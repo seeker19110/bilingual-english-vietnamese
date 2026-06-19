@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { getCurrentUser } from './lib/storage'
 import Login from './pages/Login'
@@ -6,21 +7,41 @@ import Chat from './pages/Chat'
 import Writing from './pages/Writing'
 import Speaking from './pages/Speaking'
 
+// Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng
+// thực sự bấm vào, không gộp vào bundle chính để app khởi động nhanh hơn.
+const Dictionary = lazy(() => import('./pages/Dictionary'))
+
+// Trang Bài học cũng chứa dữ liệu hội thoại lớn (sẽ lên tới 100 bài) — lazy-load tương tự.
+const Lessons = lazy(() => import('./pages/Lessons'))
+
 function RequireAuth({ children }: { children: React.ReactNode }) {
   return getCurrentUser() ? <>{children}</> : <Navigate to="/login" replace />
+}
+
+// Màn hình chờ đơn giản khi đang tải trang được lazy-load
+function PageLoading() {
+  return (
+    <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+      <p className="text-sm text-zinc-500">Đang tải...</p>
+    </div>
+  )
 }
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
-        <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
-        <Route path="/writing" element={<RequireAuth><Writing /></RequireAuth>} />
-        <Route path="/speaking" element={<RequireAuth><Speaking /></RequireAuth>} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <Suspense fallback={<PageLoading />}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+          <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
+          <Route path="/writing" element={<RequireAuth><Writing /></RequireAuth>} />
+          <Route path="/speaking" element={<RequireAuth><Speaking /></RequireAuth>} />
+          <Route path="/dictionary" element={<RequireAuth><Dictionary /></RequireAuth>} />
+          <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

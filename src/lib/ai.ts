@@ -1,5 +1,5 @@
-// Gọi Anthropic API trực tiếp từ browser (chỉ dùng cho prototype)
-// Khi production: chuyển sang backend proxy để bảo vệ API key
+// Gọi AI qua /api/claude — KHÔNG gửi API key từ browser.
+// API key được giữ ở server: vite.config.ts (lúc dev) hoặc api/claude.ts (lúc deploy lên Vercel).
 
 const MODEL = 'claude-haiku-4-5-20251001'
 
@@ -13,18 +13,11 @@ export async function callClaude(
   system: string,
   maxTokens = 1024,
 ): Promise<string> {
-  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY
-  if (!apiKey) throw new Error('Chưa có API key. Tạo file .env và thêm VITE_ANTHROPIC_API_KEY.')
-
-  // Gọi qua proxy /api/claude để tránh CORS (Vite proxy → api.anthropic.com)
+  // /api/claude: lúc "npm run dev" được vite.config.ts proxy thẳng tới Anthropic (key đọc từ .env phía server);
+  // lúc deploy lên Vercel, route này do api/claude.ts (serverless function) xử lý.
   const resp = await fetch('/api/claude', {
     method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
+    headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages }),
   })
 

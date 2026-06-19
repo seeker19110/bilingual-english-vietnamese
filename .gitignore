@@ -3,3 +3,6 @@ dist
 .env
 .env.local
 *.local
+
+# Thư mục clone trùng lặp, không phải 1 phần của project (xem báo cáo build)
+/bilingual-english-vietnamese/

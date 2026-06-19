@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown } from 'lucide-react'
+import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getCurrentUser, getUsage } from '../lib/storage'
 import { LIMITS } from '../types'
@@ -29,12 +29,30 @@ const MODES = [
     desc: 'Nộp bài viết, AI chấm theo tiêu chí IELTS, chỉ lỗi và ước lượng band.',
     tag: 'IELTS',
   },
+  {
+    path: '/dictionary',
+    icon: BookOpen,
+    color: 'amber',
+    title: 'Từ điển',
+    desc: 'Tra hơn 7.400 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
+    tag: 'Không giới hạn',
+  },
+  {
+    path: '/lessons',
+    icon: GraduationCap,
+    color: 'rose',
+    title: 'Bài học',
+    desc: 'Các bài hội thoại mẫu xoay quanh "tôi - I", mỗi bài 40 đoạn hội thoại song ngữ.',
+    tag: 'Không giới hạn',
+  },
 ]
 
 const colorMap: Record<string, { bg: string; text: string; ring: string; tag: string }> = {
   emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', ring: 'hover:border-emerald-500/50', tag: 'bg-emerald-500/20 text-emerald-300' },
   sky:     { bg: 'bg-sky-500/10',     text: 'text-sky-400',     ring: 'hover:border-sky-500/50',     tag: 'bg-sky-500/20 text-sky-300' },
   violet:  { bg: 'bg-violet-500/10',  text: 'text-violet-400',  ring: 'hover:border-violet-500/50',  tag: 'bg-violet-500/20 text-violet-300' },
+  amber:   { bg: 'bg-amber-500/10',   text: 'text-amber-400',   ring: 'hover:border-amber-500/50',   tag: 'bg-amber-500/20 text-amber-300' },
+  rose:    { bg: 'bg-rose-500/10',    text: 'text-rose-400',    ring: 'hover:border-rose-500/50',    tag: 'bg-rose-500/20 text-rose-300' },
 }
 
 export default function Home() {
