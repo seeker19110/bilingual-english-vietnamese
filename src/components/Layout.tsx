@@ -22,47 +22,62 @@ export default function Layout({ title, subtitle, back = true }: Props) {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur border-b border-zinc-800">
+    <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/60 relative">
+      {/* Gradient accent line trên cùng */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
+
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-3">
-        {/* Logo / back */}
+
+        {/* Back / Logo */}
         {back ? (
           <button onClick={() => nav('/')}
-            className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition shrink-0">
+            className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition shrink-0 -ml-1 p-1 rounded-lg hover:bg-zinc-800/50">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:inline">Trang chủ</span>
           </button>
         ) : (
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center">
-              <BookOpen className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-md shadow-emerald-500/30">
+              <BookOpen className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="font-semibold text-sm text-white hidden sm:inline">Gia sư AI</span>
+            <span className="font-bold text-sm text-white hidden sm:inline tracking-tight">Gia sư AI</span>
           </div>
         )}
 
         {/* Title */}
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-sm truncate">{title}</p>
+          <p className="font-semibold text-[15px] truncate text-white">{title}</p>
           {subtitle && <p className="text-xs text-zinc-500 truncate">{subtitle}</p>}
         </div>
 
-        {/* Usage badge */}
+        {/* Usage indicator */}
         {usage && limit && (
-          <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-500 shrink-0">
-            <span>Chat: <strong className="text-zinc-300">{usage.chatCount}/{limit.chat}</strong></span>
-            <span>Nói: <strong className="text-zinc-300">{usage.speakingCount}/{limit.speaking}</strong></span>
-          </div>
+          <>
+            {/* Desktop: text */}
+            <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-600 shrink-0">
+              <span>Chat <strong className="text-zinc-400">{usage.chatCount}/{limit.chat}</strong></span>
+              <span>Nói <strong className="text-zinc-400">{usage.speakingCount}/{limit.speaking}</strong></span>
+            </div>
+            {/* Mobile: mini bar */}
+            <div className="sm:hidden flex items-center gap-1 shrink-0">
+              <div className="w-12 h-1 bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-full bg-emerald-500 rounded-full transition-all"
+                  style={{ width: `${Math.min(100, usage.chatCount / limit.chat * 100)}%` }} />
+              </div>
+            </div>
+          </>
         )}
 
-        {/* User + logout */}
+        {/* User avatar + logout */}
         {user && (
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-xs font-bold text-white">
+          <div className="flex items-center gap-1 shrink-0">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center text-xs font-bold text-white shadow-sm">
               {user.name[0]?.toUpperCase()}
             </div>
             <button onClick={handleLogout}
-              className="text-zinc-500 hover:text-red-400 transition p-1 rounded">
-              <LogOut className="w-4 h-4" />
+              className="text-zinc-600 hover:text-red-400 transition p-2.5 rounded-lg hover:bg-red-400/10"
+              title="Đăng xuất">
+              <LogOut className="w-3.5 h-3.5" />
             </button>
           </div>
         )}

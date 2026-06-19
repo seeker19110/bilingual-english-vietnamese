@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus } from 'lucide-react'
+import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getCurrentUser, saveSpeakingSession, getUsage, incrementUsage } from '../lib/storage'
 import { callClaude, parseJson } from '../lib/ai'
@@ -14,51 +14,63 @@ interface AIResponse {
   corrected_en: string
 }
 
-// ─── Setup ────────────────────────────────────────────────────────────────────
+// ── Setup Screen ─────────────────────────────────────────────────────────────
 function SetupScreen({ onStart }: { onStart: (situation: string, level: Level) => void }) {
   const [situation, setSituation] = useState('small_talk')
   const [level, setLevel] = useState<Level>('intermediate')
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-      <div className="w-16 h-16 rounded-2xl bg-sky-500/20 flex items-center justify-center mb-6">
-        <Mic className="w-8 h-8 text-sky-400" />
+    <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
+
+      {/* Hero icon */}
+      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-400 flex items-center justify-center mb-5 shadow-xl shadow-sky-500/25 animate-scale-in">
+        <Mic className="w-8 h-8 text-white" />
       </div>
-      <h2 className="text-xl font-bold text-white mb-1">Luyện nói song ngữ</h2>
-      <p className="text-zinc-400 text-sm mb-2 text-center max-w-xs">
-        Nói tiếng Anh → AI trả lời bằng <strong className="text-white">giọng tiếng Anh</strong> → sửa lỗi bằng <strong className="text-white">giọng tiếng Việt</strong>
+      <h2 className="text-xl font-bold text-white mb-1 animate-fade-in delay-50">Luyện nói song ngữ</h2>
+      <p className="text-zinc-500 text-sm mb-2 text-center max-w-xs animate-fade-in delay-100">
+        Nói tiếng Anh · AI trả lời bằng <strong className="text-white">giọng Anh</strong> · Sửa lỗi bằng <strong className="text-white">giọng Việt</strong>
       </p>
 
+      {/* Cảnh báo browser không hỗ trợ STT */}
       {!isSTTSupported() && (
-        <p className="text-amber-400 text-xs bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2 mb-6 text-center">
-          Trình duyệt không hỗ trợ nhận giọng nói. Dùng <strong>Chrome</strong> hoặc <strong>Edge</strong>.
-        </p>
+        <div className="mt-3 mb-2 text-amber-400 text-xs bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-center max-w-sm animate-fade-in delay-150">
+          Trình duyệt không hỗ trợ giọng nói. Dùng <strong>Chrome</strong> hoặc <strong>Edge</strong> để luyện nói thật.
+          Bạn vẫn có thể <strong>gõ tay</strong> khi vào phòng luyện.
+        </div>
       )}
 
-      <div className="w-full max-w-sm space-y-4 mt-4">
+      <div className="w-full max-w-sm space-y-4 mt-4 animate-fade-up delay-200">
+        {/* Tình huống */}
         <div>
-          <label className="text-xs text-zinc-400 mb-2 block">Tình huống</label>
+          <label className="text-xs font-medium text-zinc-400 mb-2 block">Tình huống</label>
           <div className="relative">
             <select value={situation} onChange={e => setSituation(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white appearance-none outline-none focus:border-sky-500 transition">
+              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white appearance-none outline-none focus:border-sky-500/70 transition">
               {SITUATIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
           </div>
         </div>
+
+        {/* Trình độ */}
         <div>
-          <label className="text-xs text-zinc-400 mb-2 block">Trình độ</label>
+          <label className="text-xs font-medium text-zinc-400 mb-2 block">Trình độ</label>
           <div className="grid grid-cols-3 gap-2">
             {LEVELS.map(l => (
               <button key={l.value} onClick={() => setLevel(l.value)}
-                className={`py-2.5 rounded-xl text-sm font-medium border transition ${level === l.value ? 'bg-sky-600 border-sky-500 text-white' : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'}`}>
+                className={`py-2.5 rounded-xl text-sm font-medium border transition active:scale-[0.97] ${
+                  level === l.value
+                    ? 'bg-gradient-to-br from-sky-600 to-cyan-500 border-transparent text-white shadow-md shadow-sky-500/20'
+                    : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300'
+                }`}>
                 {l.label}
               </button>
             ))}
           </div>
         </div>
+
         <button onClick={() => onStart(situation, level)}
-          className="w-full bg-sky-600 hover:bg-sky-500 text-white font-semibold py-3 rounded-xl text-sm transition">
+          className="w-full bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] shadow-lg shadow-sky-500/20">
           Bắt đầu luyện nói →
         </button>
       </div>
@@ -66,33 +78,40 @@ function SetupScreen({ onStart }: { onStart: (situation: string, level: Level) =
   )
 }
 
-// ─── Message bubble ────────────────────────────────────────────────────────────
-function SpeakBubble({ msg, onPlay }: { msg: Message; onPlay?: () => void }) {
+// ── Speak Bubble ─────────────────────────────────────────────────────────────
+function SpeakBubble({ msg, onPlay, isNew }: { msg: Message; onPlay?: () => void; isNew?: boolean }) {
   if (msg.role === 'user') {
     return (
-      <div className="flex justify-end">
-        <div className="max-w-[78%] bg-sky-600 text-white rounded-2xl rounded-br-sm px-4 py-2.5 text-sm">
+      <div className={`flex justify-end ${isNew ? 'animate-fade-in' : ''}`}>
+        <div className="max-w-[78%] bg-gradient-to-br from-sky-600 to-cyan-500 text-white rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm shadow-sky-500/15">
           {msg.content}
         </div>
       </div>
     )
   }
   return (
-    <div className="flex justify-start gap-2 items-start">
-      <div className="max-w-[85%] space-y-1.5">
-        <div className="bg-zinc-800 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed flex items-start gap-2">
+    <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
+      <div className="max-w-[85%] space-y-2">
+        {/* AI speech */}
+        <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed border border-zinc-700/30 flex items-start gap-2">
           <span className="flex-1">{msg.speechEn}</span>
           {onPlay && (
-            <button onClick={onPlay} className="text-zinc-500 hover:text-sky-400 transition shrink-0 mt-0.5">
+            <button onClick={onPlay}
+              className="text-zinc-500 hover:text-sky-400 transition shrink-0 mt-0.5 p-0.5 rounded">
               <Volume2 className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
+
+        {/* Feedback */}
         {msg.feedbackVi && (
-          <div className="bg-amber-500/10 border border-amber-500/20 text-amber-200 rounded-xl px-3 py-2 text-xs leading-relaxed">
-            <span className="text-amber-400 font-medium">✅ </span>{msg.feedbackVi}
+          <div className="bg-amber-500/8 border border-amber-500/20 border-l-2 border-l-amber-400 rounded-r-xl rounded-bl-sm px-3 py-2.5 text-xs leading-relaxed">
+            <div className="flex items-start gap-1.5">
+              <span className="text-amber-400 font-bold shrink-0 mt-0.5">✅</span>
+              <span className="text-amber-200">{msg.feedbackVi}</span>
+            </div>
             {msg.correctedEn && (
-              <p className="text-emerald-400 mt-1">→ {msg.correctedEn}</p>
+              <p className="text-emerald-400 mt-1.5 pl-4">→ {msg.correctedEn}</p>
             )}
           </div>
         )}
@@ -101,7 +120,23 @@ function SpeakBubble({ msg, onPlay }: { msg: Message; onPlay?: () => void }) {
   )
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// ── Typing indicator ──────────────────────────────────────────────────────────
+function TypingDots() {
+  return (
+    <div className="flex justify-start animate-fade-in">
+      <div className="bg-zinc-800/80 rounded-2xl rounded-bl-sm px-4 py-3 border border-zinc-700/30">
+        <div className="flex gap-1 items-center h-4">
+          {[0, 1, 2].map(i => (
+            <div key={i} className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce"
+              style={{ animationDelay: `${i * 0.15}s` }} />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Main Speaking page ────────────────────────────────────────────────────────
 export default function Speaking() {
   const user = getCurrentUser()!
   const [session, setSession] = useState<SpeakingSession | null>(null)
@@ -112,14 +147,16 @@ export default function Speaking() {
   const [error, setError] = useState('')
   const [limitHit, setLimitHit] = useState(false)
   const [muted, setMuted] = useState(false)
+  const [typedInput, setTypedInput] = useState('')
+  const [lastIdx, setLastIdx] = useState(-1)
   const stopRecRef = useRef<(() => void) | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const sttSupported = isSTTSupported()
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [session?.messages, loading])
 
-  // Dọn dẹp khi unmount
   useEffect(() => () => { stopSpeaking(); stopRecRef.current?.() }, [])
 
   async function startSession(situation: string, level: Level) {
@@ -136,9 +173,12 @@ export default function Speaking() {
         speechEn: ai.speech_en, feedbackVi: ai.feedback_vi, correctedEn: ai.corrected_en,
         timestamp: Date.now(),
       }
-      const s: SpeakingSession = { id: crypto.randomUUID(), userId: user.id, situation, level, messages: [msg], createdAt: Date.now() }
+      const s: SpeakingSession = {
+        id: crypto.randomUUID(), userId: user.id, situation, level, messages: [msg], createdAt: Date.now(),
+      }
       saveSpeakingSession(s)
       setSession(s)
+      setLastIdx(0)
       incrementUsage(user.id, 'speakingCount')
       if (!muted) { setSpeaking(true); await speakBilingual(ai.speech_en, ''); setSpeaking(false) }
     } catch (e) { setError(e instanceof Error ? e.message : 'Lỗi') }
@@ -158,10 +198,7 @@ export default function Speaking() {
     const stop = startListening(
       'en',
       r => setTranscript(r.transcript),
-      async (last) => {
-        setRecording(false)
-        if (last.trim()) await sendUserSpeech(last.trim())
-      },
+      async (last) => { setRecording(false); if (last.trim()) await sendUserSpeech(last.trim()) },
       err => { setError(err); setRecording(false) },
     )
     stopRecRef.current = stop
@@ -171,7 +208,6 @@ export default function Speaking() {
     if (!session || loading) return
     const usage = getUsage(user.id)
     if (usage.speakingCount >= LIMITS[user.plan].speaking) { setLimitHit(true); return }
-
     const userMsg: Message = { id: crypto.randomUUID(), role: 'user', content: text, timestamp: Date.now() }
     const updated = { ...session, messages: [...session.messages, userMsg] }
     setSession(updated)
@@ -179,7 +215,7 @@ export default function Speaking() {
     setTranscript('')
     setLoading(true)
     setError('')
-
+    setLastIdx(updated.messages.length)
     const history = updated.messages.map(m => ({
       role: m.role,
       content: m.role === 'assistant' ? (m.speechEn ?? m.content) : m.content,
@@ -196,6 +232,7 @@ export default function Speaking() {
       const final = { ...updated, messages: [...updated.messages, aiMsg] }
       setSession(final)
       saveSpeakingSession(final)
+      setLastIdx(final.messages.length - 1)
       incrementUsage(user.id, 'speakingCount')
       if (!muted && isTTSSupported()) {
         setSpeaking(true)
@@ -216,7 +253,9 @@ export default function Speaking() {
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
       <Layout title="Luyện nói song ngữ"
-        subtitle={session ? `${situationLabel(session.situation)} · ${LEVELS.find(l => l.value === session.level)?.label}` : undefined} />
+        subtitle={session
+          ? `${situationLabel(session.situation)} · ${LEVELS.find(l => l.value === session.level)?.label}`
+          : undefined} />
 
       {!session ? (
         <SetupScreen onStart={startSession} />
@@ -224,69 +263,130 @@ export default function Speaking() {
         <>
           {/* Messages */}
           <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
-            {session.messages.map(m => (
-              <SpeakBubble key={m.id} msg={m} onPlay={m.role === 'assistant' ? () => playMsg(m) : undefined} />
+            {session.messages.map((m, i) => (
+              <SpeakBubble key={m.id} msg={m} isNew={i >= lastIdx}
+                onPlay={m.role === 'assistant' ? () => playMsg(m) : undefined} />
             ))}
-            {loading && (
-              <div className="flex justify-start">
-                <div className="bg-zinc-800 rounded-2xl rounded-bl-sm px-4 py-3">
-                  <div className="flex gap-1">
-                    {[0, 1, 2].map(i => <div key={i} className="w-1.5 h-1.5 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />)}
-                  </div>
-                </div>
-              </div>
-            )}
+            {loading && <TypingDots />}
             {transcript && (
-              <div className="flex justify-end">
-                <div className="max-w-[78%] bg-sky-600/30 border border-sky-500/30 text-sky-200 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm italic">
+              <div className="flex justify-end animate-fade-in">
+                <div className="max-w-[78%] bg-sky-600/20 border border-sky-500/25 text-sky-300 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm italic">
                   {transcript}…
                 </div>
               </div>
             )}
-            {error && <p className="text-center text-xs text-red-400">{error}</p>}
-            {limitHit && (
-              <p className="text-center text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
-                Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai.
+            {error && (
+              <p className="text-center text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
+                {error}
               </p>
+            )}
+            {limitHit && (
+              <div className="text-center text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
+                Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai.
+              </div>
             )}
             <div ref={bottomRef} />
           </div>
 
-          {/* Controls */}
-          <div className="sticky bottom-0 bg-zinc-950/95 backdrop-blur border-t border-zinc-800 px-4 py-4">
-            <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
-              {/* New session */}
-              <button onClick={() => { stopSpeaking(); setSession(null) }}
-                className="p-2.5 text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-700 rounded-xl transition">
-                <Plus className="w-4 h-4" />
-              </button>
+          {/* Controls bar */}
+          <div className="sticky bottom-0 bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 px-4 py-4 pb-safe">
+            <div className="max-w-3xl mx-auto">
 
-              {/* Mic button */}
-              <button onClick={toggleRecord}
-                disabled={loading || limitHit}
-                className={`relative w-16 h-16 rounded-full flex items-center justify-center transition shadow-lg ${
-                  recording
-                    ? 'bg-red-500 hover:bg-red-400 shadow-red-500/30'
-                    : 'bg-sky-600 hover:bg-sky-500 shadow-sky-500/30 disabled:opacity-40'
-                }`}>
-                {recording
-                  ? <MicOff className="w-7 h-7 text-white" />
-                  : <Mic className="w-7 h-7 text-white" />}
-                {recording && (
-                  <span className="absolute -inset-1 rounded-full border-2 border-red-400 animate-ping opacity-50" />
-                )}
-              </button>
+              {sttSupported ? (
+                /* ── Chế độ mic ────────────────────────────────────── */
+                <div className="flex flex-col items-center gap-3">
+                  <div className="flex items-center justify-between w-full max-w-xs">
 
-              {/* Mute TTS */}
-              <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
-                className={`p-2.5 border rounded-xl transition ${muted ? 'text-zinc-600 border-zinc-800' : speaking ? 'text-sky-400 border-sky-500/50' : 'text-zinc-400 border-zinc-800 hover:border-zinc-700'}`}>
-                {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-              </button>
+                    {/* New session */}
+                    <button onClick={() => { stopSpeaking(); setSession(null) }}
+                      className="p-3 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition hover:bg-zinc-800/50"
+                      title="Phòng mới">
+                      <Plus className="w-4 h-4" />
+                    </button>
+
+                    {/* Mic button — lớn, có ripple khi recording */}
+                    <button onClick={toggleRecord} disabled={loading || limitHit}
+                      className={`relative w-20 h-20 rounded-full flex items-center justify-center transition shadow-xl disabled:opacity-40 active:scale-95 ${
+                        recording
+                          ? 'bg-red-500 shadow-red-500/40'
+                          : 'bg-gradient-to-br from-sky-500 to-cyan-400 shadow-sky-500/30'
+                      }`}>
+                      {/* Ripple rings khi đang ghi */}
+                      {recording && <>
+                        <span className="absolute inset-0 rounded-full bg-red-400 animate-pulse-ring" />
+                        <span className="absolute inset-0 rounded-full bg-red-400 animate-pulse-ring delay-[400ms]" />
+                        <span className="absolute inset-0 rounded-full bg-red-400 animate-pulse-ring delay-[800ms]" />
+                      </>}
+                      {recording
+                        ? <MicOff className="w-8 h-8 text-white relative z-10" />
+                        : <Mic className="w-8 h-8 text-white" />
+                      }
+                    </button>
+
+                    {/* Mute / unmute */}
+                    <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
+                      className={`p-3 border rounded-xl transition ${
+                        muted
+                          ? 'text-zinc-600 border-zinc-800/80'
+                          : speaking
+                          ? 'text-sky-400 border-sky-500/40 bg-sky-500/10'
+                          : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-800/50'
+                      }`}>
+                      {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  {/* Status text */}
+                  <p className="text-center text-xs text-zinc-600">
+                    {recording
+                      ? '🔴 Đang nghe... nhấn lại để dừng'
+                      : speaking
+                      ? '🔊 AI đang đọc...'
+                      : 'Nhấn mic để nói tiếng Anh'
+                    }
+                  </p>
+                </div>
+              ) : (
+                /* ── Chế độ gõ tay (fallback cho Safari/Firefox) ───── */
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <button onClick={() => { stopSpeaking(); setSession(null) }}
+                      className="p-3 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50"
+                      title="Phòng mới">
+                      <Plus className="w-4 h-4" />
+                    </button>
+                    <input
+                      value={typedInput}
+                      onChange={e => setTypedInput(e.target.value)}
+                      onKeyDown={e => {
+                        const isMobile = window.matchMedia('(pointer: coarse)').matches
+                        if (!isMobile && e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault()
+                          if (typedInput.trim()) { sendUserSpeech(typedInput.trim()); setTypedInput('') }
+                        }
+                      }}
+                      placeholder="Gõ tiếng Anh thay vì nói..."
+                      disabled={loading || limitHit}
+                      inputMode="text"
+                      className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-sky-500/60 transition disabled:opacity-50"
+                    />
+                    <button
+                      onClick={() => { if (typedInput.trim()) { sendUserSpeech(typedInput.trim()); setTypedInput('') } }}
+                      disabled={!typedInput.trim() || loading || limitHit}
+                      className="p-3 bg-gradient-to-br from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-sky-500/20">
+                      <Send className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
+                      className={`p-3 border rounded-xl transition shrink-0 ${muted ? 'text-zinc-600 border-zinc-800/80' : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-800/50'}`}>
+                      {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  <p className="text-center text-xs text-zinc-600">
+                    Trình duyệt này không hỗ trợ mic — dùng <strong className="text-zinc-400">Chrome</strong> để luyện nói thật
+                  </p>
+                </div>
+              )}
             </div>
-
-            <p className="text-center text-xs text-zinc-600 mt-2">
-              {recording ? 'Đang nghe… nhấn lại để dừng' : speaking ? 'AI đang đọc…' : 'Nhấn mic để nói tiếng Anh'}
-            </p>
           </div>
         </>
       )}

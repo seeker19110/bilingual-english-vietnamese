@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { getCurrentUser } from './lib/storage'
+import { getCurrentUser, ensureDefaultUser } from './lib/storage'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import Chat from './pages/Chat'
@@ -28,6 +28,9 @@ function PageLoading() {
 }
 
 export default function App() {
+  // Tự động đăng nhập tài khoản mặc định nếu chưa có ai đăng nhập
+  ensureDefaultUser()
+
   return (
     <BrowserRouter>
       <Suspense fallback={<PageLoading />}>

@@ -55,6 +55,26 @@ export function getCurrentUser(): User | null {
   return get<User>(K.currentUser)
 }
 
+// ─── Tài khoản mặc định "everyone" ───────────────────────────────────────────
+// Khi chạy app lần đầu (hoặc chưa đăng nhập), tự động tạo và đăng nhập
+// vào tài khoản dùng chung này để không cần màn hình login.
+const GUEST_EMAIL = 'everyone@tutor.local'
+const GUEST_PASSWORD = 'everyone'
+const GUEST_NAME = 'Khách'
+
+export function ensureDefaultUser(): User {
+  const current = getCurrentUser()
+  if (current) return current
+
+  // Thử đăng nhập tài khoản đã tồn tại
+  const existing = login(GUEST_EMAIL, GUEST_PASSWORD)
+  if (existing) return existing
+
+  // Chưa có → tạo mới
+  const created = register(GUEST_EMAIL, GUEST_NAME, GUEST_PASSWORD)
+  return created! // luôn thành công vì email chưa tồn tại
+}
+
 // ─── Chat ─────────────────────────────────────────────────────────────────────
 export function getChatSessions(userId: string): ChatSession[] {
   return get<ChatSession[]>(K.chatSessions(userId)) ?? []
@@ -108,4 +128,26 @@ export function incrementUsage(userId: string, field: 'chatCount' | 'writingCoun
   const usage = getUsage(userId)
   usage[field]++
   set(K.usage(userId, todayStr()), usage)
+}
+
+// ─── Streak ───────────────────────────────────────────────────────────────────
+// Tính số ngày liên tiếp có học (streak)
+export function getStreak(userId: string): number {
+  let streak = 0
+  const today = new Date()
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today)
+    d.setDate(d.getDate() - i)
+    const dateStr = d.toISOString().slice(0, 10)
+    const usage = get<DailyUsage>(K.usage(userId, dateStr))
+    const hasActivity = usage && (usage.chatCount + usage.writingCount + usage.speakingCount > 0)
+    if (hasActivity) {
+      streak++
+    } else if (i > 0) {
+      // Không có hoạt động từ hôm qua trở về — streak kết thúc
+      break
+    }
+    // i === 0 chưa học hôm nay: bỏ qua, kiểm tra hôm qua
+  }
+  return streak
 }

@@ -1,6 +1,17 @@
 export type Plan = 'free' | 'pro'
 export type Level = 'beginner' | 'intermediate' | 'advanced'
 
+// Cấu trúc 1 mục từ điển — khớp với dữ liệu trong src/data/dictionary.json
+export interface DictEntry {
+  word: string     // từ tiếng Anh
+  pos: string      // loại từ viết tắt: n, v, adj, adv, prep, conj, pron, interj, art, num
+  vi: string       // nghĩa tiếng Việt
+  ex_en: string    // câu ví dụ tiếng Anh
+  ex_vi: string    // câu ví dụ dịch tiếng Việt
+  ipa_en?: string  // phiên âm quốc tế tiếng Anh
+  ipa_vi?: string  // phiên âm quốc tế tiếng Việt
+}
+
 export interface User {
   id: string
   email: string
