@@ -1,4 +1,4 @@
-import type { User, ChatSession, WritingSubmission, SpeakingSession, DailyUsage } from '../types'
+import type { User, ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Direction } from '../types'
 
 // ─── Keys ────────────────────────────────────────────────────────────────────
 const K = {
@@ -128,6 +128,17 @@ export function incrementUsage(userId: string, field: 'chatCount' | 'writingCoun
   const usage = getUsage(userId)
   usage[field]++
   set(K.usage(userId, todayStr()), usage)
+}
+
+// ─── Direction (chiều học) ────────────────────────────────────────────────────
+const DIRECTION_KEY = 'et_direction'
+
+export function getDirection(): Direction {
+  return (localStorage.getItem(DIRECTION_KEY) as Direction) ?? 'A'
+}
+
+export function setDirection(dir: Direction) {
+  localStorage.setItem(DIRECTION_KEY, dir)
 }
 
 // ─── Streak ───────────────────────────────────────────────────────────────────

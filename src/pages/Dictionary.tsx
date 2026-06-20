@@ -10,7 +10,7 @@ import PosFilter from '../components/PosFilter'
 import Flashcard from '../components/Flashcard'
 import dictionaryData from '../data/dictionary.json'
 import type { DictEntry } from '../types'
-import { ensureDefaultUser } from '../lib/storage'
+import { ensureDefaultUser, getDirection } from '../lib/storage'
 import { POS_LABEL, POS_COLOR } from '../lib/pos'
 
 const ENTRIES = dictionaryData as DictEntry[]
@@ -21,7 +21,9 @@ const MAX_RESULTS = 100
 type Tab = 'search' | 'flashcard'
 
 export default function Dictionary() {
-  const user = ensureDefaultUser()           // luôn có user (kể cả khách) để lưu tiến độ
+  const user = ensureDefaultUser()
+  const dir = getDirection()
+  const isA = dir === 'A'
   const [tab, setTab] = useState<Tab>('search')
   const [query, setQuery] = useState('')
   const [pos, setPos] = useState('')          // loại từ đang lọc ('' = tất cả)
@@ -48,7 +50,10 @@ export default function Dictionary() {
 
   return (
     <div className="min-h-screen bg-zinc-950">
-      <Layout title="Tu dien" subtitle={`${ENTRIES.length.toLocaleString('vi-VN')} tu thong dung`} />
+      <Layout
+        title={isA ? 'Từ điển' : 'Dictionary'}
+        subtitle={`${ENTRIES.length.toLocaleString('vi-VN')} ${isA ? 'từ thông dụng' : 'common words'}`}
+      />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
 
@@ -60,24 +65,20 @@ export default function Dictionary() {
 
         {/* Chuyển tab: Tra cứu / Flashcard */}
         <div className="flex gap-2 mb-4">
-          <button
-            onClick={() => setTab('search')}
+          <button onClick={() => setTab('search')}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition ${
               tab === 'search'
                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                 : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200'
-            }`}
-          >
-            <BookText className="w-4 h-4" /> Tra từ
+            }`}>
+            <BookText className="w-4 h-4" /> {isA ? 'Tra từ' : 'Search'}
           </button>
-          <button
-            onClick={() => setTab('flashcard')}
+          <button onClick={() => setTab('flashcard')}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition ${
               tab === 'flashcard'
                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                 : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200'
-            }`}
-          >
+            }`}>
             <Layers className="w-4 h-4" /> Flashcard
           </button>
         </div>
@@ -91,7 +92,7 @@ export default function Dictionary() {
                 autoFocus
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                placeholder="Go tu tieng Anh can tra..."
+                placeholder={isA ? 'Gõ từ tiếng Anh cần tra...' : 'Type an English word to look up...'}
                 className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition"
               />
               {query && (
@@ -107,8 +108,10 @@ export default function Dictionary() {
 
             {(query || pos) && (
               <p className="text-xs text-zinc-500 mb-3">
-                Tim thay {totalMatches.toLocaleString('vi-VN')} tu
-                {totalMatches > results.length ? ` — hien thi ${results.length} tu dau` : ''}
+                {isA
+                  ? `Tìm thấy ${totalMatches.toLocaleString('vi-VN')} từ${totalMatches > results.length ? ` — hiển thị ${results.length} từ đầu` : ''}`
+                  : `Found ${totalMatches.toLocaleString('en-US')} word${totalMatches !== 1 ? 's' : ''}${totalMatches > results.length ? ` — showing first ${results.length}` : ''}`
+                }
               </p>
             )}
 
@@ -166,11 +169,14 @@ export default function Dictionary() {
               ))}
             </div>
 
-            {/* Không tìm thấy */}
             {(query || pos) && results.length === 0 && (
               <div className="text-center py-12 animate-fade-in">
-                <p className="text-zinc-500 text-sm">Khong tim thay tu phu hop</p>
-                <p className="text-zinc-600 text-xs mt-1">Thu tu khoa hoac bo loc khac</p>
+                <p className="text-zinc-500 text-sm">
+                  {isA ? 'Không tìm thấy từ phù hợp' : 'No matching words found'}
+                </p>
+                <p className="text-zinc-600 text-xs mt-1">
+                  {isA ? 'Thử từ khóa hoặc bộ lọc khác' : 'Try a different keyword or filter'}
+                </p>
               </div>
             )}
           </>

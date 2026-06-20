@@ -1,60 +1,72 @@
 import { useState, useRef, useEffect } from 'react'
 import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send } from 'lucide-react'
 import Layout from '../components/Layout'
-import { getCurrentUser, saveSpeakingSession, getUsage, incrementUsage } from '../lib/storage'
+import { getCurrentUser, saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { callClaude, parseJson } from '../lib/ai'
 import { speakingSystemPrompt, situationLabel } from '../prompts'
 import { startListening, isSTTSupported } from '../lib/stt'
 import { speakBilingual, stopSpeaking, isTTSSupported } from '../lib/tts'
-import { SITUATIONS, LEVELS, LIMITS, type Level, type SpeakingSession, type Message } from '../types'
+import { SITUATIONS, LEVELS, LIMITS, type Level, type SpeakingSession, type Message, type Direction } from '../types'
 
+// JSON trả về từ AI — dùng chung cho cả 2 chiều
+// Chiều A: speech=EN, feedback=VI | Chiều B: speech=VI, feedback=EN
 interface AIResponse {
-  speech_en: string
-  feedback_vi: string
-  corrected_en: string
+  speech: string
+  feedback: string
+  corrected: string
 }
 
 // ── Setup Screen ─────────────────────────────────────────────────────────────
-function SetupScreen({ onStart }: { onStart: (situation: string, level: Level) => void }) {
+function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void; dir: Direction }) {
   const [situation, setSituation] = useState('small_talk')
   const [level, setLevel] = useState<Level>('intermediate')
+  const isA = dir === 'A'
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
 
-      {/* Hero icon */}
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-400 flex items-center justify-center mb-5 shadow-xl shadow-sky-500/25 animate-scale-in">
         <Mic className="w-8 h-8 text-white" />
       </div>
-      <h2 className="text-xl font-bold text-white mb-1 animate-fade-in delay-50">Luyện nói song ngữ</h2>
+      <h2 className="text-xl font-bold text-white mb-1 animate-fade-in delay-50">
+        {isA ? 'Luyện nói song ngữ' : 'Bilingual Speaking Practice'}
+      </h2>
       <p className="text-zinc-500 text-sm mb-2 text-center max-w-xs animate-fade-in delay-100">
-        Nói tiếng Anh · AI trả lời bằng <strong className="text-white">giọng Anh</strong> · Sửa lỗi bằng <strong className="text-white">giọng Việt</strong>
+        {isA
+          ? <>Nói tiếng Anh · AI trả lời bằng <strong className="text-white">giọng Anh</strong> · Sửa lỗi bằng <strong className="text-white">giọng Việt</strong></>
+          : <>Speak Vietnamese · AI replies in <strong className="text-white">Vietnamese voice</strong> · Corrects in <strong className="text-white">English voice</strong></>
+        }
       </p>
 
-      {/* Cảnh báo browser không hỗ trợ STT */}
       {!isSTTSupported() && (
         <div className="mt-3 mb-2 text-amber-400 text-xs bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-center max-w-sm animate-fade-in delay-150">
-          Trình duyệt không hỗ trợ giọng nói. Dùng <strong>Chrome</strong> hoặc <strong>Edge</strong> để luyện nói thật.
-          Bạn vẫn có thể <strong>gõ tay</strong> khi vào phòng luyện.
+          {isA
+            ? <>Trình duyệt không hỗ trợ giọng nói. Dùng <strong>Chrome</strong> hoặc <strong>Edge</strong>. Bạn vẫn có thể <strong>gõ tay</strong>.</>
+            : <>Browser doesn't support mic. Use <strong>Chrome</strong> or <strong>Edge</strong>. You can still <strong>type</strong>.</>
+          }
         </div>
       )}
 
       <div className="w-full max-w-sm space-y-4 mt-4 animate-fade-up delay-200">
-        {/* Tình huống */}
         <div>
-          <label className="text-xs font-medium text-zinc-400 mb-2 block">Tình huống</label>
+          <label className="text-xs font-medium text-zinc-400 mb-2 block">
+            {isA ? 'Tình huống' : 'Situation'}
+          </label>
           <div className="relative">
             <select value={situation} onChange={e => setSituation(e.target.value)}
               className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white appearance-none outline-none focus:border-sky-500/70 transition">
-              {SITUATIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+              {SITUATIONS.map(s => (
+                <option key={s.value} value={s.value}>{isA ? s.labelA : s.labelB}</option>
+              ))}
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
           </div>
         </div>
 
-        {/* Trình độ */}
         <div>
-          <label className="text-xs font-medium text-zinc-400 mb-2 block">Trình độ</label>
+          <label className="text-xs font-medium text-zinc-400 mb-2 block">
+            {isA ? 'Trình độ' : 'Level'}
+          </label>
           <div className="grid grid-cols-3 gap-2">
             {LEVELS.map(l => (
               <button key={l.value} onClick={() => setLevel(l.value)}
@@ -63,7 +75,7 @@ function SetupScreen({ onStart }: { onStart: (situation: string, level: Level) =
                     ? 'bg-gradient-to-br from-sky-600 to-cyan-500 border-transparent text-white shadow-md shadow-sky-500/20'
                     : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300'
                 }`}>
-                {l.label}
+                {isA ? l.labelA : l.labelB}
               </button>
             ))}
           </div>
@@ -71,7 +83,7 @@ function SetupScreen({ onStart }: { onStart: (situation: string, level: Level) =
 
         <button onClick={() => onStart(situation, level)}
           className="w-full bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] shadow-lg shadow-sky-500/20">
-          Bắt đầu luyện nói →
+          {isA ? 'Bắt đầu luyện nói →' : 'Start speaking →'}
         </button>
       </div>
     </div>
@@ -92,7 +104,6 @@ function SpeakBubble({ msg, onPlay, isNew }: { msg: Message; onPlay?: () => void
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
       <div className="max-w-[85%] space-y-2">
-        {/* AI speech */}
         <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed border border-zinc-700/30 flex items-start gap-2">
           <span className="flex-1">{msg.speechEn}</span>
           {onPlay && (
@@ -102,8 +113,6 @@ function SpeakBubble({ msg, onPlay, isNew }: { msg: Message; onPlay?: () => void
             </button>
           )}
         </div>
-
-        {/* Feedback */}
         {msg.feedbackVi && (
           <div className="bg-amber-500/8 border border-amber-500/20 border-l-2 border-l-amber-400 rounded-r-xl rounded-bl-sm px-3 py-2.5 text-xs leading-relaxed">
             <div className="flex items-start gap-1.5">
@@ -120,7 +129,6 @@ function SpeakBubble({ msg, onPlay, isNew }: { msg: Message; onPlay?: () => void
   )
 }
 
-// ── Typing indicator ──────────────────────────────────────────────────────────
 function TypingDots() {
   return (
     <div className="flex justify-start animate-fade-in">
@@ -139,6 +147,13 @@ function TypingDots() {
 // ── Main Speaking page ────────────────────────────────────────────────────────
 export default function Speaking() {
   const user = getCurrentUser()!
+  const dir: Direction = getDirection()
+  const isA = dir === 'A'
+
+  // Chiều A: STT tiếng Anh, TTS speech=EN + feedback=VI
+  // Chiều B: STT tiếng Việt, TTS speech=VI + feedback=EN
+  const sttLang = isA ? 'en' as const : 'vi' as const
+
   const [session, setSession] = useState<SpeakingSession | null>(null)
   const [recording, setRecording] = useState(false)
   const [transcript, setTranscript] = useState('')
@@ -164,13 +179,13 @@ export default function Speaking() {
     if (usage.speakingCount >= LIMITS[user.plan].speaking) { setLimitHit(true); return }
     setLoading(true)
     setError('')
-    const sys = speakingSystemPrompt(situationLabel(situation), level)
+    const sys = speakingSystemPrompt(situationLabel(situation, dir), level, dir)
     try {
       const raw = await callClaude([], sys)
-      const ai = parseJson<AIResponse>(raw) ?? { speech_en: raw, feedback_vi: '', corrected_en: '' }
+      const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
       const msg: Message = {
         id: crypto.randomUUID(), role: 'assistant', content: raw,
-        speechEn: ai.speech_en, feedbackVi: ai.feedback_vi, correctedEn: ai.corrected_en,
+        speechEn: ai.speech, feedbackVi: ai.feedback, correctedEn: ai.corrected,
         timestamp: Date.now(),
       }
       const s: SpeakingSession = {
@@ -180,8 +195,14 @@ export default function Speaking() {
       setSession(s)
       setLastIdx(0)
       incrementUsage(user.id, 'speakingCount')
-      if (!muted) { setSpeaking(true); await speakBilingual(ai.speech_en, ''); setSpeaking(false) }
-    } catch (e) { setError(e instanceof Error ? e.message : 'Lỗi') }
+      if (!muted) {
+        setSpeaking(true)
+        // Chiều A: giọng Anh trước, không có feedback khi mở đầu
+        // Chiều B: giọng Việt trước
+        await speakBilingual(ai.speech, '', isA ? 'en-US' : 'vi-VN', isA ? 'vi-VN' : 'en-US')
+        setSpeaking(false)
+      }
+    } catch (e) { setError(e instanceof Error ? e.message : 'Error') }
     setLoading(false)
   }
 
@@ -196,7 +217,7 @@ export default function Speaking() {
     setTranscript('')
     setRecording(true)
     const stop = startListening(
-      'en',
+      sttLang,
       r => setTranscript(r.transcript),
       async (last) => { setRecording(false); if (last.trim()) await sendUserSpeech(last.trim()) },
       err => { setError(err); setRecording(false) },
@@ -220,13 +241,13 @@ export default function Speaking() {
       role: m.role,
       content: m.role === 'assistant' ? (m.speechEn ?? m.content) : m.content,
     }))
-    const sys = speakingSystemPrompt(situationLabel(session.situation), session.level)
+    const sys = speakingSystemPrompt(situationLabel(session.situation, dir), session.level, dir)
     try {
       const raw = await callClaude(history, sys)
-      const ai = parseJson<AIResponse>(raw) ?? { speech_en: raw, feedback_vi: '', corrected_en: '' }
+      const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
       const aiMsg: Message = {
         id: crypto.randomUUID(), role: 'assistant', content: raw,
-        speechEn: ai.speech_en, feedbackVi: ai.feedback_vi, correctedEn: ai.corrected_en,
+        speechEn: ai.speech, feedbackVi: ai.feedback, correctedEn: ai.corrected,
         timestamp: Date.now(),
       }
       const final = { ...updated, messages: [...updated.messages, aiMsg] }
@@ -236,32 +257,40 @@ export default function Speaking() {
       incrementUsage(user.id, 'speakingCount')
       if (!muted && isTTSSupported()) {
         setSpeaking(true)
-        await speakBilingual(ai.speech_en, ai.feedback_vi)
+        await speakBilingual(
+          ai.speech, ai.feedback,
+          isA ? 'en-US' : 'vi-VN',
+          isA ? 'vi-VN' : 'en-US',
+        )
         setSpeaking(false)
       }
-    } catch (e) { setError(e instanceof Error ? e.message : 'Lỗi') }
+    } catch (e) { setError(e instanceof Error ? e.message : 'Error') }
     setLoading(false)
   }
 
   async function playMsg(msg: Message) {
     if (!msg.speechEn) return
     setSpeaking(true)
-    await speakBilingual(msg.speechEn, msg.feedbackVi ?? '')
+    await speakBilingual(msg.speechEn, msg.feedbackVi ?? '', isA ? 'en-US' : 'vi-VN', isA ? 'vi-VN' : 'en-US')
     setSpeaking(false)
   }
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
-      <Layout title="Luyện nói song ngữ"
+      <Layout
+        title={isA ? 'Luyện nói song ngữ' : 'Bilingual Speaking'}
         subtitle={session
-          ? `${situationLabel(session.situation)} · ${LEVELS.find(l => l.value === session.level)?.label}`
-          : undefined} />
+          ? `${situationLabel(session.situation, dir)} · ${
+              isA ? LEVELS.find(l => l.value === session.level)?.labelA
+                  : LEVELS.find(l => l.value === session.level)?.labelB
+            }`
+          : undefined}
+      />
 
       {!session ? (
-        <SetupScreen onStart={startSession} />
+        <SetupScreen onStart={startSession} dir={dir} />
       ) : (
         <>
-          {/* Messages */}
           <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
             {session.messages.map((m, i) => (
               <SpeakBubble key={m.id} msg={m} isNew={i >= lastIdx}
@@ -282,77 +311,61 @@ export default function Speaking() {
             )}
             {limitHit && (
               <div className="text-center text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
-                Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai.
+                {isA
+                  ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai.'
+                  : "You've used all sessions today. Come back tomorrow."}
               </div>
             )}
             <div ref={bottomRef} />
           </div>
 
-          {/* Controls bar */}
           <div className="sticky bottom-0 bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 px-4 py-4 pb-safe">
             <div className="max-w-3xl mx-auto">
-
               {sttSupported ? (
-                /* ── Chế độ mic ────────────────────────────────────── */
                 <div className="flex flex-col items-center gap-3">
                   <div className="flex items-center justify-between w-full max-w-xs">
-
-                    {/* New session */}
                     <button onClick={() => { stopSpeaking(); setSession(null) }}
                       className="p-3 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition hover:bg-zinc-800/50"
-                      title="Phòng mới">
+                      title={isA ? 'Phòng mới' : 'New room'}>
                       <Plus className="w-4 h-4" />
                     </button>
 
-                    {/* Mic button — lớn, có ripple khi recording */}
                     <button onClick={toggleRecord} disabled={loading || limitHit}
                       className={`relative w-20 h-20 rounded-full flex items-center justify-center transition shadow-xl disabled:opacity-40 active:scale-95 ${
-                        recording
-                          ? 'bg-red-500 shadow-red-500/40'
-                          : 'bg-gradient-to-br from-sky-500 to-cyan-400 shadow-sky-500/30'
+                        recording ? 'bg-red-500 shadow-red-500/40' : 'bg-gradient-to-br from-sky-500 to-cyan-400 shadow-sky-500/30'
                       }`}>
-                      {/* Ripple rings khi đang ghi */}
                       {recording && <>
                         <span className="absolute inset-0 rounded-full bg-red-400 animate-pulse-ring" />
                         <span className="absolute inset-0 rounded-full bg-red-400 animate-pulse-ring delay-[400ms]" />
                         <span className="absolute inset-0 rounded-full bg-red-400 animate-pulse-ring delay-[800ms]" />
                       </>}
-                      {recording
-                        ? <MicOff className="w-8 h-8 text-white relative z-10" />
-                        : <Mic className="w-8 h-8 text-white" />
-                      }
+                      {recording ? <MicOff className="w-8 h-8 text-white relative z-10" /> : <Mic className="w-8 h-8 text-white" />}
                     </button>
 
-                    {/* Mute / unmute */}
                     <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
                       className={`p-3 border rounded-xl transition ${
-                        muted
-                          ? 'text-zinc-600 border-zinc-800/80'
-                          : speaking
-                          ? 'text-sky-400 border-sky-500/40 bg-sky-500/10'
+                        muted ? 'text-zinc-600 border-zinc-800/80'
+                          : speaking ? 'text-sky-400 border-sky-500/40 bg-sky-500/10'
                           : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-800/50'
                       }`}>
                       {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                     </button>
                   </div>
 
-                  {/* Status text */}
                   <p className="text-center text-xs text-zinc-600">
                     {recording
-                      ? '🔴 Đang nghe... nhấn lại để dừng'
+                      ? (isA ? '🔴 Đang nghe... nhấn lại để dừng' : '🔴 Listening… tap to stop')
                       : speaking
-                      ? '🔊 AI đang đọc...'
-                      : 'Nhấn mic để nói tiếng Anh'
+                      ? (isA ? '🔊 AI đang đọc...' : '🔊 AI speaking...')
+                      : (isA ? 'Nhấn mic để nói tiếng Anh' : 'Tap mic to speak Vietnamese')
                     }
                   </p>
                 </div>
               ) : (
-                /* ── Chế độ gõ tay (fallback cho Safari/Firefox) ───── */
                 <div className="space-y-2">
                   <div className="flex gap-2">
                     <button onClick={() => { stopSpeaking(); setSession(null) }}
-                      className="p-3 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50"
-                      title="Phòng mới">
+                      className="p-3 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50">
                       <Plus className="w-4 h-4" />
                     </button>
                     <input
@@ -365,7 +378,7 @@ export default function Speaking() {
                           if (typedInput.trim()) { sendUserSpeech(typedInput.trim()); setTypedInput('') }
                         }
                       }}
-                      placeholder="Gõ tiếng Anh thay vì nói..."
+                      placeholder={isA ? 'Gõ tiếng Anh thay vì nói...' : 'Type Vietnamese instead of speaking...'}
                       disabled={loading || limitHit}
                       inputMode="text"
                       className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-sky-500/60 transition disabled:opacity-50"
@@ -373,16 +386,19 @@ export default function Speaking() {
                     <button
                       onClick={() => { if (typedInput.trim()) { sendUserSpeech(typedInput.trim()); setTypedInput('') } }}
                       disabled={!typedInput.trim() || loading || limitHit}
-                      className="p-3 bg-gradient-to-br from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-sky-500/20">
+                      className="p-3 bg-gradient-to-br from-sky-600 to-cyan-500 disabled:opacity-40 text-white rounded-xl transition shrink-0">
                       <Send className="w-4 h-4" />
                     </button>
                     <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
-                      className={`p-3 border rounded-xl transition shrink-0 ${muted ? 'text-zinc-600 border-zinc-800/80' : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-800/50'}`}>
+                      className={`p-3 border rounded-xl transition shrink-0 ${muted ? 'text-zinc-600 border-zinc-800/80' : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700'}`}>
                       {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                     </button>
                   </div>
                   <p className="text-center text-xs text-zinc-600">
-                    Trình duyệt này không hỗ trợ mic — dùng <strong className="text-zinc-400">Chrome</strong> để luyện nói thật
+                    {isA
+                      ? <>Trình duyệt không hỗ trợ mic — dùng <strong className="text-zinc-400">Chrome</strong></>
+                      : <>Browser doesn't support mic — use <strong className="text-zinc-400">Chrome</strong></>
+                    }
                   </p>
                 </div>
               )}

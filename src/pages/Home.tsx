@@ -1,61 +1,89 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap } from 'lucide-react'
+import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight } from 'lucide-react'
 import Layout from '../components/Layout'
-import { getCurrentUser, getUsage, getStreak } from '../lib/storage'
+import { getCurrentUser, getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { LIMITS } from '../types'
+import type { Direction } from '../types'
 
-const MODES = [
-  {
-    path: '/chat',
-    icon: MessageCircle,
-    gradient: 'from-emerald-500 to-teal-400',
-    glow: 'shadow-emerald-500/20',
-    ring: 'hover:border-emerald-500/40',
-    tag: { label: 'Phổ biến', cls: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' },
-    title: 'Chat với gia sư',
-    desc: 'Trò chuyện tiếng Anh theo tình huống. AI sửa lỗi và giải thích bằng tiếng Việt ngay lập tức.',
-  },
-  {
-    path: '/speaking',
-    icon: Mic,
-    gradient: 'from-sky-500 to-cyan-400',
-    glow: 'shadow-sky-500/20',
-    ring: 'hover:border-sky-500/40',
-    tag: { label: 'Tính năng chính', cls: 'bg-sky-500/15 text-sky-300 border border-sky-500/20' },
-    title: 'Luyện nói song ngữ',
-    desc: 'Nói → AI nghe → trả lời bằng giọng tiếng Anh → sửa lỗi bằng giọng tiếng Việt.',
-  },
-  {
-    path: '/writing',
-    icon: PenLine,
-    gradient: 'from-violet-500 to-purple-400',
-    glow: 'shadow-violet-500/20',
-    ring: 'hover:border-violet-500/40',
-    tag: { label: 'IELTS', cls: 'bg-violet-500/15 text-violet-300 border border-violet-500/20' },
-    title: 'Luyện viết & chấm điểm',
-    desc: 'Nộp bài viết, AI chấm theo tiêu chí IELTS, chỉ lỗi và ước lượng band.',
-  },
-  {
-    path: '/dictionary',
-    icon: BookOpen,
-    gradient: 'from-amber-500 to-orange-400',
-    glow: 'shadow-amber-500/20',
-    ring: 'hover:border-amber-500/40',
-    tag: { label: 'Không giới hạn', cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20' },
-    title: 'Từ điển',
-    desc: 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
-  },
-  {
-    path: '/lessons',
-    icon: GraduationCap,
-    gradient: 'from-rose-500 to-pink-400',
-    glow: 'shadow-rose-500/20',
-    ring: 'hover:border-rose-500/40',
-    tag: { label: 'Không giới hạn', cls: 'bg-rose-500/15 text-rose-300 border border-rose-500/20' },
-    title: 'Bài học',
-    desc: 'Các bài hội thoại mẫu xoay quanh "tôi - I", mỗi bài 40 đoạn hội thoại song ngữ.',
-  },
-]
+// ── Nội dung cards theo chiều học ────────────────────────────────────────────
+function getModes(dir: Direction) {
+  const isA = dir === 'A'
+  return [
+    {
+      path: '/chat',
+      icon: MessageCircle,
+      gradient: 'from-emerald-500 to-teal-400',
+      glow: 'shadow-emerald-500/20',
+      ring: 'hover:border-emerald-500/40',
+      tag: { label: 'Phổ biến / Popular', cls: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' },
+      title: isA ? 'Chat với gia sư' : 'Chat with tutor',
+      desc: isA
+        ? 'Trò chuyện tiếng Anh theo tình huống. AI sửa lỗi và giải thích bằng tiếng Việt ngay lập tức.'
+        : 'Practice Vietnamese conversation by situation. AI corrects and explains in English.',
+    },
+    {
+      path: '/speaking',
+      icon: Mic,
+      gradient: 'from-sky-500 to-cyan-400',
+      glow: 'shadow-sky-500/20',
+      ring: 'hover:border-sky-500/40',
+      tag: { label: isA ? 'Tính năng chính' : 'Key feature', cls: 'bg-sky-500/15 text-sky-300 border border-sky-500/20' },
+      title: isA ? 'Luyện nói song ngữ' : 'Bilingual speaking',
+      desc: isA
+        ? 'Nói → AI nghe → trả lời bằng giọng tiếng Anh → sửa lỗi bằng giọng tiếng Việt.'
+        : 'Speak → AI listens → replies in Vietnamese voice → corrects in English voice.',
+    },
+    {
+      path: '/writing',
+      icon: PenLine,
+      gradient: 'from-violet-500 to-purple-400',
+      glow: 'shadow-violet-500/20',
+      ring: 'hover:border-violet-500/40',
+      tag: { label: 'IELTS', cls: 'bg-violet-500/15 text-violet-300 border border-violet-500/20' },
+      title: isA ? 'Luyện viết & chấm điểm' : 'Writing & scoring',
+      desc: isA
+        ? 'Nộp bài viết, AI chấm theo tiêu chí IELTS, chỉ lỗi và ước lượng band.'
+        : 'Submit your Vietnamese writing, AI grades it and points out errors in English.',
+    },
+    {
+      path: '/phrases',
+      icon: MessagesSquare,
+      gradient: 'from-teal-500 to-emerald-400',
+      glow: 'shadow-teal-500/20',
+      ring: 'hover:border-teal-500/40',
+      tag: { label: isA ? 'Không giới hạn' : 'Unlimited', cls: 'bg-teal-500/15 text-teal-300 border border-teal-500/20' },
+      title: isA ? 'Cụm từ thông dụng' : 'Common Phrases',
+      desc: isA
+        ? '80+ cụm từ tiếng Anh thực tế theo chủ đề: chào hỏi, công việc, du lịch… Có phát âm.'
+        : '80+ everyday Vietnamese phrases by topic: greetings, travel, food… With pronunciation.',
+    },
+    {
+      path: '/dictionary',
+      icon: BookOpen,
+      gradient: 'from-amber-500 to-orange-400',
+      glow: 'shadow-amber-500/20',
+      ring: 'hover:border-amber-500/40',
+      tag: { label: isA ? 'Không giới hạn' : 'Unlimited', cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20' },
+      title: isA ? 'Từ điển' : 'Dictionary',
+      desc: isA
+        ? 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.'
+        : 'Look up 10,000 common English–Vietnamese words with part of speech and examples.',
+    },
+    {
+      path: '/lessons',
+      icon: GraduationCap,
+      gradient: 'from-rose-500 to-pink-400',
+      glow: 'shadow-rose-500/20',
+      ring: 'hover:border-rose-500/40',
+      tag: { label: isA ? 'Không giới hạn' : 'Unlimited', cls: 'bg-rose-500/15 text-rose-300 border border-rose-500/20' },
+      title: isA ? 'Bài học' : 'Lessons',
+      desc: isA
+        ? 'Các bài hội thoại mẫu xoay quanh "tôi - I", mỗi bài 40 đoạn hội thoại song ngữ.'
+        : 'Sample dialogues focused on everyday topics, 40 bilingual exchanges per lesson.',
+    },
+  ]
+}
 
 export default function Home() {
   const nav = useNavigate()
@@ -64,10 +92,21 @@ export default function Home() {
   const limit = LIMITS[user.plan]
   const streak = getStreak(user.id)
 
+  // Chiều học lưu trong localStorage, dùng state để re-render khi đổi
+  const [dir, setDir] = useState<Direction>(getDirection)
+
+  function toggleDir() {
+    const next: Direction = dir === 'A' ? 'B' : 'A'
+    setDirection(next)
+    setDir(next)
+  }
+
+  const MODES = getModes(dir)
+  const isA = dir === 'A'
+
   const usagePct = (used: number, max: number) => Math.min(100, Math.round(used / max * 100))
   const firstName = user.name.split(' ').at(-1) ?? user.name
 
-  // Tiêu chí màu bar lượt dùng
   const barColor = (used: number, max: number) => {
     const pct = used / max
     if (pct >= 0.85) return 'bg-red-500'
@@ -77,24 +116,50 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-950">
-      <Layout title={`Xin chào, ${firstName}`} back={false} />
+      <Layout title={isA ? `Xin chào, ${firstName}` : `Hello, ${firstName}`} back={false} />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
 
-        {/* ── Greeting + streak ─────────────────────────────────────────── */}
-        <div className="mb-6 flex items-start justify-between animate-fade-in">
-          <div>
-            <p className="text-zinc-500 text-sm">Hôm nay luyện gì?</p>
+        {/* ── Greeting + streak + toggle chiều học ──────────────────────── */}
+        <div className="mb-6 flex items-start justify-between animate-fade-in gap-3">
+          <div className="min-w-0">
+            <p className="text-zinc-500 text-sm">
+              {isA ? 'Hôm nay luyện gì?' : "What will you practice today?"}
+            </p>
           </div>
-          {streak > 0 && (
-            <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 rounded-xl px-3 py-2 shrink-0">
-              <span className="text-xl leading-none">🔥</span>
-              <div className="leading-none">
-                <p className="text-base font-bold text-orange-400">{streak}</p>
-                <p className="text-[10px] text-orange-400/60 mt-0.5">ngày liên tiếp</p>
+
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Toggle A ↔ B */}
+            <button
+              onClick={toggleDir}
+              title={isA ? 'Chuyển sang dạy tiếng Việt cho người nước ngoài' : 'Switch to teaching English for Vietnamese'}
+              className="flex items-center gap-1.5 bg-zinc-800/80 border border-zinc-700/60 hover:border-zinc-600 rounded-xl px-3 py-2 text-xs font-medium transition-all active:scale-95"
+            >
+              <ArrowLeftRight className="w-3.5 h-3.5 text-zinc-400" />
+              <span className="text-zinc-300">{isA ? '🇻🇳→🇬🇧' : '🇬🇧→🇻🇳'}</span>
+            </button>
+
+            {streak > 0 && (
+              <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 rounded-xl px-3 py-2">
+                <span className="text-xl leading-none">🔥</span>
+                <div className="leading-none">
+                  <p className="text-base font-bold text-orange-400">{streak}</p>
+                  <p className="text-[10px] text-orange-400/60 mt-0.5">{isA ? 'ngày liên tiếp' : 'day streak'}</p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+        </div>
+
+        {/* ── Nhãn chiều học hiện tại ────────────────────────────────────── */}
+        <div className="mb-4 flex items-center gap-2 animate-fade-in">
+          <span className={`text-xs px-3 py-1 rounded-full border font-medium ${
+            isA
+              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
+              : 'bg-sky-500/10 text-sky-400 border-sky-500/25'
+          }`}>
+            {isA ? '🇻🇳 Người Việt học tiếng Anh' : '🌍 Foreigners learning Vietnamese'}
+          </span>
         </div>
 
         {/* ── Usage card ────────────────────────────────────────────────── */}
@@ -108,13 +173,17 @@ export default function Home() {
               ? <Crown className="w-5 h-5 text-amber-400 shrink-0" />
               : <Zap className="w-5 h-5 text-zinc-400 shrink-0" />}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white">{user.plan === 'pro' ? 'Gói Pro' : 'Gói Miễn phí'}</p>
+              <p className="text-sm font-semibold text-white">
+                {user.plan === 'pro'
+                  ? (isA ? 'Gói Pro' : 'Pro Plan')
+                  : (isA ? 'Gói Miễn phí' : 'Free Plan')}
+              </p>
               {user.plan === 'free' ? (
                 <div className="mt-2 space-y-1.5">
                   {[
-                    { label: 'Chat', used: usage.chatCount, max: limit.chat },
-                    { label: 'Nói', used: usage.speakingCount, max: limit.speaking },
-                    { label: 'Viết', used: usage.writingCount, max: limit.writing },
+                    { label: isA ? 'Chat' : 'Chat',   used: usage.chatCount,     max: limit.chat },
+                    { label: isA ? 'Nói'  : 'Speak',  used: usage.speakingCount, max: limit.speaking },
+                    { label: isA ? 'Viết' : 'Write',  used: usage.writingCount,  max: limit.writing },
                   ].map(({ label, used, max }) => (
                     <div key={label} className="flex items-center gap-2">
                       <span className="text-[10px] text-zinc-500 w-8 shrink-0">{label}</span>
@@ -127,12 +196,14 @@ export default function Home() {
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-zinc-500 mt-0.5">Không giới hạn lượt dùng</p>
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  {isA ? 'Không giới hạn lượt dùng' : 'Unlimited usage'}
+                </p>
               )}
             </div>
             {user.plan === 'free' && (
               <div className="shrink-0 text-right">
-                <span className="text-[10px] text-zinc-600 block">Làm mới lúc</span>
+                <span className="text-[10px] text-zinc-600 block">{isA ? 'Làm mới lúc' : 'Resets at'}</span>
                 <span className="text-xs text-zinc-500 font-medium">12:00 AM</span>
               </div>
             )}
@@ -148,12 +219,10 @@ export default function Home() {
                 className={`w-full bg-zinc-900/80 border border-zinc-800/80 ${m.ring} rounded-2xl p-4 text-left flex items-center gap-4 transition-all duration-200 group hover:bg-zinc-800/60 active:scale-[0.99] animate-fade-up`}
                 style={{ animationDelay: `${100 + i * 60}ms` }}>
 
-                {/* Icon */}
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${m.gradient} flex items-center justify-center shrink-0 shadow-lg ${m.glow} transition-transform group-hover:scale-105`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
 
-                {/* Text */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="font-semibold text-white text-[15px]">{m.title}</p>
@@ -172,11 +241,23 @@ export default function Home() {
 
         {/* ── Tip ──────────────────────────────────────────────────────── */}
         <div className="mt-6 glass rounded-xl p-4 text-xs text-zinc-500 animate-fade-in delay-400">
-          <strong className="text-zinc-400">💡 Mẹo:</strong>{' '}
-          Bắt đầu với chế độ{' '}
-          <strong className="text-emerald-400">Chat</strong> để làm quen.
-          Khi tự tin hơn, chuyển sang{' '}
-          <strong className="text-sky-400">Luyện nói</strong> để rèn phản xạ và phát âm.
+          {isA ? (
+            <>
+              <strong className="text-zinc-400">💡 Mẹo:</strong>{' '}
+              Bắt đầu với{' '}
+              <strong className="text-teal-400">Cụm từ thông dụng</strong> để nắm vốn câu giao tiếp thực tế.
+              Rồi luyện với{' '}
+              <strong className="text-sky-400">Luyện nói</strong> để rèn phản xạ và phát âm.
+            </>
+          ) : (
+            <>
+              <strong className="text-zinc-400">💡 Tip:</strong>{' '}
+              Start with{' '}
+              <strong className="text-teal-400">Common Phrases</strong> to build practical vocabulary.
+              Then move to{' '}
+              <strong className="text-sky-400">Speaking</strong> to train your reflexes and pronunciation.
+            </>
+          )}
         </div>
       </main>
     </div>
