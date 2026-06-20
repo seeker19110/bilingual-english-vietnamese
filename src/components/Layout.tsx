@@ -3,6 +3,7 @@ import { ArrowLeft, LogOut, BookOpen } from 'lucide-react'
 import { getCurrentUser, logout } from '../lib/storage'
 import { getUsage } from '../lib/storage'
 import { LIMITS } from '../types'
+import { useLang } from '../context/LangContext'
 
 interface Props {
   title: string
@@ -15,6 +16,7 @@ export default function Layout({ title, subtitle, back = true }: Props) {
   const user = getCurrentUser()
   const usage = user ? getUsage(user.id) : null
   const limit = user ? LIMITS[user.plan] : null
+  const { lang, toggleLang, T } = useLang()
 
   function handleLogout() {
     logout()
@@ -33,14 +35,14 @@ export default function Layout({ title, subtitle, back = true }: Props) {
           <button onClick={() => nav('/')}
             className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition shrink-0 -ml-1 p-1 rounded-lg hover:bg-zinc-800/50">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm hidden sm:inline">Trang chủ</span>
+            <span className="text-sm hidden sm:inline">{T.home}</span>
           </button>
         ) : (
           <div className="flex items-center gap-2 shrink-0">
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-md shadow-emerald-500/30">
               <BookOpen className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="font-bold text-sm text-white hidden sm:inline tracking-tight">Gia sư AI</span>
+            <span className="font-bold text-sm text-white hidden sm:inline tracking-tight">{T.appName}</span>
           </div>
         )}
 
@@ -55,8 +57,8 @@ export default function Layout({ title, subtitle, back = true }: Props) {
           <>
             {/* Desktop: text */}
             <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-600 shrink-0">
-              <span>Chat <strong className="text-zinc-400">{usage.chatCount}/{limit.chat}</strong></span>
-              <span>Nói <strong className="text-zinc-400">{usage.speakingCount}/{limit.speaking}</strong></span>
+              <span>{T.chat} <strong className="text-zinc-400">{usage.chatCount}/{limit.chat}</strong></span>
+              <span>{T.speak} <strong className="text-zinc-400">{usage.speakingCount}/{limit.speaking}</strong></span>
             </div>
             {/* Mobile: mini bar */}
             <div className="sm:hidden flex items-center gap-1 shrink-0">
@@ -68,6 +70,16 @@ export default function Layout({ title, subtitle, back = true }: Props) {
           </>
         )}
 
+        {/* Nút chuyển ngôn ngữ giao diện */}
+        <button
+          onClick={toggleLang}
+          title={lang === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt'}
+          className="flex items-center gap-1 bg-zinc-800/70 hover:bg-zinc-700/80 border border-zinc-700/50 hover:border-zinc-600 rounded-lg px-2 py-1.5 text-xs font-semibold transition-all active:scale-95 shrink-0"
+        >
+          <span className="text-sm leading-none">{lang === 'vi' ? '🇻🇳' : '🇬🇧'}</span>
+          <span className="text-zinc-300 hidden sm:inline">{lang === 'vi' ? 'VI' : 'EN'}</span>
+        </button>
+
         {/* User avatar + logout */}
         {user && (
           <div className="flex items-center gap-1 shrink-0">
@@ -76,7 +88,7 @@ export default function Layout({ title, subtitle, back = true }: Props) {
             </div>
             <button onClick={handleLogout}
               className="text-zinc-600 hover:text-red-400 transition p-2.5 rounded-lg hover:bg-red-400/10"
-              title="Đăng xuất">
+              title={T.logout}>
               <LogOut className="w-3.5 h-3.5" />
             </button>
           </div>
