@@ -109,17 +109,43 @@ npm run build
 
 ## Bước 4 — Cập nhật đường dẫn Node trong ecosystem.config.cjs
 
-Mở file cấu hình PM2:
+### Bước 4.1 — Lấy đường dẫn Node 20 (nếu chưa copy ở Bước 1)
+
+```bash
+nvm which 20
+# Ví dụ kết quả: /root/.nvm/versions/node/v20.19.0/bin/node
+```
+
+Copy toàn bộ dòng kết quả đó.
+
+### Bước 4.2 — Mở file cấu hình PM2
 
 ```bash
 nano ecosystem.config.cjs
 ```
 
-Tìm dòng `interpreter` và thay bằng kết quả lệnh `nvm which 20` ở Bước 1:
+### Bước 4.3 — Tìm và sửa dòng interpreter
+
+Tìm dòng này trong file:
 
 ```js
-// Thay đường dẫn này cho khớp với máy của bạn
 interpreter: '/root/.nvm/versions/node/v20.19.0/bin/node',
+```
+
+Xóa đường dẫn cũ, dán đường dẫn vừa copy vào. Ví dụ nếu VPS của bạn ra `/root/.nvm/versions/node/v20.18.3/bin/node` thì sửa thành:
+
+```js
+interpreter: '/root/.nvm/versions/node/v20.18.3/bin/node',
+```
+
+Lưu file: nhấn `Ctrl + X` → `Y` → `Enter`
+
+### Bước 4.4 — Kiểm tra nhanh file đã đúng chưa
+
+```bash
+grep interpreter ecosystem.config.cjs
+# Phải thấy đúng đường dẫn của bạn, ví dụ:
+# interpreter: '/root/.nvm/versions/node/v20.18.3/bin/node',
 ```
 
 ---
