@@ -239,6 +239,6 @@ export const t = {
     posPageTitle: 'Parts of Speech',
     posPageSub: 'Nouns, verbs, adjectives and more',
   },
-} as const
+}
 
 export type Translations = typeof t.vi
