@@ -79,7 +79,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
 export default function Home() {
   const nav = useNavigate()
   const { user } = useAuth()
-  const { T } = useLang()
+  const { T, setLang } = useLang()
   useCloudSync(user?.id)   // kéo lượt dùng từ Supabase khi mở trang chủ
 
   // Chiều học lưu trong localStorage, dùng state để re-render khi đổi
@@ -96,6 +96,8 @@ export default function Home() {
     const next: Direction = dir === 'A' ? 'B' : 'A'
     setDirection(next)
     setDir(next)
+    // Đồng bộ ngôn ngữ giao diện: chiều A (VN học EN) → tiếng Việt, chiều B (EN học VN) → tiếng Anh
+    setLang(next === 'A' ? 'vi' : 'en')
   }
 
   const MODES = getModes(dir, T)
