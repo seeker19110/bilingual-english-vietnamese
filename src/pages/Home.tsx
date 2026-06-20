@@ -124,7 +124,7 @@ export default function Home() {
               className="flex items-center gap-1.5 bg-zinc-800/80 border border-zinc-700/60 hover:border-zinc-600 rounded-xl px-3 py-2 text-xs font-medium transition-all active:scale-95"
             >
               <ArrowLeftRight className="w-3.5 h-3.5 text-zinc-400" />
-              <span className="text-zinc-300">{isA ? '🇻🇳→🇬🇧' : '🇬🇧→🇻🇳'}</span>
+              <span className="text-zinc-300">{isA ? '🇻🇳 Việt → 🇬🇧 Anh' : '🇬🇧 Anh → 🇻🇳 Việt'}</span>
             </button>
 
             {streak > 0 && (
