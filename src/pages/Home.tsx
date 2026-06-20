@@ -119,37 +119,23 @@ export default function Home() {
 
       <main className="max-w-3xl mx-auto px-4 py-6">
 
-        {/* ── Greeting + streak + toggle chiều học ──────────────────────── */}
-        <div className="mb-6 flex items-start justify-between animate-fade-in gap-3">
-          <div className="min-w-0">
-            <p className="text-zinc-500 text-sm">{T.todayPractice}</p>
-          </div>
+        {/* ── Greeting + streak ──────────────────────────────────────────── */}
+        <div className="mb-4 flex items-center justify-between animate-fade-in gap-3">
+          <p className="text-zinc-500 text-sm">{T.todayPractice}</p>
 
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Toggle chiều học A ↔ B */}
-            <button
-              onClick={toggleDir}
-              title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
-              className="flex items-center gap-1.5 bg-zinc-800/80 border border-zinc-700/60 hover:border-zinc-600 rounded-xl px-3 py-2 text-xs font-medium transition-all active:scale-95"
-            >
-              <ArrowLeftRight className="w-3.5 h-3.5 text-zinc-400" />
-              <span className="text-zinc-300">{isA ? '🇻🇳 Việt → 🇬🇧 Anh' : '🇬🇧 Anh → 🇻🇳 Việt'}</span>
-            </button>
-
-            {streak > 0 && (
-              <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 rounded-xl px-3 py-2">
-                <span className="text-xl leading-none">🔥</span>
-                <div className="leading-none">
-                  <p className="text-base font-bold text-orange-400">{streak}</p>
-                  <p className="text-[10px] text-orange-400/60 mt-0.5">{T.streakDays}</p>
-                </div>
+          {streak > 0 && (
+            <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 rounded-xl px-3 py-2 shrink-0">
+              <span className="text-xl leading-none">🔥</span>
+              <div className="leading-none">
+                <p className="text-base font-bold text-orange-400">{streak}</p>
+                <p className="text-[10px] text-orange-400/60 mt-0.5">{T.streakDays}</p>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
-        {/* ── Nhãn chiều học hiện tại ────────────────────────────────────── */}
-        <div className="mb-4 flex items-center gap-2 animate-fade-in">
+        {/* ── Nhãn chiều học + nút toggle cùng hàng ─────────────────────── */}
+        <div className="mb-6 flex items-center gap-2 animate-fade-in">
           <span className={`text-xs px-3 py-1 rounded-full border font-medium ${
             isA
               ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
@@ -157,6 +143,15 @@ export default function Home() {
           }`}>
             {isA ? T.dirLabelA : T.dirLabelB}
           </span>
+
+          <button
+            onClick={toggleDir}
+            title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
+            className="flex items-center gap-1.5 bg-zinc-800/80 border border-zinc-700/60 hover:border-zinc-600 rounded-xl px-3 py-1.5 text-xs font-medium transition-all active:scale-95"
+          >
+            <ArrowLeftRight className="w-3 h-3 text-zinc-400" />
+            <span className="text-zinc-300">{isA ? '🇻🇳 Việt → 🇬🇧 Anh' : '🇬🇧 Anh → 🇻🇳 Việt'}</span>
+          </button>
         </div>
 
         {/* ── Usage card ────────────────────────────────────────────────── */}
