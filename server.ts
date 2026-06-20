@@ -65,6 +65,11 @@ app.all('/api/tts', wrapEdge(ttsHandler))
 app.all('/api/claude', wrapEdge(claudeHandler))
 app.all('/api/pronunciation', wrapEdge(pronunciationHandler))
 
+// ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
+// Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
+const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, 'uploads')
+app.use('/uploads', express.static(uploadsDir, { maxAge: '30d' }))
+
 // ── Phục vụ frontend (React build) ───────────────────────────────────────────
 // Cache file tĩnh 1 ngày — trừ index.html để luôn lấy bản mới nhất
 app.use(

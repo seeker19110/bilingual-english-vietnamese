@@ -89,6 +89,11 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...
 GOOGLE_TTS_API_KEY=AIza...
 ANTHROPIC_API_KEY=sk-ant-...
 PORT=3000
+
+# Lưu file audio trên VPS thay vì Supabase Storage
+STORAGE_DRIVER=local
+# Thư mục lưu file (mặc định: <project>/uploads, có thể đổi nếu muốn)
+# UPLOADS_DIR=/root/bilingual-english-vietnamese/uploads
 ```
 
 ```bash
@@ -104,17 +109,43 @@ npm run build
 
 ## Bước 4 — Cập nhật đường dẫn Node trong ecosystem.config.cjs
 
-Mở file cấu hình PM2:
+### Bước 4.1 — Lấy đường dẫn Node 20 (nếu chưa copy ở Bước 1)
+
+```bash
+nvm which 20
+# Ví dụ kết quả: /root/.nvm/versions/node/v20.19.0/bin/node
+```
+
+Copy toàn bộ dòng kết quả đó.
+
+### Bước 4.2 — Mở file cấu hình PM2
 
 ```bash
 nano ecosystem.config.cjs
 ```
 
-Tìm dòng `interpreter` và thay bằng kết quả lệnh `nvm which 20` ở Bước 1:
+### Bước 4.3 — Tìm và sửa dòng interpreter
+
+Tìm dòng này trong file:
 
 ```js
-// Thay đường dẫn này cho khớp với máy của bạn
 interpreter: '/root/.nvm/versions/node/v20.19.0/bin/node',
+```
+
+Xóa đường dẫn cũ, dán đường dẫn vừa copy vào. Ví dụ nếu VPS của bạn ra `/root/.nvm/versions/node/v20.18.3/bin/node` thì sửa thành:
+
+```js
+interpreter: '/root/.nvm/versions/node/v20.18.3/bin/node',
+```
+
+Lưu file: nhấn `Ctrl + X` → `Y` → `Enter`
+
+### Bước 4.4 — Kiểm tra nhanh file đã đúng chưa
+
+```bash
+grep interpreter ecosystem.config.cjs
+# Phải thấy đúng đường dẫn của bạn, ví dụ:
+# interpreter: '/root/.nvm/versions/node/v20.18.3/bin/node',
 ```
 
 ---
@@ -263,6 +294,97 @@ Mỗi lần cập nhật chỉ cần:
 
 ---
 
+## Local Storage — lưu file audio trên VPS
+
+> VPS có 30GB ổ cứng, dùng local storage thay Supabase Storage để **miễn phí hoàn toàn**.
+
+### Cấu trúc thư mục tự động tạo
+
+```
+uploads/
+├── tts-cache/          ← cache audio hội thoại (api/tts.ts)
+│   ├── en-US/female/
+│   ├── en-US/male/
+│   ├── vi-VN/female/
+│   └── vi-VN/male/
+└── pronunciations/     ← cache phát âm từ điển (api/pronunciation.ts)
+    ├── apple-female.mp3
+    └── apple-male.mp3
+```
+
+Thư mục tự tạo khi có file đầu tiên — không cần tạo tay.
+
+### Cấp quyền cho thư mục uploads
+
+```bash
+mkdir -p uploads
+chmod 755 uploads
+```
+
+### Cấu hình Nginx serve file audio trực tiếp (nhanh hơn qua Express)
+
+Mở file Nginx đã tạo ở Bước 6:
+
+```bash
+sudo nano /etc/nginx/sites-available/english-tutor
+```
+
+Thêm block `location /uploads` vào **trước** block `location /`:
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+
+    client_max_body_size 10M;
+
+    # Serve file audio trực tiếp — cache 30 ngày trên trình duyệt
+    location /uploads/ {
+        alias /root/bilingual-english-vietnamese/uploads/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        add_header Access-Control-Allow-Origin *;
+    }
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+### Theo dõi dung lượng uploads
+
+```bash
+du -sh uploads/          # tổng dung lượng
+du -sh uploads/*/        # theo từng thư mục con
+df -h                    # ổ cứng tổng thể
+```
+
+### Backup uploads (tùy chọn)
+
+File audio cache có thể tạo lại được — nếu mất chỉ tốn thêm lượt gọi Google TTS. Nhưng nếu muốn backup:
+
+```bash
+# Thêm vào crontab: backup hàng tuần vào Chủ Nhật 2 giờ sáng
+crontab -e
+# Thêm dòng:
+0 2 * * 0 tar -czf ~/backup-uploads-$(date +\%Y\%m\%d).tar.gz ~/bilingual-english-vietnamese/uploads/
+```
+
+---
+
 ## Xử lý sự cố thường gặp
 
 ### App không start được
@@ -307,4 +429,8 @@ pm2 reload ecosystem.config.cjs     # restart không downtime
 pm2 stop english-tutor              # dừng app
 sudo systemctl reload nginx         # reload Nginx sau khi sửa config
 ~/deploy-english-tutor.sh           # deploy code mới
+
+# Storage
+du -sh uploads/                     # kiểm tra dung lượng cache audio
+ls uploads/tts-cache/en-US/female/  # xem file đã cache
 ```

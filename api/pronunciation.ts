@@ -19,6 +19,7 @@
 
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
 import { generateAudioFromGoogle, isValidVoice, DEFAULT_VOICE } from './_lib/googleTts'
+import { saveAudio } from './_lib/fileStorage'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -106,25 +107,17 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500, allHeaders)
   }
 
-  // ── BƯỚC 3: Upload lên Supabase Storage ────────────────────
-  // upsert: true — cho phép ghi đè nếu 2 người tra cùng 1 từ chưa-cache gần như cùng lúc
-  // (tránh lỗi "resource already exists" thay vì phải bắt lỗi riêng).
-  // Tên file có hậu tố giọng (-female/-male) vì 1 từ giờ có thể có nhiều file audio.
+  // ── BƯỚC 3: Lưu file audio (local VPS hoặc Supabase Storage tùy STORAGE_DRIVER) ──
+  // Tên file có hậu tố giọng (-female/-male) vì 1 từ có thể có nhiều file audio.
   const fileName = `${encodeURIComponent(word)}-${voice}.mp3`
-  const { error: uploadError } = await supabase.storage
-    .from('pronunciations')
-    .upload(fileName, audioData, {
-      contentType: 'audio/mpeg',
-      upsert: true,
-    })
+  const origin = req.headers.get('origin') || ''
 
-  if (uploadError) {
-    return jsonResponse({ error: `Upload thất bại: ${uploadError.message}` }, 500, allHeaders)
+  let audioUrl: string
+  try {
+    audioUrl = await saveAudio('pronunciations', fileName, audioData, origin)
+  } catch (err) {
+    return jsonResponse({ error: `Lưu file thất bại: ${(err as Error).message}` }, 500, allHeaders)
   }
-
-  // ── BƯỚC 4: Lấy public URL ─────────────────────────────────
-  const { data: urlData } = supabase.storage.from('pronunciations').getPublicUrl(fileName)
-  const audioUrl = urlData.publicUrl
 
   // ── BƯỚC 5: Lưu vào DB ─────────────────────────────────────
   // upsert theo cặp (word, voice) — cột unique composite — nếu lỡ có request trùng
