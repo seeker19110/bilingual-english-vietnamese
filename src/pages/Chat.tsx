@@ -99,8 +99,8 @@ function SetupScreen({ onStart, loading, error, dir }: {
 function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direction }) {
   // Chiều A: AI nói tiếng Anh, giải thích tiếng Việt
   // Chiều B: AI nói tiếng Việt, giải thích tiếng Anh
-  const speechLang = dir === 'A' ? 'en' as const : 'vi' as const
-  const feedbackLang = dir === 'A' ? 'vi' as const : 'en' as const
+  const speechLang = dir === 'A' ? 'en-US' as const : 'vi-VN' as const
+  const feedbackLang = dir === 'A' ? 'vi-VN' as const : 'en-US' as const
   const isA = dir === 'A'
 
   if (msg.role === 'user') {

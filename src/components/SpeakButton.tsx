@@ -4,7 +4,7 @@ import { speak, stopSpeaking, isTTSSupported } from '../lib/tts'
 
 interface Props {
   text: string
-  lang: 'en' | 'vi'
+  lang: 'en-US' | 'vi-VN'
   title?: string        // tooltip hiển thị khi hover
   size?: 'sm' | 'xs'   // kích cỡ nút
 }
@@ -43,17 +43,17 @@ export default function SpeakButton({ text, lang, title, size = 'sm' }: Props) {
   const iconClass = size === 'xs' ? 'w-3 h-3' : 'w-3.5 h-3.5'
 
   // Màu theo ngôn ngữ: xanh lá = tiếng Anh, xanh dương = tiếng Việt
-  const idleClass  = lang === 'en'
+  const idleClass  = lang === 'en-US'
     ? 'bg-zinc-800/60 text-zinc-500 hover:bg-emerald-500/20 hover:text-emerald-300'
     : 'bg-zinc-800/60 text-zinc-500 hover:bg-sky-500/20 hover:text-sky-300'
-  const activeClass = lang === 'en'
+  const activeClass = lang === 'en-US'
     ? 'bg-emerald-500/20 text-emerald-300'
     : 'bg-sky-500/20 text-sky-300'
 
   return (
     <button
       onClick={handleClick}
-      title={title ?? (lang === 'en' ? 'Nghe tiếng Anh' : 'Nghe tiếng Việt')}
+      title={title ?? (lang === 'en-US' ? 'Nghe tiếng Anh' : 'Nghe tiếng Việt')}
       className={`shrink-0 ${sizeClass} flex items-center justify-center rounded-full transition
         ${playing ? activeClass : idleClass}
       `}

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight } from 'lucide-react'
+import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { LIMITS } from '../types'
@@ -79,7 +79,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
 export default function Home() {
   const nav = useNavigate()
   const { user } = useAuth()
-  const { T } = useLang()
+  const { T, setLang } = useLang()
   useCloudSync(user?.id)   // kéo lượt dùng từ Supabase khi mở trang chủ
 
   // Chiều học lưu trong localStorage, dùng state để re-render khi đổi
@@ -96,6 +96,8 @@ export default function Home() {
     const next: Direction = dir === 'A' ? 'B' : 'A'
     setDirection(next)
     setDir(next)
+    // Đồng bộ ngôn ngữ giao diện: chiều A (VN học EN) → tiếng Việt, chiều B (EN học VN) → tiếng Anh
+    setLang(next === 'A' ? 'vi' : 'en')
   }
 
   const MODES = getModes(dir, T)
@@ -117,37 +119,23 @@ export default function Home() {
 
       <main className="max-w-3xl mx-auto px-4 py-6">
 
-        {/* ── Greeting + streak + toggle chiều học ──────────────────────── */}
-        <div className="mb-6 flex items-start justify-between animate-fade-in gap-3">
-          <div className="min-w-0">
-            <p className="text-zinc-500 text-sm">{T.todayPractice}</p>
-          </div>
+        {/* ── Greeting + streak ──────────────────────────────────────────── */}
+        <div className="mb-4 flex items-center justify-between animate-fade-in gap-3">
+          <p className="text-zinc-500 text-sm">{T.todayPractice}</p>
 
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Toggle chiều học A ↔ B */}
-            <button
-              onClick={toggleDir}
-              title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
-              className="flex items-center gap-1.5 bg-zinc-800/80 border border-zinc-700/60 hover:border-zinc-600 rounded-xl px-3 py-2 text-xs font-medium transition-all active:scale-95"
-            >
-              <ArrowLeftRight className="w-3.5 h-3.5 text-zinc-400" />
-              <span className="text-zinc-300">{isA ? '🇻🇳 Việt → 🇬🇧 Anh' : '🇬🇧 Anh → 🇻🇳 Việt'}</span>
-            </button>
-
-            {streak > 0 && (
-              <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 rounded-xl px-3 py-2">
-                <span className="text-xl leading-none">🔥</span>
-                <div className="leading-none">
-                  <p className="text-base font-bold text-orange-400">{streak}</p>
-                  <p className="text-[10px] text-orange-400/60 mt-0.5">{T.streakDays}</p>
-                </div>
+          {streak > 0 && (
+            <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 rounded-xl px-3 py-2 shrink-0">
+              <span className="text-xl leading-none">🔥</span>
+              <div className="leading-none">
+                <p className="text-base font-bold text-orange-400">{streak}</p>
+                <p className="text-[10px] text-orange-400/60 mt-0.5">{T.streakDays}</p>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
-        {/* ── Nhãn chiều học hiện tại ────────────────────────────────────── */}
-        <div className="mb-4 flex items-center gap-2 animate-fade-in">
+        {/* ── Nhãn chiều học + nút toggle cùng hàng ─────────────────────── */}
+        <div className="mb-6 flex items-center gap-2 animate-fade-in">
           <span className={`text-xs px-3 py-1 rounded-full border font-medium ${
             isA
               ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
@@ -155,6 +143,15 @@ export default function Home() {
           }`}>
             {isA ? T.dirLabelA : T.dirLabelB}
           </span>
+
+          <button
+            onClick={toggleDir}
+            title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
+            className="flex items-center gap-1.5 bg-zinc-800/80 border border-zinc-700/60 hover:border-zinc-600 rounded-xl px-3 py-1.5 text-xs font-medium transition-all active:scale-95"
+          >
+            <ArrowLeftRight className="w-3 h-3 text-zinc-400" />
+            <span className="text-zinc-300">{isA ? '🇻🇳 Việt → 🇬🇧 Anh' : '🇬🇧 Anh → 🇻🇳 Việt'}</span>
+          </button>
         </div>
 
         {/* ── Usage card ────────────────────────────────────────────────── */}
@@ -200,6 +197,18 @@ export default function Home() {
             )}
           </div>
         </div>
+
+        {/* ── Lịch sử học ───────────────────────────────────────────────── */}
+        <button onClick={() => nav('/history')}
+          className="w-full mb-4 bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in">
+          <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
+            <History className="w-4 h-4 text-zinc-400" />
+          </div>
+          <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
+            {isA ? 'Xem lịch sử học' : 'View learning history'}
+          </span>
+          <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition" />
+        </button>
 
         {/* ── Mode cards ────────────────────────────────────────────────── */}
         <div className="space-y-3">

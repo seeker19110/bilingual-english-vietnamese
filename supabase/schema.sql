@@ -63,14 +63,26 @@ create table if not exists public.daily_usage (
   primary key (user_id, day)
 );
 
--- ── 6. Bật Row Level Security cho tất cả bảng ───────────────────────────────
+-- ── 6. tts_cache: cache audio Google TTS dùng chung cho mọi user ─────────────
+-- hash = SHA-256(text + lang + voice)[0:32] → key tìm nhanh, tên file trên Storage
+-- Bảng này PUBLIC (không cần RLS bật user) — audio đã phát 1 lần thì ai cũng dùng được
+create table if not exists public.tts_cache (
+  hash       text primary key,              -- 32 ký tự hex
+  lang       text not null,                 -- 'en-US' | 'vi-VN'
+  voice      text not null default 'female',-- 'female' | 'male'
+  audio_url  text not null,                 -- public URL trên Supabase Storage
+  created_at timestamptz not null default now()
+);
+create index if not exists tts_cache_lang_idx on public.tts_cache(lang);
+
+-- ── 7. Bật Row Level Security cho tất cả bảng ───────────────────────────────
 alter table public.profiles            enable row level security;
 alter table public.chat_sessions       enable row level security;
 alter table public.writing_submissions enable row level security;
 alter table public.speaking_sessions   enable row level security;
 alter table public.daily_usage         enable row level security;
 
--- ── 7. Policy: mỗi người chỉ thao tác dữ liệu của chính mình ─────────────────
+-- ── 8. Policy: mỗi người chỉ thao tác dữ liệu của chính mình ─────────────────
 -- (drop trước rồi tạo lại để chạy lại file không bị lỗi "đã tồn tại")
 
 drop policy if exists "own profile" on public.profiles;
@@ -93,7 +105,13 @@ drop policy if exists "own usage" on public.daily_usage;
 create policy "own usage" on public.daily_usage
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
--- ── 8. Tự tạo profiles khi có người đăng ký mới ─────────────────────────────
+-- tts_cache: bất kỳ ai (kể cả chưa đăng nhập) đều đọc được audio public
+alter table public.tts_cache enable row level security;
+drop policy if exists "public read tts" on public.tts_cache;
+create policy "public read tts" on public.tts_cache for select using (true);
+-- Chỉ server (service role) mới được ghi — không cần policy insert/update cho anon
+
+-- ── 9. Tự tạo profiles khi có người đăng ký mới ─────────────────────────────
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql

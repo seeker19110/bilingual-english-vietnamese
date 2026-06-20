@@ -1,99 +1,78 @@
-// Text-to-Speech dùng Web Speech API (miễn phí, có sẵn trong Chrome/Edge)
-// Khi production: thay bằng Azure Neural TTS để có giọng Việt tự nhiên hơn
+// Text-to-Speech — gọi Google TTS qua /api/tts (server-side, có cache dùng chung)
+// Audio được cache lên Supabase Storage: câu đã phát 1 lần thì mọi user sau dùng lại miễn phí.
+// Fallback về Web Speech API nếu /api/tts lỗi (mất mạng, server timeout...).
 
-let voices: SpeechSynthesisVoice[] = []
-let voicesLoaded = false
+type Lang = 'en-US' | 'vi-VN'
 
-// Tải danh sách giọng đọc — xử lý cả hai trường hợp:
-// (1) voices đã sẵn sàng ngay khi gọi, (2) cần đợi sự kiện onvoiceschanged.
-// Timeout 2 giây phòng khi onvoiceschanged đã bắn trước khi ta gắn listener.
-function loadVoices(): Promise<SpeechSynthesisVoice[]> {
-  if (voicesLoaded && voices.length) return Promise.resolve(voices)
+let currentAudio: HTMLAudioElement | null = null
 
-  return new Promise(resolve => {
-    const immediate = window.speechSynthesis.getVoices()
-    if (immediate.length) {
-      voices = immediate
-      voicesLoaded = true
-      resolve(voices)
-      return
-    }
+export function isTTSSupported(): boolean {
+  return true // Google TTS luôn hoạt động (không phụ thuộc trình duyệt)
+}
 
-    // Fallback timeout: nếu onvoiceschanged không bao giờ bắn
-    const timer = setTimeout(() => {
-      voices = window.speechSynthesis.getVoices()
-      voicesLoaded = true
-      resolve(voices)
-    }, 2000)
+export function stopSpeaking() {
+  if (currentAudio) {
+    currentAudio.pause()
+    currentAudio.src = ''
+    currentAudio = null
+  }
+  // Dừng cả Web Speech API phòng khi đang dùng fallback
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+}
 
-    window.speechSynthesis.onvoiceschanged = () => {
-      clearTimeout(timer)
-      voices = window.speechSynthesis.getVoices()
-      voicesLoaded = true
-      resolve(voices)
-    }
+// Gọi /api/tts → lấy URL audio → phát qua <audio>
+async function speakViaGoogle(text: string, lang: Lang): Promise<void> {
+  if (!text.trim()) return
+
+  const res = await fetch('/api/tts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, lang, voice: 'female' }),
+  })
+
+  if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
+
+  const { audio_url } = await res.json() as { audio_url: string }
+
+  await new Promise<void>((resolve, reject) => {
+    const audio = new Audio(audio_url)
+    currentAudio = audio
+    audio.onended = () => { currentAudio = null; resolve() }
+    audio.onerror = () => { currentAudio = null; reject(new Error('Không phát được audio')) }
+    audio.play().catch(reject)
   })
 }
 
-// Tìm giọng phù hợp: ưu tiên giọng local, nếu không có thì dùng giọng online (Google)
-function findVoice(langPrefix: string): SpeechSynthesisVoice | undefined {
-  return (
-    voices.find(v => v.lang.startsWith(langPrefix) && v.localService) ??
-    voices.find(v => v.lang.startsWith(langPrefix))
-  )
-}
-
-export function isTTSSupported(): boolean {
-  return 'speechSynthesis' in window
-}
-
-// Các lỗi "bình thường" — xảy ra khi dừng chủ động, không phải lỗi thật
-const BENIGN_ERRORS = new Set(['canceled', 'interrupted'])
-
-// Đọc văn bản với ngôn ngữ chỉ định ('en' hoặc 'vi')
-export async function speak(text: string, lang: 'en' | 'vi'): Promise<void> {
-  if (!isTTSSupported() || !text.trim()) return
-  await loadVoices()
-  window.speechSynthesis.cancel() // dừng nếu đang đọc cái gì đó
-
-  return new Promise((resolve, reject) => {
+// Fallback Web Speech API khi Google TTS không khả dụng
+function speakViaWebSpeech(text: string, lang: Lang): Promise<void> {
+  return new Promise((resolve) => {
+    if (!('speechSynthesis' in window) || !text.trim()) { resolve(); return }
+    window.speechSynthesis.cancel()
     const utt = new SpeechSynthesisUtterance(text)
-
-    // Tìm giọng phù hợp với ngôn ngữ
-    const langPrefix = lang === 'en' ? 'en' : 'vi'
-    const voice = findVoice(langPrefix)
-    if (voice) utt.voice = voice
-
-    // Đặt ngôn ngữ rõ ràng để trình duyệt chọn đúng accent/giọng đọc
-    utt.lang = lang === 'en' ? 'en-US' : 'vi-VN'
-    utt.rate = lang === 'en' ? 0.9 : 0.85
-    utt.pitch = 1.0
-
+    utt.lang = lang
+    utt.rate = lang === 'en-US' ? 0.9 : 0.85
     utt.onend = () => resolve()
-    utt.onerror = (e) => {
-      // 'canceled'/'interrupted' là do người dùng dừng hoặc bắt đầu câu mới — không phải lỗi
-      if (BENIGN_ERRORS.has(e.error)) resolve()
-      else reject(new Error(e.error))
-    }
-
+    utt.onerror = () => resolve() // không throw để tránh crash UI
     window.speechSynthesis.speak(utt)
   })
 }
 
-export function stopSpeaking() {
-  window.speechSynthesis.cancel()
+export async function speak(text: string, lang: Lang): Promise<void> {
+  try {
+    await speakViaGoogle(text, lang)
+  } catch {
+    // Nếu Google TTS lỗi (không có key, mất mạng...) → dùng Web Speech API tạm
+    await speakViaWebSpeech(text, lang)
+  }
 }
 
-// Đọc tuần tự: speech (ngôn ngữ đích) → feedback (ngôn ngữ mẹ đẻ)
-// speechLang: 'en-US' hoặc 'vi-VN' | feedbackLang: ngược lại
+// Đọc tuần tự: câu hội thoại (ngôn ngữ đích) → sửa lỗi (tiếng mẹ đẻ)
 export async function speakBilingual(
   speech: string,
   feedback: string,
-  speechLang: 'en-US' | 'vi-VN' = 'en-US',
-  feedbackLang: 'en-US' | 'vi-VN' = 'vi-VN',
+  speechLang: Lang = 'en-US',
+  feedbackLang: Lang = 'vi-VN',
 ) {
-  const sLang = speechLang.startsWith('en') ? 'en' as const : 'vi' as const
-  const fLang = feedbackLang.startsWith('en') ? 'en' as const : 'vi' as const
-  if (speech)   await speak(speech, sLang)
-  if (feedback) await speak(feedback, fLang)
+  if (speech)   await speak(speech, speechLang)
+  if (feedback) await speak(feedback, feedbackLang)
 }
