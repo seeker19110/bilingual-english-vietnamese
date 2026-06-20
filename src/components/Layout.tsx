@@ -17,7 +17,7 @@ export default function Layout({ title, subtitle, back = true }: Props) {
   const { user } = useAuth()
   const usage = user ? getUsage(user.id) : null
   const limit = user ? LIMITS[user.plan] : null
-  const { lang, toggleLang, T } = useLang()
+  const { T } = useLang()
 
   async function handleLogout() {
     await logout()
@@ -70,16 +70,6 @@ export default function Layout({ title, subtitle, back = true }: Props) {
             </div>
           </>
         )}
-
-        {/* Nút chuyển ngôn ngữ giao diện */}
-        <button
-          onClick={toggleLang}
-          title={lang === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt'}
-          className="flex items-center gap-1.5 bg-zinc-800/70 hover:bg-zinc-700/80 border border-zinc-700/50 hover:border-zinc-600 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all active:scale-95 shrink-0"
-        >
-          <span className="text-sm leading-none">{lang === 'vi' ? '🇻🇳' : '🇬🇧'}</span>
-          <span className="text-zinc-300">{lang === 'vi' ? 'Tiếng Việt' : 'English'}</span>
-        </button>
 
         {/* User avatar + logout */}
         {user && (

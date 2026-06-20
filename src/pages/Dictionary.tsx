@@ -157,13 +157,13 @@ export default function Dictionary() {
                     <div className="mt-2 pl-3 border-l-2 border-zinc-700 space-y-1">
                       {/* Câu tiếng Anh + nút đọc */}
                       <div className="flex items-start gap-1.5">
-                        <SpeakButton text={e.ex_en} lang="en" title="Nghe câu tiếng Anh" size="xs" />
+                        <SpeakButton text={e.ex_en} lang="en-US" title="Nghe câu tiếng Anh" size="xs" />
                         <p className="text-xs text-zinc-400 italic leading-relaxed">{e.ex_en}</p>
                       </div>
                       {/* Câu tiếng Việt + nút đọc */}
                       {e.ex_vi && (
                         <div className="flex items-start gap-1.5">
-                          <SpeakButton text={e.ex_vi} lang="vi" title="Nghe câu tiếng Việt" size="xs" />
+                          <SpeakButton text={e.ex_vi} lang="vi-VN" title="Nghe câu tiếng Việt" size="xs" />
                           <p className="text-xs text-zinc-500 leading-relaxed">{e.ex_vi}</p>
                         </div>
                       )}

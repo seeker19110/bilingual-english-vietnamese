@@ -7,9 +7,8 @@ import { speak as speakTts } from '../lib/tts'
 import SUBJECTS from '../data/patterns'
 import type { Direction } from '../types'
 
-// Phát âm qua Google TTS (fallback giọng trình duyệt nếu lỗi)
 function speak(text: string, lang: 'en-US' | 'vi-VN') {
-  void speakTts(text, lang === 'en-US' ? 'en' : 'vi')
+  void speakTts(text, lang)
 }
 
 const CAT_COLORS: Record<string, string> = {}

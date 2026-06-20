@@ -10,6 +10,7 @@ import Writing from './pages/Writing'
 import Speaking from './pages/Speaking'
 import PartsOfSpeech from './pages/PartsOfSpeech'
 import CommonPhrases from './pages/CommonPhrases'
+import History from './pages/History'
 
 // Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng
 // thực sự bấm vào, không gộp vào bundle chính để app khởi động nhanh hơn.
@@ -50,6 +51,7 @@ export default function App() {
               <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
               <Route path="/parts-of-speech" element={<RequireAuth><PartsOfSpeech /></RequireAuth>} />
               <Route path="/phrases" element={<RequireAuth><CommonPhrases /></RequireAuth>} />
+              <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

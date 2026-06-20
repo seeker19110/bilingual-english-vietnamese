@@ -22,8 +22,28 @@ export default function PronounceButton({ word }: Props) {
   // Nhớ audioUrl riêng cho từng giọng đã tải, để qua lại giữa nữ/nam không phải tải lại.
   const [audioUrls, setAudioUrls] = useState<Partial<Record<Voice, string>>>({})
 
+  // Câu/cụm từ dài → dùng Web Speech API miễn phí, không cần cache server
+  function speakWithWebSpeech() {
+    const utterance = new SpeechSynthesisUtterance(word)
+    utterance.lang = 'en-US'
+    // Chọn giọng nam/nữ nếu trình duyệt hỗ trợ
+    const voices = window.speechSynthesis.getVoices()
+    const preferred = voices.find(v =>
+      v.lang.startsWith('en') && (voice === 'male' ? v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david') : v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('zira') || v.name.toLowerCase().includes('samantha'))
+    )
+    if (preferred) utterance.voice = preferred
+    window.speechSynthesis.cancel()
+    window.speechSynthesis.speak(utterance)
+  }
+
   async function handleClick() {
     if (status === 'loading') return
+
+    // Cụm từ có khoảng trắng → Web Speech API (không cần upload/cache)
+    if (word.includes(' ')) {
+      speakWithWebSpeech()
+      return
+    }
 
     const cached = audioUrls[voice]
     if (cached) {
@@ -49,9 +69,9 @@ export default function PronounceButton({ word }: Props) {
       playAudio(data.audio_url)
     } catch (err) {
       console.error('Lỗi phát âm:', err)
-      setStatus('error')
-      // Tự quay lại trạng thái bình thường sau 2 giây để người dùng bấm thử lại được
-      setTimeout(() => setStatus('idle'), 2000)
+      // Fallback về Web Speech API nếu server lỗi
+      speakWithWebSpeech()
+      setStatus('idle')
     }
   }
 

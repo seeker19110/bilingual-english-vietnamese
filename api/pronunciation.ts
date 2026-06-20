@@ -101,7 +101,7 @@ export default async function handler(req: Request): Promise<Response> {
   // ── BƯỚC 2: Cache MISS → gọi Google TTS ────────────────────
   let audioData: ArrayBuffer
   try {
-    audioData = await generateAudioFromGoogle(word, voice)
+    audioData = await generateAudioFromGoogle(word, voice, 'en-US')
   } catch (err) {
     return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500, allHeaders)
   }
