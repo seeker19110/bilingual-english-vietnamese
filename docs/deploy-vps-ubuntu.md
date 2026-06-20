@@ -19,8 +19,10 @@ Internet
 [Supabase]  ← database, storage, auth (RLS)
 ```
 
-App chạy bằng **PM2** (process manager) trên **Node.js 20** (qua NVM).
-Nếu VPS đang chạy app khác dùng Node 16, hai app vẫn cùng tồn tại — mỗi app chỉ định đúng version Node của mình trong `ecosystem.config.cjs`.
+App chạy bằng **PM2** (process manager) trên **Node.js 22** (qua NVM).
+> ⚠️ **Bắt buộc Node 22 trở lên.** Node 20 thiếu WebSocket gốc → thư viện Supabase ném lỗi khi xác thực (`supabase.auth.getUser`), khiến **mọi request đăng nhập bị `AUTH_FAILED`** (đăng nhập xong vẫn không gọi được API). Node 22 có WebSocket sẵn nên hết lỗi.
+
+Nếu VPS đang chạy app khác dùng Node 16, các app vẫn cùng tồn tại — mỗi app chỉ định đúng version Node của mình trong `ecosystem.config.cjs`.
 
 ---
 
@@ -41,7 +43,7 @@ Nếu VPS đang chạy app khác dùng Node 16, hai app vẫn cùng tồn tại 
 |---|---|---|
 | Bảng Supabase (`schema.sql`) | ✅ Bắt buộc | Bước 0 |
 | Firewall `ufw` | ✅ Nên có | Bước 1 |
-| Node 20 (NVM) | ✅ Bắt buộc | Bước 2 |
+| Node 22 (NVM) | ✅ Bắt buộc | Bước 2 |
 | Nginx + PM2 + log rotation | ✅ Bắt buộc | Bước 3 |
 | `.env` đủ key (gồm `ALLOWED_ORIGINS`) | ✅ Bắt buộc | Bước 4 |
 | Health check `/api/health` | ✅ Có sẵn trong code | Bước 6, 7 |
@@ -84,7 +86,7 @@ sudo ufw status             # kiểm tra
 
 ---
 
-## Bước 2 — Cài NVM + Node.js 20
+## Bước 2 — Cài NVM + Node.js 22
 
 Dùng **NVM** để quản lý nhiều version Node song song — không xung đột với app khác đang chạy Node 16.
 
@@ -95,12 +97,12 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 # Nạp NVM vào shell hiện tại (không cần logout)
 source ~/.bashrc
 
-# Cài Node 20
-nvm install 20
+# Cài Node 22
+nvm install 22
 
-# Lấy đường dẫn chính xác của Node 20 — COPY kết quả này, dùng ở Bước 5
-nvm which 20
-# Ví dụ ra: /root/.nvm/versions/node/v20.19.0/bin/node
+# Lấy đường dẫn chính xác của Node 22 — COPY kết quả này, dùng ở Bước 5
+nvm which 22
+# Ví dụ ra: /root/.nvm/versions/node/v22.20.0/bin/node
 ```
 
 ---
@@ -173,7 +175,7 @@ PORT=3000
 
 ```bash
 # Cài thư viện
-nvm use 20
+nvm use 22
 npm install
 
 # Build frontend React → thư mục dist/
@@ -185,9 +187,9 @@ npm run build
 ## Bước 5 — Cập nhật đường dẫn Node trong `ecosystem.config.cjs`
 
 ```bash
-# Lấy lại đường dẫn Node 20 (nếu chưa copy ở Bước 2)
-nvm which 20
-# Ví dụ: /root/.nvm/versions/node/v20.19.0/bin/node
+# Lấy lại đường dẫn Node 22 (nếu chưa copy ở Bước 2)
+nvm which 22
+# Ví dụ: /root/.nvm/versions/node/v22.20.0/bin/node
 
 nano ecosystem.config.cjs
 ```
@@ -195,7 +197,7 @@ nano ecosystem.config.cjs
 Tìm dòng `interpreter` và sửa cho khớp đường dẫn vừa lấy:
 
 ```js
-interpreter: '/root/.nvm/versions/node/v20.19.0/bin/node',
+interpreter: '/root/.nvm/versions/node/v22.20.0/bin/node',
 ```
 
 Kiểm tra nhanh:
@@ -309,7 +311,7 @@ Chạy sẵn để lần đầu người dùng vào đã có audio ngay, đỡ t
 
 ```bash
 cd ~/bilingual-english-vietnamese
-nvm use 20
+nvm use 22
 
 # Cache phát âm các từ trong từ điển
 npm run seed:pronunciation
@@ -387,7 +389,7 @@ echo "📥 Pull code mới..."
 git pull origin main
 
 echo "📦 Cài thư viện..."
-source ~/.nvm/nvm.sh && nvm use 20 && npm install
+source ~/.nvm/nvm.sh && nvm use 22 && npm install
 
 echo "🔨 Build frontend..."
 npm run build
@@ -417,7 +419,7 @@ nvm which 16     # copy đường dẫn vào ecosystem của app kia
 ```
 
 ```
-english-tutor → interpreter: .../v20.x.x/bin/node   port: 3000
+english-tutor → interpreter: .../v22.x.x/bin/node   port: 3000
 xboss         → interpreter: .../v16.x.x/bin/node   port: 8000
 ```
 
@@ -429,7 +431,7 @@ xboss         → interpreter: .../v16.x.x/bin/node   port: 8000
 ```bash
 pm2 logs english-tutor --lines 50
 ```
-Hay gặp: sai `interpreter` trong `ecosystem.config.cjs` → chạy lại `nvm which 20`.
+Hay gặp: sai `interpreter` trong `ecosystem.config.cjs` → chạy lại `nvm which 22`.
 
 ### Nginx 502 Bad Gateway
 Express chưa chạy hoặc sai port.
