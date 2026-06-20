@@ -1,5 +1,5 @@
 // scripts/prefetch-tts-patterns.ts
-// Tạo trước (pre-generate) audio TTS chất lượng cao cho TẤT CẢ câu trong src/data/patterns.ts,
+// Tạo trước (pre-generate) audio TTS chất lượng cao cho TẤT CẢ câu trong src/data/patterns/chunk-*.json,
 // lưu vào Storage + bảng tts_cache — GIỐNG HỆT luồng của api/tts.ts (cùng hash, cùng mã hóa,
 // cùng cách lưu file) để dữ liệu seed dùng được ngay trên app, không bị lệch.
 //
@@ -32,7 +32,6 @@ import { generateAudioFromGoogle, VOICE_IDS, type Lang, type VoiceId } from '../
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
-import patternsData from '../src/data/patterns.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
@@ -72,7 +71,27 @@ function hashText(text: string, lang: Lang, voice: VoiceId): string {
     .slice(0, 32)
 }
 
-// ── Trích xuất tất cả câu cần seed từ patterns.ts (cho cả 2 giọng) ──────────
+// ── Nạp toàn bộ chủ thể từ dữ liệu mới (src/data/patterns/chunk-*.json) ──────
+// Dữ liệu giờ được sinh bởi scripts/gen-patterns.mjs và chia thành nhiều file
+// chunk (8 chủ thể/file). Đọc trực tiếp các file JSON này thay vì patterns.ts cũ.
+interface Sentence { en: string; vi: string }
+interface Subject { starter: string; sentences: Sentence[] }
+
+function loadSubjects(): Subject[] {
+  const dir = path.join(PROJECT_ROOT, 'src/data/patterns')
+  const files = fs
+    .readdirSync(dir)
+    .filter((f) => /^chunk-\d+\.json$/.test(f))
+    .sort()
+  const subjects: Subject[] = []
+  for (const file of files) {
+    const raw = fs.readFileSync(path.join(dir, file), 'utf8')
+    subjects.push(...(JSON.parse(raw) as Subject[]))
+  }
+  return subjects
+}
+
+// ── Trích xuất tất cả câu cần seed (cho cả 2 giọng) ─────────────────────────
 function collectTasks(): Task[] {
   const tasks: Task[] = []
   const seen = new Set<string>() // tránh trùng (cùng câu+lang+giọng xuất hiện nhiều lần)
@@ -88,7 +107,7 @@ function collectTasks(): Task[] {
     }
   }
 
-  for (const subject of patternsData) {
+  for (const subject of loadSubjects()) {
     for (const { en, vi } of subject.sentences) {
       add(en, 'en-US')
       add(vi, 'vi-VN')
@@ -164,7 +183,7 @@ async function main(): Promise<void> {
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
   const tasks = allTasks.slice(0, limit)
 
-  console.log('🔊 Bắt đầu pre-generate TTS cho patterns.ts (cả 2 giọng)\n')
+  console.log('🔊 Bắt đầu pre-generate TTS cho patterns/chunk-*.json (cả 2 giọng)\n')
   console.log(`📋 Tổng tác vụ cần xử lý: ${tasks.length} (en-US + vi-VN × ${VOICE_IDS.join('/')})`)
   console.log(`⚙️  Batch size: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms${FORCE ? ' | ⚠️  FORCE: ghi đè cache cũ' : ''}\n`)
 
