@@ -64,8 +64,8 @@ Vào **Storage → New bucket**:
 File `.env` đã có sẵn 3 dòng trống, chỉ cần điền giá trị:
 
 ```env
-SUPABASE_URL=https://xxxxx.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGci...
+SUPABASE_URL=https://imqkoedcottaanvrzldn.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWtvZWRjb3R0YWFudnJ6bGRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MDkyNjEsImV4cCI6MjA5NzQ4NTI2MX0.Hs_gvun-zDzBp1PqSxzDiQFN-A4z0SbKu4fLF4l8DJU
 GOOGLE_TTS_API_KEY=AIza...
 ```
 
