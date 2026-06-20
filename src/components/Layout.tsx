@@ -3,7 +3,7 @@ import { ArrowLeft, LogOut, BookOpen } from 'lucide-react'
 import { getCurrentUser, logout } from '../lib/storage'
 import { getUsage } from '../lib/storage'
 import { LIMITS } from '../types'
-import { useLang } from '../context/LangContext'
+import { useLang } from '../context/useLang'
 
 interface Props {
   title: string

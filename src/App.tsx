@@ -1,7 +1,8 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { getCurrentUser, ensureDefaultUser } from './lib/storage'
-import { LangProvider } from './context/LangContext'
+import { LangProvider } from './context/LangProvider'
+import { AuthProvider } from './context/AuthProvider'
+import { useAuth } from './context/useAuth'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import Chat from './pages/Chat'
@@ -17,11 +18,7 @@ const Dictionary = lazy(() => import('./pages/Dictionary'))
 // Trang Bài học cũng chứa dữ liệu hội thoại lớn (sẽ lên tới 100 bài) — lazy-load tương tự.
 const Lessons = lazy(() => import('./pages/Lessons'))
 
-function RequireAuth({ children }: { children: React.ReactNode }) {
-  return getCurrentUser() ? <>{children}</> : <Navigate to="/login" replace />
-}
-
-// Màn hình chờ đơn giản khi đang tải trang được lazy-load
+// Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang
 function PageLoading() {
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
@@ -30,28 +27,34 @@ function PageLoading() {
   )
 }
 
-export default function App() {
-  // Tự động đăng nhập tài khoản mặc định nếu chưa có ai đăng nhập
-  ensureDefaultUser()
+// Bảo vệ route: chờ Supabase xác nhận session rồi mới quyết định redirect
+function RequireAuth({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth()
+  if (loading) return <PageLoading />
+  return user ? <>{children}</> : <Navigate to="/login" replace />
+}
 
+export default function App() {
   return (
-    <LangProvider>
-    <BrowserRouter>
-      <Suspense fallback={<PageLoading />}>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
-          <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
-          <Route path="/writing" element={<RequireAuth><Writing /></RequireAuth>} />
-          <Route path="/speaking" element={<RequireAuth><Speaking /></RequireAuth>} />
-          <Route path="/dictionary" element={<RequireAuth><Dictionary /></RequireAuth>} />
-          <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
-          <Route path="/parts-of-speech" element={<RequireAuth><PartsOfSpeech /></RequireAuth>} />
-          <Route path="/phrases" element={<RequireAuth><CommonPhrases /></RequireAuth>} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
-    </LangProvider>
+    <AuthProvider>
+      <LangProvider>
+        <BrowserRouter>
+          <Suspense fallback={<PageLoading />}>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+              <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
+              <Route path="/writing" element={<RequireAuth><Writing /></RequireAuth>} />
+              <Route path="/speaking" element={<RequireAuth><Speaking /></RequireAuth>} />
+              <Route path="/dictionary" element={<RequireAuth><Dictionary /></RequireAuth>} />
+              <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
+              <Route path="/parts-of-speech" element={<RequireAuth><PartsOfSpeech /></RequireAuth>} />
+              <Route path="/phrases" element={<RequireAuth><CommonPhrases /></RequireAuth>} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </LangProvider>
+    </AuthProvider>
   )
 }
