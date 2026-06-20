@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Search, X, BookText, Layers } from 'lucide-react'
 import Layout from '../components/Layout'
 import PronounceButton from '../components/PronounceButton'
@@ -10,35 +11,9 @@ import Flashcard from '../components/Flashcard'
 import dictionaryData from '../data/dictionary.json'
 import type { DictEntry } from '../types'
 import { ensureDefaultUser } from '../lib/storage'
+import { POS_LABEL, POS_COLOR } from '../lib/pos'
 
 const ENTRIES = dictionaryData as DictEntry[]
-
-// Nhãn tiếng Việt hiển thị cho từng loại từ
-const POS_LABEL: Record<string, string> = {
-  n: 'Danh từ',
-  v: 'Động từ',
-  adj: 'Tính từ',
-  adv: 'Trạng từ',
-  prep: 'Giới từ',
-  conj: 'Liên từ',
-  pron: 'Đại từ',
-  interj: 'Thán từ',
-  art: 'Mạo từ',
-  num: 'Số từ',
-  idiom: 'Thành ngữ',
-}
-
-// Màu badge theo loại từ
-const POS_COLOR: Record<string, string> = {
-  n: 'bg-emerald-500/15 text-emerald-300',
-  v: 'bg-sky-500/15 text-sky-300',
-  adj: 'bg-violet-500/15 text-violet-300',
-  adv: 'bg-amber-500/15 text-amber-300',
-  prep: 'bg-rose-500/15 text-rose-300',
-  conj: 'bg-teal-500/15 text-teal-300',
-  pron: 'bg-orange-500/15 text-orange-300',
-  interj: 'bg-pink-500/15 text-pink-300',
-}
 
 // Giới hạn số kết quả hiển thị cùng lúc để tránh render quá nhiều phần tử
 const MAX_RESULTS = 100
@@ -146,9 +121,14 @@ export default function Dictionary() {
                   {/* Header: từ + badge + phát âm */}
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                     <span className="font-bold text-white text-base">{e.word}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${POS_COLOR[e.pos] ?? 'bg-zinc-700 text-zinc-300'}`}>
+                    {/* Badge loại từ — bấm vào để xem giải thích "Danh từ là gì?", "Động từ là gì?"... */}
+                    <Link
+                      to={`/parts-of-speech#${e.pos}`}
+                      title={`${POS_LABEL[e.pos] || e.pos} là gì?`}
+                      className={`text-[10px] px-2 py-0.5 rounded-full font-medium transition hover:brightness-125 hover:underline underline-offset-2 ${POS_COLOR[e.pos] ?? 'bg-zinc-700 text-zinc-300'}`}
+                    >
                       {POS_LABEL[e.pos] || e.pos}
-                    </span>
+                    </Link>
                     <PronounceButton word={e.word} />
                   </div>
 

@@ -43,7 +43,7 @@ const MODES = [
     ring: 'hover:border-amber-500/40',
     tag: { label: 'Không giới hạn', cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20' },
     title: 'Từ điển',
-    desc: 'Tra hơn 7.400 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
+    desc: 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
   },
   {
     path: '/lessons',
