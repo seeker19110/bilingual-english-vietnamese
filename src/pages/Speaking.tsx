@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send } from 'lucide-react'
 import Layout from '../components/Layout'
-import { getCurrentUser, saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
+import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
+import { useAuth } from '../context/AuthContext'
 import { callClaude, parseJson } from '../lib/ai'
 import { speakingSystemPrompt, situationLabel } from '../prompts'
 import { startListening, isSTTSupported } from '../lib/stt'
@@ -146,7 +147,8 @@ function TypingDots() {
 
 // ── Main Speaking page ────────────────────────────────────────────────────────
 export default function Speaking() {
-  const user = getCurrentUser()!
+  const { user: authUser } = useAuth()
+  const user = authUser!
   const dir: Direction = getDirection()
   const isA = dir === 'A'
 

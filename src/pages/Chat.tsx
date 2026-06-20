@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { Send, Plus, ChevronDown, Sparkles } from 'lucide-react'
 import Layout from '../components/Layout'
 import SpeakButton from '../components/SpeakButton'
-import { getCurrentUser, saveChatSession, getChatSessions, getUsage, incrementUsage, getDirection } from '../lib/storage'
+import { saveChatSession, getChatSessions, getUsage, incrementUsage, getDirection } from '../lib/storage'
+import { useAuth } from '../context/AuthContext'
 import { callClaude } from '../lib/ai'
 import { chatSystemPrompt, situationLabel } from '../prompts'
 import { SITUATIONS, LEVELS, LIMITS, type Level, type ChatSession, type Message, type Direction } from '../types'
@@ -135,7 +136,7 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
           {speechText && (
             <div className="flex justify-end mt-1.5">
               <SpeakButton text={speechText} lang={speechLang}
-                title={isA ? 'Nghe tiếng Anh' : 'Nghe tiếng Việt'} size="xs" />
+                title={isA ? 'Nghe tiếng Anh' : 'Nghe tiếng Việt'} size="xs" cache={false} />
             </div>
           )}
         </div>
@@ -146,7 +147,7 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
               <span className="text-amber-400 font-bold shrink-0 mt-0.5">✅</span>
               <span className="text-amber-200 flex-1">{feedbackText}</span>
               <SpeakButton text={feedbackText} lang={feedbackLang}
-                title={isA ? 'Nghe tiếng Việt' : 'Hear in English'} size="xs" />
+                title={isA ? 'Nghe tiếng Việt' : 'Hear in English'} size="xs" cache={false} />
             </div>
           </div>
         )}
@@ -172,7 +173,8 @@ function TypingDots() {
 
 // ── Main Chat page ────────────────────────────────────────────────────────────
 export default function Chat() {
-  const user = getCurrentUser()!
+  const { user: authUser } = useAuth()
+  const user = authUser!
   const dir = getDirection()
   const isA = dir === 'A'
 

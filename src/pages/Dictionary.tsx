@@ -10,8 +10,9 @@ import PosFilter from '../components/PosFilter'
 import Flashcard from '../components/Flashcard'
 import dictionaryData from '../data/dictionary.json'
 import type { DictEntry } from '../types'
-import { ensureDefaultUser, getDirection } from '../lib/storage'
+import { getDirection } from '../lib/storage'
 import { POS_LABEL, POS_COLOR } from '../lib/pos'
+import { useAuth } from '../context/AuthContext'
 
 const ENTRIES = dictionaryData as DictEntry[]
 
@@ -21,7 +22,8 @@ const MAX_RESULTS = 100
 type Tab = 'search' | 'flashcard'
 
 export default function Dictionary() {
-  const user = ensureDefaultUser()
+  const { user: authUser } = useAuth()
+  const user = authUser!
   const dir = getDirection()
   const isA = dir === 'A'
   const [tab, setTab] = useState<Tab>('search')

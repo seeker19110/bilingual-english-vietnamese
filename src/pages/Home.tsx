@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight } from 'lucide-react'
 import Layout from '../components/Layout'
-import { getCurrentUser, getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
+import { getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { LIMITS } from '../types'
 import type { Direction } from '../types'
 import { useLang } from '../context/LangContext'
+import { useAuth } from '../context/AuthContext'
 
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
 function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
@@ -76,7 +77,8 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
 
 export default function Home() {
   const nav = useNavigate()
-  const user = getCurrentUser()!
+  const { user: authUser } = useAuth()
+  const user = authUser!
   const usage = getUsage(user.id)
   const limit = LIMITS[user.plan]
   const streak = getStreak(user.id)

@@ -1,9 +1,11 @@
-import type { User, ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Direction } from '../types'
+import type { ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Direction } from '../types'
 
 // ─── Keys ────────────────────────────────────────────────────────────────────
+// Đăng nhập/đăng ký THẬT giờ dùng Supabase Auth — xem src/context/AuthContext.tsx
+// (src/lib/supabaseClient.ts). File này chỉ còn lưu DỮ LIỆU HỌC TẬP (lịch sử
+// chat/viết/nói, số lượt dùng, chiều học) ở localStorage, khoá theo userId lấy
+// từ Supabase (uid thật, ổn định) thay vì id tự sinh cũ.
 const K = {
-  currentUser: 'et_current_user',
-  users: 'et_users',
   chatSessions: (uid: string) => `et_chat_${uid}`,
   writingSubs: (uid: string) => `et_writing_${uid}`,
   speakingSessions: (uid: string) => `et_speaking_${uid}`,
@@ -19,60 +21,6 @@ function get<T>(key: string): T | null {
 
 function set<T>(key: string, val: T) {
   localStorage.setItem(key, JSON.stringify(val))
-}
-
-// ─── Auth ─────────────────────────────────────────────────────────────────────
-function hashPassword(pw: string): string {
-  // Prototype — không dùng trong production thật
-  return btoa(encodeURIComponent(pw))
-}
-
-export function register(email: string, name: string, password: string): User | null {
-  const users = get<(User & { pwHash: string })[]>(K.users) ?? []
-  if (users.find(u => u.email === email)) return null // email đã tồn tại
-  const user: User = { id: crypto.randomUUID(), email, name, plan: 'free', createdAt: Date.now() }
-  users.push({ ...user, pwHash: hashPassword(password) })
-  set(K.users, users)
-  set(K.currentUser, user)
-  return user
-}
-
-export function login(email: string, password: string): User | null {
-  const users = get<(User & { pwHash: string })[]>(K.users) ?? []
-  const found = users.find(u => u.email === email && u.pwHash === hashPassword(password))
-  if (!found) return null
-  const { pwHash: _, ...user } = found
-  void _
-  set(K.currentUser, user)
-  return user
-}
-
-export function logout() {
-  localStorage.removeItem(K.currentUser)
-}
-
-export function getCurrentUser(): User | null {
-  return get<User>(K.currentUser)
-}
-
-// ─── Tài khoản mặc định "everyone" ───────────────────────────────────────────
-// Khi chạy app lần đầu (hoặc chưa đăng nhập), tự động tạo và đăng nhập
-// vào tài khoản dùng chung này để không cần màn hình login.
-const GUEST_EMAIL = 'everyone@tutor.local'
-const GUEST_PASSWORD = 'everyone'
-const GUEST_NAME = 'Khách'
-
-export function ensureDefaultUser(): User {
-  const current = getCurrentUser()
-  if (current) return current
-
-  // Thử đăng nhập tài khoản đã tồn tại
-  const existing = login(GUEST_EMAIL, GUEST_PASSWORD)
-  if (existing) return existing
-
-  // Chưa có → tạo mới
-  const created = register(GUEST_EMAIL, GUEST_NAME, GUEST_PASSWORD)
-  return created! // luôn thành công vì email chưa tồn tại
 }
 
 // ─── Chat ─────────────────────────────────────────────────────────────────────
