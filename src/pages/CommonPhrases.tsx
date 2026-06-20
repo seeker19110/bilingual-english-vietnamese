@@ -28,7 +28,7 @@ interface AiResult {
 // Phát âm 1 câu bằng Google TTS chất lượng cao (tự fallback giọng trình duyệt nếu lỗi).
 // Cụm từ là nội dung TĨNH nên cache = true → cùng 1 câu chỉ tạo audio 1 lần.
 function speak(text: string, lang: 'en-US' | 'vi-VN') {
-  void speakTts(text, lang === 'en-US' ? 'en' : 'vi', { cache: true })
+  void speakTts(text, lang === 'en-US' ? 'en' : 'vi')
 }
 
 export default function CommonPhrases() {
