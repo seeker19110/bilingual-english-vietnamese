@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, LogOut, BookOpen } from 'lucide-react'
-import { getCurrentUser, logout } from '../lib/storage'
+import { logout } from '../lib/auth'
 import { getUsage } from '../lib/storage'
 import { LIMITS } from '../types'
 import { useLang } from '../context/useLang'
+import { useAuth } from '../context/useAuth'
 
 interface Props {
   title: string
@@ -13,13 +14,13 @@ interface Props {
 
 export default function Layout({ title, subtitle, back = true }: Props) {
   const nav = useNavigate()
-  const user = getCurrentUser()
+  const { user } = useAuth()
   const usage = user ? getUsage(user.id) : null
   const limit = user ? LIMITS[user.plan] : null
   const { lang, toggleLang, T } = useLang()
 
-  function handleLogout() {
-    logout()
+  async function handleLogout() {
+    await logout()
     nav('/login')
   }
 

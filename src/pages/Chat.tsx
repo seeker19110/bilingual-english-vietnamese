@@ -2,7 +2,9 @@ import { useState, useRef, useEffect } from 'react'
 import { Send, Plus, ChevronDown, Sparkles } from 'lucide-react'
 import Layout from '../components/Layout'
 import SpeakButton from '../components/SpeakButton'
-import { getCurrentUser, saveChatSession, getChatSessions, getUsage, incrementUsage, getDirection } from '../lib/storage'
+import { saveChatSession, getChatSessions, getUsage, incrementUsage, getDirection } from '../lib/storage'
+import { useAuth } from '../context/useAuth'
+import { useCloudSync } from '../lib/useCloudSync'
 import { callClaude } from '../lib/ai'
 import { chatSystemPrompt, situationLabel } from '../prompts'
 import { SITUATIONS, LEVELS, LIMITS, type Level, type ChatSession, type Message, type Direction } from '../types'
@@ -172,7 +174,8 @@ function TypingDots() {
 
 // ── Main Chat page ────────────────────────────────────────────────────────────
 export default function Chat() {
-  const user = getCurrentUser()!
+  const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
+  useCloudSync(user.id)          // kéo lịch sử + lượt dùng từ Supabase khi mở trang
   const dir = getDirection()
   const isA = dir === 'A'
 

@@ -45,13 +45,22 @@ Ba chế độ:
 - Ưu tiên giải pháp miễn phí / chi phí thấp vì dự án vốn tối thiểu.
 
 ## 6. Trạng thái hiện tại
-- [ ] Khởi tạo project + đăng nhập (Supabase)
-- [ ] Chế độ Chat (MVP)
-- [ ] Chế độ Luyện viết + chấm điểm (MVP)
-- [ ] Giới hạn lượt + gói trả phí
-- [ ] Deploy lên Vercel
-- [ ] Chế độ Luyện nói song ngữ (STT + TTS giọng Anh + giọng Việt) — tính năng chính
-- [ ] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng)
-- [ ] (v2) Theo dõi tiến bộ, streak, chấm phát âm
+> Cập nhật 2026-06-20.
+- [x] Khởi tạo project + đăng nhập (Supabase Auth đã chạy thật — `lib/auth.ts`, `AuthProvider`)
+- [x] Chế độ Chat (MVP) — gọi AI thật qua `/api/claude` (edge function ép model + token)
+- [x] Chế độ Luyện viết + chấm điểm (MVP) — chấm kiểu IELTS
+- [~] Giới hạn lượt + gói trả phí — lượt dùng đã đồng bộ lên Supabase (`daily_usage`); gói `plan` đọc từ bảng `profiles`; thanh toán Pro chưa có
+- [x] Deploy lên Vercel — đã deploy
+- [x] Đồng bộ Supabase — chat/viết/nói/lượt dùng lưu lên DB (RLS), login Supabase thống nhất cho mọi trang. Xem `SUPABASE_SYNC_SETUP.md` + `supabase/schema.sql`
+- [~] Chế độ Luyện nói song ngữ — đã chạy bằng Web Speech API (STT + TTS 2 giọng); CHƯA thay sang Azure Neural TTS + gpt-4o-mini-transcribe như mục tiêu
+- [x] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng) — `lib/direction.ts`
+- [~] (v2) Theo dõi tiến bộ, streak, chấm phát âm — đã có streak, WordOfTheDay, Flashcard, cache phát âm (`api/pronunciation.ts`); chấm phát âm chưa làm
+
+### Việc còn dang dở / cần quyết định
+1. TTS/STT đang dùng Web Speech API (miễn phí, giọng Việt kém, chỉ tốt trên Chrome/Edge). Đã có sẵn `api/_lib/googleTts.ts` + `api/pronunciation.ts` nhưng chưa nối vào luồng chính.
+2. Lịch sử học (chat/writing/speaking) + giới hạn lượt vẫn lưu localStorage, chưa đồng bộ lên Supabase DB → reset khi đổi máy/tab ẩn danh.
+3. Chưa deploy production.
+
+Chú thích: `[x]` xong · `[~]` làm một phần · `[ ]` chưa làm.
 
 > Tham khảo kế hoạch đầy đủ: file `App-Gia-Su-Tieng-Anh-AI.md` trong cùng thư mục.

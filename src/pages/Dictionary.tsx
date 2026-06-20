@@ -10,7 +10,8 @@ import PosFilter from '../components/PosFilter'
 import Flashcard from '../components/Flashcard'
 import dictionaryData from '../data/dictionary.json'
 import type { DictEntry } from '../types'
-import { ensureDefaultUser, getDirection } from '../lib/storage'
+import { getDirection } from '../lib/storage'
+import { useAuth } from '../context/useAuth'
 import { POS_LABEL, POS_COLOR } from '../lib/pos'
 
 const ENTRIES = dictionaryData as DictEntry[]
@@ -21,7 +22,7 @@ const MAX_RESULTS = 100
 type Tab = 'search' | 'flashcard'
 
 export default function Dictionary() {
-  const user = ensureDefaultUser()
+  const { user } = useAuth()
   const dir = getDirection()
   const isA = dir === 'A'
   const [tab, setTab] = useState<Tab>('search')
@@ -47,6 +48,9 @@ export default function Dictionary() {
     const all = [...starts, ...contains]
     return { results: all.slice(0, MAX_RESULTS), totalMatches: all.length }
   }, [query, pos])
+
+  // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
+  if (!user) return null
 
   return (
     <div className="min-h-screen bg-zinc-950">

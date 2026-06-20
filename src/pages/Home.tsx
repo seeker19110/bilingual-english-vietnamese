@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight } from 'lucide-react'
 import Layout from '../components/Layout'
-import { getCurrentUser, getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
+import { getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { LIMITS } from '../types'
 import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
+import { useAuth } from '../context/useAuth'
+import { useCloudSync } from '../lib/useCloudSync'
 
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
 function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
@@ -76,14 +78,19 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
 
 export default function Home() {
   const nav = useNavigate()
-  const user = getCurrentUser()!
-  const usage = getUsage(user.id)
-  const limit = LIMITS[user.plan]
-  const streak = getStreak(user.id)
+  const { user } = useAuth()
   const { T } = useLang()
+  useCloudSync(user?.id)   // kéo lượt dùng từ Supabase khi mở trang chủ
 
   // Chiều học lưu trong localStorage, dùng state để re-render khi đổi
   const [dir, setDir] = useState<Direction>(getDirection)
+
+  // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
+  if (!user) return null
+
+  const usage = getUsage(user.id)
+  const limit = LIMITS[user.plan]
+  const streak = getStreak(user.id)
 
   function toggleDir() {
     const next: Direction = dir === 'A' ? 'B' : 'A'

@@ -1,4 +1,6 @@
 import type { User, ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Direction } from '../types'
+// Mỗi lần lưu xuống localStorage, ta cũng đẩy bản ghi lên Supabase (bắn rồi quên)
+import { pushChatSession, pushWritingSub, pushSpeakingSession, pushUsage } from './cloud'
 
 // ─── Keys ────────────────────────────────────────────────────────────────────
 const K = {
@@ -86,6 +88,7 @@ export function saveChatSession(session: ChatSession) {
   if (idx >= 0) all[idx] = session
   else all.unshift(session)
   set(K.chatSessions(session.userId), all)
+  pushChatSession(session) // đồng bộ lên Supabase
 }
 
 // ─── Writing ──────────────────────────────────────────────────────────────────
@@ -99,6 +102,7 @@ export function saveWritingSub(sub: WritingSubmission) {
   if (idx >= 0) all[idx] = sub
   else all.unshift(sub)
   set(K.writingSubs(sub.userId), all)
+  pushWritingSub(sub) // đồng bộ lên Supabase
 }
 
 // ─── Speaking ─────────────────────────────────────────────────────────────────
@@ -112,6 +116,7 @@ export function saveSpeakingSession(session: SpeakingSession) {
   if (idx >= 0) all[idx] = session
   else all.unshift(session)
   set(K.speakingSessions(session.userId), all)
+  pushSpeakingSession(session) // đồng bộ lên Supabase
 }
 
 // ─── Usage ────────────────────────────────────────────────────────────────────
@@ -128,6 +133,7 @@ export function incrementUsage(userId: string, field: 'chatCount' | 'writingCoun
   const usage = getUsage(userId)
   usage[field]++
   set(K.usage(userId, todayStr()), usage)
+  pushUsage(userId, usage) // đồng bộ số lượt lên Supabase
 }
 
 // ─── Direction (chiều học) ────────────────────────────────────────────────────
