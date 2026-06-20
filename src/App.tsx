@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { getCurrentUser, ensureDefaultUser } from './lib/storage'
+import { LangProvider } from './context/LangContext'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import Chat from './pages/Chat'
@@ -34,6 +35,7 @@ export default function App() {
   ensureDefaultUser()
 
   return (
+    <LangProvider>
     <BrowserRouter>
       <Suspense fallback={<PageLoading />}>
         <Routes>
@@ -50,5 +52,6 @@ export default function App() {
         </Routes>
       </Suspense>
     </BrowserRouter>
+    </LangProvider>
   )
 }

@@ -5,9 +5,10 @@ import Layout from '../components/Layout'
 import { getCurrentUser, getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { LIMITS } from '../types'
 import type { Direction } from '../types'
+import { useLang } from '../context/LangContext'
 
-// ── Nội dung cards theo chiều học ────────────────────────────────────────────
-function getModes(dir: Direction) {
+// ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
+function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
   const isA = dir === 'A'
   return [
     {
@@ -16,11 +17,9 @@ function getModes(dir: Direction) {
       gradient: 'from-emerald-500 to-teal-400',
       glow: 'shadow-emerald-500/20',
       ring: 'hover:border-emerald-500/40',
-      tag: { label: 'Phổ biến / Popular', cls: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' },
-      title: isA ? 'Chat với gia sư' : 'Chat with tutor',
-      desc: isA
-        ? 'Trò chuyện tiếng Anh theo tình huống. AI sửa lỗi và giải thích bằng tiếng Việt ngay lập tức.'
-        : 'Practice Vietnamese conversation by situation. AI corrects and explains in English.',
+      tag: { label: T.tagPopular, cls: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' },
+      title: isA ? T.chatTitleA : T.chatTitleB,
+      desc:  isA ? T.chatDescA  : T.chatDescB,
     },
     {
       path: '/speaking',
@@ -28,11 +27,9 @@ function getModes(dir: Direction) {
       gradient: 'from-sky-500 to-cyan-400',
       glow: 'shadow-sky-500/20',
       ring: 'hover:border-sky-500/40',
-      tag: { label: isA ? 'Tính năng chính' : 'Key feature', cls: 'bg-sky-500/15 text-sky-300 border border-sky-500/20' },
-      title: isA ? 'Luyện nói song ngữ' : 'Bilingual speaking',
-      desc: isA
-        ? 'Nói → AI nghe → trả lời bằng giọng tiếng Anh → sửa lỗi bằng giọng tiếng Việt.'
-        : 'Speak → AI listens → replies in Vietnamese voice → corrects in English voice.',
+      tag: { label: T.tagKeyFeature, cls: 'bg-sky-500/15 text-sky-300 border border-sky-500/20' },
+      title: isA ? T.speakTitleA : T.speakTitleB,
+      desc:  isA ? T.speakDescA  : T.speakDescB,
     },
     {
       path: '/writing',
@@ -41,10 +38,8 @@ function getModes(dir: Direction) {
       glow: 'shadow-violet-500/20',
       ring: 'hover:border-violet-500/40',
       tag: { label: 'IELTS', cls: 'bg-violet-500/15 text-violet-300 border border-violet-500/20' },
-      title: isA ? 'Luyện viết & chấm điểm' : 'Writing & scoring',
-      desc: isA
-        ? 'Nộp bài viết, AI chấm theo tiêu chí IELTS, chỉ lỗi và ước lượng band.'
-        : 'Submit your Vietnamese writing, AI grades it and points out errors in English.',
+      title: isA ? T.writeTitleA : T.writeTitleB,
+      desc:  isA ? T.writeDescA  : T.writeDescB,
     },
     {
       path: '/phrases',
@@ -52,11 +47,9 @@ function getModes(dir: Direction) {
       gradient: 'from-teal-500 to-emerald-400',
       glow: 'shadow-teal-500/20',
       ring: 'hover:border-teal-500/40',
-      tag: { label: isA ? 'Không giới hạn' : 'Unlimited', cls: 'bg-teal-500/15 text-teal-300 border border-teal-500/20' },
-      title: isA ? 'Cụm từ thông dụng' : 'Common Phrases',
-      desc: isA
-        ? '80+ cụm từ tiếng Anh thực tế theo chủ đề: chào hỏi, công việc, du lịch… Có phát âm.'
-        : '80+ everyday Vietnamese phrases by topic: greetings, travel, food… With pronunciation.',
+      tag: { label: T.tagUnlimited, cls: 'bg-teal-500/15 text-teal-300 border border-teal-500/20' },
+      title: isA ? T.phrasesTitleA : T.phrasesTitleB,
+      desc:  isA ? T.phrasesDescA  : T.phrasesDescB,
     },
     {
       path: '/dictionary',
@@ -64,11 +57,9 @@ function getModes(dir: Direction) {
       gradient: 'from-amber-500 to-orange-400',
       glow: 'shadow-amber-500/20',
       ring: 'hover:border-amber-500/40',
-      tag: { label: isA ? 'Không giới hạn' : 'Unlimited', cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20' },
-      title: isA ? 'Từ điển' : 'Dictionary',
-      desc: isA
-        ? 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.'
-        : 'Look up 10,000 common English–Vietnamese words with part of speech and examples.',
+      tag: { label: T.tagUnlimited, cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20' },
+      title: isA ? T.dictTitleA : T.dictTitleB,
+      desc:  isA ? T.dictDescA  : T.dictDescB,
     },
     {
       path: '/lessons',
@@ -76,11 +67,9 @@ function getModes(dir: Direction) {
       gradient: 'from-rose-500 to-pink-400',
       glow: 'shadow-rose-500/20',
       ring: 'hover:border-rose-500/40',
-      tag: { label: isA ? 'Không giới hạn' : 'Unlimited', cls: 'bg-rose-500/15 text-rose-300 border border-rose-500/20' },
-      title: isA ? 'Bài học' : 'Lessons',
-      desc: isA
-        ? 'Các bài hội thoại mẫu xoay quanh "tôi - I", mỗi bài 40 đoạn hội thoại song ngữ.'
-        : 'Sample dialogues focused on everyday topics, 40 bilingual exchanges per lesson.',
+      tag: { label: T.tagUnlimited, cls: 'bg-rose-500/15 text-rose-300 border border-rose-500/20' },
+      title: isA ? T.lessonsTitleA : T.lessonsTitleB,
+      desc:  isA ? T.lessonsDescA  : T.lessonsDescB,
     },
   ]
 }
@@ -91,6 +80,7 @@ export default function Home() {
   const usage = getUsage(user.id)
   const limit = LIMITS[user.plan]
   const streak = getStreak(user.id)
+  const { T } = useLang()
 
   // Chiều học lưu trong localStorage, dùng state để re-render khi đổi
   const [dir, setDir] = useState<Direction>(getDirection)
@@ -101,7 +91,7 @@ export default function Home() {
     setDir(next)
   }
 
-  const MODES = getModes(dir)
+  const MODES = getModes(dir, T)
   const isA = dir === 'A'
 
   const usagePct = (used: number, max: number) => Math.min(100, Math.round(used / max * 100))
@@ -116,23 +106,21 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-950">
-      <Layout title={isA ? `Xin chào, ${firstName}` : `Hello, ${firstName}`} back={false} />
+      <Layout title={T.greeting(firstName)} back={false} />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
 
         {/* ── Greeting + streak + toggle chiều học ──────────────────────── */}
         <div className="mb-6 flex items-start justify-between animate-fade-in gap-3">
           <div className="min-w-0">
-            <p className="text-zinc-500 text-sm">
-              {isA ? 'Hôm nay luyện gì?' : "What will you practice today?"}
-            </p>
+            <p className="text-zinc-500 text-sm">{T.todayPractice}</p>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {/* Toggle A ↔ B */}
+            {/* Toggle chiều học A ↔ B */}
             <button
               onClick={toggleDir}
-              title={isA ? 'Chuyển sang dạy tiếng Việt cho người nước ngoài' : 'Switch to teaching English for Vietnamese'}
+              title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
               className="flex items-center gap-1.5 bg-zinc-800/80 border border-zinc-700/60 hover:border-zinc-600 rounded-xl px-3 py-2 text-xs font-medium transition-all active:scale-95"
             >
               <ArrowLeftRight className="w-3.5 h-3.5 text-zinc-400" />
@@ -144,7 +132,7 @@ export default function Home() {
                 <span className="text-xl leading-none">🔥</span>
                 <div className="leading-none">
                   <p className="text-base font-bold text-orange-400">{streak}</p>
-                  <p className="text-[10px] text-orange-400/60 mt-0.5">{isA ? 'ngày liên tiếp' : 'day streak'}</p>
+                  <p className="text-[10px] text-orange-400/60 mt-0.5">{T.streakDays}</p>
                 </div>
               </div>
             )}
@@ -158,7 +146,7 @@ export default function Home() {
               ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
               : 'bg-sky-500/10 text-sky-400 border-sky-500/25'
           }`}>
-            {isA ? '🇻🇳 Người Việt học tiếng Anh' : '🌍 Foreigners learning Vietnamese'}
+            {isA ? T.dirLabelA : T.dirLabelB}
           </span>
         </div>
 
@@ -174,16 +162,14 @@ export default function Home() {
               : <Zap className="w-5 h-5 text-zinc-400 shrink-0" />}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-white">
-                {user.plan === 'pro'
-                  ? (isA ? 'Gói Pro' : 'Pro Plan')
-                  : (isA ? 'Gói Miễn phí' : 'Free Plan')}
+                {user.plan === 'pro' ? T.planPro : T.planFree}
               </p>
               {user.plan === 'free' ? (
                 <div className="mt-2 space-y-1.5">
                   {[
-                    { label: isA ? 'Chat' : 'Chat',   used: usage.chatCount,     max: limit.chat },
-                    { label: isA ? 'Nói'  : 'Speak',  used: usage.speakingCount, max: limit.speaking },
-                    { label: isA ? 'Viết' : 'Write',  used: usage.writingCount,  max: limit.writing },
+                    { label: T.chat,  used: usage.chatCount,     max: limit.chat },
+                    { label: T.speak, used: usage.speakingCount, max: limit.speaking },
+                    { label: T.write, used: usage.writingCount,  max: limit.writing },
                   ].map(({ label, used, max }) => (
                     <div key={label} className="flex items-center gap-2">
                       <span className="text-[10px] text-zinc-500 w-8 shrink-0">{label}</span>
@@ -196,14 +182,12 @@ export default function Home() {
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-zinc-500 mt-0.5">
-                  {isA ? 'Không giới hạn lượt dùng' : 'Unlimited usage'}
-                </p>
+                <p className="text-xs text-zinc-500 mt-0.5">{T.unlimited}</p>
               )}
             </div>
             {user.plan === 'free' && (
               <div className="shrink-0 text-right">
-                <span className="text-[10px] text-zinc-600 block">{isA ? 'Làm mới lúc' : 'Resets at'}</span>
+                <span className="text-[10px] text-zinc-600 block">{T.resetsAt}</span>
                 <span className="text-xs text-zinc-500 font-medium">12:00 AM</span>
               </div>
             )}
@@ -241,23 +225,18 @@ export default function Home() {
 
         {/* ── Tip ──────────────────────────────────────────────────────── */}
         <div className="mt-6 glass rounded-xl p-4 text-xs text-zinc-500 animate-fade-in delay-400">
-          {isA ? (
-            <>
-              <strong className="text-zinc-400">💡 Mẹo:</strong>{' '}
-              Bắt đầu với{' '}
-              <strong className="text-teal-400">Cụm từ thông dụng</strong> để nắm vốn câu giao tiếp thực tế.
-              Rồi luyện với{' '}
-              <strong className="text-sky-400">Luyện nói</strong> để rèn phản xạ và phát âm.
-            </>
-          ) : (
-            <>
-              <strong className="text-zinc-400">💡 Tip:</strong>{' '}
-              Start with{' '}
-              <strong className="text-teal-400">Common Phrases</strong> to build practical vocabulary.
-              Then move to{' '}
-              <strong className="text-sky-400">Speaking</strong> to train your reflexes and pronunciation.
-            </>
-          )}
+          <strong className="text-zinc-400">{T.tip}</strong>{' '}
+          {T.tipBody(
+            `<strong class="text-teal-400">${T.tipPhrases}</strong>`,
+            `<strong class="text-sky-400">${T.tipSpeaking}</strong>`,
+          ).split(/(<strong[^>]*>.*?<\/strong>)/g).map((part, idx) => {
+            if (part.startsWith('<strong')) {
+              const color = part.includes('teal') ? 'text-teal-400' : 'text-sky-400'
+              const text = part.replace(/<[^>]+>/g, '')
+              return <strong key={idx} className={color}>{text}</strong>
+            }
+            return part
+          })}
         </div>
       </main>
     </div>
