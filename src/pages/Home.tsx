@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight } from 'lucide-react'
+import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { LIMITS } from '../types'
@@ -200,6 +200,18 @@ export default function Home() {
             )}
           </div>
         </div>
+
+        {/* ── Lịch sử học ───────────────────────────────────────────────── */}
+        <button onClick={() => nav('/history')}
+          className="w-full mb-4 bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in">
+          <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
+            <History className="w-4 h-4 text-zinc-400" />
+          </div>
+          <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
+            {isA ? 'Xem lịch sử học' : 'View learning history'}
+          </span>
+          <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition" />
+        </button>
 
         {/* ── Mode cards ────────────────────────────────────────────────── */}
         <div className="space-y-3">
