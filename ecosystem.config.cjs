@@ -24,10 +24,11 @@ module.exports = {
       // Ví dụ: /root/.nvm/versions/node/v20.19.0/bin/node
       interpreter: '/root/.nvm/versions/node/v20.19.0/bin/node',
 
-      // Biến môi trường production — các secret vẫn để trong .env
+      // Biến môi trường production — các secret + PORT để trong .env
+      // (KHÔNG ép cứng PORT ở đây để .env tự quyết định cổng, tránh xung đột
+      //  khi VPS đã có app khác chiếm cổng 3000)
       env: {
         NODE_ENV: 'production',
-        PORT: 3000,
       },
 
       // Tự restart nếu app crash, giới hạn 10 lần/phút để tránh vòng lặp vô tận
