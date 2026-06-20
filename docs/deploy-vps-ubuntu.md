@@ -10,156 +10,78 @@
 ```
 Internet
    │
-[Nginx]  ← nhận HTTPS, tên miền, chuyển tiếp request
+[Nginx :443]  ← nhận HTTPS, tên miền, chuyển tiếp request
    │
-[Node.js / Express :3000]  ← chạy API + phục vụ frontend
+[Express :3000]  ← api/*.ts + phục vụ React build (dist/)
    │
 [Supabase]  ← database, storage, auth (giữ nguyên như cũ)
 ```
 
-Điểm khác biệt so với Vercel: các file `api/*.ts` (Edge Functions) cần được
-bọc trong **Express.js** vì VPS chạy Node.js thuần, không có Vercel runtime.
+App chạy bằng **PM2** (process manager) trên **Node.js 20** (qua NVM).
+Nếu VPS đang chạy app khác dùng Node 16, hai app vẫn cùng tồn tại — mỗi app chỉ định đúng version Node của mình trong `ecosystem.config.cjs`.
 
 ---
 
 ## Yêu cầu
 
-- VPS chạy Ubuntu 22.04 hoặc 24.04
-- Đã có tên miền trỏ vào IP của VPS (dùng A record)
-- Truy cập SSH vào VPS với quyền `sudo`
-- Các biến môi trường trong file `.env` ở máy local
+- VPS Ubuntu 22.04 hoặc 24.04
+- Tên miền trỏ vào IP của VPS (DNS A record)
+- SSH vào VPS với quyền `sudo`
+- File `.env` ở máy local (cần copy lên VPS)
 
 ---
 
-## Bước 1 — Cài môi trường trên VPS
+## Bước 1 — Cài NVM + Node.js trên VPS
 
-SSH vào VPS rồi chạy lần lượt:
+Dùng **NVM** để quản lý nhiều version Node song song — không xung đột với app khác đang chạy Node 16.
 
 ```bash
-# Cập nhật hệ thống
-sudo apt update && sudo apt upgrade -y
+# Cài NVM
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
-# Cài Node.js 20 (LTS)
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
+# Nạp NVM vào shell hiện tại (không cần logout)
+source ~/.bashrc
 
-# Kiểm tra cài thành công
-node -v   # phải ra v20.x.x
-npm -v
+# Kiểm tra
+nvm --version
 
-# Cài PM2 — giữ app chạy liên tục, tự restart khi crash hoặc VPS reboot
-sudo npm install -g pm2
+# Cài Node 20
+nvm install 20
 
-# Cài Nginx — làm reverse proxy và xử lý HTTPS
+# Lấy đường dẫn chính xác của Node 20 — copy kết quả này, dùng ở Bước 4
+nvm which 20
+# Ví dụ ra: /root/.nvm/versions/node/v20.19.0/bin/node
+```
+
+---
+
+## Bước 2 — Cài Nginx và PM2
+
+```bash
+# Cài Nginx
 sudo apt install -y nginx
+
+# Cài PM2 toàn cục (dùng Node đang active — có thể là bất kỳ version nào)
+npm install -g pm2
 ```
 
 ---
 
-## Bước 2 — Chuyển Edge Functions sang Express
-
-> Vercel Edge Functions không chạy được trên VPS. Bước này tạo một Express server
-> bọc lại các handler hiện có — **không cần viết lại logic**.
-
-### 2a. Cài thêm thư viện Express
-
-Chạy trên **máy local** (trong thư mục project):
+## Bước 3 — Clone code và cài đặt
 
 ```bash
-npm install express
-npm install -D @types/express
-```
-
-### 2b. Tạo file `server.ts` ở gốc project
-
-```typescript
-// server.ts — Express server thay thế Vercel runtime trên VPS
-import express from 'express'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import * as dotenv from 'dotenv'
-
-dotenv.config()
-
-// Import các handler API hiện có (giữ nguyên, không sửa)
-import ttsHandler from './api/tts.js'
-import claudeHandler from './api/claude.js'
-import pronunciationHandler from './api/pronunciation.js'
-
-const app = express()
-app.use(express.json())
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
-// Hàm bọc: chuyển Edge Function handler thành Express middleware
-// Lý do: Edge Function nhận (Request) → trả (Response) theo Web API chuẩn,
-// còn Express dùng (req, res) của Node — cần chuyển đổi qua lại.
-function wrapEdge(handler: (req: Request) => Promise<Response>) {
-  return async (req: express.Request, res: express.Response) => {
-    const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`
-    const webReq = new Request(url, {
-      method: req.method,
-      headers: req.headers as HeadersInit,
-      body: ['GET', 'HEAD'].includes(req.method) ? undefined : JSON.stringify(req.body),
-    })
-
-    const webRes = await handler(webReq)
-
-    res.status(webRes.status)
-    webRes.headers.forEach((val, key) => res.setHeader(key, val))
-    res.send(await webRes.text())
-  }
-}
-
-// Gắn API routes — thêm vào đây nếu tạo thêm api/*.ts mới
-app.all('/api/tts', wrapEdge(ttsHandler))
-app.all('/api/claude', wrapEdge(claudeHandler))
-app.get('/api/pronunciation', wrapEdge(pronunciationHandler))
-
-// Phục vụ file frontend đã build (thư mục dist/)
-app.use(express.static(path.join(__dirname, 'dist')))
-
-// Mọi URL không khớp API đều trả về index.html (React Router xử lý phía client)
-app.get('*', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
-})
-
-const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log(`✅ Server chạy tại http://localhost:${PORT}`)
-})
-```
-
-### 2c. Thêm script build vào `package.json`
-
-```json
-"scripts": {
-  "build:server": "tsc server.ts --esModuleInterop --module esnext --target esnext --moduleResolution bundler --outDir ."
-}
-```
-
-### 2d. Commit và push lên GitHub
-
-```bash
-git add server.ts package.json
-git commit -m "feat: thêm Express server cho deploy VPS"
-git push origin main
-```
-
----
-
-## Bước 3 — Clone code và cài đặt trên VPS
-
-```bash
-# Clone repo (thay URL bằng repo thật)
+# Clone repo
 git clone https://github.com/seeker19110/bilingual-english-vietnamese.git
 cd bilingual-english-vietnamese
 
-# Tạo file .env — copy nội dung từ máy local
+# Tạo thư mục log (PM2 ghi log vào đây)
+mkdir -p logs
+
+# Tạo file .env — dán nội dung từ máy local vào
 nano .env
 ```
 
-Nội dung file `.env` cần có:
+Nội dung `.env` cần có:
 
 ```env
 SUPABASE_URL=https://xxxx.supabase.co
@@ -169,84 +91,80 @@ ANTHROPIC_API_KEY=sk-ant-...
 PORT=3000
 ```
 
-> ⚠️ File `.env` KHÔNG được commit lên GitHub. Kiểm tra `.gitignore` có dòng `.env`.
-
 ```bash
-# Cài thư viện
+# Cài thư viện (bao gồm express đã thêm vào package.json)
+nvm use 20
 npm install
 
-# Build frontend (tạo thư mục dist/)
+# Build frontend React → thư mục dist/
 npm run build
-
-# Build server.ts → server.js
-npm run build:server
 ```
 
 ---
 
-## Bước 4 — Chạy app với PM2
+## Bước 4 — Cập nhật đường dẫn Node trong ecosystem.config.cjs
+
+Mở file cấu hình PM2:
 
 ```bash
-# Khởi động
-pm2 start server.js --name "english-tutor"
+nano ecosystem.config.cjs
+```
 
-# Xem trạng thái
+Tìm dòng `interpreter` và thay bằng kết quả lệnh `nvm which 20` ở Bước 1:
+
+```js
+// Thay đường dẫn này cho khớp với máy của bạn
+interpreter: '/root/.nvm/versions/node/v20.19.0/bin/node',
+```
+
+---
+
+## Bước 5 — Chạy app với PM2
+
+```bash
+# Khởi động app
+pm2 start ecosystem.config.cjs
+
+# Xem trạng thái — cột "status" phải là "online"
 pm2 status
 
 # Xem log realtime
 pm2 logs english-tutor
 
-# Dừng / restart
-pm2 stop english-tutor
-pm2 restart english-tutor
+# Cấu hình tự khởi động khi VPS reboot
+pm2 startup        # chạy lệnh nó in ra (bắt đầu bằng sudo)
+pm2 save
 
-# Cấu hình tự khởi động khi VPS reboot (chạy 2 lệnh này theo thứ tự)
-pm2 startup        # copy-paste lệnh nó in ra rồi chạy
-pm2 save           # lưu danh sách process hiện tại
-```
-
-Kiểm tra app đang chạy:
-
-```bash
-curl http://localhost:3000/api/tts -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"text":"Hello","lang":"en-US"}'
-# Phải trả về JSON có audio_url
+# Kiểm tra app phản hồi
+curl http://localhost:3000
 ```
 
 ---
 
-## Bước 5 — Cài Nginx làm reverse proxy
+## Bước 6 — Cài Nginx làm reverse proxy
 
 ```bash
-# Tạo file cấu hình cho site
 sudo nano /etc/nginx/sites-available/english-tutor
 ```
 
-Dán nội dung sau (thay `yourdomain.com` bằng tên miền thật):
+Dán nội dung (thay `yourdomain.com` bằng tên miền thật):
 
 ```nginx
 server {
     listen 80;
     server_name yourdomain.com www.yourdomain.com;
 
-    # Giới hạn kích thước request — phòng upload quá lớn
     client_max_body_size 10M;
 
     location / {
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
-
-        # Cần thiết cho WebSocket nếu sau này dùng
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
-
-        # Chuyển thông tin client thật cho Express
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-
         proxy_cache_bypass $http_upgrade;
     }
 }
@@ -256,7 +174,7 @@ server {
 # Kích hoạt site
 sudo ln -s /etc/nginx/sites-available/english-tutor /etc/nginx/sites-enabled/
 
-# Kiểm tra cú pháp cấu hình
+# Kiểm tra cú pháp không có lỗi
 sudo nginx -t
 
 # Reload Nginx
@@ -265,7 +183,7 @@ sudo systemctl reload nginx
 
 ---
 
-## Bước 6 — Cài HTTPS miễn phí với Let's Encrypt
+## Bước 7 — Cài HTTPS miễn phí với Let's Encrypt
 
 ```bash
 # Cài certbot
@@ -273,90 +191,105 @@ sudo apt install -y certbot python3-certbot-nginx
 
 # Lấy chứng chỉ SSL (nhập email khi được hỏi)
 sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
-```
 
-Certbot tự sửa file Nginx và thêm HTTPS. Chứng chỉ tự gia hạn mỗi 90 ngày.
-
-Kiểm tra tự gia hạn hoạt động:
-
-```bash
+# Kiểm tra tự gia hạn hoạt động
 sudo certbot renew --dry-run
 ```
 
-Sau bước này, app chạy tại `https://yourdomain.com` ✅
+Certbot tự sửa file Nginx và thêm cấu hình HTTPS. Chứng chỉ tự gia hạn mỗi 90 ngày.
+
+App chạy tại `https://yourdomain.com` ✅
 
 ---
 
-## Bước 7 — Script deploy nhanh khi cập nhật code
+## Chạy chung với app khác (Node 16)
 
-Tạo file `~/deploy.sh` trên VPS:
+Nếu VPS đang có app khác dùng Node 16, chỉ cần tạo file `ecosystem.config.cjs` riêng cho app đó với đường dẫn Node 16:
 
 ```bash
-nano ~/deploy.sh
+# Lấy đường dẫn Node 16
+nvm install 16   # nếu chưa có
+nvm which 16     # copy kết quả
+```
+
+Mỗi app dùng đúng `interpreter` của mình trong file ecosystem — không xung đột.
+
+```
+english-tutor → interpreter: .../v20.x.x/bin/node   port: 3000
+xboss         → interpreter: .../v16.x.x/bin/node   port: 8000
+```
+
+---
+
+## Script deploy nhanh khi cập nhật code
+
+Tạo file `~/deploy-english-tutor.sh` trên VPS:
+
+```bash
+nano ~/deploy-english-tutor.sh
 ```
 
 ```bash
 #!/bin/bash
-set -e  # dừng ngay nếu có lệnh lỗi
+set -e   # dừng ngay nếu có lệnh lỗi
 
-echo "📦 Pulling code mới..."
 cd ~/bilingual-english-vietnamese
+
+echo "📥 Pull code mới..."
 git pull origin main
 
 echo "📦 Cài thư viện..."
-npm install
+nvm use 20 && npm install
 
 echo "🔨 Build frontend..."
 npm run build
 
-echo "🔨 Build server..."
-npm run build:server
+echo "🔄 Reload app (zero-downtime)..."
+pm2 reload ecosystem.config.cjs
 
-echo "🔄 Restart app..."
-pm2 restart english-tutor
-
-echo "✅ Deploy xong! App đang chạy tại https://yourdomain.com"
+echo "✅ Deploy xong!"
+pm2 status
 ```
 
 ```bash
-# Cấp quyền chạy
-chmod +x ~/deploy.sh
+chmod +x ~/deploy-english-tutor.sh
 ```
 
-Từ nay mỗi lần cập nhật chỉ cần:
+Mỗi lần cập nhật chỉ cần:
 
 ```bash
-~/deploy.sh
+~/deploy-english-tutor.sh
 ```
 
 ---
 
 ## Xử lý sự cố thường gặp
 
-### App không chạy
+### App không start được
 
 ```bash
-pm2 logs english-tutor --lines 50   # xem log lỗi
-pm2 status                           # kiểm tra trạng thái
+pm2 logs english-tutor --lines 50   # xem lỗi cụ thể
 ```
 
-### Nginx lỗi 502 Bad Gateway
+Nguyên nhân hay gặp: sai đường dẫn `interpreter` trong `ecosystem.config.cjs` — chạy lại `nvm which 20` để lấy đường dẫn đúng.
 
-Nguyên nhân: Express chưa chạy hoặc chạy sai port.
+### Nginx trả lỗi 502 Bad Gateway
+
+Express chưa chạy hoặc sai port.
 
 ```bash
-pm2 status                     # kiểm tra english-tutor đang "online"
-curl http://localhost:3000      # kiểm tra Express trả về được không
+pm2 status                     # kiểm tra "online"
+curl http://localhost:3000      # kiểm tra Express phản hồi
 ```
 
-### Lỗi thiếu biến môi trường
+### Thiếu biến môi trường
 
 ```bash
-cat .env                        # kiểm tra file .env có đủ key
-pm2 restart english-tutor       # restart sau khi sửa .env
+cat .env                        # kiểm tra có đủ key
+pm2 reload ecosystem.config.cjs # reload sau khi sửa .env
 ```
 
-### Gia hạn chứng chỉ SSL thủ công
+### Gia hạn SSL thủ công
 
 ```bash
 sudo certbot renew
@@ -365,16 +298,13 @@ sudo systemctl reload nginx
 
 ---
 
-## So sánh VPS vs Vercel
+## Tóm tắt lệnh hay dùng
 
-| | Vercel | VPS Ubuntu |
-|---|---|---|
-| Chi phí | Miễn phí (giới hạn bandwidth) | ~$5–10/tháng |
-| Độ phức tạp setup | Thấp (push là xong) | Cao hơn (1 lần) |
-| Kiểm soát server | Không có | Toàn quyền |
-| Tự scale | Có | Tự xử lý |
-| HTTPS | Tự động | Certbot (miễn phí) |
-| Cron job / background task | Không | Tự cài được |
-
-**Khuyến nghị:** Giữ Vercel cho đến khi có nhu cầu cụ thể cần VPS
-(giảm chi phí lâu dài, cần Redis, cron job nặng, hoặc traffic lớn).
+```bash
+pm2 status                          # xem trạng thái tất cả app
+pm2 logs english-tutor              # xem log realtime
+pm2 reload ecosystem.config.cjs     # restart không downtime
+pm2 stop english-tutor              # dừng app
+sudo systemctl reload nginx         # reload Nginx sau khi sửa config
+~/deploy-english-tutor.sh           # deploy code mới
+```

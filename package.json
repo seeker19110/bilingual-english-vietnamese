@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "start": "tsx server.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "seed:pronunciation": "tsx scripts/seed-pronunciations.ts",
@@ -13,6 +14,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",
+    "express": "^4.21.2",
     "lucide-react": "^0.400.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -20,6 +22,7 @@
   },
   "devDependencies": {
     "@types/cli-progress": "^3.11.6",
+    "@types/express": "^4.17.21",
     "@types/node": "^26.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

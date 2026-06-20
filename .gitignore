@@ -1,6 +1,8 @@
 node_modules
 dist
 .env
+logs/
+scripts/prefetch-tts-errors.json
 .env.local
 *.local
 
