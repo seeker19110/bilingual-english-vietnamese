@@ -12,45 +12,46 @@
 ```
 Internet
    │
-[Nginx :443]  ← nhận HTTPS, tên miền, gzip, serve file audio tĩnh
+[Nginx :443]  ← nhận HTTPS, tên miền, gzip, serve file audio tĩnh /uploads/
    │
-[Express :3000]  ← server.ts: api/*.ts + phục vụ React build (dist/)
+[Express :3001]  ← server.ts: api/*.ts + phục vụ React build (dist/)
    │
-[Supabase]  ← database, storage, auth (RLS)
+[Supabase]  ← database (bảng user, lịch sử học, tts_cache), auth (RLS)
 ```
 
-App chạy bằng **PM2** (process manager) trên **Node.js 22** (qua NVM).
-> ⚠️ **Bắt buộc Node 22 trở lên.** Node 20 thiếu WebSocket gốc → thư viện Supabase ném lỗi khi xác thực (`supabase.auth.getUser`), khiến **mọi request đăng nhập bị `AUTH_FAILED`** (đăng nhập xong vẫn không gọi được API). Node 22 có WebSocket sẵn nên hết lỗi.
+App chạy bằng **PM2** trên **Node.js 22** (yêu cầu tối thiểu).
 
-Nếu VPS đang chạy app khác dùng Node 16, các app vẫn cùng tồn tại — mỗi app chỉ định đúng version Node của mình trong `ecosystem.config.cjs`.
-
----
-
-## Yêu cầu
-
-- VPS Ubuntu 22.04 hoặc 24.04
-- Tên miền trỏ vào IP của VPS (DNS A record cho cả `@` và `www`)
-- SSH vào VPS với quyền `sudo`
-- Tài khoản Supabase + dự án đã tạo
-- API key: Anthropic (Claude) + Google Cloud Text-to-Speech
-- File `.env` ở máy local (sẽ copy lên VPS)
+> ⚠️ **Bắt buộc Node 22 trở lên.** Node 20 thiếu WebSocket gốc → thư viện Supabase
+> ném lỗi khi xác thực → **mọi request đăng nhập bị `AUTH_FAILED`**.
 
 ---
 
-## ✅ Checklist tiện ích cần có trước khi "lên sóng"
+## Thông tin VPS thực tế đang dùng
+
+| Mục | Giá trị |
+|---|---|
+| OS | Ubuntu 24.04 |
+| Node | v22.22.3 (cài hệ thống, đường dẫn `/usr/bin/node`) |
+| Thư mục app | `/var/www/english-tutor` |
+| Port app | **3001** (3000 đã bị app `xboss` chiếm) |
+| Domain | `en-vi.donghanhcungban.com` |
+| Audio storage | **Local VPS** (`/var/www/english-tutor/uploads/`) |
+| PM2 app name | `english-tutor` (id 3) |
+
+---
+
+## ✅ Checklist trước khi bắt đầu
 
 | Tiện ích | Bắt buộc? | Bước |
 |---|---|---|
-| Bảng Supabase (`schema.sql`) | ✅ Bắt buộc | Bước 0 |
+| Bảng Supabase (`schema.sql`) | ✅ | Bước 0 |
 | Firewall `ufw` | ✅ Nên có | Bước 1 |
-| Node 22 (NVM) | ✅ Bắt buộc | Bước 2 |
-| Nginx + PM2 + log rotation | ✅ Bắt buộc | Bước 3 |
-| `.env` đủ key (gồm `ALLOWED_ORIGINS`) | ✅ Bắt buộc | Bước 4 |
-| Health check `/api/health` | ✅ Có sẵn trong code | Bước 6, 7 |
-| HTTPS (Let's Encrypt) | ✅ Bắt buộc | Bước 8 |
-| Pre-cache audio (seed scripts) | ⬜ Tùy chọn | Bước 9 |
-| Local storage cho audio | ⬜ Khuyên dùng | mục riêng |
-| Backup uploads + DB | ⬜ Tùy chọn | mục riêng |
+| Node.js 22 | ✅ | Bước 2 |
+| Nginx + PM2 + log rotation | ✅ | Bước 3 |
+| `.env` đủ key | ✅ | Bước 4 |
+| HTTPS (Let's Encrypt) | ✅ | Bước 7 |
+| Pre-cache audio (seed scripts) | ⬜ Khuyên dùng | Bước 8 |
+| Backup uploads | ⬜ Tùy chọn | mục riêng |
 
 ---
 
@@ -60,67 +61,64 @@ App **không chạy được** nếu chưa tạo bảng trong database.
 
 1. Mở **Supabase Dashboard → SQL Editor → New query**.
 2. Mở file `supabase/schema.sql` trong repo, copy toàn bộ nội dung, dán vào và bấm **Run**.
-   - File này tạo các bảng `profiles`, `daily_usage`, `tts_cache`, lịch sử học… kèm Row Level Security (RLS).
-   - Chi tiết: xem `SUPABASE_SYNC_SETUP.md` và `PRONUNCIATION_CACHE_SETUP.md`.
-3. Lấy các key (dùng ở Bước 4): **Project Settings → API**
-   - `Project URL` → cho `VITE_SUPABASE_URL` và `SUPABASE_URL`
+   - Tạo các bảng: `profiles`, `daily_usage`, `tts_cache`, `pronunciations`, `chat_sessions`, `writing_submissions`, `speaking_sessions` kèm Row Level Security (RLS).
+3. Lấy các key (**Project Settings → API**):
+   - `Project URL` → `VITE_SUPABASE_URL` và `SUPABASE_URL`
    - `anon public` key → `VITE_SUPABASE_ANON_KEY`
    - `service_role` key (bí mật!) → `SUPABASE_SERVICE_ROLE_KEY`
 
-> Nếu dùng local storage cho audio (khuyên dùng) thì **không cần** tạo Storage bucket. Nếu để `STORAGE_DRIVER=supabase` thì tạo bucket `tts-cache` theo `TTS_CACHE_SETUP.md`.
+> Dùng `STORAGE_DRIVER=local` thì **không cần** tạo Storage bucket trên Supabase.
 
 ---
 
 ## Bước 1 — Bật firewall (ufw)
 
-Chỉ mở đúng 3 cổng cần thiết, chặn còn lại để an toàn.
-
 ```bash
 sudo ufw allow OpenSSH      # cổng 22 — đừng quên, kẻo tự khóa mình ngoài SSH
 sudo ufw allow 'Nginx Full' # cổng 80 (HTTP) + 443 (HTTPS)
-sudo ufw enable             # bật firewall
-sudo ufw status             # kiểm tra
+sudo ufw enable
+sudo ufw status
 ```
 
-> ⚠️ Express chạy ở cổng 3000 nhưng **không cần** mở ra ngoài — chỉ Nginx (localhost) gọi vào nó.
+> Express chạy ở cổng 3001 — **không cần mở ra ngoài** (chỉ Nginx gọi nội bộ).
 
 ---
 
-## Bước 2 — Cài NVM + Node.js 22
+## Bước 2 — Cài Node.js 22
 
-Dùng **NVM** để quản lý nhiều version Node song song — không xung đột với app khác đang chạy Node 16.
+### Cách A: Cài qua NodeSource (Node hệ thống — đơn giản hơn, đang dùng)
 
 ```bash
-# Cài NVM
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-
-# Nạp NVM vào shell hiện tại (không cần logout)
-source ~/.bashrc
-
-# Cài Node 22
-nvm install 22
-
-# Lấy đường dẫn chính xác của Node 22 — COPY kết quả này, dùng ở Bước 5
-nvm which 22
-# Ví dụ ra: /root/.nvm/versions/node/v22.20.0/bin/node
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+node -v   # phải ra v22.x.x
+which node   # lấy đường dẫn → dùng ở Bước 5, ví dụ: /usr/bin/node
 ```
+
+### Cách B: Dùng NVM (nếu cần chạy nhiều version Node song song)
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+source ~/.bashrc
+nvm install 22
+nvm which 22   # lấy đường dẫn → dùng ở Bước 5
+```
+
+> VPS hiện tại dùng **Cách A** (`/usr/bin/node`).
 
 ---
 
 ## Bước 3 — Cài Nginx, PM2 và log rotation
 
 ```bash
-# Cài Nginx
 sudo apt update && sudo apt install -y nginx
 
-# Cài PM2 toàn cục
 npm install -g pm2
 
-# Cài module xoay vòng log cho PM2 — tránh file log phình to làm đầy ổ cứng
 pm2 install pm2-logrotate
-pm2 set pm2-logrotate:max_size 10M       # mỗi file tối đa 10MB
-pm2 set pm2-logrotate:retain 7           # giữ 7 file gần nhất
-pm2 set pm2-logrotate:compress true      # nén file log cũ
+pm2 set pm2-logrotate:max_size 10M
+pm2 set pm2-logrotate:retain 7
+pm2 set pm2-logrotate:compress true
 ```
 
 ---
@@ -128,18 +126,16 @@ pm2 set pm2-logrotate:compress true      # nén file log cũ
 ## Bước 4 — Clone code, tạo `.env`, cài đặt, build
 
 ```bash
-# Clone repo
-git clone https://github.com/seeker19110/bilingual-english-vietnamese.git
-cd bilingual-english-vietnamese
+cd /var/www
+git clone https://github.com/seeker19110/bilingual-english-vietnamese.git english-tutor
+cd english-tutor
 
-# Tạo thư mục log (PM2 ghi log vào đây)
 mkdir -p logs uploads
 
-# Tạo file .env — dán nội dung vào
 nano .env
 ```
 
-Nội dung `.env` đầy đủ:
+Nội dung `.env` đầy đủ (xem `.env.example` trong repo để có danh sách mới nhất):
 
 ```env
 # ── Supabase (frontend) ──
@@ -154,54 +150,70 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...
 ANTHROPIC_API_KEY=sk-ant-...
 GOOGLE_TTS_API_KEY=AIza...
 
-# ── Mã hóa audio cache (32 byte base64) ──
+# ── Mã hóa audio cache (bắt buộc — 32 byte base64) ──
+# Tạo key: node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+# ⚠️ Sau khi tạo xong KHÔNG ĐỔI — đổi key thì toàn bộ audio cache cũ giải mã thất bại
 TTS_ENCRYPTION_MASTER_KEY=...
 
 # ── Bảo mật: chỉ cho domain thật gọi API ──
-ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+ALLOWED_ORIGINS=https://en-vi.donghanhcungban.com
 
-# ── Lưu audio trên VPS (miễn phí) ──
+# ── Lưu audio TTS trên ổ đĩa VPS (miễn phí, không tốn Supabase Storage) ──
 STORAGE_DRIVER=local
-# UPLOADS_DIR=/root/bilingual-english-vietnamese/uploads
+UPLOADS_DIR=/var/www/english-tutor/uploads
 
-PORT=3000
+# ── Cổng app (3001 vì 3000 đã bị app khác dùng) ──
+PORT=3001
 ```
 
-> **Thiếu `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY`** → đăng nhập lỗi (frontend không kết nối được Supabase).
-> **Thiếu `TTS_ENCRYPTION_MASTER_KEY`** → audio cache mã hóa/giải mã thất bại, app fallback giọng trình duyệt nhưng mất cache.
-> Tạo `TTS_ENCRYPTION_MASTER_KEY`:
-> `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
-> **Bỏ trống `ALLOWED_ORIGINS`** = cho phép mọi domain gọi API (chỉ nên dùng lúc dev).
+> **Thiếu `TTS_ENCRYPTION_MASTER_KEY`** → audio cache mã hóa/giải mã thất bại, app fallback giọng trình duyệt.
+> **Thiếu `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY`** → đăng nhập lỗi.
+> **Bỏ trống `ALLOWED_ORIGINS`** = cho phép mọi domain gọi API (chỉ dùng lúc dev).
 
 ```bash
-# Cài thư viện
-nvm use 22
 npm install
-
-# Build frontend React → thư mục dist/
 npm run build
 ```
 
 ---
 
-## Bước 5 — Cập nhật đường dẫn Node trong `ecosystem.config.cjs`
+## Bước 5 — Cấu hình `ecosystem.config.cjs` (PM2)
 
 ```bash
-# Lấy lại đường dẫn Node 22 (nếu chưa copy ở Bước 2)
-nvm which 22
-# Ví dụ: /root/.nvm/versions/node/v22.20.0/bin/node
-
 nano ecosystem.config.cjs
 ```
 
-Tìm dòng `interpreter` và sửa cho khớp đường dẫn vừa lấy:
+Nội dung cho VPS này (Node hệ thống `/usr/bin/node`, port 3001):
 
 ```js
-interpreter: '/root/.nvm/versions/node/v22.20.0/bin/node',
+module.exports = {
+  apps: [
+    {
+      name: 'english-tutor',
+      script: './node_modules/.bin/tsx',
+      args: 'server.ts',
+
+      // Đường dẫn Node — lấy bằng: which node (Node hệ thống) hoặc: nvm which 22 (NVM)
+      interpreter: '/usr/bin/node',
+
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3001,   // đổi nếu cổng này đã bị app khác dùng
+      },
+
+      restart_delay: 3000,
+      max_restarts: 10,
+      min_uptime: '10s',
+      error_file: './logs/pm2-error.log',
+      out_file: './logs/pm2-out.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss',
+      merge_logs: true,
+    },
+  ],
+}
 ```
 
-Kiểm tra nhanh:
-
+Kiểm tra:
 ```bash
 grep interpreter ecosystem.config.cjs
 ```
@@ -211,56 +223,52 @@ grep interpreter ecosystem.config.cjs
 ## Bước 6 — Chạy app với PM2
 
 ```bash
-# Khởi động
 pm2 start ecosystem.config.cjs
 
-# Trạng thái — cột "status" phải là "online"
-pm2 status
+pm2 status   # cột "status" phải là "online"
 
-# Log realtime (Ctrl+C để thoát)
-pm2 logs english-tutor
+pm2 logs english-tutor   # log realtime (Ctrl+C để thoát)
 
 # Tự khởi động khi VPS reboot
-pm2 startup        # chạy lệnh sudo nó in ra
+pm2 startup   # chạy lệnh sudo nó in ra
 pm2 save
 
-# Kiểm tra app sống chưa — health check trả về {"status":"ok",...}
-curl http://localhost:3000/api/health
+# Kiểm tra app sống
+curl http://localhost:3001/api/health
+# Kết quả: {"status":"ok","uptime":...}
 ```
 
 ---
 
-## Bước 7 — Nginx reverse proxy (gzip + health + audio tĩnh)
+## Bước 7 — Nginx reverse proxy + HTTPS
+
+### 7a. Tạo config Nginx
 
 ```bash
-sudo nano /etc/nginx/sites-available/english-tutor
+sudo nano /etc/nginx/sites-available/en-vi
 ```
 
-Dán nội dung (thay `yourdomain.com` bằng tên miền thật):
+Dán nội dung (thay domain nếu cần):
 
 ```nginx
 server {
-    listen 80;
-    server_name yourdomain.com www.yourdomain.com;
+    server_name en-vi.donghanhcungban.com;
 
     client_max_body_size 10M;
 
-    # Nén response cho nhẹ băng thông
     gzip on;
     gzip_types text/plain text/css application/json application/javascript application/xml image/svg+xml;
     gzip_min_length 1024;
 
-    # Serve file audio trực tiếp từ ổ cứng — nhanh hơn qua Express, cache 30 ngày
+    # Serve file audio TTS trực tiếp từ ổ cứng — nhanh hơn qua Express
     location /uploads/ {
-        alias /root/bilingual-english-vietnamese/uploads/;
-        expires 30d;
-        add_header Cache-Control "public, immutable";
+        alias /var/www/english-tutor/uploads/;
+        add_header Cache-Control "public, max-age=31536000";
         add_header Access-Control-Allow-Origin *;
     }
 
-    # Health check — Nginx/uptime monitor gọi /api/health
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:3001;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -270,157 +278,138 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
     }
+
+    listen 80;
 }
 ```
 
 ```bash
-# Kích hoạt site
-sudo ln -s /etc/nginx/sites-available/english-tutor /etc/nginx/sites-enabled/
-
-# Kiểm tra cú pháp
-sudo nginx -t
-
-# Reload
-sudo systemctl reload nginx
+sudo ln -s /etc/nginx/sites-available/en-vi /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
----
-
-## Bước 8 — HTTPS miễn phí với Let's Encrypt
+### 7b. Cài HTTPS miễn phí (Let's Encrypt)
 
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
 
-# Lấy chứng chỉ SSL (nhập email khi được hỏi)
-sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+sudo certbot --nginx -d en-vi.donghanhcungban.com
 
 # Kiểm tra tự gia hạn
 sudo certbot renew --dry-run
 ```
 
-Certbot tự sửa file Nginx thêm cấu hình HTTPS và tự gia hạn mỗi 90 ngày.
+Certbot tự sửa file Nginx thêm block HTTPS + tự gia hạn mỗi 90 ngày.
 
-App chạy tại `https://yourdomain.com` ✅
-Kiểm tra: `curl https://yourdomain.com/api/health`
+Kiểm tra:
+```bash
+curl https://en-vi.donghanhcungban.com/api/health
+```
 
 ---
 
-## Bước 9 — (Tùy chọn) Pre-cache audio bằng seed scripts
+## Bước 8 — Pre-cache audio (khuyên chạy 1 lần sau deploy)
 
-Chạy sẵn để lần đầu người dùng vào đã có audio ngay, đỡ tốn lượt gọi Google TTS lúc cao điểm.
+Chạy trước để người dùng đầu tiên đã có audio ngay, không phải chờ generate:
 
 ```bash
-cd ~/bilingual-english-vietnamese
-nvm use 22
+cd /var/www/english-tutor
 
-# Cache phát âm các từ trong từ điển
+# Cache phát âm từ điển (~8800 từ × 2 giọng nam/nữ)
 npm run seed:pronunciation
 
-# Pre-cache audio các mẫu câu luyện nói
-npm run prefetch:tts-patterns
+# Pre-cache câu mẫu luyện nói (~1677 câu × 2 ngôn ngữ × 2 giọng = 6708 file)
+BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
 ```
 
-> Hai script này đọc `.env` để gọi Google TTS và lưu vào `uploads/` (hoặc Supabase tùy `STORAGE_DRIVER`). Chạy lại an toàn — file đã có sẽ bỏ qua.
+> Hai script này tự bỏ qua file đã có — **chạy lại an toàn**.
+> Nếu cần tạo lại toàn bộ (vd. cache cũ bị hỏng): thêm `-- --force` vào cuối.
 
 ---
 
-## Health check `/api/health`
-
-`server.ts` có sẵn endpoint nhẹ (không gọi AI, không đụng DB):
+## Cập nhật code mới (deploy lại)
 
 ```bash
-curl https://yourdomain.com/api/health
-# {"status":"ok","uptime":123.4,"time":"2026-06-20T19:42:00.000Z"}
+cd /var/www/english-tutor
+git pull origin main
+npm install        # chỉ cần nếu package.json đổi
+npm run build      # chỉ cần nếu code frontend thay đổi
+pm2 reload ecosystem.config.cjs   # zero-downtime restart
 ```
 
-Dùng cho: uptime monitor (UptimeRobot…), kiểm tra sau deploy, cảnh báo khi app chết.
-
----
-
-## Local Storage — lưu file audio trên VPS
-
-> Đặt `STORAGE_DRIVER=local` để lưu audio trên ổ cứng VPS — **miễn phí**, không tốn Supabase Storage.
-
-### Cấu trúc thư mục (tự tạo khi có file đầu tiên)
-
-```
-uploads/
-├── tts-cache/          ← cache audio hội thoại (api/tts.ts)
-│   ├── en-US/female/  ·  en-US/male/
-│   └── vi-VN/female/  ·  vi-VN/male/
-└── pronunciations/     ← cache phát âm từ điển (api/pronunciation.ts)
-    ├── apple-female.mp3
-    └── apple-male.mp3
-```
-
-### Theo dõi dung lượng
-
-```bash
-du -sh uploads/          # tổng dung lượng
-du -sh uploads/*/        # theo thư mục con
-df -h                    # ổ cứng tổng thể
-```
-
----
-
-## Backup (tùy chọn)
-
-```bash
-crontab -e
-# Backup uploads hàng tuần (Chủ Nhật 2h sáng):
-0 2 * * 0 tar -czf ~/backup-uploads-$(date +\%Y\%m\%d).tar.gz ~/bilingual-english-vietnamese/uploads/
-```
-
-> Audio cache có thể tạo lại được (chỉ tốn thêm lượt Google TTS). Dữ liệu quan trọng nằm ở **Supabase** — bật Point-in-Time Recovery / backup ở Supabase Dashboard.
-
----
-
-## Script deploy nhanh khi cập nhật code
-
-Tạo file `~/deploy-english-tutor.sh`:
+Hoặc tạo script tự động (`~/deploy-english-tutor.sh`):
 
 ```bash
 #!/bin/bash
-set -e   # dừng ngay nếu có lệnh lỗi
+set -e
 
-cd ~/bilingual-english-vietnamese
-
+cd /var/www/english-tutor
 echo "📥 Pull code mới..."
 git pull origin main
 
 echo "📦 Cài thư viện..."
-source ~/.nvm/nvm.sh && nvm use 22 && npm install
+npm install
 
 echo "🔨 Build frontend..."
 npm run build
 
-echo "🔄 Reload app (zero-downtime)..."
+echo "🔄 Reload app..."
 pm2 reload ecosystem.config.cjs
 
 echo "✅ Deploy xong!"
-curl -s http://localhost:3000/api/health && echo
+curl -s http://localhost:3001/api/health && echo
 pm2 status
 ```
 
 ```bash
 chmod +x ~/deploy-english-tutor.sh
-~/deploy-english-tutor.sh   # mỗi lần update chỉ cần chạy lệnh này
+~/deploy-english-tutor.sh   # mỗi lần update chạy lệnh này
 ```
 
 ---
 
-## Chạy chung với app khác (Node 16)
+## Chạy chung với app khác trên cùng VPS
 
-Mỗi app dùng đúng `interpreter` của mình trong file ecosystem — không xung đột.
+VPS này đang có 2 app PM2:
+- **`xboss`** (id 0) — Next.js, port 3000, interpreter riêng
+- **`english-tutor`** (id 3) — Express, port 3001, interpreter `/usr/bin/node`
+
+Mỗi app có `interpreter` và `PORT` riêng trong `ecosystem.config.cjs` của mình → không xung đột.
+
+---
+
+## Health check
 
 ```bash
-nvm install 16   # nếu chưa có
-nvm which 16     # copy đường dẫn vào ecosystem của app kia
+curl https://en-vi.donghanhcungban.com/api/health
+# {"status":"ok","uptime":123.4,"time":"2026-06-21T..."}
 ```
 
+---
+
+## Theo dõi dung lượng audio
+
+```bash
+du -sh /var/www/english-tutor/uploads/          # tổng
+du -sh /var/www/english-tutor/uploads/*/        # theo thư mục con
+ls uploads/tts-cache/en-US/female/ | wc -l      # đếm file đã cache
+df -h                                            # ổ cứng tổng thể
 ```
-english-tutor → interpreter: .../v22.x.x/bin/node   port: 3000
-xboss         → interpreter: .../v16.x.x/bin/node   port: 8000
+
+---
+
+## Backup
+
+Audio cache **có thể tạo lại** bằng script seed (chỉ tốn thêm Google TTS quota).
+Dữ liệu quan trọng (tài khoản, lịch sử học) nằm trên **Supabase** — bật backup ở Supabase Dashboard.
+
+```bash
+# Backup uploads thủ công
+tar -czf ~/backup-uploads-$(date +%Y%m%d).tar.gz /var/www/english-tutor/uploads/
+
+# Tự động hàng tuần (Chủ Nhật 2h sáng)
+crontab -e
+# 0 2 * * 0 tar -czf ~/backup-uploads-$(date +\%Y\%m\%d).tar.gz /var/www/english-tutor/uploads/
 ```
 
 ---
@@ -431,21 +420,39 @@ xboss         → interpreter: .../v16.x.x/bin/node   port: 8000
 ```bash
 pm2 logs english-tutor --lines 50
 ```
-Hay gặp: sai `interpreter` trong `ecosystem.config.cjs` → chạy lại `nvm which 22`.
+Hay gặp: sai `interpreter` trong `ecosystem.config.cjs` — kiểm tra:
+```bash
+grep interpreter ecosystem.config.cjs
+which node   # hoặc nvm which 22
+```
 
 ### Nginx 502 Bad Gateway
 Express chưa chạy hoặc sai port.
 ```bash
 pm2 status
-curl http://localhost:3000/api/health
+curl http://localhost:3001/api/health
 ```
+Nếu app không trả lời, kiểm tra port trong `.env` (`PORT=3001`) và `ecosystem.config.cjs`.
 
 ### Đăng nhập lỗi / không gọi được API
 ```bash
-cat .env                          # kiểm tra đủ key
-# Nếu API bị chặn: kiểm tra ALLOWED_ORIGINS có khớp tên miền không
-pm2 reload ecosystem.config.cjs   # reload sau khi sửa .env
+# Kiểm tra đủ key chưa
+grep -E "^(VITE_SUPABASE|ANTHROPIC|GOOGLE_TTS|TTS_ENCRYPTION|ALLOWED_ORIGINS)" .env
+
+# Reload sau khi sửa .env
+pm2 reload ecosystem.config.cjs --update-env
 ```
+Hay gặp: `ALLOWED_ORIGINS` không có domain của bạn → bị chặn CORS.
+
+### Audio không phát / fallback về giọng trình duyệt
+```bash
+# Kiểm tra file audio đã có chưa
+ls /var/www/english-tutor/uploads/tts-cache/en-US/female/ | head
+
+# Kiểm tra Nginx phục vụ được không
+curl -I https://en-vi.donghanhcungban.com/uploads/tts-cache/en-US/female/<tên-file>.mp3
+```
+Hay gặp: `TTS_ENCRYPTION_MASTER_KEY` bị đổi → giải mã thất bại. Key phải giống nhau từ lúc tạo đến khi dùng.
 
 ### Gia hạn SSL thủ công
 ```bash
@@ -457,14 +464,19 @@ sudo certbot renew && sudo systemctl reload nginx
 ## Tóm tắt lệnh hay dùng
 
 ```bash
-pm2 status                          # trạng thái tất cả app
-pm2 logs english-tutor              # log realtime
-pm2 reload ecosystem.config.cjs     # restart không downtime
-sudo systemctl reload nginx         # reload Nginx sau khi sửa config
-~/deploy-english-tutor.sh           # deploy code mới
-curl https://yourdomain.com/api/health   # kiểm tra app sống
+pm2 status                                # trạng thái tất cả app
+pm2 logs english-tutor                    # log realtime
+pm2 reload ecosystem.config.cjs          # restart không downtime
+pm2 restart english-tutor --update-env   # restart + nạp lại .env
+sudo nginx -t && sudo systemctl reload nginx   # reload Nginx sau khi sửa config
 
-# Storage
-du -sh uploads/                     # dung lượng cache audio
-ls uploads/tts-cache/en-US/female/  # xem file đã cache
+# Deploy nhanh
+~/deploy-english-tutor.sh
+
+# Kiểm tra
+curl https://en-vi.donghanhcungban.com/api/health
+
+# Audio cache
+du -sh /var/www/english-tutor/uploads/
+BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns -- --force
 ```
