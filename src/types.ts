@@ -1,5 +1,7 @@
 export type Plan = 'free' | 'pro'
 export type Level = 'beginner' | 'intermediate' | 'advanced'
+// A = Người Việt học tiếng Anh | B = Người nước ngoài học tiếng Việt (qua tiếng Anh)
+export type Direction = 'A' | 'B'
 
 // Cấu trúc 1 mục từ điển — khớp với dữ liệu trong src/data/dictionary.json
 export interface DictEntry {
