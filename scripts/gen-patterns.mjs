@@ -74,6 +74,55 @@ const VERB = [
   ['enjoy the weekend','tận hưởng cuối tuần'],['learn something new','học điều gì đó mới'],
   ['take it easy','thư giãn'],['be on time','đến đúng giờ'],
   ['understand the lesson','hiểu bài học'],['remember the password','nhớ mật khẩu'],
+  ['call a friend','gọi cho một người bạn'],['write a report','viết một báo cáo'],
+  ['read the news','đọc tin tức'],['check my email','kiểm tra email'],
+  ['attend the class','tham gia lớp học'],['take the exam','làm bài thi'],
+  ['submit the form','nộp biểu mẫu'],['print the document','in tài liệu'],
+  ['scan the receipt','quét hóa đơn'],['book a hotel','đặt khách sạn'],
+  ['rent a car','thuê xe'],['catch the train','bắt chuyến tàu'],
+  ['miss the flight','lỡ chuyến bay'],['pack my bags','xếp hành lý'],
+  ['wash the dishes','rửa bát'],['cook breakfast','nấu bữa sáng'],
+  ['make tea','pha trà'],['buy groceries','mua thực phẩm'],
+  ['cut the budget','cắt giảm ngân sách'],['raise the price','tăng giá'],
+  ['lower the cost','giảm chi phí'],['hire new staff','tuyển nhân viên mới'],
+  ['train the team','đào tạo nhóm'],['lead the project','dẫn dắt dự án'],
+  ['manage the schedule','quản lý lịch trình'],['meet the deadline','kịp thời hạn'],
+  ['reach the goal','đạt mục tiêu'],['win the contract','giành hợp đồng'],
+  ['close the deal','chốt thỏa thuận'],['negotiate the terms','thương lượng điều khoản'],
+  ['sign up today','đăng ký hôm nay'],['log in again','đăng nhập lại'],
+  ['reset the password','đặt lại mật khẩu'],['restart the computer','khởi động lại máy tính'],
+  ['install the app','cài đặt ứng dụng'],['delete the file','xóa tệp'],
+  ['copy the link','sao chép liên kết'],['share the post','chia sẻ bài viết'],
+  ['leave a comment','để lại bình luận'],['rate the service','đánh giá dịch vụ'],
+  ['give feedback','góp ý'],['report the bug','báo lỗi'],
+  ['test the feature','kiểm thử tính năng'],['launch the product','ra mắt sản phẩm'],
+  ['grow the business','phát triển kinh doanh'],['invest wisely','đầu tư khôn ngoan'],
+  ['cut expenses','cắt giảm chi tiêu'],['pay off the loan','trả hết khoản vay'],
+  ['open a savings account','mở tài khoản tiết kiệm'],['donate to charity','quyên góp từ thiện'],
+  ['volunteer on weekends','tình nguyện cuối tuần'],['join a club','tham gia câu lạc bộ'],
+  ['learn to swim','học bơi'],['take a course','tham gia một khóa học'],
+  ['study abroad','du học'],['get a degree','lấy bằng'],
+  ['change careers','chuyển nghề'],['ask for a raise','xin tăng lương'],
+  ['take a day off','xin nghỉ một ngày'],['go on vacation','đi nghỉ mát'],
+  ['visit the doctor','đi khám bác sĩ'],['take medicine','uống thuốc'],
+  ['get some rest','nghỉ ngơi một chút'],['eat healthy','ăn uống lành mạnh'],
+  ['drink less coffee','uống ít cà phê hơn'],['go for a walk','đi dạo'],
+  ['ride a bike','đạp xe'],['play sports','chơi thể thao'],
+  ['watch the game','xem trận đấu'],['cheer for the team','cổ vũ cho đội'],
+  ['celebrate together','ăn mừng cùng nhau'],['throw a party','tổ chức tiệc'],
+  ['invite some friends','mời vài người bạn'],['cook for everyone','nấu ăn cho mọi người'],
+  ['say goodbye','nói lời tạm biệt'],['keep a diary','viết nhật ký'],
+  ['set an alarm','đặt báo thức'],['wake up early','dậy sớm'],
+  ['stay up late','thức khuya'],['relax at home','thư giãn ở nhà'],
+  ['meditate daily','thiền mỗi ngày'],['breathe deeply','hít thở sâu'],
+  ['think positive','suy nghĩ tích cực'],['help a neighbor','giúp một người hàng xóm'],
+  ['support each other','hỗ trợ lẫn nhau'],['work as a team','làm việc theo nhóm'],
+  ['split the bill','chia hóa đơn'],['save for the future','tiết kiệm cho tương lai'],
+  ['plan ahead','lên kế hoạch trước'],['stay organized','giữ ngăn nắp'],
+  ['keep learning','tiếp tục học hỏi'],['never give up','không bao giờ bỏ cuộc'],
+  ['try harder next time','cố gắng hơn lần sau'],['ask more questions','hỏi nhiều hơn'],
+  ['listen carefully','lắng nghe cẩn thận'],['speak clearly','nói rõ ràng'],
+  ['write it down','ghi nó lại'],['double-check the numbers','kiểm tra lại các con số'],
 ]
 
 // ─────────────────────────────────────────────────────────────────────
@@ -128,6 +177,53 @@ const NOUN = [
   ['a lovely garden','một khu vườn đáng yêu'],['a tight deadline','một thời hạn gấp'],
   ['a wonderful weekend','một cuối tuần tuyệt vời'],['a strong team spirit','một tinh thần đồng đội mạnh mẽ'],
   ['a clear schedule today','một lịch trình trống hôm nay'],['a brilliant idea','một ý tưởng xuất sắc'],
+  ['a bright future','một tương lai tươi sáng'],['a busy morning','một buổi sáng bận rộn'],
+  ['a quiet evening','một buổi tối yên tĩnh'],['a long weekend','một kỳ nghỉ cuối tuần dài'],
+  ['a short break','một khoảng nghỉ ngắn'],['a tight schedule','một lịch trình dày đặc'],
+  ['a good night\'s sleep','một giấc ngủ ngon'],['a balanced diet','một chế độ ăn cân bằng'],
+  ['a gym membership','một thẻ tập gym'],['a personal trainer','một huấn luyện viên riêng'],
+  ['a new hobby','một sở thích mới'],['a favorite book','một cuốn sách yêu thích'],
+  ['a good movie','một bộ phim hay'],['a playlist for work','một danh sách nhạc để làm việc'],
+  ['a cup of coffee','một tách cà phê'],['a glass of water','một ly nước'],
+  ['a quick lunch','một bữa trưa nhanh'],['a home-cooked meal','một bữa ăn tự nấu'],
+  ['a dinner reservation','một chỗ đặt bữa tối'],['a shopping list','một danh sách mua sắm'],
+  ['a credit card','một thẻ tín dụng'],['a monthly budget','một ngân sách hàng tháng'],
+  ['a savings plan','một kế hoạch tiết kiệm'],['a side income','một nguồn thu phụ'],
+  ['a business idea','một ý tưởng kinh doanh'],['a startup plan','một kế hoạch khởi nghiệp'],
+  ['a marketing strategy','một chiến lược tiếp thị'],['a loyal customer','một khách hàng trung thành'],
+  ['a positive review','một đánh giá tích cực'],['a new contract','một hợp đồng mới'],
+  ['a job interview','một buổi phỏng vấn việc làm'],['a strong resume','một bản lý lịch ấn tượng'],
+  ['a reference letter','một thư giới thiệu'],['a promotion soon','một đợt thăng chức sắp tới'],
+  ['a pay raise','một đợt tăng lương'],['a flexible schedule','một lịch trình linh hoạt'],
+  ['a remote job','một công việc từ xa'],['a quiet workspace','một không gian làm việc yên tĩnh'],
+  ['a fast internet connection','một kết nối internet nhanh'],['a reliable laptop','một chiếc laptop đáng tin cậy'],
+  ['a backup device','một thiết bị dự phòng'],['a pair of headphones','một cặp tai nghe'],
+  ['a comfortable chair','một chiếc ghế thoải mái'],['a standing desk','một bàn đứng'],
+  ['a water bottle','một bình nước'],['a notebook and pen','một quyển sổ và bút'],
+  ['a to-do list','một danh sách việc cần làm'],['a calendar reminder','một lời nhắc lịch'],
+  ['a morning routine','một thói quen buổi sáng'],['a workout plan','một kế hoạch tập luyện'],
+  ['a rest day','một ngày nghỉ ngơi'],['a doctor nearby','một bác sĩ gần đây'],
+  ['health insurance','bảo hiểm sức khỏe'],['a regular checkup','một lần khám định kỳ'],
+  ['a good night out','một buổi tối đi chơi vui'],['a weekend trip','một chuyến đi cuối tuần'],
+  ['a travel plan','một kế hoạch du lịch'],['a passport ready','một hộ chiếu sẵn sàng'],
+  ['a window seat','một ghế cạnh cửa sổ'],['a return ticket','một vé khứ hồi'],
+  ['a local guide','một hướng dẫn viên địa phương'],['a city map','một bản đồ thành phố'],
+  ['a hotel booking','một đặt phòng khách sạn'],['a beautiful view','một khung cảnh đẹp'],
+  ['a sunny day','một ngày nắng đẹp'],['a rainy afternoon','một buổi chiều mưa'],
+  ['a cozy cafe','một quán cà phê ấm cúng'],['a long conversation','một cuộc trò chuyện dài'],
+  ['a helpful tip','một mẹo hữu ích'],['a fresh perspective','một góc nhìn mới mẻ'],
+  ['a clear answer','một câu trả lời rõ ràng'],['a simple explanation','một lời giải thích đơn giản'],
+  ['a detailed plan','một kế hoạch chi tiết'],['a realistic goal','một mục tiêu thực tế'],
+  ['a second chance','một cơ hội thứ hai'],['a fresh start','một khởi đầu mới'],
+  ['a good habit','một thói quen tốt'],['a strong mindset','một tư duy mạnh mẽ'],
+  ['a supportive friend','một người bạn biết động viên'],['a kind gesture','một cử chỉ tử tế'],
+  ['a warm welcome','một sự chào đón nồng nhiệt'],['a big surprise','một bất ngờ lớn'],
+  ['a happy ending','một cái kết có hậu'],['a meaningful goal','một mục tiêu ý nghĩa'],
+  ['a busy inbox','một hộp thư đầy ắp'],['a packed calendar','một lịch kín'],
+  ['a pending task','một nhiệm vụ còn dang dở'],['an urgent matter','một việc khẩn cấp'],
+  ['a minor issue','một vấn đề nhỏ'],['a major update','một bản cập nhật lớn'],
+  ['a final decision','một quyết định cuối cùng'],['a clear deadline','một thời hạn rõ ràng'],
+  ['a fair price','một mức giá hợp lý'],['a great deal','một món hời'],
 ]
 
 // ─────────────────────────────────────────────────────────────────────
@@ -171,6 +267,51 @@ const ADJ = [
   ['nervous about the interview','hồi hộp về buổi phỏng vấn'],['hopeful about the future','hy vọng về tương lai'],
   ['happy to see you','vui khi gặp bạn'],['glad you came','vui vì bạn đã đến'],
   ['free right now','rảnh ngay bây giờ'],['done for today','xong việc cho hôm nay'],
+  ['cheerful','vui vẻ'],['energetic','tràn đầy năng lượng'],['peaceful','yên bình'],
+  ['joyful','hân hoan'],['content','mãn nguyện'],['delighted','vui sướng'],
+  ['amazed','kinh ngạc'],['inspired','được truyền cảm hứng'],['encouraged','được động viên'],
+  ['refreshed','sảng khoái'],['well-rested','được nghỉ ngơi đầy đủ'],['alert','tỉnh táo'],
+  ['cautious','thận trọng'],['thoughtful','chu đáo'],['considerate','biết quan tâm'],
+  ['generous','rộng lượng'],['humble','khiêm tốn'],['ambitious','tham vọng'],
+  ['hardworking','chăm chỉ'],['dedicated','tận tâm'],['passionate','đầy đam mê'],
+  ['enthusiastic','nhiệt tình'],['calm and collected','bình tĩnh và điềm đạm'],
+  ['under pressure','dưới áp lực'],['behind schedule','chậm tiến độ'],
+  ['ahead of schedule','sớm hơn dự kiến'],['on the right track','đi đúng hướng'],
+  ['full of energy','tràn đầy năng lượng'],['out of practice','lâu rồi không luyện'],
+  ['short of money','thiếu tiền'],['low on battery','sắp hết pin'],
+  ['out of ideas','hết ý tưởng'],['full of ideas','đầy ý tưởng'],
+  ['ready for anything','sẵn sàng cho mọi thứ'],['open to feedback','cởi mở với góp ý'],
+  ['eager to learn','háo hức học hỏi'],['quick to respond','phản hồi nhanh'],
+  ['easy to talk to','dễ trò chuyện'],['hard to please','khó chiều'],
+  ['proud of the result','tự hào về kết quả'],['happy for you','mừng cho bạn'],
+  ['sorry to hear that','tiếc khi nghe điều đó'],['glad it worked','vui vì nó hiệu quả'],
+  ['relieved','nhẹ nhõm'],['hopeful again','lại tràn hy vọng'],
+  ['stronger than before','mạnh mẽ hơn trước'],['better than yesterday','tốt hơn hôm qua'],
+  ['close to the goal','gần đạt mục tiêu'],['ready to start','sẵn sàng bắt đầu'],
+  ['done with work','xong việc'],['free all day','rảnh cả ngày'],
+  ['busy until noon','bận đến trưa'],['available after lunch','rảnh sau bữa trưa'],
+  ['back at the office','đã trở lại văn phòng'],['working from home','làm việc tại nhà'],
+  ['on a break','đang nghỉ giải lao'],['in a meeting','đang họp'],
+  ['on the phone','đang nghe điện thoại'],['out for lunch','ra ngoài ăn trưa'],
+  ['stuck in traffic','kẹt xe'],['almost there','sắp đến nơi'],
+  ['running late','bị trễ'],['right on time','đúng giờ'],
+  ['a bit overwhelmed','hơi quá tải'],['surprisingly calm','bình tĩnh đến lạ'],
+  ['cautiously optimistic','lạc quan thận trọng'],['deeply grateful','vô cùng biết ơn'],
+  ['truly impressed','thực sự ấn tượng'],['fully prepared','chuẩn bị kỹ càng'],
+  ['slightly worried','hơi lo'],['quite confident','khá tự tin'],
+  ['extremely tired','cực kỳ mệt'],['very motivated','rất có động lực'],
+  ['completely lost','hoàn toàn lạc lối'],['totally focused','hoàn toàn tập trung'],
+  ['absolutely sure','chắc chắn tuyệt đối'],['perfectly fine','hoàn toàn ổn'],
+  ['more than happy','hơn cả vui'],['proud and grateful','tự hào và biết ơn'],
+  ['calm and ready','bình tĩnh và sẵn sàng'],['tired but happy','mệt nhưng vui'],
+  ['busy but okay','bận nhưng ổn'],['nervous but excited','hồi hộp nhưng hào hứng'],
+  ['curious about it','tò mò về nó'],['serious about this','nghiêm túc về việc này'],
+  ['committed to the plan','cam kết với kế hoạch'],['confident in the team','tin tưởng vào nhóm'],
+  ['proud of everyone','tự hào về mọi người'],['thankful for today','biết ơn ngày hôm nay'],
+  ['ready for the weekend','sẵn sàng cho cuối tuần'],['excited for tomorrow','háo hức cho ngày mai'],
+  ['glad to help','vui được giúp đỡ'],['happy to be back','vui khi trở lại'],
+  ['sad to leave','buồn khi phải đi'],['proud of the progress','tự hào về sự tiến bộ'],
+  ['hopeful for the best','hy vọng điều tốt nhất'],
 ]
 
 // ─────────────────────────────────────────────────────────────────────
@@ -257,15 +398,38 @@ const FRAMES = [
 // ─────────────────────────────────────────────────────────────────────
 const cap = str => str.charAt(0).toUpperCase() + str.slice(1)
 
+// PRNG tất định (mulberry32) + hash chuỗi → cùng chủ thể luôn ra cùng kết quả,
+// nhưng mỗi chủ thể/khung lại bốc một bộ 100 câu KHÁC nhau từ kho lớn.
+function hashStr(s) {
+  let h = 2166136261 >>> 0
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) }
+  return h >>> 0
+}
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+// Xáo trộn (Fisher–Yates) theo seed rồi lấy n phần tử đầu.
+function pickShuffled(pool, seed, n) {
+  const rand = mulberry32(seed)
+  const a = pool.slice()
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a.slice(0, n)
+}
+
 function buildSentences(subj, frame) {
   const enPre = frame.en(subj)
   const viPre = frame.vi(subj)
-  const out = []
-  for (let i = 0; i < SENTENCES_PER_SUBJECT; i++) {
-    const [ce, cv] = frame.pool[i % frame.pool.length]
-    out.push({ en: `${enPre} ${ce}.`, vi: cap(`${viPre} ${cv}.`) })
-  }
-  return out
+  const seed = hashStr(`${subj.en}|${frame.id}`)
+  const items = pickShuffled(frame.pool, seed, SENTENCES_PER_SUBJECT)
+  return items.map(([ce, cv]) => ({ en: `${enPre} ${ce}.`, vi: cap(`${viPre} ${cv}.`) }))
 }
 
 const subjects = []
