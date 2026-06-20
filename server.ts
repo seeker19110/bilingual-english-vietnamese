@@ -59,6 +59,13 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
   }
 }
 
+// ── Health check ────────────────────────────────────────────────────────────
+// Endpoint nhẹ để PM2 / Nginx / uptime monitor kiểm tra app còn sống không.
+// Không gọi AI, không đụng DB → trả lời tức thì, không tốn tiền.
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime(), time: new Date().toISOString() })
+})
+
 // ── API routes ────────────────────────────────────────────────────────────────
 // Thêm vào đây nếu tạo thêm file api/*.ts mới
 app.all('/api/tts', wrapEdge(ttsHandler))

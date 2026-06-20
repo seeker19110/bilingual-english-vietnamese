@@ -50,7 +50,7 @@ Ba chế độ:
 - [x] Chế độ Chat (MVP) — gọi AI thật qua `/api/claude` (edge function ép model + token)
 - [x] Chế độ Luyện viết + chấm điểm (MVP) — chấm kiểu IELTS
 - [~] Giới hạn lượt + gói trả phí — lượt dùng đã đồng bộ lên Supabase (`daily_usage`); gói `plan` đọc từ bảng `profiles`; thanh toán Pro chưa có
-- [~] Deploy VPS (Express `server.ts` + PM2 + Nginx) — đã có code + hướng dẫn (`docs/deploy-vps-ubuntu.md`), CHƯA deploy lên server thật
+- [x] Deploy VPS (Express `server.ts` + PM2 + Nginx) — ĐÃ deploy lên server thật (code + hướng dẫn: `docs/deploy-vps-ubuntu.md`)
 - [x] Đồng bộ Supabase — chat/viết/nói/lượt dùng lưu lên DB (RLS), login Supabase thống nhất cho mọi trang. Xem `SUPABASE_SYNC_SETUP.md` + `supabase/schema.sql`
 - [~] Chế độ Luyện nói song ngữ — TTS chính đã đổi sang Google Cloud TTS qua `/api/tts` (audio cache **mã hóa AES-256-GCM** trên Supabase Storage, bắt buộc đăng nhập mới lấy được khoá giải mã), Web Speech API chỉ còn là fallback khi lỗi mạng/server. STT thật (nghe người dùng nói) vẫn chưa làm.
 - [x] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng) — `lib/direction.ts`
@@ -58,7 +58,7 @@ Ba chế độ:
 
 ### Việc còn dang dở / cần quyết định
 1. STT (nghe người dùng nói) vẫn chưa làm thật — phần TTS đã xong (Google Cloud TTS, mã hóa AES-256-GCM, cache dùng chung qua bảng `tts_cache`/bucket `tts-cache`).
-2. Chưa deploy production lên VPS thật (code/hướng dẫn đã có, xem `docs/deploy-vps-ubuntu.md`).
+2. Thanh toán Pro chưa có (giới hạn lượt đã đồng bộ Supabase, nhưng chưa có cổng thanh toán nâng cấp gói).
 
 Chú thích: `[x]` xong · `[~]` làm một phần · `[ ]` chưa làm.
 
