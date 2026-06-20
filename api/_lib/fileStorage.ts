@@ -8,14 +8,16 @@
 
 import { getSupabaseAdmin } from './supabaseAdmin'
 
-// Chỉ import fs khi chạy trên Node.js (VPS) — không chạy được trên Vercel Edge
+// Chỉ import fs khi chạy trên Node.js (VPS) — không chạy được trên Vercel Edge.
+// Dùng `new Function` để esbuild không phân tích static và không bundle fs vào Edge bundle.
 let fsPromises: typeof import('fs/promises') | null = null
 let pathModule: typeof import('path') | null = null
 
 async function getNodeModules() {
   if (!fsPromises) {
-    fsPromises = await import('fs/promises')
-    pathModule = await import('path')
+    const dynImport = new Function('m', 'return import(m)') as (m: string) => Promise<unknown>
+    fsPromises = (await dynImport('fs/promises')) as typeof import('fs/promises')
+    pathModule = (await dynImport('path')) as typeof import('path')
   }
   return { fs: fsPromises, path: pathModule! }
 }
