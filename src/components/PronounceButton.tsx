@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 
 interface Props {
   word: string
@@ -32,7 +33,11 @@ export default function PronounceButton({ word }: Props) {
 
     setStatus('loading')
     try {
-      const res = await fetch(`/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}`)
+      // Gửi kèm JWT để server xác thực người dùng
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData.session?.access_token
+      const headers: Record<string, string> = token ? { 'Authorization': `Bearer ${token}` } : {}
+      const res = await fetch(`/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}`, { headers })
       const data = (await res.json()) as { audio_url?: string; error?: string }
 
       if (!res.ok || !data.audio_url) {

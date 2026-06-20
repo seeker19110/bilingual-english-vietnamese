@@ -158,7 +158,7 @@ export default function CommonPhrases() {
           {filtered.length} {T.phrasesSubjects} · {filtered.reduce((s, x) => s + x.sentences.length, 0)} {T.phrasesSentences}
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {filtered.map(subj => {
             const c = getColor(subj.color)
             return (

@@ -24,27 +24,29 @@ function set<T>(key: string, val: T) {
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
-function hashPassword(pw: string): string {
-  // Prototype — không dùng trong production thật
-  return btoa(encodeURIComponent(pw))
-}
+// LƯU Ý BẢO MẬT: hashPassword() và verifyPassword() đã bị XÓA vì dùng btoa()
+// (base64 — không phải hashing thật, có thể đảo ngược dễ dàng).
+// Xác thực thật sự được xử lý qua Supabase Auth (src/lib/auth.ts).
+// Các hàm register/login/logout bên dưới chỉ còn dùng để quản lý localStorage guest user.
 
-export function register(email: string, name: string, password: string): User | null {
-  const users = get<(User & { pwHash: string })[]>(K.users) ?? []
+export function register(email: string, name: string, _password: string): User | null {
+  const users = get<(User & { pwHash?: string })[]>(K.users) ?? []
   if (users.find(u => u.email === email)) return null // email đã tồn tại
   const user: User = { id: crypto.randomUUID(), email, name, plan: 'free', createdAt: Date.now() }
-  users.push({ ...user, pwHash: hashPassword(password) })
+  users.push({ ...user })
   set(K.users, users)
   set(K.currentUser, user)
   return user
 }
 
-export function login(email: string, password: string): User | null {
-  const users = get<(User & { pwHash: string })[]>(K.users) ?? []
-  const found = users.find(u => u.email === email && u.pwHash === hashPassword(password))
+export function login(email: string, _password: string): User | null {
+  // Tìm theo email — không còn kiểm tra password vì storage.ts không dùng cho auth thật
+  // (auth thật dùng Supabase — xem src/lib/auth.ts)
+  const users = get<(User & { pwHash?: string })[]>(K.users) ?? []
+  const found = users.find(u => u.email === email)
   if (!found) return null
-  const { pwHash: _, ...user } = found
-  void _
+  const { pwHash: _pw, ...user } = found
+  void _pw
   set(K.currentUser, user)
   return user
 }
