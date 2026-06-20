@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Check, X, RotateCcw, Eye } from 'lucide-react'
 import type { DictEntry } from '../types'
 import { markLearned, unmarkLearned } from '../lib/vocab'
@@ -25,9 +25,8 @@ const DECK_SIZE = 30 // mỗi lượt luyện 30 thẻ cho gọn
 
 // Chế độ luyện flashcard: hiện từ tiếng Anh → bấm để lật xem nghĩa → tự đánh giá nhớ/chưa nhớ.
 export default function Flashcard({ entries, userId, onLearnedChange }: Props) {
-  // Bộ thẻ cho lượt này — trộn 1 lần khi component dựng (deckKey đổi → tạo bộ mới)
-  const [deckKey, setDeckKey] = useState(0)
-  const deck = useMemo(() => shuffle(entries).slice(0, DECK_SIZE), [entries, deckKey])
+  // Bộ thẻ cho lượt này — trộn khi khởi tạo hoặc khi bấm "Luyện lượt mới"
+  const [deck, setDeck] = useState(() => shuffle(entries).slice(0, DECK_SIZE))
 
   const [idx, setIdx] = useState(0)
   const [flipped, setFlipped] = useState(false)
@@ -53,7 +52,7 @@ export default function Flashcard({ entries, userId, onLearnedChange }: Props) {
 
   // Bắt đầu lượt mới
   function restart() {
-    setDeckKey(k => k + 1)
+    setDeck(shuffle(entries).slice(0, DECK_SIZE))
     setIdx(0)
     setFlipped(false)
     setKnown(0)
@@ -123,7 +122,7 @@ export default function Flashcard({ entries, userId, onLearnedChange }: Props) {
       {/* Nút phát âm + nghe câu (tách khỏi nút lật để bấm không bị lật thẻ) */}
       <div className="flex items-center justify-center gap-2 mb-4">
         <PronounceButton word={card.word} />
-        {card.ex_en && <SpeakButton text={card.ex_en} lang="en" title="Nghe câu ví dụ" />}
+        {card.ex_en && <SpeakButton text={card.ex_en} lang="en-US" title="Nghe câu ví dụ" />}
       </div>
 
       {/* Nút tự đánh giá */}

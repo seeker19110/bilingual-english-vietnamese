@@ -24,7 +24,7 @@ export const t = {
     tip: '💡 Mẹo:',
     tipBody: (phrases: string, speaking: string) =>
       `Bắt đầu với ${phrases} để nắm vốn câu giao tiếp thực tế. Rồi luyện với ${speaking} để rèn phản xạ và phát âm.`,
-    tipPhrases: 'Cụm từ thông dụng',
+    tipPhrases: 'Các câu thông dụng',
     tipSpeaking: 'Luyện nói',
 
     // Mode cards — Direction A
@@ -34,8 +34,8 @@ export const t = {
     speakDescA: 'Nói → AI nghe → trả lời bằng giọng tiếng Anh → sửa lỗi bằng giọng tiếng Việt.',
     writeTitleA: 'Luyện viết & chấm điểm',
     writeDescA: 'Nộp bài viết, AI chấm theo tiêu chí IELTS, chỉ lỗi và ước lượng band.',
-    phrasesTitleA: 'Cụm từ thông dụng',
-    phrasesDescA: '80+ cụm từ tiếng Anh thực tế theo chủ đề: chào hỏi, công việc, du lịch… Có phát âm.',
+    phrasesTitleA: 'Các câu thông dụng',
+    phrasesDescA: "300+ chủ thể (I'm, We are, Could you…), mỗi chủ thể nhiều câu thực tế, có phát âm.",
     dictTitleA: 'Từ điển',
     dictDescA: 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
     lessonsTitleA: 'Bài học',
@@ -51,8 +51,8 @@ export const t = {
     speakDescB: 'Nói → AI nghe → trả lời bằng giọng tiếng Việt → sửa lỗi bằng giọng tiếng Anh.',
     writeTitleB: 'Luyện viết & chấm điểm',
     writeDescB: 'Nộp bài viết tiếng Việt, AI chấm và chỉ lỗi bằng tiếng Anh.',
-    phrasesTitleB: 'Cụm từ thông dụng',
-    phrasesDescB: '80+ cụm từ tiếng Việt thực tế theo chủ đề: chào hỏi, du lịch, ăn uống… Có phát âm.',
+    phrasesTitleB: 'Các câu thông dụng',
+    phrasesDescB: '300+ chủ thể câu tiếng Anh/Việt thông dụng, mỗi chủ thể có nhiều ví dụ thực tế.',
     dictTitleB: 'Từ điển',
     dictDescB: 'Tra 10.000 từ tiếng Việt–Anh thông dụng với loại từ và ví dụ.',
     lessonsTitleB: 'Bài học',
@@ -112,8 +112,14 @@ export const t = {
     lessonsPageSub: 'Mỗi bài 40 đoạn hội thoại song ngữ',
 
     // Phrases
-    phrasesPageTitle: 'Cụm từ thông dụng',
-    phrasesPageSub: '80+ câu giao tiếp thực tế theo chủ đề',
+    phrasesPageTitle: 'Các câu thông dụng',
+    phrasesPageSub: '300+ chủ thể, mỗi chủ thể có nhiều câu thực tế',
+    phrasesSearch: 'Tìm chủ thể hoặc câu…',
+    phrasesAll: 'Tất cả',
+    phrasesSubjects: 'chủ thể',
+    phrasesSentences: 'câu',
+    phrasesBack: 'Quay lại',
+    phrasesNoResult: 'Không tìm thấy kết quả phù hợp.',
 
     // Parts of speech
     posPageTitle: 'Từ loại',
@@ -144,7 +150,7 @@ export const t = {
     tip: '💡 Tip:',
     tipBody: (phrases: string, speaking: string) =>
       `Start with ${phrases} to build practical vocabulary. Then move to ${speaking} to train your reflexes and pronunciation.`,
-    tipPhrases: 'Common Phrases',
+    tipPhrases: 'Common Sentences',
     tipSpeaking: 'Speaking',
 
     // Mode cards — Direction A
@@ -154,8 +160,8 @@ export const t = {
     speakDescA: 'Speak → AI listens → replies in English voice → corrects in Vietnamese voice.',
     writeTitleA: 'Writing & scoring',
     writeDescA: 'Submit your essay, AI grades it by IELTS criteria and estimates your band.',
-    phrasesTitleA: 'Common Phrases',
-    phrasesDescA: '80+ everyday English phrases by topic: greetings, work, travel… With audio.',
+    phrasesTitleA: 'Common Sentences',
+    phrasesDescA: "300+ subjects (I'm, We are, Could you…), each with real-life sentences and audio.",
     dictTitleA: 'Dictionary',
     dictDescA: 'Look up 10,000 common English words: part of speech, Vietnamese meaning, examples.',
     lessonsTitleA: 'Lessons',
@@ -171,8 +177,8 @@ export const t = {
     speakDescB: 'Speak → AI listens → replies in Vietnamese voice → corrects in English voice.',
     writeTitleB: 'Writing & scoring',
     writeDescB: 'Submit your Vietnamese writing, AI grades it and points out errors in English.',
-    phrasesTitleB: 'Common Phrases',
-    phrasesDescB: '80+ everyday Vietnamese phrases by topic: greetings, travel, food… With audio.',
+    phrasesTitleB: 'Common Sentences',
+    phrasesDescB: '300+ subjects with real-life English/Vietnamese sentences and audio.',
     dictTitleB: 'Dictionary',
     dictDescB: 'Look up 10,000 common Vietnamese–English words with part of speech and examples.',
     lessonsTitleB: 'Lessons',
@@ -232,8 +238,14 @@ export const t = {
     lessonsPageSub: '40 bilingual exchanges per lesson',
 
     // Phrases
-    phrasesPageTitle: 'Common Phrases',
-    phrasesPageSub: '80+ practical everyday phrases by topic',
+    phrasesPageTitle: 'Common Sentences',
+    phrasesPageSub: '300+ subjects, each with many real-life sentences',
+    phrasesSearch: 'Search subjects or sentences…',
+    phrasesAll: 'All',
+    phrasesSubjects: 'subjects',
+    phrasesSentences: 'sentences',
+    phrasesBack: 'Back',
+    phrasesNoResult: 'No results found.',
 
     // Parts of speech
     posPageTitle: 'Parts of Speech',

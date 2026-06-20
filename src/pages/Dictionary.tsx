@@ -11,8 +11,8 @@ import Flashcard from '../components/Flashcard'
 import dictionaryData from '../data/dictionary.json'
 import type { DictEntry } from '../types'
 import { getDirection } from '../lib/storage'
+import { useAuth } from '../context/useAuth'
 import { POS_LABEL, POS_COLOR } from '../lib/pos'
-import { useAuth } from '../context/AuthContext'
 
 const ENTRIES = dictionaryData as DictEntry[]
 
@@ -22,8 +22,7 @@ const MAX_RESULTS = 100
 type Tab = 'search' | 'flashcard'
 
 export default function Dictionary() {
-  const { user: authUser } = useAuth()
-  const user = authUser!
+  const { user } = useAuth()
   const dir = getDirection()
   const isA = dir === 'A'
   const [tab, setTab] = useState<Tab>('search')
@@ -49,6 +48,9 @@ export default function Dictionary() {
     const all = [...starts, ...contains]
     return { results: all.slice(0, MAX_RESULTS), totalMatches: all.length }
   }, [query, pos])
+
+  // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
+  if (!user) return null
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -155,13 +157,13 @@ export default function Dictionary() {
                     <div className="mt-2 pl-3 border-l-2 border-zinc-700 space-y-1">
                       {/* Câu tiếng Anh + nút đọc */}
                       <div className="flex items-start gap-1.5">
-                        <SpeakButton text={e.ex_en} lang="en" title="Nghe câu tiếng Anh" size="xs" />
+                        <SpeakButton text={e.ex_en} lang="en-US" title="Nghe câu tiếng Anh" size="xs" />
                         <p className="text-xs text-zinc-400 italic leading-relaxed">{e.ex_en}</p>
                       </div>
                       {/* Câu tiếng Việt + nút đọc */}
                       {e.ex_vi && (
                         <div className="flex items-start gap-1.5">
-                          <SpeakButton text={e.ex_vi} lang="vi" title="Nghe câu tiếng Việt" size="xs" />
+                          <SpeakButton text={e.ex_vi} lang="vi-VN" title="Nghe câu tiếng Việt" size="xs" />
                           <p className="text-xs text-zinc-500 leading-relaxed">{e.ex_vi}</p>
                         </div>
                       )}

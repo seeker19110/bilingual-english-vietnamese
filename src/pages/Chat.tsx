@@ -3,7 +3,8 @@ import { Send, Plus, ChevronDown, Sparkles } from 'lucide-react'
 import Layout from '../components/Layout'
 import SpeakButton from '../components/SpeakButton'
 import { saveChatSession, getChatSessions, getUsage, incrementUsage, getDirection } from '../lib/storage'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
+import { useCloudSync } from '../lib/useCloudSync'
 import { callClaude } from '../lib/ai'
 import { chatSystemPrompt, situationLabel } from '../prompts'
 import { SITUATIONS, LEVELS, LIMITS, type Level, type ChatSession, type Message, type Direction } from '../types'
@@ -98,8 +99,8 @@ function SetupScreen({ onStart, loading, error, dir }: {
 function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direction }) {
   // Chiều A: AI nói tiếng Anh, giải thích tiếng Việt
   // Chiều B: AI nói tiếng Việt, giải thích tiếng Anh
-  const speechLang = dir === 'A' ? 'en' as const : 'vi' as const
-  const feedbackLang = dir === 'A' ? 'vi' as const : 'en' as const
+  const speechLang = dir === 'A' ? 'en-US' as const : 'vi-VN' as const
+  const feedbackLang = dir === 'A' ? 'vi-VN' as const : 'en-US' as const
   const isA = dir === 'A'
 
   if (msg.role === 'user') {
@@ -136,7 +137,7 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
           {speechText && (
             <div className="flex justify-end mt-1.5">
               <SpeakButton text={speechText} lang={speechLang}
-                title={isA ? 'Nghe tiếng Anh' : 'Nghe tiếng Việt'} size="xs" cache={false} />
+                title={isA ? 'Nghe tiếng Anh' : 'Nghe tiếng Việt'} size="xs" />
             </div>
           )}
         </div>
@@ -147,7 +148,7 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
               <span className="text-amber-400 font-bold shrink-0 mt-0.5">✅</span>
               <span className="text-amber-200 flex-1">{feedbackText}</span>
               <SpeakButton text={feedbackText} lang={feedbackLang}
-                title={isA ? 'Nghe tiếng Việt' : 'Hear in English'} size="xs" cache={false} />
+                title={isA ? 'Nghe tiếng Việt' : 'Hear in English'} size="xs" />
             </div>
           </div>
         )}
@@ -173,8 +174,8 @@ function TypingDots() {
 
 // ── Main Chat page ────────────────────────────────────────────────────────────
 export default function Chat() {
-  const { user: authUser } = useAuth()
-  const user = authUser!
+  const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
+  useCloudSync(user.id)          // kéo lịch sử + lượt dùng từ Supabase khi mở trang
   const dir = getDirection()
   const isA = dir === 'A'
 

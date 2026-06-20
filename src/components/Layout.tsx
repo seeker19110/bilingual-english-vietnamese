@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, LogOut, BookOpen } from 'lucide-react'
+import { logout } from '../lib/auth'
 import { getUsage } from '../lib/storage'
 import { LIMITS } from '../types'
-import { useLang } from '../context/LangContext'
-import { useAuth } from '../context/AuthContext'
+import { useLang } from '../context/useLang'
+import { useAuth } from '../context/useAuth'
 
 interface Props {
   title: string
@@ -13,13 +14,13 @@ interface Props {
 
 export default function Layout({ title, subtitle, back = true }: Props) {
   const nav = useNavigate()
-  const { user, signOut } = useAuth()
+  const { user } = useAuth()
   const usage = user ? getUsage(user.id) : null
   const limit = user ? LIMITS[user.plan] : null
-  const { lang, toggleLang, T } = useLang()
+  const { T } = useLang()
 
   async function handleLogout() {
-    await signOut()
+    await logout()
     nav('/login')
   }
 
@@ -33,7 +34,7 @@ export default function Layout({ title, subtitle, back = true }: Props) {
         {/* Back / Logo */}
         {back ? (
           <button onClick={() => nav('/')}
-            className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition shrink-0 -ml-1 p-1 rounded-lg hover:bg-zinc-800/50">
+            className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition shrink-0 -ml-1 p-3 rounded-lg hover:bg-zinc-800/50">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:inline">{T.home}</span>
           </button>
@@ -70,16 +71,6 @@ export default function Layout({ title, subtitle, back = true }: Props) {
           </>
         )}
 
-        {/* Nút chuyển ngôn ngữ giao diện */}
-        <button
-          onClick={toggleLang}
-          title={lang === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt'}
-          className="flex items-center gap-1.5 bg-zinc-800/70 hover:bg-zinc-700/80 border border-zinc-700/50 hover:border-zinc-600 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all active:scale-95 shrink-0"
-        >
-          <span className="text-sm leading-none">{lang === 'vi' ? '🇻🇳' : '🇬🇧'}</span>
-          <span className="text-zinc-300">{lang === 'vi' ? 'Tiếng Việt' : 'English'}</span>
-        </button>
-
         {/* User avatar + logout */}
         {user && (
           <div className="flex items-center gap-1 shrink-0">
@@ -87,7 +78,7 @@ export default function Layout({ title, subtitle, back = true }: Props) {
               {user.name[0]?.toUpperCase()}
             </div>
             <button onClick={handleLogout}
-              className="text-zinc-600 hover:text-red-400 transition p-2.5 rounded-lg hover:bg-red-400/10"
+              className="text-zinc-600 hover:text-red-400 transition p-3 rounded-lg hover:bg-red-400/10"
               title={T.logout}>
               <LogOut className="w-3.5 h-3.5" />
             </button>

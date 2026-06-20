@@ -1,11 +1,11 @@
-import type { ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Direction } from '../types'
+import type { User, ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Direction } from '../types'
+// Mỗi lần lưu xuống localStorage, ta cũng đẩy bản ghi lên Supabase (bắn rồi quên)
+import { pushChatSession, pushWritingSub, pushSpeakingSession, pushUsage } from './cloud'
 
 // ─── Keys ────────────────────────────────────────────────────────────────────
-// Đăng nhập/đăng ký THẬT giờ dùng Supabase Auth — xem src/context/AuthContext.tsx
-// (src/lib/supabaseClient.ts). File này chỉ còn lưu DỮ LIỆU HỌC TẬP (lịch sử
-// chat/viết/nói, số lượt dùng, chiều học) ở localStorage, khoá theo userId lấy
-// từ Supabase (uid thật, ổn định) thay vì id tự sinh cũ.
 const K = {
+  currentUser: 'et_current_user',
+  users: 'et_users',
   chatSessions: (uid: string) => `et_chat_${uid}`,
   writingSubs: (uid: string) => `et_writing_${uid}`,
   speakingSessions: (uid: string) => `et_speaking_${uid}`,
@@ -23,6 +23,64 @@ function set<T>(key: string, val: T) {
   localStorage.setItem(key, JSON.stringify(val))
 }
 
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+// LƯU Ý BẢO MẬT: hashPassword() và verifyPassword() đã bị XÓA vì dùng btoa()
+// (base64 — không phải hashing thật, có thể đảo ngược dễ dàng).
+// Xác thực thật sự được xử lý qua Supabase Auth (src/lib/auth.ts).
+// Các hàm register/login/logout bên dưới chỉ còn dùng để quản lý localStorage guest user.
+
+export function register(email: string, name: string, _password: string): User | null {
+  void _password // không còn dùng — giữ lại tham số để không phải sửa nơi gọi
+  const users = get<(User & { pwHash?: string })[]>(K.users) ?? []
+  if (users.find(u => u.email === email)) return null // email đã tồn tại
+  const user: User = { id: crypto.randomUUID(), email, name, plan: 'free', createdAt: Date.now() }
+  users.push({ ...user })
+  set(K.users, users)
+  set(K.currentUser, user)
+  return user
+}
+
+export function login(email: string, _password: string): User | null {
+  void _password // không còn dùng — giữ lại tham số để không phải sửa nơi gọi
+  // Tìm theo email — không còn kiểm tra password vì storage.ts không dùng cho auth thật
+  // (auth thật dùng Supabase — xem src/lib/auth.ts)
+  const users = get<(User & { pwHash?: string })[]>(K.users) ?? []
+  const found = users.find(u => u.email === email)
+  if (!found) return null
+  const { pwHash: _pw, ...user } = found
+  void _pw
+  set(K.currentUser, user)
+  return user
+}
+
+export function logout() {
+  localStorage.removeItem(K.currentUser)
+}
+
+export function getCurrentUser(): User | null {
+  return get<User>(K.currentUser)
+}
+
+// ─── Tài khoản mặc định "everyone" ───────────────────────────────────────────
+// Khi chạy app lần đầu (hoặc chưa đăng nhập), tự động tạo và đăng nhập
+// vào tài khoản dùng chung này để không cần màn hình login.
+const GUEST_EMAIL = 'everyone@tutor.local'
+const GUEST_PASSWORD = 'everyone'
+const GUEST_NAME = 'Khách'
+
+export function ensureDefaultUser(): User {
+  const current = getCurrentUser()
+  if (current) return current
+
+  // Thử đăng nhập tài khoản đã tồn tại
+  const existing = login(GUEST_EMAIL, GUEST_PASSWORD)
+  if (existing) return existing
+
+  // Chưa có → tạo mới
+  const created = register(GUEST_EMAIL, GUEST_NAME, GUEST_PASSWORD)
+  return created! // luôn thành công vì email chưa tồn tại
+}
+
 // ─── Chat ─────────────────────────────────────────────────────────────────────
 export function getChatSessions(userId: string): ChatSession[] {
   return get<ChatSession[]>(K.chatSessions(userId)) ?? []
@@ -34,6 +92,7 @@ export function saveChatSession(session: ChatSession) {
   if (idx >= 0) all[idx] = session
   else all.unshift(session)
   set(K.chatSessions(session.userId), all)
+  pushChatSession(session) // đồng bộ lên Supabase
 }
 
 // ─── Writing ──────────────────────────────────────────────────────────────────
@@ -47,6 +106,7 @@ export function saveWritingSub(sub: WritingSubmission) {
   if (idx >= 0) all[idx] = sub
   else all.unshift(sub)
   set(K.writingSubs(sub.userId), all)
+  pushWritingSub(sub) // đồng bộ lên Supabase
 }
 
 // ─── Speaking ─────────────────────────────────────────────────────────────────
@@ -60,6 +120,7 @@ export function saveSpeakingSession(session: SpeakingSession) {
   if (idx >= 0) all[idx] = session
   else all.unshift(session)
   set(K.speakingSessions(session.userId), all)
+  pushSpeakingSession(session) // đồng bộ lên Supabase
 }
 
 // ─── Usage ────────────────────────────────────────────────────────────────────
@@ -76,6 +137,7 @@ export function incrementUsage(userId: string, field: 'chatCount' | 'writingCoun
   const usage = getUsage(userId)
   usage[field]++
   set(K.usage(userId, todayStr()), usage)
+  pushUsage(userId, usage) // đồng bộ số lượt lên Supabase
 }
 
 // ─── Direction (chiều học) ────────────────────────────────────────────────────

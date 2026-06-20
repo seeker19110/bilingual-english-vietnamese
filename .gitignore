@@ -1,6 +1,12 @@
 node_modules
 dist
 .env
+logs/
+
+# File audio cache khi STORAGE_DRIVER=local (xem api/_lib/fileStorage.ts) — tự tạo lại
+# được từ Google TTS, không cần commit lên Git.
+uploads/
+scripts/prefetch-tts-errors.json
 .env.local
 *.local
 
@@ -11,11 +17,13 @@ scripts/seed-errors.json
 /bilingual-english-vietnamese/
 
 # Build/verify tạm thời & cache — không commit
-dist_verify_tmp/
-dist_verify_tmp2/
-dist_verify_tmp3/
+dist_verify_tmp*/
 vite.config.ts.timestamp-*.mjs
 tsconfig.node.tsbuildinfo
 
 # Bản sao lưu từ điển tạm khi mở rộng lên 10.000 từ
 src/data/dictionary.backup.json
+.claude/
+
+# File cũ đã xóa khỏi project, giữ tạm trên đĩa do hạn chế của sandbox — không commit
+.trash/

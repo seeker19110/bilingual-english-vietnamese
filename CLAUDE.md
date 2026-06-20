@@ -21,7 +21,7 @@ Ba chế độ:
 - Frontend: React + Vite + TypeScript + Tailwind CSS (mã do Lovable sinh ra).
 - Backend & dữ liệu: **Supabase** (đăng nhập, lưu user, lịch sử học, số lượt còn lại).
 - AI: gọi API qua biến môi trường — bắt đầu bằng model rẻ (Gemini Flash / Claude Haiku).
-- Deploy: Vercel.
+- Deploy: VPS Ubuntu (Express `server.ts` + PM2 + Nginx + Let's Encrypt) — xem `docs/deploy-vps-ubuntu.md`.
 - Giọng nói song ngữ: speech-to-text (gpt-4o-mini-transcribe / Deepgram) + text-to-speech **hai giọng** — giọng Anh cho hội thoại + giọng Việt (Azure Neural) cho phần giải thích. AI trả về JSON tách riêng `speech_en` và `feedback_vi` để đọc đúng tiếng.
 
 ## 3. Quy ước khi viết code
@@ -45,13 +45,21 @@ Ba chế độ:
 - Ưu tiên giải pháp miễn phí / chi phí thấp vì dự án vốn tối thiểu.
 
 ## 6. Trạng thái hiện tại
-- [ ] Khởi tạo project + đăng nhập (Supabase)
-- [ ] Chế độ Chat (MVP)
-- [ ] Chế độ Luyện viết + chấm điểm (MVP)
-- [ ] Giới hạn lượt + gói trả phí
-- [ ] Deploy lên Vercel
-- [ ] Chế độ Luyện nói song ngữ (STT + TTS giọng Anh + giọng Việt) — tính năng chính
-- [ ] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng)
-- [ ] (v2) Theo dõi tiến bộ, streak, chấm phát âm
+> Cập nhật 2026-06-20.
+- [x] Khởi tạo project + đăng nhập (Supabase Auth đã chạy thật — `lib/auth.ts`, `AuthProvider`)
+- [x] Chế độ Chat (MVP) — gọi AI thật qua `/api/claude` (edge function ép model + token)
+- [x] Chế độ Luyện viết + chấm điểm (MVP) — chấm kiểu IELTS
+- [~] Giới hạn lượt + gói trả phí — lượt dùng đã đồng bộ lên Supabase (`daily_usage`); gói `plan` đọc từ bảng `profiles`; thanh toán Pro chưa có
+- [~] Deploy VPS (Express `server.ts` + PM2 + Nginx) — đã có code + hướng dẫn (`docs/deploy-vps-ubuntu.md`), CHƯA deploy lên server thật
+- [x] Đồng bộ Supabase — chat/viết/nói/lượt dùng lưu lên DB (RLS), login Supabase thống nhất cho mọi trang. Xem `SUPABASE_SYNC_SETUP.md` + `supabase/schema.sql`
+- [~] Chế độ Luyện nói song ngữ — TTS chính đã đổi sang Google Cloud TTS qua `/api/tts` (audio cache **mã hóa AES-256-GCM** trên Supabase Storage, bắt buộc đăng nhập mới lấy được khoá giải mã), Web Speech API chỉ còn là fallback khi lỗi mạng/server. STT thật (nghe người dùng nói) vẫn chưa làm.
+- [x] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng) — `lib/direction.ts`
+- [~] (v2) Theo dõi tiến bộ, streak, chấm phát âm — đã có streak, WordOfTheDay, Flashcard, cache phát âm (`api/pronunciation.ts`); chấm phát âm chưa làm
+
+### Việc còn dang dở / cần quyết định
+1. STT (nghe người dùng nói) vẫn chưa làm thật — phần TTS đã xong (Google Cloud TTS, mã hóa AES-256-GCM, cache dùng chung qua bảng `tts_cache`/bucket `tts-cache`).
+2. Chưa deploy production lên VPS thật (code/hướng dẫn đã có, xem `docs/deploy-vps-ubuntu.md`).
+
+Chú thích: `[x]` xong · `[~]` làm một phần · `[ ]` chưa làm.
 
 > Tham khảo kế hoạch đầy đủ: file `App-Gia-Su-Tieng-Anh-AI.md` trong cùng thư mục.

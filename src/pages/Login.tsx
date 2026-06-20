@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BookOpen, Eye, EyeOff, Mic, PenLine, MessageCircle } from 'lucide-react'
-import { useAuth } from '../context/AuthContext'
+import { login, register } from '../lib/auth'
+import { useAuth } from '../context/useAuth'
 
 const FEATURES = [
   { icon: MessageCircle, label: 'Chat với gia sư AI', color: 'text-emerald-400' },
@@ -11,42 +12,37 @@ const FEATURES = [
 
 export default function Login() {
   const nav = useNavigate()
-  const { user, signIn, signUp } = useAuth()
+  const { user, refresh } = useAuth()
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [error, setError] = useState('')
-  const [info, setInfo] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Đã có session (vừa đăng nhập xong, hoặc mở lại app khi còn phiên cũ) → vào trang chính.
-  useEffect(() => {
-    if (user) nav('/')
-  }, [user, nav])
+  // Đã đăng nhập → về trang chủ
+  if (user) { nav('/'); return null }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
-    setInfo('')
     setLoading(true)
-
-    if (mode === 'register') {
-      if (!name.trim()) { setError('Vui lòng nhập tên.'); setLoading(false); return }
-      const result = await signUp(email.trim(), password, name.trim())
-      setLoading(false)
-      if (result.error) { setError(result.error); return }
-      if (result.needsEmailConfirm) {
-        setInfo('Đã tạo tài khoản — kiểm tra email để xác nhận trước khi đăng nhập.')
-        setMode('login')
-        return
+    try {
+      if (mode === 'register') {
+        if (!name.trim()) { setError('Vui lòng nhập tên.'); return }
+        const u = await register(email.trim(), name.trim(), password)
+        if (!u) { setError('Email đã được dùng hoặc không hợp lệ. Hãy thử email khác.'); return }
+      } else {
+        const u = await login(email.trim(), password)
+        if (!u) { setError('Email hoặc mật khẩu không đúng.'); return }
       }
-      // Không cần xác nhận email (project tắt "Confirm email") → useEffect ở trên tự chuyển trang.
-    } else {
-      const result = await signIn(email.trim(), password)
+      await refresh()
+      nav('/')
+    } catch {
+      setError('Lỗi kết nối. Vui lòng thử lại.')
+    } finally {
       setLoading(false)
-      if (result.error) { setError(result.error); return }
     }
   }
 
@@ -110,11 +106,6 @@ export default function Login() {
               {error}
             </div>
           )}
-          {info && (
-            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-3 py-2 text-xs text-emerald-400">
-              {info}
-            </div>
-          )}
 
           <button type="submit" disabled={loading}
             className="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:opacity-50 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] mt-1 shadow-lg shadow-emerald-500/20">
@@ -126,7 +117,7 @@ export default function Login() {
         </form>
 
         <p className="text-center text-xs text-zinc-600 mt-4">
-          Tài khoản bảo mật qua Supabase · Lịch sử học lưu trên máy bạn
+          Dữ liệu lưu trên máy bạn · Hoàn toàn riêng tư
         </p>
       </div>
 

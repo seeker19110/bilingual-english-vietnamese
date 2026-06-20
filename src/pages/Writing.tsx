@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { PenLine, Send, RotateCcw, ChevronDown, Trophy } from 'lucide-react'
 import Layout from '../components/Layout'
 import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../lib/storage'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
+import { useCloudSync } from '../lib/useCloudSync'
 import { callClaude, parseJson } from '../lib/ai'
 import { writingSystemPrompt } from '../prompts'
 import { LIMITS, type WritingSubmission, type Direction } from '../types'
@@ -143,8 +144,8 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
 }
 
 export default function Writing() {
-  const { user: authUser } = useAuth()
-  const user = authUser!
+  const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
+  useCloudSync(user.id)          // kéo lượt dùng từ Supabase khi mở trang
   const dir: Direction = getDirection()
   const isA = dir === 'A'
   const samplePrompts = isA ? SAMPLE_PROMPTS_A : SAMPLE_PROMPTS_B

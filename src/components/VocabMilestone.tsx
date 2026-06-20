@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { Trophy, Target } from 'lucide-react'
 import { getLearnedCount } from '../lib/vocab'
 
@@ -19,7 +19,12 @@ const GOAL = MILESTONES[MILESTONES.length - 1].count // mốc cuối = 8000
 
 // Thanh tiến độ hiển thị số từ đã thuộc so với các mốc 1k/3k/5k/8k.
 export default function VocabMilestone({ userId, refreshKey }: Props) {
-  const learned = useMemo(() => getLearnedCount(userId), [userId, refreshKey])
+  const [learned, setLearned] = useState(() => getLearnedCount(userId))
+
+  // Tính lại khi userId hoặc refreshKey đổi (sau khi học flashcard)
+  useEffect(() => {
+    setLearned(getLearnedCount(userId))
+  }, [userId, refreshKey])
 
   // % vị trí trên thanh (giới hạn tối đa 100%)
   const pct = Math.min(100, (learned / GOAL) * 100)
