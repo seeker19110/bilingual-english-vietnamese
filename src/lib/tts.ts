@@ -84,8 +84,16 @@ export function stopSpeaking() {
   window.speechSynthesis.cancel()
 }
 
-// Đọc tuần tự: English → Vietnamese (hai giọng riêng)
-export async function speakBilingual(speechEn: string, feedbackVi: string) {
-  if (speechEn) await speak(speechEn, 'en')
-  if (feedbackVi) await speak(feedbackVi, 'vi')
+// Đọc tuần tự: speech (ngôn ngữ đích) → feedback (ngôn ngữ mẹ đẻ)
+// speechLang: 'en-US' hoặc 'vi-VN' | feedbackLang: ngược lại
+export async function speakBilingual(
+  speech: string,
+  feedback: string,
+  speechLang: 'en-US' | 'vi-VN' = 'en-US',
+  feedbackLang: 'en-US' | 'vi-VN' = 'vi-VN',
+) {
+  const sLang = speechLang.startsWith('en') ? 'en' as const : 'vi' as const
+  const fLang = feedbackLang.startsWith('en') ? 'en' as const : 'vi' as const
+  if (speech)   await speak(speech, sLang)
+  if (feedback) await speak(feedback, fLang)
 }

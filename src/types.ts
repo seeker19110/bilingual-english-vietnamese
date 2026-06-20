@@ -74,18 +74,19 @@ export const LIMITS: Record<Plan, { chat: number; writing: number; speaking: num
   pro:  { chat: 999, writing: 30, speaking: 60 },
 }
 
-export const SITUATIONS = [
-  { value: 'job_interview',    label: 'Phỏng vấn xin việc' },
-  { value: 'restaurant',       label: 'Gọi món tại nhà hàng' },
-  { value: 'hotel_travel',     label: 'Du lịch / khách sạn' },
-  { value: 'office_meeting',   label: 'Họp / thuyết trình' },
-  { value: 'shopping',         label: 'Mua sắm' },
-  { value: 'small_talk',       label: 'Tán gẫu / xã giao' },
-  { value: 'free',             label: 'Tự do — chủ đề bất kỳ' },
-] as const
+// Chiều A: nhãn tiếng Việt | Chiều B: nhãn tiếng Anh
+export const SITUATIONS: { value: string; labelA: string; labelB: string }[] = [
+  { value: 'job_interview',    labelA: 'Phỏng vấn xin việc',       labelB: 'Job Interview' },
+  { value: 'restaurant',       labelA: 'Gọi món tại nhà hàng',     labelB: 'Ordering at a Restaurant' },
+  { value: 'hotel_travel',     labelA: 'Du lịch / khách sạn',      labelB: 'Travel / Hotel' },
+  { value: 'office_meeting',   labelA: 'Họp / thuyết trình',       labelB: 'Meeting / Presentation' },
+  { value: 'shopping',         labelA: 'Mua sắm',                   labelB: 'Shopping' },
+  { value: 'small_talk',       labelA: 'Tán gẫu / xã giao',        labelB: 'Small Talk' },
+  { value: 'free',             labelA: 'Tự do — chủ đề bất kỳ',   labelB: 'Free Topic' },
+]
 
-export const LEVELS: { value: Level; label: string; desc: string }[] = [
-  { value: 'beginner',     label: 'Cơ bản',   desc: 'A1–A2, câu đơn giản' },
-  { value: 'intermediate', label: 'Trung cấp', desc: 'B1–B2, giao tiếp thường ngày' },
-  { value: 'advanced',     label: 'Nâng cao',  desc: 'C1+, diễn đạt phức tạp' },
+export const LEVELS: { value: Level; labelA: string; labelB: string; descA: string; descB: string }[] = [
+  { value: 'beginner',     labelA: 'Cơ bản',    labelB: 'Beginner',     descA: 'A1–A2, câu đơn giản',          descB: 'A1–A2, simple sentences' },
+  { value: 'intermediate', labelA: 'Trung cấp', labelB: 'Intermediate', descA: 'B1–B2, giao tiếp thường ngày', descB: 'B1–B2, everyday conversation' },
+  { value: 'advanced',     labelA: 'Nâng cao',  labelB: 'Advanced',     descA: 'C1+, diễn đạt phức tạp',      descB: 'C1+, complex expression' },
 ]
