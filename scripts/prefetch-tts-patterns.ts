@@ -20,6 +20,7 @@
 //
 // Chạy: npm run prefetch:tts-patterns
 // Debug 1 câu: LIMIT=1 npm run prefetch:tts-patterns
+// Ghi đè cache cũ (vd. cache hỏng/thiếu giọng): npm run prefetch:tts-patterns -- --force
 
 import * as crypto from 'node:crypto'
 import * as dotenv from 'dotenv'
@@ -47,6 +48,11 @@ const ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/prefetch-tts-errors.json')
 // URL gốc của server — chỉ cần khi STORAGE_DRIVER=local (lưu file lên VPS) để tạo link đầy đủ.
 // Khi dùng Supabase Storage (mặc định) thì biến này bị bỏ qua.
 const BASE_URL = process.env.BASE_URL || ''
+
+// --force (hoặc FORCE=1): tạo lại + GHI ĐÈ tất cả, kể cả câu đã có trong tts_cache.
+// Dùng khi cache cũ bị hỏng (vd. file seed cũ chưa mã hóa / thiếu giọng) — bỏ qua bước
+// kiểm tra cache để chắc chắn mọi bản ghi được tạo lại đúng luồng api/tts.ts.
+const FORCE = process.argv.includes('--force') || process.env.FORCE === '1'
 
 // 1 tác vụ = tạo audio cho 1 (câu, ngôn ngữ, giọng) cụ thể.
 interface Task {
@@ -101,14 +107,17 @@ async function processTask(task: Task): Promise<{ status: 'ok' | 'skip' } | { st
   try {
     const supabase = getSupabaseAdmin()
 
-    // Kiểm tra cache trước để không tốn tiền TTS với câu đã có
-    const { data: cached } = await supabase
-      .from('tts_cache')
-      .select('audio_url')
-      .eq('hash', hash)
-      .maybeSingle()
+    // Kiểm tra cache trước để không tốn tiền TTS với câu đã có.
+    // Bỏ qua bước này khi --force để tạo lại + ghi đè bản ghi cũ (vd. cache hỏng).
+    if (!FORCE) {
+      const { data: cached } = await supabase
+        .from('tts_cache')
+        .select('audio_url')
+        .eq('hash', hash)
+        .maybeSingle()
 
-    if (cached) return { status: 'skip' }
+      if (cached) return { status: 'skip' }
+    }
 
     // Gọi Google TTS → mp3 gốc
     const audioBuffer = await generateAudioFromGoogle(text, voice, lang)
@@ -157,7 +166,7 @@ async function main(): Promise<void> {
 
   console.log('🔊 Bắt đầu pre-generate TTS cho patterns.ts (cả 2 giọng)\n')
   console.log(`📋 Tổng tác vụ cần xử lý: ${tasks.length} (en-US + vi-VN × ${VOICE_IDS.join('/')})`)
-  console.log(`⚙️  Batch size: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms\n`)
+  console.log(`⚙️  Batch size: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms${FORCE ? ' | ⚠️  FORCE: ghi đè cache cũ' : ''}\n`)
 
   const bar = new cliProgress.SingleBar(
     {
