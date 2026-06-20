@@ -5,7 +5,7 @@ import Layout from '../components/Layout'
 import { getCurrentUser, getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { LIMITS } from '../types'
 import type { Direction } from '../types'
-import { useLang } from '../context/LangContext'
+import { useLang } from '../context/useLang'
 
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
 function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {

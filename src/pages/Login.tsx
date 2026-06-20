@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BookOpen, Eye, EyeOff, Mic, PenLine, MessageCircle } from 'lucide-react'
-import { login, register, getCurrentUser } from '../lib/storage'
+import { login, register } from '../lib/auth'
+import { useAuth } from '../context/useAuth'
 
 const FEATURES = [
   { icon: MessageCircle, label: 'Chat với gia sư AI', color: 'text-emerald-400' },
@@ -11,6 +12,7 @@ const FEATURES = [
 
 export default function Login() {
   const nav = useNavigate()
+  const { user, refresh } = useAuth()
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -19,26 +21,29 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    if (getCurrentUser()) nav('/')
-  }, [nav])
+  // Đã đăng nhập → về trang chủ
+  if (user) { nav('/'); return null }
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
     setLoading(true)
-    setTimeout(() => {
+    try {
       if (mode === 'register') {
-        if (!name.trim()) { setError('Vui lòng nhập tên.'); setLoading(false); return }
-        const user = register(email.trim(), name.trim(), password)
-        if (!user) { setError('Email đã được dùng. Hãy đăng nhập.'); setLoading(false); return }
-        nav('/')
+        if (!name.trim()) { setError('Vui lòng nhập tên.'); return }
+        const u = await register(email.trim(), name.trim(), password)
+        if (!u) { setError('Email đã được dùng hoặc không hợp lệ. Hãy thử email khác.'); return }
       } else {
-        const user = login(email.trim(), password)
-        if (!user) { setError('Email hoặc mật khẩu không đúng.'); setLoading(false); return }
-        nav('/')
+        const u = await login(email.trim(), password)
+        if (!u) { setError('Email hoặc mật khẩu không đúng.'); return }
       }
-    }, 300)
+      await refresh()
+      nav('/')
+    } catch {
+      setError('Lỗi kết nối. Vui lòng thử lại.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputCls = "w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-500 outline-none focus:border-emerald-500/70 focus:bg-zinc-800 transition"
