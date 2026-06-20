@@ -13,6 +13,7 @@
 
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
 import { generateAudioFromGoogle, isValidVoice, DEFAULT_VOICE, type Lang } from './_lib/googleTts'
+import { saveAudio } from './_lib/fileStorage'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -118,22 +119,18 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500, allHeaders)
   }
 
-  // ── BƯỚC 3: Upload lên Supabase Storage (bucket "tts-cache") ───────────────
+  // ── BƯỚC 3: Lưu file audio (local VPS hoặc Supabase Storage tùy STORAGE_DRIVER) ──
   const fileName = `${lang}/${voice}/${textHash}.mp3`
-  const { error: uploadError } = await supabase.storage
-    .from('tts-cache')
-    .upload(fileName, audioData, {
-      contentType: 'audio/mpeg',
-      upsert: true,
-    })
+  const origin = req.headers.get('origin') || ''
 
-  if (uploadError) {
-    return jsonResponse({ error: `Upload thất bại: ${uploadError.message}` }, 500, allHeaders)
+  let audioUrl: string
+  try {
+    audioUrl = await saveAudio('tts-cache', fileName, audioData, origin)
+  } catch (err) {
+    return jsonResponse({ error: `Lưu file thất bại: ${(err as Error).message}` }, 500, allHeaders)
   }
 
   // ── BƯỚC 4: Lưu vào DB ─────────────────────────────────────────────────────
-  const { data: urlData } = supabase.storage.from('tts-cache').getPublicUrl(fileName)
-  const audioUrl = urlData.publicUrl
 
   const { error: insertError } = await supabase
     .from('tts_cache')
