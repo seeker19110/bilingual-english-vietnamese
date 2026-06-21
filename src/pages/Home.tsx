@@ -51,6 +51,16 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       desc:  isA ? T.lessonsDescA  : T.lessonsDescB,
     },
     {
+      path: '/phrases',
+      icon: MessagesSquare,
+      gradient: 'from-teal-500 to-emerald-400',
+      glow: 'shadow-teal-500/20',
+      ring: 'hover:border-teal-500/40',
+      tag: { label: T.tagUnlimited, cls: 'bg-teal-500/15 text-teal-300 border border-teal-500/20' },
+      title: isA ? T.phrasesTitleA : T.phrasesTitleB,
+      desc:  isA ? T.phrasesDescA  : T.phrasesDescB,
+    },
+    {
       path: '/chat',
       icon: MessageCircle,
       gradient: 'from-emerald-500 to-teal-400',
@@ -79,16 +89,6 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       tag: { label: 'IELTS', cls: 'bg-violet-500/15 text-violet-300 border border-violet-500/20' },
       title: isA ? T.writeTitleA : T.writeTitleB,
       desc:  isA ? T.writeDescA  : T.writeDescB,
-    },
-    {
-      path: '/phrases',
-      icon: MessagesSquare,
-      gradient: 'from-teal-500 to-emerald-400',
-      glow: 'shadow-teal-500/20',
-      ring: 'hover:border-teal-500/40',
-      tag: { label: T.tagUnlimited, cls: 'bg-teal-500/15 text-teal-300 border border-teal-500/20' },
-      title: isA ? T.phrasesTitleA : T.phrasesTitleB,
-      desc:  isA ? T.phrasesDescA  : T.phrasesDescB,
     },
   ]
 }
