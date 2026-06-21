@@ -41,10 +41,14 @@ export const SECURITY_HEADERS: Record<string, string> = {
 // Với traffic thật nên dùng Redis (Upstash) để rate limit toàn cụm.
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 
-// Trả về true nếu được phép, false nếu vượt quá giới hạn
-export function checkRateLimit(ip: string, maxPerMin = 60): boolean {
+// Trả về true nếu được phép, false nếu vượt quá giới hạn.
+// `bucket` cho phép một IP có NHIỀU bộ đếm riêng biệt — ví dụ tách "tổng số request"
+// (kể cả cache HIT, rất rẻ) với "số lần tạo audio mới" (cache MISS, tốn tiền Google TTS).
+// Nhờ vậy người dùng phát cả bài học / tra nhiều từ đã cache vẫn mượt, mà chi phí API
+// vẫn được giới hạn chặt ở đường tạo mới. Xem cách dùng trong api/tts.ts & api/pronunciation.ts.
+export function checkRateLimit(ip: string, maxPerMin = 60, bucket = 'default'): boolean {
   const now = Date.now()
-  const key = ip
+  const key = `${bucket}:${ip}`
   const entry = rateLimitMap.get(key)
 
   if (!entry || now > entry.resetAt) {

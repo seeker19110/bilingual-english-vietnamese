@@ -1,27 +1,10 @@
-import { useState, useRef, memo } from 'react'
-import { ArrowLeft, MessageSquare, Play, Pause, Square, Volume2 } from 'lucide-react'
+import { useState, useRef, useEffect, memo } from 'react'
+import { ArrowLeft, MessageSquare, Play, Pause, Square, Volume2, Loader2 } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getDirection } from '../lib/storage'
 import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio } from '../lib/tts'
-import lessonsData from '../data/lessons.json'
+import { INDEX, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
 import type { Direction } from '../types'
-
-interface Turn {
-  speaker: 'A' | 'B'
-  en: string
-  vi: string
-}
-
-interface Lesson {
-  id: number
-  title: string
-  situation: string
-  turns: Turn[]
-  speakerAGender?: 'female' | 'male'
-  speakerBGender?: 'female' | 'male'
-}
-
-const LESSONS = lessonsData as Lesson[]
 
 type Speed = 0.75 | 1 | 1.25
 type AudioMode = 'en' | 'both' | 'vi'
@@ -69,23 +52,41 @@ const WordText = memo(function WordText({
 export default function Lessons() {
   const dir: Direction = getDirection()
   const isA = dir === 'A'
-  const [selectedId, setSelectedId] = useState<number | null>(null)
-  const selected = LESSONS.find(l => l.id === selectedId) ?? null
+  const [selectedMeta, setSelectedMeta] = useState<LessonMeta | null>(null)
+  // Nội dung đầy đủ của bài đang chọn — lazy-load qua loader (chỉ tải chunk khi cần).
+  const [lesson, setLesson] = useState<Lesson | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  // Khi chọn 1 bài: tải nội dung đầy đủ từ chunk tương ứng.
+  useEffect(() => {
+    if (!selectedMeta) { setLesson(null); return }
+    let alive = true
+    setLoading(true)
+    loadLesson(selectedMeta).then((l) => {
+      if (alive) { setLesson(l); setLoading(false) }
+    })
+    return () => { alive = false }
+  }, [selectedMeta])
 
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout
-        title={selected ? selected.title : (isA ? 'Bài học' : 'Lessons')}
-        subtitle={selected
-          ? selected.situation
-          : `${LESSONS.length} ${isA ? 'bài học xoay quanh "tôi - I"' : 'lessons focused on "I / tôi"'}`}
+        title={selectedMeta ? selectedMeta.title : (isA ? 'Bài học' : 'Lessons')}
+        subtitle={selectedMeta
+          ? selectedMeta.situation
+          : `${INDEX.length} ${isA ? 'bài học xoay quanh "tôi - I"' : 'lessons focused on "I / tôi"'}`}
       />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
-        {!selected ? (
-          <LessonList lessons={LESSONS} isA={isA} onSelect={setSelectedId} />
+        {!selectedMeta ? (
+          <LessonList lessons={INDEX} isA={isA} onSelect={setSelectedMeta} />
+        ) : loading || !lesson ? (
+          <div className="flex items-center justify-center py-20 text-zinc-500">
+            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+            {isA ? 'Đang tải bài học…' : 'Loading lesson…'}
+          </div>
         ) : (
-          <LessonView lesson={selected} isA={isA} onBack={() => setSelectedId(null)} />
+          <LessonView lesson={lesson} isA={isA} onBack={() => setSelectedMeta(null)} />
         )}
       </main>
     </div>
@@ -94,14 +95,14 @@ export default function Lessons() {
 
 // ── Danh sách bài học ─────────────────────────────────────────────────────────
 function LessonList({ lessons, isA, onSelect }: {
-  lessons: Lesson[]
+  lessons: LessonMeta[]
   isA: boolean
-  onSelect: (id: number) => void
+  onSelect: (meta: LessonMeta) => void
 }) {
   return (
     <div className="space-y-2">
       {lessons.map(l => (
-        <button key={l.id} onClick={() => onSelect(l.id)}
+        <button key={l.id} onClick={() => onSelect(l)}
           className="w-full bg-zinc-900 border border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-4 text-left flex items-center gap-4 transition group">
           <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
             <MessageSquare className="w-5 h-5 text-emerald-400" />
@@ -111,7 +112,7 @@ function LessonList({ lessons, isA, onSelect }: {
             <p className="text-xs text-zinc-500 truncate">{l.situation}</p>
           </div>
           <span className="text-[10px] px-2 py-1 rounded-full bg-zinc-800 text-zinc-400 font-medium shrink-0">
-            {l.turns.length / 2} {isA ? 'lượt' : 'exchanges'}
+            {l.turnCount / 2} {isA ? 'lượt' : 'exchanges'}
           </span>
         </button>
       ))}

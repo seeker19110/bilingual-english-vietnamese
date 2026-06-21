@@ -1,7 +1,13 @@
 // scripts/prefetch-tts-patterns.ts
-// Tạo trước (pre-generate) audio TTS chất lượng cao cho TẤT CẢ câu trong src/data/patterns/chunk-*.json,
+// Tạo trước (pre-generate) audio TTS chất lượng cao cho TẤT CẢ câu cố định trong app,
 // lưu vào Storage + bảng tts_cache — GIỐNG HỆT luồng của api/tts.ts (cùng hash, cùng mã hóa,
 // cùng cách lưu file) để dữ liệu seed dùng được ngay trên app, không bị lệch.
+//
+// Nguồn câu được seed (3 nơi):
+//   1. src/data/patterns/chunk-*.json   — câu mẫu trong CommonPhrases
+//   2. src/data/lessons.json            — hội thoại trong các bài học (/lessons)
+//   3. src/data/curriculum.ts FOUNDATION — câu thông dụng sau mỗi bài Learn (/learn)
+// Câu trùng nhau giữa các nguồn chỉ tạo 1 lần (khử trùng theo text+lang+voice).
 //
 // Tại sao cần script này?
 //   - Câu đầu tiên của mỗi câu chưa được cache sẽ phải gọi Google TTS (tốn ~1-2s).
@@ -32,6 +38,7 @@ import { generateAudioFromGoogle, VOICE_IDS, type Lang, type VoiceId } from '../
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
+import { FOUNDATION } from '../src/data/curriculum.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
@@ -93,6 +100,57 @@ function loadSubjects(): Subject[] {
   return subjects
 }
 
+// ── Nạp câu hội thoại từ src/data/lessons/chunk-*.json ──────────────────────
+// lessons.json đã được tách thành nhiều chunk (xem scripts/split-lessons.mjs) để app
+// lazy-load. Ở đây đọc thẳng các file chunk (node không dùng được import.meta.glob của Vite).
+// Mỗi bài có nhiều "turn" (lượt nói), mỗi turn có câu tiếng Anh (en) + bản dịch (vi).
+interface LessonTurn { en: string; vi: string }
+interface Lesson { turns: LessonTurn[] }
+
+function loadLessonSentences(): Sentence[] {
+  const dir = path.join(PROJECT_ROOT, 'src/data/lessons')
+  const files = fs.readdirSync(dir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+  const sentences: Sentence[] = []
+  for (const file of files) {
+    const lessons = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8')) as Lesson[]
+    for (const l of lessons) {
+      for (const t of l.turns) sentences.push({ en: t.en, vi: t.vi })
+    }
+  }
+  return sentences
+}
+
+// ── Nạp câu thông dụng từ src/data/curriculum.ts (phần FOUNDATION) ──────────
+function loadCurriculumSentences(): Sentence[] {
+  return FOUNDATION.flatMap((circle) => circle.sentences.map((s) => ({ en: s.en, vi: s.vi })))
+}
+
+// ── (Tùy chọn) Câu VÍ DỤ — chỉ seed khi INCLUDE_EXAMPLES=1 ──────────────────
+// Đây là phần TỐN KÉM NHẤT (10.000 từ trong dictionary, mỗi từ 1 câu ví dụ en+vi),
+// nên mặc định KHÔNG seed để tránh đội chi phí ngoài ý muốn. Bật khi muốn seed trọn vẹn:
+//   INCLUDE_EXAMPLES=1 npm run prefetch:tts-patterns
+interface DictEntry { ex_en?: string; ex_vi?: string }
+
+function loadExampleSentences(): Sentence[] {
+  const out: Sentence[] = []
+  // Câu ví dụ trong từ điển — đọc từ các chunk (đã tách bởi split-dictionary.mjs)
+  const dictDir = path.join(PROJECT_ROOT, 'src/data/dictionary')
+  const dictFiles = fs.readdirSync(dictDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+  for (const f of dictFiles) {
+    const dict = JSON.parse(fs.readFileSync(path.join(dictDir, f), 'utf8')) as DictEntry[]
+    for (const e of dict) {
+      if (e.ex_en || e.ex_vi) out.push({ en: e.ex_en ?? '', vi: e.ex_vi ?? '' })
+    }
+  }
+  // Câu ví dụ của từng từ trong curriculum (DictEntry có ex_en/ex_vi)
+  for (const circle of FOUNDATION) {
+    for (const word of circle.words as DictEntry[]) {
+      if (word.ex_en || word.ex_vi) out.push({ en: word.ex_en ?? '', vi: word.ex_vi ?? '' })
+    }
+  }
+  return out
+}
+
 // ── Trích xuất tất cả câu cần seed (cho cả 2 giọng) ─────────────────────────
 function collectTasks(): Task[] {
   const tasks: Task[] = []
@@ -109,11 +167,18 @@ function collectTasks(): Task[] {
     }
   }
 
-  for (const subject of loadSubjects()) {
-    for (const { en, vi } of subject.sentences) {
-      add(en, 'en-US')
-      add(vi, 'vi-VN')
-    }
+  // Gộp câu từ các nguồn — hàm add() đã tự khử trùng nên câu lặp lại chỉ seed 1 lần.
+  const includeExamples = process.env.INCLUDE_EXAMPLES === '1'
+  const allSentences: Sentence[] = [
+    ...loadSubjects().flatMap((s) => s.sentences),
+    ...loadLessonSentences(),
+    ...loadCurriculumSentences(),
+    ...(includeExamples ? loadExampleSentences() : []),
+  ]
+
+  for (const { en, vi } of allSentences) {
+    add(en, 'en-US')
+    add(vi, 'vi-VN')
   }
 
   return tasks
@@ -230,7 +295,7 @@ async function main(): Promise<void> {
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
   const tasks = allTasks.slice(0, limit)
 
-  console.log('🔊 Bắt đầu pre-generate TTS cho patterns/chunk-*.json (cả 2 giọng)')
+  console.log('🔊 Bắt đầu pre-generate TTS cho patterns + lessons.json + curriculum (cả 2 giọng)')
   console.log(`📋 Tổng tác vụ: ${tasks.length} (en-US + vi-VN × ${VOICE_IDS.join('/')})`)
   console.log(`⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | ⚠️  FORCE: ghi đè cache cũ' : ''}`)
 
