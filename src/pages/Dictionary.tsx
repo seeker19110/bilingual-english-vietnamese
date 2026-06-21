@@ -53,7 +53,7 @@ export default function Dictionary() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout
         title={isA ? 'Từ điển' : 'Dictionary'}
         subtitle={`${ENTRIES.length.toLocaleString('vi-VN')} ${isA ? 'từ thông dụng' : 'common words'}`}

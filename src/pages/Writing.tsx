@@ -55,7 +55,7 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
   const scoreGradient = overall >= 7 ? 'from-emerald-400 to-teal-300' : overall >= 5 ? 'from-amber-400 to-yellow-300' : 'from-red-400 to-orange-300'
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout title={isA ? 'Kết quả chấm bài' : 'Writing Results'} />
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-4 animate-fade-up">
 
@@ -201,7 +201,7 @@ export default function Writing() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout title={isA ? 'Luyện viết & chấm điểm' : 'Writing Practice & Grading'} />
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-4 animate-fade-up">
 

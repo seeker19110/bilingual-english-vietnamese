@@ -28,7 +28,7 @@ export default function Lessons() {
   const selected = LESSONS.find(l => l.id === selectedId) ?? null
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout
         title={selected ? selected.title : (isA ? 'Bài học' : 'Lessons')}
         subtitle={selected

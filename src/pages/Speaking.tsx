@@ -26,7 +26,7 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
   const isA = dir === 'A'
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
+    <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 overflow-y-auto">
 
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-400 flex items-center justify-center mb-5 shadow-xl shadow-sky-500/25 animate-scale-in">
         <Mic className="w-8 h-8 text-white" />
@@ -322,7 +322,7 @@ export default function Speaking() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col">
+    <div className="h-[100dvh] bg-zinc-950 flex flex-col">
       <Layout
         title={isA ? 'Luyện nói song ngữ' : 'Bilingual Speaking'}
         subtitle={session
@@ -337,7 +337,7 @@ export default function Speaking() {
         <SetupScreen onStart={startSession} dir={dir} />
       ) : (
         <>
-          <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
+          <div className="flex-1 min-h-0 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
             {session.messages.map((m, i) => (
               <SpeakBubble key={m.id} msg={m} isNew={i >= lastIdx}
                 onPlay={m.role === 'assistant' ? () => playMsg(m) : undefined} />

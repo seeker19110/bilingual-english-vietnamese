@@ -75,7 +75,7 @@ export default function CommonPhrases() {
   if (selected) {
     const c = getColor(selected.color)
     return (
-      <div className="min-h-screen bg-zinc-950">
+      <div className="min-h-dvh bg-zinc-950">
         <Layout title={selected.starter} back />
         <main className="max-w-3xl mx-auto px-4 py-6">
           <button
@@ -133,7 +133,7 @@ export default function CommonPhrases() {
   const shown = filtered.slice(0, visible)
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout title={T.phrasesPageTitle} subtitle={T.phrasesPageSub} back />
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-4">
