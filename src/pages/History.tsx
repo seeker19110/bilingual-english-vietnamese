@@ -223,7 +223,7 @@ export default function History() {
     || (tab === 'speaking' && speakings.length === 0)
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout title="Lịch sử học" />
 
       <main className="max-w-3xl mx-auto px-4 py-5">

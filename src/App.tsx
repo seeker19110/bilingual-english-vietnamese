@@ -25,7 +25,7 @@ const Learn = lazy(() => import('./pages/Learn'))
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang
 function PageLoading() {
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+    <div className="min-h-dvh bg-zinc-950 flex items-center justify-center">
       <p className="text-sm text-zinc-500">Đang tải...</p>
     </div>
   )

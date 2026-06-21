@@ -19,7 +19,7 @@ export default function PartsOfSpeech() {
   const activeCode = location.hash.slice(1)
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout title="Từ loại" subtitle="Danh từ, động từ, tính từ là gì?" />
 
       <main className="max-w-3xl mx-auto px-4 py-6">

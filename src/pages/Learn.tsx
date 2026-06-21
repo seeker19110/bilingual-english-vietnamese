@@ -42,7 +42,7 @@ export default function Learn() {
   const uid = user.id
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout
         title={isA ? 'Học theo lộ trình' : 'Learning Path'}
         subtitle={isA ? `${DAILY_GOAL} từ mới mỗi ngày` : `${DAILY_GOAL} new words a day`}
