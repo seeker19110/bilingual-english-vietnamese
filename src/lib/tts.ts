@@ -91,7 +91,7 @@ async function speakViaGoogle(
   const token = session?.access_token
   if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
 
-  const res = await fetch('/api/tts', {
+  const callTts = () => fetch('/api/tts', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -99,6 +99,14 @@ async function speakViaGoogle(
     },
     body: JSON.stringify({ text, lang, voice }),
   })
+
+  let res = await callTts()
+  // 429 = quá nhiều request (thường do phát nhiều câu liên tiếp). Đợi 1.2s rồi thử lại
+  // 1 lần trước khi rơi về Web Speech — phần lớn câu đã cache nên lần 2 thường qua.
+  if (res.status === 429) {
+    await new Promise(r => setTimeout(r, 1200))
+    res = await callTts()
+  }
 
   if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
 

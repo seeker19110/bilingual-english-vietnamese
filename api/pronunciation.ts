@@ -46,8 +46,10 @@ export default async function handler(req: Request): Promise<Response> {
   // Lấy IP để rate limit
   const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
 
-  // Rate limit: 20 request/phút (phát âm rẻ hơn AI nên cho nhiều hơn)
-  if (!checkRateLimit(clientIp, 20)) {
+  // Rate limit TỔNG: 60 request/phút mỗi IP. Hầu hết là cache HIT (tra DB, gần như miễn phí),
+  // nên hạn mức rộng để tra nhiều từ / lật nhiều thẻ liên tiếp không bị chặn. Đường tạo
+  // audio mới (tốn tiền) có hạn mức riêng, chặt hơn ở BƯỚC 2.
+  if (!checkRateLimit(clientIp, 60, 'pron')) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/pronunciation' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }
@@ -100,6 +102,14 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // ── BƯỚC 2: Cache MISS → gọi Google TTS ────────────────────
+  // Hạn mức RIÊNG cho đường tạo audio mới (tốn tiền API): 60 lần/phút mỗi IP.
+  // Audio tạo ra được lưu vào bảng `pronunciations` + Storage nên chỉ tốn tiền LẦN ĐẦU;
+  // các lần sau là cache HIT miễn phí. Hạn mức này chỉ để chặn vòng lặp lỗi bất thường.
+  if (!checkRateLimit(clientIp, 60, 'pron-gen')) {
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/pronunciation', stage: 'generate' })
+    return jsonResponse({ error: 'Quá nhiều yêu cầu tạo audio mới — thử lại sau 1 phút' }, 429, allHeaders)
+  }
+
   let audioData: ArrayBuffer
   try {
     audioData = await generateAudioFromGoogle(word, voice, 'en-US')
