@@ -128,6 +128,11 @@ export default function Home() {
     setVoicePref(v)
   }
 
+  // Bấm cả khối để đổi giọng Nữ ↔ Nam (giống ô Ngôn ngữ học)
+  function toggleVoice() {
+    chooseVoice(voice === 'female' ? 'male' : 'female')
+  }
+
   async function togglePush() {
     if (!user || pushLoading) return
     setPushL(true)
@@ -193,36 +198,23 @@ export default function Home() {
             </div>
           </button>
 
-          {/* Khối chọn giọng đọc — nhấn từng ô để chọn */}
-          <div className="flex flex-col gap-1.5 rounded-2xl px-4 py-3 border bg-zinc-900/80 border-zinc-700/60">
+          {/* Khối chọn giọng đọc — nhấn cả khối để đổi Nữ ↔ Nam */}
+          <button
+            type="button"
+            onClick={toggleVoice}
+            title={isA ? 'Nhấn để đổi giọng đọc' : 'Tap to switch voice'}
+            className="flex flex-col items-start gap-1.5 rounded-2xl px-4 py-3 border bg-zinc-900/80 border-zinc-700/60 hover:border-zinc-600 transition-all active:scale-[0.98]"
+          >
             <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wide">
               {isA ? 'Giọng đọc' : 'Voice'}
             </span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => chooseVoice('female')}
-                className={`flex-1 py-1 rounded-lg text-sm font-semibold transition-all active:scale-95 ${
-                  voice === 'female'
-                    ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/40'
-                    : 'text-zinc-500 hover:text-zinc-300 border border-transparent'
-                }`}
-              >
-                {isA ? 'Nữ' : 'Female'}
-              </button>
-              <button
-                type="button"
-                onClick={() => chooseVoice('male')}
-                className={`flex-1 py-1 rounded-lg text-sm font-semibold transition-all active:scale-95 ${
-                  voice === 'male'
-                    ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/40'
-                    : 'text-zinc-500 hover:text-zinc-300 border border-transparent'
-                }`}
-              >
-                {isA ? 'Nam' : 'Male'}
-              </button>
+            <div className="flex items-center gap-1.5">
+              <Mic className="w-3.5 h-3.5 text-zinc-400" />
+              <span className="text-sm font-semibold text-zinc-200">
+                {voice === 'female' ? (isA ? 'Nữ' : 'Female') : (isA ? 'Nam' : 'Male')}
+              </span>
             </div>
-          </div>
+          </button>
 
         </div>
 
