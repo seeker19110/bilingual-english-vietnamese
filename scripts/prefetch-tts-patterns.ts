@@ -1,7 +1,13 @@
 // scripts/prefetch-tts-patterns.ts
-// Tạo trước (pre-generate) audio TTS chất lượng cao cho TẤT CẢ câu trong src/data/patterns/chunk-*.json,
+// Tạo trước (pre-generate) audio TTS chất lượng cao cho TẤT CẢ câu cố định trong app,
 // lưu vào Storage + bảng tts_cache — GIỐNG HỆT luồng của api/tts.ts (cùng hash, cùng mã hóa,
 // cùng cách lưu file) để dữ liệu seed dùng được ngay trên app, không bị lệch.
+//
+// Nguồn câu được seed (3 nơi):
+//   1. src/data/patterns/chunk-*.json   — câu mẫu trong CommonPhrases
+//   2. src/data/lessons.json            — hội thoại trong các bài học (/lessons)
+//   3. src/data/curriculum.ts FOUNDATION — câu thông dụng sau mỗi bài Learn (/learn)
+// Câu trùng nhau giữa các nguồn chỉ tạo 1 lần (khử trùng theo text+lang+voice).
 //
 // Tại sao cần script này?
 //   - Câu đầu tiên của mỗi câu chưa được cache sẽ phải gọi Google TTS (tốn ~1-2s).
@@ -32,6 +38,7 @@ import { generateAudioFromGoogle, VOICE_IDS, type Lang, type VoiceId } from '../
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
+import { FOUNDATION } from '../src/data/curriculum.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
@@ -93,6 +100,22 @@ function loadSubjects(): Subject[] {
   return subjects
 }
 
+// ── Nạp câu hội thoại từ src/data/lessons.json ──────────────────────────────
+// Mỗi bài có nhiều "turn" (lượt nói), mỗi turn có câu tiếng Anh (en) + bản dịch (vi).
+interface LessonTurn { en: string; vi: string }
+interface Lesson { turns: LessonTurn[] }
+
+function loadLessonSentences(): Sentence[] {
+  const file = path.join(PROJECT_ROOT, 'src/data/lessons.json')
+  const lessons = JSON.parse(fs.readFileSync(file, 'utf8')) as Lesson[]
+  return lessons.flatMap((l) => l.turns.map((t) => ({ en: t.en, vi: t.vi })))
+}
+
+// ── Nạp câu thông dụng từ src/data/curriculum.ts (phần FOUNDATION) ──────────
+function loadCurriculumSentences(): Sentence[] {
+  return FOUNDATION.flatMap((circle) => circle.sentences.map((s) => ({ en: s.en, vi: s.vi })))
+}
+
 // ── Trích xuất tất cả câu cần seed (cho cả 2 giọng) ─────────────────────────
 function collectTasks(): Task[] {
   const tasks: Task[] = []
@@ -109,11 +132,16 @@ function collectTasks(): Task[] {
     }
   }
 
-  for (const subject of loadSubjects()) {
-    for (const { en, vi } of subject.sentences) {
-      add(en, 'en-US')
-      add(vi, 'vi-VN')
-    }
+  // Gộp câu từ cả 3 nguồn — hàm add() đã tự khử trùng nên câu lặp lại chỉ seed 1 lần.
+  const allSentences: Sentence[] = [
+    ...loadSubjects().flatMap((s) => s.sentences),
+    ...loadLessonSentences(),
+    ...loadCurriculumSentences(),
+  ]
+
+  for (const { en, vi } of allSentences) {
+    add(en, 'en-US')
+    add(vi, 'vi-VN')
   }
 
   return tasks
@@ -230,7 +258,7 @@ async function main(): Promise<void> {
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
   const tasks = allTasks.slice(0, limit)
 
-  console.log('🔊 Bắt đầu pre-generate TTS cho patterns/chunk-*.json (cả 2 giọng)')
+  console.log('🔊 Bắt đầu pre-generate TTS cho patterns + lessons.json + curriculum (cả 2 giọng)')
   console.log(`📋 Tổng tác vụ: ${tasks.length} (en-US + vi-VN × ${VOICE_IDS.join('/')})`)
   console.log(`⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | ⚠️  FORCE: ghi đè cache cũ' : ''}`)
 
