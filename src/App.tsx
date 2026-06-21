@@ -2,7 +2,9 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { LangProvider } from './context/LangProvider'
 import { AuthProvider } from './context/AuthProvider'
+import { ToastProvider } from './context/ToastProvider'
 import { useAuth } from './context/useAuth'
+import { CardListSkeleton } from './components/Skeleton'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import Chat from './pages/Chat'
@@ -22,11 +24,13 @@ const Lessons = lazy(() => import('./pages/Lessons'))
 // Trang Học theo lộ trình cũng dùng toàn bộ từ điển (qua lib/curriculum) — lazy-load.
 const Learn = lazy(() => import('./pages/Learn'))
 
-// Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang
+// Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
+// Hiện khung skeleton nhấp nháy thay vì chữ trơ, đỡ cảm giác đơ.
 function PageLoading() {
   return (
-    <div className="min-h-dvh bg-zinc-950 flex items-center justify-center">
-      <p className="text-sm text-zinc-500">Đang tải...</p>
+    <div className="min-h-dvh bg-zinc-950">
+      <div className="h-14 border-b border-zinc-800/60" />
+      <CardListSkeleton rows={6} />
     </div>
   )
 }
@@ -42,6 +46,7 @@ export default function App() {
   return (
     <AuthProvider>
       <LangProvider>
+        <ToastProvider>
         <BrowserRouter>
           <Suspense fallback={<PageLoading />}>
             <Routes>
@@ -60,6 +65,7 @@ export default function App() {
             </Routes>
           </Suspense>
         </BrowserRouter>
+        </ToastProvider>
       </LangProvider>
     </AuthProvider>
   )

@@ -3,12 +3,14 @@ import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send } from 'lucide-r
 import Layout from '../components/Layout'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
+import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { callClaude, parseJson } from '../lib/ai'
 import { speakingSystemPrompt, situationLabel } from '../prompts'
 import { startListening, isSTTSupported } from '../lib/stt'
 import { startRecording, isRecordingSupported, type Recorder } from '../lib/sttServer'
 import { speakBilingual, stopSpeaking, isTTSSupported } from '../lib/tts'
+import { haptics } from '../lib/haptics'
 import { SITUATIONS, LEVELS, LIMITS, type Level, type SpeakingSession, type Message, type Direction } from '../types'
 
 // JSON trả về từ AI — dùng chung cho cả 2 chiều
@@ -150,6 +152,7 @@ function TypingDots() {
 // ── Main Speaking page ────────────────────────────────────────────────────────
 export default function Speaking() {
   const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
+  const toast = useToast()
   useCloudSync(user.id)          // kéo lịch sử + lượt dùng từ Supabase khi mở trang
   const dir: Direction = getDirection()
   const isA = dir === 'A'
@@ -210,11 +213,12 @@ export default function Speaking() {
         await speakBilingual(ai.speech, '', isA ? 'en-US' : 'vi-VN', isA ? 'vi-VN' : 'en-US')
         setSpeaking(false)
       }
-    } catch (e) { setError(e instanceof Error ? e.message : 'Error') }
+    } catch (e) { const m = e instanceof Error ? e.message : 'Error'; setError(m); toast.error(m) }
     setLoading(false)
   }
 
   async function toggleRecord() {
+    haptics[recording ? 'stop' : 'start']()  // rung nhẹ báo bắt đầu/dừng ghi âm
     // ── Đang ghi → dừng lại ──────────────────────────────────────────────────
     if (recording) {
       // STT server: dừng recorder, gửi audio lên nhận diện
@@ -230,7 +234,7 @@ export default function Speaking() {
           else setError(isA ? 'Không nghe rõ, thử nói lại nhé.' : "Didn't catch that, try again.")
         } catch (e) {
           setProcessing(false)
-          setError(e instanceof Error ? e.message : (isA ? 'Lỗi nhận diện giọng nói' : 'STT error'))
+          { const m = e instanceof Error ? e.message : (isA ? 'Lỗi nhận diện giọng nói' : 'STT error'); setError(m); toast.error(m) }
         }
         return
       }
@@ -310,7 +314,7 @@ export default function Speaking() {
         )
         setSpeaking(false)
       }
-    } catch (e) { setError(e instanceof Error ? e.message : 'Error') }
+    } catch (e) { const m = e instanceof Error ? e.message : 'Error'; setError(m); toast.error(m) }
     setLoading(false)
   }
 

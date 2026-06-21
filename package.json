@@ -12,6 +12,7 @@
     "start": "tsx server.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
+    "test": "vitest run",
     "seed:pronunciation": "tsx scripts/seed-pronunciations.ts",
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts"
   },
@@ -38,10 +39,12 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
+    "happy-dom": "^20.10.6",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4",
     "tsx": "^4.22.4",
     "typescript": "^5.2.2",
-    "vite": "^7.3.5"
+    "vite": "^7.3.5",
+    "vitest": "^2.1.9"
   }
 }
