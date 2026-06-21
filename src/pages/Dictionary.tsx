@@ -1,6 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Search, X, BookText, Layers, Volume2 } from 'lucide-react'
+import { useMemo, useState, useRef, useEffect } from 'react'
+import { Search, X, BookText, Layers, Volume2, GraduationCap } from 'lucide-react'
 import Layout from '../components/Layout'
 import PronounceButton from '../components/PronounceButton'
 import VocabMilestone from '../components/VocabMilestone'
@@ -12,23 +11,34 @@ import dictionaryData from '../data/dictionary.json'
 import type { DictEntry } from '../types'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
-import { POS_LABEL, POS_COLOR } from '../lib/pos'
+import { POS_LABEL, POS_COLOR, POS_LIST } from '../lib/pos'
 
 const ENTRIES = dictionaryData as DictEntry[]
-
-// Giới hạn số kết quả hiển thị cùng lúc để tránh render quá nhiều phần tử
 const MAX_RESULTS = 100
-
-type Tab = 'search' | 'flashcard'
+type Tab = 'search' | 'flashcard' | 'pos'
 
 export default function Dictionary() {
   const { user } = useAuth()
   const dir = getDirection()
   const isA = dir === 'A'
-  const [tab, setTab] = useState<Tab>('search')
-  const [query, setQuery] = useState('')
-  const [pos, setPos] = useState('')          // loại từ đang lọc ('' = tất cả)
-  const [learnedKey, setLearnedKey] = useState(0) // đổi để buộc thanh mốc tính lại
+  const [tab, setTab]           = useState<Tab>('search')
+  const [query, setQuery]       = useState('')
+  const [pos, setPos]           = useState('')
+  const [learnedKey, setLearnedKey] = useState(0)
+  const [jumpPos, setJumpPos]   = useState<string | null>(null)   // pos cần scroll khi mở tab Từ loại
+  const posRefs = useRef<Record<string, HTMLElement | null>>({})
+
+  // Khi chuyển sang tab 'pos', scroll tới mục cần xem (nếu có)
+  useEffect(() => {
+    if (tab !== 'pos' || !jumpPos) return
+    const el = posRefs.current[jumpPos]
+    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); setJumpPos(null) }
+  }, [tab, jumpPos])
+
+  function openPos(posCode: string) {
+    setJumpPos(posCode)
+    setTab('pos')
+  }
 
   // Lọc + sắp xếp kết quả: theo từ khóa và loại từ
   const { results, totalMatches } = useMemo(() => {
@@ -67,24 +77,22 @@ export default function Dictionary() {
         {/* Từ vựng hôm nay */}
         <WordOfTheDay entries={ENTRIES} />
 
-        {/* Chuyển tab: Tra cứu / Flashcard */}
+        {/* Chuyển tab: Tra từ / Flashcard / Từ loại */}
         <div className="flex gap-2 mb-4">
-          <button onClick={() => setTab('search')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition ${
-              tab === 'search'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200'
-            }`}>
-            <BookText className="w-4 h-4" /> {isA ? 'Tra từ' : 'Search'}
-          </button>
-          <button onClick={() => setTab('flashcard')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition ${
-              tab === 'flashcard'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200'
-            }`}>
-            <Layers className="w-4 h-4" /> Flashcard
-          </button>
+          {([
+            { key: 'search',    icon: BookText,      label: isA ? 'Tra từ'   : 'Search'    },
+            { key: 'flashcard', icon: Layers,         label: 'Flashcard'                    },
+            { key: 'pos',       icon: GraduationCap, label: isA ? 'Từ loại' : 'Word Types' },
+          ] as const).map(({ key, icon: Icon, label }) => (
+            <button key={key} onClick={() => setTab(key)}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition ${
+                tab === key
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                  : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200'
+              }`}>
+              <Icon className="w-4 h-4" /> {label}
+            </button>
+          ))}
         </div>
 
         {tab === 'search' ? (
@@ -128,14 +136,15 @@ export default function Dictionary() {
                   {/* Header: từ + badge + phát âm */}
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                     <span className="font-bold text-white text-base">{e.word}</span>
-                    {/* Badge loại từ — bấm vào để xem giải thích "Danh từ là gì?", "Động từ là gì?"... */}
-                    <Link
-                      to={`/parts-of-speech#${e.pos}`}
+                    {/* Badge loại từ — bấm để chuyển sang tab Từ loại và scroll tới đúng mục */}
+                    <button
+                      type="button"
+                      onClick={() => openPos(e.pos)}
                       title={`${POS_LABEL[e.pos] || e.pos} là gì?`}
-                      className={`text-[10px] px-2 py-0.5 rounded-full font-medium transition hover:brightness-125 hover:underline underline-offset-2 ${POS_COLOR[e.pos] ?? 'bg-zinc-700 text-zinc-300'}`}
+                      className={`text-[10px] px-2 py-0.5 rounded-full font-medium transition hover:brightness-125 ${POS_COLOR[e.pos] ?? 'bg-zinc-700 text-zinc-300'}`}
                     >
                       {POS_LABEL[e.pos] || e.pos}
-                    </Link>
+                    </button>
                     <PronounceButton word={e.word} />
                   </div>
 
@@ -190,13 +199,47 @@ export default function Dictionary() {
               </div>
             )}
           </>
-        ) : (
-          /* Tab Flashcard */
+        ) : tab === 'flashcard' ? (
           <Flashcard
             entries={ENTRIES}
             userId={user.id}
             onLearnedChange={() => setLearnedKey(k => k + 1)}
           />
+        ) : (
+          /* Tab Từ loại */
+          <div className="space-y-3 animate-fade-in">
+            <div className="glass rounded-xl p-4">
+              <p className="text-sm text-zinc-300 leading-relaxed">
+                <strong className="text-white">{isA ? 'Loại từ' : 'Parts of speech'}</strong>
+                {isA
+                  ? ' giúp bạn biết từ đó đóng vai trò gì trong câu — dùng đúng chỗ, ghép câu chính xác hơn.'
+                  : ' tell you the role each word plays in a sentence — use words in the right position.'}
+              </p>
+            </div>
+            {POS_LIST.map(p => (
+              <section
+                key={p.code}
+                id={`pos-${p.code}`}
+                ref={el => { posRefs.current[p.code] = el }}
+                className="glass rounded-xl p-4 scroll-mt-20"
+              >
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <h2 className="font-bold text-white text-base">{p.label}</h2>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.color}`}>{p.labelEn}</span>
+                </div>
+                <p className="text-sm text-zinc-300 leading-relaxed mb-3">{p.definition}</p>
+                <div className="space-y-1.5">
+                  {p.examples.map((ex, i) => (
+                    <div key={i} className="flex items-start gap-2 text-sm pl-3 border-l-2 border-zinc-700">
+                      <span className="text-zinc-200 italic">{ex.en}</span>
+                      <span className="text-zinc-500">—</span>
+                      <span className="text-zinc-400">{ex.vi}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
         )}
       </main>
     </div>

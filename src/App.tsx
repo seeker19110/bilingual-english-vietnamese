@@ -8,7 +8,6 @@ import Home from './pages/Home'
 import Chat from './pages/Chat'
 import Writing from './pages/Writing'
 import Speaking from './pages/Speaking'
-import PartsOfSpeech from './pages/PartsOfSpeech'
 import CommonPhrases from './pages/CommonPhrases'
 import History from './pages/History'
 import Onboarding from './pages/Onboarding'
@@ -22,8 +21,6 @@ const Lessons = lazy(() => import('./pages/Lessons'))
 
 // Trang Học theo lộ trình cũng dùng toàn bộ từ điển (qua lib/curriculum) — lazy-load.
 const Learn = lazy(() => import('./pages/Learn'))
-
-const Quiz = lazy(() => import('./pages/Quiz'))
 
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang
 function PageLoading() {
@@ -60,10 +57,8 @@ export default function App() {
               <Route path="/learn" element={<RequireAuth><Learn /></RequireAuth>} />
               <Route path="/dictionary" element={<RequireAuth><Dictionary /></RequireAuth>} />
               <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
-              <Route path="/parts-of-speech" element={<RequireAuth><PartsOfSpeech /></RequireAuth>} />
               <Route path="/phrases" element={<RequireAuth><CommonPhrases /></RequireAuth>} />
               <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
-              <Route path="/quiz" element={<RequireAuth><Quiz /></RequireAuth>} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

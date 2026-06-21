@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, Share2, ClipboardList, Bell, BellOff } from 'lucide-react'
+// Quiz hiện nằm trong tab "Kiểm tra" của /learn
 import Layout from '../components/Layout'
 import { getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
@@ -296,8 +297,8 @@ export default function Home() {
 
           {/* Hàng ngang: Quiz + Chia sẻ + Thông báo */}
           <div className="grid grid-cols-3 gap-2">
-            {/* Quiz */}
-            <button onClick={() => nav('/quiz')}
+            {/* Quiz — mở trang Học theo lộ trình, tab Kiểm tra */}
+            <button onClick={() => nav('/learn')}
               className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-violet-500/40 transition group">
               <ClipboardList className="w-4 h-4 text-violet-400" />
               <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
