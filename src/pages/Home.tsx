@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, Share2, ClipboardList, Bell, BellOff } from 'lucide-react'
+import { MessageCircle, PenLine, Mic, ChevronRight, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, Share2, ClipboardList, Bell, BellOff } from 'lucide-react'
 // Quiz hiện nằm trong tab "Kiểm tra" của /learn
 import Layout from '../components/Layout'
-import { getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
+import { getStreak, getDirection, setDirection } from '../lib/storage'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
-import { LIMITS } from '../types'
 import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
@@ -115,8 +114,6 @@ export default function Home() {
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
 
-  const usage = getUsage(user.id)
-  const limit = LIMITS[user.plan]
   const streak = getStreak(user.id)
 
   function toggleDir() {
@@ -149,15 +146,7 @@ export default function Home() {
   const MODES = getModes(dir, T)
   const isA = dir === 'A'
 
-  const usagePct = (used: number, max: number) => Math.min(100, Math.round(used / max * 100))
   const firstName = user.name.split(' ').at(-1) ?? user.name
-
-  const barColor = (used: number, max: number) => {
-    const pct = used / max
-    if (pct >= 0.85) return 'bg-red-500'
-    if (pct >= 0.6) return 'bg-amber-500'
-    return 'bg-emerald-500'
-  }
 
   return (
     <div className="min-h-dvh bg-zinc-950">
@@ -239,7 +228,7 @@ export default function Home() {
 
         {/* ── Usage card — TẠM ẨN, tích hợp thanh toán Pro sau ────────── */}
         {/* TODO: hiện lại khi có cổng thanh toán nâng cấp gói Pro */}
-        {false && user.plan === 'pro' && (
+        {false && user?.plan === 'pro' && (
           <div className="mb-6 rounded-2xl p-4 border animate-fade-in delay-50 bg-gradient-to-r from-amber-500/10 to-orange-500/5 border-amber-500/30">
             <div className="flex items-center gap-3">
               <Crown className="w-5 h-5 text-amber-400 shrink-0" />
