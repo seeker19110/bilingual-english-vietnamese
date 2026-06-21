@@ -50,7 +50,7 @@ Ba chế độ:
 - [x] Chế độ Chat (MVP) — gọi AI thật qua `/api/claude` (edge function ép model + token)
 - [x] Chế độ Luyện viết + chấm điểm (MVP) — chấm kiểu IELTS
 - [~] Giới hạn lượt + gói trả phí — lượt dùng đã đồng bộ lên Supabase (`daily_usage`); gói `plan` đọc từ bảng `profiles`; thanh toán Pro chưa có
-- [x] Deploy VPS (Express `server.ts` + PM2 + Nginx + Let's Encrypt) — ĐÃ deploy thật, đang chạy tại https://en-vi.donghanhcungban.com (PM2 process `english-tutor`, port 3001, dùng chung VPS 160.30.172.203 với app "xboss" có sẵn ở port 3000 — không ảnh hưởng nhau). SSL Let's Encrypt tự renew. Lưu ý: `ecosystem.config.cjs` trên VPS dùng `interpreter: /usr/bin/node` (Node hệ thống v22, **bắt buộc** — xem mục lỗi WebSocket bên dưới) — khác với giá trị mặc định trong repo, nhớ đồng bộ nếu sửa lại file này.
+- [x] Deploy VPS (Express `server.ts` + PM2 + Nginx + Let's Encrypt) — ĐÃ deploy thật, đang chạy tại https://en-vi.donghanhcungban.com (PM2 process `english-tutor`, port 3001, dùng chung VPS 160.30.172.203 với app "xboss" có sẵn ở port 3000 — không ảnh hưởng nhau). SSL Let's Encrypt tự renew. Lưu ý: `ecosystem.config.cjs` trên VPS dùng `interpreter: /usr/bin/node` (Node hệ thống v22, **bắt buộc** — xem mục lỗi WebSocket bên dưới) — khác với giá trị mặc định trong repo, nhớ đồng bộ nếu sửa lại file này. (code + hướng dẫn: `docs/deploy-vps-ubuntu.md`)
 - [x] Đồng bộ Supabase — chat/viết/nói/lượt dùng lưu lên DB (RLS), login Supabase thống nhất cho mọi trang. Xem `SUPABASE_SYNC_SETUP.md` + `supabase/schema.sql`
 - [~] Chế độ Luyện nói song ngữ — TTS chính đã đổi sang Google Cloud TTS qua `/api/tts` (audio cache **mã hóa AES-256-GCM** trên Supabase Storage, bắt buộc đăng nhập mới lấy được khoá giải mã), Web Speech API chỉ còn là fallback khi lỗi mạng/server. STT thật (nghe người dùng nói) vẫn chưa làm.
 - [x] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng) — `lib/direction.ts`
@@ -59,6 +59,7 @@ Ba chế độ:
 ### Việc còn dang dở / cần quyết định
 1. STT (nghe người dùng nói) vẫn chưa làm thật — phần TTS đã xong (Google Cloud TTS, mã hóa AES-256-GCM, cache dùng chung qua bảng `tts_cache`/bucket `tts-cache`).
 2. Repo GitHub chưa đồng bộ với VPS: (a) `ecosystem.config.cjs` trên VPS dùng `interpreter: /usr/bin/node` — repo hiện đã khớp giá trị này, không cần sửa thêm; (b) `api/_lib/security.ts` trên VPS đang có thêm vài dòng debug log tạm thời trong `validateAuth` (để dò lỗi 401 do thiếu native WebSocket ở Node 20) — repo CHƯA có các dòng log này, cần quyết định: xóa log trên VPS (đã hết cần thiết) hay đồng bộ log về repo (an toàn, không lộ secret).
+3. Thanh toán Pro chưa có (giới hạn lượt đã đồng bộ Supabase, nhưng chưa có cổng thanh toán nâng cấp gói).
 
 Chú thích: `[x]` xong · `[~]` làm một phần · `[ ]` chưa làm.
 

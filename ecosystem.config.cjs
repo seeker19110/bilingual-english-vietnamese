@@ -7,7 +7,11 @@
 //   pm2 start ecosystem.config.cjs
 //   pm2 reload ecosystem.config.cjs   ← zero-downtime khi update code
 //
-// QUAN TRỌNG: VPS này dùng Node hệ thống (không qua NVM). Chạy lệnh sau để lấy đường dẫn:
+// QUAN TRỌNG: Phải dùng Node.js >= 22. Node 20 thiếu WebSocket gốc nên
+// Supabase auth (supabase.auth.getUser) ném lỗi → mọi request đăng nhập
+// bị AUTH_FAILED.
+// VPS này dùng Node hệ thống (không qua NVM) — Ubuntu 24.04, Node v22.22.3.
+// Lấy đường dẫn bằng:
 //   which node
 // Rồi cập nhật giá trị interpreter bên dưới cho khớp.
 
@@ -22,6 +26,7 @@ module.exports = {
 
       // !! Sửa đường dẫn này thành kết quả của lệnh: which node
       // VPS hiện tại (Ubuntu 24.04, Node hệ thống v22.22.3): /usr/bin/node
+      // (bắt buộc Node >= 22 — xem ghi chú WebSocket phía trên)
       interpreter: '/usr/bin/node',
 
       // Biến môi trường production — các secret vẫn để trong .env
