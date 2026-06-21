@@ -55,8 +55,9 @@ export default async function handler(req: Request): Promise<Response> {
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers })
       return new Response(JSON.stringify({ ok: true }), { headers })
     } else {
-      await supabase.from('push_subscriptions')
+      const { error: delErr } = await supabase.from('push_subscriptions')
         .delete().eq('user_id', auth.userId).eq('endpoint', sub.endpoint)
+      if (delErr) return new Response(JSON.stringify({ error: delErr.message }), { status: 500, headers })
       return new Response(JSON.stringify({ ok: true }), { headers })
     }
   }
@@ -64,7 +65,8 @@ export default async function handler(req: Request): Promise<Response> {
   // ── Gửi push nhắc học cho tất cả users (gọi từ cron, cần CRON_SECRET) ────
   if (action === 'send-daily') {
     const secret = process.env.CRON_SECRET
-    if (secret && body.secret !== secret) {
+    // Bắt buộc phải có CRON_SECRET — nếu chưa cấu hình thì từ chối luôn
+    if (!secret || body.secret !== secret) {
       return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers })
     }
 
