@@ -3,6 +3,7 @@ import { PenLine, Send, RotateCcw, ChevronDown, Trophy } from 'lucide-react'
 import Layout from '../components/Layout'
 import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
+import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { callClaude, parseJson } from '../lib/ai'
 import { writingSystemPrompt } from '../prompts'
@@ -145,6 +146,7 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
 
 export default function Writing() {
   const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
+  const toast = useToast()
   useCloudSync(user.id)          // kéo lượt dùng từ Supabase khi mở trang
   const dir: Direction = getDirection()
   const isA = dir === 'A'
@@ -190,7 +192,9 @@ export default function Writing() {
       setResult(sub)
       incrementUsage(user.id, 'writingCount')
     } catch (e) {
-      setError(e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error'))
+      const m = e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error')
+      setError(m)
+      toast.error(m)
     }
     setLoading(false)
   }

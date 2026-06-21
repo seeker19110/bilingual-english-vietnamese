@@ -4,6 +4,7 @@ import Layout from '../components/Layout'
 import SpeakButton from '../components/SpeakButton'
 import { saveChatSession, getChatSessions, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
+import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { callClaude } from '../lib/ai'
 import { chatSystemPrompt, situationLabel } from '../prompts'
@@ -175,6 +176,7 @@ function TypingDots() {
 // ── Main Chat page ────────────────────────────────────────────────────────────
 export default function Chat() {
   const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
+  const toast = useToast()
   useCloudSync(user.id)          // kéo lịch sử + lượt dùng từ Supabase khi mở trang
   const dir = getDirection()
   const isA = dir === 'A'
@@ -211,7 +213,9 @@ export default function Chat() {
       setLastIdx(0)
       incrementUsage(user.id, 'chatCount')
     } catch (e) {
-      setError(e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error'))
+      const msg = e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error')
+      setError(msg)
+      toast.error(msg)
     }
     setLoading(false)
   }
@@ -240,7 +244,9 @@ export default function Chat() {
       setLastIdx(final.messages.length - 1)
       incrementUsage(user.id, 'chatCount')
     } catch (e) {
-      setError(e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error'))
+      const msg = e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error')
+      setError(msg)
+      toast.error(msg)
     }
     setLoading(false)
     setTimeout(() => inputRef.current?.focus(), 50)
