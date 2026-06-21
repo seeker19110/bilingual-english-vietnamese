@@ -14,6 +14,7 @@
 import type { DictEntry } from '../types'
 import { FOUNDATION } from '../data/curriculum'
 import type { Circle } from '../data/curriculum'
+import { loadDictionary } from '../data/dictionary/loader'
 
 export const DAILY_GOAL = 20
 
@@ -30,8 +31,8 @@ let _loadPromise: Promise<void> | null = null
 // Gọi (await) một lần trước khi dùng getCircles/getLearningPath/getTodayBatch...
 export function loadCurriculum(): Promise<void> {
   if (!_loadPromise) {
-    _loadPromise = import('../data/dictionary.json').then(mod => {
-      ENTRIES = mod.default as DictEntry[]
+    _loadPromise = loadDictionary().then(entries => {
+      ENTRIES = entries
     })
   }
   return _loadPromise

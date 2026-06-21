@@ -133,12 +133,14 @@ interface DictEntry { ex_en?: string; ex_vi?: string }
 
 function loadExampleSentences(): Sentence[] {
   const out: Sentence[] = []
-  // Câu ví dụ trong từ điển
-  const dict = JSON.parse(
-    fs.readFileSync(path.join(PROJECT_ROOT, 'src/data/dictionary.json'), 'utf8'),
-  ) as DictEntry[]
-  for (const e of dict) {
-    if (e.ex_en || e.ex_vi) out.push({ en: e.ex_en ?? '', vi: e.ex_vi ?? '' })
+  // Câu ví dụ trong từ điển — đọc từ các chunk (đã tách bởi split-dictionary.mjs)
+  const dictDir = path.join(PROJECT_ROOT, 'src/data/dictionary')
+  const dictFiles = fs.readdirSync(dictDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+  for (const f of dictFiles) {
+    const dict = JSON.parse(fs.readFileSync(path.join(dictDir, f), 'utf8')) as DictEntry[]
+    for (const e of dict) {
+      if (e.ex_en || e.ex_vi) out.push({ en: e.ex_en ?? '', vi: e.ex_vi ?? '' })
+    }
   }
   // Câu ví dụ của từng từ trong curriculum (DictEntry có ex_en/ex_vi)
   for (const circle of FOUNDATION) {
