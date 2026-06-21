@@ -1,17 +1,13 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Volume2, Search, X, ChevronRight, ArrowLeft, Loader2 } from 'lucide-react'
+import { Search, X, ChevronRight, ArrowLeft, Loader2 } from 'lucide-react'
 import Layout from '../components/Layout'
 import { useLang } from '../context/useLang'
-import { speak as speakTts } from '../lib/tts'
+import KaraokeText from '../components/KaraokeText'
 import { INDEX, loadSubject } from '../data/patterns/loader'
 import type { SubjectMeta, Subject } from '../data/patterns/loader'
 
 // Mỗi lần chỉ hiển thị (và lazy-load) 8 chủ thể.
 const PAGE_SIZE = 8
-
-function speak(text: string, lang: 'en-US' | 'vi-VN') {
-  void speakTts(text, lang)
-}
 
 const COLOR_MAP: Record<string, { bg: string; text: string; border: string; badge: string }> = {
   emerald: { bg:'bg-emerald-500/10', text:'text-emerald-400', border:'border-emerald-500/25', badge:'bg-emerald-500/20 text-emerald-300' },
@@ -101,24 +97,16 @@ export default function CommonPhrases() {
                     {idx + 1}
                   </span>
                   <div className="flex-1 divide-y divide-zinc-800/60">
-                    {/* Khối tiếng Anh — click để đọc tiếng Anh */}
-                    <button
-                      type="button"
-                      onClick={() => speak(sent.en, 'en-US')}
-                      className={`w-full text-left px-3 py-2.5 flex items-center gap-2 group hover:bg-emerald-500/5 active:bg-emerald-500/10 transition-colors`}
-                    >
-                      <Volume2 className="w-3.5 h-3.5 shrink-0 text-zinc-700 group-hover:text-emerald-400 transition-colors" />
-                      <p className={`font-medium text-[15px] leading-snug ${c.text}`}>{sent.en}</p>
-                    </button>
-                    {/* Khối tiếng Việt — click để đọc tiếng Việt */}
-                    <button
-                      type="button"
-                      onClick={() => speak(sent.vi, 'vi-VN')}
-                      className="w-full text-left px-3 py-2 flex items-center gap-2 group hover:bg-sky-500/5 active:bg-sky-500/10 transition-colors"
-                    >
-                      <Volume2 className="w-3.5 h-3.5 shrink-0 text-zinc-700 group-hover:text-sky-400 transition-colors" />
-                      <p className="text-sm text-zinc-400">{sent.vi}</p>
-                    </button>
+                    <KaraokeText
+                      text={sent.en} lang="en-US"
+                      textClass={`font-medium text-[15px] leading-snug ${c.text}`}
+                      buttonClass="w-full px-3 py-2.5 hover:bg-emerald-500/5 active:bg-emerald-500/10"
+                    />
+                    <KaraokeText
+                      text={sent.vi} lang="vi-VN"
+                      textClass="text-sm text-zinc-400"
+                      buttonClass="w-full px-3 py-2 hover:bg-sky-500/5 active:bg-sky-500/10"
+                    />
                   </div>
                 </div>
               </div>

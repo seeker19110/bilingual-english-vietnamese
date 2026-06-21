@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, memo } from 'react'
 import { ArrowLeft, MessageSquare, Play, Pause, Square, Volume2 } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getDirection } from '../lib/storage'
@@ -23,6 +23,46 @@ const LESSONS = lessonsData as Lesson[]
 
 type Speed = 0.75 | 1 | 1.25
 type AudioMode = 'en' | 'both' | 'vi'
+
+// Trạng thái đồng bộ từng chữ: turn nào đang phát, ngôn ngữ nào, từ thứ mấy
+interface WordSync {
+  turnIdx: number
+  lang: 'en' | 'vi'
+  wordIdx: number
+}
+
+// Component hiển thị câu với từng từ được highlight khi đọc đến (karaoke style)
+const WordText = memo(function WordText({
+  text, baseClass, wordSync, turnIdx, lang,
+}: {
+  text: string
+  baseClass: string
+  wordSync: WordSync | null
+  turnIdx: number
+  lang: 'en' | 'vi'
+}) {
+  const isActive = wordSync?.turnIdx === turnIdx && wordSync?.lang === lang
+  if (!isActive) return <p className={baseClass}>{text}</p>
+
+  // Tách thành [từ, khoảng trắng, từ, ...] để giữ nguyên khoảng trắng gốc
+  const parts = text.split(/(\s+)/)
+  let wi = 0
+  return (
+    <p className={baseClass}>
+      {parts.map((part, i) => {
+        if (/^\s+$/.test(part)) return <span key={i}>{part}</span>
+        const thisIdx = wi++
+        return (
+          <span key={i} className={
+            thisIdx === wordSync.wordIdx
+              ? 'text-emerald-200 bg-emerald-500/25 rounded px-0.5 transition-colors'
+              : 'transition-colors'
+          }>{part}</span>
+        )
+      })}
+    </p>
+  )
+})
 
 export default function Lessons() {
   const dir: Direction = getDirection()
@@ -85,16 +125,31 @@ function LessonView({ lesson, isA, onBack }: { lesson: Lesson; isA: boolean; onB
   const [paused,     setPaused]       = useState(false)
   const [speed,      setSpeed]        = useState<Speed>(1)
   const [mode,       setMode]         = useState<AudioMode>('en')
+  const [wordSync,   setWordSync]     = useState<WordSync | null>(null)
 
   // Refs: đọc giá trị mới nhất trong async loop mà không cần re-render
-  const stopRef  = useRef(false)
-  const pauseRef = useRef(false)
-  const speedRef = useRef<Speed>(1)
-  const modeRef  = useRef<AudioMode>('en')
-  const turnRefs = useRef<(HTMLDivElement | null)[]>([])
+  const stopRef     = useRef(false)
+  const pauseRef    = useRef(false)
+  const speedRef    = useRef<Speed>(1)
+  const modeRef     = useRef<AudioMode>('en')
+  const turnRefs    = useRef<(HTMLDivElement | null)[]>([])
+  // wordSyncRef: tránh setState trùng lặp khi ontimeupdate gọi liên tục
+  const wordSyncRef = useRef<WordSync | null>(null)
 
   function changeSpeed(s: Speed) { setSpeed(s); speedRef.current = s }
   function changeMode(m: AudioMode) { setMode(m); modeRef.current = m }
+
+  // Chỉ setState khi từ thực sự đổi (ontimeupdate chạy ~4 lần/giây)
+  function syncWord(ws: WordSync | null) {
+    const prev = wordSyncRef.current
+    if (!ws) {
+      if (prev !== null) { wordSyncRef.current = null; setWordSync(null) }
+      return
+    }
+    if (prev?.turnIdx === ws.turnIdx && prev?.lang === ws.lang && prev?.wordIdx === ws.wordIdx) return
+    wordSyncRef.current = ws
+    setWordSync({ ...ws })
+  }
 
   // ── Phát toàn bài tự động ──────────────────────────────────────────────────
   async function startPlayAll() {
@@ -108,10 +163,8 @@ function LessonView({ lesson, isA, onBack }: { lesson: Lesson; isA: boolean; onB
     const transLang  = isA ? 'vi-VN' : 'en-US'
 
     for (let i = 0; i < lesson.turns.length; i++) {
-      // Dừng hẳn
       if (stopRef.current) break
 
-      // Tạm dừng giữa các turn: chờ cho đến khi resume hoặc stop
       while (pauseRef.current && !stopRef.current) {
         await new Promise(r => setTimeout(r, 100))
       }
@@ -127,27 +180,30 @@ function LessonView({ lesson, isA, onBack }: { lesson: Lesson; isA: boolean; onB
       const curSpeed   = speedRef.current
 
       if (curMode === 'en') {
-        await speak(t.en, 'en-US', undefined, curSpeed)
+        await speak(t.en, 'en-US', undefined, curSpeed, wi => syncWord({ turnIdx: i, lang: 'en', wordIdx: wi }))
       } else if (curMode === 'vi') {
-        await speak(t.vi, 'vi-VN', undefined, curSpeed)
+        await speak(t.vi, 'vi-VN', undefined, curSpeed, wi => syncWord({ turnIdx: i, lang: 'vi', wordIdx: wi }))
       } else {
         // Phát ngôn ngữ đích → nghỉ ngắn → phát bản dịch
-        await speak(targetText, targetLang, undefined, curSpeed)
+        const tLang = isA ? 'en' : 'vi'
+        const rLang = isA ? 'vi' : 'en'
+        await speak(targetText, targetLang, undefined, curSpeed, wi => syncWord({ turnIdx: i, lang: tLang, wordIdx: wi }))
         if (!stopRef.current) {
+          syncWord(null)
           await new Promise(r => setTimeout(r, 250))
-          await speak(transText, transLang, undefined, curSpeed)
+          await speak(transText, transLang, undefined, curSpeed, wi => syncWord({ turnIdx: i, lang: rLang, wordIdx: wi }))
         }
       }
 
-      // Nghỉ ngắn giữa các lượt
+      syncWord(null)
       if (!stopRef.current) await new Promise(r => setTimeout(r, 500))
     }
 
-    // Kết thúc tự nhiên (không bị stop)
     if (!stopRef.current) {
       setActiveTurn(null)
       setPlaying(false)
       setPaused(false)
+      syncWord(null)
     }
   }
 
@@ -169,12 +225,13 @@ function LessonView({ lesson, isA, onBack }: { lesson: Lesson; isA: boolean; onB
     setPlaying(false)
     setPaused(false)
     setActiveTurn(null)
+    syncWord(null)
   }
 
   // ── Phát từng turn riêng lẻ (bấm vào bong bóng) ───────────────────────────
   async function playTurn(idx: number) {
     if (playing || paused) handleStop()
-    await new Promise(r => setTimeout(r, 80)) // chờ stop propagate
+    await new Promise(r => setTimeout(r, 80))
 
     const t = lesson.turns[idx]
     const targetLang = isA ? 'en-US' : 'vi-VN'
@@ -182,16 +239,21 @@ function LessonView({ lesson, isA, onBack }: { lesson: Lesson; isA: boolean; onB
     const targetText = isA ? t.en : t.vi
     const transText  = isA ? t.vi : t.en
     const curMode    = modeRef.current
+    const curSpeed   = speedRef.current
 
     if (curMode === 'en') {
-      await speak(t.en, 'en-US', undefined, speedRef.current)
+      await speak(t.en, 'en-US', undefined, curSpeed, wi => syncWord({ turnIdx: idx, lang: 'en', wordIdx: wi }))
     } else if (curMode === 'vi') {
-      await speak(t.vi, 'vi-VN', undefined, speedRef.current)
+      await speak(t.vi, 'vi-VN', undefined, curSpeed, wi => syncWord({ turnIdx: idx, lang: 'vi', wordIdx: wi }))
     } else {
-      await speak(targetText, targetLang, undefined, speedRef.current)
+      const tLang = isA ? 'en' : 'vi'
+      const rLang = isA ? 'vi' : 'en'
+      await speak(targetText, targetLang, undefined, curSpeed, wi => syncWord({ turnIdx: idx, lang: tLang, wordIdx: wi }))
+      syncWord(null)
       await new Promise(r => setTimeout(r, 250))
-      await speak(transText, transLang, undefined, speedRef.current)
+      await speak(transText, transLang, undefined, curSpeed, wi => syncWord({ turnIdx: idx, lang: rLang, wordIdx: wi }))
     }
+    syncWord(null)
   }
 
   const isIdle = !playing && !paused
@@ -337,11 +399,23 @@ function LessonView({ lesson, isA, onBack }: { lesson: Lesson; isA: boolean; onB
                   </button>
                 </div>
 
-                {/* Câu chính (ngôn ngữ đích) */}
-                <p className="text-sm text-white leading-relaxed">{isA ? t.en : t.vi}</p>
+                {/* Câu chính (ngôn ngữ đích) — từng chữ sáng theo giọng đọc */}
+                <WordText
+                  text={isA ? t.en : t.vi}
+                  baseClass="text-sm text-white leading-relaxed"
+                  wordSync={wordSync}
+                  turnIdx={i}
+                  lang={isA ? 'en' : 'vi'}
+                />
 
-                {/* Bản dịch */}
-                <p className="text-xs text-zinc-500 italic mt-1 leading-relaxed">{isA ? t.vi : t.en}</p>
+                {/* Bản dịch — cũng highlight nếu đang phát chế độ EN+VI */}
+                <WordText
+                  text={isA ? t.vi : t.en}
+                  baseClass="text-xs text-zinc-500 italic mt-1 leading-relaxed"
+                  wordSync={wordSync}
+                  turnIdx={i}
+                  lang={isA ? 'vi' : 'en'}
+                />
               </div>
             </div>
           )

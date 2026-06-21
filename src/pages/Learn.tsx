@@ -3,6 +3,7 @@ import { Check, X, RotateCcw, Eye, Target, Shuffle, Trophy, Sparkles, ClipboardL
 import Layout from '../components/Layout'
 import PronounceButton from '../components/PronounceButton'
 import SpeakButton from '../components/SpeakButton'
+import KaraokeText from '../components/KaraokeText'
 import PronunciationCheck from '../components/PronunciationCheck'
 import VocabMilestone from '../components/VocabMilestone'
 import type { DictEntry } from '../types'
@@ -217,12 +218,13 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
             </div>
             <div className="space-y-2">
               {sentences.map((s, i) => (
-                <div key={i} className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3 flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[15px] leading-snug text-teal-300">{s.en}</p>
-                    <p className="text-sm text-zinc-400 mt-0.5">{s.vi}</p>
-                  </div>
-                  <SpeakButton text={s.en} lang="en-US" title="Nghe câu" />
+                <div key={i} className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3">
+                  <KaraokeText
+                    text={s.en} lang="en-US"
+                    textClass="font-medium text-[15px] leading-snug text-teal-300"
+                    buttonClass="w-full"
+                  />
+                  <p className="text-sm text-zinc-400 mt-1 pl-6">{s.vi}</p>
                 </div>
               ))}
             </div>
