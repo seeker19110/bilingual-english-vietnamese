@@ -4,11 +4,12 @@
 // Trả về: { text: string }
 //
 // Nhiệm vụ: nhận đoạn audio người dùng vừa nói (ghi âm ở trình duyệt bằng MediaRecorder,
-// mã hóa base64) → gọi OpenAI gpt-4o-mini-transcribe → trả lại văn bản để đưa vào luồng
-// hội thoại trong chế độ "Luyện nói song ngữ".
+// mã hóa base64) → gọi Groq/OpenAI Whisper → trả lại văn bản để đưa vào luồng hội thoại
+// trong chế độ "Luyện nói song ngữ".
 //
 // Khác với /api/tts: STT không cache (mỗi lần nói là audio khác nhau), nên chỉ cần
-// auth + rate limit + giới hạn dung lượng. API key OpenAI giữ ở server (OPENAI_API_KEY).
+// auth + rate limit + giới hạn dung lượng. API key giữ ở server — xem api/_lib/openaiStt.ts
+// (ưu tiên GROQ_API_KEY, fallback OPENAI_API_KEY).
 
 import { transcribeAudio, type SttLang } from './_lib/openaiStt'
 import {
