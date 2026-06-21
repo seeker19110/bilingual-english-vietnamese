@@ -10,9 +10,9 @@ import Home from './pages/Home'
 import Chat from './pages/Chat'
 import Writing from './pages/Writing'
 import Speaking from './pages/Speaking'
-import PartsOfSpeech from './pages/PartsOfSpeech'
 import CommonPhrases from './pages/CommonPhrases'
 import History from './pages/History'
+import Onboarding from './pages/Onboarding'
 
 // Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng
 // thực sự bấm vào, không gộp vào bundle chính để app khởi động nhanh hơn.
@@ -36,10 +36,13 @@ function PageLoading() {
 }
 
 // Bảo vệ route: chờ Supabase xác nhận session rồi mới quyết định redirect
+// Nếu chưa onboarding (lần đầu đăng nhập) → chuyển sang /onboarding trước
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   if (loading) return <PageLoading />
-  return user ? <>{children}</> : <Navigate to="/login" replace />
+  if (!user) return <Navigate to="/login" replace />
+  if (!user.onboarded) return <Navigate to="/onboarding" replace />
+  return <>{children}</>
 }
 
 export default function App() {
@@ -51,6 +54,7 @@ export default function App() {
           <Suspense fallback={<PageLoading />}>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
               <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
               <Route path="/writing" element={<RequireAuth><Writing /></RequireAuth>} />
@@ -58,7 +62,6 @@ export default function App() {
               <Route path="/learn" element={<RequireAuth><Learn /></RequireAuth>} />
               <Route path="/dictionary" element={<RequireAuth><Dictionary /></RequireAuth>} />
               <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
-              <Route path="/parts-of-speech" element={<RequireAuth><PartsOfSpeech /></RequireAuth>} />
               <Route path="/phrases" element={<RequireAuth><CommonPhrases /></RequireAuth>} />
               <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
               <Route path="*" element={<Navigate to="/" replace />} />

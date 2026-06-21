@@ -18,6 +18,7 @@ import ttsHandler from './api/tts.js'
 import claudeHandler from './api/claude.js'
 import pronunciationHandler from './api/pronunciation.js'
 import sttHandler from './api/stt.js'
+import pushHandler from './api/push.js'
 
 const app = express()
 
@@ -78,6 +79,7 @@ app.get('/api/health', (_req, res) => {
 app.all('/api/tts', wrapEdge(ttsHandler))
 app.all('/api/claude', wrapEdge(claudeHandler))
 app.all('/api/pronunciation', wrapEdge(pronunciationHandler))
+app.all('/api/push', wrapEdge(pushHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

@@ -105,20 +105,33 @@ export async function pullUserData(userId: string): Promise<void> {
   warn('pull', chat.error ?? writing.error ?? speaking.error ?? usage.error)
 }
 
-// ── profiles: đảm bảo có hồ sơ + đọc gói (free/pro) ──────────────────────────
-// Trigger ở DB đã tự tạo profiles khi đăng ký, nhưng ta vẫn upsert phòng trường
-// hợp tài khoản cũ tạo trước khi có trigger.
-export async function ensureProfile(userId: string, name: string): Promise<'free' | 'pro'> {
+// ── profiles: đảm bảo có hồ sơ + đọc gói + trạng thái onboarding ──────────────
+export async function ensureProfile(userId: string, name: string): Promise<{ plan: 'free' | 'pro'; onboarded: boolean }> {
   const { data, error } = await supabase
     .from('profiles')
     .upsert({ id: userId, name }, { onConflict: 'id', ignoreDuplicates: true })
-    .select('plan')
+    .select('plan, onboarded')
     .maybeSingle()
 
-  if (error) { warn('profile', error); return 'free' }
-  // ignoreDuplicates → khi đã tồn tại, upsert không trả về row; đọc lại cho chắc
-  if (data?.plan) return data.plan === 'pro' ? 'pro' : 'free'
+  if (error) { warn('profile', error); return { plan: 'free', onboarded: false } }
+  if (data?.plan !== undefined) {
+    return { plan: data.plan === 'pro' ? 'pro' : 'free', onboarded: !!data.onboarded }
+  }
 
-  const { data: existing } = await supabase.from('profiles').select('plan').eq('id', userId).maybeSingle()
-  return existing?.plan === 'pro' ? 'pro' : 'free'
+  const { data: existing } = await supabase.from('profiles').select('plan, onboarded').eq('id', userId).maybeSingle()
+  return {
+    plan: existing?.plan === 'pro' ? 'pro' : 'free',
+    onboarded: !!existing?.onboarded,
+  }
+}
+
+// ── Lưu kết quả onboarding ────────────────────────────────────────────────────
+export async function saveOnboarding(userId: string, data: { level: string; goal: string; dailyMinutes: number }) {
+  const { error } = await supabase.from('profiles').update({
+    user_level: data.level,
+    goal: data.goal,
+    daily_minutes: data.dailyMinutes,
+    onboarded: true,
+  }).eq('id', userId)
+  if (error) warn('onboarding', error)
 }

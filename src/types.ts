@@ -19,6 +19,7 @@ export interface User {
   email: string
   name: string
   plan: Plan
+  onboarded: boolean
   createdAt: number
 }
 

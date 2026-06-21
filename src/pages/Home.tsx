@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target } from 'lucide-react'
+import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, Share2, ClipboardList, Bell, BellOff } from 'lucide-react'
+// Quiz hiện nằm trong tab "Kiểm tra" của /learn
 import Layout from '../components/Layout'
 import { getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
@@ -9,11 +10,46 @@ import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import { useCloudSync } from '../lib/useCloudSync'
+import ShareProgress from '../components/ShareProgress'
+import { isPushSupported, getNotifPermission, subscribePush, unsubscribePush } from '../lib/pushNotif'
+import { supabase } from '../lib/supabase'
 
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
 function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
   const isA = dir === 'A'
   return [
+    {
+      path: '/dictionary',
+      icon: BookOpen,
+      gradient: 'from-amber-500 to-orange-400',
+      glow: 'shadow-amber-500/20',
+      ring: 'hover:border-amber-500/40',
+      tag: { label: T.tagUnlimited, cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20' },
+      title: isA ? T.dictTitleA : T.dictTitleB,
+      desc:  isA ? T.dictDescA  : T.dictDescB,
+    },
+    {
+      path: '/learn',
+      icon: Target,
+      gradient: 'from-lime-500 to-green-400',
+      glow: 'shadow-lime-500/20',
+      ring: 'hover:border-lime-500/40',
+      tag: { label: isA ? '20 từ/ngày' : '20/day', cls: 'bg-lime-500/15 text-lime-300 border border-lime-500/20' },
+      title: isA ? 'Học theo lộ trình' : 'Learning Path',
+      desc: isA
+        ? 'Bắt đầu từ chữ cái, số... mỗi ngày 20 từ mới theo vòng tròn liên quan, kèm câu thông dụng.'
+        : 'Start from letters and numbers — 20 new words a day in related circles, with common sentences.',
+    },
+    {
+      path: '/lessons',
+      icon: GraduationCap,
+      gradient: 'from-rose-500 to-pink-400',
+      glow: 'shadow-rose-500/20',
+      ring: 'hover:border-rose-500/40',
+      tag: { label: T.tagUnlimited, cls: 'bg-rose-500/15 text-rose-300 border border-rose-500/20' },
+      title: isA ? T.lessonsTitleA : T.lessonsTitleB,
+      desc:  isA ? T.lessonsDescA  : T.lessonsDescB,
+    },
     {
       path: '/chat',
       icon: MessageCircle,
@@ -54,38 +90,6 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       title: isA ? T.phrasesTitleA : T.phrasesTitleB,
       desc:  isA ? T.phrasesDescA  : T.phrasesDescB,
     },
-    {
-      path: '/learn',
-      icon: Target,
-      gradient: 'from-lime-500 to-green-400',
-      glow: 'shadow-lime-500/20',
-      ring: 'hover:border-lime-500/40',
-      tag: { label: isA ? '20 từ/ngày' : '20/day', cls: 'bg-lime-500/15 text-lime-300 border border-lime-500/20' },
-      title: isA ? 'Học theo lộ trình' : 'Learning Path',
-      desc: isA
-        ? 'Bắt đầu từ chữ cái, số... mỗi ngày 20 từ mới theo vòng tròn liên quan, kèm câu thông dụng.'
-        : 'Start from letters and numbers — 20 new words a day in related circles, with common sentences.',
-    },
-    {
-      path: '/dictionary',
-      icon: BookOpen,
-      gradient: 'from-amber-500 to-orange-400',
-      glow: 'shadow-amber-500/20',
-      ring: 'hover:border-amber-500/40',
-      tag: { label: T.tagUnlimited, cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20' },
-      title: isA ? T.dictTitleA : T.dictTitleB,
-      desc:  isA ? T.dictDescA  : T.dictDescB,
-    },
-    {
-      path: '/lessons',
-      icon: GraduationCap,
-      gradient: 'from-rose-500 to-pink-400',
-      glow: 'shadow-rose-500/20',
-      ring: 'hover:border-rose-500/40',
-      tag: { label: T.tagUnlimited, cls: 'bg-rose-500/15 text-rose-300 border border-rose-500/20' },
-      title: isA ? T.lessonsTitleA : T.lessonsTitleB,
-      desc:  isA ? T.lessonsDescA  : T.lessonsDescB,
-    },
   ]
 }
 
@@ -95,8 +99,18 @@ export default function Home() {
   const { T, setLang } = useLang()
   useCloudSync(user?.id)   // kéo lượt dùng từ Supabase khi mở trang chủ
 
-  const [dir, setDir] = useState<Direction>(getDirection)
-  const [voice, setVoice] = useState<Voice>(getVoicePref)
+  const [dir, setDir]           = useState<Direction>(getDirection)
+  const [voice, setVoice]       = useState<Voice>(getVoicePref)
+  const [showShare, setShare]   = useState(false)
+  const [pushOn, setPushOn]     = useState(false)
+  const [pushLoading, setPushL] = useState(false)
+
+  // Kiểm tra push subscription hiện tại
+  useEffect(() => {
+    if (!isPushSupported()) return
+    const perm = getNotifPermission()
+    setPushOn(perm === 'granted')
+  }, [])
 
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
@@ -115,6 +129,21 @@ export default function Home() {
   function chooseVoice(v: Voice) {
     setVoice(v)
     setVoicePref(v)
+  }
+
+  async function togglePush() {
+    if (!user || pushLoading) return
+    setPushL(true)
+    const { data: { session } } = await supabase.auth.getSession()
+    const token = session?.access_token ?? ''
+    if (pushOn) {
+      await unsubscribePush(token)
+      setPushOn(false)
+    } else {
+      const ok = await subscribePush(token)
+      setPushOn(ok)
+    }
+    setPushL(false)
   }
 
   const MODES = getModes(dir, T)
@@ -253,17 +282,63 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── Lịch sử học ───────────────────────────────────────────────── */}
-        <button onClick={() => nav('/history')}
-          className="w-full mb-4 bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in">
-          <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
-            <History className="w-4 h-4 text-zinc-400" />
+        {/* ── Hành động nhanh (lịch sử + quiz + chia sẻ + thông báo) ──────── */}
+        <div className="mb-4 space-y-2 animate-fade-in">
+          {/* Lịch sử */}
+          <button onClick={() => nav('/history')}
+            className="w-full bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group">
+            <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
+              <History className="w-4 h-4 text-zinc-400" />
+            </div>
+            <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
+              {isA ? 'Xem lịch sử học' : 'View learning history'}
+            </span>
+            <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition" />
+          </button>
+
+          {/* Hàng ngang: Quiz + Chia sẻ + Thông báo */}
+          <div className="grid grid-cols-3 gap-2">
+            {/* Quiz — mở trang Học theo lộ trình, tab Kiểm tra */}
+            <button onClick={() => nav('/learn')}
+              className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-violet-500/40 transition group">
+              <ClipboardList className="w-4 h-4 text-violet-400" />
+              <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
+                {isA ? 'Kiểm tra' : 'Quiz'}
+              </span>
+            </button>
+
+            {/* Chia sẻ tiến độ */}
+            <button onClick={() => setShare(true)}
+              className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-emerald-500/40 transition group">
+              <Share2 className="w-4 h-4 text-emerald-400" />
+              <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
+                {isA ? 'Chia sẻ' : 'Share'}
+              </span>
+            </button>
+
+            {/* Bật / tắt thông báo nhắc học */}
+            {isPushSupported() && (
+              <button onClick={togglePush} disabled={pushLoading}
+                className={`flex flex-col items-center gap-1.5 py-3 rounded-2xl border transition group ${
+                  pushOn
+                    ? 'bg-amber-500/10 border-amber-500/30 hover:border-amber-500/50'
+                    : 'bg-zinc-900/60 border-zinc-800/60 hover:border-amber-500/30'
+                }`}>
+                {pushOn
+                  ? <Bell className="w-4 h-4 text-amber-400" />
+                  : <BellOff className="w-4 h-4 text-zinc-500 group-hover:text-amber-400 transition" />}
+                <span className={`text-[11px] transition ${pushOn ? 'text-amber-300' : 'text-zinc-400 group-hover:text-zinc-200'}`}>
+                  {pushLoading ? '...' : pushOn ? (isA ? 'Nhắc bật' : 'Notif on') : (isA ? 'Nhắc tắt' : 'Notif off')}
+                </span>
+              </button>
+            )}
           </div>
-          <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
-            {isA ? 'Xem lịch sử học' : 'View learning history'}
-          </span>
-          <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition" />
-        </button>
+        </div>
+
+        {/* Modal chia sẻ tiến độ */}
+        {showShare && user && (
+          <ShareProgress userId={user.id} isA={isA} onClose={() => setShare(false)} />
+        )}
 
         {/* ── Mode cards ────────────────────────────────────────────────── */}
         <div className="space-y-3">
