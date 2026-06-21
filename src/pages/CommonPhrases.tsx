@@ -95,19 +95,19 @@ export default function CommonPhrases() {
 
           <div className="space-y-2">
             {selected.sentences.map((sent, idx) => (
-              <div key={idx} className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3 flex items-start gap-3 group">
-                <span className="text-xs text-zinc-600 w-6 shrink-0 mt-1">{idx + 1}</span>
+              <button
+                key={idx}
+                type="button"
+                onClick={() => speak(dir === 'A' ? sent.en : sent.vi, targetLang)}
+                className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3 flex items-start gap-3 group text-left hover:bg-zinc-800/60 active:scale-[0.99] transition-all"
+              >
+                <Volume2 className="w-4 h-4 shrink-0 mt-0.5 transition-colors text-zinc-600 group-hover:text-white" />
+                <span className="text-xs text-zinc-600 w-5 shrink-0 mt-0.5">{idx + 1}.</span>
                 <div className="flex-1 min-w-0">
                   <p className={`font-medium text-[15px] leading-snug ${c.text}`}>{sent.en}</p>
                   <p className="text-sm text-zinc-400 mt-0.5">{sent.vi}</p>
                 </div>
-                <button
-                  onClick={() => speak(dir === 'A' ? sent.en : sent.vi, targetLang)}
-                  className="mt-0.5 p-1.5 rounded-lg text-zinc-600 hover:text-sky-400 hover:bg-zinc-800 active:scale-95 transition-all shrink-0"
-                >
-                  <Volume2 className="w-4 h-4" />
-                </button>
-              </div>
+              </button>
             ))}
           </div>
         </main>

@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, X, BookText, Layers } from 'lucide-react'
+import { Search, X, BookText, Layers, Volume2 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PronounceButton from '../components/PronounceButton'
-import SpeakButton from '../components/SpeakButton'
 import VocabMilestone from '../components/VocabMilestone'
+import { speak } from '../lib/tts'
 import WordOfTheDay from '../components/WordOfTheDay'
 import PosFilter from '../components/PosFilter'
 import Flashcard from '../components/Flashcard'
@@ -152,20 +152,26 @@ export default function Dictionary() {
                     <p className="text-xs text-zinc-500 font-mono mb-2">{e.ipa_vi}</p>
                   )}
 
-                  {/* Câu ví dụ + nút đọc nguyên câu */}
+                  {/* Câu ví dụ — bấm cả khối để nghe */}
                   {e.ex_en && (
-                    <div className="mt-2 pl-3 border-l-2 border-zinc-700 space-y-1">
-                      {/* Câu tiếng Anh + nút đọc */}
-                      <div className="flex items-start gap-1.5">
-                        <SpeakButton text={e.ex_en} lang="en-US" title="Nghe câu tiếng Anh" size="xs" />
+                    <div className="mt-2 space-y-1">
+                      <button
+                        type="button"
+                        onClick={() => void speak(e.ex_en, 'en-US')}
+                        className="w-full flex items-start gap-2.5 pl-3 border-l-2 border-zinc-700 hover:border-emerald-500/50 group text-left transition-colors"
+                      >
+                        <Volume2 className="w-3.5 h-3.5 text-zinc-600 group-hover:text-emerald-400 mt-0.5 shrink-0 transition-colors" />
                         <p className="text-xs text-zinc-400 italic leading-relaxed">{e.ex_en}</p>
-                      </div>
-                      {/* Câu tiếng Việt + nút đọc */}
+                      </button>
                       {e.ex_vi && (
-                        <div className="flex items-start gap-1.5">
-                          <SpeakButton text={e.ex_vi} lang="vi-VN" title="Nghe câu tiếng Việt" size="xs" />
+                        <button
+                          type="button"
+                          onClick={() => void speak(e.ex_vi, 'vi-VN')}
+                          className="w-full flex items-start gap-2.5 pl-3 border-l-2 border-zinc-700 hover:border-sky-500/50 group text-left transition-colors"
+                        >
+                          <Volume2 className="w-3.5 h-3.5 text-zinc-600 group-hover:text-sky-400 mt-0.5 shrink-0 transition-colors" />
                           <p className="text-xs text-zinc-500 leading-relaxed">{e.ex_vi}</p>
-                        </div>
+                        </button>
                       )}
                     </div>
                   )}
