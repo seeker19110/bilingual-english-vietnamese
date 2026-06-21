@@ -19,6 +19,8 @@ import {
 
 // Model và giới hạn do SERVER quyết định, không tin client
 const ALLOWED_MODEL = 'claude-haiku-4-5-20251001'
+// Model chat của Groq (FREE) — dùng khi có GROQ_API_KEY. Có thể đổi qua biến môi trường.
+const GROQ_CHAT_MODEL = process.env.GROQ_CHAT_MODEL || 'llama-3.3-70b-versatile'
 const MAX_TOKENS_LIMIT = 2048      // tối đa cho phép (writing cần 2048, chat 1024)
 const MAX_BODY_BYTES = 64 * 1024   // 64KB — đủ cho 1 cuộc hội thoại dài
 const MAX_MSG_CONTENT = 2000       // mỗi tin nhắn không quá 2000 ký tự
@@ -71,10 +73,13 @@ export default async function handler(req: Request): Promise<Response> {
     )
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) {
+  // Chọn nhà cung cấp AI: có GROQ_API_KEY thì dùng Groq (Llama, FREE), không thì Anthropic.
+  // Cần ít nhất một trong hai key.
+  const groqKey = process.env.GROQ_API_KEY
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (!groqKey && !anthropicKey) {
     return new Response(
-      JSON.stringify({ error: { message: 'Server chưa cấu hình ANTHROPIC_API_KEY' } }),
+      JSON.stringify({ error: { message: 'Server chưa cấu hình GROQ_API_KEY hoặc ANTHROPIC_API_KEY' } }),
       { status: 500, headers: { 'content-type': 'application/json', ...allHeaders } },
     )
   }
@@ -125,21 +130,55 @@ export default async function handler(req: Request): Promise<Response> {
     )
   }
 
-  // Server quyết định model + max_tokens — không dùng giá trị client gửi lên
+  // Server quyết định max_tokens + system — không tin giá trị client gửi lên
+  const maxTokens = Math.min(
+    typeof parsed.max_tokens === 'number' ? parsed.max_tokens : 1024,
+    MAX_TOKENS_LIMIT,
+  )
+  const system = typeof parsed.system === 'string' ? parsed.system.slice(0, 8000) : ''
+
+  // ── Nhánh Groq (ưu tiên — FREE, API tương thích chuẩn OpenAI) ───────────────
+  if (groqKey) {
+    // Groq nhận system như 1 message role="system" ở đầu danh sách
+    const groqMessages = [
+      ...(system ? [{ role: 'system', content: system }] : []),
+      ...sanitizedMessages,
+    ]
+    const groqResp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${groqKey}`, 'content-type': 'application/json' },
+      body: JSON.stringify({ model: GROQ_CHAT_MODEL, max_tokens: maxTokens, messages: groqMessages }),
+    })
+
+    if (!groqResp.ok) {
+      const detail = await groqResp.text().catch(() => '')
+      return new Response(
+        JSON.stringify({ error: { message: `Groq lỗi (${groqResp.status}): ${detail.slice(0, 200)}` } }),
+        { status: groqResp.status, headers: { 'content-type': 'application/json', ...allHeaders } },
+      )
+    }
+
+    const groqData = (await groqResp.json()) as { choices?: { message?: { content?: string } }[] }
+    const text = groqData.choices?.[0]?.message?.content ?? ''
+    // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc: data.content[0].text
+    return new Response(
+      JSON.stringify({ content: [{ type: 'text', text }] }),
+      { status: 200, headers: { 'content-type': 'application/json', ...allHeaders } },
+    )
+  }
+
+  // ── Nhánh Anthropic (chất lượng cao — cần credit) ──────────────────────────
   const safeBody = {
     model: ALLOWED_MODEL,
-    max_tokens: Math.min(
-      typeof parsed.max_tokens === 'number' ? parsed.max_tokens : 1024,
-      MAX_TOKENS_LIMIT,
-    ),
-    system: typeof parsed.system === 'string' ? parsed.system.slice(0, 8000) : '',
+    max_tokens: maxTokens,
+    system,
     messages: sanitizedMessages,
   }
 
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
-      'x-api-key': apiKey,
+      'x-api-key': anthropicKey as string,
       'anthropic-version': '2023-06-01',
       'content-type': 'application/json',
     },
