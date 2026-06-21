@@ -404,7 +404,9 @@
         "en": "See you soon. I look forward to it.",
         "vi": "Hẹn gặp lại. Tôi rất mong chờ điều đó."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 2,
@@ -811,7 +813,9 @@
         "en": "I look forward to hearing about it.",
         "vi": "Tôi rất mong được nghe về điều đó."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 3,
@@ -1218,7 +1222,9 @@
         "en": "I really enjoyed being here. Thanks again!",
         "vi": "Tôi rất vui khi được ở đây. Cảm ơn lần nữa!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 4,
@@ -1625,7 +1631,9 @@
         "en": "Thank you. I hope you have a pleasant journey.",
         "vi": "Cảm ơn bạn. Tôi hy vọng bạn có một chuyến đi dễ chịu."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 5,
@@ -2032,7 +2040,9 @@
         "en": "It was my pleasure to help you.",
         "vi": "Đó là niềm vui của tôi khi giúp bạn."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 6,
@@ -2199,7 +2209,9 @@
         "en": "You too. Safe travels to the post office!",
         "vi": "Bạn cũng vậy. Đi đường an toàn đến bưu điện nhé!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 7,
@@ -2366,7 +2378,9 @@
         "en": "I will. Have a nice day, doctor.",
         "vi": "Tôi sẽ vậy. Chúc bác sĩ một ngày tốt lành."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 8,
@@ -2528,7 +2542,9 @@
         "en": "You too. I hope you feel better soon.",
         "vi": "Bạn cũng vậy. Tôi hy vọng bạn sẽ sớm khỏe lại."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 9,
@@ -2690,7 +2706,9 @@
         "en": "Have a great rest of your day!",
         "vi": "Chúc bạn một ngày còn lại tuyệt vời!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 10,
@@ -2852,7 +2870,9 @@
         "en": "Have a wonderful evening!",
         "vi": "Chúc bạn một buổi tối tuyệt vời!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 11,
@@ -3009,7 +3029,9 @@
         "en": "You're welcome. Have a safe trip home!",
         "vi": "Không có gì. Chúc bạn về nhà an toàn!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 12,
@@ -3166,7 +3188,9 @@
         "en": "Thank you so much. Have a nice day!",
         "vi": "Cảm ơn anh nhiều lắm. Chúc anh một ngày tốt lành!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 13,
@@ -3323,7 +3347,9 @@
         "en": "You're welcome. Have a good day at the market!",
         "vi": "Không có gì. Chúc bạn một ngày vui vẻ ở chợ!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 14,
@@ -3480,7 +3506,9 @@
         "en": "Thank you, I'm really looking forward to it.",
         "vi": "Cảm ơn bạn, tôi rất mong chờ chuyến đi này."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 15,
@@ -3637,7 +3665,9 @@
         "en": "Thank you very much. Have a nice day.",
         "vi": "Cảm ơn bạn rất nhiều. Chúc bạn một ngày tốt lành."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 16,
@@ -3794,7 +3824,9 @@
         "en": "You too, take care!",
         "vi": "Bạn cũng vậy, giữ gìn sức khỏe nhé!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 17,
@@ -3951,7 +3983,9 @@
         "en": "You're welcome. See you this afternoon.",
         "vi": "Không có gì. Hẹn gặp bạn chiều nay."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 18,
@@ -4108,7 +4142,9 @@
         "en": "Take care, see you tomorrow.",
         "vi": "Giữ gìn sức khỏe, hẹn gặp ngày mai."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 19,
@@ -4265,7 +4301,9 @@
         "en": "Same here, Ha. See you around!",
         "vi": "Tôi cũng vậy, Hà. Hẹn gặp lại nhé!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 20,
@@ -4422,7 +4460,9 @@
         "en": "You're welcome. See you soon.",
         "vi": "Không có gì. Hẹn gặp sớm."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 21,
@@ -4579,7 +4619,9 @@
         "en": "You too, thanks for choosing our store.",
         "vi": "Bạn cũng vậy, cảm ơn anh đã chọn cửa hàng chúng tôi."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 22,
@@ -4736,7 +4778,9 @@
         "en": "You're welcome. See you later.",
         "vi": "Không có gì. Hẹn gặp lại sau."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 23,
@@ -4893,7 +4937,9 @@
         "en": "You're welcome. We'll see you this afternoon.",
         "vi": "Không có gì. Hẹn gặp bạn chiều nay."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 24,
@@ -5050,7 +5096,9 @@
         "en": "Follow me, it's this way.",
         "vi": "Theo tôi, ở hướng này."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 25,
@@ -5207,7 +5255,9 @@
         "en": "You too, thanks!",
         "vi": "Bạn cũng vậy, cảm ơn!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 26,
@@ -5364,7 +5414,9 @@
         "en": "You're welcome. See you next week.",
         "vi": "Không có gì. Hẹn gặp lại tuần sau."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 27,
@@ -5521,7 +5573,9 @@
         "en": "Likewise. Have a great day.",
         "vi": "Tôi cũng vậy. Chúc anh/chị một ngày tốt lành."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 28,
@@ -5678,7 +5732,9 @@
         "en": "You too, thank you.",
         "vi": "Anh/chị cũng vậy, cảm ơn."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 29,
@@ -5835,7 +5891,9 @@
         "en": "You'll do great. Talk soon.",
         "vi": "Em sẽ làm tốt. Nói chuyện sau nhé."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 30,
@@ -5992,7 +6050,9 @@
         "en": "Thank you so much for your support, An.",
         "vi": "Cảm ơn bạn rất nhiều vì đã hỗ trợ, An."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 31,
@@ -6149,7 +6209,9 @@
         "en": "See you then, Huy.",
         "vi": "Hẹn gặp lúc đó, Huy."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 32,
@@ -6306,7 +6368,9 @@
         "en": "Goodbye.",
         "vi": "Tạm biệt."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 33,
@@ -6463,7 +6527,9 @@
         "en": "Goodbye, have a nice day.",
         "vi": "Tạm biệt, chúc bạn một ngày tốt lành."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 34,
@@ -6620,7 +6686,9 @@
         "en": "Goodbye, have a nice day.",
         "vi": "Tạm biệt, chúc bạn một ngày tốt lành."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 35,
@@ -6777,7 +6845,9 @@
         "en": "Goodbye.",
         "vi": "Tạm biệt."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 36,
@@ -6934,7 +7004,9 @@
         "en": "Me too, let's go.",
         "vi": "Tôi cũng vậy, đi thôi."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 37,
@@ -7091,7 +7163,9 @@
         "en": "See you then, have a good day.",
         "vi": "Hẹn gặp lúc đó, chúc cô một ngày tốt lành."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 38,
@@ -7248,7 +7322,9 @@
         "en": "Goodbye, take care.",
         "vi": "Tạm biệt, giữ gìn sức khỏe."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 39,
@@ -7405,7 +7481,9 @@
         "en": "Agreed, thanks for inviting me.",
         "vi": "Đồng ý, cảm ơn bạn đã mời tôi."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 40,
@@ -7562,7 +7640,9 @@
         "en": "You're welcome. Your drink will be ready shortly.",
         "vi": "Không có gì. Đồ uống của bạn sẽ sẵn sàng ngay đây."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 41,
@@ -7719,7 +7799,9 @@
         "en": "Let's enjoy this meal together now.",
         "vi": "Hãy cùng nhau thưởng thức bữa ăn này."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 42,
@@ -7876,7 +7958,9 @@
         "en": "Goodbye.",
         "vi": "Tạm biệt."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 43,
@@ -8033,7 +8117,9 @@
         "en": "See you, this is going to be fun.",
         "vi": "Hẹn gặp lại, việc này sẽ rất vui."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 44,
@@ -8190,7 +8276,9 @@
         "en": "I love you all too. Thank you so much.",
         "vi": "Tôi cũng yêu mọi người. Cảm ơn rất nhiều."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 45,
@@ -8347,7 +8435,9 @@
         "en": "Thank you so much. Happy New Year in advance!",
         "vi": "Cảm ơn bạn rất nhiều. Chúc mừng năm mới trước nhé!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 46,
@@ -8504,7 +8594,9 @@
         "en": "Me too. Happy New Year, my friend.",
         "vi": "Tôi cũng vậy. Chúc mừng năm mới, bạn của tôi."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 47,
@@ -8661,7 +8753,9 @@
         "en": "Happy Mid-Autumn Festival in advance, big sister.",
         "vi": "Chúc mừng Tết Trung Thu sớm nhé, chị."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 48,
@@ -8818,7 +8912,9 @@
         "en": "Let's go, we don't want to be late.",
         "vi": "Đi thôi, chúng ta không muốn đến muộn."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 49,
@@ -8975,7 +9071,9 @@
         "en": "Me too. This was a great evening.",
         "vi": "Anh cũng vậy. Đây là một buổi tối tuyệt vời."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 50,
@@ -9132,7 +9230,9 @@
         "en": "Me too. I hope we can do this again sometime.",
         "vi": "Tôi cũng vậy. Tôi hy vọng chúng ta có thể làm vậy lần nữa."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 51,
@@ -9289,7 +9389,9 @@
         "en": "Wonderful! We look forward to having you as a member.",
         "vi": "Tuyệt vời! Chúng tôi rất vui được chào đón bạn là thành viên."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 52,
@@ -9446,7 +9548,9 @@
         "en": "Thank you for bringing me here. I think I'm going to enjoy this.",
         "vi": "Cảm ơn bạn đã rủ tôi đến đây. Tôi nghĩ tôi sẽ thích điều này."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 53,
@@ -9603,7 +9707,9 @@
         "en": "Sounds good. I'll need something to drink after all that swimming.",
         "vi": "Nghe hay đấy. Tôi sẽ cần uống gì đó sau khi bơi xong."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "male"
   },
   {
     "id": 54,
@@ -9760,7 +9866,9 @@
         "en": "5:15 it is. Good night — I should sleep early!",
         "vi": "5:15 nhé. Chúc ngủ ngon — tôi phải ngủ sớm thôi!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "male"
   },
   {
     "id": 55,
@@ -9927,7 +10035,9 @@
         "en": "Take care. Warm up properly before playing to prevent future injuries.",
         "vi": "Bảo trọng nhé. Hãy khởi động kỹ trước khi chơi để tránh chấn thương sau này."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 56,
@@ -10084,7 +10194,9 @@
         "en": "Thank you. Enjoy your ride and have a wonderful trip in Da Nang!",
         "vi": "Cảm ơn bạn. Chúc bạn có chuyến đi vui và kỳ nghỉ tuyệt vời ở Đà Nẵng!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 57,
@@ -10251,7 +10363,9 @@
         "en": "Yes, we accept all major credit cards. I'll print your voucher.",
         "vi": "Được, chúng tôi chấp nhận tất cả thẻ tín dụng lớn. Tôi sẽ in voucher cho bạn."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 58,
@@ -10408,7 +10522,9 @@
         "en": "Done. Arrive at the airport at least 1.5 hours before departure. Have a good trip!",
         "vi": "Xong rồi. Hãy đến sân bay trước ít nhất 1.5 giờ so với giờ khởi hành. Chúc thượng lộ bình an!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 59,
@@ -10565,7 +10681,9 @@
         "en": "Same here. History always feels more alive when you can see it.",
         "vi": "Tôi cũng vậy. Lịch sử luôn cảm thấy sống động hơn khi bạn có thể nhìn thấy nó."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "male"
   },
   {
     "id": 60,
@@ -10712,7 +10830,9 @@
         "en": "Of course. Your friends and family are going to love these gifts!",
         "vi": "Được. Bạn bè và gia đình bạn sẽ rất thích những món quà này!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 61,
@@ -10869,7 +10989,9 @@
         "en": "The trailers are the best part sometimes!",
         "vi": "Đôi khi trailers là phần hay nhất luôn!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 62,
@@ -11016,7 +11138,9 @@
         "en": "Perfect. Let's go! Tonight is going to be unforgettable.",
         "vi": "Tuyệt vời. Đi thôi! Tối nay sẽ thật khó quên."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 63,
@@ -11173,7 +11297,9 @@
         "en": "You're welcome. Enjoy your reading. We're open until 9 PM.",
         "vi": "Không có gì. Chúc bạn đọc vui. Chúng tôi mở đến 9 giờ tối."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 64,
@@ -11330,7 +11456,9 @@
         "en": "Tonight is already one of the best nights of the year!",
         "vi": "Tối nay đã là một trong những đêm đẹp nhất trong năm rồi!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 65,
@@ -11487,7 +11615,9 @@
         "en": "That's a great plan! Good luck. I'm sure you'll do well.",
         "vi": "Kế hoạch tốt đấy! Chúc may mắn. Tôi chắc bạn sẽ làm tốt."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 66,
@@ -11634,7 +11764,9 @@
         "en": "See you then. Keep practicing every day!",
         "vi": "Hẹn gặp. Cứ luyện tập mỗi ngày nhé!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 67,
@@ -11801,7 +11933,9 @@
         "en": "Great choice. I think you'll be very happy with this laptop for coding!",
         "vi": "Lựa chọn tốt. Tôi nghĩ bạn sẽ rất hài lòng với laptop này để code!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 68,
@@ -11958,7 +12092,9 @@
         "en": "Goodbye and sorry again for the inconvenience.",
         "vi": "Tạm biệt và xin lỗi một lần nữa vì sự bất tiện."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 69,
@@ -12110,7 +12246,9 @@
         "en": "You'll do great. Call me if you need help.",
         "vi": "Mẹ sẽ làm tốt. Gọi cho con nếu cần giúp nhé."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 70,
@@ -12262,7 +12400,9 @@
         "en": "Of course! That's why I always make extra.",
         "vi": "Tất nhiên! Đó là lý do mẹ luôn nấu nhiều hơn một chút."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 71,
@@ -12399,7 +12539,9 @@
         "en": "She's lucky to have someone who cares for her so well. Take care.",
         "vi": "Bà may mắn có người chăm sóc chu đáo như vậy. Bảo trọng nhé."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 72,
@@ -12536,7 +12678,9 @@
         "en": "I'm lucky too. Come on, let's go fix that mirror before it gets dark.",
         "vi": "Anh cũng vậy. Đi nào, mình đi sửa cái gương trước khi trời tối."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 73,
@@ -12683,7 +12827,9 @@
         "en": "Good advice. I feel so much better just talking about it.",
         "vi": "Lời khuyên hay. Tôi cảm thấy tốt hơn rất nhiều chỉ sau khi nói về nó."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 74,
@@ -12830,7 +12976,9 @@
         "en": "We look forward to it! Now let's get started.",
         "vi": "Chúng tôi mong được phục vụ bạn! Bây giờ mình bắt đầu nào."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 75,
@@ -12987,7 +13135,9 @@
         "en": "By tomorrow afternoon if shipped today. Here's your receipt and tracking number.",
         "vi": "Chiều mai nếu gửi hôm nay. Đây là biên lai và mã theo dõi của bạn."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 76,
@@ -13144,7 +13294,9 @@
         "en": "Done! You'll receive a confirmation SMS shortly. See you Saturday!",
         "vi": "Xong! Bạn sẽ nhận được SMS xác nhận ngay. Hẹn gặp thứ Bảy!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 77,
@@ -13291,7 +13443,9 @@
         "en": "Goodnight!",
         "vi": "Chúc ngủ ngon!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 78,
@@ -13448,7 +13602,9 @@
         "en": "See you soon! Remember, no phones during the session — pure relaxation.",
         "vi": "Hẹn gặp! Nhớ là không điện thoại trong buổi — thư giãn hoàn toàn."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 79,
@@ -13585,7 +13741,9 @@
         "en": "That's what family is for. Now let's celebrate with some tea!",
         "vi": "Đó là điều gia đình dành cho nhau. Bây giờ mình ăn mừng với trà đi!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 80,
@@ -13732,7 +13890,9 @@
         "en": "See you Sunday! I'm excited to practice with you.",
         "vi": "Hẹn gặp Chủ Nhật! Tôi rất hào hứng được luyện tập cùng bạn."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 81,
@@ -13879,7 +14039,9 @@
         "en": "Welcome! Feel free to ask me anything anytime.",
         "vi": "Chào mừng! Cứ hỏi tôi bất cứ điều gì bất cứ lúc nào."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "male"
   },
   {
     "id": 82,
@@ -14031,7 +14193,9 @@
         "en": "My pleasure! Come back and explore more. There's always something new to discover.",
         "vi": "Không có gì! Hãy quay lại khám phá thêm. Luôn có điều gì đó mới để khám phá."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 83,
@@ -14183,7 +14347,9 @@
         "en": "I definitely will. Thank you for introducing me to real pho!",
         "vi": "Chắc chắn rồi. Cảm ơn bạn đã giới thiệu cho tôi phở thật sự!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 84,
@@ -14320,7 +14486,9 @@
         "en": "I like that saying. Let's make our dreams happen together!",
         "vi": "Tôi thích câu nói đó. Mình cùng nhau hiện thực hóa ước mơ nào!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 85,
@@ -14472,7 +14640,9 @@
         "en": "That's wild. I need to try it! Lead the way!",
         "vi": "Kỳ lạ thật. Tôi phải thử! Dẫn đường đi!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 86,
@@ -14629,7 +14799,9 @@
         "en": "Vietnam has many more places like this. You'll have to come back!",
         "vi": "Việt Nam có nhiều nơi như thế này. Bạn sẽ phải quay lại!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 87,
@@ -14776,7 +14948,9 @@
         "en": "Anytime! The best way to learn about Vietnam is through its food.",
         "vi": "Lúc nào cũng được! Cách tốt nhất để tìm hiểu Việt Nam là qua đồ ăn."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "male"
   },
   {
     "id": 88,
@@ -14923,7 +15097,9 @@
         "en": "You've got this! Hard work and consistency will get you that 7.0.",
         "vi": "Bạn làm được! Chăm chỉ và nhất quán sẽ giúp bạn đạt 7.0."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 89,
@@ -15080,7 +15256,9 @@
         "en": "Reading is so much richer when you share it. Count me in!",
         "vi": "Đọc sách phong phú hơn nhiều khi chia sẻ. Tôi tham gia!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 90,
@@ -15227,7 +15405,9 @@
         "en": "Good luck! Feel free to ask anything when you're ready to make the jump.",
         "vi": "Chúc may mắn! Cứ hỏi tôi bất cứ điều gì khi bạn sẵn sàng."
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 91,
@@ -15384,7 +15564,9 @@
         "en": "I love shopping with you, Mummy!",
         "vi": "Con thích đi mua sắm với mẹ lắm!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 92,
@@ -15521,7 +15703,9 @@
         "en": "And like you! We're both trying. That's what matters.",
         "vi": "Và như bạn! Chúng ta đều đang cố gắng. Đó là điều quan trọng."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 93,
@@ -15658,7 +15842,9 @@
         "en": "I'll be here. Thank you again, teacher.",
         "vi": "Tôi sẽ có mặt. Cảm ơn thầy cô một lần nữa."
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 94,
@@ -15805,7 +15991,9 @@
         "en": "That's what we're here for. Enjoy the wedding!",
         "vi": "Đó là lý do chúng tôi ở đây. Chúc vui vẻ tại đám cưới!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 95,
@@ -15952,7 +16140,9 @@
         "en": "Your reservation number is R2025-847. See you Saturday at 7 PM!",
         "vi": "Số đặt bàn của bạn là R2025-847. Hẹn gặp thứ Bảy lúc 7 giờ tối!"
       }
-    ]
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female"
   },
   {
     "id": 96,
@@ -16089,7 +16279,9 @@
         "en": "You're going to do great. Study hard and enjoy the adventure!",
         "vi": "Em sẽ làm tốt thôi. Học chăm chỉ và tận hưởng cuộc phiêu lưu!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 97,
@@ -16236,7 +16428,9 @@
         "en": "Take care of her well. She's a lucky cat to have such a caring owner!",
         "vi": "Chăm sóc con bé tốt. Con bé là mèo may mắn có chủ quan tâm như vậy!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 98,
@@ -16383,7 +16577,9 @@
         "en": "You too! Great meeting you tonight!",
         "vi": "Bạn cũng vậy! Vui khi gặp bạn tối nay!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female"
   },
   {
     "id": 99,
@@ -16515,7 +16711,9 @@
         "en": "No, I insist. You can get the next one!",
         "vi": "Không, tôi khăng khăng. Bạn trả lần sau nhé!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   },
   {
     "id": 100,
@@ -16672,6 +16870,8 @@
         "en": "Every English speaker you admire once couldn't say a single sentence. Keep going!",
         "vi": "Mỗi người nói tiếng Anh bạn ngưỡng mộ ngày xưa không thể nói được một câu. Hãy tiếp tục!"
       }
-    ]
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male"
   }
 ]

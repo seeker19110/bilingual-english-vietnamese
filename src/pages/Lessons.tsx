@@ -17,6 +17,8 @@ interface Lesson {
   title: string
   situation: string
   turns: Turn[]
+  speakerAGender?: 'female' | 'male'
+  speakerBGender?: 'female' | 'male'
 }
 
 const LESSONS = lessonsData as Lesson[]
@@ -119,6 +121,9 @@ function LessonList({ lessons, isA, onSelect }: {
 
 // ── Chi tiết bài học + audio player ──────────────────────────────────────────
 function LessonView({ lesson, isA, onBack }: { lesson: Lesson; isA: boolean; onBack: () => void }) {
+  // Giọng theo giới tính người nói (mặc định A=nữ, B=nam nếu không có dữ liệu)
+  const voiceA = lesson.speakerAGender ?? 'female'
+  const voiceB = lesson.speakerBGender ?? 'male'
   // Trạng thái phát
   const [activeTurn, setActiveTurn]   = useState<number | null>(null)
   const [playing,    setPlaying]      = useState(false)
@@ -178,20 +183,22 @@ function LessonView({ lesson, isA, onBack }: { lesson: Lesson; isA: boolean; onB
       const transText  = isA ? t.vi : t.en
       const curMode    = modeRef.current
       const curSpeed   = speedRef.current
+      // Giọng đọc theo giới tính người nói A hoặc B
+      const curVoice   = t.speaker === 'A' ? voiceA : voiceB
 
       if (curMode === 'en') {
-        await speak(t.en, 'en-US', undefined, curSpeed, wi => syncWord({ turnIdx: i, lang: 'en', wordIdx: wi }))
+        await speak(t.en, 'en-US', curVoice, curSpeed, wi => syncWord({ turnIdx: i, lang: 'en', wordIdx: wi }))
       } else if (curMode === 'vi') {
-        await speak(t.vi, 'vi-VN', undefined, curSpeed, wi => syncWord({ turnIdx: i, lang: 'vi', wordIdx: wi }))
+        await speak(t.vi, 'vi-VN', curVoice, curSpeed, wi => syncWord({ turnIdx: i, lang: 'vi', wordIdx: wi }))
       } else {
         // Phát ngôn ngữ đích → nghỉ ngắn → phát bản dịch
         const tLang = isA ? 'en' : 'vi'
         const rLang = isA ? 'vi' : 'en'
-        await speak(targetText, targetLang, undefined, curSpeed, wi => syncWord({ turnIdx: i, lang: tLang, wordIdx: wi }))
+        await speak(targetText, targetLang, curVoice, curSpeed, wi => syncWord({ turnIdx: i, lang: tLang, wordIdx: wi }))
         if (!stopRef.current) {
           syncWord(null)
           await new Promise(r => setTimeout(r, 250))
-          await speak(transText, transLang, undefined, curSpeed, wi => syncWord({ turnIdx: i, lang: rLang, wordIdx: wi }))
+          await speak(transText, transLang, curVoice, curSpeed, wi => syncWord({ turnIdx: i, lang: rLang, wordIdx: wi }))
         }
       }
 
@@ -240,18 +247,19 @@ function LessonView({ lesson, isA, onBack }: { lesson: Lesson; isA: boolean; onB
     const transText  = isA ? t.vi : t.en
     const curMode    = modeRef.current
     const curSpeed   = speedRef.current
+    const curVoice   = t.speaker === 'A' ? voiceA : voiceB
 
     if (curMode === 'en') {
-      await speak(t.en, 'en-US', undefined, curSpeed, wi => syncWord({ turnIdx: idx, lang: 'en', wordIdx: wi }))
+      await speak(t.en, 'en-US', curVoice, curSpeed, wi => syncWord({ turnIdx: idx, lang: 'en', wordIdx: wi }))
     } else if (curMode === 'vi') {
-      await speak(t.vi, 'vi-VN', undefined, curSpeed, wi => syncWord({ turnIdx: idx, lang: 'vi', wordIdx: wi }))
+      await speak(t.vi, 'vi-VN', curVoice, curSpeed, wi => syncWord({ turnIdx: idx, lang: 'vi', wordIdx: wi }))
     } else {
       const tLang = isA ? 'en' : 'vi'
       const rLang = isA ? 'vi' : 'en'
-      await speak(targetText, targetLang, undefined, curSpeed, wi => syncWord({ turnIdx: idx, lang: tLang, wordIdx: wi }))
+      await speak(targetText, targetLang, curVoice, curSpeed, wi => syncWord({ turnIdx: idx, lang: tLang, wordIdx: wi }))
       syncWord(null)
       await new Promise(r => setTimeout(r, 250))
-      await speak(transText, transLang, undefined, curSpeed, wi => syncWord({ turnIdx: idx, lang: rLang, wordIdx: wi }))
+      await speak(transText, transLang, curVoice, curSpeed, wi => syncWord({ turnIdx: idx, lang: rLang, wordIdx: wi }))
     }
     syncWord(null)
   }

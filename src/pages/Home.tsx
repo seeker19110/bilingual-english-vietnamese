@@ -237,50 +237,19 @@ export default function Home() {
 
         </div>
 
-        {/* ── Usage card ────────────────────────────────────────────────── */}
-        <div className={`mb-6 rounded-2xl p-4 border animate-fade-in delay-50 ${
-          user.plan === 'pro'
-            ? 'bg-gradient-to-r from-amber-500/10 to-orange-500/5 border-amber-500/30'
-            : 'bg-zinc-900/80 border-zinc-800/80'
-        }`}>
-          <div className="flex items-center gap-3">
-            {user.plan === 'pro'
-              ? <Crown className="w-5 h-5 text-amber-400 shrink-0" />
-              : <Zap className="w-5 h-5 text-zinc-400 shrink-0" />}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white">
-                {user.plan === 'pro' ? T.planPro : T.planFree}
-              </p>
-              {user.plan === 'free' ? (
-                <div className="mt-2 space-y-1.5">
-                  {[
-                    { label: T.chat,  used: usage.chatCount,     max: limit.chat },
-                    { label: T.speak, used: usage.speakingCount, max: limit.speaking },
-                    { label: isA ? 'Mic' : 'STT', used: usage.sttCount, max: limit.stt },
-                    { label: T.write, used: usage.writingCount,  max: limit.writing },
-                  ].map(({ label, used, max }) => (
-                    <div key={label} className="flex items-center gap-2">
-                      <span className="text-[10px] text-zinc-500 w-8 shrink-0">{label}</span>
-                      <div className="flex-1 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                        <div className={`h-full ${barColor(used, max)} rounded-full transition-all`}
-                          style={{ width: `${usagePct(used, max)}%` }} />
-                      </div>
-                      <span className="text-[10px] text-zinc-500 w-10 text-right">{used}/{max}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
+        {/* ── Usage card — TẠM ẨN, tích hợp thanh toán Pro sau ────────── */}
+        {/* TODO: hiện lại khi có cổng thanh toán nâng cấp gói Pro */}
+        {false && user.plan === 'pro' && (
+          <div className="mb-6 rounded-2xl p-4 border animate-fade-in delay-50 bg-gradient-to-r from-amber-500/10 to-orange-500/5 border-amber-500/30">
+            <div className="flex items-center gap-3">
+              <Crown className="w-5 h-5 text-amber-400 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-white">{T.planPro}</p>
                 <p className="text-xs text-zinc-500 mt-0.5">{T.unlimited}</p>
-              )}
-            </div>
-            {user.plan === 'free' && (
-              <div className="shrink-0 text-right">
-                <span className="text-[10px] text-zinc-600 block">{T.resetsAt}</span>
-                <span className="text-xs text-zinc-500 font-medium">12:00 AM</span>
               </div>
-            )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ── Hành động nhanh (lịch sử + quiz + chia sẻ + thông báo) ──────── */}
         <div className="mb-4 space-y-2 animate-fade-in">
