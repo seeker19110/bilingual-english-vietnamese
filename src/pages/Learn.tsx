@@ -84,10 +84,10 @@ export default function Learn() {
 // ── Thẻ học chung (hiện từ → lật xem nghĩa) ──────────────────────────────────
 function WordCard({ card, isA }: { card: DictEntry; isA: boolean }) {
   const [flipped, setFlipped] = useState(false)
-  // Reset mặt thẻ khi đổi từ
-  const key = card.word
+  // Lưu ý: việc reset mặt thẻ khi đổi từ là nhờ component cha gắn key={card.word}
+  // cho chính <WordCard/> (xem dưới), khiến cả thẻ remount mỗi khi đổi từ.
   return (
-    <div key={key}>
+    <div>
       <button
         onClick={() => setFlipped(f => !f)}
         className="glass w-full rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition mb-4"
