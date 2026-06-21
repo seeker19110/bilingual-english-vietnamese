@@ -12,6 +12,17 @@ export type Voice = 'female' | 'male'
 let currentAudio: HTMLAudioElement | null = null
 let currentBlobUrl: string | null = null
 
+// ── Pause / Resume — dùng cho trình phát hội thoại ──────────────────────────
+export function pauseCurrentAudio() {
+  if (currentAudio) currentAudio.pause()
+  if ('speechSynthesis' in window) window.speechSynthesis.pause()
+}
+
+export function resumeCurrentAudio() {
+  if (currentAudio) void currentAudio.play().catch(() => {})
+  if ('speechSynthesis' in window) window.speechSynthesis.resume()
+}
+
 // ── Giọng đọc toàn cục (nữ/nam) ─────────────────────────────────────────────
 // Lưu lựa chọn của người dùng vào localStorage để giữ nguyên qua các lần mở app.
 // Mọi nút loa (SpeakButton) đọc giá trị này lúc bấm, nên đổi 1 chỗ là áp dụng tất cả.
@@ -68,7 +79,8 @@ async function decryptCachedAudio(audioUrl: string, keyB64: string, ivB64: strin
 }
 
 // Gọi /api/tts (kèm JWT) → giải mã audio → phát qua <audio>
-async function speakViaGoogle(text: string, lang: Lang, voice: Voice): Promise<void> {
+// rate: 0.75 = chậm, 1 = bình thường, 1.25 = nhanh (điều chỉnh client-side, không tốn thêm API)
+async function speakViaGoogle(text: string, lang: Lang, voice: Voice, rate = 1): Promise<void> {
   if (!text.trim()) return
 
   const { data: { session } } = await supabase.auth.getSession()
@@ -94,6 +106,7 @@ async function speakViaGoogle(text: string, lang: Lang, voice: Voice): Promise<v
 
   await new Promise<void>((resolve, reject) => {
     const audio = new Audio(blobUrl)
+    audio.playbackRate = rate
     currentAudio = audio
     currentBlobUrl = blobUrl
     const cleanup = () => {
@@ -108,13 +121,13 @@ async function speakViaGoogle(text: string, lang: Lang, voice: Voice): Promise<v
 }
 
 // Fallback Web Speech API khi Google TTS không khả dụng
-function speakViaWebSpeech(text: string, lang: Lang, voice: Voice): Promise<void> {
+function speakViaWebSpeech(text: string, lang: Lang, voice: Voice, rate = 1): Promise<void> {
   return new Promise((resolve) => {
     if (!('speechSynthesis' in window) || !text.trim()) { resolve(); return }
     window.speechSynthesis.cancel()
     const utt = new SpeechSynthesisUtterance(text)
     utt.lang = lang
-    utt.rate = lang === 'en-US' ? 0.9 : 0.85
+    utt.rate = (lang === 'en-US' ? 0.9 : 0.85) * rate
     // Cố chọn giọng nam/nữ khớp ngôn ngữ nếu trình duyệt có sẵn (không phải lúc nào cũng có)
     const wanted = window.speechSynthesis.getVoices().find((v) => {
       if (!v.lang.startsWith(lang.slice(0, 2))) return false
@@ -130,12 +143,12 @@ function speakViaWebSpeech(text: string, lang: Lang, voice: Voice): Promise<void
   })
 }
 
-export async function speak(text: string, lang: Lang, voice: Voice = getVoicePref()): Promise<void> {
+export async function speak(text: string, lang: Lang, voice: Voice = getVoicePref(), rate = 1): Promise<void> {
   try {
-    await speakViaGoogle(text, lang, voice)
+    await speakViaGoogle(text, lang, voice, rate)
   } catch {
     // Lỗi Google TTS (chưa đăng nhập, mất mạng, server lỗi...) → dùng Web Speech API tạm
-    await speakViaWebSpeech(text, lang, voice)
+    await speakViaWebSpeech(text, lang, voice, rate)
   }
 }
 
@@ -146,7 +159,8 @@ export async function speakBilingual(
   speechLang: Lang = 'en-US',
   feedbackLang: Lang = 'vi-VN',
   voice: Voice = getVoicePref(),
+  rate = 1,
 ) {
-  if (speech)   await speak(speech, speechLang, voice)
-  if (feedback) await speak(feedback, feedbackLang, voice)
+  if (speech)   await speak(speech, speechLang, voice, rate)
+  if (feedback) await speak(feedback, feedbackLang, voice, rate)
 }
