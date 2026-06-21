@@ -130,10 +130,13 @@ function todayStr() {
 
 export function getUsage(userId: string): DailyUsage {
   const date = todayStr()
-  return get<DailyUsage>(K.usage(userId, date)) ?? { date, chatCount: 0, writingCount: 0, speakingCount: 0 }
+  const u = get<DailyUsage>(K.usage(userId, date)) ?? { date, chatCount: 0, writingCount: 0, speakingCount: 0, sttCount: 0 }
+  // Bản local cũ có thể thiếu sttCount (lưu trước khi thêm tính năng) — bù mặc định.
+  if (u.sttCount == null) u.sttCount = 0
+  return u
 }
 
-export function incrementUsage(userId: string, field: 'chatCount' | 'writingCount' | 'speakingCount') {
+export function incrementUsage(userId: string, field: 'chatCount' | 'writingCount' | 'speakingCount' | 'sttCount') {
   const usage = getUsage(userId)
   usage[field]++
   set(K.usage(userId, todayStr()), usage)

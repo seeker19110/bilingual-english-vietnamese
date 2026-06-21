@@ -227,6 +227,7 @@ export default function Home() {
                   {[
                     { label: T.chat,  used: usage.chatCount,     max: limit.chat },
                     { label: T.speak, used: usage.speakingCount, max: limit.speaking },
+                    { label: isA ? 'Mic' : 'STT', used: usage.sttCount, max: limit.stt },
                     { label: T.write, used: usage.writingCount,  max: limit.writing },
                   ].map(({ label, used, max }) => (
                     <div key={label} className="flex items-center gap-2">

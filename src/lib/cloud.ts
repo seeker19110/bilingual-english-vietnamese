@@ -72,6 +72,7 @@ export function pushUsage(userId: string, usage: DailyUsage) {
     chat_count: usage.chatCount,
     writing_count: usage.writingCount,
     speaking_count: usage.speakingCount,
+    stt_count: usage.sttCount,
   }).then(({ error }) => warn('usage', error))
 }
 
@@ -97,6 +98,7 @@ export async function pullUserData(userId: string): Promise<void> {
       chatCount: u.chat_count ?? 0,
       writingCount: u.writing_count ?? 0,
       speakingCount: u.speaking_count ?? 0,
+      sttCount: u.stt_count ?? 0,
     } satisfies DailyUsage)
   }
 

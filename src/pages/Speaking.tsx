@@ -230,6 +230,7 @@ export default function Speaking() {
         try {
           const text = await r.stop()
           setProcessing(false)
+          incrementUsage(user.id, 'sttCount')  // đã gọi API STT thành công → tính 1 lượt
           if (text.trim()) await sendUserSpeech(text.trim())
           else setError(isA ? 'Không nghe rõ, thử nói lại nhé.' : "Didn't catch that, try again.")
         } catch (e) {
@@ -247,6 +248,13 @@ export default function Speaking() {
 
     // ── Chưa ghi → bắt đầu ghi ───────────────────────────────────────────────
     if (!session) return
+    // Chặn nếu hết lượt nhận diện giọng nói (STT) trong ngày — đếm riêng với hội thoại.
+    if (getUsage(user.id).sttCount >= LIMITS[user.plan].stt) {
+      setLimitHit(true)
+      toast.error(isA ? 'Bạn đã hết lượt nhận diện giọng nói hôm nay. Có thể gõ tay để tiếp tục.'
+                      : "You've used all speech-recognition turns today. You can type instead.")
+      return
+    }
     setTranscript('')
     setError('')
 
@@ -269,7 +277,7 @@ export default function Speaking() {
     const stop = startListening(
       sttLang,
       r => setTranscript(r.transcript),
-      async (last) => { setRecording(false); if (last.trim()) await sendUserSpeech(last.trim()) },
+      async (last) => { setRecording(false); incrementUsage(user.id, 'sttCount'); if (last.trim()) await sendUserSpeech(last.trim()) },
       err => { setError(err); setRecording(false) },
     )
     stopRecRef.current = stop

@@ -60,8 +60,11 @@ create table if not exists public.daily_usage (
   chat_count    integer not null default 0,
   writing_count integer not null default 0,
   speaking_count integer not null default 0,
+  stt_count     integer not null default 0,    -- lượt nhận diện giọng nói (STT), đếm riêng
   primary key (user_id, day)
 );
+-- Bổ sung cột cho DB cũ đã tạo bảng trước khi có stt_count (chạy lại an toàn).
+alter table public.daily_usage add column if not exists stt_count integer not null default 0;
 
 -- ── 6. tts_cache: cache audio Google TTS dùng chung cho mọi user ─────────────
 -- hash = SHA-256(text + lang + voice)[0:32] → key tìm nhanh, tên file trên Storage
