@@ -21,7 +21,7 @@
 // Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
-import { generateAudioFromGoogle, isValidVoice, DEFAULT_VOICE, type Lang } from './_lib/googleTts'
+import { generateAudioFromGoogle, isValidVoice, DEFAULT_VOICE, VOICE_VERSION, type Lang } from './_lib/googleTts'
 import { saveAudio } from './_lib/fileStorage'
 import { encryptAudio, getClientKeyMaterial } from './_lib/ttsCrypto'
 import {
@@ -109,7 +109,9 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // ── BƯỚC 1: Kiểm tra cache ──────────────────────────────────────────────────
-  const textHash = await hashText(text + lang + voice)
+  // Khóa cache có kèm VOICE_VERSION → khi đổi giọng (đổi version), câu cũ không khớp
+  // nữa nên sẽ tạo lại bằng giọng mới thay vì phát lại audio cũ.
+  const textHash = await hashText(text + lang + voice + VOICE_VERSION)
 
   const { data: cachedRow } = await supabase
     .from('tts_cache')
