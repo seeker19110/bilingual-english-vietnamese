@@ -26,9 +26,15 @@
   .scrollbar-none::-webkit-scrollbar { display: none; }
   .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
-  /* Safe area cho iPhone */
+  /* Safe area cho iPhone / notch / bottom bar */
   .pb-safe {
     padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .pb-safe-only {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
   }
 
   /* Glass card */

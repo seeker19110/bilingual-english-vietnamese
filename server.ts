@@ -59,11 +59,23 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
   }
 }
 
+// ── Health check ────────────────────────────────────────────────────────────
+// Endpoint nhẹ để PM2 / Nginx / uptime monitor kiểm tra app còn sống không.
+// Không gọi AI, không đụng DB → trả lời tức thì, không tốn tiền.
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime(), time: new Date().toISOString() })
+})
+
 // ── API routes ────────────────────────────────────────────────────────────────
 // Thêm vào đây nếu tạo thêm file api/*.ts mới
 app.all('/api/tts', wrapEdge(ttsHandler))
 app.all('/api/claude', wrapEdge(claudeHandler))
 app.all('/api/pronunciation', wrapEdge(pronunciationHandler))
+
+// ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
+// Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
+const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, 'uploads')
+app.use('/uploads', express.static(uploadsDir, { maxAge: '30d' }))
 
 // ── Phục vụ frontend (React build) ───────────────────────────────────────────
 // Cache file tĩnh 1 ngày — trừ index.html để luôn lấy bản mới nhất

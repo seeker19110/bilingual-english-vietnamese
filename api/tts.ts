@@ -1,18 +1,37 @@
-// api/tts.ts — Vercel Edge Function
+// api/tts.ts — Vercel Edge Function / chạy qua server.ts (Express) khi deploy VPS
 // Endpoint: POST /api/tts
 // Body: { text: string, lang: 'en-US' | 'vi-VN', voice?: 'female' | 'male' }
-// Trả về: { audio_url: string, cached: boolean }
+// Trả về: { audio_url: string, key_b64: string, iv_b64: string, cached: boolean }
 //
 // Luồng xử lý:
 //   1. Hash (text + lang + voice) → tìm trong bảng tts_cache (Supabase DB)
-//   2. Cache HIT → trả audio_url luôn, không tốn API
-//   3. Cache MISS → gọi Google TTS → upload mp3 lên Supabase Storage → lưu DB → trả URL
+//   2. Cache HIT → trả audio_url + khoá giải mã luôn, không tốn API
+//   3. Cache MISS → gọi Google TTS → MÃ HÓA AES-256-GCM → lưu file qua saveAudio()
+//      (local VPS hoặc Supabase Storage tùy STORAGE_DRIVER, xem api/_lib/fileStorage.ts)
+//      → lưu DB → trả URL + khoá giải mã
 //
 // Chiến lược cache dùng chung: câu nào đã phát sinh 1 lần thì mọi user sau dùng lại,
-// không tốn thêm tiền API nữa.
+// không tốn thêm tiền API nữa. Khác với api/pronunciation.ts (chỉ đọc 1 từ), endpoint
+// này đọc cả câu/đoạn — dùng cho câu ví dụ, cụm từ, hội thoại trong Chat/Speaking.
+//
+// Bảo mật: file audio (bucket/thư mục "tts-cache") bị MÃ HÓA AES-256-GCM trước khi lưu —
+// ai có link cũng không nghe được nếu không có khoá, và khoá chỉ phát cho request có JWT
+// Supabase hợp lệ. validateAuth() ở dưới đã bắt buộc đăng nhập cho TOÀN BỘ endpoint
+// này (không có chế độ ẩn danh) nên mọi response thành công đều kèm khoá giải mã.
+// Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
 import { generateAudioFromGoogle, isValidVoice, DEFAULT_VOICE, type Lang } from './_lib/googleTts'
+import { saveAudio } from './_lib/fileStorage'
+import { encryptAudio, getClientKeyMaterial } from './_lib/ttsCrypto'
+import {
+  getCorsHeaders,
+  SECURITY_HEADERS,
+  checkRateLimit,
+  validateAuth,
+  validateContentType,
+  logSecurityEvent,
+} from './_lib/security'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
 
@@ -20,8 +39,8 @@ function isValidLang(value: string): value is Lang {
   return VALID_LANGS.includes(value as Lang)
 }
 
-// Hash đơn giản dùng để tạo tên file + key tìm kiếm trong DB
-// Không cần bảo mật, chỉ cần ngắn + ít xung đột
+// Hash đơn giản dùng để tạo tên file + key tìm kiếm trong DB (KHÔNG phải khoá mã hóa —
+// khoá mã hóa thật được suy ra riêng trong ttsCrypto.ts từ TTS_ENCRYPTION_MASTER_KEY).
 async function hashText(text: string): Promise<string> {
   const encoder = new TextEncoder()
   const data = encoder.encode(text)
@@ -31,28 +50,54 @@ async function hashText(text: string): Promise<string> {
 }
 
 export default async function handler(req: Request): Promise<Response> {
+  const corsHeaders = getCorsHeaders(req)
+  const allHeaders = { ...corsHeaders, ...SECURITY_HEADERS }
+
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS })
+    return new Response(null, { status: 204, headers: allHeaders })
   }
 
   if (req.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405)
+    return jsonResponse({ error: 'Method not allowed' }, 405, allHeaders)
+  }
+
+  // Lấy IP để rate limit
+  const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+
+  // Kiểm tra Content-Type
+  if (!validateContentType(req)) {
+    logSecurityEvent('INVALID_CONTENT_TYPE', clientIp, { path: '/api/tts' })
+    return jsonResponse({ error: 'Content-Type phải là application/json' }, 415, allHeaders)
+  }
+
+  // Rate limit: 10 request/phút mỗi IP (TTS tốn tiền ít hơn AI nhưng vẫn cần giới hạn)
+  if (!checkRateLimit(clientIp, 10)) {
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/tts' })
+    return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
+  }
+
+  // Xác thực người dùng qua Supabase JWT — bắt buộc, vì audio cache bị mã hóa và
+  // khoá giải mã chỉ phát cho người đã đăng nhập.
+  const authResult = await validateAuth(req)
+  if (!authResult) {
+    logSecurityEvent('AUTH_FAILED', clientIp, { path: '/api/tts' })
+    return jsonResponse({ error: 'Chưa đăng nhập hoặc phiên hết hạn' }, 401, allHeaders)
   }
 
   let body: { text?: string; lang?: string; voice?: string }
   try {
     body = await req.json()
   } catch {
-    return jsonResponse({ error: 'Body JSON không hợp lệ' }, 400)
+    return jsonResponse({ error: 'Body JSON không hợp lệ' }, 400, allHeaders)
   }
 
   const text = body.text?.trim()
   const lang = body.lang?.trim() || 'en-US'
   const voiceParam = body.voice?.trim() || DEFAULT_VOICE
 
-  if (!text) return jsonResponse({ error: 'Thiếu text' }, 400)
-  if (!isValidLang(lang)) return jsonResponse({ error: `lang không hợp lệ: ${lang}` }, 400)
-  if (!isValidVoice(voiceParam)) return jsonResponse({ error: `voice không hợp lệ: ${voiceParam}` }, 400)
+  if (!text) return jsonResponse({ error: 'Thiếu text' }, 400, allHeaders)
+  if (!isValidLang(lang)) return jsonResponse({ error: `lang không hợp lệ: ${lang}` }, 400, allHeaders)
+  if (!isValidVoice(voiceParam)) return jsonResponse({ error: `voice không hợp lệ: ${voiceParam}` }, 400, allHeaders)
 
   const voice = voiceParam
 
@@ -60,7 +105,7 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     supabase = getSupabaseAdmin()
   } catch (err) {
-    return jsonResponse({ error: (err as Error).message }, 500)
+    return jsonResponse({ error: (err as Error).message }, 500, allHeaders)
   }
 
   // ── BƯỚC 1: Kiểm tra cache ──────────────────────────────────────────────────
@@ -74,7 +119,8 @@ export default async function handler(req: Request): Promise<Response> {
 
   const cachedUrl = (cachedRow as { audio_url?: string } | null)?.audio_url
   if (cachedUrl) {
-    return jsonResponse({ audio_url: cachedUrl, cached: true })
+    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
+    return jsonResponse({ audio_url: cachedUrl, key_b64, iv_b64, cached: true }, 200, allHeaders)
   }
 
   // ── BƯỚC 2: Cache MISS → gọi Google TTS ────────────────────────────────────
@@ -82,25 +128,23 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     audioData = await generateAudioFromGoogle(text, voice, lang)
   } catch (err) {
-    return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500)
+    return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500, allHeaders)
   }
 
-  // ── BƯỚC 3: Upload lên Supabase Storage (bucket "tts-cache") ───────────────
+  // ── BƯỚC 3: Mã hóa AES-256-GCM rồi lưu file (local VPS hoặc Supabase Storage tùy
+  // STORAGE_DRIVER) ── Mã hóa TRƯỚC khi lưu — file luôn là ciphertext, không phải mp3 gốc.
+  const encryptedData = await encryptAudio(audioData, textHash)
   const fileName = `${lang}/${voice}/${textHash}.mp3`
-  const { error: uploadError } = await supabase.storage
-    .from('tts-cache')
-    .upload(fileName, audioData, {
-      contentType: 'audio/mpeg',
-      upsert: true,
-    })
+  const origin = req.headers.get('origin') || ''
 
-  if (uploadError) {
-    return jsonResponse({ error: `Upload thất bại: ${uploadError.message}` }, 500)
+  let audioUrl: string
+  try {
+    audioUrl = await saveAudio('tts-cache', fileName, encryptedData, origin)
+  } catch (err) {
+    return jsonResponse({ error: `Lưu file thất bại: ${(err as Error).message}` }, 500, allHeaders)
   }
 
   // ── BƯỚC 4: Lưu vào DB ─────────────────────────────────────────────────────
-  const { data: urlData } = supabase.storage.from('tts-cache').getPublicUrl(fileName)
-  const audioUrl = urlData.publicUrl
 
   const { error: insertError } = await supabase
     .from('tts_cache')
@@ -110,19 +154,14 @@ export default async function handler(req: Request): Promise<Response> {
     console.error('Lỗi lưu tts_cache:', insertError.message)
   }
 
-  return jsonResponse({ audio_url: audioUrl, cached: false })
+  const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
+  return jsonResponse({ audio_url: audioUrl, key_b64, iv_b64, cached: false }, 200, allHeaders)
 }
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-}
-
-function jsonResponse(body: unknown, status = 200): Response {
+function jsonResponse(body: unknown, status = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'content-type': 'application/json', ...CORS_HEADERS },
+    headers: { 'content-type': 'application/json', ...headers },
   })
 }
 

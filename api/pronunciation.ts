@@ -19,25 +19,63 @@
 
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
 import { generateAudioFromGoogle, isValidVoice, DEFAULT_VOICE } from './_lib/googleTts'
+import { saveAudio } from './_lib/fileStorage'
+import {
+  getCorsHeaders,
+  SECURITY_HEADERS,
+  checkRateLimit,
+  validateAuth,
+  logSecurityEvent,
+} from './_lib/security'
+
+// Regex chỉ cho phép chữ, số, dấu cách, gạch nối — ngăn ký tự lạ trong tên từ
+const WORD_SAFE_PATTERN = /^[a-zA-Z0-9\s-]+$/
 
 export default async function handler(req: Request): Promise<Response> {
+  const corsHeaders = getCorsHeaders(req)
+  const allHeaders = { ...corsHeaders, ...SECURITY_HEADERS }
+
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS })
+    return new Response(null, { status: 204, headers: allHeaders })
   }
 
   if (req.method !== 'GET') {
-    return jsonResponse({ error: 'Method not allowed' }, 405)
+    return jsonResponse({ error: 'Method not allowed' }, 405, allHeaders)
+  }
+
+  // Lấy IP để rate limit
+  const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+
+  // Rate limit: 20 request/phút (phát âm rẻ hơn AI nên cho nhiều hơn)
+  if (!checkRateLimit(clientIp, 20)) {
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/pronunciation' })
+    return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
+  }
+
+  // Xác thực người dùng qua Supabase JWT
+  const authResult = await validateAuth(req)
+  if (!authResult) {
+    logSecurityEvent('AUTH_FAILED', clientIp, { path: '/api/pronunciation' })
+    return jsonResponse({ error: 'Chưa đăng nhập hoặc phiên hết hạn' }, 401, allHeaders)
   }
 
   const url = new URL(req.url)
-  const word = url.searchParams.get('word')?.toLowerCase().trim()
+  const rawWord = url.searchParams.get('word')?.toLowerCase().trim()
   const voiceParam = url.searchParams.get('voice')?.toLowerCase().trim() || DEFAULT_VOICE
 
-  if (!word) {
-    return jsonResponse({ error: 'Thiếu tham số word' }, 400)
+  if (!rawWord) {
+    return jsonResponse({ error: 'Thiếu tham số word' }, 400, allHeaders)
   }
+
+  // Sanitize: chỉ chấp nhận chữ/số/dấu cách/gạch nối, tối đa 100 ký tự
+  if (rawWord.length > 100 || !WORD_SAFE_PATTERN.test(rawWord)) {
+    logSecurityEvent('INVALID_WORD_PARAM', clientIp, { word: rawWord.slice(0, 30) })
+    return jsonResponse({ error: 'Từ không hợp lệ (chỉ chấp nhận chữ, số, dấu cách, gạch nối)' }, 400, allHeaders)
+  }
+  const word = rawWord
+
   if (!isValidVoice(voiceParam)) {
-    return jsonResponse({ error: `voice không hợp lệ: ${voiceParam} (chỉ nhận "female" hoặc "male")` }, 400)
+    return jsonResponse({ error: `voice không hợp lệ: ${voiceParam} (chỉ nhận "female" hoặc "male")` }, 400, allHeaders)
   }
   const voice = voiceParam
 
@@ -45,7 +83,7 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     supabase = getSupabaseAdmin()
   } catch (err) {
-    return jsonResponse({ error: (err as Error).message }, 500)
+    return jsonResponse({ error: (err as Error).message }, 500, allHeaders)
   }
 
   // ── BƯỚC 1: Kiểm tra cache (theo cặp word + voice) ─────────
@@ -58,7 +96,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   const cachedUrl = (cachedRow as { audio_url?: string } | null)?.audio_url
   if (cachedUrl) {
-    return jsonResponse({ audio_url: cachedUrl, cached: true })
+    return jsonResponse({ audio_url: cachedUrl, cached: true }, 200, allHeaders)
   }
 
   // ── BƯỚC 2: Cache MISS → gọi Google TTS ────────────────────
@@ -66,28 +104,20 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     audioData = await generateAudioFromGoogle(word, voice, 'en-US')
   } catch (err) {
-    return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500)
+    return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500, allHeaders)
   }
 
-  // ── BƯỚC 3: Upload lên Supabase Storage ────────────────────
-  // upsert: true — cho phép ghi đè nếu 2 người tra cùng 1 từ chưa-cache gần như cùng lúc
-  // (tránh lỗi "resource already exists" thay vì phải bắt lỗi riêng).
-  // Tên file có hậu tố giọng (-female/-male) vì 1 từ giờ có thể có nhiều file audio.
+  // ── BƯỚC 3: Lưu file audio (local VPS hoặc Supabase Storage tùy STORAGE_DRIVER) ──
+  // Tên file có hậu tố giọng (-female/-male) vì 1 từ có thể có nhiều file audio.
   const fileName = `${encodeURIComponent(word)}-${voice}.mp3`
-  const { error: uploadError } = await supabase.storage
-    .from('pronunciations')
-    .upload(fileName, audioData, {
-      contentType: 'audio/mpeg',
-      upsert: true,
-    })
+  const origin = req.headers.get('origin') || ''
 
-  if (uploadError) {
-    return jsonResponse({ error: `Upload thất bại: ${uploadError.message}` }, 500)
+  let audioUrl: string
+  try {
+    audioUrl = await saveAudio('pronunciations', fileName, audioData, origin)
+  } catch (err) {
+    return jsonResponse({ error: `Lưu file thất bại: ${(err as Error).message}` }, 500, allHeaders)
   }
-
-  // ── BƯỚC 4: Lấy public URL ─────────────────────────────────
-  const { data: urlData } = supabase.storage.from('pronunciations').getPublicUrl(fileName)
-  const audioUrl = urlData.publicUrl
 
   // ── BƯỚC 5: Lưu vào DB ─────────────────────────────────────
   // upsert theo cặp (word, voice) — cột unique composite — nếu lỡ có request trùng
@@ -102,18 +132,13 @@ export default async function handler(req: Request): Promise<Response> {
     console.error('Lỗi lưu cache pronunciations:', insertError.message)
   }
 
-  return jsonResponse({ audio_url: audioUrl, cached: false })
+  return jsonResponse({ audio_url: audioUrl, cached: false }, 200, allHeaders)
 }
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',  // TODO: đổi thành domain Vercel thật sau khi deploy
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-}
-
-function jsonResponse(body: unknown, status = 200): Response {
+function jsonResponse(body: unknown, status = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'content-type': 'application/json', ...CORS_HEADERS },
+    headers: { 'content-type': 'application/json', ...headers },
   })
 }
 

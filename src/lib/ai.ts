@@ -1,11 +1,20 @@
 // Gọi AI qua /api/claude — KHÔNG gửi API key từ browser.
 // API key được giữ ở server: vite.config.ts (lúc dev) hoặc api/claude.ts (lúc deploy lên Vercel).
 
+import { supabase } from './supabase'
+
 const MODEL = 'claude-haiku-4-5-20251001'
 
 interface ClaudeMessage {
   role: 'user' | 'assistant'
   content: string
+}
+
+// Lấy Supabase JWT để gửi kèm request — server dùng để xác thực người dùng
+async function getAuthHeader(): Promise<Record<string, string>> {
+  const { data } = await supabase.auth.getSession()
+  const token = data.session?.access_token
+  return token ? { 'Authorization': `Bearer ${token}` } : {}
 }
 
 export async function callClaude(
@@ -15,9 +24,10 @@ export async function callClaude(
 ): Promise<string> {
   // /api/claude: lúc "npm run dev" được vite.config.ts proxy thẳng tới Anthropic (key đọc từ .env phía server);
   // lúc deploy lên Vercel, route này do api/claude.ts (serverless function) xử lý.
+  const authHeader = await getAuthHeader()
   const resp = await fetch('/api/claude', {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', ...authHeader },
     body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages }),
   })
 

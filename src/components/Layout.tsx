@@ -5,6 +5,7 @@ import { getUsage } from '../lib/storage'
 import { LIMITS } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
+import VoiceToggle from './VoiceToggle'
 
 interface Props {
   title: string
@@ -34,7 +35,7 @@ export default function Layout({ title, subtitle, back = true }: Props) {
         {/* Back / Logo */}
         {back ? (
           <button onClick={() => nav('/')}
-            className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition shrink-0 -ml-1 p-1 rounded-lg hover:bg-zinc-800/50">
+            className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition shrink-0 -ml-1 p-3 rounded-lg hover:bg-zinc-800/50">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:inline">{T.home}</span>
           </button>
@@ -71,6 +72,9 @@ export default function Layout({ title, subtitle, back = true }: Props) {
           </>
         )}
 
+        {/* Chọn giọng đọc toàn cục (nữ/nam) — áp dụng cho mọi nút loa */}
+        <VoiceToggle />
+
         {/* User avatar + logout */}
         {user && (
           <div className="flex items-center gap-1 shrink-0">
@@ -78,7 +82,7 @@ export default function Layout({ title, subtitle, back = true }: Props) {
               {user.name[0]?.toUpperCase()}
             </div>
             <button onClick={handleLogout}
-              className="text-zinc-600 hover:text-red-400 transition p-2.5 rounded-lg hover:bg-red-400/10"
+              className="text-zinc-600 hover:text-red-400 transition p-3 rounded-lg hover:bg-red-400/10"
               title={T.logout}>
               <LogOut className="w-3.5 h-3.5" />
             </button>

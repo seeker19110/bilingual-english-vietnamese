@@ -1,10 +1,29 @@
 // Text-to-Speech — gọi Google TTS qua /api/tts (server-side, có cache dùng chung)
-// Audio được cache lên Supabase Storage: câu đã phát 1 lần thì mọi user sau dùng lại miễn phí.
-// Fallback về Web Speech API nếu /api/tts lỗi (mất mạng, server timeout...).
+// Audio cache được MÃ HÓA AES-256-GCM trên Supabase Storage: ai có link cũng không
+// nghe được nội dung nếu chưa đăng nhập — server chỉ trả khoá giải mã (key_b64/iv_b64)
+// cho request có JWT Supabase hợp lệ, gửi qua header Authorization: Bearer <token>.
+// Fallback về Web Speech API nếu /api/tts lỗi (mất mạng, server timeout, chưa đăng nhập...).
+
+import { supabase } from './supabase'
 
 type Lang = 'en-US' | 'vi-VN'
+export type Voice = 'female' | 'male'
 
 let currentAudio: HTMLAudioElement | null = null
+let currentBlobUrl: string | null = null
+
+// ── Giọng đọc toàn cục (nữ/nam) ─────────────────────────────────────────────
+// Lưu lựa chọn của người dùng vào localStorage để giữ nguyên qua các lần mở app.
+// Mọi nút loa (SpeakButton) đọc giá trị này lúc bấm, nên đổi 1 chỗ là áp dụng tất cả.
+const VOICE_KEY = 'tts_voice'
+
+export function getVoicePref(): Voice {
+  return localStorage.getItem(VOICE_KEY) === 'male' ? 'male' : 'female'
+}
+
+export function setVoicePref(voice: Voice): void {
+  localStorage.setItem(VOICE_KEY, voice)
+}
 
 export function isTTSSupported(): boolean {
   return true // Google TTS luôn hoạt động (không phụ thuộc trình duyệt)
@@ -16,53 +35,107 @@ export function stopSpeaking() {
     currentAudio.src = ''
     currentAudio = null
   }
+  if (currentBlobUrl) {
+    URL.revokeObjectURL(currentBlobUrl)
+    currentBlobUrl = null
+  }
   // Dừng cả Web Speech API phòng khi đang dùng fallback
   if ('speechSynthesis' in window) window.speechSynthesis.cancel()
 }
 
-// Gọi /api/tts → lấy URL audio → phát qua <audio>
-async function speakViaGoogle(text: string, lang: Lang): Promise<void> {
+// ── Giải mã audio AES-256-GCM (xem api/_lib/ttsCrypto.ts ở phía server) ─────
+function base64ToBytes(b64: string): Uint8Array {
+  const binary = atob(b64)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+  return bytes
+}
+
+async function decryptCachedAudio(audioUrl: string, keyB64: string, ivB64: string): Promise<string> {
+  const cipherRes = await fetch(audioUrl)
+  if (!cipherRes.ok) throw new Error(`Không tải được audio: ${cipherRes.status}`)
+  const cipherBuffer = await cipherRes.arrayBuffer()
+
+  const keyBytes = base64ToBytes(keyB64)
+  const ivBytes = base64ToBytes(ivB64)
+  // Ép kiểu BufferSource: @types/node làm Uint8Array generic theo ArrayBufferLike, lệch với
+  // kiểu BufferSource của lib DOM — chỉ là vấn đề kiểu TypeScript, không ảnh hưởng runtime.
+  const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, ['decrypt'])
+  const plainBuffer = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: ivBytes as BufferSource }, key, cipherBuffer)
+
+  const blob = new Blob([plainBuffer], { type: 'audio/mpeg' })
+  return URL.createObjectURL(blob)
+}
+
+// Gọi /api/tts (kèm JWT) → giải mã audio → phát qua <audio>
+async function speakViaGoogle(text: string, lang: Lang, voice: Voice): Promise<void> {
   if (!text.trim()) return
+
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token
+  if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
 
   const res = await fetch('/api/tts', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, lang, voice: 'female' }),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ text, lang, voice }),
   })
 
   if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
 
-  const { audio_url } = await res.json() as { audio_url: string }
+  const { audio_url, key_b64, iv_b64 } = await res.json() as {
+    audio_url: string; key_b64: string; iv_b64: string
+  }
+
+  const blobUrl = await decryptCachedAudio(audio_url, key_b64, iv_b64)
 
   await new Promise<void>((resolve, reject) => {
-    const audio = new Audio(audio_url)
+    const audio = new Audio(blobUrl)
     currentAudio = audio
-    audio.onended = () => { currentAudio = null; resolve() }
-    audio.onerror = () => { currentAudio = null; reject(new Error('Không phát được audio')) }
+    currentBlobUrl = blobUrl
+    const cleanup = () => {
+      URL.revokeObjectURL(blobUrl)
+      if (currentBlobUrl === blobUrl) currentBlobUrl = null
+      if (currentAudio === audio) currentAudio = null
+    }
+    audio.onended = () => { cleanup(); resolve() }
+    audio.onerror = () => { cleanup(); reject(new Error('Không phát được audio')) }
     audio.play().catch(reject)
   })
 }
 
 // Fallback Web Speech API khi Google TTS không khả dụng
-function speakViaWebSpeech(text: string, lang: Lang): Promise<void> {
+function speakViaWebSpeech(text: string, lang: Lang, voice: Voice): Promise<void> {
   return new Promise((resolve) => {
     if (!('speechSynthesis' in window) || !text.trim()) { resolve(); return }
     window.speechSynthesis.cancel()
     const utt = new SpeechSynthesisUtterance(text)
     utt.lang = lang
     utt.rate = lang === 'en-US' ? 0.9 : 0.85
+    // Cố chọn giọng nam/nữ khớp ngôn ngữ nếu trình duyệt có sẵn (không phải lúc nào cũng có)
+    const wanted = window.speechSynthesis.getVoices().find((v) => {
+      if (!v.lang.startsWith(lang.slice(0, 2))) return false
+      const n = v.name.toLowerCase()
+      return voice === 'male'
+        ? n.includes('male') || n.includes('david') || n.includes('nam')
+        : n.includes('female') || n.includes('zira') || n.includes('samantha') || n.includes('nữ')
+    })
+    if (wanted) utt.voice = wanted
     utt.onend = () => resolve()
     utt.onerror = () => resolve() // không throw để tránh crash UI
     window.speechSynthesis.speak(utt)
   })
 }
 
-export async function speak(text: string, lang: Lang): Promise<void> {
+export async function speak(text: string, lang: Lang, voice: Voice = getVoicePref()): Promise<void> {
   try {
-    await speakViaGoogle(text, lang)
+    await speakViaGoogle(text, lang, voice)
   } catch {
-    // Nếu Google TTS lỗi (không có key, mất mạng...) → dùng Web Speech API tạm
-    await speakViaWebSpeech(text, lang)
+    // Lỗi Google TTS (chưa đăng nhập, mất mạng, server lỗi...) → dùng Web Speech API tạm
+    await speakViaWebSpeech(text, lang, voice)
   }
 }
 
@@ -72,7 +145,8 @@ export async function speakBilingual(
   feedback: string,
   speechLang: Lang = 'en-US',
   feedbackLang: Lang = 'vi-VN',
+  voice: Voice = getVoicePref(),
 ) {
-  if (speech)   await speak(speech, speechLang)
-  if (feedback) await speak(feedback, feedbackLang)
+  if (speech)   await speak(speech, speechLang, voice)
+  if (feedback) await speak(feedback, feedbackLang, voice)
 }
