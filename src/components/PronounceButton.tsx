@@ -19,8 +19,10 @@ type Voice = 'female' | 'male'
 export default function PronounceButton({ word }: Props) {
   const [voice, setVoice] = useState<Voice>('female')
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
-  // Nhớ audioUrl riêng cho từng giọng đã tải, để qua lại giữa nữ/nam không phải tải lại.
-  const [audioUrls, setAudioUrls] = useState<Partial<Record<Voice, string>>>({})
+  // Nhớ audioUrl đã tải theo cặp "từ|giọng" — PHẢI có cả từ trong khoá, vì component này
+  // hay bị dùng lại cho nhiều từ khác nhau (ví dụ chuyển thẻ flashcard) mà state không bị
+  // reset; nếu chỉ theo giọng thì từ mới sẽ phát nhầm audio của từ cũ đã lưu.
+  const [audioUrls, setAudioUrls] = useState<Record<string, string>>({})
 
   // Câu/cụm từ dài → dùng Web Speech API miễn phí, không cần cache server
   function speakWithWebSpeech() {
@@ -45,7 +47,8 @@ export default function PronounceButton({ word }: Props) {
       return
     }
 
-    const cached = audioUrls[voice]
+    const cacheKey = `${word}|${voice}`
+    const cached = audioUrls[cacheKey]
     if (cached) {
       playAudio(cached)
       return
@@ -63,10 +66,11 @@ export default function PronounceButton({ word }: Props) {
       if (!res.ok || !data.audio_url) {
         throw new Error(data.error ?? `Lỗi ${res.status}`)
       }
+      const audioUrl = data.audio_url
 
-      setAudioUrls((prev) => ({ ...prev, [voice]: data.audio_url }))
+      setAudioUrls((prev) => ({ ...prev, [cacheKey]: audioUrl }))
       setStatus('idle')
-      playAudio(data.audio_url)
+      playAudio(audioUrl)
     } catch (err) {
       console.error('Lỗi phát âm:', err)
       // Fallback về Web Speech API nếu server lỗi
