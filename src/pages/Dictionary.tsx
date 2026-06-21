@@ -185,19 +185,19 @@ export default function Dictionary() {
                     <p className="text-xs text-zinc-500 font-mono mb-2">{e.ipa_vi}</p>
                   )}
 
-                  {/* Câu ví dụ — karaoke highlight từng chữ khi nghe */}
+                  {/* Câu ví dụ — mỗi dòng EN/VI tap riêng để nghe, giống Câu thông dụng */}
                   {e.ex_en && (
-                    <div className="mt-2 space-y-1 pl-3 border-l-2 border-zinc-700">
+                    <div className="mt-2 rounded-lg border border-zinc-800 divide-y divide-zinc-800/60 overflow-hidden">
                       <KaraokeText
                         text={e.ex_en} lang="en-US"
-                        textClass="text-xs text-zinc-400 italic leading-relaxed"
-                        buttonClass="w-full hover:opacity-80"
+                        textClass="text-xs text-emerald-300/80 italic leading-relaxed"
+                        buttonClass="w-full px-3 py-2 hover:bg-emerald-500/5 active:bg-emerald-500/10 text-left"
                       />
                       {e.ex_vi && (
                         <KaraokeText
                           text={e.ex_vi} lang="vi-VN"
-                          textClass="text-xs text-zinc-500 leading-relaxed"
-                          buttonClass="w-full hover:opacity-80"
+                          textClass="text-xs text-zinc-400 leading-relaxed"
+                          buttonClass="w-full px-3 py-2 hover:bg-sky-500/5 active:bg-sky-500/10 text-left"
                         />
                       )}
                     </div>
