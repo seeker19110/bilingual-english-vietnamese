@@ -19,6 +19,9 @@ const Dictionary = lazy(() => import('./pages/Dictionary'))
 // Trang Bài học cũng chứa dữ liệu hội thoại lớn (sẽ lên tới 100 bài) — lazy-load tương tự.
 const Lessons = lazy(() => import('./pages/Lessons'))
 
+// Trang Học theo lộ trình cũng dùng toàn bộ từ điển (qua lib/curriculum) — lazy-load.
+const Learn = lazy(() => import('./pages/Learn'))
+
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang
 function PageLoading() {
   return (
@@ -47,6 +50,7 @@ export default function App() {
               <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
               <Route path="/writing" element={<RequireAuth><Writing /></RequireAuth>} />
               <Route path="/speaking" element={<RequireAuth><Speaking /></RequireAuth>} />
+              <Route path="/learn" element={<RequireAuth><Learn /></RequireAuth>} />
               <Route path="/dictionary" element={<RequireAuth><Dictionary /></RequireAuth>} />
               <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
               <Route path="/parts-of-speech" element={<RequireAuth><PartsOfSpeech /></RequireAuth>} />
