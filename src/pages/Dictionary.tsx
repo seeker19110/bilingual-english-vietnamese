@@ -8,6 +8,7 @@ import KaraokeText from '../components/KaraokeText'
 import PosFilter from '../components/PosFilter'
 import Flashcard from '../components/Flashcard'
 import type { DictEntry } from '../types'
+import { loadDictionary } from '../data/dictionary/loader'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { POS_LABEL, POS_COLOR, POS_LIST } from '../lib/pos'
@@ -31,8 +32,8 @@ export default function Dictionary() {
   const [entries, setEntries] = useState<DictEntry[]>([])
   const [ready, setReady] = useState(false)
   useEffect(() => {
-    import('../data/dictionary.json').then(mod => {
-      setEntries(mod.default as DictEntry[])
+    loadDictionary().then(data => {
+      setEntries(data)
       setReady(true)
     })
   }, [])
