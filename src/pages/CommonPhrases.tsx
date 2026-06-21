@@ -95,19 +95,37 @@ export default function CommonPhrases() {
 
           <div className="space-y-2">
             {selected.sentences.map((sent, idx) => (
-              <button
+              <div
                 key={idx}
-                type="button"
-                onClick={() => speak(dir === 'A' ? sent.en : sent.vi, targetLang)}
-                className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3 flex items-start gap-3 group text-left hover:bg-zinc-800/60 active:scale-[0.99] transition-all"
+                className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl overflow-hidden"
               >
-                <Volume2 className="w-4 h-4 shrink-0 mt-0.5 transition-colors text-zinc-600 group-hover:text-white" />
-                <span className="text-xs text-zinc-600 w-5 shrink-0 mt-0.5">{idx + 1}.</span>
-                <div className="flex-1 min-w-0">
-                  <p className={`font-medium text-[15px] leading-snug ${c.text}`}>{sent.en}</p>
-                  <p className="text-sm text-zinc-400 mt-0.5">{sent.vi}</p>
+                <div className="flex items-stretch">
+                  {/* Số thứ tự */}
+                  <span className="text-xs text-zinc-600 w-8 shrink-0 flex items-center justify-center border-r border-zinc-800/60">
+                    {idx + 1}
+                  </span>
+                  <div className="flex-1 divide-y divide-zinc-800/60">
+                    {/* Khối tiếng Anh — click để đọc tiếng Anh */}
+                    <button
+                      type="button"
+                      onClick={() => speak(sent.en, 'en-US')}
+                      className={`w-full text-left px-3 py-2.5 flex items-center gap-2 group hover:bg-emerald-500/5 active:bg-emerald-500/10 transition-colors`}
+                    >
+                      <Volume2 className="w-3.5 h-3.5 shrink-0 text-zinc-700 group-hover:text-emerald-400 transition-colors" />
+                      <p className={`font-medium text-[15px] leading-snug ${c.text}`}>{sent.en}</p>
+                    </button>
+                    {/* Khối tiếng Việt — click để đọc tiếng Việt */}
+                    <button
+                      type="button"
+                      onClick={() => speak(sent.vi, 'vi-VN')}
+                      className="w-full text-left px-3 py-2 flex items-center gap-2 group hover:bg-sky-500/5 active:bg-sky-500/10 transition-colors"
+                    >
+                      <Volume2 className="w-3.5 h-3.5 shrink-0 text-zinc-700 group-hover:text-sky-400 transition-colors" />
+                      <p className="text-sm text-zinc-400">{sent.vi}</p>
+                    </button>
+                  </div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         </main>
