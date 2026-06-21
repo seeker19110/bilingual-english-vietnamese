@@ -16,8 +16,8 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
   const [copied, setCopied] = useState(false)
 
   const shareText = isA
-    ? `🇻🇳→🇬🇧 Tôi đang học tiếng Anh với AI Gia sư!\n📚 Đã học: ${learned} từ\n🔥 Streak: ${streak} ngày liên tiếp\n👉 ${window.location.origin}`
-    : `🇬🇧→🇻🇳 I'm learning Vietnamese with AI Tutor!\n📚 Words learned: ${learned}\n🔥 Streak: ${streak} days\n👉 ${window.location.origin}`
+    ? `🇻🇳→🇺🇸 Tôi đang học tiếng Anh với AI Gia sư!\n📚 Đã học: ${learned} từ\n🔥 Streak: ${streak} ngày liên tiếp\n👉 ${window.location.origin}`
+    : `🇺🇸→🇻🇳 I'm learning Vietnamese with AI Tutor!\n📚 Words learned: ${learned}\n🔥 Streak: ${streak} days\n👉 ${window.location.origin}`
 
   async function doShare() {
     if (navigator.share) {
