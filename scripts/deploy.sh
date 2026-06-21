@@ -9,8 +9,8 @@ set -euo pipefail
 # ── CONFIG — điền thông tin của bạn vào đây ──────────────────────────────────
 VPS_USER="root"                          # user SSH trên VPS (thường là root hoặc ubuntu)
 VPS_HOST="160.30.172.203"               # IP VPS
-APP_DIR="/root/bilingual-english-vietnamese"   # đường dẫn thư mục app trên VPS
-BRANCH="claude/dictionary-lesson-routing-14ndmd"
+APP_DIR="/var/www/english-tutor"               # đường dẫn thư mục app trên VPS
+BRANCH="main"
 PM2_PROCESS="english-tutor"
 
 # Biến môi trường cần thêm (bỏ trống nếu đã có sẵn trong .env trên VPS)
