@@ -1,23 +1,21 @@
 import { useState, useRef } from 'react'
-import { Mic, Square, Loader2 } from 'lucide-react'
+import { Mic, Square, Loader2, RotateCcw } from 'lucide-react'
 import { startListening, isSTTSupported } from '../lib/stt'
-import { scorePronunciation, pronounceFeedback } from '../lib/pronounceScore'
+import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronounceScore'
 
 interface Props {
-  // Từ/câu mục tiêu cần đọc đúng
   target: string
-  // Ngôn ngữ đọc: 'en' (chiều A đọc tiếng Anh) | 'vi' (chiều B đọc tiếng Việt)
   lang: 'en' | 'vi'
   isA: boolean
 }
 
-// Nút "chấm phát âm": bấm để nói → STT nghe → so với mục tiêu → hiện điểm.
-// Hoàn toàn chạy ở trình duyệt (Web Speech), không cần API key.
+// Nút chấm phát âm: bấm nói → STT nghe → highlight từng từ đúng/sai + điểm tổng.
 export default function PronunciationCheck({ target, lang, isA }: Props) {
   const [status, setStatus] = useState<'idle' | 'listening'>('idle')
-  const [score, setScore] = useState<number | null>(null)
-  const [heard, setHeard] = useState('')
-  const [error, setError] = useState('')
+  const [score,  setScore]  = useState<number | null>(null)
+  const [heard,  setHeard]  = useState('')
+  const [words,  setWords]  = useState<Array<{ word: string; ok: boolean }>>([])
+  const [error,  setError]  = useState('')
   const stopRef = useRef<(() => void) | null>(null)
 
   if (!isSTTSupported()) return null
@@ -25,6 +23,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
   function start() {
     setScore(null)
     setHeard('')
+    setWords([])
     setError('')
     setStatus('listening')
     stopRef.current = startListening(
@@ -35,6 +34,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
         if (last.trim()) {
           setHeard(last)
           setScore(scorePronunciation(target, last))
+          setWords(scoreWords(target, last))
         } else {
           setError(isA ? 'Không nghe rõ, thử lại nhé.' : 'Did not catch that, try again.')
         }
@@ -56,7 +56,8 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
   const fb = score !== null ? pronounceFeedback(score, isA) : null
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-3">
+      {/* Nút bấm */}
       <button
         onClick={status === 'listening' ? stop : start}
         className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
@@ -70,13 +71,45 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
           : <><Mic className="w-4 h-4" /> {isA ? 'Chấm phát âm' : 'Check pronunciation'}</>}
       </button>
 
+      {/* Gợi nhắc khi đang nghe */}
       {status === 'listening' && (
         <span className="flex items-center gap-1 text-xs text-zinc-500">
           <Loader2 className="w-3 h-3 animate-spin" /> {isA ? `Hãy đọc: "${target}"` : `Say: "${target}"`}
         </span>
       )}
 
-      {fb && (
+      {/* Kết quả: điểm + highlight từng từ */}
+      {fb && words.length > 0 && (
+        <div className="w-full text-center space-y-2">
+          {/* Điểm tổng */}
+          <p className={`text-sm font-bold ${fb.color}`}>{score}% · {fb.label}</p>
+
+          {/* Highlight từng từ: xanh = đúng, đỏ = sai/thiếu */}
+          <div className="flex flex-wrap justify-center gap-1.5">
+            {words.map((w, i) => (
+              <span key={i} className={`px-2 py-0.5 rounded-lg text-sm font-medium ${
+                w.ok
+                  ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25'
+                  : 'bg-rose-500/15 text-rose-300 border border-rose-500/25'
+              }`}>
+                {w.word}
+              </span>
+            ))}
+          </div>
+
+          {/* Câu người dùng đọc */}
+          <p className="text-xs text-zinc-500">{isA ? 'Bạn đọc' : 'You said'}: "<span className="text-zinc-400">{heard}</span>"</p>
+
+          {/* Nút thử lại */}
+          <button onClick={start}
+            className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition mx-auto">
+            <RotateCcw className="w-3 h-3" /> {isA ? 'Thử lại' : 'Try again'}
+          </button>
+        </div>
+      )}
+
+      {/* Kết quả khi câu 1 từ (không có words array đủ) */}
+      {fb && words.length === 0 && (
         <div className="text-center">
           <p className={`text-sm font-bold ${fb.color}`}>{score}% · {fb.label}</p>
           <p className="text-xs text-zinc-500 mt-0.5">{isA ? 'Bạn đọc' : 'You said'}: "{heard}"</p>

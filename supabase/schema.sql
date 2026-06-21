@@ -111,6 +111,27 @@ drop policy if exists "public read tts" on public.tts_cache;
 create policy "public read tts" on public.tts_cache for select using (true);
 -- Chỉ server (service role) mới được ghi — không cần policy insert/update cho anon
 
+-- ── 9b. Thêm cột onboarding vào profiles (chạy lại an toàn) ─────────────────
+alter table public.profiles add column if not exists onboarded     boolean not null default false;
+alter table public.profiles add column if not exists user_level    text             default 'beginner';
+alter table public.profiles add column if not exists goal          text             default 'daily';
+alter table public.profiles add column if not exists daily_minutes integer          default 10;
+
+-- ── 10. Bảng lưu push subscription để gửi thông báo nhắc học ─────────────────
+create table if not exists public.push_subscriptions (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  endpoint   text not null,
+  p256dh     text not null,
+  auth_key   text not null,
+  created_at timestamptz not null default now(),
+  unique (user_id, endpoint)
+);
+alter table public.push_subscriptions enable row level security;
+drop policy if exists "own push sub" on public.push_subscriptions;
+create policy "own push sub" on public.push_subscriptions
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
 -- ── 9. Tự tạo profiles khi có người đăng ký mới ─────────────────────────────
 create or replace function public.handle_new_user()
 returns trigger

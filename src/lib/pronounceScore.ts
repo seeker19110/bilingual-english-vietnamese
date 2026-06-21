@@ -50,3 +50,20 @@ export function pronounceFeedback(score: number, isA: boolean): { label: string;
   if (score >= 40) return { label: isA ? 'Tạm được, thử lại nhé' : 'Almost, try again', color: 'text-amber-400' }
   return { label: isA ? 'Chưa rõ, thử lại' : 'Unclear, try again', color: 'text-rose-400' }
 }
+
+// So sánh từng từ: trả về mảng { word, ok } — dùng để highlight từng từ đúng/sai
+export function scoreWords(target: string, spoken: string): Array<{ word: string; ok: boolean }> {
+  const targetWords  = normalize(target).split(' ').filter(Boolean)
+  const spokenWords  = normalize(spoken).split(' ').filter(Boolean)
+  // DP alignment đơn giản: ghép từng từ target với từ spoken gần nhất (theo thứ tự)
+  let si = 0
+  return targetWords.map(tw => {
+    if (si >= spokenWords.length) return { word: tw, ok: false }
+    const sw = spokenWords[si]
+    // Coi "đúng" khi khoảng cách Levenshtein ≤ 1 (cho phép 1 lỗi ký tự nhỏ)
+    const dist = levenshtein(tw, sw)
+    const ok = dist <= Math.max(1, Math.floor(tw.length * 0.25))
+    if (ok || dist <= tw.length / 2) si++ // tiêu thụ từ spoken chỉ khi khớp được
+    return { word: tw, ok }
+  })
+}

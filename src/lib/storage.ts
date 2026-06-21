@@ -33,7 +33,7 @@ export function register(email: string, name: string, _password: string): User |
   void _password // không còn dùng — giữ lại tham số để không phải sửa nơi gọi
   const users = get<(User & { pwHash?: string })[]>(K.users) ?? []
   if (users.find(u => u.email === email)) return null // email đã tồn tại
-  const user: User = { id: crypto.randomUUID(), email, name, plan: 'free', createdAt: Date.now() }
+  const user: User = { id: crypto.randomUUID(), email, name, plan: 'free', onboarded: false, createdAt: Date.now() }
   users.push({ ...user })
   set(K.users, users)
   set(K.currentUser, user)

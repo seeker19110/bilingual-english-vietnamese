@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target } from 'lucide-react'
+import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, Share2, ClipboardList, Bell, BellOff } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
@@ -9,6 +9,9 @@ import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import { useCloudSync } from '../lib/useCloudSync'
+import ShareProgress from '../components/ShareProgress'
+import { isPushSupported, getNotifPermission, subscribePush, unsubscribePush } from '../lib/pushNotif'
+import { supabase } from '../lib/supabase'
 
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
 function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
@@ -95,8 +98,18 @@ export default function Home() {
   const { T, setLang } = useLang()
   useCloudSync(user?.id)   // kéo lượt dùng từ Supabase khi mở trang chủ
 
-  const [dir, setDir] = useState<Direction>(getDirection)
-  const [voice, setVoice] = useState<Voice>(getVoicePref)
+  const [dir, setDir]           = useState<Direction>(getDirection)
+  const [voice, setVoice]       = useState<Voice>(getVoicePref)
+  const [showShare, setShare]   = useState(false)
+  const [pushOn, setPushOn]     = useState(false)
+  const [pushLoading, setPushL] = useState(false)
+
+  // Kiểm tra push subscription hiện tại
+  useEffect(() => {
+    if (!isPushSupported()) return
+    const perm = getNotifPermission()
+    setPushOn(perm === 'granted')
+  }, [])
 
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
@@ -115,6 +128,21 @@ export default function Home() {
   function chooseVoice(v: Voice) {
     setVoice(v)
     setVoicePref(v)
+  }
+
+  async function togglePush() {
+    if (!user || pushLoading) return
+    setPushL(true)
+    const { data: { session } } = await supabase.auth.getSession()
+    const token = session?.access_token ?? ''
+    if (pushOn) {
+      await unsubscribePush(token)
+      setPushOn(false)
+    } else {
+      const ok = await subscribePush(token)
+      setPushOn(ok)
+    }
+    setPushL(false)
   }
 
   const MODES = getModes(dir, T)
@@ -252,17 +280,63 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── Lịch sử học ───────────────────────────────────────────────── */}
-        <button onClick={() => nav('/history')}
-          className="w-full mb-4 bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in">
-          <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
-            <History className="w-4 h-4 text-zinc-400" />
+        {/* ── Hành động nhanh (lịch sử + quiz + chia sẻ + thông báo) ──────── */}
+        <div className="mb-4 space-y-2 animate-fade-in">
+          {/* Lịch sử */}
+          <button onClick={() => nav('/history')}
+            className="w-full bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group">
+            <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
+              <History className="w-4 h-4 text-zinc-400" />
+            </div>
+            <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
+              {isA ? 'Xem lịch sử học' : 'View learning history'}
+            </span>
+            <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition" />
+          </button>
+
+          {/* Hàng ngang: Quiz + Chia sẻ + Thông báo */}
+          <div className="grid grid-cols-3 gap-2">
+            {/* Quiz */}
+            <button onClick={() => nav('/quiz')}
+              className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-violet-500/40 transition group">
+              <ClipboardList className="w-4 h-4 text-violet-400" />
+              <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
+                {isA ? 'Kiểm tra' : 'Quiz'}
+              </span>
+            </button>
+
+            {/* Chia sẻ tiến độ */}
+            <button onClick={() => setShare(true)}
+              className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-emerald-500/40 transition group">
+              <Share2 className="w-4 h-4 text-emerald-400" />
+              <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
+                {isA ? 'Chia sẻ' : 'Share'}
+              </span>
+            </button>
+
+            {/* Bật / tắt thông báo nhắc học */}
+            {isPushSupported() && (
+              <button onClick={togglePush} disabled={pushLoading}
+                className={`flex flex-col items-center gap-1.5 py-3 rounded-2xl border transition group ${
+                  pushOn
+                    ? 'bg-amber-500/10 border-amber-500/30 hover:border-amber-500/50'
+                    : 'bg-zinc-900/60 border-zinc-800/60 hover:border-amber-500/30'
+                }`}>
+                {pushOn
+                  ? <Bell className="w-4 h-4 text-amber-400" />
+                  : <BellOff className="w-4 h-4 text-zinc-500 group-hover:text-amber-400 transition" />}
+                <span className={`text-[11px] transition ${pushOn ? 'text-amber-300' : 'text-zinc-400 group-hover:text-zinc-200'}`}>
+                  {pushLoading ? '...' : pushOn ? (isA ? 'Nhắc bật' : 'Notif on') : (isA ? 'Nhắc tắt' : 'Notif off')}
+                </span>
+              </button>
+            )}
           </div>
-          <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
-            {isA ? 'Xem lịch sử học' : 'View learning history'}
-          </span>
-          <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition" />
-        </button>
+        </div>
+
+        {/* Modal chia sẻ tiến độ */}
+        {showShare && user && (
+          <ShareProgress userId={user.id} isA={isA} onClose={() => setShare(false)} />
+        )}
 
         {/* ── Mode cards ────────────────────────────────────────────────── */}
         <div className="space-y-3">

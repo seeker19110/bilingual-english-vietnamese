@@ -9,12 +9,13 @@ import type { User as AppUser, Plan } from '../types'
 // đổi cột plan trong DB là có hiệu lực.
 async function toAppUser(sbUser: { id: string; email?: string; user_metadata?: { name?: string } }): Promise<AppUser> {
   const name = sbUser.user_metadata?.name ?? sbUser.email?.split('@')[0] ?? 'Học viên'
-  const plan: Plan = await ensureProfile(sbUser.id, name)
+  const profile = await ensureProfile(sbUser.id, name)
   return {
     id: sbUser.id,
     email: sbUser.email ?? '',
     name,
-    plan,
+    plan: profile.plan as Plan,
+    onboarded: profile.onboarded,
     createdAt: Date.now(),
   }
 }
