@@ -9,6 +9,11 @@ export type Lang = 'en-US' | 'vi-VN'
 export const VOICE_IDS: VoiceId[] = ['female', 'male']
 export const DEFAULT_VOICE: VoiceId = 'female'
 
+// "Phiên bản giọng" — tăng số này MỖI KHI đổi giọng trong VOICE_MAP bên dưới.
+// Khóa cache trong DB (api/tts.ts) có chứa giá trị này, nên đổi version sẽ làm
+// các câu đã cache cũ KHÔNG còn khớp → tự động tạo lại (ghi đè) bằng giọng mới.
+export const VOICE_VERSION = 'chirp3hd-v1'
+
 export function isValidVoice(value: string): value is VoiceId {
   return VOICE_IDS.includes(value as VoiceId)
 }
@@ -16,15 +21,16 @@ export function isValidVoice(value: string): value is VoiceId {
 // Bảng giọng đọc: mỗi ngôn ngữ có giọng nữ và nam riêng.
 // Dùng "Chirp 3: HD" — dòng giọng MỚI & TỰ NHIÊN NHẤT của Google hiện nay
 // (mới hơn Journey/Studio/Neural2), tên dạng "<locale>-Chirp3-HD-<Tên>".
-// Aoede = giọng nữ, Charon = giọng nam — đều có cho cả en-US và vi-VN.
+// Kore = giọng nữ, Puck = giọng nam — đây là cặp giọng PHỔ BIẾN NHẤT của Chirp 3 HD
+// (Google dùng làm giọng mặc định, có sẵn cho cả en-US và vi-VN).
 const VOICE_MAP: Record<Lang, Record<VoiceId, { name: string; ssmlGender: 'FEMALE' | 'MALE' }>> = {
   'en-US': {
-    female: { name: 'en-US-Chirp3-HD-Aoede', ssmlGender: 'FEMALE' },
-    male:   { name: 'en-US-Chirp3-HD-Charon', ssmlGender: 'MALE' },
+    female: { name: 'en-US-Chirp3-HD-Kore', ssmlGender: 'FEMALE' },
+    male:   { name: 'en-US-Chirp3-HD-Puck', ssmlGender: 'MALE' },
   },
   'vi-VN': {
-    female: { name: 'vi-VN-Chirp3-HD-Aoede', ssmlGender: 'FEMALE' },
-    male:   { name: 'vi-VN-Chirp3-HD-Charon', ssmlGender: 'MALE' },
+    female: { name: 'vi-VN-Chirp3-HD-Kore', ssmlGender: 'FEMALE' },
+    male:   { name: 'vi-VN-Chirp3-HD-Puck', ssmlGender: 'MALE' },
   },
 }
 
