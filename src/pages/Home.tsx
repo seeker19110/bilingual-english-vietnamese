@@ -188,7 +188,7 @@ export default function Home() {
             <div className="flex items-center gap-1.5">
               <ArrowLeftRight className={`w-3.5 h-3.5 ${isA ? 'text-emerald-400' : 'text-sky-400'}`} />
               <span className={`text-sm font-semibold ${isA ? 'text-emerald-300' : 'text-sky-300'}`}>
-                {isA ? '🇻🇳 Việt → 🇬🇧 Anh' : '🇬🇧 Anh → 🇻🇳 Việt'}
+                {isA ? '🇻🇳 Việt → 🇺🇸 Anh' : '🇺🇸 Anh → 🇻🇳 Việt'}
               </span>
             </div>
           </button>

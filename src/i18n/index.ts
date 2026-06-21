@@ -39,7 +39,7 @@ export const t = {
     dictTitleA: 'Từ điển',
     dictDescA: 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
     lessonsTitleA: 'Bài học',
-    lessonsDescA: 'Các bài hội thoại mẫu xoay quanh "tôi - I", mỗi bài 40 đoạn hội thoại song ngữ.',
+    lessonsDescA: 'Các bài hội thoại mẫu thông dụng.',
     tagPopular: 'Phổ biến',
     tagKeyFeature: 'Tính năng chính',
     tagUnlimited: 'Không giới hạn',
