@@ -7,13 +7,11 @@ import WordOfTheDay from '../components/WordOfTheDay'
 import KaraokeText from '../components/KaraokeText'
 import PosFilter from '../components/PosFilter'
 import Flashcard from '../components/Flashcard'
-import dictionaryData from '../data/dictionary.json'
 import type { DictEntry } from '../types'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { POS_LABEL, POS_COLOR, POS_LIST } from '../lib/pos'
 
-const ENTRIES = dictionaryData as DictEntry[]
 const MAX_RESULTS = 100
 type Tab = 'search' | 'flashcard' | 'pos'
 
@@ -27,6 +25,17 @@ export default function Dictionary() {
   const [learnedKey, setLearnedKey] = useState(0)
   const [jumpPos, setJumpPos]   = useState<string | null>(null)   // pos cần scroll khi mở tab Từ loại
   const posRefs = useRef<Record<string, HTMLElement | null>>({})
+
+  // Nạp từ điển ĐỘNG (dynamic import) — tách dictionary.json thành chunk riêng,
+  // chỉ tải khi mở trang này thay vì gộp vào bundle chung.
+  const [entries, setEntries] = useState<DictEntry[]>([])
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    import('../data/dictionary.json').then(mod => {
+      setEntries(mod.default as DictEntry[])
+      setReady(true)
+    })
+  }, [])
 
   // Khi chuyển sang tab 'pos', scroll tới mục cần xem (nếu có)
   useEffect(() => {
@@ -44,7 +53,7 @@ export default function Dictionary() {
   const { results, totalMatches } = useMemo(() => {
     const q = query.trim().toLowerCase()
     // Lọc theo loại từ trước
-    const base = pos ? ENTRIES.filter(e => e.pos === pos) : ENTRIES
+    const base = pos ? entries.filter(e => e.pos === pos) : entries
 
     if (!q) {
       return { results: base.slice(0, MAX_RESULTS), totalMatches: base.length }
@@ -57,16 +66,30 @@ export default function Dictionary() {
     }
     const all = [...starts, ...contains]
     return { results: all.slice(0, MAX_RESULTS), totalMatches: all.length }
-  }, [query, pos])
+  }, [query, pos, entries])
 
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
+
+  // Chờ nạp xong từ điển (dynamic import) mới hiển thị nội dung
+  if (!ready) {
+    return (
+      <div className="min-h-dvh bg-zinc-950">
+        <Layout title={isA ? 'Từ điển' : 'Dictionary'} subtitle={isA ? 'Đang tải…' : 'Loading…'} />
+        <main className="max-w-3xl mx-auto px-4 py-6">
+          <div className="glass rounded-xl p-8 text-center animate-fade-in">
+            <p className="text-zinc-400 text-sm">{isA ? 'Đang tải từ điển…' : 'Loading dictionary…'}</p>
+          </div>
+        </main>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout
         title={isA ? 'Từ điển' : 'Dictionary'}
-        subtitle={`${ENTRIES.length.toLocaleString('vi-VN')} ${isA ? 'từ thông dụng' : 'common words'}`}
+        subtitle={`${entries.length.toLocaleString('vi-VN')} ${isA ? 'từ thông dụng' : 'common words'}`}
       />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
@@ -75,7 +98,7 @@ export default function Dictionary() {
         <VocabMilestone userId={user.id} refreshKey={learnedKey} />
 
         {/* Từ vựng hôm nay */}
-        <WordOfTheDay entries={ENTRIES} />
+        <WordOfTheDay entries={entries} />
 
         {/* Chuyển tab: Tra từ / Flashcard / Từ loại */}
         <div className="flex gap-2 mb-4">
@@ -195,7 +218,7 @@ export default function Dictionary() {
           </>
         ) : tab === 'flashcard' ? (
           <Flashcard
-            entries={ENTRIES}
+            entries={entries}
             userId={user.id}
             onLearnedChange={() => setLearnedKey(k => k + 1)}
           />

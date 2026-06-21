@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, beforeAll } from 'vitest'
 import {
   DAILY_GOAL,
   wordKey,
@@ -7,7 +7,13 @@ import {
   getPathProgress,
   getDailyLearned,
   bumpDailyLearned,
+  loadCurriculum,
 } from './curriculum'
+
+// Dictionary giờ nạp ĐỘNG → phải await loadCurriculum() trước khi test các hàm dùng nó
+beforeAll(async () => {
+  await loadCurriculum()
+})
 
 describe('wordKey', () => {
   it('chuẩn hoá: bỏ khoảng trắng + viết thường', () => {

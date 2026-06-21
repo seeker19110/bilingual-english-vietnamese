@@ -11,14 +11,36 @@
 //   - random queue:       hàng đợi ôn tập ngẫu nhiên KHÔNG lặp trong 1 vòng.
 // ──────────────────────────────────────────────────────────────────────────
 
-import dictionaryData from '../data/dictionary.json'
 import type { DictEntry } from '../types'
 import { FOUNDATION } from '../data/curriculum'
 import type { Circle } from '../data/curriculum'
 
 export const DAILY_GOAL = 20
 
-const ENTRIES = dictionaryData as DictEntry[]
+// Dữ liệu từ điển — KHÔNG import tĩnh nữa (file ~2MB). Nạp ĐỘNG bằng
+// dynamic import() qua loadCurriculum() để Vite tách dictionary.json thành
+// chunk riêng, không nằm trong bundle tải lần đầu.
+// ENTRIES rỗng cho tới khi nạp xong → phải await loadCurriculum() trước khi
+// gọi các hàm bên dưới (xem Learn.tsx / Dictionary.tsx).
+let ENTRIES: DictEntry[] = []
+
+// Promise nạp — cache lại để chỉ tải MỘT lần dù được gọi từ nhiều nơi.
+let _loadPromise: Promise<void> | null = null
+
+// Gọi (await) một lần trước khi dùng getCircles/getLearningPath/getTodayBatch...
+export function loadCurriculum(): Promise<void> {
+  if (!_loadPromise) {
+    _loadPromise = import('../data/dictionary.json').then(mod => {
+      ENTRIES = mod.default as DictEntry[]
+    })
+  }
+  return _loadPromise
+}
+
+// Đã nạp xong dữ liệu từ điển chưa (dùng để khởi tạo state "ready" ở UI).
+export function isCurriculumReady(): boolean {
+  return ENTRIES.length > 0
+}
 
 // Khóa nhận diện 1 từ (không phân biệt hoa/thường) để so trùng giữa
 // phần nền tảng và từ điển.

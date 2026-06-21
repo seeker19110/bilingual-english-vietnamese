@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { Check, X, RotateCcw, Eye, Target, Shuffle, Trophy, Sparkles, ClipboardList, ChevronRight, Home } from 'lucide-react'
 import Layout from '../components/Layout'
 import PronounceButton from '../components/PronounceButton'
@@ -20,6 +20,8 @@ import {
   findCircleOfWord,
   getLearningPath,
   wordKey,
+  loadCurriculum,
+  isCurriculumReady,
 } from '../lib/curriculum'
 
 type Tab = 'today' | 'random' | 'quiz'
@@ -63,6 +65,9 @@ export default function Learn() {
   const isA = getDirection() === 'A'
   const [tab, setTab] = useState<Tab>('today')
   const [refresh, setRefresh] = useState(0)
+  // Nạp dữ liệu từ điển (dynamic import) trước khi cho các tab dùng curriculum
+  const [ready, setReady] = useState(isCurriculumReady())
+  useEffect(() => { loadCurriculum().then(() => setReady(true)) }, [])
 
   if (!user) return null
   const uid = user.id
@@ -93,9 +98,17 @@ export default function Learn() {
           ))}
         </div>
 
-        {tab === 'today'  && <TodayLesson  uid={uid} isA={isA} onProgress={() => setRefresh(k => k + 1)} />}
-        {tab === 'random' && <RandomReview uid={uid} isA={isA} />}
-        {tab === 'quiz'   && <QuizTab      uid={uid} isA={isA} />}
+        {!ready ? (
+          <div className="glass rounded-xl p-8 text-center animate-fade-in">
+            <p className="text-zinc-400 text-sm">{isA ? 'Đang tải từ vựng…' : 'Loading vocabulary…'}</p>
+          </div>
+        ) : (
+          <>
+            {tab === 'today'  && <TodayLesson  uid={uid} isA={isA} onProgress={() => setRefresh(k => k + 1)} />}
+            {tab === 'random' && <RandomReview uid={uid} isA={isA} />}
+            {tab === 'quiz'   && <QuizTab      uid={uid} isA={isA} />}
+          </>
+        )}
       </main>
     </div>
   )
