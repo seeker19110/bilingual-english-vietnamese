@@ -7,6 +7,7 @@ import { useCloudSync } from '../lib/useCloudSync'
 import { callClaude, parseJson } from '../lib/ai'
 import { speakingSystemPrompt, situationLabel } from '../prompts'
 import { startListening, isSTTSupported } from '../lib/stt'
+import { startRecording, isRecordingSupported, type Recorder } from '../lib/sttServer'
 import { speakBilingual, stopSpeaking, isTTSSupported } from '../lib/tts'
 import { SITUATIONS, LEVELS, LIMITS, type Level, type SpeakingSession, type Message, type Direction } from '../types'
 
@@ -40,7 +41,7 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
         }
       </p>
 
-      {!isSTTSupported() && (
+      {!(isRecordingSupported() || isSTTSupported()) && (
         <div className="mt-3 mb-2 text-amber-400 text-xs bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-center max-w-sm animate-fade-in delay-150">
           {isA
             ? <>Trình duyệt không hỗ trợ giọng nói. Dùng <strong>Chrome</strong> hoặc <strong>Edge</strong>. Bạn vẫn có thể <strong>gõ tay</strong>.</>
@@ -166,16 +167,20 @@ export default function Speaking() {
   const [limitHit, setLimitHit] = useState(false)
   const [muted, setMuted] = useState(false)
   const [typedInput, setTypedInput] = useState('')
+  const [processing, setProcessing] = useState(false) // đang gửi audio lên server nhận diện
   const [lastIdx, setLastIdx] = useState(-1)
-  const stopRecRef = useRef<(() => void) | null>(null)
+  const stopRecRef = useRef<(() => void) | null>(null)   // dừng Web Speech (fallback)
+  const recorderRef = useRef<Recorder | null>(null)       // recorder server STT (chính)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const sttSupported = isSTTSupported()
+  // Ưu tiên ghi âm gửi server (chính xác, đa trình duyệt); Web Speech chỉ là dự phòng.
+  const canRecord = isRecordingSupported()
+  const sttSupported = canRecord || isSTTSupported()
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [session?.messages, loading])
 
-  useEffect(() => () => { stopSpeaking(); stopRecRef.current?.() }, [])
+  useEffect(() => () => { stopSpeaking(); stopRecRef.current?.(); recorderRef.current?.cancel() }, [])
 
   async function startSession(situation: string, level: Level) {
     const usage = getUsage(user.id)
@@ -209,15 +214,53 @@ export default function Speaking() {
     setLoading(false)
   }
 
-  function toggleRecord() {
+  async function toggleRecord() {
+    // ── Đang ghi → dừng lại ──────────────────────────────────────────────────
     if (recording) {
+      // STT server: dừng recorder, gửi audio lên nhận diện
+      if (recorderRef.current) {
+        const r = recorderRef.current
+        recorderRef.current = null
+        setRecording(false)
+        setProcessing(true)
+        try {
+          const text = await r.stop()
+          setProcessing(false)
+          if (text.trim()) await sendUserSpeech(text.trim())
+          else setError(isA ? 'Không nghe rõ, thử nói lại nhé.' : "Didn't catch that, try again.")
+        } catch (e) {
+          setProcessing(false)
+          setError(e instanceof Error ? e.message : (isA ? 'Lỗi nhận diện giọng nói' : 'STT error'))
+        }
+        return
+      }
+      // Web Speech (fallback): dừng, kết quả trả qua callback onEnd
       stopRecRef.current?.()
       stopRecRef.current = null
       setRecording(false)
       return
     }
+
+    // ── Chưa ghi → bắt đầu ghi ───────────────────────────────────────────────
     if (!session) return
     setTranscript('')
+    setError('')
+
+    if (canRecord) {
+      // Phương án chính: ghi âm rồi gửi server
+      try {
+        const r = await startRecording(sttLang)
+        recorderRef.current = r
+        setRecording(true)
+      } catch {
+        setError(isA
+          ? 'Không truy cập được micro. Hãy cho phép quyền micro hoặc gõ tay.'
+          : 'Cannot access microphone. Allow mic permission or type instead.')
+      }
+      return
+    }
+
+    // Fallback: Web Speech API (Chrome/Edge)
     setRecording(true)
     const stop = startListening(
       sttLang,
@@ -333,7 +376,7 @@ export default function Speaking() {
                       <Plus className="w-4 h-4" />
                     </button>
 
-                    <button onClick={toggleRecord} disabled={loading || limitHit}
+                    <button onClick={toggleRecord} disabled={loading || limitHit || processing}
                       className={`relative w-20 h-20 rounded-full flex items-center justify-center transition shadow-xl disabled:opacity-40 active:scale-95 ${
                         recording ? 'bg-red-500 shadow-red-500/40' : 'bg-gradient-to-br from-sky-500 to-cyan-400 shadow-sky-500/30'
                       }`}>
@@ -357,7 +400,9 @@ export default function Speaking() {
 
                   <p className="text-center text-xs text-zinc-600">
                     {recording
-                      ? (isA ? '🔴 Đang nghe... nhấn lại để dừng' : '🔴 Listening… tap to stop')
+                      ? (isA ? '🔴 Đang ghi... nhấn lại để dừng' : '🔴 Recording… tap to stop')
+                      : processing
+                      ? (isA ? '⏳ Đang nhận diện giọng nói...' : '⏳ Transcribing...')
                       : speaking
                       ? (isA ? '🔊 AI đang đọc...' : '🔊 AI speaking...')
                       : (isA ? 'Nhấn mic để nói tiếng Anh' : 'Tap mic to speak Vietnamese')

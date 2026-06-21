@@ -17,8 +17,15 @@ dotenv.config()
 import ttsHandler from './api/tts.js'
 import claudeHandler from './api/claude.js'
 import pronunciationHandler from './api/pronunciation.js'
+import sttHandler from './api/stt.js'
 
 const app = express()
+
+// STT nhận audio base64 → body lớn hơn nhiều so với chat/tts. Đăng ký parser riêng
+// cho route này TRƯỚC parser JSON 64kb mặc định bên dưới (Express chạy middleware theo
+// thứ tự — nếu để parser 64kb chạy trước, body audio sẽ bị chặn 413 trước khi tới handler).
+app.post('/api/stt', express.json({ limit: '10mb' }), wrapEdge(sttHandler))
+
 app.use(express.json({ limit: '64kb' }))
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

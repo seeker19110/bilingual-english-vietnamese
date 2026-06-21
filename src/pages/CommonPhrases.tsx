@@ -1,12 +1,10 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Volume2, Search, X, ChevronRight, ArrowLeft, Loader2 } from 'lucide-react'
 import Layout from '../components/Layout'
-import { getDirection } from '../lib/storage'
 import { useLang } from '../context/useLang'
 import { speak as speakTts } from '../lib/tts'
 import { INDEX, loadSubject } from '../data/patterns/loader'
 import type { SubjectMeta, Subject } from '../data/patterns/loader'
-import type { Direction } from '../types'
 
 // Mỗi lần chỉ hiển thị (và lazy-load) 8 chủ thể.
 const PAGE_SIZE = 8
@@ -38,9 +36,7 @@ const CAT_COLORS: Record<string, string> = {}
 INDEX.forEach(s => { if (!CAT_COLORS[s.category]) CAT_COLORS[s.category] = s.color })
 
 export default function CommonPhrases() {
-  const dir: Direction = getDirection()
   const { T } = useLang()
-  const targetLang = dir === 'A' ? 'en-US' : 'vi-VN'
 
   const [search, setSearch] = useState('')
   const [activeCat, setActiveCat] = useState<string | null>(null)

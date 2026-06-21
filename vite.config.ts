@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
   // api/*.ts đọc key bằng process.env.X (giống lúc chạy thật trên Vercel, nơi Vercel tự inject
   // Environment Variables vào process.env). Lúc "npm run dev", .env KHÔNG tự nạp vào process.env
   // nên ta gán tay các biến server-only cần dùng.
-  for (const key of ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GOOGLE_TTS_API_KEY', 'TTS_ENCRYPTION_MASTER_KEY']) {
+  for (const key of ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GOOGLE_TTS_API_KEY', 'TTS_ENCRYPTION_MASTER_KEY', 'OPENAI_API_KEY', 'OPENAI_STT_MODEL']) {
     if (env[key] && !process.env[key]) process.env[key] = env[key]
   }
 
@@ -47,6 +47,7 @@ export default defineConfig(({ mode }) => {
 const API_ROUTES: { prefix: string; module: string }[] = [
   { prefix: '/api/pronunciation', module: '/api/pronunciation.ts' },
   { prefix: '/api/tts', module: '/api/tts.ts' },
+  { prefix: '/api/stt', module: '/api/stt.ts' },
 ]
 
 function apiEdgeDevMiddleware(): Plugin {
