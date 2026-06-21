@@ -54,7 +54,8 @@ Ba chế độ:
 - [x] Đồng bộ Supabase — chat/viết/nói/lượt dùng lưu lên DB (RLS), login Supabase thống nhất cho mọi trang. Xem `SUPABASE_SYNC_SETUP.md` + `supabase/schema.sql`
 - [~] Chế độ Luyện nói song ngữ — TTS chính đã đổi sang Google Cloud TTS qua `/api/tts` (audio cache **mã hóa AES-256-GCM** trên Supabase Storage, bắt buộc đăng nhập mới lấy được khoá giải mã), Web Speech API chỉ còn là fallback khi lỗi mạng/server. STT thật (nghe người dùng nói) vẫn chưa làm.
 - [x] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng) — `lib/direction.ts`
-- [~] (v2) Theo dõi tiến bộ, streak, chấm phát âm — đã có streak, WordOfTheDay, Flashcard, cache phát âm (`api/pronunciation.ts`); chấm phát âm chưa làm
+- [x] Chế độ Học theo lộ trình (`/learn`) — curriculum nền tảng theo vòng tròn chủ đề (chữ cái, số, màu, gia đình, cơ thể, đồ ăn...) rồi tự nối tiếp bằng từ điển; mục tiêu 20 từ/ngày (tab "Hôm nay"); ôn ngẫu nhiên không lặp trong 1 vòng (tab "Ôn ngẫu nhiên"); học xong bài hiện câu thông dụng ráp từ các từ vừa học. Dữ liệu: `src/data/curriculum.ts`, logic: `src/lib/curriculum.ts`
+- [~] (v2) Theo dõi tiến bộ, streak, chấm phát âm — đã có streak, WordOfTheDay, Flashcard, cache phát âm (`api/pronunciation.ts`); **chấm phát âm đã làm** (chạy ở trình duyệt bằng Web Speech + so chuỗi Levenshtein — `src/lib/pronounceScore.ts` + `src/components/PronunciationCheck.tsx`, gắn trong `/learn`)
 
 ### Việc còn dang dở / cần quyết định
 1. STT (nghe người dùng nói) vẫn chưa làm thật — phần TTS đã xong (Google Cloud TTS, mã hóa AES-256-GCM, cache dùng chung qua bảng `tts_cache`/bucket `tts-cache`).

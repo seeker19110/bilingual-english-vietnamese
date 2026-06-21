@@ -3,6 +3,7 @@ import { Check, X, RotateCcw, Eye, Target, Shuffle, Trophy, Sparkles } from 'luc
 import Layout from '../components/Layout'
 import PronounceButton from '../components/PronounceButton'
 import SpeakButton from '../components/SpeakButton'
+import PronunciationCheck from '../components/PronunciationCheck'
 import VocabMilestone from '../components/VocabMilestone'
 import type { DictEntry } from '../types'
 import { getDirection } from '../lib/storage'
@@ -108,9 +109,14 @@ function WordCard({ card, isA }: { card: DictEntry; isA: boolean }) {
         )}
       </button>
 
-      <div className="flex items-center justify-center gap-2 mb-4">
+      <div className="flex items-center justify-center gap-2 mb-3">
         <PronounceButton word={card.word} />
         {card.ex_en && <SpeakButton text={card.ex_en} lang="en-US" title="Nghe câu ví dụ" />}
+      </div>
+
+      {/* Chấm phát âm: đọc từ mục tiêu theo ngôn ngữ đích (A: tiếng Anh, B: tiếng Việt) */}
+      <div className="mb-4">
+        <PronunciationCheck target={card.word} lang={isA ? 'en' : 'vi'} isA={isA} />
       </div>
     </div>
   )
