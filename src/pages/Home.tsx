@@ -183,7 +183,7 @@ export default function Home() {
             }`}
           >
             <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wide">
-              {isA ? 'Chiều học' : 'Direction'}
+              {isA ? 'Ngôn ngữ học' : 'Language'}
             </span>
             <div className="flex items-center gap-1.5">
               <ArrowLeftRight className={`w-3.5 h-3.5 ${isA ? 'text-emerald-400' : 'text-sky-400'}`} />
