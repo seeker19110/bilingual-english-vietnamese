@@ -61,7 +61,17 @@ let _pathCache: DictEntry[] | null = null
 
 export function getLearningPath(): DictEntry[] {
   if (_pathCache) return _pathCache
-  _pathCache = getCircles().flatMap(c => c.words)
+  // Khử trùng theo key (vd: chữ cái "I" và đại từ "I") — giữ lần xuất hiện đầu,
+  // để mỗi từ chỉ học 1 lần và đếm tiến độ không bị lệch.
+  const seen = new Set<string>()
+  _pathCache = getCircles()
+    .flatMap(c => c.words)
+    .filter(w => {
+      const k = wordKey(w.word)
+      if (seen.has(k)) return false
+      seen.add(k)
+      return true
+    })
   return _pathCache
 }
 
