@@ -15,6 +15,38 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
   const isA = dir === 'A'
   return [
     {
+      path: '/dictionary',
+      icon: BookOpen,
+      gradient: 'from-amber-500 to-orange-400',
+      glow: 'shadow-amber-500/20',
+      ring: 'hover:border-amber-500/40',
+      tag: { label: T.tagUnlimited, cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20' },
+      title: isA ? T.dictTitleA : T.dictTitleB,
+      desc:  isA ? T.dictDescA  : T.dictDescB,
+    },
+    {
+      path: '/learn',
+      icon: Target,
+      gradient: 'from-lime-500 to-green-400',
+      glow: 'shadow-lime-500/20',
+      ring: 'hover:border-lime-500/40',
+      tag: { label: isA ? '20 từ/ngày' : '20/day', cls: 'bg-lime-500/15 text-lime-300 border border-lime-500/20' },
+      title: isA ? 'Học theo lộ trình' : 'Learning Path',
+      desc: isA
+        ? 'Bắt đầu từ chữ cái, số... mỗi ngày 20 từ mới theo vòng tròn liên quan, kèm câu thông dụng.'
+        : 'Start from letters and numbers — 20 new words a day in related circles, with common sentences.',
+    },
+    {
+      path: '/lessons',
+      icon: GraduationCap,
+      gradient: 'from-rose-500 to-pink-400',
+      glow: 'shadow-rose-500/20',
+      ring: 'hover:border-rose-500/40',
+      tag: { label: T.tagUnlimited, cls: 'bg-rose-500/15 text-rose-300 border border-rose-500/20' },
+      title: isA ? T.lessonsTitleA : T.lessonsTitleB,
+      desc:  isA ? T.lessonsDescA  : T.lessonsDescB,
+    },
+    {
       path: '/chat',
       icon: MessageCircle,
       gradient: 'from-emerald-500 to-teal-400',
@@ -53,38 +85,6 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       tag: { label: T.tagUnlimited, cls: 'bg-teal-500/15 text-teal-300 border border-teal-500/20' },
       title: isA ? T.phrasesTitleA : T.phrasesTitleB,
       desc:  isA ? T.phrasesDescA  : T.phrasesDescB,
-    },
-    {
-      path: '/learn',
-      icon: Target,
-      gradient: 'from-lime-500 to-green-400',
-      glow: 'shadow-lime-500/20',
-      ring: 'hover:border-lime-500/40',
-      tag: { label: isA ? '20 từ/ngày' : '20/day', cls: 'bg-lime-500/15 text-lime-300 border border-lime-500/20' },
-      title: isA ? 'Học theo lộ trình' : 'Learning Path',
-      desc: isA
-        ? 'Bắt đầu từ chữ cái, số... mỗi ngày 20 từ mới theo vòng tròn liên quan, kèm câu thông dụng.'
-        : 'Start from letters and numbers — 20 new words a day in related circles, with common sentences.',
-    },
-    {
-      path: '/dictionary',
-      icon: BookOpen,
-      gradient: 'from-amber-500 to-orange-400',
-      glow: 'shadow-amber-500/20',
-      ring: 'hover:border-amber-500/40',
-      tag: { label: T.tagUnlimited, cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20' },
-      title: isA ? T.dictTitleA : T.dictTitleB,
-      desc:  isA ? T.dictDescA  : T.dictDescB,
-    },
-    {
-      path: '/lessons',
-      icon: GraduationCap,
-      gradient: 'from-rose-500 to-pink-400',
-      glow: 'shadow-rose-500/20',
-      ring: 'hover:border-rose-500/40',
-      tag: { label: T.tagUnlimited, cls: 'bg-rose-500/15 text-rose-300 border border-rose-500/20' },
-      title: isA ? T.lessonsTitleA : T.lessonsTitleB,
-      desc:  isA ? T.lessonsDescA  : T.lessonsDescB,
     },
   ]
 }
