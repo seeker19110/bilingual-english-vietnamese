@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History } from 'lucide-react'
+import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
 import { LIMITS } from '../types'
@@ -52,6 +52,18 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       tag: { label: T.tagUnlimited, cls: 'bg-teal-500/15 text-teal-300 border border-teal-500/20' },
       title: isA ? T.phrasesTitleA : T.phrasesTitleB,
       desc:  isA ? T.phrasesDescA  : T.phrasesDescB,
+    },
+    {
+      path: '/learn',
+      icon: Target,
+      gradient: 'from-lime-500 to-green-400',
+      glow: 'shadow-lime-500/20',
+      ring: 'hover:border-lime-500/40',
+      tag: { label: isA ? '20 từ/ngày' : '20/day', cls: 'bg-lime-500/15 text-lime-300 border border-lime-500/20' },
+      title: isA ? 'Học theo lộ trình' : 'Learning Path',
+      desc: isA
+        ? 'Bắt đầu từ chữ cái, số... mỗi ngày 20 từ mới theo vòng tròn liên quan, kèm câu thông dụng.'
+        : 'Start from letters and numbers — 20 new words a day in related circles, with common sentences.',
     },
     {
       path: '/dictionary',

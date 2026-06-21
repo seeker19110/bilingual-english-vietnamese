@@ -1,0 +1,115 @@
+// ──────────────────────────────────────────────────────────────────────────
+// LOGIC LỘ TRÌNH HỌC
+//
+// Ghép phần NỀN TẢNG (src/data/curriculum.ts) với phần MỞ RỘNG tự động
+// (các từ còn lại trong dictionary.json) thành 1 lộ trình phẳng, có thứ tự.
+//
+//   - getLearningPath(): toàn bộ chuỗi từ theo thứ tự học.
+//   - getCircles():       chuỗi đó nhưng gom theo "vòng tròn" (chủ đề / cụm mở rộng).
+//   - getTodayBatch():    lấy 20 từ KẾ TIẾP chưa thuộc (mục tiêu mỗi ngày).
+//   - daily counter:      đếm số từ đã học trong ngày (mục tiêu 20/ngày).
+//   - random queue:       hàng đợi ôn tập ngẫu nhiên KHÔNG lặp trong 1 vòng.
+// ──────────────────────────────────────────────────────────────────────────
+
+import dictionaryData from '../data/dictionary.json'
+import type { DictEntry } from '../types'
+import { FOUNDATION } from '../data/curriculum'
+import type { Circle } from '../data/curriculum'
+
+export const DAILY_GOAL = 20
+
+const ENTRIES = dictionaryData as DictEntry[]
+
+// Khóa nhận diện 1 từ (không phân biệt hoa/thường) để so trùng giữa
+// phần nền tảng và từ điển.
+export const wordKey = (word: string) => word.trim().toLowerCase()
+
+// ── Xây dựng các vòng MỞ RỘNG từ dictionary (memo hóa 1 lần) ────────────────
+let _circlesCache: Circle[] | null = null
+
+export function getCircles(): Circle[] {
+  if (_circlesCache) return _circlesCache
+
+  // Tập các từ đã có trong phần nền tảng → loại khỏi phần mở rộng để khỏi trùng
+  const foundationKeys = new Set<string>()
+  FOUNDATION.forEach(c => c.words.forEach(w => foundationKeys.add(wordKey(w.word))))
+
+  // Các từ còn lại trong từ điển, giữ nguyên thứ tự (alphabet) làm phần mở rộng
+  const rest = ENTRIES.filter(e => !foundationKeys.has(wordKey(e.word)))
+
+  // Gom phần mở rộng thành các cụm DAILY_GOAL từ → mỗi cụm là 1 "vòng"
+  const extra: Circle[] = []
+  for (let i = 0; i < rest.length; i += DAILY_GOAL) {
+    const words = rest.slice(i, i + DAILY_GOAL)
+    const n = extra.length + 1
+    extra.push({
+      id: `extra-${n}`,
+      titleVi: `Mở rộng ${n}`,
+      titleEn: `Set ${n}`,
+      emoji: '📚',
+      words,
+      sentences: [], // phần mở rộng dùng câu ví dụ sẵn trong từng từ
+    })
+  }
+
+  _circlesCache = [...FOUNDATION, ...extra]
+  return _circlesCache
+}
+
+// ── Lộ trình phẳng (mảng từ theo thứ tự học) ────────────────────────────────
+let _pathCache: DictEntry[] | null = null
+
+export function getLearningPath(): DictEntry[] {
+  if (_pathCache) return _pathCache
+  _pathCache = getCircles().flatMap(c => c.words)
+  return _pathCache
+}
+
+// Vòng (chủ đề) chứa 1 từ — để hiển thị tên chủ đề đang học
+export function findCircleOfWord(word: string): Circle | undefined {
+  const k = wordKey(word)
+  return getCircles().find(c => c.words.some(w => wordKey(w.word) === k))
+}
+
+// ── Mục tiêu hôm nay: 20 từ KẾ TIẾP chưa thuộc ──────────────────────────────
+export function getTodayBatch(learned: Set<string>, size = DAILY_GOAL): DictEntry[] {
+  const batch: DictEntry[] = []
+  for (const e of getLearningPath()) {
+    if (batch.length >= size) break
+    if (!learned.has(wordKey(e.word)) && !learned.has(e.word)) batch.push(e)
+  }
+  return batch
+}
+
+// Tiến độ tổng: đã thuộc bao nhiêu / tổng lộ trình
+export function getPathProgress(learned: Set<string>): { done: number; total: number } {
+  const path = getLearningPath()
+  let done = 0
+  for (const e of path) {
+    if (learned.has(wordKey(e.word)) || learned.has(e.word)) done++
+  }
+  return { done, total: path.length }
+}
+
+// ── Bộ đếm "học trong ngày" (mục tiêu 20/ngày) ──────────────────────────────
+const DAILY_KEY = (uid: string) => `et_learn_daily_${uid}`
+const todayStr = () => new Date().toISOString().slice(0, 10)
+
+export function getDailyLearned(uid: string): number {
+  try {
+    const raw = localStorage.getItem(DAILY_KEY(uid))
+    if (!raw) return 0
+    const obj = JSON.parse(raw) as { date: string; count: number }
+    return obj.date === todayStr() ? obj.count : 0
+  } catch {
+    return 0
+  }
+}
+
+// Tăng bộ đếm ngày (gọi khi đánh dấu 1 từ MỚI là đã thuộc trong phần lộ trình)
+export function bumpDailyLearned(uid: string): number {
+  const cur = getDailyLearned(uid)
+  const next = cur + 1
+  localStorage.setItem(DAILY_KEY(uid), JSON.stringify({ date: todayStr(), count: next }))
+  return next
+}
