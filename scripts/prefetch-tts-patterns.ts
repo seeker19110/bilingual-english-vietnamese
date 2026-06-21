@@ -100,20 +100,53 @@ function loadSubjects(): Subject[] {
   return subjects
 }
 
-// ── Nạp câu hội thoại từ src/data/lessons.json ──────────────────────────────
+// ── Nạp câu hội thoại từ src/data/lessons/chunk-*.json ──────────────────────
+// lessons.json đã được tách thành nhiều chunk (xem scripts/split-lessons.mjs) để app
+// lazy-load. Ở đây đọc thẳng các file chunk (node không dùng được import.meta.glob của Vite).
 // Mỗi bài có nhiều "turn" (lượt nói), mỗi turn có câu tiếng Anh (en) + bản dịch (vi).
 interface LessonTurn { en: string; vi: string }
 interface Lesson { turns: LessonTurn[] }
 
 function loadLessonSentences(): Sentence[] {
-  const file = path.join(PROJECT_ROOT, 'src/data/lessons.json')
-  const lessons = JSON.parse(fs.readFileSync(file, 'utf8')) as Lesson[]
-  return lessons.flatMap((l) => l.turns.map((t) => ({ en: t.en, vi: t.vi })))
+  const dir = path.join(PROJECT_ROOT, 'src/data/lessons')
+  const files = fs.readdirSync(dir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+  const sentences: Sentence[] = []
+  for (const file of files) {
+    const lessons = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8')) as Lesson[]
+    for (const l of lessons) {
+      for (const t of l.turns) sentences.push({ en: t.en, vi: t.vi })
+    }
+  }
+  return sentences
 }
 
 // ── Nạp câu thông dụng từ src/data/curriculum.ts (phần FOUNDATION) ──────────
 function loadCurriculumSentences(): Sentence[] {
   return FOUNDATION.flatMap((circle) => circle.sentences.map((s) => ({ en: s.en, vi: s.vi })))
+}
+
+// ── (Tùy chọn) Câu VÍ DỤ — chỉ seed khi INCLUDE_EXAMPLES=1 ──────────────────
+// Đây là phần TỐN KÉM NHẤT (10.000 từ trong dictionary, mỗi từ 1 câu ví dụ en+vi),
+// nên mặc định KHÔNG seed để tránh đội chi phí ngoài ý muốn. Bật khi muốn seed trọn vẹn:
+//   INCLUDE_EXAMPLES=1 npm run prefetch:tts-patterns
+interface DictEntry { ex_en?: string; ex_vi?: string }
+
+function loadExampleSentences(): Sentence[] {
+  const out: Sentence[] = []
+  // Câu ví dụ trong từ điển
+  const dict = JSON.parse(
+    fs.readFileSync(path.join(PROJECT_ROOT, 'src/data/dictionary.json'), 'utf8'),
+  ) as DictEntry[]
+  for (const e of dict) {
+    if (e.ex_en || e.ex_vi) out.push({ en: e.ex_en ?? '', vi: e.ex_vi ?? '' })
+  }
+  // Câu ví dụ của từng từ trong curriculum (DictEntry có ex_en/ex_vi)
+  for (const circle of FOUNDATION) {
+    for (const word of circle.words as DictEntry[]) {
+      if (word.ex_en || word.ex_vi) out.push({ en: word.ex_en ?? '', vi: word.ex_vi ?? '' })
+    }
+  }
+  return out
 }
 
 // ── Trích xuất tất cả câu cần seed (cho cả 2 giọng) ─────────────────────────
@@ -132,11 +165,13 @@ function collectTasks(): Task[] {
     }
   }
 
-  // Gộp câu từ cả 3 nguồn — hàm add() đã tự khử trùng nên câu lặp lại chỉ seed 1 lần.
+  // Gộp câu từ các nguồn — hàm add() đã tự khử trùng nên câu lặp lại chỉ seed 1 lần.
+  const includeExamples = process.env.INCLUDE_EXAMPLES === '1'
   const allSentences: Sentence[] = [
     ...loadSubjects().flatMap((s) => s.sentences),
     ...loadLessonSentences(),
     ...loadCurriculumSentences(),
+    ...(includeExamples ? loadExampleSentences() : []),
   ]
 
   for (const { en, vi } of allSentences) {

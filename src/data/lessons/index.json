@@ -1,0 +1,1002 @@
+[
+ {
+  "id": 1,
+  "title": "Giới thiệu bản thân",
+  "situation": "Lan và Tom gặp nhau lần đầu ở một câu lạc bộ tiếng Anh.",
+  "turnCount": 80,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 0,
+  "idx": 0
+ },
+ {
+  "id": 2,
+  "title": "Một ngày bình thường của tôi",
+  "situation": "Hai người bạn nói về thói quen hàng ngày của mình.",
+  "turnCount": 80,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 0,
+  "idx": 1
+ },
+ {
+  "id": 3,
+  "title": "Tại nhà hàng",
+  "situation": "Khách hàng Linh gọi món tại một nhà hàng.",
+  "turnCount": 80,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 0,
+  "idx": 2
+ },
+ {
+  "id": 4,
+  "title": "Tại sân bay",
+  "situation": "Một hành khách làm thủ tục, qua an ninh và lên máy bay.",
+  "turnCount": 80,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 0,
+  "idx": 3
+ },
+ {
+  "id": 5,
+  "title": "Đi mua sắm",
+  "situation": "Khách hàng mua áo khoác và giày tại một cửa hàng.",
+  "turnCount": 80,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 0,
+  "idx": 4
+ },
+ {
+  "id": 6,
+  "title": "Hỏi đường",
+  "situation": "Mai bị lạc đường và hỏi một người đi đường cách đến bưu điện.",
+  "turnCount": 32,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 0,
+  "idx": 5
+ },
+ {
+  "id": 7,
+  "title": "Đi khám bệnh",
+  "situation": "Nam cảm thấy không khỏe và đến phòng khám gặp bác sĩ.",
+  "turnCount": 32,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 0,
+  "idx": 6
+ },
+ {
+  "id": 8,
+  "title": "Ở hiệu thuốc",
+  "situation": "Hoa đến hiệu thuốc mua thuốc cảm cho mình.",
+  "turnCount": 31,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 0,
+  "idx": 7
+ },
+ {
+  "id": 9,
+  "title": "Đặt phòng khách sạn qua điện thoại",
+  "situation": "An gọi điện đặt phòng khách sạn cho kỳ nghỉ cuối tuần.",
+  "turnCount": 31,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 0,
+  "idx": 8
+ },
+ {
+  "id": 10,
+  "title": "Nhận phòng khách sạn",
+  "situation": "An đến khách sạn để nhận phòng đã đặt trước.",
+  "turnCount": 31,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 0,
+  "idx": 9
+ },
+ {
+  "id": 11,
+  "title": "Trả phòng khách sạn",
+  "situation": "An chuẩn bị trả phòng khách sạn trước khi về.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 1,
+  "idx": 0
+ },
+ {
+  "id": 12,
+  "title": "Gọi xe Grab",
+  "situation": "Hùng dùng ứng dụng để gọi xe Grab và nói chuyện với lái xe.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 1,
+  "idx": 1
+ },
+ {
+  "id": 13,
+  "title": "Đi xe buýt",
+  "situation": "Lan hỏi một hành khách trên xe buýt xem xe có đi qua chợ Bến Thành không.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 1,
+  "idx": 2
+ },
+ {
+  "id": 14,
+  "title": "Mua vé tàu",
+  "situation": "Phương đến quầy bán vé ga để mua vé tàu đi Đà Nẵng.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 1,
+  "idx": 3
+ },
+ {
+  "id": 15,
+  "title": "Mở tài khoản ngân hàng",
+  "situation": "Quân đến ngân hàng để mở một tài khoản mới.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 1,
+  "idx": 4
+ },
+ {
+  "id": 16,
+  "title": "Máy ATM bị lỗi",
+  "situation": "Tuấn gọi lên tổng đài ngân hàng để báo lỗi máy ATM bị trừ tiền nhưng không nhả tiền mặt.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 1,
+  "idx": 5
+ },
+ {
+  "id": 17,
+  "title": "Tìm phòng trọ",
+  "situation": "Linh gọi điện hỏi thông tin về một phòng trọ đang cho thuê.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 1,
+  "idx": 6
+ },
+ {
+  "id": 18,
+  "title": "Nói chuyện với chủ nhà",
+  "situation": "Đức gọi điện báo chủ nhà về vòi nước bị hỏng và hỏi chuyện gia hạn hợp đồng.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 1,
+  "idx": 7
+ },
+ {
+  "id": 19,
+  "title": "Gặp hàng xóm mới",
+  "situation": "Hà vừa dọn đến căn hộ mới và gặp hàng xóm ở hành lang.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 1,
+  "idx": 8
+ },
+ {
+  "id": 20,
+  "title": "Gọi thợ sửa điện",
+  "situation": "Việt gọi điện cho thợ sửa điện vì ổ điện trong nhà bị chập.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 1,
+  "idx": 9
+ },
+ {
+  "id": 21,
+  "title": "Mua SIM điện thoại",
+  "situation": "Nam đến cửa hàng mua SIM điện thoại và đăng ký gói cước.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 2,
+  "idx": 0
+ },
+ {
+  "id": 22,
+  "title": "Mang điện thoại đi sửa",
+  "situation": "Lan mang điện thoại bị vỡ màn hình đến tiệm sửa chữa.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 2,
+  "idx": 1
+ },
+ {
+  "id": 23,
+  "title": "Đăng ký lớp học tiếng Anh",
+  "situation": "Phương gọi điện đến trung tâm để hỏi về lớp học tiếng Anh và đăng ký.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 2,
+  "idx": 2
+ },
+ {
+  "id": 24,
+  "title": "Ngày đầu đi làm",
+  "situation": "Khánh đi làm ngày đầu tiên và được đồng nghiệp Thu hướng dẫn.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 2,
+  "idx": 3
+ },
+ {
+  "id": 25,
+  "title": "Họp ở công ty",
+  "situation": "Một cuộc họp nhóm ngắn giữa Quân và Mai về tiến độ công việc trong tuần.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 2,
+  "idx": 4
+ },
+ {
+  "id": 26,
+  "title": "Xin nghỉ phép",
+  "situation": "Lan xin nghỉ phép với quản lý để về quê giải quyết việc gia đình.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 2,
+  "idx": 5
+ },
+ {
+  "id": 27,
+  "title": "Phỏng vấn xin việc",
+  "situation": "Một buổi phỏng vấn xin việc giữa ứng viên Hoa và nhà tuyển dụng.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 2,
+  "idx": 6
+ },
+ {
+  "id": 28,
+  "title": "Thương lượng lương",
+  "situation": "Sau khi nhận được lời mời làm việc, Tùng thương lượng mức lương với nhà tuyển dụng.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 2,
+  "idx": 7
+ },
+ {
+  "id": 29,
+  "title": "Viết email công việc",
+  "situation": "Mai và đồng nghiệp Sơn trao đổi qua điện thoại về một email công việc cần gửi gấp.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 2,
+  "idx": 8
+ },
+ {
+  "id": 30,
+  "title": "Thuyết trình trước nhóm",
+  "situation": "Trước buổi thuyết trình, An trò chuyện với đồng nghiệp Bích để chuẩn bị tâm lý.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 2,
+  "idx": 9
+ },
+ {
+  "id": 31,
+  "title": "Chuẩn bị đi công tác",
+  "situation": "Huy gọi điện cho đồng nghiệp Trang để xác nhận chuyến đi công tác sắp tới.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 3,
+  "idx": 0
+ },
+ {
+  "id": 32,
+  "title": "Gọi điện cho khách hàng",
+  "situation": "Nhân viên kinh doanh Bảo gọi điện chăm sóc khách hàng về sản phẩm đã mua.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 3,
+  "idx": 1
+ },
+ {
+  "id": 33,
+  "title": "Đặt hàng online",
+  "situation": "Trang gọi điện đến tổng đài hỗ trợ để đặt hàng online qua điện thoại.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 3,
+  "idx": 2
+ },
+ {
+  "id": 34,
+  "title": "Trả hàng và đổi hàng",
+  "situation": "Khách hàng Yến gọi điện đến cửa hàng để xin đổi sản phẩm bị lỗi.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 3,
+  "idx": 3
+ },
+ {
+  "id": 35,
+  "title": "Đơn hàng bị giao trễ",
+  "situation": "Khách hàng Phúc gọi điện hỏi về đơn hàng bị giao trễ so với dự kiến.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 3,
+  "idx": 4
+ },
+ {
+  "id": 36,
+  "title": "Đi siêu thị",
+  "situation": "Hai người bạn Mai và Tâm cùng đi siêu thị mua đồ dùng cho tuần mới.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 3,
+  "idx": 5
+ },
+ {
+  "id": 37,
+  "title": "Đi chợ truyền thống",
+  "situation": "Cô Hương đi chợ truyền thống và mặc cả với người bán rau.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 3,
+  "idx": 6
+ },
+ {
+  "id": 38,
+  "title": "Gọi đồ ăn qua ứng dụng",
+  "situation": "Quân gọi điện hỗ trợ vì đơn hàng đồ ăn qua ứng dụng bị thiếu món.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 3,
+  "idx": 7
+ },
+ {
+  "id": 39,
+  "title": "Ở quán cà phê",
+  "situation": "Hai bạn Thảo và Nam ngồi nói chuyện ở quán cà phê và gọi đồ uống.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 3,
+  "idx": 8
+ },
+ {
+  "id": 40,
+  "title": "Mua trà sữa",
+  "situation": "Vy đến quán trà sữa và gọi món với nhân viên thu ngân.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 3,
+  "idx": 9
+ },
+ {
+  "id": 41,
+  "title": "Nấu ăn cùng bạn",
+  "situation": "Hai bạn Chi và Phong cùng nấu một bữa tối đơn giản tại nhà.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 4,
+  "idx": 0
+ },
+ {
+  "id": 42,
+  "title": "Đặt rau củ giao tận nhà",
+  "situation": "Hằng gọi điện đặt rau củ tươi để được giao tận nhà.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 4,
+  "idx": 1
+ },
+ {
+  "id": 43,
+  "title": "Tổ chức tiệc sinh nhật",
+  "situation": "Linh và Tú cùng lên kế hoạch tổ chức tiệc sinh nhật cho một người bạn.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 4,
+  "idx": 2
+ },
+ {
+  "id": 44,
+  "title": "Chúc mừng sinh nhật bạn",
+  "situation": "Tại buổi tiệc, mọi người chúc mừng sinh nhật Hà.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 4,
+  "idx": 3
+ },
+ {
+  "id": 45,
+  "title": "Tết Nguyên Đán",
+  "situation": "Hai người bạn Khoa và Ngọc nói chuyện về kế hoạch Tết Nguyên Đán.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 4,
+  "idx": 4
+ },
+ {
+  "id": 46,
+  "title": "Đi chùa đầu năm",
+  "situation": "Hai bạn Mỹ và Đạt cùng đi chùa cầu may đầu năm mới.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 4,
+  "idx": 5
+ },
+ {
+  "id": 47,
+  "title": "Tết Trung Thu",
+  "situation": "Hai chị em Bống và Tép nói chuyện về Tết Trung Thu sắp tới.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 4,
+  "idx": 6
+ },
+ {
+  "id": 48,
+  "title": "Dự đám cưới bạn",
+  "situation": "Việt và Trang nói chuyện trước khi đi dự đám cưới của một người bạn.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 4,
+  "idx": 7
+ },
+ {
+  "id": 49,
+  "title": "Thăm gia đình người yêu",
+  "situation": "Đăng lần đầu đến thăm nhà gia đình của bạn gái Trang.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 4,
+  "idx": 8
+ },
+ {
+  "id": 50,
+  "title": "Buổi hẹn hò đầu tiên",
+  "situation": "Khôi và Vân gặp nhau trong buổi hẹn hò đầu tiên ở một quán cà phê.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 4,
+  "idx": 9
+ },
+ {
+  "id": 51,
+  "title": "Đăng ký phòng gym",
+  "situation": "Minh đến phòng gym lần đầu để hỏi thông tin và đăng ký thành viên.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 5,
+  "idx": 0
+ },
+ {
+  "id": 52,
+  "title": "Tập yoga cùng bạn",
+  "situation": "Hoa rủ Mai đi tập yoga lần đầu ở một studio gần nhà.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 5,
+  "idx": 1
+ },
+ {
+  "id": 53,
+  "title": "Đi bơi",
+  "situation": "Nam và Duy đến hồ bơi công cộng vào buổi sáng cuối tuần.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "male",
+  "chunk": 5,
+  "idx": 2
+ },
+ {
+  "id": 54,
+  "title": "Chạy bộ buổi sáng",
+  "situation": "Tuấn rủ Bình cùng chạy bộ ở công viên mỗi sáng.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "male",
+  "chunk": 5,
+  "idx": 3
+ },
+ {
+  "id": 55,
+  "title": "Bị thương khi chơi thể thao",
+  "situation": "Long bị bong gân khi chơi bóng đá và đến gặp bác sĩ thể thao.",
+  "turnCount": 32,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 5,
+  "idx": 4
+ },
+ {
+  "id": 56,
+  "title": "Thuê xe máy đi du lịch",
+  "situation": "Phong muốn thuê xe máy để khám phá Đà Nẵng trong ba ngày.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 5,
+  "idx": 5
+ },
+ {
+  "id": 57,
+  "title": "Hỏi thông tin tour du lịch",
+  "situation": "Thu hỏi thông tin về tour Hội An tại một công ty du lịch ở Đà Nẵng.",
+  "turnCount": 32,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 5,
+  "idx": 6
+ },
+ {
+  "id": 58,
+  "title": "Đặt vé máy bay",
+  "situation": "Linh gọi điện cho hãng hàng không để đặt vé từ Hà Nội vào Thành phố Hồ Chí Minh.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 5,
+  "idx": 7
+ },
+ {
+  "id": 59,
+  "title": "Tham quan bảo tàng",
+  "situation": "An và chị gái đến tham quan Bảo tàng Lịch sử Quốc gia ở Hà Nội.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "male",
+  "chunk": 5,
+  "idx": 8
+ },
+ {
+  "id": 60,
+  "title": "Mua đặc sản làm quà",
+  "situation": "Ngọc đang ở Đà Lạt và muốn mua đặc sản để mang về làm quà cho bạn bè.",
+  "turnCount": 28,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 5,
+  "idx": 9
+ },
+ {
+  "id": 61,
+  "title": "Mua vé xem phim",
+  "situation": "Hùng và Ly mua vé xem phim tại rạp CGV.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 6,
+  "idx": 0
+ },
+ {
+  "id": 62,
+  "title": "Đi xem ca nhạc",
+  "situation": "Dung và bạn đi xem buổi biểu diễn ca nhạc của ca sĩ yêu thích.",
+  "turnCount": 28,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 6,
+  "idx": 1
+ },
+ {
+  "id": 63,
+  "title": "Đọc sách ở thư viện",
+  "situation": "Phúc đến thư viện quốc gia lần đầu và hỏi nhân viên để được hướng dẫn.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 6,
+  "idx": 2
+ },
+ {
+  "id": 64,
+  "title": "Xem bóng đá cùng bạn bè",
+  "situation": "Nhóm bạn tập trung tại nhà Toàn để xem trận chung kết bóng đá.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 6,
+  "idx": 3
+ },
+ {
+  "id": 65,
+  "title": "Học thêm ở trung tâm ngoại ngữ",
+  "situation": "Phương đến đăng ký học thêm tiếng Anh tại một trung tâm ngoại ngữ.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 6,
+  "idx": 4
+ },
+ {
+  "id": 66,
+  "title": "Nói chuyện với thầy cô",
+  "situation": "Sinh viên Hà đến gặp giáo viên sau giờ học để hỏi về bài kiểm tra.",
+  "turnCount": 28,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 6,
+  "idx": 5
+ },
+ {
+  "id": 67,
+  "title": "Mua laptop mới",
+  "situation": "Khoa đến cửa hàng điện tử để mua laptop mới cho việc học lập trình.",
+  "turnCount": 32,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 6,
+  "idx": 6
+ },
+ {
+  "id": 68,
+  "title": "Gặp sự cố wifi",
+  "situation": "Nga gọi điện cho bộ phận hỗ trợ kỹ thuật vì wifi tại nhà bị mất kết nối.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 6,
+  "idx": 7
+ },
+ {
+  "id": 69,
+  "title": "Thanh toán online",
+  "situation": "Khải hướng dẫn bà Liên cách thanh toán hóa đơn điện qua ứng dụng ngân hàng.",
+  "turnCount": 29,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 6,
+  "idx": 8
+ },
+ {
+  "id": 70,
+  "title": "Ăn cơm cùng gia đình",
+  "situation": "Gia đình sum vầy bữa cơm tối cuối tuần, nói chuyện về công việc và học hành.",
+  "turnCount": 29,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 6,
+  "idx": 9
+ },
+ {
+  "id": 71,
+  "title": "Chăm sóc người thân bị bệnh",
+  "situation": "Thanh chăm sóc mẹ đang bị ốm tại nhà và gọi điện hỏi bác sĩ.",
+  "turnCount": 26,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 7,
+  "idx": 0
+ },
+ {
+  "id": 72,
+  "title": "Xin lỗi người thân",
+  "situation": "Minh xin lỗi người anh trai vì đã làm hỏng xe và nói chuyện để hòa giải.",
+  "turnCount": 26,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 7,
+  "idx": 1
+ },
+ {
+  "id": 73,
+  "title": "Nói chuyện về stress công việc",
+  "situation": "Hương tâm sự với bạn thân về áp lực công việc sau một tuần căng thẳng.",
+  "turnCount": 28,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 7,
+  "idx": 2
+ },
+ {
+  "id": 74,
+  "title": "Đi làm tóc",
+  "situation": "Lan đến tiệm tóc để cắt và nhuộm tóc trước dịp Tết.",
+  "turnCount": 28,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 7,
+  "idx": 3
+ },
+ {
+  "id": 75,
+  "title": "Gửi bưu kiện ở bưu điện",
+  "situation": "Hải đến bưu điện để gửi quà về cho gia đình ở quê.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 7,
+  "idx": 4
+ },
+ {
+  "id": 76,
+  "title": "Đăng ký dịch vụ internet",
+  "situation": "Quân gọi điện cho nhà mạng để đăng ký dịch vụ internet mới cho căn hộ.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 7,
+  "idx": 5
+ },
+ {
+  "id": 77,
+  "title": "Phàn nàn về hàng xóm ồn ào",
+  "situation": "Bình gõ cửa nhà hàng xóm để nhờ giảm tiếng ồn vào đêm muộn.",
+  "turnCount": 28,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 7,
+  "idx": 6
+ },
+ {
+  "id": 78,
+  "title": "Đi spa và massage",
+  "situation": "Linh đặt lịch và trải nghiệm dịch vụ massage tại một spa cao cấp.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 7,
+  "idx": 7
+ },
+ {
+  "id": 79,
+  "title": "Bàn chuyện mua nhà với gia đình",
+  "situation": "Vợ chồng Anh bàn bạc với bố mẹ về kế hoạch mua nhà đầu tiên.",
+  "turnCount": 26,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 7,
+  "idx": 8
+ },
+ {
+  "id": 80,
+  "title": "Kết bạn trên mạng xã hội",
+  "situation": "Trang và một người lạ bắt đầu nói chuyện sau khi nhận được lời mời kết bạn trên Facebook.",
+  "turnCount": 28,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 7,
+  "idx": 9
+ },
+ {
+  "id": 81,
+  "title": "Hỏi về văn hóa địa phương",
+  "situation": "Một người nước ngoài hỏi bạn Việt Nam về phong tục và văn hóa Việt Nam.",
+  "turnCount": 28,
+  "speakerAGender": "male",
+  "speakerBGender": "male",
+  "chunk": 8,
+  "idx": 0
+ },
+ {
+  "id": 82,
+  "title": "Tham quan phố cổ Hà Nội",
+  "situation": "Một hướng dẫn viên địa phương dẫn khách du lịch tham quan 36 phố phường Hà Nội.",
+  "turnCount": 29,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 8,
+  "idx": 1
+ },
+ {
+  "id": 83,
+  "title": "Ăn phở buổi sáng",
+  "situation": "Du khách nước ngoài lần đầu ăn phở tại một quán phở truyền thống ở Hà Nội.",
+  "turnCount": 29,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 8,
+  "idx": 2
+ },
+ {
+  "id": 84,
+  "title": "Nói về tương lai và ước mơ",
+  "situation": "Hai người bạn trò chuyện về ước mơ và kế hoạch cho tương lai của mình.",
+  "turnCount": 26,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 8,
+  "idx": 3
+ },
+ {
+  "id": 85,
+  "title": "Ăn ẩm thực vỉa hè",
+  "situation": "Hai người bạn khám phá các món ăn vỉa hè ở một con phố đêm ở Sài Gòn.",
+  "turnCount": 29,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 8,
+  "idx": 4
+ },
+ {
+  "id": 86,
+  "title": "Đi Vịnh Hạ Long",
+  "situation": "Một nhóm du khách trên du thuyền tham quan Vịnh Hạ Long hai ngày một đêm.",
+  "turnCount": 30,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 8,
+  "idx": 5
+ },
+ {
+  "id": 87,
+  "title": "Khám phá ẩm thực Việt Nam",
+  "situation": "Hai người bạn thảo luận về ẩm thực Việt Nam phong phú và đa dạng.",
+  "turnCount": 28,
+  "speakerAGender": "male",
+  "speakerBGender": "male",
+  "chunk": 8,
+  "idx": 6
+ },
+ {
+  "id": 88,
+  "title": "Chuẩn bị cho kỳ thi IELTS",
+  "situation": "Nam hỏi người bạn đã thi IELTS về kinh nghiệm và cách ôn thi hiệu quả.",
+  "turnCount": 28,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 8,
+  "idx": 7
+ },
+ {
+  "id": 89,
+  "title": "Nói về sở thích đọc sách",
+  "situation": "Hai người bạn nói chuyện về thói quen đọc sách và những cuốn sách yêu thích.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 8,
+  "idx": 8
+ },
+ {
+  "id": 90,
+  "title": "Làm việc freelance",
+  "situation": "Duy chia sẻ kinh nghiệm làm freelance với người bạn đang cân nhắc nghỉ việc văn phòng.",
+  "turnCount": 28,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 8,
+  "idx": 9
+ },
+ {
+  "id": 91,
+  "title": "Đi siêu thị với trẻ em",
+  "situation": "Mẹ đưa con nhỏ đi siêu thị và dạy con về đồ ăn và tính toán.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 9,
+  "idx": 0
+ },
+ {
+  "id": 92,
+  "title": "Nói chuyện về môi trường",
+  "situation": "Hai sinh viên thảo luận về vấn đề môi trường và cách mỗi người có thể giúp ích.",
+  "turnCount": 26,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 9,
+  "idx": 1
+ },
+ {
+  "id": 93,
+  "title": "Họp phụ huynh ở trường",
+  "situation": "Phụ huynh Hồng gặp giáo viên chủ nhiệm để nghe về tình hình học tập của con.",
+  "turnCount": 26,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 9,
+  "idx": 2
+ },
+ {
+  "id": 94,
+  "title": "Mua quần áo ở cửa hàng",
+  "situation": "Tú đến cửa hàng thời trang để tìm trang phục đi dự đám cưới.",
+  "turnCount": 28,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 9,
+  "idx": 3
+ },
+ {
+  "id": 95,
+  "title": "Đặt bàn nhà hàng cho dịp đặc biệt",
+  "situation": "Kiên gọi điện đặt bàn tại nhà hàng sang trọng cho buổi kỷ niệm với người yêu.",
+  "turnCount": 28,
+  "speakerAGender": "male",
+  "speakerBGender": "female",
+  "chunk": 9,
+  "idx": 4
+ },
+ {
+  "id": 96,
+  "title": "Thảo luận về du học",
+  "situation": "Ngân xin lời khuyên từ người anh họ đã du học nước ngoài về kinh nghiệm và cách chuẩn bị.",
+  "turnCount": 26,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 9,
+  "idx": 5
+ },
+ {
+  "id": 97,
+  "title": "Chăm sóc thú cưng",
+  "situation": "Hiền đưa chú mèo đến thú y lần đầu và học cách chăm sóc đúng cách.",
+  "turnCount": 28,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 9,
+  "idx": 6
+ },
+ {
+  "id": 98,
+  "title": "Trò chuyện trong buổi tiệc",
+  "situation": "Hai người không quen biết gặp nhau tại buổi tiệc công ty và bắt chuyện.",
+  "turnCount": 28,
+  "speakerAGender": "female",
+  "speakerBGender": "female",
+  "chunk": 9,
+  "idx": 7
+ },
+ {
+  "id": 99,
+  "title": "Giải quyết hiểu lầm với đồng nghiệp",
+  "situation": "Trang nói chuyện thẳng thắn với đồng nghiệp Minh sau một cuộc tranh luận nhỏ trong công việc.",
+  "turnCount": 25,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 9,
+  "idx": 8
+ },
+ {
+  "id": 100,
+  "title": "Chia sẻ về hành trình học tiếng Anh",
+  "situation": "Lan chia sẻ hành trình học tiếng Anh với người bạn mới bắt đầu học.",
+  "turnCount": 30,
+  "speakerAGender": "female",
+  "speakerBGender": "male",
+  "chunk": 9,
+  "idx": 9
+ }
+]
