@@ -35,6 +35,22 @@ export async function login(email: string, password: string): Promise<AppUser | 
   return await toAppUser(data.user)
 }
 
+// Đăng nhập bằng Google (OAuth).
+// Hàm này CHUYỂN HƯỚNG trình duyệt sang trang Google, nên không trả về user ngay.
+// Sau khi Google xác thực xong sẽ quay lại app; AuthProvider (onAuthStateChange)
+// tự nhận diện session mới và cập nhật user.
+// Lưu ý: phải bật Google provider trong Supabase Dashboard (Authentication → Providers).
+export async function loginWithGoogle(): Promise<{ error: string | null }> {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      // Sau khi đăng nhập xong, Google đưa người dùng trở lại đúng trang app hiện tại
+      redirectTo: window.location.origin,
+    },
+  })
+  return { error: error ? error.message : null }
+}
+
 export async function logout() {
   await supabase.auth.signOut()
 }
