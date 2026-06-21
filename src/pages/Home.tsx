@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { MessageCircle, PenLine, Mic, ChevronRight, Zap, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getUsage, getStreak, getDirection, setDirection } from '../lib/storage'
+import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
 import { LIMITS } from '../types'
 import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
@@ -94,8 +95,8 @@ export default function Home() {
   const { T, setLang } = useLang()
   useCloudSync(user?.id)   // kéo lượt dùng từ Supabase khi mở trang chủ
 
-  // Chiều học lưu trong localStorage, dùng state để re-render khi đổi
   const [dir, setDir] = useState<Direction>(getDirection)
+  const [voice, setVoice] = useState<Voice>(getVoicePref)
 
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
@@ -108,8 +109,12 @@ export default function Home() {
     const next: Direction = dir === 'A' ? 'B' : 'A'
     setDirection(next)
     setDir(next)
-    // Đồng bộ ngôn ngữ giao diện: chiều A (VN học EN) → tiếng Việt, chiều B (EN học VN) → tiếng Anh
     setLang(next === 'A' ? 'vi' : 'en')
+  }
+
+  function chooseVoice(v: Voice) {
+    setVoice(v)
+    setVoicePref(v)
   }
 
   const MODES = getModes(dir, T)
@@ -146,24 +151,61 @@ export default function Home() {
           )}
         </div>
 
-        {/* ── Nhãn chiều học + nút toggle cùng hàng ─────────────────────── */}
-        <div className="mb-6 flex items-center gap-2 animate-fade-in">
-          <span className={`text-xs px-3 py-1 rounded-full border font-medium ${
-            isA
-              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
-              : 'bg-sky-500/10 text-sky-400 border-sky-500/25'
-          }`}>
-            {isA ? T.dirLabelA : T.dirLabelB}
-          </span>
+        {/* ── Chọn chiều học + giọng đọc (cùng hàng, khối rộng) ──────────── */}
+        <div className="mb-6 grid grid-cols-2 gap-3 animate-fade-in">
 
+          {/* Khối chọn chiều học — nhấn cả khối để toggle */}
           <button
             onClick={toggleDir}
             title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
-            className="flex items-center gap-1.5 bg-zinc-800/80 border border-zinc-700/60 hover:border-zinc-600 rounded-xl px-3 py-1.5 text-xs font-medium transition-all active:scale-95"
+            className={`flex flex-col items-start gap-1.5 rounded-2xl px-4 py-3 border transition-all active:scale-[0.98] ${
+              isA
+                ? 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60'
+                : 'bg-sky-500/10 border-sky-500/30 hover:border-sky-500/60'
+            }`}
           >
-            <ArrowLeftRight className="w-3 h-3 text-zinc-400" />
-            <span className="text-zinc-300">{isA ? '🇻🇳 Việt → 🇬🇧 Anh' : '🇬🇧 Anh → 🇻🇳 Việt'}</span>
+            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wide">
+              {isA ? 'Chiều học' : 'Direction'}
+            </span>
+            <div className="flex items-center gap-1.5">
+              <ArrowLeftRight className={`w-3.5 h-3.5 ${isA ? 'text-emerald-400' : 'text-sky-400'}`} />
+              <span className={`text-sm font-semibold ${isA ? 'text-emerald-300' : 'text-sky-300'}`}>
+                {isA ? '🇻🇳 Việt → 🇬🇧 Anh' : '🇬🇧 Anh → 🇻🇳 Việt'}
+              </span>
+            </div>
           </button>
+
+          {/* Khối chọn giọng đọc — nhấn từng ô để chọn */}
+          <div className="flex flex-col gap-1.5 rounded-2xl px-4 py-3 border bg-zinc-900/80 border-zinc-700/60">
+            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wide">
+              {isA ? 'Giọng đọc' : 'Voice'}
+            </span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => chooseVoice('female')}
+                className={`flex-1 py-1 rounded-lg text-sm font-semibold transition-all active:scale-95 ${
+                  voice === 'female'
+                    ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/40'
+                    : 'text-zinc-500 hover:text-zinc-300 border border-transparent'
+                }`}
+              >
+                {isA ? 'Nữ' : 'Female'}
+              </button>
+              <button
+                type="button"
+                onClick={() => chooseVoice('male')}
+                className={`flex-1 py-1 rounded-lg text-sm font-semibold transition-all active:scale-95 ${
+                  voice === 'male'
+                    ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/40'
+                    : 'text-zinc-500 hover:text-zinc-300 border border-transparent'
+                }`}
+              >
+                {isA ? 'Nam' : 'Male'}
+              </button>
+            </div>
+          </div>
+
         </div>
 
         {/* ── Usage card ────────────────────────────────────────────────── */}

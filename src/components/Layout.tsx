@@ -5,7 +5,6 @@ import { getUsage } from '../lib/storage'
 import { LIMITS } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
-import VoiceToggle from './VoiceToggle'
 
 interface Props {
   title: string
@@ -71,9 +70,6 @@ export default function Layout({ title, subtitle, back = true }: Props) {
             </div>
           </>
         )}
-
-        {/* Chọn giọng đọc toàn cục (nữ/nam) — áp dụng cho mọi nút loa */}
-        <VoiceToggle />
 
         {/* User avatar + logout */}
         {user && (
