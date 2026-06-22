@@ -1741,38 +1741,50 @@
  },
  {
   "id": 166,
-  "title": "Giải quyết xung đột khách hàng",
-  "situation": "Tình huống thực tế liên quan đến: Giải quyết xung đột khách hàng.",
+  "title": {
+   "vi": "Giải quyết xung đột khách hàng",
+   "en": "Resolving a Customer Conflict"
+  },
+  "situation": "Trưởng nhóm dịch vụ khách hàng Hoa xử lý khiếu nại gay gắt từ khách hàng về đơn hàng bị lỗi.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 16,
   "idx": 5
  },
  {
   "id": 167,
-  "title": "Trình bày ý tưởng mới",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Trình bày ý tưởng mới.",
+  "title": {
+   "vi": "Trình bày ý tưởng mới",
+   "en": "Presenting a New Idea"
+  },
+  "situation": "Nhân viên Phương trình bày ý tưởng cải tiến quy trình làm việc cho giám đốc bộ phận.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 16,
   "idx": 6
  },
  {
   "id": 168,
-  "title": "Phân công công việc",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Phân công công việc.",
+  "title": {
+   "vi": "Phân công công việc",
+   "en": "Delegating Work"
+  },
+  "situation": "Trưởng nhóm Khoa phân công nhiệm vụ cho nhân viên Linh khi nhận được dự án mới.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 16,
   "idx": 7
  },
  {
   "id": 169,
-  "title": "Đề xuất tăng lương",
-  "situation": "Tình huống thực tế liên quan đến: Đề xuất tăng lương.",
+  "title": {
+   "vi": "Đề xuất tăng lương",
+   "en": "Requesting a Salary Raise"
+  },
+  "situation": "Nhân viên Tuấn xin gặp trưởng phòng để thảo luận về việc điều chỉnh mức lương.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -1781,28 +1793,37 @@
  },
  {
   "id": 170,
-  "title": "Onboarding nhân viên mới",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Onboarding nhân viên mới.",
+  "title": {
+   "vi": "Onboarding nhân viên mới",
+   "en": "Onboarding a New Employee"
+  },
+  "situation": "Trưởng nhóm Hoa hướng dẫn nhân viên mới Bình trong ngày đầu tiên đi làm.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 16,
   "idx": 9
  },
  {
   "id": 171,
-  "title": "Hỏi về điện thoại mới",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về điện thoại mới.",
+  "title": {
+   "vi": "Hỏi về điện thoại mới",
+   "en": "Asking About a New Phone"
+  },
+  "situation": "Anh Tuấn đến cửa hàng điện thoại để tư vấn mua smartphone mới thay thế máy cũ.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 17,
   "idx": 0
  },
  {
   "id": 172,
-  "title": "Cài đặt ứng dụng",
-  "situation": "Tình huống thực tế liên quan đến: Cài đặt ứng dụng.",
+  "title": {
+   "vi": "Cài đặt ứng dụng",
+   "en": "Installing an Application"
+  },
+  "situation": "Chị Lan nhờ con trai Minh hướng dẫn cách tải và dùng ứng dụng gọi xe trên điện thoại.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -1811,8 +1832,11 @@
  },
  {
   "id": 173,
-  "title": "Gọi hỗ trợ kỹ thuật",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Gọi hỗ trợ kỹ thuật.",
+  "title": {
+   "vi": "Gọi hỗ trợ kỹ thuật",
+   "en": "Calling Technical Support"
+  },
+  "situation": "Anh Nam gọi điện cho bộ phận hỗ trợ kỹ thuật của nhà mạng vì internet bị chậm bất thường.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -1821,28 +1845,37 @@
  },
  {
   "id": 174,
-  "title": "Mua sắm online",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Mua sắm online.",
+  "title": {
+   "vi": "Mua sắm online",
+   "en": "Online Shopping"
+  },
+  "situation": "Hai người bạn Hà và Bình nói chuyện về kinh nghiệm mua sắm trực tuyến và chia sẻ mẹo tiết kiệm.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 17,
   "idx": 3
  },
  {
   "id": 175,
-  "title": "Bảo mật tài khoản",
-  "situation": "Tình huống thực tế liên quan đến: Bảo mật tài khoản.",
+  "title": {
+   "vi": "Bảo mật tài khoản",
+   "en": "Account Security"
+  },
+  "situation": "Chị Thảo phát hiện tài khoản ngân hàng bị đăng nhập lạ và gọi điện cho ngân hàng để xử lý.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 17,
   "idx": 4
  },
  {
   "id": 176,
-  "title": "Thiết kế website",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thiết kế website.",
+  "title": {
+   "vi": "Thiết kế website",
+   "en": "Website Design"
+  },
+  "situation": "Chủ tiệm bánh nhỏ chị Mai gặp designer freelance Hùng để thảo luận về thiết kế website bán hàng.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -1851,38 +1884,50 @@
  },
  {
   "id": 177,
-  "title": "Sử dụng AI trong công việc",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Sử dụng AI trong công việc.",
+  "title": {
+   "vi": "Sử dụng AI trong công việc",
+   "en": "Using AI at Work"
+  },
+  "situation": "Hai đồng nghiệp Trang và Nam thảo luận về cách họ đang ứng dụng AI vào công việc hàng ngày.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 17,
   "idx": 6
  },
  {
   "id": 178,
-  "title": "Nói về mạng xã hội",
-  "situation": "Tình huống thực tế liên quan đến: Nói về mạng xã hội.",
+  "title": {
+   "vi": "Nói về mạng xã hội",
+   "en": "Talking About Social Media"
+  },
+  "situation": "Bố và con gái thảo luận về thời gian dùng mạng xã hội và ảnh hưởng của nó.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 17,
   "idx": 7
  },
  {
   "id": 179,
-  "title": "Học lập trình cơ bản",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học lập trình cơ bản.",
+  "title": {
+   "vi": "Học lập trình cơ bản",
+   "en": "Learning Basic Programming"
+  },
+  "situation": "Sinh viên kinh tế Hà nhờ người bạn học IT Phong hướng dẫn cách bắt đầu học lập trình.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 17,
   "idx": 8
  },
  {
   "id": 180,
-  "title": "Livestream bán hàng",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Livestream bán hàng.",
+  "title": {
+   "vi": "Livestream bán hàng",
+   "en": "Selling through Livestream"
+  },
+  "situation": "Chị Lan vừa bắt đầu bán hàng online và hỏi đồng nghiệp Minh về cách tổ chức buổi livestream hiệu quả.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -1891,150 +1936,195 @@
  },
  {
   "id": 181,
-  "title": "Lập kế hoạch tiết kiệm",
-  "situation": "Tình huống thực tế liên quan đến: Lập kế hoạch tiết kiệm.",
+  "title": {
+   "vi": "Lập kế hoạch tiết kiệm",
+   "en": "Making a Savings Plan"
+  },
+  "situation": "Vợ chồng trẻ Hoa và Minh ngồi lại lập kế hoạch tài chính để tiết kiệm mua nhà trong 5 năm.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 18,
   "idx": 0
  },
  {
   "id": 182,
-  "title": "Hỏi về đầu tư chứng khoán",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Hỏi về đầu tư chứng khoán.",
+  "title": {
+   "vi": "Hỏi về đầu tư chứng khoán",
+   "en": "Asking About Stock Investment"
+  },
+  "situation": "Anh Tuấn hỏi người bạn có kinh nghiệm đầu tư là Dũng về cách bắt đầu đầu tư chứng khoán.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerAGender": "male",
+  "speakerBGender": "male",
   "chunk": 18,
   "idx": 1
  },
  {
   "id": 183,
-  "title": "Vay tiền ngân hàng",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Vay tiền ngân hàng.",
+  "title": {
+   "vi": "Vay tiền ngân hàng",
+   "en": "Applying for a Bank Loan"
+  },
+  "situation": "Anh Hùng đến ngân hàng để hỏi về thủ tục vay tiền mua xe máy.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 18,
   "idx": 2
  },
  {
   "id": 184,
-  "title": "Khai thuế thu nhập",
-  "situation": "Tình huống thực tế liên quan đến: Khai thuế thu nhập.",
+  "title": {
+   "vi": "Khai thuế thu nhập",
+   "en": "Filing Income Tax"
+  },
+  "situation": "Nhân viên văn phòng Lan nhờ kế toán công ty giải thích về quy trình khai và hoàn thuế thu nhập cá nhân.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 18,
   "idx": 3
  },
  {
   "id": 185,
-  "title": "Bàn về tiết kiệm hưu trí",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Bàn về tiết kiệm hưu trí.",
+  "title": {
+   "vi": "Bàn về tiết kiệm hưu trí",
+   "en": "Discussing Retirement Savings"
+  },
+  "situation": "Hai đồng nghiệp trung niên Thắng và Bình thảo luận về kế hoạch nghỉ hưu và cách chuẩn bị tài chính.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 18,
   "idx": 4
  },
  {
   "id": 186,
-  "title": "Mua bảo hiểm nhân thọ",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Mua bảo hiểm nhân thọ.",
+  "title": {
+   "vi": "Mua bảo hiểm nhân thọ",
+   "en": "Buying Life Insurance"
+  },
+  "situation": "Anh Khoa (35 tuổi) gặp tư vấn viên Linh tại công ty bảo hiểm để tìm hiểu về bảo hiểm nhân thọ.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 18,
   "idx": 5
  },
  {
   "id": 187,
-  "title": "Quản lý chi tiêu tháng",
-  "situation": "Tình huống thực tế liên quan đến: Quản lý chi tiêu tháng.",
+  "title": {
+   "vi": "Quản lý chi tiêu hàng tháng",
+   "en": "Monthly Budget Management"
+  },
+  "situation": "Hai vợ chồng Mai và Bảo ngồi lại cuối tháng để rà soát chi tiêu và lên kế hoạch tháng tới.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 18,
   "idx": 6
  },
  {
   "id": 188,
-  "title": "Đầu tư bất động sản",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đầu tư bất động sản.",
+  "title": {
+   "vi": "Đầu tư bất động sản",
+   "en": "Real Estate Investment"
+  },
+  "situation": "Anh Phong hỏi người bạn là môi giới bất động sản tên Hải về cơ hội đầu tư căn hộ.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "male",
   "chunk": 18,
   "idx": 7
  },
  {
   "id": 189,
-  "title": "Thanh toán quốc tế",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thanh toán quốc tế.",
+  "title": {
+   "vi": "Thanh toán quốc tế",
+   "en": "International Payments"
+  },
+  "situation": "Chị Thu làm freelancer cần nhận tiền từ khách hàng nước ngoài, hỏi nhân viên ngân hàng tên Mạnh về các cách chuyển tiền quốc tế.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 18,
   "idx": 8
  },
  {
   "id": 190,
-  "title": "Chia tiền thuê nhà",
-  "situation": "Tình huống thực tế liên quan đến: Chia tiền thuê nhà.",
+  "title": {
+   "vi": "Chia tiền thuê nhà",
+   "en": "Splitting Rent"
+  },
+  "situation": "Ba người bạn cùng phòng Huy, Lan và Tùng thảo luận về cách chia tiền thuê nhà và chi phí chung hàng tháng.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 18,
   "idx": 9
  },
  {
   "id": 191,
-  "title": "Mua xe ô tô trả góp",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Mua xe ô tô trả góp.",
+  "title": {
+   "vi": "Mua xe ô tô trả góp",
+   "en": "Buying a Car on Installments"
+  },
+  "situation": "Anh Dũng đến đại lý xe để hỏi về mua xe ô tô trả góp, được nhân viên tư vấn tên Thảo hỗ trợ.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 19,
   "idx": 0
  },
  {
   "id": 192,
-  "title": "Nói về khởi nghiệp",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Nói về khởi nghiệp.",
+  "title": {
+   "vi": "Nói về khởi nghiệp",
+   "en": "Talking About Starting a Business"
+  },
+  "situation": "Hai người bạn đại học Minh và Quỳnh gặp nhau sau 3 năm, Minh vừa bỏ công ty để khởi nghiệp.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 19,
   "idx": 1
  },
  {
   "id": 193,
-  "title": "Xử lý thẻ tín dụng bị mất",
-  "situation": "Tình huống thực tế liên quan đến: Xử lý thẻ tín dụng bị mất.",
+  "title": {
+   "vi": "Xử lý thẻ tín dụng bị mất",
+   "en": "Dealing with a Lost Credit Card"
+  },
+  "situation": "Chị Hạnh phát hiện mất thẻ tín dụng và gọi điện cho trung tâm hỗ trợ khách hàng của ngân hàng.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 19,
   "idx": 2
  },
  {
   "id": 194,
-  "title": "Bàn về thu nhập thụ động",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Bàn về thu nhập thụ động.",
+  "title": {
+   "vi": "Bàn về thu nhập thụ động",
+   "en": "Discussing Passive Income"
+  },
+  "situation": "Hai anh em Lâm và Sơn nói chuyện về các cách tạo thu nhập thụ động để có tự do tài chính.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerAGender": "male",
+  "speakerBGender": "male",
   "chunk": 19,
   "idx": 3
  },
  {
   "id": 195,
-  "title": "Thuê văn phòng startup",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thuê văn phòng startup.",
+  "title": {
+   "vi": "Thuê văn phòng cho startup",
+   "en": "Renting Office Space for a Startup"
+  },
+  "situation": "Chị Ngân, sáng lập startup công nghệ, gặp môi giới bất động sản thương mại tên Phúc để tìm thuê văn phòng nhỏ cho team 5 người.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 19,
   "idx": 4
