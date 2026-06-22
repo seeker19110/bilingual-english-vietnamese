@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, Crown, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, Share2, ClipboardList, Bell, BellOff } from 'lucide-react'
+import { MessageCircle, PenLine, Mic, ChevronRight, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, Share2, ClipboardList, Bell, BellOff } from 'lucide-react'
 // Quiz hiện nằm trong tab "Kiểm tra" của /learn
 import Layout from '../components/Layout'
 import { getStreak, getDirection, setDirection } from '../lib/storage'
@@ -217,20 +217,6 @@ export default function Home() {
           </button>
 
         </div>
-
-        {/* ── Usage card — TẠM ẨN, tích hợp thanh toán Pro sau ────────── */}
-        {/* TODO: hiện lại khi có cổng thanh toán nâng cấp gói Pro */}
-        {false && user?.plan === 'pro' && (
-          <div className="mb-6 rounded-2xl p-4 border animate-fade-in delay-50 bg-gradient-to-r from-amber-500/10 to-orange-500/5 border-amber-500/30">
-            <div className="flex items-center gap-3">
-              <Crown className="w-5 h-5 text-amber-400 shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-white">{T.planPro}</p>
-                <p className="text-xs text-zinc-500 mt-0.5">{T.unlimited}</p>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* ── Hành động nhanh (lịch sử + quiz + chia sẻ + thông báo) ──────── */}
         <div className="mb-4 space-y-2 animate-fade-in">

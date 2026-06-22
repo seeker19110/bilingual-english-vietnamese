@@ -49,26 +49,26 @@ export default function App() {
   return (
     <AuthProvider>
       <LangProvider>
-        <ToastProvider>
-        <BrowserRouter>
-          <Suspense fallback={<PageLoading />}>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
-              <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
-              <Route path="/writing" element={<RequireAuth><Writing /></RequireAuth>} />
-              <Route path="/speaking" element={<RequireAuth><Speaking /></RequireAuth>} />
-              <Route path="/learn" element={<RequireAuth><Learn /></RequireAuth>} />
-              <Route path="/dictionary" element={<RequireAuth><Dictionary /></RequireAuth>} />
-              <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
-              <Route path="/phrases" element={<RequireAuth><CommonPhrases /></RequireAuth>} />
-              <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-        </ToastProvider>
+          <ToastProvider>
+            <BrowserRouter>
+              <Suspense fallback={<PageLoading />}>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/onboarding" element={<Onboarding />} />
+                  <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+                  <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
+                  <Route path="/writing" element={<RequireAuth><Writing /></RequireAuth>} />
+                  <Route path="/speaking" element={<RequireAuth><Speaking /></RequireAuth>} />
+                  <Route path="/learn" element={<RequireAuth><Learn /></RequireAuth>} />
+                  <Route path="/dictionary" element={<RequireAuth><Dictionary /></RequireAuth>} />
+                  <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
+                  <Route path="/phrases" element={<RequireAuth><CommonPhrases /></RequireAuth>} />
+                  <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </ToastProvider>
       </LangProvider>
     </AuthProvider>
   )

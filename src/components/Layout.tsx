@@ -63,12 +63,11 @@ export default function Layout({ title, subtitle, back = true, extra }: Props) {
               <span>{T.chat} <strong className="text-zinc-400">{usage.chatCount}/{limit.chat}</strong></span>
               <span>{T.speak} <strong className="text-zinc-400">{usage.speakingCount}/{limit.speaking}</strong></span>
             </div>
-            {/* Mobile: mini bar */}
-            <div className="sm:hidden flex items-center gap-1 shrink-0">
-              <div className="w-12 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500 rounded-full transition-all"
-                  style={{ width: `${Math.min(100, usage.chatCount / limit.chat * 100)}%` }} />
-              </div>
+            {/* Mobile: mini badges cho chat và nói */}
+            <div className="sm:hidden flex items-center gap-1.5 shrink-0 text-[10px] text-zinc-500">
+              <span><strong className="text-zinc-400">{usage.chatCount}</strong>/{limit.chat}</span>
+              <span className="text-zinc-700">·</span>
+              <span><strong className="text-zinc-400">{usage.speakingCount}</strong>/{limit.speaking}</span>
             </div>
           </>
         )}
