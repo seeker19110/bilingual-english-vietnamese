@@ -1,1 +1,1572 @@
-[{"id":71,"title":"Chăm sóc người thân bị bệnh","situation":"Thanh chăm sóc mẹ đang bị ốm tại nhà và gọi điện hỏi bác sĩ.","turns":[{"speaker":"A","en":"Hello, doctor. My mother has had a fever for two days. I'm quite worried.","vi":"Xin chào bác sĩ. Mẹ tôi đã sốt hai ngày rồi. Tôi khá lo lắng."},{"speaker":"B","en":"How high is her temperature?","vi":"Nhiệt độ của bà cao bao nhiêu?"},{"speaker":"A","en":"It's been around 38.5 to 39 degrees Celsius.","vi":"Khoảng 38.5 đến 39 độ Celsius."},{"speaker":"B","en":"Does she have any other symptoms — cough, sore throat, or runny nose?","vi":"Bà có triệu chứng khác không — ho, đau họng hay chảy nước mũi?"},{"speaker":"A","en":"Yes, she has a mild cough and says her throat hurts.","vi":"Có, bà ho nhẹ và nói họng đau."},{"speaker":"B","en":"That sounds like it could be a common cold or mild flu.","vi":"Nghe có vẻ có thể là cảm lạnh thông thường hoặc cúm nhẹ."},{"speaker":"A","en":"Is there anything I should give her to bring the fever down?","vi":"Tôi có nên cho bà uống gì để hạ sốt không?"},{"speaker":"B","en":"Give her paracetamol 500mg every 6 hours, and make sure she drinks plenty of fluids.","vi":"Cho bà uống paracetamol 500mg mỗi 6 giờ và đảm bảo bà uống nhiều nước."},{"speaker":"A","en":"Should she rest completely or is light activity okay?","vi":"Bà có nên nghỉ ngơi hoàn toàn hay hoạt động nhẹ thì được?"},{"speaker":"B","en":"Complete rest is best. The body heals faster when it's not expending energy.","vi":"Nghỉ ngơi hoàn toàn là tốt nhất. Cơ thể lành nhanh hơn khi không tiêu hao năng lượng."},{"speaker":"A","en":"What should she eat while she's sick?","vi":"Bà nên ăn gì khi bị bệnh?"},{"speaker":"B","en":"Light foods like congee, soup, and fruit. Avoid fried or fatty foods.","vi":"Thức ăn nhẹ như cháo, súp và trái cây. Tránh đồ chiên xào hoặc nhiều dầu mỡ."},{"speaker":"A","en":"She doesn't have much appetite. Is that normal?","vi":"Bà không có mấy cảm giác thèm ăn. Điều đó có bình thường không?"},{"speaker":"B","en":"Yes, loss of appetite is common with fever. Focus on keeping her hydrated.","vi":"Có, mất cảm giác thèm ăn phổ biến khi sốt. Tập trung vào việc giữ cho bà đủ nước."},{"speaker":"A","en":"Should I bring her to the hospital?","vi":"Tôi có nên đưa bà đến bệnh viện không?"},{"speaker":"B","en":"Not yet, unless the fever goes above 40 degrees or she has difficulty breathing.","vi":"Chưa cần, trừ khi sốt trên 40 độ hoặc bà khó thở."},{"speaker":"A","en":"How long do you think the fever will last?","vi":"Bác sĩ nghĩ sốt sẽ kéo dài bao lâu?"},{"speaker":"B","en":"Usually 3 to 5 days for a flu. If it lasts longer, she should see a doctor in person.","vi":"Thường 3 đến 5 ngày với cúm. Nếu kéo dài hơn, bà cần gặp bác sĩ trực tiếp."},{"speaker":"A","en":"Can I use a cool compress on her forehead to help?","vi":"Tôi có thể chườm khăn lạnh lên trán bà để giúp không?"},{"speaker":"B","en":"Yes, a damp cloth on the forehead or neck can help lower the temperature.","vi":"Có, khăn ẩm đặt lên trán hoặc cổ có thể giúp hạ nhiệt độ."},{"speaker":"A","en":"I'll also make her some ginger and honey tea. Is that okay?","vi":"Tôi cũng sẽ pha trà gừng mật ong cho bà. Được không?"},{"speaker":"B","en":"Excellent idea. It's very soothing for the throat and helps with the immune system.","vi":"Ý kiến xuất sắc. Rất dịu cho họng và giúp hệ miễn dịch."},{"speaker":"A","en":"Thank you so much, doctor. I feel more reassured now.","vi":"Cảm ơn bác sĩ rất nhiều. Tôi cảm thấy yên tâm hơn rồi."},{"speaker":"B","en":"You're doing a great job caring for her. Call again if you're concerned.","vi":"Bạn chăm sóc bà rất tốt. Gọi lại nếu bạn lo lắng."},{"speaker":"A","en":"I will. I hope she feels better soon.","vi":"Tôi sẽ gọi. Tôi hy vọng bà sớm bình phục."},{"speaker":"B","en":"She's lucky to have someone who cares for her so well. Take care.","vi":"Bà may mắn có người chăm sóc chu đáo như vậy. Bảo trọng nhé."}],"speakerAGender":"male","speakerBGender":"female"},{"id":72,"title":"Xin lỗi người thân","situation":"Minh xin lỗi người anh trai vì đã làm hỏng xe và nói chuyện để hòa giải.","turns":[{"speaker":"A","en":"Anh, I need to talk to you about something important.","vi":"Anh ơi, em cần nói với anh điều gì đó quan trọng."},{"speaker":"B","en":"What is it? You look worried.","vi":"Chuyện gì vậy? Em trông có vẻ lo lắng."},{"speaker":"A","en":"I borrowed your motorbike yesterday without asking and I had an accident.","vi":"Em đã mượn xe máy của anh hôm qua mà không hỏi và bị tai nạn."},{"speaker":"B","en":"What?! Are you okay? Were you hurt?","vi":"Cái gì?! Em có ổn không? Em có bị thương không?"},{"speaker":"A","en":"I'm fine. Just a few scratches. But the front mirror is broken.","vi":"Em ổn. Chỉ vài vết xước thôi. Nhưng gương chiếu hậu phía trước bị vỡ."},{"speaker":"B","en":"Why didn't you ask me first? I was using it this morning and couldn't find it.","vi":"Sao em không hỏi anh trước? Sáng nay anh cần dùng mà không thấy."},{"speaker":"A","en":"I know. I'm really sorry. I thought you wouldn't mind and it was just a short trip.","vi":"Em biết. Em thực sự xin lỗi. Em nghĩ anh sẽ không để ý và chỉ đi một lúc thôi."},{"speaker":"B","en":"It's not about the mirror. It's about trust. You should have asked.","vi":"Không phải về cái gương. Đó là về sự tin tưởng. Em nên hỏi anh."},{"speaker":"A","en":"You're absolutely right. I won't do it again. I promise.","vi":"Anh hoàn toàn đúng. Em sẽ không làm lại. Em hứa."},{"speaker":"B","en":"I'm glad you told me instead of hiding it. That means a lot.","vi":"Anh vui vì em nói thật chứ không giấu. Điều đó rất có ý nghĩa."},{"speaker":"A","en":"Of course. I felt terrible keeping it from you. I'll pay to fix the mirror.","vi":"Tất nhiên. Em cảm thấy rất tệ khi giấu anh. Em sẽ trả tiền sửa gương."},{"speaker":"B","en":"You don't have to pay. Just be more responsible next time.","vi":"Em không cần phải trả. Chỉ cần có trách nhiệm hơn lần sau."},{"speaker":"A","en":"No, I insist. It was my fault and I should take responsibility.","vi":"Không, em khăng khăng. Là lỗi của em và em nên chịu trách nhiệm."},{"speaker":"B","en":"Okay, if you really want to. The repair should cost around 150,000 VND.","vi":"Được, nếu em thực sự muốn vậy. Sửa chắc khoảng 150.000 đồng."},{"speaker":"A","en":"I'll give you 200,000 to cover all the costs. I'm really sorry, anh.","vi":"Em sẽ đưa anh 200.000 để trang trải tất cả chi phí. Em thực sự xin lỗi anh."},{"speaker":"B","en":"I forgive you. We're brothers — these things happen.","vi":"Anh tha cho em. Chúng ta là anh em — những chuyện như vậy xảy ra thôi."},{"speaker":"A","en":"Thank you for being so understanding. I was really scared to tell you.","vi":"Cảm ơn anh đã rất thông cảm. Em thực sự sợ khi nói với anh."},{"speaker":"B","en":"You should never be afraid to come to me. I'm your brother, not your enemy.","vi":"Em không bao giờ phải sợ đến gặp anh. Anh là anh trai em chứ không phải kẻ thù."},{"speaker":"A","en":"I know. I just didn't want to disappoint you.","vi":"Em biết. Em chỉ không muốn làm anh thất vọng."},{"speaker":"B","en":"We all make mistakes. What matters is how we handle them.","vi":"Ai cũng mắc sai lầm. Điều quan trọng là chúng ta xử lý thế nào."},{"speaker":"A","en":"You're right. I'll be more careful and honest from now on.","vi":"Anh nói đúng. Từ bây giờ em sẽ cẩn thận và trung thực hơn."},{"speaker":"B","en":"Good. Now let's go get the mirror fixed together.","vi":"Tốt. Bây giờ mình cùng đi sửa gương đi."},{"speaker":"A","en":"Thank you, anh. You're the best.","vi":"Cảm ơn anh. Anh tuyệt vời nhất."},{"speaker":"B","en":"Don't push it!","vi":"Thôi đừng nịnh nọt quá!"},{"speaker":"A","en":"Haha! I mean it though. I'm lucky to have you as my brother.","vi":"Haha! Nhưng em nói thật đó. Em may mắn có anh là anh trai."},{"speaker":"B","en":"I'm lucky too. Come on, let's go fix that mirror before it gets dark.","vi":"Anh cũng vậy. Đi nào, mình đi sửa cái gương trước khi trời tối."}],"speakerAGender":"male","speakerBGender":"female"},{"id":73,"title":"Nói chuyện về stress công việc","situation":"Hương tâm sự với bạn thân về áp lực công việc sau một tuần căng thẳng.","turns":[{"speaker":"A","en":"You look exhausted. What's wrong?","vi":"Bạn trông kiệt sức quá. Có chuyện gì vậy?"},{"speaker":"B","en":"I've had the worst week. My boss has been piling on work non-stop.","vi":"Tôi có tuần tệ nhất. Sếp tôi liên tục chất thêm công việc."},{"speaker":"A","en":"I'm sorry to hear that. What kind of pressure are you dealing with?","vi":"Tôi xin lỗi khi nghe vậy. Bạn đang đối mặt với loại áp lực gì?"},{"speaker":"B","en":"Three deadlines this week. I've been working until midnight every day.","vi":"Ba deadline trong tuần này. Tôi làm đến nửa đêm mỗi ngày."},{"speaker":"A","en":"That's not sustainable. Have you talked to your boss about it?","vi":"Như vậy không bền vững. Bạn đã nói chuyện với sếp về điều đó chưa?"},{"speaker":"B","en":"I'm afraid to. I don't want to seem like I can't handle the workload.","vi":"Tôi sợ. Tôi không muốn có vẻ như mình không đảm đương được khối lượng công việc."},{"speaker":"A","en":"But burning yourself out won't help anyone. You need to speak up.","vi":"Nhưng làm kiệt sức mình không giúp được ai. Bạn cần lên tiếng."},{"speaker":"B","en":"You're right. I just find it hard to set boundaries at work.","vi":"Bạn nói đúng. Tôi chỉ thấy khó thiết lập ranh giới ở nơi làm việc."},{"speaker":"A","en":"What does your work day look like right now?","vi":"Ngày làm việc của bạn hiện tại trông như thế nào?"},{"speaker":"B","en":"I start at 8 AM, skip lunch half the time, and leave at 10 PM.","vi":"Tôi bắt đầu lúc 8 giờ sáng, bỏ bữa trưa một nửa số ngày và ra về lúc 10 giờ tối."},{"speaker":"A","en":"That's more than 14 hours a day! No wonder you're stressed.","vi":"Đó là hơn 14 giờ một ngày! Không lạ gì bạn bị căng thẳng."},{"speaker":"B","en":"And on weekends I reply to emails too. I can never truly switch off.","vi":"Và cuối tuần tôi cũng trả lời email. Tôi không bao giờ thực sự nghỉ được."},{"speaker":"A","en":"Have you considered talking to HR about workload distribution?","vi":"Bạn có nghĩ đến việc nói chuyện với phòng nhân sự về phân bổ công việc không?"},{"speaker":"B","en":"I hadn't thought of that. Would that be appropriate?","vi":"Tôi chưa nghĩ đến điều đó. Điều đó có phù hợp không?"},{"speaker":"A","en":"Absolutely. It's their job to ensure a healthy work environment.","vi":"Hoàn toàn phù hợp. Đó là công việc của họ để đảm bảo môi trường làm việc lành mạnh."},{"speaker":"B","en":"I might try that. I also feel like my efforts aren't appreciated.","vi":"Tôi có thể thử vậy. Tôi cũng cảm thấy nỗ lực của mình không được đánh giá cao."},{"speaker":"A","en":"Have you received any feedback from your boss recently?","vi":"Bạn có nhận được phản hồi nào từ sếp gần đây không?"},{"speaker":"B","en":"Just more tasks. No 'thank you', no recognition. It's demoralizing.","vi":"Chỉ có thêm nhiệm vụ. Không có 'cảm ơn', không có sự công nhận. Nó làm mình nản lòng."},{"speaker":"A","en":"I think you need to have an honest conversation with your manager.","vi":"Tôi nghĩ bạn cần có cuộc trò chuyện thẳng thắn với quản lý của mình."},{"speaker":"B","en":"You're right. I've been avoiding it, but I can't keep going like this.","vi":"Bạn nói đúng. Tôi đã né tránh, nhưng tôi không thể tiếp tục như thế này."},{"speaker":"A","en":"Also, try to take short breaks during the day. Even 10 minutes helps.","vi":"Ngoài ra, hãy cố gắng nghỉ ngắn trong ngày. Dù 10 phút cũng giúp ích."},{"speaker":"B","en":"I've been feeling too guilty to take breaks.","vi":"Tôi cảm thấy có lỗi quá khi nghỉ."},{"speaker":"A","en":"Breaks make you more productive, not less. It's a fact.","vi":"Nghỉ ngơi làm bạn năng suất hơn chứ không phải kém hơn. Đó là sự thật."},{"speaker":"B","en":"I'll try to remember that. Thank you for listening.","vi":"Tôi sẽ cố nhớ điều đó. Cảm ơn bạn đã lắng nghe."},{"speaker":"A","en":"Anytime. You don't have to face this alone.","vi":"Lúc nào cũng được. Bạn không phải đối mặt với điều này một mình."},{"speaker":"B","en":"You're the best friend I could ask for.","vi":"Bạn là người bạn tốt nhất tôi có thể mong muốn."},{"speaker":"A","en":"Go home, rest well tonight, and tackle one thing at a time tomorrow.","vi":"Về nhà đi, nghỉ ngơi tốt tối nay và giải quyết từng việc một vào ngày mai."},{"speaker":"B","en":"Good advice. I feel so much better just talking about it.","vi":"Lời khuyên hay. Tôi cảm thấy tốt hơn rất nhiều chỉ sau khi nói về nó."}],"speakerAGender":"female","speakerBGender":"male"},{"id":74,"title":"Đi làm tóc","situation":"Lan đến tiệm tóc để cắt và nhuộm tóc trước dịp Tết.","turns":[{"speaker":"A","en":"Good morning! I'd like to get a haircut and hair color today.","vi":"Chào buổi sáng! Tôi muốn cắt và nhuộm tóc hôm nay."},{"speaker":"B","en":"Great! Please have a seat. What kind of style are you going for?","vi":"Tốt! Mời ngồi xuống. Bạn muốn kiểu tóc như thế nào?"},{"speaker":"A","en":"I want to trim the ends and add some layers. And lighten the color a little.","vi":"Tôi muốn tỉa phần đuôi và thêm layer. Và làm màu tóc sáng lên một chút."},{"speaker":"B","en":"How much do you want to trim off the length?","vi":"Bạn muốn cắt bớt bao nhiêu chiều dài?"},{"speaker":"A","en":"Just about 5 centimeters. I want to keep it long.","vi":"Khoảng 5 cm thôi. Tôi muốn giữ dài."},{"speaker":"B","en":"And for the color — do you have a specific shade in mind?","vi":"Còn màu tóc — bạn có màu cụ thể nào trong đầu không?"},{"speaker":"A","en":"Something like a warm brown or caramel tone. Nothing too bright.","vi":"Cái gì đó như màu nâu ấm hoặc tông caramel. Không quá sáng."},{"speaker":"B","en":"I think a chestnut brown would suit your skin tone beautifully.","vi":"Tôi nghĩ màu nâu hạt dẻ sẽ rất hợp với tông da của bạn."},{"speaker":"A","en":"Can you show me a color sample?","vi":"Bạn có thể cho tôi xem mẫu màu không?"},{"speaker":"B","en":"Here's our color chart. What about this shade — number 5.3?","vi":"Đây là bảng màu của chúng tôi. Màu này thế nào — số 5.3?"},{"speaker":"A","en":"Oh, I love that! It's exactly what I was imagining.","vi":"Ồ, tôi thích màu đó! Đúng như tôi tưởng tượng."},{"speaker":"B","en":"Will you need any treatment today? Your ends look a little dry.","vi":"Bạn có cần dưỡng tóc không? Phần đuôi tóc của bạn trông hơi khô."},{"speaker":"A","en":"Yes, please add a deep conditioning treatment too.","vi":"Có, làm ơn thêm ủ tóc dưỡng ẩm sâu luôn."},{"speaker":"B","en":"Perfect. The total will be cut, color, and treatment. That's 650,000 VND.","vi":"Tốt. Tổng sẽ là cắt, nhuộm và ủ tóc. 650.000 đồng."},{"speaker":"A","en":"That's reasonable. How long will the whole process take?","vi":"Giá hợp lý. Toàn bộ quá trình mất bao lâu?"},{"speaker":"B","en":"About two to two and a half hours, including processing time for the color.","vi":"Khoảng hai đến hai tiếng rưỡi, bao gồm thời gian ngấm màu."},{"speaker":"A","en":"That's fine. Tet is coming and I want to look my best.","vi":"Ổn. Sắp Tết và tôi muốn trông đẹp nhất."},{"speaker":"B","en":"You'll definitely look gorgeous! Shall we start with the wash?","vi":"Bạn chắc chắn sẽ trông rực rỡ! Mình bắt đầu với gội đầu nhé?"},{"speaker":"A","en":"Yes, please. Can I have a head massage during the wash?","vi":"Vâng. Tôi có thể được massage đầu trong lúc gội không?"},{"speaker":"B","en":"Of course! Our shampoo service always includes a 5-minute scalp massage.","vi":"Tất nhiên! Dịch vụ gội đầu của chúng tôi luôn kèm massage da đầu 5 phút."},{"speaker":"A","en":"Wonderful. I've been so stressed lately. I need this.","vi":"Tuyệt vời. Dạo này tôi rất căng thẳng. Tôi cần điều này."},{"speaker":"B","en":"Sit back and relax. Consider this your self-care time.","vi":"Ngồi thư giãn đi. Coi đây là thời gian chăm sóc bản thân của bạn."},{"speaker":"A","en":"Perfect. Will you be cutting my hair yourself?","vi":"Tuyệt vời. Bạn sẽ tự cắt tóc cho tôi không?"},{"speaker":"B","en":"Yes, I'll be doing everything. I want to make sure it's exactly what you want.","vi":"Có, tôi sẽ làm tất cả. Tôi muốn đảm bảo đúng như bạn muốn."},{"speaker":"A","en":"I appreciate that. Should I bring reference photos next time?","vi":"Tôi đánh giá cao điều đó. Lần sau tôi có nên mang ảnh tham khảo không?"},{"speaker":"B","en":"Photos always help! But your description today was very clear.","vi":"Ảnh luôn giúp ích! Nhưng mô tả của bạn hôm nay rất rõ ràng."},{"speaker":"A","en":"Thank you. I'll definitely be back after Tet.","vi":"Cảm ơn. Tôi chắc chắn sẽ quay lại sau Tết."},{"speaker":"B","en":"We look forward to it! Now let's get started.","vi":"Chúng tôi mong được phục vụ bạn! Bây giờ mình bắt đầu nào."}],"speakerAGender":"female","speakerBGender":"male"},{"id":75,"title":"Gửi bưu kiện ở bưu điện","situation":"Hải đến bưu điện để gửi quà về cho gia đình ở quê.","turns":[{"speaker":"A","en":"Hello, I need to send a package to my family in Nghe An province.","vi":"Xin chào, tôi cần gửi bưu kiện về cho gia đình ở tỉnh Nghệ An."},{"speaker":"B","en":"Of course. Is it a gift or commercial goods?","vi":"Được. Đây là quà hay hàng hóa thương mại?"},{"speaker":"A","en":"It's a gift — some clothes and food items.","vi":"Đây là quà — một số quần áo và thực phẩm."},{"speaker":"B","en":"Please put the package on the scale. I'll weigh it first.","vi":"Vui lòng đặt bưu kiện lên cân. Tôi sẽ cân trước."},{"speaker":"A","en":"Sure. Here it is.","vi":"Được. Đây ạ."},{"speaker":"B","en":"It's 3.2 kilograms. Do you want standard or express delivery?","vi":"Nặng 3.2 kilogram. Bạn muốn giao hàng thường hay chuyển phát nhanh?"},{"speaker":"A","en":"How long does standard take?","vi":"Giao thường mất bao lâu?"},{"speaker":"B","en":"Standard takes 5 to 7 business days. Express is 1 to 2 days.","vi":"Giao thường mất 5 đến 7 ngày làm việc. Chuyển phát nhanh 1 đến 2 ngày."},{"speaker":"A","en":"How much is the express option?","vi":"Giá chuyển phát nhanh là bao nhiêu?"},{"speaker":"B","en":"For 3.2 kilograms to Nghe An, express is 85,000 VND. Standard is 45,000 VND.","vi":"Cho 3.2 kilogram đến Nghệ An, chuyển phát nhanh là 85.000 đồng. Thường là 45.000 đồng."},{"speaker":"A","en":"I'll go with express. My family is expecting the package.","vi":"Tôi chọn chuyển phát nhanh. Gia đình tôi đang chờ bưu kiện."},{"speaker":"B","en":"Good choice. Please fill out this form with the recipient's details.","vi":"Lựa chọn tốt. Vui lòng điền vào mẫu này với thông tin người nhận."},{"speaker":"A","en":"Do I need to include my contact number on the form?","vi":"Tôi có cần bao gồm số điện thoại liên hệ trên mẫu không?"},{"speaker":"B","en":"Yes, both the sender's and recipient's phone numbers are required.","vi":"Có, cả số điện thoại người gửi và người nhận đều bắt buộc."},{"speaker":"A","en":"Done. Here's the form.","vi":"Xong. Đây là mẫu."},{"speaker":"B","en":"Thank you. Can I open the package to verify the contents?","vi":"Cảm ơn. Tôi có thể mở bưu kiện để kiểm tra nội dung không?"},{"speaker":"A","en":"Yes, go ahead. It's just clothes and some dried food.","vi":"Có, làm đi. Chỉ có quần áo và một ít thực phẩm khô."},{"speaker":"B","en":"Okay, everything looks fine. I'll seal it now.","vi":"Được, mọi thứ có vẻ ổn. Tôi sẽ đóng gói lại."},{"speaker":"A","en":"Will I receive a tracking number?","vi":"Tôi có nhận được mã theo dõi không?"},{"speaker":"B","en":"Yes. Once I print the label, you'll get a tracking number to monitor delivery.","vi":"Có. Sau khi tôi in nhãn, bạn sẽ có mã theo dõi để giám sát giao hàng."},{"speaker":"A","en":"Can I track it online?","vi":"Tôi có thể theo dõi trực tuyến không?"},{"speaker":"B","en":"Yes, go to viettelpost.vn and enter your tracking number.","vi":"Có, vào viettelpost.vn và nhập mã theo dõi của bạn."},{"speaker":"A","en":"Great. Is there any insurance for the package?","vi":"Tốt. Có bảo hiểm cho bưu kiện không?"},{"speaker":"B","en":"Basic insurance is included up to 500,000 VND. Additional insurance is available.","vi":"Bảo hiểm cơ bản được bao gồm lên đến 500.000 đồng. Có thể mua bảo hiểm thêm."},{"speaker":"A","en":"The contents are worth more than that. How much for additional coverage?","vi":"Nội dung đáng giá hơn thế. Chi phí cho bảo hiểm thêm là bao nhiêu?"},{"speaker":"B","en":"1% of the declared value. So for 1.5 million VND, it's 15,000 VND extra.","vi":"1% giá trị kê khai. Vậy cho 1.5 triệu đồng, thêm 15.000 đồng."},{"speaker":"A","en":"I'll add it. Total with insurance and express delivery?","vi":"Tôi sẽ thêm vào. Tổng cộng với bảo hiểm và chuyển phát nhanh?"},{"speaker":"B","en":"85,000 plus 15,000 insurance. Total: 100,000 VND.","vi":"85.000 cộng 15.000 bảo hiểm. Tổng: 100.000 đồng."},{"speaker":"A","en":"Here you go. When exactly will it arrive?","vi":"Đây. Nó sẽ đến chính xác khi nào?"},{"speaker":"B","en":"By tomorrow afternoon if shipped today. Here's your receipt and tracking number.","vi":"Chiều mai nếu gửi hôm nay. Đây là biên lai và mã theo dõi của bạn."}],"speakerAGender":"male","speakerBGender":"female"},{"id":76,"title":"Đăng ký dịch vụ internet","situation":"Quân gọi điện cho nhà mạng để đăng ký dịch vụ internet mới cho căn hộ.","turns":[{"speaker":"A","en":"Hello, I'd like to sign up for an internet plan for my new apartment.","vi":"Xin chào, tôi muốn đăng ký gói internet cho căn hộ mới của tôi."},{"speaker":"B","en":"Welcome! Can I have your full name and address please?","vi":"Chào mừng! Bạn vui lòng cho biết tên đầy đủ và địa chỉ không?"},{"speaker":"A","en":"My name is Tran Minh Quan, and I'm at 102 Le Van Luong Street, Hanoi.","vi":"Tên tôi là Trần Minh Quân, ở 102 đường Lê Văn Lương, Hà Nội."},{"speaker":"B","en":"Let me check service availability in your area. One moment please.","vi":"Để tôi kiểm tra khả năng phục vụ trong khu vực của bạn. Vui lòng chờ một chút."},{"speaker":"A","en":"Sure, take your time.","vi":"Được, bạn cứ từ từ."},{"speaker":"B","en":"Great news — fiber optic internet is available at your address.","vi":"Tin tốt — internet cáp quang có sẵn tại địa chỉ của bạn."},{"speaker":"A","en":"Excellent. What plans do you have available?","vi":"Tuyệt vời. Bạn có những gói nào?"},{"speaker":"B","en":"We have three plans: 100 Mbps, 200 Mbps, and 500 Mbps.","vi":"Chúng tôi có ba gói: 100 Mbps, 200 Mbps và 500 Mbps."},{"speaker":"A","en":"How much is the 200 Mbps plan?","vi":"Gói 200 Mbps giá bao nhiêu?"},{"speaker":"B","en":"It's 280,000 VND per month with a 12-month contract.","vi":"280.000 đồng mỗi tháng với hợp đồng 12 tháng."},{"speaker":"A","en":"Is there a setup or installation fee?","vi":"Có phí cài đặt hay lắp đặt không?"},{"speaker":"B","en":"No, installation is free. We also provide a free router.","vi":"Không, lắp đặt miễn phí. Chúng tôi cũng cung cấp router miễn phí."},{"speaker":"A","en":"What happens if I want to cancel before the 12 months?","vi":"Điều gì xảy ra nếu tôi muốn hủy trước 12 tháng?"},{"speaker":"B","en":"There's an early termination fee of 50% of the remaining months.","vi":"Có phí hủy sớm bằng 50% số tháng còn lại."},{"speaker":"A","en":"Understood. Is there a data cap or is it unlimited?","vi":"Hiểu rồi. Có giới hạn dữ liệu không hay là không giới hạn?"},{"speaker":"B","en":"All our plans include unlimited data with no throttling.","vi":"Tất cả gói của chúng tôi bao gồm dữ liệu không giới hạn và không bị giảm tốc độ."},{"speaker":"A","en":"That's what I wanted to hear. I'll take the 200 Mbps plan.","vi":"Đó là điều tôi muốn nghe. Tôi lấy gói 200 Mbps."},{"speaker":"B","en":"Excellent choice. When would you like the installation to happen?","vi":"Lựa chọn xuất sắc. Bạn muốn lắp đặt khi nào?"},{"speaker":"A","en":"As soon as possible. Can you come this week?","vi":"Sớm nhất có thể. Bạn có thể đến tuần này không?"},{"speaker":"B","en":"We have slots on Thursday afternoon and Saturday morning.","vi":"Chúng tôi có lịch chiều thứ Năm và sáng thứ Bảy."},{"speaker":"A","en":"Saturday morning works for me. What time exactly?","vi":"Sáng thứ Bảy phù hợp với tôi. Mấy giờ cụ thể?"},{"speaker":"B","en":"Between 8 and 11 AM. The technician will call 30 minutes before arriving.","vi":"Từ 8 đến 11 giờ sáng. Kỹ thuật viên sẽ gọi trước 30 phút khi đến."},{"speaker":"A","en":"Perfect. How do I pay the monthly bill?","vi":"Tốt. Tôi trả tiền hàng tháng như thế nào?"},{"speaker":"B","en":"You can pay via bank transfer, our app, or at any post office.","vi":"Bạn có thể thanh toán qua chuyển khoản ngân hàng, ứng dụng của chúng tôi hoặc tại bưu điện."},{"speaker":"A","en":"Is auto-payment an option?","vi":"Có tùy chọn tự động thanh toán không?"},{"speaker":"B","en":"Yes, you can link a bank account for automatic monthly deductions.","vi":"Có, bạn có thể liên kết tài khoản ngân hàng để trừ tiền tự động hàng tháng."},{"speaker":"A","en":"Great. What's the customer support number if I have problems?","vi":"Tốt. Số hỗ trợ khách hàng là gì nếu tôi có vấn đề?"},{"speaker":"B","en":"Our 24/7 support line is 1800-9999. Free to call.","vi":"Đường dây hỗ trợ 24/7 của chúng tôi là 1800-9999. Miễn phí gọi."},{"speaker":"A","en":"Wonderful. I'm happy with the plan. Please proceed with the registration.","vi":"Tuyệt vời. Tôi hài lòng với gói này. Vui lòng tiến hành đăng ký."},{"speaker":"B","en":"Done! You'll receive a confirmation SMS shortly. See you Saturday!","vi":"Xong! Bạn sẽ nhận được SMS xác nhận ngay. Hẹn gặp thứ Bảy!"}],"speakerAGender":"male","speakerBGender":"female"},{"id":77,"title":"Phàn nàn về hàng xóm ồn ào","situation":"Bình gõ cửa nhà hàng xóm để nhờ giảm tiếng ồn vào đêm muộn.","turns":[{"speaker":"A","en":"Hi, sorry to bother you. I live in apartment 204, right below you.","vi":"Chào, xin lỗi vì làm phiền. Tôi ở căn hộ 204, ngay bên dưới bạn."},{"speaker":"B","en":"Oh, hi! Is there a problem?","vi":"Ồ, chào! Có vấn đề gì không?"},{"speaker":"A","en":"I wanted to talk to you about the noise last night. It kept me awake until midnight.","vi":"Tôi muốn nói chuyện với bạn về tiếng ồn tối qua. Nó khiến tôi thức đến nửa đêm."},{"speaker":"B","en":"I'm so sorry! We had friends over and didn't realize how loud we were.","vi":"Tôi thực sự xin lỗi! Chúng tôi có bạn đến chơi và không nhận ra mình ồn đến vậy."},{"speaker":"A","en":"I understand you have guests, but loud music at 11 PM is quite disruptive.","vi":"Tôi hiểu bạn có khách, nhưng nhạc to lúc 11 giờ tối khá gây phiền."},{"speaker":"B","en":"You're right. I should have been more considerate. I apologize.","vi":"Bạn nói đúng. Tôi đáng ra phải chu đáo hơn. Tôi xin lỗi."},{"speaker":"A","en":"Thank you for understanding. I work early and need to sleep by 10 PM.","vi":"Cảm ơn bạn đã hiểu. Tôi đi làm sớm và cần ngủ trước 10 giờ tối."},{"speaker":"B","en":"I didn't know that. We'll be much more careful from now on.","vi":"Tôi không biết điều đó. Từ bây giờ chúng tôi sẽ cẩn thận hơn nhiều."},{"speaker":"A","en":"I'd really appreciate that. It's not just the music — there's also a lot of stomping.","vi":"Tôi rất trân trọng điều đó. Không chỉ nhạc — còn có nhiều tiếng bước chân mạnh."},{"speaker":"B","en":"We'll try to wear socks and move more quietly. Hardwood floors carry sound.","vi":"Chúng tôi sẽ cố mang tất và di chuyển nhẹ nhàng hơn. Sàn gỗ truyền âm tốt."},{"speaker":"A","en":"That would help a lot. Also, if you're planning a late party, could you give me notice?","vi":"Điều đó sẽ giúp ích rất nhiều. Ngoài ra, nếu bạn định tổ chức tiệc khuya, bạn có thể báo tôi trước không?"},{"speaker":"B","en":"Absolutely. I'll come knock on your door in advance so you can plan accordingly.","vi":"Tất nhiên. Tôi sẽ đến gõ cửa bạn trước để bạn có thể sắp xếp."},{"speaker":"A","en":"That's very thoughtful of you. Thank you.","vi":"Bạn thật chu đáo. Cảm ơn."},{"speaker":"B","en":"I'm sorry again. By the way, I'm Duc. I don't think we've formally met.","vi":"Tôi một lần nữa xin lỗi. Nhân tiện, tôi là Đức. Tôi nghĩ chúng ta chưa chính thức gặp nhau."},{"speaker":"A","en":"I'm Binh. Nice to meet you, Duc. I hope we can be good neighbors.","vi":"Tôi là Bình. Vui được gặp bạn, Đức. Tôi hy vọng chúng ta có thể là hàng xóm tốt."},{"speaker":"B","en":"Absolutely! If you ever need anything, don't hesitate to knock.","vi":"Tất nhiên! Nếu bạn cần bất cứ điều gì, đừng ngần ngại gõ cửa."},{"speaker":"A","en":"Same goes for you. I'm home most evenings.","vi":"Tôi cũng vậy. Tôi thường ở nhà buổi tối."},{"speaker":"B","en":"Good to know. Again, I'm really sorry for last night.","vi":"Tốt khi biết điều đó. Một lần nữa, tôi thực sự xin lỗi về tối qua."},{"speaker":"A","en":"It's okay. These things happen. I'm glad we talked it out.","vi":"Không sao. Những chuyện như vậy xảy ra. Tôi vui vì chúng ta đã nói chuyện."},{"speaker":"B","en":"Me too. Communication between neighbors is so important.","vi":"Tôi cũng vậy. Giao tiếp giữa hàng xóm rất quan trọng."},{"speaker":"A","en":"I agree. By the way, do you know if the building has a noise curfew?","vi":"Tôi đồng ý. Nhân tiện, bạn có biết tòa nhà có giờ giới nghiêm về tiếng ồn không?"},{"speaker":"B","en":"I think it's 10 PM on weekdays and midnight on weekends.","vi":"Tôi nghĩ là 10 giờ tối ngày thường và nửa đêm cuối tuần."},{"speaker":"A","en":"Right. I'll check the building rules too, just to be sure.","vi":"Đúng. Tôi cũng sẽ kiểm tra nội quy tòa nhà, chắc cho chắc."},{"speaker":"B","en":"Good idea. Have a good rest tonight, neighbor.","vi":"Ý hay. Chúc bạn ngủ ngon tối nay, hàng xóm."},{"speaker":"A","en":"Thank you! Take care, Duc.","vi":"Cảm ơn! Bảo trọng nhé, Đức."},{"speaker":"B","en":"You too, Binh. Nice talking to you.","vi":"Bạn cũng vậy, Bình. Vui khi được nói chuyện với bạn."},{"speaker":"A","en":"Likewise. Goodnight!","vi":"Tôi cũng vậy. Chúc ngủ ngon!"},{"speaker":"B","en":"Goodnight!","vi":"Chúc ngủ ngon!"}],"speakerAGender":"male","speakerBGender":"female"},{"id":78,"title":"Đi spa và massage","situation":"Linh đặt lịch và trải nghiệm dịch vụ massage tại một spa cao cấp.","turns":[{"speaker":"A","en":"Good afternoon. I'd like to book a massage session today if possible.","vi":"Chào buổi chiều. Tôi muốn đặt lịch massage hôm nay nếu có thể."},{"speaker":"B","en":"Good afternoon! We have availability at 3 PM and 5 PM. Which do you prefer?","vi":"Chào buổi chiều! Chúng tôi có lịch lúc 3 giờ và 5 giờ chiều. Bạn muốn giờ nào?"},{"speaker":"A","en":"3 PM works for me. What types of massage do you offer?","vi":"3 giờ chiều phù hợp với tôi. Bạn có những loại massage nào?"},{"speaker":"B","en":"We offer Swedish, deep tissue, hot stone, and traditional Vietnamese massage.","vi":"Chúng tôi có massage Thụy Điển, deep tissue, đá nóng và massage truyền thống Việt Nam."},{"speaker":"A","en":"What's the difference between Swedish and deep tissue?","vi":"Sự khác nhau giữa Thụy Điển và deep tissue là gì?"},{"speaker":"B","en":"Swedish is gentle and relaxing. Deep tissue targets muscle knots and tension.","vi":"Thụy Điển nhẹ nhàng và thư giãn. Deep tissue nhắm vào các nút cơ và sự căng thẳng."},{"speaker":"A","en":"I have a stiff neck and shoulders. Which would you recommend?","vi":"Tôi bị cứng cổ và vai. Bạn khuyến nghị loại nào?"},{"speaker":"B","en":"Deep tissue would be best for you, then. It will really target those tight areas.","vi":"Vậy deep tissue sẽ tốt nhất cho bạn. Nó sẽ thực sự nhắm vào những vùng căng đó."},{"speaker":"A","en":"How long is the session?","vi":"Buổi massage kéo dài bao lâu?"},{"speaker":"B","en":"We have 60, 90, and 120-minute options.","vi":"Chúng tôi có tùy chọn 60, 90 và 120 phút."},{"speaker":"A","en":"How much is the 90-minute deep tissue?","vi":"Giá deep tissue 90 phút là bao nhiêu?"},{"speaker":"B","en":"It's 450,000 VND. That includes aromatherapy oil and a complimentary herbal tea.","vi":"450.000 đồng. Bao gồm dầu thơm và trà thảo mộc miễn phí."},{"speaker":"A","en":"That sounds lovely. I'll take the 90-minute session.","vi":"Nghe tuyệt vời. Tôi lấy buổi 90 phút."},{"speaker":"B","en":"Perfect. Is there any area you'd like us to focus on or avoid?","vi":"Tốt. Có khu vực nào bạn muốn chúng tôi tập trung vào hoặc tránh không?"},{"speaker":"A","en":"Please focus on my neck, shoulders, and upper back.","vi":"Vui lòng tập trung vào cổ, vai và lưng trên của tôi."},{"speaker":"B","en":"Noted. Any pressure preferences? Light, medium, or firm?","vi":"Ghi nhận. Bạn muốn lực ấn thế nào? Nhẹ, vừa hay mạnh?"},{"speaker":"A","en":"Medium to firm, please. I want to really feel the tension release.","vi":"Vừa đến mạnh. Tôi muốn thực sự cảm nhận được sự giải phóng căng thẳng."},{"speaker":"B","en":"Understood. Please arrive 10 minutes early to fill out a health form.","vi":"Hiểu rồi. Vui lòng đến trước 10 phút để điền mẫu sức khỏe."},{"speaker":"A","en":"Is there anything I should avoid before the massage?","vi":"Có điều gì tôi nên tránh trước khi massage không?"},{"speaker":"B","en":"Don't eat a heavy meal within an hour before. And avoid alcohol.","vi":"Không ăn no trong vòng một giờ trước. Và tránh rượu."},{"speaker":"A","en":"Good advice. Is there a changing room?","vi":"Lời khuyên hay. Có phòng thay đồ không?"},{"speaker":"B","en":"Yes, we provide robes, slippers, and lockers for your belongings.","vi":"Có, chúng tôi cung cấp áo choàng, dép và tủ khóa cho đồ đạc của bạn."},{"speaker":"A","en":"This is exactly what I need after a stressful week.","vi":"Đây chính xác là những gì tôi cần sau một tuần căng thẳng."},{"speaker":"B","en":"You deserve it! We'll make sure you leave feeling completely refreshed.","vi":"Bạn xứng đáng! Chúng tôi sẽ đảm bảo bạn ra về cảm thấy hoàn toàn sảng khoái."},{"speaker":"A","en":"Can I add a foot massage after the session?","vi":"Tôi có thể thêm massage chân sau buổi không?"},{"speaker":"B","en":"Absolutely! A 30-minute foot massage is an extra 150,000 VND.","vi":"Tất nhiên! Massage chân 30 phút thêm 150.000 đồng."},{"speaker":"A","en":"I'll add that too. Total is 600,000 VND, correct?","vi":"Tôi sẽ thêm cái đó luôn. Tổng là 600.000 đồng, đúng không?"},{"speaker":"B","en":"Correct! We look forward to seeing you at 3 PM.","vi":"Đúng! Chúng tôi mong được phục vụ bạn lúc 3 giờ chiều."},{"speaker":"A","en":"Thank you! I'm already looking forward to it.","vi":"Cảm ơn! Tôi đã rất mong chờ rồi."},{"speaker":"B","en":"See you soon! Remember, no phones during the session — pure relaxation.","vi":"Hẹn gặp! Nhớ là không điện thoại trong buổi — thư giãn hoàn toàn."}],"speakerAGender":"female","speakerBGender":"male"},{"id":79,"title":"Bàn chuyện mua nhà với gia đình","situation":"Vợ chồng Anh bàn bạc với bố mẹ về kế hoạch mua nhà đầu tiên.","turns":[{"speaker":"A","en":"Mom, Dad, we've been saving for a few years and we're thinking of buying a house.","vi":"Mẹ, bố, chúng con đã tiết kiệm vài năm và đang nghĩ đến việc mua nhà."},{"speaker":"B","en":"That's wonderful news! Have you found a place you like?","vi":"Tin tuyệt vời! Các con đã tìm được chỗ nào ưng chưa?"},{"speaker":"A","en":"We've been looking at a townhouse in the Long Bien district.","vi":"Chúng con đang xem một căn nhà phố ở quận Long Biên."},{"speaker":"B","en":"Long Bien is a good area. Not too far from the center. How much is it?","vi":"Long Biên là khu vực tốt. Không quá xa trung tâm. Giá bao nhiêu?"},{"speaker":"A","en":"The asking price is 3.5 billion VND. We have 1 billion saved.","vi":"Giá đặt ra là 3.5 tỷ đồng. Chúng con tiết kiệm được 1 tỷ."},{"speaker":"B","en":"So you'd need a mortgage for 2.5 billion? That's a big commitment.","vi":"Vậy là các con cần vay thêm 2.5 tỷ? Đó là cam kết lớn."},{"speaker":"A","en":"Yes, we know. But we've calculated that monthly payments would be about 15 million VND.","vi":"Vâng, chúng con biết. Nhưng chúng con đã tính toán rằng trả góp hàng tháng khoảng 15 triệu đồng."},{"speaker":"B","en":"Can both of you comfortably afford that with your current salaries?","vi":"Cả hai con có đủ khả năng chi trả thoải mái với mức lương hiện tại không?"},{"speaker":"A","en":"Combined we earn about 35 million a month. So 15 million is about 43% of income.","vi":"Cộng lại chúng con kiếm khoảng 35 triệu một tháng. Vậy 15 triệu là khoảng 43% thu nhập."},{"speaker":"B","en":"That's manageable but you'll need to be careful with other expenses.","vi":"Có thể quản lý được nhưng các con cần cẩn thận với các chi phí khác."},{"speaker":"A","en":"We've already cut back on eating out and travel. We're committed to this.","vi":"Chúng con đã cắt giảm ăn ngoài và du lịch rồi. Chúng con quyết tâm với điều này."},{"speaker":"B","en":"Have you checked the legal status of the property? The land use rights?","vi":"Các con đã kiểm tra tình trạng pháp lý của tài sản chưa? Quyền sử dụng đất?"},{"speaker":"A","en":"We hired a lawyer to review all documents. Everything looks clean.","vi":"Chúng con thuê luật sư xem xét tất cả giấy tờ. Mọi thứ có vẻ ổn."},{"speaker":"B","en":"Very smart. What bank are you planning to borrow from?","vi":"Rất thông minh. Các con định vay từ ngân hàng nào?"},{"speaker":"A","en":"We're considering Vietcombank. They offer a 7.5% interest rate for the first 3 years.","vi":"Chúng con đang xem xét Vietcombank. Họ cung cấp lãi suất 7.5% trong 3 năm đầu."},{"speaker":"B","en":"That's a reasonable rate. Just make sure you understand what happens after the fixed period.","vi":"Đó là lãi suất hợp lý. Chỉ cần đảm bảo các con hiểu điều gì xảy ra sau thời gian cố định."},{"speaker":"A","en":"We do. It switches to market rate after 3 years. We'll refinance then if needed.","vi":"Chúng con biết. Nó chuyển sang lãi suất thị trường sau 3 năm. Chúng con sẽ tái cấp vốn nếu cần."},{"speaker":"B","en":"You've done your homework well. I'm impressed.","vi":"Các con đã chuẩn bị rất kỹ. Bố mẹ ấn tượng đó."},{"speaker":"A","en":"We want to do this right. Could you come with us to see the property this Sunday?","vi":"Chúng con muốn làm đúng. Bố mẹ có thể đến cùng xem căn nhà Chủ Nhật này không?"},{"speaker":"B","en":"Of course! We'd love to. We might notice things you haven't.","vi":"Tất nhiên! Bố mẹ rất muốn. Bố mẹ có thể nhận ra những điều các con chưa để ý."},{"speaker":"A","en":"That's exactly why we want you there. Your experience is valuable.","vi":"Đó chính xác là lý do chúng con muốn bố mẹ có mặt. Kinh nghiệm của bố mẹ rất quý giá."},{"speaker":"B","en":"Check the water pressure, the roof, and the neighbors while you're there.","vi":"Hãy kiểm tra áp lực nước, mái nhà và hàng xóm khi các con đến đó."},{"speaker":"A","en":"Good reminders. We're scheduled to view it at 10 AM.","vi":"Nhắc nhở tốt. Chúng con đã hẹn xem lúc 10 giờ sáng."},{"speaker":"B","en":"We'll be ready. This is a big step — we're so proud of you both.","vi":"Bố mẹ sẽ sẵn sàng. Đây là bước lớn — bố mẹ rất tự hào về các con."},{"speaker":"A","en":"Thank you, Mom and Dad. Your support means everything to us.","vi":"Cảm ơn bố mẹ. Sự ủng hộ của bố mẹ có ý nghĩa rất lớn với chúng con."},{"speaker":"B","en":"That's what family is for. Now let's celebrate with some tea!","vi":"Đó là điều gia đình dành cho nhau. Bây giờ mình ăn mừng với trà đi!"}],"speakerAGender":"female","speakerBGender":"female"},{"id":80,"title":"Kết bạn trên mạng xã hội","situation":"Trang và một người lạ bắt đầu nói chuyện sau khi nhận được lời mời kết bạn trên Facebook.","turns":[{"speaker":"A","en":"Hi! I saw that you liked my post about learning English. Are you studying too?","vi":"Chào! Tôi thấy bạn thích bài đăng của tôi về học tiếng Anh. Bạn cũng đang học à?"},{"speaker":"B","en":"Yes! I've been studying for two years. I'm trying to reach B2 level.","vi":"Có! Tôi đã học hai năm rồi. Tôi đang cố đạt trình độ B2."},{"speaker":"A","en":"Me too! That's such a coincidence. Where are you from?","vi":"Tôi cũng vậy! Thật trùng hợp. Bạn từ đâu đến?"},{"speaker":"B","en":"I'm from Da Nang. What about you?","vi":"Tôi từ Đà Nẵng. Còn bạn?"},{"speaker":"A","en":"I'm from Hanoi. Are you studying at a language center or self-studying?","vi":"Tôi từ Hà Nội. Bạn học ở trung tâm ngoại ngữ hay tự học?"},{"speaker":"B","en":"Mostly self-studying. I use apps, YouTube, and English podcasts.","vi":"Chủ yếu tự học. Tôi dùng ứng dụng, YouTube và podcast tiếng Anh."},{"speaker":"A","en":"Which podcasts do you recommend?","vi":"Bạn khuyến nghị podcast nào?"},{"speaker":"B","en":"I like 'English Learning for Curious Minds' and BBC 6 Minute English.","vi":"Tôi thích 'English Learning for Curious Minds' và BBC 6 Minute English."},{"speaker":"A","en":"I've heard of those! I mostly watch English series with subtitles.","vi":"Tôi nghe nói về chúng rồi! Tôi chủ yếu xem phim series tiếng Anh có phụ đề."},{"speaker":"B","en":"That's a great method too. Which shows do you watch?","vi":"Đó cũng là phương pháp tốt. Bạn xem phim gì?"},{"speaker":"A","en":"I love 'Friends' for American English and 'The Crown' for British English.","vi":"Tôi thích 'Friends' cho tiếng Anh Mỹ và 'The Crown' cho tiếng Anh Anh."},{"speaker":"B","en":"I should try The Crown. I mostly know American English.","vi":"Tôi nên thử The Crown. Tôi chủ yếu biết tiếng Anh Mỹ."},{"speaker":"A","en":"Do you have conversation partners online?","vi":"Bạn có đối tác trò chuyện trực tuyến không?"},{"speaker":"B","en":"Not yet. I've been looking for someone to practice with.","vi":"Chưa. Tôi đang tìm ai đó để luyện cùng."},{"speaker":"A","en":"Me too! Would you like to be study partners? We could video call weekly.","vi":"Tôi cũng vậy! Bạn muốn trở thành đối tác học không? Chúng ta có thể gọi video mỗi tuần."},{"speaker":"B","en":"That sounds perfect! I was just thinking the same thing.","vi":"Nghe hoàn hảo! Tôi vừa nghĩ đến điều đó."},{"speaker":"A","en":"We could practice speaking and correct each other's mistakes.","vi":"Chúng ta có thể luyện nói và sửa lỗi cho nhau."},{"speaker":"B","en":"Great idea. What time zone difference is there between Hanoi and Da Nang?","vi":"Ý tuyệt vời. Có múi giờ khác biệt nào giữa Hà Nội và Đà Nẵng không?"},{"speaker":"A","en":"None! We're both in Vietnam so the same time zone.","vi":"Không có! Chúng ta đều ở Việt Nam nên cùng múi giờ."},{"speaker":"B","en":"Of course, I forgot! How about every Sunday evening at 7 PM?","vi":"Tất nhiên, tôi quên mất! Sao không vào mỗi Chủ Nhật tối lúc 7 giờ?"},{"speaker":"A","en":"That works for me. We can use Zoom or Google Meet.","vi":"Phù hợp với tôi. Chúng ta có thể dùng Zoom hoặc Google Meet."},{"speaker":"B","en":"Google Meet is easier. Should we have a topic each week?","vi":"Google Meet dễ hơn. Chúng ta có nên có chủ đề mỗi tuần không?"},{"speaker":"A","en":"Yes! Like 'talk about your week' or 'discuss a current news story'.","vi":"Có! Như 'kể về tuần của bạn' hoặc 'thảo luận về một tin tức thời sự'."},{"speaker":"B","en":"I like that. It keeps things natural instead of just drilling exercises.","vi":"Tôi thích vậy. Nó giữ mọi thứ tự nhiên thay vì chỉ làm bài tập."},{"speaker":"A","en":"Exactly. Looking forward to our first session!","vi":"Chính xác. Rất mong đợi buổi đầu tiên của chúng ta!"},{"speaker":"B","en":"Me too! This is going to be so helpful.","vi":"Tôi cũng vậy! Điều này sẽ rất hữu ích."},{"speaker":"A","en":"I'll send you a Google Meet link this Sunday. See you then!","vi":"Tôi sẽ gửi cho bạn link Google Meet Chủ Nhật này. Hẹn gặp!"},{"speaker":"B","en":"See you Sunday! I'm excited to practice with you.","vi":"Hẹn gặp Chủ Nhật! Tôi rất hào hứng được luyện tập cùng bạn."}],"speakerAGender":"female","speakerBGender":"male"}]
+[
+  {
+    "id": 71,
+    "title": "Chăm sóc người thân bị bệnh",
+    "situation": "Thanh chăm sóc mẹ đang bị ốm tại nhà và gọi điện hỏi bác sĩ.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, doctor. My mother has had a fever for two days. I'm quite worried.",
+        "vi": "Xin chào bác sĩ. Mẹ tôi đã sốt hai ngày rồi. Tôi khá lo lắng."
+      },
+      {
+        "speaker": "B",
+        "en": "How high is her temperature?",
+        "vi": "Nhiệt độ của bà cao bao nhiêu?"
+      },
+      {
+        "speaker": "A",
+        "en": "It's been around 38.5 to 39 degrees Celsius.",
+        "vi": "Khoảng 38.5 đến 39 độ Celsius."
+      },
+      {
+        "speaker": "B",
+        "en": "Does she have any other symptoms — cough, sore throat, or runny nose?",
+        "vi": "Bà có triệu chứng khác không — ho, đau họng hay chảy nước mũi?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, she has a mild cough and says her throat hurts.",
+        "vi": "Có, bà ho nhẹ và nói họng đau."
+      },
+      {
+        "speaker": "B",
+        "en": "That sounds like it could be a common cold or mild flu.",
+        "vi": "Nghe có vẻ có thể là cảm lạnh thông thường hoặc cúm nhẹ."
+      },
+      {
+        "speaker": "A",
+        "en": "Is there anything I should give her to bring the fever down?",
+        "vi": "Tôi có nên cho bà uống gì để hạ sốt không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Give her paracetamol 500mg every 6 hours, and make sure she drinks plenty of fluids.",
+        "vi": "Cho bà uống paracetamol 500mg mỗi 6 giờ và đảm bảo bà uống nhiều nước."
+      },
+      {
+        "speaker": "A",
+        "en": "Should she rest completely or is light activity okay?",
+        "vi": "Bà có nên nghỉ ngơi hoàn toàn hay hoạt động nhẹ thì được?"
+      },
+      {
+        "speaker": "B",
+        "en": "Complete rest is best. The body heals faster when it's not expending energy.",
+        "vi": "Nghỉ ngơi hoàn toàn là tốt nhất. Cơ thể lành nhanh hơn khi không tiêu hao năng lượng."
+      },
+      {
+        "speaker": "A",
+        "en": "What should she eat while she's sick?",
+        "vi": "Bà nên ăn gì khi bị bệnh?"
+      },
+      {
+        "speaker": "B",
+        "en": "Light foods like congee, soup, and fruit. Avoid fried or fatty foods.",
+        "vi": "Thức ăn nhẹ như cháo, súp và trái cây. Tránh đồ chiên xào hoặc nhiều dầu mỡ."
+      },
+      {
+        "speaker": "A",
+        "en": "She doesn't have much appetite. Is that normal?",
+        "vi": "Bà không có mấy cảm giác thèm ăn. Điều đó có bình thường không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, loss of appetite is common with fever. Focus on keeping her hydrated.",
+        "vi": "Có, mất cảm giác thèm ăn phổ biến khi sốt. Tập trung vào việc giữ cho bà đủ nước."
+      },
+      {
+        "speaker": "A",
+        "en": "Should I bring her to the hospital?",
+        "vi": "Tôi có nên đưa bà đến bệnh viện không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Not yet, unless the fever goes above 40 degrees or she has difficulty breathing.",
+        "vi": "Chưa cần, trừ khi sốt trên 40 độ hoặc bà khó thở."
+      },
+      {
+        "speaker": "A",
+        "en": "How long do you think the fever will last?",
+        "vi": "Bác sĩ nghĩ sốt sẽ kéo dài bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Usually 3 to 5 days for a flu. If it lasts longer, she should see a doctor in person.",
+        "vi": "Thường 3 đến 5 ngày với cúm. Nếu kéo dài hơn, bà cần gặp bác sĩ trực tiếp."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I use a cool compress on her forehead to help?",
+        "vi": "Tôi có thể chườm khăn lạnh lên trán bà để giúp không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, a damp cloth on the forehead or neck can help lower the temperature.",
+        "vi": "Có, khăn ẩm đặt lên trán hoặc cổ có thể giúp hạ nhiệt độ."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll also make her some ginger and honey tea. Is that okay?",
+        "vi": "Tôi cũng sẽ pha trà gừng mật ong cho bà. Được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Excellent idea. It's very soothing for the throat and helps with the immune system.",
+        "vi": "Ý kiến xuất sắc. Rất dịu cho họng và giúp hệ miễn dịch."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you so much, doctor. I feel more reassured now.",
+        "vi": "Cảm ơn bác sĩ rất nhiều. Tôi cảm thấy yên tâm hơn rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "You're doing a great job caring for her. Call again if you're concerned.",
+        "vi": "Bạn chăm sóc bà rất tốt. Gọi lại nếu bạn lo lắng."
+      },
+      {
+        "speaker": "A",
+        "en": "I will. I hope she feels better soon.",
+        "vi": "Tôi sẽ gọi. Tôi hy vọng bà sớm bình phục."
+      },
+      {
+        "speaker": "B",
+        "en": "She's lucky to have someone who cares for her so well. Take care.",
+        "vi": "Bà may mắn có người chăm sóc chu đáo như vậy. Bảo trọng nhé."
+      }
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Thanh",
+      "en": "Thanh"
+    },
+    "speakerBName": {
+      "vi": "Bác sĩ",
+      "en": "Doctor"
+    }
+  },
+  {
+    "id": 72,
+    "title": "Xin lỗi người thân",
+    "situation": "Minh xin lỗi người anh trai vì đã làm hỏng xe và nói chuyện để hòa giải.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Anh, I need to talk to you about something important.",
+        "vi": "Anh ơi, em cần nói với anh điều gì đó quan trọng."
+      },
+      {
+        "speaker": "B",
+        "en": "What is it? You look worried.",
+        "vi": "Chuyện gì vậy? Em trông có vẻ lo lắng."
+      },
+      {
+        "speaker": "A",
+        "en": "I borrowed your motorbike yesterday without asking and I had an accident.",
+        "vi": "Em đã mượn xe máy của anh hôm qua mà không hỏi và bị tai nạn."
+      },
+      {
+        "speaker": "B",
+        "en": "What?! Are you okay? Were you hurt?",
+        "vi": "Cái gì?! Em có ổn không? Em có bị thương không?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm fine. Just a few scratches. But the front mirror is broken.",
+        "vi": "Em ổn. Chỉ vài vết xước thôi. Nhưng gương chiếu hậu phía trước bị vỡ."
+      },
+      {
+        "speaker": "B",
+        "en": "Why didn't you ask me first? I was using it this morning and couldn't find it.",
+        "vi": "Sao em không hỏi anh trước? Sáng nay anh cần dùng mà không thấy."
+      },
+      {
+        "speaker": "A",
+        "en": "I know. I'm really sorry. I thought you wouldn't mind and it was just a short trip.",
+        "vi": "Em biết. Em thực sự xin lỗi. Em nghĩ anh sẽ không để ý và chỉ đi một lúc thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "It's not about the mirror. It's about trust. You should have asked.",
+        "vi": "Không phải về cái gương. Đó là về sự tin tưởng. Em nên hỏi anh."
+      },
+      {
+        "speaker": "A",
+        "en": "You're absolutely right. I won't do it again. I promise.",
+        "vi": "Anh hoàn toàn đúng. Em sẽ không làm lại. Em hứa."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm glad you told me instead of hiding it. That means a lot.",
+        "vi": "Anh vui vì em nói thật chứ không giấu. Điều đó rất có ý nghĩa."
+      },
+      {
+        "speaker": "A",
+        "en": "Of course. I felt terrible keeping it from you. I'll pay to fix the mirror.",
+        "vi": "Tất nhiên. Em cảm thấy rất tệ khi giấu anh. Em sẽ trả tiền sửa gương."
+      },
+      {
+        "speaker": "B",
+        "en": "You don't have to pay. Just be more responsible next time.",
+        "vi": "Em không cần phải trả. Chỉ cần có trách nhiệm hơn lần sau."
+      },
+      {
+        "speaker": "A",
+        "en": "No, I insist. It was my fault and I should take responsibility.",
+        "vi": "Không, em khăng khăng. Là lỗi của em và em nên chịu trách nhiệm."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, if you really want to. The repair should cost around 150,000 VND.",
+        "vi": "Được, nếu em thực sự muốn vậy. Sửa chắc khoảng 150.000 đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll give you 200,000 to cover all the costs. I'm really sorry, anh.",
+        "vi": "Em sẽ đưa anh 200.000 để trang trải tất cả chi phí. Em thực sự xin lỗi anh."
+      },
+      {
+        "speaker": "B",
+        "en": "I forgive you. We're brothers — these things happen.",
+        "vi": "Anh tha cho em. Chúng ta là anh em — những chuyện như vậy xảy ra thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you for being so understanding. I was really scared to tell you.",
+        "vi": "Cảm ơn anh đã rất thông cảm. Em thực sự sợ khi nói với anh."
+      },
+      {
+        "speaker": "B",
+        "en": "You should never be afraid to come to me. I'm your brother, not your enemy.",
+        "vi": "Em không bao giờ phải sợ đến gặp anh. Anh là anh trai em chứ không phải kẻ thù."
+      },
+      {
+        "speaker": "A",
+        "en": "I know. I just didn't want to disappoint you.",
+        "vi": "Em biết. Em chỉ không muốn làm anh thất vọng."
+      },
+      {
+        "speaker": "B",
+        "en": "We all make mistakes. What matters is how we handle them.",
+        "vi": "Ai cũng mắc sai lầm. Điều quan trọng là chúng ta xử lý thế nào."
+      },
+      {
+        "speaker": "A",
+        "en": "You're right. I'll be more careful and honest from now on.",
+        "vi": "Anh nói đúng. Từ bây giờ em sẽ cẩn thận và trung thực hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. Now let's go get the mirror fixed together.",
+        "vi": "Tốt. Bây giờ mình cùng đi sửa gương đi."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you, anh. You're the best.",
+        "vi": "Cảm ơn anh. Anh tuyệt vời nhất."
+      },
+      {
+        "speaker": "B",
+        "en": "Don't push it!",
+        "vi": "Thôi đừng nịnh nọt quá!"
+      },
+      {
+        "speaker": "A",
+        "en": "Haha! I mean it though. I'm lucky to have you as my brother.",
+        "vi": "Haha! Nhưng em nói thật đó. Em may mắn có anh là anh trai."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm lucky too. Come on, let's go fix that mirror before it gets dark.",
+        "vi": "Anh cũng vậy. Đi nào, mình đi sửa cái gương trước khi trời tối."
+      }
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Minh",
+      "en": "Minh"
+    },
+    "speakerBName": {
+      "vi": "Anh trai",
+      "en": "Brother"
+    }
+  },
+  {
+    "id": 73,
+    "title": "Nói chuyện về stress công việc",
+    "situation": "Hương tâm sự với bạn thân về áp lực công việc sau một tuần căng thẳng.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "You look exhausted. What's wrong?",
+        "vi": "Bạn trông kiệt sức quá. Có chuyện gì vậy?"
+      },
+      {
+        "speaker": "B",
+        "en": "I've had the worst week. My boss has been piling on work non-stop.",
+        "vi": "Tôi có tuần tệ nhất. Sếp tôi liên tục chất thêm công việc."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm sorry to hear that. What kind of pressure are you dealing with?",
+        "vi": "Tôi xin lỗi khi nghe vậy. Bạn đang đối mặt với loại áp lực gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "Three deadlines this week. I've been working until midnight every day.",
+        "vi": "Ba deadline trong tuần này. Tôi làm đến nửa đêm mỗi ngày."
+      },
+      {
+        "speaker": "A",
+        "en": "That's not sustainable. Have you talked to your boss about it?",
+        "vi": "Như vậy không bền vững. Bạn đã nói chuyện với sếp về điều đó chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm afraid to. I don't want to seem like I can't handle the workload.",
+        "vi": "Tôi sợ. Tôi không muốn có vẻ như mình không đảm đương được khối lượng công việc."
+      },
+      {
+        "speaker": "A",
+        "en": "But burning yourself out won't help anyone. You need to speak up.",
+        "vi": "Nhưng làm kiệt sức mình không giúp được ai. Bạn cần lên tiếng."
+      },
+      {
+        "speaker": "B",
+        "en": "You're right. I just find it hard to set boundaries at work.",
+        "vi": "Bạn nói đúng. Tôi chỉ thấy khó thiết lập ranh giới ở nơi làm việc."
+      },
+      {
+        "speaker": "A",
+        "en": "What does your work day look like right now?",
+        "vi": "Ngày làm việc của bạn hiện tại trông như thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "I start at 8 AM, skip lunch half the time, and leave at 10 PM.",
+        "vi": "Tôi bắt đầu lúc 8 giờ sáng, bỏ bữa trưa một nửa số ngày và ra về lúc 10 giờ tối."
+      },
+      {
+        "speaker": "A",
+        "en": "That's more than 14 hours a day! No wonder you're stressed.",
+        "vi": "Đó là hơn 14 giờ một ngày! Không lạ gì bạn bị căng thẳng."
+      },
+      {
+        "speaker": "B",
+        "en": "And on weekends I reply to emails too. I can never truly switch off.",
+        "vi": "Và cuối tuần tôi cũng trả lời email. Tôi không bao giờ thực sự nghỉ được."
+      },
+      {
+        "speaker": "A",
+        "en": "Have you considered talking to HR about workload distribution?",
+        "vi": "Bạn có nghĩ đến việc nói chuyện với phòng nhân sự về phân bổ công việc không?"
+      },
+      {
+        "speaker": "B",
+        "en": "I hadn't thought of that. Would that be appropriate?",
+        "vi": "Tôi chưa nghĩ đến điều đó. Điều đó có phù hợp không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Absolutely. It's their job to ensure a healthy work environment.",
+        "vi": "Hoàn toàn phù hợp. Đó là công việc của họ để đảm bảo môi trường làm việc lành mạnh."
+      },
+      {
+        "speaker": "B",
+        "en": "I might try that. I also feel like my efforts aren't appreciated.",
+        "vi": "Tôi có thể thử vậy. Tôi cũng cảm thấy nỗ lực của mình không được đánh giá cao."
+      },
+      {
+        "speaker": "A",
+        "en": "Have you received any feedback from your boss recently?",
+        "vi": "Bạn có nhận được phản hồi nào từ sếp gần đây không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just more tasks. No 'thank you', no recognition. It's demoralizing.",
+        "vi": "Chỉ có thêm nhiệm vụ. Không có 'cảm ơn', không có sự công nhận. Nó làm mình nản lòng."
+      },
+      {
+        "speaker": "A",
+        "en": "I think you need to have an honest conversation with your manager.",
+        "vi": "Tôi nghĩ bạn cần có cuộc trò chuyện thẳng thắn với quản lý của mình."
+      },
+      {
+        "speaker": "B",
+        "en": "You're right. I've been avoiding it, but I can't keep going like this.",
+        "vi": "Bạn nói đúng. Tôi đã né tránh, nhưng tôi không thể tiếp tục như thế này."
+      },
+      {
+        "speaker": "A",
+        "en": "Also, try to take short breaks during the day. Even 10 minutes helps.",
+        "vi": "Ngoài ra, hãy cố gắng nghỉ ngắn trong ngày. Dù 10 phút cũng giúp ích."
+      },
+      {
+        "speaker": "B",
+        "en": "I've been feeling too guilty to take breaks.",
+        "vi": "Tôi cảm thấy có lỗi quá khi nghỉ."
+      },
+      {
+        "speaker": "A",
+        "en": "Breaks make you more productive, not less. It's a fact.",
+        "vi": "Nghỉ ngơi làm bạn năng suất hơn chứ không phải kém hơn. Đó là sự thật."
+      },
+      {
+        "speaker": "B",
+        "en": "I'll try to remember that. Thank you for listening.",
+        "vi": "Tôi sẽ cố nhớ điều đó. Cảm ơn bạn đã lắng nghe."
+      },
+      {
+        "speaker": "A",
+        "en": "Anytime. You don't have to face this alone.",
+        "vi": "Lúc nào cũng được. Bạn không phải đối mặt với điều này một mình."
+      },
+      {
+        "speaker": "B",
+        "en": "You're the best friend I could ask for.",
+        "vi": "Bạn là người bạn tốt nhất tôi có thể mong muốn."
+      },
+      {
+        "speaker": "A",
+        "en": "Go home, rest well tonight, and tackle one thing at a time tomorrow.",
+        "vi": "Về nhà đi, nghỉ ngơi tốt tối nay và giải quyết từng việc một vào ngày mai."
+      },
+      {
+        "speaker": "B",
+        "en": "Good advice. I feel so much better just talking about it.",
+        "vi": "Lời khuyên hay. Tôi cảm thấy tốt hơn rất nhiều chỉ sau khi nói về nó."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Hương",
+      "en": "Hương"
+    },
+    "speakerBName": {
+      "vi": "Bạn thân",
+      "en": "Best Friend"
+    }
+  },
+  {
+    "id": 74,
+    "title": "Đi làm tóc",
+    "situation": "Lan đến tiệm tóc để cắt và nhuộm tóc trước dịp Tết.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning! I'd like to get a haircut and hair color today.",
+        "vi": "Chào buổi sáng! Tôi muốn cắt và nhuộm tóc hôm nay."
+      },
+      {
+        "speaker": "B",
+        "en": "Great! Please have a seat. What kind of style are you going for?",
+        "vi": "Tốt! Mời ngồi xuống. Bạn muốn kiểu tóc như thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "I want to trim the ends and add some layers. And lighten the color a little.",
+        "vi": "Tôi muốn tỉa phần đuôi và thêm layer. Và làm màu tóc sáng lên một chút."
+      },
+      {
+        "speaker": "B",
+        "en": "How much do you want to trim off the length?",
+        "vi": "Bạn muốn cắt bớt bao nhiêu chiều dài?"
+      },
+      {
+        "speaker": "A",
+        "en": "Just about 5 centimeters. I want to keep it long.",
+        "vi": "Khoảng 5 cm thôi. Tôi muốn giữ dài."
+      },
+      {
+        "speaker": "B",
+        "en": "And for the color — do you have a specific shade in mind?",
+        "vi": "Còn màu tóc — bạn có màu cụ thể nào trong đầu không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Something like a warm brown or caramel tone. Nothing too bright.",
+        "vi": "Cái gì đó như màu nâu ấm hoặc tông caramel. Không quá sáng."
+      },
+      {
+        "speaker": "B",
+        "en": "I think a chestnut brown would suit your skin tone beautifully.",
+        "vi": "Tôi nghĩ màu nâu hạt dẻ sẽ rất hợp với tông da của bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "Can you show me a color sample?",
+        "vi": "Bạn có thể cho tôi xem mẫu màu không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Here's our color chart. What about this shade — number 5.3?",
+        "vi": "Đây là bảng màu của chúng tôi. Màu này thế nào — số 5.3?"
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, I love that! It's exactly what I was imagining.",
+        "vi": "Ồ, tôi thích màu đó! Đúng như tôi tưởng tượng."
+      },
+      {
+        "speaker": "B",
+        "en": "Will you need any treatment today? Your ends look a little dry.",
+        "vi": "Bạn có cần dưỡng tóc không? Phần đuôi tóc của bạn trông hơi khô."
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, please add a deep conditioning treatment too.",
+        "vi": "Có, làm ơn thêm ủ tóc dưỡng ẩm sâu luôn."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. The total will be cut, color, and treatment. That's 650,000 VND.",
+        "vi": "Tốt. Tổng sẽ là cắt, nhuộm và ủ tóc. 650.000 đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reasonable. How long will the whole process take?",
+        "vi": "Giá hợp lý. Toàn bộ quá trình mất bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "About two to two and a half hours, including processing time for the color.",
+        "vi": "Khoảng hai đến hai tiếng rưỡi, bao gồm thời gian ngấm màu."
+      },
+      {
+        "speaker": "A",
+        "en": "That's fine. Tet is coming and I want to look my best.",
+        "vi": "Ổn. Sắp Tết và tôi muốn trông đẹp nhất."
+      },
+      {
+        "speaker": "B",
+        "en": "You'll definitely look gorgeous! Shall we start with the wash?",
+        "vi": "Bạn chắc chắn sẽ trông rực rỡ! Mình bắt đầu với gội đầu nhé?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, please. Can I have a head massage during the wash?",
+        "vi": "Vâng. Tôi có thể được massage đầu trong lúc gội không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! Our shampoo service always includes a 5-minute scalp massage.",
+        "vi": "Tất nhiên! Dịch vụ gội đầu của chúng tôi luôn kèm massage da đầu 5 phút."
+      },
+      {
+        "speaker": "A",
+        "en": "Wonderful. I've been so stressed lately. I need this.",
+        "vi": "Tuyệt vời. Dạo này tôi rất căng thẳng. Tôi cần điều này."
+      },
+      {
+        "speaker": "B",
+        "en": "Sit back and relax. Consider this your self-care time.",
+        "vi": "Ngồi thư giãn đi. Coi đây là thời gian chăm sóc bản thân của bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Will you be cutting my hair yourself?",
+        "vi": "Tuyệt vời. Bạn sẽ tự cắt tóc cho tôi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I'll be doing everything. I want to make sure it's exactly what you want.",
+        "vi": "Có, tôi sẽ làm tất cả. Tôi muốn đảm bảo đúng như bạn muốn."
+      },
+      {
+        "speaker": "A",
+        "en": "I appreciate that. Should I bring reference photos next time?",
+        "vi": "Tôi đánh giá cao điều đó. Lần sau tôi có nên mang ảnh tham khảo không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Photos always help! But your description today was very clear.",
+        "vi": "Ảnh luôn giúp ích! Nhưng mô tả của bạn hôm nay rất rõ ràng."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you. I'll definitely be back after Tet.",
+        "vi": "Cảm ơn. Tôi chắc chắn sẽ quay lại sau Tết."
+      },
+      {
+        "speaker": "B",
+        "en": "We look forward to it! Now let's get started.",
+        "vi": "Chúng tôi mong được phục vụ bạn! Bây giờ mình bắt đầu nào."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Lan",
+      "en": "Lan"
+    },
+    "speakerBName": {
+      "vi": "Thợ làm tóc",
+      "en": "Hairstylist"
+    }
+  },
+  {
+    "id": 75,
+    "title": "Gửi bưu kiện ở bưu điện",
+    "situation": "Hải đến bưu điện để gửi quà về cho gia đình ở quê.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I need to send a package to my family in Nghe An province.",
+        "vi": "Xin chào, tôi cần gửi bưu kiện về cho gia đình ở tỉnh Nghệ An."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. Is it a gift or commercial goods?",
+        "vi": "Được. Đây là quà hay hàng hóa thương mại?"
+      },
+      {
+        "speaker": "A",
+        "en": "It's a gift — some clothes and food items.",
+        "vi": "Đây là quà — một số quần áo và thực phẩm."
+      },
+      {
+        "speaker": "B",
+        "en": "Please put the package on the scale. I'll weigh it first.",
+        "vi": "Vui lòng đặt bưu kiện lên cân. Tôi sẽ cân trước."
+      },
+      {
+        "speaker": "A",
+        "en": "Sure. Here it is.",
+        "vi": "Được. Đây ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "It's 3.2 kilograms. Do you want standard or express delivery?",
+        "vi": "Nặng 3.2 kilogram. Bạn muốn giao hàng thường hay chuyển phát nhanh?"
+      },
+      {
+        "speaker": "A",
+        "en": "How long does standard take?",
+        "vi": "Giao thường mất bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Standard takes 5 to 7 business days. Express is 1 to 2 days.",
+        "vi": "Giao thường mất 5 đến 7 ngày làm việc. Chuyển phát nhanh 1 đến 2 ngày."
+      },
+      {
+        "speaker": "A",
+        "en": "How much is the express option?",
+        "vi": "Giá chuyển phát nhanh là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "For 3.2 kilograms to Nghe An, express is 85,000 VND. Standard is 45,000 VND.",
+        "vi": "Cho 3.2 kilogram đến Nghệ An, chuyển phát nhanh là 85.000 đồng. Thường là 45.000 đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll go with express. My family is expecting the package.",
+        "vi": "Tôi chọn chuyển phát nhanh. Gia đình tôi đang chờ bưu kiện."
+      },
+      {
+        "speaker": "B",
+        "en": "Good choice. Please fill out this form with the recipient's details.",
+        "vi": "Lựa chọn tốt. Vui lòng điền vào mẫu này với thông tin người nhận."
+      },
+      {
+        "speaker": "A",
+        "en": "Do I need to include my contact number on the form?",
+        "vi": "Tôi có cần bao gồm số điện thoại liên hệ trên mẫu không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, both the sender's and recipient's phone numbers are required.",
+        "vi": "Có, cả số điện thoại người gửi và người nhận đều bắt buộc."
+      },
+      {
+        "speaker": "A",
+        "en": "Done. Here's the form.",
+        "vi": "Xong. Đây là mẫu."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. Can I open the package to verify the contents?",
+        "vi": "Cảm ơn. Tôi có thể mở bưu kiện để kiểm tra nội dung không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, go ahead. It's just clothes and some dried food.",
+        "vi": "Có, làm đi. Chỉ có quần áo và một ít thực phẩm khô."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, everything looks fine. I'll seal it now.",
+        "vi": "Được, mọi thứ có vẻ ổn. Tôi sẽ đóng gói lại."
+      },
+      {
+        "speaker": "A",
+        "en": "Will I receive a tracking number?",
+        "vi": "Tôi có nhận được mã theo dõi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes. Once I print the label, you'll get a tracking number to monitor delivery.",
+        "vi": "Có. Sau khi tôi in nhãn, bạn sẽ có mã theo dõi để giám sát giao hàng."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I track it online?",
+        "vi": "Tôi có thể theo dõi trực tuyến không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, go to viettelpost.vn and enter your tracking number.",
+        "vi": "Có, vào viettelpost.vn và nhập mã theo dõi của bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. Is there any insurance for the package?",
+        "vi": "Tốt. Có bảo hiểm cho bưu kiện không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Basic insurance is included up to 500,000 VND. Additional insurance is available.",
+        "vi": "Bảo hiểm cơ bản được bao gồm lên đến 500.000 đồng. Có thể mua bảo hiểm thêm."
+      },
+      {
+        "speaker": "A",
+        "en": "The contents are worth more than that. How much for additional coverage?",
+        "vi": "Nội dung đáng giá hơn thế. Chi phí cho bảo hiểm thêm là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "1% of the declared value. So for 1.5 million VND, it's 15,000 VND extra.",
+        "vi": "1% giá trị kê khai. Vậy cho 1.5 triệu đồng, thêm 15.000 đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll add it. Total with insurance and express delivery?",
+        "vi": "Tôi sẽ thêm vào. Tổng cộng với bảo hiểm và chuyển phát nhanh?"
+      },
+      {
+        "speaker": "B",
+        "en": "85,000 plus 15,000 insurance. Total: 100,000 VND.",
+        "vi": "85.000 cộng 15.000 bảo hiểm. Tổng: 100.000 đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "Here you go. When exactly will it arrive?",
+        "vi": "Đây. Nó sẽ đến chính xác khi nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "By tomorrow afternoon if shipped today. Here's your receipt and tracking number.",
+        "vi": "Chiều mai nếu gửi hôm nay. Đây là biên lai và mã theo dõi của bạn."
+      }
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Hải",
+      "en": "Hải"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên bưu điện",
+      "en": "Post Office Staff"
+    }
+  },
+  {
+    "id": 76,
+    "title": "Đăng ký dịch vụ internet",
+    "situation": "Quân gọi điện cho nhà mạng để đăng ký dịch vụ internet mới cho căn hộ.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'd like to sign up for an internet plan for my new apartment.",
+        "vi": "Xin chào, tôi muốn đăng ký gói internet cho căn hộ mới của tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Welcome! Can I have your full name and address please?",
+        "vi": "Chào mừng! Bạn vui lòng cho biết tên đầy đủ và địa chỉ không?"
+      },
+      {
+        "speaker": "A",
+        "en": "My name is Tran Minh Quan, and I'm at 102 Le Van Luong Street, Hanoi.",
+        "vi": "Tên tôi là Trần Minh Quân, ở 102 đường Lê Văn Lương, Hà Nội."
+      },
+      {
+        "speaker": "B",
+        "en": "Let me check service availability in your area. One moment please.",
+        "vi": "Để tôi kiểm tra khả năng phục vụ trong khu vực của bạn. Vui lòng chờ một chút."
+      },
+      {
+        "speaker": "A",
+        "en": "Sure, take your time.",
+        "vi": "Được, bạn cứ từ từ."
+      },
+      {
+        "speaker": "B",
+        "en": "Great news — fiber optic internet is available at your address.",
+        "vi": "Tin tốt — internet cáp quang có sẵn tại địa chỉ của bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "Excellent. What plans do you have available?",
+        "vi": "Tuyệt vời. Bạn có những gói nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "We have three plans: 100 Mbps, 200 Mbps, and 500 Mbps.",
+        "vi": "Chúng tôi có ba gói: 100 Mbps, 200 Mbps và 500 Mbps."
+      },
+      {
+        "speaker": "A",
+        "en": "How much is the 200 Mbps plan?",
+        "vi": "Gói 200 Mbps giá bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's 280,000 VND per month with a 12-month contract.",
+        "vi": "280.000 đồng mỗi tháng với hợp đồng 12 tháng."
+      },
+      {
+        "speaker": "A",
+        "en": "Is there a setup or installation fee?",
+        "vi": "Có phí cài đặt hay lắp đặt không?"
+      },
+      {
+        "speaker": "B",
+        "en": "No, installation is free. We also provide a free router.",
+        "vi": "Không, lắp đặt miễn phí. Chúng tôi cũng cung cấp router miễn phí."
+      },
+      {
+        "speaker": "A",
+        "en": "What happens if I want to cancel before the 12 months?",
+        "vi": "Điều gì xảy ra nếu tôi muốn hủy trước 12 tháng?"
+      },
+      {
+        "speaker": "B",
+        "en": "There's an early termination fee of 50% of the remaining months.",
+        "vi": "Có phí hủy sớm bằng 50% số tháng còn lại."
+      },
+      {
+        "speaker": "A",
+        "en": "Understood. Is there a data cap or is it unlimited?",
+        "vi": "Hiểu rồi. Có giới hạn dữ liệu không hay là không giới hạn?"
+      },
+      {
+        "speaker": "B",
+        "en": "All our plans include unlimited data with no throttling.",
+        "vi": "Tất cả gói của chúng tôi bao gồm dữ liệu không giới hạn và không bị giảm tốc độ."
+      },
+      {
+        "speaker": "A",
+        "en": "That's what I wanted to hear. I'll take the 200 Mbps plan.",
+        "vi": "Đó là điều tôi muốn nghe. Tôi lấy gói 200 Mbps."
+      },
+      {
+        "speaker": "B",
+        "en": "Excellent choice. When would you like the installation to happen?",
+        "vi": "Lựa chọn xuất sắc. Bạn muốn lắp đặt khi nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "As soon as possible. Can you come this week?",
+        "vi": "Sớm nhất có thể. Bạn có thể đến tuần này không?"
+      },
+      {
+        "speaker": "B",
+        "en": "We have slots on Thursday afternoon and Saturday morning.",
+        "vi": "Chúng tôi có lịch chiều thứ Năm và sáng thứ Bảy."
+      },
+      {
+        "speaker": "A",
+        "en": "Saturday morning works for me. What time exactly?",
+        "vi": "Sáng thứ Bảy phù hợp với tôi. Mấy giờ cụ thể?"
+      },
+      {
+        "speaker": "B",
+        "en": "Between 8 and 11 AM. The technician will call 30 minutes before arriving.",
+        "vi": "Từ 8 đến 11 giờ sáng. Kỹ thuật viên sẽ gọi trước 30 phút khi đến."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. How do I pay the monthly bill?",
+        "vi": "Tốt. Tôi trả tiền hàng tháng như thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "You can pay via bank transfer, our app, or at any post office.",
+        "vi": "Bạn có thể thanh toán qua chuyển khoản ngân hàng, ứng dụng của chúng tôi hoặc tại bưu điện."
+      },
+      {
+        "speaker": "A",
+        "en": "Is auto-payment an option?",
+        "vi": "Có tùy chọn tự động thanh toán không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, you can link a bank account for automatic monthly deductions.",
+        "vi": "Có, bạn có thể liên kết tài khoản ngân hàng để trừ tiền tự động hàng tháng."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. What's the customer support number if I have problems?",
+        "vi": "Tốt. Số hỗ trợ khách hàng là gì nếu tôi có vấn đề?"
+      },
+      {
+        "speaker": "B",
+        "en": "Our 24/7 support line is 1800-9999. Free to call.",
+        "vi": "Đường dây hỗ trợ 24/7 của chúng tôi là 1800-9999. Miễn phí gọi."
+      },
+      {
+        "speaker": "A",
+        "en": "Wonderful. I'm happy with the plan. Please proceed with the registration.",
+        "vi": "Tuyệt vời. Tôi hài lòng với gói này. Vui lòng tiến hành đăng ký."
+      },
+      {
+        "speaker": "B",
+        "en": "Done! You'll receive a confirmation SMS shortly. See you Saturday!",
+        "vi": "Xong! Bạn sẽ nhận được SMS xác nhận ngay. Hẹn gặp thứ Bảy!"
+      }
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Quân",
+      "en": "Quân"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên nhà mạng",
+      "en": "ISP Agent"
+    }
+  },
+  {
+    "id": 77,
+    "title": "Phàn nàn về hàng xóm ồn ào",
+    "situation": "Bình gõ cửa nhà hàng xóm để nhờ giảm tiếng ồn vào đêm muộn.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, sorry to bother you. I live in apartment 204, right below you.",
+        "vi": "Chào, xin lỗi vì làm phiền. Tôi ở căn hộ 204, ngay bên dưới bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "Oh, hi! Is there a problem?",
+        "vi": "Ồ, chào! Có vấn đề gì không?"
+      },
+      {
+        "speaker": "A",
+        "en": "I wanted to talk to you about the noise last night. It kept me awake until midnight.",
+        "vi": "Tôi muốn nói chuyện với bạn về tiếng ồn tối qua. Nó khiến tôi thức đến nửa đêm."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm so sorry! We had friends over and didn't realize how loud we were.",
+        "vi": "Tôi thực sự xin lỗi! Chúng tôi có bạn đến chơi và không nhận ra mình ồn đến vậy."
+      },
+      {
+        "speaker": "A",
+        "en": "I understand you have guests, but loud music at 11 PM is quite disruptive.",
+        "vi": "Tôi hiểu bạn có khách, nhưng nhạc to lúc 11 giờ tối khá gây phiền."
+      },
+      {
+        "speaker": "B",
+        "en": "You're right. I should have been more considerate. I apologize.",
+        "vi": "Bạn nói đúng. Tôi đáng ra phải chu đáo hơn. Tôi xin lỗi."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you for understanding. I work early and need to sleep by 10 PM.",
+        "vi": "Cảm ơn bạn đã hiểu. Tôi đi làm sớm và cần ngủ trước 10 giờ tối."
+      },
+      {
+        "speaker": "B",
+        "en": "I didn't know that. We'll be much more careful from now on.",
+        "vi": "Tôi không biết điều đó. Từ bây giờ chúng tôi sẽ cẩn thận hơn nhiều."
+      },
+      {
+        "speaker": "A",
+        "en": "I'd really appreciate that. It's not just the music — there's also a lot of stomping.",
+        "vi": "Tôi rất trân trọng điều đó. Không chỉ nhạc — còn có nhiều tiếng bước chân mạnh."
+      },
+      {
+        "speaker": "B",
+        "en": "We'll try to wear socks and move more quietly. Hardwood floors carry sound.",
+        "vi": "Chúng tôi sẽ cố mang tất và di chuyển nhẹ nhàng hơn. Sàn gỗ truyền âm tốt."
+      },
+      {
+        "speaker": "A",
+        "en": "That would help a lot. Also, if you're planning a late party, could you give me notice?",
+        "vi": "Điều đó sẽ giúp ích rất nhiều. Ngoài ra, nếu bạn định tổ chức tiệc khuya, bạn có thể báo tôi trước không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely. I'll come knock on your door in advance so you can plan accordingly.",
+        "vi": "Tất nhiên. Tôi sẽ đến gõ cửa bạn trước để bạn có thể sắp xếp."
+      },
+      {
+        "speaker": "A",
+        "en": "That's very thoughtful of you. Thank you.",
+        "vi": "Bạn thật chu đáo. Cảm ơn."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm sorry again. By the way, I'm Duc. I don't think we've formally met.",
+        "vi": "Tôi một lần nữa xin lỗi. Nhân tiện, tôi là Đức. Tôi nghĩ chúng ta chưa chính thức gặp nhau."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm Binh. Nice to meet you, Duc. I hope we can be good neighbors.",
+        "vi": "Tôi là Bình. Vui được gặp bạn, Đức. Tôi hy vọng chúng ta có thể là hàng xóm tốt."
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely! If you ever need anything, don't hesitate to knock.",
+        "vi": "Tất nhiên! Nếu bạn cần bất cứ điều gì, đừng ngần ngại gõ cửa."
+      },
+      {
+        "speaker": "A",
+        "en": "Same goes for you. I'm home most evenings.",
+        "vi": "Tôi cũng vậy. Tôi thường ở nhà buổi tối."
+      },
+      {
+        "speaker": "B",
+        "en": "Good to know. Again, I'm really sorry for last night.",
+        "vi": "Tốt khi biết điều đó. Một lần nữa, tôi thực sự xin lỗi về tối qua."
+      },
+      {
+        "speaker": "A",
+        "en": "It's okay. These things happen. I'm glad we talked it out.",
+        "vi": "Không sao. Những chuyện như vậy xảy ra. Tôi vui vì chúng ta đã nói chuyện."
+      },
+      {
+        "speaker": "B",
+        "en": "Me too. Communication between neighbors is so important.",
+        "vi": "Tôi cũng vậy. Giao tiếp giữa hàng xóm rất quan trọng."
+      },
+      {
+        "speaker": "A",
+        "en": "I agree. By the way, do you know if the building has a noise curfew?",
+        "vi": "Tôi đồng ý. Nhân tiện, bạn có biết tòa nhà có giờ giới nghiêm về tiếng ồn không?"
+      },
+      {
+        "speaker": "B",
+        "en": "I think it's 10 PM on weekdays and midnight on weekends.",
+        "vi": "Tôi nghĩ là 10 giờ tối ngày thường và nửa đêm cuối tuần."
+      },
+      {
+        "speaker": "A",
+        "en": "Right. I'll check the building rules too, just to be sure.",
+        "vi": "Đúng. Tôi cũng sẽ kiểm tra nội quy tòa nhà, chắc cho chắc."
+      },
+      {
+        "speaker": "B",
+        "en": "Good idea. Have a good rest tonight, neighbor.",
+        "vi": "Ý hay. Chúc bạn ngủ ngon tối nay, hàng xóm."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you! Take care, Duc.",
+        "vi": "Cảm ơn! Bảo trọng nhé, Đức."
+      },
+      {
+        "speaker": "B",
+        "en": "You too, Binh. Nice talking to you.",
+        "vi": "Bạn cũng vậy, Bình. Vui khi được nói chuyện với bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "Likewise. Goodnight!",
+        "vi": "Tôi cũng vậy. Chúc ngủ ngon!"
+      },
+      {
+        "speaker": "B",
+        "en": "Goodnight!",
+        "vi": "Chúc ngủ ngon!"
+      }
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Bình",
+      "en": "Bình"
+    },
+    "speakerBName": {
+      "vi": "Hàng xóm",
+      "en": "Neighbor"
+    }
+  },
+  {
+    "id": 78,
+    "title": "Đi spa và massage",
+    "situation": "Linh đặt lịch và trải nghiệm dịch vụ massage tại một spa cao cấp.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good afternoon. I'd like to book a massage session today if possible.",
+        "vi": "Chào buổi chiều. Tôi muốn đặt lịch massage hôm nay nếu có thể."
+      },
+      {
+        "speaker": "B",
+        "en": "Good afternoon! We have availability at 3 PM and 5 PM. Which do you prefer?",
+        "vi": "Chào buổi chiều! Chúng tôi có lịch lúc 3 giờ và 5 giờ chiều. Bạn muốn giờ nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "3 PM works for me. What types of massage do you offer?",
+        "vi": "3 giờ chiều phù hợp với tôi. Bạn có những loại massage nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "We offer Swedish, deep tissue, hot stone, and traditional Vietnamese massage.",
+        "vi": "Chúng tôi có massage Thụy Điển, deep tissue, đá nóng và massage truyền thống Việt Nam."
+      },
+      {
+        "speaker": "A",
+        "en": "What's the difference between Swedish and deep tissue?",
+        "vi": "Sự khác nhau giữa Thụy Điển và deep tissue là gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "Swedish is gentle and relaxing. Deep tissue targets muscle knots and tension.",
+        "vi": "Thụy Điển nhẹ nhàng và thư giãn. Deep tissue nhắm vào các nút cơ và sự căng thẳng."
+      },
+      {
+        "speaker": "A",
+        "en": "I have a stiff neck and shoulders. Which would you recommend?",
+        "vi": "Tôi bị cứng cổ và vai. Bạn khuyến nghị loại nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "Deep tissue would be best for you, then. It will really target those tight areas.",
+        "vi": "Vậy deep tissue sẽ tốt nhất cho bạn. Nó sẽ thực sự nhắm vào những vùng căng đó."
+      },
+      {
+        "speaker": "A",
+        "en": "How long is the session?",
+        "vi": "Buổi massage kéo dài bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "We have 60, 90, and 120-minute options.",
+        "vi": "Chúng tôi có tùy chọn 60, 90 và 120 phút."
+      },
+      {
+        "speaker": "A",
+        "en": "How much is the 90-minute deep tissue?",
+        "vi": "Giá deep tissue 90 phút là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's 450,000 VND. That includes aromatherapy oil and a complimentary herbal tea.",
+        "vi": "450.000 đồng. Bao gồm dầu thơm và trà thảo mộc miễn phí."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds lovely. I'll take the 90-minute session.",
+        "vi": "Nghe tuyệt vời. Tôi lấy buổi 90 phút."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. Is there any area you'd like us to focus on or avoid?",
+        "vi": "Tốt. Có khu vực nào bạn muốn chúng tôi tập trung vào hoặc tránh không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Please focus on my neck, shoulders, and upper back.",
+        "vi": "Vui lòng tập trung vào cổ, vai và lưng trên của tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Noted. Any pressure preferences? Light, medium, or firm?",
+        "vi": "Ghi nhận. Bạn muốn lực ấn thế nào? Nhẹ, vừa hay mạnh?"
+      },
+      {
+        "speaker": "A",
+        "en": "Medium to firm, please. I want to really feel the tension release.",
+        "vi": "Vừa đến mạnh. Tôi muốn thực sự cảm nhận được sự giải phóng căng thẳng."
+      },
+      {
+        "speaker": "B",
+        "en": "Understood. Please arrive 10 minutes early to fill out a health form.",
+        "vi": "Hiểu rồi. Vui lòng đến trước 10 phút để điền mẫu sức khỏe."
+      },
+      {
+        "speaker": "A",
+        "en": "Is there anything I should avoid before the massage?",
+        "vi": "Có điều gì tôi nên tránh trước khi massage không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Don't eat a heavy meal within an hour before. And avoid alcohol.",
+        "vi": "Không ăn no trong vòng một giờ trước. Và tránh rượu."
+      },
+      {
+        "speaker": "A",
+        "en": "Good advice. Is there a changing room?",
+        "vi": "Lời khuyên hay. Có phòng thay đồ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, we provide robes, slippers, and lockers for your belongings.",
+        "vi": "Có, chúng tôi cung cấp áo choàng, dép và tủ khóa cho đồ đạc của bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "This is exactly what I need after a stressful week.",
+        "vi": "Đây chính xác là những gì tôi cần sau một tuần căng thẳng."
+      },
+      {
+        "speaker": "B",
+        "en": "You deserve it! We'll make sure you leave feeling completely refreshed.",
+        "vi": "Bạn xứng đáng! Chúng tôi sẽ đảm bảo bạn ra về cảm thấy hoàn toàn sảng khoái."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I add a foot massage after the session?",
+        "vi": "Tôi có thể thêm massage chân sau buổi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely! A 30-minute foot massage is an extra 150,000 VND.",
+        "vi": "Tất nhiên! Massage chân 30 phút thêm 150.000 đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll add that too. Total is 600,000 VND, correct?",
+        "vi": "Tôi sẽ thêm cái đó luôn. Tổng là 600.000 đồng, đúng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Correct! We look forward to seeing you at 3 PM.",
+        "vi": "Đúng! Chúng tôi mong được phục vụ bạn lúc 3 giờ chiều."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you! I'm already looking forward to it.",
+        "vi": "Cảm ơn! Tôi đã rất mong chờ rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "See you soon! Remember, no phones during the session — pure relaxation.",
+        "vi": "Hẹn gặp! Nhớ là không điện thoại trong buổi — thư giãn hoàn toàn."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Linh",
+      "en": "Linh"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên spa",
+      "en": "Spa Staff"
+    }
+  },
+  {
+    "id": 79,
+    "title": "Bàn chuyện mua nhà với gia đình",
+    "situation": "Vợ chồng Anh bàn bạc với bố mẹ về kế hoạch mua nhà đầu tiên.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Mom, Dad, we've been saving for a few years and we're thinking of buying a house.",
+        "vi": "Mẹ, bố, chúng con đã tiết kiệm vài năm và đang nghĩ đến việc mua nhà."
+      },
+      {
+        "speaker": "B",
+        "en": "That's wonderful news! Have you found a place you like?",
+        "vi": "Tin tuyệt vời! Các con đã tìm được chỗ nào ưng chưa?"
+      },
+      {
+        "speaker": "A",
+        "en": "We've been looking at a townhouse in the Long Bien district.",
+        "vi": "Chúng con đang xem một căn nhà phố ở quận Long Biên."
+      },
+      {
+        "speaker": "B",
+        "en": "Long Bien is a good area. Not too far from the center. How much is it?",
+        "vi": "Long Biên là khu vực tốt. Không quá xa trung tâm. Giá bao nhiêu?"
+      },
+      {
+        "speaker": "A",
+        "en": "The asking price is 3.5 billion VND. We have 1 billion saved.",
+        "vi": "Giá đặt ra là 3.5 tỷ đồng. Chúng con tiết kiệm được 1 tỷ."
+      },
+      {
+        "speaker": "B",
+        "en": "So you'd need a mortgage for 2.5 billion? That's a big commitment.",
+        "vi": "Vậy là các con cần vay thêm 2.5 tỷ? Đó là cam kết lớn."
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, we know. But we've calculated that monthly payments would be about 15 million VND.",
+        "vi": "Vâng, chúng con biết. Nhưng chúng con đã tính toán rằng trả góp hàng tháng khoảng 15 triệu đồng."
+      },
+      {
+        "speaker": "B",
+        "en": "Can both of you comfortably afford that with your current salaries?",
+        "vi": "Cả hai con có đủ khả năng chi trả thoải mái với mức lương hiện tại không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Combined we earn about 35 million a month. So 15 million is about 43% of income.",
+        "vi": "Cộng lại chúng con kiếm khoảng 35 triệu một tháng. Vậy 15 triệu là khoảng 43% thu nhập."
+      },
+      {
+        "speaker": "B",
+        "en": "That's manageable but you'll need to be careful with other expenses.",
+        "vi": "Có thể quản lý được nhưng các con cần cẩn thận với các chi phí khác."
+      },
+      {
+        "speaker": "A",
+        "en": "We've already cut back on eating out and travel. We're committed to this.",
+        "vi": "Chúng con đã cắt giảm ăn ngoài và du lịch rồi. Chúng con quyết tâm với điều này."
+      },
+      {
+        "speaker": "B",
+        "en": "Have you checked the legal status of the property? The land use rights?",
+        "vi": "Các con đã kiểm tra tình trạng pháp lý của tài sản chưa? Quyền sử dụng đất?"
+      },
+      {
+        "speaker": "A",
+        "en": "We hired a lawyer to review all documents. Everything looks clean.",
+        "vi": "Chúng con thuê luật sư xem xét tất cả giấy tờ. Mọi thứ có vẻ ổn."
+      },
+      {
+        "speaker": "B",
+        "en": "Very smart. What bank are you planning to borrow from?",
+        "vi": "Rất thông minh. Các con định vay từ ngân hàng nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "We're considering Vietcombank. They offer a 7.5% interest rate for the first 3 years.",
+        "vi": "Chúng con đang xem xét Vietcombank. Họ cung cấp lãi suất 7.5% trong 3 năm đầu."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a reasonable rate. Just make sure you understand what happens after the fixed period.",
+        "vi": "Đó là lãi suất hợp lý. Chỉ cần đảm bảo các con hiểu điều gì xảy ra sau thời gian cố định."
+      },
+      {
+        "speaker": "A",
+        "en": "We do. It switches to market rate after 3 years. We'll refinance then if needed.",
+        "vi": "Chúng con biết. Nó chuyển sang lãi suất thị trường sau 3 năm. Chúng con sẽ tái cấp vốn nếu cần."
+      },
+      {
+        "speaker": "B",
+        "en": "You've done your homework well. I'm impressed.",
+        "vi": "Các con đã chuẩn bị rất kỹ. Bố mẹ ấn tượng đó."
+      },
+      {
+        "speaker": "A",
+        "en": "We want to do this right. Could you come with us to see the property this Sunday?",
+        "vi": "Chúng con muốn làm đúng. Bố mẹ có thể đến cùng xem căn nhà Chủ Nhật này không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! We'd love to. We might notice things you haven't.",
+        "vi": "Tất nhiên! Bố mẹ rất muốn. Bố mẹ có thể nhận ra những điều các con chưa để ý."
+      },
+      {
+        "speaker": "A",
+        "en": "That's exactly why we want you there. Your experience is valuable.",
+        "vi": "Đó chính xác là lý do chúng con muốn bố mẹ có mặt. Kinh nghiệm của bố mẹ rất quý giá."
+      },
+      {
+        "speaker": "B",
+        "en": "Check the water pressure, the roof, and the neighbors while you're there.",
+        "vi": "Hãy kiểm tra áp lực nước, mái nhà và hàng xóm khi các con đến đó."
+      },
+      {
+        "speaker": "A",
+        "en": "Good reminders. We're scheduled to view it at 10 AM.",
+        "vi": "Nhắc nhở tốt. Chúng con đã hẹn xem lúc 10 giờ sáng."
+      },
+      {
+        "speaker": "B",
+        "en": "We'll be ready. This is a big step — we're so proud of you both.",
+        "vi": "Bố mẹ sẽ sẵn sàng. Đây là bước lớn — bố mẹ rất tự hào về các con."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you, Mom and Dad. Your support means everything to us.",
+        "vi": "Cảm ơn bố mẹ. Sự ủng hộ của bố mẹ có ý nghĩa rất lớn với chúng con."
+      },
+      {
+        "speaker": "B",
+        "en": "That's what family is for. Now let's celebrate with some tea!",
+        "vi": "Đó là điều gia đình dành cho nhau. Bây giờ mình ăn mừng với trà đi!"
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Vợ / Chồng",
+      "en": "Couple"
+    },
+    "speakerBName": {
+      "vi": "Bố / Mẹ",
+      "en": "Parent"
+    }
+  },
+  {
+    "id": 80,
+    "title": "Kết bạn trên mạng xã hội",
+    "situation": "Trang và một người lạ bắt đầu nói chuyện sau khi nhận được lời mời kết bạn trên Facebook.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi! I saw that you liked my post about learning English. Are you studying too?",
+        "vi": "Chào! Tôi thấy bạn thích bài đăng của tôi về học tiếng Anh. Bạn cũng đang học à?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes! I've been studying for two years. I'm trying to reach B2 level.",
+        "vi": "Có! Tôi đã học hai năm rồi. Tôi đang cố đạt trình độ B2."
+      },
+      {
+        "speaker": "A",
+        "en": "Me too! That's such a coincidence. Where are you from?",
+        "vi": "Tôi cũng vậy! Thật trùng hợp. Bạn từ đâu đến?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm from Da Nang. What about you?",
+        "vi": "Tôi từ Đà Nẵng. Còn bạn?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm from Hanoi. Are you studying at a language center or self-studying?",
+        "vi": "Tôi từ Hà Nội. Bạn học ở trung tâm ngoại ngữ hay tự học?"
+      },
+      {
+        "speaker": "B",
+        "en": "Mostly self-studying. I use apps, YouTube, and English podcasts.",
+        "vi": "Chủ yếu tự học. Tôi dùng ứng dụng, YouTube và podcast tiếng Anh."
+      },
+      {
+        "speaker": "A",
+        "en": "Which podcasts do you recommend?",
+        "vi": "Bạn khuyến nghị podcast nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "I like 'English Learning for Curious Minds' and BBC 6 Minute English.",
+        "vi": "Tôi thích 'English Learning for Curious Minds' và BBC 6 Minute English."
+      },
+      {
+        "speaker": "A",
+        "en": "I've heard of those! I mostly watch English series with subtitles.",
+        "vi": "Tôi nghe nói về chúng rồi! Tôi chủ yếu xem phim series tiếng Anh có phụ đề."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a great method too. Which shows do you watch?",
+        "vi": "Đó cũng là phương pháp tốt. Bạn xem phim gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "I love 'Friends' for American English and 'The Crown' for British English.",
+        "vi": "Tôi thích 'Friends' cho tiếng Anh Mỹ và 'The Crown' cho tiếng Anh Anh."
+      },
+      {
+        "speaker": "B",
+        "en": "I should try The Crown. I mostly know American English.",
+        "vi": "Tôi nên thử The Crown. Tôi chủ yếu biết tiếng Anh Mỹ."
+      },
+      {
+        "speaker": "A",
+        "en": "Do you have conversation partners online?",
+        "vi": "Bạn có đối tác trò chuyện trực tuyến không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Not yet. I've been looking for someone to practice with.",
+        "vi": "Chưa. Tôi đang tìm ai đó để luyện cùng."
+      },
+      {
+        "speaker": "A",
+        "en": "Me too! Would you like to be study partners? We could video call weekly.",
+        "vi": "Tôi cũng vậy! Bạn muốn trở thành đối tác học không? Chúng ta có thể gọi video mỗi tuần."
+      },
+      {
+        "speaker": "B",
+        "en": "That sounds perfect! I was just thinking the same thing.",
+        "vi": "Nghe hoàn hảo! Tôi vừa nghĩ đến điều đó."
+      },
+      {
+        "speaker": "A",
+        "en": "We could practice speaking and correct each other's mistakes.",
+        "vi": "Chúng ta có thể luyện nói và sửa lỗi cho nhau."
+      },
+      {
+        "speaker": "B",
+        "en": "Great idea. What time zone difference is there between Hanoi and Da Nang?",
+        "vi": "Ý tuyệt vời. Có múi giờ khác biệt nào giữa Hà Nội và Đà Nẵng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "None! We're both in Vietnam so the same time zone.",
+        "vi": "Không có! Chúng ta đều ở Việt Nam nên cùng múi giờ."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course, I forgot! How about every Sunday evening at 7 PM?",
+        "vi": "Tất nhiên, tôi quên mất! Sao không vào mỗi Chủ Nhật tối lúc 7 giờ?"
+      },
+      {
+        "speaker": "A",
+        "en": "That works for me. We can use Zoom or Google Meet.",
+        "vi": "Phù hợp với tôi. Chúng ta có thể dùng Zoom hoặc Google Meet."
+      },
+      {
+        "speaker": "B",
+        "en": "Google Meet is easier. Should we have a topic each week?",
+        "vi": "Google Meet dễ hơn. Chúng ta có nên có chủ đề mỗi tuần không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes! Like 'talk about your week' or 'discuss a current news story'.",
+        "vi": "Có! Như 'kể về tuần của bạn' hoặc 'thảo luận về một tin tức thời sự'."
+      },
+      {
+        "speaker": "B",
+        "en": "I like that. It keeps things natural instead of just drilling exercises.",
+        "vi": "Tôi thích vậy. Nó giữ mọi thứ tự nhiên thay vì chỉ làm bài tập."
+      },
+      {
+        "speaker": "A",
+        "en": "Exactly. Looking forward to our first session!",
+        "vi": "Chính xác. Rất mong đợi buổi đầu tiên của chúng ta!"
+      },
+      {
+        "speaker": "B",
+        "en": "Me too! This is going to be so helpful.",
+        "vi": "Tôi cũng vậy! Điều này sẽ rất hữu ích."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll send you a Google Meet link this Sunday. See you then!",
+        "vi": "Tôi sẽ gửi cho bạn link Google Meet Chủ Nhật này. Hẹn gặp!"
+      },
+      {
+        "speaker": "B",
+        "en": "See you Sunday! I'm excited to practice with you.",
+        "vi": "Hẹn gặp Chủ Nhật! Tôi rất hào hứng được luyện tập cùng bạn."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Trang",
+      "en": "Trang"
+    },
+    "speakerBName": {
+      "vi": "Người lạ",
+      "en": "Stranger"
+    }
+  }
+]

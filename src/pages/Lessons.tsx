@@ -389,7 +389,10 @@ function LessonView({ lesson, isA, onBack }: { lesson: Lesson; isA: boolean; onB
                 {/* Nhãn speaker + nút phát */}
                 <div className="flex items-center justify-between gap-2 mb-1.5">
                   <p className="text-[10px] font-medium text-zinc-500">
-                    {t.speaker === 'A' ? (isA ? 'Người A' : 'Person A') : (isA ? 'Người B' : 'Person B')}
+                    {t.speaker === 'A'
+                      ? (isA ? (lesson.speakerAName?.vi ?? 'Người A') : (lesson.speakerAName?.en ?? 'Person A'))
+                      : (isA ? (lesson.speakerBName?.vi ?? 'Người B') : (lesson.speakerBName?.en ?? 'Person B'))
+                    }
                   </p>
                   {/* Nút phát từng turn */}
                   <button
