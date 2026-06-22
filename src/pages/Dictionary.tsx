@@ -61,11 +61,14 @@ export default function Dictionary() {
   const totalPages = Math.max(1, Math.ceil(allMatches.length / PAGE_SIZE))
   const results    = allMatches.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
-  // chỉ xử lý nếu vuốt ngang rõ ràng hơn dọc (tránh chặn scroll)
-  function handleSwipe(deltaX: number, deltaY: number) {
+  // chuyển trang chỉ khi vuốt bắt đầu từ cạnh màn hình (40px đầu/cuối)
+  function handleSwipe(startX: number, deltaX: number, deltaY: number) {
     if (Math.abs(deltaX) <= Math.abs(deltaY)) return
-    if (deltaX < -50 && page < totalPages - 1) setPage(p => p + 1)
-    if (deltaX > 50  && page > 0)              setPage(p => p - 1)
+    const w = window.innerWidth
+    const fromLeft  = startX < 40
+    const fromRight = startX > w - 40
+    if (deltaX > 50  && fromLeft  && page > 0)              setPage(p => p - 1)
+    if (deltaX < -50 && fromRight && page < totalPages - 1) setPage(p => p + 1)
   }
 
   if (!user) return null
@@ -159,6 +162,7 @@ export default function Dictionary() {
                     className="space-y-2 animate-fade-up"
                     onTouchStart={e => { touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY } }}
                     onTouchEnd={e => handleSwipe(
+                      touchStart.current.x,
                       e.changedTouches[0].clientX - touchStart.current.x,
                       e.changedTouches[0].clientY - touchStart.current.y,
                     )}
