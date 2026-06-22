@@ -30,8 +30,8 @@ function arg(name, def) {
 
 const FROM    = parseInt(arg('--from', '101'))
 const TO      = parseInt(arg('--to', '1000'))
-const BATCH   = parseInt(arg('--batch', '3'))
-const MODEL   = arg('--model', 'claude-sonnet-4-6')
+const BATCH   = parseInt(arg('--batch', '2'))
+const MODEL   = arg('--model', 'claude-opus-4-8')
 const TURNS   = 50
 
 // ── Đọc bài hiện có ──────────────────────────────────────────────────────────
@@ -196,27 +196,64 @@ async function generateLesson(id) {
     ? `\n- Ưu tiên dùng các từ/cụm này (ít nhất 8-10 từ): ${vocabSeed.slice(0,8).join(', ')}`
     : ''
 
-  const prompt = `Tạo bài học hội thoại song ngữ Anh-Việt cho ứng dụng luyện giao tiếp.
+  const prompt = `Bạn là chuyên gia biên soạn tài liệu học tiếng Anh giao tiếp cho người Việt. Hãy viết một bài hội thoại song ngữ Anh-Việt CHẤT LƯỢNG CAO cho ứng dụng luyện nói.
 
-CHỦ ĐỀ: "${meta.title}"
-TÌNH HUỐNG CỤ THỂ: ${meta.situation}
-NGƯỜI NÓI A: ${meta.aName} (${meta.aG === 'female' ? 'nữ' : 'nam'})
-NGƯỜI NÓI B: ${meta.bName} (${meta.bG === 'female' ? 'nữ' : 'nam'})
-SỐ LƯỢT: ${TURNS} lượt (A mở đầu, xen kẽ A-B)
+═══════════════════════════════════════════════
+THÔNG TIN BÀI HỌC
+═══════════════════════════════════════════════
+Chủ đề    : "${meta.title}"
+Tình huống: ${meta.situation}
+Nhân vật A: ${meta.aName} (${meta.aG === 'female' ? 'nữ' : 'nam'}) — người mở đầu hội thoại
+Nhân vật B: ${meta.bName} (${meta.bG === 'female' ? 'nữ' : 'nam'})
+Số lượt   : ${TURNS} lượt (xen kẽ A-B, bắt đầu bằng A)
 
-CẤU TRÚC HỘI THOẠI PHẢI THEO: ${structure}
+CẤU TRÚC HỘI THOẠI: ${structure}
+${vocabSeed ? `\nTỪ VỰNG CỐT LÕI cần xuất hiện tự nhiên trong hội thoại (ít nhất 10 từ): ${vocabSeed.join(', ')}` : ''}
 
-YÊU CẦU CHẤT LƯỢNG VÀ ĐA DẠNG:
-- KHÔNG dùng câu mở đầu chung chung như "Hello, how can I help you?"
-- KHÔNG lặp cấu trúc câu (mỗi câu dùng cách diễn đạt khác nhau)
-- Câu hỏi đa dạng: dùng xen kẽ Yes/No questions, Wh-questions, Tag questions, Indirect questions
-- Bao gồm: ngôn ngữ cảm xúc, phản hồi tự nhiên ("Oh I see", "That makes sense", "Really?")
-- Dùng từ viết tắt, colloquial: "I'll", "That's", "I've", "we'd", "don't"
-- Câu đôi khi ngắn (3-5 từ), đôi khi dài (15-20 từ) — thay đổi nhịp điệu
-- Hội thoại phải mang đặc trưng CHỦ ĐỀ rõ ràng — ai đọc cũng nhận ra ngay chủ đề
-- Phải thực tế cho người học tiếng Anh ở Việt Nam, gắn với văn hóa Việt${vocabHint}
+═══════════════════════════════════════════════
+TIÊU CHUẨN CHẤT LƯỢNG CAO (BẮT BUỘC)
+═══════════════════════════════════════════════
 
-Trả về JSON thuần (không markdown, không text ngoài JSON):
+1. TÍNH TỰ NHIÊN — như người thật nói, không phải sách giáo khoa:
+   • Dùng contractions: I'm, you've, we'll, isn't it, don't, that's, I'd
+   • Phản hồi cảm xúc: "Oh really?", "Wow, that's great!", "I see.", "That makes sense.", "Fair enough."
+   • Câu ngắn tự nhiên: "Sure.", "Of course!", "Got it.", "No problem.", "Sounds good."
+   • Xen kẽ câu ngắn (3-6 từ) và dài (15-20 từ) — tránh đều đều một nhịp
+
+2. NGÔN NGỮ PHONG PHÚ — không lặp lại cấu trúc:
+   • Câu hỏi: đa dạng Yes/No, Wh-, Tag questions ("isn't it?", "right?"), Indirect ("Could you tell me...?")
+   • Lối diễn đạt lịch sự, thân mật, hoặc chuyên nghiệp tùy ngữ cảnh
+   • Thành ngữ/idiom phù hợp: "at the end of the day", "in a nutshell", "as soon as possible"
+   • Cách hỏi thêm thông tin tự nhiên: "By the way...", "Out of curiosity...", "Just to clarify..."
+
+3. TÍNH THỰC TẾ VỀ VĂN HÓA VIỆT NAM:
+   • Địa danh, thương hiệu, thói quen tiêu dùng thực tế ở Việt Nam
+   • Giá cả, điều kiện sống, môi trường làm việc phù hợp thực tế Việt Nam 2024-2025
+   • Tránh ví dụ hoàn toàn Tây phương không liên quan đến người Việt
+
+4. TIẾN TRIỂN CÓ CHIỀU SÂU — 50 lượt phải khai thác đầy đủ chủ đề:
+   • 10 lượt đầu: mở đầu, giới thiệu vấn đề/nhu cầu
+   • 15 lượt giữa: đào sâu chi tiết, hỏi thêm thông tin, thảo luận phương án
+   • 15 lượt tiếp: xử lý tình huống cụ thể, so sánh/đánh giá, quyết định
+   • 10 lượt cuối: xác nhận kết quả, cảm ơn, kế hoạch tiếp theo, tạm biệt tự nhiên
+   • KHÔNG kết thúc đột ngột ở lượt 30-35; phải đủ 50 lượt
+
+5. BẢN DỊCH TIẾNG VIỆT — không dịch máy, phải chính xác và tự nhiên:
+   • Giữ nghĩa tương đương, không dịch từng từ
+   • Dùng cách nói tiếng Việt đời thường (không văn chương)
+   • Giữ cảm xúc và sắc thái của câu gốc tiếng Anh
+
+6. KHÔNG ĐƯỢC LÀM:
+   • KHÔNG mở đầu bằng "Hello!" hoặc "Hi, how can I help you today?"
+   • KHÔNG lặp cùng cấu trúc câu quá 2 lần liên tiếp
+   • KHÔNG dùng tiếng Anh quá học thuật/cứng nhắc
+   • KHÔNG bỏ qua chủ đề — mọi lượt đều phải liên quan đến "${meta.title}"
+
+═══════════════════════════════════════════════
+ĐỊNH DẠNG OUTPUT
+═══════════════════════════════════════════════
+Trả về JSON THUẦN (không có markdown, không có text ngoài JSON, không có \`\`\`):
+
 {
   "id": ${id},
   "title": "${meta.title}",
@@ -230,11 +267,13 @@ Trả về JSON thuần (không markdown, không text ngoài JSON):
     {"speaker": "A", "en": "...", "vi": "..."},
     {"speaker": "B", "en": "...", "vi": "..."}
   ]
-}`
+}
+
+Hội thoại phải có đúng ${TURNS} lượt (${TURNS / 2} của A + ${TURNS / 2} của B).`
 
   const response = await client.messages.create({
     model: MODEL,
-    max_tokens: 8000,
+    max_tokens: 16000,
     messages: [{ role: 'user', content: prompt }],
   })
 
@@ -295,9 +334,9 @@ async function main() {
     // Lưu sau mỗi batch (có thể Ctrl+C và chạy lại)
     saveLessons(lessonMap)
 
-    // Nghỉ giữa các batch (tránh rate limit)
+    // Nghỉ giữa các batch (Opus 4.8 chậm hơn, cần nghỉ lâu hơn tránh rate limit)
     if (i + BATCH < toGen.length) {
-      await new Promise(r => setTimeout(r, 1000))
+      await new Promise(r => setTimeout(r, 2000))
     }
   }
 
