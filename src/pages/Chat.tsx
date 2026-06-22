@@ -3,6 +3,7 @@ import { Send, Plus, ChevronDown, Sparkles } from 'lucide-react'
 import Layout from '../components/Layout'
 import SpeakButton from '../components/SpeakButton'
 import { saveChatSession, getChatSessions, getUsage, incrementUsage, getDirection } from '../lib/storage'
+import { stopSpeaking } from '../lib/tts'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
@@ -189,6 +190,9 @@ export default function Chat() {
   const [lastIdx, setLastIdx] = useState(-1)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Dừng audio khi thoát trang chat
+  useEffect(() => () => stopSpeaking(), [])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
