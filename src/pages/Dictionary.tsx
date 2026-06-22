@@ -7,6 +7,8 @@ import VocabMilestone from '../components/VocabMilestone'
 import WordOfTheDay from '../components/WordOfTheDay'
 import KaraokeText from '../components/KaraokeText'
 import Flashcard from '../components/Flashcard'
+import WordIllustration from '../components/WordIllustration'
+import { EXTRA_EXAMPLES } from '../data/extra-examples'
 import type { DictEntry } from '../types'
 import { loadDictionary } from '../data/dictionary/loader'
 import { getDirection } from '../lib/storage'
@@ -185,6 +187,8 @@ export default function Dictionary() {
                         <p className="text-sm text-zinc-200 font-medium mb-1">{e.vi}</p>
                         {e.ipa_vi && <p className="text-xs text-zinc-500 font-mono mb-2">{e.ipa_vi}</p>}
 
+                        <WordIllustration word={e.word} />
+
                         {e.ex_en && (
                           <div className="mt-2 rounded-lg border border-zinc-800 divide-y divide-zinc-800/60 overflow-hidden">
                             <KaraokeText text={e.ex_en} lang="en-US"
@@ -195,6 +199,25 @@ export default function Dictionary() {
                                 textClass="text-xs text-zinc-400 leading-relaxed"
                                 buttonClass="w-full px-3 py-2 hover:bg-sky-500/5 active:bg-sky-500/10 text-left" />
                             )}
+                          </div>
+                        )}
+
+                        {/* Ví dụ bổ sung (2 câu thêm, chỉ có với từ phổ biến) */}
+                        {EXTRA_EXAMPLES[e.word.toLowerCase()] && (
+                          <div className="mt-2 space-y-1.5">
+                            <p className="text-[10px] text-zinc-600 uppercase tracking-wide px-0.5">
+                              {isA ? 'Ví dụ thêm' : 'More examples'}
+                            </p>
+                            {EXTRA_EXAMPLES[e.word.toLowerCase()].map((ex, idx) => (
+                              <div key={idx} className="rounded-lg border border-zinc-800/60 divide-y divide-zinc-800/40 overflow-hidden">
+                                <KaraokeText text={ex.en} lang="en-US"
+                                  textClass="text-xs text-emerald-300/70 italic leading-relaxed"
+                                  buttonClass="w-full px-3 py-1.5 hover:bg-emerald-500/5 active:bg-emerald-500/10 text-left" />
+                                <KaraokeText text={ex.vi} lang="vi-VN"
+                                  textClass="text-xs text-zinc-500 leading-relaxed"
+                                  buttonClass="w-full px-3 py-1.5 hover:bg-sky-500/5 active:bg-sky-500/10 text-left" />
+                              </div>
+                            ))}
                           </div>
                         )}
                       </div>
