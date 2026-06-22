@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, LogOut, BookOpen } from 'lucide-react'
 import { logout } from '../lib/auth'
@@ -10,9 +11,10 @@ interface Props {
   title: string
   subtitle?: string
   back?: boolean
+  extra?: ReactNode
 }
 
-export default function Layout({ title, subtitle, back = true }: Props) {
+export default function Layout({ title, subtitle, back = true, extra }: Props) {
   const nav = useNavigate()
   const { user } = useAuth()
   const usage = user ? getUsage(user.id) : null
@@ -70,6 +72,9 @@ export default function Layout({ title, subtitle, back = true }: Props) {
             </div>
           </>
         )}
+
+        {/* Nút tùy chỉnh thêm vào header (vd: VoiceToggle) */}
+        {extra}
 
         {/* User avatar + logout */}
         {user && (

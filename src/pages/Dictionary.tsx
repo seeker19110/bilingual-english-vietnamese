@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { Search, X, BookText, Layers, GraduationCap } from 'lucide-react'
 import Layout from '../components/Layout'
+import VoiceToggle from '../components/VoiceToggle'
 import PronounceButton from '../components/PronounceButton'
 import VocabMilestone from '../components/VocabMilestone'
 import WordOfTheDay from '../components/WordOfTheDay'
@@ -91,6 +92,7 @@ export default function Dictionary() {
       <Layout
         title={isA ? 'Từ điển' : 'Dictionary'}
         subtitle={`${entries.length.toLocaleString('vi-VN')} ${isA ? 'từ thông dụng' : 'common words'}`}
+        extra={<VoiceToggle />}
       />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
