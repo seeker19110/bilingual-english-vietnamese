@@ -39,7 +39,7 @@ export const t = {
     dictTitleA: 'Từ điển',
     dictDescA: 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
     lessonsTitleA: 'Bài học',
-    lessonsDescA: 'Các bài hội thoại mẫu xoay quanh "tôi - I", mỗi bài 40 đoạn hội thoại song ngữ.',
+    lessonsDescA: 'Các bài hội thoại mẫu thông dụng.',
     tagPopular: 'Phổ biến',
     tagKeyFeature: 'Tính năng chính',
     tagUnlimited: 'Không giới hạn',
@@ -113,13 +113,14 @@ export const t = {
 
     // Phrases
     phrasesPageTitle: 'Các câu thông dụng',
-    phrasesPageSub: '300+ chủ thể, mỗi chủ thể có nhiều câu thực tế',
-    phrasesSearch: 'Tìm chủ thể hoặc câu…',
+    phrasesPageSub: '1000 chủ thể, mỗi chủ thể 100 câu thực tế',
+    phrasesSearch: 'Tìm chủ thể…',
     phrasesAll: 'Tất cả',
     phrasesSubjects: 'chủ thể',
     phrasesSentences: 'câu',
     phrasesBack: 'Quay lại',
     phrasesNoResult: 'Không tìm thấy kết quả phù hợp.',
+    phrasesLoadMore: 'Tải thêm',
 
     // Parts of speech
     posPageTitle: 'Từ loại',
@@ -239,13 +240,14 @@ export const t = {
 
     // Phrases
     phrasesPageTitle: 'Common Sentences',
-    phrasesPageSub: '300+ subjects, each with many real-life sentences',
-    phrasesSearch: 'Search subjects or sentences…',
+    phrasesPageSub: '1000 subjects, 100 real-life sentences each',
+    phrasesSearch: 'Search subjects…',
     phrasesAll: 'All',
     phrasesSubjects: 'subjects',
     phrasesSentences: 'sentences',
     phrasesBack: 'Back',
     phrasesNoResult: 'No results found.',
+    phrasesLoadMore: 'Load more',
 
     // Parts of speech
     posPageTitle: 'Parts of Speech',

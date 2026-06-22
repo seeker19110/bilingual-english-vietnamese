@@ -35,7 +35,9 @@ dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 const BATCH_SIZE = 5 // Số tác vụ (từ+giọng) xử lý song song cùng lúc — tăng lên nếu mạng ổn định
 const DELAY_MS = 300 // Nghỉ giữa các batch để tránh bị Google TTS chặn vì gọi quá nhanh
 
-const DEFAULT_WORDS_FILE = path.join(PROJECT_ROOT, 'src/data/dictionary.json')
+// Từ điển đã được tách thành nhiều chunk (scripts/split-dictionary.mjs). Mặc định
+// đọc từ thư mục chunk; vẫn cho phép trỏ tới 1 file khác qua biến WORDS_FILE.
+const DEFAULT_WORDS_DIR = path.join(PROJECT_ROOT, 'src/data/dictionary')
 const ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
 
 // 1 tác vụ = tạo audio cho 1 (từ, giọng) cụ thể.
@@ -45,15 +47,24 @@ interface Task {
 }
 
 // ── Đọc danh sách từ cần seed ────────────────────────────────────────────────
-// Hỗ trợ 2 dạng file JSON:
-//   1. Mảng chuỗi:        ["apple", "banana", ...]   (ví dụ scripts/seed-errors.json)
-//   2. Mảng object có .word: [{ "word": "apple", ... }, ...]  (dictionary.json đang dùng trong app)
-function loadWords(filePath: string): string[] {
-  const raw = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as unknown
-  if (!Array.isArray(raw)) {
-    throw new Error(`File ${filePath} phải là 1 mảng JSON`)
-  }
+// Hỗ trợ 2 dạng phần tử JSON:
+//   1. Chuỗi:            "apple"               (ví dụ scripts/seed-errors.json)
+//   2. Object có .word:  { "word": "apple", ... }  (các chunk từ điển)
+function parseWords(raw: unknown, label: string): string[] {
+  if (!Array.isArray(raw)) throw new Error(`${label} phải là 1 mảng JSON`)
   return raw.map((item) => (typeof item === 'string' ? item : (item as { word: string }).word))
+}
+
+// Đọc từ 1 file cụ thể (WORDS_FILE) hoặc từ toàn bộ chunk trong thư mục từ điển (mặc định).
+function loadWords(): string[] {
+  if (process.env.WORDS_FILE) {
+    const filePath = path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
+    return parseWords(JSON.parse(fs.readFileSync(filePath, 'utf-8')), filePath)
+  }
+  const files = fs.readdirSync(DEFAULT_WORDS_DIR).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+  return files.flatMap((f) =>
+    parseWords(JSON.parse(fs.readFileSync(path.join(DEFAULT_WORDS_DIR, f), 'utf-8')), f),
+  )
 }
 
 // ── Xử lý 1 tác vụ (1 từ + 1 giọng): TTS → Upload Storage → Lưu DB ─────────
@@ -103,11 +114,9 @@ async function main(): Promise<void> {
 
   console.log('🚀 Bắt đầu seed phát âm...\n')
 
-  const wordsFile = process.env.WORDS_FILE
-    ? path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
-    : DEFAULT_WORDS_FILE
-  const allWords = loadWords(wordsFile)
-  console.log(`📋 Nguồn từ: ${path.relative(PROJECT_ROOT, wordsFile)}`)
+  const allWords = loadWords()
+  const source = process.env.WORDS_FILE ?? 'src/data/dictionary/chunk-*.json'
+  console.log(`📋 Nguồn từ: ${source}`)
   console.log(`📋 Tổng số từ: ${allWords.length} × ${VOICE_IDS.length} giọng (${VOICE_IDS.join(', ')})`)
 
   // Lấy danh sách (từ, giọng) đã có trong DB để bỏ qua — script resume được nếu bị dừng giữa chừng.

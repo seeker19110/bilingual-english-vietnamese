@@ -3,11 +3,14 @@ import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send } from 'lucide-r
 import Layout from '../components/Layout'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
+import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { callClaude, parseJson } from '../lib/ai'
 import { speakingSystemPrompt, situationLabel } from '../prompts'
 import { startListening, isSTTSupported } from '../lib/stt'
+import { startRecording, isRecordingSupported, type Recorder } from '../lib/sttServer'
 import { speakBilingual, stopSpeaking, isTTSSupported } from '../lib/tts'
+import { haptics } from '../lib/haptics'
 import { SITUATIONS, LEVELS, LIMITS, type Level, type SpeakingSession, type Message, type Direction } from '../types'
 
 // JSON trả về từ AI — dùng chung cho cả 2 chiều
@@ -25,7 +28,7 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
   const isA = dir === 'A'
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
+    <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 overflow-y-auto">
 
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-400 flex items-center justify-center mb-5 shadow-xl shadow-sky-500/25 animate-scale-in">
         <Mic className="w-8 h-8 text-white" />
@@ -40,7 +43,7 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
         }
       </p>
 
-      {!isSTTSupported() && (
+      {!(isRecordingSupported() || isSTTSupported()) && (
         <div className="mt-3 mb-2 text-amber-400 text-xs bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-center max-w-sm animate-fade-in delay-150">
           {isA
             ? <>Trình duyệt không hỗ trợ giọng nói. Dùng <strong>Chrome</strong> hoặc <strong>Edge</strong>. Bạn vẫn có thể <strong>gõ tay</strong>.</>
@@ -149,6 +152,7 @@ function TypingDots() {
 // ── Main Speaking page ────────────────────────────────────────────────────────
 export default function Speaking() {
   const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
+  const toast = useToast()
   useCloudSync(user.id)          // kéo lịch sử + lượt dùng từ Supabase khi mở trang
   const dir: Direction = getDirection()
   const isA = dir === 'A'
@@ -166,16 +170,20 @@ export default function Speaking() {
   const [limitHit, setLimitHit] = useState(false)
   const [muted, setMuted] = useState(false)
   const [typedInput, setTypedInput] = useState('')
+  const [processing, setProcessing] = useState(false) // đang gửi audio lên server nhận diện
   const [lastIdx, setLastIdx] = useState(-1)
-  const stopRecRef = useRef<(() => void) | null>(null)
+  const stopRecRef = useRef<(() => void) | null>(null)   // dừng Web Speech (fallback)
+  const recorderRef = useRef<Recorder | null>(null)       // recorder server STT (chính)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const sttSupported = isSTTSupported()
+  // Ưu tiên ghi âm gửi server (chính xác, đa trình duyệt); Web Speech chỉ là dự phòng.
+  const canRecord = isRecordingSupported()
+  const sttSupported = canRecord || isSTTSupported()
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [session?.messages, loading])
 
-  useEffect(() => () => { stopSpeaking(); stopRecRef.current?.() }, [])
+  useEffect(() => () => { stopSpeaking(); stopRecRef.current?.(); recorderRef.current?.cancel() }, [])
 
   async function startSession(situation: string, level: Level) {
     const usage = getUsage(user.id)
@@ -205,24 +213,71 @@ export default function Speaking() {
         await speakBilingual(ai.speech, '', isA ? 'en-US' : 'vi-VN', isA ? 'vi-VN' : 'en-US')
         setSpeaking(false)
       }
-    } catch (e) { setError(e instanceof Error ? e.message : 'Error') }
+    } catch (e) { const m = e instanceof Error ? e.message : 'Error'; setError(m); toast.error(m) }
     setLoading(false)
   }
 
-  function toggleRecord() {
+  async function toggleRecord() {
+    haptics[recording ? 'stop' : 'start']()  // rung nhẹ báo bắt đầu/dừng ghi âm
+    // ── Đang ghi → dừng lại ──────────────────────────────────────────────────
     if (recording) {
+      // STT server: dừng recorder, gửi audio lên nhận diện
+      if (recorderRef.current) {
+        const r = recorderRef.current
+        recorderRef.current = null
+        setRecording(false)
+        setProcessing(true)
+        try {
+          const text = await r.stop()
+          setProcessing(false)
+          incrementUsage(user.id, 'sttCount')  // đã gọi API STT thành công → tính 1 lượt
+          if (text.trim()) await sendUserSpeech(text.trim())
+          else setError(isA ? 'Không nghe rõ, thử nói lại nhé.' : "Didn't catch that, try again.")
+        } catch (e) {
+          setProcessing(false)
+          { const m = e instanceof Error ? e.message : (isA ? 'Lỗi nhận diện giọng nói' : 'STT error'); setError(m); toast.error(m) }
+        }
+        return
+      }
+      // Web Speech (fallback): dừng, kết quả trả qua callback onEnd
       stopRecRef.current?.()
       stopRecRef.current = null
       setRecording(false)
       return
     }
+
+    // ── Chưa ghi → bắt đầu ghi ───────────────────────────────────────────────
     if (!session) return
+    // Chặn nếu hết lượt nhận diện giọng nói (STT) trong ngày — đếm riêng với hội thoại.
+    if (getUsage(user.id).sttCount >= LIMITS[user.plan].stt) {
+      setLimitHit(true)
+      toast.error(isA ? 'Bạn đã hết lượt nhận diện giọng nói hôm nay. Có thể gõ tay để tiếp tục.'
+                      : "You've used all speech-recognition turns today. You can type instead.")
+      return
+    }
     setTranscript('')
+    setError('')
+
+    if (canRecord) {
+      // Phương án chính: ghi âm rồi gửi server
+      try {
+        const r = await startRecording(sttLang)
+        recorderRef.current = r
+        setRecording(true)
+      } catch {
+        setError(isA
+          ? 'Không truy cập được micro. Hãy cho phép quyền micro hoặc gõ tay.'
+          : 'Cannot access microphone. Allow mic permission or type instead.')
+      }
+      return
+    }
+
+    // Fallback: Web Speech API (Chrome/Edge)
     setRecording(true)
     const stop = startListening(
       sttLang,
       r => setTranscript(r.transcript),
-      async (last) => { setRecording(false); if (last.trim()) await sendUserSpeech(last.trim()) },
+      async (last) => { setRecording(false); incrementUsage(user.id, 'sttCount'); if (last.trim()) await sendUserSpeech(last.trim()) },
       err => { setError(err); setRecording(false) },
     )
     stopRecRef.current = stop
@@ -267,7 +322,7 @@ export default function Speaking() {
         )
         setSpeaking(false)
       }
-    } catch (e) { setError(e instanceof Error ? e.message : 'Error') }
+    } catch (e) { const m = e instanceof Error ? e.message : 'Error'; setError(m); toast.error(m) }
     setLoading(false)
   }
 
@@ -279,7 +334,7 @@ export default function Speaking() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col">
+    <div className="h-[100dvh] bg-zinc-950 flex flex-col">
       <Layout
         title={isA ? 'Luyện nói song ngữ' : 'Bilingual Speaking'}
         subtitle={session
@@ -294,7 +349,7 @@ export default function Speaking() {
         <SetupScreen onStart={startSession} dir={dir} />
       ) : (
         <>
-          <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
+          <div className="flex-1 min-h-0 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
             {session.messages.map((m, i) => (
               <SpeakBubble key={m.id} msg={m} isNew={i >= lastIdx}
                 onPlay={m.role === 'assistant' ? () => playMsg(m) : undefined} />
@@ -333,7 +388,7 @@ export default function Speaking() {
                       <Plus className="w-4 h-4" />
                     </button>
 
-                    <button onClick={toggleRecord} disabled={loading || limitHit}
+                    <button onClick={toggleRecord} disabled={loading || limitHit || processing}
                       className={`relative w-20 h-20 rounded-full flex items-center justify-center transition shadow-xl disabled:opacity-40 active:scale-95 ${
                         recording ? 'bg-red-500 shadow-red-500/40' : 'bg-gradient-to-br from-sky-500 to-cyan-400 shadow-sky-500/30'
                       }`}>
@@ -357,7 +412,9 @@ export default function Speaking() {
 
                   <p className="text-center text-xs text-zinc-600">
                     {recording
-                      ? (isA ? '🔴 Đang nghe... nhấn lại để dừng' : '🔴 Listening… tap to stop')
+                      ? (isA ? '🔴 Đang ghi... nhấn lại để dừng' : '🔴 Recording… tap to stop')
+                      : processing
+                      ? (isA ? '⏳ Đang nhận diện giọng nói...' : '⏳ Transcribing...')
                       : speaking
                       ? (isA ? '🔊 AI đang đọc...' : '🔊 AI speaking...')
                       : (isA ? 'Nhấn mic để nói tiếng Anh' : 'Tap mic to speak Vietnamese')

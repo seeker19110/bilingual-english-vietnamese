@@ -16,16 +16,20 @@ Làm theo 3 bước. Tổng thời gian ~5 phút.
    dán vào ô query.
 4. Bấm **Run** (góc dưới phải). Thấy "Success" là xong.
 
-> File này tạo 5 bảng (`profiles`, `chat_sessions`, `writing_submissions`,
-> `speaking_sessions`, `daily_usage`) và bật **Row Level Security**: mỗi người
-> chỉ đọc/ghi được dữ liệu của chính mình. Chạy lại nhiều lần cũng không sao.
+> File này tạo 6 bảng (`profiles`, `chat_sessions`, `writing_submissions`,
+> `speaking_sessions`, `daily_usage`, `tts_cache`) và bật **Row Level Security**: mỗi
+> người chỉ đọc/ghi được dữ liệu của chính mình (riêng `tts_cache` cho đọc công khai —
+> đây là audio dùng chung, đã mã hóa AES-256-GCM, xem `.env.example`). Chạy lại nhiều
+> lần cũng không sao.
 
 ---
 
-## Bước 2 — Đặt biến môi trường trên Vercel
+## Bước 2 — Đặt biến môi trường
 
-Vào **Vercel → Project → Settings → Environment Variables**, thêm các biến sau
-(lấy giá trị ở **Supabase → Project Settings → API**):
+Thêm các biến sau vào môi trường chạy app (lấy giá trị ở **Supabase → Project
+Settings → API**) — trên VPS là file `.env` cạnh `server.ts` (xem
+`docs/deploy-vps-ubuntu.md`), lúc chạy `npm run dev` ở máy local là file `.env`
+ở thư mục gốc dự án:
 
 | Biến | Dùng ở đâu | Lấy ở đâu |
 |---|---|---|
@@ -35,10 +39,13 @@ Vào **Vercel → Project → Settings → Environment Variables**, thêm các b
 
 > ⚠️ Hai biến `VITE_*` **bắt buộc có tiền tố `VITE_`** thì frontend mới đọc được.
 > Nếu thiếu, đăng nhập sẽ **luôn báo sai** dù mật khẩu đúng (đây là lỗi "không đăng
-> nhập được" hay gặp). Sau khi thêm biến, nhớ **Redeploy** lại để có hiệu lực.
+> nhập được" hay gặp). Sau khi thêm biến, nhớ khởi động lại app để có hiệu lực
+> (trên VPS: `pm2 reload ecosystem.config.cjs`; lúc dev: tắt/chạy lại `npm run dev`).
 
 (Tùy chọn — chỉ cần nếu dùng cache phát âm từ điển: `SUPABASE_URL`,
-`SUPABASE_SERVICE_ROLE_KEY`, `GOOGLE_TTS_API_KEY` — xem `PRONUNCIATION_CACHE_SETUP.md`.)
+`SUPABASE_SERVICE_ROLE_KEY`, `GOOGLE_TTS_API_KEY` — xem `PRONUNCIATION_CACHE_SETUP.md`.
+Cache câu/hội thoại (`tts_cache`) dùng chung các biến này + thêm
+`TTS_ENCRYPTION_MASTER_KEY` để mã hóa audio — xem `.env.example`.)
 
 ---
 

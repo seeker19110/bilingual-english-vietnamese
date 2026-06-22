@@ -1,0 +1,1672 @@
+[
+  {
+    "id": 41,
+    "title": "Nấu ăn cùng bạn",
+    "situation": "Hai bạn Chi và Phong cùng nấu một bữa tối đơn giản tại nhà.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "What should we cook for dinner tonight?",
+        "vi": "Tối nay chúng ta nên nấu gì để ăn?"
+      },
+      {
+        "speaker": "B",
+        "en": "How about fried rice? It's quick and easy.",
+        "vi": "Cơm rang thì sao? Vừa nhanh vừa dễ."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds good. Do we have enough rice?",
+        "vi": "Nghe được đó. Chúng ta có đủ gạo không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, there's leftover rice in the fridge.",
+        "vi": "Có, còn cơm thừa trong tủ lạnh."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. What other ingredients do we need?",
+        "vi": "Tuyệt vời. Chúng ta cần nguyên liệu gì khác?"
+      },
+      {
+        "speaker": "B",
+        "en": "We need eggs, some vegetables, and a bit of garlic.",
+        "vi": "Chúng ta cần trứng, một ít rau, và một chút tỏi."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll chop the vegetables. Can you crack the eggs?",
+        "vi": "Tôi sẽ thái rau. Bạn có thể đập trứng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Sure, no problem.",
+        "vi": "Được, không có vấn đề gì."
+      },
+      {
+        "speaker": "A",
+        "en": "Should we add some carrots too?",
+        "vi": "Chúng ta có nên thêm cà rốt không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, that would add some color to the dish.",
+        "vi": "Có, vậy sẽ thêm màu sắc cho món ăn."
+      },
+      {
+        "speaker": "A",
+        "en": "Good idea. Let me cut them into small pieces.",
+        "vi": "Ý hay đó. Để tôi cắt chúng thành miếng nhỏ."
+      },
+      {
+        "speaker": "B",
+        "en": "While you do that, I'll heat up the pan.",
+        "vi": "Trong khi bạn làm vậy, tôi sẽ làm nóng chảo."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay. Should we use a lot of oil?",
+        "vi": "Được. Chúng ta có nên dùng nhiều dầu không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just a little is enough for fried rice.",
+        "vi": "Chỉ cần một ít là đủ cho cơm rang."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. The pan looks ready now.",
+        "vi": "Tôi hiểu rồi. Chảo nhìn đã sẵn sàng rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Let's add the garlic first to make it fragrant.",
+        "vi": "Hãy cho tỏi vào trước để thơm."
+      },
+      {
+        "speaker": "A",
+        "en": "Smells great already. Now the eggs?",
+        "vi": "Đã thấy thơm rồi. Giờ đến trứng chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, let's scramble them quickly.",
+        "vi": "Vâng, hãy đảo nhanh chúng."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, now let's add the rice and vegetables.",
+        "vi": "Được, giờ hãy cho cơm và rau vào."
+      },
+      {
+        "speaker": "B",
+        "en": "Don't forget some soy sauce for flavor.",
+        "vi": "Đừng quên một ít nước tương để có vị."
+      },
+      {
+        "speaker": "A",
+        "en": "Right, just a small amount.",
+        "vi": "Đúng vậy, chỉ một lượng nhỏ."
+      },
+      {
+        "speaker": "B",
+        "en": "This is starting to smell really good.",
+        "vi": "Cái này đang bắt đầu có mùi thơm thật đấy."
+      },
+      {
+        "speaker": "A",
+        "en": "I think it's almost ready. Let's taste it.",
+        "vi": "Tôi nghĩ sắp xong rồi. Hãy nếm thử."
+      },
+      {
+        "speaker": "B",
+        "en": "It tastes great. Maybe a little more salt?",
+        "vi": "Vị ngon đấy. Có thể thêm chút muối không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Sure, let's add a little bit.",
+        "vi": "Được, hãy thêm một chút."
+      },
+      {
+        "speaker": "B",
+        "en": "Now it's perfect. Let's turn off the stove.",
+        "vi": "Giờ thì hoàn hảo rồi. Hãy tắt bếp."
+      },
+      {
+        "speaker": "A",
+        "en": "Great, let's put it on plates.",
+        "vi": "Tuyệt, hãy cho vào dĩa."
+      },
+      {
+        "speaker": "B",
+        "en": "This looks delicious, great teamwork.",
+        "vi": "Trông ngon quá, làm việc nhóm tốt đó."
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, cooking together is more fun.",
+        "vi": "Đúng vậy, nấu ăn cùng nhau vui hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Let's enjoy this meal together now.",
+        "vi": "Hãy cùng nhau thưởng thức bữa ăn này."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Chi",
+      "en": "Chi"
+    },
+    "speakerBName": {
+      "vi": "Phong",
+      "en": "Phong"
+    }
+  },
+  {
+    "id": 42,
+    "title": "Đặt rau củ giao tận nhà",
+    "situation": "Hằng gọi điện đặt rau củ tươi để được giao tận nhà.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'd like to order some fresh vegetables for delivery.",
+        "vi": "Xin chào, tôi muốn đặt rau củ tươi để giao tận nhà."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure, what would you like to order?",
+        "vi": "Được, bạn muốn đặt gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "I need a kilogram of tomatoes and some carrots.",
+        "vi": "Tôi cần một ký cà chua và một ít cà rốt."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay. How many kilograms of carrots would you like?",
+        "vi": "Được. Bạn muốn bao nhiêu ký cà rốt?"
+      },
+      {
+        "speaker": "A",
+        "en": "Half a kilogram is enough, thank you.",
+        "vi": "Nửa ký là đủ rồi, cảm ơn bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "Got it. Anything else you'd like to add?",
+        "vi": "Nhận được rồi. Bạn có muốn thêm gì khác không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, do you have fresh spinach today?",
+        "vi": "Có, hôm nay bạn có rau cải bó xôi tươi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, we just got some this morning.",
+        "vi": "Có, chúng tôi vừa nhập sáng nay."
+      },
+      {
+        "speaker": "A",
+        "en": "Great, I'll take one bunch, please.",
+        "vi": "Tuyệt, cho tôi một bó."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Would you like any fruit as well?",
+        "vi": "Được. Bạn có muốn thêm trái cây không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, a kilogram of oranges, please.",
+        "vi": "Có, một ký cam nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, that's noted. What's your delivery address?",
+        "vi": "Được, tôi đã ghi nhận. Địa chỉ giao hàng của bạn là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "It's 14 Nguyen Trai Street, District 5.",
+        "vi": "Đó là 14 đường Nguyễn Trãi, Quận 5."
+      },
+      {
+        "speaker": "B",
+        "en": "Got it. When would you like it delivered?",
+        "vi": "Tôi đã ghi nhận. Bạn muốn giao khi nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "This afternoon, if possible.",
+        "vi": "Chiều nay nếu có thể."
+      },
+      {
+        "speaker": "B",
+        "en": "That should be fine. We can deliver by three.",
+        "vi": "Vậy nên được. Chúng tôi có thể giao trước ba giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect, that works for me.",
+        "vi": "Tuyệt vời, vậy được với tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "How would you like to pay?",
+        "vi": "Bạn muốn thanh toán thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Cash on delivery, please.",
+        "vi": "Thanh toán khi nhận hàng nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure, the total will be eighty thousand dong.",
+        "vi": "Được, tổng cộng là tám mươi nghìn đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds fair. Will the vegetables be fresh?",
+        "vi": "Vậy hợp lý. Rau có còn tươi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, we only deliver fresh produce daily.",
+        "vi": "Có, chúng tôi chỉ giao rau quả tươi hàng ngày."
+      },
+      {
+        "speaker": "A",
+        "en": "That's good to know. Thank you.",
+        "vi": "Tốt khi biết điều đó. Cảm ơn bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "You're welcome. Anything else for today?",
+        "vi": "Không có gì. Hôm nay còn gì khác không?"
+      },
+      {
+        "speaker": "A",
+        "en": "No, that's all. Thank you very much.",
+        "vi": "Không, vậy là đủ rồi. Cảm ơn bạn rất nhiều."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you for your order. We'll deliver it soon.",
+        "vi": "Cảm ơn bạn vì đơn hàng. Chúng tôi sẽ giao sớm."
+      },
+      {
+        "speaker": "A",
+        "en": "Great, I'll be waiting at home.",
+        "vi": "Tuyệt, tôi sẽ chờ ở nhà."
+      },
+      {
+        "speaker": "B",
+        "en": "Sounds good. Have a nice day.",
+        "vi": "Nghe được đó. Chúc bạn một ngày tốt lành."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you, you too. Goodbye.",
+        "vi": "Cảm ơn bạn, bạn cũng vậy. Tạm biệt."
+      },
+      {
+        "speaker": "B",
+        "en": "Goodbye.",
+        "vi": "Tạm biệt."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Hằng",
+      "en": "Hằng"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên",
+      "en": "Staff"
+    }
+  },
+  {
+    "id": 43,
+    "title": "Tổ chức tiệc sinh nhật",
+    "situation": "Linh và Tú cùng lên kế hoạch tổ chức tiệc sinh nhật cho một người bạn.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Have you thought about the birthday party plan yet?",
+        "vi": "Bạn đã nghĩ về kế hoạch tiệc sinh nhật chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I think we should have it at home.",
+        "vi": "Rồi, tôi nghĩ chúng ta nên tổ chức ở nhà."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a good idea. How many people should we invite?",
+        "vi": "Ý hay đó. Chúng ta nên mời bao nhiêu người?"
+      },
+      {
+        "speaker": "B",
+        "en": "Maybe around ten close friends.",
+        "vi": "Có thể khoảng mười người bạn thân."
+      },
+      {
+        "speaker": "A",
+        "en": "Sounds good. What about the cake?",
+        "vi": "Nghe được đó. Còn bánh kem thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "I already ordered a chocolate cake for tomorrow.",
+        "vi": "Tôi đã đặt một cái bánh socola cho ngày mai rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "Great, what time should the party start?",
+        "vi": "Tuyệt, tiệc nên bắt đầu lúc mấy giờ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let's start at six in the evening.",
+        "vi": "Hãy bắt đầu lúc sáu giờ tối."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, should we decorate the living room?",
+        "vi": "Được, chúng ta có nên trang trí phòng khách không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, let's buy some balloons and banners.",
+        "vi": "Có, hãy mua một ít bong bóng và băng rôn."
+      },
+      {
+        "speaker": "A",
+        "en": "I can buy those this afternoon.",
+        "vi": "Tôi có thể mua những thứ đó chiều nay."
+      },
+      {
+        "speaker": "B",
+        "en": "Great, I'll take care of the food then.",
+        "vi": "Tuyệt, vậy tôi sẽ lo phần đồ ăn."
+      },
+      {
+        "speaker": "A",
+        "en": "What kind of food are you planning?",
+        "vi": "Bạn đang dự định loại đồ ăn nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "Some pizza, snacks, and drinks should be enough.",
+        "vi": "Một ít pizza, đồ ăn nhẹ, và nước uống nên là đủ."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds great. Should we play music too?",
+        "vi": "Nghe tuyệt đấy. Chúng ta có nên chơi nhạc không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Definitely, I'll make a playlist for the party.",
+        "vi": "Chắc chắn rồi, tôi sẽ làm danh sách nhạc cho tiệc."
+      },
+      {
+        "speaker": "A",
+        "en": "Good idea. Should we plan any games?",
+        "vi": "Ý hay đó. Chúng ta có nên lên kế hoạch chơi gì không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, maybe a few simple party games.",
+        "vi": "Có, có thể vài trò chơi đơn giản."
+      },
+      {
+        "speaker": "A",
+        "en": "That would make it more fun.",
+        "vi": "Vậy sẽ vui hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Agreed. Have you sent the invitations yet?",
+        "vi": "Đồng ý. Bạn đã gửi lời mời chưa?"
+      },
+      {
+        "speaker": "A",
+        "en": "Not yet, I'll send them today.",
+        "vi": "Chưa, tôi sẽ gửi hôm nay."
+      },
+      {
+        "speaker": "B",
+        "en": "Good, make sure to tell them not to be late.",
+        "vi": "Tốt, nhớ nhắc họ đừng đến muộn."
+      },
+      {
+        "speaker": "A",
+        "en": "I will. This party is going to be great.",
+        "vi": "Tôi sẽ làm vậy. Buổi tiệc này sẽ rất tuyệt."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm sure she's going to love it.",
+        "vi": "Tôi chắc chắn cô ấy sẽ rất thích."
+      },
+      {
+        "speaker": "A",
+        "en": "I hope so. Let's keep it a surprise.",
+        "vi": "Tôi hy vọng vậy. Hãy giữ bí mật làm bất ngờ."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, definitely. No telling her anything.",
+        "vi": "Vâng, chắc chắn rồi. Không nói gì với cô ấy cả."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. Let's finish the preparations tonight.",
+        "vi": "Tôi hiểu rồi. Hãy hoàn thành chuẩn bị tối nay."
+      },
+      {
+        "speaker": "B",
+        "en": "Sounds good, I'll come over after work.",
+        "vi": "Nghe được đó, tôi sẽ đến sau khi đi làm."
+      },
+      {
+        "speaker": "A",
+        "en": "Great, see you then.",
+        "vi": "Tuyệt, hẹn gặp lúc đó."
+      },
+      {
+        "speaker": "B",
+        "en": "See you, this is going to be fun.",
+        "vi": "Hẹn gặp lại, việc này sẽ rất vui."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Linh",
+      "en": "Linh"
+    },
+    "speakerBName": {
+      "vi": "Tú",
+      "en": "Tú"
+    }
+  },
+  {
+    "id": 44,
+    "title": "Chúc mừng sinh nhật bạn",
+    "situation": "Tại buổi tiệc, mọi người chúc mừng sinh nhật Hà.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Happy birthday, Ha! We're so happy to celebrate with you.",
+        "vi": "Chúc mừng sinh nhật, Hà! Chúng tôi rất vui được ăn mừng cùng bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you so much, everyone. This is such a surprise.",
+        "vi": "Cảm ơn mọi người rất nhiều. Đây thật là một bất ngờ."
+      },
+      {
+        "speaker": "A",
+        "en": "We wanted to make this day special for you.",
+        "vi": "Chúng tôi muốn làm ngày này đặc biệt cho bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "You really did. I love the decorations.",
+        "vi": "Các bạn thật sự đã làm vậy. Tôi rất thích những trang trí này."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm glad you like them. Are you ready to cut the cake?",
+        "vi": "Tôi mừng vì bạn thích chúng. Bạn đã sẵn sàng cắt bánh chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, let's do it. This cake looks amazing.",
+        "vi": "Rồi, hãy làm thôi. Cái bánh này nhìn tuyệt quá."
+      },
+      {
+        "speaker": "A",
+        "en": "Make a wish before you blow out the candles.",
+        "vi": "Hãy ước nguyện trước khi thổi nến."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, I made my wish. Here we go.",
+        "vi": "Được, tôi đã ước rồi. Bắt đầu thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "Happy birthday to you!",
+        "vi": "Chúc mừng sinh nhật bạn!"
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you all so much, this means a lot to me.",
+        "vi": "Cảm ơn tất cả mọi người rất nhiều, điều này có ý nghĩa rất lớn với tôi."
+      },
+      {
+        "speaker": "A",
+        "en": "We have a small gift for you too.",
+        "vi": "Chúng tôi cũng có một món quà nhỏ cho bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "Oh, you didn't have to. Thank you so much.",
+        "vi": "Ồ, các bạn không cần phải làm vậy. Cảm ơn rất nhiều."
+      },
+      {
+        "speaker": "A",
+        "en": "Go ahead, open it.",
+        "vi": "Mở ra đi."
+      },
+      {
+        "speaker": "B",
+        "en": "Wow, this is exactly what I wanted!",
+        "vi": "Wow, đây chính xác là thứ mình muốn!"
+      },
+      {
+        "speaker": "A",
+        "en": "We're so glad you like it.",
+        "vi": "Chúng tôi rất mừng vì bạn thích nó."
+      },
+      {
+        "speaker": "B",
+        "en": "I love it so much, thank you all.",
+        "vi": "Tôi rất thích nó, cảm ơn tất cả mọi người."
+      },
+      {
+        "speaker": "A",
+        "en": "Now let's eat some cake and have fun.",
+        "vi": "Giờ hãy ăn bánh và vui chơi thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, let's enjoy the rest of the party.",
+        "vi": "Vâng, hãy tận hưởng phần còn lại của buổi tiệc."
+      },
+      {
+        "speaker": "A",
+        "en": "How does it feel to turn another year older?",
+        "vi": "Cảm giác thêm một tuổi như thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "It feels great, especially with friends like you all.",
+        "vi": "Cảm giác rất tuyệt, đặc biệt là với những người bạn như các bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "We're lucky to have you as our friend too.",
+        "vi": "Chúng tôi cũng may mắn khi có bạn là bạn của mình."
+      },
+      {
+        "speaker": "B",
+        "en": "That means so much to me, thank you.",
+        "vi": "Điều đó có ý nghĩa rất lớn với tôi, cảm ơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Should we take some photos to remember tonight?",
+        "vi": "Chúng ta có nên chụp ảnh để nhớ về tối nay không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, let's take lots of pictures together.",
+        "vi": "Có, hãy chụp nhiều ảnh cùng nhau."
+      },
+      {
+        "speaker": "A",
+        "en": "Great, everyone gather around for a photo.",
+        "vi": "Tuyệt, mọi người tụ lại để chụp ảnh."
+      },
+      {
+        "speaker": "B",
+        "en": "This is such a wonderful night.",
+        "vi": "Đây thật là một đêm tuyệt vời."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm so happy we could celebrate with you.",
+        "vi": "Tôi rất vui vì chúng ta có thể ăn mừng cùng nhau."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you all for making this birthday special.",
+        "vi": "Cảm ơn tất cả mọi người vì đã làm sinh nhật này đặc biệt."
+      },
+      {
+        "speaker": "A",
+        "en": "Happy birthday again, Ha. We love you.",
+        "vi": "Chúc mừng sinh nhật lần nữa, Hà. Chúng tôi yêu bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "I love you all too. Thank you so much.",
+        "vi": "Tôi cũng yêu mọi người. Cảm ơn rất nhiều."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Khách mời",
+      "en": "Guest"
+    },
+    "speakerBName": {
+      "vi": "Hà",
+      "en": "Hà"
+    }
+  },
+  {
+    "id": 45,
+    "title": "Tết Nguyên Đán",
+    "situation": "Hai người bạn Khoa và Ngọc nói chuyện về kế hoạch Tết Nguyên Đán.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Are you excited about the Lunar New Year this year?",
+        "vi": "Bạn có hào hứng về Tết Nguyên Đán năm nay không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, very much. I love this holiday.",
+        "vi": "Có, rất nhiều. Tôi rất thích ngày lễ này."
+      },
+      {
+        "speaker": "A",
+        "en": "What are your plans for Tet this year?",
+        "vi": "Năm nay bạn có kế hoạch gì cho Tết?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm going back to my hometown to visit my family.",
+        "vi": "Tôi sẽ về quê để thăm gia đình."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds nice. How long will you stay there?",
+        "vi": "Nghe hay đó. Bạn sẽ ở đó bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "About a week, maybe a little longer.",
+        "vi": "Khoảng một tuần, có thể lâu hơn một chút."
+      },
+      {
+        "speaker": "A",
+        "en": "What do you usually do during Tet?",
+        "vi": "Bạn thường làm gì trong những ngày Tết?"
+      },
+      {
+        "speaker": "B",
+        "en": "We clean the house and decorate with peach blossoms.",
+        "vi": "Chúng tôi dọn dẹp nhà cửa và trang trí với hoa đào."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds beautiful. Do you cook special food too?",
+        "vi": "Nghe đẹp đấy. Bạn cũng nấu món ăn đặc biệt chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, we always make sticky rice cakes together.",
+        "vi": "Có, chúng tôi luôn làm bánh chưng cùng nhau."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a great tradition. Who do you make it with?",
+        "vi": "Đó là một truyền thống tuyệt vời. Bạn làm cùng ai?"
+      },
+      {
+        "speaker": "B",
+        "en": "My whole family helps, even my grandparents.",
+        "vi": "Cả gia đình tôi giúp, kể cả ông bà tôi."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds like a fun family activity.",
+        "vi": "Nghe như một hoạt động gia đình thú vị."
+      },
+      {
+        "speaker": "B",
+        "en": "It really is. What about your plans for Tet?",
+        "vi": "Quả thật vậy. Còn kế hoạch Tết của bạn thì sao?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm staying in the city with my parents this year.",
+        "vi": "Năm nay tôi sẽ ở thành phố với bố mẹ."
+      },
+      {
+        "speaker": "B",
+        "en": "That's nice too. Will you visit relatives?",
+        "vi": "Vậy cũng tốt. Bạn sẽ đi thăm họ hàng chứ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, we'll visit my grandparents on the first day.",
+        "vi": "Có, chúng tôi sẽ thăm ông bà vào ngày đầu năm."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a good tradition to keep.",
+        "vi": "Đó là một truyền thống tốt để giữ."
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I always look forward to receiving lucky money too.",
+        "vi": "Vâng, tôi luôn mong chờ được nhận lì xì nữa."
+      },
+      {
+        "speaker": "B",
+        "en": "Haha, me too, even though I'm an adult now.",
+        "vi": "Haha, tôi cũng vậy, mặc dù giờ tôi đã là người lớn rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "It's a nice tradition no matter your age.",
+        "vi": "Đó là một truyền thống đẹp dù bạn bao nhiêu tuổi."
+      },
+      {
+        "speaker": "B",
+        "en": "Definitely. What food are you most excited to eat?",
+        "vi": "Chắc chắn rồi. Bạn hào hứng được ăn món gì nhất?"
+      },
+      {
+        "speaker": "A",
+        "en": "I really love eating candied fruits during Tet.",
+        "vi": "Tôi rất thích ăn mứt trong những ngày Tết."
+      },
+      {
+        "speaker": "B",
+        "en": "Same here, especially candied coconut.",
+        "vi": "Tôi cũng vậy, đặc biệt là mứt dừa."
+      },
+      {
+        "speaker": "A",
+        "en": "That's my favorite too. When do you leave for your hometown?",
+        "vi": "Đó cũng là món tôi thích nhất. Khi nào bạn về quê?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm leaving this weekend, before it gets too crowded.",
+        "vi": "Tôi sẽ đi cuối tuần này, trước khi quá đông đúc."
+      },
+      {
+        "speaker": "A",
+        "en": "Good idea, traveling during Tet can be hectic.",
+        "vi": "Ý hay đó, di chuyển trong Tết có thể rất bận rộn."
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. I hope you have a wonderful Tet too.",
+        "vi": "Đúng vậy. Tôi hy vọng bạn cũng có một Tết tuyệt vời."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you, I wish you a happy Tet with your family.",
+        "vi": "Cảm ơn bạn, tôi chúc bạn có một Tết vui vẻ cùng gia đình."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you so much. Happy New Year in advance!",
+        "vi": "Cảm ơn bạn rất nhiều. Chúc mừng năm mới trước nhé!"
+      }
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Khoa",
+      "en": "Khoa"
+    },
+    "speakerBName": {
+      "vi": "Ngọc",
+      "en": "Ngọc"
+    }
+  },
+  {
+    "id": 46,
+    "title": "Đi chùa đầu năm",
+    "situation": "Hai bạn Mỹ và Đạt cùng đi chùa cầu may đầu năm mới.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Are you ready to go to the temple this morning?",
+        "vi": "Sáng nay bạn đã sẵn sàng đi chùa chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I've been looking forward to this all week.",
+        "vi": "Rồi, tôi đã mong chờ điều này cả tuần."
+      },
+      {
+        "speaker": "A",
+        "en": "Me too. It's a nice tradition to start the year.",
+        "vi": "Tôi cũng vậy. Đây là một truyền thống hay để bắt đầu năm mới."
+      },
+      {
+        "speaker": "B",
+        "en": "Definitely. Should we bring some fruit to offer?",
+        "vi": "Chắc chắn rồi. Chúng ta có nên mang hoa quả để dâng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I already bought some oranges and bananas.",
+        "vi": "Có, tôi đã mua một ít cam và chuối rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Great, that should be enough for the offering.",
+        "vi": "Tuyệt, vậy là đủ cho lễ dâng rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "What do you usually pray for at the temple?",
+        "vi": "Bạn thường cầu gì ở chùa?"
+      },
+      {
+        "speaker": "B",
+        "en": "I pray for health and happiness for my family.",
+        "vi": "Tôi cầu sức khỏe và hạnh phúc cho gia đình."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a good wish. I pray for good luck in my work too.",
+        "vi": "Đó là một lời ước hay. Tôi cũng cầu may mắn trong công việc."
+      },
+      {
+        "speaker": "B",
+        "en": "I hope your wish comes true this year.",
+        "vi": "Tôi hy vọng lời ước của bạn sẽ thành sự thật năm nay."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you. Let's light some incense when we get there.",
+        "vi": "Cảm ơn bạn. Hãy thắp nhang khi chúng ta đến đó."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure, I love the smell of incense at temples.",
+        "vi": "Được, tôi rất thích mùi nhang ở chùa."
+      },
+      {
+        "speaker": "A",
+        "en": "It feels very peaceful, doesn't it?",
+        "vi": "Cảm giác rất yên bình, đúng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, especially in the early morning like this.",
+        "vi": "Đúng vậy, đặc biệt là vào sáng sớm như thế này."
+      },
+      {
+        "speaker": "A",
+        "en": "I think the temple will be very crowded today.",
+        "vi": "Tôi nghĩ chùa sẽ rất đông hôm nay."
+      },
+      {
+        "speaker": "B",
+        "en": "That's normal during the first days of the new year.",
+        "vi": "Vậy là bình thường trong những ngày đầu năm mới."
+      },
+      {
+        "speaker": "A",
+        "en": "True, everyone wants to pray for good fortune.",
+        "vi": "Đúng vậy, mọi người đều muốn cầu may."
+      },
+      {
+        "speaker": "B",
+        "en": "Should we also buy a lucky charm there?",
+        "vi": "Chúng ta có nên mua một lá bùa may mắn ở đó không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Sure, that sounds like a nice idea.",
+        "vi": "Được, nghe là một ý tưởng hay."
+      },
+      {
+        "speaker": "B",
+        "en": "My grandmother always buys one every year.",
+        "vi": "Bà tôi luôn mua một cái mỗi năm."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a sweet tradition. We're almost there now.",
+        "vi": "Đó là một truyền thống ngọt ngào. Chúng ta gần đến rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "I can already see the gate of the temple.",
+        "vi": "Tôi đã có thể thấy cổng chùa rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "Let's park our motorbike over there.",
+        "vi": "Hãy đậu xe máy ở đằng đó."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, then let's walk in together.",
+        "vi": "Được, rồi hãy cùng đi vào."
+      },
+      {
+        "speaker": "A",
+        "en": "This place looks even more beautiful than last year.",
+        "vi": "Chỗ này nhìn còn đẹp hơn năm ngoái."
+      },
+      {
+        "speaker": "B",
+        "en": "I agree, they decorated it really nicely.",
+        "vi": "Tôi đồng ý, họ trang trí rất đẹp."
+      },
+      {
+        "speaker": "A",
+        "en": "Let's go light the incense first.",
+        "vi": "Hãy đi thắp nhang trước."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure, I'll follow you.",
+        "vi": "Được, tôi sẽ theo bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "I hope this year brings us both good luck.",
+        "vi": "Tôi hy vọng năm nay sẽ mang lại may mắn cho cả hai chúng ta."
+      },
+      {
+        "speaker": "B",
+        "en": "Me too. Happy New Year, my friend.",
+        "vi": "Tôi cũng vậy. Chúc mừng năm mới, bạn của tôi."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Mỹ",
+      "en": "Mỹ"
+    },
+    "speakerBName": {
+      "vi": "Đạt",
+      "en": "Đạt"
+    }
+  },
+  {
+    "id": 47,
+    "title": "Tết Trung Thu",
+    "situation": "Hai chị em Bống và Tép nói chuyện về Tết Trung Thu sắp tới.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Mid-Autumn Festival is coming soon, are you excited?",
+        "vi": "Tết Trung Thu sắp đến rồi, em có háo hức không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I love this festival so much.",
+        "vi": "Có, em rất thích lễ hội này."
+      },
+      {
+        "speaker": "A",
+        "en": "What do you like most about it?",
+        "vi": "Em thích nhất điều gì về nó?"
+      },
+      {
+        "speaker": "B",
+        "en": "I love eating mooncakes with the family.",
+        "vi": "Em thích ăn bánh trung thu cùng gia đình."
+      },
+      {
+        "speaker": "A",
+        "en": "Me too. What flavor do you like best?",
+        "vi": "Anh cũng vậy. Em thích vị gì nhất?"
+      },
+      {
+        "speaker": "B",
+        "en": "I like the one with lotus seed paste.",
+        "vi": "Em thích loại nhân hạt sen."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a classic flavor. I prefer the one with eggs.",
+        "vi": "Đó là một vị truyền thống. Anh thích loại có trứng hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Are we going to buy lanterns this year?",
+        "vi": "Năm nay chúng ta có mua đèn lồng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Of course, I already saw some nice ones at the market.",
+        "vi": "Tất nhiên, anh đã thấy vài cái đẹp ở chợ rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Can we get the star-shaped one?",
+        "vi": "Chúng ta có thể mua loại hình ngôi sao không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Sure, that's a popular choice this year.",
+        "vi": "Được, đó là một lựa chọn phổ biến năm nay."
+      },
+      {
+        "speaker": "B",
+        "en": "I also want to make a mask for the lion dance.",
+        "vi": "Em cũng muốn làm mặt nạ cho múa lân."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds fun. We can make it together.",
+        "vi": "Nghe vui đấy. Chúng ta có thể làm cùng nhau."
+      },
+      {
+        "speaker": "B",
+        "en": "Will there be a lion dance in our neighborhood?",
+        "vi": "Khu phố chúng ta có múa lân không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I heard there will be one this Saturday evening.",
+        "vi": "Có, anh nghe nói sẽ có vào tối thứ Bảy này."
+      },
+      {
+        "speaker": "B",
+        "en": "That's great, I really want to watch it.",
+        "vi": "Tuyệt quá, em rất muốn xem."
+      },
+      {
+        "speaker": "A",
+        "en": "We can go together with our parents.",
+        "vi": "Chúng ta có thể đi cùng bố mẹ."
+      },
+      {
+        "speaker": "B",
+        "en": "That would be so much fun.",
+        "vi": "Vậy sẽ rất vui."
+      },
+      {
+        "speaker": "A",
+        "en": "Do you want to walk around with your lantern that night?",
+        "vi": "Tối đó em có muốn đi dạo với đèn lồng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I love walking around with my friends.",
+        "vi": "Có, em rất thích đi dạo cùng các bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "It's nice to see all the colorful lanterns at night.",
+        "vi": "Thật đẹp khi thấy những chiếc đèn lồng đầy màu sắc vào buổi tối."
+      },
+      {
+        "speaker": "B",
+        "en": "I always feel so happy during this festival.",
+        "vi": "Em luôn cảm thấy rất vui trong lễ hội này."
+      },
+      {
+        "speaker": "A",
+        "en": "Me too, it reminds me of being a kid.",
+        "vi": "Anh cũng vậy, nó làm anh nhớ lại thời còn nhỏ."
+      },
+      {
+        "speaker": "B",
+        "en": "Did you celebrate it the same way when you were young?",
+        "vi": "Lúc nhỏ anh có ăn mừng giống vậy không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, exactly the same, with lanterns and mooncakes.",
+        "vi": "Có, hoàn toàn giống vậy, với đèn lồng và bánh trung thu."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a nice memory to share.",
+        "vi": "Đó là một kỷ niệm đẹp để chia sẻ."
+      },
+      {
+        "speaker": "A",
+        "en": "Let's go buy mooncakes and lanterns this weekend.",
+        "vi": "Hãy đi mua bánh trung thu và đèn lồng vào cuối tuần này."
+      },
+      {
+        "speaker": "B",
+        "en": "Sounds great, I can't wait.",
+        "vi": "Nghe tuyệt, em không thể chờ được."
+      },
+      {
+        "speaker": "A",
+        "en": "Me neither. This is going to be a fun Mid-Autumn.",
+        "vi": "Anh cũng vậy. Trung Thu này sẽ rất vui."
+      },
+      {
+        "speaker": "B",
+        "en": "Happy Mid-Autumn Festival in advance, big sister.",
+        "vi": "Chúc mừng Tết Trung Thu sớm nhé, chị."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Bống",
+      "en": "Bống"
+    },
+    "speakerBName": {
+      "vi": "Tép",
+      "en": "Tép"
+    }
+  },
+  {
+    "id": 48,
+    "title": "Dự đám cưới bạn",
+    "situation": "Việt và Trang nói chuyện trước khi đi dự đám cưới của một người bạn.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Are you ready for the wedding this afternoon?",
+        "vi": "Bạn đã sẵn sàng cho đám cưới chiều nay chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Almost, I'm just getting dressed now.",
+        "vi": "Gần xong rồi, tôi đang thay đồ."
+      },
+      {
+        "speaker": "A",
+        "en": "What time does the ceremony start?",
+        "vi": "Lễ cưới bắt đầu lúc mấy giờ?"
+      },
+      {
+        "speaker": "B",
+        "en": "It starts at five, but we should arrive a bit early.",
+        "vi": "Bắt đầu lúc năm giờ, nhưng chúng ta nên đến sớm một chút."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, did you prepare a gift for them?",
+        "vi": "Được, bạn đã chuẩn bị quà cho họ chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I have an envelope ready with some money inside.",
+        "vi": "Có, tôi đã chuẩn bị một phong bì với ít tiền trong đó."
+      },
+      {
+        "speaker": "A",
+        "en": "That's the usual gift here, isn't it?",
+        "vi": "Đó là quà thông thường ở đây, đúng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, it's a common tradition at Vietnamese weddings.",
+        "vi": "Đúng vậy, đó là một truyền thống phổ biến trong đám cưới Việt Nam."
+      },
+      {
+        "speaker": "A",
+        "en": "Do you know where the wedding is being held?",
+        "vi": "Bạn có biết đám cưới được tổ chức ở đâu không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, it's at a restaurant near the river.",
+        "vi": "Có, tại một nhà hàng gần sông."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds like a nice venue.",
+        "vi": "Nghe là một địa điểm đẹp đấy."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I've heard the view there is beautiful.",
+        "vi": "Đúng vậy, tôi nghe nói view ở đó rất đẹp."
+      },
+      {
+        "speaker": "A",
+        "en": "Should we take a taxi or drive there ourselves?",
+        "vi": "Chúng ta nên đi taxi hay tự lái xe đến?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let's take a taxi, it'll be easier to park.",
+        "vi": "Hãy đi taxi, sẽ dễ đậu xe hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Good idea. Do you know the bride and groom well?",
+        "vi": "Ý hay đó. Bạn có biết rõ cô dâu và chú rể không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, the bride was my classmate in university.",
+        "vi": "Có, cô dâu là bạn học cùng đại học của tôi."
+      },
+      {
+        "speaker": "A",
+        "en": "That's nice. How long have they been together?",
+        "vi": "Vậy tốt đấy. Họ đã quen nhau bao lâu rồi?"
+      },
+      {
+        "speaker": "B",
+        "en": "About five years, I think.",
+        "vi": "Tôi nghĩ khoảng năm năm rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "Wow, that's a long time. They must really love each other.",
+        "vi": "Wow, vậy là lâu đấy. Họ chắc phải rất yêu nhau."
+      },
+      {
+        "speaker": "B",
+        "en": "Definitely. I'm really happy for them.",
+        "vi": "Chắc chắn rồi. Tôi rất vui cho họ."
+      },
+      {
+        "speaker": "A",
+        "en": "Will there be a lot of guests at the wedding?",
+        "vi": "Đám cưới sẽ có nhiều khách không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I heard around two hundred people are invited.",
+        "vi": "Có, tôi nghe nói khoảng hai trăm người được mời."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a big wedding. It should be a great party.",
+        "vi": "Vậy là một đám cưới lớn. Sẽ là một buổi tiệc tuyệt vời."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm sure it will be. The food should be delicious too.",
+        "vi": "Tôi chắc chắn vậy. Đồ ăn cũng nên rất ngon."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm already looking forward to the food.",
+        "vi": "Tôi đã mong chờ đồ ăn rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Haha, me too, honestly.",
+        "vi": "Haha, thật ra tôi cũng vậy."
+      },
+      {
+        "speaker": "A",
+        "en": "Should we go now? It's almost time.",
+        "vi": "Chúng ta nên đi chưa? Sắp đến giờ rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, let's call a taxi right now.",
+        "vi": "Vâng, hãy gọi taxi ngay bây giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, I'm ready when you are.",
+        "vi": "Được, tôi sẵn sàng khi bạn sẵn sàng."
+      },
+      {
+        "speaker": "B",
+        "en": "Let's go, we don't want to be late.",
+        "vi": "Đi thôi, chúng ta không muốn đến muộn."
+      }
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Việt",
+      "en": "Việt"
+    },
+    "speakerBName": {
+      "vi": "Trang",
+      "en": "Trang"
+    }
+  },
+  {
+    "id": 49,
+    "title": "Thăm gia đình người yêu",
+    "situation": "Đăng lần đầu đến thăm nhà gia đình của bạn gái Trang.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Are you nervous about meeting my parents today?",
+        "vi": "Hôm nay anh có lo lắng khi gặp bố mẹ em không?"
+      },
+      {
+        "speaker": "B",
+        "en": "A little, but I'm excited too.",
+        "vi": "Một chút, nhưng anh cũng háo hức."
+      },
+      {
+        "speaker": "A",
+        "en": "Don't worry, they're very kind people.",
+        "vi": "Đừng lo, bố mẹ em rất tốt bụng."
+      },
+      {
+        "speaker": "B",
+        "en": "That's good to hear. What should I bring as a gift?",
+        "vi": "Vậy thì tốt. Anh nên mang gì làm quà?"
+      },
+      {
+        "speaker": "A",
+        "en": "Some fruit or tea would be perfect.",
+        "vi": "Một ít trái cây hoặc trà sẽ hoàn hảo."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, I already bought some tea this morning.",
+        "vi": "Được, sáng nay anh đã mua một ít trà rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "That's great, my parents will appreciate that.",
+        "vi": "Vậy tốt quá, bố mẹ em sẽ rất quý điều đó."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. What time should we arrive?",
+        "vi": "Tốt. Chúng ta nên đến lúc mấy giờ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Around five would be perfect.",
+        "vi": "Khoảng năm giờ sẽ hoàn hảo."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, I'll make sure we're not late.",
+        "vi": "Được, anh sẽ đảm bảo chúng ta không đến muộn."
+      },
+      {
+        "speaker": "A",
+        "en": "Just be yourself, they'll like you.",
+        "vi": "Cứ là chính mình, họ sẽ thích anh thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "I hope so. What does your father like to talk about?",
+        "vi": "Anh hy vọng vậy. Bố em thích nói về điều gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "He loves talking about football.",
+        "vi": "Bố em rất thích nói về bóng đá."
+      },
+      {
+        "speaker": "B",
+        "en": "Oh good, I know quite a lot about that.",
+        "vi": "Ồ tốt, anh biết khá nhiều về điều đó."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect, that should make a good conversation.",
+        "vi": "Tuyệt vời, vậy sẽ là một cuộc nói chuyện hay."
+      },
+      {
+        "speaker": "B",
+        "en": "What about your mother? What does she like?",
+        "vi": "Còn mẹ em thì sao? Mẹ thích gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "She loves cooking, so compliment her food.",
+        "vi": "Mẹ rất thích nấu ăn, nên hãy khen đồ ăn của mẹ."
+      },
+      {
+        "speaker": "B",
+        "en": "I will, I'm sure her food will be delicious.",
+        "vi": "Anh sẽ làm vậy, anh chắc đồ ăn của mẹ sẽ rất ngon."
+      },
+      {
+        "speaker": "A",
+        "en": "They're really looking forward to meeting you.",
+        "vi": "Bố mẹ em rất mong được gặp anh."
+      },
+      {
+        "speaker": "B",
+        "en": "That makes me feel a bit more relaxed.",
+        "vi": "Vậy làm anh cảm thấy thư giãn hơn một chút."
+      },
+      {
+        "speaker": "A",
+        "en": "We're almost at my house now.",
+        "vi": "Chúng ta gần đến nhà em rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, I'm ready. Let's go in together.",
+        "vi": "Được, anh sẵn sàng rồi. Hãy cùng vào nhà."
+      },
+      {
+        "speaker": "A",
+        "en": "Good evening, Mom and Dad. This is Dang.",
+        "vi": "Chào bố mẹ. Đây là Đăng."
+      },
+      {
+        "speaker": "B",
+        "en": "Good evening, it's a pleasure to finally meet you both.",
+        "vi": "Chào bố mẹ, con rất vui khi cuối cùng cũng được gặp hai người."
+      },
+      {
+        "speaker": "A",
+        "en": "They've heard a lot about you already.",
+        "vi": "Bố mẹ đã nghe nhiều về anh rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "I hope it was all good things.",
+        "vi": "Con hy vọng đều là những điều tốt đẹp."
+      },
+      {
+        "speaker": "A",
+        "en": "Of course it was. Let's sit down for dinner.",
+        "vi": "Tất nhiên là vậy rồi. Hãy ngồi xuống ăn tối thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you so much for inviting me.",
+        "vi": "Con cảm ơn rất nhiều vì đã mời con đến."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm so glad this is going well.",
+        "vi": "Em rất mừng vì mọi việc đang diễn ra tốt."
+      },
+      {
+        "speaker": "B",
+        "en": "Me too. This was a great evening.",
+        "vi": "Anh cũng vậy. Đây là một buổi tối tuyệt vời."
+      }
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Đăng",
+      "en": "Đăng"
+    },
+    "speakerBName": {
+      "vi": "Trang",
+      "en": "Trang"
+    }
+  },
+  {
+    "id": 50,
+    "title": "Buổi hẹn hò đầu tiên",
+    "situation": "Khôi và Vân gặp nhau trong buổi hẹn hò đầu tiên ở một quán cà phê.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, sorry, am I late?",
+        "vi": "Chào, xin lỗi, tôi đến muộn sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "No, you're right on time. I just got here too.",
+        "vi": "Không, bạn đến đúng giờ rồi. Tôi cũng vừa đến."
+      },
+      {
+        "speaker": "A",
+        "en": "This coffee shop looks really nice.",
+        "vi": "Quán cà phê này nhìn rất đẹp."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I chose it because the atmosphere is quiet.",
+        "vi": "Đúng vậy, tôi chọn nó vì không khí ở đây yên tĩnh."
+      },
+      {
+        "speaker": "A",
+        "en": "Good choice. What would you like to drink?",
+        "vi": "Lựa chọn tốt. Bạn muốn uống gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "I think I'll get a cappuccino.",
+        "vi": "Tôi nghĩ tôi sẽ gọi cappuccino."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds good, I'll get the same.",
+        "vi": "Nghe ngon đấy, tôi cũng gọi giống vậy."
+      },
+      {
+        "speaker": "B",
+        "en": "So, tell me a little about yourself.",
+        "vi": "Vậy, kể cho tôi nghe một chút về bạn đi."
+      },
+      {
+        "speaker": "A",
+        "en": "Sure, I work as a teacher at a high school.",
+        "vi": "Được, tôi làm giáo viên ở một trường trung học."
+      },
+      {
+        "speaker": "B",
+        "en": "That's interesting. Do you enjoy teaching?",
+        "vi": "Thú vị đấy. Bạn có thích việc dạy học không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I really love working with students.",
+        "vi": "Có, tôi rất thích làm việc với học sinh."
+      },
+      {
+        "speaker": "B",
+        "en": "That's nice. What do you do for fun?",
+        "vi": "Vậy tốt đấy. Bạn thường làm gì để giải trí?"
+      },
+      {
+        "speaker": "A",
+        "en": "I enjoy reading books and watching movies.",
+        "vi": "Tôi thích đọc sách và xem phim."
+      },
+      {
+        "speaker": "B",
+        "en": "I love movies too. What kind do you like?",
+        "vi": "Tôi cũng thích phim. Bạn thích loại nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Mostly comedies, they always make me laugh.",
+        "vi": "Chủ yếu là phim hài, chúng luôn làm tôi cười."
+      },
+      {
+        "speaker": "B",
+        "en": "Same here, I love a good laugh.",
+        "vi": "Tôi cũng vậy, tôi rất thích cười vui vẻ."
+      },
+      {
+        "speaker": "A",
+        "en": "What about you? What do you do for work?",
+        "vi": "Còn bạn? Bạn làm công việc gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "I work as a graphic designer at a small company.",
+        "vi": "Tôi làm thiết kế đồ họa ở một công ty nhỏ."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds creative. Do you enjoy it?",
+        "vi": "Nghe sáng tạo đấy. Bạn có thích nó không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I love creating new designs every day.",
+        "vi": "Có, tôi rất thích tạo ra những thiết kế mới mỗi ngày."
+      },
+      {
+        "speaker": "A",
+        "en": "That's great. I admire creative people.",
+        "vi": "Tuyệt đấy. Tôi ngưỡng mộ những người sáng tạo."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you, that's kind of you to say.",
+        "vi": "Cảm ơn bạn, bạn nói vậy thật tốt bụng."
+      },
+      {
+        "speaker": "A",
+        "en": "Do you have any hobbies outside of work?",
+        "vi": "Bạn có sở thích nào ngoài công việc không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I enjoy painting on the weekends.",
+        "vi": "Có, tôi thích vẽ tranh vào cuối tuần."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds really relaxing.",
+        "vi": "Nghe rất thư giãn đấy."
+      },
+      {
+        "speaker": "B",
+        "en": "It really is. I'd love to show you sometime.",
+        "vi": "Quả thật vậy. Tôi rất muốn cho bạn xem lúc nào đó."
+      },
+      {
+        "speaker": "A",
+        "en": "I'd really like that.",
+        "vi": "Tôi rất muốn vậy."
+      },
+      {
+        "speaker": "B",
+        "en": "This has been a really nice conversation.",
+        "vi": "Đây thật là một cuộc nói chuyện hay."
+      },
+      {
+        "speaker": "A",
+        "en": "I agree. I'm really enjoying this afternoon.",
+        "vi": "Tôi đồng ý. Tôi rất thích buổi chiều này."
+      },
+      {
+        "speaker": "B",
+        "en": "Me too. I hope we can do this again sometime.",
+        "vi": "Tôi cũng vậy. Tôi hy vọng chúng ta có thể làm vậy lần nữa."
+      }
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Khôi",
+      "en": "Khôi"
+    },
+    "speakerBName": {
+      "vi": "Vân",
+      "en": "Vân"
+    }
+  }
+]

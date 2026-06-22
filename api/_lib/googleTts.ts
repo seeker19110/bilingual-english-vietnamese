@@ -1,38 +1,52 @@
 // api/_lib/googleTts.ts
-// Gọi Google Cloud Text-to-Speech để tạo audio phát âm cho 1 từ tiếng Anh.
-// CHỈ chạy ở server (được import bởi api/pronunciation.ts) — không bao giờ import
-// file này từ code phía browser (thư mục src/), vì GOOGLE_TTS_API_KEY phải được giữ kín.
-//
-// Tiền tố "_" trong tên thư mục "_lib" để Vercel KHÔNG coi file này là 1 API route riêng
-// (Vercel mặc định biến mọi file trong api/ thành 1 endpoint, trừ file/thư mục bắt đầu bằng "_").
+// Gọi Google Cloud Text-to-Speech để tạo audio.
+// CHỈ chạy ở server — không bao giờ import file này từ code phía browser (src/).
+// Tiền tố "_" trong tên thư mục "_lib" để Vercel KHÔNG coi file này là 1 API route riêng.
 
-// Hỗ trợ 2 giọng (theo giới tính). Dùng id thân thiện "female"/"male" thay vì để lộ tên
-// giọng thật của Google (en-US-Journey-F/D) ra ngoài (DB, URL, query param) — nếu sau này
-// Google đổi/ngừng hỗ trợ tên giọng cũ, chỉ cần sửa 1 chỗ trong bảng VOICE_MAP này.
 export type VoiceId = 'female' | 'male'
+export type Lang = 'en-US' | 'vi-VN'
 
 export const VOICE_IDS: VoiceId[] = ['female', 'male']
 export const DEFAULT_VOICE: VoiceId = 'female'
+
+// "Phiên bản giọng" — tăng số này MỖI KHI đổi giọng trong VOICE_MAP bên dưới.
+// Khóa cache trong DB (api/tts.ts) có chứa giá trị này, nên đổi version sẽ làm
+// các câu đã cache cũ KHÔNG còn khớp → tự động tạo lại (ghi đè) bằng giọng mới.
+export const VOICE_VERSION = 'chirp3hd-v1'
 
 export function isValidVoice(value: string): value is VoiceId {
   return VOICE_IDS.includes(value as VoiceId)
 }
 
-const VOICE_MAP: Record<VoiceId, { name: string; ssmlGender: 'FEMALE' | 'MALE' }> = {
-  female: { name: 'en-US-Journey-F', ssmlGender: 'FEMALE' },
-  male: { name: 'en-US-Journey-D', ssmlGender: 'MALE' },
+// Bảng giọng đọc: mỗi ngôn ngữ có giọng nữ và nam riêng.
+// Dùng "Chirp 3: HD" — dòng giọng MỚI & TỰ NHIÊN NHẤT của Google hiện nay
+// (mới hơn Journey/Studio/Neural2), tên dạng "<locale>-Chirp3-HD-<Tên>".
+// Kore = giọng nữ, Puck = giọng nam — đây là cặp giọng PHỔ BIẾN NHẤT của Chirp 3 HD
+// (Google dùng làm giọng mặc định, có sẵn cho cả en-US và vi-VN).
+const VOICE_MAP: Record<Lang, Record<VoiceId, { name: string; ssmlGender: 'FEMALE' | 'MALE' }>> = {
+  'en-US': {
+    female: { name: 'en-US-Chirp3-HD-Kore', ssmlGender: 'FEMALE' },
+    male:   { name: 'en-US-Chirp3-HD-Puck', ssmlGender: 'MALE' },
+  },
+  'vi-VN': {
+    female: { name: 'vi-VN-Chirp3-HD-Kore', ssmlGender: 'FEMALE' },
+    male:   { name: 'vi-VN-Chirp3-HD-Puck', ssmlGender: 'MALE' },
+  },
 }
 
 export async function generateAudioFromGoogle(
-  word: string,
+  text: string,
   voice: VoiceId = DEFAULT_VOICE,
+  lang: Lang = 'en-US',
 ): Promise<ArrayBuffer> {
   const apiKey = process.env.GOOGLE_TTS_API_KEY
   if (!apiKey) {
     throw new Error('Server chưa cấu hình GOOGLE_TTS_API_KEY')
   }
 
-  const voiceConfig = VOICE_MAP[voice]
+  const voiceConfig = VOICE_MAP[lang][voice]
+  // Tiếng Anh đọc chậm hơn 1 chút để học viên nghe rõ; tiếng Việt tốc độ bình thường
+  const speakingRate = lang === 'en-US' ? 0.9 : 1.0
 
   const response = await fetch(
     `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
@@ -40,16 +54,17 @@ export async function generateAudioFromGoogle(
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        input: { text: word },
+        input: { text },
         voice: {
-          languageCode: 'en-US',
-          name: voiceConfig.name, // Giọng tự nhiên nhất của Google
+          languageCode: lang,
+          name: voiceConfig.name,
           ssmlGender: voiceConfig.ssmlGender,
         },
+        // Lưu ý: giọng Chirp 3 HD KHÔNG hỗ trợ tham số "pitch" (gửi vào sẽ lỗi),
+        // nên ở đây chỉ đặt speakingRate. Chirp 3 HD cũng chỉ nhận text thường (không SSML).
         audioConfig: {
           audioEncoding: 'MP3',
-          speakingRate: 0.9, // Đọc chậm hơn bình thường 1 chút để học viên nghe rõ
-          pitch: 0,
+          speakingRate,
         },
       }),
     },
@@ -66,8 +81,7 @@ export async function generateAudioFromGoogle(
   }
 
   // Google trả base64 → decode thành dữ liệu nhị phân để upload lên Supabase Storage.
-  // Dùng atob() (Web API) thay vì Buffer (Node API) vì hàm này chạy trên Vercel Edge Runtime,
-  // môi trường giống browser hơn là Node truyền thống — không có sẵn Buffer.
+  // Dùng atob() (Web API) thay vì Buffer (Node API) vì hàm này chạy trên Vercel Edge Runtime.
   const binary = atob(data.audioContent)
   const bytes = new Uint8Array(binary.length)
   for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)

@@ -122,7 +122,7 @@ export default function Flashcard({ entries, userId, onLearnedChange }: Props) {
       {/* Nút phát âm + nghe câu (tách khỏi nút lật để bấm không bị lật thẻ) */}
       <div className="flex items-center justify-center gap-2 mb-4">
         <PronounceButton word={card.word} />
-        {card.ex_en && <SpeakButton text={card.ex_en} lang="en" title="Nghe câu ví dụ" />}
+        {card.ex_en && <SpeakButton text={card.ex_en} lang="en-US" title="Nghe câu ví dụ" />}
       </div>
 
       {/* Nút tự đánh giá */}

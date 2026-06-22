@@ -12,8 +12,13 @@ export function LangProvider({ children }: { children: ReactNode }) {
     setLang(next)
   }
 
+  function setLangDirect(l: UiLang) {
+    setUiLang(l)
+    setLang(l)
+  }
+
   return (
-    <LangContext.Provider value={{ lang, toggleLang, T: t[lang] }}>
+    <LangContext.Provider value={{ lang, toggleLang, setLang: setLangDirect, T: t[lang] }}>
       {children}
     </LangContext.Provider>
   )

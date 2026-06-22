@@ -9,12 +9,13 @@ import type { User as AppUser, Plan } from '../types'
 // đổi cột plan trong DB là có hiệu lực.
 async function toAppUser(sbUser: { id: string; email?: string; user_metadata?: { name?: string } }): Promise<AppUser> {
   const name = sbUser.user_metadata?.name ?? sbUser.email?.split('@')[0] ?? 'Học viên'
-  const plan: Plan = await ensureProfile(sbUser.id, name)
+  const profile = await ensureProfile(sbUser.id, name)
   return {
     id: sbUser.id,
     email: sbUser.email ?? '',
     name,
-    plan,
+    plan: profile.plan as Plan,
+    onboarded: profile.onboarded,
     createdAt: Date.now(),
   }
 }
@@ -33,6 +34,22 @@ export async function login(email: string, password: string): Promise<AppUser | 
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
   if (error || !data.user) return null
   return await toAppUser(data.user)
+}
+
+// Đăng nhập bằng Google (OAuth qua Supabase).
+// Lưu ý: hàm này KHÔNG trả về user ngay — nó chuyển hướng trình duyệt sang
+// trang đăng nhập Google. Sau khi Google trả về, Supabase tự đọc token trên URL
+// và AuthProvider (onAuthStateChange) sẽ cập nhật user.
+// Cần bật Google provider trong Supabase Dashboard → Authentication → Providers.
+export async function loginWithGoogle(): Promise<void> {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      // Quay lại đúng trang hiện tại sau khi đăng nhập xong
+      redirectTo: window.location.origin,
+    },
+  })
+  if (error) throw error
 }
 
 export async function logout() {
