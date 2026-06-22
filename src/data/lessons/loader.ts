@@ -22,6 +22,11 @@ export interface LessonMeta {
   idx: number
 }
 
+export interface SpeakerName {
+  vi: string
+  en: string
+}
+
 export interface Lesson {
   id: number
   title: string
@@ -29,6 +34,8 @@ export interface Lesson {
   turns: Turn[]
   speakerAGender?: 'female' | 'male'
   speakerBGender?: 'female' | 'male'
+  speakerAName?: SpeakerName
+  speakerBName?: SpeakerName
 }
 
 export const INDEX: LessonMeta[] = indexData as LessonMeta[]

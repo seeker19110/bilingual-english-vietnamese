@@ -1,1 +1,1547 @@
-[{"id":91,"title":"Đi siêu thị với trẻ em","situation":"Mẹ đưa con nhỏ đi siêu thị và dạy con về đồ ăn và tính toán.","turns":[{"speaker":"A","en":"Okay, we need vegetables, milk, and some snacks. Ready?","vi":"Được rồi, chúng ta cần rau, sữa và đồ ăn vặt. Sẵn sàng chưa?"},{"speaker":"B","en":"Yes! Can I push the cart?","vi":"Sẵn sàng! Con có thể đẩy xe không?"},{"speaker":"A","en":"Sure, but be careful not to run into anyone.","vi":"Được, nhưng cẩn thận đừng đâm vào ai nhé."},{"speaker":"B","en":"Okay! What vegetables do we need?","vi":"Được! Chúng ta cần rau gì?"},{"speaker":"A","en":"Carrots, spinach, tomatoes, and broccoli. Can you find them?","vi":"Cà rốt, rau cải, cà chua và bông cải xanh. Con có thể tìm không?"},{"speaker":"B","en":"I see the carrots! They're orange.","vi":"Con thấy cà rốt! Chúng màu cam."},{"speaker":"A","en":"Great! Can you count? We need 4 carrots.","vi":"Giỏi! Con có thể đếm không? Chúng ta cần 4 củ cà rốt."},{"speaker":"B","en":"One, two, three, four! Done!","vi":"Một, hai, ba, bốn! Xong!"},{"speaker":"A","en":"Perfect. What color is broccoli?","vi":"Hoàn hảo. Bông cải xanh màu gì?"},{"speaker":"B","en":"Green! Like a tiny tree.","vi":"Màu xanh! Giống cây con."},{"speaker":"A","en":"Exactly right! Now let's get the milk.","vi":"Đúng vậy! Bây giờ mình lấy sữa nhé."},{"speaker":"B","en":"Can we get chocolate milk? Please?","vi":"Chúng ta có thể lấy sữa sô-cô-la không? Làm ơn!"},{"speaker":"A","en":"We'll get regular milk, but you can choose one small treat.","vi":"Chúng ta lấy sữa thường, nhưng con có thể chọn một món ăn nhỏ."},{"speaker":"B","en":"Can I have the gummy bears?","vi":"Con có thể lấy kẹo dẻo không?"},{"speaker":"A","en":"One small bag. It says 25,000 VND.","vi":"Một túi nhỏ thôi. Ghi 25.000 đồng."},{"speaker":"B","en":"Is that expensive?","vi":"Đắt không mẹ?"},{"speaker":"A","en":"Not too much. If I have 50,000 VND, how much change will I get?","vi":"Không nhiều. Nếu mẹ có 50.000 đồng, sẽ thối bao nhiêu?"},{"speaker":"B","en":"Um... 25,000 VND?","vi":"Ờ... 25.000 đồng?"},{"speaker":"A","en":"Exactly right! Very good math!","vi":"Đúng chính xác! Tính toán giỏi lắm!"},{"speaker":"B","en":"Mummy, why do some things have red stickers?","vi":"Mẹ ơi, sao một số thứ có nhãn đỏ vậy?"},{"speaker":"A","en":"Those are on sale — they're cheaper than usual. Good observation!","vi":"Những thứ đó đang giảm giá — rẻ hơn bình thường. Nhận xét tinh tường!"},{"speaker":"B","en":"Can we only buy things with red stickers to save money?","vi":"Chúng ta chỉ mua thứ có nhãn đỏ để tiết kiệm tiền được không?"},{"speaker":"A","en":"Ha! Brilliant idea, but we need specific things for cooking.","vi":"Ha! Ý tưởng xuất sắc, nhưng chúng ta cần thứ cụ thể để nấu ăn."},{"speaker":"B","en":"When I grow up I want to be a supermarket manager!","vi":"Khi lớn lên con muốn làm quản lý siêu thị!"},{"speaker":"A","en":"Great job! You can make sure everything is organized and affordable.","vi":"Tốt quá! Con có thể đảm bảo mọi thứ được tổ chức và giá cả hợp lý."},{"speaker":"B","en":"And I'll put all the candy near the door!","vi":"Và con sẽ đặt tất cả kẹo gần cửa ra vào!"},{"speaker":"A","en":"Clever thinking! I think we have everything. Let's check out.","vi":"Suy nghĩ thông minh! Tôi nghĩ chúng ta có đủ rồi. Mình đi thanh toán thôi."},{"speaker":"B","en":"Can I put the things on the counter?","vi":"Con có thể đặt đồ lên quầy không?"},{"speaker":"A","en":"Yes! Very carefully. You're such a great helper today.","vi":"Được! Cẩn thận thôi. Con là người giúp đỡ tuyệt vời hôm nay."},{"speaker":"B","en":"I love shopping with you, Mummy!","vi":"Con thích đi mua sắm với mẹ lắm!"}],"speakerAGender":"female","speakerBGender":"female"},{"id":92,"title":"Nói chuyện về môi trường","situation":"Hai sinh viên thảo luận về vấn đề môi trường và cách mỗi người có thể giúp ích.","turns":[{"speaker":"A","en":"Did you see the news about plastic pollution in the Mekong Delta?","vi":"Bạn có xem tin về ô nhiễm nhựa ở Đồng bằng sông Cửu Long không?"},{"speaker":"B","en":"Yes, it was heartbreaking. So much comes from everyday plastic waste.","vi":"Có, thật đau lòng. Rất nhiều đến từ rác nhựa hàng ngày."},{"speaker":"A","en":"Vietnam is one of the top countries for ocean plastic pollution. That's alarming.","vi":"Việt Nam là một trong những nước hàng đầu về ô nhiễm nhựa đại dương. Thật đáng lo."},{"speaker":"B","en":"But I think individual actions can still make a difference.","vi":"Nhưng tôi nghĩ hành động cá nhân vẫn có thể tạo ra sự khác biệt."},{"speaker":"A","en":"What changes have you made personally?","vi":"Cá nhân bạn đã thay đổi điều gì?"},{"speaker":"B","en":"I use reusable bags, a metal straw, and a refillable water bottle.","vi":"Tôi dùng túi tái sử dụng, ống hút kim loại và bình nước có thể tái sử dụng."},{"speaker":"A","en":"Me too! I also separate my trash into recyclables and non-recyclables.","vi":"Tôi cũng vậy! Tôi cũng phân loại rác thành tái chế và không tái chế."},{"speaker":"B","en":"Does your building have separate bins for recycling?","vi":"Tòa nhà của bạn có thùng riêng cho tái chế không?"},{"speaker":"A","en":"Not yet. I collect recyclables and take them to a collection point.","vi":"Chưa. Tôi thu gom đồ tái chế và đem đến điểm thu gom."},{"speaker":"B","en":"That's admirable. What do you think is the biggest environmental problem in Vietnam?","vi":"Thật đáng ngưỡng mộ. Bạn nghĩ vấn đề môi trường lớn nhất ở Việt Nam là gì?"},{"speaker":"A","en":"Air pollution, especially motorbike emissions. Both Hanoi and HCM City have poor air quality.","vi":"Ô nhiễm không khí, đặc biệt khí thải xe máy. Hà Nội và TP.HCM đều có không khí kém."},{"speaker":"B","en":"True. I started wearing an air filtration mask when I ride my motorbike.","vi":"Đúng vậy. Tôi bắt đầu đeo khẩu trang lọc khí khi đi xe máy."},{"speaker":"A","en":"Do you think electric vehicles will help solve this?","vi":"Bạn có nghĩ xe điện sẽ giúp giải quyết vấn đề này không?"},{"speaker":"B","en":"Definitely. VinFast making electric vehicles is a step in the right direction.","vi":"Chắc chắn. VinFast làm xe điện là bước đi đúng hướng."},{"speaker":"A","en":"What about deforestation? Vietnam has lost a lot of forest cover.","vi":"Còn nạn phá rừng? Việt Nam đã mất rất nhiều diện tích rừng."},{"speaker":"B","en":"Illegal logging and agricultural expansion are the main causes.","vi":"Khai thác gỗ trái phép và mở rộng nông nghiệp là nguyên nhân chính."},{"speaker":"A","en":"I think education is key. People need to understand the consequences.","vi":"Tôi nghĩ giáo dục là chìa khóa. Mọi người cần hiểu hậu quả."},{"speaker":"B","en":"I volunteer with an environmental group that teaches children in schools.","vi":"Tôi tình nguyện với nhóm môi trường đến trường dạy trẻ em."},{"speaker":"A","en":"What do you teach them?","vi":"Bạn dạy họ điều gì?"},{"speaker":"B","en":"Recycling basics, not littering, why trees matter. Simple but important lessons.","vi":"Kiến thức cơ bản về tái chế, không xả rác, tại sao cây cối quan trọng."},{"speaker":"A","en":"Can I join your group? I want to contribute more meaningfully.","vi":"Tôi có thể tham gia nhóm không? Tôi muốn đóng góp có ý nghĩa hơn."},{"speaker":"B","en":"Absolutely! We meet every Saturday morning. I'll add you to our group chat.","vi":"Tất nhiên! Chúng tôi họp mỗi sáng thứ Bảy. Tôi sẽ thêm bạn vào nhóm chat."},{"speaker":"A","en":"I'm excited. Small actions multiplied by millions of people make a real impact.","vi":"Tôi hào hứng lắm. Hành động nhỏ nhân lên bởi hàng triệu người tạo tác động thực sự."},{"speaker":"B","en":"That's the motto of our group. See you Saturday!","vi":"Đó là phương châm của nhóm. Hẹn gặp thứ Bảy!"},{"speaker":"A","en":"Looking forward to it. The planet needs more people like you.","vi":"Rất mong chờ. Hành tinh cần thêm những người như bạn."},{"speaker":"B","en":"And like you! We're both trying. That's what matters.","vi":"Và như bạn! Chúng ta đều đang cố gắng. Đó là điều quan trọng."}],"speakerAGender":"female","speakerBGender":"female"},{"id":93,"title":"Họp phụ huynh ở trường","situation":"Phụ huynh Hồng gặp giáo viên chủ nhiệm để nghe về tình hình học tập của con.","turns":[{"speaker":"A","en":"Good evening, Ms. Hong. Thank you for coming to the parent-teacher meeting.","vi":"Chào buổi tối, cô Hồng. Cảm ơn đã đến buổi họp phụ huynh."},{"speaker":"B","en":"Of course. I always make time for these. How is my daughter Linh doing?","vi":"Tất nhiên. Tôi luôn dành thời gian. Con gái tôi Linh đang học thế nào?"},{"speaker":"A","en":"Linh is a wonderful student. She's very engaged in class.","vi":"Linh là học sinh tuyệt vời. Em rất chú chú vào trong lớp."},{"speaker":"B","en":"That's great to hear! She loves school.","vi":"Thật tốt khi nghe! Con bé yêu học lắm."},{"speaker":"A","en":"Her math and science scores are excellent. She consistently gets 9 out of 10.","vi":"Điểm toán và khoa học của em xuất sắc. Em luôn được 9 trên 10."},{"speaker":"B","en":"She spends a lot of time on those subjects. What about language scores?","vi":"Con bé dành nhiều thời gian cho những môn đó. Còn điểm ngôn ngữ?"},{"speaker":"A","en":"Her Vietnamese literature is good, but she struggles a little with English writing.","vi":"Văn học tiếng Việt tốt, nhưng em gặp khó khăn một chút với viết tiếng Anh."},{"speaker":"B","en":"I've noticed that at home too. She finds writing in English difficult.","vi":"Tôi cũng nhận ra điều đó ở nhà. Con bé thấy viết tiếng Anh khó."},{"speaker":"A","en":"The issue is sentence structure and vocabulary range. She knows the ideas but struggles to express them.","vi":"Vấn đề là cấu trúc câu và phạm vi từ vựng. Em biết ý tưởng nhưng khó diễn đạt."},{"speaker":"B","en":"What do you recommend I do at home to help her?","vi":"Bạn khuyến nghị tôi nên làm gì ở nhà để giúp con?"},{"speaker":"A","en":"Encourage her to read simple English books and write a short diary in English each day.","vi":"Khuyến khích em đọc sách tiếng Anh đơn giản và viết nhật ký ngắn mỗi ngày."},{"speaker":"B","en":"That's manageable. How is her social behavior with classmates?","vi":"Điều đó có thể thực hiện được. Hành vi xã hội của em với bạn thế nào?"},{"speaker":"A","en":"She's friendly and kind, but a bit shy about speaking up in class discussions.","vi":"Em thân thiện và tốt bụng, nhưng hơi e ngại khi phát biểu trong thảo luận."},{"speaker":"B","en":"Yes, she's always been a bit introverted. Should I be concerned?","vi":"Vâng, con bé luôn hướng nội. Tôi có nên lo lắng không?"},{"speaker":"A","en":"Not at all. Introverted students often think deeply. I just encourage her to share more.","vi":"Không hề. Học sinh hướng nội thường suy nghĩ sâu. Tôi chỉ khuyến khích em chia sẻ hơn."},{"speaker":"B","en":"Has she made friends in the class?","vi":"Con bé có kết bạn trong lớp chưa?"},{"speaker":"A","en":"Yes, she has a small but close group of friends. Quality over quantity.","vi":"Có, em có nhóm bạn nhỏ nhưng thân thiết. Chất lượng hơn số lượng."},{"speaker":"B","en":"That sounds just like her. What are her strongest points as a student?","vi":"Nghe đúng như tính cách con bé. Điểm mạnh nhất của em là gì?"},{"speaker":"A","en":"Diligence and honesty. She never copies homework and always tries her best.","vi":"Sự chăm chỉ và trung thực. Em không bao giờ chép bài và luôn cố hết sức."},{"speaker":"B","en":"I'm so proud of her. What should we focus on for the next semester?","vi":"Tôi rất tự hào. Chúng ta nên tập trung vào gì cho học kỳ tới?"},{"speaker":"A","en":"English writing skills and building confidence to participate more actively in class.","vi":"Kỹ năng viết tiếng Anh và xây dựng tự tin để tham gia tích cực hơn."},{"speaker":"B","en":"Noted. I'll support her more at home. Thank you for the detailed feedback.","vi":"Ghi nhận. Tôi sẽ hỗ trợ em nhiều hơn. Cảm ơn vì phản hồi chi tiết."},{"speaker":"A","en":"Thank you for being such an involved parent. Linh is lucky to have you.","vi":"Cảm ơn vì bạn là phụ huynh tích cực. Linh may mắn có bạn."},{"speaker":"B","en":"I just want her to be happy and do her best. That's all.","vi":"Tôi chỉ muốn con được hạnh phúc và làm hết sức."},{"speaker":"A","en":"That attitude makes all the difference. See you at the next meeting.","vi":"Thái độ đó tạo ra sự khác biệt. Hẹn gặp ở buổi họp tiếp theo."},{"speaker":"B","en":"I'll be here. Thank you again, teacher.","vi":"Tôi sẽ có mặt. Cảm ơn thầy cô một lần nữa."}],"speakerAGender":"female","speakerBGender":"male"},{"id":94,"title":"Mua quần áo ở cửa hàng","situation":"Tú đến cửa hàng thời trang để tìm trang phục đi dự đám cưới.","turns":[{"speaker":"A","en":"Hi! I'm looking for an outfit to wear to a wedding next weekend.","vi":"Chào! Tôi đang tìm trang phục dự đám cưới cuối tuần tới."},{"speaker":"B","en":"Are you looking for something formal or semi-formal?","vi":"Bạn đang tìm trang phục trang trọng hay bán trang trọng?"},{"speaker":"A","en":"Semi-formal. I want to look elegant but not overdressed.","vi":"Bán trang trọng. Tôi muốn thanh lịch nhưng không quá lộng lẫy."},{"speaker":"B","en":"What's your usual size?","vi":"Cỡ thường của bạn là gì?"},{"speaker":"A","en":"I'm usually a medium. But I prefer to try before buying.","vi":"Tôi thường cỡ M. Nhưng tôi muốn thử trước khi mua."},{"speaker":"B","en":"Of course! How about this navy midi dress?","vi":"Tất nhiên! Cái váy midi xanh navy này thế nào?"},{"speaker":"A","en":"That's beautiful! Is it comfortable for a long evening?","vi":"Đẹp quá! Nó có thoải mái để mặc cả buổi tối không?"},{"speaker":"B","en":"Very comfortable. It's made from breathable fabric — great for outdoor events.","vi":"Rất thoải mái. Vải thoáng khí — tốt cho sự kiện ngoài trời."},{"speaker":"A","en":"How much is it?","vi":"Giá bao nhiêu?"},{"speaker":"B","en":"This one is 850,000 VND. Currently 10% off.","vi":"Cái này 850.000 đồng. Đang giảm 10%."},{"speaker":"A","en":"Can I try it on?","vi":"Tôi có thể thử không?"},{"speaker":"B","en":"Absolutely. The fitting room is on your right.","vi":"Tất nhiên. Phòng thử đồ ở bên phải."},{"speaker":"A","en":"It fits perfectly! But I'm not sure about the color.","vi":"Vừa hoàn hảo! Nhưng tôi không chắc về màu."},{"speaker":"B","en":"We also have it in dusty pink and sage green. Want to try those?","vi":"Chúng tôi cũng có màu hồng phấn và xanh lá nhạt. Bạn muốn thử không?"},{"speaker":"A","en":"Yes! I'll try the sage green.","vi":"Có! Tôi sẽ thử màu xanh lá nhạt."},{"speaker":"B","en":"Sage green is very on-trend right now.","vi":"Xanh lá nhạt đang rất thịnh hành lúc này."},{"speaker":"A","en":"Oh, I love this color! It suits my skin tone much better.","vi":"Ồ, tôi thích màu này! Nó phù hợp với tông da của tôi hơn."},{"speaker":"B","en":"You look wonderful! It's definitely your color.","vi":"Bạn trông tuyệt vời! Đây chắc chắn là màu của bạn."},{"speaker":"A","en":"Do you have shoes that would match this dress?","vi":"Bạn có giày phù hợp với chiếc váy này không?"},{"speaker":"B","en":"Nude heels or white block heels would both look amazing with it.","vi":"Giày cao gót nude hoặc giày đế khối trắng đều trông tuyệt với nó."},{"speaker":"A","en":"Can I see the nude heels in size 37?","vi":"Tôi có thể xem giày cao gót nude cỡ 37 không?"},{"speaker":"B","en":"Let me check... Yes, we have size 37 in stock.","vi":"Để tôi kiểm tra... Có, chúng tôi có cỡ 37 trong kho."},{"speaker":"A","en":"These heels are comfortable too. I'll take the dress and the shoes!","vi":"Giày này cũng thoải mái. Tôi sẽ lấy váy và giày!"},{"speaker":"B","en":"Great choice! Total is 765,000 for the dress plus 450,000 for the shoes.","vi":"Lựa chọn tuyệt! Tổng là 765.000 cho váy cộng 450.000 cho giày."},{"speaker":"A","en":"That's 1,215,000 VND total. Can I pay by card?","vi":"Tổng là 1.215.000 đồng. Tôi có thể trả bằng thẻ không?"},{"speaker":"B","en":"Of course! You're going to look stunning at that wedding.","vi":"Tất nhiên! Bạn sẽ trông rực rỡ tại đám cưới đó."},{"speaker":"A","en":"Thank you for all your help! I was so stressed about what to wear.","vi":"Cảm ơn bạn rất nhiều! Tôi đã rất lo về việc mặc gì."},{"speaker":"B","en":"That's what we're here for. Enjoy the wedding!","vi":"Đó là lý do chúng tôi ở đây. Chúc vui vẻ tại đám cưới!"}],"speakerAGender":"female","speakerBGender":"male"},{"id":95,"title":"Đặt bàn nhà hàng cho dịp đặc biệt","situation":"Kiên gọi điện đặt bàn tại nhà hàng sang trọng cho buổi kỷ niệm với người yêu.","turns":[{"speaker":"A","en":"Hello, I'd like to make a reservation for two people this Saturday evening.","vi":"Xin chào, tôi muốn đặt bàn cho hai người tối thứ Bảy này."},{"speaker":"B","en":"Of course! What time would you prefer?","vi":"Được! Bạn muốn vào lúc mấy giờ?"},{"speaker":"A","en":"Around 7 PM if possible.","vi":"Khoảng 7 giờ tối nếu có thể."},{"speaker":"B","en":"We have availability at 7:00 PM or 7:30 PM. Which do you prefer?","vi":"Chúng tôi có chỗ lúc 7:00 hoặc 7:30 tối. Bạn muốn giờ nào?"},{"speaker":"A","en":"7:00 PM please. It's a special occasion — our anniversary.","vi":"7:00 tối nhé. Đây là dịp đặc biệt — kỷ niệm của chúng tôi."},{"speaker":"B","en":"Congratulations! We'll make it extra special for you.","vi":"Chúc mừng! Chúng tôi sẽ làm thật đặc biệt cho bạn."},{"speaker":"A","en":"Can I request a table by the window with a city view?","vi":"Tôi có thể yêu cầu bàn cạnh cửa sổ view thành phố không?"},{"speaker":"B","en":"I'll note that as a request. We can't guarantee it but will do our best.","vi":"Tôi sẽ ghi đó là yêu cầu. Không thể đảm bảo nhưng sẽ cố hết sức."},{"speaker":"A","en":"Thank you. Can I arrange for a small cake? It's also her birthday.","vi":"Cảm ơn. Tôi có thể sắp xếp một chiếc bánh nhỏ không? Hôm đó cũng là sinh nhật cô ấy."},{"speaker":"B","en":"How lovely! Yes, we offer a complimentary dessert plate for special occasions.","vi":"Thật dễ thương! Có, chúng tôi cung cấp đĩa tráng miệng miễn phí cho dịp đặc biệt."},{"speaker":"A","en":"What's the dress code at your restaurant?","vi":"Quy định trang phục tại nhà hàng là gì?"},{"speaker":"B","en":"Smart casual to formal. No shorts, flip-flops, or sleeveless tops please.","vi":"Lịch sự đến trang trọng. Không quần short, dép xỏ ngón hoặc áo ba lỗ."},{"speaker":"A","en":"Can you tell me about your set menu for two?","vi":"Bạn có thể cho tôi biết về thực đơn set cho hai người không?"},{"speaker":"B","en":"We have a 4-course set menu at 1,200,000 VND per person, including wine pairing.","vi":"Chúng tôi có thực đơn 4 món với giá 1.200.000 đồng mỗi người, bao gồm rượu vang."},{"speaker":"A","en":"What courses are included?","vi":"Bao gồm những món gì?"},{"speaker":"B","en":"Appetizer, soup, main course, and dessert. The main can be beef or seafood.","vi":"Khai vị, súp, món chính và tráng miệng. Món chính có bò hoặc hải sản."},{"speaker":"A","en":"My partner doesn't drink alcohol. Can they substitute wine for something else?","vi":"Bạn của tôi không uống rượu. Có thể thay bằng thứ khác không?"},{"speaker":"B","en":"Yes, we offer sparkling water, fresh juice, or mocktails as substitutes.","vi":"Có, chúng tôi cung cấp nước có ga, nước ép tươi hoặc mocktail thay thế."},{"speaker":"A","en":"She'd love the fresh juice option. Any food allergies I should mention?","vi":"Cô ấy sẽ thích nước ép. Tôi nên đề cập dị ứng thực phẩm không?"},{"speaker":"B","en":"Please do! We take allergies very seriously.","vi":"Vui lòng nêu! Chúng tôi coi trọng dị ứng rất nghiêm túc."},{"speaker":"A","en":"She's allergic to shellfish. Please make sure the kitchen knows.","vi":"Cô ấy dị ứng với động vật có vỏ. Vui lòng đảm bảo nhà bếp biết."},{"speaker":"B","en":"Absolutely noted. The chef will be informed.","vi":"Ghi nhận hoàn toàn. Đầu bếp sẽ được thông báo."},{"speaker":"A","en":"Can I also arrange for a small bouquet of flowers on the table?","vi":"Tôi có thể sắp xếp một bó hoa nhỏ trên bàn không?"},{"speaker":"B","en":"We can arrange that for an additional 200,000 VND. Any flower preference?","vi":"Chúng tôi có thể sắp xếp với phụ phí 200.000 đồng. Bạn thích hoa gì?"},{"speaker":"A","en":"Red roses would be perfect.","vi":"Hoa hồng đỏ sẽ hoàn hảo."},{"speaker":"B","en":"Beautiful choice. We look forward to making your evening special!","vi":"Lựa chọn đẹp. Chúng tôi rất mong làm buổi tối của bạn thật đặc biệt!"},{"speaker":"A","en":"Can I have a confirmation number?","vi":"Tôi có thể có số xác nhận không?"},{"speaker":"B","en":"Your reservation number is R2025-847. See you Saturday at 7 PM!","vi":"Số đặt bàn của bạn là R2025-847. Hẹn gặp thứ Bảy lúc 7 giờ tối!"}],"speakerAGender":"male","speakerBGender":"female"},{"id":96,"title":"Thảo luận về du học","situation":"Ngân xin lời khuyên từ người anh họ đã du học nước ngoài về kinh nghiệm và cách chuẩn bị.","turns":[{"speaker":"A","en":"I've been accepted to a university in Australia. I'm both excited and nervous.","vi":"Em đã được nhận vào một trường đại học ở Úc. Em vừa hào hứng vừa hồi hộp."},{"speaker":"B","en":"Congratulations! That's wonderful news. Where exactly?","vi":"Chúc mừng! Đó là tin tuyệt vời. Ở đâu vậy?"},{"speaker":"A","en":"University of Melbourne. For a master's in data science.","vi":"Đại học Melbourne. Học thạc sĩ về khoa học dữ liệu."},{"speaker":"B","en":"That's an excellent university. You should be so proud!","vi":"Đó là trường xuất sắc. Em phải tự hào về bản thân lắm!"},{"speaker":"A","en":"I am, but I'm worried about living alone in a foreign country.","vi":"Em có, nhưng em lo về việc sống một mình ở nước ngoài."},{"speaker":"B","en":"That's completely normal. I felt the same when I went to the UK. It fades quickly.","vi":"Điều đó hoàn toàn bình thường. Anh cũng cảm thấy vậy khi đến Anh. Nó sẽ qua nhanh."},{"speaker":"A","en":"What was the hardest adjustment for you?","vi":"Điều khó thích nghi nhất với anh là gì?"},{"speaker":"B","en":"The food, and the loneliness in the first month. But I joined clubs and made friends fast.","vi":"Đồ ăn, và sự cô đơn tháng đầu. Nhưng anh tham gia câu lạc bộ và kết bạn nhanh."},{"speaker":"A","en":"What clubs did you join?","vi":"Anh tham gia câu lạc bộ gì?"},{"speaker":"B","en":"A Vietnamese student association and a photography club. Both were great for meeting people.","vi":"Hội sinh viên Việt Nam và câu lạc bộ nhiếp ảnh. Cả hai đều tốt để gặp gỡ mọi người."},{"speaker":"A","en":"What should I prepare financially before going?","vi":"Em nên chuẩn bị tài chính gì trước khi đi?"},{"speaker":"B","en":"Have at least 3 months of living expenses ready. Melbourne is expensive.","vi":"Hãy chuẩn bị ít nhất 3 tháng chi phí sinh hoạt. Melbourne đắt đỏ lắm."},{"speaker":"A","en":"How much does a student typically spend per month in Melbourne?","vi":"Sinh viên thường chi bao nhiêu mỗi tháng ở Melbourne?"},{"speaker":"B","en":"About 2,000 to 2,500 AUD including rent, food, transport, and necessities.","vi":"Khoảng 2.000 đến 2.500 AUD bao gồm thuê nhà, ăn uống, đi lại và nhu yếu phẩm."},{"speaker":"A","en":"Can I work part-time while studying?","vi":"Em có thể làm bán thời gian khi học không?"},{"speaker":"B","en":"Yes, student visas in Australia allow up to 48 hours of work per fortnight.","vi":"Có, visa sinh viên ở Úc cho phép làm việc tối đa 48 giờ mỗi hai tuần."},{"speaker":"A","en":"What kind of jobs do international students usually find?","vi":"Sinh viên quốc tế thường tìm được loại công việc gì?"},{"speaker":"B","en":"Cafe work, retail, tutoring, or delivery driving. Tutoring pays better if you're good at maths.","vi":"Làm cà phê, bán lẻ, gia sư hoặc giao hàng. Gia sư trả lương tốt hơn nếu giỏi toán."},{"speaker":"A","en":"I'm good at math so that's helpful! How about homesickness?","vi":"Em giỏi toán nên điều đó hữu ích! Còn nhớ nhà thì sao?"},{"speaker":"B","en":"Video call your family regularly. Cook Vietnamese food at home. It really helps.","vi":"Gọi video cho gia đình thường xuyên. Nấu đồ Việt ở nhà. Nó thực sự giúp ích."},{"speaker":"A","en":"Good advice. What do you wish you had packed that you didn't?","vi":"Lời khuyên hay. Điều gì anh ước mình đã mang theo mà không mang?"},{"speaker":"B","en":"More Vietnamese condiments! They're expensive abroad.","vi":"Nhiều gia vị Việt hơn! Chúng đắt ở nước ngoài."},{"speaker":"A","en":"Ha! I'll pack a suitcase of fish sauce!","vi":"Ha! Em sẽ mang một vali nước mắm!"},{"speaker":"B","en":"Also pack warm clothes. Melbourne winters are cold.","vi":"Cũng hãy mang quần áo ấm. Mùa đông Melbourne lạnh đấy."},{"speaker":"A","en":"Thank you, anh. This conversation has made me feel much more confident.","vi":"Cảm ơn anh. Cuộc trò chuyện này khiến em tự tin hơn nhiều."},{"speaker":"B","en":"You're going to do great. Study hard and enjoy the adventure!","vi":"Em sẽ làm tốt thôi. Học chăm chỉ và tận hưởng cuộc phiêu lưu!"}],"speakerAGender":"female","speakerBGender":"male"},{"id":97,"title":"Chăm sóc thú cưng","situation":"Hiền đưa chú mèo đến thú y lần đầu và học cách chăm sóc đúng cách.","turns":[{"speaker":"A","en":"Good morning, doctor. This is my cat Bong. It's her first vet visit.","vi":"Chào buổi sáng bác sĩ. Đây là con mèo Bông của tôi. Đây là lần đầu đến thú y."},{"speaker":"B","en":"Hello, Bong! How old is she?","vi":"Chào Bông! Con bé mấy tháng rồi?"},{"speaker":"A","en":"About 3 months. I adopted her from a shelter two weeks ago.","vi":"Khoảng 3 tháng. Tôi nhận nuôi từ trại cứu trợ hai tuần trước."},{"speaker":"B","en":"Good for you for adopting! Let me do a general health check first.","vi":"Bạn thật tốt khi nhận nuôi! Để tôi kiểm tra sức khỏe tổng quát trước."},{"speaker":"A","en":"She's been sneezing a lot. Is that normal for kittens?","vi":"Con bé hắt hơi rất nhiều. Điều đó có bình thường với mèo con không?"},{"speaker":"B","en":"Some sneezing is normal. But frequent sneezing can indicate an upper respiratory infection.","vi":"Một ít hắt hơi là bình thường. Nhưng hắt hơi thường xuyên có thể chỉ ra nhiễm trùng hô hấp."},{"speaker":"A","en":"Should I be worried?","vi":"Tôi có nên lo lắng không?"},{"speaker":"B","en":"Not too worried. It's very common in shelter cats. I'll prescribe some eye drops and medication.","vi":"Không quá lo. Rất phổ biến ở mèo từ trại cứu trợ. Tôi sẽ kê thuốc nhỏ mắt và thuốc."},{"speaker":"A","en":"Has she been vaccinated?","vi":"Con bé đã được tiêm phòng chưa?"},{"speaker":"B","en":"According to the shelter records, she had one round of vaccines. She needs boosters now.","vi":"Theo hồ sơ trại, con bé đã có một đợt vaccine. Cần nhắc lại bây giờ."},{"speaker":"A","en":"What vaccines does she need?","vi":"Con bé cần những vaccine gì?"},{"speaker":"B","en":"The core cat vaccines: FVRCP and rabies. Plus FeLV if she ever goes outdoors.","vi":"Vaccine cốt lõi: FVRCP và dại. Cộng FeLV nếu con bé ra ngoài."},{"speaker":"A","en":"She stays indoors. Are FVRCP and rabies still necessary?","vi":"Con bé ở trong nhà. FVRCP và dại có vẫn cần thiết không?"},{"speaker":"B","en":"Yes, both are essential for all cats regardless of lifestyle.","vi":"Có, cả hai đều cần thiết cho tất cả mèo dù lối sống thế nào."},{"speaker":"A","en":"How often does she need check-ups?","vi":"Con bé cần khám bao thường xuyên?"},{"speaker":"B","en":"Every year for routine check-ups and vaccine boosters.","vi":"Mỗi năm cho khám định kỳ và nhắc lại vaccine."},{"speaker":"A","en":"What should I feed her at this age?","vi":"Tôi nên cho con bé ăn gì ở tuổi này?"},{"speaker":"B","en":"High-quality kitten food — both wet and dry. Avoid adult cat food until she's 1 year old.","vi":"Thức ăn mèo con chất lượng cao — cả ướt và khô. Tránh thức ăn mèo trưởng thành cho đến 1 tuổi."},{"speaker":"A","en":"Should I give her milk? I heard cats like milk.","vi":"Tôi có nên cho con bé uống sữa không?"},{"speaker":"B","en":"Most cats are lactose intolerant. Cow's milk can cause diarrhea. Avoid it.","vi":"Hầu hết mèo không dung nạp lactose. Sữa bò có thể gây tiêu chảy. Tránh đi."},{"speaker":"A","en":"Good to know! When should I get her spayed?","vi":"Tốt khi biết! Khi nào tôi nên cho con bé triệt sản?"},{"speaker":"B","en":"Around 5 to 6 months is ideal. Before her first heat cycle.","vi":"Khoảng 5 đến 6 tháng là lý tưởng. Trước lần động dục đầu tiên."},{"speaker":"A","en":"How much does spaying cost at your clinic?","vi":"Chi phí triệt sản tại phòng khám là bao nhiêu?"},{"speaker":"B","en":"Around 800,000 to 1,000,000 VND including pre-surgery blood tests.","vi":"Khoảng 800.000 đến 1.000.000 đồng bao gồm xét nghiệm máu trước phẫu thuật."},{"speaker":"A","en":"Reasonable. I'll schedule that when she's 5 months. Any final advice?","vi":"Hợp lý. Tôi sẽ lên lịch khi con bé 5 tháng. Còn lời khuyên cuối không?"},{"speaker":"B","en":"Give her lots of love, playtime, and enrichment. Happy cats are healthy cats.","vi":"Cho con bé nhiều tình yêu, thời gian chơi. Mèo hạnh phúc là mèo khỏe mạnh."},{"speaker":"A","en":"Thank you, doctor. Bong and I will see you again soon.","vi":"Cảm ơn bác sĩ. Bông và tôi sẽ gặp lại bạn sớm thôi."},{"speaker":"B","en":"Take care of her well. She's a lucky cat to have such a caring owner!","vi":"Chăm sóc con bé tốt. Con bé là mèo may mắn có chủ quan tâm như vậy!"}],"speakerAGender":"female","speakerBGender":"male"},{"id":98,"title":"Trò chuyện trong buổi tiệc","situation":"Hai người không quen biết gặp nhau tại buổi tiệc công ty và bắt chuyện.","turns":[{"speaker":"A","en":"Hi there! I don't think we've met. I'm Khanh from the marketing department.","vi":"Chào bạn! Tôi nghĩ chúng ta chưa gặp. Tôi là Khánh từ phòng marketing."},{"speaker":"B","en":"Nice to meet you! I'm David. I just joined the engineering team last month.","vi":"Vui được gặp bạn! Tôi là David. Tôi vừa gia nhập nhóm kỹ thuật tháng trước."},{"speaker":"A","en":"Welcome to the company! Are you enjoying it so far?","vi":"Chào mừng đến công ty! Bạn có thích không?"},{"speaker":"B","en":"Very much! Everyone has been so welcoming. Is this your first company party too?","vi":"Rất nhiều! Mọi người rất thân thiện. Đây cũng là tiệc công ty đầu tiên của bạn à?"},{"speaker":"A","en":"No, I've been here three years. They always do a great job with these events.","vi":"Không, tôi đã ở đây ba năm. Họ luôn tổ chức sự kiện rất tốt."},{"speaker":"B","en":"The food here is amazing. What is this dish?","vi":"Đồ ăn ở đây tuyệt vời. Đây là món gì vậy?"},{"speaker":"A","en":"That's banh khot — mini savory pancakes with shrimp. A Vietnamese specialty.","vi":"Đó là bánh khọt — bánh pancake mặn mini với tôm. Đặc sản Việt Nam."},{"speaker":"B","en":"Delicious! I've been discovering so much Vietnamese food since I arrived.","vi":"Ngon quá! Tôi đã khám phá rất nhiều đồ ăn Việt kể từ khi đến đây."},{"speaker":"A","en":"How long have you been in Vietnam?","vi":"Bạn đã ở Việt Nam bao lâu rồi?"},{"speaker":"B","en":"Three months. I moved from Singapore for this job opportunity.","vi":"Ba tháng. Tôi chuyển từ Singapore đến vì cơ hội việc làm này."},{"speaker":"A","en":"What's the biggest difference you've noticed between Singapore and Vietnam?","vi":"Sự khác biệt lớn nhất bạn nhận thấy giữa Singapore và Việt Nam là gì?"},{"speaker":"B","en":"The pace of life here feels more vibrant. And the street food culture is incredible.","vi":"Nhịp sống ở đây cảm giác sôi động hơn. Và văn hóa đồ ăn vỉa hè thật tuyệt vời."},{"speaker":"A","en":"You'll love it more every month. Which part of HCM City do you live in?","vi":"Bạn sẽ thích hơn mỗi tháng. Bạn sống ở quận nào của TP.HCM?"},{"speaker":"B","en":"District 2. My company arranged an apartment there. Very expat-friendly.","vi":"Quận 2. Công ty sắp xếp căn hộ ở đó. Rất thân thiện với người nước ngoài."},{"speaker":"A","en":"District 2 is lovely. Have you been to District 1 for the night life?","vi":"Quận 2 rất đẹp. Bạn đã đến Quận 1 trải nghiệm cuộc sống về đêm chưa?"},{"speaker":"B","en":"Yes! Bui Vien street is incredible. Though a bit overwhelming at first.","vi":"Có! Phố Bùi Viện thật tuyệt. Mặc dù hơi choáng ngợp lúc đầu."},{"speaker":"A","en":"Ha! That's everyone's reaction. Are you learning any Vietnamese?","vi":"Ha! Đó là phản ứng của mọi người. Bạn có học tiếng Việt không?"},{"speaker":"B","en":"I'm trying! I can say 'xin chao' and 'cam on'. That's about it.","vi":"Tôi đang cố! Tôi có thể nói 'xin chào' và 'cảm ơn'. Vậy thôi."},{"speaker":"A","en":"Great start! Vietnamese is tonal so it takes time.","vi":"Khởi đầu tốt! Tiếng Việt có thanh điệu nên mất thời gian."},{"speaker":"B","en":"The tones are my biggest challenge. I keep saying the wrong thing!","vi":"Thanh điệu là thách thức lớn nhất. Tôi cứ nói nhầm!"},{"speaker":"A","en":"What funny mistake have you made?","vi":"Bạn đã mắc lỗi buồn cười nào chưa?"},{"speaker":"B","en":"I tried to say I want to buy rice but said something very inappropriate instead!","vi":"Tôi cố nói muốn mua gạo nhưng đã nói điều gì đó rất không phù hợp!"},{"speaker":"A","en":"Haha! I can guess. Don't worry, we appreciate the effort.","vi":"Haha! Tôi có thể đoán. Đừng lo, chúng tôi trân trọng sự cố gắng."},{"speaker":"B","en":"I'll keep trying. This has been such a fun conversation, Khanh.","vi":"Tôi sẽ tiếp tục cố. Đây là cuộc trò chuyện thú vị, Khánh."},{"speaker":"A","en":"Let's exchange numbers. I can show you more of the city sometime.","vi":"Mình trao đổi số điện thoại đi. Lúc nào đó tôi có thể chỉ bạn thêm về thành phố."},{"speaker":"B","en":"I'd love that! Looking forward to exploring more with a local guide.","vi":"Tôi rất muốn! Rất mong khám phá thêm với hướng dẫn viên địa phương."},{"speaker":"A","en":"Deal! Enjoy the rest of the party, David.","vi":"Đồng ý! Tận hưởng phần còn lại của bữa tiệc, David."},{"speaker":"B","en":"You too! Great meeting you tonight!","vi":"Bạn cũng vậy! Vui khi gặp bạn tối nay!"}],"speakerAGender":"female","speakerBGender":"female"},{"id":99,"title":"Giải quyết hiểu lầm với đồng nghiệp","situation":"Trang nói chuyện thẳng thắn với đồng nghiệp Minh sau một cuộc tranh luận nhỏ trong công việc.","turns":[{"speaker":"A","en":"Minh, do you have a few minutes? I'd like to talk about what happened in the meeting.","vi":"Minh, bạn có vài phút không? Tôi muốn nói về chuyện xảy ra trong cuộc họp."},{"speaker":"B","en":"Of course. I was actually going to come talk to you too.","vi":"Tất nhiên. Tôi cũng đang định đến gặp bạn."},{"speaker":"A","en":"I think there was a misunderstanding. I wasn't criticizing your work directly.","vi":"Tôi nghĩ có hiểu lầm. Tôi không phê bình trực tiếp công việc của bạn."},{"speaker":"B","en":"It felt that way. When you mentioned the report had gaps, I thought you meant my section.","vi":"Tôi cảm thấy như vậy. Khi bạn nói báo cáo có khoảng trống, tôi nghĩ bạn muốn nói phần của tôi."},{"speaker":"A","en":"I understand why that felt personal. I should have been more specific.","vi":"Tôi hiểu tại sao điều đó cảm thấy cá nhân. Tôi lẽ ra phải cụ thể hơn."},{"speaker":"B","en":"I appreciate you saying that. I might have reacted too quickly.","vi":"Tôi trân trọng khi bạn nói điều đó. Tôi có thể đã phản ứng quá nhanh."},{"speaker":"A","en":"No, your reaction was understandable. Team meetings can feel high-pressure.","vi":"Không, phản ứng của bạn có thể hiểu được. Các cuộc họp nhóm có thể tạo áp lực cao."},{"speaker":"B","en":"What were you referring to when you mentioned the gaps?","vi":"Vậy bạn đề cập đến gì khi nói về các khoảng trống?"},{"speaker":"A","en":"I meant the Q3 data was missing in the finance section. That's a separate team.","vi":"Tôi muốn nói dữ liệu Q3 bị thiếu trong phần tài chính. Đó là nhóm riêng."},{"speaker":"B","en":"Ah, I see! That makes complete sense. I jumped to conclusions.","vi":"À, tôi hiểu rồi! Bây giờ hoàn toàn có lý. Tôi đã kết luận vội vàng."},{"speaker":"A","en":"It's easy to do in a public setting. I should have clarified in the room.","vi":"Dễ xảy ra khi họp. Tôi lẽ ra phải làm rõ ngay trong phòng."},{"speaker":"B","en":"I respect that you came to talk to me directly. Some people avoid these conversations.","vi":"Tôi tôn trọng việc bạn đến nói chuyện trực tiếp. Một số người tránh những cuộc trò chuyện này."},{"speaker":"A","en":"I believe in clearing things up quickly. Misunderstandings fester if left too long.","vi":"Tôi tin vào việc làm sáng tỏ mọi việc nhanh. Hiểu lầm sẽ lan ra nếu để quá lâu."},{"speaker":"B","en":"Agreed. And honestly, your feedback overall helped me improve my section.","vi":"Đồng ý. Và thành thật, phản hồi tổng thể của bạn đã giúp tôi cải thiện phần của mình."},{"speaker":"A","en":"I'm glad to hear that. Your market analysis section was actually very strong.","vi":"Vui khi nghe. Phần phân tích thị trường của bạn thực sự rất mạnh."},{"speaker":"B","en":"Thank you. I worked hard on it. I just got defensive when I thought it was being criticized.","vi":"Cảm ơn. Tôi đã làm việc chăm chỉ. Tôi chỉ bảo vệ khi nghĩ nó bị phê bình."},{"speaker":"A","en":"That's human. We all feel protective of our work.","vi":"Điều đó rất con người. Chúng ta đều cảm thấy bảo vệ công việc của mình."},{"speaker":"B","en":"Going forward, maybe we can align before big meetings to avoid similar situations.","vi":"Từ bây giờ, có lẽ chúng ta có thể thống nhất trước các cuộc họp lớn."},{"speaker":"A","en":"Great idea. A quick check-in the day before would help.","vi":"Ý tưởng hay. Kiểm tra nhanh ngày hôm trước sẽ giúp ích."},{"speaker":"B","en":"I actually enjoy working with you, Trang. I don't want tension between us.","vi":"Thực ra tôi thích làm việc với bạn, Trang. Tôi không muốn có căng thẳng giữa chúng ta."},{"speaker":"A","en":"Same here. Good collaboration makes the whole team stronger.","vi":"Tôi cũng vậy. Sự hợp tác tốt làm cho cả nhóm mạnh hơn."},{"speaker":"B","en":"Absolutely. Thanks for being brave enough to have this conversation.","vi":"Hoàn toàn đúng. Cảm ơn vì đã đủ can đảm để có cuộc trò chuyện này."},{"speaker":"A","en":"Thank you for being open to it. Shall we grab a coffee and start fresh?","vi":"Cảm ơn bạn vì đã cởi mở. Mình đi uống cà phê và bắt đầu lại nhé?"},{"speaker":"B","en":"I'd like that very much. My treat!","vi":"Tôi rất muốn vậy. Tôi mời!"},{"speaker":"A","en":"No, I insist. You can get the next one!","vi":"Không, tôi khăng khăng. Bạn trả lần sau nhé!"}],"speakerAGender":"female","speakerBGender":"male"},{"id":100,"title":"Chia sẻ về hành trình học tiếng Anh","situation":"Lan chia sẻ hành trình học tiếng Anh với người bạn mới bắt đầu học.","turns":[{"speaker":"A","en":"Your English is so fluent! How long have you been learning?","vi":"Tiếng Anh của bạn thật trôi chảy! Bạn đã học bao lâu rồi?"},{"speaker":"B","en":"About eight years seriously. But my journey wasn't smooth at all.","vi":"Khoảng tám năm nghiêm túc. Nhưng hành trình không hề suôn sẻ."},{"speaker":"A","en":"Really? You make it look effortless now.","vi":"Thật không? Bây giờ trông bạn làm rất dễ dàng."},{"speaker":"B","en":"I failed my B1 exam twice. I cried after the second failure.","vi":"Tôi trượt kỳ thi B1 hai lần. Tôi đã khóc sau lần thất bại thứ hai."},{"speaker":"A","en":"What made you keep going?","vi":"Điều gì khiến bạn tiếp tục?"},{"speaker":"B","en":"My dream to work internationally. I knew English was the key to that door.","vi":"Ước mơ làm việc quốc tế. Tôi biết tiếng Anh là chìa khóa để mở cánh cửa đó."},{"speaker":"A","en":"What changed after the second failure?","vi":"Điều gì thay đổi sau lần thất bại thứ hai?"},{"speaker":"B","en":"My approach. I stopped memorizing grammar rules and started using English every day naturally.","vi":"Cách tiếp cận. Tôi ngừng học thuộc ngữ pháp và bắt đầu dùng tiếng Anh mỗi ngày tự nhiên."},{"speaker":"A","en":"What does using English every day mean exactly?","vi":"Dùng tiếng Anh mỗi ngày có nghĩa là gì cụ thể?"},{"speaker":"B","en":"I changed my phone to English, watched only English content, kept a journal, and found conversation partners.","vi":"Tôi đổi điện thoại sang tiếng Anh, chỉ xem nội dung tiếng Anh, viết nhật ký và tìm đối tác hội thoại."},{"speaker":"A","en":"That's total immersion. Wasn't it difficult at first?","vi":"Đó là phương pháp ngâm mình hoàn toàn. Lúc đầu có khó không?"},{"speaker":"B","en":"Very! The first month I understood almost nothing. But by month three, it clicked.","vi":"Rất! Tháng đầu tiên tôi hầu như không hiểu gì. Nhưng đến tháng ba, nó bắt đầu vào."},{"speaker":"A","en":"What does it clicked mean?","vi":"Câu it clicked có nghĩa là gì?"},{"speaker":"B","en":"It means suddenly things started making sense. I could understand without translating in my head.","vi":"Có nghĩa là đột nhiên mọi thứ bắt đầu có ý nghĩa. Tôi có thể hiểu mà không cần dịch trong đầu."},{"speaker":"A","en":"That sounds like the breakthrough moment everyone talks about.","vi":"Nghe như khoảnh khắc đột phá mà mọi người nói đến."},{"speaker":"B","en":"Exactly. And once it happens, progress accelerates rapidly.","vi":"Chính xác. Và một khi xảy ra, tiến bộ tăng nhanh chóng."},{"speaker":"A","en":"What was your biggest mistake as a beginner?","vi":"Sai lầm lớn nhất của bạn khi mới bắt đầu là gì?"},{"speaker":"B","en":"Being afraid to speak. I would practice silently for weeks then freeze when it was time to talk.","vi":"Sợ nói. Tôi luyện tập im lặng nhiều tuần rồi bị đông cứng khi đến lúc phải nói."},{"speaker":"A","en":"I do the same thing! How did you overcome that fear?","vi":"Tôi cũng vậy! Bạn vượt qua nỗi sợ đó như thế nào?"},{"speaker":"B","en":"I joined an online language exchange and committed to speaking for 15 minutes daily, no matter what.","vi":"Tôi tham gia trao đổi ngôn ngữ trực tuyến và cam kết nói 15 phút mỗi ngày dù có gì xảy ra."},{"speaker":"A","en":"Did you ever embarrass yourself while speaking?","vi":"Bạn có bao giờ xấu hổ khi nói không?"},{"speaker":"B","en":"Many times! But native speakers appreciate the effort. They almost never laugh at you.","vi":"Nhiều lần! Nhưng người bản ngữ trân trọng sự cố gắng. Họ hầu như không bao giờ cười nhạo bạn."},{"speaker":"A","en":"What advice would you give to someone just starting, like me?","vi":"Bạn có lời khuyên gì cho người mới bắt đầu như tôi?"},{"speaker":"B","en":"Consistency beats intensity. Thirty minutes every day beats five hours once a week.","vi":"Tính nhất quán quan trọng hơn cường độ. Ba mươi phút mỗi ngày tốt hơn năm giờ một tuần."},{"speaker":"A","en":"That's really wise. And sounds more sustainable.","vi":"Thật sáng suốt. Và nghe bền vững hơn."},{"speaker":"B","en":"Also, fall in love with the language. Watch movies, listen to music you enjoy. Make it fun.","vi":"Ngoài ra, hãy yêu ngôn ngữ. Xem phim, nghe nhạc bạn thích. Làm cho nó vui."},{"speaker":"A","en":"You make it sound achievable. I feel motivated now!","vi":"Bạn làm cho nó nghe có thể đạt được. Tôi cảm thấy có động lực rồi!"},{"speaker":"B","en":"You absolutely can do it. The fact that you're studying today means you're already ahead.","vi":"Bạn hoàn toàn có thể làm được. Việc bạn đang học hôm nay có nghĩa là bạn đã đi trước."},{"speaker":"A","en":"Thank you for sharing your story. It means a lot to know that struggles are normal.","vi":"Cảm ơn bạn đã chia sẻ. Biết rằng những khó khăn là bình thường thật có ý nghĩa."},{"speaker":"B","en":"Every English speaker you admire once couldn't say a single sentence. Keep going!","vi":"Mỗi người nói tiếng Anh bạn ngưỡng mộ ngày xưa không thể nói được một câu. Hãy tiếp tục!"}],"speakerAGender":"female","speakerBGender":"male"}]
+[
+  {
+    "id": 91,
+    "title": "Đi siêu thị với trẻ em",
+    "situation": "Mẹ đưa con nhỏ đi siêu thị và dạy con về đồ ăn và tính toán.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Okay, we need vegetables, milk, and some snacks. Ready?",
+        "vi": "Được rồi, chúng ta cần rau, sữa và đồ ăn vặt. Sẵn sàng chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes! Can I push the cart?",
+        "vi": "Sẵn sàng! Con có thể đẩy xe không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Sure, but be careful not to run into anyone.",
+        "vi": "Được, nhưng cẩn thận đừng đâm vào ai nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay! What vegetables do we need?",
+        "vi": "Được! Chúng ta cần rau gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Carrots, spinach, tomatoes, and broccoli. Can you find them?",
+        "vi": "Cà rốt, rau cải, cà chua và bông cải xanh. Con có thể tìm không?"
+      },
+      {
+        "speaker": "B",
+        "en": "I see the carrots! They're orange.",
+        "vi": "Con thấy cà rốt! Chúng màu cam."
+      },
+      {
+        "speaker": "A",
+        "en": "Great! Can you count? We need 4 carrots.",
+        "vi": "Giỏi! Con có thể đếm không? Chúng ta cần 4 củ cà rốt."
+      },
+      {
+        "speaker": "B",
+        "en": "One, two, three, four! Done!",
+        "vi": "Một, hai, ba, bốn! Xong!"
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. What color is broccoli?",
+        "vi": "Hoàn hảo. Bông cải xanh màu gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "Green! Like a tiny tree.",
+        "vi": "Màu xanh! Giống cây con."
+      },
+      {
+        "speaker": "A",
+        "en": "Exactly right! Now let's get the milk.",
+        "vi": "Đúng vậy! Bây giờ mình lấy sữa nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Can we get chocolate milk? Please?",
+        "vi": "Chúng ta có thể lấy sữa sô-cô-la không? Làm ơn!"
+      },
+      {
+        "speaker": "A",
+        "en": "We'll get regular milk, but you can choose one small treat.",
+        "vi": "Chúng ta lấy sữa thường, nhưng con có thể chọn một món ăn nhỏ."
+      },
+      {
+        "speaker": "B",
+        "en": "Can I have the gummy bears?",
+        "vi": "Con có thể lấy kẹo dẻo không?"
+      },
+      {
+        "speaker": "A",
+        "en": "One small bag. It says 25,000 VND.",
+        "vi": "Một túi nhỏ thôi. Ghi 25.000 đồng."
+      },
+      {
+        "speaker": "B",
+        "en": "Is that expensive?",
+        "vi": "Đắt không mẹ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Not too much. If I have 50,000 VND, how much change will I get?",
+        "vi": "Không nhiều. Nếu mẹ có 50.000 đồng, sẽ thối bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Um... 25,000 VND?",
+        "vi": "Ờ... 25.000 đồng?"
+      },
+      {
+        "speaker": "A",
+        "en": "Exactly right! Very good math!",
+        "vi": "Đúng chính xác! Tính toán giỏi lắm!"
+      },
+      {
+        "speaker": "B",
+        "en": "Mummy, why do some things have red stickers?",
+        "vi": "Mẹ ơi, sao một số thứ có nhãn đỏ vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "Those are on sale — they're cheaper than usual. Good observation!",
+        "vi": "Những thứ đó đang giảm giá — rẻ hơn bình thường. Nhận xét tinh tường!"
+      },
+      {
+        "speaker": "B",
+        "en": "Can we only buy things with red stickers to save money?",
+        "vi": "Chúng ta chỉ mua thứ có nhãn đỏ để tiết kiệm tiền được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Ha! Brilliant idea, but we need specific things for cooking.",
+        "vi": "Ha! Ý tưởng xuất sắc, nhưng chúng ta cần thứ cụ thể để nấu ăn."
+      },
+      {
+        "speaker": "B",
+        "en": "When I grow up I want to be a supermarket manager!",
+        "vi": "Khi lớn lên con muốn làm quản lý siêu thị!"
+      },
+      {
+        "speaker": "A",
+        "en": "Great job! You can make sure everything is organized and affordable.",
+        "vi": "Tốt quá! Con có thể đảm bảo mọi thứ được tổ chức và giá cả hợp lý."
+      },
+      {
+        "speaker": "B",
+        "en": "And I'll put all the candy near the door!",
+        "vi": "Và con sẽ đặt tất cả kẹo gần cửa ra vào!"
+      },
+      {
+        "speaker": "A",
+        "en": "Clever thinking! I think we have everything. Let's check out.",
+        "vi": "Suy nghĩ thông minh! Tôi nghĩ chúng ta có đủ rồi. Mình đi thanh toán thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Can I put the things on the counter?",
+        "vi": "Con có thể đặt đồ lên quầy không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes! Very carefully. You're such a great helper today.",
+        "vi": "Được! Cẩn thận thôi. Con là người giúp đỡ tuyệt vời hôm nay."
+      },
+      {
+        "speaker": "B",
+        "en": "I love shopping with you, Mummy!",
+        "vi": "Con thích đi mua sắm với mẹ lắm!"
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Mẹ",
+      "en": "Mom"
+    },
+    "speakerBName": {
+      "vi": "Con",
+      "en": "Child"
+    }
+  },
+  {
+    "id": 92,
+    "title": "Nói chuyện về môi trường",
+    "situation": "Hai sinh viên thảo luận về vấn đề môi trường và cách mỗi người có thể giúp ích.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Did you see the news about plastic pollution in the Mekong Delta?",
+        "vi": "Bạn có xem tin về ô nhiễm nhựa ở Đồng bằng sông Cửu Long không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, it was heartbreaking. So much comes from everyday plastic waste.",
+        "vi": "Có, thật đau lòng. Rất nhiều đến từ rác nhựa hàng ngày."
+      },
+      {
+        "speaker": "A",
+        "en": "Vietnam is one of the top countries for ocean plastic pollution. That's alarming.",
+        "vi": "Việt Nam là một trong những nước hàng đầu về ô nhiễm nhựa đại dương. Thật đáng lo."
+      },
+      {
+        "speaker": "B",
+        "en": "But I think individual actions can still make a difference.",
+        "vi": "Nhưng tôi nghĩ hành động cá nhân vẫn có thể tạo ra sự khác biệt."
+      },
+      {
+        "speaker": "A",
+        "en": "What changes have you made personally?",
+        "vi": "Cá nhân bạn đã thay đổi điều gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "I use reusable bags, a metal straw, and a refillable water bottle.",
+        "vi": "Tôi dùng túi tái sử dụng, ống hút kim loại và bình nước có thể tái sử dụng."
+      },
+      {
+        "speaker": "A",
+        "en": "Me too! I also separate my trash into recyclables and non-recyclables.",
+        "vi": "Tôi cũng vậy! Tôi cũng phân loại rác thành tái chế và không tái chế."
+      },
+      {
+        "speaker": "B",
+        "en": "Does your building have separate bins for recycling?",
+        "vi": "Tòa nhà của bạn có thùng riêng cho tái chế không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Not yet. I collect recyclables and take them to a collection point.",
+        "vi": "Chưa. Tôi thu gom đồ tái chế và đem đến điểm thu gom."
+      },
+      {
+        "speaker": "B",
+        "en": "That's admirable. What do you think is the biggest environmental problem in Vietnam?",
+        "vi": "Thật đáng ngưỡng mộ. Bạn nghĩ vấn đề môi trường lớn nhất ở Việt Nam là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Air pollution, especially motorbike emissions. Both Hanoi and HCM City have poor air quality.",
+        "vi": "Ô nhiễm không khí, đặc biệt khí thải xe máy. Hà Nội và TP.HCM đều có không khí kém."
+      },
+      {
+        "speaker": "B",
+        "en": "True. I started wearing an air filtration mask when I ride my motorbike.",
+        "vi": "Đúng vậy. Tôi bắt đầu đeo khẩu trang lọc khí khi đi xe máy."
+      },
+      {
+        "speaker": "A",
+        "en": "Do you think electric vehicles will help solve this?",
+        "vi": "Bạn có nghĩ xe điện sẽ giúp giải quyết vấn đề này không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Definitely. VinFast making electric vehicles is a step in the right direction.",
+        "vi": "Chắc chắn. VinFast làm xe điện là bước đi đúng hướng."
+      },
+      {
+        "speaker": "A",
+        "en": "What about deforestation? Vietnam has lost a lot of forest cover.",
+        "vi": "Còn nạn phá rừng? Việt Nam đã mất rất nhiều diện tích rừng."
+      },
+      {
+        "speaker": "B",
+        "en": "Illegal logging and agricultural expansion are the main causes.",
+        "vi": "Khai thác gỗ trái phép và mở rộng nông nghiệp là nguyên nhân chính."
+      },
+      {
+        "speaker": "A",
+        "en": "I think education is key. People need to understand the consequences.",
+        "vi": "Tôi nghĩ giáo dục là chìa khóa. Mọi người cần hiểu hậu quả."
+      },
+      {
+        "speaker": "B",
+        "en": "I volunteer with an environmental group that teaches children in schools.",
+        "vi": "Tôi tình nguyện với nhóm môi trường đến trường dạy trẻ em."
+      },
+      {
+        "speaker": "A",
+        "en": "What do you teach them?",
+        "vi": "Bạn dạy họ điều gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "Recycling basics, not littering, why trees matter. Simple but important lessons.",
+        "vi": "Kiến thức cơ bản về tái chế, không xả rác, tại sao cây cối quan trọng."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I join your group? I want to contribute more meaningfully.",
+        "vi": "Tôi có thể tham gia nhóm không? Tôi muốn đóng góp có ý nghĩa hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely! We meet every Saturday morning. I'll add you to our group chat.",
+        "vi": "Tất nhiên! Chúng tôi họp mỗi sáng thứ Bảy. Tôi sẽ thêm bạn vào nhóm chat."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm excited. Small actions multiplied by millions of people make a real impact.",
+        "vi": "Tôi hào hứng lắm. Hành động nhỏ nhân lên bởi hàng triệu người tạo tác động thực sự."
+      },
+      {
+        "speaker": "B",
+        "en": "That's the motto of our group. See you Saturday!",
+        "vi": "Đó là phương châm của nhóm. Hẹn gặp thứ Bảy!"
+      },
+      {
+        "speaker": "A",
+        "en": "Looking forward to it. The planet needs more people like you.",
+        "vi": "Rất mong chờ. Hành tinh cần thêm những người như bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "And like you! We're both trying. That's what matters.",
+        "vi": "Và như bạn! Chúng ta đều đang cố gắng. Đó là điều quan trọng."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Sinh viên A",
+      "en": "Student A"
+    },
+    "speakerBName": {
+      "vi": "Sinh viên B",
+      "en": "Student B"
+    }
+  },
+  {
+    "id": 93,
+    "title": "Họp phụ huynh ở trường",
+    "situation": "Phụ huynh Hồng gặp giáo viên chủ nhiệm để nghe về tình hình học tập của con.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good evening, Ms. Hong. Thank you for coming to the parent-teacher meeting.",
+        "vi": "Chào buổi tối, cô Hồng. Cảm ơn đã đến buổi họp phụ huynh."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. I always make time for these. How is my daughter Linh doing?",
+        "vi": "Tất nhiên. Tôi luôn dành thời gian. Con gái tôi Linh đang học thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Linh is a wonderful student. She's very engaged in class.",
+        "vi": "Linh là học sinh tuyệt vời. Em rất chú chú vào trong lớp."
+      },
+      {
+        "speaker": "B",
+        "en": "That's great to hear! She loves school.",
+        "vi": "Thật tốt khi nghe! Con bé yêu học lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "Her math and science scores are excellent. She consistently gets 9 out of 10.",
+        "vi": "Điểm toán và khoa học của em xuất sắc. Em luôn được 9 trên 10."
+      },
+      {
+        "speaker": "B",
+        "en": "She spends a lot of time on those subjects. What about language scores?",
+        "vi": "Con bé dành nhiều thời gian cho những môn đó. Còn điểm ngôn ngữ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Her Vietnamese literature is good, but she struggles a little with English writing.",
+        "vi": "Văn học tiếng Việt tốt, nhưng em gặp khó khăn một chút với viết tiếng Anh."
+      },
+      {
+        "speaker": "B",
+        "en": "I've noticed that at home too. She finds writing in English difficult.",
+        "vi": "Tôi cũng nhận ra điều đó ở nhà. Con bé thấy viết tiếng Anh khó."
+      },
+      {
+        "speaker": "A",
+        "en": "The issue is sentence structure and vocabulary range. She knows the ideas but struggles to express them.",
+        "vi": "Vấn đề là cấu trúc câu và phạm vi từ vựng. Em biết ý tưởng nhưng khó diễn đạt."
+      },
+      {
+        "speaker": "B",
+        "en": "What do you recommend I do at home to help her?",
+        "vi": "Bạn khuyến nghị tôi nên làm gì ở nhà để giúp con?"
+      },
+      {
+        "speaker": "A",
+        "en": "Encourage her to read simple English books and write a short diary in English each day.",
+        "vi": "Khuyến khích em đọc sách tiếng Anh đơn giản và viết nhật ký ngắn mỗi ngày."
+      },
+      {
+        "speaker": "B",
+        "en": "That's manageable. How is her social behavior with classmates?",
+        "vi": "Điều đó có thể thực hiện được. Hành vi xã hội của em với bạn thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "She's friendly and kind, but a bit shy about speaking up in class discussions.",
+        "vi": "Em thân thiện và tốt bụng, nhưng hơi e ngại khi phát biểu trong thảo luận."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, she's always been a bit introverted. Should I be concerned?",
+        "vi": "Vâng, con bé luôn hướng nội. Tôi có nên lo lắng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Not at all. Introverted students often think deeply. I just encourage her to share more.",
+        "vi": "Không hề. Học sinh hướng nội thường suy nghĩ sâu. Tôi chỉ khuyến khích em chia sẻ hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Has she made friends in the class?",
+        "vi": "Con bé có kết bạn trong lớp chưa?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, she has a small but close group of friends. Quality over quantity.",
+        "vi": "Có, em có nhóm bạn nhỏ nhưng thân thiết. Chất lượng hơn số lượng."
+      },
+      {
+        "speaker": "B",
+        "en": "That sounds just like her. What are her strongest points as a student?",
+        "vi": "Nghe đúng như tính cách con bé. Điểm mạnh nhất của em là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Diligence and honesty. She never copies homework and always tries her best.",
+        "vi": "Sự chăm chỉ và trung thực. Em không bao giờ chép bài và luôn cố hết sức."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm so proud of her. What should we focus on for the next semester?",
+        "vi": "Tôi rất tự hào. Chúng ta nên tập trung vào gì cho học kỳ tới?"
+      },
+      {
+        "speaker": "A",
+        "en": "English writing skills and building confidence to participate more actively in class.",
+        "vi": "Kỹ năng viết tiếng Anh và xây dựng tự tin để tham gia tích cực hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Noted. I'll support her more at home. Thank you for the detailed feedback.",
+        "vi": "Ghi nhận. Tôi sẽ hỗ trợ em nhiều hơn. Cảm ơn vì phản hồi chi tiết."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you for being such an involved parent. Linh is lucky to have you.",
+        "vi": "Cảm ơn vì bạn là phụ huynh tích cực. Linh may mắn có bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "I just want her to be happy and do her best. That's all.",
+        "vi": "Tôi chỉ muốn con được hạnh phúc và làm hết sức."
+      },
+      {
+        "speaker": "A",
+        "en": "That attitude makes all the difference. See you at the next meeting.",
+        "vi": "Thái độ đó tạo ra sự khác biệt. Hẹn gặp ở buổi họp tiếp theo."
+      },
+      {
+        "speaker": "B",
+        "en": "I'll be here. Thank you again, teacher.",
+        "vi": "Tôi sẽ có mặt. Cảm ơn thầy cô một lần nữa."
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Cô Hồng",
+      "en": "Ms. Hồng"
+    },
+    "speakerBName": {
+      "vi": "Giáo viên",
+      "en": "Teacher"
+    }
+  },
+  {
+    "id": 94,
+    "title": "Mua quần áo ở cửa hàng",
+    "situation": "Tú đến cửa hàng thời trang để tìm trang phục đi dự đám cưới.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi! I'm looking for an outfit to wear to a wedding next weekend.",
+        "vi": "Chào! Tôi đang tìm trang phục dự đám cưới cuối tuần tới."
+      },
+      {
+        "speaker": "B",
+        "en": "Are you looking for something formal or semi-formal?",
+        "vi": "Bạn đang tìm trang phục trang trọng hay bán trang trọng?"
+      },
+      {
+        "speaker": "A",
+        "en": "Semi-formal. I want to look elegant but not overdressed.",
+        "vi": "Bán trang trọng. Tôi muốn thanh lịch nhưng không quá lộng lẫy."
+      },
+      {
+        "speaker": "B",
+        "en": "What's your usual size?",
+        "vi": "Cỡ thường của bạn là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm usually a medium. But I prefer to try before buying.",
+        "vi": "Tôi thường cỡ M. Nhưng tôi muốn thử trước khi mua."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! How about this navy midi dress?",
+        "vi": "Tất nhiên! Cái váy midi xanh navy này thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "That's beautiful! Is it comfortable for a long evening?",
+        "vi": "Đẹp quá! Nó có thoải mái để mặc cả buổi tối không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Very comfortable. It's made from breathable fabric — great for outdoor events.",
+        "vi": "Rất thoải mái. Vải thoáng khí — tốt cho sự kiện ngoài trời."
+      },
+      {
+        "speaker": "A",
+        "en": "How much is it?",
+        "vi": "Giá bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "This one is 850,000 VND. Currently 10% off.",
+        "vi": "Cái này 850.000 đồng. Đang giảm 10%."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I try it on?",
+        "vi": "Tôi có thể thử không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely. The fitting room is on your right.",
+        "vi": "Tất nhiên. Phòng thử đồ ở bên phải."
+      },
+      {
+        "speaker": "A",
+        "en": "It fits perfectly! But I'm not sure about the color.",
+        "vi": "Vừa hoàn hảo! Nhưng tôi không chắc về màu."
+      },
+      {
+        "speaker": "B",
+        "en": "We also have it in dusty pink and sage green. Want to try those?",
+        "vi": "Chúng tôi cũng có màu hồng phấn và xanh lá nhạt. Bạn muốn thử không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes! I'll try the sage green.",
+        "vi": "Có! Tôi sẽ thử màu xanh lá nhạt."
+      },
+      {
+        "speaker": "B",
+        "en": "Sage green is very on-trend right now.",
+        "vi": "Xanh lá nhạt đang rất thịnh hành lúc này."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, I love this color! It suits my skin tone much better.",
+        "vi": "Ồ, tôi thích màu này! Nó phù hợp với tông da của tôi hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "You look wonderful! It's definitely your color.",
+        "vi": "Bạn trông tuyệt vời! Đây chắc chắn là màu của bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "Do you have shoes that would match this dress?",
+        "vi": "Bạn có giày phù hợp với chiếc váy này không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Nude heels or white block heels would both look amazing with it.",
+        "vi": "Giày cao gót nude hoặc giày đế khối trắng đều trông tuyệt với nó."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I see the nude heels in size 37?",
+        "vi": "Tôi có thể xem giày cao gót nude cỡ 37 không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let me check... Yes, we have size 37 in stock.",
+        "vi": "Để tôi kiểm tra... Có, chúng tôi có cỡ 37 trong kho."
+      },
+      {
+        "speaker": "A",
+        "en": "These heels are comfortable too. I'll take the dress and the shoes!",
+        "vi": "Giày này cũng thoải mái. Tôi sẽ lấy váy và giày!"
+      },
+      {
+        "speaker": "B",
+        "en": "Great choice! Total is 765,000 for the dress plus 450,000 for the shoes.",
+        "vi": "Lựa chọn tuyệt! Tổng là 765.000 cho váy cộng 450.000 cho giày."
+      },
+      {
+        "speaker": "A",
+        "en": "That's 1,215,000 VND total. Can I pay by card?",
+        "vi": "Tổng là 1.215.000 đồng. Tôi có thể trả bằng thẻ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! You're going to look stunning at that wedding.",
+        "vi": "Tất nhiên! Bạn sẽ trông rực rỡ tại đám cưới đó."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you for all your help! I was so stressed about what to wear.",
+        "vi": "Cảm ơn bạn rất nhiều! Tôi đã rất lo về việc mặc gì."
+      },
+      {
+        "speaker": "B",
+        "en": "That's what we're here for. Enjoy the wedding!",
+        "vi": "Đó là lý do chúng tôi ở đây. Chúc vui vẻ tại đám cưới!"
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Tú",
+      "en": "Tú"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên bán hàng",
+      "en": "Sales Staff"
+    }
+  },
+  {
+    "id": 95,
+    "title": "Đặt bàn nhà hàng cho dịp đặc biệt",
+    "situation": "Kiên gọi điện đặt bàn tại nhà hàng sang trọng cho buổi kỷ niệm với người yêu.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'd like to make a reservation for two people this Saturday evening.",
+        "vi": "Xin chào, tôi muốn đặt bàn cho hai người tối thứ Bảy này."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! What time would you prefer?",
+        "vi": "Được! Bạn muốn vào lúc mấy giờ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Around 7 PM if possible.",
+        "vi": "Khoảng 7 giờ tối nếu có thể."
+      },
+      {
+        "speaker": "B",
+        "en": "We have availability at 7:00 PM or 7:30 PM. Which do you prefer?",
+        "vi": "Chúng tôi có chỗ lúc 7:00 hoặc 7:30 tối. Bạn muốn giờ nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "7:00 PM please. It's a special occasion — our anniversary.",
+        "vi": "7:00 tối nhé. Đây là dịp đặc biệt — kỷ niệm của chúng tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Congratulations! We'll make it extra special for you.",
+        "vi": "Chúc mừng! Chúng tôi sẽ làm thật đặc biệt cho bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I request a table by the window with a city view?",
+        "vi": "Tôi có thể yêu cầu bàn cạnh cửa sổ view thành phố không?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'll note that as a request. We can't guarantee it but will do our best.",
+        "vi": "Tôi sẽ ghi đó là yêu cầu. Không thể đảm bảo nhưng sẽ cố hết sức."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you. Can I arrange for a small cake? It's also her birthday.",
+        "vi": "Cảm ơn. Tôi có thể sắp xếp một chiếc bánh nhỏ không? Hôm đó cũng là sinh nhật cô ấy."
+      },
+      {
+        "speaker": "B",
+        "en": "How lovely! Yes, we offer a complimentary dessert plate for special occasions.",
+        "vi": "Thật dễ thương! Có, chúng tôi cung cấp đĩa tráng miệng miễn phí cho dịp đặc biệt."
+      },
+      {
+        "speaker": "A",
+        "en": "What's the dress code at your restaurant?",
+        "vi": "Quy định trang phục tại nhà hàng là gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "Smart casual to formal. No shorts, flip-flops, or sleeveless tops please.",
+        "vi": "Lịch sự đến trang trọng. Không quần short, dép xỏ ngón hoặc áo ba lỗ."
+      },
+      {
+        "speaker": "A",
+        "en": "Can you tell me about your set menu for two?",
+        "vi": "Bạn có thể cho tôi biết về thực đơn set cho hai người không?"
+      },
+      {
+        "speaker": "B",
+        "en": "We have a 4-course set menu at 1,200,000 VND per person, including wine pairing.",
+        "vi": "Chúng tôi có thực đơn 4 món với giá 1.200.000 đồng mỗi người, bao gồm rượu vang."
+      },
+      {
+        "speaker": "A",
+        "en": "What courses are included?",
+        "vi": "Bao gồm những món gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "Appetizer, soup, main course, and dessert. The main can be beef or seafood.",
+        "vi": "Khai vị, súp, món chính và tráng miệng. Món chính có bò hoặc hải sản."
+      },
+      {
+        "speaker": "A",
+        "en": "My partner doesn't drink alcohol. Can they substitute wine for something else?",
+        "vi": "Bạn của tôi không uống rượu. Có thể thay bằng thứ khác không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, we offer sparkling water, fresh juice, or mocktails as substitutes.",
+        "vi": "Có, chúng tôi cung cấp nước có ga, nước ép tươi hoặc mocktail thay thế."
+      },
+      {
+        "speaker": "A",
+        "en": "She'd love the fresh juice option. Any food allergies I should mention?",
+        "vi": "Cô ấy sẽ thích nước ép. Tôi nên đề cập dị ứng thực phẩm không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Please do! We take allergies very seriously.",
+        "vi": "Vui lòng nêu! Chúng tôi coi trọng dị ứng rất nghiêm túc."
+      },
+      {
+        "speaker": "A",
+        "en": "She's allergic to shellfish. Please make sure the kitchen knows.",
+        "vi": "Cô ấy dị ứng với động vật có vỏ. Vui lòng đảm bảo nhà bếp biết."
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely noted. The chef will be informed.",
+        "vi": "Ghi nhận hoàn toàn. Đầu bếp sẽ được thông báo."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I also arrange for a small bouquet of flowers on the table?",
+        "vi": "Tôi có thể sắp xếp một bó hoa nhỏ trên bàn không?"
+      },
+      {
+        "speaker": "B",
+        "en": "We can arrange that for an additional 200,000 VND. Any flower preference?",
+        "vi": "Chúng tôi có thể sắp xếp với phụ phí 200.000 đồng. Bạn thích hoa gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Red roses would be perfect.",
+        "vi": "Hoa hồng đỏ sẽ hoàn hảo."
+      },
+      {
+        "speaker": "B",
+        "en": "Beautiful choice. We look forward to making your evening special!",
+        "vi": "Lựa chọn đẹp. Chúng tôi rất mong làm buổi tối của bạn thật đặc biệt!"
+      },
+      {
+        "speaker": "A",
+        "en": "Can I have a confirmation number?",
+        "vi": "Tôi có thể có số xác nhận không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Your reservation number is R2025-847. See you Saturday at 7 PM!",
+        "vi": "Số đặt bàn của bạn là R2025-847. Hẹn gặp thứ Bảy lúc 7 giờ tối!"
+      }
+    ],
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Kiên",
+      "en": "Kiên"
+    },
+    "speakerBName": {
+      "vi": "Lễ tân nhà hàng",
+      "en": "Restaurant Host"
+    }
+  },
+  {
+    "id": 96,
+    "title": "Thảo luận về du học",
+    "situation": "Ngân xin lời khuyên từ người anh họ đã du học nước ngoài về kinh nghiệm và cách chuẩn bị.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I've been accepted to a university in Australia. I'm both excited and nervous.",
+        "vi": "Em đã được nhận vào một trường đại học ở Úc. Em vừa hào hứng vừa hồi hộp."
+      },
+      {
+        "speaker": "B",
+        "en": "Congratulations! That's wonderful news. Where exactly?",
+        "vi": "Chúc mừng! Đó là tin tuyệt vời. Ở đâu vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "University of Melbourne. For a master's in data science.",
+        "vi": "Đại học Melbourne. Học thạc sĩ về khoa học dữ liệu."
+      },
+      {
+        "speaker": "B",
+        "en": "That's an excellent university. You should be so proud!",
+        "vi": "Đó là trường xuất sắc. Em phải tự hào về bản thân lắm!"
+      },
+      {
+        "speaker": "A",
+        "en": "I am, but I'm worried about living alone in a foreign country.",
+        "vi": "Em có, nhưng em lo về việc sống một mình ở nước ngoài."
+      },
+      {
+        "speaker": "B",
+        "en": "That's completely normal. I felt the same when I went to the UK. It fades quickly.",
+        "vi": "Điều đó hoàn toàn bình thường. Anh cũng cảm thấy vậy khi đến Anh. Nó sẽ qua nhanh."
+      },
+      {
+        "speaker": "A",
+        "en": "What was the hardest adjustment for you?",
+        "vi": "Điều khó thích nghi nhất với anh là gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "The food, and the loneliness in the first month. But I joined clubs and made friends fast.",
+        "vi": "Đồ ăn, và sự cô đơn tháng đầu. Nhưng anh tham gia câu lạc bộ và kết bạn nhanh."
+      },
+      {
+        "speaker": "A",
+        "en": "What clubs did you join?",
+        "vi": "Anh tham gia câu lạc bộ gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "A Vietnamese student association and a photography club. Both were great for meeting people.",
+        "vi": "Hội sinh viên Việt Nam và câu lạc bộ nhiếp ảnh. Cả hai đều tốt để gặp gỡ mọi người."
+      },
+      {
+        "speaker": "A",
+        "en": "What should I prepare financially before going?",
+        "vi": "Em nên chuẩn bị tài chính gì trước khi đi?"
+      },
+      {
+        "speaker": "B",
+        "en": "Have at least 3 months of living expenses ready. Melbourne is expensive.",
+        "vi": "Hãy chuẩn bị ít nhất 3 tháng chi phí sinh hoạt. Melbourne đắt đỏ lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "How much does a student typically spend per month in Melbourne?",
+        "vi": "Sinh viên thường chi bao nhiêu mỗi tháng ở Melbourne?"
+      },
+      {
+        "speaker": "B",
+        "en": "About 2,000 to 2,500 AUD including rent, food, transport, and necessities.",
+        "vi": "Khoảng 2.000 đến 2.500 AUD bao gồm thuê nhà, ăn uống, đi lại và nhu yếu phẩm."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I work part-time while studying?",
+        "vi": "Em có thể làm bán thời gian khi học không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, student visas in Australia allow up to 48 hours of work per fortnight.",
+        "vi": "Có, visa sinh viên ở Úc cho phép làm việc tối đa 48 giờ mỗi hai tuần."
+      },
+      {
+        "speaker": "A",
+        "en": "What kind of jobs do international students usually find?",
+        "vi": "Sinh viên quốc tế thường tìm được loại công việc gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "Cafe work, retail, tutoring, or delivery driving. Tutoring pays better if you're good at maths.",
+        "vi": "Làm cà phê, bán lẻ, gia sư hoặc giao hàng. Gia sư trả lương tốt hơn nếu giỏi toán."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm good at math so that's helpful! How about homesickness?",
+        "vi": "Em giỏi toán nên điều đó hữu ích! Còn nhớ nhà thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "Video call your family regularly. Cook Vietnamese food at home. It really helps.",
+        "vi": "Gọi video cho gia đình thường xuyên. Nấu đồ Việt ở nhà. Nó thực sự giúp ích."
+      },
+      {
+        "speaker": "A",
+        "en": "Good advice. What do you wish you had packed that you didn't?",
+        "vi": "Lời khuyên hay. Điều gì anh ước mình đã mang theo mà không mang?"
+      },
+      {
+        "speaker": "B",
+        "en": "More Vietnamese condiments! They're expensive abroad.",
+        "vi": "Nhiều gia vị Việt hơn! Chúng đắt ở nước ngoài."
+      },
+      {
+        "speaker": "A",
+        "en": "Ha! I'll pack a suitcase of fish sauce!",
+        "vi": "Ha! Em sẽ mang một vali nước mắm!"
+      },
+      {
+        "speaker": "B",
+        "en": "Also pack warm clothes. Melbourne winters are cold.",
+        "vi": "Cũng hãy mang quần áo ấm. Mùa đông Melbourne lạnh đấy."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you, anh. This conversation has made me feel much more confident.",
+        "vi": "Cảm ơn anh. Cuộc trò chuyện này khiến em tự tin hơn nhiều."
+      },
+      {
+        "speaker": "B",
+        "en": "You're going to do great. Study hard and enjoy the adventure!",
+        "vi": "Em sẽ làm tốt thôi. Học chăm chỉ và tận hưởng cuộc phiêu lưu!"
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Ngân",
+      "en": "Ngân"
+    },
+    "speakerBName": {
+      "vi": "Anh họ",
+      "en": "Cousin"
+    }
+  },
+  {
+    "id": 97,
+    "title": "Chăm sóc thú cưng",
+    "situation": "Hiền đưa chú mèo đến thú y lần đầu và học cách chăm sóc đúng cách.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning, doctor. This is my cat Bong. It's her first vet visit.",
+        "vi": "Chào buổi sáng bác sĩ. Đây là con mèo Bông của tôi. Đây là lần đầu đến thú y."
+      },
+      {
+        "speaker": "B",
+        "en": "Hello, Bong! How old is she?",
+        "vi": "Chào Bông! Con bé mấy tháng rồi?"
+      },
+      {
+        "speaker": "A",
+        "en": "About 3 months. I adopted her from a shelter two weeks ago.",
+        "vi": "Khoảng 3 tháng. Tôi nhận nuôi từ trại cứu trợ hai tuần trước."
+      },
+      {
+        "speaker": "B",
+        "en": "Good for you for adopting! Let me do a general health check first.",
+        "vi": "Bạn thật tốt khi nhận nuôi! Để tôi kiểm tra sức khỏe tổng quát trước."
+      },
+      {
+        "speaker": "A",
+        "en": "She's been sneezing a lot. Is that normal for kittens?",
+        "vi": "Con bé hắt hơi rất nhiều. Điều đó có bình thường với mèo con không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Some sneezing is normal. But frequent sneezing can indicate an upper respiratory infection.",
+        "vi": "Một ít hắt hơi là bình thường. Nhưng hắt hơi thường xuyên có thể chỉ ra nhiễm trùng hô hấp."
+      },
+      {
+        "speaker": "A",
+        "en": "Should I be worried?",
+        "vi": "Tôi có nên lo lắng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Not too worried. It's very common in shelter cats. I'll prescribe some eye drops and medication.",
+        "vi": "Không quá lo. Rất phổ biến ở mèo từ trại cứu trợ. Tôi sẽ kê thuốc nhỏ mắt và thuốc."
+      },
+      {
+        "speaker": "A",
+        "en": "Has she been vaccinated?",
+        "vi": "Con bé đã được tiêm phòng chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "According to the shelter records, she had one round of vaccines. She needs boosters now.",
+        "vi": "Theo hồ sơ trại, con bé đã có một đợt vaccine. Cần nhắc lại bây giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "What vaccines does she need?",
+        "vi": "Con bé cần những vaccine gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "The core cat vaccines: FVRCP and rabies. Plus FeLV if she ever goes outdoors.",
+        "vi": "Vaccine cốt lõi: FVRCP và dại. Cộng FeLV nếu con bé ra ngoài."
+      },
+      {
+        "speaker": "A",
+        "en": "She stays indoors. Are FVRCP and rabies still necessary?",
+        "vi": "Con bé ở trong nhà. FVRCP và dại có vẫn cần thiết không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, both are essential for all cats regardless of lifestyle.",
+        "vi": "Có, cả hai đều cần thiết cho tất cả mèo dù lối sống thế nào."
+      },
+      {
+        "speaker": "A",
+        "en": "How often does she need check-ups?",
+        "vi": "Con bé cần khám bao thường xuyên?"
+      },
+      {
+        "speaker": "B",
+        "en": "Every year for routine check-ups and vaccine boosters.",
+        "vi": "Mỗi năm cho khám định kỳ và nhắc lại vaccine."
+      },
+      {
+        "speaker": "A",
+        "en": "What should I feed her at this age?",
+        "vi": "Tôi nên cho con bé ăn gì ở tuổi này?"
+      },
+      {
+        "speaker": "B",
+        "en": "High-quality kitten food — both wet and dry. Avoid adult cat food until she's 1 year old.",
+        "vi": "Thức ăn mèo con chất lượng cao — cả ướt và khô. Tránh thức ăn mèo trưởng thành cho đến 1 tuổi."
+      },
+      {
+        "speaker": "A",
+        "en": "Should I give her milk? I heard cats like milk.",
+        "vi": "Tôi có nên cho con bé uống sữa không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Most cats are lactose intolerant. Cow's milk can cause diarrhea. Avoid it.",
+        "vi": "Hầu hết mèo không dung nạp lactose. Sữa bò có thể gây tiêu chảy. Tránh đi."
+      },
+      {
+        "speaker": "A",
+        "en": "Good to know! When should I get her spayed?",
+        "vi": "Tốt khi biết! Khi nào tôi nên cho con bé triệt sản?"
+      },
+      {
+        "speaker": "B",
+        "en": "Around 5 to 6 months is ideal. Before her first heat cycle.",
+        "vi": "Khoảng 5 đến 6 tháng là lý tưởng. Trước lần động dục đầu tiên."
+      },
+      {
+        "speaker": "A",
+        "en": "How much does spaying cost at your clinic?",
+        "vi": "Chi phí triệt sản tại phòng khám là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Around 800,000 to 1,000,000 VND including pre-surgery blood tests.",
+        "vi": "Khoảng 800.000 đến 1.000.000 đồng bao gồm xét nghiệm máu trước phẫu thuật."
+      },
+      {
+        "speaker": "A",
+        "en": "Reasonable. I'll schedule that when she's 5 months. Any final advice?",
+        "vi": "Hợp lý. Tôi sẽ lên lịch khi con bé 5 tháng. Còn lời khuyên cuối không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Give her lots of love, playtime, and enrichment. Happy cats are healthy cats.",
+        "vi": "Cho con bé nhiều tình yêu, thời gian chơi. Mèo hạnh phúc là mèo khỏe mạnh."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you, doctor. Bong and I will see you again soon.",
+        "vi": "Cảm ơn bác sĩ. Bông và tôi sẽ gặp lại bạn sớm thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Take care of her well. She's a lucky cat to have such a caring owner!",
+        "vi": "Chăm sóc con bé tốt. Con bé là mèo may mắn có chủ quan tâm như vậy!"
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Hiền",
+      "en": "Hiền"
+    },
+    "speakerBName": {
+      "vi": "Bác sĩ thú y",
+      "en": "Vet"
+    }
+  },
+  {
+    "id": 98,
+    "title": "Trò chuyện trong buổi tiệc",
+    "situation": "Hai người không quen biết gặp nhau tại buổi tiệc công ty và bắt chuyện.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi there! I don't think we've met. I'm Khanh from the marketing department.",
+        "vi": "Chào bạn! Tôi nghĩ chúng ta chưa gặp. Tôi là Khánh từ phòng marketing."
+      },
+      {
+        "speaker": "B",
+        "en": "Nice to meet you! I'm David. I just joined the engineering team last month.",
+        "vi": "Vui được gặp bạn! Tôi là David. Tôi vừa gia nhập nhóm kỹ thuật tháng trước."
+      },
+      {
+        "speaker": "A",
+        "en": "Welcome to the company! Are you enjoying it so far?",
+        "vi": "Chào mừng đến công ty! Bạn có thích không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Very much! Everyone has been so welcoming. Is this your first company party too?",
+        "vi": "Rất nhiều! Mọi người rất thân thiện. Đây cũng là tiệc công ty đầu tiên của bạn à?"
+      },
+      {
+        "speaker": "A",
+        "en": "No, I've been here three years. They always do a great job with these events.",
+        "vi": "Không, tôi đã ở đây ba năm. Họ luôn tổ chức sự kiện rất tốt."
+      },
+      {
+        "speaker": "B",
+        "en": "The food here is amazing. What is this dish?",
+        "vi": "Đồ ăn ở đây tuyệt vời. Đây là món gì vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "That's banh khot — mini savory pancakes with shrimp. A Vietnamese specialty.",
+        "vi": "Đó là bánh khọt — bánh pancake mặn mini với tôm. Đặc sản Việt Nam."
+      },
+      {
+        "speaker": "B",
+        "en": "Delicious! I've been discovering so much Vietnamese food since I arrived.",
+        "vi": "Ngon quá! Tôi đã khám phá rất nhiều đồ ăn Việt kể từ khi đến đây."
+      },
+      {
+        "speaker": "A",
+        "en": "How long have you been in Vietnam?",
+        "vi": "Bạn đã ở Việt Nam bao lâu rồi?"
+      },
+      {
+        "speaker": "B",
+        "en": "Three months. I moved from Singapore for this job opportunity.",
+        "vi": "Ba tháng. Tôi chuyển từ Singapore đến vì cơ hội việc làm này."
+      },
+      {
+        "speaker": "A",
+        "en": "What's the biggest difference you've noticed between Singapore and Vietnam?",
+        "vi": "Sự khác biệt lớn nhất bạn nhận thấy giữa Singapore và Việt Nam là gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "The pace of life here feels more vibrant. And the street food culture is incredible.",
+        "vi": "Nhịp sống ở đây cảm giác sôi động hơn. Và văn hóa đồ ăn vỉa hè thật tuyệt vời."
+      },
+      {
+        "speaker": "A",
+        "en": "You'll love it more every month. Which part of HCM City do you live in?",
+        "vi": "Bạn sẽ thích hơn mỗi tháng. Bạn sống ở quận nào của TP.HCM?"
+      },
+      {
+        "speaker": "B",
+        "en": "District 2. My company arranged an apartment there. Very expat-friendly.",
+        "vi": "Quận 2. Công ty sắp xếp căn hộ ở đó. Rất thân thiện với người nước ngoài."
+      },
+      {
+        "speaker": "A",
+        "en": "District 2 is lovely. Have you been to District 1 for the night life?",
+        "vi": "Quận 2 rất đẹp. Bạn đã đến Quận 1 trải nghiệm cuộc sống về đêm chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes! Bui Vien street is incredible. Though a bit overwhelming at first.",
+        "vi": "Có! Phố Bùi Viện thật tuyệt. Mặc dù hơi choáng ngợp lúc đầu."
+      },
+      {
+        "speaker": "A",
+        "en": "Ha! That's everyone's reaction. Are you learning any Vietnamese?",
+        "vi": "Ha! Đó là phản ứng của mọi người. Bạn có học tiếng Việt không?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm trying! I can say 'xin chao' and 'cam on'. That's about it.",
+        "vi": "Tôi đang cố! Tôi có thể nói 'xin chào' và 'cảm ơn'. Vậy thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "Great start! Vietnamese is tonal so it takes time.",
+        "vi": "Khởi đầu tốt! Tiếng Việt có thanh điệu nên mất thời gian."
+      },
+      {
+        "speaker": "B",
+        "en": "The tones are my biggest challenge. I keep saying the wrong thing!",
+        "vi": "Thanh điệu là thách thức lớn nhất. Tôi cứ nói nhầm!"
+      },
+      {
+        "speaker": "A",
+        "en": "What funny mistake have you made?",
+        "vi": "Bạn đã mắc lỗi buồn cười nào chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "I tried to say I want to buy rice but said something very inappropriate instead!",
+        "vi": "Tôi cố nói muốn mua gạo nhưng đã nói điều gì đó rất không phù hợp!"
+      },
+      {
+        "speaker": "A",
+        "en": "Haha! I can guess. Don't worry, we appreciate the effort.",
+        "vi": "Haha! Tôi có thể đoán. Đừng lo, chúng tôi trân trọng sự cố gắng."
+      },
+      {
+        "speaker": "B",
+        "en": "I'll keep trying. This has been such a fun conversation, Khanh.",
+        "vi": "Tôi sẽ tiếp tục cố. Đây là cuộc trò chuyện thú vị, Khánh."
+      },
+      {
+        "speaker": "A",
+        "en": "Let's exchange numbers. I can show you more of the city sometime.",
+        "vi": "Mình trao đổi số điện thoại đi. Lúc nào đó tôi có thể chỉ bạn thêm về thành phố."
+      },
+      {
+        "speaker": "B",
+        "en": "I'd love that! Looking forward to exploring more with a local guide.",
+        "vi": "Tôi rất muốn! Rất mong khám phá thêm với hướng dẫn viên địa phương."
+      },
+      {
+        "speaker": "A",
+        "en": "Deal! Enjoy the rest of the party, David.",
+        "vi": "Đồng ý! Tận hưởng phần còn lại của bữa tiệc, David."
+      },
+      {
+        "speaker": "B",
+        "en": "You too! Great meeting you tonight!",
+        "vi": "Bạn cũng vậy! Vui khi gặp bạn tối nay!"
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Khách A",
+      "en": "Guest A"
+    },
+    "speakerBName": {
+      "vi": "Khách B",
+      "en": "Guest B"
+    }
+  },
+  {
+    "id": 99,
+    "title": "Giải quyết hiểu lầm với đồng nghiệp",
+    "situation": "Trang nói chuyện thẳng thắn với đồng nghiệp Minh sau một cuộc tranh luận nhỏ trong công việc.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Minh, do you have a few minutes? I'd like to talk about what happened in the meeting.",
+        "vi": "Minh, bạn có vài phút không? Tôi muốn nói về chuyện xảy ra trong cuộc họp."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. I was actually going to come talk to you too.",
+        "vi": "Tất nhiên. Tôi cũng đang định đến gặp bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "I think there was a misunderstanding. I wasn't criticizing your work directly.",
+        "vi": "Tôi nghĩ có hiểu lầm. Tôi không phê bình trực tiếp công việc của bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "It felt that way. When you mentioned the report had gaps, I thought you meant my section.",
+        "vi": "Tôi cảm thấy như vậy. Khi bạn nói báo cáo có khoảng trống, tôi nghĩ bạn muốn nói phần của tôi."
+      },
+      {
+        "speaker": "A",
+        "en": "I understand why that felt personal. I should have been more specific.",
+        "vi": "Tôi hiểu tại sao điều đó cảm thấy cá nhân. Tôi lẽ ra phải cụ thể hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "I appreciate you saying that. I might have reacted too quickly.",
+        "vi": "Tôi trân trọng khi bạn nói điều đó. Tôi có thể đã phản ứng quá nhanh."
+      },
+      {
+        "speaker": "A",
+        "en": "No, your reaction was understandable. Team meetings can feel high-pressure.",
+        "vi": "Không, phản ứng của bạn có thể hiểu được. Các cuộc họp nhóm có thể tạo áp lực cao."
+      },
+      {
+        "speaker": "B",
+        "en": "What were you referring to when you mentioned the gaps?",
+        "vi": "Vậy bạn đề cập đến gì khi nói về các khoảng trống?"
+      },
+      {
+        "speaker": "A",
+        "en": "I meant the Q3 data was missing in the finance section. That's a separate team.",
+        "vi": "Tôi muốn nói dữ liệu Q3 bị thiếu trong phần tài chính. Đó là nhóm riêng."
+      },
+      {
+        "speaker": "B",
+        "en": "Ah, I see! That makes complete sense. I jumped to conclusions.",
+        "vi": "À, tôi hiểu rồi! Bây giờ hoàn toàn có lý. Tôi đã kết luận vội vàng."
+      },
+      {
+        "speaker": "A",
+        "en": "It's easy to do in a public setting. I should have clarified in the room.",
+        "vi": "Dễ xảy ra khi họp. Tôi lẽ ra phải làm rõ ngay trong phòng."
+      },
+      {
+        "speaker": "B",
+        "en": "I respect that you came to talk to me directly. Some people avoid these conversations.",
+        "vi": "Tôi tôn trọng việc bạn đến nói chuyện trực tiếp. Một số người tránh những cuộc trò chuyện này."
+      },
+      {
+        "speaker": "A",
+        "en": "I believe in clearing things up quickly. Misunderstandings fester if left too long.",
+        "vi": "Tôi tin vào việc làm sáng tỏ mọi việc nhanh. Hiểu lầm sẽ lan ra nếu để quá lâu."
+      },
+      {
+        "speaker": "B",
+        "en": "Agreed. And honestly, your feedback overall helped me improve my section.",
+        "vi": "Đồng ý. Và thành thật, phản hồi tổng thể của bạn đã giúp tôi cải thiện phần của mình."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm glad to hear that. Your market analysis section was actually very strong.",
+        "vi": "Vui khi nghe. Phần phân tích thị trường của bạn thực sự rất mạnh."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. I worked hard on it. I just got defensive when I thought it was being criticized.",
+        "vi": "Cảm ơn. Tôi đã làm việc chăm chỉ. Tôi chỉ bảo vệ khi nghĩ nó bị phê bình."
+      },
+      {
+        "speaker": "A",
+        "en": "That's human. We all feel protective of our work.",
+        "vi": "Điều đó rất con người. Chúng ta đều cảm thấy bảo vệ công việc của mình."
+      },
+      {
+        "speaker": "B",
+        "en": "Going forward, maybe we can align before big meetings to avoid similar situations.",
+        "vi": "Từ bây giờ, có lẽ chúng ta có thể thống nhất trước các cuộc họp lớn."
+      },
+      {
+        "speaker": "A",
+        "en": "Great idea. A quick check-in the day before would help.",
+        "vi": "Ý tưởng hay. Kiểm tra nhanh ngày hôm trước sẽ giúp ích."
+      },
+      {
+        "speaker": "B",
+        "en": "I actually enjoy working with you, Trang. I don't want tension between us.",
+        "vi": "Thực ra tôi thích làm việc với bạn, Trang. Tôi không muốn có căng thẳng giữa chúng ta."
+      },
+      {
+        "speaker": "A",
+        "en": "Same here. Good collaboration makes the whole team stronger.",
+        "vi": "Tôi cũng vậy. Sự hợp tác tốt làm cho cả nhóm mạnh hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely. Thanks for being brave enough to have this conversation.",
+        "vi": "Hoàn toàn đúng. Cảm ơn vì đã đủ can đảm để có cuộc trò chuyện này."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you for being open to it. Shall we grab a coffee and start fresh?",
+        "vi": "Cảm ơn bạn vì đã cởi mở. Mình đi uống cà phê và bắt đầu lại nhé?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'd like that very much. My treat!",
+        "vi": "Tôi rất muốn vậy. Tôi mời!"
+      },
+      {
+        "speaker": "A",
+        "en": "No, I insist. You can get the next one!",
+        "vi": "Không, tôi khăng khăng. Bạn trả lần sau nhé!"
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Trang",
+      "en": "Trang"
+    },
+    "speakerBName": {
+      "vi": "Minh",
+      "en": "Minh"
+    }
+  },
+  {
+    "id": 100,
+    "title": "Chia sẻ về hành trình học tiếng Anh",
+    "situation": "Lan chia sẻ hành trình học tiếng Anh với người bạn mới bắt đầu học.",
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Your English is so fluent! How long have you been learning?",
+        "vi": "Tiếng Anh của bạn thật trôi chảy! Bạn đã học bao lâu rồi?"
+      },
+      {
+        "speaker": "B",
+        "en": "About eight years seriously. But my journey wasn't smooth at all.",
+        "vi": "Khoảng tám năm nghiêm túc. Nhưng hành trình không hề suôn sẻ."
+      },
+      {
+        "speaker": "A",
+        "en": "Really? You make it look effortless now.",
+        "vi": "Thật không? Bây giờ trông bạn làm rất dễ dàng."
+      },
+      {
+        "speaker": "B",
+        "en": "I failed my B1 exam twice. I cried after the second failure.",
+        "vi": "Tôi trượt kỳ thi B1 hai lần. Tôi đã khóc sau lần thất bại thứ hai."
+      },
+      {
+        "speaker": "A",
+        "en": "What made you keep going?",
+        "vi": "Điều gì khiến bạn tiếp tục?"
+      },
+      {
+        "speaker": "B",
+        "en": "My dream to work internationally. I knew English was the key to that door.",
+        "vi": "Ước mơ làm việc quốc tế. Tôi biết tiếng Anh là chìa khóa để mở cánh cửa đó."
+      },
+      {
+        "speaker": "A",
+        "en": "What changed after the second failure?",
+        "vi": "Điều gì thay đổi sau lần thất bại thứ hai?"
+      },
+      {
+        "speaker": "B",
+        "en": "My approach. I stopped memorizing grammar rules and started using English every day naturally.",
+        "vi": "Cách tiếp cận. Tôi ngừng học thuộc ngữ pháp và bắt đầu dùng tiếng Anh mỗi ngày tự nhiên."
+      },
+      {
+        "speaker": "A",
+        "en": "What does using English every day mean exactly?",
+        "vi": "Dùng tiếng Anh mỗi ngày có nghĩa là gì cụ thể?"
+      },
+      {
+        "speaker": "B",
+        "en": "I changed my phone to English, watched only English content, kept a journal, and found conversation partners.",
+        "vi": "Tôi đổi điện thoại sang tiếng Anh, chỉ xem nội dung tiếng Anh, viết nhật ký và tìm đối tác hội thoại."
+      },
+      {
+        "speaker": "A",
+        "en": "That's total immersion. Wasn't it difficult at first?",
+        "vi": "Đó là phương pháp ngâm mình hoàn toàn. Lúc đầu có khó không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Very! The first month I understood almost nothing. But by month three, it clicked.",
+        "vi": "Rất! Tháng đầu tiên tôi hầu như không hiểu gì. Nhưng đến tháng ba, nó bắt đầu vào."
+      },
+      {
+        "speaker": "A",
+        "en": "What does it clicked mean?",
+        "vi": "Câu it clicked có nghĩa là gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "It means suddenly things started making sense. I could understand without translating in my head.",
+        "vi": "Có nghĩa là đột nhiên mọi thứ bắt đầu có ý nghĩa. Tôi có thể hiểu mà không cần dịch trong đầu."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds like the breakthrough moment everyone talks about.",
+        "vi": "Nghe như khoảnh khắc đột phá mà mọi người nói đến."
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. And once it happens, progress accelerates rapidly.",
+        "vi": "Chính xác. Và một khi xảy ra, tiến bộ tăng nhanh chóng."
+      },
+      {
+        "speaker": "A",
+        "en": "What was your biggest mistake as a beginner?",
+        "vi": "Sai lầm lớn nhất của bạn khi mới bắt đầu là gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "Being afraid to speak. I would practice silently for weeks then freeze when it was time to talk.",
+        "vi": "Sợ nói. Tôi luyện tập im lặng nhiều tuần rồi bị đông cứng khi đến lúc phải nói."
+      },
+      {
+        "speaker": "A",
+        "en": "I do the same thing! How did you overcome that fear?",
+        "vi": "Tôi cũng vậy! Bạn vượt qua nỗi sợ đó như thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "I joined an online language exchange and committed to speaking for 15 minutes daily, no matter what.",
+        "vi": "Tôi tham gia trao đổi ngôn ngữ trực tuyến và cam kết nói 15 phút mỗi ngày dù có gì xảy ra."
+      },
+      {
+        "speaker": "A",
+        "en": "Did you ever embarrass yourself while speaking?",
+        "vi": "Bạn có bao giờ xấu hổ khi nói không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Many times! But native speakers appreciate the effort. They almost never laugh at you.",
+        "vi": "Nhiều lần! Nhưng người bản ngữ trân trọng sự cố gắng. Họ hầu như không bao giờ cười nhạo bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "What advice would you give to someone just starting, like me?",
+        "vi": "Bạn có lời khuyên gì cho người mới bắt đầu như tôi?"
+      },
+      {
+        "speaker": "B",
+        "en": "Consistency beats intensity. Thirty minutes every day beats five hours once a week.",
+        "vi": "Tính nhất quán quan trọng hơn cường độ. Ba mươi phút mỗi ngày tốt hơn năm giờ một tuần."
+      },
+      {
+        "speaker": "A",
+        "en": "That's really wise. And sounds more sustainable.",
+        "vi": "Thật sáng suốt. Và nghe bền vững hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Also, fall in love with the language. Watch movies, listen to music you enjoy. Make it fun.",
+        "vi": "Ngoài ra, hãy yêu ngôn ngữ. Xem phim, nghe nhạc bạn thích. Làm cho nó vui."
+      },
+      {
+        "speaker": "A",
+        "en": "You make it sound achievable. I feel motivated now!",
+        "vi": "Bạn làm cho nó nghe có thể đạt được. Tôi cảm thấy có động lực rồi!"
+      },
+      {
+        "speaker": "B",
+        "en": "You absolutely can do it. The fact that you're studying today means you're already ahead.",
+        "vi": "Bạn hoàn toàn có thể làm được. Việc bạn đang học hôm nay có nghĩa là bạn đã đi trước."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you for sharing your story. It means a lot to know that struggles are normal.",
+        "vi": "Cảm ơn bạn đã chia sẻ. Biết rằng những khó khăn là bình thường thật có ý nghĩa."
+      },
+      {
+        "speaker": "B",
+        "en": "Every English speaker you admire once couldn't say a single sentence. Keep going!",
+        "vi": "Mỗi người nói tiếng Anh bạn ngưỡng mộ ngày xưa không thể nói được một câu. Hãy tiếp tục!"
+      }
+    ],
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Lan",
+      "en": "Lan"
+    },
+    "speakerBName": {
+      "vi": "Bạn mới",
+      "en": "New Friend"
+    }
+  }
+]
