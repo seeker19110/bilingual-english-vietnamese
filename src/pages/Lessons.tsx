@@ -128,7 +128,7 @@ export default function Lessons() {
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2">
           {/* Search bar — chỉ hiện ở trên trên desktop */}
           <div className="hidden sm:block mb-4">
-            <SearchBar query={query} setQuery={setQuery} isA={isA} alwaysVisible />
+            <SearchBar query={query} setQuery={setQuery} isA={isA} />
           </div>
           <LessonList lessons={INDEX} isA={isA} query={deferredQuery} onSelect={setSelectedMeta} />
         </div>
@@ -143,11 +143,10 @@ export default function Lessons() {
 }
 
 // ── Ô tìm kiếm dùng chung ────────────────────────────────────────────────────
-function SearchBar({ query, setQuery, isA, alwaysVisible: _av }: {
+function SearchBar({ query, setQuery, isA }: {
   query: string
   setQuery: (v: string) => void
   isA: boolean
-  alwaysVisible?: boolean
 }) {
   return (
     <div className="relative">
