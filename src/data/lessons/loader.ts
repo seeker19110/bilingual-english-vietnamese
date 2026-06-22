@@ -18,6 +18,8 @@ export interface LessonMeta {
   turnCount: number
   speakerAGender: 'female' | 'male' | null
   speakerBGender: 'female' | 'male' | null
+  speakerAName?: string
+  speakerBName?: string
   chunk: number
   idx: number
 }
@@ -29,6 +31,8 @@ export interface Lesson {
   turns: Turn[]
   speakerAGender?: 'female' | 'male'
   speakerBGender?: 'female' | 'male'
+  speakerAName?: string
+  speakerBName?: string
 }
 
 export const INDEX: LessonMeta[] = indexData as LessonMeta[]

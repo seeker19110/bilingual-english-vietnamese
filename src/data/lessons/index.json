@@ -7,7 +7,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 0,
-  "idx": 0
+  "idx": 0,
+  "speakerAName": "Lan",
+  "speakerBName": "Tom"
  },
  {
   "id": 2,
@@ -17,7 +19,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 0,
-  "idx": 1
+  "idx": 1,
+  "speakerAName": "Bạn A",
+  "speakerBName": "Bạn B"
  },
  {
   "id": 3,
@@ -27,7 +31,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 0,
-  "idx": 2
+  "idx": 2,
+  "speakerAName": "Linh",
+  "speakerBName": "Nhân viên"
  },
  {
   "id": 4,
@@ -37,7 +43,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 0,
-  "idx": 3
+  "idx": 3,
+  "speakerAName": "Hành khách",
+  "speakerBName": "Nhân viên sân bay"
  },
  {
   "id": 5,
@@ -47,7 +55,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 0,
-  "idx": 4
+  "idx": 4,
+  "speakerAName": "Khách hàng",
+  "speakerBName": "Nhân viên cửa hàng"
  },
  {
   "id": 6,
@@ -57,7 +67,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 0,
-  "idx": 5
+  "idx": 5,
+  "speakerAName": "Mai",
+  "speakerBName": "Người đi đường"
  },
  {
   "id": 7,
@@ -67,7 +79,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 0,
-  "idx": 6
+  "idx": 6,
+  "speakerAName": "Nam",
+  "speakerBName": "Bác sĩ"
  },
  {
   "id": 8,
@@ -77,7 +91,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 0,
-  "idx": 7
+  "idx": 7,
+  "speakerAName": "Hoa",
+  "speakerBName": "Dược sĩ"
  },
  {
   "id": 9,
@@ -87,7 +103,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 0,
-  "idx": 8
+  "idx": 8,
+  "speakerAName": "An",
+  "speakerBName": "Lễ tân"
  },
  {
   "id": 10,
@@ -97,7 +115,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 0,
-  "idx": 9
+  "idx": 9,
+  "speakerAName": "An",
+  "speakerBName": "Lễ tân"
  },
  {
   "id": 11,
@@ -107,7 +127,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 1,
-  "idx": 0
+  "idx": 0,
+  "speakerAName": "An",
+  "speakerBName": "Lễ tân"
  },
  {
   "id": 12,
@@ -117,7 +139,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 1,
-  "idx": 1
+  "idx": 1,
+  "speakerAName": "Hùng",
+  "speakerBName": "Tài xế"
  },
  {
   "id": 13,
@@ -127,7 +151,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 1,
-  "idx": 2
+  "idx": 2,
+  "speakerAName": "Lan",
+  "speakerBName": "Hành khách"
  },
  {
   "id": 14,
@@ -137,7 +163,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 1,
-  "idx": 3
+  "idx": 3,
+  "speakerAName": "Phương",
+  "speakerBName": "Nhân viên bán vé"
  },
  {
   "id": 15,
@@ -147,7 +175,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 1,
-  "idx": 4
+  "idx": 4,
+  "speakerAName": "Quân",
+  "speakerBName": "Nhân viên ngân hàng"
  },
  {
   "id": 16,
@@ -157,7 +187,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 1,
-  "idx": 5
+  "idx": 5,
+  "speakerAName": "Tuấn",
+  "speakerBName": "Tổng đài viên"
  },
  {
   "id": 17,
@@ -167,7 +199,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 1,
-  "idx": 6
+  "idx": 6,
+  "speakerAName": "Linh",
+  "speakerBName": "Chủ trọ"
  },
  {
   "id": 18,
@@ -177,7 +211,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 1,
-  "idx": 7
+  "idx": 7,
+  "speakerAName": "Đức",
+  "speakerBName": "Chủ nhà"
  },
  {
   "id": 19,
@@ -187,7 +223,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 1,
-  "idx": 8
+  "idx": 8,
+  "speakerAName": "Hà",
+  "speakerBName": "Hàng xóm"
  },
  {
   "id": 20,
@@ -197,7 +235,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 1,
-  "idx": 9
+  "idx": 9,
+  "speakerAName": "Việt",
+  "speakerBName": "Thợ điện"
  },
  {
   "id": 21,
@@ -207,7 +247,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 2,
-  "idx": 0
+  "idx": 0,
+  "speakerAName": "Nam",
+  "speakerBName": "Nhân viên cửa hàng"
  },
  {
   "id": 22,
@@ -217,7 +259,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 2,
-  "idx": 1
+  "idx": 1,
+  "speakerAName": "Lan",
+  "speakerBName": "Thợ sửa"
  },
  {
   "id": 23,
@@ -227,7 +271,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 2,
-  "idx": 2
+  "idx": 2,
+  "speakerAName": "Phương",
+  "speakerBName": "Nhân viên tư vấn"
  },
  {
   "id": 24,
@@ -237,7 +283,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 2,
-  "idx": 3
+  "idx": 3,
+  "speakerAName": "Khánh",
+  "speakerBName": "Thu"
  },
  {
   "id": 25,
@@ -247,7 +295,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 2,
-  "idx": 4
+  "idx": 4,
+  "speakerAName": "Quân",
+  "speakerBName": "Mai"
  },
  {
   "id": 26,
@@ -257,7 +307,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 2,
-  "idx": 5
+  "idx": 5,
+  "speakerAName": "Lan",
+  "speakerBName": "Quản lý"
  },
  {
   "id": 27,
@@ -267,7 +319,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 2,
-  "idx": 6
+  "idx": 6,
+  "speakerAName": "Hoa",
+  "speakerBName": "Nhà tuyển dụng"
  },
  {
   "id": 28,
@@ -277,7 +331,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 2,
-  "idx": 7
+  "idx": 7,
+  "speakerAName": "Tùng",
+  "speakerBName": "Nhà tuyển dụng"
  },
  {
   "id": 29,
@@ -287,7 +343,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 2,
-  "idx": 8
+  "idx": 8,
+  "speakerAName": "Mai",
+  "speakerBName": "Sơn"
  },
  {
   "id": 30,
@@ -297,7 +355,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 2,
-  "idx": 9
+  "idx": 9,
+  "speakerAName": "An",
+  "speakerBName": "Bích"
  },
  {
   "id": 31,
@@ -307,7 +367,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 3,
-  "idx": 0
+  "idx": 0,
+  "speakerAName": "Huy",
+  "speakerBName": "Trang"
  },
  {
   "id": 32,
@@ -317,7 +379,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 3,
-  "idx": 1
+  "idx": 1,
+  "speakerAName": "Bảo",
+  "speakerBName": "Khách hàng"
  },
  {
   "id": 33,
@@ -327,7 +391,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 3,
-  "idx": 2
+  "idx": 2,
+  "speakerAName": "Trang",
+  "speakerBName": "Tổng đài viên"
  },
  {
   "id": 34,
@@ -337,7 +403,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 3,
-  "idx": 3
+  "idx": 3,
+  "speakerAName": "Yến",
+  "speakerBName": "Nhân viên cửa hàng"
  },
  {
   "id": 35,
@@ -347,7 +415,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 3,
-  "idx": 4
+  "idx": 4,
+  "speakerAName": "Phúc",
+  "speakerBName": "Tổng đài viên"
  },
  {
   "id": 36,
@@ -357,7 +427,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 3,
-  "idx": 5
+  "idx": 5,
+  "speakerAName": "Mai",
+  "speakerBName": "Tâm"
  },
  {
   "id": 37,
@@ -367,7 +439,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 3,
-  "idx": 6
+  "idx": 6,
+  "speakerAName": "Cô Hương",
+  "speakerBName": "Người bán"
  },
  {
   "id": 38,
@@ -377,7 +451,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 3,
-  "idx": 7
+  "idx": 7,
+  "speakerAName": "Quân",
+  "speakerBName": "Tổng đài viên"
  },
  {
   "id": 39,
@@ -387,7 +463,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 3,
-  "idx": 8
+  "idx": 8,
+  "speakerAName": "Thảo",
+  "speakerBName": "Nam"
  },
  {
   "id": 40,
@@ -397,7 +475,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 3,
-  "idx": 9
+  "idx": 9,
+  "speakerAName": "Vy",
+  "speakerBName": "Thu ngân"
  },
  {
   "id": 41,
@@ -407,7 +487,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 4,
-  "idx": 0
+  "idx": 0,
+  "speakerAName": "Chi",
+  "speakerBName": "Phong"
  },
  {
   "id": 42,
@@ -417,7 +499,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 4,
-  "idx": 1
+  "idx": 1,
+  "speakerAName": "Hằng",
+  "speakerBName": "Người bán rau"
  },
  {
   "id": 43,
@@ -427,7 +511,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 4,
-  "idx": 2
+  "idx": 2,
+  "speakerAName": "Linh",
+  "speakerBName": "Tú"
  },
  {
   "id": 44,
@@ -437,7 +523,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 4,
-  "idx": 3
+  "idx": 3,
+  "speakerAName": "Bạn bè",
+  "speakerBName": "Hà"
  },
  {
   "id": 45,
@@ -447,7 +535,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 4,
-  "idx": 4
+  "idx": 4,
+  "speakerAName": "Khoa",
+  "speakerBName": "Ngọc"
  },
  {
   "id": 46,
@@ -457,7 +547,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 4,
-  "idx": 5
+  "idx": 5,
+  "speakerAName": "Mỹ",
+  "speakerBName": "Đạt"
  },
  {
   "id": 47,
@@ -467,7 +559,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 4,
-  "idx": 6
+  "idx": 6,
+  "speakerAName": "Bống",
+  "speakerBName": "Tép"
  },
  {
   "id": 48,
@@ -477,7 +571,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 4,
-  "idx": 7
+  "idx": 7,
+  "speakerAName": "Việt",
+  "speakerBName": "Trang"
  },
  {
   "id": 49,
@@ -487,7 +583,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 4,
-  "idx": 8
+  "idx": 8,
+  "speakerAName": "Đăng",
+  "speakerBName": "Trang"
  },
  {
   "id": 50,
@@ -497,7 +595,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 4,
-  "idx": 9
+  "idx": 9,
+  "speakerAName": "Khôi",
+  "speakerBName": "Vân"
  },
  {
   "id": 51,
@@ -507,7 +607,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 5,
-  "idx": 0
+  "idx": 0,
+  "speakerAName": "Minh",
+  "speakerBName": "Nhân viên gym"
  },
  {
   "id": 52,
@@ -517,7 +619,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 5,
-  "idx": 1
+  "idx": 1,
+  "speakerAName": "Hoa",
+  "speakerBName": "Mai"
  },
  {
   "id": 53,
@@ -527,7 +631,9 @@
   "speakerAGender": "male",
   "speakerBGender": "male",
   "chunk": 5,
-  "idx": 2
+  "idx": 2,
+  "speakerAName": "Nam",
+  "speakerBName": "Duy"
  },
  {
   "id": 54,
@@ -537,7 +643,9 @@
   "speakerAGender": "male",
   "speakerBGender": "male",
   "chunk": 5,
-  "idx": 3
+  "idx": 3,
+  "speakerAName": "Tuấn",
+  "speakerBName": "Bình"
  },
  {
   "id": 55,
@@ -547,7 +655,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 5,
-  "idx": 4
+  "idx": 4,
+  "speakerAName": "Long",
+  "speakerBName": "Bác sĩ"
  },
  {
   "id": 56,
@@ -557,7 +667,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 5,
-  "idx": 5
+  "idx": 5,
+  "speakerAName": "Phong",
+  "speakerBName": "Chủ thuê xe"
  },
  {
   "id": 57,
@@ -567,7 +679,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 5,
-  "idx": 6
+  "idx": 6,
+  "speakerAName": "Thu",
+  "speakerBName": "Nhân viên du lịch"
  },
  {
   "id": 58,
@@ -577,7 +691,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 5,
-  "idx": 7
+  "idx": 7,
+  "speakerAName": "Linh",
+  "speakerBName": "Nhân viên hàng không"
  },
  {
   "id": 59,
@@ -587,7 +703,9 @@
   "speakerAGender": "male",
   "speakerBGender": "male",
   "chunk": 5,
-  "idx": 8
+  "idx": 8,
+  "speakerAName": "An",
+  "speakerBName": "Chị gái"
  },
  {
   "id": 60,
@@ -597,7 +715,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 5,
-  "idx": 9
+  "idx": 9,
+  "speakerAName": "Ngọc",
+  "speakerBName": "Người bán"
  },
  {
   "id": 61,
@@ -607,7 +727,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 6,
-  "idx": 0
+  "idx": 0,
+  "speakerAName": "Hùng",
+  "speakerBName": "Ly"
  },
  {
   "id": 62,
@@ -617,7 +739,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 6,
-  "idx": 1
+  "idx": 1,
+  "speakerAName": "Dung",
+  "speakerBName": "Bạn"
  },
  {
   "id": 63,
@@ -627,7 +751,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 6,
-  "idx": 2
+  "idx": 2,
+  "speakerAName": "Phúc",
+  "speakerBName": "Nhân viên thư viện"
  },
  {
   "id": 64,
@@ -637,7 +763,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 6,
-  "idx": 3
+  "idx": 3,
+  "speakerAName": "Toàn",
+  "speakerBName": "Bạn"
  },
  {
   "id": 65,
@@ -647,7 +775,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 6,
-  "idx": 4
+  "idx": 4,
+  "speakerAName": "Phương",
+  "speakerBName": "Nhân viên tư vấn"
  },
  {
   "id": 66,
@@ -657,7 +787,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 6,
-  "idx": 5
+  "idx": 5,
+  "speakerAName": "Hà",
+  "speakerBName": "Giáo viên"
  },
  {
   "id": 67,
@@ -667,7 +799,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 6,
-  "idx": 6
+  "idx": 6,
+  "speakerAName": "Khoa",
+  "speakerBName": "Nhân viên tư vấn"
  },
  {
   "id": 68,
@@ -677,7 +811,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 6,
-  "idx": 7
+  "idx": 7,
+  "speakerAName": "Nga",
+  "speakerBName": "Kỹ thuật viên"
  },
  {
   "id": 69,
@@ -687,7 +823,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 6,
-  "idx": 8
+  "idx": 8,
+  "speakerAName": "Khải",
+  "speakerBName": "Bà Liên"
  },
  {
   "id": 70,
@@ -697,7 +835,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 6,
-  "idx": 9
+  "idx": 9,
+  "speakerAName": "Con",
+  "speakerBName": "Mẹ"
  },
  {
   "id": 71,
@@ -707,7 +847,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 7,
-  "idx": 0
+  "idx": 0,
+  "speakerAName": "Thanh",
+  "speakerBName": "Bác sĩ"
  },
  {
   "id": 72,
@@ -717,7 +859,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 7,
-  "idx": 1
+  "idx": 1,
+  "speakerAName": "Minh",
+  "speakerBName": "Anh trai"
  },
  {
   "id": 73,
@@ -727,7 +871,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 7,
-  "idx": 2
+  "idx": 2,
+  "speakerAName": "Hương",
+  "speakerBName": "Bạn thân"
  },
  {
   "id": 74,
@@ -737,7 +883,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 7,
-  "idx": 3
+  "idx": 3,
+  "speakerAName": "Lan",
+  "speakerBName": "Thợ làm tóc"
  },
  {
   "id": 75,
@@ -747,7 +895,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 7,
-  "idx": 4
+  "idx": 4,
+  "speakerAName": "Hải",
+  "speakerBName": "Nhân viên bưu điện"
  },
  {
   "id": 76,
@@ -757,7 +907,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 7,
-  "idx": 5
+  "idx": 5,
+  "speakerAName": "Quân",
+  "speakerBName": "Nhân viên nhà mạng"
  },
  {
   "id": 77,
@@ -767,7 +919,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 7,
-  "idx": 6
+  "idx": 6,
+  "speakerAName": "Bình",
+  "speakerBName": "Hàng xóm"
  },
  {
   "id": 78,
@@ -777,7 +931,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 7,
-  "idx": 7
+  "idx": 7,
+  "speakerAName": "Linh",
+  "speakerBName": "Nhân viên spa"
  },
  {
   "id": 79,
@@ -787,7 +943,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 7,
-  "idx": 8
+  "idx": 8,
+  "speakerAName": "Anh",
+  "speakerBName": "Vợ"
  },
  {
   "id": 80,
@@ -797,7 +955,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 7,
-  "idx": 9
+  "idx": 9,
+  "speakerAName": "Trang",
+  "speakerBName": "Người lạ"
  },
  {
   "id": 81,
@@ -807,7 +967,9 @@
   "speakerAGender": "male",
   "speakerBGender": "male",
   "chunk": 8,
-  "idx": 0
+  "idx": 0,
+  "speakerAName": "Du khách",
+  "speakerBName": "Bạn Việt Nam"
  },
  {
   "id": 82,
@@ -817,7 +979,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 8,
-  "idx": 1
+  "idx": 1,
+  "speakerAName": "Du khách",
+  "speakerBName": "Hướng dẫn viên"
  },
  {
   "id": 83,
@@ -827,7 +991,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 8,
-  "idx": 2
+  "idx": 2,
+  "speakerAName": "Du khách",
+  "speakerBName": "Chủ quán"
  },
  {
   "id": 84,
@@ -837,7 +1003,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 8,
-  "idx": 3
+  "idx": 3,
+  "speakerAName": "Bạn A",
+  "speakerBName": "Bạn B"
  },
  {
   "id": 85,
@@ -847,7 +1015,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 8,
-  "idx": 4
+  "idx": 4,
+  "speakerAName": "Bạn A",
+  "speakerBName": "Bạn B"
  },
  {
   "id": 86,
@@ -857,7 +1027,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 8,
-  "idx": 5
+  "idx": 5,
+  "speakerAName": "Du khách",
+  "speakerBName": "Hướng dẫn viên"
  },
  {
   "id": 87,
@@ -867,7 +1039,9 @@
   "speakerAGender": "male",
   "speakerBGender": "male",
   "chunk": 8,
-  "idx": 6
+  "idx": 6,
+  "speakerAName": "Bạn A",
+  "speakerBName": "Bạn B"
  },
  {
   "id": 88,
@@ -877,7 +1051,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 8,
-  "idx": 7
+  "idx": 7,
+  "speakerAName": "Nam",
+  "speakerBName": "Bạn"
  },
  {
   "id": 89,
@@ -887,7 +1063,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 8,
-  "idx": 8
+  "idx": 8,
+  "speakerAName": "Bạn A",
+  "speakerBName": "Bạn B"
  },
  {
   "id": 90,
@@ -897,7 +1075,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 8,
-  "idx": 9
+  "idx": 9,
+  "speakerAName": "Duy",
+  "speakerBName": "Bạn"
  },
  {
   "id": 91,
@@ -907,7 +1087,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 9,
-  "idx": 0
+  "idx": 0,
+  "speakerAName": "Mẹ",
+  "speakerBName": "Con"
  },
  {
   "id": 92,
@@ -917,7 +1099,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 9,
-  "idx": 1
+  "idx": 1,
+  "speakerAName": "Sinh viên A",
+  "speakerBName": "Sinh viên B"
  },
  {
   "id": 93,
@@ -927,7 +1111,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 9,
-  "idx": 2
+  "idx": 2,
+  "speakerAName": "Hồng",
+  "speakerBName": "Giáo viên"
  },
  {
   "id": 94,
@@ -937,7 +1123,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 9,
-  "idx": 3
+  "idx": 3,
+  "speakerAName": "Tú",
+  "speakerBName": "Nhân viên cửa hàng"
  },
  {
   "id": 95,
@@ -947,7 +1135,9 @@
   "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 9,
-  "idx": 4
+  "idx": 4,
+  "speakerAName": "Kiên",
+  "speakerBName": "Nhân viên nhà hàng"
  },
  {
   "id": 96,
@@ -957,7 +1147,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 9,
-  "idx": 5
+  "idx": 5,
+  "speakerAName": "Ngân",
+  "speakerBName": "Anh họ"
  },
  {
   "id": 97,
@@ -967,7 +1159,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 9,
-  "idx": 6
+  "idx": 6,
+  "speakerAName": "Hiền",
+  "speakerBName": "Bác sĩ thú y"
  },
  {
   "id": 98,
@@ -977,7 +1171,9 @@
   "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 9,
-  "idx": 7
+  "idx": 7,
+  "speakerAName": "Người A",
+  "speakerBName": "Người B"
  },
  {
   "id": 99,
@@ -987,7 +1183,9 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 9,
-  "idx": 8
+  "idx": 8,
+  "speakerAName": "Trang",
+  "speakerBName": "Minh"
  },
  {
   "id": 100,
@@ -997,6 +1195,8 @@
   "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 9,
-  "idx": 9
+  "idx": 9,
+  "speakerAName": "Lan",
+  "speakerBName": "Bạn"
  }
 ]
