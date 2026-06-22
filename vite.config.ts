@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => {
   // — không proxy thẳng tới Anthropic nữa, để handler tự chọn nhà cung cấp (Groq/Anthropic).
   return {
     plugins: [react(), apiEdgeDevMiddleware()],
+    build: {
+      chunkSizeWarningLimit: 500,
+    },
   }
 })
 
