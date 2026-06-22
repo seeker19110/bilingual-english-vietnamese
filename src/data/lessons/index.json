@@ -1351,28 +1351,37 @@
  },
  {
   "id": 136,
-  "title": "Mua thuốc tại hiệu thuốc",
-  "situation": "Tình huống thực tế liên quan đến: Mua thuốc tại hiệu thuốc.",
+  "title": {
+   "vi": "Mua thuốc tại hiệu thuốc",
+   "en": "Buying Medicine at a Pharmacy"
+  },
+  "situation": "Chị Hà đến hiệu thuốc mua thuốc trị cảm cúm và hỏi thêm về cách dùng.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 13,
   "idx": 5
  },
  {
   "id": 137,
-  "title": "Tập thể dục với huấn luyện viên",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tập thể dục với huấn luyện viên.",
+  "title": {
+   "vi": "Tập thể dục với huấn luyện viên",
+   "en": "Working Out with a Personal Trainer"
+  },
+  "situation": "Anh Minh mới đăng ký phòng gym và được sắp xếp buổi tập đầu tiên với huấn luyện viên cá nhân.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 13,
   "idx": 6
  },
  {
   "id": 138,
-  "title": "Hỏi về bảo hiểm y tế",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về bảo hiểm y tế.",
+  "title": {
+   "vi": "Hỏi về bảo hiểm y tế",
+   "en": "Asking About Health Insurance"
+  },
+  "situation": "Chị Phương mới đi làm và hỏi đồng nghiệp cũ về cách đăng ký và sử dụng bảo hiểm y tế.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -1381,138 +1390,180 @@
  },
  {
   "id": 139,
-  "title": "Khám nha khoa",
-  "situation": "Tình huống thực tế liên quan đến: Khám nha khoa.",
+  "title": {
+   "vi": "Khám nha khoa",
+   "en": "Visiting the Dentist"
+  },
+  "situation": "Anh Long đến phòng khám nha khoa để kiểm tra răng và được bác sĩ tư vấn điều trị.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 13,
   "idx": 8
  },
  {
   "id": 140,
-  "title": "Học yoga và thiền",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học yoga và thiền.",
+  "title": {
+   "vi": "Học yoga và thiền",
+   "en": "Learning Yoga and Meditation"
+  },
+  "situation": "Chị Lan tham gia lớp yoga buổi sáng lần đầu và trò chuyện với giáo viên sau buổi học.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 13,
   "idx": 9
  },
  {
   "id": 141,
-  "title": "Thi vào đại học",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thi vào đại học.",
+  "title": {
+   "vi": "Thi vào đại học",
+   "en": "University Entrance Exam"
+  },
+  "situation": "Mẹ và con gái nói chuyện về kế hoạch thi đại học và áp lực thi cử.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 14,
   "idx": 0
  },
  {
   "id": 142,
-  "title": "Xin học bổng nước ngoài",
-  "situation": "Tình huống thực tế liên quan đến: Xin học bổng nước ngoài.",
+  "title": {
+   "vi": "Xin học bổng nước ngoài",
+   "en": "Applying for a Study Abroad Scholarship"
+  },
+  "situation": "Sinh viên Hà hỏi thầy cố vấn về cách chuẩn bị hồ sơ xin học bổng du học Mỹ.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 14,
   "idx": 1
  },
  {
   "id": 143,
-  "title": "Thuyết trình nhóm",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thuyết trình nhóm.",
+  "title": {
+   "vi": "Thuyết trình nhóm",
+   "en": "Group Presentation"
+  },
+  "situation": "Hai thành viên nhóm thảo luận về việc phân công và chuẩn bị bài thuyết trình cho môn học.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 14,
   "idx": 2
  },
  {
   "id": 144,
-  "title": "Viết luận văn",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Viết luận văn.",
+  "title": {
+   "vi": "Viết luận văn",
+   "en": "Writing a Thesis"
+  },
+  "situation": "Sinh viên Tuấn gặp giáo sư hướng dẫn để thảo luận về tiến độ và hướng nghiên cứu của luận văn.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 14,
   "idx": 3
  },
  {
   "id": 145,
-  "title": "Đăng ký môn học đại học",
-  "situation": "Tình huống thực tế liên quan đến: Đăng ký môn học đại học.",
+  "title": {
+   "vi": "Đăng ký môn học đại học",
+   "en": "Registering for University Courses"
+  },
+  "situation": "Sinh viên Ngọc nhờ cố vấn học tập giúp đăng ký môn học trong kỳ mới.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 14,
   "idx": 4
  },
  {
   "id": 146,
-  "title": "Thảo luận phương pháp học",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thảo luận phương pháp học.",
+  "title": {
+   "vi": "Thảo luận phương pháp học",
+   "en": "Discussing Study Methods"
+  },
+  "situation": "Hai sinh viên Hà và Nam chia sẻ kinh nghiệm và phương pháp học hiệu quả trước kỳ thi.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 14,
   "idx": 5
  },
  {
   "id": 147,
-  "title": "Phỏng vấn thực tập",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Phỏng vấn thực tập.",
+  "title": {
+   "vi": "Phỏng vấn thực tập",
+   "en": "Internship Interview"
+  },
+  "situation": "Sinh viên Linh tham gia phỏng vấn xin vị trí thực tập Marketing tại một công ty.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 14,
   "idx": 6
  },
  {
   "id": 148,
-  "title": "Hỏi về chương trình trao đổi",
-  "situation": "Tình huống thực tế liên quan đến: Hỏi về chương trình trao đổi.",
+  "title": {
+   "vi": "Hỏi về chương trình trao đổi",
+   "en": "Asking About an Exchange Program"
+  },
+  "situation": "Sinh viên Phương hỏi cán bộ Phòng Quốc tế về chương trình trao đổi sinh viên sang Nhật Bản.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 14,
   "idx": 7
  },
  {
   "id": 149,
-  "title": "Học trực tuyến",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học trực tuyến.",
+  "title": {
+   "vi": "Học trực tuyến",
+   "en": "Online Learning"
+  },
+  "situation": "Hai người bạn Trang và Bình chia sẻ kinh nghiệm và thách thức khi học các khóa học trực tuyến.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 14,
   "idx": 8
  },
  {
   "id": 150,
-  "title": "Thảo luận về sách hay",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thảo luận về sách hay.",
+  "title": {
+   "vi": "Thảo luận về sách hay",
+   "en": "Discussing a Good Book"
+  },
+  "situation": "Hai người bạn Minh và Hoa gặp nhau tại quán cà phê và chia sẻ về những cuốn sách đã đọc gần đây.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 14,
   "idx": 9
  },
  {
   "id": 151,
-  "title": "Check in khách sạn 5 sao",
-  "situation": "Tình huống thực tế liên quan đến: Check in khách sạn 5 sao.",
+  "title": {
+   "vi": "Check in khách sạn 5 sao",
+   "en": "Checking into a 5-Star Hotel"
+  },
+  "situation": "Anh Tuấn đến check in khách sạn 5 sao ở Hà Nội nhân dịp công tác.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 15,
   "idx": 0
  },
  {
   "id": 152,
-  "title": "Thuê hướng dẫn viên",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thuê hướng dẫn viên.",
+  "title": {
+   "vi": "Thuê hướng dẫn viên du lịch",
+   "en": "Hiring a Tour Guide"
+  },
+  "situation": "Khách du lịch người Mỹ tên Sarah thuê hướng dẫn viên địa phương để tham quan Hội An.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -1521,8 +1572,11 @@
  },
  {
   "id": 153,
-  "title": "Đặt tour du lịch",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Đặt tour du lịch.",
+  "title": {
+   "vi": "Đặt tour du lịch",
+   "en": "Booking a Tour Package"
+  },
+  "situation": "Vợ chồng anh Hùng đến công ty du lịch để hỏi và đặt tour đi Phú Quốc.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -1531,121 +1585,157 @@
  },
  {
   "id": 154,
-  "title": "Hỏi về visa",
-  "situation": "Tình huống thực tế liên quan đến: Hỏi về visa.",
+  "title": {
+   "vi": "Hỏi về visa",
+   "en": "Asking About Visa"
+  },
+  "situation": "Chị Mai hỏi nhân viên lãnh sự quán về thủ tục xin visa du lịch Nhật Bản.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 15,
   "idx": 3
  },
  {
   "id": 155,
-  "title": "Phàn nàn về phòng khách sạn",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Phàn nàn về phòng khách sạn.",
+  "title": {
+   "vi": "Phàn nàn về phòng khách sạn",
+   "en": "Complaining About a Hotel Room"
+  },
+  "situation": "Anh Đức phàn nàn với lễ tân về vấn đề ở phòng khách sạn và yêu cầu đổi phòng.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 15,
   "idx": 4
  },
  {
   "id": 156,
-  "title": "Mua đồ lưu niệm",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Mua đồ lưu niệm.",
+  "title": {
+   "vi": "Mua đồ lưu niệm",
+   "en": "Buying Souvenirs"
+  },
+  "situation": "Khách du lịch người Anh tên Tom mua đồ lưu niệm tại chợ Ben Thanh, TP.HCM và trả giá với người bán.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 15,
   "idx": 5
  },
  {
   "id": 157,
-  "title": "Đi cáp treo",
-  "situation": "Tình huống thực tế liên quan đến: Đi cáp treo.",
+  "title": {
+   "vi": "Đi cáp treo",
+   "en": "Taking a Cable Car"
+  },
+  "situation": "Gia đình Hà gồm bố mẹ và hai con nhỏ đến khu du lịch Bà Nà Hills và trải nghiệm cáp treo.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 15,
   "idx": 6
  },
  {
   "id": 158,
-  "title": "Kể về chuyến đi đáng nhớ",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Kể về chuyến đi đáng nhớ.",
+  "title": {
+   "vi": "Kể về chuyến đi đáng nhớ",
+   "en": "Sharing a Memorable Trip"
+  },
+  "situation": "Hai đồng nghiệp Trang và Quân chia sẻ về chuyến đi đáng nhớ nhất của mình.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 15,
   "idx": 7
  },
  {
   "id": 159,
-  "title": "Xử lý hành lý thất lạc",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Xử lý hành lý thất lạc.",
+  "title": {
+   "vi": "Xử lý hành lý thất lạc",
+   "en": "Dealing with Lost Luggage"
+  },
+  "situation": "Chị Lan vừa xuống máy bay tại sân bay Nội Bài thì phát hiện vali bị thất lạc và đến quầy xử lý.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 15,
   "idx": 8
  },
  {
   "id": 160,
-  "title": "Nói về văn hóa khác biệt",
-  "situation": "Tình huống thực tế liên quan đến: Nói về văn hóa khác biệt.",
+  "title": {
+   "vi": "Nói về văn hóa khác biệt",
+   "en": "Talking About Cultural Differences"
+  },
+  "situation": "Sinh viên Việt Nam Hùng và bạn quốc tế Emma (người Pháp) chia sẻ về những điểm khác biệt văn hóa thú vị.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 15,
   "idx": 9
  },
  {
   "id": 161,
-  "title": "Họp nhóm dự án",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Họp nhóm dự án.",
+  "title": {
+   "vi": "Họp nhóm dự án",
+   "en": "Project Team Meeting"
+  },
+  "situation": "Nhóm dự án họp trực tuyến để cập nhật tiến độ và phân công nhiệm vụ tuần mới.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 16,
   "idx": 0
  },
  {
   "id": 162,
-  "title": "Viết email chuyên nghiệp",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Viết email chuyên nghiệp.",
+  "title": {
+   "vi": "Viết email chuyên nghiệp",
+   "en": "Writing a Professional Email"
+  },
+  "situation": "Nhân viên mới Hoa nhờ đồng nghiệp lâu năm Trung hướng dẫn cách viết email chuyên nghiệp bằng tiếng Anh.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 16,
   "idx": 1
  },
  {
   "id": 163,
-  "title": "Đàm phán hợp đồng",
-  "situation": "Tình huống thực tế liên quan đến: Đàm phán hợp đồng.",
+  "title": {
+   "vi": "Đàm phán hợp đồng",
+   "en": "Contract Negotiation"
+  },
+  "situation": "Giám đốc kinh doanh Lan gặp đối tác để đàm phán điều khoản hợp đồng cung cấp dịch vụ.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 16,
   "idx": 2
  },
  {
   "id": 164,
-  "title": "Báo cáo kết quả kinh doanh",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Báo cáo kết quả kinh doanh.",
+  "title": {
+   "vi": "Báo cáo kết quả kinh doanh",
+   "en": "Business Results Report"
+  },
+  "situation": "Trưởng phòng kinh doanh Khoa báo cáo kết quả quý vừa qua cho giám đốc trong buổi họp nội bộ.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 16,
   "idx": 3
  },
  {
   "id": 165,
-  "title": "Phỏng vấn ứng viên",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Phỏng vấn ứng viên.",
+  "title": {
+   "vi": "Phỏng vấn ứng viên",
+   "en": "Interviewing a Job Candidate"
+  },
+  "situation": "Trưởng phòng HR Linh phỏng vấn ứng viên Tuấn cho vị trí kỹ sư phần mềm.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 16,
   "idx": 4
  },
