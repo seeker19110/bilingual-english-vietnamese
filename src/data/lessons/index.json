@@ -3041,68 +3041,89 @@
  },
  {
   "id": 266,
-  "title": "Đặt phòng Airbnb",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đặt phòng Airbnb.",
+  "title": {
+   "vi": "Hỏi về dịch vụ chuyển phát nhanh quốc tế",
+   "en": "Asking About International Express Delivery Services"
+  },
+  "situation": "Chị Mai hỏi nhân viên bưu điện về dịch vụ gửi hàng đi Mỹ.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 26,
   "idx": 5
  },
  {
   "id": 267,
-  "title": "Hỏi về tiện nghi phòng",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về tiện nghi phòng.",
+  "title": {
+   "vi": "Bàn về thói quen sử dụng mạng xã hội của giới trẻ",
+   "en": "Discussing Young People's Social Media Habits"
+  },
+  "situation": "Hai giảng viên Quang và Sophie (người Pháp) trao đổi về tác động của mạng xã hội với sinh viên.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 26,
   "idx": 6
  },
  {
   "id": 268,
-  "title": "Phàn nàn về tiếng ồn",
-  "situation": "Tình huống thực tế liên quan đến: Phàn nàn về tiếng ồn.",
+  "title": {
+   "vi": "Hỏi về dịch vụ chăm sóc người cao tuổi",
+   "en": "Asking About Elderly Care Services"
+  },
+  "situation": "Chị Hương hỏi trung tâm dưỡng lão về dịch vụ chăm sóc cho mẹ già.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 26,
   "idx": 7
  },
  {
   "id": 269,
-  "title": "Tìm căn hộ dịch vụ",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tìm căn hộ dịch vụ.",
+  "title": {
+   "vi": "Thảo luận về kế hoạch nghỉ hưu sớm",
+   "en": "Discussing Early Retirement Plans"
+  },
+  "situation": "Hai người bạn Thắng và Nam thảo luận về việc nghỉ hưu sớm ở tuổi 45.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 26,
   "idx": 8
  },
  {
   "id": 270,
-  "title": "Thỏa thuận giá thuê nhà",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thỏa thuận giá thuê nhà.",
+  "title": {
+   "vi": "Hỏi về quy trình nhận con nuôi",
+   "en": "Asking About the Adoption Process"
+  },
+  "situation": "Vợ chồng anh Phúc chị Yến hỏi cán bộ tư pháp về thủ tục nhận con nuôi trong nước.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 26,
   "idx": 9
  },
  {
   "id": 271,
-  "title": "Học tiếng Hàn cơ bản",
-  "situation": "Tình huống thực tế liên quan đến: Học tiếng Hàn cơ bản.",
+  "title": {
+   "vi": "Hỏi về dịch vụ thuê xe du lịch tự lái",
+   "en": "Asking About Self-Drive Car Rental for Tourism"
+  },
+  "situation": "Anh Việt hỏi công ty cho thuê xe về việc thuê xe để tự lái đi du lịch Mũi Né.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 27,
   "idx": 0
  },
  {
   "id": 272,
-  "title": "Học tiếng Nhật căn bản",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học tiếng Nhật căn bản.",
+  "title": {
+   "vi": "Nói chuyện về thay đổi nghề nghiệp ở tuổi 30",
+   "en": "Talking About Career Change at Age 30"
+  },
+  "situation": "Hai người bạn Hoa và James (người Mỹ) nói chuyện về việc thay đổi nghề giữa chừng.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -3111,38 +3132,50 @@
  },
  {
   "id": 273,
-  "title": "Học tiếng Pháp",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Học tiếng Pháp.",
+  "title": {
+   "vi": "Mua vật liệu trang trí nhà trước Tết",
+   "en": "Buying Home Decoration Materials Before Tet"
+  },
+  "situation": "Chị Liên mua đồ trang trí Tết tại chợ hoa và thương lượng giá với người bán.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 27,
   "idx": 2
  },
  {
   "id": 274,
-  "title": "Ôn luyện IELTS",
-  "situation": "Tình huống thực tế liên quan đến: Ôn luyện IELTS.",
+  "title": {
+   "vi": "Học tiếng Anh thông qua bài hát",
+   "en": "Learning English Through Songs"
+  },
+  "situation": "Giáo viên tiếng Anh Ana (người Mỹ) hướng dẫn học viên Minh học tiếng Anh qua âm nhạc.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 27,
   "idx": 3
  },
  {
   "id": 275,
-  "title": "Chuẩn bị TOEFL",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Chuẩn bị TOEFL.",
+  "title": {
+   "vi": "Hỏi về thủ tục đăng ký hôn nhân có yếu tố nước ngoài",
+   "en": "Asking About Marriage Registration with a Foreign Element"
+  },
+  "situation": "Cô Loan hỏi cán bộ tư pháp về thủ tục đăng ký kết hôn với người nước ngoài.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 27,
   "idx": 4
  },
  {
   "id": 276,
-  "title": "Thực hành speaking IELTS",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thực hành speaking IELTS.",
+  "title": {
+   "vi": "Phàn nàn về thực phẩm bị hỏng khi giao hàng",
+   "en": "Complaining About Spoiled Food Delivered"
+  },
+  "situation": "Khách hàng Dung gọi điện phàn nàn với bộ phận hỗ trợ về đơn hàng thực phẩm bị hỏng.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -3151,41 +3184,53 @@
  },
  {
   "id": 277,
-  "title": "Viết email business",
-  "situation": "Tình huống thực tế liên quan đến: Viết email business.",
+  "title": {
+   "vi": "Hỏi về quyền lợi thai sản khi đi làm",
+   "en": "Asking About Maternity Benefits While Working"
+  },
+  "situation": "Nhân viên Ngọc hỏi phòng nhân sự về quyền lợi thai sản.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 27,
   "idx": 6
  },
  {
   "id": 278,
-  "title": "Đọc báo tiếng Anh",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đọc báo tiếng Anh.",
+  "title": {
+   "vi": "Thảo luận về kế hoạch học tiếng Nhật",
+   "en": "Discussing Plans to Study Japanese"
+  },
+  "situation": "Hai sinh viên Phúc và Yuki (người Nhật học tiếng Việt) trao đổi về việc học ngôn ngữ đối phương.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 27,
   "idx": 7
  },
  {
   "id": 279,
-  "title": "Xem phim không phụ đề",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Xem phim không phụ đề.",
+  "title": {
+   "vi": "Xử lý xung đột giữa hai nhân viên trong nhóm",
+   "en": "Handling Conflict Between Two Team Members"
+  },
+  "situation": "Quản lý Hùng nói chuyện với nhân viên Lan về xung đột cô đang có với đồng nghiệp.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 27,
   "idx": 8
  },
  {
   "id": 280,
-  "title": "Nghe podcast tiếng Anh",
-  "situation": "Tình huống thực tế liên quan đến: Nghe podcast tiếng Anh.",
+  "title": {
+   "vi": "Hỏi về cơ hội học bổng du học Nhật Bản",
+   "en": "Asking About Study-Abroad Scholarship Opportunities in Japan"
+  },
+  "situation": "Sinh viên Tuấn hỏi trung tâm tư vấn du học về học bổng MEXT đi Nhật.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 27,
   "idx": 9
  },
