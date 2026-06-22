@@ -1052,7 +1052,7 @@
  {
   "id": 106,
   "title": "Đổi tiền ngoại tệ",
-  "situation": "Khách du lịch đổi đô la sang tiền Việt tại ngân hàng.",
+  "situation": "Khách du lịch David đổi đô la sang tiền Việt tại ngân hàng.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -1102,9 +1102,9 @@
  {
   "id": 111,
   "title": "Hỏi về khóa học tiếng Anh",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về khóa học tiếng Anh.",
+  "situation": "Mai hỏi nhân viên tư vấn về khóa học tiếng Anh tại trung tâm ngôn ngữ.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 11,
   "idx": 0
@@ -1112,7 +1112,7 @@
  {
   "id": 112,
   "title": "Thuê phòng trọ",
-  "situation": "Tình huống thực tế liên quan đến: Thuê phòng trọ.",
+  "situation": "Sinh viên Lan đi xem và thuê phòng trọ gần trường đại học.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -1122,17 +1122,17 @@
  {
   "id": 113,
   "title": "Mở tài khoản ngân hàng",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Mở tài khoản ngân hàng.",
+  "situation": "Hoa đến ngân hàng để mở tài khoản thanh toán lần đầu.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 11,
   "idx": 2
  },
  {
   "id": 114,
   "title": "Đặt tiệc sinh nhật",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Đặt tiệc sinh nhật.",
+  "situation": "Thảo gọi điện cho nhà hàng để đặt tiệc sinh nhật cho bạn thân.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -1142,7 +1142,7 @@
  {
   "id": 115,
   "title": "Nói về thói quen ăn uống",
-  "situation": "Tình huống thực tế liên quan đến: Nói về thói quen ăn uống.",
+  "situation": "Hai người bạn thảo luận về thói quen ăn uống lành mạnh và cách duy trì sức khỏe.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -1152,7 +1152,7 @@
  {
   "id": 116,
   "title": "Xin nghỉ phép",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Xin nghỉ phép.",
+  "situation": "Nhân viên xin phép nghỉ phép năm để đi du lịch cùng gia đình.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -1162,37 +1162,37 @@
  {
   "id": 117,
   "title": "Hỏi đường đi bộ",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi đường đi bộ.",
+  "situation": "Du khách hỏi đường đến chùa Trấn Quốc ở Hà Nội.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 11,
   "idx": 6
  },
  {
   "id": 118,
   "title": "Gửi và nhận bưu kiện",
-  "situation": "Tình huống thực tế liên quan đến: Gửi và nhận bưu kiện.",
+  "situation": "Phương đến bưu điện để gửi quà sinh nhật cho bạn ở thành phố khác.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 11,
   "idx": 7
  },
  {
   "id": 119,
   "title": "Mua bảo hiểm xe máy",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Mua bảo hiểm xe máy.",
+  "situation": "Quân đến công ty bảo hiểm để mua bảo hiểm bắt buộc và bảo hiểm thân vỏ cho xe máy.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 11,
   "idx": 8
  },
  {
   "id": 120,
   "title": "Thảo luận về du lịch ba lô",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thảo luận về du lịch ba lô.",
+  "situation": "Hai người bạn chia sẻ kinh nghiệm và lên kế hoạch chuyến du lịch ba lô qua Đông Nam Á.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -1202,27 +1202,27 @@
  {
   "id": 121,
   "title": "Bàn về kế hoạch hôn nhân",
-  "situation": "Tình huống thực tế liên quan đến: Bàn về kế hoạch hôn nhân.",
+  "situation": "Cặp đôi Hoa và Minh nói chuyện về kế hoạch đám cưới và tương lai sau khi kết hôn.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 12,
   "idx": 0
  },
  {
   "id": 122,
   "title": "Dạy con làm bài tập",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Dạy con làm bài tập.",
+  "situation": "Mẹ ngồi kèm con học và giải thích bài toán khó cho con.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 12,
   "idx": 1
  },
  {
   "id": 123,
   "title": "Nói chuyện về nghề nghiệp",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Nói chuyện về nghề nghiệp.",
+  "situation": "Hai người bạn gặp nhau sau nhiều năm và chia sẻ về công việc hiện tại và định hướng tương lai.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -1232,19 +1232,19 @@
  {
   "id": 124,
   "title": "Hòa giải gia đình",
-  "situation": "Tình huống thực tế liên quan đến: Hòa giải gia đình.",
+  "situation": "Hai chị em gái nói chuyện thẳng thắn để hàn gắn sau một cuộc cãi vã về việc chăm sóc bố mẹ già.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 12,
   "idx": 3
  },
  {
   "id": 125,
   "title": "Thăm hỏi người ốm",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thăm hỏi người ốm.",
+  "situation": "Mai đến bệnh viện thăm bạn thân đang nằm viện sau ca phẫu thuật.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 12,
   "idx": 4
@@ -1252,7 +1252,7 @@
  {
   "id": 126,
   "title": "Chuẩn bị tiệc Tết",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Chuẩn bị tiệc Tết.",
+  "situation": "Hai chị em cùng nhau chuẩn bị đón Tết Nguyên Đán truyền thống.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -1262,7 +1262,7 @@
  {
   "id": 127,
   "title": "Chia sẻ áp lực cuộc sống",
-  "situation": "Tình huống thực tế liên quan đến: Chia sẻ áp lực cuộc sống.",
+  "situation": "Hai người bạn thân tâm sự về áp lực công việc và cách mỗi người đối phó với stress.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -1272,7 +1272,7 @@
  {
   "id": 128,
   "title": "Xin lỗi vì lỡ hẹn",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Xin lỗi vì lỡ hẹn.",
+  "situation": "Lan nhắn tin xin lỗi người bạn vì đã lỡ hẹn ăn tối quan trọng.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -1282,17 +1282,17 @@
  {
   "id": 129,
   "title": "Bàn về nuôi thú cưng",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Bàn về nuôi thú cưng.",
+  "situation": "Hai vợ chồng bàn luận về việc có nên nuôi chó ở nhà không.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 12,
   "idx": 8
  },
  {
   "id": 130,
   "title": "Tư vấn bạn bè tình yêu",
-  "situation": "Tình huống thực tế liên quan đến: Tư vấn bạn bè tình yêu.",
+  "situation": "Thảo xin lời khuyên từ bạn thân về mối quan hệ tình cảm đang gặp khó khăn.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -1302,7 +1302,7 @@
  {
   "id": 131,
   "title": "Khám sức khỏe định kỳ",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Khám sức khỏe định kỳ.",
+  "situation": "Bệnh nhân Linh đến phòng khám để khám sức khỏe tổng quát hàng năm.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -1312,7 +1312,7 @@
  {
   "id": 132,
   "title": "Hỏi bác sĩ về thuốc",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi bác sĩ về thuốc.",
+  "situation": "Bệnh nhân hỏi bác sĩ về loại thuốc vừa được kê đơn và cách sử dụng đúng.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -1322,9 +1322,9 @@
  {
   "id": 133,
   "title": "Tư vấn dinh dưỡng",
-  "situation": "Tình huống thực tế liên quan đến: Tư vấn dinh dưỡng.",
+  "situation": "Chuyên gia dinh dưỡng tư vấn cho bệnh nhân muốn cải thiện chế độ ăn uống.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 13,
   "idx": 2
@@ -1332,7 +1332,7 @@
  {
   "id": 134,
   "title": "Đặt lịch phẫu thuật",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đặt lịch phẫu thuật.",
+  "situation": "Bệnh nhân gọi điện cho bệnh viện để đặt lịch phẫu thuật và hỏi về quy trình chuẩn bị.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -1342,10 +1342,10 @@
  {
   "id": 135,
   "title": "Tư vấn sức khỏe tâm thần",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Tư vấn sức khỏe tâm thần.",
+  "situation": "Bệnh nhân lần đầu gặp nhà tâm lý học để chia sẻ về lo âu và tìm hướng giải quyết.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 13,
   "idx": 4
  },
