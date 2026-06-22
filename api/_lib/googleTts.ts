@@ -3,34 +3,36 @@
 // CHỈ chạy ở server — không bao giờ import file này từ code phía browser (src/).
 // Tiền tố "_" trong tên thư mục "_lib" để Vercel KHÔNG coi file này là 1 API route riêng.
 
-export type VoiceId = 'female' | 'male'
+export type VoiceId = 'female' | 'female2' | 'male' | 'male2'
 export type Lang = 'en-US' | 'vi-VN'
 
-export const VOICE_IDS: VoiceId[] = ['female', 'male']
+export const VOICE_IDS: VoiceId[] = ['female', 'female2', 'male', 'male2']
 export const DEFAULT_VOICE: VoiceId = 'female'
 
 // "Phiên bản giọng" — tăng số này MỖI KHI đổi giọng trong VOICE_MAP bên dưới.
 // Khóa cache trong DB (api/tts.ts) có chứa giá trị này, nên đổi version sẽ làm
 // các câu đã cache cũ KHÔNG còn khớp → tự động tạo lại (ghi đè) bằng giọng mới.
-export const VOICE_VERSION = 'chirp3hd-v1'
+export const VOICE_VERSION = 'chirp3hd-v2'
 
 export function isValidVoice(value: string): value is VoiceId {
   return VOICE_IDS.includes(value as VoiceId)
 }
 
-// Bảng giọng đọc: mỗi ngôn ngữ có giọng nữ và nam riêng.
-// Dùng "Chirp 3: HD" — dòng giọng MỚI & TỰ NHIÊN NHẤT của Google hiện nay
-// (mới hơn Journey/Studio/Neural2), tên dạng "<locale>-Chirp3-HD-<Tên>".
-// Kore = giọng nữ, Puck = giọng nam — đây là cặp giọng PHỔ BIẾN NHẤT của Chirp 3 HD
-// (Google dùng làm giọng mặc định, có sẵn cho cả en-US và vi-VN).
+// Bảng giọng đọc: mỗi ngôn ngữ có 2 giọng nữ + 2 giọng nam riêng biệt.
+// Dùng "Chirp 3: HD" — dòng giọng mới nhất & tự nhiên nhất của Google.
+// female=Kore, female2=Aoede, male=Puck, male2=Charon — đều có sẵn cho cả en-US và vi-VN.
 const VOICE_MAP: Record<Lang, Record<VoiceId, { name: string; ssmlGender: 'FEMALE' | 'MALE' }>> = {
   'en-US': {
-    female: { name: 'en-US-Chirp3-HD-Kore', ssmlGender: 'FEMALE' },
-    male:   { name: 'en-US-Chirp3-HD-Puck', ssmlGender: 'MALE' },
+    female:  { name: 'en-US-Chirp3-HD-Kore',   ssmlGender: 'FEMALE' },
+    female2: { name: 'en-US-Chirp3-HD-Aoede',  ssmlGender: 'FEMALE' },
+    male:    { name: 'en-US-Chirp3-HD-Puck',   ssmlGender: 'MALE'   },
+    male2:   { name: 'en-US-Chirp3-HD-Charon', ssmlGender: 'MALE'   },
   },
   'vi-VN': {
-    female: { name: 'vi-VN-Chirp3-HD-Kore', ssmlGender: 'FEMALE' },
-    male:   { name: 'vi-VN-Chirp3-HD-Puck', ssmlGender: 'MALE' },
+    female:  { name: 'vi-VN-Chirp3-HD-Kore',   ssmlGender: 'FEMALE' },
+    female2: { name: 'vi-VN-Chirp3-HD-Aoede',  ssmlGender: 'FEMALE' },
+    male:    { name: 'vi-VN-Chirp3-HD-Puck',   ssmlGender: 'MALE'   },
+    male2:   { name: 'vi-VN-Chirp3-HD-Charon', ssmlGender: 'MALE'   },
   },
 }
 

@@ -8,7 +8,7 @@ import { supabase } from './supabase'
 import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
 
 type Lang = 'en-US' | 'vi-VN'
-export type Voice = 'female' | 'male'
+export type Voice = 'female' | 'female2' | 'male' | 'male2'
 
 let currentAudio: HTMLAudioElement | null = null
 let currentBlobUrl: string | null = null

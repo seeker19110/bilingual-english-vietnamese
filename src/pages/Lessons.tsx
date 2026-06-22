@@ -258,8 +258,14 @@ function LessonView({ lesson, isA, color, onBack }: {
   color: typeof COLORS[0]
   onBack: () => void
 }) {
-  const voiceA = lesson.speakerAGender ?? 'female'
-  const voiceB = lesson.speakerBGender ?? 'male'
+  // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng thứ 2 cho B
+  // để 2 nhân vật luôn có giọng khác nhau (female vs female2, male vs male2)
+  const genderA = lesson.speakerAGender ?? 'female'
+  const genderB = lesson.speakerBGender ?? 'male'
+  const voiceA = genderA === 'female' ? 'female' : 'male'
+  const voiceB = genderB === genderA
+    ? (genderB === 'female' ? 'female2' : 'male2')
+    : (genderB === 'female' ? 'female' : 'male')
 
   const [activeTurn, setActiveTurn] = useState<number | null>(null)
   const [playing,    setPlaying]    = useState(false)
