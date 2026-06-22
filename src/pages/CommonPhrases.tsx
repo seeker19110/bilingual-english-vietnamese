@@ -151,18 +151,103 @@ export default function CommonPhrases() {
     )
   }
 
-  // ── Màn hình danh sách ──────────────────────────────────────────────
+  // ── Màn hình danh sách ──────────────────────────────────────────────────────
+  // Mobile: h-dvh flex col, search cố định dưới cùng
+  // Desktop (sm+): layout thường, search ở trên
   const shown = sorted.slice(0, visible)
 
   return (
-    <div className="min-h-dvh bg-zinc-950">
+    <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
       <Layout title={T.phrasesPageTitle} back extra={<VoiceToggle />} />
 
-      <main className="max-w-3xl mx-auto px-4 py-6 space-y-4">
+      <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
+        <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:py-6 space-y-4">
 
-        {/* Ô tìm kiếm */}
+          {/* Ô tìm kiếm — chỉ hiện ở trên trên desktop */}
+          <div className="hidden sm:block relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Bạn muốn nói gì…"
+              className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
+            />
+            {search && (
+              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {/* 3 loại cấu trúc S+V */}
+          <div className="flex gap-2 pb-1 overflow-x-auto scrollbar-none">
+            <button
+              onClick={() => setActiveStruct(null)}
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                activeStruct === null
+                  ? 'bg-white/10 text-white border-white/20'
+                  : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
+              }`}
+            >
+              {T.phrasesAll}
+            </button>
+            {(['be', 'toV', 'V'] as StructType[]).map(type => (
+              <button
+                key={type}
+                onClick={() => setActiveStruct(activeStruct === type ? null : type)}
+                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                  activeStruct === type
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                    : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
+                }`}
+              >
+                {STRUCT_LABELS[type]}
+              </button>
+            ))}
+          </div>
+
+          {/* Grid cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {shown.map(subj => {
+              const c = getColor(subj.color)
+              return (
+                <button
+                  key={subj.starter}
+                  onClick={() => openSubject(subj)}
+                  disabled={loading}
+                  className={`text-left bg-zinc-900/80 border rounded-xl p-3 hover:bg-zinc-800/60 active:scale-[0.98] transition-all group disabled:opacity-50 ${c.border}`}
+                >
+                  <div className={`text-xs px-2 py-0.5 rounded-full inline-block mb-2 font-medium ${c.badge}`}>
+                    {subj.category}
+                  </div>
+                  <p className={`font-bold text-[17px] ${c.text} leading-tight`}>{subj.starter}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-[11px] text-zinc-600">{subj.count} {T.phrasesSentences}</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-zinc-700 group-hover:text-zinc-400 transition" />
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          {visible < sorted.length && (
+            <div ref={sentinelRef} className="flex justify-center py-6">
+              <Loader2 className="w-5 h-5 animate-spin text-zinc-600" />
+            </div>
+          )}
+
+          {filtered.length === 0 && (
+            <div className="text-center py-16 text-zinc-600 text-sm">
+              {T.phrasesNoResult}
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Search bar cố định ở dưới — CHỈ trên mobile, mờ khi không dùng */}
+      <div className={`sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe transition-opacity duration-200 ${search ? 'opacity-100' : 'opacity-40 focus-within:opacity-100'}`}>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -175,71 +260,7 @@ export default function CommonPhrases() {
             </button>
           )}
         </div>
-
-        {/* 3 loại cấu trúc S+V */}
-        <div className="flex gap-2 pb-1">
-          <button
-            onClick={() => setActiveStruct(null)}
-            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-              activeStruct === null
-                ? 'bg-white/10 text-white border-white/20'
-                : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
-            }`}
-          >
-            {T.phrasesAll}
-          </button>
-          {(['be', 'toV', 'V'] as StructType[]).map(type => (
-            <button
-              key={type}
-              onClick={() => setActiveStruct(activeStruct === type ? null : type)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-                activeStruct === type
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                  : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
-              }`}
-            >
-              {STRUCT_LABELS[type]}
-            </button>
-          ))}
-        </div>
-
-        {/* Grid cards — 7 chủ thể mỗi lần, xen kẽ danh mục */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {shown.map(subj => {
-            const c = getColor(subj.color)
-            return (
-              <button
-                key={subj.starter}
-                onClick={() => openSubject(subj)}
-                disabled={loading}
-                className={`text-left bg-zinc-900/80 border rounded-xl p-3 hover:bg-zinc-800/60 active:scale-[0.98] transition-all group disabled:opacity-50 ${c.border}`}
-              >
-                <div className={`text-xs px-2 py-0.5 rounded-full inline-block mb-2 font-medium ${c.badge}`}>
-                  {subj.category}
-                </div>
-                <p className={`font-bold text-[17px] ${c.text} leading-tight`}>{subj.starter}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-[11px] text-zinc-600">{subj.count} {T.phrasesSentences}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-700 group-hover:text-zinc-400 transition" />
-                </div>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Sentinel lazy load */}
-        {visible < sorted.length && (
-          <div ref={sentinelRef} className="flex justify-center py-6">
-            <Loader2 className="w-5 h-5 animate-spin text-zinc-600" />
-          </div>
-        )}
-
-        {filtered.length === 0 && (
-          <div className="text-center py-16 text-zinc-600 text-sm">
-            {T.phrasesNoResult}
-          </div>
-        )}
-      </main>
+      </div>
     </div>
   )
 }

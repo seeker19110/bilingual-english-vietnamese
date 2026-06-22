@@ -73,8 +73,9 @@ const WordText = memo(function WordText({
 export default function Lessons() {
   const dir: Direction = getDirection()
   const isA = dir === 'A'
+  const [query, setQuery]           = useState('')
   const [selectedMeta, setSelectedMeta] = useState<LessonMeta | null>(null)
-  const [lesson, setLesson] = useState<Lesson | null>(null)
+  const [lesson, setLesson]         = useState<Lesson | null>(null)
   const [loadingLesson, setLoadingLesson] = useState(false)
 
   useEffect(() => {
@@ -98,47 +99,81 @@ export default function Lessons() {
           back
           extra={<VoiceToggle />}
         />
-
         {loadingLesson || !lesson ? (
           <div className="flex-1 flex items-center justify-center text-zinc-500">
             <Loader2 className="w-5 h-5 animate-spin mr-2" />
             {isA ? 'Đang tải bài học…' : 'Loading lesson…'}
           </div>
         ) : (
-          <LessonView
-            lesson={lesson}
-            isA={isA}
-            color={c}
-            onBack={() => setSelectedMeta(null)}
-          />
+          <LessonView lesson={lesson} isA={isA} color={c} onBack={() => setSelectedMeta(null)} />
         )}
       </div>
     )
   }
 
   // ── Màn hình danh sách ────────────────────────────────────────────────────
+  // Mobile: h-dvh flex col, search cố định dưới cùng
+  // Desktop (sm+): layout thường, search ở trên
   return (
-    <div className="min-h-dvh bg-zinc-950">
+    <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
       <Layout
         title={isA ? 'Bài học' : 'Lessons'}
         subtitle={isA ? '1000+ chủ đề bài học giao tiếp' : '1000+ conversation lesson topics'}
         back
         extra={<VoiceToggle />}
       />
-      <main className="max-w-3xl mx-auto px-4 py-6">
-        <LessonList lessons={INDEX} isA={isA} onSelect={setSelectedMeta} />
+
+      <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
+        <div className="max-w-3xl mx-auto px-4 pt-4 pb-2">
+          {/* Search bar — chỉ hiện ở trên trên desktop */}
+          <div className="hidden sm:block mb-4">
+            <SearchBar query={query} setQuery={setQuery} isA={isA} alwaysVisible />
+          </div>
+          <LessonList lessons={INDEX} isA={isA} query={query} onSelect={setSelectedMeta} />
+        </div>
       </main>
+
+      {/* Search bar cố định ở dưới — CHỈ trên mobile, mờ khi không dùng */}
+      <div className={`sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe transition-opacity duration-200 ${query ? 'opacity-100' : 'opacity-40 focus-within:opacity-100'}`}>
+        <SearchBar query={query} setQuery={setQuery} isA={isA} />
+      </div>
     </div>
   )
 }
 
-// ── Danh sách bài học — IntersectionObserver lazy load + màu sắc ─────────────
-function LessonList({ lessons, isA, onSelect }: {
+// ── Ô tìm kiếm dùng chung ────────────────────────────────────────────────────
+function SearchBar({ query, setQuery, isA, alwaysVisible: _av }: {
+  query: string
+  setQuery: (v: string) => void
+  isA: boolean
+  alwaysVisible?: boolean
+}) {
+  return (
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+      <input
+        type="text"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder={isA ? 'Tìm chủ đề bài học…' : 'Search lesson topics…'}
+        className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-zinc-600 transition"
+      />
+      {query && (
+        <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white">
+          <X className="w-4 h-4" />
+        </button>
+      )}
+    </div>
+  )
+}
+
+// ── Danh sách bài học — nhận query từ cha, IntersectionObserver lazy load ─────
+function LessonList({ lessons, isA, query, onSelect }: {
   lessons: LessonMeta[]
   isA: boolean
+  query: string
   onSelect: (meta: LessonMeta) => void
 }) {
-  const [query, setQuery]   = useState('')
   const [visible, setVisible] = useState(PAGE_SIZE)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
@@ -152,7 +187,6 @@ function LessonList({ lessons, isA, onSelect }: {
 
   useEffect(() => { setVisible(PAGE_SIZE) }, [query])
 
-  // Auto load thêm khi cuộn đến sentinel (giống CommonPhrases)
   useEffect(() => {
     const el = sentinelRef.current
     if (!el || visible >= filtered.length) return
@@ -167,23 +201,6 @@ function LessonList({ lessons, isA, onSelect }: {
 
   return (
     <div className="space-y-4">
-      {/* Ô tìm kiếm */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
-        <input
-          type="text"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder={isA ? 'Tìm chủ đề bài học…' : 'Search lesson topics…'}
-          className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-zinc-600 transition"
-        />
-        {query && (
-          <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white">
-            <X className="w-4 h-4" />
-          </button>
-        )}
-      </div>
-
       {query.trim() && (
         <p className="text-xs text-zinc-500 px-1">
           {filtered.length} {isA ? 'bài phù hợp' : 'lessons found'}
