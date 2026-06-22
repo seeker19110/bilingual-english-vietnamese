@@ -89,14 +89,15 @@ export default function Dictionary() {
   }
 
   return (
-    <div className="min-h-dvh bg-zinc-950">
+    <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
       <Layout
         title={isA ? 'Từ điển' : 'Dictionary'}
         subtitle={`${entries.length.toLocaleString('vi-VN')} ${isA ? 'từ thông dụng' : 'common words'}`}
         extra={<VoiceToggle />}
       />
 
-      <main className="max-w-3xl mx-auto px-4 py-6">
+      <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
+      <div className="max-w-3xl mx-auto px-4 py-6 pb-24 sm:pb-6">
 
         <VocabMilestone userId={user.id} refreshKey={learnedKey} />
         <WordOfTheDay entries={entries} />
@@ -121,8 +122,8 @@ export default function Dictionary() {
 
         {tab === 'search' ? (
           <>
-            {/* Ô tìm kiếm */}
-            <div className="relative mb-4 animate-fade-in">
+            {/* Ô tìm kiếm — chỉ hiện ở trên trên desktop */}
+            <div className="hidden sm:block relative mb-4 animate-fade-in">
               <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 autoFocus
@@ -277,7 +278,30 @@ export default function Dictionary() {
             ))}
           </div>
         )}
+      </div>
       </main>
+
+      {/* Search bar cố định dưới — CHỈ trên mobile, tab Tra từ */}
+      {tab === 'search' && (
+        <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe">
+          <div className="relative max-w-3xl mx-auto">
+            <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              autoFocus
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder={isA ? 'Gõ từ tiếng Anh cần tra...' : 'Type an English word to look up...'}
+              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition"
+            />
+            {query && (
+              <button onClick={() => setQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition p-0.5">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
