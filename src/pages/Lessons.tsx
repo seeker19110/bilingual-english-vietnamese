@@ -275,6 +275,14 @@ function LessonView({ lesson, isA, color, onBack }: {
   const turnRefs    = useRef<(HTMLDivElement | null)[]>([])
   const wordSyncRef = useRef<WordSync | null>(null)
 
+  // Dừng audio khi thoát trang hoặc back về danh sách
+  useEffect(() => {
+    return () => {
+      stopRef.current = true
+      stopSpeaking()
+    }
+  }, [])
+
   function changeSpeed(s: Speed) { setSpeed(s); speedRef.current = s }
   function changeMode(m: AudioMode) { setMode(m); modeRef.current = m }
 

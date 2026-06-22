@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { getVoicePref } from '../lib/tts'
+import { getVoicePref, playAudioUrl } from '../lib/tts'
 
 interface Props {
   word: string
@@ -70,7 +70,7 @@ export default function PronounceButton({ word }: Props) {
   }
 
   function playAudio(url: string) {
-    new Audio(url).play().catch(err => console.error('Lỗi phát audio:', err))
+    playAudioUrl(url)
   }
 
   return (

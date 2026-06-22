@@ -12,6 +12,8 @@ export type Voice = 'female' | 'male'
 
 let currentAudio: HTMLAudioElement | null = null
 let currentBlobUrl: string | null = null
+// Callback để unblock Promise đang chờ trong speakViaGoogle khi stopSpeaking() được gọi
+let currentResolve: (() => void) | null = null
 
 // ── Pause / Resume — dùng cho trình phát hội thoại ──────────────────────────
 export function pauseCurrentAudio() {
@@ -43,6 +45,10 @@ export function isTTSSupported(): boolean {
 
 export function stopSpeaking() {
   if (currentAudio) {
+    // Xóa handler trước khi pause để tránh onerror/onended fire sau khi đã stop
+    currentAudio.onended = null
+    currentAudio.onerror = null
+    currentAudio.ontimeupdate = null
     currentAudio.pause()
     currentAudio.src = ''
     currentAudio = null
@@ -53,6 +59,21 @@ export function stopSpeaking() {
   }
   // Dừng cả Web Speech API phòng khi đang dùng fallback
   if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+  // Unblock Promise đang chờ trong speakViaGoogle (nếu có) — resolve thay vì reject
+  // để speak() KHÔNG fallback sang Web Speech khi bị stop có chủ đích
+  currentResolve?.()
+  currentResolve = null
+}
+
+// Phát audio từ URL ngoài TTS (ví dụ phát âm từ) — dùng chung currentAudio để ngăn chồng
+export function playAudioUrl(url: string): void {
+  stopSpeaking()
+  const audio = new Audio(url)
+  currentAudio = audio
+  const cleanup = () => { if (currentAudio === audio) currentAudio = null }
+  audio.onended = cleanup
+  audio.onerror = cleanup
+  audio.play().catch(err => console.error('Lỗi phát audio:', err))
 }
 
 // ── Giải mã audio AES-256-GCM (xem api/_lib/ttsCrypto.ts ở phía server) ─────
@@ -141,6 +162,8 @@ async function speakViaGoogle(
     audio.playbackRate = rate
     currentAudio = audio
     currentBlobUrl = blobUrl
+    // Lưu resolve để stopSpeaking() có thể unblock Promise này mà không cần onerror
+    currentResolve = resolve
 
     // Cập nhật từ đang phát dựa trên tiến trình audio (≈4 lần/giây)
     if (onWord && words.length > 0) {
@@ -160,6 +183,7 @@ async function speakViaGoogle(
       URL.revokeObjectURL(blobUrl)
       if (currentBlobUrl === blobUrl) currentBlobUrl = null
       if (currentAudio === audio) currentAudio = null
+      if (currentResolve === resolve) currentResolve = null
     }
     audio.onended = () => { cleanup(); resolve() }
     audio.onerror = () => { cleanup(); reject(new Error('Không phát được audio')) }
