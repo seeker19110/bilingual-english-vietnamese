@@ -13,7 +13,7 @@ import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { POS_LABEL, POS_COLOR, POS_LIST } from '../lib/pos'
 
-const PAGE_SIZE = 5
+const PAGE_SIZE = 3
 type Tab = 'search' | 'flashcard' | 'pos'
 
 export default function Dictionary() {
