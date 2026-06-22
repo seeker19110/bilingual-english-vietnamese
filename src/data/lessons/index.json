@@ -775,7 +775,7 @@
   "situation": "Linh đặt lịch và trải nghiệm dịch vụ massage tại một spa cao cấp.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 7,
   "idx": 7
  },
@@ -784,7 +784,7 @@
   "title": "Bàn chuyện mua nhà với gia đình",
   "situation": "Vợ chồng Anh bàn bạc với bố mẹ về kế hoạch mua nhà đầu tiên.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 7,
   "idx": 8
@@ -792,7 +792,7 @@
  {
   "id": 80,
   "title": "Kết bạn trên mạng xã hội",
-  "situation": "Trang và một người lạ bắt đầu nói chuyện sau khi nhận được lời mời kết bạn trên Facebook.",
+  "situation": "Trang và một người lạ bắt đầu nói chuyện sau khi nhận được lời kết bạn trên mạng.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -802,10 +802,10 @@
  {
   "id": 81,
   "title": "Hỏi về văn hóa địa phương",
-  "situation": "Một người nước ngoài hỏi bạn Việt Nam về phong tục và văn hóa Việt Nam.",
+  "situation": "Một người nước ngoài hỏi bạn Việt Nam về phong tục và văn hóa địa phương.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 8,
   "idx": 0
  },
@@ -814,37 +814,37 @@
   "title": "Tham quan phố cổ Hà Nội",
   "situation": "Một hướng dẫn viên địa phương dẫn khách du lịch tham quan 36 phố phường Hà Nội.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 8,
   "idx": 1
  },
  {
   "id": 83,
   "title": "Ăn phở buổi sáng",
-  "situation": "Du khách nước ngoài lần đầu ăn phở tại một quán phở truyền thống ở Hà Nội.",
+  "situation": "Du khách nước ngoài lần đầu ăn phở tại một quán phở truyền thống.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 8,
   "idx": 2
  },
  {
   "id": 84,
   "title": "Nói về tương lai và ước mơ",
-  "situation": "Hai người bạn trò chuyện về ước mơ và kế hoạch cho tương lai của mình.",
+  "situation": "Hai người bạn trò chuyện về ước mơ và kế hoạch cho tương lai.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 8,
   "idx": 3
  },
  {
   "id": 85,
   "title": "Ăn ẩm thực vỉa hè",
-  "situation": "Hai người bạn khám phá các món ăn vỉa hè ở một con phố đêm ở Sài Gòn.",
+  "situation": "Hai người bạn khám phá các món ăn vỉa hè ở một con phố đêm ở Hà Nội.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 8,
   "idx": 4

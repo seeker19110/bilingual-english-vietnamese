@@ -1,0 +1,602 @@
+[
+  {
+    "id": 96,
+    "title": "Thảo luận về du học",
+    "situation": "Ngân xin lời khuyên từ người anh họ đã du học nước ngoài về kinh nghiệm và cách chuẩn bị.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Ngân",
+      "en": "Ngân"
+    },
+    "speakerBName": {
+      "vi": "Anh họ",
+      "en": "Cousin"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Anh ơi, em đang nghĩ đến việc nộp đơn du học ở Úc năm sau. Anh có kinh nghiệm ở đó, anh nghĩ sao?",
+        "en": "Excuse me, I'm thinking about applying to study in Australia next year. You have experience there — what do you think?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Đó là một quyết định lớn! Anh học ở Melbourne 3 năm và rất thích. Nhưng em cần chuẩn bị kỹ lưỡng nhé.",
+        "en": "That's a big decision! I studied in Melbourne for 3 years and really loved it. But you need to prepare carefully."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em biết ạ. Anh ơi, học phí và sinh hoạt phí ở Úc đắt như thế nào? Em đang tính toán xem có khả thi không.",
+        "en": "I know. How expensive is tuition and living costs in Australia? I'm calculating whether it's feasible for me."
+      },
+      {
+        "speaker": "B",
+        "vi": "Học phí đại học ở Úc tầm 20.000 đến 40.000 đô Úc mỗi năm tùy ngành. Sinh hoạt phí thêm khoảng 15.000 đến 20.000 đô Úc.",
+        "en": "University tuition in Australia ranges from about 20,000 to 40,000 AUD per year depending on the field. Living costs add another 15,000 to 20,000 AUD."
+      },
+      {
+        "speaker": "A",
+        "vi": "Khá tốn kém. Có học bổng nào dành cho sinh viên Việt Nam không anh?",
+        "en": "That's quite expensive. Are there any scholarships for Vietnamese students?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Có học bổng Australia Awards của chính phủ Úc, bao gồm toàn bộ học phí và sinh hoạt phí. Cạnh tranh cao nhưng hoàn toàn xứng đáng để thử.",
+        "en": "There's the Australia Awards scholarship from the Australian government, covering full tuition and living expenses. It's competitive but absolutely worth trying."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em sẽ tìm hiểu về học bổng đó. Ngoài tài chính, em cần chuẩn bị những gì khác không anh?",
+        "en": "I'll look into that scholarship. Besides finances, what else do I need to prepare?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Tiếng Anh là quan trọng nhất. Hầu hết trường ở Úc yêu cầu IELTS 6.5 hoặc cao hơn. Em đang ở band mấy rồi?",
+        "en": "English is the most important thing. Most Australian universities require IELTS 6.5 or higher. What band are you currently at?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Em chưa thi nhưng ước tính khoảng 6.0. Em sẽ cần ôn thêm khoảng 6 tháng. Còn hồ sơ thì cần gì anh?",
+        "en": "I haven't taken it yet but I estimate around 6.0. I'll need to study for about 6 more months. What documents are needed for the application?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Cần bảng điểm đại học hoặc cấp 3, thư giới thiệu, bài luận cá nhân, và bằng chứng về tài chính hoặc học bổng.",
+        "en": "You'll need university or high school transcripts, letters of recommendation, a personal statement, and proof of finances or scholarship."
+      },
+      {
+        "speaker": "A",
+        "vi": "Bài luận cá nhân khó nhất đúng không anh? Em không biết viết gì về bản thân.",
+        "en": "The personal statement is the hardest part, isn't it? I don't know what to write about myself."
+      },
+      {
+        "speaker": "B",
+        "vi": "Em hãy viết về lý do em muốn học ngành đó, điều gì thúc đẩy em, và mục tiêu tương lai của em. Phải trung thực và cụ thể.",
+        "en": "Write about why you want to study that field, what motivates you, and your future goals. Be honest and specific."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn anh. Anh ơi, sống ở Úc thì cuộc sống hàng ngày như thế nào? Em lo về văn hóa và thích nghi.",
+        "en": "Thank you. What is daily life like in Australia? I'm worried about culture shock and adjusting."
+      },
+      {
+        "speaker": "B",
+        "vi": "Ban đầu anh cũng sốc văn hóa. Nhưng người Úc rất thân thiện và cộng đồng người Việt ở Úc đông lắm — em sẽ không cô đơn đâu.",
+        "en": "I experienced culture shock at first too. But Australians are very friendly and there's a large Vietnamese community in Australia — you won't feel lonely."
+      },
+      {
+        "speaker": "A",
+        "vi": "Anh có làm thêm khi học không? Sinh viên quốc tế có được phép làm thêm không?",
+        "en": "Did you work part-time while studying? Are international students allowed to work?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Được làm tối đa 48 tiếng mỗi 2 tuần trong thời gian học. Anh làm phục vụ và nhân viên siêu thị, kiếm đủ để trang trải một phần sinh hoạt phí.",
+        "en": "You can work up to 48 hours per fortnight during the semester. I worked as a waiter and supermarket cashier, earning enough to cover part of my living expenses."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tiện lắm. Em còn muốn hỏi, em nên học ngành gì? Em thích cả kinh doanh lẫn công nghệ thông tin.",
+        "en": "That's useful. I also want to ask — what field should I study? I'm interested in both business and information technology."
+      },
+      {
+        "speaker": "B",
+        "vi": "Ngành IT có cơ hội việc làm rất cao ở Úc, đặc biệt là an ninh mạng và khoa học dữ liệu. Nếu em giỏi toán và thích máy tính thì nên theo IT.",
+        "en": "IT has very high job opportunities in Australia, especially cybersecurity and data science. If you're good at math and enjoy computers, IT is a great choice."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em nghe nói sau khi tốt nghiệp có thể xin visa để ở lại làm việc ở Úc không anh?",
+        "en": "I've heard that after graduating you can apply for a visa to stay and work in Australia — is that true?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Đúng rồi, có visa Tốt nghiệp Tạm thời cho phép ở lại 2 đến 4 năm sau khi tốt nghiệp để làm việc và tích lũy kinh nghiệm. Rất nhiều người định cư luôn ở đó.",
+        "en": "Yes, there's a Temporary Graduate visa that allows you to stay 2 to 4 years after graduating to work and gain experience. Many people end up settling there permanently."
+      },
+      {
+        "speaker": "A",
+        "vi": "Thông tin anh chia sẻ rất quý giá. Em cảm thấy có hướng đi rõ ràng hơn rồi. Cảm ơn anh nhiều lắm!",
+        "en": "The information you shared is so valuable. I feel much clearer about my direction now. Thank you so much!"
+      },
+      {
+        "speaker": "B",
+        "vi": "Không có gì! Nếu cần giúp viết bài luận hoặc xem hồ sơ, cứ gọi cho anh nhé. Anh hy vọng em sẽ thành công!",
+        "en": "Don't mention it! If you need help writing your personal statement or reviewing your application, just call me. I hope you'll succeed!"
+      }
+    ]
+  },
+  {
+    "id": 97,
+    "title": "Chăm sóc thú cưng",
+    "situation": "Hiền đưa chú mèo đến thú y lần đầu và học cách chăm sóc đúng cách.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Hiền",
+      "en": "Hiền"
+    },
+    "speakerBName": {
+      "vi": "Bác sĩ thú y",
+      "en": "Vet"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Chào bác sĩ ạ. Em mới nhận nuôi bé mèo này được 2 tuần. Đây là lần đầu em đưa bé đến thú y.",
+        "en": "Hello, doctor. I just adopted this kitten 2 weeks ago. This is my first time bringing her to the vet."
+      },
+      {
+        "speaker": "B",
+        "vi": "Chào bạn! Bé mèo trông khỏe mạnh đó. Bé tên gì và mấy tháng tuổi rồi?",
+        "en": "Hello! The kitten looks healthy. What's her name and how old is she?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Em đặt tên là Bông, khoảng 3 tháng tuổi theo người bán nói. Bé ăn uống bình thường nhưng hay hắt hơi.",
+        "en": "I named her Bong. She's about 3 months old according to the person I got her from. She eats normally but sneezes a lot."
+      },
+      {
+        "speaker": "B",
+        "vi": "Để tôi khám cho bé nhé. Hắt hơi ở mèo con có thể do nhiễm trùng đường hô hấp trên hoặc chỉ là bụi và dị ứng.",
+        "en": "Let me examine her. Sneezing in kittens can be due to upper respiratory infection or simply dust and allergies."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em lo lắm. Bé có bị gì nghiêm trọng không bác sĩ?",
+        "en": "I'm so worried. Is it anything serious, doctor?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Bé không bị sốt, mũi khô, mắt sáng. Có vẻ chỉ là cảm nhẹ. Tôi sẽ kê thuốc nhỏ mũi và vitamin tăng sức đề kháng.",
+        "en": "She has no fever, dry nose, clear eyes. It seems like just a mild cold. I'll prescribe nasal drops and vitamins to boost her immunity."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn bác sĩ ạ. Bé chưa được tiêm phòng. Mèo cần tiêm những mũi gì và lịch tiêm như thế nào?",
+        "en": "Thank you, doctor. She hasn't been vaccinated yet. What vaccines does she need and what's the vaccination schedule?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Mèo cần tiêm vaccine 3 trong 1 phòng viêm mũi, calicivirus và bệnh giảm bạch cầu. Tiêm 3 mũi cách nhau 3-4 tuần, sau đó nhắc lại mỗi năm.",
+        "en": "Cats need a 3-in-1 vaccine for rhinotracheitis, calicivirus, and panleukopenia. Three doses given 3-4 weeks apart, then annually."
+      },
+      {
+        "speaker": "A",
+        "vi": "Bé có thể tiêm ngay hôm nay không bác sĩ? Hay phải đợi bé khỏi cảm trước?",
+        "en": "Can she be vaccinated today, doctor? Or do I need to wait until her cold clears up?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Tốt nhất là đợi 2 tuần sau khi bé khỏe hoàn toàn. Hệ miễn dịch đang hoạt động tốt thì vaccine mới hiệu quả.",
+        "en": "It's best to wait 2 weeks after she's fully recovered. The vaccine works best when the immune system is functioning well."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em hiểu rồi ạ. Ngoài vaccine, em cần tẩy giun cho bé không? Người bán nói chưa tẩy bao giờ.",
+        "en": "I understand. Besides the vaccine, does she need to be dewormed? The person I got her from said she's never been dewormed."
+      },
+      {
+        "speaker": "B",
+        "vi": "Cần tẩy giun ngay. Mèo con dễ bị giun sán. Tôi sẽ cho thuốc tẩy giun hôm nay, và sau đó nhắc lại mỗi 3 tháng.",
+        "en": "She should be dewormed right away. Kittens are prone to worms. I'll give deworming medicine today, and she should be treated every 3 months after that."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn bác sĩ. Em muốn hỏi thêm về chế độ ăn của mèo. Em đang cho bé ăn pate mèo. Như vậy có đủ không?",
+        "en": "Thank you, doctor. I'd also like to ask about diet. I'm currently feeding her cat pâté. Is that enough?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Pate tốt nhưng nên kết hợp với hạt khô để bổ sung thêm dinh dưỡng và giúp làm sạch răng. Tỷ lệ khoảng 50-50.",
+        "en": "Pâté is good but combine it with dry kibble for additional nutrients and teeth cleaning. About a 50-50 ratio works well."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mèo uống sữa được không bác sĩ? Em thấy nhiều người cho mèo uống sữa bò.",
+        "en": "Can cats drink milk, doctor? I've seen many people give cats cow's milk."
+      },
+      {
+        "speaker": "B",
+        "vi": "Không nên cho mèo uống sữa bò vì hầu hết mèo không tiêu hóa được lactose và dễ bị tiêu chảy. Chỉ nên cho uống nước lọc thôi.",
+        "en": "You shouldn't give cats cow's milk because most cats can't digest lactose and it causes diarrhea. Just fresh water is best."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em không biết điều đó. May mà hỏi kịp. Bé cần tắm bao lâu một lần bác sĩ?",
+        "en": "I didn't know that. Good thing I asked in time. How often does she need to be bathed, doctor?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Mèo tự vệ sinh rất tốt. Chỉ cần tắm khi bé dơ thật sự, khoảng 1-2 tháng một lần. Tắm quá nhiều sẽ làm khô da và lông.",
+        "en": "Cats groom themselves very well. Only bathe when she's really dirty, about once every 1-2 months. Too much bathing dries out her skin and coat."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn bác sĩ rất nhiều. Em học được nhiều thứ hôm nay. Bây giờ em cần thanh toán và lấy thuốc ở đâu ạ?",
+        "en": "Thank you so much, doctor. I learned a lot today. Where do I pay and pick up the medicine?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Em ra quầy lễ tân nhé, họ sẽ tính tiền và phát thuốc kèm hướng dẫn sử dụng. Nhớ đưa bé lại đây sau 2 tuần để tiêm phòng nhé.",
+        "en": "Go to the reception desk — they'll process payment and give you the medicine with instructions. Remember to bring her back in 2 weeks for the vaccine."
+      }
+    ]
+  },
+  {
+    "id": 98,
+    "title": "Trò chuyện trong buổi tiệc",
+    "situation": "Hai người không quen biết gặp nhau tại buổi tiệc công ty và bắt chuyện.",
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Khách A",
+      "en": "Guest A"
+    },
+    "speakerBName": {
+      "vi": "Khách B",
+      "en": "Guest B"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Xin chào! Tôi thấy mình chưa gặp bạn ở công ty trước đây. Bạn làm ở bộ phận nào vậy?",
+        "en": "Hello! I don't think I've seen you at the company before. Which department do you work in?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Chào bạn! Tôi mới chuyển từ văn phòng Hà Nội vào đây được 2 tháng. Tôi làm ở phòng Tài chính.",
+        "en": "Hi there! I just transferred from the Hanoi office 2 months ago. I work in the Finance department."
+      },
+      {
+        "speaker": "A",
+        "vi": "Ồ, bạn từ Hà Nội vào! Cảm giác thế nào khi sống ở Sài Gòn so với Hà Nội?",
+        "en": "Oh, you transferred from Hanoi! How does it feel living in Saigon compared to Hanoi?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Khác nhau lắm! Sài Gòn nhộn nhịp hơn và người ta cởi mở hơn. Nhưng tôi nhớ mùa thu Hà Nội lắm.",
+        "en": "Very different! Saigon is more bustling and people are more open. But I really miss Hanoi's autumn."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tôi hiểu cảm giác đó. Tôi cũng từ miền Bắc vào đây 5 năm trước. Dần rồi cũng quen. Tôi tên Linh, phòng Marketing.",
+        "en": "I understand that feeling. I came from the North 5 years ago too. You get used to it gradually. I'm Linh, from the Marketing department."
+      },
+      {
+        "speaker": "B",
+        "vi": "Rất vui được gặp bạn, Linh! Tôi tên Hương. Bạn đã làm ở công ty này bao lâu rồi?",
+        "en": "Nice to meet you, Linh! I'm Huong. How long have you been with this company?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Được 5 năm rồi. Tôi bắt đầu từ vị trí thực tập sinh. Còn bạn, trước đây ở Hà Nội bạn làm công việc gì?",
+        "en": "Five years now. I started as an intern. What were you doing in Hanoi before?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Tôi cũng phụ trách tài chính cho chi nhánh Hà Nội. Được thăng chức nên chuyển vào đây nhận vị trí trưởng nhóm.",
+        "en": "I handled finance for the Hanoi branch too. I got promoted and transferred here to take a team lead position."
+      },
+      {
+        "speaker": "A",
+        "vi": "Chúc mừng bạn! Trưởng nhóm thì áp lực hơn nhiều phải không? Bạn thấy thế nào sau 2 tháng?",
+        "en": "Congratulations! Being a team lead is much more pressure, isn't it? How do you feel after 2 months?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Thực ra cũng quen dần. Nhóm ở đây thân thiện và nhiệt tình. Tôi thấy mọi người hỗ trợ nhau tốt.",
+        "en": "Actually, I'm getting used to it. The team here is friendly and enthusiastic. I feel like everyone supports each other well."
+      },
+      {
+        "speaker": "A",
+        "vi": "Công ty mình có văn hóa đó đó. Văn phòng phẩm đồng nghiệp rất tốt. Bạn đã khám phá Sài Gòn nhiều chưa?",
+        "en": "That's the culture here. The colleagues are really good people. Have you explored much of Saigon yet?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Chưa nhiều lắm. Cuối tuần tôi hay bị mắc việc dọn dẹp chỗ ở mới. Bạn có gợi ý chỗ nào hay không?",
+        "en": "Not that much yet. On weekends I've been busy unpacking at my new place. Any recommendations?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Bạn nên đi thử cà phê sân thượng ở quận 1, view đẹp lắm. Buổi tối thì đi dọc bờ sông Sài Gòn rất thư giãn.",
+        "en": "You should try rooftop cafes in District 1 — the views are beautiful. In the evening, walking along the Saigon River is very relaxing."
+      },
+      {
+        "speaker": "B",
+        "vi": "Nghe hấp dẫn quá! Tôi cũng nghe nói ẩm thực đường phố ở đây rất phong phú. Bạn có chỗ nào hay không?",
+        "en": "That sounds wonderful! I've also heard the street food here is very diverse. Any good spots?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Nhiều lắm! Tôi hay ăn bánh mì thịt nướng ở quận 3, và bún bò ở chợ Bà Chiểu. Mình có thể đi ăn cùng cuối tuần này nếu bạn muốn.",
+        "en": "There are so many! I often eat grilled pork banh mi in District 3, and bun bo at Ba Chieu market. We could go eat together this weekend if you'd like."
+      },
+      {
+        "speaker": "B",
+        "vi": "Thật không? Tuyệt quá! Tôi cần ai đó chỉ đường cho mình. Đồng ý ngay!",
+        "en": "Really? That's wonderful! I need someone to show me around. I'm in!"
+      },
+      {
+        "speaker": "A",
+        "vi": "Vui quá! À nhân tiện, đồ uống ở bàn tiệc này ngon lắm. Bạn thử thử cocktail vải này chưa?",
+        "en": "How fun! Oh by the way, the drinks at this party are great. Have you tried this lychee cocktail?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Chưa, tôi chỉ uống nước cam thôi. Trông ngon thật. Để tôi lấy thử một ly.",
+        "en": "Not yet, I've only had orange juice. It does look delicious. Let me grab a glass."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình cùng lấy đồ uống rồi tìm chỗ ngồi thoải mái hơn để nói chuyện tiếp nhé. Hôm nay gặp bạn thật vui.",
+        "en": "Let's grab drinks and find somewhere more comfortable to keep chatting. It's been really nice meeting you today."
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình cũng thấy vui lắm! Thật ra sự kiện công ty tôi hay ngại vì không quen ai, nhưng hôm nay gặp bạn rồi thấy thoải mái hơn nhiều.",
+        "en": "I feel the same! I'm usually nervous at company events because I don't know anyone, but meeting you today has made me feel so much more at ease."
+      }
+    ]
+  },
+  {
+    "id": 99,
+    "title": "Giải quyết hiểu lầm với đồng nghiệp",
+    "situation": "Trang nói chuyện thẳng thắn với đồng nghiệp Minh sau một cuộc tranh luận nhỏ trong công việc.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Trang",
+      "en": "Trang"
+    },
+    "speakerBName": {
+      "vi": "Minh",
+      "en": "Minh"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Minh ơi, bạn có rảnh nói chuyện một chút không? Mình muốn nói về chuyện hôm qua trong cuộc họp.",
+        "en": "Minh, do you have a minute to talk? I'd like to discuss what happened in yesterday's meeting."
+      },
+      {
+        "speaker": "B",
+        "vi": "Ừ, mình cũng đang muốn nói với bạn. Bạn ngồi xuống đây đi. Hôm qua mình nói hơi thẳng quá, xin lỗi Trang nhé.",
+        "en": "Yeah, I've been wanting to talk to you too. Please sit down. I was a bit too blunt yesterday — I'm sorry, Trang."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn bạn đã xin lỗi trước. Mình cũng xin lỗi nếu mình phản ứng hơi gay gắt. Mình chỉ cảm thấy ý kiến của mình bị bác bỏ trước mặt cả team.",
+        "en": "Thank you for apologizing first. I'm also sorry if my reaction was a bit harsh. I just felt like my idea was dismissed in front of the whole team."
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình hiểu và mình xin lỗi về điều đó. Ý mình thực ra không phải bác bỏ ý kiến của bạn, mà chỉ muốn đề xuất một hướng khác thôi.",
+        "en": "I understand and I'm sorry for that. I didn't actually mean to dismiss your idea — I just wanted to suggest an alternative direction."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình biết bạn không cố ý. Nhưng cách nói 'ý tưởng đó không thực tế' nghe có vẻ phủ nhận hoàn toàn. Bạn có thể nói khác hơn không?",
+        "en": "I know you didn't mean to. But saying 'that idea isn't practical' sounds like a complete rejection. Could you have phrased it differently?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Bạn nói đúng. Mình nên nói 'ý tưởng hay nhưng mình lo về tính khả thi, mình có thể bổ sung thêm không?' Như vậy sẽ tốt hơn nhiều.",
+        "en": "You're right. I should have said 'good idea, but I'm concerned about feasibility — may I add to it?' That would be much better."
+      },
+      {
+        "speaker": "A",
+        "vi": "Đúng vậy. Mình cũng nhận ra mình cần nghe thêm trước khi phản ứng. Khi bạn phủ nhận, mình đã phản ứng ngay mà chưa hỏi ý bạn thêm.",
+        "en": "Exactly. I also realize I need to listen more before reacting. When you rejected it, I responded right away without asking for your reasoning."
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình đánh giá cao điều đó. Thật ra mình rất tôn trọng năng lực của bạn. Bạn luôn có ý tưởng sáng tạo và cẩn thận.",
+        "en": "I appreciate that. The truth is I really respect your abilities. You always have creative and well-thought-out ideas."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn bạn. Mình cũng học được nhiều từ cách bạn phân tích rủi ro. Bạn rất logic và thực tế.",
+        "en": "Thank you. I also learn a lot from how you analyze risks. You're very logical and practical."
+      },
+      {
+        "speaker": "B",
+        "vi": "Thực ra tụi mình bổ trợ nhau tốt đó chứ. Mình lo ngại về tính khả thi còn bạn thì nghĩ ra ý tưởng mới. Kết hợp hai điểm mạnh đó sẽ ra kết quả tốt hơn.",
+        "en": "We actually complement each other well. I worry about feasibility while you come up with new ideas. Combining those two strengths would give better results."
+      },
+      {
+        "speaker": "A",
+        "vi": "Đúng vậy! Bạn có muốn mình và bạn cùng xem lại đề xuất đó và điều chỉnh cho phù hợp hơn không?",
+        "en": "That's right! Would you like us to review that proposal together and adjust it to be more feasible?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Muốn chứ! Mình thấy ý tưởng của bạn có cơ sở tốt, chỉ cần thêm dữ liệu để thuyết phục sếp là được.",
+        "en": "Absolutely! I think your idea has a solid foundation — we just need to add more data to convince the manager."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình sẽ bổ sung phần phân tích thị trường. Bạn có thể giúp mình với phần chi phí và lợi nhuận ước tính không?",
+        "en": "I'll add the market analysis section. Can you help me with the estimated costs and returns?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Được, mình sẽ làm phần tài chính. Mình hay làm những bảng tính kiểu đó rồi. Chiều nay bạn có rảnh ngồi làm cùng không?",
+        "en": "Sure, I'll handle the financial part. I've done that kind of spreadsheet many times. Are you free this afternoon to work on it together?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Có, mình rảnh từ 3 giờ. Mình rất vui khi chúng ta nói chuyện thẳng thắn thế này. Mình thấy nhẹ người hơn nhiều.",
+        "en": "Yes, I'm free from 3 o'clock. I'm really glad we talked openly like this. I feel so much lighter."
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình cũng vậy. Làm việc nhóm mà có hiểu lầm thì ảnh hưởng đến cả nhóm. Tốt hơn là giải quyết thẳng thắn sớm.",
+        "en": "Me too. When there's a misunderstanding on a team, it affects everyone. It's better to resolve it directly and quickly."
+      },
+      {
+        "speaker": "A",
+        "vi": "Đồng ý. Mình nghĩ từ giờ mình và bạn nên đặt ra quy tắc — nếu có bất đồng thì nói riêng trước, không phải trước mặt cả team.",
+        "en": "Agreed. I think from now on we should set a rule — if there's a disagreement, talk privately first rather than in front of the whole team."
+      },
+      {
+        "speaker": "B",
+        "vi": "Đó là một ý tưởng rất hay. Mình đồng ý. Cảm ơn bạn đã chủ động nói chuyện với mình hôm nay, Trang. Bạn rất trưởng thành và chuyên nghiệp.",
+        "en": "That's a great idea. I agree. Thank you for being the one to initiate this conversation today, Trang. You're very mature and professional."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn bạn cũng vậy, Minh. Thôi mình làm việc tiếp đi rồi chiều gặp nhau ở phòng họp nhỏ nhé!",
+        "en": "Thank you too, Minh. Let's get back to work and meet in the small conference room this afternoon!"
+      },
+      {
+        "speaker": "B",
+        "vi": "Hẹn gặp bạn lúc 3 giờ. Cảm ơn vì đã không để mọi chuyện kéo dài. Làm việc với bạn thật sự rất vui, Trang.",
+        "en": "See you at 3. Thank you for not letting things drag on. Working with you is truly a pleasure, Trang."
+      }
+    ]
+  },
+  {
+    "id": 100,
+    "title": "Chia sẻ về hành trình học tiếng Anh",
+    "situation": "Lan chia sẻ hành trình học tiếng Anh với người bạn mới bắt đầu học.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Lan",
+      "en": "Lan"
+    },
+    "speakerBName": {
+      "vi": "Bạn mới",
+      "en": "New Friend"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Mình nghe bạn vừa bắt đầu học tiếng Anh. Bạn đang học theo phương pháp nào?",
+        "en": "I heard you just started learning English. What method are you using?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình đang học với app Duolingo và xem video trên YouTube. Nhưng mình cảm thấy tiến bộ chậm quá. Bạn có kinh nghiệm gì không?",
+        "en": "I'm studying with the Duolingo app and watching YouTube videos. But I feel like I'm progressing too slowly. Do you have any experience to share?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình học tiếng Anh 7 năm rồi. Duolingo tốt để tạo thói quen nhưng chưa đủ để thực sự giao tiếp được.",
+        "en": "I've been learning English for 7 years. Duolingo is good for building habits but not enough to actually communicate."
+      },
+      {
+        "speaker": "B",
+        "vi": "Vậy bạn đã học theo cách nào để tiến bộ nhanh?",
+        "en": "So how did you learn to progress faster?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Bước ngoặt của mình là khi bắt đầu xem phim tiếng Anh không phụ đề. Nghe nhiều đến mức não quen với âm thanh của ngôn ngữ.",
+        "en": "My turning point was when I started watching English films without subtitles. Listening so much that my brain got used to the sounds of the language."
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình còn nghe không hiểu gì cả khi không có phụ đề. Không chán sao bạn?",
+        "en": "I can't understand anything without subtitles yet. Didn't you get frustrated?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Có chứ! Nhưng mình bắt đầu bằng phụ đề tiếng Anh trước — đọc + nghe cùng lúc. Từ từ rồi bỏ phụ đề dần.",
+        "en": "Definitely! But I started with English subtitles first — reading and listening at the same time. Then gradually removed the subtitles."
+      },
+      {
+        "speaker": "B",
+        "vi": "Mẹo hay đó! Còn Speaking thì sao? Mình sợ nói tiếng Anh lắm, sợ nói sai bị cười.",
+        "en": "Great tip! What about Speaking? I'm really afraid to speak English — scared of saying something wrong and being laughed at."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình cũng từng sợ vậy. Nhưng bạn biết không, người bản ngữ không quan tâm đến lỗi của bạn nhiều như bạn nghĩ đâu. Họ chỉ muốn hiểu bạn nói gì thôi.",
+        "en": "I used to be scared too. But you know what — native speakers don't care about your mistakes as much as you think. They just want to understand what you're saying."
+      },
+      {
+        "speaker": "B",
+        "vi": "Nghe vậy mình thấy tự tin hơn một chút. Bạn có cách nào luyện Speaking một mình không, vì mình không có ai nói cùng?",
+        "en": "That makes me feel a bit more confident. Do you have a way to practice Speaking alone? I don't have anyone to speak with."
+      },
+      {
+        "speaker": "A",
+        "vi": "Có! Mình hay nói chuyện với chính mình — kể lại ngày hôm nay bằng tiếng Anh hoặc mô tả những gì mình thấy xung quanh.",
+        "en": "Yes! I often talk to myself — narrating my day in English or describing what I see around me."
+      },
+      {
+        "speaker": "B",
+        "vi": "Hay thật! Còn một app hay trang web nào bạn thấy hiệu quả không? Ngoài Duolingo ấy.",
+        "en": "That's clever! Are there any other apps or websites you found effective? Besides Duolingo?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình hay dùng Anki để học từ vựng — hệ thống nhắc lại theo chu kỳ rất hiệu quả. Và trang Elllo để luyện nghe hội thoại thật.",
+        "en": "I often use Anki for vocabulary — the spaced repetition system is very effective. And the Elllo website for listening to real conversations."
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình sẽ thử ngay. Bạn nghĩ cần bao lâu để mình có thể giao tiếp cơ bản được?",
+        "en": "I'll try those right away. How long do you think it'll take me to be able to have basic conversations?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Nếu bạn học đều đặn mỗi ngày 30-60 phút và không sợ mắc lỗi, khoảng 6 tháng là có thể giao tiếp cơ bản được rồi.",
+        "en": "If you study consistently 30 to 60 minutes every day and aren't afraid to make mistakes, you should be able to have basic conversations within about 6 months."
+      },
+      {
+        "speaker": "B",
+        "vi": "6 tháng nghe có thể đạt được. Mục tiêu của mình là đủ tiếng Anh để đi du lịch một mình ở nước ngoài.",
+        "en": "6 months sounds achievable. My goal is to have enough English to travel abroad by myself."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mục tiêu rõ ràng như vậy rất tốt! Mình khuyên bạn luyện các tình huống hay gặp khi du lịch — đặt phòng, hỏi đường, gọi đồ ăn.",
+        "en": "Having a clear goal like that is great! I'd suggest practicing situations you'll encounter while traveling — booking rooms, asking for directions, ordering food."
+      },
+      {
+        "speaker": "B",
+        "vi": "Ý tưởng thực tế lắm. Bạn có muốn luyện tiếng Anh cùng mình không? Mình cần ai đó để nói chuyện.",
+        "en": "That's very practical advice. Would you like to practice English with me? I need someone to talk to."
+      },
+      {
+        "speaker": "A",
+        "vi": "Được chứ! Mình cũng muốn duy trì thói quen nói tiếng Anh hàng ngày. Mình có thể video call mỗi tối 15 phút, thế nào?",
+        "en": "Sure! I also want to keep up the habit of speaking English daily. We could video call every evening for 15 minutes — how does that sound?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Tuyệt vời! Mình đồng ý ngay. Cảm ơn bạn đã chia sẻ và sẵn lòng giúp mình. Bạn truyền cảm hứng cho mình lắm!",
+        "en": "Wonderful! I'm in. Thank you for sharing your experience and being willing to help. You've really inspired me!"
+      }
+    ]
+  }
+]

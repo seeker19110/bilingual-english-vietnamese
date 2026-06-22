@@ -1,0 +1,562 @@
+[
+  {
+    "id": 86,
+    "title": "Đi Vịnh Hạ Long",
+    "situation": "Một nhóm du khách trên du thuyền tham quan Vịnh Hạ Long hai ngày một đêm.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Du khách", "en": "Tourist" },
+    "speakerBName": { "vi": "Hướng dẫn viên", "en": "Tour Guide" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Xin chào! Đây là lần đầu tiên tôi đến Vịnh Hạ Long. Khung cảnh đẹp quá!",
+        "en": "Hello! This is my first time visiting Ha Long Bay. The scenery is so beautiful!"
+      },
+      {
+        "speaker": "B",
+        "vi": "Chào mừng bạn! Vịnh Hạ Long có hơn 1.600 hòn đảo đá vôi. Đây là Di sản Thiên nhiên Thế giới UNESCO.",
+        "en": "Welcome! Ha Long Bay has over 1,600 limestone islands. It's a UNESCO World Heritage Site."
+      },
+      {
+        "speaker": "A",
+        "vi": "Ồ, tôi không biết có nhiều đảo đến thế. Chúng ta sẽ ghé thăm hang động nào không?",
+        "en": "Oh, I didn't know there were so many islands. Will we visit any caves?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Có chứ. Buổi chiều chúng ta sẽ tham quan hang Sửng Sốt — một trong những hang đẹp nhất vịnh.",
+        "en": "Yes, we will. This afternoon we'll visit Surprising Cave — one of the most beautiful caves in the bay."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tuyệt quá! Tôi nghe nói có thể kayak ở đây. Điều đó có trong lịch trình không?",
+        "en": "Wonderful! I heard you can kayak here. Is that on the itinerary?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Có, sáng mai bạn sẽ chèo kayak qua các hang nước và khám phá làng chài nổi trên mặt vịnh.",
+        "en": "Yes, tomorrow morning you'll kayak through water caves and explore a floating fishing village on the bay."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tôi chưa bao giờ chèo kayak. Có khó không? Tôi cần mặc áo phao không?",
+        "en": "I've never kayaked before. Is it difficult? Do I need to wear a life jacket?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Không khó đâu. Hướng dẫn viên sẽ chỉ bạn cách chèo. Và có, áo phao là bắt buộc vì an toàn.",
+        "en": "It's not hard. A guide will show you how to paddle. And yes, a life jacket is mandatory for safety."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tốt lắm. Nhân tiện, bữa tối trên thuyền có món hải sản không? Tôi rất thích hải sản tươi.",
+        "en": "Great. By the way, does the dinner on the boat include seafood? I really love fresh seafood."
+      },
+      {
+        "speaker": "B",
+        "vi": "Tất nhiên rồi! Chúng tôi phục vụ tôm hùm, mực, ngao và nhiều loại hải sản tươi khác được đánh bắt ngay trong ngày.",
+        "en": "Of course! We serve lobster, squid, clams, and many other kinds of fresh seafood caught that same day."
+      },
+      {
+        "speaker": "A",
+        "vi": "Nghe hấp dẫn lắm. Mặt biển hôm nay khá yên. Thời tiết thường như thế này không?",
+        "en": "That sounds amazing. The sea is quite calm today. Is the weather usually like this?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Mùa này khá đẹp. Tháng mười đến tháng tư là mùa tốt nhất để tham quan — ít mưa, sóng nhỏ.",
+        "en": "The weather is nice this season. October to April is the best time to visit — less rain and smaller waves."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn bạn đã cho tôi biết. À, tôi có thể câu cá trên thuyền không?",
+        "en": "Thank you for letting me know. Oh, can I fish from the boat?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Được chứ. Tối nay sau bữa ăn, thuyền sẽ neo lại và mọi người có thể thả câu thử vận may.",
+        "en": "Sure. Tonight after dinner, the boat will anchor and everyone can try fishing for fun."
+      },
+      {
+        "speaker": "A",
+        "vi": "Nghe vui thật! Nếu câu được cá, bếp trên thuyền có nấu giúp không?",
+        "en": "That sounds fun! If I catch a fish, will the kitchen on the boat cook it for me?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Được, đầu bếp sẽ chế biến cá của bạn theo cách bạn muốn — hấp, nướng hoặc chiên.",
+        "en": "Yes, the chef will prepare your fish the way you want — steamed, grilled, or fried."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tuyệt vời! Tôi rất ấn tượng với dịch vụ trên thuyền. Buồng ngủ cũng rất thoải mái.",
+        "en": "Wonderful! I'm very impressed with the service on the boat. The cabin is also very comfortable."
+      },
+      {
+        "speaker": "B",
+        "vi": "Cảm ơn bạn. Chúng tôi cố gắng mang lại trải nghiệm tốt nhất. Bạn có cần thêm gì không?",
+        "en": "Thank you. We try to provide the best experience. Is there anything else you need?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Tôi muốn mua vài tấm bưu thiếp ở đây. Thuyền có bán không hay phải chờ lên đất liền?",
+        "en": "I'd like to buy some postcards here. Does the boat sell them, or do I have to wait until we're back on land?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Trên thuyền có quầy lưu niệm nhỏ bán bưu thiếp và đặc sản địa phương. Bạn có thể ghé xem bất cứ lúc nào.",
+        "en": "There's a small souvenir shop on the boat selling postcards and local specialties. You can stop by anytime."
+      }
+    ]
+  },
+  {
+    "id": 87,
+    "title": "Khám phá ẩm thực Việt Nam",
+    "situation": "Hai người bạn thảo luận về ẩm thực Việt Nam phong phú và đa dạng.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Bạn A", "en": "Friend A" },
+    "speakerBName": { "vi": "Bạn B", "en": "Friend B" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Tao vừa ăn thử bún bò Huế lần đầu. Ngon không tưởng! Sao mày không nói với tao sớm hơn?",
+        "en": "I just tried Hue-style beef noodle soup for the first time. It was incredibly delicious! Why didn't you tell me sooner?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Haha, tao tưởng mày đã biết rồi chứ! Bún bò Huế khác phở ở chỗ nào theo mày?",
+        "en": "Haha, I thought you already knew! How is Hue beef noodle soup different from pho, in your opinion?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Nước dùng bún bò cay hơn và đậm vị hơn phở. Có thêm chả cua và giò heo nữa.",
+        "en": "The broth of bun bo is spicier and richer than pho. It also has crab cake and pork knuckle."
+      },
+      {
+        "speaker": "B",
+        "vi": "Đúng rồi. Ẩm thực miền Trung thường cay và đậm đà hơn. Mày đã thử mì Quảng chưa?",
+        "en": "That's right. Central Vietnamese food tends to be spicier and more flavorful. Have you tried Quang-style noodles?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Chưa. Mì Quảng có gì đặc biệt? Trông tao thấy ít nước hơn các loại bún khác.",
+        "en": "Not yet. What's special about Quang noodles? They seem to have less broth than other noodle dishes."
+      },
+      {
+        "speaker": "B",
+        "vi": "Đúng, mì Quảng chỉ có ít nước dùng sền sệt chứ không phải nhiều nước như phở. Topping cũng rất phong phú.",
+        "en": "Right, Quang noodles have just a little thick broth, not a lot of soup like pho. The toppings are also very varied."
+      },
+      {
+        "speaker": "A",
+        "vi": "Còn ẩm thực miền Nam thì sao? Tao thấy đồ ăn Sài Gòn thường ngọt hơn ở Hà Nội.",
+        "en": "What about Southern food? I noticed that Saigon food tends to be sweeter than Hanoi food."
+      },
+      {
+        "speaker": "B",
+        "vi": "Mày nhận xét rất tinh. Người miền Nam thích ăn ngọt hơn, còn người miền Bắc thích vị thanh và ít gia vị hơn.",
+        "en": "That's a sharp observation. Southerners prefer sweeter flavors, while Northerners like lighter and less-spiced food."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tao nghĩ phở Hà Nội thanh hơn phở Sài Gòn. Phở Sài Gòn có nhiều topping hơn và ăn kèm tương hoisin.",
+        "en": "I think Hanoi pho is lighter than Saigon pho. Saigon pho has more toppings and is eaten with hoisin sauce."
+      },
+      {
+        "speaker": "B",
+        "vi": "Chính xác. Người Hà Nội có khi còn không thích người ta cho nước tương vào phở của họ đó.",
+        "en": "Exactly. Hanoi locals sometimes get upset if someone puts soy sauce in their pho."
+      },
+      {
+        "speaker": "A",
+        "vi": "Haha thật không? Ngoài phở và bún bò, theo mày đồ ăn đường phố nào của Việt Nam ngon nhất?",
+        "en": "Haha really? Besides pho and bun bo, which Vietnamese street food do you think is the best?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Với tao là bánh mì. Chiếc bánh mì Việt Nam là sự kết hợp hoàn hảo giữa ẩm thực Pháp và Việt — giòn, đầy nhân, rẻ.",
+        "en": "For me it's banh mi. Vietnamese banh mi is a perfect fusion of French and Vietnamese food — crispy, loaded with fillings, and cheap."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tao đồng ý. Mỗi quán bánh mì có công thức riêng. Tao thích nhất là bánh mì thịt nướng ở Hội An.",
+        "en": "I agree. Each banh mi shop has its own recipe. My favorite is grilled pork banh mi in Hoi An."
+      },
+      {
+        "speaker": "B",
+        "vi": "Bánh mì Phượng ở Hội An nổi tiếng thế giới rồi. Anthony Bourdain từng ăn và khen tắm tới nơi.",
+        "en": "Phuong's banh mi in Hoi An is world-famous. Anthony Bourdain ate it and gave it rave reviews."
+      },
+      {
+        "speaker": "A",
+        "vi": "Ừ, tao biết. Thế mày thấy ẩm thực Việt Nam đang thay đổi như thế nào so với ngày xưa?",
+        "en": "Yeah, I know. How do you think Vietnamese cuisine is changing compared to the past?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Bây giờ có nhiều nhà hàng fusion kết hợp nguyên liệu Việt với kỹ thuật nấu ăn phương Tây. Trẻ thì hay thích vậy.",
+        "en": "Now there are many fusion restaurants combining Vietnamese ingredients with Western cooking techniques. Young people tend to like that."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tao thấy đáng tiếc khi một số món truyền thống đang dần biến mất vì không có ai học làm.",
+        "en": "I find it sad that some traditional dishes are gradually disappearing because no one is learning to make them."
+      },
+      {
+        "speaker": "B",
+        "vi": "Tao cũng lo vậy. Nhưng cũng có nhiều người trẻ đang cố gắng khôi phục món ăn cổ truyền, mở quán chuyên về đồ ăn xưa.",
+        "en": "I'm worried about that too. But many young people are also trying to revive traditional dishes, opening restaurants specializing in old-style food."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tốt quá. Mày có biết quán nào ở Hà Nội chuyên món ăn Bắc cổ điển không? Tao muốn thử.",
+        "en": "That's great. Do you know any restaurants in Hanoi specializing in classic Northern Vietnamese dishes? I'd love to try one."
+      },
+      {
+        "speaker": "B",
+        "vi": "Có chứ! Tao sẽ cho mày địa chỉ mấy quán hay. Cuối tuần mình rủ thêm mấy đứa đi ăn cùng nhé!",
+        "en": "Of course! I'll send you the addresses of a few great spots. This weekend let's invite more friends to go eat together!"
+      }
+    ]
+  },
+  {
+    "id": 88,
+    "title": "Chuẩn bị cho kỳ thi IELTS",
+    "situation": "Nam hỏi người bạn đã thi IELTS về kinh nghiệm và cách ôn thi hiệu quả.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Nam", "en": "Nam" },
+    "speakerBName": { "vi": "Bạn", "en": "Friend" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Mình nghe bạn vừa thi IELTS và đạt band 7.5. Chúc mừng bạn! Bạn ôn thi bao lâu vậy?",
+        "en": "I heard you just took the IELTS and got band 7.5. Congratulations! How long did you study for it?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Cảm ơn bạn! Mình ôn tập khoảng 6 tháng, mỗi ngày khoảng 2 đến 3 tiếng. Bạn đang có kế hoạch thi không?",
+        "en": "Thank you! I studied for about 6 months, around 2 to 3 hours a day. Are you planning to take the test?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Ừ, mình muốn nộp hồ sơ học bổng du học. Họ yêu cầu ít nhất band 7. Bạn thấy phần nào khó nhất?",
+        "en": "Yes, I want to apply for a study abroad scholarship. They require at least band 7. Which part did you find the most difficult?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Với mình là phần Writing, đặc biệt là Task 2 — viết bài luận. Cần lập luận chặt chẽ và từ vựng học thuật.",
+        "en": "For me it was the Writing section, especially Task 2 — the essay. You need solid arguments and academic vocabulary."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình cũng lo về Writing nhất. Bạn luyện Writing như thế nào? Có lớp học không?",
+        "en": "I'm most worried about Writing too. How did you practice Writing? Did you take a class?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình học một khóa online trên Udemy rồi tự luyện viết hàng ngày. Quan trọng là phải nhờ ai đó chấm và chỉ lỗi cho mình.",
+        "en": "I took an online course on Udemy, then practiced writing every day on my own. The key is to have someone grade your writing and point out your mistakes."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình không có gia sư. Có cách nào khác để nhận phản hồi bài Writing không?",
+        "en": "I don't have a tutor. Is there another way to get feedback on Writing essays?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Có thể dùng các diễn đàn Reddit như r/IELTS hoặc nhóm Facebook. Mọi người sẽ chấm bài lẫn nhau miễn phí.",
+        "en": "You can use Reddit forums like r/IELTS or Facebook groups. People grade each other's essays for free."
+      },
+      {
+        "speaker": "A",
+        "vi": "Hay đó! Còn phần Listening thì sao? Mình hay bị nhầm vì người nói nhanh quá.",
+        "en": "Good idea! What about the Listening section? I often get confused because speakers talk too fast."
+      },
+      {
+        "speaker": "B",
+        "vi": "Luyện bằng cách xem phim tiếng Anh không phụ đề tiếng Việt, và làm đề thi thật nhiều. Mình dùng Cambridge IELTS books — rất sát đề thật.",
+        "en": "Practice by watching English movies without Vietnamese subtitles, and do lots of practice tests. I used Cambridge IELTS books — they're very close to the real test."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình có nghe nói IELTS Academic khác IELTS General Training. Mình nên thi loại nào để du học?",
+        "en": "I've heard IELTS Academic is different from IELTS General Training. Which one should I take for studying abroad?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Bạn thi IELTS Academic nhé. Loại đó dành cho đại học và sau đại học. IELTS General Training thường dùng cho visa định cư.",
+        "en": "Take IELTS Academic. That one is for undergraduate and postgraduate study. IELTS General Training is usually for immigration visas."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn bạn đã giải thích. Phần Speaking bạn có sợ không? Mình rất lo vì phải nói trực tiếp với giám khảo.",
+        "en": "Thanks for explaining. Were you nervous about the Speaking part? I'm very worried because you have to speak directly with the examiner."
+      },
+      {
+        "speaker": "B",
+        "vi": "Ban đầu mình cũng sợ lắm. Nhưng bạn cứ luyện nói một mình về các chủ đề thông dụng — gia đình, sở thích, công việc — thì sẽ quen dần.",
+        "en": "I was scared at first too. But if you practice speaking alone about common topics — family, hobbies, work — you'll get used to it."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình sẽ thử. Còn phần Reading thì sao? Có mẹo gì để đọc nhanh hơn không?",
+        "en": "I'll try that. What about the Reading section? Any tips for reading faster?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Đọc câu hỏi trước rồi mới đọc bài. Như vậy bạn biết mình đang tìm thông tin gì, đỡ mất thời gian đọc hết toàn bộ.",
+        "en": "Read the questions first, then the passage. That way you know what information you're looking for and won't waste time reading everything."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mẹo hay đó! Bạn có nghĩ mình nên đăng ký lớp luyện thi không hay tự học là đủ?",
+        "en": "That's a great tip! Do you think I should enroll in a prep class, or is self-study enough?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Nếu bạn có kỷ luật tự học thì không cần lớp cũng được. Nhưng lớp học giúp bạn có deadline và được sửa lỗi thường xuyên hơn.",
+        "en": "If you're disciplined enough to study on your own, you don't need a class. But a class gives you deadlines and more regular error correction."
+      },
+      {
+        "speaker": "A",
+        "vi": "Ừ, mình thường hay trì hoãn, nên có lẽ học lớp sẽ tốt hơn. Bạn có thể giới thiệu trung tâm uy tín không?",
+        "en": "Yeah, I tend to procrastinate, so a class would probably be better for me. Can you recommend a reputable center?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình học ở British Council và thấy rất tốt. Giáo viên bản ngữ, chương trình bài bản. Có hơi đắt nhưng xứng đáng.",
+        "en": "I studied at the British Council and found it very good. Native-speaker teachers, structured curriculum. It's a bit expensive but worth it."
+      }
+    ]
+  },
+  {
+    "id": 89,
+    "title": "Nói về sở thích đọc sách",
+    "situation": "Hai người bạn nói chuyện về thói quen đọc sách và những cuốn sách yêu thích.",
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Bạn A", "en": "Friend A" },
+    "speakerBName": { "vi": "Bạn B", "en": "Friend B" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Tao vừa đọc xong 'Nhà Giả Kim' của Paulo Coelho. Cảm giác thật sự rất truyền cảm hứng.",
+        "en": "I just finished 'The Alchemist' by Paulo Coelho. I felt truly inspired."
+      },
+      {
+        "speaker": "B",
+        "vi": "Ồ, tao cũng đọc cuốn đó rồi! Mày thích nhất đoạn nào? Tao ấn tượng nhất câu 'Vũ trụ sẽ âm mưu giúp bạn đạt được điều bạn thực sự muốn.'",
+        "en": "Oh, I've read that one too! Which part did you like best? I was most impressed by the quote: 'The universe conspires to help you achieve what you truly want.'"
+      },
+      {
+        "speaker": "A",
+        "vi": "Tao cũng thích câu đó. Ngoài sách này, mày thường đọc thể loại gì?",
+        "en": "I love that quote too. Besides this book, what genre do you usually read?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Tao thích đọc tiểu thuyết văn học và sách phát triển bản thân. Còn mày thì sao?",
+        "en": "I like reading literary fiction and self-development books. What about you?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Tao hay đọc sách lịch sử và truyện trinh thám. Tao thấy đọc sách trước ngủ giúp ngủ ngon hơn điện thoại.",
+        "en": "I often read history books and mystery novels. I find that reading before bed helps me sleep better than using my phone."
+      },
+      {
+        "speaker": "B",
+        "vi": "Tao cũng vậy! Tao đặt điện thoại ra xa và đọc sách ít nhất 30 phút mỗi tối. Giờ nó thành thói quen rồi.",
+        "en": "Me too! I put my phone away and read for at least 30 minutes every evening. Now it's become a habit."
+      },
+      {
+        "speaker": "A",
+        "vi": "Bây giờ mày đọc sách giấy hay ebook? Tao đang cân nhắc mua máy đọc sách Kindle.",
+        "en": "Do you read physical books or ebooks now? I'm considering buying a Kindle e-reader."
+      },
+      {
+        "speaker": "B",
+        "vi": "Tao dùng cả hai. Kindle tiện lợi khi đi lại, còn sách giấy thì tao thích cái cảm giác cầm và mùi giấy.",
+        "en": "I use both. Kindle is convenient when traveling, but with physical books I love the feeling of holding them and the smell of paper."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tao biết cảm giác đó! Tao có xu hướng đọc chậm vì cứ muốn suy ngẫm từng câu. Mày đọc nhanh không?",
+        "en": "I know that feeling! I tend to read slowly because I like to reflect on every sentence. Do you read fast?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Khá nhanh với tiểu thuyết, nhưng chậm hơn với sách phi hư cấu. Tao cần ghi chú và dừng lại để tiêu hóa thông tin.",
+        "en": "Quite fast with novels, but slower with non-fiction. I need to take notes and pause to absorb information."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mày có ghi chú vào sách không? Tao không nỡ viết vào sách giấy.",
+        "en": "Do you write notes in your books? I can't bring myself to write in a physical book."
+      },
+      {
+        "speaker": "B",
+        "vi": "Tao dùng sticky notes. Như vậy tao có thể gỡ ra và giữ sách sạch sẽ. Trên Kindle thì dùng tính năng highlight.",
+        "en": "I use sticky notes. That way I can remove them and keep the book clean. On Kindle I use the highlight feature."
+      },
+      {
+        "speaker": "A",
+        "vi": "Ý tưởng hay đó! Mày có đọc sách tiếng Anh không hay chỉ đọc bản dịch tiếng Việt?",
+        "en": "Great idea! Do you read books in English or only Vietnamese translations?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Giờ tao cố gắng đọc bản tiếng Anh gốc để vừa học ngôn ngữ vừa không mất đi sắc thái của tác giả.",
+        "en": "Now I try to read the original English version both to learn the language and to preserve the author's nuances."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tao cũng muốn làm vậy nhưng hay gặp từ khó. Mày dùng từ điển không hay chịu đọc tiếp?",
+        "en": "I want to do that too but I often encounter difficult words. Do you use a dictionary or just keep reading?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Mày cứ đọc tiếp, đừng dừng lại tra từ mỗi câu. Gặp từ quan trọng thì mới tra. Càng đọc nhiều sẽ càng quen từ vựng.",
+        "en": "Just keep reading, don't stop to look up every word. Only look up words that seem important. The more you read, the more vocabulary you'll pick up."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mày ơi, mày có tham gia nhóm đọc sách nào không? Tao nghe có book club hay lắm.",
+        "en": "Hey, do you belong to any book club? I've heard they can be really great."
+      },
+      {
+        "speaker": "B",
+        "vi": "Có, tao tham gia một nhóm nhỏ gặp nhau mỗi tháng một lần. Mọi người cùng đọc một cuốn rồi họp bàn luận. Vui và học được nhiều lắm.",
+        "en": "Yes, I'm in a small group that meets once a month. Everyone reads the same book and then meets to discuss it. It's fun and I learn a lot."
+      },
+      {
+        "speaker": "A",
+        "vi": "Nghe hấp dẫn quá! Mày có thể cho tao tham gia không? Tao muốn gặp những người cùng thích đọc sách.",
+        "en": "That sounds so interesting! Could I join? I'd love to meet people who also enjoy reading."
+      },
+      {
+        "speaker": "B",
+        "vi": "Tất nhiên rồi! Tháng sau nhóm tao đọc 'Sapiens' của Yuval Noah Harari. Mày đọc trước đi rồi cùng đến nhé!",
+        "en": "Of course! Next month our group is reading 'Sapiens' by Yuval Noah Harari. Read it in advance and come join us!"
+      }
+    ]
+  },
+  {
+    "id": 90,
+    "title": "Làm việc freelance",
+    "situation": "Duy chia sẻ kinh nghiệm làm freelance với người bạn đang cân nhắc nghỉ việc văn phòng.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Duy", "en": "Duy" },
+    "speakerBName": { "vi": "Bạn", "en": "Friend" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Mình nghe bạn đang nghỉ văn phòng để làm freelance. Thật sự bạn không sợ mất thu nhập ổn định sao?",
+        "en": "I heard you quit your office job to freelance. Weren't you really afraid of losing a stable income?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Ban đầu sợ lắm chứ. Nhưng mình đã chuẩn bị được 6 tháng tiết kiệm trước khi nghỉ, và đã có vài khách hàng ổn định.",
+        "en": "I was very scared at first. But I had prepared 6 months of savings before quitting, and I already had a few steady clients."
+      },
+      {
+        "speaker": "A",
+        "vi": "Bạn làm freelance trong lĩnh vực gì? Và bạn tìm khách hàng ở đâu ban đầu?",
+        "en": "What field do you freelance in? And where did you find clients at the beginning?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình làm thiết kế đồ họa và UX/UI. Ban đầu mình tìm qua Upwork và Fiverr, sau đó khách hàng giới thiệu nhau.",
+        "en": "I do graphic design and UX/UI. At first I found work through Upwork and Fiverr, then clients started referring each other to me."
+      },
+      {
+        "speaker": "A",
+        "vi": "Hay quá. Mình đang nghĩ đến việc làm content writer freelance. Bạn nghĩ ngành này có dễ bắt đầu không?",
+        "en": "That's great. I'm thinking about freelancing as a content writer. Do you think it's easy to start in that field?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Content writing khá dễ vào, nhưng cạnh tranh cũng nhiều. Bạn cần xây dựng portfolio trước — viết blog cá nhân hoặc nhận vài dự án nhỏ giá rẻ để có kinh nghiệm.",
+        "en": "Content writing is fairly easy to enter, but competition is tough. You need to build a portfolio first — write a personal blog or take on a few small low-paid projects to gain experience."
+      },
+      {
+        "speaker": "A",
+        "vi": "Còn vấn đề thuế thì sao? Mình chưa hiểu lắm về khai báo thuế cho freelancer.",
+        "en": "What about taxes? I don't really understand how tax reporting works for freelancers."
+      },
+      {
+        "speaker": "B",
+        "vi": "Ở Việt Nam, nếu thu nhập vượt mức miễn thuế thì bạn phải khai và nộp thuế thu nhập cá nhân. Nên nhờ kế toán tư vấn để tránh sai.",
+        "en": "In Vietnam, if your income exceeds the tax-free threshold, you need to declare and pay personal income tax. It's best to consult an accountant to avoid mistakes."
+      },
+      {
+        "speaker": "A",
+        "vi": "Ừ, mình sẽ tìm hiểu thêm. Còn thời gian làm việc thì sao? Mình tưởng freelance là tự do nhưng nghe nói còn bận hơn?",
+        "en": "Yeah, I'll look into that. What about working hours? I thought freelancing was free but I've heard it can be even busier?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Đúng rồi! Ban đầu mình làm việc tới 12 tiếng một ngày vì muốn nhận nhiều project. Phải học cách từ chối và đặt giới hạn rõ ràng.",
+        "en": "That's right! At first I worked up to 12 hours a day because I wanted to take on many projects. You have to learn to say no and set clear boundaries."
+      },
+      {
+        "speaker": "A",
+        "vi": "Vậy làm sao bạn quản lý thời gian bây giờ? Bạn có dùng app hay công cụ gì không?",
+        "en": "So how do you manage your time now? Do you use any apps or tools?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Mình dùng Notion để theo dõi project, Toggl để tính giờ làm việc, và đặt lịch cụ thể — sáng làm việc sáng tạo, chiều họp và email.",
+        "en": "I use Notion to track projects, Toggl to log work hours, and set a clear schedule — mornings for creative work, afternoons for meetings and email."
+      },
+      {
+        "speaker": "A",
+        "vi": "Hay thật. Còn thu nhập thì sao? Có tháng bạn thu nhập thấp hơn lương văn phòng không?",
+        "en": "That's smart. What about income? Are there months when you earn less than your old office salary?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Có những tháng đầu năm hoặc cuối năm ít việc hơn. Vì vậy mình luôn dành ra 20% thu nhập vào quỹ dự phòng.",
+        "en": "There are months at the beginning or end of the year with less work. That's why I always set aside 20% of my income as an emergency fund."
+      },
+      {
+        "speaker": "A",
+        "vi": "Bạn có bao giờ cảm thấy cô đơn khi làm một mình ở nhà không? Mình thích môi trường văn phòng vì có đồng nghiệp.",
+        "en": "Do you ever feel lonely working alone at home? I like the office environment because of my colleagues."
+      },
+      {
+        "speaker": "B",
+        "vi": "Có lúc cô đơn. Mình hay đến coworking space 2-3 lần mỗi tuần để làm việc cùng người khác và mở rộng mối quan hệ.",
+        "en": "Sometimes I do feel lonely. I go to a coworking space 2-3 times a week to work alongside others and expand my network."
+      },
+      {
+        "speaker": "A",
+        "vi": "Ý hay đó! Bạn có hối hận khi bỏ việc văn phòng không?",
+        "en": "Great idea! Do you regret leaving your office job?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Không hề. Mình tự chủ thời gian hơn, chọn project mình thích, và thu nhập bây giờ cao hơn lương cũ khoảng 40%.",
+        "en": "Not at all. I have more control over my time, choose projects I enjoy, and my income is now about 40% higher than my old salary."
+      },
+      {
+        "speaker": "A",
+        "vi": "Nghe thuyết phục lắm! Bạn nghĩ mình nên thử làm freelance song song trước khi nghỉ hẳn không?",
+        "en": "That's very convincing! Do you think I should try freelancing on the side before quitting completely?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Nhất định rồi! Làm song song ít nhất 3-6 tháng để xem mình có đủ khách hàng không rồi hẵng nghỉ. Đó là cách an toàn nhất.",
+        "en": "Definitely! Do it on the side for at least 3-6 months to see if you have enough clients, then quit. That's the safest approach."
+      }
+    ]
+  }
+]
