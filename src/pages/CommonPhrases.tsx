@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { Search, X, ChevronRight, ArrowLeft, Loader2 } from 'lucide-react'
+import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
 import Layout from '../components/Layout'
 import { useLang } from '../context/useLang'
 import KaraokeText from '../components/KaraokeText'
