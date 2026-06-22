@@ -80,11 +80,25 @@ function loadPatternTasks(): PatternTask[] {
   return tasks
 }
 
-function loadPronTasks(wordsFile: string): PronTask[] {
-  const raw = JSON.parse(fs.readFileSync(wordsFile, 'utf-8')) as unknown[]
-  const words = raw.map((item) =>
-    (typeof item === 'string' ? item : (item as { word: string }).word).toLowerCase(),
-  )
+function loadPronTasks(wordsFile?: string): PronTask[] {
+  let words: string[]
+  if (wordsFile) {
+    const raw = JSON.parse(fs.readFileSync(wordsFile, 'utf-8')) as unknown[]
+    words = raw.map((item) =>
+      (typeof item === 'string' ? item : (item as { word: string }).word).toLowerCase(),
+    )
+  } else {
+    // Đọc từ src/data/dictionary/chunk-*.json
+    const dir = path.join(PROJECT_ROOT, 'src/data/dictionary')
+    const files = fs.readdirSync(dir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+    words = []
+    for (const file of files) {
+      const raw = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf-8')) as unknown[]
+      for (const item of raw) {
+        words.push((typeof item === 'string' ? item : (item as { word: string }).word).toLowerCase())
+      }
+    }
+  }
   const tasks: PronTask[] = []
   for (const word of words) {
     for (const voice of VOICE_IDS) tasks.push({ type: 'pron', word, voice })
@@ -229,7 +243,7 @@ async function main(): Promise<void> {
 
   const wordsFile = process.env.WORDS_FILE
     ? path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
-    : path.join(PROJECT_ROOT, 'src/data/dictionary.json')
+    : undefined
 
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
 
