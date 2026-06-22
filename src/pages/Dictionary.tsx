@@ -135,6 +135,7 @@ export default function Dictionary() {
               />
               {query && (
                 <button onClick={() => setQuery('')}
+                  aria-label={isA ? 'Xóa tìm kiếm' : 'Clear search'}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition p-0.5">
                   <X className="w-4 h-4" />
                 </button>

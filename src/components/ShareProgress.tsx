@@ -48,7 +48,7 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-white">{isA ? 'Chia sẻ tiến độ' : 'Share Progress'}</h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 transition">
+          <button onClick={onClose} aria-label={isA ? 'Đóng' : 'Close'} className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 transition">
             <X className="w-4 h-4 text-zinc-400" />
           </button>
         </div>

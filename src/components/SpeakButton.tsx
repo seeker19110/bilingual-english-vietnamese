@@ -50,10 +50,12 @@ export default function SpeakButton({ text, lang, title, size = 'sm' }: Props) {
     ? 'bg-emerald-500/20 text-emerald-300'
     : 'bg-sky-500/20 text-sky-300'
 
+  const label = title ?? (lang === 'en-US' ? 'Nghe tiếng Anh' : 'Nghe tiếng Việt')
   return (
     <button
       onClick={handleClick}
-      title={title ?? (lang === 'en-US' ? 'Nghe tiếng Anh' : 'Nghe tiếng Việt')}
+      title={label}
+      aria-label={playing ? (lang === 'en-US' ? 'Dừng' : 'Stop') : label}
       className={`shrink-0 ${sizeClass} flex items-center justify-center rounded-full transition
         ${playing ? activeClass : idleClass}
       `}

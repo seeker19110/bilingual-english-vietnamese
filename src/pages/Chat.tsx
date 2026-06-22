@@ -107,7 +107,7 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
   if (msg.role === 'user') {
     return (
       <div className={`flex justify-end ${isNew ? 'animate-fade-in' : ''}`}>
-        <div className="max-w-[78%] bg-gradient-to-br from-emerald-600 to-teal-500 text-white rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm shadow-emerald-500/15">
+        <div className="max-w-[78%] bg-gradient-to-br from-emerald-600 to-teal-500 text-white rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm shadow-emerald-500/15 break-words">
           {msg.content}
         </div>
       </div>
@@ -133,7 +133,7 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
       <div className="max-w-[85%] space-y-2">
-        <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed border border-zinc-700/30">
+        <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed border border-zinc-700/30 break-words">
           {speechText}
           {speechText && (
             <div className="flex justify-end mt-1.5">
@@ -317,7 +317,8 @@ export default function Chat() {
             <div className="max-w-3xl mx-auto flex items-center gap-2">
               <button onClick={() => { setSession(null); setError(''); setLimitHit(false) }}
                 className="p-2.5 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50"
-                title={isA ? 'Hội thoại mới' : 'New session'}>
+                title={isA ? 'Hội thoại mới' : 'New session'}
+                aria-label={isA ? 'Hội thoại mới' : 'New session'}>
                 <Plus className="w-4 h-4" />
               </button>
 
@@ -332,11 +333,12 @@ export default function Chat() {
                 placeholder={isA ? 'Nhập tiếng Anh...' : 'Type in Vietnamese...'}
                 disabled={loading || limitHit}
                 inputMode="text"
-                className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition disabled:opacity-50"
+                className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-[16px] sm:text-sm text-white placeholder:text-zinc-600 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition disabled:opacity-50"
               />
 
               <button onClick={sendMessage} disabled={!input.trim() || loading || limitHit}
-                className="p-2.5 bg-gradient-to-br from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-emerald-500/20 active:scale-95">
+                className="p-2.5 bg-gradient-to-br from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-emerald-500/20 active:scale-95"
+                aria-label={isA ? 'Gửi tin nhắn' : 'Send message'}>
                 <Send className="w-4 h-4" />
               </button>
             </div>

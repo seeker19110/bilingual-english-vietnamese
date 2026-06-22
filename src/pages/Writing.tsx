@@ -214,7 +214,7 @@ export default function Writing() {
             {isA ? 'Đề bài' : 'Essay prompt'}
           </label>
           <div className="relative">
-            <select onChange={e => e.target.value && setEssayPrompt(e.target.value)} defaultValue=""
+            <select value={essayPrompt} onChange={e => e.target.value && setEssayPrompt(e.target.value)}
               className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-400 appearance-none outline-none focus:border-violet-500/70 transition mb-2">
               <option value="">
                 {isA ? '— Chọn đề mẫu hoặc tự nhập —' : '— Choose a sample prompt or type your own —'}
@@ -244,7 +244,7 @@ export default function Writing() {
                 ? 'Viết bài vào đây... (IELTS Task 2 thường 250–350 từ)'
                 : 'Write your Vietnamese essay here... (aim for 150–250 words)'
             }
-            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-violet-500/70 transition resize-none min-h-[200px] max-h-[50vh]" />
+            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-violet-500/70 transition resize-none min-h-[160px] max-h-[40dvh] sm:max-h-[50vh]" />
         </div>
 
         {error && (

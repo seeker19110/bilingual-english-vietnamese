@@ -171,10 +171,10 @@ export default function CommonPhrases() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Bạn muốn nói gì…"
-              className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
+              className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-[16px] sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
             />
             {search && (
-              <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white">
+              <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             )}
@@ -253,10 +253,10 @@ export default function CommonPhrases() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Bạn muốn nói gì…"
-            className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
+            className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-[16px] sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
           />
           {search && (
-            <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white">
+            <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white">
               <X className="w-4 h-4" />
             </button>
           )}

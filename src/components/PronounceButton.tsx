@@ -79,6 +79,7 @@ export default function PronounceButton({ word }: Props) {
         onClick={handleClick}
         disabled={status === 'loading'}
         title="Phát âm"
+        aria-label={`Phát âm từ "${word}"`}
         className="shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-emerald-500/20 text-zinc-400 hover:text-emerald-300 transition disabled:opacity-60"
       >
         {status === 'loading' && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
