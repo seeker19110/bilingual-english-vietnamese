@@ -60,17 +60,32 @@ create table if not exists public.daily_usage (
   chat_count    integer not null default 0,
   writing_count integer not null default 0,
   speaking_count integer not null default 0,
+  stt_count     integer not null default 0,    -- lượt nhận diện giọng nói (STT), đếm riêng
   primary key (user_id, day)
 );
+-- Bổ sung cột cho DB cũ đã tạo bảng trước khi có stt_count (chạy lại an toàn).
+alter table public.daily_usage add column if not exists stt_count integer not null default 0;
 
--- ── 6. Bật Row Level Security cho tất cả bảng ───────────────────────────────
+-- ── 6. tts_cache: cache audio Google TTS dùng chung cho mọi user ─────────────
+-- hash = SHA-256(text + lang + voice)[0:32] → key tìm nhanh, tên file trên Storage
+-- Bảng này PUBLIC (không cần RLS bật user) — audio đã phát 1 lần thì ai cũng dùng được
+create table if not exists public.tts_cache (
+  hash       text primary key,              -- 32 ký tự hex
+  lang       text not null,                 -- 'en-US' | 'vi-VN'
+  voice      text not null default 'female',-- 'female' | 'male'
+  audio_url  text not null,                 -- public URL trên Supabase Storage
+  created_at timestamptz not null default now()
+);
+create index if not exists tts_cache_lang_idx on public.tts_cache(lang);
+
+-- ── 7. Bật Row Level Security cho tất cả bảng ───────────────────────────────
 alter table public.profiles            enable row level security;
 alter table public.chat_sessions       enable row level security;
 alter table public.writing_submissions enable row level security;
 alter table public.speaking_sessions   enable row level security;
 alter table public.daily_usage         enable row level security;
 
--- ── 7. Policy: mỗi người chỉ thao tác dữ liệu của chính mình ─────────────────
+-- ── 8. Policy: mỗi người chỉ thao tác dữ liệu của chính mình ─────────────────
 -- (drop trước rồi tạo lại để chạy lại file không bị lỗi "đã tồn tại")
 
 drop policy if exists "own profile" on public.profiles;
@@ -93,7 +108,34 @@ drop policy if exists "own usage" on public.daily_usage;
 create policy "own usage" on public.daily_usage
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
--- ── 8. Tự tạo profiles khi có người đăng ký mới ─────────────────────────────
+-- tts_cache: bất kỳ ai (kể cả chưa đăng nhập) đều đọc được audio public
+alter table public.tts_cache enable row level security;
+drop policy if exists "public read tts" on public.tts_cache;
+create policy "public read tts" on public.tts_cache for select using (true);
+-- Chỉ server (service role) mới được ghi — không cần policy insert/update cho anon
+
+-- ── 9b. Thêm cột onboarding vào profiles (chạy lại an toàn) ─────────────────
+alter table public.profiles add column if not exists onboarded     boolean not null default false;
+alter table public.profiles add column if not exists user_level    text             default 'beginner';
+alter table public.profiles add column if not exists goal          text             default 'daily';
+alter table public.profiles add column if not exists daily_minutes integer          default 10;
+
+-- ── 10. Bảng lưu push subscription để gửi thông báo nhắc học ─────────────────
+create table if not exists public.push_subscriptions (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  endpoint   text not null,
+  p256dh     text not null,
+  auth_key   text not null,
+  created_at timestamptz not null default now(),
+  unique (user_id, endpoint)
+);
+alter table public.push_subscriptions enable row level security;
+drop policy if exists "own push sub" on public.push_subscriptions;
+create policy "own push sub" on public.push_subscriptions
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- ── 9. Tự tạo profiles khi có người đăng ký mới ─────────────────────────────
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql

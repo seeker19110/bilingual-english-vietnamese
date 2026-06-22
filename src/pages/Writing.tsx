@@ -3,6 +3,7 @@ import { PenLine, Send, RotateCcw, ChevronDown, Trophy } from 'lucide-react'
 import Layout from '../components/Layout'
 import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
+import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { callClaude, parseJson } from '../lib/ai'
 import { writingSystemPrompt } from '../prompts'
@@ -55,7 +56,7 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
   const scoreGradient = overall >= 7 ? 'from-emerald-400 to-teal-300' : overall >= 5 ? 'from-amber-400 to-yellow-300' : 'from-red-400 to-orange-300'
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout title={isA ? 'Kết quả chấm bài' : 'Writing Results'} />
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-4 animate-fade-up">
 
@@ -145,6 +146,7 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
 
 export default function Writing() {
   const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
+  const toast = useToast()
   useCloudSync(user.id)          // kéo lượt dùng từ Supabase khi mở trang
   const dir: Direction = getDirection()
   const isA = dir === 'A'
@@ -190,7 +192,9 @@ export default function Writing() {
       setResult(sub)
       incrementUsage(user.id, 'writingCount')
     } catch (e) {
-      setError(e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error'))
+      const m = e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error')
+      setError(m)
+      toast.error(m)
     }
     setLoading(false)
   }
@@ -201,7 +205,7 @@ export default function Writing() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout title={isA ? 'Luyện viết & chấm điểm' : 'Writing Practice & Grading'} />
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-4 animate-fade-up">
 

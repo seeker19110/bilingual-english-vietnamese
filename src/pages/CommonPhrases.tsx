@@ -1,19 +1,13 @@
-import { useState, useMemo } from 'react'
-import { Volume2, Search, X, ChevronRight, ArrowLeft } from 'lucide-react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
 import Layout from '../components/Layout'
-import { getDirection } from '../lib/storage'
 import { useLang } from '../context/useLang'
-import { speak as speakTts } from '../lib/tts'
-import SUBJECTS from '../data/patterns'
-import type { Direction } from '../types'
+import KaraokeText from '../components/KaraokeText'
+import VoiceToggle from '../components/VoiceToggle'
+import { INDEX, loadSubject } from '../data/patterns/loader'
+import type { SubjectMeta, Subject } from '../data/patterns/loader'
 
-// Phát âm qua Google TTS (fallback giọng trình duyệt nếu lỗi)
-function speak(text: string, lang: 'en-US' | 'vi-VN') {
-  void speakTts(text, lang === 'en-US' ? 'en' : 'vi')
-}
-
-const CAT_COLORS: Record<string, string> = {}
-SUBJECTS.forEach(s => { CAT_COLORS[s.category] = s.color })
+const PAGE_SIZE = 7
 
 const COLOR_MAP: Record<string, { bg: string; text: string; border: string; badge: string }> = {
   emerald: { bg:'bg-emerald-500/10', text:'text-emerald-400', border:'border-emerald-500/25', badge:'bg-emerald-500/20 text-emerald-300' },
@@ -28,74 +22,127 @@ const COLOR_MAP: Record<string, { bg: string; text: string; border: string; badg
   cyan:    { bg:'bg-cyan-500/10',    text:'text-cyan-400',    border:'border-cyan-500/25',    badge:'bg-cyan-500/20 text-cyan-300' },
   slate:   { bg:'bg-slate-500/10',   text:'text-slate-400',   border:'border-slate-500/25',   badge:'bg-slate-500/20 text-slate-300' },
   purple:  { bg:'bg-purple-500/10',  text:'text-purple-400',  border:'border-purple-500/25',  badge:'bg-purple-500/20 text-purple-300' },
-  lime:    { bg:'bg-lime-500/10',    text:'text-lime-400',    border:'border-lime-500/25',    badge:'bg-lime-500/20 text-lime-300' },
-  yellow:  { bg:'bg-yellow-500/10',  text:'text-yellow-400',  border:'border-yellow-500/25',  badge:'bg-yellow-500/20 text-yellow-300' },
-  stone:   { bg:'bg-stone-500/10',   text:'text-stone-400',   border:'border-stone-500/25',   badge:'bg-stone-500/20 text-stone-300' },
-  fuchsia: { bg:'bg-fuchsia-500/10', text:'text-fuchsia-400', border:'border-fuchsia-500/25', badge:'bg-fuchsia-500/20 text-fuchsia-300' },
-  red:     { bg:'bg-red-500/10',     text:'text-red-400',     border:'border-red-500/25',     badge:'bg-red-500/20 text-red-300' },
 }
 
 function getColor(color: string) {
   return COLOR_MAP[color] ?? COLOR_MAP['slate']
 }
 
+// Phân loại cấu trúc câu từ starter
+type StructType = 'be' | 'toV' | 'V'
+
+const STRUCT_LABELS: Record<StructType, string> = {
+  be:  'S + be',
+  toV: 'S + to V',
+  V:   'S + V',
+}
+
+function getStructType(starter: string): StructType {
+  const words = starter.toLowerCase().split(/\s+/)
+  // Có "to" ở bất kỳ vị trí nào → S + to V
+  if (words.slice(1).includes('to')) return 'toV'
+  // Động từ "be" ở vị trí thứ 2 → S + be
+  if (['am', 'is', 'are', 'was', 'were', 'be'].some(w => words[1] === w)) return 'be'
+  return 'V'
+}
+
+// Xen kẽ round-robin theo category để mỗi batch 7 không quá 2 cùng loại
+function interleave(items: SubjectMeta[]): SubjectMeta[] {
+  const groups: Record<string, SubjectMeta[]> = {}
+  const order: string[] = []
+  items.forEach(s => {
+    if (!groups[s.category]) { groups[s.category] = []; order.push(s.category) }
+    groups[s.category].push(s)
+  })
+  const result: SubjectMeta[] = []
+  let i = 0
+  const cats = order
+  while (result.length < items.length) {
+    const cat = cats[i % cats.length]
+    const grp = groups[cat]
+    if (grp && grp.length > 0) result.push(grp.shift()!)
+    i++
+    if (i > items.length * 3) break
+  }
+  return result
+}
+
 export default function CommonPhrases() {
-  const dir: Direction = getDirection()
   const { T } = useLang()
-  const targetLang = dir === 'A' ? 'en-US' : 'vi-VN'
 
   const [search, setSearch] = useState('')
-  const [activeCat, setActiveCat] = useState<string | null>(null)
-  const [selectedStarter, setSelectedStarter] = useState<string | null>(null)
-
-  const categories = useMemo(() => [...new Set(SUBJECTS.map(s => s.category))], [])
+  const [activeStruct, setActiveStruct] = useState<StructType | null>(null)
+  const [visible, setVisible] = useState(PAGE_SIZE)
+  const [selected, setSelected] = useState<Subject | null>(null)
+  const [loading, setLoading] = useState(false)
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   const filtered = useMemo(() => {
-    let list = SUBJECTS
-    if (activeCat) list = list.filter(s => s.category === activeCat)
+    let list = INDEX
+    if (activeStruct) list = list.filter(s => getStructType(s.starter) === activeStruct)
     if (search.trim()) {
       const q = search.toLowerCase()
-      list = list.filter(s =>
-        s.starter.toLowerCase().includes(q) ||
-        s.sentences.some(sent => sent.en.toLowerCase().includes(q) || sent.vi.toLowerCase().includes(q))
-      )
+      list = list.filter(s => s.starter.toLowerCase().includes(q))
     }
     return list
-  }, [activeCat, search])
+  }, [activeStruct, search])
 
-  const selectedSubject = selectedStarter ? SUBJECTS.find(s => s.starter === selectedStarter) : null
+  const sorted = useMemo(() => interleave(filtered), [filtered])
 
-  if (selectedSubject) {
-    const c = getColor(selectedSubject.color)
+  useEffect(() => { setVisible(PAGE_SIZE) }, [activeStruct, search])
+
+  // Lazy load bằng IntersectionObserver — cuộn tới sentinel thì load thêm 7
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el || visible >= sorted.length) return
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        setVisible(v => Math.min(v + PAGE_SIZE, sorted.length))
+      }
+    }, { rootMargin: '300px' })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [visible, sorted.length])
+
+  async function openSubject(meta: SubjectMeta) {
+    setLoading(true)
+    const subj = await loadSubject(meta)
+    setSelected(subj)
+    setLoading(false)
+    window.scrollTo({ top: 0 })
+  }
+
+  // ── Màn hình chi tiết: 100 câu của 1 chủ thể ──────────────────────
+  if (selected) {
+    const c = getColor(selected.color)
     return (
-      <div className="min-h-screen bg-zinc-950">
-        <Layout title={selectedSubject.starter} back />
-        <main className="max-w-3xl mx-auto px-4 py-6">
-          <button
-            onClick={() => setSelectedStarter(null)}
-            className="flex items-center gap-1.5 text-zinc-500 hover:text-white text-sm mb-4 transition"
-          >
-            <ArrowLeft className="w-4 h-4" /> {T.phrasesBack}
-          </button>
-
-          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border mb-4 ${c.bg} ${c.text} ${c.border}`}>
-            {selectedSubject.category}
-          </div>
-
-          <div className="space-y-2">
-            {selectedSubject.sentences.map((sent, idx) => (
-              <div key={idx} className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3 flex items-start gap-3 group">
-                <span className="text-xs text-zinc-600 w-5 shrink-0 mt-1">{idx + 1}</span>
-                <div className="flex-1 min-w-0">
-                  <p className={`font-medium text-[15px] leading-snug ${c.text}`}>{sent.en}</p>
-                  <p className="text-sm text-zinc-400 mt-0.5">{sent.vi}</p>
+      <div className="h-dvh overflow-hidden bg-zinc-950 flex flex-col">
+        <Layout title={selected.starter} back extra={<VoiceToggle />} />
+        <main className="flex-1 overflow-hidden max-w-3xl mx-auto w-full px-4 py-4 flex flex-col">
+          {/* danh sách câu cuộn trong khung cố định, không đẩy trang xuống */}
+          <div className="flex-1 overflow-y-auto space-y-2 pr-0.5">
+            {selected.sentences.map((sent, idx) => (
+              <div
+                key={idx}
+                className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl overflow-hidden"
+              >
+                <div className="flex items-stretch">
+                  <span className="text-xs text-zinc-600 w-8 shrink-0 flex items-center justify-center border-r border-zinc-800/60">
+                    {idx + 1}
+                  </span>
+                  <div className="flex-1 divide-y divide-zinc-800/60">
+                    <KaraokeText
+                      text={sent.en} lang="en-US"
+                      textClass={`font-medium text-[15px] leading-snug ${c.text}`}
+                      buttonClass="w-full px-3 py-2.5 hover:bg-emerald-500/5 active:bg-emerald-500/10"
+                    />
+                    <KaraokeText
+                      text={sent.vi} lang="vi-VN"
+                      textClass="text-sm text-zinc-400"
+                      buttonClass="w-full px-3 py-2 hover:bg-sky-500/5 active:bg-sky-500/10"
+                    />
+                  </div>
                 </div>
-                <button
-                  onClick={() => speak(dir === 'A' ? sent.en : sent.vi, targetLang)}
-                  className="mt-0.5 p-1.5 rounded-lg text-zinc-600 hover:text-sky-400 hover:bg-zinc-800 active:scale-95 transition-all shrink-0"
-                >
-                  <Volume2 className="w-4 h-4" />
-                </button>
               </div>
             ))}
           </div>
@@ -104,18 +151,22 @@ export default function CommonPhrases() {
     )
   }
 
+  // ── Màn hình danh sách ──────────────────────────────────────────────
+  const shown = sorted.slice(0, visible)
+
   return (
-    <div className="min-h-screen bg-zinc-950">
-      <Layout title={T.phrasesPageTitle} subtitle={T.phrasesPageSub} back />
+    <div className="min-h-dvh bg-zinc-950">
+      <Layout title={T.phrasesPageTitle} back extra={<VoiceToggle />} />
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-4">
 
+        {/* Ô tìm kiếm */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder={T.phrasesSearch}
+            placeholder="Bạn muốn nói gì…"
             className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
           />
           {search && (
@@ -125,60 +176,63 @@ export default function CommonPhrases() {
           )}
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        {/* 3 loại cấu trúc S+V */}
+        <div className="flex gap-2 pb-1">
           <button
-            onClick={() => setActiveCat(null)}
+            onClick={() => setActiveStruct(null)}
             className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-              activeCat === null
+              activeStruct === null
                 ? 'bg-white/10 text-white border-white/20'
                 : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
             }`}
           >
             {T.phrasesAll}
           </button>
-          {categories.map(cat => {
-            const color = CAT_COLORS[cat] ?? 'slate'
-            const c = getColor(color)
-            const isActive = activeCat === cat
-            return (
-              <button
-                key={cat}
-                onClick={() => setActiveCat(isActive ? null : cat)}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-                  isActive ? `${c.bg} ${c.text} ${c.border}` : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
-                }`}
-              >
-                {cat}
-              </button>
-            )
-          })}
+          {(['be', 'toV', 'V'] as StructType[]).map(type => (
+            <button
+              key={type}
+              onClick={() => setActiveStruct(activeStruct === type ? null : type)}
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                activeStruct === type
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                  : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
+              }`}
+            >
+              {STRUCT_LABELS[type]}
+            </button>
+          ))}
         </div>
 
-        <p className="text-xs text-zinc-600">
-          {filtered.length} {T.phrasesSubjects} · {filtered.reduce((s, x) => s + x.sentences.length, 0)} {T.phrasesSentences}
-        </p>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {filtered.map(subj => {
+        {/* Grid cards — 7 chủ thể mỗi lần, xen kẽ danh mục */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          {shown.map(subj => {
             const c = getColor(subj.color)
             return (
               <button
                 key={subj.starter}
-                onClick={() => setSelectedStarter(subj.starter)}
-                className={`text-left bg-zinc-900/80 border rounded-xl p-3 hover:bg-zinc-800/60 active:scale-[0.98] transition-all group ${c.border}`}
+                onClick={() => openSubject(subj)}
+                disabled={loading}
+                className={`text-left bg-zinc-900/80 border rounded-xl p-3 hover:bg-zinc-800/60 active:scale-[0.98] transition-all group disabled:opacity-50 ${c.border}`}
               >
                 <div className={`text-xs px-2 py-0.5 rounded-full inline-block mb-2 font-medium ${c.badge}`}>
                   {subj.category}
                 </div>
                 <p className={`font-bold text-[17px] ${c.text} leading-tight`}>{subj.starter}</p>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-[11px] text-zinc-600">{subj.sentences.length} {T.phrasesSentences}</span>
+                  <span className="text-[11px] text-zinc-600">{subj.count} {T.phrasesSentences}</span>
                   <ChevronRight className="w-3.5 h-3.5 text-zinc-700 group-hover:text-zinc-400 transition" />
                 </div>
               </button>
             )
           })}
         </div>
+
+        {/* Sentinel lazy load */}
+        {visible < sorted.length && (
+          <div ref={sentinelRef} className="flex justify-center py-6">
+            <Loader2 className="w-5 h-5 animate-spin text-zinc-600" />
+          </div>
+        )}
 
         {filtered.length === 0 && (
           <div className="text-center py-16 text-zinc-600 text-sm">

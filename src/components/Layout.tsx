@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, LogOut, BookOpen } from 'lucide-react'
 import { logout } from '../lib/auth'
@@ -10,14 +11,15 @@ interface Props {
   title: string
   subtitle?: string
   back?: boolean
+  extra?: ReactNode
 }
 
-export default function Layout({ title, subtitle, back = true }: Props) {
+export default function Layout({ title, subtitle, back = true, extra }: Props) {
   const nav = useNavigate()
   const { user } = useAuth()
   const usage = user ? getUsage(user.id) : null
   const limit = user ? LIMITS[user.plan] : null
-  const { lang, toggleLang, T } = useLang()
+  const { T } = useLang()
 
   async function handleLogout() {
     await logout()
@@ -34,7 +36,7 @@ export default function Layout({ title, subtitle, back = true }: Props) {
         {/* Back / Logo */}
         {back ? (
           <button onClick={() => nav('/')}
-            className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition shrink-0 -ml-1 p-1 rounded-lg hover:bg-zinc-800/50">
+            className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition shrink-0 -ml-1 p-3 rounded-lg hover:bg-zinc-800/50">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:inline">{T.home}</span>
           </button>
@@ -61,25 +63,17 @@ export default function Layout({ title, subtitle, back = true }: Props) {
               <span>{T.chat} <strong className="text-zinc-400">{usage.chatCount}/{limit.chat}</strong></span>
               <span>{T.speak} <strong className="text-zinc-400">{usage.speakingCount}/{limit.speaking}</strong></span>
             </div>
-            {/* Mobile: mini bar */}
-            <div className="sm:hidden flex items-center gap-1 shrink-0">
-              <div className="w-12 h-1 bg-zinc-800 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500 rounded-full transition-all"
-                  style={{ width: `${Math.min(100, usage.chatCount / limit.chat * 100)}%` }} />
-              </div>
+            {/* Mobile: mini badges cho chat và nói */}
+            <div className="sm:hidden flex items-center gap-1.5 shrink-0 text-[10px] text-zinc-500">
+              <span><strong className="text-zinc-400">{usage.chatCount}</strong>/{limit.chat}</span>
+              <span className="text-zinc-700">·</span>
+              <span><strong className="text-zinc-400">{usage.speakingCount}</strong>/{limit.speaking}</span>
             </div>
           </>
         )}
 
-        {/* Nút chuyển ngôn ngữ giao diện */}
-        <button
-          onClick={toggleLang}
-          title={lang === 'vi' ? 'Switch to English' : 'Chuyển sang Tiếng Việt'}
-          className="flex items-center gap-1.5 bg-zinc-800/70 hover:bg-zinc-700/80 border border-zinc-700/50 hover:border-zinc-600 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all active:scale-95 shrink-0"
-        >
-          <span className="text-sm leading-none">{lang === 'vi' ? '🇻🇳' : '🇬🇧'}</span>
-          <span className="text-zinc-300">{lang === 'vi' ? 'Tiếng Việt' : 'English'}</span>
-        </button>
+        {/* Nút tùy chỉnh thêm vào header (vd: VoiceToggle) */}
+        {extra}
 
         {/* User avatar + logout */}
         {user && (
@@ -88,7 +82,7 @@ export default function Layout({ title, subtitle, back = true }: Props) {
               {user.name[0]?.toUpperCase()}
             </div>
             <button onClick={handleLogout}
-              className="text-zinc-600 hover:text-red-400 transition p-2.5 rounded-lg hover:bg-red-400/10"
+              className="text-zinc-600 hover:text-red-400 transition p-3 rounded-lg hover:bg-red-400/10"
               title={T.logout}>
               <LogOut className="w-3.5 h-3.5" />
             </button>

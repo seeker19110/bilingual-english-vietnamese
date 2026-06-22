@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Sparkles } from 'lucide-react'
 import type { DictEntry } from '../types'
 import PronounceButton from './PronounceButton'
-import SpeakButton from './SpeakButton'
+import KaraokeText from './KaraokeText'
 
 interface Props {
   entries: DictEntry[]
@@ -54,18 +54,12 @@ export default function WordOfTheDay({ entries }: Props) {
       {entry.ipa_en && <p className="text-xs text-emerald-400/70 font-mono mb-1">{entry.ipa_en}</p>}
       <p className="text-sm text-zinc-200 font-medium mb-1">{entry.vi}</p>
 
-      {/* Câu ví dụ */}
+      {/* Câu ví dụ — karaoke highlight từng chữ khi nghe */}
       {entry.ex_en && (
         <div className="mt-2 pl-3 border-l-2 border-zinc-700 space-y-1">
-          <div className="flex items-start gap-1.5">
-            <SpeakButton text={entry.ex_en} lang="en" title="Nghe câu tiếng Anh" size="xs" />
-            <p className="text-xs text-zinc-400 italic leading-relaxed">{entry.ex_en}</p>
-          </div>
+          <KaraokeText text={entry.ex_en} lang="en-US" textClass="text-xs text-zinc-400 italic leading-relaxed" iconSize="xs" />
           {entry.ex_vi && (
-            <div className="flex items-start gap-1.5">
-              <SpeakButton text={entry.ex_vi} lang="vi" title="Nghe câu tiếng Việt" size="xs" />
-              <p className="text-xs text-zinc-500 leading-relaxed">{entry.ex_vi}</p>
-            </div>
+            <KaraokeText text={entry.ex_vi} lang="vi-VN" textClass="text-xs text-zinc-500 leading-relaxed" iconSize="xs" />
           )}
         </div>
       )}

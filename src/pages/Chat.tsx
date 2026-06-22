@@ -4,6 +4,7 @@ import Layout from '../components/Layout'
 import SpeakButton from '../components/SpeakButton'
 import { saveChatSession, getChatSessions, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
+import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { callClaude } from '../lib/ai'
 import { chatSystemPrompt, situationLabel } from '../prompts'
@@ -21,7 +22,7 @@ function SetupScreen({ onStart, loading, error, dir }: {
   const isA = dir === 'A'
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
+    <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 overflow-y-auto">
 
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center mb-5 shadow-xl shadow-emerald-500/25 animate-scale-in">
         <Sparkles className="w-8 h-8 text-white" />
@@ -99,8 +100,8 @@ function SetupScreen({ onStart, loading, error, dir }: {
 function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direction }) {
   // Chiều A: AI nói tiếng Anh, giải thích tiếng Việt
   // Chiều B: AI nói tiếng Việt, giải thích tiếng Anh
-  const speechLang = dir === 'A' ? 'en' as const : 'vi' as const
-  const feedbackLang = dir === 'A' ? 'vi' as const : 'en' as const
+  const speechLang = dir === 'A' ? 'en-US' as const : 'vi-VN' as const
+  const feedbackLang = dir === 'A' ? 'vi-VN' as const : 'en-US' as const
   const isA = dir === 'A'
 
   if (msg.role === 'user') {
@@ -175,6 +176,7 @@ function TypingDots() {
 // ── Main Chat page ────────────────────────────────────────────────────────────
 export default function Chat() {
   const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
+  const toast = useToast()
   useCloudSync(user.id)          // kéo lịch sử + lượt dùng từ Supabase khi mở trang
   const dir = getDirection()
   const isA = dir === 'A'
@@ -211,7 +213,9 @@ export default function Chat() {
       setLastIdx(0)
       incrementUsage(user.id, 'chatCount')
     } catch (e) {
-      setError(e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error'))
+      const msg = e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error')
+      setError(msg)
+      toast.error(msg)
     }
     setLoading(false)
   }
@@ -240,7 +244,9 @@ export default function Chat() {
       setLastIdx(final.messages.length - 1)
       incrementUsage(user.id, 'chatCount')
     } catch (e) {
-      setError(e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error'))
+      const msg = e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error')
+      setError(msg)
+      toast.error(msg)
     }
     setLoading(false)
     setTimeout(() => inputRef.current?.focus(), 50)
@@ -249,7 +255,7 @@ export default function Chat() {
   const prevSessions = getChatSessions(user.id).slice(0, 3)
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col">
+    <div className="h-[100dvh] bg-zinc-950 flex flex-col">
       <Layout
         title={isA ? 'Chat với gia sư' : 'Chat with tutor'}
         subtitle={session
@@ -262,7 +268,7 @@ export default function Chat() {
       />
 
       {!session ? (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col overflow-y-auto">
           <SetupScreen onStart={startSession} loading={loading} error={error} dir={dir} />
 
           {prevSessions.length > 0 && (
@@ -287,7 +293,7 @@ export default function Chat() {
         </div>
       ) : (
         <>
-          <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
+          <div className="flex-1 min-h-0 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
             {session.messages.map((m, i) => (
               <Bubble key={m.id} msg={m} isNew={i >= lastIdx} dir={dir} />
             ))}

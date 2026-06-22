@@ -6,6 +6,7 @@ import type { UiLang } from '../lib/uiLang'
 export interface LangContextValue {
   lang: UiLang
   toggleLang: () => void
+  setLang: (l: UiLang) => void
   T: Translations
 }
 
