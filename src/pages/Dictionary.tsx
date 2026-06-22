@@ -284,8 +284,8 @@ export default function Dictionary() {
 
       {/* Search bar cố định dưới — CHỈ trên mobile, tab Tra từ */}
       {tab === 'search' && (
-        <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe">
-          <div className="relative max-w-3xl mx-auto">
+        <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md pt-3 pb-safe flex justify-center">
+          <div className="relative w-[97%]">
             <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               autoFocus
