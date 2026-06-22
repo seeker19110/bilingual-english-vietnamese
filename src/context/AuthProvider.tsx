@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, type ReactNode } from 'react'
 import { AuthContext } from './authContext'
 import { getCurrentUser } from '../lib/auth'
 import { supabase } from '../lib/supabase'
+import { startPreload, resetPreload } from '../lib/preloader'
 import type { User } from '../types'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -18,11 +19,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refresh().finally(() => setLoading(false))
 
     // Lắng nghe thay đổi auth (đăng nhập / đăng xuất / token refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string) => {
+      if (event === 'SIGNED_OUT') resetPreload()
       refresh()
     })
     return () => subscription.unsubscribe()
   }, [refresh])
+
+  // Khi user đăng nhập xong → bắt đầu tải trước từ điển + audio (chạy nền)
+  useEffect(() => {
+    if (user) {
+      // Dùng setTimeout để không block quá trình render trang đầu tiên
+      const tid = setTimeout(() => { void startPreload() }, 2000)
+      return () => clearTimeout(tid)
+    }
+  }, [user?.id])
 
   return (
     <AuthContext.Provider value={{ user, loading, refresh }}>

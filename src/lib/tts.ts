@@ -5,6 +5,7 @@
 // Fallback về Web Speech API nếu /api/tts lỗi (mất mạng, server timeout, chưa đăng nhập...).
 
 import { supabase } from './supabase'
+import { getPreloadedAudio, audioCacheKey, audioPreloadCache } from './preloader'
 
 type Lang = 'en-US' | 'vi-VN'
 export type Voice = 'female' | 'male'
@@ -87,34 +88,44 @@ async function speakViaGoogle(
 ): Promise<void> {
   if (!text.trim()) return
 
-  const { data: { session } } = await supabase.auth.getSession()
-  const token = session?.access_token
-  if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
+  // Kiểm tra preload cache trước — nếu đã tải sẵn thì dùng ngay, không cần gọi server
+  const preloadedUrl = getPreloadedAudio(text, lang, voice)
+  let blobUrl: string
 
-  const callTts = () => fetch('/api/tts', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ text, lang, voice }),
-  })
+  if (preloadedUrl) {
+    blobUrl = preloadedUrl
+  } else {
+    const { data: { session } } = await supabase.auth.getSession()
+    const token = session?.access_token
+    if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
 
-  let res = await callTts()
-  // 429 = quá nhiều request (thường do phát nhiều câu liên tiếp). Đợi 1.2s rồi thử lại
-  // 1 lần trước khi rơi về Web Speech — phần lớn câu đã cache nên lần 2 thường qua.
-  if (res.status === 429) {
-    await new Promise(r => setTimeout(r, 1200))
-    res = await callTts()
+    const callTts = () => fetch('/api/tts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text, lang, voice }),
+    })
+
+    let res = await callTts()
+    // 429 = quá nhiều request (thường do phát nhiều câu liên tiếp). Đợi 1.2s rồi thử lại
+    // 1 lần trước khi rơi về Web Speech — phần lớn câu đã cache nên lần 2 thường qua.
+    if (res.status === 429) {
+      await new Promise(r => setTimeout(r, 1200))
+      res = await callTts()
+    }
+
+    if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
+
+    const { audio_url, key_b64, iv_b64 } = await res.json() as {
+      audio_url: string; key_b64: string; iv_b64: string
+    }
+
+    blobUrl = await decryptCachedAudio(audio_url, key_b64, iv_b64)
+    // Lưu vào preload cache để tái sử dụng nếu phát lại
+    audioPreloadCache.set(audioCacheKey(text, lang, voice), blobUrl)
   }
-
-  if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
-
-  const { audio_url, key_b64, iv_b64 } = await res.json() as {
-    audio_url: string; key_b64: string; iv_b64: string
-  }
-
-  const blobUrl = await decryptCachedAudio(audio_url, key_b64, iv_b64)
 
   // Tách từ để tính index tương ứng với vị trí phát (ước tính theo tỉ lệ thời gian)
   const words = onWord ? text.trim().split(/\s+/) : []
@@ -138,7 +149,10 @@ async function speakViaGoogle(
     }
 
     const cleanup = () => {
-      URL.revokeObjectURL(blobUrl)
+      // Không revoke blob URL nếu đang được giữ trong preload cache (để tái sử dụng)
+      if (!audioPreloadCache.has(audioCacheKey(text, lang, voice))) {
+        URL.revokeObjectURL(blobUrl)
+      }
       if (currentBlobUrl === blobUrl) currentBlobUrl = null
       if (currentAudio === audio) currentAudio = null
     }
