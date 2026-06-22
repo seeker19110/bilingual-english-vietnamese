@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, memo, useMemo } from 'react'
+import { useState, useRef, useEffect, memo, useMemo, useDeferredValue } from 'react'
 import { Play, Pause, Square, Volume2, Loader2, Search, X } from 'lucide-react'
 import Layout from '../components/Layout'
 import VoiceToggle from '../components/VoiceToggle'
@@ -74,6 +74,7 @@ export default function Lessons() {
   const dir: Direction = getDirection()
   const isA = dir === 'A'
   const [query, setQuery]           = useState('')
+  const deferredQuery               = useDeferredValue(query)
   const [selectedMeta, setSelectedMeta] = useState<LessonMeta | null>(null)
   const [lesson, setLesson]         = useState<Lesson | null>(null)
   const [loadingLesson, setLoadingLesson] = useState(false)
@@ -129,7 +130,7 @@ export default function Lessons() {
           <div className="hidden sm:block mb-4">
             <SearchBar query={query} setQuery={setQuery} isA={isA} alwaysVisible />
           </div>
-          <LessonList lessons={INDEX} isA={isA} query={query} onSelect={setSelectedMeta} />
+          <LessonList lessons={INDEX} isA={isA} query={deferredQuery} onSelect={setSelectedMeta} />
         </div>
       </main>
 

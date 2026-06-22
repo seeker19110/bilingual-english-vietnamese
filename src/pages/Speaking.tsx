@@ -181,7 +181,7 @@ export default function Speaking() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [session?.messages, loading])
+  }, [session?.messages.length, loading])
 
   useEffect(() => () => { stopSpeaking(); stopRecRef.current?.(); recorderRef.current?.cancel() }, [])
 

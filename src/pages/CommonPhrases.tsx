@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef, useDeferredValue } from 'react'
 import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
 import Layout from '../components/Layout'
 import { useLang } from '../context/useLang'
@@ -71,6 +71,7 @@ export default function CommonPhrases() {
   const { T } = useLang()
 
   const [search, setSearch] = useState('')
+  const deferredSearch      = useDeferredValue(search)  // filter lazy, input không lag
   const [activeStruct, setActiveStruct] = useState<StructType | null>(null)
   const [visible, setVisible] = useState(PAGE_SIZE)
   const [selected, setSelected] = useState<Subject | null>(null)
@@ -80,16 +81,16 @@ export default function CommonPhrases() {
   const filtered = useMemo(() => {
     let list = INDEX
     if (activeStruct) list = list.filter(s => getStructType(s.starter) === activeStruct)
-    if (search.trim()) {
-      const q = search.toLowerCase()
+    if (deferredSearch.trim()) {
+      const q = deferredSearch.toLowerCase()
       list = list.filter(s => s.starter.toLowerCase().includes(q))
     }
     return list
-  }, [activeStruct, search])
+  }, [activeStruct, deferredSearch])
 
   const sorted = useMemo(() => interleave(filtered), [filtered])
 
-  useEffect(() => { setVisible(PAGE_SIZE) }, [activeStruct, search])
+  useEffect(() => { setVisible(PAGE_SIZE) }, [activeStruct, deferredSearch])
 
   // Lazy load bằng IntersectionObserver — cuộn tới sentinel thì load thêm 7
   useEffect(() => {

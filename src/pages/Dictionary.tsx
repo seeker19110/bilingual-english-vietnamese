@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useEffect } from 'react'
+import { useMemo, useState, useRef, useEffect, useDeferredValue } from 'react'
 import { Search, X, BookText, Layers, GraduationCap, ChevronLeft, ChevronRight } from 'lucide-react'
 import Layout from '../components/Layout'
 import VoiceToggle from '../components/VoiceToggle'
@@ -24,6 +24,7 @@ export default function Dictionary() {
   const isA = dir === 'A'
   const [tab, setTab]         = useState<Tab>('search')
   const [query, setQuery]     = useState('')
+  const deferredQuery         = useDeferredValue(query)  // filter chạy lazy, input không bị lag
   const [page, setPage]       = useState(0)
   const [learnedKey, setLearnedKey] = useState(0)
   const [jumpPos, setJumpPos] = useState<string | null>(null)
@@ -36,8 +37,8 @@ export default function Dictionary() {
     loadDictionary().then(data => { setEntries(data); setReady(true) })
   }, [])
 
-  // reset trang khi gõ từ mới
-  useEffect(() => { setPage(0) }, [query])
+  // reset trang khi query deferred thay đổi
+  useEffect(() => { setPage(0) }, [deferredQuery])
 
   useEffect(() => {
     if (tab !== 'pos' || !jumpPos) return
@@ -47,9 +48,9 @@ export default function Dictionary() {
 
   function openPos(posCode: string) { setJumpPos(posCode); setTab('pos') }
 
-  // Tất cả kết quả khớp với query
+  // Tất cả kết quả khớp — dùng deferredQuery để không block input
   const allMatches = useMemo((): DictEntry[] => {
-    const q = query.trim().toLowerCase()
+    const q = deferredQuery.trim().toLowerCase()
     if (!q) return []
     const starts: DictEntry[] = []
     const contains: DictEntry[] = []
@@ -58,7 +59,7 @@ export default function Dictionary() {
       else if (e.word.includes(q)) contains.push(e)
     }
     return [...starts, ...contains]
-  }, [query, entries])
+  }, [deferredQuery, entries])
 
   const totalPages = Math.max(1, Math.ceil(allMatches.length / PAGE_SIZE))
   const results    = allMatches.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)

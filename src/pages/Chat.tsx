@@ -192,7 +192,7 @@ export default function Chat() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [session?.messages, loading])
+  }, [session?.messages.length, loading])
 
   async function startSession(situation: string, level: Level) {
     const usage = getUsage(user.id)

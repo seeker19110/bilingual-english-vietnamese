@@ -37,12 +37,24 @@
     padding-top: env(safe-area-inset-top, 0px);
   }
 
-  /* Glass card */
+  /* Glass card — fallback solid khi giảm hiệu ứng hoặc thiết bị yếu */
   .glass {
-    background: rgba(24, 24, 27, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(24, 24, 27, 0.95);
     border: 1px solid rgba(63, 63, 70, 0.8);
+  }
+  @supports (backdrop-filter: blur(1px)) {
+    .glass {
+      background: rgba(24, 24, 27, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glass {
+      background: rgba(24, 24, 27, 0.98);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
   }
 
   /* Gradient text */
