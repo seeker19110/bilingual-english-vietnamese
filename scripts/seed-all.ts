@@ -203,17 +203,21 @@ async function runBatch(
   total: number,
 ): Promise<void> {
   const results = await Promise.all(tasks.map((t) => processTask(t)))
+  let batchErrors = 0
   results.forEach((result, idx) => {
     if (result.status === 'ok')        counters.ok++
     else if (result.status === 'skip') counters.skip++
     else {
       counters.errors++
+      batchErrors++
       failed.push({ task: tasks[idx], message: result.message })
     }
   })
   processed.value = Math.min(processed.value + tasks.length, total)
   bar.update(processed.value, { ...counters })
-  if (DELAY_MS > 0) await sleep(DELAY_MS)
+  // Nếu batch này có lỗi (thường do 429) → nghỉ 10s để quota hồi phục
+  if (batchErrors > 0) await sleep(10_000)
+  else if (DELAY_MS > 0) await sleep(DELAY_MS)
 }
 
 // ── Vòng xử lý xen kẽ ───────────────────────────────────────────────────────
