@@ -1,10 +1,17 @@
 // scripts/gen-lessons.mjs
-// Sinh bài học hội thoại song ngữ Anh-Việt bằng Claude API.
-// Chạy: ANTHROPIC_API_KEY=sk-... node scripts/gen-lessons.mjs
+// Sinh 1000 bài hội thoại song ngữ Anh-Việt bằng Claude API.
+// Chạy từng bước:
+//   1. Đặt API key:  export ANTHROPIC_API_KEY=sk-ant-...
+//   2. Sinh bài học: node scripts/gen-lessons.mjs
+//   3. Tạo chunks:   node scripts/split-lessons.mjs
+//
 // Tùy chọn:
-//   --from 101   bắt đầu từ bài số 101 (mặc định tiếp theo bài cuối cùng)
-//   --count 10   số bài cần sinh (mặc định 10)
-//   --turns 50   số lượt thoại mỗi bài (mặc định 50)
+//   --from  101   bắt đầu từ id bài này (mặc định: bài đầu chưa có nội dung AI)
+//   --to    200   kết thúc ở id bài này (mặc định: 1000)
+//   --batch 5     số bài sinh song song (mặc định: 3, tăng nếu rate limit cho phép)
+//   --model claude-sonnet-4-6  (mặc định: claude-sonnet-4-6 cho chất lượng cao)
+//
+// Script tự lưu sau mỗi bài → có thể Ctrl+C và chạy lại, không mất bài đã sinh.
 
 import Anthropic from '@anthropic-ai/sdk'
 import * as fs from 'node:fs'
@@ -14,245 +21,211 @@ import { fileURLToPath } from 'node:url'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const LESSONS_FILE = path.join(ROOT, 'src/data/lessons.json')
 
-// ── Đọc tham số dòng lệnh ────────────────────────────────────────────────────
+// ── Đọc tham số ──────────────────────────────────────────────────────────────
 const args = process.argv.slice(2)
-function getArg(name, def) {
+function arg(name, def) {
   const i = args.indexOf(name)
-  return i !== -1 ? parseInt(args[i + 1]) : def
+  return i !== -1 ? args[i + 1] : def
 }
 
-const TURNS_PER_LESSON = getArg('--turns', 50)
-const BATCH = 3  // sinh 3 bài 1 lần gọi API
+const FROM    = parseInt(arg('--from', '101'))
+const TO      = parseInt(arg('--to', '1000'))
+const BATCH   = parseInt(arg('--batch', '3'))
+const MODEL   = arg('--model', 'claude-sonnet-4-6')
+const TURNS   = 50
 
-// ── Đọc file hiện tại ────────────────────────────────────────────────────────
-let existing = []
-if (fs.existsSync(LESSONS_FILE)) {
-  existing = JSON.parse(fs.readFileSync(LESSONS_FILE, 'utf8'))
-}
-const lastId = existing.length > 0 ? existing[existing.length - 1].id : 0
+// ── Đọc bài hiện có ──────────────────────────────────────────────────────────
+let lessons = fs.existsSync(LESSONS_FILE)
+  ? JSON.parse(fs.readFileSync(LESSONS_FILE, 'utf8'))
+  : []
 
-const startFrom = getArg('--from', lastId + 1)
-const totalCount = getArg('--count', 10)
+// Phát hiện bài đã có nội dung AI (phân biệt với template bằng marker)
+const aiDoneIds = new Set(
+  lessons
+    .filter(l => l._aiGenerated === true)
+    .map(l => l.id)
+)
 
-// ── 1000 chủ đề bài học ──────────────────────────────────────────────────────
-// Được tổ chức từ dễ → khó, giao tiếp hàng ngày → chuyên ngành
-const ALL_TOPICS = [
-  // === NHÓM 1: Giao tiếp cơ bản (bài 1-100, đã có) ===
-  // === NHÓM 2: Cuộc sống hàng ngày nâng cao (101-200) ===
-  { id: 101, title: "Đặt lịch hẹn qua điện thoại", situation: "Minh gọi điện đặt lịch hẹn với bác sĩ.", speakerAName: { vi: "Minh", en: "Minh" }, speakerBName: { vi: "Lễ tân", en: "Receptionist" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 102, title: "Thuê xe máy", situation: "Hoa muốn thuê xe máy đi thăm quan thành phố.", speakerAName: { vi: "Hoa", en: "Hoa" }, speakerBName: { vi: "Người cho thuê", en: "Rental owner" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 103, title: "Gọi thợ sửa điện nước", situation: "Anh Tuấn gọi thợ đến sửa vòi nước bị hỏng.", speakerAName: { vi: "Anh Tuấn", en: "Tuan" }, speakerBName: { vi: "Thợ sửa", en: "Repairman" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 104, title: "Mua vé tàu hỏa", situation: "Lan mua vé tàu từ Hà Nội đi Đà Nẵng.", speakerAName: { vi: "Lan", en: "Lan" }, speakerBName: { vi: "Nhân viên bán vé", en: "Ticket agent" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 105, title: "Nhờ hàng xóm trông nhà", situation: "Chị Mai nhờ hàng xóm trông nhà khi đi du lịch.", speakerAName: { vi: "Chị Mai", en: "Mai" }, speakerBName: { vi: "Chị Hằng", en: "Hang" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 106, title: "Đổi tiền ngoại tệ", situation: "Khách du lịch đổi đô la sang tiền Việt tại ngân hàng.", speakerAName: { vi: "David", en: "David" }, speakerBName: { vi: "Nhân viên ngân hàng", en: "Bank teller" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 107, title: "Mua sắm ở chợ truyền thống", situation: "Sarah mua rau và thịt ở chợ Bến Thành.", speakerAName: { vi: "Sarah", en: "Sarah" }, speakerBName: { vi: "Người bán hàng", en: "Vendor" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 108, title: "Xin giấy phép lái xe", situation: "Anh Hùng đến trung tâm đăng kiểm để đổi bằng lái.", speakerAName: { vi: "Anh Hùng", en: "Hung" }, speakerBName: { vi: "Nhân viên", en: "Officer" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 109, title: "Đăng ký thẻ thư viện", situation: "Sinh viên Phương đăng ký mượn sách ở thư viện.", speakerAName: { vi: "Phương", en: "Phuong" }, speakerBName: { vi: "Thủ thư", en: "Librarian" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 110, title: "Khiếu nại sản phẩm lỗi", situation: "Khách hàng mang laptop lỗi đến cửa hàng đổi trả.", speakerAName: { vi: "Anh Bình", en: "Binh" }, speakerBName: { vi: "Nhân viên dịch vụ", en: "Service staff" }, speakerAGender: "male", speakerBGender: "female" },
-  // 111-120
-  { id: 111, title: "Hỏi về khóa học tiếng Anh", situation: "Thúy hỏi về các khóa học tại trung tâm ngoại ngữ.", speakerAName: { vi: "Thúy", en: "Thuy" }, speakerBName: { vi: "Tư vấn viên", en: "Consultant" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 112, title: "Thuê phòng trọ", situation: "Sinh viên Khoa xem phòng trọ và hỏi về giá cả.", speakerAName: { vi: "Khoa", en: "Khoa" }, speakerBName: { vi: "Chủ nhà", en: "Landlord" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 113, title: "Mở tài khoản ngân hàng", situation: "Hà mở tài khoản ngân hàng lần đầu.", speakerAName: { vi: "Hà", en: "Ha" }, speakerBName: { vi: "Nhân viên ngân hàng", en: "Bank officer" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 114, title: "Đặt tiệc sinh nhật", situation: "Anh Đức đặt bàn tiệc sinh nhật cho vợ tại nhà hàng.", speakerAName: { vi: "Anh Đức", en: "Duc" }, speakerBName: { vi: "Quản lý nhà hàng", en: "Restaurant manager" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 115, title: "Nói chuyện về thói quen ăn uống", situation: "Hai người bạn thảo luận về chế độ ăn lành mạnh.", speakerAName: { vi: "Linh", en: "Linh" }, speakerBName: { vi: "Trang", en: "Trang" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 116, title: "Xin nghỉ phép", situation: "Nhân viên Hải xin sếp cho nghỉ phép một tuần.", speakerAName: { vi: "Hải", en: "Hai" }, speakerBName: { vi: "Sếp", en: "Manager" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 117, title: "Hỏi đường đi bộ", situation: "Khách nước ngoài hỏi đường đến bảo tàng Hồ Chí Minh.", speakerAName: { vi: "Tom", en: "Tom" }, speakerBName: { vi: "Người dân địa phương", en: "Local resident" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 118, title: "Gửi và nhận bưu kiện", situation: "Chị Nga gửi quà cho người thân ở nước ngoài.", speakerAName: { vi: "Chị Nga", en: "Nga" }, speakerBName: { vi: "Nhân viên bưu điện", en: "Post office staff" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 119, title: "Mua bảo hiểm xe máy", situation: "Anh Minh mua bảo hiểm cho xe máy mới.", speakerAName: { vi: "Anh Minh", en: "Minh" }, speakerBName: { vi: "Nhân viên bảo hiểm", en: "Insurance agent" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 120, title: "Thảo luận về du lịch ba lô", situation: "Hai du khách trao đổi kinh nghiệm du lịch tiết kiệm.", speakerAName: { vi: "Nam", en: "Nam" }, speakerBName: { vi: "Emma", en: "Emma" }, speakerAGender: "male", speakerBGender: "female" },
-  // 121-150: Gia đình & Quan hệ xã hội
-  { id: 121, title: "Bàn về kế hoạch hôn nhân", situation: "Cặp đôi thảo luận về kế hoạch đám cưới.", speakerAName: { vi: "Minh", en: "Minh" }, speakerBName: { vi: "Lan", en: "Lan" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 122, title: "Dạy con làm bài tập", situation: "Bố giúp con học bài tập về nhà môn Toán.", speakerAName: { vi: "Bố", en: "Dad" }, speakerBName: { vi: "Con", en: "Child" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 123, title: "Nói chuyện với bố mẹ về nghề nghiệp", situation: "Sinh viên thảo luận với bố mẹ về định hướng nghề nghiệp.", speakerAName: { vi: "Mẹ", en: "Mom" }, speakerBName: { vi: "Con gái", en: "Daughter" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 124, title: "Hòa giải mâu thuẫn gia đình", situation: "Hai anh em giải quyết xích mích về tài sản cha mẹ để lại.", speakerAName: { vi: "Anh Hai", en: "Older brother" }, speakerBName: { vi: "Em Trai", en: "Younger brother" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 125, title: "Thăm hỏi người ốm", situation: "Bạn bè đến thăm người bạn đang nằm viện.", speakerAName: { vi: "Hoa", en: "Hoa" }, speakerBName: { vi: "Trang", en: "Trang" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 126, title: "Chuẩn bị tiệc Tết", situation: "Cả gia đình bàn về kế hoạch đón Tết Nguyên Đán.", speakerAName: { vi: "Mẹ", en: "Mom" }, speakerBName: { vi: "Con trai", en: "Son" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 127, title: "Chia sẻ về áp lực cuộc sống", situation: "Hai người bạn thân nói chuyện về stress trong công việc.", speakerAName: { vi: "Khoa", en: "Khoa" }, speakerBName: { vi: "Tuấn", en: "Tuan" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 128, title: "Xin lỗi vì lỡ hẹn", situation: "Nam xin lỗi bạn gái vì đã quên ngày kỷ niệm.", speakerAName: { vi: "Nam", en: "Nam" }, speakerBName: { vi: "Linh", en: "Linh" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 129, title: "Bàn về nuôi thú cưng", situation: "Vợ chồng thảo luận về việc nuôi chó hay mèo.", speakerAName: { vi: "Chồng", en: "Husband" }, speakerBName: { vi: "Vợ", en: "Wife" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 130, title: "Tư vấn bạn bè về tình yêu", situation: "Hoa giúp bạn thân xử lý tình huống tình cảm khó khăn.", speakerAName: { vi: "Hoa", en: "Hoa" }, speakerBName: { vi: "Thảo", en: "Thao" }, speakerAGender: "female", speakerBGender: "female" },
-  // 131-160: Sức khỏe & Y tế
-  { id: 131, title: "Khám sức khỏe định kỳ", situation: "Chị Lan đến khám sức khỏe tổng quát hàng năm.", speakerAName: { vi: "Bác sĩ", en: "Doctor" }, speakerBName: { vi: "Bệnh nhân Lan", en: "Patient Lan" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 132, title: "Hỏi bác sĩ về thuốc", situation: "Bệnh nhân hỏi về tác dụng phụ của thuốc được kê.", speakerAName: { vi: "Anh Hùng", en: "Hung" }, speakerBName: { vi: "Bác sĩ", en: "Doctor" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 133, title: "Tư vấn dinh dưỡng", situation: "Chuyên gia dinh dưỡng tư vấn cho bệnh nhân tiểu đường.", speakerAName: { vi: "Bác sĩ dinh dưỡng", en: "Nutritionist" }, speakerBName: { vi: "Bệnh nhân", en: "Patient" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 134, title: "Đặt lịch phẫu thuật", situation: "Bệnh nhân thảo luận với bác sĩ về ca mổ sắp tới.", speakerAName: { vi: "Bác sĩ phẫu thuật", en: "Surgeon" }, speakerBName: { vi: "Bệnh nhân", en: "Patient" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 135, title: "Tư vấn sức khỏe tâm thần", situation: "Người trẻ lần đầu gặp nhà tâm lý học.", speakerAName: { vi: "Nhà tâm lý", en: "Therapist" }, speakerBName: { vi: "Phương", en: "Phuong" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 136, title: "Mua thuốc tại hiệu thuốc", situation: "Khách hàng hỏi dược sĩ về thuốc trị cảm cúm.", speakerAName: { vi: "Khách hàng", en: "Customer" }, speakerBName: { vi: "Dược sĩ", en: "Pharmacist" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 137, title: "Tập thể dục với huấn luyện viên", situation: "Huấn luyện viên gym hướng dẫn học viên mới.", speakerAName: { vi: "Huấn luyện viên", en: "Trainer" }, speakerBName: { vi: "Học viên", en: "Student" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 138, title: "Hỏi về bảo hiểm y tế", situation: "Nhân viên mới hỏi về chế độ bảo hiểm y tế công ty.", speakerAName: { vi: "Nhân viên mới", en: "New employee" }, speakerBName: { vi: "Nhân sự", en: "HR staff" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 139, title: "Khám nha khoa", situation: "Bệnh nhân đến khám và nhổ răng khôn.", speakerAName: { vi: "Nha sĩ", en: "Dentist" }, speakerBName: { vi: "Bệnh nhân", en: "Patient" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 140, title: "Nói về yoga và thiền", situation: "Hướng dẫn viên yoga giải thích về lợi ích của thiền.", speakerAName: { vi: "Huấn luyện viên", en: "Yoga instructor" }, speakerBName: { vi: "Học viên", en: "Student" }, speakerAGender: "female", speakerBGender: "male" },
-  // 141-170: Giáo dục & Học thuật
-  { id: 141, title: "Thi vào đại học", situation: "Học sinh hỏi giáo viên về kỳ thi đại học.", speakerAName: { vi: "Học sinh Nam", en: "Student Nam" }, speakerBName: { vi: "Giáo viên", en: "Teacher" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 142, title: "Xin học bổng nước ngoài", situation: "Sinh viên hỏi cố vấn về cách xin học bổng Fulbright.", speakerAName: { vi: "Sinh viên Thảo", en: "Student Thao" }, speakerBName: { vi: "Cố vấn học thuật", en: "Academic advisor" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 143, title: "Thuyết trình nhóm", situation: "Nhóm sinh viên chuẩn bị bài thuyết trình.", speakerAName: { vi: "Nhóm trưởng Minh", en: "Leader Minh" }, speakerBName: { vi: "Thành viên Hà", en: "Member Ha" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 144, title: "Viết luận văn tốt nghiệp", situation: "Sinh viên thảo luận với giáo sư hướng dẫn luận văn.", speakerAName: { vi: "Sinh viên", en: "Student" }, speakerBName: { vi: "Giáo sư", en: "Professor" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 145, title: "Đăng ký môn học đại học", situation: "Sinh viên năm nhất hỏi giáo vụ về đăng ký môn học.", speakerAName: { vi: "Sinh viên", en: "Student" }, speakerBName: { vi: "Phòng giáo vụ", en: "Registrar" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 146, title: "Thảo luận về phương pháp học", situation: "Hai bạn sinh viên chia sẻ cách học hiệu quả.", speakerAName: { vi: "Huy", en: "Huy" }, speakerBName: { vi: "Linh", en: "Linh" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 147, title: "Phỏng vấn thực tập", situation: "Sinh viên phỏng vấn thực tập tại công ty công nghệ.", speakerAName: { vi: "Sinh viên Khoa", en: "Student Khoa" }, speakerBName: { vi: "Nhà tuyển dụng", en: "Recruiter" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 148, title: "Hỏi về chương trình trao đổi", situation: "Sinh viên hỏi về chương trình trao đổi quốc tế.", speakerAName: { vi: "Sinh viên Vân", en: "Student Van" }, speakerBName: { vi: "Văn phòng quốc tế", en: "International office" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 149, title: "Học trực tuyến với giáo viên nước ngoài", situation: "Học viên học tiếng Anh trực tuyến với giáo viên người Mỹ.", speakerAName: { vi: "Học viên Mai", en: "Student Mai" }, speakerBName: { vi: "Giáo viên Michael", en: "Teacher Michael" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 150, title: "Thảo luận về sách hay", situation: "Hai người bạn cùng nhóm đọc sách chia sẻ cảm nhận.", speakerAName: { vi: "Thành", en: "Thanh" }, speakerBName: { vi: "Nga", en: "Nga" }, speakerAGender: "male", speakerBGender: "female" },
-  // 151-200: Du lịch & Ngoại ngữ
-  { id: 151, title: "Check in khách sạn 5 sao", situation: "Khách quốc tế check in tại khách sạn sang trọng.", speakerAName: { vi: "Khách hàng", en: "Guest" }, speakerBName: { vi: "Lễ tân", en: "Receptionist" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 152, title: "Thuê hướng dẫn viên du lịch", situation: "Nhóm du khách thuê hướng dẫn viên thăm Hội An.", speakerAName: { vi: "Hướng dẫn viên Linh", en: "Tour guide Linh" }, speakerBName: { vi: "Khách John", en: "Tourist John" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 153, title: "Đặt tour du lịch", situation: "Khách hàng đặt tour Phú Quốc 4 ngày 3 đêm.", speakerAName: { vi: "Khách hàng", en: "Customer" }, speakerBName: { vi: "Nhân viên du lịch", en: "Travel agent" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 154, title: "Hỏi về visa du lịch", situation: "Người Việt hỏi đại sứ quán về thủ tục xin visa Schengen.", speakerAName: { vi: "Chị Lan", en: "Lan" }, speakerBName: { vi: "Nhân viên đại sứ quán", en: "Embassy officer" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 155, title: "Phàn nàn về phòng khách sạn", situation: "Khách phàn nàn với lễ tân về điều hòa bị hỏng.", speakerAName: { vi: "Khách hàng", en: "Guest" }, speakerBName: { vi: "Lễ tân", en: "Receptionist" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 156, title: "Mua đồ lưu niệm", situation: "Khách nước ngoài mua đồ thủ công mỹ nghệ ở Hà Nội.", speakerAName: { vi: "Sarah", en: "Sarah" }, speakerBName: { vi: "Người bán hàng", en: "Seller" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 157, title: "Đi cáp treo Fansipan", situation: "Khách du lịch hỏi nhân viên về tuyến cáp treo Fansipan.", speakerAName: { vi: "Khách du lịch", en: "Tourist" }, speakerBName: { vi: "Nhân viên", en: "Staff" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 158, title: "Kể về chuyến đi đáng nhớ", situation: "Hai đồng nghiệp chia sẻ kỷ niệm chuyến du lịch.", speakerAName: { vi: "Hoa", en: "Hoa" }, speakerBName: { vi: "Tú", en: "Tu" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 159, title: "Xử lý hành lý thất lạc", situation: "Hành khách báo cáo vali bị thất lạc tại sân bay.", speakerAName: { vi: "Hành khách", en: "Passenger" }, speakerBName: { vi: "Nhân viên hàng không", en: "Airline staff" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 160, title: "Nói về văn hóa khác biệt", situation: "Người Việt và người nước ngoài trao đổi về văn hóa.", speakerAName: { vi: "Minh", en: "Minh" }, speakerBName: { vi: "Emma", en: "Emma" }, speakerAGender: "male", speakerBGender: "female" },
-  // 161-200: Công việc văn phòng
-  { id: 161, title: "Họp nhóm dự án", situation: "Trưởng nhóm dẫn dắt cuộc họp về tiến độ dự án.", speakerAName: { vi: "Trưởng nhóm Hùng", en: "Team lead Hung" }, speakerBName: { vi: "Thành viên Thảo", en: "Member Thao" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 162, title: "Viết email chuyên nghiệp", situation: "Nhân viên nhờ đồng nghiệp kiểm tra email gửi khách hàng.", speakerAName: { vi: "Hà", en: "Ha" }, speakerBName: { vi: "Đồng nghiệp Tom", en: "Colleague Tom" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 163, title: "Đàm phán hợp đồng", situation: "Đại diện hai công ty đàm phán điều khoản hợp đồng.", speakerAName: { vi: "Giám đốc Minh", en: "Director Minh" }, speakerBName: { vi: "Đối tác David", en: "Partner David" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 164, title: "Báo cáo kết quả kinh doanh", situation: "Nhân viên báo cáo doanh số quý với giám đốc.", speakerAName: { vi: "Nhân viên Phương", en: "Staff Phuong" }, speakerBName: { vi: "Giám đốc", en: "Director" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 165, title: "Phỏng vấn ứng viên", situation: "HR phỏng vấn ứng viên vị trí Marketing Manager.", speakerAName: { vi: "HR Lan", en: "HR Lan" }, speakerBName: { vi: "Ứng viên", en: "Applicant" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 166, title: "Giải quyết xung đột với khách hàng", situation: "Nhân viên CSKH xử lý khiếu nại của khách hàng khó tính.", speakerAName: { vi: "CSKH Hoa", en: "CS Hoa" }, speakerBName: { vi: "Khách hàng", en: "Customer" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 167, title: "Trình bày ý tưởng mới", situation: "Nhân viên trình bày đề xuất chiến lược marketing mới.", speakerAName: { vi: "Nhân viên Tuấn", en: "Staff Tuan" }, speakerBName: { vi: "Sếp", en: "Boss" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 168, title: "Phân công công việc nhóm", situation: "Trưởng nhóm phân công nhiệm vụ cho dự án mới.", speakerAName: { vi: "Trưởng nhóm", en: "Team leader" }, speakerBName: { vi: "Thành viên", en: "Team member" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 169, title: "Đề xuất tăng lương", situation: "Nhân viên đề xuất tăng lương sau 2 năm làm việc.", speakerAName: { vi: "Nhân viên Hải", en: "Employee Hai" }, speakerBName: { vi: "Trưởng phòng", en: "Department head" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 170, title: "Onboarding nhân viên mới", situation: "Nhân viên kỳ cựu hướng dẫn nhân viên mới nhập việc.", speakerAName: { vi: "Nhân viên cũ Nga", en: "Senior staff Nga" }, speakerBName: { vi: "Nhân viên mới", en: "New hire" }, speakerAGender: "female", speakerBGender: "male" },
-  // 171-200: Công nghệ & Kỹ thuật số
-  { id: 171, title: "Hỏi về điện thoại mới", situation: "Khách hàng hỏi nhân viên bán hàng về smartphone mới nhất.", speakerAName: { vi: "Khách hàng", en: "Customer" }, speakerBName: { vi: "Nhân viên", en: "Sales staff" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 172, title: "Cài đặt và sử dụng app", situation: "Người dùng nhờ bạn hướng dẫn cài đặt ứng dụng ngân hàng.", speakerAName: { vi: "Người dùng", en: "User" }, speakerBName: { vi: "Bạn hỗ trợ", en: "Tech friend" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 173, title: "Gọi hỗ trợ kỹ thuật", situation: "Người dùng gọi hotline hỗ trợ khi máy tính bị lỗi.", speakerAName: { vi: "Người dùng", en: "User" }, speakerBName: { vi: "Kỹ thuật viên", en: "Tech support" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 174, title: "Mua sắm online", situation: "Người dùng hỏi về đơn hàng bị trễ trên Shopee.", speakerAName: { vi: "Người mua", en: "Buyer" }, speakerBName: { vi: "CSKH online", en: "Online support" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 175, title: "Bảo mật tài khoản", situation: "Người dùng báo cáo tài khoản mạng xã hội bị hack.", speakerAName: { vi: "Người dùng", en: "User" }, speakerBName: { vi: "Hỗ trợ kỹ thuật", en: "Support team" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 176, title: "Thiết kế website", situation: "Khách hàng trao đổi yêu cầu thiết kế website với lập trình viên.", speakerAName: { vi: "Khách hàng", en: "Client" }, speakerBName: { vi: "Lập trình viên", en: "Developer" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 177, title: "Sử dụng AI trong công việc", situation: "Đồng nghiệp chia sẻ cách dùng AI để tăng năng suất.", speakerAName: { vi: "Nhân viên Hà", en: "Staff Ha" }, speakerBName: { vi: "Đồng nghiệp Minh", en: "Colleague Minh" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 178, title: "Nói về mạng xã hội", situation: "Hai bạn trẻ thảo luận về ảnh hưởng của TikTok.", speakerAName: { vi: "Lan", en: "Lan" }, speakerBName: { vi: "Huy", en: "Huy" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 179, title: "Học lập trình cơ bản", situation: "Người mới bắt đầu hỏi về lộ trình học lập trình.", speakerAName: { vi: "Người học", en: "Learner" }, speakerBName: { vi: "Lập trình viên kinh nghiệm", en: "Experienced developer" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 180, title: "Livestream bán hàng", situation: "Người bán hàng online học cách livestream hiệu quả.", speakerAName: { vi: "Người bán", en: "Seller" }, speakerBName: { vi: "Chuyên gia", en: "Expert" }, speakerAGender: "female", speakerBGender: "male" },
-  // 181-200: Tài chính cá nhân
-  { id: 181, title: "Lập kế hoạch tiết kiệm", situation: "Vợ chồng trẻ bàn về kế hoạch tiết kiệm mua nhà.", speakerAName: { vi: "Chồng Minh", en: "Husband Minh" }, speakerBName: { vi: "Vợ Lan", en: "Wife Lan" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 182, title: "Hỏi về đầu tư chứng khoán", situation: "Người mới hỏi chuyên gia về cách đầu tư chứng khoán an toàn.", speakerAName: { vi: "Người đầu tư mới", en: "New investor" }, speakerBName: { vi: "Chuyên gia tài chính", en: "Financial advisor" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 183, title: "Vay tiền ngân hàng", situation: "Chị Mai hỏi về thủ tục vay mua nhà.", speakerAName: { vi: "Chị Mai", en: "Mai" }, speakerBName: { vi: "Nhân viên ngân hàng", en: "Bank officer" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 184, title: "Khai thuế thu nhập", situation: "Nhân viên hỏi kế toán về cách khai thuế cá nhân.", speakerAName: { vi: "Nhân viên", en: "Employee" }, speakerBName: { vi: "Kế toán", en: "Accountant" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 185, title: "Bàn về tiết kiệm hưu trí", situation: "Cặp vợ chồng trung niên bàn về quỹ hưu trí.", speakerAName: { vi: "Chồng", en: "Husband" }, speakerBName: { vi: "Vợ", en: "Wife" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 186, title: "Mua bảo hiểm nhân thọ", situation: "Đại lý bảo hiểm tư vấn sản phẩm bảo hiểm nhân thọ.", speakerAName: { vi: "Đại lý bảo hiểm", en: "Insurance agent" }, speakerBName: { vi: "Khách hàng", en: "Customer" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 187, title: "Quản lý chi tiêu tháng", situation: "Sinh viên học cách quản lý chi tiêu với ngân sách hạn chế.", speakerAName: { vi: "Sinh viên Hoa", en: "Student Hoa" }, speakerBName: { vi: "Mentor tài chính", en: "Finance mentor" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 188, title: "Đầu tư bất động sản", situation: "Nhà đầu tư hỏi môi giới về dự án căn hộ mới.", speakerAName: { vi: "Nhà đầu tư", en: "Investor" }, speakerBName: { vi: "Môi giới", en: "Broker" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 189, title: "Thanh toán quốc tế", situation: "Freelancer hỏi về cách nhận tiền từ khách hàng nước ngoài.", speakerAName: { vi: "Freelancer Minh", en: "Freelancer Minh" }, speakerBName: { vi: "Ngân hàng", en: "Bank" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 190, title: "Chia tiền thuê nhà", situation: "Các bạn cùng phòng bàn về cách chia tiền thuê và sinh hoạt.", speakerAName: { vi: "Nam", en: "Nam" }, speakerBName: { vi: "Tuấn", en: "Tuan" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 191, title: "Mua xe ô tô trả góp", situation: "Khách hàng hỏi về chương trình mua xe trả góp.", speakerAName: { vi: "Khách hàng", en: "Customer" }, speakerBName: { vi: "Nhân viên showroom", en: "Showroom staff" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 192, title: "Nói về khởi nghiệp", situation: "Bạn bè trao đổi về ý tưởng khởi nghiệp.", speakerAName: { vi: "Hùng", en: "Hung" }, speakerBName: { vi: "Linh", en: "Linh" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 193, title: "Xử lý thẻ tín dụng bị mất", situation: "Chủ thẻ báo mất thẻ và khóa tài khoản.", speakerAName: { vi: "Chủ thẻ", en: "Cardholder" }, speakerBName: { vi: "Ngân hàng", en: "Bank" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 194, title: "Bàn về freelance và thu nhập thụ động", situation: "Hai người bạn thảo luận về các nguồn thu nhập thụ động.", speakerAName: { vi: "Tú", en: "Tu" }, speakerBName: { vi: "Hà", en: "Ha" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 195, title: "Thuê văn phòng cho startup", situation: "CEO startup hỏi về chi phí thuê văn phòng coworking.", speakerAName: { vi: "CEO startup", en: "Startup CEO" }, speakerBName: { vi: "Quản lý coworking", en: "Coworking manager" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 196, title: "Lập kế hoạch kinh doanh", situation: "Người khởi nghiệp trình bày business plan với nhà đầu tư.", speakerAName: { vi: "Người khởi nghiệp", en: "Entrepreneur" }, speakerBName: { vi: "Nhà đầu tư", en: "Investor" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 197, title: "Mua hàng qua livestream", situation: "Người xem hỏi người bán về sản phẩm trong livestream.", speakerAName: { vi: "Người xem", en: "Viewer" }, speakerBName: { vi: "Người bán hàng online", en: "Online seller" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 198, title: "Xin việc qua LinkedIn", situation: "Ứng viên hỏi nhà tuyển dụng về vị trí trên LinkedIn.", speakerAName: { vi: "Ứng viên", en: "Candidate" }, speakerBName: { vi: "HR", en: "HR manager" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 199, title: "Tổ chức sự kiện công ty", situation: "Nhân viên lên kế hoạch cho buổi team building.", speakerAName: { vi: "Nhân viên tổ chức", en: "Event organizer" }, speakerBName: { vi: "Đồng nghiệp", en: "Colleague" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 200, title: "Đàm phán giá dịch vụ", situation: "Freelancer thương lượng giá với khách hàng tiềm năng.", speakerAName: { vi: "Freelancer", en: "Freelancer" }, speakerBName: { vi: "Khách hàng", en: "Client" }, speakerAGender: "female", speakerBGender: "male" },
-  // 201-300: Ngành nghề chuyên môn
-  { id: 201, title: "Tư vấn pháp lý", situation: "Khách hàng hỏi luật sư về tranh chấp đất đai.", speakerAName: { vi: "Khách hàng", en: "Client" }, speakerBName: { vi: "Luật sư", en: "Lawyer" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 202, title: "Khám phụ khoa", situation: "Bác sĩ phụ khoa tư vấn bệnh nhân về sức khỏe sinh sản.", speakerAName: { vi: "Bác sĩ", en: "Doctor" }, speakerBName: { vi: "Bệnh nhân", en: "Patient" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 203, title: "Lên kế hoạch xây nhà", situation: "Chủ nhà thảo luận với kiến trúc sư về thiết kế.", speakerAName: { vi: "Chủ nhà", en: "Homeowner" }, speakerBName: { vi: "Kiến trúc sư", en: "Architect" }, speakerAGender: "male", speakerBGender: "male" },
-  { id: 204, title: "Tư vấn marketing", situation: "Chuyên gia marketing tư vấn chiến lược cho doanh nghiệp nhỏ.", speakerAName: { vi: "Chuyên gia marketing", en: "Marketing expert" }, speakerBName: { vi: "Chủ doanh nghiệp", en: "Business owner" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 205, title: "Phỏng vấn nhà báo", situation: "Phóng viên phỏng vấn chuyên gia về biến đổi khí hậu.", speakerAName: { vi: "Phóng viên", en: "Reporter" }, speakerBName: { vi: "Chuyên gia", en: "Expert" }, speakerAGender: "female", speakerBGender: "male" },
-  { id: 206, title: "Tư vấn thiết kế nội thất", situation: "Nhà thiết kế tư vấn cho khách hàng về phong cách nội thất.", speakerAName: { vi: "Nhà thiết kế", en: "Interior designer" }, speakerBName: { vi: "Khách hàng", en: "Client" }, speakerAGender: "female", speakerBGender: "female" },
-  { id: 207, title: "Hội thảo khoa học", situation: "Nhà nghiên cứu trình bày kết quả nghiên cứu tại hội thảo.", speakerAName: { vi: "Nhà nghiên cứu", en: "Researcher" }, speakerBName: { vi: "Đồng nghiệp", en: "Colleague" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 208, title: "Cố vấn nghề nghiệp", situation: "Mentor chia sẻ kinh nghiệm phát triển sự nghiệp.", speakerAName: { vi: "Mentor", en: "Mentor" }, speakerBName: { vi: "Người được hướng dẫn", en: "Mentee" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 209, title: "Hội chẩn y khoa", situation: "Các bác sĩ thảo luận về phương án điều trị bệnh nhân.", speakerAName: { vi: "Bác sĩ Minh", en: "Dr. Minh" }, speakerBName: { vi: "Bác sĩ Lan", en: "Dr. Lan" }, speakerAGender: "male", speakerBGender: "female" },
-  { id: 210, title: "Tư vấn xuất khẩu", situation: "Chuyên gia tư vấn doanh nghiệp về thủ tục xuất khẩu hàng hóa.", speakerAName: { vi: "Chuyên gia xuất khẩu", en: "Export consultant" }, speakerBName: { vi: "Doanh nghiệp", en: "Business owner" }, speakerAGender: "male", speakerBGender: "female" },
-]
+console.log(`📚 Đang đọc lessons.json: ${lessons.length} bài`)
+console.log(`✅ Đã có AI content: ${aiDoneIds.size} bài`)
+console.log(`🎯 Sẽ sinh bài ${FROM}-${TO} (bỏ qua bài đã có AI content)`)
+console.log(`🤖 Model: ${MODEL} | Batch: ${BATCH} song song`)
+console.log()
 
-// Tạo thêm topics từ 211-1000 theo nhóm chủ đề
-const TOPIC_GROUPS = [
-  // Nhà hàng & Ẩm thực
-  { prefix: "Nhà bếp & Nấu ăn", topics: ["Học nấu phở bò", "Làm bánh mì Việt Nam", "Nấu cơm tấm Sài Gòn", "Học làm nem cuốn", "Pha cà phê phin", "Học nấu bún bò Huế", "Tráng bánh cuốn", "Học làm bánh xèo", "Nấu lẩu thái", "Học làm chả giò"] },
-  { prefix: "Nhà hàng & Cafe", topics: ["Gọi đồ uống đặc biệt", "Hỏi về thực đơn chay", "Đặt bàn nhà hàng Nhật", "Tìm nhà hàng hải sản", "Uống trà chiều", "Thử món fusion", "Gọi combo set meal", "Hỏi về dị ứng thực phẩm", "Đặt tiệc công ty", "Hỏi cách nấu món lạ"] },
-  // Thể thao & Giải trí
-  { prefix: "Thể thao", topics: ["Đăng ký lớp bơi lội", "Tập bóng đá cuối tuần", "Học đánh cầu lông", "Tham gia câu lạc bộ chạy bộ", "Học kỹ thuật bóng rổ", "Đăng ký giải marathon", "Học võ taekwondo", "Tập tennis với bạn bè", "Đi leo núi cuối tuần", "Học yoga trực tuyến"] },
-  { prefix: "Giải trí & Văn hóa", topics: ["Mua vé xem phim", "Đi xem ca nhạc", "Thăm triển lãm nghệ thuật", "Đọc sách tại café", "Chơi board game", "Xem kịch sân khấu", "Tham gia câu lạc bộ ảnh", "Học vẽ tranh", "Chơi trò chơi điện tử", "Đi karaoke với bạn bè"] },
-  // Mua sắm & Thời trang
-  { prefix: "Thời trang", topics: ["Mua quần áo thời trang", "Tư vấn phối đồ", "Mua giày sneaker", "Tìm áo dài truyền thống", "Mua đồ công sở", "Tư vấn túi xách", "Mua đồ thể thao", "Tìm quần áo cưới", "Mua phụ kiện thời trang", "Tìm đồ vintage"] },
-  // Môi trường & Thiên nhiên
-  { prefix: "Môi trường", topics: ["Bảo vệ môi trường biển", "Phân loại rác tái chế", "Trồng cây xanh tại nhà", "Tiết kiệm điện nước", "Sử dụng túi vải", "Chăm sóc vườn rau", "Bảo vệ động vật hoang dã", "Sử dụng xe đạp", "Làm phân compost", "Nói về biến đổi khí hậu"] },
-  // Nghề nghiệp chuyên môn
-  { prefix: "Kỹ thuật & Công nghệ", topics: ["Phát triển ứng dụng mobile", "Thiết kế UX/UI", "Phân tích dữ liệu", "Quản lý dự án IT", "An ninh mạng", "Điện toán đám mây", "Trí tuệ nhân tạo", "Blockchain", "Phát triển web", "DevOps và CI/CD"] },
-  { prefix: "Y tế & Sức khỏe nâng cao", topics: ["Điều trị ung thư", "Phục hồi chức năng", "Chăm sóc sức khỏe người cao tuổi", "Y học cổ truyền", "Sức khỏe tâm thần", "Dinh dưỡng thể thao", "Y tế từ xa", "Phẫu thuật thẩm mỹ", "Điều trị vô sinh", "Chăm sóc sơ sinh"] },
-  { prefix: "Giáo dục & Đào tạo", topics: ["Dạy học trực tuyến", "Phương pháp Montessori", "Giáo dục STEM", "Học bổng nước ngoài", "Đào tạo kỹ năng mềm", "Coaching nghề nghiệp", "E-learning", "Giáo dục đặc biệt", "Học tiếng Hàn", "Học tiếng Nhật"] },
-  { prefix: "Kinh doanh & Quản lý", topics: ["Quản lý nhân sự", "Chiến lược kinh doanh", "Marketing kỹ thuật số", "Quản lý chuỗi cung ứng", "Dịch vụ khách hàng", "Phân tích tài chính", "Quản lý rủi ro", "Phát triển thương hiệu", "Thương mại điện tử", "Quản lý dự án"] },
-  // Chủ đề xã hội
-  { prefix: "Xã hội & Cộng đồng", topics: ["Tình nguyện viên", "Bảo vệ quyền phụ nữ", "Hỗ trợ người khuyết tật", "Xây dựng cộng đồng", "Chăm sóc người cao tuổi", "Giúp đỡ trẻ em", "Hoạt động thiện nguyện", "Phòng chống tệ nạn", "An toàn giao thông", "Phòng chống dịch bệnh"] },
-  // Cuộc sống thành thị
-  { prefix: "Cuộc sống đô thị", topics: ["Giao thông công cộng", "Sinh sống ở chung cư", "Tìm nhà ở thành phố lớn", "Ô nhiễm không khí đô thị", "Trung tâm mua sắm", "Sống trong khu phố cũ", "Di chuyển bằng Grab/Gojek", "Tìm chỗ đỗ xe", "Mất điện đột ngột", "Sự cố thang máy"] },
-  // Tình huống khẩn cấp
-  { prefix: "Tình huống khẩn cấp", topics: ["Gọi cấp cứu 115", "Báo cháy cho lính cứu hỏa", "Khai báo sự cố tai nạn", "Xử lý đuối nước", "Sơ cứu vết thương", "Báo cáo trộm cắp", "Tìm người thân lạc", "Cứu hộ thiên tai", "Hỗ trợ người bị nạn giao thông", "Liên hệ đại sứ quán khi gặp nạn"] },
-]
-
-// Sinh thêm topics cho đủ 1000
-const extraTopics = []
-let currentId = 211
-
-for (const group of TOPIC_GROUPS) {
-  for (const topic of group.topics) {
-    if (currentId > 1000) break
-    extraTopics.push({
-      id: currentId++,
-      title: `${topic}`,
-      situation: `Hội thoại về chủ đề: ${topic} (nhóm ${group.prefix})`,
-      speakerAGender: currentId % 2 === 0 ? 'female' : 'male',
-      speakerBGender: currentId % 2 === 0 ? 'male' : 'female',
-    })
-  }
-  if (currentId > 1000) break
+// ── 1000 chủ đề ──────────────────────────────────────────────────────────────
+const TOPICS = {
+  101:{title:"Đặt lịch hẹn qua điện thoại",situation:"Minh gọi điện đặt lịch hẹn với bác sĩ.",aName:"Minh",bName:"Lễ tân phòng khám",aG:"male",bG:"female"},
+  102:{title:"Thuê xe máy",situation:"Hoa muốn thuê xe máy đi thăm quan thành phố.",aName:"Hoa",bName:"Chủ tiệm cho thuê xe",aG:"female",bG:"male"},
+  103:{title:"Gọi thợ sửa điện nước",situation:"Anh Tuấn gọi thợ đến sửa vòi nước bị hỏng.",aName:"Anh Tuấn",bName:"Thợ sửa chữa",aG:"male",bG:"male"},
+  104:{title:"Mua vé tàu hỏa",situation:"Lan mua vé tàu từ Hà Nội đi Đà Nẵng.",aName:"Lan",bName:"Nhân viên bán vé",aG:"female",bG:"female"},
+  105:{title:"Nhờ hàng xóm trông nhà",situation:"Chị Mai nhờ hàng xóm trông nhà khi đi du lịch.",aName:"Chị Mai",bName:"Chị Hằng",aG:"female",bG:"female"},
+  106:{title:"Đổi tiền ngoại tệ",situation:"Khách du lịch đổi đô la sang tiền Việt tại ngân hàng.",aName:"David",bName:"Nhân viên ngân hàng",aG:"male",bG:"female"},
+  107:{title:"Mua sắm ở chợ truyền thống",situation:"Sarah mua rau và thịt tươi ở chợ Bến Thành.",aName:"Sarah",bName:"Người bán hàng",aG:"female",bG:"female"},
+  108:{title:"Xin giấy phép lái xe",situation:"Anh Hùng đến trung tâm đăng kiểm để làm bằng lái.",aName:"Anh Hùng",bName:"Nhân viên trung tâm",aG:"male",bG:"male"},
+  109:{title:"Đăng ký thẻ thư viện",situation:"Sinh viên Phương đăng ký thẻ mượn sách ở thư viện trường.",aName:"Phương",bName:"Thủ thư",aG:"female",bG:"female"},
+  110:{title:"Khiếu nại sản phẩm lỗi",situation:"Khách hàng mang laptop bị lỗi đến cửa hàng để đổi trả.",aName:"Anh Bình",bName:"Nhân viên bảo hành",aG:"male",bG:"female"},
+  111:{title:"Hỏi về khóa học tiếng Anh",situation:"Thúy hỏi về các khóa học tại trung tâm ngoại ngữ.",aName:"Thúy",bName:"Tư vấn viên",aG:"female",bG:"female"},
+  112:{title:"Thuê phòng trọ",situation:"Sinh viên Khoa xem phòng trọ và hỏi về giá và điều kiện.",aName:"Khoa",bName:"Chủ nhà trọ",aG:"male",bG:"male"},
+  113:{title:"Mở tài khoản ngân hàng",situation:"Hà mở tài khoản ngân hàng lần đầu tiên.",aName:"Hà",bName:"Nhân viên ngân hàng",aG:"female",bG:"male"},
+  114:{title:"Đặt tiệc sinh nhật",situation:"Anh Đức đặt bàn tiệc sinh nhật cho vợ tại nhà hàng sang.",aName:"Anh Đức",bName:"Quản lý nhà hàng",aG:"male",bG:"female"},
+  115:{title:"Thói quen ăn uống lành mạnh",situation:"Hai người bạn thảo luận về chế độ ăn uống khoa học.",aName:"Linh",bName:"Trang",aG:"female",bG:"female"},
+  116:{title:"Xin nghỉ phép",situation:"Nhân viên Hải xin trưởng phòng cho nghỉ phép một tuần.",aName:"Hải",bName:"Trưởng phòng",aG:"male",bG:"male"},
+  117:{title:"Hỏi đường đến bảo tàng",situation:"Khách nước ngoài hỏi đường đến Bảo tàng Hồ Chí Minh.",aName:"Tom",bName:"Người dân địa phương",aG:"male",bG:"female"},
+  118:{title:"Gửi bưu kiện nước ngoài",situation:"Chị Nga gửi quà tặng cho người thân đang ở nước ngoài.",aName:"Chị Nga",bName:"Nhân viên bưu điện",aG:"female",bG:"male"},
+  119:{title:"Mua bảo hiểm xe máy",situation:"Anh Minh mua bảo hiểm bắt buộc cho xe máy mới mua.",aName:"Anh Minh",bName:"Nhân viên bảo hiểm",aG:"male",bG:"female"},
+  120:{title:"Du lịch ba lô tiết kiệm",situation:"Hai du khách trao đổi kinh nghiệm đi phượt tiết kiệm.",aName:"Nam",bName:"Emma",aG:"male",bG:"female"},
+  121:{title:"Kế hoạch đám cưới",situation:"Cặp đôi thảo luận với nhau về kế hoạch tổ chức đám cưới.",aName:"Minh",bName:"Lan",aG:"male",bG:"female"},
+  122:{title:"Giúp con học bài",situation:"Bố ngồi giúp con giải bài tập môn Toán lớp 5.",aName:"Bố",bName:"Con trai",aG:"male",bG:"male"},
+  123:{title:"Chọn nghề nghiệp tương lai",situation:"Sinh viên năm cuối trao đổi với mẹ về định hướng nghề nghiệp.",aName:"Mẹ",bName:"Con gái",aG:"female",bG:"female"},
+  124:{title:"Giải quyết mâu thuẫn anh em",situation:"Hai anh em giải quyết bất đồng về tài sản thừa kế.",aName:"Anh Hai",bName:"Em Trai",aG:"male",bG:"male"},
+  125:{title:"Thăm bạn bị ốm nằm viện",situation:"Nhóm bạn thân đến thăm người bạn đang điều trị tại bệnh viện.",aName:"Hoa",bName:"Trang",aG:"female",bG:"female"},
+  126:{title:"Chuẩn bị đón Tết Nguyên Đán",situation:"Cả gia đình ngồi bàn về kế hoạch mua sắm và chuẩn bị Tết.",aName:"Mẹ",bName:"Con trai",aG:"female",bG:"male"},
+  127:{title:"Chia sẻ về áp lực công việc",situation:"Hai người bạn thân nói chuyện về stress và áp lực nghề nghiệp.",aName:"Khoa",bName:"Tuấn",aG:"male",bG:"male"},
+  128:{title:"Xin lỗi vì quên ngày kỷ niệm",situation:"Nam xin lỗi bạn gái vì đã quên mất ngày kỷ niệm 1 năm yêu.",aName:"Nam",bName:"Linh",aG:"male",bG:"female"},
+  129:{title:"Bàn về nuôi chó hay mèo",situation:"Vợ chồng tranh luận nhẹ về việc nên nuôi chó hay mèo.",aName:"Chồng",bName:"Vợ",aG:"male",bG:"female"},
+  130:{title:"Tư vấn chuyện tình cảm cho bạn",situation:"Hoa giúp người bạn thân xử lý tình huống khó khăn trong tình yêu.",aName:"Hoa",bName:"Thảo",aG:"female",bG:"female"},
+  131:{title:"Khám sức khỏe tổng quát",situation:"Chị Lan đến khám sức khỏe định kỳ hàng năm.",aName:"Bác sĩ",bName:"Bệnh nhân Lan",aG:"male",bG:"female"},
+  132:{title:"Hỏi bác sĩ về tác dụng phụ thuốc",situation:"Bệnh nhân hỏi về tác dụng phụ của thuốc vừa được kê.",aName:"Anh Hùng",bName:"Bác sĩ",aG:"male",bG:"female"},
+  133:{title:"Tư vấn dinh dưỡng cho người tiểu đường",situation:"Chuyên gia dinh dưỡng tư vấn chế độ ăn cho bệnh nhân tiểu đường.",aName:"Chuyên gia dinh dưỡng",bName:"Bệnh nhân",aG:"female",bG:"male"},
+  134:{title:"Chuẩn bị tâm lý trước phẫu thuật",situation:"Bệnh nhân hỏi bác sĩ về ca phẫu thuật sắp tới.",aName:"Bác sĩ phẫu thuật",bName:"Bệnh nhân",aG:"male",bG:"female"},
+  135:{title:"Gặp nhà tâm lý lần đầu",situation:"Người trẻ lần đầu tới gặp nhà tâm lý học để tư vấn.",aName:"Nhà tâm lý học",bName:"Phương",aG:"female",bG:"female"},
+  136:{title:"Hỏi dược sĩ về thuốc cảm cúm",situation:"Khách hàng hỏi dược sĩ về thuốc phù hợp cho triệu chứng cảm cúm.",aName:"Khách hàng",bName:"Dược sĩ",aG:"female",bG:"female"},
+  137:{title:"Buổi tập gym đầu tiên",situation:"Huấn luyện viên hướng dẫn học viên mới tập luyện tại gym.",aName:"Huấn luyện viên",bName:"Học viên mới",aG:"male",bG:"female"},
+  138:{title:"Hỏi HR về bảo hiểm y tế công ty",situation:"Nhân viên mới hỏi phòng nhân sự về quyền lợi bảo hiểm y tế.",aName:"Nhân viên mới",bName:"Nhân sự HR",aG:"female",bG:"female"},
+  139:{title:"Nhổ răng khôn tại nha khoa",situation:"Bệnh nhân đến nha khoa để nhổ chiếc răng khôn gây đau.",aName:"Nha sĩ",bName:"Bệnh nhân",aG:"male",bG:"female"},
+  140:{title:"Lớp yoga và lợi ích thiền định",situation:"Giáo viên yoga giải thích về lợi ích của thiền định cho học viên.",aName:"Giáo viên yoga",bName:"Học viên",aG:"female",bG:"male"},
+  141:{title:"Chuẩn bị thi đại học",situation:"Học sinh cuối cấp hỏi giáo viên về chiến lược ôn thi đại học.",aName:"Học sinh Nam",bName:"Giáo viên",aG:"male",bG:"female"},
+  142:{title:"Xin học bổng Fulbright",situation:"Sinh viên hỏi cố vấn cách xin học bổng Fulbright đi Mỹ.",aName:"Sinh viên Thảo",bName:"Cố vấn học thuật",aG:"female",bG:"male"},
+  143:{title:"Chuẩn bị bài thuyết trình nhóm",situation:"Nhóm sinh viên họp chuẩn bị bài thuyết trình cuối kỳ.",aName:"Nhóm trưởng Minh",bName:"Thành viên Hà",aG:"male",bG:"female"},
+  144:{title:"Gặp giáo sư hướng dẫn luận văn",situation:"Sinh viên thảo luận tiến độ luận văn với giáo sư hướng dẫn.",aName:"Sinh viên",bName:"Giáo sư",aG:"female",bG:"male"},
+  145:{title:"Đăng ký môn học đại học",situation:"Sinh viên năm nhất hỏi giáo vụ về cách đăng ký môn học.",aName:"Sinh viên",bName:"Nhân viên giáo vụ",aG:"female",bG:"female"},
+  146:{title:"Bí quyết học hiệu quả",situation:"Hai bạn sinh viên chia sẻ phương pháp học tập hiệu quả.",aName:"Huy",bName:"Linh",aG:"male",bG:"female"},
+  147:{title:"Phỏng vấn thực tập IT",situation:"Sinh viên CNTT phỏng vấn xin thực tập tại công ty công nghệ.",aName:"Sinh viên Khoa",bName:"Nhà tuyển dụng",aG:"male",bG:"female"},
+  148:{title:"Hỏi về chương trình trao đổi sinh viên",situation:"Sinh viên hỏi văn phòng quốc tế về chương trình trao đổi.",aName:"Sinh viên Vân",bName:"Nhân viên văn phòng quốc tế",aG:"female",bG:"female"},
+  149:{title:"Học tiếng Anh 1-1 với giáo viên nước ngoài",situation:"Học viên học tiếng Anh online với giáo viên người Mỹ.",aName:"Học viên Mai",bName:"Giáo viên Michael",aG:"female",bG:"male"},
+  150:{title:"Nhóm đọc sách: thảo luận tác phẩm",situation:"Hai thành viên nhóm đọc sách chia sẻ cảm nhận sau khi đọc.",aName:"Thành",bName:"Nga",aG:"male",bG:"female"},
+  151:{title:"Check-in khách sạn 5 sao",situation:"Khách quốc tế check-in tại khách sạn sang trọng ở Hà Nội.",aName:"Khách hàng",bName:"Lễ tân khách sạn",aG:"male",bG:"female"},
+  152:{title:"Thuê hướng dẫn viên du lịch Hội An",situation:"Nhóm du khách thuê hướng dẫn viên thăm phố cổ Hội An.",aName:"Hướng dẫn viên Linh",bName:"Khách John",aG:"female",bG:"male"},
+  153:{title:"Đặt tour Phú Quốc",situation:"Khách hàng đặt tour nghỉ dưỡng Phú Quốc 4 ngày 3 đêm.",aName:"Khách hàng",bName:"Nhân viên công ty du lịch",aG:"female",bG:"female"},
+  154:{title:"Xin visa du lịch Châu Âu",situation:"Người Việt hỏi đại sứ quán về thủ tục xin visa Schengen.",aName:"Chị Lan",bName:"Nhân viên đại sứ quán",aG:"female",bG:"male"},
+  155:{title:"Phàn nàn về phòng khách sạn",situation:"Khách phàn nàn với lễ tân về điều hòa không khí bị hỏng.",aName:"Khách hàng",bName:"Lễ tân khách sạn",aG:"male",bG:"female"},
+  156:{title:"Mua đồ thủ công mỹ nghệ Hà Nội",situation:"Khách nước ngoài mua đồ thủ công mỹ nghệ ở phố cổ Hà Nội.",aName:"Sarah",bName:"Người bán hàng",aG:"female",bG:"female"},
+  157:{title:"Trải nghiệm cáp treo Fansipan",situation:"Du khách hỏi nhân viên về tuyến cáp treo lên đỉnh Fansipan.",aName:"Du khách",bName:"Nhân viên khu du lịch",aG:"female",bG:"male"},
+  158:{title:"Chia sẻ kỷ niệm du lịch đáng nhớ",situation:"Hai đồng nghiệp kể cho nhau nghe về chuyến đi du lịch ấn tượng nhất.",aName:"Hoa",bName:"Tú",aG:"female",bG:"male"},
+  159:{title:"Xử lý hành lý bị thất lạc",situation:"Hành khách báo cáo vali bị thất lạc với nhân viên hàng không.",aName:"Hành khách",bName:"Nhân viên hàng không",aG:"male",bG:"female"},
+  160:{title:"Khám phá sự khác biệt văn hóa",situation:"Người Việt và người nước ngoài trao đổi về sự khác biệt văn hóa.",aName:"Minh",bName:"Emma",aG:"male",bG:"female"},
+  161:{title:"Họp tiến độ dự án",situation:"Trưởng nhóm dẫn dắt cuộc họp hàng tuần về tiến độ dự án.",aName:"Trưởng nhóm Hùng",bName:"Thành viên Thảo",aG:"male",bG:"female"},
+  162:{title:"Viết email chuyên nghiệp cho khách hàng",situation:"Nhân viên nhờ đồng nghiệp người nước ngoài kiểm tra email.",aName:"Hà",bName:"Đồng nghiệp Tom",aG:"female",bG:"male"},
+  163:{title:"Đàm phán điều khoản hợp đồng",situation:"Đại diện hai công ty ngồi đàm phán chi tiết hợp đồng hợp tác.",aName:"Giám đốc Minh",bName:"Đối tác David",aG:"male",bG:"male"},
+  164:{title:"Báo cáo doanh số quý với sếp",situation:"Nhân viên kinh doanh báo cáo kết quả quý vừa rồi với giám đốc.",aName:"Nhân viên Phương",bName:"Giám đốc",aG:"female",bG:"male"},
+  165:{title:"Phỏng vấn tuyển Marketing Manager",situation:"HR phỏng vấn ứng viên cho vị trí Trưởng phòng Marketing.",aName:"HR Lan",bName:"Ứng viên",aG:"female",bG:"male"},
+  166:{title:"Xử lý khiếu nại khách hàng khó tính",situation:"Nhân viên CSKH xử lý tình huống phàn nàn từ khách hàng.",aName:"CSKH Hoa",bName:"Khách hàng",aG:"female",bG:"male"},
+  167:{title:"Trình bày chiến lược marketing mới",situation:"Nhân viên đề xuất chiến lược marketing sáng tạo với sếp.",aName:"Nhân viên Tuấn",bName:"Giám đốc marketing",aG:"male",bG:"female"},
+  168:{title:"Phân công nhiệm vụ dự án mới",situation:"Trưởng nhóm họp để phân công công việc cho dự án vừa được nhận.",aName:"Trưởng nhóm",bName:"Thành viên",aG:"female",bG:"male"},
+  169:{title:"Đề xuất tăng lương",situation:"Nhân viên gặp sếp để đề xuất tăng lương sau 2 năm cống hiến.",aName:"Nhân viên Hải",bName:"Trưởng phòng",aG:"male",bG:"female"},
+  170:{title:"Hướng dẫn nhân viên mới nhập việc",situation:"Nhân viên kỳ cựu hướng dẫn nhân viên mới làm quen với công việc.",aName:"Nhân viên cũ Nga",bName:"Nhân viên mới",aG:"female",bG:"male"},
+  171:{title:"Tư vấn mua smartphone mới",situation:"Khách hàng hỏi nhân viên về các mẫu smartphone mới nhất.",aName:"Khách hàng",bName:"Nhân viên bán hàng",aG:"male",bG:"female"},
+  172:{title:"Hướng dẫn cài app ngân hàng",situation:"Người dùng nhờ bạn bè hướng dẫn cài đặt ứng dụng ngân hàng mobile.",aName:"Người dùng",bName:"Bạn hỗ trợ kỹ thuật",aG:"female",bG:"male"},
+  173:{title:"Gọi hotline kỹ thuật khi máy tính lỗi",situation:"Người dùng gọi hotline kỹ thuật khi máy tính bị treo không mở được.",aName:"Người dùng",bName:"Kỹ thuật viên hỗ trợ",aG:"female",bG:"male"},
+  174:{title:"Khiếu nại đơn hàng online bị trễ",situation:"Người mua hỏi CSKH về đơn hàng đặt trên Shopee bị trễ một tuần.",aName:"Người mua",bName:"CSKH online",aG:"female",bG:"female"},
+  175:{title:"Khôi phục tài khoản mạng xã hội bị hack",situation:"Người dùng báo cáo tài khoản Facebook bị hack và xin hỗ trợ.",aName:"Người dùng",bName:"Hỗ trợ kỹ thuật",aG:"male",bG:"female"},
+  176:{title:"Đặt hàng thiết kế website",situation:"Khách hàng trao đổi yêu cầu thiết kế website bán hàng với lập trình viên.",aName:"Khách hàng",bName:"Lập trình viên freelance",aG:"female",bG:"male"},
+  177:{title:"Ứng dụng AI trong công việc văn phòng",situation:"Hai đồng nghiệp chia sẻ cách dùng AI để làm việc hiệu quả hơn.",aName:"Nhân viên Hà",bName:"Đồng nghiệp Minh",aG:"female",bG:"male"},
+  178:{title:"Ảnh hưởng của TikTok đến giới trẻ",situation:"Hai bạn trẻ thảo luận về tác động tích cực và tiêu cực của TikTok.",aName:"Lan",bName:"Huy",aG:"female",bG:"male"},
+  179:{title:"Lộ trình học lập trình cho người mới",situation:"Người mới bắt đầu hỏi lập trình viên kinh nghiệm về cách bắt đầu.",aName:"Người học",bName:"Lập trình viên kinh nghiệm",aG:"female",bG:"male"},
+  180:{title:"Bí quyết livestream bán hàng hiệu quả",situation:"Người bán hàng online học cách làm livestream thu hút khách mua.",aName:"Người bán",bName:"Chuyên gia thương mại điện tử",aG:"female",bG:"male"},
 }
 
-// Thêm chủ đề cho đến 1000
-while (currentId <= 1000) {
-  extraTopics.push({
-    id: currentId,
-    title: `Chủ đề giao tiếp ${currentId}`,
-    situation: `Hội thoại thực hành giao tiếp tiếng Anh chủ đề số ${currentId}`,
-    speakerAGender: currentId % 2 === 0 ? 'female' : 'male',
-    speakerBGender: currentId % 2 === 0 ? 'male' : 'female',
-  })
-  currentId++
+// Hàm tạo topic động cho id chưa có trong TOPICS
+function makeTopic(id) {
+  if (TOPICS[id]) return TOPICS[id]
+  const list = ["Học nấu phở bò","Làm bánh mì Việt Nam","Pha cà phê phin truyền thống","Học làm nem cuốn","Nấu bún bò Huế","Đăng ký lớp bơi lội","Tập bóng đá cuối tuần","Học đánh cầu lông","Tham gia câu lạc bộ chạy bộ","Đăng ký giải marathon 5km","Mua vé xem phim rạp","Đi xem concert nhạc","Thăm triển lãm nghệ thuật","Chơi board game cùng nhóm bạn","Xem kịch sân khấu lần đầu","Tư vấn phối đồ thời trang","Mua giày sneaker giới hạn","Tìm áo dài truyền thống may đo","Mua đồ công sở thanh lịch","Chọn quà tặng sinh nhật","Bảo vệ môi trường biển","Phân loại rác tái chế tại nhà","Trồng rau sạch tại nhà","Tiết kiệm điện và nước","Chăm sóc vườn cây cảnh","Phát triển ứng dụng mobile","Thiết kế giao diện người dùng UX/UI","Phân tích dữ liệu kinh doanh","An ninh mạng và bảo mật thông tin","Điện toán đám mây AWS","Điều trị đau lưng mãn tính","Phục hồi chức năng sau tai nạn","Chăm sóc người cao tuổi tại nhà","Y học cổ truyền và châm cứu","Tư vấn sức khỏe sinh sản","Dạy học trực tuyến hiệu quả","Phương pháp giáo dục Montessori","Chương trình học STEM cho trẻ em","Đào tạo kỹ năng mềm nhân viên","Coaching phát triển sự nghiệp","Quản lý đội nhóm hiệu quả","Xây dựng chiến lược kinh doanh","Digital marketing và SEO","Quản lý chuỗi cung ứng","Phân tích báo cáo tài chính","Di chuyển bằng xe buýt điện","Mua nhà chung cư lần đầu","Sống xanh trong đô thị","Giảm ô nhiễm không khí đô thị","Tìm bãi đỗ xe thông minh","Gọi cấp cứu y tế 115","Báo cháy cho đội cứu hỏa","Sơ cứu người bị tai nạn giao thông","Báo cáo trộm cắp với công an","Liên hệ đại sứ quán khi gặp nạn","Đặt phòng Airbnb qua ứng dụng","Phàn nàn về phòng cho thuê ồn ào","Tìm căn hộ dịch vụ ngắn hạn","Thỏa thuận gia hạn hợp đồng thuê nhà","Mua xe ô tô điện mới","Đăng ký học tiếng Hàn Quốc cơ bản","Ôn luyện IELTS Speaking","Thực hành Writing Task 2","Luyện thi TOEFL iBT","Nói về phim yêu thích bằng tiếng Anh","Bàn về âm nhạc truyền thống Việt Nam","Thảo luận về thể thao điện tử esports","Chia sẻ niềm đam mê nhiếp ảnh","Kết bạn với người nước ngoài tại Việt Nam","Giới thiệu văn hóa Việt Nam cho bạn bè quốc tế","Mua đặc sản Tết về quê","Chọn hoa tươi tặng dịp 8/3","Đặt bánh kem sinh nhật tùy chỉnh","Mua phụ kiện trang trí nhà dịp Tết","Tham quan triển lãm xe hơi","Hỏi thông tin xe điện VinFast","Sửa xe ô tô tại gara uy tín","Đổi lốp xe và kiểm tra phanh","Mua vé máy bay giá rẻ dịp lễ","Đổi vé máy bay khi thay đổi lịch","Hỏi quy định hành lý máy bay","Thuê xe tự lái du lịch","Trải nghiệm xe đạp đô thị","Học cách pha cocktail cơ bản","Tìm hiểu về rượu vang Đà Lạt","Thưởng thức cà phê đặc sản Buôn Mê Thuột","Tham gia lễ hội cà phê","Tìm hiểu lịch sử Hà Nội","Thăm Văn Miếu Quốc Tử Giám","Khám phá di sản văn hóa Huế","Học về phong tục cưới hỏi Việt Nam","Tham gia lễ hội Trung Thu","Thỏa thuận với nhà thầu xây dựng","Kiểm tra tiến độ công trình","Chọn vật liệu xây nhà chất lượng","Thiết kế phòng ngủ hiện đại","Lắp đặt hệ thống điện thông minh","Thảo luận về năng lượng mặt trời","Học về xe đạp điện tiết kiệm","Chăm sóc thú cưng bị ốm","Tiêm phòng cho chó mèo","Tìm thú cưng bị lạc","Học làm vườn rau hữu cơ","Nuôi cá koi trong hồ","Đặt lịch xét nghiệm máu","Nhận kết quả xét nghiệm từ bác sĩ","Hỏi về lịch tiêm vaccine COVID","Học chơi đàn guitar từ đầu","Tham gia ban nhạc acoustic","Học hát karaoke chuẩn chỉnh","Mua đàn piano điện","Thực tập tại bệnh viện","Thực tập tại công ty luật","Thực tập tại startup","Phát triển kỹ năng leadership","Lập kế hoạch 5 năm sự nghiệp","Đọc sách tự phát triển bản thân","Thảo luận bình đẳng giới nơi làm việc","Bảo vệ quyền lợi người tiêu dùng","Giúp đỡ người vô gia cư","Tìm hiểu Phật giáo Việt Nam","Nói về truyền thống thờ cúng tổ tiên","Mua đồ nội thất Scandinavian","Trang trí nhà dịp Noel","Chọn màu sơn tường hợp phong thủy","Xem bóng đá cùng nhóm bạn","Phân tích chiến thuật đội tuyển Việt Nam","Đặt cược dự đoán bóng đá (hợp pháp)","Tham gia nhóm đọc sách thiếu nhi","Thảo luận tiểu thuyết lịch sử Việt Nam","Bàn về truyện ngắn đoạt giải","Học múa hip hop từ YouTube","Tham gia lớp Zumba buổi sáng","Luyện tập Taekwondo","Đặt vé visa điện tử vào Việt Nam","Làm thủ tục visa tại cửa khẩu","Tìm nhà sách Phương Nam","Mua sách giáo khoa đầu năm học","Đặt sách hiếm qua mạng","Cắt tóc và tư vấn kiểu tóc","Nhuộm tóc ombre tại salon","Làm nail nghệ thuật","Chọn tour Tây Bắc mùa lúa chín","Đặt tour miền Tây khám phá sông nước","Hỏi về tour Côn Đảo lặn ngắm san hô","Tư vấn pháp lý tranh chấp đất đai","Làm hợp đồng mua bán nhà đất","Chuyển nhượng quyền sử dụng đất","Tập aerobic giảm mỡ bụng","Mua dụng cụ tập yoga tại nhà","Hỏi về ứng dụng theo dõi sức khỏe","Lập kế hoạch kinh doanh nhỏ","Tư vấn mở quán cà phê","Đăng ký kinh doanh hộ cá thể","Xin vốn vay khởi nghiệp","Hỏi về giấy phép kinh doanh F&B","Tuyển dụng nhân viên bán hàng part-time","Phỏng vấn thực tập sinh marketing","Đặt lịch photoshoot chân dung","Thuê nhiếp ảnh gia chụp đám cưới","Hỏi về dịch vụ in ảnh canvas","Thiết kế logo và nhận diện thương hiệu","Đặt in standee và banner quảng cáo","Hỏi về dịch vụ quảng cáo Google Ads","Chạy Facebook Ads lần đầu","Hỏi về influencer marketing","Quản lý fanpage doanh nghiệp","Tạo content cho Instagram","Viết caption hấp dẫn","Lên kế hoạch content marketing","Hỏi về email marketing","Tư vấn SEO cho website","Chăm sóc da mặt tại spa","Massage thư giãn cuối tuần","Tư vấn chọn mỹ phẩm phù hợp","Học trang điểm cơ bản","Hỏi về phẫu thuật thẩm mỹ","Học nấu lẩu Thái cay","Làm bánh crepe tại nhà","Pha chế bubble tea","Học làm sushi cơ bản","Nấu mì Ý carbonara","Thuê xưởng sản xuất nhỏ","Hỏi về dịch vụ logistics giao hàng","Đặt container xuất khẩu","Hỏi về thủ tục hải quan","Tư vấn import hàng từ Trung Quốc","Đăng ký sàn thương mại điện tử","Hỏi về chính sách hoàn tiền Lazada","Tư vấn dropshipping","Mở gian hàng trên Shopee Mall","Xử lý đánh giá 1 sao","Phát triển app mobile đặt đồ ăn","Xây dựng hệ thống quản lý kho","Lập trình website bán vé sự kiện","Tư vấn chuyển đổi số doanh nghiệp","Hỏi về phần mềm kế toán","Khai thuế VAT hàng tháng","Lập báo cáo thuế thu nhập doanh nghiệp","Kiểm toán nội bộ cuối năm","Hỏi về ưu đãi thuế cho startup","Xin hoàn thuế thu nhập cá nhân"]
+  const namePool = [["Lan","Nam"],["Hoa","Minh"],["Thảo","Tuấn"],["Linh","Khoa"],["Sarah","Tom"],["Mai","Hùng"],["Phương","Đức"],["Emma","David"]]
+  const gPool = [["female","male"],["male","female"],["female","female"],["male","male"]]
+  const t = list[(id - 181) % list.length]
+  const [aName, bName] = namePool[id % namePool.length]
+  const [aG, bG] = gPool[id % gPool.length]
+  return { title: t, situation: `Tình huống giao tiếp thực tế: ${t}.`, aName, bName, aG, bG }
 }
 
-const ALL_TOPICS_FULL = [...ALL_TOPICS, ...extraTopics]
-
-// ── Lấy chủ đề cần sinh ────────────────────────────────────────────────────
-const topicsToGen = ALL_TOPICS_FULL.filter(t => t.id >= startFrom && t.id < startFrom + totalCount)
-if (topicsToGen.length === 0) {
-  console.log(`⚠️  Không có chủ đề nào trong khoảng id ${startFrom} - ${startFrom + totalCount - 1}`)
-  process.exit(0)
-}
-
-console.log(`🚀 Sinh ${topicsToGen.length} bài học (id ${topicsToGen[0].id} - ${topicsToGen[topicsToGen.length - 1].id}), ${TURNS_PER_LESSON} lượt/bài`)
-
-// ── Gọi API Claude để sinh hội thoại ──────────────────────────────────────
+// ── Client ────────────────────────────────────────────────────────────────────
 const client = new Anthropic()
 
-async function generateLesson(topic) {
-  const prompt = `Tạo bài học hội thoại tiếng Anh - tiếng Việt cho ứng dụng luyện tiếng Anh.
+// ── Sinh 1 bài ───────────────────────────────────────────────────────────────
+// Mỗi chủ đề có cấu trúc hội thoại riêng để tránh lặp
+const CONVERSATION_STRUCTURES = [
+  "Mở đầu bằng câu hỏi → khám phá vấn đề → giải quyết → kết thúc tích cực",
+  "Mở đầu bằng lời chào → trình bày nhu cầu → thảo luận phương án → đồng ý → chia tay",
+  "Mở đầu bằng sự cố/vấn đề → phân tích nguyên nhân → đề xuất giải pháp → kế hoạch hành động",
+  "Mở đầu bằng gặp gỡ → chia sẻ kinh nghiệm → trao đổi ý kiến → học được điều mới → hẹn gặp lại",
+  "Mở đầu bằng yêu cầu thông tin → hỏi đáp chi tiết → so sánh lựa chọn → quyết định → xác nhận",
+  "Mở đầu bằng tình huống khẩn cấp → xử lý nhanh → bình tĩnh lại → giải quyết từng bước → tổng kết",
+  "Mở đầu bằng hiểu lầm nhỏ → làm rõ → thông cảm → hợp tác → kết quả tốt",
+  "Mở đầu bằng đề xuất ý tưởng → phản hồi → cải thiện ý tưởng → lập kế hoạch → cam kết thực hiện",
+]
 
-Chủ đề: "${topic.title}"
-Tình huống: ${topic.situation}
-Người nói A: ${topic.speakerAName?.vi ?? 'Người A'} (${topic.speakerAGender})
-Người nói B: ${topic.speakerBName?.vi ?? 'Người B'} (${topic.speakerBGender})
-Số lượt thoại: ${TURNS_PER_LESSON} lượt (xen kẽ A và B, bắt đầu bằng A)
+// Từ vựng đặc trưng theo nhóm chủ đề (để đảm bảo mỗi bài có từ vựng riêng)
+const VOCAB_SEEDS = {
+  medical: ["diagnosis","prescription","symptom","treatment","appointment","insurance","specialist","dosage","recovery","checkup"],
+  business: ["proposal","deadline","budget","stakeholder","milestone","KPI","revenue","negotiation","contract","presentation"],
+  travel: ["itinerary","accommodation","luggage","departure","destination","reservation","currency","passport","transit","layover"],
+  education: ["curriculum","assignment","scholarship","graduation","internship","semester","thesis","tuition","enrollment","campus"],
+  food: ["ingredient","portion","seasoning","appetizer","recipe","cuisine","reservation","menu","dietary","takeaway"],
+  tech: ["software","debugging","deployment","interface","algorithm","bandwidth","encryption","database","startup","prototype"],
+  finance: ["investment","portfolio","interest rate","dividend","loan","budget","savings","expenditure","revenue","tax"],
+  social: ["community","volunteer","campaign","awareness","initiative","support","advocacy","empowerment","inclusion","diversity"],
+}
 
-Yêu cầu:
-- Mỗi câu tiếng Anh: tự nhiên, đúng ngữ pháp, phù hợp ngữ cảnh Việt Nam
-- Tiếng Việt: dịch sát nghĩa và tự nhiên
-- Hội thoại phải có mạch chuyện liền mạch, thực tế
-- Câu không quá dài (tối đa 20 từ/câu)
+function getVocabSeed(title) {
+  const t = title.toLowerCase()
+  if (t.includes('bác sĩ') || t.includes('sức khỏe') || t.includes('bệnh') || t.includes('thuốc') || t.includes('khám')) return VOCAB_SEEDS.medical
+  if (t.includes('kinh doanh') || t.includes('công ty') || t.includes('hợp đồng') || t.includes('doanh số') || t.includes('marketing')) return VOCAB_SEEDS.business
+  if (t.includes('du lịch') || t.includes('khách sạn') || t.includes('máy bay') || t.includes('tour') || t.includes('visa')) return VOCAB_SEEDS.travel
+  if (t.includes('học') || t.includes('trường') || t.includes('sinh viên') || t.includes('giáo viên') || t.includes('luận văn')) return VOCAB_SEEDS.education
+  if (t.includes('ăn') || t.includes('nấu') || t.includes('nhà hàng') || t.includes('món') || t.includes('cafe')) return VOCAB_SEEDS.food
+  if (t.includes('app') || t.includes('công nghệ') || t.includes('lập trình') || t.includes('website') || t.includes('ai')) return VOCAB_SEEDS.tech
+  if (t.includes('tiền') || t.includes('đầu tư') || t.includes('vay') || t.includes('thuế') || t.includes('ngân hàng')) return VOCAB_SEEDS.finance
+  return null
+}
 
-Trả về JSON theo đúng format sau (không có markdown):
+async function generateLesson(id) {
+  const meta = makeTopic(id)
+  const structure = CONVERSATION_STRUCTURES[id % CONVERSATION_STRUCTURES.length]
+  const vocabSeed = getVocabSeed(meta.title)
+  const vocabHint = vocabSeed
+    ? `\n- Ưu tiên dùng các từ/cụm này (ít nhất 8-10 từ): ${vocabSeed.slice(0,8).join(', ')}`
+    : ''
+
+  const prompt = `Tạo bài học hội thoại song ngữ Anh-Việt cho ứng dụng luyện giao tiếp.
+
+CHỦ ĐỀ: "${meta.title}"
+TÌNH HUỐNG CỤ THỂ: ${meta.situation}
+NGƯỜI NÓI A: ${meta.aName} (${meta.aG === 'female' ? 'nữ' : 'nam'})
+NGƯỜI NÓI B: ${meta.bName} (${meta.bG === 'female' ? 'nữ' : 'nam'})
+SỐ LƯỢT: ${TURNS} lượt (A mở đầu, xen kẽ A-B)
+
+CẤU TRÚC HỘI THOẠI PHẢI THEO: ${structure}
+
+YÊU CẦU CHẤT LƯỢNG VÀ ĐA DẠNG:
+- KHÔNG dùng câu mở đầu chung chung như "Hello, how can I help you?"
+- KHÔNG lặp cấu trúc câu (mỗi câu dùng cách diễn đạt khác nhau)
+- Câu hỏi đa dạng: dùng xen kẽ Yes/No questions, Wh-questions, Tag questions, Indirect questions
+- Bao gồm: ngôn ngữ cảm xúc, phản hồi tự nhiên ("Oh I see", "That makes sense", "Really?")
+- Dùng từ viết tắt, colloquial: "I'll", "That's", "I've", "we'd", "don't"
+- Câu đôi khi ngắn (3-5 từ), đôi khi dài (15-20 từ) — thay đổi nhịp điệu
+- Hội thoại phải mang đặc trưng CHỦ ĐỀ rõ ràng — ai đọc cũng nhận ra ngay chủ đề
+- Phải thực tế cho người học tiếng Anh ở Việt Nam, gắn với văn hóa Việt${vocabHint}
+
+Trả về JSON thuần (không markdown, không text ngoài JSON):
 {
-  "id": ${topic.id},
-  "title": "${topic.title}",
-  "situation": "${topic.situation}",
-  "speakerAGender": "${topic.speakerAGender}",
-  "speakerBGender": "${topic.speakerBGender}",
-  "speakerAName": {"vi": "${topic.speakerAName?.vi ?? 'Người A'}", "en": "${topic.speakerAName?.en ?? 'Person A'}"},
-  "speakerBName": {"vi": "${topic.speakerBName?.vi ?? 'Người B'}", "en": "${topic.speakerBName?.en ?? 'Person B'}"},
+  "id": ${id},
+  "title": "${meta.title}",
+  "situation": "${meta.situation}",
+  "speakerAGender": "${meta.aG}",
+  "speakerBGender": "${meta.bG}",
+  "speakerAName": {"vi": "${meta.aName}", "en": "${meta.aName}"},
+  "speakerBName": {"vi": "${meta.bName}", "en": "${meta.bName}"},
+  "_aiGenerated": true,
   "turns": [
     {"speaker": "A", "en": "...", "vi": "..."},
     {"speaker": "B", "en": "...", "vi": "..."}
@@ -260,45 +233,84 @@ Trả về JSON theo đúng format sau (không có markdown):
 }`
 
   const response = await client.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 4000,
+    model: MODEL,
+    max_tokens: 8000,
     messages: [{ role: 'user', content: prompt }],
   })
 
   const text = response.content[0].text.trim()
-  return JSON.parse(text)
+  // Trích JSON nếu có markdown bọc ngoài
+  const match = text.match(/\{[\s\S]*\}/)
+  if (!match) throw new Error('Không tìm thấy JSON trong response')
+  return JSON.parse(match[0])
 }
 
-// ── Sinh từng bài và lưu vào lessons.json ─────────────────────────────────
+// ── Lưu progress ngay lập tức ─────────────────────────────────────────────────
+function saveLessons(lessonMap) {
+  const sorted = Array.from(lessonMap.values()).sort((a, b) => a.id - b.id)
+  fs.writeFileSync(LESSONS_FILE, JSON.stringify(sorted, null, 2))
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
 async function main() {
-  const results = []
+  // Xây dựng map từ lessons hiện có
+  const lessonMap = new Map(lessons.map(l => [l.id, l]))
 
-  for (let i = 0; i < topicsToGen.length; i++) {
-    const topic = topicsToGen[i]
-    console.log(`  [${i + 1}/${topicsToGen.length}] Đang sinh bài ${topic.id}: "${topic.title}"…`)
-    try {
-      const lesson = await generateLesson(topic)
-      results.push(lesson)
-      console.log(`    ✅ ${lesson.turns.length} lượt`)
-    } catch (err) {
-      console.error(`    ❌ Lỗi bài ${topic.id}:`, err.message)
+  // Danh sách id cần sinh
+  const toGen = []
+  for (let id = FROM; id <= TO; id++) {
+    if (!aiDoneIds.has(id)) toGen.push(id)
+  }
+
+  if (toGen.length === 0) {
+    console.log('✅ Tất cả bài trong khoảng này đã có AI content!')
+    return
+  }
+
+  console.log(`📝 Cần sinh: ${toGen.length} bài\n`)
+
+  let done = 0
+  const errors = []
+
+  // Xử lý theo batch (song song)
+  for (let i = 0; i < toGen.length; i += BATCH) {
+    const batch = toGen.slice(i, i + BATCH)
+    const results = await Promise.allSettled(
+      batch.map(id => generateLesson(id))
+    )
+
+    for (let j = 0; j < results.length; j++) {
+      const r = results[j]
+      const id = batch[j]
+      if (r.status === 'fulfilled') {
+        lessonMap.set(id, r.value)
+        done++
+        process.stdout.write(`  ✅ [${done}/${toGen.length}] Bài ${id}: "${makeTopic(id).title}" (${r.value.turns?.length ?? 0} lượt)\n`)
+      } else {
+        errors.push(id)
+        process.stdout.write(`  ❌ [${done}/${toGen.length}] Bài ${id}: ${r.reason?.message}\n`)
+      }
     }
-    // Nghỉ 500ms để tránh rate limit
-    if (i < topicsToGen.length - 1) await new Promise(r => setTimeout(r, 500))
+
+    // Lưu sau mỗi batch (có thể Ctrl+C và chạy lại)
+    saveLessons(lessonMap)
+
+    // Nghỉ giữa các batch (tránh rate limit)
+    if (i + BATCH < toGen.length) {
+      await new Promise(r => setTimeout(r, 1000))
+    }
   }
 
-  // Gộp với bài hiện có, sắp xếp theo id
-  const merged = [...existing]
-  for (const lesson of results) {
-    const idx = merged.findIndex(l => l.id === lesson.id)
-    if (idx !== -1) merged[idx] = lesson
-    else merged.push(lesson)
+  console.log(`\n🎉 Hoàn thành! Đã sinh: ${done} bài | Lỗi: ${errors.length} bài`)
+  if (errors.length > 0) {
+    console.log(`⚠️  Bài lỗi: ${errors.join(', ')}`)
+    console.log(`   Chạy lại: node scripts/gen-lessons.mjs --from ${Math.min(...errors)} --to ${Math.max(...errors)}`)
   }
-  merged.sort((a, b) => a.id - b.id)
 
-  fs.writeFileSync(LESSONS_FILE, JSON.stringify(merged, null, 2))
-  console.log(`\n✅ Đã lưu ${merged.length} bài học vào src/data/lessons.json`)
-  console.log(`\n🔧 Chạy tiếp: node scripts/split-lessons.mjs`)
+  console.log(`\n🔧 Bước tiếp theo: node scripts/split-lessons.mjs`)
 }
 
-main().catch(console.error)
+main().catch(err => {
+  console.error('💥 Lỗi nghiêm trọng:', err.message)
+  process.exit(1)
+})
