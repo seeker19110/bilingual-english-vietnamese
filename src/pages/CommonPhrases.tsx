@@ -116,21 +116,11 @@ export default function CommonPhrases() {
   if (selected) {
     const c = getColor(selected.color)
     return (
-      <div className="min-h-dvh bg-zinc-950">
+      <div className="h-dvh overflow-hidden bg-zinc-950 flex flex-col">
         <Layout title={selected.starter} back extra={<VoiceToggle />} />
-        <main className="max-w-3xl mx-auto px-4 py-6">
-          <button
-            onClick={() => setSelected(null)}
-            className="flex items-center gap-1.5 text-zinc-500 hover:text-white text-sm mb-4 transition"
-          >
-            <ArrowLeft className="w-4 h-4" /> {T.phrasesBack}
-          </button>
-
-          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border mb-4 ${c.bg} ${c.text} ${c.border}`}>
-            {selected.category}
-          </div>
-
-          <div className="space-y-2">
+        <main className="flex-1 overflow-hidden max-w-3xl mx-auto w-full px-4 py-4 flex flex-col">
+          {/* danh sách câu cuộn trong khung cố định, không đẩy trang xuống */}
+          <div className="flex-1 overflow-y-auto space-y-2 pr-0.5">
             {selected.sentences.map((sent, idx) => (
               <div
                 key={idx}
