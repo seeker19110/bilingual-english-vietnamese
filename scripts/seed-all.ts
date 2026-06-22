@@ -32,9 +32,9 @@ const MAX_ROUNDS      = 5
 const INTERLEAVE_PCT  = 5     // cứ mỗi 5% pronunciation thì chạy 5% patterns
 const BASE_URL        = process.env.BASE_URL || ''
 const FORCE           = process.argv.includes('--force') || process.env.FORCE === '1'
-// Giới hạn request/phút gửi đến Google TTS — đặt dưới quota thật ~20% để an toàn
-// Chirp 3 HD quota mặc định: 100 RPM → đặt 80 để có buffer
-const MAX_RPM         = parseInt(process.env.MAX_RPM ?? '80', 10)
+// Giới hạn request/phút gửi đến Google TTS — đặt dưới quota thật ~25% để an toàn
+// Chirp 3 HD quota mặc định: 200 RPM → đặt 150 để có buffer
+const MAX_RPM         = parseInt(process.env.MAX_RPM ?? '150', 10)
 
 const PRON_ERRORS_FILE    = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
 const PATTERN_ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/prefetch-tts-errors.json')
@@ -51,7 +51,7 @@ class RateLimiter {
 
   constructor(rpm: number) {
     this.maxTokens   = rpm
-    this.tokens      = rpm           // bắt đầu đầy bucket
+    this.tokens      = 0             // bắt đầu rỗng → tránh burst 80 req ngay đầu
     this.lastRefill  = Date.now()
     this.refillPerMs = rpm / 60_000
   }
