@@ -17,9 +17,6 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
 import { generateAudioFromGoogle, VOICE_IDS, type Lang, type VoiceId } from '../api/_lib/googleTts.ts'
-
-// Pronunciations chỉ cần 2 giọng cơ bản — female2/male2 dành cho bài học hội thoại
-const PRON_VOICE_IDS: VoiceId[] = ['female', 'male']
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
@@ -33,7 +30,7 @@ const DELAY_MS        = 0     // không cần delay
 const RETRY_DELAY_MS  = 5000  // nghỉ giữa vòng retry
 const MAX_ROUNDS      = 5
 const INTERLEAVE_PCT  = 5     // cứ mỗi 5% pronunciation thì chạy 5% patterns
-const RATE_LIMIT      = 100   // nghỉ sau mỗi N request thực (không tính skip)
+const RATE_LIMIT      = 75    // nghỉ sau mỗi N request thực (không tính skip)
 const RATE_PAUSE_MS   = 30000 // thời gian nghỉ khi chạm rate limit (ms)
 const BASE_URL        = process.env.BASE_URL || ''
 const FORCE           = process.argv.includes('--force') || process.env.FORCE === '1'
@@ -106,7 +103,7 @@ function loadPronTasks(wordsFile?: string): PronTask[] {
   }
   const tasks: PronTask[] = []
   for (const word of words) {
-    for (const voice of PRON_VOICE_IDS) tasks.push({ type: 'pron', word, voice })
+    for (const voice of VOICE_IDS) tasks.push({ type: 'pron', word, voice })
   }
   return tasks
 }
