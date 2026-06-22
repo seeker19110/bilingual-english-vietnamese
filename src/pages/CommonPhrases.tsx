@@ -244,8 +244,8 @@ export default function CommonPhrases() {
         </div>
       </main>
 
-      {/* Search bar cố định ở dưới — CHỈ trên mobile, mờ khi không dùng */}
-      <div className={`sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe transition-opacity duration-200 ${search ? 'opacity-100' : 'opacity-40 focus-within:opacity-100'}`}>
+      {/* Search bar cố định ở dưới — CHỈ trên mobile */}
+      <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
           <input

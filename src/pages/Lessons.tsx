@@ -133,8 +133,8 @@ export default function Lessons() {
         </div>
       </main>
 
-      {/* Search bar cố định ở dưới — CHỈ trên mobile, mờ khi không dùng */}
-      <div className={`sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe transition-opacity duration-200 ${query ? 'opacity-100' : 'opacity-40 focus-within:opacity-100'}`}>
+      {/* Search bar cố định ở dưới — CHỈ trên mobile */}
+      <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe">
         <SearchBar query={query} setQuery={setQuery} isA={isA} />
       </div>
     </div>
