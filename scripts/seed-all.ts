@@ -25,57 +25,20 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
-const BATCH_SIZE      = 10    // số tác vụ song song (giảm để tránh burst)
-const DELAY_MS        = 0     // không cần delay thêm (rate limiter lo)
-const RETRY_DELAY_MS  = 10000 // nghỉ 10s giữa vòng retry
+const BATCH_SIZE      = 15    // số tác vụ song song
+const DELAY_MS        = 0     // không cần delay
+const RETRY_DELAY_MS  = 5000  // nghỉ giữa vòng retry
 const MAX_ROUNDS      = 5
 const INTERLEAVE_PCT  = 5     // cứ mỗi 5% pronunciation thì chạy 5% patterns
+const RATE_LIMIT      = 100   // nghỉ sau mỗi N request thực (không tính skip)
+const RATE_PAUSE_MS   = 30000 // thời gian nghỉ khi chạm rate limit (ms)
 const BASE_URL        = process.env.BASE_URL || ''
 const FORCE           = process.argv.includes('--force') || process.env.FORCE === '1'
-// Giới hạn request/phút gửi đến Google TTS — đặt dưới quota thật ~25% để an toàn
-// Chirp 3 HD quota mặc định: 200 RPM → đặt 150 để có buffer
-const MAX_RPM         = parseInt(process.env.MAX_RPM ?? '150', 10)
 
 const PRON_ERRORS_FILE    = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
 const PATTERN_ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/prefetch-tts-errors.json')
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
-
-// Token bucket rate limiter — đảm bảo không vượt MAX_RPM request/phút
-// Cách hoạt động: mỗi request phải "mua" 1 token; token tự nạp theo thời gian thực.
-class RateLimiter {
-  private tokens: number
-  private lastRefill: number
-  private readonly maxTokens: number
-  private readonly refillPerMs: number // token/ms
-
-  constructor(rpm: number) {
-    this.maxTokens   = rpm
-    this.tokens      = 0             // bắt đầu rỗng → tránh burst 80 req ngay đầu
-    this.lastRefill  = Date.now()
-    this.refillPerMs = rpm / 60_000
-  }
-
-  async acquire(): Promise<void> {
-    const now     = Date.now()
-    const elapsed = now - this.lastRefill
-    // Nạp token theo thời gian đã trôi qua
-    this.tokens    = Math.min(this.maxTokens, this.tokens + elapsed * this.refillPerMs)
-    this.lastRefill = now
-
-    if (this.tokens >= 1) {
-      this.tokens--
-      return
-    }
-    // Hết token → tính thời gian chờ cho đến khi nạp được 1 token
-    const waitMs = Math.ceil((1 - this.tokens) / this.refillPerMs)
-    await sleep(waitMs)
-    this.tokens     = 0
-    this.lastRefill = Date.now()
-  }
-}
-
-const rateLimiter = new RateLimiter(MAX_RPM)
 
 // ── Kiểu dữ liệu ────────────────────────────────────────────────────────────
 interface PronTask { type: 'pron'; word: string; voice: VoiceId }
@@ -152,7 +115,6 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
   try {
     if (task.type === 'pron') {
       const { word, voice } = task
-      await rateLimiter.acquire()
       const audioBuffer = await generateAudioFromGoogle(word, voice, 'en-US')
       const fileName    = `${word}-${voice}.mp3`
       const { error: uploadError } = await supabase.storage
@@ -177,7 +139,6 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
       if (cached) return { status: 'skip' }
     }
 
-    await rateLimiter.acquire()
     const audioBuffer = await generateAudioFromGoogle(text, voice, lang)
     const encrypted   = await encryptAudio(audioBuffer, hash)
     const fileName    = `${lang}/${voice}/${hash}.mp3`
@@ -201,23 +162,30 @@ async function runBatch(
   bar: cliProgress.SingleBar,
   processed: { value: number },
   total: number,
+  reqCount: { value: number },  // đếm tổng req thực (không tính skip) để rate limit
 ): Promise<void> {
   const results = await Promise.all(tasks.map((t) => processTask(t)))
-  let batchErrors = 0
+  let newReqs = 0
   results.forEach((result, idx) => {
-    if (result.status === 'ok')        counters.ok++
+    if (result.status === 'ok') { counters.ok++; newReqs++ }
     else if (result.status === 'skip') counters.skip++
     else {
-      counters.errors++
-      batchErrors++
+      counters.errors++; newReqs++
       failed.push({ task: tasks[idx], message: result.message })
     }
   })
+  reqCount.value += newReqs
   processed.value = Math.min(processed.value + tasks.length, total)
   bar.update(processed.value, { ...counters })
-  // Nếu batch này có lỗi (thường do 429) → nghỉ 10s để quota hồi phục
-  if (batchErrors > 0) await sleep(10_000)
-  else if (DELAY_MS > 0) await sleep(DELAY_MS)
+  if (DELAY_MS > 0) await sleep(DELAY_MS)
+  // Nghỉ khi chạm ngưỡng RATE_LIMIT req thực
+  if (reqCount.value >= RATE_LIMIT) {
+    reqCount.value = 0
+    bar.stop()
+    process.stdout.write(`\n⏸  Đã ${RATE_LIMIT} req — nghỉ ${RATE_PAUSE_MS / 1000}s...\n`)
+    await sleep(RATE_PAUSE_MS)
+    bar.start(total, processed.value, { ...counters })
+  }
 }
 
 // ── Vòng xử lý xen kẽ ───────────────────────────────────────────────────────
@@ -242,6 +210,7 @@ async function runInterleavedPass(
 
   const counters  = { ok: 0, skip: 0, errors: 0 }
   const processed = { value: 0 }
+  const reqCount  = { value: 0 }
   const pronFailed: Array<{ task: AnyTask; message: string }>    = []
   const patternFailed: Array<{ task: AnyTask; message: string }> = []
 
@@ -255,7 +224,7 @@ async function runInterleavedPass(
     if (pi < pronTasks.length) {
       const chunk = pronTasks.slice(pi, pi + pronChunkSize)
       for (let i = 0; i < chunk.length; i += BATCH_SIZE) {
-        await runBatch(chunk.slice(i, i + BATCH_SIZE), pronFailed, counters, bar, processed, total)
+        await runBatch(chunk.slice(i, i + BATCH_SIZE), pronFailed, counters, bar, processed, total, reqCount)
       }
       pi += pronChunkSize
     }
@@ -263,18 +232,13 @@ async function runInterleavedPass(
     if (ti < patternTasks.length) {
       const chunk = patternTasks.slice(ti, ti + patternChunkSize)
       for (let i = 0; i < chunk.length; i += BATCH_SIZE) {
-        await runBatch(chunk.slice(i, i + BATCH_SIZE), patternFailed, counters, bar, processed, total)
+        await runBatch(chunk.slice(i, i + BATCH_SIZE), patternFailed, counters, bar, processed, total, reqCount)
       }
       ti += patternChunkSize
     }
   }
 
   bar.stop()
-  // In ra lỗi đầu tiên để debug
-  const firstPronErr = pronFailed[0]
-  const firstPatErr  = patternFailed[0]
-  if (firstPronErr)  console.log(`\n🔴 Lỗi pron mẫu:  [${(firstPronErr.task as PronTask).word}] ${firstPronErr.message}`)
-  if (firstPatErr)   console.log(`\n🔴 Lỗi pattern mẫu: ${firstPatErr.message}`)
   console.log(`   ✓ OK: ${counters.ok}  ⏭ Skip: ${counters.skip}  ✗ Lỗi pron: ${pronFailed.length} | pattern: ${patternFailed.length}`)
 
   return { pronFailed, patternFailed }
@@ -312,7 +276,7 @@ async function main(): Promise<void> {
   console.log('🔊 Bắt đầu seed:all — pronunciation + patterns (xen kẽ)')
   console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo`)
   console.log(`📋 Patterns      : ${allPatternTasks.length} tác vụ cần tạo`)
-  console.log(`⚙️  Batch: ${BATCH_SIZE} | RPM limit: ${MAX_RPM} | Interleave: ${INTERLEAVE_PCT}% | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
+  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate limit: ${RATE_LIMIT} req/${RATE_PAUSE_MS/1000}s | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
 
   let pronRemaining    = allPronTasks
   let patternRemaining = allPatternTasks
