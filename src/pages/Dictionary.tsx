@@ -140,17 +140,19 @@ export default function Dictionary() {
             {query ? (
               allMatches.length > 0 ? (
                 <>
-                  {/* Phân trang: nút + chỉ số */}
+                  {/* Phân trang: 2 thẻ bấm 30% + thông tin giữa 40% */}
                   {totalPages > 1 && (
-                    <div className="flex items-center justify-between mb-3 text-xs text-zinc-500">
+                    <div className="flex items-stretch gap-2 mb-3 text-xs">
                       <button onClick={() => setPage(p => p - 1)} disabled={page === 0}
-                        className="flex items-center gap-1 disabled:opacity-30 hover:text-zinc-200 transition p-1">
+                        className="w-[30%] flex items-center justify-center gap-1 glass rounded-xl py-2.5 text-zinc-400 hover:text-white disabled:opacity-25 transition active:bg-zinc-700/50">
                         <ChevronLeft className="w-4 h-4" />
                         {isA ? 'Trước' : 'Prev'}
                       </button>
-                      <span>{page + 1} / {totalPages} ({allMatches.length} {isA ? 'từ' : 'words'})</span>
+                      <div className="flex-1 flex items-center justify-center text-zinc-500">
+                        {page + 1} / {totalPages} ({allMatches.length} {isA ? 'từ' : 'words'})
+                      </div>
                       <button onClick={() => setPage(p => p + 1)} disabled={page === totalPages - 1}
-                        className="flex items-center gap-1 disabled:opacity-30 hover:text-zinc-200 transition p-1">
+                        className="w-[30%] flex items-center justify-center gap-1 glass rounded-xl py-2.5 text-zinc-400 hover:text-white disabled:opacity-25 transition active:bg-zinc-700/50">
                         {isA ? 'Sau' : 'Next'}
                         <ChevronRight className="w-4 h-4" />
                       </button>
