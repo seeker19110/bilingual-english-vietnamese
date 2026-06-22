@@ -2131,8 +2131,11 @@
  },
  {
   "id": 196,
-  "title": "Tư vấn pháp lý",
-  "situation": "Tình huống thực tế liên quan đến: Tư vấn pháp lý.",
+  "title": {
+   "vi": "Học tiếng Anh qua phim",
+   "en": "Learning English Through Movies"
+  },
+  "situation": "Hai người bạn Thư và Khánh chia sẻ kinh nghiệm học tiếng Anh qua xem phim và series.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -2141,8 +2144,11 @@
  },
  {
   "id": 197,
-  "title": "Khám phụ khoa",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Khám phụ khoa.",
+  "title": {
+   "vi": "Phàn nàn về ô nhiễm tiếng ồn",
+   "en": "Complaining About Noise Pollution"
+  },
+  "situation": "Anh Nam đến gặp tổ trưởng dân phố tên Bà Lan để phản ánh về tiếng ồn từ quán karaoke gần nhà.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -2151,48 +2157,63 @@
  },
  {
   "id": 198,
-  "title": "Lên kế hoạch xây nhà",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Lên kế hoạch xây nhà.",
+  "title": {
+   "vi": "Đặt tiệc cưới",
+   "en": "Booking a Wedding Banquet"
+  },
+  "situation": "Đôi vợ chồng trẻ Hùng và Yến đến nhà hàng để gặp nhân viên sự kiện tên Mai bàn về việc đặt tiệc cưới.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 19,
   "idx": 7
  },
  {
   "id": 199,
-  "title": "Tư vấn marketing",
-  "situation": "Tình huống thực tế liên quan đến: Tư vấn marketing.",
+  "title": {
+   "vi": "Hỏi về visa du học Úc",
+   "en": "Asking About Australian Student Visa"
+  },
+  "situation": "Bạn Linh hỏi nhân viên tư vấn du học tên Phương về quy trình xin visa du học Úc.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerAGender": "female",
+  "speakerBGender": "female",
   "chunk": 19,
   "idx": 8
  },
  {
   "id": 200,
-  "title": "Phỏng vấn nhà báo",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Phỏng vấn nhà báo.",
+  "title": {
+   "vi": "Thảo luận về biến đổi khí hậu",
+   "en": "Discussing Climate Change"
+  },
+  "situation": "Hai sinh viên đại học Duy và Trâm thảo luận về biến đổi khí hậu và hành động cá nhân có thể làm.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 19,
   "idx": 9
  },
  {
   "id": 201,
-  "title": "Tư vấn thiết kế nội thất",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Tư vấn thiết kế nội thất.",
+  "title": {
+   "vi": "Phỏng vấn xin việc lập trình viên",
+   "en": "Software Developer Job Interview"
+  },
+  "situation": "Anh Tuấn phỏng vấn ứng viên lập trình viên tên Minh cho vị trí frontend developer tại công ty tech.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 20,
   "idx": 0
  },
  {
   "id": 202,
-  "title": "Hội thảo khoa học",
-  "situation": "Tình huống thực tế liên quan đến: Hội thảo khoa học.",
+  "title": {
+   "vi": "Mua sắm tết",
+   "en": "Lunar New Year Shopping"
+  },
+  "situation": "Chị Hoa đi siêu thị mua đồ Tết, hỏi nhân viên tên Thanh về hàng hóa và khuyến mãi.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -2201,18 +2222,24 @@
  },
  {
   "id": 203,
-  "title": "Cố vấn nghề nghiệp",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Cố vấn nghề nghiệp.",
+  "title": {
+   "vi": "Hỏi đường đến bệnh viện",
+   "en": "Asking for Directions to the Hospital"
+  },
+  "situation": "Anh Bình đang lái xe và gọi điện hỏi người quen tên Hà về đường đến Bệnh viện Bạch Mai.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 20,
   "idx": 2
  },
  {
   "id": 204,
-  "title": "Hội chẩn y khoa",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hội chẩn y khoa.",
+  "title": {
+   "vi": "Thảo luận về sách văn học Việt Nam",
+   "en": "Discussing Vietnamese Literature"
+  },
+  "situation": "Hai giáo viên văn học Lan và Sơn thảo luận về một tác phẩm kinh điển của văn học Việt Nam.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -2221,28 +2248,37 @@
  },
  {
   "id": 205,
-  "title": "Tư vấn xuất khẩu",
-  "situation": "Tình huống thực tế liên quan đến: Tư vấn xuất khẩu.",
+  "title": {
+   "vi": "Thuê người giúp việc nhà",
+   "en": "Hiring a Housekeeper"
+  },
+  "situation": "Chị Hương phỏng vấn người giúp việc tên Bà Lê muốn xin việc dọn dẹp nhà và trông trẻ.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 20,
   "idx": 4
  },
  {
   "id": 206,
-  "title": "Học nấu phở bò",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học nấu phở bò.",
+  "title": {
+   "vi": "Hỏi về đăng ký kinh doanh",
+   "en": "Asking About Business Registration"
+  },
+  "situation": "Anh Hải muốn mở quán cà phê nhỏ, đến phòng đăng ký kinh doanh hỏi thủ tục.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 20,
   "idx": 5
  },
  {
   "id": 207,
-  "title": "Làm bánh mì Việt Nam",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Làm bánh mì Việt Nam.",
+  "title": {
+   "vi": "Tập gym lần đầu",
+   "en": "First Time at the Gym"
+  },
+  "situation": "Anh Việt đến phòng gym lần đầu, được huấn luyện viên Khoa tư vấn và hướng dẫn.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -2251,18 +2287,24 @@
  },
  {
   "id": 208,
-  "title": "Nấu cơm tấm Sài Gòn",
-  "situation": "Tình huống thực tế liên quan đến: Nấu cơm tấm Sài Gòn.",
+  "title": {
+   "vi": "Chọn trường mầm non cho con",
+   "en": "Choosing a Preschool for Your Child"
+  },
+  "situation": "Hai bà mẹ Ngọc và Yến ngồi cà phê thảo luận về việc chọn trường mầm non cho con sắp 3 tuổi.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 20,
   "idx": 7
  },
  {
   "id": 209,
-  "title": "Học làm nem cuốn",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học làm nem cuốn.",
+  "title": {
+   "vi": "Đặt phòng khách sạn qua điện thoại",
+   "en": "Booking a Hotel Room by Phone"
+  },
+  "situation": "Anh Quân gọi điện đến khách sạn để đặt phòng cho chuyến công tác.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -2271,28 +2313,37 @@
  },
  {
   "id": 210,
-  "title": "Pha cà phê phin",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Pha cà phê phin.",
+  "title": {
+   "vi": "Nói về âm nhạc Việt Nam",
+   "en": "Talking About Vietnamese Music"
+  },
+  "situation": "Bạn Linh (người Việt) và bạn Tom (người Mỹ đang học tiếng Việt) nói chuyện về âm nhạc truyền thống và hiện đại của Việt Nam.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 20,
   "idx": 9
  },
  {
   "id": 211,
-  "title": "Đăng ký lớp bơi lội",
-  "situation": "Tình huống thực tế liên quan đến: Đăng ký lớp bơi lội.",
+  "title": {
+   "vi": "Xin nghỉ học vì ốm",
+   "en": "Asking for Sick Leave from School"
+  },
+  "situation": "Phụ huynh tên Hùng gọi điện cho cô giáo chủ nhiệm Lan để xin nghỉ học cho con.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 21,
   "idx": 0
  },
  {
   "id": 212,
-  "title": "Tập bóng đá cuối tuần",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tập bóng đá cuối tuần.",
+  "title": {
+   "vi": "Nhờ hàng xóm trông nhà",
+   "en": "Asking a Neighbor to Watch the House"
+  },
+  "situation": "Chị Ngân nhờ hàng xóm tên chú Tâm trông nhà giúp trong thời gian chị đi du lịch một tuần.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -2301,18 +2352,24 @@
  },
  {
   "id": 213,
-  "title": "Học đánh cầu lông",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Học đánh cầu lông.",
+  "title": {
+   "vi": "Mua vé tàu online",
+   "en": "Buying Train Tickets Online"
+  },
+  "situation": "Chị Dung nhờ em gái Hà hướng dẫn cách mua vé tàu hỏa trên mạng.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "female",
   "chunk": 21,
   "idx": 2
  },
  {
   "id": 214,
-  "title": "Tham gia câu lạc bộ chạy bộ",
-  "situation": "Tình huống thực tế liên quan đến: Tham gia câu lạc bộ chạy bộ.",
+  "title": {
+   "vi": "Thảo luận về xu hướng thời trang",
+   "en": "Discussing Fashion Trends"
+  },
+  "situation": "Hai người bạn Châu và Kỳ đang dạo xem quần áo trong trung tâm thương mại và bàn về thời trang.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -2321,18 +2378,24 @@
  },
  {
   "id": 215,
-  "title": "Đăng ký giải marathon",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đăng ký giải marathon.",
+  "title": {
+   "vi": "Tư vấn mua điện thoại mới",
+   "en": "Advising on Buying a New Phone"
+  },
+  "situation": "Nhân viên bán hàng tên Long tư vấn cho khách hàng tên Mỹ đang chọn mua điện thoại mới.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 21,
   "idx": 4
  },
  {
   "id": 216,
-  "title": "Mua vé xem phim",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Mua vé xem phim.",
+  "title": {
+   "vi": "Phỏng vấn người nổi tiếng",
+   "en": "Interviewing a Celebrity"
+  },
+  "situation": "Phóng viên Linh phỏng vấn ca sĩ trẻ tên Hùng về âm nhạc và cuộc sống.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -2341,8 +2404,11 @@
  },
  {
   "id": 217,
-  "title": "Đi xem ca nhạc",
-  "situation": "Tình huống thực tế liên quan đến: Đi xem ca nhạc.",
+  "title": {
+   "vi": "Giải quyết tranh chấp với hàng xóm",
+   "en": "Resolving a Dispute with a Neighbor"
+  },
+  "situation": "Anh Tân và hàng xóm bên cạnh tên Bà Hoa có tranh chấp về ranh giới tường nhà, ngồi lại nói chuyện để giải quyết.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -2351,68 +2417,89 @@
  },
  {
   "id": 218,
-  "title": "Thăm triển lãm nghệ thuật",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thăm triển lãm nghệ thuật.",
+  "title": {
+   "vi": "Hỏi về bảo hiểm xe máy",
+   "en": "Asking About Motorcycle Insurance"
+  },
+  "situation": "Anh Khải đến đại lý xe máy hỏi về các loại bảo hiểm sau khi mua xe mới.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 21,
   "idx": 7
  },
  {
   "id": 219,
-  "title": "Chơi board game",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Chơi board game.",
+  "title": {
+   "vi": "Nói chuyện về sức khỏe tâm thần với bạn bè",
+   "en": "Talking About Mental Health with Friends"
+  },
+  "situation": "Hai người bạn Liên và Hải ngồi cà phê, Liên chia sẻ về cảm giác lo âu gần đây của mình.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 21,
   "idx": 8
  },
  {
   "id": 220,
-  "title": "Xem kịch sân khấu",
-  "situation": "Tình huống thực tế liên quan đến: Xem kịch sân khấu.",
+  "title": {
+   "vi": "Mua đồ nội thất cho nhà mới",
+   "en": "Buying Furniture for a New Home"
+  },
+  "situation": "Đôi vợ chồng trẻ Bình và Ngân đến showroom nội thất để chọn đồ cho căn hộ mới.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 21,
   "idx": 9
  },
  {
   "id": 221,
-  "title": "Mua quần áo thời trang",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Mua quần áo thời trang.",
+  "title": {
+   "vi": "Đàm phán lương khi nhận việc",
+   "en": "Salary Negotiation When Accepting a Job"
+  },
+  "situation": "Cô Hà được công ty mời nhận việc với mức lương đề nghị, và cô thương lượng để được mức lương tốt hơn.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 22,
   "idx": 0
  },
  {
   "id": 222,
-  "title": "Tư vấn phối đồ",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Tư vấn phối đồ.",
+  "title": {
+   "vi": "Cấp cứu tai nạn giao thông",
+   "en": "Responding to a Traffic Accident"
+  },
+  "situation": "Anh Trung chứng kiến tai nạn giao thông trên đường và gọi điện cho cấp cứu 115.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "female",
   "chunk": 22,
   "idx": 1
  },
  {
   "id": 223,
-  "title": "Mua giày sneaker",
-  "situation": "Tình huống thực tế liên quan đến: Mua giày sneaker.",
+  "title": {
+   "vi": "Học nấu ăn từ mẹ",
+   "en": "Learning to Cook from Mom"
+  },
+  "situation": "Con gái Lan học nấu món bún bò Huế từ mẹ là Bà Ngọc trong bếp nhà.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerAGender": "female",
+  "speakerBGender": "female",
   "chunk": 22,
   "idx": 2
  },
  {
   "id": 224,
-  "title": "Tìm áo dài truyền thống",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tìm áo dài truyền thống.",
+  "title": {
+   "vi": "Tham gia câu lạc bộ thể thao",
+   "en": "Joining a Sports Club"
+  },
+  "situation": "Chị Hương đến gặp thư ký câu lạc bộ cầu lông tên Hòa để tìm hiểu và đăng ký tham gia.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -2421,11 +2508,14 @@
  },
  {
   "id": 225,
-  "title": "Mua đồ công sở",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Mua đồ công sở.",
+  "title": {
+   "vi": "Hỏi về chính sách đổi trả hàng",
+   "en": "Asking About Return and Exchange Policy"
+  },
+  "situation": "Chị Vân mua áo online nhưng kích thước không vừa, gọi điện cho bộ phận chăm sóc khách hàng để hỏi về đổi trả.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 22,
   "idx": 4
  },
