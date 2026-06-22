@@ -1,13 +1,13 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Search, X, ChevronRight, ArrowLeft, Loader2 } from 'lucide-react'
 import Layout from '../components/Layout'
 import { useLang } from '../context/useLang'
 import KaraokeText from '../components/KaraokeText'
+import VoiceToggle from '../components/VoiceToggle'
 import { INDEX, loadSubject } from '../data/patterns/loader'
 import type { SubjectMeta, Subject } from '../data/patterns/loader'
 
-// Mỗi lần chỉ hiển thị (và lazy-load) 8 chủ thể.
-const PAGE_SIZE = 8
+const PAGE_SIZE = 7
 
 const COLOR_MAP: Record<string, { bg: string; text: string; border: string; badge: string }> = {
   emerald: { bg:'bg-emerald-500/10', text:'text-emerald-400', border:'border-emerald-500/25', badge:'bg-emerald-500/20 text-emerald-300' },
@@ -28,36 +28,81 @@ function getColor(color: string) {
   return COLOR_MAP[color] ?? COLOR_MAP['slate']
 }
 
-const CAT_COLORS: Record<string, string> = {}
-INDEX.forEach(s => { if (!CAT_COLORS[s.category]) CAT_COLORS[s.category] = s.color })
+// Phân loại cấu trúc câu từ starter
+type StructType = 'be' | 'toV' | 'V'
+
+const STRUCT_LABELS: Record<StructType, string> = {
+  be:  'S + be',
+  toV: 'S + to V',
+  V:   'S + V',
+}
+
+function getStructType(starter: string): StructType {
+  const words = starter.toLowerCase().split(/\s+/)
+  // Có "to" ở bất kỳ vị trí nào → S + to V
+  if (words.slice(1).includes('to')) return 'toV'
+  // Động từ "be" ở vị trí thứ 2 → S + be
+  if (['am', 'is', 'are', 'was', 'were', 'be'].some(w => words[1] === w)) return 'be'
+  return 'V'
+}
+
+// Xen kẽ round-robin theo category để mỗi batch 7 không quá 2 cùng loại
+function interleave(items: SubjectMeta[]): SubjectMeta[] {
+  const groups: Record<string, SubjectMeta[]> = {}
+  const order: string[] = []
+  items.forEach(s => {
+    if (!groups[s.category]) { groups[s.category] = []; order.push(s.category) }
+    groups[s.category].push(s)
+  })
+  const result: SubjectMeta[] = []
+  let i = 0
+  const cats = order
+  while (result.length < items.length) {
+    const cat = cats[i % cats.length]
+    const grp = groups[cat]
+    if (grp && grp.length > 0) result.push(grp.shift()!)
+    i++
+    if (i > items.length * 3) break
+  }
+  return result
+}
 
 export default function CommonPhrases() {
   const { T } = useLang()
 
   const [search, setSearch] = useState('')
-  const [activeCat, setActiveCat] = useState<string | null>(null)
+  const [activeStruct, setActiveStruct] = useState<StructType | null>(null)
   const [visible, setVisible] = useState(PAGE_SIZE)
-
-  // Chủ thể đang mở (đã lazy-load 100 câu)
   const [selected, setSelected] = useState<Subject | null>(null)
   const [loading, setLoading] = useState(false)
-
-  const categories = useMemo(() => [...new Set(INDEX.map(s => s.category))], [])
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   const filtered = useMemo(() => {
     let list = INDEX
-    if (activeCat) list = list.filter(s => s.category === activeCat)
+    if (activeStruct) list = list.filter(s => getStructType(s.starter) === activeStruct)
     if (search.trim()) {
       const q = search.toLowerCase()
-      list = list.filter(s =>
-        s.starter.toLowerCase().includes(q) || s.category.toLowerCase().includes(q)
-      )
+      list = list.filter(s => s.starter.toLowerCase().includes(q))
     }
     return list
-  }, [activeCat, search])
+  }, [activeStruct, search])
 
-  // Khi đổi bộ lọc/tìm kiếm thì quay lại trang đầu (8 chủ thể).
-  useEffect(() => { setVisible(PAGE_SIZE) }, [activeCat, search])
+  const sorted = useMemo(() => interleave(filtered), [filtered])
+
+  useEffect(() => { setVisible(PAGE_SIZE) }, [activeStruct, search])
+
+  // Lazy load bằng IntersectionObserver — cuộn tới sentinel thì load thêm 7
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el || visible >= sorted.length) return
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        setVisible(v => Math.min(v + PAGE_SIZE, sorted.length))
+      }
+    }, { rootMargin: '300px' })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [visible, sorted.length])
 
   async function openSubject(meta: SubjectMeta) {
     setLoading(true)
@@ -72,7 +117,7 @@ export default function CommonPhrases() {
     const c = getColor(selected.color)
     return (
       <div className="min-h-dvh bg-zinc-950">
-        <Layout title={selected.starter} back />
+        <Layout title={selected.starter} back extra={<VoiceToggle />} />
         <main className="max-w-3xl mx-auto px-4 py-6">
           <button
             onClick={() => setSelected(null)}
@@ -92,7 +137,6 @@ export default function CommonPhrases() {
                 className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl overflow-hidden"
               >
                 <div className="flex items-stretch">
-                  {/* Số thứ tự */}
                   <span className="text-xs text-zinc-600 w-8 shrink-0 flex items-center justify-center border-r border-zinc-800/60">
                     {idx + 1}
                   </span>
@@ -117,21 +161,22 @@ export default function CommonPhrases() {
     )
   }
 
-  // ── Màn hình danh sách chủ thể (8 cái/trang) ──────────────────────
-  const shown = filtered.slice(0, visible)
+  // ── Màn hình danh sách ──────────────────────────────────────────────
+  const shown = sorted.slice(0, visible)
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout title={T.phrasesPageTitle} subtitle={T.phrasesPageSub} back />
+      <Layout title={T.phrasesPageTitle} back extra={<VoiceToggle />} />
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-4">
 
+        {/* Ô tìm kiếm */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder={T.phrasesSearch}
+            placeholder="Bạn muốn nói gì…"
             className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
           />
           {search && (
@@ -141,38 +186,34 @@ export default function CommonPhrases() {
           )}
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        {/* 3 loại cấu trúc S+V */}
+        <div className="flex gap-2 pb-1">
           <button
-            onClick={() => setActiveCat(null)}
+            onClick={() => setActiveStruct(null)}
             className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-              activeCat === null
+              activeStruct === null
                 ? 'bg-white/10 text-white border-white/20'
                 : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
             }`}
           >
             {T.phrasesAll}
           </button>
-          {categories.map(cat => {
-            const c = getColor(CAT_COLORS[cat] ?? 'slate')
-            const isActive = activeCat === cat
-            return (
-              <button
-                key={cat}
-                onClick={() => setActiveCat(isActive ? null : cat)}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-                  isActive ? `${c.bg} ${c.text} ${c.border}` : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
-                }`}
-              >
-                {cat}
-              </button>
-            )
-          })}
+          {(['be', 'toV', 'V'] as StructType[]).map(type => (
+            <button
+              key={type}
+              onClick={() => setActiveStruct(activeStruct === type ? null : type)}
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                activeStruct === type
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                  : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
+              }`}
+            >
+              {STRUCT_LABELS[type]}
+            </button>
+          ))}
         </div>
 
-        <p className="text-xs text-zinc-600">
-          {filtered.length} {T.phrasesSubjects} · {filtered.reduce((s, x) => s + x.count, 0)} {T.phrasesSentences}
-        </p>
-
+        {/* Grid cards — 7 chủ thể mỗi lần, xen kẽ danh mục */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {shown.map(subj => {
             const c = getColor(subj.color)
@@ -196,14 +237,11 @@ export default function CommonPhrases() {
           })}
         </div>
 
-        {visible < filtered.length && (
-          <button
-            onClick={() => setVisible(v => v + PAGE_SIZE)}
-            className="w-full py-3 rounded-xl bg-zinc-900/80 border border-zinc-800 text-sm text-zinc-300 hover:bg-zinc-800/60 hover:text-white transition flex items-center justify-center gap-2"
-          >
-            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {T.phrasesLoadMore ?? 'Tải thêm'} ({filtered.length - visible})
-          </button>
+        {/* Sentinel lazy load */}
+        {visible < sorted.length && (
+          <div ref={sentinelRef} className="flex justify-center py-6">
+            <Loader2 className="w-5 h-5 animate-spin text-zinc-600" />
+          </div>
         )}
 
         {filtered.length === 0 && (
