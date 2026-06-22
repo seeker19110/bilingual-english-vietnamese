@@ -17,6 +17,9 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
 import { generateAudioFromGoogle, VOICE_IDS, type Lang, type VoiceId } from '../api/_lib/googleTts.ts'
+
+// Pronunciations chỉ cần 2 giọng cơ bản — female2/male2 dành cho bài học hội thoại
+const PRON_VOICE_IDS: VoiceId[] = ['female', 'male']
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
@@ -103,7 +106,7 @@ function loadPronTasks(wordsFile?: string): PronTask[] {
   }
   const tasks: PronTask[] = []
   for (const word of words) {
-    for (const voice of VOICE_IDS) tasks.push({ type: 'pron', word, voice })
+    for (const voice of PRON_VOICE_IDS) tasks.push({ type: 'pron', word, voice })
   }
   return tasks
 }

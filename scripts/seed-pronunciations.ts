@@ -20,7 +20,7 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
-import { generateAudioFromGoogle, VOICE_IDS, type VoiceId } from '../api/_lib/googleTts.ts'
+import { generateAudioFromGoogle, type VoiceId } from '../api/_lib/googleTts.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
 
 // Thư mục gốc của project (1 cấp trên thư mục scripts/), để mọi đường dẫn file
@@ -36,6 +36,10 @@ const BATCH_SIZE     = 15   // số tác vụ song song — Google TTS cho phép
 const DELAY_MS       = 0    // không cần nghỉ giữa batch với BATCH_SIZE vừa phải
 const RETRY_DELAY_MS = 5000 // nghỉ giữa các vòng retry (ms) để tránh rate-limit tạm thời
 const MAX_ROUNDS     = 5    // số vòng retry tối đa
+
+// Pronunciations chỉ cần 2 giọng cơ bản (người dùng chỉ chọn female/male)
+// female2/male2 dùng cho bài học hội thoại, không cần seed vào bảng pronunciations
+const PRON_VOICE_IDS: VoiceId[] = ['female', 'male']
 
 const DEFAULT_WORDS_FILE = path.join(PROJECT_ROOT, 'src/data/dictionary.json')
 const ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
@@ -152,7 +156,7 @@ async function main(): Promise<void> {
 
   console.log('🚀 Bắt đầu seed phát âm từ điển')
   console.log(`📋 Nguồn từ : ${path.relative(PROJECT_ROOT, wordsFile)}`)
-  console.log(`📋 Tổng từ  : ${allWords.length} × ${VOICE_IDS.length} giọng (${VOICE_IDS.join(', ')})`)
+  console.log(`📋 Tổng từ  : ${allWords.length} × ${PRON_VOICE_IDS.length} giọng (${PRON_VOICE_IDS.join(', ')})`)
   console.log(`⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}`)
 
   // Lấy danh sách (từ, giọng) đã có trong DB — bỏ qua để resume được nếu bị dừng giữa chừng
@@ -174,7 +178,7 @@ async function main(): Promise<void> {
 
   const allTasks: Task[] = []
   for (const w of allWords) {
-    for (const voice of VOICE_IDS) {
+    for (const voice of PRON_VOICE_IDS) {
       allTasks.push({ word: w.toLowerCase(), voice })
     }
   }
