@@ -25,18 +25,57 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
-const BATCH_SIZE      = 15    // số tác vụ song song
-const DELAY_MS        = 0     // không cần delay
-const RETRY_DELAY_MS  = 5000  // nghỉ giữa vòng retry
+const BATCH_SIZE      = 10    // số tác vụ song song (giảm để tránh burst)
+const DELAY_MS        = 0     // không cần delay thêm (rate limiter lo)
+const RETRY_DELAY_MS  = 10000 // nghỉ 10s giữa vòng retry
 const MAX_ROUNDS      = 5
 const INTERLEAVE_PCT  = 5     // cứ mỗi 5% pronunciation thì chạy 5% patterns
 const BASE_URL        = process.env.BASE_URL || ''
 const FORCE           = process.argv.includes('--force') || process.env.FORCE === '1'
+// Giới hạn request/phút gửi đến Google TTS — đặt dưới quota thật ~20% để an toàn
+// Chirp 3 HD quota mặc định: 100 RPM → đặt 80 để có buffer
+const MAX_RPM         = parseInt(process.env.MAX_RPM ?? '80', 10)
 
 const PRON_ERRORS_FILE    = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
 const PATTERN_ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/prefetch-tts-errors.json')
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
+
+// Token bucket rate limiter — đảm bảo không vượt MAX_RPM request/phút
+// Cách hoạt động: mỗi request phải "mua" 1 token; token tự nạp theo thời gian thực.
+class RateLimiter {
+  private tokens: number
+  private lastRefill: number
+  private readonly maxTokens: number
+  private readonly refillPerMs: number // token/ms
+
+  constructor(rpm: number) {
+    this.maxTokens   = rpm
+    this.tokens      = rpm           // bắt đầu đầy bucket
+    this.lastRefill  = Date.now()
+    this.refillPerMs = rpm / 60_000
+  }
+
+  async acquire(): Promise<void> {
+    const now     = Date.now()
+    const elapsed = now - this.lastRefill
+    // Nạp token theo thời gian đã trôi qua
+    this.tokens    = Math.min(this.maxTokens, this.tokens + elapsed * this.refillPerMs)
+    this.lastRefill = now
+
+    if (this.tokens >= 1) {
+      this.tokens--
+      return
+    }
+    // Hết token → tính thời gian chờ cho đến khi nạp được 1 token
+    const waitMs = Math.ceil((1 - this.tokens) / this.refillPerMs)
+    await sleep(waitMs)
+    this.tokens     = 0
+    this.lastRefill = Date.now()
+  }
+}
+
+const rateLimiter = new RateLimiter(MAX_RPM)
 
 // ── Kiểu dữ liệu ────────────────────────────────────────────────────────────
 interface PronTask { type: 'pron'; word: string; voice: VoiceId }
@@ -113,6 +152,7 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
   try {
     if (task.type === 'pron') {
       const { word, voice } = task
+      await rateLimiter.acquire()
       const audioBuffer = await generateAudioFromGoogle(word, voice, 'en-US')
       const fileName    = `${word}-${voice}.mp3`
       const { error: uploadError } = await supabase.storage
@@ -137,6 +177,7 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
       if (cached) return { status: 'skip' }
     }
 
+    await rateLimiter.acquire()
     const audioBuffer = await generateAudioFromGoogle(text, voice, lang)
     const encrypted   = await encryptAudio(audioBuffer, hash)
     const fileName    = `${lang}/${voice}/${hash}.mp3`
@@ -262,7 +303,7 @@ async function main(): Promise<void> {
   console.log('🔊 Bắt đầu seed:all — pronunciation + patterns (xen kẽ)')
   console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo`)
   console.log(`📋 Patterns      : ${allPatternTasks.length} tác vụ cần tạo`)
-  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
+  console.log(`⚙️  Batch: ${BATCH_SIZE} | RPM limit: ${MAX_RPM} | Interleave: ${INTERLEAVE_PCT}% | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
 
   let pronRemaining    = allPronTasks
   let patternRemaining = allPatternTasks
