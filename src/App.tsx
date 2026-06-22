@@ -5,14 +5,14 @@ import { AuthProvider } from './context/AuthProvider'
 import { ToastProvider } from './context/ToastProvider'
 import { useAuth } from './context/useAuth'
 import { CardListSkeleton } from './components/Skeleton'
-import Login from './pages/Login'
-import Home from './pages/Home'
-import Chat from './pages/Chat'
-import Writing from './pages/Writing'
-import Speaking from './pages/Speaking'
-import CommonPhrases from './pages/CommonPhrases'
-import History from './pages/History'
-import Onboarding from './pages/Onboarding'
+const Login = lazy(() => import('./pages/Login'))
+const Home = lazy(() => import('./pages/Home'))
+const Chat = lazy(() => import('./pages/Chat'))
+const Writing = lazy(() => import('./pages/Writing'))
+const Speaking = lazy(() => import('./pages/Speaking'))
+const CommonPhrases = lazy(() => import('./pages/CommonPhrases'))
+const History = lazy(() => import('./pages/History'))
+const Onboarding = lazy(() => import('./pages/Onboarding'))
 
 // Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng
 // thực sự bấm vào, không gộp vào bundle chính để app khởi động nhanh hơn.
