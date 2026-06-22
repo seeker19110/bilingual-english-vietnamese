@@ -31,9 +31,9 @@ const RETRY_DELAY_MS  = 5000  // nghỉ giữa vòng retry
 const MAX_ROUNDS      = 5
 const INTERLEAVE_PCT  = 5     // cứ mỗi 5% pronunciation thì chạy 5% patterns
 // Rate limit thích nghi — tự điều chỉnh theo lượng req thực của window trước:
-//   429 xuất hiện  → nghỉ 120s, giữ limit 180
-//   req > 180      → nghỉ 60s, limit 180
-//   req ≤ 180      → chạy liên tục (không nghỉ)
+//   429 xuất hiện   → nghỉ 120s, giữ limit 180
+//   req >= 180      → nghỉ 60s, limit 180
+//   req < 180       → chạy liên tục (không nghỉ)
 const RATE_LIMIT_DEFAULT = 180  // limit mặc định khi bắt đầu
 const BASE_URL        = process.env.BASE_URL || ''
 const FORCE           = process.argv.includes('--force') || process.env.FORCE === '1'
@@ -166,9 +166,9 @@ interface RateState {
 }
 
 function nextRateState(prevReqs: number, prev429: boolean): { limit: number; pauseMs: number } {
-  if (prev429)         return { limit: 180, pauseMs: 120000 } // 429 → nghỉ 120s
-  if (prevReqs > 180)  return { limit: 180, pauseMs: 60000  } // đầy window → nghỉ 60s
-  return                      { limit: 180, pauseMs: 0      } // chưa đầy → liên tục
+  if (prev429)          return { limit: 180, pauseMs: 120000 } // 429 → nghỉ 120s
+  if (prevReqs >= 180)  return { limit: 180, pauseMs: 60000  } // đầy window → nghỉ 60s
+  return                       { limit: 180, pauseMs: 0      } // chưa đầy → liên tục
 }
 
 // ── Chạy 1 batch tác vụ + cập nhật progress bar ─────────────────────────────
@@ -300,7 +300,7 @@ async function main(): Promise<void> {
   console.log('🔊 Bắt đầu seed:all — pronunciation + patterns (xen kẽ)')
   console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo`)
   console.log(`📋 Patterns      : ${allPatternTasks.length} tác vụ cần tạo`)
-  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate: thích nghi (429→120s, >180→60s, ≤180→liên tục) | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
+  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate: thích nghi (429→120s, ≥180→60s, <180→liên tục) | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
 
   let pronRemaining    = allPronTasks
   let patternRemaining = allPatternTasks
