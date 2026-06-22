@@ -266,6 +266,11 @@ async function runInterleavedPass(
   }
 
   bar.stop()
+  // In ra lỗi đầu tiên để debug
+  const firstPronErr = pronFailed[0]
+  const firstPatErr  = patternFailed[0]
+  if (firstPronErr)  console.log(`\n🔴 Lỗi pron mẫu:  [${(firstPronErr.task as PronTask).word}] ${firstPronErr.message}`)
+  if (firstPatErr)   console.log(`\n🔴 Lỗi pattern mẫu: ${firstPatErr.message}`)
   console.log(`   ✓ OK: ${counters.ok}  ⏭ Skip: ${counters.skip}  ✗ Lỗi pron: ${pronFailed.length} | pattern: ${patternFailed.length}`)
 
   return { pronFailed, patternFailed }
