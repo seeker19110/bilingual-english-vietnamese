@@ -3,6 +3,7 @@ import { AuthContext } from './authContext'
 import { getCurrentUser } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import { startPreload, resetPreload } from '../lib/preloader'
+import { clearAudioCache } from '../lib/audioCache'
 import type { User } from '../types'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -20,7 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Lắng nghe thay đổi auth (đăng nhập / đăng xuất / token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string) => {
-      if (event === 'SIGNED_OUT') resetPreload()
+      if (event === 'SIGNED_OUT') { resetPreload(); void clearAudioCache() }
       refresh()
     })
     return () => subscription.unsubscribe()
@@ -30,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (user) {
       // Dùng setTimeout để không block quá trình render trang đầu tiên
-      const tid = setTimeout(() => { void startPreload() }, 2000)
+      const tid = setTimeout(() => { void startPreload(user.id) }, 2000)
       return () => clearTimeout(tid)
     }
   }, [user?.id])
