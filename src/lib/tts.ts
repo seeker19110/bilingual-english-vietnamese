@@ -5,6 +5,7 @@
 // Fallback về Web Speech API nếu /api/tts lỗi (mất mạng, server timeout, chưa đăng nhập...).
 
 import { supabase } from './supabase'
+import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
 
 type Lang = 'en-US' | 'vi-VN'
 export type Voice = 'female' | 'male'
@@ -62,7 +63,8 @@ function base64ToBytes(b64: string): Uint8Array {
   return bytes
 }
 
-async function decryptCachedAudio(audioUrl: string, keyB64: string, ivB64: string): Promise<string> {
+// Tải + giải mã audio → trả ArrayBuffer (lưu được vào IndexedDB, không chiếm RAM liên tục)
+async function decryptToBuffer(audioUrl: string, keyB64: string, ivB64: string): Promise<ArrayBuffer> {
   const cipherRes = await fetch(audioUrl)
   if (!cipherRes.ok) throw new Error(`Không tải được audio: ${cipherRes.status}`)
   const cipherBuffer = await cipherRes.arrayBuffer()
@@ -72,10 +74,12 @@ async function decryptCachedAudio(audioUrl: string, keyB64: string, ivB64: strin
   // Ép kiểu BufferSource: @types/node làm Uint8Array generic theo ArrayBufferLike, lệch với
   // kiểu BufferSource của lib DOM — chỉ là vấn đề kiểu TypeScript, không ảnh hưởng runtime.
   const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, ['decrypt'])
-  const plainBuffer = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: ivBytes as BufferSource }, key, cipherBuffer)
+  return crypto.subtle.decrypt({ name: 'AES-GCM', iv: ivBytes as BufferSource }, key, cipherBuffer)
+}
 
-  const blob = new Blob([plainBuffer], { type: 'audio/mpeg' })
-  return URL.createObjectURL(blob)
+// Tạo blob URL tạm từ ArrayBuffer để phát qua <audio>
+function bufferToBlobUrl(buffer: ArrayBuffer): string {
+  return URL.createObjectURL(new Blob([buffer], { type: 'audio/mpeg' }))
 }
 
 // Gọi /api/tts (kèm JWT) → giải mã audio → phát qua <audio>
@@ -87,34 +91,47 @@ async function speakViaGoogle(
 ): Promise<void> {
   if (!text.trim()) return
 
-  const { data: { session } } = await supabase.auth.getSession()
-  const token = session?.access_token
-  if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
+  const cacheKey = audioCacheKey(text, lang, voice)
 
-  const callTts = () => fetch('/api/tts', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ text, lang, voice }),
-  })
+  // Kiểm tra IndexedDB trước — nếu đã có thì tạo blob URL ngay, không gọi server
+  const cached = await getAudioBuffer(cacheKey)
+  let blobUrl: string
 
-  let res = await callTts()
-  // 429 = quá nhiều request (thường do phát nhiều câu liên tiếp). Đợi 1.2s rồi thử lại
-  // 1 lần trước khi rơi về Web Speech — phần lớn câu đã cache nên lần 2 thường qua.
-  if (res.status === 429) {
-    await new Promise(r => setTimeout(r, 1200))
-    res = await callTts()
+  if (cached) {
+    blobUrl = bufferToBlobUrl(cached)
+  } else {
+    const { data: { session } } = await supabase.auth.getSession()
+    const token = session?.access_token
+    if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
+
+    const callTts = () => fetch('/api/tts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text, lang, voice }),
+    })
+
+    let res = await callTts()
+    // 429 = quá nhiều request (thường do phát nhiều câu liên tiếp). Đợi 1.2s rồi thử lại
+    // 1 lần trước khi rơi về Web Speech — phần lớn câu đã cache nên lần 2 thường qua.
+    if (res.status === 429) {
+      await new Promise(r => setTimeout(r, 1200))
+      res = await callTts()
+    }
+
+    if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
+
+    const { audio_url, key_b64, iv_b64 } = await res.json() as {
+      audio_url: string; key_b64: string; iv_b64: string
+    }
+
+    const buffer = await decryptToBuffer(audio_url, key_b64, iv_b64)
+    // Lưu vào IndexedDB để lần sau (kể cả mở lại app) dùng ngay không cần fetch
+    void setAudioBuffer(cacheKey, buffer)
+    blobUrl = bufferToBlobUrl(buffer)
   }
-
-  if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
-
-  const { audio_url, key_b64, iv_b64 } = await res.json() as {
-    audio_url: string; key_b64: string; iv_b64: string
-  }
-
-  const blobUrl = await decryptCachedAudio(audio_url, key_b64, iv_b64)
 
   // Tách từ để tính index tương ứng với vị trí phát (ước tính theo tỉ lệ thời gian)
   const words = onWord ? text.trim().split(/\s+/) : []
@@ -138,6 +155,8 @@ async function speakViaGoogle(
     }
 
     const cleanup = () => {
+      // Blob URL là tạm — revoke ngay sau khi phát xong để giải phóng RAM.
+      // Buffer gốc vẫn còn trong IndexedDB, lần sau tạo blob URL mới từ buffer đó.
       URL.revokeObjectURL(blobUrl)
       if (currentBlobUrl === blobUrl) currentBlobUrl = null
       if (currentAudio === audio) currentAudio = null
