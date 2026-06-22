@@ -24,6 +24,9 @@ const Lessons = lazy(() => import('./pages/Lessons'))
 // Trang Học theo lộ trình cũng dùng toàn bộ từ điển (qua lib/curriculum) — lazy-load.
 const Learn = lazy(() => import('./pages/Learn'))
 
+// Bảng xếp hạng toàn server — lazy-load.
+const Leaderboard = lazy(() => import('./pages/Leaderboard'))
+
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
 // Hiện khung skeleton nhấp nháy thay vì chữ trơ, đỡ cảm giác đơ.
 function PageLoading() {
@@ -64,6 +67,7 @@ export default function App() {
                   <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
                   <Route path="/phrases" element={<RequireAuth><CommonPhrases /></RequireAuth>} />
                   <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
+                  <Route path="/leaderboard" element={<RequireAuth><Leaderboard /></RequireAuth>} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Suspense>

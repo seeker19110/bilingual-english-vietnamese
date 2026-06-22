@@ -125,6 +125,12 @@ export async function ensureProfile(userId: string, name: string): Promise<{ pla
   }
 }
 
+// ── Đồng bộ số từ đã học lên profiles.words_learned (dùng cho leaderboard) ───
+export function pushWordsLearned(userId: string, count: number) {
+  void supabase.from('profiles').update({ words_learned: count }).eq('id', userId)
+    .then(({ error }) => warn('words_learned', error))
+}
+
 // ── Lưu kết quả onboarding ────────────────────────────────────────────────────
 export async function saveOnboarding(userId: string, data: { level: string; goal: string; dailyMinutes: number }) {
   const { error } = await supabase.from('profiles').update({

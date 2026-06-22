@@ -125,6 +125,27 @@ export const t = {
     // Parts of speech
     posPageTitle: 'Từ loại',
     posPageSub: 'Danh từ, động từ, tính từ và nhiều hơn nữa',
+
+    // Leaderboard
+    leaderboardTitle: 'Bảng xếp hạng',
+    leaderboardSub: 'Top người học trong cộng đồng',
+    leaderboardWeek: 'Tuần này',
+    leaderboardMonth: 'Tháng này',
+    leaderboardScore: 'Điểm',
+    leaderboardWords: 'Từ đã học',
+    leaderboardYou: '(Bạn)',
+    leaderboardEmpty: 'Chưa có dữ liệu. Hãy học một chút để xuất hiện ở đây!',
+    leaderboardLoading: 'Đang tải…',
+    leaderboardScoreLegend: 'Chat = 1đ · Nói = 2đ · Viết = 3đ',
+    leaderboardLevel: (level: string) => {
+      const map: Record<string, string> = {
+        beginner: 'Mới bắt đầu',
+        elementary: 'Cơ bản',
+        intermediate: 'Trung cấp',
+        advanced: 'Nâng cao',
+      }
+      return map[level] ?? level
+    },
   },
 
   en: {
@@ -252,6 +273,27 @@ export const t = {
     // Parts of speech
     posPageTitle: 'Parts of Speech',
     posPageSub: 'Nouns, verbs, adjectives and more',
+
+    // Leaderboard
+    leaderboardTitle: 'Leaderboard',
+    leaderboardSub: 'Top learners in the community',
+    leaderboardWeek: 'This Week',
+    leaderboardMonth: 'This Month',
+    leaderboardScore: 'Score',
+    leaderboardWords: 'Words Learned',
+    leaderboardYou: '(You)',
+    leaderboardEmpty: 'No data yet. Study a bit to appear here!',
+    leaderboardLoading: 'Loading…',
+    leaderboardScoreLegend: 'Chat = 1pt · Speak = 2pt · Write = 3pt',
+    leaderboardLevel: (level: string) => {
+      const map: Record<string, string> = {
+        beginner: 'Beginner',
+        elementary: 'Elementary',
+        intermediate: 'Intermediate',
+        advanced: 'Advanced',
+      }
+      return map[level] ?? level
+    },
   },
 }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, Share2, ClipboardList, Bell, BellOff } from 'lucide-react'
+import { MessageCircle, PenLine, Mic, ChevronRight, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, Share2, ClipboardList, Bell, BellOff, Trophy } from 'lucide-react'
 // Quiz hiện nằm trong tab "Kiểm tra" của /learn
 import Layout from '../components/Layout'
 import { getStreak, getDirection, setDirection } from '../lib/storage'
@@ -228,6 +228,18 @@ export default function Home() {
             </div>
             <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
               {isA ? 'Xem lịch sử học' : 'View learning history'}
+            </span>
+            <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition" />
+          </button>
+
+          {/* Bảng xếp hạng */}
+          <button onClick={() => nav('/leaderboard')}
+            className="w-full bg-zinc-900/60 border border-zinc-800/60 hover:border-amber-500/30 rounded-2xl px-4 py-3 flex items-center gap-3 transition group">
+            <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-amber-500/20 flex items-center justify-center shrink-0 transition">
+              <Trophy className="w-4 h-4 text-amber-400" />
+            </div>
+            <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
+              {isA ? 'Bảng xếp hạng' : 'Leaderboard'}
             </span>
             <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition" />
           </button>
