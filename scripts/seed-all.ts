@@ -30,8 +30,11 @@ const DELAY_MS        = 0     // không cần delay
 const RETRY_DELAY_MS  = 5000  // nghỉ giữa vòng retry
 const MAX_ROUNDS      = 5
 const INTERLEAVE_PCT  = 5     // cứ mỗi 5% pronunciation thì chạy 5% patterns
-const RATE_LIMIT      = 90    // nghỉ sau mỗi N request thực (không tính skip)
-const RATE_PAUSE_MS   = 30000 // thời gian nghỉ khi chạm rate limit (ms)
+// Rate limit thích nghi — tự điều chỉnh theo lượng req thực của window trước:
+//   prevReqs = 0        → nâng limit 200 (toàn bộ là skip, không cần nghỉ)
+//   prevReqs > 90       → nghỉ 65s
+//   prevReqs > 0 ≤ 90  → nghỉ 33s
+const RATE_LIMIT_DEFAULT = 75   // limit mặc định khi bắt đầu
 const BASE_URL        = process.env.BASE_URL || ''
 const FORCE           = process.argv.includes('--force') || process.env.FORCE === '1'
 
@@ -154,6 +157,20 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
   }
 }
 
+// Trạng thái rate limit thích nghi — dùng chung trong 1 pass
+interface RateState {
+  limit: number   // ngưỡng req hiện tại
+  pauseMs: number // thời gian nghỉ hiện tại
+  count: number   // đếm req trong window hiện tại
+  has429: boolean // window hiện tại có gặp lỗi 429 không
+}
+
+function nextRateState(prevReqs: number, prev429: boolean): { limit: number; pauseMs: number } {
+  if (prev429)          return { limit: 75,  pauseMs: 120000 } // 429 → nghỉ 120s, giữ limit chặt
+  if (prevReqs > 90)    return { limit: 100, pauseMs: 65000  } // nhiều req, nghỉ 65s, nâng limit
+  /* prevReqs > 0..90 */ return { limit: 100, pauseMs: 33000  } // ít req, nghỉ 33s, nâng limit
+}
+
 // ── Chạy 1 batch tác vụ + cập nhật progress bar ─────────────────────────────
 async function runBatch(
   tasks: AnyTask[],
@@ -162,7 +179,7 @@ async function runBatch(
   bar: cliProgress.SingleBar,
   processed: { value: number },
   total: number,
-  reqCount: { value: number },  // đếm tổng req thực (không tính skip) để rate limit
+  rate: RateState,
 ): Promise<void> {
   const results = await Promise.all(tasks.map((t) => processTask(t)))
   let newReqs = 0
@@ -171,19 +188,26 @@ async function runBatch(
     else if (result.status === 'skip') counters.skip++
     else {
       counters.errors++; newReqs++
+      if ((result as { status: 'error'; message: string }).message.includes('429')) rate.has429 = true
       failed.push({ task: tasks[idx], message: result.message })
     }
   })
-  reqCount.value += newReqs
+  rate.count += newReqs
   processed.value = Math.min(processed.value + tasks.length, total)
   bar.update(processed.value, { ...counters })
   if (DELAY_MS > 0) await sleep(DELAY_MS)
-  // Nghỉ khi chạm ngưỡng RATE_LIMIT req thực
-  if (reqCount.value >= RATE_LIMIT) {
-    reqCount.value = 0
+  // Kiểm tra ngưỡng rate limit
+  if (rate.count >= rate.limit) {
+    const prevReqs = rate.count
+    const prev429  = rate.has429
+    const next = nextRateState(prevReqs, prev429)
+    rate.count   = 0
+    rate.has429  = false
+    rate.limit   = next.limit
+    rate.pauseMs = next.pauseMs
     bar.stop()
-    process.stdout.write(`\n⏸  Đã ${RATE_LIMIT} req — nghỉ ${RATE_PAUSE_MS / 1000}s...\n`)
-    await sleep(RATE_PAUSE_MS)
+    process.stdout.write(`\n⏸  ${prevReqs} req${prev429 ? ' [429!]' : ''} → nghỉ ${next.pauseMs / 1000}s, limit tiếp=${next.limit}\n`)
+    await sleep(next.pauseMs)
     bar.start(total, processed.value, { ...counters })
   }
 }
@@ -210,7 +234,7 @@ async function runInterleavedPass(
 
   const counters  = { ok: 0, skip: 0, errors: 0 }
   const processed = { value: 0 }
-  const reqCount  = { value: 0 }
+  const rate: RateState = { limit: RATE_LIMIT_DEFAULT, pauseMs: 33000, count: 0, has429: false }
   const pronFailed: Array<{ task: AnyTask; message: string }>    = []
   const patternFailed: Array<{ task: AnyTask; message: string }> = []
 
@@ -224,7 +248,7 @@ async function runInterleavedPass(
     if (pi < pronTasks.length) {
       const chunk = pronTasks.slice(pi, pi + pronChunkSize)
       for (let i = 0; i < chunk.length; i += BATCH_SIZE) {
-        await runBatch(chunk.slice(i, i + BATCH_SIZE), pronFailed, counters, bar, processed, total, reqCount)
+        await runBatch(chunk.slice(i, i + BATCH_SIZE), pronFailed, counters, bar, processed, total, rate)
       }
       pi += pronChunkSize
     }
@@ -232,7 +256,7 @@ async function runInterleavedPass(
     if (ti < patternTasks.length) {
       const chunk = patternTasks.slice(ti, ti + patternChunkSize)
       for (let i = 0; i < chunk.length; i += BATCH_SIZE) {
-        await runBatch(chunk.slice(i, i + BATCH_SIZE), patternFailed, counters, bar, processed, total, reqCount)
+        await runBatch(chunk.slice(i, i + BATCH_SIZE), patternFailed, counters, bar, processed, total, rate)
       }
       ti += patternChunkSize
     }
@@ -276,7 +300,7 @@ async function main(): Promise<void> {
   console.log('🔊 Bắt đầu seed:all — pronunciation + patterns (xen kẽ)')
   console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo`)
   console.log(`📋 Patterns      : ${allPatternTasks.length} tác vụ cần tạo`)
-  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate limit: ${RATE_LIMIT} req/${RATE_PAUSE_MS/1000}s | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
+  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate: thích nghi (429→120s, >90→65s/100lim, ≤90→33s/100lim) | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
 
   let pronRemaining    = allPronTasks
   let patternRemaining = allPatternTasks
