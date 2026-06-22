@@ -36,6 +36,7 @@ export default function Layout({ title, subtitle, back = true, extra }: Props) {
         {/* Back / Logo */}
         {back ? (
           <button onClick={() => nav('/')}
+            aria-label={T.home}
             className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition shrink-0 -ml-1 p-3 rounded-lg hover:bg-zinc-800/50">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:inline">{T.home}</span>
@@ -83,7 +84,8 @@ export default function Layout({ title, subtitle, back = true, extra }: Props) {
             </div>
             <button onClick={handleLogout}
               className="text-zinc-600 hover:text-red-400 transition p-3 rounded-lg hover:bg-red-400/10"
-              title={T.logout}>
+              title={T.logout}
+              aria-label={T.logout}>
               <LogOut className="w-3.5 h-3.5" />
             </button>
           </div>

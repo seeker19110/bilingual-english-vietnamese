@@ -100,7 +100,7 @@ function SpeakBubble({ msg, onPlay, isNew }: { msg: Message; onPlay?: () => void
   if (msg.role === 'user') {
     return (
       <div className={`flex justify-end ${isNew ? 'animate-fade-in' : ''}`}>
-        <div className="max-w-[78%] bg-gradient-to-br from-sky-600 to-cyan-500 text-white rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm shadow-sky-500/15">
+        <div className="max-w-[78%] bg-gradient-to-br from-sky-600 to-cyan-500 text-white rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm shadow-sky-500/15 break-words">
           {msg.content}
         </div>
       </div>
@@ -109,10 +109,11 @@ function SpeakBubble({ msg, onPlay, isNew }: { msg: Message; onPlay?: () => void
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
       <div className="max-w-[85%] space-y-2">
-        <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed border border-zinc-700/30 flex items-start gap-2">
-          <span className="flex-1">{msg.speechEn}</span>
+        <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed border border-zinc-700/30 flex items-start gap-2 break-words">
+          <span className="flex-1 min-w-0">{msg.speechEn}</span>
           {onPlay && (
             <button onClick={onPlay}
+              aria-label="Nghe lại"
               className="text-zinc-500 hover:text-sky-400 transition shrink-0 mt-0.5 p-0.5 rounded">
               <Volume2 className="w-3.5 h-3.5" />
             </button>
@@ -357,7 +358,7 @@ export default function Speaking() {
             {loading && <TypingDots />}
             {transcript && (
               <div className="flex justify-end animate-fade-in">
-                <div className="max-w-[78%] bg-sky-600/20 border border-sky-500/25 text-sky-300 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm italic">
+                <div className="max-w-[78%] bg-sky-600/20 border border-sky-500/25 text-sky-300 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm italic break-words">
                   {transcript}…
                 </div>
               </div>
@@ -384,11 +385,13 @@ export default function Speaking() {
                   <div className="flex items-center justify-between w-full max-w-xs">
                     <button onClick={() => { stopSpeaking(); setSession(null) }}
                       className="p-3 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition hover:bg-zinc-800/50"
-                      title={isA ? 'Phòng mới' : 'New room'}>
+                      title={isA ? 'Phòng mới' : 'New room'}
+                      aria-label={isA ? 'Phòng mới' : 'New room'}>
                       <Plus className="w-4 h-4" />
                     </button>
 
                     <button onClick={toggleRecord} disabled={loading || limitHit || processing}
+                      aria-label={recording ? (isA ? 'Dừng ghi âm' : 'Stop recording') : (isA ? 'Bắt đầu ghi âm' : 'Start recording')}
                       className={`relative w-20 h-20 rounded-full flex items-center justify-center transition shadow-xl disabled:opacity-40 active:scale-95 ${
                         recording ? 'bg-red-500 shadow-red-500/40' : 'bg-gradient-to-br from-sky-500 to-cyan-400 shadow-sky-500/30'
                       }`}>
@@ -401,6 +404,7 @@ export default function Speaking() {
                     </button>
 
                     <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
+                      aria-label={muted ? (isA ? 'Bật âm thanh' : 'Unmute') : (isA ? 'Tắt âm thanh' : 'Mute')}
                       className={`p-3 border rounded-xl transition ${
                         muted ? 'text-zinc-600 border-zinc-800/80'
                           : speaking ? 'text-sky-400 border-sky-500/40 bg-sky-500/10'
@@ -425,6 +429,7 @@ export default function Speaking() {
                 <div className="space-y-2">
                   <div className="flex gap-2">
                     <button onClick={() => { stopSpeaking(); setSession(null) }}
+                      aria-label={isA ? 'Phòng mới' : 'New room'}
                       className="p-3 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50">
                       <Plus className="w-4 h-4" />
                     </button>
@@ -441,15 +446,17 @@ export default function Speaking() {
                       placeholder={isA ? 'Gõ tiếng Anh thay vì nói...' : 'Type Vietnamese instead of speaking...'}
                       disabled={loading || limitHit}
                       inputMode="text"
-                      className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-sky-500/60 transition disabled:opacity-50"
+                      className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-[16px] sm:text-sm text-white placeholder:text-zinc-600 outline-none focus:border-sky-500/60 transition disabled:opacity-50"
                     />
                     <button
                       onClick={() => { if (typedInput.trim()) { sendUserSpeech(typedInput.trim()); setTypedInput('') } }}
                       disabled={!typedInput.trim() || loading || limitHit}
+                      aria-label={isA ? 'Gửi tin nhắn' : 'Send message'}
                       className="p-3 bg-gradient-to-br from-sky-600 to-cyan-500 disabled:opacity-40 text-white rounded-xl transition shrink-0">
                       <Send className="w-4 h-4" />
                     </button>
                     <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
+                      aria-label={muted ? (isA ? 'Bật âm thanh' : 'Unmute') : (isA ? 'Tắt âm thanh' : 'Mute')}
                       className={`p-3 border rounded-xl transition shrink-0 ${muted ? 'text-zinc-600 border-zinc-800/80' : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700'}`}>
                       {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                     </button>
