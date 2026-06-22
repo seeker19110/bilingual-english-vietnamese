@@ -1,10 +1,12 @@
-import { useState, useRef, useEffect, memo } from 'react'
-import { ArrowLeft, MessageSquare, Play, Pause, Square, Volume2, Loader2 } from 'lucide-react'
+import { useState, useRef, useEffect, memo, useMemo } from 'react'
+import { ArrowLeft, MessageSquare, Play, Pause, Square, Volume2, Loader2, Search } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getDirection } from '../lib/storage'
 import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio } from '../lib/tts'
 import { INDEX, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
 import type { Direction } from '../types'
+
+const PAGE_SIZE = 10
 
 type Speed = 0.75 | 1 | 1.25
 type AudioMode = 'en' | 'both' | 'vi'
@@ -74,7 +76,7 @@ export default function Lessons() {
         title={selectedMeta ? selectedMeta.title : (isA ? 'Bài học' : 'Lessons')}
         subtitle={selectedMeta
           ? selectedMeta.situation
-          : `${INDEX.length} ${isA ? 'bài học xoay quanh "tôi - I"' : 'lessons focused on "I / tôi"'}`}
+          : (isA ? '1000+ chủ đề bài học giao tiếp' : '1000+ conversation lesson topics')}
       />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
@@ -93,29 +95,86 @@ export default function Lessons() {
   )
 }
 
-// ── Danh sách bài học ─────────────────────────────────────────────────────────
+// ── Danh sách bài học với tìm kiếm + lazy load ────────────────────────────────
 function LessonList({ lessons, isA, onSelect }: {
   lessons: LessonMeta[]
   isA: boolean
   onSelect: (meta: LessonMeta) => void
 }) {
+  const [query, setQuery] = useState('')
+  const [visible, setVisible] = useState(PAGE_SIZE)
+
+  // Lọc theo từ khoá (title hoặc situation, không phân biệt hoa thường)
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return lessons
+    return lessons.filter(l =>
+      l.title.toLowerCase().includes(q) || l.situation.toLowerCase().includes(q)
+    )
+  }, [query, lessons])
+
+  // Reset số bài hiện khi query thay đổi
+  useEffect(() => { setVisible(PAGE_SIZE) }, [query])
+
+  const shown = filtered.slice(0, visible)
+  const hasMore = visible < filtered.length
+
   return (
-    <div className="space-y-2">
-      {lessons.map(l => (
-        <button key={l.id} onClick={() => onSelect(l)}
-          className="w-full bg-zinc-900 border border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-4 text-left flex items-center gap-4 transition group">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
-            <MessageSquare className="w-5 h-5 text-emerald-400" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-white">{l.id}. {l.title}</p>
-            <p className="text-xs text-zinc-500 truncate">{l.situation}</p>
-          </div>
-          <span className="text-[10px] px-2 py-1 rounded-full bg-zinc-800 text-zinc-400 font-medium shrink-0">
-            {l.turnCount / 2} {isA ? 'lượt' : 'exchanges'}
-          </span>
+    <div className="space-y-3">
+      {/* Ô tìm kiếm */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder={isA ? 'Tìm chủ đề bài học…' : 'Search lesson topics…'}
+          className="w-full bg-zinc-900 border border-zinc-800 focus:border-emerald-500/50 rounded-2xl pl-10 pr-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition"
+        />
+      </div>
+
+      {/* Số kết quả */}
+      {query.trim() && (
+        <p className="text-xs text-zinc-500 px-1">
+          {filtered.length} {isA ? 'bài phù hợp' : 'lessons found'}
+        </p>
+      )}
+
+      {/* Danh sách */}
+      <div className="space-y-2">
+        {shown.map(l => (
+          <button key={l.id} onClick={() => onSelect(l)}
+            className="w-full bg-zinc-900 border border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-4 text-left flex items-center gap-4 transition group">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+              <MessageSquare className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-white">{l.id}. {l.title}</p>
+              <p className="text-xs text-zinc-500 truncate">{l.situation}</p>
+            </div>
+            <span className="text-[10px] px-2 py-1 rounded-full bg-zinc-800 text-zinc-400 font-medium shrink-0">
+              {l.turnCount / 2} {isA ? 'lượt' : 'exchanges'}
+            </span>
+          </button>
+        ))}
+
+        {shown.length === 0 && (
+          <p className="text-center text-zinc-500 py-10 text-sm">
+            {isA ? 'Không tìm thấy bài nào.' : 'No lessons found.'}
+          </p>
+        )}
+      </div>
+
+      {/* Nút tải thêm 10 bài */}
+      {hasMore && (
+        <button
+          onClick={() => setVisible(v => v + PAGE_SIZE)}
+          className="w-full py-3 rounded-2xl border border-zinc-800 hover:border-emerald-500/40 text-zinc-400 hover:text-emerald-300 text-sm font-medium transition">
+          {isA
+            ? `Xem thêm ${Math.min(PAGE_SIZE, filtered.length - visible)} bài…`
+            : `Load ${Math.min(PAGE_SIZE, filtered.length - visible)} more…`}
         </button>
-      ))}
+      )}
     </div>
   )
 }
