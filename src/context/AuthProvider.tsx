@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, type ReactNode } from 'react'
 import { AuthContext } from './authContext'
-import { getCurrentUser } from '../lib/auth'
+import { getCurrentUser, clearProfileCache } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 import { startPreload, resetPreload } from '../lib/preloader'
 import { clearAudioCache } from '../lib/audioCache'
@@ -21,17 +21,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Lắng nghe thay đổi auth (đăng nhập / đăng xuất / token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string) => {
-      if (event === 'SIGNED_OUT') { resetPreload(); void clearAudioCache() }
+      if (event === 'SIGNED_OUT') { resetPreload(); clearProfileCache(); void clearAudioCache() }
       refresh()
     })
     return () => subscription.unsubscribe()
   }, [refresh])
 
-  // Khi user đăng nhập xong → bắt đầu tải trước từ điển + audio (chạy nền)
+  // Khi user đăng nhập xong → tải trước từ điển + audio khi browser rảnh (không block UI)
   useEffect(() => {
-    if (user) {
-      // Dùng setTimeout để không block quá trình render trang đầu tiên
-      const tid = setTimeout(() => { void startPreload(user.id) }, 2000)
+    if (!user) return
+    if ('requestIdleCallback' in window) {
+      // Chờ browser hoàn toàn rảnh rồi mới preload; maxWait: tối đa 3s vẫn chạy
+      const id = requestIdleCallback(() => { void startPreload(user.id) }, { timeout: 3000 })
+      return () => cancelIdleCallback(id)
+    } else {
+      // Fallback cho Safari cũ: chờ 500ms (ngắn hơn 2000ms vì auth nhanh hơn rồi)
+      const tid = setTimeout(() => { void startPreload(user.id) }, 500)
       return () => clearTimeout(tid)
     }
   }, [user?.id])

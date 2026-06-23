@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { LangProvider } from './context/LangProvider'
 import { AuthProvider } from './context/AuthProvider'
@@ -45,7 +45,28 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+// Prefetch các trang hay dùng nhất khi browser rảnh sau lần tải đầu
+function usePrefetchPages() {
+  useEffect(() => {
+    const prefetch = () => {
+      void import('./pages/Home')
+      void import('./pages/Chat')
+      void import('./pages/Learn')
+      void import('./pages/Dictionary')
+      void import('./pages/Lessons')
+      void import('./pages/CommonPhrases')
+      void import('./pages/Speaking')
+    }
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(prefetch)
+    } else {
+      setTimeout(prefetch, 3000)
+    }
+  }, [])
+}
+
 export default function App() {
+  usePrefetchPages()
   return (
     <AuthProvider>
       <LangProvider>
