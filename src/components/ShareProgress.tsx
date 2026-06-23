@@ -42,7 +42,7 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4"
       onClick={onClose}>
-      <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl"
+      <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl overflow-y-auto max-h-[90dvh]"
         onClick={e => e.stopPropagation()}>
 
         {/* Header */}
@@ -70,7 +70,7 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
               <div key={s.label} className="bg-zinc-900/60 rounded-xl p-3 text-center">
                 <p className="text-2xl">{s.emoji}</p>
                 <p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p>
-                <p className="text-[10px] text-zinc-500 mt-0.5">{s.label}</p>
+                <p className="text-xs text-zinc-500 mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>

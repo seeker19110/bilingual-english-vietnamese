@@ -80,11 +80,11 @@ export default function PronounceButton({ word }: Props) {
         disabled={status === 'loading'}
         title="Phát âm"
         aria-label={`Phát âm từ "${word}"`}
-        className="shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-emerald-500/20 text-zinc-400 hover:text-emerald-300 transition disabled:opacity-60"
+        className="shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-emerald-500/20 text-zinc-400 hover:text-emerald-300 transition disabled:opacity-60"
       >
-        {status === 'loading' && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-        {status === 'error' && <VolumeX className="w-3.5 h-3.5 text-red-400" />}
-        {status === 'idle' && <Volume2 className="w-3.5 h-3.5" />}
+        {status === 'loading' && <Loader2 className="w-4 h-4 animate-spin" />}
+        {status === 'error' && <VolumeX className="w-4 h-4 text-red-400" />}
+        {status === 'idle' && <Volume2 className="w-4 h-4" />}
       </button>
     </div>
   )

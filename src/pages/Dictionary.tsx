@@ -171,6 +171,7 @@ export default function Dictionary() {
             <div className="hidden sm:block relative mb-3 animate-fade-in">
               <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
+                type="search"
                 autoFocus
                 value={query}
                 onChange={e => { setQuery(e.target.value); setPosFilter(null) }}
@@ -180,7 +181,7 @@ export default function Dictionary() {
               {query && (
                 <button onClick={() => { setQuery(''); setPosFilter(null) }}
                   aria-label={isA ? 'Xóa tìm kiếm' : 'Clear search'}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition p-0.5">
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition p-2">
                   <X className="w-4 h-4" />
                 </button>
               )}
@@ -430,6 +431,7 @@ export default function Dictionary() {
           <div className="relative w-[97%]">
             <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
+              type="search"
               autoFocus
               value={query}
               onChange={e => { setQuery(e.target.value); setPosFilter(null) }}
@@ -438,7 +440,7 @@ export default function Dictionary() {
             />
             {query && (
               <button onClick={() => { setQuery(''); setPosFilter(null) }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition p-0.5">
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition p-2">
                 <X className="w-4 h-4" />
               </button>
             )}

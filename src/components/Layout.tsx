@@ -65,7 +65,7 @@ export default function Layout({ title, subtitle, back = true, extra }: Props) {
               <span>{T.speak} <strong className="text-zinc-400">{usage.speakingCount}/{limit.speaking}</strong></span>
             </div>
             {/* Mobile: mini badges cho chat và nói */}
-            <div className="sm:hidden flex items-center gap-1.5 shrink-0 text-[10px] text-zinc-500">
+            <div className="sm:hidden flex items-center gap-1.5 shrink-0 text-xs text-zinc-500">
               <span><strong className="text-zinc-400">{usage.chatCount}</strong>/{limit.chat}</span>
               <span className="text-zinc-700">·</span>
               <span><strong className="text-zinc-400">{usage.speakingCount}</strong>/{limit.speaking}</span>

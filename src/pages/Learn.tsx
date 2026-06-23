@@ -115,10 +115,10 @@ export default function Learn() {
         <VocabMilestone userId={uid} refreshKey={refresh} />
 
         {/* Tab bar */}
-        <div className="grid grid-cols-4 gap-1.5 mb-4">
+        <div className="grid grid-cols-4 gap-2 mb-4">
           {TABS.map(({ key, icon: Icon, labelA, labelB, badge, active, inactive }) => (
             <button key={key} onClick={() => setTab(key)}
-              className={`relative flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl text-xs font-medium transition ${tab === key ? active : inactive}`}>
+              className={`relative flex flex-col items-center justify-center gap-1 py-2.5 px-2 rounded-xl text-xs font-medium transition ${tab === key ? active : inactive}`}>
               <Icon className="w-4 h-4" />
               <span>{isA ? labelA : labelB}</span>
               {badge != null && badge > 0 && (
@@ -168,7 +168,7 @@ function WordCard({ card, isA, uid, onUpdate }: {
         <button
           onClick={handleStar}
           title={isA ? (difficult ? 'Bỏ đánh dấu khó' : 'Đánh dấu từ khó') : (difficult ? 'Unmark' : 'Mark difficult')}
-          className="absolute top-3 right-3 z-10 p-1.5 rounded-full hover:bg-zinc-700/50 transition">
+          className="absolute top-2 right-2 z-10 p-2.5 rounded-full hover:bg-zinc-700/50 transition">
           <Star className={`w-4 h-4 transition ${difficult ? 'fill-amber-400 text-amber-400' : 'text-zinc-600 hover:text-zinc-400'}`} />
         </button>
 

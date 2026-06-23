@@ -63,7 +63,7 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
       </div>
 
       {/* Nhãn các mốc dưới thanh */}
-      <div className="flex justify-between text-[10px] text-zinc-500 mb-3">
+      <div className="flex justify-between text-xs text-zinc-500 mb-3">
         <span>0</span>
         {MILESTONES.map(m => (
           <span key={m.count} className={learned >= m.count ? 'text-emerald-400 font-medium' : ''}>

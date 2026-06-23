@@ -39,8 +39,8 @@ export default function SpeakButton({ text, lang, title, size = 'sm' }: Props) {
     }
   }
 
-  const sizeClass = size === 'xs' ? 'w-5 h-5' : 'w-6 h-6'
-  const iconClass = size === 'xs' ? 'w-3 h-3' : 'w-3.5 h-3.5'
+  const sizeClass = size === 'xs' ? 'w-8 h-8' : 'w-10 h-10'
+  const iconClass = size === 'xs' ? 'w-4 h-4' : 'w-4 h-4'
 
   // Màu theo ngôn ngữ: xanh lá = tiếng Anh, xanh dương = tiếng Việt
   const idleClass  = lang === 'en-US'
