@@ -128,7 +128,7 @@ export default function Lessons() {
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2">
           {/* Search bar — chỉ hiện ở trên trên desktop */}
           <div className="hidden sm:block mb-4">
-            <SearchBar query={query} setQuery={setQuery} isA={isA} />
+            <SearchBar query={query} setQuery={setQuery} isA={isA} variant="desktop" />
           </div>
           <LessonList lessons={INDEX} isA={isA} query={deferredQuery} onSelect={setSelectedMeta} />
         </div>
@@ -136,23 +136,25 @@ export default function Lessons() {
 
       {/* Search bar cố định ở dưới — CHỈ trên mobile */}
       <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe">
-        <SearchBar query={query} setQuery={setQuery} isA={isA} />
+        <SearchBar query={query} setQuery={setQuery} isA={isA} variant="mobile" />
       </div>
     </div>
   )
 }
 
 // ── Ô tìm kiếm dùng chung ────────────────────────────────────────────────────
-function SearchBar({ query, setQuery, isA }: {
+function SearchBar({ query, setQuery, isA, variant = 'desktop' }: {
   query: string
   setQuery: (v: string) => void
   isA: boolean
+  variant?: 'desktop' | 'mobile'
 }) {
+  const inputId = variant === 'desktop' ? 'lesson-search-desktop' : 'lesson-search-mobile'
   return (
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
       <input
-        id="lesson-search"
+        id={inputId}
         name="query"
         type="text"
         value={query}
