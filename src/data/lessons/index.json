@@ -3756,38 +3756,50 @@
  },
  {
   "id": 321,
-  "title": "Tham gia hội thi nấu ăn",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Tham gia hội thi nấu ăn.",
+  "title": {
+   "vi": "Thảo luận về biến đổi khí hậu và nông nghiệp",
+   "en": "Discussing Climate Change and Agriculture"
+  },
+  "situation": "Kỹ sư nông nghiệp Hùng nói chuyện với nông dân Bình về tác động của biến đổi khí hậu với canh tác lúa.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 32,
   "idx": 0
  },
  {
   "id": 322,
-  "title": "Học làm bánh",
-  "situation": "Tình huống thực tế liên quan đến: Học làm bánh.",
+  "title": {
+   "vi": "Xử lý khiếu nại khách hàng tại nhà hàng",
+   "en": "Handling Customer Complaints at a Restaurant"
+  },
+  "situation": "Khách hàng Linh phàn nàn với quản lý nhà hàng Tuấn về chất lượng món ăn và dịch vụ.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 32,
   "idx": 1
  },
  {
   "id": 323,
-  "title": "Tham gia lớp yoga",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tham gia lớp yoga.",
+  "title": {
+   "vi": "Học về thiết kế đồ họa cơ bản",
+   "en": "Learning Basic Graphic Design"
+  },
+  "situation": "Nhân viên marketing Hoa muốn học thiết kế đồ họa và hỏi đồng nghiệp Khải về các công cụ cơ bản.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 32,
   "idx": 2
  },
  {
   "id": 324,
-  "title": "Học múa dân tộc",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Học múa dân tộc.",
+  "title": {
+   "vi": "Hỏi về phúc lợi nhân viên mới vào làm",
+   "en": "Asking About New Employee Benefits"
+  },
+  "situation": "Nhân viên mới Linh hỏi nhân sự Minh về các chế độ phúc lợi và quy định trong công ty.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -3796,38 +3808,50 @@
  },
  {
   "id": 325,
-  "title": "Tham gia hội họa",
-  "situation": "Tình huống thực tế liên quan đến: Tham gia hội họa.",
+  "title": {
+   "vi": "Thảo luận về việc học trực tuyến",
+   "en": "Discussing Online Learning"
+  },
+  "situation": "Sinh viên Hải hỏi người mentor Adam người Mỹ về cách học hiệu quả qua các platform online.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 32,
   "idx": 4
  },
  {
   "id": 326,
-  "title": "Thỏa thuận với nhà thầu",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thỏa thuận với nhà thầu.",
+  "title": {
+   "vi": "Thỏa thuận với nhà thầu",
+   "en": "Negotiating with a contractor"
+  },
+  "situation": "Phương thuê nhà thầu Đức sửa chữa căn hộ. Họ thảo luận về chi phí, tiến độ và chất lượng công việc.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 32,
   "idx": 5
  },
  {
   "id": 327,
-  "title": "Kiểm tra tiến độ xây dựng",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Kiểm tra tiến độ xây dựng.",
+  "title": {
+   "vi": "Kiểm tra tiến độ xây dựng",
+   "en": "Checking construction progress"
+  },
+  "situation": "Emma và David là chủ đầu tư đang kiểm tra tiến độ xây dựng ngôi nhà mới của họ.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 32,
   "idx": 6
  },
  {
   "id": 328,
-  "title": "Chọn vật liệu xây nhà",
-  "situation": "Tình huống thực tế liên quan đến: Chọn vật liệu xây nhà.",
+  "title": {
+   "vi": "Chọn vật liệu xây nhà",
+   "en": "Choosing building materials"
+  },
+  "situation": "Lan và chồng là Nam đang tư vấn với chuyên gia về việc chọn vật liệu xây nhà phù hợp với ngân sách.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -3836,8 +3860,11 @@
  },
  {
   "id": 329,
-  "title": "Thiết kế phòng ngủ",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thiết kế phòng ngủ.",
+  "title": {
+   "vi": "Thiết kế phòng ngủ",
+   "en": "Designing a bedroom"
+  },
+  "situation": "Hoa tư vấn với nhà thiết kế nội thất Minh để lên ý tưởng thiết kế phòng ngủ theo phong cách hiện đại.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -3846,28 +3873,37 @@
  },
  {
   "id": 330,
-  "title": "Lắp đặt nội thất",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Lắp đặt nội thất.",
+  "title": {
+   "vi": "Lắp đặt nội thất",
+   "en": "Installing furniture"
+  },
+  "situation": "Thảo liên hệ với thợ nội thất Tuấn để lắp đặt đồ nội thất mới vừa mua cho căn hộ.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 32,
   "idx": 9
  },
  {
   "id": 331,
-  "title": "Thảo luận về biến đổi khí hậu",
-  "situation": "Tình huống thực tế liên quan đến: Thảo luận về biến đổi khí hậu.",
+  "title": {
+   "vi": "Thảo luận về biến đổi khí hậu",
+   "en": "Discussing climate change"
+  },
+  "situation": "Linh và Khoa là hai sinh viên đại học thảo luận về biến đổi khí hậu và tác động của nó đến Việt Nam.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 33,
   "idx": 0
  },
  {
   "id": 332,
-  "title": "Bàn về năng lượng tái tạo",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Bàn về năng lượng tái tạo.",
+  "title": {
+   "vi": "Bàn về năng lượng tái tạo",
+   "en": "Discussing renewable energy"
+  },
+  "situation": "Sarah là kỹ sư năng lượng người Mỹ đang làm việc tại Việt Nam, thảo luận với đồng nghiệp Tom về tiềm năng năng lượng tái tạo.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -3876,38 +3912,50 @@
  },
  {
   "id": 333,
-  "title": "Học về điện mặt trời",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Học về điện mặt trời.",
+  "title": {
+   "vi": "Học về điện mặt trời",
+   "en": "Learning about solar power"
+  },
+  "situation": "Mai muốn lắp điện mặt trời cho nhà và hỏi kỹ sư Hùng về các thông tin cần thiết.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 33,
   "idx": 2
  },
  {
   "id": 334,
-  "title": "Bảo vệ đa dạng sinh học",
-  "situation": "Tình huống thực tế liên quan đến: Bảo vệ đa dạng sinh học.",
+  "title": {
+   "vi": "Bảo vệ đa dạng sinh học",
+   "en": "Protecting biodiversity"
+  },
+  "situation": "Phương và Đức là hai nhà nghiên cứu môi trường đang thảo luận về tình trạng đa dạng sinh học ở Việt Nam.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 33,
   "idx": 3
  },
  {
   "id": 335,
-  "title": "Nói về rừng nhiệt đới",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Nói về rừng nhiệt đới.",
+  "title": {
+   "vi": "Nói về rừng nhiệt đới",
+   "en": "Talking about tropical rainforests"
+  },
+  "situation": "Emma là nghiên cứu sinh người nước ngoài đang nghiên cứu rừng nhiệt đới Việt Nam, hỏi chuyện hướng dẫn viên địa phương David.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 33,
   "idx": 4
  },
  {
   "id": 336,
-  "title": "Nói chuyện với bác sĩ thú y",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Nói chuyện với bác sĩ thú y.",
+  "title": {
+   "vi": "Nói chuyện với bác sĩ thú y",
+   "en": "Talking to a veterinarian"
+  },
+  "situation": "Lan đưa chú chó nhỏ đến phòng khám thú y và hỏi bác sĩ Nam về các vấn đề sức khỏe của thú cưng.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -3916,8 +3964,11 @@
  },
  {
   "id": 337,
-  "title": "Chăm sóc chó mèo",
-  "situation": "Tình huống thực tế liên quan đến: Chăm sóc chó mèo.",
+  "title": {
+   "vi": "Chăm sóc chó mèo",
+   "en": "Caring for dogs and cats"
+  },
+  "situation": "Hoa chia sẻ kinh nghiệm nuôi thú cưng với Minh, người bạn vừa nhận nuôi một chú mèo nhỏ.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -3926,28 +3977,37 @@
  },
  {
   "id": 338,
-  "title": "Tiêm phòng cho thú cưng",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tiêm phòng cho thú cưng.",
+  "title": {
+   "vi": "Tiêm phòng cho thú cưng",
+   "en": "Getting pets vaccinated"
+  },
+  "situation": "Thảo đưa mèo đến phòng khám và hỏi bác sĩ Tuấn về lịch tiêm phòng cần thiết.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 33,
   "idx": 7
  },
  {
   "id": 339,
-  "title": "Mua thức ăn cho thú cưng",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Mua thức ăn cho thú cưng.",
+  "title": {
+   "vi": "Mua thức ăn cho thú cưng",
+   "en": "Buying pet food"
+  },
+  "situation": "Linh đến cửa hàng thú cưng để mua thức ăn cho chó và hỏi nhân viên Khoa về các loại sản phẩm.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 33,
   "idx": 8
  },
  {
   "id": 340,
-  "title": "Tìm thú cưng bị lạc",
-  "situation": "Tình huống thực tế liên quan đến: Tìm thú cưng bị lạc.",
+  "title": {
+   "vi": "Tìm thú cưng bị lạc",
+   "en": "Finding a lost pet"
+  },
+  "situation": "Sarah đang tìm con mèo bị lạc và nhờ hàng xóm Tom giúp đỡ và lên kế hoạch tìm kiếm.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -3956,38 +4016,50 @@
  },
  {
   "id": 341,
-  "title": "Học làm vườn tại nhà",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học làm vườn tại nhà.",
+  "title": {
+   "vi": "Học làm vườn tại nhà",
+   "en": "Learning home gardening"
+  },
+  "situation": "Mai muốn bắt đầu làm vườn ở nhà và xin tư vấn từ Hùng, người hàng xóm có khu vườn đẹp.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 34,
   "idx": 0
  },
  {
   "id": 342,
-  "title": "Trồng rau hữu cơ",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Trồng rau hữu cơ.",
+  "title": {
+   "vi": "Trồng rau hữu cơ",
+   "en": "Growing organic vegetables"
+  },
+  "situation": "Phương và Đức thảo luận về việc chuyển sang trồng rau hữu cơ tại gia đình.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 34,
   "idx": 1
  },
  {
   "id": 343,
-  "title": "Nuôi cá cảnh",
-  "situation": "Tình huống thực tế liên quan đến: Nuôi cá cảnh.",
+  "title": {
+   "vi": "Nuôi cá cảnh",
+   "en": "Keeping ornamental fish"
+  },
+  "situation": "Emma muốn bắt đầu nuôi cá cảnh và nhờ người bạn David có kinh nghiệm hướng dẫn.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 34,
   "idx": 2
  },
  {
   "id": 344,
-  "title": "Chăm sóc cây bonsai",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Chăm sóc cây bonsai.",
+  "title": {
+   "vi": "Chăm sóc cây bonsai",
+   "en": "Caring for bonsai trees"
+  },
+  "situation": "Lan mới mua một cây bonsai và nhờ chuyên gia Nam hướng dẫn cách chăm sóc.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -3996,8 +4068,11 @@
  },
  {
   "id": 345,
-  "title": "Làm vườn trên sân thượng",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Làm vườn trên sân thượng.",
+  "title": {
+   "vi": "Làm vườn trên sân thượng",
+   "en": "Rooftop gardening"
+  },
+  "situation": "Hoa muốn lập một khu vườn rau trên sân thượng và thảo luận kế hoạch với Minh.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4006,8 +4081,11 @@
  },
  {
   "id": 346,
-  "title": "Đặt lịch xét nghiệm máu",
-  "situation": "Tình huống thực tế liên quan đến: Đặt lịch xét nghiệm máu.",
+  "title": {
+   "vi": "Đặt lịch xét nghiệm máu",
+   "en": "Scheduling a blood test"
+  },
+  "situation": "Thảo gọi điện đến phòng khám để đặt lịch xét nghiệm máu và hỏi về quy trình chuẩn bị.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4016,18 +4094,24 @@
  },
  {
   "id": 347,
-  "title": "Nhận kết quả xét nghiệm",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Nhận kết quả xét nghiệm.",
+  "title": {
+   "vi": "Nhận kết quả xét nghiệm",
+   "en": "Receiving test results"
+  },
+  "situation": "Linh gặp bác sĩ Khoa để nghe giải thích kết quả xét nghiệm máu và trao đổi về sức khỏe.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 34,
   "idx": 6
  },
  {
   "id": 348,
-  "title": "Hỏi về tiêm vaccine",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về tiêm vaccine.",
+  "title": {
+   "vi": "Hỏi về tiêm vaccine",
+   "en": "Asking about vaccines"
+  },
+  "situation": "Sarah hỏi bác sĩ Tom về lịch tiêm vaccine cho người lớn và vaccine cần thiết.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4036,38 +4120,50 @@
  },
  {
   "id": 349,
-  "title": "Khám mắt",
-  "situation": "Tình huống thực tế liên quan đến: Khám mắt.",
+  "title": {
+   "vi": "Khám mắt",
+   "en": "Getting an eye exam"
+  },
+  "situation": "Mai đến phòng khám mắt lần đầu tiên và bác sĩ Hùng tiến hành kiểm tra thị lực.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 34,
   "idx": 8
  },
  {
   "id": 350,
-  "title": "Đo thính lực",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đo thính lực.",
+  "title": {
+   "vi": "Đo thính lực",
+   "en": "Getting a hearing test"
+  },
+  "situation": "Phương đưa cha đến phòng khám tai mũi họng để kiểm tra thính lực sau khi ông than phiền nghe không rõ.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 34,
   "idx": 9
  },
  {
   "id": 351,
-  "title": "Học chơi đàn guitar",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Học chơi đàn guitar.",
+  "title": {
+   "vi": "Học chơi đàn guitar",
+   "en": "Learning to play guitar"
+  },
+  "situation": "Emma muốn học guitar và hỏi ý kiến người bạn David đã chơi guitar nhiều năm.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 35,
   "idx": 0
  },
  {
   "id": 352,
-  "title": "Tham gia ban nhạc",
-  "situation": "Tình huống thực tế liên quan đến: Tham gia ban nhạc.",
+  "title": {
+   "vi": "Tham gia ban nhạc",
+   "en": "Joining a band"
+  },
+  "situation": "Lan muốn tham gia ban nhạc của trường và trình bày ý kiến với trưởng nhóm Nam.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4076,8 +4172,11 @@
  },
  {
   "id": 353,
-  "title": "Học hát karaoke",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học hát karaoke.",
+  "title": {
+   "vi": "Học hát karaoke",
+   "en": "Learning to sing karaoke"
+  },
+  "situation": "Hoa muốn cải thiện giọng hát karaoke và nhờ Minh—người hát rất tốt—chia sẻ bí quyết.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4086,8 +4185,11 @@
  },
  {
   "id": 354,
-  "title": "Tìm giáo viên âm nhạc",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Tìm giáo viên âm nhạc.",
+  "title": {
+   "vi": "Tìm giáo viên âm nhạc",
+   "en": "Finding a music teacher"
+  },
+  "situation": "Thảo muốn cho con học piano và hỏi trung tâm âm nhạc về giáo viên và chương trình học.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4096,18 +4198,24 @@
  },
  {
   "id": 355,
-  "title": "Mua nhạc cụ",
-  "situation": "Tình huống thực tế liên quan đến: Mua nhạc cụ.",
+  "title": {
+   "vi": "Mua nhạc cụ",
+   "en": "Buying a musical instrument"
+  },
+  "situation": "Linh đến cửa hàng nhạc cụ để mua keyboard cho con trai bắt đầu học nhạc và hỏi nhân viên Khoa.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 35,
   "idx": 4
  },
  {
   "id": 356,
-  "title": "Thực tập tại bệnh viện",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thực tập tại bệnh viện.",
+  "title": {
+   "vi": "Thực tập tại bệnh viện",
+   "en": "Interning at a hospital"
+  },
+  "situation": "Sarah là sinh viên y khoa đang thực tập tại bệnh viện và nói chuyện với bác sĩ hướng dẫn Tom về công việc.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4116,38 +4224,50 @@
  },
  {
   "id": 357,
-  "title": "Thực tập tại công ty luật",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thực tập tại công ty luật.",
+  "title": {
+   "vi": "Thực tập tại công ty luật",
+   "en": "Interning at a law firm"
+  },
+  "situation": "Mai là sinh viên luật đang thực tập tại công ty luật và nói chuyện với luật sư hướng dẫn Hùng.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 35,
   "idx": 6
  },
  {
   "id": 358,
-  "title": "Thực tập tại ngân hàng",
-  "situation": "Tình huống thực tế liên quan đến: Thực tập tại ngân hàng.",
+  "title": {
+   "vi": "Thực tập tại ngân hàng",
+   "en": "Interning at a bank"
+  },
+  "situation": "Phương là sinh viên tài chính đang thực tập tại ngân hàng và nói chuyện với trưởng phòng hướng dẫn Đức.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 35,
   "idx": 7
  },
  {
   "id": 359,
-  "title": "Thực tập tại tòa soạn",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thực tập tại tòa soạn.",
+  "title": {
+   "vi": "Thực tập tại tòa soạn",
+   "en": "Interning at a newspaper"
+  },
+  "situation": "Emma là sinh viên báo chí đang thực tập tại tòa soạn và thảo luận với biên tập viên David về bài viết đầu tiên.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 35,
   "idx": 8
  },
  {
   "id": 360,
-  "title": "Thực tập tại startup",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thực tập tại startup.",
+  "title": {
+   "vi": "Thực tập tại startup",
+   "en": "Interning at a startup"
+  },
+  "situation": "Lan là sinh viên công nghệ đang thực tập tại startup và thảo luận với lead developer Nam về dự án.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4156,8 +4276,11 @@
  },
  {
   "id": 361,
-  "title": "Nói về ước mơ nghề nghiệp",
-  "situation": "Tình huống thực tế liên quan đến: Nói về ước mơ nghề nghiệp.",
+  "title": {
+   "vi": "Nói về ước mơ nghề nghiệp",
+   "en": "Talking about career dreams"
+  },
+  "situation": "Hoa chia sẻ ước mơ nghề nghiệp với Minh và nhờ lời khuyên về cách thực hiện ước mơ đó.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4166,8 +4289,11 @@
  },
  {
   "id": 362,
-  "title": "Kế hoạch 5 năm tới",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Kế hoạch 5 năm tới.",
+  "title": {
+   "vi": "Kế hoạch 5 năm tới",
+   "en": "Five-year plan"
+  },
+  "situation": "Thảo chia sẻ kế hoạch 5 năm tới với người bạn Tuấn và nhờ góp ý.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4176,18 +4302,24 @@
  },
  {
   "id": 363,
-  "title": "Phát triển bản thân",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Phát triển bản thân.",
+  "title": {
+   "vi": "Phát triển bản thân",
+   "en": "Personal development"
+  },
+  "situation": "Linh và Khoa cùng chia sẻ về hành trình phát triển bản thân và những thay đổi tích cực trong cuộc sống.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 36,
   "idx": 2
  },
  {
   "id": 364,
-  "title": "Đọc sách tự phát triển",
-  "situation": "Tình huống thực tế liên quan đến: Đọc sách tự phát triển.",
+  "title": {
+   "vi": "Đọc sách tự phát triển",
+   "en": "Reading self-improvement books"
+  },
+  "situation": "Sarah và Tom thảo luận về sách tự phát triển và cách áp dụng kiến thức từ sách vào thực tế.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4196,38 +4328,50 @@
  },
  {
   "id": 365,
-  "title": "Tham gia khóa học online",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tham gia khóa học online.",
+  "title": {
+   "vi": "Tham gia khóa học online",
+   "en": "Taking an online course"
+  },
+  "situation": "Mai muốn học kỹ năng mới qua khóa học online và hỏi kinh nghiệm của người bạn Hùng.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 36,
   "idx": 4
  },
  {
   "id": 366,
-  "title": "Bàn về quyền phụ nữ",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Bàn về quyền phụ nữ.",
+  "title": {
+   "vi": "Bàn về quyền phụ nữ",
+   "en": "Discussing women's rights"
+  },
+  "situation": "Phương và Đức thảo luận về quyền phụ nữ và bình đẳng giới trong xã hội Việt Nam hiện đại.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 36,
   "idx": 5
  },
  {
   "id": 367,
-  "title": "Thảo luận về bình đẳng giới",
-  "situation": "Tình huống thực tế liên quan đến: Thảo luận về bình đẳng giới.",
+  "title": {
+   "vi": "Thảo luận về bình đẳng giới",
+   "en": "Discussing gender equality"
+  },
+  "situation": "Emma và David là hai sinh viên thảo luận về bình đẳng giới trong lớp học tiếng Anh.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 36,
   "idx": 6
  },
  {
   "id": 368,
-  "title": "Nói về quyền trẻ em",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Nói về quyền trẻ em.",
+  "title": {
+   "vi": "Nói về quyền trẻ em",
+   "en": "Talking about children's rights"
+  },
+  "situation": "Lan và Nam thảo luận về quyền trẻ em và những vấn đề liên quan đến trẻ em ở Việt Nam.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4236,8 +4380,11 @@
  },
  {
   "id": 369,
-  "title": "Bảo vệ người cao tuổi",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Bảo vệ người cao tuổi.",
+  "title": {
+   "vi": "Bảo vệ người cao tuổi",
+   "en": "Protecting the elderly"
+  },
+  "situation": "Hoa và Minh thảo luận về việc chăm sóc và bảo vệ quyền lợi của người cao tuổi trong xã hội hiện đại.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4246,8 +4393,11 @@
  },
  {
   "id": 370,
-  "title": "Hỗ trợ người khuyết tật",
-  "situation": "Tình huống thực tế liên quan đến: Hỗ trợ người khuyết tật.",
+  "title": {
+   "vi": "Hỗ trợ người khuyết tật",
+   "en": "Supporting people with disabilities"
+  },
+  "situation": "Thảo là tình nguyện viên làm việc với người khuyết tật và chia sẻ kinh nghiệm với Tuấn.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4256,18 +4406,24 @@
  },
  {
   "id": 371,
-  "title": "Tìm hiểu về Phật giáo",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tìm hiểu về Phật giáo.",
+  "title": {
+   "vi": "Tìm hiểu về Phật giáo",
+   "en": "Learning about Buddhism"
+  },
+  "situation": "Linh muốn tìm hiểu về đạo Phật và hỏi người bạn Khoa đang theo đạo Phật về những điều cơ bản.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 37,
   "idx": 0
  },
  {
   "id": 372,
-  "title": "Nói về Thiên Chúa giáo",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Nói về Thiên Chúa giáo.",
+  "title": {
+   "vi": "Nói về Thiên Chúa giáo",
+   "en": "Talking about Catholicism"
+  },
+  "situation": "Sarah là người Công giáo người Mỹ và Tom muốn hỏi thêm về đạo Công giáo.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4276,30 +4432,39 @@
  },
  {
   "id": 373,
-  "title": "Thảo luận về tâm linh",
-  "situation": "Tình huống thực tế liên quan đến: Thảo luận về tâm linh.",
+  "title": {
+   "vi": "Thảo luận về tâm linh",
+   "en": "Discussing spirituality"
+  },
+  "situation": "Mai và Hùng là hai người bạn có quan điểm khác nhau về tâm linh và trao đổi cởi mở về chủ đề này.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 37,
   "idx": 2
  },
  {
   "id": 374,
-  "title": "Tham gia lễ hội tôn giáo",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tham gia lễ hội tôn giáo.",
+  "title": {
+   "vi": "Tham gia lễ hội tôn giáo",
+   "en": "Attending a religious festival"
+  },
+  "situation": "Phương mời người bạn nước ngoài Đức tham gia lễ hội chùa Hương và giải thích ý nghĩa.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 37,
   "idx": 3
  },
  {
   "id": 375,
-  "title": "Hỏi về phong thủy",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về phong thủy.",
+  "title": {
+   "vi": "Hỏi về phong thủy",
+   "en": "Asking about feng shui"
+  },
+  "situation": "Emma tò mò về phong thủy và hỏi người bạn David có kiến thức về lĩnh vực này.",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 37,
   "idx": 4
