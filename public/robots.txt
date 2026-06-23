@@ -1,0 +1,33 @@
+# robots.txt — Hướng dẫn cho search engines
+# Cho phép indexing trang chính để tăng SEO
+# Chặn API, data nhạy cảm, và đường dẫn động
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /.env
+Disallow: /.env.*
+Disallow: /node_modules/
+Disallow: /*.json$
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+Disallow: /*?*page=
+
+# Google-specific
+User-agent: Googlebot
+Allow: /
+
+# Bing
+User-agent: Bingbot
+Allow: /
+
+# Chặn các bot xấu / spam
+User-agent: AhrefsBot
+User-agent: SemrushBot
+User-agent: DotBot
+User-agent: MJ12bot
+Disallow: /
+
+# Sitemap
+Sitemap: https://en-vi.donghanhcungban.com/sitemap.xml
