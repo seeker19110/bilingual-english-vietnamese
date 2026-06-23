@@ -93,13 +93,29 @@ export async function startPreload(userId: string): Promise<void> {
   const todayWords = getTodayBatch(learned)
   const voice = getVoicePref()
 
-  for (const entry of todayWords) {
-    // Tải từ + câu ví dụ đồng thời (song song) — giảm thời gian preload ~50%
-    await Promise.all([
-      prefetchAudio(entry.word, 'en-US', voice, token),
-      entry.ex_en ? prefetchAudio(entry.ex_en, 'en-US', voice, token) : Promise.resolve(),
+  // Phase 2 — TTS audio (tuần tự, chậm ~5s) — kick-off, không await
+  void (async () => {
+    for (const entry of todayWords) {
+      // Từ + câu ví dụ đồng thời
+      await Promise.all([
+        prefetchAudio(entry.word, 'en-US', voice, token),
+        entry.ex_en ? prefetchAudio(entry.ex_en, 'en-US', voice, token) : Promise.resolve(),
+      ])
+      await sleep(80)
+    }
+  })()
+
+  // Phase 3 — Preload data chunks hay dùng (nhanh ~500ms, không cần chờ Phase 2 xong)
+  // Dynamic import để không bundle vào main chunk.
+  // Vite tự tách loader + index.json thành shared chunk → khi user vào trang đó: cache hit.
+  void (async () => {
+    const [lessonsLoader, patternsLoader] = await Promise.all([
+      import('../data/lessons/loader').catch(() => null),
+      import('../data/patterns/loader').catch(() => null),
     ])
-    // Nhường main thread sau mỗi từ
-    await sleep(80)
-  }
+    await Promise.all([
+      lessonsLoader?.loadChunk(0) ?? Promise.resolve(),  // 10 bài học đầu
+      patternsLoader?.loadChunk(0) ?? Promise.resolve(), // 8 chủ đề cụm từ đầu
+    ])
+  })()
 }

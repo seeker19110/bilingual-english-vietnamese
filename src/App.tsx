@@ -53,6 +53,9 @@ function usePrefetchPages() {
       void import('./pages/Chat')
       void import('./pages/Learn')
       void import('./pages/Dictionary')
+      void import('./pages/Lessons')
+      void import('./pages/CommonPhrases')
+      void import('./pages/Speaking')
     }
     if ('requestIdleCallback' in window) {
       requestIdleCallback(prefetch)
