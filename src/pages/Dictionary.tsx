@@ -171,6 +171,8 @@ export default function Dictionary() {
             <div className="hidden sm:block relative mb-3 animate-fade-in">
               <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
+                id="dict-search-desktop"
+                name="search"
                 autoFocus
                 value={query}
                 onChange={e => { setQuery(e.target.value); setPosFilter(null) }}
@@ -430,6 +432,8 @@ export default function Dictionary() {
           <div className="relative w-[97%]">
             <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
+              id="dict-search-mobile"
+              name="search"
               autoFocus
               value={query}
               onChange={e => { setQuery(e.target.value); setPosFilter(null) }}

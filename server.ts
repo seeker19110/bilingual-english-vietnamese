@@ -25,6 +25,29 @@ const app = express()
 // Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
 app.disable('x-powered-by')
 
+// Security headers — ngăn chặn các tấn công phổ biến
+app.use((req, res, next) => {
+  // Prevent MIME type sniffing
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+
+  // Content Security Policy — thay thế X-Frame-Options
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'"
+  )
+
+  // Don't send Referrer header to untrusted sources
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+
+  // Don't send X-XSS-Protection (deprecated, CSP handles it)
+  // Remove if present, don't add
+
+  // Remove X-Powered-By if somehow present
+  res.removeHeader('X-Powered-By')
+
+  next()
+})
+
 // STT nhận audio base64 → body lớn hơn nhiều so với chat/tts. Đăng ký parser riêng
 // cho route này TRƯỚC parser JSON 64kb mặc định bên dưới (Express chạy middleware theo
 // thứ tự — nếu để parser 64kb chạy trước, body audio sẽ bị chặn 413 trước khi tới handler).
@@ -87,16 +110,39 @@ app.all('/api/push', wrapEdge(pushHandler))
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
 const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, 'uploads')
-app.use('/uploads', express.static(uploadsDir, { maxAge: '30d' }))
+app.use(
+  '/uploads',
+  express.static(uploadsDir, {
+    maxAge: '30d',
+    setHeaders(res) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000')
+    },
+  }),
+)
 
 // ── Phục vụ frontend (React build) ───────────────────────────────────────────
-// Cache file tĩnh 1 ngày — trừ index.html để luôn lấy bản mới nhất
+// Cache file tĩnh 1 năm với cache busting (filename hash) — trừ index.html để luôn lấy bản mới nhất
 app.use(
   express.static(path.join(__dirname, 'dist'), {
-    maxAge: '1d',
+    maxAge: '1y',
     setHeaders(res, filePath) {
+      // index.html không được cache (luôn fetch mới)
       if (filePath.endsWith('index.html')) {
-        res.setHeader('Cache-Control', 'no-cache')
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+        res.setHeader('Pragma', 'no-cache')
+        res.setHeader('Expires', '0')
+      }
+      // File assets có hash (*.js, *.css, images) — cache mãi mãi
+      else if (/\.[a-f0-9]{8}\.(js|css|png|jpg|gif|svg|woff2)$/.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+      }
+      // File khác (manifest, etc) — cache 1 tuần
+      else {
+        res.setHeader('Cache-Control', 'public, max-age=604800')
+      }
+      // Thêm charset cho HTML/JSON
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8')
       }
     },
   }),

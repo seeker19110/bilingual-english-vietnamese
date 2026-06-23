@@ -214,7 +214,7 @@ export default function Writing() {
             {isA ? 'Đề bài' : 'Essay prompt'}
           </label>
           <div className="relative">
-            <select value={essayPrompt} onChange={e => e.target.value && setEssayPrompt(e.target.value)}
+            <select id="essay-prompt-select" name="prompt" value={essayPrompt} onChange={e => e.target.value && setEssayPrompt(e.target.value)}
               className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-400 appearance-none outline-none focus:border-violet-500/70 transition mb-2">
               <option value="">
                 {isA ? '— Chọn đề mẫu hoặc tự nhập —' : '— Choose a sample prompt or type your own —'}
@@ -223,7 +223,7 @@ export default function Writing() {
             </select>
             <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-zinc-500 pointer-events-none" />
           </div>
-          <textarea value={essayPrompt} onChange={e => setEssayPrompt(e.target.value)}
+          <textarea id="prompt-input" name="essayPrompt" value={essayPrompt} onChange={e => setEssayPrompt(e.target.value)}
             placeholder={isA ? 'Hoặc dán đề bài IELTS vào đây...' : 'Or paste a Vietnamese writing prompt here...'}
             rows={3}
             className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-violet-500/70 transition resize-none" />
@@ -238,7 +238,7 @@ export default function Writing() {
               {wordCount} {isA ? 'từ' : 'words'} {wordHint}
             </span>
           </div>
-          <textarea value={essay} onChange={e => setEssay(e.target.value)}
+          <textarea id="essay-input" name="essay" value={essay} onChange={e => setEssay(e.target.value)}
             placeholder={
               isA
                 ? 'Viết bài vào đây... (IELTS Task 2 thường 250–350 từ)'

@@ -98,15 +98,15 @@ export default function Login() {
 
         <form onSubmit={submit} className="space-y-3">
           {mode === 'register' && (
-            <input value={name} onChange={e => setName(e.target.value)}
+            <input id="name" name="name" value={name} onChange={e => setName(e.target.value)}
               placeholder="Tên của bạn" className={inputCls} required
               autoFocus />
           )}
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+          <input id="email" name="email" type="email" value={email} onChange={e => setEmail(e.target.value)}
             placeholder="Email" className={inputCls} required
             autoFocus={mode === 'login'} />
           <div className="relative">
-            <input type={showPw ? 'text' : 'password'} value={password}
+            <input id="password" name="password" type={showPw ? 'text' : 'password'} value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="Mật khẩu" className={`${inputCls} pr-11`} required minLength={6} />
             <button type="button" onClick={() => setShowPw(p => !p)}

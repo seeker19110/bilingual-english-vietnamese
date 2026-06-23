@@ -434,6 +434,8 @@ export default function Speaking() {
                       <Plus className="w-4 h-4" />
                     </button>
                     <input
+                      id="speaking-input"
+                      name="input"
                       value={typedInput}
                       onChange={e => setTypedInput(e.target.value)}
                       onKeyDown={e => {

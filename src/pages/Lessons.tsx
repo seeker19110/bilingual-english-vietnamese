@@ -152,6 +152,8 @@ function SearchBar({ query, setQuery, isA }: {
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
       <input
+        id="lesson-search"
+        name="query"
         type="text"
         value={query}
         onChange={e => setQuery(e.target.value)}
