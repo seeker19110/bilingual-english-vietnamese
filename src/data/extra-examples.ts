@@ -1951,4 +1951,452 @@ export const EXTRA_EXAMPLES: Record<string, [ExPair, ExPair]> = {
     { en: 'Your attitude determines how far you go in life.', vi: 'Thái độ của bạn quyết định bạn đi được bao xa trong cuộc sống.' },
     { en: 'She faced every challenge with a positive attitude.', vi: 'Cô ấy đối mặt với mọi thử thách với thái độ tích cực.' },
   ],
+
+  // ── Vòng 26: Tháng trong năm ─────────────────────────────────────────────
+  January: [
+    { en: 'January is the coldest month in northern Vietnam.', vi: 'Tháng Một là tháng lạnh nhất ở miền Bắc Việt Nam.' },
+    { en: 'She started her new job in January.', vi: 'Cô ấy bắt đầu công việc mới vào tháng Một.' },
+  ],
+  February: [
+    { en: 'Tết often falls in January or February.', vi: 'Tết thường rơi vào tháng Một hoặc tháng Hai.' },
+    { en: 'February is the shortest month of the year.', vi: 'Tháng Hai là tháng ngắn nhất trong năm.' },
+  ],
+  March: [
+    { en: 'International Women\'s Day is on the eighth of March.', vi: 'Ngày Quốc tế Phụ nữ vào ngày tám tháng Ba.' },
+    { en: 'The weather in March is usually warm and pleasant.', vi: 'Thời tiết tháng Ba thường ấm áp và dễ chịu.' },
+  ],
+  April: [
+    { en: 'Reunification Day in Vietnam falls on the thirtieth of April.', vi: 'Ngày Thống Nhất của Việt Nam vào ngày ba mươi tháng Tư.' },
+    { en: 'April showers bring May flowers.', vi: 'Mưa tháng Tư mang lại hoa tháng Năm.' },
+  ],
+  May: [
+    { en: 'Labour Day is celebrated on the first of May.', vi: 'Ngày Lao động được tổ chức vào ngày một tháng Năm.' },
+    { en: 'The rainy season often starts in May in southern Vietnam.', vi: 'Mùa mưa thường bắt đầu vào tháng Năm ở miền Nam Việt Nam.' },
+  ],
+  June: [
+    { en: 'University entrance exams are usually held in June.', vi: 'Kỳ thi đại học thường được tổ chức vào tháng Sáu.' },
+    { en: 'The days are long in June because of the summer solstice.', vi: 'Ngày dài vào tháng Sáu do điểm hạ chí.' },
+  ],
+  July: [
+    { en: 'July is often the hottest month in many parts of the world.', vi: 'Tháng Bảy thường là tháng nóng nhất ở nhiều nơi trên thế giới.' },
+    { en: 'She went on a holiday to Da Nang in July.', vi: 'Cô ấy đi nghỉ ở Đà Nẵng vào tháng Bảy.' },
+  ],
+  August: [
+    { en: 'August is the peak season for beach holidays in Vietnam.', vi: 'Tháng Tám là mùa cao điểm cho kỳ nghỉ biển ở Việt Nam.' },
+    { en: 'He completed his internship in August.', vi: 'Anh ấy hoàn thành thực tập vào tháng Tám.' },
+  ],
+  September: [
+    { en: 'Mid-Autumn Festival is usually in September.', vi: 'Tết Trung Thu thường vào tháng Chín.' },
+    { en: 'School begins again at the start of September.', vi: 'Trường học bắt đầu lại vào đầu tháng Chín.' },
+  ],
+  October: [
+    { en: 'October is a great time to visit Hội An.', vi: 'Tháng Mười là thời điểm tuyệt vời để thăm Hội An.' },
+    { en: 'The weather cools down in October in the north.', vi: 'Thời tiết mát dần vào tháng Mười ở miền Bắc.' },
+  ],
+  November: [
+    { en: 'November is a good month for visiting Hanoi.', vi: 'Tháng Mười một là tháng tốt để thăm Hà Nội.' },
+    { en: 'In November, the nights get noticeably longer.', vi: 'Vào tháng Mười một, đêm dài hơn rõ rệt.' },
+  ],
+  December: [
+    { en: 'Families gather together in December for the holidays.', vi: 'Các gia đình tụ họp vào tháng Mười hai dịp lễ.' },
+    { en: 'Hanoi can be quite cold in December.', vi: 'Hà Nội có thể khá lạnh vào tháng Mười hai.' },
+  ],
+  date: [
+    { en: 'Write the date at the top of your answer sheet.', vi: 'Viết ngày tháng vào đầu bài làm của bạn.' },
+    { en: 'What date does the conference start?', vi: 'Hội nghị bắt đầu vào ngày mấy?' },
+  ],
+  birthday: [
+    { en: 'Happy birthday — I hope all your wishes come true.', vi: 'Chúc mừng sinh nhật — chúc bạn mọi điều ước thành hiện thực.' },
+    { en: 'She baked a chocolate cake for his birthday.', vi: 'Cô ấy làm bánh sô-cô-la cho sinh nhật anh ấy.' },
+  ],
+  holiday: [
+    { en: 'They spent their summer holiday at the beach.', vi: 'Họ dành kỳ nghỉ hè ở bãi biển.' },
+    { en: 'Public holidays are a good time to visit family.', vi: 'Ngày lễ là dịp tốt để về thăm gia đình.' },
+  ],
+  anniversary: [
+    { en: 'They celebrated their tenth wedding anniversary in Paris.', vi: 'Họ kỷ niệm mười năm ngày cưới ở Paris.' },
+    { en: 'The company anniversary dinner was held at a luxury hotel.', vi: 'Tiệc kỷ niệm thành lập công ty được tổ chức tại khách sạn sang trọng.' },
+  ],
+  calendar: [
+    { en: 'Mark the important dates on your calendar.', vi: 'Đánh dấu các ngày quan trọng vào lịch của bạn.' },
+    { en: 'She checked the calendar and found a free slot on Friday.', vi: 'Cô ấy xem lịch và tìm được khoảng trống vào thứ Sáu.' },
+  ],
+  period: [
+    { en: 'The busy period ends after the holiday season.', vi: 'Giai đoạn bận rộn kết thúc sau mùa lễ hội.' },
+    { en: 'This is a critical period for the company.', vi: 'Đây là giai đoạn quan trọng với công ty.' },
+  ],
+  quarterly: [
+    { en: 'The team holds quarterly reviews to track progress.', vi: 'Nhóm tổ chức đánh giá hàng quý để theo dõi tiến độ.' },
+    { en: 'Quarterly reports show how the business is doing.', vi: 'Báo cáo hàng quý cho thấy tình hình kinh doanh ra sao.' },
+  ],
+  annual: [
+    { en: 'The annual company trip is something everyone looks forward to.', vi: 'Chuyến du lịch thường niên của công ty là điều mọi người mong đợi.' },
+    { en: 'She gets an annual salary review every December.', vi: 'Cô ấy được xem xét lương hàng năm vào mỗi tháng Mười hai.' },
+  ],
+
+  // ── Vòng 27: Địa điểm thành phố ──────────────────────────────────────────
+  park: [
+    { en: 'Families enjoy picnics in the park on weekends.', vi: 'Các gia đình thích dã ngoại trong công viên vào cuối tuần.' },
+    { en: 'She runs three kilometres in the park every morning.', vi: 'Cô ấy chạy ba km trong công viên mỗi sáng.' },
+  ],
+  bank: [
+    { en: 'He went to the bank to open a savings account.', vi: 'Anh ấy đến ngân hàng để mở tài khoản tiết kiệm.' },
+    { en: 'The bank closes at five o\'clock on weekdays.', vi: 'Ngân hàng đóng cửa lúc năm giờ vào ngày thường.' },
+  ],
+  restaurant: [
+    { en: 'The restaurant was fully booked for the weekend.', vi: 'Nhà hàng đã kín chỗ cho cuối tuần.' },
+    { en: 'She recommended a great Vietnamese restaurant downtown.', vi: 'Cô ấy giới thiệu một nhà hàng Việt Nam tuyệt vời ở trung tâm thành phố.' },
+  ],
+  hotel: [
+    { en: 'The hotel room had a beautiful sea view.', vi: 'Phòng khách sạn có tầm nhìn tuyệt đẹp ra biển.' },
+    { en: 'Book your hotel early to get a better price.', vi: 'Đặt khách sạn sớm để được giá tốt hơn.' },
+  ],
+  museum: [
+    { en: 'The history museum is a great place to learn about Vietnam.', vi: 'Bảo tàng lịch sử là nơi tuyệt vời để tìm hiểu về Việt Nam.' },
+    { en: 'Children get in free at this museum on Sundays.', vi: 'Trẻ em được vào miễn phí ở bảo tàng này vào Chủ nhật.' },
+  ],
+  church: [
+    { en: 'The old church was built over a hundred years ago.', vi: 'Nhà thờ cổ được xây dựng hơn một trăm năm trước.' },
+    { en: 'They held a quiet wedding ceremony at the local church.', vi: 'Họ tổ chức lễ cưới yên tĩnh tại nhà thờ địa phương.' },
+  ],
+  gym: [
+    { en: 'She works out at the gym for an hour every day.', vi: 'Cô ấy tập ở phòng tập thể dục một tiếng mỗi ngày.' },
+    { en: 'He joined a gym to get fit before summer.', vi: 'Anh ấy đăng ký phòng gym để lấy lại vóc dáng trước mùa hè.' },
+  ],
+  cinema: [
+    { en: 'We watched the new action film at the cinema last night.', vi: 'Chúng tôi xem phim hành động mới ở rạp tối qua.' },
+    { en: 'The cinema was packed — we had to sit in the front row.', vi: 'Rạp phim chật cứng — chúng tôi phải ngồi hàng đầu.' },
+  ],
+  stadium: [
+    { en: 'Thousands of fans filled the stadium for the final.', vi: 'Hàng nghìn người hâm mộ lấp đầy sân vận động cho trận chung kết.' },
+    { en: 'The national stadium was renovated last year.', vi: 'Sân vận động quốc gia được cải tạo năm ngoái.' },
+  ],
+  supermarket: [
+    { en: 'She does her weekly grocery shopping at the supermarket.', vi: 'Cô ấy mua đồ hàng tuần ở siêu thị.' },
+    { en: 'The supermarket has a great selection of fresh produce.', vi: 'Siêu thị có nhiều lựa chọn thực phẩm tươi sống tốt.' },
+  ],
+  mall: [
+    { en: 'The new mall has a cinema, gym, and food court.', vi: 'Trung tâm thương mại mới có rạp phim, phòng gym và khu ẩm thực.' },
+    { en: 'Shopping at the mall is fun on a rainy day.', vi: 'Mua sắm ở trung tâm thương mại rất vui vào ngày mưa.' },
+  ],
+  café: [
+    { en: 'She works from a café every Tuesday morning.', vi: 'Cô ấy làm việc ở quán cà phê mỗi sáng thứ Ba.' },
+    { en: 'The café near the park serves excellent Vietnamese coffee.', vi: 'Quán cà phê gần công viên phục vụ cà phê Việt Nam rất ngon.' },
+  ],
+  bridge: [
+    { en: 'The Dragon Bridge in Da Nang breathes fire on weekends.', vi: 'Cầu Rồng ở Đà Nẵng phun lửa vào cuối tuần.' },
+    { en: 'They crossed the bridge to reach the other side of the river.', vi: 'Họ qua cầu để đến bờ sông bên kia.' },
+  ],
+  street: [
+    { en: 'The street food on this street is amazing.', vi: 'Đồ ăn đường phố trên phố này rất tuyệt vời.' },
+    { en: 'She walked down the busy street to find the office.', vi: 'Cô ấy đi dọc con phố đông đúc để tìm văn phòng.' },
+  ],
+  corner: [
+    { en: 'There is a small pharmacy on the corner of the street.', vi: 'Có một hiệu thuốc nhỏ ở góc phố.' },
+    { en: 'Wait for me on the corner — I\'ll be there in five minutes.', vi: 'Đợi tôi ở góc đường — tôi sẽ đến trong năm phút.' },
+  ],
+  block: [
+    { en: 'The supermarket is just two blocks away from here.', vi: 'Siêu thị chỉ cách đây hai dãy nhà thôi.' },
+    { en: 'She walks around the block every evening to clear her mind.', vi: 'Cô ấy đi bộ quanh khu phố mỗi tối để xua tan căng thẳng.' },
+  ],
+  neighborhood: [
+    { en: 'They love their neighborhood because it is safe and quiet.', vi: 'Họ thích khu phố của mình vì nó an toàn và yên tĩnh.' },
+    { en: 'She knows everyone in her neighborhood by name.', vi: 'Cô ấy biết tên mọi người trong khu phố.' },
+  ],
+  entrance: [
+    { en: 'The main entrance is on the north side of the building.', vi: 'Lối vào chính ở phía bắc tòa nhà.' },
+    { en: 'She waited at the entrance for her friend to arrive.', vi: 'Cô ấy đợi ở cổng vào cho bạn đến.' },
+  ],
+  exit: [
+    { en: 'Please leave through the emergency exit on the right.', vi: 'Vui lòng thoát qua lối ra khẩn cấp bên phải.' },
+    { en: 'She found the exit sign and followed it downstairs.', vi: 'Cô ấy tìm thấy biển lối ra và đi theo xuống cầu thang.' },
+  ],
+  floor: [
+    { en: 'The restaurant is on the rooftop floor — great views.', vi: 'Nhà hàng ở tầng thượng — tầm nhìn tuyệt vời.' },
+    { en: 'Take the lift to the eighth floor for the meeting room.', vi: 'Đi thang máy lên tầng tám để đến phòng họp.' },
+  ],
+
+  // ── Vòng 28: Nghề nghiệp ─────────────────────────────────────────────────
+  job: [
+    { en: 'She found a great job after only two weeks of searching.', vi: 'Cô ấy tìm được việc làm tốt sau chỉ hai tuần tìm kiếm.' },
+    { en: 'Loving your job makes every workday enjoyable.', vi: 'Yêu công việc khiến mỗi ngày làm việc trở nên thú vị.' },
+  ],
+  occupation: [
+    { en: 'Please write your occupation on the registration form.', vi: 'Hãy viết nghề nghiệp của bạn vào mẫu đăng ký.' },
+    { en: 'Teaching is one of the most respected occupations in Vietnam.', vi: 'Giảng dạy là một trong những nghề được kính trọng nhất ở Việt Nam.' },
+  ],
+  engineer: [
+    { en: 'She studied hard to become a civil engineer.', vi: 'Cô ấy học chăm chỉ để trở thành kỹ sư xây dựng.' },
+    { en: 'Engineers designed the bridge to last a hundred years.', vi: 'Các kỹ sư thiết kế cây cầu để tồn tại một trăm năm.' },
+  ],
+  lawyer: [
+    { en: 'He hired a lawyer to help with the contract dispute.', vi: 'Anh ấy thuê luật sư để giải quyết tranh chấp hợp đồng.' },
+    { en: 'She studied law for five years before becoming a lawyer.', vi: 'Cô ấy học luật năm năm trước khi trở thành luật sư.' },
+  ],
+  accountant: [
+    { en: 'The accountant prepared the annual financial report.', vi: 'Kế toán viên chuẩn bị báo cáo tài chính thường niên.' },
+    { en: 'Hire an accountant to manage your business finances.', vi: 'Thuê kế toán để quản lý tài chính doanh nghiệp của bạn.' },
+  ],
+  chef: [
+    { en: 'The chef created a new dish inspired by Vietnamese street food.', vi: 'Đầu bếp tạo ra món mới lấy cảm hứng từ ẩm thực đường phố Việt Nam.' },
+    { en: 'She trained under a famous chef for three years.', vi: 'Cô ấy học dưới sự hướng dẫn của một đầu bếp nổi tiếng ba năm.' },
+  ],
+  driver: [
+    { en: 'The taxi driver knew a shortcut to the airport.', vi: 'Tài xế taxi biết đường tắt ra sân bay.' },
+    { en: 'He works as a bus driver for the city transport company.', vi: 'Anh ấy làm tài xế xe buýt cho công ty vận tải thành phố.' },
+  ],
+  farmer: [
+    { en: 'The farmer harvested rice in the cool morning air.', vi: 'Người nông dân gặt lúa trong không khí buổi sáng mát mẻ.' },
+    { en: 'Many Vietnamese farmers grow coffee in the central highlands.', vi: 'Nhiều nông dân Việt Nam trồng cà phê ở Tây Nguyên.' },
+  ],
+  soldier: [
+    { en: 'The soldier stood guard in front of the government building.', vi: 'Người lính đứng canh trước tòa nhà chính phủ.' },
+    { en: 'Veterans are soldiers who have retired from military service.', vi: 'Cựu chiến binh là những người lính đã giải ngũ.' },
+  ],
+  pilot: [
+    { en: 'The pilot announced that we would land in twenty minutes.', vi: 'Phi công thông báo chúng tôi sẽ hạ cánh sau hai mươi phút.' },
+    { en: 'She dreamed of becoming a pilot since she was a child.', vi: 'Cô ấy mơ ước trở thành phi công từ khi còn nhỏ.' },
+  ],
+  journalist: [
+    { en: 'The journalist interviewed the mayor about city plans.', vi: 'Nhà báo phỏng vấn thị trưởng về kế hoạch thành phố.' },
+    { en: 'She became a journalist to tell important stories.', vi: 'Cô ấy trở thành nhà báo để kể những câu chuyện quan trọng.' },
+  ],
+  architect: [
+    { en: 'The architect spent a year designing the new library.', vi: 'Kiến trúc sư mất một năm thiết kế thư viện mới.' },
+    { en: 'A good architect balances beauty with practical function.', vi: 'Kiến trúc sư giỏi cân bằng giữa vẻ đẹp và tính thực tiễn.' },
+  ],
+  scientist: [
+    { en: 'Scientists discovered a new species of fish in the Mekong River.', vi: 'Các nhà khoa học phát hiện loài cá mới ở sông Mê Kông.' },
+    { en: 'She wants to be a scientist to find cures for diseases.', vi: 'Cô ấy muốn trở thành nhà khoa học để tìm ra cách chữa bệnh.' },
+  ],
+  programmer: [
+    { en: 'The programmer wrote the new feature in just two days.', vi: 'Lập trình viên viết tính năng mới chỉ trong hai ngày.' },
+    { en: 'Being a programmer requires both logic and creativity.', vi: 'Làm lập trình viên đòi hỏi cả tư duy logic lẫn sáng tạo.' },
+  ],
+  artist: [
+    { en: 'The artist spent three months painting the large mural.', vi: 'Họa sĩ dành ba tháng để vẽ bức tranh tường lớn.' },
+    { en: 'She is an artist who uses recycled materials in her work.', vi: 'Cô ấy là nghệ sĩ sử dụng vật liệu tái chế trong tác phẩm.' },
+  ],
+  musician: [
+    { en: 'The musician performed live on the rooftop stage.', vi: 'Nhạc sĩ biểu diễn trực tiếp trên sân khấu mái thượng.' },
+    { en: 'She is a talented musician who plays both guitar and piano.', vi: 'Cô ấy là nhạc sĩ tài năng chơi được cả guitar lẫn piano.' },
+  ],
+  actor: [
+    { en: 'The actor prepared for his role by living like a chef for a month.', vi: 'Diễn viên chuẩn bị cho vai diễn bằng cách sống như đầu bếp một tháng.' },
+    { en: 'She became a famous actor after her first film.', vi: 'Cô ấy trở thành diễn viên nổi tiếng sau bộ phim đầu tiên.' },
+  ],
+  athlete: [
+    { en: 'The athlete trained six hours a day to prepare for the Olympics.', vi: 'Vận động viên tập luyện sáu tiếng mỗi ngày để chuẩn bị cho Olympic.' },
+    { en: 'Vietnamese athletes won several medals at the SEA Games.', vi: 'Các vận động viên Việt Nam đoạt nhiều huy chương tại SEA Games.' },
+  ],
+  volunteer: [
+    { en: 'She volunteers at a food bank every Saturday morning.', vi: 'Cô ấy tình nguyện ở ngân hàng thực phẩm mỗi sáng thứ Bảy.' },
+    { en: 'Volunteering helps you gain new skills and meet new people.', vi: 'Tình nguyện giúp bạn có thêm kỹ năng mới và gặp gỡ người mới.' },
+  ],
+
+  // ── Vòng 29: Rau củ quả ──────────────────────────────────────────────────
+  mango: [
+    { en: 'Vietnam exports millions of tonnes of mangoes every year.', vi: 'Việt Nam xuất khẩu hàng triệu tấn xoài mỗi năm.' },
+    { en: 'She made mango smoothies for the whole family.', vi: 'Cô ấy làm sinh tố xoài cho cả gia đình.' },
+  ],
+  grape: [
+    { en: 'He bought a bunch of red grapes from the market.', vi: 'Anh ấy mua một chùm nho đỏ ở chợ.' },
+    { en: 'Grapes are used to make wine and juice.', vi: 'Nho được dùng để làm rượu vang và nước trái cây.' },
+  ],
+  strawberry: [
+    { en: 'She picked fresh strawberries straight from the farm.', vi: 'Cô ấy hái dâu tây tươi ngay từ trang trại.' },
+    { en: 'Strawberry ice cream is her favourite dessert.', vi: 'Kem dâu tây là món tráng miệng yêu thích của cô ấy.' },
+  ],
+  watermelon: [
+    { en: 'Cutting cold watermelon is perfect on a hot afternoon.', vi: 'Thái dưa hấu lạnh rất tuyệt vào buổi chiều nóng.' },
+    { en: 'Vietnamese people often eat watermelon during Tết.', vi: 'Người Việt thường ăn dưa hấu trong dịp Tết.' },
+  ],
+  pineapple: [
+    { en: 'She added pineapple chunks to the sweet and sour dish.', vi: 'Cô ấy cho miếng dứa vào món chua ngọt.' },
+    { en: 'Pineapple is sweet, sour, and very refreshing.', vi: 'Dứa vừa ngọt vừa chua và rất mát.' },
+  ],
+  tomato: [
+    { en: 'She grew tomatoes in a pot on the balcony.', vi: 'Cô ấy trồng cà chua trong chậu trên ban công.' },
+    { en: 'Tomatoes are used in hundreds of Vietnamese dishes.', vi: 'Cà chua được dùng trong hàng trăm món Việt Nam.' },
+  ],
+  potato: [
+    { en: 'He made a simple salad with boiled potatoes and eggs.', vi: 'Anh ấy làm salad đơn giản với khoai tây luộc và trứng.' },
+    { en: 'Potatoes can be fried, boiled, or baked.', vi: 'Khoai tây có thể chiên, luộc hoặc nướng.' },
+  ],
+  carrot: [
+    { en: 'She added grated carrot to the salad for colour.', vi: 'Cô ấy bào cà rốt vào salad để thêm màu sắc.' },
+    { en: 'Carrots are rich in vitamin A and beta-carotene.', vi: 'Cà rốt giàu vitamin A và beta-carotene.' },
+  ],
+  onion: [
+    { en: 'Onion is the base of almost every Vietnamese soup.', vi: 'Hành là nền tảng của hầu hết các món canh Việt Nam.' },
+    { en: 'She cried while cutting onions — as always.', vi: 'Cô ấy khóc khi thái hành — như mọi khi.' },
+  ],
+  garlic: [
+    { en: 'Fry the garlic in oil until golden before adding vegetables.', vi: 'Phi thơm tỏi trong dầu trước khi cho rau vào.' },
+    { en: 'Garlic is known for its strong flavour and health benefits.', vi: 'Tỏi nổi tiếng với hương vị đậm đà và lợi ích sức khoẻ.' },
+  ],
+  cucumber: [
+    { en: 'Cucumber slices cool down any spicy dish nicely.', vi: 'Lát dưa leo làm dịu bất kỳ món cay nào.' },
+    { en: 'She always adds cucumber to her fresh spring rolls.', vi: 'Cô ấy luôn cho dưa leo vào gỏi cuốn tươi.' },
+  ],
+  lettuce: [
+    { en: 'Wrap the grilled meat in a lettuce leaf for extra freshness.', vi: 'Cuốn thịt nướng trong lá xà lách để thêm tươi mát.' },
+    { en: 'She grows lettuce on her apartment balcony.', vi: 'Cô ấy trồng xà lách trên ban công căn hộ.' },
+  ],
+  corn: [
+    { en: 'Grilled corn with butter and salt is a popular Vietnamese street snack.', vi: 'Ngô nướng bơ muối là món ăn đường phố phổ biến ở Việt Nam.' },
+    { en: 'She boiled a pot of corn for the family dinner.', vi: 'Cô ấy luộc một nồi ngô cho bữa tối gia đình.' },
+  ],
+  pumpkin: [
+    { en: 'Pumpkin soup is warm, sweet, and very comforting.', vi: 'Súp bí đỏ ấm áp, ngọt ngào và rất dễ chịu.' },
+    { en: 'She grew a giant pumpkin in her garden this autumn.', vi: 'Cô ấy trồng một quả bí đỏ khổng lồ trong vườn mùa thu này.' },
+  ],
+  mushroom: [
+    { en: 'She added shiitake mushrooms to the hot pot broth.', vi: 'Cô ấy cho nấm shiitake vào nước lẩu.' },
+    { en: 'Mushrooms add a rich, earthy flavour to any stir-fry.', vi: 'Nấm thêm hương vị đậm đà, thơm đất cho bất kỳ món xào nào.' },
+  ],
+  avocado: [
+    { en: 'She eats avocado toast for breakfast every morning.', vi: 'Cô ấy ăn bánh mì nướng bơ mỗi sáng.' },
+    { en: 'Avocado smoothies are very popular in Vietnam.', vi: 'Sinh tố bơ rất phổ biến ở Việt Nam.' },
+  ],
+  lemon: [
+    { en: 'Squeeze a little lemon over the grilled fish for flavour.', vi: 'Vắt một chút chanh vàng lên cá nướng cho thêm hương vị.' },
+    { en: 'She drank warm lemon water every morning to stay healthy.', vi: 'Cô ấy uống nước chanh ấm mỗi sáng để giữ sức khoẻ.' },
+  ],
+  lime: [
+    { en: 'Fresh lime juice makes the best dipping sauce for spring rolls.', vi: 'Nước cốt chanh tươi làm nước chấm gỏi cuốn ngon nhất.' },
+    { en: 'A slice of lime in iced tea adds a lovely refreshing twist.', vi: 'Một lát chanh trong trà đá thêm một nét tươi mát thú vị.' },
+  ],
+
+  // ── Vòng 30: Nấu ăn & bếp ────────────────────────────────────────────────
+  cook: [
+    { en: 'She learned to cook traditional Vietnamese dishes from her mother.', vi: 'Cô ấy học nấu các món Việt truyền thống từ mẹ.' },
+    { en: 'Cooking at home is healthier and cheaper than eating out.', vi: 'Nấu ăn ở nhà lành mạnh hơn và rẻ hơn ăn ngoài.' },
+  ],
+  boil: [
+    { en: 'Boil the chicken bones for two hours to make a rich broth.', vi: 'Ninh xương gà hai tiếng để có nước dùng đậm đà.' },
+    { en: 'Always boil water before drinking if you are unsure about safety.', vi: 'Luôn đun sôi nước trước khi uống nếu bạn không chắc về an toàn.' },
+  ],
+  fry: [
+    { en: 'Fry the spring rolls until they are golden and crispy.', vi: 'Chiên chả giò cho đến khi vàng và giòn.' },
+    { en: 'She fried the garlic and onion in hot oil first.', vi: 'Cô ấy phi thơm tỏi và hành tây trong dầu nóng trước tiên.' },
+  ],
+  bake: [
+    { en: 'She bakes cookies every Sunday for her neighbours.', vi: 'Cô ấy nướng bánh quy mỗi Chủ nhật cho hàng xóm.' },
+    { en: 'Bake the bread at one hundred eighty degrees for thirty minutes.', vi: 'Nướng bánh mì ở một trăm tám mươi độ trong ba mươi phút.' },
+  ],
+  grill: [
+    { en: 'They grilled fresh seafood on the beach at sunset.', vi: 'Họ nướng hải sản tươi trên bãi biển lúc hoàng hôn.' },
+    { en: 'Grilled meat with lemongrass is a classic Vietnamese flavour.', vi: 'Thịt nướng sả là hương vị Việt Nam cổ điển.' },
+  ],
+  cut: [
+    { en: 'Cut the spring onions finely before adding them to the soup.', vi: 'Thái nhỏ hành lá trước khi cho vào canh.' },
+    { en: 'He cut his finger while chopping vegetables.', vi: 'Anh ấy bị đứt tay khi thái rau củ.' },
+  ],
+  stir: [
+    { en: 'Stir the porridge constantly to prevent it from sticking.', vi: 'Khuấy cháo liên tục để không bị dính.' },
+    { en: 'She stirred the sauce gently until it thickened.', vi: 'Cô ấy khuấy nhẹ nước sốt cho đến khi sệt lại.' },
+  ],
+  mix: [
+    { en: 'Mix the fish sauce, lime juice, and sugar to make dipping sauce.', vi: 'Trộn nước mắm, chanh và đường để làm nước chấm.' },
+    { en: 'She mixed all the dry ingredients before adding the eggs.', vi: 'Cô ấy trộn tất cả nguyên liệu khô trước khi cho trứng vào.' },
+  ],
+  taste: [
+    { en: 'Taste the broth before serving — add more salt if needed.', vi: 'Nếm nước dùng trước khi dọn — cho thêm muối nếu cần.' },
+    { en: 'This dish tastes like my grandmother used to make.', vi: 'Món này có vị như bà ngoại tôi từng nấu.' },
+  ],
+  recipe: [
+    { en: 'She shared her pho recipe with thousands of followers online.', vi: 'Cô ấy chia sẻ công thức nấu phở với hàng nghìn người theo dõi trực tuyến.' },
+    { en: 'Follow the recipe step by step for the best results.', vi: 'Làm theo công thức từng bước để có kết quả tốt nhất.' },
+  ],
+  ingredient: [
+    { en: 'Fresh ingredients make all the difference in Vietnamese cooking.', vi: 'Nguyên liệu tươi tạo ra sự khác biệt hoàn toàn trong nấu ăn Việt Nam.' },
+    { en: 'Read the ingredient list to check for any allergens.', vi: 'Đọc danh sách thành phần để kiểm tra chất gây dị ứng.' },
+  ],
+  pot: [
+    { en: 'She used a large pot to cook soup for twenty people.', vi: 'Cô ấy dùng nồi lớn để nấu canh cho hai mươi người.' },
+    { en: 'The hot pot at the table keeps the broth warm throughout the meal.', vi: 'Nồi lẩu trên bàn giữ nước dùng nóng suốt bữa ăn.' },
+  ],
+  pan: [
+    { en: 'Heat the pan over medium heat before adding the oil.', vi: 'Đun nóng chảo ở lửa vừa trước khi cho dầu vào.' },
+    { en: 'She used a non-stick pan to fry the eggs perfectly.', vi: 'Cô ấy dùng chảo chống dính để rán trứng đẹp.' },
+  ],
+  knife: [
+    { en: 'A sharp knife makes cooking faster and safer.', vi: 'Dao sắc làm nấu ăn nhanh hơn và an toàn hơn.' },
+    { en: 'She uses a chef\'s knife for most of her cutting.', vi: 'Cô ấy dùng dao đầu bếp cho hầu hết việc thái chặt.' },
+  ],
+  fork: [
+    { en: 'He picked up his fork and tasted the pasta.', vi: 'Anh ấy cầm dĩa lên và nếm thử mì ống.' },
+    { en: 'She used a fork to mix the salad dressing into the leaves.', vi: 'Cô ấy dùng dĩa để trộn sốt vào lá rau.' },
+  ],
+  spoon: [
+    { en: 'She tasted the soup with a wooden spoon.', vi: 'Cô ấy nếm canh bằng thìa gỗ.' },
+    { en: 'Use a tablespoon of oil for stir-frying.', vi: 'Dùng một muỗng canh dầu để xào.' },
+  ],
+  plate: [
+    { en: 'She arranged the food beautifully on the plate.', vi: 'Cô ấy bày đồ ăn đẹp mắt trên đĩa.' },
+    { en: 'Always eat everything on your plate — do not waste food.', vi: 'Luôn ăn hết trên đĩa — đừng lãng phí thức ăn.' },
+  ],
+  bowl: [
+    { en: 'She served the pho in a large, steaming bowl.', vi: 'Cô ấy dọn phở trong bát lớn đang bốc hơi.' },
+    { en: 'He mixed the batter in a bowl before pouring it into the pan.', vi: 'Anh ấy trộn bột trong bát trước khi đổ vào chảo.' },
+  ],
+  oven: [
+    { en: 'She preheated the oven before sliding the cake tin in.', vi: 'Cô ấy làm nóng lò trước khi cho khuôn bánh vào.' },
+    { en: 'The oven beeped to signal that the cookies were ready.', vi: 'Lò phát ra tiếng bíp báo hiệu bánh quy đã chín.' },
+  ],
+  microwave: [
+    { en: 'He reheated the leftover rice in the microwave.', vi: 'Anh ấy hâm nóng cơm thừa trong lò vi sóng.' },
+    { en: 'The microwave is the fastest way to defrost frozen food.', vi: 'Lò vi sóng là cách nhanh nhất để rã đông thực phẩm đông lạnh.' },
+  ],
+
+  // ── Vòng 31: Thiên nhiên ─────────────────────────────────────────────────
+  nature: [
+    { en: 'Spending time in nature helps reduce stress and anxiety.', vi: 'Dành thời gian trong thiên nhiên giúp giảm căng thẳng và lo âu.' },
+    { en: 'We should all do our part to protect nature.', vi: 'Tất cả chúng ta nên làm phần của mình để bảo vệ thiên nhiên.' },
+  ],
+  forest: [
+    { en: 'The forest provides oxygen for millions of people.', vi: 'Rừng cung cấp oxy cho hàng triệu người.' },
+    { en: 'They hiked deep into the forest and camped overnight.', vi: 'Họ đi bộ sâu vào rừng và cắm trại qua đêm.' },
+  ],
+  sky: [
+    { en: 'The sky turned orange and red at sunset.', vi: 'Bầu trời chuyển sang màu cam và đỏ lúc hoàng hôn.' },
+    { en: 'She looked up at the clear blue sky and felt free.', vi: 'Cô ấy nhìn lên bầu trời xanh trong và cảm thấy tự do.' },
+  ],
+  rock: [
+    { en: 'He climbed to the top of the large rock to get a better view.', vi: 'Anh ấy leo lên đỉnh tảng đá lớn để ngắm cảnh đẹp hơn.' },
+    { en: 'The rock face was steep and challenging to climb.', vi: 'Vách đá dựng đứng và rất thách thức khi leo.' },
+  ],
+  sand: [
+    { en: 'The white sand beach stretched for kilometres in both directions.', vi: 'Bãi biển cát trắng trải dài hàng cây số về cả hai phía.' },
+    { en: 'She let the warm sand run through her fingers.', vi: 'Cô ấy để cát ấm chảy qua những ngón tay.' },
+  ],
+  grass: [
+    { en: 'Children rolled down the grassy hill laughing.', vi: 'Lũ trẻ lăn xuống đồi cỏ trong tiếng cười.' },
+    { en: 'After the rain, the grass smelled fresh and clean.', vi: 'Sau mưa, cỏ có mùi tươi mát và sạch sẽ.' },
+  ],
+  leaf: [
+    { en: 'A single red leaf floated down from the oak tree.', vi: 'Một chiếc lá đỏ lơ lửng rơi từ cây sồi xuống.' },
+    { en: 'The jungle floor was covered in a thick layer of dead leaves.', vi: 'Nền rừng phủ dày một lớp lá khô.' },
+  ],
+  soil: [
+    { en: 'The rich, dark soil in the Mekong Delta is perfect for farming.', vi: 'Đất màu mỡ, đen ở đồng bằng sông Cửu Long rất thích hợp để trồng trọt.' },
+    { en: 'She tested the soil before planting to check its pH level.', vi: 'Cô ấy kiểm tra độ pH của đất trước khi trồng cây.' },
+  ],
+  air: [
+    { en: 'The air in the mountains is so clean and crisp.', vi: 'Không khí trên núi rất trong lành và sảng khoái.' },
+    { en: 'Open the windows to let in some fresh air.', vi: 'Mở cửa sổ để không khí trong lành vào.' },
+  ],
+  ice: [
+    { en: 'She put ice cubes in the glass to keep the drink cold.', vi: 'Cô ấy cho đá vào ly để giữ đồ uống lạnh.' },
+    { en: 'Ice-cold sugarcane juice is a favourite drink in Vietnam.', vi: 'Nước mía đá lạnh là loại thức uống yêu thích ở Việt Nam.' },
+  ],
+  wave: [
+    { en: 'She stood at the edge of the water as a wave washed over her feet.', vi: 'Cô ấy đứng ở mép nước khi một con sóng ập qua chân.' },
+    { en: 'The waves were too strong for swimming that day.', vi: 'Sóng quá mạnh để bơi hôm đó.' },
+  ],
+  earth: [
+    { en: 'We only have one earth, so we must take care of it.', vi: 'Chúng ta chỉ có một Trái Đất, vì vậy phải chăm sóc nó.' },
+    { en: 'The earthquake shook the earth violently for thirty seconds.', vi: 'Trận động đất làm mặt đất rung chuyển dữ dội trong ba mươi giây.' },
+  ],
 }
