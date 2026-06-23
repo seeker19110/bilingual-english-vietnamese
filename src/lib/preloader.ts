@@ -94,10 +94,11 @@ export async function startPreload(userId: string): Promise<void> {
   const voice = getVoicePref()
 
   for (const entry of todayWords) {
-    // Từ chính (tiếng Anh)
-    await prefetchAudio(entry.word, 'en-US', voice, token)
-    // Câu ví dụ tiếng Anh
-    if (entry.ex_en) await prefetchAudio(entry.ex_en, 'en-US', voice, token)
+    // Tải từ + câu ví dụ đồng thời (song song) — giảm thời gian preload ~50%
+    await Promise.all([
+      prefetchAudio(entry.word, 'en-US', voice, token),
+      entry.ex_en ? prefetchAudio(entry.ex_en, 'en-US', voice, token) : Promise.resolve(),
+    ])
     // Nhường main thread sau mỗi từ
     await sleep(80)
   }
