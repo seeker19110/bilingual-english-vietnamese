@@ -25,16 +25,16 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
-const BATCH_SIZE      = 15    // số tác vụ song song
+const BATCH_SIZE      = 50    // số tác vụ song song
 const DELAY_MS        = 0     // không cần delay
 const RETRY_DELAY_MS  = 5000  // nghỉ giữa vòng retry
-const MAX_ROUNDS      = 5
-const INTERLEAVE_PCT  = 5     // cứ mỗi 5% pronunciation thì chạy 5% patterns
+const MAX_ROUNDS      = 100
+const INTERLEAVE_PCT  = 1     // cứ mỗi 1% pronunciation thì chạy 1% patterns
 // Rate limit thích nghi — tự điều chỉnh theo lượng req thực của window trước:
-//   429 xuất hiện  → nghỉ 61s, limit 195
-//   req >= 195     → nghỉ 61s, limit 195
-//   req < 195      → chạy liên tục (không nghỉ)
-const RATE_LIMIT_DEFAULT = 195  // limit mặc định khi bắt đầu
+//   429 xuất hiện  → nghỉ 61s, limit 199
+//   req >= 199     → nghỉ 61s, limit 199
+//   req < 199      → chạy liên tục (không nghỉ)
+const RATE_LIMIT_DEFAULT = 199  // limit mặc định khi bắt đầu
 const BASE_URL        = process.env.BASE_URL || ''
 const FORCE           = process.argv.includes('--force') || process.env.FORCE === '1'
 
@@ -166,9 +166,9 @@ interface RateState {
 }
 
 function nextRateState(prevReqs: number, prev429: boolean): { limit: number; pauseMs: number } {
-  if (prev429)          return { limit: 195, pauseMs: 61000 } // 429 → nghỉ 61s
-  if (prevReqs >= 195)  return { limit: 195, pauseMs: 61000 } // đầy window → nghỉ 61s
-  return                       { limit: 195, pauseMs: 0     } // chưa đầy → liên tục
+  if (prev429)          return { limit: 199, pauseMs: 61000 } // 429 → nghỉ 61s
+  if (prevReqs >= 199)  return { limit: 199, pauseMs: 61000 } // đầy window → nghỉ 61s
+  return                       { limit: 199, pauseMs: 0     } // chưa đầy → liên tục
 }
 
 // ── Chạy 1 batch tác vụ + cập nhật progress bar ─────────────────────────────
@@ -300,7 +300,7 @@ async function main(): Promise<void> {
   console.log('🔊 Bắt đầu seed:all — pronunciation + patterns (xen kẽ)')
   console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo`)
   console.log(`📋 Patterns      : ${allPatternTasks.length} tác vụ cần tạo`)
-  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate: thích nghi (429→61s/195, ≥195→61s, <195→liên tục) | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
+  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate: thích nghi (429→61s/199, ≥199→61s, <199→liên tục) | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
 
   let pronRemaining    = allPronTasks
   let patternRemaining = allPatternTasks
