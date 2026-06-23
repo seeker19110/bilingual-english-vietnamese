@@ -22,6 +22,9 @@ import pushHandler from './api/push.js'
 
 const app = express()
 
+// Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
+app.disable('x-powered-by')
+
 // STT nhận audio base64 → body lớn hơn nhiều so với chat/tts. Đăng ký parser riêng
 // cho route này TRƯỚC parser JSON 64kb mặc định bên dưới (Express chạy middleware theo
 // thứ tự — nếu để parser 64kb chạy trước, body audio sẽ bị chặn 413 trước khi tới handler).
