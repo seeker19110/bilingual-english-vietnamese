@@ -4471,8 +4471,11 @@
  },
  {
   "id": 376,
-  "title": "Mua sắm tại IKEA",
-  "situation": "Tình huống thực tế liên quan đến: Mua sắm tại IKEA.",
+  "title": {
+   "vi": "Mua sắm tại IKEA",
+   "en": "Shopping at IKEA"
+  },
+  "situation": "Lan and Nam are shopping at IKEA for new home furniture",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4481,8 +4484,11 @@
  },
  {
   "id": 377,
-  "title": "Đặt đồ nội thất online",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đặt đồ nội thất online.",
+  "title": {
+   "vi": "Đặt đồ nội thất online",
+   "en": "Ordering Furniture Online"
+  },
+  "situation": "Hoa and Minh are discussing ordering furniture online",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4491,8 +4497,11 @@
  },
  {
   "id": 378,
-  "title": "Lắp ráp đồ nội thất",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Lắp ráp đồ nội thất.",
+  "title": {
+   "vi": "Lắp ráp đồ nội thất",
+   "en": "Assembling Furniture"
+  },
+  "situation": "Thảo and Tuấn are assembling flat-pack furniture together",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4501,18 +4510,24 @@
  },
  {
   "id": 379,
-  "title": "Chọn màu sơn nhà",
-  "situation": "Tình huống thực tế liên quan đến: Chọn màu sơn nhà.",
+  "title": {
+   "vi": "Chọn màu sơn nhà",
+   "en": "Choosing Paint Colors for Home"
+  },
+  "situation": "Linh and Khoa are at a paint store choosing colors for their new home",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 37,
   "idx": 8
  },
  {
   "id": 380,
-  "title": "Mua đồ trang trí",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Mua đồ trang trí.",
+  "title": {
+   "vi": "Mua đồ trang trí",
+   "en": "Shopping for Home Decorations"
+  },
+  "situation": "Sarah and Tom are shopping for home decorations at a local market",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4521,18 +4536,24 @@
  },
  {
   "id": 381,
-  "title": "Đặt vé xem bóng đá",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Đặt vé xem bóng đá.",
+  "title": {
+   "vi": "Đặt vé xem bóng đá",
+   "en": "Booking Football Match Tickets"
+  },
+  "situation": "Mai and Hùng are booking tickets to watch a football match",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 38,
   "idx": 0
  },
  {
   "id": 382,
-  "title": "Thảo luận về đội tuyển",
-  "situation": "Tình huống thực tế liên quan đến: Thảo luận về đội tuyển.",
+  "title": {
+   "vi": "Thảo luận về đội tuyển",
+   "en": "Discussing the National Football Team"
+  },
+  "situation": "Phương and Đức are discussing the Vietnamese national football team's performance",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4541,18 +4562,24 @@
  },
  {
   "id": 383,
-  "title": "Xem giải V-League",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Xem giải V-League.",
+  "title": {
+   "vi": "Xem giải V-League",
+   "en": "Watching the V-League"
+  },
+  "situation": "Emma and David are American friends watching a V-League match in Vietnam",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 38,
   "idx": 2
  },
  {
   "id": 384,
-  "title": "Bàn về World Cup",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Bàn về World Cup.",
+  "title": {
+   "vi": "Bàn về World Cup",
+   "en": "Discussing the World Cup"
+  },
+  "situation": "Lan and Nam are discussing the upcoming FIFA World Cup",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4561,8 +4588,11 @@
  },
  {
   "id": 385,
-  "title": "Chia sẻ về thể thao điện tử",
-  "situation": "Tình huống thực tế liên quan đến: Chia sẻ về thể thao điện tử.",
+  "title": {
+   "vi": "Chia sẻ về thể thao điện tử",
+   "en": "Talking About Esports"
+  },
+  "situation": "Hoa and Minh are discussing esports and competitive gaming",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4571,8 +4601,11 @@
  },
  {
   "id": 386,
-  "title": "Tham gia nhóm đọc sách",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tham gia nhóm đọc sách.",
+  "title": {
+   "vi": "Tham gia nhóm đọc sách",
+   "en": "Joining a Book Club"
+  },
+  "situation": "Thảo and Tuấn are discussing joining a local book club",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4581,18 +4614,24 @@
  },
  {
   "id": 387,
-  "title": "Thảo luận tiểu thuyết",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thảo luận tiểu thuyết.",
+  "title": {
+   "vi": "Thảo luận tiểu thuyết",
+   "en": "Discussing a Novel"
+  },
+  "situation": "Linh and Khoa are discussing a novel they both recently read",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 38,
   "idx": 6
  },
  {
   "id": 388,
-  "title": "Chia sẻ về truyện ngắn",
-  "situation": "Tình huống thực tế liên quan đến: Chia sẻ về truyện ngắn.",
+  "title": {
+   "vi": "Chia sẻ về truyện ngắn",
+   "en": "Sharing About Short Stories"
+  },
+  "situation": "Sarah and Tom are talking about short story collections they enjoy",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4601,18 +4640,24 @@
  },
  {
   "id": 389,
-  "title": "Bàn về thơ ca",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Bàn về thơ ca.",
+  "title": {
+   "vi": "Bàn về thơ ca",
+   "en": "Discussing Poetry"
+  },
+  "situation": "Mai and Hùng are having a conversation about poetry they love",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 38,
   "idx": 8
  },
  {
   "id": 390,
-  "title": "Nói về tác giả yêu thích",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Nói về tác giả yêu thích.",
+  "title": {
+   "vi": "Nói về tác giả yêu thích",
+   "en": "Talking About Favorite Authors"
+  },
+  "situation": "Phương and Đức are sharing their favorite authors and books",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4621,18 +4666,24 @@
  },
  {
   "id": 391,
-  "title": "Học múa hip hop",
-  "situation": "Tình huống thực tế liên quan đến: Học múa hip hop.",
+  "title": {
+   "vi": "Học múa hip hop",
+   "en": "Learning Hip Hop Dance"
+  },
+  "situation": "Emma and David are discussing their hip hop dance class experience",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 39,
   "idx": 0
  },
  {
   "id": 392,
-  "title": "Tham gia lớp Zumba",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tham gia lớp Zumba.",
+  "title": {
+   "vi": "Tham gia lớp Zumba",
+   "en": "Joining a Zumba Class"
+  },
+  "situation": "Lan and Nam are talking about Zumba fitness classes",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4641,8 +4692,11 @@
  },
  {
   "id": 393,
-  "title": "Học khiêu vũ ballroom",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Học khiêu vũ ballroom.",
+  "title": {
+   "vi": "Học khiêu vũ ballroom",
+   "en": "Learning Ballroom Dancing"
+  },
+  "situation": "Hoa and Minh are taking their first ballroom dance lesson",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4651,8 +4705,11 @@
  },
  {
   "id": 394,
-  "title": "Tham gia nhóm flashmob",
-  "situation": "Tình huống thực tế liên quan đến: Tham gia nhóm flashmob.",
+  "title": {
+   "vi": "Tham gia nhóm flashmob",
+   "en": "Joining a Flash Mob"
+  },
+  "situation": "Thảo and Tuấn are planning to participate in a surprise flash mob performance",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4661,18 +4718,24 @@
  },
  {
   "id": 395,
-  "title": "Biểu diễn văn nghệ",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Biểu diễn văn nghệ.",
+  "title": {
+   "vi": "Biểu diễn văn nghệ",
+   "en": "Performing at a Cultural Show"
+  },
+  "situation": "Linh and Khoa are preparing for a school cultural performance",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 39,
   "idx": 4
  },
  {
   "id": 396,
-  "title": "Hỏi về visa Nhật Bản",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về visa Nhật Bản.",
+  "title": {
+   "vi": "Hỏi về visa Nhật Bản",
+   "en": "Asking About Japan Visa"
+  },
+  "situation": "Sarah and Tom are discussing the process of applying for a Japan visa",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4681,18 +4744,24 @@
  },
  {
   "id": 397,
-  "title": "Hỏi về visa Hàn Quốc",
-  "situation": "Tình huống thực tế liên quan đến: Hỏi về visa Hàn Quốc.",
+  "title": {
+   "vi": "Hỏi về visa Hàn Quốc",
+   "en": "Asking About South Korea Visa"
+  },
+  "situation": "Mai and Hùng are discussing how to apply for a South Korea visa",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 39,
   "idx": 6
  },
  {
   "id": 398,
-  "title": "Hỏi về visa Mỹ",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Hỏi về visa Mỹ.",
+  "title": {
+   "vi": "Hỏi về visa Mỹ",
+   "en": "Asking About US Visa"
+  },
+  "situation": "Phương and Đức are discussing the US visa application process",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4701,18 +4770,24 @@
  },
  {
   "id": 399,
-  "title": "Hỏi về visa Canada",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về visa Canada.",
+  "title": {
+   "vi": "Hỏi về visa Canada",
+   "en": "Asking About Canada Visa"
+  },
+  "situation": "Emma and David are discussing how to apply for a Canadian visa",
   "turnCount": 20,
-  "speakerAGender": "male",
+  "speakerAGender": "female",
   "speakerBGender": "male",
   "chunk": 39,
   "idx": 8
  },
  {
   "id": 400,
-  "title": "Hỏi về visa Châu Âu",
-  "situation": "Tình huống thực tế liên quan đến: Hỏi về visa Châu Âu.",
+  "title": {
+   "vi": "Hỏi về visa Châu Âu",
+   "en": "Asking About European Schengen Visa"
+  },
+  "situation": "Lan and Nam are discussing how to apply for a Schengen visa to travel Europe",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4721,8 +4796,11 @@
  },
  {
   "id": 401,
-  "title": "Tìm nhà sách",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tìm nhà sách.",
+  "title": {
+   "vi": "Tìm nhà sách",
+   "en": "Finding a Bookstore"
+  },
+  "situation": "Hoa is looking for a bookstore and asks Minh for directions",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4731,8 +4809,11 @@
  },
  {
   "id": 402,
-  "title": "Mua sách giáo khoa",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Mua sách giáo khoa.",
+  "title": {
+   "vi": "Mua sách giáo khoa",
+   "en": "Buying Textbooks"
+  },
+  "situation": "Thảo and Tuấn are shopping for textbooks at the start of the school year",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4741,8 +4822,11 @@
  },
  {
   "id": 403,
-  "title": "Đặt sách trực tuyến",
-  "situation": "Tình huống thực tế liên quan đến: Đặt sách trực tuyến.",
+  "title": {
+   "vi": "Đặt sách trực tuyến",
+   "en": "Ordering Books Online"
+  },
+  "situation": "Linh and Khoa are comparing online bookstores and ordering books",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -4751,8 +4835,11 @@
  },
  {
   "id": 404,
-  "title": "Hỏi về sách mới xuất bản",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Hỏi về sách mới xuất bản.",
+  "title": {
+   "vi": "Hỏi về sách mới xuất bản",
+   "en": "Asking About Newly Published Books"
+  },
+  "situation": "Sarah and Tom are discussing recently published books at a bookstore",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4761,8 +4848,11 @@
  },
  {
   "id": 405,
-  "title": "Trao đổi sách cũ",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Trao đổi sách cũ.",
+  "title": {
+   "vi": "Trao đổi sách cũ",
+   "en": "Exchanging Used Books"
+  },
+  "situation": "Mai and Hùng are arranging to exchange used books with each other",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4771,8 +4861,11 @@
  },
  {
   "id": 406,
-  "title": "Đặt lịch cắt tóc",
-  "situation": "Tình huống thực tế liên quan đến: Đặt lịch cắt tóc.",
+  "title": {
+   "vi": "Đặt lịch cắt tóc",
+   "en": "Booking a Haircut Appointment"
+  },
+  "situation": "Phương calls to book a haircut appointment at a hair salon",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4781,8 +4874,11 @@
  },
  {
   "id": 407,
-  "title": "Nhuộm và uốn tóc",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Nhuộm và uốn tóc.",
+  "title": {
+   "vi": "Nhuộm và uốn tóc",
+   "en": "Hair Dyeing and Perming"
+  },
+  "situation": "Emma wants to dye and perm her hair and discusses options with the hair stylist David",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -4791,8 +4887,11 @@
  },
  {
   "id": 408,
-  "title": "Hỏi về kiểu tóc",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về kiểu tóc.",
+  "title": {
+   "vi": "Hỏi về kiểu tóc",
+   "en": "Asking About Hairstyles"
+  },
+  "situation": "Lan is asking her hairstylist Nam for advice on a new hairstyle",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4801,8 +4900,11 @@
  },
  {
   "id": 409,
-  "title": "Mua sản phẩm chăm sóc tóc",
-  "situation": "Tình huống thực tế liên quan đến: Mua sản phẩm chăm sóc tóc.",
+  "title": {
+   "vi": "Mua sản phẩm chăm sóc tóc",
+   "en": "Buying Hair Care Products"
+  },
+  "situation": "Hoa is at a beauty store asking Minh for help choosing hair care products",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4811,8 +4913,11 @@
  },
  {
   "id": 410,
-  "title": "Làm nail tại salon",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Làm nail tại salon.",
+  "title": {
+   "vi": "Làm nail tại salon",
+   "en": "Getting Nails Done at a Salon"
+  },
+  "situation": "Thảo is at a nail salon getting her nails done and chatting with the technician Tuấn",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4821,8 +4926,11 @@
  },
  {
   "id": 411,
-  "title": "Chọn tour du lịch mùa hè",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Chọn tour du lịch mùa hè.",
+  "title": {
+   "vi": "Chọn tour du lịch mùa hè",
+   "en": "Choosing a Summer Tour Package"
+  },
+  "situation": "Linh and Khoa are at a travel agency choosing a summer tour",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -4831,8 +4939,11 @@
  },
  {
   "id": 412,
-  "title": "Đặt tour Tết",
-  "situation": "Tình huống thực tế liên quan đến: Đặt tour Tết.",
+  "title": {
+   "vi": "Đặt tour Tết",
+   "en": "Booking a Lunar New Year Tour"
+  },
+  "situation": "Sarah and Tom are booking a tour for the Lunar New Year holiday",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4841,8 +4952,11 @@
  },
  {
   "id": 413,
-  "title": "Hỏi về tour Tây Nguyên",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Hỏi về tour Tây Nguyên.",
+  "title": {
+   "vi": "Hỏi về tour Tây Nguyên",
+   "en": "Asking About a Central Highlands Tour"
+  },
+  "situation": "Mai is asking a travel agency about tours to Vietnam's Central Highlands",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4851,8 +4965,11 @@
  },
  {
   "id": 414,
-  "title": "Đặt tour miền Tây",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Đặt tour miền Tây.",
+  "title": {
+   "vi": "Đặt tour miền Tây",
+   "en": "Booking a Mekong Delta Tour"
+  },
+  "situation": "Phương and Đức are booking a Mekong Delta river tour",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4861,8 +4978,11 @@
  },
  {
   "id": 415,
-  "title": "Hỏi về tour nước ngoài",
-  "situation": "Tình huống thực tế liên quan đến: Hỏi về tour nước ngoài.",
+  "title": {
+   "vi": "Hỏi về tour nước ngoài",
+   "en": "Asking About International Tours"
+  },
+  "situation": "Emma and David are discussing international tour packages",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -4871,8 +4991,11 @@
  },
  {
   "id": 416,
-  "title": "Mua đất nông nghiệp",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Mua đất nông nghiệp.",
+  "title": {
+   "vi": "Mua đất nông nghiệp",
+   "en": "Buying Agricultural Land"
+  },
+  "situation": "Lan and Nam are discussing purchasing agricultural land",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4881,8 +5004,11 @@
  },
  {
   "id": 417,
-  "title": "Hỏi về đất thổ cư",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về đất thổ cư.",
+  "title": {
+   "vi": "Hỏi về đất thổ cư",
+   "en": "Asking About Residential Land"
+  },
+  "situation": "Hoa and Minh are discussing buying residential land to build a house",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4891,8 +5017,11 @@
  },
  {
   "id": 418,
-  "title": "Đặt cọc mua nhà",
-  "situation": "Tình huống thực tế liên quan đến: Đặt cọc mua nhà.",
+  "title": {
+   "vi": "Đặt cọc mua nhà",
+   "en": "Paying a Deposit to Buy a House"
+  },
+  "situation": "Thảo and Tuấn are discussing the process of paying a deposit on a house purchase",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4901,8 +5030,11 @@
  },
  {
   "id": 419,
-  "title": "Làm hợp đồng mua bán",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Làm hợp đồng mua bán.",
+  "title": {
+   "vi": "Làm hợp đồng mua bán",
+   "en": "Drafting a Purchase Contract"
+  },
+  "situation": "Linh and Khoa are at a notary office drafting a property purchase contract",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -4911,8 +5043,11 @@
  },
  {
   "id": 420,
-  "title": "Chuyển nhượng bất động sản",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Chuyển nhượng bất động sản.",
+  "title": {
+   "vi": "Chuyển nhượng bất động sản",
+   "en": "Real Estate Transfer"
+  },
+  "situation": "Sarah and Tom discuss the process of transferring property ownership",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4921,8 +5056,11 @@
  },
  {
   "id": 421,
-  "title": "Học yoga online",
-  "situation": "Tình huống thực tế liên quan đến: Học yoga online.",
+  "title": {
+   "vi": "Học yoga online",
+   "en": "Learning Yoga Online"
+  },
+  "situation": "Mai and Hùng are discussing taking online yoga classes",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -4931,8 +5069,11 @@
  },
  {
   "id": 422,
-  "title": "Tham gia marathon trực tuyến",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Tham gia marathon trực tuyến.",
+  "title": {
+   "vi": "Tham gia marathon trực tuyến",
+   "en": "Joining an Online Marathon"
+  },
+  "situation": "Phương and Đức are discussing participating in a virtual marathon event",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -4941,8 +5082,11 @@
  },
  {
   "id": 423,
-  "title": "Tập thể dục tại nhà",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Tập thể dục tại nhà.",
+  "title": {
+   "vi": "Tập thể dục tại nhà",
+   "en": "Exercising at Home"
+  },
+  "situation": "Emma and David are sharing tips about working out at home",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -4951,8 +5095,11 @@
  },
  {
   "id": 424,
-  "title": "Hỏi về ứng dụng fitness",
-  "situation": "Tình huống thực tế liên quan đến: Hỏi về ứng dụng fitness.",
+  "title": {
+   "vi": "Hỏi về ứng dụng fitness",
+   "en": "Asking About Fitness Apps"
+  },
+  "situation": "Lan and Nam are discussing fitness apps for tracking workouts",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -4961,8 +5108,11 @@
  },
  {
   "id": 425,
-  "title": "Mua dụng cụ tập gym",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Mua dụng cụ tập gym.",
+  "title": {
+   "vi": "Mua dụng cụ tập gym",
+   "en": "Buying Gym Equipment"
+  },
+  "situation": "Hoa is at a sports equipment store asking Minh for advice on buying home gym equipment",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
