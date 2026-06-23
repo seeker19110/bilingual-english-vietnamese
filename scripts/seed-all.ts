@@ -20,12 +20,13 @@ import { generateAudioFromGoogle, VOICE_IDS, type Lang, type VoiceId } from '../
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
+import { FOUNDATION } from '../src/data/curriculum.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
-const BATCH_SIZE      = 50    // số tác vụ song song
+const BATCH_SIZE      = 200   // số tác vụ song song
 const DELAY_MS        = 0     // không cần delay
 const RETRY_DELAY_MS  = 5000  // nghỉ giữa vòng retry
 const MAX_ROUNDS      = 100
@@ -59,29 +60,60 @@ function hashText(text: string, lang: Lang, voice: VoiceId): string {
 interface Sentence { en: string; vi: string }
 interface Subject   { starter: string; sentences: Sentence[] }
 
+// Thứ tự ưu tiên seed TTS cache:
+//   1. Curriculum sentences  → /learn chạy ngay cho user đầu tiên
+//   2. Lesson turns          → Luyện nói không phải chờ generate
+//   3. Pattern sentences     → Cụm từ page (nhiều nhất nhưng ít urgent nhất)
 function loadPatternTasks(): PatternTask[] {
-  const dir   = path.join(PROJECT_ROOT, 'src/data/patterns')
-  const files = fs.readdirSync(dir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
   const tasks: PatternTask[] = []
   const seen  = new Set<string>()
 
-  for (const file of files) {
-    const subjects = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8')) as Subject[]
-    for (const subject of subjects) {
-      for (const { en, vi } of subject.sentences) {
-        for (const [rawText, lang] of [[en, 'en-US'], [vi, 'vi-VN']] as [string, Lang][]) {
-          const text = rawText.trim()
-          if (!text) continue
-          for (const voice of VOICE_IDS) {
-            const key = `${text}|${lang}|${voice}`
-            if (seen.has(key)) continue
-            seen.add(key)
-            tasks.push({ type: 'pattern', text, lang, voice })
-          }
-        }
+  const add = (rawText: string, lang: Lang) => {
+    const text = rawText.trim()
+    if (!text) return
+    for (const voice of VOICE_IDS) {
+      const key = `${text}|${lang}|${voice}`
+      if (seen.has(key)) return
+      seen.add(key)
+      tasks.push({ type: 'pattern', text, lang, voice })
+    }
+  }
+
+  // ── Ưu tiên 1: curriculum (câu thông dụng + ví dụ từng từ) ────────────────
+  for (const circle of FOUNDATION) {
+    for (const { en } of circle.sentences) add(en, 'en-US')
+    for (const entry of circle.words) {
+      if (entry.ex_en) add(entry.ex_en, 'en-US')
+      if (entry.ex_vi) add(entry.ex_vi, 'vi-VN')
+    }
+  }
+
+  // ── Ưu tiên 2: lesson turns (hội thoại bài học) ────────────────────────────
+  const lessonDir = path.join(PROJECT_ROOT, 'src/data/lessons')
+  const lessonFiles = fs.readdirSync(lessonDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+  for (const file of lessonFiles) {
+    const chunks = JSON.parse(fs.readFileSync(path.join(lessonDir, file), 'utf8')) as Array<{ turns?: Array<{ en: string; vi: string }> }>
+    for (const lesson of chunks) {
+      for (const turn of (lesson.turns ?? [])) {
+        if (turn.en) add(turn.en, 'en-US')
+        if (turn.vi) add(turn.vi, 'vi-VN')
       }
     }
   }
+
+  // ── Ưu tiên 3: pattern sentences (Cụm từ page) ─────────────────────────────
+  const patternDir = path.join(PROJECT_ROOT, 'src/data/patterns')
+  const patternFiles = fs.readdirSync(patternDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+  for (const file of patternFiles) {
+    const subjects = JSON.parse(fs.readFileSync(path.join(patternDir, file), 'utf8')) as Subject[]
+    for (const subject of subjects) {
+      for (const { en, vi } of subject.sentences) {
+        add(en, 'en-US')
+        add(vi, 'vi-VN')
+      }
+    }
+  }
+
   return tasks
 }
 
@@ -104,10 +136,19 @@ function loadPronTasks(wordsFile?: string): PronTask[] {
       }
     }
   }
+  // Curriculum words lên đầu → /learn hoạt động instant cho mọi user mới
+  const curriculumWords = new Set(
+    FOUNDATION.flatMap((c) => c.words.map((w) => w.word.toLowerCase()))
+  )
   const tasks: PronTask[] = []
   for (const word of words) {
     for (const voice of VOICE_IDS) tasks.push({ type: 'pron', word, voice })
   }
+  tasks.sort((a, b) => {
+    const aHigh = curriculumWords.has(a.word) ? 0 : 1
+    const bHigh = curriculumWords.has(b.word) ? 0 : 1
+    return aHigh - bHigh
+  })
   return tasks
 }
 
@@ -297,9 +338,9 @@ async function main(): Promise<void> {
 
   const allPatternTasks = loadPatternTasks().slice(0, limit) as AnyTask[]
 
-  console.log('🔊 Bắt đầu seed:all — pronunciation + patterns (xen kẽ)')
-  console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo`)
-  console.log(`📋 Patterns      : ${allPatternTasks.length} tác vụ cần tạo`)
+  console.log('🔊 Bắt đầu seed:all — pronunciation + (curriculum → lessons → patterns) xen kẽ')
+  console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo (curriculum words ưu tiên đầu)`)
+  console.log(`📋 TTS cache     : ${allPatternTasks.length} tác vụ (curriculum sentences → lesson turns → pattern sentences)`)
   console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate: thích nghi (429→61s/199, ≥199→61s, <199→liên tục) | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
 
   let pronRemaining    = allPronTasks
