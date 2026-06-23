@@ -17,10 +17,13 @@ const VERSION = 1
 const TTL_MS  = 7 * 24 * 60 * 60 * 1000 // giữ 7 ngày
 
 let _db: IDBDatabase | null = null
+let _dbPromise: Promise<IDBDatabase> | null = null
 
 function openDb(): Promise<IDBDatabase> {
   if (_db) return Promise.resolve(_db)
-  return new Promise((resolve, reject) => {
+  if (_dbPromise) return _dbPromise
+
+  _dbPromise = new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, VERSION)
     req.onupgradeneeded = () => {
       req.result.createObjectStore(STORE)
@@ -28,6 +31,7 @@ function openDb(): Promise<IDBDatabase> {
     req.onsuccess = () => { _db = req.result; resolve(_db) }
     req.onerror   = () => reject(req.error)
   })
+  return _dbPromise
 }
 
 // Key tra cứu: "lang:voice:text"

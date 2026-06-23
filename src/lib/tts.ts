@@ -12,6 +12,7 @@ export type Voice = 'female' | 'female2' | 'male' | 'male2'
 
 let currentAudio: HTMLAudioElement | null = null
 let currentBlobUrl: string | null = null
+let currentAudioId: string | null = null
 // Callback để unblock Promise đang chờ trong speakViaGoogle khi stopSpeaking() được gọi
 let currentResolve: (() => void) | null = null
 
@@ -57,6 +58,7 @@ export function stopSpeaking() {
     URL.revokeObjectURL(currentBlobUrl)
     currentBlobUrl = null
   }
+  currentAudioId = null
   // Dừng cả Web Speech API phòng khi đang dùng fallback
   if ('speechSynthesis' in window) window.speechSynthesis.cancel()
   // Unblock Promise đang chờ trong speakViaGoogle (nếu có) — resolve thay vì reject
@@ -69,11 +71,19 @@ export function stopSpeaking() {
 export function playAudioUrl(url: string): void {
   stopSpeaking()
   const audio = new Audio(url)
+  const audioId = crypto.randomUUID()
   currentAudio = audio
-  const cleanup = () => { if (currentAudio === audio) currentAudio = null }
+  currentAudioId = audioId
+  const cleanup = () => {
+    if (currentAudio === audio && currentAudioId === audioId) currentAudio = null
+    if (currentAudioId === audioId) currentAudioId = null
+  }
   audio.onended = cleanup
   audio.onerror = cleanup
-  audio.play().catch(err => console.error('Lỗi phát audio:', err))
+  audio.play().catch(err => {
+    console.error('Lỗi phát audio:', err)
+    cleanup()
+  })
 }
 
 // ── Giải mã audio AES-256-GCM (xem api/_lib/ttsCrypto.ts ở phía server) ─────
@@ -156,12 +166,14 @@ async function speakViaGoogle(
 
   // Tách từ để tính index tương ứng với vị trí phát (ước tính theo tỉ lệ thời gian)
   const words = onWord ? text.trim().split(/\s+/) : []
+  const audioId = crypto.randomUUID()
 
   await new Promise<void>((resolve, reject) => {
     const audio = new Audio(blobUrl)
     audio.playbackRate = rate
     currentAudio = audio
     currentBlobUrl = blobUrl
+    currentAudioId = audioId
     // Lưu resolve để stopSpeaking() có thể unblock Promise này mà không cần onerror
     currentResolve = resolve
 
@@ -170,7 +182,8 @@ async function speakViaGoogle(
       audio.onloadedmetadata = () => {
         const dur = audio.duration
         audio.ontimeupdate = () => {
-          if (!dur || dur <= 0) return
+          // Chỉ cập nhật nếu audio này vẫn còn active (không bị thay thế)
+          if (currentAudioId !== audioId || !dur || dur <= 0) return
           const idx = Math.min(Math.floor((audio.currentTime / dur) * words.length), words.length - 1)
           onWord(idx)
         }
@@ -181,13 +194,15 @@ async function speakViaGoogle(
       // Blob URL là tạm — revoke ngay sau khi phát xong để giải phóng RAM.
       // Buffer gốc vẫn còn trong IndexedDB, lần sau tạo blob URL mới từ buffer đó.
       URL.revokeObjectURL(blobUrl)
-      if (currentBlobUrl === blobUrl) currentBlobUrl = null
-      if (currentAudio === audio) currentAudio = null
+      // Chỉ cleanup nếu audio này vẫn còn active
+      if (currentBlobUrl === blobUrl && currentAudioId === audioId) currentBlobUrl = null
+      if (currentAudio === audio && currentAudioId === audioId) currentAudio = null
+      if (currentAudioId === audioId) currentAudioId = null
       if (currentResolve === resolve) currentResolve = null
     }
     audio.onended = () => { cleanup(); resolve() }
     audio.onerror = () => { cleanup(); reject(new Error('Không phát được audio')) }
-    audio.play().catch(reject)
+    audio.play().catch(err => { cleanup(); reject(err) })
   })
 }
 

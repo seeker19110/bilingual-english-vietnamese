@@ -37,7 +37,7 @@ async function toAppUser(sbUser: { id: string; email?: string; user_metadata?: {
     // Refresh plan ngầm (không block UI) — cập nhật khi user nâng cấp Pro
     void ensureProfile(sbUser.id, name)
       .then(p => setCachedProfile(sbUser.id, p))
-      .catch(() => {})
+      .catch(err => console.warn('[auth] Background profile refresh failed:', err instanceof Error ? err.message : err))
     return { id: sbUser.id, email: sbUser.email ?? '', name, plan: cached.plan as Plan, onboarded: true, createdAt: Date.now() }
   }
 
