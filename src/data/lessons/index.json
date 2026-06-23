@@ -3496,8 +3496,11 @@
  },
  {
   "id": 301,
-  "title": "Đặt vé máy bay giá rẻ",
-  "situation": "Tình huống thực tế liên quan đến: Đặt vé máy bay giá rẻ.",
+  "title": {
+   "vi": "Mua sắm đồ nội thất cho nhà mới",
+   "en": "Shopping for Furniture for a New Home"
+  },
+  "situation": "Vợ chồng trẻ Hải và Trang đang chọn nội thất cho căn hộ mới tại cửa hàng.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -3506,58 +3509,76 @@
  },
  {
   "id": 302,
-  "title": "Đổi vé máy bay",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đổi vé máy bay.",
+  "title": {
+   "vi": "Tư vấn tâm lý về lo âu và căng thẳng",
+   "en": "Psychological Counseling for Anxiety and Stress"
+  },
+  "situation": "Bạch Linh đến gặp chuyên gia tâm lý Tuấn để được tư vấn về tình trạng lo âu mãn tính.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 30,
   "idx": 1
  },
  {
   "id": 303,
-  "title": "Hỏi về hành lý xách tay",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về hành lý xách tay.",
+  "title": {
+   "vi": "Học làm bánh cupcake",
+   "en": "Learning to Make Cupcakes"
+  },
+  "situation": "Ngọc tham gia lớp học làm bánh và hỏi giáo viên Hương về cách làm cupcake đẹp.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerAGender": "female",
+  "speakerBGender": "female",
   "chunk": 30,
   "idx": 2
  },
  {
   "id": 304,
-  "title": "Check in online",
-  "situation": "Tình huống thực tế liên quan đến: Check in online.",
+  "title": {
+   "vi": "Hỏi về chính sách bảo hiểm xe ô tô",
+   "en": "Asking About Car Insurance Policy"
+  },
+  "situation": "Anh Minh vừa mua xe mới và gọi điện hỏi nhân viên tư vấn bảo hiểm về các loại bảo hiểm xe.",
   "turnCount": 20,
-  "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerAGender": "male",
+  "speakerBGender": "female",
   "chunk": 30,
   "idx": 3
  },
  {
   "id": 305,
-  "title": "Chọn chỗ ngồi trên máy bay",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Chọn chỗ ngồi trên máy bay.",
+  "title": {
+   "vi": "Trao đổi về trải nghiệm du lịch một mình ở Việt Nam",
+   "en": "Sharing Experience of Solo Travel in Vietnam"
+  },
+  "situation": "Lisa người Mỹ vừa hoàn thành chuyến du lịch bụi một mình khắp Việt Nam và chia sẻ với người bạn Hùng.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerAGender": "female",
+  "speakerBGender": "male",
   "chunk": 30,
   "idx": 4
  },
  {
   "id": 306,
-  "title": "Thuê xe tự lái",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thuê xe tự lái.",
+  "title": {
+   "vi": "Tư vấn về quy trình ly hôn",
+   "en": "Consultation on Divorce Process"
+  },
+  "situation": "Chị Hà đến gặp luật sư Dũng để hỏi về thủ tục ly hôn theo pháp luật Việt Nam.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 30,
   "idx": 5
  },
  {
   "id": 307,
-  "title": "Đặt xe Grab",
-  "situation": "Tình huống thực tế liên quan đến: Đặt xe Grab.",
+  "title": {
+   "vi": "Học tiếng Anh qua âm nhạc",
+   "en": "Learning English Through Music"
+  },
+  "situation": "Minh đang học tiếng Anh và hỏi người bạn Mỹ Jack về cách học qua âm nhạc.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "male",
@@ -3566,8 +3587,11 @@
  },
  {
   "id": 308,
-  "title": "Đi taxi",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đi taxi.",
+  "title": {
+   "vi": "Phỏng vấn xin học bổng du học",
+   "en": "Scholarship Interview for Studying Abroad"
+  },
+  "situation": "Sinh viên Thu Hà chuẩn bị phỏng vấn học bổng Chevening của Anh và nhờ giáo sư Tuấn hướng dẫn.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "male",
@@ -3576,8 +3600,11 @@
  },
  {
   "id": 309,
-  "title": "Hỏi giờ xe buýt",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi giờ xe buýt.",
+  "title": {
+   "vi": "Mua vé máy bay và hành lý ký gửi",
+   "en": "Buying Airline Tickets and Checking Luggage"
+  },
+  "situation": "Anh Tuấn gọi điện cho hãng hàng không để hỏi về vé và chính sách hành lý cho chuyến đi Nhật.",
   "turnCount": 20,
   "speakerAGender": "male",
   "speakerBGender": "female",
@@ -3586,11 +3613,14 @@
  },
  {
   "id": 310,
-  "title": "Đặt vé xe khách",
-  "situation": "Tình huống thực tế liên quan đến: Đặt vé xe khách.",
+  "title": {
+   "vi": "Thảo luận về sự khác biệt văn hóa trong công sở",
+   "en": "Discussing Cultural Differences in the Workplace"
+  },
+  "situation": "Sarah người Anh mới đến làm việc tại công ty Việt Nam và hỏi đồng nghiệp Hùng về văn hóa công sở.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 30,
   "idx": 9
  },

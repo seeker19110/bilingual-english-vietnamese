@@ -35882,827 +35882,1100 @@
   },
   {
     "id": 301,
-    "title": "Đặt vé máy bay giá rẻ",
-    "situation": "Tình huống thực tế liên quan đến: Đặt vé máy bay giá rẻ.",
+    "title": {
+      "vi": "Mua sắm đồ nội thất cho nhà mới",
+      "en": "Shopping for Furniture for a New Home"
+    },
+    "situation": "Vợ chồng trẻ Hải và Trang đang chọn nội thất cho căn hộ mới tại cửa hàng.",
     "speakerAGender": "male",
     "speakerBGender": "female",
     "speakerAName": {
-      "vi": "Mai",
-      "en": "Mai"
+      "vi": "Hải",
+      "en": "Hai"
     },
     "speakerBName": {
-      "vi": "Hùng",
-      "en": "Hung"
+      "vi": "Trang",
+      "en": "Trang"
     },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Excuse me, I'm looking for Đặt vé máy bay giá rẻ.",
-        "vi": "Xin lỗi, tôi đang tìm về Đặt vé máy bay giá rẻ."
+        "vi": "Em ơi, mình xem cái sofa này nhé. Anh thấy màu xanh navy này hợp với phòng khách mình.",
+        "en": "Honey, let's look at this sofa. I think this navy blue color suits our living room."
       },
       {
         "speaker": "B",
-        "en": "Sure, I can help you with that.",
-        "vi": "Được, tôi có thể giúp bạn điều đó."
+        "vi": "Màu đẹp đó anh! Nhưng em lo chất liệu vải dễ bám bẩn. Mình có con nhỏ, nên chọn vải dễ lau hơn không?",
+        "en": "Nice color! But I'm worried the fabric stains easily. We have a small child, shouldn't we choose something easier to wipe clean?"
       },
       {
         "speaker": "A",
-        "en": "What options do you have?",
-        "vi": "Bạn có những lựa chọn nào?"
+        "vi": "Ừ anh chưa nghĩ đến điều đó. Vậy mình chọn sofa da đi em, dễ lau hơn nhiều.",
+        "en": "Right, I hadn't thought of that. Let's choose a leather sofa then, much easier to wipe."
       },
       {
         "speaker": "B",
-        "en": "We have several options. Let me show you.",
-        "vi": "Chúng tôi có vài lựa chọn. Để tôi chỉ cho bạn."
+        "vi": "Sofa da thì mùa hè nóng lắm anh ơi. Hay mình chọn loại vải microfiber, mềm, bền và dễ vệ sinh?",
+        "en": "Leather sofas get very hot in summer. Or should we choose microfiber fabric, soft, durable and easy to clean?"
       },
       {
         "speaker": "A",
-        "en": "What's the price range?",
-        "vi": "Mức giá là bao nhiêu?"
+        "vi": "Microfiber nghe hay đó! Cô tư vấn ơi, bên mình có sofa microfiber không ạ?",
+        "en": "Microfiber sounds good! Excuse me, do you have microfiber sofas?"
       },
       {
         "speaker": "B",
-        "en": "It ranges from 100,000 to 500,000 VND.",
-        "vi": "Dao động từ 100.000 đến 500.000 đồng."
+        "vi": "Dạ có ạ! Dòng sofa Comfort Series của chúng tôi toàn bộ bọc microfiber cao cấp, nhiều màu và kích thước. Anh chị muốn xem mẫu nào?",
+        "en": "Yes we do! Our Comfort Series sofas are all upholstered in premium microfiber, many colors and sizes. Which model would you like to see?"
       },
       {
         "speaker": "A",
-        "en": "Can I try it first?",
-        "vi": "Tôi có thể thử trước không?"
+        "vi": "Cho chúng tôi xem loại 3 chỗ ngồi, phù hợp phòng khách khoảng 20 mét vuông.",
+        "en": "Show us a 3-seater, suitable for a living room of about 20 square meters."
       },
       {
         "speaker": "B",
-        "en": "Of course! Take your time.",
-        "vi": "Tất nhiên! Cứ thử thoải mái."
+        "vi": "Cái này trông được đó anh! Màu be sáng này hợp với tường trắng nhà mình. Em thích hơn màu xanh kia.",
+        "en": "This one looks nice! This light beige color matches our white walls. I prefer it over the blue one."
       },
       {
         "speaker": "A",
-        "en": "Do you have a discount?",
-        "vi": "Bạn có giảm giá không?"
+        "vi": "Nhưng em thấy không, màu be dễ bẩn hơn màu tối. Bé Nam hay nghịch màu mực nữa.",
+        "en": "But don't you see, beige shows dirt more than dark colors. Little Nam likes to play with markers too."
       },
       {
         "speaker": "B",
-        "en": "Yes, we have 10% off today.",
-        "vi": "Có, hôm nay giảm 10%."
+        "vi": "Ừ đúng rồi. Vậy màu xám trung tính này nhỉ, vừa đẹp vừa thực tế?",
+        "en": "That's true. How about this neutral gray then, both beautiful and practical?"
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Anh đồng ý màu xám! Bên cạnh sofa, mình cần mua thêm bàn cà phê và kệ tivi nữa.",
+        "en": "I agree on gray! Besides the sofa, we also need to buy a coffee table and TV stand."
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Kệ tivi thì mình nên mua loại có ngăn kéo để cất đồ chơi của bé. Tiết kiệm không gian hơn.",
+        "en": "For the TV stand we should buy one with drawers to store toys. More space-saving."
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Ý tưởng hay! Còn bàn cà phê thì em muốn kiểu nào? Gỗ hay kính?",
+        "en": "Good idea! For the coffee table what style do you want? Wood or glass?"
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "Tuyệt đối không kính vì nguy hiểm cho bé. Gỗ thực hoặc gỗ MDF phủ melamine đều được.",
+        "en": "Absolutely no glass because it's dangerous for the child. Solid wood or MDF with melamine coating both work."
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "OK mình chốt gỗ. Cô ơi, bộ ba sofa, bàn cà phê và kệ tivi hết bao nhiêu tiền ạ?",
+        "en": "OK let's go with wood. Excuse me, how much is the set of sofa, coffee table and TV stand?"
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Dạ tổng là 15 triệu 500 ngàn. Nhưng đang có chương trình khuyến mãi, mua combo 3 món giảm 15%, còn khoảng 13 triệu 200 ngàn ạ.",
+        "en": "The total is 15.5 million. But there's a promotion now, buying a combo of 3 items gets 15% off, about 13.2 million."
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Giảm giá tốt đó anh! Nhưng mình có thể thương lượng thêm không em nhỉ?",
+        "en": "That's a good discount! But can we negotiate further?"
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
+        "vi": "Anh Hải ơi, mình mua đủ rồi thì thôi, đừng mặc cả quá tội nghiệp người ta!",
+        "en": "Mr. Hai, we're buying enough already, don't bargain too much, feel bad for them!"
       },
       {
         "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
+        "vi": "Hehe được rồi em. Cô ơi cho chúng tôi đặt mua nhé. Giao hàng mất bao lâu?",
+        "en": "Hehe alright. We'll order. How long does delivery take?"
       },
       {
         "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "Giao hàng và lắp đặt miễn phí trong vòng 5-7 ngày làm việc. Anh chị có thể chọn ngày giao hàng tiện nhất.",
+        "en": "Free delivery and installation within 5-7 business days. You can choose the most convenient delivery date."
       }
     ]
   },
   {
     "id": 302,
-    "title": "Đổi vé máy bay",
-    "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đổi vé máy bay.",
+    "title": {
+      "vi": "Tư vấn tâm lý về lo âu và căng thẳng",
+      "en": "Psychological Counseling for Anxiety and Stress"
+    },
+    "situation": "Bạch Linh đến gặp chuyên gia tâm lý Tuấn để được tư vấn về tình trạng lo âu mãn tính.",
     "speakerAGender": "female",
-    "speakerBGender": "female",
-    "speakerAName": {
-      "vi": "Phương",
-      "en": "Phuong"
-    },
-    "speakerBName": {
-      "vi": "Đức",
-      "en": "Duc"
-    },
-    "turns": [
-      {
-        "speaker": "A",
-        "en": "Hello! How can I help you today?",
-        "vi": "Xin chào! Tôi có thể giúp gì hôm nay?"
-      },
-      {
-        "speaker": "B",
-        "en": "Hi! I need some information please.",
-        "vi": "Chào! Tôi cần một số thông tin."
-      },
-      {
-        "speaker": "A",
-        "en": "What would you like to know?",
-        "vi": "Bạn muốn biết gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "I'm asking about Đổi vé máy bay.",
-        "vi": "Tôi hỏi về Đổi vé máy bay."
-      },
-      {
-        "speaker": "A",
-        "en": "Great topic. What specifically interests you?",
-        "vi": "Chủ đề hay. Bạn quan tâm cụ thể điều gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "I want to learn the basics first.",
-        "vi": "Tôi muốn học những điều cơ bản trước."
-      },
-      {
-        "speaker": "A",
-        "en": "That's a good approach. Let me explain.",
-        "vi": "Đó là cách tiếp cận tốt. Để tôi giải thích."
-      },
-      {
-        "speaker": "B",
-        "en": "Please take your time. I'm listening.",
-        "vi": "Xin cứ từ từ. Tôi đang lắng nghe."
-      },
-      {
-        "speaker": "A",
-        "en": "The most important thing to know is...",
-        "vi": "Điều quan trọng nhất cần biết là..."
-      },
-      {
-        "speaker": "B",
-        "en": "That's really useful information.",
-        "vi": "Đó là thông tin thực sự hữu ích."
-      },
-      {
-        "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
-      },
-      {
-        "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
-      },
-      {
-        "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
-      },
-      {
-        "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
-      },
-      {
-        "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
-      },
-      {
-        "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
-      },
-      {
-        "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
-      },
-      {
-        "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
-      }
-    ]
-  },
-  {
-    "id": 303,
-    "title": "Hỏi về hành lý xách tay",
-    "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi về hành lý xách tay.",
-    "speakerAGender": "male",
-    "speakerBGender": "male",
-    "speakerAName": {
-      "vi": "Emma",
-      "en": "Emma"
-    },
-    "speakerBName": {
-      "vi": "David",
-      "en": "David"
-    },
-    "turns": [
-      {
-        "speaker": "A",
-        "en": "Hello! How can I help you today?",
-        "vi": "Xin chào! Tôi có thể giúp gì hôm nay?"
-      },
-      {
-        "speaker": "B",
-        "en": "Hi! I need some information please.",
-        "vi": "Chào! Tôi cần một số thông tin."
-      },
-      {
-        "speaker": "A",
-        "en": "What would you like to know?",
-        "vi": "Bạn muốn biết gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "I'm asking about Hỏi về hành lý xách tay.",
-        "vi": "Tôi hỏi về Hỏi về hành lý xách tay."
-      },
-      {
-        "speaker": "A",
-        "en": "Great topic. What specifically interests you?",
-        "vi": "Chủ đề hay. Bạn quan tâm cụ thể điều gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "I want to learn the basics first.",
-        "vi": "Tôi muốn học những điều cơ bản trước."
-      },
-      {
-        "speaker": "A",
-        "en": "That's a good approach. Let me explain.",
-        "vi": "Đó là cách tiếp cận tốt. Để tôi giải thích."
-      },
-      {
-        "speaker": "B",
-        "en": "Please take your time. I'm listening.",
-        "vi": "Xin cứ từ từ. Tôi đang lắng nghe."
-      },
-      {
-        "speaker": "A",
-        "en": "The most important thing to know is...",
-        "vi": "Điều quan trọng nhất cần biết là..."
-      },
-      {
-        "speaker": "B",
-        "en": "That's really useful information.",
-        "vi": "Đó là thông tin thực sự hữu ích."
-      },
-      {
-        "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
-      },
-      {
-        "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
-      },
-      {
-        "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
-      },
-      {
-        "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
-      },
-      {
-        "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
-      },
-      {
-        "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
-      },
-      {
-        "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
-      },
-      {
-        "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
-      }
-    ]
-  },
-  {
-    "id": 304,
-    "title": "Check in online",
-    "situation": "Tình huống thực tế liên quan đến: Check in online.",
-    "speakerAGender": "female",
-    "speakerBGender": "male",
-    "speakerAName": {
-      "vi": "Lan",
-      "en": "Lan"
-    },
-    "speakerBName": {
-      "vi": "Nam",
-      "en": "Nam"
-    },
-    "turns": [
-      {
-        "speaker": "A",
-        "en": "Hello! How can I help you today?",
-        "vi": "Xin chào! Tôi có thể giúp gì hôm nay?"
-      },
-      {
-        "speaker": "B",
-        "en": "Hi! I need some information please.",
-        "vi": "Chào! Tôi cần một số thông tin."
-      },
-      {
-        "speaker": "A",
-        "en": "What would you like to know?",
-        "vi": "Bạn muốn biết gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "I'm asking about Check in online.",
-        "vi": "Tôi hỏi về Check in online."
-      },
-      {
-        "speaker": "A",
-        "en": "Great topic. What specifically interests you?",
-        "vi": "Chủ đề hay. Bạn quan tâm cụ thể điều gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "I want to learn the basics first.",
-        "vi": "Tôi muốn học những điều cơ bản trước."
-      },
-      {
-        "speaker": "A",
-        "en": "That's a good approach. Let me explain.",
-        "vi": "Đó là cách tiếp cận tốt. Để tôi giải thích."
-      },
-      {
-        "speaker": "B",
-        "en": "Please take your time. I'm listening.",
-        "vi": "Xin cứ từ từ. Tôi đang lắng nghe."
-      },
-      {
-        "speaker": "A",
-        "en": "The most important thing to know is...",
-        "vi": "Điều quan trọng nhất cần biết là..."
-      },
-      {
-        "speaker": "B",
-        "en": "That's really useful information.",
-        "vi": "Đó là thông tin thực sự hữu ích."
-      },
-      {
-        "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
-      },
-      {
-        "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
-      },
-      {
-        "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
-      },
-      {
-        "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
-      },
-      {
-        "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
-      },
-      {
-        "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
-      },
-      {
-        "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
-      },
-      {
-        "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
-      }
-    ]
-  },
-  {
-    "id": 305,
-    "title": "Chọn chỗ ngồi trên máy bay",
-    "situation": "Hội thoại thực hành kỹ năng giao tiếp: Chọn chỗ ngồi trên máy bay.",
-    "speakerAGender": "male",
-    "speakerBGender": "female",
-    "speakerAName": {
-      "vi": "Hoa",
-      "en": "Hoa"
-    },
-    "speakerBName": {
-      "vi": "Minh",
-      "en": "Minh"
-    },
-    "turns": [
-      {
-        "speaker": "A",
-        "en": "Hello! How can I help you today?",
-        "vi": "Xin chào! Tôi có thể giúp gì hôm nay?"
-      },
-      {
-        "speaker": "B",
-        "en": "Hi! I need some information please.",
-        "vi": "Chào! Tôi cần một số thông tin."
-      },
-      {
-        "speaker": "A",
-        "en": "What would you like to know?",
-        "vi": "Bạn muốn biết gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "I'm asking about Chọn chỗ ngồi trên máy bay.",
-        "vi": "Tôi hỏi về Chọn chỗ ngồi trên máy bay."
-      },
-      {
-        "speaker": "A",
-        "en": "Great topic. What specifically interests you?",
-        "vi": "Chủ đề hay. Bạn quan tâm cụ thể điều gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "I want to learn the basics first.",
-        "vi": "Tôi muốn học những điều cơ bản trước."
-      },
-      {
-        "speaker": "A",
-        "en": "That's a good approach. Let me explain.",
-        "vi": "Đó là cách tiếp cận tốt. Để tôi giải thích."
-      },
-      {
-        "speaker": "B",
-        "en": "Please take your time. I'm listening.",
-        "vi": "Xin cứ từ từ. Tôi đang lắng nghe."
-      },
-      {
-        "speaker": "A",
-        "en": "The most important thing to know is...",
-        "vi": "Điều quan trọng nhất cần biết là..."
-      },
-      {
-        "speaker": "B",
-        "en": "That's really useful information.",
-        "vi": "Đó là thông tin thực sự hữu ích."
-      },
-      {
-        "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
-      },
-      {
-        "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
-      },
-      {
-        "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
-      },
-      {
-        "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
-      },
-      {
-        "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
-      },
-      {
-        "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
-      },
-      {
-        "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
-      },
-      {
-        "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
-      }
-    ]
-  },
-  {
-    "id": 306,
-    "title": "Thuê xe tự lái",
-    "situation": "Hai người thực hành hội thoại về chủ đề: Thuê xe tự lái.",
-    "speakerAGender": "female",
-    "speakerBGender": "female",
-    "speakerAName": {
-      "vi": "Thảo",
-      "en": "Thao"
-    },
-    "speakerBName": {
-      "vi": "Tuấn",
-      "en": "Tuan"
-    },
-    "turns": [
-      {
-        "speaker": "A",
-        "en": "Excuse me, I'm looking for Thuê xe tự lái.",
-        "vi": "Xin lỗi, tôi đang tìm về Thuê xe tự lái."
-      },
-      {
-        "speaker": "B",
-        "en": "Sure, I can help you with that.",
-        "vi": "Được, tôi có thể giúp bạn điều đó."
-      },
-      {
-        "speaker": "A",
-        "en": "What options do you have?",
-        "vi": "Bạn có những lựa chọn nào?"
-      },
-      {
-        "speaker": "B",
-        "en": "We have several options. Let me show you.",
-        "vi": "Chúng tôi có vài lựa chọn. Để tôi chỉ cho bạn."
-      },
-      {
-        "speaker": "A",
-        "en": "What's the price range?",
-        "vi": "Mức giá là bao nhiêu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It ranges from 100,000 to 500,000 VND.",
-        "vi": "Dao động từ 100.000 đến 500.000 đồng."
-      },
-      {
-        "speaker": "A",
-        "en": "Can I try it first?",
-        "vi": "Tôi có thể thử trước không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course! Take your time.",
-        "vi": "Tất nhiên! Cứ thử thoải mái."
-      },
-      {
-        "speaker": "A",
-        "en": "Do you have a discount?",
-        "vi": "Bạn có giảm giá không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Yes, we have 10% off today.",
-        "vi": "Có, hôm nay giảm 10%."
-      },
-      {
-        "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
-      },
-      {
-        "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
-      },
-      {
-        "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
-      },
-      {
-        "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
-      },
-      {
-        "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
-      },
-      {
-        "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
-      },
-      {
-        "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
-      },
-      {
-        "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
-      }
-    ]
-  },
-  {
-    "id": 307,
-    "title": "Đặt xe Grab",
-    "situation": "Tình huống thực tế liên quan đến: Đặt xe Grab.",
-    "speakerAGender": "male",
     "speakerBGender": "male",
     "speakerAName": {
       "vi": "Linh",
       "en": "Linh"
     },
     "speakerBName": {
-      "vi": "Khoa",
-      "en": "Khoa"
+      "vi": "Tuấn",
+      "en": "Tuan"
     },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Excuse me, I'm looking for Đặt xe Grab.",
-        "vi": "Xin lỗi, tôi đang tìm về Đặt xe Grab."
+        "vi": "Chào anh Tuấn, tôi là Linh. Tôi hay lo lắng và căng thẳng quá mức, ảnh hưởng đến công việc và cuộc sống.",
+        "en": "Hello Mr. Tuan, I'm Linh. I worry and feel stressed excessively, affecting my work and life."
       },
       {
         "speaker": "B",
-        "en": "Sure, I can help you with that.",
-        "vi": "Được, tôi có thể giúp bạn điều đó."
+        "vi": "Chào Linh, cảm ơn em đã dũng cảm đến đây. Hãy kể cho anh nghe: lo lắng đó xuất hiện khi nào và biểu hiện như thế nào?",
+        "en": "Hello Linh, thank you for the courage to come here. Tell me: when does the worry appear and how does it manifest?"
       },
       {
         "speaker": "A",
-        "en": "What options do you have?",
-        "vi": "Bạn có những lựa chọn nào?"
+        "vi": "Hầu như mọi lúc anh ơi. Nhất là trước các cuộc họp hoặc deadline. Tim đập nhanh, toát mồ hôi, khó thở, và tâm trí cứ nghĩ đến tình huống xấu nhất.",
+        "en": "Almost all the time. Especially before meetings or deadlines. Racing heart, sweating, shortness of breath, and my mind keeps thinking of worst-case scenarios."
       },
       {
         "speaker": "B",
-        "en": "We have several options. Let me show you.",
-        "vi": "Chúng tôi có vài lựa chọn. Để tôi chỉ cho bạn."
+        "vi": "Anh nghe hiểu rồi. Những triệu chứng em mô tả rất phổ biến với lo âu. Em bắt đầu cảm thấy vậy từ khi nào?",
+        "en": "I understand. The symptoms you describe are very common with anxiety. When did you start feeling this way?"
       },
       {
         "speaker": "A",
-        "en": "What's the price range?",
-        "vi": "Mức giá là bao nhiêu?"
+        "vi": "Từ khi bị thăng chức trưởng nhóm cách đây 1 năm. Áp lực trách nhiệm với đội nhóm khiến tôi không ngủ được.",
+        "en": "Since being promoted to team lead 1 year ago. The pressure of responsibility for the team makes me unable to sleep."
       },
       {
         "speaker": "B",
-        "en": "It ranges from 100,000 to 500,000 VND.",
-        "vi": "Dao động từ 100.000 đến 500.000 đồng."
+        "vi": "Thăng chức mang theo trách nhiệm mới, điều đó bình thường. Nhưng khi lo âu đã ảnh hưởng giấc ngủ thì cần được giải quyết. Em ngủ được mấy tiếng mỗi đêm?",
+        "en": "Promotion brings new responsibilities, that's normal. But when anxiety has affected sleep it needs to be addressed. How many hours do you sleep each night?"
       },
       {
         "speaker": "A",
-        "en": "Can I try it first?",
-        "vi": "Tôi có thể thử trước không?"
+        "vi": "Chỉ 4-5 tiếng, và hay thức dậy giữa đêm vì nghĩ đến công việc.",
+        "en": "Only 4-5 hours, and I often wake up in the middle of the night thinking about work."
       },
       {
         "speaker": "B",
-        "en": "Of course! Take your time.",
-        "vi": "Tất nhiên! Cứ thử thoải mái."
+        "vi": "Thiếu ngủ làm lo âu nặng hơn và tạo vòng luẩn quẩn. Em có đang tự gây áp lực cao cho bản thân không, như luôn phải hoàn hảo?",
+        "en": "Sleep deprivation worsens anxiety and creates a vicious cycle. Are you putting high pressure on yourself, like always having to be perfect?"
       },
       {
         "speaker": "A",
-        "en": "Do you have a discount?",
-        "vi": "Bạn có giảm giá không?"
+        "vi": "Đúng vậy anh! Tôi sợ thất bại, sợ nhóm đánh giá tôi không đủ năng lực. Tôi cứ phải kiểm tra lại mọi thứ nhiều lần.",
+        "en": "Exactly! I fear failure, fear the team judging me as incompetent. I keep checking everything multiple times."
       },
       {
         "speaker": "B",
-        "en": "Yes, we have 10% off today.",
-        "vi": "Có, hôm nay giảm 10%."
+        "vi": "Em đang chịu đựng hội chứng impostor syndrome - cảm giác mình không xứng đáng với vị trí hiện tại dù thực tế năng lực đủ tốt. Rất nhiều người thăng chức đều trải qua điều này.",
+        "en": "You're experiencing impostor syndrome - feeling you don't deserve your current position despite actually being competent enough. Many people who get promoted go through this."
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Ồ tôi không biết đó có tên gọi riêng. Vậy tôi phải làm gì để vượt qua anh?",
+        "en": "Oh I didn't know it had its own name. What should I do to overcome it?"
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Chúng ta sẽ làm việc qua nhiều buổi. Trước mắt, kỹ thuật thở 4-7-8: hít vào 4 giây, nín thở 7 giây, thở ra 8 giây. Giúp hệ thần kinh bình tĩnh lại khi lo âu.",
+        "en": "We'll work through multiple sessions. Immediately, the 4-7-8 breathing technique: inhale for 4 seconds, hold for 7 seconds, exhale for 8 seconds. Helps calm the nervous system when anxious."
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Kỹ thuật thở đơn giản vậy thôi à? Thật sự hiệu quả không anh?",
+        "en": "Just a simple breathing technique? Does it really work?"
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "Đã được nghiên cứu khoa học chứng minh. Khi lo âu tim đập nhanh, hít thở chậm kích hoạt hệ phó giao cảm làm chậm tim và bình tĩnh lại.",
+        "en": "It's been scientifically proven. When anxious the heart beats fast, slow breathing activates the parasympathetic system which slows the heart and calms down."
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "Còn về suy nghĩ tiêu cực thì sao? Tôi không tự kiểm soát được.",
+        "en": "What about negative thoughts? I can't control them on my own."
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Kỹ thuật cognitive restructuring: khi có suy nghĩ 'tôi sẽ thất bại', hỏi bản thân: bằng chứng thực sự là gì? Có khả năng khác không? Điều tệ nhất có thực sự tệ đến vậy không?",
+        "en": "Cognitive restructuring technique: when you have the thought 'I will fail', ask yourself: what is the actual evidence? Are there other possibilities? Is the worst case really that bad?"
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Nghe như tôi cần thách thức chính suy nghĩ của mình vậy.",
+        "en": "Sounds like I need to challenge my own thoughts."
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
+        "vi": "Chính xác! Anh gọi đó là 'thought challenging'. Bộ não thường phóng đại nguy hiểm và thu nhỏ khả năng đối phó của mình. Thách thức suy nghĩ giúp nhìn thực tế hơn.",
+        "en": "Exactly! I call that 'thought challenging'. The brain often exaggerates danger and minimizes one's coping ability. Challenging thoughts helps see reality more accurately."
       },
       {
         "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
+        "vi": "Tôi cũng cần thuốc không anh? Hay chỉ trị liệu tâm lý thôi?",
+        "en": "Do I also need medication? Or just psychological therapy?"
       },
       {
         "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "Trường hợp của em chúng ta thử trị liệu CBT trước trong 8-12 buổi. Nếu cần thiết mới phối hợp với bác sĩ tâm thần về thuốc. Đa số trường hợp lo âu vừa phải không cần thuốc.",
+        "en": "For your case let's try CBT therapy first for 8-12 sessions. If necessary then coordinate with a psychiatrist about medication. Most moderate anxiety cases don't need medication."
+      }
+    ]
+  },
+  {
+    "id": 303,
+    "title": {
+      "vi": "Học làm bánh cupcake",
+      "en": "Learning to Make Cupcakes"
+    },
+    "situation": "Ngọc tham gia lớp học làm bánh và hỏi giáo viên Hương về cách làm cupcake đẹp.",
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Ngọc",
+      "en": "Ngoc"
+    },
+    "speakerBName": {
+      "vi": "Hương",
+      "en": "Huong"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Cô Hương ơi, em muốn học làm cupcake để tặng bạn bè vào dịp sinh nhật. Bắt đầu từ đâu ạ?",
+        "en": "Ms. Huong, I want to learn to make cupcakes to give to friends on birthdays. Where do I start?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Hay lắm Ngọc! Cupcake nhìn fancy nhưng thực ra không khó nếu nắm vững kỹ thuật. Đầu tiên cần biết nguyên liệu cơ bản.",
+        "en": "Great Ngoc! Cupcakes look fancy but actually aren't hard if you master the techniques. First you need to know the basic ingredients."
+      },
+      {
+        "speaker": "A",
+        "vi": "Nguyên liệu cơ bản gồm những gì cô?",
+        "en": "What are the basic ingredients?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Bột mì đa dụng, đường, bơ nhạt, trứng, sữa tươi, bột nở và muối. Đây là bộ nguyên liệu nền của hầu hết bánh cupcake.",
+        "en": "All-purpose flour, sugar, unsalted butter, eggs, fresh milk, baking powder and salt. This is the base ingredient set for most cupcakes."
+      },
+      {
+        "speaker": "A",
+        "vi": "Bơ cần để mềm hay lạnh cô?",
+        "en": "Does the butter need to be soft or cold?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Để mềm ở nhiệt độ phòng - đây là bước quan trọng! Bơ lạnh không đánh bông được, bơ chảy lỏng thì bột bị sệt. Bơ mềm tạo ra bánh xốp nhẹ nhất.",
+        "en": "Softened at room temperature - this is an important step! Cold butter won't cream, melted butter makes the batter too dense. Softened butter creates the lightest fluffy cake."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em hay làm bơ bị chảy rồi cô. Vậy phải làm thế nào khi nhà mình quá nóng?",
+        "en": "I often melt the butter. So what to do when our home is too hot?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Cắt bơ thành khối nhỏ, để trong tô ở nhiệt độ phòng khoảng 30-45 phút. Không để gần bếp hay lò vi sóng. Bơ đúng độ khi ấn ngón tay vào để lại dấu nhưng không nhòe.",
+        "en": "Cut butter into small pieces, leave in a bowl at room temperature for about 30-45 minutes. Don't place near the stove or microwave. Butter is at the right consistency when you press a finger in it leaves a mark but doesn't smear."
+      },
+      {
+        "speaker": "A",
+        "vi": "Hiểu rồi cô! Bước đánh bơ với đường gọi là gì?",
+        "en": "I see! What is the step of beating butter with sugar called?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Gọi là 'creaming', đánh bơ và đường đến khi hỗn hợp trắng và bông nhẹ, khoảng 3-5 phút bằng máy đánh trứng. Đây là bước quyết định độ xốp của bánh.",
+        "en": "It's called 'creaming', beat butter and sugar until the mixture is white and light and fluffy, about 3-5 minutes with a hand mixer. This is the step that determines the fluffiness of the cake."
+      },
+      {
+        "speaker": "A",
+        "vi": "Sau đó cho trứng vào như thế nào cô?",
+        "en": "Then how do I add eggs?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Cho trứng vào từng quả một, đánh đều sau mỗi quả. Không cho tất cả cùng lúc vì hỗn hợp sẽ bị tách nước. Trứng cần để nhiệt độ phòng trước khi dùng.",
+        "en": "Add eggs one at a time, beat well after each egg. Don't add all at once because the mixture will break. Eggs need to be at room temperature before using."
+      },
+      {
+        "speaker": "A",
+        "vi": "Còn bột mì thì cho vào như thế nào?",
+        "en": "What about adding the flour?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Rây bột trước để không vón cục. Trộn bột và sữa xen kẽ nhau: 1/3 bột, 1/2 sữa, 1/3 bột, 1/2 sữa, 1/3 bột còn lại. Trộn nhẹ tay bằng spatula để bánh không bị chai.",
+        "en": "Sift flour first to avoid lumps. Alternate adding flour and milk: 1/3 flour, 1/2 milk, 1/3 flour, 1/2 milk, remaining 1/3 flour. Fold gently with a spatula so the cake doesn't become tough."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em hay trộn quá mạnh tay. Đó là lý do bánh em cứ bị cứng phải không cô?",
+        "en": "I tend to mix too vigorously. Is that why my cakes always turn out tough?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Chính xác! Trộn quá nhiều kích hoạt gluten trong bột, làm bánh bị dai. Chỉ trộn đến khi vừa hòa quyện là đủ.",
+        "en": "Exactly! Overmixing activates gluten in the flour, making the cake chewy. Mix only until just combined."
+      },
+      {
+        "speaker": "A",
+        "vi": "Nướng nhiệt độ bao nhiêu và bao lâu cô?",
+        "en": "What temperature and how long to bake?"
+      },
+      {
+        "speaker": "B",
+        "vi": "180 độ C khoảng 18-22 phút. Dùng tăm xỉa vào giữa bánh, rút ra khô không dính bột là chín. Không mở lò giữa chừng vì bánh sẽ bị xẹp.",
+        "en": "180°C for about 18-22 minutes. Insert a toothpick into the center, if it comes out clean without batter the cake is done. Don't open the oven midway because the cake will collapse."
+      },
+      {
+        "speaker": "A",
+        "vi": "Còn phần kem bơ bên trên thì làm như thế nào cô?",
+        "en": "What about the buttercream on top?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Buttercream cơ bản: đánh bơ mềm bông, thêm đường bột từng chút, vanilla, và vài thìa sữa để điều chỉnh độ đặc. Dùng túi bắt kem để trang trí.",
+        "en": "Basic buttercream: cream softened butter until fluffy, add powdered sugar gradually, vanilla, and a few spoons of milk to adjust consistency. Use a piping bag to decorate."
+      }
+    ]
+  },
+  {
+    "id": 304,
+    "title": {
+      "vi": "Hỏi về chính sách bảo hiểm xe ô tô",
+      "en": "Asking About Car Insurance Policy"
+    },
+    "situation": "Anh Minh vừa mua xe mới và gọi điện hỏi nhân viên tư vấn bảo hiểm về các loại bảo hiểm xe.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Minh",
+      "en": "Minh"
+    },
+    "speakerBName": {
+      "vi": "Lan",
+      "en": "Lan"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Chào em, anh vừa mua xe ô tô mới và cần tư vấn về bảo hiểm. Xe cần mua bảo hiểm gì?",
+        "en": "Hello, I just bought a new car and need advice about insurance. What insurance does a car need?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Chào anh! Có hai loại bảo hiểm xe ô tô: bắt buộc theo pháp luật và tự nguyện. Anh muốn nghe về cả hai không?",
+        "en": "Hello! There are two types of car insurance: mandatory by law and voluntary. Do you want to hear about both?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Vâng, anh muốn hiểu rõ cả hai loại.",
+        "en": "Yes, I want to understand both types clearly."
+      },
+      {
+        "speaker": "B",
+        "vi": "Bảo hiểm bắt buộc TNDS có 2 loại: bảo hiểm dân sự với người thứ ba, và bảo hiểm hành khách trên xe. Xe ô tô phải có bắt buộc mới được lưu hành.",
+        "en": "Mandatory TNDS insurance has 2 types: third-party civil liability insurance, and passenger insurance in the vehicle. Cars must have mandatory insurance to be on the road."
+      },
+      {
+        "speaker": "A",
+        "vi": "Bảo hiểm bắt buộc phí bao nhiêu và mua ở đâu?",
+        "en": "How much is mandatory insurance and where do I buy it?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Phí bảo hiểm bắt buộc khoảng 1 đến 3 triệu tùy loại xe và số chỗ ngồi. Mua được ở công ty bảo hiểm, đại lý xe, hoặc online.",
+        "en": "Mandatory insurance fee is about 1 to 3 million VND depending on vehicle type and number of seats. Can be purchased at insurance companies, car dealers, or online."
+      },
+      {
+        "speaker": "A",
+        "vi": "Còn bảo hiểm tự nguyện thì sao? Có cần thiết không em?",
+        "en": "What about voluntary insurance? Is it necessary?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Rất cần anh ơi! Bảo hiểm tự nguyện bồi thường thiệt hại vật chất xe của mình: tai nạn, va chạm, mưa bão, trộm cắp. Bảo hiểm bắt buộc chỉ lo cho bên thứ ba, không lo cho xe mình.",
+        "en": "Very necessary! Voluntary insurance compensates for physical damage to your own car: accidents, collisions, storms, theft. Mandatory insurance only covers third parties, not your own vehicle."
+      },
+      {
+        "speaker": "A",
+        "vi": "Xe anh trị giá 800 triệu. Bảo hiểm vật chất xe phí bao nhiêu?",
+        "en": "My car is worth 800 million. How much is vehicle physical damage insurance?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Thông thường phí là 1 đến 1.5% giá trị xe mỗi năm. Với xe 800 triệu, phí khoảng 8-12 triệu/năm. Đổi lại, xe có sự cố thì bảo hiểm sửa chữa hoặc đền bù theo điều khoản.",
+        "en": "Typically the premium is 1 to 1.5% of vehicle value per year. For an 800 million VND car, premium is about 8-12 million/year. In return, if the vehicle has an incident insurance repairs it or compensates according to terms."
+      },
+      {
+        "speaker": "A",
+        "vi": "Có những điều khoản loại trừ nào cần chú ý không em?",
+        "en": "Are there any exclusion clauses to pay attention to?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Có anh ơi: không bồi thường khi người lái say rượu, không có bằng lái, tai nạn do cố ý, hoặc tổng thiệt hại dưới mức khấu trừ (thường 2-5 triệu).",
+        "en": "Yes: no compensation when the driver is drunk, driving without a license, intentional accidents, or total damage below the deductible (usually 2-5 million VND)."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mức khấu trừ là gì vậy em?",
+        "en": "What is the deductible?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Mức khấu trừ là số tiền thiệt hại mà anh tự chịu trước khi bảo hiểm chi trả phần còn lại. Ví dụ mức khấu trừ 3 triệu, sửa xe 20 triệu thì anh trả 3 triệu, bảo hiểm trả 17 triệu.",
+        "en": "The deductible is the amount of damage you bear before insurance pays the rest. For example deductible 3 million, car repair 20 million means you pay 3 million, insurance pays 17 million."
+      },
+      {
+        "speaker": "A",
+        "vi": "Hiểu rồi. Nếu không may bị tai nạn thì làm gì đầu tiên?",
+        "en": "I see. If I'm unfortunately in an accident, what to do first?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Gọi ngay đường dây hỗ trợ 24/7 của công ty bảo hiểm. Chụp ảnh hiện trường, giữ nguyên hiện trường đến khi nhân viên đến giám định. Không sửa xe trước khi được giám định.",
+        "en": "Immediately call the insurance company's 24/7 support hotline. Take photos of the scene, preserve the scene until the assessor arrives. Don't repair the car before assessment."
+      },
+      {
+        "speaker": "A",
+        "vi": "Còn thủ tục giải quyết bồi thường mất bao lâu?",
+        "en": "How long does the claims process take?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Thông thường 5-15 ngày làm việc sau khi nộp đủ hồ sơ. Hồ sơ gồm: đơn yêu cầu bồi thường, biên bản tai nạn, hình ảnh và hóa đơn sửa chữa.",
+        "en": "Typically 5-15 business days after submitting complete documents. Documents include: claim form, accident report, photos and repair invoice."
+      },
+      {
+        "speaker": "A",
+        "vi": "Có gói bảo hiểm nào trọn gói cho cả bắt buộc và tự nguyện không?",
+        "en": "Is there a package that covers both mandatory and voluntary insurance?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Dạ có! Chúng tôi có gói combo: bảo hiểm bắt buộc + vật chất xe + tai nạn lái xe + hành khách. Mua combo tiết kiệm hơn mua từng loại riêng lẻ khoảng 10-15%.",
+        "en": "Yes! We have a combo package: mandatory insurance + vehicle physical + driver accident + passenger. Buying combo saves about 10-15% compared to buying each type separately."
+      }
+    ]
+  },
+  {
+    "id": 305,
+    "title": {
+      "vi": "Trao đổi về trải nghiệm du lịch một mình ở Việt Nam",
+      "en": "Sharing Experience of Solo Travel in Vietnam"
+    },
+    "situation": "Lisa người Mỹ vừa hoàn thành chuyến du lịch bụi một mình khắp Việt Nam và chia sẻ với người bạn Hùng.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Lisa",
+      "en": "Lisa"
+    },
+    "speakerBName": {
+      "vi": "Hùng",
+      "en": "Hung"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Hùng ơi, mình vừa hoàn thành 3 tuần du lịch một mình khắp Việt Nam! Tuyệt vời quá.",
+        "en": "Hung, I just completed 3 weeks of solo travel all over Vietnam! It was amazing."
+      },
+      {
+        "speaker": "B",
+        "vi": "Wow thật à Lisa! Một mình suốt 3 tuần? Mình ở những đâu vậy?",
+        "en": "Wow really Lisa! Alone for 3 weeks? Where did you go?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình bắt đầu từ Hà Nội, rồi đi Sapa, Ninh Bình, Đà Nẵng, Hội An, Đà Lạt và kết thúc ở Sài Gòn. Đi tàu hỏa và xe khách.",
+        "en": "I started from Hanoi, then went to Sapa, Ninh Binh, Da Nang, Hoi An, Da Lat and ended in Saigon. Traveled by train and bus."
+      },
+      {
+        "speaker": "B",
+        "vi": "Chặng đường dài quá! Bạn thấy nơi nào ấn tượng nhất?",
+        "en": "That's quite a journey! Which place impressed you most?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Khó chọn lắm! Nhưng nếu phải chọn một thì là Hội An - phố cổ về đêm đèn lồng lung linh, ẩm thực đa dạng, người dân thân thiện. Mình ở đó 4 ngày còn muốn ở thêm.",
+        "en": "Very hard to choose! But if I had to pick one it would be Hoi An - the ancient town at night with lanterns glowing, diverse cuisine, friendly people. I stayed 4 days and still wanted more."
+      },
+      {
+        "speaker": "B",
+        "vi": "Hội An nổi tiếng quốc tế rồi! Còn Sapa thì sao, mình nghe nhiều người khen?",
+        "en": "Hoi An is internationally famous! What about Sapa, I've heard many people praise it?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Sapa đẹp không thể tả được! Ruộng bậc thang mùa lúa vàng, núi mây mù, gặp người H'Mông trong trang phục truyền thống. Mình đã trekking 2 ngày dù chân đau hết.",
+        "en": "Sapa is indescribably beautiful! Golden rice terraces, misty mountains, meeting H'Mong people in traditional costumes. I trekked for 2 days even though my legs ached terribly."
+      },
+      {
+        "speaker": "B",
+        "vi": "Bạn đi một mình có an toàn không? Người Việt Nam có cởi mở với khách du lịch một mình không?",
+        "en": "Was it safe traveling alone? Are Vietnamese people open to solo travelers?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Người Việt Nam thân thiện và tốt bụng lắm Hùng ơi! Mình bị lạc ở Ninh Bình, một chú chạy xe máy dừng lại giúp mình tìm đường dù không nói được tiếng Anh. Cảm động lắm!",
+        "en": "Vietnamese people are very friendly and kind Hung! I got lost in Ninh Binh, a man on a motorbike stopped to help me find the way even though he couldn't speak English. So touching!"
+      },
+      {
+        "speaker": "B",
+        "vi": "Đó là tính cách người Việt mình đó! Bạn có gặp khó khăn gì về ngôn ngữ không?",
+        "en": "That's the Vietnamese character! Did you face any language difficulties?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Có, nhất là ở vùng nông thôn ít người biết tiếng Anh. Mình dùng Google Translate offline và tay chỉ trỏ, cũng xong! Và mọi người rất kiên nhẫn.",
+        "en": "Yes, especially in rural areas fewer people know English. I used Google Translate offline and pointing with my hands, it worked! And everyone was very patient."
+      },
+      {
+        "speaker": "B",
+        "vi": "Thức ăn Việt Nam có hợp khẩu vị không? Mình biết người phương Tây hay khó ăn.",
+        "en": "Did Vietnamese food suit your palate? I know Westerners often have difficulty eating it."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình yêu đồ ăn Việt Nam! Phở, bánh mì, cơm tấm, bún bò Huế - tất cả đều ngon. Chỉ có mắm tôm mình chưa dám thử, mùi hơi mạnh.",
+        "en": "I love Vietnamese food! Pho, banh mi, com tam, bun bo Hue - all delicious. Only shrimp paste I haven't dared try yet, the smell is quite strong."
+      },
+      {
+        "speaker": "B",
+        "vi": "Haha mắm tôm cần thời gian quen! Bạn thấy giao thông Việt Nam như thế nào?",
+        "en": "Haha shrimp paste takes time to get used to! What did you think of Vietnamese traffic?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Ban đầu mình sợ khiếp hồn! Xe máy khắp nơi, klaxon inh tai, vượt đèn đỏ. Nhưng học được cách qua đường Việt Nam: đi chậm, đều đặn, không dừng đột ngột và xe sẽ tránh.",
+        "en": "At first I was terrified! Motorbikes everywhere, honking horns, running red lights. But learned the Vietnamese way to cross the street: walk slowly, steadily, don't stop suddenly and vehicles will avoid you."
+      },
+      {
+        "speaker": "B",
+        "vi": "Đúng đó! Còn chi phí du lịch thì sao? Việt Nam có rẻ không?",
+        "en": "That's right! What about travel costs? Is Vietnam cheap?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Rẻ hơn Thái Lan và các nước Đông Nam Á khác nhiều. Mình chi khoảng 50-60 đô Mỹ mỗi ngày bao gồm hostel, ăn uống, đi lại và tham quan.",
+        "en": "Much cheaper than Thailand and other Southeast Asian countries. I spent about $50-60 USD per day including hostel, food, transportation and sightseeing."
+      },
+      {
+        "speaker": "B",
+        "vi": "50 đô/ngày khá tiết kiệm cho khách Tây đó! Bạn có bị ai lừa hay móc túi không?",
+        "en": "50 dollars a day is quite economical for a Western traveler! Did anyone try to cheat or pickpocket you?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Vài lần taxi ở sân bay có tính tiền cao hơn, nhưng mình đã biết hỏi giá trước và dùng Grab. Không bị móc túi hay mất đồ gì cả.",
+        "en": "A few times airport taxis charged more, but I knew to ask the price first and use Grab. No pickpocketing or anything stolen."
+      },
+      {
+        "speaker": "B",
+        "vi": "Bạn có lời khuyên gì cho người muốn du lịch một mình ở Việt Nam không?",
+        "en": "Do you have advice for people wanting to solo travel in Vietnam?"
+      }
+    ]
+  },
+  {
+    "id": 306,
+    "title": {
+      "vi": "Tư vấn về quy trình ly hôn",
+      "en": "Consultation on Divorce Process"
+    },
+    "situation": "Chị Hà đến gặp luật sư Dũng để hỏi về thủ tục ly hôn theo pháp luật Việt Nam.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Hà",
+      "en": "Ha"
+    },
+    "speakerBName": {
+      "vi": "Dũng",
+      "en": "Dung"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Chào luật sư Dũng, tôi cần tư vấn về thủ tục ly hôn. Tôi và chồng đã sống ly thân 2 năm rồi.",
+        "en": "Hello lawyer Dung, I need advice about the divorce process. My husband and I have been separated for 2 years."
+      },
+      {
+        "speaker": "B",
+        "vi": "Chào chị Hà. Tôi lắng nghe. Chị muốn ly hôn thuận tình hay đơn phương?",
+        "en": "Hello Ms. Ha. I'm listening. Do you want a mutual consent divorce or a unilateral one?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Ly hôn thuận tình là gì và đơn phương là gì vậy luật sư?",
+        "en": "What is mutual consent divorce and what is unilateral divorce?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Thuận tình ly hôn: cả hai đồng ý và thống nhất việc phân chia tài sản, nuôi con. Đơn phương ly hôn: một bên muốn ly hôn còn bên kia không đồng ý, phải ra tòa phán xét.",
+        "en": "Mutual consent divorce: both parties agree and settle asset division, child custody. Unilateral divorce: one party wants divorce while the other disagrees, must go to court for judgment."
+      },
+      {
+        "speaker": "A",
+        "vi": "Chồng tôi đồng ý ly hôn nhưng không đồng ý về quyền nuôi con. Vậy là thuận tình hay đơn phương?",
+        "en": "My husband agrees to divorce but disagrees about child custody. Is that mutual consent or unilateral?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Trường hợp này vẫn có thể làm thuận tình nếu giải quyết được vấn đề nuôi con. Nếu không thỏa thuận được thì chuyển sang đơn phương về phần nuôi con.",
+        "en": "This case can still be mutual consent if the child custody issue is resolved. If no agreement then switch to unilateral regarding child custody."
+      },
+      {
+        "speaker": "A",
+        "vi": "Chúng tôi có 1 con 5 tuổi. Tôi muốn nuôi con. Tiêu chí nào để tòa quyết định ai được nuôi con?",
+        "en": "We have a 5-year-old child. I want custody. What criteria does the court use to decide who gets custody?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Tòa ưu tiên lợi ích tốt nhất của con. Các yếu tố: ai có thu nhập ổn định hơn, ai có thời gian chăm sóc hơn, con muốn ở với ai (nếu đủ tuổi nói ý kiến), môi trường sống.",
+        "en": "The court prioritizes the best interests of the child. Factors include: who has more stable income, who has more time for care, who the child wants to live with (if old enough to voice opinion), living environment."
+      },
+      {
+        "speaker": "A",
+        "vi": "Con 5 tuổi thì có được hỏi ý kiến không luật sư?",
+        "en": "Is a 5-year-old asked for their opinion?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Con dưới 7 tuổi thì tòa quyết định dựa trên lợi ích của con mà không cần hỏi ý kiến. Trên 7 tuổi thì tòa sẽ lắng nghe nguyện vọng của con.",
+        "en": "Children under 7 years old, the court decides based on the child's best interests without asking their opinion. Over 7 years old the court will listen to the child's wishes."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tài sản của chúng tôi có nhà chung và tiết kiệm chung. Chia như thế nào?",
+        "en": "Our shared property includes a joint home and joint savings. How is it divided?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Tài sản chung hình thành trong hôn nhân chia đôi theo nguyên tắc, trừ tài sản riêng trước hôn nhân. Nhưng có thể thỏa thuận khác nếu hai bên đồng ý.",
+        "en": "Joint marital property is divided in half by principle, excluding pre-marital personal property. But can agree differently if both parties agree."
+      },
+      {
+        "speaker": "A",
+        "vi": "Nhà chưa trả hết nợ ngân hàng thì xử lý ra sao?",
+        "en": "The house still has outstanding bank debt, how is that handled?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Khoản nợ ngân hàng cũng chia đôi nghĩa vụ trả, hoặc người ở lại nhà nhận toàn bộ khoản nợ và bù tiền cho bên kia. Cần thỏa thuận rõ và tòa xác nhận.",
+        "en": "The bank debt obligation is also split in half, or the person keeping the house takes the full debt and compensates the other party. Needs clear agreement and court confirmation."
+      },
+      {
+        "speaker": "A",
+        "vi": "Thủ tục ly hôn mất bao lâu luật sư?",
+        "en": "How long does the divorce process take?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Thuận tình ly hôn: khoảng 2-4 tháng kể từ nộp đơn. Đơn phương: có thể kéo dài 6-12 tháng hoặc hơn nếu phức tạp và kháng cáo.",
+        "en": "Mutual consent divorce: about 2-4 months from filing. Unilateral: can last 6-12 months or more if complex and appealed."
+      },
+      {
+        "speaker": "A",
+        "vi": "Tôi cần chuẩn bị giấy tờ gì?",
+        "en": "What documents do I need to prepare?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Đơn xin ly hôn, hôn thú, CMND hai vợ chồng, giấy khai sinh con, giấy tờ tài sản chung như sổ đỏ, sổ tiết kiệm. Nộp tại tòa án quận nơi một trong hai bên cư trú.",
+        "en": "Divorce petition, marriage certificate, ID cards of both parties, child's birth certificate, joint property documents like land title, savings book. File at district court where either party resides."
+      },
+      {
+        "speaker": "A",
+        "vi": "Phí tòa án là bao nhiêu?",
+        "en": "How much are court fees?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Án phí ly hôn khoảng 300.000 đồng. Nếu có tranh chấp tài sản thì còn có thêm phí theo giá trị tài sản. Phí luật sư tư vấn riêng.",
+        "en": "Divorce court fees are about 300,000 VND. If there's asset dispute there are additional fees based on asset value. Attorney fees are separate."
+      }
+    ]
+  },
+  {
+    "id": 307,
+    "title": {
+      "vi": "Học tiếng Anh qua âm nhạc",
+      "en": "Learning English Through Music"
+    },
+    "situation": "Minh đang học tiếng Anh và hỏi người bạn Mỹ Jack về cách học qua âm nhạc.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Minh",
+      "en": "Minh"
+    },
+    "speakerBName": {
+      "vi": "Jack",
+      "en": "Jack"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Jack ơi, mình muốn học tiếng Anh theo cách thú vị hơn. Mình nghe nhiều người học qua nhạc. Có hiệu quả không?",
+        "en": "Jack, I want to learn English in a more fun way. I've heard many people learn through music. Is it effective?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Rất hiệu quả Minh! Mình học tiếng Tây Ban Nha qua nhạc và tiến bộ nhanh hơn hẳn. Âm nhạc giúp não nhớ từ vựng lâu hơn nhờ giai điệu và nhịp điệu.",
+        "en": "Very effective Minh! I learned Spanish through music and improved much faster. Music helps the brain retain vocabulary longer thanks to melody and rhythm."
+      },
+      {
+        "speaker": "A",
+        "vi": "Nhưng lời bài hát tiếng Anh phức tạp lắm, nhiều tiếng lóng và cách nói tắt. Nên bắt đầu với thể loại nào?",
+        "en": "But English song lyrics are complex, lots of slang and contractions. What genre should I start with?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Bắt đầu với nhạc pop chủ đề đơn giản: Taylor Swift, Ed Sheeran, Adele. Lời rõ ràng, phát âm chuẩn và chủ đề phổ biến như tình yêu, cuộc sống.",
+        "en": "Start with pop music with simple themes: Taylor Swift, Ed Sheeran, Adele. Clear lyrics, standard pronunciation and common themes like love, life."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình thích Taylor Swift! Học qua nhạc của cô ấy như thế nào?",
+        "en": "I like Taylor Swift! How do I learn through her music?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Quy trình: nghe bài hát 2-3 lần không nhìn lời. Sau đó vừa nghe vừa đọc lời, chú ý từ nào không hiểu. Tra từ điển các từ mới. Rồi hát theo để luyện phát âm.",
+        "en": "The process: listen to the song 2-3 times without reading lyrics. Then listen while reading lyrics, note any words you don't understand. Look up new words in the dictionary. Then sing along to practice pronunciation."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cách hát theo giúp gì cho tiếng Anh vậy Jack?",
+        "en": "How does singing along help with English?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Hát theo giúp luyện phát âm, intonation (ngữ điệu) và connected speech - cách người bản xứ nối liền các từ khi nói thật sự. Không có cách học nào tự nhiên hơn!",
+        "en": "Singing along helps practice pronunciation, intonation and connected speech - the way native speakers link words when actually speaking. No more natural way to learn!"
+      },
+      {
+        "speaker": "A",
+        "vi": "Connected speech là gì vậy Jack?",
+        "en": "What is connected speech?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Là cách người bản xứ nói nhanh và nuốt âm: 'I am going to' nói thành 'I'm gonna', 'want to' thành 'wanna'. Nghe nhạc giúp quen với cách nói tự nhiên này.",
+        "en": "It's the way native speakers speak fast and elide sounds: 'I am going to' becomes 'I'm gonna', 'want to' becomes 'wanna'. Listening to music helps get used to this natural way of speaking."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình nên học bao nhiêu bài một tuần? Có cần học lời thuộc lòng không?",
+        "en": "How many songs should I learn per week? Do I need to memorize lyrics?"
+      },
+      {
+        "speaker": "B",
+        "vi": "1-2 bài mỗi tuần là đủ để học kỹ. Không cần thuộc lòng hoàn toàn nhưng hiểu ý nghĩa và nhớ những cụm từ hay để dùng trong hội thoại.",
+        "en": "1-2 songs per week is enough to study thoroughly. No need to memorize completely but understand the meaning and remember useful phrases to use in conversation."
+      },
+      {
+        "speaker": "A",
+        "vi": "Có ứng dụng nào giúp học qua nhạc không Jack?",
+        "en": "Are there apps that help learn through music?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Có! Lirica - app chuyên học tiếng Anh qua nhạc, có highlight lời khi chạy. Còn LyricsTraining cho bạn điền lời bài hát - rất thú vị như trò chơi!",
+        "en": "Yes! Lirica - an app specialized in learning English through music, highlights lyrics as they play. Also LyricsTraining lets you fill in song lyrics - very fun like a game!"
+      },
+      {
+        "speaker": "A",
+        "vi": "LyricsTraining nghe hay đó! Còn loại nhạc nào khác phù hợp không?",
+        "en": "LyricsTraining sounds good! Any other music types that work well?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Country music Mỹ phát âm rõ ràng và chậm, dễ nghe hơn nhạc hip-hop. Nhạc Broadway (nhạc kịch) có lời hay và phong phú từ vựng. Tránh nhạc metal và rap quá fast cho người mới.",
+        "en": "American country music has clear and slow pronunciation, easier to hear than hip-hop. Broadway music (musicals) has beautiful lyrics and rich vocabulary. Avoid heavy metal and very fast rap for beginners."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình thích thử nhạc Broadway! Bạn có thể gợi ý một vài bài không?",
+        "en": "I'd love to try Broadway music! Could you suggest a few songs?"
+      },
+      {
+        "speaker": "B",
+        "vi": "'Circle of Life' từ The Lion King, 'Let It Go' từ Frozen, 'Defying Gravity' từ Wicked. Lời hay, cảm xúc và phát âm rõ ràng từ các ca sĩ chuyên nghiệp.",
+        "en": "'Circle of Life' from The Lion King, 'Let It Go' from Frozen, 'Defying Gravity' from Wicked. Beautiful lyrics, emotional and clear pronunciation from professional singers."
+      },
+      {
+        "speaker": "A",
+        "vi": "Nghe quen quen! Còn nghe podcast tiếng Anh có khác gì không Jack?",
+        "en": "They sound familiar! Is listening to English podcasts different?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Khác chứ! Podcast tốt cho formal English và thời sự, còn nhạc tốt cho informal English và cảm xúc tự nhiên. Lý tưởng là kết hợp cả hai.",
+        "en": "Different! Podcasts are good for formal English and current events, while music is good for informal English and natural emotions. Ideal is to combine both."
       }
     ]
   },
   {
     "id": 308,
-    "title": "Đi taxi",
-    "situation": "Hội thoại thực hành kỹ năng giao tiếp: Đi taxi.",
+    "title": {
+      "vi": "Phỏng vấn xin học bổng du học",
+      "en": "Scholarship Interview for Studying Abroad"
+    },
+    "situation": "Sinh viên Thu Hà chuẩn bị phỏng vấn học bổng Chevening của Anh và nhờ giáo sư Tuấn hướng dẫn.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Thu Hà",
+      "en": "Thu Ha"
+    },
+    "speakerBName": {
+      "vi": "Tuấn",
+      "en": "Tuan"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Thầy Tuấn ơi, em có buổi phỏng vấn học bổng Chevening tuần sau. Em lo lắng quá, thầy có thể hướng dẫn em không?",
+        "en": "Professor Tuan, I have a Chevening scholarship interview next week. I'm very nervous, could you guide me?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Chúc mừng em đã vào vòng phỏng vấn! Chevening rất uy tín, cạnh tranh cao. Thầy sẽ giúp em. Đầu tiên, em đã tìm hiểu kỹ về Chevening chưa?",
+        "en": "Congratulations on making it to the interview stage! Chevening is very prestigious, highly competitive. I'll help you. First, have you researched Chevening thoroughly?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Dạ có thầy. Chevening là học bổng toàn phần của chính phủ Anh, hỗ trợ thạc sĩ 1 năm tại các trường đại học Anh.",
+        "en": "Yes professor. Chevening is the full UK government scholarship, supporting 1-year masters at UK universities."
+      },
+      {
+        "speaker": "B",
+        "vi": "Tốt! Chevening tìm kiếm lãnh đạo tiềm năng có tác động đến xã hội. Câu hỏi phỏng vấn thường xoay quanh 4 tiêu chí chính. Em biết tiêu chí đó là gì không?",
+        "en": "Good! Chevening looks for potential leaders with impact on society. Interview questions usually revolve around 4 main criteria. Do you know what they are?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Dạ em biết một phần: lãnh đạo, mạng lưới quan hệ, kế hoạch nghề nghiệp rõ ràng và... còn gì nữa thầy?",
+        "en": "I know part of it: leadership, networking, clear career plan and... what else?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Tiêu chí thứ 4 là khả năng học tập và nền tảng học thuật. Em hãy chuẩn bị ví dụ cụ thể cho mỗi tiêu chí theo phương pháp STAR: Situation, Task, Action, Result.",
+        "en": "The 4th criterion is learning ability and academic foundation. Prepare specific examples for each criterion using the STAR method: Situation, Task, Action, Result."
+      },
+      {
+        "speaker": "A",
+        "vi": "Phương pháp STAR là gì thầy?",
+        "en": "What is the STAR method?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Kể về Tình huống (Situation), Nhiệm vụ của em (Task), Hành động em đã làm (Action), và Kết quả đạt được (Result). Câu trả lời cụ thể, có số liệu, sẽ thuyết phục hơn lý thuyết chung chung.",
+        "en": "Describe the Situation, your Task, the Action you took, and the Result achieved. Specific answers with data will be more convincing than general theory."
+      },
+      {
+        "speaker": "A",
+        "vi": "Thầy có thể cho em thực hành với câu hỏi mẫu không?",
+        "en": "Could you let me practice with a sample question?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Được! Câu hỏi đầu tiên: 'Hãy kể về một lần bạn thể hiện phẩm chất lãnh đạo'. Em trả lời đi.",
+        "en": "OK! First question: 'Tell us about a time you demonstrated leadership qualities.' Go ahead and answer."
+      },
+      {
+        "speaker": "A",
+        "vi": "Dạ... Em từng dẫn dắt nhóm 8 người trong dự án nghiên cứu về nước sạch ở nông thôn. Nhóm em lần đầu làm cùng nhau nên có mâu thuẫn. Em tổ chức họp để phân công rõ nhiệm vụ và giải quyết xung đột. Kết quả dự án được chọn trình bày tại hội thảo quốc tế.",
+        "en": "I once led a group of 8 people in a research project on clean water in rural areas. Our group was working together for the first time so there was conflict. I organized meetings to clearly assign tasks and resolve conflicts. The project was selected for presentation at an international conference."
+      },
+      {
+        "speaker": "B",
+        "vi": "Tốt! Nhưng em cần thêm chi tiết: hội thảo đó ở đâu? Bao nhiêu đội thi? Em học được gì từ trải nghiệm đó? Câu trả lời đầy đủ hơn sẽ ấn tượng hơn.",
+        "en": "Good! But you need more detail: where was that conference? How many teams competed? What did you learn from the experience? A more complete answer will be more impressive."
+      },
+      {
+        "speaker": "A",
+        "vi": "À đúng rồi thầy. Hội thảo ASEAN về môi trường ở Malaysia, có 30 nhóm từ 10 nước. Em học được rằng lãnh đạo là lắng nghe và điều phối hơn là chỉ huy.",
+        "en": "Right, professor. ASEAN Environment Conference in Malaysia, with 30 teams from 10 countries. I learned that leadership is about listening and coordinating more than commanding."
+      },
+      {
+        "speaker": "B",
+        "vi": "Xuất sắc! Điểm cuối đó - 'lắng nghe và điều phối' - rất mạnh. Giờ câu hỏi khó hơn: 'Tại sao bạn xứng đáng với học bổng này hơn 1000 ứng viên khác?'",
+        "en": "Excellent! That last point - 'listening and coordinating' - is very strong. Now a harder question: 'Why do you deserve this scholarship more than 1000 other applicants?'"
+      },
+      {
+        "speaker": "A",
+        "vi": "Ôi câu đó khó quá thầy! Em không muốn nghe tự phụ.",
+        "en": "Oh that question is so hard professor! I don't want to sound arrogant."
+      },
+      {
+        "speaker": "B",
+        "vi": "Đây là lúc phải tự tin không kiêu ngạo. Nói về điểm khác biệt của em: kết hợp giữa nghiên cứu học thuật và thực tế cộng đồng, mục tiêu cụ thể sau khi về Việt Nam.",
+        "en": "This is when you need to be confident without being arrogant. Talk about what makes you unique: combining academic research with community practice, specific goals after returning to Vietnam."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em sẽ nói về dự án nước sạch và kế hoạch ứng dụng kiến thức từ Anh để mở rộng dự án ra 10 tỉnh miền núi sau khi về nước.",
+        "en": "I'll talk about the clean water project and the plan to apply knowledge from the UK to expand the project to 10 mountainous provinces after returning."
+      },
+      {
+        "speaker": "B",
+        "vi": "Tốt lắm! Tác động xã hội cụ thể và đo lường được - Chevening rất đánh giá cao điều này. Còn câu hỏi nào em lo lắng không?",
+        "en": "Very good! Specific and measurable social impact - Chevening values this highly. Any other questions you're worried about?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Thầy ơi, nếu họ hỏi điểm yếu của em thì trả lời thế nào?",
+        "en": "Professor, if they ask about my weaknesses, how should I answer?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Chọn điểm yếu thật nhưng không致命, và kết thúc bằng cách em đang cải thiện. Ví dụ: 'Tôi hay cầu toàn, mất nhiều thời gian hơn dự kiến, nhưng đang học cách ưu tiên và delegate.'",
+        "en": "Choose a real weakness that's not fatal, and end with how you're improving. Example: 'I tend to be a perfectionist, taking more time than expected, but I'm learning to prioritize and delegate.'"
+      }
+    ]
+  },
+  {
+    "id": 309,
+    "title": {
+      "vi": "Mua vé máy bay và hành lý ký gửi",
+      "en": "Buying Airline Tickets and Checking Luggage"
+    },
+    "situation": "Anh Tuấn gọi điện cho hãng hàng không để hỏi về vé và chính sách hành lý cho chuyến đi Nhật.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Tuấn",
+      "en": "Tuan"
+    },
+    "speakerBName": {
+      "vi": "Nhung",
+      "en": "Nhung"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Chào em, anh muốn hỏi về vé máy bay Hà Nội - Tokyo và chính sách hành lý. Bên mình có đường bay đó không?",
+        "en": "Hello, I want to ask about Hanoi - Tokyo flights and luggage policy. Do you fly that route?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Chào anh! Dạ có ạ, chúng tôi có đường bay Hà Nội - Narita bay thẳng 5 tiếng 30 phút. Anh muốn đi ngày nào ạ?",
+        "en": "Hello! Yes, we have a direct Hanoi - Narita route, 5 hours 30 minutes. What date would you like to travel?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Anh muốn đi ngày 15 tháng 3, về ngày 25 tháng 3. Giá vé hiện tại là bao nhiêu?",
+        "en": "I want to go on March 15, return on March 25. What's the current ticket price?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Ngày 15/3 có các mức giá: Economy Light 5.2 triệu không bao gồm hành lý ký gửi, Economy Classic 6.8 triệu bao gồm 23kg ký gửi, Business 18 triệu bao gồm 32kg.",
+        "en": "March 15 has these price tiers: Economy Light 5.2 million without checked luggage, Economy Classic 6.8 million including 23kg checked, Business 18 million including 32kg."
+      },
+      {
+        "speaker": "A",
+        "vi": "Anh cần mang nhiều đồ, khoảng 30kg. Vậy mua Economy Classic và mua thêm hành lý phụ có rẻ hơn Business không?",
+        "en": "I need to bring a lot of stuff, about 30kg. Would buying Economy Classic plus extra luggage be cheaper than Business?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Economy Classic 6.8 triệu + thêm 7kg hành lý phụ khoảng 1.2 triệu = tổng 8 triệu. Rẻ hơn Business nhiều ạ. Anh chỉ mất 10 triệu thay vì 18 triệu.",
+        "en": "Economy Classic 6.8 million + extra 7kg luggage about 1.2 million = total 8 million. Much cheaper than Business. You'd save 10 million instead of 18 million."
+      },
+      {
+        "speaker": "A",
+        "vi": "Anh chọn Economy Classic và thêm 7kg. Còn hành lý xách tay được bao nhiêu?",
+        "en": "I'll choose Economy Classic and add 7kg. How much carry-on luggage is allowed?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Economy được 10kg hành lý xách tay, tối đa 1 kiện + 1 túi cá nhân (laptop bag hoặc handbag). Kích thước tối đa 56x45x25cm.",
+        "en": "Economy gets 10kg carry-on, maximum 1 piece + 1 personal item (laptop bag or handbag). Maximum dimensions 56x45x25cm."
+      },
+      {
+        "speaker": "A",
+        "vi": "Anh có thể mang thuốc lỏng lên máy bay không?",
+        "en": "Can I bring liquid medicine on the plane?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Thuốc theo đơn bác sĩ được phép mang theo xách tay, cần có đơn thuốc. Chất lỏng thông thường giới hạn 100ml/chai, đựng trong túi nhựa zip-lock trong suốt.",
+        "en": "Prescription medicine is allowed in carry-on, you need the prescription. Regular liquids are limited to 100ml/bottle, stored in a clear zip-lock bag."
+      },
+      {
+        "speaker": "A",
+        "vi": "OK cảm ơn. Quy trình check-in và đăng ký hành lý như thế nào?",
+        "en": "OK thanks. What's the check-in and luggage registration process?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Anh có thể check-in online từ 48 giờ trước khởi hành. Tại sân bay cần có mặt trước 3 tiếng để ký gửi hành lý và làm thủ tục.",
+        "en": "You can check-in online from 48 hours before departure. At the airport need to arrive 3 hours early to check luggage and complete formalities."
+      },
+      {
+        "speaker": "A",
+        "vi": "Nếu hành lý vượt cân tại sân bay thì phí là bao nhiêu?",
+        "en": "If luggage exceeds the weight limit at the airport, what's the fee?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Phí vượt cân tại sân bay cao hơn mua trước: khoảng 250.000 đồng/kg. Mua thêm kiện hành lý online trước khi đi rẻ hơn nhiều, khoảng 170.000 đồng/kg.",
+        "en": "Excess luggage fee at airport is higher than purchasing in advance: about 250,000 VND/kg. Purchasing extra luggage online before travel is much cheaper, about 170,000 VND/kg."
+      },
+      {
+        "speaker": "A",
+        "vi": "Vậy anh nên mua thêm hành lý online ngay khi đặt vé. Đặt vé khứ hồi, hành lý thêm tính cho cả 2 chiều không?",
+        "en": "So I should buy extra luggage online when booking. For a round trip ticket, is extra luggage charged for both ways?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Anh cần chọn riêng cho từng chiều. Ví dụ chiều đi thêm 7kg, chiều về cũng cần đặt riêng 7kg nữa nếu mua thêm đồ ở Nhật về.",
+        "en": "You need to select separately for each direction. For example outbound add 7kg, return also need to book an additional 7kg separately if buying things in Japan to bring back."
+      },
+      {
+        "speaker": "A",
+        "vi": "Anh định mua nhiều quà ở Nhật nên chiều về cũng thêm 7kg luôn.",
+        "en": "I plan to buy many gifts in Japan so I'll add 7kg for the return too."
+      },
+      {
+        "speaker": "B",
+        "vi": "Vậy anh thêm 7kg cho cả 2 chiều, tổng phí hành lý thêm khoảng 2.4 triệu. Bao gồm cùng với giá vé sẽ là tổng 9.2 triệu cả khứ hồi ạ.",
+        "en": "So you add 7kg for both directions, total extra luggage fee about 2.4 million. Including the ticket price the total will be 9.2 million round trip."
+      },
+      {
+        "speaker": "A",
+        "vi": "Có phụ phí nhiên liệu và thuế không em?",
+        "en": "Are there fuel surcharges and taxes?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Dạ giá 9.2 triệu anh vừa hỏi đã bao gồm thuế và phụ phí nhiên liệu rồi ạ. Không có phí ẩn nào khác.",
+        "en": "The 9.2 million figure already includes taxes and fuel surcharges. No other hidden fees."
+      }
+    ]
+  },
+  {
+    "id": 310,
+    "title": {
+      "vi": "Thảo luận về sự khác biệt văn hóa trong công sở",
+      "en": "Discussing Cultural Differences in the Workplace"
+    },
+    "situation": "Sarah người Anh mới đến làm việc tại công ty Việt Nam và hỏi đồng nghiệp Hùng về văn hóa công sở.",
     "speakerAGender": "female",
     "speakerBGender": "male",
     "speakerAName": {
@@ -36710,343 +36983,110 @@
       "en": "Sarah"
     },
     "speakerBName": {
-      "vi": "Tom",
-      "en": "Tom"
-    },
-    "turns": [
-      {
-        "speaker": "A",
-        "en": "Excuse me, I'm looking for information about the tour.",
-        "vi": "Xin lỗi, tôi đang tìm thông tin về tour."
-      },
-      {
-        "speaker": "B",
-        "en": "Welcome! I'll be happy to help.",
-        "vi": "Chào mừng! Tôi rất vui được giúp."
-      },
-      {
-        "speaker": "A",
-        "en": "How many days is the trip?",
-        "vi": "Chuyến đi bao nhiêu ngày?"
-      },
-      {
-        "speaker": "B",
-        "en": "This tour is 4 days and 3 nights.",
-        "vi": "Tour này là 4 ngày 3 đêm."
-      },
-      {
-        "speaker": "A",
-        "en": "What's included in the price?",
-        "vi": "Giá bao gồm những gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "Hotel, meals, and transportation are included.",
-        "vi": "Khách sạn, bữa ăn và đi lại được bao gồm."
-      },
-      {
-        "speaker": "A",
-        "en": "Are there any optional activities?",
-        "vi": "Có hoạt động tùy chọn nào không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Yes, there's snorkeling and boat trips.",
-        "vi": "Có, có lặn ngắm san hô và đi thuyền."
-      },
-      {
-        "speaker": "A",
-        "en": "How much is the deposit?",
-        "vi": "Tiền cọc là bao nhiêu?"
-      },
-      {
-        "speaker": "B",
-        "en": "30% of the total price.",
-        "vi": "30% tổng giá trị."
-      },
-      {
-        "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
-      },
-      {
-        "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
-      },
-      {
-        "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
-      },
-      {
-        "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
-      },
-      {
-        "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
-      },
-      {
-        "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
-      },
-      {
-        "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
-      },
-      {
-        "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
-      }
-    ]
-  },
-  {
-    "id": 309,
-    "title": "Hỏi giờ xe buýt",
-    "situation": "Hai người thực hành hội thoại về chủ đề: Hỏi giờ xe buýt.",
-    "speakerAGender": "male",
-    "speakerBGender": "female",
-    "speakerAName": {
-      "vi": "Mai",
-      "en": "Mai"
-    },
-    "speakerBName": {
       "vi": "Hùng",
       "en": "Hung"
     },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Hello! How can I help you today?",
-        "vi": "Xin chào! Tôi có thể giúp gì hôm nay?"
+        "vi": "Hùng ơi, mình làm ở đây được 2 tuần rồi nhưng vẫn còn bỡ ngỡ về văn hóa công sở Việt Nam. Bạn có thể giúp mình không?",
+        "en": "Hung, I've been working here for 2 weeks but still feel unfamiliar with Vietnamese workplace culture. Could you help me?"
       },
       {
         "speaker": "B",
-        "en": "Hi! I need some information please.",
-        "vi": "Chào! Tôi cần một số thông tin."
+        "vi": "Tất nhiên rồi Sarah! Mình rất vui được giúp. Bạn đang thấy điều gì khác biệt nhất so với công sở Anh?",
+        "en": "Of course Sarah! I'm happy to help. What do you find most different compared to British workplaces?"
       },
       {
         "speaker": "A",
-        "en": "What would you like to know?",
-        "vi": "Bạn muốn biết gì?"
+        "vi": "Việc gọi tên theo tuổi tác - anh, chị, em, anh ơi, chị ơi. Ở Anh mọi người gọi tên nhau không phân biệt tuổi.",
+        "en": "The age-based naming - anh, chi, em, anh oi, chi oi. In Britain everyone calls each other by first name regardless of age."
       },
       {
         "speaker": "B",
-        "en": "I'm asking about Hỏi giờ xe buýt.",
-        "vi": "Tôi hỏi về Hỏi giờ xe buýt."
+        "vi": "Đúng rồi! Đây là hệ thống xưng hô phân cấp theo tuổi và vai vế. Mình nhiều tuổi hơn bạn 3 tuổi nên bạn gọi mình là 'anh Hùng', mình gọi bạn là 'Sarah' hoặc 'em Sarah'.",
+        "en": "Exactly! This is the age and role hierarchy address system. I'm 3 years older than you so you call me 'anh Hung', I call you 'Sarah' or 'em Sarah'."
       },
       {
         "speaker": "A",
-        "en": "Great topic. What specifically interests you?",
-        "vi": "Chủ đề hay. Bạn quan tâm cụ thể điều gì?"
+        "vi": "Với sếp thì gọi như thế nào Hùng?",
+        "en": "What do you call the boss Hung?"
       },
       {
         "speaker": "B",
-        "en": "I want to learn the basics first.",
-        "vi": "Tôi muốn học những điều cơ bản trước."
+        "vi": "Gọi sếp là 'anh' hoặc 'chị' tùy giới tính, kèm theo tên. Ví dụ 'anh Nam' hay 'chị Lan'. Không gọi thẳng tên không thôi vì nghe bất kính.",
+        "en": "Call the boss 'anh' or 'chi' depending on gender, plus their name. For example 'anh Nam' or 'chi Lan'. Don't just call them by name alone as it sounds disrespectful."
       },
       {
         "speaker": "A",
-        "en": "That's a good approach. Let me explain.",
-        "vi": "Đó là cách tiếp cận tốt. Để tôi giải thích."
+        "vi": "Mình cũng thấy mọi người hay đồng ý với sếp dù có thể không đồng ý thực sự. Ở Anh mọi người tranh luận thẳng thắn hơn.",
+        "en": "I also notice people often agree with the boss even if they don't really agree. In Britain people debate more openly."
       },
       {
         "speaker": "B",
-        "en": "Please take your time. I'm listening.",
-        "vi": "Xin cứ từ từ. Tôi đang lắng nghe."
+        "vi": "Văn hóa 'thể diện' quan trọng ở Việt Nam. Người ta không muốn làm sếp mất mặt trước đông người. Phản đối thường được bày tỏ riêng tư sau cuộc họp.",
+        "en": "The 'face' culture is important in Vietnam. People don't want to make the boss lose face in public. Disagreement is usually expressed privately after the meeting."
       },
       {
         "speaker": "A",
-        "en": "The most important thing to know is...",
-        "vi": "Điều quan trọng nhất cần biết là..."
+        "vi": "Ah hiểu rồi! Còn về giờ làm việc, mình thấy mọi người hay ở lại muộn hơn giờ tan làm. Có bắt buộc không?",
+        "en": "Ah I see! About working hours, I notice people often stay later than official end time. Is it required?"
       },
       {
         "speaker": "B",
-        "en": "That's really useful information.",
-        "vi": "Đó là thông tin thực sự hữu ích."
+        "vi": "Không bắt buộc chính thức, nhưng văn hóa là ở lại thêm để thể hiện sự tận tụy. Về đúng giờ đôi khi bị nhìn nhận là không nhiệt tình, dù điều đó đang dần thay đổi.",
+        "en": "Not officially required, but the culture is to stay late to show dedication. Leaving on time is sometimes perceived as lacking enthusiasm, although this is gradually changing."
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Ở Anh việc về đúng giờ là bình thường hoàn toàn. Còn về ăn trưa - mọi người ở đây hay ăn cùng nhau không?",
+        "en": "In Britain leaving on time is completely normal. What about lunch - do people here often eat together?"
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Rất hay! Văn hóa ăn trưa cùng đồng nghiệp là cách gắn kết quan trọng ở Việt Nam. Thường cả nhóm cùng đi, chia nhau đặt món và ăn chung. Bạn có thích ăn trưa với nhóm không?",
+        "en": "Very much so! Eating lunch together with colleagues is an important bonding activity in Vietnam. Usually the whole group goes together, orders dishes to share. Do you like eating lunch with the group?"
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Mình thích! Nhưng lần đầu mọi người hỏi 'ăn gì không?', mình không hiểu họ mời mình đi ăn cùng hay chỉ hỏi thông thường.",
+        "en": "I like it! But the first time people asked 'are you eating?', I didn't understand if they were inviting me to eat together or just asking casually."
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "Haha đó là cách mời rất Việt Nam! 'Ăn gì không?' hay 'Đi ăn cơm không?' là lời mời ăn cùng. Cứ trả lời 'ừ đi cùng' là được!",
+        "en": "Haha that's a very Vietnamese way of inviting! 'Are you eating?' or 'Want to go eat rice?' is an invitation to eat together. Just answer 'yes let's go together' and you're set!"
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "Cảm ơn bạn! Còn về meetings - ở đây mọi người đến đúng giờ không hay hay đến muộn?",
+        "en": "Thank you! About meetings - do people here arrive on time or often arrive late?"
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Thành thật mà nói, 'giờ cao su' là vấn đề phổ biến. Đến trễ 10-15 phút thường gặp. Nhưng ở công ty này đang cố gắng xây dựng văn hóa đúng giờ hơn.",
+        "en": "Honestly, 'rubber time' is a common issue. Being 10-15 minutes late is common. But our company is trying to build a more punctual culture."
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Mình thấy khá khó chịu khi meetings trễ. Có cách nào lịch sự nhắc mọi người không?",
+        "en": "I find it quite uncomfortable when meetings are late. Is there a polite way to remind people?"
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
+        "vi": "Bạn có thể nhắn tin nhắc nhóm 5 phút trước: 'Meeting mình sẽ bắt đầu lúc 2h nhé mọi người'. Đừng nói thẳng 'sao mọi người trễ thế' vì nghe hơi gai.",
+        "en": "You can text the group 5 minutes before: 'Reminder our meeting starts at 2pm everyone'. Don't say directly 'why is everyone late' as that sounds prickly."
       },
       {
         "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
+        "vi": "Cách khéo léo đó! Mình học được nhiều hôm nay. Làm việc ở đây thú vị vì có thể học được nhiều thứ về văn hóa Việt Nam.",
+        "en": "That's a tactful way! I've learned a lot today. Working here is interesting because I can learn so much about Vietnamese culture."
       },
       {
         "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
-      }
-    ]
-  },
-  {
-    "id": 310,
-    "title": "Đặt vé xe khách",
-    "situation": "Tình huống thực tế liên quan đến: Đặt vé xe khách.",
-    "speakerAGender": "female",
-    "speakerBGender": "female",
-    "speakerAName": {
-      "vi": "Phương",
-      "en": "Phuong"
-    },
-    "speakerBName": {
-      "vi": "Đức",
-      "en": "Duc"
-    },
-    "turns": [
-      {
-        "speaker": "A",
-        "en": "Excuse me, I'm looking for Đặt vé xe khách.",
-        "vi": "Xin lỗi, tôi đang tìm về Đặt vé xe khách."
-      },
-      {
-        "speaker": "B",
-        "en": "Sure, I can help you with that.",
-        "vi": "Được, tôi có thể giúp bạn điều đó."
-      },
-      {
-        "speaker": "A",
-        "en": "What options do you have?",
-        "vi": "Bạn có những lựa chọn nào?"
-      },
-      {
-        "speaker": "B",
-        "en": "We have several options. Let me show you.",
-        "vi": "Chúng tôi có vài lựa chọn. Để tôi chỉ cho bạn."
-      },
-      {
-        "speaker": "A",
-        "en": "What's the price range?",
-        "vi": "Mức giá là bao nhiêu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It ranges from 100,000 to 500,000 VND.",
-        "vi": "Dao động từ 100.000 đến 500.000 đồng."
-      },
-      {
-        "speaker": "A",
-        "en": "Can I try it first?",
-        "vi": "Tôi có thể thử trước không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course! Take your time.",
-        "vi": "Tất nhiên! Cứ thử thoải mái."
-      },
-      {
-        "speaker": "A",
-        "en": "Do you have a discount?",
-        "vi": "Bạn có giảm giá không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Yes, we have 10% off today.",
-        "vi": "Có, hôm nay giảm 10%."
-      },
-      {
-        "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
-      },
-      {
-        "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
-      },
-      {
-        "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
-      },
-      {
-        "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
-      },
-      {
-        "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
-      },
-      {
-        "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
-      },
-      {
-        "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
-      },
-      {
-        "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "Và chúng mình cũng học được từ bạn về văn hóa làm việc phương Tây Sarah! Sự đa dạng văn hóa làm công ty mình phong phú hơn đó.",
+        "en": "And we also learn from you about Western work culture Sarah! Cultural diversity makes our company richer."
       }
     ]
   },
