@@ -6,6 +6,7 @@ import SpeakButton from '../components/SpeakButton'
 import KaraokeText from '../components/KaraokeText'
 import PronunciationCheck from '../components/PronunciationCheck'
 import VocabMilestone from '../components/VocabMilestone'
+import { EXTRA_EXAMPLES } from '../data/extra-examples'
 import type { DictEntry } from '../types'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
@@ -138,6 +139,16 @@ function WordCard({ card, isA }: { card: DictEntry; isA: boolean }) {
             <span className="text-xl text-zinc-100 font-medium mb-2">{card.vi}</span>
             {card.ex_en && <span className="text-sm text-zinc-400 italic mt-1">{card.ex_en}</span>}
             {card.ex_vi && <span className="text-xs text-zinc-500 mt-0.5">{card.ex_vi}</span>}
+            {EXTRA_EXAMPLES[card.word.toLowerCase()] && (
+              <div className="mt-2 space-y-1 text-left w-full border-t border-zinc-700/50 pt-2">
+                {EXTRA_EXAMPLES[card.word.toLowerCase()].map((ex, i) => (
+                  <div key={i}>
+                    <p className="text-xs text-emerald-400/80 italic">{ex.en}</p>
+                    <p className="text-xs text-zinc-500">{ex.vi}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </>
         )}
       </button>
