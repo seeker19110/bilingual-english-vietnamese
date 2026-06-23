@@ -31,9 +31,11 @@ export function getCorsHeaders(req: Request): Record<string, string> {
 export const SECURITY_HEADERS: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
-  'X-XSS-Protection': '1; mode=block',
+  // X-XSS-Protection đã deprecated — trình duyệt hiện đại không cần, bỏ đi tránh warning
   'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
+  // no-store: không cache response API (có chứa khoá giải mã và dữ liệu nhạy cảm)
+  'Cache-Control': 'no-store',
 }
 
 // ── Rate Limiting ─────────────────────────────────────────────────────────────
