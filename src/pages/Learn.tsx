@@ -1,16 +1,21 @@
 import { useMemo, useState, useEffect } from 'react'
-import { Check, X, RotateCcw, Eye, Target, Shuffle, Trophy, Sparkles, ClipboardList, ChevronRight, Home } from 'lucide-react'
+import {
+  Check, X, RotateCcw, Eye, Target, Trophy, Sparkles,
+  ClipboardList, ChevronRight, Home, Star, Brain,
+} from 'lucide-react'
 import Layout from '../components/Layout'
 import PronounceButton from '../components/PronounceButton'
 import SpeakButton from '../components/SpeakButton'
 import KaraokeText from '../components/KaraokeText'
 import PronunciationCheck from '../components/PronunciationCheck'
 import VocabMilestone from '../components/VocabMilestone'
+import { EXTRA_EXAMPLES } from '../data/extra-examples'
 import type { DictEntry } from '../types'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { useNavigate } from 'react-router-dom'
-import { getLearnedWords, markLearned } from '../lib/vocab'
+import { getLearnedWords, markLearned, isDifficult, toggleDifficult, getDifficultWords } from '../lib/vocab'
+import { addToSRS, reviewWord, getDueWords, getSRSStats, type Rating } from '../lib/srs'
 import {
   DAILY_GOAL,
   getTodayBatch,
@@ -18,39 +23,35 @@ import {
   getDailyLearned,
   bumpDailyLearned,
   findCircleOfWord,
+  getCircleProgress,
   getLearningPath,
   wordKey,
   loadCurriculum,
   isCurriculumReady,
 } from '../lib/curriculum'
 
-type Tab = 'today' | 'random' | 'quiz'
+type Tab = 'today' | 'srs' | 'hard' | 'quiz'
 
-// ── Quiz: kiểm tra từ đã học ──────────────────────────────────────────────────
+// ── Quiz ─────────────────────────────────────────────────────────────────────
 const QUIZ_SIZE = 10
 const CHOICES   = 4
 
-interface QuizQuestion {
-  word:    string
-  correct: string
-  options: string[]
-}
+interface QuizQuestion { word: string; correct: string; options: string[] }
 
 function buildQuiz(userId: string): QuizQuestion[] {
   const learned  = getLearnedWords(userId)
   const allWords = getLearningPath()
   const shuffled = [...allWords].sort(() => Math.random() - 0.5)
   const pool     = shuffled.filter(w => learned.has(w.word) || learned.has(w.word.toLowerCase()))
-  const candidates = pool.length >= QUIZ_SIZE ? pool : [...pool, ...shuffled.slice(0, QUIZ_SIZE - pool.length)]
-  const questions  = candidates.slice(0, QUIZ_SIZE)
-  const allMeanings = allWords.map(w => w.vi)
-  return questions.map(q => {
-    const wrongs = allMeanings.filter(m => m !== q.vi).sort(() => Math.random() - 0.5).slice(0, CHOICES - 1)
+  const cands    = pool.length >= QUIZ_SIZE ? pool : [...pool, ...shuffled.slice(0, QUIZ_SIZE - pool.length)]
+  const qs       = cands.slice(0, QUIZ_SIZE)
+  const meanings = allWords.map(w => w.vi)
+  return qs.map(q => {
+    const wrongs = meanings.filter(m => m !== q.vi).sort(() => Math.random() - 0.5).slice(0, CHOICES - 1)
     return { word: q.word, correct: q.vi, options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5) }
   })
 }
 
-// Trộn ngẫu nhiên (Fisher–Yates)
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
   for (let i = a.length - 1; i > 0; i--) {
@@ -60,22 +61,46 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
+// ── Root ─────────────────────────────────────────────────────────────────────
 export default function Learn() {
   const { user } = useAuth()
   const isA = getDirection() === 'A'
   const [tab, setTab] = useState<Tab>('today')
   const [refresh, setRefresh] = useState(0)
-  // Nạp dữ liệu từ điển (dynamic import) trước khi cho các tab dùng curriculum
   const [ready, setReady] = useState(isCurriculumReady())
   useEffect(() => { loadCurriculum().then(() => setReady(true)) }, [])
 
   if (!user) return null
   const uid = user.id
 
-  const TABS: { key: Tab; icon: typeof Target; label: string; active: string; inactive: string }[] = [
-    { key: 'today',  icon: Target,        label: isA ? 'Hôm nay'      : 'Today',   active: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40', inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200' },
-    { key: 'random', icon: Shuffle,       label: isA ? 'Ôn ngẫu nhiên': 'Review',  active: 'bg-sky-500/20 text-sky-300 border border-sky-500/40',             inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200' },
-    { key: 'quiz',   icon: ClipboardList, label: isA ? 'Kiểm tra'     : 'Quiz',    active: 'bg-violet-500/20 text-violet-300 border border-violet-500/40',    inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200' },
+  const bump = () => setRefresh(k => k + 1)
+
+  // Badge counts cho tab buttons
+  const srsDue   = useMemo(() => ready ? getSRSStats(uid).due   : 0, [uid, ready, refresh])
+  const hardCount = useMemo(() => getDifficultWords(uid).size,       [uid, refresh])
+
+  type TabDef = { key: Tab; icon: typeof Target; labelA: string; labelB: string; badge?: number; active: string; inactive: string }
+  const TABS: TabDef[] = [
+    {
+      key: 'today', icon: Target, labelA: 'Hôm nay', labelB: 'Today',
+      active: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
+    {
+      key: 'srs', icon: Brain, labelA: 'Ôn SRS', labelB: 'SRS', badge: srsDue,
+      active: 'bg-sky-500/20 text-sky-300 border border-sky-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
+    {
+      key: 'hard', icon: Star, labelA: 'Từ khó', labelB: 'Hard', badge: hardCount,
+      active: 'bg-amber-500/20 text-amber-300 border border-amber-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
+    {
+      key: 'quiz', icon: ClipboardList, labelA: 'Kiểm tra', labelB: 'Quiz',
+      active: 'bg-violet-500/20 text-violet-300 border border-violet-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
   ]
 
   return (
@@ -89,11 +114,18 @@ export default function Learn() {
       <main className="max-w-3xl mx-auto px-4 py-6">
         <VocabMilestone userId={uid} refreshKey={refresh} />
 
-        <div className="flex gap-2 mb-4">
-          {TABS.map(({ key, icon: Icon, label, active, inactive }) => (
+        {/* Tab bar */}
+        <div className="grid grid-cols-4 gap-1.5 mb-4">
+          {TABS.map(({ key, icon: Icon, labelA, labelB, badge, active, inactive }) => (
             <button key={key} onClick={() => setTab(key)}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition ${tab === key ? active : inactive}`}>
-              <Icon className="w-4 h-4" /> {label}
+              className={`relative flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl text-xs font-medium transition ${tab === key ? active : inactive}`}>
+              <Icon className="w-4 h-4" />
+              <span>{isA ? labelA : labelB}</span>
+              {badge != null && badge > 0 && (
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                  {badge > 99 ? '99+' : badge}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -104,9 +136,10 @@ export default function Learn() {
           </div>
         ) : (
           <>
-            {tab === 'today'  && <TodayLesson  uid={uid} isA={isA} onProgress={() => setRefresh(k => k + 1)} />}
-            {tab === 'random' && <RandomReview uid={uid} isA={isA} />}
-            {tab === 'quiz'   && <QuizTab      uid={uid} isA={isA} />}
+            {tab === 'today' && <TodayLesson uid={uid} isA={isA} onProgress={bump} />}
+            {tab === 'srs'   && <SRSReview   uid={uid} isA={isA} onUpdate={bump}  />}
+            {tab === 'hard'  && <HardWords   uid={uid} isA={isA} onUpdate={bump}  />}
+            {tab === 'quiz'  && <QuizTab     uid={uid} isA={isA}                  />}
           </>
         )}
       </main>
@@ -114,40 +147,68 @@ export default function Learn() {
   )
 }
 
-// ── Thẻ học chung (hiện từ → lật xem nghĩa) ──────────────────────────────────
-function WordCard({ card, isA }: { card: DictEntry; isA: boolean }) {
-  const [flipped, setFlipped] = useState(false)
-  // Lưu ý: việc reset mặt thẻ khi đổi từ là nhờ component cha gắn key={card.word}
-  // cho chính <WordCard/> (xem dưới), khiến cả thẻ remount mỗi khi đổi từ.
+// ── Thẻ từ chung ─────────────────────────────────────────────────────────────
+function WordCard({ card, isA, uid, onUpdate }: {
+  card: DictEntry; isA: boolean; uid: string; onUpdate?: () => void
+}) {
+  const [flipped,   setFlipped]   = useState(false)
+  const [difficult, setDifficult] = useState(() => isDifficult(uid, card.word))
+
+  function handleStar(e: React.MouseEvent) {
+    e.stopPropagation()
+    const next = toggleDifficult(uid, card.word)
+    setDifficult(next)
+    onUpdate?.()
+  }
+
   return (
     <div>
-      <button
-        onClick={() => setFlipped(f => !f)}
-        className="glass w-full rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition mb-4"
-      >
-        {!flipped ? (
-          <>
-            <span className="font-bold text-white text-3xl mb-2">{card.word}</span>
-            {card.ipa_en && <span className="text-sm text-emerald-400/70 font-mono">{card.ipa_en}</span>}
-            <span className="flex items-center gap-1 text-xs text-zinc-500 mt-4">
-              <Eye className="w-3.5 h-3.5" /> {isA ? 'Bấm để xem nghĩa' : 'Tap to flip'}
-            </span>
-          </>
-        ) : (
-          <>
-            <span className="text-xl text-zinc-100 font-medium mb-2">{card.vi}</span>
-            {card.ex_en && <span className="text-sm text-zinc-400 italic mt-1">{card.ex_en}</span>}
-            {card.ex_vi && <span className="text-xs text-zinc-500 mt-0.5">{card.ex_vi}</span>}
-          </>
-        )}
-      </button>
+      {/* Wrapper chứa nút ⭐ + thẻ lật */}
+      <div className="relative mb-4">
+        <button
+          onClick={handleStar}
+          title={isA ? (difficult ? 'Bỏ đánh dấu khó' : 'Đánh dấu từ khó') : (difficult ? 'Unmark' : 'Mark difficult')}
+          className="absolute top-3 right-3 z-10 p-1.5 rounded-full hover:bg-zinc-700/50 transition">
+          <Star className={`w-4 h-4 transition ${difficult ? 'fill-amber-400 text-amber-400' : 'text-zinc-600 hover:text-zinc-400'}`} />
+        </button>
+
+        <button
+          onClick={() => setFlipped(f => !f)}
+          className="glass w-full rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition"
+        >
+          {!flipped ? (
+            <>
+              <span className="font-bold text-white text-3xl mb-2">{card.word}</span>
+              {card.ipa_en && <span className="text-sm text-emerald-400/70 font-mono">{card.ipa_en}</span>}
+              <span className="flex items-center gap-1 text-xs text-zinc-500 mt-4">
+                <Eye className="w-3.5 h-3.5" /> {isA ? 'Bấm để xem nghĩa' : 'Tap to flip'}
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="text-xl text-zinc-100 font-medium mb-2">{card.vi}</span>
+              {card.ex_en && <span className="text-sm text-zinc-400 italic mt-1">{card.ex_en}</span>}
+              {card.ex_vi && <span className="text-xs text-zinc-500 mt-0.5">{card.ex_vi}</span>}
+              {EXTRA_EXAMPLES[card.word.toLowerCase()] && (
+                <div className="mt-2 space-y-1 text-left w-full border-t border-zinc-700/50 pt-2">
+                  {EXTRA_EXAMPLES[card.word.toLowerCase()].map((ex, i) => (
+                    <div key={i}>
+                      <p className="text-xs text-emerald-400/80 italic">{ex.en}</p>
+                      <p className="text-xs text-zinc-500">{ex.vi}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </button>
+      </div>
 
       <div className="flex items-center justify-center gap-2 mb-3">
         <PronounceButton word={card.word} />
         {card.ex_en && <SpeakButton text={card.ex_en} lang="en-US" title="Nghe câu ví dụ" />}
       </div>
 
-      {/* Chấm phát âm: đọc từ mục tiêu theo ngôn ngữ đích (A: tiếng Anh, B: tiếng Việt) */}
       <div className="mb-4">
         <PronunciationCheck target={card.word} lang={isA ? 'en' : 'vi'} isA={isA} />
       </div>
@@ -155,33 +216,34 @@ function WordCard({ card, isA }: { card: DictEntry; isA: boolean }) {
   )
 }
 
-// ── Tab "Hôm nay": học 20 từ mới kế tiếp ─────────────────────────────────────
+// ── Tab Hôm nay ───────────────────────────────────────────────────────────────
 function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onProgress: () => void }) {
-  // Lấy bộ 20 từ kế tiếp chưa thuộc — cố định trong suốt lượt học này
-  const [batch] = useState<DictEntry[]>(() => getTodayBatch(getLearnedWords(uid)))
+  const [batch]      = useState<DictEntry[]>(() => getTodayBatch(getLearnedWords(uid)))
   const [idx, setIdx] = useState(0)
   const [dailyStart] = useState(() => getDailyLearned(uid))
 
   const progress = useMemo(() => getPathProgress(getLearnedWords(uid)), [uid])
-  const card = batch[idx]
-  const done = idx >= batch.length
+  const card     = batch[idx]
+  const done     = idx >= batch.length
+  const circle   = card ? findCircleOfWord(card.word) : undefined
 
-  // Chủ đề của từ đang học (vòng tròn)
-  const circle = card ? findCircleOfWord(card.word) : undefined
+  // Tiến độ vòng hiện tại
+  const circleProgress = useMemo(() => {
+    if (!circle) return null
+    return getCircleProgress(circle.id, getLearnedWords(uid))
+  }, [circle, uid])
 
   function learn() {
     if (!card) return
     markLearned(uid, card.word)
+    addToSRS(uid, card.word)   // tự động vào hàng đợi SRS
     bumpDailyLearned(uid)
     onProgress()
     setIdx(i => i + 1)
   }
 
-  function skip() {
-    setIdx(i => i + 1)
-  }
+  function skip() { setIdx(i => i + 1) }
 
-  // Hết lộ trình
   if (batch.length === 0) {
     return (
       <div className="glass rounded-xl p-8 text-center animate-fade-in">
@@ -190,16 +252,14 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
           {isA ? 'Tuyệt vời! Bạn đã học hết lộ trình.' : 'Amazing! You finished the whole path.'}
         </p>
         <p className="text-sm text-zinc-400">
-          {isA ? 'Hãy chuyển sang Ôn ngẫu nhiên để nhớ lâu hơn.' : 'Switch to Random review to retain more.'}
+          {isA ? 'Hãy chuyển sang Ôn SRS để nhớ lâu hơn.' : 'Switch to SRS review to retain more.'}
         </p>
       </div>
     )
   }
 
-  // Học xong bộ hôm nay → hiển thị câu thông dụng từ các chủ đề vừa học
   if (done) {
     const learnedToday = getDailyLearned(uid) - dailyStart
-    // Gom câu thông dụng từ các vòng có trong batch (không trùng)
     const seen = new Set<string>()
     const sentences: { en: string; vi: string }[] = []
     for (const e of batch) {
@@ -213,10 +273,10 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
       <div className="animate-fade-in space-y-4">
         <div className="glass rounded-xl p-8 text-center">
           <Check className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
-          <p className="text-white font-semibold mb-1">{isA ? 'Hoàn thành bài hôm nay!' : 'Today\'s lesson done!'}</p>
+          <p className="text-white font-semibold mb-1">{isA ? 'Hoàn thành bài hôm nay!' : "Today's lesson done!"}</p>
           <p className="text-sm text-zinc-400">
             {isA
-              ? <>Bạn đã học <strong className="text-emerald-300">{learnedToday}</strong>/{DAILY_GOAL} từ hôm nay</>
+              ? <>{`Đã học `}<strong className="text-emerald-300">{learnedToday}</strong>{`/${DAILY_GOAL} từ hôm nay`}</>
               : <>You learned <strong className="text-emerald-300">{learnedToday}</strong>/{DAILY_GOAL} words today</>}
           </p>
         </div>
@@ -232,11 +292,9 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
             <div className="space-y-2">
               {sentences.map((s, i) => (
                 <div key={i} className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3">
-                  <KaraokeText
-                    text={s.en} lang="en-US"
+                  <KaraokeText text={s.en} lang="en-US"
                     textClass="font-medium text-[15px] leading-snug text-teal-300"
-                    buttonClass="w-full"
-                  />
+                    buttonClass="w-full" />
                   <p className="text-sm text-zinc-400 mt-1 pl-6">{s.vi}</p>
                 </div>
               ))}
@@ -249,11 +307,16 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
 
   return (
     <div className="animate-fade-in">
-      {/* Tên chủ đề (vòng tròn) đang học */}
+      {/* Tên chủ đề + tiến độ vòng */}
       {circle && (
         <div className="flex items-center justify-center gap-1.5 text-xs text-zinc-400 mb-2">
           <span>{circle.emoji}</span>
           <span>{isA ? circle.titleVi : circle.titleEn}</span>
+          {circleProgress && circleProgress.total > 0 && (
+            <span className="text-zinc-600">
+              ({circleProgress.done}/{circleProgress.total})
+            </span>
+          )}
         </div>
       )}
 
@@ -268,7 +331,7 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
         <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${(idx / batch.length) * 100}%` }} />
       </div>
 
-      <WordCard key={card.word} card={card} isA={isA} />
+      <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onProgress} />
 
       <div className="grid grid-cols-2 gap-3">
         <button onClick={skip}
@@ -284,45 +347,55 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
   )
 }
 
-// ── Tab "Ôn ngẫu nhiên": không lặp trong 1 vòng ─────────────────────────────
-function RandomReview({ uid, isA }: { uid: string; isA: boolean }) {
-  // Nguồn ôn tập: các từ đã thuộc; nếu chưa thuộc từ nào thì lấy phần đầu lộ trình
-  const pool = useMemo<DictEntry[]>(() => {
-    const learned = getLearnedWords(uid)
-    const path = getLearningPath()
-    const known = path.filter(e => learned.has(wordKey(e.word)) || learned.has(e.word))
-    return known.length > 0 ? known : path.slice(0, DAILY_GOAL)
-  }, [uid])
+// ── Tab Ôn SRS ────────────────────────────────────────────────────────────────
+function SRSReview({ uid, isA, onUpdate }: { uid: string; isA: boolean; onUpdate: () => void }) {
+  const allWords = getLearningPath()
+  const [due, setDue]         = useState<DictEntry[]>(() => getDueWords(uid, allWords))
+  const [idx, setIdx]         = useState(0)
+  const [sessionDone, setDone] = useState(0)
 
-  // Hàng đợi đã trộn — đi hết mới trộn lại (đảm bảo không lặp trong 1 vòng)
-  const [queue, setQueue] = useState<DictEntry[]>(() => shuffle(pool))
-  const [idx, setIdx] = useState(0)
+  const card = due[idx]
 
-  const card = queue[idx]
-
-  function next() {
-    if (idx + 1 >= queue.length) {
-      // Hết 1 vòng → trộn lại, tránh để từ cuối cùng lặp ngay đầu vòng mới
-      const reshuffled = shuffle(pool)
-      if (reshuffled.length > 1 && reshuffled[0].word === card?.word) {
-        const last = reshuffled.length - 1
-        const tmp = reshuffled[0]
-        reshuffled[0] = reshuffled[last]
-        reshuffled[last] = tmp
-      }
-      setQueue(reshuffled)
+  function rate(rating: Rating) {
+    if (!card) return
+    reviewWord(uid, card.word, rating)
+    setDone(n => n + 1)
+    onUpdate()
+    const nextIdx = idx + 1
+    if (nextIdx >= due.length) {
+      // Kiểm tra xem còn thẻ "again" nào đến hạn không
+      const remaining = getDueWords(uid, allWords)
+      setDue(remaining)
       setIdx(0)
     } else {
-      setIdx(i => i + 1)
+      setIdx(nextIdx)
     }
   }
 
-  if (pool.length === 0 || !card) {
+  const stats = getSRSStats(uid)
+
+  if (!card) {
     return (
-      <div className="glass rounded-xl p-8 text-center animate-fade-in">
-        <p className="text-zinc-400 text-sm">
-          {isA ? 'Chưa có từ nào để ôn. Hãy học vài từ ở tab Hôm nay trước nhé.' : 'No words to review yet. Learn some in the Today tab first.'}
+      <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-3">
+        <p className="text-3xl">{sessionDone > 0 ? '✅' : '🔁'}</p>
+        <p className="text-white font-semibold">
+          {sessionDone > 0
+            ? (isA ? 'Ôn tập xong hôm nay!' : 'All caught up!')
+            : (isA ? 'Không có từ nào cần ôn hôm nay' : 'No words due today')}
         </p>
+        {sessionDone > 0 && (
+          <p className="text-sm text-zinc-400">
+            {isA ? `Đã ôn ${sessionDone} thẻ` : `Reviewed ${sessionDone} cards`}
+          </p>
+        )}
+        <div className="text-xs text-zinc-500 space-y-1 pt-2 border-t border-zinc-800">
+          <p>{isA ? `Tổng trong SRS: ${stats.total} từ` : `Total in SRS: ${stats.total} words`}</p>
+          {stats.total === 0 && (
+            <p className="text-zinc-600">
+              {isA ? 'Học từ ở tab Hôm nay → từ tự vào SRS' : 'Learn words in Today tab → auto-added to SRS'}
+            </p>
+          )}
+        </div>
       </div>
     )
   }
@@ -330,24 +403,90 @@ function RandomReview({ uid, isA }: { uid: string; isA: boolean }) {
   return (
     <div className="animate-fade-in">
       <div className="flex items-center justify-between text-xs text-zinc-500 mb-2">
-        <span>{isA ? 'Ôn ngẫu nhiên' : 'Random review'}</span>
-        <span>{idx + 1}/{queue.length}</span>
+        <span>{isA ? 'Ôn SRS' : 'SRS Review'}</span>
+        <span>{idx + 1}/{due.length} {isA ? 'cần ôn' : 'due'}</span>
       </div>
       <div className="h-1 bg-zinc-800 rounded-full mb-4">
-        <div className="h-full bg-sky-500 rounded-full transition-all" style={{ width: `${((idx + 1) / queue.length) * 100}%` }} />
+        <div className="h-full bg-sky-500 rounded-full transition-all"
+          style={{ width: `${(idx / Math.max(due.length, 1)) * 100}%` }} />
       </div>
 
-      <WordCard key={card.word} card={card} isA={isA} />
+      <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onUpdate} />
 
-      <button onClick={next}
-        className="w-full flex items-center justify-center gap-2 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 transition py-3 rounded-xl text-sm font-medium">
+      {/* Rating buttons */}
+      <div className="grid grid-cols-4 gap-2 mt-2">
+        {([
+          { r: 'again' as Rating, la: 'Quên',  lb: 'Again', cls: 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30'       },
+          { r: 'hard'  as Rating, la: 'Khó',   lb: 'Hard',  cls: 'bg-orange-500/20 text-orange-300 hover:bg-orange-500/30' },
+          { r: 'good'  as Rating, la: 'Nhớ',   lb: 'Good',  cls: 'bg-sky-500/20 text-sky-300 hover:bg-sky-500/30'         },
+          { r: 'easy'  as Rating, la: 'Dễ',    lb: 'Easy',  cls: 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30' },
+        ]).map(({ r, la, lb, cls }) => (
+          <button key={r} onClick={() => rate(r)}
+            className={`py-2.5 rounded-xl text-sm font-medium transition ${cls}`}>
+            {isA ? la : lb}
+          </button>
+        ))}
+      </div>
+      <p className="text-center text-xs text-zinc-600 mt-2">
+        {isA ? 'Quên → ôn sớm   ·   Dễ → ôn sau lâu hơn' : 'Again = review soon  ·  Easy = review later'}
+      </p>
+    </div>
+  )
+}
+
+// ── Tab Từ khó ────────────────────────────────────────────────────────────────
+function HardWords({ uid, isA, onUpdate }: { uid: string; isA: boolean; onUpdate: () => void }) {
+  const allWords = getLearningPath()
+  const [hardSet, setHardSet] = useState(() => getDifficultWords(uid))
+  const hardWords = useMemo(
+    () => allWords.filter(w => hardSet.has(w.word.toLowerCase())),
+    [allWords, hardSet],
+  )
+  const [idx, setIdx] = useState(0)
+
+  function refresh() {
+    setHardSet(getDifficultWords(uid))
+    onUpdate()
+  }
+
+  if (hardWords.length === 0) {
+    return (
+      <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-2">
+        <Star className="w-8 h-8 text-zinc-600 mx-auto" />
+        <p className="text-white font-medium">{isA ? 'Chưa có từ khó' : 'No difficult words yet'}</p>
+        <p className="text-sm text-zinc-500">
+          {isA
+            ? 'Bấm ⭐ trên thẻ từ để đánh dấu từ cần ôn thêm.'
+            : 'Tap ⭐ on a word card to mark it as difficult.'}
+        </p>
+      </div>
+    )
+  }
+
+  const card = hardWords[idx % hardWords.length]
+
+  return (
+    <div className="animate-fade-in">
+      <div className="flex items-center justify-between text-xs text-zinc-500 mb-2">
+        <span>{isA ? `${hardWords.length} từ đã đánh dấu khó` : `${hardWords.length} difficult words`}</span>
+        <span>{(idx % hardWords.length) + 1}/{hardWords.length}</span>
+      </div>
+      <div className="h-1 bg-zinc-800 rounded-full mb-4">
+        <div className="h-full bg-amber-500 rounded-full transition-all"
+          style={{ width: `${((idx % hardWords.length + 1) / hardWords.length) * 100}%` }} />
+      </div>
+
+      <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={refresh} />
+
+      <button onClick={() => setIdx(i => i + 1)}
+        className="w-full flex items-center justify-center gap-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 transition py-3 rounded-xl text-sm font-medium">
         <RotateCcw className="w-4 h-4" /> {isA ? 'Từ tiếp theo' : 'Next word'}
       </button>
     </div>
   )
 }
 
-// ── Tab "Kiểm tra": 10 câu trắc nghiệm từ đã học ────────────────────────────
+// ── Tab Kiểm tra ──────────────────────────────────────────────────────────────
 function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
   const nav = useNavigate()
   const [questions] = useState<QuizQuestion[]>(() => buildQuiz(uid))
@@ -356,15 +495,19 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
   const [answers,  setAnswers]  = useState<boolean[]>([])
   const [done,     setDone]     = useState(false)
 
-  if (questions.length === 0) return (
-    <div className="glass rounded-xl p-8 text-center animate-fade-in">
-      <p className="text-zinc-400 text-sm">
-        {isA ? 'Chưa đủ từ để tạo quiz. Hãy học vài từ ở tab Hôm nay trước nhé.' : 'Not enough words for a quiz yet. Learn some words first.'}
-      </p>
-    </div>
-  )
+  if (questions.length === 0) {
+    return (
+      <div className="glass rounded-xl p-8 text-center animate-fade-in">
+        <p className="text-zinc-400 text-sm">
+          {isA
+            ? 'Chưa đủ từ để tạo quiz. Hãy học vài từ ở tab Hôm nay trước nhé.'
+            : 'Not enough words for a quiz yet. Learn some words first.'}
+        </p>
+      </div>
+    )
+  }
 
-  const q    = questions[current]
+  const q     = questions[current]
   const score = answers.filter(Boolean).length
   const pct   = Math.round((score / QUIZ_SIZE) * 100)
 
@@ -380,12 +523,11 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
 
   function restart() { setCurrent(0); setSelected(null); setAnswers([]); setDone(false) }
 
-  // Màn hình kết quả
   if (done) {
-    const grade = pct >= 90 ? { emoji: '🏆', label: isA ? 'Xuất sắc!' : 'Excellent!' }
-                : pct >= 70 ? { emoji: '👍', label: isA ? 'Tốt lắm!'  : 'Good job!'  }
-                : pct >= 50 ? { emoji: '💪', label: isA ? 'Cố lên!'   : 'Keep going!'}
-                :             { emoji: '📚', label: isA ? 'Cần ôn thêm' : 'Study more' }
+    const grade = pct >= 90 ? { emoji: '🏆', label: isA ? 'Xuất sắc!'    : 'Excellent!' }
+                : pct >= 70 ? { emoji: '👍', label: isA ? 'Tốt lắm!'     : 'Good job!'  }
+                : pct >= 50 ? { emoji: '💪', label: isA ? 'Cố lên!'      : 'Keep going!'}
+                :             { emoji: '📚', label: isA ? 'Cần ôn thêm'  : 'Study more' }
     return (
       <div className="animate-fade-in space-y-4">
         <div className="glass rounded-xl p-8 text-center space-y-2">
@@ -399,7 +541,8 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
         </div>
         <div className="space-y-1.5">
           {questions.map((qq, i) => (
-            <div key={i} className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm ${answers[i] ? 'bg-emerald-500/10 text-emerald-300' : 'bg-rose-500/10 text-rose-300'}`}>
+            <div key={i}
+              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm ${answers[i] ? 'bg-emerald-500/10 text-emerald-300' : 'bg-rose-500/10 text-rose-300'}`}>
               <span>{answers[i] ? '✓' : '✗'}</span>
               <span className="font-medium">{qq.word}</span>
               <span className="text-zinc-500 flex-1 truncate">= {qq.correct}</span>
@@ -420,15 +563,17 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
     )
   }
 
-  // Màn hình câu hỏi
   return (
     <div className="animate-fade-in space-y-4">
       <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-        <div className="h-full bg-violet-500 rounded-full transition-all" style={{ width: `${(current / QUIZ_SIZE) * 100}%` }} />
+        <div className="h-full bg-violet-500 rounded-full transition-all"
+          style={{ width: `${(current / QUIZ_SIZE) * 100}%` }} />
       </div>
       <div className="text-center py-6">
         <p className="text-xs text-zinc-500 mb-3 uppercase tracking-wide">
-          {isA ? `Câu ${current + 1}/${QUIZ_SIZE} — Nghĩa tiếng Việt của từ này là?` : `Q ${current + 1}/${QUIZ_SIZE} — Vietnamese meaning?`}
+          {isA
+            ? `Câu ${current + 1}/${QUIZ_SIZE} — Nghĩa tiếng Việt của từ này là?`
+            : `Q ${current + 1}/${QUIZ_SIZE} — Vietnamese meaning?`}
         </p>
         <p className="text-4xl font-bold text-white">{q.word}</p>
       </div>
@@ -436,9 +581,9 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
         {q.options.map(opt => {
           let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
           if (selected !== null) {
-            if (opt === q.correct)  cls = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-300'
+            if (opt === q.correct)     cls = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-300'
             else if (opt === selected) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
-            else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-600'
+            else                       cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-600'
           }
           return (
             <button key={opt} onClick={() => pick(opt)}
