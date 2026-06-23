@@ -16,7 +16,7 @@ import { FOUNDATION } from '../data/curriculum'
 import type { Circle } from '../data/curriculum'
 import { loadDictionary } from '../data/dictionary/loader'
 
-export const DAILY_GOAL = 20
+export const DAILY_GOAL = 30
 
 // Dữ liệu từ điển — KHÔNG import tĩnh nữa (file ~2MB). Nạp ĐỘNG bằng
 // dynamic import() qua loadCurriculum() để Vite tách dictionary.json thành
