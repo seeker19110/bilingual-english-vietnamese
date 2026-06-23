@@ -26,7 +26,7 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
-const BATCH_SIZE      = 49    // số tác vụ song song
+const BATCH_SIZE      = 50    // số tác vụ song song
 const DELAY_MS        = 0     // không cần delay
 const RETRY_DELAY_MS  = 5000  // nghỉ giữa vòng retry
 const MAX_ROUNDS      = 100
@@ -207,8 +207,8 @@ interface RateState {
 }
 
 function nextRateState(prevReqs: number, prev429: boolean): { limit: number; pauseMs: number } {
-  if (prev429)          return { limit: 180, pauseMs: 60000 } // 429 → nghỉ 60s
-  if (prevReqs >= 180)  return { limit: 180, pauseMs: 60000 } // đầy window → nghỉ 60s
+  if (prev429)          return { limit: 180, pauseMs: 62000 } // 429 → nghỉ 62s
+  if (prevReqs >= 180)  return { limit: 180, pauseMs: 62000 } // đầy window → nghỉ 62s
   return                       { limit: 180, pauseMs: 0     } // chưa đầy → liên tục
 }
 
@@ -341,7 +341,7 @@ async function main(): Promise<void> {
   console.log('🔊 Bắt đầu seed:all — pronunciation + (curriculum → lessons → patterns) xen kẽ')
   console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo (curriculum words ưu tiên đầu)`)
   console.log(`📋 TTS cache     : ${allPatternTasks.length} tác vụ (curriculum sentences → lesson turns → pattern sentences)`)
-  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate: thích nghi (429→60s/180, ≥180→60s, <180→liên tục) | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
+  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate: thích nghi (429→62s/180, ≥180→62s, <180→liên tục) | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
 
   let pronRemaining    = allPronTasks
   let patternRemaining = allPatternTasks
