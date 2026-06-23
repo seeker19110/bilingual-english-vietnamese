@@ -1281,4 +1281,674 @@ export const EXTRA_EXAMPLES: Record<string, [ExPair, ExPair]> = {
     { en: 'Reading widely is the best way to gain knowledge.', vi: 'Đọc rộng là cách tốt nhất để tích lũy kiến thức.' },
     { en: 'He shared his knowledge freely with everyone around him.', vi: 'Anh ấy chia sẻ kiến thức của mình một cách rộng rãi với mọi người.' },
   ],
+
+  // ── Bổ sung: Thứ trong tuần còn thiếu ────────────────────────────────
+  Tuesday: [
+    { en: 'She has a dentist appointment every Tuesday.', vi: 'Cô ấy có lịch hẹn nha sĩ mỗi thứ Ba.' },
+    { en: 'Tuesday is the second day of the working week.', vi: 'Thứ Ba là ngày thứ hai của tuần làm việc.' },
+  ],
+  Wednesday: [
+    { en: 'We always have team lunch on Wednesday.', vi: 'Chúng tôi luôn ăn trưa nhóm vào thứ Tư.' },
+    { en: 'Wednesday is exactly the middle of the week.', vi: 'Thứ Tư chính xác là giữa tuần.' },
+  ],
+  Thursday: [
+    { en: 'The weekly report is due every Thursday.', vi: 'Báo cáo tuần đến hạn vào mỗi thứ Năm.' },
+    { en: 'I go to the gym every Thursday evening.', vi: 'Tôi đi phòng gym mỗi tối thứ Năm.' },
+  ],
+
+  // ── Vòng 18: Thời tiết & mùa ─────────────────────────────────────────
+  weather: [
+    { en: 'The weather app says it will rain tomorrow.', vi: 'Ứng dụng thời tiết nói ngày mai sẽ mưa.' },
+    { en: 'Hot weather makes me feel sleepy.', vi: 'Thời tiết nóng làm tôi buồn ngủ.' },
+  ],
+  sunny: [
+    { en: 'Let\'s have a picnic on this sunny afternoon.', vi: 'Hãy đi dã ngoại vào buổi chiều nắng đẹp này.' },
+    { en: 'The children played outside on the sunny day.', vi: 'Lũ trẻ chơi ngoài trời vào ngày nắng.' },
+  ],
+  cloudy: [
+    { en: 'It was cloudy all day but it did not rain.', vi: 'Trời nhiều mây cả ngày nhưng không mưa.' },
+    { en: 'A cloudy sky often means rain is coming.', vi: 'Trời nhiều mây thường có nghĩa là sắp mưa.' },
+  ],
+  rainy: [
+    { en: 'I love rainy days because I can stay inside and read.', vi: 'Tôi thích ngày mưa vì có thể ở nhà đọc sách.' },
+    { en: 'It was a rainy weekend, so we stayed home.', vi: 'Cuối tuần trời mưa nên chúng tôi ở nhà.' },
+  ],
+  windy: [
+    { en: 'It was so windy that my umbrella turned inside out.', vi: 'Gió to đến mức ô tôi bị lộn ngược.' },
+    { en: 'Flying a kite is fun on a windy day.', vi: 'Thả diều rất vui vào ngày có gió.' },
+  ],
+  foggy: [
+    { en: 'Drive slowly when it is foggy.', vi: 'Lái xe chậm thôi khi trời có sương mù.' },
+    { en: 'The foggy morning made everything look mysterious.', vi: 'Buổi sáng sương mù làm mọi thứ trông huyền bí.' },
+  ],
+  storm: [
+    { en: 'The storm knocked down several trees in the park.', vi: 'Cơn bão làm đổ vài cây trong công viên.' },
+    { en: 'Stay inside during a storm to stay safe.', vi: 'Ở trong nhà trong cơn bão để an toàn.' },
+  ],
+  lightning: [
+    { en: 'Never stand under a tree during lightning.', vi: 'Đừng bao giờ đứng dưới cây khi có sét.' },
+    { en: 'Lightning flashed across the sky before the thunder came.', vi: 'Sét lóe sáng trên bầu trời trước khi sấm vang.' },
+  ],
+  temperature: [
+    { en: 'The temperature will reach forty degrees this weekend.', vi: 'Nhiệt độ sẽ đạt bốn mươi độ cuối tuần này.' },
+    { en: 'Check the temperature before deciding what to wear.', vi: 'Kiểm tra nhiệt độ trước khi quyết định mặc gì.' },
+  ],
+  forecast: [
+    { en: 'The forecast says there will be thunderstorms on Friday.', vi: 'Dự báo nói thứ Sáu sẽ có giông bão.' },
+    { en: 'I always check the forecast before going on a trip.', vi: 'Tôi luôn kiểm tra dự báo trước khi đi du lịch.' },
+  ],
+  season: [
+    { en: 'My favourite season is autumn because of the cool air.', vi: 'Mùa yêu thích của tôi là mùa thu vì không khí mát.' },
+    { en: 'Each season brings different fruits and vegetables.', vi: 'Mỗi mùa mang lại rau củ quả khác nhau.' },
+  ],
+  spring: [
+    { en: 'People go out more in spring after the long cold winter.', vi: 'Mọi người ra ngoài nhiều hơn vào mùa xuân sau mùa đông dài lạnh.' },
+    { en: 'The park is most beautiful in spring when flowers bloom.', vi: 'Công viên đẹp nhất vào mùa xuân khi hoa nở.' },
+  ],
+  summer: [
+    { en: 'We go to the beach every summer holiday.', vi: 'Chúng tôi đi biển mỗi kỳ nghỉ hè.' },
+    { en: 'Summer evenings are perfect for outdoor barbecues.', vi: 'Buổi tối mùa hè rất thích hợp để nướng thịt ngoài trời.' },
+  ],
+  autumn: [
+    { en: 'The trees turn red and yellow in autumn.', vi: 'Cây cối chuyển sang màu đỏ và vàng vào mùa thu.' },
+    { en: 'Autumn is the best time for hiking in the mountains.', vi: 'Mùa thu là thời điểm tốt nhất để leo núi.' },
+  ],
+  winter: [
+    { en: 'We wear thick coats and scarves in winter.', vi: 'Chúng tôi mặc áo dày và quàng khăn vào mùa đông.' },
+    { en: 'Children love building snowmen in winter.', vi: 'Trẻ em thích đắp người tuyết vào mùa đông.' },
+  ],
+  wet: [
+    { en: 'Wipe your feet on the mat — the floor is wet.', vi: 'Chùi chân lên thảm — sàn nhà ướt.' },
+    { en: 'The wet grass made our shoes muddy.', vi: 'Cỏ ướt làm giày chúng tôi bị bùn.' },
+  ],
+  dry: [
+    { en: 'Hang your clothes outside to dry in the sun.', vi: 'Phơi quần áo ra ngoài cho khô dưới nắng.' },
+    { en: 'The soil is too dry — the plants need water.', vi: 'Đất quá khô — cây cần nước.' },
+  ],
+  rainbow: [
+    { en: 'The children ran outside to see the rainbow.', vi: 'Lũ trẻ chạy ra ngoài để ngắm cầu vồng.' },
+    { en: 'A rainbow has seven colours: red, orange, yellow, green, blue, indigo, violet.', vi: 'Cầu vồng có bảy màu: đỏ, cam, vàng, lục, lam, chàm, tím.' },
+  ],
+  degree: [
+    { en: 'The water boils at one hundred degrees Celsius.', vi: 'Nước sôi ở một trăm độ C.' },
+    { en: 'It dropped to minus five degrees last night.', vi: 'Nhiệt độ xuống âm năm độ tối qua.' },
+  ],
+  breeze: [
+    { en: 'A gentle breeze kept us cool on the hot day.', vi: 'Làn gió nhẹ giúp chúng tôi mát mẻ vào ngày nóng.' },
+    { en: 'Sit by the window and enjoy the evening breeze.', vi: 'Ngồi cạnh cửa sổ và tận hưởng làn gió chiều.' },
+  ],
+
+  // ── Vòng 19: Quần áo ─────────────────────────────────────────────────
+  clothes: [
+    { en: 'She laid out her clothes the night before school.', vi: 'Cô bé chuẩn bị quần áo tối hôm trước ngày đi học.' },
+    { en: 'We donate old clothes to people in need.', vi: 'Chúng tôi quyên góp quần áo cũ cho người cần.' },
+  ],
+  shirt: [
+    { en: 'He ironed his shirt before the job interview.', vi: 'Anh ấy là áo sơ mi trước buổi phỏng vấn.' },
+    { en: 'She spilled coffee on her white shirt.', vi: 'Cô ấy đổ cà phê lên áo trắng.' },
+  ],
+  pants: [
+    { en: 'He bought a new pair of pants for the meeting.', vi: 'Anh ấy mua một chiếc quần mới cho buổi họp.' },
+    { en: 'These pants have deep pockets — very useful.', vi: 'Cái quần này có túi sâu — rất tiện.' },
+  ],
+  dress: [
+    { en: 'She wore a long red dress to the wedding.', vi: 'Cô ấy mặc váy đỏ dài đi đám cưới.' },
+    { en: 'The dress in the shop window caught her eye.', vi: 'Cái váy trong tủ kính cửa hàng thu hút ánh mắt cô ấy.' },
+  ],
+  shoes: [
+    { en: 'Always tie your shoelaces before running.', vi: 'Luôn buộc dây giày trước khi chạy.' },
+    { en: 'She tried on several pairs of shoes before choosing.', vi: 'Cô ấy thử nhiều đôi giày trước khi chọn.' },
+  ],
+  hat: [
+    { en: 'He tilted his hat to shade his eyes from the sun.', vi: 'Anh ấy nghiêng mũ che mắt khỏi nắng.' },
+    { en: 'She knitted a warm hat for winter.', vi: 'Cô ấy đan một cái mũ ấm cho mùa đông.' },
+  ],
+  jacket: [
+    { en: 'Grab your jacket — it is chilly outside.', vi: 'Lấy áo khoác đi — bên ngoài lạnh đấy.' },
+    { en: 'He left his jacket on the train by accident.', vi: 'Anh ấy vô tình để quên áo khoác trên tàu.' },
+  ],
+  coat: [
+    { en: 'She bought a long wool coat for winter.', vi: 'Cô ấy mua áo khoác dài bằng len cho mùa đông.' },
+    { en: 'Hang your coat on the hook behind the door.', vi: 'Treo áo khoác lên móc phía sau cửa.' },
+  ],
+  socks: [
+    { en: 'Always wear clean socks to keep your feet fresh.', vi: 'Luôn mang tất sạch để giữ chân thoáng mát.' },
+    { en: 'He could never find matching socks in the morning.', vi: 'Buổi sáng anh ấy không bao giờ tìm được đôi tất đôi.' },
+  ],
+  glasses: [
+    { en: 'She put on her glasses to read the small print.', vi: 'Cô ấy đeo kính để đọc chữ nhỏ.' },
+    { en: 'He scratched his glasses while cleaning them.', vi: 'Anh ấy làm trầy kính khi lau.' },
+  ],
+  wear: [
+    { en: 'You should wear a helmet when riding a bicycle.', vi: 'Bạn nên đội mũ bảo hiểm khi đi xe đạp.' },
+    { en: 'She wears the same ring every single day.', vi: 'Cô ấy đeo chiếc nhẫn đó mỗi ngày.' },
+  ],
+  size: [
+    { en: 'This shirt fits perfectly — it is the right size.', vi: 'Cái áo này vừa đúng cỡ.' },
+    { en: 'Could you check if you have a smaller size?', vi: 'Bạn có thể kiểm tra xem có cỡ nhỏ hơn không?' },
+  ],
+  style: [
+    { en: 'Her style is simple but always elegant.', vi: 'Phong cách của cô ấy đơn giản nhưng luôn thanh lịch.' },
+    { en: 'He developed his own unique style over the years.', vi: 'Anh ấy đã tạo ra phong cách riêng độc đáo qua năm tháng.' },
+  ],
+  uniform: [
+    { en: 'The school uniform makes everyone look the same.', vi: 'Đồng phục trường làm mọi người trông giống nhau.' },
+    { en: 'She ironed her uniform carefully every Sunday night.', vi: 'Cô ấy là đồng phục cẩn thận mỗi tối Chủ nhật.' },
+  ],
+  suit: [
+    { en: 'He looked professional in his grey suit.', vi: 'Anh ấy trông chuyên nghiệp trong bộ vest xám.' },
+    { en: 'She bought a new suit for the business trip.', vi: 'Cô ấy mua bộ vest mới cho chuyến công tác.' },
+  ],
+  boots: [
+    { en: 'She put on her rain boots before going outside.', vi: 'Cô ấy đi ủng mưa trước khi ra ngoài.' },
+    { en: 'His leather boots lasted over ten years.', vi: 'Đôi ủng da của anh ấy dùng được hơn mười năm.' },
+  ],
+  scarf: [
+    { en: 'She wrapped a warm scarf around her neck in the cold.', vi: 'Cô ấy quấn khăn ấm quanh cổ trong thời tiết lạnh.' },
+    { en: 'He used his scarf as a makeshift bandage.', vi: 'Anh ấy dùng khăn quàng làm băng tạm thời.' },
+  ],
+  skirt: [
+    { en: 'She paired a floral skirt with a white top.', vi: 'Cô ấy kết hợp váy hoa với áo trắng.' },
+    { en: 'The wind blew her skirt up — she laughed.', vi: 'Gió thổi váy cô ấy bay lên — cô ấy cười.' },
+  ],
+  sleeve: [
+    { en: 'He rolled up his sleeves and got to work.', vi: 'Anh ấy xắn tay áo và bắt tay vào việc.' },
+    { en: 'The sleeve of her shirt got caught on the door handle.', vi: 'Tay áo cô ấy bị vướng vào tay nắm cửa.' },
+  ],
+  button: [
+    { en: 'She sewed the button back on carefully.', vi: 'Cô ấy cẩn thận đính lại nút áo.' },
+    { en: 'Press the green button to start the machine.', vi: 'Nhấn nút màu xanh để khởi động máy.' },
+  ],
+
+  // ── Vòng 20: Giao thông & đi lại ─────────────────────────────────────
+  bus: [
+    { en: 'The bus was late so I arrived at work after nine.', vi: 'Xe buýt trễ nên tôi đến cơ quan sau chín giờ.' },
+    { en: 'Take bus number five to get to the city centre.', vi: 'Đi xe buýt số năm để đến trung tâm thành phố.' },
+  ],
+  train: [
+    { en: 'The high-speed train travels at three hundred kilometres per hour.', vi: 'Tàu tốc độ cao chạy ở ba trăm km mỗi giờ.' },
+    { en: 'I missed the last train and had to take a taxi.', vi: 'Tôi lỡ chuyến tàu cuối và phải đi taxi.' },
+  ],
+  taxi: [
+    { en: 'She called a taxi to get home after the party.', vi: 'Cô ấy gọi taxi về nhà sau bữa tiệc.' },
+    { en: 'Taxis are more expensive but much more convenient.', vi: 'Taxi đắt hơn nhưng tiện hơn nhiều.' },
+  ],
+  plane: [
+    { en: 'The plane landed smoothly despite the bad weather.', vi: 'Máy bay hạ cánh êm dù thời tiết xấu.' },
+    { en: 'She watched the plane disappear into the clouds.', vi: 'Cô ấy nhìn máy bay biến mất vào mây.' },
+  ],
+  motorcycle: [
+    { en: 'He weaved through the traffic on his motorcycle.', vi: 'Anh ấy lách qua dòng xe bằng xe máy.' },
+    { en: 'Always wear a helmet when riding a motorcycle.', vi: 'Luôn đội mũ bảo hiểm khi đi xe máy.' },
+  ],
+  walk: [
+    { en: 'It is a pleasant ten-minute walk to the park.', vi: 'Đi bộ mười phút dễ chịu đến công viên.' },
+    { en: 'She walks her dog twice a day in the neighbourhood.', vi: 'Cô ấy dắt chó đi bộ hai lần mỗi ngày trong khu phố.' },
+  ],
+  drive: [
+    { en: 'He learned to drive when he was eighteen.', vi: 'Anh ấy học lái xe khi mười tám tuổi.' },
+    { en: 'Never drive when you are tired or sleepy.', vi: 'Không bao giờ lái xe khi mệt hay buồn ngủ.' },
+  ],
+  ride: [
+    { en: 'She rides the bus to university every day.', vi: 'Cô ấy đi xe buýt lên đại học mỗi ngày.' },
+    { en: 'He gave me a ride home after the meeting.', vi: 'Anh ấy cho tôi đi nhờ về nhà sau buổi họp.' },
+  ],
+  station: [
+    { en: 'The train station is very crowded at rush hour.', vi: 'Ga tàu rất đông đúc vào giờ cao điểm.' },
+    { en: 'Meet me at the main entrance of the station.', vi: 'Gặp tôi ở lối vào chính của ga nhé.' },
+  ],
+  airport: [
+    { en: 'We arrived at the airport two hours before the flight.', vi: 'Chúng tôi đến sân bay hai tiếng trước giờ bay.' },
+    { en: 'The airport has free Wi-Fi for all passengers.', vi: 'Sân bay có Wi-Fi miễn phí cho tất cả hành khách.' },
+  ],
+  ticket: [
+    { en: 'I booked two train tickets online last night.', vi: 'Tôi đặt hai vé tàu online tối hôm qua.' },
+    { en: 'Keep your ticket safe — you need it to exit.', vi: 'Giữ vé cẩn thận — bạn cần nó để ra cửa.' },
+  ],
+  map: [
+    { en: 'She used a map on her phone to find the restaurant.', vi: 'Cô ấy dùng bản đồ trên điện thoại để tìm nhà hàng.' },
+    { en: 'Print a map in case your phone battery dies.', vi: 'In bản đồ đề phòng điện thoại hết pin.' },
+  ],
+  direction: [
+    { en: 'The police officer gave us clear directions to the hotel.', vi: 'Cảnh sát chỉ đường rõ ràng đến khách sạn cho chúng tôi.' },
+    { en: 'I got confused because the directions were wrong.', vi: 'Tôi bị lạc vì chỉ đường sai.' },
+  ],
+  left: [
+    { en: 'The post office is on the left side of the road.', vi: 'Bưu điện ở bên trái đường.' },
+    { en: 'She turned left at the junction and found the cafe.', vi: 'Cô ấy rẽ trái ở ngã tư và tìm được quán cà phê.' },
+  ],
+  right: [
+    { en: 'Turn right after the traffic lights.', vi: 'Rẽ phải sau đèn giao thông.' },
+    { en: 'The supermarket is on the right — you cannot miss it.', vi: 'Siêu thị ở bên phải — bạn không thể bỏ lỡ đâu.' },
+  ],
+  straight: [
+    { en: 'Go straight ahead and you will see the park.', vi: 'Đi thẳng và bạn sẽ thấy công viên.' },
+    { en: 'Keep going straight for about five minutes.', vi: 'Cứ đi thẳng khoảng năm phút.' },
+  ],
+  traffic: [
+    { en: 'Avoid the highway during rush-hour traffic.', vi: 'Tránh đường cao tốc vào giờ kẹt xe.' },
+    { en: 'The traffic is much lighter on Sundays.', vi: 'Giao thông thưa hơn nhiều vào Chủ nhật.' },
+  ],
+  journey: [
+    { en: 'The journey from Hanoi to Ho Chi Minh City takes two hours by plane.', vi: 'Hành trình từ Hà Nội đến TP.HCM mất hai tiếng bằng máy bay.' },
+    { en: 'Learning a language is a long journey but worth it.', vi: 'Học ngôn ngữ là hành trình dài nhưng xứng đáng.' },
+  ],
+  fuel: [
+    { en: 'The fuel warning light came on, so I stopped at a petrol station.', vi: 'Đèn báo xăng bật sáng nên tôi dừng vào trạm xăng.' },
+    { en: 'Electric cars use electricity instead of fuel.', vi: 'Xe điện dùng điện thay vì xăng.' },
+  ],
+  parking: [
+    { en: 'Parking in the city centre is very expensive.', vi: 'Đỗ xe ở trung tâm thành phố rất đắt.' },
+    { en: 'There is free parking behind the shopping centre.', vi: 'Có bãi đậu xe miễn phí phía sau trung tâm mua sắm.' },
+  ],
+
+  // ── Vòng 21: Cảm xúc & trạng thái ───────────────────────────────────
+  feel: [
+    { en: 'I feel much better after a good night\'s sleep.', vi: 'Tôi cảm thấy tốt hơn nhiều sau một giấc ngủ ngon.' },
+    { en: 'She felt proud when her son graduated.', vi: 'Cô ấy cảm thấy tự hào khi con trai tốt nghiệp.' },
+  ],
+  emotion: [
+    { en: 'Music can trigger strong emotions.', vi: 'Âm nhạc có thể kích thích cảm xúc mạnh mẽ.' },
+    { en: 'Learning to manage your emotions is important for life.', vi: 'Học cách kiểm soát cảm xúc rất quan trọng trong cuộc sống.' },
+  ],
+  angry: [
+    { en: 'He was angry when he found out the truth.', vi: 'Anh ấy tức giận khi biết sự thật.' },
+    { en: 'Take a walk when you feel angry — it helps.', vi: 'Đi bộ khi bạn tức giận — điều đó giúp ích đấy.' },
+  ],
+  tired: [
+    { en: 'She was too tired to cook dinner, so they ordered food.', vi: 'Cô ấy quá mệt để nấu ăn nên họ gọi đồ ăn.' },
+    { en: 'I feel tired after the long flight from London.', vi: 'Tôi cảm thấy mệt sau chuyến bay dài từ London.' },
+  ],
+  excited: [
+    { en: 'The children were so excited on Christmas morning.', vi: 'Lũ trẻ rất hào hứng vào sáng Giáng sinh.' },
+    { en: 'I am excited about starting my new job next week.', vi: 'Tôi hào hứng về việc bắt đầu công việc mới tuần sau.' },
+  ],
+  scared: [
+    { en: 'She was scared when she heard a noise in the night.', vi: 'Cô ấy sợ khi nghe tiếng động vào ban đêm.' },
+    { en: 'He was scared of flying but forced himself to try.', vi: 'Anh ấy sợ đi máy bay nhưng buộc mình phải thử.' },
+  ],
+  nervous: [
+    { en: 'She was nervous on her first day at the new school.', vi: 'Cô ấy hồi hộp trong ngày đầu tiên ở trường mới.' },
+    { en: 'He got nervous when speaking in front of a large crowd.', vi: 'Anh ấy hồi hộp khi nói trước đám đông lớn.' },
+  ],
+  surprised: [
+    { en: 'She was surprised to see her old friend at the airport.', vi: 'Cô ấy ngạc nhiên khi gặp bạn cũ ở sân bay.' },
+    { en: 'Everyone was surprised by his sudden decision to quit.', vi: 'Mọi người ngạc nhiên trước quyết định bỏ việc đột ngột của anh ấy.' },
+  ],
+  bored: [
+    { en: 'He was bored during the long meeting.', vi: 'Anh ấy chán trong buổi họp dài.' },
+    { en: 'Read a book when you are bored — time flies.', vi: 'Đọc sách khi chán — thời gian trôi nhanh lắm.' },
+  ],
+  proud: [
+    { en: 'She was proud when she got the highest score in class.', vi: 'Cô ấy tự hào khi đạt điểm cao nhất lớp.' },
+    { en: 'His parents were proud of everything he achieved.', vi: 'Bố mẹ anh ấy tự hào về tất cả những gì anh ấy đạt được.' },
+  ],
+  lonely: [
+    { en: 'Moving to a new city can feel lonely at first.', vi: 'Chuyển đến thành phố mới có thể cảm thấy cô đơn lúc đầu.' },
+    { en: 'She felt lonely because all her friends were far away.', vi: 'Cô ấy cảm thấy cô đơn vì tất cả bạn bè đều ở xa.' },
+  ],
+  grateful: [
+    { en: 'I am grateful for every chance I have to learn something new.', vi: 'Tôi biết ơn mỗi cơ hội được học điều gì mới.' },
+    { en: 'She wrote a note to say she was grateful for the gift.', vi: 'Cô ấy viết thư để nói rằng cô ấy biết ơn món quà.' },
+  ],
+  confused: [
+    { en: 'The instructions were confusing — I did not know where to start.', vi: 'Hướng dẫn khó hiểu — tôi không biết bắt đầu từ đâu.' },
+    { en: 'He looked confused when I asked him that question.', vi: 'Anh ấy trông bối rối khi tôi hỏi câu đó.' },
+  ],
+  worried: [
+    { en: 'She was worried when her son did not come home on time.', vi: 'Cô ấy lo lắng khi con trai không về đúng giờ.' },
+    { en: 'Do not be worried — everything will work out fine.', vi: 'Đừng lo lắng — mọi thứ rồi sẽ ổn thôi.' },
+  ],
+  calm: [
+    { en: 'She remained calm even when things went wrong.', vi: 'Cô ấy vẫn bình tĩnh ngay cả khi mọi thứ không ổn.' },
+    { en: 'Breathing slowly helps you feel calm in stressful moments.', vi: 'Thở chậm giúp bạn bình tĩnh trong lúc căng thẳng.' },
+  ],
+  hope: [
+    { en: 'I hope the weather is good for the outdoor wedding.', vi: 'Tôi hi vọng thời tiết tốt cho đám cưới ngoài trời.' },
+    { en: 'Never lose hope — things always get better eventually.', vi: 'Đừng bao giờ mất hi vọng — mọi thứ rồi sẽ tốt hơn.' },
+  ],
+  mood: [
+    { en: 'Listening to music always improves my mood.', vi: 'Nghe nhạc luôn cải thiện tâm trạng của tôi.' },
+    { en: 'She was in a great mood after getting the promotion.', vi: 'Cô ấy có tâm trạng tuyệt vời sau khi được thăng chức.' },
+  ],
+  stress: [
+    { en: 'Too much stress can lead to serious health problems.', vi: 'Quá nhiều căng thẳng có thể gây ra vấn đề sức khỏe nghiêm trọng.' },
+    { en: 'Exercise is a great way to reduce daily stress.', vi: 'Tập thể dục là cách tuyệt vời để giảm căng thẳng hàng ngày.' },
+  ],
+  relax: [
+    { en: 'She spent Sunday afternoon relaxing in the garden.', vi: 'Cô ấy dành chiều Chủ nhật thư giãn trong vườn.' },
+    { en: 'A warm bath is perfect for relaxing after a long day.', vi: 'Tắm nước ấm rất tuyệt để thư giãn sau ngày dài.' },
+  ],
+  cry: [
+    { en: 'It is okay to cry — letting emotions out is healthy.', vi: 'Khóc không sao — giải phóng cảm xúc là điều tốt.' },
+    { en: 'She cried tears of joy at her daughter\'s wedding.', vi: 'Cô ấy khóc vì vui trong đám cưới của con gái.' },
+  ],
+
+  // ── Vòng 22: Từ để hỏi & giới từ ─────────────────────────────────────
+  what: [
+    { en: 'What time does the restaurant close tonight?', vi: 'Nhà hàng tối nay đóng cửa lúc mấy giờ?' },
+    { en: 'What is the best way to learn English quickly?', vi: 'Cách tốt nhất để học tiếng Anh nhanh là gì?' },
+  ],
+  who: [
+    { en: 'Who is responsible for this project?', vi: 'Ai chịu trách nhiệm cho dự án này?' },
+    { en: 'Who taught you how to cook so well?', vi: 'Ai đã dạy bạn nấu ăn ngon như vậy?' },
+  ],
+  where: [
+    { en: 'Where can I find a good coffee shop nearby?', vi: 'Tôi có thể tìm quán cà phê ngon ở gần đây không?' },
+    { en: 'Where are you from originally?', vi: 'Quê gốc của bạn ở đâu?' },
+  ],
+  when: [
+    { en: 'When is the best time to visit this city?', vi: 'Thời điểm tốt nhất để thăm thành phố này là khi nào?' },
+    { en: 'When did you arrive in Vietnam?', vi: 'Bạn đến Việt Nam khi nào?' },
+  ],
+  why: [
+    { en: 'Why did you choose to learn Vietnamese?', vi: 'Tại sao bạn chọn học tiếng Việt?' },
+    { en: 'Why is this exercise so difficult?', vi: 'Tại sao bài tập này khó vậy?' },
+  ],
+  how: [
+    { en: 'How long does it take to become fluent?', vi: 'Mất bao lâu để nói thành thạo?' },
+    { en: 'How do you say "thank you" in Vietnamese?', vi: 'Bạn nói "cảm ơn" bằng tiếng Việt như thế nào?' },
+  ],
+  which: [
+    { en: 'Which restaurant do you recommend for seafood?', vi: 'Bạn gợi ý nhà hàng hải sản nào?' },
+    { en: 'Which bus goes to the city centre?', vi: 'Xe buýt nào đi trung tâm thành phố?' },
+  ],
+  in: [
+    { en: 'She lives in a small flat in the city centre.', vi: 'Cô ấy sống trong một căn hộ nhỏ ở trung tâm thành phố.' },
+    { en: 'I will be in the office in the morning.', vi: 'Tôi sẽ ở văn phòng vào buổi sáng.' },
+  ],
+  on: [
+    { en: 'The meeting is on Monday at nine.', vi: 'Cuộc họp là vào thứ Hai lúc chín giờ.' },
+    { en: 'There is a cat sleeping on the warm roof.', vi: 'Có một con mèo đang ngủ trên mái nhà ấm.' },
+  ],
+  at: [
+    { en: 'She is very good at speaking English.', vi: 'Cô ấy rất giỏi nói tiếng Anh.' },
+    { en: 'I will meet you at the front gate at noon.', vi: 'Tôi sẽ gặp bạn ở cổng trước lúc trưa.' },
+  ],
+  under: [
+    { en: 'The dog always hides under the bed during storms.', vi: 'Con chó luôn trốn dưới giường khi có bão.' },
+    { en: 'Keep the document under the heavy book.', vi: 'Giữ tài liệu dưới cuốn sách nặng.' },
+  ],
+  above: [
+    { en: 'The temperature above thirty degrees is too hot for me.', vi: 'Nhiệt độ trên ba mươi độ quá nóng với tôi.' },
+    { en: 'The birds flew above the clouds.', vi: 'Những con chim bay phía trên mây.' },
+  ],
+  behind: [
+    { en: 'The garden is behind the house — very peaceful.', vi: 'Khu vườn ở phía sau nhà — rất yên bình.' },
+    { en: 'Do not fall behind in your studies.', vi: 'Đừng để học tập bị trễ.' },
+  ],
+  between: [
+    { en: 'The café is between the library and the post office.', vi: 'Quán cà phê ở giữa thư viện và bưu điện.' },
+    { en: 'Just between us — I am planning a surprise party.', vi: 'Chỉ giữa chúng ta thôi — tôi đang lên kế hoạch tiệc bất ngờ.' },
+  ],
+  near: [
+    { en: 'Is there a pharmacy near this hotel?', vi: 'Gần khách sạn này có nhà thuốc không?' },
+    { en: 'She moved to a flat near her workplace.', vi: 'Cô ấy chuyển đến căn hộ gần nơi làm việc.' },
+  ],
+  far: [
+    { en: 'The nearest beach is not far — only twenty minutes away.', vi: 'Bãi biển gần nhất không xa — chỉ hai mươi phút thôi.' },
+    { en: 'She has come far since she started learning English.', vi: 'Cô ấy đã tiến bộ nhiều kể từ khi bắt đầu học tiếng Anh.' },
+  ],
+  through: [
+    { en: 'Walk through the tunnel and you will reach the station.', vi: 'Đi qua đường hầm và bạn sẽ đến ga.' },
+    { en: 'She learned English through watching movies every night.', vi: 'Cô ấy học tiếng Anh qua việc xem phim mỗi tối.' },
+  ],
+  across: [
+    { en: 'The school is directly across the road from the park.', vi: 'Trường học nằm ngay bên kia đường đối diện công viên.' },
+    { en: 'She swam across the river without stopping.', vi: 'Cô ấy bơi qua sông mà không dừng lại.' },
+  ],
+  with: [
+    { en: 'She made the cake with help from her mother.', vi: 'Cô ấy làm bánh với sự giúp đỡ của mẹ.' },
+    { en: 'He moved to a new city with his whole family.', vi: 'Anh ấy chuyển đến thành phố mới cùng cả gia đình.' },
+  ],
+  without: [
+    { en: 'She cannot start her day without a cup of coffee.', vi: 'Cô ấy không thể bắt đầu ngày mới nếu thiếu cà phê.' },
+    { en: 'He finished the project without asking for any help.', vi: 'Anh ấy hoàn thành dự án mà không nhờ ai giúp.' },
+  ],
+
+  // ── Vòng 23: Tiền & mua sắm ──────────────────────────────────────────
+  price: [
+    { en: 'The price of this laptop is much higher than I expected.', vi: 'Giá của chiếc laptop này cao hơn nhiều so với tôi nghĩ.' },
+    { en: 'Can you tell me the price of the room per night?', vi: 'Bạn có thể cho tôi biết giá phòng mỗi đêm không?' },
+  ],
+  buy: [
+    { en: 'She went to the market to buy fresh vegetables.', vi: 'Cô ấy ra chợ mua rau tươi.' },
+    { en: 'I buy most of my books online now.', vi: 'Bây giờ tôi mua hầu hết sách trực tuyến.' },
+  ],
+  sell: [
+    { en: 'The farmer sells his produce at the weekend market.', vi: 'Người nông dân bán nông sản ở chợ cuối tuần.' },
+    { en: 'She decided to sell her old car and buy a new one.', vi: 'Cô ấy quyết định bán xe cũ và mua xe mới.' },
+  ],
+  pay: [
+    { en: 'I paid fifty dollars for a one-hour lesson.', vi: 'Tôi trả năm mươi đô cho một buổi học một tiếng.' },
+    { en: 'You can pay online or at the counter.', vi: 'Bạn có thể thanh toán trực tuyến hoặc tại quầy.' },
+  ],
+  cheap: [
+    { en: 'The street food here is cheap but really delicious.', vi: 'Đồ ăn đường phố ở đây rẻ nhưng rất ngon.' },
+    { en: 'Cheap products are not always low quality.', vi: 'Sản phẩm rẻ không phải lúc nào cũng kém chất lượng.' },
+  ],
+  free: [
+    { en: 'The museum is free on the first Sunday of every month.', vi: 'Bảo tàng miễn phí vào Chủ nhật đầu tiên của mỗi tháng.' },
+    { en: 'Download the app for free on your phone.', vi: 'Tải ứng dụng miễn phí trên điện thoại của bạn.' },
+  ],
+  discount: [
+    { en: 'She got a ten percent student discount at the bookshop.', vi: 'Cô ấy được giảm giá mười phần trăm cho sinh viên ở hiệu sách.' },
+    { en: 'The shop offers discounts during the holiday season.', vi: 'Cửa hàng giảm giá trong mùa lễ hội.' },
+  ],
+  cash: [
+    { en: 'Some small shops only accept cash, not card.', vi: 'Một số cửa hàng nhỏ chỉ nhận tiền mặt, không nhận thẻ.' },
+    { en: 'Always keep some cash with you when travelling.', vi: 'Luôn giữ một ít tiền mặt khi đi du lịch.' },
+  ],
+  card: [
+    { en: 'I paid for the dinner with my credit card.', vi: 'Tôi trả tiền bữa tối bằng thẻ tín dụng.' },
+    { en: 'Her card was declined because the balance was too low.', vi: 'Thẻ của cô ấy bị từ chối vì số dư quá thấp.' },
+  ],
+  receipt: [
+    { en: 'Always keep your receipt in case you need to return something.', vi: 'Luôn giữ hóa đơn phòng khi bạn cần đổi trả.' },
+    { en: 'The cashier printed the receipt and handed it over.', vi: 'Thu ngân in hóa đơn và đưa cho khách.' },
+  ],
+  bill: [
+    { en: 'The electricity bill this month was higher than usual.', vi: 'Hóa đơn điện tháng này cao hơn bình thường.' },
+    { en: 'They split the restaurant bill equally.', vi: 'Họ chia đều hóa đơn nhà hàng.' },
+  ],
+  change: [
+    { en: 'The cashier gave me the wrong change.', vi: 'Thu ngân thối sai tiền cho tôi.' },
+    { en: 'Do you have change for a hundred-dollar note?', vi: 'Bạn có tiền lẻ đổi tờ trăm đô không?' },
+  ],
+  shop: [
+    { en: 'She loves to window shop even when she has no money.', vi: 'Cô ấy thích đi dạo ngắm cửa hàng dù không có tiền.' },
+    { en: 'There is a small gift shop near the entrance.', vi: 'Có một cửa hàng quà lưu niệm nhỏ gần lối vào.' },
+  ],
+  store: [
+    { en: 'The convenience store is open twenty-four hours.', vi: 'Cửa hàng tiện lợi mở cửa hai mươi bốn tiếng.' },
+    { en: 'She works at a clothing store in the mall.', vi: 'Cô ấy làm việc ở cửa hàng quần áo trong trung tâm thương mại.' },
+  ],
+  customer: [
+    { en: 'The shop assistant greeted every customer warmly.', vi: 'Nhân viên cửa hàng chào hỏi mỗi khách hàng một cách thân thiện.' },
+    { en: 'Loyal customers get special discounts.', vi: 'Khách hàng trung thành được giảm giá đặc biệt.' },
+  ],
+  sale: [
+    { en: 'I bought this coat at half price during the winter sale.', vi: 'Tôi mua áo khoác này với nửa giá trong đợt sale mùa đông.' },
+    { en: 'The store holds a big sale at the end of every season.', vi: 'Cửa hàng tổ chức sale lớn vào cuối mỗi mùa.' },
+  ],
+  spend: [
+    { en: 'He spent all his savings on a new laptop.', vi: 'Anh ấy tiêu hết tiền tiết kiệm vào laptop mới.' },
+    { en: 'I try to spend less on eating out each month.', vi: 'Tôi cố gắng chi ít hơn cho ăn ngoài mỗi tháng.' },
+  ],
+  earn: [
+    { en: 'She earns extra money by teaching English online.', vi: 'Cô ấy kiếm thêm tiền bằng cách dạy tiếng Anh trực tuyến.' },
+    { en: 'You earn respect by treating others well.', vi: 'Bạn giành được sự tôn trọng bằng cách đối xử tốt với người khác.' },
+  ],
+  cost: [
+    { en: 'The course costs five hundred dollars for three months.', vi: 'Khoá học này tốn năm trăm đô cho ba tháng.' },
+    { en: 'Good health is worth whatever it costs.', vi: 'Sức khoẻ tốt đáng bất kỳ chi phí nào.' },
+  ],
+  wallet: [
+    { en: 'He checked his wallet and found only ten dollars left.', vi: 'Anh ấy kiểm tra ví và chỉ còn mười đô.' },
+    { en: 'She uses a digital wallet app to pay for everything.', vi: 'Cô ấy dùng ứng dụng ví điện tử để thanh toán mọi thứ.' },
+  ],
+
+  // ── Vòng 24: Thể thao & sở thích ─────────────────────────────────────
+  sport: [
+    { en: 'Playing a sport regularly keeps you healthy.', vi: 'Chơi thể thao đều đặn giúp bạn khoẻ mạnh.' },
+    { en: 'Football is the most popular sport in the world.', vi: 'Bóng đá là môn thể thao phổ biến nhất thế giới.' },
+  ],
+  swim: [
+    { en: 'He learned to swim when he was only four years old.', vi: 'Anh ấy học bơi khi mới bốn tuổi.' },
+    { en: 'Swimming is a great full-body workout.', vi: 'Bơi lội là bài tập tuyệt vời cho toàn thân.' },
+  ],
+  run: [
+    { en: 'She runs a marathon every year to raise money for charity.', vi: 'Cô ấy chạy marathon mỗi năm để quyên tiền từ thiện.' },
+    { en: 'Start by running just ten minutes a day and build up.', vi: 'Bắt đầu bằng cách chạy mười phút mỗi ngày rồi tăng dần.' },
+  ],
+  jump: [
+    { en: 'The athlete jumped over the bar on her first attempt.', vi: 'Vận động viên nhảy qua xà ngay lần đầu tiên.' },
+    { en: 'Jump rope is a fun and cheap way to get fit.', vi: 'Nhảy dây là cách vui và rẻ để tập thể dục.' },
+  ],
+  kick: [
+    { en: 'She practised her kicks at martial arts class.', vi: 'Cô ấy luyện các cú đá ở lớp võ thuật.' },
+    { en: 'He kicked the ball so hard it went over the fence.', vi: 'Anh ấy đá bóng mạnh đến mức bay qua hàng rào.' },
+  ],
+  play: [
+    { en: 'Children learn a lot through play.', vi: 'Trẻ em học được rất nhiều qua việc chơi.' },
+    { en: 'She plays chess with her grandfather every weekend.', vi: 'Cô ấy chơi cờ với ông ngoại mỗi cuối tuần.' },
+  ],
+  game: [
+    { en: 'He downloaded a new game to play on his phone.', vi: 'Anh ấy tải trò chơi mới để chơi trên điện thoại.' },
+    { en: 'Board games bring the whole family together.', vi: 'Trò chơi cờ bàn giúp cả gia đình quây quần.' },
+  ],
+  dance: [
+    { en: 'She danced so gracefully that everyone stopped to watch.', vi: 'Cô ấy nhảy uyển chuyển đến mức mọi người dừng lại xem.' },
+    { en: 'Dance is a beautiful way to express how you feel.', vi: 'Múa là cách tuyệt đẹp để bộc lộ cảm xúc.' },
+  ],
+  sing: [
+    { en: 'She sings in the shower every morning — loudly.', vi: 'Cô ấy hát khi tắm mỗi sáng — rất to.' },
+    { en: 'He sang a love song at his best friend\'s wedding.', vi: 'Anh ấy hát một bài tình ca tại đám cưới của bạn thân.' },
+  ],
+  draw: [
+    { en: 'He draws comics to tell stories about daily life.', vi: 'Anh ấy vẽ truyện tranh để kể về cuộc sống hàng ngày.' },
+    { en: 'She draws her ideas before turning them into designs.', vi: 'Cô ấy phác thảo ý tưởng trước khi biến chúng thành thiết kế.' },
+  ],
+  paint: [
+    { en: 'She painted the living room walls light blue.', vi: 'Cô ấy sơn tường phòng khách màu xanh nhạt.' },
+    { en: 'He spent the afternoon painting by the river.', vi: 'Anh ấy dành buổi chiều vẽ tranh bên sông.' },
+  ],
+  hobby: [
+    { en: 'My hobbies include cooking, reading, and hiking.', vi: 'Sở thích của tôi bao gồm nấu ăn, đọc sách và đi bộ đường dài.' },
+    { en: 'Having a hobby helps you relax after a busy week.', vi: 'Có sở thích giúp bạn thư giãn sau tuần bận rộn.' },
+  ],
+  win: [
+    { en: 'She won first prize in the national essay competition.', vi: 'Cô ấy đoạt giải nhất trong cuộc thi viết văn toàn quốc.' },
+    { en: 'Winning is great, but the effort matters more.', vi: 'Chiến thắng rất tuyệt, nhưng nỗ lực mới quan trọng hơn.' },
+  ],
+  lose: [
+    { en: 'They lost the game but played with great spirit.', vi: 'Họ thua trận nhưng thi đấu với tinh thần tuyệt vời.' },
+    { en: 'Nobody likes to lose, but it teaches you important lessons.', vi: 'Không ai thích thua, nhưng nó dạy cho bạn bài học quan trọng.' },
+  ],
+  score: [
+    { en: 'The final score was three to one in our favour.', vi: 'Tỉ số cuối trận là ba một thiên về phía chúng tôi.' },
+    { en: 'She scored top marks in the maths exam.', vi: 'Cô ấy đạt điểm tuyệt đối trong kỳ thi toán.' },
+  ],
+  match: [
+    { en: 'The match ended in a draw after ninety minutes.', vi: 'Trận đấu kết thúc hoà sau chín mươi phút.' },
+    { en: 'Our school team won every match this season.', vi: 'Đội trường chúng tôi thắng mọi trận mùa này.' },
+  ],
+  exercise: [
+    { en: 'Regular exercise reduces the risk of heart disease.', vi: 'Tập thể dục đều đặn giảm nguy cơ bệnh tim.' },
+    { en: 'She does twenty minutes of exercise every morning before breakfast.', vi: 'Cô ấy tập hai mươi phút thể dục mỗi sáng trước bữa sáng.' },
+  ],
+  compete: [
+    { en: 'She competed in the national swimming championship.', vi: 'Cô ấy thi đấu trong giải bơi lội toàn quốc.' },
+    { en: 'Companies compete to offer the best price and service.', vi: 'Các công ty cạnh tranh để cung cấp giá và dịch vụ tốt nhất.' },
+  ],
+  club: [
+    { en: 'She joined the English conversation club at her university.', vi: 'Cô ấy tham gia câu lạc bộ hội thoại tiếng Anh ở đại học.' },
+    { en: 'The chess club meets every Wednesday after school.', vi: 'Câu lạc bộ cờ vua họp mỗi thứ Tư sau giờ học.' },
+  ],
+  trophy: [
+    { en: 'The coach lifted the trophy above his head and cheered.', vi: 'Huấn luyện viên nâng cúp lên đầu và hò reo.' },
+    { en: 'She keeps all her trophies on a shelf in her bedroom.', vi: 'Cô ấy để tất cả cúp trên kệ trong phòng ngủ.' },
+  ],
+
+  // ── Vòng 25: Tính cách & phẩm chất ───────────────────────────────────
+  kind: [
+    { en: 'It was kind of you to help the elderly woman.', vi: 'Bạn thật tốt bụng khi giúp bà cụ đó.' },
+    { en: 'Small acts of kindness make a big difference.', vi: 'Những hành động tốt bụng nhỏ tạo ra sự khác biệt lớn.' },
+  ],
+  honest: [
+    { en: 'He was honest enough to admit he had made a mistake.', vi: 'Anh ấy đủ trung thực để thừa nhận mình đã mắc sai lầm.' },
+    { en: 'Honest feedback, even when hard to hear, is valuable.', vi: 'Phản hồi trung thực, dù khó nghe, vẫn rất có giá trị.' },
+  ],
+  brave: [
+    { en: 'She was brave enough to speak up against injustice.', vi: 'Cô ấy đủ dũng cảm để lên tiếng chống lại bất công.' },
+    { en: 'It is brave to try something new, even if you might fail.', vi: 'Thử điều gì đó mới, dù có thể thất bại, là dũng cảm.' },
+  ],
+  lazy: [
+    { en: 'He was too lazy to cook so he ordered takeaway again.', vi: 'Anh ấy lười quá không muốn nấu nên lại gọi đồ ăn mang về.' },
+    { en: 'Being lazy sometimes means you just need a break.', vi: 'Đôi khi lười biếng chỉ có nghĩa là bạn cần nghỉ ngơi thôi.' },
+  ],
+  funny: [
+    { en: 'His funny jokes always make the whole office laugh.', vi: 'Những trò đùa hài hước của anh ấy luôn làm cả văn phòng cười.' },
+    { en: 'She has a funny way of explaining complicated things simply.', vi: 'Cô ấy có cách hài hước để giải thích những điều phức tạp một cách đơn giản.' },
+  ],
+  polite: [
+    { en: 'He was always polite, even to people who were rude to him.', vi: 'Anh ấy luôn lịch sự, ngay cả với người thô lỗ với anh ấy.' },
+    { en: 'Saying please and thank you is a simple way to be polite.', vi: 'Nói làm ơn và cảm ơn là cách đơn giản để lịch sự.' },
+  ],
+  rude: [
+    { en: 'It is rude to use your phone during a meal with others.', vi: 'Dùng điện thoại trong bữa ăn với người khác là thô lỗ.' },
+    { en: 'She walked out after the customer was repeatedly rude.', vi: 'Cô ấy rời đi sau khi khách hàng liên tục thô lỗ.' },
+  ],
+  confident: [
+    { en: 'She walked into the interview confident and well-prepared.', vi: 'Cô ấy bước vào phòng phỏng vấn tự tin và chuẩn bị kỹ.' },
+    { en: 'Practising every day makes you more confident in speaking.', vi: 'Luyện tập mỗi ngày giúp bạn tự tin hơn khi nói.' },
+  ],
+  serious: [
+    { en: 'She is serious about becoming a professional musician.', vi: 'Cô ấy nghiêm túc với mục tiêu trở thành nhạc sĩ chuyên nghiệp.' },
+    { en: 'He looks serious in meetings but is funny outside work.', vi: 'Anh ấy trông nghiêm túc trong cuộc họp nhưng hài hước ngoài giờ làm.' },
+  ],
+  quiet: [
+    { en: 'She prefers a quiet evening at home to loud parties.', vi: 'Cô ấy thích buổi tối yên tĩnh ở nhà hơn tiệc ồn ào.' },
+    { en: 'The library is a quiet place to focus on studying.', vi: 'Thư viện là nơi yên tĩnh để tập trung học bài.' },
+  ],
+  loud: [
+    { en: 'The music was so loud I could not hear my friend speak.', vi: 'Nhạc to đến mức tôi không nghe bạn nói chuyện.' },
+    { en: 'She has a loud laugh that fills the whole room.', vi: 'Cô ấy có tiếng cười to lấp đầy cả căn phòng.' },
+  ],
+  creative: [
+    { en: 'Creative thinking helps you solve problems in new ways.', vi: 'Tư duy sáng tạo giúp bạn giải quyết vấn đề theo cách mới.' },
+    { en: 'She is creative with both design and cooking.', vi: 'Cô ấy sáng tạo trong cả thiết kế lẫn nấu ăn.' },
+  ],
+  generous: [
+    { en: 'He was generous enough to donate half his bonus to charity.', vi: 'Anh ấy hào phóng đủ để hiến một nửa tiền thưởng cho từ thiện.' },
+    { en: 'She is generous with both her time and her advice.', vi: 'Cô ấy hào phóng với cả thời gian lẫn lời khuyên.' },
+  ],
+  selfish: [
+    { en: 'It is selfish to take all the food without sharing.', vi: 'Lấy hết đồ ăn mà không chia sẻ là ích kỷ.' },
+    { en: 'Sometimes being selfish means taking care of yourself first.', vi: 'Đôi khi ích kỷ có nghĩa là chăm sóc bản thân trước.' },
+  ],
+  shy: [
+    { en: 'She was shy at first but opened up after a few classes.', vi: 'Cô ấy nhút nhát lúc đầu nhưng cởi mở hơn sau vài buổi học.' },
+    { en: 'Many shy people are great listeners and deep thinkers.', vi: 'Nhiều người nhút nhát là người biết lắng nghe và suy nghĩ sâu sắc.' },
+  ],
+  friendly: [
+    { en: 'The locals were so friendly that we felt at home right away.', vi: 'Người địa phương thân thiện đến mức chúng tôi cảm thấy như ở nhà ngay.' },
+    { en: 'A friendly smile makes a big difference to someone\'s day.', vi: 'Một nụ cười thân thiện tạo ra sự khác biệt lớn cho ngày của ai đó.' },
+  ],
+  character: [
+    { en: 'Her character shone through when she helped strangers.', vi: 'Nhân cách của cô ấy toả sáng khi cô ấy giúp đỡ người lạ.' },
+    { en: 'You can judge a person\'s character by how they treat others.', vi: 'Bạn có thể đánh giá nhân cách một người qua cách họ đối xử với người khác.' },
+  ],
+  personality: [
+    { en: 'Her warm personality makes everyone feel welcome.', vi: 'Cá tính ấm áp của cô ấy khiến mọi người cảm thấy được chào đón.' },
+    { en: 'A positive personality is as important as technical skills.', vi: 'Cá tính tích cực quan trọng không kém kỹ năng chuyên môn.' },
+  ],
+  talent: [
+    { en: 'Hard work beats talent when talent does not work hard.', vi: 'Chăm chỉ đánh bại tài năng khi tài năng không chăm chỉ.' },
+    { en: 'She discovered her talent for languages at a young age.', vi: 'Cô ấy phát hiện năng khiếu ngôn ngữ của mình từ nhỏ.' },
+  ],
+  attitude: [
+    { en: 'Your attitude determines how far you go in life.', vi: 'Thái độ của bạn quyết định bạn đi được bao xa trong cuộc sống.' },
+    { en: 'She faced every challenge with a positive attitude.', vi: 'Cô ấy đối mặt với mọi thử thách với thái độ tích cực.' },
+  ],
 }
