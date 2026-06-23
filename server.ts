@@ -6,6 +6,7 @@
 //   Production  : npm start    (file này, chạy qua PM2)
 
 import express from 'express'
+import compression from 'compression'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as dotenv from 'dotenv'
@@ -24,6 +25,10 @@ const app = express()
 
 // Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
 app.disable('x-powered-by')
+
+// Bật gzip/brotli compression — giảm kích thước response 70% cho Mobile
+// threshold: chỉ nén khi response > 1KB (tránh overhead cho response nhỏ)
+app.use(compression({ threshold: 1024 }))
 
 // STT nhận audio base64 → body lớn hơn nhiều so với chat/tts. Đăng ký parser riêng
 // cho route này TRƯỚC parser JSON 64kb mặc định bên dưới (Express chạy middleware theo

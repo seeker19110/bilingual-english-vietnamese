@@ -20,6 +20,18 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), apiEdgeDevMiddleware()],
     build: {
       chunkSizeWarningLimit: 500,
+      minify: 'esbuild',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Vendor libraries thành chunks riêng
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-router': ['react-router-dom'],
+            'vendor-supabase': ['@supabase/supabase-js'],
+            'vendor-ui': ['lucide-react'],
+          },
+        },
+      },
     },
   }
 })
