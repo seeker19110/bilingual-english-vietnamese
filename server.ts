@@ -25,29 +25,6 @@ const app = express()
 // Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
 app.disable('x-powered-by')
 
-// Security headers — ngăn chặn các tấn công phổ biến
-app.use((req, res, next) => {
-  // Prevent MIME type sniffing
-  res.setHeader('X-Content-Type-Options', 'nosniff')
-
-  // Content Security Policy — thay thế X-Frame-Options
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'"
-  )
-
-  // Don't send Referrer header to untrusted sources
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
-
-  // Don't send X-XSS-Protection (deprecated, CSP handles it)
-  // Remove if present, don't add
-
-  // Remove X-Powered-By if somehow present
-  res.removeHeader('X-Powered-By')
-
-  next()
-})
-
 // STT nhận audio base64 → body lớn hơn nhiều so với chat/tts. Đăng ký parser riêng
 // cho route này TRƯỚC parser JSON 64kb mặc định bên dưới (Express chạy middleware theo
 // thứ tự — nếu để parser 64kb chạy trước, body audio sẽ bị chặn 413 trước khi tới handler).
