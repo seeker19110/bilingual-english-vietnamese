@@ -3626,78 +3626,102 @@
  },
  {
   "id": 311,
-  "title": "Học cách pha cocktail",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học cách pha cocktail.",
+  "title": {
+   "vi": "Tìm hiểu về yoga và lợi ích sức khỏe",
+   "en": "Learning About Yoga and Health Benefits"
+  },
+  "situation": "Chị Lan muốn bắt đầu tập yoga và hỏi người bạn Hương đã tập yoga 3 năm.",
   "turnCount": 20,
-  "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerAGender": "female",
+  "speakerBGender": "female",
   "chunk": 31,
   "idx": 0
  },
  {
   "id": 312,
-  "title": "Đặt đồ uống đặc biệt",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Đặt đồ uống đặc biệt.",
-  "turnCount": 20,
-  "speakerAGender": "female",
+  "title": {
+   "vi": "Đàm phán tăng lương với sếp",
+   "en": "Negotiating a Salary Raise with the Boss"
+  },
+  "situation": "Nhân viên Phong đặt lịch gặp sếp Hải để thảo luận về việc tăng lương sau 2 năm làm việc.",
+  "turnCount": 18,
+  "speakerAGender": "male",
   "speakerBGender": "male",
   "chunk": 31,
   "idx": 1
  },
  {
   "id": 313,
-  "title": "Hỏi về rượu vang",
-  "situation": "Tình huống thực tế liên quan đến: Hỏi về rượu vang.",
-  "turnCount": 20,
+  "title": {
+   "vi": "Hỏi thăm và tư vấn về nuôi thú cưng",
+   "en": "Asking for Advice About Keeping Pets"
+  },
+  "situation": "Bé Minh 10 tuổi hỏi bố về việc nuôi chó và cần thuyết phục bố đồng ý.",
+  "turnCount": 18,
   "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 31,
   "idx": 2
  },
  {
   "id": 314,
-  "title": "Học pha trà đạo",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học pha trà đạo.",
+  "title": {
+   "vi": "Đặt mua hàng online và theo dõi đơn hàng",
+   "en": "Online Shopping and Order Tracking"
+  },
+  "situation": "Chị Linh liên hệ bộ phận chăm sóc khách hàng của sàn thương mại điện tử để hỏi về đơn hàng chưa nhận được.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 31,
   "idx": 3
  },
  {
   "id": 315,
-  "title": "Thưởng thức cà phê đặc sản",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Thưởng thức cà phê đặc sản.",
+  "title": {
+   "vi": "Thảo luận về nấu ăn truyền thống Việt Nam",
+   "en": "Discussing Traditional Vietnamese Cooking"
+  },
+  "situation": "Kevin người Canada đang học nấu ăn Việt Nam và hỏi bạn gái Hương về cách nấu bún bò Huế.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 31,
   "idx": 4
  },
  {
   "id": 316,
-  "title": "Hỏi về lịch sử Việt Nam",
-  "situation": "Tình huống thực tế liên quan đến: Hỏi về lịch sử Việt Nam.",
+  "title": {
+   "vi": "Tư vấn mua nhà lần đầu",
+   "en": "Advice for First-Time Home Buyers"
+  },
+  "situation": "Vợ chồng trẻ Dũng và Mai lần đầu mua nhà và hỏi tư vấn viên bất động sản Khoa.",
   "turnCount": 20,
-  "speakerAGender": "female",
+  "speakerAGender": "male",
   "speakerBGender": "male",
   "chunk": 31,
   "idx": 5
  },
  {
   "id": 317,
-  "title": "Thăm bảo tàng",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thăm bảo tàng.",
+  "title": {
+   "vi": "Học về lịch sử Việt Nam với người nước ngoài",
+   "en": "Learning About Vietnamese History with a Foreigner"
+  },
+  "situation": "Mark người Mỹ đang nghiên cứu về Việt Nam và hỏi bạn Tuấn về lịch sử kháng chiến.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "female",
+  "speakerBGender": "male",
   "chunk": 31,
   "idx": 6
  },
  {
   "id": 318,
-  "title": "Tìm hiểu phong tục tập quán",
-  "situation": "Hai người thực hành hội thoại về chủ đề: Tìm hiểu phong tục tập quán.",
+  "title": {
+   "vi": "Tư vấn chăm sóc da mặt cơ bản",
+   "en": "Basic Facial Skincare Consultation"
+  },
+  "situation": "Chị Hoa đến spa để được tư vấn về chăm sóc da mặt cơ bản và hỏi chuyên viên Linh.",
   "turnCount": 20,
   "speakerAGender": "female",
   "speakerBGender": "female",
@@ -3706,21 +3730,27 @@
  },
  {
   "id": 319,
-  "title": "Học về ngày lễ truyền thống",
-  "situation": "Tình huống thực tế liên quan đến: Học về ngày lễ truyền thống.",
+  "title": {
+   "vi": "Lên kế hoạch tour phượt Tây Bắc",
+   "en": "Planning a Northwestern Vietnam Backpacking Tour"
+  },
+  "situation": "Nhóm bạn Hùng và Lan đang lên kế hoạch cho chuyến phượt Tây Bắc cuối năm.",
   "turnCount": 20,
   "speakerAGender": "male",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 31,
   "idx": 8
  },
  {
   "id": 320,
-  "title": "Nói về di sản văn hóa",
-  "situation": "Hội thoại thực hành kỹ năng giao tiếp: Nói về di sản văn hóa.",
+  "title": {
+   "vi": "Hỏi về chương trình dạy con học đọc tiếng Anh",
+   "en": "Asking About Teaching Children to Read in English"
+  },
+  "situation": "Chị Nga hỏi giáo viên tiếng Anh Hằng về phương pháp dạy con 5 tuổi học đọc tiếng Anh tại nhà.",
   "turnCount": 20,
   "speakerAGender": "female",
-  "speakerBGender": "male",
+  "speakerBGender": "female",
   "chunk": 31,
   "idx": 9
  },

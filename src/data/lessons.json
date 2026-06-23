@@ -37092,1171 +37092,1191 @@
   },
   {
     "id": 311,
-    "title": "Học cách pha cocktail",
-    "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học cách pha cocktail.",
-    "speakerAGender": "male",
-    "speakerBGender": "male",
-    "speakerAName": {
-      "vi": "Emma",
-      "en": "Emma"
+    "title": {
+      "vi": "Tìm hiểu về yoga và lợi ích sức khỏe",
+      "en": "Learning About Yoga and Health Benefits"
     },
-    "speakerBName": {
-      "vi": "David",
-      "en": "David"
-    },
-    "turns": [
-      {
-        "speaker": "A",
-        "en": "Excuse me, could you help me with this assignment?",
-        "vi": "Xin lỗi, bạn có thể giúp tôi bài tập này không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Sure, what subject is it?",
-        "vi": "Được chứ, đây là môn gì?"
-      },
-      {
-        "speaker": "A",
-        "en": "It's for my English class.",
-        "vi": "Đây là cho lớp tiếng Anh của tôi."
-      },
-      {
-        "speaker": "B",
-        "en": "What specifically do you need help with?",
-        "vi": "Bạn cần giúp đỡ cụ thể về phần gì?"
-      },
-      {
-        "speaker": "A",
-        "en": "I need to write an essay about culture.",
-        "vi": "Tôi cần viết bài luận về văn hóa."
-      },
-      {
-        "speaker": "B",
-        "en": "That's an interesting topic. What's your angle?",
-        "vi": "Đó là chủ đề thú vị. Góc nhìn của bạn là gì?"
-      },
-      {
-        "speaker": "A",
-        "en": "I want to compare Vietnamese and American culture.",
-        "vi": "Tôi muốn so sánh văn hóa Việt Nam và Mỹ."
-      },
-      {
-        "speaker": "B",
-        "en": "Great idea! Start with similarities first.",
-        "vi": "Ý hay! Hãy bắt đầu với điểm tương đồng trước."
-      },
-      {
-        "speaker": "A",
-        "en": "What are the main similarities?",
-        "vi": "Những điểm tương đồng chính là gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "Both cultures value family and education highly.",
-        "vi": "Cả hai văn hóa đều coi trọng gia đình và giáo dục."
-      },
-      {
-        "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
-      },
-      {
-        "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
-      },
-      {
-        "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
-      },
-      {
-        "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
-      },
-      {
-        "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
-      },
-      {
-        "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
-      },
-      {
-        "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
-      },
-      {
-        "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
-      }
-    ]
-  },
-  {
-    "id": 312,
-    "title": "Đặt đồ uống đặc biệt",
-    "situation": "Hai người thực hành hội thoại về chủ đề: Đặt đồ uống đặc biệt.",
+    "situation": "Chị Lan muốn bắt đầu tập yoga và hỏi người bạn Hương đã tập yoga 3 năm.",
     "speakerAGender": "female",
-    "speakerBGender": "male",
+    "speakerBGender": "female",
     "speakerAName": {
       "vi": "Lan",
       "en": "Lan"
     },
     "speakerBName": {
-      "vi": "Nam",
-      "en": "Nam"
+      "vi": "Hương",
+      "en": "Huong"
     },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Excuse me, I'm looking for Đặt đồ uống đặc biệt.",
-        "vi": "Xin lỗi, tôi đang tìm về Đặt đồ uống đặc biệt."
+        "vi": "Hương ơi, mình muốn bắt đầu tập yoga. Bạn tập được 3 năm rồi, chia sẻ cho mình với!",
+        "en": "Huong, I want to start practicing yoga. You've been doing it for 3 years, please share with me!"
       },
       {
         "speaker": "B",
-        "en": "Sure, I can help you with that.",
-        "vi": "Được, tôi có thể giúp bạn điều đó."
+        "vi": "Mình rất vui khi bạn quan tâm đến yoga! Bạn muốn tập yoga để đạt mục tiêu gì? Thả lỏng, tăng linh hoạt hay giảm cân?",
+        "en": "I'm so glad you're interested in yoga! What goal do you want to achieve with yoga? Relaxation, flexibility or weight loss?"
       },
       {
         "speaker": "A",
-        "en": "What options do you have?",
-        "vi": "Bạn có những lựa chọn nào?"
+        "vi": "Mình bị đau lưng mãn tính và căng thẳng công việc. Nghe nói yoga giúp cả hai vấn đề đó.",
+        "en": "I have chronic back pain and work stress. I've heard yoga helps with both issues."
       },
       {
         "speaker": "B",
-        "en": "We have several options. Let me show you.",
-        "vi": "Chúng tôi có vài lựa chọn. Để tôi chỉ cho bạn."
+        "vi": "Đúng vậy! Yoga rất tốt cho đau lưng - tăng cường cơ lưng và cải thiện tư thế. Còn về stress, yoga kết hợp thở và thiền giúp giảm cortisol hiệu quả.",
+        "en": "That's right! Yoga is great for back pain - strengthens back muscles and improves posture. For stress, yoga combines breathing and meditation to effectively reduce cortisol."
       },
       {
         "speaker": "A",
-        "en": "What's the price range?",
-        "vi": "Mức giá là bao nhiêu?"
+        "vi": "Có nhiều loại yoga quá, mình không biết chọn gì. Hatha, Vinyasa, Yin yoga... khác nhau thế nào?",
+        "en": "There are so many types of yoga, I don't know what to choose. Hatha, Vinyasa, Yin yoga... how are they different?"
       },
       {
         "speaker": "B",
-        "en": "It ranges from 100,000 to 500,000 VND.",
-        "vi": "Dao động từ 100.000 đến 500.000 đồng."
+        "vi": "Hatha yoga nhịp chậm, giữ tư thế lâu - phù hợp người mới. Vinyasa năng động hơn, nối động tác liên tục. Yin yoga giữ tư thế rất lâu 3-5 phút, tốt cho thư giãn sâu.",
+        "en": "Hatha yoga is slow-paced, holding poses longer - suitable for beginners. Vinyasa is more dynamic, connecting movements continuously. Yin yoga holds poses very long 3-5 minutes, good for deep relaxation."
       },
       {
         "speaker": "A",
-        "en": "Can I try it first?",
-        "vi": "Tôi có thể thử trước không?"
+        "vi": "Với mục tiêu đau lưng và stress thì nên tập loại nào?",
+        "en": "For my goals of back pain and stress, which type should I practice?"
       },
       {
         "speaker": "B",
-        "en": "Of course! Take your time.",
-        "vi": "Tất nhiên! Cứ thử thoải mái."
+        "vi": "Bắt đầu với Hatha yoga, sau 2-3 tháng thêm Yin yoga vào routine. Hai loại này nhẹ nhàng và tốt nhất cho đau lưng và thư giãn.",
+        "en": "Start with Hatha yoga, after 2-3 months add Yin yoga to your routine. These two are the gentlest and best for back pain and relaxation."
       },
       {
         "speaker": "A",
-        "en": "Do you have a discount?",
-        "vi": "Bạn có giảm giá không?"
+        "vi": "Mình cần dụng cụ gì để bắt đầu?",
+        "en": "What equipment do I need to start?"
       },
       {
         "speaker": "B",
-        "en": "Yes, we have 10% off today.",
-        "vi": "Có, hôm nay giảm 10%."
+        "vi": "Chỉ cần thảm yoga là đủ để bắt đầu. Thảm tốt nên dày ít nhất 6mm, chống trượt. Giá khoảng 200-500 ngàn. Không cần mua nhiều phụ kiện ngay.",
+        "en": "Just a yoga mat is enough to start. A good mat should be at least 6mm thick, non-slip. Price about 200-500 thousand VND. No need to buy many accessories right away."
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Tập ở nhà hay đến lớp tốt hơn?",
+        "en": "Is practicing at home or going to class better?"
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Người mới nên đến lớp trước ít nhất 1-2 tháng để thầy cô chỉnh tư thế đúng. Tư thế sai có thể làm đau lưng nặng hơn thay vì chữa.",
+        "en": "Beginners should go to class first for at least 1-2 months so instructors can correct poses. Wrong posture can worsen back pain instead of healing it."
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Tập bao nhiêu lần một tuần là đủ?",
+        "en": "How many times a week is enough?"
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "3 lần/tuần là lý tưởng để thấy kết quả sau 1 tháng. Nếu bận thì 2 lần cũng được, nhưng cần kiên trì đều đặn hơn là tập nhiều một lần rồi bỏ.",
+        "en": "3 times/week is ideal to see results after 1 month. If busy then 2 times also works, but consistency is more important than doing a lot once and then stopping."
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "Mình nên tập lúc nào trong ngày?",
+        "en": "What time of day should I practice?"
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Buổi sáng sớm trước ăn giúp tỉnh táo cả ngày. Buổi tối sau ăn 2 tiếng giúp ngủ ngon hơn. Tùy lịch của bạn, thời điểm nào duy trì được là tốt nhất.",
+        "en": "Early morning before eating helps stay alert all day. Evening 2 hours after eating helps sleep better. Depends on your schedule, whatever time you can maintain is best."
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Có tư thế yoga nào đặc biệt tốt cho đau lưng không Hương?",
+        "en": "Are there specific yoga poses particularly good for back pain Huong?"
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
+        "vi": "Cat-Cow, Child's Pose, Downward Dog, Cobra Pose và Bridge Pose - đây là 5 tư thế cơ bản tốt nhất cho lưng. YouTube có nhiều video hướng dẫn miễn phí.",
+        "en": "Cat-Cow, Child's Pose, Downward Dog, Cobra Pose and Bridge Pose - these are the 5 best basic poses for the back. YouTube has many free tutorial videos."
       },
       {
         "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
+        "vi": "Mình nên tránh tư thế nào khi bị đau lưng?",
+        "en": "What poses should I avoid with back pain?"
       },
       {
         "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "Tránh tư thế xoắn mạnh, uốn người ra sau quá nhiều, và tư thế đứng một chân khi mới bắt đầu. Luôn nói với giáo viên về tình trạng lưng của bạn.",
+        "en": "Avoid deep twisting poses, excessive backbends, and single-leg standing poses when starting. Always tell the teacher about your back condition."
+      }
+    ]
+  },
+  {
+    "id": 312,
+    "title": {
+      "vi": "Đàm phán tăng lương với sếp",
+      "en": "Negotiating a Salary Raise with the Boss"
+    },
+    "situation": "Nhân viên Phong đặt lịch gặp sếp Hải để thảo luận về việc tăng lương sau 2 năm làm việc.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Phong",
+      "en": "Phong"
+    },
+    "speakerBName": {
+      "vi": "Hải",
+      "en": "Hai"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Chào anh Hải, cảm ơn anh đã dành thời gian gặp em hôm nay. Em muốn thảo luận về mức lương của mình.",
+        "en": "Hello Mr. Hai, thank you for making time to meet with me today. I'd like to discuss my salary."
+      },
+      {
+        "speaker": "B",
+        "vi": "Chào Phong, tất nhiên rồi. Anh luôn sẵn sàng lắng nghe. Em muốn nói gì?",
+        "en": "Hello Phong, of course. I'm always ready to listen. What would you like to say?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Em đã làm việc tại công ty được 2 năm và tin rằng mình đã có những đóng góp đáng kể. Em muốn xin xem xét tăng lương 20%.",
+        "en": "I've been working at the company for 2 years and believe I've made significant contributions. I'd like to request a 20% salary increase consideration."
+      },
+      {
+        "speaker": "B",
+        "vi": "20% là con số khá cao. Em có thể nói rõ hơn về những đóng góp em đề cập không?",
+        "en": "20% is quite a high number. Could you elaborate on the contributions you mentioned?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Dạ. Năm ngoái em hoàn thành dự án e-commerce giúp doanh thu tăng 35%. Em cũng đã đào tạo 3 nhân viên mới và phụ trách thêm vai trò tech lead không có phụ cấp.",
+        "en": "Yes. Last year I completed the e-commerce project that increased revenue by 35%. I also trained 3 new employees and took on the additional tech lead role without extra compensation."
+      },
+      {
+        "speaker": "B",
+        "vi": "Anh ghi nhận những đóng góp đó của Phong. Dự án e-commerce thực sự có kết quả tốt. Nhưng 20% trong một lần khá lớn với ngân sách hiện tại.",
+        "en": "I acknowledge those contributions from Phong. The e-commerce project really had good results. But 20% at once is quite large for the current budget."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em hiểu anh. Em cũng đã research mức lương thị trường cho vị trí tương đương - trung bình cao hơn mức em đang nhận 25%. Em chỉ xin 20%.",
+        "en": "I understand. I've also researched market rates for equivalent positions - averaging 25% higher than what I currently earn. I'm only asking for 20%."
+      },
+      {
+        "speaker": "B",
+        "vi": "Em đã chuẩn bị kỹ đó! Anh tôn trọng điều đó. Nhưng anh cần xem xét tổng thể budget của bộ phận, không chỉ riêng trường hợp của em.",
+        "en": "You've prepared well! I respect that. But I need to consider the overall department budget, not just your individual case."
+      },
+      {
+        "speaker": "A",
+        "vi": "Em hiểu hoàn toàn. Nếu tăng một lần 20% không khả thi, anh có thể xem xét tăng 10% ngay và thêm 10% sau 6 tháng nếu em đạt KPI không?",
+        "en": "I completely understand. If a 20% increase at once isn't feasible, could you consider 10% now and another 10% after 6 months if I meet my KPIs?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Đề xuất linh hoạt đó nghe có lý hơn. Em muốn KPI nào cụ thể?",
+        "en": "That flexible proposal sounds more reasonable. What specific KPIs would you want?"
+      },
+      {
+        "speaker": "A",
+        "vi": "Em đề xuất: hoàn thành dự án app mobile Q2 đúng deadline, tỷ lệ bug dưới 5% và đội nhóm đạt hiệu suất tăng 15%. Anh thấy có ổn không?",
+        "en": "I propose: complete the mobile app project Q2 on time, bug rate below 5% and team performance increase by 15%. Does that sound OK?"
+      },
+      {
+        "speaker": "B",
+        "vi": "KPI đó khả đo lường và hợp lý. Anh có thể đồng ý với mức tăng 10% ngay từ tháng tới, với điều kiện hoàn thành các KPI đó trong 6 tháng thì tăng tiếp 10%.",
+        "en": "Those KPIs are measurable and reasonable. I can agree to a 10% increase starting next month, provided you complete those KPIs in 6 months then another 10% increase."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn anh Hải! Em rất vui khi anh xem xét đề nghị của em. Em sẽ cố gắng hết sức để đạt KPI.",
+        "en": "Thank you Mr. Hai! I'm very happy that you're considering my request. I'll do my best to meet the KPIs."
+      },
+      {
+        "speaker": "B",
+        "vi": "Anh tin vào khả năng của Phong. Nhưng có điều anh muốn nói thêm: ngoài kết quả công việc, anh cũng mong Phong hỗ trợ đội nhiều hơn và chia sẻ kiến thức.",
+        "en": "I believe in Phong's abilities. But I want to add: besides work results, I also hope Phong supports the team more and shares knowledge."
+      },
+      {
+        "speaker": "A",
+        "vi": "Anh hoàn toàn đúng. Em nhận ra rằng mình cần cân bằng giữa làm việc cá nhân giỏi và dẫn dắt đội tốt hơn.",
+        "en": "You're absolutely right. I realize I need to balance being individually excellent and leading the team better."
+      },
+      {
+        "speaker": "B",
+        "vi": "Đó là tư duy của một leader thật sự. Anh sẽ làm văn bản chính thức về thỏa thuận này và gửi cho em trước cuối tuần.",
+        "en": "That's the mindset of a true leader. I'll prepare an official document about this agreement and send it to you before the end of the week."
+      },
+      {
+        "speaker": "A",
+        "vi": "Cảm ơn anh Hải! Em sẽ cố gắng không phụ sự tin tưởng của anh.",
+        "en": "Thank you Mr. Hai! I'll try not to let down your trust."
+      },
+      {
+        "speaker": "B",
+        "vi": "Anh biết em sẽ làm được. Chúc em thành công với dự án mobile app nhé, đó là bước đầu tiên để đạt KPI!",
+        "en": "I know you can do it. Good luck with the mobile app project, that's the first step to achieving your KPIs!"
       }
     ]
   },
   {
     "id": 313,
-    "title": "Hỏi về rượu vang",
-    "situation": "Tình huống thực tế liên quan đến: Hỏi về rượu vang.",
-    "speakerAGender": "male",
-    "speakerBGender": "female",
-    "speakerAName": {
-      "vi": "Hoa",
-      "en": "Hoa"
+    "title": {
+      "vi": "Hỏi thăm và tư vấn về nuôi thú cưng",
+      "en": "Asking for Advice About Keeping Pets"
     },
-    "speakerBName": {
+    "situation": "Bé Minh 10 tuổi hỏi bố về việc nuôi chó và cần thuyết phục bố đồng ý.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": {
       "vi": "Minh",
       "en": "Minh"
     },
+    "speakerBName": {
+      "vi": "Bố",
+      "en": "Dad"
+    },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Hello! How can I help you today?",
-        "vi": "Xin chào! Tôi có thể giúp gì hôm nay?"
+        "vi": "Bố ơi, con muốn nuôi chó! Bạn Hùng nhà bên có chó Golden Retriever đẹp lắm. Bố cho con nuôi được không?",
+        "en": "Dad, I want to have a dog! My neighbor Hung has a beautiful Golden Retriever. Can you let me have one?"
       },
       {
         "speaker": "B",
-        "en": "Hi! I need some information please.",
-        "vi": "Chào! Tôi cần một số thông tin."
+        "vi": "Nuôi chó là trách nhiệm lớn con ơi. Con đã suy nghĩ kỹ chưa? Nuôi chó cần làm gì con biết không?",
+        "en": "Having a dog is a big responsibility son. Have you thought it through? Do you know what keeping a dog involves?"
       },
       {
         "speaker": "A",
-        "en": "What would you like to know?",
-        "vi": "Bạn muốn biết gì?"
+        "vi": "Con biết phải cho chó ăn, tắm cho chó và chơi với chó. Con sẽ tự làm hết bố ơi!",
+        "en": "I know I have to feed the dog, bathe the dog and play with the dog. I'll do everything myself Dad!"
       },
       {
         "speaker": "B",
-        "en": "I'm asking about Hỏi về rượu vang.",
-        "vi": "Tôi hỏi về Hỏi về rượu vang."
+        "vi": "Tốt! Nhưng còn nhiều thứ hơn thế nữa. Con có biết chi phí nuôi chó gồm những gì không?",
+        "en": "Good! But there's much more to it. Do you know what the costs of keeping a dog include?"
       },
       {
         "speaker": "A",
-        "en": "Great topic. What specifically interests you?",
-        "vi": "Chủ đề hay. Bạn quan tâm cụ thể điều gì?"
+        "vi": "Thức ăn thôi bố. Rẻ mà!",
+        "en": "Just food Dad. That's cheap!"
       },
       {
         "speaker": "B",
-        "en": "I want to learn the basics first.",
-        "vi": "Tôi muốn học những điều cơ bản trước."
+        "vi": "Không phải chỉ thức ăn đâu. Còn tiền mua chó, tiêm phòng hàng năm, khám thú y khi bệnh, cắt tỉa lông, xích và vòng cổ. Tổng cộng khá tốn đó con.",
+        "en": "Not just food. Also the cost to buy the dog, annual vaccinations, vet visits when sick, grooming, leash and collar. The total is quite expensive son."
       },
       {
         "speaker": "A",
-        "en": "That's a good approach. Let me explain.",
-        "vi": "Đó là cách tiếp cận tốt. Để tôi giải thích."
+        "vi": "Vậy bố, mình nhận chó cứu hộ đi, không mất tiền mua. Con thấy trên mạng có nhiều chó cần nhà mới lắm.",
+        "en": "Then Dad, let's adopt a rescue dog, no purchase cost. I saw online there are many dogs needing new homes."
       },
       {
         "speaker": "B",
-        "en": "Please take your time. I'm listening.",
-        "vi": "Xin cứ từ từ. Tôi đang lắng nghe."
+        "vi": "Con nghĩ đến chó cứu hộ - đó là ý tưởng rất tốt và nhân văn! Bố thích cách con nghĩ. Nhưng còn vấn đề không gian sống.",
+        "en": "You thought of rescue dogs - that's a very good and humane idea! I like how you think. But there's still the issue of living space."
       },
       {
         "speaker": "A",
-        "en": "The most important thing to know is...",
-        "vi": "Điều quan trọng nhất cần biết là..."
+        "vi": "Nhà mình có ban công rộng, chó ở đó được không bố?",
+        "en": "Our home has a wide balcony, can the dog stay there Dad?"
       },
       {
         "speaker": "B",
-        "en": "That's really useful information.",
-        "vi": "Đó là thông tin thực sự hữu ích."
+        "vi": "Chó cần ra ngoài đi bộ ít nhất 2 lần mỗi ngày. Ở chung cư con phải dắt chó xuống cầu thang hay thang máy, dọn phân ở bên ngoài. Con sẵn sàng làm vậy mỗi ngày không?",
+        "en": "Dogs need to go outside for walks at least twice a day. In an apartment you'd have to take the dog down stairs or elevator, clean up droppings outside. Are you ready to do that every day?"
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Con sẵn sàng! Con sẽ dắt chó mỗi sáng trước đi học và buổi tối sau ăn. Con hứa bố!",
+        "en": "I'm ready! I'll walk the dog every morning before school and in the evening after dinner. I promise Dad!"
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Bố thấy con hào hứng lắm. Nhưng bố muốn thử con trước: trong 1 tháng tới con giúp bố dắt chó nhà bạn Hùng khi họ bận nhé. Coi như tập dượt.",
+        "en": "I see you're very enthusiastic. But I want to test you first: in the next month, help Dad walk Hung's dog when they're busy. Consider it practice."
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Được bố! Con sẽ làm thật tốt. Nhưng nếu con làm tốt thì bố sẽ cho con nuôi chó thật không?",
+        "en": "OK Dad! I'll do really well. But if I do well will you let me have a real dog?"
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "Bố sẽ xem xét nghiêm túc sau 1 tháng đó. Ngoài ra con cần làm thêm bài tập về nhà trước: tìm hiểu về giống chó phù hợp với sống ở chung cư.",
+        "en": "I'll seriously consider it after that month. Additionally you need to do some homework first: research dog breeds suitable for apartment living."
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "Con sẽ lên mạng tìm hiểu ngay hôm nay. Bố ơi, mình nuôi chó sẽ vui lắm, cả nhà mình có thêm thành viên mới!",
+        "en": "I'll research online today. Dad, having a dog will be so fun, our family will have a new member!"
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Bố cũng thích chó, nhưng bố và mẹ phải đồng ý cùng nhau. Con cũng cần thuyết phục mẹ đồng ý nữa đó.",
+        "en": "I also like dogs, but your mom and I need to agree together. You also need to convince Mom to agree."
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Tối nay con sẽ nói chuyện với mẹ! Con sẽ thuyết phục cả nhà đồng ý. Cảm ơn bố đã lắng nghe con!",
+        "en": "Tonight I'll talk to Mom! I'll convince the whole family to agree. Thank you Dad for listening to me!"
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
-      },
-      {
-        "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "Bố thích thấy con chủ động và có trách nhiệm như vậy. Bây giờ đi ngủ đi, ngày mai còn đi học. Chúc ngủ ngon con!",
+        "en": "I like seeing you being proactive and responsible like this. Now go to sleep, you have school tomorrow. Good night son!"
       }
     ]
   },
   {
     "id": 314,
-    "title": "Học pha trà đạo",
-    "situation": "Hội thoại thực hành kỹ năng giao tiếp: Học pha trà đạo.",
+    "title": {
+      "vi": "Đặt mua hàng online và theo dõi đơn hàng",
+      "en": "Online Shopping and Order Tracking"
+    },
+    "situation": "Chị Linh liên hệ bộ phận chăm sóc khách hàng của sàn thương mại điện tử để hỏi về đơn hàng chưa nhận được.",
     "speakerAGender": "female",
-    "speakerBGender": "female",
-    "speakerAName": {
-      "vi": "Thảo",
-      "en": "Thao"
-    },
-    "speakerBName": {
-      "vi": "Tuấn",
-      "en": "Tuan"
-    },
-    "turns": [
-      {
-        "speaker": "A",
-        "en": "Excuse me, could you help me with this assignment?",
-        "vi": "Xin lỗi, bạn có thể giúp tôi bài tập này không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Sure, what subject is it?",
-        "vi": "Được chứ, đây là môn gì?"
-      },
-      {
-        "speaker": "A",
-        "en": "It's for my English class.",
-        "vi": "Đây là cho lớp tiếng Anh của tôi."
-      },
-      {
-        "speaker": "B",
-        "en": "What specifically do you need help with?",
-        "vi": "Bạn cần giúp đỡ cụ thể về phần gì?"
-      },
-      {
-        "speaker": "A",
-        "en": "I need to write an essay about culture.",
-        "vi": "Tôi cần viết bài luận về văn hóa."
-      },
-      {
-        "speaker": "B",
-        "en": "That's an interesting topic. What's your angle?",
-        "vi": "Đó là chủ đề thú vị. Góc nhìn của bạn là gì?"
-      },
-      {
-        "speaker": "A",
-        "en": "I want to compare Vietnamese and American culture.",
-        "vi": "Tôi muốn so sánh văn hóa Việt Nam và Mỹ."
-      },
-      {
-        "speaker": "B",
-        "en": "Great idea! Start with similarities first.",
-        "vi": "Ý hay! Hãy bắt đầu với điểm tương đồng trước."
-      },
-      {
-        "speaker": "A",
-        "en": "What are the main similarities?",
-        "vi": "Những điểm tương đồng chính là gì?"
-      },
-      {
-        "speaker": "B",
-        "en": "Both cultures value family and education highly.",
-        "vi": "Cả hai văn hóa đều coi trọng gia đình và giáo dục."
-      },
-      {
-        "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
-      },
-      {
-        "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
-      },
-      {
-        "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
-      },
-      {
-        "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
-      },
-      {
-        "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
-      },
-      {
-        "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
-      },
-      {
-        "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
-      },
-      {
-        "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
-      },
-      {
-        "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
-      },
-      {
-        "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
-      }
-    ]
-  },
-  {
-    "id": 315,
-    "title": "Thưởng thức cà phê đặc sản",
-    "situation": "Hai người thực hành hội thoại về chủ đề: Thưởng thức cà phê đặc sản.",
-    "speakerAGender": "male",
     "speakerBGender": "male",
     "speakerAName": {
       "vi": "Linh",
       "en": "Linh"
     },
     "speakerBName": {
-      "vi": "Khoa",
-      "en": "Khoa"
+      "vi": "Hưng",
+      "en": "Hung"
     },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Hello! How can I help you today?",
-        "vi": "Xin chào! Tôi có thể giúp gì hôm nay?"
+        "vi": "Chào anh, em muốn hỏi về đơn hàng của mình. Em đặt hàng 5 ngày trước nhưng vẫn chưa nhận được.",
+        "en": "Hello, I want to ask about my order. I placed an order 5 days ago but still haven't received it."
       },
       {
         "speaker": "B",
-        "en": "Hi! I need some information please.",
-        "vi": "Chào! Tôi cần một số thông tin."
+        "vi": "Chào chị, tôi sẽ giúp chị tra cứu. Chị có thể cho tôi biết mã đơn hàng không?",
+        "en": "Hello, I'll help you look it up. Could you give me your order number?"
       },
       {
         "speaker": "A",
-        "en": "What would you like to know?",
-        "vi": "Bạn muốn biết gì?"
+        "vi": "Mã đơn hàng là VN2024031500123. Đơn hàng này gồm một đôi giày và túi xách.",
+        "en": "The order number is VN2024031500123. This order includes a pair of shoes and a handbag."
       },
       {
         "speaker": "B",
-        "en": "I'm asking about Thưởng thức cà phê đặc sản.",
-        "vi": "Tôi hỏi về Thưởng thức cà phê đặc sản."
+        "vi": "Cho tôi một chút để tra hệ thống... Đơn hàng của chị đang ở trạng thái 'Đang giao hàng', hiện tại ở kho phân phối Bình Dương.",
+        "en": "Let me check the system for a moment... Your order is in 'In Delivery' status, currently at the Binh Duong distribution center."
       },
       {
         "speaker": "A",
-        "en": "Great topic. What specifically interests you?",
-        "vi": "Chủ đề hay. Bạn quan tâm cụ thể điều gì?"
+        "vi": "5 ngày rồi mà vẫn còn ở kho à? Khi đặt hàng ghi giao trong 3-5 ngày làm việc mà.",
+        "en": "5 days and still at the warehouse? When I ordered it said delivery within 3-5 business days."
       },
       {
         "speaker": "B",
-        "en": "I want to learn the basics first.",
-        "vi": "Tôi muốn học những điều cơ bản trước."
+        "vi": "Chị nói đúng, đơn hàng đã qua thời gian giao dự kiến. Tôi xin lỗi vì sự chậm trễ này. Để tôi kiểm tra lý do.",
+        "en": "You're right, the order has exceeded the expected delivery time. I apologize for this delay. Let me check the reason."
       },
       {
         "speaker": "A",
-        "en": "That's a good approach. Let me explain.",
-        "vi": "Đó là cách tiếp cận tốt. Để tôi giải thích."
+        "vi": "Lý do là gì vậy anh? Em cần giày này đi đám cưới vào cuối tuần.",
+        "en": "What's the reason? I need these shoes for a wedding this weekend."
       },
       {
         "speaker": "B",
-        "en": "Please take your time. I'm listening.",
-        "vi": "Xin cứ từ từ. Tôi đang lắng nghe."
+        "vi": "Theo hệ thống, đơn hàng bị giữ lại tại kho do địa chỉ giao hàng không rõ ràng. Shipper đã thử liên hệ chị nhưng không được. Chị có nhận được cuộc gọi từ số lạ không?",
+        "en": "According to the system, the order was held at the warehouse due to unclear delivery address. The shipper tried to contact you but couldn't reach you. Did you receive any calls from an unfamiliar number?"
       },
       {
         "speaker": "A",
-        "en": "The most important thing to know is...",
-        "vi": "Điều quan trọng nhất cần biết là..."
+        "vi": "Ồ em có bỏ qua vài cuộc gọi số lạ vì sợ scam! Bây giờ phải làm sao?",
+        "en": "Oh I did miss a few calls from unknown numbers because I was afraid of scams! What should I do now?"
       },
       {
         "speaker": "B",
-        "en": "That's really useful information.",
-        "vi": "Đó là thông tin thực sự hữu ích."
+        "vi": "Tôi sẽ cập nhật lại thông tin giao hàng và yêu cầu shipper giao lại trong ngày mai. Chị có thể xác nhận địa chỉ đầy đủ không?",
+        "en": "I'll update the delivery information and request the shipper to redeliver tomorrow. Could you confirm your full address?"
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Số 123 đường Lê Lợi, phường Bến Nghé, Quận 1, TP.HCM. Tầng 5 căn hộ 502. Tòa nhà có cổng bảo vệ.",
+        "en": "Number 123 Le Loi Street, Ben Nghe Ward, District 1, Ho Chi Minh City. Floor 5, apartment 502. The building has a security gate."
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Tôi đã cập nhật xong, bao gồm thông tin tòa nhà có bảo vệ. Shipper sẽ gọi trước khi đến. Chị nhớ bắt máy số 18001234 nhé.",
+        "en": "I've updated it, including the building security gate info. The shipper will call before arriving. Please answer calls from 18001234."
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Cảm ơn anh! Anh có chắc ngày mai giao được không? Em thực sự cần hàng trước cuối tuần.",
+        "en": "Thank you! Are you sure they can deliver tomorrow? I really need the items before the weekend."
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "Tôi đã đánh dấu ưu tiên cao cho đơn hàng này và thông báo với bộ phận giao hàng. Khả năng 95% giao được ngày mai trước 6 giờ chiều.",
+        "en": "I've marked this order as high priority and notified the delivery department. There's a 95% chance of delivery tomorrow before 6pm."
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "Nếu ngày mai không giao được thì sao anh?",
+        "en": "What if they can't deliver tomorrow?"
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Nếu không giao được ngày mai, chị có thể đến kho Bình Dương nhận trực tiếp, hoặc chúng tôi sẽ hoàn tiền đầy đủ kể cả phí vận chuyển.",
+        "en": "If delivery isn't possible tomorrow, you can come to the Binh Duong warehouse to pick it up directly, or we'll issue a full refund including shipping fee."
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Được rồi anh. Anh cho em mã tra cứu khác để em theo dõi không?",
+        "en": "OK. Could you give me a different tracking code so I can monitor it?"
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
+        "vi": "Chị vào ứng dụng phần Đơn hàng của tôi, tìm mã VN2024031500123, sẽ thấy cập nhật real-time. Hoặc nhắn TRACE VN2024031500123 đến số 8088 để kiểm tra.",
+        "en": "In the app go to My Orders, find code VN2024031500123, you'll see real-time updates. Or text TRACE VN2024031500123 to 8088 to check."
       },
       {
         "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
+        "vi": "Cảm ơn anh Hưng đã xử lý nhanh. Em sẽ theo dõi và hy vọng nhận hàng ngày mai.",
+        "en": "Thank you Mr. Hung for the quick handling. I'll monitor it and hope to receive the items tomorrow."
       },
       {
         "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "Xin lỗi chị vì sự bất tiện này. Để bù đắp, chúng tôi tặng chị voucher 50.000 đồng cho đơn hàng tiếp theo. Chúc chị có buổi đám cưới vui vẻ cuối tuần!",
+        "en": "Sorry for the inconvenience. To compensate, we're giving you a 50,000 VND voucher for your next order. Have a wonderful time at the wedding this weekend!"
+      }
+    ]
+  },
+  {
+    "id": 315,
+    "title": {
+      "vi": "Thảo luận về nấu ăn truyền thống Việt Nam",
+      "en": "Discussing Traditional Vietnamese Cooking"
+    },
+    "situation": "Kevin người Canada đang học nấu ăn Việt Nam và hỏi bạn gái Hương về cách nấu bún bò Huế.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Kevin",
+      "en": "Kevin"
+    },
+    "speakerBName": {
+      "vi": "Hương",
+      "en": "Huong"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "vi": "Hương ơi, mình muốn học nấu bún bò Huế. Nhà hàng bán 80.000 đồng một tô nhưng mình muốn tự nấu ở nhà.",
+        "en": "Huong, I want to learn how to cook bun bo Hue. Restaurants sell it for 80,000 VND a bowl but I want to cook it at home."
+      },
+      {
+        "speaker": "B",
+        "vi": "Kevin muốn nấu bún bò Huế?! Đó là món phức tạp hơn phở nhưng mình sẽ dạy bạn! Nước dùng của bún bò rất đặc trưng.",
+        "en": "Kevin wants to cook bun bo Hue?! That's more complex than pho but I'll teach you! The broth of bun bo is very distinctive."
+      },
+      {
+        "speaker": "A",
+        "vi": "Bún bò Huế khác phở như thế nào? Mình thấy hai món đều có nước dùng xương bò.",
+        "en": "How is bun bo Hue different from pho? I see both have beef bone broth."
+      },
+      {
+        "speaker": "B",
+        "vi": "Phở nước trong và ngọt thanh, ăn với thịt bò tái. Bún bò Huế đỏ và cay, có sả, mắm ruốc và thêm chả cua, giò heo. Hai hương vị rất khác nhau.",
+        "en": "Pho has clear and lightly sweet broth, eaten with rare beef. Bun bo Hue is red and spicy, with lemongrass, shrimp paste and added crab cake, pig's trotters. Very different flavors."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mắm ruốc là gì vậy Hương? Mình chưa nghe đến.",
+        "en": "What is mam ruoc Huong? I've never heard of it."
+      },
+      {
+        "speaker": "B",
+        "vi": "Mắm ruốc là tôm nhỏ lên men, màu hồng tím, mùi rất đặc trưng. Đây là nguyên liệu bí quyết tạo nên vị umami đặc biệt của bún bò Huế.",
+        "en": "Mam ruoc is fermented small shrimp, pink-purple color, very distinctive smell. This is the secret ingredient that creates the special umami flavor of bun bo Hue."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mùi đặc trưng nghĩa là mùi mạnh phải không? Mình có thể bỏ qua nguyên liệu đó không?",
+        "en": "Distinctive smell means strong smell right? Can I skip that ingredient?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Bỏ mắm ruốc thì không còn là bún bò Huế nữa Kevin ơi! Nhưng nếu muốn, dùng ít thôi và phi sả trước để giảm mùi. Hoặc thay bằng nước mắm tốt một chút.",
+        "en": "Without mam ruoc it's not bun bo Hue anymore Kevin! But if you want, use just a little and fry lemongrass first to reduce the smell. Or substitute with good quality fish sauce."
+      },
+      {
+        "speaker": "A",
+        "vi": "OK mình sẽ thử dùng ít mắm ruốc. Nguyên liệu khác cần gì?",
+        "en": "OK I'll try using a small amount. What other ingredients are needed?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Xương bò và giò heo để hầm nước dùng, bắp bò thái lát, chả cua hoặc chả lụa, sả, gừng, ớt sừng và bột màu điều để tạo màu đỏ đặc trưng.",
+        "en": "Beef bones and pig's trotters for the broth, sliced beef shank, crab paste cake or Vietnamese sausage, lemongrass, ginger, horn pepper and annatto seeds for the distinctive red color."
+      },
+      {
+        "speaker": "A",
+        "vi": "Bột màu điều ở đâu mua vậy? Mình không biết nguyên liệu đó.",
+        "en": "Where do you buy annatto seeds? I don't know that ingredient."
+      },
+      {
+        "speaker": "B",
+        "vi": "Ở chợ hoặc siêu thị có bán ở khu gia vị. Tên tiếng Anh là annatto seeds. Cũng có thể dùng paprika để thay thế nếu không tìm được.",
+        "en": "Sold at markets or supermarkets in the spice section. The English name is annatto seeds. You can also use paprika as a substitute if you can't find it."
+      },
+      {
+        "speaker": "A",
+        "vi": "Bước quan trọng nhất khi nấu nước dùng là gì?",
+        "en": "What is the most important step when making the broth?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Phải chần xương bò qua nước sôi 5 phút rồi rửa lại để loại bỏ cặn. Sau đó hầm xương ít nhất 3-4 tiếng với gừng nướng và sả đập dập để nước dùng trong và thơm.",
+        "en": "Must blanch the beef bones in boiling water for 5 minutes then rinse to remove impurities. Then simmer the bones for at least 3-4 hours with roasted ginger and smashed lemongrass for clear and fragrant broth."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mắm ruốc cho vào lúc nào?",
+        "en": "When do you add the shrimp paste?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Phi sả và ớt trong dầu điều đến thơm, sau đó cho mắm ruốc vào xào 2 phút rồi đổ vào nồi nước dùng. Nêm thêm mắm, muối, đường và bột ngọt vừa khẩu vị.",
+        "en": "Fry lemongrass and peppers in annatto oil until fragrant, then add shrimp paste and stir-fry for 2 minutes then pour into the broth pot. Season with fish sauce, salt, sugar and MSG to taste."
+      },
+      {
+        "speaker": "A",
+        "vi": "Mình ăn chay, có thể làm phiên bản chay không?",
+        "en": "I'm vegetarian, can I make a vegetarian version?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Được! Thay xương bò bằng nước hầm nấm và rau củ. Bỏ giò heo, dùng đậu hũ chiên và nấm rơm thay thế. Mắm ruốc thay bằng tương đậu. Vẫn ngon lắm!",
+        "en": "Yes! Replace beef bones with mushroom and vegetable broth. Skip pig's trotters, use fried tofu and straw mushrooms as substitutes. Replace shrimp paste with soybean paste. Still very delicious!"
+      },
+      {
+        "speaker": "A",
+        "vi": "Hay quá! Khi nào mình có thể nấu cùng Hương để học trực tiếp?",
+        "en": "That's great! When can I cook together with Huong to learn directly?"
+      },
+      {
+        "speaker": "B",
+        "vi": "Cuối tuần này đi! Mình sẽ dẫn Kevin ra chợ mua nguyên liệu tươi rồi về cùng nấu. Nấu bún bò cả buổi sáng mới ngon, nước dùng phải hầm lâu.",
+        "en": "This weekend! I'll take Kevin to the market to buy fresh ingredients then cook together at home. Cooking bun bo takes a whole morning to be good, the broth must be simmered for a long time."
       }
     ]
   },
   {
     "id": 316,
-    "title": "Hỏi về lịch sử Việt Nam",
-    "situation": "Tình huống thực tế liên quan đến: Hỏi về lịch sử Việt Nam.",
-    "speakerAGender": "female",
+    "title": {
+      "vi": "Tư vấn mua nhà lần đầu",
+      "en": "Advice for First-Time Home Buyers"
+    },
+    "situation": "Vợ chồng trẻ Dũng và Mai lần đầu mua nhà và hỏi tư vấn viên bất động sản Khoa.",
+    "speakerAGender": "male",
     "speakerBGender": "male",
     "speakerAName": {
-      "vi": "Sarah",
-      "en": "Sarah"
+      "vi": "Dũng",
+      "en": "Dung"
     },
     "speakerBName": {
-      "vi": "Tom",
-      "en": "Tom"
+      "vi": "Khoa",
+      "en": "Khoa"
     },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Hello! How can I help you today?",
-        "vi": "Xin chào! Tôi có thể giúp gì hôm nay?"
+        "vi": "Chào anh Khoa, vợ chồng em muốn mua nhà lần đầu. Em không biết bắt đầu từ đâu, anh có thể tư vấn không?",
+        "en": "Hello Mr. Khoa, my wife and I want to buy a home for the first time. I don't know where to start, could you advise us?"
       },
       {
         "speaker": "B",
-        "en": "Hi! I need some information please.",
-        "vi": "Chào! Tôi cần một số thông tin."
+        "vi": "Chào Dũng! Mua nhà lần đầu không dễ nhưng có quy trình rõ ràng. Bước đầu tiên: xác định ngân sách. Hai vợ chồng hiện có bao nhiêu tiền tiết kiệm?",
+        "en": "Hello Dung! Buying a home for the first time isn't easy but there's a clear process. First step: determine your budget. How much savings do both of you currently have?"
       },
       {
         "speaker": "A",
-        "en": "What would you like to know?",
-        "vi": "Bạn muốn biết gì?"
+        "vi": "Tụi em có khoảng 500 triệu tiết kiệm. Thu nhập hàng tháng tổng cộng khoảng 40 triệu.",
+        "en": "We have about 500 million in savings. Monthly combined income is about 40 million VND."
       },
       {
         "speaker": "B",
-        "en": "I'm asking about Hỏi về lịch sử Việt Nam.",
-        "vi": "Tôi hỏi về Hỏi về lịch sử Việt Nam."
+        "vi": "Với 500 triệu vốn và thu nhập 40 triệu, hai em có thể mua nhà khoảng 1.5 đến 2 tỷ. Ngân hàng thường cho vay 70% giá trị nhà nếu hồ sơ tốt.",
+        "en": "With 500 million capital and 40 million income, you can buy a home worth about 1.5 to 2 billion. Banks typically lend 70% of the home value if your file is good."
       },
       {
         "speaker": "A",
-        "en": "Great topic. What specifically interests you?",
-        "vi": "Chủ đề hay. Bạn quan tâm cụ thể điều gì?"
+        "vi": "Vay ngân hàng thì lãi suất bao nhiêu hiện nay anh?",
+        "en": "What is the current bank loan interest rate?"
       },
       {
         "speaker": "B",
-        "en": "I want to learn the basics first.",
-        "vi": "Tôi muốn học những điều cơ bản trước."
+        "vi": "Lãi suất vay mua nhà hiện khoảng 8-10% mỗi năm. Năm đầu thường được ưu đãi 7%, từ năm 2 trở đi lãi thả nổi theo thị trường.",
+        "en": "Current home loan interest rates are about 8-10% per year. The first year often has a preferential rate of 7%, from year 2 onwards it floats with the market."
       },
       {
         "speaker": "A",
-        "en": "That's a good approach. Let me explain.",
-        "vi": "Đó là cách tiếp cận tốt. Để tôi giải thích."
+        "vi": "Nếu vay 1 tỷ thì mỗi tháng trả bao nhiêu?",
+        "en": "If I borrow 1 billion, how much is the monthly payment?"
       },
       {
         "speaker": "B",
-        "en": "Please take your time. I'm listening.",
-        "vi": "Xin cứ từ từ. Tôi đang lắng nghe."
+        "vi": "Vay 1 tỷ trong 20 năm, lãi 9%, mỗi tháng trả khoảng 9-10 triệu. Nguyên tắc an toàn: tiền trả hàng tháng không quá 40% thu nhập.",
+        "en": "Borrowing 1 billion over 20 years at 9%, monthly payment is about 9-10 million. Safety principle: monthly payment should not exceed 40% of income."
       },
       {
         "speaker": "A",
-        "en": "The most important thing to know is...",
-        "vi": "Điều quan trọng nhất cần biết là..."
+        "vi": "40% của 40 triệu là 16 triệu, vậy tụi em vay được nhiều hơn nhỉ?",
+        "en": "40% of 40 million is 16 million, so we can borrow more right?"
       },
       {
         "speaker": "B",
-        "en": "That's really useful information.",
-        "vi": "Đó là thông tin thực sự hữu ích."
+        "vi": "Đúng về lý thuyết. Nhưng nên để dự phòng cho chi phí sinh hoạt, con cái, và quỹ khẩn cấp. Anh khuyên không vay quá 1.2 tỷ để an toàn.",
+        "en": "Correct in theory. But should keep reserves for living costs, children, and emergency fund. I advise not borrowing more than 1.2 billion for safety."
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Tụi em muốn mua chung cư hay nhà phố thì nên chọn gì anh?",
+        "en": "Should we choose an apartment or a townhouse?"
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Tùy nhu cầu. Chung cư 1.5 tỷ ở quận trung tâm dễ mua hơn nhà phố. Nhà phố cùng tiền phải ra ngoại thành nhưng có đất, có thể mở rộng sau này.",
+        "en": "Depends on your needs. A 1.5 billion apartment in central districts is easier to buy than a townhouse. Same price for a townhouse means going to the suburbs but you have land, can expand later."
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Hai vợ chồng muốn có chỗ rộng cho con sau này. Vậy nhà phố ngoại thành?",
+        "en": "We want more space for children later. So suburbs townhouse?"
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "Ngoại thành tiện hơn nếu có xe riêng. Quận 9, Bình Chánh, Nhà Bè đang phát triển tốt. Giá nhà ở đó còn vừa phải và hạ tầng đang nâng cấp.",
+        "en": "Suburbs are more convenient if you have your own car. District 9, Binh Chanh, Nha Be are developing well. Home prices there are still moderate and infrastructure is being upgraded."
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "Khi mua nhà cần chú ý pháp lý gì anh?",
+        "en": "What legal aspects should I watch out for when buying?"
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Quan trọng nhất: kiểm tra sổ đỏ (chính chủ, không tranh chấp), quy hoạch đất (không nằm diện giải tỏa), và tình trạng thế chấp ngân hàng. Thuê luật sư kiểm tra là khôn ngoan.",
+        "en": "Most important: check the land title (genuine owner, no disputes), land planning (not in clearance zone), and bank mortgage status. Hiring a lawyer to check is wise."
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Ngoài tiền mua nhà còn phải tốn thêm gì nữa không anh?",
+        "en": "Besides the purchase price, are there additional costs?"
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
+        "vi": "Có: thuế trước bạ 0.5%, phí công chứng, phí đăng bộ, phí môi giới (nếu dùng), và tiền sửa chữa/nội thất. Tổng thêm khoảng 5-8% giá trị nhà.",
+        "en": "Yes: stamp duty 0.5%, notarization fee, registration fee, broker fee (if using), and renovation/furniture costs. Total additional about 5-8% of the home value."
       },
       {
         "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
+        "vi": "Tụi em cần chuẩn bị hồ sơ vay ngân hàng gì?",
+        "en": "What bank loan documents do we need to prepare?"
       },
       {
         "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "CMND hai vợ chồng, hộ khẩu, giấy đăng ký kết hôn, bảng lương 3-6 tháng, sao kê ngân hàng, hợp đồng lao động. Và giấy tờ nhà muốn mua.",
+        "en": "Both spouses' ID cards, household registration, marriage certificate, payslips for 3-6 months, bank statements, employment contract. And documents of the home you want to buy."
       }
     ]
   },
   {
     "id": 317,
-    "title": "Thăm bảo tàng",
-    "situation": "Hội thoại thực hành kỹ năng giao tiếp: Thăm bảo tàng.",
+    "title": {
+      "vi": "Học về lịch sử Việt Nam với người nước ngoài",
+      "en": "Learning About Vietnamese History with a Foreigner"
+    },
+    "situation": "Mark người Mỹ đang nghiên cứu về Việt Nam và hỏi bạn Tuấn về lịch sử kháng chiến.",
     "speakerAGender": "male",
-    "speakerBGender": "female",
+    "speakerBGender": "male",
     "speakerAName": {
-      "vi": "Mai",
-      "en": "Mai"
+      "vi": "Mark",
+      "en": "Mark"
     },
     "speakerBName": {
-      "vi": "Hùng",
-      "en": "Hung"
+      "vi": "Tuấn",
+      "en": "Tuan"
     },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Hello! How can I help you today?",
-        "vi": "Xin chào! Tôi có thể giúp gì hôm nay?"
+        "vi": "Tuấn ơi, mình đang nghiên cứu về lịch sử Việt Nam cho luận văn. Bạn có thể kể về chiến tranh Việt Nam từ góc nhìn người Việt không?",
+        "en": "Tuan, I'm researching Vietnamese history for my thesis. Could you tell me about the Vietnam War from a Vietnamese perspective?"
       },
       {
         "speaker": "B",
-        "en": "Hi! I need some information please.",
-        "vi": "Chào! Tôi cần một số thông tin."
+        "vi": "Mark hỏi chủ đề rất quan trọng và nhạy cảm. Người Việt gọi đó là 'Chiến tranh chống Mỹ cứu nước' - cái tên đã nói lên góc nhìn rất khác với Mỹ.",
+        "en": "Mark asked about a very important and sensitive topic. Vietnamese people call it the 'Resistance War Against America' - the name itself shows a very different perspective from the American view."
       },
       {
         "speaker": "A",
-        "en": "What would you like to know?",
-        "vi": "Bạn muốn biết gì?"
+        "vi": "Khác biệt chính trong cách nhìn nhận là gì?",
+        "en": "What's the main difference in perspective?"
       },
       {
         "speaker": "B",
-        "en": "I'm asking about Thăm bảo tàng.",
-        "vi": "Tôi hỏi về Thăm bảo tàng."
+        "vi": "Người Mỹ thường nhìn đây là chiến tranh lạnh chống cộng sản. Người Việt nhìn đây là cuộc đấu tranh giành độc lập - tiếp nối sau 80 năm kháng chiến chống Pháp.",
+        "en": "Americans often see it as a Cold War anti-communist conflict. Vietnamese people see it as a struggle for independence - continuing after 80 years of resistance against France."
       },
       {
         "speaker": "A",
-        "en": "Great topic. What specifically interests you?",
-        "vi": "Chủ đề hay. Bạn quan tâm cụ thể điều gì?"
+        "vi": "Chiến tranh kết thúc năm 1975 có ý nghĩa như thế nào với người Việt?",
+        "en": "What significance does the war ending in 1975 have for Vietnamese people?"
       },
       {
         "speaker": "B",
-        "en": "I want to learn the basics first.",
-        "vi": "Tôi muốn học những điều cơ bản trước."
+        "vi": "Ngày 30 tháng 4 năm 1975 là ngày Thống Nhất đất nước sau gần 20 năm chia cắt. Với người Việt nói chung đây là ngày kết thúc đau thương và bắt đầu xây dựng lại.",
+        "en": "April 30, 1975 is the day of national Reunification after nearly 20 years of separation. For Vietnamese people in general this is the day ending suffering and beginning reconstruction."
       },
       {
         "speaker": "A",
-        "en": "That's a good approach. Let me explain.",
-        "vi": "Đó là cách tiếp cận tốt. Để tôi giải thích."
+        "vi": "Mình biết cuộc chiến gây tổn thất lớn. Người Việt đã phải chịu đựng như thế nào?",
+        "en": "I know the war caused enormous losses. What did Vietnamese people have to endure?"
       },
       {
         "speaker": "B",
-        "en": "Please take your time. I'm listening.",
-        "vi": "Xin cứ từ từ. Tôi đang lắng nghe."
+        "vi": "Ước tính 2-3 triệu người Việt thương vong cả hai miền. Đất đai bị rải chất độc da cam ảnh hưởng đến nhiều thế hệ sau. Làng xã bị phá hủy. Gia đình ly tán.",
+        "en": "An estimated 2-3 million Vietnamese casualties from both sides. Land was contaminated with Agent Orange affecting many subsequent generations. Villages were destroyed. Families separated."
       },
       {
         "speaker": "A",
-        "en": "The most important thing to know is...",
-        "vi": "Điều quan trọng nhất cần biết là..."
+        "vi": "Vấn đề chất độc da cam vẫn còn ảnh hưởng đến ngày nay không?",
+        "en": "Does the Agent Orange issue still affect people today?"
       },
       {
         "speaker": "B",
-        "en": "That's really useful information.",
-        "vi": "Đó là thông tin thực sự hữu ích."
+        "vi": "Có, đến tận thế hệ thứ 3 rồi. Nhiều trẻ em sinh ra có dị tật do cha ông bị phơi nhiễm. Đây vẫn là vấn đề chưa được giải quyết thỏa đáng với người Việt.",
+        "en": "Yes, even into the 3rd generation now. Many children are born with birth defects because their grandparents were exposed. This remains an issue not yet adequately resolved for Vietnamese people."
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Quan hệ Mỹ - Việt ngày nay như thế nào? Người Việt có còn giữ oán hận không?",
+        "en": "How are US-Vietnam relations today? Do Vietnamese people still hold resentment?"
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Quan hệ ngoại giao bình thường hóa từ 1995, nay là đối tác chiến lược toàn diện. Người Việt nói chung khá thực dụng - phân biệt giữa chính phủ Mỹ và người dân Mỹ, không thù hận người Mỹ bình thường.",
+        "en": "Diplomatic relations normalized from 1995, now a comprehensive strategic partnership. Vietnamese people in general are quite pragmatic - they distinguish between the US government and American people, not hostile to ordinary Americans."
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Mình cảm thấy người Việt rất thân thiện với mình dù là người Mỹ. Mình tò mò về điều đó.",
+        "en": "I feel Vietnamese people are very friendly toward me despite being American. I'm curious about that."
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "Người Việt có câu 'khép lại quá khứ, hướng tới tương lai'. Thực tế thế hệ trẻ Việt Nam sinh sau chiến tranh, và họ nhìn Mỹ là cơ hội kinh tế và giáo dục.",
+        "en": "Vietnamese people have a saying 'close the past, look to the future'. In reality the young Vietnamese generation was born after the war, and they see America as economic and educational opportunity."
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "Còn những người lính và gia đình ở cả hai phía, họ được tưởng niệm như thế nào?",
+        "en": "What about soldiers and families from both sides, how are they memorialized?"
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Liệt sĩ miền Bắc và bộ đội giải phóng được tôn vinh chính thức. Còn bộ đội miền Nam VNCH - gia đình họ vẫn tưởng niệm riêng tư. Đây là vấn đề xã hội phức tạp đang dần được hòa giải.",
+        "en": "North Vietnamese soldiers and liberation fighters are officially honored. As for South Vietnamese ARVN soldiers - their families still commemorate them privately. This is a complex social issue gradually being reconciled."
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Việt Nam đã phục hồi kinh tế sau chiến tranh nhanh như thế nào?",
+        "en": "How quickly did Vietnam's economy recover after the war?"
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
+        "vi": "Sau 1975 khó khăn kéo dài do cấm vận và mô hình kinh tế tập trung. Đến 1986 Đổi Mới khai phá kinh tế thị trường và từ đó Việt Nam phát triển nhanh vượt bậc.",
+        "en": "After 1975 hardship lasted due to embargo and centralized economic model. In 1986 Doi Moi opened up market economy and since then Vietnam has developed at an exceptional pace."
       },
       {
         "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
+        "vi": "Bạn có lời khuyên gì cho mình khi viết luận văn về chủ đề này?",
+        "en": "Do you have any advice for me when writing my thesis on this topic?"
       },
       {
         "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "Nghe nhiều góc nhìn khác nhau: người Việt Bắc, Việt Nam, Việt kiều và người trực tiếp trải qua chiến tranh. Tránh áp đặt khung phân tích phương Tây lên lịch sử Việt Nam.",
+        "en": "Listen to many different perspectives: North Vietnamese, South Vietnamese, overseas Vietnamese and people who directly experienced the war. Avoid imposing Western analytical frameworks onto Vietnamese history."
       }
     ]
   },
   {
     "id": 318,
-    "title": "Tìm hiểu phong tục tập quán",
-    "situation": "Hai người thực hành hội thoại về chủ đề: Tìm hiểu phong tục tập quán.",
+    "title": {
+      "vi": "Tư vấn chăm sóc da mặt cơ bản",
+      "en": "Basic Facial Skincare Consultation"
+    },
+    "situation": "Chị Hoa đến spa để được tư vấn về chăm sóc da mặt cơ bản và hỏi chuyên viên Linh.",
     "speakerAGender": "female",
     "speakerBGender": "female",
     "speakerAName": {
-      "vi": "Phương",
-      "en": "Phuong"
+      "vi": "Hoa",
+      "en": "Hoa"
     },
     "speakerBName": {
-      "vi": "Đức",
-      "en": "Duc"
+      "vi": "Linh",
+      "en": "Linh"
     },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Hello! How can I help you today?",
-        "vi": "Xin chào! Tôi có thể giúp gì hôm nay?"
+        "vi": "Chào chị Linh, em muốn bắt đầu chăm sóc da mặt nhưng không biết gì về skincare cả. Chị có thể hướng dẫn em từ đầu không?",
+        "en": "Hello Ms. Linh, I want to start taking care of my face but don't know anything about skincare. Could you guide me from the beginning?"
       },
       {
         "speaker": "B",
-        "en": "Hi! I need some information please.",
-        "vi": "Chào! Tôi cần một số thông tin."
+        "vi": "Chào Hoa! Tốt lắm khi bắt đầu sớm. Đầu tiên mình cần biết loại da của Hoa. Em thấy da mình hay bóng dầu, khô hay bình thường?",
+        "en": "Hello Hoa! Great that you're starting early. First we need to know your skin type. Does your skin tend to be oily, dry or normal?"
       },
       {
         "speaker": "A",
-        "en": "What would you like to know?",
-        "vi": "Bạn muốn biết gì?"
+        "vi": "Em thấy vùng chữ T trán và mũi hay bóng nhờn nhưng hai má thì bình thường. Thỉnh thoảng hay bị mụn ở cằm.",
+        "en": "I notice the T-zone of forehead and nose tends to be oily but the cheeks are normal. Sometimes get pimples on the chin."
       },
       {
         "speaker": "B",
-        "en": "I'm asking about Tìm hiểu phong tục tập quán.",
-        "vi": "Tôi hỏi về Tìm hiểu phong tục tập quán."
+        "vi": "Da hỗn hợp thiên dầu đó Hoa! Phổ biến nhất ở người Việt Nam. Quy trình skincare cơ bản cho da hỗn hợp gồm 5 bước.",
+        "en": "That's combination oily-prone skin Hoa! The most common type in Vietnamese people. The basic skincare routine for combination skin has 5 steps."
       },
       {
         "speaker": "A",
-        "en": "Great topic. What specifically interests you?",
-        "vi": "Chủ đề hay. Bạn quan tâm cụ thể điều gì?"
+        "vi": "5 bước nghe nhiều quá chị! Em có thể bắt đầu ít bước hơn không?",
+        "en": "5 steps sounds like a lot! Can I start with fewer steps?"
       },
       {
         "speaker": "B",
-        "en": "I want to learn the basics first.",
-        "vi": "Tôi muốn học những điều cơ bản trước."
+        "vi": "Tất nhiên! 3 bước tối thiểu: rửa mặt sạch, dưỡng ẩm và chống nắng. Chỉ 3 bước này thôi đã cải thiện da đáng kể nếu làm đúng và đều.",
+        "en": "Of course! Minimum 3 steps: cleanse, moisturize and sunscreen. Just these 3 steps will significantly improve skin if done correctly and consistently."
       },
       {
         "speaker": "A",
-        "en": "That's a good approach. Let me explain.",
-        "vi": "Đó là cách tiếp cận tốt. Để tôi giải thích."
+        "vi": "Rửa mặt thì dùng sữa rửa mặt nào cho da hỗn hợp chị?",
+        "en": "What cleanser should I use for combination skin?"
       },
       {
         "speaker": "B",
-        "en": "Please take your time. I'm listening.",
-        "vi": "Xin cứ từ từ. Tôi đang lắng nghe."
+        "vi": "Dùng sữa rửa mặt dạng gel hoặc foam nhẹ, không có sulfate mạnh. Tránh loại có nhiều xà phòng vì sẽ làm khô da. CeraVe Foaming Cleanser hay La Roche-Posay Effaclar phù hợp.",
+        "en": "Use a light gel or foam cleanser without strong sulfates. Avoid types with lots of soap as they'll dry out the skin. CeraVe Foaming Cleanser or La Roche-Posay Effaclar is suitable."
       },
       {
         "speaker": "A",
-        "en": "The most important thing to know is...",
-        "vi": "Điều quan trọng nhất cần biết là..."
+        "vi": "Rửa mặt mấy lần một ngày chị?",
+        "en": "How many times a day should I cleanse?"
       },
       {
         "speaker": "B",
-        "en": "That's really useful information.",
-        "vi": "Đó là thông tin thực sự hữu ích."
+        "vi": "2 lần: sáng và tối. Sáng rửa nhẹ để loại bỏ mồ hôi đêm. Tối rửa kỹ hơn để tẩy kem chống nắng, bụi bẩn. Rửa nhiều hơn 2 lần sẽ mất lớp dầu tự nhiên bảo vệ da.",
+        "en": "Twice: morning and evening. Morning wash lightly to remove night sweat. Evening wash more thoroughly to remove sunscreen and dirt. Washing more than twice removes natural protective oils."
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Còn kem dưỡng ẩm thì chọn loại nào?",
+        "en": "What moisturizer should I choose?"
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Da hỗn hợp nên dùng dạng gel hoặc lotion nhẹ, không quá đặc và không dầu (oil-free). CeraVe Moisturizing Cream hay Neutrogena Hydro Boost là lựa chọn tốt.",
+        "en": "Combination skin should use gel or light lotion, not too thick and oil-free. CeraVe Moisturizing Cream or Neutrogena Hydro Boost are good choices."
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Da đã có dầu sao vẫn cần dưỡng ẩm chị? Em nghĩ da nhiều dầu thì không cần.",
+        "en": "If skin is already oily why do I still need moisturizer? I thought oily skin doesn't need it."
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "Ngược lại! Da dầu đôi khi là phản ứng bù đắp của da khi bị thiếu nước. Dưỡng ẩm đúng cách sẽ giúp cân bằng lại, ít dầu hơn về lâu dài.",
+        "en": "Actually the opposite! Oily skin is sometimes the skin's compensation reaction when dehydrated. Proper moisturizing will help rebalance, less oily in the long run."
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "Ồ em không biết điều đó! Còn chống nắng thì sao chị, em hay bỏ qua bước này vì ngại nhờn.",
+        "en": "Oh I didn't know that! What about sunscreen, I often skip this step because I don't want it to feel greasy."
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Chống nắng là bước quan trọng nhất để ngăn lão hóa và thâm nám! Dùng loại SPF 30-50, dạng gel hoặc fluid sẽ không nhờn. Supergoop hoặc Anessa Perfect UV đều nhẹ nhàng.",
+        "en": "Sunscreen is the most important step to prevent aging and dark spots! Use SPF 30-50, gel or fluid formula won't feel greasy. Supergoop or Anessa Perfect UV are both lightweight."
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Em hay bị thâm mụn. Có cách nào trị thâm không chị?",
+        "en": "I often have post-acne dark spots. Is there any way to treat them?"
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
+        "vi": "Sau khi dưỡng ẩm bước buổi tối có thể thêm serum Vitamin C hoặc Niacinamide. Hai thành phần này giúp sáng da và mờ thâm hiệu quả. Nhưng bắt đầu từ từ, tuần 2-3 lần thôi.",
+        "en": "After evening moisturizer you can add Vitamin C or Niacinamide serum. These two ingredients help brighten skin and fade dark spots effectively. But start slowly, just 2-3 times a week."
       },
       {
         "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
+        "vi": "Tẩy da chết có cần thiết không chị?",
+        "en": "Is exfoliating necessary?"
       },
       {
         "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "Có nhưng không quá thường. Da hỗn hợp nên tẩy nhẹ nhàng 1-2 lần/tuần, dùng AHA/BHA acid nhẹ hoặc tẩy vật lý mịn. Tẩy quá nhiều làm da nhạy cảm và kích ứng.",
+        "en": "Yes but not too often. Combination skin should exfoliate gently 1-2 times/week, using mild AHA/BHA acids or fine physical exfoliant. Over-exfoliating makes skin sensitive and irritated."
       }
     ]
   },
   {
     "id": 319,
-    "title": "Học về ngày lễ truyền thống",
-    "situation": "Tình huống thực tế liên quan đến: Học về ngày lễ truyền thống.",
+    "title": {
+      "vi": "Lên kế hoạch tour phượt Tây Bắc",
+      "en": "Planning a Northwestern Vietnam Backpacking Tour"
+    },
+    "situation": "Nhóm bạn Hùng và Lan đang lên kế hoạch cho chuyến phượt Tây Bắc cuối năm.",
     "speakerAGender": "male",
-    "speakerBGender": "male",
+    "speakerBGender": "female",
     "speakerAName": {
-      "vi": "Emma",
-      "en": "Emma"
+      "vi": "Hùng",
+      "en": "Hung"
     },
     "speakerBName": {
-      "vi": "David",
-      "en": "David"
+      "vi": "Lan",
+      "en": "Lan"
     },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Excuse me, could you help me with this assignment?",
-        "vi": "Xin lỗi, bạn có thể giúp tôi bài tập này không?"
+        "vi": "Lan ơi, mình lên kế hoạch chuyến phượt Tây Bắc tháng 12 nhé! Tây Bắc mùa đông đẹp lắm.",
+        "en": "Lan, let's plan a Northwestern Vietnam backpacking trip in December! The Northwest in winter is beautiful."
       },
       {
         "speaker": "B",
-        "en": "Sure, what subject is it?",
-        "vi": "Được chứ, đây là môn gì?"
+        "vi": "Ý tưởng hay lắm Hùng! Tháng 12 ở Tây Bắc lạnh, nhưng trời trong xanh và mây đẹp lắm. Mình đi mấy ngày?",
+        "en": "Great idea Hung! December in the Northwest is cold, but the sky is clear blue and the clouds are beautiful. How many days?"
       },
       {
         "speaker": "A",
-        "en": "It's for my English class.",
-        "vi": "Đây là cho lớp tiếng Anh của tôi."
+        "vi": "Mình tính 7 ngày, đi xe máy. Lộ trình đề xuất: Hà Nội - Hòa Bình - Sơn La - Điện Biên - Sapa - về Hà Nội.",
+        "en": "I'm thinking 7 days by motorbike. Proposed route: Hanoi - Hoa Binh - Son La - Dien Bien - Sapa - back to Hanoi."
       },
       {
         "speaker": "B",
-        "en": "What specifically do you need help with?",
-        "vi": "Bạn cần giúp đỡ cụ thể về phần gì?"
+        "vi": "Lộ trình đó cổ điển và đẹp! Nhưng 7 ngày có hơi gấp không? Điện Biên xa lắm, khoảng 500km từ Hà Nội.",
+        "en": "That's a classic and beautiful route! But isn't 7 days a bit rushed? Dien Bien is very far, about 500km from Hanoi."
       },
       {
         "speaker": "A",
-        "en": "I need to write an essay about culture.",
-        "vi": "Tôi cần viết bài luận về văn hóa."
+        "vi": "Ừ đúng rồi. Hay mình bỏ Điện Biên, thay bằng Mù Cang Chải xem ruộng bậc thang?",
+        "en": "You're right. Or maybe we skip Dien Bien and replace with Mu Cang Chai to see rice terraces?"
       },
       {
         "speaker": "B",
-        "en": "That's an interesting topic. What's your angle?",
-        "vi": "Đó là chủ đề thú vị. Góc nhìn của bạn là gì?"
+        "vi": "Mù Cang Chải tháng 12 hết mùa lúa vàng rồi. Hay nhất là tháng 9-10. Tháng 12 đẹp nhất là Sapa và đèo Ô Quy Hồ có tuyết.",
+        "en": "Mu Cang Chai in December past the golden rice season. Best is September-October. In December most beautiful are Sapa and O Quy Ho Pass with snow."
       },
       {
         "speaker": "A",
-        "en": "I want to compare Vietnamese and American culture.",
-        "vi": "Tôi muốn so sánh văn hóa Việt Nam và Mỹ."
+        "vi": "Ồ vậy à! Tuyết ở Sapa tháng 12 có chắc không?",
+        "en": "Oh really! Is snow in Sapa in December guaranteed?"
       },
       {
         "speaker": "B",
-        "en": "Great idea! Start with similarities first.",
-        "vi": "Ý hay! Hãy bắt đầu với điểm tương đồng trước."
+        "vi": "Không 100% nhưng năm nào cũng có ít nhất 1-2 đợt tuyết. Nhiệt độ 0-5 độ C ban đêm. Cần chuẩn bị đồ ấm rất kỹ nhé.",
+        "en": "Not 100% but every year has at least 1-2 snow events. Temperature 0-5°C at night. Need to prepare warm clothing very carefully."
       },
       {
         "speaker": "A",
-        "en": "What are the main similarities?",
-        "vi": "Những điểm tương đồng chính là gì?"
+        "vi": "Cần mang đồ gì cho chuyến đi lạnh như vậy?",
+        "en": "What should we bring for such a cold trip?"
       },
       {
         "speaker": "B",
-        "en": "Both cultures value family and education highly.",
-        "vi": "Cả hai văn hóa đều coi trọng gia đình và giáo dục."
+        "vi": "Áo phao hoặc áo lông, áo lót nhiệt, găng tay, mũ len, khăn quàng cổ, giầy boots chống thấm nước. Và tuyệt đối không quên kem dưỡng và son dưỡng môi vì da rất dễ nứt nẻ.",
+        "en": "Puffer jacket or down coat, thermal underwear, gloves, wool hat, scarf, waterproof boots. And absolutely don't forget moisturizer and lip balm because skin cracks easily in cold."
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Chi phí cho chuyến đi 7 ngày khoảng bao nhiêu mình ơi?",
+        "en": "How much will the 7-day trip cost?"
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Khoảng 3-4 triệu/người không tính xăng xe. Xăng thêm khoảng 500 ngàn. Khách sạn nhỏ 150-250 ngàn/người/đêm ở các thị trấn, ăn uống rẻ ở vùng núi.",
+        "en": "About 3-4 million/person excluding gasoline. Gas adds about 500 thousand. Small hotels 150-250 thousand/person/night in towns, food is cheap in the mountains."
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Mình muốn trải nghiệm ngủ nhà dân (homestay) ở Sapa. Có khác nhiều so với khách sạn không?",
+        "en": "I want to experience staying at a local family's home (homestay) in Sapa. Is it very different from a hotel?"
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "Homestay ở Sapa rất đặc biệt - ngủ nhà người H'Mông, ăn cơm gia đình, học về văn hóa bản địa. Giá rẻ hơn khách sạn, khoảng 100-150 ngàn/người.",
+        "en": "Homestay in Sapa is very special - sleeping at an H'Mong family's home, eating family meals, learning about local culture. Cheaper than hotels, about 100-150 thousand/person."
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "Tuyệt vời! Còn điểm dừng nào hay ngoài Sapa không Lan?",
+        "en": "Wonderful! Are there any other good stops besides Sapa Lan?"
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Đèo Khau Phạ ở Mù Cang Chải dù không phải mùa vàng nhưng cảnh còn đẹp. Bản Cát Cát ở Sapa đi bộ vào bản người H'Mông. Thác Bạc trong sương mù buổi sáng.",
+        "en": "Khau Pha Pass in Mu Cang Chai even not in golden season the scenery is still beautiful. Cat Cat Village in Sapa for walking into an H'Mong village. Silver Falls in morning mist."
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Mình lo đường đèo mùa đông trơn trượt. Đi xe máy có an toàn không?",
+        "en": "I'm worried about slippery mountain passes in winter. Is it safe to ride motorbikes?"
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
+        "vi": "Cần cẩn thận thật! Kiểm tra thời tiết trước khi đi, tránh lái khi có sương mù dày hoặc trời mưa. Đi chậm ở đèo, phanh nhẹ. Xe máy nên kiểm tra trước chuyến đi.",
+        "en": "Really need to be careful! Check the weather before going, avoid driving in heavy fog or rain. Drive slowly on passes, brake gently. Motorbike should be checked before the trip."
       },
       {
         "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
+        "vi": "OK mình sẽ chuẩn bị kỹ. Số người trong nhóm bao nhiêu thì hay nhất?",
+        "en": "OK I'll prepare carefully. What's the ideal group size?"
       },
       {
         "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "4-6 người là lý tưởng: đủ vui nhưng không quá đông khó di chuyển. Số chẵn để ghép phòng 2 người tiết kiệm hơn.",
+        "en": "4-6 people is ideal: enough fun but not too many and difficult to travel. Even number to share double rooms more economically."
       }
     ]
   },
   {
     "id": 320,
-    "title": "Nói về di sản văn hóa",
-    "situation": "Hội thoại thực hành kỹ năng giao tiếp: Nói về di sản văn hóa.",
+    "title": {
+      "vi": "Hỏi về chương trình dạy con học đọc tiếng Anh",
+      "en": "Asking About Teaching Children to Read in English"
+    },
+    "situation": "Chị Nga hỏi giáo viên tiếng Anh Hằng về phương pháp dạy con 5 tuổi học đọc tiếng Anh tại nhà.",
     "speakerAGender": "female",
-    "speakerBGender": "male",
+    "speakerBGender": "female",
     "speakerAName": {
-      "vi": "Lan",
-      "en": "Lan"
+      "vi": "Nga",
+      "en": "Nga"
     },
     "speakerBName": {
-      "vi": "Nam",
-      "en": "Nam"
+      "vi": "Hằng",
+      "en": "Hang"
     },
+    "_aiGenerated": true,
     "turns": [
       {
         "speaker": "A",
-        "en": "Welcome! What would you like today?",
-        "vi": "Chào mừng! Hôm nay bạn muốn gì?"
+        "vi": "Chị Hằng ơi, con em 5 tuổi rồi, em muốn dạy bé học đọc tiếng Anh ở nhà. Bắt đầu từ đâu ạ?",
+        "en": "Ms. Hang, my child is 5 years old, I want to teach the baby to read English at home. Where do I start?"
       },
       {
         "speaker": "B",
-        "en": "I'd like to try something traditional.",
-        "vi": "Tôi muốn thử món truyền thống."
+        "vi": "Hay lắm chị Nga! 5 tuổi là độ tuổi vàng để tiếp cận ngôn ngữ mới. Bước đầu tiên không phải là đọc ngay mà là nghe và nói nhiều trước.",
+        "en": "Great Ms. Nga! 5 years old is the golden age to approach a new language. The first step is not reading right away but lots of listening and speaking first."
       },
       {
         "speaker": "A",
-        "en": "I recommend the pho. It's our specialty.",
-        "vi": "Tôi gợi ý món phở. Đó là đặc sản của chúng tôi."
+        "vi": "Nghe và nói trước à chị? Em tưởng cho con học bảng chữ cái ABC luôn.",
+        "en": "Listening and speaking first? I thought to have them learn the ABC alphabet right away."
       },
       {
         "speaker": "B",
-        "en": "That sounds delicious. What's in it?",
-        "vi": "Nghe có vẻ ngon. Nó có gì?"
+        "vi": "Đúng là phải học ABC, nhưng quan trọng hơn là phonics - âm vị học. Đây là cách đọc tiếng Anh thật sự: mỗi chữ cái có âm riêng và ghép lại thành từ.",
+        "en": "True they need to learn ABCs, but more important is phonics. This is the real way to read English: each letter has its own sound and they combine into words."
       },
       {
         "speaker": "A",
-        "en": "It has beef broth, rice noodles, and herbs.",
-        "vi": "Nó có nước dùng bò, bánh phở và rau thơm."
+        "vi": "Phonics là gì vậy chị, nghe lạ quá?",
+        "en": "What is phonics, it sounds unfamiliar?"
       },
       {
         "speaker": "B",
-        "en": "Can I get it with extra vegetables?",
-        "vi": "Tôi có thể thêm rau nhiều hơn không?"
+        "vi": "Phonics dạy trẻ âm của mỗi chữ cái thay vì chỉ tên chữ. Ví dụ: chữ A có âm /æ/ như trong 'apple', không phải âm 'ei'. Biết phonics thì tự đọc được từ mới mà không cần học thuộc.",
+        "en": "Phonics teaches children the sound of each letter instead of just the letter name. Example: letter A has sound /æ/ as in 'apple', not the sound 'ei'. Knowing phonics lets them read new words independently without memorizing."
       },
       {
         "speaker": "A",
-        "en": "Of course! Any allergies I should know about?",
-        "vi": "Tất nhiên! Có dị ứng gì tôi cần biết không?"
+        "vi": "Nghe hay quá! Bắt đầu dạy phonics như thế nào?",
+        "en": "Sounds great! How do you start teaching phonics?"
       },
       {
         "speaker": "B",
-        "en": "I'm allergic to shellfish.",
-        "vi": "Tôi bị dị ứng hải sản có vỏ."
+        "vi": "Thứ tự dạy phonics: bắt đầu từ 5-6 âm đơn giản nhất (s, a, t, p, i, n), ghép thành từ 3 âm (sat, pin, tap). Sau đó mở rộng dần. Chương trình Jolly Phonics rất phổ biến và hiệu quả.",
+        "en": "Order for teaching phonics: start with the 5-6 simplest sounds (s, a, t, p, i, n), combine into 3-sound words (sat, pin, tap). Then expand gradually. Jolly Phonics program is very popular and effective."
       },
       {
         "speaker": "A",
-        "en": "No shellfish in this dish. You're safe.",
-        "vi": "Không có hải sản vỏ trong món này. Bạn an toàn rồi."
+        "vi": "Jolly Phonics có dạy ở Việt Nam không chị?",
+        "en": "Is Jolly Phonics taught in Vietnam?"
       },
       {
         "speaker": "B",
-        "en": "Perfect. I'll have the pho please.",
-        "vi": "Tuyệt vời. Cho tôi phở nhé."
+        "vi": "Có nhiều trung tâm dạy Jolly Phonics. Nhưng chị hoàn toàn có thể tự dạy ở nhà với sách và video hướng dẫn. YouTube có channel Jolly Phonics chính thức miễn phí.",
+        "en": "Many centers teach Jolly Phonics. But you can completely self-teach at home with books and tutorial videos. YouTube has the official Jolly Phonics channel for free."
       },
       {
         "speaker": "A",
-        "en": "Can you explain that in more detail?",
-        "vi": "Bạn có thể giải thích chi tiết hơn không?"
+        "vi": "Ngoài phonics thì cần bổ sung gì nữa chị?",
+        "en": "Besides phonics what else should be supplemented?"
       },
       {
         "speaker": "B",
-        "en": "Of course. Let me give you an example.",
-        "vi": "Tất nhiên. Để tôi đưa ra ví dụ."
+        "vi": "Sight words - những từ phổ biến nhất tiếng Anh như 'the, a, I, is, it'. Khoảng 200 sight words đầu tiên chiếm 50% nội dung sách đọc. Học song song với phonics.",
+        "en": "Sight words - the most common English words like 'the, a, I, is, it'. The first 200 sight words make up 50% of reading content. Learn in parallel with phonics."
       },
       {
         "speaker": "A",
-        "en": "That's very helpful, thank you.",
-        "vi": "Điều đó rất hữu ích, cảm ơn bạn."
+        "vi": "Mỗi ngày nên học bao lâu là đủ?",
+        "en": "How long should they study each day?"
       },
       {
         "speaker": "B",
-        "en": "You're welcome. Do you have more questions?",
-        "vi": "Không có gì. Bạn còn câu hỏi nào không?"
+        "vi": "Trẻ 5 tuổi chỉ nên học 15-20 phút mỗi ngày. Chia thành 2-3 lần ngắn tốt hơn 1 lần dài. Quan trọng nhất là làm cho việc học vui vẻ, không ép buộc.",
+        "en": "5-year-olds should only study 15-20 minutes per day. Split into 2-3 short sessions is better than one long session. Most important is making learning fun, not forced."
       },
       {
         "speaker": "A",
-        "en": "Yes, I have one more question.",
-        "vi": "Có, tôi còn một câu hỏi nữa."
+        "vi": "Làm sao để bé thích học chị?",
+        "en": "How to make children enjoy learning?"
       },
       {
         "speaker": "B",
-        "en": "Go ahead, I'm here to help.",
-        "vi": "Cứ hỏi, tôi ở đây để giúp."
+        "vi": "Trò chơi! Flashcard matching, bingo chữ cái, hát phonics song, đọc sách tranh có hình đẹp. Trẻ học qua chơi sẽ nhớ lâu hơn và hứng thú hơn học theo kiểu truyền thống.",
+        "en": "Games! Flashcard matching, letter bingo, singing phonics songs, reading picture books with beautiful illustrations. Children learn through play will remember better and be more enthusiastic than traditional learning."
       },
       {
         "speaker": "A",
-        "en": "What do you recommend for a beginner?",
-        "vi": "Bạn gợi ý gì cho người mới bắt đầu?"
+        "vi": "Sách tiếng Anh cho bé tập đọc thì chọn loại nào chị?",
+        "en": "What type of English books for beginners should I choose?"
       },
       {
         "speaker": "B",
-        "en": "I suggest starting with the basics.",
-        "vi": "Tôi gợi ý bắt đầu với những điều cơ bản."
+        "vi": "Leveled readers - sách đọc có phân cấp độ. Oxford Reading Tree hoặc Ladybird Readers Level 1-3 rất phù hợp. Từ từng bước một từ 1-2 từ/trang đến câu đơn giản.",
+        "en": "Leveled readers - graded reading books. Oxford Reading Tree or Ladybird Readers Level 1-3 are very suitable. Gradually from 1-2 words per page to simple sentences."
       },
       {
         "speaker": "A",
-        "en": "How long does it usually take?",
-        "vi": "Thường mất bao lâu?"
+        "vi": "Con em chưa biết tiếng Anh gì cả, có bắt đầu được ngay không?",
+        "en": "My child doesn't know any English yet, can we start right away?"
       },
       {
         "speaker": "B",
-        "en": "It depends on your dedication.",
-        "vi": "Tùy thuộc vào sự cố gắng của bạn."
+        "vi": "Hoàn toàn bắt đầu được! Trẻ 5 tuổi học ngoại ngữ như bọt biển hấp thụ nước. Bắt đầu với việc cho bé xem video hoạt hình tiếng Anh như Peppa Pig, Bluey 30 phút mỗi ngày.",
+        "en": "You can start completely! 5-year-olds learn foreign languages like a sponge absorbing water. Start by having the child watch English cartoons like Peppa Pig, Bluey for 30 minutes each day."
       }
     ]
   },
