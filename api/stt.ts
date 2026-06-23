@@ -20,6 +20,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from './_lib/security'
+import { isRetryableError } from './_lib/retry'
 
 // Giới hạn dung lượng base64 (~8MB chuỗi ≈ ~6MB audio thật, đủ cho ~1–2 phút nói).
 const MAX_AUDIO_B64 = 8 * 1024 * 1024
@@ -99,7 +100,12 @@ export default async function handler(req: Request): Promise<Response> {
     const text = await transcribeAudio(audio, mime, lang)
     return jsonResponse({ text }, 200, allHeaders)
   } catch (err) {
-    return jsonResponse({ error: `Không nhận diện được giọng nói: ${(err as Error).message}` }, 500, allHeaders)
+    const isRetryable = isRetryableError(err)
+    const status = isRetryable ? 503 : 500
+    const message = isRetryable
+      ? `Dịch vụ nhận diện giọng tạm thời không khả dụng — thử lại trong ít phút`
+      : `Không nhận diện được giọng nói: ${(err as Error).message}`
+    return jsonResponse({ error: message }, status, allHeaders)
   }
 }
 

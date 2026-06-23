@@ -78,14 +78,24 @@ export async function startRecording(lang: 'en' | 'vi'): Promise<Recorder> {
   }
 }
 
-// Gửi audio base64 lên /api/stt và nhận lại văn bản.
+// Gửi audio base64 lên /api/stt và nhận lại văn bản. Retry khi 503/502/504.
 async function transcribe(audioB64: string, mime: string, lang: 'en' | 'vi'): Promise<string> {
   const auth = await getAuthHeader()
-  const resp = await fetch('/api/stt', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', ...auth },
-    body: JSON.stringify({ audio_b64: audioB64, mime, lang }),
-  })
+
+  const callStt = () =>
+    fetch('/api/stt', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...auth },
+      body: JSON.stringify({ audio_b64: audioB64, mime, lang }),
+    })
+
+  let resp = await callStt()
+  // Retry cho 503/502/504 (service unavailable). Chờ 1s rồi thử lại.
+  if ([502, 503, 504].includes(resp.status)) {
+    await new Promise(r => setTimeout(r, 1000))
+    resp = await callStt()
+  }
+
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}))
     throw new Error((err as { error?: string }).error ?? `Lỗi STT: ${resp.status}`)

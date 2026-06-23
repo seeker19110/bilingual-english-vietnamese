@@ -135,10 +135,11 @@ async function speakViaGoogle(
     })
 
     let res = await callTts()
-    // 429 = quá nhiều request (thường do phát nhiều câu liên tiếp). Đợi 1.2s rồi thử lại
-    // 1 lần trước khi rơi về Web Speech — phần lớn câu đã cache nên lần 2 thường qua.
-    if (res.status === 429) {
-      await new Promise(r => setTimeout(r, 1200))
+    // Retry cho 429 (rate limit) và 503/502/504 (service unavailable)
+    const retryStatuses = [429, 502, 503, 504]
+    if (retryStatuses.includes(res.status)) {
+      const delayMs = res.status === 429 ? 1200 : 1000 // 429 cần chờ lâu hơn
+      await new Promise(r => setTimeout(r, delayMs))
       res = await callTts()
     }
 

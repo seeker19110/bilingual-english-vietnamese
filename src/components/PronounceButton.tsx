@@ -50,7 +50,14 @@ export default function PronounceButton({ word }: Props) {
       const { data: sessionData } = await supabase.auth.getSession()
       const token = sessionData.session?.access_token
       const headers: Record<string, string> = token ? { 'Authorization': `Bearer ${token}` } : {}
-      const res = await fetch(`/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}`, { headers })
+
+      // Retry khi 503/502/504 (tạm thời lỗi)
+      let res = await fetch(`/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}`, { headers })
+      if ([502, 503, 504].includes(res.status)) {
+        await new Promise(r => setTimeout(r, 1000))
+        res = await fetch(`/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}`, { headers })
+      }
+
       const data = (await res.json()) as { audio_url?: string; error?: string }
 
       if (!res.ok || !data.audio_url) {

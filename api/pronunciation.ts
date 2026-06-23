@@ -27,6 +27,7 @@ import {
   validateAuth,
   logSecurityEvent,
 } from './_lib/security'
+import { isRetryableError } from './_lib/retry'
 
 // Regex chỉ cho phép chữ, số, dấu cách, gạch nối — ngăn ký tự lạ trong tên từ
 const WORD_SAFE_PATTERN = /^[a-zA-Z0-9\s-]+$/
@@ -114,7 +115,12 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     audioData = await generateAudioFromGoogle(word, voice, 'en-US')
   } catch (err) {
-    return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500, allHeaders)
+    const isRetryable = isRetryableError(err)
+    const status = isRetryable ? 503 : 500
+    const message = isRetryable
+      ? `Dịch vụ tạo giọng tạm thời không khả dụng — thử lại trong ít phút`
+      : `Không thể tạo audio: ${(err as Error).message}`
+    return jsonResponse({ error: message }, status, allHeaders)
   }
 
   // ── BƯỚC 3: Lưu file audio (local VPS hoặc Supabase Storage tùy STORAGE_DRIVER) ──

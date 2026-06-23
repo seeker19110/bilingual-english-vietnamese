@@ -8,6 +8,10 @@
 //     tương thích chuẩn OpenAI.
 //   - Ngược lại         → dùng OpenAI (OPENAI_API_KEY, model gpt-4o-mini-transcribe).
 // Có thể ép model riêng qua STT_MODEL.
+//
+// Retry: Nếu gặp lỗi tạm thời (503, timeout...), tự động retry với exponential backoff.
+
+import { retryWithBackoff } from './retry'
 
 export type SttLang = 'en' | 'vi'
 
@@ -54,6 +58,7 @@ function extFromMime(mime: string): string {
 }
 
 // Gửi audio lên nhà cung cấp STT và nhận lại văn bản. `lang` giúp phiên âm chính xác hơn.
+// Retry tự động khi gặp lỗi tạm thời (503, timeout...).
 export async function transcribeAudio(
   audio: ArrayBuffer,
   mime: string,
@@ -61,27 +66,32 @@ export async function transcribeAudio(
 ): Promise<string> {
   const provider = resolveProvider()
 
-  const cleanMime = mime || 'audio/webm'
-  const blob = new Blob([audio], { type: cleanMime })
+  return retryWithBackoff(
+    async () => {
+      const cleanMime = mime || 'audio/webm'
+      const blob = new Blob([audio], { type: cleanMime })
 
-  // Cả Groq lẫn OpenAI đều nhận multipart/form-data với 1 file audio.
-  const form = new FormData()
-  form.append('file', blob, `audio.${extFromMime(cleanMime)}`)
-  form.append('model', provider.model)
-  form.append('language', lang)
-  form.append('response_format', 'json')
+      // Cả Groq lẫn OpenAI đều nhận multipart/form-data với 1 file audio.
+      const form = new FormData()
+      form.append('file', blob, `audio.${extFromMime(cleanMime)}`)
+      form.append('model', provider.model)
+      form.append('language', lang)
+      form.append('response_format', 'json')
 
-  const resp = await fetch(provider.url, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${provider.apiKey}` },
-    body: form,
-  })
+      const resp = await fetch(provider.url, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${provider.apiKey}` },
+        body: form,
+      })
 
-  if (!resp.ok) {
-    const detail = await resp.text().catch(() => '')
-    throw new Error(`${provider.name} STT lỗi (${resp.status}): ${detail.slice(0, 200)}`)
-  }
+      if (!resp.ok) {
+        const detail = await resp.text().catch(() => '')
+        throw new Error(`${provider.name} STT lỗi (${resp.status}): ${detail.slice(0, 200)}`)
+      }
 
-  const data = (await resp.json()) as { text?: string }
-  return data.text?.trim() ?? ''
+      const data = (await resp.json()) as { text?: string }
+      return data.text?.trim() ?? ''
+    },
+    { maxRetries: 2, initialDelayMs: 100, maxDelayMs: 2000 },
+  )
 }

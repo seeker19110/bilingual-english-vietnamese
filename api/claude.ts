@@ -16,6 +16,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from './_lib/security'
+import { retryWithBackoff } from './_lib/retry'
 
 // Model và giới hạn do SERVER quyết định, không tin client
 const ALLOWED_MODEL = 'claude-haiku-4-5-20251001'
@@ -144,27 +145,44 @@ export default async function handler(req: Request): Promise<Response> {
       ...(system ? [{ role: 'system', content: system }] : []),
       ...sanitizedMessages,
     ]
-    const groqResp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${groqKey}`, 'content-type': 'application/json' },
-      body: JSON.stringify({ model: GROQ_CHAT_MODEL, max_tokens: maxTokens, messages: groqMessages }),
-    })
 
-    if (!groqResp.ok) {
-      const detail = await groqResp.text().catch(() => '')
-      return new Response(
-        JSON.stringify({ error: { message: `Groq lỗi (${groqResp.status}): ${detail.slice(0, 200)}` } }),
-        { status: groqResp.status, headers: { 'content-type': 'application/json', ...allHeaders } },
+    try {
+      const text = await retryWithBackoff(
+        async () => {
+          const groqResp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${groqKey}`, 'content-type': 'application/json' },
+            body: JSON.stringify({ model: GROQ_CHAT_MODEL, max_tokens: maxTokens, messages: groqMessages }),
+          })
+
+          if (!groqResp.ok) {
+            const detail = await groqResp.text().catch(() => '')
+            throw new Error(`Groq lỗi (${groqResp.status}): ${detail.slice(0, 200)}`)
+          }
+
+          const groqData = (await groqResp.json()) as { choices?: { message?: { content?: string } }[] }
+          return groqData.choices?.[0]?.message?.content ?? ''
+        },
+        { maxRetries: 2, initialDelayMs: 100, maxDelayMs: 2000 },
       )
-    }
 
-    const groqData = (await groqResp.json()) as { choices?: { message?: { content?: string } }[] }
-    const text = groqData.choices?.[0]?.message?.content ?? ''
-    // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc: data.content[0].text
-    return new Response(
-      JSON.stringify({ content: [{ type: 'text', text }] }),
-      { status: 200, headers: { 'content-type': 'application/json', ...allHeaders } },
-    )
+      // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc: data.content[0].text
+      return new Response(
+        JSON.stringify({ content: [{ type: 'text', text }] }),
+        { status: 200, headers: { 'content-type': 'application/json', ...allHeaders } },
+      )
+    } catch (groqError) {
+      // Nếu Groq fail (và không retry được), fallback sang Anthropic nếu có key
+      if (!anthropicKey) {
+        const errorMsg = (groqError as Error).message || 'Groq API lỗi'
+        return new Response(
+          JSON.stringify({ error: { message: errorMsg } }),
+          { status: 503, headers: { 'content-type': 'application/json', ...allHeaders } },
+        )
+      }
+      console.warn('[Claude API] Groq failed, falling back to Anthropic:', groqError)
+      // Tiếp tục sang Anthropic ở dưới
+    }
   }
 
   // ── Nhánh Anthropic (chất lượng cao — cần credit) ──────────────────────────
@@ -175,21 +193,41 @@ export default async function handler(req: Request): Promise<Response> {
     messages: sanitizedMessages,
   }
 
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': anthropicKey as string,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify(safeBody),
-  })
+  try {
+    const data = await retryWithBackoff(
+      async () => {
+        const resp = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': anthropicKey as string,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify(safeBody),
+        })
 
-  const data = await resp.text()
-  return new Response(data, {
-    status: resp.status,
-    headers: { 'content-type': 'application/json', ...allHeaders },
-  })
+        if (!resp.ok) {
+          const detail = await resp.text().catch(() => '')
+          throw new Error(`Anthropic lỗi (${resp.status}): ${detail.slice(0, 200)}`)
+        }
+
+        return resp.text()
+      },
+      { maxRetries: 2, initialDelayMs: 100, maxDelayMs: 2000 },
+    )
+
+    return new Response(data, {
+      status: 200,
+      headers: { 'content-type': 'application/json', ...allHeaders },
+    })
+  } catch (err) {
+    const errorMsg = (err as Error).message || 'Anthropic API lỗi'
+    const isRetryable = errorMsg.includes('(503)') || errorMsg.includes('(502)') || errorMsg.includes('(504)')
+    return new Response(
+      JSON.stringify({ error: { message: errorMsg } }),
+      { status: isRetryable ? 503 : 500, headers: { 'content-type': 'application/json', ...allHeaders } },
+    )
+  }
 }
 
 // Dùng Edge Runtime — nhẹ, khởi động nhanh, đủ cho việc proxy 1 request

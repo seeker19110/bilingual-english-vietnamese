@@ -32,6 +32,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from './_lib/security'
+import { isRetryableError } from './_lib/retry'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
 
@@ -141,7 +142,12 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     audioData = await generateAudioFromGoogle(text, voice, lang)
   } catch (err) {
-    return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500, allHeaders)
+    const isRetryable = isRetryableError(err)
+    const status = isRetryable ? 503 : 500
+    const message = isRetryable
+      ? `Dịch vụ tạo giọng tạm thời không khả dụng — thử lại trong ít phút`
+      : `Không thể tạo audio: ${(err as Error).message}`
+    return jsonResponse({ error: message }, status, allHeaders)
   }
 
   // ── BƯỚC 3: Mã hóa AES-256-GCM rồi lưu file (local VPS hoặc Supabase Storage tùy

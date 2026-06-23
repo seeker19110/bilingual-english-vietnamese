@@ -17,6 +17,40 @@ async function getAuthHeader(): Promise<Record<string, string>> {
   return token ? { 'Authorization': `Bearer ${token}` } : {}
 }
 
+// Retry với exponential backoff cho frontend.
+async function retryFetch(
+  url: string,
+  options: RequestInit,
+  maxAttempts = 3,
+): Promise<Response> {
+  let lastError: Error | null = null
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const resp = await fetch(url, options)
+
+      // Nếu 503, 502, 504 → retry
+      if ([502, 503, 504].includes(resp.status) && attempt < maxAttempts) {
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1) + Math.random() * 1000, 10000)
+        console.warn(`[Retry] Attempt ${attempt}/${maxAttempts} failed (${resp.status}), waiting ${delay}ms...`)
+        await new Promise(r => setTimeout(r, delay))
+        continue
+      }
+
+      return resp
+    } catch (err) {
+      lastError = err as Error
+      if (attempt < maxAttempts) {
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1) + Math.random() * 1000, 10000)
+        console.warn(`[Retry] Attempt ${attempt}/${maxAttempts} network error, waiting ${delay}ms...`, err)
+        await new Promise(r => setTimeout(r, delay))
+      }
+    }
+  }
+
+  throw lastError || new Error('Tất cả lần retry đều thất bại')
+}
+
 export async function callClaude(
   messages: ClaudeMessage[],
   system: string,
@@ -25,11 +59,16 @@ export async function callClaude(
   // /api/claude: lúc "npm run dev" được vite.config.ts proxy thẳng tới Anthropic (key đọc từ .env phía server);
   // lúc deploy lên Vercel, route này do api/claude.ts (serverless function) xử lý.
   const authHeader = await getAuthHeader()
-  const resp = await fetch('/api/claude', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', ...authHeader },
-    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages }),
-  })
+
+  const resp = await retryFetch(
+    '/api/claude',
+    {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...authHeader },
+      body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages }),
+    },
+    3,
+  )
 
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}))
