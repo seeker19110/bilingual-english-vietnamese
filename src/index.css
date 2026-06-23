@@ -24,7 +24,8 @@
 @layer utilities {
   /* Scrollbar */
   .scrollbar-none::-webkit-scrollbar { display: none; }
-  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-none { -ms-overflow-style: none; }
+  .scrollbar-none { scrollbar-width: none; }
 
   /* Safe area cho iPhone / notch / bottom bar */
   .pb-safe {
@@ -45,15 +46,15 @@
   @supports (backdrop-filter: blur(1px)) {
     .glass {
       background: rgba(24, 24, 27, 0.8);
-      backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
     }
   }
   @media (prefers-reduced-motion: reduce) {
     .glass {
       background: rgba(24, 24, 27, 0.98);
-      backdrop-filter: none;
       -webkit-backdrop-filter: none;
+      backdrop-filter: none;
     }
   }
 
@@ -61,8 +62,8 @@
   .gradient-text-emerald {
     background: linear-gradient(135deg, #10b981, #14b8a6);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   /* Glow effects */

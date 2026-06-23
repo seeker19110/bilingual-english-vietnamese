@@ -42,7 +42,7 @@ function SetupScreen({ onStart, loading, error, dir }: {
             {isA ? 'Tình huống' : 'Situation'}
           </label>
           <div className="relative">
-            <select value={situation} onChange={e => setSituation(e.target.value)}
+            <select id="situation" name="situation" value={situation} onChange={e => setSituation(e.target.value)}
               className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white appearance-none outline-none focus:border-emerald-500/70 transition">
               {SITUATIONS.map(s => (
                 <option key={s.value} value={s.value}>
@@ -327,6 +327,8 @@ export default function Chat() {
               </button>
 
               <input
+                id="message-input"
+                name="message"
                 ref={inputRef}
                 value={input}
                 onChange={e => setInput(e.target.value)}
