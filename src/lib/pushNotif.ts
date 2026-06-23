@@ -24,8 +24,20 @@ export async function subscribePush(accessToken: string): Promise<boolean> {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'vapid-key' }),
     })
-    const { publicKey } = await res.json() as { publicKey: string }
-    if (!publicKey) return false
+    if (!res.ok) {
+      console.warn('[push] Failed to fetch VAPID key:', res.status)
+      return false
+    }
+    const data = await res.json() as unknown
+    if (!data || typeof data !== 'object' || !('publicKey' in data)) {
+      console.warn('[push] Invalid VAPID response')
+      return false
+    }
+    const { publicKey } = data as { publicKey?: unknown }
+    if (typeof publicKey !== 'string' || !publicKey) {
+      console.warn('[push] VAPID key is invalid')
+      return false
+    }
 
     // Đăng ký service worker
     const reg = await navigator.serviceWorker.register(SW_PATH)
@@ -51,7 +63,16 @@ export async function subscribePush(accessToken: string): Promise<boolean> {
       },
       body: JSON.stringify({ action: 'subscribe', subscription: sub.toJSON() }),
     })
-    return r.ok
+    if (!r.ok) {
+      console.warn('[push] Failed to subscribe:', r.status)
+      return false
+    }
+    const respData = await r.json() as unknown
+    if (!respData || typeof respData !== 'object' || !('ok' in respData)) {
+      console.warn('[push] Invalid subscribe response')
+      return false
+    }
+    return (respData as { ok?: unknown }).ok === true
   } catch (err) {
     console.warn('[push] đăng ký thất bại:', err)
     return false

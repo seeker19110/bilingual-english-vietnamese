@@ -158,8 +158,41 @@ export default async function handler(req: Request): Promise<Response> {
       )
     }
 
-    const groqData = (await groqResp.json()) as { choices?: { message?: { content?: string } }[] }
-    const text = groqData.choices?.[0]?.message?.content ?? ''
+    const groqData = (await groqResp.json()) as unknown
+    if (!groqData || typeof groqData !== 'object' || !('choices' in groqData)) {
+      return new Response(
+        JSON.stringify({ error: { message: 'Groq API returned invalid response structure' } }),
+        { status: 500, headers: { 'content-type': 'application/json', ...allHeaders } },
+      )
+    }
+    const choices = (groqData as { choices?: unknown }).choices
+    if (!Array.isArray(choices) || choices.length === 0) {
+      return new Response(
+        JSON.stringify({ error: { message: 'Groq API returned empty choices' } }),
+        { status: 500, headers: { 'content-type': 'application/json', ...allHeaders } },
+      )
+    }
+    const choice = choices[0]
+    if (typeof choice !== 'object' || !choice || !('message' in choice)) {
+      return new Response(
+        JSON.stringify({ error: { message: 'Groq API returned invalid choice structure' } }),
+        { status: 500, headers: { 'content-type': 'application/json', ...allHeaders } },
+      )
+    }
+    const message = (choice as { message?: unknown }).message
+    if (typeof message !== 'object' || !message || !('content' in message)) {
+      return new Response(
+        JSON.stringify({ error: { message: 'Groq API returned invalid message structure' } }),
+        { status: 500, headers: { 'content-type': 'application/json', ...allHeaders } },
+      )
+    }
+    const text = (message as { content?: unknown }).content
+    if (typeof text !== 'string') {
+      return new Response(
+        JSON.stringify({ error: { message: 'Groq API returned non-string content' } }),
+        { status: 500, headers: { 'content-type': 'application/json', ...allHeaders } },
+      )
+    }
     // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc: data.content[0].text
     return new Response(
       JSON.stringify({ content: [{ type: 'text', text }] }),
