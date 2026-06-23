@@ -85,6 +85,12 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
       // Chuyển Web API Response → Express response
       res.status(webRes.status)
       webRes.headers.forEach((val, key) => res.setHeader(key, val))
+
+      // Security headers — thêm sau khi convert response, tránh conflict với Web API Response
+      res.setHeader('X-Content-Type-Options', 'nosniff')
+      res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'")
+      res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+
       res.send(await webRes.text())
     } catch (err) {
       console.error('[server] Lỗi handler:', err)
@@ -93,10 +99,24 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
   }
 }
 
+// ── Security headers cho static files và non-API routes ─────────────────────
+app.use((req, res, next) => {
+  // Chỉ apply cho non-API routes để tránh double headers
+  if (!req.path.startsWith('/api/')) {
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'")
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+  }
+  next()
+})
+
 // ── Health check ────────────────────────────────────────────────────────────
 // Endpoint nhẹ để PM2 / Nginx / uptime monitor kiểm tra app còn sống không.
 // Không gọi AI, không đụng DB → trả lời tức thì, không tốn tiền.
 app.get('/api/health', (_req, res) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'")
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
   res.json({ status: 'ok', uptime: process.uptime(), time: new Date().toISOString() })
 })
 
