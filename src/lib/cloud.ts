@@ -9,7 +9,7 @@
 // dữ liệu của chính tài khoản đang đăng nhập — an toàn dù dùng anon key.
 
 import { supabase } from './supabase'
-import type { ChatSession, WritingSubmission, SpeakingSession, DailyUsage } from '../types'
+import type { ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Level } from '../types'
 
 // Khóa localStorage — PHẢI khớp với storage.ts để dùng chung bộ nhớ đệm
 const K = {
@@ -33,6 +33,10 @@ function warn(where: string, error: { message: string } | null) {
 }
 
 // ── Chuyển đổi giữa hàng DB (snake_case) và kiểu của app (camelCase) ──────────
+function isValidLevel(v: unknown): v is Level {
+  return v === 'beginner' || v === 'intermediate' || v === 'advanced'
+}
+
 function rowToChat(r: unknown): ChatSession {
   if (!r || typeof r !== 'object') throw new Error('Invalid chat row')
   const row = r as Record<string, unknown>
@@ -40,7 +44,7 @@ function rowToChat(r: unknown): ChatSession {
     id: typeof row.id === 'string' ? row.id : '',
     userId: typeof row.user_id === 'string' ? row.user_id : '',
     situation: typeof row.situation === 'string' ? row.situation : '',
-    level: typeof row.level === 'string' ? row.level : 'beginner',
+    level: isValidLevel(row.level) ? row.level : 'beginner',
     messages: Array.isArray(row.messages) ? row.messages : [],
     createdAt: typeof row.created_at === 'number' || typeof row.created_at === 'string' ? Number(row.created_at) : Date.now()
   }
@@ -55,7 +59,7 @@ function rowToSpeaking(r: unknown): SpeakingSession {
     id: typeof row.id === 'string' ? row.id : '',
     userId: typeof row.user_id === 'string' ? row.user_id : '',
     situation: typeof row.situation === 'string' ? row.situation : '',
-    level: typeof row.level === 'string' ? row.level : 'beginner',
+    level: isValidLevel(row.level) ? row.level : 'beginner',
     messages: Array.isArray(row.messages) ? row.messages : [],
     createdAt: typeof row.created_at === 'number' || typeof row.created_at === 'string' ? Number(row.created_at) : Date.now()
   }
