@@ -29,7 +29,9 @@ self.addEventListener('fetch', (event) => {
   // Điều hướng trang (HTML): network-first, fallback về cache khi offline.
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match(request).then((r) => r || caches.match('/'))),
+      fetch(request).catch(() =>
+        caches.match(request).then((r) => r || caches.match('/').then((root) => root || new Response('Offline', { status: 503 })))
+      ),
     )
     return
   }
@@ -45,7 +47,7 @@ self.addEventListener('fetch', (event) => {
           }
           return res
         })
-        .catch(() => cached)
+        .catch(() => cached || new Response('Offline', { status: 503 }))
       return cached || network
     }),
   )
