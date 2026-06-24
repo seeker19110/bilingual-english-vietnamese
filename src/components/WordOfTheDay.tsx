@@ -1,11 +1,12 @@
-import { useMemo } from 'react'
 import { Sparkles } from 'lucide-react'
 import type { DictEntry } from '../types'
 import PronounceButton from './PronounceButton'
 import KaraokeText from './KaraokeText'
 
 interface Props {
-  entries: DictEntry[]
+  // Từ của hôm nay do trang cha lấy từ /api/dictionary?mode=wordOfDay (server tự
+  // chọn cố định theo ngày) — component này chỉ hiển thị, không tự tính nữa.
+  entry: DictEntry | null
 }
 
 const POS_LABEL: Record<string, string> = {
@@ -14,25 +15,8 @@ const POS_LABEL: Record<string, string> = {
   art: 'Mạo từ', num: 'Số từ', idiom: 'Thành ngữ',
 }
 
-// Sinh số "ngẫu nhiên nhưng cố định theo ngày" từ chuỗi YYYY-MM-DD.
-// Cùng một ngày luôn ra cùng một từ; sang ngày mới thì đổi từ.
-function seedFromDate(date: string): number {
-  let h = 0
-  for (let i = 0; i < date.length; i++) {
-    h = (h * 31 + date.charCodeAt(i)) >>> 0
-  }
-  return h
-}
-
-// Thẻ "Từ vựng mỗi ngày" — chọn 1 từ cố định theo ngày hôm nay, kèm ví dụ + nút phát âm.
-export default function WordOfTheDay({ entries }: Props) {
-  const entry = useMemo(() => {
-    if (entries.length === 0) return null
-    const today = new Date().toISOString().slice(0, 10)
-    const idx = seedFromDate(today) % entries.length
-    return entries[idx]
-  }, [entries])
-
+// Thẻ "Từ vựng mỗi ngày" — hiển thị 1 từ cố định theo ngày hôm nay, kèm ví dụ + nút phát âm.
+export default function WordOfTheDay({ entry }: Props) {
   if (!entry) return null
 
   return (

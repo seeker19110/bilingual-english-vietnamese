@@ -1,28 +1,32 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { LangProvider } from './context/LangProvider'
 import { AuthProvider } from './context/AuthProvider'
 import { ToastProvider } from './context/ToastProvider'
 import { useAuth } from './context/useAuth'
 import { CardListSkeleton } from './components/Skeleton'
-const Login = lazy(() => import('./pages/Login'))
-const Home = lazy(() => import('./pages/Home'))
-const Chat = lazy(() => import('./pages/Chat'))
-const Writing = lazy(() => import('./pages/Writing'))
-const Speaking = lazy(() => import('./pages/Speaking'))
-const CommonPhrases = lazy(() => import('./pages/CommonPhrases'))
-const History = lazy(() => import('./pages/History'))
-const Onboarding = lazy(() => import('./pages/Onboarding'))
+import { ErrorBoundary } from './components/ErrorBoundary'
+import { lazyWithRetry } from './lib/lazyWithRetry'
+// Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
+// (thường do app vừa deploy bản mới, chunk cũ không còn) thay vì sập trang.
+const Login = lazyWithRetry(() => import('./pages/Login'))
+const Home = lazyWithRetry(() => import('./pages/Home'))
+const Chat = lazyWithRetry(() => import('./pages/Chat'))
+const Writing = lazyWithRetry(() => import('./pages/Writing'))
+const Speaking = lazyWithRetry(() => import('./pages/Speaking'))
+const CommonPhrases = lazyWithRetry(() => import('./pages/CommonPhrases'))
+const History = lazyWithRetry(() => import('./pages/History'))
+const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
 
 // Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng
 // thực sự bấm vào, không gộp vào bundle chính để app khởi động nhanh hơn.
-const Dictionary = lazy(() => import('./pages/Dictionary'))
+const Dictionary = lazyWithRetry(() => import('./pages/Dictionary'))
 
 // Trang Bài học cũng chứa dữ liệu hội thoại lớn (sẽ lên tới 100 bài) — lazy-load tương tự.
-const Lessons = lazy(() => import('./pages/Lessons'))
+const Lessons = lazyWithRetry(() => import('./pages/Lessons'))
 
 // Trang Học theo lộ trình cũng dùng toàn bộ từ điển (qua lib/curriculum) — lazy-load.
-const Learn = lazy(() => import('./pages/Learn'))
+const Learn = lazyWithRetry(() => import('./pages/Learn'))
 
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
 // Hiện khung skeleton nhấp nháy thay vì chữ trơ, đỡ cảm giác đơ.
@@ -72,6 +76,7 @@ export default function App() {
       <LangProvider>
           <ToastProvider>
             <BrowserRouter>
+              <ErrorBoundary>
               <Suspense fallback={<PageLoading />}>
                 <Routes>
                   <Route path="/login" element={<Login />} />
@@ -88,6 +93,7 @@ export default function App() {
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Suspense>
+              </ErrorBoundary>
             </BrowserRouter>
           </ToastProvider>
       </LangProvider>

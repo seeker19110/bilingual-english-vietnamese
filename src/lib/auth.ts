@@ -19,7 +19,7 @@ function getCachedProfile(userId: string): { plan: string; onboarded: boolean } 
 }
 
 function setCachedProfile(userId: string, profile: { plan: 'free' | 'pro'; onboarded: boolean }) {
-  try { localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({ id: userId, ...profile })) } catch {}
+  try { localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({ id: userId, ...profile })) } catch { /* localStorage đầy/bị chặn — bỏ qua, chỉ là cache */ }
 }
 
 export function clearProfileCache() {
