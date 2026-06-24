@@ -19,6 +19,26 @@
   h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.015em;
   }
+
+  /* Keyboard navigation: focus-visible outline cho accessibility */
+  /* Chỉ show khi tab/keyboard dùng, không show khi click/touch (better UX) */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+  }
+
+  /* Remove default outline (use color outline above instead) */
+  button:focus,
+  a:focus,
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+  }
 }
 
 @layer utilities {
