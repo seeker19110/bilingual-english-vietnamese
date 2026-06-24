@@ -4,6 +4,7 @@
 // Hệ thống tính khoảng cách ôn tiếp theo dựa trên đánh giá.
 
 import type { DictEntry } from '../types'
+import { pushProgress } from './progressSync'
 
 export interface SRSCard {
   interval: number   // khoảng cách ôn (số ngày)
@@ -35,6 +36,7 @@ export function addToSRS(uid: string, word: string) {
   if (!data[key]) {
     data[key] = { interval: 1, ease: 2.5, due: Date.now(), reps: 0 }
     save(uid, data)
+    pushProgress(uid) // đồng bộ lịch ôn lên Supabase
   }
 }
 
@@ -67,6 +69,7 @@ export function reviewWord(uid: string, word: string, rating: Rating) {
   card.due   = now + Math.max(card.interval, 1) * MS
   data[key]  = card
   save(uid, data)
+  pushProgress(uid) // đồng bộ lịch ôn lên Supabase
 }
 
 // Lấy các từ đến hạn ôn hôm nay
