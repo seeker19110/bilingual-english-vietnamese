@@ -1,5 +1,7 @@
 import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from 'vite'
 import react from '@vitejs/plugin-react'
+import imagemin from 'vite-plugin-imagemin'
+import { visualizer } from 'rollup-plugin-visualizer'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
 export default defineConfig(({ mode }) => {
@@ -17,10 +19,32 @@ export default defineConfig(({ mode }) => {
   // /api/claude giờ do dev middleware gọi thẳng handler api/claude.ts (xem API_ROUTES bên dưới)
   // — không proxy thẳng tới Anthropic nữa, để handler tự chọn nhà cung cấp (Groq/Anthropic).
   return {
-    plugins: [react(), apiEdgeDevMiddleware()],
+    plugins: [
+      react(),
+      apiEdgeDevMiddleware(),
+      // Convert hình ảnh sang WebP (ngoại trừ SVG + icon)
+      imagemin({
+        include: /src\/.*\.(png|jpg|jpeg|gif)$/,
+        exclude: /icon|favicon/,
+        conversion: [
+          { from: 'png', to: 'webp', options: { quality: 75 } },
+          { from: 'jpg', to: 'webp', options: { quality: 75 } },
+          { from: 'jpeg', to: 'webp', options: { quality: 75 } },
+          { from: 'gif', to: 'webp', options: { quality: 75 } },
+        ],
+      }),
+      // Bundle size analyzer
+      visualizer({
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
+        filename: 'dist/stats.html',
+      }),
+    ],
     build: {
       chunkSizeWarningLimit: 500,
       minify: 'esbuild',
+      // Tree-shaking: loại bỏ code không dùng
       rollupOptions: {
         output: {
           manualChunks: {
