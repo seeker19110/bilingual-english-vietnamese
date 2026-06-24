@@ -63,8 +63,13 @@ export default function Learn() {
   // → React crash "rendered fewer hooks than expected" khi user đăng xuất).
   const uid = user?.id ?? ''
 
-  // Badge counts cho tab buttons
+  // Badge counts cho tab buttons.
+  // `refresh` là khóa invalidation THỦ CÔNG: bump() tăng nó để 2 badge này tính lại
+  // sau khi user đánh dấu từ ở các tab con (dữ liệu đọc từ localStorage). Vì thế cố ý
+  // giữ `refresh` trong deps dù callback không đọc trực tiếp → tắt cảnh báo exhaustive-deps.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const srsDue   = useMemo(() => ready && uid ? getSRSStats(uid).due : 0, [uid, ready, refresh])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const hardCount = useMemo(() => uid ? getDifficultWords(uid).size : 0, [uid, refresh])
 
   // Đã gọi đủ hook ở trên → giờ mới được phép thoát sớm.

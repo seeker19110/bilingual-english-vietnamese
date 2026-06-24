@@ -1,39 +1,41 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Check, X, RotateCcw, Eye } from 'lucide-react'
 import type { DictEntry } from '../types'
 import { markLearned, unmarkLearned } from '../lib/vocab'
+import { fetchRandomEntries } from '../lib/dictionaryApi'
 import PronounceButton from './PronounceButton'
 import SpeakButton from './SpeakButton'
 
 interface Props {
-  entries: DictEntry[]
   userId: string
   onLearnedChange?: () => void  // gọi sau khi đánh dấu để cha cập nhật thanh mốc
-}
-
-// Trộn ngẫu nhiên mảng (thuật toán Fisher–Yates), trả về mảng mới
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
 }
 
 const DECK_SIZE = 30 // mỗi lượt luyện 30 thẻ cho gọn
 
 // Chế độ luyện flashcard: hiện từ tiếng Anh → bấm để lật xem nghĩa → tự đánh giá nhớ/chưa nhớ.
-export default function Flashcard({ entries, userId, onLearnedChange }: Props) {
-  // Bộ thẻ cho lượt này — trộn khi khởi tạo hoặc khi bấm "Luyện lượt mới"
-  const [deck, setDeck] = useState(() => shuffle(entries).slice(0, DECK_SIZE))
+// Bộ thẻ được lấy NGẪU NHIÊN từ server (/api/dictionary?mode=random) — không tải cả từ điển.
+export default function Flashcard({ userId, onLearnedChange }: Props) {
+  const [deck, setDeck] = useState<DictEntry[]>([])
+  const [loading, setLoading] = useState(true)
 
   const [idx, setIdx] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [known, setKnown] = useState(0) // đếm số thẻ đánh dấu "đã nhớ" trong lượt
 
+  // Tải 1 bộ thẻ mới từ server (dùng cho lần đầu + khi bấm "Luyện lượt mới").
+  const loadDeck = useCallback(() => {
+    setLoading(true)
+    fetchRandomEntries(DECK_SIZE)
+      .then((cards) => { setDeck(cards); setIdx(0); setFlipped(false); setKnown(0) })
+      .catch(() => setDeck([]))
+      .finally(() => setLoading(false))
+  }, [])
+
+  useEffect(() => { loadDeck() }, [loadDeck])
+
   const card = deck[idx]
-  const done = idx >= deck.length
+  const done = deck.length > 0 && idx >= deck.length
 
   // Xử lý khi học viên tự đánh giá
   function rate(remembered: boolean) {
@@ -50,12 +52,13 @@ export default function Flashcard({ entries, userId, onLearnedChange }: Props) {
     setIdx(i => i + 1)
   }
 
-  // Bắt đầu lượt mới
-  function restart() {
-    setDeck(shuffle(entries).slice(0, DECK_SIZE))
-    setIdx(0)
-    setFlipped(false)
-    setKnown(0)
+  // Đang tải bộ thẻ
+  if (loading) {
+    return (
+      <div className="glass rounded-xl p-8 text-center animate-fade-in">
+        <p className="text-sm text-zinc-400">Đang tải thẻ…</p>
+      </div>
+    )
   }
 
   // Màn hình kết thúc lượt
@@ -68,7 +71,7 @@ export default function Flashcard({ entries, userId, onLearnedChange }: Props) {
           Bạn nhớ <strong className="text-emerald-300">{known}</strong>/{deck.length} từ
         </p>
         <button
-          onClick={restart}
+          onClick={loadDeck}
           className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition px-4 py-2 rounded-xl text-sm font-medium"
         >
           <RotateCcw className="w-4 h-4" /> Luyện lượt mới

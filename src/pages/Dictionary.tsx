@@ -10,7 +10,7 @@ import Flashcard from '../components/Flashcard'
 import WordIllustration from '../components/WordIllustration'
 import { EXTRA_EXAMPLES } from '../data/extra-examples'
 import type { DictEntry } from '../types'
-import { loadDictionary } from '../data/dictionary/loader'
+import { searchDictionary, fetchWordOfDay } from '../lib/dictionaryApi'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { POS_LABEL, POS_COLOR, POS_LIST } from '../lib/pos'
@@ -50,13 +50,36 @@ export default function Dictionary() {
   const posRefs    = useRef<Record<string, HTMLElement | null>>({})
   const touchStart = useRef({ x: 0, y: 0 })
 
-  const [entries, setEntries]       = useState<DictEntry[]>([])
-  const [ready, setReady]           = useState(false)
   const [learnedWords, setLearnedWords] = useState<Set<string>>(new Set())
 
+  // Kết quả tìm kiếm + thẻ "Từ vựng hôm nay" lấy TỪ SERVER (không tải cả từ điển về máy).
+  const [searchResults, setSearchResults] = useState<DictEntry[]>([])
+  const [searchPosGroups, setSearchPosGroups] = useState<[string, number][]>([])
+  const [searchMatched, setSearchMatched] = useState(0)
+  const [searching, setSearching]   = useState(false)
+  const [totalWords, setTotalWords] = useState(0)
+  const [wordOfDay, setWordOfDay]   = useState<DictEntry | null>(null)
+
+  // Lấy "từ vựng hôm nay" + tổng số từ (cho phụ đề) — 1 lần khi mở trang.
   useEffect(() => {
-    loadDictionary().then(data => { setEntries(data); setReady(true) })
+    fetchWordOfDay()
+      .then(({ total, entry }) => { setTotalWords(total); setWordOfDay(entry) })
+      .catch(() => { /* lỗi mạng — bỏ qua, trang vẫn dùng được để tra từ */ })
   }, [])
+
+  // Gọi API tìm kiếm mỗi khi từ khóa đổi (deferredQuery đã được React hoãn để gõ mượt).
+  // Hủy request cũ khi gõ tiếp để tránh kết quả về trễ ghi đè kết quả mới.
+  useEffect(() => {
+    const q = deferredQuery.trim()
+    if (!q) { setSearchResults([]); setSearchPosGroups([]); setSearchMatched(0); return }
+    const ctrl = new AbortController()
+    setSearching(true)
+    searchDictionary(q, ctrl.signal)
+      .then(r => { setSearchResults(r.results); setSearchPosGroups(r.posGroups); setSearchMatched(r.matched) })
+      .catch(err => { if (err?.name !== 'AbortError') { setSearchResults([]); setSearchPosGroups([]); setSearchMatched(0) } })
+      .finally(() => setSearching(false))
+    return () => ctrl.abort()
+  }, [deferredQuery])
 
   useEffect(() => {
     if (user) setLearnedWords(getLearnedWords(user.id))
@@ -73,36 +96,16 @@ export default function Dictionary() {
 
   function openPos(posCode: string) { setJumpPos(posCode); setTab('pos') }
 
-  // Kết quả tìm kiếm chưa lọc loại từ — dùng để tính POS filter chips
-  const allMatchesBase = useMemo((): DictEntry[] => {
-    const q = deferredQuery.trim().toLowerCase()
-    if (!q) return []
-    if (hasVietnamese(q)) {
-      // Tìm kiếm theo nghĩa tiếng Việt
-      return entries.filter(e => e.vi.toLowerCase().includes(q))
-    }
-    // Tìm kiếm theo từ tiếng Anh — ưu tiên bắt đầu bằng query
-    const starts: DictEntry[] = []
-    const contains: DictEntry[] = []
-    for (const e of entries) {
-      if (e.word.startsWith(q)) starts.push(e)
-      else if (e.word.includes(q)) contains.push(e)
-    }
-    return [...starts, ...contains]
-  }, [deferredQuery, entries])
+  // Kết quả tìm kiếm gốc (đã sắp xếp ở server) — dùng để tính chip lọc loại từ.
+  const allMatchesBase = searchResults
+  // Loại từ + số lượng do server đếm trên TOÀN BỘ kết quả khớp (không chỉ phần trả về).
+  const posGroups = searchPosGroups
 
   // Áp dụng bộ lọc loại từ lên kết quả gốc
   const allMatches = useMemo((): DictEntry[] => {
     if (!posFilter) return allMatchesBase
     return allMatchesBase.filter(e => e.pos === posFilter)
   }, [allMatchesBase, posFilter])
-
-  // Danh sách loại từ có trong kết quả tìm kiếm (kèm số lượng)
-  const posGroups = useMemo(() => {
-    const counts: Record<string, number> = {}
-    for (const e of allMatchesBase) counts[e.pos] = (counts[e.pos] || 0) + 1
-    return Object.entries(counts).sort((a, b) => b[1] - a[1])
-  }, [allMatchesBase])
 
   const totalPages = Math.max(1, Math.ceil(allMatches.length / PAGE_SIZE))
   const results    = allMatches.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
@@ -119,24 +122,11 @@ export default function Dictionary() {
 
   if (!user) return null
 
-  if (!ready) {
-    return (
-      <div className="min-h-dvh bg-zinc-950">
-        <Layout title={isA ? 'Từ điển' : 'Dictionary'} subtitle={isA ? 'Đang tải…' : 'Loading…'} extra={<VoiceToggle />} />
-        <main className="max-w-3xl mx-auto px-4 py-6">
-          <div className="glass rounded-xl p-8 text-center animate-fade-in">
-            <p className="text-zinc-400 text-sm">{isA ? 'Đang tải từ điển…' : 'Loading dictionary…'}</p>
-          </div>
-        </main>
-      </div>
-    )
-  }
-
   return (
     <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
       <Layout
         title={isA ? 'Từ điển' : 'Dictionary'}
-        subtitle={`${entries.length.toLocaleString('vi-VN')} ${isA ? 'từ thông dụng' : 'common words'}`}
+        subtitle={`${totalWords.toLocaleString('vi-VN')} ${isA ? 'từ thông dụng' : 'common words'}`}
         extra={<VoiceToggle />}
       />
 
@@ -144,7 +134,7 @@ export default function Dictionary() {
       <div className="max-w-3xl mx-auto px-4 py-6 pb-24 sm:pb-6">
 
         <VocabMilestone userId={user.id} refreshKey={learnedKey} />
-        <WordOfTheDay entries={entries} />
+        <WordOfTheDay entry={wordOfDay} />
 
         {/* Tab bar */}
         <div className="flex gap-2 mb-4">
@@ -199,7 +189,7 @@ export default function Dictionary() {
                       : 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:text-zinc-200'
                   }`}
                 >
-                  {isA ? 'Tất cả' : 'All'} ({allMatchesBase.length})
+                  {isA ? 'Tất cả' : 'All'} ({searchMatched})
                 </button>
                 {posGroups.map(([pos, count]) => (
                   <button
@@ -218,7 +208,12 @@ export default function Dictionary() {
             )}
 
             {query ? (
-              allMatches.length > 0 ? (
+              searching && allMatches.length === 0 ? (
+                /* Đang chờ server trả kết quả */
+                <div className="text-center py-10 animate-fade-in">
+                  <p className="text-zinc-500 text-sm">{isA ? 'Đang tìm…' : 'Searching…'}</p>
+                </div>
+              ) : allMatches.length > 0 ? (
                 <>
                   {/* Phân trang */}
                   {totalPages > 1 && (
@@ -388,7 +383,7 @@ export default function Dictionary() {
           </>
 
         ) : tab === 'flashcard' ? (
-          <Flashcard entries={entries} userId={user.id} onLearnedChange={() => setLearnedKey(k => k + 1)} />
+          <Flashcard userId={user.id} onLearnedChange={() => setLearnedKey(k => k + 1)} />
 
         ) : (
           /* ── Tab Loại từ ── */

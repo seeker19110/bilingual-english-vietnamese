@@ -114,6 +114,7 @@ const API_ROUTES: { prefix: string; module: string }[] = [
   { prefix: '/api/tts', module: '/api/tts.ts' },
   { prefix: '/api/stt', module: '/api/stt.ts' },
   { prefix: '/api/claude', module: '/api/claude.ts' },
+  { prefix: '/api/dictionary', module: '/api/dictionary.ts' },
 ]
 
 function apiEdgeDevMiddleware(): Plugin {
