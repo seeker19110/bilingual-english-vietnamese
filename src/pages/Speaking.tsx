@@ -21,7 +21,7 @@ interface AIResponse {
   corrected: string
 }
 
-// ── Setup Screen ─────────────────────────────────────────────────────────────
+// ── Setup Screen ─────────────────────────────────────────────────────────
 function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void; dir: Direction }) {
   const [situation, setSituation] = useState('small_talk')
   const [level, setLevel] = useState<Level>('intermediate')
@@ -95,7 +95,7 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
   )
 }
 
-// ── Speak Bubble ─────────────────────────────────────────────────────────────
+// ── Speak Bubble ───────────────────────────────────────────────────────
 function SpeakBubble({ msg, onPlay, isNew }: { msg: Message; onPlay?: () => void; isNew?: boolean }) {
   if (msg.role === 'user') {
     return (
@@ -150,7 +150,7 @@ function TypingDots() {
   )
 }
 
-// ── Main Speaking page ────────────────────────────────────────────────────────
+// ── Main Speaking page ──────────────────────────────────────────────────
 export default function Speaking() {
   const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
   const toast = useToast()
@@ -193,7 +193,7 @@ export default function Speaking() {
     setError('')
     const sys = speakingSystemPrompt(situationLabel(situation, dir), level, dir)
     try {
-      const raw = await callClaude([], sys)
+      const raw = await callClaude([], sys, 1024, 'speaking')
       const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
       const msg: Message = {
         id: crypto.randomUUID(), role: 'assistant', content: raw,
@@ -220,7 +220,7 @@ export default function Speaking() {
 
   async function toggleRecord() {
     haptics[recording ? 'stop' : 'start']()  // rung nhẹ báo bắt đầu/dừng ghi âm
-    // ── Đang ghi → dừng lại ──────────────────────────────────────────────────
+    // ── Đang ghi → dừng lại ──────────────────────────────────────────────
     if (recording) {
       // STT server: dừng recorder, gửi audio lên nhận diện
       if (recorderRef.current) {
@@ -247,7 +247,7 @@ export default function Speaking() {
       return
     }
 
-    // ── Chưa ghi → bắt đầu ghi ───────────────────────────────────────────────
+    // ── Chưa ghi → bắt đầu ghi ──────────────────────────────────────────
     if (!session) return
     // Chặn nếu hết lượt nhận diện giọng nói (STT) trong ngày — đếm riêng với hội thoại.
     if (getUsage(user.id).sttCount >= LIMITS[user.plan].stt) {
@@ -302,7 +302,7 @@ export default function Speaking() {
     }))
     const sys = speakingSystemPrompt(situationLabel(session.situation, dir), session.level, dir)
     try {
-      const raw = await callClaude(history, sys)
+      const raw = await callClaude(history, sys, 1024, 'speaking')
       const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
       const aiMsg: Message = {
         id: crypto.randomUUID(), role: 'assistant', content: raw,

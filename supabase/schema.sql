@@ -11,7 +11,7 @@
 -- chính mình (auth.uid() = user_id). Không ai xem được dữ liệu người khác.
 -- ============================================================================
 
--- ── 1. profiles: hồ sơ + gói (free/pro) ─────────────────────────────────────
+-- ── 1. profiles: hồ sơ + gói (free/pro) ───────────────────────────────
 -- id trùng với id tài khoản trong Supabase Auth (auth.users.id)
 create table if not exists public.profiles (
   id         uuid primary key references auth.users(id) on delete cascade,
@@ -20,7 +20,7 @@ create table if not exists public.profiles (
   created_at timestamptz not null default now()
 );
 
--- ── 2. chat_sessions: lịch sử chế độ Chat ───────────────────────────────────
+-- ── 2. chat_sessions: lịch sử chế độ Chat ────────────────────────────
 create table if not exists public.chat_sessions (
   id         uuid primary key,
   user_id    uuid not null references auth.users(id) on delete cascade,
@@ -31,7 +31,7 @@ create table if not exists public.chat_sessions (
 );
 create index if not exists chat_sessions_user_idx on public.chat_sessions(user_id, created_at desc);
 
--- ── 3. writing_submissions: lịch sử chấm bài viết ───────────────────────────
+-- ── 3. writing_submissions: lịch sử chấm bài viết ──────────────────────
 create table if not exists public.writing_submissions (
   id           uuid primary key,
   user_id      uuid not null references auth.users(id) on delete cascade,
@@ -42,7 +42,7 @@ create table if not exists public.writing_submissions (
 );
 create index if not exists writing_subs_user_idx on public.writing_submissions(user_id, submitted_at desc);
 
--- ── 4. speaking_sessions: lịch sử luyện nói ─────────────────────────────────
+-- ── 4. speaking_sessions: lịch sử luyện nói ──────────────────────────
 create table if not exists public.speaking_sessions (
   id         uuid primary key,
   user_id    uuid not null references auth.users(id) on delete cascade,
@@ -53,7 +53,7 @@ create table if not exists public.speaking_sessions (
 );
 create index if not exists speaking_sessions_user_idx on public.speaking_sessions(user_id, created_at desc);
 
--- ── 5. daily_usage: đếm lượt dùng theo ngày (giới hạn Free/Pro) ──────────────
+-- ── 5. daily_usage: đếm lượt dùng theo ngày (giới hạn Free/Pro) ─────────────
 create table if not exists public.daily_usage (
   user_id       uuid not null references auth.users(id) on delete cascade,
   day           text not null,                  -- 'YYYY-MM-DD'
@@ -78,14 +78,24 @@ create table if not exists public.tts_cache (
 );
 create index if not exists tts_cache_lang_idx on public.tts_cache(lang);
 
--- ── 7. Bật Row Level Security cho tất cả bảng ───────────────────────────────
+-- ── 6b. learning_progress: tiến độ học (từ đã thuộc, từ khó, lịch ôn SRS) ─────
+-- Mỗi user 1 dòng. Đồng bộ để đổi máy không mất tiến độ (xem src/lib/progressSync.ts).
+create table if not exists public.learning_progress (
+  user_id    uuid primary key references auth.users(id) on delete cascade,
+  learned    jsonb not null default '[]',   -- mảng từ đã thuộc
+  hard       jsonb not null default '[]',   -- mảng từ đánh dấu khó
+  srs        jsonb not null default '{}',   -- map từ → thẻ SRS {interval,ease,due,reps}
+  updated_at timestamptz not null default now()
+);
+
+-- ── 7. Bật Row Level Security cho tất cả bảng ─────────────────────────
 alter table public.profiles            enable row level security;
 alter table public.chat_sessions       enable row level security;
 alter table public.writing_submissions enable row level security;
 alter table public.speaking_sessions   enable row level security;
 alter table public.daily_usage         enable row level security;
 
--- ── 8. Policy: mỗi người chỉ thao tác dữ liệu của chính mình ─────────────────
+-- ── 8. Policy: mỗi người chỉ thao tác dữ liệu của chính mình ───────────────
 -- (drop trước rồi tạo lại để chạy lại file không bị lỗi "đã tồn tại")
 
 drop policy if exists "own profile" on public.profiles;
@@ -108,19 +118,24 @@ drop policy if exists "own usage" on public.daily_usage;
 create policy "own usage" on public.daily_usage
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+alter table public.learning_progress enable row level security;
+drop policy if exists "own progress" on public.learning_progress;
+create policy "own progress" on public.learning_progress
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
 -- tts_cache: bất kỳ ai (kể cả chưa đăng nhập) đều đọc được audio public
 alter table public.tts_cache enable row level security;
 drop policy if exists "public read tts" on public.tts_cache;
 create policy "public read tts" on public.tts_cache for select using (true);
 -- Chỉ server (service role) mới được ghi — không cần policy insert/update cho anon
 
--- ── 9b. Thêm cột onboarding vào profiles (chạy lại an toàn) ─────────────────
+-- ── 9b. Thêm cột onboarding vào profiles (chạy lại an toàn) ───────────────
 alter table public.profiles add column if not exists onboarded     boolean not null default false;
 alter table public.profiles add column if not exists user_level    text             default 'beginner';
 alter table public.profiles add column if not exists goal          text             default 'daily';
 alter table public.profiles add column if not exists daily_minutes integer          default 10;
 
--- ── 10. Bảng lưu push subscription để gửi thông báo nhắc học ─────────────────
+-- ── 10. Bảng lưu push subscription để gửi thông báo nhắc học ───────────────
 create table if not exists public.push_subscriptions (
   id         uuid primary key default gen_random_uuid(),
   user_id    uuid not null references auth.users(id) on delete cascade,
@@ -135,7 +150,7 @@ drop policy if exists "own push sub" on public.push_subscriptions;
 create policy "own push sub" on public.push_subscriptions
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
--- ── 9. Tự tạo profiles khi có người đăng ký mới ─────────────────────────────
+-- ── 9. Tự tạo profiles khi có người đăng ký mới ──────────────────────
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql

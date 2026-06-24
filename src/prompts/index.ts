@@ -1,5 +1,16 @@
 import type { Level, Direction } from '../types'
 
+// Các lỗi tiếng Anh ĐIỂN HÌNH của người Việt — chèn vào prompt chiều A để AI ưu tiên
+// soi đúng những lỗi này và giải thích theo tư duy tiếng Việt (hiệu quả sư phạm cao, $0).
+const VIET_COMMON_ERRORS = `Người Việt hay sai những lỗi sau — ưu tiên để ý và sửa khi gặp:
+- Thiếu "-s/-es" ở động từ ngôi thứ 3 số ít (she go → she goes) và danh từ số nhiều.
+- Quên/thừa mạo từ a/an/the.
+- Sai/lẫn thì (đặc biệt quá khứ: yesterday I go → I went), thiếu trợ động từ (do/does/did).
+- Quên "be" (I very tired → I am very tired), thừa "be" trước động từ thường.
+- Sai giới từ (in/on/at, depend on, good at), trật tự tính từ, đại từ.
+- Dịch word-by-word từ tiếng Việt nghe không tự nhiên — gợi ý cách nói của người bản xứ.
+Khi giải thích, nói ngắn gọn bằng tiếng Việt và chỉ rõ vì sao tiếng Việt không có quy tắc đó.`
+
 // Mô tả trình độ theo chiều học
 const LEVEL_DESC_A: Record<Level, string> = {
   beginner:     'A1–A2, dùng câu ngắn, từ vựng đơn giản',
@@ -12,7 +23,7 @@ const LEVEL_DESC_B: Record<Level, string> = {
   advanced:     'C1+ Vietnamese, complex expression',
 }
 
-// ─── Chat ────────────────────────────────────────────────────────────────────
+// ─── Chat ──────────────────────────────────────────────────────────────
 export function chatSystemPrompt(situation: string, level: Level, dir: Direction = 'A'): string {
   if (dir === 'A') {
     return `Bạn là gia sư tiếng Anh thân thiện cho người Việt. Trình độ học viên: ${LEVEL_DESC_A[level]}.
@@ -23,6 +34,8 @@ QUY TẮC:
 2. Sau mỗi câu học viên, nếu có lỗi: chỉ ra, viết lại câu đúng, giải thích NGẮN GỌN bằng TIẾNG VIỆT (1–2 câu).
 3. Nếu không có lỗi: khen ngắn bằng tiếng Anh và hỏi tiếp 1 câu.
 4. Không giải thích dài dòng. Luôn giữ hội thoại tiếp diễn.
+
+${VIET_COMMON_ERRORS}
 
 ĐỊNH DẠNG TRẢ LỜI (bắt buộc):
 💬 [Câu thoại tiếng Anh — phần hội thoại chính]
@@ -47,7 +60,7 @@ REPLY FORMAT (required):
 Start with an opening line appropriate for the situation.`
 }
 
-// ─── Speaking (JSON, 2 giọng) ────────────────────────────────────────────────
+// ─── Speaking (JSON, 2 giọng) ───────────────────────────────────
 // JSON keys dùng chung: "speech", "feedback", "corrected"
 // Chiều A: speech=tiếng Anh, feedback=tiếng Việt
 // Chiều B: speech=tiếng Việt, feedback=tiếng Anh
@@ -61,6 +74,8 @@ QUY TẮC:
 2. Sau mỗi câu học viên, nếu có lỗi: chỉ ra, sửa, giải thích ngắn bằng tiếng Việt.
 3. Nếu không có lỗi: khen ngắn và hỏi tiếp.
 4. Luôn hỏi 1 câu để tiếp tục hội thoại.
+
+${VIET_COMMON_ERRORS}
 
 QUAN TRỌNG — Trả về JSON (không có markdown):
 {
@@ -91,7 +106,7 @@ IMPORTANT — Return JSON only (no markdown):
 Start with an opening line for the situation (fill speech only, leave the other two empty).`
 }
 
-// ─── Writing ─────────────────────────────────────────────────────────────────
+// ─── Writing ─────────────────────────────────────────────────────
 export function writingSystemPrompt(dir: Direction = 'A'): string {
   if (dir === 'A') {
     return `Bạn là giám khảo IELTS Writing giàu kinh nghiệm, chấm bài cho người Việt học tiếng Anh.
@@ -120,7 +135,7 @@ Return JSON only (no markdown):
 }`
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────
 export function situationLabel(value: string, dir: Direction = 'A'): string {
   const mapA: Record<string, string> = {
     job_interview:  'Phỏng vấn xin việc',
@@ -129,6 +144,10 @@ export function situationLabel(value: string, dir: Direction = 'A'): string {
     office_meeting: 'Họp / thuyết trình',
     shopping:       'Mua sắm',
     small_talk:     'Tán gẫu / xã giao',
+    market_vn:      'Đi chợ truyền thống ở Việt Nam, có mặc cả giá',
+    ride_hailing:   'Đặt và đi Grab / taxi ở Việt Nam',
+    directions:     'Chỉ đường cho khách du lịch nước ngoài ở Việt Nam',
+    street_food:    'Gọi món ở quán ăn vỉa hè / quán cà phê Việt Nam',
     free:           'Tự do',
   }
   const mapB: Record<string, string> = {
@@ -138,6 +157,10 @@ export function situationLabel(value: string, dir: Direction = 'A'): string {
     office_meeting: 'Meeting / Presentation',
     shopping:       'Shopping',
     small_talk:     'Small Talk',
+    market_vn:      'Bargaining at a traditional Vietnamese market',
+    ride_hailing:   'Booking and riding a Grab / taxi in Vietnam',
+    directions:     'Giving directions to a foreign tourist in Vietnam',
+    street_food:    'Ordering at a Vietnamese street food stall / coffee shop',
     free:           'Free Topic',
   }
   const map = dir === 'A' ? mapA : mapB

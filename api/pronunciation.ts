@@ -18,7 +18,7 @@
 // Hướng dẫn tạo bảng Supabase + bucket Storage + lấy API key: xem PRONUNCIATION_CACHE_SETUP.md
 
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
-import { generateAudioFromGoogle, isValidVoice, DEFAULT_VOICE } from './_lib/googleTts'
+import { generateAudioFromGoogle, isValidVoice, DEFAULT_VOICE, VOICE_VERSION } from './_lib/googleTts'
 import { saveAudio } from './_lib/fileStorage'
 import {
   getCorsHeaders,
@@ -89,16 +89,20 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // ── BƯỚC 1: Kiểm tra cache (theo cặp word + voice) ─────────
+  // Cache CHỈ hợp lệ khi voice_version khớp VOICE_VERSION hiện tại. Khi ta đổi giọng
+  // (vd: nâng lên Chirp 3 HD), các dòng cũ có voice_version khác (hoặc NULL — audio
+  // seed bằng giọng đời cũ) sẽ bị coi là MISS → tạo lại bằng giọng mới rồi GHI ĐÈ
+  // (upsert theo word,voice). Nhờ vậy audio từ-đơn luôn trùng khớp với audio câu ví dụ.
   const { data: cachedRow } = await supabase
     .from('pronunciations')
-    .select('audio_url')
+    .select('audio_url, voice_version')
     .eq('word', word)
     .eq('voice', voice)
     .maybeSingle()
 
-  const cachedUrl = (cachedRow as { audio_url?: string } | null)?.audio_url
-  if (cachedUrl) {
-    return jsonResponse({ audio_url: cachedUrl, cached: true }, 200, allHeaders)
+  const cached = cachedRow as { audio_url?: string; voice_version?: string | null } | null
+  if (cached?.audio_url && cached.voice_version === VOICE_VERSION) {
+    return jsonResponse({ audio_url: cached.audio_url, cached: true }, 200, allHeaders)
   }
 
   // ── BƯỚC 2: Cache MISS → gọi Google TTS ────────────────────
@@ -129,12 +133,15 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: `Lưu file thất bại: ${(err as Error).message}` }, 500, allHeaders)
   }
 
-  // ── BƯỚC 5: Lưu vào DB ─────────────────────────────────────
+  // ── BƯỚC 5: Lưu vào DB ────────────────────────────
   // upsert theo cặp (word, voice) — cột unique composite — nếu lỡ có request trùng
   // từ+giọng chạy song song thì không bị lỗi vi phạm unique constraint.
   const { error: insertError } = await supabase
     .from('pronunciations')
-    .upsert({ word, voice, audio_url: audioUrl, lang: 'en-US' }, { onConflict: 'word,voice' })
+    .upsert(
+      { word, voice, audio_url: audioUrl, lang: 'en-US', voice_version: VOICE_VERSION },
+      { onConflict: 'word,voice' },
+    )
 
   if (insertError) {
     // Audio đã tạo & upload xong nên vẫn trả về cho user dùng được ngay —

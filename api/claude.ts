@@ -16,6 +16,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from './_lib/security'
+import { checkAndConsumeUsage, isUsageMode } from './_lib/usage'
 
 // Model và giới hạn do SERVER quyết định, không tin client
 const ALLOWED_MODEL = 'claude-haiku-4-5-20251001'
@@ -94,7 +95,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Parse và kiểm tra body
-  let parsed: { system?: string; messages?: unknown[]; max_tokens?: number }
+  let parsed: { system?: string; messages?: unknown[]; max_tokens?: number; mode?: string }
   try {
     parsed = JSON.parse(rawText)
   } catch {
@@ -119,7 +120,7 @@ export default async function handler(req: Request): Promise<Response> {
   })
 
   // Từ chối nếu tổng nội dung quá lớn
-  const totalContent = sanitizedMessages.reduce((sum, msg: unknown) => {
+  const totalContent = sanitizedMessages.reduce((sum: number, msg: unknown) => {
     const m = msg as { content?: unknown }
     return sum + (typeof m?.content === 'string' ? m.content.length : 0)
   }, 0)
@@ -136,6 +137,19 @@ export default async function handler(req: Request): Promise<Response> {
     MAX_TOKENS_LIMIT,
   )
   const system = typeof parsed.system === 'string' ? parsed.system.slice(0, 8000) : ''
+
+  // ── Giới hạn lượt dùng ở SERVER (theo gói Free/Pro) ──────────────────────────
+  // mode do client gửi: 'chat' | 'writing' | 'speaking' (mặc định 'chat').
+  // Server đếm authoritative trong daily_usage → client không tự vượt giới hạn được.
+  const mode = isUsageMode(parsed.mode) ? parsed.mode : 'chat'
+  const gate = await checkAndConsumeUsage(authResult.userId, mode)
+  if (!gate.ok) {
+    logSecurityEvent('USAGE_LIMIT', clientIp, { path: '/api/claude', mode })
+    return new Response(
+      JSON.stringify({ error: { message: gate.message } }),
+      { status: 429, headers: { 'content-type': 'application/json', ...allHeaders } },
+    )
+  }
 
   // ── Nhánh Groq (ưu tiên — FREE, API tương thích chuẩn OpenAI) ───────────────
   if (groqKey) {
@@ -200,7 +214,7 @@ export default async function handler(req: Request): Promise<Response> {
     )
   }
 
-  // ── Nhánh Anthropic (chất lượng cao — cần credit) ──────────────────────────
+  // ── Nhánh Anthropic (chất lượng cao — cần credit) ────────────────────────
   const safeBody = {
     model: ALLOWED_MODEL,
     max_tokens: maxTokens,

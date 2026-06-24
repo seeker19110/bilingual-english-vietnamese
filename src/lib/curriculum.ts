@@ -1,4 +1,4 @@
-// ──────────────────────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────────────
 // LOGIC LỘ TRÌNH HỌC
 //
 // Ghép phần NỀN TẢNG (src/data/curriculum.ts) với phần MỞ RỘNG tự động
@@ -9,14 +9,15 @@
 //   - getTodayBatch():    lấy 20 từ KẾ TIẾP chưa thuộc (mục tiêu mỗi ngày).
 //   - daily counter:      đếm số từ đã học trong ngày (mục tiêu 20/ngày).
 //   - random queue:       hàng đợi ôn tập ngẫu nhiên KHÔNG lặp trong 1 vòng.
-// ──────────────────────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────────────
 
 import type { DictEntry } from '../types'
 import { FOUNDATION } from '../data/curriculum'
 import type { Circle } from '../data/curriculum'
 import { loadDictionary } from '../data/dictionary/loader'
 
-export const DAILY_GOAL = 30
+// Mục tiêu 20 từ/ngày — khớp với tài liệu (CLAUDE.md), FAQ trong index.html và UI tab "Hôm nay".
+export const DAILY_GOAL = 20
 
 // Dữ liệu từ điển — KHÔNG import tĩnh nữa (file ~2MB). Nạp ĐỘNG bằng
 // dynamic import() qua loadCurriculum() để Vite tách dictionary.json thành
@@ -47,7 +48,7 @@ export function isCurriculumReady(): boolean {
 // phần nền tảng và từ điển.
 export const wordKey = (word: string) => word.trim().toLowerCase()
 
-// ── Xây dựng các vòng MỞ RỘNG từ dictionary (memo hóa 1 lần) ────────────────
+// ── Xây dựng các vòng MỞ RỘNG từ dictionary (memo hóa 1 lần) ────────────
 let _circlesCache: Circle[] | null = null
 
 export function getCircles(): Circle[] {
@@ -79,7 +80,7 @@ export function getCircles(): Circle[] {
   return _circlesCache
 }
 
-// ── Lộ trình phẳng (mảng từ theo thứ tự học) ────────────────────────────────
+// ── Lộ trình phẳng (mảng từ theo thứ tự học) ──────────────────────────
 let _pathCache: DictEntry[] | null = null
 
 export function getLearningPath(): DictEntry[] {
@@ -104,7 +105,7 @@ export function findCircleOfWord(word: string): Circle | undefined {
   return getCircles().find(c => c.words.some(w => wordKey(w.word) === k))
 }
 
-// ── Mục tiêu hôm nay: 20 từ KẾ TIẾP chưa thuộc ──────────────────────────────
+// ── Mục tiêu hôm nay: 20 từ KẾ TIẾP chưa thuộc ─────────────────────────
 export function getTodayBatch(learned: Set<string>, size = DAILY_GOAL): DictEntry[] {
   const batch: DictEntry[] = []
   for (const e of getLearningPath()) {
@@ -124,7 +125,7 @@ export function getPathProgress(learned: Set<string>): { done: number; total: nu
   return { done, total: path.length }
 }
 
-// ── Bộ đếm "học trong ngày" (mục tiêu 20/ngày) ──────────────────────────────
+// ── Bộ đếm "học trong ngày" (mục tiêu 20/ngày) ────────────────────────
 const DAILY_KEY = (uid: string) => `et_learn_daily_${uid}`
 const todayStr = () => new Date().toISOString().slice(0, 10)
 
