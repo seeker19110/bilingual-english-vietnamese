@@ -2399,4 +2399,336 @@ export const EXTRA_EXAMPLES: Record<string, [ExPair, ExPair]> = {
     { en: 'We only have one earth, so we must take care of it.', vi: 'Chúng ta chỉ có một Trái Đất, vì vậy phải chăm sóc nó.' },
     { en: 'The earthquake shook the earth violently for thirty seconds.', vi: 'Trận động đất làm mặt đất rung chuyển dữ dội trong ba mươi giây.' },
   ],
+
+  // ── Đại từ (bổ sung) ──────────────────────────────────────────
+  i: [
+    { en: 'I am learning English every day.', vi: 'Tôi học tiếng Anh mỗi ngày.' },
+    { en: 'I live with my family in Hanoi.', vi: 'Tôi sống với gia đình ở Hà Nội.' },
+  ],
+
+  // ── Số đếm (bổ sung) ──────────────────────────────────────────
+  thirteen: [
+    { en: 'My sister will be thirteen years old next month.', vi: 'Chị tôi sẽ tròn mười ba tuổi vào tháng tới.' },
+    { en: 'There are thirteen students in this small class.', vi: 'Có mười ba học sinh trong lớp nhỏ này.' },
+  ],
+  thirty: [
+    { en: 'The meeting will start in thirty minutes.', vi: 'Cuộc họp sẽ bắt đầu sau ba mươi phút.' },
+    { en: 'He saved thirty dollars to buy a new game.', vi: 'Cậu ấy để dành ba mươi đô để mua game mới.' },
+  ],
+  forty: [
+    { en: 'My father is turning forty this year.', vi: 'Bố tôi năm nay bước sang tuổi bốn mươi.' },
+    { en: 'The shop is forty metres from the bus stop.', vi: 'Cửa hàng cách trạm xe buýt bốn mươi mét.' },
+  ],
+  fifty: [
+    { en: 'About fifty people came to the wedding.', vi: 'Khoảng năm mươi người đến dự đám cưới.' },
+    { en: 'This jacket costs fifty thousand dong.', vi: 'Cái áo khoác này giá năm mươi nghìn đồng.' },
+  ],
+
+  // ── Từ chung (bổ sung) ────────────────────────────────────────
+  color: [
+    { en: 'What is your favourite color?', vi: 'Màu yêu thích của bạn là gì?' },
+    { en: 'The walls are painted a warm color.', vi: 'Những bức tường được sơn một màu ấm.' },
+  ],
+  fruit: [
+    { en: 'Fresh fruit is good for your health.', vi: 'Trái cây tươi tốt cho sức khỏe.' },
+    { en: 'She buys fruit at the market every morning.', vi: 'Cô ấy mua trái cây ở chợ mỗi sáng.' },
+  ],
+
+  // ── Ngày trong tuần ───────────────────────────────────────────
+  monday: [
+    { en: 'I always feel tired on Monday morning.', vi: 'Tôi luôn thấy mệt vào sáng thứ Hai.' },
+    { en: 'The new course starts next Monday.', vi: 'Khóa học mới bắt đầu vào thứ Hai tới.' },
+  ],
+  tuesday: [
+    { en: 'We have an English class every Tuesday.', vi: 'Chúng tôi có lớp tiếng Anh vào mỗi thứ Ba.' },
+    { en: 'The shop is closed on Tuesday.', vi: 'Cửa hàng đóng cửa vào thứ Ba.' },
+  ],
+  wednesday: [
+    { en: 'The meeting was moved to Wednesday.', vi: 'Cuộc họp được dời sang thứ Tư.' },
+    { en: 'On Wednesday I usually go to the gym.', vi: 'Vào thứ Tư tôi thường đến phòng gym.' },
+  ],
+  thursday: [
+    { en: 'She visits her grandmother every Thursday.', vi: 'Cô ấy thăm bà vào mỗi thứ Năm.' },
+    { en: 'The report is due this Thursday.', vi: 'Báo cáo phải nộp vào thứ Năm này.' },
+  ],
+  friday: [
+    { en: 'Everyone loves Friday evening.', vi: 'Ai cũng thích tối thứ Sáu.' },
+    { en: "Let's have dinner together on Friday.", vi: 'Tối thứ Sáu mình ăn tối cùng nhau nhé.' },
+  ],
+  saturday: [
+    { en: 'I sleep late on Saturday morning.', vi: 'Tôi ngủ nướng vào sáng thứ Bảy.' },
+    { en: 'We are going to the beach on Saturday.', vi: 'Thứ Bảy chúng tôi đi biển.' },
+  ],
+  sunday: [
+    { en: 'My family has lunch together every Sunday.', vi: 'Gia đình tôi ăn trưa cùng nhau vào mỗi Chủ nhật.' },
+    { en: 'Most shops open later on Sunday.', vi: 'Phần lớn cửa hàng mở cửa muộn hơn vào Chủ nhật.' },
+  ],
+
+  // ── Tháng trong năm ───────────────────────────────────────────
+  january: [
+    { en: 'The new year begins in January.', vi: 'Năm mới bắt đầu vào tháng Một.' },
+    { en: 'It is often cold in January.', vi: 'Tháng Một trời thường lạnh.' },
+  ],
+  february: [
+    { en: 'February is the shortest month of the year.', vi: 'Tháng Hai là tháng ngắn nhất trong năm.' },
+    { en: 'Her birthday is in February.', vi: 'Sinh nhật cô ấy vào tháng Hai.' },
+  ],
+  march: [
+    { en: 'The flowers bloom in March.', vi: 'Hoa nở vào tháng Ba.' },
+    { en: 'We will move to a new house in March.', vi: 'Chúng tôi sẽ chuyển nhà mới vào tháng Ba.' },
+  ],
+  april: [
+    { en: 'It often rains in April.', vi: 'Tháng Tư trời hay mưa.' },
+    { en: 'The exam is at the end of April.', vi: 'Kỳ thi diễn ra vào cuối tháng Tư.' },
+  ],
+  may: [
+    { en: 'The weather is warm and pleasant in May.', vi: 'Thời tiết tháng Năm ấm áp dễ chịu.' },
+    { en: 'We are planning a trip in May.', vi: 'Chúng tôi đang lên kế hoạch một chuyến đi vào tháng Năm.' },
+  ],
+  june: [
+    { en: 'Schools close for summer in June.', vi: 'Trường học nghỉ hè vào tháng Sáu.' },
+    { en: 'June is the start of the rainy season here.', vi: 'Tháng Sáu là đầu mùa mưa ở đây.' },
+  ],
+  july: [
+    { en: 'July is usually the hottest month.', vi: 'Tháng Bảy thường là tháng nóng nhất.' },
+    { en: 'They got married in July.', vi: 'Họ cưới nhau vào tháng Bảy.' },
+  ],
+  august: [
+    { en: 'We took a long holiday in August.', vi: 'Chúng tôi có một kỳ nghỉ dài vào tháng Tám.' },
+    { en: 'The new school year starts after August.', vi: 'Năm học mới bắt đầu sau tháng Tám.' },
+  ],
+  september: [
+    { en: 'Children go back to school in September.', vi: 'Trẻ em trở lại trường vào tháng Chín.' },
+    { en: 'The weather gets cooler in September.', vi: 'Thời tiết mát dần vào tháng Chín.' },
+  ],
+  october: [
+    { en: 'The leaves turn yellow in October.', vi: 'Lá cây chuyển vàng vào tháng Mười.' },
+    { en: 'Her exam results came out in October.', vi: 'Kết quả thi của cô ấy có vào tháng Mười.' },
+  ],
+  november: [
+    { en: 'The days get shorter in November.', vi: 'Ngày ngắn dần vào tháng Mười Một.' },
+    { en: 'We plan to visit Hanoi in November.', vi: 'Chúng tôi định thăm Hà Nội vào tháng Mười Một.' },
+  ],
+  december: [
+    { en: 'December is the last month of the year.', vi: 'Tháng Mười Hai là tháng cuối cùng của năm.' },
+    { en: 'Many people travel home in December.', vi: 'Nhiều người về quê vào tháng Mười Hai.' },
+  ],
+
+  // ── Du lịch ───────────────────────────────────────────────────
+  trip: [
+    { en: 'We are planning a trip to Da Lat.', vi: 'Chúng tôi đang lên kế hoạch một chuyến đi Đà Lạt.' },
+    { en: 'How was your business trip?', vi: 'Chuyến công tác của bạn thế nào?' },
+  ],
+  passport: [
+    { en: "Don't forget to bring your passport to the airport.", vi: 'Đừng quên mang hộ chiếu ra sân bay.' },
+    { en: 'My passport expires next year.', vi: 'Hộ chiếu của tôi hết hạn vào năm sau.' },
+  ],
+  luggage: [
+    { en: 'My luggage was too heavy to carry.', vi: 'Hành lý của tôi quá nặng để xách.' },
+    { en: 'Please keep an eye on your luggage.', vi: 'Làm ơn để mắt đến hành lý của bạn.' },
+  ],
+  suitcase: [
+    { en: 'She packed her suitcase the night before.', vi: 'Cô ấy xếp va li từ đêm hôm trước.' },
+    { en: 'My suitcase is too small for this trip.', vi: 'Va li của tôi quá nhỏ cho chuyến đi này.' },
+  ],
+  flight: [
+    { en: 'Our flight was delayed by two hours.', vi: 'Chuyến bay của chúng tôi bị hoãn hai tiếng.' },
+    { en: 'I booked a direct flight to Singapore.', vi: 'Tôi đã đặt một chuyến bay thẳng đến Singapore.' },
+  ],
+  abroad: [
+    { en: 'She wants to study abroad after graduation.', vi: 'Cô ấy muốn đi du học sau khi tốt nghiệp.' },
+    { en: 'Have you ever travelled abroad?', vi: 'Bạn đã bao giờ đi nước ngoài chưa?' },
+  ],
+  tourist: [
+    { en: 'Hoi An is full of tourists in summer.', vi: 'Hội An đông khách du lịch vào mùa hè.' },
+    { en: 'The tourist asked me for directions.', vi: 'Vị khách du lịch hỏi tôi đường.' },
+  ],
+  sightseeing: [
+    { en: 'We spent the whole day sightseeing in the old town.', vi: 'Chúng tôi dành cả ngày tham quan phố cổ.' },
+    { en: 'There is so much sightseeing to do in Hue.', vi: 'Ở Huế có rất nhiều nơi để tham quan.' },
+  ],
+  visa: [
+    { en: 'You need a visa to enter that country.', vi: 'Bạn cần thị thực để vào nước đó.' },
+    { en: 'My tourist visa is valid for one month.', vi: 'Thị thực du lịch của tôi có giá trị một tháng.' },
+  ],
+  currency: [
+    { en: 'The local currency is the dong.', vi: 'Đồng tiền địa phương là đồng (VND).' },
+    { en: 'You can exchange currency at the airport.', vi: 'Bạn có thể đổi tiền ở sân bay.' },
+  ],
+  souvenir: [
+    { en: 'I bought a small souvenir for my mother.', vi: 'Tôi mua một món quà lưu niệm nhỏ cho mẹ.' },
+    { en: 'This shop sells local souvenirs.', vi: 'Cửa hàng này bán đồ lưu niệm địa phương.' },
+  ],
+  beach: [
+    { en: 'We swam at the beach all afternoon.', vi: 'Chúng tôi bơi ở bãi biển suốt buổi chiều.' },
+    { en: 'Nha Trang has a long, sandy beach.', vi: 'Nha Trang có bãi biển dài đầy cát.' },
+  ],
+  vacation: [
+    { en: 'We are going on vacation next week.', vi: 'Tuần tới chúng tôi đi nghỉ mát.' },
+    { en: 'How did you spend your vacation?', vi: 'Bạn đã nghỉ mát thế nào?' },
+  ],
+  pack: [
+    { en: 'I need to pack my bags tonight.', vi: 'Tối nay tôi cần xếp đồ vào túi.' },
+    { en: "Don't forget to pack an umbrella.", vi: 'Đừng quên mang theo một cái ô.' },
+  ],
+  destination: [
+    { en: 'Da Nang is a popular holiday destination.', vi: 'Đà Nẵng là điểm đến nghỉ dưỡng nổi tiếng.' },
+    { en: 'We finally reached our destination at midnight.', vi: 'Cuối cùng chúng tôi đến nơi vào lúc nửa đêm.' },
+  ],
+  guide: [
+    { en: 'The tour guide spoke very good English.', vi: 'Hướng dẫn viên nói tiếng Anh rất tốt.' },
+    { en: 'This book is a useful travel guide.', vi: 'Cuốn sách này là một cẩm nang du lịch hữu ích.' },
+  ],
+  backpack: [
+    { en: 'He carried everything in one backpack.', vi: 'Anh ấy mang tất cả trong một chiếc ba lô.' },
+    { en: 'My backpack is light and easy to carry.', vi: 'Ba lô của tôi nhẹ và dễ mang.' },
+  ],
+  reservation: [
+    { en: 'I made a reservation at the restaurant.', vi: 'Tôi đã đặt chỗ ở nhà hàng.' },
+    { en: 'Do you have a hotel reservation?', vi: 'Bạn đã đặt phòng khách sạn chưa?' },
+  ],
+
+  // ── Truyền thông & giải trí ───────────────────────────────────
+  movie: [
+    { en: 'We watched a funny movie last night.', vi: 'Tối qua chúng tôi xem một bộ phim vui.' },
+    { en: 'This movie is based on a true story.', vi: 'Bộ phim này dựa trên một câu chuyện có thật.' },
+  ],
+  film: [
+    { en: 'The film won several awards.', vi: 'Bộ phim đã giành nhiều giải thưởng.' },
+    { en: 'I prefer films with happy endings.', vi: 'Tôi thích phim có kết thúc có hậu.' },
+  ],
+  song: [
+    { en: 'This song always makes me happy.', vi: 'Bài hát này luôn khiến tôi vui.' },
+    { en: 'She sang a beautiful song at the party.', vi: 'Cô ấy hát một bài hát hay tại bữa tiệc.' },
+  ],
+  television: [
+    { en: 'My grandparents watch television every evening.', vi: 'Ông bà tôi xem ti vi mỗi tối.' },
+    { en: 'There is a good documentary on television tonight.', vi: 'Tối nay có một phim tài liệu hay trên ti vi.' },
+  ],
+  news: [
+    { en: 'I read the news every morning.', vi: 'Tôi đọc tin tức mỗi sáng.' },
+    { en: 'That is great news!', vi: 'Đó là một tin tuyệt vời!' },
+  ],
+  magazine: [
+    { en: 'She writes for a fashion magazine.', vi: 'Cô ấy viết cho một tạp chí thời trang.' },
+    { en: 'I bought a travel magazine at the station.', vi: 'Tôi mua một tạp chí du lịch ở nhà ga.' },
+  ],
+  article: [
+    { en: 'I read an interesting article about health.', vi: 'Tôi đọc một bài báo thú vị về sức khỏe.' },
+    { en: 'He wrote an article for the school newspaper.', vi: 'Anh ấy viết một bài cho báo trường.' },
+  ],
+  channel: [
+    { en: 'Can you change the channel, please?', vi: 'Bạn đổi kênh giúp được không?' },
+    { en: 'This channel only shows sports.', vi: 'Kênh này chỉ chiếu thể thao.' },
+  ],
+  concert: [
+    { en: 'We went to a rock concert last weekend.', vi: 'Cuối tuần trước chúng tôi đi xem một buổi hòa nhạc rock.' },
+    { en: 'The concert tickets sold out in minutes.', vi: 'Vé buổi hòa nhạc bán hết trong vài phút.' },
+  ],
+  series: [
+    { en: 'I am watching a new series on the weekend.', vi: 'Cuối tuần tôi đang xem một bộ phim dài tập mới.' },
+    { en: 'The series has five seasons.', vi: 'Bộ phim có năm mùa.' },
+  ],
+  podcast: [
+    { en: 'I listen to a podcast on my way to work.', vi: 'Tôi nghe podcast trên đường đi làm.' },
+    { en: 'This podcast is about learning English.', vi: 'Podcast này nói về việc học tiếng Anh.' },
+  ],
+  radio: [
+    { en: 'My father listens to the radio in the car.', vi: 'Bố tôi nghe đài trong xe.' },
+    { en: 'They played my favourite song on the radio.', vi: 'Họ phát bài hát yêu thích của tôi trên đài.' },
+  ],
+  audience: [
+    { en: 'The audience clapped after the show.', vi: 'Khán giả vỗ tay sau buổi diễn.' },
+    { en: 'The speaker asked the audience a question.', vi: 'Diễn giả đặt một câu hỏi cho khán giả.' },
+  ],
+  review: [
+    { en: 'I read a good review of that restaurant.', vi: 'Tôi đọc một bài đánh giá tốt về nhà hàng đó.' },
+    { en: 'She wrote a review of the new phone.', vi: 'Cô ấy viết một bài đánh giá chiếc điện thoại mới.' },
+  ],
+  advertisement: [
+    { en: 'I saw an advertisement for the job online.', vi: 'Tôi thấy một quảng cáo tuyển dụng trên mạng.' },
+    { en: 'The advertisement was very funny.', vi: 'Mẩu quảng cáo rất hài hước.' },
+  ],
+  celebrity: [
+    { en: 'A famous celebrity visited our city.', vi: 'Một người nổi tiếng đã đến thăm thành phố chúng tôi.' },
+    { en: 'She became a celebrity after the film.', vi: 'Cô ấy trở thành người nổi tiếng sau bộ phim.' },
+  ],
+  episode: [
+    { en: 'The last episode was really exciting.', vi: 'Tập cuối thật sự rất hấp dẫn.' },
+    { en: 'I missed the first episode of the show.', vi: 'Tôi đã bỏ lỡ tập đầu của chương trình.' },
+  ],
+
+  // ── Môi trường ────────────────────────────────────────────────
+  environment: [
+    { en: 'We must protect the environment for the future.', vi: 'Chúng ta phải bảo vệ môi trường cho tương lai.' },
+    { en: 'Plastic bags harm the environment.', vi: 'Túi nilon gây hại cho môi trường.' },
+  ],
+  pollution: [
+    { en: 'Air pollution is a serious problem in big cities.', vi: 'Ô nhiễm không khí là vấn đề nghiêm trọng ở các thành phố lớn.' },
+    { en: 'We can reduce pollution by using public transport.', vi: 'Chúng ta có thể giảm ô nhiễm bằng cách dùng phương tiện công cộng.' },
+  ],
+  climate: [
+    { en: 'Climate change affects the whole planet.', vi: 'Biến đổi khí hậu ảnh hưởng đến cả hành tinh.' },
+    { en: 'This region has a tropical climate.', vi: 'Vùng này có khí hậu nhiệt đới.' },
+  ],
+  recycle: [
+    { en: 'We recycle paper, glass and plastic at home.', vi: 'Ở nhà chúng tôi tái chế giấy, thủy tinh và nhựa.' },
+    { en: 'Please recycle these bottles.', vi: 'Làm ơn tái chế những chai này.' },
+  ],
+  plastic: [
+    { en: 'Too much plastic ends up in the ocean.', vi: 'Quá nhiều nhựa trôi ra đại dương.' },
+    { en: 'Try to use less plastic every day.', vi: 'Hãy cố dùng ít nhựa hơn mỗi ngày.' },
+  ],
+  energy: [
+    { en: 'Turn off the lights to save energy.', vi: 'Tắt đèn để tiết kiệm năng lượng.' },
+    { en: 'Solar panels produce clean energy.', vi: 'Tấm pin mặt trời tạo ra năng lượng sạch.' },
+  ],
+  waste: [
+    { en: "Don't waste water when you brush your teeth.", vi: 'Đừng lãng phí nước khi đánh răng.' },
+    { en: 'The factory must treat its waste properly.', vi: 'Nhà máy phải xử lý chất thải đúng cách.' },
+  ],
+  planet: [
+    { en: 'Earth is the only planet we can live on.', vi: 'Trái Đất là hành tinh duy nhất chúng ta có thể sống.' },
+    { en: 'We all share one planet.', vi: 'Tất cả chúng ta chung một hành tinh.' },
+  ],
+  protect: [
+    { en: 'We should protect wild animals.', vi: 'Chúng ta nên bảo vệ động vật hoang dã.' },
+    { en: 'A helmet protects your head.', vi: 'Mũ bảo hiểm bảo vệ đầu của bạn.' },
+  ],
+  reduce: [
+    { en: 'We need to reduce our use of plastic.', vi: 'Chúng ta cần giảm việc dùng nhựa.' },
+    { en: 'Walking to work can reduce pollution.', vi: 'Đi bộ đi làm có thể giảm ô nhiễm.' },
+  ],
+  garbage: [
+    { en: 'Please take out the garbage tonight.', vi: 'Làm ơn đổ rác tối nay.' },
+    { en: 'The streets were full of garbage after the festival.', vi: 'Đường phố đầy rác sau lễ hội.' },
+  ],
+  endangered: [
+    { en: 'Tigers are an endangered species.', vi: 'Hổ là một loài có nguy cơ tuyệt chủng.' },
+    { en: 'Many endangered animals live in this forest.', vi: 'Nhiều loài vật nguy cấp sống trong khu rừng này.' },
+  ],
+  species: [
+    { en: 'Scientists discovered a new species of frog.', vi: 'Các nhà khoa học phát hiện một loài ếch mới.' },
+    { en: 'Some species are disappearing very fast.', vi: 'Một số loài đang biến mất rất nhanh.' },
+  ],
+  renewable: [
+    { en: 'Wind is a renewable source of energy.', vi: 'Gió là một nguồn năng lượng tái tạo.' },
+    { en: 'Many countries are investing in renewable energy.', vi: 'Nhiều nước đang đầu tư vào năng lượng tái tạo.' },
+  ],
+  solar: [
+    { en: 'They installed solar panels on the roof.', vi: 'Họ lắp tấm pin mặt trời trên mái nhà.' },
+    { en: 'Solar power is cheaper than before.', vi: 'Điện mặt trời rẻ hơn trước đây.' },
+  ],
+  drought: [
+    { en: 'The long drought damaged the rice fields.', vi: 'Đợt hạn hán kéo dài làm hỏng những cánh đồng lúa.' },
+    { en: 'Farmers worry about drought every dry season.', vi: 'Nông dân lo lắng về hạn hán mỗi mùa khô.' },
+  ],
+  litter: [
+    { en: "Please don't litter in the park.", vi: 'Làm ơn đừng xả rác trong công viên.' },
+    { en: 'There was a lot of litter on the beach.', vi: 'Có rất nhiều rác trên bãi biển.' },
+  ],
+  sustainable: [
+    { en: 'We need a more sustainable way of living.', vi: 'Chúng ta cần một lối sống bền vững hơn.' },
+    { en: 'Sustainable farming protects the soil.', vi: 'Canh tác bền vững bảo vệ đất.' },
+  ],
 }
