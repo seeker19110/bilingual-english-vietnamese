@@ -182,7 +182,7 @@ export default function Writing() {
       ? `De bai: ${essayPrompt}\n\nBai viet cua hoc vien:\n${essay}`
       : `Essay prompt: ${essayPrompt}\n\nLearner's Vietnamese essay:\n${essay}`
     try {
-      const raw = await callClaude([{ role: 'user', content: userMsg }], sys, 2048)
+      const raw = await callClaude([{ role: 'user', content: userMsg }], sys, 2048, 'writing')
       const data = parseJson<FeedbackData>(raw)
       if (!data) throw new Error(isA ? 'AI trả về định dạng không đúng. Thử lại.' : 'AI returned invalid format. Please try again.')
       const sub: WritingSubmission = {
