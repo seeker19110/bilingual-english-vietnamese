@@ -203,6 +203,7 @@ export default function Home() {
             type="button"
             onClick={toggleVoice}
             title={isA ? 'Nhấn để đổi giọng đọc' : 'Tap to switch voice'}
+            aria-label={`${isA ? 'Giọng đọc' : 'Voice'}: ${voice === 'female' ? (isA ? 'Nữ' : 'Female') : (isA ? 'Nam' : 'Male')}`}
             className="flex flex-col items-start gap-1.5 rounded-2xl px-4 py-3 border bg-zinc-900/80 border-zinc-700/60 hover:border-zinc-600 transition-all active:scale-[0.98]"
           >
             <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wide">
@@ -222,6 +223,7 @@ export default function Home() {
         <div className="mb-4 space-y-2 animate-fade-in">
           {/* Lịch sử */}
           <button onClick={() => nav('/history')}
+            aria-label={isA ? 'Xem lịch sử học' : 'View learning history'}
             className="w-full bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group">
             <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
               <History className="w-4 h-4 text-zinc-400" />
@@ -236,6 +238,7 @@ export default function Home() {
           <div className="grid grid-cols-3 gap-2">
             {/* Quiz — mở trang Học theo lộ trình, tab Kiểm tra */}
             <button onClick={() => nav('/learn')}
+              aria-label={isA ? 'Kiểm tra' : 'Quiz'}
               className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-violet-500/40 transition group">
               <ClipboardList className="w-4 h-4 text-violet-400" />
               <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
@@ -245,6 +248,7 @@ export default function Home() {
 
             {/* Chia sẻ tiến độ */}
             <button onClick={() => setShare(true)}
+              aria-label={isA ? 'Chia sẻ tiến độ' : 'Share progress'}
               className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-emerald-500/40 transition group">
               <Share2 className="w-4 h-4 text-emerald-400" />
               <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
@@ -255,6 +259,7 @@ export default function Home() {
             {/* Bật / tắt thông báo nhắc học */}
             {isPushSupported() && (
               <button onClick={togglePush} disabled={pushLoading}
+                aria-label={pushOn ? (isA ? 'Tắt thông báo' : 'Turn off notifications') : (isA ? 'Bật thông báo' : 'Turn on notifications')}
                 className={`flex flex-col items-center gap-1.5 py-3 rounded-2xl border transition group ${
                   pushOn
                     ? 'bg-amber-500/10 border-amber-500/30 hover:border-amber-500/50'
@@ -282,6 +287,7 @@ export default function Home() {
             const Icon = m.icon
             return (
               <button key={m.path} onClick={() => nav(m.path)}
+                aria-label={`${m.title}. ${m.desc}`}
                 className={`w-full bg-zinc-900/80 border border-zinc-800/80 ${m.ring} rounded-2xl p-4 text-left flex items-center gap-4 transition-all duration-200 group hover:bg-zinc-800/60 active:scale-[0.99] animate-fade-up`}
                 style={{ animationDelay: `${100 + i * 60}ms` }}>
 

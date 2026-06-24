@@ -12,18 +12,50 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Gia su AI" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
-    <title>Gia su tieng Anh AI</title>
-    <meta name="description" content="Hoc tieng Anh cung gia su AI - luyen noi, viet, va nhan phan hoi bang tieng Viet" />
-    <!-- Google Fonts optimization: preconnect + dns-prefetch + async load -->
+    <title>Gia sư tiếng Anh AI - Luyện nói, viết, đọc cùng AI | Học tiếng Anh hiệu quả</title>
+    <meta name="description" content="Gia sư tiếng Anh AI - Luyện nói, viết, đọc bằng AI với phản hồi chi tiết bằng tiếng Việt. Hợp lí cho người Việt học tiếng Anh từ A1 đến B2." />
+    <meta name="keywords" content="gia sư tiếng Anh, luyện nói tiếng Anh, học tiếng Anh online, AI, phát âm, IELTS, luyện viết" />
+    <!-- Open Graph for social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Gia sư tiếng Anh AI - Luyện nói, viết, đọc cùng AI" />
+    <meta property="og:description" content="Gia sư tiếng Anh AI - Luyện nói, viết, đọc bằng AI với phản hồi chi tiết bằng tiếng Việt." />
+    <meta property="og:url" content="https://en-vi.donghanhcungban.com" />
+    <meta property="og:image" content="https://en-vi.donghanhcungban.com/favicon.svg" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Gia sư tiếng Anh AI" />
+    <meta name="twitter:description" content="Luyện nói, viết, đọc tiếng Anh cùng AI với phản hồi bằng tiếng Việt" />
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://en-vi.donghanhcungban.com" />
+    <!-- Google Fonts optimization: preconnect + async load (critical render path) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Font display=swap: không block render, fallback system font sampai font load xong -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'" />
+    <!-- Load only critical weights async to avoid blocking FCP -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'" />
+    <!-- Defer non-critical weights (800, 900) to load after page interactive -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;800;900&display=swap" media="(prefers-reduced-motion: no-preference)" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" /></noscript>
   </head>
   <body>
     <div id="root"></div>
+    <!-- JSON-LD Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Gia sư tiếng Anh AI",
+      "description": "Gia sư tiếng Anh AI - Luyện nói, viết, đọc bằng AI với phản hồi chi tiết bằng tiếng Việt",
+      "url": "https://en-vi.donghanhcungban.com",
+      "applicationCategory": "EducationalApplication",
+      "inLanguage": ["vi", "en"],
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "VND"
+      }
+    }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
