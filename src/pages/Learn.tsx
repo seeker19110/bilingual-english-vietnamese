@@ -1,20 +1,18 @@
 import { useMemo, useState, useEffect } from 'react'
 import {
-  Check, X, RotateCcw, Eye, Target, Trophy, Sparkles,
+  Check, X, RotateCcw, Target, Trophy, Sparkles, Route,
   ClipboardList, ChevronRight, Home, Star, Brain,
 } from 'lucide-react'
 import Layout from '../components/Layout'
-import PronounceButton from '../components/PronounceButton'
-import SpeakButton from '../components/SpeakButton'
 import KaraokeText from '../components/KaraokeText'
-import PronunciationCheck from '../components/PronunciationCheck'
 import VocabMilestone from '../components/VocabMilestone'
-import { EXTRA_EXAMPLES } from '../data/extra-examples'
+import WordCard from '../components/WordCard'
+import RoadmapTab from '../components/RoadmapTab'
 import type { DictEntry } from '../types'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { useNavigate } from 'react-router-dom'
-import { getLearnedWords, markLearned, isDifficult, toggleDifficult, getDifficultWords } from '../lib/vocab'
+import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
 import { addToSRS, reviewWord, getDueWords, getSRSStats, type Rating } from '../lib/srs'
 import {
   DAILY_GOAL,
@@ -29,7 +27,7 @@ import {
   isCurriculumReady,
 } from '../lib/curriculum'
 
-type Tab = 'today' | 'srs' | 'hard' | 'quiz'
+type Tab = 'roadmap' | 'today' | 'srs' | 'hard' | 'quiz'
 
 // ── Quiz ─────────────────────────────────────────────────────────────────────
 const QUIZ_SIZE = 10
@@ -72,6 +70,11 @@ export default function Learn() {
   type TabDef = { key: Tab; icon: typeof Target; labelA: string; labelB: string; badge?: number; active: string; inactive: string }
   const TABS: TabDef[] = [
     {
+      key: 'roadmap', icon: Route, labelA: 'Lộ trình', labelB: 'Roadmap',
+      active: 'bg-teal-500/20 text-teal-300 border border-teal-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
+    {
       key: 'today', icon: Target, labelA: 'Hôm nay', labelB: 'Today',
       active: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40',
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
@@ -105,7 +108,7 @@ export default function Learn() {
         <VocabMilestone userId={uid} refreshKey={refresh} />
 
         {/* Tab bar */}
-        <div className="grid grid-cols-4 gap-1.5 mb-4">
+        <div className="grid grid-cols-5 gap-1.5 mb-4">
           {TABS.map(({ key, icon: Icon, labelA, labelB, badge, active, inactive }) => (
             <button key={key} onClick={() => setTab(key)}
               className={`relative flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl text-xs font-medium transition ${tab === key ? active : inactive}`}>
@@ -120,7 +123,10 @@ export default function Learn() {
           ))}
         </div>
 
-        {!ready ? (
+        {/* Tab Lộ trình dùng dữ liệu tĩnh (FOUNDATION) nên hiện ngay, không cần chờ tải từ điển */}
+        {tab === 'roadmap' && <RoadmapTab uid={uid} isA={isA} onProgress={bump} />}
+
+        {tab !== 'roadmap' && (!ready ? (
           <div className="glass rounded-xl p-8 text-center animate-fade-in">
             <p className="text-zinc-400 text-sm">{isA ? 'Đang tải từ vựng…' : 'Loading vocabulary…'}</p>
           </div>
@@ -131,77 +137,8 @@ export default function Learn() {
             {tab === 'hard'  && <HardWords   uid={uid} isA={isA} onUpdate={bump}  />}
             {tab === 'quiz'  && <QuizTab     uid={uid} isA={isA}                  />}
           </>
-        )}
+        ))}
       </main>
-    </div>
-  )
-}
-
-// ── Thẻ từ chung ─────────────────────────────────────────────────────────────
-function WordCard({ card, isA, uid, onUpdate }: {
-  card: DictEntry; isA: boolean; uid: string; onUpdate?: () => void
-}) {
-  const [flipped,   setFlipped]   = useState(false)
-  const [difficult, setDifficult] = useState(() => isDifficult(uid, card.word))
-
-  function handleStar(e: React.MouseEvent) {
-    e.stopPropagation()
-    const next = toggleDifficult(uid, card.word)
-    setDifficult(next)
-    onUpdate?.()
-  }
-
-  return (
-    <div>
-      {/* Wrapper chứa nút ⭐ + thẻ lật */}
-      <div className="relative mb-4">
-        <button
-          onClick={handleStar}
-          title={isA ? (difficult ? 'Bỏ đánh dấu khó' : 'Đánh dấu từ khó') : (difficult ? 'Unmark' : 'Mark difficult')}
-          className="absolute top-3 right-3 z-10 p-1.5 rounded-full hover:bg-zinc-700/50 transition">
-          <Star className={`w-4 h-4 transition ${difficult ? 'fill-amber-400 text-amber-400' : 'text-zinc-600 hover:text-zinc-400'}`} />
-        </button>
-
-        <button
-          onClick={() => setFlipped(f => !f)}
-          className="glass w-full rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition"
-        >
-          {!flipped ? (
-            <>
-              <span className="font-bold text-white text-3xl mb-2">{card.word}</span>
-              {card.ipa_en && <span className="text-sm text-emerald-400/70 font-mono">{card.ipa_en}</span>}
-              <span className="flex items-center gap-1 text-xs text-zinc-500 mt-4">
-                <Eye className="w-3.5 h-3.5" /> {isA ? 'Bấm để xem nghĩa' : 'Tap to flip'}
-              </span>
-            </>
-          ) : (
-            <>
-              <span className="text-xl text-zinc-100 font-medium mb-2">{card.vi}</span>
-              {card.ex_en && <span className="text-sm text-zinc-400 italic mt-1">{card.ex_en}</span>}
-              {card.ex_vi && <span className="text-xs text-zinc-500 mt-0.5">{card.ex_vi}</span>}
-              {EXTRA_EXAMPLES[card.word.toLowerCase()] && (
-                <div className="mt-2 space-y-1 text-left w-full border-t border-zinc-700/50 pt-2">
-                  {EXTRA_EXAMPLES[card.word.toLowerCase()].map((ex, i) => (
-                    <div key={i}>
-                      <p className="text-xs text-emerald-400/80 italic">{ex.en}</p>
-                      <p className="text-xs text-zinc-500">{ex.vi}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </button>
-      </div>
-
-      <div className="flex items-center justify-center gap-2 mb-3">
-        <PronounceButton word={card.word} />
-        {card.ex_en && <SpeakButton text={card.ex_en} lang="en-US" title="Nghe câu ví dụ" />}
-      </div>
-
-      <div className="mb-4">
-        <PronunciationCheck target={card.word} lang={isA ? 'en' : 'vi'} isA={isA} />
-      </div>
     </div>
   )
 }
