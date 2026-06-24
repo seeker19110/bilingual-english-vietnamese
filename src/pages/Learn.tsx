@@ -13,6 +13,7 @@ import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { useNavigate } from 'react-router-dom'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
+import { preloadLearnData } from '../lib/preloader'
 import { addToSRS, reviewWord, getDueWords, getSRSStats, type Rating } from '../lib/srs'
 import {
   DAILY_GOAL,
@@ -62,6 +63,19 @@ export default function Learn() {
   // gọi theo đúng thứ tự, KHÔNG đặt "return null" trước hook (vi phạm Rules of Hooks
   // → React crash "rendered fewer hooks than expected" khi user đăng xuất).
   const uid = user?.id ?? ''
+
+  // Preload audio 20 từ "hôm nay" khi browser rảnh — chỉ chạy cho người THẬT SỰ
+  // vào trang Học (không phải lúc đăng nhập), tránh tải dữ liệu/audio cho người không học.
+  useEffect(() => {
+    if (!uid) return
+    const run = () => { void preloadLearnData(uid) }
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(run, { timeout: 3000 })
+      return () => cancelIdleCallback(id)
+    }
+    const tid = setTimeout(run, 500)
+    return () => clearTimeout(tid)
+  }, [uid])
 
   // Badge counts cho tab buttons.
   // `refresh` là khóa invalidation THỦ CÔNG: bump() tăng nó để 2 badge này tính lại

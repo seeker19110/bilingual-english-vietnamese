@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, type ReactNode } from 'react'
 import { AuthContext } from './authContext'
 import { getCurrentUser, clearProfileCache } from '../lib/auth'
 import { supabase } from '../lib/supabase'
-import { startPreload, resetPreload } from '../lib/preloader'
+import { preloadBrowseChunks } from '../lib/preloadBrowse'
+import { resetPreload } from '../lib/preloadState'
 import { clearAudioCache } from '../lib/audioCache'
 import type { User } from '../types'
 
@@ -27,18 +28,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [refresh])
 
-  // Khi user đăng nhập xong → tải trước từ điển + audio khi browser rảnh (không block UI).
-  // Chỉ phụ thuộc userId (không phải cả object user) để không chạy lại mỗi khi user đổi tham chiếu.
+  // Khi user đăng nhập xong → CHỈ warm-up nhẹ chunk đầu của trang Bài học + Cụm từ
+  // khi browser rảnh. KHÔNG tải từ điển ở đây nữa (nặng ~560KB) — việc đó để trang
+  // Học tự lo khi user thật sự vào (xem preloadLearnData trong Learn.tsx), nên người
+  // chỉ dùng Chat/Tra từ/Viết không phải tải dữ liệu họ không dùng.
   const userId = user?.id
   useEffect(() => {
     if (!userId) return
     if ('requestIdleCallback' in window) {
-      // Chờ browser hoàn toàn rảnh rồi mới preload; maxWait: tối đa 3s vẫn chạy
-      const id = requestIdleCallback(() => { void startPreload(userId) }, { timeout: 3000 })
+      const id = requestIdleCallback(() => { void preloadBrowseChunks() }, { timeout: 3000 })
       return () => cancelIdleCallback(id)
     } else {
-      // Fallback cho Safari cũ: chờ 500ms (ngắn hơn 2000ms vì auth nhanh hơn rồi)
-      const tid = setTimeout(() => { void startPreload(userId) }, 500)
+      const tid = setTimeout(() => { void preloadBrowseChunks() }, 500)
       return () => clearTimeout(tid)
     }
   }, [userId])

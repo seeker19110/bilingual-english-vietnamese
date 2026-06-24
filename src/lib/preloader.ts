@@ -1,16 +1,10 @@
 // ──────────────────────────────────────────────────────────────────────────
-// PRELOADER — tải trước dữ liệu và audio khi user mở app
+// PRELOADER trang HỌC — nạp TOÀN BỘ từ điển (~560KB, cho lộ trình) + preload audio
+// 20 từ "hôm nay". CHỈ trang Học (/learn) import file này → curriculum + dữ liệu
+// FOUNDATION (~100KB) KHÔNG lọt vào bundle khởi động (chỉ nằm trong chunk Learn).
+// Việc nạp trước chunk Bài học/Cụm từ (nhẹ) tách sang preloadBrowse.ts.
 //
-// Chiến lược (tốt hơn tải 10% toàn bộ từ điển):
-//   Phase 1 — Data: loadCurriculum() để có từ điển + lộ trình học
-//             (lessons index đã static import sẵn trong loader.ts)
-//   Phase 2 — Audio: chỉ preload 20 từ của "Today batch" (hôm nay học gì thì
-//             tải trước cái đó) + câu ví dụ của mỗi từ
-//
-// Audio được lưu vào IndexedDB (persistent qua lần đóng/mở tab) nên
-// lần sau mở app không cần tải lại — chỉ cần tạo blob URL từ buffer đã có.
-//
-// Toàn bộ chạy nền, không block UI.
+// Audio lưu IndexedDB (bền qua lần đóng/mở tab) nên lần sau khỏi tải lại.
 // ──────────────────────────────────────────────────────────────────────────
 
 import { loadCurriculum, getTodayBatch } from './curriculum'
@@ -18,13 +12,7 @@ import { getLearnedWords } from './vocab'
 import { supabase } from './supabase'
 import { getVoicePref } from './tts'
 import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
-
-let _started = false
-
-// Reset để cho phép chạy lại (dùng khi đăng xuất)
-export function resetPreload(): void {
-  _started = false
-}
+import { preloadFlags } from './preloadState'
 
 // ── Tải + giải mã 1 audio rồi lưu vào IndexedDB ──────────────────────────────
 // Nếu đã có trong IndexedDB thì bỏ qua (không tải lại).
@@ -75,47 +63,31 @@ async function prefetchAudio(text: string, lang: string, voice: string, token: s
 // Ngủ để nhường main thread
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
-// ── Hàm chính ────────────────────────────────────────────────────────────────
-export async function startPreload(userId: string): Promise<void> {
-  if (_started) return
-  _started = true
+// ── Trang Học: từ điển đầy đủ + audio 20 từ hôm nay ──────────────────────────
+// GỌI KHI VÀO /learn (idle), KHÔNG gọi lúc đăng nhập.
+export async function preloadLearnData(userId: string): Promise<void> {
+  if (preloadFlags.learn) return
+  preloadFlags.learn = true
 
-  // Phase 1 — Tải toàn bộ từ điển (data, không audio)
+  // Tải toàn bộ từ điển (data, không audio) — cần cho lộ trình học.
   await loadCurriculum()
 
   // Lấy JWT để gọi /api/tts
   const { data: { session } } = await supabase.auth.getSession()
   const token = session?.access_token
-  if (!token) { _started = false; return }
+  if (!token) { preloadFlags.learn = false; return }
 
-  // Phase 2 — Preload audio cho Today batch (20 từ hôm nay)
+  // Preload audio cho Today batch (20 từ hôm nay) — tuần tự, chậm, kick-off không await.
   const learned = getLearnedWords(userId)
   const todayWords = getTodayBatch(learned)
   const voice = getVoicePref()
-
-  // Phase 2 — TTS audio (tuần tự, chậm ~5s) — kick-off, không await
   void (async () => {
     for (const entry of todayWords) {
-      // Từ + câu ví dụ đồng thời
       await Promise.all([
         prefetchAudio(entry.word, 'en-US', voice, token),
         entry.ex_en ? prefetchAudio(entry.ex_en, 'en-US', voice, token) : Promise.resolve(),
       ])
       await sleep(80)
     }
-  })()
-
-  // Phase 3 — Preload data chunks hay dùng (nhanh ~500ms, không cần chờ Phase 2 xong)
-  // Dynamic import để không bundle vào main chunk.
-  // Vite tự tách loader + index.json thành shared chunk → khi user vào trang đó: cache hit.
-  void (async () => {
-    const [lessonsLoader, patternsLoader] = await Promise.all([
-      import('../data/lessons/loader').catch(() => null),
-      import('../data/patterns/loader').catch(() => null),
-    ])
-    await Promise.all([
-      lessonsLoader?.loadChunk(0) ?? Promise.resolve(),  // 10 bài học đầu
-      patternsLoader?.loadChunk(0) ?? Promise.resolve(), // 8 chủ đề cụm từ đầu
-    ])
   })()
 }
