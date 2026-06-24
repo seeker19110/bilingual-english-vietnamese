@@ -13,7 +13,9 @@ export function useCloudSync(userId: string | undefined): number {
     let alive = true
     pullUserData(userId)
       .then(() => { if (alive) setVersion(v => v + 1) })
-      .catch(() => { /* lỗi mạng — vẫn dùng bản localStorage cũ */ })
+      .catch(err => {
+        console.warn('[useCloudSync] Data sync failed, using local cache:', err instanceof Error ? err.message : err)
+      })
     return () => { alive = false }
   }, [userId])
 

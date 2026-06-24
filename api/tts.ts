@@ -107,7 +107,8 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     supabase = getSupabaseAdmin()
   } catch (err) {
-    return jsonResponse({ error: (err as Error).message }, 500, allHeaders)
+    console.error('[tts] Failed to initialize Supabase admin:', err)
+    return jsonResponse({ error: 'Server configuration error' }, 500, allHeaders)
   }
 
   // ── BƯỚC 1: Kiểm tra cache ──────────────────────────────────────────────────
@@ -141,7 +142,8 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     audioData = await generateAudioFromGoogle(text, voice, lang)
   } catch (err) {
-    return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500, allHeaders)
+    console.error('[tts] Google TTS generation failed:', err)
+    return jsonResponse({ error: 'Không thể tạo audio — thử lại sau' }, 500, allHeaders)
   }
 
   // ── BƯỚC 3: Mã hóa AES-256-GCM rồi lưu file (local VPS hoặc Supabase Storage tùy
@@ -154,7 +156,8 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     audioUrl = await saveAudio('tts-cache', fileName, encryptedData, origin)
   } catch (err) {
-    return jsonResponse({ error: `Lưu file thất bại: ${(err as Error).message}` }, 500, allHeaders)
+    console.error('[tts] Audio save failed:', err)
+    return jsonResponse({ error: 'Không thể lưu audio — thử lại sau' }, 500, allHeaders)
   }
 
   // ── BƯỚC 4: Lưu vào DB ─────────────────────────────────────────────────────

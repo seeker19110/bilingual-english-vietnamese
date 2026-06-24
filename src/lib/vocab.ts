@@ -43,3 +43,27 @@ export function unmarkLearned(userId: string, word: string) {
 export function isLearned(userId: string, word: string): boolean {
   return getLearnedWords(userId).has(word)
 }
+
+// ── Từ khó (đánh dấu thủ công bằng nút ⭐) ──────────────────────────────────
+
+const HARD_KEY = (uid: string) => `et_hard_${uid}`
+
+export function getDifficultWords(userId: string): Set<string> {
+  try {
+    const raw = localStorage.getItem(HARD_KEY(userId))
+    return raw ? new Set(JSON.parse(raw) as string[]) : new Set()
+  } catch { return new Set() }
+}
+
+// Bật/tắt đánh dấu khó — trả về trạng thái mới (true = đang khó)
+export function toggleDifficult(userId: string, word: string): boolean {
+  const set = getDifficultWords(userId)
+  const key = word.toLowerCase()
+  if (set.has(key)) { set.delete(key) } else { set.add(key) }
+  localStorage.setItem(HARD_KEY(userId), JSON.stringify([...set]))
+  return set.has(key)
+}
+
+export function isDifficult(userId: string, word: string): boolean {
+  return getDifficultWords(userId).has(word.toLowerCase())
+}

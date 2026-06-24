@@ -96,7 +96,7 @@ export default function Flashcard({ entries, userId, onLearnedChange }: Props) {
       {/* Thẻ — bấm để lật */}
       <button
         onClick={() => setFlipped(f => !f)}
-        className="glass w-full rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition mb-4"
+        className="glass w-full rounded-2xl p-6 sm:p-8 min-h-[160px] sm:min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition mb-4"
       >
         {!flipped ? (
           <>

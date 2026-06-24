@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { getVoicePref } from '../lib/tts'
+import { getVoicePref, playAudioUrl } from '../lib/tts'
 
 interface Props {
   word: string
@@ -70,7 +70,7 @@ export default function PronounceButton({ word }: Props) {
   }
 
   function playAudio(url: string) {
-    new Audio(url).play().catch(err => console.error('Lỗi phát audio:', err))
+    playAudioUrl(url)
   }
 
   return (
@@ -79,6 +79,7 @@ export default function PronounceButton({ word }: Props) {
         onClick={handleClick}
         disabled={status === 'loading'}
         title="Phát âm"
+        aria-label={`Phát âm từ "${word}"`}
         className="shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-emerald-500/20 text-zinc-400 hover:text-emerald-300 transition disabled:opacity-60"
       >
         {status === 'loading' && <Loader2 className="w-3.5 h-3.5 animate-spin" />}

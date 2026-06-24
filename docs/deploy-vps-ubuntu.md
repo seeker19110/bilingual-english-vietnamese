@@ -254,6 +254,9 @@ Dán nội dung (thay domain nếu cần):
 server {
     server_name en-vi.donghanhcungban.com;
 
+    # Ẩn phiên bản nginx trong header "Server:" — tránh lộ thông tin hệ thống
+    server_tokens off;
+
     client_max_body_size 10M;
 
     gzip on;

@@ -1,5 +1,8 @@
 import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from 'vite'
 import react from '@vitejs/plugin-react'
+import imagemin from 'vite-plugin-imagemin'
+import { visualizer } from 'rollup-plugin-visualizer'
+import compress from 'vite-plugin-compression'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
 export default defineConfig(({ mode }) => {
@@ -17,9 +20,79 @@ export default defineConfig(({ mode }) => {
   // /api/claude giờ do dev middleware gọi thẳng handler api/claude.ts (xem API_ROUTES bên dưới)
   // — không proxy thẳng tới Anthropic nữa, để handler tự chọn nhà cung cấp (Groq/Anthropic).
   return {
-    plugins: [react(), apiEdgeDevMiddleware()],
+    plugins: [
+      react(),
+      apiEdgeDevMiddleware(),
+      // Convert hình ảnh sang WebP (ngoại trừ SVG + icon)
+      imagemin({
+        include: /src\/.*\.(png|jpg|jpeg|gif)$/,
+        exclude: /icon|favicon/,
+        conversion: [
+          { from: 'png', to: 'webp', options: { quality: 75 } },
+          { from: 'jpg', to: 'webp', options: { quality: 75 } },
+          { from: 'jpeg', to: 'webp', options: { quality: 75 } },
+          { from: 'gif', to: 'webp', options: { quality: 75 } },
+        ],
+      }),
+      // Gzip + Brotli compression cho production
+      compress({
+        gzip: {
+          threshold: 1024,  // chỉ compress file > 1KB
+          deleteOriginFile: false,
+        },
+        brotli: {
+          threshold: 1024,
+          deleteOriginFile: false,
+        },
+      }),
+      // Bundle size analyzer
+      visualizer({
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
+        filename: 'dist/stats.html',
+      }),
+    ],
     build: {
       chunkSizeWarningLimit: 500,
+      minify: 'esbuild',
+      // Tối ưu source maps cho production (mapping lỗi)
+      sourcemap: 'hidden',
+      // Tree-shaking: loại bỏ code không dùng
+      rollupOptions: {
+        output: {
+          // Chiến lược chunk thông minh: nhóm vendor theo tính năng, tránh duplicate code
+          manualChunks(id) {
+            // Nhóm 1: React + Router (core framework)
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
+              return 'vendor-core'
+            }
+            // Nhóm 2: Supabase
+            if (id.includes('node_modules/@supabase')) {
+              return 'vendor-supabase'
+            }
+            // Nhóm 3: UI library
+            if (id.includes('node_modules/lucide-react')) {
+              return 'vendor-ui'
+            }
+            // Nhóm 4: Các thư viện khác (không vào group nào ở trên)
+            if (id.includes('node_modules/')) {
+              // Tách file lớn để tránh chunk quá lớn (>300KB)
+              // Tên file căn cứ theo tên package để dễ debug
+              const match = id.match(/node_modules\/(@?[^/]+)/)
+              if (match) {
+                const name = match[1].replace(/[@\/]/g, '_')
+                return `vendor-libs-${name}`
+              }
+              return 'vendor-libs'
+            }
+          },
+          // Tên file chunk: [name]-[hash:8].js (hash 8 ký tự để track thay đổi)
+          entryFileNames: 'js/[name]-[hash:8].js',
+          chunkFileNames: 'js/[name]-[hash:8].js',
+          assetFileNames: 'assets/[name]-[hash:8][extname]',
+        },
+      },
     },
   }
 })

@@ -36,8 +36,19 @@ export async function callClaude(
     throw new Error((err as { error?: { message?: string } }).error?.message ?? `Lỗi API: ${resp.status}`)
   }
 
-  const data = await resp.json() as { content: { type: string; text: string }[] }
-  return data.content[0]?.text ?? ''
+  const data = await resp.json() as unknown
+  if (!data || typeof data !== 'object' || !('content' in data)) {
+    throw new Error('Invalid API response: missing content')
+  }
+  const content = (data as { content?: unknown }).content
+  if (!Array.isArray(content) || content.length === 0) {
+    throw new Error('API returned empty content array')
+  }
+  const text = (content[0] as { text?: unknown }).text
+  if (typeof text !== 'string') {
+    throw new Error('API returned non-string text')
+  }
+  return text
 }
 
 // Trích xuất JSON từ câu trả lời (AI đôi khi bọc thêm markdown ```)

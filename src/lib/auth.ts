@@ -4,20 +4,47 @@ import { supabase } from './supabase'
 import { ensureProfile } from './cloud'
 import type { User as AppUser, Plan } from '../types'
 
+// Cache profile trong localStorage để lần tiếp theo mở app không cần gọi DB
+// (chỉ cache khi đã onboarded — state ổn định, không thay đổi nữa)
+const PROFILE_CACHE_KEY = 'gsa_profile_v1'
+
+function getCachedProfile(userId: string): { plan: string; onboarded: boolean } | null {
+  try {
+    const raw = localStorage.getItem(PROFILE_CACHE_KEY)
+    if (!raw) return null
+    const c = JSON.parse(raw) as { id: string; plan: string; onboarded: boolean }
+    // Bỏ cache nếu sai user hoặc chưa onboarded (chưa ổn định)
+    return c.id === userId && c.onboarded ? c : null
+  } catch { return null }
+}
+
+function setCachedProfile(userId: string, profile: { plan: 'free' | 'pro'; onboarded: boolean }) {
+  try { localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({ id: userId, ...profile })) } catch {}
+}
+
+export function clearProfileCache() {
+  localStorage.removeItem(PROFILE_CACHE_KEY)
+}
+
 // Chuyển Supabase user → kiểu User của app.
-// plan đọc từ bảng profiles (mặc định 'free') để sau này nâng cấp Pro chỉ cần
-// đổi cột plan trong DB là có hiệu lực.
+// Chiến lược 2 tầng: cache localStorage → DB (nền).
+// Lần đầu / chưa onboarded: đợi DB (~400ms). Lần sau: cache (~1ms), DB chạy nền.
 async function toAppUser(sbUser: { id: string; email?: string; user_metadata?: { name?: string } }): Promise<AppUser> {
   const name = sbUser.user_metadata?.name ?? sbUser.email?.split('@')[0] ?? 'Học viên'
-  const profile = await ensureProfile(sbUser.id, name)
-  return {
-    id: sbUser.id,
-    email: sbUser.email ?? '',
-    name,
-    plan: profile.plan as Plan,
-    onboarded: profile.onboarded,
-    createdAt: Date.now(),
+
+  const cached = getCachedProfile(sbUser.id)
+  if (cached) {
+    // Refresh plan ngầm (không block UI) — cập nhật khi user nâng cấp Pro
+    void ensureProfile(sbUser.id, name)
+      .then(p => setCachedProfile(sbUser.id, p))
+      .catch(err => console.warn('[auth] Background profile refresh failed:', err instanceof Error ? err.message : err))
+    return { id: sbUser.id, email: sbUser.email ?? '', name, plan: cached.plan as Plan, onboarded: true, createdAt: Date.now() }
   }
+
+  // Không cache (lần đầu hoặc chưa onboarded) — fetch DB thật
+  const profile = await ensureProfile(sbUser.id, name)
+  if (profile.onboarded) setCachedProfile(sbUser.id, profile)
+  return { id: sbUser.id, email: sbUser.email ?? '', name, plan: profile.plan as Plan, onboarded: profile.onboarded, createdAt: Date.now() }
 }
 
 export async function register(email: string, name: string, password: string): Promise<AppUser | null> {
@@ -56,9 +83,11 @@ export async function logout() {
   await supabase.auth.signOut()
 }
 
-// Lấy user hiện tại (async — gọi 1 lần khi app khởi động)
+// Lấy user hiện tại (async — gọi 1 lần khi app khởi động).
+// Dùng getSession() (đọc localStorage ~1ms) thay getUser() (gọi mạng ~500ms).
+// Supabase client tự refresh token hết hạn qua onAuthStateChange — không cần validate thủ công.
 export async function getCurrentUser(): Promise<AppUser | null> {
-  const { data } = await supabase.auth.getUser()
-  if (!data.user) return null
-  return await toAppUser(data.user)
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session?.user) return null
+  return await toAppUser(session.user)
 }

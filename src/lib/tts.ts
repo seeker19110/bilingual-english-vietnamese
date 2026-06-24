@@ -5,12 +5,16 @@
 // Fallback về Web Speech API nếu /api/tts lỗi (mất mạng, server timeout, chưa đăng nhập...).
 
 import { supabase } from './supabase'
+import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
 
 type Lang = 'en-US' | 'vi-VN'
-export type Voice = 'female' | 'male'
+export type Voice = 'female' | 'female2' | 'male' | 'male2'
 
 let currentAudio: HTMLAudioElement | null = null
 let currentBlobUrl: string | null = null
+let currentAudioId: string | null = null
+// Callback để unblock Promise đang chờ trong speakViaGoogle khi stopSpeaking() được gọi
+let currentResolve: (() => void) | null = null
 
 // ── Pause / Resume — dùng cho trình phát hội thoại ──────────────────────────
 export function pauseCurrentAudio() {
@@ -42,6 +46,10 @@ export function isTTSSupported(): boolean {
 
 export function stopSpeaking() {
   if (currentAudio) {
+    // Xóa handler trước khi pause để tránh onerror/onended fire sau khi đã stop
+    currentAudio.onended = null
+    currentAudio.onerror = null
+    currentAudio.ontimeupdate = null
     currentAudio.pause()
     currentAudio.src = ''
     currentAudio = null
@@ -50,8 +58,32 @@ export function stopSpeaking() {
     URL.revokeObjectURL(currentBlobUrl)
     currentBlobUrl = null
   }
+  currentAudioId = null
   // Dừng cả Web Speech API phòng khi đang dùng fallback
   if ('speechSynthesis' in window) window.speechSynthesis.cancel()
+  // Unblock Promise đang chờ trong speakViaGoogle (nếu có) — resolve thay vì reject
+  // để speak() KHÔNG fallback sang Web Speech khi bị stop có chủ đích
+  currentResolve?.()
+  currentResolve = null
+}
+
+// Phát audio từ URL ngoài TTS (ví dụ phát âm từ) — dùng chung currentAudio để ngăn chồng
+export function playAudioUrl(url: string): void {
+  stopSpeaking()
+  const audio = new Audio(url)
+  const audioId = crypto.randomUUID()
+  currentAudio = audio
+  currentAudioId = audioId
+  const cleanup = () => {
+    if (currentAudio === audio && currentAudioId === audioId) currentAudio = null
+    if (currentAudioId === audioId) currentAudioId = null
+  }
+  audio.onended = cleanup
+  audio.onerror = cleanup
+  audio.play().catch(err => {
+    console.error('Lỗi phát audio:', err)
+    cleanup()
+  })
 }
 
 // ── Giải mã audio AES-256-GCM (xem api/_lib/ttsCrypto.ts ở phía server) ─────
@@ -62,7 +94,8 @@ function base64ToBytes(b64: string): Uint8Array {
   return bytes
 }
 
-async function decryptCachedAudio(audioUrl: string, keyB64: string, ivB64: string): Promise<string> {
+// Tải + giải mã audio → trả ArrayBuffer (lưu được vào IndexedDB, không chiếm RAM liên tục)
+async function decryptToBuffer(audioUrl: string, keyB64: string, ivB64: string): Promise<ArrayBuffer> {
   const cipherRes = await fetch(audioUrl)
   if (!cipherRes.ok) throw new Error(`Không tải được audio: ${cipherRes.status}`)
   const cipherBuffer = await cipherRes.arrayBuffer()
@@ -72,10 +105,12 @@ async function decryptCachedAudio(audioUrl: string, keyB64: string, ivB64: strin
   // Ép kiểu BufferSource: @types/node làm Uint8Array generic theo ArrayBufferLike, lệch với
   // kiểu BufferSource của lib DOM — chỉ là vấn đề kiểu TypeScript, không ảnh hưởng runtime.
   const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, ['decrypt'])
-  const plainBuffer = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: ivBytes as BufferSource }, key, cipherBuffer)
+  return crypto.subtle.decrypt({ name: 'AES-GCM', iv: ivBytes as BufferSource }, key, cipherBuffer)
+}
 
-  const blob = new Blob([plainBuffer], { type: 'audio/mpeg' })
-  return URL.createObjectURL(blob)
+// Tạo blob URL tạm từ ArrayBuffer để phát qua <audio>
+function bufferToBlobUrl(buffer: ArrayBuffer): string {
+  return URL.createObjectURL(new Blob([buffer], { type: 'audio/mpeg' }))
 }
 
 // Gọi /api/tts (kèm JWT) → giải mã audio → phát qua <audio>
@@ -87,50 +122,68 @@ async function speakViaGoogle(
 ): Promise<void> {
   if (!text.trim()) return
 
-  const { data: { session } } = await supabase.auth.getSession()
-  const token = session?.access_token
-  if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
+  const cacheKey = audioCacheKey(text, lang, voice)
 
-  const callTts = () => fetch('/api/tts', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ text, lang, voice }),
-  })
+  // Kiểm tra IndexedDB trước — nếu đã có thì tạo blob URL ngay, không gọi server
+  const cached = await getAudioBuffer(cacheKey)
+  let blobUrl: string
 
-  let res = await callTts()
-  // 429 = quá nhiều request (thường do phát nhiều câu liên tiếp). Đợi 1.2s rồi thử lại
-  // 1 lần trước khi rơi về Web Speech — phần lớn câu đã cache nên lần 2 thường qua.
-  if (res.status === 429) {
-    await new Promise(r => setTimeout(r, 1200))
-    res = await callTts()
+  if (cached) {
+    blobUrl = bufferToBlobUrl(cached)
+  } else {
+    const { data: { session } } = await supabase.auth.getSession()
+    const token = session?.access_token
+    if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
+
+    const callTts = () => fetch('/api/tts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text, lang, voice }),
+    })
+
+    let res = await callTts()
+    // 429 = quá nhiều request (thường do phát nhiều câu liên tiếp). Đợi 1.2s rồi thử lại
+    // 1 lần trước khi rơi về Web Speech — phần lớn câu đã cache nên lần 2 thường qua.
+    if (res.status === 429) {
+      await new Promise(r => setTimeout(r, 1200))
+      res = await callTts()
+    }
+
+    if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
+
+    const { audio_url, key_b64, iv_b64 } = await res.json() as {
+      audio_url: string; key_b64: string; iv_b64: string
+    }
+
+    const buffer = await decryptToBuffer(audio_url, key_b64, iv_b64)
+    // Lưu vào IndexedDB để lần sau (kể cả mở lại app) dùng ngay không cần fetch
+    void setAudioBuffer(cacheKey, buffer)
+    blobUrl = bufferToBlobUrl(buffer)
   }
-
-  if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
-
-  const { audio_url, key_b64, iv_b64 } = await res.json() as {
-    audio_url: string; key_b64: string; iv_b64: string
-  }
-
-  const blobUrl = await decryptCachedAudio(audio_url, key_b64, iv_b64)
 
   // Tách từ để tính index tương ứng với vị trí phát (ước tính theo tỉ lệ thời gian)
   const words = onWord ? text.trim().split(/\s+/) : []
+  const audioId = crypto.randomUUID()
 
   await new Promise<void>((resolve, reject) => {
     const audio = new Audio(blobUrl)
     audio.playbackRate = rate
     currentAudio = audio
     currentBlobUrl = blobUrl
+    currentAudioId = audioId
+    // Lưu resolve để stopSpeaking() có thể unblock Promise này mà không cần onerror
+    currentResolve = resolve
 
     // Cập nhật từ đang phát dựa trên tiến trình audio (≈4 lần/giây)
     if (onWord && words.length > 0) {
       audio.onloadedmetadata = () => {
         const dur = audio.duration
         audio.ontimeupdate = () => {
-          if (!dur || dur <= 0) return
+          // Chỉ cập nhật nếu audio này vẫn còn active (không bị thay thế)
+          if (currentAudioId !== audioId || !dur || dur <= 0) return
           const idx = Math.min(Math.floor((audio.currentTime / dur) * words.length), words.length - 1)
           onWord(idx)
         }
@@ -138,13 +191,18 @@ async function speakViaGoogle(
     }
 
     const cleanup = () => {
+      // Blob URL là tạm — revoke ngay sau khi phát xong để giải phóng RAM.
+      // Buffer gốc vẫn còn trong IndexedDB, lần sau tạo blob URL mới từ buffer đó.
       URL.revokeObjectURL(blobUrl)
-      if (currentBlobUrl === blobUrl) currentBlobUrl = null
-      if (currentAudio === audio) currentAudio = null
+      // Chỉ cleanup nếu audio này vẫn còn active
+      if (currentBlobUrl === blobUrl && currentAudioId === audioId) currentBlobUrl = null
+      if (currentAudio === audio && currentAudioId === audioId) currentAudio = null
+      if (currentAudioId === audioId) currentAudioId = null
+      if (currentResolve === resolve) currentResolve = null
     }
     audio.onended = () => { cleanup(); resolve() }
     audio.onerror = () => { cleanup(); reject(new Error('Không phát được audio')) }
-    audio.play().catch(reject)
+    audio.play().catch(err => { cleanup(); reject(err) })
   })
 }
 

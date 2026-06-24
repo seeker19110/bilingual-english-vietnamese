@@ -12,14 +12,13 @@
     "start": "tsx server.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test": "vitest run",
     "seed:pronunciation": "tsx scripts/seed-pronunciations.ts",
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts",
-    "seed:all": "npm run seed:pronunciation && npm run prefetch:tts-patterns",
-    "seed:all:with-examples": "npm run seed:pronunciation && INCLUDE_EXAMPLES=1 npm run prefetch:tts-patterns"
+    "seed:all": "tsx scripts/seed-all.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",
+    "compression": "^1.7.4",
     "express": "^4.21.2",
     "lucide-react": "^0.400.0",
     "react": "^18.3.1",
@@ -29,6 +28,7 @@
   },
   "devDependencies": {
     "@types/cli-progress": "^3.11.6",
+    "@types/compression": "^1.7.5",
     "@types/express": "^4.17.21",
     "@types/node": "^26.0.0",
     "@types/react": "^18.3.3",
@@ -42,12 +42,14 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
-    "happy-dom": "^20.10.6",
     "postcss": "^8.4.39",
+    "rollup-plugin-visualizer": "^7.0.1",
+    "sharp": "^0.35.2",
     "tailwindcss": "^3.4.4",
     "tsx": "^4.22.4",
     "typescript": "^5.2.2",
     "vite": "^7.3.5",
-    "vitest": "^2.1.9"
+    "vite-plugin-compression": "^0.5.1",
+    "vite-plugin-imagemin": "^0.6.1"
   }
 }

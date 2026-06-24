@@ -26,7 +26,14 @@ export default async function handler(req: Request): Promise<Response> {
     return new Response(JSON.stringify({ error: 'Push chưa được cấu hình (thiếu VAPID keys)' }), { status: 503, headers })
   }
 
-  const body = await req.json().catch(() => ({})) as Record<string, unknown>
+  let body: Record<string, unknown>
+  try {
+    const parsed = await req.json()
+    body = typeof parsed === 'object' && parsed !== null ? parsed as Record<string, unknown> : {}
+  } catch (err) {
+    console.error('[push] Invalid JSON in request body:', err)
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers })
+  }
   const { action } = body
 
   // ── Trả VAPID public key cho frontend ────────────────────────────────────

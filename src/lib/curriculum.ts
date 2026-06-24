@@ -16,7 +16,7 @@ import { FOUNDATION } from '../data/curriculum'
 import type { Circle } from '../data/curriculum'
 import { loadDictionary } from '../data/dictionary/loader'
 
-export const DAILY_GOAL = 20
+export const DAILY_GOAL = 30
 
 // Dữ liệu từ điển — KHÔNG import tĩnh nữa (file ~2MB). Nạp ĐỘNG bằng
 // dynamic import() qua loadCurriculum() để Vite tách dictionary.json thành
@@ -137,6 +137,17 @@ export function getDailyLearned(uid: string): number {
   } catch {
     return 0
   }
+}
+
+// Tiến độ của 1 vòng cụ thể (dùng để hiển thị "15/20" bên cạnh tên chủ đề)
+export function getCircleProgress(circleId: string, learned: Set<string>): { done: number; total: number } {
+  const circle = getCircles().find(c => c.id === circleId)
+  if (!circle) return { done: 0, total: 0 }
+  let done = 0
+  for (const w of circle.words) {
+    if (learned.has(wordKey(w.word)) || learned.has(w.word)) done++
+  }
+  return { done, total: circle.words.length }
 }
 
 // Tăng bộ đếm ngày (gọi khi đánh dấu 1 từ MỚI là đã thuộc trong phần lộ trình)

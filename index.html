@@ -14,9 +14,13 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <title>Gia su tieng Anh AI</title>
     <meta name="description" content="Hoc tieng Anh cung gia su AI - luyen noi, viet, va nhan phan hoi bang tieng Viet" />
+    <!-- Google Fonts optimization: preconnect + dns-prefetch + async load -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <!-- Font display=swap: không block render, fallback system font sampai font load xong -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" /></noscript>
   </head>
   <body>
     <div id="root"></div>

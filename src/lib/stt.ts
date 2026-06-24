@@ -47,5 +47,10 @@ export function startListening(
   rec.onerror = (e: any) => onError(e.error as string)
   rec.start()
 
-  return () => rec.stop()
+  return () => {
+    rec.onresult = null
+    rec.onend = null
+    rec.onerror = null
+    rec.stop()
+  }
 }

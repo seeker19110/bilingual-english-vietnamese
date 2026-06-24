@@ -128,7 +128,7 @@ export default function Lessons() {
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2">
           {/* Search bar — chỉ hiện ở trên trên desktop */}
           <div className="hidden sm:block mb-4">
-            <SearchBar query={query} setQuery={setQuery} isA={isA} />
+            <SearchBar query={query} setQuery={setQuery} isA={isA} variant="desktop" />
           </div>
           <LessonList lessons={INDEX} isA={isA} query={deferredQuery} onSelect={setSelectedMeta} />
         </div>
@@ -136,22 +136,26 @@ export default function Lessons() {
 
       {/* Search bar cố định ở dưới — CHỈ trên mobile */}
       <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe">
-        <SearchBar query={query} setQuery={setQuery} isA={isA} />
+        <SearchBar query={query} setQuery={setQuery} isA={isA} variant="mobile" />
       </div>
     </div>
   )
 }
 
 // ── Ô tìm kiếm dùng chung ────────────────────────────────────────────────────
-function SearchBar({ query, setQuery, isA }: {
+function SearchBar({ query, setQuery, isA, variant = 'desktop' }: {
   query: string
   setQuery: (v: string) => void
   isA: boolean
+  variant?: 'desktop' | 'mobile'
 }) {
+  const inputId = variant === 'desktop' ? 'lesson-search-desktop' : 'lesson-search-mobile'
   return (
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
       <input
+        id={inputId}
+        name="query"
         type="text"
         value={query}
         onChange={e => setQuery(e.target.value)}
@@ -258,8 +262,14 @@ function LessonView({ lesson, isA, color, onBack }: {
   color: typeof COLORS[0]
   onBack: () => void
 }) {
-  const voiceA = lesson.speakerAGender ?? 'female'
-  const voiceB = lesson.speakerBGender ?? 'male'
+  // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng thứ 2 cho B
+  // để 2 nhân vật luôn có giọng khác nhau (female vs female2, male vs male2)
+  const genderA = lesson.speakerAGender ?? 'female'
+  const genderB = lesson.speakerBGender ?? 'male'
+  const voiceA = genderA === 'female' ? 'female' : 'male'
+  const voiceB = genderB === genderA
+    ? (genderB === 'female' ? 'female2' : 'male2')
+    : (genderB === 'female' ? 'female' : 'male')
 
   const [activeTurn, setActiveTurn] = useState<number | null>(null)
   const [playing,    setPlaying]    = useState(false)
@@ -274,6 +284,14 @@ function LessonView({ lesson, isA, color, onBack }: {
   const modeRef     = useRef<AudioMode>('en')
   const turnRefs    = useRef<(HTMLDivElement | null)[]>([])
   const wordSyncRef = useRef<WordSync | null>(null)
+
+  // Dừng audio khi thoát trang hoặc back về danh sách
+  useEffect(() => {
+    return () => {
+      stopRef.current = true
+      stopSpeaking()
+    }
+  }, [])
 
   function changeSpeed(s: Speed) { setSpeed(s); speedRef.current = s }
   function changeMode(m: AudioMode) { setMode(m); modeRef.current = m }

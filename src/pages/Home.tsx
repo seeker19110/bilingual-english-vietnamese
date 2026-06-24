@@ -161,7 +161,7 @@ export default function Home() {
 
         {/* ── Greeting + streak ──────────────────────────────────────────── */}
         <div className="mb-4 flex items-center justify-between animate-fade-in gap-3">
-          <p className="text-zinc-500 text-sm">{T.todayPractice}</p>
+          <p className="text-zinc-400 text-sm">{T.todayPractice}</p>
 
           {streak > 0 && (
             <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 rounded-xl px-3 py-2 shrink-0">
@@ -187,7 +187,7 @@ export default function Home() {
                 : 'bg-sky-500/10 border-sky-500/30 hover:border-sky-500/60'
             }`}
           >
-            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wide">
+            <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wide">
               {isA ? 'Ngôn ngữ học' : 'Language'}
             </span>
             <div className="flex items-center gap-1.5">
@@ -205,7 +205,7 @@ export default function Home() {
             title={isA ? 'Nhấn để đổi giọng đọc' : 'Tap to switch voice'}
             className="flex flex-col items-start gap-1.5 rounded-2xl px-4 py-3 border bg-zinc-900/80 border-zinc-700/60 hover:border-zinc-600 transition-all active:scale-[0.98]"
           >
-            <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wide">
+            <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wide">
               {isA ? 'Giọng đọc' : 'Voice'}
             </span>
             <div className="flex items-center gap-1.5">
@@ -229,7 +229,7 @@ export default function Home() {
             <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
               {isA ? 'Xem lịch sử học' : 'View learning history'}
             </span>
-            <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition" />
+            <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-400 transition" />
           </button>
 
           {/* Hàng ngang: Quiz + Chia sẻ + Thông báo */}
@@ -262,7 +262,7 @@ export default function Home() {
                 }`}>
                 {pushOn
                   ? <Bell className="w-4 h-4 text-amber-400" />
-                  : <BellOff className="w-4 h-4 text-zinc-500 group-hover:text-amber-400 transition" />}
+                  : <BellOff className="w-4 h-4 text-zinc-400 group-hover:text-amber-400 transition" />}
                 <span className={`text-[11px] transition ${pushOn ? 'text-amber-300' : 'text-zinc-400 group-hover:text-zinc-200'}`}>
                   {pushLoading ? '...' : pushOn ? (isA ? 'Nhắc bật' : 'Notif on') : (isA ? 'Nhắc tắt' : 'Notif off')}
                 </span>
@@ -299,14 +299,14 @@ export default function Home() {
                   <p className="text-sm text-zinc-400 leading-relaxed line-clamp-2">{m.desc}</p>
                 </div>
 
-                <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 shrink-0 transition-all group-hover:translate-x-0.5" />
+                <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-400 shrink-0 transition-all group-hover:translate-x-0.5" />
               </button>
             )
           })}
         </div>
 
         {/* ── Tip ──────────────────────────────────────────────────────── */}
-        <div className="mt-6 glass rounded-xl p-4 text-xs text-zinc-500 animate-fade-in delay-400">
+        <div className="mt-6 glass rounded-xl p-4 text-xs text-zinc-400 animate-fade-in delay-400">
           <strong className="text-zinc-400">{T.tip}</strong>{' '}
           {T.tipBody(
             `<strong class="text-teal-400">${T.tipPhrases}</strong>`,

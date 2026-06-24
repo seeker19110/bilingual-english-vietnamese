@@ -46,7 +46,7 @@ export async function startRecording(lang: 'en' | 'vi'): Promise<Recorder> {
   const chunks: Blob[] = []
 
   rec.ondataavailable = (e) => {
-    if (e.data.size > 0) chunks.push(e.data)
+    if (e.data && e.data.size > 0) chunks.push(e.data)
   }
   rec.start()
 
@@ -61,18 +61,22 @@ export async function startRecording(lang: 'en' | 'vi'): Promise<Recorder> {
     stop() {
       return new Promise<string>((resolve, reject) => {
         rec.onstop = async () => {
-          cleanup()
           try {
+            cleanup()
             const blob = new Blob(chunks, { type: mime || 'audio/webm' })
             if (blob.size === 0) { resolve(''); return }
             const b64 = await blobToBase64(blob)
             const text = await transcribe(b64, blob.type, lang)
             resolve(text)
           } catch (e) {
+            cleanup()
             reject(e)
           }
         }
-        try { rec.stop() } catch (e) { reject(e) }
+        try { rec.stop() } catch (e) {
+          cleanup()
+          reject(e)
+        }
       })
     },
   }
@@ -90,8 +94,18 @@ async function transcribe(audioB64: string, mime: string, lang: 'en' | 'vi'): Pr
     const err = await resp.json().catch(() => ({}))
     throw new Error((err as { error?: string }).error ?? `Lỗi STT: ${resp.status}`)
   }
-  const data = (await resp.json()) as { text?: string }
-  return data.text?.trim() ?? ''
+  const data = (await resp.json()) as unknown
+  if (!data || typeof data !== 'object' || !('text' in data)) {
+    throw new Error('STT API returned invalid response')
+  }
+  const text = (data as { text?: unknown }).text
+  if (typeof text !== 'string') {
+    throw new Error('STT API returned non-string text')
+  }
+  if (!text.trim()) {
+    throw new Error('STT API returned empty text')
+  }
+  return text.trim()
 }
 
 // Đọc Blob → chuỗi base64 (bỏ tiền tố "data:...;base64,").
@@ -99,10 +113,19 @@ function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onloadend = () => {
-      const result = reader.result as string
-      resolve(result.split(',')[1] ?? '')
+      if (!reader.result) {
+        reject(new Error('FileReader returned no result'))
+        return
+      }
+      const result = typeof reader.result === 'string' ? reader.result : ''
+      const b64 = result.split(',')[1] ?? ''
+      if (!b64) {
+        reject(new Error('Could not extract base64 from FileReader result'))
+      } else {
+        resolve(b64)
+      }
     }
-    reader.onerror = reject
+    reader.onerror = () => reject(new Error('FileReader error'))
     reader.readAsDataURL(blob)
   })
 }

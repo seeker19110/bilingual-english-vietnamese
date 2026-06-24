@@ -20,7 +20,7 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
-import { generateAudioFromGoogle, VOICE_IDS, type VoiceId } from '../api/_lib/googleTts.ts'
+import { generateAudioFromGoogle, type VoiceId } from '../api/_lib/googleTts.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
 
 // Thư mục gốc của project (1 cấp trên thư mục scripts/), để mọi đường dẫn file
@@ -32,12 +32,16 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
-const BATCH_SIZE = 5 // Số tác vụ (từ+giọng) xử lý song song cùng lúc — tăng lên nếu mạng ổn định
-const DELAY_MS = 300 // Nghỉ giữa các batch để tránh bị Google TTS chặn vì gọi quá nhanh
+const BATCH_SIZE     = 15   // số tác vụ song song — Google TTS cho phép ~100 req/s
+const DELAY_MS       = 0    // không cần nghỉ giữa batch với BATCH_SIZE vừa phải
+const RETRY_DELAY_MS = 5000 // nghỉ giữa các vòng retry (ms) để tránh rate-limit tạm thời
+const MAX_ROUNDS     = 5    // số vòng retry tối đa
 
-// Từ điển đã được tách thành nhiều chunk (scripts/split-dictionary.mjs). Mặc định
-// đọc từ thư mục chunk; vẫn cho phép trỏ tới 1 file khác qua biến WORDS_FILE.
-const DEFAULT_WORDS_DIR = path.join(PROJECT_ROOT, 'src/data/dictionary')
+// Pronunciations chỉ cần 2 giọng cơ bản (người dùng chỉ chọn female/male)
+// female2/male2 dùng cho bài học hội thoại, không cần seed vào bảng pronunciations
+const PRON_VOICE_IDS: VoiceId[] = ['female', 'male']
+
+const DEFAULT_WORDS_FILE = path.join(PROJECT_ROOT, 'src/data/dictionary.json')
 const ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
 
 // 1 tác vụ = tạo audio cho 1 (từ, giọng) cụ thể.
@@ -47,24 +51,15 @@ interface Task {
 }
 
 // ── Đọc danh sách từ cần seed ────────────────────────────────────────────────
-// Hỗ trợ 2 dạng phần tử JSON:
-//   1. Chuỗi:            "apple"               (ví dụ scripts/seed-errors.json)
-//   2. Object có .word:  { "word": "apple", ... }  (các chunk từ điển)
-function parseWords(raw: unknown, label: string): string[] {
-  if (!Array.isArray(raw)) throw new Error(`${label} phải là 1 mảng JSON`)
-  return raw.map((item) => (typeof item === 'string' ? item : (item as { word: string }).word))
-}
-
-// Đọc từ 1 file cụ thể (WORDS_FILE) hoặc từ toàn bộ chunk trong thư mục từ điển (mặc định).
-function loadWords(): string[] {
-  if (process.env.WORDS_FILE) {
-    const filePath = path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
-    return parseWords(JSON.parse(fs.readFileSync(filePath, 'utf-8')), filePath)
+// Hỗ trợ 2 dạng file JSON:
+//   1. Mảng chuỗi:        ["apple", "banana", ...]   (ví dụ scripts/seed-errors.json)
+//   2. Mảng object có .word: [{ "word": "apple", ... }, ...]  (dictionary.json đang dùng trong app)
+function loadWords(filePath: string): string[] {
+  const raw = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as unknown
+  if (!Array.isArray(raw)) {
+    throw new Error(`File ${filePath} phải là 1 mảng JSON`)
   }
-  const files = fs.readdirSync(DEFAULT_WORDS_DIR).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
-  return files.flatMap((f) =>
-    parseWords(JSON.parse(fs.readFileSync(path.join(DEFAULT_WORDS_DIR, f), 'utf-8')), f),
-  )
+  return raw.map((item) => (typeof item === 'string' ? item : (item as { word: string }).word))
 }
 
 // ── Xử lý 1 tác vụ (1 từ + 1 giọng): TTS → Upload Storage → Lưu DB ─────────
@@ -100,26 +95,71 @@ async function processTask(task: Task): Promise<{ status: 'ok' } | { status: 'er
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
 
+// Chạy 1 vòng xử lý, trả về danh sách tác vụ còn lỗi
+async function runPass(
+  tasks: Task[],
+  label: string,
+): Promise<Array<{ task: Task; message: string }>> {
+  console.log(`\n${label} — ${tasks.length} tác vụ`)
+
+  const bar = new cliProgress.SingleBar(
+    {
+      format: 'Tiến độ |{bar}| {percentage}% | {value}/{total} | ✓{ok} ✗{errors}',
+      barCompleteChar: '█',
+      barIncompleteChar: '░',
+      hideCursor: true,
+    },
+    cliProgress.Presets.shades_classic,
+  )
+  bar.start(tasks.length, 0, { ok: 0, errors: 0 })
+
+  let countOk = 0, countError = 0
+  const failed: Array<{ task: Task; message: string }> = []
+
+  for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
+    const batch   = tasks.slice(i, i + BATCH_SIZE)
+    const results = await Promise.all(batch.map((t) => processTask(t)))
+
+    results.forEach((result, idx) => {
+      if (result.status === 'ok') countOk++
+      else {
+        countError++
+        failed.push({ task: batch[idx], message: result.message })
+      }
+    })
+
+    bar.update(Math.min(i + BATCH_SIZE, tasks.length), { ok: countOk, errors: countError })
+
+    if (DELAY_MS > 0 && i + BATCH_SIZE < tasks.length) await sleep(DELAY_MS)
+  }
+
+  bar.stop()
+  console.log(`   ✓ Thành công: ${countOk}  ✗ Lỗi: ${countError}`)
+
+  return failed
+}
+
 // ── MAIN ─────────────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
-  // Kiểm tra đủ biến môi trường trước — tránh chạy hàng nghìn từ rồi mới phát hiện thiếu key.
   const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GOOGLE_TTS_API_KEY'].filter(
     (key) => !process.env[key],
   )
   if (missing.length > 0) {
     console.error(`❌ Thiếu biến môi trường trong .env: ${missing.join(', ')}`)
-    console.error('   Xem hướng dẫn lấy key trong PRONUNCIATION_CACHE_SETUP.md')
     process.exit(1)
   }
 
-  console.log('🚀 Bắt đầu seed phát âm...\n')
+  const wordsFile = process.env.WORDS_FILE
+    ? path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
+    : DEFAULT_WORDS_FILE
+  const allWords = loadWords(wordsFile)
 
-  const allWords = loadWords()
-  const source = process.env.WORDS_FILE ?? 'src/data/dictionary/chunk-*.json'
-  console.log(`📋 Nguồn từ: ${source}`)
-  console.log(`📋 Tổng số từ: ${allWords.length} × ${VOICE_IDS.length} giọng (${VOICE_IDS.join(', ')})`)
+  console.log('🚀 Bắt đầu seed phát âm từ điển')
+  console.log(`📋 Nguồn từ : ${path.relative(PROJECT_ROOT, wordsFile)}`)
+  console.log(`📋 Tổng từ  : ${allWords.length} × ${PRON_VOICE_IDS.length} giọng (${PRON_VOICE_IDS.join(', ')})`)
+  console.log(`⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}`)
 
-  // Lấy danh sách (từ, giọng) đã có trong DB để bỏ qua — script resume được nếu bị dừng giữa chừng.
+  // Lấy danh sách (từ, giọng) đã có trong DB — bỏ qua để resume được nếu bị dừng giữa chừng
   const supabase = getSupabaseAdmin()
   const { data: existing, error: selectError } = await supabase
     .from('pronunciations')
@@ -136,73 +176,58 @@ async function main(): Promise<void> {
     }),
   )
 
-  // Mỗi từ cần seed cho TỪNG giọng trong VOICE_IDS → danh sách tác vụ = từ × giọng.
   const allTasks: Task[] = []
   for (const w of allWords) {
-    for (const voice of VOICE_IDS) {
+    for (const voice of PRON_VOICE_IDS) {
       allTasks.push({ word: w.toLowerCase(), voice })
     }
   }
-  const todo = allTasks.filter((t) => !done.has(`${t.word}:${t.voice}`))
 
-  console.log(`✅ Đã có: ${done.size} (từ, giọng)`)
-  console.log(`⏳ Cần tạo: ${todo.length} (từ, giọng)\n`)
+  // Giới hạn số tác vụ nếu chạy debug (LIMIT=10 npm run seed:pronunciation)
+  const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
+  const todo  = allTasks.filter((t) => !done.has(`${t.word}:${t.voice}`)).slice(0, limit)
+
+  console.log(`\n✅ Đã có  : ${done.size} (từ × giọng)`)
+  console.log(`⏳ Cần tạo: ${todo.length} (từ × giọng)`)
 
   if (todo.length === 0) {
-    console.log('🎉 Tất cả đã được cache rồi!')
+    console.log('\n🎉 Tất cả đã được cache rồi!')
     return
   }
 
-  const bar = new cliProgress.SingleBar(
-    {
-      format: 'Tiến độ |{bar}| {percentage}% | {value}/{total} | ✓{ok} ✗{errors}',
-      barCompleteChar: '█',
-      barIncompleteChar: '░',
-      hideCursor: true,
-    },
-    cliProgress.Presets.shades_classic,
-  )
-  bar.start(todo.length, 0, { ok: 0, errors: 0 })
+  // ── Vòng lặp: lặp cho đến khi hết lỗi hoặc đạt MAX_ROUNDS ───────────────
+  let remaining: Array<{ task: Task; message: string }> = []
+  let previousErrorCount = Infinity
 
-  let countOk = 0
-  let countError = 0
-  // Dùng Set để 1 từ bị lỗi ở cả 2 giọng cũng chỉ ghi 1 lần vào file lỗi.
-  const errorWords = new Set<string>()
-  let firstError: { word: string; voice: VoiceId; message: string } | null = null
+  remaining = await runPass(todo, '🟢 Vòng 1 — Xử lý toàn bộ')
 
-  for (let i = 0; i < todo.length; i += BATCH_SIZE) {
-    const batch = todo.slice(i, i + BATCH_SIZE)
-    const results = await Promise.all(batch.map((task) => processTask(task)))
-
-    results.forEach((result, idx) => {
-      if (result.status === 'ok') {
-        countOk++
-      } else {
-        countError++
-        errorWords.add(batch[idx].word)
-        if (!firstError) firstError = { ...batch[idx], message: result.message }
-      }
-    })
-
-    bar.update(Math.min(i + BATCH_SIZE, todo.length), { ok: countOk, errors: countError })
-
-    if (i + BATCH_SIZE < todo.length) {
-      await sleep(DELAY_MS)
+  for (let round = 2; round <= MAX_ROUNDS && remaining.length > 0; round++) {
+    if (remaining.length >= previousErrorCount) {
+      console.log(`\n⛔ Số lỗi không giảm (${remaining.length} tác vụ) — dừng retry.`)
+      break
     }
+    previousErrorCount = remaining.length
+
+    console.log(`\n⏳ Nghỉ ${RETRY_DELAY_MS / 1000}s trước khi retry...`)
+    await sleep(RETRY_DELAY_MS)
+
+    remaining = await runPass(
+      remaining.map((r) => r.task),
+      `🔄 Vòng ${round} — Retry ${remaining.length} tác vụ còn lỗi`,
+    )
   }
 
-  bar.stop()
-
-  if (errorWords.size > 0) {
-    fs.writeFileSync(ERRORS_FILE, JSON.stringify([...errorWords], null, 2))
-    console.log(`\n⚠️  ${errorWords.size} từ bị lỗi (ở ít nhất 1 giọng) → xem danh sách: scripts/seed-errors.json`)
-    console.log('   Chạy lại các từ lỗi bằng: WORDS_FILE=scripts/seed-errors.json npm run seed:pronunciation')
-    if (firstError) {
-      console.log(`   Lỗi đầu tiên (ví dụ): ${firstError.word} (giọng ${firstError.voice}) — ${firstError.message}`)
-    }
+  // ── Kết quả cuối ─────────────────────────────────────────────────────────
+  if (remaining.length === 0) {
+    console.log('\n🎉 Hoàn thành 100%! Toàn bộ từ đã được cache.')
+    if (fs.existsSync(ERRORS_FILE)) fs.unlinkSync(ERRORS_FILE)
+  } else {
+    fs.writeFileSync(ERRORS_FILE, JSON.stringify(remaining.map((r) => r.task.word), null, 2))
+    console.log(`\n⚠️  Còn ${remaining.length} tác vụ không thể cache sau ${MAX_ROUNDS} vòng.`)
+    console.log(`   Retry thủ công: WORDS_FILE=scripts/seed-errors.json npm run seed:pronunciation`)
+    console.log(`   Lỗi mẫu: ${remaining[0].task.word} (${remaining[0].task.voice}) — ${remaining[0].message}`)
+    process.exit(1)
   }
-
-  console.log(`\n✅ Hoàn thành! Thành công: ${countOk} | Lỗi: ${countError}`)
 }
 
 main().catch((err) => {

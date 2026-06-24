@@ -6,6 +6,7 @@
 //   Production  : npm start    (file này, chạy qua PM2)
 
 import express from 'express'
+import compression from 'compression'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as dotenv from 'dotenv'
@@ -21,6 +22,13 @@ import sttHandler from './api/stt.js'
 import pushHandler from './api/push.js'
 
 const app = express()
+
+// Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
+app.disable('x-powered-by')
+
+// Bật gzip/brotli compression — giảm kích thước response 70% cho Mobile
+// threshold: chỉ nén khi response > 1KB (tránh overhead cho response nhỏ)
+app.use(compression({ threshold: 1024 }))
 
 // STT nhận audio base64 → body lớn hơn nhiều so với chat/tts. Đăng ký parser riêng
 // cho route này TRƯỚC parser JSON 64kb mặc định bên dưới (Express chạy middleware theo
@@ -59,6 +67,12 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
       // Chuyển Web API Response → Express response
       res.status(webRes.status)
       webRes.headers.forEach((val, key) => res.setHeader(key, val))
+
+      // Security headers — thêm sau khi convert response, tránh conflict với Web API Response
+      res.setHeader('X-Content-Type-Options', 'nosniff')
+      res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'")
+      res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+
       res.send(await webRes.text())
     } catch (err) {
       console.error('[server] Lỗi handler:', err)
@@ -67,10 +81,24 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
   }
 }
 
+// ── Security headers cho static files và non-API routes ─────────────────────
+app.use((req, res, next) => {
+  // Chỉ apply cho non-API routes để tránh double headers
+  if (!req.path.startsWith('/api/')) {
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'")
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+  }
+  next()
+})
+
 // ── Health check ────────────────────────────────────────────────────────────
 // Endpoint nhẹ để PM2 / Nginx / uptime monitor kiểm tra app còn sống không.
 // Không gọi AI, không đụng DB → trả lời tức thì, không tốn tiền.
 app.get('/api/health', (_req, res) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'")
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
   res.json({ status: 'ok', uptime: process.uptime(), time: new Date().toISOString() })
 })
 
@@ -84,16 +112,39 @@ app.all('/api/push', wrapEdge(pushHandler))
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
 const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, 'uploads')
-app.use('/uploads', express.static(uploadsDir, { maxAge: '30d' }))
+app.use(
+  '/uploads',
+  express.static(uploadsDir, {
+    maxAge: '30d',
+    setHeaders(res) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000')
+    },
+  }),
+)
 
 // ── Phục vụ frontend (React build) ───────────────────────────────────────────
-// Cache file tĩnh 1 ngày — trừ index.html để luôn lấy bản mới nhất
+// Cache file tĩnh 1 năm với cache busting (filename hash) — trừ index.html để luôn lấy bản mới nhất
 app.use(
   express.static(path.join(__dirname, 'dist'), {
-    maxAge: '1d',
+    maxAge: '1y',
     setHeaders(res, filePath) {
+      // index.html không được cache (luôn fetch mới)
       if (filePath.endsWith('index.html')) {
-        res.setHeader('Cache-Control', 'no-cache')
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+        res.setHeader('Pragma', 'no-cache')
+        res.setHeader('Expires', '0')
+      }
+      // File assets có hash (*.js, *.css, images) — cache mãi mãi
+      else if (/\.[a-f0-9]{8}\.(js|css|png|jpg|gif|svg|woff2)$/.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+      }
+      // File khác (manifest, etc) — cache 1 tuần
+      else {
+        res.setHeader('Cache-Control', 'public, max-age=604800')
+      }
+      // Thêm charset cho HTML/JSON
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8')
       }
     },
   }),
