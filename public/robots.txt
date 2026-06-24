@@ -1,33 +1,44 @@
-# robots.txt — Hướng dẫn cho search engines
-# Cho phép indexing trang chính để tăng SEO
-# Chặn API, data nhạy cảm, và đường dẫn động
+# robots.txt — Search engine crawler instructions
+# Standard format: https://www.robotstxt.org/
 
+# Allow all crawlers to index public content
 User-agent: *
 Allow: /
+
+# Block sensitive paths
 Disallow: /api/
 Disallow: /admin/
-Disallow: /.env
-Disallow: /.env.*
+Disallow: /.env*
 Disallow: /node_modules/
 Disallow: /*.json$
 Disallow: /*?*sort=
 Disallow: /*?*filter=
 Disallow: /*?*page=
 
-# Google-specific
+# Google crawlers - can index everything except blocked paths
 User-agent: Googlebot
 Allow: /
 
-# Bing
+# Bing crawlers
 User-agent: Bingbot
 Allow: /
 
-# Chặn các bot xấu / spam
+# Block bad bots and crawlers (must list individually)
 User-agent: AhrefsBot
+Disallow: /
+
 User-agent: SemrushBot
+Disallow: /
+
 User-agent: DotBot
+Disallow: /
+
 User-agent: MJ12bot
 Disallow: /
 
-# Sitemap
+# Crawl delay (optional): tell crawlers to wait this many seconds between requests
+# Crawl-delay: 1
+
+# Sitemap location for search engines
 Sitemap: https://en-vi.donghanhcungban.com/sitemap.xml
+Sitemap: https://en-vi.donghanhcungban.com/sitemap-pages.xml

@@ -53,19 +53,19 @@ export default function Layout({ title, subtitle, back = true, extra }: Props) {
         {/* Title */}
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-[15px] truncate text-white">{title}</p>
-          {subtitle && <p className="text-xs text-zinc-500 truncate">{subtitle}</p>}
+          {subtitle && <p className="text-xs text-zinc-400 truncate">{subtitle}</p>}
         </div>
 
         {/* Usage indicator */}
         {usage && limit && (
           <>
             {/* Desktop: text */}
-            <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-600 shrink-0">
+            <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-400 shrink-0">
               <span>{T.chat} <strong className="text-zinc-400">{usage.chatCount}/{limit.chat}</strong></span>
               <span>{T.speak} <strong className="text-zinc-400">{usage.speakingCount}/{limit.speaking}</strong></span>
             </div>
             {/* Mobile: mini badges cho chat và nói */}
-            <div className="sm:hidden flex items-center gap-1.5 shrink-0 text-[10px] text-zinc-500">
+            <div className="sm:hidden flex items-center gap-1.5 shrink-0 text-[10px] text-zinc-400">
               <span><strong className="text-zinc-400">{usage.chatCount}</strong>/{limit.chat}</span>
               <span className="text-zinc-700">·</span>
               <span><strong className="text-zinc-400">{usage.speakingCount}</strong>/{limit.speaking}</span>
@@ -83,7 +83,7 @@ export default function Layout({ title, subtitle, back = true, extra }: Props) {
               {user.name[0]?.toUpperCase()}
             </div>
             <button onClick={handleLogout}
-              className="text-zinc-600 hover:text-red-400 transition p-3 rounded-lg hover:bg-red-400/10"
+              className="text-zinc-400 hover:text-red-400 transition p-3 rounded-lg hover:bg-red-400/10"
               title={T.logout}
               aria-label={T.logout}>
               <LogOut className="w-3.5 h-3.5" />
