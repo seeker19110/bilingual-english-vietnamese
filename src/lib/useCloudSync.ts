@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { pullUserData } from './cloud'
+import { pullProgress } from './progressSync'
 
 // Hook nhỏ: khi trang mở (hoặc userId đổi), kéo dữ liệu mới nhất từ Supabase
 // về localStorage rồi tăng "version" để component vẽ lại với dữ liệu đã đồng bộ.
@@ -11,7 +12,7 @@ export function useCloudSync(userId: string | undefined): number {
   useEffect(() => {
     if (!userId) return
     let alive = true
-    pullUserData(userId)
+    Promise.all([pullUserData(userId), pullProgress(userId)])
       .then(() => { if (alive) setVersion(v => v + 1) })
       .catch(err => {
         console.warn('[useCloudSync] Data sync failed, using local cache:', err instanceof Error ? err.message : err)

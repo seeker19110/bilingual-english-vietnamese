@@ -17,10 +17,14 @@ async function getAuthHeader(): Promise<Record<string, string>> {
   return token ? { 'Authorization': `Bearer ${token}` } : {}
 }
 
+// mode: cho server biết đây là lượt chat / viết / nói để đếm đúng cột giới hạn.
+export type CallMode = 'chat' | 'writing' | 'speaking'
+
 export async function callClaude(
   messages: ClaudeMessage[],
   system: string,
   maxTokens = 1024,
+  mode: CallMode = 'chat',
 ): Promise<string> {
   // /api/claude: lúc "npm run dev" được vite.config.ts proxy thẳng tới Anthropic (key đọc từ .env phía server);
   // lúc deploy lên Vercel, route này do api/claude.ts (serverless function) xử lý.
@@ -28,7 +32,7 @@ export async function callClaude(
   const resp = await fetch('/api/claude', {
     method: 'POST',
     headers: { 'content-type': 'application/json', ...authHeader },
-    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages }),
+    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages, mode }),
   })
 
   if (!resp.ok) {

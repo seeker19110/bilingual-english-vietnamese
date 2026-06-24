@@ -84,6 +84,11 @@ export const SITUATIONS: { value: string; labelA: string; labelB: string }[] = [
   { value: 'office_meeting',   labelA: 'Họp / thuyết trình',       labelB: 'Meeting / Presentation' },
   { value: 'shopping',         labelA: 'Mua sắm',                   labelB: 'Shopping' },
   { value: 'small_talk',       labelA: 'Tán gẫu / xã giao',        labelB: 'Small Talk' },
+  // Bối cảnh sát đời sống Việt Nam — dễ liên hệ, tăng động lực luyện tập
+  { value: 'market_vn',        labelA: 'Đi chợ / mặc cả',          labelB: 'At a Vietnamese Market' },
+  { value: 'ride_hailing',     labelA: 'Đặt Grab / taxi',          labelB: 'Booking a Grab / Taxi' },
+  { value: 'directions',       labelA: 'Chỉ đường cho khách Tây',   labelB: 'Giving Directions to a Tourist' },
+  { value: 'street_food',      labelA: 'Quán ăn vỉa hè / cà phê',  labelB: 'Street Food & Coffee' },
   { value: 'free',             labelA: 'Tự do — chủ đề bất kỳ',   labelB: 'Free Topic' },
 ]
 

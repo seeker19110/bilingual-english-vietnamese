@@ -1,6 +1,6 @@
 import type { User, ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Direction } from '../types'
 // Mỗi lần lưu xuống localStorage, ta cũng đẩy bản ghi lên Supabase (bắn rồi quên)
-import { pushChatSession, pushWritingSub, pushSpeakingSession, pushUsage } from './cloud'
+import { pushChatSession, pushWritingSub, pushSpeakingSession } from './cloud'
 
 // ─── Keys ────────────────────────────────────────────────────────────────────
 const K = {
@@ -136,11 +136,14 @@ export function getUsage(userId: string): DailyUsage {
   return u
 }
 
+// Tăng lượt CHỈ ở localStorage để giao diện phản hồi tức thì. Số lượt THẬT do SERVER
+// đếm authoritative (api/_lib/usage.ts) trong daily_usage; khi mở trang, pullUserData
+// kéo số chính xác từ Supabase về ghi đè bản local — nên client KHÔNG đẩy lượt nữa
+// (tránh đếm trùng / bị sửa localStorage để gian lận giới hạn).
 export function incrementUsage(userId: string, field: 'chatCount' | 'writingCount' | 'speakingCount' | 'sttCount') {
   const usage = getUsage(userId)
   usage[field]++
   set(K.usage(userId, todayStr()), usage)
-  pushUsage(userId, usage) // đồng bộ số lượt lên Supabase
 }
 
 // ─── Direction (chiều học) ────────────────────────────────────────────────────
