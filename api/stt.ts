@@ -20,6 +20,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from './_lib/security'
+import { checkAndConsumeUsage } from './_lib/usage'
 
 // Giới hạn dung lượng base64 (~8MB chuỗi ≈ ~6MB audio thật, đủ cho ~1–2 phút nói).
 const MAX_AUDIO_B64 = 8 * 1024 * 1024
@@ -93,6 +94,13 @@ export default async function handler(req: Request): Promise<Response> {
     audio = base64ToArrayBuffer(audioB64)
   } catch {
     return jsonResponse({ error: 'audio_b64 không phải base64 hợp lệ' }, 400, allHeaders)
+  }
+
+  // Giới hạn lượt STT ở SERVER (theo gói Free/Pro) — STT tốn tiền API riêng.
+  const gate = await checkAndConsumeUsage(authResult.userId, 'stt')
+  if (!gate.ok) {
+    logSecurityEvent('USAGE_LIMIT', clientIp, { path: '/api/stt' })
+    return jsonResponse({ error: gate.message }, 429, allHeaders)
   }
 
   try {
