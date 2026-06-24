@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import {
   ChevronRight, ChevronLeft, BookOpen, GraduationCap, Check,
   Sparkles, CheckCircle2, Layers, X, Lightbulb, AlertTriangle, PencilLine,
+  MessageCircle,
 } from 'lucide-react'
 import KaraokeText from './KaraokeText'
 import WordCard from './WordCard'
@@ -9,6 +10,8 @@ import { CEFR_LEVELS, countGrammar } from '../data/cefr'
 import type { CefrLevel, CefrUnit, GrammarLesson, QuizItem } from '../data/cefr'
 import { FOUNDATION } from '../data/curriculum'
 import type { Circle } from '../data/curriculum'
+import { getDialogues } from '../data/dialogues'
+import type { Dialogue } from '../data/dialogues'
 import type { DictEntry } from '../types'
 import { getLearnedWords, markLearned } from '../lib/vocab'
 import { addToSRS } from '../lib/srs'
@@ -42,14 +45,22 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
   const [levelId, setLevelId] = useState<CefrLevel['id']>('A1')
   const [lesson, setLesson]   = useState<GrammarLesson | null>(null)
   const [circle, setCircle]   = useState<Circle | null>(null)
+  const [dialogue, setDialogue] = useState<Dialogue | null>(null)
 
   const level = CEFR_LEVELS.find(l => l.id === levelId)!
   const accent = ACCENT[level.accent]
 
+  // Màn xem 1 cuộc hội thoại
+  if (dialogue) {
+    return <DialogueView dialogue={dialogue} isA={isA} accent={accent}
+      onBack={() => setDialogue(null)} />
+  }
+
   // Màn flashcard cho 1 vòng từ vựng
   if (circle) {
     return <VocabFlash circle={circle} isA={isA} uid={uid}
-      onProgress={onProgress} onBack={() => setCircle(null)} />
+      onProgress={onProgress} onBack={() => setCircle(null)}
+      onOpenDialogue={setDialogue} />
   }
 
   // Màn chi tiết 1 bài ngữ pháp
@@ -112,7 +123,7 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
       <div className="space-y-3">
         {level.units.map(unit => (
           <UnitCard key={unit.id} unit={unit} isA={isA} uid={uid} accent={accent}
-            onOpenLesson={setLesson} onOpenCircle={setCircle} />
+            onOpenLesson={setLesson} onOpenCircle={setCircle} onOpenDialogue={setDialogue} />
         ))}
       </div>
     </div>
@@ -120,13 +131,15 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
 }
 
 // ── Thẻ 1 unit ────────────────────────────────────────────────────────────────
-function UnitCard({ unit, isA, uid, accent, onOpenLesson, onOpenCircle }: {
+function UnitCard({ unit, isA, uid, accent, onOpenLesson, onOpenCircle, onOpenDialogue }: {
   unit: CefrUnit; isA: boolean; uid: string
   accent: typeof ACCENT[keyof typeof ACCENT]
   onOpenLesson: (l: GrammarLesson) => void
   onOpenCircle: (c: Circle) => void
+  onOpenDialogue: (d: Dialogue) => void
 }) {
   const learned = useMemo(() => getLearnedWords(uid), [uid])
+  const dialogues = getDialogues(unit.id)
 
   return (
     <div className="glass rounded-2xl p-4">
@@ -169,6 +182,22 @@ function UnitCard({ unit, isA, uid, accent, onOpenLesson, onOpenCircle }: {
               </button>
             )
           })}
+        </div>
+      )}
+
+      {/* Hội thoại mẫu của bài */}
+      {dialogues.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-zinc-800/80 space-y-1.5">
+          {dialogues.map((dl, i) => (
+            <button key={i} onClick={() => onOpenDialogue(dl)}
+              className="w-full flex items-center gap-2 text-left px-3 py-2.5 rounded-xl bg-zinc-900/70 border border-zinc-800 hover:border-zinc-600 transition">
+              <MessageCircle className={`w-4 h-4 shrink-0 ${accent.text}`} />
+              <span className="flex-1 min-w-0 text-sm font-medium text-zinc-200 truncate">
+                {isA ? dl.titleVi : dl.titleEn}
+              </span>
+              <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+            </button>
+          ))}
         </div>
       )}
     </div>
@@ -309,9 +338,10 @@ function QuizCard({ item, isA }: {
 }
 
 // ── Flashcard cho 1 vòng từ vựng (gắn vào lộ trình) ───────────────────────────
-function VocabFlash({ circle, isA, uid, onProgress, onBack }: {
+function VocabFlash({ circle, isA, uid, onProgress, onBack, onOpenDialogue }: {
   circle: Circle; isA: boolean; uid: string
   onProgress: () => void; onBack: () => void
+  onOpenDialogue: (d: Dialogue) => void
 }) {
   // Lọc ra các từ CHƯA thuộc để học trước; nếu đã thuộc hết thì ôn lại cả vòng.
   const [cards] = useState<DictEntry[]>(() => {
@@ -322,6 +352,7 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack }: {
   const [idx, setIdx] = useState(0)
   const card = cards[idx]
   const done = idx >= cards.length
+  const dialogues = getDialogues(circle.id)
 
   function learn() {
     if (!card) return
@@ -363,6 +394,24 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack }: {
               ))}
             </div>
           )}
+          {dialogues.length > 0 && (
+            <div className="text-left pt-3 border-t border-zinc-800 space-y-1.5">
+              <p className="text-xs font-semibold text-zinc-400 flex items-center gap-1.5">
+                <MessageCircle className="w-3.5 h-3.5 text-teal-400" />
+                {isA ? 'Hội thoại mẫu' : 'Sample dialogues'}
+              </p>
+              {dialogues.map((dl, i) => (
+                <button key={i} onClick={() => onOpenDialogue(dl)}
+                  className="w-full flex items-center gap-2 text-left px-3 py-2.5 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:border-zinc-600 transition">
+                  <MessageCircle className="w-4 h-4 shrink-0 text-teal-400" />
+                  <span className="flex-1 min-w-0 text-sm font-medium text-zinc-200 truncate">
+                    {isA ? dl.titleVi : dl.titleEn}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+                </button>
+              ))}
+            </div>
+          )}
           <button onClick={onBack}
             className="w-full mt-2 py-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-sm font-medium transition">
             {isA ? 'Về lộ trình' : 'Back to roadmap'}
@@ -391,6 +440,52 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack }: {
           </div>
         </>
       )}
+    </div>
+  )
+}
+
+// ── Xem 1 cuộc hội thoại ──────────────────────────────────────────────────────
+// Hai người nói A/B hiển thị so le hai bên (giống khung chat). Mỗi câu tiếng Anh
+// bấm nghe được (KaraokeText), kèm bản dịch tiếng Việt bên dưới.
+function DialogueView({ dialogue, isA, accent, onBack }: {
+  dialogue: Dialogue; isA: boolean
+  accent: typeof ACCENT[keyof typeof ACCENT]
+  onBack: () => void
+}) {
+  return (
+    <div className="animate-fade-in">
+      <button onClick={onBack}
+        className="flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200 transition mb-3">
+        <ChevronLeft className="w-4 h-4" /> {isA ? 'Quay lại lộ trình' : 'Back to roadmap'}
+      </button>
+
+      <div className="glass rounded-2xl p-4 sm:p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <MessageCircle className={`w-5 h-5 shrink-0 ${accent.text}`} />
+          <h3 className="font-bold text-white">{isA ? dialogue.titleVi : dialogue.titleEn}</h3>
+        </div>
+
+        <div className="space-y-2.5">
+          {dialogue.lines.map((ln, i) => {
+            const isB = ln.who === 'B'
+            return (
+              <div key={i} className={`flex ${isB ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border ${
+                  isB ? `${accent.soft} ${accent.ring}` : 'bg-zinc-900/80 border-zinc-800/80'}`}>
+                  <span className={`text-[10px] font-semibold uppercase tracking-wide ${
+                    isB ? accent.text : 'text-zinc-500'}`}>
+                    {ln.who}
+                  </span>
+                  <KaraokeText text={ln.en} lang="en-US"
+                    textClass={`font-medium text-[15px] leading-snug ${isB ? accent.text : 'text-zinc-100'}`}
+                    buttonClass="w-full" />
+                  <p className="text-sm text-zinc-400 mt-1 pl-6">{ln.vi}</p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }
