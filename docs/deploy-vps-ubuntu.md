@@ -251,28 +251,66 @@ sudo nano /etc/nginx/sites-available/en-vi
 Dán nội dung (thay domain nếu cần):
 
 ```nginx
+# ── HTTP → HTTPS redirect ──
 server {
+    listen 80;
     server_name en-vi.donghanhcungban.com;
+    server_tokens off;
+    
+    return 301 https://$host$request_uri;
+}
 
-    # Ẩn phiên bản nginx trong header "Server:" — tránh lộ thông tin hệ thống
+# ── HTTPS + HTTP/2 ──
+server {
+    listen 443 ssl http2;  # HTTP/2 bật ở đây
+    server_name en-vi.donghanhcungban.com;
     server_tokens off;
 
     client_max_body_size 10M;
 
+    # ── SSL/TLS (Certbot sẽ tự thêm sau) ──
+    ssl_certificate /etc/letsencrypt/live/en-vi.donghanhcungban.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/en-vi.donghanhcungban.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # ── Compression ──
     gzip on;
+    gzip_vary on;
     gzip_types text/plain text/css application/json application/javascript application/xml image/svg+xml;
     gzip_min_length 1024;
+    gzip_comp_level 6;
 
-    # Serve file audio TTS trực tiếp từ ổ cứng — nhanh hơn qua Express
+    # ── HTTP/2 optimization ──
+    http2_max_field_size 16k;
+    http2_max_header_size 32k;
+
+    # ── Serve file audio TTS trực tiếp từ ổ cứng — nhanh hơn qua Express ──
     location /uploads/ {
         alias /var/www/english-tutor/uploads/;
-        add_header Cache-Control "public, max-age=31536000";
-        add_header Access-Control-Allow-Origin *;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        add_header Access-Control-Allow-Origin "*";
     }
 
+    # ── index.html: không cache (luôn lấy bản mới) ──
+    location = /index.html {
+        expires -1;
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Pragma "no-cache";
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # ── API + assets ──
     location / {
         proxy_pass http://localhost:3001;
         proxy_http_version 1.1;
+        
+        # WebSocket (luyện nói) + headers cần thiết
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
@@ -280,9 +318,12 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
-    }
 
-    listen 80;
+        # Timeout cho API dài hơi (TTS/STT)
+        proxy_connect_timeout 30s;
+        proxy_send_timeout 30s;
+        proxy_read_timeout 30s;
+    }
 }
 ```
 
@@ -302,12 +343,41 @@ sudo certbot --nginx -d en-vi.donghanhcungban.com
 sudo certbot renew --dry-run
 ```
 
-Certbot tự sửa file Nginx thêm block HTTPS + tự gia hạn mỗi 90 ngày.
+**⚠️ Lưu ý:** Certbot sẽ tự sửa file Nginx để thêm SSL certificate, nhưng sẽ **bỏ đi** `http2` từ dòng `listen`. Sau khi Certbot chạy xong, phải thêm lại `http2`:
 
-Kiểm tra:
 ```bash
+# Sau certbot, edit file lại
+sudo nano /etc/nginx/sites-available/en-vi
+
+# Tìm dòng: listen 443 ssl;
+# Sửa thành: listen 443 ssl http2;
+```
+
+Kiểm tra + reload:
+```bash
+sudo nginx -t && sudo systemctl reload nginx
 curl https://en-vi.donghanhcungban.com/api/health
 ```
+
+### 7c. Kiểm tra HTTP/2 đã bật
+
+```bash
+# Cách 1: dùng curl
+curl -I --http2 https://en-vi.donghanhcungban.com
+# Kết quả phải có: HTTP/2 200
+
+# Cách 2: dùng h2load (cài: sudo apt install nghttp2)
+h2load -n 100 -c 10 https://en-vi.donghanhcungban.com
+
+# Cách 3: kiểm tra online
+# Truy cập: https://www.webpagetest.org/ → nhập domain → xem Protocol
+```
+
+**Lợi ích HTTP/2:**
+- ✅ Multiplexing: gửi nhiều request cùng lúc (không chờ tuần tự)
+- ✅ Nén header: giảm ~30% kích thước request/response
+- ✅ Server push: đẩy asset trước khi client request (tùy chọn)
+- ✅ Phù hợp hơn với nhiều file nhỏ (JS, CSS, hình ảnh)
 
 ---
 
