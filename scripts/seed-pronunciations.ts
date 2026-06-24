@@ -20,7 +20,7 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
-import { generateAudioFromGoogle, type VoiceId } from '../api/_lib/googleTts.ts'
+import { generateAudioFromGoogle, VOICE_VERSION, type VoiceId } from '../api/_lib/googleTts.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
 
 // Thư mục gốc của project (1 cấp trên thư mục scripts/), để mọi đường dẫn file
@@ -31,7 +31,7 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 // KHÔNG dùng .env.local như bản spec gốc, để chỉ cần quản lý đúng 1 file .env duy nhất.
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 
-// ── Cấu hình ────────────────────────────────────────────────────────────────
+// ── Cấu hình ─────────────────────────────────────────────────────────
 const BATCH_SIZE     = 15   // số tác vụ song song — Google TTS cho phép ~100 req/s
 const DELAY_MS       = 0    // không cần nghỉ giữa batch với BATCH_SIZE vừa phải
 const RETRY_DELAY_MS = 5000 // nghỉ giữa các vòng retry (ms) để tránh rate-limit tạm thời
@@ -50,7 +50,7 @@ interface Task {
   voice: VoiceId
 }
 
-// ── Đọc danh sách từ cần seed ────────────────────────────────────────────────
+// ── Đọc danh sách từ cần seed ─────────────────────────────────────────
 // Hỗ trợ 2 dạng file JSON:
 //   1. Mảng chuỗi:        ["apple", "banana", ...]   (ví dụ scripts/seed-errors.json)
 //   2. Mảng object có .word: [{ "word": "apple", ... }, ...]  (dictionary.json đang dùng trong app)
@@ -82,7 +82,7 @@ async function processTask(task: Task): Promise<{ status: 'ok' } | { status: 'er
     const { error: dbError } = await supabase
       .from('pronunciations')
       .upsert(
-        { word, voice, audio_url: publicUrlData.publicUrl, lang: 'en-US' },
+        { word, voice, audio_url: publicUrlData.publicUrl, lang: 'en-US', voice_version: VOICE_VERSION },
         { onConflict: 'word,voice' },
       )
     if (dbError) throw new Error(`Lưu DB lỗi: ${dbError.message}`)
@@ -139,7 +139,7 @@ async function runPass(
   return failed
 }
 
-// ── MAIN ─────────────────────────────────────────────────────────────────────
+// ── MAIN ──────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
   const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GOOGLE_TTS_API_KEY'].filter(
     (key) => !process.env[key],
@@ -217,7 +217,7 @@ async function main(): Promise<void> {
     )
   }
 
-  // ── Kết quả cuối ─────────────────────────────────────────────────────────
+  // ── Kết quả cuối ────────────────────────────────────────────────
   if (remaining.length === 0) {
     console.log('\n🎉 Hoàn thành 100%! Toàn bộ từ đã được cache.')
     if (fs.existsSync(ERRORS_FILE)) fs.unlinkSync(ERRORS_FILE)
