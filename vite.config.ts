@@ -75,21 +75,26 @@ export default defineConfig(({ mode }) => {
             if (id.includes('node_modules/lucide-react')) {
               return 'vendor-ui'
             }
-            // Nhóm 4: Các thư viện khác (không vào group nào ở trên)
+            // Nhóm 4: Mọi thư viện còn lại gộp chung vào 1 file "vendor-misc".
+            // Trước đây tách MỖI package 1 file (vendor-libs-<tên>) → sinh ra nhiều
+            // chunk tí hon (scheduler 3.8KB, remix 8KB...) = nhiều request nhỏ, hại
+            // điểm Lighthouse. Các lib còn lại ở đây đều nhỏ nên gộp 1 file là tối ưu.
             if (id.includes('node_modules/')) {
-              // Tách file lớn để tránh chunk quá lớn (>300KB)
-              // Tên file căn cứ theo tên package để dễ debug
-              const match = id.match(/node_modules\/(@?[^/]+)/)
-              if (match) {
-                const name = match[1].replace(/[@\/]/g, '_')
-                return `vendor-libs-${name}`
-              }
-              return 'vendor-libs'
+              return 'vendor-misc'
             }
           },
-          // Tên file chunk: [name]-[hash:8].js (hash 8 ký tự để track thay đổi)
+          // Tên file chunk: [name]-[hash:8].js (hash 8 ký tự để track thay đổi).
+          // Với các chunk DỮ LIỆU lazy (mỗi file JSON 1 chunk), thêm tiền tố theo
+          // thư mục nguồn để 3 nguồn dictionary/patterns/lessons (đều có file tên
+          // chunk-NNN.json) không sinh ra các file dist trùng tên khó debug.
           entryFileNames: 'js/[name]-[hash:8].js',
-          chunkFileNames: 'js/[name]-[hash:8].js',
+          chunkFileNames(chunkInfo) {
+            const id = chunkInfo.facadeModuleId ?? ''
+            if (id.includes('/data/dictionary/')) return 'js/dict-[name]-[hash:8].js'
+            if (id.includes('/data/patterns/')) return 'js/pattern-[name]-[hash:8].js'
+            if (id.includes('/data/lessons/')) return 'js/lesson-[name]-[hash:8].js'
+            return 'js/[name]-[hash:8].js'
+          },
           assetFileNames: 'assets/[name]-[hash:8][extname]',
         },
       },

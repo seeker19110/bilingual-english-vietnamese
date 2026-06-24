@@ -134,8 +134,12 @@ app.use(
         res.setHeader('Pragma', 'no-cache')
         res.setHeader('Expires', '0')
       }
-      // File assets có hash (*.js, *.css, images) — cache mãi mãi
-      else if (/\.[a-f0-9]{8}\.(js|css|png|jpg|gif|svg|woff2)$/.test(filePath)) {
+      // File assets có hash (*.js, *.css, images) — cache mãi mãi (immutable).
+      // LƯU Ý: Vite đặt tên kiểu "[name]-[hash:8].ext" (ví dụ chunk-009-kqpwuI8u.js),
+      // hash là chuỗi base64url 8 ký tự (A-Za-z0-9_-) đứng SAU dấu gạch ngang —
+      // KHÔNG phải hex thường sau dấu chấm. Regex cũ /\.[a-f0-9]{8}\./ không bao giờ
+      // khớp nên trước đây mọi file JS/CSS chỉ được cache 1 tuần (rớt điểm Lighthouse).
+      else if (/-[A-Za-z0-9_-]{8}\.(js|css|png|jpg|jpeg|gif|svg|webp|woff2?)$/.test(filePath)) {
         res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
       }
       // File khác (manifest, etc) — cache 1 tuần
@@ -150,8 +154,14 @@ app.use(
   }),
 )
 
-// Mọi route không khớp đều trả index.html (React Router xử lý phía client)
+// Mọi route không khớp đều trả index.html (React Router xử lý phía client).
+// index.html KHÔNG được cache — luôn lấy bản mới để tham chiếu đúng tên chunk
+// (có hash) sau mỗi lần deploy; nếu cache index.html cũ sẽ trỏ tới chunk đã biến
+// mất → 404 chunk → màn hình trắng.
 app.get('*', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+  res.setHeader('Pragma', 'no-cache')
+  res.setHeader('Expires', '0')
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 

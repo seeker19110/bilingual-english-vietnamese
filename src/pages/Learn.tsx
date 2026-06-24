@@ -58,14 +58,19 @@ export default function Learn() {
   const [ready, setReady] = useState(isCurriculumReady())
   useEffect(() => { loadCurriculum().then(() => setReady(true)) }, [])
 
-  if (!user) return null
-  const uid = user.id
-
-  const bump = () => setRefresh(k => k + 1)
+  // uid an toàn (chuỗi rỗng khi chưa đăng nhập) — để mọi hook bên dưới luôn được
+  // gọi theo đúng thứ tự, KHÔNG đặt "return null" trước hook (vi phạm Rules of Hooks
+  // → React crash "rendered fewer hooks than expected" khi user đăng xuất).
+  const uid = user?.id ?? ''
 
   // Badge counts cho tab buttons
-  const srsDue   = useMemo(() => ready ? getSRSStats(uid).due   : 0, [uid, ready, refresh])
-  const hardCount = useMemo(() => getDifficultWords(uid).size,       [uid, refresh])
+  const srsDue   = useMemo(() => ready && uid ? getSRSStats(uid).due : 0, [uid, ready, refresh])
+  const hardCount = useMemo(() => uid ? getDifficultWords(uid).size : 0, [uid, refresh])
+
+  // Đã gọi đủ hook ở trên → giờ mới được phép thoát sớm.
+  if (!user) return null
+
+  const bump = () => setRefresh(k => k + 1)
 
   type TabDef = { key: Tab; icon: typeof Target; labelA: string; labelB: string; badge?: number; active: string; inactive: string }
   const TABS: TabDef[] = [
