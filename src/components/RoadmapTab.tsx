@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react'
 import {
   ChevronRight, ChevronLeft, BookOpen, GraduationCap, Check,
-  Sparkles, CheckCircle2, Layers, X,
+  Sparkles, CheckCircle2, Layers, X, Lightbulb, AlertTriangle, PencilLine,
 } from 'lucide-react'
 import KaraokeText from './KaraokeText'
 import WordCard from './WordCard'
 import { CEFR_LEVELS, countGrammar } from '../data/cefr'
-import type { CefrLevel, CefrUnit, GrammarLesson } from '../data/cefr'
+import type { CefrLevel, CefrUnit, GrammarLesson, QuizItem } from '../data/cefr'
 import { FOUNDATION } from '../data/curriculum'
 import type { Circle } from '../data/curriculum'
 import type { DictEntry } from '../types'
@@ -202,6 +202,16 @@ function GrammarDetail({ lesson, isA, accent, onBack }: {
           {lesson.explainVi}
         </div>
 
+        {/* Mẹo / lưu ý */}
+        {lesson.tipVi && (
+          <div className="mt-4 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
+            <p className="text-xs font-semibold text-amber-300 mb-1 flex items-center gap-1.5">
+              <Lightbulb className="w-3.5 h-3.5" /> {isA ? 'Mẹo ghi nhớ' : 'Tip'}
+            </p>
+            <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">{lesson.tipVi}</p>
+          </div>
+        )}
+
         {/* Ví dụ có nghe */}
         <div className="mt-4 pt-4 border-t border-zinc-800/80">
           <p className="text-xs font-semibold text-zinc-400 mb-2">{isA ? 'Ví dụ' : 'Examples'}</p>
@@ -216,7 +226,84 @@ function GrammarDetail({ lesson, isA, accent, onBack }: {
             ))}
           </div>
         </div>
+
+        {/* Lỗi thường gặp */}
+        {lesson.mistakes && lesson.mistakes.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-zinc-800/80">
+            <p className="text-xs font-semibold text-zinc-400 mb-2 flex items-center gap-1.5">
+              <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+              {isA ? 'Lỗi thường gặp' : 'Common mistakes'}
+            </p>
+            <div className="space-y-2">
+              {lesson.mistakes.map((m, i) => (
+                <div key={i} className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3">
+                  <p className="text-sm text-rose-300 line-through decoration-rose-500/60">{m.wrong}</p>
+                  <p className="text-sm text-emerald-300 mt-0.5 flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 shrink-0" /> {m.right}
+                  </p>
+                  <p className="text-xs text-zinc-500 mt-1">{m.noteVi}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Bài tập nhỏ */}
+        {lesson.quiz && lesson.quiz.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-zinc-800/80">
+            <p className="text-xs font-semibold text-zinc-400 mb-2 flex items-center gap-1.5">
+              <PencilLine className={`w-3.5 h-3.5 ${accent.text}`} />
+              {isA ? 'Tự kiểm tra' : 'Quick check'}
+            </p>
+            <div className="space-y-3">
+              {lesson.quiz.map((q, i) => (
+                <QuizCard key={i} item={q} isA={isA} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+    </div>
+  )
+}
+
+// ── Một câu trắc nghiệm tự kiểm tra ───────────────────────────────────────────
+function QuizCard({ item, isA }: {
+  item: QuizItem
+  isA: boolean
+}) {
+  // pick = đáp án người dùng đã chọn (null = chưa chọn).
+  const [pick, setPick] = useState<number | null>(null)
+  const answered = pick !== null
+  const correct = pick === item.answer
+
+  return (
+    <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3">
+      <p className="text-sm font-medium text-zinc-200 mb-2">{item.q}</p>
+      <div className="space-y-1.5">
+        {item.options.map((opt, i) => {
+          // Sau khi trả lời: tô xanh đáp án đúng, tô đỏ đáp án đã chọn nếu sai.
+          let cls = 'bg-zinc-800/70 border-zinc-700 text-zinc-300 hover:border-zinc-500'
+          if (answered) {
+            if (i === item.answer) cls = 'bg-emerald-500/15 border-emerald-500/50 text-emerald-300'
+            else if (i === pick) cls = 'bg-rose-500/15 border-rose-500/50 text-rose-300'
+            else cls = 'bg-zinc-800/40 border-zinc-800 text-zinc-500'
+          }
+          return (
+            <button key={i} disabled={answered} onClick={() => setPick(i)}
+              className={`w-full text-left text-sm px-3 py-2 rounded-lg border transition ${cls}`}>
+              {opt}
+              {answered && i === item.answer && <Check className="inline w-3.5 h-3.5 ml-1.5" />}
+            </button>
+          )
+        })}
+      </div>
+      {answered && (
+        <p className={`text-xs mt-2 ${correct ? 'text-emerald-400' : 'text-rose-400'}`}>
+          {correct ? (isA ? '✓ Chính xác!' : '✓ Correct!') : (isA ? '✗ Chưa đúng.' : '✗ Not quite.')}
+          {item.explainVi && <span className="text-zinc-400"> {item.explainVi}</span>}
+        </p>
+      )}
     </div>
   )
 }
