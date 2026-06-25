@@ -110,11 +110,11 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
           </div>
         </div>
 
-        {/* Mục tiêu "Tôi có thể…" */}
+        {/* Mục tiêu can-do */}
         <div className="mt-4 pt-4 border-t border-zinc-800/80">
           <p className="text-xs font-semibold text-zinc-400 mb-2 flex items-center gap-1.5">
             <Sparkles className={`w-3.5 h-3.5 ${accent.text}`} />
-            {isA ? 'Học xong cấp này bạn có thể:' : 'After this level you can:'}
+            {isA ? 'Hoàn thành cấp này, bạn sẽ:' : 'After this level, you will be able to:'}
           </p>
           <ul className="space-y-1.5">
             {level.canDo.map((c, i) => (
