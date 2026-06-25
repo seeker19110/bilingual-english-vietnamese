@@ -5,6 +5,7 @@ import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
+import { useApiThrottle } from '../lib/useApiThrottle'
 import { callClaude, parseJson } from '../lib/ai'
 import { speakingSystemPrompt, situationLabel } from '../prompts'
 import { startListening, isSTTSupported } from '../lib/stt'
@@ -174,12 +175,19 @@ export default function Speaking() {
   const [typedInput, setTypedInput] = useState('')
   const [processing, setProcessing] = useState(false) // đang gửi audio lên server nhận diện
   const [lastIdx, setLastIdx] = useState(-1)
+  const [throttleCountdown, setThrottleCountdown] = useState(0)
   const stopRecRef = useRef<(() => void) | null>(null)   // dừng Web Speech (fallback)
   const recorderRef = useRef<Recorder | null>(null)       // recorder server STT (chính)
   const bottomRef = useRef<HTMLDivElement>(null)
   // Ưu tiên ghi âm gửi server (chính xác, đa trình duyệt); Web Speech chỉ là dự phòng.
   const canRecord = isRecordingSupported()
   const sttSupported = canRecord || isSTTSupported()
+
+  // Rate limit 10s giữa các lần gọi API
+  const { isThrottled, throttle } = useApiThrottle({
+    delayMs: 10000,
+    onCountdown: setThrottleCountdown,
+  })
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -190,6 +198,7 @@ export default function Speaking() {
   async function startSession(situation: string, level: Level) {
     const usage = getUsage(user.id)
     if (usage.speakingCount >= LIMITS[user.plan].speaking) { setLimitHit(true); return }
+    if (isThrottled) { toast.error(isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`); return }
     setLoading(true)
     setError('')
     const sys = speakingSystemPrompt(situationLabel(situation, dir), level, dir)
@@ -208,6 +217,7 @@ export default function Speaking() {
       setSession(s)
       setLastIdx(0)
       incrementUsage(user.id, 'speakingCount')
+      throttle()  // Rate limit 10s sau lần gọi thành công
       if (!muted) {
         setSpeaking(true)
         // Chiều A: giọng Anh trước, không có feedback khi mở đầu
@@ -287,6 +297,7 @@ export default function Speaking() {
 
   async function sendUserSpeech(text: string) {
     if (!session || loading) return
+    if (isThrottled) { toast.error(isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`); return }
     const usage = getUsage(user.id)
     if (usage.speakingCount >= LIMITS[user.plan].speaking) { setLimitHit(true); return }
     const userMsg: Message = { id: crypto.randomUUID(), role: 'user', content: text, timestamp: Date.now() }
@@ -315,6 +326,7 @@ export default function Speaking() {
       saveSpeakingSession(final)
       setLastIdx(final.messages.length - 1)
       incrementUsage(user.id, 'speakingCount')
+      throttle()  // Rate limit 10s sau lần gọi thành công
       if (!muted && isTTSSupported()) {
         setSpeaking(true)
         await speakBilingual(
@@ -391,7 +403,7 @@ export default function Speaking() {
                       <Plus className="w-4 h-4" />
                     </button>
 
-                    <button onClick={toggleRecord} disabled={loading || limitHit || processing}
+                    <button onClick={toggleRecord} disabled={loading || limitHit || processing || isThrottled}
                       aria-label={recording ? (isA ? 'Dừng ghi âm' : 'Stop recording') : (isA ? 'Bắt đầu ghi âm' : 'Start recording')}
                       className={`relative w-20 h-20 rounded-full flex items-center justify-center transition shadow-xl disabled:opacity-40 active:scale-95 ${
                         recording ? 'bg-red-500 shadow-red-500/40' : 'bg-gradient-to-br from-sky-500 to-cyan-400 shadow-sky-500/30'
@@ -402,6 +414,11 @@ export default function Speaking() {
                         <span className="absolute inset-0 rounded-full bg-red-400 animate-pulse-ring delay-[800ms]" />
                       </>}
                       {recording ? <MicOff className="w-8 h-8 text-white relative z-10" /> : <Mic className="w-8 h-8 text-white" />}
+                      {isThrottled && throttleCountdown > 0 && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full text-white font-bold text-lg">
+                          {throttleCountdown}s
+                        </div>
+                      )}
                     </button>
 
                     <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
@@ -447,16 +464,21 @@ export default function Speaking() {
                         }
                       }}
                       placeholder={isA ? 'Gõ tiếng Anh thay vì nói...' : 'Type Vietnamese instead of speaking...'}
-                      disabled={loading || limitHit}
+                      disabled={loading || limitHit || isThrottled}
                       inputMode="text"
                       className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-[16px] sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-sky-500/60 transition disabled:opacity-50"
                     />
                     <button
                       onClick={() => { if (typedInput.trim()) { sendUserSpeech(typedInput.trim()); setTypedInput('') } }}
-                      disabled={!typedInput.trim() || loading || limitHit}
+                      disabled={!typedInput.trim() || loading || limitHit || isThrottled}
                       aria-label={isA ? 'Gửi tin nhắn' : 'Send message'}
-                      className="p-3 bg-gradient-to-br from-sky-600 to-cyan-500 disabled:opacity-40 text-white rounded-xl transition shrink-0">
+                      className="p-3 bg-gradient-to-br from-sky-600 to-cyan-500 disabled:opacity-40 text-white rounded-xl transition shrink-0 relative">
                       <Send className="w-4 h-4" />
+                      {isThrottled && throttleCountdown > 0 && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-xl text-[10px] font-bold text-white">
+                          {throttleCountdown}s
+                        </div>
+                      )}
                     </button>
                     <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
                       aria-label={muted ? (isA ? 'Bật âm thanh' : 'Unmute') : (isA ? 'Tắt âm thanh' : 'Mute')}
