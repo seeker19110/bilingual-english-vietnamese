@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "node scripts/gen-data-manifest.mjs && tsc && vite build",
     "test": "vitest run",
     "test:watch": "vitest",
     "start": "tsx server.ts",
