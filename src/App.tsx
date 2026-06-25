@@ -1,6 +1,7 @@
 import { Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { LangProvider } from './context/LangProvider'
+import { ThemeProvider } from './context/ThemeProvider'
 import { AuthProvider } from './context/AuthProvider'
 import { ToastProvider } from './context/ToastProvider'
 import { useAuth } from './context/useAuth'
@@ -73,6 +74,7 @@ export default function App() {
   usePrefetchPages()
   return (
     <AuthProvider>
+      <ThemeProvider>
       <LangProvider>
           <ToastProvider>
             <BrowserRouter>
@@ -97,6 +99,7 @@ export default function App() {
             </BrowserRouter>
           </ToastProvider>
       </LangProvider>
+      </ThemeProvider>
     </AuthProvider>
   )
 }

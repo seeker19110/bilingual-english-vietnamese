@@ -2,6 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== THEME ===== */
+/* 3 theme: dark (mặc định), light, dark blue.
+   Mỗi theme chỉ cần định nghĩa lại bảng màu zinc + white ở dạng biến CSS;
+   toàn bộ class bg-zinc và text-zinc trong app tự đổi theo (xem tailwind.config.js). */
+:root, [data-theme="dark"] {
+  color-scheme: dark;
+  --c-white: 255 255 255;
+  --z-50:  250 250 250;
+  --z-100: 244 244 245;
+  --z-200: 228 228 231;
+  --z-300: 212 212 216;
+  --z-400: 161 161 170;
+  --z-500: 113 113 122;
+  --z-600: 82 82 91;
+  --z-700: 63 63 70;
+  --z-800: 39 39 42;
+  --z-900: 24 24 27;
+  --z-950: 9 9 11;
+  --glass-bg: 24 24 27;
+  --glass-border: 63 63 70;
+}
+
+/* Light: đảo ngược thang zinc (nền sáng, chữ tối). white → gần đen để chữ "text-white" vẫn đọc được. */
+[data-theme="light"] {
+  color-scheme: light;
+  --c-white: 24 24 27;
+  --z-50:  9 9 11;
+  --z-100: 24 24 27;
+  --z-200: 39 39 42;
+  --z-300: 63 63 70;
+  --z-400: 82 82 91;
+  --z-500: 113 113 122;
+  --z-600: 161 161 170;
+  --z-700: 212 212 216;
+  --z-800: 228 228 231;
+  --z-900: 244 244 245;
+  --z-950: 255 255 255;
+  --glass-bg: 255 255 255;
+  --glass-border: 212 212 216;
+}
+
+/* Dark blue: tông xanh navy (slate) */
+[data-theme="dark-blue"] {
+  color-scheme: dark;
+  --c-white: 255 255 255;
+  --z-50:  248 250 252;
+  --z-100: 241 245 249;
+  --z-200: 226 232 240;
+  --z-300: 203 213 225;
+  --z-400: 148 163 184;
+  --z-500: 100 116 139;
+  --z-600: 71 85 105;
+  --z-700: 51 65 85;
+  --z-800: 30 41 59;
+  --z-900: 15 23 42;
+  --z-950: 8 12 28;
+  --glass-bg: 15 23 42;
+  --glass-border: 51 65 85;
+}
+
 @layer base {
   body {
     @apply bg-zinc-950 text-zinc-100 antialiased;
@@ -60,19 +120,19 @@
 
   /* Glass card — fallback solid khi giảm hiệu ứng hoặc thiết bị yếu */
   .glass {
-    background: rgba(24, 24, 27, 0.95);
-    border: 1px solid rgba(63, 63, 70, 0.8);
+    background: rgb(var(--glass-bg) / 0.95);
+    border: 1px solid rgb(var(--glass-border) / 0.8);
   }
   @supports (backdrop-filter: blur(1px)) {
     .glass {
-      background: rgba(24, 24, 27, 0.8);
+      background: rgb(var(--glass-bg) / 0.8);
       -webkit-backdrop-filter: blur(12px);
       backdrop-filter: blur(12px);
     }
   }
   @media (prefers-reduced-motion: reduce) {
     .glass {
-      background: rgba(24, 24, 27, 0.98);
+      background: rgb(var(--glass-bg) / 0.98);
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
     }
