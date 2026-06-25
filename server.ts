@@ -16,7 +16,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 import ttsHandler from './api/tts.js'
-import claudeHandler from './api/claude.js'
+import aiHandler from './api/ai.js'
 import pronunciationHandler from './api/pronunciation.js'
 import sttHandler from './api/stt.js'
 import pushHandler from './api/push.js'
@@ -106,7 +106,7 @@ app.get('/api/health', (_req, res) => {
 // ── API routes ────────────────────────────────────────────────────────────────
 // Thêm vào đây nếu tạo thêm file api/*.ts mới
 app.all('/api/tts', wrapEdge(ttsHandler))
-app.all('/api/claude', wrapEdge(claudeHandler))
+app.all('/api/claude', wrapEdge(aiHandler))
 app.all('/api/pronunciation', wrapEdge(pronunciationHandler))
 app.all('/api/push', wrapEdge(pushHandler))
 app.all('/api/dictionary', wrapEdge(dictionaryHandler))
