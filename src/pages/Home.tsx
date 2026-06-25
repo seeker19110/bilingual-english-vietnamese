@@ -10,6 +10,7 @@ import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import { useCloudSync } from '../lib/useCloudSync'
 import ShareProgress from '../components/ShareProgress'
+import OfflineProgress from '../components/OfflineProgress'
 import { isPushSupported, getNotifPermission, subscribePush, unsubscribePush } from '../lib/pushNotif'
 import { supabase } from '../lib/supabase'
 
@@ -276,6 +277,9 @@ export default function Home() {
             )}
           </div>
         </div>
+
+        {/* Thanh tiến độ tải dữ liệu để dùng offline (tự ẩn khi chưa/không tải) */}
+        <OfflineProgress isA={isA} />
 
         {/* Modal chia sẻ tiến độ */}
         {showShare && user && (

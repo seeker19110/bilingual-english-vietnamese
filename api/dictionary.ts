@@ -93,16 +93,24 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Đếm số lượng theo loại từ trên TOÀN BỘ kết quả khớp (để vẽ chip lọc loại từ).
+  // Đếm TRƯỚC khi lọc theo `pos` để chip luôn hiện tổng đầy đủ, không bị thay đổi
+  // theo bộ lọc đang chọn.
   const counts: Record<string, number> = {}
   for (const e of matches) counts[e.pos] = (counts[e.pos] || 0) + 1
   const posGroups = Object.entries(counts).sort((a, b) => b[1] - a[1])
+
+  // Lọc theo loại từ Ở SERVER (nếu client gửi `pos`). Trước đây client tự lọc trên
+  // tối đa 200 kết quả trả về → khi 1 truy vấn có >200 từ khớp, số trên chip (đếm
+  // toàn bộ) lệch với số thực sự lọc được. Lọc ở server bảo đảm khớp.
+  const posParam = url.searchParams.get('pos')
+  const filtered = posParam ? matches.filter((e) => e.pos === posParam) : matches
 
   return json(
     {
       total: entries.length,
       matched: matches.length,
       posGroups,
-      results: matches.slice(0, MAX_RESULTS), // cắt bớt để response không quá lớn
+      results: filtered.slice(0, MAX_RESULTS), // cắt bớt để response không quá lớn
     },
     200,
     allHeaders,
