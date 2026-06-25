@@ -1,13 +1,11 @@
-// Loader cho từ điển (tách bởi scripts/split-dictionary.mjs).
-// dictionary.json (~2,6MB) được chia thành nhiều chunk-*.json (1.000 từ/file).
-// loadDictionary() tải TẤT CẢ chunk SONG SONG rồi ghép lại — nhanh hơn nạp 1 file
-// JS lớn, và Vite tách mỗi chunk thành file riêng (tải song song, cache tốt hơn).
-// Kết quả được cache để các trang khác nhau (Dictionary, Learn) chỉ tải 1 lần.
+// Loader cho từ điển — các file chunk-*.json nằm trong /public/data/dictionary/
+// và được tải bằng fetch() thay vì import.meta.glob để giảm số module Vite phải xử lý lúc build.
+// loadDictionary() tải TẤT CẢ chunk SONG SONG rồi ghép lại. Kết quả được cache.
 
 import type { DictEntry } from '../../types'
 
-// import.meta.glob: Vite biến mỗi chunk thành 1 hàm import động (file JS riêng).
-const chunkLoaders = import.meta.glob<{ default: DictEntry[] }>('./chunk-*.json')
+// Đếm số chunk: script split-dictionary.mjs đặt tên chunk-000.json đến chunk-009.json (10 file).
+const CHUNK_COUNT = 10
 
 let cache: DictEntry[] | null = null
 let _loadPromise: Promise<DictEntry[]> | null = null
@@ -17,10 +15,13 @@ export function loadDictionary(): Promise<DictEntry[]> {
   if (cache) return Promise.resolve(cache)
   if (_loadPromise) return _loadPromise
 
-  // Sắp xếp theo tên file để giữ đúng thứ tự từ gốc (chunk-000, 001, ...).
-  const keys = Object.keys(chunkLoaders).sort()
-  _loadPromise = Promise.all(keys.map((k) => chunkLoaders[k]())).then((mods) => {
-    cache = mods.flatMap((m) => m.default)
+  const fetches = Array.from({ length: CHUNK_COUNT }, (_, i) => {
+    const name = `chunk-${String(i).padStart(3, '0')}.json`
+    return fetch(`/data/dictionary/${name}`).then((r) => r.json() as Promise<DictEntry[]>)
+  })
+
+  _loadPromise = Promise.all(fetches).then((chunks) => {
+    cache = chunks.flat()
     return cache
   })
   return _loadPromise

@@ -8,7 +8,8 @@ import WordOfTheDay from '../components/WordOfTheDay'
 import KaraokeText from '../components/KaraokeText'
 import Flashcard from '../components/Flashcard'
 import WordIllustration from '../components/WordIllustration'
-import { EXTRA_EXAMPLES } from '../data/extra-examples'
+import type { ExPair } from '../data/extra-examples'
+import { loadExtraExamples } from '../data/extraExamplesLoader'
 import type { DictEntry } from '../types'
 import { searchDictionary, fetchWordOfDay } from '../lib/dictionaryApi'
 import { getDirection } from '../lib/storage'
@@ -59,6 +60,9 @@ export default function Dictionary() {
   const [searching, setSearching]   = useState(false)
   const [totalWords, setTotalWords] = useState(0)
   const [wordOfDay, setWordOfDay]   = useState<DictEntry | null>(null)
+  const [extraExamples, setExtraExamples] = useState<Record<string, [ExPair, ExPair]>>({})
+
+  useEffect(() => { loadExtraExamples().then(setExtraExamples) }, [])
 
   // Lấy "từ vựng hôm nay" + tổng số từ (cho phụ đề) — 1 lần khi mở trang.
   useEffect(() => {
@@ -253,7 +257,7 @@ export default function Dictionary() {
                     )}
                   >
                     {results.map(e => {
-                      const extras   = EXTRA_EXAMPLES[e.word.toLowerCase()]
+                      const extras   = extraExamples[e.word.toLowerCase()]
                       const isLearned = learnedWords.has(e.word.toLowerCase())
                       return (
                         <div key={e.word} className="glass rounded-xl p-4 hover:bg-zinc-800/60 transition">

@@ -1,9 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Eye, Star } from 'lucide-react'
 import PronounceButton from './PronounceButton'
 import SpeakButton from './SpeakButton'
 import PronunciationCheck from './PronunciationCheck'
-import { EXTRA_EXAMPLES } from '../data/extra-examples'
+import type { ExPair } from '../data/extra-examples'
+import { loadExtraExamples } from '../data/extraExamplesLoader'
+
+// Cache module-level để không fetch lại mỗi lần component mount
+let _extraCache: Record<string, [ExPair, ExPair]> | null = null
+loadExtraExamples().then(d => { _extraCache = d })
 import type { DictEntry } from '../types'
 import { isDifficult, toggleDifficult } from '../lib/vocab'
 
@@ -15,6 +20,12 @@ export default function WordCard({ card, isA, uid, onUpdate }: {
 }) {
   const [flipped,   setFlipped]   = useState(false)
   const [difficult, setDifficult] = useState(() => isDifficult(uid, card.word))
+  const [extraExamples, setExtraExamples] = useState<Record<string, [ExPair, ExPair]>>(_extraCache ?? {})
+
+  useEffect(() => {
+    if (_extraCache) { setExtraExamples(_extraCache); return }
+    loadExtraExamples().then(d => { _extraCache = d; setExtraExamples(d) })
+  }, [])
 
   function handleStar(e: React.MouseEvent) {
     e.stopPropagation()
@@ -51,9 +62,9 @@ export default function WordCard({ card, isA, uid, onUpdate }: {
               <span className="text-xl text-zinc-100 font-medium mb-2">{card.vi}</span>
               {card.ex_en && <span className="text-sm text-zinc-400 italic mt-1">{card.ex_en}</span>}
               {card.ex_vi && <span className="text-xs text-zinc-400 mt-0.5">{card.ex_vi}</span>}
-              {EXTRA_EXAMPLES[card.word.toLowerCase()] && (
+              {extraExamples[card.word.toLowerCase()] && (
                 <div className="mt-2 space-y-1 text-left w-full border-t border-zinc-700/50 pt-2">
-                  {EXTRA_EXAMPLES[card.word.toLowerCase()].map((ex, i) => (
+                  {extraExamples[card.word.toLowerCase()].map((ex, i) => (
                     <div key={i}>
                       <p className="text-xs text-emerald-400/80 italic">{ex.en}</p>
                       <p className="text-xs text-zinc-400">{ex.vi}</p>

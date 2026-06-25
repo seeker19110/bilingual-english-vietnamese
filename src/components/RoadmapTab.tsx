@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import {
   ChevronRight, ChevronLeft, BookOpen, GraduationCap, Check,
   Sparkles, CheckCircle2, Layers, X, Lightbulb, AlertTriangle, PencilLine,
@@ -6,12 +6,16 @@ import {
 } from 'lucide-react'
 import KaraokeText from './KaraokeText'
 import WordCard from './WordCard'
-import { CEFR_LEVELS, countGrammar } from '../data/cefr'
 import type { CefrLevel, CefrUnit, GrammarLesson, QuizItem } from '../data/cefr'
-import { FOUNDATION } from '../data/curriculum'
 import type { Circle } from '../data/curriculum'
-import { getDialogues } from '../data/dialogues'
 import type { Dialogue } from '../data/dialogues'
+import { loadCefr } from '../data/cefrLoader'
+import { loadFoundation } from '../data/curriculumLoader'
+import { getDialogues } from '../data/dialoguesLoader'
+
+function countGrammar(level: CefrLevel): number {
+  return level.units.reduce((sum, u) => sum + u.grammar.length, 0)
+}
 import type { DictEntry } from '../types'
 import { getLearnedWords, markLearned } from '../lib/vocab'
 import { addToSRS } from '../lib/srs'
@@ -27,11 +31,8 @@ const ACCENT: Record<CefrLevel['accent'], {
   amber:   { active: 'bg-amber-500/20 text-amber-300 border-amber-500/50',       bar: 'bg-amber-500',   text: 'text-amber-300',   soft: 'bg-amber-500/10',   ring: 'border-amber-500/30' },
 }
 
-// Tra cứu nhanh vòng từ vựng theo id (FOUNDATION là dữ liệu tĩnh — không cần
-// chờ tải từ điển, nên tab Lộ trình dùng được ngay).
-const CIRCLE_BY_ID: Record<string, Circle> = Object.fromEntries(
-  FOUNDATION.map(c => [c.id, c]),
-)
+// CIRCLE_BY_ID được khởi tạo rỗng, điền vào sau khi FOUNDATION tải xong.
+let CIRCLE_BY_ID: Record<string, Circle> = {}
 
 // Đếm số từ trong 1 vòng đã thuộc (so cả bản gốc lẫn chữ thường).
 function circleDone(circle: Circle, learned: Set<string>): number {
@@ -42,12 +43,19 @@ function circleDone(circle: Circle, learned: Set<string>): number {
 export default function RoadmapTab({ uid, isA, onProgress }: {
   uid: string; isA: boolean; onProgress: () => void
 }) {
+  const [cefrLevels, setCefrLevels] = useState<CefrLevel[]>([])
   const [levelId, setLevelId] = useState<CefrLevel['id']>('A1')
   const [lesson, setLesson]   = useState<GrammarLesson | null>(null)
   const [circle, setCircle]   = useState<Circle | null>(null)
   const [dialogue, setDialogue] = useState<Dialogue | null>(null)
 
-  const level = CEFR_LEVELS.find(l => l.id === levelId)!
+  useEffect(() => {
+    loadCefr().then(setCefrLevels)
+    loadFoundation().then(f => { CIRCLE_BY_ID = Object.fromEntries(f.map(c => [c.id, c])) })
+  }, [])
+
+  const level = cefrLevels.find(l => l.id === levelId) ?? cefrLevels[0]
+  if (!level) return null
   const accent = ACCENT[level.accent]
 
   // Màn xem 1 cuộc hội thoại
@@ -73,7 +81,7 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
     <div className="animate-fade-in">
       {/* Chọn cấp độ CEFR */}
       <div className="grid grid-cols-4 gap-1.5 mb-4">
-        {CEFR_LEVELS.map(l => {
+        {cefrLevels.map(l => {
           const a = ACCENT[l.accent]
           const on = l.id === levelId
           return (
@@ -139,7 +147,8 @@ function UnitCard({ unit, isA, uid, accent, onOpenLesson, onOpenCircle, onOpenDi
   onOpenDialogue: (d: Dialogue) => void
 }) {
   const learned = useMemo(() => getLearnedWords(uid), [uid])
-  const dialogues = getDialogues(unit.id)
+  const [dialogues, setDialogues] = useState<Dialogue[]>([])
+  useEffect(() => { getDialogues(unit.id).then(setDialogues) }, [unit.id])
 
   return (
     <div className="glass rounded-2xl p-4">
@@ -352,7 +361,8 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack, onOpenDialogue }: {
   const [idx, setIdx] = useState(0)
   const card = cards[idx]
   const done = idx >= cards.length
-  const dialogues = getDialogues(circle.id)
+  const [dialogues, setDialogues] = useState<Dialogue[]>([])
+  useEffect(() => { getDialogues(circle.id).then(setDialogues) }, [circle.id])
 
   function learn() {
     if (!card) return

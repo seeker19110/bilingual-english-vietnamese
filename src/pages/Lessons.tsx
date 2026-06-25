@@ -4,7 +4,7 @@ import Layout from '../components/Layout'
 import VoiceToggle from '../components/VoiceToggle'
 import { getDirection } from '../lib/storage'
 import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio } from '../lib/tts'
-import { INDEX, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
+import { loadIndex, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
 import type { Direction } from '../types'
 
 const PAGE_SIZE = 10
@@ -73,11 +73,14 @@ const WordText = memo(function WordText({
 export default function Lessons() {
   const dir: Direction = getDirection()
   const isA = dir === 'A'
+  const [index, setIndex]           = useState<LessonMeta[]>([])
   const [query, setQuery]           = useState('')
   const deferredQuery               = useDeferredValue(query)
   const [selectedMeta, setSelectedMeta] = useState<LessonMeta | null>(null)
   const [lesson, setLesson]         = useState<Lesson | null>(null)
   const [loadingLesson, setLoadingLesson] = useState(false)
+
+  useEffect(() => { loadIndex().then(setIndex) }, [])
 
   useEffect(() => {
     if (!selectedMeta) { setLesson(null); return }
@@ -130,7 +133,7 @@ export default function Lessons() {
           <div className="hidden sm:block mb-4">
             <SearchBar query={query} setQuery={setQuery} isA={isA} variant="desktop" />
           </div>
-          <LessonList lessons={INDEX} isA={isA} query={deferredQuery} onSelect={setSelectedMeta} />
+          <LessonList lessons={index} isA={isA} query={deferredQuery} onSelect={setSelectedMeta} />
         </div>
       </main>
 

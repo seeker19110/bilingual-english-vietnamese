@@ -12,9 +12,9 @@
 // ──────────────────────────────────────────────────────────────────────
 
 import type { DictEntry } from '../types'
-import { FOUNDATION } from '../data/curriculum'
 import type { Circle } from '../data/curriculum'
 import { loadDictionary } from '../data/dictionary/loader'
+import { loadFoundation } from '../data/curriculumLoader'
 
 // Mục tiêu 20 từ/ngày — khớp với tài liệu (CLAUDE.md), FAQ trong index.html và UI tab "Hôm nay".
 export const DAILY_GOAL = 20
@@ -25,6 +25,7 @@ export const DAILY_GOAL = 20
 // ENTRIES rỗng cho tới khi nạp xong → phải await loadCurriculum() trước khi
 // gọi các hàm bên dưới (xem Learn.tsx / Dictionary.tsx).
 let ENTRIES: DictEntry[] = []
+let FOUNDATION: Circle[] = []
 
 // Promise nạp — cache lại để chỉ tải MỘT lần dù được gọi từ nhiều nơi.
 let _loadPromise: Promise<void> | null = null
@@ -32,8 +33,9 @@ let _loadPromise: Promise<void> | null = null
 // Gọi (await) một lần trước khi dùng getCircles/getLearningPath/getTodayBatch...
 export function loadCurriculum(): Promise<void> {
   if (!_loadPromise) {
-    _loadPromise = loadDictionary().then(entries => {
+    _loadPromise = Promise.all([loadDictionary(), loadFoundation()]).then(([entries, foundation]) => {
       ENTRIES = entries
+      FOUNDATION = foundation
     })
   }
   return _loadPromise

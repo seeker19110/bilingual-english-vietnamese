@@ -1,9 +1,6 @@
-// Loader cho dữ liệu "Bài học hội thoại" (tách bởi scripts/split-lessons.mjs).
-// index.json nhẹ (chỉ meta từng bài) được nạp ngay để hiện danh sách; nội dung
-// đầy đủ (turns) của mỗi bài nằm trong các file chunk (10 bài/chunk) và CHỈ được
-// tải khi người dùng bấm vào bài đó (lazy load) — giống chuẩn của patterns/loader.ts.
-
-import indexData from './index.json'
+// Loader cho dữ liệu "Bài học hội thoại" — các file chunk-*.json và index.json
+// nằm trong /public/data/lessons/ và được tải bằng fetch() thay vì import.meta.glob.
+// index.json (chỉ meta) được tải 1 lần; chunk chỉ tải khi người dùng bấm vào bài.
 
 export interface Turn {
   speaker: 'A' | 'B'
@@ -38,26 +35,33 @@ export interface Lesson {
   speakerBName?: SpeakerName
 }
 
-export const INDEX: LessonMeta[] = indexData as LessonMeta[]
+// Tải index ngay lần đầu (file nhỏ, chỉ meta).
+let _indexPromise: Promise<LessonMeta[]> | null = null
+export function loadIndex(): Promise<LessonMeta[]> {
+  if (!_indexPromise) {
+    _indexPromise = fetch('/data/lessons/index.json').then((r) => r.json())
+  }
+  return _indexPromise
+}
 
-// Map tất cả file chunk thành các hàm import động (Vite tách thành file riêng,
-// chỉ tải qua mạng khi gọi) — mỗi lần chỉ kéo về 10 bài.
-const chunkLoaders = import.meta.glob<{ default: Lesson[] }>('./chunk-*.json')
+// Xuất INDEX để tương thích ngược với code cũ dùng `import { INDEX }`.
+// Giá trị này là mảng rỗng cho đến khi loadIndex() resolve.
+export const INDEX: LessonMeta[] = []
+loadIndex().then((d) => { INDEX.splice(0, INDEX.length, ...d) })
 
 const cache = new Map<number, Lesson[]>()
 
 function chunkKey(n: number): string {
-  return `./chunk-${String(n).padStart(3, '0')}.json`
+  return `chunk-${String(n).padStart(3, '0')}.json`
 }
 
-// Tải 1 chunk (10 bài). Có cache để không tải lại.
+// Tải 1 chunk (nhiều bài). Có cache để không tải lại.
 export async function loadChunk(n: number): Promise<Lesson[]> {
   if (cache.has(n)) return cache.get(n)!
-  const loader = chunkLoaders[chunkKey(n)]
-  if (!loader) return []
-  const mod = await loader()
-  cache.set(n, mod.default)
-  return mod.default
+  const res = await fetch(`/data/lessons/${chunkKey(n)}`)
+  const data: Lesson[] = await res.json()
+  cache.set(n, data)
+  return data
 }
 
 // Tải đầy đủ 1 bài (gồm mọi turn) dựa trên meta.
