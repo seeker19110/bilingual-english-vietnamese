@@ -49,7 +49,7 @@ export default function Onboarding() {
             <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i <= step ? 'bg-emerald-500' : 'bg-zinc-800'}`} />
           ))}
         </div>
-        <p className="text-xs text-zinc-500 mt-2">Bước {step + 1} / 3</p>
+        <p className="text-xs text-zinc-400 mt-2">Bước {step + 1} / 3</p>
       </div>
 
       {/* Bước 0: Trình độ */}
@@ -68,7 +68,7 @@ export default function Onboarding() {
                 <span className="text-2xl">{l.emoji}</span>
                 <div className="text-left flex-1">
                   <p className="font-semibold text-[15px]">{l.label}</p>
-                  <p className="text-xs text-zinc-500 mt-0.5">{l.desc}</p>
+                  <p className="text-xs text-zinc-400 mt-0.5">{l.desc}</p>
                 </div>
                 {level === l.value && <Check className="w-4 h-4 text-emerald-400 shrink-0" />}
               </button>
@@ -107,10 +107,10 @@ export default function Onboarding() {
                   className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all ${
                     active ? colors[g.color] : 'bg-zinc-900/80 border-zinc-800 hover:border-zinc-700'
                   }`}>
-                  <Icon className={`w-5 h-5 shrink-0 ${active ? iconColors[g.color] : 'text-zinc-500'}`} />
+                  <Icon className={`w-5 h-5 shrink-0 ${active ? iconColors[g.color] : 'text-zinc-400'}`} />
                   <div className="text-left flex-1">
                     <p className={`font-semibold text-[15px] ${active ? 'text-white' : 'text-zinc-400'}`}>{g.label}</p>
-                    <p className="text-xs text-zinc-500 mt-0.5">{g.desc}</p>
+                    <p className="text-xs text-zinc-400 mt-0.5">{g.desc}</p>
                   </div>
                   {active && <Check className={`w-4 h-4 shrink-0 ${iconColors[g.color]}`} />}
                 </button>
@@ -144,7 +144,7 @@ export default function Onboarding() {
                     : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:border-zinc-700'
                 }`}>
                 <p className="text-3xl font-bold">{m}</p>
-                <p className="text-xs text-zinc-500 mt-1">phút / ngày</p>
+                <p className="text-xs text-zinc-400 mt-1">phút / ngày</p>
                 {m === 10 && <p className="text-[10px] text-emerald-400 mt-1">Phổ biến nhất</p>}
               </button>
             ))}

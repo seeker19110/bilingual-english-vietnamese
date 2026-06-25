@@ -64,7 +64,7 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-violet-500/25">
             <Trophy className="w-6 h-6 text-white" />
           </div>
-          <p className="text-sm text-zinc-500 mb-1">
+          <p className="text-sm text-zinc-400 mb-1">
             {isA ? 'Điểm ước lượng IELTS' : 'Estimated score'}
           </p>
           <div className={`text-7xl font-black bg-gradient-to-b ${scoreGradient} bg-clip-text text-transparent leading-none py-2`}>
@@ -87,7 +87,7 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
           <div className="glass rounded-2xl p-5 animate-fade-in delay-150">
             <p className="text-sm font-semibold text-zinc-200 mb-4">
               {isA ? 'Lỗi cần sửa' : 'Errors to fix'}
-              <span className="ml-2 text-xs font-normal text-zinc-500">({feedback.errors.length})</span>
+              <span className="ml-2 text-xs font-normal text-zinc-400">({feedback.errors.length})</span>
             </p>
             <div className="space-y-3">
               {feedback.errors.map((err, i) => (
@@ -121,11 +121,12 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
         </div>
 
         <div className="glass rounded-2xl p-5 animate-fade-in delay-250">
-          <button onClick={() => setShowSample(p => !p)} className="flex items-center justify-between w-full">
+          <button onClick={() => setShowSample(p => !p)} className="flex items-center justify-between w-full"
+            aria-expanded={showSample} aria-label={isA ? 'Hiện/ẩn đoạn văn mẫu' : 'Toggle sample paragraph'}>
             <p className="text-sm font-semibold text-zinc-200">
               {isA ? 'Đoạn văn mẫu' : 'Sample paragraph'}
             </p>
-            <ChevronDown className={`w-4 h-4 text-zinc-500 transition ${showSample ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-zinc-400 transition ${showSample ? 'rotate-180' : ''}`} />
           </button>
           {showSample && (
             <p className="mt-3 text-sm text-zinc-300 leading-relaxed bg-zinc-800/40 rounded-xl p-4">
@@ -135,6 +136,7 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
         </div>
 
         <button onClick={onReset}
+          aria-label={isA ? 'Bài viết mới' : 'New essay'}
           className="w-full flex items-center justify-center gap-2 border border-zinc-800/80 hover:border-zinc-700 text-zinc-400 hover:text-white rounded-xl py-3 text-sm transition hover:bg-zinc-800/40 active:scale-[0.99]">
           <RotateCcw className="w-4 h-4" />
           {isA ? 'Bài viết mới' : 'New essay'}
@@ -221,12 +223,12 @@ export default function Writing() {
               </option>
               {samplePrompts.map((p, i) => <option key={i} value={p}>{p.slice(0, 60)}…</option>)}
             </select>
-            <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-zinc-500 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-zinc-400 pointer-events-none" />
           </div>
           <textarea id="prompt-input" name="essayPrompt" value={essayPrompt} onChange={e => setEssayPrompt(e.target.value)}
             placeholder={isA ? 'Hoặc dán đề bài IELTS vào đây...' : 'Or paste a Vietnamese writing prompt here...'}
             rows={3}
-            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-violet-500/70 transition resize-none" />
+            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-violet-500/70 transition resize-none" />
         </div>
 
         <div className="space-y-2">
@@ -244,7 +246,7 @@ export default function Writing() {
                 ? 'Viết bài vào đây... (IELTS Task 2 thường 250–350 từ)'
                 : 'Write your Vietnamese essay here... (aim for 150–250 words)'
             }
-            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-violet-500/70 transition resize-none min-h-[160px] max-h-[40dvh] sm:max-h-[50vh]" />
+            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-violet-500/70 transition resize-none min-h-[160px] max-h-[40dvh] sm:max-h-[50vh]" />
         </div>
 
         {error && (
@@ -254,6 +256,7 @@ export default function Writing() {
         )}
 
         <button onClick={submit} disabled={loading || !essay.trim() || !essayPrompt.trim()}
+          aria-label={isA ? 'Chấm bài ngay' : 'Grade my essay'}
           className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-purple-500 hover:from-violet-500 hover:to-purple-400 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] shadow-lg shadow-violet-500/20">
           {loading
             ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -263,7 +266,7 @@ export default function Writing() {
           }
         </button>
 
-        <p className="text-center text-xs text-zinc-600">
+        <p className="text-center text-xs text-zinc-400">
           {isA
             ? 'AI chấm theo tiêu chí IELTS — Task Response · Coherence · Lexical · Grammar'
             : 'AI grades Vietnamese writing — Task Response · Coherence · Lexical · Grammar'}

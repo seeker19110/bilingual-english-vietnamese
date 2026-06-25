@@ -44,8 +44,8 @@ export default function SpeakButton({ text, lang, title, size = 'sm' }: Props) {
 
   // Màu theo ngôn ngữ: xanh lá = tiếng Anh, xanh dương = tiếng Việt
   const idleClass  = lang === 'en-US'
-    ? 'bg-zinc-800/60 text-zinc-500 hover:bg-emerald-500/20 hover:text-emerald-300'
-    : 'bg-zinc-800/60 text-zinc-500 hover:bg-sky-500/20 hover:text-sky-300'
+    ? 'bg-zinc-800/60 text-zinc-400 hover:bg-emerald-500/20 hover:text-emerald-300'
+    : 'bg-zinc-800/60 text-zinc-400 hover:bg-sky-500/20 hover:text-sky-300'
   const activeClass = lang === 'en-US'
     ? 'bg-emerald-500/20 text-emerald-300'
     : 'bg-sky-500/20 text-sky-300'

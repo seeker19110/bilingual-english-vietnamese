@@ -63,7 +63,7 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
       </div>
 
       {/* Nhãn các mốc dưới thanh */}
-      <div className="flex justify-between text-[10px] text-zinc-500 mb-3">
+      <div className="flex justify-between text-[10px] text-zinc-400 mb-3">
         <span>0</span>
         {MILESTONES.map(m => (
           <span key={m.count} className={learned >= m.count ? 'text-emerald-400 font-medium' : ''}>
@@ -77,14 +77,14 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
         {current ? (
           <span className="text-zinc-300">
             Trình độ: <strong className="text-emerald-300">{current.label}</strong>
-            <span className="text-zinc-500"> ({current.cefr})</span>
+            <span className="text-zinc-400"> ({current.cefr})</span>
           </span>
         ) : (
-          <span className="text-zinc-500">Bắt đầu học để đạt mốc đầu tiên (1.000 từ)</span>
+          <span className="text-zinc-400">Bắt đầu học để đạt mốc đầu tiên (1.000 từ)</span>
         )}
         {next && (
           <span className="flex items-center gap-1 text-zinc-400">
-            <Target className="w-3 h-3 text-zinc-500" />
+            <Target className="w-3 h-3 text-zinc-400" />
             Còn <strong className="text-white">{(next.count - learned).toLocaleString('vi-VN')}</strong> từ → {next.label}
           </span>
         )}

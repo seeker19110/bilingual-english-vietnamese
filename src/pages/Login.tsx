@@ -60,7 +60,7 @@ export default function Login() {
     }
   }
 
-  const inputCls = "w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-500 outline-none focus:border-emerald-500/70 focus:bg-zinc-800 transition"
+  const inputCls = "w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-400 outline-none focus:border-emerald-500/70 focus:bg-zinc-800 transition"
 
   return (
     <div className="min-h-dvh bg-zinc-950 flex flex-col items-center justify-center px-4 relative overflow-hidden">
@@ -76,7 +76,7 @@ export default function Login() {
           <BookOpen className="w-8 h-8 text-white" />
         </div>
         <h1 className="text-2xl font-bold text-white tracking-tight">Gia sư tiếng Anh AI</h1>
-        <p className="text-zinc-500 text-sm mt-1.5 tracking-wide">Luyện nói · Viết · Nhận xét bằng tiếng Việt</p>
+        <p className="text-zinc-400 text-sm mt-1.5 tracking-wide">Luyện nói · Viết · Nhận xét bằng tiếng Việt</p>
       </div>
 
       {/* Card */}
@@ -89,7 +89,7 @@ export default function Login() {
               className={`flex-1 py-2 text-sm font-medium rounded-lg transition ${
                 mode === m
                   ? 'bg-zinc-700 text-white shadow-sm'
-                  : 'text-zinc-500 hover:text-zinc-300'
+                  : 'text-zinc-400 hover:text-zinc-300'
               }`}>
               {m === 'login' ? 'Đăng nhập' : 'Đăng ký'}
             </button>
@@ -110,7 +110,7 @@ export default function Login() {
               onChange={e => setPassword(e.target.value)}
               placeholder="Mật khẩu" className={`${inputCls} pr-11`} required minLength={6} />
             <button type="button" onClick={() => setShowPw(p => !p)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 p-0.5 transition">
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 p-0.5 transition">
               {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
@@ -133,7 +133,7 @@ export default function Login() {
         {/* Ngăn cách "hoặc" */}
         <div className="flex items-center gap-3 my-4">
           <div className="flex-1 h-px bg-zinc-700/60" />
-          <span className="text-xs text-zinc-600">hoặc</span>
+          <span className="text-xs text-zinc-400">hoặc</span>
           <div className="flex-1 h-px bg-zinc-700/60" />
         </div>
 
@@ -149,7 +149,7 @@ export default function Login() {
           Đăng nhập bằng Google
         </button>
 
-        <p className="text-center text-xs text-zinc-600 mt-4">
+        <p className="text-center text-xs text-zinc-400 mt-4">
           Dữ liệu lưu trên máy bạn · Hoàn toàn riêng tư
         </p>
       </div>
@@ -159,7 +159,7 @@ export default function Login() {
         {FEATURES.map(f => {
           const Icon = f.icon
           return (
-            <div key={f.label} className="flex items-center gap-1.5 text-xs text-zinc-500">
+            <div key={f.label} className="flex items-center gap-1.5 text-xs text-zinc-400">
               <Icon className={`w-3.5 h-3.5 ${f.color}`} />
               <span>{f.label}</span>
             </div>

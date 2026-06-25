@@ -85,7 +85,7 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
   return (
     <div className="animate-fade-in">
       {/* Thanh tiến độ trong lượt */}
-      <div className="flex items-center justify-between text-xs text-zinc-500 mb-2">
+      <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
         <span>Thẻ {idx + 1}/{deck.length}</span>
         <span className="text-emerald-400">{known} đã nhớ</span>
       </div>
@@ -105,7 +105,7 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
           <>
             <span className="font-bold text-white text-2xl mb-2">{card.word}</span>
             {card.ipa_en && <span className="text-sm text-emerald-400/70 font-mono">{card.ipa_en}</span>}
-            <span className="flex items-center gap-1 text-xs text-zinc-500 mt-4">
+            <span className="flex items-center gap-1 text-xs text-zinc-400 mt-4">
               <Eye className="w-3.5 h-3.5" /> Bấm để xem nghĩa
             </span>
           </>
@@ -116,7 +116,7 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
               <span className="text-xs text-zinc-400 italic mt-1">{card.ex_en}</span>
             )}
             {card.ex_vi && (
-              <span className="text-xs text-zinc-500 mt-0.5">{card.ex_vi}</span>
+              <span className="text-xs text-zinc-400 mt-0.5">{card.ex_vi}</span>
             )}
           </>
         )}

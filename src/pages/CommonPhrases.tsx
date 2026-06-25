@@ -128,7 +128,7 @@ export default function CommonPhrases() {
                 className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl overflow-hidden"
               >
                 <div className="flex items-stretch">
-                  <span className="text-xs text-zinc-600 w-8 shrink-0 flex items-center justify-center border-r border-zinc-800/60">
+                  <span className="text-xs text-zinc-400 w-8 shrink-0 flex items-center justify-center border-r border-zinc-800/60">
                     {idx + 1}
                   </span>
                   <div className="flex-1 divide-y divide-zinc-800/60">
@@ -166,7 +166,7 @@ export default function CommonPhrases() {
 
           {/* Ô tìm kiếm — chỉ hiện ở trên trên desktop */}
           <div className="hidden sm:block relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
             <input
               id="search-desktop"
               name="search"
@@ -176,7 +176,7 @@ export default function CommonPhrases() {
               className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-[16px] sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
             />
             {search && (
-              <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white">
+              <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             )}
@@ -189,7 +189,7 @@ export default function CommonPhrases() {
               className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
                 activeStruct === null
                   ? 'bg-white/10 text-white border-white/20'
-                  : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
+                  : 'bg-zinc-900/60 text-zinc-400 border-zinc-800 hover:text-zinc-300'
               }`}
             >
               {T.phrasesAll}
@@ -201,7 +201,7 @@ export default function CommonPhrases() {
                 className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
                   activeStruct === type
                     ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                    : 'bg-zinc-900/60 text-zinc-500 border-zinc-800 hover:text-zinc-300'
+                    : 'bg-zinc-900/60 text-zinc-400 border-zinc-800 hover:text-zinc-300'
                 }`}
               >
                 {STRUCT_LABELS[type]}
@@ -225,7 +225,7 @@ export default function CommonPhrases() {
                   </div>
                   <p className={`font-bold text-[17px] ${c.text} leading-tight`}>{subj.starter}</p>
                   <div className="flex items-center justify-between mt-2">
-                    <span className="text-[11px] text-zinc-600">{subj.count} {T.phrasesSentences}</span>
+                    <span className="text-[11px] text-zinc-400">{subj.count} {T.phrasesSentences}</span>
                     <ChevronRight className="w-3.5 h-3.5 text-zinc-700 group-hover:text-zinc-400 transition" />
                   </div>
                 </button>
@@ -235,12 +235,12 @@ export default function CommonPhrases() {
 
           {visible < sorted.length && (
             <div ref={sentinelRef} className="flex justify-center py-6">
-              <Loader2 className="w-5 h-5 animate-spin text-zinc-600" />
+              <Loader2 className="w-5 h-5 animate-spin text-zinc-400" />
             </div>
           )}
 
           {filtered.length === 0 && (
-            <div className="text-center py-16 text-zinc-600 text-sm">
+            <div className="text-center py-16 text-zinc-400 text-sm">
               {T.phrasesNoResult}
             </div>
           )}
@@ -250,7 +250,7 @@ export default function CommonPhrases() {
       {/* Search bar cố định ở dưới — CHỈ trên mobile */}
       <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
           <input
             id="search-mobile"
             name="search"
@@ -260,7 +260,7 @@ export default function CommonPhrases() {
             className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-[16px] sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
           />
           {search && (
-            <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white">
+            <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white">
               <X className="w-4 h-4" />
             </button>
           )}

@@ -11,7 +11,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Gia su AI" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <meta name="robots" content="index, follow" />
     <title>Gia sư tiếng Anh AI - Luyện nói, viết, đọc cùng AI | Học tiếng Anh hiệu quả</title>
     <meta name="description" content="Gia sư tiếng Anh AI - Luyện nói, viết, đọc bằng AI với phản hồi chi tiết bằng tiếng Việt. Hợp lí cho người Việt học tiếng Anh từ A1 đến B2." />
     <meta name="keywords" content="gia sư tiếng Anh, luyện nói tiếng Anh, học tiếng Anh online, AI, phát âm, IELTS, luyện viết" />
@@ -31,13 +32,11 @@
     <link rel="alternate" hreflang="vi" href="https://en-vi.donghanhcungban.com" />
     <link rel="alternate" hreflang="en" href="https://en-vi.donghanhcungban.com" />
     <link rel="alternate" hreflang="x-default" href="https://en-vi.donghanhcungban.com" />
-    <!-- Google Fonts optimization: preconnect + async load (critical render path) -->
+    <!-- Google Fonts: gộp 1 request duy nhất, async để không block FCP -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Load only critical weights async to avoid blocking FCP -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'" />
-    <!-- Defer non-critical weights (800, 900) to load after page interactive -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;800;900&display=swap" media="(prefers-reduced-motion: no-preference)" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" /></noscript>
   </head>
   <body>

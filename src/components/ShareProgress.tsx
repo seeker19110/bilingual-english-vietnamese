@@ -61,7 +61,7 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
               <p className="text-sm font-semibold text-white">
                 {isA ? 'AI Gia sư tiếng Anh' : 'AI Vietnamese Tutor'}
               </p>
-              <p className="text-xs text-zinc-500">{window.location.hostname}</p>
+              <p className="text-xs text-zinc-400">{window.location.hostname}</p>
             </div>
           </div>
 
@@ -70,12 +70,12 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
               <div key={s.label} className="bg-zinc-900/60 rounded-xl p-3 text-center">
                 <p className="text-2xl">{s.emoji}</p>
                 <p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p>
-                <p className="text-[10px] text-zinc-500 mt-0.5">{s.label}</p>
+                <p className="text-[10px] text-zinc-400 mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
 
-          <p className="text-xs text-zinc-500 text-center mt-3">
+          <p className="text-xs text-zinc-400 text-center mt-3">
             {isA ? 'Học tiếng Anh mỗi ngày' : 'Learning Vietnamese every day'} 💪
           </p>
         </div>

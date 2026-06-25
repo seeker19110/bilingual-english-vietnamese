@@ -36,7 +36,7 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
       <h2 className="text-xl font-bold text-white mb-1 animate-fade-in delay-50">
         {isA ? 'Luyện nói song ngữ' : 'Bilingual Speaking Practice'}
       </h2>
-      <p className="text-zinc-500 text-sm mb-2 text-center max-w-xs animate-fade-in delay-100">
+      <p className="text-zinc-400 text-sm mb-2 text-center max-w-xs animate-fade-in delay-100">
         {isA
           ? <>Nói tiếng Anh · AI trả lời bằng <strong className="text-white">giọng Anh</strong> · Sửa lỗi bằng <strong className="text-white">giọng Việt</strong></>
           : <>Speak Vietnamese · AI replies in <strong className="text-white">Vietnamese voice</strong> · Corrects in <strong className="text-white">English voice</strong></>
@@ -64,7 +64,7 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
                 <option key={s.value} value={s.value}>{isA ? s.labelA : s.labelB}</option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
           </div>
         </div>
 
@@ -87,6 +87,7 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
         </div>
 
         <button onClick={() => onStart(situation, level)}
+          aria-label={isA ? 'Bắt đầu luyện nói' : 'Start speaking practice'}
           className="w-full bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] shadow-lg shadow-sky-500/20">
           {isA ? 'Bắt đầu luyện nói →' : 'Start speaking →'}
         </button>
@@ -114,7 +115,7 @@ function SpeakBubble({ msg, onPlay, isNew }: { msg: Message; onPlay?: () => void
           {onPlay && (
             <button onClick={onPlay}
               aria-label="Nghe lại"
-              className="text-zinc-500 hover:text-sky-400 transition shrink-0 mt-0.5 p-0.5 rounded">
+              className="text-zinc-400 hover:text-sky-400 transition shrink-0 mt-0.5 p-0.5 rounded">
               <Volume2 className="w-3.5 h-3.5" />
             </button>
           )}
@@ -384,7 +385,7 @@ export default function Speaking() {
                 <div className="flex flex-col items-center gap-3">
                   <div className="flex items-center justify-between w-full max-w-xs">
                     <button onClick={() => { stopSpeaking(); setSession(null) }}
-                      className="p-3 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition hover:bg-zinc-800/50"
+                      className="p-3 text-zinc-400 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition hover:bg-zinc-800/50"
                       title={isA ? 'Phòng mới' : 'New room'}
                       aria-label={isA ? 'Phòng mới' : 'New room'}>
                       <Plus className="w-4 h-4" />
@@ -406,7 +407,7 @@ export default function Speaking() {
                     <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
                       aria-label={muted ? (isA ? 'Bật âm thanh' : 'Unmute') : (isA ? 'Tắt âm thanh' : 'Mute')}
                       className={`p-3 border rounded-xl transition ${
-                        muted ? 'text-zinc-600 border-zinc-800/80'
+                        muted ? 'text-zinc-400 border-zinc-800/80'
                           : speaking ? 'text-sky-400 border-sky-500/40 bg-sky-500/10'
                           : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-800/50'
                       }`}>
@@ -414,7 +415,7 @@ export default function Speaking() {
                     </button>
                   </div>
 
-                  <p className="text-center text-xs text-zinc-600">
+                  <p className="text-center text-xs text-zinc-400">
                     {recording
                       ? (isA ? '🔴 Đang ghi... nhấn lại để dừng' : '🔴 Recording… tap to stop')
                       : processing
@@ -430,7 +431,7 @@ export default function Speaking() {
                   <div className="flex gap-2">
                     <button onClick={() => { stopSpeaking(); setSession(null) }}
                       aria-label={isA ? 'Phòng mới' : 'New room'}
-                      className="p-3 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50">
+                      className="p-3 text-zinc-400 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50">
                       <Plus className="w-4 h-4" />
                     </button>
                     <input
@@ -448,7 +449,7 @@ export default function Speaking() {
                       placeholder={isA ? 'Gõ tiếng Anh thay vì nói...' : 'Type Vietnamese instead of speaking...'}
                       disabled={loading || limitHit}
                       inputMode="text"
-                      className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-[16px] sm:text-sm text-white placeholder:text-zinc-600 outline-none focus:border-sky-500/60 transition disabled:opacity-50"
+                      className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-[16px] sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-sky-500/60 transition disabled:opacity-50"
                     />
                     <button
                       onClick={() => { if (typedInput.trim()) { sendUserSpeech(typedInput.trim()); setTypedInput('') } }}
@@ -459,11 +460,11 @@ export default function Speaking() {
                     </button>
                     <button onClick={() => { setMuted(m => !m); stopSpeaking(); setSpeaking(false) }}
                       aria-label={muted ? (isA ? 'Bật âm thanh' : 'Unmute') : (isA ? 'Tắt âm thanh' : 'Mute')}
-                      className={`p-3 border rounded-xl transition shrink-0 ${muted ? 'text-zinc-600 border-zinc-800/80' : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700'}`}>
+                      className={`p-3 border rounded-xl transition shrink-0 ${muted ? 'text-zinc-400 border-zinc-800/80' : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700'}`}>
                       {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                     </button>
                   </div>
-                  <p className="text-center text-xs text-zinc-600">
+                  <p className="text-center text-xs text-zinc-400">
                     {isA
                       ? <>Trình duyệt không hỗ trợ mic — dùng <strong className="text-zinc-400">Chrome</strong></>
                       : <>Browser doesn't support mic — use <strong className="text-zinc-400">Chrome</strong></>
