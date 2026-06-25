@@ -4,7 +4,7 @@ import Layout from '../components/Layout'
 import { useLang } from '../context/useLang'
 import KaraokeText from '../components/KaraokeText'
 import VoiceToggle from '../components/VoiceToggle'
-import { INDEX, loadSubject } from '../data/patterns/loader'
+import { loadIndex, loadSubject } from '../data/patterns/loader'
 import type { SubjectMeta, Subject } from '../data/patterns/loader'
 
 const PAGE_SIZE = 7
@@ -70,6 +70,7 @@ function interleave(items: SubjectMeta[]): SubjectMeta[] {
 export default function CommonPhrases() {
   const { T } = useLang()
 
+  const [indexData, setIndexData] = useState<SubjectMeta[]>([])
   const [search, setSearch] = useState('')
   const deferredSearch      = useDeferredValue(search)  // filter lazy, input không lag
   const [activeStruct, setActiveStruct] = useState<StructType | null>(null)
@@ -78,15 +79,17 @@ export default function CommonPhrases() {
   const [loading, setLoading] = useState(false)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => { loadIndex().then(setIndexData) }, [])
+
   const filtered = useMemo(() => {
-    let list = INDEX
+    let list = indexData
     if (activeStruct) list = list.filter(s => getStructType(s.starter) === activeStruct)
     if (deferredSearch.trim()) {
       const q = deferredSearch.toLowerCase()
       list = list.filter(s => s.starter.toLowerCase().includes(q))
     }
     return list
-  }, [activeStruct, deferredSearch])
+  }, [activeStruct, deferredSearch, indexData])
 
   const sorted = useMemo(() => interleave(filtered), [filtered])
 

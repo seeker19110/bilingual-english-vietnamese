@@ -1,8 +1,6 @@
-// Loader cho dữ liệu "Cụm từ theo chủ thể" (sinh bởi scripts/gen-patterns.mjs).
-// index.json nhẹ (chỉ meta) được nạp ngay; câu của từng chủ thể nằm trong
-// các file chunk (8 chủ thể/chunk) và CHỈ được tải khi cần (lazy load).
-
-import indexData from './index.json'
+// Loader cho dữ liệu "Cụm từ theo chủ thể" — các file chunk-*.json và index.json
+// nằm trong /public/data/patterns/ và được tải bằng fetch() thay vì import.meta.glob.
+// index.json (chỉ meta) được tải 1 lần; chunk chỉ tải khi cần (lazy load).
 
 export interface Sentence { en: string; vi: string }
 export interface SubjectMeta {
@@ -20,29 +18,41 @@ export interface Subject {
   sentences: Sentence[]
 }
 
-export const INDEX: SubjectMeta[] = indexData as SubjectMeta[]
+// Tải index ngay lần đầu (file nhỏ, chỉ meta).
+let _indexPromise: Promise<SubjectMeta[]> | null = null
+export function loadIndex(): Promise<SubjectMeta[]> {
+  if (!_indexPromise) {
+    _indexPromise = fetch('/data/patterns/index.json').then((r) => r.json())
+  }
+  return _indexPromise
+}
 
-// Map tất cả file chunk thành các hàm import động (Vite tách thành file riêng,
-// chỉ tải qua mạng khi gọi). => mỗi lần chỉ kéo về 8 chủ thể.
-const chunkLoaders = import.meta.glob<{ default: Subject[] }>('./chunk-*.json')
+// Để gọi đồng bộ sau khi đã tải xong (dùng ở những nơi cũ dùng import trực tiếp).
+let _indexCache: SubjectMeta[] | null = null
+loadIndex().then((d) => { _indexCache = d })
+export function getIndex(): SubjectMeta[] { return _indexCache ?? [] }
+
+// Xuất thêm INDEX để tương thích ngược với code cũ dùng `import { INDEX }`.
+// Giá trị này là mảng rỗng cho đến khi loadIndex() resolve — dùng getIndex() nếu cần sync.
+export const INDEX: SubjectMeta[] = []
+loadIndex().then((d) => { INDEX.splice(0, INDEX.length, ...d) })
 
 const cache = new Map<number, Subject[]>()
 
 function chunkKey(n: number) {
-  return `./chunk-${String(n).padStart(3, '0')}.json`
+  return `chunk-${String(n).padStart(3, '0')}.json`
 }
 
-// Tải 1 chunk (8 chủ thể). Có cache để không tải lại.
+// Tải 1 chunk (nhiều chủ thể). Có cache để không tải lại.
 export async function loadChunk(n: number): Promise<Subject[]> {
   if (cache.has(n)) return cache.get(n)!
-  const loader = chunkLoaders[chunkKey(n)]
-  if (!loader) return []
-  const mod = await loader()
-  cache.set(n, mod.default)
-  return mod.default
+  const res = await fetch(`/data/patterns/${chunkKey(n)}`)
+  const data: Subject[] = await res.json()
+  cache.set(n, data)
+  return data
 }
 
-// Tải đầy đủ 1 chủ thể (gồm 100 câu) dựa trên meta.
+// Tải đầy đủ 1 chủ thể dựa trên meta.
 export async function loadSubject(meta: SubjectMeta): Promise<Subject | null> {
   const chunk = await loadChunk(meta.chunk)
   return chunk[meta.idx] ?? chunk.find(s => s.starter === meta.starter) ?? null
