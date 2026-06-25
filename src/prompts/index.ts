@@ -135,6 +135,117 @@ Return JSON only (no markdown):
 }`
 }
 
+// ─── Pronunciation Scoring (từ đơn lẻ) ─────────────────────────────
+// Chấm phát âm từ đơn (IPA score + gợi ý, chiều A: English, chiều B: Vietnamese)
+export function pronunciationScoringPrompt(word: string, direction: Direction = 'A'): string {
+  if (direction === 'A') {
+    return `Bạn là giáo viên phát âm tiếng Anh dày dặn. Học viên là người Việt cần cải thiện phát âm.
+
+Từ: "${word}"
+
+Hãy:
+1. Viết IPA của từ này (ví dụ: /wɜːld/)
+2. Chỉ ra những âm vị khó với người Việt (nếu có)
+3. Gợi ý cách phát âm so sánh với tiếng Việt (để học viên dễ nhớ)
+4. Cho điểm phát âm 0–10 nếu học viên đã được nghe phát âm sẵn; nếu chưa có audio thì ghi "N/A"
+5. Khích lệ nếu cần
+
+Trả về JSON (không markdown):
+{
+  "word": "${word}",
+  "ipa": "<phiên âm IPA>",
+  "difficultSounds": "<những âm vị khó (tiếng Việt)>",
+  "tip": "<gợi ý phát âm so sánh tiếng Việt>",
+  "score": <0–10 hoặc "N/A" nếu chưa nghe>,
+  "encouragement": "<1 câu động viên tiếng Việt>"
+}`
+  }
+
+  return `You are an experienced English pronunciation coach. The learner is an English speaker learning Vietnamese pronunciation.
+
+Word: "${word}"
+
+Please:
+1. Provide the IPA transcription of this word (e.g. /wɜːld/)
+2. Identify which sounds might be difficult for an English speaker
+3. Give a tip comparing pronunciation to English words (for easy memory)
+4. Give a pronunciation score 0–10 if the learner has already heard the pronunciation; if not yet, write "N/A"
+5. Be encouraging if needed
+
+Return JSON only (no markdown):
+{
+  "word": "${word}",
+  "ipa": "<IPA transcription>",
+  "difficultSounds": "<sounds that might be difficult (in English)>",
+  "tip": "<pronunciation tip comparing to English words>",
+  "score": <0–10 or "N/A" if no audio yet>,
+  "encouragement": "<one encouraging sentence in English>"
+}`
+}
+
+// ─── Speaking Full Evaluation (chấm hội thoại toàn diện IELTS style) ───
+// Chấm: pronunciation + grammar + vocabulary + fluency (theo chuẩn IELTS Speaking)
+// Dùng khi học viên nói một hội thoại dài, cần feedback toàn diện
+export function speakingFullEvaluationPrompt(direction: Direction = 'A'): string {
+  if (direction === 'A') {
+    return `Bạn là giám khảo IELTS Speaking giàu kinh nghiệm, chấm kỹ năng nói tiếng Anh của người Việt.
+
+Các tiêu chí chấm IELTS Speaking:
+- Fluency & Coherence (0–9): liền mạch, không ngừng, logicq
+- Lexical Resource (0–9): vốn từ vựng, sử dụng từ phức tạp/idioms
+- Grammatical Range & Accuracy (0–9): đa dạng cấu trúc, ít lỗi
+- Pronunciation (0–9): phát âm rõ, stress/intonation đúng
+
+Giọng điệu: khích lệ, xây dựng.
+
+${VIET_COMMON_ERRORS}
+
+Trả về JSON (không markdown):
+{
+  "scores": {
+    "fluency": <0–9>,
+    "lexical": <0–9>,
+    "grammar": <0–9>,
+    "pronunciation": <0–9>,
+    "overall": <trung bình, làm tròn 0.5>
+  },
+  "errors": [
+    { "original": "<trích đoạn sai>", "corrected": "<sửa lại>", "explanation": "<giải thích tiếng Việt>" }
+  ],
+  "strengths": ["<điểm mạnh 1>", "<điểm mạnh 2>"],
+  "suggestions": ["<gợi ý nâng cao>"],
+  "encouragement": "<1 câu động viên tiếng Việt>"
+}`
+  }
+
+  return `You are an experienced IELTS Speaking examiner, evaluating English pronunciation and speech for learners who are Vietnamese speakers.
+
+IELTS Speaking criteria:
+- Fluency & Coherence (0–9): smooth, continuous speech, logical flow
+- Lexical Resource (0–9): vocabulary range, use of complex words/idioms
+- Grammatical Range & Accuracy (0–9): structure variety, minimal errors
+- Pronunciation (0–9): clear articulation, correct stress/intonation
+
+Tone: encouraging, constructive.
+
+Return JSON only (no markdown):
+{
+  "scores": {
+    "fluency": <0–9>,
+    "lexical": <0–9>,
+    "grammar": <0–9>,
+    "pronunciation": <0–9>,
+    "overall": <average, rounded to 0.5>
+  },
+  "errors": [
+    { "original": "<error excerpt>", "corrected": "<corrected version>", "explanation": "<explanation in English>" }
+  ],
+  "strengths": ["<strength 1>", "<strength 2>"],
+  "suggestions": ["<tip to improve>"],
+  "encouragement": "<one encouraging sentence in English>"
+}`
+}
+
 // ─── Helpers ─────────────────────────────────────────────────────
 export function situationLabel(value: string, dir: Direction = 'A'): string {
   const mapA: Record<string, string> = {
