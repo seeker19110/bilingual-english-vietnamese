@@ -31,7 +31,7 @@ function SetupScreen({ onStart, loading, error, dir }: {
       <h2 className="text-xl font-bold text-white mb-1 animate-fade-in delay-50">
         {isA ? 'Chọn tình huống luyện tập' : 'Choose a practice situation'}
       </h2>
-      <p className="text-zinc-500 text-sm mb-8 animate-fade-in delay-100">
+      <p className="text-zinc-400 text-sm mb-8 animate-fade-in delay-100">
         {isA ? 'AI sẽ đóng vai đối tác hội thoại' : 'AI will role-play a conversation partner'}
       </p>
 
@@ -50,7 +50,7 @@ function SetupScreen({ onStart, loading, error, dir }: {
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
           </div>
         </div>
 
@@ -71,7 +71,7 @@ function SetupScreen({ onStart, loading, error, dir }: {
               </button>
             ))}
           </div>
-          <p className="text-xs text-zinc-600 mt-1.5 text-center">
+          <p className="text-xs text-zinc-400 mt-1.5 text-center">
             {isA
               ? LEVELS.find(l => l.value === level)?.descA
               : LEVELS.find(l => l.value === level)?.descB}
@@ -277,7 +277,7 @@ export default function Chat() {
 
           {prevSessions.length > 0 && (
             <div className="max-w-sm mx-auto w-full px-4 pb-8 animate-fade-in delay-200">
-              <p className="text-xs text-zinc-600 mb-2 font-medium">
+              <p className="text-xs text-zinc-400 mb-2 font-medium">
                 {isA ? 'Hội thoại gần đây' : 'Recent sessions'}
               </p>
               {prevSessions.map(s => (
@@ -285,9 +285,9 @@ export default function Chat() {
                   className="w-full text-left glass rounded-xl px-4 py-3 mb-2 hover:bg-zinc-800/60 transition group">
                   <div className="flex items-center justify-between">
                     <p className="text-sm text-zinc-300 font-medium">{situationLabel(s.situation, dir)}</p>
-                    <ChevronDown className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-400 transition -rotate-90" />
+                    <ChevronDown className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-200 transition -rotate-90" />
                   </div>
-                  <p className="text-xs text-zinc-600 mt-0.5">
+                  <p className="text-xs text-zinc-400 mt-0.5">
                     {s.messages.length} {isA ? 'tin nhắn' : 'messages'} · {new Date(s.createdAt).toLocaleDateString(isA ? 'vi-VN' : 'en-US')}
                   </p>
                 </button>
@@ -320,7 +320,7 @@ export default function Chat() {
           <div className="sticky bottom-0 bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 px-4 py-3 pb-safe">
             <div className="max-w-3xl mx-auto flex items-center gap-2">
               <button onClick={() => { setSession(null); setError(''); setLimitHit(false) }}
-                className="p-2.5 text-zinc-500 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50"
+                className="p-2.5 text-zinc-400 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50"
                 title={isA ? 'Hội thoại mới' : 'New session'}
                 aria-label={isA ? 'Hội thoại mới' : 'New session'}>
                 <Plus className="w-4 h-4" />
@@ -339,7 +339,7 @@ export default function Chat() {
                 placeholder={isA ? 'Nhập tiếng Anh...' : 'Type in Vietnamese...'}
                 disabled={loading || limitHit}
                 inputMode="text"
-                className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-[16px] sm:text-sm text-white placeholder:text-zinc-600 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition disabled:opacity-50"
+                className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-[16px] sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition disabled:opacity-50"
               />
 
               <button onClick={sendMessage} disabled={!input.trim() || loading || limitHit}

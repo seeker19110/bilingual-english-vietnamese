@@ -32,12 +32,12 @@ function Tab({ active, onClick, icon: Icon, label, count }: {
       className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition border ${
         active
           ? 'bg-zinc-800 border-zinc-700 text-white'
-          : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
+          : 'border-transparent text-zinc-400 hover:text-zinc-300 hover:bg-zinc-800/50'
       }`}>
       <Icon className="w-4 h-4" />
       {label}
       <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
-        active ? 'bg-zinc-700 text-zinc-300' : 'bg-zinc-800 text-zinc-500'
+        active ? 'bg-zinc-700 text-zinc-300' : 'bg-zinc-800 text-zinc-400'
       }`}>{count}</span>
     </button>
   )
@@ -60,11 +60,11 @@ function ChatCard({ s }: { s: ChatSession }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-medium text-white text-sm">{label}</p>
-          <p className="text-xs text-zinc-500 mt-0.5">
+          <p className="text-xs text-zinc-400 mt-0.5">
             {levelLabel(s.level)} · {userMsgs} lượt nói · {formatDate(s.createdAt)}
           </p>
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-zinc-600" /> : <ChevronDown className="w-4 h-4 text-zinc-600" />}
+        {open ? <ChevronUp className="w-4 h-4 text-zinc-400" /> : <ChevronDown className="w-4 h-4 text-zinc-400" />}
       </button>
 
       {open && (
@@ -109,26 +109,26 @@ function WritingCard({ s }: { s: WritingSubmission }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-medium text-white text-sm line-clamp-1">{s.essayPrompt || 'Bài viết tự do'}</p>
-          <p className="text-xs text-zinc-500 mt-0.5">{formatDate(s.submittedAt)}</p>
+          <p className="text-xs text-zinc-400 mt-0.5">{formatDate(s.submittedAt)}</p>
         </div>
         {overall != null && (
           <span className={`text-lg font-black shrink-0 ${scoreColor}`}>{overall}</span>
         )}
-        {open ? <ChevronUp className="w-4 h-4 text-zinc-600" /> : <ChevronDown className="w-4 h-4 text-zinc-600" />}
+        {open ? <ChevronUp className="w-4 h-4 text-zinc-400" /> : <ChevronDown className="w-4 h-4 text-zinc-400" />}
       </button>
 
       {open && (
         <div className="border-t border-zinc-800/60 px-4 py-3 space-y-3">
           {/* Bài viết của học viên */}
           <div>
-            <p className="text-xs font-semibold text-zinc-500 mb-1.5">Bài viết</p>
+            <p className="text-xs font-semibold text-zinc-400 mb-1.5">Bài viết</p>
             <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap">{s.essay}</p>
           </div>
 
           {/* Điểm thành phần */}
           {fb?.scores && (
             <div>
-              <p className="text-xs font-semibold text-zinc-500 mb-2">Điểm IELTS</p>
+              <p className="text-xs font-semibold text-zinc-400 mb-2">Điểm IELTS</p>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { label: 'Task', val: fb.scores.task_response },
@@ -137,7 +137,7 @@ function WritingCard({ s }: { s: WritingSubmission }) {
                   { label: 'Grammar', val: fb.scores.grammar },
                 ].map(({ label, val }) => (
                   <div key={label} className="bg-zinc-800/60 rounded-xl px-3 py-2 flex justify-between items-center">
-                    <span className="text-xs text-zinc-500">{label}</span>
+                    <span className="text-xs text-zinc-400">{label}</span>
                     <span className={`text-sm font-bold ${val >= 7 ? 'text-emerald-400' : val >= 5 ? 'text-amber-400' : 'text-red-400'}`}>{val}</span>
                   </div>
                 ))}
@@ -167,11 +167,11 @@ function SpeakingCard({ s }: { s: SpeakingSession }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-medium text-white text-sm">{label}</p>
-          <p className="text-xs text-zinc-500 mt-0.5">
+          <p className="text-xs text-zinc-400 mt-0.5">
             {levelLabel(s.level)} · {userMsgs} lượt nói · {formatDate(s.createdAt)}
           </p>
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-zinc-600" /> : <ChevronDown className="w-4 h-4 text-zinc-600" />}
+        {open ? <ChevronUp className="w-4 h-4 text-zinc-400" /> : <ChevronDown className="w-4 h-4 text-zinc-400" />}
       </button>
 
       {open && (
@@ -241,9 +241,9 @@ export default function History() {
         {/* Danh sách */}
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
-            <Clock className="w-12 h-12 text-zinc-700 mb-3" />
-            <p className="text-zinc-500 text-sm">Chưa có lịch sử nào.</p>
-            <p className="text-zinc-600 text-xs mt-1">Bắt đầu luyện tập để xem lại ở đây!</p>
+            <Clock className="w-12 h-12 text-zinc-600 mb-3" />
+            <p className="text-zinc-400 text-sm">Chưa có lịch sử nào.</p>
+            <p className="text-zinc-400 text-xs mt-1">Bắt đầu luyện tập để xem lại ở đây!</p>
           </div>
         ) : (
           <div className="space-y-3 animate-fade-in">

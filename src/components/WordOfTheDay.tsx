@@ -43,7 +43,7 @@ export default function WordOfTheDay({ entry }: Props) {
         <div className="mt-2 pl-3 border-l-2 border-zinc-700 space-y-1">
           <KaraokeText text={entry.ex_en} lang="en-US" textClass="text-xs text-zinc-400 italic leading-relaxed" iconSize="xs" />
           {entry.ex_vi && (
-            <KaraokeText text={entry.ex_vi} lang="vi-VN" textClass="text-xs text-zinc-500 leading-relaxed" iconSize="xs" />
+            <KaraokeText text={entry.ex_vi} lang="vi-VN" textClass="text-xs text-zinc-400 leading-relaxed" iconSize="xs" />
           )}
         </div>
       )}

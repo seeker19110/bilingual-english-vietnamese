@@ -181,6 +181,7 @@ export default function Home() {
           <button
             onClick={toggleDir}
             title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
+            aria-label={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
             className={`flex flex-col items-start gap-1.5 rounded-2xl px-4 py-3 border transition-all active:scale-[0.98] ${
               isA
                 ? 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60'
@@ -231,7 +232,7 @@ export default function Home() {
             <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
               {isA ? 'Xem lịch sử học' : 'View learning history'}
             </span>
-            <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-400 transition" />
+            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-200 transition" />
           </button>
 
           {/* Hàng ngang: Quiz + Chia sẻ + Thông báo */}
@@ -305,7 +306,7 @@ export default function Home() {
                   <p className="text-sm text-zinc-400 leading-relaxed line-clamp-2">{m.desc}</p>
                 </div>
 
-                <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-400 shrink-0 transition-all group-hover:translate-x-0.5" />
+                <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-200 shrink-0 transition-all group-hover:translate-x-0.5" />
               </button>
             )
           })}

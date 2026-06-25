@@ -73,7 +73,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
 
       {/* Gợi nhắc khi đang nghe */}
       {status === 'listening' && (
-        <span className="flex items-center gap-1 text-xs text-zinc-500">
+        <span className="flex items-center gap-1 text-xs text-zinc-400">
           <Loader2 className="w-3 h-3 animate-spin" /> {isA ? `Hãy đọc: "${target}"` : `Say: "${target}"`}
         </span>
       )}
@@ -98,11 +98,11 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
           </div>
 
           {/* Câu người dùng đọc */}
-          <p className="text-xs text-zinc-500">{isA ? 'Bạn đọc' : 'You said'}: "<span className="text-zinc-400">{heard}</span>"</p>
+          <p className="text-xs text-zinc-400">{isA ? 'Bạn đọc' : 'You said'}: "<span className="text-zinc-400">{heard}</span>"</p>
 
           {/* Nút thử lại */}
           <button onClick={start}
-            className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition mx-auto">
+            className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition mx-auto">
             <RotateCcw className="w-3 h-3" /> {isA ? 'Thử lại' : 'Try again'}
           </button>
         </div>
@@ -112,7 +112,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
       {fb && words.length === 0 && (
         <div className="text-center">
           <p className={`text-sm font-bold ${fb.color}`}>{score}% · {fb.label}</p>
-          <p className="text-xs text-zinc-500 mt-0.5">{isA ? 'Bạn đọc' : 'You said'}: "{heard}"</p>
+          <p className="text-xs text-zinc-400 mt-0.5">{isA ? 'Bạn đọc' : 'You said'}: "{heard}"</p>
         </div>
       )}
 

@@ -101,7 +101,7 @@ export default function Lessons() {
           extra={<VoiceToggle />}
         />
         {loadingLesson || !lesson ? (
-          <div className="flex-1 flex items-center justify-center text-zinc-500">
+          <div className="flex-1 flex items-center justify-center text-zinc-400">
             <Loader2 className="w-5 h-5 animate-spin mr-2" />
             {isA ? 'Đang tải bài học…' : 'Loading lesson…'}
           </div>
@@ -152,7 +152,7 @@ function SearchBar({ query, setQuery, isA, variant = 'desktop' }: {
   const inputId = variant === 'desktop' ? 'lesson-search-desktop' : 'lesson-search-mobile'
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
       <input
         id={inputId}
         name="query"
@@ -163,7 +163,7 @@ function SearchBar({ query, setQuery, isA, variant = 'desktop' }: {
         className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-zinc-600 transition"
       />
       {query && (
-        <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white">
+        <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white">
           <X className="w-4 h-4" />
         </button>
       )}
@@ -206,7 +206,7 @@ function LessonList({ lessons, isA, query, onSelect }: {
   return (
     <div className="space-y-4">
       {query.trim() && (
-        <p className="text-xs text-zinc-500 px-1">
+        <p className="text-xs text-zinc-400 px-1">
           {filtered.length} {isA ? 'bài phù hợp' : 'lessons found'}
         </p>
       )}
@@ -228,8 +228,8 @@ function LessonList({ lessons, isA, query, onSelect }: {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className={`font-semibold text-[15px] leading-snug ${c.text}`}>{l.title}</p>
-                  <p className="text-xs text-zinc-500 truncate mt-0.5">{l.situation}</p>
-                  <p className="text-[11px] text-zinc-600 mt-1.5">
+                  <p className="text-xs text-zinc-400 truncate mt-0.5">{l.situation}</p>
+                  <p className="text-[11px] text-zinc-400 mt-1.5">
                     {l.turnCount / 2} {isA ? 'lượt thoại' : 'exchanges'}
                   </p>
                 </div>
@@ -240,7 +240,7 @@ function LessonList({ lessons, isA, query, onSelect }: {
       </div>
 
       {shown.length === 0 && (
-        <p className="text-center text-zinc-500 py-10 text-sm">
+        <p className="text-center text-zinc-400 py-10 text-sm">
           {isA ? 'Không tìm thấy bài nào.' : 'No lessons found.'}
         </p>
       )}
@@ -248,7 +248,7 @@ function LessonList({ lessons, isA, query, onSelect }: {
       {/* Sentinel — cuộn tới đây tự động tải thêm */}
       {visible < filtered.length && (
         <div ref={sentinelRef} className="flex justify-center py-6">
-          <Loader2 className="w-5 h-5 animate-spin text-zinc-600" />
+          <Loader2 className="w-5 h-5 animate-spin text-zinc-400" />
         </div>
       )}
     </div>
@@ -412,7 +412,7 @@ function LessonView({ lesson, isA, color, onBack }: {
             {/* Nút quay lại danh sách */}
             <button
               onClick={onBack}
-              className="shrink-0 text-xs text-zinc-500 hover:text-white transition flex items-center gap-1"
+              className="shrink-0 text-xs text-zinc-400 hover:text-white transition flex items-center gap-1"
             >
               ← {isA ? 'Danh sách' : 'Back'}
             </button>
@@ -470,7 +470,7 @@ function LessonView({ lesson, isA, color, onBack }: {
 
             {/* Chế độ nghe */}
             <div className="flex items-center gap-1">
-              <Volume2 className="w-3 h-3 text-zinc-500 shrink-0" />
+              <Volume2 className="w-3 h-3 text-zinc-400 shrink-0" />
               {MODES.map(m => (
                 <button key={m.key} onClick={() => changeMode(m.key)}
                   className={`px-1.5 py-0.5 rounded text-xs font-medium transition ${
@@ -487,7 +487,7 @@ function LessonView({ lesson, isA, color, onBack }: {
             {playing && activeTurn !== null && (
               <div className="ml-auto flex items-center gap-1 shrink-0">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] text-zinc-500">{activeTurn + 1}/{lesson.turns.length}</span>
+                <span className="text-[10px] text-zinc-400">{activeTurn + 1}/{lesson.turns.length}</span>
               </div>
             )}
           </div>
@@ -518,7 +518,7 @@ function LessonView({ lesson, isA, color, onBack }: {
                 }`}>
                   {/* Nhãn speaker + nút phát turn */}
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <p className="text-[10px] font-medium text-zinc-500">
+                    <p className="text-[10px] font-medium text-zinc-400">
                       {t.speaker === 'A'
                         ? (isA ? (lesson.speakerAName?.vi ?? 'Người A') : (lesson.speakerAName?.en ?? 'Person A'))
                         : (isA ? (lesson.speakerBName?.vi ?? 'Người B') : (lesson.speakerBName?.en ?? 'Person B'))
@@ -530,7 +530,7 @@ function LessonView({ lesson, isA, color, onBack }: {
                       className={`shrink-0 w-6 h-6 flex items-center justify-center rounded-full transition ${
                         isActive
                           ? `${color.text} bg-zinc-800/50`
-                          : 'text-zinc-600 hover:text-zinc-300 hover:bg-zinc-700'
+                          : 'text-zinc-400 hover:text-zinc-300 hover:bg-zinc-700'
                       }`}
                     >
                       <Volume2 className={`w-3 h-3 ${isActive ? 'animate-pulse' : ''}`} />
@@ -549,7 +549,7 @@ function LessonView({ lesson, isA, color, onBack }: {
                   {/* Bản dịch */}
                   <WordText
                     text={isA ? t.vi : t.en}
-                    baseClass="text-xs text-zinc-500 italic mt-1 leading-relaxed"
+                    baseClass="text-xs text-zinc-400 italic mt-1 leading-relaxed"
                     wordSync={wordSync}
                     turnIdx={i}
                     lang={isA ? 'vi' : 'en'}

@@ -37,7 +37,7 @@ export default function Layout({ title, subtitle, back = true, extra }: Props) {
         {back ? (
           <button onClick={() => nav('/')}
             aria-label={T.home}
-            className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition shrink-0 -ml-1 p-3 rounded-lg hover:bg-zinc-800/50">
+            className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition shrink-0 -ml-1 p-3 rounded-lg hover:bg-zinc-800/50">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:inline">{T.home}</span>
           </button>

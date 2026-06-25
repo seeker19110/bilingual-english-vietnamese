@@ -264,7 +264,7 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
           <span>{circle.emoji}</span>
           <span>{isA ? circle.titleVi : circle.titleEn}</span>
           {circleProgress && circleProgress.total > 0 && (
-            <span className="text-zinc-600">
+            <span className="text-zinc-400">
               ({circleProgress.done}/{circleProgress.total})
             </span>
           )}
@@ -272,9 +272,9 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
       )}
 
       {/* Tiến độ trong lượt */}
-      <div className="flex items-center justify-between text-xs text-zinc-500 mb-2">
+      <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
         <span>{isA ? 'Từ' : 'Word'} {idx + 1}/{batch.length}</span>
-        <span className="text-zinc-600">
+        <span className="text-zinc-400">
           {isA ? 'Tổng đã thuộc' : 'Total learned'}: {progress.done}/{progress.total}
         </span>
       </div>
@@ -339,10 +339,10 @@ function SRSReview({ uid, isA, onUpdate }: { uid: string; isA: boolean; onUpdate
             {isA ? `Đã ôn ${sessionDone} thẻ` : `Reviewed ${sessionDone} cards`}
           </p>
         )}
-        <div className="text-xs text-zinc-500 space-y-1 pt-2 border-t border-zinc-800">
+        <div className="text-xs text-zinc-400 space-y-1 pt-2 border-t border-zinc-800">
           <p>{isA ? `Tổng trong SRS: ${stats.total} từ` : `Total in SRS: ${stats.total} words`}</p>
           {stats.total === 0 && (
-            <p className="text-zinc-600">
+            <p className="text-zinc-400">
               {isA ? 'Học từ ở tab Hôm nay → từ tự vào SRS' : 'Learn words in Today tab → auto-added to SRS'}
             </p>
           )}
@@ -353,7 +353,7 @@ function SRSReview({ uid, isA, onUpdate }: { uid: string; isA: boolean; onUpdate
 
   return (
     <div className="animate-fade-in">
-      <div className="flex items-center justify-between text-xs text-zinc-500 mb-2">
+      <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
         <span>{isA ? 'Ôn SRS' : 'SRS Review'}</span>
         <span>{idx + 1}/{due.length} {isA ? 'cần ôn' : 'due'}</span>
       </div>
@@ -378,7 +378,7 @@ function SRSReview({ uid, isA, onUpdate }: { uid: string; isA: boolean; onUpdate
           </button>
         ))}
       </div>
-      <p className="text-center text-xs text-zinc-600 mt-2">
+      <p className="text-center text-xs text-zinc-400 mt-2">
         {isA ? 'Quên → ôn sớm   ·   Dễ → ôn sau lâu hơn' : 'Again = review soon  ·  Easy = review later'}
       </p>
     </div>
@@ -403,9 +403,9 @@ function HardWords({ uid, isA, onUpdate }: { uid: string; isA: boolean; onUpdate
   if (hardWords.length === 0) {
     return (
       <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-2">
-        <Star className="w-8 h-8 text-zinc-600 mx-auto" />
+        <Star className="w-8 h-8 text-zinc-400 mx-auto" />
         <p className="text-white font-medium">{isA ? 'Chưa có từ khó' : 'No difficult words yet'}</p>
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-zinc-400">
           {isA
             ? 'Bấm ⭐ trên thẻ từ để đánh dấu từ cần ôn thêm.'
             : 'Tap ⭐ on a word card to mark it as difficult.'}
@@ -418,7 +418,7 @@ function HardWords({ uid, isA, onUpdate }: { uid: string; isA: boolean; onUpdate
 
   return (
     <div className="animate-fade-in">
-      <div className="flex items-center justify-between text-xs text-zinc-500 mb-2">
+      <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
         <span>{isA ? `${hardWords.length} từ đã đánh dấu khó` : `${hardWords.length} difficult words`}</span>
         <span>{(idx % hardWords.length) + 1}/{hardWords.length}</span>
       </div>
@@ -496,7 +496,7 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
               className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm ${answers[i] ? 'bg-emerald-500/10 text-emerald-300' : 'bg-rose-500/10 text-rose-300'}`}>
               <span>{answers[i] ? '✓' : '✗'}</span>
               <span className="font-medium">{qq.word}</span>
-              <span className="text-zinc-500 flex-1 truncate">= {qq.correct}</span>
+              <span className="text-zinc-400 flex-1 truncate">= {qq.correct}</span>
             </div>
           ))}
         </div>
@@ -521,7 +521,7 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
           style={{ width: `${(current / QUIZ_SIZE) * 100}%` }} />
       </div>
       <div className="text-center py-6">
-        <p className="text-xs text-zinc-500 mb-3 uppercase tracking-wide">
+        <p className="text-xs text-zinc-400 mb-3 uppercase tracking-wide">
           {isA
             ? `Câu ${current + 1}/${QUIZ_SIZE} — Nghĩa tiếng Việt của từ này là?`
             : `Q ${current + 1}/${QUIZ_SIZE} — Vietnamese meaning?`}
@@ -534,7 +534,7 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
           if (selected !== null) {
             if (opt === q.correct)     cls = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-300'
             else if (opt === selected) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
-            else                       cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-600'
+            else                       cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
           }
           return (
             <button key={opt} onClick={() => pick(opt)}

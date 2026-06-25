@@ -93,9 +93,9 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
             <h3 className="font-bold text-white text-lg leading-tight">
               {isA ? level.titleVi : level.titleEn}
             </h3>
-            <p className="text-xs text-zinc-500 mt-0.5">{level.subtitleVi}</p>
+            <p className="text-xs text-zinc-400 mt-0.5">{level.subtitleVi}</p>
             <p className="text-sm text-zinc-300 mt-2 leading-snug">{level.goalVi}</p>
-            <div className="flex gap-3 mt-3 text-xs text-zinc-500">
+            <div className="flex gap-3 mt-3 text-xs text-zinc-400">
               <span className="flex items-center gap-1"><Layers className="w-3.5 h-3.5" /> {level.units.length} {isA ? 'bài' : 'units'}</span>
               <span className="flex items-center gap-1"><BookOpen className="w-3.5 h-3.5" /> {countGrammar(level)} {isA ? 'điểm ngữ pháp' : 'grammar points'}</span>
             </div>
@@ -156,9 +156,9 @@ function UnitCard({ unit, isA, uid, accent, onOpenLesson, onOpenCircle, onOpenDi
             <BookOpen className={`w-4 h-4 shrink-0 ${accent.text}`} />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-zinc-200 truncate">{isA ? g.titleVi : g.titleEn}</p>
-              <p className="text-xs text-zinc-500 font-mono truncate">{g.structure}</p>
+              <p className="text-xs text-zinc-400 font-mono truncate">{g.structure}</p>
             </div>
-            <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+            <ChevronRight className="w-4 h-4 text-zinc-400 shrink-0" />
           </button>
         ))}
       </div>
@@ -176,7 +176,7 @@ function UnitCard({ unit, isA, uid, accent, onOpenLesson, onOpenCircle, onOpenDi
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs border transition hover:border-zinc-500 ${full ? `${accent.soft} ${accent.ring}` : 'bg-zinc-900/70 border-zinc-800 text-zinc-300'}`}>
                 <span>{c.emoji}</span>
                 <span>{isA ? c.titleVi : c.titleEn}</span>
-                <span className={full ? accent.text : 'text-zinc-500'}>
+                <span className={full ? accent.text : 'text-zinc-400'}>
                   {full ? <Check className="w-3.5 h-3.5" /> : `${done}/${c.words.length}`}
                 </span>
               </button>
@@ -195,7 +195,7 @@ function UnitCard({ unit, isA, uid, accent, onOpenLesson, onOpenCircle, onOpenDi
               <span className="flex-1 min-w-0 text-sm font-medium text-zinc-200 truncate">
                 {isA ? dl.titleVi : dl.titleEn}
               </span>
-              <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+              <ChevronRight className="w-4 h-4 text-zinc-400 shrink-0" />
             </button>
           ))}
         </div>
@@ -222,7 +222,7 @@ function GrammarDetail({ lesson, isA, accent, onBack }: {
 
         {/* Công thức */}
         <div className={`mt-3 px-4 py-3 rounded-xl ${accent.soft} border ${accent.ring}`}>
-          <p className="text-xs text-zinc-500 mb-1">{isA ? 'Cấu trúc' : 'Structure'}</p>
+          <p className="text-xs text-zinc-400 mb-1">{isA ? 'Cấu trúc' : 'Structure'}</p>
           <p className={`font-mono text-sm font-semibold ${accent.text}`}>{lesson.structure}</p>
         </div>
 
@@ -270,7 +270,7 @@ function GrammarDetail({ lesson, isA, accent, onBack }: {
                   <p className="text-sm text-emerald-300 mt-0.5 flex items-center gap-1.5">
                     <Check className="w-3.5 h-3.5 shrink-0" /> {m.right}
                   </p>
-                  <p className="text-xs text-zinc-500 mt-1">{m.noteVi}</p>
+                  <p className="text-xs text-zinc-400 mt-1">{m.noteVi}</p>
                 </div>
               ))}
             </div>
@@ -316,7 +316,7 @@ function QuizCard({ item, isA }: {
           if (answered) {
             if (i === item.answer) cls = 'bg-emerald-500/15 border-emerald-500/50 text-emerald-300'
             else if (i === pick) cls = 'bg-rose-500/15 border-rose-500/50 text-rose-300'
-            else cls = 'bg-zinc-800/40 border-zinc-800 text-zinc-500'
+            else cls = 'bg-zinc-800/40 border-zinc-800 text-zinc-400'
           }
           return (
             <button key={i} disabled={answered} onClick={() => setPick(i)}
@@ -407,7 +407,7 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack, onOpenDialogue }: {
                   <span className="flex-1 min-w-0 text-sm font-medium text-zinc-200 truncate">
                     {isA ? dl.titleVi : dl.titleEn}
                   </span>
-                  <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+                  <ChevronRight className="w-4 h-4 text-zinc-400 shrink-0" />
                 </button>
               ))}
             </div>
@@ -419,7 +419,7 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack, onOpenDialogue }: {
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between text-xs text-zinc-500 mb-2">
+          <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
             <span>{isA ? 'Từ' : 'Word'} {idx + 1}/{cards.length}</span>
           </div>
           <div className="h-1 bg-zinc-800 rounded-full mb-4">
@@ -473,7 +473,7 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
                 <div className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border ${
                   isB ? `${accent.soft} ${accent.ring}` : 'bg-zinc-900/80 border-zinc-800/80'}`}>
                   <span className={`text-[10px] font-semibold uppercase tracking-wide ${
-                    isB ? accent.text : 'text-zinc-500'}`}>
+                    isB ? accent.text : 'text-zinc-400'}`}>
                     {ln.who}
                   </span>
                   <KaraokeText text={ln.en} lang="en-US"
