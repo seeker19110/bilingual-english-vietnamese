@@ -110,11 +110,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
     goalVi: 'Chào hỏi, giới thiệu bản thân và gia đình, nói về đồ vật quen thuộc và đặt câu hỏi đơn giản.',
     accent: 'emerald',
     canDo: [
-      'Tôi có thể chào hỏi và giới thiệu tên, tuổi, quốc tịch của mình.',
-      'Tôi có thể nói về gia đình và những người thân quen.',
-      'Tôi có thể gọi tên đồ vật, màu sắc, con số và thời gian.',
-      'Tôi có thể nói mình thích gì, có thể làm gì.',
-      'Tôi có thể đặt và trả lời câu hỏi đơn giản về thông tin cá nhân.',
+      'Chào hỏi và giới thiệu tên, tuổi, quốc tịch của mình.',
+      'Nói về gia đình và những người thân quen.',
+      'Gọi tên đồ vật, màu sắc, con số và thời gian.',
+      'Nói mình thích gì, làm được gì.',
+      'Đặt và trả lời câu hỏi đơn giản về thông tin cá nhân.',
     ],
     units: [
       {
@@ -651,11 +651,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
     goalVi: 'Nói về thói quen, kể chuyện quá khứ, mô tả và so sánh, nói về số lượng và mua sắm.',
     accent: 'sky',
     canDo: [
-      'Tôi có thể kể về thói quen và lịch sinh hoạt hằng ngày.',
-      'Tôi có thể kể lại những việc đã xảy ra trong quá khứ.',
-      'Tôi có thể nói về việc đang diễn ra và kế hoạch sắp tới.',
-      'Tôi có thể so sánh người, vật, nơi chốn quen thuộc.',
-      'Tôi có thể hỏi giá, nói về số lượng và đi mua sắm.',
+      'Kể về thói quen và lịch sinh hoạt hằng ngày.',
+      'Kể lại những việc đã xảy ra trong quá khứ.',
+      'Nói về việc đang diễn ra và kế hoạch sắp tới.',
+      'So sánh người, vật, nơi chốn quen thuộc.',
+      'Hỏi giá, nói về số lượng và đi mua sắm.',
     ],
     units: [
       {
@@ -1082,11 +1082,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
     goalVi: 'Nói về kinh nghiệm, kế hoạch tương lai, điều kiện, lời khuyên và dùng mệnh đề phức.',
     accent: 'violet',
     canDo: [
-      'Tôi có thể nói về kinh nghiệm và những việc đã làm trong đời.',
-      'Tôi có thể nói về kế hoạch và dự đoán tương lai.',
-      'Tôi có thể diễn đạt điều kiện ("nếu… thì…").',
-      'Tôi có thể đưa ra lời khuyên và nói về bổn phận.',
-      'Tôi có thể nối câu bằng mệnh đề quan hệ và dùng động từ + V-ing/to-V.',
+      'Nói về kinh nghiệm và những việc đã làm trong đời.',
+      'Nói về kế hoạch và dự đoán tương lai.',
+      'Diễn đạt điều kiện ("nếu… thì…").',
+      'Đưa ra lời khuyên và nói về bổn phận.',
+      'Nối câu bằng mệnh đề quan hệ và dùng động từ + V-ing/to-V.',
     ],
     units: [
       {
@@ -1480,11 +1480,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
     goalVi: 'Dùng câu giả định, câu bị động, tường thuật, suy đoán và thành ngữ một cách tự nhiên.',
     accent: 'amber',
     canDo: [
-      'Tôi có thể nói về tình huống giả định trái với thực tế và điều tiếc nuối.',
-      'Tôi có thể dùng câu bị động khi muốn nhấn mạnh hành động.',
-      'Tôi có thể thuật lại lời người khác (câu tường thuật).',
-      'Tôi có thể suy đoán và dùng mệnh đề quan hệ phức.',
-      'Tôi có thể dùng phrasal verbs, thành ngữ và từ nối để diễn đạt tự nhiên.',
+      'Nói về tình huống giả định trái với thực tế và điều tiếc nuối.',
+      'Dùng câu bị động khi muốn nhấn mạnh hành động.',
+      'Thuật lại lời người khác (câu tường thuật).',
+      'Suy đoán và dùng mệnh đề quan hệ phức.',
+      'Dùng phrasal verbs, thành ngữ và từ nối để diễn đạt tự nhiên.',
     ],
     units: [
       {
