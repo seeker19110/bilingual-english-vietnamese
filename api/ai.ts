@@ -17,9 +17,12 @@ import {
   logSecurityEvent,
 } from './_lib/security'
 import { checkAndConsumeUsage, isUsageMode } from './_lib/usage'
+import { callGemini } from './_lib/geminiApi'
 
 // Model và giới hạn do SERVER quyết định, không tin client
 const ALLOWED_MODEL = 'claude-haiku-4-5-20251001'
+// Model chat của Gemini (ưu tiên nếu có key) — dùng khi có GEMINI_API_KEY. Có thể đổi qua biến môi trường.
+const GEMINI_CHAT_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash'
 // Model chat của Groq (FREE) — dùng khi có GROQ_API_KEY. Có thể đổi qua biến môi trường.
 const GROQ_CHAT_MODEL = process.env.GROQ_CHAT_MODEL || 'llama-3.3-70b-versatile'
 const MAX_TOKENS_LIMIT = 2048      // tối đa cho phép (writing cần 2048, chat 1024)
@@ -74,13 +77,14 @@ export default async function handler(req: Request): Promise<Response> {
     )
   }
 
-  // Chọn nhà cung cấp AI: có GROQ_API_KEY thì dùng Groq (Llama, FREE), không thì Anthropic.
-  // Cần ít nhất một trong hai key.
+  // Chọn nhà cung cấp AI: ưu tiên Gemini → Groq → Anthropic
+  // Cần ít nhất một trong ba key.
+  const geminiKey = process.env.GEMINI_API_KEY
   const groqKey = process.env.GROQ_API_KEY
   const anthropicKey = process.env.ANTHROPIC_API_KEY
-  if (!groqKey && !anthropicKey) {
+  if (!geminiKey && !groqKey && !anthropicKey) {
     return new Response(
-      JSON.stringify({ error: { message: 'Server chưa cấu hình GROQ_API_KEY hoặc ANTHROPIC_API_KEY' } }),
+      JSON.stringify({ error: { message: 'Server chưa cấu hình GEMINI_API_KEY, GROQ_API_KEY hoặc ANTHROPIC_API_KEY' } }),
       { status: 500, headers: { 'content-type': 'application/json', ...allHeaders } },
     )
   }
@@ -151,7 +155,31 @@ export default async function handler(req: Request): Promise<Response> {
     )
   }
 
-  // ── Nhánh Groq (ưu tiên — FREE, API tương thích chuẩn OpenAI) ───────────────
+  // ── Nhánh Gemini (ưu tiên — FREE quota, kết quả tốt) ─────────────────────────
+  if (geminiKey) {
+    try {
+      const geminiText = await callGemini(
+        geminiKey,
+        GEMINI_CHAT_MODEL,
+        system,
+        sanitizedMessages as Array<{ role: 'user' | 'assistant'; content: string }>,
+        maxTokens,
+      )
+      // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc
+      return new Response(
+        JSON.stringify({ content: [{ type: 'text', text: geminiText }] }),
+        { status: 200, headers: { 'content-type': 'application/json', ...allHeaders } },
+      )
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err)
+      return new Response(
+        JSON.stringify({ error: { message: `Gemini lỗi: ${errMsg.slice(0, 200)}` } }),
+        { status: 500, headers: { 'content-type': 'application/json', ...allHeaders } },
+      )
+    }
+  }
+
+  // ── Nhánh Groq (FREE, API tương thích chuẩn OpenAI) ────────────────────────
   if (groqKey) {
     // Groq nhận system như 1 message role="system" ở đầu danh sách
     const groqMessages = [

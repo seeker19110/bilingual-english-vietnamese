@@ -7,6 +7,7 @@ import { stopSpeaking } from '../lib/tts'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
+import { useApiThrottle } from '../lib/useApiThrottle'
 import { callClaude } from '../lib/ai'
 import { chatSystemPrompt, situationLabel } from '../prompts'
 import { SITUATIONS, LEVELS, LIMITS, type Level, type ChatSession, type Message, type Direction } from '../types'
@@ -188,8 +189,15 @@ export default function Chat() {
   const [error, setError] = useState('')
   const [limitHit, setLimitHit] = useState(false)
   const [lastIdx, setLastIdx] = useState(-1)
+  const [throttleCountdown, setThrottleCountdown] = useState(0)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Rate limit 10s giữa các lần gọi API
+  const { isThrottled, throttle } = useApiThrottle({
+    delayMs: 10000,
+    onCountdown: setThrottleCountdown,
+  })
 
   // Dừng audio khi thoát trang chat
   useEffect(() => () => stopSpeaking(), [])
@@ -202,6 +210,7 @@ export default function Chat() {
     const usage = getUsage(user.id)
     const limit = LIMITS[user.plan]
     if (usage.chatCount >= limit.chat) { setLimitHit(true); return }
+    if (isThrottled) { toast.error(isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`); return }
     setLoading(true)
     setError('')
     const sys = chatSystemPrompt(situationLabel(situation, dir), level, dir)
@@ -216,6 +225,7 @@ export default function Chat() {
       setSession(newSession)
       setLastIdx(0)
       incrementUsage(user.id, 'chatCount')
+      throttle()  // Rate limit 10s sau lần gọi thành công
     } catch (e) {
       const msg = e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error')
       setError(msg)
@@ -226,6 +236,7 @@ export default function Chat() {
 
   async function sendMessage() {
     if (!input.trim() || !session || loading) return
+    if (isThrottled) { toast.error(isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`); return }
     const usage = getUsage(user.id)
     const limit = LIMITS[user.plan]
     if (usage.chatCount >= limit.chat) { setLimitHit(true); return }
@@ -247,6 +258,7 @@ export default function Chat() {
       saveChatSession(final)
       setLastIdx(final.messages.length - 1)
       incrementUsage(user.id, 'chatCount')
+      throttle()  // Rate limit 10s sau lần gọi thành công
     } catch (e) {
       const msg = e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error')
       setError(msg)
@@ -337,15 +349,20 @@ export default function Chat() {
                   if (!isMobile && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
                 }}
                 placeholder={isA ? 'Nhập tiếng Anh...' : 'Type in Vietnamese...'}
-                disabled={loading || limitHit}
+                disabled={loading || limitHit || isThrottled}
                 inputMode="text"
                 className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-[16px] sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition disabled:opacity-50"
               />
 
-              <button onClick={sendMessage} disabled={!input.trim() || loading || limitHit}
-                className="p-2.5 bg-gradient-to-br from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-emerald-500/20 active:scale-95"
+              <button onClick={sendMessage} disabled={!input.trim() || loading || limitHit || isThrottled}
+                className="p-2.5 bg-gradient-to-br from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-emerald-500/20 active:scale-95 relative"
                 aria-label={isA ? 'Gửi tin nhắn' : 'Send message'}>
                 <Send className="w-4 h-4" />
+                {isThrottled && throttleCountdown > 0 && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-xl text-[10px] font-bold text-white">
+                    {throttleCountdown}s
+                  </div>
+                )}
               </button>
             </div>
           </div>

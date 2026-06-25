@@ -1,5 +1,6 @@
 // Gọi AI qua /api/claude — KHÔNG gửi API key từ browser.
-// API key được giữ ở server: vite.config.ts (lúc dev) hoặc api/claude.ts (lúc deploy lên Vercel).
+// API key được giữ ở server: vite.config.ts (lúc dev) hoặc api/ai.ts (lúc deploy lên VPS).
+// Handler hỗ trợ Gemini (ưu tiên) / Groq / Anthropic — chọn dựa trên biến môi trường.
 
 import { supabase } from './supabase'
 

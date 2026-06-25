@@ -5,6 +5,7 @@ import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../lib/s
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
+import { useApiThrottle } from '../lib/useApiThrottle'
 import { callClaude, parseJson } from '../lib/ai'
 import { writingSystemPrompt } from '../prompts'
 import { LIMITS, type WritingSubmission, type Direction } from '../types'
@@ -159,6 +160,13 @@ export default function Writing() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [result, setResult] = useState<WritingSubmission | null>(null)
+  const [throttleCountdown, setThrottleCountdown] = useState(0)
+
+  // Rate limit 10s giữa các lần gọi API
+  const { isThrottled, throttle } = useApiThrottle({
+    delayMs: 10000,
+    onCountdown: setThrottleCountdown,
+  })
 
   const wordCount = essay.trim().split(/\s+/).filter(Boolean).length
   const wordColor = wordCount < 150 ? 'text-red-400' : wordCount < 250 ? 'text-amber-400' : 'text-emerald-400'
@@ -168,6 +176,7 @@ export default function Writing() {
 
   async function submit() {
     if (!essay.trim() || !essayPrompt.trim()) return
+    if (isThrottled) { toast.error(isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`); return }
     if (essay.length > 10000) {
       setError(isA ? 'Bài viết quá dài (tối đa 10.000 ký tự).' : 'Essay too long (max 10,000 characters).')
       return
@@ -193,6 +202,7 @@ export default function Writing() {
       saveWritingSub(sub)
       setResult(sub)
       incrementUsage(user.id, 'writingCount')
+      throttle()  // Rate limit 10s sau lần gọi thành công
     } catch (e) {
       const m = e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error')
       setError(m)
@@ -255,15 +265,21 @@ export default function Writing() {
           </div>
         )}
 
-        <button onClick={submit} disabled={loading || !essay.trim() || !essayPrompt.trim()}
+        <button onClick={submit} disabled={loading || !essay.trim() || !essayPrompt.trim() || isThrottled}
           aria-label={isA ? 'Chấm bài ngay' : 'Grade my essay'}
-          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-purple-500 hover:from-violet-500 hover:to-purple-400 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] shadow-lg shadow-violet-500/20">
-          {loading
-            ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-purple-500 hover:from-violet-500 hover:to-purple-400 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] shadow-lg shadow-violet-500/20 relative">
+          {isThrottled && throttleCountdown > 0 ? (
+            <>
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              {isA ? `Chờ ${throttleCountdown}s...` : `Wait ${throttleCountdown}s...`}
+            </>
+          ) : loading ? (
+            <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 {isA ? 'Đang chấm bài...' : 'Grading...'}</>
-            : <><PenLine className="w-4 h-4" /><Send className="w-4 h-4" />
+          ) : (
+            <><PenLine className="w-4 h-4" /><Send className="w-4 h-4" />
                 {isA ? 'Chấm bài ngay' : 'Grade my essay'}</>
-          }
+          )}
         </button>
 
         <p className="text-center text-xs text-zinc-400">

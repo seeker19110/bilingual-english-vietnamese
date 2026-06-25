@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => {
     if (env[key] && !process.env[key]) process.env[key] = env[key]
   }
 
-  // /api/claude giờ do dev middleware gọi thẳng handler api/claude.ts (xem API_ROUTES bên dưới)
-  // — không proxy thẳng tới Anthropic nữa, để handler tự chọn nhà cung cấp (Groq/Anthropic).
+  // /api/claude giờ do dev middleware gọi thẳng handler api/ai.ts (xem API_ROUTES bên dưới)
+  // — không proxy thẳng tới Anthropic nữa, để handler tự chọn nhà cung cấp (Gemini/Groq/Anthropic).
   return {
     plugins: [
       react(),
@@ -113,7 +113,7 @@ const API_ROUTES: { prefix: string; module: string }[] = [
   { prefix: '/api/pronunciation', module: '/api/pronunciation.ts' },
   { prefix: '/api/tts', module: '/api/tts.ts' },
   { prefix: '/api/stt', module: '/api/stt.ts' },
-  { prefix: '/api/claude', module: '/api/claude.ts' },
+  { prefix: '/api/claude', module: '/api/ai.ts' },
   { prefix: '/api/dictionary', module: '/api/dictionary.ts' },
 ]
 
