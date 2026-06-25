@@ -19,8 +19,11 @@ export interface DictSearchResult {
 }
 
 // Tìm kiếm theo từ khóa (tiếng Anh hoặc tiếng Việt). signal để hủy request cũ khi gõ nhanh.
-export async function searchDictionary(q: string, signal?: AbortSignal): Promise<DictSearchResult> {
-  const res = await fetch(`/api/dictionary?q=${encodeURIComponent(q)}`, {
+// pos (tùy chọn): lọc theo loại từ Ở SERVER để khớp với số đếm trên chip kể cả khi
+// truy vấn có hơn 200 từ khớp.
+export async function searchDictionary(q: string, signal?: AbortSignal, pos?: string | null): Promise<DictSearchResult> {
+  const posParam = pos ? `&pos=${encodeURIComponent(pos)}` : ''
+  const res = await fetch(`/api/dictionary?q=${encodeURIComponent(q)}${posParam}`, {
     headers: await authHeaders(),
     signal,
   })

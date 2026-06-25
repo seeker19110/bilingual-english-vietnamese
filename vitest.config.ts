@@ -6,5 +6,7 @@ export default defineConfig({
   test: {
     environment: 'happy-dom',
     include: ['src/**/*.test.{ts,tsx}'],
+    // Mock fetch('/data/...') → đọc thẳng public/ để test chạy offline (không cần server).
+    setupFiles: ['./vitest.setup.ts'],
   },
 })

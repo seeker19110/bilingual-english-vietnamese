@@ -78,12 +78,13 @@ export default function Dictionary() {
     if (!q) { setSearchResults([]); setSearchPosGroups([]); setSearchMatched(0); return }
     const ctrl = new AbortController()
     setSearching(true)
-    searchDictionary(q, ctrl.signal)
+    // Truyền posFilter để server lọc đúng theo loại từ (số khớp với chip kể cả >200 từ).
+    searchDictionary(q, ctrl.signal, posFilter)
       .then(r => { setSearchResults(r.results); setSearchPosGroups(r.posGroups); setSearchMatched(r.matched) })
       .catch(err => { if (err?.name !== 'AbortError') { setSearchResults([]); setSearchPosGroups([]); setSearchMatched(0) } })
       .finally(() => setSearching(false))
     return () => ctrl.abort()
-  }, [deferredQuery])
+  }, [deferredQuery, posFilter])
 
   useEffect(() => {
     if (user) setLearnedWords(getLearnedWords(user.id))

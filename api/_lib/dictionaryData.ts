@@ -5,8 +5,10 @@
 // import.meta.glob là tính năng RIÊNG của Vite, không có khi chạy tsx production.
 // Dùng fs.readdirSync/readFileSync thì cả hai môi trường (đều là Node) đều chạy được.
 //
-// Dữ liệu nằm tại src/data/dictionary/chunk-*.json — có sẵn trên đĩa ở cả dev lẫn
+// Dữ liệu nằm tại public/data/dictionary/chunk-*.json — có sẵn trên đĩa ở cả dev lẫn
 // trên VPS (repo được clone nguyên vẹn). Nạp ~2.6MB vào RAM server 1 lần là không đáng kể.
+// LƯU Ý: các chunk đã được chuyển từ src/ sang public/ (commit "chuyển chunk sang public/")
+// để giảm số module Vite. Endpoint server đọc trực tiếp bằng fs nên phải trỏ ĐÚNG public/.
 
 import { readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
@@ -22,8 +24,8 @@ export interface DictEntry {
   ipa_vi?: string
 }
 
-// api/_lib/ → ../../src/data/dictionary
-const DICT_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'src', 'data', 'dictionary')
+// api/_lib/ → ../../public/data/dictionary
+const DICT_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'public', 'data', 'dictionary')
 
 let _all: DictEntry[] | null = null
 
