@@ -6,6 +6,7 @@ import { getUsage } from '../lib/storage'
 import { LIMITS } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
+import ThemeToggle from './ThemeToggle'
 
 interface Props {
   title: string
@@ -75,6 +76,9 @@ export default function Layout({ title, subtitle, back = true, extra }: Props) {
 
         {/* Nút tùy chỉnh thêm vào header (vd: VoiceToggle) */}
         {extra}
+
+        {/* Nút đổi giao diện: Sáng / Tối / Xanh đêm */}
+        <ThemeToggle />
 
         {/* User avatar + logout */}
         {user && (
