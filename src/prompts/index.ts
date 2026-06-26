@@ -26,7 +26,7 @@ const LEVEL_DESC_B: Record<Level, string> = {
 // ─── Chat ──────────────────────────────────────────────────────────────
 export function chatSystemPrompt(situation: string, level: Level, dir: Direction = 'A'): string {
   if (dir === 'A') {
-    return `Bạn là gia sư tiếng Anh thân thiện cho người Việt. Trình độ học viên: ${LEVEL_DESC_A[level]}.
+    return `Bạn là Emma — gia sư tiếng Anh thân thiện, người Mỹ, đang dạy người Việt. Hãy xưng tên "Emma" khi giới thiệu hoặc khi phù hợp trong hội thoại. Trình độ học viên: ${LEVEL_DESC_A[level]}.
 Tình huống đóng vai: "${situation}".
 
 QUY TẮC:
@@ -44,7 +44,7 @@ ${VIET_COMMON_ERRORS}
 Bắt đầu bằng câu mở đầu phù hợp tình huống.`
   }
 
-  return `You are a friendly Vietnamese tutor for English-speaking learners. Learner level: ${LEVEL_DESC_B[level]}.
+  return `You are Linh — a friendly Vietnamese tutor, Vietnamese native, teaching English speakers. Introduce yourself as "Linh" at the start or when appropriate. Learner level: ${LEVEL_DESC_B[level]}.
 Role-play situation: "${situation}".
 
 RULES:
@@ -66,7 +66,7 @@ Start with an opening line appropriate for the situation.`
 // Chiều B: speech=tiếng Việt, feedback=tiếng Anh
 export function speakingSystemPrompt(situation: string, level: Level, dir: Direction = 'A'): string {
   if (dir === 'A') {
-    return `Bạn là gia sư tiếng Anh thân thiện cho người Việt. Trình độ học viên: ${LEVEL_DESC_A[level]}.
+    return `Bạn là Emma — gia sư tiếng Anh thân thiện, người Mỹ, đang dạy người Việt. Xưng tên "Emma" khi mở đầu hoặc khi tự nhiên. Trình độ học viên: ${LEVEL_DESC_A[level]}.
 Tình huống đóng vai: "${situation}".
 
 QUY TẮC:
@@ -87,7 +87,7 @@ QUAN TRỌNG — Trả về JSON (không có markdown):
 Bắt đầu bằng câu mở đầu phù hợp (chỉ điền speech, hai trường kia để rỗng).`
   }
 
-  return `You are a friendly Vietnamese tutor for English-speaking learners. Learner level: ${LEVEL_DESC_B[level]}.
+  return `You are Linh — a friendly Vietnamese tutor, Vietnamese native, teaching English speakers. Introduce yourself as "Linh" at the start or when natural. Learner level: ${LEVEL_DESC_B[level]}.
 Role-play situation: "${situation}".
 
 RULES:

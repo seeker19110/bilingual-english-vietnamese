@@ -155,12 +155,12 @@ export default function Home() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout title={T.greeting(firstName)} back={false} streak={streak} />
+      <Layout title={T.greeting(firstName)} back={false} />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
 
-        {/* ── Chọn chiều học + giọng đọc (cùng hàng, khối rộng) ──────────── */}
-        <div className="mb-6 grid grid-cols-2 gap-3 animate-fade-in">
+        {/* ── Chọn chiều học + streak + giọng đọc (cùng hàng, 3 cột) ────────── */}
+        <div className="mb-6 grid grid-cols-[1fr_auto_1fr] gap-3 animate-fade-in items-stretch">
 
           {/* Khối chọn chiều học — nhấn cả khối để toggle */}
           <button
@@ -183,6 +183,16 @@ export default function Home() {
               </span>
             </div>
           </button>
+
+          {/* Streak — căn giữa giữa Language và Voice */}
+          {streak > 0 && (
+            <div className="flex flex-col items-center justify-center gap-1 bg-orange-500/10 border border-orange-500/25 rounded-2xl px-3 py-3">
+              <span className="text-xl leading-none">🔥</span>
+              <p className="text-sm font-bold text-orange-400 leading-none">{streak}</p>
+              <p className="text-[9px] text-orange-400/60 leading-none">{T.streakDays}</p>
+            </div>
+          )}
+          {streak === 0 && <div />}
 
           {/* Khối chọn giọng đọc — nhấn cả khối để đổi Nữ ↔ Nam */}
           <button
