@@ -1,5 +1,5 @@
 import { Suspense, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { LangProvider } from './context/LangProvider'
 import { ThemeProvider } from './context/ThemeProvider'
 import { AuthProvider } from './context/AuthProvider'
@@ -50,6 +50,18 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+// Cập nhật thẻ <link rel="canonical"> theo route hiện tại để tránh lỗi SEO
+// "canonical points to homepage instead of current page"
+const BASE_URL = 'https://en-vi.donghanhcungban.com'
+function CanonicalUpdater() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+    if (canonical) canonical.href = BASE_URL + pathname
+  }, [pathname])
+  return null
+}
+
 // Prefetch các trang hay dùng nhất khi browser rảnh sau lần tải đầu
 function usePrefetchPages() {
   useEffect(() => {
@@ -78,6 +90,7 @@ export default function App() {
       <LangProvider>
           <ToastProvider>
             <BrowserRouter>
+              <CanonicalUpdater />
               <ErrorBoundary>
               <Suspense fallback={<PageLoading />}>
                 <Routes>
