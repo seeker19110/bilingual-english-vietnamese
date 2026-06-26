@@ -63,11 +63,29 @@
 }
 
 @layer base {
+  html {
+    /* Chặn iOS/Safari tự phóng to chữ khi xoay ngang màn hình */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-zinc-950 text-zinc-100 antialiased;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Chặn double-tap zoom trên mobile (vẫn cho phép scroll/pan dọc) */
+    touch-action: pan-x pan-y;
+  }
+
+  /* iOS Safari tự zoom khi focus vào ô nhập có font < 16px.
+     Ép font ≥ 16px trên màn hình cảm ứng để không bị giật zoom. */
+  @media (hover: none) and (pointer: coarse) {
+    input,
+    textarea,
+    select {
+      font-size: 16px;
+    }
   }
 
   ::-webkit-scrollbar { width: 4px; height: 4px; }

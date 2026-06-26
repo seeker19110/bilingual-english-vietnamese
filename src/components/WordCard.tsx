@@ -41,7 +41,9 @@ export default function WordCard({ card, isA, uid, onUpdate }: {
         <button
           onClick={handleStar}
           title={isA ? (difficult ? 'Bỏ đánh dấu khó' : 'Đánh dấu từ khó') : (difficult ? 'Unmark' : 'Mark difficult')}
-          className="absolute top-3 right-3 z-10 p-1.5 rounded-full hover:bg-zinc-700/50 transition">
+          aria-label={isA ? (difficult ? 'Bỏ đánh dấu từ khó' : 'Đánh dấu từ khó') : (difficult ? 'Unmark difficult word' : 'Mark word as difficult')}
+          aria-pressed={difficult}
+          className="absolute top-2 right-2 z-10 p-2.5 rounded-full hover:bg-zinc-700/50 transition">
           <Star className={`w-4 h-4 transition ${difficult ? 'fill-amber-400 text-amber-400' : 'text-zinc-400 hover:text-zinc-200'}`} />
         </button>
 
