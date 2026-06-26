@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from 'react'
 import {
   ChevronRight, ChevronLeft, BookOpen, GraduationCap, Check,
   Sparkles, CheckCircle2, Layers, X, Lightbulb, AlertTriangle, PencilLine,
-  MessageCircle,
+  MessageCircle, Lock,
 } from 'lucide-react'
 import KaraokeText from './KaraokeText'
 import WordCard from './WordCard'
@@ -15,6 +15,22 @@ import { getDialogues } from '../data/dialoguesLoader'
 
 function countGrammar(level: CefrLevel): number {
   return level.units.reduce((sum, u) => sum + u.grammar.length, 0)
+}
+
+// Đếm tổng số từ trong tất cả vòng vocab của 1 cấp
+function countLevelWords(level: CefrLevel): number {
+  const ids = level.units.flatMap(u => u.vocabCircleIds)
+  return ids.reduce((sum, id) => sum + (CIRCLE_BY_ID[id]?.words.length ?? 0), 0)
+}
+
+// Đếm số từ đã thuộc trong tất cả vòng vocab của 1 cấp
+function countLevelLearned(level: CefrLevel, learned: Set<string>): number {
+  const ids = level.units.flatMap(u => u.vocabCircleIds)
+  return ids.reduce((sum, id) => {
+    const c = CIRCLE_BY_ID[id]
+    if (!c) return sum
+    return sum + circleDone(c, learned)
+  }, 0)
 }
 import type { DictEntry } from '../types'
 import { getLearnedWords, markLearned } from '../lib/vocab'
@@ -48,15 +64,34 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
   const [lesson, setLesson]   = useState<GrammarLesson | null>(null)
   const [circle, setCircle]   = useState<Circle | null>(null)
   const [dialogue, setDialogue] = useState<Dialogue | null>(null)
+  const [foundationReady, setFoundationReady] = useState(false)
 
   useEffect(() => {
     loadCefr().then(setCefrLevels)
-    loadFoundation().then(f => { CIRCLE_BY_ID = Object.fromEntries(f.map(c => [c.id, c])) })
+    loadFoundation().then(f => {
+      CIRCLE_BY_ID = Object.fromEntries(f.map(c => [c.id, c]))
+      setFoundationReady(true)
+    })
   }, [])
+
+  const learned = useMemo(() => getLearnedWords(uid), [uid, foundationReady]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const level = cefrLevels.find(l => l.id === levelId) ?? cefrLevels[0]
   if (!level) return null
   const accent = ACCENT[level.accent]
+
+  // Kiểm tra cấp độ có bị khóa không (A1 luôn mở, các cấp sau cần hoàn thành ≥70% vocab cấp trước)
+  function isLevelLocked(l: CefrLevel): boolean {
+    const idx = cefrLevels.findIndex(x => x.id === l.id)
+    if (idx <= 0) return false
+    const prev = cefrLevels[idx - 1]
+    const total = countLevelWords(prev)
+    if (total === 0) return false
+    const done = countLevelLearned(prev, learned)
+    return done / total < 0.7
+  }
+
+  const locked = isLevelLocked(level)
 
   // Màn xem 1 cuộc hội thoại
   if (dialogue) {
@@ -77,6 +112,9 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
       onBack={() => setLesson(null)} />
   }
 
+  // Đánh số bài ngữ pháp liên tục trong cả cấp (Bài 1, Bài 2, …)
+  let globalLessonIndex = 0
+
   return (
     <div className="animate-fade-in">
       {/* Chọn cấp độ CEFR */}
@@ -84,10 +122,12 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
         {cefrLevels.map(l => {
           const a = ACCENT[l.accent]
           const on = l.id === levelId
+          const lkd = isLevelLocked(l)
           return (
             <button key={l.id} onClick={() => setLevelId(l.id)}
-              className={`py-2 rounded-xl text-sm font-bold border transition ${on ? a.active : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'}`}>
-              {l.id}
+              className={`py-2.5 rounded-xl text-sm font-bold border transition flex flex-col items-center gap-0.5 ${on ? a.active : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'}`}>
+              {lkd && <Lock className="w-3 h-3 opacity-60" />}
+              <span>{l.id}</span>
             </button>
           )
         })}
@@ -98,27 +138,27 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
         <div className="flex items-start gap-3">
           <GraduationCap className={`w-6 h-6 shrink-0 ${accent.text}`} />
           <div className="flex-1">
-            <h3 className="font-bold text-white text-lg leading-tight">
+            <h3 className="font-bold text-white text-xl leading-tight">
               {isA ? level.titleVi : level.titleEn}
             </h3>
-            <p className="text-xs text-zinc-400 mt-0.5">{level.subtitleVi}</p>
-            <p className="text-sm text-zinc-300 mt-2 leading-snug">{level.goalVi}</p>
-            <div className="flex gap-3 mt-3 text-xs text-zinc-400">
-              <span className="flex items-center gap-1"><Layers className="w-3.5 h-3.5" /> {level.units.length} {isA ? 'bài' : 'units'}</span>
-              <span className="flex items-center gap-1"><BookOpen className="w-3.5 h-3.5" /> {countGrammar(level)} {isA ? 'điểm ngữ pháp' : 'grammar points'}</span>
+            <p className="text-sm text-zinc-400 mt-0.5">{level.subtitleVi}</p>
+            <p className="text-base text-zinc-300 mt-2 leading-snug">{level.goalVi}</p>
+            <div className="flex gap-3 mt-3 text-sm text-zinc-400">
+              <span className="flex items-center gap-1"><Layers className="w-3.5 h-3.5" /> {level.units.length} {isA ? 'chủ đề' : 'units'}</span>
+              <span className="flex items-center gap-1"><BookOpen className="w-3.5 h-3.5" /> {countGrammar(level)} {isA ? 'bài ngữ pháp' : 'grammar points'}</span>
             </div>
           </div>
         </div>
 
         {/* Mục tiêu can-do */}
         <div className="mt-4 pt-4 border-t border-zinc-800/80">
-          <p className="text-xs font-semibold text-zinc-400 mb-2 flex items-center gap-1.5">
-            <Sparkles className={`w-3.5 h-3.5 ${accent.text}`} />
+          <p className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-1.5">
+            <Sparkles className={`w-4 h-4 ${accent.text}`} />
             {isA ? 'Hoàn thành cấp này, bạn có thể:' : 'After this level, you will be able to:'}
           </p>
-          <ul className="space-y-1.5">
+          <ul className="space-y-2">
             {level.canDo.map((c, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-zinc-300">
+              <li key={i} className="flex items-start gap-2 text-base text-zinc-300 leading-snug">
                 <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${accent.text}`} />
                 <span>{c}</span>
               </li>
@@ -127,21 +167,42 @@ export default function RoadmapTab({ uid, isA, onProgress }: {
         </div>
       </div>
 
-      {/* Danh sách unit */}
-      <div className="space-y-3">
-        {level.units.map(unit => (
-          <UnitCard key={unit.id} unit={unit} isA={isA} uid={uid} accent={accent}
-            onOpenLesson={setLesson} onOpenCircle={setCircle} onOpenDialogue={setDialogue} />
-        ))}
-      </div>
+      {/* Màn khóa — nếu cấp bị khóa */}
+      {locked ? (
+        <div className="glass rounded-2xl p-6 text-center space-y-3 border border-zinc-700/60">
+          <Lock className="w-8 h-8 text-zinc-400 mx-auto" />
+          <p className="text-white font-semibold text-lg">
+            {isA ? `Cấp ${level.id} đang bị khóa` : `${level.id} is locked`}
+          </p>
+          <p className="text-sm text-zinc-400 leading-relaxed">
+            {isA
+              ? `Hoàn thành ≥70% từ vựng của cấp ${cefrLevels[cefrLevels.findIndex(x => x.id === level.id) - 1]?.id ?? ''} để mở khóa.`
+              : `Complete ≥70% vocabulary in the previous level to unlock.`}
+          </p>
+        </div>
+      ) : (
+        /* Danh sách unit */
+        <div className="space-y-3">
+          {level.units.map(unit => {
+            const startIdx = globalLessonIndex
+            globalLessonIndex += unit.grammar.length
+            return (
+              <UnitCard key={unit.id} unit={unit} isA={isA} uid={uid} accent={accent}
+                lessonStartIndex={startIdx}
+                onOpenLesson={setLesson} onOpenCircle={setCircle} onOpenDialogue={setDialogue} />
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
 
 // ── Thẻ 1 unit ────────────────────────────────────────────────────────────────
-function UnitCard({ unit, isA, uid, accent, onOpenLesson, onOpenCircle, onOpenDialogue }: {
+function UnitCard({ unit, isA, uid, accent, lessonStartIndex, onOpenLesson, onOpenCircle, onOpenDialogue }: {
   unit: CefrUnit; isA: boolean; uid: string
   accent: typeof ACCENT[keyof typeof ACCENT]
+  lessonStartIndex: number
   onOpenLesson: (l: GrammarLesson) => void
   onOpenCircle: (c: Circle) => void
   onOpenDialogue: (d: Dialogue) => void
@@ -154,14 +215,17 @@ function UnitCard({ unit, isA, uid, accent, onOpenLesson, onOpenCircle, onOpenDi
     <div className="glass rounded-2xl p-4">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-xl">{unit.emoji}</span>
-        <h4 className="font-semibold text-white">{isA ? unit.titleVi : unit.titleEn}</h4>
+        <h4 className="font-semibold text-white text-base">{isA ? unit.titleVi : unit.titleEn}</h4>
       </div>
 
-      {/* Bài ngữ pháp */}
+      {/* Bài ngữ pháp — có số thứ tự toàn cấp */}
       <div className="space-y-1.5 mb-3">
-        {unit.grammar.map(g => (
+        {unit.grammar.map((g, gi) => (
           <button key={g.id} onClick={() => onOpenLesson(g)}
-            className="w-full flex items-center gap-2 text-left px-3 py-2.5 rounded-xl bg-zinc-900/70 border border-zinc-800 hover:border-zinc-600 transition">
+            className="w-full flex items-center gap-2 text-left px-3 py-3 rounded-xl bg-zinc-900/70 border border-zinc-800 hover:border-zinc-600 transition">
+            <span className={`text-xs font-bold w-14 shrink-0 ${accent.text}`}>
+              {isA ? `Bài ${lessonStartIndex + gi + 1}` : `L.${lessonStartIndex + gi + 1}`}
+            </span>
             <BookOpen className={`w-4 h-4 shrink-0 ${accent.text}`} />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-zinc-200 truncate">{isA ? g.titleVi : g.titleEn}</p>

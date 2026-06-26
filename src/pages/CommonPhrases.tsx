@@ -169,17 +169,19 @@ export default function CommonPhrases() {
 
           {/* Ô tìm kiếm — chỉ hiện ở trên trên desktop */}
           <div className="hidden sm:block relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" aria-hidden="true" />
             <input
               id="search-desktop"
               name="search"
+              type="search"
+              aria-label={T.phrasesPageTitle}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Bạn muốn nói gì…"
-              className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-[16px] sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
+              placeholder={T.phrasesSearchPlaceholder}
+              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition"
             />
             {search && (
-              <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white">
+              <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition p-0.5">
                 <X className="w-4 h-4" />
               </button>
             )}
@@ -253,17 +255,19 @@ export default function CommonPhrases() {
       {/* Search bar cố định ở dưới — CHỈ trên mobile */}
       <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" aria-hidden="true" />
           <input
             id="search-mobile"
             name="search"
+            type="search"
+            aria-label={T.phrasesPageTitle}
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Bạn muốn nói gì…"
-            className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl pl-9 pr-9 py-2.5 text-[16px] sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
+            placeholder={T.phrasesSearchPlaceholder}
+            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-[16px] text-white placeholder:text-zinc-400 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition"
           />
           {search && (
-            <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white">
+            <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition p-0.5">
               <X className="w-4 h-4" />
             </button>
           )}

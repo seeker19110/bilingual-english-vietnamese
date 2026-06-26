@@ -244,11 +244,18 @@ curl http://localhost:3001/api/health
 
 ### 7a. Tạo config Nginx
 
+File config chuẩn đã có sẵn trong repo tại `nginx/en-vi.conf`. Copy lên VPS:
+
 ```bash
-sudo nano /etc/nginx/sites-available/en-vi
+# Từ thư mục dự án trên VPS
+sudo cp nginx/en-vi.conf /etc/nginx/sites-available/en-vi
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
-Dán nội dung (thay domain nếu cần):
+> **Điểm khác biệt so với config cũ:** `/js/` và `/assets/` (file có hash) giờ được Nginx
+> serve trực tiếp từ `dist/` mà **không qua Express** → TTFB giảm ~80ms, không tốn RAM Node.js.
+> `open_file_cache` giữ metadata file trong RAM → không cần `stat()` ổ cứng mỗi request.
+> Còn nếu muốn tự tạo tay, nội dung như sau (thay domain nếu cần):
 
 ```nginx
 # ── HTTP → HTTPS redirect ──
