@@ -100,7 +100,7 @@ export default function App() {
                   <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
                   <Route path="/writing" element={<RequireAuth><Writing /></RequireAuth>} />
                   <Route path="/speaking" element={<RequireAuth><Speaking /></RequireAuth>} />
-                  <Route path="/learn" element={<RequireAuth><Learn /></RequireAuth>} />
+                  <Route path="/learning-path" element={<RequireAuth><Learn /></RequireAuth>} />
                   <Route path="/dictionary" element={<RequireAuth><Dictionary /></RequireAuth>} />
                   <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
                   <Route path="/phrases" element={<RequireAuth><CommonPhrases /></RequireAuth>} />
