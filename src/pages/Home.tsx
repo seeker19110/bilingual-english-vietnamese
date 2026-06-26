@@ -10,7 +10,6 @@ import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import { useCloudSync } from '../lib/useCloudSync'
 import ShareProgress from '../components/ShareProgress'
-import OfflineProgress from '../components/OfflineProgress'
 import { isPushSupported, getNotifPermission, subscribePush, unsubscribePush } from '../lib/pushNotif'
 import { supabase } from '../lib/supabase'
 
@@ -156,24 +155,9 @@ export default function Home() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout title={T.greeting(firstName)} back={false} />
+      <Layout title={T.greeting(firstName)} back={false} streak={streak} />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
-
-        {/* ── Greeting + streak ──────────────────────────────────────────── */}
-        <div className="mb-4 flex items-center justify-between animate-fade-in gap-3">
-          <p className="text-zinc-400 text-sm">{T.todayPractice}</p>
-
-          {streak > 0 && (
-            <div className="flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 rounded-xl px-3 py-2 shrink-0">
-              <span className="text-xl leading-none">🔥</span>
-              <div className="leading-none">
-                <p className="text-base font-bold text-orange-400">{streak}</p>
-                <p className="text-[10px] text-orange-400/60 mt-0.5">{T.streakDays}</p>
-              </div>
-            </div>
-          )}
-        </div>
 
         {/* ── Chọn chiều học + giọng đọc (cùng hàng, khối rộng) ──────────── */}
         <div className="mb-6 grid grid-cols-2 gap-3 animate-fade-in">
@@ -277,9 +261,6 @@ export default function Home() {
             )}
           </div>
         </div>
-
-        {/* Thanh tiến độ tải dữ liệu để dùng offline (tự ẩn khi chưa/không tải) */}
-        <OfflineProgress isA={isA} />
 
         {/* Modal chia sẻ tiến độ */}
         {showShare && user && (

@@ -13,9 +13,10 @@ interface Props {
   subtitle?: string
   back?: boolean
   extra?: ReactNode
+  streak?: number
 }
 
-export default function Layout({ title, subtitle, back = true, extra }: Props) {
+export default function Layout({ title, subtitle, back = true, extra, streak }: Props) {
   const nav = useNavigate()
   const { user } = useAuth()
   const usage = user ? getUsage(user.id) : null
@@ -28,7 +29,7 @@ export default function Layout({ title, subtitle, back = true, extra }: Props) {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/60 relative">
+    <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/60 relative pt-safe">
       {/* Gradient accent line trên cùng */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
 
@@ -56,6 +57,17 @@ export default function Layout({ title, subtitle, back = true, extra }: Props) {
           <p className="font-semibold text-[15px] truncate text-white">{title}</p>
           {subtitle && <p className="text-xs text-zinc-400 truncate">{subtitle}</p>}
         </div>
+
+        {/* Streak — hiện ở giữa header khi được truyền vào */}
+        {streak != null && streak > 0 && (
+          <div className="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/25 rounded-xl px-2.5 py-1.5 shrink-0">
+            <span className="text-base leading-none">🔥</span>
+            <div className="leading-none">
+              <p className="text-sm font-bold text-orange-400">{streak}</p>
+              <p className="text-[9px] text-orange-400/60">{T.streakDays}</p>
+            </div>
+          </div>
+        )}
 
         {/* Usage indicator */}
         {usage && limit && (
