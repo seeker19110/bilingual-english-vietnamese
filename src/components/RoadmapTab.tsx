@@ -1,9 +1,10 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import {
   ChevronRight, ChevronLeft, BookOpen, GraduationCap, Check,
   Sparkles, CheckCircle2, Layers, X, Lightbulb, AlertTriangle, PencilLine,
-  MessageCircle, Lock,
+  MessageCircle, Lock, Play, Pause, Square, Volume2,
 } from 'lucide-react'
+import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio } from '../lib/tts'
 import KaraokeText from './KaraokeText'
 import WordCard from './WordCard'
 import type { CefrLevel, CefrUnit, GrammarLesson, QuizItem } from '../data/cefr'
@@ -521,17 +522,176 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack, onOpenDialogue }: {
 // ── Xem 1 cuộc hội thoại ──────────────────────────────────────────────────────
 // Hai người nói A/B hiển thị so le hai bên (giống khung chat). Mỗi câu tiếng Anh
 // bấm nghe được (KaraokeText), kèm bản dịch tiếng Việt bên dưới.
+// Có thanh điều khiển: tốc độ (0.75× / 1× / 1.25×) + chế độ EN / EN+VI / VI
+// + Phát tất cả / Dừng / Tiếp — giống trang Lessons.
+
+type DlgSpeed = 0.75 | 1 | 1.25
+type DlgMode  = 'en' | 'both' | 'vi'
+
 function DialogueView({ dialogue, isA, accent, onBack }: {
   dialogue: Dialogue; isA: boolean
   accent: typeof ACCENT[keyof typeof ACCENT]
   onBack: () => void
 }) {
+  const [activeLine, setActiveLine] = useState<number | null>(null)
+  const [playing,    setPlaying]    = useState(false)
+  const [paused,     setPaused]     = useState(false)
+  const [speed,      setSpeed]      = useState<DlgSpeed>(1)
+  const [mode,       setMode]       = useState<DlgMode>('en')
+
+  const stopRef  = useRef(false)
+  const pauseRef = useRef(false)
+  const speedRef = useRef<DlgSpeed>(1)
+  const modeRef  = useRef<DlgMode>('en')
+
+  // Dừng audio khi back
+  useEffect(() => () => { stopRef.current = true; stopSpeaking() }, [])
+
+  function changeSpeed(s: DlgSpeed) { setSpeed(s); speedRef.current = s }
+  function changeMode(m: DlgMode)   { setMode(m);  modeRef.current  = m }
+
+  async function startPlayAll() {
+    stopRef.current  = false
+    pauseRef.current = false
+    setPlaying(true)
+    setPaused(false)
+    setActiveLine(null)
+
+    const targetLang = isA ? 'en-US' : 'vi-VN'
+    const transLang  = isA ? 'vi-VN' : 'en-US'
+
+    for (let i = 0; i < dialogue.lines.length; i++) {
+      if (stopRef.current) break
+      while (pauseRef.current && !stopRef.current) await new Promise(r => setTimeout(r, 100))
+      if (stopRef.current) break
+
+      const ln  = dialogue.lines[i]
+      setActiveLine(i)
+
+      const curMode  = modeRef.current
+      const curSpeed = speedRef.current
+
+      if (curMode === 'en') {
+        await speak(ln.en, 'en-US', undefined, curSpeed)
+      } else if (curMode === 'vi') {
+        await speak(ln.vi, 'vi-VN', undefined, curSpeed)
+      } else {
+        // both: đích trước, bản dịch sau
+        await speak(isA ? ln.en : ln.vi, targetLang, undefined, curSpeed)
+        if (!stopRef.current) {
+          await new Promise(r => setTimeout(r, 250))
+          await speak(isA ? ln.vi : ln.en, transLang, undefined, curSpeed)
+        }
+      }
+      if (!stopRef.current) await new Promise(r => setTimeout(r, 400))
+    }
+
+    stopRef.current = false
+    setPlaying(false)
+    setPaused(false)
+    setActiveLine(null)
+  }
+
+  function handlePause()  { pauseRef.current = true;  setPaused(true);  pauseCurrentAudio() }
+  function handleResume() { pauseRef.current = false; setPaused(false); resumeCurrentAudio() }
+  function handleStop()   { stopRef.current  = true;  stopSpeaking();   setPlaying(false); setPaused(false); setActiveLine(null) }
+
+  const isIdle = !playing && !paused
+
+  const SPEEDS: DlgSpeed[] = [0.75, 1, 1.25]
+  const MODES: { key: DlgMode; label: string }[] = [
+    { key: 'en',   label: 'EN' },
+    { key: 'both', label: isA ? 'EN+VI' : 'VI+EN' },
+    { key: 'vi',   label: 'VI' },
+  ]
+
   return (
     <div className="animate-fade-in">
-      <button onClick={onBack}
-        className="flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200 transition mb-3">
-        <ChevronLeft className="w-4 h-4" /> {isA ? 'Quay lại lộ trình' : 'Back to roadmap'}
-      </button>
+      {/* Thanh điều khiển audio */}
+      <div className="bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800/40 px-4 py-2.5 -mx-4 mb-3">
+        <div className="glass rounded-xl px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+
+          {/* Nút back */}
+          <button onClick={onBack}
+            className="shrink-0 text-xs text-zinc-400 hover:text-white transition flex items-center gap-1">
+            <ChevronLeft className="w-3.5 h-3.5" /> {isA ? 'Quay lại' : 'Back'}
+          </button>
+
+          <div className="h-3.5 w-px bg-zinc-700" />
+
+          {/* Play / Pause / Resume / Stop */}
+          <div className="flex items-center gap-1.5">
+            {isIdle && (
+              <button onClick={() => void startPlayAll()}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-medium transition">
+                <Play className="w-3 h-3 fill-current" />
+                {isA ? 'Phát tất cả' : 'Play all'}
+              </button>
+            )}
+            {playing && !paused && (
+              <button onClick={handlePause}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition">
+                <Pause className="w-3 h-3 fill-current" />
+                {isA ? 'Dừng' : 'Pause'}
+              </button>
+            )}
+            {paused && (
+              <button onClick={handleResume}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-medium transition">
+                <Play className="w-3 h-3 fill-current" />
+                {isA ? 'Tiếp' : 'Resume'}
+              </button>
+            )}
+            {!isIdle && (
+              <button onClick={handleStop}
+                className="w-6 h-6 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition">
+                <Square className="w-3 h-3 fill-current" />
+              </button>
+            )}
+          </div>
+
+          <div className="h-3.5 w-px bg-zinc-700" />
+
+          {/* Tốc độ đọc */}
+          <div className="flex items-center gap-1">
+            {SPEEDS.map(s => (
+              <button key={s} onClick={() => changeSpeed(s)}
+                className={`px-1.5 py-0.5 rounded text-xs font-medium transition ${
+                  speed === s
+                    ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40'
+                    : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
+                }`}>
+                {s}×
+              </button>
+            ))}
+          </div>
+
+          <div className="h-3.5 w-px bg-zinc-700" />
+
+          {/* Chế độ nghe: EN / EN+VI / VI */}
+          <div className="flex items-center gap-1">
+            <Volume2 className="w-3 h-3 text-zinc-400 shrink-0" />
+            {MODES.map(m => (
+              <button key={m.key} onClick={() => changeMode(m.key)}
+                className={`px-1.5 py-0.5 rounded text-xs font-medium transition ${
+                  mode === m.key
+                    ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40'
+                    : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
+                }`}>
+                {m.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Đang phát dòng bao nhiêu */}
+          {playing && activeLine !== null && (
+            <div className="ml-auto flex items-center gap-1 shrink-0">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[10px] text-zinc-400">{activeLine + 1}/{dialogue.lines.length}</span>
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="glass rounded-2xl p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
@@ -542,10 +702,12 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
         <div className="space-y-2.5">
           {dialogue.lines.map((ln, i) => {
             const isB = ln.who === 'B'
+            const isActive = activeLine === i
             return (
               <div key={i} className={`flex ${isB ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border ${
-                  isB ? `${accent.soft} ${accent.ring}` : 'bg-zinc-900/80 border-zinc-800/80'}`}>
+                <div className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border transition-all ${
+                  isActive ? 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-emerald-500/60' : ''
+                } ${isB ? `${accent.soft} ${accent.ring}` : 'bg-zinc-900/80 border-zinc-800/80'}`}>
                   <span className={`text-[10px] font-semibold uppercase tracking-wide ${
                     isB ? accent.text : 'text-zinc-400'}`}>
                     {ln.who}

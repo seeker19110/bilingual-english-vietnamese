@@ -29,7 +29,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       desc:  isA ? T.dictDescA  : T.dictDescB,
     },
     {
-      path: '/learn',
+      path: '/learning-path',
       icon: Target,
       gradient: 'from-lime-500 to-green-400',
       glow: 'shadow-lime-500/20',
@@ -239,7 +239,7 @@ export default function Home() {
           {/* Hàng ngang: Quiz + Chia sẻ + Thông báo */}
           <div className="grid grid-cols-3 gap-2">
             {/* Quiz — mở trang Học theo lộ trình, tab Kiểm tra */}
-            <button onClick={() => nav('/learn')}
+            <button onClick={() => nav('/learning-path')}
               aria-label={isA ? 'Kiểm tra' : 'Quiz'}
               className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-violet-500/40 transition group">
               <ClipboardList className="w-4 h-4 text-violet-400" />
