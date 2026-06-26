@@ -159,15 +159,15 @@ export default function Home() {
 
       <main className="max-w-3xl mx-auto px-4 py-6">
 
-        {/* ── Chọn chiều học + streak + giọng đọc (cùng hàng, 3 cột) ────────── */}
-        <div className="mb-6 grid grid-cols-[1fr_auto_1fr] gap-3 animate-fade-in items-stretch">
+        {/* ── Chọn chiều học + streak + giọng đọc (3 cột đều nhau) ───────────── */}
+        <div className="mb-6 grid grid-cols-3 gap-3 animate-fade-in">
 
           {/* Khối chọn chiều học — nhấn cả khối để toggle */}
           <button
             onClick={toggleDir}
             title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
             aria-label={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
-            className={`flex flex-col items-start gap-1.5 rounded-2xl px-4 py-3 border transition-all active:scale-[0.98] ${
+            className={`flex flex-col items-start gap-1.5 rounded-2xl px-3 py-3 border transition-all active:scale-[0.98] ${
               isA
                 ? 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60'
                 : 'bg-sky-500/10 border-sky-500/30 hover:border-sky-500/60'
@@ -176,23 +176,28 @@ export default function Home() {
             <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wide">
               {isA ? 'Ngôn ngữ học' : 'Language'}
             </span>
-            <div className="flex items-center gap-1.5">
-              <ArrowLeftRight className={`w-3.5 h-3.5 ${isA ? 'text-emerald-400' : 'text-sky-400'}`} />
-              <span className={`text-sm font-semibold ${isA ? 'text-emerald-300' : 'text-sky-300'}`}>
-                {isA ? '🇻🇳 Việt → 🇺🇸 Anh' : '🇺🇸 Anh → 🇻🇳 Việt'}
+            <div className="flex items-center gap-1.5 min-w-0">
+              <ArrowLeftRight className={`w-3.5 h-3.5 shrink-0 ${isA ? 'text-emerald-400' : 'text-sky-400'}`} />
+              <span className={`text-xs font-semibold truncate ${isA ? 'text-emerald-300' : 'text-sky-300'}`}>
+                {isA ? '🇻🇳 → 🇺🇸 Anh' : '🇺🇸 → 🇻🇳 Việt'}
               </span>
             </div>
           </button>
 
-          {/* Streak — căn giữa giữa Language và Voice */}
-          {streak > 0 && (
-            <div className="flex flex-col items-center justify-center gap-1 bg-orange-500/10 border border-orange-500/25 rounded-2xl px-3 py-3">
-              <span className="text-xl leading-none">🔥</span>
-              <p className="text-sm font-bold text-orange-400 leading-none">{streak}</p>
-              <p className="text-[9px] text-orange-400/60 leading-none">{T.streakDays}</p>
-            </div>
-          )}
-          {streak === 0 && <div />}
+          {/* Streak — cột giữa, căn giữa hoàn toàn */}
+          <div className={`flex flex-col items-center justify-center gap-1 rounded-2xl py-3 border ${
+            streak > 0
+              ? 'bg-orange-500/10 border-orange-500/25'
+              : 'bg-zinc-900/40 border-zinc-800/40'
+          }`}>
+            <span className="text-xl leading-none">{streak > 0 ? '🔥' : '💤'}</span>
+            <p className={`text-sm font-bold leading-none ${streak > 0 ? 'text-orange-400' : 'text-zinc-500'}`}>
+              {streak}
+            </p>
+            <p className={`text-[9px] leading-none ${streak > 0 ? 'text-orange-400/60' : 'text-zinc-600'}`}>
+              {T.streakDays}
+            </p>
+          </div>
 
           {/* Khối chọn giọng đọc — nhấn cả khối để đổi Nữ ↔ Nam */}
           <button
@@ -200,15 +205,15 @@ export default function Home() {
             onClick={toggleVoice}
             title={isA ? 'Nhấn để đổi giọng đọc' : 'Tap to switch voice'}
             aria-label={`${isA ? 'Giọng đọc' : 'Voice'}: ${voice === 'female' ? (isA ? 'Nữ' : 'Female') : (isA ? 'Nam' : 'Male')}`}
-            className="flex flex-col items-start gap-1.5 rounded-2xl px-4 py-3 border bg-zinc-900/80 border-zinc-700/60 hover:border-zinc-600 transition-all active:scale-[0.98]"
+            className="flex flex-col items-start gap-1.5 rounded-2xl px-3 py-3 border bg-zinc-900/80 border-zinc-700/60 hover:border-zinc-600 transition-all active:scale-[0.98]"
           >
             <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wide">
               {isA ? 'Giọng đọc' : 'Voice'}
             </span>
             <div className="flex items-center gap-1.5">
               <Mic className="w-3.5 h-3.5 text-zinc-400" />
-              <span className="text-sm font-semibold text-zinc-200">
-                {voice === 'female' ? (isA ? 'Nữ' : 'Female') : (isA ? 'Nam' : 'Male')}
+              <span className="text-xs font-semibold text-zinc-200">
+                {voice === 'female' ? (isA ? '♀ Nữ' : '♀ Female') : (isA ? '♂ Nam' : '♂ Male')}
               </span>
             </div>
           </button>
