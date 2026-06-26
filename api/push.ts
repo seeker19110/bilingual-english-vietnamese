@@ -115,5 +115,17 @@ export default async function handler(req: Request): Promise<Response> {
     return new Response(JSON.stringify({ sent, expired: expired.length }), { headers })
   }
 
+  // ── Xóa toàn bộ push subscriptions (admin, cần CRON_SECRET) ─────────────
+  if (action === 'clear-all') {
+    const secret = process.env.CRON_SECRET
+    if (!secret || body.secret !== secret) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers })
+    }
+    const supabase = getSupabaseAdmin()
+    const { error: delErr, count } = await supabase.from('push_subscriptions').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+    if (delErr) return new Response(JSON.stringify({ error: delErr.message }), { status: 500, headers })
+    return new Response(JSON.stringify({ ok: true, deleted: count }), { headers })
+  }
+
   return new Response(JSON.stringify({ error: 'Action không hợp lệ' }), { status: 400, headers })
 }

@@ -12,7 +12,6 @@ export const t = {
 
     // Home
     greeting: (name: string) => `Xin chào, ${name}`,
-    todayPractice: 'Hôm nay luyện gì?',
     dirLabelA: '🇻🇳 Người Việt học tiếng Anh',
     dirLabelB: '🌍 Người nước ngoài học tiếng Việt',
     toggleDirTitleA: 'Chuyển sang dạy tiếng Việt cho người nước ngoài',
@@ -140,7 +139,6 @@ export const t = {
 
     // Home
     greeting: (name: string) => `Hello, ${name}`,
-    todayPractice: "What will you practice today?",
     dirLabelA: '🇻🇳 Vietnamese learning English',
     dirLabelB: '🌍 Foreigners learning Vietnamese',
     toggleDirTitleA: 'Switch to teaching Vietnamese for foreigners',
