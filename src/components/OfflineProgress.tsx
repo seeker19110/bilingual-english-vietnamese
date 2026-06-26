@@ -13,29 +13,38 @@ function mb(bytes: number): string {
 
 export default function OfflineProgress({ isA }: { isA: boolean }) {
   const [p, setP] = useState<PrecacheProgress>(getPrecacheProgress())
+  const [hidden, setHidden] = useState(false)
 
   useEffect(() => {
     const onProgress = (e: Event) => setP((e as CustomEvent<PrecacheProgress>).detail)
     window.addEventListener('data-precache-progress', onProgress)
-    // Đồng bộ lại lần đầu (phòng khi event đã phát trước khi component mount).
     setP(getPrecacheProgress())
     return () => window.removeEventListener('data-precache-progress', onProgress)
   }, [])
 
-  // Chưa khởi động / không có gì để tải → ẩn hẳn.
-  if (p.total === 0) return null
+  // Tự ẩn 4 giây sau khi tải xong
+  useEffect(() => {
+    if (p.done >= p.total && p.total > 0) {
+      const t = setTimeout(() => setHidden(true), 4000)
+      return () => clearTimeout(t)
+    }
+  }, [p.done, p.total])
+
+  // Chưa khởi động / không có gì để tải / đã ẩn → không render.
+  if (p.total === 0 || hidden) return null
 
   const done = p.done >= p.total
   const pct = Math.min(100, Math.round((p.bytesDone / Math.max(1, p.bytesTotal)) * 100))
+  const totalMb = mb(p.bytesTotal)
 
   if (done) {
     return (
       <div className="mb-4 flex items-center gap-2 rounded-2xl bg-emerald-500/8 border border-emerald-500/20 px-4 py-2.5 animate-fade-in">
-        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
         <span className="text-xs text-emerald-300">
           {isA
-            ? `Đã tải xong dữ liệu — dùng được khi không có mạng (${mb(p.bytesTotal)}MB)`
-            : `All data downloaded — works offline (${mb(p.bytesTotal)}MB)`}
+            ? `Đã tải xong — dùng được khi không có mạng (${totalMb} MB)`
+            : `Downloaded — works offline (${totalMb} MB)`}
         </span>
       </div>
     )
@@ -49,7 +58,7 @@ export default function OfflineProgress({ isA }: { isA: boolean }) {
           {isA ? 'Đang tải dữ liệu để dùng offline…' : 'Downloading data for offline use…'}
         </span>
         <span className="text-[11px] text-zinc-400 tabular-nums">
-          {mb(p.bytesDone)}/{mb(p.bytesTotal)}MB
+          {mb(p.bytesDone)}/{totalMb} MB
         </span>
       </div>
       <div className="h-1.5 w-full rounded-full bg-zinc-800 overflow-hidden">
