@@ -220,21 +220,8 @@ export default function Home() {
 
         </div>
 
-        {/* ── Hành động nhanh (lịch sử + quiz + chia sẻ + thông báo) ──────── */}
+        {/* ── Hành động nhanh (quiz + chia sẻ + thông báo) ──────── */}
         <div className="mb-4 space-y-2 animate-fade-in">
-          {/* Lịch sử */}
-          <button onClick={() => nav('/history')}
-            aria-label={isA ? 'Xem lịch sử học' : 'View learning history'}
-            className="w-full bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group">
-            <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
-              <History className="w-4 h-4 text-zinc-400" />
-            </div>
-            <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
-              {isA ? 'Xem lịch sử học' : 'View learning history'}
-            </span>
-            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-200 transition" />
-          </button>
-
           {/* Hàng ngang: Quiz + Chia sẻ + Thông báo */}
           <div className="grid grid-cols-3 gap-2">
             {/* Quiz — mở trang Học theo lộ trình, tab Kiểm tra */}
@@ -311,6 +298,19 @@ export default function Home() {
             )
           })}
         </div>
+
+        {/* ── Lịch sử học (dòng 2 từ dưới lên) ───────────────────────── */}
+        <button onClick={() => nav('/history')}
+          aria-label={isA ? 'Xem lịch sử học' : 'View learning history'}
+          className="w-full mt-4 bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in">
+          <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
+            <History className="w-4 h-4 text-zinc-400" />
+          </div>
+          <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
+            {isA ? 'Xem lịch sử học' : 'View learning history'}
+          </span>
+          <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-200 transition" />
+        </button>
 
         {/* ── Tip ──────────────────────────────────────────────────────── */}
         <div className="mt-6 glass rounded-xl p-4 text-xs text-zinc-400 animate-fade-in delay-400">
