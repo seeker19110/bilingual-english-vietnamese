@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import KaraokeText from './KaraokeText'
 import WordCard from './WordCard'
+import { InlinePronounce } from '../pages/Lessons'
 import type { CefrLevel, CefrUnit, GrammarLesson, QuizItem } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
 import type { Dialogue } from '../data/dialogues'
@@ -554,6 +555,11 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
                     textClass={`font-medium text-[15px] leading-snug ${isB ? accent.text : 'text-zinc-100'}`}
                     buttonClass="w-full" />
                   <p className="text-sm text-zinc-400 mt-1 pl-6">{ln.vi}</p>
+                  <InlinePronounce
+                    text={isA ? ln.en : ln.vi}
+                    lang={isA ? 'en-US' : 'vi-VN'}
+                    isA={isA}
+                  />
                 </div>
               </div>
             )
