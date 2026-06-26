@@ -18,6 +18,8 @@ import { loadFoundation } from '../data/curriculumLoader'
 
 // Mục tiêu 20 từ/ngày — khớp với tài liệu (CLAUDE.md), FAQ trong index.html và UI tab "Hôm nay".
 export const DAILY_GOAL = 20
+// Tối đa 100 từ/ngày (5 batch × 20 từ). Mỗi batch thêm phải pass quiz 100%.
+export const DAILY_MAX = 100
 
 // Dữ liệu từ điển — KHÔNG import tĩnh nữa (file ~2MB). Nạp ĐỘNG bằng
 // dynamic import() qua loadCurriculum() để Vite tách dictionary.json thành
@@ -159,4 +161,30 @@ export function bumpDailyLearned(uid: string): number {
   const next = cur + 1
   localStorage.setItem(DAILY_KEY(uid), JSON.stringify({ date: todayStr(), count: next }))
   return next
+}
+
+// ── Số lần pass quiz để mở batch mới trong ngày ──────────────────────────
+const QUIZ_PASS_KEY = (uid: string) => `et_quiz_pass_${uid}`
+
+export function getDailyQuizPasses(uid: string): number {
+  try {
+    const raw = localStorage.getItem(QUIZ_PASS_KEY(uid))
+    if (!raw) return 0
+    const obj = JSON.parse(raw) as { date: string; passes: number }
+    return obj.date === todayStr() ? obj.passes : 0
+  } catch {
+    return 0
+  }
+}
+
+export function bumpDailyQuizPasses(uid: string): number {
+  const cur = getDailyQuizPasses(uid)
+  const next = cur + 1
+  localStorage.setItem(QUIZ_PASS_KEY(uid), JSON.stringify({ date: todayStr(), passes: next }))
+  return next
+}
+
+// Số từ được phép học hôm nay: DAILY_GOAL × (quizPasses + 1), tối đa DAILY_MAX
+export function getDailyAllowance(uid: string): number {
+  return Math.min(DAILY_GOAL * (getDailyQuizPasses(uid) + 1), DAILY_MAX)
 }

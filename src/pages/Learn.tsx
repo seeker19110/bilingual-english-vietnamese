@@ -17,10 +17,14 @@ import { preloadLearnData } from '../lib/preloader'
 import { addToSRS, reviewWord, getDueWords, getSRSStats, type Rating } from '../lib/srs'
 import {
   DAILY_GOAL,
+  DAILY_MAX,
   getTodayBatch,
   getPathProgress,
   getDailyLearned,
   bumpDailyLearned,
+  getDailyQuizPasses,
+  bumpDailyQuizPasses,
+  getDailyAllowance,
   findCircleOfWord,
   getCircleProgress,
   getLearningPath,
@@ -168,17 +172,49 @@ export default function Learn() {
 }
 
 // ── Tab Hôm nay ───────────────────────────────────────────────────────────────
+// Số câu mini-quiz cần đúng 100% để mở batch mới
+const MINI_QUIZ_SIZE = 5
+const MINI_QUIZ_CHOICES = 4
+
+interface MiniQuizQ { word: string; correct: string; options: string[] }
+
+function buildMiniQuiz(batch: DictEntry[]): MiniQuizQ[] {
+  const allMeanings = getLearningPath().map(w => w.vi)
+  const pool = [...batch].sort(() => Math.random() - 0.5).slice(0, MINI_QUIZ_SIZE)
+  return pool.map(q => {
+    const wrongs = allMeanings
+      .filter(m => m !== q.vi)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, MINI_QUIZ_CHOICES - 1)
+    return { word: q.word, correct: q.vi, options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5) }
+  })
+}
+
+type TodayPhase = 'learning' | 'batch-done' | 'mini-quiz' | 'daily-max'
+
 function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onProgress: () => void }) {
-  const [batch]      = useState<DictEntry[]>(() => getTodayBatch(getLearnedWords(uid)))
+  // Phase bắt đầu dựa trên trạng thái ngày hiện tại
+  const [phase, setPhase] = useState<TodayPhase>(() => {
+    const learned = getDailyLearned(uid)
+    if (learned >= DAILY_MAX) return 'daily-max'
+    if (learned >= getDailyAllowance(uid)) return 'batch-done'
+    return 'learning'
+  })
+  const [batch, setBatch] = useState<DictEntry[]>(() => getTodayBatch(getLearnedWords(uid)))
   const [idx, setIdx] = useState(0)
   const [dailyStart] = useState(() => getDailyLearned(uid))
 
+  // Mini-quiz state
+  const [quizQs, setQuizQs]       = useState<MiniQuizQ[]>([])
+  const [quizIdx, setQuizIdx]     = useState(0)
+  const [quizSel, setQuizSel]     = useState<string | null>(null)
+  const [quizAns, setQuizAns]     = useState<boolean[]>([])
+  const [quizDone, setQuizDone]   = useState(false)
+
   const progress = useMemo(() => getPathProgress(getLearnedWords(uid)), [uid])
   const card     = batch[idx]
-  const done     = idx >= batch.length
   const circle   = card ? findCircleOfWord(card.word) : undefined
 
-  // Tiến độ vòng hiện tại
   const circleProgress = useMemo(() => {
     if (!circle) return null
     return getCircleProgress(circle.id, getLearnedWords(uid))
@@ -187,15 +223,63 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
   function learn() {
     if (!card) return
     markLearned(uid, card.word)
-    addToSRS(uid, card.word)   // tự động vào hàng đợi SRS
+    addToSRS(uid, card.word)
     bumpDailyLearned(uid)
     onProgress()
-    setIdx(i => i + 1)
+    const nextIdx = idx + 1
+    if (nextIdx >= batch.length) {
+      // Hết batch → check tổng hôm nay
+      const totalToday = getDailyLearned(uid) // đã bump rồi
+      if (totalToday >= DAILY_MAX) setPhase('daily-max')
+      else setPhase('batch-done')
+    } else {
+      setIdx(nextIdx)
+    }
   }
 
-  function skip() { setIdx(i => i + 1) }
+  function skip() {
+    const nextIdx = idx + 1
+    if (nextIdx >= batch.length) {
+      const totalToday = getDailyLearned(uid)
+      if (totalToday >= DAILY_MAX) setPhase('daily-max')
+      else setPhase('batch-done')
+    } else {
+      setIdx(nextIdx)
+    }
+  }
 
-  if (batch.length === 0) {
+  function startMiniQuiz() {
+    setQuizQs(buildMiniQuiz(batch))
+    setQuizIdx(0)
+    setQuizSel(null)
+    setQuizAns([])
+    setQuizDone(false)
+    setPhase('mini-quiz')
+  }
+
+  function quizNext() {
+    const ok = quizSel === quizQs[quizIdx].correct
+    const newAns = [...quizAns, ok]
+    setQuizAns(newAns)
+    if (quizIdx + 1 >= quizQs.length) {
+      setQuizDone(true)
+    } else {
+      setQuizIdx(q => q + 1)
+      setQuizSel(null)
+    }
+  }
+
+  function unlockNextBatch() {
+    bumpDailyQuizPasses(uid)
+    const newBatch = getTodayBatch(getLearnedWords(uid))
+    setBatch(newBatch)
+    setIdx(0)
+    setPhase('learning')
+    onProgress()
+  }
+
+  // ── Hết lộ trình ──────────────────────────────────────────────────────
+  if (batch.length === 0 && phase === 'learning') {
     return (
       <div className="glass rounded-xl p-8 text-center animate-fade-in">
         <Trophy className="w-10 h-10 text-amber-400 mx-auto mb-3" />
@@ -209,8 +293,29 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
     )
   }
 
-  if (done) {
+  // ── Đã đạt 100 từ/ngày ────────────────────────────────────────────────
+  if (phase === 'daily-max') {
+    return (
+      <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-2">
+        <Trophy className="w-10 h-10 text-amber-400 mx-auto" />
+        <p className="text-white font-semibold">
+          {isA ? `Xuất sắc! Đã học đủ ${DAILY_MAX} từ hôm nay 🎉` : `Amazing! ${DAILY_MAX} words learned today 🎉`}
+        </p>
+        <p className="text-sm text-zinc-400">
+          {isA ? 'Quay lại vào ngày mai để tiếp tục.' : 'Come back tomorrow to continue.'}
+        </p>
+        <p className="text-xs text-zinc-500 pt-1">
+          {isA ? 'Trong khi chờ, hãy ôn SRS để nhớ lâu hơn.' : 'Meanwhile, review SRS to retain better.'}
+        </p>
+      </div>
+    )
+  }
+
+  // ── Xong batch, chờ kiểm tra ──────────────────────────────────────────
+  if (phase === 'batch-done') {
     const learnedToday = getDailyLearned(uid) - dailyStart
+    const totalToday   = getDailyLearned(uid)
+    const quizPasses   = getDailyQuizPasses(uid)
     const seen = new Set<string>()
     const sentences: { en: string; vi: string }[] = []
     for (const e of batch) {
@@ -220,16 +325,24 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
         c.sentences.forEach(s => sentences.push(s))
       }
     }
+    const canLearnMore = totalToday < DAILY_MAX
     return (
       <div className="animate-fade-in space-y-4">
         <div className="glass rounded-xl p-8 text-center">
           <Check className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
           <p className="text-white font-semibold mb-1">{isA ? 'Hoàn thành bài hôm nay!' : "Today's lesson done!"}</p>
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-zinc-400 mb-1">
             {isA
-              ? <>{`Đã học `}<strong className="text-emerald-300">{learnedToday}</strong>{`/${DAILY_GOAL} từ hôm nay`}</>
-              : <>You learned <strong className="text-emerald-300">{learnedToday}</strong>/{DAILY_GOAL} words today</>}
+              ? <>{`Đã học `}<strong className="text-emerald-300">{learnedToday}</strong>{` từ trong lượt này · Tổng hôm nay: `}<strong className="text-emerald-300">{totalToday}</strong>{`/${DAILY_MAX}`}</>
+              : <>Learned <strong className="text-emerald-300">{learnedToday}</strong> words · Today total: <strong className="text-emerald-300">{totalToday}</strong>/{DAILY_MAX}</>}
           </p>
+          {canLearnMore && (
+            <p className="text-xs text-zinc-500 mt-2">
+              {isA
+                ? `Còn ${DAILY_MAX - totalToday} từ có thể học hôm nay — kiểm tra để mở thêm.`
+                : `${DAILY_MAX - totalToday} more words available today — pass a quiz to unlock.`}
+            </p>
+          )}
         </div>
 
         {sentences.length > 0 && (
@@ -252,10 +365,107 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
             </div>
           </div>
         )}
+
+        {canLearnMore && quizPasses < (DAILY_MAX / DAILY_GOAL - 1) && (
+          <button onClick={startMiniQuiz}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 font-medium transition">
+            <ClipboardList className="w-4 h-4" />
+            {isA ? `Kiểm tra để học thêm 20 từ (còn ${DAILY_MAX - totalToday} từ hôm nay)` : `Quiz to unlock 20 more words (${DAILY_MAX - totalToday} left today)`}
+          </button>
+        )}
       </div>
     )
   }
 
+  // ── Mini-quiz mở batch mới ────────────────────────────────────────────
+  if (phase === 'mini-quiz') {
+    const q = quizQs[quizIdx]
+    const allRight = quizAns.length === quizQs.length && quizAns.every(Boolean)
+
+    if (quizDone) {
+      if (allRight) {
+        return (
+          <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-3">
+            <p className="text-4xl">🏆</p>
+            <p className="text-white font-semibold">{isA ? 'Xuất sắc! 100% đúng!' : 'Perfect! 100% correct!'}</p>
+            <p className="text-sm text-zinc-400">
+              {isA ? 'Bạn đã mở được 20 từ mới. Tiếp tục thôi!' : 'You unlocked 20 more words. Keep going!'}
+            </p>
+            <button onClick={unlockNextBatch}
+              className="mt-2 w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold transition">
+              {isA ? 'Học 20 từ tiếp theo →' : 'Learn next 20 words →'}
+            </button>
+          </div>
+        )
+      }
+      const score = quizAns.filter(Boolean).length
+      return (
+        <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-3">
+          <p className="text-4xl">📚</p>
+          <p className="text-white font-semibold">
+            {isA ? `${score}/${quizQs.length} — Cần đúng 100% để mở batch mới` : `${score}/${quizQs.length} — Need 100% to unlock next batch`}
+          </p>
+          <p className="text-sm text-zinc-400">
+            {isA ? 'Ôn lại rồi thử lại nhé!' : 'Review and try again!'}
+          </p>
+          <button onClick={startMiniQuiz}
+            className="w-full py-3 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 font-medium transition">
+            <RotateCcw className="w-4 h-4 inline mr-1" /> {isA ? 'Làm lại kiểm tra' : 'Retry quiz'}
+          </button>
+          <button onClick={() => setPhase('batch-done')}
+            className="w-full py-2 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm transition">
+            {isA ? 'Ôn lại từ vừa học trước' : 'Review words first'}
+          </button>
+        </div>
+      )
+    }
+
+    return (
+      <div className="animate-fade-in space-y-4">
+        <div className="flex items-center justify-between text-xs text-zinc-400 mb-1">
+          <span className="text-violet-400 font-medium">
+            {isA ? 'Kiểm tra mở batch mới' : 'Quiz to unlock next batch'}
+          </span>
+          <span>{quizIdx + 1}/{quizQs.length}</span>
+        </div>
+        <div className="h-1 bg-zinc-800 rounded-full">
+          <div className="h-full bg-violet-500 rounded-full transition-all"
+            style={{ width: `${(quizIdx / quizQs.length) * 100}%` }} />
+        </div>
+        <div className="text-center py-4">
+          <p className="text-xs text-zinc-400 mb-3 uppercase tracking-wide">
+            {isA ? 'Nghĩa tiếng Việt của từ này là?' : 'Vietnamese meaning?'}
+          </p>
+          <p className="text-4xl font-bold text-white">{q.word}</p>
+        </div>
+        <div className="space-y-2.5">
+          {q.options.map(opt => {
+            let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
+            if (quizSel !== null) {
+              if (opt === q.correct)    cls = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-300'
+              else if (opt === quizSel) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
+              else                      cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
+            }
+            return (
+              <button key={opt} onClick={() => { if (quizSel === null) setQuizSel(opt) }}
+                className={`w-full text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}>
+                {opt}
+              </button>
+            )
+          })}
+        </div>
+        {quizSel !== null && (
+          <button onClick={quizNext}
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-violet-500 hover:bg-violet-400 text-white font-semibold transition animate-fade-in">
+            {quizIdx + 1 >= quizQs.length ? (isA ? 'Xem kết quả' : 'See results') : (isA ? 'Câu tiếp theo' : 'Next')}
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+    )
+  }
+
+  // ── Đang học ──────────────────────────────────────────────────────────
   return (
     <div className="animate-fade-in">
       {/* Tên chủ đề + tiến độ vòng */}
