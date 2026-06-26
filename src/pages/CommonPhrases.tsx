@@ -28,6 +28,49 @@ function getColor(color: string) {
   return COLOR_MAP[color] ?? COLOR_MAP['slate']
 }
 
+// Bản đồ từ khóa tiếng Anh → gợi ý tiếng Việt để tìm kiếm 2 chiều
+const VI_HINTS: Record<string, string> = {
+  'I': 'tôi mình em con',
+  'He': 'anh ấy ông ấy anh chàng',
+  'She': 'cô ấy bà ấy chị cô',
+  'You': 'bạn anh chị em mày',
+  'We': 'chúng tôi chúng ta mình',
+  'They': 'họ bọn họ chúng nó',
+  'Everyone': 'mọi người tất cả ai cũng',
+  'can': 'có thể',
+  "can't": 'không thể không có thể',
+  'want': 'muốn',
+  'needs': 'cần',
+  'need': 'cần',
+  'is': 'là đang',
+  'was': 'đã là đã',
+  'has': 'có',
+  'have': 'có',
+  'will': 'sẽ',
+  "won't": 'sẽ không',
+  'would': 'sẽ muốn',
+  'should': 'nên',
+  'might': 'có thể',
+  'love': 'yêu thích',
+  'loves': 'yêu thích',
+  'like': 'thích',
+  'likes': 'thích',
+  'thinks': 'nghĩ',
+  'think': 'nghĩ',
+  'plans': 'kế hoạch dự định',
+  'going': 'sắp sẽ đi',
+  'trying': 'cố đang cố',
+  'planning': 'kế hoạch dự định',
+  "doesn't": 'không',
+  "don't": 'không',
+  "didn't": 'đã không',
+}
+
+// Chuyển starter tiếng Anh thành chuỗi gợi ý tiếng Việt để tìm kiếm
+function starterToViHint(starter: string): string {
+  return starter.split(/\s+/).map(w => VI_HINTS[w] ?? w).join(' ')
+}
+
 // Phân loại cấu trúc câu từ starter
 type StructType = 'be' | 'toV' | 'V'
 
@@ -86,7 +129,11 @@ export default function CommonPhrases() {
     if (activeStruct) list = list.filter(s => getStructType(s.starter) === activeStruct)
     if (deferredSearch.trim()) {
       const q = deferredSearch.toLowerCase()
-      list = list.filter(s => s.starter.toLowerCase().includes(q))
+      list = list.filter(s =>
+        s.starter.toLowerCase().includes(q) ||
+        s.category.toLowerCase().includes(q) ||
+        starterToViHint(s.starter).toLowerCase().includes(q)
+      )
     }
     return list
   }, [activeStruct, deferredSearch, indexData])

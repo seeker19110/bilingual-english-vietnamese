@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, memo, useMemo, useDeferredValue } from 'react'
-import { Play, Pause, Square, Volume2, Loader2, Search, X } from 'lucide-react'
+import { Play, Pause, Square, Volume2, Loader2, Search, X, Mic, RotateCcw } from 'lucide-react'
+import { startListening, isSTTSupported } from '../lib/stt'
+import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronounceScore'
 import Layout from '../components/Layout'
 import VoiceToggle from '../components/VoiceToggle'
 import { getDirection } from '../lib/storage'
@@ -523,7 +525,7 @@ function LessonView({ lesson, isA, color, onBack }: {
                       ? 'bg-zinc-900 border border-zinc-800'
                       : 'bg-emerald-500/10 border border-emerald-500/30'
                 }`}>
-                  {/* Nhãn speaker + nút phát turn */}
+                  {/* Nhãn speaker + nút phát + nút kiểm tra phát âm */}
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <p className="text-[10px] font-medium text-zinc-400">
                       {t.speaker === 'A'
@@ -531,17 +533,24 @@ function LessonView({ lesson, isA, color, onBack }: {
                         : (isA ? (lesson.speakerBName?.vi ?? 'Người B') : (lesson.speakerBName?.en ?? 'Person B'))
                       }
                     </p>
-                    <button
-                      onClick={() => void playTurn(i)}
-                      title={isA ? 'Nghe câu này' : 'Play this line'}
-                      className={`shrink-0 w-6 h-6 flex items-center justify-center rounded-full transition ${
-                        isActive
-                          ? `${color.text} bg-zinc-800/50`
-                          : 'text-zinc-400 hover:text-zinc-300 hover:bg-zinc-700'
-                      }`}
-                    >
-                      <Volume2 className={`w-3 h-3 ${isActive ? 'animate-pulse' : ''}`} />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <InlinePronounce
+                        text={isA ? t.en : t.vi}
+                        lang={isA ? 'en-US' : 'vi-VN'}
+                        isA={isA}
+                      />
+                      <button
+                        onClick={() => void playTurn(i)}
+                        title={isA ? 'Nghe câu này' : 'Play this line'}
+                        className={`shrink-0 w-6 h-6 flex items-center justify-center rounded-full transition ${
+                          isActive
+                            ? `${color.text} bg-zinc-800/50`
+                            : 'text-zinc-400 hover:text-zinc-300 hover:bg-zinc-700'
+                        }`}
+                      >
+                        <Volume2 className={`w-3 h-3 ${isActive ? 'animate-pulse' : ''}`} />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Câu chính */}
@@ -568,5 +577,107 @@ function LessonView({ lesson, isA, color, onBack }: {
         </div>
       </div>
     </>
+  )
+}
+
+// ── Kiểm tra phát âm inline cho 1 câu hội thoại ──────────────────────────────
+export function InlinePronounce({ text, lang, isA }: {
+  text: string; lang: 'en-US' | 'vi-VN'; isA: boolean
+}) {
+  const [open,   setOpen]   = useState(false)
+  const [status, setStatus] = useState<'idle' | 'listening'>('idle')
+  const [score,  setScore]  = useState<number | null>(null)
+  const [heard,  setHeard]  = useState('')
+  const [words,  setWords]  = useState<Array<{ word: string; ok: boolean }>>([])
+  const [err,    setErr]    = useState('')
+  const stopRef = useRef<(() => void) | null>(null)
+
+  if (!isSTTSupported()) return null
+
+  function reset() { setScore(null); setHeard(''); setWords([]); setErr('') }
+
+  function start() {
+    reset()
+    setStatus('listening')
+    stopRef.current = startListening(
+      lang === 'en-US' ? 'en' : 'vi',
+      () => {},
+      (last) => {
+        setStatus('idle')
+        if (last.trim()) {
+          setHeard(last)
+          setScore(scorePronunciation(text, last))
+          setWords(scoreWords(text, last))
+        } else {
+          setErr(isA ? 'Không nghe rõ, thử lại.' : 'Did not catch that.')
+        }
+      },
+      () => { setStatus('idle'); setErr(isA ? 'Lỗi micro.' : 'Mic error.') },
+    )
+  }
+
+  function stop() { stopRef.current?.(); setStatus('idle') }
+
+  const fb = score !== null ? pronounceFeedback(score, isA) : null
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => { setOpen(true); reset() }}
+        title={isA ? 'Kiểm tra phát âm câu này' : 'Check pronunciation'}
+        className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-zinc-500 hover:text-violet-300 hover:bg-violet-500/15 transition"
+      >
+        <Mic className="w-3 h-3" />
+      </button>
+    )
+  }
+
+  return (
+    <div className="mt-2 space-y-2">
+      <div className="flex items-center gap-2 flex-wrap">
+        <button
+          onClick={status === 'listening' ? stop : start}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+            status === 'listening'
+              ? 'bg-rose-500/20 text-rose-300'
+              : 'bg-violet-500/20 text-violet-300 hover:bg-violet-500/30'
+          }`}
+        >
+          {status === 'listening'
+            ? <><Square className="w-3 h-3" /> {isA ? 'Dừng' : 'Stop'}</>
+            : <><Mic className="w-3 h-3" /> {isA ? 'Nói lại' : 'Repeat'}</>}
+        </button>
+        <button onClick={() => { stop(); setOpen(false); reset() }}
+          className="text-[10px] text-zinc-500 hover:text-zinc-300 transition">
+          {isA ? 'Đóng' : 'Close'}
+        </button>
+        {status === 'listening' && (
+          <span className="text-[10px] text-zinc-400 animate-pulse">
+            {isA ? `Đọc: "${text}"` : `Say: "${text}"`}
+          </span>
+        )}
+      </div>
+
+      {fb && (
+        <div className="space-y-1.5">
+          <p className={`text-xs font-bold ${fb.color}`}>{score}% · {fb.label}</p>
+          {words.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {words.map((w, i) => (
+                <span key={i} className={`px-1.5 py-0.5 rounded text-xs ${
+                  w.ok ? 'bg-emerald-500/15 text-emerald-300' : 'bg-rose-500/15 text-rose-300'
+                }`}>{w.word}</span>
+              ))}
+            </div>
+          )}
+          <p className="text-[10px] text-zinc-400">{isA ? 'Bạn đọc' : 'You said'}: "{heard}"</p>
+          <button onClick={start}
+            className="flex items-center gap-1 text-[10px] text-zinc-400 hover:text-zinc-300 transition">
+            <RotateCcw className="w-2.5 h-2.5" /> {isA ? 'Thử lại' : 'Retry'}
+          </button>
+        </div>
+      )}
+      {err && <p className="text-[10px] text-rose-400">{err}</p>}
+    </div>
   )
 }
