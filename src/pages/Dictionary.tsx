@@ -16,6 +16,7 @@ import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { POS_LABEL, POS_COLOR, POS_LIST } from '../lib/pos'
 import { getLearnedWords } from '../lib/vocab'
+import { loadCurriculum, getTodayBatch } from '../lib/curriculum'
 
 const PAGE_SIZE = 3
 type Tab = 'search' | 'flashcard' | 'pos'
@@ -59,17 +60,26 @@ export default function Dictionary() {
   const [searchMatched, setSearchMatched] = useState(0)
   const [searching, setSearching]   = useState(false)
   const [totalWords, setTotalWords] = useState(0)
-  const [wordOfDay, setWordOfDay]   = useState<DictEntry | null>(null)
+  const [todayWords, setTodayWords] = useState<DictEntry[]>([])
   const [extraExamples, setExtraExamples] = useState<Record<string, [ExPair, ExPair]>>({})
 
   useEffect(() => { loadExtraExamples().then(setExtraExamples) }, [])
 
-  // Lấy "từ vựng hôm nay" + tổng số từ (cho phụ đề) — 1 lần khi mở trang.
+  // Tổng số từ trong từ điển (cho phụ đề) — 1 lần khi mở trang.
   useEffect(() => {
     fetchWordOfDay()
-      .then(({ total, entry }) => { setTotalWords(total); setWordOfDay(entry) })
+      .then(({ total }) => setTotalWords(total))
       .catch(() => { /* lỗi mạng — bỏ qua, trang vẫn dùng được để tra từ */ })
   }, [])
+
+  // "Từ vựng hôm nay" = đúng batch các từ ở tab "Hôm nay" của lộ trình học.
+  // Nạp lại khi học thêm từ (learnedKey đổi) để bỏ từ đã thuộc khỏi danh sách.
+  useEffect(() => {
+    if (!user) return
+    loadCurriculum()
+      .then(() => setTodayWords(getTodayBatch(getLearnedWords(user.id))))
+      .catch(() => { /* lỗi nạp dữ liệu — bỏ qua, vẫn tra từ được */ })
+  }, [user, learnedKey])
 
   // Gọi API tìm kiếm mỗi khi từ khóa đổi (deferredQuery đã được React hoãn để gõ mượt).
   // Hủy request cũ khi gõ tiếp để tránh kết quả về trễ ghi đè kết quả mới.
@@ -139,7 +149,7 @@ export default function Dictionary() {
       <div className="max-w-3xl mx-auto px-4 py-6 pb-24 sm:pb-6">
 
         <VocabMilestone userId={user.id} refreshKey={learnedKey} />
-        <WordOfTheDay entry={wordOfDay} />
+        <WordOfTheDay entries={todayWords} isA={isA} />
 
         {/* Tab bar */}
         <div className="flex gap-2 mb-4">

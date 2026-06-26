@@ -1,12 +1,14 @@
-import { Sparkles } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Sparkles, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { DictEntry } from '../types'
 import PronounceButton from './PronounceButton'
 import KaraokeText from './KaraokeText'
 
 interface Props {
-  // Từ của hôm nay do trang cha lấy từ /api/dictionary?mode=wordOfDay (server tự
-  // chọn cố định theo ngày) — component này chỉ hiển thị, không tự tính nữa.
-  entry: DictEntry | null
+  // Các từ "hôm nay" lấy TỪ LỘ TRÌNH HỌC (batch tab "Hôm nay") do trang cha truyền vào.
+  // Thẻ này chỉ hiển thị 1 từ mỗi lần + nút xoay vòng để xem hết các từ.
+  entries: DictEntry[]
+  isA?: boolean
 }
 
 const POS_LABEL: Record<string, string> = {
@@ -15,15 +17,55 @@ const POS_LABEL: Record<string, string> = {
   art: 'Mạo từ', num: 'Số từ', idiom: 'Thành ngữ',
 }
 
-// Thẻ "Từ vựng mỗi ngày" — hiển thị 1 từ cố định theo ngày hôm nay, kèm ví dụ + nút phát âm.
-export default function WordOfTheDay({ entry }: Props) {
-  if (!entry) return null
+// Thẻ "Từ vựng hôm nay" — hiển thị các từ trong lộ trình học hôm nay,
+// mỗi lần 1 từ, có nút ◀ ▶ để xoay vòng qua hết danh sách.
+export default function WordOfTheDay({ entries, isA = true }: Props) {
+  const [idx, setIdx] = useState(0)
+
+  // Danh sách đổi (vd: sau khi học thêm từ) → đưa con trỏ về đầu cho an toàn.
+  useEffect(() => { setIdx(0) }, [entries])
+
+  if (entries.length === 0) return null
+
+  // Kẹp chỉ số trong khoảng hợp lệ phòng khi danh sách ngắn lại.
+  const safeIdx = Math.min(idx, entries.length - 1)
+  const entry = entries[safeIdx]
+  const total = entries.length
+
+  const go = (delta: number) => setIdx((safeIdx + delta + total) % total)
 
   return (
     <div className="glass rounded-xl p-4 mb-4 animate-fade-in border-emerald-500/20">
       <div className="flex items-center gap-2 mb-2">
         <Sparkles className="w-4 h-4 text-emerald-400" />
-        <span className="text-sm font-semibold text-white">Từ vựng hôm nay</span>
+        <span className="text-sm font-semibold text-white">
+          {isA ? 'Từ vựng hôm nay' : "Today's words"}
+        </span>
+
+        {/* Bộ điều khiển xoay vòng — chỉ hiện khi có nhiều hơn 1 từ */}
+        {total > 1 && (
+          <div className="ml-auto flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => go(-1)}
+              aria-label={isA ? 'Từ trước' : 'Previous word'}
+              className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-xs text-zinc-400 tabular-nums select-none" aria-live="polite">
+              {safeIdx + 1}/{total}
+            </span>
+            <button
+              type="button"
+              onClick={() => go(1)}
+              aria-label={isA ? 'Từ tiếp theo' : 'Next word'}
+              className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Từ + loại từ + phát âm */}
