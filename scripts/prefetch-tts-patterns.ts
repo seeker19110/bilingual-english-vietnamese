@@ -127,7 +127,7 @@ function collectTasks(): Task[] {
 
 // ── Xử lý 1 tác vụ: kiểm tra cache → TTS → MÃ HÓA → lưu file → lưu DB ───────
 // Các bước này khớp với api/tts.ts để file seed dùng được ngay trên app.
-async function processTask(task: Task): Promise<{ status: 'ok' | 'skip' } | { status: 'error'; message: string }> {
+async function processTask(task: Task): Promise<{ status: 'ok' } | { status: 'skip' } | { status: 'error'; message: string }> {
   const { text, lang, voice } = task
   const hash = hashText(text, lang, voice)
 

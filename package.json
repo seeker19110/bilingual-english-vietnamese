@@ -8,7 +8,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/gen-data-manifest.mjs && tsc && vite build",
+    "build": "node scripts/gen-data-manifest.mjs && tsc && tsc -p tsconfig.api.json && vite build",
+    "typecheck": "tsc && tsc -p tsconfig.api.json",
+    "typecheck:api": "tsc -p tsconfig.api.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "start": "tsx server.ts",
