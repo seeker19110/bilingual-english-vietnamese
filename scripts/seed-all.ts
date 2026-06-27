@@ -16,8 +16,9 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
-import { generateAudioFromGoogle, VOICE_IDS, type Lang, type VoiceId } from '../api/_lib/googleTts.ts'
-import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
+import { generateAudioFromGoogle, VOICE_IDS, VOICE_VERSION, type Lang, type VoiceId } from '../api/_lib/googleTts.ts'
+import { CEFR_LEVELS } from '../src/data/cefr.ts'
+import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
 import { FOUNDATION } from '../src/data/curriculum.ts'
@@ -26,6 +27,9 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
+// Pronunciations chỉ cần 2 giọng cơ bản — female2/male2 chỉ dùng cho TTS hội thoại
+const PRON_VOICE_IDS: VoiceId[] = ['female', 'male']
+
 const BATCH_SIZE      = 50    // số tác vụ song song
 const DELAY_MS        = 0     // không cần delay
 const RETRY_DELAY_MS  = 5000  // nghỉ giữa vòng retry
@@ -49,10 +53,15 @@ interface PronTask { type: 'pron'; word: string; voice: VoiceId }
 interface PatternTask { type: 'pattern'; text: string; lang: Lang; voice: VoiceId }
 type AnyTask = PronTask | PatternTask
 
-type TaskResult = { status: 'ok' | 'skip' } | { status: 'error'; message: string }
+type TaskResult = { status: 'ok' | 'skip' | 'remapped' } | { status: 'error'; message: string }
 
-// ── Hash cho pattern cache (giống api/tts.ts) ────────────────────────────────
+// ── Hash cho pattern cache — phải khớp hoàn toàn với api/tts.ts ─────────────
+// Hash đúng (mới): có VOICE_VERSION — dùng cho mọi entry mới
 function hashText(text: string, lang: Lang, voice: VoiceId): string {
+  return crypto.createHash('sha256').update(text + lang + voice + VOICE_VERSION).digest('hex').slice(0, 32)
+}
+// Hash cũ (sai): thiếu VOICE_VERSION — dùng để tìm entry đã seed trước đây
+function oldHashText(text: string, lang: Lang, voice: VoiceId): string {
   return crypto.createHash('sha256').update(text + lang + voice).digest('hex').slice(0, 32)
 }
 
@@ -61,9 +70,16 @@ interface Sentence { en: string; vi: string }
 interface Subject   { starter: string; sentences: Sentence[] }
 
 // Thứ tự ưu tiên seed TTS cache:
-//   1. Curriculum sentences  → /learn chạy ngay cho user đầu tiên
-//   2. Lesson turns          → Luyện nói không phải chờ generate
-//   3. Pattern sentences     → Cụm từ page (nhiều nhất nhưng ít urgent nhất)
+//   1. Curriculum sentences + examples  → /learn chạy ngay cho user đầu tiên
+//   2. CEFR grammar examples            → Roadmap tab (/learn)
+//   3. Lesson turns (50 bài đầu)        → Luyện nói beginner instant
+//   4. Pattern sentences                → Cụm từ page
+//   5. Lesson turns còn lại             → cache dần, ít urgent hơn
+//
+// Lesson turns: mỗi turn chỉ seed ĐÚNG 1 giọng (voiceA hoặc voiceB) thay vì cả 4.
+// Giống logic Lessons.tsx — speakerAGender/speakerBGender quyết định giọng từng nhân vật,
+// nếu cùng giới thì B dùng giọng variant2 (female2/male2) để phân biệt.
+// Kết quả: ~5,900 tasks thay vì ~160,000 (giảm 96%).
 function loadPatternTasks(): PatternTask[] {
   const tasks: PatternTask[] = []
   const seen  = new Set<string>()
@@ -88,21 +104,61 @@ function loadPatternTasks(): PatternTask[] {
     }
   }
 
-  // ── Ưu tiên 2: lesson turns (hội thoại bài học) ────────────────────────────
-  const lessonDir = path.join(PROJECT_ROOT, 'src/data/lessons')
-  const lessonFiles = fs.readdirSync(lessonDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
-  for (const file of lessonFiles) {
-    const chunks = JSON.parse(fs.readFileSync(path.join(lessonDir, file), 'utf8')) as Array<{ turns?: Array<{ en: string; vi: string }> }>
-    for (const lesson of chunks) {
-      for (const turn of (lesson.turns ?? [])) {
-        if (turn.en) add(turn.en, 'en-US')
-        if (turn.vi) add(turn.vi, 'vi-VN')
+  // ── Ưu tiên 2: CEFR grammar examples → Roadmap tab ────────────────────────
+  for (const level of CEFR_LEVELS) {
+    for (const unit of level.units) {
+      for (const lesson of unit.grammar) {
+        for (const { en, vi } of lesson.examples) {
+          add(en, 'en-US')
+          add(vi, 'vi-VN')
+        }
       }
     }
   }
 
-  // ── Ưu tiên 3: pattern sentences (Cụm từ page) ─────────────────────────────
-  const patternDir = path.join(PROJECT_ROOT, 'src/data/patterns')
+  // ── Ưu tiên 3 & 5: lesson turns — giọng đúng per nhân vật ─────────────────
+  // Giống Lessons.tsx: voiceA = giới tính A; voiceB = variant2 nếu cùng giới, giọng kia nếu khác
+  const lessonDir = path.join(PROJECT_ROOT, 'public/data/lessons')
+  const lessonFiles = fs.readdirSync(lessonDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+  let lessonCount = 0
+  const laterLessonTasks: PatternTask[] = []
+
+  type LessonRaw = {
+    speakerAGender?: 'female' | 'male' | null
+    speakerBGender?: 'female' | 'male' | null
+    turns?: Array<{ speaker: string; en: string; vi: string }>
+  }
+
+  for (const file of lessonFiles) {
+    const chunks = JSON.parse(fs.readFileSync(path.join(lessonDir, file), 'utf8')) as LessonRaw[]
+    for (const lesson of chunks) {
+      const gA = lesson.speakerAGender ?? 'female'
+      const gB = lesson.speakerBGender ?? 'male'
+      const voiceA: VoiceId = gA === 'female' ? 'female' : 'male'
+      const voiceB: VoiceId = gB === gA
+        ? (gB === 'female' ? 'female2' : 'male2')
+        : (gB === 'female' ? 'female' : 'male')
+
+      const isEarly = lessonCount < 50
+      for (const turn of (lesson.turns ?? [])) {
+        const voice = turn.speaker === 'A' ? voiceA : voiceB
+        if (turn.en) {
+          const text = turn.en.trim(); if (!text) continue
+          const key = `${text}|en-US|${voice}`
+          if (!seen.has(key)) { seen.add(key); (isEarly ? tasks : laterLessonTasks).push({ type: 'pattern', text, lang: 'en-US', voice }) }
+        }
+        if (turn.vi) {
+          const text = turn.vi.trim(); if (!text) continue
+          const key = `${text}|vi-VN|${voice}`
+          if (!seen.has(key)) { seen.add(key); (isEarly ? tasks : laterLessonTasks).push({ type: 'pattern', text, lang: 'vi-VN', voice }) }
+        }
+      }
+      lessonCount++
+    }
+  }
+
+  // ── Ưu tiên 4: pattern sentences (Cụm từ page) ─────────────────────────────
+  const patternDir = path.join(PROJECT_ROOT, 'public/data/patterns')
   const patternFiles = fs.readdirSync(patternDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
   for (const file of patternFiles) {
     const subjects = JSON.parse(fs.readFileSync(path.join(patternDir, file), 'utf8')) as Subject[]
@@ -114,19 +170,23 @@ function loadPatternTasks(): PatternTask[] {
     }
   }
 
+  // ── Ưu tiên 5: lesson turns còn lại ────────────────────────────────────────
+  tasks.push(...laterLessonTasks)
+
   return tasks
 }
 
 function loadPronTasks(wordsFile?: string): PronTask[] {
   let words: string[]
   if (wordsFile) {
+    // Retry từ file lỗi (seed-errors.json)
     const raw = JSON.parse(fs.readFileSync(wordsFile, 'utf-8')) as unknown[]
     words = raw.map((item) =>
       (typeof item === 'string' ? item : (item as { word: string }).word).toLowerCase(),
     )
   } else {
-    // Đọc từ src/data/dictionary/chunk-*.json
-    const dir = path.join(PROJECT_ROOT, 'src/data/dictionary')
+    // Đọc từ public/data/dictionary/chunk-*.json
+    const dir = path.join(PROJECT_ROOT, 'public/data/dictionary')
     const files = fs.readdirSync(dir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
     words = []
     for (const file of files) {
@@ -142,7 +202,8 @@ function loadPronTasks(wordsFile?: string): PronTask[] {
   )
   const tasks: PronTask[] = []
   for (const word of words) {
-    for (const voice of VOICE_IDS) tasks.push({ type: 'pron', word, voice })
+    // Pronunciations chỉ cần 2 giọng (female/male) — female2/male2 dành cho TTS hội thoại
+    for (const voice of PRON_VOICE_IDS) tasks.push({ type: 'pron', word, voice })
   }
   tasks.sort((a, b) => {
     const aHigh = curriculumWords.has(a.word) ? 0 : 1
@@ -168,19 +229,46 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
       const { data: urlData } = supabase.storage.from('pronunciations').getPublicUrl(fileName)
       const { error: dbError } = await supabase
         .from('pronunciations')
-        .upsert({ word, voice, audio_url: urlData.publicUrl, lang: 'en-US' }, { onConflict: 'word,voice' })
+        .upsert({ word, voice, audio_url: urlData.publicUrl, lang: 'en-US', voice_version: VOICE_VERSION }, { onConflict: 'word,voice' })
       if (dbError) throw new Error(`DB lỗi: ${dbError.message}`)
       return { status: 'ok' }
     }
 
     // pattern task
     const { text, lang, voice } = task
-    const hash = hashText(text, lang, voice)
+    const hash    = hashText(text, lang, voice)
+    const oldHash = oldHashText(text, lang, voice)
 
     if (!FORCE) {
       const { data: cached } = await supabase
         .from('tts_cache').select('audio_url').eq('hash', hash).maybeSingle()
       if (cached) return { status: 'skip' }
+    }
+
+    // Trước khi gọi Google TTS: thử remap từ cache cũ (hash thiếu VOICE_VERSION).
+    // Nếu có → tải về → giải mã bằng oldHash → re-encrypt bằng hash mới → upload.
+    // Không tốn API quota, chỉ tốn băng thông Storage.
+    if (!FORCE) {
+      const { data: oldCached } = await supabase
+        .from('tts_cache').select('audio_url').eq('hash', oldHash).maybeSingle()
+      if (oldCached?.audio_url) {
+        try {
+          const res = await fetch(oldCached.audio_url)
+          if (res.ok) {
+            const plain     = await decryptAudio(await res.arrayBuffer(), oldHash)
+            const newCipher = await encryptAudio(plain, hash)
+            const fileName  = `${lang}/${voice}/${hash}.mp3`
+            const audioUrl  = await saveAudio('tts-cache', fileName, newCipher, BASE_URL)
+            const { error } = await supabase
+              .from('tts_cache')
+              .upsert({ hash, lang, voice, audio_url: audioUrl }, { onConflict: 'hash' })
+            if (error) throw new Error(`DB lỗi: ${error.message}`)
+            return { status: 'remapped' }
+          }
+        } catch {
+          // Remap thất bại (file hỏng, mạng lỗi...) → tiếp tục generate mới bên dưới
+        }
+      }
     }
 
     const audioBuffer = await generateAudioFromGoogle(text, voice, lang)
@@ -216,7 +304,7 @@ function nextRateState(prevReqs: number, prev429: boolean): { limit: number; pau
 async function runBatch(
   tasks: AnyTask[],
   failed: Array<{ task: AnyTask; message: string }>,
-  counters: { ok: number; skip: number; errors: number },
+  counters: { ok: number; remapped: number; skip: number; errors: number },
   bar: cliProgress.SingleBar,
   processed: { value: number },
   total: number,
@@ -225,8 +313,9 @@ async function runBatch(
   const results = await Promise.all(tasks.map((t) => processTask(t)))
   let newReqs = 0
   results.forEach((result, idx) => {
-    if (result.status === 'ok') { counters.ok++; newReqs++ }
-    else if (result.status === 'skip') counters.skip++
+    if (result.status === 'ok')      { counters.ok++;      newReqs++ }  // gọi Google TTS → tính rate
+    else if (result.status === 'remapped') counters.remapped++          // re-encrypt, không tốn API
+    else if (result.status === 'skip')     counters.skip++
     else {
       counters.errors++; newReqs++
       if ((result as { status: 'error'; message: string }).message.includes('429')) rate.has429 = true
@@ -264,16 +353,16 @@ async function runInterleavedPass(
 
   const bar = new cliProgress.SingleBar(
     {
-      format: 'Tổng |{bar}| {percentage}% | {value}/{total} | ✓{ok} ⏭{skip} ✗{errors}',
+      format: 'Tổng |{bar}| {percentage}% | {value}/{total} | ✓{ok} ↺{remapped} ⏭{skip} ✗{errors}',
       barCompleteChar: '█',
       barIncompleteChar: '░',
       hideCursor: true,
     },
     cliProgress.Presets.shades_classic,
   )
-  bar.start(total, 0, { ok: 0, skip: 0, errors: 0 })
+  bar.start(total, 0, { ok: 0, remapped: 0, skip: 0, errors: 0 })
 
-  const counters  = { ok: 0, skip: 0, errors: 0 }
+  const counters  = { ok: 0, remapped: 0, skip: 0, errors: 0 }
   const processed = { value: 0 }
   const rate: RateState = { limit: RATE_LIMIT_DEFAULT, pauseMs: 0, count: 0, has429: false }
   const pronFailed: Array<{ task: AnyTask; message: string }>    = []
@@ -304,7 +393,7 @@ async function runInterleavedPass(
   }
 
   bar.stop()
-  console.log(`   ✓ OK: ${counters.ok}  ⏭ Skip: ${counters.skip}  ✗ Lỗi pron: ${pronFailed.length} | pattern: ${patternFailed.length}`)
+  console.log(`   ✓ OK: ${counters.ok}  ↺ Remap: ${counters.remapped}  ⏭ Skip: ${counters.skip}  ✗ Lỗi pron: ${pronFailed.length} | pattern: ${patternFailed.length}`)
 
   return { pronFailed, patternFailed }
 }
@@ -338,9 +427,9 @@ async function main(): Promise<void> {
 
   const allPatternTasks = loadPatternTasks().slice(0, limit) as AnyTask[]
 
-  console.log('🔊 Bắt đầu seed:all — pronunciation + (curriculum → lessons → patterns) xen kẽ')
-  console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo (curriculum words ưu tiên đầu)`)
-  console.log(`📋 TTS cache     : ${allPatternTasks.length} tác vụ (curriculum sentences → lesson turns → pattern sentences)`)
+  console.log('🔊 Bắt đầu seed:all — pronunciation + (curriculum → CEFR → lessons[0-50] → patterns → lessons[51+]) xen kẽ')
+  console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo (curriculum words ưu tiên đầu, 2 giọng)`)
+  console.log(`📋 TTS cache     : ${allPatternTasks.length} tác vụ (curriculum → CEFR → lessons[50] → patterns → lessons còn lại)`)
   console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate: thích nghi (429→62s/180, ≥180→62s, <180→liên tục) | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
 
   let pronRemaining    = allPronTasks

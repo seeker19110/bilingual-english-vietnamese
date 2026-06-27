@@ -2,9 +2,9 @@
 // Script chạy 1 LẦN trên máy local để tạo trước (bulk) audio phát âm cho cả danh sách từ,
 // thay vì để người dùng app phải chờ TTS ở lần tra từ đầu tiên.
 //
-// Mặc định lấy danh sách từ trong src/data/dictionary.json (từ điển đang dùng trong app —
-// hiện có ~8800 từ). Có thể đổi nguồn từ bằng biến môi trường WORDS_FILE, ví dụ để retry
-// các từ bị lỗi:
+// Mặc định đọc toàn bộ từ điển từ public/data/dictionary/chunk-*.json
+// Có thể đổi nguồn từ bằng biến môi trường WORDS_FILE (file JSON) hoặc DICT_DIR (thư mục chunk),
+// ví dụ retry các từ bị lỗi:
 //   WORDS_FILE=scripts/seed-errors.json npm run seed:pronunciation
 //
 // Tạo CẢ 2 giọng (nữ + nam — xem api/_lib/googleTts.ts) cho mỗi từ, vì app cho học viên
@@ -41,7 +41,8 @@ const MAX_ROUNDS     = 5    // số vòng retry tối đa
 // female2/male2 dùng cho bài học hội thoại, không cần seed vào bảng pronunciations
 const PRON_VOICE_IDS: VoiceId[] = ['female', 'male']
 
-const DEFAULT_WORDS_FILE = path.join(PROJECT_ROOT, 'src/data/dictionary.json')
+// Thư mục chứa chunk từ điển — đây là nguồn mặc định
+const DEFAULT_DICT_DIR = path.join(PROJECT_ROOT, 'public/data/dictionary')
 const ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
 
 // 1 tác vụ = tạo audio cho 1 (từ, giọng) cụ thể.
@@ -50,15 +51,23 @@ interface Task {
   voice: VoiceId
 }
 
-// ── Đọc danh sách từ cần seed ─────────────────────────────────────────
-// Hỗ trợ 2 dạng file JSON:
-//   1. Mảng chuỗi:        ["apple", "banana", ...]   (ví dụ scripts/seed-errors.json)
-//   2. Mảng object có .word: [{ "word": "apple", ... }, ...]  (dictionary.json đang dùng trong app)
-function loadWords(filePath: string): string[] {
-  const raw = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as unknown
-  if (!Array.isArray(raw)) {
-    throw new Error(`File ${filePath} phải là 1 mảng JSON`)
+// ── Đọc danh sách từ: từ 1 file JSON hoặc cả thư mục chunk-*.json ───────────
+// WORDS_FILE=path/to/file.json → đọc file đó (dùng để retry từ seed-errors.json)
+// Mặc định (không có WORDS_FILE) → đọc tất cả public/data/dictionary/chunk-*.json
+function loadWords(fileOrDir: string): string[] {
+  const stat = fs.statSync(fileOrDir)
+  if (stat.isDirectory()) {
+    const files = fs.readdirSync(fileOrDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+    const words: string[] = []
+    for (const file of files) {
+      const raw = JSON.parse(fs.readFileSync(path.join(fileOrDir, file), 'utf-8')) as unknown[]
+      words.push(...raw.map((item) => (typeof item === 'string' ? item : (item as { word: string }).word)))
+    }
+    return words
   }
+  // File đơn (vd. seed-errors.json)
+  const raw = JSON.parse(fs.readFileSync(fileOrDir, 'utf-8')) as unknown
+  if (!Array.isArray(raw)) throw new Error(`File ${fileOrDir} phải là 1 mảng JSON`)
   return raw.map((item) => (typeof item === 'string' ? item : (item as { word: string }).word))
 }
 
@@ -149,13 +158,13 @@ async function main(): Promise<void> {
     process.exit(1)
   }
 
-  const wordsFile = process.env.WORDS_FILE
+  const wordsSource = process.env.WORDS_FILE
     ? path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
-    : DEFAULT_WORDS_FILE
-  const allWords = loadWords(wordsFile)
+    : DEFAULT_DICT_DIR
+  const allWords = loadWords(wordsSource)
 
   console.log('🚀 Bắt đầu seed phát âm từ điển')
-  console.log(`📋 Nguồn từ : ${path.relative(PROJECT_ROOT, wordsFile)}`)
+  console.log(`📋 Nguồn từ : ${path.relative(PROJECT_ROOT, wordsSource)}`)
   console.log(`📋 Tổng từ  : ${allWords.length} × ${PRON_VOICE_IDS.length} giọng (${PRON_VOICE_IDS.join(', ')})`)
   console.log(`⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}`)
 

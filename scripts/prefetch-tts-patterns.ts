@@ -28,7 +28,8 @@ import * as path from 'node:path'
 import * as fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
-import { generateAudioFromGoogle, VOICE_IDS, type Lang, type VoiceId } from '../api/_lib/googleTts.ts'
+import { generateAudioFromGoogle, VOICE_IDS, VOICE_VERSION, type Lang, type VoiceId } from '../api/_lib/googleTts.ts'
+import { CEFR_LEVELS } from '../src/data/cefr.ts'
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
@@ -60,40 +61,35 @@ interface Task {
 }
 
 // ── Hash: GIỐNG HỆT hàm hashText trong api/tts.ts ───────────────────────────
-// api/tts.ts băm chuỗi (text + lang + voice). Dùng node:crypto thay vì crypto.subtle
-// (crypto.subtle chỉ có trong Edge/browser runtime) — kết quả hex giống nhau.
+// api/tts.ts băm chuỗi (text + lang + voice + VOICE_VERSION). Phải khớp hoàn toàn
+// nếu không cache seeded sẽ không bao giờ được tìm thấy bởi API.
 function hashText(text: string, lang: Lang, voice: VoiceId): string {
   return crypto
     .createHash('sha256')
-    .update(text + lang + voice)
+    .update(text + lang + voice + VOICE_VERSION)
     .digest('hex')
     .slice(0, 32)
 }
 
-// ── Nạp toàn bộ chủ thể từ dữ liệu mới (src/data/patterns/chunk-*.json) ──────
-// Dữ liệu giờ được sinh bởi scripts/gen-patterns.mjs và chia thành nhiều file
-// chunk (8 chủ thể/file). Đọc trực tiếp các file JSON này thay vì patterns.ts cũ.
 interface Sentence { en: string; vi: string }
 interface Subject { starter: string; sentences: Sentence[] }
 
+// ── Nạp patterns từ public/data/patterns/chunk-*.json ───────────────────────
 function loadSubjects(): Subject[] {
-  const dir = path.join(PROJECT_ROOT, 'src/data/patterns')
-  const files = fs
-    .readdirSync(dir)
-    .filter((f) => /^chunk-\d+\.json$/.test(f))
-    .sort()
+  const dir = path.join(PROJECT_ROOT, 'public/data/patterns')
+  const files = fs.readdirSync(dir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
   const subjects: Subject[] = []
   for (const file of files) {
-    const raw = fs.readFileSync(path.join(dir, file), 'utf8')
-    subjects.push(...(JSON.parse(raw) as Subject[]))
+    subjects.push(...(JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8')) as Subject[]))
   }
   return subjects
 }
 
-// ── Trích xuất tất cả câu cần seed (cho cả 2 giọng) ─────────────────────────
+// ── Trích xuất tất cả câu cần seed ──────────────────────────────────────────
+// Thứ tự ưu tiên: CEFR examples → patterns (lessons được seed trong seed-all.ts)
 function collectTasks(): Task[] {
   const tasks: Task[] = []
-  const seen = new Set<string>() // tránh trùng (cùng câu+lang+giọng xuất hiện nhiều lần)
+  const seen = new Set<string>()
 
   const add = (rawText: string, lang: Lang) => {
     const text = rawText.trim()
@@ -106,6 +102,19 @@ function collectTasks(): Task[] {
     }
   }
 
+  // ── Ưu tiên 1: CEFR grammar examples → Roadmap tab (/learn)
+  for (const level of CEFR_LEVELS) {
+    for (const unit of level.units) {
+      for (const lesson of unit.grammar) {
+        for (const { en, vi } of lesson.examples) {
+          add(en, 'en-US')
+          add(vi, 'vi-VN')
+        }
+      }
+    }
+  }
+
+  // ── Ưu tiên 2: Pattern sentences → Cụm từ page
   for (const subject of loadSubjects()) {
     for (const { en, vi } of subject.sentences) {
       add(en, 'en-US')
