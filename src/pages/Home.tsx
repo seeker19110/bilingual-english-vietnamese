@@ -159,29 +159,27 @@ export default function Home() {
 
       <main className="max-w-3xl mx-auto px-4 py-6">
 
-        {/* ── Chọn chiều học + streak + giọng đọc (3 cột đều nhau) ───────────── */}
+        {/* ── Chọn chiều học + streak + giọng đọc (3 cột căn giữa) ──────────── */}
         <div className="mb-6 grid grid-cols-3 gap-3 animate-fade-in">
 
-          {/* Khối chọn chiều học — nhấn cả khối để toggle */}
+          {/* Chiều học — icon trên, text giữa, nhãn dưới, căn giữa */}
           <button
             onClick={toggleDir}
             title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
             aria-label={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
-            className={`flex flex-col items-start gap-1.5 rounded-2xl px-3 py-3 border transition-all active:scale-[0.98] ${
+            className={`flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3 border transition-all active:scale-[0.98] ${
               isA
                 ? 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60'
                 : 'bg-sky-500/10 border-sky-500/30 hover:border-sky-500/60'
             }`}
           >
-            <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wide">
-              {isA ? 'Ngôn ngữ học' : 'Language'}
+            <ArrowLeftRight className={`w-4 h-4 ${isA ? 'text-emerald-400' : 'text-sky-400'}`} />
+            <span className={`text-xs font-semibold leading-none text-center ${isA ? 'text-emerald-300' : 'text-sky-300'}`}>
+              {isA ? '🇻🇳 → 🇺🇸' : '🇺🇸 → 🇻🇳'}
             </span>
-            <div className="flex items-center gap-1.5 min-w-0">
-              <ArrowLeftRight className={`w-3.5 h-3.5 shrink-0 ${isA ? 'text-emerald-400' : 'text-sky-400'}`} />
-              <span className={`text-xs font-semibold truncate ${isA ? 'text-emerald-300' : 'text-sky-300'}`}>
-                {isA ? '🇻🇳 → 🇺🇸 Anh' : '🇺🇸 → 🇻🇳 Việt'}
-              </span>
-            </div>
+            <span className={`text-[9px] leading-none text-center ${isA ? 'text-emerald-400/60' : 'text-sky-400/60'}`}>
+              {isA ? 'Ngôn ngữ' : 'Language'}
+            </span>
           </button>
 
           {/* Streak — cột giữa, căn giữa hoàn toàn */}
@@ -199,23 +197,21 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Khối chọn giọng đọc — nhấn cả khối để đổi Nữ ↔ Nam */}
+          {/* Giọng đọc — icon trên, text giữa, nhãn dưới, căn giữa */}
           <button
             type="button"
             onClick={toggleVoice}
             title={isA ? 'Nhấn để đổi giọng đọc' : 'Tap to switch voice'}
             aria-label={`${isA ? 'Giọng đọc' : 'Voice'}: ${voice === 'female' ? (isA ? 'Nữ' : 'Female') : (isA ? 'Nam' : 'Male')}`}
-            className="flex flex-col items-start gap-1.5 rounded-2xl px-3 py-3 border bg-zinc-900/80 border-zinc-700/60 hover:border-zinc-600 transition-all active:scale-[0.98]"
+            className="flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3 border bg-zinc-900/80 border-zinc-700/60 hover:border-zinc-600 transition-all active:scale-[0.98]"
           >
-            <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wide">
+            <Mic className="w-4 h-4 text-zinc-400" />
+            <span className="text-xs font-semibold leading-none text-center text-zinc-200">
+              {voice === 'female' ? (isA ? 'Nữ' : 'Female') : (isA ? 'Nam' : 'Male')}
+            </span>
+            <span className="text-[9px] leading-none text-center text-zinc-500">
               {isA ? 'Giọng đọc' : 'Voice'}
             </span>
-            <div className="flex items-center gap-1.5">
-              <Mic className="w-3.5 h-3.5 text-zinc-400" />
-              <span className="text-xs font-semibold text-zinc-200">
-                {voice === 'female' ? (isA ? '♀ Nữ' : '♀ Female') : (isA ? '♂ Nam' : '♂ Male')}
-              </span>
-            </div>
           </button>
 
         </div>
