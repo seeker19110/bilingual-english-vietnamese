@@ -1,0 +1,21 @@
+{
+  // Typecheck cho code KHÔNG nằm trong bundle Vite: handler API (api/) + script tiện ích (scripts/).
+  // tsconfig.json chính chỉ `include: ["src"]` nên 2 thư mục này lâu nay không được kiểm type —
+  // lỗi tích tụ mà build/CI không phát hiện. File này lấp lỗ hổng đó.
+  // Chạy: `npm run typecheck:api` (cũng được gọi trong `npm run build`).
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["api", "scripts"]
+}
