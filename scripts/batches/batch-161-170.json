@@ -1,0 +1,682 @@
+[
+  {
+    "id": 161,
+    "title": "Họp tiến độ dự án",
+    "situation": "Trưởng nhóm dẫn dắt cuộc họp hàng tuần về tiến độ dự án.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Trưởng nhóm Hùng",
+      "en": "Hung"
+    },
+    "speakerBName": {
+      "vi": "Thành viên Thảo",
+      "en": "Thao"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning, everyone. Let's start our weekly check-in. Thao, how's the design phase going?",
+        "vi": "Chào buổi sáng cả nhóm. Mình bắt đầu họp tuần nào. Thảo, phần thiết kế tiến triển sao rồi?"
+      },
+      {
+        "speaker": "B",
+        "en": "Morning! The homepage mockups are done. I'm just waiting for feedback from the client.",
+        "vi": "Chào anh! Bản thiết kế trang chủ xong rồi. Em chỉ đang chờ phản hồi từ khách hàng."
+      },
+      {
+        "speaker": "A",
+        "en": "Great progress. When do you expect to hear back from them?",
+        "vi": "Tiến độ tốt đấy. Khi nào em nghĩ sẽ có phản hồi của họ?"
+      },
+      {
+        "speaker": "B",
+        "en": "They promised to reply by Thursday. If there are no major changes, we'll stay on schedule.",
+        "vi": "Họ hứa trả lời trước thứ Năm. Nếu không có thay đổi lớn, chúng ta sẽ đúng tiến độ."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Is there anything blocking you right now?",
+        "vi": "Tuyệt. Hiện có gì đang cản trở em không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just one thing — I need the final logo files from the marketing team.",
+        "vi": "Chỉ một việc thôi — em cần file logo cuối cùng từ nhóm marketing."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll follow up with them today and make sure you get them by tomorrow.",
+        "vi": "Để anh nhắc họ hôm nay và đảm bảo em nhận được trước ngày mai."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. That would really help me move forward.",
+        "vi": "Cảm ơn anh. Việc đó sẽ giúp em tiến hành tiếp được."
+      },
+      {
+        "speaker": "A",
+        "en": "Of course. Let's aim to have the first version ready for review next Monday.",
+        "vi": "Đương nhiên. Mình đặt mục tiêu có bản đầu tiên để duyệt vào thứ Hai tới nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Sounds good. I'll send everyone a short summary after the meeting.",
+        "vi": "Được ạ. Em sẽ gửi mọi người bản tóm tắt ngắn sau buổi họp."
+      }
+    ]
+  },
+  {
+    "id": 162,
+    "title": "Viết email chuyên nghiệp cho khách hàng",
+    "situation": "Nhân viên nhờ đồng nghiệp người nước ngoài kiểm tra email.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Hà",
+      "en": "Ha"
+    },
+    "speakerBName": {
+      "vi": "Đồng nghiệp Tom",
+      "en": "Tom"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hey Tom, do you have a minute? Could you check this email before I send it to the client?",
+        "vi": "Này Tom, anh rảnh chút không? Anh kiểm tra giúp email này trước khi tôi gửi cho khách được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Sure, Ha. Send it over. What's it about?",
+        "vi": "Được chứ, Hà. Gửi qua đây. Email về việc gì vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "It's to apologize for a delayed shipment and offer a discount on their next order.",
+        "vi": "Là để xin lỗi vì lô hàng giao trễ và đề nghị giảm giá cho đơn hàng tiếp theo của họ."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay. The tone is good, but the opening is a bit too casual for a client.",
+        "vi": "Được. Giọng văn ổn, nhưng phần mở đầu hơi suồng sã so với khách hàng."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh really? How should I start it instead?",
+        "vi": "Ồ thật à? Vậy tôi nên mở đầu thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "Try 'Dear Mr. Brown' instead of 'Hi', and add 'I hope this email finds you well.'",
+        "vi": "Thử dùng 'Dear Mr. Brown' thay vì 'Hi', và thêm câu 'I hope this email finds you well.'"
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds much more professional. What about the discount part?",
+        "vi": "Nghe chuyên nghiệp hơn nhiều. Còn phần giảm giá thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "Be specific. Say '10% off your next order' instead of just 'a discount'.",
+        "vi": "Hãy cụ thể. Nói '10% off your next order' thay vì chỉ 'a discount'."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. Clear numbers make it more convincing, right?",
+        "vi": "Hiểu rồi. Con số rõ ràng sẽ thuyết phục hơn đúng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. Fix those two things and it'll be ready to send.",
+        "vi": "Chính xác. Sửa hai chỗ đó là gửi được rồi."
+      }
+    ]
+  },
+  {
+    "id": 163,
+    "title": "Đàm phán điều khoản hợp đồng",
+    "situation": "Đại diện hai công ty ngồi đàm phán chi tiết hợp đồng hợp tác.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Giám đốc Minh",
+      "en": "Minh"
+    },
+    "speakerBName": {
+      "vi": "Đối tác David",
+      "en": "David"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Thank you for coming, David. Shall we go over the main terms of the contract?",
+        "vi": "Cảm ơn anh đã đến, David. Chúng ta cùng xem qua các điều khoản chính của hợp đồng nhé?"
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely, Minh. Overall the proposal looks solid, but I have a few concerns.",
+        "vi": "Chắc chắn rồi, Minh. Nhìn chung đề xuất khá vững, nhưng tôi có vài băn khoăn."
+      },
+      {
+        "speaker": "A",
+        "en": "Please go ahead. We're open to discussion.",
+        "vi": "Anh cứ nói. Chúng tôi sẵn sàng trao đổi."
+      },
+      {
+        "speaker": "B",
+        "en": "The delivery time of six weeks is a bit tight for us. Could we extend it to eight?",
+        "vi": "Thời gian giao hàng sáu tuần hơi gấp với chúng tôi. Có thể kéo dài thành tám tuần không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Eight weeks is possible, but we'd need a larger deposit upfront.",
+        "vi": "Tám tuần thì được, nhưng chúng tôi cần khoản đặt cọc trước lớn hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "That's fair. What percentage are you thinking?",
+        "vi": "Hợp lý thôi. Anh tính khoảng bao nhiêu phần trăm?"
+      },
+      {
+        "speaker": "A",
+        "en": "Let's say forty percent on signing, and the rest on delivery.",
+        "vi": "Tạm tính bốn mươi phần trăm khi ký, phần còn lại khi giao hàng."
+      },
+      {
+        "speaker": "B",
+        "en": "I can agree to that, as long as the quality guarantee stays in the contract.",
+        "vi": "Tôi đồng ý được, miễn là điều khoản bảo đảm chất lượng vẫn nằm trong hợp đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "Of course. The two-year warranty remains unchanged.",
+        "vi": "Đương nhiên. Bảo hành hai năm vẫn giữ nguyên."
+      },
+      {
+        "speaker": "B",
+        "en": "Then I think we have a deal. Let's have our lawyers finalize the wording.",
+        "vi": "Vậy thì tôi nghĩ chúng ta đã thống nhất. Để luật sư hai bên hoàn thiện câu chữ."
+      }
+    ]
+  },
+  {
+    "id": 164,
+    "title": "Báo cáo doanh số quý với sếp",
+    "situation": "Nhân viên kinh doanh báo cáo kết quả quý vừa rồi với giám đốc.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Nhân viên Phương",
+      "en": "Phuong"
+    },
+    "speakerBName": {
+      "vi": "Giám đốc",
+      "en": "Director"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good afternoon, sir. I've prepared the sales report for the third quarter.",
+        "vi": "Chào buổi chiều sếp. Em đã chuẩn bị báo cáo doanh số quý ba."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. Give me the highlights — how did we do overall?",
+        "vi": "Tốt. Tóm tắt những điểm chính cho tôi — nhìn chung chúng ta làm thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "We reached 112% of our target. Revenue grew 18% compared to last quarter.",
+        "vi": "Chúng ta đạt 112% chỉ tiêu. Doanh thu tăng 18% so với quý trước."
+      },
+      {
+        "speaker": "B",
+        "en": "That's impressive. What drove the growth?",
+        "vi": "Ấn tượng đấy. Điều gì thúc đẩy sự tăng trưởng vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "Mainly the new product line. It accounted for nearly a third of total sales.",
+        "vi": "Chủ yếu là dòng sản phẩm mới. Nó chiếm gần một phần ba tổng doanh số."
+      },
+      {
+        "speaker": "B",
+        "en": "Excellent. Were there any areas that underperformed?",
+        "vi": "Xuất sắc. Có mảng nào chưa đạt kỳ vọng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "The northern region was a bit slow, about 8% below target.",
+        "vi": "Khu vực miền Bắc hơi chậm, thấp hơn chỉ tiêu khoảng 8%."
+      },
+      {
+        "speaker": "B",
+        "en": "I see. Do you have any suggestions to improve that?",
+        "vi": "Tôi hiểu. Em có đề xuất nào để cải thiện không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes. I think we should increase advertising there and train the local sales team.",
+        "vi": "Có ạ. Em nghĩ chúng ta nên tăng quảng cáo ở đó và đào tạo đội ngũ bán hàng địa phương."
+      },
+      {
+        "speaker": "B",
+        "en": "Good thinking. Put together a plan and we'll discuss it next week.",
+        "vi": "Suy nghĩ tốt. Em lập kế hoạch rồi tuần sau mình bàn tiếp."
+      }
+    ]
+  },
+  {
+    "id": 165,
+    "title": "Phỏng vấn tuyển Marketing Manager",
+    "situation": "HR phỏng vấn ứng viên cho vị trí Trưởng phòng Marketing.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "HR Lan",
+      "en": "Lan"
+    },
+    "speakerBName": {
+      "vi": "Ứng viên",
+      "en": "Candidate"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Thanks for coming in today. Could you start by telling me about your experience?",
+        "vi": "Cảm ơn anh đã đến hôm nay. Anh có thể bắt đầu bằng việc kể về kinh nghiệm của mình không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. I've worked in marketing for seven years, the last three as a team leader.",
+        "vi": "Vâng. Tôi đã làm marketing bảy năm, ba năm gần đây ở vị trí trưởng nhóm."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. What kind of campaigns have you managed?",
+        "vi": "Tốt. Anh đã quản lý những loại chiến dịch nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "Mostly digital campaigns — social media, email marketing, and influencer partnerships.",
+        "vi": "Chủ yếu là chiến dịch kỹ thuật số — mạng xã hội, email marketing và hợp tác với người ảnh hưởng."
+      },
+      {
+        "speaker": "A",
+        "en": "Can you give me an example of a successful campaign you led?",
+        "vi": "Anh có thể cho một ví dụ về chiến dịch thành công anh đã dẫn dắt không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. One campaign increased our online sales by 40% in just three months.",
+        "vi": "Được. Một chiến dịch đã tăng doanh số trực tuyến của chúng tôi lên 40% chỉ trong ba tháng."
+      },
+      {
+        "speaker": "A",
+        "en": "That's impressive. How do you handle a campaign that isn't performing well?",
+        "vi": "Ấn tượng đấy. Anh xử lý thế nào khi một chiến dịch hoạt động không tốt?"
+      },
+      {
+        "speaker": "B",
+        "en": "I analyze the data, find the weak points, and adjust quickly rather than waiting.",
+        "vi": "Tôi phân tích dữ liệu, tìm điểm yếu và điều chỉnh nhanh thay vì chờ đợi."
+      },
+      {
+        "speaker": "A",
+        "en": "Good approach. Why are you interested in joining our company?",
+        "vi": "Cách tiếp cận tốt. Vì sao anh muốn gia nhập công ty chúng tôi?"
+      },
+      {
+        "speaker": "B",
+        "en": "I admire your brand, and I believe my experience can help you reach new markets.",
+        "vi": "Tôi ngưỡng mộ thương hiệu của công ty, và tin kinh nghiệm của mình có thể giúp tiếp cận thị trường mới."
+      }
+    ]
+  },
+  {
+    "id": 166,
+    "title": "Xử lý khiếu nại khách hàng khó tính",
+    "situation": "Nhân viên CSKH xử lý tình huống phàn nàn từ khách hàng.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "CSKH Hoa",
+      "en": "Hoa"
+    },
+    "speakerBName": {
+      "vi": "Khách hàng",
+      "en": "Customer"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, this is Hoa from customer service. How can I help you today?",
+        "vi": "Xin chào, tôi là Hoa từ bộ phận chăm sóc khách hàng. Tôi có thể giúp gì cho anh hôm nay?"
+      },
+      {
+        "speaker": "B",
+        "en": "Finally! I've been waiting for my order for two weeks and it still hasn't arrived.",
+        "vi": "Cuối cùng cũng gặp được! Tôi đã chờ đơn hàng hai tuần rồi mà vẫn chưa nhận được."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm very sorry for the delay. Could you give me your order number, please?",
+        "vi": "Tôi rất xin lỗi vì sự chậm trễ. Anh vui lòng cho tôi mã đơn hàng được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's 48291. I really need it this week — this is unacceptable.",
+        "vi": "Là 48291. Tôi thực sự cần nó trong tuần này — như thế này không chấp nhận được."
+      },
+      {
+        "speaker": "A",
+        "en": "I completely understand your frustration. Let me check the status right now.",
+        "vi": "Tôi hoàn toàn hiểu sự bực bội của anh. Để tôi kiểm tra tình trạng ngay bây giờ."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay. I just want to know when it will actually arrive.",
+        "vi": "Được. Tôi chỉ muốn biết khi nào nó thực sự đến."
+      },
+      {
+        "speaker": "A",
+        "en": "I see the problem — it was stuck at the warehouse. I'll have it shipped today by express.",
+        "vi": "Tôi thấy vấn đề rồi — nó bị kẹt ở kho. Tôi sẽ cho giao hàng hôm nay bằng chuyển phát nhanh."
+      },
+      {
+        "speaker": "B",
+        "en": "And how long will express take?",
+        "vi": "Vậy chuyển phát nhanh mất bao lâu?"
+      },
+      {
+        "speaker": "A",
+        "en": "It should reach you within two days, and I'll waive the shipping fee for the trouble.",
+        "vi": "Anh sẽ nhận được trong vòng hai ngày, và tôi sẽ miễn phí ship vì sự bất tiện này."
+      },
+      {
+        "speaker": "B",
+        "en": "Alright, that's better. Thank you for sorting it out.",
+        "vi": "Được rồi, vậy đỡ hơn. Cảm ơn cô đã giải quyết."
+      }
+    ]
+  },
+  {
+    "id": 167,
+    "title": "Trình bày chiến lược marketing mới",
+    "situation": "Nhân viên đề xuất chiến lược marketing sáng tạo với sếp.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Nhân viên Tuấn",
+      "en": "Tuan"
+    },
+    "speakerBName": {
+      "vi": "Giám đốc marketing",
+      "en": "Marketing Director"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning. I'd like to present a new marketing strategy for the summer.",
+        "vi": "Chào buổi sáng. Em muốn trình bày một chiến lược marketing mới cho mùa hè."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm listening. What's the main idea?",
+        "vi": "Tôi đang nghe đây. Ý tưởng chính là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "We focus on short videos on TikTok and Instagram to reach younger customers.",
+        "vi": "Chúng ta tập trung vào video ngắn trên TikTok và Instagram để tiếp cận khách hàng trẻ."
+      },
+      {
+        "speaker": "B",
+        "en": "Interesting. Do we have the budget for that kind of content?",
+        "vi": "Thú vị. Chúng ta có ngân sách cho loại nội dung đó không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes. It's actually cheaper than TV ads, and the reach is much wider.",
+        "vi": "Có ạ. Thực ra nó rẻ hơn quảng cáo truyền hình, và độ phủ rộng hơn nhiều."
+      },
+      {
+        "speaker": "B",
+        "en": "How will we measure whether it's working?",
+        "vi": "Chúng ta sẽ đo lường hiệu quả bằng cách nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "We'll track views, engagement, and the number of clicks to our website.",
+        "vi": "Chúng ta sẽ theo dõi lượt xem, tương tác và số lượt nhấp vào website."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. And who will create the videos?",
+        "vi": "Tốt. Vậy ai sẽ làm các video đó?"
+      },
+      {
+        "speaker": "A",
+        "en": "I suggest we partner with a few young content creators on a trial basis.",
+        "vi": "Em đề xuất hợp tác thử với vài nhà sáng tạo nội dung trẻ."
+      },
+      {
+        "speaker": "B",
+        "en": "I like it. Prepare a detailed plan and a budget, and we'll present it to the board.",
+        "vi": "Tôi thích đấy. Em chuẩn bị kế hoạch chi tiết và ngân sách, rồi mình trình lên ban lãnh đạo."
+      }
+    ]
+  },
+  {
+    "id": 168,
+    "title": "Phân công nhiệm vụ dự án mới",
+    "situation": "Trưởng nhóm họp để phân công công việc cho dự án vừa được nhận.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Trưởng nhóm",
+      "en": "Team Lead"
+    },
+    "speakerBName": {
+      "vi": "Thành viên",
+      "en": "Team Member"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "We've just landed a new project, so let's divide up the tasks.",
+        "vi": "Chúng ta vừa nhận một dự án mới, nên hãy phân chia công việc nào."
+      },
+      {
+        "speaker": "B",
+        "en": "Sounds good. What part would you like me to handle?",
+        "vi": "Được ạ. Chị muốn em phụ trách phần nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'd like you to take care of the research and gather the user requirements.",
+        "vi": "Chị muốn em lo phần nghiên cứu và thu thập yêu cầu của người dùng."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay. When do you need the research finished by?",
+        "vi": "Vâng. Khi nào chị cần phần nghiên cứu hoàn thành?"
+      },
+      {
+        "speaker": "A",
+        "en": "By the end of next week. Can you manage that?",
+        "vi": "Trước cuối tuần sau. Em làm kịp không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, that's enough time. Who will I be working with?",
+        "vi": "Vâng, thời gian đó đủ. Em sẽ làm việc cùng ai ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "You'll work with Mai. She'll help with the data analysis.",
+        "vi": "Em sẽ làm với Mai. Cô ấy sẽ hỗ trợ phần phân tích dữ liệu."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. Should I report to you directly?",
+        "vi": "Tuyệt. Em báo cáo trực tiếp cho chị chứ ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes. Send me a short update every Friday afternoon.",
+        "vi": "Đúng vậy. Gửi chị bản cập nhật ngắn mỗi chiều thứ Sáu."
+      },
+      {
+        "speaker": "B",
+        "en": "Understood. I'll start gathering the requirements tomorrow morning.",
+        "vi": "Em hiểu rồi. Sáng mai em sẽ bắt đầu thu thập yêu cầu."
+      }
+    ]
+  },
+  {
+    "id": 169,
+    "title": "Đề xuất tăng lương",
+    "situation": "Nhân viên gặp sếp để đề xuất tăng lương sau 2 năm cống hiến.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Nhân viên Hải",
+      "en": "Hai"
+    },
+    "speakerBName": {
+      "vi": "Trưởng phòng",
+      "en": "Manager"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Thank you for meeting with me. I'd like to discuss my salary.",
+        "vi": "Cảm ơn chị đã dành thời gian. Em muốn trao đổi về mức lương của mình."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course, Hai. What did you have in mind?",
+        "vi": "Được chứ, Hải. Em đang nghĩ thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "I've been with the company for two years, and my responsibilities have grown a lot.",
+        "vi": "Em đã làm ở công ty hai năm, và khối lượng trách nhiệm của em tăng lên nhiều."
+      },
+      {
+        "speaker": "B",
+        "en": "That's true. You've taken on the whole reporting system this year.",
+        "vi": "Đúng vậy. Năm nay em đã đảm nhận toàn bộ hệ thống báo cáo."
+      },
+      {
+        "speaker": "A",
+        "en": "Exactly. Based on my performance, I'd like to request a 15% raise.",
+        "vi": "Chính xác. Dựa trên kết quả làm việc, em muốn đề nghị tăng lương 15%."
+      },
+      {
+        "speaker": "B",
+        "en": "I appreciate your honesty. Do you have results to support that?",
+        "vi": "Chị trân trọng sự thẳng thắn của em. Em có kết quả nào để chứng minh không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes. My projects saved the team about twenty hours of work each week.",
+        "vi": "Có ạ. Các dự án của em giúp nhóm tiết kiệm khoảng hai mươi giờ làm việc mỗi tuần."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a strong point. I can't promise 15%, but I'll discuss it with the director.",
+        "vi": "Đó là một điểm mạnh. Chị không hứa được 15%, nhưng chị sẽ trao đổi với giám đốc."
+      },
+      {
+        "speaker": "A",
+        "en": "I understand. I really appreciate you considering it.",
+        "vi": "Em hiểu. Em rất cảm kích vì chị cân nhắc việc này."
+      },
+      {
+        "speaker": "B",
+        "en": "You've earned it. I'll get back to you by the end of the month.",
+        "vi": "Em xứng đáng mà. Chị sẽ phản hồi em trước cuối tháng."
+      }
+    ]
+  },
+  {
+    "id": 170,
+    "title": "Hướng dẫn nhân viên mới nhập việc",
+    "situation": "Nhân viên kỳ cựu hướng dẫn nhân viên mới làm quen với công việc.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Nhân viên cũ Nga",
+      "en": "Nga"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên mới",
+      "en": "New Employee"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Welcome to the team! I'm Nga. I'll help you settle in this week.",
+        "vi": "Chào mừng bạn đến với nhóm! Mình là Nga. Mình sẽ giúp bạn làm quen trong tuần này."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you so much. Honestly, I'm a little nervous on my first day.",
+        "vi": "Cảm ơn chị nhiều. Thật ra ngày đầu tiên em hơi hồi hộp."
+      },
+      {
+        "speaker": "A",
+        "en": "That's completely normal. Let me show you around the office first.",
+        "vi": "Điều đó hoàn toàn bình thường. Để mình dẫn bạn đi một vòng văn phòng trước nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. Where do I get my computer and login details?",
+        "vi": "Tuyệt. Em nhận máy tính và thông tin đăng nhập ở đâu ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "The IT team will set that up for you this morning. I'll take you there now.",
+        "vi": "Nhóm IT sẽ cài đặt cho bạn sáng nay. Mình dẫn bạn qua đó luôn."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. And who should I ask if I have questions about my tasks?",
+        "vi": "Tuyệt vời. Còn nếu có thắc mắc về công việc thì em nên hỏi ai ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "You can always ask me, or our team leader, Mr. Long. We're happy to help.",
+        "vi": "Bạn cứ hỏi mình, hoặc trưởng nhóm là anh Long. Bọn mình sẵn lòng giúp."
+      },
+      {
+        "speaker": "B",
+        "en": "That's reassuring. When is our first team meeting?",
+        "vi": "Vậy em yên tâm hơn. Khi nào nhóm mình họp lần đầu ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Every Monday at nine. I'll send you the calendar invite right away.",
+        "vi": "Mỗi thứ Hai lúc chín giờ. Mình sẽ gửi bạn lời mời lịch ngay."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you, Nga. I feel much more comfortable already.",
+        "vi": "Cảm ơn chị Nga. Em đã thấy thoải mái hơn nhiều rồi."
+      }
+    ]
+  }
+]
