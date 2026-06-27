@@ -80,7 +80,13 @@ interface PronTask    { type: 'pron';    cat: 'pron'; word: string; voice: Voice
 interface PatternTask { type: 'pattern'; cat: CatId;  text: string; lang: Lang; voice: VoiceId }
 type AnyTask = PronTask | PatternTask
 
-type TaskResult = { status: 'ok' | 'skip' | 'remapped' } | { status: 'error'; message: string }
+// Tách thành các nhánh literal riêng để TypeScript narrow đúng về nhánh 'error'
+// (gộp 'ok'|'skip'|'remapped' vào 1 nhánh khiến else không suy ra được .message).
+type TaskResult =
+  | { status: 'ok' }
+  | { status: 'skip' }
+  | { status: 'remapped' }
+  | { status: 'error'; message: string }
 
 // ── Hash cho pattern cache — phải khớp hoàn toàn với api/tts.ts ─────────────
 // Hash đúng (mới): có VOICE_VERSION — dùng cho mọi entry mới
@@ -353,7 +359,7 @@ async function runBatch(
     else if (result.status === 'skip')     counters.skip++
     else {
       counters.errors++; newReqs++
-      if ((result as { status: 'error'; message: string }).message.includes('429')) rate.has429 = true
+      if (result.message.includes('429')) rate.has429 = true
       failed.push({ task: tasks[idx], message: result.message })
     }
   })

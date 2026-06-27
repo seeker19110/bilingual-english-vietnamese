@@ -34,7 +34,7 @@ function getMasterKeyBytes(): Uint8Array {
 // HMAC-SHA256(key, message) — dùng Web Crypto, có sẵn trên Edge Runtime.
 async function hmacSha256(keyBytes: Uint8Array, message: string): Promise<Uint8Array> {
   const cryptoKey = await crypto.subtle.importKey(
-    'raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'],
+    'raw', keyBytes as BufferSource, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'],
   )
   const sig = await crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(message))
   return new Uint8Array(sig)
@@ -52,8 +52,8 @@ async function deriveKeyAndIv(hash: string): Promise<{ keyBytes: Uint8Array; iv:
 // Mã hóa bytes audio (mp3 gốc) → ciphertext để upload lên Storage.
 export async function encryptAudio(plain: ArrayBuffer, hash: string): Promise<ArrayBuffer> {
   const { keyBytes, iv } = await deriveKeyAndIv(hash)
-  const key = await crypto.subtle.importKey('raw', keyBytes, 'AES-GCM', false, ['encrypt'])
-  return crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plain)
+  const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, ['encrypt'])
+  return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv as BufferSource }, key, plain)
 }
 
 // Giải mã ciphertext audio → bytes mp3 gốc (dùng khi remap cache sang hash mới).
