@@ -5,7 +5,7 @@ import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronou
 import Layout from '../components/Layout'
 import VoiceToggle from '../components/VoiceToggle'
 import { getDirection } from '../lib/storage'
-import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio } from '../lib/tts'
+import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio, unlockAudio } from '../lib/tts'
 import { loadIndex, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
 import type { Direction } from '../types'
 
@@ -321,6 +321,7 @@ function LessonView({ lesson, isA, color, onBack }: {
   }
 
   async function startPlayAll() {
+    unlockAudio() // mở khoá audio iOS NGAY trong cú bấm (trước mọi await)
     stopRef.current  = false
     pauseRef.current = false
     setPlaying(true)
@@ -380,6 +381,7 @@ function LessonView({ lesson, isA, color, onBack }: {
   }
 
   async function playTurn(idx: number) {
+    unlockAudio() // mở khoá audio iOS NGAY trong cú bấm (trước mọi await)
     if (playing || paused) handleStop()
     await new Promise(r => setTimeout(r, 80))
 

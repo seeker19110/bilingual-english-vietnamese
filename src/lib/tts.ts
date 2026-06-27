@@ -10,20 +10,86 @@ import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
 type Lang = 'en-US' | 'vi-VN'
 export type Voice = 'female' | 'female2' | 'male' | 'male2'
 
-let currentAudio: HTMLAudioElement | null = null
+// ── Thẻ <audio> DUY NHẤT dùng chung cho mọi lần phát ────────────────────────
+// iOS/Safari (kể cả khi cài PWA) chỉ cho JavaScript phát audio trên một thẻ
+// <audio> ĐÃ được người dùng "mở khoá" bằng một cú chạm tay. Nếu mỗi câu tạo
+// `new Audio()` mới rồi gọi .play() trong chuỗi async (sau khi await tải/giải mã),
+// thì sau câu 1–2 hiệu lực của cú chạm tay đã hết → iOS chặn các câu sau (hội
+// thoại đứng giữa chừng). Khắc phục: tái dùng MỘT thẻ duy nhất, mở khoá 1 lần
+// lúc chạm đầu tiên (unlockAudio), sau đó chỉ đổi .src cho từng câu — thẻ đã mở
+// khoá sẽ phát được mãi. Máy tính không có giới hạn này nên trước đây vẫn chạy.
+let sharedAudio: HTMLAudioElement | null = null
+let audioUnlocked = false
 let currentBlobUrl: string | null = null
 let currentAudioId: string | null = null
 // Callback để unblock Promise đang chờ trong speakViaGoogle khi stopSpeaking() được gọi
 let currentResolve: (() => void) | null = null
 
+function getSharedAudio(): HTMLAudioElement {
+  if (!sharedAudio) {
+    sharedAudio = new Audio()
+    sharedAudio.preload = 'auto'
+  }
+  return sharedAudio
+}
+
+// Gỡ mọi handler cũ trên thẻ dùng chung trước khi gắn handler cho lượt phát mới
+function clearAudioHandlers(a: HTMLAudioElement) {
+  a.onended = null
+  a.onerror = null
+  a.ontimeupdate = null
+  a.onloadedmetadata = null
+}
+
+// WAV im lặng cực ngắn để "mở khoá" thẻ audio trên iOS (tạo 1 lần, dùng lại)
+let silentUrl: string | null = null
+function getSilentUrl(): string {
+  if (silentUrl) return silentUrl
+  const numSamples = 8
+  const buf = new ArrayBuffer(44 + numSamples)
+  const dv = new DataView(buf)
+  const writeStr = (off: number, s: string) => {
+    for (let i = 0; i < s.length; i++) dv.setUint8(off + i, s.charCodeAt(i))
+  }
+  writeStr(0, 'RIFF'); dv.setUint32(4, 36 + numSamples, true); writeStr(8, 'WAVE')
+  writeStr(12, 'fmt '); dv.setUint32(16, 16, true)
+  dv.setUint16(20, 1, true)     // PCM
+  dv.setUint16(22, 1, true)     // 1 kênh (mono)
+  dv.setUint32(24, 8000, true)  // sample rate
+  dv.setUint32(28, 8000, true)  // byte rate
+  dv.setUint16(32, 1, true)     // block align
+  dv.setUint16(34, 8, true)     // 8 bit / mẫu
+  writeStr(36, 'data'); dv.setUint32(40, numSamples, true)
+  for (let i = 0; i < numSamples; i++) dv.setUint8(44 + i, 128) // 128 = im lặng (8-bit)
+  silentUrl = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }))
+  return silentUrl
+}
+
+// Mở khoá audio cho iOS — PHẢI gọi ĐỒNG BỘ bên trong handler của một cú chạm tay
+// (onClick/onTouch...), TRƯỚC mọi await. Phát 1 đoạn im lặng để Safari đánh dấu
+// thẻ dùng chung là "được người dùng cho phép". Gọi nhiều lần vẫn an toàn (chỉ
+// chạy thực sự ở lần đầu).
+export function unlockAudio(): void {
+  if (audioUnlocked) return
+  try {
+    const a = getSharedAudio()
+    a.src = getSilentUrl()
+    const p = a.play()
+    if (p && typeof p.then === 'function') {
+      p.then(() => { a.pause(); a.currentTime = 0 }).catch(() => {})
+    }
+    audioUnlocked = true
+  } catch { /* sẽ thử lại ở lần phát thật */ }
+}
+
 // ── Pause / Resume — dùng cho trình phát hội thoại ──────────────────────────
 export function pauseCurrentAudio() {
-  if (currentAudio) currentAudio.pause()
+  if (sharedAudio) sharedAudio.pause()
   if ('speechSynthesis' in window) window.speechSynthesis.pause()
 }
 
 export function resumeCurrentAudio() {
-  if (currentAudio) void currentAudio.play().catch(() => {})
+  if (sharedAudio) void sharedAudio.play().catch(() => {})
   if ('speechSynthesis' in window) window.speechSynthesis.resume()
 }
 
@@ -45,14 +111,12 @@ export function isTTSSupported(): boolean {
 }
 
 export function stopSpeaking() {
-  if (currentAudio) {
-    // Xóa handler trước khi pause để tránh onerror/onended fire sau khi đã stop
-    currentAudio.onended = null
-    currentAudio.onerror = null
-    currentAudio.ontimeupdate = null
-    currentAudio.pause()
-    currentAudio.src = ''
-    currentAudio = null
+  if (sharedAudio) {
+    // Xóa handler trước khi pause để tránh onerror/onended fire sau khi đã stop.
+    // KHÔNG huỷ thẻ sharedAudio (đặt = null) — phải giữ lại để nó vẫn "đã mở
+    // khoá" trên iOS cho các lần phát sau. Chỉ pause + revoke blob là đủ.
+    clearAudioHandlers(sharedAudio)
+    sharedAudio.pause()
   }
   if (currentBlobUrl) {
     URL.revokeObjectURL(currentBlobUrl)
@@ -67,15 +131,16 @@ export function stopSpeaking() {
   currentResolve = null
 }
 
-// Phát audio từ URL ngoài TTS (ví dụ phát âm từ) — dùng chung currentAudio để ngăn chồng
+// Phát audio từ URL ngoài TTS (ví dụ phát âm từ) — dùng chung thẻ sharedAudio để ngăn chồng
 export function playAudioUrl(url: string): void {
   stopSpeaking()
-  const audio = new Audio(url)
+  const audio = getSharedAudio()
   const audioId = crypto.randomUUID()
-  currentAudio = audio
   currentAudioId = audioId
+  clearAudioHandlers(audio)
+  audio.playbackRate = 1
+  audio.src = url
   const cleanup = () => {
-    if (currentAudio === audio && currentAudioId === audioId) currentAudio = null
     if (currentAudioId === audioId) currentAudioId = null
   }
   audio.onended = cleanup
@@ -169,9 +234,12 @@ async function speakViaGoogle(
   const audioId = crypto.randomUUID()
 
   await new Promise<void>((resolve, reject) => {
-    const audio = new Audio(blobUrl)
+    // Tái dùng thẻ <audio> đã mở khoá (xem ghi chú đầu file) thay vì tạo mới mỗi câu
+    const audio = getSharedAudio()
+    clearAudioHandlers(audio)
+    audio.pause()
+    audio.src = blobUrl
     audio.playbackRate = rate
-    currentAudio = audio
     currentBlobUrl = blobUrl
     currentAudioId = audioId
     // Lưu resolve để stopSpeaking() có thể unblock Promise này mà không cần onerror
@@ -194,9 +262,8 @@ async function speakViaGoogle(
       // Blob URL là tạm — revoke ngay sau khi phát xong để giải phóng RAM.
       // Buffer gốc vẫn còn trong IndexedDB, lần sau tạo blob URL mới từ buffer đó.
       URL.revokeObjectURL(blobUrl)
-      // Chỉ cleanup nếu audio này vẫn còn active
+      // Chỉ cleanup nếu lượt phát này vẫn còn active (chưa bị câu khác thay thế)
       if (currentBlobUrl === blobUrl && currentAudioId === audioId) currentBlobUrl = null
-      if (currentAudio === audio && currentAudioId === audioId) currentAudio = null
       if (currentAudioId === audioId) currentAudioId = null
       if (currentResolve === resolve) currentResolve = null
     }

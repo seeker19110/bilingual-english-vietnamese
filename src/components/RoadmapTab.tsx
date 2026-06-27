@@ -4,7 +4,7 @@ import {
   Sparkles, CheckCircle2, Layers, X, Lightbulb, AlertTriangle, PencilLine,
   MessageCircle, Lock, Play, Pause, Square, Volume2,
 } from 'lucide-react'
-import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio } from '../lib/tts'
+import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio, unlockAudio } from '../lib/tts'
 import KaraokeText from './KaraokeText'
 import WordCard from './WordCard'
 import { InlinePronounce } from '../pages/Lessons'
@@ -552,6 +552,7 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
   function changeMode(m: DlgMode)   { setMode(m);  modeRef.current  = m }
 
   async function startPlayAll() {
+    unlockAudio() // mở khoá audio iOS NGAY trong cú bấm (trước mọi await)
     stopRef.current  = false
     pauseRef.current = false
     setPlaying(true)
