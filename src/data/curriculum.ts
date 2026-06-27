@@ -917,7 +917,7 @@ export const FOUNDATION: Circle[] = [
       w('stadium',      'n', 'sân vận động',    'The stadium holds fifty thousand people.',  'Sân vận động chứa năm mươi nghìn người.'),
       w('supermarket',  'n', 'siêu thị',        'I buy groceries at the supermarket weekly.','Tôi mua đồ ăn ở siêu thị hàng tuần.'),
       w('mall',         'n', 'trung tâm mua sắm','The mall has over a hundred shops.',       'Trung tâm mua sắm có hơn một trăm cửa hàng.'),
-      w('café',         'n', 'quán cà phê',     'She reads at a café every weekend.',       'Cô ấy đọc sách ở quán cà phê mỗi cuối tuần.'),
+      w('cafe',         'n', 'quán cà phê',     'She reads at a cafe every weekend.',        'Cô ấy đọc sách ở quán cà phê mỗi cuối tuần.'),
       w('bridge',       'n', 'cây cầu',         'The bridge across the river is beautiful.','Cây cầu qua sông rất đẹp.'),
       w('street',       'n', 'con đường, phố',  'What street do you live on?',              'Bạn ở phố nào?'),
       w('corner',       'n', 'góc đường',       'Turn left at the corner.',                 'Rẽ trái ở góc đường.'),
@@ -931,7 +931,7 @@ export const FOUNDATION: Circle[] = [
       { en: 'Is there a bank near here?',              vi: 'Gần đây có ngân hàng không?' },
       { en: 'Let\'s go to the cinema this weekend.',   vi: 'Cuối tuần này hãy đi xem phim nhé.' },
       { en: 'The museum is free — let\'s go inside.',  vi: 'Bảo tàng miễn phí — vào xem thôi.' },
-      { en: 'The café is on the corner of the street.',vi: 'Quán cà phê ở góc phố đó.' },
+      { en: 'The cafe is on the corner of the street.', vi: 'Quán cà phê ở góc phố đó.' },
     ],
   },
 
