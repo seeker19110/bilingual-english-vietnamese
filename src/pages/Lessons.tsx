@@ -124,7 +124,11 @@ export default function Lessons() {
     <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
       <Layout
         title={isA ? 'Bài học' : 'Lessons'}
-        subtitle={isA ? '1000+ chủ đề bài học giao tiếp' : '1000+ conversation lesson topics'}
+        subtitle={
+          index.length > 0
+            ? (isA ? `${index.length} chủ đề bài học giao tiếp` : `${index.length} conversation lesson topics`)
+            : (isA ? 'Bài học giao tiếp' : 'Conversation lessons')
+        }
         back
         extra={<VoiceToggle />}
       />
