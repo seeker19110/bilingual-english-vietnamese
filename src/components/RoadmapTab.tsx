@@ -4,7 +4,7 @@ import {
   Sparkles, CheckCircle2, Layers, X, Lightbulb, AlertTriangle, PencilLine,
   MessageCircle, Lock, Play, Pause, Square, Volume2,
 } from 'lucide-react'
-import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio } from '../lib/tts'
+import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio, unlockAudio, prefetchSpeech } from '../lib/tts'
 import KaraokeText from './KaraokeText'
 import WordCard from './WordCard'
 import { InlinePronounce } from '../pages/Lessons'
@@ -552,6 +552,7 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
   function changeMode(m: DlgMode)   { setMode(m);  modeRef.current  = m }
 
   async function startPlayAll() {
+    unlockAudio() // mở khoá audio iOS NGAY trong cú bấm (trước mọi await)
     stopRef.current  = false
     pauseRef.current = false
     setPlaying(true)
@@ -560,6 +561,17 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
 
     const targetLang = isA ? 'en-US' : 'vi-VN'
     const transLang  = isA ? 'vi-VN' : 'en-US'
+
+    // Nạp TRƯỚC audio các câu (chạy nền, tuần tự) để phát liền mạch không khựng.
+    // Tải nhanh hơn đọc nên bộ nạp luôn đi trước trình phát; trùng câu thì gộp (dedup).
+    void (async () => {
+      for (const ln of dialogue.lines) {
+        if (stopRef.current) break
+        const m = modeRef.current
+        if (m === 'en' || m === 'both') await prefetchSpeech(ln.en, 'en-US')
+        if (m === 'vi' || m === 'both') await prefetchSpeech(ln.vi, 'vi-VN')
+      }
+    })()
 
     for (let i = 0; i < dialogue.lines.length; i++) {
       if (stopRef.current) break

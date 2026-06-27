@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
 import { applyTheme, getTheme } from './lib/theme'
+import { unlockAudio } from './lib/tts'
 
 // Áp dụng theme đã lưu NGAY trước khi render để tránh nhấp nháy màu
 applyTheme(getTheme())
@@ -12,6 +13,16 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 )
+
+// Mở khoá audio cho iOS/Safari (kể cả PWA) ngay ở lần người dùng chạm/bấm ĐẦU TIÊN.
+// Safari chỉ cho JavaScript phát audio trên thẻ đã được tương tác — mở khoá sớm 1
+// lần để cả trình phát hội thoại lẫn phần đọc tự động (Chat/Luyện nói) đều phát được.
+const unlockEvents = ['pointerdown', 'touchend', 'mousedown', 'keydown'] as const
+function onFirstGesture() {
+  unlockAudio()
+  unlockEvents.forEach((e) => window.removeEventListener(e, onFirstGesture))
+}
+unlockEvents.forEach((e) => window.addEventListener(e, onFirstGesture, { passive: true }))
 
 // Đăng ký service worker để app cài được lên màn hình chính (PWA) và mở nhanh hơn.
 // Chỉ chạy ở bản build thật (production) để khỏi vướng cache lúc đang dev.
