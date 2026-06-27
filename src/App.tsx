@@ -17,6 +17,7 @@ const Writing = lazyWithRetry(() => import('./pages/Writing'))
 const Speaking = lazyWithRetry(() => import('./pages/Speaking'))
 const CommonPhrases = lazyWithRetry(() => import('./pages/CommonPhrases'))
 const History = lazyWithRetry(() => import('./pages/History'))
+const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'))
 const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
 
 // Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng
@@ -51,8 +52,12 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 }
 
 // Cập nhật thẻ <link rel="canonical"> theo route hiện tại để tránh lỗi SEO
-// "canonical points to homepage instead of current page"
-const BASE_URL = 'https://en-vi.donghanhcungban.com'
+// "canonical points to homepage instead of current page".
+// Tên miền lấy từ biến môi trường VITE_SITE_URL (đặt khi build) để dễ dùng cho
+// staging / domain khác; nếu không đặt thì mặc định domain production hiện tại.
+const BASE_URL =
+  (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, '') ||
+  'https://en-vi.donghanhcungban.com'
 function CanonicalUpdater() {
   const { pathname } = useLocation()
   useEffect(() => {
@@ -105,6 +110,7 @@ export default function App() {
                   <Route path="/lessons" element={<RequireAuth><Lessons /></RequireAuth>} />
                   <Route path="/phrases" element={<RequireAuth><CommonPhrases /></RequireAuth>} />
                   <Route path="/history" element={<RequireAuth><History /></RequireAuth>} />
+                  <Route path="/progress" element={<RequireAuth><Dashboard /></RequireAuth>} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Suspense>
