@@ -89,7 +89,11 @@ function getStructType(starter: string): StructType {
   return 'V'
 }
 
-// Xen kẽ round-robin theo category để mỗi batch 7 không quá 2 cùng loại
+// Xen kẽ round-robin theo category để mỗi batch 7 không quá 2 cùng loại.
+// Quét qua từng category (giữ thứ tự xuất hiện), mỗi vòng lấy 1 phần tử nếu còn,
+// lặp tới khi xếp HẾT. Dùng con trỏ thay cho shift() — không phá mảng gốc và đảm bảo
+// giữ ĐỦ mọi chủ thể (bản cũ có `i > items.length*3` làm rớt chủ thể cuối khi 1 loại
+// quá nhiều, vd. "Người (số ít)" chiếm 680/1000 → trang chỉ hiện ~653 chủ thể).
 function interleave(items: SubjectMeta[]): SubjectMeta[] {
   const groups: Record<string, SubjectMeta[]> = {}
   const order: string[] = []
@@ -98,14 +102,19 @@ function interleave(items: SubjectMeta[]): SubjectMeta[] {
     groups[s.category].push(s)
   })
   const result: SubjectMeta[] = []
-  let i = 0
-  const cats = order
-  while (result.length < items.length) {
-    const cat = cats[i % cats.length]
-    const grp = groups[cat]
-    if (grp && grp.length > 0) result.push(grp.shift()!)
-    i++
-    if (i > items.length * 3) break
+  const cursor: Record<string, number> = {}
+  let placed = true
+  while (placed) {
+    placed = false
+    for (const cat of order) {
+      const grp = groups[cat]
+      const idx = cursor[cat] ?? 0
+      if (idx < grp.length) {
+        result.push(grp[idx])
+        cursor[cat] = idx + 1
+        placed = true
+      }
+    }
   }
   return result
 }

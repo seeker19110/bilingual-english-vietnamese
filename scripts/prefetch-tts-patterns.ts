@@ -10,8 +10,8 @@
 //
 // Dữ liệu seed (giống api/tts.ts — mã hóa AES-256-GCM, lưu qua saveAudio theo STORAGE_DRIVER):
 //   - Tiếng Anh (lang=en-US) và Tiếng Việt (lang=vi-VN)
-//   - CẢ 2 GIỌNG nữ + nam (VOICE_IDS) cho mỗi câu — vì app cho chọn giọng.
-//   Tổng ~ số câu × 2 ngôn ngữ-phù-hợp × 2 giọng.
+//   - CEFR + Cụm từ: chỉ 2 giọng female/male — đều phát qua getVoicePref (female2/male2
+//     chỉ dùng cho hội thoại Lessons). Câu Cụm từ seed theo thứ tự hiển thị (phổ biến nhất trước).
 //
 // ⚠️ QUAN TRỌNG — phải nhất quán với api/tts.ts, nếu không app sẽ giải mã thất bại:
 //   - Hash: SHA-256(text + lang + voice), lấy 32 ký tự hex đầu (giống hàm hashText trong api/tts.ts).
@@ -33,6 +33,7 @@ import { CEFR_LEVELS } from '../src/data/cefr.ts'
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
+import { loadSubjectsInDisplayOrder, PREF_VOICE_IDS } from './_lib/patternOrder.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
@@ -71,30 +72,18 @@ function hashText(text: string, lang: Lang, voice: VoiceId): string {
     .slice(0, 32)
 }
 
-interface Sentence { en: string; vi: string }
-interface Subject { starter: string; sentences: Sentence[] }
-
-// ── Nạp patterns từ public/data/patterns/chunk-*.json ───────────────────────
-function loadSubjects(): Subject[] {
-  const dir = path.join(PROJECT_ROOT, 'public/data/patterns')
-  const files = fs.readdirSync(dir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
-  const subjects: Subject[] = []
-  for (const file of files) {
-    subjects.push(...(JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8')) as Subject[]))
-  }
-  return subjects
-}
-
 // ── Trích xuất tất cả câu cần seed ──────────────────────────────────────────
 // Thứ tự ưu tiên: CEFR examples → patterns (lessons được seed trong seed-all.ts)
 function collectTasks(): Task[] {
   const tasks: Task[] = []
   const seen = new Set<string>()
 
-  const add = (rawText: string, lang: Lang) => {
+  // voices: giới hạn giọng theo nhóm. CEFR + patterns đều phát qua getVoicePref nên chỉ
+  // cần female/male (PREF_VOICE_IDS — xem _lib/patternOrder.ts).
+  const add = (rawText: string, lang: Lang, voices: readonly VoiceId[] = VOICE_IDS) => {
     const text = rawText.trim()
     if (!text) return
-    for (const voice of VOICE_IDS) {
+    for (const voice of voices) {
       const key = `${text}|${lang}|${voice}`
       if (seen.has(key)) continue
       seen.add(key)
@@ -102,23 +91,25 @@ function collectTasks(): Task[] {
     }
   }
 
-  // ── Ưu tiên 1: CEFR grammar examples → Roadmap tab (/learn)
+  // ── Ưu tiên 1: CEFR grammar examples → Roadmap tab (/learn) — chỉ female/male
   for (const level of CEFR_LEVELS) {
     for (const unit of level.units) {
       for (const lesson of unit.grammar) {
         for (const { en, vi } of lesson.examples) {
-          add(en, 'en-US')
-          add(vi, 'vi-VN')
+          add(en, 'en-US', PREF_VOICE_IDS)
+          add(vi, 'vi-VN', PREF_VOICE_IDS)
         }
       }
     }
   }
 
-  // ── Ưu tiên 2: Pattern sentences → Cụm từ page
-  for (const subject of loadSubjects()) {
+  // ── Ưu tiên 2: Pattern sentences → Cụm từ page (PHỔ BIẾN NHẤT TRƯỚC)
+  // Chỉ 2 giọng female/male (trang Cụm từ không phát female2/male2) và theo thứ tự
+  // hiển thị (I am, You are, He is... trước) — xem scripts/_lib/patternOrder.ts.
+  for (const subject of loadSubjectsInDisplayOrder(path.join(PROJECT_ROOT, 'public/data/patterns'))) {
     for (const { en, vi } of subject.sentences) {
-      add(en, 'en-US')
-      add(vi, 'vi-VN')
+      add(en, 'en-US', PREF_VOICE_IDS)
+      add(vi, 'vi-VN', PREF_VOICE_IDS)
     }
   }
 
@@ -236,8 +227,8 @@ async function main(): Promise<void> {
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
   const tasks = allTasks.slice(0, limit)
 
-  console.log('🔊 Bắt đầu pre-generate TTS cho patterns/chunk-*.json (cả 2 giọng)')
-  console.log(`📋 Tổng tác vụ: ${tasks.length} (en-US + vi-VN × ${VOICE_IDS.join('/')})`)
+  console.log('🔊 Bắt đầu pre-generate TTS cho CEFR + Cụm từ (Cụm từ: phổ biến nhất trước)')
+  console.log(`📋 Tổng tác vụ: ${tasks.length} (en-US + vi-VN · chỉ 2 giọng ${PREF_VOICE_IDS.join('/')})`)
   console.log(`⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | ⚠️  FORCE: ghi đè cache cũ' : ''}`)
 
   // ── Vòng lặp: lặp cho đến khi hết lỗi hoặc đạt MAX_ROUNDS ───────────────
