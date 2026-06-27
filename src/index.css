@@ -3,48 +3,15 @@
 @tailwind utilities;
 
 /* ===== THEME ===== */
-/* 3 theme: dark (mặc định), light, dark blue.
-   Mỗi theme chỉ cần định nghĩa lại bảng màu zinc + white ở dạng biến CSS;
-   toàn bộ class bg-zinc và text-zinc trong app tự đổi theo (xem tailwind.config.js). */
-:root, [data-theme="dark"] {
-  color-scheme: dark;
-  --c-white: 255 255 255;
-  --z-50:  250 250 250;
-  --z-100: 244 244 245;
-  --z-200: 228 228 231;
-  --z-300: 212 212 216;
-  --z-400: 161 161 170;
-  --z-500: 113 113 122;
-  --z-600: 82 82 91;
-  --z-700: 63 63 70;
-  --z-800: 39 39 42;
-  --z-900: 24 24 27;
-  --z-950: 9 9 11;
-  --glass-bg: 24 24 27;
-  --glass-border: 63 63 70;
-}
+/* 4 theme: Xanh đêm (mặc định), Blue sky, Pink, Rực rỡ.
+   Mỗi theme định nghĩa lại 2 bảng màu ở dạng biến CSS:
+   - zinc + white  → nền/chữ trung tính  (class bg-zinc / text-zinc / text-white)
+   - accent (--a-*) → màu nhấn thương hiệu (class bg-accent / text-accent ...)
+   Toàn bộ app tự đổi theo, không phải sửa từng file (xem tailwind.config.js).
+   --glow-accent dùng cho hiệu ứng phát sáng + outline focus theo đúng màu nhấn. */
 
-/* Light: đảo ngược thang zinc (nền sáng, chữ tối). white → gần đen để chữ "text-white" vẫn đọc được. */
-[data-theme="light"] {
-  color-scheme: light;
-  --c-white: 24 24 27;
-  --z-50:  9 9 11;
-  --z-100: 24 24 27;
-  --z-200: 39 39 42;
-  --z-300: 63 63 70;
-  --z-400: 82 82 91;
-  --z-500: 113 113 122;
-  --z-600: 161 161 170;
-  --z-700: 212 212 216;
-  --z-800: 228 228 231;
-  --z-900: 244 244 245;
-  --z-950: 255 255 255;
-  --glass-bg: 255 255 255;
-  --glass-border: 212 212 216;
-}
-
-/* Dark blue: tông xanh navy (slate) */
-[data-theme="dark-blue"] {
+/* 🌙 Xanh đêm (MẶC ĐỊNH) — nền navy/slate + nhấn xanh ngọc (emerald) */
+:root, [data-theme="dark-blue"] {
   color-scheme: dark;
   --c-white: 255 255 255;
   --z-50:  248 250 252;
@@ -60,6 +27,116 @@
   --z-950: 8 12 28;
   --glass-bg: 15 23 42;
   --glass-border: 51 65 85;
+  /* accent: emerald */
+  --a-50:  236 253 245;
+  --a-100: 209 250 229;
+  --a-200: 167 243 208;
+  --a-300: 110 231 183;
+  --a-400: 52 211 153;
+  --a-500: 16 185 129;
+  --a-600: 5 150 105;
+  --a-700: 4 120 87;
+  --a-800: 6 95 70;
+  --a-900: 6 78 59;
+  --glow-accent: 0.4;
+  --theme-color: #0f172a;
+}
+
+/* ☀️ Blue sky — nền sáng tông xanh + nhấn xanh da trời (sky).
+   Theo cơ chế light: đảo thang zinc (nền sáng, chữ tối), white → tối để "text-white" vẫn đọc được. */
+[data-theme="blue-sky"] {
+  color-scheme: light;
+  --c-white: 15 23 42;
+  --z-50:  8 12 28;
+  --z-100: 15 23 42;
+  --z-200: 30 41 59;
+  --z-300: 51 65 85;
+  --z-400: 71 85 105;
+  --z-500: 100 116 139;
+  --z-600: 148 163 184;
+  --z-700: 203 213 225;
+  --z-800: 226 232 240;
+  --z-900: 241 245 249;
+  --z-950: 248 250 255;
+  --glass-bg: 255 255 255;
+  --glass-border: 203 213 225;
+  /* accent: sky */
+  --a-50:  240 249 255;
+  --a-100: 224 242 254;
+  --a-200: 186 230 253;
+  --a-300: 125 211 252;
+  --a-400: 56 189 248;
+  --a-500: 14 165 233;
+  --a-600: 2 132 199;
+  --a-700: 3 105 161;
+  --a-800: 7 89 133;
+  --a-900: 12 74 110;
+  --glow-accent: 0.35;
+  --theme-color: #f0f9ff;
+}
+
+/* 🌸 Pink — nền hồng phấn nhạt (xám ấm) + nhấn hồng (pink) */
+[data-theme="pink"] {
+  color-scheme: light;
+  --c-white: 38 24 32;
+  --z-50:  38 24 32;
+  --z-100: 55 38 48;
+  --z-200: 82 64 74;
+  --z-300: 110 92 102;
+  --z-400: 140 122 132;
+  --z-500: 168 152 160;
+  --z-600: 198 182 190;
+  --z-700: 224 212 218;
+  --z-800: 240 230 235;
+  --z-900: 250 244 247;
+  --z-950: 255 248 252;
+  --glass-bg: 255 250 252;
+  --glass-border: 244 207 224;
+  /* accent: pink */
+  --a-50:  253 242 248;
+  --a-100: 252 231 243;
+  --a-200: 251 207 232;
+  --a-300: 249 168 212;
+  --a-400: 244 114 182;
+  --a-500: 236 72 153;
+  --a-600: 219 39 119;
+  --a-700: 190 24 93;
+  --a-800: 157 23 77;
+  --a-900: 131 24 67;
+  --glow-accent: 0.35;
+  --theme-color: #fff8fc;
+}
+
+/* 🎉 Rực rỡ — nền tím than đậm + nhấn fuchsia rực, glow mạnh */
+[data-theme="vibrant"] {
+  color-scheme: dark;
+  --c-white: 255 255 255;
+  --z-50:  250 245 255;
+  --z-100: 245 238 255;
+  --z-200: 233 222 250;
+  --z-300: 209 196 233;
+  --z-400: 180 160 210;
+  --z-500: 148 130 178;
+  --z-600: 110 92 140;
+  --z-700: 72 55 100;
+  --z-800: 44 32 66;
+  --z-900: 28 20 46;
+  --z-950: 18 12 32;
+  --glass-bg: 44 32 66;
+  --glass-border: 109 64 150;
+  /* accent: fuchsia */
+  --a-50:  253 244 255;
+  --a-100: 250 232 255;
+  --a-200: 245 208 254;
+  --a-300: 240 171 252;
+  --a-400: 232 121 249;
+  --a-500: 217 70 239;
+  --a-600: 192 38 211;
+  --a-700: 162 28 175;
+  --a-800: 134 25 143;
+  --a-900: 112 26 117;
+  --glow-accent: 0.55;
+  --theme-color: #1c1428;
 }
 
 @layer base {
@@ -105,7 +182,7 @@
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid #10b981;
+    outline: 2px solid rgb(var(--a-500));
     outline-offset: 2px;
   }
 
@@ -156,17 +233,17 @@
     }
   }
 
-  /* Gradient text */
-  .gradient-text-emerald {
-    background: linear-gradient(135deg, #10b981, #14b8a6);
+  /* Gradient text — theo màu nhấn của theme */
+  .gradient-text-accent {
+    background: linear-gradient(135deg, rgb(var(--a-500)), rgb(var(--a-300)));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  /* Glow effects */
-  .glow-emerald {
-    box-shadow: 0 0 30px -5px rgba(16, 185, 129, 0.4);
+  /* Glow effects — glow-accent đổi theo theme (độ đậm qua --glow-accent) */
+  .glow-accent {
+    box-shadow: 0 0 30px -5px rgb(var(--a-500) / var(--glow-accent, 0.4));
   }
   .glow-sky {
     box-shadow: 0 0 30px -5px rgba(14, 165, 233, 0.4);

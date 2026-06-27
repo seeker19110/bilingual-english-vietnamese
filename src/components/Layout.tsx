@@ -31,7 +31,7 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
   return (
     <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/60 relative pt-safe">
       {/* Gradient accent line trên cùng */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
 
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-3">
 
@@ -45,7 +45,7 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
           </button>
         ) : (
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-md shadow-emerald-500/30">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center shadow-md shadow-accent-500/30">
               <BookOpen className="w-3.5 h-3.5 text-white" />
             </div>
             <span className="font-bold text-sm text-white hidden sm:inline tracking-tight">{T.appName}</span>
@@ -64,7 +64,7 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
             <span className="text-base leading-none">🔥</span>
             <div className="leading-none">
               <p className="text-sm font-bold text-orange-400">{streak}</p>
-              <p className="text-[9px] text-orange-400/60">{T.streakDays}</p>
+              <p className="text-[11px] text-orange-400/60">{T.streakDays}</p>
             </div>
           </div>
         )}
@@ -78,7 +78,7 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
               <span>{T.speak} <strong className="text-zinc-400">{usage.speakingCount}/{limit.speaking}</strong></span>
             </div>
             {/* Mobile: mini badges cho chat và nói */}
-            <div className="sm:hidden flex items-center gap-1.5 shrink-0 text-[10px] text-zinc-400">
+            <div className="sm:hidden flex items-center gap-1.5 shrink-0 text-[11px] text-zinc-400">
               <span><strong className="text-zinc-400">{usage.chatCount}</strong>/{limit.chat}</span>
               <span className="text-zinc-700">·</span>
               <span><strong className="text-zinc-400">{usage.speakingCount}</strong>/{limit.speaking}</span>
@@ -95,7 +95,7 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
         {/* User avatar + logout */}
         {user && (
           <div className="flex items-center gap-1 shrink-0">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center text-xs font-bold text-white shadow-sm">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-xs font-bold text-white shadow-sm">
               {user.name[0]?.toUpperCase()}
             </div>
             <button onClick={handleLogout}

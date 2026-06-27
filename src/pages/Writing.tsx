@@ -37,8 +37,8 @@ interface FeedbackData {
 
 function ScoreBar({ label, score }: { label: string; score: number }) {
   const pct = (score / 9) * 100
-  const color = score >= 7 ? 'bg-emerald-500' : score >= 5 ? 'bg-amber-500' : 'bg-red-500'
-  const textColor = score >= 7 ? 'text-emerald-400' : score >= 5 ? 'text-amber-400' : 'text-red-400'
+  const color = score >= 7 ? 'bg-accent-500' : score >= 5 ? 'bg-amber-500' : 'bg-red-500'
+  const textColor = score >= 7 ? 'text-accent-400' : score >= 5 ? 'text-amber-400' : 'text-red-400'
   return (
     <div className="flex items-center gap-3">
       <span className="text-xs text-zinc-400 w-36 shrink-0">{label}</span>
@@ -54,7 +54,7 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
   const [showSample, setShowSample] = useState(false)
   const isA = dir === 'A'
   const overall = feedback.scores.overall
-  const scoreGradient = overall >= 7 ? 'from-emerald-400 to-teal-300' : overall >= 5 ? 'from-amber-400 to-yellow-300' : 'from-red-400 to-orange-300'
+  const scoreGradient = overall >= 7 ? 'from-accent-400 to-accent-300' : overall >= 5 ? 'from-amber-400 to-yellow-300' : 'from-red-400 to-orange-300'
 
   return (
     <div className="min-h-dvh bg-zinc-950">
@@ -96,8 +96,8 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
                   <div className="px-3 py-2 bg-red-500/8 border-b border-zinc-800/60">
                     <p className="text-xs text-red-400 line-through">{err.original}</p>
                   </div>
-                  <div className="px-3 py-2 bg-emerald-500/6 border-b border-zinc-800/60">
-                    <p className="text-xs text-emerald-400">→ {err.corrected}</p>
+                  <div className="px-3 py-2 bg-accent-500/6 border-b border-zinc-800/60">
+                    <p className="text-xs text-accent-400">→ {err.corrected}</p>
                   </div>
                   <div className="px-3 py-2">
                     <p className="text-xs text-zinc-400">{err.explanation}</p>
@@ -115,7 +115,7 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
           <ul className="space-y-2">
             {feedback.suggestions.map((s, i) => (
               <li key={i} className="flex gap-2 text-sm text-zinc-400">
-                <span className="text-emerald-500 shrink-0 font-bold">·</span>{s}
+                <span className="text-accent-500 shrink-0 font-bold">·</span>{s}
               </li>
             ))}
           </ul>
@@ -169,7 +169,7 @@ export default function Writing() {
   })
 
   const wordCount = essay.trim().split(/\s+/).filter(Boolean).length
-  const wordColor = wordCount < 150 ? 'text-red-400' : wordCount < 250 ? 'text-amber-400' : 'text-emerald-400'
+  const wordColor = wordCount < 150 ? 'text-red-400' : wordCount < 250 ? 'text-amber-400' : 'text-accent-400'
   const wordHint = isA
     ? (wordCount < 150 ? '(tối thiểu 150)' : wordCount < 250 ? '(IELTS Task 2: 250+)' : '✓')
     : (wordCount < 100 ? '(min. 100 words)' : '✓')

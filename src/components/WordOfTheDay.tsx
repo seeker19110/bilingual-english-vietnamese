@@ -35,9 +35,9 @@ export default function WordOfTheDay({ entries, isA = true }: Props) {
   const go = (delta: number) => setIdx((safeIdx + delta + total) % total)
 
   return (
-    <div className="glass rounded-xl p-4 mb-4 animate-fade-in border-emerald-500/20">
+    <div className="glass rounded-xl p-4 mb-4 animate-fade-in border-accent-500/20">
       <div className="flex items-center gap-2 mb-2">
-        <Sparkles className="w-4 h-4 text-emerald-400" />
+        <Sparkles className="w-4 h-4 text-accent-400" />
         <span className="text-sm font-semibold text-white">
           {isA ? 'Từ vựng hôm nay' : "Today's words"}
         </span>
@@ -71,13 +71,13 @@ export default function WordOfTheDay({ entries, isA = true }: Props) {
       {/* Từ + loại từ + phát âm */}
       <div className="flex items-center gap-2 mb-1.5 flex-wrap">
         <span className="font-bold text-white text-lg">{entry.word}</span>
-        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-zinc-700 text-zinc-300">
+        <span className="text-[11px] px-2 py-0.5 rounded-full font-medium bg-zinc-700 text-zinc-300">
           {POS_LABEL[entry.pos] || entry.pos}
         </span>
         <PronounceButton word={entry.word} />
       </div>
 
-      {entry.ipa_en && <p className="text-xs text-emerald-400/70 font-mono mb-1">{entry.ipa_en}</p>}
+      {entry.ipa_en && <p className="text-xs text-accent-400/70 font-mono mb-1">{entry.ipa_en}</p>}
       <p className="text-sm text-zinc-200 font-medium mb-1">{entry.vi}</p>
 
       {/* Câu ví dụ — karaoke highlight từng chữ khi nghe */}

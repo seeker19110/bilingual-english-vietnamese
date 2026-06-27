@@ -46,7 +46,7 @@ export default function Onboarding() {
       <div className="w-full max-w-sm mb-8">
         <div className="flex gap-1.5">
           {[0, 1, 2].map(i => (
-            <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i <= step ? 'bg-emerald-500' : 'bg-zinc-800'}`} />
+            <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i <= step ? 'bg-accent-500' : 'bg-zinc-800'}`} />
           ))}
         </div>
         <p className="text-xs text-zinc-400 mt-2">Bước {step + 1} / 3</p>
@@ -62,7 +62,7 @@ export default function Onboarding() {
               <button key={l.value} onClick={() => setLevel(l.value)}
                 className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all ${
                   level === l.value
-                    ? 'bg-emerald-500/15 border-emerald-500/50 text-white'
+                    ? 'bg-accent-500/15 border-accent-500/50 text-white'
                     : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:border-zinc-700'
                 }`}>
                 <span className="text-2xl">{l.emoji}</span>
@@ -70,12 +70,12 @@ export default function Onboarding() {
                   <p className="font-semibold text-[15px]">{l.label}</p>
                   <p className="text-xs text-zinc-400 mt-0.5">{l.desc}</p>
                 </div>
-                {level === l.value && <Check className="w-4 h-4 text-emerald-400 shrink-0" />}
+                {level === l.value && <Check className="w-4 h-4 text-accent-400 shrink-0" />}
               </button>
             ))}
           </div>
           <button onClick={() => setStep(1)}
-            className="mt-6 w-full bg-emerald-500 hover:bg-emerald-400 text-black font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition">
+            className="mt-6 w-full bg-accent-500 hover:bg-accent-400 text-black font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition">
             Tiếp theo <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -91,13 +91,13 @@ export default function Onboarding() {
               const Icon = g.Icon
               const active = goal === g.value
               const colors: Record<string, string> = {
-                emerald: 'bg-emerald-500/15 border-emerald-500/50',
+                emerald: 'bg-accent-500/15 border-accent-500/50',
                 sky:     'bg-sky-500/15 border-sky-500/50',
                 violet:  'bg-violet-500/15 border-violet-500/50',
                 amber:   'bg-amber-500/15 border-amber-500/50',
               }
               const iconColors: Record<string, string> = {
-                emerald: 'text-emerald-400',
+                emerald: 'text-accent-400',
                 sky:     'text-sky-400',
                 violet:  'text-violet-400',
                 amber:   'text-amber-400',
@@ -123,7 +123,7 @@ export default function Onboarding() {
               Quay lại
             </button>
             <button onClick={() => setStep(2)}
-              className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition">
+              className="flex-1 bg-accent-500 hover:bg-accent-400 text-black font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition">
               Tiếp theo <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -140,12 +140,12 @@ export default function Onboarding() {
               <button key={m} onClick={() => setMinutes(m)}
                 className={`p-5 rounded-2xl border text-center transition-all ${
                   minutes === m
-                    ? 'bg-emerald-500/15 border-emerald-500/50 text-white'
+                    ? 'bg-accent-500/15 border-accent-500/50 text-white'
                     : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:border-zinc-700'
                 }`}>
                 <p className="text-3xl font-bold">{m}</p>
                 <p className="text-xs text-zinc-400 mt-1">phút / ngày</p>
-                {m === 10 && <p className="text-[10px] text-emerald-400 mt-1">Phổ biến nhất</p>}
+                {m === 10 && <p className="text-[11px] text-accent-400 mt-1">Phổ biến nhất</p>}
               </button>
             ))}
           </div>
@@ -155,7 +155,7 @@ export default function Onboarding() {
               Quay lại
             </button>
             <button onClick={finish} disabled={saving}
-              className="flex-1 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-60 text-black font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition">
+              className="flex-1 bg-accent-500 hover:bg-accent-400 disabled:opacity-60 text-black font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition">
               {saving ? 'Đang lưu...' : 'Bắt đầu học! 🚀'}
             </button>
           </div>

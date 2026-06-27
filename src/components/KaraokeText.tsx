@@ -51,12 +51,12 @@ export default function KaraokeText({
 
   const iSize   = iconSize === 'xs' ? 'w-3 h-3'   : 'w-3.5 h-3.5'
   const bSize   = iconSize === 'xs' ? 'w-4 h-4 mt-0.5' : 'w-5 h-5 mt-0.5'
-  const accent  = lang === 'en-US' ? 'text-emerald-300' : 'text-sky-300'
+  const accent  = lang === 'en-US' ? 'text-accent-300' : 'text-sky-300'
   const idle    = lang === 'en-US'
-    ? 'text-zinc-400 hover:text-emerald-400'
+    ? 'text-zinc-400 hover:text-accent-400'
     : 'text-zinc-400 hover:text-sky-400'
   const wordHl  = lang === 'en-US'
-    ? 'bg-emerald-500/20 text-emerald-200 rounded px-0.5'
+    ? 'bg-accent-500/20 text-accent-200 rounded px-0.5'
     : 'bg-sky-500/20 text-sky-200 rounded px-0.5'
 
   // Tách text thành [từ, khoảng-trắng, từ...] để giữ nguyên whitespace gốc

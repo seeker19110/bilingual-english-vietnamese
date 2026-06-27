@@ -16,7 +16,7 @@ type AudioMode = 'en' | 'both' | 'vi'
 
 // ── Hệ thống màu sắc — giống CommonPhrases ───────────────────────────────────
 const COLORS = [
-  { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/25', dot: 'bg-emerald-400' },
+  { bg: 'bg-accent-500/10', text: 'text-accent-400', border: 'border-accent-500/25', dot: 'bg-accent-400' },
   { bg: 'bg-sky-500/10',     text: 'text-sky-400',     border: 'border-sky-500/25',     dot: 'bg-sky-400'     },
   { bg: 'bg-violet-500/10',  text: 'text-violet-400',  border: 'border-violet-500/25',  dot: 'bg-violet-400'  },
   { bg: 'bg-amber-500/10',   text: 'text-amber-400',   border: 'border-amber-500/25',   dot: 'bg-amber-400'   },
@@ -62,7 +62,7 @@ const WordText = memo(function WordText({
         return (
           <span key={i} className={
             thisIdx === wordSync.wordIdx
-              ? 'text-emerald-200 bg-emerald-500/25 rounded px-0.5 transition-colors'
+              ? 'text-accent-200 bg-accent-500/25 rounded px-0.5 transition-colors'
               : 'transition-colors'
           }>{part}</span>
         )
@@ -171,7 +171,7 @@ function SearchBar({ query, setQuery, isA, variant = 'desktop' }: {
         value={query}
         onChange={e => setQuery(e.target.value)}
         placeholder={isA ? 'Tìm bằng tiếng Anh hoặc tiếng Việt…' : 'Search in English or Vietnamese…'}
-        className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition"
+        className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-accent-500/60 focus:bg-zinc-900 transition"
       />
       {query && (
         <button onClick={() => setQuery('')}
@@ -436,7 +436,7 @@ function LessonView({ lesson, isA, color, onBack }: {
             <div className="flex items-center gap-1.5">
               {isIdle && (
                 <button onClick={() => void startPlayAll()}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-medium transition">
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition">
                   <Play className="w-3 h-3 fill-current" />
                   {isA ? 'Phát tất cả' : 'Play all'}
                 </button>
@@ -450,7 +450,7 @@ function LessonView({ lesson, isA, color, onBack }: {
               )}
               {paused && (
                 <button onClick={handleResume}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-medium transition">
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition">
                   <Play className="w-3 h-3 fill-current" />
                   {isA ? 'Tiếp' : 'Resume'}
                 </button>
@@ -499,8 +499,8 @@ function LessonView({ lesson, isA, color, onBack }: {
             {/* Số turn đang phát */}
             {playing && activeTurn !== null && (
               <div className="ml-auto flex items-center gap-1 shrink-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] text-zinc-400">{activeTurn + 1}/{lesson.turns.length}</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" />
+                <span className="text-[11px] text-zinc-400">{activeTurn + 1}/{lesson.turns.length}</span>
               </div>
             )}
           </div>
@@ -527,11 +527,11 @@ function LessonView({ lesson, isA, color, onBack }: {
                       : 'bg-sky-500/15 border border-sky-500/50 shadow-lg shadow-sky-500/10'
                     : isLeft
                       ? 'bg-zinc-900 border border-zinc-800'
-                      : 'bg-emerald-500/10 border border-emerald-500/30'
+                      : 'bg-accent-500/10 border border-accent-500/30'
                 }`}>
                   {/* Nhãn speaker + nút phát + nút kiểm tra phát âm */}
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <p className="text-[10px] font-medium text-zinc-400">
+                    <p className="text-[11px] font-medium text-zinc-400">
                       {t.speaker === 'A'
                         ? (isA ? (lesson.speakerAName?.vi ?? 'Người A') : (lesson.speakerAName?.en ?? 'Person A'))
                         : (isA ? (lesson.speakerBName?.vi ?? 'Người B') : (lesson.speakerBName?.en ?? 'Person B'))
@@ -652,11 +652,11 @@ export function InlinePronounce({ text, lang, isA }: {
             : <><Mic className="w-3 h-3" /> {isA ? 'Nói lại' : 'Repeat'}</>}
         </button>
         <button onClick={() => { stop(); setOpen(false); reset() }}
-          className="text-[10px] text-zinc-500 hover:text-zinc-300 transition">
+          className="text-[11px] text-zinc-500 hover:text-zinc-300 transition">
           {isA ? 'Đóng' : 'Close'}
         </button>
         {status === 'listening' && (
-          <span className="text-[10px] text-zinc-400 animate-pulse">
+          <span className="text-[11px] text-zinc-400 animate-pulse">
             {isA ? `Đọc: "${text}"` : `Say: "${text}"`}
           </span>
         )}
@@ -669,19 +669,19 @@ export function InlinePronounce({ text, lang, isA }: {
             <div className="flex flex-wrap gap-1">
               {words.map((w, i) => (
                 <span key={i} className={`px-1.5 py-0.5 rounded text-xs ${
-                  w.ok ? 'bg-emerald-500/15 text-emerald-300' : 'bg-rose-500/15 text-rose-300'
+                  w.ok ? 'bg-accent-500/15 text-accent-300' : 'bg-rose-500/15 text-rose-300'
                 }`}>{w.word}</span>
               ))}
             </div>
           )}
-          <p className="text-[10px] text-zinc-400">{isA ? 'Bạn đọc' : 'You said'}: "{heard}"</p>
+          <p className="text-[11px] text-zinc-400">{isA ? 'Bạn đọc' : 'You said'}: "{heard}"</p>
           <button onClick={start}
-            className="flex items-center gap-1 text-[10px] text-zinc-400 hover:text-zinc-300 transition">
+            className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-zinc-300 transition">
             <RotateCcw className="w-2.5 h-2.5" /> {isA ? 'Thử lại' : 'Retry'}
           </button>
         </div>
       )}
-      {err && <p className="text-[10px] text-rose-400">{err}</p>}
+      {err && <p className="text-[11px] text-rose-400">{err}</p>}
     </div>
   )
 }

@@ -43,7 +43,7 @@ import { bumpDailyLearned } from '../lib/curriculum'
 const ACCENT: Record<CefrLevel['accent'], {
   active: string; bar: string; text: string; soft: string; ring: string
 }> = {
-  emerald: { active: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50', bar: 'bg-emerald-500', text: 'text-emerald-300', soft: 'bg-emerald-500/10', ring: 'border-emerald-500/30' },
+  emerald: { active: 'bg-accent-500/20 text-accent-300 border-accent-500/50', bar: 'bg-accent-500', text: 'text-accent-300', soft: 'bg-accent-500/10', ring: 'border-accent-500/30' },
   sky:     { active: 'bg-sky-500/20 text-sky-300 border-sky-500/50',             bar: 'bg-sky-500',     text: 'text-sky-300',     soft: 'bg-sky-500/10',     ring: 'border-sky-500/30' },
   violet:  { active: 'bg-violet-500/20 text-violet-300 border-violet-500/50',    bar: 'bg-violet-500',  text: 'text-violet-300',  soft: 'bg-violet-500/10',  ring: 'border-violet-500/30' },
   amber:   { active: 'bg-amber-500/20 text-amber-300 border-amber-500/50',       bar: 'bg-amber-500',   text: 'text-amber-300',   soft: 'bg-amber-500/10',   ring: 'border-amber-500/30' },
@@ -342,7 +342,7 @@ function GrammarDetail({ lesson, isA, accent, onBack }: {
               {lesson.mistakes.map((m, i) => (
                 <div key={i} className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3">
                   <p className="text-sm text-rose-300 line-through decoration-rose-500/60">{m.wrong}</p>
-                  <p className="text-sm text-emerald-300 mt-0.5 flex items-center gap-1.5">
+                  <p className="text-sm text-accent-300 mt-0.5 flex items-center gap-1.5">
                     <Check className="w-3.5 h-3.5 shrink-0" /> {m.right}
                   </p>
                   <p className="text-xs text-zinc-400 mt-1">{m.noteVi}</p>
@@ -389,7 +389,7 @@ function QuizCard({ item, isA }: {
           // Sau khi trả lời: tô xanh đáp án đúng, tô đỏ đáp án đã chọn nếu sai.
           let cls = 'bg-zinc-800/70 border-zinc-700 text-zinc-300 hover:border-zinc-500'
           if (answered) {
-            if (i === item.answer) cls = 'bg-emerald-500/15 border-emerald-500/50 text-emerald-300'
+            if (i === item.answer) cls = 'bg-accent-500/15 border-accent-500/50 text-accent-300'
             else if (i === pick) cls = 'bg-rose-500/15 border-rose-500/50 text-rose-300'
             else cls = 'bg-zinc-800/40 border-zinc-800 text-zinc-400'
           }
@@ -403,7 +403,7 @@ function QuizCard({ item, isA }: {
         })}
       </div>
       {answered && (
-        <p className={`text-xs mt-2 ${correct ? 'text-emerald-400' : 'text-rose-400'}`}>
+        <p className={`text-xs mt-2 ${correct ? 'text-accent-400' : 'text-rose-400'}`}>
           {correct ? (isA ? '✓ Chính xác!' : '✓ Correct!') : (isA ? '✗ Chưa đúng.' : '✗ Not quite.')}
           {item.explainVi && <span className="text-zinc-400"> {item.explainVi}</span>}
         </p>
@@ -453,7 +453,7 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack, onOpenDialogue }: {
 
       {done ? (
         <div className="glass rounded-xl p-8 text-center space-y-3">
-          <Check className="w-10 h-10 text-emerald-400 mx-auto" />
+          <Check className="w-10 h-10 text-accent-400 mx-auto" />
           <p className="text-white font-semibold">{isA ? 'Xong bộ từ này!' : 'Set complete!'}</p>
           {circle.sentences.length > 0 && (
             <div className="text-left pt-3 border-t border-zinc-800 space-y-2">
@@ -489,7 +489,7 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack, onOpenDialogue }: {
             </div>
           )}
           <button onClick={onBack}
-            className="w-full mt-2 py-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-sm font-medium transition">
+            className="w-full mt-2 py-3 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-sm font-medium transition">
             {isA ? 'Về lộ trình' : 'Back to roadmap'}
           </button>
         </div>
@@ -499,7 +499,7 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack, onOpenDialogue }: {
             <span>{isA ? 'Từ' : 'Word'} {idx + 1}/{cards.length}</span>
           </div>
           <div className="h-1 bg-zinc-800 rounded-full mb-4">
-            <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${(idx / cards.length) * 100}%` }} />
+            <div className="h-full bg-accent-500 rounded-full transition-all" style={{ width: `${(idx / cards.length) * 100}%` }} />
           </div>
 
           <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onProgress} />
@@ -510,7 +510,7 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack, onOpenDialogue }: {
               <X className="w-4 h-4" /> {isA ? 'Để sau' : 'Later'}
             </button>
             <button onClick={learn}
-              className="flex items-center justify-center gap-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition py-3 rounded-xl text-sm font-medium">
+              className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 transition py-3 rounded-xl text-sm font-medium">
               <Check className="w-4 h-4" /> {isA ? 'Đã thuộc' : 'Got it'}
             </button>
           </div>
@@ -624,7 +624,7 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
           <div className="flex items-center gap-1.5">
             {isIdle && (
               <button onClick={() => void startPlayAll()}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-medium transition">
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition">
                 <Play className="w-3 h-3 fill-current" />
                 {isA ? 'Phát tất cả' : 'Play all'}
               </button>
@@ -638,7 +638,7 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
             )}
             {paused && (
               <button onClick={handleResume}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-medium transition">
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition">
                 <Play className="w-3 h-3 fill-current" />
                 {isA ? 'Tiếp' : 'Resume'}
               </button>
@@ -687,8 +687,8 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
           {/* Đang phát dòng bao nhiêu */}
           {playing && activeLine !== null && (
             <div className="ml-auto flex items-center gap-1 shrink-0">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] text-zinc-400">{activeLine + 1}/{dialogue.lines.length}</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" />
+              <span className="text-[11px] text-zinc-400">{activeLine + 1}/{dialogue.lines.length}</span>
             </div>
           )}
         </div>
@@ -707,9 +707,9 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
             return (
               <div key={i} className={`flex ${isB ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border transition-all ${
-                  isActive ? 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-emerald-500/60' : ''
+                  isActive ? 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-accent-500/60' : ''
                 } ${isB ? `${accent.soft} ${accent.ring}` : 'bg-zinc-900/80 border-zinc-800/80'}`}>
-                  <span className={`text-[10px] font-semibold tracking-wide ${
+                  <span className={`text-[11px] font-semibold tracking-wide ${
                     isB ? accent.text : 'text-zinc-400'}`}>
                     {ln.who === 'A'
                       ? (isA ? (dialogue.speakerA?.vi ?? 'A') : (dialogue.speakerA?.en ?? 'A'))

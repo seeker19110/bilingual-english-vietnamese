@@ -149,7 +149,7 @@ function SpeakBubble({ msg, onPlay, isNew }: { msg: Message; onPlay?: () => void
               <span className="text-amber-200">{msg.feedbackVi}</span>
             </div>
             {msg.correctedEn && (
-              <p className="text-emerald-400 mt-1.5 pl-4">→ {msg.correctedEn}</p>
+              <p className="text-accent-400 mt-1.5 pl-4">→ {msg.correctedEn}</p>
             )}
           </div>
         )}
@@ -505,7 +505,7 @@ export default function Speaking() {
                       placeholder={isA ? 'Gõ tiếng Anh thay vì nói...' : 'Type Vietnamese instead of speaking...'}
                       disabled={loading || limitHit || isThrottled}
                       inputMode="text"
-                      className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-[16px] sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-sky-500/60 transition disabled:opacity-50"
+                      className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-base sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-sky-500/60 transition disabled:opacity-50"
                     />
                     <button
                       onClick={() => { if (typedInput.trim()) { sendUserSpeech(typedInput.trim()); setTypedInput('') } }}
@@ -514,7 +514,7 @@ export default function Speaking() {
                       className="p-3 bg-gradient-to-br from-sky-600 to-cyan-500 disabled:opacity-40 text-white rounded-xl transition shrink-0 relative">
                       <Send className="w-4 h-4" />
                       {isThrottled && throttleCountdown > 0 && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-xl text-[10px] font-bold text-white">
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-xl text-[11px] font-bold text-white">
                           {throttleCountdown}s
                         </div>
                       )}

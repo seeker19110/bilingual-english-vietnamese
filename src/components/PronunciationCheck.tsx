@@ -89,7 +89,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
             {words.map((w, i) => (
               <span key={i} className={`px-2 py-0.5 rounded-lg text-sm font-medium ${
                 w.ok
-                  ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25'
+                  ? 'bg-accent-500/15 text-accent-300 border border-accent-500/25'
                   : 'bg-rose-500/15 text-rose-300 border border-rose-500/25'
               }`}>
                 {w.word}

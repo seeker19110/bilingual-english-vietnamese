@@ -19,7 +19,7 @@ const ToastContext = createContext<ToastApi | null>(null)
 
 // Cấu hình màu + icon theo loại toast
 const STYLES: Record<ToastKind, { cls: string; Icon: typeof Info }> = {
-  success: { cls: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300', Icon: CheckCircle2 },
+  success: { cls: 'bg-accent-500/15 border-accent-500/30 text-accent-300', Icon: CheckCircle2 },
   error:   { cls: 'bg-red-500/15 border-red-500/30 text-red-300',             Icon: AlertCircle },
   info:    { cls: 'bg-sky-500/15 border-sky-500/30 text-sky-300',             Icon: Info },
 }

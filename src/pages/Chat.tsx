@@ -26,7 +26,7 @@ function SetupScreen({ onStart, loading, error, dir }: {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 overflow-y-auto">
 
-      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center mb-5 shadow-xl shadow-emerald-500/25 animate-scale-in">
+      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center mb-5 shadow-xl shadow-accent-500/25 animate-scale-in">
         <Sparkles className="w-8 h-8 text-white" />
       </div>
       <h2 className="text-xl font-bold text-white mb-1 animate-fade-in delay-50">
@@ -44,7 +44,7 @@ function SetupScreen({ onStart, loading, error, dir }: {
           </label>
           <div className="relative">
             <select id="situation" name="situation" value={situation} onChange={e => setSituation(e.target.value)}
-              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white appearance-none outline-none focus:border-emerald-500/70 transition">
+              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white appearance-none outline-none focus:border-accent-500/70 transition">
               {SITUATIONS.map(s => (
                 <option key={s.value} value={s.value}>
                   {isA ? s.labelA : s.labelB}
@@ -65,7 +65,7 @@ function SetupScreen({ onStart, loading, error, dir }: {
               <button key={l.value} onClick={() => setLevel(l.value)}
                 className={`py-2.5 rounded-xl text-sm font-medium border transition active:scale-[0.97] ${
                   level === l.value
-                    ? 'bg-gradient-to-br from-emerald-600 to-teal-500 border-transparent text-white shadow-md shadow-emerald-500/20'
+                    ? 'bg-gradient-to-br from-accent-600 to-accent-500 border-transparent text-white shadow-md shadow-accent-500/20'
                     : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300'
                 }`}>
                 {isA ? l.labelA : l.labelB}
@@ -86,7 +86,7 @@ function SetupScreen({ onStart, loading, error, dir }: {
         )}
 
         <button onClick={() => onStart(situation, level)} disabled={loading}
-          className="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:opacity-60 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+          className="w-full bg-gradient-to-r from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 disabled:opacity-60 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-accent-500/20">
           {loading
             ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 {isA ? 'Đang kết nối AI...' : 'Connecting to AI...'}</>
@@ -109,7 +109,7 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
   if (msg.role === 'user') {
     return (
       <div className={`flex justify-end ${isNew ? 'animate-fade-in' : ''}`}>
-        <div className="max-w-[78%] bg-gradient-to-br from-emerald-600 to-teal-500 text-white rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm shadow-emerald-500/15 break-words">
+        <div className="max-w-[78%] bg-gradient-to-br from-accent-600 to-accent-500 text-white rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm shadow-accent-500/15 break-words">
           {msg.content}
         </div>
       </div>
@@ -355,15 +355,15 @@ export default function Chat() {
                 placeholder={isA ? 'Nhập tiếng Anh...' : 'Type in Vietnamese...'}
                 disabled={loading || limitHit || isThrottled}
                 inputMode="text"
-                className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-[16px] sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition disabled:opacity-50"
+                className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-base sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-accent-500/60 focus:bg-zinc-900 transition disabled:opacity-50"
               />
 
               <button onClick={sendMessage} disabled={!input.trim() || loading || limitHit || isThrottled}
-                className="p-2.5 bg-gradient-to-br from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-emerald-500/20 active:scale-95 relative"
+                className="p-2.5 bg-gradient-to-br from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-accent-500/20 active:scale-95 relative"
                 aria-label={isA ? 'Gửi tin nhắn' : 'Send message'}>
                 <Send className="w-4 h-4" />
                 {isThrottled && throttleCountdown > 0 && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-xl text-[10px] font-bold text-white">
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-xl text-[11px] font-bold text-white">
                     {throttleCountdown}s
                   </div>
                 )}

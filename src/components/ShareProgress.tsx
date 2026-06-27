@@ -35,7 +35,7 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
   }
 
   const statCards = [
-    { emoji: '📚', value: learned, label: isA ? 'từ đã học' : 'words learned', color: 'text-emerald-400' },
+    { emoji: '📚', value: learned, label: isA ? 'từ đã học' : 'words learned', color: 'text-accent-400' },
     { emoji: '🔥', value: streak,  label: isA ? 'ngày streak' : 'day streak',  color: 'text-orange-400' },
   ]
 
@@ -70,7 +70,7 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
               <div key={s.label} className="bg-zinc-900/60 rounded-xl p-3 text-center">
                 <p className="text-2xl">{s.emoji}</p>
                 <p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p>
-                <p className="text-[10px] text-zinc-400 mt-0.5">{s.label}</p>
+                <p className="text-[11px] text-zinc-400 mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
@@ -84,12 +84,12 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
         <div className="flex gap-3">
           <button onClick={copyText}
             className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition">
-            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="w-4 h-4 text-accent-400" /> : <Copy className="w-4 h-4" />}
             {copied ? (isA ? 'Đã sao chép!' : 'Copied!') : (isA ? 'Sao chép' : 'Copy')}
           </button>
           {'share' in navigator && (
             <button onClick={doShare}
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-semibold transition">
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-black text-sm font-semibold transition">
               <Share2 className="w-4 h-4" />
               {isA ? 'Chia sẻ' : 'Share'}
             </button>

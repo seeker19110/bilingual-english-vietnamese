@@ -16,13 +16,13 @@ export default function VoiceToggle() {
       type="button"
       onClick={toggle}
       title="Chọn giọng đọc (áp dụng cho cả app)"
-      className="flex rounded-full bg-zinc-800 p-0.5 text-[10px] leading-none shrink-0 cursor-pointer"
+      className="flex rounded-full bg-zinc-800 p-0.5 text-[11px] leading-none shrink-0 cursor-pointer"
     >
       <span className={`px-2 py-1 rounded-full transition ${
-        voice === 'female' ? 'bg-emerald-500/30 text-emerald-300' : 'text-zinc-400'
+        voice === 'female' ? 'bg-accent-500/30 text-accent-300' : 'text-zinc-400'
       }`}>Nữ</span>
       <span className={`px-2 py-1 rounded-full transition ${
-        voice === 'male' ? 'bg-emerald-500/30 text-emerald-300' : 'text-zinc-400'
+        voice === 'male' ? 'bg-accent-500/30 text-accent-300' : 'text-zinc-400'
       }`}>Nam</span>
     </button>
   )
