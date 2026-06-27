@@ -709,9 +709,11 @@ function DialogueView({ dialogue, isA, accent, onBack }: {
                 <div className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border transition-all ${
                   isActive ? 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-emerald-500/60' : ''
                 } ${isB ? `${accent.soft} ${accent.ring}` : 'bg-zinc-900/80 border-zinc-800/80'}`}>
-                  <span className={`text-[10px] font-semibold uppercase tracking-wide ${
+                  <span className={`text-[10px] font-semibold tracking-wide ${
                     isB ? accent.text : 'text-zinc-400'}`}>
-                    {ln.who}
+                    {ln.who === 'A'
+                      ? (isA ? (dialogue.speakerA?.vi ?? 'A') : (dialogue.speakerA?.en ?? 'A'))
+                      : (isA ? (dialogue.speakerB?.vi ?? 'B') : (dialogue.speakerB?.en ?? 'B'))}
                   </span>
                   <KaraokeText text={ln.en} lang="en-US"
                     textClass={`font-medium text-[15px] leading-snug ${isB ? accent.text : 'text-zinc-100'}`}
