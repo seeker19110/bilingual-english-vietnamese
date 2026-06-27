@@ -108,11 +108,17 @@ export function pushUsage(userId: string, usage: DailyUsage) {
 // Gọi khi đăng nhập / mở trang. Lỗi mạng sẽ bị nuốt (vẫn dùng được bản local cũ).
 export async function pullUserData(userId: string): Promise<void> {
   const date = todayStr()
+  // Kéo 40 ngày gần nhất để getStreak() có đủ dữ liệu tính streak liên tục
+  const startDate = (() => {
+    const d = new Date()
+    d.setDate(d.getDate() - 40)
+    return d.toISOString().slice(0, 10)
+  })()
   const results = await Promise.allSettled([
     supabase.from('chat_sessions').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
     supabase.from('writing_submissions').select('*').eq('user_id', userId).order('submitted_at', { ascending: false }),
     supabase.from('speaking_sessions').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
-    supabase.from('daily_usage').select('*').eq('user_id', userId).eq('day', date).maybeSingle(),
+    supabase.from('daily_usage').select('*').eq('user_id', userId).gte('day', startDate).order('day', { ascending: false }),
   ])
 
   const [chatResult, writingResult, speakingResult, usageResult] = results
@@ -143,16 +149,20 @@ export async function pullUserData(userId: string): Promise<void> {
 
   if (usageResult.status === 'fulfilled') {
     const usage = usageResult.value
-    if (!usage.error && usage.data) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const u = usage.data as any
-      setLocal(K.usage(userId, date), {
-        date,
-        chatCount: u.chat_count ?? 0,
-        writingCount: u.writing_count ?? 0,
-        speakingCount: u.speaking_count ?? 0,
-        sttCount: u.stt_count ?? 0,
-      } satisfies DailyUsage)
+    if (!usage.error && Array.isArray(usage.data)) {
+      // Lưu từng ngày vào localStorage để getStreak() tính đúng streak nhiều ngày
+      for (const row of usage.data) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const u = row as any
+        const day: string = u.day ?? date
+        setLocal(K.usage(userId, day), {
+          date: day,
+          chatCount: u.chat_count ?? 0,
+          writingCount: u.writing_count ?? 0,
+          speakingCount: u.speaking_count ?? 0,
+          sttCount: u.stt_count ?? 0,
+        } satisfies DailyUsage)
+      }
     } else if (usage.error) warn('pull usage', usage.error)
   } else {
     console.warn('[cloud] usage query rejected:', usageResult.reason)

@@ -167,14 +167,14 @@ export function getStreak(userId: string): number {
     d.setDate(d.getDate() - i)
     const dateStr = d.toISOString().slice(0, 10)
     const usage = get<DailyUsage>(K.usage(userId, dateStr))
-    const hasActivity = usage && (usage.chatCount + usage.writingCount + usage.speakingCount > 0)
+    const hasActivity = usage && (usage.chatCount + usage.writingCount + usage.speakingCount + (usage.sttCount ?? 0) > 0)
     if (hasActivity) {
       streak++
     } else if (i > 0) {
-      // Không có hoạt động từ hôm qua trở về — streak kết thúc
+      // Ngày trước không có hoạt động → streak đứt
       break
     }
-    // i === 0 chưa học hôm nay: bỏ qua, kiểm tra hôm qua
+    // i === 0 (hôm nay) chưa học: cho qua, kiểm tra hôm qua xem streak còn không
   }
   return streak
 }
