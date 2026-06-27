@@ -33,21 +33,39 @@ export function startListening(
   rec.interimResults = true
 
   let lastTranscript = ''
+  let gotSpeech = false
+
+  // Chống "mic mở vô tận": tự dừng nếu không nghe thấy gì sau 8s, hoặc nói quá 20s.
+  const NO_SPEECH_MS = 8000
+  const MAX_MS = 20000
+  let noSpeechTimer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+    noSpeechTimer = null
+    if (!gotSpeech) { try { rec.stop() } catch { /* đã dừng */ } onError('no-speech') }
+  }, NO_SPEECH_MS)
+  const maxTimer = setTimeout(() => { try { rec.stop() } catch { /* đã dừng */ } }, MAX_MS)
+
+  function clearTimers() {
+    if (noSpeechTimer) { clearTimeout(noSpeechTimer); noSpeechTimer = null }
+    clearTimeout(maxTimer)
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rec.onresult = (e: any) => {
+    gotSpeech = true
+    if (noSpeechTimer) { clearTimeout(noSpeechTimer); noSpeechTimer = null }
     const result = e.results[e.results.length - 1]
     const t = result[0].transcript as string
     lastTranscript = t
     onResult({ transcript: t, isFinal: result.isFinal as boolean })
   }
 
-  rec.onend = () => onEnd(lastTranscript)
+  rec.onend = () => { clearTimers(); onEnd(lastTranscript) }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rec.onerror = (e: any) => onError(e.error as string)
+  rec.onerror = (e: any) => { clearTimers(); onError(e.error as string) }
   rec.start()
 
   return () => {
+    clearTimers()
     rec.onresult = null
     rec.onend = null
     rec.onerror = null

@@ -1,6 +1,11 @@
 // Gọi Google Gemini API
 // Tương tự Groq/Anthropic, nhưng dùng endpoint Google Generative AI
 
+import { fetchWithTimeout } from './fetchTimeout'
+
+// Thời gian chờ tối đa cho 1 lần gọi AI (ms) — tránh treo vô hạn khi nhà cung cấp chậm.
+const AI_TIMEOUT_MS = 30_000
+
 export interface GeminiMessage {
   role: 'user' | 'model'
   parts: Array<{ text: string }>
@@ -59,11 +64,11 @@ export async function callGemini(
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
 
-  const resp = await fetch(url, {
+  const resp = await fetchWithTimeout(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
-  })
+  }, AI_TIMEOUT_MS)
 
   if (!resp.ok) {
     const errorText = await resp.text()

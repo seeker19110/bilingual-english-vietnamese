@@ -59,6 +59,8 @@ export default function Dictionary() {
   const [searchPosGroups, setSearchPosGroups] = useState<[string, number][]>([])
   const [searchMatched, setSearchMatched] = useState(0)
   const [searching, setSearching]   = useState(false)
+  const [searchError, setSearchError] = useState(false)  // true khi lỗi mạng (khác "không có kết quả")
+  const [retryKey, setRetryKey] = useState(0)            // tăng để gọi lại tìm kiếm sau lỗi mạng
   const [totalWords, setTotalWords] = useState(0)
   const [todayWords, setTodayWords] = useState<DictEntry[]>([])
   const [extraExamples, setExtraExamples] = useState<Record<string, [ExPair, ExPair]>>({})
@@ -85,16 +87,22 @@ export default function Dictionary() {
   // Hủy request cũ khi gõ tiếp để tránh kết quả về trễ ghi đè kết quả mới.
   useEffect(() => {
     const q = deferredQuery.trim()
-    if (!q) { setSearchResults([]); setSearchPosGroups([]); setSearchMatched(0); return }
+    if (!q) { setSearchResults([]); setSearchPosGroups([]); setSearchMatched(0); setSearchError(false); return }
     const ctrl = new AbortController()
     setSearching(true)
+    setSearchError(false)
     // Truyền posFilter để server lọc đúng theo loại từ (số khớp với chip kể cả >200 từ).
     searchDictionary(q, ctrl.signal, posFilter)
-      .then(r => { setSearchResults(r.results); setSearchPosGroups(r.posGroups); setSearchMatched(r.matched) })
-      .catch(err => { if (err?.name !== 'AbortError') { setSearchResults([]); setSearchPosGroups([]); setSearchMatched(0) } })
+      .then(r => { setSearchResults(r.results); setSearchPosGroups(r.posGroups); setSearchMatched(r.matched); setSearchError(false) })
+      .catch(err => {
+        if (err?.name !== 'AbortError') {
+          // Lỗi mạng/server thật sự → đánh dấu để báo khác với "không tìm thấy từ"
+          setSearchResults([]); setSearchPosGroups([]); setSearchMatched(0); setSearchError(true)
+        }
+      })
       .finally(() => setSearching(false))
     return () => ctrl.abort()
-  }, [deferredQuery, posFilter])
+  }, [deferredQuery, posFilter, retryKey])
 
   useEffect(() => {
     if (user) setLearnedWords(getLearnedWords(user.id))
@@ -346,6 +354,20 @@ export default function Dictionary() {
                     )}
                   </div>
                 </>
+              ) : searchError ? (
+                /* Lỗi mạng/server — KHÁC với "không tìm thấy từ" */
+                <div className="text-center py-10 animate-fade-in space-y-3">
+                  <p className="text-amber-400 text-sm font-medium">
+                    {isA ? 'Không kết nối được máy chủ tra từ' : 'Could not reach the dictionary server'}
+                  </p>
+                  <p className="text-zinc-400 text-xs">
+                    {isA ? 'Kiểm tra kết nối mạng rồi thử lại.' : 'Check your connection and try again.'}
+                  </p>
+                  <button onClick={() => setRetryKey(k => k + 1)}
+                    className="text-xs px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition">
+                    {isA ? 'Thử lại' : 'Retry'}
+                  </button>
+                </div>
               ) : (
                 /* Không có kết quả */
                 <div className="text-center py-10 animate-fade-in space-y-2">

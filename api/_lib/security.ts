@@ -12,18 +12,32 @@ export function getCorsHeaders(req: Request): Record<string, string> {
   const origin = req.headers.get('Origin') ?? ''
 
   let allowOrigin = '*'
+  let allowCredentials = false
   if (allowedOrigins) {
-    const list = allowedOrigins.split(',').map(s => s.trim())
-    allowOrigin = list.includes(origin) ? origin : list[0]
+    const list = allowedOrigins.split(',').map(s => s.trim()).filter(Boolean)
+    if (origin && list.includes(origin)) {
+      // Origin nằm trong whitelist → phản chiếu đúng origin + cho phép credentials
+      allowOrigin = origin
+      allowCredentials = true
+    } else {
+      // Không khớp → trả origin đầu danh sách (browser sẽ chặn origin lạ)
+      allowOrigin = list[0] ?? '*'
+    }
   }
 
-  return {
+  const headers: Record<string, string> = {
     'Access-Control-Allow-Origin': allowOrigin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Credentials': 'true',
     'Vary': 'Origin',
   }
+  // CHỈ gắn Allow-Credentials khi phản chiếu đúng 1 origin cụ thể trong whitelist.
+  // KHÔNG bao giờ kèm '*' — tổ hợp '*' + credentials bị browser từ chối và quá rộng.
+  // (App xác thực bằng header Authorization: Bearer, không dùng cookie nên không bắt buộc.)
+  if (allowCredentials) {
+    headers['Access-Control-Allow-Credentials'] = 'true'
+  }
+  return headers
 }
 
 // ── Security Headers ──────────────────────────────────────────────────────────

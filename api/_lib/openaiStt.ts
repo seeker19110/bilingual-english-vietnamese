@@ -9,6 +9,11 @@
 //   - Ngược lại         → dùng OpenAI (OPENAI_API_KEY, model gpt-4o-mini-transcribe).
 // Có thể ép model riêng qua STT_MODEL.
 
+import { fetchWithTimeout } from './fetchTimeout'
+
+// STT có thể chậm hơn chat (phải xử lý cả file audio) → cho timeout rộng hơn.
+const STT_TIMEOUT_MS = 45_000
+
 export type SttLang = 'en' | 'vi'
 
 interface SttProvider {
@@ -71,11 +76,11 @@ export async function transcribeAudio(
   form.append('language', lang)
   form.append('response_format', 'json')
 
-  const resp = await fetch(provider.url, {
+  const resp = await fetchWithTimeout(provider.url, {
     method: 'POST',
     headers: { Authorization: `Bearer ${provider.apiKey}` },
     body: form,
-  })
+  }, STT_TIMEOUT_MS)
 
   if (!resp.ok) {
     const detail = await resp.text().catch(() => '')

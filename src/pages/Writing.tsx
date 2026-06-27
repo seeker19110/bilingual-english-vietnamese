@@ -176,6 +176,12 @@ export default function Writing() {
 
   async function submit() {
     if (!essay.trim() || !essayPrompt.trim()) return
+    // Chặn bài quá ngắn — tránh tốn lượt/API cho bài không thực chất.
+    if (wordCount < 20) {
+      const m = isA ? 'Bài viết quá ngắn — viết ít nhất 20 từ để AI chấm chính xác.'
+                    : 'Essay too short — write at least 20 words for accurate grading.'
+      setError(m); toast.error(m); return
+    }
     if (isThrottled) { toast.error(isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`); return }
     if (essay.length > 10000) {
       setError(isA ? 'Bài viết quá dài (tối đa 10.000 ký tự).' : 'Essay too long (max 10,000 characters).')

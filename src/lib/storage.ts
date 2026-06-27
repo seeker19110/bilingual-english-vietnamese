@@ -19,8 +19,17 @@ function get<T>(key: string): T | null {
   } catch { return null }
 }
 
-function set<T>(key: string, val: T) {
-  localStorage.setItem(key, JSON.stringify(val))
+// Ghi localStorage AN TOÀN: bắt lỗi (đầy bộ nhớ / chế độ riêng tư của Safari) để
+// không làm crash luồng lưu chat/viết/nói. Dữ liệu thật vẫn được đồng bộ lên Supabase
+// (pushChatSession/...), nên lỗi cache cục bộ không làm mất dữ liệu.
+function set<T>(key: string, val: T): boolean {
+  try {
+    localStorage.setItem(key, JSON.stringify(val))
+    return true
+  } catch (err) {
+    console.warn('[storage] không ghi được localStorage (bỏ qua, vẫn đồng bộ cloud):', err)
+    return false
+  }
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
