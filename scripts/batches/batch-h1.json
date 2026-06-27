@@ -1,0 +1,1702 @@
+[
+  {
+    "id": 201,
+    "title": "Phân tích dữ liệu",
+    "situation": "Một nhân viên trình bày báo cáo phân tích dữ liệu bán hàng với sếp.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Linh",
+      "en": "Linh"
+    },
+    "speakerBName": {
+      "vi": "Tuấn",
+      "en": "Tuan"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I've finished analyzing last quarter's sales data.",
+        "vi": "Em đã phân tích xong dữ liệu bán hàng quý trước."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. What's the main takeaway?",
+        "vi": "Tốt lắm. Điểm chính rút ra là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Online sales grew thirty percent, but in-store sales dropped.",
+        "vi": "Bán hàng online tăng ba mươi phần trăm, nhưng tại cửa hàng lại giảm."
+      },
+      {
+        "speaker": "B",
+        "en": "Interesting. Do we know why?",
+        "vi": "Thú vị. Mình có biết lý do không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Younger customers prefer shopping on their phones now.",
+        "vi": "Khách trẻ giờ thích mua sắm trên điện thoại hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "So we should invest more in the mobile app.",
+        "vi": "Vậy mình nên đầu tư nhiều hơn vào ứng dụng di động."
+      },
+      {
+        "speaker": "A",
+        "en": "Exactly. The data clearly supports that.",
+        "vi": "Chính xác. Dữ liệu cho thấy rõ điều đó."
+      },
+      {
+        "speaker": "B",
+        "en": "Can you make a chart for the meeting tomorrow?",
+        "vi": "Em làm biểu đồ cho cuộc họp ngày mai được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Sure. I'll prepare a simple one that's easy to read.",
+        "vi": "Được ạ. Em sẽ làm một biểu đồ đơn giản dễ đọc."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. This will really help our decision.",
+        "vi": "Tuyệt. Cái này sẽ giúp ích cho quyết định của mình."
+      }
+    ]
+  },
+  {
+    "id": 202,
+    "title": "Quản lý dự án IT",
+    "situation": "Trưởng nhóm và lập trình viên bàn về tiến độ một dự án phần mềm.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Khoa",
+      "en": "Khoa"
+    },
+    "speakerBName": {
+      "vi": "Mai",
+      "en": "Mai"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "How is the new feature coming along?",
+        "vi": "Tính năng mới đang tiến triển thế nào rồi?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's about eighty percent done. I need two more days.",
+        "vi": "Khoảng tám mươi phần trăm rồi ạ. Em cần thêm hai ngày nữa."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay. Are there any blockers I should know about?",
+        "vi": "Được. Có vướng mắc gì anh cần biết không?"
+      },
+      {
+        "speaker": "B",
+        "en": "The login part depends on the new server setup.",
+        "vi": "Phần đăng nhập phụ thuộc vào việc cài máy chủ mới."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll talk to the server team this afternoon.",
+        "vi": "Anh sẽ trao đổi với nhóm máy chủ chiều nay."
+      },
+      {
+        "speaker": "B",
+        "en": "Thanks. That would unblock me quickly.",
+        "vi": "Cảm ơn anh. Vậy thì em sẽ thông được ngay."
+      },
+      {
+        "speaker": "A",
+        "en": "Let's also update the task board after this.",
+        "vi": "Sau đó mình cũng cập nhật bảng công việc nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Good idea. I'll mark my tasks as in progress.",
+        "vi": "Ý hay. Em sẽ đánh dấu việc của mình là đang làm."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. We're still on track for the deadline.",
+        "vi": "Tốt. Mình vẫn đúng tiến độ cho hạn chót."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I'm confident we'll finish on time.",
+        "vi": "Vâng, em tin mình sẽ xong đúng hạn."
+      }
+    ]
+  },
+  {
+    "id": 203,
+    "title": "An ninh mạng",
+    "situation": "Chuyên viên an ninh mạng tư vấn cho nhân viên về bảo mật tài khoản.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Sơn",
+      "en": "Son"
+    },
+    "speakerBName": {
+      "vi": "Hà",
+      "en": "Ha"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I got a strange email asking for my password.",
+        "vi": "Em nhận được một email lạ hỏi mật khẩu của em."
+      },
+      {
+        "speaker": "B",
+        "en": "Don't reply. That's almost certainly a phishing scam.",
+        "vi": "Đừng trả lời. Gần như chắc chắn đó là lừa đảo."
+      },
+      {
+        "speaker": "A",
+        "en": "How can I tell if an email is fake?",
+        "vi": "Làm sao em biết một email là giả ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Real companies never ask for your password by email.",
+        "vi": "Công ty thật không bao giờ hỏi mật khẩu qua email."
+      },
+      {
+        "speaker": "A",
+        "en": "That makes sense. What else should I do?",
+        "vi": "Hợp lý. Em còn nên làm gì nữa không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Turn on two-factor authentication on all your accounts.",
+        "vi": "Bật xác thực hai lớp cho tất cả tài khoản của em."
+      },
+      {
+        "speaker": "A",
+        "en": "Is that the code sent to my phone?",
+        "vi": "Đó là mã gửi về điện thoại phải không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes. Even if someone steals your password, they can't log in.",
+        "vi": "Đúng. Dù ai lấy mật khẩu, họ cũng không đăng nhập được."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. I'll set it up right now.",
+        "vi": "Tuyệt. Em sẽ cài đặt ngay bây giờ."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. And please change that password too.",
+        "vi": "Tốt. Và nhớ đổi cái mật khẩu đó luôn nhé."
+      }
+    ]
+  },
+  {
+    "id": 204,
+    "title": "Chăm sóc người cao tuổi",
+    "situation": "Con gái trao đổi với điều dưỡng về việc chăm sóc người mẹ lớn tuổi.",
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Thảo",
+      "en": "Thao"
+    },
+    "speakerBName": {
+      "vi": "Y tá Hương",
+      "en": "Nurse Huong"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "How has my mother been this week?",
+        "vi": "Tuần này mẹ tôi thế nào rồi ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "She's doing well. She eats and sleeps regularly.",
+        "vi": "Bà khỏe ạ. Bà ăn và ngủ đều đặn."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a relief. Does she take her medicine on time?",
+        "vi": "Tôi yên tâm rồi. Bà có uống thuốc đúng giờ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I remind her every morning and evening.",
+        "vi": "Có ạ, tôi nhắc bà mỗi sáng và mỗi tối."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you. Does she get any exercise?",
+        "vi": "Cảm ơn chị. Bà có vận động chút nào không?"
+      },
+      {
+        "speaker": "B",
+        "en": "We take a short walk in the garden every day.",
+        "vi": "Chúng tôi đi dạo ngắn trong vườn mỗi ngày."
+      },
+      {
+        "speaker": "A",
+        "en": "That's wonderful for her health.",
+        "vi": "Vậy thì tốt cho sức khỏe của bà lắm."
+      },
+      {
+        "speaker": "B",
+        "en": "She also enjoys talking with the other residents.",
+        "vi": "Bà cũng thích trò chuyện với những cụ khác."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm so glad she's not lonely.",
+        "vi": "Tôi mừng vì bà không cô đơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Don't worry. We take good care of her here.",
+        "vi": "Chị đừng lo. Ở đây chúng tôi chăm sóc bà chu đáo."
+      }
+    ]
+  },
+  {
+    "id": 205,
+    "title": "Giáo dục STEM",
+    "situation": "Phụ huynh hỏi giáo viên về một khóa học STEM cho con.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Anh Dũng",
+      "en": "Mr Dung"
+    },
+    "speakerBName": {
+      "vi": "Cô Lan",
+      "en": "Ms Lan"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I heard you offer a STEM class for kids. Is that right?",
+        "vi": "Tôi nghe nói trung tâm có lớp STEM cho trẻ. Đúng không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes. STEM means science, technology, engineering, and math.",
+        "vi": "Đúng ạ. STEM là khoa học, công nghệ, kỹ thuật và toán."
+      },
+      {
+        "speaker": "A",
+        "en": "What do the children actually do in class?",
+        "vi": "Các cháu thực sự làm gì trong lớp ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "They build simple robots and do fun experiments.",
+        "vi": "Các cháu lắp robot đơn giản và làm thí nghiệm vui."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds engaging. What age is it for?",
+        "vi": "Nghe hấp dẫn đấy. Lớp dành cho độ tuổi nào ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "This class is for children aged eight to twelve.",
+        "vi": "Lớp này dành cho trẻ từ tám đến mười hai tuổi."
+      },
+      {
+        "speaker": "A",
+        "en": "My son is ten. Does he need any background?",
+        "vi": "Con trai tôi mười tuổi. Cháu có cần kiến thức nền không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Not at all. We start from the very basics.",
+        "vi": "Không cần đâu ạ. Chúng tôi bắt đầu từ điều cơ bản nhất."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. How often are the classes?",
+        "vi": "Tuyệt. Lớp học bao lâu một lần ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Twice a week, on Saturday and Sunday mornings.",
+        "vi": "Hai buổi một tuần, sáng thứ Bảy và Chủ nhật."
+      }
+    ]
+  },
+  {
+    "id": 206,
+    "title": "Coaching nghề nghiệp",
+    "situation": "Một người trẻ gặp chuyên gia hướng nghiệp để xin lời khuyên.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Ngọc",
+      "en": "Ngoc"
+    },
+    "speakerBName": {
+      "vi": "Chuyên gia Minh",
+      "en": "Coach Minh"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I'm not sure which career path to choose.",
+        "vi": "Em không chắc nên chọn con đường nghề nghiệp nào."
+      },
+      {
+        "speaker": "B",
+        "en": "Let's start with what you enjoy doing most.",
+        "vi": "Mình bắt đầu từ việc em thích làm nhất nhé."
+      },
+      {
+        "speaker": "A",
+        "en": "I love designing things and working with colors.",
+        "vi": "Em thích thiết kế và làm việc với màu sắc."
+      },
+      {
+        "speaker": "B",
+        "en": "That suggests a creative field might suit you.",
+        "vi": "Vậy có vẻ lĩnh vực sáng tạo hợp với em đấy."
+      },
+      {
+        "speaker": "A",
+        "en": "Like graphic design or interior design?",
+        "vi": "Như thiết kế đồ họa hay thiết kế nội thất ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. Both are growing fields with good demand.",
+        "vi": "Chính xác. Cả hai đều đang phát triển và nhiều nhu cầu."
+      },
+      {
+        "speaker": "A",
+        "en": "How do I get started without experience?",
+        "vi": "Em bắt đầu thế nào khi chưa có kinh nghiệm ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Take an online course and build a small portfolio.",
+        "vi": "Học một khóa online và làm một bộ hồ sơ nhỏ."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds doable. Thank you so much.",
+        "vi": "Nghe khả thi đấy. Em cảm ơn anh nhiều."
+      },
+      {
+        "speaker": "B",
+        "en": "You're welcome. Believe in yourself and take the first step.",
+        "vi": "Không có gì. Hãy tin vào bản thân và bước bước đầu tiên."
+      }
+    ]
+  },
+  {
+    "id": 207,
+    "title": "Quản lý nhân sự",
+    "situation": "Trưởng phòng nhân sự phỏng vấn một ứng viên xin việc.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Trưởng phòng Vy",
+      "en": "Manager Vy"
+    },
+    "speakerBName": {
+      "vi": "Ứng viên Hùng",
+      "en": "Hung"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Thank you for coming. Please tell me about yourself.",
+        "vi": "Cảm ơn anh đã đến. Anh giới thiệu đôi nét về mình nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "I have three years of experience in customer service.",
+        "vi": "Tôi có ba năm kinh nghiệm trong chăm sóc khách hàng."
+      },
+      {
+        "speaker": "A",
+        "en": "Why do you want to work at our company?",
+        "vi": "Vì sao anh muốn làm việc tại công ty chúng tôi?"
+      },
+      {
+        "speaker": "B",
+        "en": "I admire your reputation for treating staff well.",
+        "vi": "Tôi ngưỡng mộ tiếng tăm đối xử tốt với nhân viên của công ty."
+      },
+      {
+        "speaker": "A",
+        "en": "What would you say is your biggest strength?",
+        "vi": "Anh cho rằng điểm mạnh nhất của mình là gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "I stay calm and patient even with difficult customers.",
+        "vi": "Tôi giữ bình tĩnh và kiên nhẫn cả với khách khó tính."
+      },
+      {
+        "speaker": "A",
+        "en": "Good. And how do you handle pressure?",
+        "vi": "Tốt. Còn anh xử lý áp lực thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "I make a list and focus on one task at a time.",
+        "vi": "Tôi lập danh sách và tập trung từng việc một."
+      },
+      {
+        "speaker": "A",
+        "en": "Great answer. Do you have any questions for me?",
+        "vi": "Câu trả lời hay. Anh có câu hỏi nào cho tôi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, when could I expect to hear your decision?",
+        "vi": "Có ạ, khi nào tôi có thể biết kết quả ạ?"
+      }
+    ]
+  },
+  {
+    "id": 208,
+    "title": "Chiến lược kinh doanh",
+    "situation": "Hai đồng sáng lập bàn về hướng phát triển công ty.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Phong",
+      "en": "Phong"
+    },
+    "speakerBName": {
+      "vi": "Trang",
+      "en": "Trang"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Our sales have been flat for three months.",
+        "vi": "Doanh số của mình đứng yên ba tháng nay rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Maybe we should expand to a new market.",
+        "vi": "Có lẽ mình nên mở rộng sang thị trường mới."
+      },
+      {
+        "speaker": "A",
+        "en": "Which market do you have in mind?",
+        "vi": "Em đang nghĩ đến thị trường nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "The northern provinces. Demand there is growing fast.",
+        "vi": "Các tỉnh phía Bắc. Nhu cầu ở đó đang tăng nhanh."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a good point. But it needs more staff.",
+        "vi": "Ý hay đấy. Nhưng cần thêm nhân sự."
+      },
+      {
+        "speaker": "B",
+        "en": "We could start small with one regional office.",
+        "vi": "Mình có thể bắt đầu nhỏ với một văn phòng vùng."
+      },
+      {
+        "speaker": "A",
+        "en": "I like that. Less risk, and we can learn first.",
+        "vi": "Anh thích cái đó. Ít rủi ro, và mình học được trước."
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. We can grow once it proves successful.",
+        "vi": "Chính xác. Khi thành công thì mình mở rộng tiếp."
+      },
+      {
+        "speaker": "A",
+        "en": "Let's write a simple plan and set a budget.",
+        "vi": "Mình viết một kế hoạch đơn giản và đặt ngân sách nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Agreed. I'll have a draft ready by Friday.",
+        "vi": "Đồng ý. Em sẽ có bản nháp trước thứ Sáu."
+      }
+    ]
+  },
+  {
+    "id": 209,
+    "title": "Marketing kỹ thuật số",
+    "situation": "Nhân viên marketing đề xuất chiến dịch quảng cáo trực tuyến với sếp.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Quỳnh",
+      "en": "Quynh"
+    },
+    "speakerBName": {
+      "vi": "Giám đốc Đạt",
+      "en": "Director Dat"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I'd like to propose a campaign on social media.",
+        "vi": "Em muốn đề xuất một chiến dịch trên mạng xã hội."
+      },
+      {
+        "speaker": "B",
+        "en": "Go ahead. Which platform are you thinking of?",
+        "vi": "Em nói đi. Em đang nghĩ đến nền tảng nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Facebook and TikTok, where our customers spend time.",
+        "vi": "Facebook và TikTok, nơi khách hàng của mình hay vào."
+      },
+      {
+        "speaker": "B",
+        "en": "Makes sense. What kind of content?",
+        "vi": "Hợp lý. Nội dung kiểu gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Short videos showing how to use our product.",
+        "vi": "Video ngắn hướng dẫn cách dùng sản phẩm."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. How much budget do you need?",
+        "vi": "Tốt. Em cần bao nhiêu ngân sách?"
+      },
+      {
+        "speaker": "A",
+        "en": "About twenty million for the first month.",
+        "vi": "Khoảng hai mươi triệu cho tháng đầu."
+      },
+      {
+        "speaker": "B",
+        "en": "And how will we measure success?",
+        "vi": "Và mình đo lường thành công thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "By tracking clicks, follows, and new orders.",
+        "vi": "Bằng cách theo dõi lượt bấm, theo dõi và đơn hàng mới."
+      },
+      {
+        "speaker": "B",
+        "en": "Sounds solid. Let's try it for a month.",
+        "vi": "Nghe chắc chắn đấy. Mình thử một tháng xem sao."
+      }
+    ]
+  },
+  {
+    "id": 210,
+    "title": "Quản lý chuỗi cung ứng",
+    "situation": "Quản lý kho và nhà cung cấp trao đổi về việc giao hàng.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Quản lý Bình",
+      "en": "Manager Binh"
+    },
+    "speakerBName": {
+      "vi": "Nhà cung cấp Long",
+      "en": "Supplier Long"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "We're running low on packaging materials.",
+        "vi": "Bên tôi sắp hết vật liệu đóng gói rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "No problem. How many boxes do you need?",
+        "vi": "Không vấn đề. Anh cần bao nhiêu thùng?"
+      },
+      {
+        "speaker": "A",
+        "en": "About five thousand, delivered by next week.",
+        "vi": "Khoảng năm nghìn, giao trước tuần sau."
+      },
+      {
+        "speaker": "B",
+        "en": "That's doable. Same address as last time?",
+        "vi": "Được thôi. Vẫn địa chỉ như lần trước chứ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, the warehouse on the highway.",
+        "vi": "Đúng, kho trên quốc lộ."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. Delivery takes about three days.",
+        "vi": "Tốt. Giao hàng mất khoảng ba ngày."
+      },
+      {
+        "speaker": "A",
+        "en": "Can you guarantee the quality stays consistent?",
+        "vi": "Anh đảm bảo chất lượng đồng đều chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely. We check every batch before shipping.",
+        "vi": "Chắc chắn. Bên tôi kiểm tra từng lô trước khi gửi."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. I'll send the purchase order today.",
+        "vi": "Tuyệt. Tôi sẽ gửi đơn đặt hàng hôm nay."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. I'll confirm once I receive it.",
+        "vi": "Được. Tôi sẽ xác nhận khi nhận được."
+      }
+    ]
+  },
+  {
+    "id": 211,
+    "title": "Phân tích tài chính",
+    "situation": "Chuyên viên tài chính giải thích báo cáo cho chủ doanh nghiệp nhỏ.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Chuyên viên Thu",
+      "en": "Analyst Thu"
+    },
+    "speakerBName": {
+      "vi": "Chủ shop Nam",
+      "en": "Owner Nam"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I've reviewed your shop's finances for last year.",
+        "vi": "Em đã xem lại tài chính cửa hàng của anh năm ngoái."
+      },
+      {
+        "speaker": "B",
+        "en": "How does it look overall?",
+        "vi": "Nhìn chung thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Revenue is good, but your costs are too high.",
+        "vi": "Doanh thu tốt, nhưng chi phí của anh hơi cao."
+      },
+      {
+        "speaker": "B",
+        "en": "Where am I spending too much?",
+        "vi": "Tôi tiêu quá nhiều ở đâu vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "Mostly on rent and unsold inventory.",
+        "vi": "Chủ yếu là tiền thuê và hàng tồn không bán được."
+      },
+      {
+        "speaker": "B",
+        "en": "I see. How can I reduce the inventory cost?",
+        "vi": "Tôi hiểu. Làm sao giảm chi phí hàng tồn?"
+      },
+      {
+        "speaker": "A",
+        "en": "Order smaller amounts more often, based on demand.",
+        "vi": "Đặt ít hơn nhưng thường xuyên hơn, theo nhu cầu."
+      },
+      {
+        "speaker": "B",
+        "en": "That makes sense. Anything else?",
+        "vi": "Hợp lý. Còn gì nữa không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, try to negotiate a lower rent next year.",
+        "vi": "Có, anh thử thương lượng giảm tiền thuê năm sau."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. This is really helpful advice.",
+        "vi": "Cảm ơn em. Lời khuyên này thực sự hữu ích."
+      }
+    ]
+  },
+  {
+    "id": 212,
+    "title": "Giao thông công cộng",
+    "situation": "Một người hỏi nhân viên về cách đi tàu điện trong thành phố.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Khách Việt",
+      "en": "Passenger"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên ga",
+      "en": "Station staff"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Excuse me, how do I buy a ticket for the metro?",
+        "vi": "Xin lỗi, tôi mua vé tàu điện thế nào ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "You can use the machine over there or buy a card.",
+        "vi": "Anh dùng máy đằng kia hoặc mua thẻ ạ."
+      },
+      {
+        "speaker": "A",
+        "en": "What's the difference between them?",
+        "vi": "Hai cái khác nhau thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "A card is cheaper if you travel often.",
+        "vi": "Thẻ rẻ hơn nếu anh đi lại thường xuyên."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll travel every day for work. I'll get a card.",
+        "vi": "Tôi đi làm hằng ngày. Tôi lấy thẻ vậy."
+      },
+      {
+        "speaker": "B",
+        "en": "Good choice. Just tap it when you enter and exit.",
+        "vi": "Lựa chọn tốt. Anh chỉ cần quẹt khi vào và ra."
+      },
+      {
+        "speaker": "A",
+        "en": "How do I know which platform to use?",
+        "vi": "Làm sao tôi biết đi sân ga nào ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Check the signs for your line and direction.",
+        "vi": "Anh xem bảng chỉ dẫn tuyến và hướng đi."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. How often do the trains come?",
+        "vi": "Hiểu rồi. Tàu chạy bao lâu một chuyến ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Every five minutes during rush hour.",
+        "vi": "Năm phút một chuyến vào giờ cao điểm."
+      }
+    ]
+  },
+  {
+    "id": 213,
+    "title": "Sinh sống ở chung cư",
+    "situation": "Cư dân mới hỏi ban quản lý chung cư về các quy định.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Cư dân Hoa",
+      "en": "Resident Hoa"
+    },
+    "speakerBName": {
+      "vi": "Quản lý Tài",
+      "en": "Manager Tai"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I just moved into apartment seven-oh-two.",
+        "vi": "Chào anh, tôi mới chuyển vào căn bảy không hai."
+      },
+      {
+        "speaker": "B",
+        "en": "Welcome! Do you have any questions about the building?",
+        "vi": "Chào mừng chị! Chị có thắc mắc gì về tòa nhà không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, where can I park my motorbike?",
+        "vi": "Có ạ, tôi để xe máy ở đâu được ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "In the basement. Your card opens the gate.",
+        "vi": "Ở tầng hầm. Thẻ của chị mở được cổng."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. What about taking out the trash?",
+        "vi": "Tuyệt. Còn việc đổ rác thì sao ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "There's a trash room on each floor.",
+        "vi": "Có phòng rác ở mỗi tầng ạ."
+      },
+      {
+        "speaker": "A",
+        "en": "Good to know. Are there quiet hours?",
+        "vi": "Tốt quá. Có giờ giữ yên lặng không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, please keep quiet after ten at night.",
+        "vi": "Có ạ, xin giữ yên lặng sau mười giờ tối."
+      },
+      {
+        "speaker": "A",
+        "en": "Understood. Is there a swimming pool?",
+        "vi": "Hiểu rồi. Có hồ bơi không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, on the fourth floor, open until nine.",
+        "vi": "Có, ở tầng bốn, mở đến chín giờ."
+      }
+    ]
+  },
+  {
+    "id": 214,
+    "title": "Tìm nhà thành phố lớn",
+    "situation": "Người đi thuê nhà trao đổi với môi giới bất động sản.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Khách thuê Đức",
+      "en": "Tenant Duc"
+    },
+    "speakerBName": {
+      "vi": "Môi giới Hằng",
+      "en": "Agent Hang"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I'm looking for a two-bedroom apartment to rent.",
+        "vi": "Tôi đang tìm thuê căn hộ hai phòng ngủ."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. What's your budget per month?",
+        "vi": "Được ạ. Ngân sách mỗi tháng của anh bao nhiêu?"
+      },
+      {
+        "speaker": "A",
+        "en": "Around ten million, not too far from the center.",
+        "vi": "Khoảng mười triệu, không quá xa trung tâm."
+      },
+      {
+        "speaker": "B",
+        "en": "I have a few options. Do you need parking?",
+        "vi": "Tôi có vài lựa chọn. Anh cần chỗ để xe không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, for a car and a motorbike.",
+        "vi": "Có, cho một ô tô và một xe máy."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay. This one has both and good security.",
+        "vi": "Được. Căn này có cả hai và an ninh tốt."
+      },
+      {
+        "speaker": "A",
+        "en": "Sounds good. How far is it from my office downtown?",
+        "vi": "Nghe ổn đấy. Cách văn phòng tôi ở trung tâm bao xa?"
+      },
+      {
+        "speaker": "B",
+        "en": "About fifteen minutes by motorbike.",
+        "vi": "Khoảng mười lăm phút đi xe máy."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I see it this weekend?",
+        "vi": "Cuối tuần này tôi xem được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. I'll arrange a viewing for Saturday.",
+        "vi": "Tất nhiên. Tôi sắp xếp xem nhà vào thứ Bảy."
+      }
+    ]
+  },
+  {
+    "id": 215,
+    "title": "Ô nhiễm không khí",
+    "situation": "Hai người bạn trò chuyện về chất lượng không khí và cách bảo vệ sức khỏe.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Vân",
+      "en": "Van"
+    },
+    "speakerBName": {
+      "vi": "Hải",
+      "en": "Hai"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "The air looks really hazy today, doesn't it?",
+        "vi": "Hôm nay không khí mù mịt quá nhỉ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, the pollution level is very high.",
+        "vi": "Ừ, mức ô nhiễm cao lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "I checked the app and it said unhealthy.",
+        "vi": "Mình xem ứng dụng, nó báo có hại cho sức khỏe."
+      },
+      {
+        "speaker": "B",
+        "en": "We should wear masks when we go outside.",
+        "vi": "Mình nên đeo khẩu trang khi ra ngoài."
+      },
+      {
+        "speaker": "A",
+        "en": "Good idea. Which mask is best for this?",
+        "vi": "Ý hay. Loại khẩu trang nào tốt nhất cho việc này?"
+      },
+      {
+        "speaker": "B",
+        "en": "An N95 mask filters out the tiny particles.",
+        "vi": "Khẩu trang N95 lọc được các hạt bụi nhỏ."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll buy some today. What else can we do?",
+        "vi": "Mình sẽ mua hôm nay. Còn làm gì được nữa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Keep windows closed and use an air purifier.",
+        "vi": "Đóng cửa sổ và dùng máy lọc không khí."
+      },
+      {
+        "speaker": "A",
+        "en": "Our city really needs to reduce traffic.",
+        "vi": "Thành phố mình thật sự cần giảm xe cộ."
+      },
+      {
+        "speaker": "B",
+        "en": "Agreed. More trees and public transport would help.",
+        "vi": "Đồng ý. Nhiều cây xanh và giao thông công cộng sẽ giúp ích."
+      }
+    ]
+  },
+  {
+    "id": 216,
+    "title": "Tìm chỗ đỗ xe",
+    "situation": "Tài xế hỏi bảo vệ về chỗ đỗ ô tô tại trung tâm thương mại.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Tài xế Nam",
+      "en": "Driver Nam"
+    },
+    "speakerBName": {
+      "vi": "Bảo vệ Tú",
+      "en": "Guard Tu"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Excuse me, where can I park my car?",
+        "vi": "Xin lỗi, tôi đỗ ô tô ở đâu được ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "The parking lot is in the basement, sir.",
+        "vi": "Bãi đỗ xe ở tầng hầm ạ."
+      },
+      {
+        "speaker": "A",
+        "en": "Is there still space available?",
+        "vi": "Còn chỗ trống không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, level two has plenty of spots.",
+        "vi": "Có ạ, tầng hầm hai còn nhiều chỗ."
+      },
+      {
+        "speaker": "A",
+        "en": "How much does it cost per hour?",
+        "vi": "Giá bao nhiêu một giờ vậy?"
+      },
+      {
+        "speaker": "B",
+        "en": "Twenty thousand for the first two hours.",
+        "vi": "Hai mươi nghìn cho hai giờ đầu."
+      },
+      {
+        "speaker": "A",
+        "en": "Do I pay now or when I leave?",
+        "vi": "Tôi trả bây giờ hay khi ra về ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "When you leave. Just keep your ticket.",
+        "vi": "Khi ra về ạ. Anh giữ vé là được."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. Is the exit the same as the entrance?",
+        "vi": "Hiểu rồi. Lối ra cùng lối vào phải không?"
+      },
+      {
+        "speaker": "B",
+        "en": "No, the exit is on the other side. Follow the signs.",
+        "vi": "Không, lối ra ở phía bên kia. Anh theo biển chỉ dẫn."
+      }
+    ]
+  },
+  {
+    "id": 217,
+    "title": "Gọi cấp cứu 115",
+    "situation": "Một người gọi tổng đài cấp cứu khi người thân bị ngất.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Người gọi Lan",
+      "en": "Caller Lan"
+    },
+    "speakerBName": {
+      "vi": "Tổng đài 115",
+      "en": "115 Operator"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I need an ambulance right away!",
+        "vi": "Alô, tôi cần xe cấp cứu ngay!"
+      },
+      {
+        "speaker": "B",
+        "en": "Stay calm. What happened?",
+        "vi": "Chị bình tĩnh. Có chuyện gì vậy ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "My father suddenly fainted and won't wake up.",
+        "vi": "Bố tôi đột nhiên ngất và không tỉnh lại."
+      },
+      {
+        "speaker": "B",
+        "en": "Is he breathing? Can you check?",
+        "vi": "Ông ấy còn thở không? Chị kiểm tra được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, he's breathing but very weakly.",
+        "vi": "Có, ông ấy còn thở nhưng rất yếu."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. What is your exact address?",
+        "vi": "Tốt. Địa chỉ chính xác của chị là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Number twelve, Le Loi Street, ward five.",
+        "vi": "Số mười hai, đường Lê Lợi, phường năm."
+      },
+      {
+        "speaker": "B",
+        "en": "An ambulance is on the way. Don't move him.",
+        "vi": "Xe cấp cứu đang đến. Đừng di chuyển ông ấy."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay. What should I do while I wait?",
+        "vi": "Vâng. Trong lúc chờ tôi nên làm gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "Loosen his clothes and keep him lying flat.",
+        "vi": "Nới lỏng quần áo và để ông ấy nằm thẳng."
+      }
+    ]
+  },
+  {
+    "id": 218,
+    "title": "Báo cháy",
+    "situation": "Người dân gọi báo cháy cho lực lượng phòng cháy chữa cháy.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Người báo Hùng",
+      "en": "Caller Hung"
+    },
+    "speakerBName": {
+      "vi": "Tổng đài 114",
+      "en": "114 Operator"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, there's a fire in my building!",
+        "vi": "Alô, có cháy trong tòa nhà của tôi!"
+      },
+      {
+        "speaker": "B",
+        "en": "Where exactly is the fire?",
+        "vi": "Đám cháy ở chỗ nào chính xác ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "On the third floor, in an empty apartment.",
+        "vi": "Ở tầng ba, trong một căn hộ trống."
+      },
+      {
+        "speaker": "B",
+        "en": "Is anyone trapped inside?",
+        "vi": "Có ai bị mắc kẹt bên trong không?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm not sure. The hallway is full of smoke.",
+        "vi": "Tôi không chắc. Hành lang đầy khói."
+      },
+      {
+        "speaker": "B",
+        "en": "Get everyone out and don't use the elevator.",
+        "vi": "Đưa mọi người ra ngoài và đừng dùng thang máy."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, we're using the stairs now.",
+        "vi": "Vâng, chúng tôi đang đi cầu thang bộ."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. What is the building's address?",
+        "vi": "Tốt. Địa chỉ tòa nhà là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Sunrise Tower, twenty Tran Hung Dao Street.",
+        "vi": "Tòa Sunrise, số hai mươi đường Trần Hưng Đạo."
+      },
+      {
+        "speaker": "B",
+        "en": "Fire trucks are coming. Wait in a safe place outside.",
+        "vi": "Xe cứu hỏa đang đến. Hãy chờ ở nơi an toàn bên ngoài."
+      }
+    ]
+  },
+  {
+    "id": 219,
+    "title": "Khai báo tai nạn",
+    "situation": "Người lái xe khai báo với cảnh sát sau một vụ va chạm nhỏ.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Tài xế Phú",
+      "en": "Driver Phu"
+    },
+    "speakerBName": {
+      "vi": "Cảnh sát Minh",
+      "en": "Officer Minh"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Officer, I'd like to report a small accident.",
+        "vi": "Chú công an ơi, tôi muốn khai báo một vụ va chạm nhỏ."
+      },
+      {
+        "speaker": "B",
+        "en": "Are you or anyone else injured?",
+        "vi": "Anh hoặc ai khác có bị thương không?"
+      },
+      {
+        "speaker": "A",
+        "en": "No, everyone is fine. Just the cars are damaged.",
+        "vi": "Không, mọi người đều ổn. Chỉ có xe bị hư thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay. Can you tell me how it happened?",
+        "vi": "Được. Anh kể lại sự việc thế nào ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "The other car ran a red light and hit me.",
+        "vi": "Xe kia vượt đèn đỏ và đâm vào tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Did anyone witness the accident?",
+        "vi": "Có ai chứng kiến vụ việc không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, a man at the bus stop saw everything.",
+        "vi": "Có, một người ở trạm xe buýt thấy hết."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. Please show me your license and papers.",
+        "vi": "Tốt. Anh cho tôi xem giấy phép và giấy tờ xe."
+      },
+      {
+        "speaker": "A",
+        "en": "Here they are. Do I need to fill out a form?",
+        "vi": "Đây ạ. Tôi có cần điền giấy tờ gì không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I'll prepare a report for the insurance.",
+        "vi": "Có, tôi sẽ lập biên bản cho bảo hiểm."
+      }
+    ]
+  },
+  {
+    "id": 220,
+    "title": "Sơ cứu vết thương",
+    "situation": "Một người hướng dẫn bạn cách sơ cứu khi bị đứt tay.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Y tá Mai",
+      "en": "Nurse Mai"
+    },
+    "speakerBName": {
+      "vi": "Bệnh nhân Tâm",
+      "en": "Patient Tam"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Let me see your hand. How did you cut it?",
+        "vi": "Để tôi xem tay anh. Anh bị đứt thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "I cut it with a knife while cooking.",
+        "vi": "Tôi bị dao cứa khi đang nấu ăn."
+      },
+      {
+        "speaker": "A",
+        "en": "It's bleeding a lot. Press here with this cloth.",
+        "vi": "Chảy máu nhiều đấy. Anh ấn vào đây bằng miếng vải này."
+      },
+      {
+        "speaker": "B",
+        "en": "Like this? It hurts quite a bit.",
+        "vi": "Như thế này à? Đau khá nhiều đấy."
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, keep pressing to stop the bleeding.",
+        "vi": "Đúng, cứ ấn để cầm máu."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay. Should I wash it with water?",
+        "vi": "Vâng. Tôi có nên rửa bằng nước không?"
+      },
+      {
+        "speaker": "A",
+        "en": "First stop the bleeding, then we'll clean it.",
+        "vi": "Cầm máu trước đã, rồi mình rửa sạch sau."
+      },
+      {
+        "speaker": "B",
+        "en": "Alright. The bleeding is slowing down now.",
+        "vi": "Được. Máu đang chậm lại rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "Good. Now I'll clean it and put on a bandage.",
+        "vi": "Tốt. Giờ tôi rửa sạch và băng lại cho anh."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. You really know what to do.",
+        "vi": "Cảm ơn chị. Chị thực sự biết cách xử lý."
+      }
+    ]
+  },
+  {
+    "id": 221,
+    "title": "Báo cáo trộm cắp",
+    "situation": "Nạn nhân trình báo công an về việc bị mất trộm điện thoại.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Nạn nhân Hương",
+      "en": "Victim Huong"
+    },
+    "speakerBName": {
+      "vi": "Cảnh sát Đức",
+      "en": "Officer Duc"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I want to report that my phone was stolen.",
+        "vi": "Tôi muốn trình báo bị mất trộm điện thoại."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm sorry to hear that. Where did it happen?",
+        "vi": "Tôi rất tiếc. Việc xảy ra ở đâu ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "At the market, about an hour ago.",
+        "vi": "Ở chợ, khoảng một tiếng trước."
+      },
+      {
+        "speaker": "B",
+        "en": "Did you see who took it?",
+        "vi": "Chị có thấy ai lấy không?"
+      },
+      {
+        "speaker": "A",
+        "en": "No, it was very crowded. I felt someone push me.",
+        "vi": "Không, đông lắm. Tôi chỉ thấy ai đó xô vào tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "What kind of phone was it?",
+        "vi": "Đó là loại điện thoại gì ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "A black iPhone in a red case.",
+        "vi": "Một chiếc iPhone đen trong ốp đỏ."
+      },
+      {
+        "speaker": "B",
+        "en": "Do you remember the phone number?",
+        "vi": "Chị có nhớ số điện thoại không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I'll write it down for you.",
+        "vi": "Có, tôi ghi lại cho anh đây."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. I'll file the report and we'll investigate.",
+        "vi": "Cảm ơn chị. Tôi sẽ lập hồ sơ và chúng tôi sẽ điều tra."
+      }
+    ]
+  },
+  {
+    "id": 222,
+    "title": "Chào hỏi khách hàng lần đầu",
+    "situation": "Nhân viên bán hàng chào đón và tìm hiểu nhu cầu khách mới.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Nhân viên Sơn",
+      "en": "Staff Son"
+    },
+    "speakerBName": {
+      "vi": "Khách Linh",
+      "en": "Customer Linh"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning! Welcome to our store.",
+        "vi": "Chào buổi sáng! Hoan nghênh chị đến cửa hàng."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. I'm just looking around for now.",
+        "vi": "Cảm ơn anh. Tôi xem quanh chút thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "Of course. Let me know if you need anything.",
+        "vi": "Vâng ạ. Cần gì chị cứ gọi tôi nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Actually, I'm looking for a gift for my mom.",
+        "vi": "Thật ra tôi đang tìm quà cho mẹ."
+      },
+      {
+        "speaker": "A",
+        "en": "Lovely. What does she like?",
+        "vi": "Hay quá. Bác thích gì ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "She loves skincare products.",
+        "vi": "Mẹ tôi thích đồ chăm sóc da."
+      },
+      {
+        "speaker": "A",
+        "en": "We have a popular gift set right here.",
+        "vi": "Bên tôi có một bộ quà rất được ưa chuộng đây ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "It looks nice. Is it good for older skin?",
+        "vi": "Trông đẹp đấy. Nó có hợp da lớn tuổi không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, it's gentle and very moisturizing.",
+        "vi": "Có ạ, sản phẩm dịu nhẹ và rất dưỡng ẩm."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. I'll take it. Thank you for your help.",
+        "vi": "Tuyệt. Tôi lấy nó. Cảm ơn anh đã giúp."
+      }
+    ]
+  },
+  {
+    "id": 223,
+    "title": "Giới thiệu sản phẩm",
+    "situation": "Nhân viên giới thiệu một mẫu điện thoại mới cho khách.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Nhân viên Thu",
+      "en": "Staff Thu"
+    },
+    "speakerBName": {
+      "vi": "Khách Bình",
+      "en": "Customer Binh"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "This is our newest phone model. Would you like to see it?",
+        "vi": "Đây là mẫu điện thoại mới nhất. Anh muốn xem thử không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. What makes it special?",
+        "vi": "Được. Nó có gì đặc biệt?"
+      },
+      {
+        "speaker": "A",
+        "en": "It has a great camera and a long battery life.",
+        "vi": "Nó có camera tốt và pin lâu."
+      },
+      {
+        "speaker": "B",
+        "en": "How long does the battery last?",
+        "vi": "Pin dùng được bao lâu vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "About two days with normal use.",
+        "vi": "Khoảng hai ngày nếu dùng bình thường."
+      },
+      {
+        "speaker": "B",
+        "en": "That's impressive. How much is it?",
+        "vi": "Ấn tượng đấy. Giá bao nhiêu ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Twelve million, but there's a discount this week.",
+        "vi": "Mười hai triệu, nhưng tuần này có giảm giá."
+      },
+      {
+        "speaker": "B",
+        "en": "What's the discounted price?",
+        "vi": "Giá sau giảm là bao nhiêu?"
+      },
+      {
+        "speaker": "A",
+        "en": "Ten and a half million, with a free case.",
+        "vi": "Mười triệu rưỡi, kèm ốp lưng miễn phí."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a good deal. Let me think about it.",
+        "vi": "Hời đấy. Để tôi suy nghĩ thêm."
+      }
+    ]
+  },
+  {
+    "id": 224,
+    "title": "Thuyết phục mua hàng",
+    "situation": "Nhân viên thuyết phục khách còn do dự về một chiếc máy lọc nước.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Nhân viên Đạt",
+      "en": "Staff Dat"
+    },
+    "speakerBName": {
+      "vi": "Khách Nga",
+      "en": "Customer Nga"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I can see you're still thinking about it.",
+        "vi": "Tôi thấy chị vẫn còn đang cân nhắc."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, it's a bit expensive for me.",
+        "vi": "Vâng, nó hơi đắt với tôi."
+      },
+      {
+        "speaker": "A",
+        "en": "I understand. But think of the long-term savings.",
+        "vi": "Tôi hiểu. Nhưng chị nghĩ đến khoản tiết kiệm lâu dài xem."
+      },
+      {
+        "speaker": "B",
+        "en": "How does it save money?",
+        "vi": "Nó tiết kiệm tiền thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "You won't need to buy bottled water anymore.",
+        "vi": "Chị sẽ không phải mua nước đóng chai nữa."
+      },
+      {
+        "speaker": "B",
+        "en": "That's true. We buy a lot of water now.",
+        "vi": "Đúng thật. Giờ nhà tôi mua nước nhiều lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "And it's healthier for your whole family.",
+        "vi": "Và nó tốt cho sức khỏe cả nhà chị hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Does it come with a warranty?",
+        "vi": "Có bảo hành không ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, two years, with free filter changes.",
+        "vi": "Có, hai năm, kèm thay lõi lọc miễn phí."
+      },
+      {
+        "speaker": "B",
+        "en": "Alright, you've convinced me. I'll buy it.",
+        "vi": "Được rồi, anh thuyết phục được tôi. Tôi sẽ mua."
+      }
+    ]
+  },
+  {
+    "id": 225,
+    "title": "Theo dõi đơn hàng",
+    "situation": "Khách gọi điện hỏi về tình trạng một đơn hàng mua online.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Khách Hà",
+      "en": "Customer Ha"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên CSKH",
+      "en": "Support staff"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to check on my order status.",
+        "vi": "Chào bạn, tôi muốn kiểm tra tình trạng đơn hàng."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Could you give me your order number?",
+        "vi": "Được ạ. Chị cho em mã đơn hàng được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, it's A B one two three four five.",
+        "vi": "Vâng, là A B một hai ba bốn năm."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. Your order shipped yesterday.",
+        "vi": "Cảm ơn chị. Đơn của chị đã gửi đi hôm qua."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. When will it arrive?",
+        "vi": "Tuyệt. Khi nào hàng đến ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "It should arrive within two to three days.",
+        "vi": "Dự kiến đến trong hai đến ba ngày ạ."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I track it myself somehow?",
+        "vi": "Tôi có tự theo dõi được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I'll text you a tracking link.",
+        "vi": "Có ạ, em sẽ nhắn cho chị đường link theo dõi."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. What if I'm not home for delivery?",
+        "vi": "Tuyệt. Nếu lúc giao tôi không có nhà thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "The driver will call you to arrange a time.",
+        "vi": "Tài xế sẽ gọi để hẹn lại giờ với chị."
+      }
+    ]
+  }
+]
