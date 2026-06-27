@@ -15,13 +15,15 @@
 //   - lessons-rest  Hội thoại các bài còn lại
 //
 // Cờ / biến môi trường:
-//   --check (CHECK=1)        Chỉ in báo cáo rồi thoát (không seed, không menu).
-//   --all   (SEED_ALL=1/YES=1) Seed tất cả ngay, không hỏi menu (dùng cho CI/cron).
-//   --force (FORCE=1)        Tạo lại + ghi đè cả audio đã có.
+//   --check  (CHECK=1)       Chỉ in báo cáo rồi thoát (không seed, không menu).
+//   --verify (VERIFY=1)      Kiểm tra KỸ DB: đối chiếu 2 chiều (thiếu / thừa / lệch đường dẫn).
+//   --all    (SEED_ALL=1/YES=1) Seed tất cả ngay, không hỏi menu (dùng cho CI/cron).
+//   --force  (FORCE=1)       Tạo lại + ghi đè cả audio đã có.
 //   LIMIT=20                 Giới hạn số tác vụ mỗi nhóm (debug).
+//   VERIFY_DECRYPT=20        (kèm --verify) Tải + giải mã thử 20 file để chắc dùng được.
 //   WORDS_FILE=...           Đọc danh sách từ cần phát âm từ file (retry lỗi).
 //
-// Chạy: npm run seed:all   ·   Chỉ xem báo cáo: npm run seed:all -- --check
+// Chạy: npm run seed:all   ·   Xem báo cáo: npm run seed:all -- --check   ·   Kiểm tra kỹ: npm run seed:all -- --verify
 
 import * as crypto from 'node:crypto'
 import * as dotenv from 'dotenv'
@@ -36,6 +38,7 @@ import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
 import { FOUNDATION } from '../src/data/curriculum.ts'
+import { loadSubjectsInDisplayOrder, PATTERN_VOICE_IDS } from './_lib/patternOrder.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
@@ -56,6 +59,7 @@ const RATE_LIMIT_DEFAULT = 180  // limit mặc định khi bắt đầu
 const BASE_URL        = process.env.BASE_URL || ''
 const FORCE           = process.argv.includes('--force') || process.env.FORCE === '1'
 const CHECK_ONLY      = process.argv.includes('--check') || process.env.CHECK === '1'
+const VERIFY_ONLY     = process.argv.includes('--verify') || process.env.VERIFY === '1'
 const SEED_ALL_FLAG   = process.argv.includes('--all') || process.env.SEED_ALL === '1' || process.env.YES === '1'
 
 const PRON_ERRORS_FILE    = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
@@ -99,9 +103,6 @@ function oldHashText(text: string, lang: Lang, voice: VoiceId): string {
 }
 
 // ── Load dữ liệu ────────────────────────────────────────────────────────────
-interface Sentence { en: string; vi: string }
-interface Subject   { starter: string; sentences: Sentence[] }
-
 // Thứ tự ưu tiên seed TTS cache:
 //   1. Curriculum sentences + examples  → /learn chạy ngay cho user đầu tiên
 //   2. CEFR grammar examples            → Roadmap tab (/learn)
@@ -117,10 +118,11 @@ function loadPatternTasks(): PatternTask[] {
   const tasks: PatternTask[] = []
   const seen  = new Set<string>()
 
-  const add = (rawText: string, lang: Lang, cat: CatId) => {
+  // voices: cho phép giới hạn giọng theo nhóm (vd. patterns chỉ cần female/male).
+  const add = (rawText: string, lang: Lang, cat: CatId, voices: readonly VoiceId[] = VOICE_IDS) => {
     const text = rawText.trim()
     if (!text) return
-    for (const voice of VOICE_IDS) {
+    for (const voice of voices) {
       const key = `${text}|${lang}|${voice}`
       if (seen.has(key)) continue   // bỏ qua giọng đã thêm, KHÔNG return (return sẽ rớt các giọng còn lại)
       seen.add(key)
@@ -192,16 +194,17 @@ function loadPatternTasks(): PatternTask[] {
     }
   }
 
-  // ── Ưu tiên 4: pattern sentences (Cụm từ page) ─────────────────────────────
+  // ── Ưu tiên 4: pattern sentences (Cụm từ page) — PHỔ BIẾN NHẤT TRƯỚC ────────
+  // Hai điều chỉnh để seed đúng cái app thật sự dùng, trước tiên:
+  //   • Chỉ 2 giọng female/male (PATTERN_VOICE_IDS): trang Cụm từ không bao giờ phát
+  //     female2/male2 → bỏ đi giảm một nửa tác vụ, không ảnh hưởng người dùng.
+  //   • Thứ tự hiển thị (loadSubjectsInDisplayOrder): I am, You are, We are, He is...
+  //     lên trước; chủ thể hiếm seed sau → nếu seed dở dang vẫn có sẵn câu hay gặp nhất.
   const patternDir = path.join(PROJECT_ROOT, 'public/data/patterns')
-  const patternFiles = fs.readdirSync(patternDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
-  for (const file of patternFiles) {
-    const subjects = JSON.parse(fs.readFileSync(path.join(patternDir, file), 'utf8')) as Subject[]
-    for (const subject of subjects) {
-      for (const { en, vi } of subject.sentences) {
-        add(en, 'en-US', 'patterns')
-        add(vi, 'vi-VN', 'patterns')
-      }
+  for (const subject of loadSubjectsInDisplayOrder(patternDir)) {
+    for (const { en, vi } of subject.sentences) {
+      add(en, 'en-US', 'patterns', PATTERN_VOICE_IDS)
+      add(vi, 'vi-VN', 'patterns', PATTERN_VOICE_IDS)
     }
   }
 
@@ -511,6 +514,110 @@ function printReport(stats: CatStat[]): void {
   else             console.log(`\nℹ️  Còn ${(grandTotal - grandDone).toLocaleString('vi-VN')} tác vụ chưa seed.`)
 }
 
+// ── KIỂM TRA KỸ DB: đối chiếu dữ liệu đã seed với tập KỲ VỌNG ────────────────
+// Khác `audit()` (chỉ đếm có/thiếu). Hàm này đối chiếu HAI CHIỀU vì đã seed rất nhiều:
+//   • Chiều thiếu : câu kỳ vọng nào CHƯA có trong DB (theo nhóm).
+//   • Chiều thừa  : bản ghi nào trong DB KHÔNG còn nằm trong tập kỳ vọng
+//                   (vd. female2/male2 của Cụm từ đã bỏ, hoặc VOICE_VERSION cũ) → "orphan".
+//   • Nhất quán   : audio_url có đúng dạng `${lang}/${voice}/${hash}.mp3` không.
+//   • (tùy chọn)  : VERIFY_DECRYPT=N → tải + giải mã thử N file để chắc dùng được thật.
+async function verifyDb(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
+  console.log('\n🔬 KIỂM TRA KỸ DB — đối chiếu hash kỳ vọng với dữ liệu đã seed')
+
+  // 1) Tập KỲ VỌNG: hash TTS (kèm VOICE_VERSION) + key phát âm
+  const expectedTts  = new Set<string>()           // hash câu TTS kỳ vọng
+  const expectedPron = new Set<string>()           // `word:voice` phát âm kỳ vọng
+  for (const { id } of CATEGORIES) {
+    for (const t of allByCat.get(id) ?? []) {
+      if (t.type === 'pron') expectedPron.add(`${t.word}:${t.voice}`)
+      else                   expectedTts.add(hashText(t.text, t.lang, t.voice))
+    }
+  }
+
+  // 2) Đọc DB (phân trang đầy đủ)
+  process.stdout.write('   Đang đọc DB...')
+  const ttsRows  = await fetchAllRows<{ hash: string; lang: string; voice: string; audio_url: string }>(
+    'tts_cache', 'hash, lang, voice, audio_url')
+  const pronRows = await fetchAllRows<{ word: string; voice: string; audio_url: string }>(
+    'pronunciations', 'word, voice, audio_url')
+  const dbHash = new Set(ttsRows.map((r) => r.hash))
+  console.log(` xong (${ttsRows.length} câu TTS, ${pronRows.length} phát âm)`)
+
+  // 3) Chiều THIẾU — theo nhóm
+  const labelWidth = Math.max(...CATEGORIES.map((c) => c.label.length))
+  console.log('\n📋 Câu kỳ vọng đã có trong DB chưa (theo nhóm):')
+  let totalMissing = 0
+  for (const { id, label } of CATEGORIES) {
+    if (id === 'pron') continue
+    const tasks = (allByCat.get(id) ?? []).filter((t): t is PatternTask => t.type === 'pattern')
+    let present = 0, missing = 0
+    for (const t of tasks) (dbHash.has(hashText(t.text, t.lang, t.voice)) ? present++ : missing++)
+    totalMissing += missing
+    const tag = tasks.length === 0 ? '∅' : missing === 0 ? '✅' : '⚠️'
+    console.log(`  ${tag} ${label.padEnd(labelWidth)}  có ${present}/${tasks.length}  thiếu ${missing}`)
+  }
+  // phát âm
+  let pronPresent = 0
+  for (const r of pronRows) if (expectedPron.has(`${r.word}:${r.voice}`)) pronPresent++
+  console.log(`  ${pronPresent === expectedPron.size ? '✅' : '⚠️'} ${'Phát âm (pron)'.padEnd(labelWidth)}  có ${pronPresent}/${expectedPron.size}  thiếu ${expectedPron.size - pronPresent}`)
+
+  // 4) Chiều THỪA — orphan (DB có nhưng không còn kỳ vọng)
+  const orphans = ttsRows.filter((r) => !expectedTts.has(r.hash))
+  const orphanByVoice = new Map<string, number>()
+  for (const r of orphans) {
+    const k = `${r.lang}/${r.voice}`
+    orphanByVoice.set(k, (orphanByVoice.get(k) ?? 0) + 1)
+  }
+  console.log(`\n🧹 Bản ghi tts_cache KHÔNG còn trong tập kỳ vọng: ${orphans.length}/${ttsRows.length}`)
+  if (orphans.length > 0) {
+    for (const [k, n] of [...orphanByVoice.entries()].sort((a, b) => b[1] - a[1])) {
+      console.log(`     • ${k}: ${n}`)
+    }
+    console.log('     (thường là female2/male2 của Cụm từ đã bỏ, hoặc VOICE_VERSION cũ — có thể xóa cho gọn)')
+  }
+
+  // 5) Nhất quán đường dẫn: audio_url phải chứa `${lang}/${voice}/${hash}.mp3`
+  let pathBad = 0
+  const badSample: string[] = []
+  for (const r of ttsRows) {
+    if (!r.audio_url || !r.audio_url.includes(`${r.lang}/${r.voice}/${r.hash}.mp3`)) {
+      pathBad++
+      if (badSample.length < 5) badSample.push(r.hash)
+    }
+  }
+  console.log(`\n🔗 audio_url khớp lang/voice/hash: ${ttsRows.length - pathBad}/${ttsRows.length}` +
+    (pathBad ? `  (✗ ${pathBad} lệch, vd: ${badSample.join(', ')})` : ' ✅'))
+
+  // 6) (tùy chọn) Giải mã thử N file để chắc dùng được — VERIFY_DECRYPT=20
+  const sampleN = process.env.VERIFY_DECRYPT ? parseInt(process.env.VERIFY_DECRYPT, 10) : 0
+  if (sampleN > 0) {
+    const pick = ttsRows.filter((r) => expectedTts.has(r.hash)).slice(0, sampleN)
+    let okDec = 0, failDec = 0
+    for (const r of pick) {
+      try {
+        const res = await fetch(r.audio_url)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        await decryptAudio(await res.arrayBuffer(), r.hash)   // giải mã bằng khoá suy từ hash
+        okDec++
+      } catch {
+        failDec++
+      }
+    }
+    console.log(`\n🔓 Giải mã thử ${pick.length} file (mẫu): ✓ ${okDec}  ✗ ${failDec}`)
+  }
+
+  // 7) Kết luận
+  console.log('─'.repeat(labelWidth + 30))
+  if (totalMissing === 0 && pathBad === 0) {
+    console.log('✅ DB KHỚP tập kỳ vọng: mọi câu cần thiết đã có, đường dẫn đúng.' +
+      (orphans.length ? ` (còn ${orphans.length} bản ghi thừa có thể dọn)` : ''))
+  } else {
+    console.log(`⚠️  Chưa khớp: thiếu ${totalMissing} câu kỳ vọng` +
+      (pathBad ? `, ${pathBad} đường dẫn lệch` : '') +
+      `. Chạy \`npm run seed:all -- --all\` để bù.`)
+  }
+}
+
 // ── Ghi/xóa file lỗi sau khi seed ───────────────────────────────────────────
 function writeErrorFiles(remaining: AnyTask[]): void {
   const pronLeft    = remaining.filter((t): t is PronTask => t.type === 'pron')
@@ -621,6 +728,12 @@ async function main(): Promise<void> {
   // ── Chế độ chỉ xem báo cáo ────────────────────────────────────────────────
   if (CHECK_ONLY) {
     printReport(await audit(allByCat))
+    return
+  }
+
+  // ── Chế độ kiểm tra kỹ DB (đối chiếu 2 chiều, không seed) ──────────────────
+  if (VERIFY_ONLY) {
+    await verifyDb(allByCat)
     return
   }
 
