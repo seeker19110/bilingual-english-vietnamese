@@ -168,3 +168,53 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- ── 11. consume_usage: đếm lượt ATOMIC (chống race condition) ───────────────
+-- Trước đây server đọc số lượt rồi mới +1 (2 query tách rời) → 2 request song song
+-- cùng đọc giá trị cũ rồi cùng ghi, khiến người dùng vượt giới hạn gói Free.
+-- Hàm này gói "kiểm tra + tăng" vào MỘT giao dịch, dùng SELECT ... FOR UPDATE để
+-- khoá dòng → tuần tự hoá 2 request, không thể vượt giới hạn.
+--   Trả về TRUE  nếu còn lượt (đã tăng 1)
+--   Trả về FALSE nếu hết lượt (không tăng)
+-- Gọi từ server bằng service role: supabase.rpc('consume_usage', {...}) — xem api/_lib/usage.ts
+create or replace function public.consume_usage(
+  p_user_id uuid,
+  p_day     text,
+  p_col     text,
+  p_limit   integer
+) returns boolean
+language plpgsql
+security definer set search_path = public
+as $$
+declare
+  v_current integer;
+begin
+  -- Chỉ chấp nhận đúng 4 cột đếm hợp lệ (an toàn dù %I đã quote định danh)
+  if p_col not in ('chat_count', 'writing_count', 'speaking_count', 'stt_count') then
+    raise exception 'cot dem khong hop le: %', p_col;
+  end if;
+
+  -- Đảm bảo có dòng cho (user, ngày)
+  insert into public.daily_usage (user_id, day)
+  values (p_user_id, p_day)
+  on conflict (user_id, day) do nothing;
+
+  -- Khoá dòng + đọc giá trị hiện tại của cột tương ứng (atomic nhờ FOR UPDATE)
+  execute format(
+    'select %I from public.daily_usage where user_id = $1 and day = $2 for update',
+    p_col
+  ) into v_current using p_user_id, p_day;
+
+  if coalesce(v_current, 0) >= p_limit then
+    return false;  -- hết lượt
+  end if;
+
+  -- Tăng 1 (atomic trong cùng giao dịch đang giữ khoá dòng)
+  execute format(
+    'update public.daily_usage set %I = %I + 1 where user_id = $1 and day = $2',
+    p_col, p_col
+  ) using p_user_id, p_day;
+
+  return true;
+end;
+$$;

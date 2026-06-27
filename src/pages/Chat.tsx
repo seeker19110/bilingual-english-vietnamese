@@ -344,6 +344,10 @@ export default function Chat() {
                 ref={inputRef}
                 value={input}
                 onChange={e => setInput(e.target.value)}
+                onFocus={() => {
+                  // Bàn phím ảo mobile mở → cuộn tin nhắn cuối lên để input không bị che.
+                  setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 300)
+                }}
                 onKeyDown={e => {
                   const isMobile = window.matchMedia('(pointer: coarse)').matches
                   if (!isMobile && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
