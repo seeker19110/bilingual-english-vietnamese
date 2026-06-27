@@ -38,7 +38,7 @@ import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
 import { FOUNDATION } from '../src/data/curriculum.ts'
-import { loadSubjectsInDisplayOrder, PATTERN_VOICE_IDS } from './_lib/patternOrder.ts'
+import { loadSubjectsInDisplayOrder, PREF_VOICE_IDS } from './_lib/patternOrder.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
@@ -131,21 +131,23 @@ function loadPatternTasks(): PatternTask[] {
   }
 
   // ── Ưu tiên 1: curriculum (câu thông dụng + ví dụ từng từ) ────────────────
+  // Phát qua KaraokeText/getVoicePref → chỉ 2 giọng female/male (xem PREF_VOICE_IDS).
   for (const circle of FOUNDATION) {
-    for (const { en } of circle.sentences) add(en, 'en-US', 'curriculum')
+    for (const { en } of circle.sentences) add(en, 'en-US', 'curriculum', PREF_VOICE_IDS)
     for (const entry of circle.words) {
-      if (entry.ex_en) add(entry.ex_en, 'en-US', 'curriculum')
-      if (entry.ex_vi) add(entry.ex_vi, 'vi-VN', 'curriculum')
+      if (entry.ex_en) add(entry.ex_en, 'en-US', 'curriculum', PREF_VOICE_IDS)
+      if (entry.ex_vi) add(entry.ex_vi, 'vi-VN', 'curriculum', PREF_VOICE_IDS)
     }
   }
 
   // ── Ưu tiên 2: CEFR grammar examples → Roadmap tab ────────────────────────
+  // Cũng phát qua KaraokeText/getVoicePref → chỉ 2 giọng female/male.
   for (const level of CEFR_LEVELS) {
     for (const unit of level.units) {
       for (const lesson of unit.grammar) {
         for (const { en, vi } of lesson.examples) {
-          add(en, 'en-US', 'cefr')
-          add(vi, 'vi-VN', 'cefr')
+          add(en, 'en-US', 'cefr', PREF_VOICE_IDS)
+          add(vi, 'vi-VN', 'cefr', PREF_VOICE_IDS)
         }
       }
     }
@@ -196,15 +198,15 @@ function loadPatternTasks(): PatternTask[] {
 
   // ── Ưu tiên 4: pattern sentences (Cụm từ page) — PHỔ BIẾN NHẤT TRƯỚC ────────
   // Hai điều chỉnh để seed đúng cái app thật sự dùng, trước tiên:
-  //   • Chỉ 2 giọng female/male (PATTERN_VOICE_IDS): trang Cụm từ không bao giờ phát
+  //   • Chỉ 2 giọng female/male (PREF_VOICE_IDS): trang Cụm từ không bao giờ phát
   //     female2/male2 → bỏ đi giảm một nửa tác vụ, không ảnh hưởng người dùng.
   //   • Thứ tự hiển thị (loadSubjectsInDisplayOrder): I am, You are, We are, He is...
   //     lên trước; chủ thể hiếm seed sau → nếu seed dở dang vẫn có sẵn câu hay gặp nhất.
   const patternDir = path.join(PROJECT_ROOT, 'public/data/patterns')
   for (const subject of loadSubjectsInDisplayOrder(patternDir)) {
     for (const { en, vi } of subject.sentences) {
-      add(en, 'en-US', 'patterns', PATTERN_VOICE_IDS)
-      add(vi, 'vi-VN', 'patterns', PATTERN_VOICE_IDS)
+      add(en, 'en-US', 'patterns', PREF_VOICE_IDS)
+      add(vi, 'vi-VN', 'patterns', PREF_VOICE_IDS)
     }
   }
 
@@ -573,7 +575,7 @@ async function verifyDb(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
     for (const [k, n] of [...orphanByVoice.entries()].sort((a, b) => b[1] - a[1])) {
       console.log(`     • ${k}: ${n}`)
     }
-    console.log('     (thường là female2/male2 của Cụm từ đã bỏ, hoặc VOICE_VERSION cũ — có thể xóa cho gọn)')
+    console.log('     (thường là female2/male2 đã bỏ ở curriculum/cefr/Cụm từ, hoặc VOICE_VERSION cũ — có thể xóa cho gọn)')
   }
 
   // 5) Nhất quán đường dẫn: audio_url phải chứa `${lang}/${voice}/${hash}.mp3`

@@ -2,10 +2,12 @@
 // Tiện ích dùng chung cho các script seed TTS của trang "Cụm từ" (CommonPhrases).
 //
 // Hai việc:
-//   1. PATTERN_VOICE_IDS — trang Cụm từ CHỈ phát 2 giọng female/male
-//      (getVoicePref() trong src/lib/tts.ts chỉ trả 'female' | 'male'; female2/male2
-//      chỉ dùng cho hội thoại trong Lessons.tsx). Vì vậy seed Cụm từ chỉ cần 2 giọng này
-//      — bỏ female2/male2 giúp giảm một nửa số tác vụ + dung lượng, không mất gì cả.
+//   1. PREF_VOICE_IDS — giọng người dùng tự chọn (female/male). Mọi chỗ phát audio
+//      qua speak()/getVoicePref() (Cụm từ, curriculum /learn, ví dụ CEFR Roadmap,
+//      từ điển, từ của ngày...) CHỈ dùng 2 giọng này — getVoicePref() trong
+//      src/lib/tts.ts chỉ trả 'female' | 'male'. Riêng hội thoại Lessons.tsx mới tự
+//      chọn giọng per-turn (gồm female2/male2). Vì vậy seed các nhóm "phát theo lựa
+//      chọn" chỉ cần 2 giọng — bỏ female2/male2 giảm một nửa tác vụ + dung lượng.
 //   2. loadSubjectsInDisplayOrder() — trả về chủ thể theo ĐÚNG thứ tự hiển thị trên
 //      trang (round-robin theo category, giống interleave() trong CommonPhrases.tsx),
 //      để seed "phổ biến nhất trước": I am, You are, We are, They are, He is, She is...
@@ -15,8 +17,9 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import type { VoiceId } from '../../api/_lib/googleTts.ts'
 
-// Giọng cần seed cho trang Cụm từ — female trước (DEFAULT_VOICE), rồi male.
-export const PATTERN_VOICE_IDS: VoiceId[] = ['female', 'male']
+// Giọng cần seed cho các nhóm phát theo lựa chọn người dùng — female trước
+// (DEFAULT_VOICE), rồi male. (Lessons dùng giọng riêng per-turn, không qua hằng này.)
+export const PREF_VOICE_IDS: VoiceId[] = ['female', 'male']
 
 export interface Sentence { en: string; vi: string }
 export interface Subject {
