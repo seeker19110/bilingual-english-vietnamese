@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from 'vite'
 import react from '@vitejs/plugin-react'
-import imagemin from 'vite-plugin-imagemin'
 import { visualizer } from 'rollup-plugin-visualizer'
 import compress from 'vite-plugin-compression'
 import type { IncomingMessage, ServerResponse } from 'node:http'
@@ -23,17 +22,6 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       apiEdgeDevMiddleware(),
-      // Convert hình ảnh sang WebP (ngoại trừ SVG + icon)
-      imagemin({
-        include: /src\/.*\.(png|jpg|jpeg|gif)$/,
-        exclude: /icon|favicon/,
-        conversion: [
-          { from: 'png', to: 'webp', options: { quality: 75 } },
-          { from: 'jpg', to: 'webp', options: { quality: 75 } },
-          { from: 'jpeg', to: 'webp', options: { quality: 75 } },
-          { from: 'gif', to: 'webp', options: { quality: 75 } },
-        ],
-      }),
       // Gzip + Brotli compression cho production
       compress({
         gzip: {
