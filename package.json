@@ -16,7 +16,8 @@
     "preview": "vite preview",
     "seed:pronunciation": "tsx scripts/seed-pronunciations.ts",
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts",
-    "seed:all": "tsx scripts/seed-all.ts"
+    "seed:all": "tsx scripts/seed-all.ts",
+    "remap:tts-cache": "tsx scripts/remap-tts-cache.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",
