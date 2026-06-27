@@ -1,19 +1,33 @@
 // scripts/seed-all.ts
-// Chạy cả 2 script seed song song xen kẽ nhau:
-//   - seed:pronunciation  (phát âm từ điển)
-//   - prefetch:tts-patterns (câu mẫu patterns)
+// Công cụ seed audio (phát âm + TTS câu) có BÁO CÁO TIẾN ĐỘ + MENU chọn việc.
 //
-// Chiến lược: không chạy 2 script riêng lẻ nối tiếp (sẽ mất hàng giờ trước khi
-// bắt đầu script thứ 2). Thay vào đó, cứ mỗi INTERLEAVE_PCT% tổng tác vụ của
-// script A thì chạy INTERLEAVE_PCT% của script B — 2 loại dữ liệu tăng dần đều.
+// Khi chạy `npm run seed:all`:
+//   1. Kiểm tra DB → báo cáo bao nhiêu % mỗi nhóm đã seed xong (sẵn sàng cho client).
+//   2. Hiện menu: seed riêng 1 nhóm · seed tất cả · thoát.
+//   3. Sau mỗi lần seed, kiểm tra lại + hiện menu mới (lặp đến khi bạn thoát).
 //
-// Chạy: npm run seed:all
-// Debug: LIMIT=20 npm run seed:all
+// Các nhóm (theo thứ tự ưu tiên client cần):
+//   - pron          Phát âm từ điển (pronunciations)
+//   - curriculum    Câu + ví dụ giáo trình nền tảng (/learn)
+//   - cefr          Ví dụ ngữ pháp CEFR (Roadmap)
+//   - lessons-early Hội thoại 50 bài đầu (Luyện nói)
+//   - patterns      Câu mẫu trang Cụm từ
+//   - lessons-rest  Hội thoại các bài còn lại
+//
+// Cờ / biến môi trường:
+//   --check (CHECK=1)        Chỉ in báo cáo rồi thoát (không seed, không menu).
+//   --all   (SEED_ALL=1/YES=1) Seed tất cả ngay, không hỏi menu (dùng cho CI/cron).
+//   --force (FORCE=1)        Tạo lại + ghi đè cả audio đã có.
+//   LIMIT=20                 Giới hạn số tác vụ mỗi nhóm (debug).
+//   WORDS_FILE=...           Đọc danh sách từ cần phát âm từ file (retry lỗi).
+//
+// Chạy: npm run seed:all   ·   Chỉ xem báo cáo: npm run seed:all -- --check
 
 import * as crypto from 'node:crypto'
 import * as dotenv from 'dotenv'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
+import * as readline from 'node:readline/promises'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
 import { generateAudioFromGoogle, VOICE_IDS, VOICE_VERSION, type Lang, type VoiceId } from '../api/_lib/googleTts.ts'
@@ -34,7 +48,6 @@ const BATCH_SIZE      = 50    // số tác vụ song song
 const DELAY_MS        = 0     // không cần delay
 const RETRY_DELAY_MS  = 5000  // nghỉ giữa vòng retry
 const MAX_ROUNDS      = 100
-const INTERLEAVE_PCT  = 1     // cứ mỗi 1% pronunciation thì chạy 1% patterns
 // Rate limit thích nghi — tự điều chỉnh theo lượng req thực của window trước:
 //   429 xuất hiện  → nghỉ 60s, limit 180
 //   req >= 180     → nghỉ 60s, limit 180
@@ -42,15 +55,29 @@ const INTERLEAVE_PCT  = 1     // cứ mỗi 1% pronunciation thì chạy 1% patt
 const RATE_LIMIT_DEFAULT = 180  // limit mặc định khi bắt đầu
 const BASE_URL        = process.env.BASE_URL || ''
 const FORCE           = process.argv.includes('--force') || process.env.FORCE === '1'
+const CHECK_ONLY      = process.argv.includes('--check') || process.env.CHECK === '1'
+const SEED_ALL_FLAG   = process.argv.includes('--all') || process.env.SEED_ALL === '1' || process.env.YES === '1'
 
 const PRON_ERRORS_FILE    = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
 const PATTERN_ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/prefetch-tts-errors.json')
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
 
+// ── Nhóm (category) ─────────────────────────────────────────────────────────
+type CatId = 'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest'
+
+const CATEGORIES: { id: CatId; label: string }[] = [
+  { id: 'pron',          label: 'Phát âm từ điển (pronunciations)' },
+  { id: 'curriculum',    label: 'Câu + ví dụ giáo trình nền tảng (/learn)' },
+  { id: 'cefr',          label: 'Ví dụ ngữ pháp CEFR (Roadmap)' },
+  { id: 'lessons-early', label: 'Hội thoại 50 bài đầu (Luyện nói)' },
+  { id: 'patterns',      label: 'Câu mẫu trang Cụm từ' },
+  { id: 'lessons-rest',  label: 'Hội thoại các bài còn lại' },
+]
+
 // ── Kiểu dữ liệu ────────────────────────────────────────────────────────────
-interface PronTask { type: 'pron'; word: string; voice: VoiceId }
-interface PatternTask { type: 'pattern'; text: string; lang: Lang; voice: VoiceId }
+interface PronTask    { type: 'pron';    cat: 'pron'; word: string; voice: VoiceId }
+interface PatternTask { type: 'pattern'; cat: CatId;  text: string; lang: Lang; voice: VoiceId }
 type AnyTask = PronTask | PatternTask
 
 type TaskResult = { status: 'ok' | 'skip' | 'remapped' } | { status: 'error'; message: string }
@@ -84,23 +111,23 @@ function loadPatternTasks(): PatternTask[] {
   const tasks: PatternTask[] = []
   const seen  = new Set<string>()
 
-  const add = (rawText: string, lang: Lang) => {
+  const add = (rawText: string, lang: Lang, cat: CatId) => {
     const text = rawText.trim()
     if (!text) return
     for (const voice of VOICE_IDS) {
       const key = `${text}|${lang}|${voice}`
-      if (seen.has(key)) return
+      if (seen.has(key)) continue   // bỏ qua giọng đã thêm, KHÔNG return (return sẽ rớt các giọng còn lại)
       seen.add(key)
-      tasks.push({ type: 'pattern', text, lang, voice })
+      tasks.push({ type: 'pattern', cat, text, lang, voice })
     }
   }
 
   // ── Ưu tiên 1: curriculum (câu thông dụng + ví dụ từng từ) ────────────────
   for (const circle of FOUNDATION) {
-    for (const { en } of circle.sentences) add(en, 'en-US')
+    for (const { en } of circle.sentences) add(en, 'en-US', 'curriculum')
     for (const entry of circle.words) {
-      if (entry.ex_en) add(entry.ex_en, 'en-US')
-      if (entry.ex_vi) add(entry.ex_vi, 'vi-VN')
+      if (entry.ex_en) add(entry.ex_en, 'en-US', 'curriculum')
+      if (entry.ex_vi) add(entry.ex_vi, 'vi-VN', 'curriculum')
     }
   }
 
@@ -109,8 +136,8 @@ function loadPatternTasks(): PatternTask[] {
     for (const unit of level.units) {
       for (const lesson of unit.grammar) {
         for (const { en, vi } of lesson.examples) {
-          add(en, 'en-US')
-          add(vi, 'vi-VN')
+          add(en, 'en-US', 'cefr')
+          add(vi, 'vi-VN', 'cefr')
         }
       }
     }
@@ -140,17 +167,19 @@ function loadPatternTasks(): PatternTask[] {
         : (gB === 'female' ? 'female' : 'male')
 
       const isEarly = lessonCount < 50
+      const cat: CatId = isEarly ? 'lessons-early' : 'lessons-rest'
+      const bucket = isEarly ? tasks : laterLessonTasks
       for (const turn of (lesson.turns ?? [])) {
         const voice = turn.speaker === 'A' ? voiceA : voiceB
         if (turn.en) {
           const text = turn.en.trim(); if (!text) continue
           const key = `${text}|en-US|${voice}`
-          if (!seen.has(key)) { seen.add(key); (isEarly ? tasks : laterLessonTasks).push({ type: 'pattern', text, lang: 'en-US', voice }) }
+          if (!seen.has(key)) { seen.add(key); bucket.push({ type: 'pattern', cat, text, lang: 'en-US', voice }) }
         }
         if (turn.vi) {
           const text = turn.vi.trim(); if (!text) continue
           const key = `${text}|vi-VN|${voice}`
-          if (!seen.has(key)) { seen.add(key); (isEarly ? tasks : laterLessonTasks).push({ type: 'pattern', text, lang: 'vi-VN', voice }) }
+          if (!seen.has(key)) { seen.add(key); bucket.push({ type: 'pattern', cat, text, lang: 'vi-VN', voice }) }
         }
       }
       lessonCount++
@@ -164,8 +193,8 @@ function loadPatternTasks(): PatternTask[] {
     const subjects = JSON.parse(fs.readFileSync(path.join(patternDir, file), 'utf8')) as Subject[]
     for (const subject of subjects) {
       for (const { en, vi } of subject.sentences) {
-        add(en, 'en-US')
-        add(vi, 'vi-VN')
+        add(en, 'en-US', 'patterns')
+        add(vi, 'vi-VN', 'patterns')
       }
     }
   }
@@ -201,9 +230,15 @@ function loadPronTasks(wordsFile?: string): PronTask[] {
     FOUNDATION.flatMap((c) => c.words.map((w) => w.word.toLowerCase()))
   )
   const tasks: PronTask[] = []
+  const seen = new Set<string>()
   for (const word of words) {
     // Pronunciations chỉ cần 2 giọng (female/male) — female2/male2 dành cho TTS hội thoại
-    for (const voice of PRON_VOICE_IDS) tasks.push({ type: 'pron', word, voice })
+    for (const voice of PRON_VOICE_IDS) {
+      const key = `${word}:${voice}`
+      if (seen.has(key)) continue
+      seen.add(key)
+      tasks.push({ type: 'pron', cat: 'pron', word, voice })
+    }
   }
   tasks.sort((a, b) => {
     const aHigh = curriculumWords.has(a.word) ? 0 : 1
@@ -342,18 +377,17 @@ async function runBatch(
   }
 }
 
-// ── Vòng xử lý xen kẽ ───────────────────────────────────────────────────────
-async function runInterleavedPass(
-  pronTasks: AnyTask[],
-  patternTasks: AnyTask[],
+// ── Chạy 1 pass trên 1 danh sách tác vụ (có thanh tiến độ) ───────────────────
+async function runPass(
+  tasks: AnyTask[],
   label: string,
-): Promise<{ pronFailed: Array<{ task: AnyTask; message: string }>; patternFailed: Array<{ task: AnyTask; message: string }> }> {
-  const total = pronTasks.length + patternTasks.length
-  console.log(`\n${label} — ${pronTasks.length} pron + ${patternTasks.length} pattern`)
+): Promise<Array<{ task: AnyTask; message: string }>> {
+  const total = tasks.length
+  console.log(`\n${label} — ${total} tác vụ`)
 
   const bar = new cliProgress.SingleBar(
     {
-      format: 'Tổng |{bar}| {percentage}% | {value}/{total} | ✓{ok} ↺{remapped} ⏭{skip} ✗{errors}',
+      format: 'Tiến độ |{bar}| {percentage}% | {value}/{total} | ✓{ok} ↺{remapped} ⏭{skip} ✗{errors}',
       barCompleteChar: '█',
       barIncompleteChar: '░',
       hideCursor: true,
@@ -365,37 +399,189 @@ async function runInterleavedPass(
   const counters  = { ok: 0, remapped: 0, skip: 0, errors: 0 }
   const processed = { value: 0 }
   const rate: RateState = { limit: RATE_LIMIT_DEFAULT, pauseMs: 0, count: 0, has429: false }
-  const pronFailed: Array<{ task: AnyTask; message: string }>    = []
-  const patternFailed: Array<{ task: AnyTask; message: string }> = []
+  const failed: Array<{ task: AnyTask; message: string }> = []
 
-  // Chia thành các chunk theo INTERLEAVE_PCT
-  const pronChunkSize    = Math.max(BATCH_SIZE, Math.ceil(pronTasks.length * INTERLEAVE_PCT / 100))
-  const patternChunkSize = Math.max(BATCH_SIZE, Math.ceil(patternTasks.length * INTERLEAVE_PCT / 100))
-
-  let pi = 0, ti = 0
-  while (pi < pronTasks.length || ti < patternTasks.length) {
-    // Chạy chunk pronunciation
-    if (pi < pronTasks.length) {
-      const chunk = pronTasks.slice(pi, pi + pronChunkSize)
-      for (let i = 0; i < chunk.length; i += BATCH_SIZE) {
-        await runBatch(chunk.slice(i, i + BATCH_SIZE), pronFailed, counters, bar, processed, total, rate)
-      }
-      pi += pronChunkSize
-    }
-    // Chạy chunk pattern
-    if (ti < patternTasks.length) {
-      const chunk = patternTasks.slice(ti, ti + patternChunkSize)
-      for (let i = 0; i < chunk.length; i += BATCH_SIZE) {
-        await runBatch(chunk.slice(i, i + BATCH_SIZE), patternFailed, counters, bar, processed, total, rate)
-      }
-      ti += patternChunkSize
-    }
+  for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
+    await runBatch(tasks.slice(i, i + BATCH_SIZE), failed, counters, bar, processed, total, rate)
   }
 
   bar.stop()
-  console.log(`   ✓ OK: ${counters.ok}  ↺ Remap: ${counters.remapped}  ⏭ Skip: ${counters.skip}  ✗ Lỗi pron: ${pronFailed.length} | pattern: ${patternFailed.length}`)
+  console.log(`   ✓ OK: ${counters.ok}  ↺ Remap: ${counters.remapped}  ⏭ Skip: ${counters.skip}  ✗ Lỗi: ${failed.length}`)
+  return failed
+}
 
-  return { pronFailed, patternFailed }
+// ── Seed 1 danh sách: pass đầu + các vòng retry cho tới khi hết/ngừng giảm ───
+async function seedWithRetry(tasks: AnyTask[], baseLabel: string): Promise<AnyTask[]> {
+  if (tasks.length === 0) return []
+  let failed   = await runPass(tasks, `🟢 ${baseLabel} — Vòng 1`)
+  let remaining = failed.map((f) => f.task)
+  let prevErr   = Infinity
+
+  for (let round = 2; round <= MAX_ROUNDS && remaining.length > 0; round++) {
+    if (remaining.length >= prevErr) {
+      console.log(`\n⛔ Lỗi không giảm (${remaining.length}) — dừng retry.`)
+      break
+    }
+    prevErr = remaining.length
+    console.log(`\n⏳ Nghỉ ${RETRY_DELAY_MS / 1000}s...`)
+    await sleep(RETRY_DELAY_MS)
+    failed    = await runPass(remaining, `🔄 ${baseLabel} — Vòng ${round} (còn ${remaining.length})`)
+    remaining = failed.map((f) => f.task)
+  }
+  return remaining
+}
+
+// ── Đọc TẤT CẢ dòng 1 bảng (phân trang 1000 dòng/lần) ───────────────────────
+// Supabase mặc định trả tối đa 1000 dòng/query → phải phân trang mới đếm đúng.
+async function fetchAllRows<T>(table: string, columns: string): Promise<T[]> {
+  const supabase = getSupabaseAdmin()
+  const PAGE = 1000
+  const out: T[] = []
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await supabase.from(table).select(columns).range(from, from + PAGE - 1)
+    if (error) throw new Error(`Đọc bảng ${table} lỗi: ${error.message}`)
+    if (!data || data.length === 0) break
+    out.push(...(data as T[]))
+    if (data.length < PAGE) break
+  }
+  return out
+}
+
+// ── Kiểm tra DB → tính done/total/remaining cho từng nhóm ────────────────────
+interface CatStat { id: CatId; label: string; total: number; done: number; remaining: AnyTask[] }
+
+async function audit(allByCat: Map<CatId, AnyTask[]>): Promise<CatStat[]> {
+  process.stdout.write('🔎 Đang kiểm tra DB (pronunciations + tts_cache)...')
+
+  // Tập đã có trên DB
+  const pronRows = await fetchAllRows<{ word: string; voice: string }>('pronunciations', 'word, voice')
+  const donePron = new Set(pronRows.map((r) => `${r.word}:${r.voice}`))
+  const ttsRows  = await fetchAllRows<{ hash: string }>('tts_cache', 'hash')
+  const doneHash = new Set(ttsRows.map((r) => r.hash))
+
+  process.stdout.write(` xong (${donePron.size} phát âm, ${doneHash.size} câu TTS)\n`)
+
+  const isDone = (t: AnyTask): boolean =>
+    t.type === 'pron'
+      ? donePron.has(`${t.word}:${t.voice}`)
+      : doneHash.has(hashText(t.text, t.lang, t.voice))
+
+  const stats: CatStat[] = []
+  for (const { id, label } of CATEGORIES) {
+    const tasks = allByCat.get(id) ?? []
+    const done  = tasks.reduce((n, t) => n + (isDone(t) ? 1 : 0), 0)
+    // FORCE: seed lại tất cả; bình thường: chỉ seed tác vụ chưa có
+    const remaining = FORCE ? tasks.slice() : tasks.filter((t) => !isDone(t))
+    stats.push({ id, label, total: tasks.length, done, remaining })
+  }
+  return stats
+}
+
+// ── In báo cáo tiến độ ──────────────────────────────────────────────────────
+function bar10(pct: number): string {
+  const filled = Math.round((pct / 100) * 10)
+  return '▓'.repeat(filled) + '░'.repeat(10 - filled)
+}
+
+function printReport(stats: CatStat[]): void {
+  let grandTotal = 0, grandDone = 0
+  const labelWidth = Math.max(...CATEGORIES.map((c) => c.label.length))
+
+  console.log('\n📊 BÁO CÁO TIẾN ĐỘ SEED (sẵn sàng cho client)')
+  console.log('─'.repeat(labelWidth + 34))
+  for (const s of stats) {
+    grandTotal += s.total
+    grandDone  += s.done
+    const pct = s.total === 0 ? 100 : (s.done / s.total) * 100
+    const tag = s.total === 0 ? '∅' : pct >= 100 ? '✅' : '⏳'
+    const counts = `${s.done}/${s.total}`.padStart(13)
+    console.log(`  ${tag} ${s.label.padEnd(labelWidth)}  ${counts}  ${bar10(pct)} ${pct.toFixed(1).padStart(5)}%`)
+  }
+  console.log('─'.repeat(labelWidth + 34))
+  const gPct = grandTotal === 0 ? 100 : (grandDone / grandTotal) * 100
+  const gCounts = `${grandDone}/${grandTotal}`.padStart(13)
+  console.log(`  📦 ${'TỔNG CỘNG'.padEnd(labelWidth)}  ${gCounts}  ${bar10(gPct)} ${gPct.toFixed(1).padStart(5)}%`)
+  if (gPct >= 100) console.log('\n🎉 Tất cả đã seed xong — client dùng được ngay, không cần gọi TTS realtime.')
+  else             console.log(`\nℹ️  Còn ${(grandTotal - grandDone).toLocaleString('vi-VN')} tác vụ chưa seed.`)
+}
+
+// ── Ghi/xóa file lỗi sau khi seed ───────────────────────────────────────────
+function writeErrorFiles(remaining: AnyTask[]): void {
+  const pronLeft    = remaining.filter((t): t is PronTask => t.type === 'pron')
+  const patternLeft = remaining.filter((t): t is PatternTask => t.type === 'pattern')
+
+  if (pronLeft.length > 0) {
+    const words = [...new Set(pronLeft.map((t) => t.word))]
+    fs.writeFileSync(PRON_ERRORS_FILE, JSON.stringify(words, null, 2))
+    console.log(`⚠️  ${pronLeft.length} phát âm lỗi → scripts/seed-errors.json`)
+  } else if (fs.existsSync(PRON_ERRORS_FILE)) fs.unlinkSync(PRON_ERRORS_FILE)
+
+  if (patternLeft.length > 0) {
+    const errors = patternLeft.map((t) => ({ text: t.text, lang: t.lang, voice: t.voice }))
+    fs.writeFileSync(PATTERN_ERRORS_FILE, JSON.stringify(errors, null, 2))
+    console.log(`⚠️  ${patternLeft.length} câu TTS lỗi → scripts/prefetch-tts-errors.json`)
+  } else if (fs.existsSync(PATTERN_ERRORS_FILE)) fs.unlinkSync(PATTERN_ERRORS_FILE)
+}
+
+// ── Seed nhiều nhóm rồi báo kết quả ─────────────────────────────────────────
+async function seedCategories(stats: CatStat[], picked: CatId[]): Promise<void> {
+  const tasks = picked.flatMap((id) => stats.find((s) => s.id === id)?.remaining ?? [])
+  if (tasks.length === 0) {
+    console.log('\n✅ Các nhóm đã chọn không còn gì để seed.')
+    return
+  }
+  const label = picked.length === CATEGORIES.length
+    ? 'Seed TẤT CẢ'
+    : `Seed ${picked.map((id) => CATEGORIES.find((c) => c.id === id)?.label).join(' + ')}`
+  console.log(`\n🚀 ${label} — ${tasks.length} tác vụ${FORCE ? ' (FORCE: ghi đè)' : ''}`)
+  const remaining = await seedWithRetry(tasks, label)
+  writeErrorFiles(remaining)
+  if (remaining.length === 0) console.log('\n🎉 Hoàn thành — không còn lỗi.')
+  else                        console.log(`\n⚠️  Còn ${remaining.length} tác vụ chưa xong (xem file lỗi ở trên).`)
+}
+
+// ── Menu tương tác ──────────────────────────────────────────────────────────
+async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+  try {
+    for (;;) {
+      const stats = await audit(allByCat)
+      printReport(stats)
+
+      const pending = stats.filter((s) => s.remaining.length > 0)
+      if (pending.length === 0 && !FORCE) {
+        console.log('\n✨ Mọi nhóm đã seed đủ. Thoát.')
+        return
+      }
+
+      console.log('\n── Chọn việc tiếp theo ──')
+      stats.forEach((s, i) => {
+        const left = s.remaining.length
+        const mark = left === 0 ? '✔ đã đủ' : `còn ${left.toLocaleString('vi-VN')}`
+        console.log(`  ${i + 1}) ${s.label}  (${mark})`)
+      })
+      console.log('  a) Seed TẤT CẢ nhóm còn thiếu')
+      console.log('  r) Làm mới báo cáo')
+      console.log('  q) Thoát')
+
+      const ans = (await rl.question('\nNhập lựa chọn (số / a / r / q): ')).trim().toLowerCase()
+
+      if (ans === 'q' || ans === '') { console.log('👋 Thoát.'); return }
+      if (ans === 'r') continue
+      if (ans === 'a') {
+        await seedCategories(stats, CATEGORIES.map((c) => c.id))
+        continue
+      }
+      const n = parseInt(ans, 10)
+      if (Number.isInteger(n) && n >= 1 && n <= stats.length) {
+        await seedCategories(stats, [stats[n - 1].id])
+      } else {
+        console.log('❓ Lựa chọn không hợp lệ.')
+      }
+    }
+  } finally {
+    rl.close()
+  }
 }
 
 // ── MAIN ─────────────────────────────────────────────────────────────────────
@@ -412,81 +598,47 @@ async function main(): Promise<void> {
   const wordsFile = process.env.WORDS_FILE
     ? path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
     : undefined
-
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
 
-  // Lấy tác vụ chưa có trong DB cho pronunciation
-  const supabase = getSupabaseAdmin()
-  const { data: existingPron } = await supabase.from('pronunciations').select('word, voice')
-  const donePron = new Set(
-    (existingPron ?? []).map((r) => `${(r as { word: string }).word}:${(r as { voice: string }).voice}`),
-  )
-  const allPronTasks = loadPronTasks(wordsFile)
-    .filter((t) => !donePron.has(`${t.word}:${t.voice}`))
-    .slice(0, limit) as AnyTask[]
-
-  const allPatternTasks = loadPatternTasks().slice(0, limit) as AnyTask[]
-
-  console.log('🔊 Bắt đầu seed:all — pronunciation + (curriculum → CEFR → lessons[0-50] → patterns → lessons[51+]) xen kẽ')
-  console.log(`📋 Pronunciation : ${allPronTasks.length} tác vụ cần tạo (curriculum words ưu tiên đầu, 2 giọng)`)
-  console.log(`📋 TTS cache     : ${allPatternTasks.length} tác vụ (curriculum → CEFR → lessons[50] → patterns → lessons còn lại)`)
-  console.log(`⚙️  Batch: ${BATCH_SIZE} | Interleave: ${INTERLEAVE_PCT}% | Rate: thích nghi (429→62s/180, ≥180→62s, <180→liên tục) | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | FORCE' : ''}`)
-
-  let pronRemaining    = allPronTasks
-  let patternRemaining = allPatternTasks
-  let prevPronErr      = Infinity
-  let prevPatternErr   = Infinity
-
-  // Vòng 1
-  let result = await runInterleavedPass(pronRemaining, patternRemaining, '🟢 Vòng 1 — Xử lý toàn bộ')
-  pronRemaining    = result.pronFailed.map((r) => r.task)
-  patternRemaining = result.patternFailed.map((r) => r.task)
-
-  // Vòng retry
-  for (let round = 2; round <= MAX_ROUNDS; round++) {
-    if (pronRemaining.length === 0 && patternRemaining.length === 0) break
-    if (pronRemaining.length >= prevPronErr && patternRemaining.length >= prevPatternErr) {
-      console.log('\n⛔ Lỗi không giảm — dừng retry.')
-      break
+  // Gom toàn bộ tác vụ theo nhóm (LIMIT cắt bớt mỗi nhóm khi debug)
+  const allByCat = new Map<CatId, AnyTask[]>()
+  for (const { id } of CATEGORIES) allByCat.set(id, [])
+  allByCat.set('pron', loadPronTasks(wordsFile).slice(0, limit))
+  for (const t of loadPatternTasks()) allByCat.get(t.cat)!.push(t)
+  if (Number.isFinite(limit)) {
+    for (const { id } of CATEGORIES) {
+      if (id === 'pron') continue
+      allByCat.set(id, allByCat.get(id)!.slice(0, limit))
     }
-    prevPronErr    = pronRemaining.length
-    prevPatternErr = patternRemaining.length
-
-    console.log(`\n⏳ Nghỉ ${RETRY_DELAY_MS / 1000}s...`)
-    await sleep(RETRY_DELAY_MS)
-
-    result = await runInterleavedPass(
-      pronRemaining, patternRemaining,
-      `🔄 Vòng ${round} — Retry (pron: ${pronRemaining.length}, pattern: ${patternRemaining.length})`,
-    )
-    pronRemaining    = result.pronFailed.map((r) => r.task)
-    patternRemaining = result.patternFailed.map((r) => r.task)
   }
 
-  // Ghi file lỗi nếu còn
-  let hasError = false
-  if (pronRemaining.length > 0) {
-    hasError = true
-    const words = [...new Set(pronRemaining.map((t) => (t as PronTask).word))]
-    fs.writeFileSync(PRON_ERRORS_FILE, JSON.stringify(words, null, 2))
-    console.log(`\n⚠️  ${pronRemaining.length} pron lỗi → scripts/seed-errors.json`)
-  } else if (fs.existsSync(PRON_ERRORS_FILE)) fs.unlinkSync(PRON_ERRORS_FILE)
-
-  if (patternRemaining.length > 0) {
-    hasError = true
-    const errors = patternRemaining.map((t) => {
-      const pt = t as PatternTask
-      return { text: pt.text, lang: pt.lang, voice: pt.voice }
-    })
-    fs.writeFileSync(PATTERN_ERRORS_FILE, JSON.stringify(errors, null, 2))
-    console.log(`⚠️  ${patternRemaining.length} pattern lỗi → scripts/prefetch-tts-errors.json`)
-  } else if (fs.existsSync(PATTERN_ERRORS_FILE)) fs.unlinkSync(PATTERN_ERRORS_FILE)
-
-  if (!hasError) {
-    console.log('\n🎉 Hoàn thành 100%! Toàn bộ audio đã được cache.')
-  } else {
-    process.exit(1)
+  // ── Chế độ chỉ xem báo cáo ────────────────────────────────────────────────
+  if (CHECK_ONLY) {
+    printReport(await audit(allByCat))
+    return
   }
+
+  // ── Chế độ seed tất cả không hỏi (CI/cron) ────────────────────────────────
+  if (SEED_ALL_FLAG) {
+    const stats = await audit(allByCat)
+    printReport(stats)
+    await seedCategories(stats, CATEGORIES.map((c) => c.id))
+    // In lại báo cáo cuối để biết đã 100% chưa
+    printReport(await audit(allByCat))
+    return
+  }
+
+  // ── Không có TTY (không gõ được) mà không kèm cờ → in báo cáo + hướng dẫn ──
+  if (!process.stdin.isTTY) {
+    printReport(await audit(allByCat))
+    console.log('\nℹ️  Không có bàn phím tương tác. Chạy `npm run seed:all -- --all` để seed hết,')
+    console.log('   hoặc `npm run seed:all -- --check` để chỉ xem báo cáo.')
+    return
+  }
+
+  // ── Mặc định: menu tương tác ──────────────────────────────────────────────
+  console.log('🔊 seed:all — báo cáo tiến độ + chọn việc (phát âm + TTS câu)')
+  await interactiveMenu(allByCat)
 }
 
 main().catch((err) => {
