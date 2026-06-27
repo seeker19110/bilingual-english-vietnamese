@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import {
   Check, X, RotateCcw, Target, Trophy, Sparkles, Route,
-  ClipboardList, ChevronRight, Home, Star, Brain,
+  ClipboardList, ChevronRight, Home, Star, Brain, MessageCircle,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import KaraokeText from '../components/KaraokeText'
@@ -31,6 +31,8 @@ import {
   loadCurriculum,
   isCurriculumReady,
 } from '../lib/curriculum'
+import { getDialogues } from '../data/dialoguesLoader'
+import type { Dialogue } from '../data/dialogues'
 
 type Tab = 'roadmap' | 'today' | 'srs' | 'hard' | 'quiz'
 
@@ -192,6 +194,130 @@ function buildMiniQuiz(batch: DictEntry[]): MiniQuizQ[] {
 
 type TodayPhase = 'learning' | 'batch-done' | 'mini-quiz' | 'daily-max'
 
+// ── Màn "Xong batch": câu + hội thoại dựng TỪ CHÍNH 20 từ vừa học ─────────────
+// SỬA LỖI: trước đây màn này hiển thị câu CỐ ĐỊNH của "vòng" (circle.sentences),
+// nên khi học sang 20 từ mới mà vẫn cùng một vòng thì câu KHÔNG đổi (và vòng mở
+// rộng không có câu nào). Giờ:
+//   • "Câu thông dụng" lấy thẳng ví dụ của CHÍNH 20 từ trong batch → luôn đổi theo
+//     từ mới (mỗi DictEntry đã có sẵn ex_en/ex_vi).
+//   • Kèm 1 HỘI THOẠI của vòng (nói đủ các từ vừa học): tải theo circle có nhiều
+//     từ nhất trong batch, lấy cuộc hội thoại cuối (bản dựng "đủ 20 từ").
+function BatchDoneView({ batch, uid, isA, dailyStart, onStartQuiz }: {
+  batch: DictEntry[]; uid: string; isA: boolean; dailyStart: number; onStartQuiz: () => void
+}) {
+  const learnedToday = getDailyLearned(uid) - dailyStart
+  const totalToday   = getDailyLearned(uid)
+  const quizPasses   = getDailyQuizPasses(uid)
+  const canLearnMore = totalToday < DAILY_MAX
+
+  // Câu ví dụ từ CHÍNH các từ vừa học (mỗi từ có sẵn ex_en/ex_vi) → đổi theo batch.
+  const sentences = useMemo(() => {
+    const seen = new Set<string>()
+    const out: { en: string; vi: string }[] = []
+    for (const e of batch) {
+      const en = e.ex_en?.trim()
+      if (en && e.ex_vi && !seen.has(en)) { seen.add(en); out.push({ en, vi: e.ex_vi }) }
+    }
+    return out
+  }, [batch])
+
+  // Hội thoại của vòng hiện tại — chọn circle có NHIỀU từ nhất trong batch.
+  const [dialogue, setDialogue] = useState<Dialogue | null>(null)
+  useEffect(() => {
+    const counts = new Map<string, number>()
+    for (const e of batch) {
+      const c = findCircleOfWord(e.word)
+      if (c) counts.set(c.id, (counts.get(c.id) ?? 0) + 1)
+    }
+    const topId = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]
+    if (!topId) { setDialogue(null); return }
+    let alive = true
+    getDialogues(topId).then(ds => { if (alive) setDialogue(ds.length ? ds[ds.length - 1] : null) })
+    return () => { alive = false }
+  }, [batch])
+
+  return (
+    <div className="animate-fade-in space-y-4">
+      <div className="glass rounded-xl p-8 text-center">
+        <Check className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
+        <p className="text-white font-semibold mb-1">{isA ? 'Hoàn thành bài hôm nay!' : "Today's lesson done!"}</p>
+        <p className="text-sm text-zinc-400 mb-1">
+          {isA
+            ? <>{`Đã học `}<strong className="text-emerald-300">{learnedToday}</strong>{` từ trong lượt này · Tổng hôm nay: `}<strong className="text-emerald-300">{totalToday}</strong>{`/${DAILY_MAX}`}</>
+            : <>Learned <strong className="text-emerald-300">{learnedToday}</strong> words · Today total: <strong className="text-emerald-300">{totalToday}</strong>/{DAILY_MAX}</>}
+        </p>
+        {canLearnMore && (
+          <p className="text-xs text-zinc-500 mt-2">
+            {isA
+              ? `Còn ${DAILY_MAX - totalToday} từ có thể học hôm nay — kiểm tra để mở thêm.`
+              : `${DAILY_MAX - totalToday} more words available today — pass a quiz to unlock.`}
+          </p>
+        )}
+      </div>
+
+      {sentences.length > 0 && (
+        <div className="glass rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4 text-teal-400" />
+            <span className="text-sm font-semibold text-white">
+              {isA ? 'Câu thông dụng từ những từ vừa học' : 'Common sentences from these words'}
+            </span>
+          </div>
+          <div className="space-y-2">
+            {sentences.map((s, i) => (
+              <div key={i} className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3">
+                <KaraokeText text={s.en} lang="en-US"
+                  textClass="font-medium text-[15px] leading-snug text-teal-300"
+                  buttonClass="w-full" />
+                <p className="text-sm text-zinc-400 mt-1 pl-6">{s.vi}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {dialogue && (
+        <div className="glass rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <MessageCircle className="w-4 h-4 text-teal-400" />
+            <span className="text-sm font-semibold text-white">
+              {isA ? 'Hội thoại dùng các từ vừa học' : 'A conversation using these words'}
+            </span>
+          </div>
+          <p className="text-xs text-zinc-400 mb-3">{isA ? dialogue.titleVi : dialogue.titleEn}</p>
+          <div className="space-y-2.5">
+            {dialogue.lines.map((ln, i) => {
+              const isB = ln.who === 'B'
+              const name = ln.who === 'A'
+                ? (isA ? (dialogue.speakerA?.vi ?? 'A') : (dialogue.speakerA?.en ?? 'A'))
+                : (isA ? (dialogue.speakerB?.vi ?? 'B') : (dialogue.speakerB?.en ?? 'B'))
+              return (
+                <div key={i} className={`flex ${isB ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border ${isB ? 'bg-teal-500/10 border-teal-500/30' : 'bg-zinc-900/80 border-zinc-800/80'}`}>
+                    <span className={`text-[10px] font-semibold tracking-wide ${isB ? 'text-teal-300' : 'text-zinc-400'}`}>{name}</span>
+                    <KaraokeText text={ln.en} lang="en-US"
+                      textClass={`font-medium text-[15px] leading-snug ${isB ? 'text-teal-300' : 'text-zinc-100'}`}
+                      buttonClass="w-full" />
+                    <p className="text-sm text-zinc-400 mt-1 pl-6">{ln.vi}</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {canLearnMore && quizPasses < (DAILY_MAX / DAILY_GOAL - 1) && (
+        <button onClick={onStartQuiz}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 font-medium transition">
+          <ClipboardList className="w-4 h-4" />
+          {isA ? `Kiểm tra để học thêm 20 từ (còn ${DAILY_MAX - totalToday} từ hôm nay)` : `Quiz to unlock 20 more words (${DAILY_MAX - totalToday} left today)`}
+        </button>
+      )}
+    </div>
+  )
+}
+
 function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onProgress: () => void }) {
   // Phase bắt đầu dựa trên trạng thái ngày hiện tại
   const [phase, setPhase] = useState<TodayPhase>(() => {
@@ -313,68 +439,8 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
 
   // ── Xong batch, chờ kiểm tra ──────────────────────────────────────────
   if (phase === 'batch-done') {
-    const learnedToday = getDailyLearned(uid) - dailyStart
-    const totalToday   = getDailyLearned(uid)
-    const quizPasses   = getDailyQuizPasses(uid)
-    const seen = new Set<string>()
-    const sentences: { en: string; vi: string }[] = []
-    for (const e of batch) {
-      const c = findCircleOfWord(e.word)
-      if (c && !seen.has(c.id)) {
-        seen.add(c.id)
-        c.sentences.forEach(s => sentences.push(s))
-      }
-    }
-    const canLearnMore = totalToday < DAILY_MAX
-    return (
-      <div className="animate-fade-in space-y-4">
-        <div className="glass rounded-xl p-8 text-center">
-          <Check className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
-          <p className="text-white font-semibold mb-1">{isA ? 'Hoàn thành bài hôm nay!' : "Today's lesson done!"}</p>
-          <p className="text-sm text-zinc-400 mb-1">
-            {isA
-              ? <>{`Đã học `}<strong className="text-emerald-300">{learnedToday}</strong>{` từ trong lượt này · Tổng hôm nay: `}<strong className="text-emerald-300">{totalToday}</strong>{`/${DAILY_MAX}`}</>
-              : <>Learned <strong className="text-emerald-300">{learnedToday}</strong> words · Today total: <strong className="text-emerald-300">{totalToday}</strong>/{DAILY_MAX}</>}
-          </p>
-          {canLearnMore && (
-            <p className="text-xs text-zinc-500 mt-2">
-              {isA
-                ? `Còn ${DAILY_MAX - totalToday} từ có thể học hôm nay — kiểm tra để mở thêm.`
-                : `${DAILY_MAX - totalToday} more words available today — pass a quiz to unlock.`}
-            </p>
-          )}
-        </div>
-
-        {sentences.length > 0 && (
-          <div className="glass rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-teal-400" />
-              <span className="text-sm font-semibold text-white">
-                {isA ? 'Câu thông dụng từ những từ vừa học' : 'Common sentences from these words'}
-              </span>
-            </div>
-            <div className="space-y-2">
-              {sentences.map((s, i) => (
-                <div key={i} className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3">
-                  <KaraokeText text={s.en} lang="en-US"
-                    textClass="font-medium text-[15px] leading-snug text-teal-300"
-                    buttonClass="w-full" />
-                  <p className="text-sm text-zinc-400 mt-1 pl-6">{s.vi}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {canLearnMore && quizPasses < (DAILY_MAX / DAILY_GOAL - 1) && (
-          <button onClick={startMiniQuiz}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 font-medium transition">
-            <ClipboardList className="w-4 h-4" />
-            {isA ? `Kiểm tra để học thêm 20 từ (còn ${DAILY_MAX - totalToday} từ hôm nay)` : `Quiz to unlock 20 more words (${DAILY_MAX - totalToday} left today)`}
-          </button>
-        )}
-      </div>
-    )
+    return <BatchDoneView batch={batch} uid={uid} isA={isA}
+      dailyStart={dailyStart} onStartQuiz={startMiniQuiz} />
   }
 
   // ── Mini-quiz mở batch mới ────────────────────────────────────────────

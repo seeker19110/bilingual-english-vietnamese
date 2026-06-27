@@ -1,6 +1,6 @@
 // Loader cho hội thoại mẫu — tải từ /public/data/dialogues.json bằng fetch().
 
-export type { DialogueLine, Dialogue } from './dialogues'
+export type { DialogueLine, Dialogue, SpeakerName } from './dialogues'
 import type { Dialogue } from './dialogues'
 
 let _promise: Promise<Record<string, Dialogue[]>> | null = null
