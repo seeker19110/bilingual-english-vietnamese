@@ -178,24 +178,27 @@ function bufferToBlobUrl(buffer: ArrayBuffer): string {
   return URL.createObjectURL(new Blob([buffer], { type: 'audio/mpeg' }))
 }
 
-// Gọi /api/tts (kèm JWT) → giải mã audio → phát qua <audio>
-// rate: 0.75 = chậm, 1 = bình thường, 1.25 = nhanh (điều chỉnh client-side, không tốn thêm API)
-// onWord: callback(wordIndex) gọi mỗi khi từ tiếp theo bắt đầu — dùng cho karaoke highlight
-async function speakViaGoogle(
-  text: string, lang: Lang, voice: Voice, rate = 1,
-  onWord?: (idx: number) => void,
-): Promise<void> {
-  if (!text.trim()) return
+// ── Nạp audio (IndexedDB → server) — tách riêng để vừa phát vừa NẠP TRƯỚC ────
+// Trả ArrayBuffer đã giải mã, sẵn sàng phát. Có trong IndexedDB thì lấy ngay;
+// chưa có thì gọi /api/tts → giải mã → lưu IndexedDB. Dùng chung cho cả việc
+// phát ngay (speakViaGoogle) lẫn nạp trước (prefetchSpeech).
+//
+// `inflight`: gộp các yêu cầu TRÙNG key đang chạy làm 1 — tránh việc trình phát
+// và bộ nạp-trước cùng tải một câu (tải đôi + dễ dính 429).
+const inflight = new Map<string, Promise<ArrayBuffer>>()
 
+async function ensureAudioBuffer(text: string, lang: Lang, voice: Voice): Promise<ArrayBuffer> {
   const cacheKey = audioCacheKey(text, lang, voice)
 
-  // Kiểm tra IndexedDB trước — nếu đã có thì tạo blob URL ngay, không gọi server
+  // Kiểm tra IndexedDB trước — nếu đã có thì khỏi gọi server
   const cached = await getAudioBuffer(cacheKey)
-  let blobUrl: string
+  if (cached) return cached
 
-  if (cached) {
-    blobUrl = bufferToBlobUrl(cached)
-  } else {
+  // Đang có yêu cầu tải cùng câu này (vd: bộ nạp-trước) → dùng chung, không tải lại
+  const running = inflight.get(cacheKey)
+  if (running) return running
+
+  const job = (async () => {
     const { data: { session } } = await supabase.auth.getSession()
     const token = session?.access_token
     if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
@@ -211,7 +214,7 @@ async function speakViaGoogle(
 
     let res = await callTts()
     // 429 = quá nhiều request (thường do phát nhiều câu liên tiếp). Đợi 1.2s rồi thử lại
-    // 1 lần trước khi rơi về Web Speech — phần lớn câu đã cache nên lần 2 thường qua.
+    // 1 lần trước khi báo lỗi — phần lớn câu đã cache nên lần 2 thường qua.
     if (res.status === 429) {
       await new Promise(r => setTimeout(r, 1200))
       res = await callTts()
@@ -226,8 +229,40 @@ async function speakViaGoogle(
     const buffer = await decryptToBuffer(audio_url, key_b64, iv_b64)
     // Lưu vào IndexedDB để lần sau (kể cả mở lại app) dùng ngay không cần fetch
     void setAudioBuffer(cacheKey, buffer)
-    blobUrl = bufferToBlobUrl(buffer)
+    return buffer
+  })()
+
+  inflight.set(cacheKey, job)
+  try {
+    return await job
+  } finally {
+    inflight.delete(cacheKey)
   }
+}
+
+// Nạp TRƯỚC audio một câu vào IndexedDB mà KHÔNG phát — gọi nền cho các câu kế
+// tiếp để khi tới lượt phát đã có sẵn, hội thoại chạy liền mạch không bị khựng.
+// Lỗi thì bỏ qua (sẽ tải lại lúc phát). Không giữ buffer trong RAM — chỉ cần nó
+// nằm trong IndexedDB là đủ.
+export async function prefetchSpeech(
+  text: string, lang: Lang, voice: Voice = getVoicePref(),
+): Promise<void> {
+  if (!text.trim()) return
+  try { await ensureAudioBuffer(text, lang, voice) } catch { /* sẽ tải lại lúc phát */ }
+}
+
+// Gọi /api/tts (kèm JWT) → giải mã audio → phát qua <audio>
+// rate: 0.75 = chậm, 1 = bình thường, 1.25 = nhanh (điều chỉnh client-side, không tốn thêm API)
+// onWord: callback(wordIndex) gọi mỗi khi từ tiếp theo bắt đầu — dùng cho karaoke highlight
+async function speakViaGoogle(
+  text: string, lang: Lang, voice: Voice, rate = 1,
+  onWord?: (idx: number) => void,
+): Promise<void> {
+  if (!text.trim()) return
+
+  // Lấy audio (ưu tiên IndexedDB; bộ nạp-trước thường đã tải sẵn câu này)
+  const buffer = await ensureAudioBuffer(text, lang, voice)
+  const blobUrl = bufferToBlobUrl(buffer)
 
   // Tách từ để tính index tương ứng với vị trí phát (ước tính theo tỉ lệ thời gian)
   const words = onWord ? text.trim().split(/\s+/) : []

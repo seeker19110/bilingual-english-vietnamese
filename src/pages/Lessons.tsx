@@ -5,7 +5,7 @@ import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronou
 import Layout from '../components/Layout'
 import VoiceToggle from '../components/VoiceToggle'
 import { getDirection } from '../lib/storage'
-import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio, unlockAudio } from '../lib/tts'
+import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio, unlockAudio, prefetchSpeech } from '../lib/tts'
 import { loadIndex, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
 import type { Direction } from '../types'
 
@@ -330,6 +330,18 @@ function LessonView({ lesson, isA, color, onBack }: {
 
     const targetLang = isA ? 'en-US' : 'vi-VN'
     const transLang  = isA ? 'vi-VN' : 'en-US'
+
+    // Nạp TRƯỚC audio các lượt (chạy nền, tuần tự) để phát liền mạch không khựng.
+    // Tải nhanh hơn đọc nên bộ nạp luôn đi trước trình phát; trùng câu thì gộp (dedup).
+    void (async () => {
+      for (const t of lesson.turns) {
+        if (stopRef.current) break
+        const v = t.speaker === 'A' ? voiceA : voiceB
+        const m = modeRef.current
+        if (m === 'en' || m === 'both') await prefetchSpeech(t.en, 'en-US', v)
+        if (m === 'vi' || m === 'both') await prefetchSpeech(t.vi, 'vi-VN', v)
+      }
+    })()
 
     for (let i = 0; i < lesson.turns.length; i++) {
       if (stopRef.current) break
