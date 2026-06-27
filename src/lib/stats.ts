@@ -7,6 +7,8 @@ import { loadCefr } from '../data/cefrLoader'
 import { loadFoundation } from '../data/curriculumLoader'
 import type { CefrLevel } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
+import { getWritingSubs } from './storage'
+import { parseJson } from './ai'
 
 const DAY_MS = 86_400_000
 const dayStr = (d: Date) => d.toISOString().slice(0, 10)
@@ -49,6 +51,95 @@ export function getActivity7Days(uid: string): DayActivity[] {
 // Tổng số hoạt động trong 7 ngày gần nhất (gồm cả hôm nay).
 export function getWeekTotal(uid: string): number {
   return getActivity7Days(uid).reduce((sum, d) => sum + d.count, 0)
+}
+
+// ── Lịch hoạt động dạng heatmap (vài tuần gần nhất) ─────────────────────────
+export interface ActivityCalendar {
+  days: DayActivity[]   // cũ → mới (ngày cuối = hôm nay)
+  firstColumn: number   // 0..6 — cột (Thứ 2 = 0) của ô đầu tiên, để xếp lưới 7 cột
+  activeDays: number    // số ngày có học trong khoảng
+  bestDay: number       // số hoạt động của ngày bận nhất (để tô đậm nhạt)
+}
+
+// `totalDays` ngày gần nhất, kèm chỉ số cột để component xếp thành lưới 7 cột
+// (Thứ 2 → Chủ nhật) đúng như lịch.
+export function getActivityCalendar(uid: string, totalDays = 35): ActivityCalendar {
+  const days: DayActivity[] = []
+  const today = new Date()
+  for (let i = totalDays - 1; i >= 0; i--) {
+    const d = new Date(today.getTime() - i * DAY_MS)
+    const count = usageTotal(readUsage(uid, dayStr(d)))
+    days.push({ date: dayStr(d), dow: d.getDay(), count, active: count > 0 })
+  }
+  // Đổi getDay() (0 = CN) sang chỉ số cột bắt đầu từ Thứ 2 (0 = T2 … 6 = CN).
+  const firstColumn = (days[0].dow + 6) % 7
+  return {
+    days,
+    firstColumn,
+    activeDays: days.filter(d => d.active).length,
+    bestDay: Math.max(0, ...days.map(d => d.count)),
+  }
+}
+
+// ── Tiến bộ luyện viết (điểm IELTS ước lượng theo thời gian) ─────────────────
+// `feedback` của mỗi bài viết là JSON string (xem Writing.tsx) — parse lấy điểm.
+interface WritingScores {
+  task_response: number
+  coherence: number
+  lexical: number
+  grammar: number
+  overall: number
+}
+interface WritingFeedback {
+  scores?: WritingScores
+}
+
+export interface BandPoint {
+  date: string
+  overall: number
+}
+
+export interface WritingProgress {
+  history: BandPoint[]  // theo thứ tự thời gian tăng dần (cũ → mới)
+  count: number
+  latest: number | null
+  best: number | null
+  avg: number | null
+  // Điểm trung bình từng tiêu chí (để chỉ ra điểm mạnh / yếu)
+  components: { task_response: number; coherence: number; lexical: number; grammar: number } | null
+}
+
+export function getWritingProgress(uid: string): WritingProgress {
+  // getWritingSubs trả về mới→cũ; lọc các bài đã chấm (có scores.overall hợp lệ).
+  const rows = getWritingSubs(uid)
+    .map(s => {
+      const sc = s.feedback ? parseJson<WritingFeedback>(s.feedback)?.scores : null
+      return sc && typeof sc.overall === 'number' ? { t: s.submittedAt, sc } : null
+    })
+    .filter((x): x is { t: number; sc: WritingScores } => x != null)
+
+  if (rows.length === 0) {
+    return { history: [], count: 0, latest: null, best: null, avg: null, components: null }
+  }
+
+  const asc = [...rows].sort((a, b) => a.t - b.t)
+  const overalls = asc.map(r => r.sc.overall)
+  const mean = (xs: number[]) => xs.reduce((s, x) => s + x, 0) / xs.length
+  const round1 = (x: number) => Math.round(x * 10) / 10
+
+  return {
+    history: asc.map(r => ({ date: dayStr(new Date(r.t)), overall: r.sc.overall })),
+    count: rows.length,
+    latest: overalls[overalls.length - 1],
+    best: Math.max(...overalls),
+    avg: round1(mean(overalls)),
+    components: {
+      task_response: round1(mean(asc.map(r => r.sc.task_response))),
+      coherence: round1(mean(asc.map(r => r.sc.coherence))),
+      lexical: round1(mean(asc.map(r => r.sc.lexical))),
+      grammar: round1(mean(asc.map(r => r.sc.grammar))),
+    },
+  }
 }
 
 // ── Tiến độ theo cấp CEFR (A1 → B2) ─────────────────────────────────────────

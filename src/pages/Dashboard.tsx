@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Flame, BookOpen, Target, GraduationCap, MessageCircle, PenLine, Mic, RotateCcw, TrendingUp } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Flame, BookOpen, Target, GraduationCap, MessageCircle, PenLine, Mic, RotateCcw, TrendingUp, CalendarDays, Trophy } from 'lucide-react'
 import Layout from '../components/Layout'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
@@ -8,8 +9,25 @@ import { getStreak, getUsage, getChatSessions, getWritingSubs, getSpeakingSessio
 import { getLearnedWords, getLearnedCount } from '../lib/vocab'
 import { getSRSStats } from '../lib/srs'
 import { loadCurriculum, getPathProgress, getDailyLearned, DAILY_GOAL } from '../lib/curriculum'
-import { getActivity7Days, getWeekTotal, getCefrProgress, type LevelProgress } from '../lib/stats'
+import { getActivity7Days, getWeekTotal, getCefrProgress, getActivityCalendar, getWritingProgress, type LevelProgress } from '../lib/stats'
 import { LIMITS } from '../types'
+
+// Màu ô heatmap theo số hoạt động trong ngày (đậm dần).
+function heatColor(count: number): string {
+  if (count <= 0) return 'bg-zinc-800/50'
+  if (count <= 2) return 'bg-emerald-900'
+  if (count <= 5) return 'bg-emerald-700'
+  if (count <= 10) return 'bg-emerald-500'
+  return 'bg-emerald-400'
+}
+
+// Màu theo band IELTS (đồng bộ với trang Luyện viết).
+function bandBar(v: number): string {
+  return v >= 7 ? 'bg-emerald-500' : v >= 5 ? 'bg-amber-500' : 'bg-red-500'
+}
+function bandText(v: number): string {
+  return v >= 7 ? 'text-emerald-400' : v >= 5 ? 'text-amber-400' : 'text-red-400'
+}
 
 // Bảng màu nhấn cho từng cấp CEFR (Tailwind cần class tĩnh — không ghép động được).
 const ACCENT: Record<LevelProgress['accent'], { bar: string; text: string; soft: string }> = {
@@ -43,6 +61,7 @@ function Bar({ pct, color }: { pct: number; color: string }) {
 }
 
 export default function Dashboard() {
+  const nav = useNavigate()
   const { user } = useAuth()
   const { T, lang } = useLang()
   const vi = lang === 'vi'
@@ -74,6 +93,8 @@ export default function Dashboard() {
       streak: getStreak(user.id),
       week: getActivity7Days(user.id),
       weekTotal: getWeekTotal(user.id),
+      calendar: getActivityCalendar(user.id, 35),
+      writing: getWritingProgress(user.id),
       learnedToday: getDailyLearned(user.id),
       learnedTotal: getLearnedCount(user.id),
       path: ready ? getPathProgress(getLearnedWords(user.id)) : { done: 0, total: 0 },
@@ -91,6 +112,9 @@ export default function Dashboard() {
   const DOW_VI = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
   const DOW_EN = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
   const dow = vi ? DOW_VI : DOW_EN
+  // Nhãn thứ bắt đầu từ Thứ 2 — cho lưới lịch heatmap.
+  const WDOW = vi ? ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'] : ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+  const wp = stats.writing
 
   // Tổng tiến độ CEFR (trung bình % 4 cấp) — chỉ để hiển thị 1 con số tổng quan.
   const cefrOverall = cefr.length
@@ -135,6 +159,48 @@ export default function Dashboard() {
                 <span className="text-[10px] text-zinc-500">{dow[d.dow]}</span>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* ── Lịch hoạt động 5 tuần (heatmap) ─────────────────────────── */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 animate-fade-in">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+              <CalendarDays className="w-4 h-4 text-emerald-400" /> {vi ? 'Lịch hoạt động' : 'Activity calendar'}
+            </h2>
+            <span className="text-xs text-zinc-500">
+              {stats.calendar.activeDays} {vi ? 'ngày / 5 tuần' : 'days / 5 weeks'}
+            </span>
+          </div>
+
+          {/* Nhãn thứ */}
+          <div className="grid grid-cols-7 gap-1.5 mb-1.5">
+            {WDOW.map((w, i) => (
+              <span key={i} className="text-[9px] text-zinc-600 text-center">{w}</span>
+            ))}
+          </div>
+
+          {/* Lưới ngày — ô đầu lệch cột theo thứ trong tuần */}
+          <div className="grid grid-cols-7 gap-1.5">
+            {stats.calendar.days.map((d, idx) => (
+              <div
+                key={d.date}
+                style={idx === 0 ? { gridColumnStart: stats.calendar.firstColumn + 1 } : undefined}
+                className={`aspect-square rounded-[4px] ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1].date ? 'ring-1 ring-emerald-400/70' : ''}`}
+                title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
+              />
+            ))}
+          </div>
+
+          {/* Chú thích đậm nhạt */}
+          <div className="flex items-center justify-end gap-1.5 mt-3 text-[10px] text-zinc-500">
+            <span>{vi ? 'Ít' : 'Less'}</span>
+            <span className="w-3 h-3 rounded-[3px] bg-zinc-800/50" />
+            <span className="w-3 h-3 rounded-[3px] bg-emerald-900" />
+            <span className="w-3 h-3 rounded-[3px] bg-emerald-700" />
+            <span className="w-3 h-3 rounded-[3px] bg-emerald-500" />
+            <span className="w-3 h-3 rounded-[3px] bg-emerald-400" />
+            <span>{vi ? 'Nhiều' : 'More'}</span>
           </div>
         </section>
 
@@ -213,6 +279,74 @@ export default function Dashboard() {
               )
             })}
           </div>
+        </section>
+
+        {/* ── Điểm IELTS luyện viết theo thời gian ─────────────────────── */}
+        <section className="animate-fade-in">
+          <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
+            <PenLine className="w-4 h-4 text-violet-400" /> {vi ? 'Điểm viết IELTS (ước lượng)' : 'IELTS writing score (estimated)'}
+          </h2>
+
+          {wp.count === 0 ? (
+            <button onClick={() => nav('/writing')}
+              className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-violet-500/40 rounded-2xl p-5 text-center transition group">
+              <p className="text-sm text-zinc-400">{vi ? 'Chưa có bài viết nào được chấm.' : 'No graded essays yet.'}</p>
+              <p className="text-xs text-violet-400 mt-1 group-hover:underline">{vi ? 'Viết bài đầu tiên →' : 'Write your first essay →'}</p>
+            </button>
+          ) : (
+            <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 space-y-4">
+              {/* 3 số tổng quan: gần nhất · cao nhất · trung bình */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="text-center">
+                  <p className={`text-2xl font-bold leading-none ${bandText(wp.latest!)}`}>{wp.latest}</p>
+                  <p className="text-[11px] text-zinc-500 mt-1">{vi ? 'gần nhất' : 'latest'}</p>
+                </div>
+                <div className="text-center border-x border-zinc-800">
+                  <p className="text-2xl font-bold leading-none text-amber-300 flex items-center justify-center gap-1">
+                    <Trophy className="w-4 h-4" />{wp.best}
+                  </p>
+                  <p className="text-[11px] text-zinc-500 mt-1">{vi ? 'cao nhất' : 'best'}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold leading-none text-zinc-200">{wp.avg}</p>
+                  <p className="text-[11px] text-zinc-500 mt-1">{vi ? 'trung bình' : 'average'}</p>
+                </div>
+              </div>
+
+              {/* Biểu đồ cột band qua các bài (tối đa 12 bài gần nhất), thang 0–9 */}
+              <div>
+                <p className="text-[11px] text-zinc-500 mb-2">{vi ? `${wp.count} bài đã chấm` : `${wp.count} essays graded`}</p>
+                <div className="flex items-end justify-between gap-1.5 h-24">
+                  {wp.history.slice(-12).map((p, i) => (
+                    <div key={`${p.date}-${i}`} className="flex-1 flex flex-col items-center gap-1" title={`${p.date}: ${p.overall}`}>
+                      <span className="text-[9px] text-zinc-500">{p.overall}</span>
+                      <div className="w-full flex-1 flex items-end">
+                        <div className={`w-full rounded-md ${bandBar(p.overall)} transition-all`} style={{ height: `${(p.overall / 9) * 100}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Điểm trung bình từng tiêu chí — chỉ ra điểm mạnh / yếu */}
+              {wp.components && (
+                <div className="space-y-2 pt-1">
+                  {[
+                    { label: vi ? 'Trả lời đề (TR)' : 'Task Response', val: wp.components.task_response },
+                    { label: vi ? 'Mạch lạc (CC)' : 'Coherence', val: wp.components.coherence },
+                    { label: vi ? 'Từ vựng (LR)' : 'Lexical', val: wp.components.lexical },
+                    { label: vi ? 'Ngữ pháp (GRA)' : 'Grammar', val: wp.components.grammar },
+                  ].map((c) => (
+                    <div key={c.label} className="flex items-center gap-2">
+                      <span className="text-xs text-zinc-400 w-28 shrink-0">{c.label}</span>
+                      <div className="flex-1"><Bar pct={(c.val / 9) * 100} color={bandBar(c.val)} /></div>
+                      <span className={`text-xs font-semibold w-6 text-right ${bandText(c.val)}`}>{c.val}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </section>
 
         {/* ── Tổng kết hoạt động ──────────────────────────────────────── */}
