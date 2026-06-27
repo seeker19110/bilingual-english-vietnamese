@@ -71,6 +71,11 @@ interface Subject   { starter: string; sentences: Sentence[] }
 //   3. Lesson turns (50 bài đầu)        → Luyện nói beginner instant
 //   4. Pattern sentences                → Cụm từ page
 //   5. Lesson turns còn lại             → cache dần, ít urgent hơn
+//
+// Lesson turns: mỗi turn chỉ seed ĐÚNG 1 giọng (voiceA hoặc voiceB) thay vì cả 4.
+// Giống logic Lessons.tsx — speakerAGender/speakerBGender quyết định giọng từng nhân vật,
+// nếu cùng giới thì B dùng giọng variant2 (female2/male2) để phân biệt.
+// Kết quả: ~5,900 tasks thay vì ~160,000 (giảm 96%).
 function loadPatternTasks(): PatternTask[] {
   const tasks: PatternTask[] = []
   const seen  = new Set<string>()
@@ -107,29 +112,41 @@ function loadPatternTasks(): PatternTask[] {
     }
   }
 
-  // ── Ưu tiên 3: lesson turns — 50 bài đầu (beginner instant) ───────────────
+  // ── Ưu tiên 3 & 5: lesson turns — giọng đúng per nhân vật ─────────────────
+  // Giống Lessons.tsx: voiceA = giới tính A; voiceB = variant2 nếu cùng giới, giọng kia nếu khác
   const lessonDir = path.join(PROJECT_ROOT, 'public/data/lessons')
   const lessonFiles = fs.readdirSync(lessonDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
   let lessonCount = 0
   const laterLessonTasks: PatternTask[] = []
+
+  type LessonRaw = {
+    speakerAGender?: 'female' | 'male' | null
+    speakerBGender?: 'female' | 'male' | null
+    turns?: Array<{ speaker: string; en: string; vi: string }>
+  }
+
   for (const file of lessonFiles) {
-    const chunks = JSON.parse(fs.readFileSync(path.join(lessonDir, file), 'utf8')) as Array<{ turns?: Array<{ en: string; vi: string }> }>
+    const chunks = JSON.parse(fs.readFileSync(path.join(lessonDir, file), 'utf8')) as LessonRaw[]
     for (const lesson of chunks) {
+      const gA = lesson.speakerAGender ?? 'female'
+      const gB = lesson.speakerBGender ?? 'male'
+      const voiceA: VoiceId = gA === 'female' ? 'female' : 'male'
+      const voiceB: VoiceId = gB === gA
+        ? (gB === 'female' ? 'female2' : 'male2')
+        : (gB === 'female' ? 'female' : 'male')
+
       const isEarly = lessonCount < 50
       for (const turn of (lesson.turns ?? [])) {
+        const voice = turn.speaker === 'A' ? voiceA : voiceB
         if (turn.en) {
           const text = turn.en.trim(); if (!text) continue
-          for (const voice of VOICE_IDS) {
-            const key = `${text}|en-US|${voice}`
-            if (!seen.has(key)) { seen.add(key); (isEarly ? tasks : laterLessonTasks).push({ type: 'pattern', text, lang: 'en-US', voice }) }
-          }
+          const key = `${text}|en-US|${voice}`
+          if (!seen.has(key)) { seen.add(key); (isEarly ? tasks : laterLessonTasks).push({ type: 'pattern', text, lang: 'en-US', voice }) }
         }
         if (turn.vi) {
           const text = turn.vi.trim(); if (!text) continue
-          for (const voice of VOICE_IDS) {
-            const key = `${text}|vi-VN|${voice}`
-            if (!seen.has(key)) { seen.add(key); (isEarly ? tasks : laterLessonTasks).push({ type: 'pattern', text, lang: 'vi-VN', voice }) }
-          }
+          const key = `${text}|vi-VN|${voice}`
+          if (!seen.has(key)) { seen.add(key); (isEarly ? tasks : laterLessonTasks).push({ type: 'pattern', text, lang: 'vi-VN', voice }) }
         }
       }
       lessonCount++

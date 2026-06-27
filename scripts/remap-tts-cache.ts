@@ -133,14 +133,35 @@ function collectAllEntries(): Entry[] {
     }
   }
 
-  // 3. Lessons
+  // 3. Lessons — giống Lessons.tsx: mỗi turn chỉ 1 giọng đúng (voiceA hoặc voiceB)
+  type LessonRaw = {
+    speakerAGender?: 'female' | 'male' | null
+    speakerBGender?: 'female' | 'male' | null
+    turns?: Array<{ speaker: string; en: string; vi: string }>
+  }
   const lessonDir = path.join(PROJECT_ROOT, 'public/data/lessons')
   for (const file of fs.readdirSync(lessonDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()) {
-    const chunks = JSON.parse(fs.readFileSync(path.join(lessonDir, file), 'utf8')) as Array<{ turns?: Array<{ en: string; vi: string }> }>
+    const chunks = JSON.parse(fs.readFileSync(path.join(lessonDir, file), 'utf8')) as LessonRaw[]
     for (const lesson of chunks) {
+      const gA = lesson.speakerAGender ?? 'female'
+      const gB = lesson.speakerBGender ?? 'male'
+      const voiceA: VoiceId = gA === 'female' ? 'female' : 'male'
+      const voiceB: VoiceId = gB === gA
+        ? (gB === 'female' ? 'female2' : 'male2')
+        : (gB === 'female' ? 'female' : 'male')
+
       for (const turn of lesson.turns ?? []) {
-        if (turn.en) add(turn.en, 'en-US')
-        if (turn.vi) add(turn.vi, 'vi-VN')
+        const voice = turn.speaker === 'A' ? voiceA : voiceB
+        if (turn.en) {
+          const text = turn.en.trim(); if (!text) continue
+          const key = `${text}|en-US|${voice}`
+          if (!seen.has(key)) { seen.add(key); entries.push({ text, lang: 'en-US', voice }) }
+        }
+        if (turn.vi) {
+          const text = turn.vi.trim(); if (!text) continue
+          const key = `${text}|vi-VN|${voice}`
+          if (!seen.has(key)) { seen.add(key); entries.push({ text, lang: 'vi-VN', voice }) }
+        }
       }
     }
   }
