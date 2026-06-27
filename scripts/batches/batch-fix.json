@@ -1,0 +1,206 @@
+[
+  {
+    "id": 113,
+    "title": "Đăng ký gói cước điện thoại",
+    "situation": "Hà đăng ký một gói cước di động mới tại cửa hàng nhà mạng.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Hà",
+      "en": "Ha"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên nhà mạng",
+      "en": "Phone shop staff"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to sign up for a new mobile phone plan.",
+        "vi": "Chào anh, tôi muốn đăng ký một gói cước điện thoại mới."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Do you use more data or more calls?",
+        "vi": "Được ạ. Chị dùng nhiều data hay nhiều cuộc gọi hơn?"
+      },
+      {
+        "speaker": "A",
+        "en": "Mostly data. I watch videos and use maps a lot.",
+        "vi": "Chủ yếu là data. Tôi hay xem video và dùng bản đồ."
+      },
+      {
+        "speaker": "B",
+        "en": "Then this plan is perfect: 5GB a day for a hundred and twenty thousand a month.",
+        "vi": "Vậy gói này hợp lắm: 5GB mỗi ngày, một trăm hai mươi nghìn một tháng."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds good. Does it include free calls?",
+        "vi": "Nghe được đấy. Có kèm gọi miễn phí không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, free calls within the same network, and a hundred minutes to other networks.",
+        "vi": "Có, gọi miễn phí nội mạng, và một trăm phút gọi ngoại mạng."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. Can I keep my old phone number?",
+        "vi": "Tuyệt. Tôi giữ được số điện thoại cũ chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. Just bring your ID and your old SIM.",
+        "vi": "Đương nhiên. Chị chỉ cần mang căn cước và SIM cũ."
+      },
+      {
+        "speaker": "A",
+        "en": "I have both here. How long does it take?",
+        "vi": "Tôi có cả hai đây. Mất bao lâu vậy ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "About ten minutes. Your new plan will be active today.",
+        "vi": "Khoảng mười phút. Gói mới của chị sẽ kích hoạt ngay hôm nay."
+      }
+    ]
+  },
+  {
+    "id": 115,
+    "title": "Hỏi về lớp học nấu ăn",
+    "situation": "Hải hỏi trung tâm về một lớp học nấu món Việt cho người mới.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Hải",
+      "en": "Hai"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên trung tâm",
+      "en": "Course advisor"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I saw your ad for a cooking class. Can you tell me more?",
+        "vi": "Xin chào, tôi thấy quảng cáo về lớp học nấu ăn. Cho tôi hỏi thêm được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! We have Vietnamese, Italian, and baking classes.",
+        "vi": "Tất nhiên ạ! Bên em có lớp món Việt, món Ý và lớp làm bánh."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm interested in Vietnamese cooking. I'm a beginner.",
+        "vi": "Tôi quan tâm đến nấu món Việt. Tôi mới bắt đầu."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. Our beginner class teaches ten popular dishes.",
+        "vi": "Tuyệt. Lớp cơ bản của bên em dạy mười món phổ biến."
+      },
+      {
+        "speaker": "A",
+        "en": "How long is the course?",
+        "vi": "Khóa học kéo dài bao lâu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Five weeks, with one evening class each week.",
+        "vi": "Năm tuần, mỗi tuần một buổi tối."
+      },
+      {
+        "speaker": "A",
+        "en": "Do I need to bring my own ingredients?",
+        "vi": "Tôi có cần mang nguyên liệu riêng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "No, everything is provided. You just bring an apron.",
+        "vi": "Không, mọi thứ đều có sẵn. Anh chỉ cần mang tạp dề."
+      },
+      {
+        "speaker": "A",
+        "en": "Sounds great. How much is the tuition?",
+        "vi": "Nghe hay đấy. Học phí bao nhiêu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "One and a half million for the whole course, including materials.",
+        "vi": "Một triệu rưỡi cho cả khóa, đã gồm nguyên liệu."
+      }
+    ]
+  },
+  {
+    "id": 187,
+    "title": "Đặt phòng hát karaoke",
+    "situation": "Khách gọi điện đặt phòng hát karaoke cho buổi tối.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Mai",
+      "en": "Mai"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên quán karaoke",
+      "en": "Karaoke staff"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to book a karaoke room for tonight.",
+        "vi": "Chào bạn, tôi muốn đặt một phòng hát karaoke tối nay."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. How many people, and what time?",
+        "vi": "Được ạ. Bao nhiêu người và mấy giờ ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "About eight people, around eight o'clock.",
+        "vi": "Khoảng tám người, tầm tám giờ."
+      },
+      {
+        "speaker": "B",
+        "en": "We have a medium room for ten. Would that work?",
+        "vi": "Bên em có phòng vừa cho mười người. Được không ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. How much is it per hour?",
+        "vi": "Tuyệt. Giá bao nhiêu một giờ ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "A hundred and fifty thousand per hour.",
+        "vi": "Một trăm năm mươi nghìn một giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "Do you have food and drinks too?",
+        "vi": "Bên bạn có đồ ăn và nước uống không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, we have snacks, fruit, and soft drinks.",
+        "vi": "Có ạ, bên em có đồ ăn nhẹ, trái cây và nước ngọt."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. Can we order when we arrive?",
+        "vi": "Tuyệt. Đến nơi bọn tôi gọi món được chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. I'll reserve room five for you at eight.",
+        "vi": "Đương nhiên. Em giữ phòng số năm cho chị lúc tám giờ."
+      }
+    ]
+  }
+]

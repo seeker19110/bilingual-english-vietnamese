@@ -1,0 +1,954 @@
+[
+  {
+    "id": 106,
+    "title": "Đổi tiền ngoại tệ",
+    "situation": "Khách du lịch đổi đô la sang tiền Việt tại ngân hàng.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "David",
+      "en": "David"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên ngân hàng",
+      "en": "Bank teller"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to exchange some US dollars for Vietnamese dong.",
+        "vi": "Chào chị, tôi muốn đổi đô la Mỹ sang tiền Việt."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. How much would you like to exchange?",
+        "vi": "Được ạ. Anh muốn đổi bao nhiêu?"
+      },
+      {
+        "speaker": "A",
+        "en": "Two hundred dollars. What's today's rate?",
+        "vi": "Hai trăm đô. Tỷ giá hôm nay là bao nhiêu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Today it's 25,400 dong per dollar.",
+        "vi": "Hôm nay là 25.400 đồng một đô."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, that sounds fair. Do you charge any fee?",
+        "vi": "Được, hợp lý đấy. Có thu phí gì không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "No fee for cash exchange. May I see your passport?",
+        "vi": "Đổi tiền mặt không mất phí. Cho tôi xem hộ chiếu được không ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Here you go. Can I get some smaller notes too?",
+        "vi": "Đây ạ. Tôi đổi thêm ít tiền lẻ được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. I'll give you a mix of large and small notes.",
+        "vi": "Đương nhiên. Tôi sẽ đưa anh cả tiền chẵn lẫn tiền lẻ."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. How much will I get in total?",
+        "vi": "Tuyệt. Tổng cộng tôi nhận được bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Five million and eighty thousand dong. Please count it carefully.",
+        "vi": "Năm triệu tám mươi nghìn đồng. Anh vui lòng đếm kỹ nhé."
+      }
+    ]
+  },
+  {
+    "id": 107,
+    "title": "Mua sắm ở chợ truyền thống",
+    "situation": "Sarah mua rau và thịt ở chợ Bến Thành.",
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Sarah",
+      "en": "Sarah"
+    },
+    "speakerBName": {
+      "vi": "Người bán hàng",
+      "en": "Vendor"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning. How much are these tomatoes?",
+        "vi": "Chào chị. Cà chua này bao nhiêu một cân ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Twenty-five thousand a kilo. Very fresh today.",
+        "vi": "Hai mươi lăm nghìn một cân. Hôm nay tươi lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll take one kilo. Do you have green vegetables?",
+        "vi": "Cho tôi một cân. Chị có rau xanh không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, water spinach and lettuce. Which do you want?",
+        "vi": "Có, rau muống với xà lách. Em muốn loại nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "A bunch of water spinach, please. And some pork.",
+        "vi": "Cho tôi một mớ rau muống. Và ít thịt lợn nữa."
+      },
+      {
+        "speaker": "B",
+        "en": "How much pork? The lean shoulder is good for stir-fry.",
+        "vi": "Bao nhiêu thịt? Thịt vai nạc xào ngon lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "Half a kilo, please. Can you cut it into small pieces?",
+        "vi": "Nửa cân ạ. Chị thái nhỏ giúp được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. Anything else, dear?",
+        "vi": "Được chứ. Còn gì nữa không em?"
+      },
+      {
+        "speaker": "A",
+        "en": "That's all. How much altogether?",
+        "vi": "Hết rồi ạ. Tất cả bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Ninety thousand in total. Thank you, come again!",
+        "vi": "Tổng cộng chín mươi nghìn. Cảm ơn em, lần sau lại ghé nhé!"
+      }
+    ]
+  },
+  {
+    "id": 108,
+    "title": "Xin giấy phép lái xe",
+    "situation": "Anh Hùng đến cơ quan để gia hạn giấy phép lái xe.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Anh Hùng",
+      "en": "Hung"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên",
+      "en": "Officer"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'd like to renew my driving license.",
+        "vi": "Xin chào, tôi muốn gia hạn giấy phép lái xe."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Is your current license expired or about to expire?",
+        "vi": "Được. Bằng của anh đã hết hạn hay sắp hết hạn?"
+      },
+      {
+        "speaker": "A",
+        "en": "It expires next month. What documents do I need?",
+        "vi": "Tháng sau hết hạn. Tôi cần những giấy tờ gì ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Your old license, your ID card, and a health certificate.",
+        "vi": "Bằng cũ, căn cước, và giấy khám sức khỏe."
+      },
+      {
+        "speaker": "A",
+        "en": "I have all of them here. Do I need to take a test again?",
+        "vi": "Tôi mang đủ cả đây. Tôi có phải thi lại không?"
+      },
+      {
+        "speaker": "B",
+        "en": "No, renewal doesn't require a test, just the paperwork.",
+        "vi": "Không, gia hạn không phải thi, chỉ cần hồ sơ thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. How long will it take to get the new one?",
+        "vi": "Tuyệt. Bao lâu thì có bằng mới ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "About a week. You'll get a text message when it's ready.",
+        "vi": "Khoảng một tuần. Anh sẽ nhận tin nhắn khi bằng xong."
+      },
+      {
+        "speaker": "A",
+        "en": "Is there a fee?",
+        "vi": "Có mất phí không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, a hundred and thirty-five thousand. Please pay at counter three.",
+        "vi": "Có, một trăm ba mươi lăm nghìn. Anh đóng ở quầy số ba nhé."
+      }
+    ]
+  },
+  {
+    "id": 110,
+    "title": "Khiếu nại sản phẩm lỗi",
+    "situation": "Khách hàng mang laptop lỗi đến cửa hàng để khiếu nại.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Anh Bình",
+      "en": "Binh"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên dịch vụ",
+      "en": "Service staff"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I bought this laptop last week and it keeps shutting down.",
+        "vi": "Chào chị, tôi mua laptop này tuần trước mà nó cứ tự tắt."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm sorry about that. Does it happen when it gets hot?",
+        "vi": "Tôi rất tiếc. Nó có bị vậy khi máy nóng lên không ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, after about twenty minutes of use.",
+        "vi": "Đúng vậy, sau khoảng hai mươi phút sử dụng."
+      },
+      {
+        "speaker": "B",
+        "en": "That could be a hardware fault. Do you have the warranty card?",
+        "vi": "Có thể là lỗi phần cứng. Anh có phiếu bảo hành không ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, here it is, along with the receipt.",
+        "vi": "Có, đây ạ, kèm cả hóa đơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. It's still under warranty, so we can repair it for free.",
+        "vi": "Cảm ơn anh. Máy vẫn trong bảo hành nên bên em sửa miễn phí."
+      },
+      {
+        "speaker": "A",
+        "en": "How long will the repair take?",
+        "vi": "Sửa mất bao lâu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Usually three to five days. We'll call you when it's done.",
+        "vi": "Thường ba đến năm ngày. Xong bên em sẽ gọi anh."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I get a replacement if it can't be fixed?",
+        "vi": "Nếu không sửa được thì tôi đổi máy khác được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes. If it's a manufacturing defect, you can have a new unit.",
+        "vi": "Được ạ. Nếu là lỗi nhà sản xuất, anh sẽ được đổi máy mới."
+      }
+    ]
+  },
+  {
+    "id": 161,
+    "title": "Hỏi về đầu tư chứng khoán",
+    "situation": "Phương hỏi người bạn có kinh nghiệm về đầu tư chứng khoán.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Phương",
+      "en": "Phuong"
+    },
+    "speakerBName": {
+      "vi": "Đức",
+      "en": "Duc"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Duc, I'm thinking about investing in the stock market. Is it risky?",
+        "vi": "Đức ơi, mình đang tính đầu tư chứng khoán. Có rủi ro lắm không?"
+      },
+      {
+        "speaker": "B",
+        "en": "It can be, but if you learn first and start small, it's manageable.",
+        "vi": "Có thể, nhưng nếu tìm hiểu trước và bắt đầu nhỏ thì kiểm soát được."
+      },
+      {
+        "speaker": "A",
+        "en": "How much should a beginner start with?",
+        "vi": "Người mới nên bắt đầu với bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Only money you can afford to lose. Maybe ten percent of your savings.",
+        "vi": "Chỉ số tiền cậu chấp nhận mất được. Khoảng mười phần trăm tiền tiết kiệm thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "That makes sense. Which stocks are safer?",
+        "vi": "Hợp lý đấy. Cổ phiếu nào an toàn hơn?"
+      },
+      {
+        "speaker": "B",
+        "en": "Big, stable companies are safer than small ones.",
+        "vi": "Công ty lớn, ổn định thì an toàn hơn công ty nhỏ."
+      },
+      {
+        "speaker": "A",
+        "en": "How do I actually buy them?",
+        "vi": "Mình mua thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "Open an account with a securities firm and use their app.",
+        "vi": "Mở tài khoản ở công ty chứng khoán rồi dùng app của họ."
+      },
+      {
+        "speaker": "A",
+        "en": "Should I check the prices every day?",
+        "vi": "Mình có nên xem giá mỗi ngày không?"
+      },
+      {
+        "speaker": "B",
+        "en": "No, don't panic over daily changes. Think long term.",
+        "vi": "Không, đừng hoảng vì biến động hằng ngày. Hãy nghĩ dài hạn."
+      }
+    ]
+  },
+  {
+    "id": 162,
+    "title": "Vay tiền ngân hàng",
+    "situation": "Khách hàng hỏi nhân viên tín dụng về vay mua xe máy.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Tuấn",
+      "en": "Tuan"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên tín dụng",
+      "en": "Loan officer"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'd like to ask about a personal loan.",
+        "vi": "Xin chào, tôi muốn hỏi về vay tín dụng cá nhân."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. What will you use the loan for?",
+        "vi": "Được ạ. Anh vay để dùng vào việc gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "I want to buy a motorbike. I need about forty million.",
+        "vi": "Tôi muốn mua xe máy. Tôi cần khoảng bốn mươi triệu."
+      },
+      {
+        "speaker": "B",
+        "en": "I see. Do you have a stable monthly income?",
+        "vi": "Vâng. Anh có thu nhập hàng tháng ổn định không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I have a full-time job with a fixed salary.",
+        "vi": "Có, tôi làm toàn thời gian, lương cố định."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. The interest rate is twelve percent per year.",
+        "vi": "Tốt. Lãi suất là mười hai phần trăm một năm."
+      },
+      {
+        "speaker": "A",
+        "en": "How long can I take to repay it?",
+        "vi": "Tôi được trả góp trong bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "You can choose twelve, twenty-four, or thirty-six months.",
+        "vi": "Anh có thể chọn mười hai, hai mươi bốn hoặc ba mươi sáu tháng."
+      },
+      {
+        "speaker": "A",
+        "en": "Twenty-four months sounds good. What do I need to apply?",
+        "vi": "Hai mươi bốn tháng nghe ổn. Tôi cần gì để làm hồ sơ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Your ID, proof of income, and a completed application form.",
+        "vi": "Căn cước, giấy chứng minh thu nhập, và đơn đăng ký điền đầy đủ."
+      }
+    ]
+  },
+  {
+    "id": 163,
+    "title": "Khai thuế thu nhập",
+    "situation": "Lan lần đầu khai thuế thu nhập và hỏi cán bộ thuế.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Lan",
+      "en": "Lan"
+    },
+    "speakerBName": {
+      "vi": "Cán bộ thuế",
+      "en": "Tax officer"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Excuse me, this is my first time filing income tax. Can you help?",
+        "vi": "Xin lỗi, đây là lần đầu tôi khai thuế thu nhập. Anh giúp được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. Do you have only one source of income?",
+        "vi": "Được chứ. Chị chỉ có một nguồn thu nhập thôi à?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, just my salary from one company.",
+        "vi": "Vâng, chỉ là lương từ một công ty."
+      },
+      {
+        "speaker": "B",
+        "en": "Then it's simple. Your company usually declares it for you.",
+        "vi": "Vậy thì đơn giản. Công ty thường khai thay cho chị."
+      },
+      {
+        "speaker": "A",
+        "en": "But I heard I might get a tax refund.",
+        "vi": "Nhưng tôi nghe nói có thể được hoàn thuế."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, if too much was withheld, you can claim it back.",
+        "vi": "Đúng, nếu bị khấu trừ quá nhiều, chị có thể xin hoàn lại."
+      },
+      {
+        "speaker": "A",
+        "en": "How do I do that?",
+        "vi": "Tôi làm thế nào ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "File a tax finalization form online and attach your income statement.",
+        "vi": "Nộp tờ khai quyết toán thuế trực tuyến và đính kèm chứng từ thu nhập."
+      },
+      {
+        "speaker": "A",
+        "en": "Is there a deadline?",
+        "vi": "Có hạn chót không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, the end of March. Don't miss it, or there's a penalty.",
+        "vi": "Có, cuối tháng Ba. Đừng để trễ kẻo bị phạt."
+      }
+    ]
+  },
+  {
+    "id": 164,
+    "title": "Bàn về tiết kiệm hưu trí",
+    "situation": "Hai đồng nghiệp bàn về việc tiết kiệm cho tuổi hưu.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Hoa",
+      "en": "Hoa"
+    },
+    "speakerBName": {
+      "vi": "Minh",
+      "en": "Minh"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Minh, do you think it's too early to save for retirement?",
+        "vi": "Minh ơi, cậu có nghĩ tiết kiệm hưu trí bây giờ là quá sớm không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Not at all. The earlier you start, the easier it is.",
+        "vi": "Không hề. Bắt đầu càng sớm càng dễ."
+      },
+      {
+        "speaker": "A",
+        "en": "But retirement is thirty years away.",
+        "vi": "Nhưng còn tận ba mươi năm nữa mới nghỉ hưu."
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly why it works — your money has time to grow.",
+        "vi": "Chính vì thế mới hiệu quả — tiền của cậu có thời gian sinh lời."
+      },
+      {
+        "speaker": "A",
+        "en": "How much should I put aside each month?",
+        "vi": "Mỗi tháng mình nên để dành bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Even ten percent of your income makes a big difference.",
+        "vi": "Chỉ mười phần trăm thu nhập thôi cũng tạo khác biệt lớn."
+      },
+      {
+        "speaker": "A",
+        "en": "Where should I keep it?",
+        "vi": "Mình nên để tiền ở đâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "A mix of savings and a retirement fund is a safe choice.",
+        "vi": "Kết hợp tiết kiệm và quỹ hưu trí là lựa chọn an toàn."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds wise. I'll start this month.",
+        "vi": "Nghe khôn ngoan đấy. Mình sẽ bắt đầu từ tháng này."
+      },
+      {
+        "speaker": "B",
+        "en": "Great decision. Your future self will thank you.",
+        "vi": "Quyết định hay. Bản thân cậu sau này sẽ cảm ơn cậu."
+      }
+    ]
+  },
+  {
+    "id": 165,
+    "title": "Mua bảo hiểm nhân thọ",
+    "situation": "Khách hàng tìm hiểu gói bảo hiểm nhân thọ cho gia đình.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Thảo",
+      "en": "Thao"
+    },
+    "speakerBName": {
+      "vi": "Tư vấn bảo hiểm",
+      "en": "Insurance advisor"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to learn about your life insurance plans.",
+        "vi": "Chào anh, tôi muốn tìm hiểu về các gói bảo hiểm nhân thọ."
+      },
+      {
+        "speaker": "B",
+        "en": "Certainly. Are you looking to protect your family or to save?",
+        "vi": "Vâng. Chị muốn bảo vệ gia đình hay để tiết kiệm ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Both, if possible. I have two young children.",
+        "vi": "Cả hai nếu được. Tôi có hai con nhỏ."
+      },
+      {
+        "speaker": "B",
+        "en": "Then a plan with both protection and savings suits you.",
+        "vi": "Vậy gói vừa bảo vệ vừa tiết kiệm hợp với chị."
+      },
+      {
+        "speaker": "A",
+        "en": "How much is the monthly premium?",
+        "vi": "Phí đóng hàng tháng là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "It depends on the coverage, starting around one million.",
+        "vi": "Tùy mức bảo hiểm, bắt đầu từ khoảng một triệu."
+      },
+      {
+        "speaker": "A",
+        "en": "What happens if I miss a payment?",
+        "vi": "Nếu tôi đóng trễ thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "There's a grace period of sixty days before it lapses.",
+        "vi": "Có thời gian gia hạn sáu mươi ngày trước khi hợp đồng mất hiệu lực."
+      },
+      {
+        "speaker": "A",
+        "en": "Good to know. Can I increase the coverage later?",
+        "vi": "Tốt đấy. Sau này tôi tăng mức bảo hiểm được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, you can adjust it as your needs change.",
+        "vi": "Được, chị có thể điều chỉnh khi nhu cầu thay đổi."
+      }
+    ]
+  },
+  {
+    "id": 166,
+    "title": "Quản lý chi tiêu tháng",
+    "situation": "Hai người bạn chia sẻ cách lập ngân sách chi tiêu.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Linh",
+      "en": "Linh"
+    },
+    "speakerBName": {
+      "vi": "Khoa",
+      "en": "Khoa"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Khoa, I always run out of money before payday. Any tips?",
+        "vi": "Khoa ơi, mình toàn hết tiền trước ngày lương. Có mẹo gì không?"
+      },
+      {
+        "speaker": "B",
+        "en": "You need a monthly budget. Do you track your spending?",
+        "vi": "Cậu cần lập ngân sách tháng. Cậu có ghi chép chi tiêu không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Not really. I just spend and hope for the best.",
+        "vi": "Không hẳn. Mình cứ tiêu rồi mong sao cho ổn."
+      },
+      {
+        "speaker": "B",
+        "en": "That's the problem. Start by listing your fixed costs.",
+        "vi": "Đó là vấn đề. Bắt đầu bằng việc liệt kê các khoản cố định."
+      },
+      {
+        "speaker": "A",
+        "en": "Like rent and bills?",
+        "vi": "Kiểu như tiền nhà và hóa đơn?"
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. Then set a limit for food and entertainment.",
+        "vi": "Chính xác. Rồi đặt giới hạn cho ăn uống và giải trí."
+      },
+      {
+        "speaker": "A",
+        "en": "What about saving?",
+        "vi": "Còn tiết kiệm thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "Treat savings like a bill — pay it first every month.",
+        "vi": "Coi tiết kiệm như một hóa đơn — trả nó đầu tiên mỗi tháng."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a smart way to think about it.",
+        "vi": "Cách nghĩ đó hay đấy."
+      },
+      {
+        "speaker": "B",
+        "en": "Try a budgeting app. It makes everything easier.",
+        "vi": "Thử một ứng dụng quản lý chi tiêu xem. Nó giúp mọi thứ dễ hơn."
+      }
+    ]
+  },
+  {
+    "id": 167,
+    "title": "Đầu tư bất động sản",
+    "situation": "Hai người bạn trao đổi về đầu tư bất động sản.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Sarah",
+      "en": "Sarah"
+    },
+    "speakerBName": {
+      "vi": "Tom",
+      "en": "Tom"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Tom, is now a good time to invest in real estate here?",
+        "vi": "Tom, bây giờ có phải lúc tốt để đầu tư bất động sản ở đây không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Property is usually a safe long-term investment, but do your research.",
+        "vi": "Bất động sản thường là khoản đầu tư dài hạn an toàn, nhưng phải nghiên cứu kỹ."
+      },
+      {
+        "speaker": "A",
+        "en": "What should I look at first?",
+        "vi": "Tôi nên xem xét điều gì trước?"
+      },
+      {
+        "speaker": "B",
+        "en": "Location is everything. Near schools and main roads is best.",
+        "vi": "Vị trí là quan trọng nhất. Gần trường học và đường lớn là tốt nhất."
+      },
+      {
+        "speaker": "A",
+        "en": "Should I buy an apartment or land?",
+        "vi": "Tôi nên mua căn hộ hay đất?"
+      },
+      {
+        "speaker": "B",
+        "en": "Land usually grows in value, but apartments are easier to rent out.",
+        "vi": "Đất thường tăng giá, nhưng căn hộ dễ cho thuê hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Can foreigners buy property in Vietnam?",
+        "vi": "Người nước ngoài mua bất động sản ở Việt Nam được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, but there are limits. You should check with a lawyer.",
+        "vi": "Được, nhưng có giới hạn. Bạn nên hỏi luật sư."
+      },
+      {
+        "speaker": "A",
+        "en": "Good point. Is it better to pay cash or take a loan?",
+        "vi": "Ý hay. Nên trả tiền mặt hay vay?"
+      },
+      {
+        "speaker": "B",
+        "en": "If the interest is low, a loan lets you keep cash for other things.",
+        "vi": "Nếu lãi thấp, vay giúp bạn giữ tiền mặt cho việc khác."
+      }
+    ]
+  },
+  {
+    "id": 168,
+    "title": "Thanh toán quốc tế",
+    "situation": "Chủ doanh nghiệp nhờ ngân hàng chuyển tiền cho nhà cung cấp nước ngoài.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Mai",
+      "en": "Mai"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên ngân hàng",
+      "en": "Bank staff"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I need to send a payment to a supplier overseas.",
+        "vi": "Xin chào, tôi cần chuyển tiền thanh toán cho nhà cung cấp ở nước ngoài."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Do you have their bank details and SWIFT code?",
+        "vi": "Được ạ. Chị có thông tin ngân hàng và mã SWIFT của họ không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I have everything from their invoice.",
+        "vi": "Có, tôi có đủ trên hóa đơn của họ."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. How much would you like to transfer?",
+        "vi": "Tuyệt. Chị muốn chuyển bao nhiêu?"
+      },
+      {
+        "speaker": "A",
+        "en": "Five thousand US dollars. How long does it take?",
+        "vi": "Năm nghìn đô la Mỹ. Mất bao lâu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Usually two to three business days.",
+        "vi": "Thường là hai đến ba ngày làm việc."
+      },
+      {
+        "speaker": "A",
+        "en": "Is there a transfer fee?",
+        "vi": "Có phí chuyển không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, a fixed fee plus a small percentage of the amount.",
+        "vi": "Có, một khoản phí cố định cộng thêm phần trăm nhỏ trên số tiền."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I track the transfer?",
+        "vi": "Tôi theo dõi giao dịch được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I'll give you a reference number to track it online.",
+        "vi": "Được, tôi sẽ đưa chị mã giao dịch để tra cứu trực tuyến."
+      }
+    ]
+  },
+  {
+    "id": 169,
+    "title": "Chia tiền thuê nhà",
+    "situation": "Hai người ở chung bàn cách chia tiền nhà và hóa đơn.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": {
+      "vi": "Phương",
+      "en": "Phuong"
+    },
+    "speakerBName": {
+      "vi": "Đức",
+      "en": "Duc"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Duc, we should figure out how to split the rent and bills.",
+        "vi": "Đức ơi, mình nên tính cách chia tiền nhà và hóa đơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. The rent is six million, so three million each?",
+        "vi": "Được. Tiền nhà sáu triệu, vậy mỗi người ba triệu nhé?"
+      },
+      {
+        "speaker": "A",
+        "en": "That's fair. What about electricity and water?",
+        "vi": "Hợp lý. Còn điện nước thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let's split those equally too, when the bills come.",
+        "vi": "Cứ chia đều luôn khi có hóa đơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay. Should we set up a shared fund?",
+        "vi": "Được. Mình lập một quỹ chung nhé?"
+      },
+      {
+        "speaker": "B",
+        "en": "Good idea. We each put in five hundred thousand for shared things.",
+        "vi": "Ý hay. Mỗi người góp năm trăm nghìn cho đồ dùng chung."
+      },
+      {
+        "speaker": "A",
+        "en": "Like dish soap, internet, and cleaning stuff?",
+        "vi": "Kiểu như nước rửa bát, internet và đồ vệ sinh?"
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. We can keep the receipts in a notebook.",
+        "vi": "Chính xác. Mình giữ hóa đơn trong một cuốn sổ."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Let's pay on the first of each month.",
+        "vi": "Tuyệt. Mình đóng vào ngày đầu mỗi tháng nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Agreed. That keeps everything clear and fair.",
+        "vi": "Đồng ý. Như vậy mọi thứ rõ ràng và công bằng."
+      }
+    ]
+  },
+  {
+    "id": 170,
+    "title": "Mua xe ô tô trả góp",
+    "situation": "Khách hàng hỏi nhân viên bán xe về mua ô tô trả góp.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": {
+      "vi": "Anh Hùng",
+      "en": "Hung"
+    },
+    "speakerBName": {
+      "vi": "Nhân viên bán xe",
+      "en": "Car sales staff"
+    },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'm interested in buying this car on an installment plan.",
+        "vi": "Chào chị, tôi muốn mua chiếc xe này theo hình thức trả góp."
+      },
+      {
+        "speaker": "B",
+        "en": "Great choice! This model is very popular. How much can you pay upfront?",
+        "vi": "Lựa chọn tuyệt vời! Mẫu này rất được ưa chuộng. Anh trả trước được bao nhiêu?"
+      },
+      {
+        "speaker": "A",
+        "en": "I can pay about thirty percent as a down payment.",
+        "vi": "Tôi có thể trả trước khoảng ba mươi phần trăm."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. Then you can finance the rest over a few years.",
+        "vi": "Tuyệt. Phần còn lại anh trả góp trong vài năm."
+      },
+      {
+        "speaker": "A",
+        "en": "What's the interest rate?",
+        "vi": "Lãi suất là bao nhiêu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Around nine percent a year through our bank partner.",
+        "vi": "Khoảng chín phần trăm một năm qua ngân hàng liên kết."
+      },
+      {
+        "speaker": "A",
+        "en": "How long is the loan term?",
+        "vi": "Thời hạn vay là bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "You can choose up to seven years.",
+        "vi": "Anh có thể chọn tối đa bảy năm."
+      },
+      {
+        "speaker": "A",
+        "en": "Could you calculate the monthly payment for me?",
+        "vi": "Chị tính giúp tôi khoản trả hàng tháng được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. With a five-year term, it's about eight million a month.",
+        "vi": "Được. Với kỳ hạn năm năm, khoảng tám triệu một tháng."
+      }
+    ]
+  }
+]
