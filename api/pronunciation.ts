@@ -28,8 +28,11 @@ import {
   logSecurityEvent,
 } from './_lib/security'
 
-// Regex chỉ cho phép chữ, số, dấu cách, gạch nối — ngăn ký tự lạ trong tên từ
-const WORD_SAFE_PATTERN = /^[a-zA-Z0-9\s-]+$/
+// Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),
+// dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.). Ngăn ký tự lạ.
+// \p{L}=letter, \p{M}=combining mark; cờ u để bật Unicode. An toàn: giá trị chỉ dùng làm
+// cache key + text cho TTS (query Supabase parameterized, không nối chuỗi SQL).
+const WORD_SAFE_PATTERN = /^[\p{L}\p{M}0-9\s'’.-]+$/u
 
 export default async function handler(req: Request): Promise<Response> {
   const corsHeaders = getCorsHeaders(req)
@@ -72,7 +75,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Sanitize: chỉ chấp nhận chữ/số/dấu cách/gạch nối, tối đa 100 ký tự
   if (rawWord.length > 100 || !WORD_SAFE_PATTERN.test(rawWord)) {
     logSecurityEvent('INVALID_WORD_PARAM', clientIp, { word: rawWord.slice(0, 30) })
-    return jsonResponse({ error: 'Từ không hợp lệ (chỉ chấp nhận chữ, số, dấu cách, gạch nối)' }, 400, allHeaders)
+    return jsonResponse({ error: 'Từ không hợp lệ (chỉ chấp nhận chữ, số, dấu cách, gạch nối, dấu nháy)' }, 400, allHeaders)
   }
   const word = rawWord
 
