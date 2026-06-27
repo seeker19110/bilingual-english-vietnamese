@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
 import { generateAudioFromGoogle, VOICE_IDS, VOICE_VERSION, type Lang, type VoiceId } from '../api/_lib/googleTts.ts'
 import { CEFR_LEVELS } from '../src/data/cefr.ts'
-import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
+import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
 import { FOUNDATION } from '../src/data/curriculum.ts'
@@ -53,12 +53,16 @@ interface PronTask { type: 'pron'; word: string; voice: VoiceId }
 interface PatternTask { type: 'pattern'; text: string; lang: Lang; voice: VoiceId }
 type AnyTask = PronTask | PatternTask
 
-type TaskResult = { status: 'ok' | 'skip' } | { status: 'error'; message: string }
+type TaskResult = { status: 'ok' | 'skip' | 'remapped' } | { status: 'error'; message: string }
 
 // ── Hash cho pattern cache — phải khớp hoàn toàn với api/tts.ts ─────────────
-// api/tts.ts: hashText(text + lang + voice + VOICE_VERSION) — bắt buộc có VOICE_VERSION
+// Hash đúng (mới): có VOICE_VERSION — dùng cho mọi entry mới
 function hashText(text: string, lang: Lang, voice: VoiceId): string {
   return crypto.createHash('sha256').update(text + lang + voice + VOICE_VERSION).digest('hex').slice(0, 32)
+}
+// Hash cũ (sai): thiếu VOICE_VERSION — dùng để tìm entry đã seed trước đây
+function oldHashText(text: string, lang: Lang, voice: VoiceId): string {
+  return crypto.createHash('sha256').update(text + lang + voice).digest('hex').slice(0, 32)
 }
 
 // ── Load dữ liệu ────────────────────────────────────────────────────────────
@@ -232,12 +236,39 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
 
     // pattern task
     const { text, lang, voice } = task
-    const hash = hashText(text, lang, voice)
+    const hash    = hashText(text, lang, voice)
+    const oldHash = oldHashText(text, lang, voice)
 
     if (!FORCE) {
       const { data: cached } = await supabase
         .from('tts_cache').select('audio_url').eq('hash', hash).maybeSingle()
       if (cached) return { status: 'skip' }
+    }
+
+    // Trước khi gọi Google TTS: thử remap từ cache cũ (hash thiếu VOICE_VERSION).
+    // Nếu có → tải về → giải mã bằng oldHash → re-encrypt bằng hash mới → upload.
+    // Không tốn API quota, chỉ tốn băng thông Storage.
+    if (!FORCE) {
+      const { data: oldCached } = await supabase
+        .from('tts_cache').select('audio_url').eq('hash', oldHash).maybeSingle()
+      if (oldCached?.audio_url) {
+        try {
+          const res = await fetch(oldCached.audio_url)
+          if (res.ok) {
+            const plain     = await decryptAudio(await res.arrayBuffer(), oldHash)
+            const newCipher = await encryptAudio(plain, hash)
+            const fileName  = `${lang}/${voice}/${hash}.mp3`
+            const audioUrl  = await saveAudio('tts-cache', fileName, newCipher, BASE_URL)
+            const { error } = await supabase
+              .from('tts_cache')
+              .upsert({ hash, lang, voice, audio_url: audioUrl }, { onConflict: 'hash' })
+            if (error) throw new Error(`DB lỗi: ${error.message}`)
+            return { status: 'remapped' }
+          }
+        } catch {
+          // Remap thất bại (file hỏng, mạng lỗi...) → tiếp tục generate mới bên dưới
+        }
+      }
     }
 
     const audioBuffer = await generateAudioFromGoogle(text, voice, lang)
@@ -273,7 +304,7 @@ function nextRateState(prevReqs: number, prev429: boolean): { limit: number; pau
 async function runBatch(
   tasks: AnyTask[],
   failed: Array<{ task: AnyTask; message: string }>,
-  counters: { ok: number; skip: number; errors: number },
+  counters: { ok: number; remapped: number; skip: number; errors: number },
   bar: cliProgress.SingleBar,
   processed: { value: number },
   total: number,
@@ -282,8 +313,9 @@ async function runBatch(
   const results = await Promise.all(tasks.map((t) => processTask(t)))
   let newReqs = 0
   results.forEach((result, idx) => {
-    if (result.status === 'ok') { counters.ok++; newReqs++ }
-    else if (result.status === 'skip') counters.skip++
+    if (result.status === 'ok')      { counters.ok++;      newReqs++ }  // gọi Google TTS → tính rate
+    else if (result.status === 'remapped') counters.remapped++          // re-encrypt, không tốn API
+    else if (result.status === 'skip')     counters.skip++
     else {
       counters.errors++; newReqs++
       if ((result as { status: 'error'; message: string }).message.includes('429')) rate.has429 = true
@@ -321,16 +353,16 @@ async function runInterleavedPass(
 
   const bar = new cliProgress.SingleBar(
     {
-      format: 'Tổng |{bar}| {percentage}% | {value}/{total} | ✓{ok} ⏭{skip} ✗{errors}',
+      format: 'Tổng |{bar}| {percentage}% | {value}/{total} | ✓{ok} ↺{remapped} ⏭{skip} ✗{errors}',
       barCompleteChar: '█',
       barIncompleteChar: '░',
       hideCursor: true,
     },
     cliProgress.Presets.shades_classic,
   )
-  bar.start(total, 0, { ok: 0, skip: 0, errors: 0 })
+  bar.start(total, 0, { ok: 0, remapped: 0, skip: 0, errors: 0 })
 
-  const counters  = { ok: 0, skip: 0, errors: 0 }
+  const counters  = { ok: 0, remapped: 0, skip: 0, errors: 0 }
   const processed = { value: 0 }
   const rate: RateState = { limit: RATE_LIMIT_DEFAULT, pauseMs: 0, count: 0, has429: false }
   const pronFailed: Array<{ task: AnyTask; message: string }>    = []
@@ -361,7 +393,7 @@ async function runInterleavedPass(
   }
 
   bar.stop()
-  console.log(`   ✓ OK: ${counters.ok}  ⏭ Skip: ${counters.skip}  ✗ Lỗi pron: ${pronFailed.length} | pattern: ${patternFailed.length}`)
+  console.log(`   ✓ OK: ${counters.ok}  ↺ Remap: ${counters.remapped}  ⏭ Skip: ${counters.skip}  ✗ Lỗi pron: ${pronFailed.length} | pattern: ${patternFailed.length}`)
 
   return { pronFailed, patternFailed }
 }

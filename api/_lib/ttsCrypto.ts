@@ -56,6 +56,13 @@ export async function encryptAudio(plain: ArrayBuffer, hash: string): Promise<Ar
   return crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plain)
 }
 
+// Giải mã ciphertext audio → bytes mp3 gốc (dùng khi remap cache sang hash mới).
+export async function decryptAudio(cipher: ArrayBuffer, hash: string): Promise<ArrayBuffer> {
+  const { keyBytes, iv } = await deriveKeyAndIv(hash)
+  const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, ['decrypt'])
+  return crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv as BufferSource }, key, cipher)
+}
+
 // Khoá + iv dạng base64 để gửi cho client giải mã — CHỈ gọi sau khi validateAuth() (security.ts)
 // đã xác nhận request có JWT hợp lệ, tránh phát khoá cho người chưa đăng nhập.
 export async function getClientKeyMaterial(hash: string): Promise<{ key_b64: string; iv_b64: string }> {
