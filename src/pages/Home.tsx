@@ -52,7 +52,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
     {
       path: '/phrases',
       icon: MessagesSquare,
-      gradient: 'from-teal-500 to-emerald-400',
+      gradient: 'from-teal-500 to-accent-400',
       glow: 'shadow-teal-500/20',
       ring: 'hover:border-teal-500/40',
       tag: { label: T.tagUnlimited, cls: 'bg-teal-500/15 text-teal-300 border border-teal-500/20' },
@@ -62,10 +62,10 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
     {
       path: '/chat',
       icon: MessageCircle,
-      gradient: 'from-emerald-500 to-teal-400',
-      glow: 'shadow-emerald-500/20',
-      ring: 'hover:border-emerald-500/40',
-      tag: { label: T.tagPopular, cls: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' },
+      gradient: 'from-accent-500 to-accent-400',
+      glow: 'shadow-accent-500/20',
+      ring: 'hover:border-accent-500/40',
+      tag: { label: T.tagPopular, cls: 'bg-accent-500/15 text-accent-300 border border-accent-500/20' },
       title: isA ? T.chatTitleA : T.chatTitleB,
       desc:  isA ? T.chatDescA  : T.chatDescB,
     },
@@ -169,15 +169,15 @@ export default function Home() {
             aria-label={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
             className={`flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3 border transition-all active:scale-[0.98] ${
               isA
-                ? 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60'
+                ? 'bg-accent-500/10 border-accent-500/30 hover:border-accent-500/60'
                 : 'bg-sky-500/10 border-sky-500/30 hover:border-sky-500/60'
             }`}
           >
-            <ArrowLeftRight className={`w-4 h-4 ${isA ? 'text-emerald-400' : 'text-sky-400'}`} />
-            <span className={`text-xs font-semibold leading-none text-center ${isA ? 'text-emerald-300' : 'text-sky-300'}`}>
+            <ArrowLeftRight className={`w-4 h-4 ${isA ? 'text-accent-400' : 'text-sky-400'}`} />
+            <span className={`text-xs font-semibold leading-none text-center ${isA ? 'text-accent-300' : 'text-sky-300'}`}>
               {isA ? '🇻🇳 → 🇺🇸' : '🇺🇸 → 🇻🇳'}
             </span>
-            <span className={`text-[9px] leading-none text-center ${isA ? 'text-emerald-400/60' : 'text-sky-400/60'}`}>
+            <span className={`text-[11px] leading-none text-center ${isA ? 'text-accent-400/60' : 'text-sky-400/60'}`}>
               {isA ? 'Ngôn ngữ' : 'Language'}
             </span>
           </button>
@@ -192,7 +192,7 @@ export default function Home() {
             <p className={`text-sm font-bold leading-none ${streak > 0 ? 'text-orange-400' : 'text-zinc-500'}`}>
               {streak}
             </p>
-            <p className={`text-[9px] leading-none ${streak > 0 ? 'text-orange-400/60' : 'text-zinc-600'}`}>
+            <p className={`text-[11px] leading-none ${streak > 0 ? 'text-orange-400/60' : 'text-zinc-600'}`}>
               {T.streakDays}
             </p>
           </div>
@@ -209,7 +209,7 @@ export default function Home() {
             <span className="text-xs font-semibold leading-none text-center text-zinc-200">
               {voice === 'female' ? (isA ? 'Nữ' : 'Female') : (isA ? 'Nam' : 'Male')}
             </span>
-            <span className="text-[9px] leading-none text-center text-zinc-500">
+            <span className="text-[11px] leading-none text-center text-zinc-500">
               {isA ? 'Giọng đọc' : 'Voice'}
             </span>
           </button>
@@ -233,8 +233,8 @@ export default function Home() {
             {/* Chia sẻ tiến độ */}
             <button onClick={() => setShare(true)}
               aria-label={isA ? 'Chia sẻ tiến độ' : 'Share progress'}
-              className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-emerald-500/40 transition group">
-              <Share2 className="w-4 h-4 text-emerald-400" />
+              className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-accent-500/40 transition group">
+              <Share2 className="w-4 h-4 text-accent-400" />
               <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
                 {isA ? 'Chia sẻ' : 'Share'}
               </span>
@@ -282,7 +282,7 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="font-semibold text-white text-[15px]">{m.title}</p>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}>
+                    <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}>
                       {m.tag.label}
                     </span>
                   </div>
@@ -300,9 +300,9 @@ export default function Home() {
           {/* Bảng tiến độ: streak, từ đã thuộc, % CEFR, lượt còn lại */}
           <button onClick={() => nav('/progress')}
             aria-label={isA ? 'Xem bảng tiến độ' : 'View progress dashboard'}
-            className="bg-zinc-900/60 border border-zinc-800/60 hover:border-emerald-500/40 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in">
-            <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-emerald-500/15 flex items-center justify-center shrink-0 transition">
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
+            className="bg-zinc-900/60 border border-zinc-800/60 hover:border-accent-500/40 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in">
+            <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-accent-500/15 flex items-center justify-center shrink-0 transition">
+              <TrendingUp className="w-4 h-4 text-accent-400" />
             </div>
             <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
               {isA ? 'Tiến độ' : 'Progress'}

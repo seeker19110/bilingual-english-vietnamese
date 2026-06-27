@@ -65,14 +65,14 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
   if (done) {
     return (
       <div className="glass rounded-xl p-8 text-center animate-fade-in">
-        <Check className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
+        <Check className="w-10 h-10 text-accent-400 mx-auto mb-3" />
         <p className="text-white font-semibold mb-1">Hoàn thành lượt luyện!</p>
         <p className="text-sm text-zinc-400 mb-5">
-          Bạn nhớ <strong className="text-emerald-300">{known}</strong>/{deck.length} từ
+          Bạn nhớ <strong className="text-accent-300">{known}</strong>/{deck.length} từ
         </p>
         <button
           onClick={loadDeck}
-          className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition px-4 py-2 rounded-xl text-sm font-medium"
+          className="inline-flex items-center gap-2 bg-accent-500/20 text-accent-300 hover:bg-accent-500/30 transition px-4 py-2 rounded-xl text-sm font-medium"
         >
           <RotateCcw className="w-4 h-4" /> Luyện lượt mới
         </button>
@@ -87,11 +87,11 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
       {/* Thanh tiến độ trong lượt */}
       <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
         <span>Thẻ {idx + 1}/{deck.length}</span>
-        <span className="text-emerald-400">{known} đã nhớ</span>
+        <span className="text-accent-400">{known} đã nhớ</span>
       </div>
       <div className="h-1 bg-zinc-800 rounded-full mb-4">
         <div
-          className="h-full bg-emerald-500 rounded-full transition-all"
+          className="h-full bg-accent-500 rounded-full transition-all"
           style={{ width: `${(idx / deck.length) * 100}%` }}
         />
       </div>
@@ -104,7 +104,7 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
         {!flipped ? (
           <>
             <span className="font-bold text-white text-2xl mb-2">{card.word}</span>
-            {card.ipa_en && <span className="text-sm text-emerald-400/70 font-mono">{card.ipa_en}</span>}
+            {card.ipa_en && <span className="text-sm text-accent-400/70 font-mono">{card.ipa_en}</span>}
             <span className="flex items-center gap-1 text-xs text-zinc-400 mt-4">
               <Eye className="w-3.5 h-3.5" /> Bấm để xem nghĩa
             </span>
@@ -138,7 +138,7 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
         </button>
         <button
           onClick={() => rate(true)}
-          className="flex items-center justify-center gap-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition py-3 rounded-xl text-sm font-medium"
+          className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 transition py-3 rounded-xl text-sm font-medium"
         >
           <Check className="w-4 h-4" /> Đã nhớ
         </button>

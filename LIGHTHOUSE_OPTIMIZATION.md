@@ -185,6 +185,27 @@ npm run build
 
 **Status:** ✅ No major forms in app (mostly UI controls)
 
+### 2.4 Zoom on mobile — intentionally disabled (trade-off)
+
+**Decision (product):** zoom is **disabled** on mobile so the app keeps a native, fixed
+layout (`<meta name="viewport">` keeps `maximum-scale=1.0, user-scalable=no`).
+
+**Trade-off:** Lighthouse a11y will flag *"[user-scalable=no] is used in the <meta name=viewport>"*
+and dock the score for that single audit. This is accepted on purpose. Mitigations so legibility
+is not hurt:
+- Body text floored at ≥11px and inputs at 16px (`src/index.css`) so nothing is too small to read.
+- Double-tap zoom blocked via `touch-action: pan-x pan-y`; input focus never triggers iOS zoom (16px font).
+
+> If the priority later flips to a perfect a11y score, drop `maximum-scale=1.0, user-scalable=no`
+> from the viewport meta to re-enable pinch-zoom.
+
+### 2.5 Themed focus & dynamic theme-color
+
+- Focus-visible outline uses the active theme accent (`outline: 2px solid rgb(var(--a-500))`)
+  so keyboard focus stays clearly visible across all 4 themes.
+- `<meta name="theme-color">` is updated at runtime by `applyTheme()` (`src/lib/theme.ts`)
+  to match the selected theme (Xanh đêm / Blue sky / Pink / Rực rỡ).
+
 ---
 
 ## 3. SEO Optimization (91 → 100)

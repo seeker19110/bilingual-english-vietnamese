@@ -15,23 +15,23 @@ import { LIMITS } from '../types'
 // Màu ô heatmap theo số hoạt động trong ngày (đậm dần).
 function heatColor(count: number): string {
   if (count <= 0) return 'bg-zinc-800/50'
-  if (count <= 2) return 'bg-emerald-900'
-  if (count <= 5) return 'bg-emerald-700'
-  if (count <= 10) return 'bg-emerald-500'
-  return 'bg-emerald-400'
+  if (count <= 2) return 'bg-accent-900'
+  if (count <= 5) return 'bg-accent-700'
+  if (count <= 10) return 'bg-accent-500'
+  return 'bg-accent-400'
 }
 
 // Màu theo band IELTS (đồng bộ với trang Luyện viết).
 function bandBar(v: number): string {
-  return v >= 7 ? 'bg-emerald-500' : v >= 5 ? 'bg-amber-500' : 'bg-red-500'
+  return v >= 7 ? 'bg-accent-500' : v >= 5 ? 'bg-amber-500' : 'bg-red-500'
 }
 function bandText(v: number): string {
-  return v >= 7 ? 'text-emerald-400' : v >= 5 ? 'text-amber-400' : 'text-red-400'
+  return v >= 7 ? 'text-accent-400' : v >= 5 ? 'text-amber-400' : 'text-red-400'
 }
 
 // Bảng màu nhấn cho từng cấp CEFR (Tailwind cần class tĩnh — không ghép động được).
 const ACCENT: Record<LevelProgress['accent'], { bar: string; text: string; soft: string }> = {
-  emerald: { bar: 'bg-emerald-500', text: 'text-emerald-300', soft: 'bg-emerald-500/10' },
+  emerald: { bar: 'bg-accent-500', text: 'text-accent-300', soft: 'bg-accent-500/10' },
   sky:     { bar: 'bg-sky-500',     text: 'text-sky-300',     soft: 'bg-sky-500/10' },
   violet:  { bar: 'bg-violet-500',  text: 'text-violet-300',  soft: 'bg-violet-500/10' },
   amber:   { bar: 'bg-amber-500',   text: 'text-amber-300',   soft: 'bg-amber-500/10' },
@@ -156,7 +156,7 @@ export default function Dashboard() {
                     title={`${d.count} ${vi ? 'hoạt động' : 'activities'}`}
                   />
                 </div>
-                <span className="text-[10px] text-zinc-500">{dow[d.dow]}</span>
+                <span className="text-[11px] text-zinc-500">{dow[d.dow]}</span>
               </div>
             ))}
           </div>
@@ -166,7 +166,7 @@ export default function Dashboard() {
         <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 animate-fade-in">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-emerald-400" /> {vi ? 'Lịch hoạt động' : 'Activity calendar'}
+              <CalendarDays className="w-4 h-4 text-accent-400" /> {vi ? 'Lịch hoạt động' : 'Activity calendar'}
             </h2>
             <span className="text-xs text-zinc-500">
               {stats.calendar.activeDays} {vi ? 'ngày / 5 tuần' : 'days / 5 weeks'}
@@ -176,7 +176,7 @@ export default function Dashboard() {
           {/* Nhãn thứ */}
           <div className="grid grid-cols-7 gap-1.5 mb-1.5">
             {WDOW.map((w, i) => (
-              <span key={i} className="text-[9px] text-zinc-600 text-center">{w}</span>
+              <span key={i} className="text-[11px] text-zinc-600 text-center">{w}</span>
             ))}
           </div>
 
@@ -186,20 +186,20 @@ export default function Dashboard() {
               <div
                 key={d.date}
                 style={idx === 0 ? { gridColumnStart: stats.calendar.firstColumn + 1 } : undefined}
-                className={`aspect-square rounded-[4px] ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1].date ? 'ring-1 ring-emerald-400/70' : ''}`}
+                className={`aspect-square rounded-[4px] ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1].date ? 'ring-1 ring-accent-400/70' : ''}`}
                 title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
               />
             ))}
           </div>
 
           {/* Chú thích đậm nhạt */}
-          <div className="flex items-center justify-end gap-1.5 mt-3 text-[10px] text-zinc-500">
+          <div className="flex items-center justify-end gap-1.5 mt-3 text-[11px] text-zinc-500">
             <span>{vi ? 'Ít' : 'Less'}</span>
             <span className="w-3 h-3 rounded-[3px] bg-zinc-800/50" />
-            <span className="w-3 h-3 rounded-[3px] bg-emerald-900" />
-            <span className="w-3 h-3 rounded-[3px] bg-emerald-700" />
-            <span className="w-3 h-3 rounded-[3px] bg-emerald-500" />
-            <span className="w-3 h-3 rounded-[3px] bg-emerald-400" />
+            <span className="w-3 h-3 rounded-[3px] bg-accent-900" />
+            <span className="w-3 h-3 rounded-[3px] bg-accent-700" />
+            <span className="w-3 h-3 rounded-[3px] bg-accent-500" />
+            <span className="w-3 h-3 rounded-[3px] bg-accent-400" />
             <span>{vi ? 'Nhiều' : 'More'}</span>
           </div>
         </section>
@@ -222,7 +222,7 @@ export default function Dashboard() {
           {/* Lượt dùng còn lại hôm nay */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { icon: <MessageCircle className="w-4 h-4 text-emerald-400" />, label: vi ? 'Chat' : 'Chat', used: stats.usage.chatCount, max: stats.limit.chat },
+              { icon: <MessageCircle className="w-4 h-4 text-accent-400" />, label: vi ? 'Chat' : 'Chat', used: stats.usage.chatCount, max: stats.limit.chat },
               { icon: <Mic className="w-4 h-4 text-sky-400" />, label: vi ? 'Nói' : 'Speak', used: stats.usage.speakingCount, max: stats.limit.speaking },
               { icon: <PenLine className="w-4 h-4 text-violet-400" />, label: vi ? 'Viết' : 'Write', used: stats.usage.writingCount, max: stats.limit.writing },
             ].map((m) => (
@@ -257,7 +257,7 @@ export default function Dashboard() {
         <section className="animate-fade-in">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
-              <GraduationCap className="w-4 h-4 text-emerald-400" /> {vi ? 'Lộ trình CEFR' : 'CEFR Roadmap'}
+              <GraduationCap className="w-4 h-4 text-accent-400" /> {vi ? 'Lộ trình CEFR' : 'CEFR Roadmap'}
             </h2>
             {cefr.length > 0 && <span className="text-xs text-zinc-500">{vi ? 'Tổng' : 'Overall'} {cefrOverall}%</span>}
           </div>
@@ -319,7 +319,7 @@ export default function Dashboard() {
                 <div className="flex items-end justify-between gap-1.5 h-24">
                   {wp.history.slice(-12).map((p, i) => (
                     <div key={`${p.date}-${i}`} className="flex-1 flex flex-col items-center gap-1" title={`${p.date}: ${p.overall}`}>
-                      <span className="text-[9px] text-zinc-500">{p.overall}</span>
+                      <span className="text-[11px] text-zinc-500">{p.overall}</span>
                       <div className="w-full flex-1 flex items-end">
                         <div className={`w-full rounded-md ${bandBar(p.overall)} transition-all`} style={{ height: `${(p.overall / 9) * 100}%` }} />
                       </div>
@@ -353,7 +353,7 @@ export default function Dashboard() {
         <section className="animate-fade-in">
           <h2 className="text-sm font-semibold text-zinc-300 mb-3">{vi ? 'Tổng kết' : 'All-time totals'}</h2>
           <div className="grid grid-cols-3 gap-3">
-            <StatCard icon={<MessageCircle className="w-5 h-5 text-emerald-300" />} color="bg-emerald-500/10"
+            <StatCard icon={<MessageCircle className="w-5 h-5 text-accent-300" />} color="bg-accent-500/10"
               value={stats.chatN} label={vi ? 'phiên chat' : 'chat sessions'} />
             <StatCard icon={<Mic className="w-5 h-5 text-sky-300" />} color="bg-sky-500/10"
               value={stats.speakN} label={vi ? 'lượt luyện nói' : 'speaking turns'} />

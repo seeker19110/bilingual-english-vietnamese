@@ -42,14 +42,14 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
           <span className="text-sm font-semibold text-white">Mốc từ vựng</span>
         </div>
         <span className="text-xs text-zinc-400">
-          <strong className="text-emerald-300">{learned.toLocaleString('vi-VN')}</strong> từ đã thuộc
+          <strong className="text-accent-300">{learned.toLocaleString('vi-VN')}</strong> từ đã thuộc
         </span>
       </div>
 
       {/* Thanh tiến độ + các vạch mốc */}
       <div className="relative h-2 bg-zinc-800 rounded-full mb-1">
         <div
-          className="absolute left-0 top-0 h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500"
+          className="absolute left-0 top-0 h-full bg-gradient-to-r from-accent-500 to-accent-400 rounded-full transition-all duration-500"
           style={{ width: `${pct}%` }}
         />
         {/* Vạch đánh dấu từng mốc */}
@@ -63,10 +63,10 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
       </div>
 
       {/* Nhãn các mốc dưới thanh */}
-      <div className="flex justify-between text-[10px] text-zinc-400 mb-3">
+      <div className="flex justify-between text-[11px] text-zinc-400 mb-3">
         <span>0</span>
         {MILESTONES.map(m => (
-          <span key={m.count} className={learned >= m.count ? 'text-emerald-400 font-medium' : ''}>
+          <span key={m.count} className={learned >= m.count ? 'text-accent-400 font-medium' : ''}>
             {m.count >= 1000 ? `${m.count / 1000}k` : m.count}
           </span>
         ))}
@@ -76,7 +76,7 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
         {current ? (
           <span className="text-zinc-300">
-            Trình độ: <strong className="text-emerald-300">{current.label}</strong>
+            Trình độ: <strong className="text-accent-300">{current.label}</strong>
             <span className="text-zinc-400"> ({current.cefr})</span>
           </span>
         ) : (

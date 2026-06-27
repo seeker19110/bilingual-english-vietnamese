@@ -54,7 +54,7 @@ export default function WordCard({ card, isA, uid, onUpdate }: {
           {!flipped ? (
             <>
               <span className="font-bold text-white text-3xl mb-2">{card.word}</span>
-              {card.ipa_en && <span className="text-sm text-emerald-400/70 font-mono">{card.ipa_en}</span>}
+              {card.ipa_en && <span className="text-sm text-accent-400/70 font-mono">{card.ipa_en}</span>}
               <span className="flex items-center gap-1 text-xs text-zinc-400 mt-4">
                 <Eye className="w-3.5 h-3.5" /> {isA ? 'Bấm để xem nghĩa' : 'Tap to flip'}
               </span>
@@ -68,7 +68,7 @@ export default function WordCard({ card, isA, uid, onUpdate }: {
                 <div className="mt-2 space-y-1 text-left w-full border-t border-zinc-700/50 pt-2">
                   {extraExamples[card.word.toLowerCase()].map((ex, i) => (
                     <div key={i}>
-                      <p className="text-xs text-emerald-400/80 italic">{ex.en}</p>
+                      <p className="text-xs text-accent-400/80 italic">{ex.en}</p>
                       <p className="text-xs text-zinc-400">{ex.vi}</p>
                     </div>
                   ))}

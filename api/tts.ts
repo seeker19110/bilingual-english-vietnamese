@@ -142,6 +142,18 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     audioData = await generateAudioFromGoogle(text, voice, lang)
   } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    // 429 = hết quota Google TTS. Đây là tình huống VẬN HÀNH (cần nâng quota/bật billing),
+    // không phải bug code → log GỌN 1 dòng (tránh spam stack trace), trả 503 + Retry-After
+    // để client biết tạm thời và tự fallback sang Web Speech. Lỗi khác mới log full + 500.
+    const isQuota = /\(429\)|RESOURCE_EXHAUSTED|quota/i.test(msg)
+    if (isQuota) {
+      console.warn('[tts] Google TTS hết quota (429) — client sẽ fallback Web Speech')
+      return jsonResponse({ error: 'Dịch vụ giọng đọc tạm quá tải — thử lại sau', fallback: true }, 503, {
+        ...allHeaders,
+        'Retry-After': '60',
+      })
+    }
     console.error('[tts] Google TTS generation failed:', err)
     return jsonResponse({ error: 'Không thể tạo audio — thử lại sau' }, 500, allHeaders)
   }

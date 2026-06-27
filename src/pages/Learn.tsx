@@ -106,7 +106,7 @@ export default function Learn() {
     },
     {
       key: 'today', icon: Target, labelA: 'Hôm nay', labelB: 'Today',
-      active: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40',
+      active: 'bg-accent-500/20 text-accent-300 border border-accent-500/40',
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
     },
     {
@@ -145,7 +145,7 @@ export default function Learn() {
               <Icon className="w-4 h-4" />
               <span>{isA ? labelA : labelB}</span>
               {badge != null && badge > 0 && (
-                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[11px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
                   {badge > 99 ? '99+' : badge}
                 </span>
               )}
@@ -239,12 +239,12 @@ function BatchDoneView({ batch, uid, isA, dailyStart, onStartQuiz }: {
   return (
     <div className="animate-fade-in space-y-4">
       <div className="glass rounded-xl p-8 text-center">
-        <Check className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
+        <Check className="w-10 h-10 text-accent-400 mx-auto mb-3" />
         <p className="text-white font-semibold mb-1">{isA ? 'Hoàn thành bài hôm nay!' : "Today's lesson done!"}</p>
         <p className="text-sm text-zinc-400 mb-1">
           {isA
-            ? <>{`Đã học `}<strong className="text-emerald-300">{learnedToday}</strong>{` từ trong lượt này · Tổng hôm nay: `}<strong className="text-emerald-300">{totalToday}</strong>{`/${DAILY_MAX}`}</>
-            : <>Learned <strong className="text-emerald-300">{learnedToday}</strong> words · Today total: <strong className="text-emerald-300">{totalToday}</strong>/{DAILY_MAX}</>}
+            ? <>{`Đã học `}<strong className="text-accent-300">{learnedToday}</strong>{` từ trong lượt này · Tổng hôm nay: `}<strong className="text-accent-300">{totalToday}</strong>{`/${DAILY_MAX}`}</>
+            : <>Learned <strong className="text-accent-300">{learnedToday}</strong> words · Today total: <strong className="text-accent-300">{totalToday}</strong>/{DAILY_MAX}</>}
         </p>
         {canLearnMore && (
           <p className="text-xs text-zinc-500 mt-2">
@@ -294,7 +294,7 @@ function BatchDoneView({ batch, uid, isA, dailyStart, onStartQuiz }: {
               return (
                 <div key={i} className={`flex ${isB ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border ${isB ? 'bg-teal-500/10 border-teal-500/30' : 'bg-zinc-900/80 border-zinc-800/80'}`}>
-                    <span className={`text-[10px] font-semibold tracking-wide ${isB ? 'text-teal-300' : 'text-zinc-400'}`}>{name}</span>
+                    <span className={`text-[11px] font-semibold tracking-wide ${isB ? 'text-teal-300' : 'text-zinc-400'}`}>{name}</span>
                     <KaraokeText text={ln.en} lang="en-US"
                       textClass={`font-medium text-[15px] leading-snug ${isB ? 'text-teal-300' : 'text-zinc-100'}`}
                       buttonClass="w-full" />
@@ -458,7 +458,7 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
               {isA ? 'Bạn đã mở được 20 từ mới. Tiếp tục thôi!' : 'You unlocked 20 more words. Keep going!'}
             </p>
             <button onClick={unlockNextBatch}
-              className="mt-2 w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold transition">
+              className="mt-2 w-full py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold transition">
               {isA ? 'Học 20 từ tiếp theo →' : 'Learn next 20 words →'}
             </button>
           </div>
@@ -508,7 +508,7 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
           {q.options.map(opt => {
             let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
             if (quizSel !== null) {
-              if (opt === q.correct)    cls = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-300'
+              if (opt === q.correct)    cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300'
               else if (opt === quizSel) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
               else                      cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
             }
@@ -555,7 +555,7 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
         </span>
       </div>
       <div className="h-1 bg-zinc-800 rounded-full mb-4">
-        <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${(idx / batch.length) * 100}%` }} />
+        <div className="h-full bg-accent-500 rounded-full transition-all" style={{ width: `${(idx / batch.length) * 100}%` }} />
       </div>
 
       <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onProgress} />
@@ -566,7 +566,7 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
           <X className="w-4 h-4" /> {isA ? 'Để sau' : 'Later'}
         </button>
         <button onClick={learn}
-          className="flex items-center justify-center gap-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition py-3 rounded-xl text-sm font-medium">
+          className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 transition py-3 rounded-xl text-sm font-medium">
           <Check className="w-4 h-4" /> {isA ? 'Đã thuộc' : 'Got it'}
         </button>
       </div>
@@ -646,7 +646,7 @@ function SRSReview({ uid, isA, onUpdate }: { uid: string; isA: boolean; onUpdate
           { r: 'again' as Rating, la: 'Quên',  lb: 'Again', cls: 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30'       },
           { r: 'hard'  as Rating, la: 'Khó',   lb: 'Hard',  cls: 'bg-orange-500/20 text-orange-300 hover:bg-orange-500/30' },
           { r: 'good'  as Rating, la: 'Nhớ',   lb: 'Good',  cls: 'bg-sky-500/20 text-sky-300 hover:bg-sky-500/30'         },
-          { r: 'easy'  as Rating, la: 'Dễ',    lb: 'Easy',  cls: 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30' },
+          { r: 'easy'  as Rating, la: 'Dễ',    lb: 'Easy',  cls: 'bg-accent-500/20 text-accent-300 hover:bg-accent-500/30' },
         ]).map(({ r, la, lb, cls }) => (
           <button key={r} onClick={() => rate(r)}
             className={`py-2.5 rounded-xl text-sm font-medium transition ${cls}`}>
@@ -762,14 +762,14 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
           <p className="text-2xl font-bold text-white">{score}/{QUIZ_SIZE}</p>
           <p className="text-zinc-400">{grade.label}</p>
           <div className="h-2 bg-zinc-800 rounded-full overflow-hidden mt-3">
-            <div className={`h-full rounded-full ${pct >= 70 ? 'bg-emerald-500' : pct >= 50 ? 'bg-amber-500' : 'bg-rose-500'}`}
+            <div className={`h-full rounded-full ${pct >= 70 ? 'bg-accent-500' : pct >= 50 ? 'bg-amber-500' : 'bg-rose-500'}`}
               style={{ width: `${pct}%` }} />
           </div>
         </div>
         <div className="space-y-1.5">
           {questions.map((qq, i) => (
             <div key={i}
-              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm ${answers[i] ? 'bg-emerald-500/10 text-emerald-300' : 'bg-rose-500/10 text-rose-300'}`}>
+              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm ${answers[i] ? 'bg-accent-500/10 text-accent-300' : 'bg-rose-500/10 text-rose-300'}`}>
               <span>{answers[i] ? '✓' : '✗'}</span>
               <span className="font-medium">{qq.word}</span>
               <span className="text-zinc-400 flex-1 truncate">= {qq.correct}</span>
@@ -782,7 +782,7 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
             <RotateCcw className="w-4 h-4" /> {isA ? 'Làm lại' : 'Retry'}
           </button>
           <button onClick={() => nav('/')}
-            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold transition">
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold transition">
             <Home className="w-4 h-4" /> {isA ? 'Trang chủ' : 'Home'}
           </button>
         </div>
@@ -808,7 +808,7 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
         {q.options.map(opt => {
           let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
           if (selected !== null) {
-            if (opt === q.correct)     cls = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-300'
+            if (opt === q.correct)     cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300'
             else if (opt === selected) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
             else                       cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
           }

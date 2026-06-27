@@ -55,8 +55,8 @@ function ChatCard({ s }: { s: ChatSession }) {
     <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl overflow-hidden">
       <button onClick={() => setOpen(o => !o)}
         className="w-full px-4 py-3.5 flex items-center gap-3 text-left hover:bg-zinc-800/40 transition">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shrink-0">
-          <MessageCircle className="w-4.5 h-4.5 text-white" />
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center shrink-0">
+          <MessageCircle className="w-5 h-5 text-white" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-medium text-white text-sm">{label}</p>
@@ -73,7 +73,7 @@ function ChatCard({ s }: { s: ChatSession }) {
             <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
                 m.role === 'user'
-                  ? 'bg-emerald-600/20 border border-emerald-500/20 text-emerald-100'
+                  ? 'bg-accent-600/20 border border-accent-500/20 text-accent-100'
                   : 'bg-zinc-800/80 text-zinc-200'
               }`}>
                 {/* Nếu là assistant có speechEn thì hiển thị phần hội thoại */}
@@ -98,7 +98,7 @@ function WritingCard({ s }: { s: WritingSubmission }) {
   const fb = s.feedback ? parseJson<FeedbackData>(s.feedback) : null
   const overall = fb?.scores?.overall
 
-  const scoreColor = overall == null ? '' : overall >= 7 ? 'text-emerald-400' : overall >= 5 ? 'text-amber-400' : 'text-red-400'
+  const scoreColor = overall == null ? '' : overall >= 7 ? 'text-accent-400' : overall >= 5 ? 'text-amber-400' : 'text-red-400'
 
   return (
     <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl overflow-hidden">
@@ -138,7 +138,7 @@ function WritingCard({ s }: { s: WritingSubmission }) {
                 ].map(({ label, val }) => (
                   <div key={label} className="bg-zinc-800/60 rounded-xl px-3 py-2 flex justify-between items-center">
                     <span className="text-xs text-zinc-400">{label}</span>
-                    <span className={`text-sm font-bold ${val >= 7 ? 'text-emerald-400' : val >= 5 ? 'text-amber-400' : 'text-red-400'}`}>{val}</span>
+                    <span className={`text-sm font-bold ${val >= 7 ? 'text-accent-400' : val >= 5 ? 'text-amber-400' : 'text-red-400'}`}>{val}</span>
                   </div>
                 ))}
               </div>
@@ -190,7 +190,7 @@ function SpeakingCard({ s }: { s: SpeakingSession }) {
                 {m.feedbackVi && (
                   <div className="bg-amber-500/8 border border-amber-500/20 rounded-lg px-2.5 py-1.5 text-xs text-amber-200 max-w-full">
                     ✅ {m.feedbackVi}
-                    {m.correctedEn && <p className="text-emerald-400 mt-1">→ {m.correctedEn}</p>}
+                    {m.correctedEn && <p className="text-accent-400 mt-1">→ {m.correctedEn}</p>}
                   </div>
                 )}
               </div>

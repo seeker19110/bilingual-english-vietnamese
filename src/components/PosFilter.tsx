@@ -24,7 +24,7 @@ export default function PosFilter({ value, onChange }: Props) {
           onClick={() => onChange(f.value)}
           className={`shrink-0 text-xs px-3 py-1.5 rounded-full transition border ${
             value === f.value
-              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+              ? 'bg-accent-500/20 text-accent-300 border-accent-500/40'
               : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-zinc-200'
           }`}
         >

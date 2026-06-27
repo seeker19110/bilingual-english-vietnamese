@@ -10,7 +10,7 @@ import type { SubjectMeta, Subject } from '../data/patterns/loader'
 const PAGE_SIZE = 7
 
 const COLOR_MAP: Record<string, { bg: string; text: string; border: string; badge: string }> = {
-  emerald: { bg:'bg-emerald-500/10', text:'text-emerald-400', border:'border-emerald-500/25', badge:'bg-emerald-500/20 text-emerald-300' },
+  emerald: { bg:'bg-accent-500/10', text:'text-accent-400', border:'border-accent-500/25', badge:'bg-accent-500/20 text-accent-300' },
   sky:     { bg:'bg-sky-500/10',     text:'text-sky-400',     border:'border-sky-500/25',     badge:'bg-sky-500/20 text-sky-300' },
   violet:  { bg:'bg-violet-500/10',  text:'text-violet-400',  border:'border-violet-500/25',  badge:'bg-violet-500/20 text-violet-300' },
   amber:   { bg:'bg-amber-500/10',   text:'text-amber-400',   border:'border-amber-500/25',   badge:'bg-amber-500/20 text-amber-300' },
@@ -185,7 +185,7 @@ export default function CommonPhrases() {
                     <KaraokeText
                       text={sent.en} lang="en-US"
                       textClass={`font-medium text-[15px] leading-snug ${c.text}`}
-                      buttonClass="w-full px-3 py-2.5 hover:bg-emerald-500/5 active:bg-emerald-500/10"
+                      buttonClass="w-full px-3 py-2.5 hover:bg-accent-500/5 active:bg-accent-500/10"
                     />
                     <KaraokeText
                       text={sent.vi} lang="vi-VN"
@@ -225,7 +225,7 @@ export default function CommonPhrases() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={T.phrasesSearchPlaceholder}
-              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition"
+              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-accent-500/60 focus:bg-zinc-900 transition"
             />
             {search && (
               <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition p-0.5">
@@ -252,7 +252,7 @@ export default function CommonPhrases() {
                 onClick={() => setActiveStruct(activeStruct === type ? null : type)}
                 className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
                   activeStruct === type
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                    ? 'bg-accent-500/20 text-accent-300 border-accent-500/30'
                     : 'bg-zinc-900/60 text-zinc-400 border-zinc-800 hover:text-zinc-300'
                 }`}
               >
@@ -275,7 +275,7 @@ export default function CommonPhrases() {
                   <div className={`text-xs px-2 py-0.5 rounded-full inline-block mb-2 font-medium ${c.badge}`}>
                     {subj.category}
                   </div>
-                  <p className={`font-bold text-[17px] ${c.text} leading-tight`}>{subj.starter}</p>
+                  <p className={`font-bold text-lg ${c.text} leading-tight`}>{subj.starter}</p>
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-[11px] text-zinc-400">{subj.count} {T.phrasesSentences}</span>
                     <ChevronRight className="w-3.5 h-3.5 text-zinc-700 group-hover:text-zinc-400 transition" />
@@ -311,7 +311,7 @@ export default function CommonPhrases() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={T.phrasesSearchPlaceholder}
-            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-[16px] text-white placeholder:text-zinc-400 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition"
+            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-base text-white placeholder:text-zinc-400 outline-none focus:border-accent-500/60 focus:bg-zinc-900 transition"
           />
           {search && (
             <button onClick={() => setSearch('')} aria-label="Xóa tìm kiếm" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition p-0.5">

@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Khóa zoom trên mobile: maximum-scale=1 + user-scalable=no (giao diện app, tránh người dùng phóng to làm vỡ layout) -->
+    <!-- KHÓA zoom trên mobile (yêu cầu sản phẩm: giao diện app, tránh phóng to làm vỡ layout).
+         maximum-scale=1 + user-scalable=no. Đánh đổi: Lighthouse a11y sẽ trừ mục "allow users to zoom".
+         Double-tap zoom chặn thêm bằng touch-action:pan-x pan-y; zoom khi focus input chặn bằng font ≥16px (xem index.css). -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#09090b" />
     <link rel="manifest" href="/manifest.webmanifest" />

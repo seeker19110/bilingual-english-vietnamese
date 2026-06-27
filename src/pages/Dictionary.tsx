@@ -169,7 +169,7 @@ export default function Dictionary() {
             <button key={key} onClick={() => setTab(key)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition ${
                 tab === key
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                  ? 'bg-accent-500/20 text-accent-300 border border-accent-500/40'
                   : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200'
               }`}>
               <Icon className="w-4 h-4" /> {label}
@@ -192,7 +192,7 @@ export default function Dictionary() {
                 value={query}
                 onChange={e => { setQuery(e.target.value); setPosFilter(null) }}
                 placeholder={isA ? 'Gõ tiếng Anh hoặc tiếng Việt để tra…' : 'Search in English or Vietnamese…'}
-                className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition"
+                className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-accent-500/60 focus:bg-zinc-900 transition"
               />
               {query && (
                 <button onClick={() => { setQuery(''); setPosFilter(null) }}
@@ -212,7 +212,7 @@ export default function Dictionary() {
                   aria-pressed={!posFilter}
                   className={`text-xs px-2.5 py-1 rounded-full border transition ${
                     !posFilter
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                      ? 'bg-accent-500/20 text-accent-300 border-accent-500/40'
                       : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                   }`}
                 >
@@ -286,12 +286,12 @@ export default function Dictionary() {
                             <span className="font-bold text-white text-base">{e.word}</span>
                             <button type="button" onClick={() => openPos(e.pos)}
                               title={`${POS_LABEL[e.pos] || e.pos} — ${isA ? 'nhấn để xem giải thích' : 'tap to learn more'}`}
-                              className={`text-[10px] px-2 py-0.5 rounded-full font-medium transition hover:brightness-125 ${POS_COLOR[e.pos] ?? 'bg-zinc-700 text-zinc-300'}`}>
+                              className={`text-[11px] px-2 py-0.5 rounded-full font-medium transition hover:brightness-125 ${POS_COLOR[e.pos] ?? 'bg-zinc-700 text-zinc-300'}`}>
                               {POS_LABEL[e.pos] || e.pos}
                             </button>
                             <PronounceButton word={e.word} />
                             {isLearned && (
-                              <span className="flex items-center gap-0.5 text-[10px] text-emerald-400 ml-auto">
+                              <span className="flex items-center gap-0.5 text-[11px] text-accent-400 ml-auto">
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                                 {isA ? 'Đã học' : 'Learned'}
                               </span>
@@ -299,7 +299,7 @@ export default function Dictionary() {
                           </div>
 
                           {/* Phiên âm + nghĩa */}
-                          {e.ipa_en && <p className="text-xs text-emerald-400/70 font-mono mb-1">{e.ipa_en}</p>}
+                          {e.ipa_en && <p className="text-xs text-accent-400/70 font-mono mb-1">{e.ipa_en}</p>}
                           <p className="text-sm text-zinc-200 font-medium mb-1.5">{e.vi}</p>
                           {e.ipa_vi && <p className="text-xs text-zinc-400 font-mono mb-2">{e.ipa_vi}</p>}
 
@@ -308,17 +308,17 @@ export default function Dictionary() {
                           {/* 3 ví dụ đánh số — Ví dụ 1 từ ex_en, Ví dụ 2&3 từ EXTRA_EXAMPLES */}
                           {e.ex_en && (
                             <div className="mt-2 space-y-1.5">
-                              <p className="text-[10px] text-zinc-400 uppercase tracking-wide">
+                              <p className="text-[11px] text-zinc-400 uppercase tracking-wide">
                                 {isA ? 'Ví dụ' : 'Examples'}
                               </p>
 
                               {/* Ví dụ 1 */}
                               <div className="relative">
-                                <span className="absolute left-3 top-2 text-[10px] text-zinc-400 font-mono select-none">1.</span>
+                                <span className="absolute left-3 top-2 text-[11px] text-zinc-400 font-mono select-none">1.</span>
                                 <div className="rounded-lg border border-zinc-800 divide-y divide-zinc-800/60 overflow-hidden">
                                   <KaraokeText text={e.ex_en} lang="en-US"
-                                    textClass="text-xs text-emerald-300/80 italic leading-relaxed"
-                                    buttonClass="w-full pl-7 pr-3 py-2 hover:bg-emerald-500/5 active:bg-emerald-500/10 text-left transition" />
+                                    textClass="text-xs text-accent-300/80 italic leading-relaxed"
+                                    buttonClass="w-full pl-7 pr-3 py-2 hover:bg-accent-500/5 active:bg-accent-500/10 text-left transition" />
                                   {e.ex_vi && (
                                     <KaraokeText text={e.ex_vi} lang="vi-VN"
                                       textClass="text-xs text-zinc-400 leading-relaxed"
@@ -330,11 +330,11 @@ export default function Dictionary() {
                               {/* Ví dụ 2 & 3 */}
                               {extras?.map((ex, idx) => (
                                 <div key={idx} className="relative">
-                                  <span className="absolute left-3 top-1.5 text-[10px] text-zinc-400 font-mono select-none">{idx + 2}.</span>
+                                  <span className="absolute left-3 top-1.5 text-[11px] text-zinc-400 font-mono select-none">{idx + 2}.</span>
                                   <div className="rounded-lg border border-zinc-800/60 divide-y divide-zinc-800/40 overflow-hidden">
                                     <KaraokeText text={ex.en} lang="en-US"
-                                      textClass="text-xs text-emerald-300/70 italic leading-relaxed"
-                                      buttonClass="w-full pl-7 pr-3 py-1.5 hover:bg-emerald-500/5 active:bg-emerald-500/10 text-left transition" />
+                                      textClass="text-xs text-accent-300/70 italic leading-relaxed"
+                                      buttonClass="w-full pl-7 pr-3 py-1.5 hover:bg-accent-500/5 active:bg-accent-500/10 text-left transition" />
                                     <KaraokeText text={ex.vi} lang="vi-VN"
                                       textClass="text-xs text-zinc-400 leading-relaxed"
                                       buttonClass="w-full pl-7 pr-3 py-1.5 hover:bg-sky-500/5 active:bg-sky-500/10 text-left transition" />
@@ -348,7 +348,7 @@ export default function Dictionary() {
                     })}
 
                     {totalPages > 1 && (
-                      <p className="text-[10px] text-zinc-500 text-center pt-1">
+                      <p className="text-[11px] text-zinc-500 text-center pt-1">
                         {isA ? '← Vuốt để xem thêm kết quả →' : '← Swipe for more results →'}
                       </p>
                     )}
@@ -364,7 +364,7 @@ export default function Dictionary() {
                     {isA ? 'Kiểm tra kết nối mạng rồi thử lại.' : 'Check your connection and try again.'}
                   </p>
                   <button onClick={() => setRetryKey(k => k + 1)}
-                    className="text-xs px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition">
+                    className="text-xs px-4 py-2 rounded-xl bg-accent-500/20 text-accent-300 border border-accent-500/40 hover:bg-accent-500/30 transition">
                     {isA ? 'Thử lại' : 'Retry'}
                   </button>
                 </div>
@@ -388,7 +388,7 @@ export default function Dictionary() {
                 {/* Tip tìm kiếm */}
                 <div className="glass rounded-xl px-4 py-3 border border-zinc-800/60">
                   <p className="text-sm text-zinc-300 leading-relaxed">
-                    <span className="text-emerald-400 font-semibold">
+                    <span className="text-accent-400 font-semibold">
                       {isA ? '💡 Mẹo:' : '💡 Tip:'}
                     </span>{' '}
                     {isA
@@ -413,7 +413,7 @@ export default function Dictionary() {
                             <button
                               key={w}
                               onClick={() => setQuery(w)}
-                              className="text-xs px-2.5 py-1 rounded-full bg-zinc-800/80 text-zinc-300 border border-zinc-700/60 hover:border-emerald-500/50 hover:text-emerald-300 transition"
+                              className="text-xs px-2.5 py-1 rounded-full bg-zinc-800/80 text-zinc-300 border border-zinc-700/60 hover:border-accent-500/50 hover:text-accent-300 transition"
                             >
                               {w}
                             </button>
@@ -447,7 +447,7 @@ export default function Dictionary() {
                 className="glass rounded-xl p-4 scroll-mt-20">
                 <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                   <h2 className="font-bold text-white text-base">{p.label}</h2>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.color}`}>{p.labelEn}</span>
+                  <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${p.color}`}>{p.labelEn}</span>
                 </div>
                 <p className="text-sm text-zinc-300 leading-relaxed mb-3">{p.definition}</p>
                 <div className="space-y-1.5">
@@ -478,7 +478,7 @@ export default function Dictionary() {
               value={query}
               onChange={e => { setQuery(e.target.value); setPosFilter(null) }}
               placeholder={isA ? 'Gõ tiếng Anh hoặc tiếng Việt…' : 'English or Vietnamese…'}
-              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-[16px] leading-tight text-white placeholder:text-zinc-400 outline-none focus:border-emerald-500/60 focus:bg-zinc-900 transition"
+              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-base leading-tight text-white placeholder:text-zinc-400 outline-none focus:border-accent-500/60 focus:bg-zinc-900 transition"
             />
             {query && (
               <button onClick={() => { setQuery(''); setPosFilter(null) }}
