@@ -7,19 +7,24 @@ import type { User as AppUser, Plan } from '../types'
 // Cache profile trong localStorage để lần tiếp theo mở app không cần gọi DB
 // (chỉ cache khi đã onboarded — state ổn định, không thay đổi nữa)
 const PROFILE_CACHE_KEY = 'gsa_profile_v1'
+// TTL 5 phút: quá hạn thì lấy lại gói từ DB. Tránh trường hợp user nâng cấp Pro nhưng
+// cache cũ vẫn báo Free → bị chặn nhầm bởi giới hạn gói Free phía client.
+const PROFILE_TTL_MS = 5 * 60 * 1000
 
 function getCachedProfile(userId: string): { plan: string; onboarded: boolean } | null {
   try {
     const raw = localStorage.getItem(PROFILE_CACHE_KEY)
     if (!raw) return null
-    const c = JSON.parse(raw) as { id: string; plan: string; onboarded: boolean }
-    // Bỏ cache nếu sai user hoặc chưa onboarded (chưa ổn định)
-    return c.id === userId && c.onboarded ? c : null
+    const c = JSON.parse(raw) as { id: string; plan: string; onboarded: boolean; ts?: number }
+    // Bỏ cache nếu sai user, chưa onboarded (chưa ổn định), hoặc đã quá hạn TTL
+    if (c.id !== userId || !c.onboarded) return null
+    if (typeof c.ts !== 'number' || Date.now() - c.ts > PROFILE_TTL_MS) return null
+    return c
   } catch { return null }
 }
 
 function setCachedProfile(userId: string, profile: { plan: 'free' | 'pro'; onboarded: boolean }) {
-  try { localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({ id: userId, ...profile })) } catch { /* localStorage đầy/bị chặn — bỏ qua, chỉ là cache */ }
+  try { localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({ id: userId, ...profile, ts: Date.now() })) } catch { /* localStorage đầy/bị chặn — bỏ qua, chỉ là cache */ }
 }
 
 export function clearProfileCache() {

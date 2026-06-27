@@ -22,6 +22,27 @@ interface AIResponse {
   corrected: string
 }
 
+// Đổi mã lỗi của Web Speech API sang thông điệp dễ hiểu cho người dùng.
+function sttErrorMessage(code: string, isA: boolean): string {
+  switch (code) {
+    case 'no-speech':
+      return isA ? 'Không nghe thấy giọng nói — thử nói lại gần micro hơn.'
+                 : "Didn't hear anything — try speaking closer to the mic."
+    case 'not-allowed':
+    case 'service-not-allowed':
+      return isA ? 'Bị chặn quyền micro. Hãy cho phép micro trong cài đặt trình duyệt.'
+                 : 'Microphone blocked. Please allow mic access in browser settings.'
+    case 'audio-capture':
+      return isA ? 'Không tìm thấy micro. Kiểm tra thiết bị ghi âm.'
+                 : 'No microphone found. Check your recording device.'
+    case 'network':
+      return isA ? 'Lỗi mạng khi nhận diện giọng nói — thử lại.'
+                 : 'Network error during recognition — please try again.'
+    default:
+      return isA ? `Lỗi nhận diện giọng nói (${code}).` : `Speech recognition error (${code}).`
+  }
+}
+
 // ── Setup Screen ─────────────────────────────────────────────────────────
 function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void; dir: Direction }) {
   const [situation, setSituation] = useState('small_talk')
@@ -178,7 +199,9 @@ export default function Speaking() {
   const [throttleCountdown, setThrottleCountdown] = useState(0)
   const stopRecRef = useRef<(() => void) | null>(null)   // dừng Web Speech (fallback)
   const recorderRef = useRef<Recorder | null>(null)       // recorder server STT (chính)
+  const recTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null) // tự dừng ghi âm khi quá lâu
   const bottomRef = useRef<HTMLDivElement>(null)
+  const MAX_REC_MS = 60_000  // tự dừng ghi âm server sau 60s (tránh micro mở vô tận)
   // Ưu tiên ghi âm gửi server (chính xác, đa trình duyệt); Web Speech chỉ là dự phòng.
   const canRecord = isRecordingSupported()
   const sttSupported = canRecord || isSTTSupported()
@@ -193,7 +216,34 @@ export default function Speaking() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [session?.messages.length, loading])
 
-  useEffect(() => () => { stopSpeaking(); stopRecRef.current?.(); recorderRef.current?.cancel() }, [])
+  useEffect(() => () => {
+    stopSpeaking()
+    stopRecRef.current?.()
+    recorderRef.current?.cancel()
+    if (recTimerRef.current) clearTimeout(recTimerRef.current)
+  }, [])
+
+  // Dừng ghi âm server (chính) rồi gửi audio lên nhận diện. Gọi khi người dùng nhấn dừng
+  // HOẶC khi quá thời lượng tối đa (recTimerRef).
+  async function stopServerRecording() {
+    if (recTimerRef.current) { clearTimeout(recTimerRef.current); recTimerRef.current = null }
+    const r = recorderRef.current
+    if (!r) return
+    recorderRef.current = null
+    setRecording(false)
+    setProcessing(true)
+    try {
+      const text = await r.stop()
+      setProcessing(false)
+      incrementUsage(user.id, 'sttCount')  // đã gọi API STT thành công → tính 1 lượt
+      if (text.trim()) await sendUserSpeech(text.trim())
+      else setError(isA ? 'Không nghe rõ, thử nói lại nhé.' : "Didn't catch that, try again.")
+    } catch (e) {
+      setProcessing(false)
+      const m = e instanceof Error ? e.message : (isA ? 'Lỗi nhận diện giọng nói' : 'STT error')
+      setError(m); toast.error(m)
+    }
+  }
 
   async function startSession(situation: string, level: Level) {
     const usage = getUsage(user.id)
@@ -235,20 +285,7 @@ export default function Speaking() {
     if (recording) {
       // STT server: dừng recorder, gửi audio lên nhận diện
       if (recorderRef.current) {
-        const r = recorderRef.current
-        recorderRef.current = null
-        setRecording(false)
-        setProcessing(true)
-        try {
-          const text = await r.stop()
-          setProcessing(false)
-          incrementUsage(user.id, 'sttCount')  // đã gọi API STT thành công → tính 1 lượt
-          if (text.trim()) await sendUserSpeech(text.trim())
-          else setError(isA ? 'Không nghe rõ, thử nói lại nhé.' : "Didn't catch that, try again.")
-        } catch (e) {
-          setProcessing(false)
-          { const m = e instanceof Error ? e.message : (isA ? 'Lỗi nhận diện giọng nói' : 'STT error'); setError(m); toast.error(m) }
-        }
+        await stopServerRecording()
         return
       }
       // Web Speech (fallback): dừng, kết quả trả qua callback onEnd
@@ -276,6 +313,8 @@ export default function Speaking() {
         const r = await startRecording(sttLang)
         recorderRef.current = r
         setRecording(true)
+        // An toàn: tự dừng + gửi nhận diện nếu người dùng quên nhấn dừng (mic mở quá lâu)
+        recTimerRef.current = setTimeout(() => { void stopServerRecording() }, MAX_REC_MS)
       } catch {
         setError(isA
           ? 'Không truy cập được micro. Hãy cho phép quyền micro hoặc gõ tay.'
@@ -290,7 +329,7 @@ export default function Speaking() {
       sttLang,
       r => setTranscript(r.transcript),
       async (last) => { setRecording(false); incrementUsage(user.id, 'sttCount'); if (last.trim()) await sendUserSpeech(last.trim()) },
-      err => { setError(err); setRecording(false) },
+      err => { setError(sttErrorMessage(err, isA)); setRecording(false) },
     )
     stopRecRef.current = stop
   }

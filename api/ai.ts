@@ -18,6 +18,10 @@ import {
 } from './_lib/security'
 import { checkAndConsumeUsage, isUsageMode } from './_lib/usage'
 import { callGemini } from './_lib/geminiApi'
+import { fetchWithTimeout } from './_lib/fetchTimeout'
+
+// Thời gian chờ tối đa cho 1 lần gọi AI (ms) — tránh treo vô hạn khi nhà cung cấp chậm.
+const AI_TIMEOUT_MS = 30_000
 
 // Model và giới hạn do SERVER quyết định, không tin client
 const ALLOWED_MODEL = 'claude-haiku-4-5-20251001'
@@ -186,11 +190,20 @@ export default async function handler(req: Request): Promise<Response> {
       ...(system ? [{ role: 'system', content: system }] : []),
       ...sanitizedMessages,
     ]
-    const groqResp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${groqKey}`, 'content-type': 'application/json' },
-      body: JSON.stringify({ model: GROQ_CHAT_MODEL, max_tokens: maxTokens, messages: groqMessages }),
-    })
+    let groqResp: Response
+    try {
+      groqResp = await fetchWithTimeout('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${groqKey}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ model: GROQ_CHAT_MODEL, max_tokens: maxTokens, messages: groqMessages }),
+      }, AI_TIMEOUT_MS)
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err)
+      return new Response(
+        JSON.stringify({ error: { message: `Groq lỗi: ${errMsg.slice(0, 200)}` } }),
+        { status: 504, headers: { 'content-type': 'application/json', ...allHeaders } },
+      )
+    }
 
     if (!groqResp.ok) {
       const detail = await groqResp.text().catch(() => '')
@@ -250,15 +263,24 @@ export default async function handler(req: Request): Promise<Response> {
     messages: sanitizedMessages,
   }
 
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': anthropicKey as string,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify(safeBody),
-  })
+  let resp: Response
+  try {
+    resp = await fetchWithTimeout('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': anthropicKey as string,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(safeBody),
+    }, AI_TIMEOUT_MS)
+  } catch (err) {
+    const errMsg = err instanceof Error ? err.message : String(err)
+    return new Response(
+      JSON.stringify({ error: { message: `Anthropic lỗi: ${errMsg.slice(0, 200)}` } }),
+      { status: 504, headers: { 'content-type': 'application/json', ...allHeaders } },
+    )
+  }
 
   const data = await resp.text()
   return new Response(data, {

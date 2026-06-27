@@ -961,7 +961,6 @@ export const FOUNDATION: Circle[] = [
       w('actor',        'n', 'diễn viên',        'The actor won an award for his role.',     'Diễn viên giành giải thưởng cho vai diễn.'),
       w('athlete',      'n', 'vận động viên',    'The athlete trained hard every day.',      'Vận động viên tập luyện chăm chỉ mỗi ngày.'),
       w('volunteer',    'n', 'tình nguyện viên', 'She volunteers at the local hospital.',    'Cô ấy tình nguyện ở bệnh viện địa phương.'),
-      w('salary',       'n', 'lương',            'He asked for a salary increase.',          'Anh ấy đề nghị tăng lương.'),
     ],
     sentences: [
       { en: 'What do you do for a living?',            vi: 'Bạn làm nghề gì để kiếm sống?' },
