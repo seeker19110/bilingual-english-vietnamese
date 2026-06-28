@@ -112,10 +112,11 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 |------|------|---------|---------|
 | Kiểu (frontend + API) | `npm run typecheck` (`tsc && tsc -p tsconfig.api.json`) | ✅ **PASS** (exit 0) | Không lỗi type |
 | Lint | `npm run lint` (`eslint . --max-warnings 0`) | ✅ **PASS** (exit 0) | 0 cảnh báo. *Sửa "M4 ESLint không chạy" của v1: nay chạy tốt sau khi cài deps* |
-| Unit test | `npx vitest run` | ✅ **PASS** — 7 file, **46 test** | Lượt 3 thêm test **lớp API** (`usage`, `security`, `fetchTimeout`) |
+| Unit test | `npx vitest run` | ✅ **PASS** — 8 file, **49 test** | Lượt 5 thêm `vocab` (BUG-6); lượt 3 thêm lớp API |
 | Build production | `npm run build` | ✅ **PASS** (exit 0) | Sinh manifest + `tsc` + `vite build`, có nén Gzip/Brotli |
+| **CI gate** | `.github/workflows/ci.yml` | ✅ **MỚI** | Chạy cả 4 cổng trên mọi PR & push `main` (T2) |
 
-> **Tiến triển độ phủ:** lượt 1 **10 test / 1 file** → lượt 2 **27 test / 4 file** (chấm phát âm, SRS, thống kê) → lượt 3 **46 test / 7 file** (thêm `api/_lib`: đếm/hoàn lượt, CORS+rate-limit, timeout). Đã phủ các luồng tiền & fix bảo mật trọng yếu; còn lại có thể bổ sung integration test cho handler `api/ai.ts`/`api/stt.ts` (mock provider).
+> **Tiến triển độ phủ:** lượt 1 **10/1** → lượt 2 **27/4** → lượt 3 **46/7** (thêm `api/_lib`) → lượt 5 **49 test / 8 file** (thêm `vocab`). Đã có **CI gate** chạy 4 cổng tự động. Còn lại có thể bổ sung integration test cho handler `api/ai.ts`/`api/stt.ts` (mock provider).
 
 ---
 
@@ -160,9 +161,9 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 | # | Mức | Vấn đề | Nhóm | File chính |
 |---|-----|--------|------|-----------|
 | **T1** | 🟠 High | ⚠️ PARTIAL — **Độ phủ kiểm thử đang nâng dần**: 46 ca / 7 file gồm `curriculum`, `pronounceScore`, `srs`, `stats` + **lớp API** `usage`/`security`/`fetchTimeout`. Còn thiếu: **integration test cho handler** `api/ai.ts`/`api/stt.ts` (mock provider) và `ttsCrypto`. | Kiểm thử | handler `api/*.ts`, phần còn lại `src/lib` |
-| **T2** | 🟡 Medium | **Không có cổng chất lượng CI**: workflow `.github/workflows/deploy.yml` chỉ deploy, **không chạy** typecheck/lint/test trước khi `pm2 restart` → có thể đẩy mã hỏng lên production. | CI/CD | `.github/workflows/deploy.yml` |
+| ~~T2~~ | 🟡 Medium | ✅ **RESOLVED** — Thêm `.github/workflows/ci.yml` chạy `typecheck + lint + test + build` trên mọi PR & push `main` (Node 22) → chặn mã hỏng trước khi merge/deploy. | CI/CD | `.github/workflows/ci.yml` |
 | M1 | 🟡 Medium | `direction` (chiều A/B) không sync đa thiết bị (chỉ localStorage). | Dữ liệu | `src/lib/storage.ts`, `profiles` |
-| M2 | ⚠️ PARTIAL | Prompt nền **đã** gom vào `src/prompts/index.ts` ✅, nhưng vẫn **dựng ở client**; server chỉ `slice(0,8000)` (`api/ai.ts:147`) → chưa có guardrail cố định phía server. | Bảo mật/chi phí | `api/ai.ts:147`, `src/prompts/index.ts` |
+| ~~M2~~ | 🟡 Medium | ✅ **RESOLVED** — Server **prepend** guardrail cố định (`SYSTEM_GUARDRAIL`) vào đầu system prompt ở `api/ai.ts` → AI luôn đóng vai gia sư ngôn ngữ dù client gửi prompt tuỳ ý. Khung ngắn, không ép format (giữ JSON cho writing/speaking). | Bảo mật/chi phí | `api/ai.ts` |
 | M6 | 🟡 Medium | Rate limit **in-memory** (`api/_lib/security.ts:58`) — mất khi restart, không chia sẻ giữa instance. | Bảo mật | `api/_lib/security.ts:58-82` |
 | M7 | 🟡 Medium | Quiz ôn tập (QuizTab) không lưu lịch sử/điểm. | Tính năng | `src/pages/Learn.tsx` |
 | L1 | 🟢 Low | Component quá lớn: `Learn.tsx` (839), `RoadmapTab.tsx` (749), `Lessons.tsx` (706). | Refactor | — |
@@ -182,9 +183,9 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 | **BUG-3** | 🟢 Low | Tài liệu | Audit v1 ghi cửa sổ pull streak là "40 ngày" — mã đã là 365. | `cloud.ts:122`, `storage.ts:186` | ✅ **FIXED** — sửa số liệu (§3, §4.1 H9). |
 | **BUG-4** | 🟢 Low | Frontend/UX | **Nhấp nháy spinner khi gõ nhanh ở Dictionary** — `.finally` tắt spinner cả khi request đã `abort()`. | `src/pages/Dictionary.tsx:90-107` | ✅ **FIXED** — chỉ tắt nếu `!ctrl.signal.aborted`. |
 | **BUG-5** | 🟡 Medium | Logic/Dữ liệu | **Streak ⇄ biểu đồ Dashboard không khớp** — `usageTotal` (stats) thiếu `learnCount` trong khi `getStreak` (storage) có → ngày chỉ học từ vựng hiện trống trên biểu đồ. | `stats.ts:27-30` vs `storage.ts:188-193` | ✅ **FIXED** — cộng `learnCount` vào `usageTotal` + test `stats.test.ts`. |
-| **BUG-6** | 🟢 Low | Logic/Dữ liệu | **Từ "đã thuộc" không chuẩn hoá chữ thường** trong khi "từ khó" thì có → các nơi tiêu thụ phải kiểm tra cả 2 dạng (`learned.has(w) \|\| learned.has(w.toLowerCase())`). Hiện "chạy được" nhờ kiểm tra kép bù đắp, nhưng dễ vỡ. | `vocab.ts:31-49` (không `toLowerCase`) vs `vocab.ts:63-73` (có); bù đắp tại `stats.ts:159` | 🔲 OPEN — **chưa sửa** (đổi cách lưu có thể lệch dữ liệu đã thuộc cũ; cần migrate cẩn thận, để PR riêng). |
-| **BUG-7** | 🟢 Low | UX/Audio | **Mute giữa chừng vẫn đọc nốt phần feedback.** `stopSpeaking()` resolve clip hiện tại → `speakBilingual` chạy tiếp `speak(feedback)`. | `tts.ts:130,374-375`; `Speaking.tsx:477` | 🔲 OPEN — thêm cờ huỷ chuỗi bilingual khi stop (rủi ro thấp, để sau). |
-| **BUG-8** | 🟢 Low | Dữ liệu | **STT qua Web Speech (fallback) chỉ đếm ở client**, server không đếm (không qua `/api/stt`) → `pullUserData` ghi đè làm "biến mất" lượt; fallback STT gần như không giới hạn. | `Speaking.tsx:333` | 🔲 OPEN — edge case (chỉ trình duyệt không hỗ trợ ghi âm); ghi nhận. |
+| **BUG-6** | 🟢 Low | Logic/Dữ liệu | **Từ "đã thuộc" không chuẩn hoá chữ thường** trong khi "từ khó" thì có → các nơi tiêu thụ phải kiểm tra cả 2 dạng. Dễ vỡ. | `vocab.ts` (learned vs hard) | ✅ **FIXED** — `getLearnedWords`/`markLearned`/`isLearned` chuẩn hoá `toLowerCase` (đọc lowercase = tự migrate dữ liệu cũ, không mất); test `vocab.test.ts`. |
+| **BUG-7** | 🟢 Low | UX/Audio | **Mute giữa chừng vẫn đọc nốt phần feedback.** `stopSpeaking()` resolve clip hiện tại → `speakBilingual` chạy tiếp `speak(feedback)`. | `tts.ts`; `Speaking.tsx` | ✅ **FIXED** — thêm `playToken`: `stopSpeaking()` tăng token, `speakBilingual` bỏ phần còn lại nếu token đổi. |
+| **BUG-8** | 🟢 Low | Dữ liệu | **STT qua Web Speech (fallback) chỉ đếm ở client**, server không đếm → `pullUserData` ghi đè làm "biến mất" lượt. | `Speaking.tsx` | ✅ **FIXED** — bỏ `incrementUsage('sttCount')` ở nhánh Web Speech (miễn phí, không qua `/api/stt` → không tính lượt). |
 | **BUG-9** | 🟡 Medium | Logic/SRS | **"Quên/Again" không ôn lại trong phiên.** Gợi ý UI ghi "Quên → ôn sớm" và `SRSReview.rate()` chủ ý tải lại thẻ "again", nhưng `reviewWord` đặt `due = now + max(0,1)·ngày` = **mai** → từ vừa quên KHÔNG hiện lại hôm nay (mã trái với lời hứa UI). | `srs.ts` (`due` calc) vs `Learn.tsx:600,665` | ✅ **FIXED** — `again` → `due = now` (ôn lại ngay trong phiên); cập nhật `srs.test.ts`. |
 | **BUG-10** | 🟢 Low | UX/Tài nguyên | **Micro mở dai dẳng sau khi rời trang.** `InlinePronounce` (kiểm tra phát âm từng câu) không dừng Web Speech khi unmount → mic mở tới ~20s sau khi back + cảnh báo setState-after-unmount. | `Lessons.tsx` `InlinePronounce` (thiếu cleanup) | ✅ **FIXED** — thêm `useEffect` cleanup gọi `stopRef.current?.()`. |
 
@@ -454,13 +455,13 @@ npm run build       # phải dựng được
 > Tổng hợp các cải thiện **nên làm** sau đợt audit này, gom theo lĩnh vực, kèm **Tác động** (giá trị mang lại) và **Công sức** (ước lượng) để dễ chọn việc. Ưu tiên: làm việc **Tác động cao / Công sức thấp** trước.
 
 ### 9.1 Chất lượng & độ tin cậy (ưu tiên #1)
-| Đề xuất | Tác động | Công sức |
-|---------|----------|----------|
-| **Thêm CI gate** (`typecheck + lint + test + build`) cho PR & push trước khi deploy (xử lý T2). | Cao — chặn mã hỏng lên app live | Thấp |
-| **Mở rộng bộ test** theo §6 (P0 cho `api/_lib`, P1 cho `lib` thuần) — khoá H1/H2/H10 + BUG-1/2/5. | Cao — chống hồi quy | Trung bình |
-| **Bật coverage** (`@vitest/coverage-v8`) + ngưỡng 70% cho `lib/**` & `api/_lib/**`, ratchet tăng dần. | Trung bình | Thấp |
-| **Giám sát lỗi production** (Sentry hoặc log tập trung) thay cho `console.warn` rải rác (L7). | Cao — phát hiện sự cố thật | Trung bình |
-| **Pre-commit hook** (husky + lint-staged) chạy lint/typecheck cục bộ. | Trung bình | Thấp |
+| Đề xuất | Trạng thái |
+|---------|-----------|
+| **CI gate** (`typecheck + lint + test + build`) cho PR & push (T2). | ✅ Đã làm (`.github/workflows/ci.yml`) |
+| **Mở rộng bộ test** (P0 `api/_lib`, P1 `lib` thuần) — khoá H1/H2/H10 + BUG đã sửa. | ✅ Đã làm (49 test/8 file) |
+| **Bật coverage** (`@vitest/coverage-v8`) + ngưỡng 70% cho `lib/**` & `api/_lib/**`, ratchet tăng dần. | 🔲 Đề xuất (Trung bình) |
+| **Giám sát lỗi production** (Sentry hoặc log tập trung) thay cho `console.warn` rải rác (L7). | 🔲 Đề xuất (Cao) |
+| **Pre-commit hook** (husky + lint-staged) chạy lint/typecheck cục bộ. | 🔲 Đề xuất (Thấp) |
 
 ### 9.2 Sửa các lỗi vừa phát hiện (deep pass §4.3)
 | Đề xuất | Trạng thái |
@@ -471,14 +472,14 @@ npm run build       # phải dựng được
 | **BUG-5** — cộng `learnCount` vào `usageTotal` để streak ⇄ biểu đồ nhất quán. | ✅ Đã sửa |
 | **BUG-9** — "Quên/Again" ôn lại ngay trong phiên (đúng lời hứa UI). | ✅ Đã sửa |
 | **BUG-10** — dừng micro khi rời trang (InlinePronounce cleanup). | ✅ Đã sửa |
-| **BUG-6** — chuẩn hoá chữ thường cho "từ đã thuộc" (cần migrate dữ liệu cũ). | 🔲 Để PR sau |
-| **BUG-7** — huỷ chuỗi đọc bilingual khi mute giữa chừng. | 🔲 Để PR sau |
-| **BUG-8** — đếm lượt STT cho nhánh Web Speech fallback. | 🔲 Để PR sau |
+| **BUG-6** — chuẩn hoá chữ thường cho "từ đã thuộc" (tự migrate khi đọc). | ✅ Đã sửa |
+| **BUG-7** — huỷ chuỗi đọc bilingual khi mute giữa chừng (`playToken`). | ✅ Đã sửa |
+| **BUG-8** — không tính lượt STT cho nhánh Web Speech (miễn phí). | ✅ Đã sửa |
 
 ### 9.3 Bảo mật & chi phí
 | Đề xuất | Tác động | Công sức |
 |---------|----------|----------|
-| **Guardrail system prompt phía server** (M2) — server prepend khung "chỉ là gia sư ngôn ngữ" trước prompt client. | Cao — chống lạm dụng AI, giữ đúng mục đích | Trung bình |
+| **Guardrail system prompt phía server** (M2) — server prepend khung "chỉ là gia sư ngôn ngữ". | ✅ Đã làm (`SYSTEM_GUARDRAIL` trong `api/ai.ts`) |
 | **Rate limit dùng Redis/Upstash** (M6) khi scale ngang. | Trung bình (chỉ khi >1 instance) | Trung bình |
 | **Rotate/versioning master key TTS** (L3) — thêm `key_version` vào metadata cache. | Thấp — sẵn sàng xoay khoá | Trung bình |
 | **Quét secret định kỳ** (`git log --all -- .env`, `npm audit` trong CI). | Trung bình | Thấp |
@@ -572,7 +573,9 @@ npm run build               # ✅ PASS (manifest + tsc + vite build, nén Gzip/B
 - `api/_lib/usage.test.ts` (10 ca) — đếm/hoàn lượt (mock `supabaseAdmin`); khoá H1 + BUG-2
 - `api/_lib/security.test.ts` (6 ca) — CORS (khoá H10) + rate limit
 - `api/_lib/fetchTimeout.test.ts` (3 ca) — timeout (khoá H2)
+- `src/lib/vocab.test.ts` (3 ca) — chuẩn hoá chữ thường từ đã thuộc; khoá BUG-6
+- `.github/workflows/ci.yml` — cổng chất lượng tự động (T2)
 
-**Sửa lỗi đã áp dụng:** BUG-1 (`Chat.tsx`), BUG-2 (`usage.ts` + `ai.ts` + `stt.ts` + migration `0004_refund_usage.sql` + `schema.sql`), BUG-4 (`Dictionary.tsx`), BUG-5 (`stats.ts`), BUG-9 (`srs.ts` + test), BUG-10 (`Lessons.tsx` InlinePronounce). BUG-6/7/8 ghi nhận, để PR sau.
+**Sửa lỗi đã áp dụng:** BUG-1..10 (toàn bộ) + T2 (CI gate) + M2 (guardrail). Chi tiết: BUG-1 (`Chat.tsx`), BUG-2 (`usage.ts`+`ai.ts`+`stt.ts`+migration `0004`+`schema.sql`), BUG-4 (`Dictionary.tsx`), BUG-5 (`stats.ts`), BUG-6 (`vocab.ts`+test), BUG-7 (`tts.ts` playToken), BUG-8 (`Speaking.tsx`), BUG-9 (`srs.ts`+test), BUG-10 (`Lessons.tsx`), T2 (`.github/workflows/ci.yml`), M2 (`api/ai.ts` `SYSTEM_GUARDRAIL`).
 
 > *Báo cáo audit cũ vẫn lưu tại `AUDIT_REPORT.md` (2026-06-20) để tra cứu lịch sử các phát hiện ban đầu (auth localStorage, rate limit, mobile…), nay đã được xử lý qua Supabase Auth + server-side limits.*

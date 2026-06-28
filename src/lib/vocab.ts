@@ -6,12 +6,15 @@ import { pushProgress } from './progressSync'
 
 const KEY = (uid: string) => `et_learned_${uid}`
 
-// Đọc Set các từ đã thuộc của 1 user
+// Đọc Set các từ đã thuộc của 1 user.
+// CHUẨN HOÁ chữ thường khi đọc → khớp nhất quán ở mọi nơi (giống "từ khó" vốn đã lowercase)
+// và tự "migrate" dữ liệu cũ từng lưu nguyên dạng hoa/thường. An toàn vì các nơi tiêu thụ
+// đều so bằng .toLowerCase()/wordKey hoặc kiểm tra kép.
 export function getLearnedWords(userId: string): Set<string> {
   try {
     const raw = localStorage.getItem(KEY(userId))
     const arr = raw ? (JSON.parse(raw) as string[]) : []
-    return new Set(arr)
+    return new Set(arr.map(w => w.toLowerCase()))
   } catch {
     return new Set()
   }
@@ -27,10 +30,10 @@ function save(userId: string, set: Set<string>) {
   localStorage.setItem(KEY(userId), JSON.stringify([...set]))
 }
 
-// Đánh dấu 1 từ là đã thuộc
+// Đánh dấu 1 từ là đã thuộc (chuẩn hoá chữ thường để khớp nhất quán)
 export function markLearned(userId: string, word: string) {
   const set = getLearnedWords(userId)
-  set.add(word)
+  set.add(word.toLowerCase())
   save(userId, set)
   pushProgress(userId) // đồng bộ lên Supabase
 }
@@ -38,14 +41,14 @@ export function markLearned(userId: string, word: string) {
 // Bỏ đánh dấu (đánh dấu là chưa thuộc)
 export function unmarkLearned(userId: string, word: string) {
   const set = getLearnedWords(userId)
-  set.delete(word)
+  set.delete(word.toLowerCase())
   save(userId, set)
   pushProgress(userId) // đồng bộ lên Supabase
 }
 
 // Kiểm tra 1 từ đã thuộc chưa
 export function isLearned(userId: string, word: string): boolean {
-  return getLearnedWords(userId).has(word)
+  return getLearnedWords(userId).has(word.toLowerCase())
 }
 
 // ── Từ khó (đánh dấu thủ công bằng nút ⭐) ──────────────────────────────────

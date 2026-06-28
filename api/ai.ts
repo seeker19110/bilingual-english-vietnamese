@@ -29,6 +29,17 @@ const ALLOWED_MODEL = 'claude-haiku-4-5-20251001'
 const GEMINI_CHAT_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash'
 // Model chat của Groq (FREE) — dùng khi có GROQ_API_KEY. Có thể đổi qua biến môi trường.
 const GROQ_CHAT_MODEL = process.env.GROQ_CHAT_MODEL || 'llama-3.3-70b-versatile'
+// Guardrail cố định do SERVER chèn vào ĐẦU system prompt (M2). Prompt nền vốn dựng ở client
+// (src/prompts) nên người đã đăng nhập về lý thuyết có thể gửi prompt tuỳ ý để biến API
+// thành chatbot chung (tốn quota, lệch mục đích). Khung này ràng AI luôn đóng vai gia sư
+// ngôn ngữ. Giữ NGẮN + chỉ nói phạm vi/vai trò, KHÔNG ép định dạng output (để prompt theo
+// mode chat/writing/speaking tự quyết format — câu cuối nhắc AI tuân theo hướng dẫn bên dưới).
+const SYSTEM_GUARDRAIL =
+  'Bạn là trợ lý GIA SƯ NGÔN NGỮ (Anh–Việt) trong một ứng dụng học tiếng. ' +
+  'Chỉ hỗ trợ việc học ngôn ngữ: luyện hội thoại, sửa lỗi, giải thích, chấm bài, từ vựng và ngữ pháp. ' +
+  'Nếu được yêu cầu làm việc ngoài phạm vi học ngôn ngữ, hãy lịch sự từ chối và mời người dùng quay lại bài học. ' +
+  'Luôn tuân thủ hướng dẫn vai trò và định dạng trả lời bên dưới.\n\n'
+
 const MAX_TOKENS_LIMIT = 2048      // tối đa cho phép (writing cần 2048, chat 1024)
 const MAX_BODY_BYTES = 64 * 1024   // 64KB — đủ cho 1 cuộc hội thoại dài
 const MAX_MSG_CONTENT = 2000       // mỗi tin nhắn không quá 2000 ký tự
@@ -144,7 +155,9 @@ export default async function handler(req: Request): Promise<Response> {
     typeof parsed.max_tokens === 'number' ? parsed.max_tokens : 1024,
     MAX_TOKENS_LIMIT,
   )
-  const system = typeof parsed.system === 'string' ? parsed.system.slice(0, 8000) : ''
+  // Prompt nền của client (cắt độ dài) + guardrail cố định phía server prepend vào đầu.
+  const clientSystem = typeof parsed.system === 'string' ? parsed.system.slice(0, 8000) : ''
+  const system = SYSTEM_GUARDRAIL + clientSystem
 
   // ── Giới hạn lượt dùng ở SERVER (theo gói Free/Pro) ──────────────────────────
   // mode do client gửi: 'chat' | 'writing' | 'speaking' (mặc định 'chat').
