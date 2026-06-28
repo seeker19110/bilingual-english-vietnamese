@@ -143,11 +143,17 @@ lên Supabase). Script `scripts/sync-storage-to-vps.ts` **tải xuống** các f
 `UPLOADS_DIR` của VPS — **chỉ file nào chưa có ở local**.
 
 ```bash
-# CHẠY TRÊN VPS (nơi có UPLOADS_DIR)
+# CHẠY TRÊN VPS (nơi có UPLOADS_DIR) — quy trình 2 bước:
+
+# Bước 1 — TẢI FILE về local
 npm run sync:storage -- --dry-run     # xem trước: còn thiếu local bao nhiêu, KHÔNG tải
 npm run sync:storage                  # tải thật các file còn thiếu về /uploads
 npm run sync:storage -- --force       # tải lại + ghi đè cả file local đã có
 BUCKET=pronunciations npm run sync:storage   # chỉ đồng bộ 1 bucket
+
+# Bước 2 — ĐỔI audio_url sang local (để app phục vụ từ VPS, không qua Supabase)
+npm run sync:storage -- --rewrite-urls --dry-run   # xem trước sẽ đổi bao nhiêu dòng
+npm run sync:storage -- --rewrite-urls             # đổi thật (ghi DB)
 ```
 
 Cách hoạt động (an toàn, chạy lại nhiều lần được):
@@ -157,15 +163,22 @@ Cách hoạt động (an toàn, chạy lại nhiều lần được):
   service-role nên đọc được cả bucket private) → ghi ra `${UPLOADS_DIR}/${bucket}/${key}`.
 - **Không** ghi đè file local (trừ `--force`), **không** đụng DB.
 
-Đọc kết quả:
+Đọc kết quả **bước 1 (tải file)**:
 - `⏭ đã có` — file local sẵn rồi, bỏ qua.
 - `↓ tải về` — vừa kéo từ Supabase xuống.
 - `∅ thiếu trên Supabase` — không có ở **cả** local lẫn Supabase → cần tạo lại bằng
   `npm run seed:all -- --all`.
 
-> Lưu ý: script chỉ **chép file**, không sửa `audio_url` trong DB. Bản ghi nào có
-> `audio_url` trỏ Supabase thì client vẫn tải từ Supabase cho tới khi `audio_url` được
-> đổi sang đường dẫn local (chưa làm tự động — hỏi nếu cần thêm bước này).
+Đọc kết quả **bước 2 (đổi URL, `--rewrite-urls`)**:
+- `✏️ đã đổi` — `audio_url` vừa được trỏ sang `/uploads/...` (vì file đã có ở VPS).
+- `⏭ đã local` — `audio_url` vốn đã trỏ local, không đụng.
+- `∅ chưa có file VPS` — file chưa tải về → **bỏ qua, KHÔNG đổi** (tránh link hỏng);
+  chạy lại bước 1 rồi đổi URL lại.
+
+Quy tắc an toàn của `--rewrite-urls`: **chỉ đổi dòng đã có file ở VPS**, **không đụng**
+dòng đã trỏ local, **không xóa** gì. Mặc định ghi URL **tương đối** `/uploads/...`
+(trình duyệt tự resolve theo domain — không gắn cứng host). Muốn ghi tuyệt đối thì đặt
+`REWRITE_BASE_URL=https://en-vi.donghanhcungban.com`.
 
 Kết luận cuối:
 - `✅ DB KHỚP tập kỳ vọng` — mọi câu cần thiết đã có, đường dẫn đúng (có thể còn orphan để dọn).
