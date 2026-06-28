@@ -104,6 +104,10 @@ Nếu thấy `↺ Remap` lớn nghĩa là đang tận dụng lại audio cũ —
 ```bash
 npm run seed:verify                  # hoặc: npm run seed:all -- --verify
 VERIFY_DECRYPT=20 npm run seed:verify  # thêm: tải + giải mã thử 20 file
+
+# ⚠️ STORAGE_DRIVER=local: audio_url hay là đường dẫn TƯƠNG ĐỐI (/uploads/...).
+# Node fetch không nhận URL tương đối → phải cho base, nếu không giải mã thử fail HẾT:
+VERIFY_DECRYPT=20 VERIFY_BASE_URL=https://en-vi.donghanhcungban.com npm run seed:verify
 ```
 
 Khác báo cáo thường (chỉ đếm thiếu), verify đối chiếu **HAI CHIỀU** + kiểm đường dẫn:
@@ -119,7 +123,15 @@ Khác báo cáo thường (chỉ đếm thiếu), verify đối chiếu **HAI CH
    chạy `supabase/refresh-tts-voices.sql` trong SQL Editor (xóa dòng cache cũ) rồi seed lại.
 3. **Nhất quán đường dẫn**: `audio_url` phải chứa đúng `${lang}/${voice}/${hash}.mp3`.
 4. **Giải mã thử** (khi đặt `VERIFY_DECRYPT=N`): tải N file + giải mã bằng khóa suy từ
-   hash để chắc audio **dùng được thật**, không chỉ tồn tại dòng DB.
+   hash để chắc audio **dùng được thật**, không chỉ tồn tại dòng DB. Khi fail, in
+   **lý do gom nhóm** + vài mẫu để biết hỏng ở khâu nào:
+   - `URL_TƯƠNG_ĐỐI` / `Failed to parse URL` → `audio_url` tương đối (local mode) mà
+     chưa cho base → **đặt `VERIFY_BASE_URL=https://...`** rồi chạy lại (đây là lỗi của
+     phép thử, KHÔNG phải audio hỏng — trình duyệt vẫn phát được vì tự resolve theo origin).
+   - `HTTP_4xx/5xx` → file chưa có trên Storage/Nginx (đường dẫn lỗi hoặc chưa upload).
+   - `OperationError` → giải mã thất bại thật: sai `TTS_ENCRYPTION_MASTER_KEY` (khác lúc
+     mã hóa) hoặc file ciphertext hỏng.
+   - `BODY_NGẮN_*` → tải về quá ngắn (thường là trang lỗi HTML, không phải audio).
 
 Kết luận cuối:
 - `✅ DB KHỚP tập kỳ vọng` — mọi câu cần thiết đã có, đường dẫn đúng (có thể còn orphan để dọn).
