@@ -24,6 +24,8 @@
 //   WORDS_FILE=...           Đọc danh sách từ cần phát âm từ file (retry lỗi).
 //
 // Chạy: npm run seed:all   ·   Xem báo cáo: npm run seed:all -- --check   ·   Kiểm tra kỹ: npm run seed:all -- --verify
+//
+// 📖 Hướng dẫn chi tiết (báo cáo / remap / verify): docs/seed-guide.md
 
 import * as crypto from 'node:crypto'
 import * as dotenv from 'dotenv'
@@ -442,14 +444,28 @@ async function seedWithRetry(tasks: AnyTask[], baseLabel: string): Promise<AnyTa
   return remaining
 }
 
-// ── Đọc TẤT CẢ dòng 1 bảng (phân trang 1000 dòng/lần) ───────────────────────
+// ── Đọc TẤT CẢ dòng 1 bảng (phân trang ỔN ĐỊNH theo khóa) ───────────────────
 // Supabase mặc định trả tối đa 1000 dòng/query → phải phân trang mới đếm đúng.
-async function fetchAllRows<T>(table: string, columns: string): Promise<T[]> {
+//
+// ⚠️ LỖI "số liệu nhảy loạn xạ": nếu phân trang bằng `.range()` mà KHÔNG kèm
+// ORDER BY thì Postgres/PostgREST KHÔNG đảm bảo thứ tự dòng giống nhau giữa các
+// trang. Với hàng trăm nghìn dòng (tts_cache 300k+ → 300+ trang) các trang bị
+// CHỒNG/LỌT dòng ngẫu nhiên → số dòng gom vào Set đổi mỗi lần chạy → báo cáo
+// (và --verify) nhảy số.
+//
+// Cách sửa: LUÔN sắp xếp theo một bộ cột tạo KHÓA DUY NHẤT (orderCols):
+//   • tts_cache       → ['hash']          (primary key)
+//   • pronunciations  → ['word','voice']  (unique (word,voice))
+// Thứ tự TỔNG + ổn định → phân trang không lọt/trùng → đếm chuẩn, lặp lại y hệt.
+async function fetchAllRows<T>(table: string, columns: string, orderCols: string[]): Promise<T[]> {
   const supabase = getSupabaseAdmin()
   const PAGE = 1000
   const out: T[] = []
   for (let from = 0; ; from += PAGE) {
-    const { data, error } = await supabase.from(table).select(columns).range(from, from + PAGE - 1)
+    // Áp ORDER BY cho từng cột khóa rồi mới phân trang (range = limit/offset).
+    let query = supabase.from(table).select(columns).order(orderCols[0], { ascending: true })
+    for (let i = 1; i < orderCols.length; i++) query = query.order(orderCols[i], { ascending: true })
+    const { data, error } = await query.range(from, from + PAGE - 1)
     if (error) throw new Error(`Đọc bảng ${table} lỗi: ${error.message}`)
     if (!data || data.length === 0) break
     out.push(...(data as T[]))
@@ -465,9 +481,9 @@ async function audit(allByCat: Map<CatId, AnyTask[]>): Promise<CatStat[]> {
   process.stdout.write('🔎 Đang kiểm tra DB (pronunciations + tts_cache)...')
 
   // Tập đã có trên DB
-  const pronRows = await fetchAllRows<{ word: string; voice: string }>('pronunciations', 'word, voice')
+  const pronRows = await fetchAllRows<{ word: string; voice: string }>('pronunciations', 'word, voice', ['word', 'voice'])
   const donePron = new Set(pronRows.map((r) => `${r.word}:${r.voice}`))
-  const ttsRows  = await fetchAllRows<{ hash: string }>('tts_cache', 'hash')
+  const ttsRows  = await fetchAllRows<{ hash: string }>('tts_cache', 'hash', ['hash'])
   const doneHash = new Set(ttsRows.map((r) => r.hash))
 
   process.stdout.write(` xong (${donePron.size} phát âm, ${doneHash.size} câu TTS)\n`)
@@ -539,9 +555,9 @@ async function verifyDb(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
   // 2) Đọc DB (phân trang đầy đủ)
   process.stdout.write('   Đang đọc DB...')
   const ttsRows  = await fetchAllRows<{ hash: string; lang: string; voice: string; audio_url: string }>(
-    'tts_cache', 'hash, lang, voice, audio_url')
+    'tts_cache', 'hash, lang, voice, audio_url', ['hash'])
   const pronRows = await fetchAllRows<{ word: string; voice: string; audio_url: string }>(
-    'pronunciations', 'word, voice, audio_url')
+    'pronunciations', 'word, voice, audio_url', ['word', 'voice'])
   const dbHash = new Set(ttsRows.map((r) => r.hash))
   console.log(` xong (${ttsRows.length} câu TTS, ${pronRows.length} phát âm)`)
 
