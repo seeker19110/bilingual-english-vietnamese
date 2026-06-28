@@ -20,7 +20,8 @@
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts",
     "seed:all": "tsx scripts/seed-all.ts",
     "seed:verify": "tsx scripts/seed-all.ts --verify",
-    "sync:storage": "tsx scripts/sync-storage-to-vps.ts"
+    "sync:storage": "tsx scripts/sync-storage-to-vps.ts",
+    "check:supabase": "tsx scripts/check-supabase-audio.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",

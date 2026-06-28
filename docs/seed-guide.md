@@ -133,6 +133,10 @@ Khác báo cáo thường (chỉ đếm thiếu), verify đối chiếu **HAI CH
      mã hóa) hoặc file ciphertext hỏng.
    - `BODY_NGẮN_*` → tải về quá ngắn (thường là trang lỗi HTML, không phải audio).
 
+Kết luận cuối:
+- `✅ DB KHỚP tập kỳ vọng` — mọi câu cần thiết đã có, đường dẫn đúng (có thể còn orphan để dọn).
+- `⚠️ Chưa khớp: thiếu N câu...` — chạy `npm run seed:all -- --all` để bù.
+
 ---
 
 ## 5. Đồng bộ audio Supabase → VPS (`sync:storage`)
@@ -180,19 +184,48 @@ dòng đã trỏ local, **không xóa** gì. Mặc định ghi URL **tương đ�
 (trình duyệt tự resolve theo domain — không gắn cứng host). Muốn ghi tuyệt đối thì đặt
 `REWRITE_BASE_URL=https://en-vi.donghanhcungban.com`.
 
-Kết luận cuối:
-- `✅ DB KHỚP tập kỳ vọng` — mọi câu cần thiết đã có, đường dẫn đúng (có thể còn orphan để dọn).
-- `⚠️ Chưa khớp: thiếu N câu...` — chạy `npm run seed:all -- --all` để bù.
+---
+
+## 6. Kiểm tra Storage ↔ VPS (`check:supabase`)
+
+Khác `sync:storage` (đi từ **dòng DB**), script `scripts/check-supabase-audio.ts` đi từ
+**object THẬT trên Supabase Storage**: liệt kê đệ quy từng bucket, đối chiếu file local
+trên VPS, báo cáo VPS còn thiếu gì — và bắt được cả file có trên Storage mà **DB không
+có** (orphan storage). Có cờ `--seed` để tải các file thiếu về.
+
+```bash
+# CHẠY TRÊN VPS
+npm run check:supabase            # chỉ báo cáo: Storage ↔ VPS ↔ DB
+npm run check:supabase -- --seed  # tải các object Storage còn thiếu ở VPS về local
+BUCKET=tts-cache npm run check:supabase   # chỉ 1 bucket
+```
+
+Báo cáo mỗi bucket:
+- **Trên Supabase Storage** — tổng số object thật trong bucket.
+- **Đã có ở VPS local** / **THIẾU ở VPS local** — đối chiếu file dưới `UPLOADS_DIR`
+  (tts-cache còn gom số thiếu theo thư mục `lang/voice`).
+- **Đối chiếu DB** — `có dòng` (object khớp 1 dòng tts_cache/pronunciations) vs
+  `orphan storage` (file trên Storage nhưng KHÔNG có dòng DB — không bao giờ được app dùng).
+
+Khi nào dùng `check:supabase` vs `sync:storage`:
+- `sync:storage` — đảm bảo mọi thứ **DB cần** có ở VPS (đúng cái app phục vụ).
+- `check:supabase` — đối chiếu **kho file thật** trên Storage, phát hiện chênh lệch/orphan.
 
 ---
 
-## 5. Quy trình khuyến nghị
+## 7. Quy trình khuyến nghị
 
 ```bash
+# Seed audio (tạo cache TTS)
 npm run seed:all -- --check     # 1. Xem còn thiếu bao nhiêu (số liệu nay ổn định)
 npm run seed:all -- --all       # 2. Seed hết (tự remap cái nào remap được)
 npm run seed:verify             # 3. Kiểm tra: thiếu / thừa / đường dẫn
 VERIFY_DECRYPT=20 npm run seed:verify   # 4. (tùy chọn) chắc chắn audio giải mã được
+
+# Đưa audio về VPS local (chạy TRÊN VPS)
+npm run sync:storage                       # 5. Tải file Supabase → VPS (cái DB cần)
+npm run sync:storage -- --rewrite-urls     # 6. Trỏ audio_url sang /uploads (file đã có ở VPS)
+npm run check:supabase                     # 7. Đối chiếu kho Storage thật ↔ VPS (tùy chọn)
 ```
 
 Nếu seed bị lỗi giữa chừng: danh sách lỗi được ghi ra `scripts/seed-errors.json`
