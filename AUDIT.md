@@ -173,7 +173,7 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 
 ### 4.3 Sổ lỗi cụ thể phát hiện trong rà soát SÂU (deep pass)
 
-> Các lỗi **mới**, phát hiện khi đọc tay từng dòng theo quy trình §1.5. **Lượt 1:** BUG-1..5. **Lượt 2** (đọc `Speaking.tsx`, `tts.ts`, lib backend Gemini/STT/pronunciation, `vocab.ts`): BUG-6..8. **Lượt 3** (đọc `RoadmapTab.tsx`, `supabaseAdmin.ts` + viết test lớp API): không phát hiện lỗi mới — `RoadmapTab` đã tự bù trừ BUG-6 bằng kiểm tra kép chữ thường; tập trung **viết test hồi quy** khoá H1/H2/H10 + BUG-2/5. Cột **Trạng thái** phản ánh mã hiện tại.
+> Các lỗi **mới**, phát hiện khi đọc tay từng dòng theo quy trình §1.5. **Lượt 1:** BUG-1..5. **Lượt 2** (đọc `Speaking.tsx`, `tts.ts`, lib backend Gemini/STT/pronunciation, `vocab.ts`): BUG-6..8. **Lượt 3** (đọc `RoadmapTab.tsx`, `supabaseAdmin.ts` + viết test lớp API): không lỗi mới. **Lượt 4** (đọc nốt `Learn.tsx`, `Lessons.tsx`): BUG-9, BUG-10. Đến đây đã đọc tay **toàn bộ trang/UI lớn + lib + lớp API**. Cột **Trạng thái** phản ánh mã hiện tại.
 
 | ID | Mức | Lớp | Lỗi | Bằng chứng | Trạng thái |
 |----|-----|-----|-----|-----------|-----------|
@@ -185,6 +185,8 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 | **BUG-6** | 🟢 Low | Logic/Dữ liệu | **Từ "đã thuộc" không chuẩn hoá chữ thường** trong khi "từ khó" thì có → các nơi tiêu thụ phải kiểm tra cả 2 dạng (`learned.has(w) \|\| learned.has(w.toLowerCase())`). Hiện "chạy được" nhờ kiểm tra kép bù đắp, nhưng dễ vỡ. | `vocab.ts:31-49` (không `toLowerCase`) vs `vocab.ts:63-73` (có); bù đắp tại `stats.ts:159` | 🔲 OPEN — **chưa sửa** (đổi cách lưu có thể lệch dữ liệu đã thuộc cũ; cần migrate cẩn thận, để PR riêng). |
 | **BUG-7** | 🟢 Low | UX/Audio | **Mute giữa chừng vẫn đọc nốt phần feedback.** `stopSpeaking()` resolve clip hiện tại → `speakBilingual` chạy tiếp `speak(feedback)`. | `tts.ts:130,374-375`; `Speaking.tsx:477` | 🔲 OPEN — thêm cờ huỷ chuỗi bilingual khi stop (rủi ro thấp, để sau). |
 | **BUG-8** | 🟢 Low | Dữ liệu | **STT qua Web Speech (fallback) chỉ đếm ở client**, server không đếm (không qua `/api/stt`) → `pullUserData` ghi đè làm "biến mất" lượt; fallback STT gần như không giới hạn. | `Speaking.tsx:333` | 🔲 OPEN — edge case (chỉ trình duyệt không hỗ trợ ghi âm); ghi nhận. |
+| **BUG-9** | 🟡 Medium | Logic/SRS | **"Quên/Again" không ôn lại trong phiên.** Gợi ý UI ghi "Quên → ôn sớm" và `SRSReview.rate()` chủ ý tải lại thẻ "again", nhưng `reviewWord` đặt `due = now + max(0,1)·ngày` = **mai** → từ vừa quên KHÔNG hiện lại hôm nay (mã trái với lời hứa UI). | `srs.ts` (`due` calc) vs `Learn.tsx:600,665` | ✅ **FIXED** — `again` → `due = now` (ôn lại ngay trong phiên); cập nhật `srs.test.ts`. |
+| **BUG-10** | 🟢 Low | UX/Tài nguyên | **Micro mở dai dẳng sau khi rời trang.** `InlinePronounce` (kiểm tra phát âm từng câu) không dừng Web Speech khi unmount → mic mở tới ~20s sau khi back + cảnh báo setState-after-unmount. | `Lessons.tsx` `InlinePronounce` (thiếu cleanup) | ✅ **FIXED** — thêm `useEffect` cleanup gọi `stopRef.current?.()`. |
 
 **Quan sát thêm (không phải lỗi):**
 - `created_at`/`submitted_at` là `bigint` epoch-ms (`schema.sql:30,41,52`) → `Number(...)` trong `cloud.ts` an toàn. ✅
@@ -467,6 +469,8 @@ npm run build       # phải dựng được
 | **BUG-2** — hoàn lượt (`refundUsage` + RPC) khi provider lỗi/timeout. | ✅ Đã sửa |
 | **BUG-4** — không tắt spinner khi request đã abort (Dictionary). | ✅ Đã sửa |
 | **BUG-5** — cộng `learnCount` vào `usageTotal` để streak ⇄ biểu đồ nhất quán. | ✅ Đã sửa |
+| **BUG-9** — "Quên/Again" ôn lại ngay trong phiên (đúng lời hứa UI). | ✅ Đã sửa |
+| **BUG-10** — dừng micro khi rời trang (InlinePronounce cleanup). | ✅ Đã sửa |
 | **BUG-6** — chuẩn hoá chữ thường cho "từ đã thuộc" (cần migrate dữ liệu cũ). | 🔲 Để PR sau |
 | **BUG-7** — huỷ chuỗi đọc bilingual khi mute giữa chừng. | 🔲 Để PR sau |
 | **BUG-8** — đếm lượt STT cho nhánh Web Speech fallback. | 🔲 Để PR sau |
@@ -569,6 +573,6 @@ npm run build               # ✅ PASS (manifest + tsc + vite build, nén Gzip/B
 - `api/_lib/security.test.ts` (6 ca) — CORS (khoá H10) + rate limit
 - `api/_lib/fetchTimeout.test.ts` (3 ca) — timeout (khoá H2)
 
-**Sửa lỗi đã áp dụng trong bản này:** BUG-1 (`Chat.tsx`), BUG-2 (`usage.ts` + `ai.ts` + `stt.ts` + migration `0004_refund_usage.sql` + `schema.sql`), BUG-4 (`Dictionary.tsx`), BUG-5 (`stats.ts`). BUG-6/7/8 ghi nhận, để PR sau.
+**Sửa lỗi đã áp dụng:** BUG-1 (`Chat.tsx`), BUG-2 (`usage.ts` + `ai.ts` + `stt.ts` + migration `0004_refund_usage.sql` + `schema.sql`), BUG-4 (`Dictionary.tsx`), BUG-5 (`stats.ts`), BUG-9 (`srs.ts` + test), BUG-10 (`Lessons.tsx` InlinePronounce). BUG-6/7/8 ghi nhận, để PR sau.
 
 > *Báo cáo audit cũ vẫn lưu tại `AUDIT_REPORT.md` (2026-06-20) để tra cứu lịch sử các phát hiện ban đầu (auth localStorage, rate limit, mobile…), nay đã được xử lý qua Supabase Auth + server-side limits.*

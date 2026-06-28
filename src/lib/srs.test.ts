@@ -28,12 +28,14 @@ describe('SRS — SM-2', () => {
     expect(due2).toBe(due1)
   })
 
-  it("reviewWord('again') giảm ease (sàn 1.3) và hẹn ôn lại sớm", () => {
+  it("reviewWord('again') → ôn lại NGAY trong phiên (due ≤ now, thẻ vẫn đến hạn)", () => {
     addToSRS('u1', 'apple')
-    reviewWord('u1', 'apple', 'again')
-    // due ≈ now + 1 ngày (interval=0 → max(0,1)=1)
+    reviewWord('u1', 'apple', 'good')   // đẩy due ra tương lai trước
+    reviewWord('u1', 'apple', 'again')  // Quên → kéo due về bây giờ
     const due = getNextReview('u1', 'apple')!.getTime()
-    expect(due).toBeGreaterThan(Date.now())
+    expect(due).toBeLessThanOrEqual(Date.now())
+    // và thẻ phải xuất hiện lại trong danh sách cần ôn ngay
+    expect(getDueWords('u1', [W('apple')]).map(e => e.word)).toContain('apple')
   })
 
   it("reviewWord('good') tăng interval theo SM-2: 1 → 4 → ×ease", () => {

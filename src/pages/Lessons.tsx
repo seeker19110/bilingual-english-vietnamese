@@ -615,6 +615,10 @@ export function InlinePronounce({ text, lang, isA }: {
   const [err,    setErr]    = useState('')
   const stopRef = useRef<(() => void) | null>(null)
 
+  // Dừng nhận diện giọng nói khi rời trang/đóng component để micro KHÔNG mở dai dẳng
+  // (~20s tới khi Web Speech tự timeout) và tránh setState sau khi đã unmount.
+  useEffect(() => () => { stopRef.current?.() }, [])
+
   if (!isSTTSupported()) return null
 
   function reset() { setScore(null); setHeard(''); setWords([]); setErr('') }
