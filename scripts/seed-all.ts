@@ -609,19 +609,44 @@ async function verifyDb(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
   // 6) (tùy chọn) Giải mã thử N file để chắc dùng được — VERIFY_DECRYPT=20
   const sampleN = process.env.VERIFY_DECRYPT ? parseInt(process.env.VERIFY_DECRYPT, 10) : 0
   if (sampleN > 0) {
+    // ⚠️ Ở STORAGE_DRIVER=local, audio_url thường là đường dẫn TƯƠNG ĐỐI
+    // ('/uploads/...') khi seed/generate không đặt BASE_URL. Node `fetch` KHÔNG
+    // nhận URL tương đối → phải ghép base, nếu không sẽ fail HẾT ngay ở bước tải
+    // (chưa tới giải mã). Base lấy theo: VERIFY_BASE_URL > BASE_URL > VITE_SITE_URL.
+    const verifyBase = (process.env.VERIFY_BASE_URL || process.env.BASE_URL || process.env.VITE_SITE_URL || '')
+      .trim().replace(/\/$/, '')
+    const toAbsolute = (u: string): string =>
+      /^https?:\/\//i.test(u) ? u : verifyBase ? `${verifyBase}${u.startsWith('/') ? '' : '/'}${u}` : u
+
     const pick = ttsRows.filter((r) => expectedTts.has(r.hash)).slice(0, sampleN)
-    let okDec = 0, failDec = 0
+    let okDec = 0
+    const reasons = new Map<string, number>()        // gom LÝ DO fail để biết hỏng ở khâu nào
+    const samples: string[] = []
     for (const r of pick) {
       try {
-        const res = await fetch(r.audio_url)
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        await decryptAudio(await res.arrayBuffer(), r.hash)   // giải mã bằng khoá suy từ hash
+        const url = toAbsolute(r.audio_url)
+        if (!/^https?:\/\//i.test(url)) throw new Error('URL_TƯƠNG_ĐỐI (đặt VERIFY_BASE_URL=https://...)')
+        const res = await fetch(url)
+        if (!res.ok) throw new Error(`HTTP_${res.status}`)
+        const buf = await res.arrayBuffer()
+        if (buf.byteLength < 32) throw new Error(`BODY_NGẮN_${buf.byteLength}B (có thể là trang lỗi, không phải audio)`)
+        await decryptAudio(buf, r.hash)              // giải mã bằng khoá suy từ hash
         okDec++
-      } catch {
-        failDec++
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err)
+        const label = msg.split(/[:\n]/)[0].trim().slice(0, 40) || 'lỗi không rõ'  // gom theo nhãn đầu
+        reasons.set(label, (reasons.get(label) ?? 0) + 1)
+        if (samples.length < 3) samples.push(`${r.audio_url.slice(0, 70)} → ${msg.slice(0, 90)}`)
       }
     }
+    const failDec = pick.length - okDec
     console.log(`\n🔓 Giải mã thử ${pick.length} file (mẫu): ✓ ${okDec}  ✗ ${failDec}`)
+    if (failDec > 0) {
+      for (const [k, n] of [...reasons.entries()].sort((a, b) => b[1] - a[1])) console.log(`     • ${k}: ${n}`)
+      for (const s of samples) console.log(`     ↳ ${s}`)
+      console.log('     Gợi ý: URL_TƯƠNG_ĐỐI / "Failed to parse URL" → đặt VERIFY_BASE_URL (vd domain production);')
+      console.log('            HTTP_4xx/5xx → file chưa có trên Storage/Nginx; OperationError → sai master key hoặc file hỏng.')
+    }
   }
 
   // 7) Kết luận
