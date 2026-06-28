@@ -101,17 +101,29 @@ export function pushUsage(userId: string, usage: DailyUsage) {
     writing_count: usage.writingCount,
     speaking_count: usage.speakingCount,
     stt_count: usage.sttCount,
+    learn_count: usage.learnCount ?? 0,
   }).then(({ error }) => warn('usage', error))
+}
+
+// Đẩy RIÊNG cột learn_count (số từ học trong ngày) để ghi nhận streak — KHÔNG đụng
+// các cột chat/writing/speaking/stt (server là nguồn sự thật của các lượt đó, tránh
+// ghi đè làm sai giới hạn gói). Upsert chỉ kèm learn_count nên onConflict chỉ cập nhật cột này.
+// Nếu DB chưa có cột learn_count (chưa chạy migration) → lỗi được nuốt êm, streak vẫn chạy ở client.
+export function pushLearnDay(userId: string, day: string, learnCount: number) {
+  void supabase.from('daily_usage')
+    .upsert({ user_id: userId, day, learn_count: learnCount }, { onConflict: 'user_id,day' })
+    .then(({ error }) => warn('learn day', error))
 }
 
 // ── PULL: kéo toàn bộ dữ liệu của user về ghi vào localStorage ────────────────
 // Gọi khi đăng nhập / mở trang. Lỗi mạng sẽ bị nuốt (vẫn dùng được bản local cũ).
 export async function pullUserData(userId: string): Promise<void> {
   const date = todayStr()
-  // Kéo 40 ngày gần nhất để getStreak() có đủ dữ liệu tính streak liên tục
+  // Kéo 365 ngày gần nhất để getStreak() tính được chuỗi ngày liên tiếp tối đa 1 năm
+  // (đồng bộ đủ dữ liệu daily_usage từ Supabase về localStorage cho mọi máy).
   const startDate = (() => {
     const d = new Date()
-    d.setDate(d.getDate() - 40)
+    d.setDate(d.getDate() - 365)
     return d.toISOString().slice(0, 10)
   })()
   const results = await Promise.allSettled([
@@ -161,6 +173,7 @@ export async function pullUserData(userId: string): Promise<void> {
           writingCount: u.writing_count ?? 0,
           speakingCount: u.speaking_count ?? 0,
           sttCount: u.stt_count ?? 0,
+          learnCount: u.learn_count ?? 0,
         } satisfies DailyUsage)
       }
     } else if (usage.error) warn('pull usage', usage.error)

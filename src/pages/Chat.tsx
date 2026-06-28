@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { Send, Plus, ChevronDown, Sparkles } from 'lucide-react'
 import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
+import QuickActions from '../components/QuickActions'
 import SpeakButton from '../components/SpeakButton'
 import { saveChatSession, getChatSessions, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { stopSpeaking } from '../lib/tts'
@@ -273,7 +275,6 @@ export default function Chat() {
   return (
     <div className="h-[100dvh] bg-zinc-950 flex flex-col">
       <Layout
-        title={isA ? 'Chat với gia sư' : 'Chat with tutor'}
         subtitle={session
           ? `${situationLabel(session.situation, dir)} · ${
               isA
@@ -285,6 +286,13 @@ export default function Chat() {
 
       {!session ? (
         <div className="flex-1 flex flex-col overflow-y-auto">
+          {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
+          <div className="max-w-sm mx-auto w-full px-4 pt-5">
+            <PageHeader
+              title={isA ? 'Chat với gia sư' : 'Chat with tutor'}
+              subtitle={isA ? 'Trò chuyện tiếng Anh theo tình huống' : 'Practise English by situation'}
+            />
+          </div>
           <SetupScreen onStart={startSession} loading={loading} error={error} dir={dir} />
 
           {prevSessions.length > 0 && (
@@ -306,6 +314,11 @@ export default function Chat() {
               ))}
             </div>
           )}
+
+          {/* Hàng hành động nhanh ở đáy màn thiết lập */}
+          <div className="max-w-md mx-auto w-full px-4 pb-8">
+            <QuickActions />
+          </div>
         </div>
       ) : (
         <>

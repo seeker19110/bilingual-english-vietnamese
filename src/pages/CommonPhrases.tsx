@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect, useRef, useDeferredValue } from 'react'
 import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
 import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
+import QuickActions from '../components/QuickActions'
 import { useLang } from '../context/useLang'
 import KaraokeText from '../components/KaraokeText'
 import VoiceToggle from '../components/VoiceToggle'
@@ -218,10 +220,13 @@ export default function CommonPhrases() {
 
   return (
     <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
-      <Layout title={T.phrasesPageTitle} back extra={<VoiceToggle />} />
+      <Layout back extra={<VoiceToggle />} />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:py-6 space-y-4">
+
+          {/* Tiêu đề trang — đặt ngay dưới AppHeader, cỡ chữ lớn */}
+          <PageHeader title={T.phrasesPageTitle} subtitle={T.phrasesPageSub} />
 
           {/* Ô tìm kiếm — chỉ hiện ở trên trên desktop */}
           <div className="hidden sm:block relative">
@@ -305,6 +310,9 @@ export default function CommonPhrases() {
               {T.phrasesNoResult}
             </div>
           )}
+
+          {/* Hàng hành động nhanh ở đáy trang */}
+          <QuickActions />
         </div>
       </main>
 

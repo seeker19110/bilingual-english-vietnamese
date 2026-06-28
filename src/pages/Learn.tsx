@@ -4,12 +4,14 @@ import {
   ClipboardList, ChevronRight, Home, Star, Brain, MessageCircle,
 } from 'lucide-react'
 import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
+import QuickActions from '../components/QuickActions'
 import KaraokeText from '../components/KaraokeText'
 import VocabMilestone from '../components/VocabMilestone'
 import WordCard from '../components/WordCard'
 import RoadmapTab from '../components/RoadmapTab'
 import type { DictEntry } from '../types'
-import { getDirection } from '../lib/storage'
+import { getDirection, markStudiedToday } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { useNavigate } from 'react-router-dom'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
@@ -128,13 +130,14 @@ export default function Learn() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout
-        title={isA ? 'Học theo lộ trình' : 'Learning Path'}
-        subtitle={isA ? `${DAILY_GOAL} từ mới mỗi ngày` : `${DAILY_GOAL} new words a day`}
-        back
-      />
+      <Layout back />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
+        {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
+        <PageHeader
+          title={isA ? 'Học theo lộ trình' : 'Learning Path'}
+          subtitle={isA ? `${DAILY_GOAL} từ mới mỗi ngày` : `${DAILY_GOAL} new words a day`}
+        />
         <VocabMilestone userId={uid} refreshKey={refresh} />
 
         {/* Tab bar */}
@@ -168,6 +171,9 @@ export default function Learn() {
             {tab === 'quiz'  && <QuizTab     uid={uid} isA={isA}                  />}
           </>
         ))}
+
+        {/* Hàng hành động nhanh ở đáy trang */}
+        <QuickActions />
       </main>
     </div>
   )
@@ -351,6 +357,7 @@ function TodayLesson({ uid, isA, onProgress }: { uid: string; isA: boolean; onPr
     markLearned(uid, card.word)
     addToSRS(uid, card.word)
     bumpDailyLearned(uid)
+    markStudiedToday(uid) // ghi nhận có học hôm nay → tính streak (đồng bộ server)
     onProgress()
     const nextIdx = idx + 1
     if (nextIdx >= batch.length) {

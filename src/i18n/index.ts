@@ -37,8 +37,8 @@ export const t = {
     phrasesDescA: "300+ chủ thể (I'm, We are, Could you…), mỗi chủ thể nhiều câu thực tế, có phát âm.",
     dictTitleA: 'Từ điển',
     dictDescA: 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
-    lessonsTitleA: 'Bài học',
-    lessonsDescA: 'Các bài hội thoại mẫu thông dụng.',
+    lessonsTitleA: 'Các bài hội thoại mẫu thông dụng',
+    lessonsDescA: 'Hội thoại mẫu theo chủ đề đời sống hằng ngày, mỗi bài 40 đoạn song ngữ có phát âm.',
     tagPopular: 'Phổ biến',
     tagKeyFeature: 'Tính năng chính',
     tagUnlimited: 'Không giới hạn',
@@ -181,7 +181,7 @@ export const t = {
     phrasesDescB: '300+ subjects with real-life English/Vietnamese sentences and audio.',
     dictTitleB: 'Dictionary',
     dictDescB: 'Look up 10,000 common Vietnamese–English words with part of speech and examples.',
-    lessonsTitleB: 'Lessons',
+    lessonsTitleB: 'Common sample dialogues',
     lessonsDescB: 'Everyday Vietnamese dialogues, 40 bilingual exchanges per lesson.',
 
     // Login

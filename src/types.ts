@@ -68,6 +68,9 @@ export interface DailyUsage {
   writingCount: number
   speakingCount: number
   sttCount: number   // số lần nhận diện giọng nói (STT) — đếm riêng vì tốn API riêng
+  // Số từ vựng đã học trong ngày (tab Lộ trình / Hôm nay). KHÔNG tốn API, không tính
+  // vào giới hạn gói — chỉ để ghi nhận "có học hôm nay" cho chuỗi ngày liên tiếp (streak).
+  learnCount?: number
 }
 
 // Giới hạn theo gói

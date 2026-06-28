@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Flame, BookOpen, Target, GraduationCap, MessageCircle, PenLine, Mic, RotateCcw, TrendingUp, CalendarDays, Trophy } from 'lucide-react'
 import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
+import QuickActions from '../components/QuickActions'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useCloudSync } from '../lib/useCloudSync'
@@ -123,9 +125,15 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout title={vi ? 'Tiến độ học' : 'Your Progress'} streak={stats.streak} />
+      <Layout streak={stats.streak} />
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+
+        {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
+        <PageHeader
+          title={vi ? 'Tiến độ học' : 'Your Progress'}
+          subtitle={vi ? 'Chuỗi ngày, mục tiêu hôm nay và tiến độ lộ trình' : 'Streak, today’s goal and roadmap progress'}
+        />
 
         {/* ── Streak + biểu đồ 7 ngày ─────────────────────────────────── */}
         <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 animate-fade-in">
@@ -362,6 +370,8 @@ export default function Dashboard() {
           </div>
         </section>
 
+        {/* Hàng hành động nhanh ở đáy trang */}
+        <QuickActions />
       </main>
     </div>
   )

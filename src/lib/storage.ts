@@ -1,6 +1,6 @@
 import type { User, ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Direction } from '../types'
 // Mỗi lần lưu xuống localStorage, ta cũng đẩy bản ghi lên Supabase (bắn rồi quên)
-import { pushChatSession, pushWritingSub, pushSpeakingSession } from './cloud'
+import { pushChatSession, pushWritingSub, pushSpeakingSession, pushLearnDay } from './cloud'
 
 // ─── Keys ────────────────────────────────────────────────────────────────────
 const K = {
@@ -139,9 +139,10 @@ function todayStr() {
 
 export function getUsage(userId: string): DailyUsage {
   const date = todayStr()
-  const u = get<DailyUsage>(K.usage(userId, date)) ?? { date, chatCount: 0, writingCount: 0, speakingCount: 0, sttCount: 0 }
-  // Bản local cũ có thể thiếu sttCount (lưu trước khi thêm tính năng) — bù mặc định.
+  const u = get<DailyUsage>(K.usage(userId, date)) ?? { date, chatCount: 0, writingCount: 0, speakingCount: 0, sttCount: 0, learnCount: 0 }
+  // Bản local cũ có thể thiếu sttCount/learnCount (lưu trước khi thêm tính năng) — bù mặc định.
   if (u.sttCount == null) u.sttCount = 0
+  if (u.learnCount == null) u.learnCount = 0
   return u
 }
 
@@ -153,6 +154,17 @@ export function incrementUsage(userId: string, field: 'chatCount' | 'writingCoun
   const usage = getUsage(userId)
   usage[field]++
   set(K.usage(userId, todayStr()), usage)
+}
+
+// Ghi nhận "đã học từ vựng hôm nay" để tính chuỗi ngày liên tiếp (streak).
+// Khác incrementUsage: việc học từ KHÔNG tốn API và KHÔNG do server đếm tự động,
+// nên ở đây client vừa lưu local vừa CHỦ ĐỘNG đẩy lên Supabase (daily_usage.learn_count)
+// để đổi máy / xoá cache vẫn giữ được streak (đồng bộ cả server và client).
+export function markStudiedToday(userId: string) {
+  const usage = getUsage(userId)
+  usage.learnCount = (usage.learnCount ?? 0) + 1
+  set(K.usage(userId, todayStr()), usage)
+  pushLearnDay(userId, usage.date, usage.learnCount) // đồng bộ lên server (chỉ cột learn_count)
 }
 
 // ─── Direction (chiều học) ────────────────────────────────────────────────────
@@ -167,17 +179,28 @@ export function setDirection(dir: Direction) {
 }
 
 // ─── Streak ───────────────────────────────────────────────────────────────────
-// Tính số ngày liên tiếp có học (streak)
+// Tính số ngày liên tiếp có học (streak) — tối đa 365 ngày.
+// "Có học" = bất kỳ hoạt động nào trong ngày: chat / viết / nói / STT / HỌC TỪ VỰNG.
+// Dữ liệu đọc từ localStorage (đã được pullUserData đồng bộ từ Supabase tối đa 365 ngày),
+// nên streak nhất quán giữa các máy.
+const STREAK_MAX_DAYS = 365
+
+function hasActivityOn(usage: DailyUsage | null): boolean {
+  if (!usage) return false
+  const total = usage.chatCount + usage.writingCount + usage.speakingCount
+    + (usage.sttCount ?? 0) + (usage.learnCount ?? 0)
+  return total > 0
+}
+
 export function getStreak(userId: string): number {
   let streak = 0
   const today = new Date()
-  for (let i = 0; i < 365; i++) {
+  for (let i = 0; i < STREAK_MAX_DAYS; i++) {
     const d = new Date(today)
     d.setDate(d.getDate() - i)
     const dateStr = d.toISOString().slice(0, 10)
     const usage = get<DailyUsage>(K.usage(userId, dateStr))
-    const hasActivity = usage && (usage.chatCount + usage.writingCount + usage.speakingCount + (usage.sttCount ?? 0) > 0)
-    if (hasActivity) {
+    if (hasActivityOn(usage)) {
       streak++
     } else if (i > 0) {
       // Ngày trước không có hoạt động → streak đứt
@@ -185,5 +208,5 @@ export function getStreak(userId: string): number {
     }
     // i === 0 (hôm nay) chưa học: cho qua, kiểm tra hôm qua xem streak còn không
   }
-  return streak
+  return Math.min(streak, STREAK_MAX_DAYS)
 }

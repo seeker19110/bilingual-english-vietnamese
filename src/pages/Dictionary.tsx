@@ -1,6 +1,8 @@
 import { useMemo, useState, useRef, useEffect, useDeferredValue } from 'react'
 import { Search, X, BookText, Layers, GraduationCap, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react'
 import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
+import QuickActions from '../components/QuickActions'
 import VoiceToggle from '../components/VoiceToggle'
 import PronounceButton from '../components/PronounceButton'
 import VocabMilestone from '../components/VocabMilestone'
@@ -147,14 +149,16 @@ export default function Dictionary() {
 
   return (
     <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
-      <Layout
-        title={isA ? 'Từ điển' : 'Dictionary'}
-        subtitle={`${totalWords.toLocaleString('vi-VN')} ${isA ? 'từ thông dụng' : 'common words'}`}
-        extra={<VoiceToggle />}
-      />
+      <Layout extra={<VoiceToggle />} />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
       <div className="max-w-3xl mx-auto px-4 py-6 pb-24 sm:pb-6">
+
+        {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
+        <PageHeader
+          title={isA ? 'Từ điển' : 'Dictionary'}
+          subtitle={`${totalWords.toLocaleString('vi-VN')} ${isA ? 'từ thông dụng' : 'common words'}`}
+        />
 
         <VocabMilestone userId={user.id} refreshKey={learnedKey} />
         <WordOfTheDay entries={todayWords} isA={isA} />
@@ -463,6 +467,9 @@ export default function Dictionary() {
             ))}
           </div>
         )}
+
+        {/* Hàng hành động nhanh ở đáy trang */}
+        <QuickActions />
       </div>
       </main>
 

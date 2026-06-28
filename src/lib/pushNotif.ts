@@ -13,8 +13,9 @@ export function getNotifPermission(): NotificationPermission {
   return Notification.permission
 }
 
-// Đăng ký SW + subscribe push, gửi subscription lên server
-export async function subscribePush(accessToken: string): Promise<boolean> {
+// Đăng ký SW + subscribe push, gửi subscription lên server.
+// remindHour: giờ UTC (0–23) muốn được nhắc học mỗi ngày (server gửi đúng giờ này).
+export async function subscribePush(accessToken: string, remindHour?: number): Promise<boolean> {
   if (!isPushSupported()) return false
 
   try {
@@ -54,14 +55,14 @@ export async function subscribePush(accessToken: string): Promise<boolean> {
       applicationServerKey: urlBase64ToUint8Array(publicKey) as unknown as ArrayBuffer,
     })
 
-    // Gửi subscription lên server
+    // Gửi subscription lên server (kèm giờ nhắc nếu có)
     const r = await fetch('/api/push', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ action: 'subscribe', subscription: sub.toJSON() }),
+      body: JSON.stringify({ action: 'subscribe', subscription: sub.toJSON(), remindHour }),
     })
     if (!r.ok) {
       console.warn('[push] Failed to subscribe:', r.status)

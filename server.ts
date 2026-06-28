@@ -19,7 +19,7 @@ import ttsHandler from './api/tts.js'
 import aiHandler from './api/ai.js'
 import pronunciationHandler from './api/pronunciation.js'
 import sttHandler from './api/stt.js'
-import pushHandler from './api/push.js'
+import pushHandler, { sendReminders } from './api/push.js'
 import dictionaryHandler from './api/dictionary.js'
 
 const app = express()
@@ -167,10 +167,41 @@ app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
+// ── Bộ hẹn giờ nhắc học (web push) ───────────────────────────────────────────
+// Mỗi khi sang một GIỜ mới (UTC), gửi nhắc cho những người đã hẹn nhắc vào giờ đó
+// mà HÔM NAY CHƯA HỌC (giữ streak). Chạy ngay trong tiến trình server, không cần cron ngoài.
+// Lưu ý: nếu chạy PM2 cluster nhiều instance, đặt REMINDER_SCHEDULER=off ở các instance
+// phụ để tránh gửi trùng (mặc định bật).
+function startReminderScheduler() {
+  if (process.env.REMINDER_SCHEDULER === 'off') {
+    console.log('   Nhắc học : tắt (REMINDER_SCHEDULER=off)')
+    return
+  }
+  if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+    console.log('   Nhắc học : tắt (chưa cấu hình VAPID keys)')
+    return
+  }
+  // Khởi tạo = giờ hiện tại để BỎ QUA phần giờ dở dang lúc server vừa bật
+  // (tránh gửi nhắc trễ giữa giờ); bắt đầu gửi từ đầu giờ kế tiếp.
+  let lastHourSent = new Date().getUTCHours()
+  setInterval(() => {
+    const hour = new Date().getUTCHours()
+    if (hour === lastHourSent) return
+    lastHourSent = hour
+    void sendReminders(hour)
+      .then(r => {
+        if (r.sent || r.skipped) console.log(`[reminder] ${hour}h UTC → gửi ${r.sent}, bỏ qua ${r.skipped} (đã học)`)
+      })
+      .catch(err => console.error('[reminder] lỗi gửi nhắc:', err))
+  }, 60_000) // kiểm tra mỗi phút, gửi 1 lần khi sang giờ mới
+  console.log('   Nhắc học : bật (gửi đúng giờ mỗi người chọn)')
+}
+
 // ── Khởi động ─────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`✅ English Tutor đang chạy tại http://localhost:${PORT}`)
   console.log(`   NODE_ENV : ${process.env.NODE_ENV || 'production'}`)
   console.log(`   Node.js  : ${process.version}`)
+  startReminderScheduler()
 })

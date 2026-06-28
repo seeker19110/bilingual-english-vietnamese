@@ -9,7 +9,9 @@ import { useAuth } from '../context/useAuth'
 import ThemeToggle from './ThemeToggle'
 
 interface Props {
-  title: string
+  // title/subtitle KHÔNG bắt buộc: nhiều trang nay hiển thị tiêu đề LỚN ngay dưới header
+  // (component PageHeader) thay vì nhồi trong thanh header này.
+  title?: string
   subtitle?: string
   back?: boolean
   extra?: ReactNode
@@ -52,9 +54,11 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
           </div>
         )}
 
-        {/* Title */}
+        {/* Title — chỉ hiện khi trang truyền title cho header (trang chủ, màn chi tiết…).
+            Các trang đã chuyển sang PageHeader sẽ KHÔNG truyền title → ô này chỉ làm spacer
+            đẩy các nút bên phải về đúng vị trí. */}
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-[15px] truncate text-white">{title}</p>
+          {title && <p className="font-semibold text-[15px] truncate text-white">{title}</p>}
           {subtitle && <p className="text-xs text-zinc-400 truncate">{subtitle}</p>}
         </div>
 
