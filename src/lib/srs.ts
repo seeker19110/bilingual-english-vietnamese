@@ -66,7 +66,10 @@ export function reviewWord(uid: string, word: string, rating: Rating) {
   }
 
   card.reps += 1
-  card.due   = now + Math.max(card.interval, 1) * MS
+  // 'again' (Quên): hẹn ôn lại NGAY trong phiên này (due = bây giờ) — đúng như gợi ý UI
+  // "Quên → ôn sớm" và để SRSReview tải lại thẻ này cho người dùng drill tới khi nhớ.
+  // Các mức khác tối thiểu 1 ngày.
+  card.due = rating === 'again' ? now : now + Math.max(card.interval, 1) * MS
   data[key]  = card
   save(uid, data)
   pushProgress(uid) // đồng bộ lịch ôn lên Supabase

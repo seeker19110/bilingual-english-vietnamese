@@ -102,7 +102,9 @@ export default function Dictionary() {
           setSearchResults([]); setSearchPosGroups([]); setSearchMatched(0); setSearchError(true)
         }
       })
-      .finally(() => setSearching(false))
+      // Chỉ tắt spinner nếu request này CHƯA bị huỷ (gõ tiếp sẽ abort req cũ rồi bật
+      // lại spinner cho req mới — không để req cũ tắt nhầm spinner của req mới, gây nhấp nháy).
+      .finally(() => { if (!ctrl.signal.aborted) setSearching(false) })
     return () => ctrl.abort()
   }, [deferredQuery, posFilter, retryKey])
 
