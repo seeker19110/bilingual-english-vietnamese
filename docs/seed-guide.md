@@ -1,0 +1,140 @@
+# Hướng dẫn seed audio (`seed:all`) — báo cáo, remap, verify
+
+Script: `scripts/seed-all.ts` · Lệnh: `npm run seed:all`
+
+Mục tiêu: tạo sẵn (cache) audio **phát âm từ điển** + **TTS câu** lên Supabase
+(bảng `pronunciations` và `tts_cache` + Storage) để client phát ngay, **không phải
+gọi Google TTS realtime** → nhanh + rẻ.
+
+> File này dành cho người mới: giải thích từng lệnh và cách đọc số liệu. Nếu chỉ
+> cần chạy nhanh: `npm run seed:all -- --check` (xem báo cáo) →
+> `npm run seed:all -- --all` (seed hết) → `npm run seed:verify` (kiểm tra).
+
+---
+
+## 1. Các lệnh
+
+| Lệnh | Làm gì |
+|---|---|
+| `npm run seed:all` | Menu tương tác: in báo cáo → chọn nhóm để seed (lặp tới khi thoát). |
+| `npm run seed:all -- --check` | **Chỉ in báo cáo** tiến độ rồi thoát (không seed, không menu). |
+| `npm run seed:all -- --all` | Seed **tất cả** nhóm còn thiếu, không hỏi (dùng cho CI/cron). |
+| `npm run seed:verify` | = `seed:all -- --verify`. **Kiểm tra kỹ** DB (đối chiếu 2 chiều). |
+| `npm run seed:all -- --force` | Tạo lại + **ghi đè** cả audio đã có. |
+
+Biến môi trường thêm:
+
+- `LIMIT=20` — giới hạn số tác vụ mỗi nhóm (debug nhanh).
+- `VERIFY_DECRYPT=20` — (kèm `--verify`) tải + **giải mã thử** 20 file để chắc dùng được.
+- `WORDS_FILE=scripts/seed-errors.json` — chỉ seed lại danh sách từ trong file (retry lỗi).
+- `BASE_URL=...` — host để ghép `audio_url` khi lưu Storage (mặc định lấy từ `.env`).
+
+Bắt buộc có trong `.env`: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
+`GOOGLE_TTS_API_KEY`, `TTS_ENCRYPTION_MASTER_KEY`.
+
+---
+
+## 2. Đọc báo cáo tiến độ
+
+```
+📊 BÁO CÁO TIẾN ĐỘ SEED (sẵn sàng cho client)
+  ⏳ Phát âm từ điển (pronunciations)            20012/20014  ▓▓▓▓▓▓▓▓▓▓ 100.0%
+  ⏳ Câu + ví dụ giáo trình nền tảng (/learn)      1747/2772  ▓▓▓▓▓▓░░░░  63.0%
+  ...
+  📦 TỔNG CỘNG                                 142238/422447  ▓▓▓░░░░░░░  33.7%
+```
+
+- Mỗi dòng = 1 **nhóm**, số `done/total` = đã seed / cần seed (theo tập **kỳ vọng**
+  dựng từ dữ liệu tĩnh trong repo, nên `total` cố định).
+- 6 nhóm theo thứ tự ưu tiên client cần (seed dở vẫn có sẵn cái hay dùng nhất trước):
+  `pron` → `curriculum` → `cefr` → `lessons-early` (50 bài đầu) → `patterns` (Cụm từ)
+  → `lessons-rest`.
+
+> ⚠️ **Lưu ý "số liệu nhảy loạn xạ" (ĐÃ SỬA):** trước đây hàm đọc DB phân trang
+> 1000 dòng/lần bằng `.range()` **mà không `ORDER BY`**. Postgres không đảm bảo thứ
+> tự dòng giữa các trang → với `tts_cache` hàng trăm nghìn dòng, các trang chồng/lọt
+> dòng ngẫu nhiên → mỗi lần chạy ra số khác nhau. Nay đã **luôn sắp xếp theo khóa
+> duy nhất** (`tts_cache`→`hash`, `pronunciations`→`word,voice`) nên số liệu **ổn
+> định, chạy lại y hệt** (xem `fetchAllRows` trong `scripts/seed-all.ts`).
+
+Dòng đầu khi audit: `xong (27330 phát âm, 301227 câu TTS)` = **tổng số dòng thật**
+trong DB. Con số này có thể **lớn hơn** `done` của báo cáo vì DB còn chứa **bản ghi
+thừa (orphan)** không nằm trong tập kỳ vọng (xem mục 4) — đây là chuyện bình thường,
+không phải lỗi.
+
+---
+
+## 3. Remap — chuyển cache cũ sang khóa mới, KHÔNG tốn quota API
+
+### Vì sao có remap
+Khóa cache 1 câu = `hash(text + lang + voice + VOICE_VERSION)` (32 hex đầu của SHA-256).
+Khi đổi giọng TTS, ta tăng `VOICE_VERSION` (hiện là `chirp3hd-v2`, ở
+`api/_lib/googleTts.ts`) → **hash đổi** → mọi câu đã seed trước đó không còn khớp.
+
+Nhưng audio cũ vẫn nằm trên Storage, chỉ là **đã mã hóa bằng khóa suy từ hash cũ**.
+Tạo lại bằng cách gọi Google TTS sẽ **tốn quota**. Remap tránh điều đó.
+
+### Remap chạy thế nào
+Trong `processTask` (`scripts/seed-all.ts`), với mỗi câu chưa có ở hash mới, **trước
+khi gọi Google** script thử:
+
+1. Tìm bản ghi ở **hash cũ** = `hash(text + lang + voice)` (thiếu `VOICE_VERSION`).
+2. Nếu có → **tải audio cũ → giải mã bằng hash cũ → mã hóa lại bằng hash mới → upload**
+   → ghi dòng `tts_cache` mới.
+3. Chỉ tốn **băng thông Storage**, **0 quota Google**. Đếm vào cột `↺ remapped`.
+4. Remap lỗi (file hỏng/mạng) → tự chuyển sang gọi Google tạo mới (`✓ ok`).
+
+### Cách kích hoạt remap
+**Không có lệnh riêng** — cứ seed bình thường:
+
+```bash
+npm run seed:all -- --all      # gặp câu nào remap được, tự remap; còn lại generate mới
+```
+
+Cuối mỗi vòng có thống kê: `✓ OK (gọi Google)  ↺ Remap (tái mã hóa)  ⏭ Skip (đã có)  ✗ Lỗi`.
+Nếu thấy `↺ Remap` lớn nghĩa là đang tận dụng lại audio cũ — đỡ tốn tiền.
+
+> `--force` sẽ **bỏ qua** cả skip lẫn remap và **gọi Google tạo lại tất cả** (tốn quota).
+> Chỉ dùng khi thật sự muốn làm mới audio.
+
+---
+
+## 4. Verify — kiểm tra kỹ DB (đối chiếu 2 chiều)
+
+```bash
+npm run seed:verify                  # hoặc: npm run seed:all -- --verify
+VERIFY_DECRYPT=20 npm run seed:verify  # thêm: tải + giải mã thử 20 file
+```
+
+Khác báo cáo thường (chỉ đếm thiếu), verify đối chiếu **HAI CHIỀU** + kiểm đường dẫn:
+
+1. **Chiều THIẾU** (theo nhóm): câu kỳ vọng nào **chưa có** trong DB.
+   `✅` đủ · `⚠️` còn thiếu.
+2. **Chiều THỪA — orphan**: bản ghi `tts_cache` **có trong DB nhưng không còn kỳ vọng**,
+   gom theo `lang/voice`. Thường là:
+   - giọng `female2`/`male2` đã bỏ ở curriculum/CEFR/Cụm từ (giờ chỉ seed `female`/`male`), hoặc
+   - audio của `VOICE_VERSION` **cũ** còn sót.
+
+   Orphan **vô hại** (chỉ tốn ít dung lượng, không bao giờ bị phát). Muốn dọn sạch:
+   chạy `supabase/refresh-tts-voices.sql` trong SQL Editor (xóa dòng cache cũ) rồi seed lại.
+3. **Nhất quán đường dẫn**: `audio_url` phải chứa đúng `${lang}/${voice}/${hash}.mp3`.
+4. **Giải mã thử** (khi đặt `VERIFY_DECRYPT=N`): tải N file + giải mã bằng khóa suy từ
+   hash để chắc audio **dùng được thật**, không chỉ tồn tại dòng DB.
+
+Kết luận cuối:
+- `✅ DB KHỚP tập kỳ vọng` — mọi câu cần thiết đã có, đường dẫn đúng (có thể còn orphan để dọn).
+- `⚠️ Chưa khớp: thiếu N câu...` — chạy `npm run seed:all -- --all` để bù.
+
+---
+
+## 5. Quy trình khuyến nghị
+
+```bash
+npm run seed:all -- --check     # 1. Xem còn thiếu bao nhiêu (số liệu nay ổn định)
+npm run seed:all -- --all       # 2. Seed hết (tự remap cái nào remap được)
+npm run seed:verify             # 3. Kiểm tra: thiếu / thừa / đường dẫn
+VERIFY_DECRYPT=20 npm run seed:verify   # 4. (tùy chọn) chắc chắn audio giải mã được
+```
+
+Nếu seed bị lỗi giữa chừng: danh sách lỗi được ghi ra `scripts/seed-errors.json`
+(phát âm) và `scripts/prefetch-tts-errors.json` (câu TTS) để retry sau.
