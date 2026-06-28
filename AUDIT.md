@@ -112,10 +112,10 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 |------|------|---------|---------|
 | Kiểu (frontend + API) | `npm run typecheck` (`tsc && tsc -p tsconfig.api.json`) | ✅ **PASS** (exit 0) | Không lỗi type |
 | Lint | `npm run lint` (`eslint . --max-warnings 0`) | ✅ **PASS** (exit 0) | 0 cảnh báo. *Sửa "M4 ESLint không chạy" của v1: nay chạy tốt sau khi cài deps* |
-| Unit test | `npx vitest run` | ✅ **PASS** — 1 file, **10 test** | Chỉ phủ `src/lib/curriculum.ts` |
+| Unit test | `npx vitest run` | ✅ **PASS** — 4 file, **27 test** | Lượt 2 thêm `pronounceScore`, `srs`, `stats` (trước chỉ `curriculum`) |
 | Build production | `npm run build` | ✅ **PASS** (exit 0) | Sinh manifest + `tsc` + `vite build`, có nén Gzip/Brotli |
 
-> **Khoảng trống lớn nhất:** độ phủ kiểm thử rất mỏng — chỉ **1/≈40 module logic** trong `src/lib` có test, và **0 test** cho lớp API (`api/`). Đây là trọng tâm của §6.
+> **Tiến triển độ phủ:** lượt 1 chỉ **10 test / 1 file**; lượt 2 nâng lên **27 test / 4 file** (thêm logic chấm phát âm, SRS, thống kê). Vẫn còn trống lớn ở **lớp API** (`api/` chưa có test) — trọng tâm tiếp theo của §6.
 
 ---
 
@@ -159,7 +159,7 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 
 | # | Mức | Vấn đề | Nhóm | File chính |
 |---|-----|--------|------|-----------|
-| **T1** | 🟠 High | **Độ phủ kiểm thử thấp**: 1/≈40 module `src/lib` có test, 0 test cho `api/` (đếm lượt, bảo mật, timeout, crypto chưa có test hồi quy). | Kiểm thử | toàn bộ `api/`, hầu hết `src/lib` |
+| **T1** | 🟠 High | ⚠️ PARTIAL — **Độ phủ kiểm thử còn mỏng**: lượt 2 đã thêm test cho `curriculum`, `pronounceScore`, `srs`, `stats` (27 ca), nhưng **lớp `api/` vẫn 0 test** (đếm lượt/refund, bảo mật, timeout, crypto chưa có test hồi quy). | Kiểm thử | toàn bộ `api/`, phần còn lại `src/lib` |
 | **T2** | 🟡 Medium | **Không có cổng chất lượng CI**: workflow `.github/workflows/deploy.yml` chỉ deploy, **không chạy** typecheck/lint/test trước khi `pm2 restart` → có thể đẩy mã hỏng lên production. | CI/CD | `.github/workflows/deploy.yml` |
 | M1 | 🟡 Medium | `direction` (chiều A/B) không sync đa thiết bị (chỉ localStorage). | Dữ liệu | `src/lib/storage.ts`, `profiles` |
 | M2 | ⚠️ PARTIAL | Prompt nền **đã** gom vào `src/prompts/index.ts` ✅, nhưng vẫn **dựng ở client**; server chỉ `slice(0,8000)` (`api/ai.ts:147`) → chưa có guardrail cố định phía server. | Bảo mật/chi phí | `api/ai.ts:147`, `src/prompts/index.ts` |
@@ -171,21 +171,25 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 | L5 | 🟢 Low | Multi-tab sync thiếu (`storage` event) → đổi chiều A/B ở tab này, tab kia không cập nhật. | Dữ liệu | `src/lib/*` |
 | L7 | 🟢 Low | Không có metrics/alerting/log tập trung. | Hạ tầng | — |
 
-### 4.3 Sổ lỗi cụ thể phát hiện trong rà soát SÂU (deep pass 2026-06-28)
+### 4.3 Sổ lỗi cụ thể phát hiện trong rà soát SÂU (deep pass)
 
-> Đây là các lỗi **mới**, lần đầu phát hiện khi đọc tay từng dòng theo quy trình §1.5 (không phải mục tồn từ v1). Mỗi lỗi đều có bằng chứng `file:line` + hướng sửa tối thiểu, rủi ro thấp.
+> Các lỗi **mới**, phát hiện khi đọc tay từng dòng theo quy trình §1.5. **Lượt 1 (2026-06-28):** BUG-1..5. **Lượt 2 (2026-06-28, mở rộng độ phủ):** đọc thêm `Speaking.tsx`, `tts.ts`, các lib backend (Gemini/STT/pronunciation), `vocab.ts` → BUG-6..8. Cột **Trạng thái** phản ánh mã hiện tại.
 
-| ID | Mức | Lớp | Lỗi | Bằng chứng | Hướng sửa |
+| ID | Mức | Lớp | Lỗi | Bằng chứng | Trạng thái |
 |----|-----|-----|-----|-----------|-----------|
-| **BUG-1** | 🟡 Medium | UI/Frontend | **Nhãn "Nhận xét:" không bị cắt** ở bong bóng feedback chiều A. Regex chỉ khớp `Nhan xet` (không dấu) trong khi prompt phát ra `✅ Nhận xét:` (có dấu) → người Việt (chiều A — đối tượng CHÍNH) thấy chữ "Nhận xét:" dư trong feedback. Chiều B ("Feedback:") không bị vì khớp đúng. | `src/pages/Chat.tsx:128` regex `/^✅\s*(Nhan xet\|Feedback):\s*/i`; prompt `src/prompts/index.ts:42` `✅ Nhận xét:` | Sửa regex thành `(Nhận xét\|Feedback)` (có dấu) hoặc chuẩn hoá bỏ dấu trước khi so. |
-| **BUG-2** | 🟡 Medium | Backend | **Mất lượt khi provider lỗi.** `checkAndConsumeUsage` chạy **trước** khi gọi AI/STT → nếu provider trả lỗi/timeout (504/500), người dùng vẫn **bị trừ 1 lượt** dù không nhận được kết quả. Mâu thuẫn với triết lý FAIL-OPEN của chính dự án. | `api/ai.ts:153` rồi mới gọi provider (`:165`/`:195`/`:268`); `api/stt.ts:100` rồi `:107` | Consume **sau** khi provider OK; hoặc thêm `refundUsage()` khi provider lỗi. (Đụng luồng tiền → cần test TC-USAGE + TC-AI trước.) |
-| **BUG-3** | 🟢 Low | Tài liệu | Audit v1 ghi cửa sổ pull streak là "40 ngày" — **mã hiện tại đã là 365 ngày**. | `cloud.ts:122`, `storage.ts:186` (`STREAK_MAX_DAYS=365`) | ✅ Đã sửa trong bản này (§3, §4.1 H9, §4.2 L5). |
-| **BUG-4** | 🟢 Low | Frontend/UX | **Nhấp nháy spinner khi gõ nhanh ở Dictionary.** `.finally(() => setSearching(false))` chạy cả khi request bị `abort()` (do gõ tiếp) → có thể tắt spinner ngay sau khi request mới vừa bật, gây flicker. | `src/pages/Dictionary.tsx:90-107` | Trong `.finally`, chỉ `setSearching(false)` nếu `!ctrl.signal.aborted`. |
-| **BUG-5** | 🟡 Medium | Logic/Dữ liệu | **Streak và biểu đồ hoạt động KHÔNG khớp nhau.** `getStreak` tính ngày "có học" *bao gồm* `learnCount` (học từ vựng), nhưng biểu đồ 7 ngày / lịch heatmap ở Dashboard *bỏ qua* `learnCount` → ngày chỉ học từ vựng vẫn cộng streak nhưng hiện **trống** trên biểu đồ (người dùng tưởng mất streak). | `storage.ts:188-193` (`hasActivityOn` có `learnCount`) vs `stats.ts:27-30` (`usageTotal` thiếu `learnCount`) | Thêm `+ (u.learnCount ?? 0)` vào `usageTotal` để hai nơi tính nhất quán. |
+| **BUG-1** | 🟡 Medium | UI/Frontend | **Nhãn "Nhận xét:" không bị cắt** ở bong bóng feedback chiều A. Regex chỉ khớp `Nhan xet` (không dấu) trong khi prompt phát ra `✅ Nhận xét:` (có dấu) → người Việt (chiều A — đối tượng CHÍNH) thấy chữ "Nhận xét:" dư. | `src/pages/Chat.tsx:128`; prompt `src/prompts/index.ts:42` | ✅ **FIXED** — regex thêm `Nhận xét` (có dấu). |
+| **BUG-2** | 🟡 Medium | Backend | **Mất lượt khi provider lỗi.** `checkAndConsumeUsage` chạy **trước** khi gọi AI/STT → provider lỗi/timeout vẫn **bị trừ 1 lượt** dù không nhận được kết quả. Mâu thuẫn FAIL-OPEN. | `api/ai.ts`, `api/stt.ts` | ✅ **FIXED** — thêm `refundUsage()` + RPC `refund_usage` (migration `0004`); hoàn lượt ở mọi nhánh provider lỗi/timeout. |
+| **BUG-3** | 🟢 Low | Tài liệu | Audit v1 ghi cửa sổ pull streak là "40 ngày" — mã đã là 365. | `cloud.ts:122`, `storage.ts:186` | ✅ **FIXED** — sửa số liệu (§3, §4.1 H9). |
+| **BUG-4** | 🟢 Low | Frontend/UX | **Nhấp nháy spinner khi gõ nhanh ở Dictionary** — `.finally` tắt spinner cả khi request đã `abort()`. | `src/pages/Dictionary.tsx:90-107` | ✅ **FIXED** — chỉ tắt nếu `!ctrl.signal.aborted`. |
+| **BUG-5** | 🟡 Medium | Logic/Dữ liệu | **Streak ⇄ biểu đồ Dashboard không khớp** — `usageTotal` (stats) thiếu `learnCount` trong khi `getStreak` (storage) có → ngày chỉ học từ vựng hiện trống trên biểu đồ. | `stats.ts:27-30` vs `storage.ts:188-193` | ✅ **FIXED** — cộng `learnCount` vào `usageTotal` + test `stats.test.ts`. |
+| **BUG-6** | 🟢 Low | Logic/Dữ liệu | **Từ "đã thuộc" không chuẩn hoá chữ thường** trong khi "từ khó" thì có → các nơi tiêu thụ phải kiểm tra cả 2 dạng (`learned.has(w) \|\| learned.has(w.toLowerCase())`). Hiện "chạy được" nhờ kiểm tra kép bù đắp, nhưng dễ vỡ. | `vocab.ts:31-49` (không `toLowerCase`) vs `vocab.ts:63-73` (có); bù đắp tại `stats.ts:159` | 🔲 OPEN — **chưa sửa** (đổi cách lưu có thể lệch dữ liệu đã thuộc cũ; cần migrate cẩn thận, để PR riêng). |
+| **BUG-7** | 🟢 Low | UX/Audio | **Mute giữa chừng vẫn đọc nốt phần feedback.** `stopSpeaking()` resolve clip hiện tại → `speakBilingual` chạy tiếp `speak(feedback)`. | `tts.ts:130,374-375`; `Speaking.tsx:477` | 🔲 OPEN — thêm cờ huỷ chuỗi bilingual khi stop (rủi ro thấp, để sau). |
+| **BUG-8** | 🟢 Low | Dữ liệu | **STT qua Web Speech (fallback) chỉ đếm ở client**, server không đếm (không qua `/api/stt`) → `pullUserData` ghi đè làm "biến mất" lượt; fallback STT gần như không giới hạn. | `Speaking.tsx:333` | 🔲 OPEN — edge case (chỉ trình duyệt không hỗ trợ ghi âm); ghi nhận. |
 
-**Quan sát thêm (không phải lỗi, nhưng nên biết):**
-- `created_at`/`submitted_at` là `bigint` epoch-ms trong schema (`supabase/schema.sql:30,41,52`) → `Number(row.created_at)` trong `cloud.ts` an toàn (không ra `NaN`). ✅
-- `prevSessions = getChatSessions(...).slice(0,3)` (`Chat.tsx:273`) đọc localStorage + `JSON.parse` **mỗi lần render** — chấp nhận được nhưng có thể `useMemo`.
+**Quan sát thêm (không phải lỗi):**
+- `created_at`/`submitted_at` là `bigint` epoch-ms (`schema.sql:30,41,52`) → `Number(...)` trong `cloud.ts` an toàn. ✅
+- `api/ai.ts` nhánh Gemini trước đây trả 500 cho mọi lỗi (kể cả timeout) trong khi Groq/Anthropic trả 504 → đã **đồng bộ**: timeout→504, lỗi provider→502.
+- `prevSessions = getChatSessions(...).slice(0,3)` (`Chat.tsx`) đọc localStorage mỗi render — có thể `useMemo` (Low).
 
 ---
 
@@ -228,7 +232,7 @@ Thuần refactor/hạ tầng, rủi ro hồi quy cao trên app live → để **
 
 | Mức | Phạm vi | Công cụ | Trạng thái hiện tại |
 |-----|---------|---------|---------------------|
-| **Unit** | Hàm/logic thuần trong `src/lib`, `api/_lib` | Vitest (+ happy-dom) | ⚠️ Chỉ `curriculum` (10 ca) |
+| **Unit** | Hàm/logic thuần trong `src/lib`, `api/_lib` | Vitest (+ happy-dom) | ⚠️ `curriculum`, `pronounceScore`, `srs`, `stats` (27 ca); `api/_lib` chưa có |
 | **Integration (API)** | Handler `api/*.ts` với mock Supabase/provider | Vitest + mock | 🔲 Chưa có |
 | **Component** | Render React + tương tác (Chat, Writing, Dictionary) | Vitest + @testing-library/react | 🔲 Chưa có (cần thêm dev-dep) |
 | **E2E / luồng** | Đăng nhập → chat → đếm lượt, qua trình duyệt thật | Playwright (đã có Chromium sẵn) | 🔲 Chưa có |
@@ -457,12 +461,15 @@ npm run build       # phải dựng được
 | **Pre-commit hook** (husky + lint-staged) chạy lint/typecheck cục bộ. | Trung bình | Thấp |
 
 ### 9.2 Sửa các lỗi vừa phát hiện (deep pass §4.3)
-| Đề xuất | Tác động | Công sức |
-|---------|----------|----------|
-| **BUG-1** — sửa regex nhãn "Nhận xét" (chiều A). | Trung bình — sạch UI cho đối tượng chính | Rất thấp |
-| **BUG-5** — cộng `learnCount` vào `usageTotal` để streak ⇄ biểu đồ nhất quán. | Trung bình — số liệu đáng tin | Rất thấp |
-| **BUG-4** — không tắt spinner khi request đã abort (Dictionary). | Thấp — hết flicker | Rất thấp |
-| **BUG-2** — đếm lượt sau khi provider OK / hoàn lượt khi lỗi. | Trung bình — công bằng cho người dùng | Trung bình (cần test) |
+| Đề xuất | Trạng thái |
+|---------|-----------|
+| **BUG-1** — sửa regex nhãn "Nhận xét" (chiều A). | ✅ Đã sửa |
+| **BUG-2** — hoàn lượt (`refundUsage` + RPC) khi provider lỗi/timeout. | ✅ Đã sửa |
+| **BUG-4** — không tắt spinner khi request đã abort (Dictionary). | ✅ Đã sửa |
+| **BUG-5** — cộng `learnCount` vào `usageTotal` để streak ⇄ biểu đồ nhất quán. | ✅ Đã sửa |
+| **BUG-6** — chuẩn hoá chữ thường cho "từ đã thuộc" (cần migrate dữ liệu cũ). | 🔲 Để PR sau |
+| **BUG-7** — huỷ chuỗi đọc bilingual khi mute giữa chừng. | 🔲 Để PR sau |
+| **BUG-8** — đếm lượt STT cho nhánh Web Speech fallback. | 🔲 Để PR sau |
 
 ### 9.3 Bảo mật & chi phí
 | Đề xuất | Tác động | Công sức |
@@ -551,9 +558,14 @@ npm run build               # ✅ PASS (manifest + tsc + vite build, nén Gzip/B
 - Writing validate: `src/pages/Writing.tsx:173,182`
 - Profile TTL: `src/lib/auth.ts:10-21`
 
-**Cấu trúc kiểm thử hiện có:**
+**Cấu trúc kiểm thử hiện có (sau lượt 2 — 27 ca / 4 file):**
 - `vitest.config.ts` (happy-dom, include `src/**/*.test.{ts,tsx}`)
 - `vitest.setup.ts` (mock `fetch('/data/...')` → đọc `public/`)
 - `src/lib/curriculum.test.ts` (10 ca)
+- `src/lib/pronounceScore.test.ts` (8 ca) — chấm phát âm
+- `src/lib/srs.test.ts` (6 ca) — SM-2 (mock `progressSync` để chạy offline)
+- `src/lib/stats.test.ts` (3 ca) — hoạt động/streak (mock `supabase`); khoá BUG-5
+
+**Sửa lỗi đã áp dụng trong bản này:** BUG-1 (`Chat.tsx`), BUG-2 (`usage.ts` + `ai.ts` + `stt.ts` + migration `0004_refund_usage.sql` + `schema.sql`), BUG-4 (`Dictionary.tsx`), BUG-5 (`stats.ts`). BUG-6/7/8 ghi nhận, để PR sau.
 
 > *Báo cáo audit cũ vẫn lưu tại `AUDIT_REPORT.md` (2026-06-20) để tra cứu lịch sử các phát hiện ban đầu (auth localStorage, rate limit, mobile…), nay đã được xử lý qua Supabase Auth + server-side limits.*

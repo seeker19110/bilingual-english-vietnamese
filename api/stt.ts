@@ -20,7 +20,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from './_lib/security'
-import { checkAndConsumeUsage } from './_lib/usage'
+import { checkAndConsumeUsage, refundUsage } from './_lib/usage'
 
 // Giới hạn dung lượng base64 (~8MB chuỗi ≈ ~6MB audio thật, đủ cho ~1–2 phút nói).
 const MAX_AUDIO_B64 = 8 * 1024 * 1024
@@ -107,6 +107,8 @@ export default async function handler(req: Request): Promise<Response> {
     const text = await transcribeAudio(audio, mime, lang)
     return jsonResponse({ text }, 200, allHeaders)
   } catch (err) {
+    // Provider STT lỗi → người dùng không nhận được kết quả: hoàn lại lượt vừa trừ.
+    await refundUsage(authResult.userId, 'stt')
     return jsonResponse({ error: `Không nhận diện được giọng nói: ${(err as Error).message}` }, 500, allHeaders)
   }
 }

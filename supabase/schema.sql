@@ -223,3 +223,27 @@ begin
   return true;
 end;
 $$;
+
+-- ── 12. refund_usage: hoàn lại 1 lượt khi provider lỗi ──────────────────────
+-- Cặp với consume_usage: ta TRỪ lượt TRƯỚC khi gọi AI/STT (để chống race condition),
+-- nên khi nhà cung cấp lỗi/timeout (người dùng không nhận được kết quả) phải HOÀN lại
+-- để không tính oan. Giảm 1 nhưng không xuống dưới 0 (greatest). Xem api/_lib/usage.ts.
+create or replace function public.refund_usage(
+  p_user_id uuid,
+  p_day     text,
+  p_col     text
+) returns void
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  if p_col not in ('chat_count', 'writing_count', 'speaking_count', 'stt_count') then
+    raise exception 'cot dem khong hop le: %', p_col;
+  end if;
+
+  execute format(
+    'update public.daily_usage set %I = greatest(%I - 1, 0) where user_id = $1 and day = $2',
+    p_col, p_col
+  ) using p_user_id, p_day;
+end;
+$$;

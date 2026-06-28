@@ -81,6 +81,40 @@ export async function checkAndConsumeUsage(
   }
 }
 
+// Hoàn lại 1 lượt đã trừ khi nhà cung cấp AI/STT lỗi (người dùng không nhận được kết quả).
+// Cặp với checkAndConsumeUsage: ta trừ TRƯỚC khi gọi provider (chống race), nên nếu provider
+// lỗi/timeout phải hoàn lại để không tính oan. FAIL-OPEN: lỗi hạ tầng thì bỏ qua êm
+// (không bao giờ làm vỡ luồng trả lỗi cho client). Thiên về có lợi cho người dùng.
+export async function refundUsage(userId: string, mode: UsageMode): Promise<void> {
+  try {
+    const supabase = getSupabaseAdmin()
+    const day = today()
+    const col = COLUMN[mode]
+    const { error } = await supabase.rpc('refund_usage', {
+      p_user_id: userId,
+      p_day: day,
+      p_col: col,
+    })
+    if (error) {
+      // RPC chưa cài (schema cũ) → hoàn bằng cách đọc rồi -1 (không xuống dưới 0).
+      const { data: row } = await supabase
+        .from('daily_usage')
+        .select(col)
+        .eq('user_id', userId)
+        .eq('day', day)
+        .maybeSingle()
+      const current = Number((row as unknown as Record<string, unknown> | null)?.[col] ?? 0)
+      if (current > 0) {
+        await supabase
+          .from('daily_usage')
+          .upsert({ user_id: userId, day, [col]: current - 1 }, { onConflict: 'user_id,day' })
+      }
+    }
+  } catch (err) {
+    console.warn('[usage] hoàn lượt lỗi → bỏ qua (fail-open):', err)
+  }
+}
+
 // Cách cũ (đọc rồi +1) — CHỈ dùng làm phương án dự phòng khi RPC chưa có trên DB.
 async function legacyCheckAndConsume(
   supabase: ReturnType<typeof getSupabaseAdmin>,

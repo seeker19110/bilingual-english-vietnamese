@@ -16,7 +16,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from './_lib/security'
-import { checkAndConsumeUsage, isUsageMode } from './_lib/usage'
+import { checkAndConsumeUsage, refundUsage, isUsageMode } from './_lib/usage'
 import { callGemini } from './_lib/geminiApi'
 import { fetchWithTimeout } from './_lib/fetchTimeout'
 
@@ -176,9 +176,13 @@ export default async function handler(req: Request): Promise<Response> {
       )
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
+      // Provider lỗi → người dùng không nhận được trả lời: hoàn lại lượt vừa trừ.
+      await refundUsage(authResult.userId, mode)
+      // Lỗi timeout (AbortController) → 504, còn lại 502 (lỗi từ nhà cung cấp), không phải 500 của ta.
+      const isTimeout = /Hết thời gian chờ/.test(errMsg)
       return new Response(
         JSON.stringify({ error: { message: `Gemini lỗi: ${errMsg.slice(0, 200)}` } }),
-        { status: 500, headers: { 'content-type': 'application/json', ...allHeaders } },
+        { status: isTimeout ? 504 : 502, headers: { 'content-type': 'application/json', ...allHeaders } },
       )
     }
   }
@@ -199,6 +203,7 @@ export default async function handler(req: Request): Promise<Response> {
       }, AI_TIMEOUT_MS)
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
+      await refundUsage(authResult.userId, mode)
       return new Response(
         JSON.stringify({ error: { message: `Groq lỗi: ${errMsg.slice(0, 200)}` } }),
         { status: 504, headers: { 'content-type': 'application/json', ...allHeaders } },
@@ -207,6 +212,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     if (!groqResp.ok) {
       const detail = await groqResp.text().catch(() => '')
+      await refundUsage(authResult.userId, mode)
       return new Response(
         JSON.stringify({ error: { message: `Groq lỗi (${groqResp.status}): ${detail.slice(0, 200)}` } }),
         { status: groqResp.status, headers: { 'content-type': 'application/json', ...allHeaders } },
@@ -276,12 +282,15 @@ export default async function handler(req: Request): Promise<Response> {
     }, AI_TIMEOUT_MS)
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err)
+    await refundUsage(authResult.userId, mode)
     return new Response(
       JSON.stringify({ error: { message: `Anthropic lỗi: ${errMsg.slice(0, 200)}` } }),
       { status: 504, headers: { 'content-type': 'application/json', ...allHeaders } },
     )
   }
 
+  // Anthropic trả lỗi (4xx/5xx) → người dùng không có câu trả lời: hoàn lại lượt vừa trừ.
+  if (!resp.ok) await refundUsage(authResult.userId, mode)
   const data = await resp.text()
   return new Response(data, {
     status: resp.status,

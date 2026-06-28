@@ -125,7 +125,9 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
   for (const line of lines) {
     if (line.startsWith('✅')) {
       inFeedback = true
-      feedbackLines.push(line.replace(/^✅\s*(Nhan xet|Feedback):\s*/i, '').replace(/^✅\s*/i, ''))
+      // Cắt nhãn đầu dòng: "Nhận xét:" (chiều A, CÓ DẤU) hoặc "Feedback:" (chiều B).
+      // Bản không dấu "Nhan xet" giữ lại phòng khi AI bỏ dấu.
+      feedbackLines.push(line.replace(/^✅\s*(Nhận xét|Nhan xet|Feedback):\s*/i, '').replace(/^✅\s*/i, ''))
       continue
     }
     if (inFeedback) feedbackLines.push(line)
