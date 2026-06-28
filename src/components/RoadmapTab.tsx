@@ -38,6 +38,7 @@ import type { DictEntry } from '../types'
 import { getLearnedWords, markLearned } from '../lib/vocab'
 import { addToSRS } from '../lib/srs'
 import { bumpDailyLearned } from '../lib/curriculum'
+import { markStudiedToday } from '../lib/storage'
 
 // ── Bảng màu nhấn cho từng cấp (Tailwind cần class tĩnh, không ghép động) ─────
 const ACCENT: Record<CefrLevel['accent'], {
@@ -435,6 +436,7 @@ function VocabFlash({ circle, isA, uid, onProgress, onBack, onOpenDialogue }: {
     markLearned(uid, card.word)
     addToSRS(uid, card.word)
     bumpDailyLearned(uid)
+    markStudiedToday(uid) // ghi nhận có học hôm nay → tính streak (đồng bộ server)
     onProgress()
     setIdx(i => i + 1)
   }

@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, Share2, ClipboardList, Bell, BellOff, TrendingUp } from 'lucide-react'
-// Quiz hiện nằm trong tab "Kiểm tra" của /learn
+import { MessageCircle, PenLine, Mic, ChevronRight, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, TrendingUp } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getStreak, getDirection, setDirection } from '../lib/storage'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
@@ -9,9 +8,6 @@ import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import { useCloudSync } from '../lib/useCloudSync'
-import ShareProgress from '../components/ShareProgress'
-import { isPushSupported, getNotifPermission, subscribePush, unsubscribePush } from '../lib/pushNotif'
-import { supabase } from '../lib/supabase'
 
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
 function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
@@ -100,16 +96,6 @@ export default function Home() {
 
   const [dir, setDir]           = useState<Direction>(getDirection)
   const [voice, setVoice]       = useState<Voice>(getVoicePref)
-  const [showShare, setShare]   = useState(false)
-  const [pushOn, setPushOn]     = useState(false)
-  const [pushLoading, setPushL] = useState(false)
-
-  // Kiểm tra push subscription hiện tại
-  useEffect(() => {
-    if (!isPushSupported()) return
-    const perm = getNotifPermission()
-    setPushOn(perm === 'granted')
-  }, [])
 
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
@@ -131,21 +117,6 @@ export default function Home() {
   // Bấm cả khối để đổi giọng Nữ ↔ Nam (giống ô Ngôn ngữ học)
   function toggleVoice() {
     chooseVoice(voice === 'female' ? 'male' : 'female')
-  }
-
-  async function togglePush() {
-    if (!user || pushLoading) return
-    setPushL(true)
-    const { data: { session } } = await supabase.auth.getSession()
-    const token = session?.access_token ?? ''
-    if (pushOn) {
-      await unsubscribePush(token)
-      setPushOn(false)
-    } else {
-      const ok = await subscribePush(token)
-      setPushOn(ok)
-    }
-    setPushL(false)
   }
 
   const MODES = getModes(dir, T)
@@ -215,55 +186,6 @@ export default function Home() {
           </button>
 
         </div>
-
-        {/* ── Hành động nhanh (quiz + chia sẻ + thông báo) ──────── */}
-        <div className="mb-4 space-y-2 animate-fade-in">
-          {/* Hàng ngang: Quiz + Chia sẻ + Thông báo */}
-          <div className="grid grid-cols-3 gap-2">
-            {/* Quiz — mở trang Học theo lộ trình, tab Kiểm tra */}
-            <button onClick={() => nav('/learning-path')}
-              aria-label={isA ? 'Kiểm tra' : 'Quiz'}
-              className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-violet-500/40 transition group">
-              <ClipboardList className="w-4 h-4 text-violet-400" />
-              <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
-                {isA ? 'Kiểm tra' : 'Quiz'}
-              </span>
-            </button>
-
-            {/* Chia sẻ tiến độ */}
-            <button onClick={() => setShare(true)}
-              aria-label={isA ? 'Chia sẻ tiến độ' : 'Share progress'}
-              className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-accent-500/40 transition group">
-              <Share2 className="w-4 h-4 text-accent-400" />
-              <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
-                {isA ? 'Chia sẻ' : 'Share'}
-              </span>
-            </button>
-
-            {/* Bật / tắt thông báo nhắc học */}
-            {isPushSupported() && (
-              <button onClick={togglePush} disabled={pushLoading}
-                aria-label={pushOn ? (isA ? 'Tắt thông báo' : 'Turn off notifications') : (isA ? 'Bật thông báo' : 'Turn on notifications')}
-                className={`flex flex-col items-center gap-1.5 py-3 rounded-2xl border transition group ${
-                  pushOn
-                    ? 'bg-amber-500/10 border-amber-500/30 hover:border-amber-500/50'
-                    : 'bg-zinc-900/60 border-zinc-800/60 hover:border-amber-500/30'
-                }`}>
-                {pushOn
-                  ? <Bell className="w-4 h-4 text-amber-400" />
-                  : <BellOff className="w-4 h-4 text-zinc-400 group-hover:text-amber-400 transition" />}
-                <span className={`text-[11px] transition ${pushOn ? 'text-amber-300' : 'text-zinc-400 group-hover:text-zinc-200'}`}>
-                  {pushLoading ? '...' : pushOn ? (isA ? 'Nhắc bật' : 'Notif on') : (isA ? 'Nhắc tắt' : 'Notif off')}
-                </span>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Modal chia sẻ tiến độ */}
-        {showShare && user && (
-          <ShareProgress userId={user.id} isA={isA} onClose={() => setShare(false)} />
-        )}
 
         {/* ── Mode cards ────────────────────────────────────────────────── */}
         <div className="space-y-3">

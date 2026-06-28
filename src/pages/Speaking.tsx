@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send } from 'lucide-react'
 import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
+import QuickActions from '../components/QuickActions'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
@@ -389,7 +391,6 @@ export default function Speaking() {
   return (
     <div className="h-[100dvh] bg-zinc-950 flex flex-col">
       <Layout
-        title={isA ? 'Luyện nói song ngữ' : 'Bilingual Speaking'}
         subtitle={session
           ? `${situationLabel(session.situation, dir)} · ${
               isA ? LEVELS.find(l => l.value === session.level)?.labelA
@@ -399,7 +400,20 @@ export default function Speaking() {
       />
 
       {!session ? (
-        <SetupScreen onStart={startSession} dir={dir} />
+        <div className="flex-1 flex flex-col overflow-y-auto">
+          {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
+          <div className="max-w-sm mx-auto w-full px-4 pt-5">
+            <PageHeader
+              title={isA ? 'Luyện nói song ngữ' : 'Bilingual Speaking'}
+              subtitle={isA ? 'Nói → AI nghe → phản hồi + sửa lỗi' : 'Speak → AI listens → replies & corrects'}
+            />
+          </div>
+          <SetupScreen onStart={startSession} dir={dir} />
+          {/* Hàng hành động nhanh ở đáy màn thiết lập */}
+          <div className="max-w-md mx-auto w-full px-4 pb-8">
+            <QuickActions />
+          </div>
+        </div>
       ) : (
         <>
           <div className="flex-1 min-h-0 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">

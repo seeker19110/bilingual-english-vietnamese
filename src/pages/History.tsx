@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { MessageCircle, PenLine, Mic, ChevronDown, ChevronUp, Clock } from 'lucide-react'
 import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
+import QuickActions from '../components/QuickActions'
 import { getChatSessions, getWritingSubs, getSpeakingSessions, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { useCloudSync } from '../lib/useCloudSync'
@@ -224,9 +226,12 @@ export default function History() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout title="Lịch sử học" />
+      <Layout />
 
       <main className="max-w-3xl mx-auto px-4 py-5">
+
+        {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
+        <PageHeader title="Lịch sử học" subtitle="Xem lại chat, bài viết và buổi luyện nói" />
 
         {/* Tabs */}
         <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
@@ -252,6 +257,9 @@ export default function History() {
             {tab === 'speaking' && speakings.map(s => <SpeakingCard key={s.id} s={s} />)}
           </div>
         )}
+
+        {/* Hàng hành động nhanh ở đáy trang */}
+        <QuickActions />
       </main>
     </div>
   )

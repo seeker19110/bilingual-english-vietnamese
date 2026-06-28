@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { PenLine, Send, RotateCcw, ChevronDown, Trophy } from 'lucide-react'
 import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
+import QuickActions from '../components/QuickActions'
 import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
@@ -224,8 +226,14 @@ export default function Writing() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout title={isA ? 'Luyện viết & chấm điểm' : 'Writing Practice & Grading'} />
+      <Layout />
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-4 animate-fade-up">
+
+        {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
+        <PageHeader
+          title={isA ? 'Luyện viết & chấm điểm' : 'Writing Practice & Grading'}
+          subtitle={isA ? 'AI chấm theo tiêu chí IELTS Writing Task 2' : 'AI grades by IELTS Writing Task 2 criteria'}
+        />
 
         <div className="space-y-2">
           <label className="text-xs font-medium text-zinc-400 block">
@@ -293,6 +301,9 @@ export default function Writing() {
             ? 'AI chấm theo tiêu chí IELTS — Task Response · Coherence · Lexical · Grammar'
             : 'AI grades Vietnamese writing — Task Response · Coherence · Lexical · Grammar'}
         </p>
+
+        {/* Hàng hành động nhanh ở đáy trang */}
+        <QuickActions />
       </main>
     </div>
   )

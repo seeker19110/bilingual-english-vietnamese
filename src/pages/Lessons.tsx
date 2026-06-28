@@ -3,6 +3,8 @@ import { Play, Pause, Square, Volume2, Loader2, Search, X, Mic, RotateCcw } from
 import { startListening, isSTTSupported } from '../lib/stt'
 import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronounceScore'
 import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
+import QuickActions from '../components/QuickActions'
 import VoiceToggle from '../components/VoiceToggle'
 import { getDirection } from '../lib/storage'
 import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio, unlockAudio, prefetchSpeech } from '../lib/tts'
@@ -122,24 +124,27 @@ export default function Lessons() {
   // Desktop (sm+): layout thường, search ở trên
   return (
     <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
-      <Layout
-        title={isA ? 'Bài học' : 'Lessons'}
-        subtitle={
-          index.length > 0
-            ? (isA ? `${index.length} chủ đề bài học giao tiếp` : `${index.length} conversation lesson topics`)
-            : (isA ? 'Bài học giao tiếp' : 'Conversation lessons')
-        }
-        back
-        extra={<VoiceToggle />}
-      />
+      <Layout back extra={<VoiceToggle />} />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2">
+          {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
+          <PageHeader
+            title={isA ? 'Các bài hội thoại mẫu thông dụng' : 'Common sample dialogues'}
+            subtitle={
+              index.length > 0
+                ? (isA ? `${index.length} chủ đề hội thoại giao tiếp` : `${index.length} conversation topics`)
+                : (isA ? 'Hội thoại mẫu giao tiếp' : 'Conversation lessons')
+            }
+          />
           {/* Search bar — chỉ hiện ở trên trên desktop */}
           <div className="hidden sm:block mb-4">
             <SearchBar query={query} setQuery={setQuery} isA={isA} variant="desktop" />
           </div>
           <LessonList lessons={index} isA={isA} query={deferredQuery} onSelect={setSelectedMeta} />
+
+          {/* Hàng hành động nhanh ở đáy trang */}
+          <QuickActions />
         </div>
       </main>
 

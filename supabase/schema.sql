@@ -61,10 +61,12 @@ create table if not exists public.daily_usage (
   writing_count integer not null default 0,
   speaking_count integer not null default 0,
   stt_count     integer not null default 0,    -- lượt nhận diện giọng nói (STT), đếm riêng
+  learn_count   integer not null default 0,    -- số từ vựng học trong ngày (để tính streak, KHÔNG giới hạn)
   primary key (user_id, day)
 );
--- Bổ sung cột cho DB cũ đã tạo bảng trước khi có stt_count (chạy lại an toàn).
-alter table public.daily_usage add column if not exists stt_count integer not null default 0;
+-- Bổ sung cột cho DB cũ đã tạo bảng trước khi có stt_count / learn_count (chạy lại an toàn).
+alter table public.daily_usage add column if not exists stt_count   integer not null default 0;
+alter table public.daily_usage add column if not exists learn_count integer not null default 0;
 
 -- ── 6. tts_cache: cache audio Google TTS dùng chung cho mọi user ─────────────
 -- hash = SHA-256(text + lang + voice)[0:32] → key tìm nhanh, tên file trên Storage
@@ -137,14 +139,17 @@ alter table public.profiles add column if not exists daily_minutes integer      
 
 -- ── 10. Bảng lưu push subscription để gửi thông báo nhắc học ───────────────
 create table if not exists public.push_subscriptions (
-  id         uuid primary key default gen_random_uuid(),
-  user_id    uuid not null references auth.users(id) on delete cascade,
-  endpoint   text not null,
-  p256dh     text not null,
-  auth_key   text not null,
-  created_at timestamptz not null default now(),
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  endpoint    text not null,
+  p256dh      text not null,
+  auth_key    text not null,
+  remind_hour smallint,                          -- giờ UTC (0–23) muốn được nhắc học; null = giờ mặc định
+  created_at  timestamptz not null default now(),
   unique (user_id, endpoint)
 );
+-- Bổ sung cột cho DB cũ đã tạo bảng trước khi có remind_hour (chạy lại an toàn).
+alter table public.push_subscriptions add column if not exists remind_hour smallint;
 alter table public.push_subscriptions enable row level security;
 drop policy if exists "own push sub" on public.push_subscriptions;
 create policy "own push sub" on public.push_subscriptions
