@@ -21,6 +21,10 @@ dist_verify_tmp*/
 vite.config.ts.timestamp-*.mjs
 tsconfig.node.tsbuildinfo
 
+# Sinh tự động lúc build bởi scripts/gen-data-manifest.mjs (chạy trước vite build).
+# Mỗi lần build sẽ tạo lại (đổi generatedAt) → đừng theo dõi để git status không "bẩn".
+public/data/manifest.json
+
 # Bản sao lưu từ điển tạm khi mở rộng lên 10.000 từ
 src/data/dictionary.backup.json
 .claude/
