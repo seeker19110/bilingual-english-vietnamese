@@ -330,7 +330,10 @@ export default function Speaking() {
     const stop = startListening(
       sttLang,
       r => setTranscript(r.transcript),
-      async (last) => { setRecording(false); incrementUsage(user.id, 'sttCount'); if (last.trim()) await sendUserSpeech(last.trim()) },
+      // KHÔNG đếm sttCount cho nhánh Web Speech: nó chạy MIỄN PHÍ ở trình duyệt, không qua
+      // /api/stt nên server không đếm → bump cục bộ chỉ gây lệch rồi bị pullUserData ghi đè.
+      // (Đường tốn tiền là server STT/Whisper ở stopServerRecording — chỗ đó mới tính lượt.)
+      async (last) => { setRecording(false); if (last.trim()) await sendUserSpeech(last.trim()) },
       err => { setError(sttErrorMessage(err, isA)); setRecording(false) },
     )
     stopRecRef.current = stop

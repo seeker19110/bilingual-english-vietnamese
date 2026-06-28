@@ -24,6 +24,9 @@ let currentBlobUrl: string | null = null
 let currentAudioId: string | null = null
 // Callback để unblock Promise đang chờ trong speakViaGoogle khi stopSpeaking() được gọi
 let currentResolve: (() => void) | null = null
+// "Vé" cho chuỗi đọc song ngữ: stopSpeaking() tăng số này để huỷ phần CÒN LẠI của
+// speakBilingual (vd: đang đọc câu thoại mà bấm Tắt tiếng → KHÔNG đọc tiếp phần sửa lỗi).
+let playToken = 0
 
 function getSharedAudio(): HTMLAudioElement {
   if (!sharedAudio) {
@@ -111,6 +114,7 @@ export function isTTSSupported(): boolean {
 }
 
 export function stopSpeaking() {
+  playToken++  // huỷ phần còn lại của chuỗi đọc song ngữ đang chờ (nếu có)
   if (sharedAudio) {
     // Xóa handler trước khi pause để tránh onerror/onended fire sau khi đã stop.
     // KHÔNG huỷ thẻ sharedAudio (đặt = null) — phải giữ lại để nó vẫn "đã mở
@@ -371,6 +375,10 @@ export async function speakBilingual(
   voice: Voice = getVoicePref(),
   rate = 1,
 ) {
+  const myToken = ++playToken
   if (speech)   await speak(speech, speechLang, voice, rate)
+  // Nếu giữa chừng người dùng bấm Tắt tiếng / sang câu khác (stopSpeaking → playToken đổi),
+  // thì DỪNG, không đọc tiếp phần sửa lỗi.
+  if (playToken !== myToken) return
   if (feedback) await speak(feedback, feedbackLang, voice, rate)
 }
