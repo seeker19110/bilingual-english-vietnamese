@@ -112,10 +112,10 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 |------|------|---------|---------|
 | Kiểu (frontend + API) | `npm run typecheck` (`tsc && tsc -p tsconfig.api.json`) | ✅ **PASS** (exit 0) | Không lỗi type |
 | Lint | `npm run lint` (`eslint . --max-warnings 0`) | ✅ **PASS** (exit 0) | 0 cảnh báo. *Sửa "M4 ESLint không chạy" của v1: nay chạy tốt sau khi cài deps* |
-| Unit test | `npx vitest run` | ✅ **PASS** — 4 file, **27 test** | Lượt 2 thêm `pronounceScore`, `srs`, `stats` (trước chỉ `curriculum`) |
+| Unit test | `npx vitest run` | ✅ **PASS** — 7 file, **46 test** | Lượt 3 thêm test **lớp API** (`usage`, `security`, `fetchTimeout`) |
 | Build production | `npm run build` | ✅ **PASS** (exit 0) | Sinh manifest + `tsc` + `vite build`, có nén Gzip/Brotli |
 
-> **Tiến triển độ phủ:** lượt 1 chỉ **10 test / 1 file**; lượt 2 nâng lên **27 test / 4 file** (thêm logic chấm phát âm, SRS, thống kê). Vẫn còn trống lớn ở **lớp API** (`api/` chưa có test) — trọng tâm tiếp theo của §6.
+> **Tiến triển độ phủ:** lượt 1 **10 test / 1 file** → lượt 2 **27 test / 4 file** (chấm phát âm, SRS, thống kê) → lượt 3 **46 test / 7 file** (thêm `api/_lib`: đếm/hoàn lượt, CORS+rate-limit, timeout). Đã phủ các luồng tiền & fix bảo mật trọng yếu; còn lại có thể bổ sung integration test cho handler `api/ai.ts`/`api/stt.ts` (mock provider).
 
 ---
 
@@ -159,7 +159,7 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 
 | # | Mức | Vấn đề | Nhóm | File chính |
 |---|-----|--------|------|-----------|
-| **T1** | 🟠 High | ⚠️ PARTIAL — **Độ phủ kiểm thử còn mỏng**: lượt 2 đã thêm test cho `curriculum`, `pronounceScore`, `srs`, `stats` (27 ca), nhưng **lớp `api/` vẫn 0 test** (đếm lượt/refund, bảo mật, timeout, crypto chưa có test hồi quy). | Kiểm thử | toàn bộ `api/`, phần còn lại `src/lib` |
+| **T1** | 🟠 High | ⚠️ PARTIAL — **Độ phủ kiểm thử đang nâng dần**: 46 ca / 7 file gồm `curriculum`, `pronounceScore`, `srs`, `stats` + **lớp API** `usage`/`security`/`fetchTimeout`. Còn thiếu: **integration test cho handler** `api/ai.ts`/`api/stt.ts` (mock provider) và `ttsCrypto`. | Kiểm thử | handler `api/*.ts`, phần còn lại `src/lib` |
 | **T2** | 🟡 Medium | **Không có cổng chất lượng CI**: workflow `.github/workflows/deploy.yml` chỉ deploy, **không chạy** typecheck/lint/test trước khi `pm2 restart` → có thể đẩy mã hỏng lên production. | CI/CD | `.github/workflows/deploy.yml` |
 | M1 | 🟡 Medium | `direction` (chiều A/B) không sync đa thiết bị (chỉ localStorage). | Dữ liệu | `src/lib/storage.ts`, `profiles` |
 | M2 | ⚠️ PARTIAL | Prompt nền **đã** gom vào `src/prompts/index.ts` ✅, nhưng vẫn **dựng ở client**; server chỉ `slice(0,8000)` (`api/ai.ts:147`) → chưa có guardrail cố định phía server. | Bảo mật/chi phí | `api/ai.ts:147`, `src/prompts/index.ts` |
@@ -173,7 +173,7 @@ Tất cả cổng chất lượng được **chạy thật** trong lần audit n
 
 ### 4.3 Sổ lỗi cụ thể phát hiện trong rà soát SÂU (deep pass)
 
-> Các lỗi **mới**, phát hiện khi đọc tay từng dòng theo quy trình §1.5. **Lượt 1 (2026-06-28):** BUG-1..5. **Lượt 2 (2026-06-28, mở rộng độ phủ):** đọc thêm `Speaking.tsx`, `tts.ts`, các lib backend (Gemini/STT/pronunciation), `vocab.ts` → BUG-6..8. Cột **Trạng thái** phản ánh mã hiện tại.
+> Các lỗi **mới**, phát hiện khi đọc tay từng dòng theo quy trình §1.5. **Lượt 1:** BUG-1..5. **Lượt 2** (đọc `Speaking.tsx`, `tts.ts`, lib backend Gemini/STT/pronunciation, `vocab.ts`): BUG-6..8. **Lượt 3** (đọc `RoadmapTab.tsx`, `supabaseAdmin.ts` + viết test lớp API): không phát hiện lỗi mới — `RoadmapTab` đã tự bù trừ BUG-6 bằng kiểm tra kép chữ thường; tập trung **viết test hồi quy** khoá H1/H2/H10 + BUG-2/5. Cột **Trạng thái** phản ánh mã hiện tại.
 
 | ID | Mức | Lớp | Lỗi | Bằng chứng | Trạng thái |
 |----|-----|-----|-----|-----------|-----------|
@@ -232,8 +232,8 @@ Thuần refactor/hạ tầng, rủi ro hồi quy cao trên app live → để **
 
 | Mức | Phạm vi | Công cụ | Trạng thái hiện tại |
 |-----|---------|---------|---------------------|
-| **Unit** | Hàm/logic thuần trong `src/lib`, `api/_lib` | Vitest (+ happy-dom) | ⚠️ `curriculum`, `pronounceScore`, `srs`, `stats` (27 ca); `api/_lib` chưa có |
-| **Integration (API)** | Handler `api/*.ts` với mock Supabase/provider | Vitest + mock | 🔲 Chưa có |
+| **Unit** | Hàm/logic thuần trong `src/lib`, `api/_lib` | Vitest (+ happy-dom) | ✅ `curriculum`, `pronounceScore`, `srs`, `stats`, `usage`, `security`, `fetchTimeout` (46 ca) |
+| **Integration (API)** | Handler `api/*.ts` với mock Supabase/provider | Vitest + mock | 🔲 Chưa có (đã có unit cho `api/_lib`; handler còn lại) |
 | **Component** | Render React + tương tác (Chat, Writing, Dictionary) | Vitest + @testing-library/react | 🔲 Chưa có (cần thêm dev-dep) |
 | **E2E / luồng** | Đăng nhập → chat → đếm lượt, qua trình duyệt thật | Playwright (đã có Chromium sẵn) | 🔲 Chưa có |
 | **Thủ công / khám phá** | Mobile keyboard, iOS Safari TTS, STT thực | Checklist tay | 📋 Một phần (đã kiểm khi sửa) |
@@ -558,13 +558,16 @@ npm run build               # ✅ PASS (manifest + tsc + vite build, nén Gzip/B
 - Writing validate: `src/pages/Writing.tsx:173,182`
 - Profile TTL: `src/lib/auth.ts:10-21`
 
-**Cấu trúc kiểm thử hiện có (sau lượt 2 — 27 ca / 4 file):**
-- `vitest.config.ts` (happy-dom, include `src/**/*.test.{ts,tsx}`)
+**Cấu trúc kiểm thử hiện có (sau lượt 3 — 46 ca / 7 file):**
+- `vitest.config.ts` (happy-dom, include `src/**/*.test.{ts,tsx}` **+ `api/**/*.test.ts`**)
 - `vitest.setup.ts` (mock `fetch('/data/...')` → đọc `public/`)
 - `src/lib/curriculum.test.ts` (10 ca)
 - `src/lib/pronounceScore.test.ts` (8 ca) — chấm phát âm
-- `src/lib/srs.test.ts` (6 ca) — SM-2 (mock `progressSync` để chạy offline)
+- `src/lib/srs.test.ts` (6 ca) — SM-2 (mock `progressSync`)
 - `src/lib/stats.test.ts` (3 ca) — hoạt động/streak (mock `supabase`); khoá BUG-5
+- `api/_lib/usage.test.ts` (10 ca) — đếm/hoàn lượt (mock `supabaseAdmin`); khoá H1 + BUG-2
+- `api/_lib/security.test.ts` (6 ca) — CORS (khoá H10) + rate limit
+- `api/_lib/fetchTimeout.test.ts` (3 ca) — timeout (khoá H2)
 
 **Sửa lỗi đã áp dụng trong bản này:** BUG-1 (`Chat.tsx`), BUG-2 (`usage.ts` + `ai.ts` + `stt.ts` + migration `0004_refund_usage.sql` + `schema.sql`), BUG-4 (`Dictionary.tsx`), BUG-5 (`stats.ts`). BUG-6/7/8 ghi nhận, để PR sau.
 
