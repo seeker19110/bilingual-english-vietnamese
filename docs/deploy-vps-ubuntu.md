@@ -541,6 +541,43 @@ sudo certbot renew && sudo systemctl reload nginx
 
 ---
 
+## SSH nhanh — tự vào thẳng thư mục app
+
+Để mỗi lần SSH tự nhảy vào `/var/www/english-tutor` (khỏi gõ `cd` lại), thêm
+**trên máy cá nhân** của bạn vào file `~/.ssh/config`
+(Windows: `C:\Users\<tên-bạn>\.ssh\config`):
+
+```ssh-config
+# Host trơn — dùng vào VPS bình thường + chạy lệnh lẻ
+Host xboss
+    HostName 160.30.172.203
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+
+# Host tự cd vào thư mục app khi đăng nhập tương tác
+Host app
+    HostName 160.30.172.203
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+    RequestTTY yes
+    RemoteCommand cd /var/www/english-tutor && exec $SHELL -l
+```
+
+Cách dùng:
+
+```bash
+ssh app                              # → vào thẳng /var/www/english-tutor
+ssh xboss                            # → vào VPS như cũ (thư mục home)
+ssh xboss "pm2 logs english-tutor"   # → chạy lệnh lẻ trên VPS
+```
+
+> ⚠️ Host có `RemoteCommand` (ở đây là `app`) **không** chạy được lệnh lẻ kiểu
+> `ssh app "lệnh"` (sẽ báo xung đột lệnh). Vì vậy giữ thêm host trơn `xboss`
+> để chạy lệnh nhanh. Đổi `User`/`IdentityFile` cho khớp nếu bạn đăng nhập
+> bằng user hoặc khóa khác.
+
+---
+
 ## Tóm tắt lệnh hay dùng
 
 ```bash
