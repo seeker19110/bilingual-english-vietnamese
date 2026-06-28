@@ -133,6 +133,40 @@ Khác báo cáo thường (chỉ đếm thiếu), verify đối chiếu **HAI CH
      mã hóa) hoặc file ciphertext hỏng.
    - `BODY_NGẮN_*` → tải về quá ngắn (thường là trang lỗi HTML, không phải audio).
 
+---
+
+## 5. Đồng bộ audio Supabase → VPS (`sync:storage`)
+
+VPS chạy `STORAGE_DRIVER=local` (Nginx phục vụ `/uploads/`), nhưng nhiều file đã được
+seed lên **Supabase Storage** trước đó (riêng bảng `pronunciations` seed luôn đẩy thẳng
+lên Supabase). Script `scripts/sync-storage-to-vps.ts` **tải xuống** các file đó về
+`UPLOADS_DIR` của VPS — **chỉ file nào chưa có ở local**.
+
+```bash
+# CHẠY TRÊN VPS (nơi có UPLOADS_DIR)
+npm run sync:storage -- --dry-run     # xem trước: còn thiếu local bao nhiêu, KHÔNG tải
+npm run sync:storage                  # tải thật các file còn thiếu về /uploads
+npm run sync:storage -- --force       # tải lại + ghi đè cả file local đã có
+BUCKET=pronunciations npm run sync:storage   # chỉ đồng bộ 1 bucket
+```
+
+Cách hoạt động (an toàn, chạy lại nhiều lần được):
+- Đọc DB lấy danh sách file kỳ vọng theo bucket: `tts-cache` (`${lang}/${voice}/${hash}.mp3`,
+  audio đã mã hóa) và `pronunciations` (`${word}-${voice}.mp3`, mp3 thường).
+- File local **đã có** → bỏ qua. **Chưa có** → tải từ Supabase (`storage.download`, dùng
+  service-role nên đọc được cả bucket private) → ghi ra `${UPLOADS_DIR}/${bucket}/${key}`.
+- **Không** ghi đè file local (trừ `--force`), **không** đụng DB.
+
+Đọc kết quả:
+- `⏭ đã có` — file local sẵn rồi, bỏ qua.
+- `↓ tải về` — vừa kéo từ Supabase xuống.
+- `∅ thiếu trên Supabase` — không có ở **cả** local lẫn Supabase → cần tạo lại bằng
+  `npm run seed:all -- --all`.
+
+> Lưu ý: script chỉ **chép file**, không sửa `audio_url` trong DB. Bản ghi nào có
+> `audio_url` trỏ Supabase thì client vẫn tải từ Supabase cho tới khi `audio_url` được
+> đổi sang đường dẫn local (chưa làm tự động — hỏi nếu cần thêm bước này).
+
 Kết luận cuối:
 - `✅ DB KHỚP tập kỳ vọng` — mọi câu cần thiết đã có, đường dẫn đúng (có thể còn orphan để dọn).
 - `⚠️ Chưa khớp: thiếu N câu...` — chạy `npm run seed:all -- --all` để bù.
