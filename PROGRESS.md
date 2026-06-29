@@ -75,6 +75,11 @@
   7. **Gate a11y nay 47 test** (login + Trang chủ×4 + chiều B×2 + menu×4 + 9 route×4) — tất cả
      0 critical / 0 serious. → Cam kết "AA ở mọi theme" được bảo chứng cho mọi trang chính +
      các trạng thái tương tác chính (không cần backend).
+  8. **Sửa AA cho UI KẾT QUẢ cần backend** (Chat trả lời/sửa lỗi, Writing chấm điểm/lỗi,
+     Speaking sửa lỗi/cảnh báo, bandText/`textColor` điểm IELTS): thêm `theme-light:` sắc độ
+     -700/-800 (red/amber/accent/sky). **Đúng trong CODE** (dùng đúng sắc độ đã được gate ở
+     trang khác xác nhận AA) nhưng **CHƯA gate** — các UI này chỉ hiện sau khi gọi AI, E2E
+     hiện không có backend. Gate chúng cần mock API (xem "Tiếp theo").
 
 ## Tiếp theo
 

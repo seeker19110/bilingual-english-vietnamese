@@ -108,7 +108,7 @@ function SetupScreen({
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-xs text-red-400">
+          <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-xs text-red-400 theme-light:text-red-700">
             {error}
           </div>
         )}
@@ -192,7 +192,9 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
         {feedbackText && (
           <div className="bg-amber-500/8 border border-amber-500/20 border-l-2 border-l-amber-400 rounded-r-xl rounded-bl-sm px-3 py-2.5 text-xs leading-relaxed">
             <div className="flex items-start gap-1.5">
-              <span className="text-amber-400 font-bold shrink-0 mt-0.5">✅</span>
+              <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
+                ✅
+              </span>
               <span className="text-amber-200 flex-1">{feedbackText}</span>
               <SpeakButton
                 text={feedbackText}
@@ -418,12 +420,12 @@ export default function Chat() {
             ))}
             {loading && <TypingDots />}
             {error && (
-              <p className="text-center text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
+              <p className="text-center text-xs text-red-400 theme-light:text-red-700 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
                 {error}
               </p>
             )}
             {limitHit && (
-              <div className="text-center text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
+              <div className="text-center text-xs text-amber-400 theme-light:text-amber-800 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
                 {isA
                   ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai hoặc nâng cấp lên Pro.'
                   : "You've used all your sessions today. Come back tomorrow or upgrade to Pro."}

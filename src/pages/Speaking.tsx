@@ -87,7 +87,7 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
       </p>
 
       {!(isRecordingSupported() || isSTTSupported()) && (
-        <div className="mt-3 mb-2 text-amber-400 text-xs bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-center max-w-sm animate-fade-in delay-150">
+        <div className="mt-3 mb-2 text-amber-400 theme-light:text-amber-800 text-xs bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-center max-w-sm animate-fade-in delay-150">
           {isA ? (
             <>
               Trình duyệt không hỗ trợ giọng nói. Dùng <strong>Chrome</strong> hoặc{' '}
@@ -197,10 +197,16 @@ function SpeakBubble({
         {msg.feedbackVi && (
           <div className="bg-amber-500/8 border border-amber-500/20 border-l-2 border-l-amber-400 rounded-r-xl rounded-bl-sm px-3 py-2.5 text-xs leading-relaxed">
             <div className="flex items-start gap-1.5">
-              <span className="text-amber-400 font-bold shrink-0 mt-0.5">✅</span>
+              <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
+                ✅
+              </span>
               <span className="text-amber-200">{msg.feedbackVi}</span>
             </div>
-            {msg.correctedEn && <p className="text-accent-400 mt-1.5 pl-4">→ {msg.correctedEn}</p>}
+            {msg.correctedEn && (
+              <p className="text-accent-400 theme-light:text-accent-800 mt-1.5 pl-4">
+                → {msg.correctedEn}
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -557,18 +563,18 @@ export default function Speaking() {
             {loading && <TypingDots />}
             {transcript && (
               <div className="flex justify-end animate-fade-in">
-                <div className="max-w-[78%] bg-sky-600/20 border border-sky-500/25 text-sky-300 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm italic break-words">
+                <div className="max-w-[78%] bg-sky-600/20 border border-sky-500/25 text-sky-300 theme-light:text-sky-800 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm italic break-words">
                   {transcript}…
                 </div>
               </div>
             )}
             {error && (
-              <p className="text-center text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
+              <p className="text-center text-xs text-red-400 theme-light:text-red-700 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
                 {error}
               </p>
             )}
             {limitHit && (
-              <div className="text-center text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
+              <div className="text-center text-xs text-amber-400 theme-light:text-amber-800 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
                 {isA
                   ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai.'
                   : "You've used all sessions today. Come back tomorrow."}
@@ -644,7 +650,7 @@ export default function Speaking() {
                         muted
                           ? 'text-zinc-400 border-zinc-800/80'
                           : speaking
-                            ? 'text-sky-400 border-sky-500/40 bg-sky-500/10'
+                            ? 'text-sky-400 theme-light:text-sky-800 border-sky-500/40 bg-sky-500/10'
                             : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-800/50'
                       }`}
                     >

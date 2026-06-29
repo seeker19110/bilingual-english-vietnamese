@@ -53,7 +53,11 @@ function bandBar(v: number): string {
   return v >= 7 ? 'bg-accent-500' : v >= 5 ? 'bg-amber-500' : 'bg-red-500'
 }
 function bandText(v: number): string {
-  return v >= 7 ? 'text-accent-400' : v >= 5 ? 'text-amber-400' : 'text-red-400'
+  return v >= 7
+    ? 'text-accent-400 theme-light:text-accent-800'
+    : v >= 5
+      ? 'text-amber-400 theme-light:text-amber-800'
+      : 'text-red-400 theme-light:text-red-700'
 }
 
 // Bảng màu nhấn cho từng cấp CEFR (Tailwind cần class tĩnh — không ghép động được).
