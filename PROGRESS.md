@@ -68,18 +68,21 @@
      `COLOR_MAP` (CommonPhrases), `COLORS` (Lessons), `ACCENT` cấp CEFR (Dashboard), tab Learn,
      IPA (`text-accent-400/70`→`/90` + `theme-light:`), nút/badge accent dùng chung. Đồng thời
      bắt được lỗi CÓ SẴN ở theme tối **Rực rỡ** (IPA fuchsia /70 mờ trên nền tím → bump /90).
-  6. **Gate a11y nay 42 test** (login + Trang chủ×4 theme + menu + 9 route×4 theme) — tất cả
-     0 critical / 0 serious. → Cam kết "AA ở mọi theme" được bảo chứng cho toàn bộ trang chính.
+  6. **Phủ TRẠNG THÁI SAU TƯƠNG TÁC** (không cần backend): thêm vào gate — Trang chủ **chiều B**
+     (đảo accent→sky) ở 2 theme sáng, **menu giao diện đã mở ở cả 4 theme**. Đã explore xác nhận
+     thêm (không gate vì thao tác dễ flaky): mở bài học, tab Từ loại Từ điển, tab Learn
+     (SRS/Khó/Quiz) — đều 0 vi phạm ở 2 theme sáng.
+  7. **Gate a11y nay 47 test** (login + Trang chủ×4 + chiều B×2 + menu×4 + 9 route×4) — tất cả
+     0 critical / 0 serious. → Cam kết "AA ở mọi theme" được bảo chứng cho mọi trang chính +
+     các trạng thái tương tác chính (không cần backend).
 
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
 - (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
-- (Tùy chọn) Quét a11y trạng thái sau tương tác KHÁC cần backend (vd. sau khi gửi tin
-  nhắn chat) — cần mock API; chưa làm.
-- (Nhỏ) Các thành phần ÍT hiển thị (modal/section ẩn) chưa chắc đã phủ hết ở theme sáng —
-  gate chỉ quét trạng thái thấy lúc tải mỗi route. Có `theme-light:` sẵn để vá khi gặp.
+- (Tùy chọn) Quét a11y trạng thái sau tương tác CẦN BACKEND (sau khi gửi tin chat, chấm bài
+  viết, STT) — cần mock API trong E2E; chưa làm. Đây là phần a11y duy nhất còn chừa lại.
 
 ## Quyết định quan trọng (trỏ tới ADR nếu có)
 
@@ -96,11 +99,11 @@
 
 ## Nợ kỹ thuật (chỗ "làm tạm" cần quay lại)
 
-- **a11y**: gate nay **42 test** — login + Trang chủ ở 4 theme + menu giao diện sau khi mở +
-  **11 trang × quét ở 4 theme** (/, /progress, /dictionary, /lessons, /history, /phrases,
-  /learning-path, /chat, /writing, /speaking) — 0 critical, 0 serious ở MỌI theme. **Nợ còn
-  lại:** axe chỉ quét trạng thái HIỂN THỊ lúc tải mỗi route (+ menu giao diện); trạng thái sau
-  tương tác khác (modal/section ẩn, sau gửi tin chat…) chưa kiểm — cần mock backend / mở UI rồi quét.
+- **a11y**: gate nay **47 test** — login + Trang chủ (chiều A) ×4 theme + Trang chủ chiều B ×2
+  theme sáng + menu giao diện đã mở ×4 theme + **10 trang × 4 theme** (/progress, /dictionary,
+  /lessons, /history, /phrases, /learning-path, /chat, /writing, /speaking) — 0 critical,
+  0 serious ở MỌI theme + trạng thái tương tác chính. **Nợ còn lại:** chỉ còn trạng thái sau
+  tương tác CẦN BACKEND (sau gửi tin chat, chấm bài, STT) — cần mock API trong E2E.
 - E2E (`e2e/`) chưa nằm trong `npm run typecheck` (không thuộc tsconfig nào) —
   Playwright tự transpile khi chạy. Thêm `tsconfig.e2e.json` nếu muốn type-check.
 - Trang Login dùng text tiếng Việt hard-code (chưa qua i18n) — chưa song ngữ.
