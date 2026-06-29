@@ -21,3 +21,8 @@ vite.config.ts.timestamp-*.mjs
 playwright-report/
 test-results/
 blob-report/
+
+# Thư mục "drop-in" khung tham khảo (không phải mã nguồn dự án) — có .prettierrc
+# riêng yêu cầu prettier-plugin-tailwindcss (không cài), khiến `prettier --check .`
+# lỗi. Đã được eslint/tsc bỏ qua; bỏ qua ở prettier cho nhất quán.
+_framework-dropins/
