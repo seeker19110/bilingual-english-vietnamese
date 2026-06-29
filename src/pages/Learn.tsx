@@ -141,7 +141,7 @@ export default function Learn() {
       icon: Route,
       labelA: 'Lộ trình',
       labelB: 'Roadmap',
-      active: 'bg-teal-500/20 text-teal-300 border border-teal-500/40',
+      active: 'bg-teal-500/20 text-teal-300 theme-light:text-teal-800 border border-teal-500/40',
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
     },
     {
@@ -149,7 +149,8 @@ export default function Learn() {
       icon: Target,
       labelA: 'Hôm nay',
       labelB: 'Today',
-      active: 'bg-accent-500/20 text-accent-300 border border-accent-500/40',
+      active:
+        'bg-accent-500/20 text-accent-300 theme-light:text-accent-800 border border-accent-500/40',
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
     },
     {
@@ -158,7 +159,7 @@ export default function Learn() {
       labelA: 'Ôn SRS',
       labelB: 'SRS',
       badge: srsDue,
-      active: 'bg-sky-500/20 text-sky-300 border border-sky-500/40',
+      active: 'bg-sky-500/20 text-sky-300 theme-light:text-sky-800 border border-sky-500/40',
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
     },
     {
@@ -167,7 +168,8 @@ export default function Learn() {
       labelA: 'Từ khó',
       labelB: 'Hard',
       badge: hardCount,
-      active: 'bg-amber-500/20 text-amber-300 border border-amber-500/40',
+      active:
+        'bg-amber-500/20 text-amber-300 theme-light:text-amber-800 border border-amber-500/40',
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
     },
     {
@@ -175,7 +177,8 @@ export default function Learn() {
       icon: ClipboardList,
       labelA: 'Kiểm tra',
       labelB: 'Quiz',
-      active: 'bg-violet-500/20 text-violet-300 border border-violet-500/40',
+      active:
+        'bg-violet-500/20 text-violet-300 theme-light:text-violet-800 border border-violet-500/40',
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
     },
   ]
@@ -756,7 +759,7 @@ function TodayLesson({
         </button>
         <button
           onClick={learn}
-          className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 transition py-3 rounded-xl text-sm font-medium"
+          className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 transition py-3 rounded-xl text-sm font-medium"
         >
           <Check className="w-4 h-4" /> {isA ? 'Đã thuộc' : 'Got it'}
         </button>

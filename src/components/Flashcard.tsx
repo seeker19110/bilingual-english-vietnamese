@@ -114,7 +114,9 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
           <>
             <span className="font-bold text-white text-2xl mb-2">{card.word}</span>
             {card.ipa_en && (
-              <span className="text-sm text-accent-400/70 font-mono">{card.ipa_en}</span>
+              <span className="text-sm text-accent-400/90 theme-light:text-accent-800 font-mono">
+                {card.ipa_en}
+              </span>
             )}
             <span className="flex items-center gap-1 text-xs text-zinc-400 mt-4">
               <Eye className="w-3.5 h-3.5" /> Bấm để xem nghĩa
@@ -145,7 +147,7 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
         </button>
         <button
           onClick={() => rate(true)}
-          className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 transition py-3 rounded-xl text-sm font-medium"
+          className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 transition py-3 rounded-xl text-sm font-medium"
         >
           <Check className="w-4 h-4" /> Đã nhớ
         </button>

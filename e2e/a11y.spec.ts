@@ -77,8 +77,10 @@ test('a11y: menu chọn giao diện (sau khi mở) — 0 critical, không có se
   expect(unexpectedSerious).toEqual([])
 })
 
-// Các trang chính sau đăng nhập (Dashboard + những trang nhúng QuickActions).
-// Đã fix caption zinc-500/600 → zinc-400 nên không còn vi phạm color-contrast.
+// Các trang chính sau đăng nhập — quét ở CẢ 4 THEME (cam kết "AA ở mọi theme").
+// Màu cố định của Tailwind (pill loại từ, màu chủ đề/cấp, IPA…) đã thêm biến thể
+// `theme-light:` sắc độ đậm cho 2 theme nền sáng (qua map dùng chung: pos.ts,
+// COLOR_MAP Phrases, COLORS Lessons, CEFR_COLORS Dashboard, tab Learn…).
 const AUTHED_ROUTES = [
   '/progress',
   '/dictionary',
@@ -91,12 +93,14 @@ const AUTHED_ROUTES = [
   '/speaking',
 ]
 for (const route of AUTHED_ROUTES) {
-  test(`a11y: ${route} (đã đăng nhập) — 0 critical, không có serious mới`, async ({ page }) => {
-    await mockLogin(page, 'vi')
-    await page.goto(route, { waitUntil: 'domcontentloaded' })
-    await page.waitForTimeout(1000) // chờ render xong (data offline + animation)
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
-  })
+  for (const theme of THEMES) {
+    test(`a11y: ${route} theme=${theme} — 0 critical, không có serious mới`, async ({ page }) => {
+      await mockLogin(page, 'vi', theme)
+      await page.goto(route, { waitUntil: 'domcontentloaded' })
+      await page.waitForTimeout(1000) // chờ render xong (data offline + animation)
+      const { critical, unexpectedSerious } = await scan(page)
+      expect(critical).toEqual([])
+      expect(unexpectedSerious).toEqual([])
+    })
+  }
 }

@@ -27,39 +27,64 @@ type AudioMode = 'en' | 'both' | 'vi'
 const COLORS = [
   {
     bg: 'bg-accent-500/10',
-    text: 'text-accent-400',
+    text: 'text-accent-400 theme-light:text-accent-800',
     border: 'border-accent-500/25',
     dot: 'bg-accent-400',
   },
-  { bg: 'bg-sky-500/10', text: 'text-sky-400', border: 'border-sky-500/25', dot: 'bg-sky-400' },
+  {
+    bg: 'bg-sky-500/10',
+    text: 'text-sky-400 theme-light:text-sky-800',
+    border: 'border-sky-500/25',
+    dot: 'bg-sky-400',
+  },
   {
     bg: 'bg-violet-500/10',
-    text: 'text-violet-400',
+    text: 'text-violet-400 theme-light:text-violet-800',
     border: 'border-violet-500/25',
     dot: 'bg-violet-400',
   },
   {
     bg: 'bg-amber-500/10',
-    text: 'text-amber-400',
+    text: 'text-amber-400 theme-light:text-amber-800',
     border: 'border-amber-500/25',
     dot: 'bg-amber-400',
   },
-  { bg: 'bg-pink-500/10', text: 'text-pink-400', border: 'border-pink-500/25', dot: 'bg-pink-400' },
-  { bg: 'bg-teal-500/10', text: 'text-teal-400', border: 'border-teal-500/25', dot: 'bg-teal-400' },
-  { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/25', dot: 'bg-rose-400' },
+  {
+    bg: 'bg-pink-500/10',
+    text: 'text-pink-400 theme-light:text-pink-800',
+    border: 'border-pink-500/25',
+    dot: 'bg-pink-400',
+  },
+  {
+    bg: 'bg-teal-500/10',
+    text: 'text-teal-400 theme-light:text-teal-800',
+    border: 'border-teal-500/25',
+    dot: 'bg-teal-400',
+  },
+  {
+    bg: 'bg-rose-500/10',
+    text: 'text-rose-400 theme-light:text-rose-800',
+    border: 'border-rose-500/25',
+    dot: 'bg-rose-400',
+  },
   {
     bg: 'bg-indigo-500/10',
-    text: 'text-indigo-400',
+    text: 'text-indigo-400 theme-light:text-indigo-800',
     border: 'border-indigo-500/25',
     dot: 'bg-indigo-400',
   },
   {
     bg: 'bg-orange-500/10',
-    text: 'text-orange-400',
+    text: 'text-orange-400 theme-light:text-orange-800',
     border: 'border-orange-500/25',
     dot: 'bg-orange-400',
   },
-  { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/25', dot: 'bg-cyan-400' },
+  {
+    bg: 'bg-cyan-500/10',
+    text: 'text-cyan-400 theme-light:text-cyan-800',
+    border: 'border-cyan-500/25',
+    dot: 'bg-cyan-400',
+  },
 ]
 
 function getColor(id: number) {
@@ -587,7 +612,7 @@ function LessonView({
               {isIdle && (
                 <button
                   onClick={() => void startPlayAll()}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs font-medium transition"
                 >
                   <Play className="w-3 h-3 fill-current" />
                   {isA ? 'Phát tất cả' : 'Play all'}
@@ -605,7 +630,7 @@ function LessonView({
               {paused && (
                 <button
                   onClick={handleResume}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs font-medium transition"
                 >
                   <Play className="w-3 h-3 fill-current" />
                   {isA ? 'Tiếp' : 'Resume'}

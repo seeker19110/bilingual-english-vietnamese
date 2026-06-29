@@ -654,7 +654,7 @@ function VocabFlash({
           )}
           <button
             onClick={onBack}
-            className="w-full mt-2 py-3 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-sm font-medium transition"
+            className="w-full mt-2 py-3 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
           >
             {isA ? 'Về lộ trình' : 'Back to roadmap'}
           </button>
@@ -684,7 +684,7 @@ function VocabFlash({
             </button>
             <button
               onClick={learn}
-              className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 transition py-3 rounded-xl text-sm font-medium"
+              className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 transition py-3 rounded-xl text-sm font-medium"
             >
               <Check className="w-4 h-4" /> {isA ? 'Đã thuộc' : 'Got it'}
             </button>
@@ -846,7 +846,7 @@ function DialogueView({
             {isIdle && (
               <button
                 onClick={() => void startPlayAll()}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs font-medium transition"
               >
                 <Play className="w-3 h-3 fill-current" />
                 {isA ? 'Phát tất cả' : 'Play all'}
@@ -864,7 +864,7 @@ function DialogueView({
             {paused && (
               <button
                 onClick={handleResume}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs font-medium transition"
               >
                 <Play className="w-3 h-3 fill-current" />
                 {isA ? 'Tiếp' : 'Resume'}

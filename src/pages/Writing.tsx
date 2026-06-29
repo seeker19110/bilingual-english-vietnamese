@@ -204,7 +204,11 @@ export default function Writing() {
 
   const wordCount = essay.trim().split(/\s+/).filter(Boolean).length
   const wordColor =
-    wordCount < 150 ? 'text-red-400' : wordCount < 250 ? 'text-amber-400' : 'text-accent-400'
+    wordCount < 150
+      ? 'text-red-400 theme-light:text-red-700'
+      : wordCount < 250
+        ? 'text-amber-400 theme-light:text-amber-800'
+        : 'text-accent-400 theme-light:text-accent-800'
   const wordHint = isA
     ? wordCount < 150
       ? '(tối thiểu 150)'
