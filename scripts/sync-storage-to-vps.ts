@@ -63,9 +63,9 @@ async function fetchAllRows<T>(table: string, columns: string, orderCols: string
   const PAGE = 1000
   const out: T[] = []
   for (let from = 0; ; from += PAGE) {
-    let query = supabase.from(table).select(columns).order(orderCols[0], { ascending: true })
+    let query = supabase.from(table).select(columns).order(orderCols[0]!, { ascending: true })
     for (let i = 1; i < orderCols.length; i++)
-      query = query.order(orderCols[i], { ascending: true })
+      query = query.order(orderCols[i]!, { ascending: true })
     const { data, error } = await query.range(from, from + PAGE - 1)
     if (error) throw new Error(`Đọc bảng ${table} lỗi: ${error.message}`)
     if (!data || data.length === 0) break

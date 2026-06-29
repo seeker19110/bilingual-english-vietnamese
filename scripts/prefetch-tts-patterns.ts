@@ -204,7 +204,7 @@ async function runPass(
       else if (result.status === 'skip') countSkip++
       else {
         countError++
-        failed.push({ task: batch[idx], message: result.message })
+        failed.push({ task: batch[idx]!, message: result.message }) // idx khớp batch nên có
       }
     })
 
@@ -290,8 +290,9 @@ async function main(): Promise<void> {
     fs.writeFileSync(ERRORS_FILE, JSON.stringify(errorOutput, null, 2))
     console.log(`\n⚠️  Còn ${remaining.length} tác vụ không thể cache sau ${MAX_ROUNDS} vòng.`)
     console.log(`   Xem chi tiết: scripts/prefetch-tts-errors.json`)
+    const sample = remaining[0]! // nhánh else nên remaining.length>0, chắc chắn có
     console.log(
-      `   Lỗi mẫu: "${remaining[0].task.text}" (${remaining[0].task.lang}/${remaining[0].task.voice}) — ${remaining[0].message}`,
+      `   Lỗi mẫu: "${sample.task.text}" (${sample.task.lang}/${sample.task.voice}) — ${sample.message}`,
     )
     process.exit(1)
   }

@@ -425,7 +425,7 @@ async function runBatch(
       counters.errors++
       newReqs++
       if (result.message.includes('429')) rate.has429 = true
-      failed.push({ task: tasks[idx], message: result.message })
+      failed.push({ task: tasks[idx]!, message: result.message }) // idx khớp tasks nên có
     }
   })
   rate.count += newReqs
@@ -526,9 +526,9 @@ async function fetchAllRows<T>(table: string, columns: string, orderCols: string
   const out: T[] = []
   for (let from = 0; ; from += PAGE) {
     // Áp ORDER BY cho từng cột khóa rồi mới phân trang (range = limit/offset).
-    let query = supabase.from(table).select(columns).order(orderCols[0], { ascending: true })
+    let query = supabase.from(table).select(columns).order(orderCols[0]!, { ascending: true })
     for (let i = 1; i < orderCols.length; i++)
-      query = query.order(orderCols[i], { ascending: true })
+      query = query.order(orderCols[i]!, { ascending: true })
     const { data, error } = await query.range(from, from + PAGE - 1)
     if (error) throw new Error(`Đọc bảng ${table} lỗi: ${error.message}`)
     if (!data || data.length === 0) break
@@ -745,7 +745,7 @@ async function verifyDb(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
         okDec++
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err)
-        const label = msg.split(/[:\n]/)[0].trim().slice(0, 40) || 'lỗi không rõ' // gom theo nhãn đầu
+        const label = msg.split(/[:\n]/)[0]?.trim().slice(0, 40) || 'lỗi không rõ' // gom theo nhãn đầu
         reasons.set(label, (reasons.get(label) ?? 0) + 1)
         if (samples.length < 3) samples.push(`${r.audio_url.slice(0, 70)} → ${msg.slice(0, 90)}`)
       }
@@ -857,7 +857,7 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
       }
       const n = parseInt(ans, 10)
       if (Number.isInteger(n) && n >= 1 && n <= stats.length) {
-        await seedCategories(stats, [stats[n - 1].id])
+        await seedCategories(stats, [stats[n - 1]!.id])
       } else {
         console.log('❓ Lựa chọn không hợp lệ.')
       }

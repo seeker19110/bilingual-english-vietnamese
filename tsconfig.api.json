@@ -15,7 +15,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "strict": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true
   },
   "include": ["api", "scripts"]
 }

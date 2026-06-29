@@ -70,7 +70,7 @@ function interleaveByCategory(items: Subject[]): Subject[] {
       const grp = groups.get(cat)!
       const i = cursor.get(cat)!
       if (i < grp.length) {
-        result.push(grp[i])
+        result.push(grp[i]!) // i < grp.length nên chắc chắn có
         cursor.set(cat, i + 1)
         placedSomething = true
       }

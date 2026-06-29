@@ -145,7 +145,7 @@ async function runPass(
       if (result.status === 'ok') countOk++
       else {
         countError++
-        failed.push({ task: batch[idx], message: result.message })
+        failed.push({ task: batch[idx]!, message: result.message }) // idx khớp batch nên có
       }
     })
 
@@ -257,9 +257,8 @@ async function main(): Promise<void> {
     )
     console.log(`\n⚠️  Còn ${remaining.length} tác vụ không thể cache sau ${MAX_ROUNDS} vòng.`)
     console.log(`   Retry thủ công: WORDS_FILE=scripts/seed-errors.json npm run seed:pronunciation`)
-    console.log(
-      `   Lỗi mẫu: ${remaining[0].task.word} (${remaining[0].task.voice}) — ${remaining[0].message}`,
-    )
+    const sample = remaining[0]! // nhánh else nên remaining.length>0, chắc chắn có
+    console.log(`   Lỗi mẫu: ${sample.task.word} (${sample.task.voice}) — ${sample.message}`)
     process.exit(1)
   }
 }
