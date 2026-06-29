@@ -15,6 +15,15 @@ import { mockLogin } from './helpers/auth'
 const KNOWN_SERIOUS = new Set<string>([])
 
 async function scan(page: Page) {
+  // Tắt animation/transition trước khi quét để axe đo TRẠNG THÁI CUỐI, không bắt
+  // nhằm khung giữa của `animate-fade-in` (opacity 0→1) — lúc opacity ~0.6 màu chữ
+  // trộn nền làm contrast tụt dưới 4.5 → vi phạm color-contrast chập chờn (flaky).
+  // fade-in dùng fill-mode 'both' nên ép duration 0s sẽ nhảy thẳng tới opacity 1.
+  await page.addStyleTag({
+    content:
+      '*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;transition:none!important}',
+  })
+  await page.waitForTimeout(100)
   const { violations } = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .disableRules(['meta-viewport'])
@@ -46,7 +55,17 @@ test('a11y: trang chủ (đã đăng nhập) — 0 critical, không có serious 
 
 // Các trang chính sau đăng nhập (Dashboard + những trang nhúng QuickActions).
 // Đã fix caption zinc-500/600 → zinc-400 nên không còn vi phạm color-contrast.
-const AUTHED_ROUTES = ['/progress', '/dictionary', '/lessons', '/history', '/phrases']
+const AUTHED_ROUTES = [
+  '/progress',
+  '/dictionary',
+  '/lessons',
+  '/history',
+  '/phrases',
+  '/learning-path',
+  '/chat',
+  '/writing',
+  '/speaking',
+]
 for (const route of AUTHED_ROUTES) {
   test(`a11y: ${route} (đã đăng nhập) — 0 critical, không có serious mới`, async ({ page }) => {
     await mockLogin(page, 'vi')

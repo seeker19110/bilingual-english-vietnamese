@@ -480,7 +480,7 @@ export default function Dictionary() {
                       })}
 
                       {totalPages > 1 && (
-                        <p className="text-[11px] text-zinc-500 text-center pt-1">
+                        <p className="text-[11px] text-zinc-400 text-center pt-1">
                           {isA ? '← Vuốt để xem thêm kết quả →' : '← Swipe for more results →'}
                         </p>
                       )}
