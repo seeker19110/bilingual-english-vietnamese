@@ -316,18 +316,16 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
         .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: true })
       if (uploadError) throw new Error(`Upload lỗi: ${uploadError.message}`)
       const { data: urlData } = supabase.storage.from('pronunciations').getPublicUrl(fileName)
-      const { error: dbError } = await supabase
-        .from('pronunciations')
-        .upsert(
-          {
-            word,
-            voice,
-            audio_url: urlData.publicUrl,
-            lang: 'en-US',
-            voice_version: VOICE_VERSION,
-          },
-          { onConflict: 'word,voice' },
-        )
+      const { error: dbError } = await supabase.from('pronunciations').upsert(
+        {
+          word,
+          voice,
+          audio_url: urlData.publicUrl,
+          lang: 'en-US',
+          voice_version: VOICE_VERSION,
+        },
+        { onConflict: 'word,voice' },
+      )
       if (dbError) throw new Error(`DB lỗi: ${dbError.message}`)
       return { status: 'ok' }
     }
