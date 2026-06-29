@@ -59,7 +59,7 @@ function SetupScreen({
       <div className="w-full max-w-sm space-y-4 animate-fade-up delay-150">
         {/* Tình huống */}
         <div>
-          <label className="text-xs font-medium text-zinc-400 mb-2 block">
+          <label htmlFor="situation" className="text-xs font-medium text-zinc-400 mb-2 block">
             {isA ? 'Tình huống' : 'Situation'}
           </label>
           <div className="relative">

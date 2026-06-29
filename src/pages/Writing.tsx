@@ -310,7 +310,7 @@ export default function Writing() {
         />
 
         <div className="space-y-2">
-          <label className="text-xs font-medium text-zinc-400 block">
+          <label htmlFor="essay-prompt-select" className="text-xs font-medium text-zinc-400 block">
             {isA ? 'Đề bài' : 'Essay prompt'}
           </label>
           <div className="relative">

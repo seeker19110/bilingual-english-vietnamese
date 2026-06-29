@@ -352,7 +352,7 @@ function BatchDoneView({
           )}
         </p>
         {canLearnMore && (
-          <p className="text-xs text-zinc-500 mt-2">
+          <p className="text-xs text-zinc-400 mt-2">
             {isA
               ? `Còn ${DAILY_MAX - totalToday} từ có thể học hôm nay — kiểm tra để mở thêm.`
               : `${DAILY_MAX - totalToday} more words available today — pass a quiz to unlock.`}
@@ -572,7 +572,7 @@ function TodayLesson({
         <p className="text-sm text-zinc-400">
           {isA ? 'Quay lại vào ngày mai để tiếp tục.' : 'Come back tomorrow to continue.'}
         </p>
-        <p className="text-xs text-zinc-500 pt-1">
+        <p className="text-xs text-zinc-400 pt-1">
           {isA
             ? 'Trong khi chờ, hãy ôn SRS để nhớ lâu hơn.'
             : 'Meanwhile, review SRS to retain better.'}

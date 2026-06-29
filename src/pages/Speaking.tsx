@@ -104,11 +104,15 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
 
       <div className="w-full max-w-sm space-y-4 mt-4 animate-fade-up delay-200">
         <div>
-          <label className="text-xs font-medium text-zinc-400 mb-2 block">
+          <label
+            htmlFor="speaking-situation"
+            className="text-xs font-medium text-zinc-400 mb-2 block"
+          >
             {isA ? 'Tình huống' : 'Situation'}
           </label>
           <div className="relative">
             <select
+              id="speaking-situation"
               value={situation}
               onChange={(e) => setSituation(e.target.value)}
               className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white appearance-none outline-none focus:border-sky-500/70 transition"

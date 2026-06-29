@@ -3,6 +3,10 @@
 > Cập nhật sau mỗi mốc đáng kể. AI đọc file này để biết đang ở đâu.
 > Chi tiết tính năng sản phẩm: xem mục 13 trong `CLAUDE.md`.
 
+> **Nhịp làm việc theo giới hạn giờ (xem CLAUDE.md mục 3):**
+> ≥ 70% → hoàn tất việc đang làm, tạo PR rồi **DỪNG chờ người dùng cho phép**.
+> < 70% → sau khi PR **merge** thì **tự động tiếp tục** mục kế tiếp.
+
 ## Giai đoạn hiện tại
 
 - GĐ 4–5 (Phát triển + nâng chất lượng). Sản phẩm đã deploy thật
@@ -30,22 +34,28 @@
   `e2e/a11y.spec.ts`. Đã merge: **PR #134**.
 - **a11y `color-contrast` (Dashboard/QuickActions) + mở rộng gate**: đổi caption
   `zinc-500/600` → `zinc-400`; thêm 5 route đã-đăng-nhập vào gate a11y. Đã merge: **PR #135**.
-- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage) + **PR #133** (size-limit) + **PR #134** + **PR #135** (a11y).
+- **a11y flaky fix (Home)**: số streak `zinc-500` → `zinc-400` (contrast sát ngưỡng gây
+  flaky CI). Đã merge: **PR #136**.
+- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage) + **PR #133** (size-limit) + **PR #134/#135/#136** (a11y).
 
 ## Đang làm
 
-- **Sửa flaky test a11y trang chủ** — đang ở PR (chưa merge). Con số streak ở Home
-  (dòng 189) còn `text-zinc-500` (`text-sm` bold "0") trên nền thẻ tối → contrast ~4.0,
-  SÁT ngưỡng 4.5 nên axe lúc bắt lúc không (pass local + CI #134, FAIL CI #135). Đổi
-  sang `text-zinc-400` (contrast ~7, hết flaky). Đã chạy lặp 5× trang chủ: pass đều.
+- **a11y: phủ hết route chính + sửa critical `select-name`** — đang ở PR (chưa merge).
+  1. Dọn nốt `text-zinc-500/600` → `zinc-400` ở Lessons/Learn/Dictionary.
+  2. Phát hiện & sửa **critical `select-name`**: 3 `<select>` (Chat/Writing/Speaking)
+     thiếu accessible name → liên kết `<label htmlFor>` + `id`.
+  3. Thêm 4 route vào gate a11y (/learning-path, /chat, /writing, /speaking) → gate
+     nay phủ 11 trang (login + home + 9 route đã đăng nhập).
+  4. `scan()` tắt animation/transition trước khi quét (đo trạng thái cuối, chống flaky
+     color-contrast do `animate-fade-in`). Đã chạy `--workers=1 --repeat-each=2` = 22/22 pass.
 
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
-- (Tùy chọn) Đưa nốt /chat, /writing, /speaking, /learning-path vào gate a11y
-  (đã probe = 0 vi phạm color-contrast, chỉ chưa thêm vào spec).
 - (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
+- (Tùy chọn) Quét a11y cả trạng thái SAU tương tác (mở dropdown, sau khi gửi tin nhắn…)
+  — hiện gate chỉ quét lúc tải trang.
 
 ## Quyết định quan trọng (trỏ tới ADR nếu có)
 
@@ -62,10 +72,11 @@
 
 ## Nợ kỹ thuật (chỗ "làm tạm" cần quay lại)
 
-- **a11y `color-contrast`**: ĐÃ dọn — caption `zinc-500/600` ở Home + Dashboard +
-  QuickActions (dùng chung) đổi sang `zinc-400`. Gate a11y nay quét /login, /, /progress,
-  /dictionary, /lessons, /history, /phrases (đều 0 vi phạm). Lưu ý: axe chỉ quét phần
-  HIỂN THỊ lúc tải — caption ẩn dưới fold / khối thu gọn chưa chắc được kiểm.
+- **a11y**: ĐÃ dọn `color-contrast` (caption `zinc-500/600` → `zinc-400` toàn app) và
+  sửa critical `select-name` (3 `<select>` Chat/Writing/Speaking). Gate a11y nay phủ
+  **11 trang** (login, /, /progress, /dictionary, /lessons, /history, /phrases,
+  /learning-path, /chat, /writing, /speaking) — 0 critical, 0 serious. Lưu ý: axe chỉ
+  quét phần HIỂN THỊ lúc tải — trạng thái sau tương tác (dropdown mở, sau gửi tin) chưa kiểm.
 - E2E (`e2e/`) chưa nằm trong `npm run typecheck` (không thuộc tsconfig nào) —
   Playwright tự transpile khi chạy. Thêm `tsconfig.e2e.json` nếu muốn type-check.
 - Trang Login dùng text tiếng Việt hard-code (chưa qua i18n) — chưa song ngữ.

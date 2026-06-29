@@ -865,7 +865,7 @@ export function InlinePronounce({
             setOpen(false)
             reset()
           }}
-          className="text-[11px] text-zinc-500 hover:text-zinc-300 transition"
+          className="text-[11px] text-zinc-400 hover:text-zinc-300 transition"
         >
           {isA ? 'Đóng' : 'Close'}
         </button>
