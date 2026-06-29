@@ -70,9 +70,15 @@
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
 - **(Tiếp nối) Đạt AA theme SÁNG cho CÁC TRANG CÒN LẠI.** PR này mới sửa + gate Trang chủ.
-  Các trang khác (Dictionary, Lessons, Learn, Speaking…) vẫn dùng pill/badge màu cố định →
-  còn rớt AA ở Blue sky/Pink (chưa gate vì gate đa-theme mới phủ Trang chủ). Cách làm đã có
-  sẵn (`theme-light:`), chỉ cần áp từng trang rồi thêm route vào vòng quét đa-theme.
+  Đã quét sẵn 9 route ở 2 theme sáng — số vi phạm `color-contrast` còn lại (làm follow-up,
+  nên tách PR theo từng trang/hệ màu để dễ review):
+  - `/phrases` **43**, `/lessons` **32** — dùng BẢNG MÀU ĐỘNG `text-{color}-300/400` theo
+    chủ đề/cấp (amber/sky/violet/pink/teal/rose/indigo/orange/cyan/purple…) → sửa ở HÀM/MAP
+    gán màu (không phải từng phần tử). Đây là phần lớn nhất.
+  - `/progress` **6** (màu cấp CEFR `text-{lime,accent,sky,violet,amber}-300` + link `violet-400`).
+  - `/dictionary` **5** (chỉ Pink), `/learning-path` **3**, `/writing` **1** (`text-red-400`).
+  - `/history`, `/chat`, `/speaking`: **0** — đã sạch.
+  - Cách làm sẵn (`theme-light:`); sửa xong từng trang thì thêm route vào vòng quét đa-theme.
 - (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
 - (Tùy chọn) Quét a11y trạng thái sau tương tác KHÁC cần backend (vd. sau khi gửi tin
   nhắn chat) — cần mock API; chưa làm.
