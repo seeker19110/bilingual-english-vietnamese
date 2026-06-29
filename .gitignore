@@ -3,6 +3,9 @@ dist
 .env
 logs/
 
+# Vitest coverage — báo cáo sinh tự động (text + html), không commit
+coverage/
+
 # Playwright E2E — báo cáo & kết quả sinh tự động, không commit
 playwright-report/
 test-results/
