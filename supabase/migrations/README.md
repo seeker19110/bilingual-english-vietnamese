@@ -4,6 +4,7 @@ Thư mục lưu các thay đổi schema theo thời gian (incremental), để DB
 chạy phần thay đổi mới** thay vì chạy lại toàn bộ `schema.sql`.
 
 ## Cách dùng
+
 - DB mới (lần đầu): chạy `../schema.sql` (đã gồm mọi thứ, idempotent).
 - DB đã có sẵn: vào Supabase Dashboard → SQL Editor → chạy lần lượt các file
   `NNNN_*.sql` theo thứ tự số tăng dần mà bạn CHƯA chạy.

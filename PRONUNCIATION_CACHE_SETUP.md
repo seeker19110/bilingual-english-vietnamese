@@ -11,6 +11,7 @@ Code đã viết xong (xem mục "Đã đổi gì" ở cuối file). Phần còn
 Nếu chưa có project Supabase: vào https://supabase.com → New Project (chọn tên, mật khẩu database, region gần VN như Singapore).
 
 Project đã có rồi thì vào **Project Settings → API**, lấy 2 giá trị:
+
 - **Project URL** → dán vào `SUPABASE_URL` trong file `.env`
 - **service_role key** (mục "Project API keys", bấm "Reveal") → dán vào `SUPABASE_SERVICE_ROLE_KEY` trong `.env`
 
@@ -34,6 +35,7 @@ create index idx_pronunciations_word on pronunciations(word);
 
 > Đã tạo bảng theo hướng dẫn cũ (chỉ unique theo `word`, chưa có cột `voice`)? Chạy thêm đoạn
 > này để nâng cấp bảng cũ lên hỗ trợ nhiều giọng, không mất dữ liệu đã cache:
+>
 > ```sql
 > alter table pronunciations add column voice text not null default 'female';
 > alter table pronunciations drop constraint pronunciations_word_key;
@@ -43,6 +45,7 @@ create index idx_pronunciations_word on pronunciations(word);
 ### 1c. Tạo Storage bucket
 
 Vào **Storage → New bucket**:
+
 - Name: `pronunciations` (phải gõ đúng tên này, code đang gọi đúng tên này)
 - Public bucket: **BẬT** (để browser phát được audio trực tiếp từ URL)
 
@@ -80,6 +83,7 @@ npm run dev
 Mở http://localhost:5173/dictionary, bấm nút loa cạnh 1 từ. Lần đầu sẽ chậm vài giây (đang tạo audio mới), bấm lại từ đó (load lại trang) sẽ nhanh ngay vì đã có cache trong Supabase. Mỗi từ có 2 nút nhỏ "Nữ"/"Nam" để chọn giọng trước khi bấm loa.
 
 Test nhanh endpoint bằng tay (xem JSON trả về):
+
 ```
 http://localhost:5173/api/pronunciation?word=apple
 http://localhost:5173/api/pronunciation?word=apple&voice=male

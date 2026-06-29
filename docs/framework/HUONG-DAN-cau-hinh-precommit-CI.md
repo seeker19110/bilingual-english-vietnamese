@@ -102,12 +102,12 @@ ESLint 9/10 và Next 16 dùng **flat config** (`eslint.config.mjs`) — không c
 File `eslint.config.mjs` đã kèm sẵn ở gốc repo:
 
 ```js
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { FlatCompat } from '@eslint/eslintrc';
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { FlatCompat } from '@eslint/eslintrc'
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const compat = new FlatCompat({ baseDirectory: __dirname });
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const compat = new FlatCompat({ baseDirectory: __dirname })
 
 const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
@@ -124,9 +124,9 @@ const eslintConfig = [
     },
   },
   { ignores: ['.next/**', 'coverage/**', 'playwright-report/**', 'public/sw.js', 'next-env.d.ts'] },
-];
+]
 
-export default eslintConfig;
+export default eslintConfig
 ```
 
 > `eslint-config-next` đã gồm React/Hooks và bộ rule **jsx-a11y** cốt lõi. `no-explicit-any` ép bỏ `any`;
@@ -195,7 +195,7 @@ Tạo file `commitlint.config.js`:
 ```js
 module.exports = {
   extends: ['@commitlint/config-conventional'],
-};
+}
 ```
 
 Tạo file `.husky/commit-msg` với nội dung:
@@ -213,9 +213,9 @@ npx --no-install commitlint --edit "$1"
 Tạo file `vitest.config.ts`:
 
 ```ts
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
@@ -227,13 +227,13 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, './') },
   },
-});
+})
 ```
 
 Tạo file `vitest.setup.ts`:
 
 ```ts
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom'
 ```
 
 Viết thử một test nhỏ (ví dụ `lib/example.test.ts`) để xác nhận `npm test` chạy được.
@@ -368,6 +368,7 @@ Nếu bước 1–2 **không** bị chặn → hook chưa hoạt động (kiểm
 ## Thứ tự ưu tiên nếu bạn muốn làm gọn (cho người làm một mình)
 
 Tối thiểu cần 4 lớp này là đã chặn phần lớn lỗi:
+
 1. **Pre-commit hook** (Bước 6–7) — chặn ngay trên máy.
 2. **commit-msg** (Bước 8) — lịch sử sạch.
 3. **CI** (Bước 10) — kiểm tra tập trung.

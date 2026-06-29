@@ -28,30 +28,30 @@ App chạy bằng **PM2** trên **Node.js 22** (yêu cầu tối thiểu).
 
 ## Thông tin VPS thực tế đang dùng
 
-| Mục | Giá trị |
-|---|---|
-| OS | Ubuntu 24.04 |
-| Node | v22.22.3 (cài hệ thống, đường dẫn `/usr/bin/node`) |
-| Thư mục app | `/var/www/english-tutor` |
-| Port app | **3001** (3000 đã bị app `xboss` chiếm) |
-| Domain | `en-vi.donghanhcungban.com` |
-| Audio storage | **Local VPS** (`/var/www/english-tutor/uploads/`) |
-| PM2 app name | `english-tutor` (id 3) |
+| Mục           | Giá trị                                            |
+| ------------- | -------------------------------------------------- |
+| OS            | Ubuntu 24.04                                       |
+| Node          | v22.22.3 (cài hệ thống, đường dẫn `/usr/bin/node`) |
+| Thư mục app   | `/var/www/english-tutor`                           |
+| Port app      | **3001** (3000 đã bị app `xboss` chiếm)            |
+| Domain        | `en-vi.donghanhcungban.com`                        |
+| Audio storage | **Local VPS** (`/var/www/english-tutor/uploads/`)  |
+| PM2 app name  | `english-tutor` (id 3)                             |
 
 ---
 
 ## ✅ Checklist trước khi bắt đầu
 
-| Tiện ích | Bắt buộc? | Bước |
-|---|---|---|
-| Bảng Supabase (`schema.sql`) | ✅ | Bước 0 |
-| Firewall `ufw` | ✅ Nên có | Bước 1 |
-| Node.js 22 | ✅ | Bước 2 |
-| Nginx + PM2 + log rotation | ✅ | Bước 3 |
-| `.env` đủ key | ✅ | Bước 4 |
-| HTTPS (Let's Encrypt) | ✅ | Bước 7 |
-| Pre-cache audio (seed scripts) | ⬜ Khuyên dùng | Bước 8 |
-| Backup uploads | ⬜ Tùy chọn | mục riêng |
+| Tiện ích                       | Bắt buộc?      | Bước      |
+| ------------------------------ | -------------- | --------- |
+| Bảng Supabase (`schema.sql`)   | ✅             | Bước 0    |
+| Firewall `ufw`                 | ✅ Nên có      | Bước 1    |
+| Node.js 22                     | ✅             | Bước 2    |
+| Nginx + PM2 + log rotation     | ✅             | Bước 3    |
+| `.env` đủ key                  | ✅             | Bước 4    |
+| HTTPS (Let's Encrypt)          | ✅             | Bước 7    |
+| Pre-cache audio (seed scripts) | ⬜ Khuyên dùng | Bước 8    |
+| Backup uploads                 | ⬜ Tùy chọn    | mục riêng |
 
 ---
 
@@ -198,7 +198,7 @@ module.exports = {
 
       env: {
         NODE_ENV: 'production',
-        PORT: 3001,   // đổi nếu cổng này đã bị app khác dùng
+        PORT: 3001, // đổi nếu cổng này đã bị app khác dùng
       },
 
       restart_delay: 3000,
@@ -214,6 +214,7 @@ module.exports = {
 ```
 
 Kiểm tra:
+
 ```bash
 grep interpreter ecosystem.config.cjs
 ```
@@ -263,7 +264,7 @@ server {
     listen 80;
     server_name en-vi.donghanhcungban.com;
     server_tokens off;
-    
+
     return 301 https://$host$request_uri;
 }
 
@@ -316,7 +317,7 @@ server {
     location / {
         proxy_pass http://localhost:3001;
         proxy_http_version 1.1;
-        
+
         # WebSocket (luyện nói) + headers cần thiết
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -361,6 +362,7 @@ sudo nano /etc/nginx/sites-available/en-vi
 ```
 
 Kiểm tra + reload:
+
 ```bash
 sudo nginx -t && sudo systemctl reload nginx
 curl https://en-vi.donghanhcungban.com/api/health
@@ -381,6 +383,7 @@ h2load -n 100 -c 10 https://en-vi.donghanhcungban.com
 ```
 
 **Lợi ích HTTP/2:**
+
 - ✅ Multiplexing: gửi nhiều request cùng lúc (không chờ tuần tự)
 - ✅ Nén header: giảm ~30% kích thước request/response
 - ✅ Server push: đẩy asset trước khi client request (tùy chọn)
@@ -451,6 +454,7 @@ chmod +x ~/deploy-english-tutor.sh
 ## Chạy chung với app khác trên cùng VPS
 
 VPS này đang có 2 app PM2:
+
 - **`xboss`** (id 0) — Next.js, port 3000, interpreter riêng
 - **`english-tutor`** (id 3) — Express, port 3001, interpreter `/usr/bin/node`
 
@@ -497,24 +501,31 @@ crontab -e
 ## Xử lý sự cố thường gặp
 
 ### App không start
+
 ```bash
 pm2 logs english-tutor --lines 50
 ```
+
 Hay gặp: sai `interpreter` trong `ecosystem.config.cjs` — kiểm tra:
+
 ```bash
 grep interpreter ecosystem.config.cjs
 which node   # hoặc nvm which 22
 ```
 
 ### Nginx 502 Bad Gateway
+
 Express chưa chạy hoặc sai port.
+
 ```bash
 pm2 status
 curl http://localhost:3001/api/health
 ```
+
 Nếu app không trả lời, kiểm tra port trong `.env` (`PORT=3001`) và `ecosystem.config.cjs`.
 
 ### Đăng nhập lỗi / không gọi được API
+
 ```bash
 # Kiểm tra đủ key chưa
 grep -E "^(VITE_SUPABASE|ANTHROPIC|GOOGLE_TTS|TTS_ENCRYPTION|ALLOWED_ORIGINS)" .env
@@ -522,9 +533,11 @@ grep -E "^(VITE_SUPABASE|ANTHROPIC|GOOGLE_TTS|TTS_ENCRYPTION|ALLOWED_ORIGINS)" .
 # Reload sau khi sửa .env
 pm2 reload ecosystem.config.cjs --update-env
 ```
+
 Hay gặp: `ALLOWED_ORIGINS` không có domain của bạn → bị chặn CORS.
 
 ### Audio không phát / fallback về giọng trình duyệt
+
 ```bash
 # Kiểm tra file audio đã có chưa
 ls /var/www/english-tutor/uploads/tts-cache/en-US/female/ | head
@@ -532,9 +545,11 @@ ls /var/www/english-tutor/uploads/tts-cache/en-US/female/ | head
 # Kiểm tra Nginx phục vụ được không
 curl -I https://en-vi.donghanhcungban.com/uploads/tts-cache/en-US/female/<tên-file>.mp3
 ```
+
 Hay gặp: `TTS_ENCRYPTION_MASTER_KEY` bị đổi → giải mã thất bại. Key phải giống nhau từ lúc tạo đến khi dùng.
 
 ### Gia hạn SSL thủ công
+
 ```bash
 sudo certbot renew && sudo systemctl reload nginx
 ```

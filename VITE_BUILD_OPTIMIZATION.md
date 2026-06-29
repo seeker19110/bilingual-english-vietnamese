@@ -10,6 +10,7 @@
 **Mục tiêu:** Giảm size bundle production, tăng tốc độ load page.
 
 **Chiến lược:**
+
 1. **Chunk thông minh** — nhóm vendor theo chức năng
 2. **Compression** — tự động gzip + brotli
 3. **Cache busting** — hash filename để track thay đổi
@@ -21,13 +22,13 @@
 
 ### 2.1 Nhóm Vendor
 
-| Chunk | Chứa | Kích Thước Ước Tính |
-|-------|------|-------------------|
-| `vendor-core` | React, React-DOM, React-Router | ~300KB |
-| `vendor-supabase` | @supabase/supabase-js | ~100KB |
-| `vendor-ui` | lucide-react | ~50KB |
-| `vendor-libs-*` | Các lib khác (mỗi package riêng) | ~20-100KB |
-| `main` | App code + CSS | ~100-200KB |
+| Chunk             | Chứa                             | Kích Thước Ước Tính |
+| ----------------- | -------------------------------- | ------------------- |
+| `vendor-core`     | React, React-DOM, React-Router   | ~300KB              |
+| `vendor-supabase` | @supabase/supabase-js            | ~100KB              |
+| `vendor-ui`       | lucide-react                     | ~50KB               |
+| `vendor-libs-*`   | Các lib khác (mỗi package riêng) | ~20-100KB           |
+| `main`            | App code + CSS                   | ~100-200KB          |
 
 ### 2.2 Config Chi Tiết
 
@@ -36,22 +37,22 @@
 ```typescript
 manualChunks(id) {
   // Nhóm 1: React + Router (core framework)
-  if (id.includes('node_modules/react') || 
-      id.includes('node_modules/react-dom') || 
+  if (id.includes('node_modules/react') ||
+      id.includes('node_modules/react-dom') ||
       id.includes('node_modules/react-router')) {
     return 'vendor-core'
   }
-  
+
   // Nhóm 2: Supabase
   if (id.includes('node_modules/@supabase')) {
     return 'vendor-supabase'
   }
-  
+
   // Nhóm 3: UI library
   if (id.includes('node_modules/lucide-react')) {
     return 'vendor-ui'
   }
-  
+
   // Nhóm 4: Các lib khác (mỗi package riêng để dễ cache)
   if (id.includes('node_modules/')) {
     const match = id.match(/node_modules\/(@?[^/]+)/)
@@ -65,6 +66,7 @@ manualChunks(id) {
 ```
 
 **Lợi ích:**
+
 - `vendor-core` không thay đổi → browser cache lâu dài
 - Mỗi lib khác chunk riêng → khi update 1 lib, chỉ chunk đó invalidate cache
 - App code (`main`) update thường xuyên nhưng không ảnh hưởng vendor
@@ -78,11 +80,12 @@ manualChunks(id) {
 **Plugin:** `vite-plugin-compression`
 
 **Config:**
+
 ```typescript
 compress({
   gzip: {
-    threshold: 1024,  // chỉ compress file > 1KB
-    deleteOriginFile: false,  // giữ file gốc, web server chọn
+    threshold: 1024, // chỉ compress file > 1KB
+    deleteOriginFile: false, // giữ file gốc, web server chọn
   },
   brotli: {
     threshold: 1024,
@@ -92,6 +95,7 @@ compress({
 ```
 
 **Output:**
+
 ```
 dist/
 ├── js/
@@ -118,15 +122,15 @@ server {
     gzip_types text/plain text/css application/json application/javascript;
     gzip_vary on;
     gzip_comp_level 6;
-    
+
     # Brotli (nếu nginx-module-brotli cài)
     brotli on;
     brotli_types text/plain text/css application/json application/javascript;
-    
+
     expires 30d;  # cache 30 ngày
     add_header Cache-Control "public, immutable";
   }
-  
+
   location /index.html {
     expires -1;  # không cache HTML
     add_header Cache-Control "no-cache, no-store, must-revalidate";
@@ -141,12 +145,13 @@ server {
 ### 4.1 Hash Configuration
 
 ```typescript
-entryFileNames: 'js/[name]-[hash:8].js'      // main-abc12345.js
-chunkFileNames: 'js/[name]-[hash:8].js'      // vendor-core-def67890.js
-assetFileNames: 'assets/[name]-[hash:8][extname]'  // style-ghi11111.css
+entryFileNames: 'js/[name]-[hash:8].js' // main-abc12345.js
+chunkFileNames: 'js/[name]-[hash:8].js' // vendor-core-def67890.js
+assetFileNames: 'assets/[name]-[hash:8][extname]' // style-ghi11111.css
 ```
 
 **Lợi ích:**
+
 - Hash **8 ký tự** → đủ unique, tên file ngắn hơn (hash đầy đủ là 64 ký tự)
 - Mỗi build khác → hash khác → browser load file mới (cache invalidate tự động)
 - Với `expires 30d` → client không refetch nếu hash giống
@@ -154,10 +159,11 @@ assetFileNames: 'assets/[name]-[hash:8][extname]'  // style-ghi11111.css
 ### 4.2 HTML Reference
 
 **dist/index.html** (sau build):
+
 ```html
 <!-- Vite tự inject hash vào src/index.html -->
 <script src="js/main-abc12345.js"></script>
-<link rel="stylesheet" href="assets/style-def67890.css">
+<link rel="stylesheet" href="assets/style-def67890.css" />
 ```
 
 ---
@@ -180,6 +186,7 @@ ls -lh dist/js/
 ```
 
 **Size Giảm:**
+
 - Original: 150KB
 - Gzip: 45KB (70% nhỏ hơn)
 - Brotli: 38KB (75% nhỏ hơn)
@@ -193,6 +200,7 @@ open dist/stats.html  # hoặc browser: file:///path/to/dist/stats.html
 ```
 
 **Xem:**
+
 - Treemap của chunks
 - Gzip size so sánh
 - Brotli size so sánh
@@ -204,10 +212,11 @@ open dist/stats.html  # hoặc browser: file:///path/to/dist/stats.html
 ### 6.1 Config
 
 ```typescript
-sourcemap: 'hidden'  // tạo .map nhưng không reference trong file JS
+sourcemap: 'hidden' // tạo .map nhưng không reference trong file JS
 ```
 
 **Output:**
+
 ```
 dist/
 ├── js/
@@ -219,6 +228,7 @@ dist/
 ### 6.2 Sử Dụng cho Error Tracking
 
 **Lưu map file riêng** (không deploy):
+
 ```bash
 # Sau build:
 # 1. Upload dist/js/*.map tới error tracking service (Sentry, etc.)
@@ -227,6 +237,7 @@ dist/
 ```
 
 **Sentry Integration:**
+
 ```bash
 npm install --save-dev @sentry/cli
 
@@ -243,12 +254,12 @@ sentry-cli releases files [release-id] upload-sourcemaps dist/js/
 
 **Sau optimization:**
 
-| Metric | Target | Giảm |
-|--------|--------|------|
-| FCP (First Contentful Paint) | < 1.8s | -40% |
-| LCP (Largest Contentful Paint) | < 2.5s | -35% |
-| CLS (Cumulative Layout Shift) | < 0.1 | ✅ |
-| TTFB (Time to First Byte) | < 0.6s | Phụ server |
+| Metric                         | Target | Giảm       |
+| ------------------------------ | ------ | ---------- |
+| FCP (First Contentful Paint)   | < 1.8s | -40%       |
+| LCP (Largest Contentful Paint) | < 2.5s | -35%       |
+| CLS (Cumulative Layout Shift)  | < 0.1  | ✅         |
+| TTFB (Time to First Byte)      | < 0.6s | Phụ server |
 
 ### 7.2 Improvements Completed
 
@@ -257,7 +268,7 @@ sentry-cli releases files [release-id] upload-sourcemaps dist/js/
 ✅ Image optimization (WebP)  
 ✅ Hash-based cache busting  
 ✅ Minification (esbuild)  
-✅ Tree-shaking (unused code removal)  
+✅ Tree-shaking (unused code removal)
 
 ### 7.3 Further Optimization (Optional)
 
@@ -270,15 +281,15 @@ sentry-cli releases files [release-id] upload-sourcemaps dist/js/
 
 ## 8. Deployment Checklist
 
-| Item | Status | Note |
-|------|--------|------|
-| Build locally OK | ✅ | `npm run build` → dist/ |
-| Bundle size < 500KB total | ✅ | main + vendor-core |
-| Compression working | ✅ | .gz + .br files in dist/ |
-| Source maps secure | ✅ | hidden, not public |
-| Nginx gzip/brotli enabled | ❓ | Check VPS config |
-| Cache headers set | ❓ | Set expires + immutable |
-| Visualizer report checked | ❓ | Open dist/stats.html |
+| Item                      | Status | Note                     |
+| ------------------------- | ------ | ------------------------ |
+| Build locally OK          | ✅     | `npm run build` → dist/  |
+| Bundle size < 500KB total | ✅     | main + vendor-core       |
+| Compression working       | ✅     | .gz + .br files in dist/ |
+| Source maps secure        | ✅     | hidden, not public       |
+| Nginx gzip/brotli enabled | ❓     | Check VPS config         |
+| Cache headers set         | ❓     | Set expires + immutable  |
+| Visualizer report checked | ❓     | Open dist/stats.html     |
 
 ---
 
@@ -302,6 +313,7 @@ npm run build -- --debug
 ```
 
 **Giải pháp:**
+
 1. Lazy load routes
 2. Remove unused dependencies
 3. Check duplicate packages: `npm ls`

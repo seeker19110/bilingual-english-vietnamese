@@ -14,13 +14,13 @@ gọi Google TTS realtime** → nhanh + rẻ.
 
 ## 1. Các lệnh
 
-| Lệnh | Làm gì |
-|---|---|
-| `npm run seed:all` | Menu tương tác: in báo cáo → chọn nhóm để seed (lặp tới khi thoát). |
-| `npm run seed:all -- --check` | **Chỉ in báo cáo** tiến độ rồi thoát (không seed, không menu). |
-| `npm run seed:all -- --all` | Seed **tất cả** nhóm còn thiếu, không hỏi (dùng cho CI/cron). |
-| `npm run seed:verify` | = `seed:all -- --verify`. **Kiểm tra kỹ** DB (đối chiếu 2 chiều). |
-| `npm run seed:all -- --force` | Tạo lại + **ghi đè** cả audio đã có. |
+| Lệnh                          | Làm gì                                                              |
+| ----------------------------- | ------------------------------------------------------------------- |
+| `npm run seed:all`            | Menu tương tác: in báo cáo → chọn nhóm để seed (lặp tới khi thoát). |
+| `npm run seed:all -- --check` | **Chỉ in báo cáo** tiến độ rồi thoát (không seed, không menu).      |
+| `npm run seed:all -- --all`   | Seed **tất cả** nhóm còn thiếu, không hỏi (dùng cho CI/cron).       |
+| `npm run seed:verify`         | = `seed:all -- --verify`. **Kiểm tra kỹ** DB (đối chiếu 2 chiều).   |
+| `npm run seed:all -- --force` | Tạo lại + **ghi đè** cả audio đã có.                                |
 
 Biến môi trường thêm:
 
@@ -67,6 +67,7 @@ không phải lỗi.
 ## 3. Remap — chuyển cache cũ sang khóa mới, KHÔNG tốn quota API
 
 ### Vì sao có remap
+
 Khóa cache 1 câu = `hash(text + lang + voice + VOICE_VERSION)` (32 hex đầu của SHA-256).
 Khi đổi giọng TTS, ta tăng `VOICE_VERSION` (hiện là `chirp3hd-v2`, ở
 `api/_lib/googleTts.ts`) → **hash đổi** → mọi câu đã seed trước đó không còn khớp.
@@ -75,6 +76,7 @@ Nhưng audio cũ vẫn nằm trên Storage, chỉ là **đã mã hóa bằng kh�
 Tạo lại bằng cách gọi Google TTS sẽ **tốn quota**. Remap tránh điều đó.
 
 ### Remap chạy thế nào
+
 Trong `processTask` (`scripts/seed-all.ts`), với mỗi câu chưa có ở hash mới, **trước
 khi gọi Google** script thử:
 
@@ -85,6 +87,7 @@ khi gọi Google** script thử:
 4. Remap lỗi (file hỏng/mạng) → tự chuyển sang gọi Google tạo mới (`✓ ok`).
 
 ### Cách kích hoạt remap
+
 **Không có lệnh riêng** — cứ seed bình thường:
 
 ```bash
@@ -121,6 +124,7 @@ Khác báo cáo thường (chỉ đếm thiếu), verify đối chiếu **HAI CH
 
    Orphan **vô hại** (chỉ tốn ít dung lượng, không bao giờ bị phát). Muốn dọn sạch:
    chạy `supabase/refresh-tts-voices.sql` trong SQL Editor (xóa dòng cache cũ) rồi seed lại.
+
 3. **Nhất quán đường dẫn**: `audio_url` phải chứa đúng `${lang}/${voice}/${hash}.mp3`.
 4. **Giải mã thử** (khi đặt `VERIFY_DECRYPT=N`): tải N file + giải mã bằng khóa suy từ
    hash để chắc audio **dùng được thật**, không chỉ tồn tại dòng DB. Khi fail, in
@@ -134,6 +138,7 @@ Khác báo cáo thường (chỉ đếm thiếu), verify đối chiếu **HAI CH
    - `BODY_NGẮN_*` → tải về quá ngắn (thường là trang lỗi HTML, không phải audio).
 
 Kết luận cuối:
+
 - `✅ DB KHỚP tập kỳ vọng` — mọi câu cần thiết đã có, đường dẫn đúng (có thể còn orphan để dọn).
 - `⚠️ Chưa khớp: thiếu N câu...` — chạy `npm run seed:all -- --all` để bù.
 
@@ -161,6 +166,7 @@ npm run sync:storage -- --rewrite-urls             # đổi thật (ghi DB)
 ```
 
 Cách hoạt động (an toàn, chạy lại nhiều lần được):
+
 - Đọc DB lấy danh sách file kỳ vọng theo bucket: `tts-cache` (`${lang}/${voice}/${hash}.mp3`,
   audio đã mã hóa) và `pronunciations` (`${word}-${voice}.mp3`, mp3 thường).
 - File local **đã có** → bỏ qua. **Chưa có** → tải từ Supabase (`storage.download`, dùng
@@ -168,12 +174,14 @@ Cách hoạt động (an toàn, chạy lại nhiều lần được):
 - **Không** ghi đè file local (trừ `--force`), **không** đụng DB.
 
 Đọc kết quả **bước 1 (tải file)**:
+
 - `⏭ đã có` — file local sẵn rồi, bỏ qua.
 - `↓ tải về` — vừa kéo từ Supabase xuống.
 - `∅ thiếu trên Supabase` — không có ở **cả** local lẫn Supabase → cần tạo lại bằng
   `npm run seed:all -- --all`.
 
 Đọc kết quả **bước 2 (đổi URL, `--rewrite-urls`)**:
+
 - `✏️ đã đổi` — `audio_url` vừa được trỏ sang `/uploads/...` (vì file đã có ở VPS).
 - `⏭ đã local` — `audio_url` vốn đã trỏ local, không đụng.
 - `∅ chưa có file VPS` — file chưa tải về → **bỏ qua, KHÔNG đổi** (tránh link hỏng);
@@ -201,6 +209,7 @@ BUCKET=tts-cache npm run check:supabase   # chỉ 1 bucket
 ```
 
 Báo cáo mỗi bucket:
+
 - **Trên Supabase Storage** — tổng số object thật trong bucket.
 - **Đã có ở VPS local** / **THIẾU ở VPS local** — đối chiếu file dưới `UPLOADS_DIR`
   (tts-cache còn gom số thiếu theo thư mục `lang/voice`).
@@ -208,6 +217,7 @@ Báo cáo mỗi bucket:
   `orphan storage` (file trên Storage nhưng KHÔNG có dòng DB — không bao giờ được app dùng).
 
 Khi nào dùng `check:supabase` vs `sync:storage`:
+
 - `sync:storage` — đảm bảo mọi thứ **DB cần** có ở VPS (đúng cái app phục vụ).
 - `check:supabase` — đối chiếu **kho file thật** trên Storage, phát hiện chênh lệch/orphan.
 

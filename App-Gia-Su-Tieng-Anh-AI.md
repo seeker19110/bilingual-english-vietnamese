@@ -2,12 +2,13 @@
 
 > **Sản phẩm:** Web app gia sư ngôn ngữ AI **hai chiều**, gồm 3 chế độ: **Luyện nói song ngữ**, **Luyện viết + chấm điểm**, **Chat tổng hợp**.
 > **Hai chiều học (chọn bằng nút gạt ngôn ngữ):**
+>
 > - **Chiều A — Người Việt học tiếng Anh:** hội thoại bằng **giọng Anh**, sửa lỗi & giải thích bằng **giọng tiếng Việt**.
 > - **Chiều B — Người nước ngoài học tiếng Việt (qua tiếng Anh):** hội thoại bằng **giọng Việt**, sửa lỗi & giải thích bằng **giọng tiếng Anh**.
-> **Điểm nhấn:** Chế độ **Luyện nói song ngữ** — AI nói ngôn ngữ đích để luyện hội thoại, nhưng **sửa lỗi và giải thích bằng GIỌNG tiếng mẹ đẻ của học viên**. Đây là tính năng chính, là thứ làm app khác biệt.
-> **Người làm:** mới bắt đầu lập trình, vốn tối thiểu, làm part-time.
-> **Nền tảng:** Web app trước, mobile để sau.
-> **Cập nhật:** Tháng 6/2026.
+>   **Điểm nhấn:** Chế độ **Luyện nói song ngữ** — AI nói ngôn ngữ đích để luyện hội thoại, nhưng **sửa lỗi và giải thích bằng GIỌNG tiếng mẹ đẻ của học viên**. Đây là tính năng chính, là thứ làm app khác biệt.
+>   **Người làm:** mới bắt đầu lập trình, vốn tối thiểu, làm part-time.
+>   **Nền tảng:** Web app trước, mobile để sau.
+>   **Cập nhật:** Tháng 6/2026.
 
 ---
 
@@ -15,22 +16,22 @@
 
 Thị trường đã có nhiều app, giá tham khảo:
 
-| App | Giá/tháng | Điểm mạnh | Điểm yếu (khe hở cho bạn) |
-|-----|-----------|-----------|---------------------------|
-| **ELSA Speak** | ~13 USD | Chấm phát âm chi tiết | Chỉ tập trung phát âm, không phải "gia sư" trò chuyện |
-| **Talkpal** | ~6 USD | Hội thoại AI rẻ | Phản hồi chung chung, không giải thích bằng tiếng Việt |
-| **Speak** | ~57–71 USD | Chất lượng cao | Quá đắt với người Việt |
+| App                | Giá/tháng  | Điểm mạnh                | Điểm yếu (khe hở cho bạn)                                |
+| ------------------ | ---------- | ------------------------ | -------------------------------------------------------- |
+| **ELSA Speak**     | ~13 USD    | Chấm phát âm chi tiết    | Chỉ tập trung phát âm, không phải "gia sư" trò chuyện    |
+| **Talkpal**        | ~6 USD     | Hội thoại AI rẻ          | Phản hồi chung chung, không giải thích bằng tiếng Việt   |
+| **Speak**          | ~57–71 USD | Chất lượng cao           | Quá đắt với người Việt                                   |
 | **Talkio / Loora** | ~10–11 USD | Hội thoại không giới hạn | Giao diện & nội dung tiếng Anh, không hợp người Việt mới |
 
 **Lợi thế cạnh tranh (USP) của bạn — phải bám chặt:**
 
-1. **Sửa lỗi & giải thích bằng GIỌNG tiếng Việt.** Không chỉ chữ — học viên *nghe* AI giải thích lỗi bằng tiếng Việt. App quốc tế không làm được vì họ không có giọng Việt tự nhiên. Người mới rất cần điều này.
+1. **Sửa lỗi & giải thích bằng GIỌNG tiếng Việt.** Không chỉ chữ — học viên _nghe_ AI giải thích lỗi bằng tiếng Việt. App quốc tế không làm được vì họ không có giọng Việt tự nhiên. Người mới rất cần điều này.
 2. **Luyện nói song ngữ:** AI hội thoại bằng **giọng tiếng Anh** chuẩn, rồi chuyển sang **giọng tiếng Việt** để nhận xét. Học viên vừa luyện tai nghe Anh, vừa hiểu lỗi sâu bằng tiếng mẹ đẻ.
 3. **Gộp 3 kỹ năng trong 1 app** (nói + viết + chat) — đối thủ thường chỉ mạnh 1 mảng.
 4. **Giá hợp túi tiền Việt** (xem Phần 6) + thanh toán nội địa (chuyển khoản, ví điện tử).
 5. **Tình huống & nội dung "rất Việt Nam"**: phỏng vấn xin việc ở công ty VN, thi IELTS, giao tiếp công sở, du học — sát nhu cầu thật.
 
-> Khẩu hiệu định vị thử: *"Gia sư tiếng Anh AI — nói chuyện bằng tiếng Anh, sửa lỗi bằng giọng tiếng Việt. Luyện nói–viết mọi lúc, giá bằng một ly cà phê."*
+> Khẩu hiệu định vị thử: _"Gia sư tiếng Anh AI — nói chuyện bằng tiếng Anh, sửa lỗi bằng giọng tiếng Việt. Luyện nói–viết mọi lúc, giá bằng một ly cà phê."_
 
 ### 1b. Chiều B — Dạy tiếng Việt cho người nước ngoài (qua tiếng Anh)
 
@@ -41,13 +42,14 @@ Cùng một bộ máy, chỉ **đảo vai hai ngôn ngữ**: AI hội thoại b�
 - **Nội dung "rất Việt Nam" lúc này thành điểm cộng kép:** vừa hợp người Việt học Anh, vừa là thứ người nước ngoài cần khi học tiếng Việt.
 - **Tận dụng lại gần như toàn bộ:** chỉ cần đổi prompt + đổi giọng TTS (đã có sẵn giọng Anh & giọng Việt), không phải xây lại từ đầu.
 
-> Khẩu hiệu thử cho chiều B: *"Learn Vietnamese by talking. The AI speaks Vietnamese with you and explains your mistakes in clear English."*
+> Khẩu hiệu thử cho chiều B: _"Learn Vietnamese by talking. The AI speaks Vietnamese with you and explains your mistakes in clear English."_
 
 ---
 
 ## 2. Tính năng — chia theo phiên bản (đừng làm hết một lúc)
 
 ### MVP (làm trước — ra mắt trong ~6–8 tuần)
+
 Bắt đầu bằng phần **dễ làm và rẻ nhất** để có sản phẩm sớm:
 
 - **Chế độ Chat tổng hợp (chỉ text)** — gia sư AI trò chuyện theo tình huống, sửa lỗi ngay, giải thích bằng tiếng Việt.
@@ -57,17 +59,19 @@ Bắt đầu bằng phần **dễ làm và rẻ nhất** để có sản phẩm 
 > Lý do: cả hai chế độ trên **chỉ cần API text** (rẻ nhất, dễ làm nhất). Đây là nền móng — làm xong mới thêm giọng nói.
 
 ### v1 — Luyện nói song ngữ (tính năng chính, làm ngay sau MVP)
+
 Đây là phần "ăn tiền" của app, nên ưu tiên cao chứ không để lâu:
 
 - **Học viên bấm nói** → app ghi âm → **speech-to-text** chuyển thành chữ.
 - **Gia sư AI trả lời bằng giọng tiếng Anh** (text-to-speech tiếng Anh) để học viên luyện nghe hội thoại tự nhiên.
-- Nếu có lỗi: AI chuyển sang **giọng tiếng Việt** đọc phần nhận xét, sửa lỗi, giải thích vì sao sai — học viên *nghe* được, không chỉ đọc.
+- Nếu có lỗi: AI chuyển sang **giọng tiếng Việt** đọc phần nhận xét, sửa lỗi, giải thích vì sao sai — học viên _nghe_ được, không chỉ đọc.
 - Trên màn hình hiển thị song song: câu thoại tiếng Anh (kèm phụ đề) + ô nhận xét tiếng Việt.
 - Theo dõi tiến bộ: lưu lỗi hay mắc, từ vựng đã học, streak (chuỗi ngày học).
 
 > **Vì sao tách giọng Anh và giọng Việt?** Hai giọng riêng nghe tự nhiên hơn nhiều so với một giọng đọc lẫn lộn hai thứ tiếng. Dùng **giọng Anh chuẩn** cho hội thoại + **giọng Việt tự nhiên** cho giải thích là điểm khác biệt mà đối thủ không có.
 
 ### v1b — Mở chiều "dạy tiếng Việt cho người nước ngoài"
+
 Làm **sau khi chiều A (Việt học Anh) đã chạy ổn**, vì tận dụng lại gần hết hệ thống:
 
 - Thêm **nút gạt ngôn ngữ**: "Tôi học tiếng Anh" ↔ "I'm learning Vietnamese".
@@ -77,6 +81,7 @@ Làm **sau khi chiều A (Việt học Anh) đã chạy ổn**, vì tận dụng
 - Có thể ra mắt chiều B như một "sản phẩm em" để test thị trường ngách trước khi đầu tư sâu.
 
 ### v2 (mở rộng)
+
 - Chấm phát âm chi tiết (so sánh với giọng chuẩn), flashcard từ vựng tự sinh, lộ trình theo mục tiêu (IELTS 6.5, phỏng vấn, giao tiếp tiếng Việt cơ bản...), bản mobile.
 - (Xa hơn) mở thêm cặp ngôn ngữ khác bằng đúng kiến trúc này (ví dụ Việt ⇄ Trung/Nhật/Hàn).
 
@@ -114,10 +119,10 @@ Bạn dùng công cụ no-code/vibe-coding, không cần tự code từ đầu.
 
 **Thiết kế hai chiều ngay từ đầu:** đặt một biến `direction` (ví dụ `vi_learns_en` hoặc `en_learns_vi`). Biến này quyết định: (1) prompt nào được dùng, (2) giọng nào đọc phần hội thoại, (3) giọng nào đọc phần giải thích. Nhờ vậy mở thêm chiều B chỉ là đổi cấu hình, không phải viết lại. Cặp giọng đảo nhau:
 
-| Chiều học | Hội thoại (ngôn ngữ đích) | Giải thích (tiếng mẹ đẻ) |
-|-----------|---------------------------|--------------------------|
-| A — Việt học Anh | giọng **English** | giọng **tiếng Việt** |
-| B — Người nước ngoài học Việt | giọng **tiếng Việt** | giọng **English** |
+| Chiều học                     | Hội thoại (ngôn ngữ đích) | Giải thích (tiếng mẹ đẻ) |
+| ----------------------------- | ------------------------- | ------------------------ |
+| A — Việt học Anh              | giọng **English**         | giọng **tiếng Việt**     |
+| B — Người nước ngoài học Việt | giọng **tiếng Việt**      | giọng **English**        |
 
 **Thứ tự dựng:** auth + database → chế độ Chat → chế độ Viết → giới hạn lượt + thanh toán → **chế độ Luyện nói song ngữ (STT + TTS Anh + TTS Việt)**.
 
@@ -127,17 +132,17 @@ Bạn dùng công cụ no-code/vibe-coding, không cần tự code từ đầu.
 
 **Giá tham khảo (cập nhật tháng 6/2026):**
 
-| Loại | Lựa chọn rẻ | Giá |
-|------|-------------|-----|
-| Text (LLM) | Gemini 3.1 Flash-Lite | ~0,10 USD vào / ~0,40 USD ra / 1 triệu token |
-| Text (LLM) | Claude Haiku 4.5 | ~0,25 USD vào / ~1,25 USD ra / 1 triệu token |
-| Text (LLM) | GPT-4o-mini | ~0,15 USD vào / ~0,60 USD ra / 1 triệu token |
-| Giọng → chữ (STT) | gpt-4o-mini-transcribe | ~0,003 USD/phút |
-| Giọng → chữ (STT) | gpt-4o-transcribe (chính xác hơn) | ~0,006 USD/phút |
-| Giọng → chữ (STT) | Deepgram Nova (batch) | ~0,26 USD/giờ (~0,0043 USD/phút) |
-| Chữ → giọng (TTS) | Google / Amazon (giọng standard) | ~4 USD / 1 triệu ký tự |
-| Chữ → giọng (TTS) | Azure / Google (giọng Neural) | ~16 USD / 1 triệu ký tự |
-| Chữ → giọng (TTS) | ElevenLabs (chất lượng cao) | gói từ ~5 USD/tháng |
+| Loại              | Lựa chọn rẻ                       | Giá                                          |
+| ----------------- | --------------------------------- | -------------------------------------------- |
+| Text (LLM)        | Gemini 3.1 Flash-Lite             | ~0,10 USD vào / ~0,40 USD ra / 1 triệu token |
+| Text (LLM)        | Claude Haiku 4.5                  | ~0,25 USD vào / ~1,25 USD ra / 1 triệu token |
+| Text (LLM)        | GPT-4o-mini                       | ~0,15 USD vào / ~0,60 USD ra / 1 triệu token |
+| Giọng → chữ (STT) | gpt-4o-mini-transcribe            | ~0,003 USD/phút                              |
+| Giọng → chữ (STT) | gpt-4o-transcribe (chính xác hơn) | ~0,006 USD/phút                              |
+| Giọng → chữ (STT) | Deepgram Nova (batch)             | ~0,26 USD/giờ (~0,0043 USD/phút)             |
+| Chữ → giọng (TTS) | Google / Amazon (giọng standard)  | ~4 USD / 1 triệu ký tự                       |
+| Chữ → giọng (TTS) | Azure / Google (giọng Neural)     | ~16 USD / 1 triệu ký tự                      |
+| Chữ → giọng (TTS) | ElevenLabs (chất lượng cao)       | gói từ ~5 USD/tháng                          |
 
 > **Giọng tiếng Việt nên dùng gì?** **Azure Neural** có giọng Việt tự nhiên nhất hiện nay (MyAn, Mai, Long, NamMinh… nhiều cảm xúc) và **tặng 500.000 ký tự/tháng miễn phí** cho giọng neural — đủ chạy thử thoải mái. Giọng tiếng Anh có thể dùng chính Azure để gọn một nhà cung cấp, hoặc ElevenLabs nếu muốn nghe "xịn" hơn.
 
@@ -261,16 +266,17 @@ Mỗi câu kèm đáp án và giải thích ngắn bằng tiếng Việt (ẩn �
 
 Đối thủ quốc tế ~6–13 USD/tháng. Bạn định giá **hợp túi tiền Việt + nhấn mạnh "rẻ hơn gia sư thật"** (gia sư người thật 150k–500k/buổi).
 
-| Gói | Giá gợi ý | Bao gồm | Mục đích |
-|-----|-----------|---------|----------|
-| **Free** | 0đ | 10 tin nhắn chat/ngày, 1 bài chấm viết/ngày (chưa có giọng nói) | Kéo người dùng, cho nếm thử |
-| **Pro tháng** | ~99k đ/tháng | Chat không giới hạn, 30 bài viết/tháng, **60 phút luyện nói song ngữ/tháng** | Doanh thu chính |
-| **Pro năm** | ~799k đ/năm | Như Pro + giảm giá | Thu tiền trước, giữ khách lâu |
-| **Combo lớp/trung tâm** | thỏa thuận | Bán cho trung tâm tiếng Anh, gia sư | Khách sỉ, doanh thu lớn |
+| Gói                     | Giá gợi ý    | Bao gồm                                                                      | Mục đích                      |
+| ----------------------- | ------------ | ---------------------------------------------------------------------------- | ----------------------------- |
+| **Free**                | 0đ           | 10 tin nhắn chat/ngày, 1 bài chấm viết/ngày (chưa có giọng nói)              | Kéo người dùng, cho nếm thử   |
+| **Pro tháng**           | ~99k đ/tháng | Chat không giới hạn, 30 bài viết/tháng, **60 phút luyện nói song ngữ/tháng** | Doanh thu chính               |
+| **Pro năm**             | ~799k đ/năm  | Như Pro + giảm giá                                                           | Thu tiền trước, giữ khách lâu |
+| **Combo lớp/trung tâm** | thỏa thuận   | Bán cho trung tâm tiếng Anh, gia sư                                          | Khách sỉ, doanh thu lớn       |
 
 **Lưu ý định giá khi có giọng nói:** giọng nói là tính năng "wow" → để **chỉ gói Pro mới có**. Đây là động lực chính khiến khách nâng cấp từ Free lên Pro.
 
 **Thu tiền (theo giai đoạn):**
+
 - **Đầu (vốn 0):** khách chuyển khoản → bạn kích hoạt tài khoản tay. Đủ để bắt đầu.
 - **Khi có khách đều:** tích hợp **PayOS / Casso** (tự động xác nhận chuyển khoản VN) hoặc **Stripe** (nếu có khách quốc tế).
 
@@ -281,6 +287,7 @@ Mỗi câu kèm đáp án và giải thích ngắn bằng tiếng Việt (ẩn �
 ## 7. Lộ trình build (cụ thể từng tuần)
 
 ### Giai đoạn 1 — MVP text (Tuần 1–6)
+
 - **T1:** Lập tài khoản Lovable/Supabase/Vercel/GitHub. Lấy API key Gemini Flash-Lite hoặc Claude Haiku. Học nhanh khái niệm gọi API.
 - **T2:** Dựng khung app + đăng nhập (Supabase). Một màn hình chọn chế độ.
 - **T3:** Làm **chế độ Chat** (prompt 5.2). Test cho ra hội thoại + sửa lỗi tiếng Việt mượt.
@@ -289,6 +296,7 @@ Mỗi câu kèm đáp án và giải thích ngắn bằng tiếng Việt (ẩn �
 - **T6:** Deploy lên Vercel. Thu tiền thủ công. **Mục tiêu: mời 20 người học thử.**
 
 ### Giai đoạn 2 — Luyện nói song ngữ (Tuần 7–11) ⭐
+
 - **T7:** Sửa theo phản hồi MVP, tinh chỉnh prompt.
 - **T8:** Lấy API key STT (gpt-4o-mini-transcribe) + TTS (Azure — bật giọng Việt + giọng Anh). Test riêng từng phần: thu âm → ra chữ; chữ → ra giọng đúng tiếng.
 - **T9:** Ghép luồng: nói → STT → AI trả JSON `speech_en` + `feedback_vi` (prompt 5.1) → đọc 2 giọng. Làm giao diện nút "bấm để nói".
@@ -296,6 +304,7 @@ Mỗi câu kèm đáp án và giải thích ngắn bằng tiếng Việt (ẩn �
 - **T11:** Đẩy marketing (Phần 8). **Mục tiêu: khách trả tiền đầu tiên nhờ tính năng giọng nói.**
 
 ### Giai đoạn 3 — Tăng trưởng & mở chiều B (Tuần 12+)
+
 - Thêm theo dõi tiến bộ, streak, chấm phát âm. Tích hợp thanh toán tự động (PayOS). Tiếp cận trung tâm/gia sư để bán sỉ.
 - **Mở chiều B (dạy tiếng Việt cho người nước ngoài):** thêm nút gạt ngôn ngữ + prompt 5.5 + đảo giọng. Vì tận dụng lại hệ thống nên chi phí mở thêm rất thấp — đáng làm để chạm tới ngách ít đối thủ. Marketing chiều B bằng tiếng Anh trên các kênh expat/Việt kiều (xem Phần 8).
 
@@ -322,14 +331,14 @@ Mỗi câu kèm đáp án và giải thích ngắn bằng tiếng Việt (ẩn �
 
 ## 9. Rủi ro & cách xử lý
 
-| Rủi ro | Cách giảm |
-|--------|-----------|
-| Chi phí API vượt doanh thu | Đặt giới hạn lượt chặt, dùng model rẻ, prompt caching, cache TTS, bán cao hơn vốn 4–6 lần |
-| Đối thủ lớn (ELSA, Talkpal) | Bám USP: **giọng tiếng Việt giải thích** + giá rẻ + nội dung Việt + gộp 3 kỹ năng |
-| Giọng nói khó làm / nghe giả | Tách riêng giọng Anh & giọng Việt; dùng Azure Neural (giọng Việt tốt); ra mắt text trước rồi mới thêm giọng |
-| Độ trễ khi nói (chờ STT→AI→TTS) | Stream câu trả lời, đọc giọng ngay khi có; cache câu mẫu hay lặp |
-| Khách dùng thử rồi bỏ | Thêm streak, theo dõi tiến bộ, nhắc học qua email/thông báo |
-| Phụ thuộc 1 nhà cung cấp API | Thiết kế để dễ đổi giữa Gemini/Claude/OpenAI và giữa Azure/Google/ElevenLabs khi giá thay đổi |
+| Rủi ro                          | Cách giảm                                                                                                   |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Chi phí API vượt doanh thu      | Đặt giới hạn lượt chặt, dùng model rẻ, prompt caching, cache TTS, bán cao hơn vốn 4–6 lần                   |
+| Đối thủ lớn (ELSA, Talkpal)     | Bám USP: **giọng tiếng Việt giải thích** + giá rẻ + nội dung Việt + gộp 3 kỹ năng                           |
+| Giọng nói khó làm / nghe giả    | Tách riêng giọng Anh & giọng Việt; dùng Azure Neural (giọng Việt tốt); ra mắt text trước rồi mới thêm giọng |
+| Độ trễ khi nói (chờ STT→AI→TTS) | Stream câu trả lời, đọc giọng ngay khi có; cache câu mẫu hay lặp                                            |
+| Khách dùng thử rồi bỏ           | Thêm streak, theo dõi tiến bộ, nhắc học qua email/thông báo                                                 |
+| Phụ thuộc 1 nhà cung cấp API    | Thiết kế để dễ đổi giữa Gemini/Claude/OpenAI và giữa Azure/Google/ElevenLabs khi giá thay đổi               |
 
 ---
 
@@ -340,7 +349,7 @@ Mỗi câu kèm đáp án và giải thích ngắn bằng tiếng Việt (ẩn �
 3. Lập tài khoản **Azure Speech** (free 500k ký tự/tháng), nghe thử **giọng Việt** (MyAn, Mai) và một **giọng Anh** để cảm nhận chất lượng.
 4. Mở ChatGPT/Claude, dán **prompt 5.1 và 5.3**, test thử và chỉnh cho hợp.
 5. Vào **3 group Facebook học tiếng Anh/IELTS**, ghi lại 5 điều học viên hay than phiền.
-6. Trong Lovable, gõ mô tả app đầu tiên: *"Web app gia sư tiếng Anh cho người Việt, có chế độ chat sửa lỗi và chế độ chấm bài viết, đăng nhập bằng email."* → xem nó dựng ra gì.
+6. Trong Lovable, gõ mô tả app đầu tiên: _"Web app gia sư tiếng Anh cho người Việt, có chế độ chat sửa lỗi và chế độ chấm bài viết, đăng nhập bằng email."_ → xem nó dựng ra gì.
 
 ---
 

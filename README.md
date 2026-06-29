@@ -3,6 +3,7 @@
 **Gia sư tiếng Anh AI song ngữ Anh - Việt** — Luyện nói, viết và trò chuyện với AI, nhận phản hồi bằng **tiếng Việt**.
 
 Ứng dụng giúp người Việt học tiếng Anh hiệu quả hơn nhờ:
+
 - AI hội thoại bằng giọng Anh chuẩn
 - Sửa lỗi & giải thích bằng **giọng tiếng Việt tự nhiên**
 - Hỗ trợ cả chiều ngược: người nước ngoài học tiếng Việt
@@ -39,3 +40,4 @@ git clone https://github.com/seeker19110/bilingual-english-vietnamese.git
 cd bilingual-english-vietnamese
 npm install
 npm run dev
+```

@@ -34,12 +34,14 @@ location = /index.html {
 #### Google Fonts Optimization
 
 **Before:**
+
 ```html
 <link href="https://fonts.googleapis.com/css2?family=Inter..." />
 <!-- blocks render for 920ms -->
 ```
 
 **After:**
+
 ```html
 <!-- Preconnect for faster DNS + TCP handshake -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -47,15 +49,19 @@ location = /index.html {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
 <!-- async load with display=swap: fallback system font first -->
-<link rel="stylesheet" 
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" 
-  media="print" 
-  onload="this.media='all'" />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
 
 <!-- Fallback for no-JS -->
 <noscript>
-  <link rel="stylesheet" 
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+  />
 </noscript>
 ```
 
@@ -75,6 +81,7 @@ location = /index.html {
 **Current:** 219 KiB unused JS
 
 **Solutions:**
+
 - ✅ Already implemented: vite manualChunks (vendor-core, vendor-supabase, etc.)
 - ✅ Already implemented: Gzip + Brotli compression
 - Option: Lazy load routes with `React.lazy()` + `Suspense`
@@ -103,22 +110,30 @@ const Chat = lazy(() => import('./pages/Chat'))
 **Solution:** Use `transform` and `opacity` instead of `width/height/top/left`.
 
 **Before:**
+
 ```css
 @keyframes fadeIn {
-  from { opacity: 0; top: -10px; }  /* causes repaint */
-  to { opacity: 1; top: 0; }
+  from {
+    opacity: 0;
+    top: -10px;
+  } /* causes repaint */
+  to {
+    opacity: 1;
+    top: 0;
+  }
 }
 ```
 
 **After:**
+
 ```css
 @keyframes fadeIn {
-  from { 
-    opacity: 0; 
-    transform: translateY(-10px);  /* efficient: GPU accelerated */
+  from {
+    opacity: 0;
+    transform: translateY(-10px); /* efficient: GPU accelerated */
   }
-  to { 
-    opacity: 1; 
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
@@ -161,17 +176,19 @@ const Chat = lazy(() => import('./pages/Chat'))
 
 **Solution:** Upgrade text color class
 
-| Old | New | Reason |
-|-----|-----|--------|
+| Old             | New             | Reason          |
+| --------------- | --------------- | --------------- |
 | `text-zinc-500` | `text-zinc-400` | Higher contrast |
 | `text-zinc-600` | `text-zinc-500` | Higher contrast |
 
 **Affected components:**
+
 - ✅ Layout.tsx: subtitle, usage text, logout button
 - ✅ Home.tsx: practice text, language/voice labels, bell icon, chevron icons, tip text
 - Todo: Check other pages (Chat.tsx, Learn.tsx, Writing.tsx, Dictionary.tsx)
 
 **How to verify:**
+
 ```bash
 # Use WebAIM contrast checker
 # https://webaim.org/resources/contrastchecker/
@@ -190,9 +207,10 @@ npm run build
 **Decision (product):** zoom is **disabled** on mobile so the app keeps a native, fixed
 layout (`<meta name="viewport">` keeps `maximum-scale=1.0, user-scalable=no`).
 
-**Trade-off:** Lighthouse a11y will flag *"[user-scalable=no] is used in the <meta name=viewport>"*
+**Trade-off:** Lighthouse a11y will flag _"[user-scalable=no] is used in the <meta name=viewport>"_
 and dock the score for that single audit. This is accepted on purpose. Mitigations so legibility
 is not hurt:
+
 - Body text floored at ≥11px and inputs at 16px (`src/index.css`) so nothing is too small to read.
 - Double-tap zoom blocked via `touch-action: pan-x pan-y`; input focus never triggers iOS zoom (16px font).
 
@@ -224,11 +242,13 @@ is not hurt:
 ### 3.2 Metadata
 
 **Status:** ✅ Already configured:
+
 - `meta name="description"` (in index.html)
 - `title` tag
 - Open Graph meta tags (optional, not present)
 
 **Enhancement (optional):**
+
 ```html
 <!-- Add Open Graph for social sharing -->
 <meta property="og:title" content="Gia su tieng Anh AI" />
@@ -247,23 +267,28 @@ is not hurt:
 **Status:** ✅ Already referenced in robots.txt
 
 **Recommendation:** Generate dynamic sitemap:
+
 ```typescript
 // api/sitemap.xml.ts
 export default async function handler(req: Request) {
   const pages = ['/', '/chat', '/writing', '/speaking', '/learn', '/dictionary']
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${pages.map(page => `
+${pages
+  .map(
+    (page) => `
   <url>
     <loc>https://en-vi.donghanhcungban.com${page}</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>${page === '/' ? '1.0' : '0.8'}</priority>
   </url>
-`).join('')}
+`,
+  )
+  .join('')}
 </urlset>`
   return new Response(xml, {
-    headers: { 'Content-Type': 'application/xml' }
+    headers: { 'Content-Type': 'application/xml' },
   })
 }
 ```
@@ -303,6 +328,7 @@ curl -I https://en-vi.donghanhcungban.com/assets/main-abc12345.js
 ### 4.3 Monitor Performance
 
 Use Chrome DevTools:
+
 1. Open DevTools → Network tab
 2. Disable cache (checkbox)
 3. Reload → check FCP, LCP, CLS

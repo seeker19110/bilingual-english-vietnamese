@@ -50,28 +50,35 @@ dự-án/
 ## Phần A — LÀM GÌ (trình tự triển khai)
 
 ### Bước 0 — Đưa khung vào repo
+
 - [ ] Copy 4 file khung vào `docs/framework/`.
 - [ ] Copy `CLAUDE.md`, `adr-template.md` (→ `docs/adr/0000-template.md`), `lib/env.ts`, `pull_request_template.md` vào đúng chỗ theo Phần 0.
 
 ### Bước 1 — Định nghĩa dự án → tạo `PROJECT.md`
-*(Tương ứng Giai đoạn 0–2 của khung, làm gọn)*
+
+_(Tương ứng Giai đoạn 0–2 của khung, làm gọn)_
+
 - [ ] Điền **Mẫu định nghĩa dự án** (Phần B của KHUNG 2): vấn đề, người dùng, MVP (MoSCoW), yêu cầu phi chức năng, stack, schema CSDL, kiến trúc/API, luồng người dùng, DoD, lộ trình, rủi ro.
-- [ ] **AI chạy KHUNG 3 (research-first):** đề xuất chủ động *mọi mặt* (PHẦN A) + chọn công nghệ với **phiên bản ổn định đã xác minh bằng nguồn sống** (PHẦN B), cân bằng phổ biến ↔ năng lực; ghi ADR.
+- [ ] **AI chạy KHUNG 3 (research-first):** đề xuất chủ động _mọi mặt_ (PHẦN A) + chọn công nghệ với **phiên bản ổn định đã xác minh bằng nguồn sống** (PHẦN B), cân bằng phổ biến ↔ năng lực; ghi ADR.
 - [ ] Chốt `PROJECT.md` sau khi đồng ý các góp ý (tech stack ghi rõ **phiên bản + ngày xác minh**).
-- **Tuân thủ:** mỗi tính năng Must có *tiêu chí chấp nhận* đo được; *đóng băng* phạm vi MVP; **không đoán phiên bản theo trí nhớ**.
+- **Tuân thủ:** mỗi tính năng Must có _tiêu chí chấp nhận_ đo được; _đóng băng_ phạm vi MVP; **không đoán phiên bản theo trí nhớ**.
 
 ### Bước 2 — Tạo `CLAUDE.md` cho dự án
+
 - [ ] Điền mọi chỗ `[ĐIỀN: ...]` từ `PROJECT.md`: stack, lệnh (dev/build/test/type-check/format/migration), cấu trúc thư mục, quy ước đặt tên, thư viện chính, giai đoạn hiện tại.
 - [ ] Giữ file gọn (< 200 dòng); để chi tiết ở `docs/framework/`.
 
 ### Bước 3 — Khởi tạo dự án + Git
+
 - [ ] `npx create-next-app@latest` (TypeScript, Tailwind, ESLint).
 - [ ] `git init`, tạo repo trên GitHub, commit đầu tiên.
 - [ ] `.gitignore` chặn `.env`, `.env*.local`, `node_modules`, `.next`.
 - **Tuân thủ:** không bao giờ commit `.env` hay bí mật.
 
 ### Bước 4 — Dựng hàng rào tự động
-*(Theo `HUONG-DAN-cau-hinh-precommit-CI.md`, 14 bước)*
+
+_(Theo `HUONG-DAN-cau-hinh-precommit-CI.md`, 14 bước)_
+
 - [ ] TypeScript `strict` + các cờ nghiêm (`noUncheckedIndexedAccess`...).
 - [ ] ESLint (no-explicit-any, no-floating-promises) + Prettier.
 - [ ] ESLint thêm `jsx-a11y/recommended` (a11y tĩnh).
@@ -84,6 +91,7 @@ dự-án/
 - **Tuân thủ:** không bỏ bước nào của hàng rào — đây là tầng chặn lỗi đáng tin cậy nhất.
 
 ### Bước 5 — Thêm file bổ sung chất lượng
+
 - [ ] `lib/env.ts`: đổi tên biến cho khớp dự án; dùng `clientEnv`/`serverEnv` thay cho `process.env` rải rác.
 - [ ] `styles/theme.css`: nối tokens vào Tailwind + script no-flash + nút chuyển (theo `BO-SUNG-giao-dien-theme.md`). Mặc định **Dark blue**, có **Light**.
 - [ ] `e2e/smoke.spec.ts`: sửa cho khớp luồng chính thật.
@@ -91,10 +99,12 @@ dự-án/
 - [ ] Thư mục `docs/adr/` sẵn sàng (viết ADR khi có quyết định kỹ thuật lớn).
 
 ### Bước 6 — Bật branch protection (GitHub UI)
+
 - [ ] Settings → Branches → rule cho `main`: yêu cầu **Pull request**, yêu cầu **status checks (job CI) xanh**, yêu cầu **nhánh cập nhật** trước khi merge.
 - **Tuân thủ:** từ đây, không gì vào `main` khi CI chưa xanh.
 
 ### Bước 7 — Kết nối Supabase + migration đầu tiên
+
 - [ ] `npx supabase init` → `link` tới project; commit thư mục `supabase/`.
 - [ ] Tạo schema qua migration (`supabase migration new ...` hoặc `db diff`).
 - [ ] **Bật và test Row Level Security** trước khi mở cho người ngoài.
@@ -102,12 +112,14 @@ dự-án/
 - **Tuân thủ:** mọi thay đổi CSDL đi qua migration có phiên bản; có sẵn đường rollback (migration bù trừ hoặc backup).
 
 ### Bước 8 — Deploy thử lên Vercel (Hello World)
+
 - [ ] Kết nối repo với Vercel.
 - [ ] Đặt biến môi trường **riêng** cho Production và Preview (Preview trỏ tới Supabase "staging", không đụng dữ liệu thật).
 - [ ] Xác nhận build + deploy thành công, và mỗi PR tự sinh một bản Preview.
 - **Tuân thủ:** chỉ nhánh `main` deploy lên production.
 
 ### Bước 9 — Kiểm chứng hàng rào hoạt động
+
 - [ ] Thử commit message sai chuẩn → **phải bị chặn**.
 - [ ] Thử thêm code sai kiểu/thừa biến rồi commit → pre-commit **phải chặn**.
 - [ ] Tạo một PR thử → CI chạy; khi đỏ thì **không merge được**.
@@ -120,27 +132,32 @@ dự-án/
 ## Phần B — PHẢI TUÂN THỦ GÌ (quy tắc bất biến, không bao giờ phá)
 
 ### Mã nguồn & kiểu dữ liệu
+
 - TypeScript `strict`, **không `any`**.
 - Mọi đầu vào (người dùng, API, CSDL) **validate lúc chạy** trước khi dùng.
 - Mọi thao tác có thể fail đều có **xử lý lỗi** + trạng thái tải/rỗng/lỗi trên UI.
 - Không lặp logic; hàm nhỏ làm một việc; không "số/chuỗi ma thuật".
 
 ### Bảo mật
+
 - **Bí mật không bao giờ vào Git** (dùng biến môi trường).
 - Logic nhạy cảm (kiểm tra quyền, tính toán quan trọng) **luôn ở server**.
 - Truy vấn **tham số hóa** (chống SQL injection); **escape** dữ liệu ra HTML (chống XSS).
 - **RLS** bật và đã test trước khi mở cho người ngoài.
 
 ### Git & quy trình
+
 - Mỗi tính năng/sửa lỗi **một nhánh riêng**; commit nhỏ.
 - **Conventional commits** (`feat`, `fix`, `refactor`...).
 - **Mọi merge qua Pull Request**; **CI xanh mới được merge**; **không push thẳng `main`**.
 
 ### Chất lượng
+
 - Một tính năng chỉ **XONG** khi đạt **Definition of Done** (đối chiếu checklist PR).
 - Một task chỉ **BẮT ĐẦU** khi đạt **Definition of Ready** (có tiêu chí chấp nhận rõ, không còn câu hỏi mở, phạm vi gói trong một PR).
 
 ### Hành vi AI
+
 - **Không bịa** hàm/thư viện/API — xác minh tồn tại.
 - **Đọc file thật**, **chạy lệnh thật** — không giả định, không đoán kết quả.
 - **Xuất báo cáo xác thực** trước mỗi commit/merge; có mục ❌ thì không commit/merge.
@@ -148,6 +165,7 @@ dự-án/
 - **Chủ động góp ý** khi thấy cách tốt hơn hoặc rủi ro — không im lặng làm theo.
 
 ### Dữ liệu & vận hành
+
 - Mọi thay đổi CSDL qua **migration có phiên bản**, có đường **rollback**.
 - **Backup đã thử khôi phục** ít nhất một lần.
 - **Không test trên dữ liệu production thật**; tách môi trường dev/staging/production.
@@ -169,4 +187,4 @@ Chỉ bắt đầu phát triển tính năng khi **tất cả** đã đạt:
 - [ ] Backup CSDL đã bật.
 
 > Đạt đủ = ba tầng phòng thủ đã sẵn sàng (AI có kỷ luật + hook cục bộ + CI tập trung). Giờ mới bắt đầu code tính năng theo Giai đoạn 4.
-EOF
+> EOF

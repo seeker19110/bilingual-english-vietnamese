@@ -8,12 +8,13 @@
 
 App hỗ trợ **2 chiều học độc lập**:
 
-| Chiều | Tên | Học Viên | Giao Diện | Hội Thoại (Speech) | Giải Thích (Feedback) |
-|------|-----|----------|-----------|-------------------|----------------------|
-| **A** | Vi→En | Người Việt | Tiếng Việt | Tiếng Anh (en-US) | Tiếng Việt (vi-VN) |
-| **B** | En→Vi | Người nước ngoài | Tiếng Anh | Tiếng Việt (vi-VN) | Tiếng Anh (en-US) |
+| Chiều | Tên   | Học Viên         | Giao Diện  | Hội Thoại (Speech) | Giải Thích (Feedback) |
+| ----- | ----- | ---------------- | ---------- | ------------------ | --------------------- |
+| **A** | Vi→En | Người Việt       | Tiếng Việt | Tiếng Anh (en-US)  | Tiếng Việt (vi-VN)    |
+| **B** | En→Vi | Người nước ngoài | Tiếng Anh  | Tiếng Việt (vi-VN) | Tiếng Anh (en-US)     |
 
 **Cách chuyển đổi:**
+
 - Home page → nút gạt ngôn ngữ (góc trên phải) → toggle A ↔ B
 - Giao diện tự đổi theo chiều
 - Lưu tùy chọn vào `localStorage` (`et_direction`)
@@ -52,9 +53,10 @@ export function setDirection(dir: Direction) {
 ```
 
 **Sử dụng:**
+
 ```typescript
-const dir = getDirection()  // đọc direction hiện tại
-setDirection('B')           // lưu direction mới
+const dir = getDirection() // đọc direction hiện tại
+setDirection('B') // lưu direction mới
 ```
 
 ---
@@ -66,12 +68,9 @@ setDirection('B')           // lưu direction mới
 Tất cả prompt function nhận tham số `dir: Direction` để tự động thay đổi ngôn ngữ:
 
 #### Chat Prompt
+
 ```typescript
-export function chatSystemPrompt(
-  situation: string,
-  level: Level,
-  dir: Direction = 'A'
-): string {
+export function chatSystemPrompt(situation: string, level: Level, dir: Direction = 'A'): string {
   if (dir === 'A') {
     return `Bạn là gia sư tiếng Anh...` // Prompt tiếng Việt
   }
@@ -80,11 +79,12 @@ export function chatSystemPrompt(
 ```
 
 #### Speaking Prompt
+
 ```typescript
 export function speakingSystemPrompt(
   situation: string,
   level: Level,
-  dir: Direction = 'A'
+  dir: Direction = 'A',
 ): string {
   if (dir === 'A') {
     return `Bạn là gia sư tiếng Anh...
@@ -106,6 +106,7 @@ export function speakingSystemPrompt(
 ```
 
 #### Writing Prompt
+
 ```typescript
 export function writingSystemPrompt(dir: Direction = 'A'): string {
   if (dir === 'A') {
@@ -124,6 +125,7 @@ export function writingSystemPrompt(dir: Direction = 'A'): string {
 ```
 
 **Quy tắc:**
+
 - Chiều A: prompt + feedback **tiếng Việt**
 - Chiều B: prompt + feedback **tiếng Anh**
 - **Hội thoại luôn dùng ngôn ngữ đích** (A: Anh, B: Việt)
@@ -137,13 +139,14 @@ export function writingSystemPrompt(dir: Direction = 'A'): string {
 Quản lý `uiLang` độc lập (Việt/Anh) để dịch text giao diện.
 
 **Luồng:**
+
 1. Home.tsx gọi `toggleDir()` → thay đổi direction A/B
 2. Đồng thời cập nhật `uiLang` trong LangProvider:
    ```typescript
    function toggleDir() {
      const next: Direction = dir === 'A' ? 'B' : 'A'
      setDirection(next)
-     setLang(next === 'A' ? 'vi' : 'en')  // đổi giao diện
+     setLang(next === 'A' ? 'vi' : 'en') // đổi giao diện
    }
    ```
 3. Tất cả component dùng `useLang()` để lấy `T` (text objects)
@@ -153,6 +156,7 @@ Quản lý `uiLang` độc lập (Việt/Anh) để dịch text giao diện.
    ```
 
 **Hardcoded Labels:**
+
 - `SITUATIONS`, `LEVELS` (src/types.ts) — có `labelA` + `labelB`
 - `situationLabel(value, dir)` (src/prompts/index.ts) — trả label đúng chiều
 
@@ -169,14 +173,14 @@ const dir: Direction = getDirection()
 const isA = dir === 'A'
 
 // STT: chiều A nhận Anh, chiều B nhận Việt
-const sttLang = isA ? 'en' as const : 'vi' as const
+const sttLang = isA ? ('en' as const) : ('vi' as const)
 
 // TTS: speech + feedback song ngữ
 await speakBilingual(
-  ai.speech,    // hội thoại
-  ai.feedback,  // sửa lỗi
-  isA ? 'en-US' : 'vi-VN',  // speech lang
-  isA ? 'vi-VN' : 'en-US',  // feedback lang
+  ai.speech, // hội thoại
+  ai.feedback, // sửa lỗi
+  isA ? 'en-US' : 'vi-VN', // speech lang
+  isA ? 'vi-VN' : 'en-US', // feedback lang
 )
 ```
 
@@ -193,7 +197,7 @@ export async function speakBilingual(
   voice: Voice = getVoicePref(),
   rate = 1,
 ) {
-  if (speech)   await speak(speech, speechLang, voice, rate)
+  if (speech) await speak(speech, speechLang, voice, rate)
   if (feedback) await speak(feedback, feedbackLang, voice, rate)
 }
 ```
@@ -212,6 +216,7 @@ curl -X POST http://localhost:3000/api/tts \
 ```
 
 **Response:**
+
 ```json
 {
   "audio_url": "https://...",
@@ -228,6 +233,7 @@ curl -X POST http://localhost:3000/api/tts \
 **File:** `src/lib/stt.ts` + `src/lib/sttServer.ts`
 
 **Flow:**
+
 1. Browser ghi âm → `MediaRecorder` (WebM/Opus)
 2. Gửi base64 lên `/api/stt` với `lang`
 3. Server dùng Whisper (Groq hoặc OpenAI)
@@ -246,6 +252,7 @@ curl -X POST http://localhost:3000/api/stt \
 ```
 
 **Response:**
+
 ```json
 {
   "text": "Hello, how are you?"
@@ -253,6 +260,7 @@ curl -X POST http://localhost:3000/api/stt \
 ```
 
 **Lựa chọn STT:**
+
 - Ưu tiên: `GROQ_API_KEY` → Whisper `whisper-large-v3-turbo` (miễn phí, nhanh)
 - Fallback: `OPENAI_API_KEY` → Whisper `gpt-4o-mini-transcribe`
 - Web Speech API (fallback cuối khi api lỗi)
@@ -282,6 +290,7 @@ const sys = chatSystemPrompt(situationLabel(situation, dir), level, dir)
 ```
 
 **Khác biệt với Speaking:**
+
 - Không có TTS/STT
 - Text-only dialog
 - Prompt dùng `chatSystemPrompt` (format khác)
@@ -320,6 +329,7 @@ await speakBilingual(
 ```
 
 **Luồng hội thoại:**
+
 1. **Người dùng nói** → STT → text
 2. **Gửi prompt + lịch sử** → AI trả JSON
 3. **Phát audio**: speech (ngôn ngữ đích) → feedback (tiếng mẹ đẻ)
@@ -360,7 +370,7 @@ const isA = dir === 'A'
 function toggleDir() {
   const next: Direction = dir === 'A' ? 'B' : 'A'
   setDirection(next)
-  setLang(next === 'A' ? 'vi' : 'en')  // đổi giao diện
+  setLang(next === 'A' ? 'vi' : 'en') // đổi giao diện
 }
 
 // Cards — hiển thị mô tả tùy chiều
@@ -381,10 +391,10 @@ const modes = getModes(dir, T)
 ```typescript
 export const SITUATIONS: { value: string; labelA: string; labelB: string }[] = [
   // ...existing...
-  { 
+  {
     value: 'hospital',
     labelA: 'Bệnh viện / Y tế',
-    labelB: 'Hospital / Medical'
+    labelB: 'Hospital / Medical',
   },
 ]
 ```
@@ -407,6 +417,7 @@ const mapB: Record<string, string> = {
 ### 5.2 Thêm Feature Mới Dùng Direction
 
 **Quy tắc:**
+
 1. Import: `import { getDirection } from '../lib/storage'`
 2. Dùng: `const dir = getDirection()`
 3. Kiểm tra: `const isA = dir === 'A'`
@@ -503,6 +514,7 @@ npm run dev
 ### 6.2 Kiểm Tra API
 
 **TTS:**
+
 ```bash
 curl -X POST http://localhost:3000/api/tts \
   -H "Authorization: Bearer $TOKEN" \
@@ -510,6 +522,7 @@ curl -X POST http://localhost:3000/api/tts \
 ```
 
 **STT:**
+
 ```bash
 # Ghi âm browser → base64 → gửi
 curl -X POST http://localhost:3000/api/stt \
@@ -542,34 +555,34 @@ VITE_SUPABASE_ANON_KEY=...
 
 ## 8. Troubleshooting
 
-| Vấn đề | Nguyên nhân | Giải pháp |
-|--------|-----------|----------|
-| STT không nhận giọng Anh | `sttLang` sai | Kiểm tra `const sttLang = isA ? 'en' : 'vi'` |
-| TTS phát sai giọng | lang param sai | Verify `speakBilingual(..., isA ? 'en-US' : 'vi-VN', ...)` |
-| Chat phát prompt sai | direction không pass | Cập nhật `chatSystemPrompt(..., dir)` |
-| UI không đổi sau toggle | LangProvider not updated | Kiểm tra `setLang()` call trong `toggleDir()` |
-| 401 Unauthorized | Chưa đăng nhập | Refresh → Login lại |
+| Vấn đề                   | Nguyên nhân              | Giải pháp                                                  |
+| ------------------------ | ------------------------ | ---------------------------------------------------------- |
+| STT không nhận giọng Anh | `sttLang` sai            | Kiểm tra `const sttLang = isA ? 'en' : 'vi'`               |
+| TTS phát sai giọng       | lang param sai           | Verify `speakBilingual(..., isA ? 'en-US' : 'vi-VN', ...)` |
+| Chat phát prompt sai     | direction không pass     | Cập nhật `chatSystemPrompt(..., dir)`                      |
+| UI không đổi sau toggle  | LangProvider not updated | Kiểm tra `setLang()` call trong `toggleDir()`              |
+| 401 Unauthorized         | Chưa đăng nhập           | Refresh → Login lại                                        |
 
 ---
 
 ## 9. Danh Sách File Liên Quan
 
-| File | Mục đích |
-|------|---------|
-| `src/types.ts` | Type `Direction`, `SITUATIONS`, `LEVELS` |
-| `src/lib/storage.ts` | Get/set direction localStorage |
-| `src/lib/tts.ts` | Function `speak()`, `speakBilingual()` |
-| `src/lib/stt.ts` | Function `startListening()` (Web Speech API) |
-| `src/lib/sttServer.ts` | Function `startRecording()` (server STT) |
-| `src/prompts/index.ts` | Prompt functions (chat, speaking, writing) |
-| `src/context/LangProvider.tsx` | UI language context |
-| `src/pages/Chat.tsx` | Chat page (text-only) |
-| `src/pages/Speaking.tsx` | Speaking page (audio + 2 voices) |
-| `src/pages/Writing.tsx` | Writing page (essay grading) |
-| `src/pages/Home.tsx` | Home + toggle direction |
-| `api/tts.ts` | TTS endpoint (Google Cloud TTS) |
-| `api/stt.ts` | STT endpoint (Groq/OpenAI Whisper) |
-| `api/claude.ts` | LLM proxy (Groq/Anthropic) |
+| File                           | Mục đích                                     |
+| ------------------------------ | -------------------------------------------- |
+| `src/types.ts`                 | Type `Direction`, `SITUATIONS`, `LEVELS`     |
+| `src/lib/storage.ts`           | Get/set direction localStorage               |
+| `src/lib/tts.ts`               | Function `speak()`, `speakBilingual()`       |
+| `src/lib/stt.ts`               | Function `startListening()` (Web Speech API) |
+| `src/lib/sttServer.ts`         | Function `startRecording()` (server STT)     |
+| `src/prompts/index.ts`         | Prompt functions (chat, speaking, writing)   |
+| `src/context/LangProvider.tsx` | UI language context                          |
+| `src/pages/Chat.tsx`           | Chat page (text-only)                        |
+| `src/pages/Speaking.tsx`       | Speaking page (audio + 2 voices)             |
+| `src/pages/Writing.tsx`        | Writing page (essay grading)                 |
+| `src/pages/Home.tsx`           | Home + toggle direction                      |
+| `api/tts.ts`                   | TTS endpoint (Google Cloud TTS)              |
+| `api/stt.ts`                   | STT endpoint (Groq/OpenAI Whisper)           |
+| `api/claude.ts`                | LLM proxy (Groq/Anthropic)                   |
 
 ---
 

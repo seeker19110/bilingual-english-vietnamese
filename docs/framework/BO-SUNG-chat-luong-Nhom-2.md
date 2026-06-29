@@ -3,31 +3,32 @@
 > Tài liệu này gắn các bổ sung "Nhóm 2" vào bộ khung đã có (KHUNG 1, KHUNG 2, Nhóm 1).
 > Trọng tâm Nhóm 2: **mobile-first, hiệu năng (Lighthouse/Core Web Vitals), kiểm thử mở rộng
 > (E2E + accessibility tự động), UI/UX, và chống lỗi logic.**
-> Triết lý xuyên suốt vẫn là *"tự động hóa thay vì kỷ luật"*: mỗi checklist dưới đây đều
+> Triết lý xuyên suốt vẫn là _"tự động hóa thay vì kỷ luật"_: mỗi checklist dưới đây đều
 > kèm một hàng rào máy chạy được (CI/lint/test) — đừng chỉ dựa vào việc "nhớ kiểm tra".
 
 ## Các bổ sung gắn vào khung ở đâu
 
-| Bổ sung | Lấp lỗ hổng | Liên quan giai đoạn | Hàng rào tự động |
-|---------|-------------|---------------------|------------------|
-| Checklist mobile-first | "Mobile-first" mới có 1 dòng ở GĐ 2 | GĐ 2 & 4 | Playwright project `mobile` |
-| Performance budget + Lighthouse CI | "Lighthouse ≥ 90" chưa được ép trong pipeline | GĐ 5 & 6 | `lighthouserc.json` + workflow |
-| Accessibility tự động | A11y mới ở mức "nhớ kiểm tra tay" | GĐ 4 & 5 | `eslint-plugin-jsx-a11y` + `@axe-core/playwright` |
-| Kiểm thử E2E (Playwright) | Kim tự tháp test thiếu tầng E2E | GĐ 5 | `playwright.config.ts` |
-| Ngưỡng coverage | "Có test" chưa có mức tối thiểu | GĐ 5 | `vitest` coverage thresholds |
-| Checklist UI/UX trạng thái | Loading/rỗng/lỗi mới là nguyên tắc, chưa thành checklist | GĐ 4 | PR template |
-| Checklist chống lỗi logic | "Type safety" không bắt được lỗi *nghiệp vụ* | GĐ 4 & 5 | review + test biên |
-| Observability (Sentry) | GĐ 6 nhắc Sentry nhưng chưa nói *làm sao* | GĐ 6 & 8 | `@sentry/nextjs` |
-| Issue template + CHANGELOG | Quản lý việc & lịch sử thay đổi chưa có công cụ | Xuyên suốt | GitHub templates |
+| Bổ sung                            | Lấp lỗ hổng                                              | Liên quan giai đoạn | Hàng rào tự động                                  |
+| ---------------------------------- | -------------------------------------------------------- | ------------------- | ------------------------------------------------- |
+| Checklist mobile-first             | "Mobile-first" mới có 1 dòng ở GĐ 2                      | GĐ 2 & 4            | Playwright project `mobile`                       |
+| Performance budget + Lighthouse CI | "Lighthouse ≥ 90" chưa được ép trong pipeline            | GĐ 5 & 6            | `lighthouserc.json` + workflow                    |
+| Accessibility tự động              | A11y mới ở mức "nhớ kiểm tra tay"                        | GĐ 4 & 5            | `eslint-plugin-jsx-a11y` + `@axe-core/playwright` |
+| Kiểm thử E2E (Playwright)          | Kim tự tháp test thiếu tầng E2E                          | GĐ 5                | `playwright.config.ts`                            |
+| Ngưỡng coverage                    | "Có test" chưa có mức tối thiểu                          | GĐ 5                | `vitest` coverage thresholds                      |
+| Checklist UI/UX trạng thái         | Loading/rỗng/lỗi mới là nguyên tắc, chưa thành checklist | GĐ 4                | PR template                                       |
+| Checklist chống lỗi logic          | "Type safety" không bắt được lỗi _nghiệp vụ_             | GĐ 4 & 5            | review + test biên                                |
+| Observability (Sentry)             | GĐ 6 nhắc Sentry nhưng chưa nói _làm sao_                | GĐ 6 & 8            | `@sentry/nextjs`                                  |
+| Issue template + CHANGELOG         | Quản lý việc & lịch sử thay đổi chưa có công cụ          | Xuyên suốt          | GitHub templates                                  |
 
 ---
 
 ## 1. Mobile-first (cụ thể hóa)
 
-Khung yêu cầu "mobile-first; responsive" nhưng chưa nói *kiểm cái gì*. Phần lớn người dùng vào
+Khung yêu cầu "mobile-first; responsive" nhưng chưa nói _kiểm cái gì_. Phần lớn người dùng vào
 bằng điện thoại — thiết kế cho màn nhỏ trước, rồi mở rộng ra màn lớn (`sm:`, `md:`, `lg:` của Tailwind).
 
 **Checklist mobile-first (đối chiếu cho mỗi màn hình):**
+
 - [ ] Thiết kế ở khổ ~360px trước; không có thanh cuộn ngang ở bất kỳ breakpoint nào.
 - [ ] **Vùng chạm ≥ 44×44px** cho mọi nút/link (Apple HIG; tối thiểu WCAG 2.2 AA là 24px) — ngón tay không phải con trỏ chuột.
 - [ ] `<meta name="viewport" content="width=device-width, initial-scale=1" />` (Next có sẵn qua `viewport` export).
@@ -45,18 +46,18 @@ bằng điện thoại — thiết kế cho màn nhỏ trước, rồi mở rộ
 
 ## 2. Performance budget & Lighthouse CI
 
-Khung nói "Lighthouse ≥ 90" nhưng để nó là việc *nhớ chạy tay* thì sớm muộn cũng quên.
+Khung nói "Lighthouse ≥ 90" nhưng để nó là việc _nhớ chạy tay_ thì sớm muộn cũng quên.
 Biến nó thành **cổng tự động** chạy trên mỗi PR.
 
 ### Ngân sách hiệu năng (đặt mục tiêu cụ thể trong `PROJECT.md` mục 3)
 
 **Core Web Vitals** (đo trên 4G/thiết bị tầm trung — tức điều kiện thật của đa số người dùng):
 
-| Chỉ số | Ngưỡng "tốt" | Ý nghĩa |
-|--------|-------------|---------|
-| **LCP** (Largest Contentful Paint) | ≤ 2.5s | nội dung chính hiện nhanh |
-| **INP** (Interaction to Next Paint) | ≤ 200ms | bấm/gõ phản hồi mượt (thay FID từ 2024) |
-| **CLS** (Cumulative Layout Shift) | ≤ 0.1 | bố cục không "nhảy" |
+| Chỉ số                              | Ngưỡng "tốt" | Ý nghĩa                                 |
+| ----------------------------------- | ------------ | --------------------------------------- |
+| **LCP** (Largest Contentful Paint)  | ≤ 2.5s       | nội dung chính hiện nhanh               |
+| **INP** (Interaction to Next Paint) | ≤ 200ms      | bấm/gõ phản hồi mượt (thay FID từ 2024) |
+| **CLS** (Cumulative Layout Shift)   | ≤ 0.1        | bố cục không "nhảy"                     |
 
 **Điểm Lighthouse tối thiểu (mobile):** Performance ≥ 90 · Accessibility ≥ 90 · Best Practices ≥ 90 · SEO ≥ 90.
 
@@ -94,6 +95,7 @@ Mỗi smoke test E2E nên kèm một lần quét axe (xem `e2e/smoke.spec.ts`). 
 linter tĩnh không thấy: tương phản màu thực tế, thứ tự heading, focus trap, ARIA sai ngữ cảnh.
 
 **Vẫn cần kiểm tay (máy không thay được):**
+
 - [ ] Duyệt toàn bộ luồng chính **chỉ bằng bàn phím** (Tab/Shift-Tab/Enter/Esc); focus thấy rõ.
 - [ ] Thử một lượt với trình đọc màn hình (VoiceOver/TalkBack) cho luồng quan trọng nhất.
 - [ ] `prefers-reduced-motion`: tắt animation lớn cho người chọn giảm chuyển động.
@@ -121,7 +123,7 @@ Mỗi E2E nên: (a) chạy được độc lập, tự dọn dữ liệu; (b) kh
 
 ### Ngưỡng coverage cho unit test
 
-Đã thêm `coverage` vào `vitest.config.ts`. Coverage là *sàn an toàn tối thiểu*, **không phải mục tiêu** —
+Đã thêm `coverage` vào `vitest.config.ts`. Coverage là _sàn an toàn tối thiểu_, **không phải mục tiêu** —
 một số phủ cao mà toàn assert vô nghĩa thì vô dụng. Đặt sàn vừa phải (vd 70%) để bắt việc "quên viết test",
 và luôn ưu tiên **chất lượng test ở đường đi quan trọng + trường hợp biên** hơn là con số.
 
@@ -144,18 +146,21 @@ Chạy: `npm run test:coverage`.
 Khung đã nói "xử lý trạng thái lỗi/rỗng/tải" — nâng thành checklist cụ thể để không sót.
 
 **Mỗi màn hình hiển thị dữ liệu phải xử lý đủ 4 trạng thái:**
-- [ ] **Đang tải:** skeleton hoặc spinner — *không* để màn trắng/nhảy layout.
+
+- [ ] **Đang tải:** skeleton hoặc spinner — _không_ để màn trắng/nhảy layout.
 - [ ] **Rỗng:** thông điệp rõ + hành động gợi ý ("Chưa có mục nào — Tạo mục đầu tiên").
 - [ ] **Lỗi:** thông báo thân thiện (không phơi stack trace) + nút thử lại.
 - [ ] **Thành công/có dữ liệu:** trạng thái bình thường.
 
 **Form & hành động:**
-- [ ] Validate inline, ngay cạnh ô lỗi; thông báo nói *cách sửa*, không chỉ "sai".
+
+- [ ] Validate inline, ngay cạnh ô lỗi; thông báo nói _cách sửa_, không chỉ "sai".
 - [ ] Nút submit **disable + hiện loading** khi đang gửi → chặn double-submit.
 - [ ] Sau hành động: phản hồi rõ (toast/redirect); thất bại thì giữ nguyên dữ liệu người dùng đã nhập.
 - [ ] Hành động phá hủy (xóa) cần xác nhận; ưu tiên cho **hoàn tác (undo)** hơn là hỏi "chắc chưa?".
 
 **Phản hồi & chuyển động:**
+
 - [ ] Thao tác > ~400ms phải có chỉ báo tiến trình.
 - [ ] Tôn trọng `prefers-reduced-motion`.
 - [ ] Optimistic UI (nếu dùng): có **đường rollback** khi server trả lỗi (xem mục 6).
@@ -164,36 +169,41 @@ Khung đã nói "xử lý trạng thái lỗi/rỗng/tải" — nâng thành che
 
 ## 6. Chống lỗi logic (lỗi nghiệp vụ — type-checker KHÔNG bắt được)
 
-Đây là loại bug nguy hiểm nhất: code *biên dịch sạch, type đúng*, nhưng **làm sai việc**.
+Đây là loại bug nguy hiểm nhất: code _biên dịch sạch, type đúng_, nhưng **làm sai việc**.
 TypeScript không cứu bạn ở đây — chỉ có suy nghĩ kỹ + test biên + review.
 
 **Checklist rà soát logic (đối chiếu khi viết & khi review mọi logic nghiệp vụ):**
 
-*Biên & rỗng:*
+_Biên & rỗng:_
+
 - [ ] Mảng/danh sách rỗng, đúng 1 phần tử, rất nhiều phần tử — đều xử lý đúng?
 - [ ] `null`/`undefined`/chuỗi rỗng/số 0 — phân biệt rõ "không có" với "bằng 0/rỗng"? (`??` vs `||`).
 - [ ] Off-by-one: vòng lặp, phân trang, cắt chuỗi, chỉ số mảng (`noUncheckedIndexedAccess` đã giúp một phần).
 
-*Số & tiền:*
+_Số & tiền:_
+
 - [ ] Tiền tệ: **không** dùng số thực (float) — dùng số nguyên (cents) hoặc kiểu decimal. `0.1 + 0.2 !== 0.3`.
 - [ ] Chia cho 0, tràn số, làm tròn — định nghĩa rõ hành vi.
 
-*Thời gian:*
+_Thời gian:_
+
 - [ ] Lưu & tính bằng **UTC**; chỉ đổi sang giờ địa phương khi hiển thị.
 - [ ] Múi giờ, giờ mùa hè (DST), ranh giới ngày/tháng — test ca chuyển ngày.
 
-*Bất đồng bộ & đồng thời:*
+_Bất đồng bộ & đồng thời:_
+
 - [ ] **Race condition:** hai request/click đồng thời — kết quả vẫn đúng? (khóa, disable nút, idempotency).
 - [ ] **Idempotency:** gửi lại cùng một thao tác (mạng chập chờn, người dùng bấm 2 lần) không tạo bản ghi trùng / tính tiền 2 lần.
 - [ ] `await` đặt đúng chỗ; không có promise "trôi" (đã có `no-floating-promises`).
 - [ ] Thứ tự phản hồi không đảm bảo: phản hồi cũ về sau không ghi đè dữ liệu mới (stale closure / race).
 
-*Trạng thái & nhất quán:*
+_Trạng thái & nhất quán:_
+
 - [ ] Cập nhật một chỗ → mọi nơi phụ thuộc đồng bộ (một nguồn sự thật).
 - [ ] Optimistic update có rollback khi server lỗi; UI không "kẹt" ở trạng thái lạc quan sai.
 - [ ] Thao tác nhiều bước (giao dịch): hoặc xong cả, hoặc rollback cả — không để nửa vời.
 
-> **Quy tắc:** với mỗi nhánh logic phức tạp, viết *ít nhất một test cho ca biên* trước khi coi là xong.
+> **Quy tắc:** với mỗi nhánh logic phức tạp, viết _ít nhất một test cho ca biên_ trước khi coi là xong.
 > Lỗi logic rẻ nhất khi bị một unit test bắt; đắt nhất khi người dùng thật gặp trên production.
 
 ---
@@ -208,6 +218,7 @@ npx @sentry/wizard@latest -i nextjs
 ```
 
 Wizard tự tạo config client/server/edge, gắn source map, và một route test. Sau khi cài:
+
 - [ ] Đặt `SENTRY_DSN` qua biến môi trường (thêm vào `lib/env.ts`) — **không** hard-code.
 - [ ] Tách môi trường (`environment: process.env.NODE_ENV`) để lọc lỗi dev/staging/prod riêng.
 - [ ] Bật cảnh báo (email/Slack) cho lỗi mới hoặc tần suất tăng đột biến.
@@ -222,8 +233,8 @@ Wizard tự tạo config client/server/edge, gắn source map, và một route t
 **Issue templates** (`.github/ISSUE_TEMPLATE/`, đã kèm): ép mọi báo lỗi/đề xuất tính năng có đủ
 thông tin (các bước tái hiện, kỳ vọng vs thực tế, tiêu chí chấp nhận) → gắn với **Definition of Ready**.
 
-**CHANGELOG.md** (đã kèm, theo chuẩn *Keep a Changelog*): ghi lại thay đổi theo phiên bản cho con người đọc.
-Vì commit đã theo *conventional commits*, có thể sinh CHANGELOG tự động sau (`standard-version`/`changesets`),
+**CHANGELOG.md** (đã kèm, theo chuẩn _Keep a Changelog_): ghi lại thay đổi theo phiên bản cho con người đọc.
+Vì commit đã theo _conventional commits_, có thể sinh CHANGELOG tự động sau (`standard-version`/`changesets`),
 nhưng bản viết tay vẫn giá trị cho mục "Unreleased".
 
 **Nhịp nhìn lại (với người làm một mình):** cuối mỗi đợt/sprint, cập nhật `PROGRESS.md` và tự hỏi 3 câu:
