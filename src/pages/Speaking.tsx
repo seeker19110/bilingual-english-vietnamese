@@ -200,7 +200,7 @@ function SpeakBubble({
               <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
                 ✅
               </span>
-              <span className="text-amber-200">{msg.feedbackVi}</span>
+              <span className="text-amber-200 theme-light:text-amber-800">{msg.feedbackVi}</span>
             </div>
             {msg.correctedEn && (
               <p className="text-accent-400 theme-light:text-accent-800 mt-1.5 pl-4">
