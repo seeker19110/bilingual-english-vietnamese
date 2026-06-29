@@ -9,9 +9,9 @@ import { mockLogin } from './helpers/auth'
 //   - KHÔNG cho phép bất kỳ vi phạm mức 'critical'.
 //   - 'serious' chỉ chấp nhận các nợ đã biết (KNOWN_SERIOUS); vi phạm serious MỚI
 //     (ngoài baseline) sẽ làm fail → chống tụt lùi. Nợ baseline ghi ở PROGRESS.md.
-// Hiện baseline RỖNG: nợ 'color-contrast' trên các trang được quét (/login, /) đã
-// được fix (nhãn nhỏ ở Home dùng zinc-400 / accent-400 đặc thay vì zinc-500/600 và
-// accent-400/60). Trang chưa quét có thể còn — xem PROGRESS.md.
+// Hiện baseline RỖNG: nợ 'color-contrast' trên TẤT CẢ trang được quét dưới đây đã
+// được fix (caption nhỏ chuyển từ zinc-500/600 + accent-400/60 sang zinc-400 /
+// accent-400 đặc — đạt AA ở mọi theme). Xem PROGRESS.md.
 const KNOWN_SERIOUS = new Set<string>([])
 
 async function scan(page: Page) {
@@ -43,3 +43,17 @@ test('a11y: trang chủ (đã đăng nhập) — 0 critical, không có serious 
   expect(critical).toEqual([])
   expect(unexpectedSerious).toEqual([])
 })
+
+// Các trang chính sau đăng nhập (Dashboard + những trang nhúng QuickActions).
+// Đã fix caption zinc-500/600 → zinc-400 nên không còn vi phạm color-contrast.
+const AUTHED_ROUTES = ['/progress', '/dictionary', '/lessons', '/history', '/phrases']
+for (const route of AUTHED_ROUTES) {
+  test(`a11y: ${route} (đã đăng nhập) — 0 critical, không có serious mới`, async ({ page }) => {
+    await mockLogin(page, 'vi')
+    await page.goto(route, { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(1000) // chờ render xong (data offline + animation)
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+}

@@ -26,21 +26,25 @@
 - **Bundle-size budget (`size-limit`)**: gác kích thước JS/CSS ban đầu (brotli) = "không
   tệ hơn hiện tại" — Initial JS ≤ 116 kB, CSS ≤ 9 kB; script `size` + bước CI trong job
   `quality`. (Đổi từ Lighthouse — xem "Quyết định quan trọng".) Đã merge: **PR #133**.
-- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage) + **PR #133** (size-limit).
+- **a11y `color-contrast` (Home)**: 3 nhãn nhỏ ở Home đạt AA + gỡ baseline khỏi
+  `e2e/a11y.spec.ts`. Đã merge: **PR #134**.
+- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage) + **PR #133** (size-limit) + **PR #134** (a11y Home).
 
 ## Đang làm
 
-- **Fix a11y `color-contrast`** (trang được quét) — đang ở PR (chưa merge). 3 nhãn nhỏ
-  11px ở Home (Ngôn ngữ / streak-days / Giọng đọc) đổi từ `zinc-500/600` + `accent-400/60`
-  sang `zinc-400` / `accent-400` đặc → đạt AA mọi theme (axe: /login + / = 0 vi phạm
-  color-contrast). Gỡ baseline `color-contrast` khỏi `e2e/a11y.spec.ts`.
+- **Mở rộng quét a11y + dọn hết caption color-contrast** — đang ở PR (chưa merge).
+  Dò axe ra 27 vi phạm ở Dashboard + 1 caption của QuickActions (nhúng ở mọi trang);
+  đổi `text-zinc-500/600` → `text-zinc-400` ở `Dashboard.tsx` + `QuickActions.tsx`
+  (chỉ chữ/icon, không động viền/nền). Thêm 5 route đã-đăng-nhập vào gate a11y
+  (/progress, /dictionary, /lessons, /history, /phrases). axe: cả 9 route đã probe = 0
+  vi phạm color-contrast.
 
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
-- (Tùy chọn) Quét a11y thêm trang (Dashboard, Dictionary…) rồi fix nốt caption
-  `zinc-500/600` còn lại ở các trang chưa quét — xem Nợ kỹ thuật. ← đề xuất làm tiếp
+- (Tùy chọn) Đưa nốt /chat, /writing, /speaking, /learning-path vào gate a11y
+  (đã probe = 0 vi phạm color-contrast, chỉ chưa thêm vào spec).
 - (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
 
 ## Quyết định quan trọng (trỏ tới ADR nếu có)
@@ -58,10 +62,10 @@
 
 ## Nợ kỹ thuật (chỗ "làm tạm" cần quay lại)
 
-- **a11y `color-contrast`**: ĐÃ fix trên các trang được e2e quét (`/login`, `/`) — baseline
-  đã gỡ khỏi `e2e/a11y.spec.ts` (PR a11y này). **Còn lại**: nhiều caption nhỏ dùng
-  `text-zinc-500`/`text-zinc-600` ở các trang CHƯA quét (Dashboard, Dictionary, QuickActions,
-  Lessons, History) vẫn dưới AA ở nền tối — fix khi đưa các trang đó vào diện quét a11y.
+- **a11y `color-contrast`**: ĐÃ dọn — caption `zinc-500/600` ở Home + Dashboard +
+  QuickActions (dùng chung) đổi sang `zinc-400`. Gate a11y nay quét /login, /, /progress,
+  /dictionary, /lessons, /history, /phrases (đều 0 vi phạm). Lưu ý: axe chỉ quét phần
+  HIỂN THỊ lúc tải — caption ẩn dưới fold / khối thu gọn chưa chắc được kiểm.
 - E2E (`e2e/`) chưa nằm trong `npm run typecheck` (không thuộc tsconfig nào) —
   Playwright tự transpile khi chạy. Thêm `tsconfig.e2e.json` nếu muốn type-check.
 - Trang Login dùng text tiếng Việt hard-code (chưa qua i18n) — chưa song ngữ.

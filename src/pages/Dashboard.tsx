@@ -83,7 +83,7 @@ function StatCard({
       <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${color}`}>{icon}</div>
       <p className="text-2xl font-bold text-white leading-none mt-1">{value}</p>
       <p className="text-xs text-zinc-400 leading-tight">{label}</p>
-      {sub && <p className="text-[11px] text-zinc-500 leading-tight">{sub}</p>}
+      {sub && <p className="text-[11px] text-zinc-400 leading-tight">{sub}</p>}
     </div>
   )
 }
@@ -187,7 +187,7 @@ export default function Dashboard() {
                 className={`w-12 h-12 rounded-2xl flex items-center justify-center ${stats.streak > 0 ? 'bg-orange-500/15' : 'bg-zinc-800'}`}
               >
                 <Flame
-                  className={`w-6 h-6 ${stats.streak > 0 ? 'text-orange-400' : 'text-zinc-500'}`}
+                  className={`w-6 h-6 ${stats.streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
                 />
               </div>
               <div>
@@ -214,7 +214,7 @@ export default function Dashboard() {
                     title={`${d.count} ${vi ? 'hoạt động' : 'activities'}`}
                   />
                 </div>
-                <span className="text-[11px] text-zinc-500">{dow[d.dow]}</span>
+                <span className="text-[11px] text-zinc-400">{dow[d.dow]}</span>
               </div>
             ))}
           </div>
@@ -227,7 +227,7 @@ export default function Dashboard() {
               <CalendarDays className="w-4 h-4 text-accent-400" />{' '}
               {vi ? 'Lịch hoạt động' : 'Activity calendar'}
             </h2>
-            <span className="text-xs text-zinc-500">
+            <span className="text-xs text-zinc-400">
               {stats.calendar.activeDays} {vi ? 'ngày / 5 tuần' : 'days / 5 weeks'}
             </span>
           </div>
@@ -235,7 +235,7 @@ export default function Dashboard() {
           {/* Nhãn thứ */}
           <div className="grid grid-cols-7 gap-1.5 mb-1.5">
             {WDOW.map((w, i) => (
-              <span key={i} className="text-[11px] text-zinc-600 text-center">
+              <span key={i} className="text-[11px] text-zinc-400 text-center">
                 {w}
               </span>
             ))}
@@ -254,7 +254,7 @@ export default function Dashboard() {
           </div>
 
           {/* Chú thích đậm nhạt */}
-          <div className="flex items-center justify-end gap-1.5 mt-3 text-[11px] text-zinc-500">
+          <div className="flex items-center justify-end gap-1.5 mt-3 text-[11px] text-zinc-400">
             <span>{vi ? 'Ít' : 'Less'}</span>
             <span className="w-3 h-3 rounded-[3px] bg-zinc-800/50" />
             <span className="w-3 h-3 rounded-[3px] bg-accent-900" />
@@ -313,9 +313,9 @@ export default function Dashboard() {
                 <div className="flex justify-center mb-1.5">{m.icon}</div>
                 <p className="text-base font-bold text-white leading-none">
                   {m.used}
-                  <span className="text-zinc-600 text-xs">/{m.max}</span>
+                  <span className="text-zinc-400 text-xs">/{m.max}</span>
                 </p>
-                <p className="text-[11px] text-zinc-500 mt-1">{m.label}</p>
+                <p className="text-[11px] text-zinc-400 mt-1">{m.label}</p>
               </div>
             ))}
           </div>
@@ -362,14 +362,14 @@ export default function Dashboard() {
               {vi ? 'Lộ trình CEFR' : 'CEFR Roadmap'}
             </h2>
             {cefr.length > 0 && (
-              <span className="text-xs text-zinc-500">
+              <span className="text-xs text-zinc-400">
                 {vi ? 'Tổng' : 'Overall'} {cefrOverall}%
               </span>
             )}
           </div>
           <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 space-y-4">
             {cefr.length === 0 ? (
-              <p className="text-sm text-zinc-500 text-center py-2">
+              <p className="text-sm text-zinc-400 text-center py-2">
                 {vi ? 'Đang tải…' : 'Loading…'}
               </p>
             ) : (
@@ -420,24 +420,24 @@ export default function Dashboard() {
                   <p className={`text-2xl font-bold leading-none ${bandText(wp.latest!)}`}>
                     {wp.latest}
                   </p>
-                  <p className="text-[11px] text-zinc-500 mt-1">{vi ? 'gần nhất' : 'latest'}</p>
+                  <p className="text-[11px] text-zinc-400 mt-1">{vi ? 'gần nhất' : 'latest'}</p>
                 </div>
                 <div className="text-center border-x border-zinc-800">
                   <p className="text-2xl font-bold leading-none text-amber-300 flex items-center justify-center gap-1">
                     <Trophy className="w-4 h-4" />
                     {wp.best}
                   </p>
-                  <p className="text-[11px] text-zinc-500 mt-1">{vi ? 'cao nhất' : 'best'}</p>
+                  <p className="text-[11px] text-zinc-400 mt-1">{vi ? 'cao nhất' : 'best'}</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold leading-none text-zinc-200">{wp.avg}</p>
-                  <p className="text-[11px] text-zinc-500 mt-1">{vi ? 'trung bình' : 'average'}</p>
+                  <p className="text-[11px] text-zinc-400 mt-1">{vi ? 'trung bình' : 'average'}</p>
                 </div>
               </div>
 
               {/* Biểu đồ cột band qua các bài (tối đa 12 bài gần nhất), thang 0–9 */}
               <div>
-                <p className="text-[11px] text-zinc-500 mb-2">
+                <p className="text-[11px] text-zinc-400 mb-2">
                   {vi ? `${wp.count} bài đã chấm` : `${wp.count} essays graded`}
                 </p>
                 <div className="flex items-end justify-between gap-1.5 h-24">
@@ -447,7 +447,7 @@ export default function Dashboard() {
                       className="flex-1 flex flex-col items-center gap-1"
                       title={`${p.date}: ${p.overall}`}
                     >
-                      <span className="text-[11px] text-zinc-500">{p.overall}</span>
+                      <span className="text-[11px] text-zinc-400">{p.overall}</span>
                       <div className="w-full flex-1 flex items-end">
                         <div
                           className={`w-full rounded-md ${bandBar(p.overall)} transition-all`}
