@@ -159,7 +159,7 @@ export default function QuickActions() {
       </div>
 
       {/* Giải thích "Nhắc học" đang nhắc cái gì */}
-      <p className="text-[11px] text-zinc-500 text-center mt-2.5 max-w-md mx-auto">
+      <p className="text-[11px] text-zinc-400 text-center mt-2.5 max-w-md mx-auto">
         🔔{' '}
         {pushOn
           ? isA
