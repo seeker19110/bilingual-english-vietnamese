@@ -31,3 +31,6 @@ src/data/dictionary.backup.json
 
 # File cũ đã xóa khỏi project, giữ tạm trên đĩa do hạn chế của sandbox — không commit
 .trash/
+
+dist_verify_tmp*/
+.trash/
