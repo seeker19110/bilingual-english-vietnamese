@@ -36,6 +36,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Ngân sách hiệu năng: chặn bundle JS/CSS phình to (đo brotli, không tệ hơn
+      # hiện tại). Đo trên dist vừa build ở bước trên. Xem .size-limit.json.
+      - name: Bundle size budget (size-limit)
+        run: npm run size
+
   e2e:
     runs-on: ubuntu-latest
     steps:

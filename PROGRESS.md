@@ -20,27 +20,34 @@
   Sửa `button-name` (nút hiện/ẩn mật khẩu thiếu nhãn) → login hết critical.
 - **CI gate trên mọi PR**: lint · typecheck · test · build · format:check ·
   **E2E (job `e2e` riêng: Playwright + axe)**.
-- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E).
+- **Coverage ratchet (Vitest)**: `@vitest/coverage-v8` + ngưỡng SÀN = "không tệ hơn
+  hiện tại" (stmts/lines 13 · branches 80 · funcs 50; baseline 13.63/87.89/51.03),
+  script `test:coverage`, gate trong CI. Đã merge: **PR #132**.
+- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage gate).
 
 ## Đang làm
 
-- **Coverage ratchet (Vitest)** — đang ở PR (chưa merge). Thêm `@vitest/coverage-v8`,
-  bật coverage v8 trong `vitest.config.ts` (đo `src/lib/**` + `api/**`), đặt ngưỡng
-  SÀN = "không tệ hơn hiện tại" (stmts/lines 13 · branches 80 · funcs 50; baseline đo
-  được: stmts/lines 13.63 · branches 87.89 · funcs 51.03), thêm script `test:coverage`
-  và đưa vào CI (bước "Unit tests + coverage gate"). Chống tụt coverage, nâng dần sau.
+- **Bundle-size budget (`size-limit`)** — đang ở PR (chưa merge). Gác kích thước JS/CSS
+  ban đầu (đo brotli) = "không tệ hơn hiện tại", nâng dần. Config `.size-limit.json`:
+  Initial JS (entry + 4 vendor chunks) ≤ 116 kB (baseline 110.46), Initial CSS ≤ 9 kB
+  (baseline 8.34). Script `size`, thêm bước CI "Bundle size budget" trong job `quality`.
 
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
-- **Lighthouse budget** ("không tệ hơn hiện tại") + đưa vào CI. ← đề xuất làm tiếp (quick win)
-- Fix nợ a11y **`color-contrast`** (điều chỉnh design token theme cho đạt AA) — xem mục Nợ kỹ thuật.
+- Fix nợ a11y **`color-contrast`** (điều chỉnh design token theme cho đạt AA) — xem mục Nợ kỹ thuật. ← đề xuất làm tiếp
 - (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
 
 ## Quyết định quan trọng (trỏ tới ADR nếu có)
 
 - GIỮ NGUYÊN phiên bản: Tailwind 3, ESLint 8 (`.eslintrc.cjs`) — KHÔNG nâng v4/flat config.
+- **Perf budget: chọn `size-limit` thay Lighthouse CI.** Lighthouse 12.6 không đo được
+  app trong môi trường sandbox/CI hiện có (lỗi `NO_FCP` ở mọi cấu hình: full/headless-shell,
+  headless/xvfb, route `/` và `/login`) dù app render bình thường qua Playwright → không lấy
+  được baseline để đặt ngưỡng. `size-limit` gác kích thước bundle (đòn bẩy perf chính của SPA),
+  deterministic, không cần browser, verify được cả local lẫn CI. Cân nhắc lại Lighthouse sau
+  nếu chạy ổn trên runner thật.
 - Zod (validate env/input): **đã đánh giá là giá trị thấp hiện tại** — code đã
   validate input rất kỹ bằng tay (xem `api/ai.ts`) và env lazy/feature-gated;
   ưu tiên E2E/a11y trước. Làm Zod sau nếu cần.
