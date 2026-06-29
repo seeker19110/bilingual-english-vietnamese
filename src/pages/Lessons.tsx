@@ -63,7 +63,8 @@ const COLORS = [
 ]
 
 function getColor(id: number) {
-  return COLORS[(id - 1) % COLORS.length]
+  // COLORS không rỗng; với id≥1 chỉ số luôn hợp lệ, fallback COLORS[0] phòng id lạ
+  return COLORS[(id - 1) % COLORS.length] ?? COLORS[0]!
 }
 
 // ── Trạng thái đồng bộ từng chữ: turn nào đang phát, ngôn ngữ nào, từ thứ mấy
@@ -290,7 +291,7 @@ function LessonList({
     if (!el || visible >= filtered.length) return
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) setVisible((v) => Math.min(v + PAGE_SIZE, filtered.length))
+        if (entries[0]?.isIntersecting) setVisible((v) => Math.min(v + PAGE_SIZE, filtered.length))
       },
       { rootMargin: '300px' },
     )
@@ -455,6 +456,7 @@ function LessonView({
       if (stopRef.current) break
 
       const t = lesson.turns[i]
+      if (!t) continue // i < turns.length nên t luôn có; guard để TS narrow kiểu
       setActiveTurn(i)
       turnRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
@@ -524,6 +526,7 @@ function LessonView({
     await new Promise((r) => setTimeout(r, 80))
 
     const t = lesson.turns[idx]
+    if (!t) return // idx ngoài phạm vi thì không phát gì
     const targetLang = isA ? 'en-US' : 'vi-VN'
     const transLang = isA ? 'vi-VN' : 'en-US'
     const targetText = isA ? t.en : t.vi

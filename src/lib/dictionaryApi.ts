@@ -88,7 +88,7 @@ export async function fetchRandomEntries(n = 30): Promise<DictEntry[]> {
   const out: DictEntry[] = []
   for (let i = 0; i < n && a.length > 0; i++) {
     const j = Math.floor(Math.random() * a.length)
-    out.push(a[j])
+    out.push(a[j]!) // j < a.length nên chắc chắn có
     a.splice(j, 1)
   }
   return out

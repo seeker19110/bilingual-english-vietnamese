@@ -23,13 +23,14 @@ function levenshtein(a: string, b: string): number {
     cur[0] = i
     for (let j = 1; j <= n; j++) {
       const cost = a[i - 1] === b[j - 1] ? 0 : 1
-      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost)
+      // i,j luôn trong [1..m]/[1..n] và prev/cur dài n+1 nên các ô này chắc chắn có
+      cur[j] = Math.min(prev[j]! + 1, cur[j - 1]! + 1, prev[j - 1]! + cost)
     }
     const swap = prev
     prev = cur
     cur = swap
   }
-  return prev[n]
+  return prev[n]!
 }
 
 // Điểm phát âm 0–100 (so từ/câu người đọc với mục tiêu)
@@ -60,7 +61,7 @@ export function scoreWords(target: string, spoken: string): Array<{ word: string
   let si = 0
   return targetWords.map((tw) => {
     if (si >= spokenWords.length) return { word: tw, ok: false }
-    const sw = spokenWords[si]
+    const sw = spokenWords[si]! // đã chặn si >= length ở trên nên chắc chắn có
     // Coi "đúng" khi khoảng cách Levenshtein ≤ 1 (cho phép 1 lỗi ký tự nhỏ)
     const dist = levenshtein(tw, sw)
     const ok = dist <= Math.max(1, Math.floor(tw.length * 0.25))

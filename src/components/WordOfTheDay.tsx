@@ -41,6 +41,8 @@ export default function WordOfTheDay({ entries, isA = true }: Props) {
   const safeIdx = Math.min(idx, entries.length - 1)
   const entry = entries[safeIdx]
   const total = entries.length
+  // safeIdx luôn trong [0, length-1] nên entry luôn có; guard này chỉ để TS narrow kiểu.
+  if (!entry) return null
 
   const go = (delta: number) => setIdx((safeIdx + delta + total) % total)
 

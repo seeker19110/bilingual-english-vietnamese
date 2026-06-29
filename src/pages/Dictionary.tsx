@@ -367,13 +367,16 @@ export default function Dictionary() {
                     <div
                       className="space-y-2 animate-fade-up"
                       onTouchStart={(e) => {
-                        touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+                        touchStart.current = {
+                          x: e.touches[0]?.clientX ?? 0,
+                          y: e.touches[0]?.clientY ?? 0,
+                        }
                       }}
                       onTouchEnd={(e) =>
                         handleSwipe(
                           touchStart.current.x,
-                          e.changedTouches[0].clientX - touchStart.current.x,
-                          e.changedTouches[0].clientY - touchStart.current.y,
+                          (e.changedTouches[0]?.clientX ?? 0) - touchStart.current.x,
+                          (e.changedTouches[0]?.clientY ?? 0) - touchStart.current.y,
                         )
                       }
                     >

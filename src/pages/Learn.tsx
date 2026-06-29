@@ -321,7 +321,7 @@ function BatchDoneView({
     }
     let alive = true
     getDialogues(topId).then((ds) => {
-      if (alive) setDialogue(ds.length ? ds[ds.length - 1] : null)
+      if (alive) setDialogue(ds[ds.length - 1] ?? null)
     })
     return () => {
       alive = false
@@ -522,7 +522,9 @@ function TodayLesson({
   }
 
   function quizNext() {
-    const ok = quizSel === quizQs[quizIdx].correct
+    const q = quizQs[quizIdx]
+    if (!q) return
+    const ok = quizSel === q.correct
     const newAns = [...quizAns, ok]
     setQuizAns(newAns)
     if (quizIdx + 1 >= quizQs.length) {
@@ -647,6 +649,7 @@ function TodayLesson({
       )
     }
 
+    if (!q) return null // quizIdx luôn hợp lệ ở nhánh này; guard để TS narrow kiểu
     return (
       <div className="animate-fade-in space-y-4">
         <div className="flex items-center justify-between text-xs text-zinc-400 mb-1">
@@ -710,6 +713,7 @@ function TodayLesson({
   }
 
   // ── Đang học ──────────────────────────────────────────────────────────
+  if (!card) return null // idx luôn trong batch ở phase này; guard để TS narrow kiểu
   return (
     <div className="animate-fade-in">
       {/* Tên chủ đề + tiến độ vòng */}
@@ -915,6 +919,7 @@ function HardWords({ uid, isA, onUpdate }: { uid: string; isA: boolean; onUpdate
   }
 
   const card = hardWords[idx % hardWords.length]
+  if (!card) return null // hardWords không rỗng ở nhánh này; guard để TS narrow kiểu
 
   return (
     <div className="animate-fade-in">
@@ -967,6 +972,7 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
   }
 
   const q = questions[current]
+  if (!q) return null // current luôn hợp lệ ở nhánh này; guard để TS narrow kiểu
   const score = answers.filter(Boolean).length
   const pct = Math.round((score / QUIZ_SIZE) * 100)
 
@@ -975,6 +981,7 @@ function QuizTab({ uid, isA }: { uid: string; isA: boolean }) {
   }
 
   function next() {
+    if (!q) return
     const ok = selected === q.correct
     const newAnswers = [...answers, ok]
     setAnswers(newAnswers)

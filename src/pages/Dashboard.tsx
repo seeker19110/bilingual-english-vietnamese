@@ -247,7 +247,7 @@ export default function Dashboard() {
               <div
                 key={d.date}
                 style={idx === 0 ? { gridColumnStart: stats.calendar.firstColumn + 1 } : undefined}
-                className={`aspect-square rounded-[4px] ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1].date ? 'ring-1 ring-accent-400/70' : ''}`}
+                className={`aspect-square rounded-[4px] ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
                 title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
               />
             ))}

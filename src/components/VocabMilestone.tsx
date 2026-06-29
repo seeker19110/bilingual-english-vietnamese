@@ -15,7 +15,7 @@ const MILESTONES = [
   { count: 5000, label: 'Thành thạo', cefr: 'B2–C1', desc: 'Đọc báo khá thoải mái (~98%)' },
   { count: 8000, label: 'Đọc tự do', cefr: 'C1+', desc: 'Đọc tiểu thuyết không cần tra' },
 ]
-const GOAL = MILESTONES[MILESTONES.length - 1].count // mốc cuối = 8000
+const GOAL = MILESTONES[MILESTONES.length - 1]!.count // mốc cuối = 8000 (mảng literal luôn có phần tử)
 
 // Thanh tiến độ hiển thị số từ đã thuộc so với các mốc 1k/3k/5k/8k.
 export default function VocabMilestone({ userId, refreshKey }: Props) {

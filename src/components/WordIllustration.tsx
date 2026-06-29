@@ -467,10 +467,12 @@ const ILL: Record<string, IllFn> = {
     <>
       <rect x="20" y="40" width="50" height="40" rx="8" fill="#78350f" />
       <path d="M70 50 Q81 45 79 57 Q77 63 70 61" stroke="#92400e" strokeWidth="3" fill="none" />
-      {[
-        [35, 38],
-        [45, 35],
-      ].map(([x, y], i) => (
+      {(
+        [
+          [35, 38],
+          [45, 35],
+        ] as [number, number][]
+      ).map(([x, y], i) => (
         <path
           key={i}
           d={`M${x} ${y} Q${x - 2} ${y - 10} ${x + 3} ${y - 18}`}

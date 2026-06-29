@@ -147,6 +147,7 @@ export default function RoadmapTab({
     const idx = cefrLevels.findIndex((x) => x.id === l.id)
     if (idx <= 0) return false
     const prev = cefrLevels[idx - 1]
+    if (!prev) return false // idx>0 nên prev luôn có; guard để TS narrow kiểu
     const total = countLevelWords(prev)
     if (total === 0) return false
     const done = countLevelLearned(prev, learned)
@@ -604,7 +605,7 @@ function VocabFlash({
         <span>{isA ? circle.titleVi : circle.titleEn}</span>
       </div>
 
-      {done ? (
+      {done || !card ? (
         <div className="glass rounded-xl p-8 text-center space-y-3">
           <Check className="w-10 h-10 text-accent-400 mx-auto" />
           <p className="text-white font-semibold">{isA ? 'Xong bộ từ này!' : 'Set complete!'}</p>
@@ -771,6 +772,7 @@ function DialogueView({
       if (stopRef.current) break
 
       const ln = dialogue.lines[i]
+      if (!ln) continue // i < lines.length nên ln luôn có; guard để TS narrow kiểu
       setActiveLine(i)
 
       const curMode = modeRef.current

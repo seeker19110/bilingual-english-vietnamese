@@ -378,11 +378,12 @@ function speakViaWebSpeech(
         if (e.name !== 'word') return
         let cumLen = 0
         for (let i = 0; i < words.length; i++) {
-          if (e.charIndex <= cumLen + words[i].length) {
+          const w = words[i]! // i < words.length nên chắc chắn có
+          if (e.charIndex <= cumLen + w.length) {
             onWord(i)
             return
           }
-          cumLen += words[i].length + 1 // +1 cho dấu cách
+          cumLen += w.length + 1 // +1 cho dấu cách
         }
       }
     }

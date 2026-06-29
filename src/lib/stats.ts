@@ -74,7 +74,7 @@ export function getActivityCalendar(uid: string, totalDays = 35): ActivityCalend
     days.push({ date: dayStr(d), dow: d.getDay(), count, active: count > 0 })
   }
   // Đổi getDay() (0 = CN) sang chỉ số cột bắt đầu từ Thứ 2 (0 = T2 … 6 = CN).
-  const firstColumn = (days[0].dow + 6) % 7
+  const firstColumn = ((days[0]?.dow ?? 0) + 6) % 7
   return {
     days,
     firstColumn,
@@ -132,7 +132,7 @@ export function getWritingProgress(uid: string): WritingProgress {
   return {
     history: asc.map((r) => ({ date: dayStr(new Date(r.t)), overall: r.sc.overall })),
     count: rows.length,
-    latest: overalls[overalls.length - 1],
+    latest: overalls[overalls.length - 1] ?? null,
     best: Math.max(...overalls),
     avg: round1(mean(overalls)),
     components: {

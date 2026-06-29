@@ -87,7 +87,8 @@ const COLOR_MAP: Record<string, { bg: string; text: string; border: string; badg
 }
 
 function getColor(color: string) {
-  return COLOR_MAP[color] ?? COLOR_MAP['slate']
+  // 'slate' luôn có trong COLOR_MAP nên fallback chắc chắn khác undefined
+  return COLOR_MAP[color] ?? COLOR_MAP['slate']!
 }
 
 // Bản đồ từ khóa tiếng Anh → gợi ý tiếng Việt để tìm kiếm 2 chiều
@@ -163,11 +164,13 @@ function interleave(items: SubjectMeta[]): SubjectMeta[] {
   const groups: Record<string, SubjectMeta[]> = {}
   const order: string[] = []
   items.forEach((s) => {
-    if (!groups[s.category]) {
-      groups[s.category] = []
+    const g = groups[s.category]
+    if (!g) {
+      groups[s.category] = [s]
       order.push(s.category)
+    } else {
+      g.push(s)
     }
-    groups[s.category].push(s)
   })
   const result: SubjectMeta[] = []
   const cursor: Record<string, number> = {}
@@ -176,9 +179,10 @@ function interleave(items: SubjectMeta[]): SubjectMeta[] {
     placed = false
     for (const cat of order) {
       const grp = groups[cat]
+      if (!grp) continue
       const idx = cursor[cat] ?? 0
       if (idx < grp.length) {
-        result.push(grp[idx])
+        result.push(grp[idx]!) // idx < grp.length nên chắc chắn có
         cursor[cat] = idx + 1
         placed = true
       }
@@ -230,7 +234,7 @@ export default function CommonPhrases() {
     if (!el || visible >= sorted.length) return
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
+        if (entries[0]?.isIntersecting) {
           setVisible((v) => Math.min(v + PAGE_SIZE, sorted.length))
         }
       },
