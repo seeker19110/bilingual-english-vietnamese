@@ -27,7 +27,11 @@ const SAMPLE_PROMPTS_B = [
 ]
 
 interface Scores {
-  task_response: number; coherence: number; lexical: number; grammar: number; overall: number
+  task_response: number
+  coherence: number
+  lexical: number
+  grammar: number
+  overall: number
 }
 interface FeedbackData {
   scores: Scores
@@ -45,24 +49,39 @@ function ScoreBar({ label, score }: { label: string; score: number }) {
     <div className="flex items-center gap-3">
       <span className="text-xs text-zinc-400 w-36 shrink-0">{label}</span>
       <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-        <div className={`h-full ${color} rounded-full transition-all duration-700`} style={{ width: `${pct}%` }} />
+        <div
+          className={`h-full ${color} rounded-full transition-all duration-700`}
+          style={{ width: `${pct}%` }}
+        />
       </div>
       <span className={`text-sm font-bold w-6 text-right ${textColor}`}>{score}</span>
     </div>
   )
 }
 
-function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onReset: () => void; dir: Direction }) {
+function ResultView({
+  feedback,
+  onReset,
+  dir,
+}: {
+  feedback: FeedbackData
+  onReset: () => void
+  dir: Direction
+}) {
   const [showSample, setShowSample] = useState(false)
   const isA = dir === 'A'
   const overall = feedback.scores.overall
-  const scoreGradient = overall >= 7 ? 'from-accent-400 to-accent-300' : overall >= 5 ? 'from-amber-400 to-yellow-300' : 'from-red-400 to-orange-300'
+  const scoreGradient =
+    overall >= 7
+      ? 'from-accent-400 to-accent-300'
+      : overall >= 5
+        ? 'from-amber-400 to-yellow-300'
+        : 'from-red-400 to-orange-300'
 
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout title={isA ? 'Kết quả chấm bài' : 'Writing Results'} />
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-4 animate-fade-up">
-
         <div className="glass rounded-2xl p-6 text-center">
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-violet-500/25">
             <Trophy className="w-6 h-6 text-white" />
@@ -70,7 +89,9 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
           <p className="text-sm text-zinc-400 mb-1">
             {isA ? 'Điểm ước lượng IELTS' : 'Estimated score'}
           </p>
-          <div className={`text-7xl font-black bg-gradient-to-b ${scoreGradient} bg-clip-text text-transparent leading-none py-2`}>
+          <div
+            className={`text-7xl font-black bg-gradient-to-b ${scoreGradient} bg-clip-text text-transparent leading-none py-2`}
+          >
             {overall}
           </div>
           <p className="text-sm text-zinc-400 mt-3 max-w-xs mx-auto">{feedback.encouragement}</p>
@@ -90,7 +111,9 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
           <div className="glass rounded-2xl p-5 animate-fade-in delay-150">
             <p className="text-sm font-semibold text-zinc-200 mb-4">
               {isA ? 'Lỗi cần sửa' : 'Errors to fix'}
-              <span className="ml-2 text-xs font-normal text-zinc-400">({feedback.errors.length})</span>
+              <span className="ml-2 text-xs font-normal text-zinc-400">
+                ({feedback.errors.length})
+              </span>
             </p>
             <div className="space-y-3">
               {feedback.errors.map((err, i) => (
@@ -117,19 +140,26 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
           <ul className="space-y-2">
             {feedback.suggestions.map((s, i) => (
               <li key={i} className="flex gap-2 text-sm text-zinc-400">
-                <span className="text-accent-500 shrink-0 font-bold">·</span>{s}
+                <span className="text-accent-500 shrink-0 font-bold">·</span>
+                {s}
               </li>
             ))}
           </ul>
         </div>
 
         <div className="glass rounded-2xl p-5 animate-fade-in delay-250">
-          <button onClick={() => setShowSample(p => !p)} className="flex items-center justify-between w-full"
-            aria-expanded={showSample} aria-label={isA ? 'Hiện/ẩn đoạn văn mẫu' : 'Toggle sample paragraph'}>
+          <button
+            onClick={() => setShowSample((p) => !p)}
+            className="flex items-center justify-between w-full"
+            aria-expanded={showSample}
+            aria-label={isA ? 'Hiện/ẩn đoạn văn mẫu' : 'Toggle sample paragraph'}
+          >
             <p className="text-sm font-semibold text-zinc-200">
               {isA ? 'Đoạn văn mẫu' : 'Sample paragraph'}
             </p>
-            <ChevronDown className={`w-4 h-4 text-zinc-400 transition ${showSample ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              className={`w-4 h-4 text-zinc-400 transition ${showSample ? 'rotate-180' : ''}`}
+            />
           </button>
           {showSample && (
             <p className="mt-3 text-sm text-zinc-300 leading-relaxed bg-zinc-800/40 rounded-xl p-4">
@@ -138,9 +168,11 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
           )}
         </div>
 
-        <button onClick={onReset}
+        <button
+          onClick={onReset}
           aria-label={isA ? 'Bài viết mới' : 'New essay'}
-          className="w-full flex items-center justify-center gap-2 border border-zinc-800/80 hover:border-zinc-700 text-zinc-400 hover:text-white rounded-xl py-3 text-sm transition hover:bg-zinc-800/40 active:scale-[0.99]">
+          className="w-full flex items-center justify-center gap-2 border border-zinc-800/80 hover:border-zinc-700 text-zinc-400 hover:text-white rounded-xl py-3 text-sm transition hover:bg-zinc-800/40 active:scale-[0.99]"
+        >
           <RotateCcw className="w-4 h-4" />
           {isA ? 'Bài viết mới' : 'New essay'}
         </button>
@@ -150,9 +182,9 @@ function ResultView({ feedback, onReset, dir }: { feedback: FeedbackData; onRese
 }
 
 export default function Writing() {
-  const user = useAuth().user!   // RequireAuth đã đảm bảo có user trước khi vào trang
+  const user = useAuth().user! // RequireAuth đã đảm bảo có user trước khi vào trang
   const toast = useToast()
-  useCloudSync(user.id)          // kéo lượt dùng từ Supabase khi mở trang
+  useCloudSync(user.id) // kéo lượt dùng từ Supabase khi mở trang
   const dir: Direction = getDirection()
   const isA = dir === 'A'
   const samplePrompts = isA ? SAMPLE_PROMPTS_A : SAMPLE_PROMPTS_B
@@ -171,27 +203,46 @@ export default function Writing() {
   })
 
   const wordCount = essay.trim().split(/\s+/).filter(Boolean).length
-  const wordColor = wordCount < 150 ? 'text-red-400' : wordCount < 250 ? 'text-amber-400' : 'text-accent-400'
+  const wordColor =
+    wordCount < 150 ? 'text-red-400' : wordCount < 250 ? 'text-amber-400' : 'text-accent-400'
   const wordHint = isA
-    ? (wordCount < 150 ? '(tối thiểu 150)' : wordCount < 250 ? '(IELTS Task 2: 250+)' : '✓')
-    : (wordCount < 100 ? '(min. 100 words)' : '✓')
+    ? wordCount < 150
+      ? '(tối thiểu 150)'
+      : wordCount < 250
+        ? '(IELTS Task 2: 250+)'
+        : '✓'
+    : wordCount < 100
+      ? '(min. 100 words)'
+      : '✓'
 
   async function submit() {
     if (!essay.trim() || !essayPrompt.trim()) return
     // Chặn bài quá ngắn — tránh tốn lượt/API cho bài không thực chất.
     if (wordCount < 20) {
-      const m = isA ? 'Bài viết quá ngắn — viết ít nhất 20 từ để AI chấm chính xác.'
-                    : 'Essay too short — write at least 20 words for accurate grading.'
-      setError(m); toast.error(m); return
+      const m = isA
+        ? 'Bài viết quá ngắn — viết ít nhất 20 từ để AI chấm chính xác.'
+        : 'Essay too short — write at least 20 words for accurate grading.'
+      setError(m)
+      toast.error(m)
+      return
     }
-    if (isThrottled) { toast.error(isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`); return }
+    if (isThrottled) {
+      toast.error(
+        isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`,
+      )
+      return
+    }
     if (essay.length > 10000) {
-      setError(isA ? 'Bài viết quá dài (tối đa 10.000 ký tự).' : 'Essay too long (max 10,000 characters).')
+      setError(
+        isA ? 'Bài viết quá dài (tối đa 10.000 ký tự).' : 'Essay too long (max 10,000 characters).',
+      )
       return
     }
     const usage = getUsage(user.id)
     if (usage.writingCount >= LIMITS[user.plan].writing) {
-      setError(isA ? 'Bạn đã dùng hết lượt chấm bài hôm nay.' : "You've used all grading sessions today.")
+      setError(
+        isA ? 'Bạn đã dùng hết lượt chấm bài hôm nay.' : "You've used all grading sessions today.",
+      )
       return
     }
     setLoading(true)
@@ -203,16 +254,26 @@ export default function Writing() {
     try {
       const raw = await callClaude([{ role: 'user', content: userMsg }], sys, 2048, 'writing')
       const data = parseJson<FeedbackData>(raw)
-      if (!data) throw new Error(isA ? 'AI trả về định dạng không đúng. Thử lại.' : 'AI returned invalid format. Please try again.')
+      if (!data)
+        throw new Error(
+          isA
+            ? 'AI trả về định dạng không đúng. Thử lại.'
+            : 'AI returned invalid format. Please try again.',
+        )
       const sub: WritingSubmission = {
-        id: crypto.randomUUID(), userId: user.id, essayPrompt, essay, feedback: raw, submittedAt: Date.now(),
+        id: crypto.randomUUID(),
+        userId: user.id,
+        essayPrompt,
+        essay,
+        feedback: raw,
+        submittedAt: Date.now(),
       }
       saveWritingSub(sub)
       setResult(sub)
       incrementUsage(user.id, 'writingCount')
-      throttle()  // Rate limit 10s sau lần gọi thành công
+      throttle() // Rate limit 10s sau lần gọi thành công
     } catch (e) {
-      const m = e instanceof Error ? e.message : (isA ? 'Lỗi không xác định' : 'Unknown error')
+      const m = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
       setError(m)
       toast.error(m)
     }
@@ -221,18 +282,31 @@ export default function Writing() {
 
   const feedback = result?.feedback ? parseJson<FeedbackData>(result.feedback) : null
   if (result && feedback) {
-    return <ResultView feedback={feedback} onReset={() => { setResult(null); setEssay(''); setEssayPrompt('') }} dir={dir} />
+    return (
+      <ResultView
+        feedback={feedback}
+        onReset={() => {
+          setResult(null)
+          setEssay('')
+          setEssayPrompt('')
+        }}
+        dir={dir}
+      />
+    )
   }
 
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-4 animate-fade-up">
-
         {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
         <PageHeader
           title={isA ? 'Luyện viết & chấm điểm' : 'Writing Practice & Grading'}
-          subtitle={isA ? 'AI chấm theo tiêu chí IELTS Writing Task 2' : 'AI grades by IELTS Writing Task 2 criteria'}
+          subtitle={
+            isA
+              ? 'AI chấm theo tiêu chí IELTS Writing Task 2'
+              : 'AI grades by IELTS Writing Task 2 criteria'
+          }
         />
 
         <div className="space-y-2">
@@ -240,19 +314,39 @@ export default function Writing() {
             {isA ? 'Đề bài' : 'Essay prompt'}
           </label>
           <div className="relative">
-            <select id="essay-prompt-select" name="prompt" value={essayPrompt} onChange={e => e.target.value && setEssayPrompt(e.target.value)}
-              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-400 appearance-none outline-none focus:border-violet-500/70 transition mb-2">
+            <select
+              id="essay-prompt-select"
+              name="prompt"
+              value={essayPrompt}
+              onChange={(e) => e.target.value && setEssayPrompt(e.target.value)}
+              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-400 appearance-none outline-none focus:border-violet-500/70 transition mb-2"
+            >
               <option value="">
-                {isA ? '— Chọn đề mẫu hoặc tự nhập —' : '— Choose a sample prompt or type your own —'}
+                {isA
+                  ? '— Chọn đề mẫu hoặc tự nhập —'
+                  : '— Choose a sample prompt or type your own —'}
               </option>
-              {samplePrompts.map((p, i) => <option key={i} value={p}>{p.slice(0, 60)}…</option>)}
+              {samplePrompts.map((p, i) => (
+                <option key={i} value={p}>
+                  {p.slice(0, 60)}…
+                </option>
+              ))}
             </select>
             <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-zinc-400 pointer-events-none" />
           </div>
-          <textarea id="prompt-input" name="essayPrompt" value={essayPrompt} onChange={e => setEssayPrompt(e.target.value)}
-            placeholder={isA ? 'Hoặc dán đề bài IELTS vào đây...' : 'Or paste a Vietnamese writing prompt here...'}
+          <textarea
+            id="prompt-input"
+            name="essayPrompt"
+            value={essayPrompt}
+            onChange={(e) => setEssayPrompt(e.target.value)}
+            placeholder={
+              isA
+                ? 'Hoặc dán đề bài IELTS vào đây...'
+                : 'Or paste a Vietnamese writing prompt here...'
+            }
             rows={3}
-            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-violet-500/70 transition resize-none" />
+            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-violet-500/70 transition resize-none"
+          />
         </div>
 
         <div className="space-y-2">
@@ -264,13 +358,18 @@ export default function Writing() {
               {wordCount} {isA ? 'từ' : 'words'} {wordHint}
             </span>
           </div>
-          <textarea id="essay-input" name="essay" value={essay} onChange={e => setEssay(e.target.value)}
+          <textarea
+            id="essay-input"
+            name="essay"
+            value={essay}
+            onChange={(e) => setEssay(e.target.value)}
             placeholder={
               isA
                 ? 'Viết bài vào đây... (IELTS Task 2 thường 250–350 từ)'
                 : 'Write your Vietnamese essay here... (aim for 150–250 words)'
             }
-            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-violet-500/70 transition resize-none min-h-[160px] max-h-[40dvh] sm:max-h-[50vh]" />
+            className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-violet-500/70 transition resize-none min-h-[160px] max-h-[40dvh] sm:max-h-[50vh]"
+          />
         </div>
 
         {error && (
@@ -279,20 +378,28 @@ export default function Writing() {
           </div>
         )}
 
-        <button onClick={submit} disabled={loading || !essay.trim() || !essayPrompt.trim() || isThrottled}
+        <button
+          onClick={submit}
+          disabled={loading || !essay.trim() || !essayPrompt.trim() || isThrottled}
           aria-label={isA ? 'Chấm bài ngay' : 'Grade my essay'}
-          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-purple-500 hover:from-violet-500 hover:to-purple-400 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] shadow-lg shadow-violet-500/20 relative">
+          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-purple-500 hover:from-violet-500 hover:to-purple-400 disabled:opacity-40 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] shadow-lg shadow-violet-500/20 relative"
+        >
           {isThrottled && throttleCountdown > 0 ? (
             <>
               <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               {isA ? `Chờ ${throttleCountdown}s...` : `Wait ${throttleCountdown}s...`}
             </>
           ) : loading ? (
-            <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                {isA ? 'Đang chấm bài...' : 'Grading...'}</>
+            <>
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              {isA ? 'Đang chấm bài...' : 'Grading...'}
+            </>
           ) : (
-            <><PenLine className="w-4 h-4" /><Send className="w-4 h-4" />
-                {isA ? 'Chấm bài ngay' : 'Grade my essay'}</>
+            <>
+              <PenLine className="w-4 h-4" />
+              <Send className="w-4 h-4" />
+              {isA ? 'Chấm bài ngay' : 'Grade my essay'}
+            </>
           )}
         </button>
 

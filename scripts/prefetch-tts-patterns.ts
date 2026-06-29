@@ -28,7 +28,13 @@ import * as path from 'node:path'
 import * as fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
-import { generateAudioFromGoogle, VOICE_IDS, VOICE_VERSION, type Lang, type VoiceId } from '../api/_lib/googleTts.ts'
+import {
+  generateAudioFromGoogle,
+  VOICE_IDS,
+  VOICE_VERSION,
+  type Lang,
+  type VoiceId,
+} from '../api/_lib/googleTts.ts'
 import { CEFR_LEVELS } from '../src/data/cefr.ts'
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
@@ -39,10 +45,10 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
-const BATCH_SIZE     = 15    // số tác vụ song song — Google TTS cho phép ~100 req/s
-const DELAY_MS       = 0     // không cần nghỉ giữa batch với BATCH_SIZE vừa phải
-const RETRY_DELAY_MS = 5000  // nghỉ giữa các vòng retry (ms)
-const MAX_ROUNDS     = 5     // số vòng retry tối đa
+const BATCH_SIZE = 15 // số tác vụ song song — Google TTS cho phép ~100 req/s
+const DELAY_MS = 0 // không cần nghỉ giữa batch với BATCH_SIZE vừa phải
+const RETRY_DELAY_MS = 5000 // nghỉ giữa các vòng retry (ms)
+const MAX_ROUNDS = 5 // số vòng retry tối đa
 const ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/prefetch-tts-errors.json')
 
 // URL gốc của server — chỉ cần khi STORAGE_DRIVER=local (lưu file lên VPS) để tạo link đầy đủ.
@@ -106,7 +112,9 @@ function collectTasks(): Task[] {
   // ── Ưu tiên 2: Pattern sentences → Cụm từ page (PHỔ BIẾN NHẤT TRƯỚC)
   // Chỉ 2 giọng female/male (trang Cụm từ không phát female2/male2) và theo thứ tự
   // hiển thị (I am, You are, He is... trước) — xem scripts/_lib/patternOrder.ts.
-  for (const subject of loadSubjectsInDisplayOrder(path.join(PROJECT_ROOT, 'public/data/patterns'))) {
+  for (const subject of loadSubjectsInDisplayOrder(
+    path.join(PROJECT_ROOT, 'public/data/patterns'),
+  )) {
     for (const { en, vi } of subject.sentences) {
       add(en, 'en-US', PREF_VOICE_IDS)
       add(vi, 'vi-VN', PREF_VOICE_IDS)
@@ -118,7 +126,9 @@ function collectTasks(): Task[] {
 
 // ── Xử lý 1 tác vụ: kiểm tra cache → TTS → MÃ HÓA → lưu file → lưu DB ───────
 // Các bước này khớp với api/tts.ts để file seed dùng được ngay trên app.
-async function processTask(task: Task): Promise<{ status: 'ok' } | { status: 'skip' } | { status: 'error'; message: string }> {
+async function processTask(
+  task: Task,
+): Promise<{ status: 'ok' } | { status: 'skip' } | { status: 'error'; message: string }> {
   const { text, lang, voice } = task
   const hash = hashText(text, lang, voice)
 
@@ -150,10 +160,7 @@ async function processTask(task: Task): Promise<{ status: 'ok' } | { status: 'sk
     // Lưu vào DB — upsert để idempotent nếu 2 process chạy song song
     const { error: dbError } = await supabase
       .from('tts_cache')
-      .upsert(
-        { hash, lang, voice, audio_url: audioUrl },
-        { onConflict: 'hash' },
-      )
+      .upsert({ hash, lang, voice, audio_url: audioUrl }, { onConflict: 'hash' })
 
     if (dbError) throw new Error(`Lưu DB lỗi: ${dbError.message}`)
 
@@ -183,15 +190,17 @@ async function runPass(
   )
   bar.start(tasks.length, 0, { ok: 0, skip: 0, errors: 0 })
 
-  let countOk = 0, countSkip = 0, countError = 0
+  let countOk = 0,
+    countSkip = 0,
+    countError = 0
   const failed: Array<{ task: Task; message: string }> = []
 
   for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
-    const batch   = tasks.slice(i, i + BATCH_SIZE)
+    const batch = tasks.slice(i, i + BATCH_SIZE)
     const results = await Promise.all(batch.map((t) => processTask(t)))
 
     results.forEach((result, idx) => {
-      if (result.status === 'ok')        countOk++
+      if (result.status === 'ok') countOk++
       else if (result.status === 'skip') countSkip++
       else {
         countError++
@@ -199,7 +208,11 @@ async function runPass(
       }
     })
 
-    bar.update(Math.min(i + BATCH_SIZE, tasks.length), { ok: countOk, skip: countSkip, errors: countError })
+    bar.update(Math.min(i + BATCH_SIZE, tasks.length), {
+      ok: countOk,
+      skip: countSkip,
+      errors: countError,
+    })
 
     if (DELAY_MS > 0 && i + BATCH_SIZE < tasks.length) await sleep(DELAY_MS)
   }
@@ -213,9 +226,12 @@ async function runPass(
 // ── MAIN ─────────────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
   // Kiểm tra biến môi trường — thêm TTS_ENCRYPTION_MASTER_KEY vì giờ có mã hóa.
-  const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GOOGLE_TTS_API_KEY', 'TTS_ENCRYPTION_MASTER_KEY'].filter(
-    (k) => !process.env[k],
-  )
+  const missing = [
+    'SUPABASE_URL',
+    'SUPABASE_SERVICE_ROLE_KEY',
+    'GOOGLE_TTS_API_KEY',
+    'TTS_ENCRYPTION_MASTER_KEY',
+  ].filter((k) => !process.env[k])
   if (missing.length > 0) {
     console.error(`❌ Thiếu biến môi trường trong .env: ${missing.join(', ')}`)
     process.exit(1)
@@ -228,8 +244,12 @@ async function main(): Promise<void> {
   const tasks = allTasks.slice(0, limit)
 
   console.log('🔊 Bắt đầu pre-generate TTS cho CEFR + Cụm từ (Cụm từ: phổ biến nhất trước)')
-  console.log(`📋 Tổng tác vụ: ${tasks.length} (en-US + vi-VN · chỉ 2 giọng ${PREF_VOICE_IDS.join('/')})`)
-  console.log(`⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | ⚠️  FORCE: ghi đè cache cũ' : ''}`)
+  console.log(
+    `📋 Tổng tác vụ: ${tasks.length} (en-US + vi-VN · chỉ 2 giọng ${PREF_VOICE_IDS.join('/')})`,
+  )
+  console.log(
+    `⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}${FORCE ? ' | ⚠️  FORCE: ghi đè cache cũ' : ''}`,
+  )
 
   // ── Vòng lặp: lặp cho đến khi hết lỗi hoặc đạt MAX_ROUNDS ───────────────
   let remaining: Array<{ task: Task; message: string }> = []
@@ -262,12 +282,17 @@ async function main(): Promise<void> {
     if (fs.existsSync(ERRORS_FILE)) fs.unlinkSync(ERRORS_FILE)
   } else {
     const errorOutput = remaining.map((r) => ({
-      text: r.task.text, lang: r.task.lang, voice: r.task.voice, message: r.message,
+      text: r.task.text,
+      lang: r.task.lang,
+      voice: r.task.voice,
+      message: r.message,
     }))
     fs.writeFileSync(ERRORS_FILE, JSON.stringify(errorOutput, null, 2))
     console.log(`\n⚠️  Còn ${remaining.length} tác vụ không thể cache sau ${MAX_ROUNDS} vòng.`)
     console.log(`   Xem chi tiết: scripts/prefetch-tts-errors.json`)
-    console.log(`   Lỗi mẫu: "${remaining[0].task.text}" (${remaining[0].task.lang}/${remaining[0].task.voice}) — ${remaining[0].message}`)
+    console.log(
+      `   Lỗi mẫu: "${remaining[0].task.text}" (${remaining[0].task.lang}/${remaining[0].task.voice}) — ${remaining[0].message}`,
+    )
     process.exit(1)
   }
 }

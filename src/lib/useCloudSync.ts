@@ -13,11 +13,18 @@ export function useCloudSync(userId: string | undefined): number {
     if (!userId) return
     let alive = true
     Promise.all([pullUserData(userId), pullProgress(userId)])
-      .then(() => { if (alive) setVersion(v => v + 1) })
-      .catch(err => {
-        console.warn('[useCloudSync] Data sync failed, using local cache:', err instanceof Error ? err.message : err)
+      .then(() => {
+        if (alive) setVersion((v) => v + 1)
       })
-    return () => { alive = false }
+      .catch((err) => {
+        console.warn(
+          '[useCloudSync] Data sync failed, using local cache:',
+          err instanceof Error ? err.message : err,
+        )
+      })
+    return () => {
+      alive = false
+    }
   }, [userId])
 
   return version

@@ -9,35 +9,147 @@
     "speakerBName": { "vi": "Ly", "en": "Ly" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Ly, what movie do you want to watch? Let me pull up the listings.", "vi": "Ly, mày muốn xem phim gì? Để tao kiểm tra lịch chiếu." },
-      { "speaker": "B", "en": "I really want to see that new horror movie everyone's been talking about. Is it playing?", "vi": "Tao muốn xem bộ phim kinh dị mới mà mọi người đang nói đến. Có chiếu không?" },
-      { "speaker": "A", "en": "Let me check... Yes! It's showing at 7:30 PM and 9:45 PM tonight.", "vi": "Để tao xem... Có rồi! Chiều nay chiếu lúc 7 giờ 30 và 9 giờ 45 tối." },
-      { "speaker": "B", "en": "7:30 is perfect. We can grab dinner beforehand.", "vi": "7 giờ 30 thì hoàn hảo. Mình có thể ăn tối trước." },
-      { "speaker": "A", "en": "Good thinking. Okay, let's get tickets at the counter. Or should we use the kiosk?", "vi": "Ý hay. Oke, mình mua vé ở quầy hay dùng máy tự phục vụ?" },
-      { "speaker": "B", "en": "The kiosk is faster. I hate waiting in line.", "vi": "Máy tự phục vụ nhanh hơn. Tao ghét xếp hàng." },
-      { "speaker": "A", "en": "Okay. Two tickets for the 7:30 showing... Standard or Premium?", "vi": "Oke. Hai vé cho xuất 7 giờ 30... Phòng thường hay Premium?" },
-      { "speaker": "B", "en": "Premium! For a horror movie, better sound and seats make a huge difference.", "vi": "Premium đi! Xem phim kinh dị mà âm thanh hay và ghế tốt thì khác hẳn." },
-      { "speaker": "A", "en": "Agreed. Premium is 130,000 per ticket. That's 260,000 total.", "vi": "Đồng ý. Premium là 130 nghìn một vé. Tổng là 260 nghìn." },
-      { "speaker": "B", "en": "That's reasonable. What seats are available?", "vi": "Giá hợp lý. Còn ghế nào trống?" },
-      { "speaker": "A", "en": "The screen is showing here... Looks like most of the middle section is gone. We have some in the back or on the sides.", "vi": "Màn hình hiện ra đây... Khu giữa gần hết rồi. Còn một số ghế phía sau hoặc hai bên." },
-      { "speaker": "B", "en": "Back row is too far. How about E7 and E8 — that's slightly off-center but should be fine.", "vi": "Hàng cuối xa quá. Sao không lấy E7 và E8 — hơi lệch giữa một chút nhưng cũng ổn." },
-      { "speaker": "A", "en": "Let me select those... Done! Seat E7 and E8, Premium Hall 2, 7:30 PM showing.", "vi": "Để tao chọn... Xong! Ghế E7 và E8, Phòng Premium 2, xuất 7 giờ 30 tối." },
-      { "speaker": "B", "en": "Perfect. Does the kiosk accept QR payment?", "vi": "Hoàn hảo. Máy này thanh toán QR được không?" },
-      { "speaker": "A", "en": "Yes, MoMo, ZaloPay, and bank apps all work. I'll scan with MoMo.", "vi": "Có, MoMo, ZaloPay và app ngân hàng đều được. Tao quét bằng MoMo." },
-      { "speaker": "B", "en": "Great. The tickets should go straight to your phone, right?", "vi": "Tốt. Vé sẽ gửi thẳng vào điện thoại mày đúng không?" },
-      { "speaker": "A", "en": "Yes, e-tickets. I'll screenshot them just in case.", "vi": "Đúng, vé điện tử. Tao sẽ chụp màn hình lại phòng khi cần." },
-      { "speaker": "B", "en": "Smart. Okay, now we absolutely must get popcorn. That's non-negotiable.", "vi": "Khôn đó. Oke, bây giờ mình nhất định phải mua bắp rang. Cái đó không thương lượng được." },
+      {
+        "speaker": "A",
+        "en": "Ly, what movie do you want to watch? Let me pull up the listings.",
+        "vi": "Ly, mày muốn xem phim gì? Để tao kiểm tra lịch chiếu."
+      },
+      {
+        "speaker": "B",
+        "en": "I really want to see that new horror movie everyone's been talking about. Is it playing?",
+        "vi": "Tao muốn xem bộ phim kinh dị mới mà mọi người đang nói đến. Có chiếu không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Let me check... Yes! It's showing at 7:30 PM and 9:45 PM tonight.",
+        "vi": "Để tao xem... Có rồi! Chiều nay chiếu lúc 7 giờ 30 và 9 giờ 45 tối."
+      },
+      {
+        "speaker": "B",
+        "en": "7:30 is perfect. We can grab dinner beforehand.",
+        "vi": "7 giờ 30 thì hoàn hảo. Mình có thể ăn tối trước."
+      },
+      {
+        "speaker": "A",
+        "en": "Good thinking. Okay, let's get tickets at the counter. Or should we use the kiosk?",
+        "vi": "Ý hay. Oke, mình mua vé ở quầy hay dùng máy tự phục vụ?"
+      },
+      {
+        "speaker": "B",
+        "en": "The kiosk is faster. I hate waiting in line.",
+        "vi": "Máy tự phục vụ nhanh hơn. Tao ghét xếp hàng."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay. Two tickets for the 7:30 showing... Standard or Premium?",
+        "vi": "Oke. Hai vé cho xuất 7 giờ 30... Phòng thường hay Premium?"
+      },
+      {
+        "speaker": "B",
+        "en": "Premium! For a horror movie, better sound and seats make a huge difference.",
+        "vi": "Premium đi! Xem phim kinh dị mà âm thanh hay và ghế tốt thì khác hẳn."
+      },
+      {
+        "speaker": "A",
+        "en": "Agreed. Premium is 130,000 per ticket. That's 260,000 total.",
+        "vi": "Đồng ý. Premium là 130 nghìn một vé. Tổng là 260 nghìn."
+      },
+      {
+        "speaker": "B",
+        "en": "That's reasonable. What seats are available?",
+        "vi": "Giá hợp lý. Còn ghế nào trống?"
+      },
+      {
+        "speaker": "A",
+        "en": "The screen is showing here... Looks like most of the middle section is gone. We have some in the back or on the sides.",
+        "vi": "Màn hình hiện ra đây... Khu giữa gần hết rồi. Còn một số ghế phía sau hoặc hai bên."
+      },
+      {
+        "speaker": "B",
+        "en": "Back row is too far. How about E7 and E8 — that's slightly off-center but should be fine.",
+        "vi": "Hàng cuối xa quá. Sao không lấy E7 và E8 — hơi lệch giữa một chút nhưng cũng ổn."
+      },
+      {
+        "speaker": "A",
+        "en": "Let me select those... Done! Seat E7 and E8, Premium Hall 2, 7:30 PM showing.",
+        "vi": "Để tao chọn... Xong! Ghế E7 và E8, Phòng Premium 2, xuất 7 giờ 30 tối."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. Does the kiosk accept QR payment?",
+        "vi": "Hoàn hảo. Máy này thanh toán QR được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, MoMo, ZaloPay, and bank apps all work. I'll scan with MoMo.",
+        "vi": "Có, MoMo, ZaloPay và app ngân hàng đều được. Tao quét bằng MoMo."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. The tickets should go straight to your phone, right?",
+        "vi": "Tốt. Vé sẽ gửi thẳng vào điện thoại mày đúng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, e-tickets. I'll screenshot them just in case.",
+        "vi": "Đúng, vé điện tử. Tao sẽ chụp màn hình lại phòng khi cần."
+      },
+      {
+        "speaker": "B",
+        "en": "Smart. Okay, now we absolutely must get popcorn. That's non-negotiable.",
+        "vi": "Khôn đó. Oke, bây giờ mình nhất định phải mua bắp rang. Cái đó không thương lượng được."
+      },
       { "speaker": "A", "en": "Obviously. Large or combo?", "vi": "Dĩ nhiên rồi. Lớn hay combo?" },
-      { "speaker": "B", "en": "The combo with two drinks is usually the best deal. What flavors do they have?", "vi": "Combo có hai ly nước thường là đáng tiền nhất. Bắp rang có vị gì vậy?" },
-      { "speaker": "A", "en": "Classic butter, caramel, cheese, or half-and-half.", "vi": "Bơ kinh điển, caramel, phô mai hoặc nửa nửa." },
-      { "speaker": "B", "en": "Half butter, half caramel please! Best of both worlds.", "vi": "Nửa bơ nửa caramel! Kết hợp hai cái tốt nhất." },
-      { "speaker": "A", "en": "One large half-and-half popcorn combo with two Cokes — 155,000.", "vi": "Một bắp rang lớn nửa nửa combo với hai ly Coke — 155 nghìn." },
-      { "speaker": "B", "en": "Not bad at all. Total damage?", "vi": "Không tệ lắm. Tổng thiệt hại?" },
-      { "speaker": "A", "en": "260,000 for tickets plus 155,000 for snacks. Total 415,000. I'll get it — you can treat next time.", "vi": "260 nghìn vé cộng 155 nghìn đồ ăn. Tổng 415 nghìn. Để tao thanh toán — mày trả lần sau." },
-      { "speaker": "B", "en": "Deal! You're the best. Now let's go grab dinner quickly — we have about an hour.", "vi": "Thỏa thuận! Mày tốt nhất. Bây giờ mình đi ăn nhanh — còn khoảng một tiếng." },
-      { "speaker": "A", "en": "There's a good bún bò place nearby. Ten minutes away.", "vi": "Gần đây có quán bún bò ngon. Mười phút đi bộ thôi." },
-      { "speaker": "B", "en": "Perfect! And Hùng — if I grab your arm during the scary parts, don't judge me.", "vi": "Hoàn hảo! À Hùng ơi — nếu tao nắm tay mày lúc đoạn đáng sợ, đừng cười nhé." },
-      { "speaker": "A", "en": "Ha! Don't worry. I'll probably be just as scared. Let's go!", "vi": "Ha! Đừng lo. Tao chắc cũng sợ vậy. Đi thôi!" }
+      {
+        "speaker": "B",
+        "en": "The combo with two drinks is usually the best deal. What flavors do they have?",
+        "vi": "Combo có hai ly nước thường là đáng tiền nhất. Bắp rang có vị gì vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "Classic butter, caramel, cheese, or half-and-half.",
+        "vi": "Bơ kinh điển, caramel, phô mai hoặc nửa nửa."
+      },
+      {
+        "speaker": "B",
+        "en": "Half butter, half caramel please! Best of both worlds.",
+        "vi": "Nửa bơ nửa caramel! Kết hợp hai cái tốt nhất."
+      },
+      {
+        "speaker": "A",
+        "en": "One large half-and-half popcorn combo with two Cokes — 155,000.",
+        "vi": "Một bắp rang lớn nửa nửa combo với hai ly Coke — 155 nghìn."
+      },
+      {
+        "speaker": "B",
+        "en": "Not bad at all. Total damage?",
+        "vi": "Không tệ lắm. Tổng thiệt hại?"
+      },
+      {
+        "speaker": "A",
+        "en": "260,000 for tickets plus 155,000 for snacks. Total 415,000. I'll get it — you can treat next time.",
+        "vi": "260 nghìn vé cộng 155 nghìn đồ ăn. Tổng 415 nghìn. Để tao thanh toán — mày trả lần sau."
+      },
+      {
+        "speaker": "B",
+        "en": "Deal! You're the best. Now let's go grab dinner quickly — we have about an hour.",
+        "vi": "Thỏa thuận! Mày tốt nhất. Bây giờ mình đi ăn nhanh — còn khoảng một tiếng."
+      },
+      {
+        "speaker": "A",
+        "en": "There's a good bún bò place nearby. Ten minutes away.",
+        "vi": "Gần đây có quán bún bò ngon. Mười phút đi bộ thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect! And Hùng — if I grab your arm during the scary parts, don't judge me.",
+        "vi": "Hoàn hảo! À Hùng ơi — nếu tao nắm tay mày lúc đoạn đáng sợ, đừng cười nhé."
+      },
+      {
+        "speaker": "A",
+        "en": "Ha! Don't worry. I'll probably be just as scared. Let's go!",
+        "vi": "Ha! Đừng lo. Tao chắc cũng sợ vậy. Đi thôi!"
+      }
     ]
   },
   {
@@ -50,41 +162,181 @@
     "speakerBName": { "vi": "Bạn", "en": "Friend" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Tú! We're finally here! I've been waiting for this concert for months!", "vi": "Tú! Cuối cùng cũng đến rồi! Tao chờ đợi buổi concert này mấy tháng nay rồi!" },
-      { "speaker": "B", "en": "Me too! Look at the crowd — it's absolutely massive. How many people do you think are here?", "vi": "Tao cũng vậy! Nhìn đám đông kìa — đông khủng khiếp. Mày đoán có bao nhiêu người không?" },
-      { "speaker": "A", "en": "The venue holds 8,000. And it looks completely sold out!", "vi": "Sân khấu này chứa được 8,000 người. Và có vẻ như bán vé hết sạch rồi!" },
-      { "speaker": "B", "en": "I'm so glad you got the tickets early. Our seats look amazing on the map.", "vi": "May là mày mua vé sớm. Chỗ ngồi của mình trông đẹp trên sơ đồ lắm." },
-      { "speaker": "A", "en": "Row G, right in the center section! Perfect view of the stage.", "vi": "Hàng G, ngay giữa! Nhìn thấy sân khấu hoàn hảo." },
-      { "speaker": "B", "en": "I love the atmosphere before a concert starts. Everyone's so excited.", "vi": "Tao thích không khí trước khi concert bắt đầu. Mọi người hào hứng lắm." },
-      { "speaker": "A", "en": "Have you seen her perform live before?", "vi": "Mày đã từng xem cô ấy biểu diễn live chưa?" },
-      { "speaker": "B", "en": "Never! This is my first time. I've only seen YouTube clips. Is she as good live?", "vi": "Chưa bao giờ! Đây là lần đầu tiên. Tao chỉ xem clip YouTube thôi. Cô ấy biểu diễn live có hay không?" },
-      { "speaker": "A", "en": "Even better! Her voice live is incredible — she actually sounds better without autotune.", "vi": "Còn hay hơn! Giọng live của cô ấy tuyệt vời — thật ra nghe hay hơn cả khi chỉnh âm." },
-      { "speaker": "B", "en": "That's rare! Most pop singers can't match their recorded sound live.", "vi": "Hiếm lắm đó! Hầu hết ca sĩ pop không bằng được âm thanh trong bản thu khi hát live." },
-      { "speaker": "A", "en": "She's the real deal. Oh! The lights are dimming! It's starting!", "vi": "Cô ấy thật tài năng. Ồ! Đèn mờ rồi! Bắt đầu rồi!" },
-      { "speaker": "B", "en": "Oh wow — the stage lighting is spectacular! All those lasers!", "vi": "Ôi trời — đèn sân khấu đẹp ngoạn mục! Mấy cái đèn laser kìa!" },
-      { "speaker": "A", "en": "She always starts with her most energetic song. Get ready to scream!", "vi": "Cô ấy lúc nào cũng bắt đầu với bài sôi động nhất. Chuẩn bị hét lên đi!" },
-      { "speaker": "B", "en": "Is screaming okay here? I don't want to disturb anyone.", "vi": "Hét lên ở đây có ổn không? Tao không muốn làm phiền ai." },
-      { "speaker": "A", "en": "It's a concert — of course! Everyone screams. That's the whole point!", "vi": "Đây là concert mà — dĩ nhiên rồi! Mọi người đều hét. Đó là điểm mấu chốt!" },
-      { "speaker": "B", "en": "(After the opening) That was INCREDIBLE! My heart is still racing!", "vi": "(Sau phần mở đầu) Tuyệt ĐỈNH! Tim tao vẫn còn đập nhanh!" },
-      { "speaker": "A", "en": "She literally just appeared through that platform rising from the floor! I nearly had a heart attack!", "vi": "Cô ấy xuất hiện từ cái bục nâng từ dưới sàn lên! Tao suýt đau tim!" },
-      { "speaker": "B", "en": "And her outfit is stunning — all those glittery pieces. She looks like a star literally.", "vi": "Và trang phục của cô ấy tuyệt vời — toàn đồ lấp lánh. Cô ấy trông như một ngôi sao thật sự." },
-      { "speaker": "A", "en": "Oh! This next song is my absolute favorite. We have to sing along!", "vi": "Ồ! Bài tiếp theo là bài yêu thích nhất của tao. Mình phải hát theo!" },
-      { "speaker": "B", "en": "I know the chorus! Let me check I still remember the words...", "vi": "Tao thuộc điệp khúc rồi! Để tao kiểm tra xem mình còn nhớ lời không..." },
-      { "speaker": "A", "en": "Ready? Three, two, one — SING!", "vi": "Sẵn sàng chưa? Ba, hai, một — HÁT!" },
-      { "speaker": "B", "en": "(After the song) That felt so amazing singing with 8,000 people!", "vi": "(Sau bài hát) Hát cùng 8,000 người cảm giác đỉnh thật!" },
-      { "speaker": "A", "en": "That's the magic of concerts! You become one big group sharing the same emotion.", "vi": "Đó là phép màu của concert! Mọi người trở thành một nhóm lớn chia sẻ cùng một cảm xúc." },
-      { "speaker": "B", "en": "She just said she's going to do an acoustic set now. That sounds amazing.", "vi": "Cô ấy vừa nói sẽ có phần hát acoustic bây giờ. Nghe hay lắm." },
-      { "speaker": "A", "en": "This is my favorite part of her shows. Just her and a guitar — you can hear every emotion.", "vi": "Đây là phần tao thích nhất trong show của cô ấy. Chỉ mình cô ấy và cây đàn guitar — bạn nghe rõ từng cảm xúc." },
-      { "speaker": "B", "en": "She's so talented. I feel like I know her better just from hearing her voice this close.", "vi": "Cô ấy tài năng lắm. Tao cảm giác như hiểu cô ấy hơn chỉ từ việc nghe giọng hát từ khoảng cách này." },
-      { "speaker": "A", "en": "That's what a great artist does — they make you feel a personal connection.", "vi": "Đó là điều một nghệ sĩ tài năng làm được — khiến bạn cảm thấy có kết nối cá nhân." },
-      { "speaker": "B", "en": "Do you think she'll sing her classic hit? The one from five years ago?", "vi": "Mày nghĩ cô ấy có hát bài hit cổ điển không? Bài từ năm năm trước đó?" },
-      { "speaker": "A", "en": "She always closes with it. Every single tour. It's her signature ending.", "vi": "Cô ấy lúc nào cũng kết thúc bằng bài đó. Mọi tour đều vậy. Đó là cái kết thúc đặc trưng của cô ấy." },
-      { "speaker": "B", "en": "I'm going to lose my mind when she plays it. I'm not ready.", "vi": "Tao sẽ phát điên khi cô ấy hát bài đó. Tao chưa sẵn sàng đâu." },
-      { "speaker": "A", "en": "(Later) And there it is — she's starting the final song!", "vi": "(Sau đó) Đây rồi — cô ấy bắt đầu bài cuối cùng rồi!" },
-      { "speaker": "B", "en": "OH! The whole crowd lit up their phone flashlights! It looks like a sea of stars!", "vi": "ÔI! Cả đám đông bật đèn flash điện thoại! Trông như một biển sao!" },
-      { "speaker": "A", "en": "This is what I came for. This exact moment. I'm so happy!", "vi": "Đây là điều tao đến vì. Khoảnh khắc này. Tao hạnh phúc lắm!" },
-      { "speaker": "B", "en": "Same. Thank you for bringing me, Dung. This was the best night I've had in a long time.", "vi": "Tao cũng vậy. Cảm ơn mày đã rủ tao đi, Dung ơi. Đây là đêm tuyệt nhất tao có trong một thời gian dài." },
-      { "speaker": "A", "en": "We'll do this again! Same time next year when she tours again.", "vi": "Mình sẽ lại đi cùng nhau! Năm sau cùng thời gian khi cô ấy tour lại." }
+      {
+        "speaker": "A",
+        "en": "Tú! We're finally here! I've been waiting for this concert for months!",
+        "vi": "Tú! Cuối cùng cũng đến rồi! Tao chờ đợi buổi concert này mấy tháng nay rồi!"
+      },
+      {
+        "speaker": "B",
+        "en": "Me too! Look at the crowd — it's absolutely massive. How many people do you think are here?",
+        "vi": "Tao cũng vậy! Nhìn đám đông kìa — đông khủng khiếp. Mày đoán có bao nhiêu người không?"
+      },
+      {
+        "speaker": "A",
+        "en": "The venue holds 8,000. And it looks completely sold out!",
+        "vi": "Sân khấu này chứa được 8,000 người. Và có vẻ như bán vé hết sạch rồi!"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm so glad you got the tickets early. Our seats look amazing on the map.",
+        "vi": "May là mày mua vé sớm. Chỗ ngồi của mình trông đẹp trên sơ đồ lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "Row G, right in the center section! Perfect view of the stage.",
+        "vi": "Hàng G, ngay giữa! Nhìn thấy sân khấu hoàn hảo."
+      },
+      {
+        "speaker": "B",
+        "en": "I love the atmosphere before a concert starts. Everyone's so excited.",
+        "vi": "Tao thích không khí trước khi concert bắt đầu. Mọi người hào hứng lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "Have you seen her perform live before?",
+        "vi": "Mày đã từng xem cô ấy biểu diễn live chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Never! This is my first time. I've only seen YouTube clips. Is she as good live?",
+        "vi": "Chưa bao giờ! Đây là lần đầu tiên. Tao chỉ xem clip YouTube thôi. Cô ấy biểu diễn live có hay không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Even better! Her voice live is incredible — she actually sounds better without autotune.",
+        "vi": "Còn hay hơn! Giọng live của cô ấy tuyệt vời — thật ra nghe hay hơn cả khi chỉnh âm."
+      },
+      {
+        "speaker": "B",
+        "en": "That's rare! Most pop singers can't match their recorded sound live.",
+        "vi": "Hiếm lắm đó! Hầu hết ca sĩ pop không bằng được âm thanh trong bản thu khi hát live."
+      },
+      {
+        "speaker": "A",
+        "en": "She's the real deal. Oh! The lights are dimming! It's starting!",
+        "vi": "Cô ấy thật tài năng. Ồ! Đèn mờ rồi! Bắt đầu rồi!"
+      },
+      {
+        "speaker": "B",
+        "en": "Oh wow — the stage lighting is spectacular! All those lasers!",
+        "vi": "Ôi trời — đèn sân khấu đẹp ngoạn mục! Mấy cái đèn laser kìa!"
+      },
+      {
+        "speaker": "A",
+        "en": "She always starts with her most energetic song. Get ready to scream!",
+        "vi": "Cô ấy lúc nào cũng bắt đầu với bài sôi động nhất. Chuẩn bị hét lên đi!"
+      },
+      {
+        "speaker": "B",
+        "en": "Is screaming okay here? I don't want to disturb anyone.",
+        "vi": "Hét lên ở đây có ổn không? Tao không muốn làm phiền ai."
+      },
+      {
+        "speaker": "A",
+        "en": "It's a concert — of course! Everyone screams. That's the whole point!",
+        "vi": "Đây là concert mà — dĩ nhiên rồi! Mọi người đều hét. Đó là điểm mấu chốt!"
+      },
+      {
+        "speaker": "B",
+        "en": "(After the opening) That was INCREDIBLE! My heart is still racing!",
+        "vi": "(Sau phần mở đầu) Tuyệt ĐỈNH! Tim tao vẫn còn đập nhanh!"
+      },
+      {
+        "speaker": "A",
+        "en": "She literally just appeared through that platform rising from the floor! I nearly had a heart attack!",
+        "vi": "Cô ấy xuất hiện từ cái bục nâng từ dưới sàn lên! Tao suýt đau tim!"
+      },
+      {
+        "speaker": "B",
+        "en": "And her outfit is stunning — all those glittery pieces. She looks like a star literally.",
+        "vi": "Và trang phục của cô ấy tuyệt vời — toàn đồ lấp lánh. Cô ấy trông như một ngôi sao thật sự."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh! This next song is my absolute favorite. We have to sing along!",
+        "vi": "Ồ! Bài tiếp theo là bài yêu thích nhất của tao. Mình phải hát theo!"
+      },
+      {
+        "speaker": "B",
+        "en": "I know the chorus! Let me check I still remember the words...",
+        "vi": "Tao thuộc điệp khúc rồi! Để tao kiểm tra xem mình còn nhớ lời không..."
+      },
+      {
+        "speaker": "A",
+        "en": "Ready? Three, two, one — SING!",
+        "vi": "Sẵn sàng chưa? Ba, hai, một — HÁT!"
+      },
+      {
+        "speaker": "B",
+        "en": "(After the song) That felt so amazing singing with 8,000 people!",
+        "vi": "(Sau bài hát) Hát cùng 8,000 người cảm giác đỉnh thật!"
+      },
+      {
+        "speaker": "A",
+        "en": "That's the magic of concerts! You become one big group sharing the same emotion.",
+        "vi": "Đó là phép màu của concert! Mọi người trở thành một nhóm lớn chia sẻ cùng một cảm xúc."
+      },
+      {
+        "speaker": "B",
+        "en": "She just said she's going to do an acoustic set now. That sounds amazing.",
+        "vi": "Cô ấy vừa nói sẽ có phần hát acoustic bây giờ. Nghe hay lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "This is my favorite part of her shows. Just her and a guitar — you can hear every emotion.",
+        "vi": "Đây là phần tao thích nhất trong show của cô ấy. Chỉ mình cô ấy và cây đàn guitar — bạn nghe rõ từng cảm xúc."
+      },
+      {
+        "speaker": "B",
+        "en": "She's so talented. I feel like I know her better just from hearing her voice this close.",
+        "vi": "Cô ấy tài năng lắm. Tao cảm giác như hiểu cô ấy hơn chỉ từ việc nghe giọng hát từ khoảng cách này."
+      },
+      {
+        "speaker": "A",
+        "en": "That's what a great artist does — they make you feel a personal connection.",
+        "vi": "Đó là điều một nghệ sĩ tài năng làm được — khiến bạn cảm thấy có kết nối cá nhân."
+      },
+      {
+        "speaker": "B",
+        "en": "Do you think she'll sing her classic hit? The one from five years ago?",
+        "vi": "Mày nghĩ cô ấy có hát bài hit cổ điển không? Bài từ năm năm trước đó?"
+      },
+      {
+        "speaker": "A",
+        "en": "She always closes with it. Every single tour. It's her signature ending.",
+        "vi": "Cô ấy lúc nào cũng kết thúc bằng bài đó. Mọi tour đều vậy. Đó là cái kết thúc đặc trưng của cô ấy."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm going to lose my mind when she plays it. I'm not ready.",
+        "vi": "Tao sẽ phát điên khi cô ấy hát bài đó. Tao chưa sẵn sàng đâu."
+      },
+      {
+        "speaker": "A",
+        "en": "(Later) And there it is — she's starting the final song!",
+        "vi": "(Sau đó) Đây rồi — cô ấy bắt đầu bài cuối cùng rồi!"
+      },
+      {
+        "speaker": "B",
+        "en": "OH! The whole crowd lit up their phone flashlights! It looks like a sea of stars!",
+        "vi": "ÔI! Cả đám đông bật đèn flash điện thoại! Trông như một biển sao!"
+      },
+      {
+        "speaker": "A",
+        "en": "This is what I came for. This exact moment. I'm so happy!",
+        "vi": "Đây là điều tao đến vì. Khoảnh khắc này. Tao hạnh phúc lắm!"
+      },
+      {
+        "speaker": "B",
+        "en": "Same. Thank you for bringing me, Dung. This was the best night I've had in a long time.",
+        "vi": "Tao cũng vậy. Cảm ơn mày đã rủ tao đi, Dung ơi. Đây là đêm tuyệt nhất tao có trong một thời gian dài."
+      },
+      {
+        "speaker": "A",
+        "en": "We'll do this again! Same time next year when she tours again.",
+        "vi": "Mình sẽ lại đi cùng nhau! Năm sau cùng thời gian khi cô ấy tour lại."
+      }
     ]
   },
   {
@@ -97,32 +349,132 @@
     "speakerBName": { "vi": "Nhân viên", "en": "Librarian" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Excuse me, this is my first time at the National Library. Could you help me get started?", "vi": "Xin lỗi, đây là lần đầu tiên tôi đến Thư viện Quốc gia. Bạn có thể hướng dẫn tôi không?" },
-      { "speaker": "B", "en": "Of course! Welcome. To access the reading rooms, you'll need a library card. Do you have one?", "vi": "Dĩ nhiên! Chào mừng. Để vào phòng đọc sách, bạn cần có thẻ thư viện. Bạn đã có chưa?" },
+      {
+        "speaker": "A",
+        "en": "Excuse me, this is my first time at the National Library. Could you help me get started?",
+        "vi": "Xin lỗi, đây là lần đầu tiên tôi đến Thư viện Quốc gia. Bạn có thể hướng dẫn tôi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! Welcome. To access the reading rooms, you'll need a library card. Do you have one?",
+        "vi": "Dĩ nhiên! Chào mừng. Để vào phòng đọc sách, bạn cần có thẻ thư viện. Bạn đã có chưa?"
+      },
       { "speaker": "A", "en": "Not yet. How do I get one?", "vi": "Chưa ạ. Tôi làm thẻ ở đâu?" },
-      { "speaker": "B", "en": "At the registration desk on the ground floor. You'll need your ID and two passport photos. It takes about 15 minutes.", "vi": "Ở quầy đăng ký ở tầng trệt. Bạn cần CCCD và hai ảnh thẻ. Mất khoảng 15 phút." },
-      { "speaker": "A", "en": "I have my ID but I don't have photos on me. Is there a photo booth nearby?", "vi": "Tôi có CCCD nhưng không có ảnh thẻ mang theo. Gần đây có máy chụp ảnh thẻ không?" },
-      { "speaker": "B", "en": "Yes! There's one right outside the main entrance — 20,000 VND for four photos.", "vi": "Có! Có một máy ngay ngoài cổng chính — 20 nghìn cho bốn tấm ảnh." },
-      { "speaker": "A", "en": "Perfect, I'll do that. Is the library card free?", "vi": "Tốt, tôi sẽ ra chụp. Làm thẻ thư viện có mất phí không?" },
-      { "speaker": "B", "en": "Yes, completely free for Vietnamese citizens. Students from partner universities also get free cards.", "vi": "Có, hoàn toàn miễn phí cho công dân Việt Nam. Sinh viên từ các trường đại học đối tác cũng được miễn phí." },
-      { "speaker": "A", "en": "Great. What sections does the library have? I'm looking for books on Vietnamese history and economics.", "vi": "Tốt. Thư viện có những khu vực nào? Tôi đang tìm sách về lịch sử và kinh tế Việt Nam." },
-      { "speaker": "B", "en": "Third floor has humanities — history, culture, literature. Fourth floor is social sciences, economics, and law.", "vi": "Tầng ba có khoa học nhân văn — lịch sử, văn hóa, văn học. Tầng bốn có khoa học xã hội, kinh tế và luật." },
-      { "speaker": "A", "en": "Can I borrow books to take home?", "vi": "Tôi có thể mượn sách mang về nhà không?" },
-      { "speaker": "B", "en": "Yes, registered members can borrow up to five books at a time for two weeks. Rare and reference books must be read on-site only.", "vi": "Có, thành viên đăng ký có thể mượn tối đa năm cuốn cùng lúc trong hai tuần. Sách quý hiếm và tài liệu tham khảo chỉ đọc tại chỗ." },
-      { "speaker": "A", "en": "Do you have an online catalog where I can search for specific titles before coming?", "vi": "Thư viện có danh mục trực tuyến để tôi tìm kiếm đầu sách cụ thể trước khi đến không?" },
-      { "speaker": "B", "en": "Yes — nlv.gov.vn is our website. You can search by title, author, or keyword and check availability.", "vi": "Có — nlv.gov.vn là website của chúng tôi. Bạn có thể tìm theo tiêu đề, tác giả hoặc từ khóa và kiểm tra tình trạng sẵn có." },
-      { "speaker": "A", "en": "That's very convenient. Are there computers I can use in the library?", "vi": "Rất tiện. Trong thư viện có máy tính cho tôi dùng không?" },
-      { "speaker": "B", "en": "Yes, the second floor has a digital resource center with 40 computers. Free to use with your library card.", "vi": "Có, tầng hai có trung tâm tài nguyên kỹ thuật số với 40 máy tính. Miễn phí khi dùng thẻ thư viện." },
-      { "speaker": "A", "en": "Can I access international academic journals there?", "vi": "Tôi có thể truy cập các tạp chí học thuật quốc tế ở đó không?" },
-      { "speaker": "B", "en": "Yes! We have subscriptions to JSTOR, ProQuest, and several others. Access is only possible within the library network.", "vi": "Có! Chúng tôi có đăng ký JSTOR, ProQuest và nhiều cơ sở dữ liệu khác. Chỉ truy cập được trong mạng nội bộ thư viện." },
-      { "speaker": "A", "en": "Excellent. Is there a quiet reading room? I get distracted easily.", "vi": "Tuyệt vời. Có phòng đọc sách yên tĩnh không? Tôi dễ bị phân tán." },
-      { "speaker": "B", "en": "The fifth floor is strictly silent — no talking, phones on silent. It's very peaceful up there.", "vi": "Tầng năm là khu hoàn toàn yên lặng — không nói chuyện, điện thoại để chế độ im lặng. Rất yên tĩnh ở đó." },
-      { "speaker": "A", "en": "That sounds perfect. One more question — can I bring coffee inside?", "vi": "Nghe hoàn hảo. Còn một câu hỏi nữa — tôi có thể mang cà phê vào trong không?" },
-      { "speaker": "B", "en": "No food or drinks in the reading rooms, I'm afraid. But there's a café on the ground floor with very reasonable prices.", "vi": "Không có thức ăn hay đồ uống trong phòng đọc, tiếc là vậy. Nhưng có quán cà phê ở tầng trệt với giá rất hợp lý." },
-      { "speaker": "A", "en": "Understood. What are the library's opening hours?", "vi": "Hiểu rồi. Giờ mở cửa của thư viện là mấy giờ?" },
-      { "speaker": "B", "en": "Monday to Saturday, 8 AM to 6 PM. Closed Sundays and public holidays.", "vi": "Thứ Hai đến thứ Bảy, 8 giờ sáng đến 6 giờ chiều. Đóng cửa Chủ Nhật và ngày lễ." },
-      { "speaker": "A", "en": "Perfect. I'll go get photos now and register for the card. Thank you so much for your help!", "vi": "Hoàn hảo. Tôi sẽ ra chụp ảnh và đăng ký thẻ ngay. Cảm ơn bạn rất nhiều đã giúp đỡ!" },
-      { "speaker": "B", "en": "My pleasure! I hope you enjoy the library. If you have any questions while you're here, feel free to ask any staff member.", "vi": "Không có gì! Tôi hy vọng bạn thích thư viện. Nếu có câu hỏi gì trong lúc ở đây, cứ thoải mái hỏi bất kỳ nhân viên nào nhé." }
+      {
+        "speaker": "B",
+        "en": "At the registration desk on the ground floor. You'll need your ID and two passport photos. It takes about 15 minutes.",
+        "vi": "Ở quầy đăng ký ở tầng trệt. Bạn cần CCCD và hai ảnh thẻ. Mất khoảng 15 phút."
+      },
+      {
+        "speaker": "A",
+        "en": "I have my ID but I don't have photos on me. Is there a photo booth nearby?",
+        "vi": "Tôi có CCCD nhưng không có ảnh thẻ mang theo. Gần đây có máy chụp ảnh thẻ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes! There's one right outside the main entrance — 20,000 VND for four photos.",
+        "vi": "Có! Có một máy ngay ngoài cổng chính — 20 nghìn cho bốn tấm ảnh."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect, I'll do that. Is the library card free?",
+        "vi": "Tốt, tôi sẽ ra chụp. Làm thẻ thư viện có mất phí không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, completely free for Vietnamese citizens. Students from partner universities also get free cards.",
+        "vi": "Có, hoàn toàn miễn phí cho công dân Việt Nam. Sinh viên từ các trường đại học đối tác cũng được miễn phí."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. What sections does the library have? I'm looking for books on Vietnamese history and economics.",
+        "vi": "Tốt. Thư viện có những khu vực nào? Tôi đang tìm sách về lịch sử và kinh tế Việt Nam."
+      },
+      {
+        "speaker": "B",
+        "en": "Third floor has humanities — history, culture, literature. Fourth floor is social sciences, economics, and law.",
+        "vi": "Tầng ba có khoa học nhân văn — lịch sử, văn hóa, văn học. Tầng bốn có khoa học xã hội, kinh tế và luật."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I borrow books to take home?",
+        "vi": "Tôi có thể mượn sách mang về nhà không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, registered members can borrow up to five books at a time for two weeks. Rare and reference books must be read on-site only.",
+        "vi": "Có, thành viên đăng ký có thể mượn tối đa năm cuốn cùng lúc trong hai tuần. Sách quý hiếm và tài liệu tham khảo chỉ đọc tại chỗ."
+      },
+      {
+        "speaker": "A",
+        "en": "Do you have an online catalog where I can search for specific titles before coming?",
+        "vi": "Thư viện có danh mục trực tuyến để tôi tìm kiếm đầu sách cụ thể trước khi đến không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes — nlv.gov.vn is our website. You can search by title, author, or keyword and check availability.",
+        "vi": "Có — nlv.gov.vn là website của chúng tôi. Bạn có thể tìm theo tiêu đề, tác giả hoặc từ khóa và kiểm tra tình trạng sẵn có."
+      },
+      {
+        "speaker": "A",
+        "en": "That's very convenient. Are there computers I can use in the library?",
+        "vi": "Rất tiện. Trong thư viện có máy tính cho tôi dùng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, the second floor has a digital resource center with 40 computers. Free to use with your library card.",
+        "vi": "Có, tầng hai có trung tâm tài nguyên kỹ thuật số với 40 máy tính. Miễn phí khi dùng thẻ thư viện."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I access international academic journals there?",
+        "vi": "Tôi có thể truy cập các tạp chí học thuật quốc tế ở đó không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes! We have subscriptions to JSTOR, ProQuest, and several others. Access is only possible within the library network.",
+        "vi": "Có! Chúng tôi có đăng ký JSTOR, ProQuest và nhiều cơ sở dữ liệu khác. Chỉ truy cập được trong mạng nội bộ thư viện."
+      },
+      {
+        "speaker": "A",
+        "en": "Excellent. Is there a quiet reading room? I get distracted easily.",
+        "vi": "Tuyệt vời. Có phòng đọc sách yên tĩnh không? Tôi dễ bị phân tán."
+      },
+      {
+        "speaker": "B",
+        "en": "The fifth floor is strictly silent — no talking, phones on silent. It's very peaceful up there.",
+        "vi": "Tầng năm là khu hoàn toàn yên lặng — không nói chuyện, điện thoại để chế độ im lặng. Rất yên tĩnh ở đó."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds perfect. One more question — can I bring coffee inside?",
+        "vi": "Nghe hoàn hảo. Còn một câu hỏi nữa — tôi có thể mang cà phê vào trong không?"
+      },
+      {
+        "speaker": "B",
+        "en": "No food or drinks in the reading rooms, I'm afraid. But there's a café on the ground floor with very reasonable prices.",
+        "vi": "Không có thức ăn hay đồ uống trong phòng đọc, tiếc là vậy. Nhưng có quán cà phê ở tầng trệt với giá rất hợp lý."
+      },
+      {
+        "speaker": "A",
+        "en": "Understood. What are the library's opening hours?",
+        "vi": "Hiểu rồi. Giờ mở cửa của thư viện là mấy giờ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Monday to Saturday, 8 AM to 6 PM. Closed Sundays and public holidays.",
+        "vi": "Thứ Hai đến thứ Bảy, 8 giờ sáng đến 6 giờ chiều. Đóng cửa Chủ Nhật và ngày lễ."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. I'll go get photos now and register for the card. Thank you so much for your help!",
+        "vi": "Hoàn hảo. Tôi sẽ ra chụp ảnh và đăng ký thẻ ngay. Cảm ơn bạn rất nhiều đã giúp đỡ!"
+      },
+      {
+        "speaker": "B",
+        "en": "My pleasure! I hope you enjoy the library. If you have any questions while you're here, feel free to ask any staff member.",
+        "vi": "Không có gì! Tôi hy vọng bạn thích thư viện. Nếu có câu hỏi gì trong lúc ở đây, cứ thoải mái hỏi bất kỳ nhân viên nào nhé."
+      }
     ]
   },
   {
@@ -135,36 +487,156 @@
     "speakerBName": { "vi": "Bạn bè", "en": "Friend" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Guys, everyone's here! Grab a seat — the match starts in five minutes!", "vi": "Mọi người ơi, đủ mặt rồi! Lấy chỗ ngồi đi — trận đấu bắt đầu sau năm phút nữa!" },
-      { "speaker": "B", "en": "Toàn, your TV is HUGE! When did you get that?", "vi": "Toàn ơi, TV của mày TO KHỔNG LỒ! Mày mua cái này khi nào vậy?" },
-      { "speaker": "A", "en": "Last week! Specifically bought it for the World Cup final. 65 inches, 4K. Worth every penny.", "vi": "Tuần trước! Mua chuyên để xem chung kết World Cup. 65 inch, 4K. Xứng đáng từng đồng." },
-      { "speaker": "B", "en": "Dedicated! I brought beer and mực nướng. Who else brought snacks?", "vi": "Tâm huyết đó! Tao mang bia và mực nướng. Ai mang đồ ăn vặt nữa không?" },
-      { "speaker": "A", "en": "Minh brought bánh tráng trộn, and I made a big pot of bò kho to share.", "vi": "Minh mang bánh tráng trộn, và tao nấu một nồi bò kho lớn để chia nhau." },
-      { "speaker": "B", "en": "Oh my god — bò kho at midnight watching football? That's peak Vietnamese experience!", "vi": "Ôi trời — ăn bò kho lúc nửa đêm xem bóng đá? Đó là trải nghiệm Việt Nam đỉnh cao!" },
-      { "speaker": "A", "en": "Ha! Okay, kickoff! Everyone pay attention. Volume up!", "vi": "Ha! Oke, bắt đầu rồi! Mọi người chú ý nhé. Tăng âm lượng lên!" },
-      { "speaker": "B", "en": "I'm so nervous. Do you think our team can pull this off?", "vi": "Tao hồi hộp lắm. Mày nghĩ đội mình có làm được không?" },
-      { "speaker": "A", "en": "We trained so hard for this. Our defense looks solid today — I'm cautiously optimistic.", "vi": "Mình đã luyện tập chăm chỉ cho trận này. Hàng phòng thủ hôm nay trông vững chắc — tao thận trọng lạc quan." },
-      { "speaker": "B", "en": "Their striker is dangerous though. He scored in every group stage match.", "vi": "Nhưng tiền đạo của họ nguy hiểm lắm. Anh ta ghi bàn trong mọi trận vòng bảng." },
-      { "speaker": "A", "en": "Our goalkeeper is the best in the tournament. I trust him completely.", "vi": "Thủ môn của mình là tốt nhất giải đấu. Tao hoàn toàn tin vào anh ấy." },
-      { "speaker": "B", "en": "OHHHH! Did you see that cross? That almost went in!", "vi": "OOHHH! Mày thấy pha tạt bóng đó không? Suýt vào rồi!" },
-      { "speaker": "A", "en": "Heart attack! The goalkeeper just barely got a hand on it!", "vi": "Đau tim thật sự! Thủ môn chỉ chặn lại bằng đầu ngón tay!" },
-      { "speaker": "B", "en": "This match is going to give me grey hair. Can we pause it to breathe?", "vi": "Trận này sẽ làm tóc tao bạc mất. Mình tạm dừng lại để thở được không?" },
-      { "speaker": "A", "en": "It's a live match, Linh! You can't pause live football!", "vi": "Đây là trận trực tiếp, Linh ơi! Không tạm dừng bóng đá trực tiếp được!" },
-      { "speaker": "B", "en": "I KNOW, I was joking! Oh — free kick! This could be it!", "vi": "TÔI BIẾT, tao đùa thôi! À — đá phạt rồi! Cơ hội đây rồi!" },
-      { "speaker": "A", "en": "Everyone up on your feet! Come on, come on, come on...", "vi": "Mọi người đứng dậy hết! Nào nào nào..." },
-      { "speaker": "B", "en": "GOOOAAALLL!!! We scored!!! YESSS!!!", "vi": "GOOOOAAAALL!!! Ghi bàn rồi!!! YEA!!!" },
-      { "speaker": "A", "en": "I can't believe it! The whole neighborhood can probably hear us right now!", "vi": "Tao không thể tin được! Cả khu phố chắc đang nghe thấy tiếng mình rồi!" },
-      { "speaker": "B", "en": "WHO CARES! We're winning! Quick — pour the beer, this needs celebrating!", "vi": "AI QUAN TÂM! Mình đang thắng! Nhanh — rót bia đi, cái này cần ăn mừng!" },
-      { "speaker": "A", "en": "Okay, first half is over. We're up 1-0. Breathe everyone.", "vi": "Oke, hiệp một kết thúc rồi. Mình đang dẫn 1-0. Thở nào mọi người." },
-      { "speaker": "B", "en": "My hands are shaking from adrenaline. That was intense.", "vi": "Tay tao đang run vì adrenaline. Căng thẳng quá." },
-      { "speaker": "A", "en": "Same here! Everyone eat something during halftime — we need energy for the second half.", "vi": "Tao cũng vậy! Mọi người ăn gì đi trong giờ nghỉ — mình cần năng lượng cho hiệp hai." },
-      { "speaker": "B", "en": "This bò kho is incredible by the way. Recipe please!", "vi": "Bò kho này ngon lắm nha. Cho tao công thức với!" },
-      { "speaker": "A", "en": "Ha! After the match. Focus! Second half is starting...", "vi": "Ha! Sau trận xong. Tập trung! Hiệp hai bắt đầu rồi..." },
-      { "speaker": "B", "en": "They're pushing hard now. Chasing the equalizer. This is nerve-wracking.", "vi": "Họ đang tấn công mạnh hơn rồi. Đang tìm bàn gỡ. Hồi hộp ghê." },
-      { "speaker": "A", "en": "Hold the line! Just 10 more minutes! WE CAN DO THIS!", "vi": "Giữ vững phòng thủ! Còn 10 phút nữa thôi! MÌNH LÀM ĐƯỢC!" },
-      { "speaker": "B", "en": "FINAL WHISTLE!!! WE WON THE WORLD CUP!!!", "vi": "TIẾNG CÒI KẾT THÚC!!! MÌNH ĐÃ VÔ ĐỊCH WORLD CUP!!!" },
-      { "speaker": "A", "en": "I'M CRYING! I actually can't believe it! We actually did it!", "vi": "TÔI ĐANG KHÓC ĐÂY! Tao thật sự không thể tin! Mình đã làm được thật sự rồi!" },
-      { "speaker": "B", "en": "Best night of my life! Toàn, your house is lucky — we need to watch every big match here from now on!", "vi": "Đêm tuyệt nhất cuộc đời tao! Toàn ơi, nhà mày may mắn lắm — từ giờ mình cần xem mọi trận lớn ở đây!" }
+      {
+        "speaker": "A",
+        "en": "Guys, everyone's here! Grab a seat — the match starts in five minutes!",
+        "vi": "Mọi người ơi, đủ mặt rồi! Lấy chỗ ngồi đi — trận đấu bắt đầu sau năm phút nữa!"
+      },
+      {
+        "speaker": "B",
+        "en": "Toàn, your TV is HUGE! When did you get that?",
+        "vi": "Toàn ơi, TV của mày TO KHỔNG LỒ! Mày mua cái này khi nào vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "Last week! Specifically bought it for the World Cup final. 65 inches, 4K. Worth every penny.",
+        "vi": "Tuần trước! Mua chuyên để xem chung kết World Cup. 65 inch, 4K. Xứng đáng từng đồng."
+      },
+      {
+        "speaker": "B",
+        "en": "Dedicated! I brought beer and mực nướng. Who else brought snacks?",
+        "vi": "Tâm huyết đó! Tao mang bia và mực nướng. Ai mang đồ ăn vặt nữa không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Minh brought bánh tráng trộn, and I made a big pot of bò kho to share.",
+        "vi": "Minh mang bánh tráng trộn, và tao nấu một nồi bò kho lớn để chia nhau."
+      },
+      {
+        "speaker": "B",
+        "en": "Oh my god — bò kho at midnight watching football? That's peak Vietnamese experience!",
+        "vi": "Ôi trời — ăn bò kho lúc nửa đêm xem bóng đá? Đó là trải nghiệm Việt Nam đỉnh cao!"
+      },
+      {
+        "speaker": "A",
+        "en": "Ha! Okay, kickoff! Everyone pay attention. Volume up!",
+        "vi": "Ha! Oke, bắt đầu rồi! Mọi người chú ý nhé. Tăng âm lượng lên!"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm so nervous. Do you think our team can pull this off?",
+        "vi": "Tao hồi hộp lắm. Mày nghĩ đội mình có làm được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "We trained so hard for this. Our defense looks solid today — I'm cautiously optimistic.",
+        "vi": "Mình đã luyện tập chăm chỉ cho trận này. Hàng phòng thủ hôm nay trông vững chắc — tao thận trọng lạc quan."
+      },
+      {
+        "speaker": "B",
+        "en": "Their striker is dangerous though. He scored in every group stage match.",
+        "vi": "Nhưng tiền đạo của họ nguy hiểm lắm. Anh ta ghi bàn trong mọi trận vòng bảng."
+      },
+      {
+        "speaker": "A",
+        "en": "Our goalkeeper is the best in the tournament. I trust him completely.",
+        "vi": "Thủ môn của mình là tốt nhất giải đấu. Tao hoàn toàn tin vào anh ấy."
+      },
+      {
+        "speaker": "B",
+        "en": "OHHHH! Did you see that cross? That almost went in!",
+        "vi": "OOHHH! Mày thấy pha tạt bóng đó không? Suýt vào rồi!"
+      },
+      {
+        "speaker": "A",
+        "en": "Heart attack! The goalkeeper just barely got a hand on it!",
+        "vi": "Đau tim thật sự! Thủ môn chỉ chặn lại bằng đầu ngón tay!"
+      },
+      {
+        "speaker": "B",
+        "en": "This match is going to give me grey hair. Can we pause it to breathe?",
+        "vi": "Trận này sẽ làm tóc tao bạc mất. Mình tạm dừng lại để thở được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "It's a live match, Linh! You can't pause live football!",
+        "vi": "Đây là trận trực tiếp, Linh ơi! Không tạm dừng bóng đá trực tiếp được!"
+      },
+      {
+        "speaker": "B",
+        "en": "I KNOW, I was joking! Oh — free kick! This could be it!",
+        "vi": "TÔI BIẾT, tao đùa thôi! À — đá phạt rồi! Cơ hội đây rồi!"
+      },
+      {
+        "speaker": "A",
+        "en": "Everyone up on your feet! Come on, come on, come on...",
+        "vi": "Mọi người đứng dậy hết! Nào nào nào..."
+      },
+      {
+        "speaker": "B",
+        "en": "GOOOAAALLL!!! We scored!!! YESSS!!!",
+        "vi": "GOOOOAAAALL!!! Ghi bàn rồi!!! YEA!!!"
+      },
+      {
+        "speaker": "A",
+        "en": "I can't believe it! The whole neighborhood can probably hear us right now!",
+        "vi": "Tao không thể tin được! Cả khu phố chắc đang nghe thấy tiếng mình rồi!"
+      },
+      {
+        "speaker": "B",
+        "en": "WHO CARES! We're winning! Quick — pour the beer, this needs celebrating!",
+        "vi": "AI QUAN TÂM! Mình đang thắng! Nhanh — rót bia đi, cái này cần ăn mừng!"
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, first half is over. We're up 1-0. Breathe everyone.",
+        "vi": "Oke, hiệp một kết thúc rồi. Mình đang dẫn 1-0. Thở nào mọi người."
+      },
+      {
+        "speaker": "B",
+        "en": "My hands are shaking from adrenaline. That was intense.",
+        "vi": "Tay tao đang run vì adrenaline. Căng thẳng quá."
+      },
+      {
+        "speaker": "A",
+        "en": "Same here! Everyone eat something during halftime — we need energy for the second half.",
+        "vi": "Tao cũng vậy! Mọi người ăn gì đi trong giờ nghỉ — mình cần năng lượng cho hiệp hai."
+      },
+      {
+        "speaker": "B",
+        "en": "This bò kho is incredible by the way. Recipe please!",
+        "vi": "Bò kho này ngon lắm nha. Cho tao công thức với!"
+      },
+      {
+        "speaker": "A",
+        "en": "Ha! After the match. Focus! Second half is starting...",
+        "vi": "Ha! Sau trận xong. Tập trung! Hiệp hai bắt đầu rồi..."
+      },
+      {
+        "speaker": "B",
+        "en": "They're pushing hard now. Chasing the equalizer. This is nerve-wracking.",
+        "vi": "Họ đang tấn công mạnh hơn rồi. Đang tìm bàn gỡ. Hồi hộp ghê."
+      },
+      {
+        "speaker": "A",
+        "en": "Hold the line! Just 10 more minutes! WE CAN DO THIS!",
+        "vi": "Giữ vững phòng thủ! Còn 10 phút nữa thôi! MÌNH LÀM ĐƯỢC!"
+      },
+      {
+        "speaker": "B",
+        "en": "FINAL WHISTLE!!! WE WON THE WORLD CUP!!!",
+        "vi": "TIẾNG CÒI KẾT THÚC!!! MÌNH ĐÃ VÔ ĐỊCH WORLD CUP!!!"
+      },
+      {
+        "speaker": "A",
+        "en": "I'M CRYING! I actually can't believe it! We actually did it!",
+        "vi": "TÔI ĐANG KHÓC ĐÂY! Tao thật sự không thể tin! Mình đã làm được thật sự rồi!"
+      },
+      {
+        "speaker": "B",
+        "en": "Best night of my life! Toàn, your house is lucky — we need to watch every big match here from now on!",
+        "vi": "Đêm tuyệt nhất cuộc đời tao! Toàn ơi, nhà mày may mắn lắm — từ giờ mình cần xem mọi trận lớn ở đây!"
+      }
     ]
   },
   {
@@ -177,36 +649,156 @@
     "speakerBName": { "vi": "Tư vấn viên", "en": "Consultant" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Hello, I'd like to enroll in an English course here. I spoke to someone on the phone last week.", "vi": "Xin chào, tôi muốn đăng ký học tiếng Anh ở đây. Tôi đã nói chuyện với ai đó qua điện thoại tuần trước." },
-      { "speaker": "B", "en": "Welcome! Please have a seat. May I have your name?", "vi": "Chào mừng! Mời bạn ngồi. Cho tôi biết tên bạn nhé?" },
-      { "speaker": "A", "en": "Nguyễn Thị Phương. I spoke with a consultant named Huy.", "vi": "Nguyễn Thị Phương. Tôi đã nói chuyện với tư vấn viên tên Huy." },
-      { "speaker": "B", "en": "Ah yes, Huy mentioned you'd be coming in! I'm Huy. Thanks for making the trip. Before we look at courses, shall we do a quick placement test?", "vi": "À đúng rồi, Huy — chính là tôi đây! Cảm ơn bạn đã ghé qua. Trước khi xem các khóa học, mình làm bài kiểm tra xếp lớp nhanh nhé?" },
-      { "speaker": "A", "en": "Oh great! I was hoping for that. I don't want to be in the wrong level.", "vi": "Tốt quá! Tôi cũng mong vậy. Tôi không muốn học sai trình độ." },
-      { "speaker": "B", "en": "The test takes about 20 minutes — grammar, vocabulary, and a short speaking section. Ready?", "vi": "Bài kiểm tra mất khoảng 20 phút — ngữ pháp, từ vựng và phần nói ngắn. Sẵn sàng chưa?" },
-      { "speaker": "A", "en": "Yes! Let me do my best.", "vi": "Sẵn sàng! Để tôi cố gắng hết sức." },
-      { "speaker": "B", "en": "(After test) Great job! Your result shows B1 — Intermediate level. Solid grammar, good vocabulary, but speaking fluency could improve.", "vi": "(Sau khi kiểm tra) Làm tốt lắm! Kết quả của bạn là B1 — Trung cấp. Ngữ pháp vững, từ vựng tốt, nhưng sự trôi chảy khi nói có thể cải thiện thêm." },
-      { "speaker": "A", "en": "That matches how I feel! My reading and writing are okay but I freeze when speaking to foreigners.", "vi": "Đúng với cảm nhận của tôi! Đọc và viết tôi ổn nhưng tôi hay bị đứng hình khi nói chuyện với người nước ngoài." },
-      { "speaker": "B", "en": "That's very common! Our B1 speaking-focused class is perfect for you then. It's 80% speaking practice.", "vi": "Rất phổ biến! Vậy thì lớp B1 tập trung vào nói của chúng tôi phù hợp với bạn. Lớp đó 80% là luyện nói." },
-      { "speaker": "A", "en": "That sounds exactly like what I need. How many students are in the class?", "vi": "Nghe đúng với những gì tôi cần. Lớp có bao nhiêu học viên?" },
-      { "speaker": "B", "en": "Maximum 12 per class. Small enough for everyone to speak regularly.", "vi": "Tối đa 12 học viên mỗi lớp. Nhỏ đủ để mọi người nói thường xuyên." },
-      { "speaker": "A", "en": "Who are the teachers? Are they native English speakers?", "vi": "Giáo viên là ai? Họ là người bản ngữ không?" },
-      { "speaker": "B", "en": "We have a mix — two native speakers from Australia and the UK, and three Vietnamese teachers who are C2 certified. Both styles are effective.", "vi": "Chúng tôi có cả hai — hai giáo viên bản ngữ từ Úc và Anh, và ba giáo viên người Việt được chứng nhận C2. Cả hai phong cách đều hiệu quả." },
-      { "speaker": "A", "en": "I prefer native speakers if possible — for the authentic accent and cultural exposure.", "vi": "Tôi thích người bản ngữ hơn nếu có thể — để nghe giọng thật và tiếp xúc văn hóa." },
-      { "speaker": "B", "en": "Our Thursday evening class is taught by James from Australia. There are still two spots available.", "vi": "Lớp tối thứ Năm do James người Úc dạy. Hiện còn hai chỗ trống." },
-      { "speaker": "A", "en": "Thursday evenings work perfectly for me. What time?", "vi": "Tối thứ Năm hoàn toàn phù hợp với tôi. Mấy giờ?" },
-      { "speaker": "B", "en": "6:30 PM to 8:30 PM. Two hours of intensive speaking practice.", "vi": "6 giờ 30 đến 8 giờ 30 tối. Hai tiếng luyện nói chuyên sâu." },
-      { "speaker": "A", "en": "Great. How long is the course and how much does it cost?", "vi": "Tốt. Khóa học kéo dài bao lâu và học phí bao nhiêu?" },
-      { "speaker": "B", "en": "The B1 course is 3 months — 12 sessions total. The fee is 3,600,000 VND, or 300,000 per session.", "vi": "Khóa B1 kéo dài 3 tháng — 12 buổi tổng cộng. Học phí là 3 triệu 600 nghìn, hoặc 300 nghìn mỗi buổi." },
-      { "speaker": "A", "en": "Can I pay monthly rather than all upfront?", "vi": "Tôi có thể đóng tiền theo tháng thay vì đóng hết một lần không?" },
-      { "speaker": "B", "en": "Yes, we offer monthly installments — 1,200,000 per month. But the full upfront payment gets you a 10% discount.", "vi": "Có, chúng tôi có trả theo tháng — 1 triệu 200 nghìn mỗi tháng. Nhưng đóng trước toàn bộ sẽ được giảm 10%." },
-      { "speaker": "A", "en": "A 10% discount is quite nice. I'll pay the full amount then — it saves me 360,000.", "vi": "Giảm 10% thì hấp dẫn. Tôi sẽ đóng toàn bộ — tiết kiệm được 360 nghìn." },
-      { "speaker": "B", "en": "Smart! I'll prepare the enrollment form. We also provide a textbook, a student app, and access to our online practice platform.", "vi": "Thông minh đó! Tôi sẽ chuẩn bị mẫu đăng ký. Chúng tôi cũng cung cấp sách giáo khoa, app học viên và quyền truy cập nền tảng luyện tập trực tuyến." },
-      { "speaker": "A", "en": "Oh wonderful — extra materials to practice at home too?", "vi": "Ồ tuyệt — có thêm tài liệu để luyện tập ở nhà nữa à?" },
-      { "speaker": "B", "en": "Yes! The app has daily 10-minute speaking exercises. Students who use it improve 40% faster on average.", "vi": "Có! App có bài tập nói 10 phút mỗi ngày. Học viên dùng app cải thiện nhanh hơn 40% trung bình." },
-      { "speaker": "A", "en": "I'll definitely use it every day. When does the class start?", "vi": "Tôi chắc chắn sẽ dùng mỗi ngày. Lớp bắt đầu khi nào?" },
-      { "speaker": "B", "en": "The next Thursday class starts in two weeks — March 6th. That gives you time to prepare.", "vi": "Lớp thứ Năm tiếp theo bắt đầu sau hai tuần — ngày 6 tháng 3. Bạn có thời gian để chuẩn bị." },
-      { "speaker": "A", "en": "I'm very excited to improve my English. I have a job interview coming up in three months and I want to feel confident.", "vi": "Tôi rất hào hứng để cải thiện tiếng Anh. Tôi có buổi phỏng vấn xin việc sau ba tháng và tôi muốn tự tin hơn." },
-      { "speaker": "B", "en": "That's a perfect timeline! Three months of this course will make a real difference for your interview. Let's sign you up!", "vi": "Đó là đúng thời gian rồi! Ba tháng học khóa này sẽ tạo ra sự khác biệt thật sự cho buổi phỏng vấn. Mình đăng ký cho bạn ngay thôi!" }
+      {
+        "speaker": "A",
+        "en": "Hello, I'd like to enroll in an English course here. I spoke to someone on the phone last week.",
+        "vi": "Xin chào, tôi muốn đăng ký học tiếng Anh ở đây. Tôi đã nói chuyện với ai đó qua điện thoại tuần trước."
+      },
+      {
+        "speaker": "B",
+        "en": "Welcome! Please have a seat. May I have your name?",
+        "vi": "Chào mừng! Mời bạn ngồi. Cho tôi biết tên bạn nhé?"
+      },
+      {
+        "speaker": "A",
+        "en": "Nguyễn Thị Phương. I spoke with a consultant named Huy.",
+        "vi": "Nguyễn Thị Phương. Tôi đã nói chuyện với tư vấn viên tên Huy."
+      },
+      {
+        "speaker": "B",
+        "en": "Ah yes, Huy mentioned you'd be coming in! I'm Huy. Thanks for making the trip. Before we look at courses, shall we do a quick placement test?",
+        "vi": "À đúng rồi, Huy — chính là tôi đây! Cảm ơn bạn đã ghé qua. Trước khi xem các khóa học, mình làm bài kiểm tra xếp lớp nhanh nhé?"
+      },
+      {
+        "speaker": "A",
+        "en": "Oh great! I was hoping for that. I don't want to be in the wrong level.",
+        "vi": "Tốt quá! Tôi cũng mong vậy. Tôi không muốn học sai trình độ."
+      },
+      {
+        "speaker": "B",
+        "en": "The test takes about 20 minutes — grammar, vocabulary, and a short speaking section. Ready?",
+        "vi": "Bài kiểm tra mất khoảng 20 phút — ngữ pháp, từ vựng và phần nói ngắn. Sẵn sàng chưa?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes! Let me do my best.",
+        "vi": "Sẵn sàng! Để tôi cố gắng hết sức."
+      },
+      {
+        "speaker": "B",
+        "en": "(After test) Great job! Your result shows B1 — Intermediate level. Solid grammar, good vocabulary, but speaking fluency could improve.",
+        "vi": "(Sau khi kiểm tra) Làm tốt lắm! Kết quả của bạn là B1 — Trung cấp. Ngữ pháp vững, từ vựng tốt, nhưng sự trôi chảy khi nói có thể cải thiện thêm."
+      },
+      {
+        "speaker": "A",
+        "en": "That matches how I feel! My reading and writing are okay but I freeze when speaking to foreigners.",
+        "vi": "Đúng với cảm nhận của tôi! Đọc và viết tôi ổn nhưng tôi hay bị đứng hình khi nói chuyện với người nước ngoài."
+      },
+      {
+        "speaker": "B",
+        "en": "That's very common! Our B1 speaking-focused class is perfect for you then. It's 80% speaking practice.",
+        "vi": "Rất phổ biến! Vậy thì lớp B1 tập trung vào nói của chúng tôi phù hợp với bạn. Lớp đó 80% là luyện nói."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds exactly like what I need. How many students are in the class?",
+        "vi": "Nghe đúng với những gì tôi cần. Lớp có bao nhiêu học viên?"
+      },
+      {
+        "speaker": "B",
+        "en": "Maximum 12 per class. Small enough for everyone to speak regularly.",
+        "vi": "Tối đa 12 học viên mỗi lớp. Nhỏ đủ để mọi người nói thường xuyên."
+      },
+      {
+        "speaker": "A",
+        "en": "Who are the teachers? Are they native English speakers?",
+        "vi": "Giáo viên là ai? Họ là người bản ngữ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "We have a mix — two native speakers from Australia and the UK, and three Vietnamese teachers who are C2 certified. Both styles are effective.",
+        "vi": "Chúng tôi có cả hai — hai giáo viên bản ngữ từ Úc và Anh, và ba giáo viên người Việt được chứng nhận C2. Cả hai phong cách đều hiệu quả."
+      },
+      {
+        "speaker": "A",
+        "en": "I prefer native speakers if possible — for the authentic accent and cultural exposure.",
+        "vi": "Tôi thích người bản ngữ hơn nếu có thể — để nghe giọng thật và tiếp xúc văn hóa."
+      },
+      {
+        "speaker": "B",
+        "en": "Our Thursday evening class is taught by James from Australia. There are still two spots available.",
+        "vi": "Lớp tối thứ Năm do James người Úc dạy. Hiện còn hai chỗ trống."
+      },
+      {
+        "speaker": "A",
+        "en": "Thursday evenings work perfectly for me. What time?",
+        "vi": "Tối thứ Năm hoàn toàn phù hợp với tôi. Mấy giờ?"
+      },
+      {
+        "speaker": "B",
+        "en": "6:30 PM to 8:30 PM. Two hours of intensive speaking practice.",
+        "vi": "6 giờ 30 đến 8 giờ 30 tối. Hai tiếng luyện nói chuyên sâu."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. How long is the course and how much does it cost?",
+        "vi": "Tốt. Khóa học kéo dài bao lâu và học phí bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "The B1 course is 3 months — 12 sessions total. The fee is 3,600,000 VND, or 300,000 per session.",
+        "vi": "Khóa B1 kéo dài 3 tháng — 12 buổi tổng cộng. Học phí là 3 triệu 600 nghìn, hoặc 300 nghìn mỗi buổi."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I pay monthly rather than all upfront?",
+        "vi": "Tôi có thể đóng tiền theo tháng thay vì đóng hết một lần không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, we offer monthly installments — 1,200,000 per month. But the full upfront payment gets you a 10% discount.",
+        "vi": "Có, chúng tôi có trả theo tháng — 1 triệu 200 nghìn mỗi tháng. Nhưng đóng trước toàn bộ sẽ được giảm 10%."
+      },
+      {
+        "speaker": "A",
+        "en": "A 10% discount is quite nice. I'll pay the full amount then — it saves me 360,000.",
+        "vi": "Giảm 10% thì hấp dẫn. Tôi sẽ đóng toàn bộ — tiết kiệm được 360 nghìn."
+      },
+      {
+        "speaker": "B",
+        "en": "Smart! I'll prepare the enrollment form. We also provide a textbook, a student app, and access to our online practice platform.",
+        "vi": "Thông minh đó! Tôi sẽ chuẩn bị mẫu đăng ký. Chúng tôi cũng cung cấp sách giáo khoa, app học viên và quyền truy cập nền tảng luyện tập trực tuyến."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh wonderful — extra materials to practice at home too?",
+        "vi": "Ồ tuyệt — có thêm tài liệu để luyện tập ở nhà nữa à?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes! The app has daily 10-minute speaking exercises. Students who use it improve 40% faster on average.",
+        "vi": "Có! App có bài tập nói 10 phút mỗi ngày. Học viên dùng app cải thiện nhanh hơn 40% trung bình."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll definitely use it every day. When does the class start?",
+        "vi": "Tôi chắc chắn sẽ dùng mỗi ngày. Lớp bắt đầu khi nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "The next Thursday class starts in two weeks — March 6th. That gives you time to prepare.",
+        "vi": "Lớp thứ Năm tiếp theo bắt đầu sau hai tuần — ngày 6 tháng 3. Bạn có thời gian để chuẩn bị."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm very excited to improve my English. I have a job interview coming up in three months and I want to feel confident.",
+        "vi": "Tôi rất hào hứng để cải thiện tiếng Anh. Tôi có buổi phỏng vấn xin việc sau ba tháng và tôi muốn tự tin hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a perfect timeline! Three months of this course will make a real difference for your interview. Let's sign you up!",
+        "vi": "Đó là đúng thời gian rồi! Ba tháng học khóa này sẽ tạo ra sự khác biệt thật sự cho buổi phỏng vấn. Mình đăng ký cho bạn ngay thôi!"
+      }
     ]
   }
 ]

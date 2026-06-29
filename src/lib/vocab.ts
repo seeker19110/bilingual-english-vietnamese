@@ -14,7 +14,7 @@ export function getLearnedWords(userId: string): Set<string> {
   try {
     const raw = localStorage.getItem(KEY(userId))
     const arr = raw ? (JSON.parse(raw) as string[]) : []
-    return new Set(arr.map(w => w.toLowerCase()))
+    return new Set(arr.map((w) => w.toLowerCase()))
   } catch {
     return new Set()
   }
@@ -59,14 +59,20 @@ export function getDifficultWords(userId: string): Set<string> {
   try {
     const raw = localStorage.getItem(HARD_KEY(userId))
     return raw ? new Set(JSON.parse(raw) as string[]) : new Set()
-  } catch { return new Set() }
+  } catch {
+    return new Set()
+  }
 }
 
 // Bật/tắt đánh dấu khó — trả về trạng thái mới (true = đang khó)
 export function toggleDifficult(userId: string, word: string): boolean {
   const set = getDifficultWords(userId)
   const key = word.toLowerCase()
-  if (set.has(key)) { set.delete(key) } else { set.add(key) }
+  if (set.has(key)) {
+    set.delete(key)
+  } else {
+    set.add(key)
+  }
   localStorage.setItem(HARD_KEY(userId), JSON.stringify([...set]))
   pushProgress(userId) // đồng bộ lên Supabase
   return set.has(key)

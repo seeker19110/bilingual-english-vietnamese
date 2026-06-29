@@ -9,26 +9,106 @@
     "speakerBName": { "vi": "Thầy Minh", "en": "Mr. Minh" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Excuse me, Mr. Minh. Do you have a few minutes after class? I had some questions about the test.", "vi": "Xin lỗi thầy Minh. Thầy có vài phút sau giờ học không? Em có vài câu hỏi về bài kiểm tra." },
-      { "speaker": "B", "en": "Of course, Hà. Come in and sit down. What's on your mind?", "vi": "Dĩ nhiên, Hà. Vào ngồi đi. Em muốn hỏi gì vậy?" },
-      { "speaker": "A", "en": "I got 68 on the midterm and I'm not sure where I lost marks. Can you help me understand?", "vi": "Em được 68 điểm bài giữa kỳ và em không biết mình mất điểm ở đâu. Thầy có thể giúp em hiểu không?" },
-      { "speaker": "B", "en": "Sure, let me pull up your paper. Ah — your biggest issue was question 4. You missed the main argument entirely.", "vi": "Được, để thầy xem lại bài của em. À — vấn đề lớn nhất là câu 4. Em đã bỏ qua luận điểm chính hoàn toàn." },
-      { "speaker": "A", "en": "I thought I answered it correctly. I wrote about the economic factors.", "vi": "Em nghĩ em đã trả lời đúng rồi. Em viết về các yếu tố kinh tế mà." },
-      { "speaker": "B", "en": "The question asked about cultural factors, not economic ones. Reading the question carefully is crucial.", "vi": "Câu hỏi hỏi về các yếu tố văn hóa chứ không phải kinh tế. Đọc kỹ câu hỏi rất quan trọng." },
-      { "speaker": "A", "en": "Oh no, I completely misread it. That was careless of me.", "vi": "Ôi không, em đọc sai hoàn toàn rồi. Em sơ suất quá." },
-      { "speaker": "B", "en": "It happens to everyone. For the final exam, I recommend re-reading each question twice before answering.", "vi": "Ai cũng có lúc vậy. Cho bài thi cuối kỳ, thầy khuyên em đọc lại mỗi câu hỏi hai lần trước khi trả lời." },
-      { "speaker": "A", "en": "I will do that. Were there other areas I could improve?", "vi": "Em sẽ làm vậy. Còn những điểm nào khác em có thể cải thiện không thầy?" },
-      { "speaker": "B", "en": "Your essays need stronger topic sentences. State your main point clearly in the first sentence of each paragraph.", "vi": "Bài luận của em cần câu chủ đề mạnh hơn. Hãy nêu rõ ý chính trong câu đầu tiên của mỗi đoạn." },
-      { "speaker": "A", "en": "I tend to build up to the point gradually. Should I be more direct?", "vi": "Em hay xây dựng dần dần đến điểm chính. Em có nên trực tiếp hơn không?" },
-      { "speaker": "B", "en": "In academic writing — yes, absolutely. Your reader should know your argument immediately.", "vi": "Trong bài viết học thuật — có, chắc chắn. Người đọc cần biết luận điểm của em ngay lập tức." },
-      { "speaker": "A", "en": "That's really helpful. Is there any extra reading you'd recommend before the final?", "vi": "Nghe bổ ích lắm. Thầy có tài liệu đọc thêm nào gợi ý trước khi thi cuối kỳ không?" },
-      { "speaker": "B", "en": "The supplementary chapters I posted on the learning portal last week. Also review your lecture notes from weeks 8 to 11.", "vi": "Các chương bổ trợ thầy đã đăng lên cổng học tập tuần trước. Và ôn lại ghi chú bài giảng từ tuần 8 đến 11." },
-      { "speaker": "A", "en": "I'll go through those this weekend. Thank you so much for your time, Mr. Minh.", "vi": "Em sẽ xem qua những thứ đó cuối tuần này. Cảm ơn thầy đã dành thời gian, thầy Minh ạ." },
-      { "speaker": "B", "en": "You're welcome. You clearly care about doing well — that's already half the battle.", "vi": "Không có gì. Em rõ ràng quan tâm đến kết quả học tập — đó đã là một nửa thành công rồi." },
-      { "speaker": "A", "en": "I really want to pass this course with a good grade. It's important for my major.", "vi": "Em thật sự muốn qua môn này với điểm tốt. Nó quan trọng cho chuyên ngành của em." },
-      { "speaker": "B", "en": "With focused preparation, I'm confident you can score in the 80s on the final. Come see me again if you need help.", "vi": "Với sự chuẩn bị tập trung, thầy tin em có thể đạt điểm 80 trở lên trong bài thi cuối. Em cứ đến gặp thầy nếu cần hỗ trợ." },
-      { "speaker": "A", "en": "I will! Thank you again, Mr. Minh. I feel much more confident now.", "vi": "Em sẽ đến ạ! Cảm ơn thầy lần nữa. Bây giờ em tự tin hơn nhiều rồi." },
-      { "speaker": "B", "en": "Good luck with your studies! See you next week in class.", "vi": "Chúc em học tốt! Gặp lại em tuần sau trong lớp nhé." }
+      {
+        "speaker": "A",
+        "en": "Excuse me, Mr. Minh. Do you have a few minutes after class? I had some questions about the test.",
+        "vi": "Xin lỗi thầy Minh. Thầy có vài phút sau giờ học không? Em có vài câu hỏi về bài kiểm tra."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course, Hà. Come in and sit down. What's on your mind?",
+        "vi": "Dĩ nhiên, Hà. Vào ngồi đi. Em muốn hỏi gì vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "I got 68 on the midterm and I'm not sure where I lost marks. Can you help me understand?",
+        "vi": "Em được 68 điểm bài giữa kỳ và em không biết mình mất điểm ở đâu. Thầy có thể giúp em hiểu không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Sure, let me pull up your paper. Ah — your biggest issue was question 4. You missed the main argument entirely.",
+        "vi": "Được, để thầy xem lại bài của em. À — vấn đề lớn nhất là câu 4. Em đã bỏ qua luận điểm chính hoàn toàn."
+      },
+      {
+        "speaker": "A",
+        "en": "I thought I answered it correctly. I wrote about the economic factors.",
+        "vi": "Em nghĩ em đã trả lời đúng rồi. Em viết về các yếu tố kinh tế mà."
+      },
+      {
+        "speaker": "B",
+        "en": "The question asked about cultural factors, not economic ones. Reading the question carefully is crucial.",
+        "vi": "Câu hỏi hỏi về các yếu tố văn hóa chứ không phải kinh tế. Đọc kỹ câu hỏi rất quan trọng."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh no, I completely misread it. That was careless of me.",
+        "vi": "Ôi không, em đọc sai hoàn toàn rồi. Em sơ suất quá."
+      },
+      {
+        "speaker": "B",
+        "en": "It happens to everyone. For the final exam, I recommend re-reading each question twice before answering.",
+        "vi": "Ai cũng có lúc vậy. Cho bài thi cuối kỳ, thầy khuyên em đọc lại mỗi câu hỏi hai lần trước khi trả lời."
+      },
+      {
+        "speaker": "A",
+        "en": "I will do that. Were there other areas I could improve?",
+        "vi": "Em sẽ làm vậy. Còn những điểm nào khác em có thể cải thiện không thầy?"
+      },
+      {
+        "speaker": "B",
+        "en": "Your essays need stronger topic sentences. State your main point clearly in the first sentence of each paragraph.",
+        "vi": "Bài luận của em cần câu chủ đề mạnh hơn. Hãy nêu rõ ý chính trong câu đầu tiên của mỗi đoạn."
+      },
+      {
+        "speaker": "A",
+        "en": "I tend to build up to the point gradually. Should I be more direct?",
+        "vi": "Em hay xây dựng dần dần đến điểm chính. Em có nên trực tiếp hơn không?"
+      },
+      {
+        "speaker": "B",
+        "en": "In academic writing — yes, absolutely. Your reader should know your argument immediately.",
+        "vi": "Trong bài viết học thuật — có, chắc chắn. Người đọc cần biết luận điểm của em ngay lập tức."
+      },
+      {
+        "speaker": "A",
+        "en": "That's really helpful. Is there any extra reading you'd recommend before the final?",
+        "vi": "Nghe bổ ích lắm. Thầy có tài liệu đọc thêm nào gợi ý trước khi thi cuối kỳ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "The supplementary chapters I posted on the learning portal last week. Also review your lecture notes from weeks 8 to 11.",
+        "vi": "Các chương bổ trợ thầy đã đăng lên cổng học tập tuần trước. Và ôn lại ghi chú bài giảng từ tuần 8 đến 11."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll go through those this weekend. Thank you so much for your time, Mr. Minh.",
+        "vi": "Em sẽ xem qua những thứ đó cuối tuần này. Cảm ơn thầy đã dành thời gian, thầy Minh ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "You're welcome. You clearly care about doing well — that's already half the battle.",
+        "vi": "Không có gì. Em rõ ràng quan tâm đến kết quả học tập — đó đã là một nửa thành công rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "I really want to pass this course with a good grade. It's important for my major.",
+        "vi": "Em thật sự muốn qua môn này với điểm tốt. Nó quan trọng cho chuyên ngành của em."
+      },
+      {
+        "speaker": "B",
+        "en": "With focused preparation, I'm confident you can score in the 80s on the final. Come see me again if you need help.",
+        "vi": "Với sự chuẩn bị tập trung, thầy tin em có thể đạt điểm 80 trở lên trong bài thi cuối. Em cứ đến gặp thầy nếu cần hỗ trợ."
+      },
+      {
+        "speaker": "A",
+        "en": "I will! Thank you again, Mr. Minh. I feel much more confident now.",
+        "vi": "Em sẽ đến ạ! Cảm ơn thầy lần nữa. Bây giờ em tự tin hơn nhiều rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Good luck with your studies! See you next week in class.",
+        "vi": "Chúc em học tốt! Gặp lại em tuần sau trong lớp nhé."
+      }
     ]
   },
   {
@@ -41,26 +121,106 @@
     "speakerBName": { "vi": "Nhân viên", "en": "Staff" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Hi, I need a laptop for software development. I code mainly in Python and JavaScript.", "vi": "Chào, tôi cần laptop để học lập trình. Tôi viết code chủ yếu bằng Python và JavaScript." },
-      { "speaker": "B", "en": "Great! For coding, you'll want a good processor and plenty of RAM. What's your budget?", "vi": "Tốt! Để lập trình, bạn cần bộ xử lý tốt và nhiều RAM. Ngân sách của bạn là bao nhiêu?" },
-      { "speaker": "A", "en": "Around 20 to 25 million VND. I want something that will last me at least four years.", "vi": "Khoảng 20 đến 25 triệu. Tôi muốn thứ gì dùng được ít nhất bốn năm." },
-      { "speaker": "B", "en": "That budget is very workable. Are you more comfortable with Windows or macOS?", "vi": "Ngân sách đó rất phù hợp. Bạn dùng quen Windows hay macOS hơn?" },
-      { "speaker": "A", "en": "I've only used Windows, but I'm open to trying macOS if it's better for coding.", "vi": "Tôi chỉ dùng Windows thôi, nhưng tôi sẵn sàng thử macOS nếu tốt hơn cho lập trình." },
-      { "speaker": "B", "en": "Many developers prefer macOS — Unix-based system, great terminal, and the M-series chips are extremely powerful.", "vi": "Nhiều lập trình viên thích macOS — hệ thống dựa trên Unix, terminal tốt và chip dòng M cực kỳ mạnh." },
-      { "speaker": "A", "en": "I've heard about the MacBook Air M2. Is that within my budget?", "vi": "Tôi nghe về MacBook Air M2. Cái đó có trong ngân sách tôi không?" },
-      { "speaker": "B", "en": "The M2 Air starts at 23.9 million for the base 8GB RAM model. I'd actually recommend the 16GB version at 28 million for coding.", "vi": "M2 Air bắt đầu từ 23,9 triệu cho bản cơ bản 8GB RAM. Tôi thực ra khuyên bản 16GB ở mức 28 triệu cho lập trình." },
-      { "speaker": "A", "en": "28 million is a bit over my budget. Is there a good Windows alternative?", "vi": "28 triệu hơi vượt ngân sách. Có lựa chọn Windows nào tốt không?" },
-      { "speaker": "B", "en": "Yes! The ASUS Vivobook Pro 15 with an Intel Core i7 and 16GB RAM is 22 million. Very solid for development.", "vi": "Có! ASUS Vivobook Pro 15 với Core i7 và 16GB RAM là 22 triệu. Rất tốt cho lập trình." },
-      { "speaker": "A", "en": "What about storage? Running multiple IDEs and virtual environments needs space.", "vi": "Còn dung lượng lưu trữ thì sao? Chạy nhiều IDE và môi trường ảo cần nhiều không gian." },
-      { "speaker": "B", "en": "That model has a 512GB SSD, which is the minimum I'd recommend. You can always add an external drive later.", "vi": "Mẫu đó có SSD 512GB, đó là mức tối thiểu tôi khuyên. Bạn có thể thêm ổ cứng ngoài sau." },
-      { "speaker": "A", "en": "Can I see it? I want to check the keyboard feel — I type a lot.", "vi": "Tôi xem được không? Tôi muốn kiểm tra độ đàn hồi bàn phím — tôi gõ nhiều lắm." },
-      { "speaker": "B", "en": "Of course! Here it is. The keyboard has 1.5mm key travel — most users find it very comfortable for long sessions.", "vi": "Dĩ nhiên! Đây rồi. Bàn phím có độ nảy phím 1,5mm — hầu hết người dùng thấy rất thoải mái cho thời gian dài." },
-      { "speaker": "A", "en": "The screen is great too! 15.6 inches is spacious for multi-window coding.", "vi": "Màn hình cũng tốt! 15,6 inch rộng rãi cho việc code nhiều cửa sổ." },
-      { "speaker": "B", "en": "It's a 2.8K OLED display — excellent color accuracy, which is a bonus if you ever do frontend work.", "vi": "Đây là màn hình OLED 2.8K — độ chính xác màu sắc tuyệt vời, có lợi nếu bạn làm việc frontend." },
-      { "speaker": "A", "en": "I'm sold! Does it come with a warranty?", "vi": "Tôi quyết định rồi! Máy có bảo hành không?" },
-      { "speaker": "B", "en": "Two years manufacturer warranty plus we offer an optional third year extended warranty for 800,000.", "vi": "Bảo hành nhà sản xuất hai năm cộng thêm bảo hành mở rộng năm thứ ba tùy chọn với giá 800 nghìn." },
-      { "speaker": "A", "en": "I'll take the extended warranty too. Peace of mind for a student is worth it.", "vi": "Tôi sẽ lấy thêm bảo hành mở rộng. Yên tâm cho sinh viên thì đáng tiền." },
-      { "speaker": "B", "en": "Smart choice! Total is 22,800,000 VND. Cash or card?", "vi": "Lựa chọn thông minh! Tổng cộng là 22 triệu 800 nghìn. Tiền mặt hay thẻ?" }
+      {
+        "speaker": "A",
+        "en": "Hi, I need a laptop for software development. I code mainly in Python and JavaScript.",
+        "vi": "Chào, tôi cần laptop để học lập trình. Tôi viết code chủ yếu bằng Python và JavaScript."
+      },
+      {
+        "speaker": "B",
+        "en": "Great! For coding, you'll want a good processor and plenty of RAM. What's your budget?",
+        "vi": "Tốt! Để lập trình, bạn cần bộ xử lý tốt và nhiều RAM. Ngân sách của bạn là bao nhiêu?"
+      },
+      {
+        "speaker": "A",
+        "en": "Around 20 to 25 million VND. I want something that will last me at least four years.",
+        "vi": "Khoảng 20 đến 25 triệu. Tôi muốn thứ gì dùng được ít nhất bốn năm."
+      },
+      {
+        "speaker": "B",
+        "en": "That budget is very workable. Are you more comfortable with Windows or macOS?",
+        "vi": "Ngân sách đó rất phù hợp. Bạn dùng quen Windows hay macOS hơn?"
+      },
+      {
+        "speaker": "A",
+        "en": "I've only used Windows, but I'm open to trying macOS if it's better for coding.",
+        "vi": "Tôi chỉ dùng Windows thôi, nhưng tôi sẵn sàng thử macOS nếu tốt hơn cho lập trình."
+      },
+      {
+        "speaker": "B",
+        "en": "Many developers prefer macOS — Unix-based system, great terminal, and the M-series chips are extremely powerful.",
+        "vi": "Nhiều lập trình viên thích macOS — hệ thống dựa trên Unix, terminal tốt và chip dòng M cực kỳ mạnh."
+      },
+      {
+        "speaker": "A",
+        "en": "I've heard about the MacBook Air M2. Is that within my budget?",
+        "vi": "Tôi nghe về MacBook Air M2. Cái đó có trong ngân sách tôi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "The M2 Air starts at 23.9 million for the base 8GB RAM model. I'd actually recommend the 16GB version at 28 million for coding.",
+        "vi": "M2 Air bắt đầu từ 23,9 triệu cho bản cơ bản 8GB RAM. Tôi thực ra khuyên bản 16GB ở mức 28 triệu cho lập trình."
+      },
+      {
+        "speaker": "A",
+        "en": "28 million is a bit over my budget. Is there a good Windows alternative?",
+        "vi": "28 triệu hơi vượt ngân sách. Có lựa chọn Windows nào tốt không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes! The ASUS Vivobook Pro 15 with an Intel Core i7 and 16GB RAM is 22 million. Very solid for development.",
+        "vi": "Có! ASUS Vivobook Pro 15 với Core i7 và 16GB RAM là 22 triệu. Rất tốt cho lập trình."
+      },
+      {
+        "speaker": "A",
+        "en": "What about storage? Running multiple IDEs and virtual environments needs space.",
+        "vi": "Còn dung lượng lưu trữ thì sao? Chạy nhiều IDE và môi trường ảo cần nhiều không gian."
+      },
+      {
+        "speaker": "B",
+        "en": "That model has a 512GB SSD, which is the minimum I'd recommend. You can always add an external drive later.",
+        "vi": "Mẫu đó có SSD 512GB, đó là mức tối thiểu tôi khuyên. Bạn có thể thêm ổ cứng ngoài sau."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I see it? I want to check the keyboard feel — I type a lot.",
+        "vi": "Tôi xem được không? Tôi muốn kiểm tra độ đàn hồi bàn phím — tôi gõ nhiều lắm."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! Here it is. The keyboard has 1.5mm key travel — most users find it very comfortable for long sessions.",
+        "vi": "Dĩ nhiên! Đây rồi. Bàn phím có độ nảy phím 1,5mm — hầu hết người dùng thấy rất thoải mái cho thời gian dài."
+      },
+      {
+        "speaker": "A",
+        "en": "The screen is great too! 15.6 inches is spacious for multi-window coding.",
+        "vi": "Màn hình cũng tốt! 15,6 inch rộng rãi cho việc code nhiều cửa sổ."
+      },
+      {
+        "speaker": "B",
+        "en": "It's a 2.8K OLED display — excellent color accuracy, which is a bonus if you ever do frontend work.",
+        "vi": "Đây là màn hình OLED 2.8K — độ chính xác màu sắc tuyệt vời, có lợi nếu bạn làm việc frontend."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm sold! Does it come with a warranty?",
+        "vi": "Tôi quyết định rồi! Máy có bảo hành không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Two years manufacturer warranty plus we offer an optional third year extended warranty for 800,000.",
+        "vi": "Bảo hành nhà sản xuất hai năm cộng thêm bảo hành mở rộng năm thứ ba tùy chọn với giá 800 nghìn."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll take the extended warranty too. Peace of mind for a student is worth it.",
+        "vi": "Tôi sẽ lấy thêm bảo hành mở rộng. Yên tâm cho sinh viên thì đáng tiền."
+      },
+      {
+        "speaker": "B",
+        "en": "Smart choice! Total is 22,800,000 VND. Cash or card?",
+        "vi": "Lựa chọn thông minh! Tổng cộng là 22 triệu 800 nghìn. Tiền mặt hay thẻ?"
+      }
     ]
   },
   {
@@ -73,27 +233,107 @@
     "speakerBName": { "vi": "Kỹ thuật viên", "en": "Tech Support" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Hello, I'm calling because my home wifi has been down for two hours. I need it for work.", "vi": "Xin chào, tôi gọi vì wifi nhà tôi mất kết nối hai tiếng rồi. Tôi cần dùng để làm việc." },
-      { "speaker": "B", "en": "I understand, that's frustrating. May I have your account number or the phone number registered to your account?", "vi": "Tôi hiểu, thật bực bội. Cho tôi số tài khoản hoặc số điện thoại đăng ký tài khoản của bạn nhé?" },
-      { "speaker": "A", "en": "My phone number is 0909-123-456. The account is under Trần Thị Nga.", "vi": "Số điện thoại của tôi là 0909-123-456. Tài khoản đứng tên Trần Thị Nga." },
-      { "speaker": "B", "en": "Found it. I can see your connection dropped at 2:15 PM. Let me run a line check... your signal is actually reaching the modem.", "vi": "Tìm thấy rồi. Tôi thấy kết nối của bạn mất lúc 2 giờ 15 chiều. Để tôi kiểm tra đường truyền... tín hiệu thực ra đang đến modem của bạn." },
-      { "speaker": "A", "en": "So it's a router issue, not a service outage?", "vi": "Vậy là lỗi router chứ không phải sự cố dịch vụ?" },
-      { "speaker": "B", "en": "Possibly. Can you check — is the router's power light solid green or blinking?", "vi": "Có thể vậy. Bạn có thể kiểm tra — đèn nguồn router có màu xanh liên tục hay đang nhấp nháy?" },
-      { "speaker": "A", "en": "The power light is green but the internet light is red.", "vi": "Đèn nguồn màu xanh nhưng đèn internet màu đỏ." },
-      { "speaker": "B", "en": "Red internet light means the router can't establish the WAN connection. Please unplug the router from power, wait 30 seconds, then plug it back in.", "vi": "Đèn internet màu đỏ nghĩa là router không thiết lập được kết nối WAN. Rút điện router ra, đợi 30 giây, rồi cắm lại." },
-      { "speaker": "A", "en": "Okay, I've done that. Waiting... The lights are cycling... Now the internet light is turning orange.", "vi": "Oke, tôi làm rồi. Đợi đây... Đèn đang chạy vòng... Bây giờ đèn internet đổi sang màu cam rồi." },
-      { "speaker": "B", "en": "That's normal — it's reconnecting. Give it another 60 seconds.", "vi": "Bình thường — đang kết nối lại. Đợi thêm 60 giây nữa." },
-      { "speaker": "A", "en": "It turned green! And I can see my wifi network on my phone now!", "vi": "Đổi sang xanh rồi! Và tôi thấy mạng wifi của mình trên điện thoại rồi!" },
-      { "speaker": "B", "en": "Excellent! Can you connect and try loading a webpage?", "vi": "Tuyệt vời! Bạn có thể kết nối và thử mở một trang web không?" },
-      { "speaker": "A", "en": "Connected! The page loaded perfectly. Oh, what a relief!", "vi": "Kết nối rồi! Trang web mở bình thường. Ôi, nhẹ nhõm quá!" },
-      { "speaker": "B", "en": "Great! The restart cleared a firmware glitch. If this happens again, try restarting the router first — it solves 80% of issues.", "vi": "Tốt lắm! Việc khởi động lại đã xóa một lỗi firmware. Nếu xảy ra lại, hãy thử khởi động lại router trước — cách này giải quyết được 80% sự cố." },
-      { "speaker": "A", "en": "I'll remember that. Is there a reason it happened in the first place?", "vi": "Tôi sẽ nhớ điều đó. Có lý do nào khiến nó xảy ra không?" },
-      { "speaker": "B", "en": "Could be a brief power fluctuation or an automatic firmware update that required a restart.", "vi": "Có thể là do biến động điện ngắn hoặc cập nhật firmware tự động cần khởi động lại." },
-      { "speaker": "A", "en": "I see. Should I set my router to update manually to avoid this?", "vi": "Hiểu rồi. Tôi có nên để router cập nhật thủ công để tránh điều này không?" },
-      { "speaker": "B", "en": "Actually, automatic updates are better for security. But you can schedule them for late night to minimize disruption.", "vi": "Thực ra, cập nhật tự động tốt hơn cho bảo mật. Nhưng bạn có thể lên lịch cho ban đêm khuya để giảm thiểu gián đoạn." },
+      {
+        "speaker": "A",
+        "en": "Hello, I'm calling because my home wifi has been down for two hours. I need it for work.",
+        "vi": "Xin chào, tôi gọi vì wifi nhà tôi mất kết nối hai tiếng rồi. Tôi cần dùng để làm việc."
+      },
+      {
+        "speaker": "B",
+        "en": "I understand, that's frustrating. May I have your account number or the phone number registered to your account?",
+        "vi": "Tôi hiểu, thật bực bội. Cho tôi số tài khoản hoặc số điện thoại đăng ký tài khoản của bạn nhé?"
+      },
+      {
+        "speaker": "A",
+        "en": "My phone number is 0909-123-456. The account is under Trần Thị Nga.",
+        "vi": "Số điện thoại của tôi là 0909-123-456. Tài khoản đứng tên Trần Thị Nga."
+      },
+      {
+        "speaker": "B",
+        "en": "Found it. I can see your connection dropped at 2:15 PM. Let me run a line check... your signal is actually reaching the modem.",
+        "vi": "Tìm thấy rồi. Tôi thấy kết nối của bạn mất lúc 2 giờ 15 chiều. Để tôi kiểm tra đường truyền... tín hiệu thực ra đang đến modem của bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "So it's a router issue, not a service outage?",
+        "vi": "Vậy là lỗi router chứ không phải sự cố dịch vụ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Possibly. Can you check — is the router's power light solid green or blinking?",
+        "vi": "Có thể vậy. Bạn có thể kiểm tra — đèn nguồn router có màu xanh liên tục hay đang nhấp nháy?"
+      },
+      {
+        "speaker": "A",
+        "en": "The power light is green but the internet light is red.",
+        "vi": "Đèn nguồn màu xanh nhưng đèn internet màu đỏ."
+      },
+      {
+        "speaker": "B",
+        "en": "Red internet light means the router can't establish the WAN connection. Please unplug the router from power, wait 30 seconds, then plug it back in.",
+        "vi": "Đèn internet màu đỏ nghĩa là router không thiết lập được kết nối WAN. Rút điện router ra, đợi 30 giây, rồi cắm lại."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, I've done that. Waiting... The lights are cycling... Now the internet light is turning orange.",
+        "vi": "Oke, tôi làm rồi. Đợi đây... Đèn đang chạy vòng... Bây giờ đèn internet đổi sang màu cam rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "That's normal — it's reconnecting. Give it another 60 seconds.",
+        "vi": "Bình thường — đang kết nối lại. Đợi thêm 60 giây nữa."
+      },
+      {
+        "speaker": "A",
+        "en": "It turned green! And I can see my wifi network on my phone now!",
+        "vi": "Đổi sang xanh rồi! Và tôi thấy mạng wifi của mình trên điện thoại rồi!"
+      },
+      {
+        "speaker": "B",
+        "en": "Excellent! Can you connect and try loading a webpage?",
+        "vi": "Tuyệt vời! Bạn có thể kết nối và thử mở một trang web không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Connected! The page loaded perfectly. Oh, what a relief!",
+        "vi": "Kết nối rồi! Trang web mở bình thường. Ôi, nhẹ nhõm quá!"
+      },
+      {
+        "speaker": "B",
+        "en": "Great! The restart cleared a firmware glitch. If this happens again, try restarting the router first — it solves 80% of issues.",
+        "vi": "Tốt lắm! Việc khởi động lại đã xóa một lỗi firmware. Nếu xảy ra lại, hãy thử khởi động lại router trước — cách này giải quyết được 80% sự cố."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll remember that. Is there a reason it happened in the first place?",
+        "vi": "Tôi sẽ nhớ điều đó. Có lý do nào khiến nó xảy ra không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Could be a brief power fluctuation or an automatic firmware update that required a restart.",
+        "vi": "Có thể là do biến động điện ngắn hoặc cập nhật firmware tự động cần khởi động lại."
+      },
+      {
+        "speaker": "A",
+        "en": "I see. Should I set my router to update manually to avoid this?",
+        "vi": "Hiểu rồi. Tôi có nên để router cập nhật thủ công để tránh điều này không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Actually, automatic updates are better for security. But you can schedule them for late night to minimize disruption.",
+        "vi": "Thực ra, cập nhật tự động tốt hơn cho bảo mật. Nhưng bạn có thể lên lịch cho ban đêm khuya để giảm thiểu gián đoạn."
+      },
       { "speaker": "A", "en": "How do I do that?", "vi": "Làm cách nào vậy?" },
-      { "speaker": "B", "en": "Log into your router settings at 192.168.1.1, go to Maintenance, then Schedule Updates and set it to 3 AM.", "vi": "Đăng nhập vào cài đặt router tại 192.168.1.1, vào Bảo trì, rồi Lên lịch Cập nhật và đặt lúc 3 giờ sáng." },
-      { "speaker": "A", "en": "Perfect, I'll do that now. Thank you so much for your help!", "vi": "Hoàn hảo, tôi sẽ làm ngay. Cảm ơn bạn rất nhiều đã hỗ trợ!" }
+      {
+        "speaker": "B",
+        "en": "Log into your router settings at 192.168.1.1, go to Maintenance, then Schedule Updates and set it to 3 AM.",
+        "vi": "Đăng nhập vào cài đặt router tại 192.168.1.1, vào Bảo trì, rồi Lên lịch Cập nhật và đặt lúc 3 giờ sáng."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect, I'll do that now. Thank you so much for your help!",
+        "vi": "Hoàn hảo, tôi sẽ làm ngay. Cảm ơn bạn rất nhiều đã hỗ trợ!"
+      }
     ]
   },
   {
@@ -106,27 +346,107 @@
     "speakerBName": { "vi": "Bà Liên", "en": "Mrs. Lien" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Grandma Lien, I'll show you how to pay your electricity bill on the banking app. It only takes two minutes.", "vi": "Bà Liên ơi, cháu sẽ chỉ bà cách thanh toán hóa đơn điện trên app ngân hàng. Chỉ mất hai phút thôi." },
-      { "speaker": "B", "en": "Okay, but my eyesight isn't great. Can you make the text bigger first?", "vi": "Được rồi, nhưng mắt bà kém rồi. Con có thể làm chữ to hơn trước không?" },
-      { "speaker": "A", "en": "Of course! Go to Settings, then Display Size, and increase it to Large. There — is that better?", "vi": "Dĩ nhiên! Vào Cài đặt, rồi Cỡ chữ, tăng lên Lớn. Đó — bây giờ có thấy rõ hơn không?" },
-      { "speaker": "B", "en": "Much better! Now what do I press?", "vi": "Rõ hơn nhiều rồi! Bây giờ bà nhấn cái gì?" },
-      { "speaker": "A", "en": "Open the Vietcombank app — it's the green icon on your home screen.", "vi": "Mở app Vietcombank — cái icon màu xanh lá trên màn hình chính bà đó." },
-      { "speaker": "B", "en": "This one? With the star logo?", "vi": "Cái này không? Có logo ngôi sao không?" },
-      { "speaker": "A", "en": "Yes, that's it! Now log in with your password — the 6-digit one you set up.", "vi": "Đúng rồi! Bây giờ đăng nhập bằng mật khẩu — cái 6 số bà đã đặt." },
-      { "speaker": "B", "en": "I always forget it. Let me think... Is it my birthday?", "vi": "Bà hay quên lắm. Để bà nhớ lại... Có phải ngày sinh nhật bà không?" },
-      { "speaker": "A", "en": "I think so — try 150362. But remember to memorize it — don't use an obvious number for security.", "vi": "Cháu nghĩ vậy — thử 150362 xem. Nhưng bà nhớ thuộc lòng nhé — đừng dùng số dễ đoán cho bảo mật." },
+      {
+        "speaker": "A",
+        "en": "Grandma Lien, I'll show you how to pay your electricity bill on the banking app. It only takes two minutes.",
+        "vi": "Bà Liên ơi, cháu sẽ chỉ bà cách thanh toán hóa đơn điện trên app ngân hàng. Chỉ mất hai phút thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, but my eyesight isn't great. Can you make the text bigger first?",
+        "vi": "Được rồi, nhưng mắt bà kém rồi. Con có thể làm chữ to hơn trước không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Of course! Go to Settings, then Display Size, and increase it to Large. There — is that better?",
+        "vi": "Dĩ nhiên! Vào Cài đặt, rồi Cỡ chữ, tăng lên Lớn. Đó — bây giờ có thấy rõ hơn không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Much better! Now what do I press?",
+        "vi": "Rõ hơn nhiều rồi! Bây giờ bà nhấn cái gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Open the Vietcombank app — it's the green icon on your home screen.",
+        "vi": "Mở app Vietcombank — cái icon màu xanh lá trên màn hình chính bà đó."
+      },
+      {
+        "speaker": "B",
+        "en": "This one? With the star logo?",
+        "vi": "Cái này không? Có logo ngôi sao không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, that's it! Now log in with your password — the 6-digit one you set up.",
+        "vi": "Đúng rồi! Bây giờ đăng nhập bằng mật khẩu — cái 6 số bà đã đặt."
+      },
+      {
+        "speaker": "B",
+        "en": "I always forget it. Let me think... Is it my birthday?",
+        "vi": "Bà hay quên lắm. Để bà nhớ lại... Có phải ngày sinh nhật bà không?"
+      },
+      {
+        "speaker": "A",
+        "en": "I think so — try 150362. But remember to memorize it — don't use an obvious number for security.",
+        "vi": "Cháu nghĩ vậy — thử 150362 xem. Nhưng bà nhớ thuộc lòng nhé — đừng dùng số dễ đoán cho bảo mật."
+      },
       { "speaker": "B", "en": "It worked! I'm in. Now what?", "vi": "Vào được rồi! Bây giờ sao?" },
-      { "speaker": "A", "en": "Look for the 'Pay Bills' button — it might say 'Thanh toán hóa đơn'. Do you see it?", "vi": "Tìm nút 'Thanh toán hóa đơn'. Bà thấy không?" },
-      { "speaker": "B", "en": "I see something that says 'Services'. Is that the same?", "vi": "Bà thấy cái gì đó ghi 'Dịch vụ'. Có phải vậy không?" },
-      { "speaker": "A", "en": "Yes! Tap that, then choose 'Electricity' from the list.", "vi": "Đúng! Nhấn vào đó, rồi chọn 'Điện' trong danh sách." },
-      { "speaker": "B", "en": "I see 'EVN' — is that the electricity company?", "vi": "Bà thấy 'EVN' — đó là công ty điện phải không?" },
-      { "speaker": "A", "en": "Exactly! Select that. Now you need to enter your electricity meter customer code — it's on your paper bill.", "vi": "Chính xác! Chọn cái đó. Bây giờ bà cần nhập mã khách hàng đồng hồ điện — nằm trên hóa đơn giấy của bà." },
-      { "speaker": "B", "en": "Found it — PE029384. Entered. And now it's showing the amount: 487,000 VND.", "vi": "Tìm thấy rồi — PE029384. Nhập xong. Và bây giờ nó hiển thị số tiền: 487,000 đồng." },
-      { "speaker": "A", "en": "Check that number against your bill to make sure it's correct.", "vi": "Bà kiểm tra con số đó với hóa đơn để chắc chắn là đúng nhé." },
-      { "speaker": "B", "en": "It matches exactly! What's next?", "vi": "Khớp chính xác rồi! Bước tiếp theo là gì?" },
-      { "speaker": "A", "en": "Press 'Confirm', then you'll get an OTP code by SMS. Enter that code to complete the payment.", "vi": "Nhấn 'Xác nhận', rồi bà sẽ nhận mã OTP qua tin nhắn. Nhập mã đó để hoàn tất thanh toán." },
-      { "speaker": "B", "en": "Got the SMS — 847391. Entered it... 'Payment Successful'! I did it!", "vi": "Nhận được tin nhắn rồi — 847391. Nhập xong... 'Thanh toán thành công'! Bà làm được rồi!" },
-      { "speaker": "A", "en": "You did it! See, it's not hard once you know the steps. No more queuing at the post office!", "vi": "Bà làm được rồi! Thấy chưa, không khó sau khi biết các bước. Không cần xếp hàng ở bưu điện nữa!" }
+      {
+        "speaker": "A",
+        "en": "Look for the 'Pay Bills' button — it might say 'Thanh toán hóa đơn'. Do you see it?",
+        "vi": "Tìm nút 'Thanh toán hóa đơn'. Bà thấy không?"
+      },
+      {
+        "speaker": "B",
+        "en": "I see something that says 'Services'. Is that the same?",
+        "vi": "Bà thấy cái gì đó ghi 'Dịch vụ'. Có phải vậy không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes! Tap that, then choose 'Electricity' from the list.",
+        "vi": "Đúng! Nhấn vào đó, rồi chọn 'Điện' trong danh sách."
+      },
+      {
+        "speaker": "B",
+        "en": "I see 'EVN' — is that the electricity company?",
+        "vi": "Bà thấy 'EVN' — đó là công ty điện phải không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Exactly! Select that. Now you need to enter your electricity meter customer code — it's on your paper bill.",
+        "vi": "Chính xác! Chọn cái đó. Bây giờ bà cần nhập mã khách hàng đồng hồ điện — nằm trên hóa đơn giấy của bà."
+      },
+      {
+        "speaker": "B",
+        "en": "Found it — PE029384. Entered. And now it's showing the amount: 487,000 VND.",
+        "vi": "Tìm thấy rồi — PE029384. Nhập xong. Và bây giờ nó hiển thị số tiền: 487,000 đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "Check that number against your bill to make sure it's correct.",
+        "vi": "Bà kiểm tra con số đó với hóa đơn để chắc chắn là đúng nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "It matches exactly! What's next?",
+        "vi": "Khớp chính xác rồi! Bước tiếp theo là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Press 'Confirm', then you'll get an OTP code by SMS. Enter that code to complete the payment.",
+        "vi": "Nhấn 'Xác nhận', rồi bà sẽ nhận mã OTP qua tin nhắn. Nhập mã đó để hoàn tất thanh toán."
+      },
+      {
+        "speaker": "B",
+        "en": "Got the SMS — 847391. Entered it... 'Payment Successful'! I did it!",
+        "vi": "Nhận được tin nhắn rồi — 847391. Nhập xong... 'Thanh toán thành công'! Bà làm được rồi!"
+      },
+      {
+        "speaker": "A",
+        "en": "You did it! See, it's not hard once you know the steps. No more queuing at the post office!",
+        "vi": "Bà làm được rồi! Thấy chưa, không khó sau khi biết các bước. Không cần xếp hàng ở bưu điện nữa!"
+      }
     ]
   },
   {
@@ -139,26 +459,102 @@
     "speakerBName": { "vi": "Con gái", "en": "Daughter" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Everyone sit down! The food is getting cold. Hùng, call your father from the living room.", "vi": "Mọi người ngồi xuống đi! Cơm nguội rồi. Hùng, ra kêu ba ở phòng khách vào." },
-      { "speaker": "B", "en": "Mom, the kitchen smells amazing. Is that caramelized pork? My favorite!", "vi": "Mẹ ơi, bếp thơm quá. Thịt kho tàu phải không? Món yêu thích của con!" },
-      { "speaker": "A", "en": "Yes! And I made súp miso for your grandmother. She's been under the weather today.", "vi": "Đúng rồi! Và mẹ nấu súp miso cho bà. Bà hôm nay không được khỏe." },
-      { "speaker": "B", "en": "Poor Grandma. I'll sit next to her and keep her company.", "vi": "Tội bà quá. Con ngồi cạnh bà cho bà có người trò chuyện nhé." },
-      { "speaker": "A", "en": "That's very thoughtful. Now, Linh — how was your week? You seem tired.", "vi": "Con chu đáo quá. Vậy, Linh ơi — tuần này con thế nào? Con trông có vẻ mệt." },
-      { "speaker": "B", "en": "It was intense, Mom. We had three exams in four days. My brain is completely fried.", "vi": "Căng lắm mẹ ơi. Con có ba bài kiểm tra trong bốn ngày. Não con kiệt sức hoàn toàn rồi." },
+      {
+        "speaker": "A",
+        "en": "Everyone sit down! The food is getting cold. Hùng, call your father from the living room.",
+        "vi": "Mọi người ngồi xuống đi! Cơm nguội rồi. Hùng, ra kêu ba ở phòng khách vào."
+      },
+      {
+        "speaker": "B",
+        "en": "Mom, the kitchen smells amazing. Is that caramelized pork? My favorite!",
+        "vi": "Mẹ ơi, bếp thơm quá. Thịt kho tàu phải không? Món yêu thích của con!"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes! And I made súp miso for your grandmother. She's been under the weather today.",
+        "vi": "Đúng rồi! Và mẹ nấu súp miso cho bà. Bà hôm nay không được khỏe."
+      },
+      {
+        "speaker": "B",
+        "en": "Poor Grandma. I'll sit next to her and keep her company.",
+        "vi": "Tội bà quá. Con ngồi cạnh bà cho bà có người trò chuyện nhé."
+      },
+      {
+        "speaker": "A",
+        "en": "That's very thoughtful. Now, Linh — how was your week? You seem tired.",
+        "vi": "Con chu đáo quá. Vậy, Linh ơi — tuần này con thế nào? Con trông có vẻ mệt."
+      },
+      {
+        "speaker": "B",
+        "en": "It was intense, Mom. We had three exams in four days. My brain is completely fried.",
+        "vi": "Căng lắm mẹ ơi. Con có ba bài kiểm tra trong bốn ngày. Não con kiệt sức hoàn toàn rồi."
+      },
       { "speaker": "A", "en": "Did you do well?", "vi": "Con làm bài tốt không?" },
-      { "speaker": "B", "en": "I think so. I felt confident walking out of each one. Results come next week.", "vi": "Con nghĩ vậy. Con cảm thấy tự tin sau mỗi bài. Kết quả ra tuần sau." },
-      { "speaker": "A", "en": "I'm proud of you for working so hard. Make sure you rest this weekend.", "vi": "Mẹ tự hào về con vì con chăm chỉ lắm. Cuối tuần này nhớ nghỉ ngơi nhé." },
-      { "speaker": "B", "en": "I will. Mom, can I ask — are we going back to visit Grandpa's house in the countryside next month?", "vi": "Dạ con sẽ nghỉ. Mẹ ơi, con hỏi — tháng sau mình có về thăm nhà ông ngoại ở quê không?" },
-      { "speaker": "A", "en": "I was thinking the same! Your father and I were discussing it yesterday. The rice harvest season is beautiful.", "vi": "Mẹ cũng đang nghĩ vậy! Mẹ và ba mới bàn hôm qua. Mùa gặt lúa rất đẹp." },
-      { "speaker": "B", "en": "I miss the fresh air there. And Grandpa's cooking — nothing beats his bánh xèo.", "vi": "Con nhớ không khí trong lành ở đó. Và món ăn của ông — bánh xèo của ông không gì sánh bằng." },
-      { "speaker": "A", "en": "Ha! Don't let me hear that — I spent all afternoon making this food!", "vi": "Ha! Đừng để mẹ nghe vậy — mẹ nấu suốt cả buổi chiều!" },
-      { "speaker": "B", "en": "Your food is the best too, Mom! But Grandpa's bánh xèo is... different. In a nostalgic way.", "vi": "Đồ ăn mẹ nấu cũng ngon nhất đó mẹ! Nhưng bánh xèo của ông... khác. Theo kiểu nhớ nhà ấy." },
-      { "speaker": "A", "en": "I know exactly what you mean. Some tastes are tied to memories. Now eat before it gets cold!", "vi": "Mẹ hiểu mày muốn nói gì. Có những hương vị gắn liền với ký ức. Bây giờ ăn đi trước khi nguội!" },
-      { "speaker": "B", "en": "This caramelized pork is melt-in-your-mouth tender. The egg is perfect!", "vi": "Thịt kho này mềm tan trong miệng. Trứng chín hoàn hảo!" },
-      { "speaker": "A", "en": "The secret is patience — low heat for a long time. No shortcuts with thịt kho.", "vi": "Bí quyết là sự kiên nhẫn — lửa nhỏ trong thời gian dài. Nấu thịt kho không được nôn nóng." },
-      { "speaker": "B", "en": "I want to learn how to cook it someday. Will you teach me?", "vi": "Con muốn học nấu món này một ngày nào đó. Mẹ sẽ dạy con không?" },
-      { "speaker": "A", "en": "Of course! Next weekend we'll cook together. It's important to know how to cook your own family recipes.", "vi": "Dĩ nhiên rồi! Cuối tuần sau mình nấu cùng nhau. Biết nấu công thức của gia đình rất quan trọng." },
-      { "speaker": "B", "en": "Deal! These Sunday dinners together are my favorite part of the week, Mom. I hope we never stop doing this.", "vi": "Thỏa thuận! Bữa cơm tối Chủ Nhật cùng nhau là phần con yêu thích nhất trong tuần mẹ ơi. Con mong mình không bao giờ bỏ thói quen này." }
+      {
+        "speaker": "B",
+        "en": "I think so. I felt confident walking out of each one. Results come next week.",
+        "vi": "Con nghĩ vậy. Con cảm thấy tự tin sau mỗi bài. Kết quả ra tuần sau."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm proud of you for working so hard. Make sure you rest this weekend.",
+        "vi": "Mẹ tự hào về con vì con chăm chỉ lắm. Cuối tuần này nhớ nghỉ ngơi nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "I will. Mom, can I ask — are we going back to visit Grandpa's house in the countryside next month?",
+        "vi": "Dạ con sẽ nghỉ. Mẹ ơi, con hỏi — tháng sau mình có về thăm nhà ông ngoại ở quê không?"
+      },
+      {
+        "speaker": "A",
+        "en": "I was thinking the same! Your father and I were discussing it yesterday. The rice harvest season is beautiful.",
+        "vi": "Mẹ cũng đang nghĩ vậy! Mẹ và ba mới bàn hôm qua. Mùa gặt lúa rất đẹp."
+      },
+      {
+        "speaker": "B",
+        "en": "I miss the fresh air there. And Grandpa's cooking — nothing beats his bánh xèo.",
+        "vi": "Con nhớ không khí trong lành ở đó. Và món ăn của ông — bánh xèo của ông không gì sánh bằng."
+      },
+      {
+        "speaker": "A",
+        "en": "Ha! Don't let me hear that — I spent all afternoon making this food!",
+        "vi": "Ha! Đừng để mẹ nghe vậy — mẹ nấu suốt cả buổi chiều!"
+      },
+      {
+        "speaker": "B",
+        "en": "Your food is the best too, Mom! But Grandpa's bánh xèo is... different. In a nostalgic way.",
+        "vi": "Đồ ăn mẹ nấu cũng ngon nhất đó mẹ! Nhưng bánh xèo của ông... khác. Theo kiểu nhớ nhà ấy."
+      },
+      {
+        "speaker": "A",
+        "en": "I know exactly what you mean. Some tastes are tied to memories. Now eat before it gets cold!",
+        "vi": "Mẹ hiểu mày muốn nói gì. Có những hương vị gắn liền với ký ức. Bây giờ ăn đi trước khi nguội!"
+      },
+      {
+        "speaker": "B",
+        "en": "This caramelized pork is melt-in-your-mouth tender. The egg is perfect!",
+        "vi": "Thịt kho này mềm tan trong miệng. Trứng chín hoàn hảo!"
+      },
+      {
+        "speaker": "A",
+        "en": "The secret is patience — low heat for a long time. No shortcuts with thịt kho.",
+        "vi": "Bí quyết là sự kiên nhẫn — lửa nhỏ trong thời gian dài. Nấu thịt kho không được nôn nóng."
+      },
+      {
+        "speaker": "B",
+        "en": "I want to learn how to cook it someday. Will you teach me?",
+        "vi": "Con muốn học nấu món này một ngày nào đó. Mẹ sẽ dạy con không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Of course! Next weekend we'll cook together. It's important to know how to cook your own family recipes.",
+        "vi": "Dĩ nhiên rồi! Cuối tuần sau mình nấu cùng nhau. Biết nấu công thức của gia đình rất quan trọng."
+      },
+      {
+        "speaker": "B",
+        "en": "Deal! These Sunday dinners together are my favorite part of the week, Mom. I hope we never stop doing this.",
+        "vi": "Thỏa thuận! Bữa cơm tối Chủ Nhật cùng nhau là phần con yêu thích nhất trong tuần mẹ ơi. Con mong mình không bao giờ bỏ thói quen này."
+      }
     ]
   }
 ]

@@ -57,9 +57,7 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
         method: req.method,
         headers: req.headers as HeadersInit,
         // GET/HEAD không có body
-        body: ['GET', 'HEAD'].includes(req.method)
-          ? undefined
-          : JSON.stringify(req.body),
+        body: ['GET', 'HEAD'].includes(req.method) ? undefined : JSON.stringify(req.body),
       })
 
       // Gọi handler gốc
@@ -71,7 +69,10 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
 
       // Security headers — thêm sau khi convert response, tránh conflict với Web API Response
       res.setHeader('X-Content-Type-Options', 'nosniff')
-      res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'")
+      res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'",
+      )
       res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
 
       res.send(await webRes.text())
@@ -87,7 +88,10 @@ app.use((req, res, next) => {
   // Chỉ apply cho non-API routes để tránh double headers
   if (!req.path.startsWith('/api/')) {
     res.setHeader('X-Content-Type-Options', 'nosniff')
-    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'")
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'",
+    )
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
   }
   next()
@@ -98,7 +102,10 @@ app.use((req, res, next) => {
 // Không gọi AI, không đụng DB → trả lời tức thì, không tốn tiền.
 app.get('/api/health', (_req, res) => {
   res.setHeader('X-Content-Type-Options', 'nosniff')
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'")
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'",
+  )
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
   res.json({ status: 'ok', uptime: process.uptime(), time: new Date().toISOString() })
 })
@@ -189,10 +196,11 @@ function startReminderScheduler() {
     if (hour === lastHourSent) return
     lastHourSent = hour
     void sendReminders(hour)
-      .then(r => {
-        if (r.sent || r.skipped) console.log(`[reminder] ${hour}h UTC → gửi ${r.sent}, bỏ qua ${r.skipped} (đã học)`)
+      .then((r) => {
+        if (r.sent || r.skipped)
+          console.log(`[reminder] ${hour}h UTC → gửi ${r.sent}, bỏ qua ${r.skipped} (đã học)`)
       })
-      .catch(err => console.error('[reminder] lỗi gửi nhắc:', err))
+      .catch((err) => console.error('[reminder] lỗi gửi nhắc:', err))
   }, 60_000) // kiểm tra mỗi phút, gửi 1 lần khi sang giờ mới
   console.log('   Nhắc học : bật (gửi đúng giờ mỗi người chọn)')
 }

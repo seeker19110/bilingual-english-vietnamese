@@ -7,7 +7,7 @@ vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
 import { addToSRS, reviewWord, getDueWords, getSRSStats, getNextReview } from './srs'
 import type { DictEntry } from '../types'
 
-const W = (word: string): DictEntry => ({ word } as DictEntry)
+const W = (word: string): DictEntry => ({ word }) as DictEntry
 
 describe('SRS — SM-2', () => {
   beforeEach(() => localStorage.clear())
@@ -21,21 +21,21 @@ describe('SRS — SM-2', () => {
 
   it('addToSRS idempotent — không ghi đè thẻ đã có tiến độ', () => {
     addToSRS('u1', 'apple')
-    reviewWord('u1', 'apple', 'good')          // reps=1, due đẩy về tương lai
+    reviewWord('u1', 'apple', 'good') // reps=1, due đẩy về tương lai
     const due1 = getNextReview('u1', 'apple')?.getTime()
-    addToSRS('u1', 'apple')                     // gọi lại — phải KHÔNG reset
+    addToSRS('u1', 'apple') // gọi lại — phải KHÔNG reset
     const due2 = getNextReview('u1', 'apple')?.getTime()
     expect(due2).toBe(due1)
   })
 
   it("reviewWord('again') → ôn lại NGAY trong phiên (due ≤ now, thẻ vẫn đến hạn)", () => {
     addToSRS('u1', 'apple')
-    reviewWord('u1', 'apple', 'good')   // đẩy due ra tương lai trước
-    reviewWord('u1', 'apple', 'again')  // Quên → kéo due về bây giờ
+    reviewWord('u1', 'apple', 'good') // đẩy due ra tương lai trước
+    reviewWord('u1', 'apple', 'again') // Quên → kéo due về bây giờ
     const due = getNextReview('u1', 'apple')!.getTime()
     expect(due).toBeLessThanOrEqual(Date.now())
     // và thẻ phải xuất hiện lại trong danh sách cần ôn ngay
-    expect(getDueWords('u1', [W('apple')]).map(e => e.word)).toContain('apple')
+    expect(getDueWords('u1', [W('apple')]).map((e) => e.word)).toContain('apple')
   })
 
   it("reviewWord('good') tăng interval theo SM-2: 1 → 4 → ×ease", () => {
@@ -50,9 +50,9 @@ describe('SRS — SM-2', () => {
   })
 
   it('getDueWords chỉ trả từ đến hạn', () => {
-    addToSRS('u1', 'apple')           // due = now → đến hạn
+    addToSRS('u1', 'apple') // due = now → đến hạn
     reviewWord('u1', 'banana', 'good') // tạo thẻ banana, due tương lai
-    const due = getDueWords('u1', [W('apple'), W('banana')]).map(e => e.word)
+    const due = getDueWords('u1', [W('apple'), W('banana')]).map((e) => e.word)
     expect(due).toContain('apple')
     expect(due).not.toContain('banana')
   })

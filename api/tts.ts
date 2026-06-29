@@ -21,7 +21,13 @@
 // Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
-import { generateAudioFromGoogle, isValidVoice, DEFAULT_VOICE, VOICE_VERSION, type Lang } from './_lib/googleTts'
+import {
+  generateAudioFromGoogle,
+  isValidVoice,
+  DEFAULT_VOICE,
+  VOICE_VERSION,
+  type Lang,
+} from './_lib/googleTts'
 import { saveAudio } from './_lib/fileStorage'
 import { encryptAudio, getClientKeyMaterial } from './_lib/ttsCrypto'
 import {
@@ -46,7 +52,10 @@ async function hashText(text: string): Promise<string> {
   const data = encoder.encode(text)
   const hashBuffer = await crypto.subtle.digest('SHA-256', data)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 32)
+  return hashArray
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+    .slice(0, 32)
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -98,8 +107,10 @@ export default async function handler(req: Request): Promise<Response> {
   const voiceParam = body.voice?.trim() || DEFAULT_VOICE
 
   if (!text) return jsonResponse({ error: 'Thiếu text' }, 400, allHeaders)
-  if (!isValidLang(lang)) return jsonResponse({ error: `lang không hợp lệ: ${lang}` }, 400, allHeaders)
-  if (!isValidVoice(voiceParam)) return jsonResponse({ error: `voice không hợp lệ: ${voiceParam}` }, 400, allHeaders)
+  if (!isValidLang(lang))
+    return jsonResponse({ error: `lang không hợp lệ: ${lang}` }, 400, allHeaders)
+  if (!isValidVoice(voiceParam))
+    return jsonResponse({ error: `voice không hợp lệ: ${voiceParam}` }, 400, allHeaders)
 
   const voice = voiceParam
 
@@ -135,7 +146,11 @@ export default async function handler(req: Request): Promise<Response> {
   // hạn mức tổng để cache HIT (gần như miễn phí) không bao giờ bị đường này cản.
   if (!checkRateLimit(clientIp, 60, 'tts-gen')) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/tts', stage: 'generate' })
-    return jsonResponse({ error: 'Quá nhiều yêu cầu tạo audio mới — thử lại sau 1 phút' }, 429, allHeaders)
+    return jsonResponse(
+      { error: 'Quá nhiều yêu cầu tạo audio mới — thử lại sau 1 phút' },
+      429,
+      allHeaders,
+    )
   }
 
   let audioData: ArrayBuffer
@@ -149,10 +164,14 @@ export default async function handler(req: Request): Promise<Response> {
     const isQuota = /\(429\)|RESOURCE_EXHAUSTED|quota/i.test(msg)
     if (isQuota) {
       console.warn('[tts] Google TTS hết quota (429) — client sẽ fallback Web Speech')
-      return jsonResponse({ error: 'Dịch vụ giọng đọc tạm quá tải — thử lại sau', fallback: true }, 503, {
-        ...allHeaders,
-        'Retry-After': '60',
-      })
+      return jsonResponse(
+        { error: 'Dịch vụ giọng đọc tạm quá tải — thử lại sau', fallback: true },
+        503,
+        {
+          ...allHeaders,
+          'Retry-After': '60',
+        },
+      )
     }
     console.error('[tts] Google TTS generation failed:', err)
     return jsonResponse({ error: 'Không thể tạo audio — thử lại sau' }, 500, allHeaders)

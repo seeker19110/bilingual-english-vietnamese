@@ -21,8 +21,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refresh().finally(() => setLoading(false))
 
     // Lắng nghe thay đổi auth (đăng nhập / đăng xuất / token refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string) => {
-      if (event === 'SIGNED_OUT') { resetPreload(); clearProfileCache(); void clearAudioCache() }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event: string) => {
+      if (event === 'SIGNED_OUT') {
+        resetPreload()
+        clearProfileCache()
+        void clearAudioCache()
+      }
       refresh()
     })
     return () => subscription.unsubscribe()
@@ -36,17 +42,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!userId) return
     if ('requestIdleCallback' in window) {
-      const id = requestIdleCallback(() => { void preloadBrowseChunks() }, { timeout: 3000 })
+      const id = requestIdleCallback(
+        () => {
+          void preloadBrowseChunks()
+        },
+        { timeout: 3000 },
+      )
       return () => cancelIdleCallback(id)
     } else {
-      const tid = setTimeout(() => { void preloadBrowseChunks() }, 500)
+      const tid = setTimeout(() => {
+        void preloadBrowseChunks()
+      }, 500)
       return () => clearTimeout(tid)
     }
   }, [userId])
 
-  return (
-    <AuthContext.Provider value={{ user, loading, refresh }}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={{ user, loading, refresh }}>{children}</AuthContext.Provider>
 }

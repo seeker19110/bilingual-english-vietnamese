@@ -3,12 +3,12 @@
 // trang Từ loại (giải thích) cùng dùng — tránh viết lặp 2 chỗ.
 
 export interface PosInfo {
-  code: string            // mã viết tắt dùng trong dictionary.json (n, v, adj...)
-  label: string            // nhãn tiếng Việt, ví dụ 'Danh từ'
-  labelEn: string          // tên tiếng Anh, ví dụ 'Noun'
-  color: string            // class Tailwind cho badge
-  definition: string       // giải thích ngắn bằng tiếng Việt
-  examples: { en: string; vi: string }[]   // vài ví dụ điển hình
+  code: string // mã viết tắt dùng trong dictionary.json (n, v, adj...)
+  label: string // nhãn tiếng Việt, ví dụ 'Danh từ'
+  labelEn: string // tên tiếng Anh, ví dụ 'Noun'
+  color: string // class Tailwind cho badge
+  definition: string // giải thích ngắn bằng tiếng Việt
+  examples: { en: string; vi: string }[] // vài ví dụ điển hình
 }
 
 // Thứ tự hiển thị trên trang giải thích: loại từ chính trước, loại phụ sau.
@@ -54,7 +54,8 @@ export const POS_LIST: PosInfo[] = [
     label: 'Trạng từ',
     labelEn: 'Adverb',
     color: 'bg-amber-500/15 text-amber-300',
-    definition: 'Từ bổ nghĩa cho động từ, tính từ hoặc cả câu — trả lời "như thế nào, khi nào, ở đâu, mức độ nào".',
+    definition:
+      'Từ bổ nghĩa cho động từ, tính từ hoặc cả câu — trả lời "như thế nào, khi nào, ở đâu, mức độ nào".',
     examples: [
       { en: 'quickly', vi: 'nhanh chóng' },
       { en: 'very', vi: 'rất' },
@@ -66,7 +67,8 @@ export const POS_LIST: PosInfo[] = [
     label: 'Giới từ',
     labelEn: 'Preposition',
     color: 'bg-rose-500/15 text-rose-300',
-    definition: 'Từ đứng trước danh từ/đại từ để chỉ vị trí, thời gian hoặc quan hệ với phần còn lại của câu.',
+    definition:
+      'Từ đứng trước danh từ/đại từ để chỉ vị trí, thời gian hoặc quan hệ với phần còn lại của câu.',
     examples: [
       { en: 'in the box', vi: 'trong cái hộp' },
       { en: 'on the table', vi: 'trên cái bàn' },
@@ -102,7 +104,8 @@ export const POS_LIST: PosInfo[] = [
     label: 'Mạo từ',
     labelEn: 'Article',
     color: 'bg-lime-500/15 text-lime-300',
-    definition: 'Từ đứng trước danh từ để cho biết danh từ đó đã xác định (the) hay chưa xác định (a/an).',
+    definition:
+      'Từ đứng trước danh từ để cho biết danh từ đó đã xác định (the) hay chưa xác định (a/an).',
     examples: [
       { en: 'a dog', vi: 'một con chó (chưa rõ con nào)' },
       { en: 'the dog', vi: 'con chó đó (đã xác định)' },
@@ -137,7 +140,8 @@ export const POS_LIST: PosInfo[] = [
     label: 'Thành ngữ',
     labelEn: 'Idiom',
     color: 'bg-fuchsia-500/15 text-fuchsia-300',
-    definition: 'Cụm từ cố định mang nghĩa bóng — không thể hiểu bằng cách ghép nghĩa đen của từng từ.',
+    definition:
+      'Cụm từ cố định mang nghĩa bóng — không thể hiểu bằng cách ghép nghĩa đen của từng từ.',
     examples: [
       { en: 'piece of cake', vi: 'dễ như ăn bánh (việc rất dễ)' },
       { en: 'break the ice', vi: 'phá vỡ sự ngượng ngùng ban đầu' },
@@ -147,10 +151,10 @@ export const POS_LIST: PosInfo[] = [
 
 // Nhãn tiếng Việt theo mã loại từ — Dictionary.tsx dùng để hiển thị badge.
 export const POS_LABEL: Record<string, string> = Object.fromEntries(
-  POS_LIST.map(p => [p.code, p.label])
+  POS_LIST.map((p) => [p.code, p.label]),
 )
 
 // Màu badge theo mã loại từ — dùng chung cho Dictionary.tsx và trang giải thích.
 export const POS_COLOR: Record<string, string> = Object.fromEntries(
-  POS_LIST.map(p => [p.code, p.color])
+  POS_LIST.map((p) => [p.code, p.color]),
 )

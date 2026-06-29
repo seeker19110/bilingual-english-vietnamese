@@ -47,4 +47,6 @@ for (let i = 0; i < lessons.length; i += LESSONS_PER_CHUNK) {
 
 fs.writeFileSync(path.join(OUT_DIR, 'index.json'), JSON.stringify(index, null, 1))
 
-console.log(`✅ Tách ${lessons.length} bài → ${chunkCount} chunk (${LESSONS_PER_CHUNK} bài/chunk) + index.json`)
+console.log(
+  `✅ Tách ${lessons.length} bài → ${chunkCount} chunk (${LESSONS_PER_CHUNK} bài/chunk) + index.json`,
+)

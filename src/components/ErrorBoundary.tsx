@@ -36,8 +36,8 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="text-4xl">😵</div>
           <h1 className="text-lg font-semibold text-zinc-100">Đã có lỗi xảy ra</h1>
           <p className="text-sm text-zinc-400">
-            Trang gặp sự cố khi tải. Hãy thử tải lại — thường là do mất mạng tạm thời
-            hoặc app vừa được cập nhật.
+            Trang gặp sự cố khi tải. Hãy thử tải lại — thường là do mất mạng tạm thời hoặc app vừa
+            được cập nhật.
           </p>
           <button
             onClick={this.handleReload}

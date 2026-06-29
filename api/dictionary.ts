@@ -74,7 +74,8 @@ export default async function handler(req: Request): Promise<Response> {
 
   // ── Tìm kiếm theo từ khóa ────────────────────────────────────────────────────
   const q = (url.searchParams.get('q') ?? '').trim().toLowerCase()
-  if (!q) return json({ total: entries.length, matched: 0, posGroups: [], results: [] }, 200, allHeaders)
+  if (!q)
+    return json({ total: entries.length, matched: 0, posGroups: [], results: [] }, 200, allHeaders)
   if (q.length > 100) return json({ error: 'Từ khóa quá dài' }, 400, allHeaders)
 
   let matches: DictEntry[]

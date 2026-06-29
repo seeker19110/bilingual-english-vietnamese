@@ -32,8 +32,8 @@ function usageTotal(u: DailyUsage | null): number {
 }
 
 export interface DayActivity {
-  date: string  // YYYY-MM-DD
-  dow: number   // 0 = Chủ nhật … 6 = Thứ bảy (component tự đổi sang nhãn theo ngôn ngữ)
+  date: string // YYYY-MM-DD
+  dow: number // 0 = Chủ nhật … 6 = Thứ bảy (component tự đổi sang nhãn theo ngôn ngữ)
   count: number // tổng số hoạt động trong ngày
   active: boolean
 }
@@ -57,10 +57,10 @@ export function getWeekTotal(uid: string): number {
 
 // ── Lịch hoạt động dạng heatmap (vài tuần gần nhất) ─────────────────────────
 export interface ActivityCalendar {
-  days: DayActivity[]   // cũ → mới (ngày cuối = hôm nay)
-  firstColumn: number   // 0..6 — cột (Thứ 2 = 0) của ô đầu tiên, để xếp lưới 7 cột
-  activeDays: number    // số ngày có học trong khoảng
-  bestDay: number       // số hoạt động của ngày bận nhất (để tô đậm nhạt)
+  days: DayActivity[] // cũ → mới (ngày cuối = hôm nay)
+  firstColumn: number // 0..6 — cột (Thứ 2 = 0) của ô đầu tiên, để xếp lưới 7 cột
+  activeDays: number // số ngày có học trong khoảng
+  bestDay: number // số hoạt động của ngày bận nhất (để tô đậm nhạt)
 }
 
 // `totalDays` ngày gần nhất, kèm chỉ số cột để component xếp thành lưới 7 cột
@@ -78,8 +78,8 @@ export function getActivityCalendar(uid: string, totalDays = 35): ActivityCalend
   return {
     days,
     firstColumn,
-    activeDays: days.filter(d => d.active).length,
-    bestDay: Math.max(0, ...days.map(d => d.count)),
+    activeDays: days.filter((d) => d.active).length,
+    bestDay: Math.max(0, ...days.map((d) => d.count)),
   }
 }
 
@@ -102,7 +102,7 @@ export interface BandPoint {
 }
 
 export interface WritingProgress {
-  history: BandPoint[]  // theo thứ tự thời gian tăng dần (cũ → mới)
+  history: BandPoint[] // theo thứ tự thời gian tăng dần (cũ → mới)
   count: number
   latest: number | null
   best: number | null
@@ -114,7 +114,7 @@ export interface WritingProgress {
 export function getWritingProgress(uid: string): WritingProgress {
   // getWritingSubs trả về mới→cũ; lọc các bài đã chấm (có scores.overall hợp lệ).
   const rows = getWritingSubs(uid)
-    .map(s => {
+    .map((s) => {
       const sc = s.feedback ? parseJson<WritingFeedback>(s.feedback)?.scores : null
       return sc && typeof sc.overall === 'number' ? { t: s.submittedAt, sc } : null
     })
@@ -125,21 +125,21 @@ export function getWritingProgress(uid: string): WritingProgress {
   }
 
   const asc = [...rows].sort((a, b) => a.t - b.t)
-  const overalls = asc.map(r => r.sc.overall)
+  const overalls = asc.map((r) => r.sc.overall)
   const mean = (xs: number[]) => xs.reduce((s, x) => s + x, 0) / xs.length
   const round1 = (x: number) => Math.round(x * 10) / 10
 
   return {
-    history: asc.map(r => ({ date: dayStr(new Date(r.t)), overall: r.sc.overall })),
+    history: asc.map((r) => ({ date: dayStr(new Date(r.t)), overall: r.sc.overall })),
     count: rows.length,
     latest: overalls[overalls.length - 1],
     best: Math.max(...overalls),
     avg: round1(mean(overalls)),
     components: {
-      task_response: round1(mean(asc.map(r => r.sc.task_response))),
-      coherence: round1(mean(asc.map(r => r.sc.coherence))),
-      lexical: round1(mean(asc.map(r => r.sc.lexical))),
-      grammar: round1(mean(asc.map(r => r.sc.grammar))),
+      task_response: round1(mean(asc.map((r) => r.sc.task_response))),
+      coherence: round1(mean(asc.map((r) => r.sc.coherence))),
+      lexical: round1(mean(asc.map((r) => r.sc.lexical))),
+      grammar: round1(mean(asc.map((r) => r.sc.grammar))),
     },
   }
 }
@@ -152,13 +152,13 @@ export interface LevelProgress {
   accent: CefrLevel['accent']
   doneWords: number
   totalWords: number
-  pct: number        // 0..100 (theo số từ vựng đã thuộc của cấp)
+  pct: number // 0..100 (theo số từ vựng đã thuộc của cấp)
   grammarCount: number
 }
 
 // Số từ trong 1 vòng đã thuộc — so cả bản gốc lẫn chữ thường (giống RoadmapTab).
 function circleDone(circle: Circle, learned: Set<string>): number {
-  return circle.words.filter(w => learned.has(w.word) || learned.has(w.word.toLowerCase())).length
+  return circle.words.filter((w) => learned.has(w.word) || learned.has(w.word.toLowerCase())).length
 }
 
 // % hoàn thành mỗi cấp = số từ đã thuộc / tổng số từ trong các vòng vocab của cấp.
@@ -166,10 +166,12 @@ function circleDone(circle: Circle, learned: Set<string>): number {
 export async function getCefrProgress(learned: Set<string>): Promise<LevelProgress[]> {
   const [levels, foundation] = await Promise.all([loadCefr(), loadFoundation()])
   const byId: Record<string, Circle> = {}
-  foundation.forEach(c => { byId[c.id] = c })
+  foundation.forEach((c) => {
+    byId[c.id] = c
+  })
 
-  return levels.map(level => {
-    const ids = level.units.flatMap(u => u.vocabCircleIds)
+  return levels.map((level) => {
+    const ids = level.units.flatMap((u) => u.vocabCircleIds)
     let totalWords = 0
     let doneWords = 0
     for (const id of ids) {

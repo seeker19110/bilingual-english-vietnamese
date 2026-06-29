@@ -40,14 +40,16 @@ export default function ThemeToggle() {
         aria-label={`${lang === 'vi' ? 'Đổi giao diện' : 'Change theme'} (${label})`}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex items-center justify-center text-zinc-400 hover:text-white transition p-2.5 rounded-lg hover:bg-zinc-800/50">
+        className="flex items-center justify-center text-zinc-400 hover:text-white transition p-2.5 rounded-lg hover:bg-zinc-800/50"
+      >
         <Palette className="w-5 h-5" />
       </button>
 
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full mt-2 w-44 glass rounded-xl p-1.5 shadow-xl z-50 animate-scale-in origin-top-right">
+          className="absolute right-0 top-full mt-2 w-44 glass rounded-xl p-1.5 shadow-xl z-50 animate-scale-in origin-top-right"
+        >
           <p className="px-2 py-1 text-[11px] font-medium text-zinc-400">
             {lang === 'vi' ? 'Giao diện' : 'Theme'}
           </p>
@@ -65,12 +67,17 @@ export default function ThemeToggle() {
                 }}
                 className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm transition ${
                   active ? 'bg-accent-500/15 text-white' : 'text-zinc-300 hover:bg-zinc-800/60'
-                }`}>
+                }`}
+              >
                 {/* Swatch: ô nền + chấm màu nhấn để xem trước theme */}
                 <span
                   className="w-5 h-5 rounded-md border border-zinc-600/50 shrink-0 flex items-center justify-center"
-                  style={{ background: t.swatchBg }}>
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: t.swatchAccent }} />
+                  style={{ background: t.swatchBg }}
+                >
+                  <span
+                    className="w-2.5 h-2.5 rounded-full"
+                    style={{ background: t.swatchAccent }}
+                  />
                 </span>
                 <span className="flex-1 text-left truncate">{name}</span>
                 {active && <Check className="w-4 h-4 text-accent-400 shrink-0" />}

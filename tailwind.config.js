@@ -8,7 +8,7 @@ export default {
       colors: {
         white: 'rgb(var(--c-white) / <alpha-value>)',
         zinc: {
-          50:  'rgb(var(--z-50) / <alpha-value>)',
+          50: 'rgb(var(--z-50) / <alpha-value>)',
           100: 'rgb(var(--z-100) / <alpha-value>)',
           200: 'rgb(var(--z-200) / <alpha-value>)',
           300: 'rgb(var(--z-300) / <alpha-value>)',
@@ -23,7 +23,7 @@ export default {
         // Màu nhấn thương hiệu — đổi theo theme (emerald / sky / pink / fuchsia).
         // Thay cho 'emerald' hard-code cũ: class bg-accent-500, text-accent-400...
         accent: {
-          50:  'rgb(var(--a-50) / <alpha-value>)',
+          50: 'rgb(var(--a-50) / <alpha-value>)',
           100: 'rgb(var(--a-100) / <alpha-value>)',
           200: 'rgb(var(--a-200) / <alpha-value>)',
           300: 'rgb(var(--a-300) / <alpha-value>)',
@@ -55,7 +55,7 @@ export default {
           '0%': { transform: 'scale(1)', opacity: '0.6' },
           '100%': { transform: 'scale(1.8)', opacity: '0' },
         },
-        'shimmer': {
+        shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
@@ -65,7 +65,7 @@ export default {
         'fade-up': 'fade-up 0.4s ease-out both',
         'scale-in': 'scale-in 0.25s ease-out both',
         'pulse-ring': 'pulse-ring 1.4s ease-out infinite',
-        'shimmer': 'shimmer 2s linear infinite',
+        shimmer: 'shimmer 2s linear infinite',
       },
     },
   },

@@ -1,260 +1,1044 @@
 [
-{
-  "id": 31,
-  "title": "Chuẩn bị đi công tác",
-  "situation": "Huy gọi điện cho đồng nghiệp Trang để xác nhận chuyến đi công tác sắp tới.",
-  "speakerAGender": "male",
-  "speakerBGender": "female",
-  "speakerAName": {"vi": "Huy", "en": "Huy"},
-  "speakerBName": {"vi": "Trang", "en": "Trang"},
-  "_aiGenerated": true,
-  "turns": [
-    {"speaker":"A","en":"Hi Trang, I'm just calling to confirm a few things about our business trip to Da Nang next week.","vi":"Chào Trang, mình gọi để xác nhận vài điều về chuyến công tác Đà Nẵng tuần tới."},
-    {"speaker":"B","en":"Hi Huy! Good timing — I was about to message you. What do we need to sort out?","vi":"Chào Huy! Đúng lúc — mình vừa định nhắn cậu. Mình cần sắp xếp gì vậy?"},
-    {"speaker":"A","en":"First, the flights. Are we still on the Wednesday morning flight, departing at eight?","vi":"Đầu tiên là chuyến bay. Mình vẫn đi chuyến sáng thứ Tư, khởi hành lúc tám giờ chứ?"},
-    {"speaker":"B","en":"Yes, eight a.m. on Wednesday, arriving in Da Nang around nine-twenty. I've already booked both tickets.","vi":"Đúng, tám giờ sáng thứ Tư, đến Đà Nẵng khoảng chín giờ hai mươi. Mình đã đặt cả hai vé rồi."},
-    {"speaker":"A","en":"Perfect, thank you. Did you manage to book seats together?","vi":"Hoàn hảo, cảm ơn cậu. Cậu đặt được ghế cạnh nhau chưa?"},
-    {"speaker":"B","en":"Yes, seats 12A and 12B. I figured we could go over the presentation on the flight.","vi":"Rồi, ghế 12A và 12B. Mình nghĩ mình có thể xem lại bài thuyết trình trên máy bay."},
-    {"speaker":"A","en":"Good thinking. What about the hotel — is it close to the client's office?","vi":"Suy nghĩ tốt. Còn khách sạn — có gần văn phòng khách hàng không?"},
-    {"speaker":"B","en":"It's about ten minutes by taxi. I chose one near the beach so we can relax a bit after the meetings.","vi":"Khoảng mười phút đi taxi. Mình chọn một cái gần biển để mình thư giãn một chút sau các cuộc họp."},
-    {"speaker":"A","en":"Near the beach — nice touch! Are we sharing the cost or is the company covering it?","vi":"Gần biển — ý hay đó! Mình chia chi phí hay công ty chi trả?"},
-    {"speaker":"B","en":"The company covers accommodation and flights. We just keep receipts for meals and taxis to claim back.","vi":"Công ty chi trả chỗ ở và vé máy bay. Mình chỉ cần giữ hóa đơn ăn uống và taxi để hoàn lại."},
-    {"speaker":"A","en":"Got it. I'll keep all my receipts in one envelope. When's the main meeting with the client?","vi":"Hiểu rồi. Mình sẽ giữ tất cả hóa đơn trong một phong bì. Cuộc họp chính với khách hàng khi nào?"},
-    {"speaker":"B","en":"Thursday at ten a.m. That gives us Wednesday afternoon to settle in and review everything one last time.","vi":"Thứ Năm lúc mười giờ sáng. Như vậy mình có chiều thứ Tư để ổn định và xem lại mọi thứ lần cuối."},
-    {"speaker":"A","en":"That's a comfortable schedule. Do we have everything ready for the presentation?","vi":"Lịch trình thoải mái đó. Mình đã chuẩn bị xong mọi thứ cho bài thuyết trình chưa?"},
-    {"speaker":"B","en":"Almost — the slides are done, but I still need to finalize the budget figures. I'll have them ready by tomorrow.","vi":"Gần xong — slide xong rồi, nhưng mình vẫn cần chốt các con số ngân sách. Mình sẽ chuẩn bị xong vào ngày mai."},
-    {"speaker":"A","en":"Great. Should I prepare the product demo, or are you handling that part?","vi":"Tuyệt. Mình chuẩn bị phần demo sản phẩm, hay cậu lo phần đó?"},
-    {"speaker":"B","en":"Could you take the demo? You explain the technical features so clearly — the client will appreciate it.","vi":"Cậu nhận phần demo được không? Cậu giải thích các tính năng kỹ thuật rất rõ ràng — khách hàng sẽ đánh giá cao."},
-    {"speaker":"A","en":"Sure, I'm happy to. I'll make sure the demo runs smoothly and prepare a backup in case of technical issues.","vi":"Được, mình rất sẵn lòng. Mình sẽ đảm bảo demo chạy mượt và chuẩn bị phương án dự phòng phòng khi có sự cố kỹ thuật."},
-    {"speaker":"B","en":"A backup is smart — you never know with live demos. Should we bring printed handouts too?","vi":"Phương án dự phòng là khôn ngoan — demo trực tiếp khó lường lắm. Mình có nên mang bản in phát tay nữa không?"},
-    {"speaker":"A","en":"Definitely. Let's print ten copies of the summary, just in case more people attend than expected.","vi":"Chắc chắn rồi. Mình in mười bản tóm tắt, phòng khi có nhiều người tham dự hơn dự kiến."},
-    {"speaker":"B","en":"I'll arrange the printing before we leave. Do you need anything else from me to prepare?","vi":"Mình sẽ lo việc in trước khi đi. Cậu cần gì khác từ mình để chuẩn bị không?"},
-    {"speaker":"A","en":"Just send me the final slides once the budget is in, so I can rehearse my parts.","vi":"Chỉ cần gửi mình slide cuối khi có ngân sách, để mình tập phần của mình."},
-    {"speaker":"B","en":"Will do. I'll send the complete deck by tomorrow evening at the latest.","vi":"Sẽ làm vậy. Mình sẽ gửi bộ slide hoàn chỉnh muộn nhất là tối mai."},
-    {"speaker":"A","en":"Perfect. Oh — one more thing. What's the dress code for the meeting? Formal or business casual?","vi":"Hoàn hảo. Ồ — một điều nữa. Quy định trang phục cho cuộc họp là gì? Trang trọng hay công sở thoải mái?"},
-    {"speaker":"B","en":"This client is fairly formal, so I'd go with a suit. Better to be slightly overdressed than underdressed.","vi":"Khách hàng này khá trang trọng, nên mình sẽ mặc vest. Thà ăn mặc hơi quá trang trọng còn hơn xuề xòa."},
-    {"speaker":"A","en":"Agreed. I'll pack my suit and a spare shirt. Da Nang can get humid, so an extra shirt is wise.","vi":"Đồng ý. Mình sẽ mang vest và một áo sơ mi dự phòng. Đà Nẵng có thể ẩm, nên một áo thêm là khôn ngoan."},
-    {"speaker":"B","en":"Good call. The weather forecast says it'll be sunny and around thirty degrees, so pack light otherwise.","vi":"Hay đó. Dự báo thời tiết nói trời nắng và khoảng ba mươi độ, nên mang đồ nhẹ là được."},
-    {"speaker":"A","en":"Sunny and thirty — perfect beach weather for that evening off. Are we flying back Friday?","vi":"Nắng và ba mươi độ — thời tiết biển hoàn hảo cho buổi tối rảnh đó. Mình bay về thứ Sáu phải không?"},
-    {"speaker":"B","en":"Yes, Friday afternoon at four. That gives us Friday morning free in case the client wants a follow-up.","vi":"Đúng, chiều thứ Sáu lúc bốn giờ. Như vậy mình có sáng thứ Sáu rảnh phòng khi khách hàng muốn họp tiếp."},
-    {"speaker":"A","en":"That's well planned. You've thought of everything, Trang.","vi":"Lên kế hoạch chu đáo đó. Cậu đã nghĩ đến mọi thứ rồi, Trang."},
-    {"speaker":"B","en":"I try! Business trips go much smoother with good planning. Less stress for both of us.","vi":"Mình cố gắng! Chuyến công tác trôi chảy hơn nhiều với kế hoạch tốt. Bớt căng thẳng cho cả hai."},
-    {"speaker":"A","en":"Absolutely. Should we meet at the airport, or share a taxi from the office?","vi":"Hoàn toàn đúng. Mình gặp nhau ở sân bay, hay đi chung taxi từ văn phòng?"},
-    {"speaker":"B","en":"Let's share a taxi — it's cheaper and we won't risk one of us being late. I'll book it for six a.m.","vi":"Mình đi chung taxi — rẻ hơn và mình không lo ai đó bị trễ. Mình sẽ đặt lúc sáu giờ sáng."},
-    {"speaker":"A","en":"Six a.m. pickup — I'll set two alarms! Where should the taxi collect me?","vi":"Đón lúc sáu giờ sáng — mình sẽ đặt hai báo thức! Taxi đón mình ở đâu?"},
-    {"speaker":"B","en":"I'll have it pick you up first since you're on the way. Around five-fifty at your building.","vi":"Mình sẽ cho nó đón cậu trước vì cậu trên đường đi. Khoảng năm giờ năm mươi tại tòa nhà của cậu."},
-    {"speaker":"A","en":"Perfect. I'll be downstairs and ready. Anything I'm forgetting?","vi":"Hoàn hảo. Mình sẽ xuống dưới và sẵn sàng. Mình có quên gì không?"},
-    {"speaker":"B","en":"Just bring your ID for the flight and your laptop charger. I'll handle the rest of the logistics.","vi":"Chỉ cần mang CMND cho chuyến bay và sạc laptop. Mình sẽ lo phần hậu cần còn lại."},
-    {"speaker":"A","en":"ID and charger — noted. Honestly, I feel really prepared now. Thanks for organizing everything.","vi":"CMND và sạc — ghi nhớ rồi. Thành thật mà nói, giờ mình cảm thấy rất sẵn sàng. Cảm ơn cậu đã tổ chức mọi thứ."},
-    {"speaker":"B","en":"My pleasure. I think it's going to be a great trip — and we might even win this client over.","vi":"Rất vui. Mình nghĩ đây sẽ là chuyến đi tuyệt vời — và mình thậm chí có thể chinh phục được khách hàng này."},
-    {"speaker":"A","en":"With your planning and our preparation, I'm feeling confident. Let's nail it!","vi":"Với sự lên kế hoạch của cậu và sự chuẩn bị của mình, mình thấy tự tin. Mình quyết làm tốt nhé!"},
-    {"speaker":"B","en":"That's the spirit! I'll send the slides tomorrow. Talk soon, Huy!","vi":"Đó là tinh thần! Mình sẽ gửi slide ngày mai. Nói chuyện sớm nhé, Huy!"},
-    {"speaker":"A","en":"Talk soon, Trang. Thanks again — see you Wednesday morning!","vi":"Nói chuyện sớm, Trang. Cảm ơn lần nữa — hẹn gặp sáng thứ Tư!"}
-  ]
-},
-{
-  "id": 32,
-  "title": "Gọi điện cho khách hàng",
-  "situation": "Nhân viên kinh doanh Bảo gọi điện chăm sóc khách hàng về sản phẩm đã mua.",
-  "speakerAGender": "male",
-  "speakerBGender": "female",
-  "speakerAName": {"vi": "Bảo", "en": "Bao"},
-  "speakerBName": {"vi": "Khách hàng", "en": "Customer"},
-  "_aiGenerated": true,
-  "turns": [
-    {"speaker":"A","en":"Good afternoon, may I speak with Ms. Hanh? This is Bao calling from Green Home Appliances.","vi":"Chào buổi chiều, tôi có thể nói chuyện với chị Hạnh không? Tôi là Bảo gọi từ Green Home Appliances."},
-    {"speaker":"B","en":"Yes, this is Hanh speaking. What's this regarding?","vi":"Vâng, Hạnh đây. Việc này về vấn đề gì vậy?"},
-    {"speaker":"A","en":"Thank you. I'm just following up on the air purifier you purchased from us last month. How has it been working for you?","vi":"Cảm ơn chị. Tôi gọi để hỏi thăm về máy lọc không khí chị mua từ chúng tôi tháng trước. Nó hoạt động thế nào với chị?"},
-    {"speaker":"B","en":"Oh, that's thoughtful of you to check. It's been working well, actually. The air does feel cleaner.","vi":"Ồ, anh thật chu đáo khi hỏi thăm. Thực ra nó hoạt động tốt. Không khí cảm giác sạch hơn thật."},
-    {"speaker":"A","en":"That's wonderful to hear. Are you finding the controls easy to use?","vi":"Thật tuyệt khi nghe vậy. Chị thấy các nút điều khiển có dễ dùng không?"},
-    {"speaker":"B","en":"Mostly, yes. Although I'm not entirely sure how the auto mode works — it changes speed by itself sometimes.","vi":"Hầu hết là dễ, đúng vậy. Mặc dù tôi không hoàn toàn chắc chế độ tự động hoạt động ra sao — đôi khi nó tự thay đổi tốc độ."},
-    {"speaker":"A","en":"Ah, that's actually a great feature. In auto mode, the sensor detects air quality and adjusts the fan speed automatically.","vi":"À, đó thực ra là tính năng tuyệt vời. Ở chế độ tự động, cảm biến phát hiện chất lượng không khí và điều chỉnh tốc độ quạt tự động."},
-    {"speaker":"B","en":"Oh, I see! So when it speeds up, it means the air is more polluted?","vi":"Ồ, tôi hiểu rồi! Vậy khi nó tăng tốc, nghĩa là không khí ô nhiễm hơn?"},
-    {"speaker":"A","en":"Exactly right. And when the air is clean, it slows down to save energy. It's designed to be efficient.","vi":"Chính xác. Và khi không khí sạch, nó chậm lại để tiết kiệm điện. Nó được thiết kế để tiết kiệm."},
-    {"speaker":"B","en":"That's clever. I was worried something was wrong, but it's actually doing its job.","vi":"Thông minh đó. Tôi lo có gì đó hỏng, nhưng hóa ra nó đang làm đúng việc của mình."},
-    {"speaker":"A","en":"It's doing exactly what it should. Is there anything else about the product you'd like to ask?","vi":"Nó đang làm đúng những gì nên làm. Còn điều gì khác về sản phẩm chị muốn hỏi không?"},
-    {"speaker":"B","en":"Now that you mention it — how often do I need to replace the filter?","vi":"Anh nhắc mới nhớ — tôi cần thay bộ lọc bao lâu một lần?"},
-    {"speaker":"A","en":"Typically every six to eight months, depending on use. The device will show a filter indicator light when it's time.","vi":"Thường mỗi sáu đến tám tháng, tùy vào việc sử dụng. Thiết bị sẽ hiện đèn báo bộ lọc khi đến lúc cần thay."},
-    {"speaker":"B","en":"Good to know. Where do I buy replacement filters?","vi":"Tốt khi biết. Tôi mua bộ lọc thay thế ở đâu?"},
-    {"speaker":"A","en":"You can buy them directly from us, online or in-store. I can also set up a reminder to call you when it's about time, if you'd like.","vi":"Chị có thể mua trực tiếp từ chúng tôi, online hoặc tại cửa hàng. Tôi cũng có thể đặt nhắc nhở để gọi chị khi gần đến lúc, nếu chị muốn."},
-    {"speaker":"B","en":"That would be really helpful — I'd probably forget otherwise.","vi":"Vậy thì hữu ích lắm — không thì chắc tôi quên mất."},
-    {"speaker":"A","en":"No problem at all. I'll note your account to remind you around the six-month mark. We can even deliver the filter to your door.","vi":"Không sao cả. Tôi sẽ ghi chú tài khoản chị để nhắc vào khoảng mốc sáu tháng. Chúng tôi thậm chí có thể giao bộ lọc tận nhà."},
-    {"speaker":"B","en":"Delivery to my door? That's excellent service. I appreciate that.","vi":"Giao tận nhà? Dịch vụ tuyệt vời đó. Tôi cảm kích điều đó."},
-    {"speaker":"A","en":"We try to make ownership as easy as possible. By the way, are you happy enough with the purifier that you'd recommend it to others?","vi":"Chúng tôi cố làm cho việc sở hữu dễ dàng nhất có thể. Nhân tiện, chị có hài lòng với máy lọc đủ để giới thiệu cho người khác không?"},
-    {"speaker":"B","en":"Definitely. In fact, my sister was asking about it last week — she has allergies, so she's interested.","vi":"Chắc chắn. Thực ra, em gái tôi đã hỏi về nó tuần trước — em ấy bị dị ứng, nên rất quan tâm."},
-    {"speaker":"A","en":"That's great to hear! For allergy sufferers, this model is ideal. If she's interested, I can offer a referral discount.","vi":"Thật tuyệt khi nghe vậy! Với người bị dị ứng, model này lý tưởng. Nếu em ấy quan tâm, tôi có thể giảm giá giới thiệu."},
-    {"speaker":"B","en":"A referral discount? She'd love that. How does it work?","vi":"Giảm giá giới thiệu? Em ấy sẽ thích lắm. Nó hoạt động như thế nào?"},
-    {"speaker":"A","en":"If she mentions your name when she buys, she gets ten percent off, and you receive a voucher for your next filter purchase.","vi":"Nếu em ấy nhắc tên chị khi mua, em ấy được giảm mười phần trăm, và chị nhận được phiếu giảm giá cho lần mua bộ lọc tiếp theo."},
-    {"speaker":"B","en":"That benefits both of us — perfect! I'll pass your number to her.","vi":"Cả hai chúng tôi đều có lợi — hoàn hảo! Tôi sẽ chuyển số của anh cho em ấy."},
-    {"speaker":"A","en":"Wonderful, thank you. She can call me anytime, or visit the store and ask for Bao.","vi":"Tuyệt vời, cảm ơn chị. Em ấy có thể gọi tôi bất cứ lúc nào, hoặc đến cửa hàng và hỏi Bảo."},
-    {"speaker":"B","en":"I'll let her know. This has been such a pleasant call — I wasn't expecting follow-up service like this.","vi":"Tôi sẽ báo em ấy. Đây là một cuộc gọi thật dễ chịu — tôi không ngờ có dịch vụ hậu mãi như thế này."},
-    {"speaker":"A","en":"We believe in looking after our customers well after the sale, not just during it.","vi":"Chúng tôi tin vào việc chăm sóc khách hàng tốt sau khi bán hàng, không chỉ trong lúc bán."},
-    {"speaker":"B","en":"It really shows. It makes me feel confident about buying from you again in the future.","vi":"Nó thể hiện rõ lắm. Nó làm tôi cảm thấy tự tin về việc mua hàng của anh lần nữa trong tương lai."},
-    {"speaker":"A","en":"That means a lot to us. Is there anything else I can help you with while I have you on the line?","vi":"Điều đó có ý nghĩa lớn với chúng tôi. Còn gì khác tôi có thể giúp chị trong lúc đang gọi không?"},
-    {"speaker":"B","en":"No, I think you've covered everything. You've actually taught me how to use my own purifier better!","vi":"Không, tôi nghĩ anh đã bao quát hết. Thực ra anh đã dạy tôi cách dùng máy lọc của chính mình tốt hơn!"},
-    {"speaker":"A","en":"Ha! I'm glad I could help with the auto mode. Enjoy the cleaner air, Ms. Hanh.","vi":"Ha! Tôi vui vì giúp được chị về chế độ tự động. Tận hưởng không khí sạch hơn nhé, chị Hạnh."},
-    {"speaker":"B","en":"Thank you so much, Bao. And thanks for taking the time to check in.","vi":"Cảm ơn anh rất nhiều, Bảo. Và cảm ơn anh đã dành thời gian hỏi thăm."},
-    {"speaker":"A","en":"It's my pleasure. I'll be in touch about the filter when the time comes. Take care!","vi":"Đó là niềm vui của tôi. Tôi sẽ liên hệ về bộ lọc khi đến lúc. Bảo trọng nhé!"},
-    {"speaker":"B","en":"You too. And I'll send my sister your way. Have a great afternoon!","vi":"Anh cũng vậy. Và tôi sẽ giới thiệu em gái đến chỗ anh. Chúc anh buổi chiều tốt lành!"},
-    {"speaker":"A","en":"Thank you, that's very kind. Goodbye, Ms. Hanh, and thank you for being a valued customer.","vi":"Cảm ơn chị, chị thật tử tế. Tạm biệt chị Hạnh, và cảm ơn chị đã là khách hàng quý giá."},
-    {"speaker":"B","en":"Goodbye, Bao! Take care.","vi":"Tạm biệt, Bảo! Bảo trọng nhé."},
-    {"speaker":"A","en":"You too. Enjoy the rest of your day!","vi":"Chị cũng vậy. Tận hưởng phần còn lại trong ngày nhé!"},
-    {"speaker":"B","en":"Will do, thanks again. Bye now!","vi":"Sẽ vậy, cảm ơn lần nữa. Tạm biệt nhé!"},
-    {"speaker":"A","en":"Bye, and remember — just ask for Bao anytime you need anything!","vi":"Tạm biệt, và nhớ nhé — cứ hỏi Bảo bất cứ khi nào chị cần gì!"}
-  ]
-},
-{
-  "id": 33,
-  "title": "Đặt hàng online",
-  "situation": "Trang gọi điện đến tổng đài hỗ trợ để đặt hàng online qua điện thoại.",
-  "speakerAGender": "female",
-  "speakerBGender": "male",
-  "speakerAName": {"vi": "Trang", "en": "Trang"},
-  "speakerBName": {"vi": "Tổng đài viên", "en": "Call agent"},
-  "_aiGenerated": true,
-  "turns": [
-    {"speaker":"A","en":"Hi, I'd like to place an order, but I'm having trouble with your website. Can I order over the phone?","vi":"Xin chào, tôi muốn đặt hàng, nhưng tôi gặp trục trặc với website của bên anh. Tôi đặt hàng qua điện thoại được không?"},
-    {"speaker":"B","en":"Of course! I'd be happy to help you place the order. What items were you looking to buy?","vi":"Dĩ nhiên! Tôi rất vui được giúp chị đặt hàng. Chị muốn mua những món nào?"},
-    {"speaker":"A","en":"I want the stainless steel cookware set — the one with five pieces — and a matching frying pan.","vi":"Tôi muốn bộ nồi inox — loại năm món — và một cái chảo rán cùng bộ."},
-    {"speaker":"B","en":"Great choices. Let me check stock... Yes, both are available. The five-piece set is one million two hundred thousand, and the frying pan is three hundred fifty thousand.","vi":"Lựa chọn tốt. Để tôi kiểm tra kho... Vâng, cả hai đều có. Bộ năm món là một triệu hai trăm nghìn, và chảo rán là ba trăm năm mươi nghìn."},
-    {"speaker":"A","en":"Perfect. Is the frying pan the same brand and finish as the set?","vi":"Hoàn hảo. Chảo rán có cùng thương hiệu và kiểu hoàn thiện với bộ nồi không?"},
-    {"speaker":"B","en":"Yes, exactly the same — they're designed to match. They'll look great together in your kitchen.","vi":"Vâng, giống hệt nhau — chúng được thiết kế để đồng bộ. Chúng sẽ trông rất đẹp cùng nhau trong bếp của chị."},
-    {"speaker":"A","en":"Wonderful. Are they induction-compatible? I have an induction stove.","vi":"Tuyệt vời. Chúng có dùng được với bếp từ không? Tôi có bếp từ."},
-    {"speaker":"B","en":"Yes, this entire range works with induction, gas, and electric stoves. Very versatile.","vi":"Vâng, toàn bộ dòng này dùng được với bếp từ, bếp gas, và bếp điện. Rất linh hoạt."},
-    {"speaker":"A","en":"That's exactly what I need. Is there any discount if I buy them together?","vi":"Đó chính xác là thứ tôi cần. Có giảm giá nếu mua chung không?"},
-    {"speaker":"B","en":"Actually, yes — there's a current promotion. Buy the set and pan together and you get ten percent off the total.","vi":"Thực ra có — đang có khuyến mãi. Mua bộ và chảo cùng nhau được giảm mười phần trăm tổng tiền."},
-    {"speaker":"A","en":"Oh great! So that brings the total down. What would it be after the discount?","vi":"Ồ tuyệt! Vậy giảm được tổng tiền. Sau giảm giá là bao nhiêu?"},
-    {"speaker":"B","en":"The combined price is one million five hundred fifty thousand. With ten percent off, it's one million three hundred ninety-five thousand.","vi":"Giá gộp là một triệu năm trăm năm mươi nghìn. Giảm mười phần trăm còn một triệu ba trăm chín mươi lăm nghìn."},
-    {"speaker":"A","en":"That's a good saving. I'll take both. How much is the delivery fee?","vi":"Tiết kiệm được kha khá. Tôi lấy cả hai. Phí giao hàng bao nhiêu?"},
-    {"speaker":"B","en":"For orders over one million, delivery is free within the city. Where would you like it delivered?","vi":"Với đơn hàng trên một triệu, giao hàng miễn phí trong thành phố. Chị muốn giao đến đâu?"},
-    {"speaker":"A","en":"Free delivery — even better. My address is 88 Hoang Hoa Tham Street, Ward 5, Binh Thanh District.","vi":"Giao hàng miễn phí — càng tốt. Địa chỉ của tôi là 88 đường Hoàng Hoa Thám, Phường 5, Quận Bình Thạnh."},
-    {"speaker":"B","en":"88 Hoang Hoa Tham, Ward 5, Binh Thanh. Got it. And a phone number for the delivery team?","vi":"88 Hoàng Hoa Thám, Phường 5, Bình Thạnh. Ghi rồi. Và số điện thoại cho đội giao hàng?"},
-    {"speaker":"A","en":"It's the number I'm calling from — zero-nine-three-four, five-six-seven, eight-nine-zero.","vi":"Là số tôi đang gọi đây — không-chín-ba-bốn, năm-sáu-bảy, tám-chín-không."},
-    {"speaker":"B","en":"Perfect. When would you like it delivered? We have slots tomorrow morning or afternoon.","vi":"Hoàn hảo. Chị muốn giao khi nào? Chúng tôi có khung giờ sáng mai hoặc chiều mai."},
-    {"speaker":"A","en":"Tomorrow afternoon would be best — I work in the morning. Is there a specific time window?","vi":"Chiều mai thì tốt nhất — buổi sáng tôi làm việc. Có khung giờ cụ thể không?"},
-    {"speaker":"B","en":"The afternoon window is between two and five p.m. The driver will call about thirty minutes before arriving.","vi":"Khung chiều là từ hai đến năm giờ chiều. Tài xế sẽ gọi khoảng ba mươi phút trước khi đến."},
-    {"speaker":"A","en":"That works perfectly. How would I pay — cash on delivery or transfer?","vi":"Vậy hoàn hảo. Tôi thanh toán như thế nào — trả tiền khi nhận hay chuyển khoản?"},
-    {"speaker":"B","en":"Both are available. Cash on delivery, bank transfer, or you can pay by card when the driver arrives.","vi":"Cả hai đều được. Trả tiền khi nhận, chuyển khoản, hoặc chị có thể trả bằng thẻ khi tài xế đến."},
-    {"speaker":"A","en":"I'll pay by card on delivery — that's most convenient. Do I need to do anything else now?","vi":"Tôi sẽ trả bằng thẻ khi nhận hàng — tiện nhất. Tôi có cần làm gì khác bây giờ không?"},
-    {"speaker":"B","en":"No, you're all set. Let me just confirm the order: a five-piece cookware set and matching frying pan, total one million three hundred ninety-five thousand, free delivery tomorrow afternoon.","vi":"Không, chị xong hết rồi. Để tôi xác nhận đơn hàng: một bộ nồi năm món và chảo rán cùng bộ, tổng một triệu ba trăm chín mươi lăm nghìn, giao miễn phí chiều mai."},
-    {"speaker":"A","en":"That's all correct. Will I get a confirmation message?","vi":"Tất cả đúng rồi. Tôi có nhận được tin nhắn xác nhận không?"},
-    {"speaker":"B","en":"Yes, you'll receive an SMS with your order number shortly. Keep it in case you need to track or change anything.","vi":"Vâng, chị sẽ sớm nhận được SMS với mã đơn hàng. Giữ nó phòng khi chị cần theo dõi hoặc thay đổi gì."},
-    {"speaker":"A","en":"Great. What if I'm not home during the delivery window for some reason?","vi":"Tuyệt. Nếu vì lý do gì đó tôi không có nhà trong khung giờ giao thì sao?"},
-    {"speaker":"B","en":"Just let the driver know when he calls — we can reschedule for another day at no extra charge.","vi":"Chỉ cần báo tài xế khi anh ấy gọi — chúng tôi có thể đổi sang ngày khác mà không tính phí thêm."},
-    {"speaker":"A","en":"That's flexible — thank you. And is there a warranty on the cookware?","vi":"Linh hoạt đó — cảm ơn anh. Và bộ nồi có bảo hành không?"},
-    {"speaker":"B","en":"Yes, a two-year warranty against manufacturing defects. Keep your receipt as proof of purchase.","vi":"Có, bảo hành hai năm cho lỗi sản xuất. Giữ hóa đơn làm bằng chứng mua hàng."},
-    {"speaker":"A","en":"Two years is reassuring. I'll keep the receipt safe. You've made this so easy compared to the website!","vi":"Hai năm thật yên tâm. Tôi sẽ giữ hóa đơn cẩn thận. Anh đã làm việc này dễ dàng hơn nhiều so với website!"},
-    {"speaker":"B","en":"Ha! I'm sorry the website gave you trouble, but I'm glad I could help over the phone.","vi":"Ha! Tôi xin lỗi vì website gây trục trặc, nhưng tôi vui vì giúp được chị qua điện thoại."},
-    {"speaker":"A","en":"Sometimes talking to a real person is just easier. Thank you for being so patient and clear.","vi":"Đôi khi nói chuyện với người thật chỉ là dễ hơn. Cảm ơn anh đã rất kiên nhẫn và rõ ràng."},
-    {"speaker":"B","en":"It's my pleasure. I hope you enjoy your new cookware — it's genuinely a great set.","vi":"Đó là niềm vui của tôi. Hy vọng chị thích bộ nồi mới — nó thực sự là một bộ tuyệt vời."},
-    {"speaker":"A","en":"I'm excited to use it. Thank you so much for all your help today.","vi":"Tôi háo hức được dùng nó. Cảm ơn anh rất nhiều vì tất cả sự giúp đỡ hôm nay."},
-    {"speaker":"B","en":"You're very welcome. You'll get that SMS shortly. Have a wonderful evening!","vi":"Không có gì. Chị sẽ sớm nhận được SMS. Chúc chị buổi tối tuyệt vời!"},
-    {"speaker":"A","en":"You too! Goodbye, and thanks again.","vi":"Anh cũng vậy! Tạm biệt, và cảm ơn lần nữa."},
-    {"speaker":"B","en":"Goodbye! Enjoy your cooking, and call us anytime you need anything.","vi":"Tạm biệt! Chúc chị nấu ăn vui vẻ, và gọi chúng tôi bất cứ khi nào chị cần gì."},
-    {"speaker":"A","en":"I will. Thanks — bye for now!","vi":"Tôi sẽ vậy. Cảm ơn — tạm biệt nhé!"},
-    {"speaker":"B","en":"Bye, Ms. Trang. Take care!","vi":"Tạm biệt chị Trang. Bảo trọng nhé!"}
-  ]
-},
-{
-  "id": 34,
-  "title": "Trả hàng và đổi hàng",
-  "situation": "Khách hàng Yến gọi điện đến cửa hàng để xin đổi sản phẩm bị lỗi.",
-  "speakerAGender": "female",
-  "speakerBGender": "male",
-  "speakerAName": {"vi": "Yến", "en": "Yen"},
-  "speakerBName": {"vi": "Nhân viên hỗ trợ", "en": "Support staff"},
-  "_aiGenerated": true,
-  "turns": [
-    {"speaker":"A","en":"Hello, I bought a blender from your store last week and it's already not working properly. I'd like to exchange it.","vi":"Xin chào, tôi mua một cái máy xay sinh tố từ cửa hàng tuần trước và nó đã không hoạt động đúng cách rồi. Tôi muốn đổi nó."},
-    {"speaker":"B","en":"I'm sorry to hear that. Let's get it sorted for you. Can you describe what's wrong with it?","vi":"Tôi rất tiếc khi nghe điều đó. Để tôi giải quyết cho chị. Chị có thể mô tả nó bị sao không?"},
-    {"speaker":"A","en":"It makes a loud grinding noise and then stops after just a few seconds. It can't blend anything properly.","vi":"Nó phát ra tiếng kêu ken két lớn rồi dừng lại chỉ sau vài giây. Nó không xay được gì đàng hoàng."},
-    {"speaker":"B","en":"That definitely sounds like a fault. Did it do this from the start, or did it develop over time?","vi":"Cái đó chắc chắn nghe như lỗi. Nó bị vậy từ đầu, hay phát sinh theo thời gian?"},
-    {"speaker":"A","en":"It worked fine for the first two days, then started doing this on the third day.","vi":"Nó hoạt động tốt trong hai ngày đầu, rồi bắt đầu bị vậy vào ngày thứ ba."},
-    {"speaker":"B","en":"Understood. Since it's within our fourteen-day exchange period and clearly faulty, you're fully entitled to an exchange.","vi":"Hiểu rồi. Vì còn trong thời hạn đổi hàng mười bốn ngày và rõ ràng bị lỗi, chị hoàn toàn có quyền được đổi."},
-    {"speaker":"A","en":"Oh good, I was worried it might be a hassle. What do I need to do?","vi":"Ồ tốt, tôi lo việc này có thể rắc rối. Tôi cần làm gì?"},
-    {"speaker":"B","en":"Just bring the blender back with the receipt and the original box if you still have it. Do you have those?","vi":"Chỉ cần mang máy xay lại với hóa đơn và hộp gốc nếu chị còn giữ. Chị có những thứ đó không?"},
-    {"speaker":"A","en":"Yes, I kept the box and the receipt. I always keep them for at least a month.","vi":"Có, tôi giữ hộp và hóa đơn. Tôi luôn giữ chúng ít nhất một tháng."},
-    {"speaker":"B","en":"That's very sensible — it makes everything much easier. Would you like the same model, or a different one?","vi":"Thật khôn ngoan — nó làm mọi thứ dễ dàng hơn nhiều. Chị muốn cùng model, hay model khác?"},
-    {"speaker":"A","en":"I liked the model overall, so I'd prefer the same one — assuming it was just a one-off defect.","vi":"Tôi thích model đó về tổng thể, nên tôi muốn cùng loại — giả định đó chỉ là lỗi cá biệt."},
-    {"speaker":"B","en":"That's most likely the case. We'll test the replacement before you leave to make sure it works perfectly.","vi":"Khả năng cao là vậy. Chúng tôi sẽ kiểm tra chiếc thay thế trước khi chị về để đảm bảo nó hoạt động hoàn hảo."},
-    {"speaker":"A","en":"Oh, that's a great idea — testing it in store. That gives me peace of mind.","vi":"Ồ, ý hay đó — kiểm tra tại cửa hàng. Vậy tôi yên tâm."},
-    {"speaker":"B","en":"Exactly. We don't want you to make another trip. When were you thinking of coming in?","vi":"Chính xác. Chúng tôi không muốn chị phải đi thêm lần nữa. Chị định khi nào đến?"},
-    {"speaker":"A","en":"Could I come this evening, around six? I finish work at five-thirty.","vi":"Tôi đến chiều nay được không, khoảng sáu giờ? Tôi tan làm lúc năm rưỡi."},
-    {"speaker":"B","en":"Six p.m. is fine — we're open until nine. Just ask for the customer service desk when you arrive.","vi":"Sáu giờ chiều thì được — chúng tôi mở đến chín giờ. Chỉ cần hỏi quầy chăm sóc khách hàng khi chị đến."},
-    {"speaker":"A","en":"Will you be there, or should I ask for someone specific?","vi":"Anh có ở đó không, hay tôi nên hỏi ai cụ thể?"},
-    {"speaker":"B","en":"I'll be on shift until eight, so just ask for Minh at customer service. I'll have your details ready.","vi":"Tôi làm ca đến tám giờ, nên cứ hỏi Minh ở quầy chăm sóc khách hàng. Tôi sẽ chuẩn bị sẵn thông tin của chị."},
-    {"speaker":"A","en":"Perfect, thank you Minh. Is there any cost involved in the exchange?","vi":"Hoàn hảo, cảm ơn Minh. Việc đổi hàng có tốn phí gì không?"},
-    {"speaker":"B","en":"None at all. A faulty product exchange is completely free. You won't pay anything.","vi":"Không hề. Đổi sản phẩm lỗi hoàn toàn miễn phí. Chị sẽ không phải trả gì."},
-    {"speaker":"A","en":"That's a relief. What if the same model is out of stock when I come in?","vi":"Thật nhẹ nhõm. Nếu model đó hết hàng khi tôi đến thì sao?"},
-    {"speaker":"B","en":"Let me check current stock... Yes, we have several in stock right now, so that won't be a problem.","vi":"Để tôi kiểm tra kho hiện tại... Vâng, chúng tôi có vài cái trong kho ngay bây giờ, nên đó sẽ không phải vấn đề."},
-    {"speaker":"A","en":"Great. Could you set one aside for me, just to be safe?","vi":"Tuyệt. Anh có thể để riêng một cái cho tôi không, cho chắc?"},
-    {"speaker":"B","en":"Absolutely. I'll reserve one under your name right now. Can I get your full name, please?","vi":"Hoàn toàn được. Tôi sẽ giữ một cái dưới tên chị ngay bây giờ. Cho tôi tên đầy đủ của chị được không?"},
-    {"speaker":"A","en":"It's Nguyen Thi Yen. Thank you for arranging that.","vi":"Là Nguyễn Thị Yến. Cảm ơn anh đã sắp xếp."},
-    {"speaker":"B","en":"Done — one blender reserved for Ms. Yen, to be exchanged this evening. You're all set.","vi":"Xong — một máy xay được giữ cho chị Yến, để đổi vào chiều nay. Chị xong hết rồi."},
-    {"speaker":"A","en":"Wonderful. I really appreciate how smoothly you've handled this.","vi":"Tuyệt vời. Tôi thực sự cảm kích cách anh xử lý việc này trơn tru."},
-    {"speaker":"B","en":"It's our responsibility to make it right. A faulty product is frustrating, and we want to fix that quickly.","vi":"Đó là trách nhiệm của chúng tôi để làm đúng. Một sản phẩm lỗi gây bực bội, và chúng tôi muốn khắc phục nhanh chóng."},
-    {"speaker":"A","en":"You've definitely turned a frustrating situation into a positive one. Thank you.","vi":"Anh chắc chắn đã biến một tình huống bực bội thành tích cực. Cảm ơn anh."},
-    {"speaker":"B","en":"That's exactly what we aim for. Is there anything else I can help you with today?","vi":"Đó chính xác là điều chúng tôi hướng tới. Còn gì khác tôi giúp chị hôm nay không?"},
-    {"speaker":"A","en":"No, that's everything. I feel much better about my purchase now, knowing the service is this good.","vi":"Không, vậy là hết. Tôi cảm thấy tốt hơn nhiều về món hàng của mình, khi biết dịch vụ tốt thế này."},
-    {"speaker":"B","en":"That's lovely to hear. We hope the new blender serves you well for a long time.","vi":"Thật vui khi nghe vậy. Chúng tôi hy vọng máy xay mới phục vụ chị tốt trong thời gian dài."},
-    {"speaker":"A","en":"I'm sure it will. So I'll see you this evening at six — ask for Minh, customer service.","vi":"Tôi chắc là vậy. Vậy tôi sẽ gặp anh chiều nay lúc sáu giờ — hỏi Minh, quầy chăm sóc khách hàng."},
-    {"speaker":"B","en":"That's right. Don't forget the receipt and the box. See you then, Ms. Yen!","vi":"Đúng vậy. Đừng quên hóa đơn và hộp. Hẹn gặp chị lúc đó, chị Yến!"},
-    {"speaker":"A","en":"I won't forget. Thank you so much, Minh. Have a great rest of your day!","vi":"Tôi sẽ không quên. Cảm ơn anh rất nhiều, Minh. Chúc anh phần còn lại trong ngày tốt lành!"},
-    {"speaker":"B","en":"You too! See you this evening. Take care!","vi":"Chị cũng vậy! Hẹn gặp chiều nay. Bảo trọng nhé!"},
-    {"speaker":"A","en":"Bye for now — and thanks again for making this so easy!","vi":"Tạm biệt nhé — và cảm ơn lần nữa vì đã làm việc này thật dễ dàng!"},
-    {"speaker":"B","en":"My pleasure, truly. See you at six. Goodbye!","vi":"Thật sự rất vui được giúp. Hẹn gặp lúc sáu giờ. Tạm biệt!"},
-    {"speaker":"A","en":"Goodbye!","vi":"Tạm biệt!"},
-    {"speaker":"B","en":"Take care, Ms. Yen — and we'll have everything ready for you.","vi":"Bảo trọng chị Yến — và chúng tôi sẽ chuẩn bị sẵn mọi thứ cho chị."}
-  ]
-},
-{
-  "id": 35,
-  "title": "Đơn hàng bị giao trễ",
-  "situation": "Khách hàng Phúc gọi điện hỏi về đơn hàng bị giao trễ so với dự kiến.",
-  "speakerAGender": "male",
-  "speakerBGender": "female",
-  "speakerAName": {"vi": "Phúc", "en": "Phuc"},
-  "speakerBName": {"vi": "Nhân viên hỗ trợ", "en": "Support agent"},
-  "_aiGenerated": true,
-  "turns": [
-    {"speaker":"A","en":"Hello, I'm calling about an order that hasn't arrived. It was supposed to be delivered two days ago.","vi":"Xin chào, tôi gọi về một đơn hàng chưa đến. Lẽ ra nó phải được giao hai ngày trước."},
-    {"speaker":"B","en":"I'm sorry for the delay. Let me look into it right away. Could you give me your order number?","vi":"Tôi xin lỗi vì sự chậm trễ. Để tôi kiểm tra ngay. Anh có thể cho tôi mã đơn hàng không?"},
-    {"speaker":"A","en":"Yes, it's V-N, then four-four-seven-eight-one-two.","vi":"Vâng, là V-N, rồi bốn-bốn-bảy-tám-một-hai."},
-    {"speaker":"B","en":"Thank you. Let me pull that up... I can see your order. It's a pair of running shoes, correct?","vi":"Cảm ơn anh. Để tôi tìm... Tôi thấy đơn hàng của anh rồi. Là một đôi giày chạy bộ, đúng không?"},
-    {"speaker":"A","en":"That's right. I ordered them specifically for a race this weekend, so the timing is important.","vi":"Đúng vậy. Tôi đặt chúng riêng cho một cuộc đua cuối tuần này, nên thời gian rất quan trọng."},
-    {"speaker":"B","en":"I completely understand the urgency. Let me check the shipping status for you.","vi":"Tôi hoàn toàn hiểu sự cấp bách. Để tôi kiểm tra tình trạng vận chuyển cho anh."},
-    {"speaker":"A","en":"Thank you. The tracking page just says 'in transit' and hasn't updated since Monday.","vi":"Cảm ơn chị. Trang theo dõi chỉ ghi 'đang vận chuyển' và không cập nhật từ thứ Hai."},
-    {"speaker":"B","en":"I see the issue. It looks like the package was held at the regional sorting center due to a backlog. I apologize for that.","vi":"Tôi thấy vấn đề rồi. Có vẻ kiện hàng bị giữ lại tại trung tâm phân loại khu vực do tồn đọng. Tôi xin lỗi về điều đó."},
-    {"speaker":"A","en":"A backlog — okay. So when can I realistically expect it now?","vi":"Tồn đọng — được. Vậy thực tế khi nào tôi có thể nhận được nó?"},
-    {"speaker":"B","en":"The good news is it was released this morning and is now out for delivery. It should arrive by tomorrow afternoon.","vi":"Tin tốt là nó đã được giải phóng sáng nay và hiện đang trên đường giao. Nó sẽ đến vào chiều mai."},
-    {"speaker":"A","en":"Tomorrow afternoon? The race is Saturday morning, so that's cutting it close but it should work.","vi":"Chiều mai? Cuộc đua là sáng thứ Bảy, nên hơi sát giờ nhưng vẫn kịp."},
-    {"speaker":"B","en":"I understand it's tight. Would you like me to upgrade it to express delivery to be safe? At no extra charge, given the delay.","vi":"Tôi hiểu là sát giờ. Anh có muốn tôi nâng cấp lên giao hỏa tốc cho chắc không? Không tính phí thêm, vì đã chậm trễ."},
-    {"speaker":"A","en":"Oh, that would be great! Express delivery would give me more of a buffer.","vi":"Ồ, vậy thì tuyệt! Giao hỏa tốc sẽ cho tôi nhiều thời gian dự phòng hơn."},
-    {"speaker":"B","en":"Consider it done. With the express upgrade, it should arrive by tomorrow morning instead of afternoon.","vi":"Coi như xong. Với nâng cấp hỏa tốc, nó sẽ đến vào sáng mai thay vì chiều."},
-    {"speaker":"A","en":"Tomorrow morning is perfect — that gives me a whole day to spare before the race. Thank you.","vi":"Sáng mai là hoàn hảo — cho tôi cả một ngày dự phòng trước cuộc đua. Cảm ơn chị."},
-    {"speaker":"B","en":"You're very welcome. I'm also going to apply a fifteen percent refund to your order as an apology for the inconvenience.","vi":"Không có gì. Tôi cũng sẽ hoàn lại mười lăm phần trăm vào đơn hàng của anh như một lời xin lỗi cho sự bất tiện."},
-    {"speaker":"A","en":"Oh, that's unexpected — thank you! You really didn't have to do that.","vi":"Ồ, bất ngờ đó — cảm ơn chị! Chị thực sự không cần phải làm vậy."},
-    {"speaker":"B","en":"It's the least we can do. A late delivery is our responsibility, and we value your business.","vi":"Đó là điều tối thiểu chúng tôi có thể làm. Giao hàng trễ là trách nhiệm của chúng tôi, và chúng tôi trân trọng anh."},
-    {"speaker":"A","en":"I really appreciate that. Honestly, I was prepared to be annoyed, but you've handled this so well.","vi":"Tôi thực sự cảm kích điều đó. Thành thật mà nói, tôi đã chuẩn bị tâm lý bực bội, nhưng chị xử lý việc này quá tốt."},
-    {"speaker":"B","en":"I'm really glad to hear that. We'd rather fix the problem than make excuses.","vi":"Tôi rất vui khi nghe vậy. Chúng tôi thà sửa vấn đề còn hơn biện minh."},
-    {"speaker":"A","en":"That attitude makes a big difference. Will I get an updated tracking link for the express delivery?","vi":"Thái độ đó tạo nên khác biệt lớn. Tôi có nhận được link theo dõi cập nhật cho giao hỏa tốc không?"},
-    {"speaker":"B","en":"Yes, I'll send a new tracking link by SMS and email within the next few minutes. It'll update in real time.","vi":"Vâng, tôi sẽ gửi link theo dõi mới qua SMS và email trong vài phút tới. Nó sẽ cập nhật theo thời gian thực."},
-    {"speaker":"A","en":"Perfect. And the refund — how long will that take to process?","vi":"Hoàn hảo. Còn khoản hoàn tiền — mất bao lâu để xử lý?"},
-    {"speaker":"B","en":"The refund will be back on your original payment method within three to five business days.","vi":"Khoản hoàn tiền sẽ về phương thức thanh toán ban đầu của anh trong ba đến năm ngày làm việc."},
-    {"speaker":"A","en":"That's reasonable. Is there anything I need to do to receive the express delivery?","vi":"Hợp lý đó. Tôi có cần làm gì để nhận giao hỏa tốc không?"},
-    {"speaker":"B","en":"Just make sure someone is available at the address tomorrow morning. The driver will call before arriving.","vi":"Chỉ cần đảm bảo có người ở địa chỉ vào sáng mai. Tài xế sẽ gọi trước khi đến."},
-    {"speaker":"A","en":"I'll be home all morning, so that's no problem. What if I miss the driver's call?","vi":"Tôi sẽ ở nhà cả sáng, nên không vấn đề gì. Nếu tôi lỡ cuộc gọi của tài xế thì sao?"},
-    {"speaker":"B","en":"If you miss the call, the driver will still attempt delivery, and they'll leave a notice with a number to reschedule.","vi":"Nếu anh lỡ cuộc gọi, tài xế vẫn sẽ cố giao, và họ sẽ để lại thông báo với số để đặt lại lịch."},
-    {"speaker":"A","en":"Good to know there's a backup plan. You've thought of everything.","vi":"Tốt khi biết có phương án dự phòng. Chị đã nghĩ đến mọi thứ."},
-    {"speaker":"B","en":"We try to! Is there anything else I can help you with regarding this order or anything else?","vi":"Chúng tôi cố gắng! Còn gì khác tôi giúp anh về đơn hàng này hoặc bất cứ điều gì khác không?"},
-    {"speaker":"A","en":"No, you've covered it all. Thank you for turning a stressful situation around.","vi":"Không, chị đã bao quát hết. Cảm ơn chị đã xoay chuyển một tình huống căng thẳng."},
-    {"speaker":"B","en":"It's my pleasure, truly. I hope the shoes arrive in perfect condition and you have a great race!","vi":"Thật sự rất vui được giúp. Tôi hy vọng đôi giày đến trong tình trạng hoàn hảo và anh có một cuộc đua tuyệt vời!"},
-    {"speaker":"A","en":"Thank you! It's my first half-marathon, so I'm a little nervous but excited.","vi":"Cảm ơn chị! Đây là giải bán marathon đầu tiên của tôi, nên tôi hơi lo nhưng háo hức."},
-    {"speaker":"B","en":"Your first half-marathon — how exciting! Good luck. I'm sure you'll do brilliantly.","vi":"Giải bán marathon đầu tiên của anh — thú vị quá! Chúc may mắn. Tôi chắc anh sẽ làm rất tốt."},
-    {"speaker":"A","en":"Thank you so much. You've genuinely made my day easier. Have a great afternoon!","vi":"Cảm ơn chị rất nhiều. Chị thực sự đã làm cho ngày của tôi dễ dàng hơn. Chúc chị buổi chiều tốt lành!"},
-    {"speaker":"B","en":"You too! Watch for that tracking link, and best of luck on Saturday. Goodbye!","vi":"Anh cũng vậy! Để ý link theo dõi nhé, và chúc may mắn vào thứ Bảy. Tạm biệt!"},
-    {"speaker":"A","en":"Goodbye, and thanks again for everything!","vi":"Tạm biệt, và cảm ơn lần nữa vì tất cả!"},
-    {"speaker":"B","en":"Anytime! Take care, and enjoy the race!","vi":"Bất cứ lúc nào! Bảo trọng, và tận hưởng cuộc đua nhé!"}
-  ]
-}
+  {
+    "id": 31,
+    "title": "Chuẩn bị đi công tác",
+    "situation": "Huy gọi điện cho đồng nghiệp Trang để xác nhận chuyến đi công tác sắp tới.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Huy", "en": "Huy" },
+    "speakerBName": { "vi": "Trang", "en": "Trang" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi Trang, I'm just calling to confirm a few things about our business trip to Da Nang next week.",
+        "vi": "Chào Trang, mình gọi để xác nhận vài điều về chuyến công tác Đà Nẵng tuần tới."
+      },
+      {
+        "speaker": "B",
+        "en": "Hi Huy! Good timing — I was about to message you. What do we need to sort out?",
+        "vi": "Chào Huy! Đúng lúc — mình vừa định nhắn cậu. Mình cần sắp xếp gì vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "First, the flights. Are we still on the Wednesday morning flight, departing at eight?",
+        "vi": "Đầu tiên là chuyến bay. Mình vẫn đi chuyến sáng thứ Tư, khởi hành lúc tám giờ chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, eight a.m. on Wednesday, arriving in Da Nang around nine-twenty. I've already booked both tickets.",
+        "vi": "Đúng, tám giờ sáng thứ Tư, đến Đà Nẵng khoảng chín giờ hai mươi. Mình đã đặt cả hai vé rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect, thank you. Did you manage to book seats together?",
+        "vi": "Hoàn hảo, cảm ơn cậu. Cậu đặt được ghế cạnh nhau chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, seats 12A and 12B. I figured we could go over the presentation on the flight.",
+        "vi": "Rồi, ghế 12A và 12B. Mình nghĩ mình có thể xem lại bài thuyết trình trên máy bay."
+      },
+      {
+        "speaker": "A",
+        "en": "Good thinking. What about the hotel — is it close to the client's office?",
+        "vi": "Suy nghĩ tốt. Còn khách sạn — có gần văn phòng khách hàng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's about ten minutes by taxi. I chose one near the beach so we can relax a bit after the meetings.",
+        "vi": "Khoảng mười phút đi taxi. Mình chọn một cái gần biển để mình thư giãn một chút sau các cuộc họp."
+      },
+      {
+        "speaker": "A",
+        "en": "Near the beach — nice touch! Are we sharing the cost or is the company covering it?",
+        "vi": "Gần biển — ý hay đó! Mình chia chi phí hay công ty chi trả?"
+      },
+      {
+        "speaker": "B",
+        "en": "The company covers accommodation and flights. We just keep receipts for meals and taxis to claim back.",
+        "vi": "Công ty chi trả chỗ ở và vé máy bay. Mình chỉ cần giữ hóa đơn ăn uống và taxi để hoàn lại."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. I'll keep all my receipts in one envelope. When's the main meeting with the client?",
+        "vi": "Hiểu rồi. Mình sẽ giữ tất cả hóa đơn trong một phong bì. Cuộc họp chính với khách hàng khi nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "Thursday at ten a.m. That gives us Wednesday afternoon to settle in and review everything one last time.",
+        "vi": "Thứ Năm lúc mười giờ sáng. Như vậy mình có chiều thứ Tư để ổn định và xem lại mọi thứ lần cuối."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a comfortable schedule. Do we have everything ready for the presentation?",
+        "vi": "Lịch trình thoải mái đó. Mình đã chuẩn bị xong mọi thứ cho bài thuyết trình chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Almost — the slides are done, but I still need to finalize the budget figures. I'll have them ready by tomorrow.",
+        "vi": "Gần xong — slide xong rồi, nhưng mình vẫn cần chốt các con số ngân sách. Mình sẽ chuẩn bị xong vào ngày mai."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. Should I prepare the product demo, or are you handling that part?",
+        "vi": "Tuyệt. Mình chuẩn bị phần demo sản phẩm, hay cậu lo phần đó?"
+      },
+      {
+        "speaker": "B",
+        "en": "Could you take the demo? You explain the technical features so clearly — the client will appreciate it.",
+        "vi": "Cậu nhận phần demo được không? Cậu giải thích các tính năng kỹ thuật rất rõ ràng — khách hàng sẽ đánh giá cao."
+      },
+      {
+        "speaker": "A",
+        "en": "Sure, I'm happy to. I'll make sure the demo runs smoothly and prepare a backup in case of technical issues.",
+        "vi": "Được, mình rất sẵn lòng. Mình sẽ đảm bảo demo chạy mượt và chuẩn bị phương án dự phòng phòng khi có sự cố kỹ thuật."
+      },
+      {
+        "speaker": "B",
+        "en": "A backup is smart — you never know with live demos. Should we bring printed handouts too?",
+        "vi": "Phương án dự phòng là khôn ngoan — demo trực tiếp khó lường lắm. Mình có nên mang bản in phát tay nữa không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Definitely. Let's print ten copies of the summary, just in case more people attend than expected.",
+        "vi": "Chắc chắn rồi. Mình in mười bản tóm tắt, phòng khi có nhiều người tham dự hơn dự kiến."
+      },
+      {
+        "speaker": "B",
+        "en": "I'll arrange the printing before we leave. Do you need anything else from me to prepare?",
+        "vi": "Mình sẽ lo việc in trước khi đi. Cậu cần gì khác từ mình để chuẩn bị không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Just send me the final slides once the budget is in, so I can rehearse my parts.",
+        "vi": "Chỉ cần gửi mình slide cuối khi có ngân sách, để mình tập phần của mình."
+      },
+      {
+        "speaker": "B",
+        "en": "Will do. I'll send the complete deck by tomorrow evening at the latest.",
+        "vi": "Sẽ làm vậy. Mình sẽ gửi bộ slide hoàn chỉnh muộn nhất là tối mai."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Oh — one more thing. What's the dress code for the meeting? Formal or business casual?",
+        "vi": "Hoàn hảo. Ồ — một điều nữa. Quy định trang phục cho cuộc họp là gì? Trang trọng hay công sở thoải mái?"
+      },
+      {
+        "speaker": "B",
+        "en": "This client is fairly formal, so I'd go with a suit. Better to be slightly overdressed than underdressed.",
+        "vi": "Khách hàng này khá trang trọng, nên mình sẽ mặc vest. Thà ăn mặc hơi quá trang trọng còn hơn xuề xòa."
+      },
+      {
+        "speaker": "A",
+        "en": "Agreed. I'll pack my suit and a spare shirt. Da Nang can get humid, so an extra shirt is wise.",
+        "vi": "Đồng ý. Mình sẽ mang vest và một áo sơ mi dự phòng. Đà Nẵng có thể ẩm, nên một áo thêm là khôn ngoan."
+      },
+      {
+        "speaker": "B",
+        "en": "Good call. The weather forecast says it'll be sunny and around thirty degrees, so pack light otherwise.",
+        "vi": "Hay đó. Dự báo thời tiết nói trời nắng và khoảng ba mươi độ, nên mang đồ nhẹ là được."
+      },
+      {
+        "speaker": "A",
+        "en": "Sunny and thirty — perfect beach weather for that evening off. Are we flying back Friday?",
+        "vi": "Nắng và ba mươi độ — thời tiết biển hoàn hảo cho buổi tối rảnh đó. Mình bay về thứ Sáu phải không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, Friday afternoon at four. That gives us Friday morning free in case the client wants a follow-up.",
+        "vi": "Đúng, chiều thứ Sáu lúc bốn giờ. Như vậy mình có sáng thứ Sáu rảnh phòng khi khách hàng muốn họp tiếp."
+      },
+      {
+        "speaker": "A",
+        "en": "That's well planned. You've thought of everything, Trang.",
+        "vi": "Lên kế hoạch chu đáo đó. Cậu đã nghĩ đến mọi thứ rồi, Trang."
+      },
+      {
+        "speaker": "B",
+        "en": "I try! Business trips go much smoother with good planning. Less stress for both of us.",
+        "vi": "Mình cố gắng! Chuyến công tác trôi chảy hơn nhiều với kế hoạch tốt. Bớt căng thẳng cho cả hai."
+      },
+      {
+        "speaker": "A",
+        "en": "Absolutely. Should we meet at the airport, or share a taxi from the office?",
+        "vi": "Hoàn toàn đúng. Mình gặp nhau ở sân bay, hay đi chung taxi từ văn phòng?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let's share a taxi — it's cheaper and we won't risk one of us being late. I'll book it for six a.m.",
+        "vi": "Mình đi chung taxi — rẻ hơn và mình không lo ai đó bị trễ. Mình sẽ đặt lúc sáu giờ sáng."
+      },
+      {
+        "speaker": "A",
+        "en": "Six a.m. pickup — I'll set two alarms! Where should the taxi collect me?",
+        "vi": "Đón lúc sáu giờ sáng — mình sẽ đặt hai báo thức! Taxi đón mình ở đâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'll have it pick you up first since you're on the way. Around five-fifty at your building.",
+        "vi": "Mình sẽ cho nó đón cậu trước vì cậu trên đường đi. Khoảng năm giờ năm mươi tại tòa nhà của cậu."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. I'll be downstairs and ready. Anything I'm forgetting?",
+        "vi": "Hoàn hảo. Mình sẽ xuống dưới và sẵn sàng. Mình có quên gì không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just bring your ID for the flight and your laptop charger. I'll handle the rest of the logistics.",
+        "vi": "Chỉ cần mang CMND cho chuyến bay và sạc laptop. Mình sẽ lo phần hậu cần còn lại."
+      },
+      {
+        "speaker": "A",
+        "en": "ID and charger — noted. Honestly, I feel really prepared now. Thanks for organizing everything.",
+        "vi": "CMND và sạc — ghi nhớ rồi. Thành thật mà nói, giờ mình cảm thấy rất sẵn sàng. Cảm ơn cậu đã tổ chức mọi thứ."
+      },
+      {
+        "speaker": "B",
+        "en": "My pleasure. I think it's going to be a great trip — and we might even win this client over.",
+        "vi": "Rất vui. Mình nghĩ đây sẽ là chuyến đi tuyệt vời — và mình thậm chí có thể chinh phục được khách hàng này."
+      },
+      {
+        "speaker": "A",
+        "en": "With your planning and our preparation, I'm feeling confident. Let's nail it!",
+        "vi": "Với sự lên kế hoạch của cậu và sự chuẩn bị của mình, mình thấy tự tin. Mình quyết làm tốt nhé!"
+      },
+      {
+        "speaker": "B",
+        "en": "That's the spirit! I'll send the slides tomorrow. Talk soon, Huy!",
+        "vi": "Đó là tinh thần! Mình sẽ gửi slide ngày mai. Nói chuyện sớm nhé, Huy!"
+      },
+      {
+        "speaker": "A",
+        "en": "Talk soon, Trang. Thanks again — see you Wednesday morning!",
+        "vi": "Nói chuyện sớm, Trang. Cảm ơn lần nữa — hẹn gặp sáng thứ Tư!"
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "title": "Gọi điện cho khách hàng",
+    "situation": "Nhân viên kinh doanh Bảo gọi điện chăm sóc khách hàng về sản phẩm đã mua.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Bảo", "en": "Bao" },
+    "speakerBName": { "vi": "Khách hàng", "en": "Customer" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good afternoon, may I speak with Ms. Hanh? This is Bao calling from Green Home Appliances.",
+        "vi": "Chào buổi chiều, tôi có thể nói chuyện với chị Hạnh không? Tôi là Bảo gọi từ Green Home Appliances."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, this is Hanh speaking. What's this regarding?",
+        "vi": "Vâng, Hạnh đây. Việc này về vấn đề gì vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you. I'm just following up on the air purifier you purchased from us last month. How has it been working for you?",
+        "vi": "Cảm ơn chị. Tôi gọi để hỏi thăm về máy lọc không khí chị mua từ chúng tôi tháng trước. Nó hoạt động thế nào với chị?"
+      },
+      {
+        "speaker": "B",
+        "en": "Oh, that's thoughtful of you to check. It's been working well, actually. The air does feel cleaner.",
+        "vi": "Ồ, anh thật chu đáo khi hỏi thăm. Thực ra nó hoạt động tốt. Không khí cảm giác sạch hơn thật."
+      },
+      {
+        "speaker": "A",
+        "en": "That's wonderful to hear. Are you finding the controls easy to use?",
+        "vi": "Thật tuyệt khi nghe vậy. Chị thấy các nút điều khiển có dễ dùng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Mostly, yes. Although I'm not entirely sure how the auto mode works — it changes speed by itself sometimes.",
+        "vi": "Hầu hết là dễ, đúng vậy. Mặc dù tôi không hoàn toàn chắc chế độ tự động hoạt động ra sao — đôi khi nó tự thay đổi tốc độ."
+      },
+      {
+        "speaker": "A",
+        "en": "Ah, that's actually a great feature. In auto mode, the sensor detects air quality and adjusts the fan speed automatically.",
+        "vi": "À, đó thực ra là tính năng tuyệt vời. Ở chế độ tự động, cảm biến phát hiện chất lượng không khí và điều chỉnh tốc độ quạt tự động."
+      },
+      {
+        "speaker": "B",
+        "en": "Oh, I see! So when it speeds up, it means the air is more polluted?",
+        "vi": "Ồ, tôi hiểu rồi! Vậy khi nó tăng tốc, nghĩa là không khí ô nhiễm hơn?"
+      },
+      {
+        "speaker": "A",
+        "en": "Exactly right. And when the air is clean, it slows down to save energy. It's designed to be efficient.",
+        "vi": "Chính xác. Và khi không khí sạch, nó chậm lại để tiết kiệm điện. Nó được thiết kế để tiết kiệm."
+      },
+      {
+        "speaker": "B",
+        "en": "That's clever. I was worried something was wrong, but it's actually doing its job.",
+        "vi": "Thông minh đó. Tôi lo có gì đó hỏng, nhưng hóa ra nó đang làm đúng việc của mình."
+      },
+      {
+        "speaker": "A",
+        "en": "It's doing exactly what it should. Is there anything else about the product you'd like to ask?",
+        "vi": "Nó đang làm đúng những gì nên làm. Còn điều gì khác về sản phẩm chị muốn hỏi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Now that you mention it — how often do I need to replace the filter?",
+        "vi": "Anh nhắc mới nhớ — tôi cần thay bộ lọc bao lâu một lần?"
+      },
+      {
+        "speaker": "A",
+        "en": "Typically every six to eight months, depending on use. The device will show a filter indicator light when it's time.",
+        "vi": "Thường mỗi sáu đến tám tháng, tùy vào việc sử dụng. Thiết bị sẽ hiện đèn báo bộ lọc khi đến lúc cần thay."
+      },
+      {
+        "speaker": "B",
+        "en": "Good to know. Where do I buy replacement filters?",
+        "vi": "Tốt khi biết. Tôi mua bộ lọc thay thế ở đâu?"
+      },
+      {
+        "speaker": "A",
+        "en": "You can buy them directly from us, online or in-store. I can also set up a reminder to call you when it's about time, if you'd like.",
+        "vi": "Chị có thể mua trực tiếp từ chúng tôi, online hoặc tại cửa hàng. Tôi cũng có thể đặt nhắc nhở để gọi chị khi gần đến lúc, nếu chị muốn."
+      },
+      {
+        "speaker": "B",
+        "en": "That would be really helpful — I'd probably forget otherwise.",
+        "vi": "Vậy thì hữu ích lắm — không thì chắc tôi quên mất."
+      },
+      {
+        "speaker": "A",
+        "en": "No problem at all. I'll note your account to remind you around the six-month mark. We can even deliver the filter to your door.",
+        "vi": "Không sao cả. Tôi sẽ ghi chú tài khoản chị để nhắc vào khoảng mốc sáu tháng. Chúng tôi thậm chí có thể giao bộ lọc tận nhà."
+      },
+      {
+        "speaker": "B",
+        "en": "Delivery to my door? That's excellent service. I appreciate that.",
+        "vi": "Giao tận nhà? Dịch vụ tuyệt vời đó. Tôi cảm kích điều đó."
+      },
+      {
+        "speaker": "A",
+        "en": "We try to make ownership as easy as possible. By the way, are you happy enough with the purifier that you'd recommend it to others?",
+        "vi": "Chúng tôi cố làm cho việc sở hữu dễ dàng nhất có thể. Nhân tiện, chị có hài lòng với máy lọc đủ để giới thiệu cho người khác không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Definitely. In fact, my sister was asking about it last week — she has allergies, so she's interested.",
+        "vi": "Chắc chắn. Thực ra, em gái tôi đã hỏi về nó tuần trước — em ấy bị dị ứng, nên rất quan tâm."
+      },
+      {
+        "speaker": "A",
+        "en": "That's great to hear! For allergy sufferers, this model is ideal. If she's interested, I can offer a referral discount.",
+        "vi": "Thật tuyệt khi nghe vậy! Với người bị dị ứng, model này lý tưởng. Nếu em ấy quan tâm, tôi có thể giảm giá giới thiệu."
+      },
+      {
+        "speaker": "B",
+        "en": "A referral discount? She'd love that. How does it work?",
+        "vi": "Giảm giá giới thiệu? Em ấy sẽ thích lắm. Nó hoạt động như thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "If she mentions your name when she buys, she gets ten percent off, and you receive a voucher for your next filter purchase.",
+        "vi": "Nếu em ấy nhắc tên chị khi mua, em ấy được giảm mười phần trăm, và chị nhận được phiếu giảm giá cho lần mua bộ lọc tiếp theo."
+      },
+      {
+        "speaker": "B",
+        "en": "That benefits both of us — perfect! I'll pass your number to her.",
+        "vi": "Cả hai chúng tôi đều có lợi — hoàn hảo! Tôi sẽ chuyển số của anh cho em ấy."
+      },
+      {
+        "speaker": "A",
+        "en": "Wonderful, thank you. She can call me anytime, or visit the store and ask for Bao.",
+        "vi": "Tuyệt vời, cảm ơn chị. Em ấy có thể gọi tôi bất cứ lúc nào, hoặc đến cửa hàng và hỏi Bảo."
+      },
+      {
+        "speaker": "B",
+        "en": "I'll let her know. This has been such a pleasant call — I wasn't expecting follow-up service like this.",
+        "vi": "Tôi sẽ báo em ấy. Đây là một cuộc gọi thật dễ chịu — tôi không ngờ có dịch vụ hậu mãi như thế này."
+      },
+      {
+        "speaker": "A",
+        "en": "We believe in looking after our customers well after the sale, not just during it.",
+        "vi": "Chúng tôi tin vào việc chăm sóc khách hàng tốt sau khi bán hàng, không chỉ trong lúc bán."
+      },
+      {
+        "speaker": "B",
+        "en": "It really shows. It makes me feel confident about buying from you again in the future.",
+        "vi": "Nó thể hiện rõ lắm. Nó làm tôi cảm thấy tự tin về việc mua hàng của anh lần nữa trong tương lai."
+      },
+      {
+        "speaker": "A",
+        "en": "That means a lot to us. Is there anything else I can help you with while I have you on the line?",
+        "vi": "Điều đó có ý nghĩa lớn với chúng tôi. Còn gì khác tôi có thể giúp chị trong lúc đang gọi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "No, I think you've covered everything. You've actually taught me how to use my own purifier better!",
+        "vi": "Không, tôi nghĩ anh đã bao quát hết. Thực ra anh đã dạy tôi cách dùng máy lọc của chính mình tốt hơn!"
+      },
+      {
+        "speaker": "A",
+        "en": "Ha! I'm glad I could help with the auto mode. Enjoy the cleaner air, Ms. Hanh.",
+        "vi": "Ha! Tôi vui vì giúp được chị về chế độ tự động. Tận hưởng không khí sạch hơn nhé, chị Hạnh."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you so much, Bao. And thanks for taking the time to check in.",
+        "vi": "Cảm ơn anh rất nhiều, Bảo. Và cảm ơn anh đã dành thời gian hỏi thăm."
+      },
+      {
+        "speaker": "A",
+        "en": "It's my pleasure. I'll be in touch about the filter when the time comes. Take care!",
+        "vi": "Đó là niềm vui của tôi. Tôi sẽ liên hệ về bộ lọc khi đến lúc. Bảo trọng nhé!"
+      },
+      {
+        "speaker": "B",
+        "en": "You too. And I'll send my sister your way. Have a great afternoon!",
+        "vi": "Anh cũng vậy. Và tôi sẽ giới thiệu em gái đến chỗ anh. Chúc anh buổi chiều tốt lành!"
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you, that's very kind. Goodbye, Ms. Hanh, and thank you for being a valued customer.",
+        "vi": "Cảm ơn chị, chị thật tử tế. Tạm biệt chị Hạnh, và cảm ơn chị đã là khách hàng quý giá."
+      },
+      { "speaker": "B", "en": "Goodbye, Bao! Take care.", "vi": "Tạm biệt, Bảo! Bảo trọng nhé." },
+      {
+        "speaker": "A",
+        "en": "You too. Enjoy the rest of your day!",
+        "vi": "Chị cũng vậy. Tận hưởng phần còn lại trong ngày nhé!"
+      },
+      {
+        "speaker": "B",
+        "en": "Will do, thanks again. Bye now!",
+        "vi": "Sẽ vậy, cảm ơn lần nữa. Tạm biệt nhé!"
+      },
+      {
+        "speaker": "A",
+        "en": "Bye, and remember — just ask for Bao anytime you need anything!",
+        "vi": "Tạm biệt, và nhớ nhé — cứ hỏi Bảo bất cứ khi nào chị cần gì!"
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "title": "Đặt hàng online",
+    "situation": "Trang gọi điện đến tổng đài hỗ trợ để đặt hàng online qua điện thoại.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Trang", "en": "Trang" },
+    "speakerBName": { "vi": "Tổng đài viên", "en": "Call agent" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to place an order, but I'm having trouble with your website. Can I order over the phone?",
+        "vi": "Xin chào, tôi muốn đặt hàng, nhưng tôi gặp trục trặc với website của bên anh. Tôi đặt hàng qua điện thoại được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! I'd be happy to help you place the order. What items were you looking to buy?",
+        "vi": "Dĩ nhiên! Tôi rất vui được giúp chị đặt hàng. Chị muốn mua những món nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "I want the stainless steel cookware set — the one with five pieces — and a matching frying pan.",
+        "vi": "Tôi muốn bộ nồi inox — loại năm món — và một cái chảo rán cùng bộ."
+      },
+      {
+        "speaker": "B",
+        "en": "Great choices. Let me check stock... Yes, both are available. The five-piece set is one million two hundred thousand, and the frying pan is three hundred fifty thousand.",
+        "vi": "Lựa chọn tốt. Để tôi kiểm tra kho... Vâng, cả hai đều có. Bộ năm món là một triệu hai trăm nghìn, và chảo rán là ba trăm năm mươi nghìn."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Is the frying pan the same brand and finish as the set?",
+        "vi": "Hoàn hảo. Chảo rán có cùng thương hiệu và kiểu hoàn thiện với bộ nồi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, exactly the same — they're designed to match. They'll look great together in your kitchen.",
+        "vi": "Vâng, giống hệt nhau — chúng được thiết kế để đồng bộ. Chúng sẽ trông rất đẹp cùng nhau trong bếp của chị."
+      },
+      {
+        "speaker": "A",
+        "en": "Wonderful. Are they induction-compatible? I have an induction stove.",
+        "vi": "Tuyệt vời. Chúng có dùng được với bếp từ không? Tôi có bếp từ."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, this entire range works with induction, gas, and electric stoves. Very versatile.",
+        "vi": "Vâng, toàn bộ dòng này dùng được với bếp từ, bếp gas, và bếp điện. Rất linh hoạt."
+      },
+      {
+        "speaker": "A",
+        "en": "That's exactly what I need. Is there any discount if I buy them together?",
+        "vi": "Đó chính xác là thứ tôi cần. Có giảm giá nếu mua chung không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Actually, yes — there's a current promotion. Buy the set and pan together and you get ten percent off the total.",
+        "vi": "Thực ra có — đang có khuyến mãi. Mua bộ và chảo cùng nhau được giảm mười phần trăm tổng tiền."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh great! So that brings the total down. What would it be after the discount?",
+        "vi": "Ồ tuyệt! Vậy giảm được tổng tiền. Sau giảm giá là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "The combined price is one million five hundred fifty thousand. With ten percent off, it's one million three hundred ninety-five thousand.",
+        "vi": "Giá gộp là một triệu năm trăm năm mươi nghìn. Giảm mười phần trăm còn một triệu ba trăm chín mươi lăm nghìn."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a good saving. I'll take both. How much is the delivery fee?",
+        "vi": "Tiết kiệm được kha khá. Tôi lấy cả hai. Phí giao hàng bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "For orders over one million, delivery is free within the city. Where would you like it delivered?",
+        "vi": "Với đơn hàng trên một triệu, giao hàng miễn phí trong thành phố. Chị muốn giao đến đâu?"
+      },
+      {
+        "speaker": "A",
+        "en": "Free delivery — even better. My address is 88 Hoang Hoa Tham Street, Ward 5, Binh Thanh District.",
+        "vi": "Giao hàng miễn phí — càng tốt. Địa chỉ của tôi là 88 đường Hoàng Hoa Thám, Phường 5, Quận Bình Thạnh."
+      },
+      {
+        "speaker": "B",
+        "en": "88 Hoang Hoa Tham, Ward 5, Binh Thanh. Got it. And a phone number for the delivery team?",
+        "vi": "88 Hoàng Hoa Thám, Phường 5, Bình Thạnh. Ghi rồi. Và số điện thoại cho đội giao hàng?"
+      },
+      {
+        "speaker": "A",
+        "en": "It's the number I'm calling from — zero-nine-three-four, five-six-seven, eight-nine-zero.",
+        "vi": "Là số tôi đang gọi đây — không-chín-ba-bốn, năm-sáu-bảy, tám-chín-không."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. When would you like it delivered? We have slots tomorrow morning or afternoon.",
+        "vi": "Hoàn hảo. Chị muốn giao khi nào? Chúng tôi có khung giờ sáng mai hoặc chiều mai."
+      },
+      {
+        "speaker": "A",
+        "en": "Tomorrow afternoon would be best — I work in the morning. Is there a specific time window?",
+        "vi": "Chiều mai thì tốt nhất — buổi sáng tôi làm việc. Có khung giờ cụ thể không?"
+      },
+      {
+        "speaker": "B",
+        "en": "The afternoon window is between two and five p.m. The driver will call about thirty minutes before arriving.",
+        "vi": "Khung chiều là từ hai đến năm giờ chiều. Tài xế sẽ gọi khoảng ba mươi phút trước khi đến."
+      },
+      {
+        "speaker": "A",
+        "en": "That works perfectly. How would I pay — cash on delivery or transfer?",
+        "vi": "Vậy hoàn hảo. Tôi thanh toán như thế nào — trả tiền khi nhận hay chuyển khoản?"
+      },
+      {
+        "speaker": "B",
+        "en": "Both are available. Cash on delivery, bank transfer, or you can pay by card when the driver arrives.",
+        "vi": "Cả hai đều được. Trả tiền khi nhận, chuyển khoản, hoặc chị có thể trả bằng thẻ khi tài xế đến."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll pay by card on delivery — that's most convenient. Do I need to do anything else now?",
+        "vi": "Tôi sẽ trả bằng thẻ khi nhận hàng — tiện nhất. Tôi có cần làm gì khác bây giờ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "No, you're all set. Let me just confirm the order: a five-piece cookware set and matching frying pan, total one million three hundred ninety-five thousand, free delivery tomorrow afternoon.",
+        "vi": "Không, chị xong hết rồi. Để tôi xác nhận đơn hàng: một bộ nồi năm món và chảo rán cùng bộ, tổng một triệu ba trăm chín mươi lăm nghìn, giao miễn phí chiều mai."
+      },
+      {
+        "speaker": "A",
+        "en": "That's all correct. Will I get a confirmation message?",
+        "vi": "Tất cả đúng rồi. Tôi có nhận được tin nhắn xác nhận không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, you'll receive an SMS with your order number shortly. Keep it in case you need to track or change anything.",
+        "vi": "Vâng, chị sẽ sớm nhận được SMS với mã đơn hàng. Giữ nó phòng khi chị cần theo dõi hoặc thay đổi gì."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. What if I'm not home during the delivery window for some reason?",
+        "vi": "Tuyệt. Nếu vì lý do gì đó tôi không có nhà trong khung giờ giao thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just let the driver know when he calls — we can reschedule for another day at no extra charge.",
+        "vi": "Chỉ cần báo tài xế khi anh ấy gọi — chúng tôi có thể đổi sang ngày khác mà không tính phí thêm."
+      },
+      {
+        "speaker": "A",
+        "en": "That's flexible — thank you. And is there a warranty on the cookware?",
+        "vi": "Linh hoạt đó — cảm ơn anh. Và bộ nồi có bảo hành không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, a two-year warranty against manufacturing defects. Keep your receipt as proof of purchase.",
+        "vi": "Có, bảo hành hai năm cho lỗi sản xuất. Giữ hóa đơn làm bằng chứng mua hàng."
+      },
+      {
+        "speaker": "A",
+        "en": "Two years is reassuring. I'll keep the receipt safe. You've made this so easy compared to the website!",
+        "vi": "Hai năm thật yên tâm. Tôi sẽ giữ hóa đơn cẩn thận. Anh đã làm việc này dễ dàng hơn nhiều so với website!"
+      },
+      {
+        "speaker": "B",
+        "en": "Ha! I'm sorry the website gave you trouble, but I'm glad I could help over the phone.",
+        "vi": "Ha! Tôi xin lỗi vì website gây trục trặc, nhưng tôi vui vì giúp được chị qua điện thoại."
+      },
+      {
+        "speaker": "A",
+        "en": "Sometimes talking to a real person is just easier. Thank you for being so patient and clear.",
+        "vi": "Đôi khi nói chuyện với người thật chỉ là dễ hơn. Cảm ơn anh đã rất kiên nhẫn và rõ ràng."
+      },
+      {
+        "speaker": "B",
+        "en": "It's my pleasure. I hope you enjoy your new cookware — it's genuinely a great set.",
+        "vi": "Đó là niềm vui của tôi. Hy vọng chị thích bộ nồi mới — nó thực sự là một bộ tuyệt vời."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm excited to use it. Thank you so much for all your help today.",
+        "vi": "Tôi háo hức được dùng nó. Cảm ơn anh rất nhiều vì tất cả sự giúp đỡ hôm nay."
+      },
+      {
+        "speaker": "B",
+        "en": "You're very welcome. You'll get that SMS shortly. Have a wonderful evening!",
+        "vi": "Không có gì. Chị sẽ sớm nhận được SMS. Chúc chị buổi tối tuyệt vời!"
+      },
+      {
+        "speaker": "A",
+        "en": "You too! Goodbye, and thanks again.",
+        "vi": "Anh cũng vậy! Tạm biệt, và cảm ơn lần nữa."
+      },
+      {
+        "speaker": "B",
+        "en": "Goodbye! Enjoy your cooking, and call us anytime you need anything.",
+        "vi": "Tạm biệt! Chúc chị nấu ăn vui vẻ, và gọi chúng tôi bất cứ khi nào chị cần gì."
+      },
+      {
+        "speaker": "A",
+        "en": "I will. Thanks — bye for now!",
+        "vi": "Tôi sẽ vậy. Cảm ơn — tạm biệt nhé!"
+      },
+      {
+        "speaker": "B",
+        "en": "Bye, Ms. Trang. Take care!",
+        "vi": "Tạm biệt chị Trang. Bảo trọng nhé!"
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "title": "Trả hàng và đổi hàng",
+    "situation": "Khách hàng Yến gọi điện đến cửa hàng để xin đổi sản phẩm bị lỗi.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Yến", "en": "Yen" },
+    "speakerBName": { "vi": "Nhân viên hỗ trợ", "en": "Support staff" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I bought a blender from your store last week and it's already not working properly. I'd like to exchange it.",
+        "vi": "Xin chào, tôi mua một cái máy xay sinh tố từ cửa hàng tuần trước và nó đã không hoạt động đúng cách rồi. Tôi muốn đổi nó."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm sorry to hear that. Let's get it sorted for you. Can you describe what's wrong with it?",
+        "vi": "Tôi rất tiếc khi nghe điều đó. Để tôi giải quyết cho chị. Chị có thể mô tả nó bị sao không?"
+      },
+      {
+        "speaker": "A",
+        "en": "It makes a loud grinding noise and then stops after just a few seconds. It can't blend anything properly.",
+        "vi": "Nó phát ra tiếng kêu ken két lớn rồi dừng lại chỉ sau vài giây. Nó không xay được gì đàng hoàng."
+      },
+      {
+        "speaker": "B",
+        "en": "That definitely sounds like a fault. Did it do this from the start, or did it develop over time?",
+        "vi": "Cái đó chắc chắn nghe như lỗi. Nó bị vậy từ đầu, hay phát sinh theo thời gian?"
+      },
+      {
+        "speaker": "A",
+        "en": "It worked fine for the first two days, then started doing this on the third day.",
+        "vi": "Nó hoạt động tốt trong hai ngày đầu, rồi bắt đầu bị vậy vào ngày thứ ba."
+      },
+      {
+        "speaker": "B",
+        "en": "Understood. Since it's within our fourteen-day exchange period and clearly faulty, you're fully entitled to an exchange.",
+        "vi": "Hiểu rồi. Vì còn trong thời hạn đổi hàng mười bốn ngày và rõ ràng bị lỗi, chị hoàn toàn có quyền được đổi."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh good, I was worried it might be a hassle. What do I need to do?",
+        "vi": "Ồ tốt, tôi lo việc này có thể rắc rối. Tôi cần làm gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just bring the blender back with the receipt and the original box if you still have it. Do you have those?",
+        "vi": "Chỉ cần mang máy xay lại với hóa đơn và hộp gốc nếu chị còn giữ. Chị có những thứ đó không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I kept the box and the receipt. I always keep them for at least a month.",
+        "vi": "Có, tôi giữ hộp và hóa đơn. Tôi luôn giữ chúng ít nhất một tháng."
+      },
+      {
+        "speaker": "B",
+        "en": "That's very sensible — it makes everything much easier. Would you like the same model, or a different one?",
+        "vi": "Thật khôn ngoan — nó làm mọi thứ dễ dàng hơn nhiều. Chị muốn cùng model, hay model khác?"
+      },
+      {
+        "speaker": "A",
+        "en": "I liked the model overall, so I'd prefer the same one — assuming it was just a one-off defect.",
+        "vi": "Tôi thích model đó về tổng thể, nên tôi muốn cùng loại — giả định đó chỉ là lỗi cá biệt."
+      },
+      {
+        "speaker": "B",
+        "en": "That's most likely the case. We'll test the replacement before you leave to make sure it works perfectly.",
+        "vi": "Khả năng cao là vậy. Chúng tôi sẽ kiểm tra chiếc thay thế trước khi chị về để đảm bảo nó hoạt động hoàn hảo."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, that's a great idea — testing it in store. That gives me peace of mind.",
+        "vi": "Ồ, ý hay đó — kiểm tra tại cửa hàng. Vậy tôi yên tâm."
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. We don't want you to make another trip. When were you thinking of coming in?",
+        "vi": "Chính xác. Chúng tôi không muốn chị phải đi thêm lần nữa. Chị định khi nào đến?"
+      },
+      {
+        "speaker": "A",
+        "en": "Could I come this evening, around six? I finish work at five-thirty.",
+        "vi": "Tôi đến chiều nay được không, khoảng sáu giờ? Tôi tan làm lúc năm rưỡi."
+      },
+      {
+        "speaker": "B",
+        "en": "Six p.m. is fine — we're open until nine. Just ask for the customer service desk when you arrive.",
+        "vi": "Sáu giờ chiều thì được — chúng tôi mở đến chín giờ. Chỉ cần hỏi quầy chăm sóc khách hàng khi chị đến."
+      },
+      {
+        "speaker": "A",
+        "en": "Will you be there, or should I ask for someone specific?",
+        "vi": "Anh có ở đó không, hay tôi nên hỏi ai cụ thể?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'll be on shift until eight, so just ask for Minh at customer service. I'll have your details ready.",
+        "vi": "Tôi làm ca đến tám giờ, nên cứ hỏi Minh ở quầy chăm sóc khách hàng. Tôi sẽ chuẩn bị sẵn thông tin của chị."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect, thank you Minh. Is there any cost involved in the exchange?",
+        "vi": "Hoàn hảo, cảm ơn Minh. Việc đổi hàng có tốn phí gì không?"
+      },
+      {
+        "speaker": "B",
+        "en": "None at all. A faulty product exchange is completely free. You won't pay anything.",
+        "vi": "Không hề. Đổi sản phẩm lỗi hoàn toàn miễn phí. Chị sẽ không phải trả gì."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a relief. What if the same model is out of stock when I come in?",
+        "vi": "Thật nhẹ nhõm. Nếu model đó hết hàng khi tôi đến thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let me check current stock... Yes, we have several in stock right now, so that won't be a problem.",
+        "vi": "Để tôi kiểm tra kho hiện tại... Vâng, chúng tôi có vài cái trong kho ngay bây giờ, nên đó sẽ không phải vấn đề."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. Could you set one aside for me, just to be safe?",
+        "vi": "Tuyệt. Anh có thể để riêng một cái cho tôi không, cho chắc?"
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely. I'll reserve one under your name right now. Can I get your full name, please?",
+        "vi": "Hoàn toàn được. Tôi sẽ giữ một cái dưới tên chị ngay bây giờ. Cho tôi tên đầy đủ của chị được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "It's Nguyen Thi Yen. Thank you for arranging that.",
+        "vi": "Là Nguyễn Thị Yến. Cảm ơn anh đã sắp xếp."
+      },
+      {
+        "speaker": "B",
+        "en": "Done — one blender reserved for Ms. Yen, to be exchanged this evening. You're all set.",
+        "vi": "Xong — một máy xay được giữ cho chị Yến, để đổi vào chiều nay. Chị xong hết rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "Wonderful. I really appreciate how smoothly you've handled this.",
+        "vi": "Tuyệt vời. Tôi thực sự cảm kích cách anh xử lý việc này trơn tru."
+      },
+      {
+        "speaker": "B",
+        "en": "It's our responsibility to make it right. A faulty product is frustrating, and we want to fix that quickly.",
+        "vi": "Đó là trách nhiệm của chúng tôi để làm đúng. Một sản phẩm lỗi gây bực bội, và chúng tôi muốn khắc phục nhanh chóng."
+      },
+      {
+        "speaker": "A",
+        "en": "You've definitely turned a frustrating situation into a positive one. Thank you.",
+        "vi": "Anh chắc chắn đã biến một tình huống bực bội thành tích cực. Cảm ơn anh."
+      },
+      {
+        "speaker": "B",
+        "en": "That's exactly what we aim for. Is there anything else I can help you with today?",
+        "vi": "Đó chính xác là điều chúng tôi hướng tới. Còn gì khác tôi giúp chị hôm nay không?"
+      },
+      {
+        "speaker": "A",
+        "en": "No, that's everything. I feel much better about my purchase now, knowing the service is this good.",
+        "vi": "Không, vậy là hết. Tôi cảm thấy tốt hơn nhiều về món hàng của mình, khi biết dịch vụ tốt thế này."
+      },
+      {
+        "speaker": "B",
+        "en": "That's lovely to hear. We hope the new blender serves you well for a long time.",
+        "vi": "Thật vui khi nghe vậy. Chúng tôi hy vọng máy xay mới phục vụ chị tốt trong thời gian dài."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm sure it will. So I'll see you this evening at six — ask for Minh, customer service.",
+        "vi": "Tôi chắc là vậy. Vậy tôi sẽ gặp anh chiều nay lúc sáu giờ — hỏi Minh, quầy chăm sóc khách hàng."
+      },
+      {
+        "speaker": "B",
+        "en": "That's right. Don't forget the receipt and the box. See you then, Ms. Yen!",
+        "vi": "Đúng vậy. Đừng quên hóa đơn và hộp. Hẹn gặp chị lúc đó, chị Yến!"
+      },
+      {
+        "speaker": "A",
+        "en": "I won't forget. Thank you so much, Minh. Have a great rest of your day!",
+        "vi": "Tôi sẽ không quên. Cảm ơn anh rất nhiều, Minh. Chúc anh phần còn lại trong ngày tốt lành!"
+      },
+      {
+        "speaker": "B",
+        "en": "You too! See you this evening. Take care!",
+        "vi": "Chị cũng vậy! Hẹn gặp chiều nay. Bảo trọng nhé!"
+      },
+      {
+        "speaker": "A",
+        "en": "Bye for now — and thanks again for making this so easy!",
+        "vi": "Tạm biệt nhé — và cảm ơn lần nữa vì đã làm việc này thật dễ dàng!"
+      },
+      {
+        "speaker": "B",
+        "en": "My pleasure, truly. See you at six. Goodbye!",
+        "vi": "Thật sự rất vui được giúp. Hẹn gặp lúc sáu giờ. Tạm biệt!"
+      },
+      { "speaker": "A", "en": "Goodbye!", "vi": "Tạm biệt!" },
+      {
+        "speaker": "B",
+        "en": "Take care, Ms. Yen — and we'll have everything ready for you.",
+        "vi": "Bảo trọng chị Yến — và chúng tôi sẽ chuẩn bị sẵn mọi thứ cho chị."
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "title": "Đơn hàng bị giao trễ",
+    "situation": "Khách hàng Phúc gọi điện hỏi về đơn hàng bị giao trễ so với dự kiến.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Phúc", "en": "Phuc" },
+    "speakerBName": { "vi": "Nhân viên hỗ trợ", "en": "Support agent" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'm calling about an order that hasn't arrived. It was supposed to be delivered two days ago.",
+        "vi": "Xin chào, tôi gọi về một đơn hàng chưa đến. Lẽ ra nó phải được giao hai ngày trước."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm sorry for the delay. Let me look into it right away. Could you give me your order number?",
+        "vi": "Tôi xin lỗi vì sự chậm trễ. Để tôi kiểm tra ngay. Anh có thể cho tôi mã đơn hàng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, it's V-N, then four-four-seven-eight-one-two.",
+        "vi": "Vâng, là V-N, rồi bốn-bốn-bảy-tám-một-hai."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. Let me pull that up... I can see your order. It's a pair of running shoes, correct?",
+        "vi": "Cảm ơn anh. Để tôi tìm... Tôi thấy đơn hàng của anh rồi. Là một đôi giày chạy bộ, đúng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "That's right. I ordered them specifically for a race this weekend, so the timing is important.",
+        "vi": "Đúng vậy. Tôi đặt chúng riêng cho một cuộc đua cuối tuần này, nên thời gian rất quan trọng."
+      },
+      {
+        "speaker": "B",
+        "en": "I completely understand the urgency. Let me check the shipping status for you.",
+        "vi": "Tôi hoàn toàn hiểu sự cấp bách. Để tôi kiểm tra tình trạng vận chuyển cho anh."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you. The tracking page just says 'in transit' and hasn't updated since Monday.",
+        "vi": "Cảm ơn chị. Trang theo dõi chỉ ghi 'đang vận chuyển' và không cập nhật từ thứ Hai."
+      },
+      {
+        "speaker": "B",
+        "en": "I see the issue. It looks like the package was held at the regional sorting center due to a backlog. I apologize for that.",
+        "vi": "Tôi thấy vấn đề rồi. Có vẻ kiện hàng bị giữ lại tại trung tâm phân loại khu vực do tồn đọng. Tôi xin lỗi về điều đó."
+      },
+      {
+        "speaker": "A",
+        "en": "A backlog — okay. So when can I realistically expect it now?",
+        "vi": "Tồn đọng — được. Vậy thực tế khi nào tôi có thể nhận được nó?"
+      },
+      {
+        "speaker": "B",
+        "en": "The good news is it was released this morning and is now out for delivery. It should arrive by tomorrow afternoon.",
+        "vi": "Tin tốt là nó đã được giải phóng sáng nay và hiện đang trên đường giao. Nó sẽ đến vào chiều mai."
+      },
+      {
+        "speaker": "A",
+        "en": "Tomorrow afternoon? The race is Saturday morning, so that's cutting it close but it should work.",
+        "vi": "Chiều mai? Cuộc đua là sáng thứ Bảy, nên hơi sát giờ nhưng vẫn kịp."
+      },
+      {
+        "speaker": "B",
+        "en": "I understand it's tight. Would you like me to upgrade it to express delivery to be safe? At no extra charge, given the delay.",
+        "vi": "Tôi hiểu là sát giờ. Anh có muốn tôi nâng cấp lên giao hỏa tốc cho chắc không? Không tính phí thêm, vì đã chậm trễ."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, that would be great! Express delivery would give me more of a buffer.",
+        "vi": "Ồ, vậy thì tuyệt! Giao hỏa tốc sẽ cho tôi nhiều thời gian dự phòng hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Consider it done. With the express upgrade, it should arrive by tomorrow morning instead of afternoon.",
+        "vi": "Coi như xong. Với nâng cấp hỏa tốc, nó sẽ đến vào sáng mai thay vì chiều."
+      },
+      {
+        "speaker": "A",
+        "en": "Tomorrow morning is perfect — that gives me a whole day to spare before the race. Thank you.",
+        "vi": "Sáng mai là hoàn hảo — cho tôi cả một ngày dự phòng trước cuộc đua. Cảm ơn chị."
+      },
+      {
+        "speaker": "B",
+        "en": "You're very welcome. I'm also going to apply a fifteen percent refund to your order as an apology for the inconvenience.",
+        "vi": "Không có gì. Tôi cũng sẽ hoàn lại mười lăm phần trăm vào đơn hàng của anh như một lời xin lỗi cho sự bất tiện."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, that's unexpected — thank you! You really didn't have to do that.",
+        "vi": "Ồ, bất ngờ đó — cảm ơn chị! Chị thực sự không cần phải làm vậy."
+      },
+      {
+        "speaker": "B",
+        "en": "It's the least we can do. A late delivery is our responsibility, and we value your business.",
+        "vi": "Đó là điều tối thiểu chúng tôi có thể làm. Giao hàng trễ là trách nhiệm của chúng tôi, và chúng tôi trân trọng anh."
+      },
+      {
+        "speaker": "A",
+        "en": "I really appreciate that. Honestly, I was prepared to be annoyed, but you've handled this so well.",
+        "vi": "Tôi thực sự cảm kích điều đó. Thành thật mà nói, tôi đã chuẩn bị tâm lý bực bội, nhưng chị xử lý việc này quá tốt."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm really glad to hear that. We'd rather fix the problem than make excuses.",
+        "vi": "Tôi rất vui khi nghe vậy. Chúng tôi thà sửa vấn đề còn hơn biện minh."
+      },
+      {
+        "speaker": "A",
+        "en": "That attitude makes a big difference. Will I get an updated tracking link for the express delivery?",
+        "vi": "Thái độ đó tạo nên khác biệt lớn. Tôi có nhận được link theo dõi cập nhật cho giao hỏa tốc không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I'll send a new tracking link by SMS and email within the next few minutes. It'll update in real time.",
+        "vi": "Vâng, tôi sẽ gửi link theo dõi mới qua SMS và email trong vài phút tới. Nó sẽ cập nhật theo thời gian thực."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. And the refund — how long will that take to process?",
+        "vi": "Hoàn hảo. Còn khoản hoàn tiền — mất bao lâu để xử lý?"
+      },
+      {
+        "speaker": "B",
+        "en": "The refund will be back on your original payment method within three to five business days.",
+        "vi": "Khoản hoàn tiền sẽ về phương thức thanh toán ban đầu của anh trong ba đến năm ngày làm việc."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reasonable. Is there anything I need to do to receive the express delivery?",
+        "vi": "Hợp lý đó. Tôi có cần làm gì để nhận giao hỏa tốc không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just make sure someone is available at the address tomorrow morning. The driver will call before arriving.",
+        "vi": "Chỉ cần đảm bảo có người ở địa chỉ vào sáng mai. Tài xế sẽ gọi trước khi đến."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll be home all morning, so that's no problem. What if I miss the driver's call?",
+        "vi": "Tôi sẽ ở nhà cả sáng, nên không vấn đề gì. Nếu tôi lỡ cuộc gọi của tài xế thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "If you miss the call, the driver will still attempt delivery, and they'll leave a notice with a number to reschedule.",
+        "vi": "Nếu anh lỡ cuộc gọi, tài xế vẫn sẽ cố giao, và họ sẽ để lại thông báo với số để đặt lại lịch."
+      },
+      {
+        "speaker": "A",
+        "en": "Good to know there's a backup plan. You've thought of everything.",
+        "vi": "Tốt khi biết có phương án dự phòng. Chị đã nghĩ đến mọi thứ."
+      },
+      {
+        "speaker": "B",
+        "en": "We try to! Is there anything else I can help you with regarding this order or anything else?",
+        "vi": "Chúng tôi cố gắng! Còn gì khác tôi giúp anh về đơn hàng này hoặc bất cứ điều gì khác không?"
+      },
+      {
+        "speaker": "A",
+        "en": "No, you've covered it all. Thank you for turning a stressful situation around.",
+        "vi": "Không, chị đã bao quát hết. Cảm ơn chị đã xoay chuyển một tình huống căng thẳng."
+      },
+      {
+        "speaker": "B",
+        "en": "It's my pleasure, truly. I hope the shoes arrive in perfect condition and you have a great race!",
+        "vi": "Thật sự rất vui được giúp. Tôi hy vọng đôi giày đến trong tình trạng hoàn hảo và anh có một cuộc đua tuyệt vời!"
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you! It's my first half-marathon, so I'm a little nervous but excited.",
+        "vi": "Cảm ơn chị! Đây là giải bán marathon đầu tiên của tôi, nên tôi hơi lo nhưng háo hức."
+      },
+      {
+        "speaker": "B",
+        "en": "Your first half-marathon — how exciting! Good luck. I'm sure you'll do brilliantly.",
+        "vi": "Giải bán marathon đầu tiên của anh — thú vị quá! Chúc may mắn. Tôi chắc anh sẽ làm rất tốt."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you so much. You've genuinely made my day easier. Have a great afternoon!",
+        "vi": "Cảm ơn chị rất nhiều. Chị thực sự đã làm cho ngày của tôi dễ dàng hơn. Chúc chị buổi chiều tốt lành!"
+      },
+      {
+        "speaker": "B",
+        "en": "You too! Watch for that tracking link, and best of luck on Saturday. Goodbye!",
+        "vi": "Anh cũng vậy! Để ý link theo dõi nhé, và chúc may mắn vào thứ Bảy. Tạm biệt!"
+      },
+      {
+        "speaker": "A",
+        "en": "Goodbye, and thanks again for everything!",
+        "vi": "Tạm biệt, và cảm ơn lần nữa vì tất cả!"
+      },
+      {
+        "speaker": "B",
+        "en": "Anytime! Take care, and enjoy the race!",
+        "vi": "Bất cứ lúc nào! Bảo trọng, và tận hưởng cuộc đua nhé!"
+      }
+    ]
+  }
 ]

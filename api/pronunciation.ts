@@ -18,7 +18,12 @@
 // Hướng dẫn tạo bảng Supabase + bucket Storage + lấy API key: xem PRONUNCIATION_CACHE_SETUP.md
 
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
-import { generateAudioFromGoogle, isValidVoice, DEFAULT_VOICE, VOICE_VERSION } from './_lib/googleTts'
+import {
+  generateAudioFromGoogle,
+  isValidVoice,
+  DEFAULT_VOICE,
+  VOICE_VERSION,
+} from './_lib/googleTts'
 import { saveAudio } from './_lib/fileStorage'
 import {
   getCorsHeaders,
@@ -75,12 +80,20 @@ export default async function handler(req: Request): Promise<Response> {
   // Sanitize: chỉ chấp nhận chữ/số/dấu cách/gạch nối, tối đa 100 ký tự
   if (rawWord.length > 100 || !WORD_SAFE_PATTERN.test(rawWord)) {
     logSecurityEvent('INVALID_WORD_PARAM', clientIp, { word: rawWord.slice(0, 30) })
-    return jsonResponse({ error: 'Từ không hợp lệ (chỉ chấp nhận chữ, số, dấu cách, gạch nối, dấu nháy)' }, 400, allHeaders)
+    return jsonResponse(
+      { error: 'Từ không hợp lệ (chỉ chấp nhận chữ, số, dấu cách, gạch nối, dấu nháy)' },
+      400,
+      allHeaders,
+    )
   }
   const word = rawWord
 
   if (!isValidVoice(voiceParam)) {
-    return jsonResponse({ error: `voice không hợp lệ: ${voiceParam} (chỉ nhận "female" hoặc "male")` }, 400, allHeaders)
+    return jsonResponse(
+      { error: `voice không hợp lệ: ${voiceParam} (chỉ nhận "female" hoặc "male")` },
+      400,
+      allHeaders,
+    )
   }
   const voice = voiceParam
 
@@ -113,15 +126,26 @@ export default async function handler(req: Request): Promise<Response> {
   // Audio tạo ra được lưu vào bảng `pronunciations` + Storage nên chỉ tốn tiền LẦN ĐẦU;
   // các lần sau là cache HIT miễn phí. Hạn mức này chỉ để chặn vòng lặp lỗi bất thường.
   if (!checkRateLimit(clientIp, 60, 'pron-gen')) {
-    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/pronunciation', stage: 'generate' })
-    return jsonResponse({ error: 'Quá nhiều yêu cầu tạo audio mới — thử lại sau 1 phút' }, 429, allHeaders)
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, {
+      path: '/api/pronunciation',
+      stage: 'generate',
+    })
+    return jsonResponse(
+      { error: 'Quá nhiều yêu cầu tạo audio mới — thử lại sau 1 phút' },
+      429,
+      allHeaders,
+    )
   }
 
   let audioData: ArrayBuffer
   try {
     audioData = await generateAudioFromGoogle(word, voice, 'en-US')
   } catch (err) {
-    return jsonResponse({ error: `Không thể tạo audio: ${(err as Error).message}` }, 500, allHeaders)
+    return jsonResponse(
+      { error: `Không thể tạo audio: ${(err as Error).message}` },
+      500,
+      allHeaders,
+    )
   }
 
   // ── BƯỚC 3: Lưu file audio (local VPS hoặc Supabase Storage tùy STORAGE_DRIVER) ──

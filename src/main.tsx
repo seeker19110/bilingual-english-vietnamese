@@ -28,7 +28,8 @@ unlockEvents.forEach((e) => window.addEventListener(e, onFirstGesture, { passive
 // Chỉ chạy ở bản build thật (production) để khỏi vướng cache lúc đang dev.
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker
+      .register('/sw.js')
       .then(() => {
         // Sau khi SW sẵn sàng: tải DẦN toàn bộ dữ liệu tĩnh (~15MB) về máy để dùng offline.
         // Chạy nền lúc CPU rảnh, tiếp tục cả khi đang nghe hội thoại / không làm gì, và tự
@@ -36,7 +37,9 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
         // bundle khởi động.
         import('./lib/dataPrecache')
           .then((m) => m.startDataPrecache())
-          .catch(() => { /* lỗi tải nền — không ảnh hưởng app */ })
+          .catch(() => {
+            /* lỗi tải nền — không ảnh hưởng app */
+          })
       })
       .catch(() => {
         // Không sao nếu trình duyệt chặn/không hỗ trợ — app vẫn chạy bình thường.

@@ -35,10 +35,12 @@ let _loadPromise: Promise<void> | null = null
 // Gọi (await) một lần trước khi dùng getCircles/getLearningPath/getTodayBatch...
 export function loadCurriculum(): Promise<void> {
   if (!_loadPromise) {
-    _loadPromise = Promise.all([loadDictionary(), loadFoundation()]).then(([entries, foundation]) => {
-      ENTRIES = entries
-      FOUNDATION = foundation
-    })
+    _loadPromise = Promise.all([loadDictionary(), loadFoundation()]).then(
+      ([entries, foundation]) => {
+        ENTRIES = entries
+        FOUNDATION = foundation
+      },
+    )
   }
   return _loadPromise
 }
@@ -60,10 +62,10 @@ export function getCircles(): Circle[] {
 
   // Tập các từ đã có trong phần nền tảng → loại khỏi phần mở rộng để khỏi trùng
   const foundationKeys = new Set<string>()
-  FOUNDATION.forEach(c => c.words.forEach(w => foundationKeys.add(wordKey(w.word))))
+  FOUNDATION.forEach((c) => c.words.forEach((w) => foundationKeys.add(wordKey(w.word))))
 
   // Các từ còn lại trong từ điển, giữ nguyên thứ tự (alphabet) làm phần mở rộng
-  const rest = ENTRIES.filter(e => !foundationKeys.has(wordKey(e.word)))
+  const rest = ENTRIES.filter((e) => !foundationKeys.has(wordKey(e.word)))
 
   // Gom phần mở rộng thành các cụm DAILY_GOAL từ → mỗi cụm là 1 "vòng"
   const extra: Circle[] = []
@@ -93,8 +95,8 @@ export function getLearningPath(): DictEntry[] {
   // để mỗi từ chỉ học 1 lần và đếm tiến độ không bị lệch.
   const seen = new Set<string>()
   _pathCache = getCircles()
-    .flatMap(c => c.words)
-    .filter(w => {
+    .flatMap((c) => c.words)
+    .filter((w) => {
       const k = wordKey(w.word)
       if (seen.has(k)) return false
       seen.add(k)
@@ -106,7 +108,7 @@ export function getLearningPath(): DictEntry[] {
 // Vòng (chủ đề) chứa 1 từ — để hiển thị tên chủ đề đang học
 export function findCircleOfWord(word: string): Circle | undefined {
   const k = wordKey(word)
-  return getCircles().find(c => c.words.some(w => wordKey(w.word) === k))
+  return getCircles().find((c) => c.words.some((w) => wordKey(w.word) === k))
 }
 
 // ── Mục tiêu hôm nay: 20 từ KẾ TIẾP chưa thuộc ─────────────────────────
@@ -145,8 +147,11 @@ export function getDailyLearned(uid: string): number {
 }
 
 // Tiến độ của 1 vòng cụ thể (dùng để hiển thị "15/20" bên cạnh tên chủ đề)
-export function getCircleProgress(circleId: string, learned: Set<string>): { done: number; total: number } {
-  const circle = getCircles().find(c => c.id === circleId)
+export function getCircleProgress(
+  circleId: string,
+  learned: Set<string>,
+): { done: number; total: number } {
+  const circle = getCircles().find((c) => c.id === circleId)
   if (!circle) return { done: 0, total: 0 }
   let done = 0
   for (const w of circle.words) {

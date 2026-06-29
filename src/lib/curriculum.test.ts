@@ -25,7 +25,7 @@ describe('wordKey', () => {
 describe('getLearningPath', () => {
   it('không có từ trùng key (đã khử trùng)', () => {
     const path = getLearningPath()
-    const keys = path.map(e => wordKey(e.word))
+    const keys = path.map((e) => wordKey(e.word))
     expect(new Set(keys).size).toBe(keys.length)
   })
 
@@ -46,7 +46,7 @@ describe('getTodayBatch', () => {
     const path = getLearningPath()
     const learned = new Set([wordKey(path[0].word)])
     const batch = getTodayBatch(learned, 5)
-    expect(batch.some(e => wordKey(e.word) === wordKey(path[0].word))).toBe(false)
+    expect(batch.some((e) => wordKey(e.word) === wordKey(path[0].word))).toBe(false)
     expect(batch.length).toBe(5)
   })
 

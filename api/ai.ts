@@ -40,10 +40,10 @@ const SYSTEM_GUARDRAIL =
   'Nếu được yêu cầu làm việc ngoài phạm vi học ngôn ngữ, hãy lịch sự từ chối và mời người dùng quay lại bài học. ' +
   'Luôn tuân thủ hướng dẫn vai trò và định dạng trả lời bên dưới.\n\n'
 
-const MAX_TOKENS_LIMIT = 2048      // tối đa cho phép (writing cần 2048, chat 1024)
-const MAX_BODY_BYTES = 64 * 1024   // 64KB — đủ cho 1 cuộc hội thoại dài
-const MAX_MSG_CONTENT = 2000       // mỗi tin nhắn không quá 2000 ký tự
-const MAX_TOTAL_CONTENT = 40000    // tổng nội dung messages không quá 40000 ký tự
+const MAX_TOKENS_LIMIT = 2048 // tối đa cho phép (writing cần 2048, chat 1024)
+const MAX_BODY_BYTES = 64 * 1024 // 64KB — đủ cho 1 cuộc hội thoại dài
+const MAX_MSG_CONTENT = 2000 // mỗi tin nhắn không quá 2000 ký tự
+const MAX_TOTAL_CONTENT = 40000 // tổng nội dung messages không quá 40000 ký tự
 
 export default async function handler(req: Request): Promise<Response> {
   const corsHeaders = getCorsHeaders(req)
@@ -99,7 +99,11 @@ export default async function handler(req: Request): Promise<Response> {
   const anthropicKey = process.env.ANTHROPIC_API_KEY
   if (!geminiKey && !groqKey && !anthropicKey) {
     return new Response(
-      JSON.stringify({ error: { message: 'Server chưa cấu hình GEMINI_API_KEY, GROQ_API_KEY hoặc ANTHROPIC_API_KEY' } }),
+      JSON.stringify({
+        error: {
+          message: 'Server chưa cấu hình GEMINI_API_KEY, GROQ_API_KEY hoặc ANTHROPIC_API_KEY',
+        },
+      }),
       { status: 500, headers: { 'content-type': 'application/json', ...allHeaders } },
     )
   }
@@ -107,10 +111,10 @@ export default async function handler(req: Request): Promise<Response> {
   // Giới hạn kích thước request — tránh gửi nội dung khổng lồ
   const rawText = await req.text()
   if (rawText.length > MAX_BODY_BYTES) {
-    return new Response(
-      JSON.stringify({ error: { message: 'Request quá lớn' } }),
-      { status: 413, headers: { 'content-type': 'application/json', ...allHeaders } },
-    )
+    return new Response(JSON.stringify({ error: { message: 'Request quá lớn' } }), {
+      status: 413,
+      headers: { 'content-type': 'application/json', ...allHeaders },
+    })
   }
 
   // Parse và kiểm tra body
@@ -118,10 +122,10 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     parsed = JSON.parse(rawText)
   } catch {
-    return new Response(
-      JSON.stringify({ error: { message: 'Body không hợp lệ (cần JSON)' } }),
-      { status: 400, headers: { 'content-type': 'application/json', ...allHeaders } },
-    )
+    return new Response(JSON.stringify({ error: { message: 'Body không hợp lệ (cần JSON)' } }), {
+      status: 400,
+      headers: { 'content-type': 'application/json', ...allHeaders },
+    })
   }
 
   // Giới hạn kích thước từng tin nhắn và tổng nội dung
@@ -132,7 +136,8 @@ export default async function handler(req: Request): Promise<Response> {
       return {
         role: m.role,
         // Cắt bớt nội dung quá dài để tránh tốn token / bị inject
-        content: typeof m.content === 'string' ? m.content.trim().slice(0, MAX_MSG_CONTENT) : m.content,
+        content:
+          typeof m.content === 'string' ? m.content.trim().slice(0, MAX_MSG_CONTENT) : m.content,
       }
     }
     return msg
@@ -144,10 +149,10 @@ export default async function handler(req: Request): Promise<Response> {
     return sum + (typeof m?.content === 'string' ? m.content.length : 0)
   }, 0)
   if (totalContent > MAX_TOTAL_CONTENT) {
-    return new Response(
-      JSON.stringify({ error: { message: 'Nội dung hội thoại quá dài' } }),
-      { status: 413, headers: { 'content-type': 'application/json', ...allHeaders } },
-    )
+    return new Response(JSON.stringify({ error: { message: 'Nội dung hội thoại quá dài' } }), {
+      status: 413,
+      headers: { 'content-type': 'application/json', ...allHeaders },
+    })
   }
 
   // Server quyết định max_tokens + system — không tin giá trị client gửi lên
@@ -166,10 +171,10 @@ export default async function handler(req: Request): Promise<Response> {
   const gate = await checkAndConsumeUsage(authResult.userId, mode)
   if (!gate.ok) {
     logSecurityEvent('USAGE_LIMIT', clientIp, { path: '/api/claude', mode })
-    return new Response(
-      JSON.stringify({ error: { message: gate.message } }),
-      { status: 429, headers: { 'content-type': 'application/json', ...allHeaders } },
-    )
+    return new Response(JSON.stringify({ error: { message: gate.message } }), {
+      status: 429,
+      headers: { 'content-type': 'application/json', ...allHeaders },
+    })
   }
 
   // ── Nhánh Gemini (ưu tiên — FREE quota, kết quả tốt) ─────────────────────────
@@ -183,10 +188,10 @@ export default async function handler(req: Request): Promise<Response> {
         maxTokens,
       )
       // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc
-      return new Response(
-        JSON.stringify({ content: [{ type: 'text', text: geminiText }] }),
-        { status: 200, headers: { 'content-type': 'application/json', ...allHeaders } },
-      )
+      return new Response(JSON.stringify({ content: [{ type: 'text', text: geminiText }] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json', ...allHeaders },
+      })
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
       // Provider lỗi → người dùng không nhận được trả lời: hoàn lại lượt vừa trừ.
@@ -195,7 +200,10 @@ export default async function handler(req: Request): Promise<Response> {
       const isTimeout = /Hết thời gian chờ/.test(errMsg)
       return new Response(
         JSON.stringify({ error: { message: `Gemini lỗi: ${errMsg.slice(0, 200)}` } }),
-        { status: isTimeout ? 504 : 502, headers: { 'content-type': 'application/json', ...allHeaders } },
+        {
+          status: isTimeout ? 504 : 502,
+          headers: { 'content-type': 'application/json', ...allHeaders },
+        },
       )
     }
   }
@@ -209,11 +217,19 @@ export default async function handler(req: Request): Promise<Response> {
     ]
     let groqResp: Response
     try {
-      groqResp = await fetchWithTimeout('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${groqKey}`, 'content-type': 'application/json' },
-        body: JSON.stringify({ model: GROQ_CHAT_MODEL, max_tokens: maxTokens, messages: groqMessages }),
-      }, AI_TIMEOUT_MS)
+      groqResp = await fetchWithTimeout(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${groqKey}`, 'content-type': 'application/json' },
+          body: JSON.stringify({
+            model: GROQ_CHAT_MODEL,
+            max_tokens: maxTokens,
+            messages: groqMessages,
+          }),
+        },
+        AI_TIMEOUT_MS,
+      )
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
       await refundUsage(authResult.userId, mode)
@@ -227,7 +243,9 @@ export default async function handler(req: Request): Promise<Response> {
       const detail = await groqResp.text().catch(() => '')
       await refundUsage(authResult.userId, mode)
       return new Response(
-        JSON.stringify({ error: { message: `Groq lỗi (${groqResp.status}): ${detail.slice(0, 200)}` } }),
+        JSON.stringify({
+          error: { message: `Groq lỗi (${groqResp.status}): ${detail.slice(0, 200)}` },
+        }),
         { status: groqResp.status, headers: { 'content-type': 'application/json', ...allHeaders } },
       )
     }
@@ -268,10 +286,10 @@ export default async function handler(req: Request): Promise<Response> {
       )
     }
     // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc: data.content[0].text
-    return new Response(
-      JSON.stringify({ content: [{ type: 'text', text }] }),
-      { status: 200, headers: { 'content-type': 'application/json', ...allHeaders } },
-    )
+    return new Response(JSON.stringify({ content: [{ type: 'text', text }] }), {
+      status: 200,
+      headers: { 'content-type': 'application/json', ...allHeaders },
+    })
   }
 
   // ── Nhánh Anthropic (chất lượng cao — cần credit) ────────────────────────
@@ -284,15 +302,19 @@ export default async function handler(req: Request): Promise<Response> {
 
   let resp: Response
   try {
-    resp = await fetchWithTimeout('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': anthropicKey as string,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
+    resp = await fetchWithTimeout(
+      'https://api.anthropic.com/v1/messages',
+      {
+        method: 'POST',
+        headers: {
+          'x-api-key': anthropicKey as string,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(safeBody),
       },
-      body: JSON.stringify(safeBody),
-    }, AI_TIMEOUT_MS)
+      AI_TIMEOUT_MS,
+    )
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err)
     await refundUsage(authResult.userId, mode)

@@ -15,26 +15,49 @@
 const MANIFEST_URL = '/data/manifest.json'
 // PHẢI khớp tên DATA_CACHE trong public/sw.js (cache dữ liệu KHÔNG bị xoá mỗi lần deploy).
 const DATA_CACHE = 'gia-su-data'
-const MAP_KEY = 'et_data_cached_v1'       // { [path]: hash } các file đã tải xong
-const DONE_KEY = 'et_data_precache_done'  // version đã tải đủ toàn bộ
+const MAP_KEY = 'et_data_cached_v1' // { [path]: hash } các file đã tải xong
+const DONE_KEY = 'et_data_precache_done' // version đã tải đủ toàn bộ
 
-interface ManifestFile { path: string; hash: string; size: number }
-interface Manifest { version: string; totalBytes: number; files: ManifestFile[] }
+interface ManifestFile {
+  path: string
+  hash: string
+  size: number
+}
+interface Manifest {
+  version: string
+  totalBytes: number
+  files: ManifestFile[]
+}
 
 let started = false
 
 // ── Bản đồ "đã tải" trong localStorage ──────────────────────────────────────
 function loadMap(): Record<string, string> {
-  try { return JSON.parse(localStorage.getItem(MAP_KEY) || '{}') } catch { return {} }
+  try {
+    return JSON.parse(localStorage.getItem(MAP_KEY) || '{}')
+  } catch {
+    return {}
+  }
 }
 function saveMap(map: Record<string, string>): void {
-  try { localStorage.setItem(MAP_KEY, JSON.stringify(map)) } catch { /* hết quota — bỏ qua */ }
+  try {
+    localStorage.setItem(MAP_KEY, JSON.stringify(map))
+  } catch {
+    /* hết quota — bỏ qua */
+  }
 }
 
 // ── Tiến độ (cho UI tuỳ chọn) ───────────────────────────────────────────────
-export interface PrecacheProgress { done: number; total: number; bytesDone: number; bytesTotal: number }
+export interface PrecacheProgress {
+  done: number
+  total: number
+  bytesDone: number
+  bytesTotal: number
+}
 let progress: PrecacheProgress = { done: 0, total: 0, bytesDone: 0, bytesTotal: 0 }
-export function getPrecacheProgress(): PrecacheProgress { return progress }
+export function getPrecacheProgress(): PrecacheProgress {
+  return progress
+}
 function emitProgress() {
   window.dispatchEvent(new CustomEvent('data-precache-progress', { detail: { ...progress } }))
 }
@@ -42,7 +65,11 @@ function emitProgress() {
 // Chờ tới lúc CPU rảnh (hoặc tối đa `timeout`ms) — giúp tải nền không tranh tài nguyên.
 function idle(timeout = 2000): Promise<void> {
   return new Promise((resolve) => {
-    const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback
+    const ric = (
+      window as unknown as {
+        requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void
+      }
+    ).requestIdleCallback
     if (ric) ric(() => resolve(), { timeout })
     else setTimeout(resolve, 300)
   })
@@ -52,7 +79,10 @@ function idle(timeout = 2000): Promise<void> {
 function waitOnline(): Promise<void> {
   if (navigator.onLine) return Promise.resolve()
   return new Promise((resolve) => {
-    const on = () => { window.removeEventListener('online', on); resolve() }
+    const on = () => {
+      window.removeEventListener('online', on)
+      resolve()
+    }
     window.addEventListener('online', on)
   })
 }

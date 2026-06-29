@@ -20,7 +20,11 @@ const K = {
 }
 
 function setLocal<T>(key: string, val: T) {
-  try { localStorage.setItem(key, JSON.stringify(val)) } catch { /* hết dung lượng — bỏ qua */ }
+  try {
+    localStorage.setItem(key, JSON.stringify(val))
+  } catch {
+    /* hết dung lượng — bỏ qua */
+  }
 }
 
 function todayStr() {
@@ -46,11 +50,21 @@ function rowToChat(r: unknown): ChatSession {
     situation: typeof row.situation === 'string' ? row.situation : '',
     level: isValidLevel(row.level) ? row.level : 'beginner',
     messages: Array.isArray(row.messages) ? row.messages : [],
-    createdAt: typeof row.created_at === 'number' || typeof row.created_at === 'string' ? Number(row.created_at) : Date.now()
+    createdAt:
+      typeof row.created_at === 'number' || typeof row.created_at === 'string'
+        ? Number(row.created_at)
+        : Date.now(),
   }
 }
 function chatToRow(s: ChatSession) {
-  return { id: s.id, user_id: s.userId, situation: s.situation, level: s.level, messages: s.messages, created_at: s.createdAt }
+  return {
+    id: s.id,
+    user_id: s.userId,
+    situation: s.situation,
+    level: s.level,
+    messages: s.messages,
+    created_at: s.createdAt,
+  }
 }
 function rowToSpeaking(r: unknown): SpeakingSession {
   if (!r || typeof r !== 'object') throw new Error('Invalid speaking row')
@@ -61,11 +75,21 @@ function rowToSpeaking(r: unknown): SpeakingSession {
     situation: typeof row.situation === 'string' ? row.situation : '',
     level: isValidLevel(row.level) ? row.level : 'beginner',
     messages: Array.isArray(row.messages) ? row.messages : [],
-    createdAt: typeof row.created_at === 'number' || typeof row.created_at === 'string' ? Number(row.created_at) : Date.now()
+    createdAt:
+      typeof row.created_at === 'number' || typeof row.created_at === 'string'
+        ? Number(row.created_at)
+        : Date.now(),
   }
 }
 function speakingToRow(s: SpeakingSession) {
-  return { id: s.id, user_id: s.userId, situation: s.situation, level: s.level, messages: s.messages, created_at: s.createdAt }
+  return {
+    id: s.id,
+    user_id: s.userId,
+    situation: s.situation,
+    level: s.level,
+    messages: s.messages,
+    created_at: s.createdAt,
+  }
 }
 function rowToWriting(r: unknown): WritingSubmission {
   if (!r || typeof r !== 'object') throw new Error('Invalid writing row')
@@ -76,33 +100,55 @@ function rowToWriting(r: unknown): WritingSubmission {
     essayPrompt: typeof row.essay_prompt === 'string' ? row.essay_prompt : '',
     essay: typeof row.essay === 'string' ? row.essay : '',
     feedback: typeof row.feedback === 'string' ? row.feedback : '',
-    submittedAt: typeof row.submitted_at === 'number' || typeof row.submitted_at === 'string' ? Number(row.submitted_at) : Date.now()
+    submittedAt:
+      typeof row.submitted_at === 'number' || typeof row.submitted_at === 'string'
+        ? Number(row.submitted_at)
+        : Date.now(),
   }
 }
 function writingToRow(s: WritingSubmission) {
-  return { id: s.id, user_id: s.userId, essay_prompt: s.essayPrompt, essay: s.essay, feedback: s.feedback, submitted_at: s.submittedAt }
+  return {
+    id: s.id,
+    user_id: s.userId,
+    essay_prompt: s.essayPrompt,
+    essay: s.essay,
+    feedback: s.feedback,
+    submitted_at: s.submittedAt,
+  }
 }
 
 // ── PUSH: đẩy 1 bản ghi lên Supabase (bắn rồi quên) ──────────────────────────
 export function pushChatSession(s: ChatSession) {
-  void supabase.from('chat_sessions').upsert(chatToRow(s)).then(({ error }) => warn('chat', error))
+  void supabase
+    .from('chat_sessions')
+    .upsert(chatToRow(s))
+    .then(({ error }) => warn('chat', error))
 }
 export function pushSpeakingSession(s: SpeakingSession) {
-  void supabase.from('speaking_sessions').upsert(speakingToRow(s)).then(({ error }) => warn('speaking', error))
+  void supabase
+    .from('speaking_sessions')
+    .upsert(speakingToRow(s))
+    .then(({ error }) => warn('speaking', error))
 }
 export function pushWritingSub(s: WritingSubmission) {
-  void supabase.from('writing_submissions').upsert(writingToRow(s)).then(({ error }) => warn('writing', error))
+  void supabase
+    .from('writing_submissions')
+    .upsert(writingToRow(s))
+    .then(({ error }) => warn('writing', error))
 }
 export function pushUsage(userId: string, usage: DailyUsage) {
-  void supabase.from('daily_usage').upsert({
-    user_id: userId,
-    day: usage.date,
-    chat_count: usage.chatCount,
-    writing_count: usage.writingCount,
-    speaking_count: usage.speakingCount,
-    stt_count: usage.sttCount,
-    learn_count: usage.learnCount ?? 0,
-  }).then(({ error }) => warn('usage', error))
+  void supabase
+    .from('daily_usage')
+    .upsert({
+      user_id: userId,
+      day: usage.date,
+      chat_count: usage.chatCount,
+      writing_count: usage.writingCount,
+      speaking_count: usage.speakingCount,
+      stt_count: usage.sttCount,
+      learn_count: usage.learnCount ?? 0,
+    })
+    .then(({ error }) => warn('usage', error))
 }
 
 // Đẩy RIÊNG cột learn_count (số từ học trong ngày) để ghi nhận streak — KHÔNG đụng
@@ -110,7 +156,8 @@ export function pushUsage(userId: string, usage: DailyUsage) {
 // ghi đè làm sai giới hạn gói). Upsert chỉ kèm learn_count nên onConflict chỉ cập nhật cột này.
 // Nếu DB chưa có cột learn_count (chưa chạy migration) → lỗi được nuốt êm, streak vẫn chạy ở client.
 export function pushLearnDay(userId: string, day: string, learnCount: number) {
-  void supabase.from('daily_usage')
+  void supabase
+    .from('daily_usage')
     .upsert({ user_id: userId, day, learn_count: learnCount }, { onConflict: 'user_id,day' })
     .then(({ error }) => warn('learn day', error))
 }
@@ -127,10 +174,27 @@ export async function pullUserData(userId: string): Promise<void> {
     return d.toISOString().slice(0, 10)
   })()
   const results = await Promise.allSettled([
-    supabase.from('chat_sessions').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
-    supabase.from('writing_submissions').select('*').eq('user_id', userId).order('submitted_at', { ascending: false }),
-    supabase.from('speaking_sessions').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
-    supabase.from('daily_usage').select('*').eq('user_id', userId).gte('day', startDate).order('day', { ascending: false }),
+    supabase
+      .from('chat_sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('writing_submissions')
+      .select('*')
+      .eq('user_id', userId)
+      .order('submitted_at', { ascending: false }),
+    supabase
+      .from('speaking_sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('daily_usage')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('day', startDate)
+      .order('day', { ascending: false }),
   ])
 
   const [chatResult, writingResult, speakingResult, usageResult] = results
@@ -153,7 +217,8 @@ export async function pullUserData(userId: string): Promise<void> {
 
   if (speakingResult.status === 'fulfilled') {
     const speaking = speakingResult.value
-    if (!speaking.error && speaking.data) setLocal(K.speaking(userId), speaking.data.map(rowToSpeaking))
+    if (!speaking.error && speaking.data)
+      setLocal(K.speaking(userId), speaking.data.map(rowToSpeaking))
     else if (speaking.error) warn('pull speaking', speaking.error)
   } else {
     console.warn('[cloud] speaking query rejected:', speakingResult.reason)
@@ -183,19 +248,29 @@ export async function pullUserData(userId: string): Promise<void> {
 }
 
 // ── profiles: đảm bảo có hồ sơ + đọc gói + trạng thái onboarding ──────────────
-export async function ensureProfile(userId: string, name: string): Promise<{ plan: 'free' | 'pro'; onboarded: boolean }> {
+export async function ensureProfile(
+  userId: string,
+  name: string,
+): Promise<{ plan: 'free' | 'pro'; onboarded: boolean }> {
   const { data, error } = await supabase
     .from('profiles')
     .upsert({ id: userId, name }, { onConflict: 'id', ignoreDuplicates: true })
     .select('plan, onboarded')
     .maybeSingle()
 
-  if (error) { warn('profile', error); return { plan: 'free', onboarded: false } }
+  if (error) {
+    warn('profile', error)
+    return { plan: 'free', onboarded: false }
+  }
   if (data?.plan !== undefined) {
     return { plan: data.plan === 'pro' ? 'pro' : 'free', onboarded: !!data.onboarded }
   }
 
-  const { data: existing } = await supabase.from('profiles').select('plan, onboarded').eq('id', userId).maybeSingle()
+  const { data: existing } = await supabase
+    .from('profiles')
+    .select('plan, onboarded')
+    .eq('id', userId)
+    .maybeSingle()
   return {
     plan: existing?.plan === 'pro' ? 'pro' : 'free',
     onboarded: !!existing?.onboarded,
@@ -203,12 +278,18 @@ export async function ensureProfile(userId: string, name: string): Promise<{ pla
 }
 
 // ── Lưu kết quả onboarding ────────────────────────────────────────────────────
-export async function saveOnboarding(userId: string, data: { level: string; goal: string; dailyMinutes: number }) {
-  const { error } = await supabase.from('profiles').update({
-    user_level: data.level,
-    goal: data.goal,
-    daily_minutes: data.dailyMinutes,
-    onboarded: true,
-  }).eq('id', userId)
+export async function saveOnboarding(
+  userId: string,
+  data: { level: string; goal: string; dailyMinutes: number },
+) {
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      user_level: data.level,
+      goal: data.goal,
+      daily_minutes: data.dailyMinutes,
+      onboarded: true,
+    })
+    .eq('id', userId)
   if (error) warn('onboarding', error)
 }

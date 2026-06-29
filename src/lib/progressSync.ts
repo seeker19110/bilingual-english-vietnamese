@@ -14,14 +14,21 @@ const HARD = (uid: string) => `et_hard_${uid}`
 const SRS = (uid: string) => `srs_${uid}`
 
 // Cấu trúc 1 thẻ SRS (khớp src/lib/srs.ts) — chỉ cần để merge theo số lần ôn (reps).
-interface SRSLike { interval: number; ease: number; due: number; reps: number }
+interface SRSLike {
+  interval: number
+  ease: number
+  due: number
+  reps: number
+}
 
 function readArr(key: string): string[] {
   try {
     const r = localStorage.getItem(key)
     const arr = r ? (JSON.parse(r) as unknown) : []
     return Array.isArray(arr) ? (arr as string[]) : []
-  } catch { return [] }
+  } catch {
+    return []
+  }
 }
 
 function readObj(key: string): Record<string, SRSLike> {
@@ -29,7 +36,9 @@ function readObj(key: string): Record<string, SRSLike> {
     const r = localStorage.getItem(key)
     const obj = r ? (JSON.parse(r) as unknown) : {}
     return obj && typeof obj === 'object' ? (obj as Record<string, SRSLike>) : {}
-  } catch { return {} }
+  } catch {
+    return {}
+  }
 }
 
 // Đẩy toàn bộ tiến độ hiện tại lên Supabase (bắn rồi quên — không chặn giao diện).
@@ -80,7 +89,9 @@ export async function pullProgress(userId: string): Promise<void> {
     localStorage.setItem(LEARNED(userId), JSON.stringify([...learned]))
     localStorage.setItem(HARD(userId), JSON.stringify([...hard]))
     localStorage.setItem(SRS(userId), JSON.stringify(merged))
-  } catch { /* hết dung lượng — bỏ qua */ }
+  } catch {
+    /* hết dung lượng — bỏ qua */
+  }
 
   pushProgress(userId) // đẩy bản hợp nhất để cloud cập nhật
 }
