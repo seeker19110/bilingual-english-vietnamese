@@ -3,6 +3,10 @@
 > Cập nhật sau mỗi mốc đáng kể. AI đọc file này để biết đang ở đâu.
 > Chi tiết tính năng sản phẩm: xem mục 13 trong `CLAUDE.md`.
 
+> **Nhịp làm việc theo giới hạn giờ (xem CLAUDE.md mục 3):**
+> ≥ 70% → hoàn tất việc đang làm, tạo PR rồi **DỪNG chờ người dùng cho phép**.
+> < 70% → sau khi PR **merge** thì **tự động tiếp tục** mục kế tiếp.
+
 ## Giai đoạn hiện tại
 
 - GĐ 4–5 (Phát triển + nâng chất lượng). Sản phẩm đã deploy thật
