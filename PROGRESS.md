@@ -15,20 +15,26 @@
 - Prettier + eslint-config-prettier; format toàn repo; `format:check` trong CI.
 - `noUncheckedIndexedAccess` bật (app + api), sửa sạch 110 lỗi (behavior-preserving).
 - husky + lint-staged + commitlint (pre-commit + commit-msg).
-- CI: lint · typecheck · test · build · format:check.
 - **E2E Playwright** (`e2e/`): smoke đăng nhập + Trang chủ **song ngữ en/vi**
   (auth giả qua localStorage, không cần backend) + **quét a11y bằng axe**.
   Sửa `button-name` (nút hiện/ẩn mật khẩu thiếu nhãn) → login hết critical.
+- **CI gate trên mọi PR**: lint · typecheck · test · build · format:check ·
+  **E2E (job `e2e` riêng: Playwright + axe)**.
+- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E).
 
 ## Đang làm
 
-- Mở rộng E2E + cân nhắc tích hợp E2E vào CI (cần cài browser trong CI).
+- (trống) — khung Lớp 1 + E2E/a11y đã xong và chạy trên `main`. Chờ chọn mục
+  chất lượng kế tiếp (xem "Tiếp theo").
 
 ## Tiếp theo
 
-- Tích hợp `test:e2e` vào CI (job riêng, `playwright install --with-deps chromium`).
-- Lighthouse budget ("không tệ hơn hiện tại").
-- Coverage threshold cho Vitest (đặt thấp, nâng dần).
+> Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
+
+- **Coverage threshold** cho Vitest (đặt thấp = "không tệ hơn hiện tại", nâng dần) + đưa vào CI. ← đề xuất làm trước (quick win)
+- **Lighthouse budget** ("không tệ hơn hiện tại") + đưa vào CI.
+- Fix nợ a11y **`color-contrast`** (điều chỉnh design token theme cho đạt AA) — xem mục Nợ kỹ thuật.
+- (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
 
 ## Quyết định quan trọng (trỏ tới ADR nếu có)
 
