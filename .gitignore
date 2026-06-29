@@ -3,6 +3,12 @@ dist
 .env
 logs/
 
+# Playwright E2E — báo cáo & kết quả sinh tự động, không commit
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
 # File audio cache khi STORAGE_DRIVER=local (xem api/_lib/fileStorage.ts) — tự tạo lại
 # được từ Google TTS, không cần commit lên Git.
 uploads/
