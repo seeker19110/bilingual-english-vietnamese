@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
-import { mockLogin } from './helpers/auth'
+import { mockLogin, type ThemeName } from './helpers/auth'
 
 // Quét a11y bằng axe-core (WCAG 2.0/2.1 A & AA). Loại 'meta-viewport' vì dự án
 // CHỦ ĐỘNG khóa zoom (đánh đổi 1 mục a11y, bù bằng sàn chữ ≥11px — CLAUDE.md mục 8).
@@ -44,10 +44,34 @@ test('a11y: trang đăng nhập — 0 critical, không có serious mới', async
   expect(unexpectedSerious).toEqual([])
 })
 
-test('a11y: trang chủ (đã đăng nhập) — 0 critical, không có serious mới', async ({ page }) => {
+// Quét Trang chủ ở CẢ 4 THEME (gồm cả mặc định Xanh đêm) — bảo chứng cam kết
+// "AA ở mọi theme" (CLAUDE.md mục 4.8, 8).
+// Theme SÁNG (Blue sky, Pink) trước đây rớt color-contrast (pill màu cố định + token
+// zinc-400 của Pink quá nhạt) → đã sửa bằng biến thể `theme-light:` (sắc độ đậm hơn) và
+// chỉnh token `--z-400` của Pink. Gate này chống tụt lùi cho mọi theme.
+const THEMES: ThemeName[] = ['dark-blue', 'blue-sky', 'pink', 'vibrant']
+for (const theme of THEMES) {
+  test(`a11y: trang chủ theme=${theme} — 0 critical, không có serious mới`, async ({ page }) => {
+    await mockLogin(page, 'vi', theme)
+    await page.goto('/')
+    await expect(page.getByText(/Xin chào/)).toBeVisible()
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+}
+
+// Trạng thái SAU tương tác: menu chọn giao diện (ThemeToggle) chỉ render khi bấm mở
+// → axe lúc tải trang KHÔNG quét được. Mở dropdown rồi quét để bắt lỗi a11y của
+// menu (role/menuitem, contrast các mục) — chống tụt lùi khi sửa menu sau này.
+test('a11y: menu chọn giao diện (sau khi mở) — 0 critical, không có serious mới', async ({
+  page,
+}) => {
   await mockLogin(page, 'vi')
   await page.goto('/')
   await expect(page.getByText(/Xin chào/)).toBeVisible()
+  await page.getByRole('button', { name: /Đổi giao diện/ }).click()
+  await expect(page.getByRole('menu')).toBeVisible()
   const { critical, unexpectedSerious } = await scan(page)
   expect(critical).toEqual([])
   expect(unexpectedSerious).toEqual([])

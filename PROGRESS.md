@@ -36,26 +36,52 @@
   `zinc-500/600` → `zinc-400`; thêm 5 route đã-đăng-nhập vào gate a11y. Đã merge: **PR #135**.
 - **a11y flaky fix (Home)**: số streak `zinc-500` → `zinc-400` (contrast sát ngưỡng gây
   flaky CI). Đã merge: **PR #136**.
-- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage) + **PR #133** (size-limit) + **PR #134/#135/#136** (a11y).
-
-## Đang làm
-
-- **a11y: phủ hết route chính + sửa critical `select-name`** — đang ở PR (chưa merge).
+- **a11y: phủ hết route chính + sửa critical `select-name`** — Đã merge: **PR #137**.
   1. Dọn nốt `text-zinc-500/600` → `zinc-400` ở Lessons/Learn/Dictionary.
   2. Phát hiện & sửa **critical `select-name`**: 3 `<select>` (Chat/Writing/Speaking)
      thiếu accessible name → liên kết `<label htmlFor>` + `id`.
   3. Thêm 4 route vào gate a11y (/learning-path, /chat, /writing, /speaking) → gate
      nay phủ 11 trang (login + home + 9 route đã đăng nhập).
   4. `scan()` tắt animation/transition trước khi quét (đo trạng thái cuối, chống flaky
-     color-contrast do `animate-fade-in`). Đã chạy `--workers=1 --repeat-each=2` = 22/22 pass.
+     color-contrast do `animate-fade-in`).
+- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage) + **PR #133** (size-limit) + **PR #134/#135/#136/#137** (a11y).
+
+## Đang làm
+
+- **a11y: AA color-contrast cho MỌI theme + quét trạng thái sau tương tác** — đang ở PR.
+  1. **Phát hiện** (quét Trang chủ ở cả 4 theme): theme SÁNG rớt nặng `color-contrast`
+     — **Blue sky 11 · Pink 28 vi phạm (serious)**; theme tối (Xanh đêm, Rực rỡ) sạch.
+     Trái cam kết "AA ở mọi theme" (CLAUDE.md mục 4.8, 8). Gate cũ chỉ quét theme mặc định.
+  2. **Cơ chế sửa:** thêm biến thể Tailwind `theme-light:` (plugin `addVariant` trong
+     `tailwind.config.js`) — chỉ áp dụng cho 2 theme nền sáng (Blue sky, Pink). Cho phép
+     chọn SẮC ĐỘ ĐẬM HƠN cho màu Tailwind cố định (vd. `text-amber-300 theme-light:text-amber-800`)
+     mà KHÔNG đụng theme tối. An toàn (opt-in từng chỗ), giữ màu trong markup (đúng triết lý token).
+  3. **Sửa Trang chủ:** 7 pill nhãn (amber/lime/rose/teal/sky/violet/accent), badge chiều học
+     (`text-accent/sky`), nhấn trong ô Mẹo (`text-teal/sky`) — đều thêm `theme-light:` sắc độ
+     -700/-800 đạt AA. Token `--z-400` của Pink đậm hơn (`140 122 132` → `118 100 110`) để
+     mọi `text-zinc-400` đạt AA trên nền hồng.
+  4. **Mở rộng gate a11y:** quét Trang chủ ở **cả 4 theme** (chống tụt lùi cam kết AA mọi
+     theme), kèm test quét **menu chọn giao diện sau khi MỞ** (trạng thái sau tương tác —
+     axe lúc tải trang không thấy menu). `e2e/helpers/auth.ts` nhận thêm tham số `theme`.
+     Gate a11y nay **15 test**, tất cả 0 critical / 0 serious.
 
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
+- **(Tiếp nối) Đạt AA theme SÁNG cho CÁC TRANG CÒN LẠI.** PR này mới sửa + gate Trang chủ.
+  Đã quét sẵn 9 route ở 2 theme sáng — số vi phạm `color-contrast` còn lại (làm follow-up,
+  nên tách PR theo từng trang/hệ màu để dễ review):
+  - `/phrases` **43**, `/lessons` **32** — dùng BẢNG MÀU ĐỘNG `text-{color}-300/400` theo
+    chủ đề/cấp (amber/sky/violet/pink/teal/rose/indigo/orange/cyan/purple…) → sửa ở HÀM/MAP
+    gán màu (không phải từng phần tử). Đây là phần lớn nhất.
+  - `/progress` **6** (màu cấp CEFR `text-{lime,accent,sky,violet,amber}-300` + link `violet-400`).
+  - `/dictionary` **5** (chỉ Pink), `/learning-path` **3**, `/writing` **1** (`text-red-400`).
+  - `/history`, `/chat`, `/speaking`: **0** — đã sạch.
+  - Cách làm sẵn (`theme-light:`); sửa xong từng trang thì thêm route vào vòng quét đa-theme.
 - (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
-- (Tùy chọn) Quét a11y cả trạng thái SAU tương tác (mở dropdown, sau khi gửi tin nhắn…)
-  — hiện gate chỉ quét lúc tải trang.
+- (Tùy chọn) Quét a11y trạng thái sau tương tác KHÁC cần backend (vd. sau khi gửi tin
+  nhắn chat) — cần mock API; chưa làm.
 
 ## Quyết định quan trọng (trỏ tới ADR nếu có)
 
@@ -72,11 +98,12 @@
 
 ## Nợ kỹ thuật (chỗ "làm tạm" cần quay lại)
 
-- **a11y**: ĐÃ dọn `color-contrast` (caption `zinc-500/600` → `zinc-400` toàn app) và
-  sửa critical `select-name` (3 `<select>` Chat/Writing/Speaking). Gate a11y nay phủ
-  **11 trang** (login, /, /progress, /dictionary, /lessons, /history, /phrases,
-  /learning-path, /chat, /writing, /speaking) — 0 critical, 0 serious. Lưu ý: axe chỉ
-  quét phần HIỂN THỊ lúc tải — trạng thái sau tương tác (dropdown mở, sau gửi tin) chưa kiểm.
+- **a11y**: gate nay phủ **11 trang** (login, /, /progress, /dictionary, /lessons, /history,
+  /phrases, /learning-path, /chat, /writing, /speaking) + Trang chủ ở **cả 4 theme** + menu
+  giao diện sau khi mở — 0 critical, 0 serious. **Nợ còn lại:** quét đa-theme MỚI phủ Trang chủ;
+  các trang khác chưa kiểm AA ở theme sáng (Blue sky/Pink) — xem mục "Tiếp theo". Ngoài ra axe
+  chỉ quét trạng thái HIỂN THỊ lúc tải + menu giao diện; các trạng thái sau tương tác khác
+  (sau gửi tin chat…) cần mock backend nên chưa kiểm.
 - E2E (`e2e/`) chưa nằm trong `npm run typecheck` (không thuộc tsconfig nào) —
   Playwright tự transpile khi chạy. Thêm `tsconfig.e2e.json` nếu muốn type-check.
 - Trang Login dùng text tiếng Việt hard-code (chưa qua i18n) — chưa song ngữ.

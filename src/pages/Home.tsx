@@ -33,7 +33,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       ring: 'hover:border-amber-500/40',
       tag: {
         label: T.tagUnlimited,
-        cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20',
+        cls: 'bg-amber-500/15 text-amber-300 theme-light:text-amber-800 border border-amber-500/20',
       },
       title: isA ? T.dictTitleA : T.dictTitleB,
       desc: isA ? T.dictDescA : T.dictDescB,
@@ -46,7 +46,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       ring: 'hover:border-lime-500/40',
       tag: {
         label: isA ? '20 từ/ngày' : '20/day',
-        cls: 'bg-lime-500/15 text-lime-300 border border-lime-500/20',
+        cls: 'bg-lime-500/15 text-lime-300 theme-light:text-lime-800 border border-lime-500/20',
       },
       title: isA ? 'Học theo lộ trình' : 'Learning Path',
       desc: isA
@@ -59,7 +59,10 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       gradient: 'from-rose-500 to-pink-400',
       glow: 'shadow-rose-500/20',
       ring: 'hover:border-rose-500/40',
-      tag: { label: T.tagUnlimited, cls: 'bg-rose-500/15 text-rose-300 border border-rose-500/20' },
+      tag: {
+        label: T.tagUnlimited,
+        cls: 'bg-rose-500/15 text-rose-300 theme-light:text-rose-700 border border-rose-500/20',
+      },
       title: isA ? T.lessonsTitleA : T.lessonsTitleB,
       desc: isA ? T.lessonsDescA : T.lessonsDescB,
     },
@@ -69,7 +72,10 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       gradient: 'from-teal-500 to-accent-400',
       glow: 'shadow-teal-500/20',
       ring: 'hover:border-teal-500/40',
-      tag: { label: T.tagUnlimited, cls: 'bg-teal-500/15 text-teal-300 border border-teal-500/20' },
+      tag: {
+        label: T.tagUnlimited,
+        cls: 'bg-teal-500/15 text-teal-300 theme-light:text-teal-800 border border-teal-500/20',
+      },
       title: isA ? T.phrasesTitleA : T.phrasesTitleB,
       desc: isA ? T.phrasesDescA : T.phrasesDescB,
     },
@@ -81,7 +87,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       ring: 'hover:border-accent-500/40',
       tag: {
         label: T.tagPopular,
-        cls: 'bg-accent-500/15 text-accent-300 border border-accent-500/20',
+        cls: 'bg-accent-500/15 text-accent-300 theme-light:text-accent-700 border border-accent-500/20',
       },
       title: isA ? T.chatTitleA : T.chatTitleB,
       desc: isA ? T.chatDescA : T.chatDescB,
@@ -92,7 +98,10 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       gradient: 'from-sky-500 to-cyan-400',
       glow: 'shadow-sky-500/20',
       ring: 'hover:border-sky-500/40',
-      tag: { label: T.tagKeyFeature, cls: 'bg-sky-500/15 text-sky-300 border border-sky-500/20' },
+      tag: {
+        label: T.tagKeyFeature,
+        cls: 'bg-sky-500/15 text-sky-300 theme-light:text-sky-700 border border-sky-500/20',
+      },
       title: isA ? T.speakTitleA : T.speakTitleB,
       desc: isA ? T.speakDescA : T.speakDescB,
     },
@@ -102,7 +111,10 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       gradient: 'from-violet-500 to-purple-400',
       glow: 'shadow-violet-500/20',
       ring: 'hover:border-violet-500/40',
-      tag: { label: 'IELTS', cls: 'bg-violet-500/15 text-violet-300 border border-violet-500/20' },
+      tag: {
+        label: 'IELTS',
+        cls: 'bg-violet-500/15 text-violet-300 theme-light:text-violet-700 border border-violet-500/20',
+      },
       title: isA ? T.writeTitleA : T.writeTitleB,
       desc: isA ? T.writeDescA : T.writeDescB,
     },
@@ -165,12 +177,12 @@ export default function Home() {
           >
             <ArrowLeftRight className={`w-4 h-4 ${isA ? 'text-accent-400' : 'text-sky-400'}`} />
             <span
-              className={`text-xs font-semibold leading-none text-center ${isA ? 'text-accent-300' : 'text-sky-300'}`}
+              className={`text-xs font-semibold leading-none text-center ${isA ? 'text-accent-300 theme-light:text-accent-700' : 'text-sky-300 theme-light:text-sky-700'}`}
             >
               {isA ? '🇻🇳 → 🇺🇸' : '🇺🇸 → 🇻🇳'}
             </span>
             <span
-              className={`text-[11px] leading-none text-center ${isA ? 'text-accent-400' : 'text-sky-400'}`}
+              className={`text-[11px] leading-none text-center ${isA ? 'text-accent-400 theme-light:text-accent-700' : 'text-sky-400 theme-light:text-sky-700'}`}
             >
               {isA ? 'Ngôn ngữ' : 'Language'}
             </span>
@@ -292,7 +304,10 @@ export default function Home() {
             .split(/(<strong[^>]*>.*?<\/strong>)/g)
             .map((part, idx) => {
               if (part.startsWith('<strong')) {
-                const color = part.includes('teal') ? 'text-teal-400' : 'text-sky-400'
+                // theme-light: sắc độ đậm hơn để đạt AA trên nền sáng (Blue sky/Pink)
+                const color = part.includes('teal')
+                  ? 'text-teal-400 theme-light:text-teal-700'
+                  : 'text-sky-400 theme-light:text-sky-700'
                 const text = part.replace(/<[^>]+>/g, '')
                 return (
                   <strong key={idx} className={color}>

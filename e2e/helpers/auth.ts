@@ -12,7 +12,14 @@ const PROFILE_CACHE_KEY = 'gsa_profile_v1'
 const USER_ID = 'e2e-user-0001'
 const USER_NAME = 'E2E Tester'
 
-export async function mockLogin(page: Page, uiLang: 'vi' | 'en' = 'vi'): Promise<void> {
+// Tên 4 theme (đồng bộ src/lib/theme.ts). Dùng để E2E quét a11y ở mọi theme.
+export type ThemeName = 'dark-blue' | 'blue-sky' | 'pink' | 'vibrant'
+
+export async function mockLogin(
+  page: Page,
+  uiLang: 'vi' | 'en' = 'vi',
+  theme?: ThemeName,
+): Promise<void> {
   const nowSec = Math.floor(Date.now() / 1000)
   const oneYear = 60 * 60 * 24 * 365
   const session = {
@@ -37,7 +44,15 @@ export async function mockLogin(page: Page, uiLang: 'vi' | 'en' = 'vi'): Promise
       localStorage.setItem(data.authKey, JSON.stringify(data.session))
       localStorage.setItem(data.profileKey, JSON.stringify(data.profile))
       localStorage.setItem('ui_lang', data.uiLang)
+      if (data.theme) localStorage.setItem('ui_theme', data.theme)
     },
-    { authKey: SUPABASE_AUTH_KEY, session, profileKey: PROFILE_CACHE_KEY, profile, uiLang },
+    {
+      authKey: SUPABASE_AUTH_KEY,
+      session,
+      profileKey: PROFILE_CACHE_KEY,
+      profile,
+      uiLang,
+      theme: theme ?? null,
+    },
   )
 }
