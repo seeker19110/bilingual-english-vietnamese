@@ -44,7 +44,12 @@ interface FeedbackData {
 function ScoreBar({ label, score }: { label: string; score: number }) {
   const pct = (score / 9) * 100
   const color = score >= 7 ? 'bg-accent-500' : score >= 5 ? 'bg-amber-500' : 'bg-red-500'
-  const textColor = score >= 7 ? 'text-accent-400' : score >= 5 ? 'text-amber-400' : 'text-red-400'
+  const textColor =
+    score >= 7
+      ? 'text-accent-400 theme-light:text-accent-800'
+      : score >= 5
+        ? 'text-amber-400 theme-light:text-amber-800'
+        : 'text-red-400 theme-light:text-red-700'
   return (
     <div className="flex items-center gap-3">
       <span className="text-xs text-zinc-400 w-36 shrink-0">{label}</span>
@@ -119,10 +124,14 @@ function ResultView({
               {feedback.errors.map((err, i) => (
                 <div key={i} className="border border-zinc-800/80 rounded-xl overflow-hidden">
                   <div className="px-3 py-2 bg-red-500/8 border-b border-zinc-800/60">
-                    <p className="text-xs text-red-400 line-through">{err.original}</p>
+                    <p className="text-xs text-red-400 theme-light:text-red-700 line-through">
+                      {err.original}
+                    </p>
                   </div>
                   <div className="px-3 py-2 bg-accent-500/6 border-b border-zinc-800/60">
-                    <p className="text-xs text-accent-400">→ {err.corrected}</p>
+                    <p className="text-xs text-accent-400 theme-light:text-accent-800">
+                      → {err.corrected}
+                    </p>
                   </div>
                   <div className="px-3 py-2">
                     <p className="text-xs text-zinc-400">{err.explanation}</p>
@@ -204,7 +213,11 @@ export default function Writing() {
 
   const wordCount = essay.trim().split(/\s+/).filter(Boolean).length
   const wordColor =
-    wordCount < 150 ? 'text-red-400' : wordCount < 250 ? 'text-amber-400' : 'text-accent-400'
+    wordCount < 150
+      ? 'text-red-400 theme-light:text-red-700'
+      : wordCount < 250
+        ? 'text-amber-400 theme-light:text-amber-800'
+        : 'text-accent-400 theme-light:text-accent-800'
   const wordHint = isA
     ? wordCount < 150
       ? '(tối thiểu 150)'
@@ -373,7 +386,7 @@ export default function Writing() {
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3 text-sm text-red-400">
+          <div className="bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3 text-sm text-red-400 theme-light:text-red-700">
             {error}
           </div>
         )}

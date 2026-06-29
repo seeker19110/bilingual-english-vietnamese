@@ -245,7 +245,7 @@ export default function Dictionary() {
                 onClick={() => setTab(key)}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition ${
                   tab === key
-                    ? 'bg-accent-500/20 text-accent-300 border border-accent-500/40'
+                    ? 'bg-accent-500/20 text-accent-300 theme-light:text-accent-800 border border-accent-500/40'
                     : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200'
                 }`}
               >
@@ -315,7 +315,7 @@ export default function Dictionary() {
                       aria-pressed={posFilter === pos}
                       className={`text-xs px-2.5 py-1 rounded-full border transition ${
                         posFilter === pos
-                          ? `${POS_COLOR[pos] ?? 'bg-zinc-700 text-zinc-300'} border-transparent`
+                          ? `${POS_COLOR[pos] ?? 'bg-zinc-700 text-zinc-300 theme-light:text-zinc-100'} border-transparent`
                           : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                       }`}
                     >
@@ -395,7 +395,7 @@ export default function Dictionary() {
                                 type="button"
                                 onClick={() => openPos(e.pos)}
                                 title={`${POS_LABEL[e.pos] || e.pos} — ${isA ? 'nhấn để xem giải thích' : 'tap to learn more'}`}
-                                className={`text-[11px] px-2 py-0.5 rounded-full font-medium transition hover:brightness-125 ${POS_COLOR[e.pos] ?? 'bg-zinc-700 text-zinc-300'}`}
+                                className={`text-[11px] px-2 py-0.5 rounded-full font-medium transition hover:brightness-125 ${POS_COLOR[e.pos] ?? 'bg-zinc-700 text-zinc-300 theme-light:text-zinc-100'}`}
                               >
                                 {POS_LABEL[e.pos] || e.pos}
                               </button>
@@ -410,7 +410,7 @@ export default function Dictionary() {
 
                             {/* Phiên âm + nghĩa */}
                             {e.ipa_en && (
-                              <p className="text-xs text-accent-400/70 font-mono mb-1">
+                              <p className="text-xs text-accent-400/90 theme-light:text-accent-800 font-mono mb-1">
                                 {e.ipa_en}
                               </p>
                             )}
@@ -501,7 +501,7 @@ export default function Dictionary() {
                     </p>
                     <button
                       onClick={() => setRetryKey((k) => k + 1)}
-                      className="text-xs px-4 py-2 rounded-xl bg-accent-500/20 text-accent-300 border border-accent-500/40 hover:bg-accent-500/30 transition"
+                      className="text-xs px-4 py-2 rounded-xl bg-accent-500/20 text-accent-300 theme-light:text-accent-800 border border-accent-500/40 hover:bg-accent-500/30 transition"
                     >
                       {isA ? 'Thử lại' : 'Retry'}
                     </button>
@@ -529,7 +529,7 @@ export default function Dictionary() {
                   {/* Tip tìm kiếm */}
                   <div className="glass rounded-xl px-4 py-3 border border-zinc-800/60">
                     <p className="text-sm text-zinc-300 leading-relaxed">
-                      <span className="text-accent-400 font-semibold">
+                      <span className="text-accent-400 theme-light:text-accent-800 font-semibold">
                         {isA ? '💡 Mẹo:' : '💡 Tip:'}
                       </span>{' '}
                       {isA

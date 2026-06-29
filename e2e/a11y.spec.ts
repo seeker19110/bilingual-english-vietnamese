@@ -61,24 +61,45 @@ for (const theme of THEMES) {
   })
 }
 
-// Trạng thái SAU tương tác: menu chọn giao diện (ThemeToggle) chỉ render khi bấm mở
-// → axe lúc tải trang KHÔNG quét được. Mở dropdown rồi quét để bắt lỗi a11y của
-// menu (role/menuitem, contrast các mục) — chống tụt lùi khi sửa menu sau này.
-test('a11y: menu chọn giao diện (sau khi mở) — 0 critical, không có serious mới', async ({
-  page,
-}) => {
-  await mockLogin(page, 'vi')
-  await page.goto('/')
-  await expect(page.getByText(/Xin chào/)).toBeVisible()
-  await page.getByRole('button', { name: /Đổi giao diện/ }).click()
-  await expect(page.getByRole('menu')).toBeVisible()
-  const { critical, unexpectedSerious } = await scan(page)
-  expect(critical).toEqual([])
-  expect(unexpectedSerious).toEqual([])
-})
+// Trang chủ ở CHIỀU B (người nước ngoài học tiếng Việt): đảo bộ màu accent→sky cho
+// badge/nhãn chiều học. Quét ở 2 theme SÁNG (nơi màu sky cố định dễ rớt AA) để chắc
+// biến thể `theme-light:` của nhánh B cũng đạt — gate Home phía trên chỉ phủ chiều A.
+for (const theme of ['blue-sky', 'pink'] as ThemeName[]) {
+  test(`a11y: trang chủ chiều B theme=${theme} — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await mockLogin(page, 'en', theme)
+    await page.addInitScript(() => localStorage.setItem('et_direction', 'B'))
+    await page.goto('/')
+    await expect(page.getByText(/Hello,/)).toBeVisible()
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+}
 
-// Các trang chính sau đăng nhập (Dashboard + những trang nhúng QuickActions).
-// Đã fix caption zinc-500/600 → zinc-400 nên không còn vi phạm color-contrast.
+// Trạng thái SAU tương tác: menu chọn giao diện (ThemeToggle) chỉ render khi bấm mở
+// → axe lúc tải trang KHÔNG quét được. Mở dropdown rồi quét (role/menuitem + contrast
+// các mục) ở MỌI theme — chống tụt lùi, gồm cả contrast menu trên nền sáng.
+for (const theme of THEMES) {
+  test(`a11y: menu chọn giao diện (đã mở) theme=${theme} — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await mockLogin(page, 'vi', theme)
+    await page.goto('/')
+    await expect(page.getByText(/Xin chào/)).toBeVisible()
+    await page.getByRole('button', { name: /Đổi giao diện/ }).click()
+    await expect(page.getByRole('menu')).toBeVisible()
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+}
+
+// Các trang chính sau đăng nhập — quét ở CẢ 4 THEME (cam kết "AA ở mọi theme").
+// Màu cố định của Tailwind (pill loại từ, màu chủ đề/cấp, IPA…) đã thêm biến thể
+// `theme-light:` sắc độ đậm cho 2 theme nền sáng (qua map dùng chung: pos.ts,
+// COLOR_MAP Phrases, COLORS Lessons, CEFR_COLORS Dashboard, tab Learn…).
 const AUTHED_ROUTES = [
   '/progress',
   '/dictionary',
@@ -91,12 +112,14 @@ const AUTHED_ROUTES = [
   '/speaking',
 ]
 for (const route of AUTHED_ROUTES) {
-  test(`a11y: ${route} (đã đăng nhập) — 0 critical, không có serious mới`, async ({ page }) => {
-    await mockLogin(page, 'vi')
-    await page.goto(route, { waitUntil: 'domcontentloaded' })
-    await page.waitForTimeout(1000) // chờ render xong (data offline + animation)
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
-  })
+  for (const theme of THEMES) {
+    test(`a11y: ${route} theme=${theme} — 0 critical, không có serious mới`, async ({ page }) => {
+      await mockLogin(page, 'vi', theme)
+      await page.goto(route, { waitUntil: 'domcontentloaded' })
+      await page.waitForTimeout(1000) // chờ render xong (data offline + animation)
+      const { critical, unexpectedSerious } = await scan(page)
+      expect(critical).toEqual([])
+      expect(unexpectedSerious).toEqual([])
+    })
+  }
 }

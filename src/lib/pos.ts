@@ -17,7 +17,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'n',
     label: 'Danh từ',
     labelEn: 'Noun',
-    color: 'bg-emerald-500/15 text-emerald-300',
+    color: 'bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800',
     definition: 'Từ gọi tên người, vật, nơi chốn, sự việc hoặc khái niệm.',
     examples: [
       { en: 'dog', vi: 'con chó' },
@@ -29,7 +29,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'v',
     label: 'Động từ',
     labelEn: 'Verb',
-    color: 'bg-sky-500/15 text-sky-300',
+    color: 'bg-sky-500/15 text-sky-300 theme-light:text-sky-800',
     definition: 'Từ diễn tả hành động hoặc trạng thái của người/vật.',
     examples: [
       { en: 'run', vi: 'chạy' },
@@ -41,7 +41,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'adj',
     label: 'Tính từ',
     labelEn: 'Adjective',
-    color: 'bg-violet-500/15 text-violet-300',
+    color: 'bg-violet-500/15 text-violet-300 theme-light:text-violet-800',
     definition: 'Từ miêu tả đặc điểm, tính chất của danh từ (đứng trước danh từ hoặc sau "to be").',
     examples: [
       { en: 'beautiful', vi: 'đẹp' },
@@ -53,7 +53,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'adv',
     label: 'Trạng từ',
     labelEn: 'Adverb',
-    color: 'bg-amber-500/15 text-amber-300',
+    color: 'bg-amber-500/15 text-amber-300 theme-light:text-amber-800',
     definition:
       'Từ bổ nghĩa cho động từ, tính từ hoặc cả câu — trả lời "như thế nào, khi nào, ở đâu, mức độ nào".',
     examples: [
@@ -66,7 +66,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'prep',
     label: 'Giới từ',
     labelEn: 'Preposition',
-    color: 'bg-rose-500/15 text-rose-300',
+    color: 'bg-rose-500/15 text-rose-300 theme-light:text-rose-800',
     definition:
       'Từ đứng trước danh từ/đại từ để chỉ vị trí, thời gian hoặc quan hệ với phần còn lại của câu.',
     examples: [
@@ -79,7 +79,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'conj',
     label: 'Liên từ',
     labelEn: 'Conjunction',
-    color: 'bg-teal-500/15 text-teal-300',
+    color: 'bg-teal-500/15 text-teal-300 theme-light:text-teal-800',
     definition: 'Từ dùng để nối hai từ, cụm từ hoặc hai câu lại với nhau.',
     examples: [
       { en: 'bread and butter', vi: 'bánh mì và bơ' },
@@ -91,7 +91,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'pron',
     label: 'Đại từ',
     labelEn: 'Pronoun',
-    color: 'bg-orange-500/15 text-orange-300',
+    color: 'bg-orange-500/15 text-orange-300 theme-light:text-orange-800',
     definition: 'Từ dùng thay thế cho danh từ đã nhắc tới trước đó, để tránh lặp lại.',
     examples: [
       { en: 'They are students.', vi: 'Họ là học sinh.' },
@@ -103,7 +103,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'art',
     label: 'Mạo từ',
     labelEn: 'Article',
-    color: 'bg-lime-500/15 text-lime-300',
+    color: 'bg-lime-500/15 text-lime-300 theme-light:text-lime-800',
     definition:
       'Từ đứng trước danh từ để cho biết danh từ đó đã xác định (the) hay chưa xác định (a/an).',
     examples: [
@@ -116,7 +116,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'num',
     label: 'Số từ',
     labelEn: 'Numeral',
-    color: 'bg-cyan-500/15 text-cyan-300',
+    color: 'bg-cyan-500/15 text-cyan-300 theme-light:text-cyan-800',
     definition: 'Từ chỉ số lượng (một, hai, ba...) hoặc thứ tự (thứ nhất, thứ hai...).',
     examples: [
       { en: 'one apple', vi: 'một quả táo' },
@@ -127,7 +127,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'interj',
     label: 'Thán từ',
     labelEn: 'Interjection',
-    color: 'bg-pink-500/15 text-pink-300',
+    color: 'bg-pink-500/15 text-pink-300 theme-light:text-pink-800',
     definition: 'Từ hoặc cụm từ ngắn diễn tả cảm xúc bất ngờ, vui mừng, đau đớn...',
     examples: [
       { en: 'Wow!', vi: 'Ồ! / Tuyệt!' },
@@ -139,7 +139,7 @@ export const POS_LIST: PosInfo[] = [
     code: 'idiom',
     label: 'Thành ngữ',
     labelEn: 'Idiom',
-    color: 'bg-fuchsia-500/15 text-fuchsia-300',
+    color: 'bg-fuchsia-500/15 text-fuchsia-300 theme-light:text-fuchsia-800',
     definition:
       'Cụm từ cố định mang nghĩa bóng — không thể hiểu bằng cách ghép nghĩa đen của từng từ.',
     examples: [

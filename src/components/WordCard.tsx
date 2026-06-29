@@ -92,7 +92,9 @@ export default function WordCard({
             <>
               <span className="font-bold text-white text-3xl mb-2">{card.word}</span>
               {card.ipa_en && (
-                <span className="text-sm text-accent-400/70 font-mono">{card.ipa_en}</span>
+                <span className="text-sm text-accent-400/90 theme-light:text-accent-800 font-mono">
+                  {card.ipa_en}
+                </span>
               )}
               <span className="flex items-center gap-1 text-xs text-zinc-400 mt-4">
                 <Eye className="w-3.5 h-3.5" /> {isA ? 'Bấm để xem nghĩa' : 'Tap to flip'}

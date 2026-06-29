@@ -20,14 +20,18 @@ export default function VoiceToggle() {
     >
       <span
         className={`px-2 py-1 rounded-full transition ${
-          voice === 'female' ? 'bg-accent-500/30 text-accent-300' : 'text-zinc-400'
+          voice === 'female'
+            ? 'bg-accent-500/30 text-accent-300 theme-light:text-accent-800'
+            : 'text-zinc-400'
         }`}
       >
         Nữ
       </span>
       <span
         className={`px-2 py-1 rounded-full transition ${
-          voice === 'male' ? 'bg-accent-500/30 text-accent-300' : 'text-zinc-400'
+          voice === 'male'
+            ? 'bg-accent-500/30 text-accent-300 theme-light:text-accent-800'
+            : 'text-zinc-400'
         }`}
       >
         Nam

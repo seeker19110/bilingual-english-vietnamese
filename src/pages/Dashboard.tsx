@@ -53,15 +53,31 @@ function bandBar(v: number): string {
   return v >= 7 ? 'bg-accent-500' : v >= 5 ? 'bg-amber-500' : 'bg-red-500'
 }
 function bandText(v: number): string {
-  return v >= 7 ? 'text-accent-400' : v >= 5 ? 'text-amber-400' : 'text-red-400'
+  return v >= 7
+    ? 'text-accent-400 theme-light:text-accent-800'
+    : v >= 5
+      ? 'text-amber-400 theme-light:text-amber-800'
+      : 'text-red-400 theme-light:text-red-700'
 }
 
 // Bảng màu nhấn cho từng cấp CEFR (Tailwind cần class tĩnh — không ghép động được).
 const ACCENT: Record<LevelProgress['accent'], { bar: string; text: string; soft: string }> = {
-  emerald: { bar: 'bg-accent-500', text: 'text-accent-300', soft: 'bg-accent-500/10' },
-  sky: { bar: 'bg-sky-500', text: 'text-sky-300', soft: 'bg-sky-500/10' },
-  violet: { bar: 'bg-violet-500', text: 'text-violet-300', soft: 'bg-violet-500/10' },
-  amber: { bar: 'bg-amber-500', text: 'text-amber-300', soft: 'bg-amber-500/10' },
+  emerald: {
+    bar: 'bg-accent-500',
+    text: 'text-accent-300 theme-light:text-accent-800',
+    soft: 'bg-accent-500/10',
+  },
+  sky: { bar: 'bg-sky-500', text: 'text-sky-300 theme-light:text-sky-800', soft: 'bg-sky-500/10' },
+  violet: {
+    bar: 'bg-violet-500',
+    text: 'text-violet-300 theme-light:text-violet-800',
+    soft: 'bg-violet-500/10',
+  },
+  amber: {
+    bar: 'bg-amber-500',
+    text: 'text-amber-300 theme-light:text-amber-800',
+    soft: 'bg-amber-500/10',
+  },
 }
 
 // Một thẻ số liệu nhỏ (icon + số to + nhãn).
@@ -277,7 +293,7 @@ export default function Dashboard() {
               <span className="text-sm text-zinc-300">
                 {vi ? 'Từ mới hôm nay' : 'New words today'}
               </span>
-              <span className="text-sm font-semibold text-lime-300">
+              <span className="text-sm font-semibold text-lime-300 theme-light:text-lime-800">
                 {stats.learnedToday}/{DAILY_GOAL}
               </span>
             </div>
@@ -408,7 +424,7 @@ export default function Dashboard() {
               <p className="text-sm text-zinc-400">
                 {vi ? 'Chưa có bài viết nào được chấm.' : 'No graded essays yet.'}
               </p>
-              <p className="text-xs text-violet-400 mt-1 group-hover:underline">
+              <p className="text-xs text-violet-400 theme-light:text-violet-800 mt-1 group-hover:underline">
                 {vi ? 'Viết bài đầu tiên →' : 'Write your first essay →'}
               </p>
             </button>
