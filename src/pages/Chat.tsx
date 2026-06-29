@@ -195,7 +195,9 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
               <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
                 ✅
               </span>
-              <span className="text-amber-200 flex-1">{feedbackText}</span>
+              <span className="text-amber-200 theme-light:text-amber-800 flex-1">
+                {feedbackText}
+              </span>
               <SpeakButton
                 text={feedbackText}
                 lang={feedbackLang}
