@@ -9,9 +9,10 @@ import { mockLogin } from './helpers/auth'
 //   - KHÔNG cho phép bất kỳ vi phạm mức 'critical'.
 //   - 'serious' chỉ chấp nhận các nợ đã biết (KNOWN_SERIOUS); vi phạm serious MỚI
 //     (ngoài baseline) sẽ làm fail → chống tụt lùi. Nợ baseline ghi ở PROGRESS.md.
-const KNOWN_SERIOUS = new Set<string>([
-  'color-contrast', // nợ a11y: vài chữ phụ (zinc-400) chưa đạt AA ở nền tối — fix ở PR theme riêng
-])
+// Hiện baseline RỖNG: nợ 'color-contrast' trên các trang được quét (/login, /) đã
+// được fix (nhãn nhỏ ở Home dùng zinc-400 / accent-400 đặc thay vì zinc-500/600 và
+// accent-400/60). Trang chưa quét có thể còn — xem PROGRESS.md.
+const KNOWN_SERIOUS = new Set<string>([])
 
 async function scan(page: Page) {
   const { violations } = await new AxeBuilder({ page })

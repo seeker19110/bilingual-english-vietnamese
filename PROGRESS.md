@@ -23,20 +23,24 @@
 - **Coverage ratchet (Vitest)**: `@vitest/coverage-v8` + ngưỡng SÀN = "không tệ hơn
   hiện tại" (stmts/lines 13 · branches 80 · funcs 50; baseline 13.63/87.89/51.03),
   script `test:coverage`, gate trong CI. Đã merge: **PR #132**.
-- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage gate).
+- **Bundle-size budget (`size-limit`)**: gác kích thước JS/CSS ban đầu (brotli) = "không
+  tệ hơn hiện tại" — Initial JS ≤ 116 kB, CSS ≤ 9 kB; script `size` + bước CI trong job
+  `quality`. (Đổi từ Lighthouse — xem "Quyết định quan trọng".) Đã merge: **PR #133**.
+- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage) + **PR #133** (size-limit).
 
 ## Đang làm
 
-- **Bundle-size budget (`size-limit`)** — đang ở PR (chưa merge). Gác kích thước JS/CSS
-  ban đầu (đo brotli) = "không tệ hơn hiện tại", nâng dần. Config `.size-limit.json`:
-  Initial JS (entry + 4 vendor chunks) ≤ 116 kB (baseline 110.46), Initial CSS ≤ 9 kB
-  (baseline 8.34). Script `size`, thêm bước CI "Bundle size budget" trong job `quality`.
+- **Fix a11y `color-contrast`** (trang được quét) — đang ở PR (chưa merge). 3 nhãn nhỏ
+  11px ở Home (Ngôn ngữ / streak-days / Giọng đọc) đổi từ `zinc-500/600` + `accent-400/60`
+  sang `zinc-400` / `accent-400` đặc → đạt AA mọi theme (axe: /login + / = 0 vi phạm
+  color-contrast). Gỡ baseline `color-contrast` khỏi `e2e/a11y.spec.ts`.
 
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
-- Fix nợ a11y **`color-contrast`** (điều chỉnh design token theme cho đạt AA) — xem mục Nợ kỹ thuật. ← đề xuất làm tiếp
+- (Tùy chọn) Quét a11y thêm trang (Dashboard, Dictionary…) rồi fix nốt caption
+  `zinc-500/600` còn lại ở các trang chưa quét — xem Nợ kỹ thuật. ← đề xuất làm tiếp
 - (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
 
 ## Quyết định quan trọng (trỏ tới ADR nếu có)
@@ -54,9 +58,10 @@
 
 ## Nợ kỹ thuật (chỗ "làm tạm" cần quay lại)
 
-- **a11y `color-contrast` (serious)**: vài chữ phụ (zinc-400) chưa đạt AA ở nền tối.
-  Hiện để **baseline** trong `e2e/a11y.spec.ts` (cổng chặn vi phạm serious MỚI,
-  chấp nhận nợ này). Cần fix ở PR điều chỉnh design token theme riêng.
+- **a11y `color-contrast`**: ĐÃ fix trên các trang được e2e quét (`/login`, `/`) — baseline
+  đã gỡ khỏi `e2e/a11y.spec.ts` (PR a11y này). **Còn lại**: nhiều caption nhỏ dùng
+  `text-zinc-500`/`text-zinc-600` ở các trang CHƯA quét (Dashboard, Dictionary, QuickActions,
+  Lessons, History) vẫn dưới AA ở nền tối — fix khi đưa các trang đó vào diện quét a11y.
 - E2E (`e2e/`) chưa nằm trong `npm run typecheck` (không thuộc tsconfig nào) —
   Playwright tự transpile khi chạy. Thêm `tsconfig.e2e.json` nếu muốn type-check.
 - Trang Login dùng text tiếng Việt hard-code (chưa qua i18n) — chưa song ngữ.
