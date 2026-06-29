@@ -24,15 +24,17 @@
 
 ## Đang làm
 
-- (trống) — khung Lớp 1 + E2E/a11y đã xong và chạy trên `main`. Chờ chọn mục
-  chất lượng kế tiếp (xem "Tiếp theo").
+- **Coverage ratchet (Vitest)** — đang ở PR (chưa merge). Thêm `@vitest/coverage-v8`,
+  bật coverage v8 trong `vitest.config.ts` (đo `src/lib/**` + `api/**`), đặt ngưỡng
+  SÀN = "không tệ hơn hiện tại" (stmts/lines 13 · branches 80 · funcs 50; baseline đo
+  được: stmts/lines 13.63 · branches 87.89 · funcs 51.03), thêm script `test:coverage`
+  và đưa vào CI (bước "Unit tests + coverage gate"). Chống tụt coverage, nâng dần sau.
 
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
-- **Coverage threshold** cho Vitest (đặt thấp = "không tệ hơn hiện tại", nâng dần) + đưa vào CI. ← đề xuất làm trước (quick win)
-- **Lighthouse budget** ("không tệ hơn hiện tại") + đưa vào CI.
+- **Lighthouse budget** ("không tệ hơn hiện tại") + đưa vào CI. ← đề xuất làm tiếp (quick win)
 - Fix nợ a11y **`color-contrast`** (điều chỉnh design token theme cho đạt AA) — xem mục Nợ kỹ thuật.
 - (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
 
