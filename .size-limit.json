@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Initial JS (entry + vendors, brotli)",
+    "path": [
+      "dist/js/index-*.js",
+      "dist/js/vendor-core-*.js",
+      "dist/js/vendor-supabase-*.js",
+      "dist/js/vendor-misc-*.js",
+      "dist/js/vendor-ui-*.js"
+    ],
+    "limit": "116 kB"
+  },
+  {
+    "name": "Initial CSS (brotli)",
+    "path": "dist/assets/index-*.css",
+    "limit": "9 kB"
+  }
+]
