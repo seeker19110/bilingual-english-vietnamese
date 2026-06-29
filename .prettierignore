@@ -16,3 +16,8 @@ src/data/dictionary.backup.json
 # File build/cache tạm
 vite.config.ts.timestamp-*.mjs
 *.tsbuildinfo
+
+# Playwright artefacts sinh tự động
+playwright-report/
+test-results/
+blob-report/
