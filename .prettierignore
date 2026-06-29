@@ -1,0 +1,18 @@
+# Thư viện & sản phẩm build
+node_modules
+dist
+coverage
+
+# Lockfile do npm tự quản lý
+package-lock.json
+
+# Dữ liệu sinh tự động khi build (scripts/gen-data-manifest.mjs ...) — không format
+public/data/
+
+# Data blob lớn (nguồn dữ liệu, không phải code) — bỏ qua để diff format gọn
+src/data/lessons.json
+src/data/dictionary.backup.json
+
+# File build/cache tạm
+vite.config.ts.timestamp-*.mjs
+*.tsbuildinfo
