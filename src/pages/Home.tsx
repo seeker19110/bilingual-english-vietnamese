@@ -186,7 +186,7 @@ export default function Home() {
           >
             <span className="text-xl leading-none">{streak > 0 ? '🔥' : '💤'}</span>
             <p
-              className={`text-sm font-bold leading-none ${streak > 0 ? 'text-orange-400' : 'text-zinc-500'}`}
+              className={`text-sm font-bold leading-none ${streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
             >
               {streak}
             </p>

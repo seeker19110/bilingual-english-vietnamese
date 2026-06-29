@@ -28,16 +28,16 @@
   `quality`. (Đổi từ Lighthouse — xem "Quyết định quan trọng".) Đã merge: **PR #133**.
 - **a11y `color-contrast` (Home)**: 3 nhãn nhỏ ở Home đạt AA + gỡ baseline khỏi
   `e2e/a11y.spec.ts`. Đã merge: **PR #134**.
-- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage) + **PR #133** (size-limit) + **PR #134** (a11y Home).
+- **a11y `color-contrast` (Dashboard/QuickActions) + mở rộng gate**: đổi caption
+  `zinc-500/600` → `zinc-400`; thêm 5 route đã-đăng-nhập vào gate a11y. Đã merge: **PR #135**.
+- Đã merge vào `main`: **PR #129** (khung) + **PR #130** (E2E + CI E2E) + **PR #132** (coverage) + **PR #133** (size-limit) + **PR #134** + **PR #135** (a11y).
 
 ## Đang làm
 
-- **Mở rộng quét a11y + dọn hết caption color-contrast** — đang ở PR (chưa merge).
-  Dò axe ra 27 vi phạm ở Dashboard + 1 caption của QuickActions (nhúng ở mọi trang);
-  đổi `text-zinc-500/600` → `text-zinc-400` ở `Dashboard.tsx` + `QuickActions.tsx`
-  (chỉ chữ/icon, không động viền/nền). Thêm 5 route đã-đăng-nhập vào gate a11y
-  (/progress, /dictionary, /lessons, /history, /phrases). axe: cả 9 route đã probe = 0
-  vi phạm color-contrast.
+- **Sửa flaky test a11y trang chủ** — đang ở PR (chưa merge). Con số streak ở Home
+  (dòng 189) còn `text-zinc-500` (`text-sm` bold "0") trên nền thẻ tối → contrast ~4.0,
+  SÁT ngưỡng 4.5 nên axe lúc bắt lúc không (pass local + CI #134, FAIL CI #135). Đổi
+  sang `text-zinc-400` (contrast ~7, hết flaky). Đã chạy lặp 5× trang chủ: pass đều.
 
 ## Tiếp theo
 
