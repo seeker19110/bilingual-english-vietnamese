@@ -21,9 +21,17 @@ describe('stats — hoạt động theo ngày', () => {
   // BUG-5: ngày CHỈ học từ vựng (learnCount > 0) phải tính là "có hoạt động" để
   // khớp với getStreak() — nếu không, biểu đồ Dashboard hiện trống dù streak vẫn cộng.
   it('ngày chỉ học từ vựng vẫn được tính là có hoạt động', () => {
-    localStorage.setItem(usageKey('u1', today()), JSON.stringify({
-      date: today(), chatCount: 0, writingCount: 0, speakingCount: 0, sttCount: 0, learnCount: 3,
-    }))
+    localStorage.setItem(
+      usageKey('u1', today()),
+      JSON.stringify({
+        date: today(),
+        chatCount: 0,
+        writingCount: 0,
+        speakingCount: 0,
+        sttCount: 0,
+        learnCount: 3,
+      }),
+    )
     const days = getActivity7Days('u1')
     expect(days[6].count).toBe(3)
     expect(days[6].active).toBe(true)

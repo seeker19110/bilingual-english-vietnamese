@@ -64,11 +64,15 @@ export async function callGemini(
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
 
-  const resp = await fetchWithTimeout(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  }, AI_TIMEOUT_MS)
+  const resp = await fetchWithTimeout(
+    url,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    },
+    AI_TIMEOUT_MS,
+  )
 
   if (!resp.ok) {
     const errorText = await resp.text()
@@ -87,11 +91,14 @@ export async function callGemini(
   }
 
   const candidate = data.candidates[0]
+  if (!candidate) {
+    throw new Error('Gemini API returned empty candidates')
+  }
   if (!candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
     throw new Error('Gemini API returned empty content')
   }
 
-  const text = candidate.content.parts[0].text
+  const text = candidate.content.parts[0]?.text
   if (!text) {
     throw new Error('Gemini API returned empty text')
   }

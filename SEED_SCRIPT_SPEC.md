@@ -3,6 +3,7 @@
 ## Tổng quan
 
 Script chạy 1 lần duy nhất trên máy local:
+
 - Đọc danh sách 10,000 từ
 - Bỏ qua từ đã có trong DB (resume được nếu bị dừng)
 - Gọi Google TTS theo batch, tránh rate limit
@@ -38,12 +39,7 @@ npm install tsx dotenv cli-progress @types/cli-progress
 ## 2. scripts/words.json
 
 ```json
-[
-  "apple",
-  "beautiful",
-  "challenge",
-  "...10000 từ của bạn..."
-]
+["apple", "beautiful", "challenge", "...10000 từ của bạn..."]
 ```
 
 ---
@@ -51,179 +47,173 @@ npm install tsx dotenv cli-progress @types/cli-progress
 ## 3. scripts/seed-pronunciations.ts
 
 ```typescript
-import * as dotenv from "dotenv";
-import * as fs from "fs";
-import * as path from "path";
-import { createClient } from "@supabase/supabase-js";
-import cliProgress from "cli-progress";
+import * as dotenv from 'dotenv'
+import * as fs from 'fs'
+import * as path from 'path'
+import { createClient } from '@supabase/supabase-js'
+import cliProgress from 'cli-progress'
 
 // Load .env.local
-dotenv.config({ path: ".env.local" });
+dotenv.config({ path: '.env.local' })
 
 // ── Config ──────────────────────────────────────────────────────
-const BATCH_SIZE = 5;          // Số từ xử lý song song cùng lúc
-const DELAY_MS = 300;          // Nghỉ giữa các batch (tránh rate limit)
-const LANG = "en-US";
-const VOICE = "en-US-Journey-F"; // Giọng tự nhiên nhất
+const BATCH_SIZE = 5 // Số từ xử lý song song cùng lúc
+const DELAY_MS = 300 // Nghỉ giữa các batch (tránh rate limit)
+const LANG = 'en-US'
+const VOICE = 'en-US-Journey-F' // Giọng tự nhiên nhất
 
-const WORDS_FILE = path.join(__dirname, "words.json");
-const ERRORS_FILE = path.join(__dirname, "seed-errors.json");
+const WORDS_FILE = path.join(__dirname, 'words.json')
+const ERRORS_FILE = path.join(__dirname, 'seed-errors.json')
 
 // ── Supabase Client ─────────────────────────────────────────────
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!  // Cần service role để upload
-);
+  process.env.SUPABASE_SERVICE_ROLE_KEY!, // Cần service role để upload
+)
 
 // ── Google TTS ──────────────────────────────────────────────────
 async function generateAudio(word: string): Promise<Buffer> {
   const res = await fetch(
     `https://texttospeech.googleapis.com/v1/text:synthesize?key=${process.env.GOOGLE_TTS_API_KEY}`,
     {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         input: { text: word },
         voice: { languageCode: LANG, name: VOICE },
-        audioConfig: { audioEncoding: "MP3", speakingRate: 0.9 },
+        audioConfig: { audioEncoding: 'MP3', speakingRate: 0.9 },
       }),
-    }
-  );
+    },
+  )
 
-  if (!res.ok) throw new Error(`TTS API lỗi ${res.status}: ${res.statusText}`);
-  const data = await res.json();
-  return Buffer.from(data.audioContent, "base64");
+  if (!res.ok) throw new Error(`TTS API lỗi ${res.status}: ${res.statusText}`)
+  const data = await res.json()
+  return Buffer.from(data.audioContent, 'base64')
 }
 
 // ── Upload lên Supabase Storage ─────────────────────────────────
 async function uploadAudio(word: string, buffer: Buffer): Promise<string> {
-  const fileName = `${word}.mp3`;
+  const fileName = `${word}.mp3`
 
-  const { error } = await supabase.storage
-    .from("pronunciations")
-    .upload(fileName, buffer, {
-      contentType: "audio/mpeg",
-      upsert: false, // Không ghi đè nếu đã có
-    });
+  const { error } = await supabase.storage.from('pronunciations').upload(fileName, buffer, {
+    contentType: 'audio/mpeg',
+    upsert: false, // Không ghi đè nếu đã có
+  })
 
   // Bỏ qua lỗi "đã tồn tại"
-  if (error && !error.message.includes("already exists")) {
-    throw new Error(`Upload lỗi: ${error.message}`);
+  if (error && !error.message.includes('already exists')) {
+    throw new Error(`Upload lỗi: ${error.message}`)
   }
 
-  const { data } = supabase.storage
-    .from("pronunciations")
-    .getPublicUrl(fileName);
+  const { data } = supabase.storage.from('pronunciations').getPublicUrl(fileName)
 
-  return data.publicUrl;
+  return data.publicUrl
 }
 
 // ── Lưu vào DB ──────────────────────────────────────────────────
 async function saveToDb(word: string, audioUrl: string): Promise<void> {
   const { error } = await supabase
-    .from("pronunciations")
-    .upsert({ word, audio_url: audioUrl, lang: LANG }, { onConflict: "word" });
+    .from('pronunciations')
+    .upsert({ word, audio_url: audioUrl, lang: LANG }, { onConflict: 'word' })
 
-  if (error) throw new Error(`DB lỗi: ${error.message}`);
+  if (error) throw new Error(`DB lỗi: ${error.message}`)
 }
 
 // ── Xử lý 1 từ (TTS → Upload → DB) ────────────────────────────
-async function processWord(word: string): Promise<"ok" | "skip" | "error"> {
+async function processWord(word: string): Promise<'ok' | 'skip' | 'error'> {
   try {
-    const buffer = await generateAudio(word);
-    const audioUrl = await uploadAudio(word, buffer);
-    await saveToDb(word, audioUrl);
-    return "ok";
+    const buffer = await generateAudio(word)
+    const audioUrl = await uploadAudio(word, buffer)
+    await saveToDb(word, audioUrl)
+    return 'ok'
   } catch (err) {
-    return "error";
+    return 'error'
   }
 }
 
 // ── Hàm chờ ────────────────────────────────────────────────────
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 // ── MAIN ────────────────────────────────────────────────────────
 async function main() {
-  console.log("🚀 Bắt đầu seed phát âm...\n");
+  console.log('🚀 Bắt đầu seed phát âm...\n')
 
   // 1. Đọc danh sách từ
-  const allWords: string[] = JSON.parse(fs.readFileSync(WORDS_FILE, "utf-8"));
-  console.log(`📋 Tổng số từ: ${allWords.length}`);
+  const allWords: string[] = JSON.parse(fs.readFileSync(WORDS_FILE, 'utf-8'))
+  console.log(`📋 Tổng số từ: ${allWords.length}`)
 
   // 2. Lấy từ đã có trong DB (để bỏ qua — resume được)
-  const { data: existing } = await supabase
-    .from("pronunciations")
-    .select("word");
+  const { data: existing } = await supabase.from('pronunciations').select('word')
 
-  const done = new Set(existing?.map((r) => r.word) ?? []);
-  const todo = allWords.filter((w) => !done.has(w.toLowerCase()));
+  const done = new Set(existing?.map((r) => r.word) ?? [])
+  const todo = allWords.filter((w) => !done.has(w.toLowerCase()))
 
-  console.log(`✅ Đã có: ${done.size} từ`);
-  console.log(`⏳ Cần tạo: ${todo.length} từ\n`);
+  console.log(`✅ Đã có: ${done.size} từ`)
+  console.log(`⏳ Cần tạo: ${todo.length} từ\n`)
 
   if (todo.length === 0) {
-    console.log("🎉 Tất cả đã được cache rồi!");
-    return;
+    console.log('🎉 Tất cả đã được cache rồi!')
+    return
   }
 
   // 3. Setup progress bar
   const bar = new cliProgress.SingleBar(
     {
-      format: "Tiến độ |{bar}| {percentage}% | {value}/{total} từ | ✓{ok} ✗{errors}",
-      barCompleteChar: "█",
-      barIncompleteChar: "░",
+      format: 'Tiến độ |{bar}| {percentage}% | {value}/{total} từ | ✓{ok} ✗{errors}',
+      barCompleteChar: '█',
+      barIncompleteChar: '░',
       hideCursor: true,
     },
-    cliProgress.Presets.shades_classic
-  );
+    cliProgress.Presets.shades_classic,
+  )
 
-  bar.start(todo.length, 0, { ok: 0, errors: 0 });
+  bar.start(todo.length, 0, { ok: 0, errors: 0 })
 
   // 4. Xử lý theo batch
-  let countOk = 0;
-  let countError = 0;
-  const errorWords: string[] = [];
+  let countOk = 0
+  let countError = 0
+  const errorWords: string[] = []
 
   for (let i = 0; i < todo.length; i += BATCH_SIZE) {
-    const batch = todo.slice(i, i + BATCH_SIZE);
+    const batch = todo.slice(i, i + BATCH_SIZE)
 
-    const results = await Promise.all(
-      batch.map((word) => processWord(word.toLowerCase()))
-    );
+    const results = await Promise.all(batch.map((word) => processWord(word.toLowerCase())))
 
     results.forEach((result, idx) => {
-      if (result === "ok") {
-        countOk++;
-      } else if (result === "error") {
-        countError++;
-        errorWords.push(batch[idx]);
+      if (result === 'ok') {
+        countOk++
+      } else if (result === 'error') {
+        countError++
+        errorWords.push(batch[idx])
       }
-    });
+    })
 
     bar.update(Math.min(i + BATCH_SIZE, todo.length), {
       ok: countOk,
       errors: countError,
-    });
+    })
 
     // Nghỉ giữa các batch
     if (i + BATCH_SIZE < todo.length) {
-      await sleep(DELAY_MS);
+      await sleep(DELAY_MS)
     }
   }
 
-  bar.stop();
+  bar.stop()
 
   // 5. Ghi file lỗi để retry sau
   if (errorWords.length > 0) {
-    fs.writeFileSync(ERRORS_FILE, JSON.stringify(errorWords, null, 2));
-    console.log(`\n⚠️  ${errorWords.length} từ bị lỗi → xem file: seed-errors.json`);
-    console.log(`   Chạy lại với: WORDS_FILE=scripts/seed-errors.json npx tsx scripts/seed-pronunciations.ts`);
+    fs.writeFileSync(ERRORS_FILE, JSON.stringify(errorWords, null, 2))
+    console.log(`\n⚠️  ${errorWords.length} từ bị lỗi → xem file: seed-errors.json`)
+    console.log(
+      `   Chạy lại với: WORDS_FILE=scripts/seed-errors.json npx tsx scripts/seed-pronunciations.ts`,
+    )
   }
 
-  console.log(`\n✅ Hoàn thành! Thành công: ${countOk} | Lỗi: ${countError}`);
+  console.log(`\n✅ Hoàn thành! Thành công: ${countOk} | Lỗi: ${countError}`)
 }
 
-main().catch(console.error);
+main().catch(console.error)
 ```
 
 ---
@@ -274,11 +264,11 @@ Tiến độ |████████░░░░░░░░| 48% | 3264/6800 
 
 ## 7. Ước tính thời gian
 
-| Số từ | BATCH_SIZE=5 + delay 300ms | Thực tế |
-|-------|--------------------------|---------|
-| 1,000 | ~4 phút | ~5 phút |
-| 5,000 | ~20 phút | ~25 phút |
-| 10,000 | ~40 phút | ~50 phút |
+| Số từ  | BATCH_SIZE=5 + delay 300ms | Thực tế  |
+| ------ | -------------------------- | -------- |
+| 1,000  | ~4 phút                    | ~5 phút  |
+| 5,000  | ~20 phút                   | ~25 phút |
+| 10,000 | ~40 phút                   | ~50 phút |
 
 > Có thể tăng BATCH_SIZE lên 10 nếu mạng ổn định để chạy nhanh hơn.
 

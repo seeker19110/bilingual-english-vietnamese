@@ -21,7 +21,10 @@ import type { VoiceId } from '../../api/_lib/googleTts.ts'
 // (DEFAULT_VOICE), rồi male. (Lessons dùng giọng riêng per-turn, không qua hằng này.)
 export const PREF_VOICE_IDS: VoiceId[] = ['female', 'male']
 
-export interface Sentence { en: string; vi: string }
+export interface Sentence {
+  en: string
+  vi: string
+}
 export interface Subject {
   starter: string
   category: string
@@ -51,7 +54,11 @@ function interleaveByCategory(items: Subject[]): Subject[] {
   const order: string[] = []
   for (const s of items) {
     let grp = groups.get(s.category)
-    if (!grp) { grp = []; groups.set(s.category, grp); order.push(s.category) }
+    if (!grp) {
+      grp = []
+      groups.set(s.category, grp)
+      order.push(s.category)
+    }
     grp.push(s)
   }
   const result: Subject[] = []
@@ -63,7 +70,7 @@ function interleaveByCategory(items: Subject[]): Subject[] {
       const grp = groups.get(cat)!
       const i = cursor.get(cat)!
       if (i < grp.length) {
-        result.push(grp[i])
+        result.push(grp[i]!) // i < grp.length nên chắc chắn có
         cursor.set(cat, i + 1)
         placedSomething = true
       }

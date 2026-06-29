@@ -32,10 +32,10 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 
 // ── Cấu hình ─────────────────────────────────────────────────────────
-const BATCH_SIZE     = 15   // số tác vụ song song — Google TTS cho phép ~100 req/s
-const DELAY_MS       = 0    // không cần nghỉ giữa batch với BATCH_SIZE vừa phải
+const BATCH_SIZE = 15 // số tác vụ song song — Google TTS cho phép ~100 req/s
+const DELAY_MS = 0 // không cần nghỉ giữa batch với BATCH_SIZE vừa phải
 const RETRY_DELAY_MS = 5000 // nghỉ giữa các vòng retry (ms) để tránh rate-limit tạm thời
-const MAX_ROUNDS     = 5    // số vòng retry tối đa
+const MAX_ROUNDS = 5 // số vòng retry tối đa
 
 // Pronunciations chỉ cần 2 giọng cơ bản (người dùng chỉ chọn female/male)
 // female2/male2 dùng cho bài học hội thoại, không cần seed vào bảng pronunciations
@@ -57,11 +57,16 @@ interface Task {
 function loadWords(fileOrDir: string): string[] {
   const stat = fs.statSync(fileOrDir)
   if (stat.isDirectory()) {
-    const files = fs.readdirSync(fileOrDir).filter((f) => /^chunk-\d+\.json$/.test(f)).sort()
+    const files = fs
+      .readdirSync(fileOrDir)
+      .filter((f) => /^chunk-\d+\.json$/.test(f))
+      .sort()
     const words: string[] = []
     for (const file of files) {
       const raw = JSON.parse(fs.readFileSync(path.join(fileOrDir, file), 'utf-8')) as unknown[]
-      words.push(...raw.map((item) => (typeof item === 'string' ? item : (item as { word: string }).word)))
+      words.push(
+        ...raw.map((item) => (typeof item === 'string' ? item : (item as { word: string }).word)),
+      )
     }
     return words
   }
@@ -72,7 +77,9 @@ function loadWords(fileOrDir: string): string[] {
 }
 
 // ── Xử lý 1 tác vụ (1 từ + 1 giọng): TTS → Upload Storage → Lưu DB ─────────
-async function processTask(task: Task): Promise<{ status: 'ok' } | { status: 'error'; message: string }> {
+async function processTask(
+  task: Task,
+): Promise<{ status: 'ok' } | { status: 'error'; message: string }> {
   try {
     const { word, voice } = task
     const supabase = getSupabaseAdmin()
@@ -88,12 +95,16 @@ async function processTask(task: Task): Promise<{ status: 'ok' } | { status: 'er
 
     const { data: publicUrlData } = supabase.storage.from('pronunciations').getPublicUrl(fileName)
 
-    const { error: dbError } = await supabase
-      .from('pronunciations')
-      .upsert(
-        { word, voice, audio_url: publicUrlData.publicUrl, lang: 'en-US', voice_version: VOICE_VERSION },
-        { onConflict: 'word,voice' },
-      )
+    const { error: dbError } = await supabase.from('pronunciations').upsert(
+      {
+        word,
+        voice,
+        audio_url: publicUrlData.publicUrl,
+        lang: 'en-US',
+        voice_version: VOICE_VERSION,
+      },
+      { onConflict: 'word,voice' },
+    )
     if (dbError) throw new Error(`Lưu DB lỗi: ${dbError.message}`)
 
     return { status: 'ok' }
@@ -122,18 +133,19 @@ async function runPass(
   )
   bar.start(tasks.length, 0, { ok: 0, errors: 0 })
 
-  let countOk = 0, countError = 0
+  let countOk = 0,
+    countError = 0
   const failed: Array<{ task: Task; message: string }> = []
 
   for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
-    const batch   = tasks.slice(i, i + BATCH_SIZE)
+    const batch = tasks.slice(i, i + BATCH_SIZE)
     const results = await Promise.all(batch.map((t) => processTask(t)))
 
     results.forEach((result, idx) => {
       if (result.status === 'ok') countOk++
       else {
         countError++
-        failed.push({ task: batch[idx], message: result.message })
+        failed.push({ task: batch[idx]!, message: result.message }) // idx khớp batch nên có
       }
     })
 
@@ -165,8 +177,12 @@ async function main(): Promise<void> {
 
   console.log('🚀 Bắt đầu seed phát âm từ điển')
   console.log(`📋 Nguồn từ : ${path.relative(PROJECT_ROOT, wordsSource)}`)
-  console.log(`📋 Tổng từ  : ${allWords.length} × ${PRON_VOICE_IDS.length} giọng (${PRON_VOICE_IDS.join(', ')})`)
-  console.log(`⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}`)
+  console.log(
+    `📋 Tổng từ  : ${allWords.length} × ${PRON_VOICE_IDS.length} giọng (${PRON_VOICE_IDS.join(', ')})`,
+  )
+  console.log(
+    `⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}`,
+  )
 
   // Lấy danh sách (từ, giọng) đã có trong DB — bỏ qua để resume được nếu bị dừng giữa chừng
   const supabase = getSupabaseAdmin()
@@ -194,7 +210,7 @@ async function main(): Promise<void> {
 
   // Giới hạn số tác vụ nếu chạy debug (LIMIT=10 npm run seed:pronunciation)
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
-  const todo  = allTasks.filter((t) => !done.has(`${t.word}:${t.voice}`)).slice(0, limit)
+  const todo = allTasks.filter((t) => !done.has(`${t.word}:${t.voice}`)).slice(0, limit)
 
   console.log(`\n✅ Đã có  : ${done.size} (từ × giọng)`)
   console.log(`⏳ Cần tạo: ${todo.length} (từ × giọng)`)
@@ -231,10 +247,18 @@ async function main(): Promise<void> {
     console.log('\n🎉 Hoàn thành 100%! Toàn bộ từ đã được cache.')
     if (fs.existsSync(ERRORS_FILE)) fs.unlinkSync(ERRORS_FILE)
   } else {
-    fs.writeFileSync(ERRORS_FILE, JSON.stringify(remaining.map((r) => r.task.word), null, 2))
+    fs.writeFileSync(
+      ERRORS_FILE,
+      JSON.stringify(
+        remaining.map((r) => r.task.word),
+        null,
+        2,
+      ),
+    )
     console.log(`\n⚠️  Còn ${remaining.length} tác vụ không thể cache sau ${MAX_ROUNDS} vòng.`)
     console.log(`   Retry thủ công: WORDS_FILE=scripts/seed-errors.json npm run seed:pronunciation`)
-    console.log(`   Lỗi mẫu: ${remaining[0].task.word} (${remaining[0].task.voice}) — ${remaining[0].message}`)
+    const sample = remaining[0]! // nhánh else nên remaining.length>0, chắc chắn có
+    console.log(`   Lỗi mẫu: ${sample.task.word} (${sample.task.voice}) — ${sample.message}`)
     process.exit(1)
   }
 }

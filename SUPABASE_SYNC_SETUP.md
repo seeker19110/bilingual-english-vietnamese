@@ -31,11 +31,11 @@ Settings → API**) — trên VPS là file `.env` cạnh `server.ts` (xem
 `docs/deploy-vps-ubuntu.md`), lúc chạy `npm run dev` ở máy local là file `.env`
 ở thư mục gốc dự án:
 
-| Biến | Dùng ở đâu | Lấy ở đâu |
-|---|---|---|
-| `VITE_SUPABASE_URL` | Frontend (login + đồng bộ) | API → Project URL |
-| `VITE_SUPABASE_ANON_KEY` | Frontend | API → `anon` `public` key |
-| `ANTHROPIC_API_KEY` | Server (gọi AI) | console.anthropic.com |
+| Biến                     | Dùng ở đâu                 | Lấy ở đâu                 |
+| ------------------------ | -------------------------- | ------------------------- |
+| `VITE_SUPABASE_URL`      | Frontend (login + đồng bộ) | API → Project URL         |
+| `VITE_SUPABASE_ANON_KEY` | Frontend                   | API → `anon` `public` key |
+| `ANTHROPIC_API_KEY`      | Server (gọi AI)            | console.anthropic.com     |
 
 > ⚠️ Hai biến `VITE_*` **bắt buộc có tiền tố `VITE_`** thì frontend mới đọc được.
 > Nếu thiếu, đăng nhập sẽ **luôn báo sai** dù mật khẩu đúng (đây là lỗi "không đăng

@@ -13,10 +13,10 @@ import type { DictEntry } from '../types'
 const MAX_RESULTS = 200
 
 export interface DictSearchResult {
-  total: number          // tổng số từ trong từ điển (hiển thị ở phụ đề)
-  matched: number        // số từ khớp truy vấn
-  posGroups: [string, number][]  // [loại từ, số lượng] để vẽ chip lọc
-  results: DictEntry[]   // kết quả (đã cắt bớt)
+  total: number // tổng số từ trong từ điển (hiển thị ở phụ đề)
+  matched: number // số từ khớp truy vấn
+  posGroups: [string, number][] // [loại từ, số lượng] để vẽ chip lọc
+  results: DictEntry[] // kết quả (đã cắt bớt)
 }
 
 // Phát hiện chuỗi tiếng Việt (có dấu) — giống logic server cũ.
@@ -88,7 +88,7 @@ export async function fetchRandomEntries(n = 30): Promise<DictEntry[]> {
   const out: DictEntry[] = []
   for (let i = 0; i < n && a.length > 0; i++) {
     const j = Math.floor(Math.random() * a.length)
-    out.push(a[j])
+    out.push(a[j]!) // j < a.length nên chắc chắn có
     a.splice(j, 1)
   }
   return out

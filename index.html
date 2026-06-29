@@ -6,7 +6,10 @@
     <!-- KHÓA zoom trên mobile (yêu cầu sản phẩm: giao diện app, tránh phóng to làm vỡ layout).
          maximum-scale=1 + user-scalable=no. Đánh đổi: Lighthouse a11y sẽ trừ mục "allow users to zoom".
          Double-tap zoom chặn thêm bằng touch-action:pan-x pan-y; zoom khi focus input chặn bằng font ≥16px (xem index.css). -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <meta name="theme-color" content="#09090b" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <!-- Thẻ chuẩn mới (trình duyệt hiện đại); thẻ apple- bên dưới giữ cho iOS Safari cũ -->
@@ -17,18 +20,30 @@
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="robots" content="index, follow" />
     <title>Gia sư tiếng Anh AI - Luyện nói, viết, đọc cùng AI | Học tiếng Anh hiệu quả</title>
-    <meta name="description" content="Gia sư tiếng Anh AI - Luyện nói, viết, đọc bằng AI với phản hồi chi tiết bằng tiếng Việt. Hợp lí cho người Việt học tiếng Anh từ A1 đến B2." />
-    <meta name="keywords" content="gia sư tiếng Anh, luyện nói tiếng Anh, học tiếng Anh online, AI, phát âm, IELTS, luyện viết" />
+    <meta
+      name="description"
+      content="Gia sư tiếng Anh AI - Luyện nói, viết, đọc bằng AI với phản hồi chi tiết bằng tiếng Việt. Hợp lí cho người Việt học tiếng Anh từ A1 đến B2."
+    />
+    <meta
+      name="keywords"
+      content="gia sư tiếng Anh, luyện nói tiếng Anh, học tiếng Anh online, AI, phát âm, IELTS, luyện viết"
+    />
     <!-- Open Graph for social sharing -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Gia sư tiếng Anh AI - Luyện nói, viết, đọc cùng AI" />
-    <meta property="og:description" content="Gia sư tiếng Anh AI - Luyện nói, viết, đọc bằng AI với phản hồi chi tiết bằng tiếng Việt." />
+    <meta
+      property="og:description"
+      content="Gia sư tiếng Anh AI - Luyện nói, viết, đọc bằng AI với phản hồi chi tiết bằng tiếng Việt."
+    />
     <meta property="og:url" content="https://en-vi.donghanhcungban.com" />
     <meta property="og:image" content="https://en-vi.donghanhcungban.com/favicon.svg" />
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Gia sư tiếng Anh AI" />
-    <meta name="twitter:description" content="Luyện nói, viết, đọc tiếng Anh cùng AI với phản hồi bằng tiếng Việt" />
+    <meta
+      name="twitter:description"
+      content="Luyện nói, viết, đọc tiếng Anh cùng AI với phản hồi bằng tiếng Việt"
+    />
     <!-- Canonical URL -->
     <link rel="canonical" href="https://en-vi.donghanhcungban.com/" />
     <!-- hreflang: bilingual SEO (supports both VI & EN interfaces) -->
@@ -39,77 +54,86 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" /></noscript>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    /></noscript>
   </head>
   <body>
     <div id="root"></div>
     <!-- JSON-LD Structured Data for SEO -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Gia sư tiếng Anh AI",
-      "description": "Gia sư tiếng Anh AI - Luyện nói, viết, đọc bằng AI với phản hồi chi tiết bằng tiếng Việt",
-      "url": "https://en-vi.donghanhcungban.com",
-      "applicationCategory": "EducationalApplication",
-      "inLanguage": ["vi", "en"],
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "VND"
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Gia sư tiếng Anh AI",
+        "description": "Gia sư tiếng Anh AI - Luyện nói, viết, đọc bằng AI với phản hồi chi tiết bằng tiếng Việt",
+        "url": "https://en-vi.donghanhcungban.com",
+        "applicationCategory": "EducationalApplication",
+        "inLanguage": ["vi", "en"],
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "VND"
+        }
       }
-    }
     </script>
     <!-- FAQ Schema for search result snippets -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Gia sư tiếng Anh AI có những tính năng gì?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Gia sư AI cung cấp 3 chế độ chính: (1) Chat tổng hợp - trò chuyện với AI, sửa lỗi, giải thích bằng tiếng Việt; (2) Luyện viết - chấm bài kiểu IELTS với phản hồi chi tiết; (3) Luyện nói - nói tiếng Anh, AI phản hồi bằng giọng Anh, sửa lỗi bằng giọng Việt. Cộng thêm: Học từ vựng theo lộ trình (20 từ/ngày), Lộ trình CEFR (A1→B2), Từ điển 7400+ từ, Bài học ngữ pháp."
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Gia sư tiếng Anh AI có những tính năng gì?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Gia sư AI cung cấp 3 chế độ chính: (1) Chat tổng hợp - trò chuyện với AI, sửa lỗi, giải thích bằng tiếng Việt; (2) Luyện viết - chấm bài kiểu IELTS với phản hồi chi tiết; (3) Luyện nói - nói tiếng Anh, AI phản hồi bằng giọng Anh, sửa lỗi bằng giọng Việt. Cộng thêm: Học từ vựng theo lộ trình (20 từ/ngày), Lộ trình CEFR (A1→B2), Từ điển 7400+ từ, Bài học ngữ pháp."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Có bao nhiêu lượt dùng mỗi ngày?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Gói Free: 5 lượt chat + 5 lượt nói + 3 lượt viết/ngày. Gói Pro: unlimited. Lượt dùng reset mỗi ngày 00:00 UTC+7."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Có hỗ trợ ngoại ngữ nào khác ngoài tiếng Anh không?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Hiện tại chỉ hỗ trợ tiếng Anh và tiếng Việt. Người Việt có thể học tiếng Anh (chiều A) hoặc người nước ngoài có thể học tiếng Việt qua tiếng Anh (chiều B)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Có cần đăng nhập không?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Có. Bạn cần đăng nhập bằng email để theo dõi tiến độ, lưu lịch sử, và quản lý gói cước. Đăng nhập hoàn toàn miễn phí qua Supabase Auth."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Dữ liệu của tôi an toàn như thế nào?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Dữ liệu được lưu trên Supabase (PostgreSQL) với Row-Level Security (RLS). Chat, viết, nói, và thống kê lượt dùng được mã hóa và chỉ bạn mới có quyền truy cập. Audio được cache mã hóa AES-256-GCM."
+            }
           }
-        },
-        {
-          "@type": "Question",
-          "name": "Có bao nhiêu lượt dùng mỗi ngày?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Gói Free: 5 lượt chat + 5 lượt nói + 3 lượt viết/ngày. Gói Pro: unlimited. Lượt dùng reset mỗi ngày 00:00 UTC+7."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Có hỗ trợ ngoại ngữ nào khác ngoài tiếng Anh không?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Hiện tại chỉ hỗ trợ tiếng Anh và tiếng Việt. Người Việt có thể học tiếng Anh (chiều A) hoặc người nước ngoài có thể học tiếng Việt qua tiếng Anh (chiều B)."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Có cần đăng nhập không?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Có. Bạn cần đăng nhập bằng email để theo dõi tiến độ, lưu lịch sử, và quản lý gói cước. Đăng nhập hoàn toàn miễn phí qua Supabase Auth."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Dữ liệu của tôi an toàn như thế nào?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Dữ liệu được lưu trên Supabase (PostgreSQL) với Row-Level Security (RLS). Chat, viết, nói, và thống kê lượt dùng được mã hóa và chỉ bạn mới có quyền truy cập. Audio được cache mã hóa AES-256-GCM."
-          }
-        }
-      ]
-    }
+        ]
+      }
     </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>

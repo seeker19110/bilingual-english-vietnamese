@@ -32,6 +32,7 @@ bash scripts/deploy.sh
 ```
 
 Điều kiện:
+
 - Có SSH key setup hoặc password SSH
 - Node.js v22+
 
@@ -44,6 +45,7 @@ GitHub Actions sẽ auto deploy khi push lên `main`.
 ### Setup:
 
 1. **Tạo SSH key trên VPS:**
+
 ```bash
 ssh-keygen -t ed25519 -f /root/.ssh/github-deploy -N ""
 cat /root/.ssh/github-deploy.pub >> /root/.ssh/authorized_keys
@@ -57,6 +59,7 @@ cat /root/.ssh/github-deploy.pub >> /root/.ssh/authorized_keys
      - `VPS_SSH_KEY`: (nội dung file `/root/.ssh/github-deploy`)
 
 3. **Push code lên main:**
+
 ```bash
 git push origin main
 ```
@@ -68,23 +71,27 @@ GitHub Actions sẽ tự động deploy! ✅
 ## Troubleshooting
 
 ### 502 Bad Gateway
+
 - Check: `pm2 logs english-tutor --lines 50`
 - Nếu lỗi `compression not found`: `npm install`
 - Nếu lỗi build: `npm run build` check error message
 
 ### Port 3001 đang dùng
+
 ```bash
 lsof -i :3001
 kill -9 <PID>
 ```
 
 ### PM2 không restart
+
 ```bash
 pm2 delete english-tutor
 pm2 start ecosystem.config.cjs --name english-tutor
 ```
 
 ### Clear cache
+
 ```bash
 cd /var/www/english-tutor
 rm -rf dist node_modules
@@ -98,11 +105,13 @@ pm2 restart english-tutor
 ## Deploy Status
 
 Xem logs realtime:
+
 ```bash
 pm2 logs english-tutor -f
 ```
 
 Health check:
+
 ```bash
 curl http://localhost:3001/api/health
 ```

@@ -4,13 +4,13 @@
 > (2026-06-29)** và file drop-in (nếu có). Bật mục nào tùy nhu cầu dự án (KHUNG 3 PHẦN A sẽ nhắc bạn quyết).
 > Chạy theo nguyên tắc research-first: **xác minh lại phiên bản** khi khởi tạo.
 
-| Năng lực | Gói (phiên bản 2026-06-29) | File drop-in kèm theo |
-|----------|----------------------------|------------------------|
-| Đa ngôn ngữ (i18n) | `next-intl` 4.x | `i18n/request.ts`, `messages/*.json` |
-| PWA / offline | `@serwist/next` 9.x + `serwist` | `app/sw.ts`, `app/manifest.ts` |
-| Theo dõi lỗi | `@sentry/nextjs` 10.x | (tạo bằng wizard) |
-| SEO | (Next có sẵn) | `app/sitemap.ts`, `app/robots.ts` |
-| Trang lỗi thân thiện | (Next có sẵn) | `app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx` |
+| Năng lực             | Gói (phiên bản 2026-06-29)      | File drop-in kèm theo                                        |
+| -------------------- | ------------------------------- | ------------------------------------------------------------ |
+| Đa ngôn ngữ (i18n)   | `next-intl` 4.x                 | `i18n/request.ts`, `messages/*.json`                         |
+| PWA / offline        | `@serwist/next` 9.x + `serwist` | `app/sw.ts`, `app/manifest.ts`                               |
+| Theo dõi lỗi         | `@sentry/nextjs` 10.x           | (tạo bằng wizard)                                            |
+| SEO                  | (Next có sẵn)                   | `app/sitemap.ts`, `app/robots.ts`                            |
+| Trang lỗi thân thiện | (Next có sẵn)                   | `app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx` |
 
 ---
 
@@ -28,27 +28,28 @@ Thông điệp ở `messages/vi.json`, `messages/en.json` (đã kèm).
 **Bọc Provider ở `app/layout.tsx`:**
 
 ```tsx
-import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl'
+import { getLocale, getMessages } from 'next-intl/server'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = await getLocale();
-  const messages = await getMessages();
+  const locale = await getLocale()
+  const messages = await getMessages()
   return (
     <html lang={locale} data-theme="dark" suppressHydrationWarning>
       <body>
         <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
       </body>
     </html>
-  );
+  )
 }
 ```
 
 **Dùng trong component:**
+
 ```tsx
-import { useTranslations } from 'next-intl';
-const t = useTranslations('home');
-return <h1>{t('title')}</h1>;
+import { useTranslations } from 'next-intl'
+const t = useTranslations('home')
+return <h1>{t('title')}</h1>
 ```
 
 **Đổi ngôn ngữ:** đặt cookie `locale` (qua server action) rồi `router.refresh()`. Định dạng ngày/số/tiền
@@ -82,6 +83,7 @@ npx @sentry/wizard@latest -i nextjs
 
 Wizard sẽ tạo/sửa: `instrumentation.ts`, `instrumentation-client.ts`, cấu hình server/edge, và **bọc
 `next.config` bằng `withSentryConfig`**. Sau khi cài:
+
 - [ ] Đặt `SENTRY_DSN` qua biến môi trường (đã khai trong `lib/env.ts` + `.env.example`) — không hard-code.
 - [ ] `environment: process.env.NODE_ENV` để tách lỗi dev/staging/prod.
 - [ ] Lọc dữ liệu nhạy cảm trong `beforeSend` (đừng gửi token/PII).
@@ -112,28 +114,28 @@ Không phơi chi tiết kỹ thuật ra người dùng; log để theo dõi. Dù
 create-next-app tạo sẵn `next.config.ts` — **sửa** nó để bọc các plugin bạn dùng (bỏ plugin không cần):
 
 ```ts
-import type { NextConfig } from 'next';
-import createNextIntlPlugin from 'next-intl/plugin';
-import withSerwistInit from '@serwist/next';
-import { withSentryConfig } from '@sentry/nextjs';
+import type { NextConfig } from 'next'
+import createNextIntlPlugin from 'next-intl/plugin'
+import withSerwistInit from '@serwist/next'
+import { withSentryConfig } from '@sentry/nextjs'
 
-const withNextIntl = createNextIntlPlugin();
+const withNextIntl = createNextIntlPlugin()
 
 const withSerwist = withSerwistInit({
   swSrc: 'app/sw.ts',
   swDest: 'public/sw.js',
   disable: process.env.NODE_ENV === 'development',
-});
+})
 
 const nextConfig: NextConfig = {
   // cấu hình Next của bạn ở đây
-};
+}
 
 // Thứ tự bọc: Sentry ngoài cùng. Bỏ lớp nào không dùng.
 export default withSentryConfig(withSerwist(withNextIntl(nextConfig)), {
   silent: !process.env.CI,
   // org/project: đặt qua biến môi trường hoặc để wizard điền.
-});
+})
 ```
 
 > Nếu chỉ dùng một phần (vd chỉ i18n), chỉ bọc lớp đó: `export default withNextIntl(nextConfig);`.

@@ -8,7 +8,9 @@ function reqWithOrigin(origin: string | null): Request {
 
 describe('getCorsHeaders (H10 — CORS)', () => {
   const OLD = process.env.ALLOWED_ORIGINS
-  afterEach(() => { process.env.ALLOWED_ORIGINS = OLD })
+  afterEach(() => {
+    process.env.ALLOWED_ORIGINS = OLD
+  })
 
   it('không cấu hình ALLOWED_ORIGINS → "*", KHÔNG kèm credentials', () => {
     delete process.env.ALLOWED_ORIGINS

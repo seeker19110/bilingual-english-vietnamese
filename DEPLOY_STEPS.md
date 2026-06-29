@@ -7,9 +7,11 @@
 ## 📌 Tóm tắt nhanh
 
 ### Deploy lần 1 (Setup toàn bộ)
+
 Xem **`docs/deploy-vps-ubuntu.md`** (8 bước chính).
 
 ### Deploy lần 2+ (Cập nhật code)
+
 ```bash
 ./scripts/deploy.sh
 ```
@@ -19,15 +21,18 @@ Xem **`docs/deploy-vps-ubuntu.md`** (8 bước chính).
 ## 🚀 Deploy Lần 1: Setup VPS từ đầu (8 bước)
 
 ### Bước 0️⃣ Chuẩn bị Supabase
+
 - Tạo bảng database (copy `supabase/schema.sql` vào Supabase SQL Editor)
 - Lấy 3 key: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
 
 ### Bước 1️⃣ Bật Firewall
+
 ```bash
 sudo ufw allow OpenSSH && sudo ufw allow 'Nginx Full' && sudo ufw enable
 ```
 
 ### Bước 2️⃣ Cài Node.js 22
+
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt-get install -y nodejs
@@ -35,6 +40,7 @@ node -v   # phải là v22.x.x
 ```
 
 ### Bước 3️⃣ Cài Nginx + PM2
+
 ```bash
 sudo apt update && sudo apt install -y nginx
 npm install -g pm2
@@ -42,6 +48,7 @@ pm2 install pm2-logrotate
 ```
 
 ### Bước 4️⃣ Clone code + Setup `.env`
+
 ```bash
 cd /var/www
 git clone https://github.com/seeker19110/bilingual-english-vietnamese.git english-tutor
@@ -57,6 +64,7 @@ npm install && npm run build
 ```
 
 **Kiểm tra `.env` có đủ:**
+
 - ✅ `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` (frontend)
 - ✅ `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` (server)
 - ✅ `ANTHROPIC_API_KEY` hoặc model khác (AI)
@@ -67,6 +75,7 @@ npm install && npm run build
 - ✅ `PORT=3001` (hoặc port trống khác nếu 3001 đã bị dùng)
 
 ### Bước 5️⃣ Cấu hình PM2
+
 ```bash
 nano ecosystem.config.cjs
 # Đảm bảo: interpreter: '/usr/bin/node' (lấy bằng: which node)
@@ -74,6 +83,7 @@ nano ecosystem.config.cjs
 ```
 
 ### Bước 6️⃣ Start app + tự khởi động
+
 ```bash
 pm2 start ecosystem.config.cjs
 pm2 startup
@@ -82,6 +92,7 @@ pm2 status   # phải là "online"
 ```
 
 ### Bước 7️⃣ Nginx Reverse Proxy + HTTPS
+
 ```bash
 sudo nano /etc/nginx/sites-available/en-vi
 # (Dán config — xem docs/deploy-vps-ubuntu.md)
@@ -94,6 +105,7 @@ sudo certbot --nginx -d en-vi.donghanhcungban.com
 ```
 
 ### Bước 8️⃣ Pre-cache Audio (tuỳ chọn, nhưng khuyên làm)
+
 ```bash
 npm run seed:pronunciation
 BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
@@ -106,11 +118,13 @@ BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
 ## 🔄 Deploy Lần 2+ (Cập nhật code từ GitHub)
 
 ### Cách nhanh nhất:
+
 ```bash
 ./scripts/deploy.sh
 ```
 
 ### Hoặc chạy từng lệnh:
+
 ```bash
 ssh root@160.30.172.203
 
@@ -128,13 +142,13 @@ curl https://en-vi.donghanhcungban.com/api/health
 
 ## 🛠️ Troubleshooting
 
-| Vấn đề | Giải pháp |
-|---|---|
-| App không start | `pm2 logs english-tutor` — xem chi tiết error |
-| Nginx 502 | Kiểm tra `pm2 status` + `curl http://localhost:3001/api/health` |
-| Đăng nhập lỗi | Kiểm tra `.env` có đủ key Supabase không; reload: `pm2 restart english-tutor --update-env` |
-| Audio không phát | Kiểm tra `ls /var/www/english-tutor/uploads/tts-cache/` có file không |
-| SSL lỗi | `sudo certbot renew --dry-run` |
+| Vấn đề           | Giải pháp                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| App không start  | `pm2 logs english-tutor` — xem chi tiết error                                              |
+| Nginx 502        | Kiểm tra `pm2 status` + `curl http://localhost:3001/api/health`                            |
+| Đăng nhập lỗi    | Kiểm tra `.env` có đủ key Supabase không; reload: `pm2 restart english-tutor --update-env` |
+| Audio không phát | Kiểm tra `ls /var/www/english-tutor/uploads/tts-cache/` có file không                      |
+| SSL lỗi          | `sudo certbot renew --dry-run`                                                             |
 
 ---
 

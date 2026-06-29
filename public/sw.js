@@ -5,8 +5,8 @@
 //    mỗi lần deploy → 15MB tải dần (xem src/lib/dataPrecache.ts) không phải tải lại.
 //  - /data/manifest.json: LUÔN ưu tiên mạng (để client phát hiện bản mới), fallback cache.
 //  - Điều hướng trang (HTML) và API (/api/...): luôn ưu tiên mạng.
-const SHELL_CACHE = 'gia-su-shell-v2'  // bump khi đổi chiến lược cache app-shell
-const DATA_CACHE = 'gia-su-data'        // tên ỔN ĐỊNH — phải khớp src/lib/dataPrecache.ts
+const SHELL_CACHE = 'gia-su-shell-v2' // bump khi đổi chiến lược cache app-shell
+const DATA_CACHE = 'gia-su-data' // tên ỔN ĐỊNH — phải khớp src/lib/dataPrecache.ts
 const KEEP = [SHELL_CACHE, DATA_CACHE]
 
 // Khi cài bản mới: kích hoạt ngay, không chờ tab cũ đóng.
@@ -15,8 +15,11 @@ self.addEventListener('install', () => self.skipWaiting())
 // Khi kích hoạt: xoá cache CŨ (GIỮ lại DATA_CACHE bền) rồi giành quyền điều khiển mọi tab.
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => !KEEP.includes(k)).map((k) => caches.delete(k))))
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(keys.filter((k) => !KEEP.includes(k)).map((k) => caches.delete(k))),
+      )
       .then(() => self.clients.claim()),
   )
 })
@@ -51,7 +54,13 @@ self.addEventListener('fetch', (event) => {
   if (url.pathname === '/data/manifest.json') {
     event.respondWith(
       fetch(request).catch(() =>
-        caches.match(request).then((r) => r || new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } }))
+        caches
+          .match(request)
+          .then(
+            (r) =>
+              r ||
+              new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } }),
+          ),
       ),
     )
     return
@@ -61,7 +70,13 @@ self.addEventListener('fetch', (event) => {
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request).catch(() =>
-        caches.match(request).then((r) => r || caches.match('/').then((root) => root || new Response('Offline', { status: 503 })))
+        caches
+          .match(request)
+          .then(
+            (r) =>
+              r ||
+              caches.match('/').then((root) => root || new Response('Offline', { status: 503 })),
+          ),
       ),
     )
     return
@@ -81,9 +96,9 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {}
   const title = data.title || 'AI Gia sư tiếng Anh'
-  const body  = data.body  || 'Đừng quên luyện tập hôm nay nhé! 🔥'
-  const icon  = data.icon  || '/favicon.ico'
-  const url   = data.url   || '/'
+  const body = data.body || 'Đừng quên luyện tập hôm nay nhé! 🔥'
+  const icon = data.icon || '/favicon.ico'
+  const url = data.url || '/'
 
   event.waitUntil(
     self.registration.showNotification(title, {
@@ -91,9 +106,9 @@ self.addEventListener('push', (event) => {
       icon,
       badge: icon,
       data: { url },
-      tag: 'daily-reminder',   // ghi đè notification cũ nếu chưa đọc
+      tag: 'daily-reminder', // ghi đè notification cũ nếu chưa đọc
       renotify: false,
-    })
+    }),
   )
 })
 
@@ -101,11 +116,11 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close()
   const url = event.notification.data?.url || '/'
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
       for (const client of list) {
         if (client.url.includes(url) && 'focus' in client) return client.focus()
       }
       if (clients.openWindow) return clients.openWindow(url)
-    })
+    }),
   )
 })

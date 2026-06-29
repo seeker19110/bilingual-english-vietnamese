@@ -26,7 +26,9 @@ function getMasterKeyBytes(): Uint8Array {
   }
   const bytes = base64ToBytes(b64)
   if (bytes.length !== 32) {
-    throw new Error('TTS_ENCRYPTION_MASTER_KEY phải là khoá 32 byte dạng base64 — tạo lại bằng lệnh trong .env.example')
+    throw new Error(
+      'TTS_ENCRYPTION_MASTER_KEY phải là khoá 32 byte dạng base64 — tạo lại bằng lệnh trong .env.example',
+    )
   }
   return bytes
 }
@@ -34,7 +36,11 @@ function getMasterKeyBytes(): Uint8Array {
 // HMAC-SHA256(key, message) — dùng Web Crypto, có sẵn trên Edge Runtime.
 async function hmacSha256(keyBytes: Uint8Array, message: string): Promise<Uint8Array> {
   const cryptoKey = await crypto.subtle.importKey(
-    'raw', keyBytes as BufferSource, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'],
+    'raw',
+    keyBytes as BufferSource,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
   )
   const sig = await crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(message))
   return new Uint8Array(sig)
@@ -52,20 +58,26 @@ async function deriveKeyAndIv(hash: string): Promise<{ keyBytes: Uint8Array; iv:
 // Mã hóa bytes audio (mp3 gốc) → ciphertext để upload lên Storage.
 export async function encryptAudio(plain: ArrayBuffer, hash: string): Promise<ArrayBuffer> {
   const { keyBytes, iv } = await deriveKeyAndIv(hash)
-  const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, ['encrypt'])
+  const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, [
+    'encrypt',
+  ])
   return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv as BufferSource }, key, plain)
 }
 
 // Giải mã ciphertext audio → bytes mp3 gốc (dùng khi remap cache sang hash mới).
 export async function decryptAudio(cipher: ArrayBuffer, hash: string): Promise<ArrayBuffer> {
   const { keyBytes, iv } = await deriveKeyAndIv(hash)
-  const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, ['decrypt'])
+  const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, [
+    'decrypt',
+  ])
   return crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv as BufferSource }, key, cipher)
 }
 
 // Khoá + iv dạng base64 để gửi cho client giải mã — CHỈ gọi sau khi validateAuth() (security.ts)
 // đã xác nhận request có JWT hợp lệ, tránh phát khoá cho người chưa đăng nhập.
-export async function getClientKeyMaterial(hash: string): Promise<{ key_b64: string; iv_b64: string }> {
+export async function getClientKeyMaterial(
+  hash: string,
+): Promise<{ key_b64: string; iv_b64: string }> {
   const { keyBytes, iv } = await deriveKeyAndIv(hash)
   return { key_b64: bytesToBase64(keyBytes), iv_b64: bytesToBase64(iv) }
 }
@@ -80,6 +92,6 @@ function base64ToBytes(b64: string): Uint8Array {
 
 function bytesToBase64(bytes: Uint8Array): string {
   let binary = ''
-  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]!) // i < length nên có
   return btoa(binary)
 }

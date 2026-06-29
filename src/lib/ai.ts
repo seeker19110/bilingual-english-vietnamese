@@ -15,7 +15,7 @@ interface ClaudeMessage {
 async function getAuthHeader(): Promise<Record<string, string>> {
   const { data } = await supabase.auth.getSession()
   const token = data.session?.access_token
-  return token ? { 'Authorization': `Bearer ${token}` } : {}
+  return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 // mode: cho server biết đây là lượt chat / viết / nói để đếm đúng cột giới hạn.
@@ -38,10 +38,12 @@ export async function callClaude(
 
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}))
-    throw new Error((err as { error?: { message?: string } }).error?.message ?? `Lỗi API: ${resp.status}`)
+    throw new Error(
+      (err as { error?: { message?: string } }).error?.message ?? `Lỗi API: ${resp.status}`,
+    )
   }
 
-  const data = await resp.json() as unknown
+  const data = (await resp.json()) as unknown
   if (!data || typeof data !== 'object' || !('content' in data)) {
     throw new Error('Invalid API response: missing content')
   }
@@ -59,7 +61,12 @@ export async function callClaude(
 // Trích xuất JSON từ câu trả lời (AI đôi khi bọc thêm markdown ```)
 export function parseJson<T>(text: string): T | null {
   try {
-    const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
+    const cleaned = text
+      .replace(/^```(?:json)?\s*/i, '')
+      .replace(/\s*```$/, '')
+      .trim()
     return JSON.parse(cleaned) as T
-  } catch { return null }
+  } catch {
+    return null
+  }
 }

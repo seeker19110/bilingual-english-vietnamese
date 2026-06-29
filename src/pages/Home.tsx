@@ -1,6 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, PenLine, Mic, ChevronRight, BookOpen, GraduationCap, MessagesSquare, ArrowLeftRight, History, Target, TrendingUp } from 'lucide-react'
+import {
+  MessageCircle,
+  PenLine,
+  Mic,
+  ChevronRight,
+  BookOpen,
+  GraduationCap,
+  MessagesSquare,
+  ArrowLeftRight,
+  History,
+  Target,
+  TrendingUp,
+} from 'lucide-react'
 import Layout from '../components/Layout'
 import { getStreak, getDirection, setDirection } from '../lib/storage'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
@@ -19,9 +31,12 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       gradient: 'from-amber-500 to-orange-400',
       glow: 'shadow-amber-500/20',
       ring: 'hover:border-amber-500/40',
-      tag: { label: T.tagUnlimited, cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20' },
+      tag: {
+        label: T.tagUnlimited,
+        cls: 'bg-amber-500/15 text-amber-300 border border-amber-500/20',
+      },
       title: isA ? T.dictTitleA : T.dictTitleB,
-      desc:  isA ? T.dictDescA  : T.dictDescB,
+      desc: isA ? T.dictDescA : T.dictDescB,
     },
     {
       path: '/learning-path',
@@ -29,7 +44,10 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       gradient: 'from-lime-500 to-green-400',
       glow: 'shadow-lime-500/20',
       ring: 'hover:border-lime-500/40',
-      tag: { label: isA ? '20 từ/ngày' : '20/day', cls: 'bg-lime-500/15 text-lime-300 border border-lime-500/20' },
+      tag: {
+        label: isA ? '20 từ/ngày' : '20/day',
+        cls: 'bg-lime-500/15 text-lime-300 border border-lime-500/20',
+      },
       title: isA ? 'Học theo lộ trình' : 'Learning Path',
       desc: isA
         ? 'Bắt đầu từ chữ cái, số... mỗi ngày 20 từ mới theo vòng tròn liên quan, kèm câu thông dụng.'
@@ -43,7 +61,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       ring: 'hover:border-rose-500/40',
       tag: { label: T.tagUnlimited, cls: 'bg-rose-500/15 text-rose-300 border border-rose-500/20' },
       title: isA ? T.lessonsTitleA : T.lessonsTitleB,
-      desc:  isA ? T.lessonsDescA  : T.lessonsDescB,
+      desc: isA ? T.lessonsDescA : T.lessonsDescB,
     },
     {
       path: '/phrases',
@@ -53,7 +71,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       ring: 'hover:border-teal-500/40',
       tag: { label: T.tagUnlimited, cls: 'bg-teal-500/15 text-teal-300 border border-teal-500/20' },
       title: isA ? T.phrasesTitleA : T.phrasesTitleB,
-      desc:  isA ? T.phrasesDescA  : T.phrasesDescB,
+      desc: isA ? T.phrasesDescA : T.phrasesDescB,
     },
     {
       path: '/chat',
@@ -61,9 +79,12 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       gradient: 'from-accent-500 to-accent-400',
       glow: 'shadow-accent-500/20',
       ring: 'hover:border-accent-500/40',
-      tag: { label: T.tagPopular, cls: 'bg-accent-500/15 text-accent-300 border border-accent-500/20' },
+      tag: {
+        label: T.tagPopular,
+        cls: 'bg-accent-500/15 text-accent-300 border border-accent-500/20',
+      },
       title: isA ? T.chatTitleA : T.chatTitleB,
-      desc:  isA ? T.chatDescA  : T.chatDescB,
+      desc: isA ? T.chatDescA : T.chatDescB,
     },
     {
       path: '/speaking',
@@ -73,7 +94,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       ring: 'hover:border-sky-500/40',
       tag: { label: T.tagKeyFeature, cls: 'bg-sky-500/15 text-sky-300 border border-sky-500/20' },
       title: isA ? T.speakTitleA : T.speakTitleB,
-      desc:  isA ? T.speakDescA  : T.speakDescB,
+      desc: isA ? T.speakDescA : T.speakDescB,
     },
     {
       path: '/writing',
@@ -83,7 +104,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       ring: 'hover:border-violet-500/40',
       tag: { label: 'IELTS', cls: 'bg-violet-500/15 text-violet-300 border border-violet-500/20' },
       title: isA ? T.writeTitleA : T.writeTitleB,
-      desc:  isA ? T.writeDescA  : T.writeDescB,
+      desc: isA ? T.writeDescA : T.writeDescB,
     },
   ]
 }
@@ -92,10 +113,10 @@ export default function Home() {
   const nav = useNavigate()
   const { user } = useAuth()
   const { T, setLang } = useLang()
-  useCloudSync(user?.id)   // kéo lượt dùng từ Supabase khi mở trang chủ
+  useCloudSync(user?.id) // kéo lượt dùng từ Supabase khi mở trang chủ
 
-  const [dir, setDir]           = useState<Direction>(getDirection)
-  const [voice, setVoice]       = useState<Voice>(getVoicePref)
+  const [dir, setDir] = useState<Direction>(getDirection)
+  const [voice, setVoice] = useState<Voice>(getVoicePref)
 
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
@@ -129,10 +150,8 @@ export default function Home() {
       <Layout title={T.greeting(firstName)} back={false} />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
-
         {/* ── Chọn chiều học + streak + giọng đọc (3 cột căn giữa) ──────────── */}
         <div className="mb-6 grid grid-cols-3 gap-3 animate-fade-in">
-
           {/* Chiều học — icon trên, text giữa, nhãn dưới, căn giữa */}
           <button
             onClick={toggleDir}
@@ -145,25 +164,35 @@ export default function Home() {
             }`}
           >
             <ArrowLeftRight className={`w-4 h-4 ${isA ? 'text-accent-400' : 'text-sky-400'}`} />
-            <span className={`text-xs font-semibold leading-none text-center ${isA ? 'text-accent-300' : 'text-sky-300'}`}>
+            <span
+              className={`text-xs font-semibold leading-none text-center ${isA ? 'text-accent-300' : 'text-sky-300'}`}
+            >
               {isA ? '🇻🇳 → 🇺🇸' : '🇺🇸 → 🇻🇳'}
             </span>
-            <span className={`text-[11px] leading-none text-center ${isA ? 'text-accent-400/60' : 'text-sky-400/60'}`}>
+            <span
+              className={`text-[11px] leading-none text-center ${isA ? 'text-accent-400/60' : 'text-sky-400/60'}`}
+            >
               {isA ? 'Ngôn ngữ' : 'Language'}
             </span>
           </button>
 
           {/* Streak — cột giữa, căn giữa hoàn toàn */}
-          <div className={`flex flex-col items-center justify-center gap-1 rounded-2xl py-3 border ${
-            streak > 0
-              ? 'bg-orange-500/10 border-orange-500/25'
-              : 'bg-zinc-900/40 border-zinc-800/40'
-          }`}>
+          <div
+            className={`flex flex-col items-center justify-center gap-1 rounded-2xl py-3 border ${
+              streak > 0
+                ? 'bg-orange-500/10 border-orange-500/25'
+                : 'bg-zinc-900/40 border-zinc-800/40'
+            }`}
+          >
             <span className="text-xl leading-none">{streak > 0 ? '🔥' : '💤'}</span>
-            <p className={`text-sm font-bold leading-none ${streak > 0 ? 'text-orange-400' : 'text-zinc-500'}`}>
+            <p
+              className={`text-sm font-bold leading-none ${streak > 0 ? 'text-orange-400' : 'text-zinc-500'}`}
+            >
               {streak}
             </p>
-            <p className={`text-[11px] leading-none ${streak > 0 ? 'text-orange-400/60' : 'text-zinc-600'}`}>
+            <p
+              className={`text-[11px] leading-none ${streak > 0 ? 'text-orange-400/60' : 'text-zinc-600'}`}
+            >
               {T.streakDays}
             </p>
           </div>
@@ -173,18 +202,17 @@ export default function Home() {
             type="button"
             onClick={toggleVoice}
             title={isA ? 'Nhấn để đổi giọng đọc' : 'Tap to switch voice'}
-            aria-label={`${isA ? 'Giọng đọc' : 'Voice'}: ${voice === 'female' ? (isA ? 'Nữ' : 'Female') : (isA ? 'Nam' : 'Male')}`}
+            aria-label={`${isA ? 'Giọng đọc' : 'Voice'}: ${voice === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'}`}
             className="flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3 border bg-zinc-900/80 border-zinc-700/60 hover:border-zinc-600 transition-all active:scale-[0.98]"
           >
             <Mic className="w-4 h-4 text-zinc-400" />
             <span className="text-xs font-semibold leading-none text-center text-zinc-200">
-              {voice === 'female' ? (isA ? 'Nữ' : 'Female') : (isA ? 'Nam' : 'Male')}
+              {voice === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'}
             </span>
             <span className="text-[11px] leading-none text-center text-zinc-500">
               {isA ? 'Giọng đọc' : 'Voice'}
             </span>
           </button>
-
         </div>
 
         {/* ── Mode cards ────────────────────────────────────────────────── */}
@@ -192,19 +220,25 @@ export default function Home() {
           {MODES.map((m, i) => {
             const Icon = m.icon
             return (
-              <button key={m.path} onClick={() => nav(m.path)}
+              <button
+                key={m.path}
+                onClick={() => nav(m.path)}
                 aria-label={`${m.title}. ${m.desc}`}
                 className={`w-full bg-zinc-900/80 border border-zinc-800/80 ${m.ring} rounded-2xl p-4 text-left flex items-center gap-4 transition-all duration-200 group hover:bg-zinc-800/60 active:scale-[0.99] animate-fade-up`}
-                style={{ animationDelay: `${100 + i * 60}ms` }}>
-
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${m.gradient} flex items-center justify-center shrink-0 shadow-lg ${m.glow} transition-transform group-hover:scale-105`}>
+                style={{ animationDelay: `${100 + i * 60}ms` }}
+              >
+                <div
+                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${m.gradient} flex items-center justify-center shrink-0 shadow-lg ${m.glow} transition-transform group-hover:scale-105`}
+                >
                   <Icon className="w-6 h-6 text-white" />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="font-semibold text-white text-[15px]">{m.title}</p>
-                    <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}>
+                    <span
+                      className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}
+                    >
                       {m.tag.label}
                     </span>
                   </div>
@@ -220,9 +254,11 @@ export default function Home() {
         {/* ── Tiến độ + Lịch sử học ──────────────────────────────────── */}
         <div className="grid grid-cols-2 gap-2 mt-4">
           {/* Bảng tiến độ: streak, từ đã thuộc, % CEFR, lượt còn lại */}
-          <button onClick={() => nav('/progress')}
+          <button
+            onClick={() => nav('/progress')}
             aria-label={isA ? 'Xem bảng tiến độ' : 'View progress dashboard'}
-            className="bg-zinc-900/60 border border-zinc-800/60 hover:border-accent-500/40 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in">
+            className="bg-zinc-900/60 border border-zinc-800/60 hover:border-accent-500/40 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in"
+          >
             <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-accent-500/15 flex items-center justify-center shrink-0 transition">
               <TrendingUp className="w-4 h-4 text-accent-400" />
             </div>
@@ -232,9 +268,11 @@ export default function Home() {
           </button>
 
           {/* Lịch sử học */}
-          <button onClick={() => nav('/history')}
+          <button
+            onClick={() => nav('/history')}
             aria-label={isA ? 'Xem lịch sử học' : 'View learning history'}
-            className="bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in">
+            className="bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in"
+          >
             <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
               <History className="w-4 h-4 text-zinc-400" />
             </div>
@@ -250,14 +288,20 @@ export default function Home() {
           {T.tipBody(
             `<strong class="text-teal-400">${T.tipPhrases}</strong>`,
             `<strong class="text-sky-400">${T.tipSpeaking}</strong>`,
-          ).split(/(<strong[^>]*>.*?<\/strong>)/g).map((part, idx) => {
-            if (part.startsWith('<strong')) {
-              const color = part.includes('teal') ? 'text-teal-400' : 'text-sky-400'
-              const text = part.replace(/<[^>]+>/g, '')
-              return <strong key={idx} className={color}>{text}</strong>
-            }
-            return part
-          })}
+          )
+            .split(/(<strong[^>]*>.*?<\/strong>)/g)
+            .map((part, idx) => {
+              if (part.startsWith('<strong')) {
+                const color = part.includes('teal') ? 'text-teal-400' : 'text-sky-400'
+                const text = part.replace(/<[^>]+>/g, '')
+                return (
+                  <strong key={idx} className={color}>
+                    {text}
+                  </strong>
+                )
+              }
+              return part
+            })}
         </div>
       </main>
     </div>

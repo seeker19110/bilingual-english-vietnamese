@@ -2,8 +2,8 @@
 import { useState, useEffect, useRef } from 'react'
 
 interface UseApiThrottleOptions {
-  delayMs?: number  // Khoảng thời gian giữa các lần gọi (mặc định: 10000ms = 10s)
-  onCountdown?: (remaining: number) => void  // Callback mỗi khi countdown thay đổi
+  delayMs?: number // Khoảng thời gian giữa các lần gọi (mặc định: 10000ms = 10s)
+  onCountdown?: (remaining: number) => void // Callback mỗi khi countdown thay đổi
 }
 
 export function useApiThrottle(options: UseApiThrottleOptions = {}) {
@@ -60,8 +60,8 @@ export function useApiThrottle(options: UseApiThrottleOptions = {}) {
 
   return {
     isThrottled,
-    countdown,  // Số giây còn lại
-    throttle,   // Gọi để bắt đầu throttle
-    reset,      // Gọi để reset throttle
+    countdown, // Số giây còn lại
+    throttle, // Gọi để bắt đầu throttle
+    reset, // Gọi để reset throttle
   }
 }

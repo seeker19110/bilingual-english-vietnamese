@@ -3,6 +3,7 @@
 > Dành cho những lần deploy sau khi đã setup VPS lần đầu. Nếu setup lần đầu, xem **`docs/deploy-vps-ubuntu.md`**.
 
 ## 📋 Thông tin VPS
+
 - **Server:** `en-vi.donghanhcungban.com` (160.30.172.203)
 - **Port app:** 3001
 - **Thư mục:** `/var/www/english-tutor`
@@ -20,6 +21,7 @@ ssh root@160.30.172.203
 ```
 
 Script sẽ:
+
 1. Pull code mới từ GitHub
 2. Cài thư viện (nếu `package.json` đổi)
 3. Build frontend
@@ -57,17 +59,20 @@ curl https://en-vi.donghanhcungban.com/api/health
 ## 🔧 Nếu có lỗi
 
 ### App không start
+
 ```bash
 pm2 logs english-tutor --lines 50
 ```
 
 ### Nginx 502
+
 ```bash
 pm2 status
 curl http://localhost:3001/api/health
 ```
 
 ### Đăng nhập lỗi
+
 ```bash
 # Kiểm tra .env đủ key không
 grep -E "^VITE_SUPABASE|^SUPABASE_URL|^ANTHROPIC_API_KEY" .env

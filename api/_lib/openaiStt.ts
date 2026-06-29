@@ -76,11 +76,15 @@ export async function transcribeAudio(
   form.append('language', lang)
   form.append('response_format', 'json')
 
-  const resp = await fetchWithTimeout(provider.url, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${provider.apiKey}` },
-    body: form,
-  }, STT_TIMEOUT_MS)
+  const resp = await fetchWithTimeout(
+    provider.url,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${provider.apiKey}` },
+      body: form,
+    },
+    STT_TIMEOUT_MS,
+  )
 
   if (!resp.ok) {
     const detail = await resp.text().catch(() => '')

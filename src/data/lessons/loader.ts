@@ -47,7 +47,9 @@ export function loadIndex(): Promise<LessonMeta[]> {
 // Xuất INDEX để tương thích ngược với code cũ dùng `import { INDEX }`.
 // Giá trị này là mảng rỗng cho đến khi loadIndex() resolve.
 export const INDEX: LessonMeta[] = []
-loadIndex().then((d) => { INDEX.splice(0, INDEX.length, ...d) })
+loadIndex().then((d) => {
+  INDEX.splice(0, INDEX.length, ...d)
+})
 
 const cache = new Map<number, Lesson[]>()
 

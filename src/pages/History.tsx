@@ -15,32 +15,51 @@ import type { ChatSession, WritingSubmission, SpeakingSession } from '../types'
 
 function formatDate(ts: number) {
   return new Date(ts).toLocaleDateString('vi-VN', {
-    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   })
 }
 
 function levelLabel(level: string) {
-  return LEVELS.find(l => l.value === level)?.labelA ?? level
+  return LEVELS.find((l) => l.value === level)?.labelA ?? level
 }
 
 // ── Tab button ───────────────────────────────────────────────────────────────
 
-function Tab({ active, onClick, icon: Icon, label, count }: {
-  active: boolean; onClick: () => void
-  icon: React.ElementType; label: string; count: number
+function Tab({
+  active,
+  onClick,
+  icon: Icon,
+  label,
+  count,
+}: {
+  active: boolean
+  onClick: () => void
+  icon: React.ElementType
+  label: string
+  count: number
 }) {
   return (
-    <button onClick={onClick}
+    <button
+      onClick={onClick}
       className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition border ${
         active
           ? 'bg-zinc-800 border-zinc-700 text-white'
           : 'border-transparent text-zinc-400 hover:text-zinc-300 hover:bg-zinc-800/50'
-      }`}>
+      }`}
+    >
       <Icon className="w-4 h-4" />
       {label}
-      <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
-        active ? 'bg-zinc-700 text-zinc-300' : 'bg-zinc-800 text-zinc-400'
-      }`}>{count}</span>
+      <span
+        className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
+          active ? 'bg-zinc-700 text-zinc-300' : 'bg-zinc-800 text-zinc-400'
+        }`}
+      >
+        {count}
+      </span>
     </button>
   )
 }
@@ -51,12 +70,14 @@ function ChatCard({ s }: { s: ChatSession }) {
   const [open, setOpen] = useState(false)
   const dir = getDirection()
   const label = situationLabel(s.situation, dir)
-  const userMsgs = s.messages.filter(m => m.role === 'user').length
+  const userMsgs = s.messages.filter((m) => m.role === 'user').length
 
   return (
     <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl overflow-hidden">
-      <button onClick={() => setOpen(o => !o)}
-        className="w-full px-4 py-3.5 flex items-center gap-3 text-left hover:bg-zinc-800/40 transition">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full px-4 py-3.5 flex items-center gap-3 text-left hover:bg-zinc-800/40 transition"
+      >
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center shrink-0">
           <MessageCircle className="w-5 h-5 text-white" />
         </div>
@@ -66,18 +87,27 @@ function ChatCard({ s }: { s: ChatSession }) {
             {levelLabel(s.level)} · {userMsgs} lượt nói · {formatDate(s.createdAt)}
           </p>
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-zinc-400" /> : <ChevronDown className="w-4 h-4 text-zinc-400" />}
+        {open ? (
+          <ChevronUp className="w-4 h-4 text-zinc-400" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-zinc-400" />
+        )}
       </button>
 
       {open && (
         <div className="border-t border-zinc-800/60 px-4 py-3 space-y-2 max-h-72 overflow-y-auto">
-          {s.messages.map(m => (
-            <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
-                m.role === 'user'
-                  ? 'bg-accent-600/20 border border-accent-500/20 text-accent-100'
-                  : 'bg-zinc-800/80 text-zinc-200'
-              }`}>
+          {s.messages.map((m) => (
+            <div
+              key={m.id}
+              className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed ${
+                  m.role === 'user'
+                    ? 'bg-accent-600/20 border border-accent-500/20 text-accent-100'
+                    : 'bg-zinc-800/80 text-zinc-200'
+                }`}
+              >
                 {/* Nếu là assistant có speechEn thì hiển thị phần hội thoại */}
                 {m.role === 'assistant' && m.speechEn ? m.speechEn : m.content}
               </div>
@@ -92,7 +122,13 @@ function ChatCard({ s }: { s: ChatSession }) {
 // ── Writing card ─────────────────────────────────────────────────────────────
 
 interface FeedbackData {
-  scores: { task_response: number; coherence: number; lexical: number; grammar: number; overall: number }
+  scores: {
+    task_response: number
+    coherence: number
+    lexical: number
+    grammar: number
+    overall: number
+  }
 }
 
 function WritingCard({ s }: { s: WritingSubmission }) {
@@ -100,23 +136,38 @@ function WritingCard({ s }: { s: WritingSubmission }) {
   const fb = s.feedback ? parseJson<FeedbackData>(s.feedback) : null
   const overall = fb?.scores?.overall
 
-  const scoreColor = overall == null ? '' : overall >= 7 ? 'text-accent-400' : overall >= 5 ? 'text-amber-400' : 'text-red-400'
+  const scoreColor =
+    overall == null
+      ? ''
+      : overall >= 7
+        ? 'text-accent-400'
+        : overall >= 5
+          ? 'text-amber-400'
+          : 'text-red-400'
 
   return (
     <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl overflow-hidden">
-      <button onClick={() => setOpen(o => !o)}
-        className="w-full px-4 py-3.5 flex items-center gap-3 text-left hover:bg-zinc-800/40 transition">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full px-4 py-3.5 flex items-center gap-3 text-left hover:bg-zinc-800/40 transition"
+      >
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center shrink-0">
           <PenLine className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-white text-sm line-clamp-1">{s.essayPrompt || 'Bài viết tự do'}</p>
+          <p className="font-medium text-white text-sm line-clamp-1">
+            {s.essayPrompt || 'Bài viết tự do'}
+          </p>
           <p className="text-xs text-zinc-400 mt-0.5">{formatDate(s.submittedAt)}</p>
         </div>
         {overall != null && (
           <span className={`text-lg font-black shrink-0 ${scoreColor}`}>{overall}</span>
         )}
-        {open ? <ChevronUp className="w-4 h-4 text-zinc-400" /> : <ChevronDown className="w-4 h-4 text-zinc-400" />}
+        {open ? (
+          <ChevronUp className="w-4 h-4 text-zinc-400" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-zinc-400" />
+        )}
       </button>
 
       {open && (
@@ -138,9 +189,16 @@ function WritingCard({ s }: { s: WritingSubmission }) {
                   { label: 'Lexical', val: fb.scores.lexical },
                   { label: 'Grammar', val: fb.scores.grammar },
                 ].map(({ label, val }) => (
-                  <div key={label} className="bg-zinc-800/60 rounded-xl px-3 py-2 flex justify-between items-center">
+                  <div
+                    key={label}
+                    className="bg-zinc-800/60 rounded-xl px-3 py-2 flex justify-between items-center"
+                  >
                     <span className="text-xs text-zinc-400">{label}</span>
-                    <span className={`text-sm font-bold ${val >= 7 ? 'text-accent-400' : val >= 5 ? 'text-amber-400' : 'text-red-400'}`}>{val}</span>
+                    <span
+                      className={`text-sm font-bold ${val >= 7 ? 'text-accent-400' : val >= 5 ? 'text-amber-400' : 'text-red-400'}`}
+                    >
+                      {val}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -158,12 +216,14 @@ function SpeakingCard({ s }: { s: SpeakingSession }) {
   const [open, setOpen] = useState(false)
   const dir = getDirection()
   const label = situationLabel(s.situation, dir)
-  const userMsgs = s.messages.filter(m => m.role === 'user').length
+  const userMsgs = s.messages.filter((m) => m.role === 'user').length
 
   return (
     <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl overflow-hidden">
-      <button onClick={() => setOpen(o => !o)}
-        className="w-full px-4 py-3.5 flex items-center gap-3 text-left hover:bg-zinc-800/40 transition">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full px-4 py-3.5 flex items-center gap-3 text-left hover:bg-zinc-800/40 transition"
+      >
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-400 flex items-center justify-center shrink-0">
           <Mic className="w-4 h-4 text-white" />
         </div>
@@ -173,19 +233,30 @@ function SpeakingCard({ s }: { s: SpeakingSession }) {
             {levelLabel(s.level)} · {userMsgs} lượt nói · {formatDate(s.createdAt)}
           </p>
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-zinc-400" /> : <ChevronDown className="w-4 h-4 text-zinc-400" />}
+        {open ? (
+          <ChevronUp className="w-4 h-4 text-zinc-400" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-zinc-400" />
+        )}
       </button>
 
       {open && (
         <div className="border-t border-zinc-800/60 px-4 py-3 space-y-2 max-h-72 overflow-y-auto">
-          {s.messages.map(m => (
-            <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] space-y-1 ${m.role === 'user' ? 'items-end' : 'items-start'} flex flex-col`}>
-                <div className={`rounded-xl px-3 py-2 text-sm leading-relaxed ${
-                  m.role === 'user'
-                    ? 'bg-sky-600/20 border border-sky-500/20 text-sky-100'
-                    : 'bg-zinc-800/80 text-zinc-200'
-                }`}>
+          {s.messages.map((m) => (
+            <div
+              key={m.id}
+              className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[85%] space-y-1 ${m.role === 'user' ? 'items-end' : 'items-start'} flex flex-col`}
+              >
+                <div
+                  className={`rounded-xl px-3 py-2 text-sm leading-relaxed ${
+                    m.role === 'user'
+                      ? 'bg-sky-600/20 border border-sky-500/20 text-sky-100'
+                      : 'bg-zinc-800/80 text-zinc-200'
+                  }`}
+                >
                   {m.role === 'assistant' && m.speechEn ? m.speechEn : m.content}
                 </div>
                 {/* Hiển thị feedback sửa lỗi nếu có */}
@@ -220,27 +291,42 @@ export default function History() {
   const writings = getWritingSubs(user.id)
   const speakings = getSpeakingSessions(user.id)
 
-  const isEmpty = (tab === 'chat' && chats.length === 0)
-    || (tab === 'writing' && writings.length === 0)
-    || (tab === 'speaking' && speakings.length === 0)
+  const isEmpty =
+    (tab === 'chat' && chats.length === 0) ||
+    (tab === 'writing' && writings.length === 0) ||
+    (tab === 'speaking' && speakings.length === 0)
 
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
 
       <main className="max-w-3xl mx-auto px-4 py-5">
-
         {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
         <PageHeader title="Lịch sử học" subtitle="Xem lại chat, bài viết và buổi luyện nói" />
 
         {/* Tabs */}
         <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
-          <Tab active={tab === 'chat'} onClick={() => setTab('chat')}
-            icon={MessageCircle} label="Chat" count={chats.length} />
-          <Tab active={tab === 'writing'} onClick={() => setTab('writing')}
-            icon={PenLine} label="Viết" count={writings.length} />
-          <Tab active={tab === 'speaking'} onClick={() => setTab('speaking')}
-            icon={Mic} label="Nói" count={speakings.length} />
+          <Tab
+            active={tab === 'chat'}
+            onClick={() => setTab('chat')}
+            icon={MessageCircle}
+            label="Chat"
+            count={chats.length}
+          />
+          <Tab
+            active={tab === 'writing'}
+            onClick={() => setTab('writing')}
+            icon={PenLine}
+            label="Viết"
+            count={writings.length}
+          />
+          <Tab
+            active={tab === 'speaking'}
+            onClick={() => setTab('speaking')}
+            icon={Mic}
+            label="Nói"
+            count={speakings.length}
+          />
         </div>
 
         {/* Danh sách */}
@@ -252,9 +338,9 @@ export default function History() {
           </div>
         ) : (
           <div className="space-y-3 animate-fade-in">
-            {tab === 'chat'     && chats.map(s    => <ChatCard     key={s.id} s={s} />)}
-            {tab === 'writing'  && writings.map(s  => <WritingCard  key={s.id} s={s} />)}
-            {tab === 'speaking' && speakings.map(s => <SpeakingCard key={s.id} s={s} />)}
+            {tab === 'chat' && chats.map((s) => <ChatCard key={s.id} s={s} />)}
+            {tab === 'writing' && writings.map((s) => <WritingCard key={s.id} s={s} />)}
+            {tab === 'speaking' && speakings.map((s) => <SpeakingCard key={s.id} s={s} />)}
           </div>
         )}
 

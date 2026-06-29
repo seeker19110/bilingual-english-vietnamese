@@ -43,7 +43,7 @@ describe('scoreWords', () => {
   it('mọi từ đúng → ok=true, đủ số phần tử', () => {
     const r = scoreWords('the cat sat', 'the cat sat')
     expect(r).toHaveLength(3)
-    expect(r.every(w => w.ok)).toBe(true)
+    expect(r.every((w) => w.ok)).toBe(true)
   })
 
   it('thiếu từ cuối → từ đó ok=false', () => {

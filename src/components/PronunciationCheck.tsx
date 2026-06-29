@@ -12,10 +12,10 @@ interface Props {
 // Nút chấm phát âm: bấm nói → STT nghe → highlight từng từ đúng/sai + điểm tổng.
 export default function PronunciationCheck({ target, lang, isA }: Props) {
   const [status, setStatus] = useState<'idle' | 'listening'>('idle')
-  const [score,  setScore]  = useState<number | null>(null)
-  const [heard,  setHeard]  = useState('')
-  const [words,  setWords]  = useState<Array<{ word: string; ok: boolean }>>([])
-  const [error,  setError]  = useState('')
+  const [score, setScore] = useState<number | null>(null)
+  const [heard, setHeard] = useState('')
+  const [words, setWords] = useState<Array<{ word: string; ok: boolean }>>([])
+  const [error, setError] = useState('')
   const stopRef = useRef<(() => void) | null>(null)
 
   if (!isSTTSupported()) return null
@@ -41,9 +41,15 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
       },
       (err) => {
         setStatus('idle')
-        setError(err === 'no-speech'
-          ? (isA ? 'Không nghe thấy gì.' : 'No speech detected.')
-          : (isA ? 'Lỗi micro, thử lại.' : 'Mic error, try again.'))
+        setError(
+          err === 'no-speech'
+            ? isA
+              ? 'Không nghe thấy gì.'
+              : 'No speech detected.'
+            : isA
+              ? 'Lỗi micro, thử lại.'
+              : 'Mic error, try again.',
+        )
       },
     )
   }
@@ -66,15 +72,23 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
             : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
         }`}
       >
-        {status === 'listening'
-          ? <><Square className="w-4 h-4" /> {isA ? 'Đang nghe... bấm để dừng' : 'Listening... tap to stop'}</>
-          : <><Mic className="w-4 h-4" /> {isA ? 'Chấm phát âm' : 'Check pronunciation'}</>}
+        {status === 'listening' ? (
+          <>
+            <Square className="w-4 h-4" />{' '}
+            {isA ? 'Đang nghe... bấm để dừng' : 'Listening... tap to stop'}
+          </>
+        ) : (
+          <>
+            <Mic className="w-4 h-4" /> {isA ? 'Chấm phát âm' : 'Check pronunciation'}
+          </>
+        )}
       </button>
 
       {/* Gợi nhắc khi đang nghe */}
       {status === 'listening' && (
         <span className="flex items-center gap-1 text-xs text-zinc-400">
-          <Loader2 className="w-3 h-3 animate-spin" /> {isA ? `Hãy đọc: "${target}"` : `Say: "${target}"`}
+          <Loader2 className="w-3 h-3 animate-spin" />{' '}
+          {isA ? `Hãy đọc: "${target}"` : `Say: "${target}"`}
         </span>
       )}
 
@@ -82,27 +96,36 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
       {fb && words.length > 0 && (
         <div className="w-full text-center space-y-2">
           {/* Điểm tổng */}
-          <p className={`text-sm font-bold ${fb.color}`}>{score}% · {fb.label}</p>
+          <p className={`text-sm font-bold ${fb.color}`}>
+            {score}% · {fb.label}
+          </p>
 
           {/* Highlight từng từ: xanh = đúng, đỏ = sai/thiếu */}
           <div className="flex flex-wrap justify-center gap-1.5">
             {words.map((w, i) => (
-              <span key={i} className={`px-2 py-0.5 rounded-lg text-sm font-medium ${
-                w.ok
-                  ? 'bg-accent-500/15 text-accent-300 border border-accent-500/25'
-                  : 'bg-rose-500/15 text-rose-300 border border-rose-500/25'
-              }`}>
+              <span
+                key={i}
+                className={`px-2 py-0.5 rounded-lg text-sm font-medium ${
+                  w.ok
+                    ? 'bg-accent-500/15 text-accent-300 border border-accent-500/25'
+                    : 'bg-rose-500/15 text-rose-300 border border-rose-500/25'
+                }`}
+              >
                 {w.word}
               </span>
             ))}
           </div>
 
           {/* Câu người dùng đọc */}
-          <p className="text-xs text-zinc-400">{isA ? 'Bạn đọc' : 'You said'}: "<span className="text-zinc-400">{heard}</span>"</p>
+          <p className="text-xs text-zinc-400">
+            {isA ? 'Bạn đọc' : 'You said'}: "<span className="text-zinc-400">{heard}</span>"
+          </p>
 
           {/* Nút thử lại */}
-          <button onClick={start}
-            className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition mx-auto">
+          <button
+            onClick={start}
+            className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition mx-auto"
+          >
             <RotateCcw className="w-3 h-3" /> {isA ? 'Thử lại' : 'Try again'}
           </button>
         </div>
@@ -111,8 +134,12 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
       {/* Kết quả khi câu 1 từ (không có words array đủ) */}
       {fb && words.length === 0 && (
         <div className="text-center">
-          <p className={`text-sm font-bold ${fb.color}`}>{score}% · {fb.label}</p>
-          <p className="text-xs text-zinc-400 mt-0.5">{isA ? 'Bạn đọc' : 'You said'}: "{heard}"</p>
+          <p className={`text-sm font-bold ${fb.color}`}>
+            {score}% · {fb.label}
+          </p>
+          <p className="text-xs text-zinc-400 mt-0.5">
+            {isA ? 'Bạn đọc' : 'You said'}: "{heard}"
+          </p>
         </div>
       )}
 

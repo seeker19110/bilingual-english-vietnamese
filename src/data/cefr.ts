@@ -82,7 +82,7 @@ export interface CefrLevel {
   titleVi: string
   titleEn: string
   subtitleVi: string // vd: "Người mới bắt đầu"
-  goalVi: string     // mục tiêu tổng quát của cả cấp
+  goalVi: string // mục tiêu tổng quát của cả cấp
   // Màu nhấn (Tailwind) cho UI — dùng để phân biệt các cấp.
   accent: 'emerald' | 'sky' | 'violet' | 'amber'
   // Mục tiêu "Tôi có thể…" theo CEFR (tiếng Việt).
@@ -93,10 +93,18 @@ export interface CefrLevel {
 // Rút gọn: hàm tạo 1 ví dụ.
 const ex = (en: string, vi: string): Example => ({ en, vi })
 // Rút gọn: hàm tạo 1 lỗi thường gặp (sai → đúng + ghi chú).
-const mis = (wrong: string, right: string, noteVi: string): CommonMistake => ({ wrong, right, noteVi })
+const mis = (wrong: string, right: string, noteVi: string): CommonMistake => ({
+  wrong,
+  right,
+  noteVi,
+})
 // Rút gọn: hàm tạo 1 câu quiz.
-const qz = (q: string, options: string[], answer: number, explainVi?: string): QuizItem =>
-  ({ q, options, answer, explainVi })
+const qz = (q: string, options: string[], answer: number, explainVi?: string): QuizItem => ({
+  q,
+  options,
+  answer,
+  explainVi,
+})
 
 export const CEFR_LEVELS: CefrLevel[] = [
   // ══════════════════════════════════════════════════════════════════════════
@@ -107,7 +115,8 @@ export const CEFR_LEVELS: CefrLevel[] = [
     titleVi: 'A1 — Sơ cấp',
     titleEn: 'A1 — Beginner',
     subtitleVi: 'Người mới bắt đầu',
-    goalVi: 'Chào hỏi, giới thiệu bản thân và gia đình, nói về đồ vật quen thuộc và đặt câu hỏi đơn giản.',
+    goalVi:
+      'Chào hỏi, giới thiệu bản thân và gia đình, nói về đồ vật quen thuộc và đặt câu hỏi đơn giản.',
     accent: 'emerald',
     canDo: [
       'Chào hỏi và giới thiệu tên, tuổi, quốc tịch của mình.',
@@ -141,9 +150,13 @@ export const CEFR_LEVELS: CefrLevel[] = [
               ex("My name is Minh. I'm twenty.", 'Tôi tên Minh. Tôi hai mươi tuổi.'),
             ],
             tipVi:
-              'Nhớ nhanh: "I am, he/she/it is, còn lại are". Trong nói chuyện thường rút gọn: I am → I\'m, she is → she\'s, you are → you\'re.',
+              "Nhớ nhanh: \"I am, he/she/it is, còn lại are\". Trong nói chuyện thường rút gọn: I am → I'm, she is → she's, you are → you're.",
             mistakes: [
-              mis('I student.', 'I am a student.', 'Câu tiếng Anh BẮT BUỘC có động từ — không được bỏ "am/is/are".'),
+              mis(
+                'I student.',
+                'I am a student.',
+                'Câu tiếng Anh BẮT BUỘC có động từ — không được bỏ "am/is/are".',
+              ),
               mis('She are happy.', 'She is happy.', 'She/he/it đi với "is", không phải "are".'),
               mis('They is my friends.', 'They are my friends.', 'they → are (không phải is).'),
               mis('I is happy.', 'I am happy.', '"I" luôn đi với "am".'),
@@ -169,33 +182,50 @@ export const CEFR_LEVELS: CefrLevel[] = [
             structure: 'S + am/is/are + not + …',
             explainVi:
               'Thêm "not" sau to be để nói "không".\n' +
-              'Viết tắt: is not → isn\'t, are not → aren\'t (am not không có dạng tắt).',
+              "Viết tắt: is not → isn't, are not → aren't (am not không có dạng tắt).",
             examples: [
               ex('I am not tired.', 'Tôi không mệt.'),
-              ex('He isn\'t at home.', 'Anh ấy không có ở nhà.'),
-              ex('They aren\'t students.', 'Họ không phải học sinh.'),
+              ex("He isn't at home.", 'Anh ấy không có ở nhà.'),
+              ex("They aren't students.", 'Họ không phải học sinh.'),
               ex("This isn't my bag.", 'Đây không phải túi của tôi.'),
               ex("We aren't ready yet.", 'Chúng tôi chưa sẵn sàng.'),
             ],
             tipVi: 'Chỉ cần chèn "not" ngay sau am/is/are. Không dùng "do not" với to be.',
             mistakes: [
-              mis("He doesn't is at home.", "He isn't at home.", 'Với to be KHÔNG dùng do/does — chỉ thêm "not".'),
-              mis('I amn\'t tired.', "I'm not tired.", '"am not" không có dạng viết tắt "amn\'t".'),
+              mis(
+                "He doesn't is at home.",
+                "He isn't at home.",
+                'Với to be KHÔNG dùng do/does — chỉ thêm "not".',
+              ),
+              mis("I amn't tired.", "I'm not tired.", '"am not" không có dạng viết tắt "amn\'t".'),
               mis('She not happy.', "She isn't happy.", 'Phải có to be: thêm "not" sau "is".'),
-              mis("They aren't student.", "They aren't students.", 'Danh từ số nhiều phải thêm -s: students.'),
-              mis("I'm not agree.", "I don't agree.", '"agree" là động từ thường → phủ định dùng "don\'t", không dùng be + not.'),
+              mis(
+                "They aren't student.",
+                "They aren't students.",
+                'Danh từ số nhiều phải thêm -s: students.',
+              ),
+              mis(
+                "I'm not agree.",
+                "I don't agree.",
+                '"agree" là động từ thường → phủ định dùng "don\'t", không dùng be + not.',
+              ),
             ],
             quiz: [
-              qz('They ___ ready.', ["isn't", "aren't", "am not"], 1, 'They đi với aren\'t.'),
-              qz('Chọn câu ĐÚNG:', ["She not happy.", "She isn't happy.", "She don't happy."], 1),
-              qz('I ___ hungry. (không đói)', ["isn't", "am not", "aren't"], 1, 'I → am not.'),
-              qz('He ___ a teacher.', ["isn't", "aren't", "am not"], 0, 'he → isn\'t.'),
-              qz('We ___ late.', ["isn't", "aren't"], 1, 'we → aren\'t.'),
+              qz('They ___ ready.', ["isn't", "aren't", 'am not'], 1, "They đi với aren't."),
+              qz('Chọn câu ĐÚNG:', ['She not happy.', "She isn't happy.", "She don't happy."], 1),
+              qz('I ___ hungry. (không đói)', ["isn't", 'am not', "aren't"], 1, 'I → am not.'),
+              qz('He ___ a teacher.', ["isn't", "aren't", 'am not'], 0, "he → isn't."),
+              qz('We ___ late.', ["isn't", "aren't"], 1, "we → aren't."),
               qz('Viết tắt của "is not":', ["isn't", "amn't", "aren't"], 0),
-              qz('Chọn câu ĐÚNG:', ["He no is tall.", "He isn't tall.", "He don't tall."], 1),
-              qz('It ___ expensive.', ["aren't", "isn't"], 1, 'it → isn\'t.'),
-              qz('You ___ alone.', ["aren't", "isn't"], 0, 'you → aren\'t.'),
-              qz('"am not" có dạng viết tắt "amn\'t" không?', ['Có', 'Không'], 1, '"am not" không có dạng tắt.'),
+              qz('Chọn câu ĐÚNG:', ['He no is tall.', "He isn't tall.", "He don't tall."], 1),
+              qz('It ___ expensive.', ["aren't", "isn't"], 1, "it → isn't."),
+              qz('You ___ alone.', ["aren't", "isn't"], 0, "you → aren't."),
+              qz(
+                '"am not" có dạng viết tắt "amn\'t" không?',
+                ['Có', 'Không'],
+                1,
+                '"am not" không có dạng tắt.',
+              ),
             ],
           },
           {
@@ -216,11 +246,23 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Dùng "it" cho đồ vật và con vật (khi không rõ giới tính). "I" luôn viết HOA dù ở giữa câu.',
             mistakes: [
-              mis('me am a student.', 'I am a student.', 'Chủ ngữ dùng "I", không dùng "me" (me là tân ngữ).'),
+              mis(
+                'me am a student.',
+                'I am a student.',
+                'Chủ ngữ dùng "I", không dùng "me" (me là tân ngữ).',
+              ),
               mis('He are my brother.', 'He is my brother.', 'He đi với is.'),
-              mis('Them are my friends.', 'They are my friends.', 'Chủ ngữ dùng "they", không dùng "them".'),
+              mis(
+                'Them are my friends.',
+                'They are my friends.',
+                'Chủ ngữ dùng "they", không dùng "them".',
+              ),
               mis('Us are students.', 'We are students.', 'Chủ ngữ dùng "we", không dùng "us".'),
-              mis('Me and Lan are friends.', 'Lan and I are friends.', 'Dùng chủ ngữ "I" và đặt mình sau cùng cho lịch sự.'),
+              mis(
+                'Me and Lan are friends.',
+                'Lan and I are friends.',
+                'Dùng chủ ngữ "I" và đặt mình sau cùng cho lịch sự.',
+              ),
             ],
             quiz: [
               qz('___ is a cat. (con mèo)', ['He', 'She', 'It'], 2, 'Đồ vật/con vật dùng "it".'),
@@ -228,11 +270,21 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('___ are doctors. (họ)', ['Them', 'They', 'Their'], 1),
               qz('___ is my mother. (bà ấy)', ['He', 'She', 'It'], 1),
               qz('___ live in Hanoi. (chúng tôi)', ['Us', 'We', 'Our'], 1),
-              qz('This is a dog. ___ is cute.', ['He', 'It', 'She'], 1, 'Con vật chung chung → it.'),
+              qz(
+                'This is a dog. ___ is cute.',
+                ['He', 'It', 'She'],
+                1,
+                'Con vật chung chung → it.',
+              ),
               qz('___ are students. (các bạn)', ['You', 'Your', 'He'], 0),
               qz('Đại từ nào LUÔN viết hoa?', ['you', 'i', 'I'], 2, '"I" luôn viết hoa.'),
               qz('___ is tall. (anh ấy)', ['He', 'Him', 'His'], 0),
-              qz('"Nam and Lan" thay bằng đại từ:', ['we', 'they', 'you'], 1, 'Hai người khác → they.'),
+              qz(
+                '"Nam and Lan" thay bằng đại từ:',
+                ['we', 'they', 'you'],
+                1,
+                'Hai người khác → they.',
+              ),
             ],
           },
         ],
@@ -262,10 +314,18 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi: 'Quy tắc giống "to be": he/she/it dùng "has", còn lại dùng "have".',
             mistakes: [
               mis('She have a new phone.', 'She has a new phone.', 'She → has (không phải have).'),
-              mis('He has got two car.', 'He has two cars.', 'Danh từ đếm được số nhiều phải thêm -s: cars.'),
+              mis(
+                'He has got two car.',
+                'He has two cars.',
+                'Danh từ đếm được số nhiều phải thêm -s: cars.',
+              ),
               mis('I has a sister.', 'I have a sister.', 'I → have.'),
               mis('They has a dog.', 'They have a dog.', 'they → have.'),
-              mis('She have not a car.', "She doesn't have a car.", 'Phủ định hiện tại đơn dùng "doesn\'t have".'),
+              mis(
+                'She have not a car.',
+                "She doesn't have a car.",
+                'Phủ định hiện tại đơn dùng "doesn\'t have".',
+              ),
             ],
             quiz: [
               qz('He ___ a bike.', ['have', 'has'], 1, 'He → has.'),
@@ -295,14 +355,33 @@ export const CEFR_LEVELS: CefrLevel[] = [
               ex('His car is new.', 'Xe của anh ấy mới.'),
               ex('What is their address?', 'Địa chỉ của họ là gì?'),
             ],
-            tipVi:
-              'Đừng nhầm "its" (của nó) với "it\'s" (= it is). "its" KHÔNG có dấu nháy.',
+            tipVi: 'Đừng nhầm "its" (của nó) với "it\'s" (= it is). "its" KHÔNG có dấu nháy.',
             mistakes: [
-              mis('This is me mother.', 'This is my mother.', 'Trước danh từ dùng "my", không dùng "me".'),
-              mis("She name is Lan.", 'Her name is Lan.', 'Cần tính từ sở hữu "her" trước danh từ.'),
-              mis("It's color is red.", 'Its color is red.', '"its" (của nó) không có dấu nháy; "it\'s" = it is.'),
-              mis('This is he book.', 'This is his book.', 'Trước danh từ dùng "his", không dùng "he".'),
-              mis('We like you car.', 'We like your car.', 'Trước danh từ dùng "your", không dùng "you".'),
+              mis(
+                'This is me mother.',
+                'This is my mother.',
+                'Trước danh từ dùng "my", không dùng "me".',
+              ),
+              mis(
+                'She name is Lan.',
+                'Her name is Lan.',
+                'Cần tính từ sở hữu "her" trước danh từ.',
+              ),
+              mis(
+                "It's color is red.",
+                'Its color is red.',
+                '"its" (của nó) không có dấu nháy; "it\'s" = it is.',
+              ),
+              mis(
+                'This is he book.',
+                'This is his book.',
+                'Trước danh từ dùng "his", không dùng "he".',
+              ),
+              mis(
+                'We like you car.',
+                'We like your car.',
+                'Trước danh từ dùng "your", không dùng "you".',
+              ),
             ],
             quiz: [
               qz('I love ___ family.', ['I', 'my', 'me'], 1, 'Trước danh từ dùng my.'),
@@ -321,10 +400,10 @@ export const CEFR_LEVELS: CefrLevel[] = [
             id: 'a1-possessive-s',
             titleVi: 'Sở hữu cách ("\'s")',
             titleEn: "Possessive 's",
-            structure: 'tên/người + \'s + danh từ',
+            structure: "tên/người + 's + danh từ",
             explainVi:
               'Thêm \'s vào sau tên người để chỉ "của ai đó".\n' +
-              'Lan\'s book = cuốn sách của Lan.',
+              "Lan's book = cuốn sách của Lan.",
             examples: [
               ex("This is Lan's bag.", 'Đây là túi của Lan.'),
               ex("My father's car is red.", 'Xe của bố tôi màu đỏ.'),
@@ -335,23 +414,57 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Người sở hữu đứng TRƯỚC, vật được sở hữu đứng SAU: "Lan\'s bag" = túi của Lan (không phải "bag\'s Lan").',
             mistakes: [
-              mis('the bag of Lan', "Lan's bag", 'Với người, tiếng Anh thường dùng \'s thay vì "of".'),
-              mis("My fathers car", "My father's car", 'Thiếu dấu nháy: phải là father\'s.'),
-              mis("Lan's and Nam's house", "Lan and Nam's house", 'Sở hữu chung chỉ thêm \'s vào tên cuối.'),
-              mis("This is Nam book.", "This is Nam's book.", 'Thiếu \'s: phải là Nam\'s book.'),
-              mis("my parent's car", "my parents' car", 'Bố mẹ (số nhiều, đã có -s) chỉ thêm dấu nháy: parents\'.'),
+              mis(
+                'the bag of Lan',
+                "Lan's bag",
+                'Với người, tiếng Anh thường dùng \'s thay vì "of".',
+              ),
+              mis('My fathers car', "My father's car", "Thiếu dấu nháy: phải là father's."),
+              mis(
+                "Lan's and Nam's house",
+                "Lan and Nam's house",
+                "Sở hữu chung chỉ thêm 's vào tên cuối.",
+              ),
+              mis('This is Nam book.', "This is Nam's book.", "Thiếu 's: phải là Nam's book."),
+              mis(
+                "my parent's car",
+                "my parents' car",
+                "Bố mẹ (số nhiều, đã có -s) chỉ thêm dấu nháy: parents'.",
+              ),
             ],
             quiz: [
-              qz('"Cuốn sách của Nam" =', ["Nam book's", "Nam's book", "book of Nam"], 1),
-              qz('Chọn câu đúng:', ["the car's my father", "my father's car", "my father car's"], 1),
-              qz('"Phòng của chị tôi" =', ['my sister room', "my sister's room", 'my sisters room'], 1),
+              qz('"Cuốn sách của Nam" =', ["Nam book's", "Nam's book", 'book of Nam'], 1),
+              qz(
+                'Chọn câu đúng:',
+                ["the car's my father", "my father's car", "my father car's"],
+                1,
+              ),
+              qz(
+                '"Phòng của chị tôi" =',
+                ['my sister room', "my sister's room", 'my sisters room'],
+                1,
+              ),
               qz('"Tên con mèo" =', ["the cat's name", "the cat name's", "name of the cat's"], 0),
-              qz('Chọn câu ĐÚNG:', ['This is Lans bag.', "This is Lan's bag.", "This is Lan bag's."], 1),
-              qz('"Xe của bố mẹ tôi" =', ["my parents' car", "my parent's car", 'my parents car'], 0, 'Số nhiều tận cùng -s chỉ thêm dấu nháy.'),
+              qz(
+                'Chọn câu ĐÚNG:',
+                ['This is Lans bag.', "This is Lan's bag.", "This is Lan bag's."],
+                1,
+              ),
+              qz(
+                '"Xe của bố mẹ tôi" =',
+                ["my parents' car", "my parent's car", 'my parents car'],
+                0,
+                'Số nhiều tận cùng -s chỉ thêm dấu nháy.',
+              ),
               qz('"Điện thoại của Mai" =', ['Mai phone', "Mai's phone", "phone's Mai"], 1),
               qz('Ai là người sở hữu trong "Tom\'s dog"?', ['the dog', 'Tom', 'cả hai'], 1),
               qz('"Bạn của Hoa" =', ["Hoa's friend", "Hoa friend's", "friend Hoa's"], 0),
-              qz('Chọn cách viết ĐÚNG:', ["the childrens' room", "the children's room", 'the childrens room'], 1, 'children số nhiều bất quy tắc → children\'s.'),
+              qz(
+                'Chọn cách viết ĐÚNG:',
+                ["the childrens' room", "the children's room", 'the childrens room'],
+                1,
+                "children số nhiều bất quy tắc → children's.",
+              ),
             ],
           },
         ],
@@ -381,22 +494,71 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Chọn is hay are theo danh từ NGAY SAU nó. Với danh từ không đếm được (water, milk) dùng "there is".',
             mistakes: [
-              mis('There are a book on the table.', 'There is a book on the table.', 'Một vật (a book) → there is.'),
-              mis('Have a bank near here?', 'Is there a bank near here?', 'Hỏi "có tồn tại không" dùng there is/are, không dùng "have".'),
-              mis('There is many people.', 'There are many people.', 'many people số nhiều → there are.'),
-              mis('It has a book on the table.', 'There is a book on the table.', 'Diễn tả "có tồn tại" dùng there is/are.'),
-              mis('There are a milk in the fridge.', 'There is some milk in the fridge.', 'milk không đếm được → there is.'),
+              mis(
+                'There are a book on the table.',
+                'There is a book on the table.',
+                'Một vật (a book) → there is.',
+              ),
+              mis(
+                'Have a bank near here?',
+                'Is there a bank near here?',
+                'Hỏi "có tồn tại không" dùng there is/are, không dùng "have".',
+              ),
+              mis(
+                'There is many people.',
+                'There are many people.',
+                'many people số nhiều → there are.',
+              ),
+              mis(
+                'It has a book on the table.',
+                'There is a book on the table.',
+                'Diễn tả "có tồn tại" dùng there is/are.',
+              ),
+              mis(
+                'There are a milk in the fridge.',
+                'There is some milk in the fridge.',
+                'milk không đếm được → there is.',
+              ),
             ],
             quiz: [
-              qz('___ a cat under the table.', ['There is', 'There are'], 0, 'a cat = số ít → there is.'),
-              qz('___ five books here.', ['There is', 'There are'], 1, 'five books = số nhiều → there are.'),
+              qz(
+                '___ a cat under the table.',
+                ['There is', 'There are'],
+                0,
+                'a cat = số ít → there is.',
+              ),
+              qz(
+                '___ five books here.',
+                ['There is', 'There are'],
+                1,
+                'five books = số nhiều → there are.',
+              ),
               qz('___ three chairs here.', ['There is', 'There are'], 1, 'số nhiều → there are.'),
               qz('___ a dog in the garden.', ['There is', 'There are'], 0, 'một con → there is.'),
-              qz('___ some water in the glass.', ['There is', 'There are'], 0, 'water không đếm được → there is.'),
-              qz('___ any students in the room?', ['Is there', 'Are there'], 1, 'students số nhiều → are there.'),
-              qz('Phủ định: There ___ any milk.', ["isn't", "aren't"], 0, 'milk → isn\'t.'),
-              qz('___ many cars on the road.', ['There is', 'There are'], 1, 'số nhiều → there are.'),
-              qz('Chọn câu ĐÚNG:', ['There is two pens.', 'There are two pens.', 'There have two pens.'], 1),
+              qz(
+                '___ some water in the glass.',
+                ['There is', 'There are'],
+                0,
+                'water không đếm được → there is.',
+              ),
+              qz(
+                '___ any students in the room?',
+                ['Is there', 'Are there'],
+                1,
+                'students số nhiều → are there.',
+              ),
+              qz('Phủ định: There ___ any milk.', ["isn't", "aren't"], 0, "milk → isn't."),
+              qz(
+                '___ many cars on the road.',
+                ['There is', 'There are'],
+                1,
+                'số nhiều → there are.',
+              ),
+              qz(
+                'Chọn câu ĐÚNG:',
+                ['There is two pens.', 'There are two pens.', 'There have two pens.'],
+                1,
+              ),
               qz('___ a problem.', ['There is', 'There are'], 0, 'một → there is.'),
             ],
           },
@@ -456,10 +618,26 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Mẹo "in–on–at": in = bên trong (in the box), on = trên bề mặt (on the table), at = tại một điểm (at the door).',
             mistakes: [
-              mis('The cat is in the table.', 'The cat is under / on the table.', '"in the table" nghĩa là bên trong cái bàn — sai nghĩa.'),
-              mis('My keys are on my bag.', 'My keys are in my bag.', 'Bên trong túi → in (on = trên bề mặt).'),
-              mis('I live in Da Nang on Vietnam.', 'I live in Da Nang in Vietnam.', 'Ở trong một nước/thành phố dùng "in".'),
-              mis('The picture is in the wall.', 'The picture is on the wall.', 'Trên bề mặt tường → on.'),
+              mis(
+                'The cat is in the table.',
+                'The cat is under / on the table.',
+                '"in the table" nghĩa là bên trong cái bàn — sai nghĩa.',
+              ),
+              mis(
+                'My keys are on my bag.',
+                'My keys are in my bag.',
+                'Bên trong túi → in (on = trên bề mặt).',
+              ),
+              mis(
+                'I live in Da Nang on Vietnam.',
+                'I live in Da Nang in Vietnam.',
+                'Ở trong một nước/thành phố dùng "in".',
+              ),
+              mis(
+                'The picture is in the wall.',
+                'The picture is on the wall.',
+                'Trên bề mặt tường → on.',
+              ),
               mis('She is behind of me.', 'She is behind me.', '"behind" không đi với "of".'),
             ],
             quiz: [
@@ -472,7 +650,15 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('The car is ___ the house. (trước)', ['behind', 'in front of', 'in'], 1),
               qz('The cat is ___ the bed. (dưới)', ['on', 'under', 'next to'], 1),
               qz('We meet ___ the door. (tại)', ['in', 'at', 'on'], 1, 'tại một điểm → at.'),
-              qz('Chọn câu ĐÚNG:', ['The dog is on the table.', 'The dog is in the table.', 'The dog is at the table.'], 0),
+              qz(
+                'Chọn câu ĐÚNG:',
+                [
+                  'The dog is on the table.',
+                  'The dog is in the table.',
+                  'The dog is at the table.',
+                ],
+                0,
+              ),
             ],
           },
         ],
@@ -512,13 +698,28 @@ export const CEFR_LEVELS: CefrLevel[] = [
             quiz: [
               qz('Số nhiều của "box" là:', ['boxs', 'boxes', 'boxies'], 1, 'Tận cùng -x thêm -es.'),
               qz('Số nhiều của "city" là:', ['citys', 'cities', 'cityes'], 1, 'phụ âm + y → ies.'),
-              qz('Số nhiều của "watch":', ['watchs', 'watches', 'watchies'], 1, 'Tận cùng -ch thêm -es.'),
+              qz(
+                'Số nhiều của "watch":',
+                ['watchs', 'watches', 'watchies'],
+                1,
+                'Tận cùng -ch thêm -es.',
+              ),
               qz('Số nhiều của "baby":', ['babys', 'babies', 'babyes'], 1, 'phụ âm + y → ies.'),
               qz('Số nhiều của "man":', ['mans', 'men', 'mens'], 1, 'man → men.'),
               qz('Số nhiều của "tooth":', ['tooths', 'teeth', 'toothes'], 1, 'tooth → teeth.'),
               qz('Số nhiều của "bus":', ['bus', 'buses', 'buss'], 1, 'Tận cùng -s thêm -es.'),
-              qz('Số nhiều của "leaf":', ['leafs', 'leaves', 'leafes'], 1, '-f/-fe thường đổi thành -ves.'),
-              qz('Số nhiều của "boy":', ['boies', 'boys', 'boyes'], 1, 'nguyên âm + y chỉ thêm -s.'),
+              qz(
+                'Số nhiều của "leaf":',
+                ['leafs', 'leaves', 'leafes'],
+                1,
+                '-f/-fe thường đổi thành -ves.',
+              ),
+              qz(
+                'Số nhiều của "boy":',
+                ['boies', 'boys', 'boyes'],
+                1,
+                'nguyên âm + y chỉ thêm -s.',
+              ),
               qz('Chọn câu ĐÚNG:', ['I have two dog.', 'I have two dogs.', 'I have two doges.'], 1),
             ],
           },
@@ -540,7 +741,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Chọn a/an theo ÂM ĐỌC, không theo chữ cái: an hour (h câm), a university (đọc /ju/ như phụ âm).',
             mistakes: [
-              mis('She eats a apple.', 'She eats an apple.', 'apple bắt đầu bằng nguyên âm → dùng "an".'),
+              mis(
+                'She eats a apple.',
+                'She eats an apple.',
+                'apple bắt đầu bằng nguyên âm → dùng "an".',
+              ),
               mis('I have dog.', 'I have a dog.', 'Danh từ đếm được số ít cần a/an hoặc the.'),
               mis('He is a engineer.', 'He is an engineer.', 'engineer bắt đầu nguyên âm → an.'),
               mis('an university', 'a university', 'university đọc /ju/ như phụ âm → a.'),
@@ -551,7 +756,12 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('It takes ___ hour.', ['a', 'an'], 1, 'h câm, đọc như nguyên âm → an.'),
               qz('She has ___ umbrella.', ['a', 'an', 'the'], 1, 'umbrella nguyên âm → an.'),
               qz('He is ___ honest man.', ['a', 'an'], 1, 'h câm → an.'),
-              qz('I bought ___ car. ___ car is red.', ['a / The', 'The / A', 'an / The'], 0, 'Lần đầu a, nhắc lại the.'),
+              qz(
+                'I bought ___ car. ___ car is red.',
+                ['a / The', 'The / A', 'an / The'],
+                0,
+                'Lần đầu a, nhắc lại the.',
+              ),
               qz('___ sun is hot. (duy nhất)', ['A', 'An', 'The'], 2, 'Vật duy nhất → the.'),
               qz('She is ___ teacher.', ['a', 'an', 'the'], 0, 'teacher bắt đầu phụ âm → a.'),
               qz('I need ___ apple.', ['a', 'an', 'the'], 1, 'apple nguyên âm → an.'),
@@ -576,20 +786,52 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'How many đi với danh từ ĐẾM ĐƯỢC (số nhiều). Với danh từ KHÔNG đếm được (water, money) dùng "How much".',
             mistakes: [
-              mis('How many book do you have?', 'How many books do you have?', 'Sau how many là danh từ số nhiều.'),
+              mis(
+                'How many book do you have?',
+                'How many books do you have?',
+                'Sau how many là danh từ số nhiều.',
+              ),
               mis('How much apples?', 'How many apples?', 'apples đếm được → how many.'),
-              mis('How many money do you have?', 'How much money do you have?', 'money không đếm được → how much.'),
+              mis(
+                'How many money do you have?',
+                'How much money do you have?',
+                'money không đếm được → how much.',
+              ),
               mis('How many is it?', 'How much is it?', 'Hỏi giá tiền dùng "how much".'),
-              mis('How many childrens?', 'How many children?', 'children đã là số nhiều, không thêm -s.'),
+              mis(
+                'How many childrens?',
+                'How many children?',
+                'children đã là số nhiều, không thêm -s.',
+              ),
             ],
             quiz: [
-              qz('___ chairs are there?', ['How much', 'How many'], 1, 'chairs đếm được → how many.'),
-              qz('___ water do you need?', ['How many', 'How much'], 1, 'water không đếm được → how much.'),
-              qz('___ students are in your class?', ['How much', 'How many'], 1, 'students đếm được.'),
+              qz(
+                '___ chairs are there?',
+                ['How much', 'How many'],
+                1,
+                'chairs đếm được → how many.',
+              ),
+              qz(
+                '___ water do you need?',
+                ['How many', 'How much'],
+                1,
+                'water không đếm được → how much.',
+              ),
+              qz(
+                '___ students are in your class?',
+                ['How much', 'How many'],
+                1,
+                'students đếm được.',
+              ),
               qz('___ rice do you eat?', ['How many', 'How much'], 1, 'rice không đếm được.'),
               qz('___ does this cost?', ['How many', 'How much'], 1, 'Hỏi giá → how much.'),
               qz('___ days are in a week?', ['How much', 'How many'], 1, 'days đếm được.'),
-              qz('___ time do you have?', ['How many', 'How much'], 1, 'time (chung) không đếm được.'),
+              qz(
+                '___ time do you have?',
+                ['How many', 'How much'],
+                1,
+                'time (chung) không đếm được.',
+              ),
               qz('___ brothers do you have?', ['How much', 'How many'], 1, 'brothers đếm được.'),
               qz('___ sugar do you want?', ['How many', 'How much'], 1, 'sugar không đếm được.'),
               qz('Chọn câu ĐÚNG:', ['How many book?', 'How many books?', 'How much books?'], 1),
@@ -621,7 +863,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Sau "like/love/enjoy" có thể dùng danh từ (like coffee) hoặc V-ing (like reading).',
             mistakes: [
-              mis('I likes coffee.', 'I like coffee.', 'Với "I" giữ nguyên động từ, không thêm -s.'),
+              mis(
+                'I likes coffee.',
+                'I like coffee.',
+                'Với "I" giữ nguyên động từ, không thêm -s.',
+              ),
               mis('I want water some.', 'I want some water.', 'Trật tự đúng: some + danh từ.'),
               mis('We likes pizza.', 'We like pizza.', 'we → like (không -s).'),
               mis('They wants help.', 'They want help.', 'they → want.'),
@@ -634,7 +880,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('We ___ rice every day.', ['eats', 'eat'], 1, 'we → eat.'),
               qz('They ___ football.', ['plays', 'play'], 1, 'they → play.'),
               qz('I ___ in Hanoi.', ['lives', 'live'], 1, 'I → live.'),
-              qz('Phủ định "I like tea":', ["I don't like tea", "I doesn't like tea", "I not like tea"], 0),
+              qz(
+                'Phủ định "I like tea":',
+                ["I don't like tea", "I doesn't like tea", 'I not like tea'],
+                0,
+              ),
               qz('You and I ___ coffee.', ['likes', 'like'], 1, 'we → like.'),
               qz('They ___ to music.', ['listen', 'listens'], 0, 'they → listen.'),
               qz('Chọn câu ĐÚNG:', ['I wants water.', 'I want water.', 'I to want water.'], 1),
@@ -644,10 +894,10 @@ export const CEFR_LEVELS: CefrLevel[] = [
             id: 'a1-can',
             titleVi: 'Can — diễn tả khả năng',
             titleEn: 'Can (ability)',
-            structure: 'S + can / can\'t + động từ nguyên mẫu',
+            structure: "S + can / can't + động từ nguyên mẫu",
             explainVi:
               '"Can" = "có thể". Sau "can" luôn dùng động từ nguyên mẫu (không thêm -s, không "to").\n' +
-              'Phủ định: cannot / can\'t. Câu hỏi: Can + S + V?',
+              "Phủ định: cannot / can't. Câu hỏi: Can + S + V?",
             examples: [
               ex('I can swim.', 'Tôi biết bơi.'),
               ex('She can speak English.', 'Cô ấy nói được tiếng Anh.'),
@@ -660,18 +910,40 @@ export const CEFR_LEVELS: CefrLevel[] = [
             mistakes: [
               mis('She can to swim.', 'She can swim.', 'Sau "can" KHÔNG có "to".'),
               mis('He cans drive.', 'He can drive.', '"can" không thêm -s cho he/she/it.'),
-              mis('I can speaking English.', 'I can speak English.', 'Sau "can" dùng động từ nguyên mẫu (không V-ing).'),
-              mis('Can you to help me?', 'Can you help me?', 'Câu hỏi với can: Can + S + V (không "to").'),
+              mis(
+                'I can speaking English.',
+                'I can speak English.',
+                'Sau "can" dùng động từ nguyên mẫu (không V-ing).',
+              ),
+              mis(
+                'Can you to help me?',
+                'Can you help me?',
+                'Câu hỏi với can: Can + S + V (không "to").',
+              ),
               mis("She can't to come.", "She can't come.", 'Sau "can\'t" cũng không có "to".'),
             ],
             quiz: [
-              qz('She can ___ very fast.', ['runs', 'to run', 'run'], 2, 'Sau can dùng động từ nguyên mẫu, không "to".'),
+              qz(
+                'She can ___ very fast.',
+                ['runs', 'to run', 'run'],
+                2,
+                'Sau can dùng động từ nguyên mẫu, không "to".',
+              ),
               qz('Câu phủ định của "I can swim":', ["I can't swim", "I don't can swim"], 0),
-              qz('He can ___ the guitar.', ['plays', 'play', 'to play'], 1, 'Sau can → nguyên mẫu.'),
+              qz(
+                'He can ___ the guitar.',
+                ['plays', 'play', 'to play'],
+                1,
+                'Sau can → nguyên mẫu.',
+              ),
               qz('___ you swim?', ['Do', 'Can', 'Are'], 1, 'Hỏi khả năng → Can.'),
               qz('I ___ cook. (không thể)', ["can't", "don't can", 'not can'], 0),
               qz('She can ___ three languages.', ['speaks', 'to speak', 'speak'], 2),
-              qz('"Bạn nói được tiếng Anh không?" =', ['You can speak English?', 'Can you speak English?', 'Do you can speak English?'], 1),
+              qz(
+                '"Bạn nói được tiếng Anh không?" =',
+                ['You can speak English?', 'Can you speak English?', 'Do you can speak English?'],
+                1,
+              ),
               qz('They ___ come tomorrow. (có thể)', ['cans', 'can', 'can to'], 1),
               qz('We can ___ here.', ['to wait', 'wait', 'waits'], 1),
               qz('Chọn câu ĐÚNG:', ['He can sings.', 'He can sing.', 'He can to sing.'], 1),
@@ -684,7 +956,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
             structure: 'Động từ nguyên mẫu + … (không có chủ ngữ)',
             explainVi:
               'Dùng để ra lệnh, hướng dẫn, mời. Bắt đầu bằng động từ.\n' +
-              'Phủ định: Don\'t + động từ.',
+              "Phủ định: Don't + động từ.",
             examples: [
               ex('Open the window, please.', 'Làm ơn mở cửa sổ.'),
               ex('Sit down.', 'Ngồi xuống.'),
@@ -695,23 +967,43 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Thêm "please" để lịch sự hơn (đầu hoặc cuối câu). Câu mệnh lệnh KHÔNG có chủ ngữ.',
             mistakes: [
-              mis('You open the door.', 'Open the door.', 'Câu mệnh lệnh bỏ chủ ngữ (trừ khi muốn nhấn mạnh).'),
-              mis("No worry.", "Don't worry.", 'Phủ định mệnh lệnh dùng "Don\'t + động từ".'),
-              mis('To open the door.', 'Open the door.', 'Mệnh lệnh bắt đầu bằng động từ nguyên mẫu, không "to".'),
-              mis("Don't to be late.", "Don't be late.", 'Sau "Don\'t" dùng động từ nguyên mẫu, không "to".'),
+              mis(
+                'You open the door.',
+                'Open the door.',
+                'Câu mệnh lệnh bỏ chủ ngữ (trừ khi muốn nhấn mạnh).',
+              ),
+              mis('No worry.', "Don't worry.", 'Phủ định mệnh lệnh dùng "Don\'t + động từ".'),
+              mis(
+                'To open the door.',
+                'Open the door.',
+                'Mệnh lệnh bắt đầu bằng động từ nguyên mẫu, không "to".',
+              ),
+              mis(
+                "Don't to be late.",
+                "Don't be late.",
+                'Sau "Don\'t" dùng động từ nguyên mẫu, không "to".',
+              ),
               mis('Opens the window.', 'Open the window.', 'Mệnh lệnh không chia -s.'),
             ],
             quiz: [
-              qz('Đừng chạm vào nó! =', ["No touch it!", "Don't touch it!", "Not touch it!"], 1),
-              qz('Câu mệnh lệnh đúng:', ["You sit down.", "Sit down.", "To sit down."], 1),
+              qz('Đừng chạm vào nó! =', ['No touch it!', "Don't touch it!", 'Not touch it!'], 1),
+              qz('Câu mệnh lệnh đúng:', ['You sit down.', 'Sit down.', 'To sit down.'], 1),
               qz('"Ngồi xuống." =', ['You sit down.', 'Sit down.', 'Sitting down.'], 1),
               qz('"Đừng nói chuyện." =', ['No talk.', "Don't talk.", 'Not talk.'], 1),
-              qz('"Làm ơn vào đi." =', ['Please come in.', 'Please you come in.', 'Please to come in.'], 0),
+              qz(
+                '"Làm ơn vào đi." =',
+                ['Please come in.', 'Please you come in.', 'Please to come in.'],
+                0,
+              ),
               qz('"Hãy cẩn thận!" =', ['Be careful!', 'You careful!', 'To careful!'], 0),
               qz('Phủ định của "Open it":', ["Don't open it", 'No open it', 'Not open it'], 0),
               qz('"Rẽ trái." =', ['Turning left.', 'Turn left.', 'You turn left.'], 1),
               qz('"Đừng lo." =', ["Don't worry.", 'No worry.', 'Not worry.'], 0),
-              qz('Chọn câu mệnh lệnh ĐÚNG:', ['Closes the door.', 'Close the door.', 'To close the door.'], 1),
+              qz(
+                'Chọn câu mệnh lệnh ĐÚNG:',
+                ['Closes the door.', 'Close the door.', 'To close the door.'],
+                1,
+              ),
             ],
           },
         ],
@@ -728,8 +1020,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
             titleVi: 'Câu hỏi Yes/No với "to be"',
             titleEn: 'Yes/No questions with be',
             structure: 'Am / Is / Are + S + …?',
-            explainVi:
-              'Đảo "to be" lên đầu câu để hỏi. Trả lời ngắn: Yes, I am. / No, I am not.',
+            explainVi: 'Đảo "to be" lên đầu câu để hỏi. Trả lời ngắn: Yes, I am. / No, I am not.',
             examples: [
               ex('Are you a student?', 'Bạn có phải học sinh không?'),
               ex('Is she your sister?', 'Cô ấy là chị/em gái bạn à?'),
@@ -742,7 +1033,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
             mistakes: [
               mis('You are a student?', 'Are you a student?', 'Câu hỏi phải đảo "are" lên đầu.'),
               mis('Are she your sister?', 'Is she your sister?', 'she đi với is.'),
-              mis('Do you are ready?', 'Are you ready?', 'Với to be KHÔNG dùng "do" — đảo to be lên đầu.'),
+              mis(
+                'Do you are ready?',
+                'Are you ready?',
+                'Với to be KHÔNG dùng "do" — đảo to be lên đầu.',
+              ),
               mis('Is they at home?', 'Are they at home?', 'they → are.'),
               mis('Yes, I are.', 'Yes, I am.', 'Trả lời ngắn theo chủ ngữ: I → am.'),
             ],
@@ -754,9 +1049,17 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('___ I late?', ['Is', 'Am', 'Are'], 1, 'I → am.'),
               qz('Trả lời "Are you tired?" (có):', ['Yes, I am.', 'Yes, I are.', 'Yes, I do.'], 0),
               qz('___ she a nurse?', ['Are', 'Is', 'Am'], 1, 'she → is.'),
-              qz('Trả lời "Is he here?" (không):', ["No, he isn't.", "No, he doesn't.", 'No, he not.'], 0),
+              qz(
+                'Trả lời "Is he here?" (không):',
+                ["No, he isn't.", "No, he doesn't.", 'No, he not.'],
+                0,
+              ),
               qz('___ we ready?', ['Is', 'Are', 'Am'], 1, 'we → are.'),
-              qz('Chọn câu hỏi ĐÚNG:', ['You are a teacher?', 'Are you a teacher?', 'Do you a teacher?'], 1),
+              qz(
+                'Chọn câu hỏi ĐÚNG:',
+                ['You are a teacher?', 'Are you a teacher?', 'Do you a teacher?'],
+                1,
+              ),
             ],
           },
           {
@@ -778,9 +1081,17 @@ export const CEFR_LEVELS: CefrLevel[] = [
               'Thứ tự: từ để hỏi + to be + chủ ngữ. "How old" hỏi tuổi (dùng to be, KHÔNG dùng have): How old are you?',
             mistakes: [
               mis('How old have you?', 'How old are you?', 'Hỏi tuổi dùng to be: How old are you?'),
-              mis('Where you are from?', 'Where are you from?', 'Phải đảo to be lên trước chủ ngữ.'),
+              mis(
+                'Where you are from?',
+                'Where are you from?',
+                'Phải đảo to be lên trước chủ ngữ.',
+              ),
               mis('Who you are?', 'Who are you?', 'Đảo to be lên trước chủ ngữ.'),
-              mis('Where is you live?', 'Where do you live?', 'Với động từ thường dùng "do": Where do you live?'),
+              mis(
+                'Where is you live?',
+                'Where do you live?',
+                'Với động từ thường dùng "do": Where do you live?',
+              ),
               mis('Why you are sad?', 'Why are you sad?', 'Đảo to be: Why are you...?'),
             ],
             quiz: [
@@ -793,7 +1104,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('___ do you live? (ở đâu)', ['What', 'Where', 'When'], 1),
               qz('___ is this? (cái gì)', ['Who', 'What', 'Where'], 1),
               qz('"Bạn khỏe không?" =', ['How are you?', 'What are you?', 'Where are you?'], 0),
-              qz('Chọn câu hỏi ĐÚNG:', ['Where you are from?', 'Where are you from?', 'Where from you are?'], 1),
+              qz(
+                'Chọn câu hỏi ĐÚNG:',
+                ['Where you are from?', 'Where are you from?', 'Where from you are?'],
+                1,
+              ),
             ],
           },
           {
@@ -884,9 +1199,21 @@ export const CEFR_LEVELS: CefrLevel[] = [
             mistakes: [
               mis('She work in a hospital.', 'She works in a hospital.', 'he/she/it phải thêm -s.'),
               mis('He gos to school.', 'He goes to school.', 'go tận cùng -o → thêm -es: goes.'),
-              mis('My brother go to school by bus.', 'My brother goes to school by bus.', 'brother (he) → goes.'),
-              mis('She watch TV every night.', 'She watches TV every night.', 'watch tận cùng -ch → watches.'),
-              mis('Water boil at 100 degrees.', 'Water boils at 100 degrees.', 'Sự thật hiển nhiên, chủ ngữ số ít → boils.'),
+              mis(
+                'My brother go to school by bus.',
+                'My brother goes to school by bus.',
+                'brother (he) → goes.',
+              ),
+              mis(
+                'She watch TV every night.',
+                'She watches TV every night.',
+                'watch tận cùng -ch → watches.',
+              ),
+              mis(
+                'Water boil at 100 degrees.',
+                'Water boils at 100 degrees.',
+                'Sự thật hiển nhiên, chủ ngữ số ít → boils.',
+              ),
             ],
             quiz: [
               qz('He ___ football every Sunday.', ['play', 'plays'], 1, 'he → plays.'),
@@ -908,7 +1235,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
             structure: "S + don't/doesn't + V • Do/Does + S + V?",
             explainVi:
               'Dùng "do/does" làm trợ động từ.\n' +
-              '• I/you/we/they → don\'t / Do…?   • he/she/it → doesn\'t / Does…?\n' +
+              "• I/you/we/they → don't / Do…?   • he/she/it → doesn't / Does…?\n" +
               'Sau do/does, động từ trở về nguyên mẫu (bỏ -s).',
             examples: [
               ex("I don't drink coffee.", 'Tôi không uống cà phê.'),
@@ -920,23 +1247,27 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Khi đã có "does/doesn\'t" thì động từ chính BỎ -s (vì -s đã chuyển vào does). Does she like? (KHÔNG "likes").',
             mistakes: [
-              mis("She doesn't eats meat.", "She doesn't eat meat.", 'Sau doesn\'t, động từ về nguyên mẫu (eat).'),
+              mis(
+                "She doesn't eats meat.",
+                "She doesn't eat meat.",
+                "Sau doesn't, động từ về nguyên mẫu (eat).",
+              ),
               mis('Does he lives here?', 'Does he live here?', 'Sau does, bỏ -s ở động từ chính.'),
-              mis("I doesn't like tea.", "I don't like tea.", 'I → don\'t.'),
+              mis("I doesn't like tea.", "I don't like tea.", "I → don't."),
               mis('Do she like coffee?', 'Does she like coffee?', 'she → does.'),
-              mis("They doesn't work here.", "They don't work here.", 'they → don\'t.'),
+              mis("They doesn't work here.", "They don't work here.", "they → don't."),
             ],
             quiz: [
-              qz('She ___ like coffee.', ["don't", "doesn't"], 1, 'she → doesn\'t.'),
+              qz('She ___ like coffee.', ["don't", "doesn't"], 1, "she → doesn't."),
               qz('___ you speak English?', ['Does', 'Do'], 1, 'you → do.'),
               qz('___ they live near here?', ['Do', 'Does'], 0, 'they → do.'),
-              qz('He ___ eat meat.', ["don't", "doesn't"], 1, 'he → doesn\'t.'),
+              qz('He ___ eat meat.', ["don't", "doesn't"], 1, "he → doesn't."),
               qz('Does she ___ English?', ['speaks', 'speak'], 1, 'sau does → nguyên mẫu.'),
               qz('___ your father work on Sunday?', ['Do', 'Does'], 1, 'father → does.'),
-              qz('We ___ have a car.', ["doesn't", "don't"], 1, 'we → don\'t.'),
+              qz('We ___ have a car.', ["doesn't", "don't"], 1, "we → don't."),
               qz('Chọn câu ĐÚNG:', ["She don't like fish.", "She doesn't like fish."], 1),
               qz('___ you want some tea?', ['Does', 'Do'], 1, 'you → do.'),
-              qz('It ___ work. (máy hỏng)', ["don't", "doesn't"], 1, 'it → doesn\'t.'),
+              qz('It ___ work. (máy hỏng)', ["don't", "doesn't"], 1, "it → doesn't."),
             ],
           },
           {
@@ -957,16 +1288,46 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Vị trí: TRƯỚC động từ thường (I often go), nhưng SAU to be (She is often late). "never" đã mang nghĩa phủ định — không thêm "not".',
             mistakes: [
-              mis('I brush always my teeth.', 'I always brush my teeth.', 'Trạng từ tần suất đứng TRƯỚC động từ thường.'),
-              mis("He doesn't never eat meat.", 'He never eats meat.', '"never" đã là phủ định, không dùng kèm doesn\'t.'),
-              mis('She always is late.', 'She is always late.', 'Với to be, trạng từ đứng SAU: is always.'),
-              mis('Always I go to bed early.', 'I always go to bed early.', 'Trạng từ đứng giữa chủ ngữ và động từ.'),
-              mis('I go often to the gym.', 'I often go to the gym.', 'Trạng từ đứng TRƯỚC động từ thường.'),
+              mis(
+                'I brush always my teeth.',
+                'I always brush my teeth.',
+                'Trạng từ tần suất đứng TRƯỚC động từ thường.',
+              ),
+              mis(
+                "He doesn't never eat meat.",
+                'He never eats meat.',
+                '"never" đã là phủ định, không dùng kèm doesn\'t.',
+              ),
+              mis(
+                'She always is late.',
+                'She is always late.',
+                'Với to be, trạng từ đứng SAU: is always.',
+              ),
+              mis(
+                'Always I go to bed early.',
+                'I always go to bed early.',
+                'Trạng từ đứng giữa chủ ngữ và động từ.',
+              ),
+              mis(
+                'I go often to the gym.',
+                'I often go to the gym.',
+                'Trạng từ đứng TRƯỚC động từ thường.',
+              ),
             ],
             quiz: [
-              qz('She ___ late. (thường — với to be)', ['is usually', 'usually is'], 0, 'Trạng từ đứng sau to be.'),
+              qz(
+                'She ___ late. (thường — với to be)',
+                ['is usually', 'usually is'],
+                0,
+                'Trạng từ đứng sau to be.',
+              ),
               qz('I ___ coffee in the morning. (luôn uống)', ['drink always', 'always drink'], 1),
-              qz('He ___ breakfast. (luôn ăn)', ['always eats', 'eats always'], 0, 'trước động từ thường.'),
+              qz(
+                'He ___ breakfast. (luôn ăn)',
+                ['always eats', 'eats always'],
+                0,
+                'trước động từ thường.',
+              ),
               qz('They ___ to the cinema. (thỉnh thoảng)', ['go sometimes', 'sometimes go'], 1),
               qz('She ___ angry. (hiếm khi — to be)', ['rarely is', 'is rarely'], 1),
               qz('Mức độ cao nhất (100%):', ['often', 'always', 'sometimes'], 1),
@@ -992,7 +1353,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
             structure: 'I/He/She/It + was • You/We/They + were',
             explainVi:
               '"Was/Were" là dạng quá khứ của "to be". Dùng để mô tả trạng thái trong quá khứ.\n' +
-              'Phủ định: wasn\'t / weren\'t. Câu hỏi: Was/Were + S?',
+              "Phủ định: wasn't / weren't. Câu hỏi: Was/Were + S?",
             examples: [
               ex('I was tired last night.', 'Tối qua tôi mệt.'),
               ex('They were at home.', 'Họ đã ở nhà.'),
@@ -1007,7 +1368,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
               mis('I were tired.', 'I was tired.', 'I → was.'),
               mis('She were at home.', 'She was at home.', 'she → was.'),
               mis('You was late.', 'You were late.', 'you → were.'),
-              mis("They wasn't ready.", "They weren't ready.", 'they → weren\'t.'),
+              mis("They wasn't ready.", "They weren't ready.", "they → weren't."),
             ],
             quiz: [
               qz('We ___ at the party.', ['was', 'were'], 1, 'we → were.'),
@@ -1017,7 +1378,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('She ___ happy yesterday.', ['were', 'was'], 1, 'she → was.'),
               qz('You ___ right.', ['was', 'were'], 1, 'you → were.'),
               qz('It ___ cold last week.', ['were', 'was'], 1, 'it → was.'),
-              qz('Phủ định: He ___ at work.', ["weren't", "wasn't"], 1, 'he → wasn\'t.'),
+              qz('Phủ định: He ___ at work.', ["weren't", "wasn't"], 1, "he → wasn't."),
               qz('___ you at the party?', ['Was', 'Were'], 1, 'you → were.'),
               qz('We ___ very busy.', ['was', 'were'], 1, 'we → were.'),
             ],
@@ -1041,7 +1402,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Dùng với mốc thời gian quá khứ: yesterday, last week, in 2010, two days ago. Quá khứ đơn KHÔNG đổi theo chủ ngữ (I/he/they đều worked).',
             mistakes: [
-              mis('Yesterday I go to school.', 'Yesterday I went to school.', 'Có "yesterday" → động từ phải ở quá khứ.'),
+              mis(
+                'Yesterday I go to school.',
+                'Yesterday I went to school.',
+                'Có "yesterday" → động từ phải ở quá khứ.',
+              ),
               mis('She buyed a house.', 'She bought a house.', 'buy là bất quy tắc → bought.'),
               mis('He goed home.', 'He went home.', 'go bất quy tắc → went.'),
               mis('I seen a film.', 'I saw a film.', 'Quá khứ đơn của see là saw.'),
@@ -1077,19 +1442,27 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Khi đã có "did" thì động từ chính KHÔNG chia quá khứ nữa: Did you go? (KHÔNG "Did you went?").',
             mistakes: [
-              mis('Did you went there?', 'Did you go there?', 'Sau "did" động từ về nguyên mẫu (go).'),
-              mis("She didn't called me.", "She didn't call me.", 'Sau didn\'t dùng nguyên mẫu (call).'),
-              mis("I didn't went.", "I didn't go.", 'Sau didn\'t → nguyên mẫu.'),
+              mis(
+                'Did you went there?',
+                'Did you go there?',
+                'Sau "did" động từ về nguyên mẫu (go).',
+              ),
+              mis(
+                "She didn't called me.",
+                "She didn't call me.",
+                "Sau didn't dùng nguyên mẫu (call).",
+              ),
+              mis("I didn't went.", "I didn't go.", "Sau didn't → nguyên mẫu."),
               mis('Did she saw it?', 'Did she see it?', 'Sau did → nguyên mẫu.'),
-              mis("He didn't ate.", "He didn't eat.", 'Sau didn\'t → eat.'),
+              mis("He didn't ate.", "He didn't eat.", "Sau didn't → eat."),
             ],
             quiz: [
               qz('___ you see the film?', ['Do', 'Did', 'Does'], 1, 'Hỏi quá khứ dùng did.'),
-              qz("I ___ go to school yesterday.", ["didn't", "don't"], 0),
+              qz('I ___ go to school yesterday.', ["didn't", "don't"], 0),
               qz('___ they go to school?', ['Do', 'Did', 'Does'], 1),
               qz('She ___ call me. (không)', ["didn't", "doesn't"], 0),
               qz('Did you ___ the film? (see)', ['saw', 'see'], 1),
-              qz('We ___ have time.', ["don't", "didn't"], 1, 'quá khứ → didn\'t.'),
+              qz('We ___ have time.', ["don't", "didn't"], 1, "quá khứ → didn't."),
               qz('What time ___ you get up?', ['do', 'did'], 1),
               qz('Chọn câu ĐÚNG:', ['Did he went?', 'Did he go?'], 1),
               qz('I ___ eat breakfast today.', ["didn't", "doesn't"], 0),
@@ -1123,11 +1496,23 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Đi với now, at the moment, right now. Một số động từ chỉ trạng thái (like, want, know, love) KHÔNG dùng -ing.',
             mistakes: [
-              mis('I reading a book now.', 'I am reading a book now.', 'Thiếu "am/is/are" trước V-ing.'),
-              mis('I am wanting a coffee.', 'I want a coffee.', '"want" là động từ trạng thái — không dùng tiếp diễn.'),
+              mis(
+                'I reading a book now.',
+                'I am reading a book now.',
+                'Thiếu "am/is/are" trước V-ing.',
+              ),
+              mis(
+                'I am wanting a coffee.',
+                'I want a coffee.',
+                '"want" là động từ trạng thái — không dùng tiếp diễn.',
+              ),
               mis('She is read a book.', 'She is reading a book.', 'Sau am/is/are → V-ing.'),
               mis('They is playing.', 'They are playing.', 'they → are.'),
-              mis('I am knowing the answer.', 'I know the answer.', '"know" là động từ trạng thái — không tiếp diễn.'),
+              mis(
+                'I am knowing the answer.',
+                'I know the answer.',
+                '"know" là động từ trạng thái — không tiếp diễn.',
+              ),
             ],
             quiz: [
               qz('She ___ TV now.', ['watch', 'is watching', 'watches'], 1),
@@ -1150,7 +1535,10 @@ export const CEFR_LEVELS: CefrLevel[] = [
             explainVi:
               'Diễn tả dự định, kế hoạch đã có sẵn hoặc điều sắp xảy ra theo dấu hiệu nhìn thấy.',
             examples: [
-              ex('I am going to visit my family this weekend.', 'Cuối tuần này tôi sẽ về thăm gia đình.'),
+              ex(
+                'I am going to visit my family this weekend.',
+                'Cuối tuần này tôi sẽ về thăm gia đình.',
+              ),
               ex('It is going to rain.', 'Trời sắp mưa.'),
               ex('They are going to buy a new car.', 'Họ định mua xe mới.'),
               ex('She is going to study abroad.', 'Cô ấy định đi du học.'),
@@ -1159,10 +1547,18 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Sau "going to" là động từ NGUYÊN MẪU. Khác "be going to" (kế hoạch) với "will" (quyết định ngay lúc nói).',
             mistakes: [
-              mis('I am going to visiting my family.', 'I am going to visit my family.', 'Sau "going to" dùng nguyên mẫu.'),
+              mis(
+                'I am going to visiting my family.',
+                'I am going to visit my family.',
+                'Sau "going to" dùng nguyên mẫu.',
+              ),
               mis('She going to study abroad.', 'She is going to study abroad.', 'Thiếu "is".'),
               mis('I going to call him.', 'I am going to call him.', 'Thiếu "am".'),
-              mis('They are going to buys a car.', 'They are going to buy a car.', 'Sau "going to" → nguyên mẫu.'),
+              mis(
+                'They are going to buys a car.',
+                'They are going to buy a car.',
+                'Sau "going to" → nguyên mẫu.',
+              ),
               mis('Is going to rain.', 'It is going to rain.', 'Thiếu chủ ngữ "It".'),
             ],
             quiz: [
@@ -1205,22 +1601,51 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Bất quy tắc cần nhớ: good→better→best, bad→worse→worst, far→farther→farthest. So sánh hơn dùng "than", so sánh nhất dùng "the".',
             mistakes: [
-              mis('My house is more big than yours.', 'My house is bigger than yours.', 'Tính từ ngắn thêm -er, không dùng "more".'),
-              mis('She is the most tall.', 'She is the tallest.', 'Tính từ ngắn thêm -est, không dùng "most".'),
-              mis('She is more taller than me.', 'She is taller than me.', 'Không dùng "more" với -er.'),
-              mis('This is the goodest film.', 'This is the best film.', 'good → best (bất quy tắc).'),
+              mis(
+                'My house is more big than yours.',
+                'My house is bigger than yours.',
+                'Tính từ ngắn thêm -er, không dùng "more".',
+              ),
+              mis(
+                'She is the most tall.',
+                'She is the tallest.',
+                'Tính từ ngắn thêm -est, không dùng "most".',
+              ),
+              mis(
+                'She is more taller than me.',
+                'She is taller than me.',
+                'Không dùng "more" với -er.',
+              ),
+              mis(
+                'This is the goodest film.',
+                'This is the best film.',
+                'good → best (bất quy tắc).',
+              ),
               mis('Hanoi is more big than Hue.', 'Hanoi is bigger than Hue.', 'big ngắn → bigger.'),
             ],
             quiz: [
               qz('She is ___ than me. (tall)', ['more tall', 'taller', 'tallest'], 1),
               qz('It is the ___ film. (interesting)', ['interestingest', 'most interesting'], 1),
               qz('good → so sánh hơn:', ['gooder', 'better'], 1),
-              qz('This box is ___ than that. (heavy)', ['heavier', 'more heavy'], 0, 'phụ âm+y → ier.'),
-              qz('She is the ___ student. (intelligent)', ['intelligentest', 'most intelligent'], 1),
+              qz(
+                'This box is ___ than that. (heavy)',
+                ['heavier', 'more heavy'],
+                0,
+                'phụ âm+y → ier.',
+              ),
+              qz(
+                'She is the ___ student. (intelligent)',
+                ['intelligentest', 'most intelligent'],
+                1,
+              ),
               qz('bad → so sánh nhất:', ['baddest', 'worst'], 1),
               qz('My car is ___ than yours. (fast)', ['faster', 'more fast'], 0),
               qz('Everest is the ___ mountain. (high)', ['highest', 'most high'], 0),
-              qz('This book is ___ than that one. (interesting)', ['interestinger', 'more interesting'], 1),
+              qz(
+                'This book is ___ than that one. (interesting)',
+                ['interestinger', 'more interesting'],
+                1,
+              ),
               qz('Chọn câu ĐÚNG:', ['He is more old than me.', 'He is older than me.'], 1),
             ],
           },
@@ -1242,11 +1667,23 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Giữa hai "as" luôn là tính từ/trạng từ NGUYÊN GỐC (không thêm -er): as tall as (KHÔNG "as taller as").',
             mistakes: [
-              mis('She is as taller as her brother.', 'She is as tall as her brother.', 'Giữa as…as dùng tính từ nguyên gốc.'),
-              mis('This phone is as expensive than that.', 'This phone is as expensive as that.', 'Dùng "as", không dùng "than".'),
+              mis(
+                'She is as taller as her brother.',
+                'She is as tall as her brother.',
+                'Giữa as…as dùng tính từ nguyên gốc.',
+              ),
+              mis(
+                'This phone is as expensive than that.',
+                'This phone is as expensive as that.',
+                'Dùng "as", không dùng "than".',
+              ),
               mis('He is so tall as me.', 'He is as tall as me.', 'Cấu trúc là as…as.'),
               mis('She is as good than him.', 'She is as good as him.', 'Dùng "as", không "than".'),
-              mis('It is not as bigger as that.', 'It is not as big as that.', 'Giữa as…as dùng nguyên gốc.'),
+              mis(
+                'It is not as bigger as that.',
+                'It is not as big as that.',
+                'Giữa as…as dùng nguyên gốc.',
+              ),
             ],
             quiz: [
               qz('He is ___ his father.', ['as tall as', 'as taller as', 'tall as'], 0),
@@ -1279,11 +1716,27 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Trạng từ bổ nghĩa cho ĐỘNG TỪ (mô tả cách làm); tính từ bổ nghĩa cho DANH TỪ. "good" là tính từ, "well" là trạng từ.',
             mistakes: [
-              mis('She speaks English good.', 'She speaks English well.', '"good" là tính từ; bổ nghĩa cho động từ dùng "well".'),
-              mis('He drives careful.', 'He drives carefully.', 'Bổ nghĩa cho động từ "drives" cần trạng từ "carefully".'),
+              mis(
+                'She speaks English good.',
+                'She speaks English well.',
+                '"good" là tính từ; bổ nghĩa cho động từ dùng "well".',
+              ),
+              mis(
+                'He drives careful.',
+                'He drives carefully.',
+                'Bổ nghĩa cho động từ "drives" cần trạng từ "carefully".',
+              ),
               mis('She runs quick.', 'She runs quickly.', 'Bổ nghĩa động từ → quickly.'),
-              mis('He plays the piano beautiful.', 'He plays the piano beautifully.', 'Bổ nghĩa động từ "plays" → beautifully.'),
-              mis('They work hardly.', 'They work hard.', '"hard" (chăm chỉ) là trạng từ; "hardly" nghĩa khác (hầu như không).'),
+              mis(
+                'He plays the piano beautiful.',
+                'He plays the piano beautifully.',
+                'Bổ nghĩa động từ "plays" → beautifully.',
+              ),
+              mis(
+                'They work hardly.',
+                'They work hard.',
+                '"hard" (chăm chỉ) là trạng từ; "hardly" nghĩa khác (hầu như không).',
+              ),
             ],
             quiz: [
               qz('He sings ___. (beautiful)', ['beautiful', 'beautifully'], 1),
@@ -1325,10 +1778,22 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Để đếm danh từ không đếm được, dùng "đơn vị": a glass of water, a cup of coffee, a piece of advice, a kilo of rice.',
             mistakes: [
-              mis('I need some informations.', 'I need some information.', 'information không đếm được — không thêm -s.'),
+              mis(
+                'I need some informations.',
+                'I need some information.',
+                'information không đếm được — không thêm -s.',
+              ),
               mis('How many money?', 'How much money?', 'money không đếm được → how much.'),
-              mis('I have three rices.', 'I have three bowls of rice.', 'rice không đếm được — dùng đơn vị.'),
-              mis('Can I have a water?', 'Can I have a glass of water?', 'water không đếm được — dùng "a glass of".'),
+              mis(
+                'I have three rices.',
+                'I have three bowls of rice.',
+                'rice không đếm được — dùng đơn vị.',
+              ),
+              mis(
+                'Can I have a water?',
+                'Can I have a glass of water?',
+                'water không đếm được — dùng "a glass of".',
+              ),
               mis('many furnitures', 'much furniture', 'furniture không đếm được.'),
             ],
             quiz: [
@@ -1363,11 +1828,27 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Ngoại lệ: trong LỜI MỜI/ĐỀ NGHỊ dùng "some" dù là câu hỏi: "Would you like some coffee?"',
             mistakes: [
-              mis("I don't have some money.", "I don't have any money.", 'Câu phủ định dùng "any".'),
-              mis('Do you have some questions?', 'Do you have any questions?', 'Câu hỏi (không phải mời) dùng "any".'),
-              mis('I have any friends here.', 'I have some friends here.', 'Câu khẳng định dùng "some".'),
+              mis(
+                "I don't have some money.",
+                "I don't have any money.",
+                'Câu phủ định dùng "any".',
+              ),
+              mis(
+                'Do you have some questions?',
+                'Do you have any questions?',
+                'Câu hỏi (không phải mời) dùng "any".',
+              ),
+              mis(
+                'I have any friends here.',
+                'I have some friends here.',
+                'Câu khẳng định dùng "some".',
+              ),
               mis('Is there some milk?', 'Is there any milk?', 'Câu hỏi (không mời) dùng "any".'),
-              mis('Would you like any coffee?', 'Would you like some coffee?', 'Lời mời dùng "some".'),
+              mis(
+                'Would you like any coffee?',
+                'Would you like some coffee?',
+                'Lời mời dùng "some".',
+              ),
             ],
             quiz: [
               qz("There aren't ___ apples.", ['some', 'any'], 1, 'Câu phủ định → any.'),
@@ -1384,9 +1865,9 @@ export const CEFR_LEVELS: CefrLevel[] = [
           },
           {
             id: 'a2-would-like',
-            titleVi: "Would like (muốn — lịch sự)",
+            titleVi: 'Would like (muốn — lịch sự)',
             titleEn: 'Would like',
-            structure: "S + would like + danh từ / to + V",
+            structure: 'S + would like + danh từ / to + V',
             explainVi:
               '"Would like" = "muốn" một cách lịch sự (lịch sự hơn "want"). Viết tắt: I\'d like.',
             examples: [
@@ -1399,11 +1880,23 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Sau "would like" + danh từ HOẶC to + V. "would like" ≠ "like": I like coffee (thích nói chung) vs I\'d like a coffee (muốn ngay bây giờ).',
             mistakes: [
-              mis("I would like coffee?", "Would you like coffee?", 'Câu hỏi mời phải đảo: Would you like…?'),
-              mis("She would like learn English.", "She would like to learn English.", 'Trước động từ cần "to".'),
+              mis(
+                'I would like coffee?',
+                'Would you like coffee?',
+                'Câu hỏi mời phải đảo: Would you like…?',
+              ),
+              mis(
+                'She would like learn English.',
+                'She would like to learn English.',
+                'Trước động từ cần "to".',
+              ),
               mis("I'd like to a coffee.", "I'd like a coffee.", 'Trước danh từ KHÔNG có "to".'),
-              mis("Would you like go out?", "Would you like to go out?", 'Trước động từ cần "to".'),
-              mis("Do you would like some tea?", "Would you like some tea?", 'Không dùng "do" với "would like".'),
+              mis('Would you like go out?', 'Would you like to go out?', 'Trước động từ cần "to".'),
+              mis(
+                'Do you would like some tea?',
+                'Would you like some tea?',
+                'Không dùng "do" với "would like".',
+              ),
             ],
             quiz: [
               qz('___ you like some cake?', ['Do', 'Would'], 1, 'Lời mời lịch sự dùng Would.'),
@@ -1460,17 +1953,29 @@ export const CEFR_LEVELS: CefrLevel[] = [
               ex('I have visited Japan twice.', 'Tôi đã đến Nhật hai lần.'),
               ex('She has never eaten durian.', 'Cô ấy chưa từng ăn sầu riêng.'),
               ex('Have you finished your homework yet?', 'Bạn làm xong bài tập chưa?'),
-              ex("I have just had lunch.", 'Tôi vừa ăn trưa xong.'),
-              ex("They have already left.", 'Họ đã đi rồi.'),
+              ex('I have just had lunch.', 'Tôi vừa ăn trưa xong.'),
+              ex('They have already left.', 'Họ đã đi rồi.'),
             ],
             tipVi:
               'Vị trí trạng từ: just/already đứng GIỮA have và V3; yet đứng CUỐI câu phủ định/nghi vấn. "he/she/it" dùng "has".',
             mistakes: [
-              mis('I have visit Japan.', 'I have visited Japan.', 'Sau have/has dùng V3 (quá khứ phân từ).'),
-              mis('She has ate durian.', 'She has eaten durian.', 'eat → eaten (V3), không phải "ate" (V2).'),
+              mis(
+                'I have visit Japan.',
+                'I have visited Japan.',
+                'Sau have/has dùng V3 (quá khứ phân từ).',
+              ),
+              mis(
+                'She has ate durian.',
+                'She has eaten durian.',
+                'eat → eaten (V3), không phải "ate" (V2).',
+              ),
               mis('She have visited Japan.', 'She has visited Japan.', 'she → has.'),
               mis('I have saw that film.', 'I have seen that film.', 'see → seen (V3).'),
-              mis('Have you went there?', 'Have you been there?', 'go → been/gone (V3), không phải "went".'),
+              mis(
+                'Have you went there?',
+                'Have you been there?',
+                'go → been/gone (V3), không phải "went".',
+              ),
             ],
             quiz: [
               qz('I have ___ this film.', ['saw', 'seen', 'see'], 1, 'see → seen (V3).'),
@@ -1503,11 +2008,31 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Phân biệt: for + KHOẢNG (for 3 days), since + MỐC bắt đầu (since Monday, since 2019).',
             mistakes: [
-              mis('I have lived here since ten years.', 'I have lived here for ten years.', '"ten years" là khoảng → dùng for.'),
-              mis('She has worked here for 2019.', 'She has worked here since 2019.', '"2019" là mốc → dùng since.'),
-              mis('I have known her for 2015.', 'I have known her since 2015.', '2015 là mốc → since.'),
-              mis('She has been ill for Monday.', 'She has been ill since Monday.', 'Monday là mốc → since.'),
-              mis('We have studied since three years.', 'We have studied for three years.', 'khoảng → for.'),
+              mis(
+                'I have lived here since ten years.',
+                'I have lived here for ten years.',
+                '"ten years" là khoảng → dùng for.',
+              ),
+              mis(
+                'She has worked here for 2019.',
+                'She has worked here since 2019.',
+                '"2019" là mốc → dùng since.',
+              ),
+              mis(
+                'I have known her for 2015.',
+                'I have known her since 2015.',
+                '2015 là mốc → since.',
+              ),
+              mis(
+                'She has been ill for Monday.',
+                'She has been ill since Monday.',
+                'Monday là mốc → since.',
+              ),
+              mis(
+                'We have studied since three years.',
+                'We have studied for three years.',
+                'khoảng → for.',
+              ),
             ],
             quiz: [
               qz('I have studied English ___ five years.', ['since', 'for'], 1),
@@ -1519,7 +2044,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('We have known them ___ a long time.', ['since', 'for'], 1),
               qz('They have been married ___ ten years.', ['since', 'for'], 1),
               qz("I haven't seen her ___ last week.", ['for', 'since'], 1),
-              qz('Chọn câu ĐÚNG:', ['I have waited since two hours.', 'I have waited for two hours.'], 1),
+              qz(
+                'Chọn câu ĐÚNG:',
+                ['I have waited since two hours.', 'I have waited for two hours.'],
+                1,
+              ),
             ],
           },
           {
@@ -1533,22 +2062,50 @@ export const CEFR_LEVELS: CefrLevel[] = [
             examples: [
               ex('I have been to Paris.', 'Tôi đã từng đến Paris.'),
               ex('I went to Paris in 2018.', 'Tôi đến Paris vào năm 2018.'),
-              ex('Have you seen this film? — Yes, I saw it last week.', 'Bạn xem phim này chưa? — Rồi, tuần trước tôi xem.'),
+              ex(
+                'Have you seen this film? — Yes, I saw it last week.',
+                'Bạn xem phim này chưa? — Rồi, tuần trước tôi xem.',
+              ),
               ex('She has finished her work.', 'Cô ấy làm xong việc rồi.'),
               ex('She finished her work at 5 p.m.', 'Cô ấy làm xong việc lúc 5 giờ chiều.'),
             ],
             tipVi:
               'Có mốc thời gian quá khứ rõ ràng (yesterday, ago, in 2010) → BẮT BUỘC dùng quá khứ đơn, không dùng hiện tại hoàn thành.',
             mistakes: [
-              mis('I have gone to Paris in 2018.', 'I went to Paris in 2018.', 'Có "in 2018" → quá khứ đơn.'),
-              mis('I saw this film already.', 'I have already seen this film.', '"already" (chưa rõ lúc nào) → hiện tại hoàn thành.'),
-              mis('I have seen him yesterday.', 'I saw him yesterday.', 'Có "yesterday" → quá khứ đơn.'),
-              mis('Did you ever eat sushi?', 'Have you ever eaten sushi?', 'Hỏi kinh nghiệm → present perfect.'),
-              mis('She has finished it two hours ago.', 'She finished it two hours ago.', '"ago" → quá khứ đơn.'),
+              mis(
+                'I have gone to Paris in 2018.',
+                'I went to Paris in 2018.',
+                'Có "in 2018" → quá khứ đơn.',
+              ),
+              mis(
+                'I saw this film already.',
+                'I have already seen this film.',
+                '"already" (chưa rõ lúc nào) → hiện tại hoàn thành.',
+              ),
+              mis(
+                'I have seen him yesterday.',
+                'I saw him yesterday.',
+                'Có "yesterday" → quá khứ đơn.',
+              ),
+              mis(
+                'Did you ever eat sushi?',
+                'Have you ever eaten sushi?',
+                'Hỏi kinh nghiệm → present perfect.',
+              ),
+              mis(
+                'She has finished it two hours ago.',
+                'She finished it two hours ago.',
+                '"ago" → quá khứ đơn.',
+              ),
             ],
             quiz: [
               qz('I ___ him yesterday.', ['have seen', 'saw'], 1, 'Có "yesterday" → quá khứ đơn.'),
-              qz('___ you ever ___ sushi?', ['Did / eat', 'Have / eaten'], 1, 'Hỏi kinh nghiệm → present perfect.'),
+              qz(
+                '___ you ever ___ sushi?',
+                ['Did / eat', 'Have / eaten'],
+                1,
+                'Hỏi kinh nghiệm → present perfect.',
+              ),
               qz('We ___ to Paris in 2019.', ['have been', 'went'], 1, 'có mốc → quá khứ đơn.'),
               qz('I ___ my keys (vẫn đang mất).', ['have lost', 'lost'], 0),
               qz('He ___ a car last year.', ['has bought', 'bought'], 1),
@@ -1584,19 +2141,46 @@ export const CEFR_LEVELS: CefrLevel[] = [
               ex('Maybe she will come later.', 'Có lẽ lát nữa cô ấy sẽ đến.'),
             ],
             tipVi:
-              'Quyết định NGAY lúc nói → will (I\'ll help you). Đã LÊN KẾ HOẠCH từ trước → be going to. Sau cả hai đều là động từ nguyên mẫu.',
+              "Quyết định NGAY lúc nói → will (I'll help you). Đã LÊN KẾ HOẠCH từ trước → be going to. Sau cả hai đều là động từ nguyên mẫu.",
             mistakes: [
               mis('I will to help you.', 'I will help you.', 'Sau "will" KHÔNG có "to".'),
-              mis('She will helps you.', 'She will help you.', 'Sau "will" động từ nguyên mẫu, không thêm -s.'),
-              mis("I am going to call you back. (vừa quyết định)", "I'll call you back.", 'Quyết định ngay → will.'),
+              mis(
+                'She will helps you.',
+                'She will help you.',
+                'Sau "will" động từ nguyên mẫu, không thêm -s.',
+              ),
+              mis(
+                'I am going to call you back. (vừa quyết định)',
+                "I'll call you back.",
+                'Quyết định ngay → will.',
+              ),
               mis('It will to rain.', 'It will rain.', 'Sau "will" không "to".'),
-              mis('Look at the clouds! It will rain.', "Look at the clouds! It's going to rain.", 'Có dấu hiệu → be going to.'),
+              mis(
+                'Look at the clouds! It will rain.',
+                "Look at the clouds! It's going to rain.",
+                'Có dấu hiệu → be going to.',
+              ),
             ],
             quiz: [
-              qz('The phone is ringing! I ___ answer it.', ["'m going to", "'ll"], 1, 'Quyết định ngay lúc nói → will.'),
+              qz(
+                'The phone is ringing! I ___ answer it.',
+                ["'m going to", "'ll"],
+                1,
+                'Quyết định ngay lúc nói → will.',
+              ),
               qz('After "will" we use:', ['to + V', 'V nguyên mẫu', 'V-ing'], 1),
-              qz("I've decided. I ___ study abroad.", ["'ll", "'m going to"], 1, 'kế hoạch đã có → going to.'),
-              qz('That bag is heavy. I ___ help you.', ["'ll", "'m going to"], 0, 'quyết định ngay → will.'),
+              qz(
+                "I've decided. I ___ study abroad.",
+                ["'ll", "'m going to"],
+                1,
+                'kế hoạch đã có → going to.',
+              ),
+              qz(
+                'That bag is heavy. I ___ help you.',
+                ["'ll", "'m going to"],
+                0,
+                'quyết định ngay → will.',
+              ),
               qz('She ___ leave. (đã lên kế hoạch)', ['will', 'is going to'], 1),
               qz('Dự đoán có dấu hiệu rõ → dùng:', ['will', 'be going to'], 1),
               qz('Lời hứa thường dùng:', ['will', 'be going to'], 0),
@@ -1610,8 +2194,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
             titleVi: 'Hiện tại tiếp diễn cho tương lai (lịch hẹn)',
             titleEn: 'Present Continuous for future',
             structure: 'S + am/is/are + V-ing + thời gian tương lai',
-            explainVi:
-              'Dùng cho cuộc hẹn, sắp xếp đã chốt (có thời gian/địa điểm cụ thể).',
+            explainVi: 'Dùng cho cuộc hẹn, sắp xếp đã chốt (có thời gian/địa điểm cụ thể).',
             examples: [
               ex('I am meeting my boss at 3 p.m.', 'Tôi gặp sếp lúc 3 giờ chiều.'),
               ex('We are flying to Da Nang on Friday.', 'Thứ Sáu chúng tôi bay đi Đà Nẵng.'),
@@ -1622,14 +2205,39 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Dùng khi đã CHỐT lịch (có thời gian + người + nơi). Khác với "be going to" (chỉ là dự định). Cần thời gian tương lai đi kèm để khỏi nhầm với hiện tại.',
             mistakes: [
-              mis("I meet my boss at 3 p.m. tomorrow.", "I'm meeting my boss at 3 p.m. tomorrow.", 'Lịch hẹn tương lai → hiện tại tiếp diễn.'),
-              mis('We are fly to Da Nang on Friday.', 'We are flying to Da Nang on Friday.', 'Cần dạng V-ing (flying).'),
-              mis('They are get married next month.', 'They are getting married next month.', 'Cần V-ing: getting.'),
-              mis('She is have dinner with friends tonight.', 'She is having dinner with friends tonight.', 'Cần V-ing: having.'),
-              mis('I am seeing the dentist. (không có thời gian)', "I'm seeing the dentist at 9 tomorrow.", 'Cần thời gian cụ thể cho lịch đã chốt.'),
+              mis(
+                'I meet my boss at 3 p.m. tomorrow.',
+                "I'm meeting my boss at 3 p.m. tomorrow.",
+                'Lịch hẹn tương lai → hiện tại tiếp diễn.',
+              ),
+              mis(
+                'We are fly to Da Nang on Friday.',
+                'We are flying to Da Nang on Friday.',
+                'Cần dạng V-ing (flying).',
+              ),
+              mis(
+                'They are get married next month.',
+                'They are getting married next month.',
+                'Cần V-ing: getting.',
+              ),
+              mis(
+                'She is have dinner with friends tonight.',
+                'She is having dinner with friends tonight.',
+                'Cần V-ing: having.',
+              ),
+              mis(
+                'I am seeing the dentist. (không có thời gian)',
+                "I'm seeing the dentist at 9 tomorrow.",
+                'Cần thời gian cụ thể cho lịch đã chốt.',
+              ),
             ],
             quiz: [
-              qz('I ___ the doctor at 9 tomorrow.', ['see', 'am seeing'], 1, 'Lịch hẹn đã chốt → present continuous.'),
+              qz(
+                'I ___ the doctor at 9 tomorrow.',
+                ['see', 'am seeing'],
+                1,
+                'Lịch hẹn đã chốt → present continuous.',
+              ),
               qz('Chọn câu chỉ lịch hẹn:', ['It will rain.', 'We are meeting at 5.'], 1),
               qz('We ___ to Hue on Friday. (đã đặt vé)', ['fly', 'are flying'], 1),
               qz('Lịch hẹn đã chốt dùng thì:', ['hiện tại đơn', 'hiện tại tiếp diễn'], 1),
@@ -1638,7 +2246,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('What ___ you doing tonight?', ['are', 'do'], 0),
               qz('She ___ friends at the cinema at 7.', ['meets', 'is meeting'], 1),
               qz('Chọn câu ĐÚNG:', ['We are fly tomorrow.', 'We are flying tomorrow.'], 1),
-              qz('"be going to" và HT tiếp diễn cho tương lai khác nhau ở:', ['không khác gì', 'tiếp diễn = lịch đã chốt'], 1),
+              qz(
+                '"be going to" và HT tiếp diễn cho tương lai khác nhau ở:',
+                ['không khác gì', 'tiếp diễn = lịch đã chốt'],
+                1,
+              ),
             ],
           },
         ],
@@ -1660,18 +2272,44 @@ export const CEFR_LEVELS: CefrLevel[] = [
             examples: [
               ex('If you heat water, it boils.', 'Nếu đun nước, nó sôi.'),
               ex('Ice melts if the weather is hot.', 'Băng tan nếu trời nóng.'),
-              ex('If you mix blue and yellow, you get green.', 'Trộn xanh dương với vàng thì ra xanh lá.'),
-              ex('Plants die if you don\'t water them.', 'Cây chết nếu bạn không tưới.'),
-              ex('If I drink coffee at night, I can\'t sleep.', 'Nếu tối uống cà phê, tôi không ngủ được.'),
+              ex(
+                'If you mix blue and yellow, you get green.',
+                'Trộn xanh dương với vàng thì ra xanh lá.',
+              ),
+              ex("Plants die if you don't water them.", 'Cây chết nếu bạn không tưới.'),
+              ex(
+                "If I drink coffee at night, I can't sleep.",
+                'Nếu tối uống cà phê, tôi không ngủ được.',
+              ),
             ],
             tipVi:
               'Loại 0 nói về điều LUÔN đúng → có thể thay "if" bằng "when" mà nghĩa gần như không đổi.',
             mistakes: [
-              mis('If you heat water, it will boil.', 'If you heat water, it boils.', 'Loại 0 (sự thật) → cả hai vế hiện tại, không dùng will.'),
-              mis('If you will mix blue and yellow…', 'If you mix blue and yellow…', 'Sau "if" loại 0 KHÔNG dùng will.'),
-              mis('If it is cold, water will freeze.', 'If it is cold, water freezes.', 'Loại 0: cả hai vế hiện tại.'),
-              mis("Plants will die if you don't water them.", "Plants die if you don't water them.", 'Sự thật → hiện tại.'),
-              mis('If I will drink coffee at night, I can\'t sleep.', "If I drink coffee at night, I can't sleep.", 'Sau if (loại 0) không will.'),
+              mis(
+                'If you heat water, it will boil.',
+                'If you heat water, it boils.',
+                'Loại 0 (sự thật) → cả hai vế hiện tại, không dùng will.',
+              ),
+              mis(
+                'If you will mix blue and yellow…',
+                'If you mix blue and yellow…',
+                'Sau "if" loại 0 KHÔNG dùng will.',
+              ),
+              mis(
+                'If it is cold, water will freeze.',
+                'If it is cold, water freezes.',
+                'Loại 0: cả hai vế hiện tại.',
+              ),
+              mis(
+                "Plants will die if you don't water them.",
+                "Plants die if you don't water them.",
+                'Sự thật → hiện tại.',
+              ),
+              mis(
+                "If I will drink coffee at night, I can't sleep.",
+                "If I drink coffee at night, I can't sleep.",
+                'Sau if (loại 0) không will.',
+              ),
             ],
             quiz: [
               qz('If you heat ice, it ___.', ['will melt', 'melts'], 1, 'Loại 0 → hiện tại.'),
@@ -1683,7 +2321,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('Water boils if you ___ it.', ['heat', 'will heat'], 0),
               qz('Loại 0 nói về:', ['dự định tương lai', 'sự thật luôn đúng'], 1),
               qz('If the sun ___, plants grow.', ['shines', 'will shine'], 0),
-              qz('Chọn câu ĐÚNG (loại 0):', ['If you press it, it will start.', 'If you press it, it starts.'], 1),
+              qz(
+                'Chọn câu ĐÚNG (loại 0):',
+                ['If you press it, it will start.', 'If you press it, it starts.'],
+                1,
+              ),
             ],
           },
           {
@@ -1700,17 +2342,41 @@ export const CEFR_LEVELS: CefrLevel[] = [
               ex('I will call you if I have time.', 'Tôi sẽ gọi bạn nếu có thời gian.'),
               ex('If she comes, we will start.', 'Nếu cô ấy đến, chúng ta sẽ bắt đầu.'),
             ],
-            tipVi:
-              'Quy tắc vàng: SAU "if" KHÔNG dùng "will". "will" chỉ nằm ở vế chính.',
+            tipVi: 'Quy tắc vàng: SAU "if" KHÔNG dùng "will". "will" chỉ nằm ở vế chính.',
             mistakes: [
-              mis('If it will rain, I will stay home.', 'If it rains, I will stay home.', 'Sau "if" dùng hiện tại đơn, không dùng will.'),
-              mis('If you study hard, you pass.', 'If you study hard, you will pass.', 'Vế chính (kết quả tương lai) cần "will".'),
-              mis('If I will see her, I will tell her.', 'If I see her, I will tell her.', 'Sau if không will.'),
-              mis('If it rains, I stay home.', 'If it rains, I will stay home.', 'Vế chính cần will.'),
-              mis('If he comes, we starting.', 'If he comes, we will start.', 'Vế chính dùng will + V.'),
+              mis(
+                'If it will rain, I will stay home.',
+                'If it rains, I will stay home.',
+                'Sau "if" dùng hiện tại đơn, không dùng will.',
+              ),
+              mis(
+                'If you study hard, you pass.',
+                'If you study hard, you will pass.',
+                'Vế chính (kết quả tương lai) cần "will".',
+              ),
+              mis(
+                'If I will see her, I will tell her.',
+                'If I see her, I will tell her.',
+                'Sau if không will.',
+              ),
+              mis(
+                'If it rains, I stay home.',
+                'If it rains, I will stay home.',
+                'Vế chính cần will.',
+              ),
+              mis(
+                'If he comes, we starting.',
+                'If he comes, we will start.',
+                'Vế chính dùng will + V.',
+              ),
             ],
             quiz: [
-              qz('If it ___, we will cancel the trip.', ['will rain', 'rains'], 1, 'Sau if → hiện tại.'),
+              qz(
+                'If it ___, we will cancel the trip.',
+                ['will rain', 'rains'],
+                1,
+                'Sau if → hiện tại.',
+              ),
               qz('If you ask him, he ___ help.', ['will', 'wills'], 0),
               qz('If you ___ hard, you will pass.', ['will study', 'study'], 1),
               qz('If it rains, we ___ at home.', ['stay', 'will stay'], 1),
@@ -1719,7 +2385,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('If she calls, I ___ answer.', ['will', 'am'], 0),
               qz("We won't be late if we ___ now.", ['leave', 'will leave'], 0),
               qz('If you press it, the light ___ on.', ['will come', 'comes'], 0),
-              qz('Chọn câu ĐÚNG:', ['If it will rain, I will stay.', 'If it rains, I will stay.'], 1),
+              qz(
+                'Chọn câu ĐÚNG:',
+                ['If it will rain, I will stay.', 'If it rains, I will stay.'],
+                1,
+              ),
             ],
           },
           {
@@ -1731,7 +2401,10 @@ export const CEFR_LEVELS: CefrLevel[] = [
               'Sau when, as soon as, before, after, until… nói về tương lai, vẫn dùng HIỆN TẠI (không dùng will).',
             examples: [
               ex('I will call you when I arrive.', 'Tôi sẽ gọi bạn khi tôi đến nơi.'),
-              ex('As soon as he comes, we will start.', 'Ngay khi anh ấy đến, chúng ta sẽ bắt đầu.'),
+              ex(
+                'As soon as he comes, we will start.',
+                'Ngay khi anh ấy đến, chúng ta sẽ bắt đầu.',
+              ),
               ex('Turn off the lights before you leave.', 'Tắt đèn trước khi bạn rời đi.'),
               ex("I won't go until you call me.", 'Tôi sẽ không đi cho đến khi bạn gọi.'),
               ex('After I finish work, I will go home.', 'Sau khi xong việc, tôi sẽ về nhà.'),
@@ -1739,11 +2412,31 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Giống điều kiện loại 1: sau từ chỉ thời gian (when/before/after/until/as soon as) dùng HIỆN TẠI dù nói về tương lai.',
             mistakes: [
-              mis('I will call you when I will arrive.', 'I will call you when I arrive.', 'Sau "when" (tương lai) dùng hiện tại.'),
-              mis('As soon as he will come…', 'As soon as he comes…', 'Sau "as soon as" dùng hiện tại.'),
-              mis('Before you will leave, turn off the lights.', 'Before you leave, turn off the lights.', 'Sau "before" dùng hiện tại.'),
-              mis("I won't start until he will come.", "I won't start until he comes.", 'Sau "until" dùng hiện tại.'),
-              mis('After I will finish, I will rest.', 'After I finish, I will rest.', 'Sau "after" dùng hiện tại.'),
+              mis(
+                'I will call you when I will arrive.',
+                'I will call you when I arrive.',
+                'Sau "when" (tương lai) dùng hiện tại.',
+              ),
+              mis(
+                'As soon as he will come…',
+                'As soon as he comes…',
+                'Sau "as soon as" dùng hiện tại.',
+              ),
+              mis(
+                'Before you will leave, turn off the lights.',
+                'Before you leave, turn off the lights.',
+                'Sau "before" dùng hiện tại.',
+              ),
+              mis(
+                "I won't start until he will come.",
+                "I won't start until he comes.",
+                'Sau "until" dùng hiện tại.',
+              ),
+              mis(
+                'After I will finish, I will rest.',
+                'After I finish, I will rest.',
+                'Sau "after" dùng hiện tại.',
+              ),
             ],
             quiz: [
               qz('I will text you when I ___ there.', ['will get', 'get'], 1),
@@ -1784,15 +2477,27 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Sau "should" là động từ NGUYÊN MẪU (không "to", không -s). "ought to" nghĩa giống "should" nhưng có "to".',
             mistakes: [
-              mis('You should to see a doctor.', 'You should see a doctor.', 'Sau "should" KHÔNG có "to".'),
-              mis('She should sees a doctor.', 'She should see a doctor.', 'Sau "should" động từ nguyên mẫu.'),
+              mis(
+                'You should to see a doctor.',
+                'You should see a doctor.',
+                'Sau "should" KHÔNG có "to".',
+              ),
+              mis(
+                'She should sees a doctor.',
+                'She should see a doctor.',
+                'Sau "should" động từ nguyên mẫu.',
+              ),
               mis('He shoulds study more.', 'He should study more.', '"should" không chia -s.'),
-              mis("You don't should do that.", "You shouldn't do that.", 'Phủ định: shouldn\'t.'),
-              mis('Should to I call her?', 'Should I call her?', 'Câu hỏi: Should + S + V (không "to").'),
+              mis("You don't should do that.", "You shouldn't do that.", "Phủ định: shouldn't."),
+              mis(
+                'Should to I call her?',
+                'Should I call her?',
+                'Câu hỏi: Should + S + V (không "to").',
+              ),
             ],
             quiz: [
               qz('You should ___ more.', ['to study', 'study', 'studies'], 1),
-              qz('Lời khuyên "không nên" =', ["should not", "don't should"], 0),
+              qz('Lời khuyên "không nên" =', ['should not', "don't should"], 0),
               qz('She should ___ more water.', ['drinks', 'drink'], 1),
               qz('Sau "should" động từ dạng:', ['to + V', 'nguyên mẫu'], 1),
               qz('___ I call her now?', ['Should', 'Do should'], 0),
@@ -1805,32 +2510,55 @@ export const CEFR_LEVELS: CefrLevel[] = [
           },
           {
             id: 'b1-must-have-to',
-            titleVi: 'Must / Have to / Mustn\'t',
-            titleEn: 'Must / Have to / Mustn\'t',
-            structure: 'S + must / have to + V • mustn\'t = cấm',
+            titleVi: "Must / Have to / Mustn't",
+            titleEn: "Must / Have to / Mustn't",
+            structure: "S + must / have to + V • mustn't = cấm",
             explainVi:
               '• must / have to: phải (bắt buộc).\n' +
-              '• mustn\'t: cấm, không được phép.\n' +
-              '• don\'t have to: không cần thiết (KHÁC mustn\'t!).',
+              "• mustn't: cấm, không được phép.\n" +
+              "• don't have to: không cần thiết (KHÁC mustn't!).",
             examples: [
               ex('You must wear a helmet.', 'Bạn phải đội mũ bảo hiểm.'),
               ex('I have to work on Saturday.', 'Tôi phải làm việc thứ Bảy.'),
-              ex("You don't have to come if you're busy.", 'Bạn không nhất thiết phải đến nếu bận.'),
+              ex(
+                "You don't have to come if you're busy.",
+                'Bạn không nhất thiết phải đến nếu bận.',
+              ),
               ex("You mustn't smoke here.", 'Bạn không được hút thuốc ở đây.'),
               ex('She has to study for the exam.', 'Cô ấy phải học cho kỳ thi.'),
             ],
             tipVi:
-              'Phân biệt quan trọng: mustn\'t = CẤM (không được làm); don\'t have to = KHÔNG CẦN (làm cũng được, không làm cũng được).',
+              "Phân biệt quan trọng: mustn't = CẤM (không được làm); don't have to = KHÔNG CẦN (làm cũng được, không làm cũng được).",
             mistakes: [
-              mis('He must to wear a helmet.', 'He must wear a helmet.', 'Sau "must" KHÔNG có "to".'),
-              mis("You don't have to smoke here. (ý: cấm)", "You mustn't smoke here.", 'Cấm → mustn\'t, không phải don\'t have to.'),
-              mis('She must to wear a uniform.', 'She must wear a uniform.', 'Sau "must" không "to".'),
-              mis('I must to work on Saturday.', 'I have to work on Saturday.', 'must + V; "have" mới đi với "to".'),
+              mis(
+                'He must to wear a helmet.',
+                'He must wear a helmet.',
+                'Sau "must" KHÔNG có "to".',
+              ),
+              mis(
+                "You don't have to smoke here. (ý: cấm)",
+                "You mustn't smoke here.",
+                "Cấm → mustn't, không phải don't have to.",
+              ),
+              mis(
+                'She must to wear a uniform.',
+                'She must wear a uniform.',
+                'Sau "must" không "to".',
+              ),
+              mis(
+                'I must to work on Saturday.',
+                'I have to work on Saturday.',
+                'must + V; "have" mới đi với "to".',
+              ),
               mis('He have to study tonight.', 'He has to study tonight.', 'he → has to.'),
             ],
             quiz: [
               qz('Đèn đỏ: You ___ stop. (bắt buộc)', ['must', "don't have to"], 0),
-              qz('Bài tập tự chọn: You ___ do it. (không bắt buộc)', ["mustn't", "don't have to"], 1),
+              qz(
+                'Bài tập tự chọn: You ___ do it. (không bắt buộc)',
+                ["mustn't", "don't have to"],
+                1,
+              ),
               qz('Cấm hút thuốc:', ["You don't have to smoke", "You mustn't smoke"], 1),
               qz('Sau "must" dùng:', ['to + V', 'V nguyên mẫu'], 1),
               qz('"không cần thiết" =', ["mustn't", "don't have to"], 1),
@@ -1859,7 +2587,10 @@ export const CEFR_LEVELS: CefrLevel[] = [
               'Dùng để mô tả thêm cho danh từ, nối hai câu thành một.\n' +
               'who → người, which → vật, that → cả hai.',
             examples: [
-              ex('The man who lives next door is a doctor.', 'Người đàn ông sống cạnh nhà là bác sĩ.'),
+              ex(
+                'The man who lives next door is a doctor.',
+                'Người đàn ông sống cạnh nhà là bác sĩ.',
+              ),
               ex('This is the book which I told you about.', 'Đây là cuốn sách tôi đã kể với bạn.'),
               ex("She's the teacher that helped me.", 'Cô ấy là giáo viên đã giúp tôi.'),
               ex('I like songs which have good lyrics.', 'Tôi thích những bài hát có lời hay.'),
@@ -1868,11 +2599,31 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Khi đại từ quan hệ là TÂN NGỮ, có thể lược bỏ: "the book (which) I told you about". Khi là CHỦ NGỮ thì không bỏ được.',
             mistakes: [
-              mis('The man which lives next door…', 'The man who lives next door…', 'Chỉ người → who/that, không dùng which.'),
-              mis('The book who I read…', 'The book which/that I read…', 'Chỉ vật → which/that, không dùng who.'),
-              mis('The girl which sings is my friend.', 'The girl who sings is my friend.', 'Người → who.'),
-              mis('The man what helped me left.', 'The man who helped me left.', 'Không dùng "what" làm đại từ quan hệ.'),
-              mis('The woman who car is red is my boss.', "The woman whose car is red is my boss.", 'Sở hữu → whose.'),
+              mis(
+                'The man which lives next door…',
+                'The man who lives next door…',
+                'Chỉ người → who/that, không dùng which.',
+              ),
+              mis(
+                'The book who I read…',
+                'The book which/that I read…',
+                'Chỉ vật → which/that, không dùng who.',
+              ),
+              mis(
+                'The girl which sings is my friend.',
+                'The girl who sings is my friend.',
+                'Người → who.',
+              ),
+              mis(
+                'The man what helped me left.',
+                'The man who helped me left.',
+                'Không dùng "what" làm đại từ quan hệ.',
+              ),
+              mis(
+                'The woman who car is red is my boss.',
+                'The woman whose car is red is my boss.',
+                'Sở hữu → whose.',
+              ),
             ],
             quiz: [
               qz('The woman ___ called you is my aunt.', ['which', 'who'], 1, 'Người → who.'),
@@ -1882,9 +2633,18 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('"that" dùng cho:', ['chỉ người', 'người và vật'], 1),
               qz('The teacher ___ helped me is nice.', ['which', 'who'], 1),
               qz('Đại từ quan hệ là tân ngữ thì:', ['bắt buộc giữ', 'có thể lược bỏ'], 1),
-              qz('The woman ___ bag was stolen called police.', ['who', 'whose'], 1, 'sở hữu → whose.'),
+              qz(
+                'The woman ___ bag was stolen called police.',
+                ['who', 'whose'],
+                1,
+                'sở hữu → whose.',
+              ),
               qz('The phone ___ I bought broke.', ['who', 'that'], 1),
-              qz('Chọn câu ĐÚNG:', ['The dog who barks is mine.', 'The dog that barks is mine.'], 1),
+              qz(
+                'Chọn câu ĐÚNG:',
+                ['The dog who barks is mine.', 'The dog that barks is mine.'],
+                1,
+              ),
             ],
           },
           {
@@ -1905,9 +2665,21 @@ export const CEFR_LEVELS: CefrLevel[] = [
               'Nhóm V-ing: enjoy, finish, avoid, mind, suggest, keep. Nhóm to-V: want, need, decide, hope, plan, promise, agree.',
             mistakes: [
               mis('I enjoy to read books.', 'I enjoy reading books.', 'Sau "enjoy" dùng V-ing.'),
-              mis('She wants travelling the world.', 'She wants to travel the world.', 'Sau "want" dùng to + V.'),
-              mis('I finished to read the book.', 'I finished reading the book.', 'Sau "finish" → V-ing.'),
-              mis('They decided moving to the city.', 'They decided to move to the city.', 'Sau "decide" → to + V.'),
+              mis(
+                'She wants travelling the world.',
+                'She wants to travel the world.',
+                'Sau "want" dùng to + V.',
+              ),
+              mis(
+                'I finished to read the book.',
+                'I finished reading the book.',
+                'Sau "finish" → V-ing.',
+              ),
+              mis(
+                'They decided moving to the city.',
+                'They decided to move to the city.',
+                'Sau "decide" → to + V.',
+              ),
               mis('I avoid to eat junk food.', 'I avoid eating junk food.', 'Sau "avoid" → V-ing.'),
             ],
             quiz: [
@@ -1928,8 +2700,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
             titleVi: 'Used to (thói quen trong quá khứ)',
             titleEn: 'Used to',
             structure: 'S + used to + V (nguyên mẫu)',
-            explainVi:
-              'Diễn tả thói quen hoặc trạng thái trong quá khứ mà bây giờ không còn nữa.',
+            explainVi: 'Diễn tả thói quen hoặc trạng thái trong quá khứ mà bây giờ không còn nữa.',
             examples: [
               ex('I used to play football every day.', 'Hồi xưa tôi chơi bóng đá mỗi ngày.'),
               ex('She used to live in Hanoi.', 'Trước đây cô ấy sống ở Hà Nội.'),
@@ -1940,15 +2711,31 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Ở phủ định/nghi vấn (có did/didn\'t) thì viết "use to" (KHÔNG có "d"): didn\'t use to, Did you use to…?',
             mistakes: [
-              mis("They didn't used to have a car.", "They didn't use to have a car.", 'Sau "didn\'t" dùng "use to" (bỏ d).'),
-              mis('I used to playing football.', 'I used to play football.', 'Sau "used to" dùng động từ nguyên mẫu.'),
+              mis(
+                "They didn't used to have a car.",
+                "They didn't use to have a car.",
+                'Sau "didn\'t" dùng "use to" (bỏ d).',
+              ),
+              mis(
+                'I used to playing football.',
+                'I used to play football.',
+                'Sau "used to" dùng động từ nguyên mẫu.',
+              ),
               mis('Did you used to live here?', 'Did you use to live here?', 'Có "did" → use to.'),
-              mis('I am used to play tennis. (ý: hồi xưa)', 'I used to play tennis.', 'Thói quen quá khứ: "used to + V" (không "am").'),
-              mis('She use to live in Hanoi.', 'She used to live in Hanoi.', 'Khẳng định → used to (có d).'),
+              mis(
+                'I am used to play tennis. (ý: hồi xưa)',
+                'I used to play tennis.',
+                'Thói quen quá khứ: "used to + V" (không "am").',
+              ),
+              mis(
+                'She use to live in Hanoi.',
+                'She used to live in Hanoi.',
+                'Khẳng định → used to (có d).',
+              ),
             ],
             quiz: [
               qz('I ___ live in Hue.', ['use to', 'used to'], 1, 'Khẳng định → used to.'),
-              qz("She didn't ___ like coffee.", ['used to', 'use to'], 1, 'Sau didn\'t → use to.'),
+              qz("She didn't ___ like coffee.", ['used to', 'use to'], 1, "Sau didn't → use to."),
               qz('Sau "used to" dùng động từ dạng:', ['V-ing', 'nguyên mẫu'], 1),
               qz('___ you use to smoke?', ['Did', 'Do'], 0),
               qz('There ___ be a shop here.', ['used to', 'use to'], 0),
@@ -1998,20 +2785,49 @@ export const CEFR_LEVELS: CefrLevel[] = [
               'Giả định KHÔNG có thật hoặc khó xảy ra ở hiện tại.\n' +
               'Lưu ý: với "to be" dùng "were" cho mọi chủ ngữ (If I were…).',
             examples: [
-              ex('If I were you, I would accept the offer.', 'Nếu là bạn, tôi sẽ nhận lời đề nghị.'),
-              ex('If I had more time, I would learn piano.', 'Nếu có thêm thời gian, tôi sẽ học piano.'),
+              ex(
+                'If I were you, I would accept the offer.',
+                'Nếu là bạn, tôi sẽ nhận lời đề nghị.',
+              ),
+              ex(
+                'If I had more time, I would learn piano.',
+                'Nếu có thêm thời gian, tôi sẽ học piano.',
+              ),
               ex('What would you do if you won the lottery?', 'Bạn sẽ làm gì nếu trúng số?'),
-              ex('If she spoke English, she would get the job.', 'Nếu cô ấy nói được tiếng Anh, cô ấy sẽ được nhận việc.'),
+              ex(
+                'If she spoke English, she would get the job.',
+                'Nếu cô ấy nói được tiếng Anh, cô ấy sẽ được nhận việc.',
+              ),
               ex("I wouldn't do that if I were you.", 'Nếu là bạn, tôi sẽ không làm vậy.'),
             ],
             tipVi:
               'Loại 1 (có thật) vs loại 2 (giả định): loại 2 lùi thì ở vế if (V2) và dùng "would" thay "will". Thành ngữ khuyên bảo: "If I were you, I would…".',
             mistakes: [
-              mis('If I was you, I would accept.', 'If I were you, I would accept.', 'Với điều kiện loại 2, "to be" dùng "were" cho mọi chủ ngữ.'),
-              mis('If I had more time, I will learn piano.', 'If I had more time, I would learn piano.', 'Vế chính loại 2 dùng "would", không "will".'),
-              mis('If she studied, she will pass.', 'If she studied, she would pass.', 'Vế chính loại 2 dùng would.'),
-              mis('If I would have time, I would learn.', 'If I had time, I would learn.', 'Sau if (loại 2) dùng V2, không would.'),
-              mis('If he speaks English, he would get the job.', 'If he spoke English, he would get the job.', 'Loại 2: vế if lùi về V2 (spoke).'),
+              mis(
+                'If I was you, I would accept.',
+                'If I were you, I would accept.',
+                'Với điều kiện loại 2, "to be" dùng "were" cho mọi chủ ngữ.',
+              ),
+              mis(
+                'If I had more time, I will learn piano.',
+                'If I had more time, I would learn piano.',
+                'Vế chính loại 2 dùng "would", không "will".',
+              ),
+              mis(
+                'If she studied, she will pass.',
+                'If she studied, she would pass.',
+                'Vế chính loại 2 dùng would.',
+              ),
+              mis(
+                'If I would have time, I would learn.',
+                'If I had time, I would learn.',
+                'Sau if (loại 2) dùng V2, không would.',
+              ),
+              mis(
+                'If he speaks English, he would get the job.',
+                'If he spoke English, he would get the job.',
+                'Loại 2: vế if lùi về V2 (spoke).',
+              ),
             ],
             quiz: [
               qz('If I ___ rich, I would travel.', ['am', 'were'], 1, 'Loại 2 → were.'),
@@ -2031,23 +2847,48 @@ export const CEFR_LEVELS: CefrLevel[] = [
             titleVi: 'Điều kiện loại 3 (tiếc nuối quá khứ)',
             titleEn: 'Third Conditional',
             structure: 'If + S + had + V3, S + would have + V3',
-            explainVi:
-              'Diễn tả điều trái với quá khứ — việc đã không xảy ra và sự tiếc nuối.',
+            explainVi: 'Diễn tả điều trái với quá khứ — việc đã không xảy ra và sự tiếc nuối.',
             examples: [
               ex('If I had studied, I would have passed.', 'Nếu tôi đã học, tôi đã đậu rồi.'),
-              ex('If she had left earlier, she would have caught the train.', 'Nếu đi sớm hơn, cô ấy đã kịp tàu.'),
-              ex("If we had known, we would have helped.", 'Nếu biết, chúng tôi đã giúp.'),
-              ex("If you had told me, I wouldn't have worried.", 'Nếu bạn nói cho tôi biết, tôi đã không lo lắng.'),
+              ex(
+                'If she had left earlier, she would have caught the train.',
+                'Nếu đi sớm hơn, cô ấy đã kịp tàu.',
+              ),
+              ex('If we had known, we would have helped.', 'Nếu biết, chúng tôi đã giúp.'),
+              ex(
+                "If you had told me, I wouldn't have worried.",
+                'Nếu bạn nói cho tôi biết, tôi đã không lo lắng.',
+              ),
               ex('I would have come if you had invited me.', 'Tôi đã đến nếu bạn mời tôi.'),
             ],
             tipVi:
               'Công thức: vế if dùng "had + V3" (quá khứ hoàn thành), vế chính dùng "would have + V3". Nói về điều ĐÃ KHÔNG xảy ra.',
             mistakes: [
-              mis('If I would have studied, I would have passed.', 'If I had studied, I would have passed.', 'Sau "if" loại 3 dùng "had + V3", KHÔNG dùng would.'),
-              mis('If I had studied, I would passed.', 'If I had studied, I would have passed.', 'Vế chính cần "would have + V3".'),
-              mis('If she had left earlier, she would catch the train.', 'If she had left earlier, she would have caught the train.', 'Vế chính: would have + V3.'),
-              mis('If you had told me, I would worried.', "If you had told me, I wouldn't have worried.", 'Vế chính loại 3: would have + V3.'),
-              mis('If we would have known, we would have helped.', 'If we had known, we would have helped.', 'Sau if dùng had + V3.'),
+              mis(
+                'If I would have studied, I would have passed.',
+                'If I had studied, I would have passed.',
+                'Sau "if" loại 3 dùng "had + V3", KHÔNG dùng would.',
+              ),
+              mis(
+                'If I had studied, I would passed.',
+                'If I had studied, I would have passed.',
+                'Vế chính cần "would have + V3".',
+              ),
+              mis(
+                'If she had left earlier, she would catch the train.',
+                'If she had left earlier, she would have caught the train.',
+                'Vế chính: would have + V3.',
+              ),
+              mis(
+                'If you had told me, I would worried.',
+                "If you had told me, I wouldn't have worried.",
+                'Vế chính loại 3: would have + V3.',
+              ),
+              mis(
+                'If we would have known, we would have helped.',
+                'If we had known, we would have helped.',
+                'Sau if dùng had + V3.',
+              ),
             ],
             quiz: [
               qz('If I ___ known, I would have called.', ['had', 'have', 'would have'], 0),
@@ -2081,11 +2922,27 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Giống điều kiện: ước hiện tại → lùi một thì (wish I had); tiếc quá khứ → lùi hai thì (wish I had had). "If only" mạnh hơn "wish".',
             mistakes: [
-              mis('I wish I have more money.', 'I wish I had more money.', 'Ước trái hiện tại → lùi về quá khứ đơn (had).'),
-              mis('I wish I studied harder. (tiếc quá khứ)', 'I wish I had studied harder.', 'Tiếc quá khứ → wish + had + V3.'),
-              mis('I wish I was taller.', 'I wish I were taller.', 'Sau wish, "to be" thường dùng "were".'),
+              mis(
+                'I wish I have more money.',
+                'I wish I had more money.',
+                'Ước trái hiện tại → lùi về quá khứ đơn (had).',
+              ),
+              mis(
+                'I wish I studied harder. (tiếc quá khứ)',
+                'I wish I had studied harder.',
+                'Tiếc quá khứ → wish + had + V3.',
+              ),
+              mis(
+                'I wish I was taller.',
+                'I wish I were taller.',
+                'Sau wish, "to be" thường dùng "were".',
+              ),
               mis('I wish I can fly.', 'I wish I could fly.', 'Ước trái hiện tại: can → could.'),
-              mis('I wish you will stop shouting.', 'I wish you would stop shouting.', 'Mong người khác đổi hành vi → wish + would.'),
+              mis(
+                'I wish you will stop shouting.',
+                'I wish you would stop shouting.',
+                'Mong người khác đổi hành vi → wish + would.',
+              ),
             ],
             quiz: [
               qz('I wish I ___ taller.', ['am', 'were'], 1, 'Ước trái hiện tại → were.'),
@@ -2127,15 +2984,44 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Bị động = đúng dạng "be" theo thì + V3. Chỉ thêm "by + người làm" khi cần nói rõ ai làm.',
             mistakes: [
-              mis('This bridge was build in 1990.', 'This bridge was built in 1990.', 'Bị động dùng V3 (built), không phải nguyên mẫu.'),
-              mis('English speaks all over the world.', 'English is spoken all over the world.', 'Cần "be + V3" cho bị động.'),
-              mis('This song sang by many people.', 'This song is sung by many people.', 'Cần "be + V3" (is sung).'),
-              mis('The work will done tomorrow.', 'The work will be done tomorrow.', 'Tương lai bị động: will be + V3.'),
-              mis('The letter has delivered.', 'The letter has been delivered.', 'Hiện tại hoàn thành bị động: has been + V3.'),
+              mis(
+                'This bridge was build in 1990.',
+                'This bridge was built in 1990.',
+                'Bị động dùng V3 (built), không phải nguyên mẫu.',
+              ),
+              mis(
+                'English speaks all over the world.',
+                'English is spoken all over the world.',
+                'Cần "be + V3" cho bị động.',
+              ),
+              mis(
+                'This song sang by many people.',
+                'This song is sung by many people.',
+                'Cần "be + V3" (is sung).',
+              ),
+              mis(
+                'The work will done tomorrow.',
+                'The work will be done tomorrow.',
+                'Tương lai bị động: will be + V3.',
+              ),
+              mis(
+                'The letter has delivered.',
+                'The letter has been delivered.',
+                'Hiện tại hoàn thành bị động: has been + V3.',
+              ),
             ],
             quiz: [
-              qz('The room ___ cleaned every day.', ['is', 'is being', 'was'], 0, 'Thói quen hiện tại → is cleaned.'),
-              qz('Bị động của "They make cars here":', ['Cars are made here.', 'Cars are make here.'], 0),
+              qz(
+                'The room ___ cleaned every day.',
+                ['is', 'is being', 'was'],
+                0,
+                'Thói quen hiện tại → is cleaned.',
+              ),
+              qz(
+                'Bị động của "They make cars here":',
+                ['Cars are made here.', 'Cars are make here.'],
+                0,
+              ),
               qz('English ___ in many countries.', ['speaks', 'is spoken'], 1),
               qz('The letter ___ yesterday. (gửi)', ['was sent', 'sent'], 0),
               qz('My car ___ now. (đang sửa)', ['is being repaired', 'is repaired'], 0),
@@ -2151,8 +3037,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
             titleVi: 'Câu nhờ vả (have something done)',
             titleEn: 'Causative (have something done)',
             structure: 'S + have/get + tân ngữ + V3',
-            explainVi:
-              'Diễn tả việc bạn nhờ/thuê người khác làm cho mình (không tự làm).',
+            explainVi: 'Diễn tả việc bạn nhờ/thuê người khác làm cho mình (không tự làm).',
             examples: [
               ex('I had my car repaired yesterday.', 'Hôm qua tôi mang xe đi sửa.'),
               ex('She is getting her hair cut.', 'Cô ấy đang đi cắt tóc.'),
@@ -2163,11 +3048,27 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Phân biệt: "I repaired my car" (tự sửa) vs "I had my car repaired" (thuê người sửa). Vật + V3 (quá khứ phân từ).',
             mistakes: [
-              mis('I had my car repair.', 'I had my car repaired.', 'Cấu trúc nhờ vả dùng V3 (repaired).'),
-              mis('I cut my hair yesterday. (ý: đi tiệm)', 'I had my hair cut yesterday.', 'Nhờ người khác làm → have something done.'),
+              mis(
+                'I had my car repair.',
+                'I had my car repaired.',
+                'Cấu trúc nhờ vả dùng V3 (repaired).',
+              ),
+              mis(
+                'I cut my hair yesterday. (ý: đi tiệm)',
+                'I had my hair cut yesterday.',
+                'Nhờ người khác làm → have something done.',
+              ),
               mis('I had cut my hair.', 'I had my hair cut.', 'Trật tự: have + tân ngữ + V3.'),
-              mis('She got her car wash.', 'She got her car washed.', 'have/get + O + V3 (washed).'),
-              mis('We had painted the house. (thuê người)', 'We had the house painted.', 'Nhờ người: have + O + V3.'),
+              mis(
+                'She got her car wash.',
+                'She got her car washed.',
+                'have/get + O + V3 (washed).',
+              ),
+              mis(
+                'We had painted the house. (thuê người)',
+                'We had the house painted.',
+                'Nhờ người: have + O + V3.',
+              ),
             ],
             quiz: [
               qz('I had my house ___.', ['paint', 'painted'], 1, 'have + O + V3.'),
@@ -2209,11 +3110,23 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Phân biệt say và tell: "tell" cần tân ngữ (tell me), "say" thì không (say that). Lùi thì: V→V2, V2→had V3, will→would, can→could.',
             mistakes: [
-              mis('She said me she was busy.', 'She told me she was busy.', '"said" không đi với tân ngữ; dùng "told me".'),
+              mis(
+                'She said me she was busy.',
+                'She told me she was busy.',
+                '"said" không đi với tân ngữ; dùng "told me".',
+              ),
               mis('He said he will come.', 'He said he would come.', 'Lùi thì: will → would.'),
-              mis('He told that he was tired.', 'He said that he was tired.', '"told" cần tân ngữ; không tân ngữ dùng "said".'),
+              mis(
+                'He told that he was tired.',
+                'He said that he was tired.',
+                '"told" cần tân ngữ; không tân ngữ dùng "said".',
+              ),
               mis('She said she can help.', 'She said she could help.', 'Lùi thì: can → could.'),
-              mis('They said they have finished.', 'They said they had finished.', 'Lùi thì: have → had.'),
+              mis(
+                'They said they have finished.',
+                'They said they had finished.',
+                'Lùi thì: have → had.',
+              ),
             ],
             quiz: [
               qz('"I am happy" → She said she ___ happy.', ['is', 'was'], 1, 'Lùi thì: am → was.'),
@@ -2239,18 +3152,41 @@ export const CEFR_LEVELS: CefrLevel[] = [
             examples: [
               ex('She asked if I was OK.', 'Cô ấy hỏi tôi có ổn không.'),
               ex('He asked where I lived.', 'Anh ấy hỏi tôi sống ở đâu.'),
-              ex('They asked what time the meeting started.', 'Họ hỏi cuộc họp bắt đầu lúc mấy giờ.'),
+              ex(
+                'They asked what time the meeting started.',
+                'Họ hỏi cuộc họp bắt đầu lúc mấy giờ.',
+              ),
               ex('She asked if I could help.', 'Cô ấy hỏi tôi có giúp được không.'),
               ex('He asked why I was late.', 'Anh ấy hỏi sao tôi muộn.'),
             ],
             tipVi:
               'Câu tường thuật trở về trật tự CÂU KỂ (chủ ngữ + động từ), KHÔNG đảo và KHÔNG dùng do/does/did.',
             mistakes: [
-              mis('He asked where did I live.', 'He asked where I lived.', 'Tường thuật câu hỏi: không đảo, không "did".'),
-              mis('She asked was I OK.', 'She asked if I was OK.', 'Câu hỏi Yes/No → dùng "if/whether".'),
-              mis('They asked what time does it start.', 'They asked what time it started.', 'Không dùng "does"; không đảo.'),
-              mis('He asked do I like coffee.', 'He asked if I liked coffee.', 'Yes/No → if; lùi thì.'),
-              mis('She asked where are you going.', 'She asked where I was going.', 'Không đảo; lùi thì.'),
+              mis(
+                'He asked where did I live.',
+                'He asked where I lived.',
+                'Tường thuật câu hỏi: không đảo, không "did".',
+              ),
+              mis(
+                'She asked was I OK.',
+                'She asked if I was OK.',
+                'Câu hỏi Yes/No → dùng "if/whether".',
+              ),
+              mis(
+                'They asked what time does it start.',
+                'They asked what time it started.',
+                'Không dùng "does"; không đảo.',
+              ),
+              mis(
+                'He asked do I like coffee.',
+                'He asked if I liked coffee.',
+                'Yes/No → if; lùi thì.',
+              ),
+              mis(
+                'She asked where are you going.',
+                'She asked where I was going.',
+                'Không đảo; lùi thì.',
+              ),
             ],
             quiz: [
               qz('He asked where I ___.', ['live', 'lived', 'did live'], 1),
@@ -2276,28 +3212,36 @@ export const CEFR_LEVELS: CefrLevel[] = [
         grammar: [
           {
             id: 'b2-modals-deduction',
-            titleVi: 'Suy đoán (must / might / can\'t + be)',
+            titleVi: "Suy đoán (must / might / can't + be)",
             titleEn: 'Modals of deduction',
-            structure: 'S + must / might / can\'t + be / V',
+            structure: "S + must / might / can't + be / V",
             explainVi:
               '• must be: chắc chắn là (suy đoán có cơ sở mạnh).\n' +
               '• might/may be: có lẽ là (không chắc).\n' +
-              '• can\'t be: không thể nào là (chắc chắn không).',
+              "• can't be: không thể nào là (chắc chắn không).",
             examples: [
               ex("He isn't answering — he must be busy.", 'Anh ấy không trả lời — chắc đang bận.'),
               ex('She might be at home now.', 'Có lẽ giờ cô ấy đang ở nhà.'),
               ex("That can't be true.", 'Điều đó không thể là thật.'),
-              ex("They must know each other.", 'Chắc họ quen nhau.'),
+              ex('They must know each other.', 'Chắc họ quen nhau.'),
               ex('It might rain later.', 'Lát nữa có thể mưa.'),
             ],
             tipVi:
               'Để suy đoán "chắc chắn KHÔNG" dùng "can\'t" (KHÔNG dùng "mustn\'t" — mustn\'t nghĩa là cấm). Sau modal là động từ nguyên mẫu.',
             mistakes: [
-              mis("That mustn't be true.", "That can't be true.", 'Suy đoán "không thể đúng" dùng "can\'t", không "mustn\'t".'),
+              mis(
+                "That mustn't be true.",
+                "That can't be true.",
+                'Suy đoán "không thể đúng" dùng "can\'t", không "mustn\'t".',
+              ),
               mis('He must to be busy.', 'He must be busy.', 'Sau "must" KHÔNG có "to".'),
               mis('She might to be at home.', 'She might be at home.', 'Sau "might" không "to".'),
               mis("It can't to be him.", "It can't be him.", 'Sau "can\'t" không "to".'),
-              mis('They must knowing each other.', 'They must know each other.', 'Sau modal dùng động từ nguyên mẫu.'),
+              mis(
+                'They must knowing each other.',
+                'They must know each other.',
+                'Sau modal dùng động từ nguyên mẫu.',
+              ),
             ],
             quiz: [
               qz('The light is on — someone ___ be home.', ['must', "can't"], 0),
@@ -2307,7 +3251,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('"không thể nào" =', ["can't be", "mustn't be"], 0),
               qz('Sau modal suy đoán dùng:', ['to + V', 'V nguyên mẫu'], 1),
               qz('He has three cars — he ___ be rich.', ['must', "can't"], 0),
-              qz('She isn\'t answering — she ___ be busy.', ['might', "can't"], 0),
+              qz("She isn't answering — she ___ be busy.", ['might', "can't"], 0),
               qz('"không thể đúng" dùng:', ["mustn't", "can't"], 1),
               qz('Chọn câu ĐÚNG:', ["That mustn't be true.", "That can't be true."], 1),
             ],
@@ -2320,23 +3264,60 @@ export const CEFR_LEVELS: CefrLevel[] = [
             explainVi:
               'Bổ sung thông tin KHÔNG bắt buộc (bỏ đi câu vẫn đủ nghĩa). Đặt giữa hai dấu phẩy, KHÔNG dùng "that".',
             examples: [
-              ex('My brother, who lives in Hue, is a teacher.', 'Anh trai tôi, người sống ở Huế, là giáo viên.'),
+              ex(
+                'My brother, who lives in Hue, is a teacher.',
+                'Anh trai tôi, người sống ở Huế, là giáo viên.',
+              ),
               ex('Hanoi, which is the capital, is very old.', 'Hà Nội, thủ đô, rất cổ kính.'),
-              ex('Our manager, who is very kind, helped us.', 'Quản lý của chúng tôi, người rất tốt bụng, đã giúp chúng tôi.'),
-              ex('This book, which I read last year, is excellent.', 'Cuốn sách này, tôi đọc năm ngoái, rất hay.'),
-              ex('Ms. Lan, who teaches us English, is from Hue.', 'Cô Lan, người dạy chúng tôi tiếng Anh, quê ở Huế.'),
+              ex(
+                'Our manager, who is very kind, helped us.',
+                'Quản lý của chúng tôi, người rất tốt bụng, đã giúp chúng tôi.',
+              ),
+              ex(
+                'This book, which I read last year, is excellent.',
+                'Cuốn sách này, tôi đọc năm ngoái, rất hay.',
+              ),
+              ex(
+                'Ms. Lan, who teaches us English, is from Hue.',
+                'Cô Lan, người dạy chúng tôi tiếng Anh, quê ở Huế.',
+              ),
             ],
             tipVi:
               'Mệnh đề KHÔNG xác định: có DẤU PHẨY, KHÔNG dùng "that", và KHÔNG được lược bỏ đại từ quan hệ.',
             mistakes: [
-              mis('My brother, that lives in Hue, is a teacher.', 'My brother, who lives in Hue, is a teacher.', 'Mệnh đề không xác định KHÔNG dùng "that".'),
-              mis('Hanoi which is the capital is very old.', 'Hanoi, which is the capital, is very old.', 'Cần hai dấu phẩy bao quanh thông tin thêm.'),
-              mis('My sister, who lives in Hue is a nurse.', 'My sister, who lives in Hue, is a nurse.', 'Cần dấu phẩy thứ hai để đóng mệnh đề.'),
-              mis('Ms. Lan who teaches us is kind.', 'Ms. Lan, who teaches us, is kind.', 'Thông tin thêm cần đặt giữa hai dấu phẩy.'),
-              mis('This book, that I love, is rare.', 'This book, which I love, is rare.', 'Không xác định → which, không that.'),
+              mis(
+                'My brother, that lives in Hue, is a teacher.',
+                'My brother, who lives in Hue, is a teacher.',
+                'Mệnh đề không xác định KHÔNG dùng "that".',
+              ),
+              mis(
+                'Hanoi which is the capital is very old.',
+                'Hanoi, which is the capital, is very old.',
+                'Cần hai dấu phẩy bao quanh thông tin thêm.',
+              ),
+              mis(
+                'My sister, who lives in Hue is a nurse.',
+                'My sister, who lives in Hue, is a nurse.',
+                'Cần dấu phẩy thứ hai để đóng mệnh đề.',
+              ),
+              mis(
+                'Ms. Lan who teaches us is kind.',
+                'Ms. Lan, who teaches us, is kind.',
+                'Thông tin thêm cần đặt giữa hai dấu phẩy.',
+              ),
+              mis(
+                'This book, that I love, is rare.',
+                'This book, which I love, is rare.',
+                'Không xác định → which, không that.',
+              ),
             ],
             quiz: [
-              qz('Hue, ___ is in central Vietnam, is beautiful.', ['that', 'which'], 1, 'Không xác định → which, không that.'),
+              qz(
+                'Hue, ___ is in central Vietnam, is beautiful.',
+                ['that', 'which'],
+                1,
+                'Không xác định → which, không that.',
+              ),
               qz('Mệnh đề không xác định có:', ['dấu phẩy', 'không dấu phẩy'], 0),
               qz('Mệnh đề không xác định dùng "that" không?', ['có', 'không'], 1),
               qz('My boss, ___ is very kind, helped me.', ['that', 'who'], 1),
@@ -2345,7 +3326,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('Mệnh đề XÁC ĐỊNH (cần thiết) thì:', ['có dấu phẩy', 'không dấu phẩy'], 1),
               qz('Mr. Nam, ___ car is new, drives fast.', ['who', 'whose'], 1),
               qz('Tokyo, ___ is huge, is in Japan.', ['that', 'which'], 1),
-              qz('Chọn câu ĐÚNG:', ['Tom, that is my friend, called.', 'Tom, who is my friend, called.'], 1),
+              qz(
+                'Chọn câu ĐÚNG:',
+                ['Tom, that is my friend, called.', 'Tom, who is my friend, called.'],
+                1,
+              ),
             ],
           },
         ],
@@ -2375,11 +3360,27 @@ export const CEFR_LEVELS: CefrLevel[] = [
             tipVi:
               'Có loại "tách được": turn the light off = turn off the light. Nhưng nếu tân ngữ là ĐẠI TỪ thì BẮT BUỘC tách: "turn it off" (KHÔNG "turn off it").',
             mistakes: [
-              mis('Please turn off it.', 'Please turn it off.', 'Đại từ (it) phải đứng giữa: turn it off.'),
-              mis("I am looking my keys.", 'I am looking for my keys.', 'Thiếu giới từ "for".'),
-              mis("I can't put up it.", "I can't put up with it.", 'Cụm "put up with" (chịu đựng) cần "with".'),
-              mis('She gets along her sister.', 'She gets along with her sister.', 'Cụm "get along with" cần "with".'),
-              mis('Pick up them, please.', 'Pick them up, please.', 'Đại từ đứng giữa: pick them up.'),
+              mis(
+                'Please turn off it.',
+                'Please turn it off.',
+                'Đại từ (it) phải đứng giữa: turn it off.',
+              ),
+              mis('I am looking my keys.', 'I am looking for my keys.', 'Thiếu giới từ "for".'),
+              mis(
+                "I can't put up it.",
+                "I can't put up with it.",
+                'Cụm "put up with" (chịu đựng) cần "with".',
+              ),
+              mis(
+                'She gets along her sister.',
+                'She gets along with her sister.',
+                'Cụm "get along with" cần "with".',
+              ),
+              mis(
+                'Pick up them, please.',
+                'Pick them up, please.',
+                'Đại từ đứng giữa: pick them up.',
+              ),
             ],
             quiz: [
               qz('Please turn ___. (it)', ['off it', 'it off'], 1, 'Đại từ đứng giữa.'),
@@ -2403,23 +3404,60 @@ export const CEFR_LEVELS: CefrLevel[] = [
               'Dùng để nối ý tương phản, làm câu mạch lạc hơn.\n' +
               '• although + mệnh đề (S + V).   • despite/in spite of + danh từ/V-ing.   • however đứng đầu câu, có dấu phẩy.',
             examples: [
-              ex('Although it was raining, we went out.', 'Mặc dù trời mưa, chúng tôi vẫn ra ngoài.'),
+              ex(
+                'Although it was raining, we went out.',
+                'Mặc dù trời mưa, chúng tôi vẫn ra ngoài.',
+              ),
               ex('Despite the rain, we went out.', 'Bất chấp cơn mưa, chúng tôi vẫn ra ngoài.'),
-              ex("The plan was risky. However, it worked.", 'Kế hoạch rủi ro. Tuy nhiên, nó đã thành công.'),
-              ex('In spite of being tired, she kept working.', 'Dù mệt, cô ấy vẫn tiếp tục làm việc.'),
-              ex('He passed the exam although he didn\'t study much.', 'Anh ấy đậu dù không học nhiều.'),
+              ex(
+                'The plan was risky. However, it worked.',
+                'Kế hoạch rủi ro. Tuy nhiên, nó đã thành công.',
+              ),
+              ex(
+                'In spite of being tired, she kept working.',
+                'Dù mệt, cô ấy vẫn tiếp tục làm việc.',
+              ),
+              ex(
+                "He passed the exam although he didn't study much.",
+                'Anh ấy đậu dù không học nhiều.',
+              ),
             ],
             tipVi:
               'Quy tắc ngữ pháp: although + MỆNH ĐỀ (có động từ); despite/in spite of + DANH TỪ hoặc V-ing. Đừng dùng "despite of".',
             mistakes: [
-              mis('Despite it was raining, we went out.', 'Although it was raining, we went out.', 'despite đi với danh từ/V-ing, không đi với mệnh đề.'),
-              mis('In spite of the rain, but we went out.', 'In spite of the rain, we went out.', 'Không dùng "but" kèm theo.'),
-              mis('Despite of the rain, we went out.', 'Despite the rain, we went out.', 'Không có "of" sau "despite".'),
-              mis('Although the rain, we went out.', 'Although it rained, we went out.', '"although" đi với mệnh đề (S + V).'),
-              mis('However it was late, we stayed.', 'Although it was late, we stayed.', '"however" không nối mệnh đề như "although".'),
+              mis(
+                'Despite it was raining, we went out.',
+                'Although it was raining, we went out.',
+                'despite đi với danh từ/V-ing, không đi với mệnh đề.',
+              ),
+              mis(
+                'In spite of the rain, but we went out.',
+                'In spite of the rain, we went out.',
+                'Không dùng "but" kèm theo.',
+              ),
+              mis(
+                'Despite of the rain, we went out.',
+                'Despite the rain, we went out.',
+                'Không có "of" sau "despite".',
+              ),
+              mis(
+                'Although the rain, we went out.',
+                'Although it rained, we went out.',
+                '"although" đi với mệnh đề (S + V).',
+              ),
+              mis(
+                'However it was late, we stayed.',
+                'Although it was late, we stayed.',
+                '"however" không nối mệnh đề như "although".',
+              ),
             ],
             quiz: [
-              qz('___ the rain, we went out.', ['Although', 'Despite'], 1, 'despite + danh từ (the rain).'),
+              qz(
+                '___ the rain, we went out.',
+                ['Although', 'Despite'],
+                1,
+                'despite + danh từ (the rain).',
+              ),
               qz('___ it was cold, we swam.', ['Despite', 'Although'], 1, 'although + mệnh đề.'),
               qz('"despite" đi với:', ['mệnh đề', 'danh từ/V-ing'], 1),
               qz('"although" đi với:', ['danh từ', 'mệnh đề'], 1),
@@ -2428,7 +3466,11 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('The plan was risky. ___, it worked.', ['However', 'Although'], 0),
               qz('___ he was rich, he was unhappy.', ['Despite', 'Although'], 1),
               qz('In spite ___ the noise, I slept.', ['of', '—'], 0),
-              qz('Chọn câu ĐÚNG:', ['Despite it was late, we stayed.', 'Although it was late, we stayed.'], 1),
+              qz(
+                'Chọn câu ĐÚNG:',
+                ['Despite it was late, we stayed.', 'Although it was late, we stayed.'],
+                1,
+              ),
             ],
           },
           {
@@ -2436,23 +3478,34 @@ export const CEFR_LEVELS: CefrLevel[] = [
             titleVi: 'Thành ngữ thông dụng',
             titleEn: 'Common idioms',
             structure: 'cụm từ cố định mang nghĩa bóng',
-            explainVi:
-              'Thành ngữ không dịch theo nghĩa đen. Học cả cụm và tình huống dùng.',
+            explainVi: 'Thành ngữ không dịch theo nghĩa đen. Học cả cụm và tình huống dùng.',
             examples: [
               ex("It's a piece of cake.", 'Chuyện nhỏ (dễ ợt).'),
               ex('Break a leg!', 'Chúc may mắn!'),
-              ex("Once in a blue moon.", 'Hiếm khi, họa hoằn lắm.'),
+              ex('Once in a blue moon.', 'Hiếm khi, họa hoằn lắm.'),
               ex("It's raining cats and dogs.", 'Trời mưa như trút nước.'),
               ex("Let's call it a day.", 'Thôi nghỉ tay hôm nay nhé.'),
             ],
             tipVi:
               'Đừng dịch từng từ. "Break a leg" KHÔNG phải "gãy chân" mà là "chúc may mắn" (thường nói trước khi biểu diễn).',
             mistakes: [
-              mis("It's a cake piece.", "It's a piece of cake.", 'Thành ngữ cố định — không đổi trật tự từ.'),
-              mis('Raining dogs and cats.', 'Raining cats and dogs.', 'Đúng thứ tự cố định: cats and dogs.'),
+              mis(
+                "It's a cake piece.",
+                "It's a piece of cake.",
+                'Thành ngữ cố định — không đổi trật tự từ.',
+              ),
+              mis(
+                'Raining dogs and cats.',
+                'Raining cats and dogs.',
+                'Đúng thứ tự cố định: cats and dogs.',
+              ),
               mis('Break your leg!', 'Break a leg!', 'Thành ngữ cố định: "Break a leg".'),
               mis('Once in a red moon.', 'Once in a blue moon.', 'Thành ngữ cố định: "blue moon".'),
-              mis("Let's call it a night. (giữa ngày)", "Let's call it a day.", 'Nghỉ tay (ban ngày) → "call it a day".'),
+              mis(
+                "Let's call it a night. (giữa ngày)",
+                "Let's call it a day.",
+                'Nghỉ tay (ban ngày) → "call it a day".',
+              ),
             ],
             quiz: [
               qz('"Việc dễ ợt" =', ['a piece of cake', 'a cup of tea', 'break a leg'], 0),

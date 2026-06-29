@@ -54,15 +54,19 @@ function getSilentUrl(): string {
   const writeStr = (off: number, s: string) => {
     for (let i = 0; i < s.length; i++) dv.setUint8(off + i, s.charCodeAt(i))
   }
-  writeStr(0, 'RIFF'); dv.setUint32(4, 36 + numSamples, true); writeStr(8, 'WAVE')
-  writeStr(12, 'fmt '); dv.setUint32(16, 16, true)
-  dv.setUint16(20, 1, true)     // PCM
-  dv.setUint16(22, 1, true)     // 1 kênh (mono)
-  dv.setUint32(24, 8000, true)  // sample rate
-  dv.setUint32(28, 8000, true)  // byte rate
-  dv.setUint16(32, 1, true)     // block align
-  dv.setUint16(34, 8, true)     // 8 bit / mẫu
-  writeStr(36, 'data'); dv.setUint32(40, numSamples, true)
+  writeStr(0, 'RIFF')
+  dv.setUint32(4, 36 + numSamples, true)
+  writeStr(8, 'WAVE')
+  writeStr(12, 'fmt ')
+  dv.setUint32(16, 16, true)
+  dv.setUint16(20, 1, true) // PCM
+  dv.setUint16(22, 1, true) // 1 kênh (mono)
+  dv.setUint32(24, 8000, true) // sample rate
+  dv.setUint32(28, 8000, true) // byte rate
+  dv.setUint16(32, 1, true) // block align
+  dv.setUint16(34, 8, true) // 8 bit / mẫu
+  writeStr(36, 'data')
+  dv.setUint32(40, numSamples, true)
   for (let i = 0; i < numSamples; i++) dv.setUint8(44 + i, 128) // 128 = im lặng (8-bit)
   silentUrl = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }))
   return silentUrl
@@ -79,10 +83,15 @@ export function unlockAudio(): void {
     a.src = getSilentUrl()
     const p = a.play()
     if (p && typeof p.then === 'function') {
-      p.then(() => { a.pause(); a.currentTime = 0 }).catch(() => {})
+      p.then(() => {
+        a.pause()
+        a.currentTime = 0
+      }).catch(() => {})
     }
     audioUnlocked = true
-  } catch { /* sẽ thử lại ở lần phát thật */ }
+  } catch {
+    /* sẽ thử lại ở lần phát thật */
+  }
 }
 
 // ── Pause / Resume — dùng cho trình phát hội thoại ──────────────────────────
@@ -114,7 +123,7 @@ export function isTTSSupported(): boolean {
 }
 
 export function stopSpeaking() {
-  playToken++  // huỷ phần còn lại của chuỗi đọc song ngữ đang chờ (nếu có)
+  playToken++ // huỷ phần còn lại của chuỗi đọc song ngữ đang chờ (nếu có)
   if (sharedAudio) {
     // Xóa handler trước khi pause để tránh onerror/onended fire sau khi đã stop.
     // KHÔNG huỷ thẻ sharedAudio (đặt = null) — phải giữ lại để nó vẫn "đã mở
@@ -149,7 +158,7 @@ export function playAudioUrl(url: string): void {
   }
   audio.onended = cleanup
   audio.onerror = cleanup
-  audio.play().catch(err => {
+  audio.play().catch((err) => {
     console.error('Lỗi phát audio:', err)
     cleanup()
   })
@@ -164,7 +173,11 @@ function base64ToBytes(b64: string): Uint8Array {
 }
 
 // Tải + giải mã audio → trả ArrayBuffer (lưu được vào IndexedDB, không chiếm RAM liên tục)
-async function decryptToBuffer(audioUrl: string, keyB64: string, ivB64: string): Promise<ArrayBuffer> {
+async function decryptToBuffer(
+  audioUrl: string,
+  keyB64: string,
+  ivB64: string,
+): Promise<ArrayBuffer> {
   const cipherRes = await fetch(audioUrl)
   if (!cipherRes.ok) throw new Error(`Không tải được audio: ${cipherRes.status}`)
   const cipherBuffer = await cipherRes.arrayBuffer()
@@ -173,7 +186,9 @@ async function decryptToBuffer(audioUrl: string, keyB64: string, ivB64: string):
   const ivBytes = base64ToBytes(ivB64)
   // Ép kiểu BufferSource: @types/node làm Uint8Array generic theo ArrayBufferLike, lệch với
   // kiểu BufferSource của lib DOM — chỉ là vấn đề kiểu TypeScript, không ảnh hưởng runtime.
-  const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, ['decrypt'])
+  const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, [
+    'decrypt',
+  ])
   return crypto.subtle.decrypt({ name: 'AES-GCM', iv: ivBytes as BufferSource }, key, cipherBuffer)
 }
 
@@ -203,31 +218,36 @@ async function ensureAudioBuffer(text: string, lang: Lang, voice: Voice): Promis
   if (running) return running
 
   const job = (async () => {
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
     const token = session?.access_token
     if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
 
-    const callTts = () => fetch('/api/tts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ text, lang, voice }),
-    })
+    const callTts = () =>
+      fetch('/api/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text, lang, voice }),
+      })
 
     let res = await callTts()
     // 429 = quá nhiều request (thường do phát nhiều câu liên tiếp). Đợi 1.2s rồi thử lại
     // 1 lần trước khi báo lỗi — phần lớn câu đã cache nên lần 2 thường qua.
     if (res.status === 429) {
-      await new Promise(r => setTimeout(r, 1200))
+      await new Promise((r) => setTimeout(r, 1200))
       res = await callTts()
     }
 
     if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
 
-    const { audio_url, key_b64, iv_b64 } = await res.json() as {
-      audio_url: string; key_b64: string; iv_b64: string
+    const { audio_url, key_b64, iv_b64 } = (await res.json()) as {
+      audio_url: string
+      key_b64: string
+      iv_b64: string
     }
 
     const buffer = await decryptToBuffer(audio_url, key_b64, iv_b64)
@@ -249,17 +269,26 @@ async function ensureAudioBuffer(text: string, lang: Lang, voice: Voice): Promis
 // Lỗi thì bỏ qua (sẽ tải lại lúc phát). Không giữ buffer trong RAM — chỉ cần nó
 // nằm trong IndexedDB là đủ.
 export async function prefetchSpeech(
-  text: string, lang: Lang, voice: Voice = getVoicePref(),
+  text: string,
+  lang: Lang,
+  voice: Voice = getVoicePref(),
 ): Promise<void> {
   if (!text.trim()) return
-  try { await ensureAudioBuffer(text, lang, voice) } catch { /* sẽ tải lại lúc phát */ }
+  try {
+    await ensureAudioBuffer(text, lang, voice)
+  } catch {
+    /* sẽ tải lại lúc phát */
+  }
 }
 
 // Gọi /api/tts (kèm JWT) → giải mã audio → phát qua <audio>
 // rate: 0.75 = chậm, 1 = bình thường, 1.25 = nhanh (điều chỉnh client-side, không tốn thêm API)
 // onWord: callback(wordIndex) gọi mỗi khi từ tiếp theo bắt đầu — dùng cho karaoke highlight
 async function speakViaGoogle(
-  text: string, lang: Lang, voice: Voice, rate = 1,
+  text: string,
+  lang: Lang,
+  voice: Voice,
+  rate = 1,
   onWord?: (idx: number) => void,
 ): Promise<void> {
   if (!text.trim()) return
@@ -291,7 +320,10 @@ async function speakViaGoogle(
         audio.ontimeupdate = () => {
           // Chỉ cập nhật nếu audio này vẫn còn active (không bị thay thế)
           if (currentAudioId !== audioId || !dur || dur <= 0) return
-          const idx = Math.min(Math.floor((audio.currentTime / dur) * words.length), words.length - 1)
+          const idx = Math.min(
+            Math.floor((audio.currentTime / dur) * words.length),
+            words.length - 1,
+          )
           onWord(idx)
         }
       }
@@ -306,19 +338,34 @@ async function speakViaGoogle(
       if (currentAudioId === audioId) currentAudioId = null
       if (currentResolve === resolve) currentResolve = null
     }
-    audio.onended = () => { cleanup(); resolve() }
-    audio.onerror = () => { cleanup(); reject(new Error('Không phát được audio')) }
-    audio.play().catch(err => { cleanup(); reject(err) })
+    audio.onended = () => {
+      cleanup()
+      resolve()
+    }
+    audio.onerror = () => {
+      cleanup()
+      reject(new Error('Không phát được audio'))
+    }
+    audio.play().catch((err) => {
+      cleanup()
+      reject(err)
+    })
   })
 }
 
 // Fallback Web Speech API khi Google TTS không khả dụng
 function speakViaWebSpeech(
-  text: string, lang: Lang, voice: Voice, rate = 1,
+  text: string,
+  lang: Lang,
+  voice: Voice,
+  rate = 1,
   onWord?: (idx: number) => void,
 ): Promise<void> {
   return new Promise((resolve) => {
-    if (!('speechSynthesis' in window) || !text.trim()) { resolve(); return }
+    if (!('speechSynthesis' in window) || !text.trim()) {
+      resolve()
+      return
+    }
     window.speechSynthesis.cancel()
     const utt = new SpeechSynthesisUtterance(text)
     utt.lang = lang
@@ -331,8 +378,12 @@ function speakViaWebSpeech(
         if (e.name !== 'word') return
         let cumLen = 0
         for (let i = 0; i < words.length; i++) {
-          if (e.charIndex <= cumLen + words[i].length) { onWord(i); return }
-          cumLen += words[i].length + 1 // +1 cho dấu cách
+          const w = words[i]! // i < words.length nên chắc chắn có
+          if (e.charIndex <= cumLen + w.length) {
+            onWord(i)
+            return
+          }
+          cumLen += w.length + 1 // +1 cho dấu cách
         }
       }
     }
@@ -353,7 +404,8 @@ function speakViaWebSpeech(
 }
 
 export async function speak(
-  text: string, lang: Lang,
+  text: string,
+  lang: Lang,
   voice: Voice = getVoicePref(),
   rate = 1,
   onWord?: (idx: number) => void,
@@ -376,7 +428,7 @@ export async function speakBilingual(
   rate = 1,
 ) {
   const myToken = ++playToken
-  if (speech)   await speak(speech, speechLang, voice, rate)
+  if (speech) await speak(speech, speechLang, voice, rate)
   // Nếu giữa chừng người dùng bấm Tắt tiếng / sang câu khác (stopSpeaking → playToken đổi),
   // thì DỪNG, không đọc tiếp phần sửa lỗi.
   if (playToken !== myToken) return

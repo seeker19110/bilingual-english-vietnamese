@@ -1,246 +1,978 @@
 [
-{
-  "id": 6,
-  "title": "Hỏi đường",
-  "situation": "Mai bị lạc đường và hỏi một người đi đường cách đến bưu điện.",
-  "speakerAGender": "female",
-  "speakerBGender": "male",
-  "speakerAName": {"vi": "Mai", "en": "Mai"},
-  "speakerBName": {"vi": "Người đi đường", "en": "Passer-by"},
-  "_aiGenerated": true,
-  "turns": [
-    {"speaker":"A","en":"Excuse me, sir! Sorry to bother you — could you help me? I think I'm completely lost.","vi":"Xin lỗi anh! Xin lỗi đã làm phiền — anh có thể giúp tôi không? Tôi nghĩ tôi bị lạc hoàn toàn rồi."},
-    {"speaker":"B","en":"Of course! Where are you trying to get to?","vi":"Dĩ nhiên! Bạn đang cố đến đâu?"},
-    {"speaker":"A","en":"The main post office — Buu Dien trung tam. I need to pick up a parcel before it closes at five.","vi":"Bưu điện trung tâm. Tôi cần lấy một bưu kiện trước khi đóng cửa lúc năm giờ."},
-    {"speaker":"B","en":"Ah, the central post office! You're actually not that far — maybe a ten-minute walk. Do you know which direction is north?","vi":"À, bưu điện trung tâm! Bạn thực ra không xa lắm — khoảng mười phút đi bộ. Bạn có biết hướng nào là hướng bắc không?"},
-    {"speaker":"A","en":"Ha, I'm terrible with cardinal directions. I can follow landmarks though!","vi":"Ha, tôi rất dở về hướng địa lý. Nhưng tôi có thể đi theo các mốc nổi tiếng!"},
-    {"speaker":"B","en":"Landmarks — perfect. Okay, do you see that big intersection ahead with the traffic lights?","vi":"Mốc nổi tiếng — tuyệt vời. Được rồi, bạn có thấy giao lộ lớn phía trước với đèn giao thông không?"},
-    {"speaker":"A","en":"Yes, I can see it — there's a pharmacy on the corner?","vi":"Có, tôi thấy rồi — có một hiệu thuốc ở góc đường phải không?"},
-    {"speaker":"B","en":"Exactly — that's Long Chau pharmacy. Turn right there. Then walk straight for about three hundred metres.","vi":"Đúng rồi — đó là hiệu thuốc Long Châu. Rẽ phải ở đó. Sau đó đi thẳng khoảng ba trăm mét."},
-    {"speaker":"A","en":"Right at Long Chau, then straight three hundred metres. Got it. What's the next landmark?","vi":"Rẽ phải ở Long Châu, sau đó đi thẳng ba trăm mét. Hiểu rồi. Mốc tiếp theo là gì?"},
-    {"speaker":"B","en":"You'll pass a school on your left — you can't miss it, there'll be kids and motorcycles everywhere at this hour.","vi":"Bạn sẽ đi qua một trường học ở phía trái — không thể bỏ lỡ đâu, giờ này sẽ có trẻ em và xe máy khắp nơi."},
-    {"speaker":"A","en":"A school on the left — okay. And after the school?","vi":"Trường học ở bên trái — được. Và sau trường học?"},
-    {"speaker":"B","en":"After the school, you'll see a small park with a fountain. Turn left there — the post office is in the yellow building about fifty metres along.","vi":"Sau trường học, bạn sẽ thấy một công viên nhỏ với đài phun nước. Rẽ trái ở đó — bưu điện ở trong tòa nhà màu vàng khoảng năm mươi mét tiếp theo."},
-    {"speaker":"A","en":"Yellow building, fifty metres after the park fountain. Perfect — that's very clear. Thank you!","vi":"Tòa nhà màu vàng, năm mươi mét sau đài phun nước trong công viên. Hoàn hảo — rất rõ ràng. Cảm ơn!"},
-    {"speaker":"B","en":"Wait — one thing I should mention. Is it the main post office on Dinh Tien Hoang, or the branch on Le Duan?","vi":"Khoan — có một điều tôi nên đề cập. Đó là bưu điện chính trên đường Đinh Tiên Hoàng, hay chi nhánh trên Lê Duẩn?"},
-    {"speaker":"A","en":"I'm not sure — the slip says 'Buu Dien Quan 1.' Is that the same as central?","vi":"Tôi không chắc — phiếu ghi 'Bưu Điện Quận 1.' Đó có phải là trung tâm không?"},
-    {"speaker":"B","en":"Yes, that's the one on Dinh Tien Hoang. My directions are correct then.","vi":"Đúng, đó là cái trên đường Đinh Tiên Hoàng. Vậy chỉ dẫn của tôi là đúng."},
-    {"speaker":"A","en":"Oh, phew! I was worried for a second. Do I need to cross any main roads?","vi":"Ồ, may quá! Tôi lo một giây rồi. Tôi có cần băng qua đường lớn nào không?"},
-    {"speaker":"B","en":"Just one — right at the start, after you turn right at Long Chau, you'll need to cross a two-lane road. There's a pedestrian crossing there.","vi":"Chỉ một — ngay từ đầu, sau khi rẽ phải ở Long Châu, bạn sẽ cần băng qua một con đường hai làn. Ở đó có vạch sang đường."},
-    {"speaker":"A","en":"A pedestrian crossing — good. Crossing roads in this city makes me nervous.","vi":"Có vạch sang đường — tốt. Băng qua đường trong thành phố này làm tôi lo lắng."},
-    {"speaker":"B","en":"Ha, I understand! Just make eye contact with motorbike riders and move at a steady pace — don't stop suddenly.","vi":"Ha, tôi hiểu! Chỉ cần nhìn vào mắt người chạy xe máy và bước đều — đừng dừng đột ngột."},
-    {"speaker":"A","en":"That's actually great advice. Walk steady, don't freeze. I'll remember that!","vi":"Đó thực sự là lời khuyên hay. Bước đều, không đứng lại đột ngột. Tôi sẽ nhớ!"},
-    {"speaker":"B","en":"You'll be fine! How did you end up this far off route, if you don't mind me asking?","vi":"Bạn sẽ ổn thôi! Bạn đã đi lạc xa thế nào, nếu tôi có thể hỏi?"},
-    {"speaker":"A","en":"I took a xe om — the motorbike taxi — and I think the driver misunderstood me. He dropped me off here instead.","vi":"Tôi đi xe ôm và tôi nghĩ tài xế hiểu nhầm tôi. Ông ấy thả tôi xuống ở đây thay vào đó."},
-    {"speaker":"B","en":"Ah, that happens! The traffic is also one-way around here, so sometimes they have to take a longer route.","vi":"À, điều đó xảy ra! Giao thông ở đây cũng là một chiều, nên đôi khi họ phải đi đường vòng."},
-    {"speaker":"A","en":"That makes sense — I noticed we were going in circles. Is it walking distance from here, really?","vi":"Điều đó có lý — tôi nhận thấy chúng tôi đang đi vòng vòng. Từ đây đi bộ được thực sự không?"},
-    {"speaker":"B","en":"Absolutely. Ten minutes maximum. And it's a pleasant walk — there are some nice street food stalls along the way too.","vi":"Hoàn toàn được. Tối đa mười phút. Và đó là đoạn đi bộ dễ chịu — dọc đường cũng có một số quầy bán thức ăn đường phố ngon."},
-    {"speaker":"A","en":"Oh, I might grab something after I pick up the parcel. What's popular around here?","vi":"Ồ, tôi có thể mua gì đó sau khi lấy bưu kiện. Ở đây cái gì nổi tiếng?"},
-    {"speaker":"B","en":"There's a lady who sells banh trang tron right outside the school — the best in the neighbourhood. Spicy mixed rice paper.","vi":"Có một bà bán bánh tráng trộn ngay bên ngoài trường học — ngon nhất khu vực. Bánh tráng trộn cay."},
-    {"speaker":"A","en":"Banh trang tron! My weakness. I'll definitely stop there. You've been so helpful — thank you!","vi":"Bánh tráng trộn! Điểm yếu của tôi. Tôi chắc chắn sẽ ghé đó. Bạn đã giúp đỡ rất nhiều — cảm ơn!"},
-    {"speaker":"B","en":"Happy to help! Good luck with the parcel — hope it's something exciting.","vi":"Vui được giúp! Chúc may mắn với bưu kiện — hy vọng đó là thứ gì đó thú vị."},
-    {"speaker":"A","en":"Ha! It's a book I ordered from Japan, so yes — very exciting for me!","vi":"Ha! Đó là một cuốn sách tôi đặt từ Nhật Bản, nên vâng — rất thú vị với tôi!"},
-    {"speaker":"B","en":"A book from Japan — nice! Enjoy it. Good luck finding the post office!","vi":"Sách từ Nhật Bản — hay đó! Tận hưởng nhé. Chúc may mắn tìm được bưu điện!"},
-    {"speaker":"A","en":"I think I've got it now. Right at Long Chau, straight, school on left, park fountain, left, yellow building.","vi":"Tôi nghĩ tôi hiểu rồi. Rẽ phải ở Long Châu, đi thẳng, trường học bên trái, đài phun nước trong công viên, rẽ trái, tòa nhà màu vàng."},
-    {"speaker":"B","en":"Perfect! You've got it exactly right. You'll be there in no time.","vi":"Tuyệt vời! Bạn ghi nhớ hoàn toàn đúng. Bạn sẽ đến ngay thôi."},
-    {"speaker":"A","en":"Thank you again. You really saved me — I was starting to panic!","vi":"Cảm ơn một lần nữa. Bạn thực sự đã cứu tôi — tôi bắt đầu hoảng loạn rồi!"},
-    {"speaker":"B","en":"No panic needed — Saigon is easy to navigate once you know a few landmarks. Take care!","vi":"Không cần hoảng loạn — Sài Gòn dễ điều hướng khi bạn biết một vài mốc nổi tiếng. Bảo trọng!"}
-  ]
-},
-{
-  "id": 7,
-  "title": "Đi khám bệnh",
-  "situation": "Nam cảm thấy không khỏe và đến phòng khám gặp bác sĩ.",
-  "speakerAGender": "male",
-  "speakerBGender": "female",
-  "speakerAName": {"vi": "Nam", "en": "Nam"},
-  "speakerBName": {"vi": "Bác sĩ", "en": "Doctor"},
-  "_aiGenerated": true,
-  "turns": [
-    {"speaker":"A","en":"Good morning, doctor. I've been feeling really unwell for the past three days.","vi":"Chào buổi sáng, bác sĩ. Tôi cảm thấy rất không khỏe trong ba ngày qua."},
-    {"speaker":"B","en":"Good morning, Nam. Please sit down and tell me what's been going on.","vi":"Chào buổi sáng, Nam. Ngồi xuống và kể cho tôi nghe chuyện gì đang xảy ra."},
-    {"speaker":"A","en":"It started with a sore throat on Monday, then I got a fever Tuesday night. Today I have a headache and my whole body aches.","vi":"Bắt đầu bằng đau họng vào thứ Hai, rồi sốt vào tối thứ Ba. Hôm nay tôi bị đau đầu và toàn thân đau nhức."},
-    {"speaker":"B","en":"How high was the fever when you measured it?","vi":"Khi đo nhiệt độ thì sốt bao nhiêu độ?"},
-    {"speaker":"A","en":"Thirty-eight point six last night. This morning it was thirty-eight point one.","vi":"Ba mươi tám phẩy sáu tối qua. Sáng nay là ba mươi tám phẩy một."},
-    {"speaker":"B","en":"Okay. Any other symptoms — runny nose, cough, difficulty breathing?","vi":"Được. Có triệu chứng nào khác không — chảy nước mũi, ho, khó thở?"},
-    {"speaker":"A","en":"A bit of a runny nose and I've been sneezing a lot. No trouble breathing, thankfully.","vi":"Hơi chảy nước mũi và tôi hắt hơi nhiều lắm. May mắn là không có vấn đề hô hấp."},
-    {"speaker":"B","en":"Any nausea, vomiting, or stomach issues?","vi":"Có buồn nôn, nôn mửa, hay vấn đề dạ dày không?"},
-    {"speaker":"A","en":"No stomach problems. But I haven't had much appetite — I've barely eaten in two days.","vi":"Không có vấn đề dạ dày. Nhưng tôi không có nhiều cảm giác đói — gần như không ăn gì trong hai ngày."},
-    {"speaker":"B","en":"That's common with a fever. Have you taken any medication so far?","vi":"Điều đó bình thường khi bị sốt. Bạn đã dùng thuốc gì chưa?"},
-    {"speaker":"A","en":"Just paracetamol — five hundred milligrams, twice a day. It brings the fever down but it comes back after a few hours.","vi":"Chỉ paracetamol — năm trăm miligram, hai lần một ngày. Nó hạ sốt nhưng sốt lại sau vài tiếng."},
-    {"speaker":"B","en":"That's the right approach. Let me take your temperature and have a look at your throat. Open wide please.","vi":"Đó là cách xử lý đúng. Để tôi đo nhiệt độ và xem họng của bạn. Mở miệng rộng nhé."},
-    {"speaker":"A","en":"Sure. Does my throat look bad?","vi":"Vâng. Họng tôi trông tệ không?"},
-    {"speaker":"B","en":"It's quite red and inflamed. I can see some white patches — which suggests a bacterial infection. Your temperature is thirty-eight point two right now.","vi":"Khá đỏ và viêm. Tôi thấy một số đốm trắng — điều đó gợi ý nhiễm khuẩn. Nhiệt độ của bạn hiện là ba mươi tám phẩy hai."},
-    {"speaker":"A","en":"Bacterial infection — does that mean I need antibiotics?","vi":"Nhiễm khuẩn — điều đó có nghĩa là tôi cần kháng sinh không?"},
-    {"speaker":"B","en":"Most likely yes. But I'd like to do a rapid strep test first to confirm. It only takes five minutes.","vi":"Có khả năng vậy. Nhưng trước tiên tôi muốn làm xét nghiệm liên cầu khuẩn nhanh để xác nhận. Chỉ mất năm phút."},
-    {"speaker":"A","en":"Of course, go ahead. I want to make sure we're treating the right thing.","vi":"Dĩ nhiên, cứ làm. Tôi muốn chắc chắn chúng ta điều trị đúng bệnh."},
-    {"speaker":"B","en":"Good attitude. The test is positive — you do have a streptococcal throat infection. I'll prescribe amoxicillin.","vi":"Thái độ tốt. Kết quả xét nghiệm dương tính — bạn bị viêm họng liên cầu khuẩn. Tôi sẽ kê amoxicillin."},
-    {"speaker":"A","en":"How long is the course? And are there any side effects I should know about?","vi":"Thời gian điều trị bao lâu? Và có tác dụng phụ nào tôi cần biết không?"},
-    {"speaker":"B","en":"Seven days — it's important to complete the full course even if you feel better after three days. Side effects can include mild stomach upset; take it with food.","vi":"Bảy ngày — quan trọng là phải hoàn thành đủ liệu trình ngay cả khi bạn cảm thấy khỏe hơn sau ba ngày. Tác dụng phụ có thể bao gồm khó chịu dạ dày nhẹ; uống cùng với thức ăn."},
-    {"speaker":"A","en":"Got it — seven days, with food. What about the fever and body aches?","vi":"Hiểu rồi — bảy ngày, dùng cùng thức ăn. Còn sốt và đau nhức thì sao?"},
-    {"speaker":"B","en":"Continue the paracetamol as needed — you can increase to five hundred milligrams every six hours, maximum four times a day. Stay well hydrated.","vi":"Tiếp tục dùng paracetamol khi cần — bạn có thể tăng lên năm trăm miligram mỗi sáu tiếng, tối đa bốn lần một ngày. Uống đủ nước."},
-    {"speaker":"A","en":"How much water is 'well hydrated'? I've been drinking maybe one litre a day.","vi":"'Đủ nước' là bao nhiêu? Tôi uống khoảng một lít mỗi ngày."},
-    {"speaker":"B","en":"When you have a fever, aim for at least two to two-and-a-half litres. Water, warm herbal tea, or soup all count.","vi":"Khi bị sốt, cố gắng uống ít nhất hai đến hai lít rưỡi. Nước, trà thảo mộc ấm, hoặc súp đều tính."},
-    {"speaker":"A","en":"I'll make sure to drink more. Should I rest completely, or is some light activity okay?","vi":"Tôi sẽ đảm bảo uống nhiều hơn. Tôi có nên nghỉ ngơi hoàn toàn không, hay một số hoạt động nhẹ là ổn?"},
-    {"speaker":"B","en":"Complete rest for the first two to three days while the fever is still above thirty-eight. After that, gentle activity is fine.","vi":"Nghỉ ngơi hoàn toàn trong hai đến ba ngày đầu khi sốt vẫn trên ba mươi tám độ. Sau đó hoạt động nhẹ nhàng là ổn."},
-    {"speaker":"A","en":"I work at a desk job — can I work from home?","vi":"Tôi làm việc văn phòng — tôi có thể làm từ xa ở nhà không?"},
-    {"speaker":"B","en":"Once the fever is under thirty-seven point five, light desk work from home is okay. I'd strongly advise against going to the office while contagious — probably until Saturday.","vi":"Khi sốt dưới ba mươi bảy phẩy năm, làm việc nhẹ tại bàn ở nhà là ổn. Tôi khuyên không nên đến văn phòng khi còn lây — có thể đến thứ Bảy."},
-    {"speaker":"A","en":"That makes sense — I'd feel terrible infecting my colleagues. What about the sore throat — is there anything to help with the pain?","vi":"Điều đó hợp lý — tôi sẽ cảm thấy tệ nếu lây cho đồng nghiệp. Còn đau họng — có gì giúp giảm đau không?"},
-    {"speaker":"B","en":"Gargling with warm salt water three times a day helps a lot. And throat lozenges for temporary relief. Avoid ice cold drinks.","vi":"Súc họng bằng nước muối ấm ba lần một ngày rất có tác dụng. Và kẹo ngậm họng để giảm đau tạm thời. Tránh đồ uống lạnh."},
-    {"speaker":"A","en":"Salt water gargle — simple but effective. How many days before I should start feeling better?","vi":"Súc nước muối — đơn giản nhưng hiệu quả. Bao nhiêu ngày trước khi tôi bắt đầu cảm thấy khỏe hơn?"},
-    {"speaker":"B","en":"With antibiotics, you should notice significant improvement within forty-eight to seventy-two hours. The fever should break by tomorrow evening.","vi":"Với kháng sinh, bạn sẽ nhận thấy cải thiện đáng kể trong bốn mươi tám đến bảy mươi hai tiếng. Sốt nên hết vào tối mai."},
-    {"speaker":"A","en":"That's reassuring. What if I don't improve after seventy-two hours — should I come back?","vi":"Điều đó thật yên tâm. Nếu tôi không cải thiện sau bảy mươi hai tiếng — tôi có nên quay lại không?"},
-    {"speaker":"B","en":"Yes, please come back if the fever persists beyond seventy-two hours, or if you develop a rash, difficulty swallowing, or shortness of breath — those would be warning signs.","vi":"Vâng, vui lòng quay lại nếu sốt kéo dài quá bảy mươi hai tiếng, hoặc nếu bạn phát ban, khó nuốt, hoặc khó thở — đó sẽ là dấu hiệu cảnh báo."},
-    {"speaker":"A","en":"Noted — rash, difficulty swallowing, or breathing problems. Got it. Is there a follow-up appointment needed if everything goes well?","vi":"Ghi nhớ rồi — phát ban, khó nuốt, hoặc khó thở. Hiểu rồi. Có cần lịch hẹn tái khám không nếu mọi thứ ổn?"},
-    {"speaker":"B","en":"Not necessary if you feel completely recovered after seven days. But do finish all the antibiotics regardless.","vi":"Không cần thiết nếu bạn cảm thấy hồi phục hoàn toàn sau bảy ngày. Nhưng hãy dùng hết kháng sinh dù sao đi nữa."},
-    {"speaker":"A","en":"I will — I've heard stopping antibiotics early can cause resistance. Thank you for explaining everything so clearly.","vi":"Tôi sẽ vậy — tôi nghe nói ngừng kháng sinh sớm có thể gây kháng thuốc. Cảm ơn bác sĩ đã giải thích mọi thứ rõ ràng."},
-    {"speaker":"B","en":"You're very well informed! Get plenty of rest, drink lots of fluids, and you'll be back on your feet soon.","vi":"Bạn rất am hiểu! Nghỉ ngơi nhiều, uống nhiều nước, và bạn sẽ sớm khỏe lại thôi."},
-    {"speaker":"A","en":"Thank you, doctor. Should I pick up the prescription at the front desk?","vi":"Cảm ơn bác sĩ. Tôi nhận đơn thuốc ở quầy lễ tân không?"},
-    {"speaker":"B","en":"Yes, the nurse will hand it to you outside. There's also a pharmacy on the ground floor if you'd like to fill it here.","vi":"Vâng, y tá sẽ đưa cho bạn ở ngoài. Cũng có hiệu thuốc ở tầng trệt nếu bạn muốn mua thuốc tại đây."},
-    {"speaker":"A","en":"Convenient! I'll get it filled here then. Take care, and thank you again.","vi":"Tiện quá! Vậy tôi sẽ mua thuốc tại đây luôn. Bảo trọng, và cảm ơn một lần nữa."},
-    {"speaker":"B","en":"Rest well, Nam. Feel better soon!","vi":"Nghỉ ngơi tốt nhé, Nam. Chúc bạn mau khỏe!"}
-  ]
-},
-{
-  "id": 8,
-  "title": "Ở hiệu thuốc",
-  "situation": "Hoa đến hiệu thuốc mua thuốc cảm cho mình.",
-  "speakerAGender": "female",
-  "speakerBGender": "male",
-  "speakerAName": {"vi": "Hoa", "en": "Hoa"},
-  "speakerBName": {"vi": "Dược sĩ", "en": "Pharmacist"},
-  "_aiGenerated": true,
-  "turns": [
-    {"speaker":"A","en":"Hello. I have a cold — runny nose, mild sore throat, and I'm sneezing non-stop. Can you recommend something?","vi":"Xin chào. Tôi bị cảm — chảy nước mũi, đau họng nhẹ, và tôi hắt hơi liên tục. Bạn có thể gợi ý thứ gì không?"},
-    {"speaker":"B","en":"Of course. How long have you had these symptoms?","vi":"Dĩ nhiên. Bạn có những triệu chứng này bao lâu rồi?"},
-    {"speaker":"A","en":"Since this morning — so about six hours. It came on suddenly. I woke up fine but by ten it hit me hard.","vi":"Từ sáng nay — khoảng sáu tiếng rồi. Đến đột ngột. Tôi thức dậy ổn nhưng đến mười giờ thì bị nặng."},
-    {"speaker":"B","en":"Do you have a fever? Have you checked your temperature?","vi":"Bạn có sốt không? Bạn đã đo nhiệt độ chưa?"},
-    {"speaker":"A","en":"I didn't measure, but I feel a little warm. No chills or shaking though.","vi":"Tôi chưa đo, nhưng cảm thấy hơi nóng. Không ớn lạnh hay run người."},
-    {"speaker":"B","en":"That suggests a low-grade fever at most. Any cough?","vi":"Điều đó gợi ý sốt nhẹ nhiều lắm. Có ho không?"},
-    {"speaker":"A","en":"No cough yet. But my nose is incredibly stuffy — I can barely breathe through it.","vi":"Chưa ho. Nhưng mũi tôi nghẹt kinh khủng — gần như không thở được qua mũi."},
-    {"speaker":"B","en":"For a common cold with nasal congestion and mild symptoms, I'd suggest a combination product. Are you taking any other medications currently?","vi":"Với cảm thông thường có nghẹt mũi và triệu chứng nhẹ, tôi gợi ý sản phẩm kết hợp. Bạn đang dùng thuốc nào khác hiện không?"},
-    {"speaker":"A","en":"Just a daily vitamin C — nothing prescription.","vi":"Chỉ vitamin C hàng ngày — không có thuốc kê đơn."},
-    {"speaker":"B","en":"Good. I'd recommend Tiffy — it contains paracetamol for the low fever and any discomfort, chlorphenamine for the runny nose, and pseudoephedrine for the congestion.","vi":"Tốt. Tôi khuyên Tiffy — chứa paracetamol cho sốt nhẹ và khó chịu, chlorphenamine cho chảy nước mũi, và pseudoephedrine cho nghẹt mũi."},
-    {"speaker":"A","en":"Tiffy — I've heard of that. Is it safe to take with vitamin C?","vi":"Tiffy — tôi nghe tên rồi. Uống cùng vitamin C có an toàn không?"},
-    {"speaker":"B","en":"Completely safe. Take vitamin C separately, maybe two hours apart. The Tiffy should be taken with food though.","vi":"Hoàn toàn an toàn. Uống vitamin C riêng, có thể cách nhau hai tiếng. Nhưng Tiffy nên uống cùng thức ăn."},
-    {"speaker":"A","en":"With food — okay. How often do I take it?","vi":"Cùng thức ăn — được. Tôi uống bao lâu một lần?"},
-    {"speaker":"B","en":"One tablet every six to eight hours. Maximum four tablets in twenty-four hours. And it does cause drowsiness — be careful if you're driving.","vi":"Một viên mỗi sáu đến tám tiếng. Tối đa bốn viên trong hai mươi bốn giờ. Và nó gây buồn ngủ — cẩn thận nếu bạn lái xe."},
-    {"speaker":"A","en":"Drowsiness! Good warning — I have a meeting this afternoon. Maybe I should take a non-drowsy version?","vi":"Buồn ngủ! Cảnh báo tốt — tôi có cuộc họp chiều nay. Có lẽ tôi nên dùng loại không gây buồn ngủ?"},
-    {"speaker":"B","en":"Yes, Decolgen has a non-drowsy formula. It doesn't have the antihistamine, so the runny nose relief won't be as strong, but you'll stay alert.","vi":"Vâng, Decolgen có công thức không gây buồn ngủ. Không có kháng histamine, nên hiệu quả giảm chảy nước mũi sẽ không mạnh bằng, nhưng bạn sẽ tỉnh táo."},
-    {"speaker":"A","en":"I think I can handle a runny nose in the meeting — I'll carry tissues. So Decolgen non-drowsy for now, and switch to Tiffy at night?","vi":"Tôi nghĩ tôi có thể chịu đựng chảy nước mũi trong cuộc họp — tôi sẽ mang khăn giấy. Vậy Decolgen không buồn ngủ bây giờ, và chuyển sang Tiffy vào ban đêm?"},
-    {"speaker":"B","en":"That's actually a very smart approach. Decolgen in the daytime, Tiffy at night. Perfect combination.","vi":"Đó thực sự là cách tiếp cận rất thông minh. Decolgen ban ngày, Tiffy ban đêm. Kết hợp hoàn hảo."},
-    {"speaker":"A","en":"How many days should I take these before seeing a doctor if things don't improve?","vi":"Tôi nên dùng thuốc bao nhiêu ngày trước khi gặp bác sĩ nếu tình trạng không cải thiện?"},
-    {"speaker":"B","en":"Three to five days is normal for a cold. If symptoms worsen, fever goes above thirty-eight point five, or you develop a chest cough, see a doctor sooner.","vi":"Ba đến năm ngày là bình thường cho cảm. Nếu triệu chứng nặng hơn, sốt trên ba mươi tám phẩy năm, hoặc ho ngực, hãy gặp bác sĩ sớm hơn."},
-    {"speaker":"A","en":"Got it. Anything else I should take — like something for my throat?","vi":"Hiểu rồi. Còn thứ gì khác tôi nên dùng — kiểu như thứ gì đó cho họng?"},
-    {"speaker":"B","en":"These throat lozenges with honey and menthol are very soothing — no medication but provides relief. Or if you prefer, Strepsils has a mild antiseptic formula.","vi":"Những viên ngậm họng với mật ong và bạc hà này rất dễ chịu — không có thuốc nhưng mang lại sự dịu nhẹ. Hoặc nếu bạn thích, Strepsils có công thức kháng khuẩn nhẹ."},
-    {"speaker":"A","en":"I'll get the Strepsils — sounds more effective. Is there anything natural I can do at home too?","vi":"Tôi sẽ lấy Strepsils — nghe có vẻ hiệu quả hơn. Có gì tự nhiên tôi có thể làm ở nhà không?"},
-    {"speaker":"B","en":"Steam inhalation works wonders for congestion — just a bowl of hot water with a towel over your head for ten minutes. And ginger honey tea for the throat.","vi":"Xông hơi rất hiệu quả cho nghẹt mũi — chỉ cần một tô nước nóng và khăn che đầu trong mười phút. Và trà gừng mật ong cho họng."},
-    {"speaker":"A","en":"Ginger honey tea — I love that. My grandmother always made that.","vi":"Trà gừng mật ong — tôi thích cái đó. Bà tôi hay làm vậy."},
-    {"speaker":"B","en":"Grandmother's remedies often have real science behind them! Ginger is genuinely anti-inflammatory.","vi":"Các bài thuốc của bà thường có cơ sở khoa học thực sự! Gừng thực sự có tác dụng chống viêm."},
-    {"speaker":"A","en":"That makes me feel better about trusting her recipe. How much are the Decolgen, Tiffy, and Strepsils altogether?","vi":"Điều đó làm tôi cảm thấy tốt hơn khi tin vào công thức của bà. Decolgen, Tiffy và Strepsils tất cả là bao nhiêu?"},
-    {"speaker":"B","en":"Decolgen ten tablets is twenty-five thousand, Tiffy ten tablets is twenty-two thousand, Strepsils is eighteen thousand. Total sixty-five thousand dong.","vi":"Decolgen mười viên là hai mươi lăm nghìn, Tiffy mười viên là hai mươi hai nghìn, Strepsils là mười tám nghìn. Tổng sáu mươi lăm nghìn đồng."},
-    {"speaker":"A","en":"Very affordable. Here's seventy thousand — keep the change.","vi":"Rất phải chăng. Đây là bảy mươi nghìn — thối lại không cần."},
-    {"speaker":"B","en":"Thank you! Get plenty of rest today if you can, and drink warm fluids throughout.","vi":"Cảm ơn! Nghỉ ngơi nhiều hôm nay nếu có thể, và uống nhiều nước ấm suốt ngày."},
-    {"speaker":"A","en":"I'll try — after this meeting I'm going straight home. Thank you for all the advice!","vi":"Tôi sẽ cố — sau cuộc họp này tôi về thẳng nhà. Cảm ơn vì tất cả lời khuyên!"},
-    {"speaker":"B","en":"Take care of yourself. Feel better soon!","vi":"Giữ gìn sức khỏe nhé. Chúc bạn mau khỏe!"}
-  ]
-},
-{
-  "id": 9,
-  "title": "Đặt phòng khách sạn qua điện thoại",
-  "situation": "An gọi điện đặt phòng khách sạn cho kỳ nghỉ cuối tuần.",
-  "speakerAGender": "male",
-  "speakerBGender": "female",
-  "speakerAName": {"vi": "An", "en": "An"},
-  "speakerBName": {"vi": "Lễ tân khách sạn", "en": "Hotel receptionist"},
-  "_aiGenerated": true,
-  "turns": [
-    {"speaker":"A","en":"Hello, is this the Riverside Boutique Hotel in Hoi An?","vi":"Xin chào, đây có phải khách sạn Riverside Boutique ở Hội An không?"},
-    {"speaker":"B","en":"Yes, good afternoon! Riverside Boutique Hotel, this is Linh speaking. How can I help you?","vi":"Vâng, chào buổi chiều! Khách sạn Riverside Boutique, tôi là Linh. Tôi có thể giúp gì cho anh?"},
-    {"speaker":"A","en":"Hi Linh! I'd like to make a room reservation for the weekend — checking in Saturday, checking out Monday morning.","vi":"Chào Linh! Tôi muốn đặt phòng cho cuối tuần — nhận phòng thứ Bảy, trả phòng sáng thứ Hai."},
-    {"speaker":"B","en":"That's two nights — Saturday the twenty-fourth and Sunday the twenty-fifth. Let me check availability. One moment please.","vi":"Đó là hai đêm — thứ Bảy ngày hai mươi bốn và Chủ Nhật ngày hai mươi lăm. Để tôi kiểm tra tình trạng phòng. Vui lòng chờ một chút."},
-    {"speaker":"A","en":"Of course, take your time.","vi":"Dĩ nhiên, cứ từ từ."},
-    {"speaker":"B","en":"Good news — we have availability. Are you looking for a room for one person or two?","vi":"Tin tốt — chúng tôi có phòng. Anh tìm phòng cho một hay hai người?"},
-    {"speaker":"A","en":"Two people — my partner and I. We'd love a room with a river view if possible.","vi":"Hai người — tôi và bạn đời. Chúng tôi muốn phòng có tầm nhìn ra sông nếu có thể."},
-    {"speaker":"B","en":"We have three river-view room types: Superior, Deluxe, and our signature Heritage Suite. Which category interests you?","vi":"Chúng tôi có ba loại phòng nhìn ra sông: Superior, Deluxe, và Heritage Suite đặc trưng. Loại nào anh quan tâm?"},
-    {"speaker":"A","en":"What's the difference between Superior and Deluxe?","vi":"Sự khác biệt giữa Superior và Deluxe là gì?"},
-    {"speaker":"B","en":"The Superior is thirty-five square metres with a partial river view and a shower. Deluxe is fifty square metres, full river view, and has a bathtub plus a private balcony.","vi":"Superior là ba mươi lăm mét vuông với tầm nhìn sông một phần và phòng tắm đứng. Deluxe là năm mươi mét vuông, tầm nhìn sông hoàn toàn, và có bồn tắm cộng với ban công riêng."},
-    {"speaker":"A","en":"A balcony sounds wonderful — we love having morning coffee outside. How much is the Deluxe for two nights?","vi":"Ban công nghe tuyệt vời — chúng tôi thích uống cà phê buổi sáng bên ngoài. Deluxe hai đêm bao nhiêu tiền?"},
-    {"speaker":"B","en":"The Deluxe is two million two hundred thousand dong per night, so four million four hundred thousand for two nights. That includes breakfast for two.","vi":"Deluxe là hai triệu hai trăm nghìn đồng mỗi đêm, vậy bốn triệu bốn trăm nghìn cho hai đêm. Bao gồm bữa sáng cho hai người."},
-    {"speaker":"A","en":"Breakfast included — that's a nice touch. Is it a buffet or set menu?","vi":"Bao gồm bữa sáng — đó là điểm thú vị. Là buffet hay thực đơn cố định?"},
-    {"speaker":"B","en":"À la carte from a set menu — you choose from six options including Vietnamese pho, Western eggs, and fresh tropical fruit. Served from six-thirty to ten.","vi":"Gọi món từ thực đơn cố định — bạn chọn từ sáu lựa chọn bao gồm phở Việt Nam, trứng kiểu Tây, và trái cây nhiệt đới tươi. Phục vụ từ sáu giờ rưỡi đến mười giờ."},
-    {"speaker":"A","en":"That actually sounds better than a buffet — more personal. We'll take the Deluxe. What do I need to do to confirm the booking?","vi":"Nghe thực ra hay hơn buffet — riêng tư hơn. Chúng tôi sẽ lấy Deluxe. Tôi cần làm gì để xác nhận đặt phòng?"},
-    {"speaker":"B","en":"I'll need your name, email, phone number, and a credit or debit card to hold the reservation.","vi":"Tôi sẽ cần tên, email, số điện thoại của anh, và thẻ tín dụng hoặc ghi nợ để giữ chỗ."},
-    {"speaker":"A","en":"Sure. Name is Nguyen Thanh An. Email is anthanh at gmail dot com.","vi":"Được. Tên là Nguyễn Thành An. Email là anthanh chấm gmail chấm com."},
-    {"speaker":"B","en":"Nguyen Thanh An, anthanh at gmail. And your phone number?","vi":"Nguyễn Thành An, anthanh tại gmail. Và số điện thoại của anh?"},
-    {"speaker":"A","en":"Zero nine one eight, two four six, eight seven nine.","vi":"Không chín một tám, hai bốn sáu, tám bảy chín."},
-    {"speaker":"B","en":"Got it. Now for the card — we just take the details to hold the room. You won't be charged now.","vi":"Ghi rồi. Bây giờ về thẻ — chúng tôi chỉ lấy thông tin để giữ phòng. Anh sẽ không bị tính phí ngay."},
-    {"speaker":"A","en":"That's reassuring. It's a Visa card, number four-five-eight-nine... should I give all sixteen digits?","vi":"Thật yên tâm. Là thẻ Visa, số bốn-năm-tám-chín... tôi có nên đọc cả mười sáu chữ số không?"},
-    {"speaker":"B","en":"Yes please, and the expiry date and the three-digit CVV on the back.","vi":"Vâng, và ngày hết hạn và ba chữ số CVV ở mặt sau."},
-    {"speaker":"A","en":"Four-five-eight-nine, seven-seven-three-two, one-one-four-six, zero-eight-three-two. Expiry: oh-nine, twenty-seven. CVV: four-five-one.","vi":"Bốn-năm-tám-chín, bảy-bảy-ba-hai, một-một-bốn-sáu, không-tám-ba-hai. Hết hạn: không-chín, hai mươi bảy. CVV: bốn-năm-một."},
-    {"speaker":"B","en":"Perfect, I have all that. Can I confirm: Deluxe River View, check-in Saturday the twenty-fourth, check-out Monday the twenty-sixth, two guests, breakfast included?","vi":"Tuyệt vời, tôi có tất cả rồi. Tôi xác nhận nhé: Deluxe River View, nhận phòng thứ Bảy ngày hai mươi bốn, trả phòng thứ Hai ngày hai mươi sáu, hai khách, bao gồm bữa sáng?"},
-    {"speaker":"A","en":"That's all correct. Oh — what time is check-in?","vi":"Tất cả đúng rồi. Ồ — check-in lúc mấy giờ?"},
-    {"speaker":"B","en":"Standard check-in is from two p.m. If you arrive earlier, we can store your luggage and you're welcome to use the pool and restaurant.","vi":"Check-in tiêu chuẩn từ hai giờ chiều. Nếu anh đến sớm hơn, chúng tôi có thể giữ hành lý và anh được chào đón sử dụng hồ bơi và nhà hàng."},
-    {"speaker":"A","en":"You have a pool? I didn't see that on the website.","vi":"Khách sạn có hồ bơi à? Tôi không thấy trên website."},
-    {"speaker":"B","en":"Yes, an outdoor infinity pool overlooking the river — it's stunning. Open from seven a.m. to nine p.m.","vi":"Vâng, hồ bơi vô cực ngoài trời nhìn ra sông — rất tuyệt vời. Mở từ bảy giờ sáng đến chín giờ tối."},
-    {"speaker":"A","en":"An infinity pool! We'll definitely be using that. What about late checkout — can we stay until one p.m. on Monday?","vi":"Hồ bơi vô cực! Chúng tôi chắc chắn sẽ dùng đó. Còn trả phòng muộn — chúng tôi có thể ở đến một giờ chiều thứ Hai không?"},
-    {"speaker":"B","en":"Late checkout until noon is complimentary for Deluxe room guests. Until one p.m. we'd charge a small fee — around three hundred thousand dong.","vi":"Trả phòng muộn đến trưa miễn phí cho khách phòng Deluxe. Đến một giờ chiều chúng tôi tính thêm phí nhỏ — khoảng ba trăm nghìn đồng."},
-    {"speaker":"A","en":"Noon for free is perfect — that gives us a relaxed Monday morning. We'll take that.","vi":"Đến trưa miễn phí là hoàn hảo — giúp chúng tôi có sáng thứ Hai thư thái. Chúng tôi chọn vậy."},
-    {"speaker":"B","en":"Wonderful. I'll add late checkout until noon to your booking. You'll receive a confirmation email within the next few minutes.","vi":"Tuyệt vời. Tôi sẽ thêm trả phòng muộn đến trưa vào đặt phòng của anh. Anh sẽ nhận email xác nhận trong vài phút tới."},
-    {"speaker":"A","en":"Perfect. One last question — is there parking available at the hotel?","vi":"Tuyệt vời. Câu hỏi cuối — khách sạn có bãi đậu xe không?"},
-    {"speaker":"B","en":"We have limited parking in our courtyard — first come, first served. I'd suggest calling ahead on Saturday morning to reserve a spot.","vi":"Chúng tôi có bãi đậu xe hạn chế trong sân — ai đến trước được trước. Tôi gợi ý gọi trước vào sáng thứ Bảy để đặt chỗ."},
-    {"speaker":"A","en":"We're actually coming by motorbike from Da Nang — should be fine then.","vi":"Chúng tôi thực ra đến bằng xe máy từ Đà Nẵng — vậy thì ổn."},
-    {"speaker":"B","en":"Perfect — motorbike parking is free and secure. We look forward to welcoming you and your partner!","vi":"Tuyệt vời — đậu xe máy miễn phí và an toàn. Chúng tôi mong đón tiếp anh và bạn đời!"},
-    {"speaker":"A","en":"Thank you, Linh! We're really looking forward to it. Hoi An is somewhere we've always wanted to visit.","vi":"Cảm ơn, Linh! Chúng tôi thực sự mong chờ. Hội An là nơi chúng tôi luôn muốn thăm."},
-    {"speaker":"B","en":"You'll love it — especially the Old Town in the evenings with all the lanterns. Have a wonderful stay with us!","vi":"Anh sẽ thích đó — đặc biệt là Phố Cổ vào buổi tối với tất cả những chiếc đèn lồng. Chúc anh có kỳ lưu trú tuyệt vời với chúng tôi!"}
-  ]
-},
-{
-  "id": 10,
-  "title": "Nhận phòng khách sạn",
-  "situation": "An đến khách sạn để nhận phòng đã đặt trước.",
-  "speakerAGender": "male",
-  "speakerBGender": "female",
-  "speakerAName": {"vi": "An", "en": "An"},
-  "speakerBName": {"vi": "Lễ tân", "en": "Receptionist"},
-  "_aiGenerated": true,
-  "turns": [
-    {"speaker":"A","en":"Good afternoon! I have a reservation — Nguyen Thanh An. Two nights, Deluxe River View.","vi":"Chào buổi chiều! Tôi có đặt phòng — Nguyễn Thành An. Hai đêm, Deluxe River View."},
-    {"speaker":"B","en":"Welcome to Riverside Boutique Hotel, Mr. An! Let me pull up your booking. Ah yes — checking in today for two nights, checking out Monday. Is that right?","vi":"Chào mừng đến khách sạn Riverside Boutique, anh An! Để tôi tìm đặt phòng. À vâng — nhận phòng hôm nay hai đêm, trả phòng thứ Hai. Đúng không?"},
-    {"speaker":"A","en":"That's correct. We were actually just here for the infinity pool while we waited — it's stunning!","vi":"Đúng vậy. Chúng tôi thực ra vừa dùng hồ bơi vô cực trong khi chờ — tuyệt đẹp!"},
-    {"speaker":"B","en":"I'm so glad you enjoyed it! We're proud of that pool. Can I see your passport or ID for check-in?","vi":"Tôi rất vui khi anh thích! Chúng tôi tự hào về hồ bơi đó. Tôi có thể xem hộ chiếu hoặc CMND để làm thủ tục không?"},
-    {"speaker":"A","en":"Of course. Here's my ID card. My partner's too — she's just parking the motorbike.","vi":"Dĩ nhiên. Đây là CMND của tôi. Và của bạn đời — cô ấy đang đậu xe máy."},
-    {"speaker":"B","en":"No problem — I can process yours now and add hers when she arrives. Everything looks good. For payment, how would you like to settle the balance?","vi":"Không sao — tôi có thể xử lý của anh trước và thêm của cô ấy khi đến. Mọi thứ ổn. Về thanh toán, anh muốn thanh toán phần còn lại như thế nào?"},
-    {"speaker":"A","en":"I'll pay by card now — the same Visa card on file. Should I swipe it?","vi":"Tôi sẽ thanh toán bằng thẻ ngay bây giờ — cùng thẻ Visa trong hồ sơ. Tôi có quẹt thẻ không?"},
-    {"speaker":"B","en":"Just tap or insert — our terminal accepts contactless. The total is four million four hundred thousand dong for two nights with breakfast.","vi":"Chỉ cần chạm hoặc cắm thẻ — thiết bị của chúng tôi chấp nhận contactless. Tổng cộng bốn triệu bốn trăm nghìn đồng cho hai đêm kèm bữa sáng."},
-    {"speaker":"A","en":"Perfect. Processing... done. Here's the receipt?","vi":"Tuyệt vời. Đang xử lý... xong. Đây là biên lai không?"},
-    {"speaker":"B","en":"Yes, that's your receipt and I'll email a full invoice too. Now — your room key cards. You have two.","vi":"Vâng, đó là biên lai của anh và tôi cũng sẽ gửi hóa đơn đầy đủ qua email. Bây giờ — thẻ phòng của anh. Anh có hai thẻ."},
-    {"speaker":"A","en":"Great — one each. What floor are we on?","vi":"Tốt — mỗi người một thẻ. Chúng tôi ở tầng mấy?"},
-    {"speaker":"B","en":"Third floor — room 304. The river view from up there is the best in the building. Elevator is just behind you to the left.","vi":"Tầng ba — phòng 304. Tầm nhìn sông từ trên đó là tốt nhất trong tòa nhà. Thang máy ngay sau lưng anh bên trái."},
-    {"speaker":"A","en":"Room 304, third floor. And the card activates the elevator too?","vi":"Phòng 304, tầng ba. Và thẻ cũng kích hoạt thang máy không?"},
-    {"speaker":"B","en":"Yes, tap it on the panel inside the lift and select your floor. It's a security feature.","vi":"Vâng, chạm thẻ vào bảng điều khiển bên trong thang máy và chọn tầng. Đó là tính năng bảo mật."},
-    {"speaker":"A","en":"Smart. Can you tell me about breakfast — where and what time?","vi":"Thông minh. Bạn có thể cho tôi biết về bữa sáng — ở đâu và mấy giờ?"},
-    {"speaker":"B","en":"Breakfast is served in our riverside restaurant on the ground floor — six-thirty to ten a.m. Just show your room key and the waiter will bring your menu.","vi":"Bữa sáng được phục vụ tại nhà hàng ven sông ở tầng trệt — sáu giờ rưỡi đến mười giờ sáng. Chỉ cần cho thấy thẻ phòng và nhân viên phục vụ sẽ mang thực đơn."},
-    {"speaker":"A","en":"Perfect. What about room service — do you have it in the evenings?","vi":"Tuyệt vời. Còn dịch vụ phòng — tối có không?"},
-    {"speaker":"B","en":"Room service is available from seven a.m. to eleven p.m. The menu is in the folder on your desk. You can also use the QR code in the room to order from your phone.","vi":"Dịch vụ phòng có từ bảy giờ sáng đến mười một giờ tối. Thực đơn trong thư mục trên bàn làm việc của anh. Anh cũng có thể dùng mã QR trong phòng để đặt từ điện thoại."},
-    {"speaker":"A","en":"QR code ordering — very modern! Is there Wi-Fi in the room?","vi":"Đặt bằng mã QR — rất hiện đại! Phòng có Wi-Fi không?"},
-    {"speaker":"B","en":"Yes, high-speed Wi-Fi. The network name is Riverside-Guest and the password is on the key card envelope.","vi":"Vâng, Wi-Fi tốc độ cao. Tên mạng là Riverside-Guest và mật khẩu có trên phong bì đựng thẻ."},
-    {"speaker":"A","en":"Ah, I see it — thank you. What about the pool hours again?","vi":"À, tôi thấy rồi — cảm ơn. Giờ hồ bơi lại là mấy giờ?"},
-    {"speaker":"B","en":"Seven a.m. to nine p.m. Towels are provided at the poolside. Please bring your key card to access the pool area.","vi":"Bảy giờ sáng đến chín giờ tối. Khăn tắm được cung cấp tại khu vực hồ bơi. Vui lòng mang theo thẻ phòng để vào khu vực hồ bơi."},
-    {"speaker":"A","en":"Is there a spa too? My partner would love a massage after the drive from Da Nang.","vi":"Có spa không? Bạn đời tôi sẽ thích được massage sau chuyến đi từ Đà Nẵng."},
-    {"speaker":"B","en":"We do have an in-house spa on the second floor. I'd recommend booking ahead — it fills up on weekends. I can book a slot for her now if you'd like.","vi":"Chúng tôi có spa trong khách sạn ở tầng hai. Tôi gợi ý đặt trước — cuối tuần thường kín chỗ. Tôi có thể đặt lịch cho cô ấy ngay bây giờ nếu anh muốn."},
-    {"speaker":"A","en":"Oh, that's thoughtful! Can you book a one-hour massage for two people tomorrow afternoon — say three p.m.?","vi":"Ồ, thật chu đáo! Bạn có thể đặt massage một tiếng cho hai người vào chiều mai — khoảng ba giờ không?"},
-    {"speaker":"B","en":"Let me check... Yes, three p.m. Sunday is available for two. Shall I add that to your bill?","vi":"Để tôi kiểm tra... Vâng, ba giờ chiều Chủ Nhật có chỗ cho hai người. Tôi có thêm vào hóa đơn không?"},
-    {"speaker":"A","en":"Please do. What's the cost for two?","vi":"Làm ơn. Hai người hết bao nhiêu?"},
-    {"speaker":"B","en":"Traditional Vietnamese massage for one hour is five hundred thousand each — one million for two. Our therapists are wonderful.","vi":"Massage cổ truyền Việt Nam một tiếng là năm trăm nghìn mỗi người — một triệu cho hai người. Các chuyên viên trị liệu của chúng tôi rất tuyệt."},
-    {"speaker":"A","en":"Booked. Perfect. Is there anything else you'd recommend doing around Hoi An this weekend?","vi":"Đặt rồi. Tuyệt vời. Bạn có gợi ý gì khác nên làm quanh Hội An cuối tuần này không?"},
-    {"speaker":"B","en":"Saturday evening, walk the Old Town — the lanterns are lit from five p.m. and it's magical. Sunday morning, rent bicycles from us and cycle to An Bang beach — twenty minutes.","vi":"Tối thứ Bảy, đi dạo Phố Cổ — đèn lồng sáng từ năm giờ chiều và rất kỳ diệu. Sáng Chủ Nhật, thuê xe đạp từ chúng tôi và đạp xe đến bãi biển An Bàng — hai mươi phút."},
-    {"speaker":"A","en":"An Bang beach by bicycle — that sounds perfect for Sunday morning before the massage.","vi":"Bãi biển An Bàng bằng xe đạp — nghe hoàn hảo cho sáng Chủ Nhật trước khi massage."},
-    {"speaker":"B","en":"Exactly the perfect itinerary! The bikes are free of charge for hotel guests — just ask at the front desk tomorrow morning.","vi":"Đúng là lịch trình hoàn hảo! Xe đạp miễn phí cho khách khách sạn — chỉ cần hỏi tại lễ tân sáng mai."},
-    {"speaker":"A","en":"Free bicycles — this hotel just keeps getting better. My partner has arrived by the way.","vi":"Xe đạp miễn phí — khách sạn này cứ tốt hơn mãi. Bạn đời tôi vừa đến nhân tiện."},
-    {"speaker":"B","en":"Wonderful! Could I quickly photocopy her ID card as well?","vi":"Tuyệt vời! Tôi có thể photo thẻ CMND của cô ấy nhanh không?"},
-    {"speaker":"A","en":"Of course. Lan, could you hand over your ID? Thank you. Here you go.","vi":"Dĩ nhiên. Lan ơi, em đưa CMND cho anh nhé? Cảm ơn. Đây bạn."},
-    {"speaker":"B","en":"Thank you. All done! Room 304 is all yours. Enjoy your stay in Hoi An — it's going to be a beautiful weekend.","vi":"Cảm ơn. Xong hết rồi! Phòng 304 là của anh chị. Tận hưởng kỳ lưu trú tại Hội An — sẽ là một cuối tuần tuyệt đẹp."}
-  ]
-}
+  {
+    "id": 6,
+    "title": "Hỏi đường",
+    "situation": "Mai bị lạc đường và hỏi một người đi đường cách đến bưu điện.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Mai", "en": "Mai" },
+    "speakerBName": { "vi": "Người đi đường", "en": "Passer-by" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Excuse me, sir! Sorry to bother you — could you help me? I think I'm completely lost.",
+        "vi": "Xin lỗi anh! Xin lỗi đã làm phiền — anh có thể giúp tôi không? Tôi nghĩ tôi bị lạc hoàn toàn rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! Where are you trying to get to?",
+        "vi": "Dĩ nhiên! Bạn đang cố đến đâu?"
+      },
+      {
+        "speaker": "A",
+        "en": "The main post office — Buu Dien trung tam. I need to pick up a parcel before it closes at five.",
+        "vi": "Bưu điện trung tâm. Tôi cần lấy một bưu kiện trước khi đóng cửa lúc năm giờ."
+      },
+      {
+        "speaker": "B",
+        "en": "Ah, the central post office! You're actually not that far — maybe a ten-minute walk. Do you know which direction is north?",
+        "vi": "À, bưu điện trung tâm! Bạn thực ra không xa lắm — khoảng mười phút đi bộ. Bạn có biết hướng nào là hướng bắc không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Ha, I'm terrible with cardinal directions. I can follow landmarks though!",
+        "vi": "Ha, tôi rất dở về hướng địa lý. Nhưng tôi có thể đi theo các mốc nổi tiếng!"
+      },
+      {
+        "speaker": "B",
+        "en": "Landmarks — perfect. Okay, do you see that big intersection ahead with the traffic lights?",
+        "vi": "Mốc nổi tiếng — tuyệt vời. Được rồi, bạn có thấy giao lộ lớn phía trước với đèn giao thông không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I can see it — there's a pharmacy on the corner?",
+        "vi": "Có, tôi thấy rồi — có một hiệu thuốc ở góc đường phải không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly — that's Long Chau pharmacy. Turn right there. Then walk straight for about three hundred metres.",
+        "vi": "Đúng rồi — đó là hiệu thuốc Long Châu. Rẽ phải ở đó. Sau đó đi thẳng khoảng ba trăm mét."
+      },
+      {
+        "speaker": "A",
+        "en": "Right at Long Chau, then straight three hundred metres. Got it. What's the next landmark?",
+        "vi": "Rẽ phải ở Long Châu, sau đó đi thẳng ba trăm mét. Hiểu rồi. Mốc tiếp theo là gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "You'll pass a school on your left — you can't miss it, there'll be kids and motorcycles everywhere at this hour.",
+        "vi": "Bạn sẽ đi qua một trường học ở phía trái — không thể bỏ lỡ đâu, giờ này sẽ có trẻ em và xe máy khắp nơi."
+      },
+      {
+        "speaker": "A",
+        "en": "A school on the left — okay. And after the school?",
+        "vi": "Trường học ở bên trái — được. Và sau trường học?"
+      },
+      {
+        "speaker": "B",
+        "en": "After the school, you'll see a small park with a fountain. Turn left there — the post office is in the yellow building about fifty metres along.",
+        "vi": "Sau trường học, bạn sẽ thấy một công viên nhỏ với đài phun nước. Rẽ trái ở đó — bưu điện ở trong tòa nhà màu vàng khoảng năm mươi mét tiếp theo."
+      },
+      {
+        "speaker": "A",
+        "en": "Yellow building, fifty metres after the park fountain. Perfect — that's very clear. Thank you!",
+        "vi": "Tòa nhà màu vàng, năm mươi mét sau đài phun nước trong công viên. Hoàn hảo — rất rõ ràng. Cảm ơn!"
+      },
+      {
+        "speaker": "B",
+        "en": "Wait — one thing I should mention. Is it the main post office on Dinh Tien Hoang, or the branch on Le Duan?",
+        "vi": "Khoan — có một điều tôi nên đề cập. Đó là bưu điện chính trên đường Đinh Tiên Hoàng, hay chi nhánh trên Lê Duẩn?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm not sure — the slip says 'Buu Dien Quan 1.' Is that the same as central?",
+        "vi": "Tôi không chắc — phiếu ghi 'Bưu Điện Quận 1.' Đó có phải là trung tâm không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, that's the one on Dinh Tien Hoang. My directions are correct then.",
+        "vi": "Đúng, đó là cái trên đường Đinh Tiên Hoàng. Vậy chỉ dẫn của tôi là đúng."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, phew! I was worried for a second. Do I need to cross any main roads?",
+        "vi": "Ồ, may quá! Tôi lo một giây rồi. Tôi có cần băng qua đường lớn nào không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just one — right at the start, after you turn right at Long Chau, you'll need to cross a two-lane road. There's a pedestrian crossing there.",
+        "vi": "Chỉ một — ngay từ đầu, sau khi rẽ phải ở Long Châu, bạn sẽ cần băng qua một con đường hai làn. Ở đó có vạch sang đường."
+      },
+      {
+        "speaker": "A",
+        "en": "A pedestrian crossing — good. Crossing roads in this city makes me nervous.",
+        "vi": "Có vạch sang đường — tốt. Băng qua đường trong thành phố này làm tôi lo lắng."
+      },
+      {
+        "speaker": "B",
+        "en": "Ha, I understand! Just make eye contact with motorbike riders and move at a steady pace — don't stop suddenly.",
+        "vi": "Ha, tôi hiểu! Chỉ cần nhìn vào mắt người chạy xe máy và bước đều — đừng dừng đột ngột."
+      },
+      {
+        "speaker": "A",
+        "en": "That's actually great advice. Walk steady, don't freeze. I'll remember that!",
+        "vi": "Đó thực sự là lời khuyên hay. Bước đều, không đứng lại đột ngột. Tôi sẽ nhớ!"
+      },
+      {
+        "speaker": "B",
+        "en": "You'll be fine! How did you end up this far off route, if you don't mind me asking?",
+        "vi": "Bạn sẽ ổn thôi! Bạn đã đi lạc xa thế nào, nếu tôi có thể hỏi?"
+      },
+      {
+        "speaker": "A",
+        "en": "I took a xe om — the motorbike taxi — and I think the driver misunderstood me. He dropped me off here instead.",
+        "vi": "Tôi đi xe ôm và tôi nghĩ tài xế hiểu nhầm tôi. Ông ấy thả tôi xuống ở đây thay vào đó."
+      },
+      {
+        "speaker": "B",
+        "en": "Ah, that happens! The traffic is also one-way around here, so sometimes they have to take a longer route.",
+        "vi": "À, điều đó xảy ra! Giao thông ở đây cũng là một chiều, nên đôi khi họ phải đi đường vòng."
+      },
+      {
+        "speaker": "A",
+        "en": "That makes sense — I noticed we were going in circles. Is it walking distance from here, really?",
+        "vi": "Điều đó có lý — tôi nhận thấy chúng tôi đang đi vòng vòng. Từ đây đi bộ được thực sự không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely. Ten minutes maximum. And it's a pleasant walk — there are some nice street food stalls along the way too.",
+        "vi": "Hoàn toàn được. Tối đa mười phút. Và đó là đoạn đi bộ dễ chịu — dọc đường cũng có một số quầy bán thức ăn đường phố ngon."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, I might grab something after I pick up the parcel. What's popular around here?",
+        "vi": "Ồ, tôi có thể mua gì đó sau khi lấy bưu kiện. Ở đây cái gì nổi tiếng?"
+      },
+      {
+        "speaker": "B",
+        "en": "There's a lady who sells banh trang tron right outside the school — the best in the neighbourhood. Spicy mixed rice paper.",
+        "vi": "Có một bà bán bánh tráng trộn ngay bên ngoài trường học — ngon nhất khu vực. Bánh tráng trộn cay."
+      },
+      {
+        "speaker": "A",
+        "en": "Banh trang tron! My weakness. I'll definitely stop there. You've been so helpful — thank you!",
+        "vi": "Bánh tráng trộn! Điểm yếu của tôi. Tôi chắc chắn sẽ ghé đó. Bạn đã giúp đỡ rất nhiều — cảm ơn!"
+      },
+      {
+        "speaker": "B",
+        "en": "Happy to help! Good luck with the parcel — hope it's something exciting.",
+        "vi": "Vui được giúp! Chúc may mắn với bưu kiện — hy vọng đó là thứ gì đó thú vị."
+      },
+      {
+        "speaker": "A",
+        "en": "Ha! It's a book I ordered from Japan, so yes — very exciting for me!",
+        "vi": "Ha! Đó là một cuốn sách tôi đặt từ Nhật Bản, nên vâng — rất thú vị với tôi!"
+      },
+      {
+        "speaker": "B",
+        "en": "A book from Japan — nice! Enjoy it. Good luck finding the post office!",
+        "vi": "Sách từ Nhật Bản — hay đó! Tận hưởng nhé. Chúc may mắn tìm được bưu điện!"
+      },
+      {
+        "speaker": "A",
+        "en": "I think I've got it now. Right at Long Chau, straight, school on left, park fountain, left, yellow building.",
+        "vi": "Tôi nghĩ tôi hiểu rồi. Rẽ phải ở Long Châu, đi thẳng, trường học bên trái, đài phun nước trong công viên, rẽ trái, tòa nhà màu vàng."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect! You've got it exactly right. You'll be there in no time.",
+        "vi": "Tuyệt vời! Bạn ghi nhớ hoàn toàn đúng. Bạn sẽ đến ngay thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you again. You really saved me — I was starting to panic!",
+        "vi": "Cảm ơn một lần nữa. Bạn thực sự đã cứu tôi — tôi bắt đầu hoảng loạn rồi!"
+      },
+      {
+        "speaker": "B",
+        "en": "No panic needed — Saigon is easy to navigate once you know a few landmarks. Take care!",
+        "vi": "Không cần hoảng loạn — Sài Gòn dễ điều hướng khi bạn biết một vài mốc nổi tiếng. Bảo trọng!"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Đi khám bệnh",
+    "situation": "Nam cảm thấy không khỏe và đến phòng khám gặp bác sĩ.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Nam", "en": "Nam" },
+    "speakerBName": { "vi": "Bác sĩ", "en": "Doctor" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning, doctor. I've been feeling really unwell for the past three days.",
+        "vi": "Chào buổi sáng, bác sĩ. Tôi cảm thấy rất không khỏe trong ba ngày qua."
+      },
+      {
+        "speaker": "B",
+        "en": "Good morning, Nam. Please sit down and tell me what's been going on.",
+        "vi": "Chào buổi sáng, Nam. Ngồi xuống và kể cho tôi nghe chuyện gì đang xảy ra."
+      },
+      {
+        "speaker": "A",
+        "en": "It started with a sore throat on Monday, then I got a fever Tuesday night. Today I have a headache and my whole body aches.",
+        "vi": "Bắt đầu bằng đau họng vào thứ Hai, rồi sốt vào tối thứ Ba. Hôm nay tôi bị đau đầu và toàn thân đau nhức."
+      },
+      {
+        "speaker": "B",
+        "en": "How high was the fever when you measured it?",
+        "vi": "Khi đo nhiệt độ thì sốt bao nhiêu độ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Thirty-eight point six last night. This morning it was thirty-eight point one.",
+        "vi": "Ba mươi tám phẩy sáu tối qua. Sáng nay là ba mươi tám phẩy một."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay. Any other symptoms — runny nose, cough, difficulty breathing?",
+        "vi": "Được. Có triệu chứng nào khác không — chảy nước mũi, ho, khó thở?"
+      },
+      {
+        "speaker": "A",
+        "en": "A bit of a runny nose and I've been sneezing a lot. No trouble breathing, thankfully.",
+        "vi": "Hơi chảy nước mũi và tôi hắt hơi nhiều lắm. May mắn là không có vấn đề hô hấp."
+      },
+      {
+        "speaker": "B",
+        "en": "Any nausea, vomiting, or stomach issues?",
+        "vi": "Có buồn nôn, nôn mửa, hay vấn đề dạ dày không?"
+      },
+      {
+        "speaker": "A",
+        "en": "No stomach problems. But I haven't had much appetite — I've barely eaten in two days.",
+        "vi": "Không có vấn đề dạ dày. Nhưng tôi không có nhiều cảm giác đói — gần như không ăn gì trong hai ngày."
+      },
+      {
+        "speaker": "B",
+        "en": "That's common with a fever. Have you taken any medication so far?",
+        "vi": "Điều đó bình thường khi bị sốt. Bạn đã dùng thuốc gì chưa?"
+      },
+      {
+        "speaker": "A",
+        "en": "Just paracetamol — five hundred milligrams, twice a day. It brings the fever down but it comes back after a few hours.",
+        "vi": "Chỉ paracetamol — năm trăm miligram, hai lần một ngày. Nó hạ sốt nhưng sốt lại sau vài tiếng."
+      },
+      {
+        "speaker": "B",
+        "en": "That's the right approach. Let me take your temperature and have a look at your throat. Open wide please.",
+        "vi": "Đó là cách xử lý đúng. Để tôi đo nhiệt độ và xem họng của bạn. Mở miệng rộng nhé."
+      },
+      {
+        "speaker": "A",
+        "en": "Sure. Does my throat look bad?",
+        "vi": "Vâng. Họng tôi trông tệ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's quite red and inflamed. I can see some white patches — which suggests a bacterial infection. Your temperature is thirty-eight point two right now.",
+        "vi": "Khá đỏ và viêm. Tôi thấy một số đốm trắng — điều đó gợi ý nhiễm khuẩn. Nhiệt độ của bạn hiện là ba mươi tám phẩy hai."
+      },
+      {
+        "speaker": "A",
+        "en": "Bacterial infection — does that mean I need antibiotics?",
+        "vi": "Nhiễm khuẩn — điều đó có nghĩa là tôi cần kháng sinh không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Most likely yes. But I'd like to do a rapid strep test first to confirm. It only takes five minutes.",
+        "vi": "Có khả năng vậy. Nhưng trước tiên tôi muốn làm xét nghiệm liên cầu khuẩn nhanh để xác nhận. Chỉ mất năm phút."
+      },
+      {
+        "speaker": "A",
+        "en": "Of course, go ahead. I want to make sure we're treating the right thing.",
+        "vi": "Dĩ nhiên, cứ làm. Tôi muốn chắc chắn chúng ta điều trị đúng bệnh."
+      },
+      {
+        "speaker": "B",
+        "en": "Good attitude. The test is positive — you do have a streptococcal throat infection. I'll prescribe amoxicillin.",
+        "vi": "Thái độ tốt. Kết quả xét nghiệm dương tính — bạn bị viêm họng liên cầu khuẩn. Tôi sẽ kê amoxicillin."
+      },
+      {
+        "speaker": "A",
+        "en": "How long is the course? And are there any side effects I should know about?",
+        "vi": "Thời gian điều trị bao lâu? Và có tác dụng phụ nào tôi cần biết không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Seven days — it's important to complete the full course even if you feel better after three days. Side effects can include mild stomach upset; take it with food.",
+        "vi": "Bảy ngày — quan trọng là phải hoàn thành đủ liệu trình ngay cả khi bạn cảm thấy khỏe hơn sau ba ngày. Tác dụng phụ có thể bao gồm khó chịu dạ dày nhẹ; uống cùng với thức ăn."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it — seven days, with food. What about the fever and body aches?",
+        "vi": "Hiểu rồi — bảy ngày, dùng cùng thức ăn. Còn sốt và đau nhức thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "Continue the paracetamol as needed — you can increase to five hundred milligrams every six hours, maximum four times a day. Stay well hydrated.",
+        "vi": "Tiếp tục dùng paracetamol khi cần — bạn có thể tăng lên năm trăm miligram mỗi sáu tiếng, tối đa bốn lần một ngày. Uống đủ nước."
+      },
+      {
+        "speaker": "A",
+        "en": "How much water is 'well hydrated'? I've been drinking maybe one litre a day.",
+        "vi": "'Đủ nước' là bao nhiêu? Tôi uống khoảng một lít mỗi ngày."
+      },
+      {
+        "speaker": "B",
+        "en": "When you have a fever, aim for at least two to two-and-a-half litres. Water, warm herbal tea, or soup all count.",
+        "vi": "Khi bị sốt, cố gắng uống ít nhất hai đến hai lít rưỡi. Nước, trà thảo mộc ấm, hoặc súp đều tính."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll make sure to drink more. Should I rest completely, or is some light activity okay?",
+        "vi": "Tôi sẽ đảm bảo uống nhiều hơn. Tôi có nên nghỉ ngơi hoàn toàn không, hay một số hoạt động nhẹ là ổn?"
+      },
+      {
+        "speaker": "B",
+        "en": "Complete rest for the first two to three days while the fever is still above thirty-eight. After that, gentle activity is fine.",
+        "vi": "Nghỉ ngơi hoàn toàn trong hai đến ba ngày đầu khi sốt vẫn trên ba mươi tám độ. Sau đó hoạt động nhẹ nhàng là ổn."
+      },
+      {
+        "speaker": "A",
+        "en": "I work at a desk job — can I work from home?",
+        "vi": "Tôi làm việc văn phòng — tôi có thể làm từ xa ở nhà không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Once the fever is under thirty-seven point five, light desk work from home is okay. I'd strongly advise against going to the office while contagious — probably until Saturday.",
+        "vi": "Khi sốt dưới ba mươi bảy phẩy năm, làm việc nhẹ tại bàn ở nhà là ổn. Tôi khuyên không nên đến văn phòng khi còn lây — có thể đến thứ Bảy."
+      },
+      {
+        "speaker": "A",
+        "en": "That makes sense — I'd feel terrible infecting my colleagues. What about the sore throat — is there anything to help with the pain?",
+        "vi": "Điều đó hợp lý — tôi sẽ cảm thấy tệ nếu lây cho đồng nghiệp. Còn đau họng — có gì giúp giảm đau không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Gargling with warm salt water three times a day helps a lot. And throat lozenges for temporary relief. Avoid ice cold drinks.",
+        "vi": "Súc họng bằng nước muối ấm ba lần một ngày rất có tác dụng. Và kẹo ngậm họng để giảm đau tạm thời. Tránh đồ uống lạnh."
+      },
+      {
+        "speaker": "A",
+        "en": "Salt water gargle — simple but effective. How many days before I should start feeling better?",
+        "vi": "Súc nước muối — đơn giản nhưng hiệu quả. Bao nhiêu ngày trước khi tôi bắt đầu cảm thấy khỏe hơn?"
+      },
+      {
+        "speaker": "B",
+        "en": "With antibiotics, you should notice significant improvement within forty-eight to seventy-two hours. The fever should break by tomorrow evening.",
+        "vi": "Với kháng sinh, bạn sẽ nhận thấy cải thiện đáng kể trong bốn mươi tám đến bảy mươi hai tiếng. Sốt nên hết vào tối mai."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reassuring. What if I don't improve after seventy-two hours — should I come back?",
+        "vi": "Điều đó thật yên tâm. Nếu tôi không cải thiện sau bảy mươi hai tiếng — tôi có nên quay lại không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, please come back if the fever persists beyond seventy-two hours, or if you develop a rash, difficulty swallowing, or shortness of breath — those would be warning signs.",
+        "vi": "Vâng, vui lòng quay lại nếu sốt kéo dài quá bảy mươi hai tiếng, hoặc nếu bạn phát ban, khó nuốt, hoặc khó thở — đó sẽ là dấu hiệu cảnh báo."
+      },
+      {
+        "speaker": "A",
+        "en": "Noted — rash, difficulty swallowing, or breathing problems. Got it. Is there a follow-up appointment needed if everything goes well?",
+        "vi": "Ghi nhớ rồi — phát ban, khó nuốt, hoặc khó thở. Hiểu rồi. Có cần lịch hẹn tái khám không nếu mọi thứ ổn?"
+      },
+      {
+        "speaker": "B",
+        "en": "Not necessary if you feel completely recovered after seven days. But do finish all the antibiotics regardless.",
+        "vi": "Không cần thiết nếu bạn cảm thấy hồi phục hoàn toàn sau bảy ngày. Nhưng hãy dùng hết kháng sinh dù sao đi nữa."
+      },
+      {
+        "speaker": "A",
+        "en": "I will — I've heard stopping antibiotics early can cause resistance. Thank you for explaining everything so clearly.",
+        "vi": "Tôi sẽ vậy — tôi nghe nói ngừng kháng sinh sớm có thể gây kháng thuốc. Cảm ơn bác sĩ đã giải thích mọi thứ rõ ràng."
+      },
+      {
+        "speaker": "B",
+        "en": "You're very well informed! Get plenty of rest, drink lots of fluids, and you'll be back on your feet soon.",
+        "vi": "Bạn rất am hiểu! Nghỉ ngơi nhiều, uống nhiều nước, và bạn sẽ sớm khỏe lại thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you, doctor. Should I pick up the prescription at the front desk?",
+        "vi": "Cảm ơn bác sĩ. Tôi nhận đơn thuốc ở quầy lễ tân không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, the nurse will hand it to you outside. There's also a pharmacy on the ground floor if you'd like to fill it here.",
+        "vi": "Vâng, y tá sẽ đưa cho bạn ở ngoài. Cũng có hiệu thuốc ở tầng trệt nếu bạn muốn mua thuốc tại đây."
+      },
+      {
+        "speaker": "A",
+        "en": "Convenient! I'll get it filled here then. Take care, and thank you again.",
+        "vi": "Tiện quá! Vậy tôi sẽ mua thuốc tại đây luôn. Bảo trọng, và cảm ơn một lần nữa."
+      },
+      {
+        "speaker": "B",
+        "en": "Rest well, Nam. Feel better soon!",
+        "vi": "Nghỉ ngơi tốt nhé, Nam. Chúc bạn mau khỏe!"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Ở hiệu thuốc",
+    "situation": "Hoa đến hiệu thuốc mua thuốc cảm cho mình.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Hoa", "en": "Hoa" },
+    "speakerBName": { "vi": "Dược sĩ", "en": "Pharmacist" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello. I have a cold — runny nose, mild sore throat, and I'm sneezing non-stop. Can you recommend something?",
+        "vi": "Xin chào. Tôi bị cảm — chảy nước mũi, đau họng nhẹ, và tôi hắt hơi liên tục. Bạn có thể gợi ý thứ gì không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. How long have you had these symptoms?",
+        "vi": "Dĩ nhiên. Bạn có những triệu chứng này bao lâu rồi?"
+      },
+      {
+        "speaker": "A",
+        "en": "Since this morning — so about six hours. It came on suddenly. I woke up fine but by ten it hit me hard.",
+        "vi": "Từ sáng nay — khoảng sáu tiếng rồi. Đến đột ngột. Tôi thức dậy ổn nhưng đến mười giờ thì bị nặng."
+      },
+      {
+        "speaker": "B",
+        "en": "Do you have a fever? Have you checked your temperature?",
+        "vi": "Bạn có sốt không? Bạn đã đo nhiệt độ chưa?"
+      },
+      {
+        "speaker": "A",
+        "en": "I didn't measure, but I feel a little warm. No chills or shaking though.",
+        "vi": "Tôi chưa đo, nhưng cảm thấy hơi nóng. Không ớn lạnh hay run người."
+      },
+      {
+        "speaker": "B",
+        "en": "That suggests a low-grade fever at most. Any cough?",
+        "vi": "Điều đó gợi ý sốt nhẹ nhiều lắm. Có ho không?"
+      },
+      {
+        "speaker": "A",
+        "en": "No cough yet. But my nose is incredibly stuffy — I can barely breathe through it.",
+        "vi": "Chưa ho. Nhưng mũi tôi nghẹt kinh khủng — gần như không thở được qua mũi."
+      },
+      {
+        "speaker": "B",
+        "en": "For a common cold with nasal congestion and mild symptoms, I'd suggest a combination product. Are you taking any other medications currently?",
+        "vi": "Với cảm thông thường có nghẹt mũi và triệu chứng nhẹ, tôi gợi ý sản phẩm kết hợp. Bạn đang dùng thuốc nào khác hiện không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Just a daily vitamin C — nothing prescription.",
+        "vi": "Chỉ vitamin C hàng ngày — không có thuốc kê đơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. I'd recommend Tiffy — it contains paracetamol for the low fever and any discomfort, chlorphenamine for the runny nose, and pseudoephedrine for the congestion.",
+        "vi": "Tốt. Tôi khuyên Tiffy — chứa paracetamol cho sốt nhẹ và khó chịu, chlorphenamine cho chảy nước mũi, và pseudoephedrine cho nghẹt mũi."
+      },
+      {
+        "speaker": "A",
+        "en": "Tiffy — I've heard of that. Is it safe to take with vitamin C?",
+        "vi": "Tiffy — tôi nghe tên rồi. Uống cùng vitamin C có an toàn không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Completely safe. Take vitamin C separately, maybe two hours apart. The Tiffy should be taken with food though.",
+        "vi": "Hoàn toàn an toàn. Uống vitamin C riêng, có thể cách nhau hai tiếng. Nhưng Tiffy nên uống cùng thức ăn."
+      },
+      {
+        "speaker": "A",
+        "en": "With food — okay. How often do I take it?",
+        "vi": "Cùng thức ăn — được. Tôi uống bao lâu một lần?"
+      },
+      {
+        "speaker": "B",
+        "en": "One tablet every six to eight hours. Maximum four tablets in twenty-four hours. And it does cause drowsiness — be careful if you're driving.",
+        "vi": "Một viên mỗi sáu đến tám tiếng. Tối đa bốn viên trong hai mươi bốn giờ. Và nó gây buồn ngủ — cẩn thận nếu bạn lái xe."
+      },
+      {
+        "speaker": "A",
+        "en": "Drowsiness! Good warning — I have a meeting this afternoon. Maybe I should take a non-drowsy version?",
+        "vi": "Buồn ngủ! Cảnh báo tốt — tôi có cuộc họp chiều nay. Có lẽ tôi nên dùng loại không gây buồn ngủ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, Decolgen has a non-drowsy formula. It doesn't have the antihistamine, so the runny nose relief won't be as strong, but you'll stay alert.",
+        "vi": "Vâng, Decolgen có công thức không gây buồn ngủ. Không có kháng histamine, nên hiệu quả giảm chảy nước mũi sẽ không mạnh bằng, nhưng bạn sẽ tỉnh táo."
+      },
+      {
+        "speaker": "A",
+        "en": "I think I can handle a runny nose in the meeting — I'll carry tissues. So Decolgen non-drowsy for now, and switch to Tiffy at night?",
+        "vi": "Tôi nghĩ tôi có thể chịu đựng chảy nước mũi trong cuộc họp — tôi sẽ mang khăn giấy. Vậy Decolgen không buồn ngủ bây giờ, và chuyển sang Tiffy vào ban đêm?"
+      },
+      {
+        "speaker": "B",
+        "en": "That's actually a very smart approach. Decolgen in the daytime, Tiffy at night. Perfect combination.",
+        "vi": "Đó thực sự là cách tiếp cận rất thông minh. Decolgen ban ngày, Tiffy ban đêm. Kết hợp hoàn hảo."
+      },
+      {
+        "speaker": "A",
+        "en": "How many days should I take these before seeing a doctor if things don't improve?",
+        "vi": "Tôi nên dùng thuốc bao nhiêu ngày trước khi gặp bác sĩ nếu tình trạng không cải thiện?"
+      },
+      {
+        "speaker": "B",
+        "en": "Three to five days is normal for a cold. If symptoms worsen, fever goes above thirty-eight point five, or you develop a chest cough, see a doctor sooner.",
+        "vi": "Ba đến năm ngày là bình thường cho cảm. Nếu triệu chứng nặng hơn, sốt trên ba mươi tám phẩy năm, hoặc ho ngực, hãy gặp bác sĩ sớm hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. Anything else I should take — like something for my throat?",
+        "vi": "Hiểu rồi. Còn thứ gì khác tôi nên dùng — kiểu như thứ gì đó cho họng?"
+      },
+      {
+        "speaker": "B",
+        "en": "These throat lozenges with honey and menthol are very soothing — no medication but provides relief. Or if you prefer, Strepsils has a mild antiseptic formula.",
+        "vi": "Những viên ngậm họng với mật ong và bạc hà này rất dễ chịu — không có thuốc nhưng mang lại sự dịu nhẹ. Hoặc nếu bạn thích, Strepsils có công thức kháng khuẩn nhẹ."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll get the Strepsils — sounds more effective. Is there anything natural I can do at home too?",
+        "vi": "Tôi sẽ lấy Strepsils — nghe có vẻ hiệu quả hơn. Có gì tự nhiên tôi có thể làm ở nhà không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Steam inhalation works wonders for congestion — just a bowl of hot water with a towel over your head for ten minutes. And ginger honey tea for the throat.",
+        "vi": "Xông hơi rất hiệu quả cho nghẹt mũi — chỉ cần một tô nước nóng và khăn che đầu trong mười phút. Và trà gừng mật ong cho họng."
+      },
+      {
+        "speaker": "A",
+        "en": "Ginger honey tea — I love that. My grandmother always made that.",
+        "vi": "Trà gừng mật ong — tôi thích cái đó. Bà tôi hay làm vậy."
+      },
+      {
+        "speaker": "B",
+        "en": "Grandmother's remedies often have real science behind them! Ginger is genuinely anti-inflammatory.",
+        "vi": "Các bài thuốc của bà thường có cơ sở khoa học thực sự! Gừng thực sự có tác dụng chống viêm."
+      },
+      {
+        "speaker": "A",
+        "en": "That makes me feel better about trusting her recipe. How much are the Decolgen, Tiffy, and Strepsils altogether?",
+        "vi": "Điều đó làm tôi cảm thấy tốt hơn khi tin vào công thức của bà. Decolgen, Tiffy và Strepsils tất cả là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Decolgen ten tablets is twenty-five thousand, Tiffy ten tablets is twenty-two thousand, Strepsils is eighteen thousand. Total sixty-five thousand dong.",
+        "vi": "Decolgen mười viên là hai mươi lăm nghìn, Tiffy mười viên là hai mươi hai nghìn, Strepsils là mười tám nghìn. Tổng sáu mươi lăm nghìn đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "Very affordable. Here's seventy thousand — keep the change.",
+        "vi": "Rất phải chăng. Đây là bảy mươi nghìn — thối lại không cần."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you! Get plenty of rest today if you can, and drink warm fluids throughout.",
+        "vi": "Cảm ơn! Nghỉ ngơi nhiều hôm nay nếu có thể, và uống nhiều nước ấm suốt ngày."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll try — after this meeting I'm going straight home. Thank you for all the advice!",
+        "vi": "Tôi sẽ cố — sau cuộc họp này tôi về thẳng nhà. Cảm ơn vì tất cả lời khuyên!"
+      },
+      {
+        "speaker": "B",
+        "en": "Take care of yourself. Feel better soon!",
+        "vi": "Giữ gìn sức khỏe nhé. Chúc bạn mau khỏe!"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Đặt phòng khách sạn qua điện thoại",
+    "situation": "An gọi điện đặt phòng khách sạn cho kỳ nghỉ cuối tuần.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "An", "en": "An" },
+    "speakerBName": { "vi": "Lễ tân khách sạn", "en": "Hotel receptionist" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, is this the Riverside Boutique Hotel in Hoi An?",
+        "vi": "Xin chào, đây có phải khách sạn Riverside Boutique ở Hội An không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, good afternoon! Riverside Boutique Hotel, this is Linh speaking. How can I help you?",
+        "vi": "Vâng, chào buổi chiều! Khách sạn Riverside Boutique, tôi là Linh. Tôi có thể giúp gì cho anh?"
+      },
+      {
+        "speaker": "A",
+        "en": "Hi Linh! I'd like to make a room reservation for the weekend — checking in Saturday, checking out Monday morning.",
+        "vi": "Chào Linh! Tôi muốn đặt phòng cho cuối tuần — nhận phòng thứ Bảy, trả phòng sáng thứ Hai."
+      },
+      {
+        "speaker": "B",
+        "en": "That's two nights — Saturday the twenty-fourth and Sunday the twenty-fifth. Let me check availability. One moment please.",
+        "vi": "Đó là hai đêm — thứ Bảy ngày hai mươi bốn và Chủ Nhật ngày hai mươi lăm. Để tôi kiểm tra tình trạng phòng. Vui lòng chờ một chút."
+      },
+      { "speaker": "A", "en": "Of course, take your time.", "vi": "Dĩ nhiên, cứ từ từ." },
+      {
+        "speaker": "B",
+        "en": "Good news — we have availability. Are you looking for a room for one person or two?",
+        "vi": "Tin tốt — chúng tôi có phòng. Anh tìm phòng cho một hay hai người?"
+      },
+      {
+        "speaker": "A",
+        "en": "Two people — my partner and I. We'd love a room with a river view if possible.",
+        "vi": "Hai người — tôi và bạn đời. Chúng tôi muốn phòng có tầm nhìn ra sông nếu có thể."
+      },
+      {
+        "speaker": "B",
+        "en": "We have three river-view room types: Superior, Deluxe, and our signature Heritage Suite. Which category interests you?",
+        "vi": "Chúng tôi có ba loại phòng nhìn ra sông: Superior, Deluxe, và Heritage Suite đặc trưng. Loại nào anh quan tâm?"
+      },
+      {
+        "speaker": "A",
+        "en": "What's the difference between Superior and Deluxe?",
+        "vi": "Sự khác biệt giữa Superior và Deluxe là gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "The Superior is thirty-five square metres with a partial river view and a shower. Deluxe is fifty square metres, full river view, and has a bathtub plus a private balcony.",
+        "vi": "Superior là ba mươi lăm mét vuông với tầm nhìn sông một phần và phòng tắm đứng. Deluxe là năm mươi mét vuông, tầm nhìn sông hoàn toàn, và có bồn tắm cộng với ban công riêng."
+      },
+      {
+        "speaker": "A",
+        "en": "A balcony sounds wonderful — we love having morning coffee outside. How much is the Deluxe for two nights?",
+        "vi": "Ban công nghe tuyệt vời — chúng tôi thích uống cà phê buổi sáng bên ngoài. Deluxe hai đêm bao nhiêu tiền?"
+      },
+      {
+        "speaker": "B",
+        "en": "The Deluxe is two million two hundred thousand dong per night, so four million four hundred thousand for two nights. That includes breakfast for two.",
+        "vi": "Deluxe là hai triệu hai trăm nghìn đồng mỗi đêm, vậy bốn triệu bốn trăm nghìn cho hai đêm. Bao gồm bữa sáng cho hai người."
+      },
+      {
+        "speaker": "A",
+        "en": "Breakfast included — that's a nice touch. Is it a buffet or set menu?",
+        "vi": "Bao gồm bữa sáng — đó là điểm thú vị. Là buffet hay thực đơn cố định?"
+      },
+      {
+        "speaker": "B",
+        "en": "À la carte from a set menu — you choose from six options including Vietnamese pho, Western eggs, and fresh tropical fruit. Served from six-thirty to ten.",
+        "vi": "Gọi món từ thực đơn cố định — bạn chọn từ sáu lựa chọn bao gồm phở Việt Nam, trứng kiểu Tây, và trái cây nhiệt đới tươi. Phục vụ từ sáu giờ rưỡi đến mười giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "That actually sounds better than a buffet — more personal. We'll take the Deluxe. What do I need to do to confirm the booking?",
+        "vi": "Nghe thực ra hay hơn buffet — riêng tư hơn. Chúng tôi sẽ lấy Deluxe. Tôi cần làm gì để xác nhận đặt phòng?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'll need your name, email, phone number, and a credit or debit card to hold the reservation.",
+        "vi": "Tôi sẽ cần tên, email, số điện thoại của anh, và thẻ tín dụng hoặc ghi nợ để giữ chỗ."
+      },
+      {
+        "speaker": "A",
+        "en": "Sure. Name is Nguyen Thanh An. Email is anthanh at gmail dot com.",
+        "vi": "Được. Tên là Nguyễn Thành An. Email là anthanh chấm gmail chấm com."
+      },
+      {
+        "speaker": "B",
+        "en": "Nguyen Thanh An, anthanh at gmail. And your phone number?",
+        "vi": "Nguyễn Thành An, anthanh tại gmail. Và số điện thoại của anh?"
+      },
+      {
+        "speaker": "A",
+        "en": "Zero nine one eight, two four six, eight seven nine.",
+        "vi": "Không chín một tám, hai bốn sáu, tám bảy chín."
+      },
+      {
+        "speaker": "B",
+        "en": "Got it. Now for the card — we just take the details to hold the room. You won't be charged now.",
+        "vi": "Ghi rồi. Bây giờ về thẻ — chúng tôi chỉ lấy thông tin để giữ phòng. Anh sẽ không bị tính phí ngay."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reassuring. It's a Visa card, number four-five-eight-nine... should I give all sixteen digits?",
+        "vi": "Thật yên tâm. Là thẻ Visa, số bốn-năm-tám-chín... tôi có nên đọc cả mười sáu chữ số không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes please, and the expiry date and the three-digit CVV on the back.",
+        "vi": "Vâng, và ngày hết hạn và ba chữ số CVV ở mặt sau."
+      },
+      {
+        "speaker": "A",
+        "en": "Four-five-eight-nine, seven-seven-three-two, one-one-four-six, zero-eight-three-two. Expiry: oh-nine, twenty-seven. CVV: four-five-one.",
+        "vi": "Bốn-năm-tám-chín, bảy-bảy-ba-hai, một-một-bốn-sáu, không-tám-ba-hai. Hết hạn: không-chín, hai mươi bảy. CVV: bốn-năm-một."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect, I have all that. Can I confirm: Deluxe River View, check-in Saturday the twenty-fourth, check-out Monday the twenty-sixth, two guests, breakfast included?",
+        "vi": "Tuyệt vời, tôi có tất cả rồi. Tôi xác nhận nhé: Deluxe River View, nhận phòng thứ Bảy ngày hai mươi bốn, trả phòng thứ Hai ngày hai mươi sáu, hai khách, bao gồm bữa sáng?"
+      },
+      {
+        "speaker": "A",
+        "en": "That's all correct. Oh — what time is check-in?",
+        "vi": "Tất cả đúng rồi. Ồ — check-in lúc mấy giờ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Standard check-in is from two p.m. If you arrive earlier, we can store your luggage and you're welcome to use the pool and restaurant.",
+        "vi": "Check-in tiêu chuẩn từ hai giờ chiều. Nếu anh đến sớm hơn, chúng tôi có thể giữ hành lý và anh được chào đón sử dụng hồ bơi và nhà hàng."
+      },
+      {
+        "speaker": "A",
+        "en": "You have a pool? I didn't see that on the website.",
+        "vi": "Khách sạn có hồ bơi à? Tôi không thấy trên website."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, an outdoor infinity pool overlooking the river — it's stunning. Open from seven a.m. to nine p.m.",
+        "vi": "Vâng, hồ bơi vô cực ngoài trời nhìn ra sông — rất tuyệt vời. Mở từ bảy giờ sáng đến chín giờ tối."
+      },
+      {
+        "speaker": "A",
+        "en": "An infinity pool! We'll definitely be using that. What about late checkout — can we stay until one p.m. on Monday?",
+        "vi": "Hồ bơi vô cực! Chúng tôi chắc chắn sẽ dùng đó. Còn trả phòng muộn — chúng tôi có thể ở đến một giờ chiều thứ Hai không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Late checkout until noon is complimentary for Deluxe room guests. Until one p.m. we'd charge a small fee — around three hundred thousand dong.",
+        "vi": "Trả phòng muộn đến trưa miễn phí cho khách phòng Deluxe. Đến một giờ chiều chúng tôi tính thêm phí nhỏ — khoảng ba trăm nghìn đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "Noon for free is perfect — that gives us a relaxed Monday morning. We'll take that.",
+        "vi": "Đến trưa miễn phí là hoàn hảo — giúp chúng tôi có sáng thứ Hai thư thái. Chúng tôi chọn vậy."
+      },
+      {
+        "speaker": "B",
+        "en": "Wonderful. I'll add late checkout until noon to your booking. You'll receive a confirmation email within the next few minutes.",
+        "vi": "Tuyệt vời. Tôi sẽ thêm trả phòng muộn đến trưa vào đặt phòng của anh. Anh sẽ nhận email xác nhận trong vài phút tới."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. One last question — is there parking available at the hotel?",
+        "vi": "Tuyệt vời. Câu hỏi cuối — khách sạn có bãi đậu xe không?"
+      },
+      {
+        "speaker": "B",
+        "en": "We have limited parking in our courtyard — first come, first served. I'd suggest calling ahead on Saturday morning to reserve a spot.",
+        "vi": "Chúng tôi có bãi đậu xe hạn chế trong sân — ai đến trước được trước. Tôi gợi ý gọi trước vào sáng thứ Bảy để đặt chỗ."
+      },
+      {
+        "speaker": "A",
+        "en": "We're actually coming by motorbike from Da Nang — should be fine then.",
+        "vi": "Chúng tôi thực ra đến bằng xe máy từ Đà Nẵng — vậy thì ổn."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect — motorbike parking is free and secure. We look forward to welcoming you and your partner!",
+        "vi": "Tuyệt vời — đậu xe máy miễn phí và an toàn. Chúng tôi mong đón tiếp anh và bạn đời!"
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you, Linh! We're really looking forward to it. Hoi An is somewhere we've always wanted to visit.",
+        "vi": "Cảm ơn, Linh! Chúng tôi thực sự mong chờ. Hội An là nơi chúng tôi luôn muốn thăm."
+      },
+      {
+        "speaker": "B",
+        "en": "You'll love it — especially the Old Town in the evenings with all the lanterns. Have a wonderful stay with us!",
+        "vi": "Anh sẽ thích đó — đặc biệt là Phố Cổ vào buổi tối với tất cả những chiếc đèn lồng. Chúc anh có kỳ lưu trú tuyệt vời với chúng tôi!"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Nhận phòng khách sạn",
+    "situation": "An đến khách sạn để nhận phòng đã đặt trước.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "An", "en": "An" },
+    "speakerBName": { "vi": "Lễ tân", "en": "Receptionist" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good afternoon! I have a reservation — Nguyen Thanh An. Two nights, Deluxe River View.",
+        "vi": "Chào buổi chiều! Tôi có đặt phòng — Nguyễn Thành An. Hai đêm, Deluxe River View."
+      },
+      {
+        "speaker": "B",
+        "en": "Welcome to Riverside Boutique Hotel, Mr. An! Let me pull up your booking. Ah yes — checking in today for two nights, checking out Monday. Is that right?",
+        "vi": "Chào mừng đến khách sạn Riverside Boutique, anh An! Để tôi tìm đặt phòng. À vâng — nhận phòng hôm nay hai đêm, trả phòng thứ Hai. Đúng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "That's correct. We were actually just here for the infinity pool while we waited — it's stunning!",
+        "vi": "Đúng vậy. Chúng tôi thực ra vừa dùng hồ bơi vô cực trong khi chờ — tuyệt đẹp!"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm so glad you enjoyed it! We're proud of that pool. Can I see your passport or ID for check-in?",
+        "vi": "Tôi rất vui khi anh thích! Chúng tôi tự hào về hồ bơi đó. Tôi có thể xem hộ chiếu hoặc CMND để làm thủ tục không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Of course. Here's my ID card. My partner's too — she's just parking the motorbike.",
+        "vi": "Dĩ nhiên. Đây là CMND của tôi. Và của bạn đời — cô ấy đang đậu xe máy."
+      },
+      {
+        "speaker": "B",
+        "en": "No problem — I can process yours now and add hers when she arrives. Everything looks good. For payment, how would you like to settle the balance?",
+        "vi": "Không sao — tôi có thể xử lý của anh trước và thêm của cô ấy khi đến. Mọi thứ ổn. Về thanh toán, anh muốn thanh toán phần còn lại như thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'll pay by card now — the same Visa card on file. Should I swipe it?",
+        "vi": "Tôi sẽ thanh toán bằng thẻ ngay bây giờ — cùng thẻ Visa trong hồ sơ. Tôi có quẹt thẻ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just tap or insert — our terminal accepts contactless. The total is four million four hundred thousand dong for two nights with breakfast.",
+        "vi": "Chỉ cần chạm hoặc cắm thẻ — thiết bị của chúng tôi chấp nhận contactless. Tổng cộng bốn triệu bốn trăm nghìn đồng cho hai đêm kèm bữa sáng."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Processing... done. Here's the receipt?",
+        "vi": "Tuyệt vời. Đang xử lý... xong. Đây là biên lai không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, that's your receipt and I'll email a full invoice too. Now — your room key cards. You have two.",
+        "vi": "Vâng, đó là biên lai của anh và tôi cũng sẽ gửi hóa đơn đầy đủ qua email. Bây giờ — thẻ phòng của anh. Anh có hai thẻ."
+      },
+      {
+        "speaker": "A",
+        "en": "Great — one each. What floor are we on?",
+        "vi": "Tốt — mỗi người một thẻ. Chúng tôi ở tầng mấy?"
+      },
+      {
+        "speaker": "B",
+        "en": "Third floor — room 304. The river view from up there is the best in the building. Elevator is just behind you to the left.",
+        "vi": "Tầng ba — phòng 304. Tầm nhìn sông từ trên đó là tốt nhất trong tòa nhà. Thang máy ngay sau lưng anh bên trái."
+      },
+      {
+        "speaker": "A",
+        "en": "Room 304, third floor. And the card activates the elevator too?",
+        "vi": "Phòng 304, tầng ba. Và thẻ cũng kích hoạt thang máy không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, tap it on the panel inside the lift and select your floor. It's a security feature.",
+        "vi": "Vâng, chạm thẻ vào bảng điều khiển bên trong thang máy và chọn tầng. Đó là tính năng bảo mật."
+      },
+      {
+        "speaker": "A",
+        "en": "Smart. Can you tell me about breakfast — where and what time?",
+        "vi": "Thông minh. Bạn có thể cho tôi biết về bữa sáng — ở đâu và mấy giờ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Breakfast is served in our riverside restaurant on the ground floor — six-thirty to ten a.m. Just show your room key and the waiter will bring your menu.",
+        "vi": "Bữa sáng được phục vụ tại nhà hàng ven sông ở tầng trệt — sáu giờ rưỡi đến mười giờ sáng. Chỉ cần cho thấy thẻ phòng và nhân viên phục vụ sẽ mang thực đơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. What about room service — do you have it in the evenings?",
+        "vi": "Tuyệt vời. Còn dịch vụ phòng — tối có không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Room service is available from seven a.m. to eleven p.m. The menu is in the folder on your desk. You can also use the QR code in the room to order from your phone.",
+        "vi": "Dịch vụ phòng có từ bảy giờ sáng đến mười một giờ tối. Thực đơn trong thư mục trên bàn làm việc của anh. Anh cũng có thể dùng mã QR trong phòng để đặt từ điện thoại."
+      },
+      {
+        "speaker": "A",
+        "en": "QR code ordering — very modern! Is there Wi-Fi in the room?",
+        "vi": "Đặt bằng mã QR — rất hiện đại! Phòng có Wi-Fi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, high-speed Wi-Fi. The network name is Riverside-Guest and the password is on the key card envelope.",
+        "vi": "Vâng, Wi-Fi tốc độ cao. Tên mạng là Riverside-Guest và mật khẩu có trên phong bì đựng thẻ."
+      },
+      {
+        "speaker": "A",
+        "en": "Ah, I see it — thank you. What about the pool hours again?",
+        "vi": "À, tôi thấy rồi — cảm ơn. Giờ hồ bơi lại là mấy giờ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Seven a.m. to nine p.m. Towels are provided at the poolside. Please bring your key card to access the pool area.",
+        "vi": "Bảy giờ sáng đến chín giờ tối. Khăn tắm được cung cấp tại khu vực hồ bơi. Vui lòng mang theo thẻ phòng để vào khu vực hồ bơi."
+      },
+      {
+        "speaker": "A",
+        "en": "Is there a spa too? My partner would love a massage after the drive from Da Nang.",
+        "vi": "Có spa không? Bạn đời tôi sẽ thích được massage sau chuyến đi từ Đà Nẵng."
+      },
+      {
+        "speaker": "B",
+        "en": "We do have an in-house spa on the second floor. I'd recommend booking ahead — it fills up on weekends. I can book a slot for her now if you'd like.",
+        "vi": "Chúng tôi có spa trong khách sạn ở tầng hai. Tôi gợi ý đặt trước — cuối tuần thường kín chỗ. Tôi có thể đặt lịch cho cô ấy ngay bây giờ nếu anh muốn."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, that's thoughtful! Can you book a one-hour massage for two people tomorrow afternoon — say three p.m.?",
+        "vi": "Ồ, thật chu đáo! Bạn có thể đặt massage một tiếng cho hai người vào chiều mai — khoảng ba giờ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let me check... Yes, three p.m. Sunday is available for two. Shall I add that to your bill?",
+        "vi": "Để tôi kiểm tra... Vâng, ba giờ chiều Chủ Nhật có chỗ cho hai người. Tôi có thêm vào hóa đơn không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Please do. What's the cost for two?",
+        "vi": "Làm ơn. Hai người hết bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Traditional Vietnamese massage for one hour is five hundred thousand each — one million for two. Our therapists are wonderful.",
+        "vi": "Massage cổ truyền Việt Nam một tiếng là năm trăm nghìn mỗi người — một triệu cho hai người. Các chuyên viên trị liệu của chúng tôi rất tuyệt."
+      },
+      {
+        "speaker": "A",
+        "en": "Booked. Perfect. Is there anything else you'd recommend doing around Hoi An this weekend?",
+        "vi": "Đặt rồi. Tuyệt vời. Bạn có gợi ý gì khác nên làm quanh Hội An cuối tuần này không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Saturday evening, walk the Old Town — the lanterns are lit from five p.m. and it's magical. Sunday morning, rent bicycles from us and cycle to An Bang beach — twenty minutes.",
+        "vi": "Tối thứ Bảy, đi dạo Phố Cổ — đèn lồng sáng từ năm giờ chiều và rất kỳ diệu. Sáng Chủ Nhật, thuê xe đạp từ chúng tôi và đạp xe đến bãi biển An Bàng — hai mươi phút."
+      },
+      {
+        "speaker": "A",
+        "en": "An Bang beach by bicycle — that sounds perfect for Sunday morning before the massage.",
+        "vi": "Bãi biển An Bàng bằng xe đạp — nghe hoàn hảo cho sáng Chủ Nhật trước khi massage."
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly the perfect itinerary! The bikes are free of charge for hotel guests — just ask at the front desk tomorrow morning.",
+        "vi": "Đúng là lịch trình hoàn hảo! Xe đạp miễn phí cho khách khách sạn — chỉ cần hỏi tại lễ tân sáng mai."
+      },
+      {
+        "speaker": "A",
+        "en": "Free bicycles — this hotel just keeps getting better. My partner has arrived by the way.",
+        "vi": "Xe đạp miễn phí — khách sạn này cứ tốt hơn mãi. Bạn đời tôi vừa đến nhân tiện."
+      },
+      {
+        "speaker": "B",
+        "en": "Wonderful! Could I quickly photocopy her ID card as well?",
+        "vi": "Tuyệt vời! Tôi có thể photo thẻ CMND của cô ấy nhanh không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Of course. Lan, could you hand over your ID? Thank you. Here you go.",
+        "vi": "Dĩ nhiên. Lan ơi, em đưa CMND cho anh nhé? Cảm ơn. Đây bạn."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. All done! Room 304 is all yours. Enjoy your stay in Hoi An — it's going to be a beautiful weekend.",
+        "vi": "Cảm ơn. Xong hết rồi! Phòng 304 là của anh chị. Tận hưởng kỳ lưu trú tại Hội An — sẽ là một cuối tuần tuyệt đẹp."
+      }
+    ]
+  }
 ]

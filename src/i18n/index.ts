@@ -28,24 +28,28 @@ export const t = {
 
     // Mode cards — Direction A
     chatTitleA: 'Chat với gia sư',
-    chatDescA: 'Trò chuyện tiếng Anh theo tình huống. AI sửa lỗi và giải thích bằng tiếng Việt ngay lập tức.',
+    chatDescA:
+      'Trò chuyện tiếng Anh theo tình huống. AI sửa lỗi và giải thích bằng tiếng Việt ngay lập tức.',
     speakTitleA: 'Luyện nói song ngữ',
     speakDescA: 'Nói → AI nghe → trả lời bằng giọng tiếng Anh → sửa lỗi bằng giọng tiếng Việt.',
     writeTitleA: 'Luyện viết & chấm điểm',
     writeDescA: 'Nộp bài viết, AI chấm theo tiêu chí IELTS, chỉ lỗi và ước lượng band.',
     phrasesTitleA: 'Các câu thông dụng',
-    phrasesDescA: "300+ chủ thể (I'm, We are, Could you…), mỗi chủ thể nhiều câu thực tế, có phát âm.",
+    phrasesDescA:
+      "300+ chủ thể (I'm, We are, Could you…), mỗi chủ thể nhiều câu thực tế, có phát âm.",
     dictTitleA: 'Từ điển',
     dictDescA: 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
     lessonsTitleA: 'Các bài hội thoại mẫu thông dụng',
-    lessonsDescA: 'Hội thoại mẫu theo chủ đề đời sống hằng ngày, mỗi bài 40 đoạn song ngữ có phát âm.',
+    lessonsDescA:
+      'Hội thoại mẫu theo chủ đề đời sống hằng ngày, mỗi bài 40 đoạn song ngữ có phát âm.',
     tagPopular: 'Phổ biến',
     tagKeyFeature: 'Tính năng chính',
     tagUnlimited: 'Không giới hạn',
 
     // Mode cards — Direction B
     chatTitleB: 'Chat với gia sư',
-    chatDescB: 'Luyện hội thoại tiếng Việt theo tình huống. AI sửa lỗi và giải thích bằng tiếng Anh.',
+    chatDescB:
+      'Luyện hội thoại tiếng Việt theo tình huống. AI sửa lỗi và giải thích bằng tiếng Anh.',
     speakTitleB: 'Luyện nói song ngữ',
     speakDescB: 'Nói → AI nghe → trả lời bằng giọng tiếng Việt → sửa lỗi bằng giọng tiếng Anh.',
     writeTitleB: 'Luyện viết & chấm điểm',
@@ -155,13 +159,15 @@ export const t = {
 
     // Mode cards — Direction A
     chatTitleA: 'Chat with tutor',
-    chatDescA: 'Practice English conversation by situation. AI corrects and explains in Vietnamese instantly.',
+    chatDescA:
+      'Practice English conversation by situation. AI corrects and explains in Vietnamese instantly.',
     speakTitleA: 'Bilingual speaking',
     speakDescA: 'Speak → AI listens → replies in English voice → corrects in Vietnamese voice.',
     writeTitleA: 'Writing & scoring',
     writeDescA: 'Submit your essay, AI grades it by IELTS criteria and estimates your band.',
     phrasesTitleA: 'Common Sentences',
-    phrasesDescA: "300+ subjects (I'm, We are, Could you…), each with real-life sentences and audio.",
+    phrasesDescA:
+      "300+ subjects (I'm, We are, Could you…), each with real-life sentences and audio.",
     dictTitleA: 'Dictionary',
     dictDescA: 'Look up 10,000 common English words: part of speech, Vietnamese meaning, examples.',
     lessonsTitleA: 'Lessons',
@@ -172,7 +178,8 @@ export const t = {
 
     // Mode cards — Direction B
     chatTitleB: 'Chat with tutor',
-    chatDescB: 'Practice Vietnamese conversation by situation. AI corrects and explains in English.',
+    chatDescB:
+      'Practice Vietnamese conversation by situation. AI corrects and explains in English.',
     speakTitleB: 'Bilingual speaking',
     speakDescB: 'Speak → AI listens → replies in Vietnamese voice → corrects in English voice.',
     writeTitleB: 'Writing & scoring',

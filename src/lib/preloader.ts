@@ -16,7 +16,12 @@ import { preloadFlags } from './preloadState'
 
 // ── Tải + giải mã 1 audio rồi lưu vào IndexedDB ──────────────────────────────
 // Nếu đã có trong IndexedDB thì bỏ qua (không tải lại).
-async function prefetchAudio(text: string, lang: string, voice: string, token: string): Promise<void> {
+async function prefetchAudio(
+  text: string,
+  lang: string,
+  voice: string,
+  token: string,
+): Promise<void> {
   if (!text.trim()) return
   const key = audioCacheKey(text, lang, voice)
 
@@ -32,7 +37,9 @@ async function prefetchAudio(text: string, lang: string, voice: string, token: s
     if (!res.ok) return
 
     const { audio_url, key_b64, iv_b64 } = (await res.json()) as {
-      audio_url: string; key_b64: string; iv_b64: string
+      audio_url: string
+      key_b64: string
+      iv_b64: string
     }
 
     // Tải file audio mã hoá
@@ -42,15 +49,22 @@ async function prefetchAudio(text: string, lang: string, voice: string, token: s
 
     // Giải mã AES-256-GCM
     const toBytes = (b64: string) => {
-      const bin = atob(b64); const out = new Uint8Array(bin.length)
+      const bin = atob(b64)
+      const out = new Uint8Array(bin.length)
       for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i)
       return out
     }
     const cryptoKey = await crypto.subtle.importKey(
-      'raw', toBytes(key_b64) as BufferSource, 'AES-GCM', false, ['decrypt'],
+      'raw',
+      toBytes(key_b64) as BufferSource,
+      'AES-GCM',
+      false,
+      ['decrypt'],
     )
     const plain = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: toBytes(iv_b64) as BufferSource }, cryptoKey, cipherBuffer,
+      { name: 'AES-GCM', iv: toBytes(iv_b64) as BufferSource },
+      cryptoKey,
+      cipherBuffer,
     )
 
     // Lưu ArrayBuffer (đã giải mã) vào IndexedDB
@@ -73,9 +87,14 @@ export async function preloadLearnData(userId: string): Promise<void> {
   await loadCurriculum()
 
   // Lấy JWT để gọi /api/tts
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
   const token = session?.access_token
-  if (!token) { preloadFlags.learn = false; return }
+  if (!token) {
+    preloadFlags.learn = false
+    return
+  }
 
   // Preload audio cho Today batch (20 từ hôm nay) — tuần tự, chậm, kick-off không await.
   const learned = getLearnedWords(userId)

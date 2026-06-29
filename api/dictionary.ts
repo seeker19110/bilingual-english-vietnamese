@@ -74,7 +74,8 @@ export default async function handler(req: Request): Promise<Response> {
 
   // ── Tìm kiếm theo từ khóa ────────────────────────────────────────────────────
   const q = (url.searchParams.get('q') ?? '').trim().toLowerCase()
-  if (!q) return json({ total: entries.length, matched: 0, posGroups: [], results: [] }, 200, allHeaders)
+  if (!q)
+    return json({ total: entries.length, matched: 0, posGroups: [], results: [] }, 200, allHeaders)
   if (q.length > 100) return json({ error: 'Từ khóa quá dài' }, 400, allHeaders)
 
   let matches: DictEntry[]
@@ -123,7 +124,7 @@ function pickRandom<T>(arr: T[], n: number): T[] {
   const out: T[] = []
   for (let i = 0; i < n && a.length > 0; i++) {
     const j = Math.floor(Math.random() * a.length)
-    out.push(a[j])
+    out.push(a[j]!) // j < a.length nên chắc chắn có
     a.splice(j, 1)
   }
   return out

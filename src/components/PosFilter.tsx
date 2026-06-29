@@ -1,15 +1,15 @@
 interface Props {
-  value: string            // loại từ đang chọn ('' = tất cả)
+  value: string // loại từ đang chọn ('' = tất cả)
   onChange: (pos: string) => void
 }
 
 // Danh sách nút lọc — khớp các mã pos trong dictionary.json
 const FILTERS: { value: string; label: string }[] = [
-  { value: '',     label: 'Tất cả' },
-  { value: 'n',    label: 'Danh từ' },
-  { value: 'v',    label: 'Động từ' },
-  { value: 'adj',  label: 'Tính từ' },
-  { value: 'adv',  label: 'Trạng từ' },
+  { value: '', label: 'Tất cả' },
+  { value: 'n', label: 'Danh từ' },
+  { value: 'v', label: 'Động từ' },
+  { value: 'adj', label: 'Tính từ' },
+  { value: 'adv', label: 'Trạng từ' },
   { value: 'prep', label: 'Giới từ' },
   { value: 'pron', label: 'Đại từ' },
 ]
@@ -18,7 +18,7 @@ const FILTERS: { value: string; label: string }[] = [
 export default function PosFilter({ value, onChange }: Props) {
   return (
     <div className="flex gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1 mb-3">
-      {FILTERS.map(f => (
+      {FILTERS.map((f) => (
         <button
           key={f.value}
           onClick={() => onChange(f.value)}

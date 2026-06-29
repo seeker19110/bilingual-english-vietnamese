@@ -36,12 +36,13 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
 
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-3">
-
         {/* Back / Logo */}
         {back ? (
-          <button onClick={() => nav('/')}
+          <button
+            onClick={() => nav('/')}
             aria-label={T.home}
-            className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition shrink-0 -ml-1 p-3 rounded-lg hover:bg-zinc-800/50">
+            className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition shrink-0 -ml-1 p-3 rounded-lg hover:bg-zinc-800/50"
+          >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:inline">{T.home}</span>
           </button>
@@ -50,7 +51,9 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center shadow-md shadow-accent-500/30">
               <BookOpen className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="font-bold text-sm text-white hidden sm:inline tracking-tight">{T.appName}</span>
+            <span className="font-bold text-sm text-white hidden sm:inline tracking-tight">
+              {T.appName}
+            </span>
           </div>
         )}
 
@@ -78,14 +81,28 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
           <>
             {/* Desktop: text */}
             <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-400 shrink-0">
-              <span>{T.chat} <strong className="text-zinc-400">{usage.chatCount}/{limit.chat}</strong></span>
-              <span>{T.speak} <strong className="text-zinc-400">{usage.speakingCount}/{limit.speaking}</strong></span>
+              <span>
+                {T.chat}{' '}
+                <strong className="text-zinc-400">
+                  {usage.chatCount}/{limit.chat}
+                </strong>
+              </span>
+              <span>
+                {T.speak}{' '}
+                <strong className="text-zinc-400">
+                  {usage.speakingCount}/{limit.speaking}
+                </strong>
+              </span>
             </div>
             {/* Mobile: mini badges cho chat và nói */}
             <div className="sm:hidden flex items-center gap-1.5 shrink-0 text-[11px] text-zinc-400">
-              <span><strong className="text-zinc-400">{usage.chatCount}</strong>/{limit.chat}</span>
+              <span>
+                <strong className="text-zinc-400">{usage.chatCount}</strong>/{limit.chat}
+              </span>
               <span className="text-zinc-700">·</span>
-              <span><strong className="text-zinc-400">{usage.speakingCount}</strong>/{limit.speaking}</span>
+              <span>
+                <strong className="text-zinc-400">{usage.speakingCount}</strong>/{limit.speaking}
+              </span>
             </div>
           </>
         )}
@@ -102,10 +119,12 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-xs font-bold text-white shadow-sm">
               {user.name[0]?.toUpperCase()}
             </div>
-            <button onClick={handleLogout}
+            <button
+              onClick={handleLogout}
               className="text-zinc-400 hover:text-red-400 transition p-3 rounded-lg hover:bg-red-400/10"
               title={T.logout}
-              aria-label={T.logout}>
+              aria-label={T.logout}
+            >
               <LogOut className="w-3.5 h-3.5" />
             </button>
           </div>

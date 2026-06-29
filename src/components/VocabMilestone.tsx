@@ -15,7 +15,7 @@ const MILESTONES = [
   { count: 5000, label: 'Thành thạo', cefr: 'B2–C1', desc: 'Đọc báo khá thoải mái (~98%)' },
   { count: 8000, label: 'Đọc tự do', cefr: 'C1+', desc: 'Đọc tiểu thuyết không cần tra' },
 ]
-const GOAL = MILESTONES[MILESTONES.length - 1].count // mốc cuối = 8000
+const GOAL = MILESTONES[MILESTONES.length - 1]!.count // mốc cuối = 8000 (mảng literal luôn có phần tử)
 
 // Thanh tiến độ hiển thị số từ đã thuộc so với các mốc 1k/3k/5k/8k.
 export default function VocabMilestone({ userId, refreshKey }: Props) {
@@ -30,9 +30,9 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
   const pct = Math.min(100, (learned / GOAL) * 100)
 
   // Mốc kế tiếp chưa đạt (để hiện "còn bao nhiêu từ nữa")
-  const next = MILESTONES.find(m => learned < m.count)
+  const next = MILESTONES.find((m) => learned < m.count)
   // Trình độ hiện tại = mốc cao nhất đã vượt
-  const current = [...MILESTONES].reverse().find(m => learned >= m.count)
+  const current = [...MILESTONES].reverse().find((m) => learned >= m.count)
 
   return (
     <div className="glass rounded-xl p-4 mb-4 animate-fade-in">
@@ -53,7 +53,7 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
           style={{ width: `${pct}%` }}
         />
         {/* Vạch đánh dấu từng mốc */}
-        {MILESTONES.slice(0, -1).map(m => (
+        {MILESTONES.slice(0, -1).map((m) => (
           <div
             key={m.count}
             className="absolute top-1/2 -translate-y-1/2 w-px h-3 bg-zinc-600"
@@ -65,7 +65,7 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
       {/* Nhãn các mốc dưới thanh */}
       <div className="flex justify-between text-[11px] text-zinc-400 mb-3">
         <span>0</span>
-        {MILESTONES.map(m => (
+        {MILESTONES.map((m) => (
           <span key={m.count} className={learned >= m.count ? 'text-accent-400 font-medium' : ''}>
             {m.count >= 1000 ? `${m.count / 1000}k` : m.count}
           </span>
@@ -85,7 +85,11 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
         {next && (
           <span className="flex items-center gap-1 text-zinc-400">
             <Target className="w-3 h-3 text-zinc-400" />
-            Còn <strong className="text-white">{(next.count - learned).toLocaleString('vi-VN')}</strong> từ → {next.label}
+            Còn{' '}
+            <strong className="text-white">
+              {(next.count - learned).toLocaleString('vi-VN')}
+            </strong>{' '}
+            từ → {next.label}
           </span>
         )}
       </div>

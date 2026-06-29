@@ -1,4 +1,11 @@
-import type { User, ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Direction } from '../types'
+import type {
+  User,
+  ChatSession,
+  WritingSubmission,
+  SpeakingSession,
+  DailyUsage,
+  Direction,
+} from '../types'
 // Mỗi lần lưu xuống localStorage, ta cũng đẩy bản ghi lên Supabase (bắn rồi quên)
 import { pushChatSession, pushWritingSub, pushSpeakingSession, pushLearnDay } from './cloud'
 
@@ -16,7 +23,9 @@ function get<T>(key: string): T | null {
   try {
     const raw = localStorage.getItem(key)
     return raw ? (JSON.parse(raw) as T) : null
-  } catch { return null }
+  } catch {
+    return null
+  }
 }
 
 // Ghi localStorage AN TOÀN: bắt lỗi (đầy bộ nhớ / chế độ riêng tư của Safari) để
@@ -41,8 +50,15 @@ function set<T>(key: string, val: T): boolean {
 export function register(email: string, name: string, _password: string): User | null {
   void _password // không còn dùng — giữ lại tham số để không phải sửa nơi gọi
   const users = get<(User & { pwHash?: string })[]>(K.users) ?? []
-  if (users.find(u => u.email === email)) return null // email đã tồn tại
-  const user: User = { id: crypto.randomUUID(), email, name, plan: 'free', onboarded: false, createdAt: Date.now() }
+  if (users.find((u) => u.email === email)) return null // email đã tồn tại
+  const user: User = {
+    id: crypto.randomUUID(),
+    email,
+    name,
+    plan: 'free',
+    onboarded: false,
+    createdAt: Date.now(),
+  }
   users.push({ ...user })
   set(K.users, users)
   set(K.currentUser, user)
@@ -54,7 +70,7 @@ export function login(email: string, _password: string): User | null {
   // Tìm theo email — không còn kiểm tra password vì storage.ts không dùng cho auth thật
   // (auth thật dùng Supabase — xem src/lib/auth.ts)
   const users = get<(User & { pwHash?: string })[]>(K.users) ?? []
-  const found = users.find(u => u.email === email)
+  const found = users.find((u) => u.email === email)
   if (!found) return null
   const { pwHash: _pw, ...user } = found
   void _pw
@@ -97,7 +113,7 @@ export function getChatSessions(userId: string): ChatSession[] {
 
 export function saveChatSession(session: ChatSession) {
   const all = getChatSessions(session.userId)
-  const idx = all.findIndex(s => s.id === session.id)
+  const idx = all.findIndex((s) => s.id === session.id)
   if (idx >= 0) all[idx] = session
   else all.unshift(session)
   set(K.chatSessions(session.userId), all)
@@ -111,7 +127,7 @@ export function getWritingSubs(userId: string): WritingSubmission[] {
 
 export function saveWritingSub(sub: WritingSubmission) {
   const all = getWritingSubs(sub.userId)
-  const idx = all.findIndex(s => s.id === sub.id)
+  const idx = all.findIndex((s) => s.id === sub.id)
   if (idx >= 0) all[idx] = sub
   else all.unshift(sub)
   set(K.writingSubs(sub.userId), all)
@@ -125,7 +141,7 @@ export function getSpeakingSessions(userId: string): SpeakingSession[] {
 
 export function saveSpeakingSession(session: SpeakingSession) {
   const all = getSpeakingSessions(session.userId)
-  const idx = all.findIndex(s => s.id === session.id)
+  const idx = all.findIndex((s) => s.id === session.id)
   if (idx >= 0) all[idx] = session
   else all.unshift(session)
   set(K.speakingSessions(session.userId), all)
@@ -139,7 +155,14 @@ function todayStr() {
 
 export function getUsage(userId: string): DailyUsage {
   const date = todayStr()
-  const u = get<DailyUsage>(K.usage(userId, date)) ?? { date, chatCount: 0, writingCount: 0, speakingCount: 0, sttCount: 0, learnCount: 0 }
+  const u = get<DailyUsage>(K.usage(userId, date)) ?? {
+    date,
+    chatCount: 0,
+    writingCount: 0,
+    speakingCount: 0,
+    sttCount: 0,
+    learnCount: 0,
+  }
   // Bản local cũ có thể thiếu sttCount/learnCount (lưu trước khi thêm tính năng) — bù mặc định.
   if (u.sttCount == null) u.sttCount = 0
   if (u.learnCount == null) u.learnCount = 0
@@ -150,7 +173,10 @@ export function getUsage(userId: string): DailyUsage {
 // đếm authoritative (api/_lib/usage.ts) trong daily_usage; khi mở trang, pullUserData
 // kéo số chính xác từ Supabase về ghi đè bản local — nên client KHÔNG đẩy lượt nữa
 // (tránh đếm trùng / bị sửa localStorage để gian lận giới hạn).
-export function incrementUsage(userId: string, field: 'chatCount' | 'writingCount' | 'speakingCount' | 'sttCount') {
+export function incrementUsage(
+  userId: string,
+  field: 'chatCount' | 'writingCount' | 'speakingCount' | 'sttCount',
+) {
   const usage = getUsage(userId)
   usage[field]++
   set(K.usage(userId, todayStr()), usage)
@@ -187,8 +213,12 @@ const STREAK_MAX_DAYS = 365
 
 function hasActivityOn(usage: DailyUsage | null): boolean {
   if (!usage) return false
-  const total = usage.chatCount + usage.writingCount + usage.speakingCount
-    + (usage.sttCount ?? 0) + (usage.learnCount ?? 0)
+  const total =
+    usage.chatCount +
+    usage.writingCount +
+    usage.speakingCount +
+    (usage.sttCount ?? 0) +
+    (usage.learnCount ?? 0)
   return total > 0
 }
 

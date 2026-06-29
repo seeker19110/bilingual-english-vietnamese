@@ -5,8 +5,8 @@ import { speak, stopSpeaking, isTTSSupported } from '../lib/tts'
 interface Props {
   text: string
   lang: 'en-US' | 'vi-VN'
-  title?: string        // tooltip hiển thị khi hover
-  size?: 'sm' | 'xs'   // kích cỡ nút
+  title?: string // tooltip hiển thị khi hover
+  size?: 'sm' | 'xs' // kích cỡ nút
 }
 
 // Nút loa đọc nguyên câu/đoạn văn bằng Web Speech API (miễn phí, không cần API key).
@@ -43,12 +43,12 @@ export default function SpeakButton({ text, lang, title, size = 'sm' }: Props) {
   const iconClass = size === 'xs' ? 'w-3 h-3' : 'w-3.5 h-3.5'
 
   // Màu theo ngôn ngữ: xanh lá = tiếng Anh, xanh dương = tiếng Việt
-  const idleClass  = lang === 'en-US'
-    ? 'bg-zinc-800/60 text-zinc-400 hover:bg-accent-500/20 hover:text-accent-300'
-    : 'bg-zinc-800/60 text-zinc-400 hover:bg-sky-500/20 hover:text-sky-300'
-  const activeClass = lang === 'en-US'
-    ? 'bg-accent-500/20 text-accent-300'
-    : 'bg-sky-500/20 text-sky-300'
+  const idleClass =
+    lang === 'en-US'
+      ? 'bg-zinc-800/60 text-zinc-400 hover:bg-accent-500/20 hover:text-accent-300'
+      : 'bg-zinc-800/60 text-zinc-400 hover:bg-sky-500/20 hover:text-sky-300'
+  const activeClass =
+    lang === 'en-US' ? 'bg-accent-500/20 text-accent-300' : 'bg-sky-500/20 text-sky-300'
 
   const label = title ?? (lang === 'en-US' ? 'Nghe tiếng Anh' : 'Nghe tiếng Việt')
   return (
@@ -60,10 +60,11 @@ export default function SpeakButton({ text, lang, title, size = 'sm' }: Props) {
         ${playing ? activeClass : idleClass}
       `}
     >
-      {playing
-        ? <Square className={`${iconClass} fill-current`} />
-        : <Volume2 className={iconClass} />
-      }
+      {playing ? (
+        <Square className={`${iconClass} fill-current`} />
+      ) : (
+        <Volume2 className={iconClass} />
+      )}
     </button>
   )
 }

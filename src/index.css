@@ -11,10 +11,11 @@
    --glow-accent dùng cho hiệu ứng phát sáng + outline focus theo đúng màu nhấn. */
 
 /* 🌙 Xanh đêm (MẶC ĐỊNH) — nền navy/slate + nhấn xanh ngọc (emerald) */
-:root, [data-theme="dark-blue"] {
+:root,
+[data-theme='dark-blue'] {
   color-scheme: dark;
   --c-white: 255 255 255;
-  --z-50:  248 250 252;
+  --z-50: 248 250 252;
   --z-100: 241 245 249;
   --z-200: 226 232 240;
   --z-300: 203 213 225;
@@ -28,7 +29,7 @@
   --glass-bg: 15 23 42;
   --glass-border: 51 65 85;
   /* accent: emerald */
-  --a-50:  236 253 245;
+  --a-50: 236 253 245;
   --a-100: 209 250 229;
   --a-200: 167 243 208;
   --a-300: 110 231 183;
@@ -44,10 +45,10 @@
 
 /* ☀️ Blue sky — nền sáng tông xanh + nhấn xanh da trời (sky).
    Theo cơ chế light: đảo thang zinc (nền sáng, chữ tối), white → tối để "text-white" vẫn đọc được. */
-[data-theme="blue-sky"] {
+[data-theme='blue-sky'] {
   color-scheme: light;
   --c-white: 15 23 42;
-  --z-50:  8 12 28;
+  --z-50: 8 12 28;
   --z-100: 15 23 42;
   --z-200: 30 41 59;
   --z-300: 51 65 85;
@@ -61,7 +62,7 @@
   --glass-bg: 255 255 255;
   --glass-border: 203 213 225;
   /* accent: sky */
-  --a-50:  240 249 255;
+  --a-50: 240 249 255;
   --a-100: 224 242 254;
   --a-200: 186 230 253;
   --a-300: 125 211 252;
@@ -76,10 +77,10 @@
 }
 
 /* 🌸 Pink — nền hồng phấn nhạt (xám ấm) + nhấn hồng (pink) */
-[data-theme="pink"] {
+[data-theme='pink'] {
   color-scheme: light;
   --c-white: 38 24 32;
-  --z-50:  38 24 32;
+  --z-50: 38 24 32;
   --z-100: 55 38 48;
   --z-200: 82 64 74;
   --z-300: 110 92 102;
@@ -93,7 +94,7 @@
   --glass-bg: 255 250 252;
   --glass-border: 244 207 224;
   /* accent: pink */
-  --a-50:  253 242 248;
+  --a-50: 253 242 248;
   --a-100: 252 231 243;
   --a-200: 251 207 232;
   --a-300: 249 168 212;
@@ -108,10 +109,10 @@
 }
 
 /* 🎉 Rực rỡ — nền tím than đậm + nhấn fuchsia rực, glow mạnh */
-[data-theme="vibrant"] {
+[data-theme='vibrant'] {
   color-scheme: dark;
   --c-white: 255 255 255;
-  --z-50:  250 245 255;
+  --z-50: 250 245 255;
   --z-100: 245 238 255;
   --z-200: 233 222 250;
   --z-300: 209 196 233;
@@ -125,7 +126,7 @@
   --glass-bg: 44 32 66;
   --glass-border: 109 64 150;
   /* accent: fuchsia */
-  --a-50:  253 244 255;
+  --a-50: 253 244 255;
   --a-100: 250 232 255;
   --a-200: 245 208 254;
   --a-300: 240 171 252;
@@ -148,7 +149,12 @@
 
   body {
     @apply bg-zinc-950 text-zinc-100 antialiased;
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family:
+      'Inter',
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Chặn double-tap zoom trên mobile (vẫn cho phép scroll/pan dọc) */
@@ -165,13 +171,27 @@
     }
   }
 
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { @apply bg-zinc-700 rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-zinc-600; }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-700 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-600;
+  }
 
   /* Smooth font rendering for Inter */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     letter-spacing: -0.015em;
   }
 
@@ -198,9 +218,15 @@
 
 @layer utilities {
   /* Scrollbar */
-  .scrollbar-none::-webkit-scrollbar { display: none; }
-  .scrollbar-none { -ms-overflow-style: none; }
-  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
 
   /* Safe area cho iPhone / notch / bottom bar */
   .pb-safe {
@@ -253,11 +279,25 @@
   }
 
   /* Staggered animation delays */
-  .delay-50  { animation-delay: 50ms; }
-  .delay-100 { animation-delay: 100ms; }
-  .delay-150 { animation-delay: 150ms; }
-  .delay-200 { animation-delay: 200ms; }
-  .delay-250 { animation-delay: 250ms; }
-  .delay-300 { animation-delay: 300ms; }
-  .delay-400 { animation-delay: 400ms; }
+  .delay-50 {
+    animation-delay: 50ms;
+  }
+  .delay-100 {
+    animation-delay: 100ms;
+  }
+  .delay-150 {
+    animation-delay: 150ms;
+  }
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+  .delay-250 {
+    animation-delay: 250ms;
+  }
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+  .delay-400 {
+    animation-delay: 400ms;
+  }
 }

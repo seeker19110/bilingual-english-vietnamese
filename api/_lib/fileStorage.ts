@@ -77,11 +77,7 @@ async function saveLocal(
 
 // ── Supabase Storage ─────────────────────────────────────────────────────────
 
-async function saveSupabase(
-  bucket: string,
-  fileName: string,
-  data: ArrayBuffer,
-): Promise<string> {
+async function saveSupabase(bucket: string, fileName: string, data: ArrayBuffer): Promise<string> {
   const supabase = getSupabaseAdmin()
 
   const { error: uploadError } = await supabase.storage

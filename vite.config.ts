@@ -12,7 +12,18 @@ export default defineConfig(({ mode }) => {
   // api/*.ts đọc key bằng process.env.X (giống lúc chạy thật trên Vercel, nơi Vercel tự inject
   // Environment Variables vào process.env). Lúc "npm run dev", .env KHÔNG tự nạp vào process.env
   // nên ta gán tay các biến server-only cần dùng.
-  for (const key of ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GOOGLE_TTS_API_KEY', 'TTS_ENCRYPTION_MASTER_KEY', 'ANTHROPIC_API_KEY', 'OPENAI_API_KEY', 'GROQ_API_KEY', 'GROQ_CHAT_MODEL', 'STT_MODEL', 'OPENAI_STT_MODEL']) {
+  for (const key of [
+    'SUPABASE_URL',
+    'SUPABASE_SERVICE_ROLE_KEY',
+    'GOOGLE_TTS_API_KEY',
+    'TTS_ENCRYPTION_MASTER_KEY',
+    'ANTHROPIC_API_KEY',
+    'OPENAI_API_KEY',
+    'GROQ_API_KEY',
+    'GROQ_CHAT_MODEL',
+    'STT_MODEL',
+    'OPENAI_STT_MODEL',
+  ]) {
     if (env[key] && !process.env[key]) process.env[key] = env[key]
   }
 
@@ -25,7 +36,7 @@ export default defineConfig(({ mode }) => {
       // Gzip + Brotli compression cho production
       compress({
         gzip: {
-          threshold: 1024,  // chỉ compress file > 1KB
+          threshold: 1024, // chỉ compress file > 1KB
           deleteOriginFile: false,
         },
         brotli: {
@@ -52,7 +63,11 @@ export default defineConfig(({ mode }) => {
           // Chiến lược chunk thông minh: nhóm vendor theo tính năng, tránh duplicate code
           manualChunks(id) {
             // Nhóm 1: React + Router (core framework)
-            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
+            if (
+              id.includes('node_modules/react') ||
+              id.includes('node_modules/react-dom') ||
+              id.includes('node_modules/react-router')
+            ) {
               return 'vendor-core'
             }
             // Nhóm 2: Supabase
@@ -109,43 +124,47 @@ function apiEdgeDevMiddleware(): Plugin {
   return {
     name: 'api-edge-dev-middleware',
     configureServer(server: ViteDevServer) {
-      server.middlewares.use(async (req: IncomingMessage, res: ServerResponse, next: () => void) => {
-        const route = req.url ? API_ROUTES.find(r => req.url!.startsWith(r.prefix)) : undefined
-        if (!route) {
-          next()
-          return
-        }
-
-        try {
-          // Đọc body cho các method có payload (POST) — /api/tts nhận JSON body.
-          const body = await readRequestBody(req)
-
-          // ssrLoadModule: để Vite tự biên dịch TypeScript + import nội bộ (./_lib/...)
-          // bằng đúng pipeline thật, không phải viết/duy trì 2 bản logic khác nhau.
-          const mod = (await server.ssrLoadModule(route.module)) as {
-            default: (request: Request) => Promise<Response>
+      server.middlewares.use(
+        async (req: IncomingMessage, res: ServerResponse, next: () => void) => {
+          const route = req.url ? API_ROUTES.find((r) => req.url!.startsWith(r.prefix)) : undefined
+          if (!route) {
+            next()
+            return
           }
-          const request = new Request(new URL(req.url!, 'http://localhost'), {
-            method: req.method,
-            headers: {
-              'content-type': req.headers['content-type'] ?? 'application/json',
-              // /api/tts cần header này để biết user đã đăng nhập chưa (trả khoá giải mã hay không)
-              ...(req.headers['authorization'] ? { authorization: req.headers['authorization'] as string } : {}),
-            },
-            // GET/HEAD không được có body trong Fetch API
-            body: req.method && req.method !== 'GET' && req.method !== 'HEAD' ? body : undefined,
-          })
-          const response = await mod.default(request)
 
-          res.statusCode = response.status
-          response.headers.forEach((value, key) => res.setHeader(key, value))
-          res.end(await response.text())
-        } catch (err) {
-          res.statusCode = 500
-          res.setHeader('content-type', 'application/json')
-          res.end(JSON.stringify({ error: (err as Error).message }))
-        }
-      })
+          try {
+            // Đọc body cho các method có payload (POST) — /api/tts nhận JSON body.
+            const body = await readRequestBody(req)
+
+            // ssrLoadModule: để Vite tự biên dịch TypeScript + import nội bộ (./_lib/...)
+            // bằng đúng pipeline thật, không phải viết/duy trì 2 bản logic khác nhau.
+            const mod = (await server.ssrLoadModule(route.module)) as {
+              default: (request: Request) => Promise<Response>
+            }
+            const request = new Request(new URL(req.url!, 'http://localhost'), {
+              method: req.method,
+              headers: {
+                'content-type': req.headers['content-type'] ?? 'application/json',
+                // /api/tts cần header này để biết user đã đăng nhập chưa (trả khoá giải mã hay không)
+                ...(req.headers['authorization']
+                  ? { authorization: req.headers['authorization'] as string }
+                  : {}),
+              },
+              // GET/HEAD không được có body trong Fetch API
+              body: req.method && req.method !== 'GET' && req.method !== 'HEAD' ? body : undefined,
+            })
+            const response = await mod.default(request)
+
+            res.statusCode = response.status
+            response.headers.forEach((value, key) => res.setHeader(key, value))
+            res.end(await response.text())
+          } catch (err) {
+            res.statusCode = 500
+            res.setHeader('content-type', 'application/json')
+            res.end(JSON.stringify({ error: (err as Error).message }))
+          }
+        },
+      )
     },
   }
 }
@@ -154,7 +173,9 @@ function apiEdgeDevMiddleware(): Plugin {
 function readRequestBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
     let data = ''
-    req.on('data', (chunk: Buffer) => { data += chunk.toString() })
+    req.on('data', (chunk: Buffer) => {
+      data += chunk.toString()
+    })
     req.on('end', () => resolve(data))
     req.on('error', reject)
   })

@@ -20,8 +20,14 @@ export default function PronounceButton({ word }: Props) {
     const utterance = new SpeechSynthesisUtterance(word)
     utterance.lang = 'en-US'
     const voices = window.speechSynthesis.getVoices()
-    const preferred = voices.find(v =>
-      v.lang.startsWith('en') && (voice === 'male' ? v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david') : v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('zira') || v.name.toLowerCase().includes('samantha'))
+    const preferred = voices.find(
+      (v) =>
+        v.lang.startsWith('en') &&
+        (voice === 'male'
+          ? v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david')
+          : v.name.toLowerCase().includes('female') ||
+            v.name.toLowerCase().includes('zira') ||
+            v.name.toLowerCase().includes('samantha')),
     )
     if (preferred) utterance.voice = preferred
     window.speechSynthesis.cancel()
@@ -49,8 +55,11 @@ export default function PronounceButton({ word }: Props) {
       // Gửi kèm JWT để server xác thực người dùng
       const { data: sessionData } = await supabase.auth.getSession()
       const token = sessionData.session?.access_token
-      const headers: Record<string, string> = token ? { 'Authorization': `Bearer ${token}` } : {}
-      const res = await fetch(`/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}`, { headers })
+      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
+      const res = await fetch(
+        `/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}`,
+        { headers },
+      )
       const data = (await res.json()) as { audio_url?: string; error?: string }
 
       if (!res.ok || !data.audio_url) {

@@ -45,4 +45,6 @@ const out = FOUNDATION.map((circle) => ({
 
 fs.writeFileSync(OUT, JSON.stringify(out))
 const totalWords = out.reduce((s, c) => s + c.words.length, 0)
-console.log(`✅ Sinh curriculum.json: ${out.length} vòng, ${totalWords} từ, ${enriched} từ được gắn ipa_en từ từ điển`)
+console.log(
+  `✅ Sinh curriculum.json: ${out.length} vòng, ${totalWords} từ, ${enriched} từ được gắn ipa_en từ từ điển`,
+)

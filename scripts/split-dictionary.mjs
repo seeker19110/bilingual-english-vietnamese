@@ -23,7 +23,10 @@ let chunkCount = 0
 for (let i = 0; i < entries.length; i += PER_CHUNK) {
   const chunkN = Math.floor(i / PER_CHUNK)
   const batch = entries.slice(i, i + PER_CHUNK)
-  fs.writeFileSync(path.join(OUT_DIR, `chunk-${String(chunkN).padStart(3, '0')}.json`), JSON.stringify(batch))
+  fs.writeFileSync(
+    path.join(OUT_DIR, `chunk-${String(chunkN).padStart(3, '0')}.json`),
+    JSON.stringify(batch),
+  )
   chunkCount++
 }
 

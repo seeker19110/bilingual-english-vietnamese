@@ -25,7 +25,14 @@ export interface DictEntry {
 }
 
 // api/_lib/ → ../../public/data/dictionary
-const DICT_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'public', 'data', 'dictionary')
+const DICT_DIR = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  'public',
+  'data',
+  'dictionary',
+)
 
 let _all: DictEntry[] | null = null
 

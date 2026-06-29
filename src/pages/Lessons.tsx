@@ -7,7 +7,14 @@ import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
 import VoiceToggle from '../components/VoiceToggle'
 import { getDirection } from '../lib/storage'
-import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio, unlockAudio, prefetchSpeech } from '../lib/tts'
+import {
+  speak,
+  stopSpeaking,
+  pauseCurrentAudio,
+  resumeCurrentAudio,
+  unlockAudio,
+  prefetchSpeech,
+} from '../lib/tts'
 import { loadIndex, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
 import type { Direction } from '../types'
 
@@ -18,20 +25,46 @@ type AudioMode = 'en' | 'both' | 'vi'
 
 // ── Hệ thống màu sắc — giống CommonPhrases ───────────────────────────────────
 const COLORS = [
-  { bg: 'bg-accent-500/10', text: 'text-accent-400', border: 'border-accent-500/25', dot: 'bg-accent-400' },
-  { bg: 'bg-sky-500/10',     text: 'text-sky-400',     border: 'border-sky-500/25',     dot: 'bg-sky-400'     },
-  { bg: 'bg-violet-500/10',  text: 'text-violet-400',  border: 'border-violet-500/25',  dot: 'bg-violet-400'  },
-  { bg: 'bg-amber-500/10',   text: 'text-amber-400',   border: 'border-amber-500/25',   dot: 'bg-amber-400'   },
-  { bg: 'bg-pink-500/10',    text: 'text-pink-400',    border: 'border-pink-500/25',    dot: 'bg-pink-400'    },
-  { bg: 'bg-teal-500/10',    text: 'text-teal-400',    border: 'border-teal-500/25',    dot: 'bg-teal-400'    },
-  { bg: 'bg-rose-500/10',    text: 'text-rose-400',    border: 'border-rose-500/25',    dot: 'bg-rose-400'    },
-  { bg: 'bg-indigo-500/10',  text: 'text-indigo-400',  border: 'border-indigo-500/25',  dot: 'bg-indigo-400'  },
-  { bg: 'bg-orange-500/10',  text: 'text-orange-400',  border: 'border-orange-500/25',  dot: 'bg-orange-400'  },
-  { bg: 'bg-cyan-500/10',    text: 'text-cyan-400',    border: 'border-cyan-500/25',    dot: 'bg-cyan-400'    },
+  {
+    bg: 'bg-accent-500/10',
+    text: 'text-accent-400',
+    border: 'border-accent-500/25',
+    dot: 'bg-accent-400',
+  },
+  { bg: 'bg-sky-500/10', text: 'text-sky-400', border: 'border-sky-500/25', dot: 'bg-sky-400' },
+  {
+    bg: 'bg-violet-500/10',
+    text: 'text-violet-400',
+    border: 'border-violet-500/25',
+    dot: 'bg-violet-400',
+  },
+  {
+    bg: 'bg-amber-500/10',
+    text: 'text-amber-400',
+    border: 'border-amber-500/25',
+    dot: 'bg-amber-400',
+  },
+  { bg: 'bg-pink-500/10', text: 'text-pink-400', border: 'border-pink-500/25', dot: 'bg-pink-400' },
+  { bg: 'bg-teal-500/10', text: 'text-teal-400', border: 'border-teal-500/25', dot: 'bg-teal-400' },
+  { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/25', dot: 'bg-rose-400' },
+  {
+    bg: 'bg-indigo-500/10',
+    text: 'text-indigo-400',
+    border: 'border-indigo-500/25',
+    dot: 'bg-indigo-400',
+  },
+  {
+    bg: 'bg-orange-500/10',
+    text: 'text-orange-400',
+    border: 'border-orange-500/25',
+    dot: 'bg-orange-400',
+  },
+  { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/25', dot: 'bg-cyan-400' },
 ]
 
 function getColor(id: number) {
-  return COLORS[(id - 1) % COLORS.length]
+  // COLORS không rỗng; với id≥1 chỉ số luôn hợp lệ, fallback COLORS[0] phòng id lạ
+  return COLORS[(id - 1) % COLORS.length] ?? COLORS[0]!
 }
 
 // ── Trạng thái đồng bộ từng chữ: turn nào đang phát, ngôn ngữ nào, từ thứ mấy
@@ -43,7 +76,11 @@ interface WordSync {
 
 // Component highlight từng từ kiểu karaoke
 const WordText = memo(function WordText({
-  text, baseClass, wordSync, turnIdx, lang,
+  text,
+  baseClass,
+  wordSync,
+  turnIdx,
+  lang,
 }: {
   text: string
   baseClass: string
@@ -62,11 +99,16 @@ const WordText = memo(function WordText({
         if (/^\s+$/.test(part)) return <span key={i}>{part}</span>
         const thisIdx = wi++
         return (
-          <span key={i} className={
-            thisIdx === wordSync.wordIdx
-              ? 'text-accent-200 bg-accent-500/25 rounded px-0.5 transition-colors'
-              : 'transition-colors'
-          }>{part}</span>
+          <span
+            key={i}
+            className={
+              thisIdx === wordSync.wordIdx
+                ? 'text-accent-200 bg-accent-500/25 rounded px-0.5 transition-colors'
+                : 'transition-colors'
+            }
+          >
+            {part}
+          </span>
         )
       })}
     </p>
@@ -77,23 +119,33 @@ const WordText = memo(function WordText({
 export default function Lessons() {
   const dir: Direction = getDirection()
   const isA = dir === 'A'
-  const [index, setIndex]           = useState<LessonMeta[]>([])
-  const [query, setQuery]           = useState('')
-  const deferredQuery               = useDeferredValue(query)
+  const [index, setIndex] = useState<LessonMeta[]>([])
+  const [query, setQuery] = useState('')
+  const deferredQuery = useDeferredValue(query)
   const [selectedMeta, setSelectedMeta] = useState<LessonMeta | null>(null)
-  const [lesson, setLesson]         = useState<Lesson | null>(null)
+  const [lesson, setLesson] = useState<Lesson | null>(null)
   const [loadingLesson, setLoadingLesson] = useState(false)
 
-  useEffect(() => { loadIndex().then(setIndex) }, [])
+  useEffect(() => {
+    loadIndex().then(setIndex)
+  }, [])
 
   useEffect(() => {
-    if (!selectedMeta) { setLesson(null); return }
+    if (!selectedMeta) {
+      setLesson(null)
+      return
+    }
     let alive = true
     setLoadingLesson(true)
-    loadLesson(selectedMeta).then(l => {
-      if (alive) { setLesson(l); setLoadingLesson(false) }
+    loadLesson(selectedMeta).then((l) => {
+      if (alive) {
+        setLesson(l)
+        setLoadingLesson(false)
+      }
     })
-    return () => { alive = false }
+    return () => {
+      alive = false
+    }
   }, [selectedMeta])
 
   // ── Màn hình chi tiết bài học ─────────────────────────────────────────────
@@ -133,8 +185,12 @@ export default function Lessons() {
             title={isA ? 'Các bài hội thoại mẫu thông dụng' : 'Common sample dialogues'}
             subtitle={
               index.length > 0
-                ? (isA ? `${index.length} chủ đề hội thoại giao tiếp` : `${index.length} conversation topics`)
-                : (isA ? 'Hội thoại mẫu giao tiếp' : 'Conversation lessons')
+                ? isA
+                  ? `${index.length} chủ đề hội thoại giao tiếp`
+                  : `${index.length} conversation topics`
+                : isA
+                  ? 'Hội thoại mẫu giao tiếp'
+                  : 'Conversation lessons'
             }
           />
           {/* Search bar — chỉ hiện ở trên trên desktop */}
@@ -157,31 +213,45 @@ export default function Lessons() {
 }
 
 // ── Ô tìm kiếm dùng chung ────────────────────────────────────────────────────
-function SearchBar({ query, setQuery, isA, variant = 'desktop' }: {
+function SearchBar({
+  query,
+  setQuery,
+  isA,
+  variant = 'desktop',
+}: {
   query: string
   setQuery: (v: string) => void
   isA: boolean
   variant?: 'desktop' | 'mobile'
 }) {
   const inputId = variant === 'desktop' ? 'lesson-search-desktop' : 'lesson-search-mobile'
-  const label = isA ? 'Tìm chủ đề bài học (tiếng Anh hoặc tiếng Việt)' : 'Search lesson topics (English or Vietnamese)'
+  const label = isA
+    ? 'Tìm chủ đề bài học (tiếng Anh hoặc tiếng Việt)'
+    : 'Search lesson topics (English or Vietnamese)'
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" aria-hidden="true" />
+      <Search
+        className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none"
+        aria-hidden="true"
+      />
       <input
         id={inputId}
         name="query"
         type="search"
         aria-label={label}
         value={query}
-        onChange={e => setQuery(e.target.value)}
-        placeholder={isA ? 'Tìm bằng tiếng Anh hoặc tiếng Việt…' : 'Search in English or Vietnamese…'}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder={
+          isA ? 'Tìm bằng tiếng Anh hoặc tiếng Việt…' : 'Search in English or Vietnamese…'
+        }
         className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-accent-500/60 focus:bg-zinc-900 transition"
       />
       {query && (
-        <button onClick={() => setQuery('')}
+        <button
+          onClick={() => setQuery('')}
           aria-label={isA ? 'Xóa tìm kiếm' : 'Clear search'}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition p-0.5">
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition p-0.5"
+        >
           <X className="w-4 h-4" />
         </button>
       )}
@@ -190,7 +260,12 @@ function SearchBar({ query, setQuery, isA, variant = 'desktop' }: {
 }
 
 // ── Danh sách bài học — nhận query từ cha, IntersectionObserver lazy load ─────
-function LessonList({ lessons, isA, query, onSelect }: {
+function LessonList({
+  lessons,
+  isA,
+  query,
+  onSelect,
+}: {
   lessons: LessonMeta[]
   isA: boolean
   query: string
@@ -202,19 +277,24 @@ function LessonList({ lessons, isA, query, onSelect }: {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     if (!q) return lessons
-    return lessons.filter(l =>
-      l.title.toLowerCase().includes(q) || l.situation.toLowerCase().includes(q)
+    return lessons.filter(
+      (l) => l.title.toLowerCase().includes(q) || l.situation.toLowerCase().includes(q),
     )
   }, [query, lessons])
 
-  useEffect(() => { setVisible(PAGE_SIZE) }, [query])
+  useEffect(() => {
+    setVisible(PAGE_SIZE)
+  }, [query])
 
   useEffect(() => {
     const el = sentinelRef.current
     if (!el || visible >= filtered.length) return
-    const observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) setVisible(v => Math.min(v + PAGE_SIZE, filtered.length))
-    }, { rootMargin: '300px' })
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) setVisible((v) => Math.min(v + PAGE_SIZE, filtered.length))
+      },
+      { rootMargin: '300px' },
+    )
     observer.observe(el)
     return () => observer.disconnect()
   }, [visible, filtered.length])
@@ -231,7 +311,7 @@ function LessonList({ lessons, isA, query, onSelect }: {
 
       {/* Cards màu sắc — grid 2 cột trên màn rộng */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {shown.map(l => {
+        {shown.map((l) => {
           const c = getColor(l.id)
           return (
             <button
@@ -241,7 +321,9 @@ function LessonList({ lessons, isA, query, onSelect }: {
             >
               <div className="flex items-start gap-3">
                 {/* Số bài + chấm màu */}
-                <div className={`w-8 h-8 rounded-lg ${c.bg} flex items-center justify-center shrink-0 mt-0.5`}>
+                <div
+                  className={`w-8 h-8 rounded-lg ${c.bg} flex items-center justify-center shrink-0 mt-0.5`}
+                >
                   <span className={`text-xs font-bold ${c.text}`}>{l.id}</span>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -274,10 +356,15 @@ function LessonList({ lessons, isA, query, onSelect }: {
 }
 
 // ── Chi tiết bài học với audio player + karaoke ──────────────────────────────
-function LessonView({ lesson, isA, color, onBack }: {
+function LessonView({
+  lesson,
+  isA,
+  color,
+  onBack,
+}: {
   lesson: Lesson
   isA: boolean
-  color: typeof COLORS[0]
+  color: (typeof COLORS)[0]
   onBack: () => void
 }) {
   // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng thứ 2 cho B
@@ -285,22 +372,27 @@ function LessonView({ lesson, isA, color, onBack }: {
   const genderA = lesson.speakerAGender ?? 'female'
   const genderB = lesson.speakerBGender ?? 'male'
   const voiceA = genderA === 'female' ? 'female' : 'male'
-  const voiceB = genderB === genderA
-    ? (genderB === 'female' ? 'female2' : 'male2')
-    : (genderB === 'female' ? 'female' : 'male')
+  const voiceB =
+    genderB === genderA
+      ? genderB === 'female'
+        ? 'female2'
+        : 'male2'
+      : genderB === 'female'
+        ? 'female'
+        : 'male'
 
   const [activeTurn, setActiveTurn] = useState<number | null>(null)
-  const [playing,    setPlaying]    = useState(false)
-  const [paused,     setPaused]     = useState(false)
-  const [speed,      setSpeed]      = useState<Speed>(1)
-  const [mode,       setMode]       = useState<AudioMode>('en')
-  const [wordSync,   setWordSync]   = useState<WordSync | null>(null)
+  const [playing, setPlaying] = useState(false)
+  const [paused, setPaused] = useState(false)
+  const [speed, setSpeed] = useState<Speed>(1)
+  const [mode, setMode] = useState<AudioMode>('en')
+  const [wordSync, setWordSync] = useState<WordSync | null>(null)
 
-  const stopRef     = useRef(false)
-  const pauseRef    = useRef(false)
-  const speedRef    = useRef<Speed>(1)
-  const modeRef     = useRef<AudioMode>('en')
-  const turnRefs    = useRef<(HTMLDivElement | null)[]>([])
+  const stopRef = useRef(false)
+  const pauseRef = useRef(false)
+  const speedRef = useRef<Speed>(1)
+  const modeRef = useRef<AudioMode>('en')
+  const turnRefs = useRef<(HTMLDivElement | null)[]>([])
   const wordSyncRef = useRef<WordSync | null>(null)
 
   // Dừng audio khi thoát trang hoặc back về danh sách
@@ -311,30 +403,40 @@ function LessonView({ lesson, isA, color, onBack }: {
     }
   }, [])
 
-  function changeSpeed(s: Speed) { setSpeed(s); speedRef.current = s }
-  function changeMode(m: AudioMode) { setMode(m); modeRef.current = m }
+  function changeSpeed(s: Speed) {
+    setSpeed(s)
+    speedRef.current = s
+  }
+  function changeMode(m: AudioMode) {
+    setMode(m)
+    modeRef.current = m
+  }
 
   function syncWord(ws: WordSync | null) {
     const prev = wordSyncRef.current
     if (!ws) {
-      if (prev !== null) { wordSyncRef.current = null; setWordSync(null) }
+      if (prev !== null) {
+        wordSyncRef.current = null
+        setWordSync(null)
+      }
       return
     }
-    if (prev?.turnIdx === ws.turnIdx && prev?.lang === ws.lang && prev?.wordIdx === ws.wordIdx) return
+    if (prev?.turnIdx === ws.turnIdx && prev?.lang === ws.lang && prev?.wordIdx === ws.wordIdx)
+      return
     wordSyncRef.current = ws
     setWordSync({ ...ws })
   }
 
   async function startPlayAll() {
     unlockAudio() // mở khoá audio iOS NGAY trong cú bấm (trước mọi await)
-    stopRef.current  = false
+    stopRef.current = false
     pauseRef.current = false
     setPlaying(true)
     setPaused(false)
     setActiveTurn(null)
 
     const targetLang = isA ? 'en-US' : 'vi-VN'
-    const transLang  = isA ? 'vi-VN' : 'en-US'
+    const transLang = isA ? 'vi-VN' : 'en-US'
 
     // Nạp TRƯỚC audio các lượt (chạy nền, tuần tự) để phát liền mạch không khựng.
     // Tải nhanh hơn đọc nên bộ nạp luôn đi trước trình phát; trùng câu thì gộp (dedup).
@@ -350,36 +452,45 @@ function LessonView({ lesson, isA, color, onBack }: {
 
     for (let i = 0; i < lesson.turns.length; i++) {
       if (stopRef.current) break
-      while (pauseRef.current && !stopRef.current) await new Promise(r => setTimeout(r, 100))
+      while (pauseRef.current && !stopRef.current) await new Promise((r) => setTimeout(r, 100))
       if (stopRef.current) break
 
       const t = lesson.turns[i]
+      if (!t) continue // i < turns.length nên t luôn có; guard để TS narrow kiểu
       setActiveTurn(i)
       turnRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
       const targetText = isA ? t.en : t.vi
-      const transText  = isA ? t.vi : t.en
-      const curMode    = modeRef.current
-      const curSpeed   = speedRef.current
-      const curVoice   = t.speaker === 'A' ? voiceA : voiceB
+      const transText = isA ? t.vi : t.en
+      const curMode = modeRef.current
+      const curSpeed = speedRef.current
+      const curVoice = t.speaker === 'A' ? voiceA : voiceB
 
       if (curMode === 'en') {
-        await speak(t.en, 'en-US', curVoice, curSpeed, wi => syncWord({ turnIdx: i, lang: 'en', wordIdx: wi }))
+        await speak(t.en, 'en-US', curVoice, curSpeed, (wi) =>
+          syncWord({ turnIdx: i, lang: 'en', wordIdx: wi }),
+        )
       } else if (curMode === 'vi') {
-        await speak(t.vi, 'vi-VN', curVoice, curSpeed, wi => syncWord({ turnIdx: i, lang: 'vi', wordIdx: wi }))
+        await speak(t.vi, 'vi-VN', curVoice, curSpeed, (wi) =>
+          syncWord({ turnIdx: i, lang: 'vi', wordIdx: wi }),
+        )
       } else {
         const tLang = isA ? 'en' : 'vi'
         const rLang = isA ? 'vi' : 'en'
-        await speak(targetText, targetLang, curVoice, curSpeed, wi => syncWord({ turnIdx: i, lang: tLang, wordIdx: wi }))
+        await speak(targetText, targetLang, curVoice, curSpeed, (wi) =>
+          syncWord({ turnIdx: i, lang: tLang, wordIdx: wi }),
+        )
         if (!stopRef.current) {
           syncWord(null)
-          await new Promise(r => setTimeout(r, 250))
-          await speak(transText, transLang, curVoice, curSpeed, wi => syncWord({ turnIdx: i, lang: rLang, wordIdx: wi }))
+          await new Promise((r) => setTimeout(r, 250))
+          await speak(transText, transLang, curVoice, curSpeed, (wi) =>
+            syncWord({ turnIdx: i, lang: rLang, wordIdx: wi }),
+          )
         }
       }
 
       syncWord(null)
-      if (!stopRef.current) await new Promise(r => setTimeout(r, 500))
+      if (!stopRef.current) await new Promise((r) => setTimeout(r, 500))
     }
 
     if (!stopRef.current) {
@@ -390,38 +501,59 @@ function LessonView({ lesson, isA, color, onBack }: {
     }
   }
 
-  function handlePause()  { pauseRef.current = true;  setPaused(true);  pauseCurrentAudio() }
-  function handleResume() { pauseRef.current = false; setPaused(false); resumeCurrentAudio() }
-  function handleStop()   {
-    stopRef.current = true; stopSpeaking()
-    setPlaying(false); setPaused(false); setActiveTurn(null); syncWord(null)
+  function handlePause() {
+    pauseRef.current = true
+    setPaused(true)
+    pauseCurrentAudio()
+  }
+  function handleResume() {
+    pauseRef.current = false
+    setPaused(false)
+    resumeCurrentAudio()
+  }
+  function handleStop() {
+    stopRef.current = true
+    stopSpeaking()
+    setPlaying(false)
+    setPaused(false)
+    setActiveTurn(null)
+    syncWord(null)
   }
 
   async function playTurn(idx: number) {
     unlockAudio() // mở khoá audio iOS NGAY trong cú bấm (trước mọi await)
     if (playing || paused) handleStop()
-    await new Promise(r => setTimeout(r, 80))
+    await new Promise((r) => setTimeout(r, 80))
 
     const t = lesson.turns[idx]
+    if (!t) return // idx ngoài phạm vi thì không phát gì
     const targetLang = isA ? 'en-US' : 'vi-VN'
-    const transLang  = isA ? 'vi-VN' : 'en-US'
+    const transLang = isA ? 'vi-VN' : 'en-US'
     const targetText = isA ? t.en : t.vi
-    const transText  = isA ? t.vi : t.en
-    const curMode    = modeRef.current
-    const curSpeed   = speedRef.current
-    const curVoice   = t.speaker === 'A' ? voiceA : voiceB
+    const transText = isA ? t.vi : t.en
+    const curMode = modeRef.current
+    const curSpeed = speedRef.current
+    const curVoice = t.speaker === 'A' ? voiceA : voiceB
 
     if (curMode === 'en') {
-      await speak(t.en, 'en-US', curVoice, curSpeed, wi => syncWord({ turnIdx: idx, lang: 'en', wordIdx: wi }))
+      await speak(t.en, 'en-US', curVoice, curSpeed, (wi) =>
+        syncWord({ turnIdx: idx, lang: 'en', wordIdx: wi }),
+      )
     } else if (curMode === 'vi') {
-      await speak(t.vi, 'vi-VN', curVoice, curSpeed, wi => syncWord({ turnIdx: idx, lang: 'vi', wordIdx: wi }))
+      await speak(t.vi, 'vi-VN', curVoice, curSpeed, (wi) =>
+        syncWord({ turnIdx: idx, lang: 'vi', wordIdx: wi }),
+      )
     } else {
       const tLang = isA ? 'en' : 'vi'
       const rLang = isA ? 'vi' : 'en'
-      await speak(targetText, targetLang, curVoice, curSpeed, wi => syncWord({ turnIdx: idx, lang: tLang, wordIdx: wi }))
+      await speak(targetText, targetLang, curVoice, curSpeed, (wi) =>
+        syncWord({ turnIdx: idx, lang: tLang, wordIdx: wi }),
+      )
       syncWord(null)
-      await new Promise(r => setTimeout(r, 250))
-      await speak(transText, transLang, curVoice, curSpeed, wi => syncWord({ turnIdx: idx, lang: rLang, wordIdx: wi }))
+      await new Promise((r) => setTimeout(r, 250))
+      await speak(transText, transLang, curVoice, curSpeed, (wi) =>
+        syncWord({ turnIdx: idx, lang: rLang, wordIdx: wi }),
+      )
     }
     syncWord(null)
   }
@@ -429,9 +561,9 @@ function LessonView({ lesson, isA, color, onBack }: {
   const isIdle = !playing && !paused
   const SPEEDS: Speed[] = [0.75, 1, 1.25]
   const MODES: { key: AudioMode; label: string }[] = [
-    { key: 'en',   label: 'EN' },
+    { key: 'en', label: 'EN' },
     { key: 'both', label: isA ? 'EN+VI' : 'VI+EN' },
-    { key: 'vi',   label: 'VI' },
+    { key: 'vi', label: 'VI' },
   ]
 
   return (
@@ -440,7 +572,6 @@ function LessonView({ lesson, isA, color, onBack }: {
       <div className="bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800/40 px-4 py-2.5">
         <div className="max-w-3xl mx-auto">
           <div className="glass rounded-xl px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-2">
-
             {/* Nút quay lại danh sách */}
             <button
               onClick={onBack}
@@ -454,29 +585,37 @@ function LessonView({ lesson, isA, color, onBack }: {
             {/* Play / Pause / Resume / Stop */}
             <div className="flex items-center gap-1.5">
               {isIdle && (
-                <button onClick={() => void startPlayAll()}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition">
+                <button
+                  onClick={() => void startPlayAll()}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition"
+                >
                   <Play className="w-3 h-3 fill-current" />
                   {isA ? 'Phát tất cả' : 'Play all'}
                 </button>
               )}
               {playing && !paused && (
-                <button onClick={handlePause}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition">
+                <button
+                  onClick={handlePause}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition"
+                >
                   <Pause className="w-3 h-3 fill-current" />
                   {isA ? 'Dừng' : 'Pause'}
                 </button>
               )}
               {paused && (
-                <button onClick={handleResume}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition">
+                <button
+                  onClick={handleResume}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 text-xs font-medium transition"
+                >
                   <Play className="w-3 h-3 fill-current" />
                   {isA ? 'Tiếp' : 'Resume'}
                 </button>
               )}
               {!isIdle && (
-                <button onClick={handleStop}
-                  className="w-6 h-6 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition">
+                <button
+                  onClick={handleStop}
+                  className="w-6 h-6 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
+                >
                   <Square className="w-3 h-3 fill-current" />
                 </button>
               )}
@@ -486,13 +625,16 @@ function LessonView({ lesson, isA, color, onBack }: {
 
             {/* Tốc độ */}
             <div className="flex items-center gap-1">
-              {SPEEDS.map(s => (
-                <button key={s} onClick={() => changeSpeed(s)}
+              {SPEEDS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => changeSpeed(s)}
                   className={`px-1.5 py-0.5 rounded text-xs font-medium transition ${
                     speed === s
                       ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40'
                       : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
-                  }`}>
+                  }`}
+                >
                   {s}×
                 </button>
               ))}
@@ -503,13 +645,16 @@ function LessonView({ lesson, isA, color, onBack }: {
             {/* Chế độ nghe */}
             <div className="flex items-center gap-1">
               <Volume2 className="w-3 h-3 text-zinc-400 shrink-0" />
-              {MODES.map(m => (
-                <button key={m.key} onClick={() => changeMode(m.key)}
+              {MODES.map((m) => (
+                <button
+                  key={m.key}
+                  onClick={() => changeMode(m.key)}
                   className={`px-1.5 py-0.5 rounded text-xs font-medium transition ${
                     mode === m.key
                       ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40'
                       : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
-                  }`}>
+                  }`}
+                >
                   {m.label}
                 </button>
               ))}
@@ -519,7 +664,9 @@ function LessonView({ lesson, isA, color, onBack }: {
             {playing && activeTurn !== null && (
               <div className="ml-auto flex items-center gap-1 shrink-0">
                 <div className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" />
-                <span className="text-[11px] text-zinc-400">{activeTurn + 1}/{lesson.turns.length}</span>
+                <span className="text-[11px] text-zinc-400">
+                  {activeTurn + 1}/{lesson.turns.length}
+                </span>
               </div>
             )}
           </div>
@@ -531,30 +678,37 @@ function LessonView({ lesson, isA, color, onBack }: {
         <div className="max-w-3xl mx-auto px-4 py-4 space-y-3 pb-8">
           {lesson.turns.map((t, i) => {
             const isActive = activeTurn === i
-            const isLeft   = t.speaker === 'A'
+            const isLeft = t.speaker === 'A'
 
             return (
               <div
                 key={i}
-                ref={el => { turnRefs.current[i] = el }}
+                ref={(el) => {
+                  turnRefs.current[i] = el
+                }}
                 className={`flex ${isLeft ? 'justify-start' : 'justify-end'}`}
               >
-                <div className={`max-w-[85%] rounded-2xl p-3.5 transition-all duration-300 ${
-                  isActive
-                    ? isLeft
-                      ? `${color.bg} border ${color.border} shadow-lg`
-                      : 'bg-sky-500/15 border border-sky-500/50 shadow-lg shadow-sky-500/10'
-                    : isLeft
-                      ? 'bg-zinc-900 border border-zinc-800'
-                      : 'bg-accent-500/10 border border-accent-500/30'
-                }`}>
+                <div
+                  className={`max-w-[85%] rounded-2xl p-3.5 transition-all duration-300 ${
+                    isActive
+                      ? isLeft
+                        ? `${color.bg} border ${color.border} shadow-lg`
+                        : 'bg-sky-500/15 border border-sky-500/50 shadow-lg shadow-sky-500/10'
+                      : isLeft
+                        ? 'bg-zinc-900 border border-zinc-800'
+                        : 'bg-accent-500/10 border border-accent-500/30'
+                  }`}
+                >
                   {/* Nhãn speaker + nút phát + nút kiểm tra phát âm */}
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <p className="text-[11px] font-medium text-zinc-400">
                       {t.speaker === 'A'
-                        ? (isA ? (lesson.speakerAName?.vi ?? 'Người A') : (lesson.speakerAName?.en ?? 'Person A'))
-                        : (isA ? (lesson.speakerBName?.vi ?? 'Người B') : (lesson.speakerBName?.en ?? 'Person B'))
-                      }
+                        ? isA
+                          ? (lesson.speakerAName?.vi ?? 'Người A')
+                          : (lesson.speakerAName?.en ?? 'Person A')
+                        : isA
+                          ? (lesson.speakerBName?.vi ?? 'Người B')
+                          : (lesson.speakerBName?.en ?? 'Person B')}
                     </p>
                     <div className="flex items-center gap-1">
                       <InlinePronounce
@@ -604,24 +758,40 @@ function LessonView({ lesson, isA, color, onBack }: {
 }
 
 // ── Kiểm tra phát âm inline cho 1 câu hội thoại ──────────────────────────────
-export function InlinePronounce({ text, lang, isA }: {
-  text: string; lang: 'en-US' | 'vi-VN'; isA: boolean
+export function InlinePronounce({
+  text,
+  lang,
+  isA,
+}: {
+  text: string
+  lang: 'en-US' | 'vi-VN'
+  isA: boolean
 }) {
-  const [open,   setOpen]   = useState(false)
+  const [open, setOpen] = useState(false)
   const [status, setStatus] = useState<'idle' | 'listening'>('idle')
-  const [score,  setScore]  = useState<number | null>(null)
-  const [heard,  setHeard]  = useState('')
-  const [words,  setWords]  = useState<Array<{ word: string; ok: boolean }>>([])
-  const [err,    setErr]    = useState('')
+  const [score, setScore] = useState<number | null>(null)
+  const [heard, setHeard] = useState('')
+  const [words, setWords] = useState<Array<{ word: string; ok: boolean }>>([])
+  const [err, setErr] = useState('')
   const stopRef = useRef<(() => void) | null>(null)
 
   // Dừng nhận diện giọng nói khi rời trang/đóng component để micro KHÔNG mở dai dẳng
   // (~20s tới khi Web Speech tự timeout) và tránh setState sau khi đã unmount.
-  useEffect(() => () => { stopRef.current?.() }, [])
+  useEffect(
+    () => () => {
+      stopRef.current?.()
+    },
+    [],
+  )
 
   if (!isSTTSupported()) return null
 
-  function reset() { setScore(null); setHeard(''); setWords([]); setErr('') }
+  function reset() {
+    setScore(null)
+    setHeard('')
+    setWords([])
+    setErr('')
+  }
 
   function start() {
     reset()
@@ -639,18 +809,27 @@ export function InlinePronounce({ text, lang, isA }: {
           setErr(isA ? 'Không nghe rõ, thử lại.' : 'Did not catch that.')
         }
       },
-      () => { setStatus('idle'); setErr(isA ? 'Lỗi micro.' : 'Mic error.') },
+      () => {
+        setStatus('idle')
+        setErr(isA ? 'Lỗi micro.' : 'Mic error.')
+      },
     )
   }
 
-  function stop() { stopRef.current?.(); setStatus('idle') }
+  function stop() {
+    stopRef.current?.()
+    setStatus('idle')
+  }
 
   const fb = score !== null ? pronounceFeedback(score, isA) : null
 
   if (!open) {
     return (
       <button
-        onClick={() => { setOpen(true); reset() }}
+        onClick={() => {
+          setOpen(true)
+          reset()
+        }}
         title={isA ? 'Kiểm tra phát âm câu này' : 'Check pronunciation'}
         className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-zinc-500 hover:text-violet-300 hover:bg-violet-500/15 transition"
       >
@@ -670,12 +849,24 @@ export function InlinePronounce({ text, lang, isA }: {
               : 'bg-violet-500/20 text-violet-300 hover:bg-violet-500/30'
           }`}
         >
-          {status === 'listening'
-            ? <><Square className="w-3 h-3" /> {isA ? 'Dừng' : 'Stop'}</>
-            : <><Mic className="w-3 h-3" /> {isA ? 'Nói lại' : 'Repeat'}</>}
+          {status === 'listening' ? (
+            <>
+              <Square className="w-3 h-3" /> {isA ? 'Dừng' : 'Stop'}
+            </>
+          ) : (
+            <>
+              <Mic className="w-3 h-3" /> {isA ? 'Nói lại' : 'Repeat'}
+            </>
+          )}
         </button>
-        <button onClick={() => { stop(); setOpen(false); reset() }}
-          className="text-[11px] text-zinc-500 hover:text-zinc-300 transition">
+        <button
+          onClick={() => {
+            stop()
+            setOpen(false)
+            reset()
+          }}
+          className="text-[11px] text-zinc-500 hover:text-zinc-300 transition"
+        >
           {isA ? 'Đóng' : 'Close'}
         </button>
         {status === 'listening' && (
@@ -687,19 +878,30 @@ export function InlinePronounce({ text, lang, isA }: {
 
       {fb && (
         <div className="space-y-1.5">
-          <p className={`text-xs font-bold ${fb.color}`}>{score}% · {fb.label}</p>
+          <p className={`text-xs font-bold ${fb.color}`}>
+            {score}% · {fb.label}
+          </p>
           {words.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {words.map((w, i) => (
-                <span key={i} className={`px-1.5 py-0.5 rounded text-xs ${
-                  w.ok ? 'bg-accent-500/15 text-accent-300' : 'bg-rose-500/15 text-rose-300'
-                }`}>{w.word}</span>
+                <span
+                  key={i}
+                  className={`px-1.5 py-0.5 rounded text-xs ${
+                    w.ok ? 'bg-accent-500/15 text-accent-300' : 'bg-rose-500/15 text-rose-300'
+                  }`}
+                >
+                  {w.word}
+                </span>
               ))}
             </div>
           )}
-          <p className="text-[11px] text-zinc-400">{isA ? 'Bạn đọc' : 'You said'}: "{heard}"</p>
-          <button onClick={start}
-            className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-zinc-300 transition">
+          <p className="text-[11px] text-zinc-400">
+            {isA ? 'Bạn đọc' : 'You said'}: "{heard}"
+          </p>
+          <button
+            onClick={start}
+            className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-zinc-300 transition"
+          >
             <RotateCcw className="w-2.5 h-2.5" /> {isA ? 'Thử lại' : 'Retry'}
           </button>
         </div>

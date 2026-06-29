@@ -29,7 +29,7 @@ export async function subscribePush(accessToken: string, remindHour?: number): P
       console.warn('[push] Failed to fetch VAPID key:', res.status)
       return false
     }
-    const data = await res.json() as unknown
+    const data = (await res.json()) as unknown
     if (!data || typeof data !== 'object' || !('publicKey' in data)) {
       console.warn('[push] Invalid VAPID response')
       return false
@@ -50,17 +50,19 @@ export async function subscribePush(accessToken: string, remindHour?: number): P
 
     // Subscribe push (Notification.requestPermission đã hỏi ở trên)
     const existing = await reg.pushManager.getSubscription()
-    const sub = existing ?? await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(publicKey) as unknown as ArrayBuffer,
-    })
+    const sub =
+      existing ??
+      (await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey) as unknown as ArrayBuffer,
+      }))
 
     // Gửi subscription lên server (kèm giờ nhắc nếu có)
     const r = await fetch('/api/push', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ action: 'subscribe', subscription: sub.toJSON(), remindHour }),
     })
@@ -68,7 +70,7 @@ export async function subscribePush(accessToken: string, remindHour?: number): P
       console.warn('[push] Failed to subscribe:', r.status)
       return false
     }
-    const respData = await r.json() as unknown
+    const respData = (await r.json()) as unknown
     if (!respData || typeof respData !== 'object' || !('ok' in respData)) {
       console.warn('[push] Invalid subscribe response')
       return false
@@ -90,7 +92,7 @@ export async function unsubscribePush(accessToken: string): Promise<boolean> {
 
     await fetch('/api/push', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
       body: JSON.stringify({ action: 'unsubscribe', subscription: sub.toJSON() }),
     })
     await sub.unsubscribe()
@@ -102,8 +104,8 @@ export async function unsubscribePush(accessToken: string): Promise<boolean> {
 
 // Chuyển VAPID public key từ base64url sang Uint8Array (PushManager yêu cầu)
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4)
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
   const raw = atob(base64)
-  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)))
+  return Uint8Array.from([...raw].map((c) => c.charCodeAt(0)))
 }

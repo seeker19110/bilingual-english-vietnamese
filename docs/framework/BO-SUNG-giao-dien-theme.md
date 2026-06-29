@@ -5,9 +5,10 @@
 > File tokens kèm theo: `styles/theme.css` (ở gốc repo).
 
 ## Nguyên tắc
+
 - **Dùng biến (design tokens), không hard-code màu** trong component → một nguồn sự thật, đổi theme là cả app đổi.
-- **Tương phản đạt WCAG AA** ở *cả hai* chế độ (đã chọn màu trong `styles/theme.css` để đạt; vẫn kiểm lại bằng axe — xem Nhóm 2).
-- **Không "nháy" theme sai khi tải trang** (no flash of wrong theme): đặt theme *trước khi* trang vẽ.
+- **Tương phản đạt WCAG AA** ở _cả hai_ chế độ (đã chọn màu trong `styles/theme.css` để đạt; vẫn kiểm lại bằng axe — xem Nhóm 2).
+- **Không "nháy" theme sai khi tải trang** (no flash of wrong theme): đặt theme _trước khi_ trang vẽ.
 - **Mặc định Dark blue**, kể cả khi máy người dùng đang để Light (trừ khi bạn bật khối tùy chọn trong `theme.css`).
 
 ## Bước 1 — Nạp tokens
@@ -23,7 +24,7 @@ Import `styles/theme.css` ở layout gốc (Next App Router: `app/layout.tsx` ho
 ## Bước 2 — Nối tokens vào Tailwind (v4)
 
 Tailwind v4 cấu hình theme bằng CSS. Thêm khối `@theme inline` để các tiện ích Tailwind
-(`bg-background`, `text-foreground`, `border-border`...) trỏ tới biến *chạy theo theme*:
+(`bg-background`, `text-foreground`, `border-border`...) trỏ tới biến _chạy theo theme_:
 
 ```css
 /* app/globals.css — sau hai dòng @import ở trên */
@@ -51,6 +52,7 @@ Tailwind v4 cấu hình theme bằng CSS. Thêm khối `@theme inline` để cá
 > trỏ `'background': 'var(--background)'` trong `tailwind.config`.)
 
 Giờ viết UI bằng token, ví dụ:
+
 ```tsx
 <div className="bg-background text-foreground">
   <button className="bg-primary text-primary-foreground rounded-lg px-4 py-2">Lưu</button>
@@ -73,7 +75,7 @@ const noFlashTheme = `
       // không có lựa chọn đã lưu → để mặc định Dark blue (không set gì)
     } catch (e) {}
   })();
-`;
+`
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -83,7 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>{children}</body>
     </html>
-  );
+  )
 }
 ```
 
@@ -92,24 +94,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ## Bước 4 — Nút chuyển theme
 
 ```tsx
-'use client';
-import { useEffect, useState } from 'react';
+'use client'
+import { useEffect, useState } from 'react'
 
-type Theme = 'light' | 'dark';
+type Theme = 'light' | 'dark'
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>('dark'); // mặc định Dark blue
+  const [theme, setTheme] = useState<Theme>('dark') // mặc định Dark blue
 
   useEffect(() => {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'light' || saved === 'dark') setTheme(saved);
-  }, []);
+    const saved = localStorage.getItem('theme')
+    if (saved === 'light' || saved === 'dark') setTheme(saved)
+  }, [])
 
   function toggle() {
-    const next: Theme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
+    const next: Theme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    document.documentElement.setAttribute('data-theme', next)
+    localStorage.setItem('theme', next)
   }
 
   return (
@@ -121,11 +123,12 @@ export function ThemeToggle() {
     >
       {theme === 'dark' ? '☀️ Sáng' : '🌙 Tối'}
     </button>
-  );
+  )
 }
 ```
 
 ## Checklist khi làm UI có theme
+
 - [ ] Không hard-code mã màu (`#fff`, `bg-blue-500`...) cho nền/chữ — dùng token (`bg-background`, `text-foreground`...).
 - [ ] Thử **cả hai** chế độ: không có chữ "tàng hình", không mất viền, ảnh/biểu đồ vẫn đọc được.
 - [ ] Tương phản đạt **AA** ở cả hai chế độ (axe + kiểm tay phần tử quan trọng).

@@ -8,7 +8,7 @@ import SpeakButton from './SpeakButton'
 
 interface Props {
   userId: string
-  onLearnedChange?: () => void  // gọi sau khi đánh dấu để cha cập nhật thanh mốc
+  onLearnedChange?: () => void // gọi sau khi đánh dấu để cha cập nhật thanh mốc
 }
 
 const DECK_SIZE = 30 // mỗi lượt luyện 30 thẻ cho gọn
@@ -27,12 +27,19 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
   const loadDeck = useCallback(() => {
     setLoading(true)
     fetchRandomEntries(DECK_SIZE)
-      .then((cards) => { setDeck(cards); setIdx(0); setFlipped(false); setKnown(0) })
+      .then((cards) => {
+        setDeck(cards)
+        setIdx(0)
+        setFlipped(false)
+        setKnown(0)
+      })
       .catch(() => setDeck([]))
       .finally(() => setLoading(false))
   }, [])
 
-  useEffect(() => { loadDeck() }, [loadDeck])
+  useEffect(() => {
+    loadDeck()
+  }, [loadDeck])
 
   const card = deck[idx]
   const done = deck.length > 0 && idx >= deck.length
@@ -42,14 +49,14 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
     if (!card) return
     if (remembered) {
       markLearned(userId, card.word)
-      setKnown(k => k + 1)
+      setKnown((k) => k + 1)
     } else {
       // Chưa nhớ → bỏ đánh dấu (nếu trước đó từng đánh dấu thuộc)
       unmarkLearned(userId, card.word)
     }
     onLearnedChange?.()
     setFlipped(false)
-    setIdx(i => i + 1)
+    setIdx((i) => i + 1)
   }
 
   // Đang tải bộ thẻ
@@ -86,7 +93,9 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
     <div className="animate-fade-in">
       {/* Thanh tiến độ trong lượt */}
       <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
-        <span>Thẻ {idx + 1}/{deck.length}</span>
+        <span>
+          Thẻ {idx + 1}/{deck.length}
+        </span>
         <span className="text-accent-400">{known} đã nhớ</span>
       </div>
       <div className="h-1 bg-zinc-800 rounded-full mb-4">
@@ -98,13 +107,15 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
 
       {/* Thẻ — bấm để lật */}
       <button
-        onClick={() => setFlipped(f => !f)}
+        onClick={() => setFlipped((f) => !f)}
         className="glass w-full rounded-2xl p-6 sm:p-8 min-h-[160px] sm:min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition mb-4"
       >
         {!flipped ? (
           <>
             <span className="font-bold text-white text-2xl mb-2">{card.word}</span>
-            {card.ipa_en && <span className="text-sm text-accent-400/70 font-mono">{card.ipa_en}</span>}
+            {card.ipa_en && (
+              <span className="text-sm text-accent-400/70 font-mono">{card.ipa_en}</span>
+            )}
             <span className="flex items-center gap-1 text-xs text-zinc-400 mt-4">
               <Eye className="w-3.5 h-3.5" /> Bấm để xem nghĩa
             </span>
@@ -112,12 +123,8 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
         ) : (
           <>
             <span className="text-lg text-zinc-100 font-medium mb-2">{card.vi}</span>
-            {card.ex_en && (
-              <span className="text-xs text-zinc-400 italic mt-1">{card.ex_en}</span>
-            )}
-            {card.ex_vi && (
-              <span className="text-xs text-zinc-400 mt-0.5">{card.ex_vi}</span>
-            )}
+            {card.ex_en && <span className="text-xs text-zinc-400 italic mt-1">{card.ex_en}</span>}
+            {card.ex_vi && <span className="text-xs text-zinc-400 mt-0.5">{card.ex_vi}</span>}
           </>
         )}
       </button>

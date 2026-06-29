@@ -17,7 +17,7 @@ export function isRecordingSupported(): boolean {
 
 export interface Recorder {
   stop: () => Promise<string> // dừng ghi + trả về văn bản nhận diện
-  cancel: () => void          // hủy, không gọi API
+  cancel: () => void // hủy, không gọi API
 }
 
 // Lấy Supabase JWT để server xác thực (giống src/lib/ai.ts).
@@ -55,7 +55,11 @@ export async function startRecording(lang: 'en' | 'vi'): Promise<Recorder> {
 
   return {
     cancel() {
-      try { rec.stop() } catch { /* đã dừng rồi */ }
+      try {
+        rec.stop()
+      } catch {
+        /* đã dừng rồi */
+      }
       cleanup()
     },
     stop() {
@@ -64,7 +68,10 @@ export async function startRecording(lang: 'en' | 'vi'): Promise<Recorder> {
           try {
             cleanup()
             const blob = new Blob(chunks, { type: mime || 'audio/webm' })
-            if (blob.size === 0) { resolve(''); return }
+            if (blob.size === 0) {
+              resolve('')
+              return
+            }
             const b64 = await blobToBase64(blob)
             const text = await transcribe(b64, blob.type, lang)
             resolve(text)
@@ -73,7 +80,9 @@ export async function startRecording(lang: 'en' | 'vi'): Promise<Recorder> {
             reject(e)
           }
         }
-        try { rec.stop() } catch (e) {
+        try {
+          rec.stop()
+        } catch (e) {
           cleanup()
           reject(e)
         }

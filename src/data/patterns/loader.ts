@@ -2,7 +2,10 @@
 // nằm trong /public/data/patterns/ và được tải bằng fetch() thay vì import.meta.glob.
 // index.json (chỉ meta) được tải 1 lần; chunk chỉ tải khi cần (lazy load).
 
-export interface Sentence { en: string; vi: string }
+export interface Sentence {
+  en: string
+  vi: string
+}
 export interface SubjectMeta {
   starter: string
   category: string
@@ -29,13 +32,19 @@ export function loadIndex(): Promise<SubjectMeta[]> {
 
 // Để gọi đồng bộ sau khi đã tải xong (dùng ở những nơi cũ dùng import trực tiếp).
 let _indexCache: SubjectMeta[] | null = null
-loadIndex().then((d) => { _indexCache = d })
-export function getIndex(): SubjectMeta[] { return _indexCache ?? [] }
+loadIndex().then((d) => {
+  _indexCache = d
+})
+export function getIndex(): SubjectMeta[] {
+  return _indexCache ?? []
+}
 
 // Xuất thêm INDEX để tương thích ngược với code cũ dùng `import { INDEX }`.
 // Giá trị này là mảng rỗng cho đến khi loadIndex() resolve — dùng getIndex() nếu cần sync.
 export const INDEX: SubjectMeta[] = []
-loadIndex().then((d) => { INDEX.splice(0, INDEX.length, ...d) })
+loadIndex().then((d) => {
+  INDEX.splice(0, INDEX.length, ...d)
+})
 
 const cache = new Map<number, Subject[]>()
 
@@ -55,5 +64,5 @@ export async function loadChunk(n: number): Promise<Subject[]> {
 // Tải đầy đủ 1 chủ thể dựa trên meta.
 export async function loadSubject(meta: SubjectMeta): Promise<Subject | null> {
   const chunk = await loadChunk(meta.chunk)
-  return chunk[meta.idx] ?? chunk.find(s => s.starter === meta.starter) ?? null
+  return chunk[meta.idx] ?? chunk.find((s) => s.starter === meta.starter) ?? null
 }

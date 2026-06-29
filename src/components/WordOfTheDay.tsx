@@ -12,9 +12,17 @@ interface Props {
 }
 
 const POS_LABEL: Record<string, string> = {
-  n: 'Danh từ', v: 'Động từ', adj: 'Tính từ', adv: 'Trạng từ',
-  prep: 'Giới từ', conj: 'Liên từ', pron: 'Đại từ', interj: 'Thán từ',
-  art: 'Mạo từ', num: 'Số từ', idiom: 'Thành ngữ',
+  n: 'Danh từ',
+  v: 'Động từ',
+  adj: 'Tính từ',
+  adv: 'Trạng từ',
+  prep: 'Giới từ',
+  conj: 'Liên từ',
+  pron: 'Đại từ',
+  interj: 'Thán từ',
+  art: 'Mạo từ',
+  num: 'Số từ',
+  idiom: 'Thành ngữ',
 }
 
 // Thẻ "Từ vựng hôm nay" — hiển thị các từ trong lộ trình học hôm nay,
@@ -23,7 +31,9 @@ export default function WordOfTheDay({ entries, isA = true }: Props) {
   const [idx, setIdx] = useState(0)
 
   // Danh sách đổi (vd: sau khi học thêm từ) → đưa con trỏ về đầu cho an toàn.
-  useEffect(() => { setIdx(0) }, [entries])
+  useEffect(() => {
+    setIdx(0)
+  }, [entries])
 
   if (entries.length === 0) return null
 
@@ -31,6 +41,8 @@ export default function WordOfTheDay({ entries, isA = true }: Props) {
   const safeIdx = Math.min(idx, entries.length - 1)
   const entry = entries[safeIdx]
   const total = entries.length
+  // safeIdx luôn trong [0, length-1] nên entry luôn có; guard này chỉ để TS narrow kiểu.
+  if (!entry) return null
 
   const go = (delta: number) => setIdx((safeIdx + delta + total) % total)
 
@@ -83,9 +95,19 @@ export default function WordOfTheDay({ entries, isA = true }: Props) {
       {/* Câu ví dụ — karaoke highlight từng chữ khi nghe */}
       {entry.ex_en && (
         <div className="mt-2 pl-3 border-l-2 border-zinc-700 space-y-1">
-          <KaraokeText text={entry.ex_en} lang="en-US" textClass="text-xs text-zinc-400 italic leading-relaxed" iconSize="xs" />
+          <KaraokeText
+            text={entry.ex_en}
+            lang="en-US"
+            textClass="text-xs text-zinc-400 italic leading-relaxed"
+            iconSize="xs"
+          />
           {entry.ex_vi && (
-            <KaraokeText text={entry.ex_vi} lang="vi-VN" textClass="text-xs text-zinc-400 leading-relaxed" iconSize="xs" />
+            <KaraokeText
+              text={entry.ex_vi}
+              lang="vi-VN"
+              textClass="text-xs text-zinc-400 leading-relaxed"
+              iconSize="xs"
+            />
           )}
         </div>
       )}

@@ -9,39 +9,167 @@
     "speakerBName": { "vi": "Nhân viên", "en": "Staff" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Hello! I'd like to rent a motorbike for three days to explore Da Nang.", "vi": "Xin chào! Tôi muốn thuê xe máy ba ngày để khám phá Đà Nẵng." },
-      { "speaker": "B", "en": "Welcome! Great choice — Da Nang is perfect for riding. What type of motorbike are you looking for?", "vi": "Chào mừng! Lựa chọn tuyệt vời — Đà Nẵng rất thích hợp để đi xe máy. Bạn muốn thuê loại xe nào?" },
-      { "speaker": "A", "en": "Something easy to ride. I can drive, but I'm not very experienced with big bikes.", "vi": "Loại dễ chạy thôi. Tôi biết đi, nhưng không nhiều kinh nghiệm với xe phân khối lớn." },
-      { "speaker": "B", "en": "I recommend our Honda Wave 110cc — very easy to handle, fuel-efficient, and perfect for city and coastal roads.", "vi": "Tôi khuyên Honda Wave 110cc — rất dễ điều khiển, tiết kiệm xăng và phù hợp cho đường phố lẫn đường ven biển." },
-      { "speaker": "A", "en": "That sounds good. What's the rental price per day?", "vi": "Nghe ổn. Giá thuê mỗi ngày là bao nhiêu?" },
-      { "speaker": "B", "en": "For the Wave 110, it's 120,000 VND per day. For three days, that's 360,000 in total.", "vi": "Wave 110 là 120 nghìn mỗi ngày. Ba ngày là 360 nghìn tổng cộng." },
-      { "speaker": "A", "en": "That's very reasonable. Does it include insurance?", "vi": "Giá hợp lý lắm. Có bao gồm bảo hiểm không?" },
-      { "speaker": "B", "en": "Basic insurance is included. If you want comprehensive coverage, it's an extra 30,000 per day.", "vi": "Bảo hiểm cơ bản đã bao gồm. Nếu bạn muốn bảo hiểm toàn diện thì thêm 30 nghìn mỗi ngày." },
-      { "speaker": "A", "en": "I'll take the comprehensive coverage. Better safe than sorry while traveling.", "vi": "Tôi sẽ lấy gói toàn diện. Đi du lịch thì an toàn hơn là hối tiếc." },
+      {
+        "speaker": "A",
+        "en": "Hello! I'd like to rent a motorbike for three days to explore Da Nang.",
+        "vi": "Xin chào! Tôi muốn thuê xe máy ba ngày để khám phá Đà Nẵng."
+      },
+      {
+        "speaker": "B",
+        "en": "Welcome! Great choice — Da Nang is perfect for riding. What type of motorbike are you looking for?",
+        "vi": "Chào mừng! Lựa chọn tuyệt vời — Đà Nẵng rất thích hợp để đi xe máy. Bạn muốn thuê loại xe nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Something easy to ride. I can drive, but I'm not very experienced with big bikes.",
+        "vi": "Loại dễ chạy thôi. Tôi biết đi, nhưng không nhiều kinh nghiệm với xe phân khối lớn."
+      },
+      {
+        "speaker": "B",
+        "en": "I recommend our Honda Wave 110cc — very easy to handle, fuel-efficient, and perfect for city and coastal roads.",
+        "vi": "Tôi khuyên Honda Wave 110cc — rất dễ điều khiển, tiết kiệm xăng và phù hợp cho đường phố lẫn đường ven biển."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds good. What's the rental price per day?",
+        "vi": "Nghe ổn. Giá thuê mỗi ngày là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "For the Wave 110, it's 120,000 VND per day. For three days, that's 360,000 in total.",
+        "vi": "Wave 110 là 120 nghìn mỗi ngày. Ba ngày là 360 nghìn tổng cộng."
+      },
+      {
+        "speaker": "A",
+        "en": "That's very reasonable. Does it include insurance?",
+        "vi": "Giá hợp lý lắm. Có bao gồm bảo hiểm không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Basic insurance is included. If you want comprehensive coverage, it's an extra 30,000 per day.",
+        "vi": "Bảo hiểm cơ bản đã bao gồm. Nếu bạn muốn bảo hiểm toàn diện thì thêm 30 nghìn mỗi ngày."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll take the comprehensive coverage. Better safe than sorry while traveling.",
+        "vi": "Tôi sẽ lấy gói toàn diện. Đi du lịch thì an toàn hơn là hối tiếc."
+      },
       { "speaker": "A", "en": "Does it come with a helmet?", "vi": "Xe có kèm mũ bảo hiểm không?" },
-      { "speaker": "B", "en": "Yes! One helmet is included free. A second one is 10,000 per day if you need it.", "vi": "Có! Một mũ bảo hiểm đã bao gồm miễn phí. Mũ thứ hai là 10 nghìn mỗi ngày nếu bạn cần." },
-      { "speaker": "A", "en": "Just one is fine. What documents do I need to provide?", "vi": "Một cái là đủ rồi. Tôi cần cung cấp giấy tờ gì?" },
-      { "speaker": "B", "en": "We need a copy of your ID or passport, and a deposit of 500,000 VND or your passport as collateral.", "vi": "Chúng tôi cần bản sao CCCD hoặc hộ chiếu của bạn, và đặt cọc 500 nghìn hoặc để lại hộ chiếu làm đảm bảo." },
-      { "speaker": "A", "en": "I'll leave the cash deposit — I'd rather keep my passport with me.", "vi": "Tôi sẽ đặt cọc tiền mặt — tôi muốn giữ hộ chiếu bên người." },
-      { "speaker": "B", "en": "Of course, that's no problem. Let me show you the bike first so you can check it.", "vi": "Được thôi, không vấn đề. Để tôi dẫn bạn ra xem xe trước để bạn kiểm tra." },
-      { "speaker": "A", "en": "I see a small scratch on the front fender. Can we note that before I take it?", "vi": "Tôi thấy có vết trầy nhỏ ở bùn trước. Mình ghi chú lại trước khi tôi lấy xe được không?" },
-      { "speaker": "B", "en": "Absolutely! We always do a condition check before rental. I'll note the scratch right here on the form.", "vi": "Chắc chắn rồi! Chúng tôi luôn kiểm tra tình trạng xe trước khi cho thuê. Tôi sẽ ghi vết trầy vào biên bản ngay đây." },
-      { "speaker": "A", "en": "Good. How much fuel is in it?", "vi": "Tốt. Xe còn bao nhiêu xăng?" },
-      { "speaker": "B", "en": "It's full — and please return it full as well. There's a petrol station two blocks away.", "vi": "Đầy bình — và vui lòng trả xe với bình đầy. Có trạm xăng cách đây hai dãy nhà." },
-      { "speaker": "A", "en": "Of course. What time do I need to return it on the last day?", "vi": "Dĩ nhiên rồi. Ngày cuối tôi phải trả xe lúc mấy giờ?" },
-      { "speaker": "B", "en": "Before 6 PM please. If you need a late return, let us know and we can arrange it for a small fee.", "vi": "Trước 6 giờ chiều nhé. Nếu bạn cần trả muộn, báo chúng tôi trước và chúng tôi có thể sắp xếp với một khoản phí nhỏ." },
-      { "speaker": "A", "en": "Understood. Do you have any recommendations for places to ride in Da Nang?", "vi": "Hiểu rồi. Bạn có gợi ý địa điểm nào để đi xe ở Đà Nẵng không?" },
-      { "speaker": "B", "en": "Definitely the Hai Van Pass — spectacular views! Also Marble Mountains, My Khe Beach, and the day trip to Hoi An.", "vi": "Nhất định phải đi Đèo Hải Vân — tầm nhìn ngoạn mục! Cũng nên đến Ngũ Hành Sơn, Bãi biển Mỹ Khê và đi ngày về Hội An." },
-      { "speaker": "A", "en": "I was planning on all of those! The Hai Van Pass is at the top of my list.", "vi": "Tôi đang định đi hết mấy chỗ đó! Đèo Hải Vân đứng đầu danh sách của tôi." },
-      { "speaker": "B", "en": "Go early in the morning — the mist over the mountains is magical and it's less busy.", "vi": "Đi sớm buổi sáng — sương mù trên núi rất huyền ảo và ít đông người hơn." },
-      { "speaker": "A", "en": "Great tip! Should I be careful of anything specific on the roads here?", "vi": "Mẹo hay đó! Tôi cần chú ý điều gì đặc biệt trên đường ở đây không?" },
-      { "speaker": "B", "en": "Watch out for sand on the coastal road — it can make the bike slip. And always wear your helmet of course.", "vi": "Chú ý cát trên đường ven biển — có thể làm trơn trượt xe. Và luôn đội mũ bảo hiểm dĩ nhiên rồi." },
-      { "speaker": "A", "en": "Noted. Is there a phone number I can reach if I have trouble with the bike?", "vi": "Ghi nhớ rồi. Có số điện thoại nào tôi có thể gọi nếu gặp sự cố với xe không?" },
-      { "speaker": "B", "en": "Yes, here's my card with our 24-hour emergency line. We'll come to you wherever you are in Da Nang.", "vi": "Có, đây là danh thiếp của tôi với đường dây khẩn cấp 24 giờ. Chúng tôi sẽ đến chỗ bạn dù bạn ở đâu ở Đà Nẵng." },
-      { "speaker": "A", "en": "That's very reassuring. Okay, I think I'm ready. Where do I sign?", "vi": "Nghe yên tâm lắm. Oke, tôi nghĩ mình sẵn sàng rồi. Tôi ký ở đâu?" },
-      { "speaker": "B", "en": "Right here at the bottom of this form. And here's the key and a bag for your belongings.", "vi": "Ngay đây ở cuối tờ hợp đồng này. Và đây là chìa khóa và túi để đồ của bạn." },
-      { "speaker": "A", "en": "Thank you so much! I'm really looking forward to exploring Da Nang by motorbike.", "vi": "Cảm ơn bạn nhiều lắm! Tôi rất háo hức được khám phá Đà Nẵng bằng xe máy." },
-      { "speaker": "B", "en": "Have a wonderful trip! Ride safe, and don't forget to watch the sunset from the Hai Van Pass!", "vi": "Chúc bạn chuyến đi tuyệt vời! Lái xe an toàn, và đừng quên ngắm hoàng hôn từ Đèo Hải Vân!" }
+      {
+        "speaker": "B",
+        "en": "Yes! One helmet is included free. A second one is 10,000 per day if you need it.",
+        "vi": "Có! Một mũ bảo hiểm đã bao gồm miễn phí. Mũ thứ hai là 10 nghìn mỗi ngày nếu bạn cần."
+      },
+      {
+        "speaker": "A",
+        "en": "Just one is fine. What documents do I need to provide?",
+        "vi": "Một cái là đủ rồi. Tôi cần cung cấp giấy tờ gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "We need a copy of your ID or passport, and a deposit of 500,000 VND or your passport as collateral.",
+        "vi": "Chúng tôi cần bản sao CCCD hoặc hộ chiếu của bạn, và đặt cọc 500 nghìn hoặc để lại hộ chiếu làm đảm bảo."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll leave the cash deposit — I'd rather keep my passport with me.",
+        "vi": "Tôi sẽ đặt cọc tiền mặt — tôi muốn giữ hộ chiếu bên người."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course, that's no problem. Let me show you the bike first so you can check it.",
+        "vi": "Được thôi, không vấn đề. Để tôi dẫn bạn ra xem xe trước để bạn kiểm tra."
+      },
+      {
+        "speaker": "A",
+        "en": "I see a small scratch on the front fender. Can we note that before I take it?",
+        "vi": "Tôi thấy có vết trầy nhỏ ở bùn trước. Mình ghi chú lại trước khi tôi lấy xe được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely! We always do a condition check before rental. I'll note the scratch right here on the form.",
+        "vi": "Chắc chắn rồi! Chúng tôi luôn kiểm tra tình trạng xe trước khi cho thuê. Tôi sẽ ghi vết trầy vào biên bản ngay đây."
+      },
+      {
+        "speaker": "A",
+        "en": "Good. How much fuel is in it?",
+        "vi": "Tốt. Xe còn bao nhiêu xăng?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's full — and please return it full as well. There's a petrol station two blocks away.",
+        "vi": "Đầy bình — và vui lòng trả xe với bình đầy. Có trạm xăng cách đây hai dãy nhà."
+      },
+      {
+        "speaker": "A",
+        "en": "Of course. What time do I need to return it on the last day?",
+        "vi": "Dĩ nhiên rồi. Ngày cuối tôi phải trả xe lúc mấy giờ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Before 6 PM please. If you need a late return, let us know and we can arrange it for a small fee.",
+        "vi": "Trước 6 giờ chiều nhé. Nếu bạn cần trả muộn, báo chúng tôi trước và chúng tôi có thể sắp xếp với một khoản phí nhỏ."
+      },
+      {
+        "speaker": "A",
+        "en": "Understood. Do you have any recommendations for places to ride in Da Nang?",
+        "vi": "Hiểu rồi. Bạn có gợi ý địa điểm nào để đi xe ở Đà Nẵng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Definitely the Hai Van Pass — spectacular views! Also Marble Mountains, My Khe Beach, and the day trip to Hoi An.",
+        "vi": "Nhất định phải đi Đèo Hải Vân — tầm nhìn ngoạn mục! Cũng nên đến Ngũ Hành Sơn, Bãi biển Mỹ Khê và đi ngày về Hội An."
+      },
+      {
+        "speaker": "A",
+        "en": "I was planning on all of those! The Hai Van Pass is at the top of my list.",
+        "vi": "Tôi đang định đi hết mấy chỗ đó! Đèo Hải Vân đứng đầu danh sách của tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Go early in the morning — the mist over the mountains is magical and it's less busy.",
+        "vi": "Đi sớm buổi sáng — sương mù trên núi rất huyền ảo và ít đông người hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Great tip! Should I be careful of anything specific on the roads here?",
+        "vi": "Mẹo hay đó! Tôi cần chú ý điều gì đặc biệt trên đường ở đây không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Watch out for sand on the coastal road — it can make the bike slip. And always wear your helmet of course.",
+        "vi": "Chú ý cát trên đường ven biển — có thể làm trơn trượt xe. Và luôn đội mũ bảo hiểm dĩ nhiên rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "Noted. Is there a phone number I can reach if I have trouble with the bike?",
+        "vi": "Ghi nhớ rồi. Có số điện thoại nào tôi có thể gọi nếu gặp sự cố với xe không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, here's my card with our 24-hour emergency line. We'll come to you wherever you are in Da Nang.",
+        "vi": "Có, đây là danh thiếp của tôi với đường dây khẩn cấp 24 giờ. Chúng tôi sẽ đến chỗ bạn dù bạn ở đâu ở Đà Nẵng."
+      },
+      {
+        "speaker": "A",
+        "en": "That's very reassuring. Okay, I think I'm ready. Where do I sign?",
+        "vi": "Nghe yên tâm lắm. Oke, tôi nghĩ mình sẵn sàng rồi. Tôi ký ở đâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Right here at the bottom of this form. And here's the key and a bag for your belongings.",
+        "vi": "Ngay đây ở cuối tờ hợp đồng này. Và đây là chìa khóa và túi để đồ của bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you so much! I'm really looking forward to exploring Da Nang by motorbike.",
+        "vi": "Cảm ơn bạn nhiều lắm! Tôi rất háo hức được khám phá Đà Nẵng bằng xe máy."
+      },
+      {
+        "speaker": "B",
+        "en": "Have a wonderful trip! Ride safe, and don't forget to watch the sunset from the Hai Van Pass!",
+        "vi": "Chúc bạn chuyến đi tuyệt vời! Lái xe an toàn, và đừng quên ngắm hoàng hôn từ Đèo Hải Vân!"
+      }
     ]
   },
   {
@@ -54,36 +182,152 @@
     "speakerBName": { "vi": "Nhân viên", "en": "Staff" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Hello, I'm interested in a day tour to Hoi An from Da Nang. Do you offer that?", "vi": "Xin chào, tôi muốn hỏi về tour ngày đi Hội An từ Đà Nẵng. Công ty có tour đó không?" },
-      { "speaker": "B", "en": "Yes, Hoi An is our most popular day tour! We run it every day. Have a seat and I'll tell you all about it.", "vi": "Có, Hội An là tour ngày phổ biến nhất của chúng tôi! Chúng tôi chạy mỗi ngày. Mời bạn ngồi và tôi sẽ giới thiệu chi tiết." },
-      { "speaker": "A", "en": "Great! What's included in the tour?", "vi": "Tốt quá! Tour bao gồm những gì?" },
-      { "speaker": "B", "en": "The tour includes round-trip transport from your hotel in Da Nang, an English-speaking guide, boat ride on the Thu Bon River, and a lantern-making workshop.", "vi": "Tour bao gồm đưa đón hai chiều từ khách sạn của bạn ở Đà Nẵng, hướng dẫn viên nói tiếng Anh, đi thuyền trên sông Thu Bồn và xưởng làm đèn lồng." },
-      { "speaker": "A", "en": "Oh, a lantern-making workshop! That sounds wonderful.", "vi": "Ồ, xưởng làm đèn lồng! Nghe tuyệt quá." },
-      { "speaker": "B", "en": "It's very popular with our guests. You'll make your own paper lantern and float it on the river at night.", "vi": "Rất được khách hàng yêu thích. Bạn sẽ tự làm đèn lồng giấy và thả trôi trên sông vào buổi tối." },
-      { "speaker": "A", "en": "Wait — this is a night tour? Not a day tour?", "vi": "Khoan — đây là tour ban đêm? Không phải tour ban ngày à?" },
-      { "speaker": "B", "en": "We have both! The day tour runs from 8 AM to 5 PM. The evening tour runs from 4 PM to 10 PM. Which would you prefer?", "vi": "Chúng tôi có cả hai! Tour ngày từ 8 giờ sáng đến 5 giờ chiều. Tour chiều tối từ 4 giờ đến 10 giờ tối. Bạn muốn loại nào?" },
-      { "speaker": "A", "en": "The evening tour sounds more magical. Lanterns floating on the river at night...", "vi": "Tour chiều tối nghe huyền diệu hơn. Đèn lồng thả trôi trên sông vào ban đêm..." },
-      { "speaker": "B", "en": "It truly is. And the Ancient Town looks spectacular lit up at night — especially on the 14th and 15th of the lunar month when vehicles are banned.", "vi": "Thật sự rất đẹp. Và Phố Cổ trông ngoạn mục khi được thắp sáng vào ban đêm — đặc biệt vào ngày 14 và 15 âm lịch khi cấm xe cộ." },
-      { "speaker": "A", "en": "Is today a vehicle-ban night?", "vi": "Tối nay có phải đêm cấm xe không?" },
-      { "speaker": "B", "en": "Let me check... No, not tonight. But the experience is still beautiful on any night.", "vi": "Để tôi kiểm tra... Không, tối nay không phải. Nhưng trải nghiệm vẫn tuyệt đêm nào cũng vậy." },
-      { "speaker": "A", "en": "What is the price per person?", "vi": "Giá tour mỗi người là bao nhiêu?" },
-      { "speaker": "B", "en": "The evening tour is 450,000 VND per adult. Children under 12 are half price.", "vi": "Tour chiều tối là 450 nghìn mỗi người lớn. Trẻ em dưới 12 tuổi được giảm nửa giá." },
+      {
+        "speaker": "A",
+        "en": "Hello, I'm interested in a day tour to Hoi An from Da Nang. Do you offer that?",
+        "vi": "Xin chào, tôi muốn hỏi về tour ngày đi Hội An từ Đà Nẵng. Công ty có tour đó không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, Hoi An is our most popular day tour! We run it every day. Have a seat and I'll tell you all about it.",
+        "vi": "Có, Hội An là tour ngày phổ biến nhất của chúng tôi! Chúng tôi chạy mỗi ngày. Mời bạn ngồi và tôi sẽ giới thiệu chi tiết."
+      },
+      {
+        "speaker": "A",
+        "en": "Great! What's included in the tour?",
+        "vi": "Tốt quá! Tour bao gồm những gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "The tour includes round-trip transport from your hotel in Da Nang, an English-speaking guide, boat ride on the Thu Bon River, and a lantern-making workshop.",
+        "vi": "Tour bao gồm đưa đón hai chiều từ khách sạn của bạn ở Đà Nẵng, hướng dẫn viên nói tiếng Anh, đi thuyền trên sông Thu Bồn và xưởng làm đèn lồng."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, a lantern-making workshop! That sounds wonderful.",
+        "vi": "Ồ, xưởng làm đèn lồng! Nghe tuyệt quá."
+      },
+      {
+        "speaker": "B",
+        "en": "It's very popular with our guests. You'll make your own paper lantern and float it on the river at night.",
+        "vi": "Rất được khách hàng yêu thích. Bạn sẽ tự làm đèn lồng giấy và thả trôi trên sông vào buổi tối."
+      },
+      {
+        "speaker": "A",
+        "en": "Wait — this is a night tour? Not a day tour?",
+        "vi": "Khoan — đây là tour ban đêm? Không phải tour ban ngày à?"
+      },
+      {
+        "speaker": "B",
+        "en": "We have both! The day tour runs from 8 AM to 5 PM. The evening tour runs from 4 PM to 10 PM. Which would you prefer?",
+        "vi": "Chúng tôi có cả hai! Tour ngày từ 8 giờ sáng đến 5 giờ chiều. Tour chiều tối từ 4 giờ đến 10 giờ tối. Bạn muốn loại nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "The evening tour sounds more magical. Lanterns floating on the river at night...",
+        "vi": "Tour chiều tối nghe huyền diệu hơn. Đèn lồng thả trôi trên sông vào ban đêm..."
+      },
+      {
+        "speaker": "B",
+        "en": "It truly is. And the Ancient Town looks spectacular lit up at night — especially on the 14th and 15th of the lunar month when vehicles are banned.",
+        "vi": "Thật sự rất đẹp. Và Phố Cổ trông ngoạn mục khi được thắp sáng vào ban đêm — đặc biệt vào ngày 14 và 15 âm lịch khi cấm xe cộ."
+      },
+      {
+        "speaker": "A",
+        "en": "Is today a vehicle-ban night?",
+        "vi": "Tối nay có phải đêm cấm xe không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let me check... No, not tonight. But the experience is still beautiful on any night.",
+        "vi": "Để tôi kiểm tra... Không, tối nay không phải. Nhưng trải nghiệm vẫn tuyệt đêm nào cũng vậy."
+      },
+      {
+        "speaker": "A",
+        "en": "What is the price per person?",
+        "vi": "Giá tour mỗi người là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "The evening tour is 450,000 VND per adult. Children under 12 are half price.",
+        "vi": "Tour chiều tối là 450 nghìn mỗi người lớn. Trẻ em dưới 12 tuổi được giảm nửa giá."
+      },
       { "speaker": "A", "en": "Does that include dinner?", "vi": "Có bao gồm bữa tối không?" },
-      { "speaker": "B", "en": "Dinner is not included, but we stop at Bà Buội restaurant — very authentic Hoi An food at reasonable prices.", "vi": "Bữa tối không bao gồm, nhưng chúng tôi dừng ở nhà hàng Bà Buội — đồ ăn Hội An rất chân thực với giá hợp lý." },
-      { "speaker": "A", "en": "What dishes do you recommend trying in Hoi An?", "vi": "Bạn khuyên tôi thử món gì ở Hội An?" },
-      { "speaker": "B", "en": "Cao lầu is a must — the noodles are unique to Hoi An. Also White Rose dumplings and crispy Bà Già pancakes.", "vi": "Cao lầu là bắt buộc — mì này chỉ có ở Hội An. Thêm bánh bao trắng Hoa Hồng Trắng và bánh đập bà già giòn tan." },
-      { "speaker": "A", "en": "I'll definitely try all of those. Is the guide at the restaurant too or just on the tour bus?", "vi": "Tôi chắc chắn sẽ thử hết. Hướng dẫn viên có ở nhà hàng không hay chỉ trên xe?" },
-      { "speaker": "B", "en": "Our guide accompanies you throughout — from pickup to drop-off. He can help you order and explain the food history.", "vi": "Hướng dẫn viên của chúng tôi đi cùng bạn xuyên suốt — từ khi đón đến lúc trả về. Anh ấy có thể giúp bạn gọi món và giải thích lịch sử ẩm thực." },
-      { "speaker": "A", "en": "Perfect. How many people are typically in one group?", "vi": "Tốt. Thường mỗi nhóm có bao nhiêu người?" },
-      { "speaker": "B", "en": "Maximum 12 people per group. We keep it small so the experience is more personal.", "vi": "Tối đa 12 người mỗi nhóm. Chúng tôi giữ nhóm nhỏ để trải nghiệm cá nhân hơn." },
-      { "speaker": "A", "en": "That's great — I hate huge tour groups. I'd like to book for tomorrow evening, just for one person.", "vi": "Tốt lắm — tôi không thích tour đông người. Tôi muốn đặt tour tối mai, chỉ một người thôi." },
-      { "speaker": "B", "en": "No problem. May I have your name and hotel address for the pickup?", "vi": "Không vấn đề. Cho tôi biết tên và địa chỉ khách sạn của bạn để đưa đón nhé?" },
-      { "speaker": "A", "en": "Thu Nguyen. I'm staying at Bali Resort, near My Khe Beach.", "vi": "Thu Nguyễn. Tôi đang ở Bali Resort, gần Bãi biển Mỹ Khê." },
-      { "speaker": "B", "en": "Bali Resort — great location! We'll pick you up at 3:45 PM tomorrow. Does that work?", "vi": "Bali Resort — vị trí tuyệt vời! Chúng tôi sẽ đón bạn lúc 3 giờ 45 chiều ngày mai. Ổn không?" },
-      { "speaker": "A", "en": "Perfect. Should I pay now or at pickup?", "vi": "Hoàn hảo. Tôi thanh toán ngay bây giờ hay khi đón xe?" },
-      { "speaker": "B", "en": "A 50% deposit now would confirm your booking. The rest you pay at pickup.", "vi": "Đặt cọc 50% ngay bây giờ để xác nhận chỗ. Phần còn lại thanh toán khi xe đón." },
-      { "speaker": "A", "en": "Okay, here's 225,000. See you tomorrow evening!", "vi": "Oke, đây là 225 nghìn. Hẹn gặp lại tối mai!" },
-      { "speaker": "B", "en": "Thank you! I've sent the confirmation to your phone number. Have a wonderful evening in Hoi An!", "vi": "Cảm ơn bạn! Tôi đã gửi xác nhận đến số điện thoại của bạn. Chúc bạn một buổi tối tuyệt vời ở Hội An!" }
+      {
+        "speaker": "B",
+        "en": "Dinner is not included, but we stop at Bà Buội restaurant — very authentic Hoi An food at reasonable prices.",
+        "vi": "Bữa tối không bao gồm, nhưng chúng tôi dừng ở nhà hàng Bà Buội — đồ ăn Hội An rất chân thực với giá hợp lý."
+      },
+      {
+        "speaker": "A",
+        "en": "What dishes do you recommend trying in Hoi An?",
+        "vi": "Bạn khuyên tôi thử món gì ở Hội An?"
+      },
+      {
+        "speaker": "B",
+        "en": "Cao lầu is a must — the noodles are unique to Hoi An. Also White Rose dumplings and crispy Bà Già pancakes.",
+        "vi": "Cao lầu là bắt buộc — mì này chỉ có ở Hội An. Thêm bánh bao trắng Hoa Hồng Trắng và bánh đập bà già giòn tan."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll definitely try all of those. Is the guide at the restaurant too or just on the tour bus?",
+        "vi": "Tôi chắc chắn sẽ thử hết. Hướng dẫn viên có ở nhà hàng không hay chỉ trên xe?"
+      },
+      {
+        "speaker": "B",
+        "en": "Our guide accompanies you throughout — from pickup to drop-off. He can help you order and explain the food history.",
+        "vi": "Hướng dẫn viên của chúng tôi đi cùng bạn xuyên suốt — từ khi đón đến lúc trả về. Anh ấy có thể giúp bạn gọi món và giải thích lịch sử ẩm thực."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. How many people are typically in one group?",
+        "vi": "Tốt. Thường mỗi nhóm có bao nhiêu người?"
+      },
+      {
+        "speaker": "B",
+        "en": "Maximum 12 people per group. We keep it small so the experience is more personal.",
+        "vi": "Tối đa 12 người mỗi nhóm. Chúng tôi giữ nhóm nhỏ để trải nghiệm cá nhân hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "That's great — I hate huge tour groups. I'd like to book for tomorrow evening, just for one person.",
+        "vi": "Tốt lắm — tôi không thích tour đông người. Tôi muốn đặt tour tối mai, chỉ một người thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "No problem. May I have your name and hotel address for the pickup?",
+        "vi": "Không vấn đề. Cho tôi biết tên và địa chỉ khách sạn của bạn để đưa đón nhé?"
+      },
+      {
+        "speaker": "A",
+        "en": "Thu Nguyen. I'm staying at Bali Resort, near My Khe Beach.",
+        "vi": "Thu Nguyễn. Tôi đang ở Bali Resort, gần Bãi biển Mỹ Khê."
+      },
+      {
+        "speaker": "B",
+        "en": "Bali Resort — great location! We'll pick you up at 3:45 PM tomorrow. Does that work?",
+        "vi": "Bali Resort — vị trí tuyệt vời! Chúng tôi sẽ đón bạn lúc 3 giờ 45 chiều ngày mai. Ổn không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Should I pay now or at pickup?",
+        "vi": "Hoàn hảo. Tôi thanh toán ngay bây giờ hay khi đón xe?"
+      },
+      {
+        "speaker": "B",
+        "en": "A 50% deposit now would confirm your booking. The rest you pay at pickup.",
+        "vi": "Đặt cọc 50% ngay bây giờ để xác nhận chỗ. Phần còn lại thanh toán khi xe đón."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, here's 225,000. See you tomorrow evening!",
+        "vi": "Oke, đây là 225 nghìn. Hẹn gặp lại tối mai!"
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you! I've sent the confirmation to your phone number. Have a wonderful evening in Hoi An!",
+        "vi": "Cảm ơn bạn! Tôi đã gửi xác nhận đến số điện thoại của bạn. Chúc bạn một buổi tối tuyệt vời ở Hội An!"
+      }
     ]
   },
   {
@@ -96,40 +340,152 @@
     "speakerBName": { "vi": "Nhân viên", "en": "Agent" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Hello, I'd like to book a flight from Hanoi to Ho Chi Minh City, please.", "vi": "Xin chào, tôi muốn đặt vé máy bay từ Hà Nội đi Thành phố Hồ Chí Minh." },
-      { "speaker": "B", "en": "Hello! I'd be happy to help with that. What's your preferred travel date?", "vi": "Xin chào! Tôi rất vui được hỗ trợ. Bạn muốn đi vào ngày nào?" },
-      { "speaker": "A", "en": "I'd like to travel next Friday, the 28th. Preferably in the morning.", "vi": "Tôi muốn đi thứ Sáu tới, ngày 28. Tốt nhất là buổi sáng." },
-      { "speaker": "B", "en": "On the 28th, we have departures at 6:00 AM, 8:30 AM, and 11:45 AM from Noi Bai. Do any of those work?", "vi": "Ngày 28, chúng tôi có các chuyến khởi hành lúc 6 giờ, 8 giờ 30 và 11 giờ 45 từ Nội Bài. Chuyến nào phù hợp với bạn?" },
-      { "speaker": "A", "en": "The 8:30 AM sounds best. What time does it arrive in Ho Chi Minh City?", "vi": "8 giờ 30 nghe hợp lý nhất. Chuyến đó đến Thành phố Hồ Chí Minh lúc mấy giờ?" },
-      { "speaker": "B", "en": "It arrives at Tan Son Nhat at 10:45 AM — a two-hour and fifteen minute flight.", "vi": "Chuyến này đến Tân Sơn Nhất lúc 10 giờ 45 — chuyến bay kéo dài hai tiếng mười lăm phút." },
-      { "speaker": "A", "en": "Perfect. Is it a direct flight or does it stop anywhere?", "vi": "Hoàn hảo. Đây là chuyến thẳng hay có dừng?" },
-      { "speaker": "B", "en": "Direct flight on that service. No stopovers.", "vi": "Chuyến thẳng. Không có điểm dừng." },
-      { "speaker": "A", "en": "Wonderful. How much is a standard economy ticket?", "vi": "Tốt quá. Vé phổ thông tiêu chuẩn là bao nhiêu?" },
-      { "speaker": "B", "en": "The lowest available fare on that flight is 1,350,000 VND — that's a Basic fare, carry-on bag only.", "vi": "Giá vé thấp nhất hiện có cho chuyến đó là 1 triệu 350 nghìn — đó là giá Cơ Bản, chỉ bao gồm hành lý xách tay." },
-      { "speaker": "A", "en": "I have a checked bag. What does that cost extra?", "vi": "Tôi có hành lý ký gửi. Phụ phí thêm bao nhiêu?" },
-      { "speaker": "B", "en": "Adding a 20kg checked bag brings the total to 1,750,000 VND. Or our Flexi fare is 2,100,000 and includes 23kg bag and free changes.", "vi": "Thêm hành lý ký gửi 20kg tổng cộng là 1 triệu 750 nghìn. Hoặc giá Flexi là 2 triệu 100 nghìn bao gồm 23kg hành lý và đổi vé miễn phí." },
-      { "speaker": "A", "en": "I'll go with the Flexi fare — I might need to change the date. Better to have flexibility.", "vi": "Tôi sẽ lấy giá Flexi — tôi có thể cần thay đổi ngày. Tốt hơn là có sự linh hoạt." },
-      { "speaker": "B", "en": "Wise choice! May I have your full name as it appears on your ID or passport?", "vi": "Lựa chọn khôn ngoan! Cho tôi tên đầy đủ của bạn như trên CCCD hoặc hộ chiếu nhé?" },
+      {
+        "speaker": "A",
+        "en": "Hello, I'd like to book a flight from Hanoi to Ho Chi Minh City, please.",
+        "vi": "Xin chào, tôi muốn đặt vé máy bay từ Hà Nội đi Thành phố Hồ Chí Minh."
+      },
+      {
+        "speaker": "B",
+        "en": "Hello! I'd be happy to help with that. What's your preferred travel date?",
+        "vi": "Xin chào! Tôi rất vui được hỗ trợ. Bạn muốn đi vào ngày nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'd like to travel next Friday, the 28th. Preferably in the morning.",
+        "vi": "Tôi muốn đi thứ Sáu tới, ngày 28. Tốt nhất là buổi sáng."
+      },
+      {
+        "speaker": "B",
+        "en": "On the 28th, we have departures at 6:00 AM, 8:30 AM, and 11:45 AM from Noi Bai. Do any of those work?",
+        "vi": "Ngày 28, chúng tôi có các chuyến khởi hành lúc 6 giờ, 8 giờ 30 và 11 giờ 45 từ Nội Bài. Chuyến nào phù hợp với bạn?"
+      },
+      {
+        "speaker": "A",
+        "en": "The 8:30 AM sounds best. What time does it arrive in Ho Chi Minh City?",
+        "vi": "8 giờ 30 nghe hợp lý nhất. Chuyến đó đến Thành phố Hồ Chí Minh lúc mấy giờ?"
+      },
+      {
+        "speaker": "B",
+        "en": "It arrives at Tan Son Nhat at 10:45 AM — a two-hour and fifteen minute flight.",
+        "vi": "Chuyến này đến Tân Sơn Nhất lúc 10 giờ 45 — chuyến bay kéo dài hai tiếng mười lăm phút."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Is it a direct flight or does it stop anywhere?",
+        "vi": "Hoàn hảo. Đây là chuyến thẳng hay có dừng?"
+      },
+      {
+        "speaker": "B",
+        "en": "Direct flight on that service. No stopovers.",
+        "vi": "Chuyến thẳng. Không có điểm dừng."
+      },
+      {
+        "speaker": "A",
+        "en": "Wonderful. How much is a standard economy ticket?",
+        "vi": "Tốt quá. Vé phổ thông tiêu chuẩn là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "The lowest available fare on that flight is 1,350,000 VND — that's a Basic fare, carry-on bag only.",
+        "vi": "Giá vé thấp nhất hiện có cho chuyến đó là 1 triệu 350 nghìn — đó là giá Cơ Bản, chỉ bao gồm hành lý xách tay."
+      },
+      {
+        "speaker": "A",
+        "en": "I have a checked bag. What does that cost extra?",
+        "vi": "Tôi có hành lý ký gửi. Phụ phí thêm bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Adding a 20kg checked bag brings the total to 1,750,000 VND. Or our Flexi fare is 2,100,000 and includes 23kg bag and free changes.",
+        "vi": "Thêm hành lý ký gửi 20kg tổng cộng là 1 triệu 750 nghìn. Hoặc giá Flexi là 2 triệu 100 nghìn bao gồm 23kg hành lý và đổi vé miễn phí."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll go with the Flexi fare — I might need to change the date. Better to have flexibility.",
+        "vi": "Tôi sẽ lấy giá Flexi — tôi có thể cần thay đổi ngày. Tốt hơn là có sự linh hoạt."
+      },
+      {
+        "speaker": "B",
+        "en": "Wise choice! May I have your full name as it appears on your ID or passport?",
+        "vi": "Lựa chọn khôn ngoan! Cho tôi tên đầy đủ của bạn như trên CCCD hoặc hộ chiếu nhé?"
+      },
       { "speaker": "A", "en": "Nguyen Thi Linh.", "vi": "Nguyễn Thị Linh." },
       { "speaker": "B", "en": "And your date of birth?", "vi": "Ngày tháng năm sinh của bạn?" },
       { "speaker": "A", "en": "March 15, 1993.", "vi": "Ngày 15 tháng 3 năm 1993." },
-      { "speaker": "B", "en": "Do you have a preferred seat? Window or aisle?", "vi": "Bạn có muốn chọn chỗ ngồi không? Cửa sổ hay lối đi?" },
-      { "speaker": "A", "en": "Window seat, please. I love looking at the view, especially over the clouds.", "vi": "Chỗ ngồi cửa sổ, cảm ơn. Tôi thích nhìn phong cảnh, đặc biệt là nhìn xuống những đám mây." },
-      { "speaker": "B", "en": "Seat 14A is available — window seat in the economy section. Shall I assign that?", "vi": "Ghế 14A có trống — ghế cửa sổ trong khoang phổ thông. Tôi gán ghế đó nhé?" },
-      { "speaker": "A", "en": "Yes, that's perfect. What's my total?", "vi": "Vâng, hoàn hảo. Tổng tiền tôi phải trả là bao nhiêu?" },
-      { "speaker": "B", "en": "Your total is 2,100,000 VND. This includes the Flexi fare, 23kg luggage allowance, and seat selection — seat selection is a free perk with Flexi.", "vi": "Tổng cộng là 2 triệu 100 nghìn. Bao gồm giá Flexi, hành lý 23kg và chọn ghế — chọn ghế miễn phí với gói Flexi." },
-      { "speaker": "A", "en": "How can I pay? Can I use a credit card?", "vi": "Tôi thanh toán bằng cách nào? Dùng thẻ tín dụng được không?" },
-      { "speaker": "B", "en": "Yes, we accept Visa, Mastercard, and domestic bank cards. May I have your card number?", "vi": "Có, chúng tôi chấp nhận Visa, Mastercard và thẻ nội địa. Cho tôi số thẻ của bạn nhé?" },
+      {
+        "speaker": "B",
+        "en": "Do you have a preferred seat? Window or aisle?",
+        "vi": "Bạn có muốn chọn chỗ ngồi không? Cửa sổ hay lối đi?"
+      },
+      {
+        "speaker": "A",
+        "en": "Window seat, please. I love looking at the view, especially over the clouds.",
+        "vi": "Chỗ ngồi cửa sổ, cảm ơn. Tôi thích nhìn phong cảnh, đặc biệt là nhìn xuống những đám mây."
+      },
+      {
+        "speaker": "B",
+        "en": "Seat 14A is available — window seat in the economy section. Shall I assign that?",
+        "vi": "Ghế 14A có trống — ghế cửa sổ trong khoang phổ thông. Tôi gán ghế đó nhé?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, that's perfect. What's my total?",
+        "vi": "Vâng, hoàn hảo. Tổng tiền tôi phải trả là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Your total is 2,100,000 VND. This includes the Flexi fare, 23kg luggage allowance, and seat selection — seat selection is a free perk with Flexi.",
+        "vi": "Tổng cộng là 2 triệu 100 nghìn. Bao gồm giá Flexi, hành lý 23kg và chọn ghế — chọn ghế miễn phí với gói Flexi."
+      },
+      {
+        "speaker": "A",
+        "en": "How can I pay? Can I use a credit card?",
+        "vi": "Tôi thanh toán bằng cách nào? Dùng thẻ tín dụng được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, we accept Visa, Mastercard, and domestic bank cards. May I have your card number?",
+        "vi": "Có, chúng tôi chấp nhận Visa, Mastercard và thẻ nội địa. Cho tôi số thẻ của bạn nhé?"
+      },
       { "speaker": "A", "en": "4556 7823 1234 5678.", "vi": "4556 7823 1234 5678." },
       { "speaker": "B", "en": "Expiry date and CVV, please?", "vi": "Ngày hết hạn và mã CVV nhé?" },
       { "speaker": "A", "en": "Expiry 09/27, CVV 412.", "vi": "Hết hạn 09/27, CVV 412." },
-      { "speaker": "B", "en": "Payment confirmed! Your booking reference is VN2809-LNH. I'm sending the e-ticket to your email right now.", "vi": "Thanh toán thành công! Mã đặt chỗ của bạn là VN2809-LNH. Tôi đang gửi vé điện tử đến email của bạn ngay bây giờ." },
-      { "speaker": "A", "en": "Thank you! Should I check in online beforehand?", "vi": "Cảm ơn! Tôi có nên làm thủ tục check-in online trước không?" },
-      { "speaker": "B", "en": "Yes, online check-in opens 24 hours before departure. Saves you time at the airport.", "vi": "Có, check-in online mở 24 giờ trước khởi hành. Tiết kiệm thời gian ở sân bay cho bạn." },
-      { "speaker": "A", "en": "Understood. How early should I arrive at Noi Bai airport?", "vi": "Hiểu rồi. Tôi nên đến sân bay Nội Bài sớm bao nhiêu?" },
-      { "speaker": "B", "en": "For domestic flights, arrive at least 90 minutes before departure. Your flight is at 8:30, so 7 AM at the latest.", "vi": "Đối với chuyến bay nội địa, đến trước ít nhất 90 phút. Chuyến của bạn lúc 8 giờ 30, vậy chậm nhất là 7 giờ." },
-      { "speaker": "A", "en": "Perfect. Thank you for all your help!", "vi": "Hoàn hảo. Cảm ơn bạn đã hỗ trợ nhiệt tình!" },
-      { "speaker": "B", "en": "My pleasure! Have a smooth and enjoyable flight, Ms. Linh!", "vi": "Không có gì! Chúc bạn chuyến bay suôn sẻ và thú vị, cô Linh!" }
+      {
+        "speaker": "B",
+        "en": "Payment confirmed! Your booking reference is VN2809-LNH. I'm sending the e-ticket to your email right now.",
+        "vi": "Thanh toán thành công! Mã đặt chỗ của bạn là VN2809-LNH. Tôi đang gửi vé điện tử đến email của bạn ngay bây giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you! Should I check in online beforehand?",
+        "vi": "Cảm ơn! Tôi có nên làm thủ tục check-in online trước không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, online check-in opens 24 hours before departure. Saves you time at the airport.",
+        "vi": "Có, check-in online mở 24 giờ trước khởi hành. Tiết kiệm thời gian ở sân bay cho bạn."
+      },
+      {
+        "speaker": "A",
+        "en": "Understood. How early should I arrive at Noi Bai airport?",
+        "vi": "Hiểu rồi. Tôi nên đến sân bay Nội Bài sớm bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "For domestic flights, arrive at least 90 minutes before departure. Your flight is at 8:30, so 7 AM at the latest.",
+        "vi": "Đối với chuyến bay nội địa, đến trước ít nhất 90 phút. Chuyến của bạn lúc 8 giờ 30, vậy chậm nhất là 7 giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Thank you for all your help!",
+        "vi": "Hoàn hảo. Cảm ơn bạn đã hỗ trợ nhiệt tình!"
+      },
+      {
+        "speaker": "B",
+        "en": "My pleasure! Have a smooth and enjoyable flight, Ms. Linh!",
+        "vi": "Không có gì! Chúc bạn chuyến bay suôn sẻ và thú vị, cô Linh!"
+      }
     ]
   },
   {
@@ -142,34 +498,146 @@
     "speakerBName": { "vi": "Chị", "en": "Sister" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Wow, the National Museum of History is so impressive from the outside! That French colonial architecture is stunning.", "vi": "Ôi, Bảo tàng Lịch sử Quốc gia nhìn từ bên ngoài ấn tượng quá! Kiến trúc thực dân Pháp đẹp tuyệt." },
-      { "speaker": "B", "en": "It's one of my favorite buildings in Hanoi. Wait until you see the inside — so much to discover!", "vi": "Đây là một trong những tòa nhà tao yêu thích ở Hà Nội. Đợi đến khi mày thấy bên trong — có rất nhiều thứ để khám phá!" },
-      { "speaker": "A", "en": "How much is the entrance fee?", "vi": "Giá vé vào cửa là bao nhiêu?" },
-      { "speaker": "B", "en": "It's only 40,000 VND for adults. Students with ID get a discount — do you have your student card?", "vi": "Chỉ 40 nghìn cho người lớn. Sinh viên có thẻ được giảm giá — mày có thẻ sinh viên không?" },
-      { "speaker": "A", "en": "Yes! I have it right here. So, where should we start?", "vi": "Có! Tao có ngay đây. Vậy mình bắt đầu từ đâu?" },
-      { "speaker": "B", "en": "Let's go in chronological order — start on the ground floor with prehistoric Vietnam and work our way up.", "vi": "Mình đi theo thứ tự thời gian — bắt đầu từ tầng trệt với Việt Nam thời tiền sử rồi lên dần." },
-      { "speaker": "A", "en": "Good plan. Oh look — these bronze drums! Are these the famous Đông Sơn drums?", "vi": "Kế hoạch tốt. Ồ nhìn kìa — mấy cái trống đồng! Đây có phải trống Đông Sơn nổi tiếng không?" },
-      { "speaker": "B", "en": "Yes! These are over 2,000 years old. They're considered some of the finest bronze work in ancient Southeast Asia.", "vi": "Đúng vậy! Những cái này hơn 2,000 năm tuổi. Chúng được coi là một trong những tác phẩm đồng đẹp nhất ở Đông Nam Á cổ đại." },
-      { "speaker": "A", "en": "The intricate patterns on them are incredible. Did ancient Vietnamese people actually use these in ceremonies?", "vi": "Hoa văn tinh xảo trên đó thật không thể tin được. Người Việt cổ đại thực sự dùng chúng trong nghi lễ không?" },
-      { "speaker": "B", "en": "Yes — for rain-calling ceremonies, funerals, and as symbols of power. The patterns represent the sun, birds, and boats.", "vi": "Đúng vậy — dùng cho lễ cầu mưa, tang lễ và là biểu tượng quyền lực. Hoa văn tượng trưng cho mặt trời, chim và thuyền." },
-      { "speaker": "A", "en": "This is so cool. I wish school history classes had shown us actual artifacts like these.", "vi": "Cái này thú quá. Tao ước giờ lịch sử ở trường có cho mình xem hiện vật thật như thế này." },
-      { "speaker": "B", "en": "That's why I always say museums are the best way to make history feel real.", "vi": "Đó là lý do tao luôn nói bảo tàng là cách tốt nhất để lịch sử trở nên sống động." },
-      { "speaker": "A", "en": "Let's move to the next section. What's in here?", "vi": "Mình sang phần tiếp theo đi. Ở đây có gì?" },
-      { "speaker": "B", "en": "This is the Ly-Tran dynasty section — Vietnam's golden age. See those ceramics? They're from the 11th to 14th centuries.", "vi": "Đây là phần triều đại Lý-Trần — thời kỳ hoàng kim của Việt Nam. Thấy mấy đồ gốm đó không? Từ thế kỷ 11 đến 14 đó." },
-      { "speaker": "A", "en": "The blue and white ceramics are gorgeous. They remind me of Chinese porcelain.", "vi": "Đồ gốm trắng xanh đẹp lắm. Trông giống đồ sứ Trung Hoa." },
-      { "speaker": "B", "en": "There was a strong Chinese cultural influence at that time, but Vietnamese artisans developed their own unique style.", "vi": "Thời đó ảnh hưởng văn hóa Trung Hoa rất mạnh, nhưng nghệ nhân Việt Nam đã phát triển phong cách riêng độc đáo." },
-      { "speaker": "A", "en": "Is there anything about the Trưng sisters here? That's one of my favorite stories from Vietnamese history.", "vi": "Có gì về Hai Bà Trưng ở đây không? Đó là một trong những câu chuyện lịch sử Việt Nam tao yêu thích nhất." },
-      { "speaker": "B", "en": "Yes, there's a whole section on them upstairs. And there's a beautiful painting of them leading the uprising against Han domination.", "vi": "Có, ở tầng trên có một phần riêng về hai bà. Và có một bức tranh đẹp về hai bà dẫn dắt cuộc khởi nghĩa chống ách đô hộ của nhà Hán." },
-      { "speaker": "A", "en": "I can't wait to see it. Oh — can I take photos in here?", "vi": "Tao mong lên xem cái đó. À — tao có thể chụp ảnh trong này không?" },
-      { "speaker": "B", "en": "Yes, photography is allowed without flash. Some exhibits have restrictions — there will be signs.", "vi": "Có, được phép chụp ảnh nhưng không dùng đèn flash. Một số hiện vật có hạn chế — sẽ có biển báo." },
-      { "speaker": "A", "en": "This room is incredible — weapons from the French Resistance period. It's so emotional to see these.", "vi": "Phòng này ấn tượng quá — vũ khí từ thời kỳ kháng Pháp. Thật xúc động khi nhìn thấy những thứ này." },
-      { "speaker": "B", "en": "History isn't just dates and battles. It's real people with real lives. These weapons were held by real hands.", "vi": "Lịch sử không chỉ là ngày tháng và trận đánh. Là những con người thật với cuộc đời thật. Những vũ khí này từng được cầm trong tay thật." },
-      { "speaker": "A", "en": "That perspective really hits differently. I want to come back with more time someday.", "vi": "Góc nhìn đó thật sự tác động khác. Tao muốn quay lại với nhiều thời gian hơn một ngày nào đó." },
-      { "speaker": "B", "en": "We can always come back. Shall we stop at the gift shop on the way out?", "vi": "Mình có thể quay lại bất cứ lúc nào. Trên đường ra mình ghé cửa hàng lưu niệm không?" },
-      { "speaker": "A", "en": "Yes! I want to buy a replica of the Đông Sơn drum pattern — maybe on a postcard or a tote bag.", "vi": "Có! Tao muốn mua đồ có họa tiết trống Đông Sơn — có thể là bưu thiếp hay túi vải." },
-      { "speaker": "B", "en": "They have beautiful silk scarves with the pattern too. Mom would love one as a gift.", "vi": "Họ cũng có khăn lụa đẹp với họa tiết đó. Mẹ chắc sẽ thích làm quà lắm." },
-      { "speaker": "A", "en": "Great idea! Today was an amazing outing, sis. Thanks for suggesting this.", "vi": "Ý tưởng hay! Hôm nay là một chuyến đi tuyệt vời, chị ơi. Cảm ơn chị đã gợi ý." },
-      { "speaker": "B", "en": "Anytime! The best kind of learning is the kind you enjoy. Same time next month?", "vi": "Bất cứ lúc nào cũng được! Loại học tốt nhất là loại bạn thích thú. Tháng sau cùng giờ này nhé?" }
+      {
+        "speaker": "A",
+        "en": "Wow, the National Museum of History is so impressive from the outside! That French colonial architecture is stunning.",
+        "vi": "Ôi, Bảo tàng Lịch sử Quốc gia nhìn từ bên ngoài ấn tượng quá! Kiến trúc thực dân Pháp đẹp tuyệt."
+      },
+      {
+        "speaker": "B",
+        "en": "It's one of my favorite buildings in Hanoi. Wait until you see the inside — so much to discover!",
+        "vi": "Đây là một trong những tòa nhà tao yêu thích ở Hà Nội. Đợi đến khi mày thấy bên trong — có rất nhiều thứ để khám phá!"
+      },
+      {
+        "speaker": "A",
+        "en": "How much is the entrance fee?",
+        "vi": "Giá vé vào cửa là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's only 40,000 VND for adults. Students with ID get a discount — do you have your student card?",
+        "vi": "Chỉ 40 nghìn cho người lớn. Sinh viên có thẻ được giảm giá — mày có thẻ sinh viên không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes! I have it right here. So, where should we start?",
+        "vi": "Có! Tao có ngay đây. Vậy mình bắt đầu từ đâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let's go in chronological order — start on the ground floor with prehistoric Vietnam and work our way up.",
+        "vi": "Mình đi theo thứ tự thời gian — bắt đầu từ tầng trệt với Việt Nam thời tiền sử rồi lên dần."
+      },
+      {
+        "speaker": "A",
+        "en": "Good plan. Oh look — these bronze drums! Are these the famous Đông Sơn drums?",
+        "vi": "Kế hoạch tốt. Ồ nhìn kìa — mấy cái trống đồng! Đây có phải trống Đông Sơn nổi tiếng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes! These are over 2,000 years old. They're considered some of the finest bronze work in ancient Southeast Asia.",
+        "vi": "Đúng vậy! Những cái này hơn 2,000 năm tuổi. Chúng được coi là một trong những tác phẩm đồng đẹp nhất ở Đông Nam Á cổ đại."
+      },
+      {
+        "speaker": "A",
+        "en": "The intricate patterns on them are incredible. Did ancient Vietnamese people actually use these in ceremonies?",
+        "vi": "Hoa văn tinh xảo trên đó thật không thể tin được. Người Việt cổ đại thực sự dùng chúng trong nghi lễ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes — for rain-calling ceremonies, funerals, and as symbols of power. The patterns represent the sun, birds, and boats.",
+        "vi": "Đúng vậy — dùng cho lễ cầu mưa, tang lễ và là biểu tượng quyền lực. Hoa văn tượng trưng cho mặt trời, chim và thuyền."
+      },
+      {
+        "speaker": "A",
+        "en": "This is so cool. I wish school history classes had shown us actual artifacts like these.",
+        "vi": "Cái này thú quá. Tao ước giờ lịch sử ở trường có cho mình xem hiện vật thật như thế này."
+      },
+      {
+        "speaker": "B",
+        "en": "That's why I always say museums are the best way to make history feel real.",
+        "vi": "Đó là lý do tao luôn nói bảo tàng là cách tốt nhất để lịch sử trở nên sống động."
+      },
+      {
+        "speaker": "A",
+        "en": "Let's move to the next section. What's in here?",
+        "vi": "Mình sang phần tiếp theo đi. Ở đây có gì?"
+      },
+      {
+        "speaker": "B",
+        "en": "This is the Ly-Tran dynasty section — Vietnam's golden age. See those ceramics? They're from the 11th to 14th centuries.",
+        "vi": "Đây là phần triều đại Lý-Trần — thời kỳ hoàng kim của Việt Nam. Thấy mấy đồ gốm đó không? Từ thế kỷ 11 đến 14 đó."
+      },
+      {
+        "speaker": "A",
+        "en": "The blue and white ceramics are gorgeous. They remind me of Chinese porcelain.",
+        "vi": "Đồ gốm trắng xanh đẹp lắm. Trông giống đồ sứ Trung Hoa."
+      },
+      {
+        "speaker": "B",
+        "en": "There was a strong Chinese cultural influence at that time, but Vietnamese artisans developed their own unique style.",
+        "vi": "Thời đó ảnh hưởng văn hóa Trung Hoa rất mạnh, nhưng nghệ nhân Việt Nam đã phát triển phong cách riêng độc đáo."
+      },
+      {
+        "speaker": "A",
+        "en": "Is there anything about the Trưng sisters here? That's one of my favorite stories from Vietnamese history.",
+        "vi": "Có gì về Hai Bà Trưng ở đây không? Đó là một trong những câu chuyện lịch sử Việt Nam tao yêu thích nhất."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, there's a whole section on them upstairs. And there's a beautiful painting of them leading the uprising against Han domination.",
+        "vi": "Có, ở tầng trên có một phần riêng về hai bà. Và có một bức tranh đẹp về hai bà dẫn dắt cuộc khởi nghĩa chống ách đô hộ của nhà Hán."
+      },
+      {
+        "speaker": "A",
+        "en": "I can't wait to see it. Oh — can I take photos in here?",
+        "vi": "Tao mong lên xem cái đó. À — tao có thể chụp ảnh trong này không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, photography is allowed without flash. Some exhibits have restrictions — there will be signs.",
+        "vi": "Có, được phép chụp ảnh nhưng không dùng đèn flash. Một số hiện vật có hạn chế — sẽ có biển báo."
+      },
+      {
+        "speaker": "A",
+        "en": "This room is incredible — weapons from the French Resistance period. It's so emotional to see these.",
+        "vi": "Phòng này ấn tượng quá — vũ khí từ thời kỳ kháng Pháp. Thật xúc động khi nhìn thấy những thứ này."
+      },
+      {
+        "speaker": "B",
+        "en": "History isn't just dates and battles. It's real people with real lives. These weapons were held by real hands.",
+        "vi": "Lịch sử không chỉ là ngày tháng và trận đánh. Là những con người thật với cuộc đời thật. Những vũ khí này từng được cầm trong tay thật."
+      },
+      {
+        "speaker": "A",
+        "en": "That perspective really hits differently. I want to come back with more time someday.",
+        "vi": "Góc nhìn đó thật sự tác động khác. Tao muốn quay lại với nhiều thời gian hơn một ngày nào đó."
+      },
+      {
+        "speaker": "B",
+        "en": "We can always come back. Shall we stop at the gift shop on the way out?",
+        "vi": "Mình có thể quay lại bất cứ lúc nào. Trên đường ra mình ghé cửa hàng lưu niệm không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes! I want to buy a replica of the Đông Sơn drum pattern — maybe on a postcard or a tote bag.",
+        "vi": "Có! Tao muốn mua đồ có họa tiết trống Đông Sơn — có thể là bưu thiếp hay túi vải."
+      },
+      {
+        "speaker": "B",
+        "en": "They have beautiful silk scarves with the pattern too. Mom would love one as a gift.",
+        "vi": "Họ cũng có khăn lụa đẹp với họa tiết đó. Mẹ chắc sẽ thích làm quà lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "Great idea! Today was an amazing outing, sis. Thanks for suggesting this.",
+        "vi": "Ý tưởng hay! Hôm nay là một chuyến đi tuyệt vời, chị ơi. Cảm ơn chị đã gợi ý."
+      },
+      {
+        "speaker": "B",
+        "en": "Anytime! The best kind of learning is the kind you enjoy. Same time next month?",
+        "vi": "Bất cứ lúc nào cũng được! Loại học tốt nhất là loại bạn thích thú. Tháng sau cùng giờ này nhé?"
+      }
     ]
   },
   {
@@ -182,36 +650,152 @@
     "speakerBName": { "vi": "Người bán", "en": "Vendor" },
     "_aiGenerated": true,
     "turns": [
-      { "speaker": "A", "en": "Excuse me, I'm looking for Da Lat specialties to bring back as gifts. What do you recommend?", "vi": "Xin hỏi, tôi đang tìm đặc sản Đà Lạt để mang về làm quà. Bạn có thể gợi ý không?" },
-      { "speaker": "B", "en": "Welcome! You came to the right place. We have everything — strawberry jam, dried fruit, artichoke tea, and more.", "vi": "Chào mừng! Bạn đến đúng chỗ rồi. Chúng tôi có đủ thứ — mứt dâu tây, trái cây sấy, trà atiso và nhiều hơn nữa." },
-      { "speaker": "A", "en": "Oh wonderful! Let me start with the strawberries — I've seen them everywhere in Da Lat. Do you have fresh ones?", "vi": "Tuyệt vời! Tôi muốn bắt đầu với dâu tây — tôi thấy chúng ở khắp nơi ở Đà Lạt. Bạn có hàng tươi không?" },
-      { "speaker": "B", "en": "Yes! These were picked this morning. Very sweet, a bit tart. Perfect Da Lat strawberries.", "vi": "Có! Những cái này được hái sáng nay. Rất ngọt, hơi chua nhẹ. Dâu tây Đà Lạt chuẩn." },
-      { "speaker": "A", "en": "They look beautiful! How much per kilogram?", "vi": "Trông đẹp lắm! Bao nhiêu tiền một ký?" },
-      { "speaker": "B", "en": "Fresh strawberries are 80,000 per kilogram. For a gift, I recommend the dried strawberries — they last longer and are easier to travel with.", "vi": "Dâu tươi 80 nghìn một ký. Để làm quà, tôi khuyên dâu sấy khô — để được lâu hơn và dễ mang đi hơn." },
-      { "speaker": "A", "en": "Good point! How much are the dried ones?", "vi": "Điểm hay đó! Dâu sấy bao nhiêu?" },
-      { "speaker": "B", "en": "Dried strawberries are 120,000 per 200 gram bag. Two bags for 220,000 — a small saving.", "vi": "Dâu sấy là 120 nghìn mỗi túi 200 gram. Hai túi 220 nghìn — tiết kiệm một chút." },
-      { "speaker": "A", "en": "I'll take two bags. Now, what about artichoke tea? My coworkers keep asking me to bring some back.", "vi": "Tôi lấy hai túi nhé. Còn trà atiso thì sao? Đồng nghiệp của tôi cứ nhờ tôi mang về." },
-      { "speaker": "B", "en": "Artichoke tea is our best-seller! We have the loose leaf version and the pre-packaged tea bags.", "vi": "Trà atiso là hàng bán chạy nhất của chúng tôi! Chúng tôi có loại lá rời và loại túi trà đóng gói sẵn." },
+      {
+        "speaker": "A",
+        "en": "Excuse me, I'm looking for Da Lat specialties to bring back as gifts. What do you recommend?",
+        "vi": "Xin hỏi, tôi đang tìm đặc sản Đà Lạt để mang về làm quà. Bạn có thể gợi ý không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Welcome! You came to the right place. We have everything — strawberry jam, dried fruit, artichoke tea, and more.",
+        "vi": "Chào mừng! Bạn đến đúng chỗ rồi. Chúng tôi có đủ thứ — mứt dâu tây, trái cây sấy, trà atiso và nhiều hơn nữa."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh wonderful! Let me start with the strawberries — I've seen them everywhere in Da Lat. Do you have fresh ones?",
+        "vi": "Tuyệt vời! Tôi muốn bắt đầu với dâu tây — tôi thấy chúng ở khắp nơi ở Đà Lạt. Bạn có hàng tươi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes! These were picked this morning. Very sweet, a bit tart. Perfect Da Lat strawberries.",
+        "vi": "Có! Những cái này được hái sáng nay. Rất ngọt, hơi chua nhẹ. Dâu tây Đà Lạt chuẩn."
+      },
+      {
+        "speaker": "A",
+        "en": "They look beautiful! How much per kilogram?",
+        "vi": "Trông đẹp lắm! Bao nhiêu tiền một ký?"
+      },
+      {
+        "speaker": "B",
+        "en": "Fresh strawberries are 80,000 per kilogram. For a gift, I recommend the dried strawberries — they last longer and are easier to travel with.",
+        "vi": "Dâu tươi 80 nghìn một ký. Để làm quà, tôi khuyên dâu sấy khô — để được lâu hơn và dễ mang đi hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Good point! How much are the dried ones?",
+        "vi": "Điểm hay đó! Dâu sấy bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Dried strawberries are 120,000 per 200 gram bag. Two bags for 220,000 — a small saving.",
+        "vi": "Dâu sấy là 120 nghìn mỗi túi 200 gram. Hai túi 220 nghìn — tiết kiệm một chút."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll take two bags. Now, what about artichoke tea? My coworkers keep asking me to bring some back.",
+        "vi": "Tôi lấy hai túi nhé. Còn trà atiso thì sao? Đồng nghiệp của tôi cứ nhờ tôi mang về."
+      },
+      {
+        "speaker": "B",
+        "en": "Artichoke tea is our best-seller! We have the loose leaf version and the pre-packaged tea bags.",
+        "vi": "Trà atiso là hàng bán chạy nhất của chúng tôi! Chúng tôi có loại lá rời và loại túi trà đóng gói sẵn."
+      },
       { "speaker": "A", "en": "Which one is better quality?", "vi": "Loại nào chất lượng hơn?" },
-      { "speaker": "B", "en": "The loose leaf has a stronger, more authentic flavor. The tea bags are more convenient but milder.", "vi": "Lá rời có hương vị đậm đà và chân thực hơn. Túi trà tiện lợi hơn nhưng nhạt hơn." },
-      { "speaker": "A", "en": "I'll get one box of each — loose leaf for myself and tea bags for gifting.", "vi": "Tôi sẽ lấy một hộp mỗi loại — lá rời cho tôi và túi trà để tặng." },
-      { "speaker": "B", "en": "Great choice! The loose leaf is 85,000 per box, the tea bags are 60,000.", "vi": "Lựa chọn tốt! Hộp lá rời 85 nghìn, hộp túi trà 60 nghìn." },
-      { "speaker": "A", "en": "Do you have wine here? I heard Da Lat wine is famous.", "vi": "Bạn có rượu vang ở đây không? Tôi nghe rượu vang Đà Lạt nổi tiếng lắm." },
-      { "speaker": "B", "en": "Absolutely! Da Lat wine is our pride. We have red, white, and strawberry wine. The strawberry wine is uniquely Vietnamese.", "vi": "Dĩ nhiên! Rượu vang Đà Lạt là niềm tự hào của chúng tôi. Chúng tôi có đỏ, trắng và vang dâu tây. Vang dâu tây rất riêng của Việt Nam." },
-      { "speaker": "A", "en": "I've never heard of strawberry wine before! I must try it. One bottle please.", "vi": "Tôi chưa nghe vang dâu tây bao giờ! Tôi phải thử. Một chai nhé." },
-      { "speaker": "B", "en": "Excellent! The strawberry wine is 150,000 per bottle. Sweet and fruity — very unique.", "vi": "Tuyệt vời! Vang dâu tây 150 nghìn một chai. Ngọt và có hương trái cây — rất độc đáo." },
-      { "speaker": "A", "en": "I also want some of those pine nut candies I see in the jar there. They look homemade.", "vi": "Tôi cũng muốn mua kẹo hạt thông kia tôi thấy trong hũ đó. Trông có vẻ làm thủ công." },
-      { "speaker": "B", "en": "Very observant! Yes, those are handmade by a local family. Crunchy pine nuts coated in caramel. They're addictive!", "vi": "Quan sát tinh tế lắm! Đúng vậy, cái đó được một gia đình địa phương làm thủ công. Hạt thông giòn tráng caramel. Ăn là nghiện luôn!" },
-      { "speaker": "A", "en": "I'll take two small bags. Can you also recommend something unique that tourists often miss?", "vi": "Tôi lấy hai túi nhỏ. Bạn có thể gợi ý thứ gì độc đáo mà du khách thường bỏ qua không?" },
-      { "speaker": "B", "en": "Our mulberry jam! It's less well-known but the flavor is extraordinary — sweet, slightly sour, beautiful deep purple.", "vi": "Mứt dâu tằm của chúng tôi! Ít người biết hơn nhưng hương vị đặc biệt lắm — ngọt, hơi chua, màu tím đậm đẹp lắm." },
-      { "speaker": "A", "en": "That sounds amazing. I'll take one jar of that too!", "vi": "Nghe hấp dẫn quá. Tôi lấy thêm một hũ cái đó nữa!" },
-      { "speaker": "B", "en": "Okay! Let me calculate everything for you. Dried strawberries ×2, artichoke tea ×2, strawberry wine, pine nut candy ×2, mulberry jam...", "vi": "Được! Để tôi tính tổng cho bạn. Dâu sấy ×2, trà atiso ×2, vang dâu tây, kẹo hạt thông ×2, mứt dâu tằm..." },
-      { "speaker": "A", "en": "Also, is there a nice gift box or basket I can put everything in?", "vi": "À, có hộp quà hay giỏ nào đẹp để đựng hết mấy thứ này không?" },
-      { "speaker": "B", "en": "Yes! We have woven bamboo baskets that are very pretty. 50,000 for the large size.", "vi": "Có! Chúng tôi có giỏ tre đan rất đẹp. 50 nghìn cho cỡ lớn." },
-      { "speaker": "A", "en": "Perfect. I'll take one of those too. What's the grand total?", "vi": "Hoàn hảo. Tôi lấy một cái đó nữa. Tổng cộng tất cả là bao nhiêu?" },
-      { "speaker": "B", "en": "Your total comes to 865,000 VND. Would you like me to pack everything neatly in the basket as a gift set?", "vi": "Tổng cộng của bạn là 865 nghìn. Bạn có muốn tôi sắp xếp hết vào giỏ gọn gàng như một bộ quà không?" },
-      { "speaker": "A", "en": "Yes please! That would be wonderful. My friends are going to love these Da Lat specialties.", "vi": "Vâng nhờ bạn! Vậy thì tuyệt quá. Bạn bè tôi sẽ thích những đặc sản Đà Lạt này lắm." },
-      { "speaker": "B", "en": "Everyone loves Da Lat gifts! Here you go — all packed nicely. Safe travels!", "vi": "Ai cũng thích quà Đà Lạt! Đây nhé — đã đóng gói cẩn thận rồi. Chúc bạn đi an toàn!" }
+      {
+        "speaker": "B",
+        "en": "The loose leaf has a stronger, more authentic flavor. The tea bags are more convenient but milder.",
+        "vi": "Lá rời có hương vị đậm đà và chân thực hơn. Túi trà tiện lợi hơn nhưng nhạt hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll get one box of each — loose leaf for myself and tea bags for gifting.",
+        "vi": "Tôi sẽ lấy một hộp mỗi loại — lá rời cho tôi và túi trà để tặng."
+      },
+      {
+        "speaker": "B",
+        "en": "Great choice! The loose leaf is 85,000 per box, the tea bags are 60,000.",
+        "vi": "Lựa chọn tốt! Hộp lá rời 85 nghìn, hộp túi trà 60 nghìn."
+      },
+      {
+        "speaker": "A",
+        "en": "Do you have wine here? I heard Da Lat wine is famous.",
+        "vi": "Bạn có rượu vang ở đây không? Tôi nghe rượu vang Đà Lạt nổi tiếng lắm."
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely! Da Lat wine is our pride. We have red, white, and strawberry wine. The strawberry wine is uniquely Vietnamese.",
+        "vi": "Dĩ nhiên! Rượu vang Đà Lạt là niềm tự hào của chúng tôi. Chúng tôi có đỏ, trắng và vang dâu tây. Vang dâu tây rất riêng của Việt Nam."
+      },
+      {
+        "speaker": "A",
+        "en": "I've never heard of strawberry wine before! I must try it. One bottle please.",
+        "vi": "Tôi chưa nghe vang dâu tây bao giờ! Tôi phải thử. Một chai nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Excellent! The strawberry wine is 150,000 per bottle. Sweet and fruity — very unique.",
+        "vi": "Tuyệt vời! Vang dâu tây 150 nghìn một chai. Ngọt và có hương trái cây — rất độc đáo."
+      },
+      {
+        "speaker": "A",
+        "en": "I also want some of those pine nut candies I see in the jar there. They look homemade.",
+        "vi": "Tôi cũng muốn mua kẹo hạt thông kia tôi thấy trong hũ đó. Trông có vẻ làm thủ công."
+      },
+      {
+        "speaker": "B",
+        "en": "Very observant! Yes, those are handmade by a local family. Crunchy pine nuts coated in caramel. They're addictive!",
+        "vi": "Quan sát tinh tế lắm! Đúng vậy, cái đó được một gia đình địa phương làm thủ công. Hạt thông giòn tráng caramel. Ăn là nghiện luôn!"
+      },
+      {
+        "speaker": "A",
+        "en": "I'll take two small bags. Can you also recommend something unique that tourists often miss?",
+        "vi": "Tôi lấy hai túi nhỏ. Bạn có thể gợi ý thứ gì độc đáo mà du khách thường bỏ qua không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Our mulberry jam! It's less well-known but the flavor is extraordinary — sweet, slightly sour, beautiful deep purple.",
+        "vi": "Mứt dâu tằm của chúng tôi! Ít người biết hơn nhưng hương vị đặc biệt lắm — ngọt, hơi chua, màu tím đậm đẹp lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds amazing. I'll take one jar of that too!",
+        "vi": "Nghe hấp dẫn quá. Tôi lấy thêm một hũ cái đó nữa!"
+      },
+      {
+        "speaker": "B",
+        "en": "Okay! Let me calculate everything for you. Dried strawberries ×2, artichoke tea ×2, strawberry wine, pine nut candy ×2, mulberry jam...",
+        "vi": "Được! Để tôi tính tổng cho bạn. Dâu sấy ×2, trà atiso ×2, vang dâu tây, kẹo hạt thông ×2, mứt dâu tằm..."
+      },
+      {
+        "speaker": "A",
+        "en": "Also, is there a nice gift box or basket I can put everything in?",
+        "vi": "À, có hộp quà hay giỏ nào đẹp để đựng hết mấy thứ này không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes! We have woven bamboo baskets that are very pretty. 50,000 for the large size.",
+        "vi": "Có! Chúng tôi có giỏ tre đan rất đẹp. 50 nghìn cho cỡ lớn."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. I'll take one of those too. What's the grand total?",
+        "vi": "Hoàn hảo. Tôi lấy một cái đó nữa. Tổng cộng tất cả là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Your total comes to 865,000 VND. Would you like me to pack everything neatly in the basket as a gift set?",
+        "vi": "Tổng cộng của bạn là 865 nghìn. Bạn có muốn tôi sắp xếp hết vào giỏ gọn gàng như một bộ quà không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes please! That would be wonderful. My friends are going to love these Da Lat specialties.",
+        "vi": "Vâng nhờ bạn! Vậy thì tuyệt quá. Bạn bè tôi sẽ thích những đặc sản Đà Lạt này lắm."
+      },
+      {
+        "speaker": "B",
+        "en": "Everyone loves Da Lat gifts! Here you go — all packed nicely. Safe travels!",
+        "vi": "Ai cũng thích quà Đà Lạt! Đây nhé — đã đóng gói cẩn thận rồi. Chúc bạn đi an toàn!"
+      }
     ]
   }
 ]

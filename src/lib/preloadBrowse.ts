@@ -12,7 +12,7 @@ export async function preloadBrowseChunks(): Promise<void> {
     import('../data/patterns/loader').catch(() => null),
   ])
   await Promise.all([
-    lessonsLoader?.loadChunk(0) ?? Promise.resolve(),  // 10 bài học đầu
+    lessonsLoader?.loadChunk(0) ?? Promise.resolve(), // 10 bài học đầu
     patternsLoader?.loadChunk(0) ?? Promise.resolve(), // 8 chủ đề cụm từ đầu
   ])
 }

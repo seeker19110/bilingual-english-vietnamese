@@ -23,16 +23,16 @@ export function isValidVoice(value: string): value is VoiceId {
 // female=Kore, female2=Aoede, male=Puck, male2=Charon — đều có sẵn cho cả en-US và vi-VN.
 const VOICE_MAP: Record<Lang, Record<VoiceId, { name: string; ssmlGender: 'FEMALE' | 'MALE' }>> = {
   'en-US': {
-    female:  { name: 'en-US-Chirp3-HD-Kore',   ssmlGender: 'FEMALE' },
-    female2: { name: 'en-US-Chirp3-HD-Aoede',  ssmlGender: 'FEMALE' },
-    male:    { name: 'en-US-Chirp3-HD-Puck',   ssmlGender: 'MALE'   },
-    male2:   { name: 'en-US-Chirp3-HD-Charon', ssmlGender: 'MALE'   },
+    female: { name: 'en-US-Chirp3-HD-Kore', ssmlGender: 'FEMALE' },
+    female2: { name: 'en-US-Chirp3-HD-Aoede', ssmlGender: 'FEMALE' },
+    male: { name: 'en-US-Chirp3-HD-Puck', ssmlGender: 'MALE' },
+    male2: { name: 'en-US-Chirp3-HD-Charon', ssmlGender: 'MALE' },
   },
   'vi-VN': {
-    female:  { name: 'vi-VN-Chirp3-HD-Kore',   ssmlGender: 'FEMALE' },
-    female2: { name: 'vi-VN-Chirp3-HD-Aoede',  ssmlGender: 'FEMALE' },
-    male:    { name: 'vi-VN-Chirp3-HD-Puck',   ssmlGender: 'MALE'   },
-    male2:   { name: 'vi-VN-Chirp3-HD-Charon', ssmlGender: 'MALE'   },
+    female: { name: 'vi-VN-Chirp3-HD-Kore', ssmlGender: 'FEMALE' },
+    female2: { name: 'vi-VN-Chirp3-HD-Aoede', ssmlGender: 'FEMALE' },
+    male: { name: 'vi-VN-Chirp3-HD-Puck', ssmlGender: 'MALE' },
+    male2: { name: 'vi-VN-Chirp3-HD-Charon', ssmlGender: 'MALE' },
   },
 }
 

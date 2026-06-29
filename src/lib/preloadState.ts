@@ -5,8 +5,8 @@
 // Logic preload nặng (preloadLearnData) nằm ở preloader.ts, chỉ trang Học mới import.
 
 export const preloadFlags = {
-  learn: false,   // đã preload từ điển + audio "hôm nay" cho trang Học chưa
-  browse: false,  // đã preload chunk đầu của Bài học/Cụm từ chưa
+  learn: false, // đã preload từ điển + audio "hôm nay" cho trang Học chưa
+  browse: false, // đã preload chunk đầu của Bài học/Cụm từ chưa
 }
 
 // Reset toàn bộ (gọi khi đăng xuất) để user kế tiếp được preload lại.

@@ -1,7 +1,9 @@
 # Tính năng: Cache Phát Âm Từ Điển (TTS + Supabase)
 
 ## Mục tiêu
+
 Khi user tìm một từ tiếng Anh:
+
 - Lần đầu → gọi Google Cloud TTS tạo audio → lưu vào Supabase Storage + DB
 - Lần sau → đọc thẳng từ cache, không gọi API nữa
 
@@ -43,6 +45,7 @@ create index idx_pronunciations_word on pronunciations(word);
 ### 2b. Tạo Storage Bucket
 
 Vào Supabase Dashboard → Storage → New Bucket:
+
 - Name: `pronunciations`
 - Public: **BẬT** (để audio_url có thể phát thẳng trên browser)
 
@@ -69,36 +72,36 @@ GOOGLE_TTS_API_KEY=your_google_tts_key
 // lib/tts.ts
 
 export async function generateAudioFromGoogle(word: string): Promise<Buffer> {
-  const apiKey = process.env.GOOGLE_TTS_API_KEY;
+  const apiKey = process.env.GOOGLE_TTS_API_KEY
 
   const response = await fetch(
     `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
     {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         input: { text: word },
         voice: {
-          languageCode: "en-US",
-          name: "en-US-Journey-F",   // Giọng tự nhiên nhất của Google
-          ssmlGender: "FEMALE",
+          languageCode: 'en-US',
+          name: 'en-US-Journey-F', // Giọng tự nhiên nhất của Google
+          ssmlGender: 'FEMALE',
         },
         audioConfig: {
-          audioEncoding: "MP3",
-          speakingRate: 0.9,          // Hơi chậm để dễ nghe
+          audioEncoding: 'MP3',
+          speakingRate: 0.9, // Hơi chậm để dễ nghe
           pitch: 0,
         },
       }),
-    }
-  );
+    },
+  )
 
   if (!response.ok) {
-    throw new Error(`Google TTS error: ${response.statusText}`);
+    throw new Error(`Google TTS error: ${response.statusText}`)
   }
 
-  const data = await response.json();
+  const data = await response.json()
   // Google trả về base64, decode thành Buffer
-  return Buffer.from(data.audioContent, "base64");
+  return Buffer.from(data.audioContent, 'base64')
 }
 ```
 
@@ -108,73 +111,71 @@ export async function generateAudioFromGoogle(word: string): Promise<Buffer> {
 
 ```typescript
 // app/api/pronunciation/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { generateAudioFromGoogle } from "@/lib/tts";
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+import { generateAudioFromGoogle } from '@/lib/tts'
 
 // Dùng service role key để upload file (server-side only)
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+)
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const word = searchParams.get("word")?.toLowerCase().trim();
+  const { searchParams } = new URL(request.url)
+  const word = searchParams.get('word')?.toLowerCase().trim()
 
   if (!word) {
-    return NextResponse.json({ error: "Thiếu tham số word" }, { status: 400 });
+    return NextResponse.json({ error: 'Thiếu tham số word' }, { status: 400 })
   }
 
   // ── BƯỚC 1: Kiểm tra cache ──────────────────────────────────
   const { data: cached } = await supabase
-    .from("pronunciations")
-    .select("audio_url")
-    .eq("word", word)
-    .single();
+    .from('pronunciations')
+    .select('audio_url')
+    .eq('word', word)
+    .single()
 
   if (cached?.audio_url) {
     // Cache HIT → trả về luôn, không tốn token
-    return NextResponse.json({ audio_url: cached.audio_url, cached: true });
+    return NextResponse.json({ audio_url: cached.audio_url, cached: true })
   }
 
   // ── BƯỚC 2: Cache MISS → Gọi Google TTS ────────────────────
-  let audioBuffer: Buffer;
+  let audioBuffer: Buffer
   try {
-    audioBuffer = await generateAudioFromGoogle(word);
+    audioBuffer = await generateAudioFromGoogle(word)
   } catch (err) {
-    return NextResponse.json({ error: "Không thể tạo audio" }, { status: 500 });
+    return NextResponse.json({ error: 'Không thể tạo audio' }, { status: 500 })
   }
 
   // ── BƯỚC 3: Upload lên Supabase Storage ────────────────────
-  const fileName = `${word}.mp3`;
+  const fileName = `${word}.mp3`
 
   const { error: uploadError } = await supabase.storage
-    .from("pronunciations")
+    .from('pronunciations')
     .upload(fileName, audioBuffer, {
-      contentType: "audio/mpeg",
-      upsert: false,           // Không ghi đè nếu đã có
-    });
+      contentType: 'audio/mpeg',
+      upsert: false, // Không ghi đè nếu đã có
+    })
 
-  if (uploadError && uploadError.message !== "The resource already exists") {
-    return NextResponse.json({ error: "Upload thất bại" }, { status: 500 });
+  if (uploadError && uploadError.message !== 'The resource already exists') {
+    return NextResponse.json({ error: 'Upload thất bại' }, { status: 500 })
   }
 
   // ── BƯỚC 4: Lấy public URL ─────────────────────────────────
-  const { data: urlData } = supabase.storage
-    .from("pronunciations")
-    .getPublicUrl(fileName);
+  const { data: urlData } = supabase.storage.from('pronunciations').getPublicUrl(fileName)
 
-  const audioUrl = urlData.publicUrl;
+  const audioUrl = urlData.publicUrl
 
   // ── BƯỚC 5: Lưu vào DB ─────────────────────────────────────
-  await supabase.from("pronunciations").insert({
+  await supabase.from('pronunciations').insert({
     word,
     audio_url: audioUrl,
-    lang: "en-US",
-  });
+    lang: 'en-US',
+  })
 
-  return NextResponse.json({ audio_url: audioUrl, cached: false });
+  return NextResponse.json({ audio_url: audioUrl, cached: false })
 }
 ```
 
@@ -316,11 +317,11 @@ GET /api/pronunciation?word=apple
 
 ## 9. Chi phí ước tính
 
-| Giai đoạn | Lượt gọi TTS | Chi phí |
-|-----------|-------------|---------|
-| Tháng đầu (warm-up cache) | ~5,000 từ phổ biến | Free (Google 1M ký tự/tháng) |
-| Tháng 2+ | Gần 0 (hầu hết đã cache) | ~$0 |
-| Từ hiếm, mới | Rất ít | Không đáng kể |
+| Giai đoạn                 | Lượt gọi TTS             | Chi phí                      |
+| ------------------------- | ------------------------ | ---------------------------- |
+| Tháng đầu (warm-up cache) | ~5,000 từ phổ biến       | Free (Google 1M ký tự/tháng) |
+| Tháng 2+                  | Gần 0 (hầu hết đã cache) | ~$0                          |
+| Từ hiếm, mới              | Rất ít                   | Không đáng kể                |
 
 ---
 
@@ -330,4 +331,7 @@ GET /api/pronunciation?word=apple
 - [ ] Phát âm theo câu, không chỉ từ đơn
 - [ ] Rate limiting để tránh bị abuse
 - [ ] Prefetch top 1000 từ phổ biến khi khởi động
+
+```
+
 ```

@@ -13,14 +13,14 @@ Khi giải thích, nói ngắn gọn bằng tiếng Việt và chỉ rõ vì sao
 
 // Mô tả trình độ theo chiều học
 const LEVEL_DESC_A: Record<Level, string> = {
-  beginner:     'A1–A2, dùng câu ngắn, từ vựng đơn giản',
+  beginner: 'A1–A2, dùng câu ngắn, từ vựng đơn giản',
   intermediate: 'B1–B2, giao tiếp thường ngày, có thể dùng thành ngữ phổ biến',
-  advanced:     'C1+, diễn đạt phức tạp, dùng collocations và idioms',
+  advanced: 'C1+, diễn đạt phức tạp, dùng collocations và idioms',
 }
 const LEVEL_DESC_B: Record<Level, string> = {
-  beginner:     'A1–A2 Vietnamese, use short simple sentences',
+  beginner: 'A1–A2 Vietnamese, use short simple sentences',
   intermediate: 'B1–B2 Vietnamese, everyday conversation',
-  advanced:     'C1+ Vietnamese, complex expression',
+  advanced: 'C1+ Vietnamese, complex expression',
 }
 
 // ─── Chat ──────────────────────────────────────────────────────────────
@@ -64,7 +64,11 @@ Start with an opening line appropriate for the situation.`
 // JSON keys dùng chung: "speech", "feedback", "corrected"
 // Chiều A: speech=tiếng Anh, feedback=tiếng Việt
 // Chiều B: speech=tiếng Việt, feedback=tiếng Anh
-export function speakingSystemPrompt(situation: string, level: Level, dir: Direction = 'A'): string {
+export function speakingSystemPrompt(
+  situation: string,
+  level: Level,
+  dir: Direction = 'A',
+): string {
   if (dir === 'A') {
     return `Bạn là Emma — gia sư tiếng Anh thân thiện, người Mỹ, đang dạy người Việt. Xưng tên "Emma" khi mở đầu hoặc khi tự nhiên. Trình độ học viên: ${LEVEL_DESC_A[level]}.
 Tình huống đóng vai: "${situation}".
@@ -249,30 +253,30 @@ Return JSON only (no markdown):
 // ─── Helpers ─────────────────────────────────────────────────────
 export function situationLabel(value: string, dir: Direction = 'A'): string {
   const mapA: Record<string, string> = {
-    job_interview:  'Phỏng vấn xin việc',
-    restaurant:     'Gọi món tại nhà hàng',
-    hotel_travel:   'Du lịch / khách sạn',
+    job_interview: 'Phỏng vấn xin việc',
+    restaurant: 'Gọi món tại nhà hàng',
+    hotel_travel: 'Du lịch / khách sạn',
     office_meeting: 'Họp / thuyết trình',
-    shopping:       'Mua sắm',
-    small_talk:     'Tán gẫu / xã giao',
-    market_vn:      'Đi chợ truyền thống ở Việt Nam, có mặc cả giá',
-    ride_hailing:   'Đặt và đi Grab / taxi ở Việt Nam',
-    directions:     'Chỉ đường cho khách du lịch nước ngoài ở Việt Nam',
-    street_food:    'Gọi món ở quán ăn vỉa hè / quán cà phê Việt Nam',
-    free:           'Tự do',
+    shopping: 'Mua sắm',
+    small_talk: 'Tán gẫu / xã giao',
+    market_vn: 'Đi chợ truyền thống ở Việt Nam, có mặc cả giá',
+    ride_hailing: 'Đặt và đi Grab / taxi ở Việt Nam',
+    directions: 'Chỉ đường cho khách du lịch nước ngoài ở Việt Nam',
+    street_food: 'Gọi món ở quán ăn vỉa hè / quán cà phê Việt Nam',
+    free: 'Tự do',
   }
   const mapB: Record<string, string> = {
-    job_interview:  'Job Interview',
-    restaurant:     'Ordering at a Restaurant',
-    hotel_travel:   'Travel / Hotel',
+    job_interview: 'Job Interview',
+    restaurant: 'Ordering at a Restaurant',
+    hotel_travel: 'Travel / Hotel',
     office_meeting: 'Meeting / Presentation',
-    shopping:       'Shopping',
-    small_talk:     'Small Talk',
-    market_vn:      'Bargaining at a traditional Vietnamese market',
-    ride_hailing:   'Booking and riding a Grab / taxi in Vietnam',
-    directions:     'Giving directions to a foreign tourist in Vietnam',
-    street_food:    'Ordering at a Vietnamese street food stall / coffee shop',
-    free:           'Free Topic',
+    shopping: 'Shopping',
+    small_talk: 'Small Talk',
+    market_vn: 'Bargaining at a traditional Vietnamese market',
+    ride_hailing: 'Booking and riding a Grab / taxi in Vietnam',
+    directions: 'Giving directions to a foreign tourist in Vietnam',
+    street_food: 'Ordering at a Vietnamese street food stall / coffee shop',
+    free: 'Free Topic',
   }
   const map = dir === 'A' ? mapA : mapB
   return map[value] ?? value
