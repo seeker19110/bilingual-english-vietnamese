@@ -33,5 +33,10 @@ jobs:
             echo "🔄 Reload PM2 (graceful, hạn chế downtime)..."
             pm2 reload ecosystem.config.cjs
 
-            echo "✅ Deploy thành công!"
-            curl -fsS http://localhost:3001/api/health && echo " — health OK" || echo "⚠️  Health check failed"
+            echo "⏳ Chờ app sẵn sàng (health check có retry)..."
+            for i in $(seq 1 15); do
+              curl -fsS http://localhost:3001/api/health >/dev/null && { echo "✅ Deploy thành công — health OK (sau ${i}s)"; exit 0; }
+              sleep 1
+            done
+            echo "⚠️  Health check failed sau 15s — app chưa phản hồi ở cổng 3001"
+            exit 1
