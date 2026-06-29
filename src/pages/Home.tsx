@@ -170,7 +170,7 @@ export default function Home() {
               {isA ? '🇻🇳 → 🇺🇸' : '🇺🇸 → 🇻🇳'}
             </span>
             <span
-              className={`text-[11px] leading-none text-center ${isA ? 'text-accent-400/60' : 'text-sky-400/60'}`}
+              className={`text-[11px] leading-none text-center ${isA ? 'text-accent-400' : 'text-sky-400'}`}
             >
               {isA ? 'Ngôn ngữ' : 'Language'}
             </span>
@@ -191,7 +191,7 @@ export default function Home() {
               {streak}
             </p>
             <p
-              className={`text-[11px] leading-none ${streak > 0 ? 'text-orange-400/60' : 'text-zinc-600'}`}
+              className={`text-[11px] leading-none ${streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
             >
               {T.streakDays}
             </p>
@@ -209,7 +209,7 @@ export default function Home() {
             <span className="text-xs font-semibold leading-none text-center text-zinc-200">
               {voice === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'}
             </span>
-            <span className="text-[11px] leading-none text-center text-zinc-500">
+            <span className="text-[11px] leading-none text-center text-zinc-400">
               {isA ? 'Giọng đọc' : 'Voice'}
             </span>
           </button>
