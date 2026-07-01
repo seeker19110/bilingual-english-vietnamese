@@ -3,16 +3,20 @@ import { useNavigate } from 'react-router-dom'
 import { BookOpen, Eye, EyeOff, Mic, PenLine, MessageCircle } from 'lucide-react'
 import { login, register, loginWithGoogle } from '../lib/auth'
 import { useAuth } from '../context/useAuth'
+import { useLang } from '../context/useLang'
+import type { UiLang } from '../lib/uiLang'
 
+// Nhãn tính năng lấy từ i18n theo `key` (icon + màu cố định, chữ dịch theo ngôn ngữ)
 const FEATURES = [
-  { icon: MessageCircle, label: 'Chat với gia sư AI', color: 'text-accent-400' },
-  { icon: Mic, label: 'Luyện nói song ngữ', color: 'text-sky-400' },
-  { icon: PenLine, label: 'Chấm bài IELTS tức thì', color: 'text-violet-400' },
-]
+  { icon: MessageCircle, key: 'featChat', color: 'text-accent-400' },
+  { icon: Mic, key: 'featSpeak', color: 'text-sky-400' },
+  { icon: PenLine, key: 'featScore', color: 'text-violet-400' },
+] as const
 
 export default function Login() {
   const nav = useNavigate()
   const { user, refresh } = useAuth()
+  const { T, lang, setLang } = useLang()
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -34,25 +38,25 @@ export default function Login() {
     try {
       if (mode === 'register') {
         if (!name.trim()) {
-          setError('Vui lòng nhập tên.')
+          setError(T.errNameRequired)
           return
         }
         const u = await register(email.trim(), name.trim(), password)
         if (!u) {
-          setError('Email đã được dùng hoặc không hợp lệ. Hãy thử email khác.')
+          setError(T.errEmailInvalid)
           return
         }
       } else {
         const u = await login(email.trim(), password)
         if (!u) {
-          setError('Email hoặc mật khẩu không đúng.')
+          setError(T.errBadCredentials)
           return
         }
       }
       await refresh()
       nav('/')
     } catch {
-      setError('Lỗi kết nối. Vui lòng thử lại.')
+      setError(T.errConnection)
     } finally {
       setLoading(false)
     }
@@ -67,7 +71,7 @@ export default function Login() {
       await loginWithGoogle()
       // Trình duyệt sẽ rời trang ngay; không cần làm gì thêm ở đây.
     } catch {
-      setError('Không kết nối được Google. Vui lòng thử lại.')
+      setError(T.errGoogle)
       setLoading(false)
     }
   }
@@ -82,15 +86,34 @@ export default function Login() {
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-sky-500 rounded-full blur-[140px] opacity-[0.07] translate-x-1/2 translate-y-1/2 pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-violet-500 rounded-full blur-[120px] opacity-[0.04] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
+      {/* Chọn ngôn ngữ giao diện (VI/EN) — trang này không có header nên đặt góc trên */}
+      <div
+        className="absolute top-4 right-4 z-10 flex gap-1 bg-zinc-800/60 border border-zinc-700/60 rounded-xl p-1"
+        role="group"
+        aria-label={T.langToggleLabel}
+      >
+        {(['vi', 'en'] as const).map((l: UiLang) => (
+          <button
+            key={l}
+            type="button"
+            onClick={() => setLang(l)}
+            aria-pressed={lang === l}
+            className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition ${
+              lang === l ? 'bg-zinc-700 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            {l.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
       {/* Logo */}
       <div className="mb-7 text-center animate-fade-in">
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-accent-500/30 glow-accent">
           <BookOpen className="w-8 h-8 text-white" />
         </div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">Gia sư tiếng Anh AI</h1>
-        <p className="text-zinc-400 text-sm mt-1.5 tracking-wide">
-          Luyện nói · Viết · Nhận xét bằng tiếng Việt
-        </p>
+        <h1 className="text-2xl font-bold text-white tracking-tight">{T.loginBrand}</h1>
+        <p className="text-zinc-400 text-sm mt-1.5 tracking-wide">{T.loginTagline}</p>
       </div>
 
       {/* Card */}
@@ -110,7 +133,7 @@ export default function Login() {
                   : 'text-zinc-400 hover:text-zinc-300'
               }`}
             >
-              {m === 'login' ? 'Đăng nhập' : 'Đăng ký'}
+              {m === 'login' ? T.loginTabLogin : T.loginTabRegister}
             </button>
           ))}
         </div>
@@ -122,7 +145,7 @@ export default function Login() {
               name="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Tên của bạn"
+              placeholder={T.namePlaceholder}
               className={inputCls}
               required
               autoFocus
@@ -134,7 +157,7 @@ export default function Login() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
+            placeholder={T.emailPlaceholder}
             className={inputCls}
             required
             autoFocus={mode === 'login'}
@@ -146,7 +169,7 @@ export default function Login() {
               type={showPw ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mật khẩu"
+              placeholder={T.passwordPlaceholder}
               className={`${inputCls} pr-11`}
               required
               minLength={6}
@@ -154,7 +177,7 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setShowPw((p) => !p)}
-              aria-label={showPw ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+              aria-label={showPw ? T.hidePassword : T.showPassword}
               aria-pressed={showPw}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 p-0.5 transition"
             >
@@ -176,12 +199,12 @@ export default function Login() {
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block" />{' '}
-                Đang xử lý…
+                {T.loginProcessing}
               </span>
             ) : mode === 'login' ? (
-              'Đăng nhập'
+              T.loginSubmit
             ) : (
-              'Tạo tài khoản miễn phí'
+              T.registerSubmit
             )}
           </button>
         </form>
@@ -189,7 +212,7 @@ export default function Login() {
         {/* Ngăn cách "hoặc" */}
         <div className="flex items-center gap-3 my-4">
           <div className="flex-1 h-px bg-zinc-700/60" />
-          <span className="text-xs text-zinc-400">hoặc</span>
+          <span className="text-xs text-zinc-400">{T.loginOr}</span>
           <div className="flex-1 h-px bg-zinc-700/60" />
         </div>
 
@@ -218,12 +241,10 @@ export default function Login() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.06l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38z"
             />
           </svg>
-          Đăng nhập bằng Google
+          {T.googleSignIn}
         </button>
 
-        <p className="text-center text-xs text-zinc-400 mt-4">
-          Dữ liệu lưu trên máy bạn · Hoàn toàn riêng tư
-        </p>
+        <p className="text-center text-xs text-zinc-400 mt-4">{T.loginPrivacy}</p>
       </div>
 
       {/* Feature pills */}
@@ -231,9 +252,9 @@ export default function Login() {
         {FEATURES.map((f) => {
           const Icon = f.icon
           return (
-            <div key={f.label} className="flex items-center gap-1.5 text-xs text-zinc-400">
+            <div key={f.key} className="flex items-center gap-1.5 text-xs text-zinc-400">
               <Icon className={`w-3.5 h-3.5 ${f.color}`} />
-              <span>{f.label}</span>
+              <span>{T[f.key]}</span>
             </div>
           )
         })}

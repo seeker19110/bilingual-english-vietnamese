@@ -60,11 +60,20 @@
   bóng Chat (`src/pages/Chat.tsx`) + Speaking (`src/pages/Speaking.tsx`) thiếu `theme-light:`
   → contrast chỉ 1.19 trên nền sáng; đã thêm `theme-light:text-amber-800` (khớp dấu ✅ cùng
   ô). Gate a11y nay **59 test** (62 E2E tổng) — 0 critical / 0 serious ở mọi theme + mọi
-  trạng thái tương tác (gồm cả màn kết quả AI). → Đóng hẳn nợ a11y. Đây là PR hiện tại.
+  trạng thái tương tác (gồm cả màn kết quả AI). → Đóng hẳn nợ a11y. Đã merge: **PR #143**.
+- **i18n Trang đăng nhập (song ngữ vi/en)** — Trang Login là trang cuối còn hard-code tiếng
+  Việt; đã chuyển toàn bộ chữ sang hệ i18n sẵn có (`useLang()` → `T`, `src/i18n/index.ts`).
+  Thay khối key `login*` cũ (bỏ hoang, không khớp thiết kế) bằng bộ key khớp Login hiện tại
+  cho cả vi/en (brand, tagline, tab đăng nhập/đăng ký, placeholder, nút, lỗi, feature pills).
+  Vì `/login` không có header, **thêm nút gạt VI/EN** (segmented, `aria-pressed`, `role=group`)
+  góc trên phải để người nước ngoài (chiều B) đổi ngôn ngữ trước khi đăng nhập. Chữ vi giữ
+  nguyên byte → không đổi hình + smoke cũ còn xanh. E2E: thêm 2 test (login tiếng Anh khi
+  `ui_lang=en` + nút VI/EN đổi ngôn ngữ tại chỗ). a11y `/login` vẫn 0 critical/serious. Đây
+  là PR hiện tại.
 
 ## Đang làm
 
-- (Chờ duyệt) PR a11y gate màn kết quả + sửa `text-amber-200` — xem mục cuối "Đã xong".
+- (Chờ duyệt) PR i18n Trang đăng nhập song ngữ + nút gạt VI/EN — xem mục cuối "Đã xong".
 
 ## Tiếp theo
 
@@ -97,4 +106,5 @@
   theme, gồm cả trạng thái sau tương tác có/không cần backend. Nợ a11y đã đóng.
 - E2E (`e2e/`) chưa nằm trong `npm run typecheck` (không thuộc tsconfig nào) —
   Playwright tự transpile khi chạy. Thêm `tsconfig.e2e.json` nếu muốn type-check.
-- Trang Login dùng text tiếng Việt hard-code (chưa qua i18n) — chưa song ngữ.
+- ~~Trang Login dùng text tiếng Việt hard-code (chưa qua i18n) — chưa song ngữ.~~ ĐÃ XONG:
+  Login nay dùng i18n `T` + có nút gạt VI/EN (xem "Đã xong" đợt áp khung).
