@@ -4,7 +4,7 @@
 
 import { useState, useRef } from 'react'
 import { Volume2, Square } from 'lucide-react'
-import { speak, stopSpeaking } from '../lib/tts'
+import { speak, stopSpeaking, type Voice } from '../lib/tts'
 
 interface Props {
   text: string
@@ -12,6 +12,7 @@ interface Props {
   textClass?: string // class CSS cho phần văn bản (font, màu, size...)
   buttonClass?: string // class CSS thêm vào nút container (padding, hover...)
   iconSize?: 'xs' | 'sm'
+  voice?: Voice // giọng riêng cho nhân vật (vd hội thoại 2 người) — bỏ trống thì dùng giọng mặc định
 }
 
 export default function KaraokeText({
@@ -20,6 +21,7 @@ export default function KaraokeText({
   textClass = 'text-sm text-zinc-300 leading-relaxed',
   buttonClass = '',
   iconSize = 'sm',
+  voice,
 }: Props) {
   const [playing, setPlaying] = useState(false)
   const [wordIdx, setWordIdx] = useState<number | null>(null)
@@ -43,7 +45,7 @@ export default function KaraokeText({
     wordIdxRef.current = null
     setWordIdx(null)
     try {
-      await speak(text, lang, undefined, 1, onWord)
+      await speak(text, lang, voice, 1, onWord)
     } catch {
       // lỗi mạng / TTS → im lặng
     } finally {

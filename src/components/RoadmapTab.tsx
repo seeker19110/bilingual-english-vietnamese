@@ -27,6 +27,7 @@ import {
   unlockAudio,
   prefetchSpeech,
 } from '../lib/tts'
+import type { Voice } from '../lib/tts'
 import KaraokeText from './KaraokeText'
 import WordCard from './WordCard'
 import { InlinePronounce } from '../pages/Lessons'
@@ -726,6 +727,21 @@ function DialogueView({
   const speedRef = useRef<DlgSpeed>(1)
   const modeRef = useRef<DlgMode>('en')
 
+  // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng thứ 2 cho B
+  // để 2 nhân vật luôn có giọng khác nhau (female vs female2, male vs male2).
+  // Giống cách làm ở src/pages/Lessons.tsx (LessonView).
+  const genderA = dialogue.speakerAGender ?? 'female'
+  const genderB = dialogue.speakerBGender ?? 'male'
+  const voiceA: Voice = genderA === 'female' ? 'female' : 'male'
+  const voiceB: Voice =
+    genderB === genderA
+      ? genderB === 'female'
+        ? 'female2'
+        : 'male2'
+      : genderB === 'female'
+        ? 'female'
+        : 'male'
+
   // Dừng audio khi back
   useEffect(
     () => () => {
@@ -760,9 +776,10 @@ function DialogueView({
     void (async () => {
       for (const ln of dialogue.lines) {
         if (stopRef.current) break
+        const v = ln.who === 'A' ? voiceA : voiceB
         const m = modeRef.current
-        if (m === 'en' || m === 'both') await prefetchSpeech(ln.en, 'en-US')
-        if (m === 'vi' || m === 'both') await prefetchSpeech(ln.vi, 'vi-VN')
+        if (m === 'en' || m === 'both') await prefetchSpeech(ln.en, 'en-US', v)
+        if (m === 'vi' || m === 'both') await prefetchSpeech(ln.vi, 'vi-VN', v)
       }
     })()
 
@@ -777,17 +794,18 @@ function DialogueView({
 
       const curMode = modeRef.current
       const curSpeed = speedRef.current
+      const curVoice = ln.who === 'A' ? voiceA : voiceB
 
       if (curMode === 'en') {
-        await speak(ln.en, 'en-US', undefined, curSpeed)
+        await speak(ln.en, 'en-US', curVoice, curSpeed)
       } else if (curMode === 'vi') {
-        await speak(ln.vi, 'vi-VN', undefined, curSpeed)
+        await speak(ln.vi, 'vi-VN', curVoice, curSpeed)
       } else {
         // both: đích trước, bản dịch sau
-        await speak(isA ? ln.en : ln.vi, targetLang, undefined, curSpeed)
+        await speak(isA ? ln.en : ln.vi, targetLang, curVoice, curSpeed)
         if (!stopRef.current) {
           await new Promise((r) => setTimeout(r, 250))
-          await speak(isA ? ln.vi : ln.en, transLang, undefined, curSpeed)
+          await speak(isA ? ln.vi : ln.en, transLang, curVoice, curSpeed)
         }
       }
       if (!stopRef.current) await new Promise((r) => setTimeout(r, 400))
@@ -966,6 +984,7 @@ function DialogueView({
                     lang="en-US"
                     textClass={`font-medium text-[15px] leading-snug ${isB ? accent.text : 'text-zinc-100'}`}
                     buttonClass="w-full"
+                    voice={ln.who === 'A' ? voiceA : voiceB}
                   />
                   <p className="text-sm text-zinc-400 mt-1 pl-6">{ln.vi}</p>
                   <InlinePronounce

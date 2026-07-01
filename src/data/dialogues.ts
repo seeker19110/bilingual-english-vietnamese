@@ -32,6 +32,10 @@ export interface Dialogue {
   // Tên hai nhân vật (tùy chọn — hội thoại cũ chưa đặt tên vẫn chạy, hiển thị "A"/"B").
   speakerA?: SpeakerName
   speakerB?: SpeakerName
+  // Giới tính nhân vật (tùy chọn) — dùng để chọn 2 giọng TTS khác nhau cho A/B
+  // (giống cách làm ở src/data/lessons/loader.ts). Cùng giới thì tự đổi sang giọng 2.
+  speakerAGender?: 'female' | 'male'
+  speakerBGender?: 'female' | 'male'
   lines: DialogueLine[]
 }
 
@@ -39,14 +43,17 @@ export interface Dialogue {
 const d = (who: 'A' | 'B', en: string, vi: string): DialogueLine => ({ who, en, vi })
 // Rút gọn: tạo 1 tên nhân vật song ngữ.
 const sp = (vi: string, en: string): SpeakerName => ({ vi, en })
-// Rút gọn: tạo 1 cuộc hội thoại. Có thể kèm tên hai nhân vật (speakerA, speakerB).
+// Rút gọn: tạo 1 cuộc hội thoại. Có thể kèm tên hai nhân vật (speakerA, speakerB)
+// và giới tính của họ (speakerAGender, speakerBGender) để phát TTS 2 giọng khác nhau.
 const dlg = (
   titleVi: string,
   titleEn: string,
   lines: DialogueLine[],
   speakerA?: SpeakerName,
   speakerB?: SpeakerName,
-): Dialogue => ({ titleVi, titleEn, speakerA, speakerB, lines })
+  speakerAGender?: 'female' | 'male',
+  speakerBGender?: 'female' | 'male',
+): Dialogue => ({ titleVi, titleEn, speakerA, speakerB, speakerAGender, speakerBGender, lines })
 
 export const DIALOGUES: Record<string, Dialogue[]> = {
   // ════════ A1 — UNITS ════════
@@ -84,6 +91,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Lan', 'Lan'),
       sp('Minh', 'Minh'),
+      'female',
+      'male',
     ),
     dlg(
       'Chào buổi sáng',
@@ -111,6 +120,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Lan', 'Lan'),
       sp('Minh', 'Minh'),
+      'female',
+      'male',
     ),
     dlg(
       'Đánh vần tên',
@@ -133,6 +144,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Lan', 'Lan'),
       sp('Minh', 'Minh'),
+      'female',
+      'male',
     ),
   ],
   'a1-family': [
@@ -173,6 +186,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hương', 'Huong'),
       sp('Tuấn', 'Tuan'),
+      'female',
+      'male',
     ),
     dlg(
       'Xem ảnh gia đình',
@@ -200,6 +215,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hương', 'Huong'),
       sp('Tuấn', 'Tuan'),
+      'female',
+      'male',
     ),
     dlg(
       'Nhà của ông bà',
@@ -226,6 +243,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hương', 'Huong'),
       sp('Tuấn', 'Tuan'),
+      'female',
+      'male',
     ),
   ],
   'a1-things': [
@@ -251,6 +270,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Linh', 'Linh'),
       sp('Nam', 'Nam'),
+      'female',
+      'male',
     ),
     dlg(
       'Tìm chìa khóa',
@@ -274,6 +295,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Linh', 'Linh'),
       sp('Nam', 'Nam'),
+      'female',
+      'male',
     ),
     dlg(
       'Mua đồ cho phòng mới',
@@ -300,6 +323,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Linh', 'Linh'),
       sp('Nam', 'Nam'),
+      'female',
+      'male',
     ),
   ],
   'a1-numbers-time': [
@@ -325,6 +350,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Mai', 'Mai'),
       sp('Hải', 'Hai'),
+      'female',
+      'male',
     ),
     dlg(
       'Ngày sinh nhật',
@@ -349,6 +376,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Mai', 'Mai'),
       sp('Hải', 'Hai'),
+      'female',
+      'male',
     ),
     dlg(
       'Đặt bàn ăn',
@@ -375,6 +404,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Mai', 'Mai'),
       sp('Hải', 'Hai'),
+      'female',
+      'male',
     ),
   ],
   'a1-actions': [
@@ -404,6 +435,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Trang', 'Trang'),
       sp('Phong', 'Phong'),
+      'female',
+      'male',
     ),
     dlg(
       'Buổi sáng bận rộn',
@@ -427,6 +460,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Trang', 'Trang'),
       sp('Phong', 'Phong'),
+      'female',
+      'male',
     ),
     dlg(
       'Học nấu ăn',
@@ -449,6 +484,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Trang', 'Trang'),
       sp('Phong', 'Phong'),
+      'female',
+      'male',
     ),
   ],
   'a1-questions': [
@@ -483,6 +520,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hoa', 'Hoa'),
       sp('Quân', 'Quan'),
+      'female',
+      'male',
     ),
     dlg(
       'Hỏi thăm sức khỏe',
@@ -506,6 +545,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hoa', 'Hoa'),
       sp('Quân', 'Quan'),
+      'female',
+      'male',
     ),
     dlg(
       'Ở phòng khám',
@@ -533,6 +574,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Quân', 'Quan'),
       sp('Bác sĩ Lan', 'Dr. Lan'),
+      'male',
+      'female',
     ),
   ],
 
@@ -567,8 +610,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('A', 'You have a busy day!', 'Bạn có một ngày bận rộn!'),
         d('B', 'I do, but I like my routine.', 'Đúng vậy, nhưng tôi thích nếp sống của mình.'),
       ],
-      sp('Mai', 'Mai'),
+      sp('Vân', 'Van'),
       sp('Khoa', 'Khoa'),
+      'female',
+      'male',
     ),
     dlg(
       'Thói quen cuối tuần',
@@ -595,8 +640,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('A', 'Maybe I can join you next time.', 'Có lẽ lần sau tôi đi cùng bạn.'),
         d('B', 'Sure, that would be fun!', 'Được chứ, sẽ vui lắm!'),
       ],
-      sp('Mai', 'Mai'),
+      sp('Vân', 'Van'),
       sp('Khoa', 'Khoa'),
+      'female',
+      'male',
     ),
     dlg(
       'Thói quen của đồng nghiệp mới',
@@ -609,8 +656,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         ),
         d(
           'B',
-          "Thanks, Mai. I'm a little nervous on my first day.",
-          'Cảm ơn Mai. Ngày đầu tôi hơi hồi hộp.',
+          "Thanks, Vân. I'm a little nervous on my first day.",
+          'Cảm ơn Vân. Ngày đầu tôi hơi hồi hộp.',
         ),
         d(
           'A',
@@ -647,10 +694,12 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
           'Tôi thỉnh thoảng nấu bữa tối cho gia đình.',
         ),
         d('A', "That's great. You'll fit in well here.", 'Tuyệt. Bạn sẽ hợp với ở đây.'),
-        d('B', 'Thank you, Mai. I feel better now.', 'Cảm ơn Mai. Giờ tôi thấy đỡ hơn rồi.'),
+        d('B', 'Thank you, Vân. I feel better now.', 'Cảm ơn Vân. Giờ tôi thấy đỡ hơn rồi.'),
       ],
-      sp('Mai', 'Mai'),
+      sp('Vân', 'Van'),
       sp('Khoa', 'Khoa'),
+      'female',
+      'male',
     ),
   ],
   'a2-past': [
@@ -679,8 +728,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('A', 'Maybe we can go together.', 'Có lẽ chúng ta đi cùng nhau.'),
         d('B', 'I would love that!', 'Tôi rất thích!'),
       ],
-      sp('Lan', 'Lan'),
+      sp('Yến', 'Yen'),
       sp('Hùng', 'Hung'),
+      'female',
+      'male',
     ),
     dlg(
       'Tối qua bạn làm gì?',
@@ -707,8 +758,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('A', 'Good luck! You can do it.', 'Chúc may mắn! Bạn làm được mà.'),
         d('B', 'Thanks. I hope so.', 'Cảm ơn. Hy vọng vậy.'),
       ],
-      sp('Lan', 'Lan'),
+      sp('Yến', 'Yen'),
       sp('Hùng', 'Hung'),
+      'female',
+      'male',
     ),
     dlg(
       'Kể về tuổi thơ',
@@ -741,8 +794,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('A', 'Those were good days.', 'Những ngày đó thật đẹp.'),
         d('B', 'They were. I still miss them.', 'Đúng vậy. Tôi vẫn nhớ chúng.'),
       ],
-      sp('Lan', 'Lan'),
+      sp('Yến', 'Yen'),
       sp('Hùng', 'Hung'),
+      'female',
+      'male',
     ),
   ],
   'a2-continuous': [
@@ -773,6 +828,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Thu', 'Thu'),
       sp('Đạt', 'Dat'),
+      'female',
+      'male',
     ),
     dlg(
       'Kế hoạch cuối tuần',
@@ -801,6 +858,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Thu', 'Thu'),
       sp('Đạt', 'Dat'),
+      'female',
+      'male',
     ),
     dlg(
       'Đang chuẩn bị chuyến đi',
@@ -832,6 +891,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Thu', 'Thu'),
       sp('Đạt', 'Dat'),
+      'female',
+      'male',
     ),
   ],
   'a2-compare': [
@@ -862,6 +923,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hà', 'Ha'),
       sp('Sơn', 'Son'),
+      'female',
+      'male',
     ),
     dlg(
       'So sánh hai thành phố',
@@ -890,6 +953,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hà', 'Ha'),
       sp('Sơn', 'Son'),
+      'female',
+      'male',
     ),
     dlg(
       'So sánh hai quán ăn',
@@ -920,6 +985,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hà', 'Ha'),
       sp('Sơn', 'Son'),
+      'female',
+      'male',
     ),
   ],
   'a2-shopping': [
@@ -948,8 +1015,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('A', 'See you next time.', 'Hẹn gặp lần sau.'),
         d('B', 'Have a nice day!', 'Chúc một ngày tốt lành!'),
       ],
-      sp('Linh', 'Linh'),
+      sp('Trâm', 'Tram'),
       sp('Cô Tâm', 'Ms. Tam'),
+      'female',
+      'female',
     ),
     dlg(
       'Mua quần áo',
@@ -976,8 +1045,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('A', 'Can I pay by card?', 'Tôi trả bằng thẻ được không?'),
         d('B', 'Yes, of course.', 'Được, dĩ nhiên.'),
       ],
-      sp('Linh', 'Linh'),
+      sp('Trâm', 'Tram'),
       sp('Cô Tâm', 'Ms. Tam'),
+      'female',
+      'female',
     ),
     dlg(
       'Đổi hàng',
@@ -1007,8 +1078,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('B', 'Good choice. Anything else?', 'Lựa chọn hay. Còn gì nữa không?'),
         d('A', 'No, thank you so much.', 'Không, cảm ơn cô nhiều.'),
       ],
-      sp('Linh', 'Linh'),
+      sp('Trâm', 'Tram'),
       sp('Cô Tâm', 'Ms. Tam'),
+      'female',
+      'female',
     ),
   ],
 
@@ -1041,6 +1114,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Nga', 'Nga'),
       sp('Bảo', 'Bao'),
+      'female',
+      'male',
     ),
     dlg(
       'Kinh nghiệm làm việc',
@@ -1069,6 +1144,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Nga', 'Nga'),
       sp('Bảo', 'Bao'),
+      'female',
+      'male',
     ),
     dlg(
       'Món ăn đã từng thử',
@@ -1107,6 +1184,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Nga', 'Nga'),
       sp('Bảo', 'Bao'),
+      'female',
+      'male',
     ),
   ],
   'b1-future': [
@@ -1135,8 +1214,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('A', 'Good luck with everything.', 'Chúc mọi việc may mắn.'),
         d('B', 'Thank you for your support.', 'Cảm ơn bạn đã ủng hộ.'),
       ],
-      sp('Trang', 'Trang'),
+      sp('Ly', 'Ly'),
       sp('Khánh', 'Khanh'),
+      'female',
+      'male',
     ),
     dlg(
       'Dự báo thời tiết',
@@ -1163,8 +1244,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('A', 'Perfect plan!', 'Kế hoạch hoàn hảo!'),
         d('B', 'See you tomorrow then.', 'Vậy hẹn gặp mai nhé.'),
       ],
-      sp('Trang', 'Trang'),
+      sp('Ly', 'Ly'),
       sp('Khánh', 'Khanh'),
+      'female',
+      'male',
     ),
     dlg(
       'Mở quán cà phê',
@@ -1193,8 +1276,10 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('A', "If you need help, I'll be there.", 'Nếu cần giúp, tôi sẽ có mặt.'),
         d('B', 'Thank you. That means a lot.', 'Cảm ơn. Điều đó có ý nghĩa lắm.'),
       ],
-      sp('Trang', 'Trang'),
+      sp('Ly', 'Ly'),
       sp('Khánh', 'Khanh'),
+      'female',
+      'male',
     ),
   ],
   'b1-conditionals': [
@@ -1229,6 +1314,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Vy', 'Vy'),
       sp('Tâm', 'Tam'),
+      'female',
+      'male',
     ),
     dlg(
       'Tiết kiệm điện',
@@ -1261,6 +1348,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Vy', 'Vy'),
       sp('Tâm', 'Tam'),
+      'female',
+      'male',
     ),
     dlg(
       'Tiết kiệm để đi du lịch',
@@ -1303,6 +1392,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Vy', 'Vy'),
       sp('Tâm', 'Tam'),
+      'female',
+      'male',
     ),
   ],
   'b1-modals': [
@@ -1332,7 +1423,9 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('B', 'Good. Your health comes first.', 'Tốt. Sức khỏe là trên hết.'),
       ],
       sp('Huy', 'Huy'),
-      sp('Lan', 'Lan'),
+      sp('Hạnh', 'Hanh'),
+      'male',
+      'female',
     ),
     dlg(
       'Nội quy nơi làm việc',
@@ -1364,7 +1457,9 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
         d('B', 'Welcome to the team!', 'Chào mừng đến với nhóm!'),
       ],
       sp('Huy', 'Huy'),
-      sp('Lan', 'Lan'),
+      sp('Hạnh', 'Hanh'),
+      'male',
+      'female',
     ),
     dlg(
       'Sống khỏe hơn',
@@ -1372,8 +1467,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       [
         d(
           'A',
-          'Lan, if I want to be healthier, what should I do?',
-          'Lan, nếu muốn khỏe hơn, tôi nên làm gì?',
+          'Hạnh, if I want to be healthier, what should I do?',
+          'Hạnh, nếu muốn khỏe hơn, tôi nên làm gì?',
         ),
         d('B', 'You should exercise three times a week.', 'Bạn nên tập thể dục ba lần một tuần.'),
         d('A', 'Do I have to join a gym?', 'Tôi có phải đăng ký phòng gym không?'),
@@ -1402,11 +1497,13 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
           'You must be patient. Change takes time.',
           'Bạn phải kiên nhẫn. Thay đổi cần thời gian.',
         ),
-        d('A', 'Thank you, doctor Lan!', 'Cảm ơn bác sĩ Lan!'),
+        d('A', 'Thank you, doctor Hanh!', 'Cảm ơn bác sĩ Hạnh!'),
         d('B', "You're welcome. Take care!", 'Không có gì. Giữ gìn sức khỏe nhé!'),
       ],
       sp('Huy', 'Huy'),
-      sp('Bác sĩ Lan', 'Dr. Lan'),
+      sp('Bác sĩ Hạnh', 'Dr. Hanh'),
+      'male',
+      'female',
     ),
   ],
   'b1-clauses': [
@@ -1445,6 +1542,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Ngọc', 'Ngoc'),
       sp('Dũng', 'Dung'),
+      'female',
+      'male',
     ),
     dlg(
       'Sở thích ngày xưa',
@@ -1477,6 +1576,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Ngọc', 'Ngoc'),
       sp('Dũng', 'Dung'),
+      'female',
+      'male',
     ),
     dlg(
       'Lớp yoga gần sông',
@@ -1523,6 +1624,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Ngọc', 'Ngoc'),
       sp('Dũng', 'Dung'),
+      'female',
+      'male',
     ),
   ],
 
@@ -1563,6 +1666,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Phương', 'Phuong'),
       sp('Long', 'Long'),
+      'female',
+      'male',
     ),
     dlg(
       'Điều tiếc nuối',
@@ -1603,6 +1708,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Phương', 'Phuong'),
       sp('Long', 'Long'),
+      'female',
+      'male',
     ),
     dlg(
       'Nếu được quay lại',
@@ -1657,6 +1764,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Phương', 'Phuong'),
       sp('Long', 'Long'),
+      'female',
+      'male',
     ),
   ],
   'b2-passive': [
@@ -1695,6 +1804,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hằng', 'Hang'),
       sp('Kiên', 'Kien'),
+      'female',
+      'male',
     ),
     dlg(
       'Sửa chữa nhà',
@@ -1723,6 +1834,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hằng', 'Hang'),
       sp('Kiên', 'Kien'),
+      'female',
+      'male',
     ),
     dlg(
       'Triển lãm nghệ thuật',
@@ -1765,6 +1878,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Hằng', 'Hang'),
       sp('Kiên', 'Kien'),
+      'female',
+      'male',
     ),
   ],
   'b2-reported': [
@@ -1795,6 +1910,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Thảo', 'Thao'),
       sp('Việt', 'Viet'),
+      'female',
+      'male',
     ),
     dlg(
       'Tin đồn ở văn phòng',
@@ -1827,6 +1944,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Thảo', 'Thao'),
       sp('Việt', 'Viet'),
+      'female',
+      'male',
     ),
     dlg(
       'Kể lại buổi phỏng vấn',
@@ -1861,6 +1980,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Thảo', 'Thao'),
       sp('Việt', 'Viet'),
+      'female',
+      'male',
     ),
   ],
   'b2-deduction': [
@@ -1891,6 +2012,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Mơ', 'Mo'),
       sp('Tú', 'Tu'),
+      'female',
+      'male',
     ),
     dlg(
       'Người hàng xóm bí ẩn',
@@ -1927,6 +2050,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Mơ', 'Mo'),
       sp('Tú', 'Tu'),
+      'female',
+      'male',
     ),
     dlg(
       'Giải mã bí ẩn',
@@ -1973,6 +2098,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Mơ', 'Mo'),
       sp('Tú', 'Tu'),
+      'female',
+      'male',
     ),
   ],
   'b2-natural': [
@@ -2007,6 +2134,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Đức', 'Duc'),
       sp('Chi', 'Chi'),
+      'male',
+      'female',
     ),
     dlg(
       'Lên kế hoạch dù bận',
@@ -2039,6 +2168,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Đức', 'Duc'),
       sp('Chi', 'Chi'),
+      'male',
+      'female',
     ),
     dlg(
       'Khởi nghiệp',
@@ -2069,6 +2200,8 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       ],
       sp('Đức', 'Duc'),
       sp('Chi', 'Chi'),
+      'male',
+      'female',
     ),
   ],
 
