@@ -5,8 +5,21 @@
 //        action="send-daily"  → gửi push cho tất cả users (gọi từ cron, cần CRON_SECRET)
 
 import webpush from 'web-push'
+import { z } from 'zod'
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
 import { getCorsHeaders, SECURITY_HEADERS, validateAuth } from './_lib/security'
+import { validateBody } from './_lib/validation'
+
+// Chỉ validate phần `subscription` (bắt buộc + đúng kiểu dữ liệu) — action/remindHour/hour/secret
+// giữ nguyên cách kiểm tra tay hiện có (vốn đã an toàn: có typeof guard trước khi dùng).
+// Lỗi field nào cũng trả về CÙNG 1 message (giữ đúng hành vi cũ) — xem nơi gọi bên dưới.
+const SubscriptionSchema = z.object({
+  endpoint: z.string().min(1),
+  keys: z.object({
+    p256dh: z.string().min(1),
+    auth: z.string().min(1),
+  }),
+})
 
 const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY ?? ''
 const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY ?? ''
@@ -139,13 +152,14 @@ export default async function handler(req: Request): Promise<Response> {
     if (!auth)
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers })
 
-    const sub = body.subscription as { endpoint: string; keys: { p256dh: string; auth: string } }
-    if (!sub?.endpoint || !sub?.keys?.p256dh || !sub?.keys?.auth) {
+    const subResult = validateBody(SubscriptionSchema, body.subscription)
+    if (!subResult.ok) {
       return new Response(JSON.stringify({ error: 'Thiếu dữ liệu subscription' }), {
         status: 400,
         headers,
       })
     }
+    const sub = subResult.data
 
     const supabase = getSupabaseAdmin()
     if (action === 'subscribe') {
