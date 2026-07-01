@@ -155,10 +155,12 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // ── BƯỚC 2: Cache MISS → gọi Google TTS ────────────────────────────────────
-  // Hạn mức RIÊNG cho đường tạo audio mới (tốn tiền API): 60 lần/phút mỗi IP.
-  // Đủ rộng để phát lần đầu cả một bài học chưa cache (chế độ EN+VI ~16 câu mới),
-  // nhưng vẫn chặn vòng lặp lỗi chạy vô hạn làm cháy hạn mức Google TTS. Tách khỏi
-  // hạn mức tổng để cache HIT (gần như miễn phí) không bao giờ bị đường này cản.
+  // Bộ đếm RIÊNG cho đường tạo audio mới (tốn tiền API): 60 lần/phút mỗi IP.
+  // Mục đích của việc TÁCH bucket (không phải đặt hạn mức thấp hơn): cách ly đường tốn
+  // tiền khỏi lưu lượng cache HIT (gần như miễn phí) — nhờ đó phát cả bài học đã cache
+  // hay tra nhiều từ vẫn mượt, mà mỗi IP không thể tạo quá 60 audio MỚI/phút (chặn vòng
+  // lặp lỗi làm cháy hạn mức Google TTS). Giữ 60 để lần đầu "Phát tất cả" một bài học
+  // chưa cache (chế độ EN+VI ~16 câu × 2 giọng) không bị chặn giữa chừng.
   if (!checkRateLimit(clientIp, 60, 'tts-gen')) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/tts', stage: 'generate' })
     return jsonResponse(

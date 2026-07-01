@@ -136,20 +136,11 @@ export function pushWritingSub(s: WritingSubmission) {
     .upsert(writingToRow(s))
     .then(({ error }) => warn('writing', error))
 }
-export function pushUsage(userId: string, usage: DailyUsage) {
-  void supabase
-    .from('daily_usage')
-    .upsert({
-      user_id: userId,
-      day: usage.date,
-      chat_count: usage.chatCount,
-      writing_count: usage.writingCount,
-      speaking_count: usage.speakingCount,
-      stt_count: usage.sttCount,
-      learn_count: usage.learnCount ?? 0,
-    })
-    .then(({ error }) => warn('usage', error))
-}
+// BẢO MẬT (bất biến): KHÔNG có hàm đẩy các cột đếm lượt (chat/writing/speaking/stt) từ
+// client. Các cột đó do SERVER đếm authoritative (api/_lib/usage.ts qua RPC consume_usage)
+// và client KHÔNG được phép ghi — quyền ghi đã bị thu hồi ở DB (supabase/migrations/
+// 0005_lockdown_cost_columns.sql). Nếu ghi từ client thì DB trả lỗi quyền. Client chỉ đẩy
+// learn_count (streak, không tốn API) qua pushLearnDay dưới đây.
 
 // Đẩy RIÊNG cột learn_count (số từ học trong ngày) để ghi nhận streak — KHÔNG đụng
 // các cột chat/writing/speaking/stt (server là nguồn sự thật của các lượt đó, tránh

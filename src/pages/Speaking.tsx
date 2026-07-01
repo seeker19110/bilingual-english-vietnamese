@@ -190,6 +190,8 @@ function HighlightText({
   return (
     <span className={className}>
       {parts.map((part, i) => {
+        // Bỏ qua đoạn rỗng '' (chỉ sinh ở đầu/cuối text) để chỉ số từ khớp bộ đếm audio.
+        if (part === '') return null
         if (/^\s+$/.test(part)) return <span key={i}>{part}</span>
         const thisIdx = wi++
         return (
