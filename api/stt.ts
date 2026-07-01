@@ -11,6 +11,7 @@
 // auth + rate limit + giới hạn dung lượng. API key giữ ở server — xem api/_lib/openaiStt.ts
 // (ưu tiên GROQ_API_KEY, fallback OPENAI_API_KEY).
 
+import { z } from 'zod'
 import { transcribeAudio, type SttLang } from './_lib/openaiStt'
 import {
   getCorsHeaders,
@@ -21,6 +22,7 @@ import {
   logSecurityEvent,
 } from './_lib/security'
 import { checkAndConsumeUsage, refundUsage } from './_lib/usage'
+import { readJsonBody, validateBody } from './_lib/validation'
 
 // Giới hạn dung lượng base64 (~8MB chuỗi ≈ ~6MB audio thật, đủ cho ~1–2 phút nói).
 const MAX_AUDIO_B64 = 8 * 1024 * 1024
@@ -29,6 +31,26 @@ const VALID_LANGS: SttLang[] = ['en', 'vi']
 function isValidLang(v: string): v is SttLang {
   return VALID_LANGS.includes(v as SttLang)
 }
+
+const SttBodySchema = z.object({
+  audio_b64: z
+    .string({ error: 'Thiếu audio_b64' })
+    .trim()
+    .min(1, 'Thiếu audio_b64')
+    .refine((v) => v.length <= MAX_AUDIO_B64, {
+      error: 'Đoạn ghi âm quá dài — nói ngắn hơn',
+      params: { status: 413 },
+    }),
+  mime: z.string().trim().optional(),
+  lang: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => (v ? v : 'en'))
+    .refine((v): v is SttLang => isValidLang(v), {
+      error: (ctx) => `lang không hợp lệ: ${ctx.input}`,
+    }),
+})
 
 // Giải mã base64 → ArrayBuffer (dùng atob của Web API cho cả Edge lẫn Node).
 function base64ToArrayBuffer(b64: string): ArrayBuffer {
@@ -70,24 +92,18 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Chưa đăng nhập hoặc phiên hết hạn' }, 401, allHeaders)
   }
 
-  let body: { audio_b64?: string; mime?: string; lang?: string }
-  try {
-    body = await req.json()
-  } catch {
-    return jsonResponse({ error: 'Body JSON không hợp lệ' }, 400, allHeaders)
+  const bodyResult = await readJsonBody(req)
+  if (!bodyResult.ok) {
+    return jsonResponse({ error: bodyResult.error.message }, bodyResult.error.status, allHeaders)
+  }
+  const parsed = validateBody(SttBodySchema, bodyResult.raw)
+  if (!parsed.ok) {
+    return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
   }
 
-  const audioB64 = body.audio_b64?.trim()
-  const mime = body.mime?.trim() || 'audio/webm'
-  const lang = body.lang?.trim() || 'en'
-
-  if (!audioB64) return jsonResponse({ error: 'Thiếu audio_b64' }, 400, allHeaders)
-  if (audioB64.length > MAX_AUDIO_B64) {
-    return jsonResponse({ error: 'Đoạn ghi âm quá dài — nói ngắn hơn' }, 413, allHeaders)
-  }
-  if (!isValidLang(lang)) {
-    return jsonResponse({ error: `lang không hợp lệ: ${lang}` }, 400, allHeaders)
-  }
+  const audioB64 = parsed.data.audio_b64
+  const mime = parsed.data.mime || 'audio/webm'
+  const lang = parsed.data.lang
 
   let audio: ArrayBuffer
   try {
