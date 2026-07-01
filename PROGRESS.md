@@ -148,7 +148,30 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
     state ở từng nơi gọi `stopSpeaking()`.
   - Đã kiểm: `npx playwright test e2e/a11y.spec.ts --grep "chat|speaking|dictionary|learn"` —
     24/24 pass, 0 critical/serious ở cả 4 theme, gồm cả màn "kết quả AI" (mock `/api/claude`) của
-    Chat/Speaking. Đây là PR hiện tại.
+    Chat/Speaking. Đã merge: **PR #158**.
+- **fix(security): audit lại phát hiện 2 lỗ High cùng gốc rễ — RLS bypass giới hạn gói/lượt.**
+  Audit sâu 4 vùng (bảo mật/RLS, Speaking/STT/TTS, hiệu năng, cloud-sync) cho thấy repo tổng
+  thể tốt (cổng chất lượng xanh, không lộ secret/XSS, RLS bật đủ, crypto TTS vững), nhưng RLS
+  chỉ chặn theo **DÒNG**, không theo **CỘT**: policy `own profile`/`own usage` cho phép người
+  dùng đã đăng nhập tự ghi đè `profiles.plan` (tự nâng Pro) hoặc reset `daily_usage.*_count`
+  (bypass giới hạn lượt) ngay từ console trình duyệt — vô hiệu hóa cơ chế đếm-lượt-server
+  (`consume_usage` RPC) đang chạy production. Vá bằng quyền-THEO-CỘT Postgres: migration mới
+  `supabase/migrations/0005_lockdown_cost_columns.sql` + cập nhật `supabase/schema.sql`
+  (`revoke update(plan)`; `daily_usage` client chỉ còn ghi được `learn_count`, 4 cột đếm lượt
+  chỉ `service_role`/RPC ghi được). Xóa `pushUsage` (`src/lib/cloud.ts`, code chết — không ai
+  gọi, nếu nối dây lại sẽ ghi đè đếm server). Kèm 2 sửa Low: karaoke lệch 1 từ khi text có
+  khoảng trắng thừa (`KaraokeText.tsx` + `Speaking.tsx` bỏ qua đoạn rỗng khi split) và đính
+  chính comment rate-limit `tts-gen` (`api/tts.ts`). Gộp `AUDIT.md`/`AUDIT_REPORT.md`/
+  `TRANSLATION_AUDIT.md` (3 file rời rạc, phình dần) thành 1 `AUDIT.md` duy nhất (3 phần theo
+  thời gian, không mất nội dung/bằng chứng nào). Đã merge: **PR #159**.
+
+## ⚠️ Cần làm tay (chưa xong)
+
+- **Chạy migration `supabase/migrations/0005_lockdown_cost_columns.sql` trên Supabase production**
+  (Dashboard → SQL Editor) — PR #159 đã merge nhưng migration này KHÔNG tự chạy được từ phiên
+  làm việc (không có credentials Supabase trong môi trường), phải làm tay. An toàn chạy lại
+  (idempotent); không phá luồng client/server hiện có. **Đây là bước thực sự đóng lỗ RLS** —
+  code/schema mới chỉ đảm bảo DB mới an toàn, DB đang chạy vẫn mở cho tới khi chạy migration này.
 
 ## Tiếp theo
 
