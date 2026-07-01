@@ -110,21 +110,20 @@
 - **chore:** thêm cấu hình model cho Claude Code (`.claude/settings.json`) — mặc định `haiku`,
   fallback `opus` cho việc phức tạp, bật thinking mode + effort cao, cân bằng chi phí/chất lượng
   cho các phiên làm việc trên repo này. Đã merge: **PR #153/#154**.
-
-## Đang làm
-
-- Không có việc CODE nào đang mở (không có PR nào đang mở trên GitHub, nhánh hiện tại ngang bằng
-  `main`). Việc còn lại là THỦ CÔNG (không cần PR): tự chạy `npm run tag:cefr` khi có key AI.
-
-## Đang làm (đợt Zod)
-
 - **Zod validate input (đợt 1 — `api/stt.ts` + `api/tts.ts`)** — thêm `api/_lib/validation.ts`
   (`readJsonBody` + `validateBody`, dùng chung) thay cho parse/validate tay ở 2 endpoint có body
   JSON đơn giản nhất, giữ NGUYÊN status code + message (kể cả 413 khi audio quá dài, qua
-  `.refine(..., { params: { status } })`). Có 5 test cho helper (`validation.test.ts`). Chưa đụng
-  `api/ai.ts` (logic cắt/sanitize message phức tạp, cố tình lenient — làm sau nếu cần) và
-  `api/push.ts` (action dạng discriminated union) — để đợt sau, theo nguyên tắc tăng dần
-  (không "big bang" cả `api/`). Đây là PR hiện tại.
+  `.refine(..., { params: { status } })`). Có 5 test cho helper (`validation.test.ts`). Đã merge:
+  **PR #156**.
+
+## Đang làm
+
+- **Zod validate input (đợt 2 — `api/push.ts`)** — validate riêng phần `subscription` (bắt buộc +
+  đúng kiểu, dùng `SubscriptionSchema` + `validateBody`) cho action `subscribe`/`unsubscribe`, giữ
+  NGUYÊN message lỗi cũ ("Thiếu dữ liệu subscription", cùng 1 message cho mọi field thiếu — không
+  đổi để giữ hành vi). `action`/`remindHour`/`hour`/`secret` GIỮ NGUYÊN cách kiểm tra tay hiện có
+  (vốn đã có `typeof` guard, không có lỗi tiềm ẩn như `subscription` trước đây dùng `as` cast +
+  truthy check lỏng lẻo). Chưa đụng `api/ai.ts` — để sau nếu cần. Đây là PR hiện tại.
 
 ## Tiếp theo
 
@@ -134,9 +133,12 @@
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
 - Chạy thật `npm run tag:cefr` (cần key AI) rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR
   trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu trước, UI sau khi có dữ liệu thật để kiểm tra).
-- Zod validate input (đợt 2, tùy chọn) — mở rộng sang `api/push.ts` (discriminated union theo
-  `action`) rồi cân nhắc `api/ai.ts`; query param của `api/dictionary.ts`/`api/pronunciation.ts`
-  đã sanitize kỹ bằng tay, giá trị thêm Zod thấp hơn.
+  Môi trường phiên làm việc hiện tại không có key AI nào (`GEMINI_API_KEY`/`GROQ_API_KEY`/
+  `ANTHROPIC_API_KEY`) — đã hỏi lại người dùng, xác nhận giữ quyết định cũ: **tự chạy trên máy có
+  `.env`**.
+- Zod validate input (đợt 3, tùy chọn) — cân nhắc `api/ai.ts` (logic cắt/sanitize message phức
+  tạp, cố tình lenient — giá trị thêm thấp hơn 2 đợt trước); query param của
+  `api/dictionary.ts`/`api/pronunciation.ts` đã sanitize kỹ bằng tay, giá trị thêm Zod thấp hơn.
 - a11y đã hoàn tất (gồm cả màn kết quả AI qua mock API). Không còn hạng mục a11y chừa lại.
   Nếu cần phủ thêm: trạng thái STT thật (ghi âm trình duyệt) — giá trị thấp vì luồng STT
   dùng chung UI bong bóng đã được gate qua màn kết quả Speaking.
@@ -151,8 +153,8 @@
   deterministic, không cần browser, verify được cả local lẫn CI. Cân nhắc lại Lighthouse sau
   nếu chạy ổn trên runner thật.
 - Zod (validate input): trước đây đánh giá giá trị thấp (ưu tiên E2E/a11y trước) — nay bắt đầu
-  làm THEO ĐỢT NHỎ (không "big bang" cả `api/`), bắt đầu từ 2 endpoint đơn giản nhất
-  (`stt.ts`/`tts.ts`), xem "Đang làm". Bản Zod dùng là v4 (`z.string({ error })`,
+  làm THEO ĐỢT NHỎ (không "big bang" cả `api/`): đợt 1 xong `stt.ts`/`tts.ts` (PR #156), đợt 2 —
+  `push.ts`, xem "Đang làm". Bản Zod dùng là v4 (`z.string({ error })`,
   `.refine(fn, { error, params })` — khác cú pháp `message`/`errorMap` của v3).
 
 ## Nợ kỹ thuật (chỗ "làm tạm" cần quay lại)
