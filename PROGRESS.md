@@ -97,13 +97,17 @@
   "API key not valid" (xác nhận mạng + luồng lỗi/retry hoạt động, file KHÔNG bị ghi hỏng khi
   batch lỗi). **CHƯA chạy thật** (sandbox không có `GEMINI_API_KEY`/`GROQ_API_KEY`/
   `ANTHROPIC_API_KEY`) — ~9.500 từ × phân loại AI là quyết định có ảnh hưởng (chi phí/quota, dù
-  Gemini free) nên dừng hỏi người dùng trước khi chạy thật, theo CLAUDE.md mục 12. Đây là PR
+  Gemini free) nên dừng hỏi người dùng trước khi chạy thật, theo CLAUDE.md mục 12. Đã hỏi người
+  dùng có muốn chạy ngay trong phiên không — chọn **tự chạy sau** trên máy có `.env`. Đã merge:
+  **PR #150**.
+- **docs:** đồng bộ nốt `PROJECT.md` (còn sót từ đợt PR #148: chưa cập nhật khi #149/#150 merge —
+  i18n Login/`tsconfig.e2e.json`/hạ tầng CEFR ghi nhầm là "chưa xong"/"tiếp theo"). Đây là PR
   hiện tại.
 
 ## Đang làm
 
-- (Chờ duyệt) PR hạ tầng gắn nhãn CEFR — xem mục cuối "Đã xong". Sau khi merge: cần người dùng
-  cho key AI (hoặc tự chạy `npm run tag:cefr` trên máy có `.env`) để THỰC SỰ gắn nhãn ~9.500 từ.
+- (Chờ duyệt) PR docs đồng bộ `PROJECT.md` — xem mục cuối "Đã xong". Không có việc CODE nào khác
+  đang mở. Việc còn lại là THỦ CÔNG (không cần PR): tự chạy `npm run tag:cefr` khi có key AI.
 
 ## Tiếp theo
 
