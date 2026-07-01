@@ -77,18 +77,20 @@
 - **docs:** đồng bộ `CLAUDE.md`/`PROGRESS.md` với code thật (sửa 3 ghi chú lỗi thời — STT đã tách
   lượt riêng từ trước chứ không dùng chung `speaking`; `security.ts` không còn debug log tạm; CEFR
   đã có % hoàn thành theo cấp) + viết `PROJECT.md` từ template rỗng thành tài liệu thật (schema,
-  API, MoSCoW…). Đây là PR hiện tại.
+  API, MoSCoW…). Đã merge: **PR #148**.
+- **`tsconfig.e2e.json`** — đóng nợ "E2E chưa nằm trong `npm run typecheck`": thêm cấu hình
+  typecheck riêng cho `e2e/` + `playwright.config.ts` (mirror `tsconfig.api.json`), gộp vào
+  `npm run typecheck` qua script mới `typecheck:e2e`. CI (`npm run typecheck`) nay tự phủ
+  luôn E2E, không cần đổi workflow. Đây là PR hiện tại.
 
 ## Đang làm
 
-- (Chờ duyệt) PR docs đồng bộ `CLAUDE.md`/`PROGRESS.md` + viết `PROJECT.md` — xem mục cuối "Đã xong".
+- (Chờ duyệt) PR `tsconfig.e2e.json` — xem mục cuối "Đã xong".
 
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
-- **E2E chưa nằm trong typecheck** (`e2e/` không thuộc tsconfig nào) — thêm `tsconfig.e2e.json`;
-  việc nhỏ, rủi ro thấp. Xem "Nợ kỹ thuật".
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
 - Gắn nhãn CEFR cho từ vựng mở rộng (việc dữ liệu — xem CLAUDE.md mục 13).
@@ -117,7 +119,7 @@
   /lessons, /history, /phrases, /learning-path, /chat, /writing, /speaking) + **màn KẾT QUẢ
   AI (Chat/Writing/Speaking) × 4 theme** (mock `/api/claude`) — 0 critical, 0 serious ở MỌI
   theme, gồm cả trạng thái sau tương tác có/không cần backend. Nợ a11y đã đóng.
-- E2E (`e2e/`) chưa nằm trong `npm run typecheck` (không thuộc tsconfig nào) —
-  Playwright tự transpile khi chạy. Thêm `tsconfig.e2e.json` nếu muốn type-check.
+- ~~E2E (`e2e/`) chưa nằm trong `npm run typecheck`~~ ĐÃ XONG: thêm `tsconfig.e2e.json` +
+  script `typecheck:e2e`, gộp vào `npm run typecheck` (CI tự phủ, không cần đổi workflow).
 - ~~Trang Login dùng text tiếng Việt hard-code (chưa qua i18n) — chưa song ngữ.~~ ĐÃ XONG:
   Login nay dùng i18n `T` + có nút gạt VI/EN (xem "Đã xong" đợt áp khung, PR #147).

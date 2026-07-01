@@ -1,0 +1,23 @@
+{
+  // Typecheck cho Playwright E2E (e2e/) — Playwright tự transpile khi CHẠY test nên lỗi type
+  // ở đây không bị bắt bởi build/CI trước đó. File này lấp lỗ hổng đó (xem PROGRESS.md "Nợ kỹ thuật").
+  // Chạy: `npm run typecheck:e2e` (cũng được gọi trong `npm run typecheck`).
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true
+  },
+  "include": ["e2e", "playwright.config.ts"]
+}

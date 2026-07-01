@@ -73,7 +73,7 @@ Ba chế độ:
 - **AI:** gọi qua biến môi trường, ưu tiên model rẻ. Chat qua `/api/claude`. **STT** Whisper qua **Groq hoặc OpenAI** (`/api/stt`, tự chọn theo key). **TTS** Google Cloud qua `/api/tts` (audio cache **mã hóa AES-256-GCM** trên Supabase Storage; Web Speech API chỉ là fallback).
 - **Deploy:** VPS Ubuntu (PM2 + Nginx + Let's Encrypt), đang chạy tại https://en-vi.donghanhcungban.com — xem `docs/deploy-vps-ubuntu.md`.
 - **GIỮ NGUYÊN PHIÊN BẢN — KHÔNG nâng React/TS/Tailwind/ESLint.** Dự án cố tình dùng **Tailwind 3** (không phải v4) và **ESLint 8 với `.eslintrc.cjs`** (không phải flat config). Tài liệu khung có nhắc Tailwind v4 / ESLint flat config — chỉ để **tham khảo**, KHÔNG áp vào dự án này.
-- **Lệnh:** dev `npm run dev` · build `npm run build` · typecheck `npm run typecheck` (+ `npm run typecheck:api`) · lint `npm run lint` (max-warnings 0) · format `npm run format` (Prettier — đang thêm ở bước khung) · test `npm test` (`vitest run`) · start `npm start` (`tsx server.ts`).
+- **Lệnh:** dev `npm run dev` · build `npm run build` · typecheck `npm run typecheck` (gộp cả `tsconfig.json` + `tsconfig.api.json` + `tsconfig.e2e.json`) · lint `npm run lint` (max-warnings 0) · format `npm run format` (Prettier — đang thêm ở bước khung) · test `npm test` (`vitest run`) · E2E `npm run test:e2e` (Playwright) · start `npm start` (`tsx server.ts`).
 - **Cấu trúc:** `src/` (React: `pages/`, `components/`, `lib/`, `data/`, `prompts/`), `api/` (handler kiểu serverless), `server.ts` (Express gắn handler), `supabase/` (`schema.sql`), `scripts/` (seed/sync), `docs/`.
 - **Đặt tên:** component PascalCase (`src/components`), tiện ích camelCase (`src/lib`), prompt gửi AI để riêng trong `src/prompts/`.
 
