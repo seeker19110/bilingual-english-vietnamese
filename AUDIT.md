@@ -1,3 +1,19 @@
+# Audit — Gia sư tiếng Anh AI (tổng hợp)
+
+> File này **gộp 3 báo cáo audit** trước đây (`AUDIT.md`, `AUDIT_REPORT.md`,
+> `TRANSLATION_AUDIT.md`) thành một, cho gọn repo. Không nội dung nào bị xóa —
+> chỉ gộp lại theo thứ tự thời gian, mới nhất lên trước.
+
+## Mục lục tổng
+
+- **[PHẦN A — Audit source code v2 (2026-06-28, mới nhất)](#phần-a--audit-source-code-v2-2026-06-28)** — báo cáo audit đầy đủ nhất: bảo mật, ISO/IEC 25010, sổ phát hiện, yêu cầu kiểm thử, nợ kỹ thuật, lộ trình. **Đọc phần này trước.**
+- **[PHẦN B — Audit source code v1 (2026-06-20, lịch sử)](#phần-b--audit-source-code-v1-2026-06-20-lịch-sử)** — bản audit đầu tiên (bảo mật, mobile-first, đa thiết bị). Mọi phát hiện ở đây **đã RESOLVED**, đối chiếu tại PHẦN A §4.1. Giữ lại để tra cứu bằng chứng/snippet gốc.
+- **[PHẦN C — Audit bản dịch & đồng bộ từ vựng (2026-06-27)](#phần-c--audit-bản-dịch--đồng-bộ-từ-vựng-2026-06-27)** — chất lượng dịch Anh⇄Việt của từ điển + câu song ngữ, khác chủ đề (nội dung, không phải code) nhưng gộp chung cho gọn. Có 1 mục còn cần quyết định (§5 phần này).
+
+---
+
+## PHẦN A — Audit source code v2 (2026-06-28)
+
 # Báo cáo Audit Source Code — Gia sư tiếng Anh AI (song ngữ Việt ⇄ Anh)
 
 > **Phiên bản:** 2.0 · **Ngày audit:** 2026-06-28 · **Người duyệt:** Audit kỹ thuật tự động + soát tay
@@ -372,7 +388,7 @@ _Cách test:_ tiêm mock `getSupabaseAdmin` để điều khiển `.rpc()`, `.fr
 
 **Bảo mật (OWASP):**
 
-- Quét `git log --all -- .env` xác nhận secret chưa từng commit (đã nêu ở `AUDIT_REPORT.md`).
+- Quét `git log --all -- .env` xác nhận secret chưa từng commit (đã nêu ở PHẦN B).
 - Kiểm RLS thủ công: user A không đọc được dữ liệu user B (test bằng 2 JWT).
 - `npm audit` định kỳ trong CI; theo dõi CVE phụ thuộc.
 
@@ -624,4 +640,416 @@ npm run build               # ✅ PASS (manifest + tsc + vite build, nén Gzip/B
 
 **Sửa lỗi đã áp dụng:** BUG-1..10 (toàn bộ) + T2 (CI gate) + M2 (guardrail). Chi tiết: BUG-1 (`Chat.tsx`), BUG-2 (`usage.ts`+`ai.ts`+`stt.ts`+migration `0004`+`schema.sql`), BUG-4 (`Dictionary.tsx`), BUG-5 (`stats.ts`), BUG-6 (`vocab.ts`+test), BUG-7 (`tts.ts` playToken), BUG-8 (`Speaking.tsx`), BUG-9 (`srs.ts`+test), BUG-10 (`Lessons.tsx`), T2 (`.github/workflows/ci.yml`), M2 (`api/ai.ts` `SYSTEM_GUARDRAIL`).
 
-> _Báo cáo audit cũ vẫn lưu tại `AUDIT_REPORT.md` (2026-06-20) để tra cứu lịch sử các phát hiện ban đầu (auth localStorage, rate limit, mobile…), nay đã được xử lý qua Supabase Auth + server-side limits._
+> _Báo cáo audit v1 (bảo mật, mobile-first, đa thiết bị) nay ở **PHẦN B** ngay dưới đây, để tra cứu lịch sử các phát hiện ban đầu (auth localStorage, rate limit, mobile…) — tất cả đã được xử lý qua Supabase Auth + server-side limits._
+
+---
+
+## PHẦN B — Audit source code v1 (2026-06-20, lịch sử)
+
+> Mọi phát hiện dưới đây đã RESOLVED — xem đối chiếu chi tiết ở PHẦN A §4.1.
+
+> Ngày audit: 2026-06-20  
+> Phạm vi: toàn bộ `src/`, `api/`, `index.html`, `vite.config.ts`
+
+---
+
+## 🔴 CRITICAL — Sửa trước khi public
+
+### 1. API key Anthropic thật đang nằm trong `.env`
+
+**File:** `.env` dòng 1
+
+```
+ANTHROPIC_API_KEY=sk-ant-api03-2aXZema...
+```
+
+`.env` đã có trong `.gitignore` nên chưa bị commit — **nhưng cần kiểm tra lại git history** (`git log --all -- .env`) để chắc chắn key chưa từng bị commit. Nếu từng commit thì phải **rotate key ngay** trên console.anthropic.com.
+
+---
+
+### 2. Hệ thống xác thực hoàn toàn không an toàn (localStorage + btoa)
+
+**File:** `src/lib/storage.ts` dòng 25–48
+
+```ts
+function hashPassword(pw: string): string {
+  return btoa(encodeURIComponent(pw)) // ← base64, KHÔNG phải hash!
+}
+```
+
+Vấn đề:
+
+- `btoa` là **mã hóa thuận nghịch**, không phải hash. Ai đọc được localStorage là có mật khẩu thật.
+- Toàn bộ dữ liệu user, lịch sử học, gói dùng (`plan: 'free'/'pro'`) đều lưu trên localStorage — **bất kỳ ai mở DevTools đều sửa được**.
+- User có thể tự nâng lên gói Pro bằng cách sửa `et_current_user` trong localStorage.
+
+**Hướng sửa (khi chuyển sang Supabase Auth thật):**
+
+- Dùng `supabase.auth.signUp()` / `signIn()` — Supabase tự hash + lưu server-side.
+- Giới hạn lượt dùng phải kiểm tra ở server (API function), không phải ở browser.
+
+---
+
+### 3. `/api/claude` không có rate limiting / auth — ai cũng gọi được
+
+**File:** `api/claude.ts`  
+Serverless function này chỉ kiểm tra `method === 'POST'`, không kiểm tra:
+
+- Auth token (ai gọi?)
+- Rate limit (bao nhiêu lần/phút?)
+- Model và max_tokens (user có thể gửi `"model": "claude-opus-4-5", "max_tokens": 8192`)
+- Kích thước request body
+
+**Tác hại:** Nếu ai biết URL Vercel deployment, họ có thể spam API của bạn, tốn tiền không giới hạn.
+
+**Hướng sửa ngắn hạn (chưa có Supabase Auth):**
+
+```ts
+// Thêm vào đầu handler, trước khi gọi Anthropic
+const body = await req.json()
+
+// Ép model và max_tokens ở server — không tin client
+const safeBody = {
+  model: 'claude-haiku-4-5-20251001', // cứng, không cho đổi
+  max_tokens: Math.min(body.max_tokens ?? 1024, 2048), // giới hạn tối đa
+  system: String(body.system ?? '').slice(0, 5000), // giới hạn độ dài
+  messages: body.messages,
+}
+```
+
+Dài hạn: thêm `Authorization: Bearer <supabase-jwt>` header từ client, verify ở server.
+
+---
+
+## 🟡 MEDIUM — Sửa trong sprint tiếp theo
+
+### 4. Không có CORS restrictions trên API
+
+`api/claude.ts` và `api/pronunciation.ts` không set CORS headers.  
+Mặc định Vercel Edge sẽ trả về không có `Access-Control-Allow-Origin` cụ thể, nhưng nên explicit:
+
+```ts
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': 'https://your-domain.vercel.app', // domain thật
+  'Access-Control-Allow-Methods': 'POST',
+}
+```
+
+### 5. Không có input validation trên essay/chat
+
+**File:** `src/pages/Writing.tsx` — essay dài bao nhiêu cũng gửi được.  
+Nên thêm giới hạn phía client và server:
+
+```ts
+if (essay.length > 10000) {
+  setError('Bài viết quá dài (tối đa 10.000 ký tự)')
+  return
+}
+```
+
+### 6. `localStorage` mất dữ liệu nếu user xóa cache / đổi thiết bị
+
+Dữ liệu học (chat history, writing history) chỉ tồn tại trên 1 thiết bị, 1 browser.  
+Người dùng Pro trả tiền sẽ mất `plan: 'pro'` khi đổi máy — nghiêm trọng về UX.  
+Cần migrate sang Supabase DB trước khi bán gói Pro.
+
+---
+
+## 📱 MOBILE-FIRST — Lỗi giao diện di động
+
+### 7. 🔴 Thiếu `safe-area-inset` — thanh input bị che bởi home indicator iPhone
+
+**File:** `index.html`
+
+Viewport hiện tại:
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+```
+
+Các trang Chat và Speaking có thanh input/control `sticky bottom-0`. Trên iPhone (Safari iOS), thanh home indicator (28px) sẽ **che phủ phần input**, user không bấm được nút Send/Mic.
+
+**Sửa:**
+
+```html
+<!-- index.html -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+```
+
+```css
+/* src/index.css — thêm vào cuối */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+```
+
+```tsx
+{/* Chat.tsx và Speaking.tsx — sticky bottom bar */}
+<div className="sticky bottom-0 bg-zinc-950/95 ... pb-safe">
+```
+
+---
+
+### 8. 🔴 Enter key trên mobile gửi tin nhắn thay vì xuống dòng
+
+**File:** `src/pages/Chat.tsx` dòng 234
+
+```tsx
+onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
+```
+
+Trên mobile, keyboard Enter thường dùng để xuống dòng. User sẽ hay gửi nhầm.
+
+**Sửa:** Tắt tính năng này trên mobile — thêm nút Send riêng (đã có rồi). Hoặc detect thiết bị:
+
+```tsx
+// Chỉ bật Enter-to-send trên desktop
+const isMobile = /Mobi|Android/i.test(navigator.userAgent)
+onKeyDown={e => !isMobile && e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
+```
+
+---
+
+### 9. 🟡 Touch target quá nhỏ
+
+**File:** `src/components/Layout.tsx`  
+Nút logout: `p-1` → kích thước ~26px. Apple/Google khuyến nghị **tối thiểu 44px**.
+
+```tsx
+// Hiện tại
+<button onClick={handleLogout} className="text-zinc-500 hover:text-red-400 transition p-1 rounded">
+
+// Sửa thành
+<button onClick={handleLogout} className="text-zinc-500 hover:text-red-400 transition p-3 rounded-lg -m-2">
+```
+
+Nút volume/mute và plus trong Speaking.tsx: `p-2.5` → ~34px, cũng hơi nhỏ. Nâng lên `p-3`.
+
+---
+
+### 10. 🟡 Thông tin lượt dùng ẩn hoàn toàn trên mobile
+
+**File:** `src/components/Layout.tsx` dòng 51
+
+```tsx
+<div className="hidden sm:flex ...">
+  <span>Chat: {usage.chatCount}/{limit.chat}</span>
+```
+
+Trên mobile (`sm` = 640px), user không biết còn bao nhiêu lượt. Chỉ biết khi bị chặn.
+
+**Sửa:** Hiện badge nhỏ thay vì ẩn hoàn toàn:
+
+```tsx
+{
+  /* Mobile: chỉ hiện progress bar nhỏ */
+}
+;<div className="sm:hidden">
+  <div className="w-8 h-1 bg-zinc-700 rounded-full overflow-hidden">
+    <div
+      className="h-full bg-emerald-500 rounded-full"
+      style={{ width: `${Math.min(100, (usage.chatCount / limit.chat) * 100)}%` }}
+    />
+  </div>
+</div>
+{
+  /* Desktop: text đầy đủ */
+}
+;<div className="hidden sm:flex ...">...</div>
+```
+
+---
+
+### 11. 🟡 Writing textarea `rows={14}` không dùng được khi keyboard mở
+
+**File:** `src/pages/Writing.tsx`  
+Textarea 14 dòng + keyboard ảo = hầu như không thấy gì. Trên mobile nên dùng chiều cao linh hoạt:
+
+```tsx
+// Thay rows={14} thành
+className = '... min-h-[200px] max-h-[50vh]'
+// và thêm style={{ height: 'auto', overflowY: 'auto' }}
+```
+
+---
+
+## 🖥️ ĐA THIẾT BỊ
+
+### 12. 🔴 STT (giọng nói) chỉ chạy được trên Chrome/Edge
+
+`Web Speech API` không có trên Firefox, Safari iOS 15 trở xuống.  
+Trang Speaking hiện có cảnh báo nhưng không có fallback — user Safari/Firefox bị kẹt hoàn toàn.
+
+**Hướng sửa:** Thêm ô text input fallback khi STT không hỗ trợ:
+
+```tsx
+{!isSTTSupported() && (
+  <div className="flex gap-2">
+    <input placeholder="Gõ tiếng Anh thay vì nói..." ... />
+    <button onClick={() => sendUserSpeech(typedText)}>Gửi</button>
+  </div>
+)}
+```
+
+### 13. 🟡 TTS trên iOS Safari có vấn đề
+
+`speechSynthesis` trên Safari iOS yêu cầu **user gesture** mới phát âm được. Nếu AI tự động đọc sau khi API trả về (không phải từ click trực tiếp của user), Safari sẽ im lặng không báo lỗi.
+
+Hiện tại `speakBilingual` được gọi trong async callback sau `callClaude` — không phải user gesture — nên **có thể không phát âm trên iOS Safari**.
+
+**Hướng sửa:** Luôn yêu cầu user nhấn nút Play để nghe, thay vì tự động phát.
+
+### 14. 🟢 Điều tốt đã có
+
+- API key không bị bundle vào JS frontend ✅
+- Proxy pattern đúng chuẩn ✅
+- `supabaseAdmin` chỉ dùng ở server ✅
+- `.env` trong `.gitignore` ✅
+- Viewport meta tag có mặt ✅
+- `theme-color` cho PWA ✅
+- Responsive design với Tailwind breakpoints ✅
+- Mic button 64px — đủ lớn ✅
+- `max-w-sm` form center trên mọi màn hình ✅
+- Sticky header + sticky input bar ✅
+
+---
+
+## Tóm tắt ưu tiên
+
+| #   | Vấn đề                                       | Mức | Sửa ngay?           |
+| --- | -------------------------------------------- | --- | ------------------- |
+| 1   | Kiểm tra git history, rotate API key nếu cần | 🔴  | Ngay                |
+| 2   | Auth localStorage + btoa không an toàn       | 🔴  | Trước khi public    |
+| 3   | `/api/claude` không rate limit / auth        | 🔴  | Trước khi public    |
+| 7   | iOS home indicator che input bar             | 🔴  | Ngay (2 dòng fix)   |
+| 8   | Enter key gửi tin trên mobile                | 🔴  | Dễ fix              |
+| 9   | Touch target nút logout quá nhỏ              | 🟡  | Sprint tới          |
+| 10  | Lượt dùng ẩn trên mobile                     | 🟡  | Sprint tới          |
+| 11  | Textarea quá cao khi keyboard mở             | 🟡  | Sprint tới          |
+| 12  | STT không có fallback cho Safari/Firefox     | 🔴  | Nên có trước launch |
+| 13  | TTS iOS Safari cần user gesture              | 🟡  | Kiểm tra thực tế    |
+
+---
+
+## PHẦN C — Audit bản dịch & đồng bộ từ vựng (2026-06-27)
+
+> Ngày: 2026-06-27
+> Phạm vi: toàn bộ dữ liệu song ngữ Anh–Việt của ứng dụng
+> (từ điển 10.000 mục + từ vựng/câu ở mọi trang khác)
+
+---
+
+## 1. Mục tiêu
+
+1. **Audit toàn bộ bản dịch**, chỉnh sửa cho đúng.
+2. **Từ vựng ở các trang khác lấy trong từ điển**; từ nào từ điển chưa có thì
+   bổ sung vào theo đúng logic & cấu trúc của từ điển (giữ nghĩa theo ngữ cảnh).
+
+---
+
+## 2. Phương pháp audit
+
+Vì lượng dữ liệu rất lớn (10.000 mục từ điển + **125.878** cặp câu song ngữ ở các
+file khác), audit kết hợp 3 lớp:
+
+1. **Kiểm tra tự động toàn bộ** (script `scripts`/scratchpad): quét MỌI mục/cặp để
+   bắt các loại lỗi máy phát hiện được:
+   - nghĩa tiếng Việt trống / trùng tiếng Anh / không có ký tự tiếng Việt
+   - ví dụ tiếng Anh không chứa từ chính
+   - nghĩa/ví dụ trùng lặp bất thường, dài/ngắn lệch nhau
+   - nghĩa còn lẫn tiếng Anh, phiên âm sai định dạng
+2. **Rà tay các mục bị gắn cờ** — đọc từng mục nghi ngờ để xác nhận đúng/sai.
+3. **Đọc mẫu trải đều** ~185 mục từ điển dải khắp A→Z để soi lỗi NGỮ NGHĨA mà
+   máy không bắt được (nghĩa sai nhưng trông hợp lệ).
+
+---
+
+## 3. Kết quả audit bản dịch
+
+### 3.1. Từ điển (nay 10.007 mục) — **chất lượng tốt**
+
+- Không có mục trống, không trùng từ.
+- Các cờ tự động gần như đều là **báo nhầm**:
+  - nghĩa tiếng Việt không dấu (vd `mua`, `tin`, `con ong`, `cao`) → **đúng**;
+  - ví dụ "thiếu từ" do động từ chia thì (`cling → clung`) hoặc từ ghép gạch nối → **đúng**;
+  - nhiều từ cùng nghĩa (`begin/start/starting` → "bắt đầu") → **đúng** (đồng nghĩa).
+- **Sửa thật: 1 mục** — `efficiently`: "một cách hiệu suất, hiệu quả" →
+  **"một cách hiệu quả"** (bỏ cụm gượng "một cách hiệu suất").
+
+### 3.2. Câu song ngữ ở các trang khác (125.878 cặp) — **sạch**
+
+Gồm: hội thoại (`dialogues`), bài học (`lessons`), mẫu câu (`patterns`),
+ví dụ mở rộng (`extra-examples`), giáo trình CEFR (`cefr`), câu thông dụng (`curriculum`).
+
+- Không phát hiện cặp dịch sai.
+- Các cờ đều là báo nhầm hợp lệ: ghi chú ngữ pháp tiếng Việt có lẫn thuật ngữ tiếng Anh
+  (`am/is/are`, `who/that`…), **tên riêng** giữ nguyên (Lan, Tom, David…), bài **đánh vần**
+  (`S-C-H-O-O-L`, `A, E, I, O, U`).
+
+---
+
+## 4. Đồng bộ từ vựng với từ điển (giữ ngữ cảnh)
+
+Đối chiếu **645 từ** trong 34 vòng từ vựng nền tảng (`src/data/curriculum.ts`)
+với từ điển: **613/645 đã có** trong từ điển (nay 620/645 sau khi bổ sung).
+
+### 4.1. Bổ sung 7 từ còn thiếu vào từ điển
+
+Thêm theo đúng cấu trúc `DictEntry` (vi, pos, ex_en, ex_vi, ipa_en, ipa_vi),
+chèn theo thứ tự ABC: **avocado, endangered, glasses, quarterly, recycle,
+watermelon, windy**.
+
+> _24 "mục" còn lại chỉ là chữ cái B–Z trong vòng "Bảng chữ cái" — không phải từ
+> vựng nên không đưa vào từ điển._
+
+### 4.2. `café` → `cafe`
+
+Từ điển đã có `cafe`; đổi vòng nền tảng dùng `cafe` cho khớp (tránh trùng lặp).
+
+### 4.3. Làm giàu phiên âm từ từ điển
+
+**621 từ** vựng nền tảng nay được gắn `ipa_en` **lấy trực tiếp từ từ điển**, nên
+trang Học theo lộ trình / Lộ trình CEFR hiển thị phiên âm THỐNG NHẤT với trang Từ điển.
+
+- **Giữ ngữ cảnh:** nghĩa tiếng Việt theo từng vòng được giữ nguyên (vd `orange` =
+  "màu cam" trong vòng Màu sắc, không lấy "quả cam" của từ điển; `patient` = "bệnh nhân"
+  trong vòng Y tế; `May` = "tháng Năm" trong vòng Tháng).
+- Không sao chép `ipa_vi` (vì nghĩa tiếng Việt theo ngữ cảnh có thể khác từ điển →
+  phiên âm tiếng Việt sẽ không khớp).
+
+### 4.4. Công cụ duy trì đồng bộ
+
+Thêm `scripts/gen-curriculum-json.ts`: sinh `public/data/curriculum.json` từ nguồn
+`src/data/curriculum.ts` và tự làm giàu `ipa_en` từ từ điển.
+Chạy lại khi sửa từ vựng: `npx tsx scripts/gen-curriculum-json.ts`.
+
+---
+
+## 5. Vấn đề hệ thống cần QUYẾT ĐỊNH: `ipa_vi` chỉ có 1 âm tiết
+
+`ipa_vi` (phiên âm tiếng Việt của _nghĩa_) hiện **chỉ chứa âm tiết ĐẦU** của nghĩa
+nhiều chữ — vd "ability" nghĩa "khả năng" nhưng `ipa_vi` = `/xaː˧˩˧/` (chỉ "khả").
+Có **9.468/10.007** mục như vậy, và trường này **được hiển thị** ở trang Từ điển
+(`Dictionary.tsx`) nên gây hiểu nhầm.
+
+> Đây là vấn đề **phiên âm**, không phải bản dịch, nên chưa tự ý sửa hàng loạt.
+
+**Gợi ý xử lý (chọn 1):**
+
+- **(a) Ẩn `ipa_vi`** ở trang Từ điển — đơn giản, hết gây nhầm (phiên âm tiếng Việt
+  ít giá trị với người Việt học tiếng Anh — chiều A).
+- (b) Tạo lại `ipa_vi` đầy đủ cho cả nghĩa nhiều âm tiết — cần bộ chuyển chữ→IPA
+  tiếng Việt đáng tin cậy, rủi ro sai cao nếu làm ẩu.
+- (c) Giữ nguyên.
+
+---
+
+## 6. Cách chạy lại / xác minh
+
+```bash
+npm install                              # cài phụ thuộc
+npx tsx scripts/gen-curriculum-json.ts   # đồng bộ từ vựng nền tảng ← từ điển
+node scripts/gen-data-manifest.mjs       # cập nhật manifest dữ liệu
+npm run lint && npx tsc --noEmit && npm test
+npm run build                            # build production (đã chạy OK)
+```
