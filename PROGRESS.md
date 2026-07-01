@@ -13,7 +13,8 @@
   (https://en-vi.donghanhcungban.com). Đang **áp bộ khung** lên dự án có sẵn
   theo `docs/framework/AP-DUNG-vao-du-an-co-san.md` — Lớp 1 (hàng rào) xong;
   Lớp 2 (E2E, a11y, bundle-size, i18n Login) đã đóng — còn rà nợ kỹ thuật
-  nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro, CEFR).
+  nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro, chạy thật
+  script gắn nhãn CEFR).
 
 ## Đã xong (đợt áp khung)
 
@@ -81,11 +82,28 @@
 - **`tsconfig.e2e.json`** — đóng nợ "E2E chưa nằm trong `npm run typecheck`": thêm cấu hình
   typecheck riêng cho `e2e/` + `playwright.config.ts` (mirror `tsconfig.api.json`), gộp vào
   `npm run typecheck` qua script mới `typecheck:e2e`. CI (`npm run typecheck`) nay tự phủ
-  luôn E2E, không cần đổi workflow. Đây là PR hiện tại.
+  luôn E2E, không cần đổi workflow. Đã merge: **PR #149**.
+- **Hạ tầng gắn nhãn CEFR cho từ vựng mở rộng** — repo không có wordlist CEFR nào sẵn để tra
+  chính xác (đã xác nhận), nên chọn cách **AI phân loại theo lô** (quyết định cùng người dùng).
+  Thêm `CefrWordLevel` (`'A1'..'C2'`, rộng hơn `CefrLevel['id']` A1-B2 của lộ trình vì từ điển
+  có cả từ nâng cao) + field `level?` optional trên `DictEntry` (`src/types.ts`,
+  `api/_lib/dictionaryData.ts`) — CHƯA có dữ liệu thật. Logic thuần tách riêng + có test
+  (`api/_lib/cefrTagging.ts` + `.test.ts`, 9 test: dựng prompt, parse JSON từ AI kể cả khi lỡ bọc
+  markdown/có chữ thừa, bỏ qua phần tử lỗi không throw cả batch). Script orchestrator
+  `scripts/tag-cefr-levels.ts` (`npm run tag:cefr`) đọc `public/data/dictionary/chunk-*.json`,
+  ưu tiên provider theo key có sẵn (Gemini free → Groq free → Anthropic trả phí, khớp
+  `.env.example`), ghi lại sau MỖI batch (an toàn Ctrl+C, resume bằng cách bỏ qua từ đã có
+  `level`). Đã kiểm: gọi thật tới Gemini API với key giả từ sandbox này → nhận đúng lỗi 400
+  "API key not valid" (xác nhận mạng + luồng lỗi/retry hoạt động, file KHÔNG bị ghi hỏng khi
+  batch lỗi). **CHƯA chạy thật** (sandbox không có `GEMINI_API_KEY`/`GROQ_API_KEY`/
+  `ANTHROPIC_API_KEY`) — ~9.500 từ × phân loại AI là quyết định có ảnh hưởng (chi phí/quota, dù
+  Gemini free) nên dừng hỏi người dùng trước khi chạy thật, theo CLAUDE.md mục 12. Đây là PR
+  hiện tại.
 
 ## Đang làm
 
-- (Chờ duyệt) PR `tsconfig.e2e.json` — xem mục cuối "Đã xong".
+- (Chờ duyệt) PR hạ tầng gắn nhãn CEFR — xem mục cuối "Đã xong". Sau khi merge: cần người dùng
+  cho key AI (hoặc tự chạy `npm run tag:cefr` trên máy có `.env`) để THỰC SỰ gắn nhãn ~9.500 từ.
 
 ## Tiếp theo
 
@@ -93,7 +111,8 @@
 
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
-- Gắn nhãn CEFR cho từ vựng mở rộng (việc dữ liệu — xem CLAUDE.md mục 13).
+- Chạy thật `npm run tag:cefr` (cần key AI) rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR
+  trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu trước, UI sau khi có dữ liệu thật để kiểm tra).
 - (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
 - a11y đã hoàn tất (gồm cả màn kết quả AI qua mock API). Không còn hạng mục a11y chừa lại.
   Nếu cần phủ thêm: trạng thái STT thật (ghi âm trình duyệt) — giá trị thấp vì luồng STT
