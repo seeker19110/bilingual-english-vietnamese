@@ -120,6 +120,15 @@ drop policy if exists "own usage" on public.daily_usage;
 create policy "own usage" on public.daily_usage
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+-- ── 8b. Khóa quyền ghi cột KIỂM SOÁT CHI PHÍ (quyền theo CỘT, xem migration 0005) ──
+-- RLS chỉ chặn theo DÒNG, không theo cột → nếu không có phần này, người dùng có thể tự
+-- ghi profiles.plan='pro' hoặc reset daily_usage.*_count để vượt giới hạn gói (tốn tiền
+-- API). Server dùng service_role nên bỏ qua các hạn chế này, vẫn ghi bình thường.
+revoke update (plan) on public.profiles from authenticated, anon;
+revoke insert, update on public.daily_usage from authenticated, anon;
+grant  insert (user_id, day, learn_count) on public.daily_usage to authenticated; -- streak
+grant  update (learn_count)               on public.daily_usage to authenticated; -- streak
+
 alter table public.learning_progress enable row level security;
 drop policy if exists "own progress" on public.learning_progress;
 create policy "own progress" on public.learning_progress
