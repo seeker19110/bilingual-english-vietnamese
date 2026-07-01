@@ -11,8 +11,9 @@
 
 - GĐ 4–5 (Phát triển + nâng chất lượng). Sản phẩm đã deploy thật
   (https://en-vi.donghanhcungban.com). Đang **áp bộ khung** lên dự án có sẵn
-  theo `docs/framework/AP-DUNG-vao-du-an-co-san.md` — Lớp 1 (hàng rào) xong,
-  đang sang Lớp 2 (lấp lỗ hổng chất lượng: E2E, a11y, Lighthouse).
+  theo `docs/framework/AP-DUNG-vao-du-an-co-san.md` — Lớp 1 (hàng rào) xong;
+  Lớp 2 (E2E, a11y, bundle-size, i18n Login) đã đóng — còn rà nợ kỹ thuật
+  nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro, CEFR).
 
 ## Đã xong (đợt áp khung)
 
@@ -61,6 +62,9 @@
   → contrast chỉ 1.19 trên nền sáng; đã thêm `theme-light:text-amber-800` (khớp dấu ✅ cùng
   ô). Gate a11y nay **59 test** (62 E2E tổng) — 0 critical / 0 serious ở mọi theme + mọi
   trạng thái tương tác (gồm cả màn kết quả AI). → Đóng hẳn nợ a11y. Đã merge: **PR #143**.
+- **CI deploy: health check chờ + retry** — gate deploy thật chờ app lên hẳn rồi mới coi là
+  thành công, tự retry thay vì fail ngay ở lần gọi đầu. Đã merge: **PR #144** + **#145**.
+- **chore(dictionary):** bỏ từ "sauté" khỏi từ điển (không phù hợp ngữ cảnh). Đã merge: **PR #146**.
 - **i18n Trang đăng nhập (song ngữ vi/en)** — Trang Login là trang cuối còn hard-code tiếng
   Việt; đã chuyển toàn bộ chữ sang hệ i18n sẵn có (`useLang()` → `T`, `src/i18n/index.ts`).
   Thay khối key `login*` cũ (bỏ hoang, không khớp thiết kế) bằng bộ key khớp Login hiện tại
@@ -68,17 +72,26 @@
   Vì `/login` không có header, **thêm nút gạt VI/EN** (segmented, `aria-pressed`, `role=group`)
   góc trên phải để người nước ngoài (chiều B) đổi ngôn ngữ trước khi đăng nhập. Chữ vi giữ
   nguyên byte → không đổi hình + smoke cũ còn xanh. E2E: thêm 2 test (login tiếng Anh khi
-  `ui_lang=en` + nút VI/EN đổi ngôn ngữ tại chỗ). a11y `/login` vẫn 0 critical/serious. Đây
-  là PR hiện tại.
+  `ui_lang=en` + nút VI/EN đổi ngôn ngữ tại chỗ). a11y `/login` vẫn 0 critical/serious. Đã
+  merge: **PR #147**.
+- **docs:** đồng bộ `CLAUDE.md`/`PROGRESS.md` với code thật (sửa 3 ghi chú lỗi thời — STT đã tách
+  lượt riêng từ trước chứ không dùng chung `speaking`; `security.ts` không còn debug log tạm; CEFR
+  đã có % hoàn thành theo cấp) + viết `PROJECT.md` từ template rỗng thành tài liệu thật (schema,
+  API, MoSCoW…). Đây là PR hiện tại.
 
 ## Đang làm
 
-- (Chờ duyệt) PR i18n Trang đăng nhập song ngữ + nút gạt VI/EN — xem mục cuối "Đã xong".
+- (Chờ duyệt) PR docs đồng bộ `CLAUDE.md`/`PROGRESS.md` + viết `PROJECT.md` — xem mục cuối "Đã xong".
 
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
+- **E2E chưa nằm trong typecheck** (`e2e/` không thuộc tsconfig nào) — thêm `tsconfig.e2e.json`;
+  việc nhỏ, rủi ro thấp. Xem "Nợ kỹ thuật".
+- Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
+  khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
+- Gắn nhãn CEFR cho từ vựng mở rộng (việc dữ liệu — xem CLAUDE.md mục 13).
 - (Tùy chọn, giá trị thấp) Zod validate env/input — đã đánh giá ở "Quyết định quan trọng".
 - a11y đã hoàn tất (gồm cả màn kết quả AI qua mock API). Không còn hạng mục a11y chừa lại.
   Nếu cần phủ thêm: trạng thái STT thật (ghi âm trình duyệt) — giá trị thấp vì luồng STT
@@ -107,4 +120,4 @@
 - E2E (`e2e/`) chưa nằm trong `npm run typecheck` (không thuộc tsconfig nào) —
   Playwright tự transpile khi chạy. Thêm `tsconfig.e2e.json` nếu muốn type-check.
 - ~~Trang Login dùng text tiếng Việt hard-code (chưa qua i18n) — chưa song ngữ.~~ ĐÃ XONG:
-  Login nay dùng i18n `T` + có nút gạt VI/EN (xem "Đã xong" đợt áp khung).
+  Login nay dùng i18n `T` + có nút gạt VI/EN (xem "Đã xong" đợt áp khung, PR #147).
