@@ -3,7 +3,11 @@ export type Level = 'beginner' | 'intermediate' | 'advanced'
 // A = Người Việt học tiếng Anh | B = Người nước ngoài học tiếng Việt (qua tiếng Anh)
 export type Direction = 'A' | 'B'
 
-// Cấu trúc 1 mục từ điển — khớp với dữ liệu trong src/data/dictionary.json
+// Cấp CEFR áp cho TỪNG TỪ vựng (khác CefrLevel['id'] trong src/data/cefr.ts chỉ có A1-B2
+// cho lộ trình) — từ điển mở rộng có cả từ nâng cao nên cần thêm C1/C2.
+export type CefrWordLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
+
+// Cấu trúc 1 mục từ điển — khớp với dữ liệu trong public/data/dictionary/chunk-*.json
 export interface DictEntry {
   word: string // từ tiếng Anh
   pos: string // loại từ viết tắt: n, v, adj, adv, prep, conj, pron, interj, art, num
@@ -12,6 +16,9 @@ export interface DictEntry {
   ex_vi: string // câu ví dụ dịch tiếng Việt
   ipa_en?: string // phiên âm quốc tế tiếng Anh
   ipa_vi?: string // phiên âm quốc tế tiếng Việt
+  // Cấp CEFR ƯỚC LƯỢNG bằng AI (scripts/tag-cefr-levels.ts) — không phải mọi từ đều có,
+  // và giá trị là ước lượng (chưa qua kiểm tra tay), không phải nguồn CEFR chính thức.
+  level?: CefrWordLevel
 }
 
 export interface User {
