@@ -104,6 +104,9 @@ export default function KaraokeText({
       {/* Văn bản: từng chữ highlight đúng lúc đọc */}
       <span className={textClass}>
         {parts.map((part, i) => {
+          // Đoạn rỗng '' chỉ sinh ra ở đầu/cuối khi text có khoảng trắng thừa; bỏ qua để
+          // chỉ số từ (wi) khớp với bộ đếm của audio (dùng text.trim().split ở tts.ts).
+          if (part === '') return null
           if (/^\s+$/.test(part)) return <span key={i}>{part}</span>
           const thisIdx = wi++
           return (
