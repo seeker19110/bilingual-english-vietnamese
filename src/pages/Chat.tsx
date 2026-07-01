@@ -3,7 +3,7 @@ import { Send, Plus, ChevronDown, Sparkles } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
-import SpeakButton from '../components/SpeakButton'
+import KaraokeText from '../components/KaraokeText'
 import {
   saveChatSession,
   getChatSessions,
@@ -140,7 +140,6 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
   // Chiều B: AI nói tiếng Việt, giải thích tiếng Anh
   const speechLang = dir === 'A' ? ('en-US' as const) : ('vi-VN' as const)
   const feedbackLang = dir === 'A' ? ('vi-VN' as const) : ('en-US' as const)
-  const isA = dir === 'A'
 
   if (msg.role === 'user') {
     return (
@@ -175,34 +174,29 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
       <div className="max-w-[85%] space-y-2">
-        <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed border border-zinc-700/30 break-words">
-          {speechText}
+        <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 border border-zinc-700/30 break-words">
           {speechText && (
-            <div className="flex justify-end mt-1.5">
-              <SpeakButton
-                text={speechText}
-                lang={speechLang}
-                title={isA ? 'Nghe tiếng Anh' : 'Nghe tiếng Việt'}
-                size="xs"
-              />
-            </div>
+            <KaraokeText
+              text={speechText}
+              lang={speechLang}
+              textClass="text-sm leading-relaxed text-zinc-100"
+              iconSize="xs"
+            />
           )}
         </div>
 
         {feedbackText && (
-          <div className="bg-amber-500/8 border border-amber-500/20 border-l-2 border-l-amber-400 rounded-r-xl rounded-bl-sm px-3 py-2.5 text-xs leading-relaxed">
+          <div className="bg-amber-500/8 border border-amber-500/20 border-l-2 border-l-amber-400 rounded-r-xl rounded-bl-sm px-3 py-2.5">
             <div className="flex items-start gap-1.5">
               <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
                 ✅
               </span>
-              <span className="text-amber-200 theme-light:text-amber-800 flex-1">
-                {feedbackText}
-              </span>
-              <SpeakButton
+              <KaraokeText
                 text={feedbackText}
                 lang={feedbackLang}
-                title={isA ? 'Nghe tiếng Việt' : 'Hear in English'}
-                size="xs"
+                textClass="text-xs leading-relaxed text-amber-200 theme-light:text-amber-800"
+                buttonClass="flex-1"
+                iconSize="xs"
               />
             </div>
           </div>

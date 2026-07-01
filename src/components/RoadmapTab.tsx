@@ -721,6 +721,13 @@ function DialogueView({
   const [paused, setPaused] = useState(false)
   const [speed, setSpeed] = useState<DlgSpeed>(1)
   const [mode, setMode] = useState<DlgMode>('en')
+  // Từ đang đọc của dòng đang phát (chỉ theo dõi khi audio đang đọc CHÍNH `ln.en` — đúng văn
+  // bản mà KaraokeText hiển thị) — cho karaoke sáng chữ trong lúc "Phát tất cả", không chỉ khi
+  // bấm nghe từng dòng riêng lẻ.
+  const [dlgWordSync, setDlgWordSync] = useState<{
+    lineIdx: number
+    wordIdx: number | null
+  } | null>(null)
 
   const stopRef = useRef(false)
   const pauseRef = useRef(false)
@@ -791,21 +798,30 @@ function DialogueView({
       const ln = dialogue.lines[i]
       if (!ln) continue // i < lines.length nên ln luôn có; guard để TS narrow kiểu
       setActiveLine(i)
+      setDlgWordSync(null)
 
       const curMode = modeRef.current
       const curSpeed = speedRef.current
       const curVoice = ln.who === 'A' ? voiceA : voiceB
 
+      // Chỉ theo dõi từ đang đọc khi văn bản CHÍNH LÀ ln.en (đúng câu KaraokeText hiển thị) —
+      // ln.vi luôn hiện dạng chữ thường, không có karaoke.
+      const onWordFor = (text: string) =>
+        text === ln.en ? (wi: number) => setDlgWordSync({ lineIdx: i, wordIdx: wi }) : undefined
+
       if (curMode === 'en') {
-        await speak(ln.en, 'en-US', curVoice, curSpeed)
+        await speak(ln.en, 'en-US', curVoice, curSpeed, onWordFor(ln.en))
       } else if (curMode === 'vi') {
         await speak(ln.vi, 'vi-VN', curVoice, curSpeed)
       } else {
         // both: đích trước, bản dịch sau
-        await speak(isA ? ln.en : ln.vi, targetLang, curVoice, curSpeed)
+        const targetText = isA ? ln.en : ln.vi
+        const transText = isA ? ln.vi : ln.en
+        await speak(targetText, targetLang, curVoice, curSpeed, onWordFor(targetText))
         if (!stopRef.current) {
           await new Promise((r) => setTimeout(r, 250))
-          await speak(isA ? ln.vi : ln.en, transLang, curVoice, curSpeed)
+          setDlgWordSync(null)
+          await speak(transText, transLang, curVoice, curSpeed, onWordFor(transText))
         }
       }
       if (!stopRef.current) await new Promise((r) => setTimeout(r, 400))
@@ -815,6 +831,7 @@ function DialogueView({
     setPlaying(false)
     setPaused(false)
     setActiveLine(null)
+    setDlgWordSync(null)
   }
 
   function handlePause() {
@@ -833,6 +850,7 @@ function DialogueView({
     setPlaying(false)
     setPaused(false)
     setActiveLine(null)
+    setDlgWordSync(null)
   }
 
   const isIdle = !playing && !paused
@@ -985,6 +1003,11 @@ function DialogueView({
                     textClass={`font-medium text-[15px] leading-snug ${isB ? accent.text : 'text-zinc-100'}`}
                     buttonClass="w-full"
                     voice={ln.who === 'A' ? voiceA : voiceB}
+                    externalState={
+                      playing && dlgWordSync?.lineIdx === i
+                        ? { playing: true, wordIdx: dlgWordSync.wordIdx }
+                        : undefined
+                    }
                   />
                   <p className="text-sm text-zinc-400 mt-1 pl-6">{ln.vi}</p>
                   <InlinePronounce

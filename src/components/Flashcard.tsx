@@ -4,7 +4,7 @@ import type { DictEntry } from '../types'
 import { markLearned, unmarkLearned } from '../lib/vocab'
 import { fetchRandomEntries } from '../lib/dictionaryApi'
 import PronounceButton from './PronounceButton'
-import SpeakButton from './SpeakButton'
+import KaraokeText from './KaraokeText'
 
 interface Props {
   userId: string
@@ -125,16 +125,17 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
         ) : (
           <>
             <span className="text-lg text-zinc-100 font-medium mb-2">{card.vi}</span>
-            {card.ex_en && <span className="text-xs text-zinc-400 italic mt-1">{card.ex_en}</span>}
             {card.ex_vi && <span className="text-xs text-zinc-400 mt-0.5">{card.ex_vi}</span>}
           </>
         )}
       </button>
 
-      {/* Nút phát âm + nghe câu (tách khỏi nút lật để bấm không bị lật thẻ) */}
-      <div className="flex items-center justify-center gap-2 mb-4">
+      {/* Nút phát âm từ + câu ví dụ (có karaoke) — tách khỏi nút lật để bấm không bị lật thẻ */}
+      <div className="flex flex-col items-center gap-2 mb-4">
         <PronounceButton word={card.word} />
-        {card.ex_en && <SpeakButton text={card.ex_en} lang="en-US" title="Nghe câu ví dụ" />}
+        {card.ex_en && (
+          <KaraokeText text={card.ex_en} lang="en-US" textClass="text-xs text-zinc-400 italic" />
+        )}
       </div>
 
       {/* Nút tự đánh giá */}

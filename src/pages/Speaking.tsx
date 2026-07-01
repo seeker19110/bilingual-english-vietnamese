@@ -160,15 +160,66 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
   )
 }
 
+// Đang phát audio của tin nhắn nào (msgId) — phần nào (speech/feedback) — từ thứ mấy.
+// Dùng để karaoke sáng chữ đúng nhịp cả khi AI vừa trả lời (tự phát) lẫn khi bấm "Nghe lại".
+interface SpkWordSync {
+  msgId: string
+  field: 'speech' | 'feedback'
+  wordIdx: number | null
+}
+
+// Text sáng từng chữ kiểu karaoke khi đang là đoạn audio đang phát — giống cách WordText
+// (src/pages/Lessons.tsx) làm, tách riêng vì SpeakBubble không dùng KaraokeText (nút "Nghe lại"
+// phát TUẦN TỰ cả speech lẫn feedback qua speakBilingual, không phải phát 1 đoạn độc lập).
+function HighlightText({
+  text,
+  active,
+  wordIdx,
+  className,
+  highlightClass = 'bg-sky-500/25 text-sky-200',
+}: {
+  text: string
+  active: boolean
+  wordIdx: number | null
+  className: string
+  highlightClass?: string
+}) {
+  if (!active) return <span className={className}>{text}</span>
+  const parts = text.split(/(\s+)/)
+  let wi = 0
+  return (
+    <span className={className}>
+      {parts.map((part, i) => {
+        if (/^\s+$/.test(part)) return <span key={i}>{part}</span>
+        const thisIdx = wi++
+        return (
+          <span
+            key={i}
+            className={
+              thisIdx === wordIdx
+                ? `${highlightClass} rounded px-0.5 transition-colors`
+                : 'transition-colors'
+            }
+          >
+            {part}
+          </span>
+        )
+      })}
+    </span>
+  )
+}
+
 // ── Speak Bubble ───────────────────────────────────────────────────────
 function SpeakBubble({
   msg,
   onPlay,
   isNew,
+  wordSync,
 }: {
   msg: Message
   onPlay?: () => void
   isNew?: boolean
+  wordSync: SpkWordSync | null
 }) {
   if (msg.role === 'user') {
     return (
@@ -179,11 +230,18 @@ function SpeakBubble({
       </div>
     )
   }
+  const speechActive = wordSync?.msgId === msg.id && wordSync.field === 'speech'
+  const feedbackActive = wordSync?.msgId === msg.id && wordSync.field === 'feedback'
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
       <div className="max-w-[85%] space-y-2">
         <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed border border-zinc-700/30 flex items-start gap-2 break-words">
-          <span className="flex-1 min-w-0">{msg.speechEn}</span>
+          <HighlightText
+            text={msg.speechEn ?? ''}
+            active={speechActive}
+            wordIdx={wordSync?.wordIdx ?? null}
+            className="flex-1 min-w-0"
+          />
           {onPlay && (
             <button
               onClick={onPlay}
@@ -200,7 +258,13 @@ function SpeakBubble({
               <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
                 ✅
               </span>
-              <span className="text-amber-200 theme-light:text-amber-800">{msg.feedbackVi}</span>
+              <HighlightText
+                text={msg.feedbackVi}
+                active={feedbackActive}
+                wordIdx={wordSync?.wordIdx ?? null}
+                className="text-amber-200 theme-light:text-amber-800"
+                highlightClass="bg-amber-500/25 text-amber-100 theme-light:text-amber-900"
+              />
             </div>
             {msg.correctedEn && (
               <p className="text-accent-400 theme-light:text-accent-800 mt-1.5 pl-4">
@@ -256,6 +320,8 @@ export default function Speaking() {
   const [processing, setProcessing] = useState(false) // đang gửi audio lên server nhận diện
   const [lastIdx, setLastIdx] = useState(-1)
   const [throttleCountdown, setThrottleCountdown] = useState(0)
+  // Karaoke: tin nhắn/phần/từ nào đang phát (xem SpkWordSync + HighlightText ở trên).
+  const [wordSync, setWordSync] = useState<SpkWordSync | null>(null)
   const stopRecRef = useRef<(() => void) | null>(null) // dừng Web Speech (fallback)
   const recorderRef = useRef<Recorder | null>(null) // recorder server STT (chính)
   const recTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null) // tự dừng ghi âm khi quá lâu
@@ -355,7 +421,15 @@ export default function Speaking() {
         setSpeaking(true)
         // Chiều A: giọng Anh trước, không có feedback khi mở đầu
         // Chiều B: giọng Việt trước
-        await speakBilingual(ai.speech, '', isA ? 'en-US' : 'vi-VN', isA ? 'vi-VN' : 'en-US')
+        await speakBilingual(
+          ai.speech,
+          '',
+          isA ? 'en-US' : 'vi-VN',
+          isA ? 'vi-VN' : 'en-US',
+          undefined,
+          1,
+          (wi) => setWordSync({ msgId: msg.id, field: 'speech', wordIdx: wi }),
+        )
         setSpeaking(false)
       }
     } catch (e) {
@@ -493,6 +567,10 @@ export default function Speaking() {
           ai.feedback,
           isA ? 'en-US' : 'vi-VN',
           isA ? 'vi-VN' : 'en-US',
+          undefined,
+          1,
+          (wi) => setWordSync({ msgId: aiMsg.id, field: 'speech', wordIdx: wi }),
+          (wi) => setWordSync({ msgId: aiMsg.id, field: 'feedback', wordIdx: wi }),
         )
         setSpeaking(false)
       }
@@ -512,6 +590,10 @@ export default function Speaking() {
       msg.feedbackVi ?? '',
       isA ? 'en-US' : 'vi-VN',
       isA ? 'vi-VN' : 'en-US',
+      undefined,
+      1,
+      (wi) => setWordSync({ msgId: msg.id, field: 'speech', wordIdx: wi }),
+      (wi) => setWordSync({ msgId: msg.id, field: 'feedback', wordIdx: wi }),
     )
     setSpeaking(false)
   }
@@ -558,6 +640,7 @@ export default function Speaking() {
                 msg={m}
                 isNew={i >= lastIdx}
                 onPlay={m.role === 'assistant' ? () => playMsg(m) : undefined}
+                wordSync={speaking ? wordSync : null}
               />
             ))}
             {loading && <TypingDots />}

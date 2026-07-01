@@ -744,13 +744,15 @@ function LessonView({
                       <button
                         onClick={() => void playTurn(i)}
                         title={isA ? 'Nghe câu này' : 'Play this line'}
-                        className={`shrink-0 w-6 h-6 flex items-center justify-center rounded-full transition ${
+                        className={`shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition ${
                           isActive
                             ? `${color.text} bg-zinc-800/50`
                             : 'text-zinc-400 hover:text-zinc-300 hover:bg-zinc-700'
                         }`}
                       >
-                        <Volume2 className={`w-3 h-3 ${isActive ? 'animate-pulse' : ''}`} />
+                        <Volume2
+                          className={`w-[1.125rem] h-[1.125rem] ${isActive ? 'animate-pulse' : ''}`}
+                        />
                       </button>
                     </div>
                   </div>
@@ -856,9 +858,9 @@ export function InlinePronounce({
           reset()
         }}
         title={isA ? 'Kiểm tra phát âm câu này' : 'Check pronunciation'}
-        className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-zinc-500 hover:text-violet-300 hover:bg-violet-500/15 transition"
+        className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-zinc-500 hover:text-violet-300 hover:bg-violet-500/15 transition"
       >
-        <Mic className="w-3 h-3" />
+        <Mic className="w-[1.125rem] h-[1.125rem]" />
       </button>
     )
   }
