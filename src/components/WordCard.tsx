@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Eye, Star } from 'lucide-react'
 import PronounceButton from './PronounceButton'
-import SpeakButton from './SpeakButton'
+import KaraokeText from './KaraokeText'
 import PronunciationCheck from './PronunciationCheck'
 import type { ExPair } from '../data/extra-examples'
 import { loadExtraExamples } from '../data/extraExamplesLoader'
@@ -103,9 +103,6 @@ export default function WordCard({
           ) : (
             <>
               <span className="text-xl text-zinc-100 font-medium mb-2">{card.vi}</span>
-              {card.ex_en && (
-                <span className="text-sm text-zinc-400 italic mt-1">{card.ex_en}</span>
-              )}
               {card.ex_vi && <span className="text-xs text-zinc-400 mt-0.5">{card.ex_vi}</span>}
               {extraExamples[card.word.toLowerCase()] && (
                 <div className="mt-2 space-y-1 text-left w-full border-t border-zinc-700/50 pt-2">
@@ -122,9 +119,11 @@ export default function WordCard({
         </button>
       </div>
 
-      <div className="flex items-center justify-center gap-2 mb-3">
+      <div className="flex flex-col items-center gap-2 mb-3">
         <PronounceButton word={card.word} />
-        {card.ex_en && <SpeakButton text={card.ex_en} lang="en-US" title="Nghe câu ví dụ" />}
+        {card.ex_en && (
+          <KaraokeText text={card.ex_en} lang="en-US" textClass="text-sm text-zinc-400 italic" />
+        )}
       </div>
 
       <div className="mb-4">

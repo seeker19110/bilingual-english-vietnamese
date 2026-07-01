@@ -419,6 +419,8 @@ export async function speak(
 }
 
 // Đọc tuần tự: câu hội thoại (ngôn ngữ đích) → sửa lỗi (tiếng mẹ đẻ)
+// onSpeechWord/onFeedbackWord (tùy chọn): cho karaoke sáng chữ từng phần theo giọng đọc
+// (dùng ở Speaking.tsx — xem KaraokeText.tsx cho cách dùng onWord tương tự với speak()).
 export async function speakBilingual(
   speech: string,
   feedback: string,
@@ -426,11 +428,13 @@ export async function speakBilingual(
   feedbackLang: Lang = 'vi-VN',
   voice: Voice = getVoicePref(),
   rate = 1,
+  onSpeechWord?: (idx: number) => void,
+  onFeedbackWord?: (idx: number) => void,
 ) {
   const myToken = ++playToken
-  if (speech) await speak(speech, speechLang, voice, rate)
+  if (speech) await speak(speech, speechLang, voice, rate, onSpeechWord)
   // Nếu giữa chừng người dùng bấm Tắt tiếng / sang câu khác (stopSpeaking → playToken đổi),
   // thì DỪNG, không đọc tiếp phần sửa lỗi.
   if (playToken !== myToken) return
-  if (feedback) await speak(feedback, feedbackLang, voice, rate)
+  if (feedback) await speak(feedback, feedbackLang, voice, rate, onFeedbackWord)
 }

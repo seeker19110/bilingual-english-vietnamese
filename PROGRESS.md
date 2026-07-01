@@ -133,17 +133,24 @@
   này" + `InlinePronounce` (micro) trong hội thoại (`Lessons.tsx`, dùng lại ở `RoadmapTab.tsx`) —
   vùng chạm rõ hơn trên mobile. (Thử 3x trước, người dùng phản hồi to quá → chỉnh còn 1.5x.) Đã
   kiểm bằng Playwright screenshot thật (không chỉ đọc code): layout không vỡ ở mobile viewport
-  (390px), a11y gate `/lessons` + `/learning-path` vẫn 0 critical/serious ở cả 4 theme. Đây là PR
-  hiện tại.
+  (390px), a11y gate `/lessons` + `/learning-path` vẫn 0 critical/serious ở cả 4 theme.
+- **Karaoke áp dụng cho MỌI TTS >1 từ** (theo yêu cầu mở rộng) — 2 giai đoạn, gộp chung PR #158:
+  - **Đợt 1 (tái dùng `KaraokeText` có sẵn):** `Chat.tsx` (2 chỗ: câu trả lời + nhận xét),
+    `Flashcard.tsx`/`WordCard.tsx` (câu ví dụ `ex_en`) — thay `SpeakButton` + chữ thường bằng
+    `KaraokeText`. Bỏ luôn chữ ví dụ tĩnh lặp lại (trước đây hiện 2 lần: 1 lần chữ thường + 1 nút
+    loa riêng) → gộp thành 1 chỗ duy nhất có karaoke.
+  - **Đợt 2 (thêm hạ tầng mới):** `Speaking.tsx` (tính năng chính) — `speakBilingual()`
+    (`src/lib/tts.ts`) nhận thêm 2 tham số cuối tùy chọn `onSpeechWord`/`onFeedbackWord` (không đổi
+    lời gọi cũ, tham số optional ở cuối). `SpeakBubble` thêm component `HighlightText` (giống
+    `WordText` ở Lessons.tsx) + state `wordSync` (tin nhắn/phần/từ đang phát) ở component cha, áp
+    dụng cho cả lúc AI vừa trả lời (tự phát) lẫn bấm "Nghe lại". Gate hiển thị bằng `speaking &&
+wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt highlight mà không cần dọn
+    state ở từng nơi gọi `stopSpeaking()`.
+  - Đã kiểm: `npx playwright test e2e/a11y.spec.ts --grep "chat|speaking|dictionary|learn"` —
+    24/24 pass, 0 critical/serious ở cả 4 theme, gồm cả màn "kết quả AI" (mock `/api/claude`) của
+    Chat/Speaking. Đây là PR hiện tại.
 
 ## Tiếp theo
-
-> **Yêu cầu mới nhận, CHƯA làm** (người dùng: "tính năng karaoke cho text khi phát âm tới chữ đó,
-> áp dụng cho tất cả tts (>1 từ)") — mở rộng karaoke ra MỌI nơi gọi `speak()`/`speakBilingual()`
-> với văn bản >1 từ, không chỉ hội thoại. Đã rà: `SpeakButton` (dùng ở Chat/Flashcard/WordCard)
-> và `speakBilingual()` (dùng ở Speaking.tsx — tính năng chính) hiện KHÔNG có word-sync. Đây là
-> việc lớn, nhiều trang — cần trình bày kế hoạch chia nhỏ + xác nhận trước khi làm (theo CLAUDE.md
-> mục 3/7), sẽ làm ở phiên/PR tiếp theo.
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
