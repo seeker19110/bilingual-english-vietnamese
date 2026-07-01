@@ -113,7 +113,7 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 
 ## 13. Trạng thái hiện tại
 
-> Cập nhật 2026-06-21.
+> Cập nhật 2026-07-01.
 
 - [x] Khởi tạo project + đăng nhập (Supabase Auth đã chạy thật — `lib/auth.ts`, `AuthProvider`)
 - [x] Chế độ Chat (MVP) — gọi AI thật qua `/api/claude` (edge function ép model + token)
@@ -124,7 +124,7 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 - [x] Chế độ Luyện nói song ngữ — TTS chính Google Cloud TTS qua `/api/tts` (cache mã hóa AES-256-GCM trên Supabase Storage, bắt buộc đăng nhập mới lấy được khoá giải mã), Web Speech API chỉ còn fallback. **STT thật**: ghi âm trình duyệt (`MediaRecorder`, `src/lib/sttServer.ts`) → base64 lên `/api/stt` → Whisper qua Groq hoặc OpenAI (`api/stt.ts` + `api/_lib/openaiStt.ts`, có `GROQ_API_KEY` thì dùng Groq `whisper-large-v3-turbo`, không thì OpenAI `gpt-4o-mini-transcribe`); Web Speech API (`src/lib/stt.ts`) chỉ còn dự phòng. Cần `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`).
 - [x] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng) — `lib/direction.ts`
 - [x] Chế độ Học theo lộ trình (`/learn`) — curriculum nền tảng theo vòng tròn chủ đề rồi nối tiếp bằng từ điển; mục tiêu 20 từ/ngày; ôn ngẫu nhiên không lặp trong 1 vòng; học xong hiện câu thông dụng ráp từ các từ vừa học. Dữ liệu: `src/data/curriculum.ts`, logic: `src/lib/curriculum.ts`
-- [x] Lộ trình CHUẨN CEFR (tab "Lộ trình" trong `/learn`) — A1→B2 đầy đủ: 21 unit / ~55 bài ngữ pháp; mỗi cấp có mục tiêu "can-do", mỗi bài có cấu trúc + giải thích tiếng Việt + ví dụ bấm nghe; liên kết trọn 34 vòng từ vựng (flashcard `WordCard`, vào SRS + đếm lượt ngày). Dữ liệu: `src/data/cefr.ts`, UI: `src/components/RoadmapTab.tsx`. Còn: gắn nhãn CEFR cho từ vựng mở rộng, theo dõi % hoàn thành theo cấp.
+- [x] Lộ trình CHUẨN CEFR (tab "Lộ trình" trong `/learn`) — A1→B2 đầy đủ: 21 unit / ~55 bài ngữ pháp; mỗi cấp có mục tiêu "can-do", mỗi bài có cấu trúc + giải thích tiếng Việt + ví dụ bấm nghe; liên kết trọn 34 vòng từ vựng (flashcard `WordCard`, vào SRS + đếm lượt ngày). Dữ liệu: `src/data/cefr.ts`, UI: `src/components/RoadmapTab.tsx`. Còn: gắn nhãn CEFR cho từ vựng mở rộng (hiện chỉ liên kết qua `vocabCircleIds` ở cấp unit, chưa có nhãn CEFR trên từng từ).
 - [x] (v2) Theo dõi tiến bộ, streak, chấm phát âm — streak, WordOfTheDay, Flashcard, cache phát âm (`api/pronunciation.ts`); chấm phát âm chạy trình duyệt bằng Web Speech + Levenshtein (`src/lib/pronounceScore.ts` + `src/components/PronunciationCheck.tsx`).
 - [x] Bảng tiến độ (`/progress`) — streak + biểu đồ 7 ngày, mục tiêu từ mới hôm nay + lượt còn lại, số từ đã thuộc + cần ôn SRS + % lộ trình, % hoàn thành từng cấp CEFR A1→B2, tổng kết phiên. Logic: `src/lib/stats.ts`; UI: `src/pages/Dashboard.tsx`.
 - [x] Tên miền canonical (SEO) đọc từ `VITE_SITE_URL` trong `src/App.tsx`, mặc định domain production. Xem `.env.example`.
@@ -132,8 +132,11 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 
 ### Việc còn dang dở / cần quyết định
 
-1. STT đã xong (Whisper Groq/OpenAI qua `/api/stt`). Còn: thêm `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) vào `.env` trên VPS + cân nhắc đếm lượt riêng cho STT (hiện dùng chung giới hạn `speaking`).
-2. Repo GitHub đồng bộ VPS: `ecosystem.config.cjs` đã khớp `interpreter: /usr/bin/node`; còn vài dòng debug log tạm trong `api/_lib/security.ts` (`validateAuth`) trên VPS chưa đồng bộ về repo — cần quyết định xóa hay đồng bộ.
+1. STT đã xong (Whisper Groq/OpenAI qua `/api/stt`) **và đã đếm lượt riêng** (mode `stt` tách khỏi
+   `speaking`: cột `stt_count`, giới hạn free 10/pro 100 — `api/_lib/usage.ts`, `src/types.ts`). Còn: thêm
+   `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) vào `.env` trên VPS.
+2. Repo GitHub đồng bộ VPS: `ecosystem.config.cjs` đã khớp `interpreter: /usr/bin/node`; đã rà lại
+   `api/_lib/security.ts` (`validateAuth`) — repo hiện sạch, không còn debug log tạm (ghi chú cũ đã lỗi thời).
 3. Thanh toán Pro chưa có (giới hạn lượt đã đồng bộ Supabase, chưa có cổng thanh toán nâng cấp gói).
 
 Chú thích: `[x]` xong · `[~]` làm một phần · `[ ]` chưa làm.
