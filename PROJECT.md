@@ -29,14 +29,14 @@
   - Lộ trình học (`/learn`): vòng từ vựng nền tảng + lộ trình chuẩn CEFR A1→B2.
   - Bảng tiến độ (`/progress`): streak, biểu đồ 7 ngày, % hoàn thành theo cấp CEFR.
   - Mở chiều B (dạy tiếng Việt cho người nước ngoài) — nút gạt chiều học.
-  - Deploy thật (VPS + PM2 + Nginx + SSL), 4 theme đạt AA, E2E + a11y gate trong CI.
+  - Deploy thật (VPS + PM2 + Nginx + SSL), 4 theme đạt AA, E2E (gồm typecheck) + a11y gate trong CI.
+  - i18n trang Login (song ngữ vi/en + nút gạt VI/EN) — PR #147.
 - **Should have (chưa xong):**
   - **Thanh toán Pro** — hiện `plan` chỉ đổi tay trong bảng `profiles`, chưa có cổng thanh toán/webhook.
-  - i18n cho trang Login (đang xử lý — PR #147).
-  - `tsconfig.e2e.json` để `npm run typecheck` phủ luôn thư mục `e2e/`.
+    Cần chốt sản phẩm (nhà cung cấp, giá, webhook) trước khi code.
 - **Could have:**
-  - Gắn nhãn CEFR (A1–B2) cho từng từ vựng mở rộng, thay vì chỉ liên kết qua `vocabCircleIds` ở
-    cấp unit.
+  - Gắn nhãn CEFR (A1–C2) cho từng từ vựng mở rộng — **hạ tầng đã có** (`scripts/tag-cefr-levels.ts`,
+    field `DictEntry.level`, PR #150) nhưng CHƯA chạy phân loại thật (cần key AI, xem PROGRESS.md).
   - Zod validate runtime cho input/env (đánh giá là giá trị thấp hiện tại — input đã validate tay
     kỹ ở `api/ai.ts`, `api/stt.ts`; xem PROGRESS.md "Quyết định quan trọng").
   - Đếm lượt riêng cho STT khi cần tách khỏi mô hình hiện tại (đã tách sẵn — xem §5).
@@ -147,15 +147,15 @@ có nhánh xử lý; nếu đổi schema Supabase phải có migration chạy l�
 ## 9. Lộ trình & Mốc thời gian
 
 - **Đã xong (GĐ 1–5):** MVP 3 chế độ, deploy thật, đồng bộ Supabase, chiều B, lộ trình học +
-  CEFR, bảng tiến độ, hệ theme 4 màu, và đợt "áp khung" brownfield (Prettier/ESLint/TS strict,
-  husky, CI gate, E2E + a11y AA toàn site, coverage ratchet, bundle-size budget) — chi tiết từng
-  PR xem `PROGRESS.md`.
-- **Đang làm:** i18n trang Login (PR #147).
+  CEFR, bảng tiến độ, hệ theme 4 màu, i18n Login, và đợt "áp khung" brownfield (Prettier/ESLint/
+  TS strict, husky, CI gate, E2E + typecheck E2E + a11y AA toàn site, coverage ratchet,
+  bundle-size budget, hạ tầng gắn nhãn CEFR) — chi tiết từng PR xem `PROGRESS.md`.
+- **Đang làm:** không có việc code nào đang mở. Còn 1 bước THỦ CÔNG (không cần PR): chạy
+  `npm run tag:cefr` (cần key AI trong `.env`) để thực sự gắn nhãn ~9.500 từ vựng mở rộng.
 - **Tiếp theo (mỗi việc 1 PR, xin duyệt ở mỗi cổng — xem `PROGRESS.md`):**
-  1. `tsconfig.e2e.json` — đóng nợ E2E chưa nằm trong `npm run typecheck`.
-  2. Thanh toán Pro — **cần chốt trước:** nhà cung cấp thanh toán, mức giá, cách xác nhận
+  1. Thanh toán Pro — **cần chốt trước:** nhà cung cấp thanh toán, mức giá, cách xác nhận
      (webhook) trước khi code (theo `CLAUDE.md` mục 12: đụng thanh toán phải dừng hỏi).
-  3. Gắn nhãn CEFR cho từ vựng mở rộng.
+  2. (Tuỳ chọn, giá trị thấp) Zod validate env/input.
 
 ## 10. Rủi ro & Giả định
 
