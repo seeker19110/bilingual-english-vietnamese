@@ -20,6 +20,7 @@
 // này (không có chế độ ẩn danh) nên mọi response thành công đều kèm khoá giải mã.
 // Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
+import { z } from 'zod'
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
 import {
   generateAudioFromGoogle,
@@ -27,6 +28,7 @@ import {
   DEFAULT_VOICE,
   VOICE_VERSION,
   type Lang,
+  type VoiceId,
 } from './_lib/googleTts'
 import { saveAudio } from './_lib/fileStorage'
 import { encryptAudio, getClientKeyMaterial } from './_lib/ttsCrypto'
@@ -38,12 +40,33 @@ import {
   validateContentType,
   logSecurityEvent,
 } from './_lib/security'
+import { readJsonBody, validateBody } from './_lib/validation'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
 
 function isValidLang(value: string): value is Lang {
   return VALID_LANGS.includes(value as Lang)
 }
+
+const TtsBodySchema = z.object({
+  text: z.string({ error: 'Thiếu text' }).trim().min(1, 'Thiếu text'),
+  lang: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => (v ? v : 'en-US'))
+    .refine((v): v is Lang => isValidLang(v), {
+      error: (ctx) => `lang không hợp lệ: ${ctx.input}`,
+    }),
+  voice: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => (v ? v : DEFAULT_VOICE))
+    .refine((v): v is VoiceId => isValidVoice(v), {
+      error: (ctx) => `voice không hợp lệ: ${ctx.input}`,
+    }),
+})
 
 // Hash đơn giản dùng để tạo tên file + key tìm kiếm trong DB (KHÔNG phải khoá mã hóa —
 // khoá mã hóa thật được suy ra riêng trong ttsCrypto.ts từ TTS_ENCRYPTION_MASTER_KEY).
@@ -95,24 +118,16 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Chưa đăng nhập hoặc phiên hết hạn' }, 401, allHeaders)
   }
 
-  let body: { text?: string; lang?: string; voice?: string }
-  try {
-    body = await req.json()
-  } catch {
-    return jsonResponse({ error: 'Body JSON không hợp lệ' }, 400, allHeaders)
+  const bodyResult = await readJsonBody(req)
+  if (!bodyResult.ok) {
+    return jsonResponse({ error: bodyResult.error.message }, bodyResult.error.status, allHeaders)
+  }
+  const parsed = validateBody(TtsBodySchema, bodyResult.raw)
+  if (!parsed.ok) {
+    return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
   }
 
-  const text = body.text?.trim()
-  const lang = body.lang?.trim() || 'en-US'
-  const voiceParam = body.voice?.trim() || DEFAULT_VOICE
-
-  if (!text) return jsonResponse({ error: 'Thiếu text' }, 400, allHeaders)
-  if (!isValidLang(lang))
-    return jsonResponse({ error: `lang không hợp lệ: ${lang}` }, 400, allHeaders)
-  if (!isValidVoice(voiceParam))
-    return jsonResponse({ error: `voice không hợp lệ: ${voiceParam}` }, 400, allHeaders)
-
-  const voice = voiceParam
+  const { text, lang, voice } = parsed.data
 
   let supabase
   try {
