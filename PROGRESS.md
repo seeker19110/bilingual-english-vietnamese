@@ -101,13 +101,20 @@
   dùng có muốn chạy ngay trong phiên không — chọn **tự chạy sau** trên máy có `.env`. Đã merge:
   **PR #150**.
 - **docs:** đồng bộ nốt `PROJECT.md` (còn sót từ đợt PR #148: chưa cập nhật khi #149/#150 merge —
-  i18n Login/`tsconfig.e2e.json`/hạ tầng CEFR ghi nhầm là "chưa xong"/"tiếp theo"). Đây là PR
-  hiện tại.
+  i18n Login/`tsconfig.e2e.json`/hạ tầng CEFR ghi nhầm là "chưa xong"/"tiếp theo"). Đã merge: **PR #151**.
+- **fix(learning-path):** 5 unit tái dùng trùng tên nhân vật giữa các bài (Mai, Lan×2, Linh, Trang)
+  → đổi tên không trùng (Vân, Yến, Trâm, Ly, Hạnh); thêm `speakerAGender`/`speakerBGender` cho
+  `Dialogue` (gán cho cả 63 hội thoại đã đặt tên). Tab "Lộ trình" (`RoadmapTab`) giờ phát **2 giọng
+  TTS riêng** cho 2 nhân vật hội thoại (trước dùng chung 1 giọng) — áp dụng cho cả nút "Phát tất
+  cả" lẫn nút loa từng câu (`KaraokeText` nhận thêm prop `voice` tùy chọn). Đã merge: **PR #152**.
+- **chore:** thêm cấu hình model cho Claude Code (`.claude/settings.json`) — mặc định `haiku`,
+  fallback `opus` cho việc phức tạp, bật thinking mode + effort cao, cân bằng chi phí/chất lượng
+  cho các phiên làm việc trên repo này. Đã merge: **PR #153/#154**.
 
 ## Đang làm
 
-- (Chờ duyệt) PR docs đồng bộ `PROJECT.md` — xem mục cuối "Đã xong". Không có việc CODE nào khác
-  đang mở. Việc còn lại là THỦ CÔNG (không cần PR): tự chạy `npm run tag:cefr` khi có key AI.
+- Không có việc CODE nào đang mở (không có PR nào đang mở trên GitHub, nhánh hiện tại ngang bằng
+  `main`). Việc còn lại là THỦ CÔNG (không cần PR): tự chạy `npm run tag:cefr` khi có key AI.
 
 ## Tiếp theo
 
