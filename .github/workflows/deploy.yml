@@ -1,11 +1,17 @@
 name: Deploy to VPS
 
+# Chỉ deploy SAU KHI workflow CI chạy xong và PASS trên main — tránh lặp lỗi
+# đã xảy ra (PR #173: CI đỏ ở bước format:check nhưng deploy vẫn chạy vì trước
+# đây trigger độc lập trên cùng sự kiện push, không phụ thuộc kết quả CI).
 on:
-  push:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
     branches: [main]
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -8,9 +8,7 @@
     "SessionStart": [
       {
         "matcher": "",
-        "hooks": [
-          { "type": "command", "command": "bash .claude/report-status.sh" }
-        ]
+        "hooks": [{ "type": "command", "command": "bash .claude/report-status.sh" }]
       }
     ]
   }
