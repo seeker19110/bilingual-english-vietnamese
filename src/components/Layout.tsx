@@ -113,12 +113,17 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
         {/* Nút đổi giao diện: Sáng / Tối / Xanh đêm */}
         <ThemeToggle />
 
-        {/* User avatar + logout */}
+        {/* User avatar (bấm vào để xem trang cá nhân) + logout */}
         {user && (
           <div className="flex items-center gap-1 shrink-0">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-xs font-bold text-white shadow-sm">
+            <button
+              onClick={() => nav('/profile')}
+              aria-label={T.profile}
+              title={T.profile}
+              className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-xs font-bold text-white shadow-sm hover:opacity-85 transition"
+            >
               {user.name[0]?.toUpperCase()}
-            </div>
+            </button>
             <button
               onClick={handleLogout}
               className="text-zinc-400 hover:text-red-400 transition p-3 rounded-lg hover:bg-red-400/10"

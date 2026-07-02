@@ -4,6 +4,7 @@ export const t = {
     // Layout / Header
     appName: 'Gia sư AI',
     home: 'Trang chủ',
+    profile: 'Trang cá nhân',
     logout: 'Đăng xuất',
     chat: 'Chat',
     speak: 'Nói',
@@ -152,6 +153,7 @@ export const t = {
     // Layout / Header
     appName: 'AI Tutor',
     home: 'Home',
+    profile: 'Profile',
     logout: 'Log out',
     chat: 'Chat',
     speak: 'Speak',
