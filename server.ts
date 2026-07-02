@@ -28,8 +28,11 @@ const app = express()
 // Đã bỏ các domain KHÔNG còn dùng: cdn.jsdelivr.net (không có script nào tải từ CDN),
 // fonts.googleapis.com + fonts.gstatic.com (font Inter đã tự host — xem src/main.tsx).
 // 'unsafe-inline'/'unsafe-eval' giữ lại vì bundle Vite hiện cần; siết thêm là việc riêng.
+// static.cloudflareinsights.com: script beacon Cloudflare tự chèn khi bật proxy
+// (xem docs/cloudflare-setup.md) — cần cho phép cả script-src (tải file) lẫn
+// connect-src (báo cáo RUM qua cdn-cgi/rum), nếu không sẽ bị chặn CSP.
 const CSP_HEADER =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'"
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'"
 
 // Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
 app.disable('x-powered-by')
