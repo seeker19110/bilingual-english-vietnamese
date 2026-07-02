@@ -204,15 +204,22 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   đổi nameserver ở nơi mua domain, đặt SSL/TLS mode "Full (strict)"; sau đó SSH vào VPS chạy
   `git pull` + `sudo bash scripts/update-cloudflare-ips.sh` + copy `nginx/en-vi.conf` mới +
   `nginx -t && systemctl reload nginx`.
+- **Đặt Cloudflare trước VPS — ĐÃ HOÀN TẤT VÀ KIỂM CHỨNG (2026-07-02).** Người dùng tự làm phần
+  Cloudflare Dashboard (thêm site, bật Proxy cho `en-vi`, đổi nameserver — xác nhận bằng
+  `nslookup -type=NS` ra đúng `lennon.ns.cloudflare.com`/`kelly.ns.cloudflare.com`, đặt SSL/TLS
+  "Full (strict)") + deploy trên VPS (`git pull` → `sudo bash scripts/update-cloudflare-ips.sh`
+  → copy `nginx/en-vi.conf` → `nginx -t && systemctl reload nginx`). Xác minh 2 lớp: (1)
+  `curl -I` thấy header `cf-ray` + `server: cloudflare`, `nginx -T` xác nhận
+  `cloudflare-realip.conf` đã nạp vào cấu hình đang chạy; (2) **quan trọng nhất** — gửi 1 request
+  thiếu auth thật tới `/api/claude` (từ máy người dùng, qua Cloudflare) để kích hoạt log
+  `[Security][AUTH_FAILED]`, xác nhận IP hiện trong `pm2 logs` là **IP thật của người dùng** (dải
+  di động nhà mạng VN), không phải IP nội bộ Cloudflare → module `real_ip` hoạt động đúng, rate
+  limit theo IP (`api/_lib/security.ts`) không còn kẽ hở giả mạo IP khi có Cloudflare phía trước.
 
 ## ⚠️ Cần làm tay (chưa xong)
 
-- **Đặt Cloudflare trước VPS** (theo `docs/cloudflare-setup.md`) — 5 bước trên Cloudflare
-  Dashboard + nơi quản lý domain (thêm site, bật Proxy, đổi nameserver, SSL mode Full strict),
-  sau đó deploy `nginx/en-vi.conf` + chạy `scripts/update-cloudflare-ips.sh` trên VPS. Chưa làm
-  thì site vẫn chạy bình thường như cũ (dòng `include cloudflare-realip.conf` sẽ làm `nginx -t`
-  LỖI nếu bật Cloudflare mà chưa chạy script sinh file trước — nhớ đúng thứ tự trong tài liệu).
-
+- _(Hiện không còn mục nào.)_ ~~Đặt Cloudflare trước VPS~~ — ĐÃ XONG (xem "Đã xong" ở trên,
+  kiểm chứng bằng log IP thật 2026-07-02).
 - _(Hiện không còn mục nào.)_ ~~Chạy migration `0005_lockdown_cost_columns.sql` +
   `0006_pronunciations_rls.sql` trên Supabase production~~ — ĐÃ XONG: người dùng xác nhận
   đã chạy trên Dashboard → SQL Editor (2026-07-02). Lỗ RLS (cột chi phí + cache phát âm
@@ -222,11 +229,6 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
-- **Nhắc lại: cân nhắc đặt Cloudflare (miễn phí) trước VPS** — sau PR #161 (tự host font),
-  bước tối ưu tốc độ tiếp theo là CDN/edge cache để giảm khoảng cách địa lý + giảm tải VPS
-  (đang dùng chung tài nguyên với app "xboss"). Đây là thay đổi HẠ TẦNG (đổi DNS trỏ qua
-  Cloudflare) — người dùng (chủ dự án) phải tự thao tác ở nơi quản lý domain, AI chỉ hướng
-  dẫn từng bước khi được yêu cầu làm tiếp.
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
 - Chạy thật `npm run tag:cefr` (cần key AI) rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR
