@@ -80,6 +80,25 @@ create table if not exists public.tts_cache (
 );
 create index if not exists tts_cache_lang_idx on public.tts_cache(lang);
 
+-- ── 6a. pronunciations: cache audio phát âm TỪ ĐƠN dùng chung cho mọi user ────
+-- (Trước đây bảng này chỉ nằm trong hướng dẫn PRONUNCIATION_CACHE_SETUP.md — thêm vào
+-- đây để schema.sql là nguồn sự thật DUY NHẤT của schema. Chạy lại an toàn.)
+-- Mỗi (word, voice) 1 dòng; voice_version đánh dấu đời giọng — khác VOICE_VERSION hiện
+-- tại (api/_lib/googleTts.ts) thì coi là MISS và tạo lại (xem api/pronunciation.ts).
+create table if not exists public.pronunciations (
+  id            uuid primary key default gen_random_uuid(),
+  word          text not null,
+  voice         text not null default 'female', -- 'female' | 'female2' | 'male' | 'male2'
+  audio_url     text not null,
+  lang          text not null default 'en-US',
+  voice_version text,                            -- null = audio đời giọng cũ (sẽ tạo lại)
+  created_at    timestamptz default now(),
+  unique (word, voice)
+);
+create index if not exists idx_pronunciations_word on public.pronunciations(word);
+-- Bổ sung cột cho DB cũ đã tạo bảng theo hướng dẫn trước khi có voice_version.
+alter table public.pronunciations add column if not exists voice_version text;
+
 -- ── 6b. learning_progress: tiến độ học (từ đã thuộc, từ khó, lịch ôn SRS) ─────
 -- Mỗi user 1 dòng. Đồng bộ để đổi máy không mất tiến độ (xem src/lib/progressSync.ts).
 create table if not exists public.learning_progress (
@@ -139,6 +158,11 @@ alter table public.tts_cache enable row level security;
 drop policy if exists "public read tts" on public.tts_cache;
 create policy "public read tts" on public.tts_cache for select using (true);
 -- Chỉ server (service role) mới được ghi — không cần policy insert/update cho anon
+
+-- pronunciations: giống tts_cache — cache dùng chung, chỉ server ghi (service role)
+alter table public.pronunciations enable row level security;
+drop policy if exists "public read pronunciations" on public.pronunciations;
+create policy "public read pronunciations" on public.pronunciations for select using (true);
 
 -- ── 9b. Thêm cột onboarding vào profiles (chạy lại an toàn) ───────────────
 alter table public.profiles add column if not exists onboarded     boolean not null default false;

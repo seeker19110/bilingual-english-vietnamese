@@ -1,6 +1,6 @@
 // api/tts.ts — Vercel Edge Function / chạy qua server.ts (Express) khi deploy VPS
 // Endpoint: POST /api/tts
-// Body: { text: string, lang: 'en-US' | 'vi-VN', voice?: 'female' | 'male' }
+// Body: { text: string, lang: 'en-US' | 'vi-VN', voice?: 'female' | 'female2' | 'male' | 'male2' }
 // Trả về: { audio_url: string, key_b64: string, iv_b64: string, cached: boolean }
 //
 // Luồng xử lý:
@@ -44,12 +44,25 @@ import { readJsonBody, validateBody } from './_lib/validation'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
 
+// Trần độ dài văn bản 1 lần đọc. Nội dung hợp lệ dài nhất của app (câu trả lời Chat/Speaking,
+// câu ví dụ) đều dưới mức này rất xa; Google TTS cũng chỉ nhận ~5000 byte/lần. Chặn ở server
+// để body 64KB không đẩy được chuỗi khổng lồ tới Google (tốn tiền theo ký tự) và trả 413 rõ
+// ràng thay vì lỗi 500 từ Google.
+const MAX_TTS_TEXT = 4000
+
 function isValidLang(value: string): value is Lang {
   return VALID_LANGS.includes(value as Lang)
 }
 
 const TtsBodySchema = z.object({
-  text: z.string({ error: 'Thiếu text' }).trim().min(1, 'Thiếu text'),
+  text: z
+    .string({ error: 'Thiếu text' })
+    .trim()
+    .min(1, 'Thiếu text')
+    .refine((v) => v.length <= MAX_TTS_TEXT, {
+      error: `Văn bản quá dài — tối đa ${MAX_TTS_TEXT} ký tự`,
+      params: { status: 413 },
+    }),
   lang: z
     .string()
     .trim()

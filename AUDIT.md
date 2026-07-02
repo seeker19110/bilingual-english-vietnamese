@@ -6,9 +6,32 @@
 
 ## Mục lục tổng
 
-- **[PHẦN A — Audit source code v2 (2026-06-28, mới nhất)](#phần-a--audit-source-code-v2-2026-06-28)** — báo cáo audit đầy đủ nhất: bảo mật, ISO/IEC 25010, sổ phát hiện, yêu cầu kiểm thử, nợ kỹ thuật, lộ trình. **Đọc phần này trước.**
+- **[PHẦN A0 — Đợt rà bổ sung (2026-07-02, mới nhất)](#phần-a0--đợt-rà-bổ-sung-2026-07-02)** — 6 phát hiện mới theo checklist §1.5, đã vá toàn bộ trong cùng PR.
+- **[PHẦN A — Audit source code v2 (2026-06-28)](#phần-a--audit-source-code-v2-2026-06-28)** — báo cáo audit đầy đủ nhất: bảo mật, ISO/IEC 25010, sổ phát hiện, yêu cầu kiểm thử, nợ kỹ thuật, lộ trình. **Đọc phần này trước.**
 - **[PHẦN B — Audit source code v1 (2026-06-20, lịch sử)](#phần-b--audit-source-code-v1-2026-06-20-lịch-sử)** — bản audit đầu tiên (bảo mật, mobile-first, đa thiết bị). Mọi phát hiện ở đây **đã RESOLVED**, đối chiếu tại PHẦN A §4.1. Giữ lại để tra cứu bằng chứng/snippet gốc.
 - **[PHẦN C — Audit bản dịch & đồng bộ từ vựng (2026-06-27)](#phần-c--audit-bản-dịch--đồng-bộ-từ-vựng-2026-06-27)** — chất lượng dịch Anh⇄Việt của từ điển + câu song ngữ, khác chủ đề (nội dung, không phải code) nhưng gộp chung cho gọn. Có 1 mục còn cần quyết định (§5 phần này).
+
+---
+
+## PHẦN A0 — Đợt rà bổ sung (2026-07-02)
+
+> Rà lại toàn bộ theo quy trình đa lớp (§1.5 PHẦN A) sau các PR #156–#161. Cổng chất lượng
+> trước khi rà: Build/Type/Lint/Test đều ✅ (63 test), `npm audit --omit=dev` = 0 lỗ hổng.
+> 6 phát hiện mới, **vá toàn bộ trong cùng PR** (kèm 6 test mới cho F1 → 69 test).
+
+| ID     | Mức       | Phát hiện (bằng chứng)                                                                                                                                                                                                                                                                        | Xử lý                                                                                                                                                                 | Trạng thái                                                 |
+| ------ | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **F1** | 🟠 High   | `api/ai.ts` nhánh Groq: 5 nhánh "body hỏng" (HTTP 200 nhưng thiếu `choices`/`message`/content sai kiểu) trả 500 mà **không `refundUsage`**; `groqResp.json()` ném lỗi khi body không phải JSON → rơi vào catch `wrapEdge` cũng mất lượt. Người dùng bị trừ lượt mà không có câu trả lời.      | Gom parse vào `parseGroqText()` (giữ nguyên từng message lỗi), bọc try/catch hoàn lượt mọi nhánh; 6 test mới `api/ai.test.ts` (mock security/usage/fetchTimeout)      | ✅ RESOLVED                                                |
+| **F2** | 🟠 High   | `api/pronunciation.ts` + bảng `pronunciations` production tạo tay theo PRONUNCIATION_CACHE_SETUP.md — bảng **không nằm trong `schema.sql`** và hướng dẫn cũ **không bật RLS** → client (anon key) ghi thẳng được vào cache phát âm dùng chung, có thể đầu độc `audio_url` cho mọi người dùng. | Thêm bảng (idempotent, kèm `voice_version`) + RLS chỉ-đọc vào `schema.sql`; migration `0006_pronunciations_rls.sql` cho DB đang chạy (cần chạy tay — xem PROGRESS.md) | ✅ RESOLVED (code) / ⚠️ chờ chạy migration trên production |
+| **F3** | 🟡 Medium | `api/_lib/googleTts.ts` gọi Google TTS bằng `fetch` trần, **không timeout** — vi phạm checklist Lớp A (mọi fetch ra ngoài có AbortController); request TTS/pronunciation treo vô hạn khi Google sự cố.                                                                                        | Đổi sang `fetchWithTimeout` 30s (helper có sẵn)                                                                                                                       | ✅ RESOLVED                                                |
+| **F4** | 🟡 Medium | `api/tts.ts` `TtsBodySchema.text` không có trần độ dài — body 64KB đẩy được chuỗi rất dài tới Google TTS (tính tiền theo ký tự).                                                                                                                                                              | Chặn `MAX_TTS_TEXT = 4000` ký tự → 413 (nội dung hợp lệ dài nhất của app thấp hơn nhiều; Google cũng chỉ nhận ~5000 byte)                                             | ✅ RESOLVED                                                |
+| **F5** | 🟢 Low    | `public/sw.js` icon notification mặc định `/favicon.ico` — file **không tồn tại** (repo chỉ có `favicon.svg`) → icon push 404; Android cũng không render SVG trong notification.                                                                                                              | Đổi mặc định sang `/icon-192.png` (có sẵn)                                                                                                                            | ✅ RESOLVED                                                |
+| **F6** | 🟢 Low    | `server.ts` CSP lặp nguyên văn 3 chỗ + còn whitelist `cdn.jsdelivr.net`, `fonts.googleapis.com`, `fonts.gstatic.com` dù không còn tài nguyên nào tải từ đó (font đã tự host PR #161). Kèm: comment/message "chỉ female/male" lỗi thời ở `api/tts.ts`/`api/pronunciation.ts` (đã 4 giọng).     | Gom 1 hằng `CSP_HEADER`, bỏ 3 domain thừa; sửa comment/message dùng `VOICE_IDS`                                                                                       | ✅ RESOLVED                                                |
+
+**Không phát hiện vấn đề mới** ở: `usage.ts` (atomic RPC + fail-open đúng), `security.ts`
+(CORS/auth/rate-limit), `ttsCrypto.ts`, `cloud.ts` (không còn đường ghi cột đếm lượt từ client),
+`schema.sql` các bảng còn lại (RLS đủ), LIMITS client (`src/types.ts`) ⇄ server (`api/_lib/usage.ts`)
+khớp nhau, service worker (chiến lược cache đúng), CI gates.
 
 ---
 

@@ -97,7 +97,9 @@ self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {}
   const title = data.title || 'AI Gia sư tiếng Anh'
   const body = data.body || 'Đừng quên luyện tập hôm nay nhé! 🔥'
-  const icon = data.icon || '/favicon.ico'
+  // Icon mặc định: dùng PNG có sẵn trong public/ — repo KHÔNG có favicon.ico, và
+  // notification trên Android không hiển thị được SVG, nên không dùng favicon.svg.
+  const icon = data.icon || '/icon-192.png'
   const url = data.url || '/'
 
   event.waitUntil(

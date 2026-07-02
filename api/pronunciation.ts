@@ -1,6 +1,6 @@
 // api/pronunciation.ts — Vercel Edge Function
 // Endpoint: GET /api/pronunciation?word=apple&voice=female
-//   - voice: "female" (mặc định) hoặc "male" — bỏ qua tham số này thì dùng giọng nữ.
+//   - voice: "female" (mặc định) | "female2" | "male" | "male2" — bỏ qua thì dùng giọng nữ.
 //
 // Luồng xử lý (cache phát âm từ điển):
 //   1. Tìm từ + giọng trong bảng `pronunciations` (Supabase) — có rồi thì trả luôn audio_url
@@ -22,6 +22,7 @@ import {
   generateAudioFromGoogle,
   isValidVoice,
   DEFAULT_VOICE,
+  VOICE_IDS,
   VOICE_VERSION,
 } from './_lib/googleTts'
 import { saveAudio } from './_lib/fileStorage'
@@ -90,7 +91,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (!isValidVoice(voiceParam)) {
     return jsonResponse(
-      { error: `voice không hợp lệ: ${voiceParam} (chỉ nhận "female" hoặc "male")` },
+      { error: `voice không hợp lệ: ${voiceParam} (chỉ nhận ${VOICE_IDS.join(' | ')})` },
       400,
       allHeaders,
     )
