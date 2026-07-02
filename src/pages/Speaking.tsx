@@ -1,15 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
-import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send } from 'lucide-react'
+import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send, Award } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
+import EvaluationResultView from '../components/EvaluationResultView'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { useApiThrottle } from '../lib/useApiThrottle'
 import { callClaude, parseJson } from '../lib/ai'
-import { speakingSystemPrompt, situationLabel } from '../prompts'
+import { speakingSystemPrompt, speakingFullEvaluationPrompt, situationLabel } from '../prompts'
 import { startListening, isSTTSupported } from '../lib/stt'
 import { startRecording, isRecordingSupported, type Recorder } from '../lib/sttServer'
 import { speakBilingual, stopSpeaking, isTTSSupported } from '../lib/tts'
@@ -22,7 +23,11 @@ import {
   type SpeakingSession,
   type Message,
   type Direction,
+  type EvaluationResult,
 } from '../types'
+
+// Số lượt trao đổi tối thiểu trước khi cho phép chấm điểm — tránh chấm khi mới 1 câu.
+const MIN_TURNS_TO_GRADE = 3
 
 // JSON trả về từ AI — dùng chung cho cả 2 chiều
 // Chiều A: speech=EN, feedback=VI | Chiều B: speech=VI, feedback=EN
@@ -327,6 +332,8 @@ export default function Speaking() {
   const [throttleCountdown, setThrottleCountdown] = useState(0)
   // Karaoke: tin nhắn/phần/từ nào đang phát (xem SpkWordSync + HighlightText ở trên).
   const [wordSync, setWordSync] = useState<SpkWordSync | null>(null)
+  const [evaluation, setEvaluation] = useState<EvaluationResult | null>(null)
+  const [evaluating, setEvaluating] = useState(false)
   const stopRecRef = useRef<(() => void) | null>(null) // dừng Web Speech (fallback)
   const recorderRef = useRef<Recorder | null>(null) // recorder server STT (chính)
   const recTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null) // tự dừng ghi âm khi quá lâu
@@ -603,6 +610,51 @@ export default function Speaking() {
     setSpeaking(false)
   }
 
+  // Kết thúc & chấm điểm cả phiên — gọi AI 1 lần thêm với prompt chấm điểm sẵn có
+  // (speakingFullEvaluationPrompt, có tiêu chí Pronunciation), tính là 1 lượt speaking
+  // (không thêm cột giới hạn riêng). Kết quả chỉ hiện tạm, không lưu Supabase.
+  async function endAndGrade() {
+    if (!session || loading || evaluating) return
+    const usage = getUsage(user.id)
+    if (usage.speakingCount >= LIMITS[user.plan].speaking) {
+      setLimitHit(true)
+      return
+    }
+    if (isThrottled) {
+      toast.error(
+        isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`,
+      )
+      return
+    }
+    setEvaluating(true)
+    setError('')
+    const sys = speakingFullEvaluationPrompt(dir)
+    const history = session.messages.map((m) => ({
+      role: m.role,
+      content: m.role === 'assistant' ? (m.speechEn ?? m.content) : m.content,
+    }))
+    try {
+      const raw = await callClaude(history, sys, 2048, 'speaking')
+      const data = parseJson<EvaluationResult>(raw)
+      if (!data)
+        throw new Error(
+          isA
+            ? 'AI trả về định dạng không đúng. Thử lại.'
+            : 'AI returned invalid format. Please try again.',
+        )
+      setEvaluation(data)
+      incrementUsage(user.id, 'speakingCount')
+      throttle()
+    } catch (e) {
+      const m = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
+      setError(m)
+      toast.error(m)
+    }
+    setEvaluating(false)
+  }
+
+  const userTurns = session?.messages.filter((m) => m.role === 'user').length ?? 0
+
   return (
     <div className="h-[100dvh] bg-zinc-950 flex flex-col">
       <Layout
@@ -636,6 +688,12 @@ export default function Speaking() {
             <QuickActions />
           </div>
         </div>
+      ) : evaluation ? (
+        <EvaluationResultView
+          evaluation={evaluation}
+          onClose={() => setEvaluation(null)}
+          dir={dir}
+        />
       ) : (
         <>
           <div className="flex-1 min-h-0 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
@@ -673,6 +731,22 @@ export default function Speaking() {
 
           <div className="sticky bottom-0 bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 px-4 py-4 pb-safe">
             <div className="max-w-3xl mx-auto">
+              {userTurns >= MIN_TURNS_TO_GRADE && (
+                <div className="flex justify-center mb-3">
+                  <button
+                    onClick={endAndGrade}
+                    disabled={loading || evaluating || limitHit || isThrottled}
+                    className="tap-44 flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-violet-400 border border-zinc-800/80 hover:border-violet-500/50 rounded-full px-4 py-2 transition hover:bg-zinc-800/50 disabled:opacity-50"
+                  >
+                    {evaluating ? (
+                      <span className="w-3.5 h-3.5 border-2 border-zinc-500/40 border-t-zinc-300 rounded-full animate-spin shrink-0" />
+                    ) : (
+                      <Award className="w-3.5 h-3.5 shrink-0" />
+                    )}
+                    {isA ? 'Kết thúc & chấm điểm' : 'End & grade conversation'}
+                  </button>
+                </div>
+              )}
               {sttSupported ? (
                 <div className="flex flex-col items-center gap-3">
                   <div className="flex items-center justify-between w-full max-w-xs">
