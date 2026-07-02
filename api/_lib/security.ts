@@ -58,6 +58,13 @@ export const SECURITY_HEADERS: Record<string, string> = {
 // ── Rate Limiting ─────────────────────────────────────────────────────────────
 // Dùng in-memory Map — đơn giản, phù hợp với Edge Runtime (mỗi instance riêng).
 // Với traffic thật nên dùng Redis (Upstash) để rate limit toàn cụm.
+//
+// LƯU Ý khi có Cloudflare trước VPS (xem docs/cloudflare-setup.md): IP lấy từ
+// header X-Forwarded-For (clientIp ở mỗi handler api/*.ts) CHỈ đáng tin nếu Nginx
+// đã cấu hình module real_ip để chỉ chấp nhận header này từ đúng dải IP Cloudflare
+// (nginx/cloudflare-realip.conf, sinh bởi scripts/update-cloudflare-ips.sh). Thiếu
+// bước đó, ai gọi thẳng vào IP VPS có thể tự chèn X-Forwarded-For giả để né rate
+// limit này hoàn toàn.
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 
 // Trả về true nếu được phép, false nếu vượt quá giới hạn.

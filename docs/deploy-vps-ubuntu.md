@@ -4,6 +4,9 @@
 > Đọc hết một lần trước khi bắt đầu để hiểu tổng thể.
 >
 > **Dự án deploy bằng VPS (Express `server.ts` + PM2 + Nginx) — KHÔNG dùng Vercel.**
+>
+> Muốn thêm Cloudflare (CDN + chống DDoS, miễn phí) trước VPS này? Xem
+> `docs/cloudflare-setup.md` — làm SAU KHI app đã chạy ổn qua Nginx (hướng dẫn dưới đây).
 
 ---
 
