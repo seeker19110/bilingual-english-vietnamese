@@ -1,0 +1,3 @@
+# Chuẩn hoá line ending về LF cho mọi file text — tránh git báo "modified"
+# hàng loạt chỉ vì đổi CRLF/LF giữa các máy/editor khác nhau.
+* text=auto eol=lf
