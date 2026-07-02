@@ -215,6 +215,15 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   `[Security][AUTH_FAILED]`, xác nhận IP hiện trong `pm2 logs` là **IP thật của người dùng** (dải
   di động nhà mạng VN), không phải IP nội bộ Cloudflare → module `real_ip` hoạt động đúng, rate
   limit theo IP (`api/_lib/security.ts`) không còn kẽ hở giả mạo IP khi có Cloudflare phía trước.
+- **fix(security): CSP chặn script Cloudflare Insights (beacon.min.js).** Sau khi bật Proxy
+  Cloudflare, trình duyệt tự báo lỗi console `Content-Security-Policy` chặn
+  `static.cloudflareinsights.com/beacon.min.js` — script RUM Cloudflare tự chèn khi proxy bật,
+  không phải do code app. Sửa `CSP_HEADER` (`server.ts`) thêm
+  `https://static.cloudflareinsights.com` vào `script-src` (giữ nguyên `connect-src ... https:`
+  — đã đủ cho báo cáo `cdn-cgi/rum`). Không đổi hành vi app. Lỗi 503 kèm theo trong console
+  (`(index):1`) không tái hiện được từ môi trường AI (không có quyền truy cập domain production)
+  — nếu còn xảy ra, cần người dùng cung cấp thêm chi tiết (thời điểm, tần suất) để tra log
+  Nginx/PM2 trên VPS.
 
 - **Audit UI/UX nút loa/micro — chuẩn hóa vị trí & đồng nhất với text** (nhánh
   `claude/ui-ux-audit-standards-i9gp19`):
