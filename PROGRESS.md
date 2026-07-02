@@ -180,6 +180,8 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   theo setup doc cũ) **chưa bật RLS** → client ghi được vào cache dùng chung (đầu độc audio_url):
   thêm bảng + RLS vào schema.sql, migration mới `0006_pronunciations_rls.sql` (xem "Cần làm tay"),
   sửa luôn comment/message lỗi thời "chỉ female/male" (đã 4 giọng). `npm audit` production: 0 lỗ hổng.
+  Đã merge: **PR #163**. Người dùng đã chạy migration trên Supabase production (xác nhận
+  2026-07-02) → lỗ RLS `pronunciations` (0006) và khóa cột chi phí (0005) đã ĐÓNG THẬT trên DB đang chạy.
 - **perf: tự host font Inter, bỏ Google Fonts.** Người dùng phản ánh lần đầu truy cập chậm —
   rà lại cho thấy bundle JS/CSS đầu trang đã trong ngân sách `size-limit` (110.87/116 kB JS,
   8.73/9 kB CSS brotli) và Nginx đã cache static tốt từ trước; điểm chưa tối ưu là font Inter
@@ -191,17 +193,10 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
 
 ## ⚠️ Cần làm tay (chưa xong)
 
-- **Chạy migration `supabase/migrations/0005_lockdown_cost_columns.sql` trên Supabase production**
-  (Dashboard → SQL Editor) — PR #159 đã merge nhưng migration này KHÔNG tự chạy được từ phiên
-  làm việc (không có credentials Supabase trong môi trường), phải làm tay. An toàn chạy lại
-  (idempotent); không phá luồng client/server hiện có. **Đây là bước thực sự đóng lỗ RLS** —
-  code/schema mới chỉ đảm bảo DB mới an toàn, DB đang chạy vẫn mở cho tới khi chạy migration này.
-- **Chạy migration `supabase/migrations/0006_pronunciations_rls.sql` trên Supabase production**
-  (Dashboard → SQL Editor) — đợt rà 2026-07-02 phát hiện bảng `pronunciations` (tạo tay theo
-  PRONUNCIATION_CACHE_SETUP.md, không nằm trong schema.sql) **chưa bật RLS** → người dùng đăng
-  nhập có thể ghi thẳng vào cache phát âm dùng chung (đầu độc `audio_url` cho MỌI người).
-  Migration bật RLS + chỉ cho đọc; server (service_role) vẫn ghi bình thường. Idempotent,
-  chạy lại an toàn, không phá luồng hiện có.
+- _(Hiện không còn mục nào.)_ ~~Chạy migration `0005_lockdown_cost_columns.sql` +
+  `0006_pronunciations_rls.sql` trên Supabase production~~ — ĐÃ XONG: người dùng xác nhận
+  đã chạy trên Dashboard → SQL Editor (2026-07-02). Lỗ RLS (cột chi phí + cache phát âm
+  dùng chung) đã đóng thật trên DB đang chạy, không chỉ trong schema.
 
 ## Tiếp theo
 
