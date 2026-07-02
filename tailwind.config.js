@@ -38,7 +38,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans: ['Inter Variable', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       keyframes: {
         'fade-in': {
