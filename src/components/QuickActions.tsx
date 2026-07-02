@@ -16,7 +16,7 @@ import {
   subscribePush,
   unsubscribePush,
 } from '../lib/pushNotif'
-import { supabase } from '../lib/supabase'
+import { getAccessToken } from '../lib/authHeader'
 import { useAuth } from '../context/useAuth'
 import { getDirection } from '../lib/storage'
 
@@ -59,19 +59,12 @@ export default function QuickActions() {
     else setShowTime(true)
   }
 
-  async function getToken() {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    return session?.access_token ?? ''
-  }
-
   // Lưu giờ đã chọn rồi BẬT nhắc (đăng ký push + gửi giờ UTC lên server)
   async function confirmTime() {
     if (pushLoading) return
     setPushL(true)
     localStorage.setItem(remindKey(userId), String(remindHour))
-    const ok = await subscribePush(await getToken(), localHourToUtc(remindHour))
+    const ok = await subscribePush((await getAccessToken()) ?? '', localHourToUtc(remindHour))
     setPushOn(ok)
     setPushL(false)
     setShowTime(false)
@@ -79,7 +72,7 @@ export default function QuickActions() {
 
   async function turnOff() {
     setPushL(true)
-    await unsubscribePush(await getToken())
+    await unsubscribePush((await getAccessToken()) ?? '')
     setPushOn(false)
     setPushL(false)
   }

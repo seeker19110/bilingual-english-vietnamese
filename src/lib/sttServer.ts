@@ -4,7 +4,7 @@
 // hết trình duyệt hiện đại (kể cả Safari mobile). Web Speech API (src/lib/stt.ts) chỉ
 // còn là phương án dự phòng khi máy không hỗ trợ ghi âm.
 
-import { supabase } from './supabase'
+import { getAuthHeader } from './authHeader'
 
 // Trình duyệt có hỗ trợ ghi âm không (cần getUserMedia + MediaRecorder).
 export function isRecordingSupported(): boolean {
@@ -18,13 +18,6 @@ export function isRecordingSupported(): boolean {
 export interface Recorder {
   stop: () => Promise<string> // dừng ghi + trả về văn bản nhận diện
   cancel: () => void // hủy, không gọi API
-}
-
-// Lấy Supabase JWT để server xác thực (giống src/lib/ai.ts).
-async function getAuthHeader(): Promise<Record<string, string>> {
-  const { data } = await supabase.auth.getSession()
-  const token = data.session?.access_token
-  return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 // Chọn định dạng ghi âm mà trình duyệt hỗ trợ (Chrome/FF: webm/opus, Safari: mp4).

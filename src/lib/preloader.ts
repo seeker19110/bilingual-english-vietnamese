@@ -9,7 +9,7 @@
 
 import { loadCurriculum, getTodayBatch } from './curriculum'
 import { getLearnedWords } from './vocab'
-import { supabase } from './supabase'
+import { getAccessToken } from './authHeader'
 import { getVoicePref } from './tts'
 import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
 import { preloadFlags } from './preloadState'
@@ -87,10 +87,7 @@ export async function preloadLearnData(userId: string): Promise<void> {
   await loadCurriculum()
 
   // Lấy JWT để gọi /api/tts
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-  const token = session?.access_token
+  const token = await getAccessToken()
   if (!token) {
     preloadFlags.learn = false
     return

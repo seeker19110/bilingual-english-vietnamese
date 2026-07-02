@@ -18,6 +18,7 @@ import {
   validateAuth,
   logSecurityEvent,
 } from './_lib/security'
+import { jsonResponse, getClientIp } from './_lib/http'
 
 const MAX_RESULTS = 200
 
@@ -38,20 +39,20 @@ export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }
 
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: allHeaders })
-  if (req.method !== 'GET') return json({ error: 'Method not allowed' }, 405, allHeaders)
+  if (req.method !== 'GET') return jsonResponse({ error: 'Method not allowed' }, 405, allHeaders)
 
-  const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const clientIp = getClientIp(req)
   // Tra từ điển chỉ đọc RAM (không tốn tiền API) nên hạn mức rộng.
   if (!checkRateLimit(clientIp, 120, 'dict')) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/dictionary' })
-    return json({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
+    return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }
 
   // Bắt buộc đăng nhập (giống các endpoint khác) để tránh bị cào dữ liệu vô tội vạ.
   const auth = await validateAuth(req)
   if (!auth) {
     logSecurityEvent('AUTH_FAILED', clientIp, { path: '/api/dictionary' })
-    return json({ error: 'Chưa đăng nhập hoặc phiên hết hạn' }, 401, allHeaders)
+    return jsonResponse({ error: 'Chưa đăng nhập hoặc phiên hết hạn' }, 401, allHeaders)
   }
 
   const entries = getAllEntries()
@@ -62,21 +63,25 @@ export default async function handler(req: Request): Promise<Response> {
   if (mode === 'wordOfDay') {
     const today = new Date().toISOString().slice(0, 10)
     const entry = entries[seedFromDate(today) % entries.length] ?? null
-    return json({ total: entries.length, entry }, 200, allHeaders)
+    return jsonResponse({ total: entries.length, entry }, 200, allHeaders)
   }
 
   // ── n từ ngẫu nhiên (Flashcard) ─────────────────────────────────────────────
   if (mode === 'random') {
     const n = Math.min(Math.max(Number(url.searchParams.get('n')) || 30, 1), 100)
     const picked = pickRandom(entries, n)
-    return json({ total: entries.length, entries: picked }, 200, allHeaders)
+    return jsonResponse({ total: entries.length, entries: picked }, 200, allHeaders)
   }
 
   // ── Tìm kiếm theo từ khóa ────────────────────────────────────────────────────
   const q = (url.searchParams.get('q') ?? '').trim().toLowerCase()
   if (!q)
-    return json({ total: entries.length, matched: 0, posGroups: [], results: [] }, 200, allHeaders)
-  if (q.length > 100) return json({ error: 'Từ khóa quá dài' }, 400, allHeaders)
+    return jsonResponse(
+      { total: entries.length, matched: 0, posGroups: [], results: [] },
+      200,
+      allHeaders,
+    )
+  if (q.length > 100) return jsonResponse({ error: 'Từ khóa quá dài' }, 400, allHeaders)
 
   let matches: DictEntry[]
   if (hasVietnamese(q)) {
@@ -106,7 +111,7 @@ export default async function handler(req: Request): Promise<Response> {
   const posParam = url.searchParams.get('pos')
   const filtered = posParam ? matches.filter((e) => e.pos === posParam) : matches
 
-  return json(
+  return jsonResponse(
     {
       total: entries.length,
       matched: matches.length,
@@ -128,11 +133,4 @@ function pickRandom<T>(arr: T[], n: number): T[] {
     a.splice(j, 1)
   }
   return out
-}
-
-function json(body: unknown, status = 200, headers: Record<string, string> = {}): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json', ...headers },
-  })
 }

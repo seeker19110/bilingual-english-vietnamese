@@ -55,9 +55,6 @@ export interface PrecacheProgress {
   bytesTotal: number
 }
 let progress: PrecacheProgress = { done: 0, total: 0, bytesDone: 0, bytesTotal: 0 }
-export function getPrecacheProgress(): PrecacheProgress {
-  return progress
-}
 function emitProgress() {
   window.dispatchEvent(new CustomEvent('data-precache-progress', { detail: { ...progress } }))
 }

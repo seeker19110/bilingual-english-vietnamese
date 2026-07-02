@@ -4,7 +4,7 @@
 // cho request có JWT Supabase hợp lệ, gửi qua header Authorization: Bearer <token>.
 // Fallback về Web Speech API nếu /api/tts lỗi (mất mạng, server timeout, chưa đăng nhập...).
 
-import { supabase } from './supabase'
+import { getAccessToken } from './authHeader'
 import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
 
 type Lang = 'en-US' | 'vi-VN'
@@ -218,10 +218,7 @@ async function ensureAudioBuffer(text: string, lang: Lang, voice: Voice): Promis
   if (running) return running
 
   const job = (async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    const token = session?.access_token
+    const token = await getAccessToken()
     if (!token) throw new Error('Chưa đăng nhập — không gọi được /api/tts')
 
     const callTts = () =>

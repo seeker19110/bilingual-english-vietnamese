@@ -33,6 +33,7 @@ import {
   validateAuth,
   logSecurityEvent,
 } from './_lib/security'
+import { jsonResponse, getClientIp } from './_lib/http'
 
 // Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),
 // dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.). Ngăn ký tự lạ.
@@ -53,7 +54,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Lấy IP để rate limit
-  const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const clientIp = getClientIp(req)
 
   // Rate limit TỔNG: 60 request/phút mỗi IP. Hầu hết là cache HIT (tra DB, gần như miễn phí),
   // nên hạn mức rộng để tra nhiều từ / lật nhiều thẻ liên tiếp không bị chặn. Đường tạo
@@ -178,13 +179,6 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   return jsonResponse({ audio_url: audioUrl, cached: false }, 200, allHeaders)
-}
-
-function jsonResponse(body: unknown, status = 200, headers: Record<string, string> = {}): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json', ...headers },
-  })
 }
 
 // Dùng Edge Runtime — nhẹ, khởi động nhanh, giống api/claude.ts đã có

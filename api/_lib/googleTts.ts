@@ -4,6 +4,7 @@
 // Tiền tố "_" trong tên thư mục "_lib" để Vercel KHÔNG coi file này là 1 API route riêng.
 
 import { fetchWithTimeout } from './fetchTimeout'
+import { base64ToBytes } from './base64'
 
 // Thời gian chờ tối đa 1 lần gọi Google TTS (ms) — tránh treo request khi Google chậm/sự cố.
 const TTS_TIMEOUT_MS = 30_000
@@ -89,9 +90,5 @@ export async function generateAudioFromGoogle(
   }
 
   // Google trả base64 → decode thành dữ liệu nhị phân để upload lên Supabase Storage.
-  // Dùng atob() (Web API) thay vì Buffer (Node API) vì hàm này chạy trên Vercel Edge Runtime.
-  const binary = atob(data.audioContent)
-  const bytes = new Uint8Array(binary.length)
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
-  return bytes.buffer
+  return base64ToBytes(data.audioContent).buffer as ArrayBuffer
 }
