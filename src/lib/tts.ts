@@ -107,7 +107,7 @@ export function resumeCurrentAudio() {
 
 // ── Giọng đọc toàn cục (nữ/nam) ─────────────────────────────────────────────
 // Lưu lựa chọn của người dùng vào localStorage để giữ nguyên qua các lần mở app.
-// Mọi nút loa (SpeakButton) đọc giá trị này lúc bấm, nên đổi 1 chỗ là áp dụng tất cả.
+// Mọi nút loa (KaraokeText, PronounceButton) đọc giá trị này lúc bấm, nên đổi 1 chỗ là áp dụng tất cả.
 const VOICE_KEY = 'tts_voice'
 
 export function getVoicePref(): Voice {

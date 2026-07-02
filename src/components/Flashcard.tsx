@@ -134,7 +134,12 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
       <div className="flex flex-col items-center gap-2 mb-4">
         <PronounceButton word={card.word} />
         {card.ex_en && (
-          <KaraokeText text={card.ex_en} lang="en-US" textClass="text-xs text-zinc-400 italic" />
+          <KaraokeText
+            text={card.ex_en}
+            lang="en-US"
+            textClass="text-xs text-zinc-400 italic"
+            iconSize="xs"
+          />
         )}
       </div>
 

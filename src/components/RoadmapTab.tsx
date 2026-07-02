@@ -28,7 +28,7 @@ import {
   prefetchSpeech,
 } from '../lib/tts'
 import type { Voice } from '../lib/tts'
-import KaraokeText from './KaraokeText'
+import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import WordCard from './WordCard'
 import { InlinePronounce } from '../pages/Lessons'
 import type { CefrLevel, CefrUnit, GrammarLesson, QuizItem } from '../data/cefr'
@@ -457,7 +457,7 @@ function GrammarDetail({
                   textClass={`font-medium text-[15px] leading-snug ${accent.text}`}
                   buttonClass="w-full"
                 />
-                <p className="text-sm text-zinc-400 mt-1 pl-6">{e.vi}</p>
+                <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>{e.vi}</p>
               </div>
             ))}
           </div>
@@ -627,7 +627,7 @@ function VocabFlash({
                     textClass="font-medium text-[15px] leading-snug text-teal-300"
                     buttonClass="w-full"
                   />
-                  <p className="text-sm text-zinc-400 mt-1 pl-6">{s.vi}</p>
+                  <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>{s.vi}</p>
                 </div>
               ))}
             </div>
@@ -984,19 +984,29 @@ function DialogueView({
                     isActive ? 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-accent-500/60' : ''
                   } ${isB ? `${accent.soft} ${accent.ring}` : 'bg-zinc-900/80 border-zinc-800/80'}`}
                 >
-                  <span
-                    className={`text-[11px] font-semibold tracking-wide ${
-                      isB ? accent.text : 'text-zinc-400'
-                    }`}
-                  >
-                    {ln.who === 'A'
-                      ? isA
-                        ? (dialogue.speakerA?.vi ?? 'A')
-                        : (dialogue.speakerA?.en ?? 'A')
-                      : isA
-                        ? (dialogue.speakerB?.vi ?? 'B')
-                        : (dialogue.speakerB?.en ?? 'B')}
-                  </span>
+                  {/* Hàng đầu: tên người nói (trái) + nút micro chấm phát âm (phải) —
+                      thống nhất vị trí với hội thoại ở trang Lessons; khi mở bảng
+                      chấm điểm thì flex-wrap đẩy bảng xuống dòng riêng. */}
+                  <div className="flex flex-wrap items-center justify-between gap-x-2">
+                    <span
+                      className={`text-[11px] font-semibold tracking-wide ${
+                        isB ? accent.text : 'text-zinc-400'
+                      }`}
+                    >
+                      {ln.who === 'A'
+                        ? isA
+                          ? (dialogue.speakerA?.vi ?? 'A')
+                          : (dialogue.speakerA?.en ?? 'A')
+                        : isA
+                          ? (dialogue.speakerB?.vi ?? 'B')
+                          : (dialogue.speakerB?.en ?? 'B')}
+                    </span>
+                    <InlinePronounce
+                      text={isA ? ln.en : ln.vi}
+                      lang={isA ? 'en-US' : 'vi-VN'}
+                      isA={isA}
+                    />
+                  </div>
                   <KaraokeText
                     text={ln.en}
                     lang="en-US"
@@ -1009,12 +1019,7 @@ function DialogueView({
                         : undefined
                     }
                   />
-                  <p className="text-sm text-zinc-400 mt-1 pl-6">{ln.vi}</p>
-                  <InlinePronounce
-                    text={isA ? ln.en : ln.vi}
-                    lang={isA ? 'en-US' : 'vi-VN'}
-                    isA={isA}
-                  />
+                  <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>{ln.vi}</p>
                 </div>
               </div>
             )

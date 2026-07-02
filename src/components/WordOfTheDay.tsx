@@ -61,7 +61,7 @@ export default function WordOfTheDay({ entries, isA = true }: Props) {
               type="button"
               onClick={() => go(-1)}
               aria-label={isA ? 'Từ trước' : 'Previous word'}
-              className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition"
+              className="tap-44 p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -72,7 +72,7 @@ export default function WordOfTheDay({ entries, isA = true }: Props) {
               type="button"
               onClick={() => go(1)}
               aria-label={isA ? 'Từ tiếp theo' : 'Next word'}
-              className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition"
+              className="tap-44 p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

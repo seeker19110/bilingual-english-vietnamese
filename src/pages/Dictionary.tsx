@@ -439,6 +439,7 @@ export default function Dictionary() {
                                       lang="en-US"
                                       textClass="text-xs text-accent-300/80 italic leading-relaxed"
                                       buttonClass="w-full pl-7 pr-3 py-2 hover:bg-accent-500/5 active:bg-accent-500/10 text-left transition"
+                                      iconSize="xs"
                                     />
                                     {e.ex_vi && (
                                       <KaraokeText
@@ -446,6 +447,7 @@ export default function Dictionary() {
                                         lang="vi-VN"
                                         textClass="text-xs text-zinc-400 leading-relaxed"
                                         buttonClass="w-full pl-7 pr-3 py-2 hover:bg-sky-500/5 active:bg-sky-500/10 text-left transition"
+                                        iconSize="xs"
                                       />
                                     )}
                                   </div>
@@ -463,12 +465,14 @@ export default function Dictionary() {
                                         lang="en-US"
                                         textClass="text-xs text-accent-300/70 italic leading-relaxed"
                                         buttonClass="w-full pl-7 pr-3 py-1.5 hover:bg-accent-500/5 active:bg-accent-500/10 text-left transition"
+                                        iconSize="xs"
                                       />
                                       <KaraokeText
                                         text={ex.vi}
                                         lang="vi-VN"
                                         textClass="text-xs text-zinc-400 leading-relaxed"
                                         buttonClass="w-full pl-7 pr-3 py-1.5 hover:bg-sky-500/5 active:bg-sky-500/10 text-left transition"
+                                        iconSize="xs"
                                       />
                                     </div>
                                   </div>

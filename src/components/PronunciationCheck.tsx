@@ -66,7 +66,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
       {/* Nút bấm */}
       <button
         onClick={status === 'listening' ? stop : start}
-        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+        className={`flex items-center gap-2 px-4 py-2 min-h-11 rounded-xl text-sm font-medium transition ${
           status === 'listening'
             ? 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30'
             : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
@@ -124,7 +124,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
           {/* Nút thử lại */}
           <button
             onClick={start}
-            className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition mx-auto"
+            className="tap-44 flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition mx-auto px-1"
           >
             <RotateCcw className="w-3 h-3" /> {isA ? 'Thử lại' : 'Try again'}
           </button>

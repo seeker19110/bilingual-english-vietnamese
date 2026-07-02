@@ -17,7 +17,7 @@ import {
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
-import KaraokeText from '../components/KaraokeText'
+import KaraokeText, { KARAOKE_INDENT } from '../components/KaraokeText'
 import VocabMilestone from '../components/VocabMilestone'
 import WordCard from '../components/WordCard'
 import RoadmapTab from '../components/RoadmapTab'
@@ -383,7 +383,7 @@ function BatchDoneView({
                   textClass="font-medium text-[15px] leading-snug text-teal-300"
                   buttonClass="w-full"
                 />
-                <p className="text-sm text-zinc-400 mt-1 pl-6">{s.vi}</p>
+                <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>{s.vi}</p>
               </div>
             ))}
           </div>
@@ -426,7 +426,7 @@ function BatchDoneView({
                       textClass={`font-medium text-[15px] leading-snug ${isB ? 'text-teal-300' : 'text-zinc-100'}`}
                       buttonClass="w-full"
                     />
-                    <p className="text-sm text-zinc-400 mt-1 pl-6">{ln.vi}</p>
+                    <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>{ln.vi}</p>
                   </div>
                 </div>
               )

@@ -180,7 +180,6 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
               text={speechText}
               lang={speechLang}
               textClass="text-sm leading-relaxed text-zinc-100"
-              iconSize="xs"
             />
           )}
         </div>
