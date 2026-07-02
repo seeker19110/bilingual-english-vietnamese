@@ -237,22 +237,25 @@ function SpeakBubble({
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
       <div className="max-w-[85%] space-y-2">
+        {/* Loa "Nghe lại" đặt BÊN TRÁI văn bản, căn với dòng đầu — thống nhất với
+            chuẩn KaraokeText ở mọi trang khác; tap-44 đảm bảo vùng chạm ≥ 44px. */}
         <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed border border-zinc-700/30 flex items-start gap-2 break-words">
+          {onPlay && (
+            <button
+              onClick={onPlay}
+              title="Nghe lại"
+              aria-label="Nghe lại"
+              className="tap-44 shrink-0 w-7 h-[1.375rem] flex items-center justify-center text-zinc-400 hover:text-sky-400 transition"
+            >
+              <Volume2 className="w-[1.3125rem] h-[1.3125rem]" />
+            </button>
+          )}
           <HighlightText
             text={msg.speechEn ?? ''}
             active={speechActive}
             wordIdx={wordSync?.wordIdx ?? null}
             className="flex-1 min-w-0"
           />
-          {onPlay && (
-            <button
-              onClick={onPlay}
-              aria-label="Nghe lại"
-              className="text-zinc-400 hover:text-sky-400 transition shrink-0 mt-0.5 p-0.5 rounded"
-            >
-              <Volume2 className="w-3.5 h-3.5" />
-            </button>
-          )}
         </div>
         {msg.feedbackVi && (
           <div className="bg-amber-500/8 border border-amber-500/20 border-l-2 border-l-amber-400 rounded-r-xl rounded-bl-sm px-3 py-2.5 text-xs leading-relaxed">
@@ -678,7 +681,7 @@ export default function Speaking() {
                         stopSpeaking()
                         setSession(null)
                       }}
-                      className="p-3 text-zinc-400 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition hover:bg-zinc-800/50"
+                      className="tap-44 p-3 text-zinc-400 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition hover:bg-zinc-800/50"
                       title={isA ? 'Phòng mới' : 'New room'}
                       aria-label={isA ? 'Phòng mới' : 'New room'}
                     >
@@ -731,7 +734,7 @@ export default function Speaking() {
                       aria-label={
                         muted ? (isA ? 'Bật âm thanh' : 'Unmute') : isA ? 'Tắt âm thanh' : 'Mute'
                       }
-                      className={`p-3 border rounded-xl transition ${
+                      className={`tap-44 p-3 border rounded-xl transition ${
                         muted
                           ? 'text-zinc-400 border-zinc-800/80'
                           : speaking
@@ -770,7 +773,7 @@ export default function Speaking() {
                         setSession(null)
                       }}
                       aria-label={isA ? 'Phòng mới' : 'New room'}
-                      className="p-3 text-zinc-400 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50"
+                      className="tap-44 p-3 text-zinc-400 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -807,7 +810,7 @@ export default function Speaking() {
                       }}
                       disabled={!typedInput.trim() || loading || limitHit || isThrottled}
                       aria-label={isA ? 'Gửi tin nhắn' : 'Send message'}
-                      className="p-3 bg-gradient-to-br from-sky-600 to-cyan-500 disabled:opacity-40 text-white rounded-xl transition shrink-0 relative"
+                      className="tap-44 p-3 bg-gradient-to-br from-sky-600 to-cyan-500 disabled:opacity-40 text-white rounded-xl transition shrink-0"
                     >
                       <Send className="w-4 h-4" />
                       {isThrottled && throttleCountdown > 0 && (
@@ -825,7 +828,7 @@ export default function Speaking() {
                       aria-label={
                         muted ? (isA ? 'Bật âm thanh' : 'Unmute') : isA ? 'Tắt âm thanh' : 'Mute'
                       }
-                      className={`p-3 border rounded-xl transition shrink-0 ${muted ? 'text-zinc-400 border-zinc-800/80' : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700'}`}
+                      className={`tap-44 p-3 border rounded-xl transition shrink-0 ${muted ? 'text-zinc-400 border-zinc-800/80' : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700'}`}
                     >
                       {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                     </button>

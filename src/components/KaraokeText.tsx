@@ -1,10 +1,19 @@
 // KaraokeText — nút loa + văn bản với từng chữ sáng lên theo giọng đọc.
-// Thay thế pattern "SpeakButton + <p>text</p>" ở mọi nơi trong dự án.
 // Tự quản lý trạng thái phát/dừng và word-sync, không cần state ở component cha.
+//
+// CHUẨN UI THỐNG NHẤT cho mọi nút loa đi kèm text:
+// - Icon loa luôn nằm BÊN TRÁI văn bản, căn giữa với DÒNG ĐẦU của văn bản.
+// - iconSize: 'sm' cho text ≥ 14px (text-sm / text-[15px]), 'xs' cho text-xs.
+// - Với iconSize 'sm', văn bản bắt đầu ở 36px (icon w-7 + gap-2) — dòng phụ
+//   (bản dịch) đặt dưới phải dùng KARAOKE_INDENT để thẳng hàng với văn bản.
 
 import { useState, useRef } from 'react'
 import { Volume2, Square } from 'lucide-react'
 import { speak, stopSpeaking, type Voice } from '../lib/tts'
+
+// Class thụt lề cho dòng phụ (vd bản dịch) đặt ngay dưới KaraokeText (iconSize 'sm')
+// để thẳng hàng với phần văn bản: 36px = cột icon w-7 (28px) + gap-2 (8px).
+export const KARAOKE_INDENT = 'pl-9'
 
 interface Props {
   text: string
@@ -68,9 +77,11 @@ export default function KaraokeText({
     }
   }
 
-  // Icon loa to gấp 1.5x kích thước gốc (w-3/w-3.5 → 1.125rem/1.3125rem) — vùng chạm rõ ràng hơn trên mobile.
+  // Icon loa 18px (xs) / 21px (sm) — đủ lớn để thấy rõ trên mobile.
   const iSize = iconSize === 'xs' ? 'w-[1.125rem] h-[1.125rem]' : 'w-[1.3125rem] h-[1.3125rem]'
-  const bSize = iconSize === 'xs' ? 'w-6 h-6 mt-0.5' : 'w-[1.875rem] h-[1.875rem] mt-0.5'
+  // Cột icon: CAO ĐÚNG BẰNG dòng chữ đầu tiên (xs ≈ text-xs 18px, sm ≈ text-sm/15px 22px)
+  // để icon căn giữa với dòng đầu — không lệch xuống dưới khi văn bản nhiều dòng.
+  const bSize = iconSize === 'xs' ? 'w-6 h-[1.125rem]' : 'w-7 h-[1.375rem]'
   const accent = lang === 'en-US' ? 'text-accent-300' : 'text-sky-300'
   const idle =
     lang === 'en-US' ? 'text-zinc-400 hover:text-accent-400' : 'text-zinc-400 hover:text-sky-400'
@@ -87,6 +98,15 @@ export default function KaraokeText({
     <button
       type="button"
       onClick={handleClick}
+      title={
+        displayPlaying
+          ? lang === 'en-US'
+            ? 'Dừng đọc'
+            : 'Stop'
+          : lang === 'en-US'
+            ? 'Nghe tiếng Anh'
+            : 'Nghe tiếng Việt'
+      }
       className={`flex items-start gap-2 text-left transition group ${buttonClass}`}
     >
       {/* Icon loa / dừng */}
@@ -101,8 +121,8 @@ export default function KaraokeText({
         )}
       </span>
 
-      {/* Văn bản: từng chữ highlight đúng lúc đọc */}
-      <span className={textClass}>
+      {/* Văn bản: từng chữ highlight đúng lúc đọc (min-w-0 để câu dài xuống dòng gọn) */}
+      <span className={`min-w-0 ${textClass}`}>
         {parts.map((part, i) => {
           // Đoạn rỗng '' chỉ sinh ra ở đầu/cuối khi text có khoảng trắng thừa; bỏ qua để
           // chỉ số từ (wi) khớp với bộ đếm của audio (dùng text.trim().split ở tts.ts).

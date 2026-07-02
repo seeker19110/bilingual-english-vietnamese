@@ -216,6 +216,27 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   di động nhà mạng VN), không phải IP nội bộ Cloudflare → module `real_ip` hoạt động đúng, rate
   limit theo IP (`api/_lib/security.ts`) không còn kẽ hở giả mạo IP khi có Cloudflare phía trước.
 
+- **Audit UI/UX nút loa/micro — chuẩn hóa vị trí & đồng nhất với text** (nhánh
+  `claude/ui-ux-audit-standards-i9gp19`):
+  1. **KaraokeText** (chuẩn chung mọi nút loa đi kèm text): cột icon cao đúng bằng
+     dòng chữ đầu (hết lệch xuống dưới); quy tắc cỡ icon theo cỡ chữ (text-xs → `xs`
+     18px, text-sm trở lên → `sm` 21px) — áp lại ở Chat/Dictionary/Flashcard; thêm
+     `title` cho nút; export **`KARAOKE_INDENT`** (`pl-9`) cho dòng phụ.
+  2. **Bản dịch dưới câu có loa** thẳng hàng với văn bản: `pl-6` → `KARAOKE_INDENT`
+     (Learn ×2, RoadmapTab ×3).
+  3. **Trang Luyện nói**: loa "Nghe lại" chuyển từ bên phải → **bên trái** văn bản
+     (đồng nhất chuẩn KaraokeText), icon 21px căn dòng đầu.
+  4. **RoadmapTab hội thoại**: nút micro chấm phát âm chuyển từ đáy bong bóng lên
+     **hàng tên người nói (bên phải)** — đồng nhất vị trí với Lessons.
+  5. **Vùng chạm ≥ 44px**: utility mới **`.tap-44`** (`src/index.css`, mở rộng vùng
+     bấm bằng pseudo-element `inset: min(0, calc((100%−44px)/2))`, không đổi layout;
+     `:where()` để không ghi đè nút `absolute`). Áp cho: PronounceButton (đồng thời
+     nâng 28→36px hiển thị, icon 18px), loa Nghe lại/mute/phòng mới/gửi (Speaking),
+     loa & micro từng câu (Lessons), nút chấm phát âm + thử lại (PronunciationCheck),
+     chevron (WordOfTheDay), sao từ khó (WordCard).
+  6. Dọn code chết: xóa `SpeakButton.tsx` (đã bị KaraokeText thay từ lâu, không nơi
+     nào import).
+
 ## ⚠️ Cần làm tay (chưa xong)
 
 - _(Hiện không còn mục nào.)_ ~~Đặt Cloudflare trước VPS~~ — ĐÃ XONG (xem "Đã xong" ở trên,

@@ -77,7 +77,7 @@ export default function WordCard({
                 : 'Mark word as difficult'
           }
           aria-pressed={difficult}
-          className="absolute top-2 right-2 z-10 p-2.5 rounded-full hover:bg-zinc-700/50 transition"
+          className="tap-44 absolute top-2 right-2 z-10 p-2.5 rounded-full hover:bg-zinc-700/50 transition"
         >
           <Star
             className={`w-4 h-4 transition ${difficult ? 'fill-amber-400 text-amber-400' : 'text-zinc-400 hover:text-zinc-200'}`}

@@ -228,6 +228,19 @@
     scrollbar-width: none;
   }
 
+  /* Vùng chạm tối thiểu 44×44px (chuẩn mobile) cho nút nhỏ — mở rộng vùng bấm
+     bằng pseudo-element vô hình, KHÔNG làm thay đổi kích thước hiển thị/layout.
+     min(0px, ...) đảm bảo nút đã đủ lớn thì không mở rộng thêm. */
+  /* :where() để specificity = 0 — nút đã có position khác (vd .absolute) không bị ghi đè */
+  :where(.tap-44) {
+    position: relative;
+  }
+  .tap-44::after {
+    content: '';
+    position: absolute;
+    inset: min(0px, calc((100% - 44px) / 2));
+  }
+
   /* Safe area cho iPhone / notch / bottom bar */
   .pb-safe {
     padding-bottom: max(12px, env(safe-area-inset-bottom));

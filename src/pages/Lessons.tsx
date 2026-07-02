@@ -735,7 +735,8 @@ function LessonView({
                           ? (lesson.speakerBName?.vi ?? 'Người B')
                           : (lesson.speakerBName?.en ?? 'Person B')}
                     </p>
-                    <div className="flex items-center gap-1">
+                    {/* gap-2 để vùng chạm 44px của 2 nút cạnh nhau không đè lên nhau */}
+                    <div className="flex items-center gap-2">
                       <InlinePronounce
                         text={isA ? t.en : t.vi}
                         lang={isA ? 'en-US' : 'vi-VN'}
@@ -744,7 +745,8 @@ function LessonView({
                       <button
                         onClick={() => void playTurn(i)}
                         title={isA ? 'Nghe câu này' : 'Play this line'}
-                        className={`shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition ${
+                        aria-label={isA ? 'Nghe câu này' : 'Play this line'}
+                        className={`tap-44 shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition ${
                           isActive
                             ? `${color.text} bg-zinc-800/50`
                             : 'text-zinc-400 hover:text-zinc-300 hover:bg-zinc-700'
@@ -858,7 +860,8 @@ export function InlinePronounce({
           reset()
         }}
         title={isA ? 'Kiểm tra phát âm câu này' : 'Check pronunciation'}
-        className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-zinc-500 hover:text-violet-300 hover:bg-violet-500/15 transition"
+        aria-label={isA ? 'Kiểm tra phát âm câu này' : 'Check pronunciation'}
+        className="tap-44 shrink-0 w-9 h-9 flex items-center justify-center rounded-full text-zinc-500 hover:text-violet-300 hover:bg-violet-500/15 transition"
       >
         <Mic className="w-[1.125rem] h-[1.125rem]" />
       </button>
@@ -870,7 +873,7 @@ export function InlinePronounce({
       <div className="flex items-center gap-2 flex-wrap">
         <button
           onClick={status === 'listening' ? stop : start}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+          className={`tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition ${
             status === 'listening'
               ? 'bg-rose-500/20 text-rose-300'
               : 'bg-violet-500/20 text-violet-300 hover:bg-violet-500/30'
@@ -892,7 +895,7 @@ export function InlinePronounce({
             setOpen(false)
             reset()
           }}
-          className="text-[11px] text-zinc-400 hover:text-zinc-300 transition"
+          className="tap-44 text-[11px] text-zinc-400 hover:text-zinc-300 transition px-1"
         >
           {isA ? 'Đóng' : 'Close'}
         </button>

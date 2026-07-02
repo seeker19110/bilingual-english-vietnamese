@@ -82,19 +82,18 @@ export default function PronounceButton({ word }: Props) {
     playAudioUrl(url)
   }
 
+  // Chuẩn nút loa tròn độc lập: 36px hiển thị, icon 18px, vùng chạm ≥ 44px (tap-44).
   return (
-    <div className="flex items-center gap-1">
-      <button
-        onClick={handleClick}
-        disabled={status === 'loading'}
-        title="Phát âm"
-        aria-label={`Phát âm từ "${word}"`}
-        className="shrink-0 w-7 h-7 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-accent-500/20 text-zinc-400 hover:text-accent-300 transition disabled:opacity-60"
-      >
-        {status === 'loading' && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-        {status === 'error' && <VolumeX className="w-3.5 h-3.5 text-red-400" />}
-        {status === 'idle' && <Volume2 className="w-3.5 h-3.5" />}
-      </button>
-    </div>
+    <button
+      onClick={handleClick}
+      disabled={status === 'loading'}
+      title="Phát âm"
+      aria-label={`Phát âm từ "${word}"`}
+      className="tap-44 shrink-0 w-9 h-9 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-accent-500/20 text-zinc-400 hover:text-accent-300 transition disabled:opacity-60"
+    >
+      {status === 'loading' && <Loader2 className="w-[1.125rem] h-[1.125rem] animate-spin" />}
+      {status === 'error' && <VolumeX className="w-[1.125rem] h-[1.125rem] text-red-400" />}
+      {status === 'idle' && <Volume2 className="w-[1.125rem] h-[1.125rem]" />}
+    </button>
   )
 }
