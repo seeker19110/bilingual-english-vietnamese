@@ -164,6 +164,14 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   chính comment rate-limit `tts-gen` (`api/tts.ts`). Gộp `AUDIT.md`/`AUDIT_REPORT.md`/
   `TRANSLATION_AUDIT.md` (3 file rời rạc, phình dần) thành 1 `AUDIT.md` duy nhất (3 phần theo
   thời gian, không mất nội dung/bằng chứng nào). Đã merge: **PR #159**.
+- **perf: tự host font Inter, bỏ Google Fonts.** Người dùng phản ánh lần đầu truy cập chậm —
+  rà lại cho thấy bundle JS/CSS đầu trang đã trong ngân sách `size-limit` (110.87/116 kB JS,
+  8.73/9 kB CSS brotli) và Nginx đã cache static tốt từ trước; điểm chưa tối ưu là font Inter
+  tải qua Google Fonts (`fonts.googleapis.com` → `fonts.gstatic.com`), tốn thêm 2 vòng
+  DNS/TLS/HTTP tới domain ngoài. Thay bằng `@fontsource-variable/inter` (file `.woff2` tự host
+  cùng domain, hưởng cache immutable 1 năm như asset khác); `index.html` bỏ hết thẻ Google
+  Fonts, font-family đổi tên `'Inter Variable'` (`src/index.css`, `tailwind.config.js`). Đã
+  merge: **PR #161**.
 
 ## ⚠️ Cần làm tay (chưa xong)
 
@@ -177,6 +185,11 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
+- **Nhắc lại: cân nhắc đặt Cloudflare (miễn phí) trước VPS** — sau PR #161 (tự host font),
+  bước tối ưu tốc độ tiếp theo là CDN/edge cache để giảm khoảng cách địa lý + giảm tải VPS
+  (đang dùng chung tài nguyên với app "xboss"). Đây là thay đổi HẠ TẦNG (đổi DNS trỏ qua
+  Cloudflare) — người dùng (chủ dự án) phải tự thao tác ở nơi quản lý domain, AI chỉ hướng
+  dẫn từng bước khi được yêu cầu làm tiếp.
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
 - Chạy thật `npm run tag:cefr` (cần key AI) rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR
