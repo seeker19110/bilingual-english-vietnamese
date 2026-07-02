@@ -24,6 +24,13 @@ import dictionaryHandler from './api/dictionary.js'
 
 const app = express()
 
+// Content-Security-Policy dùng chung cho mọi response (API, static, health).
+// Đã bỏ các domain KHÔNG còn dùng: cdn.jsdelivr.net (không có script nào tải từ CDN),
+// fonts.googleapis.com + fonts.gstatic.com (font Inter đã tự host — xem src/main.tsx).
+// 'unsafe-inline'/'unsafe-eval' giữ lại vì bundle Vite hiện cần; siết thêm là việc riêng.
+const CSP_HEADER =
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'"
+
 // Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
 app.disable('x-powered-by')
 
@@ -69,10 +76,7 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
 
       // Security headers — thêm sau khi convert response, tránh conflict với Web API Response
       res.setHeader('X-Content-Type-Options', 'nosniff')
-      res.setHeader(
-        'Content-Security-Policy',
-        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'",
-      )
+      res.setHeader('Content-Security-Policy', CSP_HEADER)
       res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
 
       res.send(await webRes.text())
@@ -88,10 +92,7 @@ app.use((req, res, next) => {
   // Chỉ apply cho non-API routes để tránh double headers
   if (!req.path.startsWith('/api/')) {
     res.setHeader('X-Content-Type-Options', 'nosniff')
-    res.setHeader(
-      'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'",
-    )
+    res.setHeader('Content-Security-Policy', CSP_HEADER)
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
   }
   next()
@@ -102,10 +103,7 @@ app.use((req, res, next) => {
 // Không gọi AI, không đụng DB → trả lời tức thì, không tốn tiền.
 app.get('/api/health', (_req, res) => {
   res.setHeader('X-Content-Type-Options', 'nosniff')
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'",
-  )
+  res.setHeader('Content-Security-Policy', CSP_HEADER)
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
   res.json({ status: 'ok', uptime: process.uptime(), time: new Date().toISOString() })
 })

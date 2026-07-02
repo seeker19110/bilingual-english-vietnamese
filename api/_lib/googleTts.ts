@@ -3,6 +3,11 @@
 // CHỈ chạy ở server — không bao giờ import file này từ code phía browser (src/).
 // Tiền tố "_" trong tên thư mục "_lib" để Vercel KHÔNG coi file này là 1 API route riêng.
 
+import { fetchWithTimeout } from './fetchTimeout'
+
+// Thời gian chờ tối đa 1 lần gọi Google TTS (ms) — tránh treo request khi Google chậm/sự cố.
+const TTS_TIMEOUT_MS = 30_000
+
 export type VoiceId = 'female' | 'female2' | 'male' | 'male2'
 export type Lang = 'en-US' | 'vi-VN'
 
@@ -50,7 +55,7 @@ export async function generateAudioFromGoogle(
   // Tiếng Anh đọc chậm hơn 1 chút để học viên nghe rõ; tiếng Việt tốc độ bình thường
   const speakingRate = lang === 'en-US' ? 0.9 : 1.0
 
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
     {
       method: 'POST',
@@ -70,6 +75,7 @@ export async function generateAudioFromGoogle(
         },
       }),
     },
+    TTS_TIMEOUT_MS,
   )
 
   if (!response.ok) {

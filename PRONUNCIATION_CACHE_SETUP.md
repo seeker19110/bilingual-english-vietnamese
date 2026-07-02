@@ -19,6 +19,10 @@ Project đã có rồi thì vào **Project Settings → API**, lấy 2 giá tr�
 
 ### 1b. Tạo bảng — vào SQL Editor, dán đoạn này, bấm Run
 
+> **Cập nhật:** bảng `pronunciations` nay đã nằm trong `supabase/schema.sql` (nguồn sự thật
+> duy nhất của schema, chạy lại an toàn) — chạy file đó là đủ, kèm cả cột `voice_version`
+> và RLS. Đoạn SQL dưới đây giữ lại để tham khảo lịch sử.
+
 ```sql
 create table pronunciations (
   id         uuid primary key default gen_random_uuid(),

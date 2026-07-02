@@ -164,6 +164,22 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   chính comment rate-limit `tts-gen` (`api/tts.ts`). Gộp `AUDIT.md`/`AUDIT_REPORT.md`/
   `TRANSLATION_AUDIT.md` (3 file rời rạc, phình dần) thành 1 `AUDIT.md` duy nhất (3 phần theo
   thời gian, không mất nội dung/bằng chứng nào). Đã merge: **PR #159**.
+- **fix(security/reliability): đợt rà soát toàn diện 2026-07-02 — 6 phát hiện, vá hết trong 1 PR.**
+  Rà lại theo checklist đa lớp (AUDIT.md §1.5) trên repo hiện tại, mọi cổng chất lượng xanh
+  từ trước. Phát hiện + vá: **(1)** `api/ai.ts` nhánh Groq trả 200 nhưng body hỏng (không phải
+  JSON / thiếu `choices`) → trả 500 mà QUÊN hoàn lượt — gom parse vào `parseGroqText()` +
+  try/catch hoàn lượt mọi nhánh lỗi, kèm 6 test mới (`api/ai.test.ts`, mock security/usage/fetch);
+  **(2)** `googleTts.ts` gọi Google TTS bằng `fetch` trần không timeout → đổi sang
+  `fetchWithTimeout` 30s (TTS/pronunciation hết treo vô hạn khi Google sự cố); **(3)** `api/tts.ts`
+  `text` không có trần độ dài (body 64KB đẩy được chuỗi khổng lồ tới Google TTS, tính tiền theo
+  ký tự) → chặn 4000 ký tự, trả 413; **(4)** `public/sw.js` icon notification mặc định
+  `/favicon.ico` không tồn tại (chỉ có favicon.svg) → đổi `/icon-192.png`; **(5)** `server.ts`
+  CSP lặp 3 lần + còn whitelist 3 domain không dùng (cdn.jsdelivr.net, fonts.googleapis.com,
+  fonts.gstatic.com — font đã tự host PR #161) → gom 1 hằng `CSP_HEADER`, bỏ domain thừa;
+  **(6)** bảng `pronunciations` KHÔNG có trong `supabase/schema.sql` và bản production (tạo tay
+  theo setup doc cũ) **chưa bật RLS** → client ghi được vào cache dùng chung (đầu độc audio_url):
+  thêm bảng + RLS vào schema.sql, migration mới `0006_pronunciations_rls.sql` (xem "Cần làm tay"),
+  sửa luôn comment/message lỗi thời "chỉ female/male" (đã 4 giọng). `npm audit` production: 0 lỗ hổng.
 - **perf: tự host font Inter, bỏ Google Fonts.** Người dùng phản ánh lần đầu truy cập chậm —
   rà lại cho thấy bundle JS/CSS đầu trang đã trong ngân sách `size-limit` (110.87/116 kB JS,
   8.73/9 kB CSS brotli) và Nginx đã cache static tốt từ trước; điểm chưa tối ưu là font Inter
@@ -180,6 +196,12 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   làm việc (không có credentials Supabase trong môi trường), phải làm tay. An toàn chạy lại
   (idempotent); không phá luồng client/server hiện có. **Đây là bước thực sự đóng lỗ RLS** —
   code/schema mới chỉ đảm bảo DB mới an toàn, DB đang chạy vẫn mở cho tới khi chạy migration này.
+- **Chạy migration `supabase/migrations/0006_pronunciations_rls.sql` trên Supabase production**
+  (Dashboard → SQL Editor) — đợt rà 2026-07-02 phát hiện bảng `pronunciations` (tạo tay theo
+  PRONUNCIATION_CACHE_SETUP.md, không nằm trong schema.sql) **chưa bật RLS** → người dùng đăng
+  nhập có thể ghi thẳng vào cache phát âm dùng chung (đầu độc `audio_url` cho MỌI người).
+  Migration bật RLS + chỉ cho đọc; server (service_role) vẫn ghi bình thường. Idempotent,
+  chạy lại an toàn, không phá luồng hiện có.
 
 ## Tiếp theo
 
