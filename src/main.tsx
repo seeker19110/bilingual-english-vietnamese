@@ -1,5 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+// Font Inter tự host (variable font, chỉ 1 file/subset) thay vì tải qua Google Fonts —
+// bỏ 2 vòng DNS/TLS/HTTP tới domain ngoài (fonts.googleapis.com + fonts.gstatic.com),
+// file font giờ cùng domain, cache immutable như các asset khác (xem server.ts/nginx).
+import '@fontsource-variable/inter/wght.css'
 import './index.css'
 import App from './App'
 import { applyTheme, getTheme } from './lib/theme'

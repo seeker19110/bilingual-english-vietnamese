@@ -50,21 +50,7 @@
     <link rel="alternate" hreflang="vi" href="https://en-vi.donghanhcungban.com" />
     <link rel="alternate" hreflang="en" href="https://en-vi.donghanhcungban.com" />
     <link rel="alternate" hreflang="x-default" href="https://en-vi.donghanhcungban.com" />
-    <!-- Google Fonts: gộp 1 request duy nhất, async để không block FCP -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-      media="print"
-      onload="this.media = 'all'"
-    />
-    <noscript
-      ><link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-    /></noscript>
+    <!-- Font Inter tự host cùng domain (xem src/main.tsx) — không còn phụ thuộc Google Fonts -->
   </head>
   <body>
     <div id="root"></div>
