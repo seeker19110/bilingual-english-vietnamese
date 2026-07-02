@@ -19,7 +19,8 @@ Web app **gia sư ngôn ngữ AI hai chiều (Việt ⇄ Anh)**.
 
 Ba chế độ:
 
-1. **Chat tổng hợp** — gia sư AI trò chuyện, sửa lỗi, giải thích bằng tiếng Việt.
+1. **Chat tổng hợp** — gia sư AI trò chuyện thân mật/nhẹ nhàng, sửa lỗi kèm động viên, giải thích
+   bằng tiếng Việt; có nút "Kết thúc & chấm điểm" cuối phiên (chấm kiểu IELTS Speaking).
 2. **Luyện viết + chấm điểm** — chấm bài kiểu IELTS, chỉ lỗi, ước lượng band.
 3. **Luyện nói song ngữ** (tính năng chính) — nói → AI nghe (STT) → trả lời bằng **giọng ngôn ngữ đích** + sửa lỗi/giải thích bằng **giọng tiếng mẹ đẻ của học viên** (TTS hai giọng riêng). Chiều A: đích=Anh, giải thích=Việt. Chiều B: đích=Việt, giải thích=Anh.
 
@@ -113,7 +114,7 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 
 ## 13. Trạng thái hiện tại
 
-> Cập nhật 2026-07-01.
+> Cập nhật 2026-07-02.
 
 - [x] Khởi tạo project + đăng nhập (Supabase Auth đã chạy thật — `lib/auth.ts`, `AuthProvider`)
 - [x] Chế độ Chat (MVP) — gọi AI thật qua `/api/claude` (edge function ép model + token)
@@ -129,6 +130,9 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 - [x] Bảng tiến độ (`/progress`) — streak + biểu đồ 7 ngày, mục tiêu từ mới hôm nay + lượt còn lại, số từ đã thuộc + cần ôn SRS + % lộ trình, % hoàn thành từng cấp CEFR A1→B2, tổng kết phiên. Logic: `src/lib/stats.ts`; UI: `src/pages/Dashboard.tsx`.
 - [x] Tên miền canonical (SEO) đọc từ `VITE_SITE_URL` trong `src/App.tsx`, mặc định domain production. Xem `.env.example`.
 - [x] **Hệ thống theme + audit UI** — màu nhấn thương hiệu thành biến CSS `--a-*` (class `accent-*`, map trong `tailwind.config.js`). **4 theme, mặc định Xanh đêm**: 🌙 Xanh đêm · ☀️ Blue sky · 🌸 Pink · 🎉 Rực rỡ. Chọn theme qua menu swatch (`src/components/ThemeToggle.tsx`); định nghĩa ở `src/index.css` + `src/lib/theme.ts`. Giữ màu ngữ nghĩa. Font: sàn chữ ≥ 11px, input 16px. Zoom mobile khóa chủ động (đánh đổi 1 mục a11y, bù bằng sàn chữ).
+- [x] Giọng điệu Chat/Speaking thân mật, nhẹ nhàng hơn + nút "Kết thúc & chấm điểm" cuối phiên
+      (chấm kiểu IELTS Speaking: fluency/từ vựng/ngữ pháp, riêng Speaking có thêm phát âm) — kết quả
+      chỉ hiện tạm trong phiên, không lưu Supabase. Xem `PROGRESS.md` (PR #170).
 
 ### Việc còn dang dở / cần quyết định
 

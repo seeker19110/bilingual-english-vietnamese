@@ -245,6 +245,18 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
      chevron (WordOfTheDay), sao từ khó (WordCard).
   6. Dọn code chết: xóa `SpeakButton.tsx` (đã bị KaraokeText thay từ lâu, không nơi
      nào import).
+- **feat(chat,speaking): giọng điệu thân mật + nút "Kết thúc & chấm điểm".** Tinh chỉnh
+  `chatSystemPrompt`/`speakingSystemPrompt` (`src/prompts/index.ts`, cả 2 chiều A/B): giọng
+  điệu thân mật, nhẹ nhàng hơn; khi sửa lỗi LUÔN kèm 1 câu động viên (trước đây chỉ khen khi
+  câu đúng). Nối tính năng chấm điểm cuối phiên — `speakingFullEvaluationPrompt` (chấm kiểu
+  IELTS Speaking: fluency/từ vựng/ngữ pháp/phát âm) đã có sẵn từ trước nhưng CHƯA có UI nào gọi
+  tới; thêm `chatFullEvaluationPrompt` tương tự cho Chat (không có tiêu chí phát âm vì hội thoại
+  chữ). Nút "Kết thúc & chấm điểm" (Chat + Speaking) chỉ hiện sau ≥ 3 lượt trao đổi; bấm vào gọi
+  AI 1 lần, hiển thị bảng điểm qua component dùng chung mới `src/components/EvaluationResultView.tsx`
+  (điểm tổng, băng điểm từng tiêu chí, lỗi cần sửa, điểm mạnh, gợi ý, câu động viên — cùng phong
+  cách với màn kết quả Writing). Kết quả CHỈ hiện tạm trong phiên, KHÔNG lưu Supabase → không cần
+  đổi schema DB; tính 1 lượt dùng theo mode sẵn có (`chat`/`speaking`), không thêm cột giới hạn
+  riêng. Đã merge: **PR #170**.
 
 ## ⚠️ Cần làm tay (chưa xong)
 
