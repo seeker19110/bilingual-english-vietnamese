@@ -2,20 +2,13 @@
 // API key được giữ ở server: vite.config.ts (lúc dev) hoặc api/ai.ts (lúc deploy lên VPS).
 // Handler hỗ trợ Gemini (ưu tiên) / Groq / Anthropic — chọn dựa trên biến môi trường.
 
-import { supabase } from './supabase'
+import { getAuthHeader } from './authHeader'
 
 const MODEL = 'claude-haiku-4-5-20251001'
 
 interface ClaudeMessage {
   role: 'user' | 'assistant'
   content: string
-}
-
-// Lấy Supabase JWT để gửi kèm request — server dùng để xác thực người dùng
-async function getAuthHeader(): Promise<Record<string, string>> {
-  const { data } = await supabase.auth.getSession()
-  const token = data.session?.access_token
-  return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 // mode: cho server biết đây là lượt chat / viết / nói để đếm đúng cột giới hạn.

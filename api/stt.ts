@@ -23,6 +23,8 @@ import {
 } from './_lib/security'
 import { checkAndConsumeUsage, refundUsage } from './_lib/usage'
 import { readJsonBody, validateBody } from './_lib/validation'
+import { jsonResponse, getClientIp } from './_lib/http'
+import { base64ToBytes } from './_lib/base64'
 
 // Giới hạn dung lượng base64 (~8MB chuỗi ≈ ~6MB audio thật, đủ cho ~1–2 phút nói).
 const MAX_AUDIO_B64 = 8 * 1024 * 1024
@@ -52,14 +54,6 @@ const SttBodySchema = z.object({
     }),
 })
 
-// Giải mã base64 → ArrayBuffer (dùng atob của Web API cho cả Edge lẫn Node).
-function base64ToArrayBuffer(b64: string): ArrayBuffer {
-  const binary = atob(b64)
-  const bytes = new Uint8Array(binary.length)
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
-  return bytes.buffer
-}
-
 export default async function handler(req: Request): Promise<Response> {
   const corsHeaders = getCorsHeaders(req)
   const allHeaders = { ...corsHeaders, ...SECURITY_HEADERS }
@@ -72,7 +66,7 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Method not allowed' }, 405, allHeaders)
   }
 
-  const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const clientIp = getClientIp(req)
 
   if (!validateContentType(req)) {
     logSecurityEvent('INVALID_CONTENT_TYPE', clientIp, { path: '/api/stt' })
@@ -107,7 +101,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   let audio: ArrayBuffer
   try {
-    audio = base64ToArrayBuffer(audioB64)
+    audio = base64ToBytes(audioB64).buffer as ArrayBuffer
   } catch {
     return jsonResponse({ error: 'audio_b64 không phải base64 hợp lệ' }, 400, allHeaders)
   }
@@ -131,13 +125,6 @@ export default async function handler(req: Request): Promise<Response> {
       allHeaders,
     )
   }
-}
-
-function jsonResponse(body: unknown, status = 200, headers: Record<string, string> = {}): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json', ...headers },
-  })
 }
 
 export const config = { runtime: 'edge' }

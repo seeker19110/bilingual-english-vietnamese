@@ -139,23 +139,31 @@ export default function RoadmapTab({
 
   const learned = useMemo(() => getLearnedWords(uid), [uid, foundationReady]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Cấp nào bị khóa (A1 luôn mở, cấp sau cần hoàn thành ≥70% vocab cấp trước) — tính 1 lần
+  // mỗi khi cefrLevels/learned đổi thay vì lặp lại phép reduce trên toàn bộ units mỗi render.
+  const lockedByLevelId = useMemo(() => {
+    const map = new Map<CefrLevel['id'], boolean>()
+    cefrLevels.forEach((l, idx) => {
+      if (idx === 0) {
+        map.set(l.id, false)
+        return
+      }
+      const prev = cefrLevels[idx - 1]
+      if (!prev) {
+        map.set(l.id, false)
+        return
+      }
+      const total = countLevelWords(prev)
+      const done = countLevelLearned(prev, learned)
+      map.set(l.id, total > 0 && done / total < 0.7)
+    })
+    return map
+  }, [cefrLevels, learned, foundationReady]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const level = cefrLevels.find((l) => l.id === levelId) ?? cefrLevels[0]
   if (!level) return null
   const accent = ACCENT[level.accent]
-
-  // Kiểm tra cấp độ có bị khóa không (A1 luôn mở, các cấp sau cần hoàn thành ≥70% vocab cấp trước)
-  function isLevelLocked(l: CefrLevel): boolean {
-    const idx = cefrLevels.findIndex((x) => x.id === l.id)
-    if (idx <= 0) return false
-    const prev = cefrLevels[idx - 1]
-    if (!prev) return false // idx>0 nên prev luôn có; guard để TS narrow kiểu
-    const total = countLevelWords(prev)
-    if (total === 0) return false
-    const done = countLevelLearned(prev, learned)
-    return done / total < 0.7
-  }
-
-  const locked = isLevelLocked(level)
+  const locked = lockedByLevelId.get(level.id) ?? false
 
   // Màn xem 1 cuộc hội thoại
   if (dialogue) {
@@ -200,7 +208,7 @@ export default function RoadmapTab({
         {cefrLevels.map((l) => {
           const a = ACCENT[l.accent]
           const on = l.id === levelId
-          const lkd = isLevelLocked(l)
+          const lkd = lockedByLevelId.get(l.id) ?? false
           return (
             <button
               key={l.id}

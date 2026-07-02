@@ -41,6 +41,7 @@ import {
   logSecurityEvent,
 } from './_lib/security'
 import { readJsonBody, validateBody } from './_lib/validation'
+import { jsonResponse, getClientIp } from './_lib/http'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
 
@@ -107,7 +108,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Lấy IP để rate limit
-  const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const clientIp = getClientIp(req)
 
   // Kiểm tra Content-Type
   if (!validateContentType(req)) {
@@ -233,13 +234,6 @@ export default async function handler(req: Request): Promise<Response> {
 
   const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
   return jsonResponse({ audio_url: audioUrl, key_b64, iv_b64, cached: false }, 200, allHeaders)
-}
-
-function jsonResponse(body: unknown, status = 200, headers: Record<string, string> = {}): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json', ...headers },
-  })
 }
 
 export const config = { runtime: 'edge' }
