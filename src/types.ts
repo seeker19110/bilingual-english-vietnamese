@@ -68,6 +68,23 @@ export interface SpeakingSession {
   createdAt: number
 }
 
+// Kết quả chấm điểm cuối phiên Chat/Speaking (nút "Kết thúc & chấm điểm").
+// Không lưu lên Supabase (chỉ hiện tạm trong phiên) nên không cần đổi schema DB.
+// pronunciation chỉ có ở Speaking (có audio); Chat không có.
+export interface EvaluationResult {
+  scores: {
+    fluency: number
+    lexical: number
+    grammar: number
+    pronunciation?: number
+    overall: number
+  }
+  errors: { original: string; corrected: string; explanation: string }[]
+  strengths: string[]
+  suggestions: string[]
+  encouragement: string
+}
+
 // Đếm lượt dùng trong ngày (reset mỗi ngày)
 export interface DailyUsage {
   date: string // YYYY-MM-DD

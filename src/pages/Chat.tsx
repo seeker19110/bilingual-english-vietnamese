@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, Plus, ChevronDown, Sparkles } from 'lucide-react'
+import { Send, Plus, ChevronDown, Sparkles, Award } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
 import KaraokeText from '../components/KaraokeText'
+import EvaluationResultView from '../components/EvaluationResultView'
 import {
   saveChatSession,
   getChatSessions,
@@ -16,8 +17,8 @@ import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { useApiThrottle } from '../lib/useApiThrottle'
-import { callClaude } from '../lib/ai'
-import { chatSystemPrompt, situationLabel } from '../prompts'
+import { callClaude, parseJson } from '../lib/ai'
+import { chatSystemPrompt, chatFullEvaluationPrompt, situationLabel } from '../prompts'
 import {
   SITUATIONS,
   LEVELS,
@@ -26,7 +27,11 @@ import {
   type ChatSession,
   type Message,
   type Direction,
+  type EvaluationResult,
 } from '../types'
+
+// Số lượt trao đổi tối thiểu trước khi cho phép chấm điểm — tránh chấm khi mới 1 câu.
+const MIN_TURNS_TO_GRADE = 3
 
 // ── Setup Screen ─────────────────────────────────────────────────────────────
 function SetupScreen({
@@ -238,6 +243,8 @@ export default function Chat() {
   const [limitHit, setLimitHit] = useState(false)
   const [lastIdx, setLastIdx] = useState(-1)
   const [throttleCountdown, setThrottleCountdown] = useState(0)
+  const [evaluation, setEvaluation] = useState<EvaluationResult | null>(null)
+  const [evaluating, setEvaluating] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -347,6 +354,47 @@ export default function Chat() {
     setTimeout(() => inputRef.current?.focus(), 50)
   }
 
+  // Kết thúc & chấm điểm cả phiên — gọi AI 1 lần thêm với prompt chấm điểm, tính
+  // là 1 lượt chat (không thêm cột giới hạn riêng). Kết quả chỉ hiện tạm, không lưu Supabase.
+  async function endAndGrade() {
+    if (!session || loading || evaluating) return
+    const usage = getUsage(user.id)
+    const limit = LIMITS[user.plan]
+    if (usage.chatCount >= limit.chat) {
+      setLimitHit(true)
+      return
+    }
+    if (isThrottled) {
+      toast.error(
+        isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`,
+      )
+      return
+    }
+    setEvaluating(true)
+    setError('')
+    const sys = chatFullEvaluationPrompt(dir)
+    const history = session.messages.map((m) => ({ role: m.role, content: m.content }))
+    try {
+      const raw = await callClaude(history, sys, 2048, 'chat')
+      const data = parseJson<EvaluationResult>(raw)
+      if (!data)
+        throw new Error(
+          isA
+            ? 'AI trả về định dạng không đúng. Thử lại.'
+            : 'AI returned invalid format. Please try again.',
+        )
+      setEvaluation(data)
+      incrementUsage(user.id, 'chatCount')
+      throttle()
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
+      setError(msg)
+      toast.error(msg)
+    }
+    setEvaluating(false)
+  }
+
+  const userTurns = session?.messages.filter((m) => m.role === 'user').length ?? 0
   const prevSessions = getChatSessions(user.id).slice(0, 3)
 
   return (
@@ -407,6 +455,12 @@ export default function Chat() {
             <QuickActions />
           </div>
         </div>
+      ) : evaluation ? (
+        <EvaluationResultView
+          evaluation={evaluation}
+          onClose={() => setEvaluation(null)}
+          dir={dir}
+        />
       ) : (
         <>
           <div className="flex-1 min-h-0 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
@@ -443,6 +497,22 @@ export default function Chat() {
               >
                 <Plus className="w-4 h-4" />
               </button>
+
+              {userTurns >= MIN_TURNS_TO_GRADE && (
+                <button
+                  onClick={endAndGrade}
+                  disabled={loading || evaluating || limitHit || isThrottled}
+                  className="p-2.5 text-zinc-400 hover:text-violet-400 border border-zinc-800/80 hover:border-violet-500/50 rounded-xl transition shrink-0 hover:bg-zinc-800/50 disabled:opacity-50"
+                  title={isA ? 'Kết thúc & chấm điểm' : 'End & grade conversation'}
+                  aria-label={isA ? 'Kết thúc & chấm điểm' : 'End & grade conversation'}
+                >
+                  {evaluating ? (
+                    <span className="w-4 h-4 border-2 border-zinc-500/40 border-t-zinc-300 rounded-full animate-spin block" />
+                  ) : (
+                    <Award className="w-4 h-4" />
+                  )}
+                </button>
+              )}
 
               <input
                 id="message-input"
