@@ -190,8 +190,28 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   cùng domain, hưởng cache immutable 1 năm như asset khác); `index.html` bỏ hết thẻ Google
   Fonts, font-family đổi tên `'Inter Variable'` (`src/index.css`, `tailwind.config.js`). Đã
   merge: **PR #161**.
+- **feat(infra): chuẩn bị Cloudflare trước VPS** — người dùng đồng ý làm tiếp mục "Cloudflare"
+  trong "Tiếp theo". Phần AI làm được (code/cấu hình, đã xong): `nginx/en-vi.conf` thêm
+  `include /etc/nginx/cloudflare-realip.conf` (module `real_ip` — chỉ tin header
+  `X-Forwarded-For`/`CF-Connecting-IP` khi request thực sự đến từ dải IP Cloudflare, chặn
+  đường giả mạo IP để né rate-limit nếu ai gọi thẳng vào IP VPS bỏ qua Cloudflare); script mới
+  `scripts/update-cloudflare-ips.sh` (tải dải IP Cloudflare MỚI NHẤT lúc chạy — không hard-code
+  danh sách tĩnh vào repo vì dải IP có thể đổi theo thời gian); tài liệu đầy đủ
+  `docs/cloudflare-setup.md` (5 bước DNS/SSL bạn tự làm trên Cloudflare + lệnh deploy VPS + cách
+  kiểm tra + cách hoàn tác); ghi chú thêm ở `api/_lib/security.ts` giải thích điều kiện để IP
+  đáng tin. **Phần BẠN cần tự làm** (AI không có quyền truy cập tài khoản Cloudflare/domain):
+  làm theo `docs/cloudflare-setup.md` — thêm site vào Cloudflare, bật Proxy cho bản ghi `en-vi`,
+  đổi nameserver ở nơi mua domain, đặt SSL/TLS mode "Full (strict)"; sau đó SSH vào VPS chạy
+  `git pull` + `sudo bash scripts/update-cloudflare-ips.sh` + copy `nginx/en-vi.conf` mới +
+  `nginx -t && systemctl reload nginx`.
 
 ## ⚠️ Cần làm tay (chưa xong)
+
+- **Đặt Cloudflare trước VPS** (theo `docs/cloudflare-setup.md`) — 5 bước trên Cloudflare
+  Dashboard + nơi quản lý domain (thêm site, bật Proxy, đổi nameserver, SSL mode Full strict),
+  sau đó deploy `nginx/en-vi.conf` + chạy `scripts/update-cloudflare-ips.sh` trên VPS. Chưa làm
+  thì site vẫn chạy bình thường như cũ (dòng `include cloudflare-realip.conf` sẽ làm `nginx -t`
+  LỖI nếu bật Cloudflare mà chưa chạy script sinh file trước — nhớ đúng thứ tự trong tài liệu).
 
 - _(Hiện không còn mục nào.)_ ~~Chạy migration `0005_lockdown_cost_columns.sql` +
   `0006_pronunciations_rls.sql` trên Supabase production~~ — ĐÃ XONG: người dùng xác nhận
