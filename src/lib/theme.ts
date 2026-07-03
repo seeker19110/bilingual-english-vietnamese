@@ -6,43 +6,11 @@ export const THEMES: {
   value: Theme
   labelVi: string
   labelEn: string
-  emoji: string
-  // Màu đại diện để vẽ ô swatch trong menu chọn theme (nền + nhấn)
-  swatchBg: string
-  swatchAccent: string
 }[] = [
-  {
-    value: 'dark-blue',
-    labelVi: 'Xanh đêm',
-    labelEn: 'Night blue',
-    emoji: '🌙',
-    swatchBg: '#0f172a',
-    swatchAccent: '#10b981',
-  },
-  {
-    value: 'blue-sky',
-    labelVi: 'Blue sky',
-    labelEn: 'Blue sky',
-    emoji: '☀️',
-    swatchBg: '#f0f9ff',
-    swatchAccent: '#0ea5e9',
-  },
-  {
-    value: 'pink',
-    labelVi: 'Pink',
-    labelEn: 'Pink',
-    emoji: '🌸',
-    swatchBg: '#fff8fc',
-    swatchAccent: '#ec4899',
-  },
-  {
-    value: 'vibrant',
-    labelVi: 'Rực rỡ',
-    labelEn: 'Vibrant',
-    emoji: '🎉',
-    swatchBg: '#1c1428',
-    swatchAccent: '#d946ef',
-  },
+  { value: 'dark-blue', labelVi: 'Xanh đêm', labelEn: 'Night blue' },
+  { value: 'blue-sky', labelVi: 'Blue sky', labelEn: 'Blue sky' },
+  { value: 'pink', labelVi: 'Pink', labelEn: 'Pink' },
+  { value: 'vibrant', labelVi: 'Rực rỡ', labelEn: 'Vibrant' },
 ]
 
 const VALID = new Set<Theme>(THEMES.map((t) => t.value))

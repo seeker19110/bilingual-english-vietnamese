@@ -78,24 +78,6 @@ for (const theme of ['blue-sky', 'pink'] as ThemeName[]) {
   })
 }
 
-// Trạng thái SAU tương tác: menu chọn giao diện (ThemeToggle) chỉ render khi bấm mở
-// → axe lúc tải trang KHÔNG quét được. Mở dropdown rồi quét (role/menuitem + contrast
-// các mục) ở MỌI theme — chống tụt lùi, gồm cả contrast menu trên nền sáng.
-for (const theme of THEMES) {
-  test(`a11y: menu chọn giao diện (đã mở) theme=${theme} — 0 critical, không có serious mới`, async ({
-    page,
-  }) => {
-    await mockLogin(page, 'vi', theme)
-    await page.goto('/')
-    await expect(page.getByText(/Xin chào/)).toBeVisible()
-    await page.getByRole('button', { name: /Đổi giao diện/ }).click()
-    await expect(page.getByRole('menu')).toBeVisible()
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
-  })
-}
-
 // Các trang chính sau đăng nhập — quét ở CẢ 4 THEME (cam kết "AA ở mọi theme").
 // Màu cố định của Tailwind (pill loại từ, màu chủ đề/cấp, IPA…) đã thêm biến thể
 // `theme-light:` sắc độ đậm cho 2 theme nền sáng (qua map dùng chung: pos.ts,
