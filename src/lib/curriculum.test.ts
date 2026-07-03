@@ -5,6 +5,9 @@ import {
   getCircles,
   getLearningPath,
   getTodayBatch,
+  getTodayBatchFrom,
+  getLevelWords,
+  getBeyondCefrWords,
   getPathProgress,
   getDailyLearned,
   bumpDailyLearned,
@@ -91,6 +94,47 @@ describe('getTodayBatch', () => {
 
   it('tôn trọng tham số size', () => {
     expect(getTodayBatch(new Set(), 3).length).toBe(3)
+  })
+})
+
+describe('getLevelWords / getBeyondCefrWords — từ vựng theo cấp', () => {
+  it('mỗi từ chỉ thuộc đúng 1 cấp (không trùng key giữa A1 và A2)', () => {
+    const a1 = new Set(getLevelWords('A1').map((w) => wordKey(w.word)))
+    const a2 = getLevelWords('A2').map((w) => wordKey(w.word))
+    expect(a1.size).toBeGreaterThan(0)
+    expect(a2.length).toBeGreaterThan(0)
+    expect(a2.filter((k) => a1.has(k))).toEqual([])
+  })
+
+  it('tổng từ của 4 cấp + phần ngoài CEFR = đúng lộ trình phẳng', () => {
+    const total =
+      getLevelWords('A1').length +
+      getLevelWords('A2').length +
+      getLevelWords('B1').length +
+      getLevelWords('B2').length +
+      getBeyondCefrWords().length
+    expect(total).toBe(getLearningPath().length)
+  })
+
+  it('phần ngoài CEFR không chứa từ của cấp A1', () => {
+    const a1 = new Set(getLevelWords('A1').map((w) => wordKey(w.word)))
+    expect(getBeyondCefrWords().some((w) => a1.has(wordKey(w.word)))).toBe(false)
+  })
+})
+
+describe('getTodayBatchFrom — batch theo pool tùy chọn (từ vựng 1 cấp)', () => {
+  it('chỉ lấy từ trong pool, bỏ từ đã thuộc, tôn trọng size', () => {
+    const pool = getLevelWords('A1')
+    const learned = new Set([wordKey(pool[0].word)])
+    const batch = getTodayBatchFrom(pool, learned, 5)
+    expect(batch.length).toBe(5)
+    expect(batch.some((e) => wordKey(e.word) === wordKey(pool[0].word))).toBe(false)
+    const poolKeys = new Set(pool.map((w) => wordKey(w.word)))
+    expect(batch.every((e) => poolKeys.has(wordKey(e.word)))).toBe(true)
+  })
+
+  it('pool rỗng → batch rỗng (đã thuộc hết từ của cấp)', () => {
+    expect(getTodayBatchFrom([], new Set())).toEqual([])
   })
 })
 

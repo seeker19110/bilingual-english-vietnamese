@@ -1,4 +1,4 @@
-// QuickActions — hàng hành động nhanh: Kiểm tra · Chia sẻ · Nhắc học.
+// QuickActions — hàng hành động nhanh: Lộ trình · Chia sẻ · Nhắc học.
 // Trước đây nằm ở trang chủ; nay chuyển xuống ĐÁY các trang khác (xóa khỏi trang chủ).
 // Tự gói toàn bộ logic: mở quiz, modal chia sẻ tiến độ, bật/tắt + chọn GIỜ nhắc học.
 //
@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Share2, ClipboardList, Bell, BellOff, X, Clock } from 'lucide-react'
+import { Share2, Route, Bell, BellOff, X, Clock } from 'lucide-react'
 import ShareProgress from './ShareProgress'
 import {
   isPushSupported,
@@ -95,15 +95,15 @@ export default function QuickActions() {
   return (
     <div className="mt-8 pt-5 border-t border-zinc-800/60">
       <div className="grid grid-cols-3 gap-2 max-w-md mx-auto">
-        {/* Kiểm tra — mở trang Học theo lộ trình, tab Kiểm tra */}
+        {/* Lộ trình — mở tổng quan A1→B2 (tab Kiểm tra giờ nằm TRONG từng cấp) */}
         <button
           onClick={() => nav('/learning-path')}
-          aria-label={isA ? 'Kiểm tra' : 'Quiz'}
-          className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-violet-500/40 transition group"
+          aria-label={isA ? 'Lộ trình học' : 'Learning path'}
+          className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-teal-500/40 transition group"
         >
-          <ClipboardList className="w-4 h-4 text-violet-400" />
+          <Route className="w-4 h-4 text-teal-400" />
           <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
-            {isA ? 'Kiểm tra' : 'Quiz'}
+            {isA ? 'Lộ trình' : 'Roadmap'}
           </span>
         </button>
 

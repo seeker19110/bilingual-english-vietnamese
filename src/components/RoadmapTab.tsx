@@ -1,11 +1,12 @@
 // ──────────────────────────────────────────────────────────────────────
-// TAB LỘ TRÌNH — TỔNG QUAN 4 CẤP CEFR (A1 → B2)
+// BẢN ĐỒ LỘ TRÌNH — TỔNG QUAN 4 CẤP CEFR (A1 → B2)
 //
-// Sau khi mỗi cấp có TRANG RIÊNG (/learning-path/a1…b2), tab này chỉ còn là
-// "bản đồ lộ trình": mỗi cấp 1 thẻ (tiến độ từ vựng + ngữ pháp, trạng thái
-// khóa, nhãn "Bạn đang ở đây") — bấm vào để mở trang của cấp đó.
-// Các màn chi tiết (bài ngữ pháp, flashcard, hội thoại) đã chuyển sang
-// src/components/CefrLessonViews.tsx + src/pages/CefrLevelPage.tsx.
+// Là nội dung chính của trang /learning-path (Learn.tsx): mỗi cấp 1 thẻ
+// (tiến độ từ vựng + ngữ pháp, trạng thái khóa, nhãn "Bạn đang ở đây") —
+// bấm vào để mở TRANG RIÊNG của cấp (/learning-path/a1…b2).
+// Các màn chi tiết (bài ngữ pháp, flashcard, hội thoại) ở
+// src/components/CefrLessonViews.tsx + src/pages/CefrLevelPage.tsx;
+// các tab học (Hôm nay/Ôn SRS/Từ khó/Kiểm tra) ở src/components/StudyTabs.tsx.
 // ──────────────────────────────────────────────────────────────────────
 
 import { useEffect, useMemo, useState } from 'react'
@@ -83,7 +84,12 @@ export default function RoadmapTab({ uid, isA }: { uid: string; isA: boolean }) 
         return (
           <div
             key={level.id}
-            className={`glass rounded-2xl p-4 border ${isCurrent ? a.ring : 'border-transparent'} ${locked ? 'opacity-80' : ''}`}
+            // KHÔNG dùng opacity để làm mờ thẻ khóa: opacity nhân vào cả chữ bên trong,
+            // làm tương phản chữ (đã sát ngưỡng AA) tụt dưới 4.5:1 ở theme nền sáng
+            // (Blue sky/Pink) — bắt được khi /learning-path hiện thẳng bản đồ lộ trình
+            // (trước đây tab "Lộ trình" không phải mặc định nên chưa lộ). Trạng thái khóa
+            // đã có Lock icon + dòng "Thuộc ≥70%..." bên dưới, không cần làm mờ cả thẻ.
+            className={`glass rounded-2xl p-4 border ${isCurrent ? a.ring : 'border-transparent'}`}
           >
             <div className="flex items-start gap-3">
               {/* Badge cấp */}

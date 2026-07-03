@@ -147,14 +147,53 @@ export function findCircleOfWord(word: string): Circle | undefined {
   return getCircles().find((c) => c.words.some((w) => wordKey(w.word) === k))
 }
 
+// ── Từ vựng theo CẤP CEFR (cho các tab học trong /learning-path/a1…b2) ──
+// Duyệt getCircles() theo đúng thứ tự học và khử trùng theo wordKey GIỐNG
+// getLearningPath (giữ lần xuất hiện ĐẦU) → mỗi từ chỉ thuộc đúng 1 cấp,
+// tổng từ của 4 cấp + phần ngoài CEFR = đúng lộ trình phẳng.
+function collectPathWords(belongs: (circleId: string) => boolean): DictEntry[] {
+  const seen = new Set<string>()
+  const out: DictEntry[] = []
+  for (const c of getCircles()) {
+    const keep = belongs(c.id)
+    for (const w of c.words) {
+      const k = wordKey(w.word)
+      if (seen.has(k)) continue
+      seen.add(k)
+      if (keep) out.push(w)
+    }
+  }
+  return out
+}
+
+// Từ vựng của 1 cấp CEFR, theo thứ tự học trong lộ trình.
+export function getLevelWords(levelId: CefrLevel['id']): DictEntry[] {
+  return collectPathWords((id) => CIRCLE_LEVEL[id] === levelId)
+}
+
+// Từ NGOÀI lộ trình CEFR (vòng nền tảng lẻ + cụm "Mở rộng" từ từ điển) —
+// trang cấp CUỐI (B2) học tiếp phần này sau khi thuộc hết từ của cấp.
+export function getBeyondCefrWords(): DictEntry[] {
+  return collectPathWords((id) => !(id in CIRCLE_LEVEL))
+}
+
 // ── Mục tiêu hôm nay: 20 từ KẾ TIẾP chưa thuộc ─────────────────────────
-export function getTodayBatch(learned: Set<string>, size = DAILY_GOAL): DictEntry[] {
+// Bản tổng quát: lấy từ 1 danh sách bất kỳ (pool = từ của 1 cấp, hoặc cả lộ trình).
+export function getTodayBatchFrom(
+  pool: DictEntry[],
+  learned: Set<string>,
+  size = DAILY_GOAL,
+): DictEntry[] {
   const batch: DictEntry[] = []
-  for (const e of getLearningPath()) {
+  for (const e of pool) {
     if (batch.length >= size) break
     if (!learned.has(wordKey(e.word)) && !learned.has(e.word)) batch.push(e)
   }
   return batch
+}
+
+export function getTodayBatch(learned: Set<string>, size = DAILY_GOAL): DictEntry[] {
+  return getTodayBatchFrom(getLearningPath(), learned, size)
 }
 
 // Tiến độ tổng: đã thuộc bao nhiêu / tổng lộ trình
