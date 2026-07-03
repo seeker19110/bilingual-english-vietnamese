@@ -133,7 +133,7 @@ export default function Profile() {
         {/* Đăng xuất */}
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-red-500/25 text-red-400 hover:bg-red-500/10 transition text-sm font-medium animate-fade-in"
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-red-500/25 text-red-400 theme-light:text-red-700 hover:bg-red-500/10 transition text-sm font-medium animate-fade-in"
         >
           <LogOut className="w-4 h-4" /> {T.logout}
         </button>
