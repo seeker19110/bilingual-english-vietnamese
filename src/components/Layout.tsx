@@ -72,15 +72,20 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
         {/* Nút đổi giao diện: Sáng / Tối / Xanh đêm */}
         <ThemeToggle />
 
-        {/* User avatar (bấm vào để xem trang cá nhân) */}
+        {/* User avatar + tên đầy đủ (bấm vào để xem trang cá nhân) */}
         {user && (
           <button
             onClick={() => nav('/profile')}
             aria-label={T.profile}
             title={T.profile}
-            className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-xs font-bold text-white shadow-sm hover:opacity-85 transition shrink-0"
+            className="flex items-center gap-2 shrink-0 hover:opacity-85 transition min-w-0"
           >
-            {user.name[0]?.toUpperCase()}
+            <span className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0">
+              {user.name[0]?.toUpperCase()}
+            </span>
+            <span className="text-sm font-medium text-white truncate hidden sm:inline max-w-[10rem]">
+              {user.name}
+            </span>
           </button>
         )}
       </div>

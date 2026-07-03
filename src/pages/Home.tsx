@@ -155,11 +155,9 @@ export default function Home() {
   const MODES = getModes(dir, T)
   const isA = dir === 'A'
 
-  const firstName = user.name.split(' ').at(-1) ?? user.name
-
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout title={T.greeting(firstName)} back={false} />
+      <Layout title={T.greeting(user.name)} back={false} />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
         {/* ── Chọn chiều học + streak + giọng đọc (3 cột căn giữa) ──────────── */}
