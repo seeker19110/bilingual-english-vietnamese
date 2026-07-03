@@ -1183,7 +1183,13 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Thói quen hằng ngày',
         titleEn: 'Daily Routine',
         emoji: '🌅',
-        vocabCircleIds: ['cooking', 'fruits-veggies'],
+        vocabCircleIds: [
+          'cooking',
+          'fruits-veggies',
+          'hobbies-leisure',
+          'daily-chores',
+          'body-health-2',
+        ],
         grammar: [
           {
             id: 'a2-present-simple',
@@ -1351,7 +1357,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Kể chuyện quá khứ',
         titleEn: 'Talking about the Past',
         emoji: '⏪',
-        vocabCircleIds: ['transport', 'animals', 'festivals'],
+        vocabCircleIds: ['transport', 'animals', 'festivals', 'animals-extended'],
         grammar: [
           {
             id: 'a2-was-were',
@@ -1483,7 +1489,14 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Đang diễn ra & kế hoạch',
         titleEn: 'Now & Future Plans',
         emoji: '⏳',
-        vocabCircleIds: ['weather', 'clothing', 'travel'],
+        vocabCircleIds: [
+          'weather',
+          'clothing',
+          'travel',
+          'weather-extended',
+          'travel-extended',
+          'clothing-extended',
+        ],
         grammar: [
           {
             id: 'a2-present-cont',
@@ -1588,7 +1601,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Mô tả & so sánh',
         titleEn: 'Describing & Comparing',
         emoji: '⚖️',
-        vocabCircleIds: ['adjectives', 'personality'],
+        vocabCircleIds: ['adjectives', 'personality', 'personality-extended'],
         grammar: [
           {
             id: 'a2-comparative',
@@ -1765,7 +1778,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Số lượng & mua sắm',
         titleEn: 'Quantity & Shopping',
         emoji: '🛒',
-        vocabCircleIds: ['shopping', 'restaurant'],
+        vocabCircleIds: ['shopping', 'restaurant', 'shopping-extended', 'restaurant-extended'],
         grammar: [
           {
             id: 'a2-countable',
