@@ -4,6 +4,10 @@
 // Ghép phần NỀN TẢNG (src/data/curriculum.ts) với phần MỞ RỘNG tự động
 // (các từ còn lại trong dictionary.json) thành 1 lộ trình phẳng, có thứ tự.
 //
+// THỨ TỰ HỌC = THEO CẤP CEFR: các vòng nền tảng xếp theo đúng thứ tự
+// xuất hiện trong lộ trình A1→B2 (src/data/cefr.ts) — học hết từ vựng A1
+// mới sang A2… — rồi mới tới phần mở rộng từ từ điển.
+//
 //   - getLearningPath(): toàn bộ chuỗi từ theo thứ tự học.
 //   - getCircles():       chuỗi đó nhưng gom theo "vòng tròn" (chủ đề / cụm mở rộng).
 //   - getTodayBatch():    lấy 20 từ KẾ TIẾP chưa thuộc (mục tiêu mỗi ngày).
@@ -13,8 +17,10 @@
 
 import type { DictEntry } from '../types'
 import type { Circle } from '../data/curriculum'
+import type { CefrLevel } from '../data/cefr'
 import { loadDictionary } from '../data/dictionary/loader'
 import { loadFoundation } from '../data/curriculumLoader'
+import { loadCefr } from '../data/cefrLoader'
 
 // Mục tiêu 20 từ/ngày — khớp với tài liệu (CLAUDE.md), FAQ trong index.html và UI tab "Hôm nay".
 export const DAILY_GOAL = 20
@@ -28,6 +34,9 @@ export const DAILY_MAX = 100
 // gọi các hàm bên dưới (xem Learn.tsx / Dictionary.tsx).
 let ENTRIES: DictEntry[] = []
 let FOUNDATION: Circle[] = []
+// Thứ tự vòng từ vựng theo lộ trình CEFR (id vòng, đã khử trùng) + cấp của từng vòng.
+let CEFR_CIRCLE_ORDER: string[] = []
+let CIRCLE_LEVEL: Record<string, CefrLevel['id']> = {}
 
 // Promise nạp — cache lại để chỉ tải MỘT lần dù được gọi từ nhiều nơi.
 let _loadPromise: Promise<void> | null = null
@@ -35,14 +44,33 @@ let _loadPromise: Promise<void> | null = null
 // Gọi (await) một lần trước khi dùng getCircles/getLearningPath/getTodayBatch...
 export function loadCurriculum(): Promise<void> {
   if (!_loadPromise) {
-    _loadPromise = Promise.all([loadDictionary(), loadFoundation()]).then(
-      ([entries, foundation]) => {
+    _loadPromise = Promise.all([loadDictionary(), loadFoundation(), loadCefr()]).then(
+      ([entries, foundation, levels]) => {
         ENTRIES = entries
         FOUNDATION = foundation
+        // Ghi lại thứ tự vòng theo A1→B2 (1 vòng có thể được nhắc ở 2 cấp —
+        // giữ lần xuất hiện ĐẦU, tức cấp thấp nhất cần nó).
+        CEFR_CIRCLE_ORDER = []
+        CIRCLE_LEVEL = {}
+        for (const lv of levels) {
+          for (const u of lv.units) {
+            for (const id of u.vocabCircleIds) {
+              if (!(id in CIRCLE_LEVEL)) {
+                CIRCLE_LEVEL[id] = lv.id
+                CEFR_CIRCLE_ORDER.push(id)
+              }
+            }
+          }
+        }
       },
     )
   }
   return _loadPromise
+}
+
+// Cấp CEFR của 1 vòng từ vựng (null với vòng mở rộng "extra-*").
+export function getCefrLevelOfCircle(circleId: string): CefrLevel['id'] | null {
+  return CIRCLE_LEVEL[circleId] ?? null
 }
 
 // Đã nạp xong dữ liệu từ điển chưa (dùng để khởi tạo state "ready" ở UI).
@@ -59,6 +87,14 @@ let _circlesCache: Circle[] | null = null
 
 export function getCircles(): Circle[] {
   if (_circlesCache) return _circlesCache
+
+  // Xếp các vòng nền tảng THEO THỨ TỰ CEFR (A1→B2). Vòng nào không nằm trong
+  // lộ trình CEFR (phòng hờ dữ liệu lệch) giữ nguyên thứ tự gốc, xếp sau cùng.
+  const byId = new Map(FOUNDATION.map((c) => [c.id, c]))
+  const inCefr = CEFR_CIRCLE_ORDER.map((id) => byId.get(id)).filter((c): c is Circle => c != null)
+  const referenced = new Set(CEFR_CIRCLE_ORDER)
+  const rest0 = FOUNDATION.filter((c) => !referenced.has(c.id))
+  const orderedFoundation = [...inCefr, ...rest0]
 
   // Tập các từ đã có trong phần nền tảng → loại khỏi phần mở rộng để khỏi trùng
   const foundationKeys = new Set<string>()
@@ -82,7 +118,7 @@ export function getCircles(): Circle[] {
     })
   }
 
-  _circlesCache = [...FOUNDATION, ...extra]
+  _circlesCache = [...orderedFoundation, ...extra]
   return _circlesCache
 }
 
