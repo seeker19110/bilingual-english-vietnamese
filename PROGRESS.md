@@ -350,12 +350,71 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   trang cấp, bài ngữ pháp mới render đủ ví dụ có nghe/lỗi thường gặp/quiz, hội thoại mới
   phát đúng 2 giọng theo tên nhân vật; full E2E suite (68/68, gồm a11y 4 theme) xanh.
 
+## Đã xong (tăng từ vựng lộ trình CEFR lên ~1500 từ — 2026-07-03)
+
+- **Mục tiêu người dùng**: tăng tổng từ vựng lộ trình CEFR (A1→B2) từ 771 lên ~1500 từ,
+  cân bằng lại ưu tiên B1/B2 (2 cấp ít từ hơn A1/A2). Làm theo từng cấp, 1 PR/cấp.
+- **A1: 251→378 từ** (+8 vòng: daily-actions, house-rooms, basic-verbs-2, people-basic,
+  basic-descriptions, basic-places, basic-food-drink, family-extended). **A2: 222→382 từ**
+  (+10 vòng: hobbies-leisure, daily-chores, body-health-2, shopping-extended,
+  restaurant-extended, weather-extended, travel-extended, personality-extended,
+  clothing-extended, animals-extended). Gộp 1 PR, đã merge: **PR #186**.
+- **B1: 169→377 từ** (+13 vòng: workplace, money-finance, education-further,
+  technology-use, entertainment-media, sports-extended, emotions-extended,
+  environment-issues, city-life, opinions-extended, narrative-extra, relationships-b1,
+  problems-solutions). **PR #187** (gộp chung với 2 fix logic ở mục dưới).
+- **B2: 130→386 từ** (+16 vòng: business-extended, technology-advanced, medical-advanced,
+  social-issues, arts-culture-advanced, science-advanced, environment-advanced,
+  abstract-concepts, communication-advanced, law-justice, politics-government,
+  travel-advanced, food-culture-advanced, mental-health, education-advanced,
+  economy-global). Gộp vào **PR #187** (đẩy thêm commit sau khi vá 2 lỗi logic).
+- Mỗi vòng ~16 từ có câu ví dụ song ngữ, gắn vào `vocabCircleIds` của unit CEFR có sẵn theo
+  đúng chủ đề (không tạo unit/ngữ pháp mới). Rà không trùng khóa từ (`word`, không phân biệt
+  hoa/thường) bằng script kiểm tra riêng sau mỗi đợt.
+- **Hoàn tất mục tiêu**: tổng lộ trình CEFR 771→**1523 từ** (A1 378, A2 382, B1 377, B2 386).
+  Verify: build/typecheck/lint/format/test (105/105)/size-limit xanh; full E2E suite
+  (68/68, a11y 4 theme) xanh.
+
+## Đã xong (audit logic/đồng nhất + vá 2 lỗi — 2026-07-03)
+
+> Theo yêu cầu người dùng "audit lại tính đồng nhất, logic, lỗi của dự án" giữa lúc đang tăng
+> từ vựng CEFR. Chi tiết đầy đủ: `AUDIT.md` PHẦN A00.
+
+- **Lỗi khóa lại cấp CEFR khi tăng từ vựng** — `computeLockedMap` tính % mở khóa SỐNG trên
+  tổng từ vựng hiện tại; tăng từ vựng (PR #185-187) làm % người dùng đã đạt ngưỡng trước đó
+  tụt xuống → cấp sau bị khóa lại dù đang học dở. Vá bằng cơ chế **grandfather**: cột mới
+  `cefr_unlocked` (localStorage + Supabase, migration `0008`) ghi nhớ cấp đã từng đủ điều kiện
+  mở khóa — 1 khi đã mở thì không khóa lại nữa. Hàm mới `computeLockedMapPersisted`
+  (`src/lib/cefrProgress.ts`), gọi thay `computeLockedMap` ở `CefrLevelPage.tsx`/`RoadmapTab.tsx`
+  (hàm cũ giữ nguyên, vẫn dùng nội bộ + còn đủ test cũ). 3 test mới.
+- **Ranh giới "ngày" tính theo UTC thay vì giờ Việt Nam** — 9 chỗ dùng
+  `new Date().toISOString().slice(0, 10)` (`src/lib/{stats,storage,cloud,curriculum,
+dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "ngày mới" thực chất
+  là 7h sáng giờ VN thay vì nửa đêm — hoạt động 0h-7h sáng bị tính nhầm sang ngày hôm trước
+  (lượt dùng reset trễ, streak/Dashboard có thể hiện "đứt" sai). Thêm helper dùng chung
+  `vnDateStr()` (offset cố định +7h, Việt Nam không có DST) ở `src/lib/date.ts` (client) +
+  `api/_lib/date.ts` (server, không import chéo được do tsconfig tách `src`/`api`) — thay thế
+  cả 9 chỗ. 6 test mới (3 mỗi bản) + sửa 1 test cũ (`stats.test.ts`) dùng chung logic ngày mới.
+- **Đợt audit thứ 2 (theo yêu cầu người dùng rà sâu hơn)** — phát hiện thêm 1 lỗi cùng lớp
+  với F1 (PHẦN A0) nhưng ở nhánh STT: `api/_lib/openaiStt.ts` `transcribeAudio` coi HTTP 200
+  thiếu/sai kiểu trường `text` giống hệt im lặng thật (chuỗi rỗng hợp lệ) → không throw nên
+  `api/stt.ts` không hoàn lượt dù đây là body hỏng từ provider. Đã đối chiếu `callGemini`/
+  `googleTts.ts` (đã validate đúng, không lỗi) — chỉ STT còn thiếu. Sửa: throw khi
+  `typeof data.text !== 'string'`, giữ nguyên trả `''` khi im lặng thật. 5 test mới
+  (`openaiStt.test.ts`). Ghi nhận thêm 1 mục mức thấp CHƯA sửa (tùy chọn): nhánh Anthropic của
+  `api/ai.ts` không parse JSON để kiểm tra cấu trúc trước khi trả cho client (chỉ hoàn lượt khi
+  `!resp.ok`) — rủi ro thấp vì là API trả phí/ổn định, xem AUDIT.md PHẦN A00.
+- Verify: build/typecheck/lint/format/test (110/110, +14 tổng cả 2 đợt)/size-limit xanh; full
+  E2E suite (68/68, a11y 4 theme) xanh sau khi sửa.
+- ⚠️ Cần chạy migration `0008` trên production TRƯỚC khi deploy (xem "Cần làm tay").
+
 ## ⚠️ Cần làm tay (chưa xong)
 
-- **Chạy migration `0007_learning_progress_cefr.sql` trên Supabase production**
-  (Dashboard → SQL Editor) — **TRƯỚC khi deploy code mới lên VPS**. Nếu deploy code
-  trước, upsert của `progressSync.ts` lỗi "column does not exist" → đồng bộ tiến độ
-  (kể cả từ vựng/SRS) tạm ngưng tới khi chạy migration (kéo về vẫn chạy nhờ `select('*')`).
+- **Chạy migration `0007_learning_progress_cefr.sql` VÀ `0008_learning_progress_cefr_unlocked.sql`
+  trên Supabase production** (Dashboard → SQL Editor) — **TRƯỚC khi deploy code mới lên VPS**.
+  Nếu deploy code trước, upsert của `progressSync.ts` lỗi "column does not exist" → đồng bộ
+  tiến độ (kể cả từ vựng/SRS) tạm ngưng tới khi chạy migration (kéo về vẫn chạy nhờ `select('*')`).
+  0008 thêm cột `cefr_unlocked` (grandfather chống khóa lại cấp CEFR — xem AUDIT.md PHẦN A00).
 - ~~Đặt Cloudflare trước VPS~~ — ĐÃ XONG (xem "Đã xong" ở trên,
   kiểm chứng bằng log IP thật 2026-07-02).
 - _(Hiện không còn mục nào.)_ ~~Chạy migration `0005_lockdown_cost_columns.sql` +

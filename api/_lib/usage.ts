@@ -9,6 +9,7 @@
 // dùng hợp lệ — vì chặn nhầm tệ hơn là lỡ 1 lượt khi DB trục trặc.
 
 import { getSupabaseAdmin } from './supabaseAdmin'
+import { vnDateStr } from './date'
 
 export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt'
 
@@ -31,7 +32,7 @@ export function isUsageMode(v: unknown): v is UsageMode {
 }
 
 function today(): string {
-  return new Date().toISOString().slice(0, 10)
+  return vnDateStr()
 }
 
 function limitMessage(plan: 'free' | 'pro'): string {

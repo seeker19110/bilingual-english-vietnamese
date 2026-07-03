@@ -1960,7 +1960,15 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Kinh nghiệm & trải nghiệm',
         titleEn: 'Experiences',
         emoji: '🌍',
-        vocabCircleIds: ['sports', 'emotions', 'media'],
+        vocabCircleIds: [
+          'sports',
+          'emotions',
+          'media',
+          'sports-extended',
+          'emotions-extended',
+          'entertainment-media',
+          'relationships-b1',
+        ],
         grammar: [
           {
             id: 'b1-present-perfect',
@@ -2144,7 +2152,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Kế hoạch & dự đoán tương lai',
         titleEn: 'Future Plans & Predictions',
         emoji: '🔮',
-        vocabCircleIds: ['jobs'],
+        vocabCircleIds: ['jobs', 'workplace', 'money-finance'],
         grammar: [
           {
             id: 'b1-will-going-to',
@@ -2281,7 +2289,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Câu điều kiện',
         titleEn: 'Conditionals',
         emoji: '🔀',
-        vocabCircleIds: ['nature'],
+        vocabCircleIds: ['nature', 'environment-issues'],
         grammar: [
           {
             id: 'b1-cond-0',
@@ -2479,7 +2487,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Lời khuyên & bổn phận',
         titleEn: 'Advice & Obligation',
         emoji: '💡',
-        vocabCircleIds: ['city-places', 'opinions'],
+        vocabCircleIds: ['city-places', 'opinions', 'city-life', 'opinions-extended'],
         grammar: [
           {
             id: 'b1-should',
@@ -2597,7 +2605,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Mệnh đề & dạng động từ',
         titleEn: 'Clauses & Verb Forms',
         emoji: '🔗',
-        vocabCircleIds: ['school'],
+        vocabCircleIds: ['school', 'education-further', 'technology-use', 'problems-solutions'],
         grammar: [
           {
             id: 'b1-relative',
@@ -2774,7 +2782,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Thuật lại sự việc',
         titleEn: 'Narrating Past Events',
         emoji: '📖',
-        vocabCircleIds: ['news'],
+        vocabCircleIds: ['news', 'narrative-extra'],
         grammar: [
           {
             id: 'b1-past-continuous',
@@ -2955,7 +2963,12 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Giả định & tiếc nuối',
         titleEn: 'Hypotheticals & Regrets',
         emoji: '🎭',
-        vocabCircleIds: ['personality'],
+        vocabCircleIds: [
+          'personality',
+          'abstract-concepts',
+          'politics-government',
+          'education-advanced',
+        ],
         grammar: [
           {
             id: 'b2-cond-2',
@@ -3145,7 +3158,15 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Câu bị động',
         titleEn: 'The Passive Voice',
         emoji: '🔁',
-        vocabCircleIds: ['business', 'it', 'environment'],
+        vocabCircleIds: [
+          'business',
+          'it',
+          'environment',
+          'business-extended',
+          'environment-advanced',
+          'law-justice',
+          'economy-global',
+        ],
         grammar: [
           {
             id: 'b2-passive',
@@ -3271,7 +3292,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Câu tường thuật',
         titleEn: 'Reported Speech',
         emoji: '💬',
-        vocabCircleIds: ['social'],
+        vocabCircleIds: ['social', 'social-issues', 'communication-advanced'],
         grammar: [
           {
             id: 'b2-reported-statements',
@@ -3389,7 +3410,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Suy đoán & mệnh đề quan hệ',
         titleEn: 'Deduction & Relative Clauses',
         emoji: '🧩',
-        vocabCircleIds: ['medical'],
+        vocabCircleIds: ['medical', 'medical-advanced', 'mental-health'],
         grammar: [
           {
             id: 'b2-modals-deduction',
@@ -3521,7 +3542,14 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Diễn đạt tự nhiên',
         titleEn: 'Natural Expression',
         emoji: '🗣️',
-        vocabCircleIds: ['it', 'arts-culture'],
+        vocabCircleIds: [
+          'it',
+          'arts-culture',
+          'technology-advanced',
+          'arts-culture-advanced',
+          'travel-advanced',
+          'food-culture-advanced',
+        ],
         grammar: [
           {
             id: 'b2-phrasal',
@@ -3708,7 +3736,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Cấu trúc nâng cao',
         titleEn: 'Advanced Structures',
         emoji: '🎓',
-        vocabCircleIds: ['science-tech'],
+        vocabCircleIds: ['science-tech', 'science-advanced'],
         grammar: [
           {
             id: 'b2-mixed-conditional',

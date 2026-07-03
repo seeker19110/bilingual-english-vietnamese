@@ -5,8 +5,9 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 vi.mock('./supabase', () => ({ supabase: {} }))
 
 import { getActivity7Days, getWeekTotal } from './stats'
+import { vnDateStr } from './date'
 
-const today = () => new Date().toISOString().slice(0, 10)
+const today = vnDateStr
 const usageKey = (uid: string, date: string) => `et_usage_${uid}_${date}`
 
 describe('stats — hoạt động theo ngày', () => {

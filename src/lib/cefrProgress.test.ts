@@ -18,6 +18,8 @@ import {
   unitGrammarCounts,
   levelGrammarCounts,
   computeLockedMap,
+  computeLockedMapPersisted,
+  getUnlockedLevels,
   findNextStep,
 } from './cefrProgress'
 import type { CefrLevel, CefrUnit, GrammarLesson } from '../data/cefr'
@@ -156,6 +158,53 @@ describe('computeLockedMap — luật mở khóa 70% từ vựng cấp trước'
     const map = computeLockedMap([A1, A2], BY_ID, learned)
     expect(3 / 4).toBeGreaterThanOrEqual(UNLOCK_PCT)
     expect(map.get('A2')).toBe(false)
+  })
+})
+
+describe('computeLockedMapPersisted — grandfather: đã mở thì không khóa lại', () => {
+  it('mở khóa A2 và ghi nhớ lại khi đạt ngưỡng lần đầu', () => {
+    const learned = new Set(['apple', 'banana', 'cat'])
+    const map = computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned)
+    expect(map.get('A2')).toBe(false)
+    expect(getUnlockedLevels('u1').has('A2')).toBe(true)
+  })
+
+  it('KHÔNG khóa lại A2 dù tổng từ vựng A1 tăng lên sau này (thêm từ mới)', () => {
+    // Lần 1: học đủ để mở khóa A2 với A1 nhỏ (4 từ)
+    const learned = new Set(['apple', 'banana', 'cat'])
+    computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned)
+
+    // Lần 2: A1 được thêm nhiều từ mới (giả lập tăng từ vựng) → % tụt dưới 70%
+    const biggerA1: CefrLevel = {
+      ...A1,
+      units: [unit('u1', [], ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10'])],
+    }
+    const biggerById = {
+      ...BY_ID,
+      c5: circle('c5', ['x1', 'x2']),
+      c6: circle('c6', ['x3', 'x4']),
+      c7: circle('c7', ['x5', 'x6']),
+      c8: circle('c8', ['x7', 'x8']),
+      c9: circle('c9', ['x9', 'x10']),
+      c10: circle('c10', ['x11', 'x12']),
+    }
+    const liveMap = computeLockedMap([biggerA1, A2], biggerById, learned)
+    expect(liveMap.get('A2')).toBe(true) // % tụt dưới ngưỡng nếu tính sống
+
+    const persistedMap = computeLockedMapPersisted('u1', [biggerA1, A2], biggerById, learned)
+    expect(persistedMap.get('A2')).toBe(false) // vẫn mở nhờ grandfather
+  })
+
+  it('không ghi/đồng bộ thừa khi trạng thái không đổi giữa 2 lần gọi', () => {
+    const learned = new Set(['apple', 'banana', 'cat'])
+    computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned)
+    const afterFirst = [...JSON.parse(localStorage.getItem('et_cefr_unlocked_u1') ?? '[]')].sort()
+
+    const map = computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned)
+    const afterSecond = [...JSON.parse(localStorage.getItem('et_cefr_unlocked_u1') ?? '[]')].sort()
+
+    expect(map.get('A2')).toBe(false)
+    expect(afterSecond).toEqual(afterFirst) // lần gọi thứ 2 không đổi trạng thái đã lưu
   })
 })
 

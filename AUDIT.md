@@ -6,10 +6,45 @@
 
 ## Mục lục tổng
 
+- **[PHẦN A00 — Đợt rà logic/đồng nhất (2026-07-03, mới nhất)](#phần-a00--đợt-rà-logicđồng-nhất-2026-07-03)** — 2 phát hiện logic (khóa lại cấp CEFR do tăng từ vựng, ranh giới ngày tính theo UTC), đã vá toàn bộ.
 - **[PHẦN A0 — Đợt rà bổ sung (2026-07-02, mới nhất)](#phần-a0--đợt-rà-bổ-sung-2026-07-02)** — 6 phát hiện mới theo checklist §1.5, đã vá toàn bộ trong cùng PR.
 - **[PHẦN A — Audit source code v2 (2026-06-28)](#phần-a--audit-source-code-v2-2026-06-28)** — báo cáo audit đầy đủ nhất: bảo mật, ISO/IEC 25010, sổ phát hiện, yêu cầu kiểm thử, nợ kỹ thuật, lộ trình. **Đọc phần này trước.**
 - **[PHẦN B — Audit source code v1 (2026-06-20, lịch sử)](#phần-b--audit-source-code-v1-2026-06-20-lịch-sử)** — bản audit đầu tiên (bảo mật, mobile-first, đa thiết bị). Mọi phát hiện ở đây **đã RESOLVED**, đối chiếu tại PHẦN A §4.1. Giữ lại để tra cứu bằng chứng/snippet gốc.
 - **[PHẦN C — Audit bản dịch & đồng bộ từ vựng (2026-06-27)](#phần-c--audit-bản-dịch--đồng-bộ-từ-vựng-2026-06-27)** — chất lượng dịch Anh⇄Việt của từ điển + câu song ngữ, khác chủ đề (nội dung, không phải code) nhưng gộp chung cho gọn. Có 1 mục còn cần quyết định (§5 phần này).
+
+---
+
+## PHẦN A00 — Đợt rà logic/đồng nhất (2026-07-03)
+
+> Rà theo yêu cầu người dùng "audit lại tính đồng nhất, logic, lỗi của dự án", tập trung vào
+> phần code MỚI nhất (hệ thống lộ trình CEFR vừa cải tổ PR #180-185 + đợt tăng từ vựng
+> A1→B2 lên ~1500 từ đang làm cùng thời điểm — PR #186/#187). Build/Type/Lint/Test đều ✅
+> trước khi rà (105 test sau khi vá, +9 so với 96 trước đó).
+
+| ID     | Mức       | Phát hiện (bằng chứng)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Xử lý                                                                                                                                                                                                                                                           | Trạng thái  |
+| ------ | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **G1** | 🔴 High   | `src/lib/cefrProgress.ts` `computeLockedMap`: % "đủ điều kiện mở khóa cấp sau" tính SỐNG trên tổng từ vựng HIỆN TẠI của cấp trước (`levelVocabCounts`), không phải tổng tại thời điểm người dùng học. Tăng từ vựng (PR #185→#187, ~771→~1500 từ toàn lộ trình) khiến % của người dùng ĐÃ đạt ngưỡng 70% trước đó tụt xuống dưới ngưỡng → cấp sau **bị khóa lại** dù đang học dở. Không có cơ chế "đã từng mở khóa" nào tồn tại trước đó.                                                                                                       | Thêm grandfather: cột mới `cefr_unlocked` (localStorage + Supabase, migration `0008`) ghi nhớ cấp đã từng đủ điều kiện mở khóa — 1 khi đã mở thì không khóa lại nữa. Hàm mới `computeLockedMapPersisted` (giữ nguyên `computeLockedMap` cũ + test). 3 test mới. | ✅ RESOLVED |
+| **G2** | 🟡 Medium | Ranh giới "ngày" tính bằng `new Date().toISOString().slice(0, 10)` (giờ UTC) ở **9 chỗ** (`src/lib/{stats,storage,cloud,curriculum,dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) — không quy đổi giờ Việt Nam (UTC+7) ở đâu cả. Ranh giới ngày thật ra là **7h sáng giờ VN**, không phải nửa đêm: hoạt động lúc 0h–7h sáng bị tính vào ngày HÔM TRƯỚC → lượt dùng/ngày reset trễ, streak/biểu đồ Dashboard có thể hiện "đứt" dù người dùng học đều mỗi ngày (giờ VN). Lỗi có sẵn từ trước, không phải do đợt tăng từ vựng gây ra. | Thêm helper dùng chung `vnDateStr()` (offset cố định +7h, VN không có DST) ở `src/lib/date.ts` (client) + `api/_lib/date.ts` (server, không import chéo được do tsconfig tách riêng) — thay thế cả 9 chỗ. 6 test mới (3 mỗi bản).                               | ✅ RESOLVED |
+| **G3** | 🟡 Medium | `api/_lib/openaiStt.ts` `transcribeAudio`: `data.text?.trim() ?? ''` coi HTTP 200 **thiếu/sai kiểu trường `text`** giống hệt im lặng thật (chuỗi rỗng hợp lệ) — không throw nên `api/stt.ts` KHÔNG hoàn lượt (`refundUsage`) dù đây là body hỏng từ provider, không phải người dùng không nói gì. Cùng nguyên tắc với `parseGroqText` đã sửa ở `api/ai.ts` (F1, 2026-07-02) nhưng chưa từng áp dụng cho nhánh STT. Đã đối chiếu: `callGemini` (`geminiApi.ts`) và `googleTts.ts` đã validate đúng (throw khi thiếu field); chỉ STT còn thiếu.  | Throw khi `typeof data.text !== 'string'` (giữ nguyên hành vi trả `''` khi im lặng thật — `text` là chuỗi rỗng hợp lệ, không throw). 5 test mới (`openaiStt.test.ts`).                                                                                          | ✅ RESOLVED |
+
+**Không phát hiện vấn đề mới** ở: RLS/bảo mật (đã rà rất kỹ ở PHẦN A0 2026-07-02, không có
+thay đổi liên quan), theme/màu sắc các trang CEFR mới (`CefrLevelPage`, `StudyTabs`,
+`CefrLessonViews`) và `Profile`/`EvaluationResultView` (đúng pattern `zinc-400` + `theme-light:`
+đã chuẩn hóa, gate a11y vẫn 0 critical/serious ở cả 4 theme), `console.log`/`TODO`/`FIXME` sót
+lại (không có), cú pháp các đợt từ vựng A1/A2/B1/B2 mới thêm (build/typecheck xanh), SRS
+(`srs.ts` dùng `Date.now()` — mốc thời gian tuyệt đối, không có lỗi ranh giới ngày như G2),
+nút "Kết thúc & chấm điểm" (đã có state `evaluating` chặn double-submit).
+
+**Chưa sửa — mức thấp, để tùy chọn**: nhánh Anthropic của `api/ai.ts` chỉ hoàn lượt khi
+`!resp.ok` (HTTP lỗi) — nếu Anthropic trả 200 nhưng body không parse được thành tin nhắn hợp lệ
+(rất hiếm, API trả phí/ổn định), server KHÔNG parse để kiểm tra cấu trúc (chỉ proxy `resp.text()`
+thẳng cho client) nên sẽ không hoàn lượt trong trường hợp cực hiếm đó. Khác G3 ở chỗ đây là
+nhánh trả phí/tin cậy cao, sửa sẽ thêm độ trễ parse JSON server-side cho lợi ích nhỏ — để tùy
+chọn sau nếu cần.
+
+⚠️ **Cần làm tay**: chạy migration `0008_learning_progress_cefr_unlocked.sql` trên Supabase
+production TRƯỚC khi deploy (xem "Cần làm tay" trong PROGRESS.md) — cùng thứ tự như migration
+0007 trước đó.
 
 ---
 

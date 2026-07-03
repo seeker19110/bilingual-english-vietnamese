@@ -9,6 +9,7 @@
 
 import { loadDictionary } from '../data/dictionary/loader'
 import type { DictEntry } from '../types'
+import { vnDateStr } from './date'
 
 const MAX_RESULTS = 200
 
@@ -76,7 +77,7 @@ export async function searchDictionary(
 export async function fetchWordOfDay(): Promise<{ total: number; entry: DictEntry | null }> {
   const entries = await loadDictionary()
   if (entries.length === 0) return { total: 0, entry: null }
-  const today = new Date().toISOString().slice(0, 10)
+  const today = vnDateStr()
   const entry = entries[seedFromDate(today) % entries.length] ?? null
   return { total: entries.length, entry }
 }

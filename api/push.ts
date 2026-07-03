@@ -9,6 +9,7 @@ import { z } from 'zod'
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
 import { getCorsHeaders, SECURITY_HEADERS, validateAuth } from './_lib/security'
 import { validateBody } from './_lib/validation'
+import { vnDateStr } from './_lib/date'
 
 // Chỉ validate phần `subscription` (bắt buộc + đúng kiểu dữ liệu) — action/remindHour/hour/secret
 // giữ nguyên cách kiểm tra tay hiện có (vốn đã an toàn: có typeof guard trước khi dùng).
@@ -33,7 +34,7 @@ if (VAPID_PUBLIC && VAPID_PRIVATE) {
 const DEFAULT_REMIND_UTC_HOUR = 13
 
 function todayStr(): string {
-  return new Date().toISOString().slice(0, 10)
+  return vnDateStr()
 }
 
 // Gửi thông báo "nhắc học" cho các subscription muốn được nhắc vào GIỜ này (UTC),

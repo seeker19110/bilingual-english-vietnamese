@@ -117,6 +117,12 @@ alter table public.learning_progress
 alter table public.learning_progress
   add column if not exists cefr_dialogues jsonb not null default '[]';
 
+-- Cột thêm sau (migration 0008): các cấp CEFR ĐÃ TỪNG mở khóa (grandfather) — chặn
+-- việc tăng từ vựng sau này (PR #185-187) làm % cấp trước tụt dưới ngưỡng và khóa
+-- lại cấp người dùng đang học dở (xem lib/cefrProgress.ts computeLockedMapPersisted).
+alter table public.learning_progress
+  add column if not exists cefr_unlocked jsonb not null default '[]';
+
 -- ── 7. Bật Row Level Security cho tất cả bảng ─────────────────────────
 alter table public.profiles            enable row level security;
 alter table public.chat_sessions       enable row level security;
