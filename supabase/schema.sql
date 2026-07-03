@@ -109,6 +109,14 @@ create table if not exists public.learning_progress (
   updated_at timestamptz not null default now()
 );
 
+-- Cột thêm sau (migration 0007): tiến độ lộ trình CEFR — bài ngữ pháp đã học xong
+-- + hội thoại đã xem ("<id unit/vòng>:<titleEn>"). Đặt ngoài create table để DB cũ
+-- (đã có bảng) chạy lại schema.sql vẫn nhận được cột mới.
+alter table public.learning_progress
+  add column if not exists cefr_grammar jsonb not null default '[]';
+alter table public.learning_progress
+  add column if not exists cefr_dialogues jsonb not null default '[]';
+
 -- ── 7. Bật Row Level Security cho tất cả bảng ─────────────────────────
 alter table public.profiles            enable row level security;
 alter table public.chat_sessions       enable row level security;

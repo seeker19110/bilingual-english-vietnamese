@@ -3,15 +3,20 @@
 // Trước đây từ đã thuộc (et_learned_*), từ khó (et_hard_*) và lịch ôn SRS (srs_*)
 // CHỈ nằm trong localStorage → đổi điện thoại/xoá cache là mất sạch, mất động lực.
 // Module này đẩy/kéo các dữ liệu đó qua bảng `learning_progress` (RLS theo user).
+// Từ migration 0007 đồng bộ thêm tiến độ lộ trình CEFR: bài ngữ pháp đã học xong
+// (et_cefr_grammar_*) + hội thoại đã xem (et_cefr_dialogue_*) — xem lib/cefrProgress.ts.
 //
 // localStorage vẫn là bộ đệm đọc nhanh + chạy offline. Khi kéo về, ta HỢP NHẤT
-// (không ghi đè mất dữ liệu): learned/hard lấy hợp (union), SRS giữ thẻ tiến bộ hơn.
+// (không ghi đè mất dữ liệu): learned/hard/cefr_* lấy hợp (union), SRS giữ thẻ tiến bộ hơn.
 
 import { supabase } from './supabase'
 
 const LEARNED = (uid: string) => `et_learned_${uid}`
 const HARD = (uid: string) => `et_hard_${uid}`
 const SRS = (uid: string) => `srs_${uid}`
+// PHẢI khớp key trong lib/cefrProgress.ts (GRAMMAR_KEY/DIALOGUE_KEY).
+const CEFR_GRAMMAR = (uid: string) => `et_cefr_grammar_${uid}`
+const CEFR_DIALOGUE = (uid: string) => `et_cefr_dialogue_${uid}`
 
 // Cấu trúc 1 thẻ SRS (khớp src/lib/srs.ts) — chỉ cần để merge theo số lần ôn (reps).
 interface SRSLike {
@@ -52,6 +57,8 @@ export function pushProgress(userId: string): void {
         learned: readArr(LEARNED(userId)),
         hard: readArr(HARD(userId)),
         srs: readObj(SRS(userId)),
+        cefr_grammar: readArr(CEFR_GRAMMAR(userId)),
+        cefr_dialogues: readArr(CEFR_DIALOGUE(userId)),
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id' },
@@ -65,18 +72,34 @@ export function pushProgress(userId: string): void {
 // hợp nhất lên (để mọi máy hội tụ). Lỗi mạng bị nuốt — vẫn dùng bản local.
 export async function pullProgress(userId: string): Promise<void> {
   if (!userId) return
+  // select('*') thay vì liệt kê cột: nếu DB CHƯA chạy migration 0007 (thiếu 2 cột
+  // cefr_*) thì kéo về vẫn chạy được các phần cũ, không gãy cả pull.
   const { data, error } = await supabase
     .from('learning_progress')
-    .select('learned, hard, srs')
+    .select('*')
     .eq('user_id', userId)
     .maybeSingle()
   if (error || !data) return
 
-  const cloud = data as { learned?: string[]; hard?: string[]; srs?: Record<string, SRSLike> }
+  const cloud = data as {
+    learned?: string[]
+    hard?: string[]
+    srs?: Record<string, SRSLike>
+    cefr_grammar?: string[]
+    cefr_dialogues?: string[]
+  }
 
-  // learned & hard: dữ liệu chỉ tăng dần → lấy hợp của local và cloud
+  // learned/hard/cefr_*: dữ liệu chỉ tăng dần → lấy hợp của local và cloud
   const learned = new Set<string>([...readArr(LEARNED(userId)), ...(cloud.learned ?? [])])
   const hard = new Set<string>([...readArr(HARD(userId)), ...(cloud.hard ?? [])])
+  const cefrGrammar = new Set<string>([
+    ...readArr(CEFR_GRAMMAR(userId)),
+    ...(cloud.cefr_grammar ?? []),
+  ])
+  const cefrDialogues = new Set<string>([
+    ...readArr(CEFR_DIALOGUE(userId)),
+    ...(cloud.cefr_dialogues ?? []),
+  ])
 
   // SRS: merge theo từ-khoá, giữ thẻ có nhiều lần ôn hơn (tiến bộ hơn)
   const merged: Record<string, SRSLike> = { ...(cloud.srs ?? {}) }
@@ -89,6 +112,8 @@ export async function pullProgress(userId: string): Promise<void> {
     localStorage.setItem(LEARNED(userId), JSON.stringify([...learned]))
     localStorage.setItem(HARD(userId), JSON.stringify([...hard]))
     localStorage.setItem(SRS(userId), JSON.stringify(merged))
+    localStorage.setItem(CEFR_GRAMMAR(userId), JSON.stringify([...cefrGrammar]))
+    localStorage.setItem(CEFR_DIALOGUE(userId), JSON.stringify([...cefrDialogues]))
   } catch {
     /* hết dung lượng — bỏ qua */
   }

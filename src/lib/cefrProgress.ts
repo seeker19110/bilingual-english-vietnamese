@@ -9,12 +9,14 @@
 //   - Luật mở khóa cấp (A1 luôn mở; cấp sau cần ≥70% từ vựng cấp trước).
 //   - Tìm "mục học tiếp theo" (vòng từ vựng / bài ngữ pháp đầu tiên chưa xong).
 //
-// Dữ liệu lưu localStorage theo từng user (giống vocab.ts). Chưa đồng bộ
-// Supabase — cần thêm cột vào bảng learning_progress (ghi ở PROGRESS.md).
+// Dữ liệu lưu localStorage theo từng user (giống vocab.ts) và ĐỒNG BỘ lên
+// Supabase qua bảng learning_progress — cột cefr_grammar / cefr_dialogues
+// (migration 0007, xem lib/progressSync.ts).
 // ──────────────────────────────────────────────────────────────────────
 
 import type { CefrLevel, CefrUnit } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
+import { pushProgress } from './progressSync'
 
 // Ngưỡng mở khóa cấp tiếp theo: thuộc ≥70% từ vựng của cấp trước.
 export const UNLOCK_PCT = 0.7
@@ -46,12 +48,14 @@ export function markGrammarDone(uid: string, lessonId: string) {
   const set = getDoneGrammar(uid)
   set.add(lessonId)
   writeSet(GRAMMAR_KEY(uid), set)
+  pushProgress(uid) // đồng bộ lên Supabase
 }
 
 export function unmarkGrammarDone(uid: string, lessonId: string) {
   const set = getDoneGrammar(uid)
   set.delete(lessonId)
   writeSet(GRAMMAR_KEY(uid), set)
+  pushProgress(uid) // đồng bộ lên Supabase
 }
 
 export function isGrammarDone(uid: string, lessonId: string): boolean {
@@ -68,8 +72,11 @@ export function getViewedDialogues(uid: string): Set<string> {
 
 export function markDialogueViewed(uid: string, ownerId: string, titleEn: string) {
   const set = getViewedDialogues(uid)
-  set.add(dialogueKey(ownerId, titleEn))
+  const key = dialogueKey(ownerId, titleEn)
+  if (set.has(key)) return // đã xem rồi — khỏi ghi lại + khỏi đẩy mạng thừa
+  set.add(key)
   writeSet(DIALOGUE_KEY(uid), set)
+  pushProgress(uid) // đồng bộ lên Supabase
 }
 
 // ── Đếm tiến độ ─────────────────────────────────────────────────────────
