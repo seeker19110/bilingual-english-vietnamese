@@ -120,13 +120,13 @@ Dự án bạn đã có i18n → **đừng thay nếu đang chạy tốt.** Đá
 
 ## PHẦN C — Bản đồ "dùng ngay vs cần thay" theo stack
 
-| Bạn đang dùng                                              | Lớp 1 (quy trình)                         | Lớp 2 (file cấu hình)                                                                            |
-| ---------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **Next.js + Tailwind + Supabase** (trùng stack tham chiếu) | Dùng ngay                                 | Áp thẳng gần hết; chỉ chỉnh tên biến/route                                                       |
-| **Next.js nhưng CSDL/CSS khác**                            | Dùng ngay                                 | ESLint/Playwright/theme dùng được; thay phần Supabase/Tailwind                                   |
-| **React SPA (Vite/CRA)**                                   | Dùng ngay                                 | ESLint/Prettier/Vitest/Playwright/theme tokens dùng được; bỏ phần Next (app/*, next-intl plugin) |
-| **Vue/Svelte/khác**                                        | Dùng ngay                                 | Lấy _ý tưởng_ (lint/format/hook/CI/budget/a11y) + thay công cụ tương đương của hệ đó             |
-| **Không phải web**                                         | Dùng phần lớn (cổng, DoR/DoD, ADR, logic) | Bỏ phần web (Lighthouse/theme/PWA)                                                               |
+| Bạn đang dùng                                              | Lớp 1 (quy trình)                         | Lớp 2 (file cấu hình)                                                                             |
+| ---------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Next.js + Tailwind + Supabase** (trùng stack tham chiếu) | Dùng ngay                                 | Áp thẳng gần hết; chỉ chỉnh tên biến/route                                                        |
+| **Next.js nhưng CSDL/CSS khác**                            | Dùng ngay                                 | ESLint/Playwright/theme dùng được; thay phần Supabase/Tailwind                                    |
+| **React SPA (Vite/CRA)**                                   | Dùng ngay                                 | ESLint/Prettier/Vitest/Playwright/theme tokens dùng được; bỏ phần Next (app/\*, next-intl plugin) |
+| **Vue/Svelte/khác**                                        | Dùng ngay                                 | Lấy _ý tưởng_ (lint/format/hook/CI/budget/a11y) + thay công cụ tương đương của hệ đó              |
+| **Không phải web**                                         | Dùng phần lớn (cổng, DoR/DoD, ADR, logic) | Bỏ phần web (Lighthouse/theme/PWA)                                                                |
 
 > Điểm mấu chốt: **giá trị lớn nhất của khung là Lớp 1 (kỷ luật + cổng + chống lỗi logic) — áp được ngay
 > cho dự án của bạn dù dùng công nghệ gì.** Lớp 2 là tiện ích đi kèm cho stack tham chiếu.

@@ -618,7 +618,7 @@ npm run build       # phải dựng được
 2. **T1/P0** — unit test cho `api/_lib/usage.ts`, `security.ts`, `fetchTimeout.ts` (khoá H1, H2, H10).
 3. **T1/P1** — unit test cho `srs.ts`, `pronounceScore.ts` (logic thuần, ROI cao).
 
-**Sprint kế tiếp:** 4. Integration test `api/ai.ts` (TC-AI-*) + component test Writing/Dictionary/Chat (khoá H5, H6, H7). 5. Bật `--coverage`, đặt baseline rồi ngưỡng 70% cho `lib/**` & `api/_lib/**`. 6. **M2** — guardrail system prompt phía server (kèm TC-AI-05).
+**Sprint kế tiếp:** 4. Integration test `api/ai.ts` (TC-AI-\*) + component test Writing/Dictionary/Chat (khoá H5, H6, H7). 5. Bật `--coverage`, đặt baseline rồi ngưỡng 70% cho `lib/**` & `api/_lib/**`. 6. **M2** — guardrail system prompt phía server (kèm TC-AI-05).
 
 **Backlog (PR riêng, đã có test làm lưới an toàn):** 7. **L1** — tách `Learn.tsx`/`RoadmapTab.tsx`/`Lessons.tsx`. 8. **M1** — sync `direction` lên `profiles` (cần migration). 9. **M6/L3/L7** — Redis rate limit, rotate key TTS, metrics/alerting.
 
@@ -649,7 +649,7 @@ npm run build               # ✅ PASS (manifest + tsc + vite build, nén Gzip/B
 
 **Cấu trúc kiểm thử hiện có (sau lượt 3 — 46 ca / 7 file):**
 
-- `vitest.config.ts` (happy-dom, include `src/**/*.test.{ts,tsx}` **+ `api/**/*.test.ts`**)
+- `vitest.config.ts` (happy-dom, include `src/**/*.test.{ts,tsx}` **+ `api/**/\*.test.ts`\*\*)
 - `vitest.setup.ts` (mock `fetch('/data/...')` → đọc `public/`)
 - `src/lib/curriculum.test.ts` (10 ca)
 - `src/lib/pronounceScore.test.ts` (8 ca) — chấm phát âm
