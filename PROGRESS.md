@@ -257,6 +257,15 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   cách với màn kết quả Writing). Kết quả CHỈ hiện tạm trong phiên, KHÔNG lưu Supabase → không cần
   đổi schema DB; tính 1 lượt dùng theo mode sẵn có (`chat`/`speaking`), không thêm cột giới hạn
   riêng. Đã merge: **PR #170**.
+- **feat(profile): trang cá nhân, liên kết vào Tiến độ.** Trang mới `/profile`
+  (`src/pages/Profile.tsx`, lazy-loaded + `RequireAuth`): avatar, tên, email, huy hiệu gói
+  (Free/Pro), streak, số từ đã học, 2 nút điều hướng nhanh sang **Tiến độ** (`/progress`) +
+  **Lịch sử** (`/history`), và nút đăng xuất. Avatar ở thanh header (`Layout.tsx`) trước đây chỉ
+  hiển thị tĩnh — nay bấm vào mở trang này. Thêm route + key i18n `profile` (vi/en). Đã thêm
+  `/profile` vào gate a11y (`AUTHED_ROUTES` trong `e2e/a11y.spec.ts`) — quét thấy 1 lỗi
+  `color-contrast (serious)` ở 2 theme sáng (Blue sky/Pink) do nút Đăng xuất thiếu biến thể
+  `theme-light:text-red-700` (quên áp quy ước màu đỏ sẵn có ở Writing/Chat/Speaking) → sửa ngay,
+  gate a11y nay **63 test**, vẫn 0 critical/serious. Đã merge: **PR #176**.
 
 ## ⚠️ Cần làm tay (chưa xong)
 
@@ -301,11 +310,11 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
 
 ## Nợ kỹ thuật (chỗ "làm tạm" cần quay lại)
 
-- **a11y**: gate nay **59 test** — login + Trang chủ (chiều A) ×4 theme + Trang chủ chiều B ×2
-  theme sáng + menu giao diện đã mở ×4 theme + 9 trang × 4 theme (/progress, /dictionary,
-  /lessons, /history, /phrases, /learning-path, /chat, /writing, /speaking) + **màn KẾT QUẢ
-  AI (Chat/Writing/Speaking) × 4 theme** (mock `/api/claude`) — 0 critical, 0 serious ở MỌI
-  theme, gồm cả trạng thái sau tương tác có/không cần backend. Nợ a11y đã đóng.
+- **a11y**: gate nay **63 test** — login + Trang chủ (chiều A) ×4 theme + Trang chủ chiều B ×2
+  theme sáng + menu giao diện đã mở ×4 theme + 10 trang × 4 theme (/progress, /dictionary,
+  /lessons, /history, /phrases, /learning-path, /chat, /writing, /speaking, /profile) + **màn
+  KẾT QUẢ AI (Chat/Writing/Speaking) × 4 theme** (mock `/api/claude`) — 0 critical, 0 serious ở
+  MỌI theme, gồm cả trạng thái sau tương tác có/không cần backend. Nợ a11y đã đóng.
 - ~~E2E (`e2e/`) chưa nằm trong `npm run typecheck`~~ ĐÃ XONG: thêm `tsconfig.e2e.json` +
   script `typecheck:e2e`, gộp vào `npm run typecheck` (CI tự phủ, không cần đổi workflow).
 - ~~Trang Login dùng text tiếng Việt hard-code (chưa qua i18n) — chưa song ngữ.~~ ĐÃ XONG:

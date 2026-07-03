@@ -110,6 +110,7 @@ const AUTHED_ROUTES = [
   '/chat',
   '/writing',
   '/speaking',
+  '/profile',
 ]
 for (const route of AUTHED_ROUTES) {
   for (const theme of THEMES) {
