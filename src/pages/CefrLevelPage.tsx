@@ -68,7 +68,7 @@ import {
   circleDoneCount,
   levelVocabCounts,
   levelGrammarCounts,
-  computeLockedMap,
+  computeLockedMapPersisted,
   findNextStep,
 } from '../lib/cefrProgress'
 
@@ -127,8 +127,8 @@ export default function CefrLevelPage() {
   const viewedDialogues = useMemo(() => getViewedDialogues(uid), [uid, refresh])
 
   const lockedMap = useMemo(
-    () => computeLockedMap(levels, circleById, learned),
-    [levels, circleById, learned],
+    () => computeLockedMapPersisted(uid, levels, circleById, learned),
+    [uid, levels, circleById, learned],
   )
 
   // Số thứ tự "Bài N" liên tục trong cả cấp (ổn định dù có ẩn bài đã xong).

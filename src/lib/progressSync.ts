@@ -14,9 +14,10 @@ import { supabase } from './supabase'
 const LEARNED = (uid: string) => `et_learned_${uid}`
 const HARD = (uid: string) => `et_hard_${uid}`
 const SRS = (uid: string) => `srs_${uid}`
-// PHẢI khớp key trong lib/cefrProgress.ts (GRAMMAR_KEY/DIALOGUE_KEY).
+// PHẢI khớp key trong lib/cefrProgress.ts (GRAMMAR_KEY/DIALOGUE_KEY/UNLOCKED_KEY).
 const CEFR_GRAMMAR = (uid: string) => `et_cefr_grammar_${uid}`
 const CEFR_DIALOGUE = (uid: string) => `et_cefr_dialogue_${uid}`
+const CEFR_UNLOCKED = (uid: string) => `et_cefr_unlocked_${uid}`
 
 // Cấu trúc 1 thẻ SRS (khớp src/lib/srs.ts) — chỉ cần để merge theo số lần ôn (reps).
 interface SRSLike {
@@ -59,6 +60,7 @@ export function pushProgress(userId: string): void {
         srs: readObj(SRS(userId)),
         cefr_grammar: readArr(CEFR_GRAMMAR(userId)),
         cefr_dialogues: readArr(CEFR_DIALOGUE(userId)),
+        cefr_unlocked: readArr(CEFR_UNLOCKED(userId)),
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id' },
@@ -87,6 +89,7 @@ export async function pullProgress(userId: string): Promise<void> {
     srs?: Record<string, SRSLike>
     cefr_grammar?: string[]
     cefr_dialogues?: string[]
+    cefr_unlocked?: string[]
   }
 
   // learned/hard/cefr_*: dữ liệu chỉ tăng dần → lấy hợp của local và cloud
@@ -99,6 +102,10 @@ export async function pullProgress(userId: string): Promise<void> {
   const cefrDialogues = new Set<string>([
     ...readArr(CEFR_DIALOGUE(userId)),
     ...(cloud.cefr_dialogues ?? []),
+  ])
+  const cefrUnlocked = new Set<string>([
+    ...readArr(CEFR_UNLOCKED(userId)),
+    ...(cloud.cefr_unlocked ?? []),
   ])
 
   // SRS: merge theo từ-khoá, giữ thẻ có nhiều lần ôn hơn (tiến bộ hơn)
@@ -114,6 +121,7 @@ export async function pullProgress(userId: string): Promise<void> {
     localStorage.setItem(SRS(userId), JSON.stringify(merged))
     localStorage.setItem(CEFR_GRAMMAR(userId), JSON.stringify([...cefrGrammar]))
     localStorage.setItem(CEFR_DIALOGUE(userId), JSON.stringify([...cefrDialogues]))
+    localStorage.setItem(CEFR_UNLOCKED(userId), JSON.stringify([...cefrUnlocked]))
   } catch {
     /* hết dung lượng — bỏ qua */
   }

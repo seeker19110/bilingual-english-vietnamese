@@ -20,6 +20,7 @@ import type { Circle } from '../data/curriculum'
 import type { CefrLevel } from '../data/cefr'
 import { loadDictionary } from '../data/dictionary/loader'
 import { loadFoundation } from '../data/curriculumLoader'
+import { vnDateStr } from './date'
 import { loadCefr } from '../data/cefrLoader'
 
 // Mục tiêu 20 từ/ngày — khớp với tài liệu (CLAUDE.md), FAQ trong index.html và UI tab "Hôm nay".
@@ -208,7 +209,7 @@ export function getPathProgress(learned: Set<string>): { done: number; total: nu
 
 // ── Bộ đếm "học trong ngày" (mục tiêu 20/ngày) ────────────────────────
 const DAILY_KEY = (uid: string) => `et_learn_daily_${uid}`
-const todayStr = () => new Date().toISOString().slice(0, 10)
+const todayStr = vnDateStr
 
 export function getDailyLearned(uid: string): number {
   try {

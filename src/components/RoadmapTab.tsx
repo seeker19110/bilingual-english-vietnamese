@@ -19,7 +19,7 @@ import { loadFoundation } from '../data/curriculumLoader'
 import { getLearnedWords } from '../lib/vocab'
 import {
   getDoneGrammar,
-  computeLockedMap,
+  computeLockedMapPersisted,
   levelVocabCounts,
   levelGrammarCounts,
 } from '../lib/cefrProgress'
@@ -48,8 +48,8 @@ export default function RoadmapTab({ uid, isA }: { uid: string; isA: boolean }) 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const doneGrammar = useMemo(() => getDoneGrammar(uid), [uid, ready])
   const lockedMap = useMemo(
-    () => computeLockedMap(levels, circleById, learned),
-    [levels, circleById, learned],
+    () => computeLockedMapPersisted(uid, levels, circleById, learned),
+    [uid, levels, circleById, learned],
   )
 
   if (!ready) {

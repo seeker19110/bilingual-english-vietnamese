@@ -11,6 +11,7 @@
 // Chạy trên Node (Express/VPS) vì cần đọc file từ điển — KHÔNG dùng Edge runtime.
 
 import { getAllEntries, type DictEntry } from './_lib/dictionaryData'
+import { vnDateStr } from './_lib/date'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -61,7 +62,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   // ── Từ vựng hôm nay: 1 từ cố định theo ngày ────────────────────────────────
   if (mode === 'wordOfDay') {
-    const today = new Date().toISOString().slice(0, 10)
+    const today = vnDateStr()
     const entry = entries[seedFromDate(today) % entries.length] ?? null
     return jsonResponse({ total: entries.length, entry }, 200, allHeaders)
   }

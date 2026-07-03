@@ -8,6 +8,7 @@ import type {
 } from '../types'
 // Mỗi lần lưu xuống localStorage, ta cũng đẩy bản ghi lên Supabase (bắn rồi quên)
 import { pushChatSession, pushWritingSub, pushSpeakingSession, pushLearnDay } from './cloud'
+import { vnDateStr } from './date'
 
 // ─── Keys ────────────────────────────────────────────────────────────────────
 const K = {
@@ -130,7 +131,7 @@ export function saveSpeakingSession(session: SpeakingSession) {
 
 // ─── Usage ────────────────────────────────────────────────────────────────────
 function todayStr() {
-  return new Date().toISOString().slice(0, 10)
+  return vnDateStr()
 }
 
 export function getUsage(userId: string): DailyUsage {
@@ -208,7 +209,7 @@ export function getStreak(userId: string): number {
   for (let i = 0; i < STREAK_MAX_DAYS; i++) {
     const d = new Date(today)
     d.setDate(d.getDate() - i)
-    const dateStr = d.toISOString().slice(0, 10)
+    const dateStr = vnDateStr(d)
     const usage = get<DailyUsage>(K.usage(userId, dateStr))
     if (hasActivityOn(usage)) {
       streak++

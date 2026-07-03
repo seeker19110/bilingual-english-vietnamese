@@ -9,9 +9,10 @@ import type { CefrLevel } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
 import { getWritingSubs } from './storage'
 import { parseJson } from './ai'
+import { vnDateStr } from './date'
 
 const DAY_MS = 86_400_000
-const dayStr = (d: Date) => d.toISOString().slice(0, 10)
+const dayStr = vnDateStr
 
 // Đọc lượt dùng của 1 ngày bất kỳ — DÙNG CHUNG KEY với storage.ts (`et_usage_<uid>_<date>`).
 function readUsage(uid: string, date: string): DailyUsage | null {

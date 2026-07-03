@@ -10,6 +10,7 @@
 
 import { supabase } from './supabase'
 import type { ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Level } from '../types'
+import { vnDateStr } from './date'
 
 // Khóa localStorage — PHẢI khớp với storage.ts để dùng chung bộ nhớ đệm
 const K = {
@@ -28,7 +29,7 @@ function setLocal<T>(key: string, val: T) {
 }
 
 function todayStr() {
-  return new Date().toISOString().slice(0, 10)
+  return vnDateStr()
 }
 
 // Ghi log lỗi đồng bộ nhẹ nhàng — KHÔNG làm vỡ giao diện (vẫn còn bản localStorage)

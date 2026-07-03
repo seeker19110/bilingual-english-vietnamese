@@ -161,6 +161,43 @@ export function computeLockedMap(
   return map
 }
 
+// ── Grandfather: cấp đã từng mở khóa thì không bao giờ khóa lại ─────────
+// %` ở computeLockedMap tính SỐNG trên tổng từ vựng HIỆN TẠI của cấp trước — khi
+// thêm từ vựng mới (vd PR #185-187), tổng đó tăng lên, khiến % của người dùng ĐÃ
+// từng đạt ngưỡng tụt xuống dưới UNLOCK_PCT và bị khóa lại dù đang học dở cấp sau.
+// Ghi nhớ lại các cấp đã từng mở khóa (localStorage + Supabase, đồng bộ đổi máy)
+// để chặn hồi tố việc khóa lại này.
+const UNLOCKED_KEY = (uid: string) => `et_cefr_unlocked_${uid}`
+
+export function getUnlockedLevels(uid: string): Set<string> {
+  return readSet(UNLOCKED_KEY(uid))
+}
+
+export function computeLockedMapPersisted(
+  uid: string,
+  levels: CefrLevel[],
+  byId: Record<string, Circle>,
+  learned: Set<string>,
+): Map<CefrLevel['id'], boolean> {
+  const everUnlocked = getUnlockedLevels(uid)
+  const liveMap = computeLockedMap(levels, byId, learned)
+  const result = new Map<CefrLevel['id'], boolean>()
+  let changed = false
+  for (const l of levels) {
+    const liveLocked = liveMap.get(l.id) ?? false
+    if (!liveLocked && !everUnlocked.has(l.id)) {
+      everUnlocked.add(l.id)
+      changed = true
+    }
+    result.set(l.id, liveLocked && !everUnlocked.has(l.id))
+  }
+  if (uid && changed) {
+    writeSet(UNLOCKED_KEY(uid), everUnlocked)
+    pushProgress(uid) // đồng bộ lên Supabase
+  }
+  return result
+}
+
 // ── Mục học tiếp theo trong 1 cấp ───────────────────────────────────────
 // Duyệt unit theo thứ tự; trong mỗi unit ưu tiên TỪ VỰNG trước, NGỮ PHÁP sau
 // (đúng trình tự hiển thị). Hội thoại không bắt buộc nên không tính.
