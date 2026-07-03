@@ -294,7 +294,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Gia đình & sự sở hữu',
         titleEn: 'Family & Possession',
         emoji: '👪',
-        vocabCircleIds: ['family'],
+        vocabCircleIds: ['family', 'family-extended', 'people-basic'],
         grammar: [
           {
             id: 'a1-have',
@@ -474,7 +474,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Đồ vật & nơi chốn',
         titleEn: 'Things & Places',
         emoji: '🏠',
-        vocabCircleIds: ['home', 'colors'],
+        vocabCircleIds: ['home', 'colors', 'house-rooms', 'basic-descriptions', 'basic-places'],
         grammar: [
           {
             id: 'a1-there-is',
@@ -844,7 +844,14 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Hành động & khả năng',
         titleEn: 'Actions & Ability',
         emoji: '🏃',
-        vocabCircleIds: ['verbs', 'food', 'communication'],
+        vocabCircleIds: [
+          'verbs',
+          'food',
+          'communication',
+          'daily-actions',
+          'basic-verbs-2',
+          'basic-food-drink',
+        ],
         grammar: [
           {
             id: 'a1-present-basic',
