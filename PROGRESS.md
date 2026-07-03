@@ -395,8 +395,17 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   `vnDateStr()` (offset cố định +7h, Việt Nam không có DST) ở `src/lib/date.ts` (client) +
   `api/_lib/date.ts` (server, không import chéo được do tsconfig tách `src`/`api`) — thay thế
   cả 9 chỗ. 6 test mới (3 mỗi bản) + sửa 1 test cũ (`stats.test.ts`) dùng chung logic ngày mới.
-- Verify: build/typecheck/lint/format/test (105/105, +9)/size-limit xanh; full E2E suite
-  (68/68, a11y 4 theme) xanh sau khi sửa.
+- **Đợt audit thứ 2 (theo yêu cầu người dùng rà sâu hơn)** — phát hiện thêm 1 lỗi cùng lớp
+  với F1 (PHẦN A0) nhưng ở nhánh STT: `api/_lib/openaiStt.ts` `transcribeAudio` coi HTTP 200
+  thiếu/sai kiểu trường `text` giống hệt im lặng thật (chuỗi rỗng hợp lệ) → không throw nên
+  `api/stt.ts` không hoàn lượt dù đây là body hỏng từ provider. Đã đối chiếu `callGemini`/
+  `googleTts.ts` (đã validate đúng, không lỗi) — chỉ STT còn thiếu. Sửa: throw khi
+  `typeof data.text !== 'string'`, giữ nguyên trả `''` khi im lặng thật. 5 test mới
+  (`openaiStt.test.ts`). Ghi nhận thêm 1 mục mức thấp CHƯA sửa (tùy chọn): nhánh Anthropic của
+  `api/ai.ts` không parse JSON để kiểm tra cấu trúc trước khi trả cho client (chỉ hoàn lượt khi
+  `!resp.ok`) — rủi ro thấp vì là API trả phí/ổn định, xem AUDIT.md PHẦN A00.
+- Verify: build/typecheck/lint/format/test (110/110, +14 tổng cả 2 đợt)/size-limit xanh; full
+  E2E suite (68/68, a11y 4 theme) xanh sau khi sửa.
 - ⚠️ Cần chạy migration `0008` trên production TRƯỚC khi deploy (xem "Cần làm tay").
 
 ## ⚠️ Cần làm tay (chưa xong)
