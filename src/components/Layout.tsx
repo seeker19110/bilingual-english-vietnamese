@@ -1,9 +1,6 @@
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, LogOut, BookOpen } from 'lucide-react'
-import { logout } from '../lib/auth'
-import { getUsage } from '../lib/storage'
-import { LIMITS } from '../types'
+import { ArrowLeft, BookOpen } from 'lucide-react'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import ThemeToggle from './ThemeToggle'
@@ -21,14 +18,7 @@ interface Props {
 export default function Layout({ title, subtitle, back = true, extra, streak }: Props) {
   const nav = useNavigate()
   const { user } = useAuth()
-  const usage = user ? getUsage(user.id) : null
-  const limit = user ? LIMITS[user.plan] : null
   const { T } = useLang()
-
-  async function handleLogout() {
-    await logout()
-    nav('/login')
-  }
 
   return (
     <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/60 relative pt-safe">
@@ -76,63 +66,22 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
           </div>
         )}
 
-        {/* Usage indicator */}
-        {usage && limit && (
-          <>
-            {/* Desktop: text */}
-            <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-400 shrink-0">
-              <span>
-                {T.chat}{' '}
-                <strong className="text-zinc-400">
-                  {usage.chatCount}/{limit.chat}
-                </strong>
-              </span>
-              <span>
-                {T.speak}{' '}
-                <strong className="text-zinc-400">
-                  {usage.speakingCount}/{limit.speaking}
-                </strong>
-              </span>
-            </div>
-            {/* Mobile: mini badges cho chat và nói */}
-            <div className="sm:hidden flex items-center gap-1.5 shrink-0 text-[11px] text-zinc-400">
-              <span>
-                <strong className="text-zinc-400">{usage.chatCount}</strong>/{limit.chat}
-              </span>
-              <span className="text-zinc-700">·</span>
-              <span>
-                <strong className="text-zinc-400">{usage.speakingCount}</strong>/{limit.speaking}
-              </span>
-            </div>
-          </>
-        )}
-
         {/* Nút tùy chỉnh thêm vào header (vd: VoiceToggle) */}
         {extra}
 
         {/* Nút đổi giao diện: Sáng / Tối / Xanh đêm */}
         <ThemeToggle />
 
-        {/* User avatar (bấm vào để xem trang cá nhân) + logout */}
+        {/* User avatar (bấm vào để xem trang cá nhân) */}
         {user && (
-          <div className="flex items-center gap-1 shrink-0">
-            <button
-              onClick={() => nav('/profile')}
-              aria-label={T.profile}
-              title={T.profile}
-              className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-xs font-bold text-white shadow-sm hover:opacity-85 transition"
-            >
-              {user.name[0]?.toUpperCase()}
-            </button>
-            <button
-              onClick={handleLogout}
-              className="text-zinc-400 hover:text-red-400 transition p-3 rounded-lg hover:bg-red-400/10"
-              title={T.logout}
-              aria-label={T.logout}
-            >
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          <button
+            onClick={() => nav('/profile')}
+            aria-label={T.profile}
+            title={T.profile}
+            className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-xs font-bold text-white shadow-sm hover:opacity-85 transition shrink-0"
+          >
+            {user.name[0]?.toUpperCase()}
+          </button>
         )}
       </div>
     </header>
