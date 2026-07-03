@@ -3595,6 +3595,298 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       d('B', "I can't wait!", 'Tôi nóng lòng quá!'),
     ]),
   ],
+
+  // ════════ B1 — Thuật lại sự việc (unit 'b1-narrative') ════════
+  'b1-narrative': [
+    dlg(
+      'Chuyện xảy ra tối qua',
+      'What happened last night',
+      [
+        d('A', 'What were you doing at nine last night?', 'Tối qua lúc chín giờ bạn đang làm gì?'),
+        d(
+          'B',
+          'I was watching the news when it happened.',
+          'Tôi đang xem tin tức thì chuyện đó xảy ra.',
+        ),
+        d('A', 'What happened? Tell me everything.', 'Chuyện gì xảy ra vậy? Kể tôi nghe hết đi.'),
+        d('B', 'Suddenly, the power went out.', 'Đột nhiên mất điện.'),
+        d('A', 'Were you scared?', 'Bạn có sợ không?'),
+        d(
+          'B',
+          'A little. I was sitting alone in the dark.',
+          'Hơi hơi. Tôi đang ngồi một mình trong bóng tối.',
+        ),
+        d('A', 'What were your parents doing then?', 'Lúc đó bố mẹ bạn đang làm gì?'),
+        d('B', 'They were cooking dinner in the kitchen.', 'Họ đang nấu bữa tối trong bếp.'),
+        d('A', 'Did anyone get hurt?', 'Có ai bị thương không?'),
+        d('B', 'No, luckily nothing bad happened.', 'Không, may là không có chuyện gì xấu xảy ra.'),
+        d('A', 'How long were you in the dark?', 'Bạn ở trong bóng tối bao lâu?'),
+        d('B', 'We were waiting for about an hour.', 'Chúng tôi đợi khoảng một tiếng.'),
+        d('A', 'Was it the whole neighborhood?', 'Cả khu phố bị mất điện à?'),
+        d('B', 'Yes, the whole street was affected.', 'Vâng, cả con đường đều bị ảnh hưởng.'),
+        d('A', 'What were you thinking during that time?', 'Lúc đó bạn nghĩ gì?'),
+        d('B', 'I was hoping the power would come back soon.', 'Tôi mong điện sẽ có lại sớm.'),
+        d(
+          'A',
+          'Did you read about it in the news today?',
+          'Hôm nay bạn có đọc tin tức về việc đó không?',
+        ),
+        d(
+          'B',
+          'Yes, they announced it was a technical problem.',
+          'Có, họ thông báo đó là sự cố kỹ thuật.',
+        ),
+        d('A', 'That must have been stressful.', 'Chắc căng thẳng lắm.'),
+        d('B', 'It was, but everything is fine now.', 'Đúng vậy, nhưng giờ mọi thứ đều ổn rồi.'),
+      ],
+      sp('Thanh', 'Thanh'),
+      sp('Bình', 'Binh'),
+      'female',
+      'male',
+    ),
+    dlg(
+      'Đến muộn vì lỡ chuyến bay',
+      'Late because of a missed flight',
+      [
+        d('A', 'Why were you so late yesterday?', 'Sao hôm qua bạn đến muộn vậy?'),
+        d(
+          'B',
+          'My flight had been delayed for three hours.',
+          'Chuyến bay của tôi đã bị hoãn ba tiếng.',
+        ),
+        d('A', 'Oh no! Had you eaten before you left?', 'Ôi không! Bạn đã ăn trước khi đi chưa?'),
+        d('B', "No, I hadn't eaten anything all day.", 'Chưa, cả ngày tôi chưa ăn gì.'),
+        d('A', 'Had something happened at the airport?', 'Có chuyện gì xảy ra ở sân bay à?'),
+        d(
+          'B',
+          'Yes, a storm had hit the city that morning.',
+          'Vâng, một cơn bão đã ập đến thành phố sáng đó.',
+        ),
+        d(
+          'A',
+          'Had you checked the weather before leaving?',
+          'Bạn đã kiểm tra thời tiết trước khi đi chưa?',
+        ),
+        d(
+          'B',
+          'I had checked it, but the storm was sudden.',
+          'Tôi đã kiểm tra, nhưng cơn bão đến bất ngờ.',
+        ),
+        d(
+          'A',
+          'When you finally landed, had everyone left?',
+          'Khi bạn cuối cùng hạ cánh, mọi người đã về hết chưa?',
+        ),
+        d('B', 'Yes, my friends had already gone home.', 'Vâng, bạn tôi đã về nhà rồi.'),
+        d('A', 'Had you told them about the delay?', 'Bạn đã báo họ về việc trễ chuyến chưa?'),
+        d(
+          'B',
+          'I had texted them, but my phone had died.',
+          'Tôi đã nhắn tin, nhưng điện thoại tôi đã hết pin.',
+        ),
+        d('A', 'That sounds like a difficult day.', 'Nghe có vẻ là một ngày khó khăn.'),
+        d('B', 'It was the worst trip I had ever had.', 'Đó là chuyến đi tệ nhất tôi từng có.'),
+        d(
+          'A',
+          'Had this ever happened to you before?',
+          'Chuyện này từng xảy ra với bạn trước đây chưa?',
+        ),
+        d(
+          'B',
+          'No, I had never experienced anything like it.',
+          'Chưa, tôi chưa bao giờ trải qua điều gì như vậy.',
+        ),
+        d('A', 'What did you do once you arrived?', 'Bạn làm gì khi vừa đến?'),
+        d('B', 'I just went straight to bed.', 'Tôi đi thẳng lên giường ngủ luôn.'),
+        d('A', "I'm glad you're okay now.", 'Tôi mừng vì giờ bạn ổn rồi.'),
+        d(
+          'B',
+          'Thanks. I had learned an important lesson.',
+          'Cảm ơn. Tôi đã học được một bài học quan trọng.',
+        ),
+      ],
+      sp('Thanh', 'Thanh'),
+      sp('Bình', 'Binh'),
+      'female',
+      'male',
+    ),
+  ],
+
+  // ════════ B2 — Cấu trúc nâng cao (unit 'b2-advanced-structures') ════════
+  'b2-advanced-structures': [
+    dlg(
+      'Giá như ngày xưa',
+      'If only, back then',
+      [
+        d(
+          'A',
+          'If you had studied abroad, would your life be different now?',
+          'Nếu ngày xưa bạn du học, giờ cuộc sống bạn có khác không?',
+        ),
+        d(
+          'B',
+          'Definitely. If I had studied abroad, I would speak three languages now.',
+          'Chắc chắn rồi. Nếu tôi đi du học, giờ tôi đã nói được ba ngôn ngữ.',
+        ),
+        d('A', "Why didn't you go?", 'Sao ngày đó bạn không đi?'),
+        d(
+          'B',
+          'If my family had had more money, I would have gone.',
+          'Nếu gia đình tôi ngày đó có nhiều tiền hơn, tôi đã đi rồi.',
+        ),
+        d('A', 'Do you regret that decision?', 'Bạn có tiếc quyết định đó không?'),
+        d(
+          'B',
+          'A little. If I had taken that scholarship, I would be living in Canada now.',
+          'Có một chút. Nếu tôi nhận học bổng đó, giờ tôi đã sống ở Canada.',
+        ),
+        d('A', 'What about your career?', 'Còn sự nghiệp của bạn thì sao?'),
+        d(
+          'B',
+          "If I hadn't stayed here, I wouldn't have this job today.",
+          'Nếu tôi không ở lại đây, giờ tôi đã không có công việc này.',
+        ),
+        d('A', "So it wasn't all bad.", 'Vậy cũng không hẳn là tệ.'),
+        d(
+          'B',
+          'Exactly. If I had left, I might not have met you.',
+          'Chính xác. Nếu tôi rời đi, có thể tôi đã không gặp bạn.',
+        ),
+        d('A', "That's a nice way to think about it.", 'Cách nghĩ đó thật hay.'),
+        d(
+          'B',
+          "If we hadn't met at university, we wouldn't be friends now.",
+          'Nếu chúng ta không gặp nhau ở đại học, giờ chúng ta đã không là bạn.',
+        ),
+        d('A', 'Do you think about the past often?', 'Bạn có hay nghĩ về quá khứ không?'),
+        d(
+          'B',
+          'Sometimes. If I had known then what I know now…',
+          'Thỉnh thoảng. Nếu ngày đó tôi biết những gì tôi biết bây giờ…',
+        ),
+        d('A', '…things might be different.', '…mọi thứ có thể đã khác.'),
+        d(
+          'B',
+          "Yes, but I'm happy with where I am.",
+          'Đúng, nhưng tôi hài lòng với vị trí hiện tại của mình.',
+        ),
+        d('A', "That's a healthy way to look at life.", 'Đó là cách nhìn cuộc sống rất tích cực.'),
+        d(
+          'B',
+          "If I hadn't learned that lesson, I would still be worrying now.",
+          'Nếu tôi chưa học được bài học đó, giờ tôi vẫn còn lo lắng.',
+        ),
+        d('A', 'Wise words, Khai.', 'Lời nói khôn ngoan đấy, Khải.'),
+        d(
+          'B',
+          'Thanks, Giang. Life teaches us in strange ways.',
+          'Cảm ơn Giang. Cuộc sống dạy ta theo những cách kỳ lạ.',
+        ),
+      ],
+      sp('Giang', 'Giang'),
+      sp('Khải', 'Khai'),
+      'female',
+      'male',
+    ),
+    dlg(
+      'Chưa bao giờ tôi thấy điều như vậy',
+      'I have never seen anything like it',
+      [
+        d(
+          'A',
+          'Never have I seen such a beautiful view.',
+          'Chưa bao giờ tôi thấy khung cảnh đẹp như vậy.',
+        ),
+        d(
+          'B',
+          'I know. Rarely do we get such clear skies here.',
+          'Tôi biết. Ở đây hiếm khi có bầu trời trong như vậy.',
+        ),
+        d(
+          'A',
+          'Not only is the view amazing, but the air is also fresh.',
+          'Không chỉ khung cảnh tuyệt đẹp, mà không khí còn rất trong lành.',
+        ),
+        d(
+          'B',
+          'Hardly had we arrived when the sun started to set.',
+          'Chúng tôi vừa mới đến thì mặt trời bắt đầu lặn.',
+        ),
+        d('A', 'Little did I know this place even existed.', 'Tôi chẳng hề biết nơi này tồn tại.'),
+        d('B', 'Seldom do tourists come this far.', 'Khách du lịch hiếm khi đến xa như vậy.'),
+        d(
+          'A',
+          'Not only did we find this place, but we also saved it for ourselves.',
+          'Chúng ta không những tìm ra nơi này, mà còn giữ nó cho riêng mình.',
+        ),
+        d(
+          'B',
+          'Never had I felt so relaxed before this trip.',
+          'Trước chuyến đi này, chưa bao giờ tôi cảm thấy thư giãn đến vậy.',
+        ),
+        d(
+          'A',
+          'Rarely does life give us moments like this.',
+          'Cuộc sống hiếm khi cho ta những khoảnh khắc như thế này.',
+        ),
+        d(
+          'B',
+          'Hardly ever do I take time to just sit and look.',
+          'Tôi hiếm khi dành thời gian chỉ để ngồi và ngắm nhìn.',
+        ),
+        d(
+          'A',
+          'Not only should we come back, but we should also bring the kids.',
+          'Chúng ta không chỉ nên quay lại, mà còn nên đưa lũ trẻ đi cùng.',
+        ),
+        d(
+          'B',
+          'Little did they know what they were missing at home.',
+          'Bọn trẻ chẳng hề biết chúng đang bỏ lỡ điều gì ở nhà.',
+        ),
+        d(
+          'A',
+          'Never before had I appreciated nature this much.',
+          'Chưa bao giờ trước đây tôi trân trọng thiên nhiên đến thế.',
+        ),
+        d(
+          'B',
+          'Rarely do we slow down enough to notice it.',
+          'Chúng ta hiếm khi chậm lại đủ để nhận ra điều đó.',
+        ),
+        d(
+          'A',
+          "Not only is this trip memorable, but it's also life-changing.",
+          'Chuyến đi này không những đáng nhớ, mà còn thay đổi cuộc đời.',
+        ),
+        d(
+          'B',
+          'Hardly had I said that when it started to rain.',
+          'Tôi vừa nói xong thì trời bắt đầu mưa.',
+        ),
+        d(
+          'A',
+          'Typical! Never does the weather cooperate with us.',
+          'Đúng kiểu! Thời tiết chẳng bao giờ chiều lòng chúng ta.',
+        ),
+        d('B', "Let's just laugh about it.", 'Thôi cứ cười cho qua vậy.'),
+        d(
+          'A',
+          'Never have I laughed this hard on a hike.',
+          'Chưa bao giờ tôi cười nhiều đến vậy trong một chuyến đi bộ đường dài.',
+        ),
+        d(
+          'B',
+          'Best trip ever, rain or not.',
+          'Chuyến đi tuyệt nhất từ trước đến giờ, dù có mưa hay không.',
+        ),
+      ],
+      sp('Giang', 'Giang'),
+      sp('Khải', 'Khai'),
+      'female',
+      'male',
+    ),
+  ],
 }
 
 // Tiện ích: lấy danh sách hội thoại của 1 bài (rỗng nếu chưa có).

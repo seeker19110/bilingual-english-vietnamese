@@ -131,7 +131,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Chào hỏi & giới thiệu bản thân',
         titleEn: 'Greetings & Introductions',
         emoji: '👋',
-        vocabCircleIds: ['greetings', 'letters'],
+        vocabCircleIds: ['greetings', 'letters', 'countries'],
         grammar: [
           {
             id: 'a1-be',
@@ -844,7 +844,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Hành động & khả năng',
         titleEn: 'Actions & Ability',
         emoji: '🏃',
-        vocabCircleIds: ['verbs', 'food'],
+        vocabCircleIds: ['verbs', 'food', 'communication'],
         grammar: [
           {
             id: 'a1-present-basic',
@@ -1344,7 +1344,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Kể chuyện quá khứ',
         titleEn: 'Talking about the Past',
         emoji: '⏪',
-        vocabCircleIds: ['transport', 'animals'],
+        vocabCircleIds: ['transport', 'animals', 'festivals'],
         grammar: [
           {
             id: 'a2-was-were',
@@ -1758,7 +1758,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Số lượng & mua sắm',
         titleEn: 'Quantity & Shopping',
         emoji: '🛒',
-        vocabCircleIds: ['shopping'],
+        vocabCircleIds: ['shopping', 'restaurant'],
         grammar: [
           {
             id: 'a2-countable',
@@ -1932,6 +1932,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
       'Diễn đạt điều kiện ("nếu… thì…").',
       'Đưa ra lời khuyên và nói về bổn phận.',
       'Nối câu bằng mệnh đề quan hệ và dùng động từ + V-ing/to-V.',
+      'Thuật lại một câu chuyện, phân biệt hành động đang xảy ra và hành động đã xảy ra trước đó.',
     ],
     units: [
       {
@@ -2458,7 +2459,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Lời khuyên & bổn phận',
         titleEn: 'Advice & Obligation',
         emoji: '💡',
-        vocabCircleIds: ['city-places'],
+        vocabCircleIds: ['city-places', 'opinions'],
         grammar: [
           {
             id: 'b1-should',
@@ -2748,6 +2749,165 @@ export const CEFR_LEVELS: CefrLevel[] = [
           },
         ],
       },
+      {
+        id: 'b1-narrative',
+        titleVi: 'Thuật lại sự việc',
+        titleEn: 'Narrating Past Events',
+        emoji: '📖',
+        vocabCircleIds: ['news'],
+        grammar: [
+          {
+            id: 'b1-past-continuous',
+            titleVi: 'Quá khứ tiếp diễn (was/were + V-ing)',
+            titleEn: 'Past Continuous',
+            structure: 'S + was/were + V-ing',
+            explainVi:
+              'Diễn tả một hành động ĐANG XẢY RA tại một thời điểm cụ thể trong quá khứ, hoặc hai ' +
+              'hành động xảy ra song song. Thường dùng cùng quá khứ đơn để nói hành động A đang xảy ' +
+              'ra thì hành động B (ngắn hơn) xen vào.\n' +
+              'I/He/She/It → was, You/We/They → were.',
+            examples: [
+              ex('I was watching TV when you called.', 'Tôi đang xem TV thì bạn gọi.'),
+              ex(
+                'She was cooking dinner at seven last night.',
+                'Tối qua lúc bảy giờ cô ấy đang nấu bữa tối.',
+              ),
+              ex(
+                'They were playing football when it started to rain.',
+                'Họ đang chơi bóng đá thì trời bắt đầu mưa.',
+              ),
+              ex('What were you doing at nine o’clock?', 'Chín giờ tối qua bạn đang làm gì?'),
+              ex(
+                'While I was studying, my brother was sleeping.',
+                'Trong khi tôi đang học thì em trai tôi đang ngủ.',
+              ),
+            ],
+            tipVi:
+              'Dùng "while" với quá khứ tiếp diễn cho hành động dài, và "when" với quá khứ đơn cho ' +
+              'hành động ngắn xen vào: "While I was cooking, the phone rang."',
+            mistakes: [
+              mis(
+                'I was watch TV last night.',
+                'I was watching TV last night.',
+                'Sau was/were phải thêm -ing.',
+              ),
+              mis(
+                'She were cooking dinner.',
+                'She was cooking dinner.',
+                'She/he/it dùng "was", không dùng "were".',
+              ),
+              mis(
+                'When I was cooking, the phone was ringing.',
+                'When I was cooking, the phone rang.',
+                'Hành động NGẮN xen vào dùng quá khứ đơn (rang), không phải tiếp diễn.',
+              ),
+              mis(
+                'They was playing football.',
+                'They were playing football.',
+                'They/we/you dùng "were".',
+              ),
+              mis(
+                'What you were doing at 9pm?',
+                'What were you doing at 9pm?',
+                'Câu hỏi đảo "were" lên trước chủ ngữ.',
+              ),
+            ],
+            quiz: [
+              qz(
+                'I ___ TV when you called.',
+                ['watched', 'was watching'],
+                1,
+                'Hành động đang diễn ra → quá khứ tiếp diễn.',
+              ),
+              qz('She ___ when the phone rang.', ['was sleeping', 'slept'], 0),
+              qz('They ___ football at 5pm yesterday.', ['were playing', 'played'], 0),
+              qz('While I ___ dinner, she arrived.', ['was cooking', 'cooked'], 0),
+              qz('He/she dùng:', ['was', 'were'], 0),
+              qz('They/we/you dùng:', ['was', 'were'], 1),
+              qz('What ___ you doing at midnight?', ['was', 'were'], 1),
+              qz('When the accident happened, I ___ home.', ['was driving', 'drove'], 0),
+              qz('Chọn câu ĐÚNG:', ['I was study.', 'I was studying.'], 1),
+              qz(
+                'Hành động NGẮN xen vào hành động dài dùng thì:',
+                ['quá khứ tiếp diễn', 'quá khứ đơn'],
+                1,
+              ),
+            ],
+          },
+          {
+            id: 'b1-past-perfect',
+            titleVi: 'Quá khứ hoàn thành (had + V3)',
+            titleEn: 'Past Perfect',
+            structure: 'S + had + V3/ed',
+            explainVi:
+              'Diễn tả một hành động xảy ra TRƯỚC một hành động khác trong quá khứ ("quá khứ của quá ' +
+              'khứ"). Hành động xảy ra trước dùng quá khứ hoàn thành, hành động xảy ra sau dùng quá ' +
+              'khứ đơn.',
+            examples: [
+              ex('When I arrived, the train had already left.', 'Khi tôi đến, tàu đã rời đi rồi.'),
+              ex(
+                'She had finished her homework before dinner.',
+                'Cô ấy đã làm xong bài tập trước bữa tối.',
+              ),
+              ex(
+                'I had never seen snow before that trip.',
+                'Trước chuyến đi đó tôi chưa từng thấy tuyết.',
+              ),
+              ex('They had left before we arrived.', 'Họ đã rời đi trước khi chúng tôi đến.'),
+              ex(
+                'Had you eaten before the movie started?',
+                'Bạn đã ăn trước khi phim bắt đầu chưa?',
+              ),
+            ],
+            tipVi:
+              'Dùng "already", "just", "never" cùng quá khứ hoàn thành để nhấn mạnh thứ tự thời ' +
+              'gian: "had already left", "had just finished".',
+            mistakes: [
+              mis(
+                'When I arrived, the train already left.',
+                'When I arrived, the train had already left.',
+                'Hành động xảy ra trước cần "had + V3".',
+              ),
+              mis(
+                'She has finished before dinner.',
+                'She had finished before dinner.',
+                'Mốc thời gian trong quá khứ → "had", không dùng "has".',
+              ),
+              mis(
+                'I had saw that movie before.',
+                'I had seen that movie before.',
+                'V3 của "see" là "seen".',
+              ),
+              mis(
+                'They had leave before we arrived.',
+                'They had left before we arrived.',
+                'Sau "had" dùng V3, không phải nguyên mẫu.',
+              ),
+              mis(
+                'Did you had eaten before the movie?',
+                'Had you eaten before the movie?',
+                'Câu hỏi đảo "had" lên trước chủ ngữ, không dùng "did".',
+              ),
+            ],
+            quiz: [
+              qz('When I arrived, she ___ already left.', ['has', 'had'], 1),
+              qz('I ___ never seen snow before that day.', ['had', 'have'], 0),
+              qz('By the time we got there, the movie ___ started.', ['had', 'has'], 0),
+              qz('She ___ her homework before dinner.', ['had finished', 'had finish'], 0),
+              qz('___ you eaten before the film started?', ['Did', 'Had'], 1),
+              qz(
+                'Quá khứ hoàn thành diễn tả:',
+                ['hành động xảy ra trước 1 mốc quá khứ', 'hành động đang xảy ra'],
+                0,
+              ),
+              qz('Chọn câu ĐÚNG:', ['I had saw it.', 'I had seen it.'], 1),
+              qz('They ___ before we arrived.', ['had left', 'has left'], 0),
+              qz('Cấu trúc quá khứ hoàn thành:', ['had + V3', 'have + V3'], 0),
+              qz('By 2020, she ___ finished university.', ['had', 'have'], 0),
+            ],
+          },
+        ],
+      },
     ],
   },
 
@@ -2767,6 +2927,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
       'Thuật lại lời người khác (câu tường thuật).',
       'Suy đoán và dùng mệnh đề quan hệ phức.',
       'Dùng phrasal verbs, thành ngữ và từ nối để diễn đạt tự nhiên.',
+      'Dùng câu điều kiện hỗn hợp và đảo ngữ để diễn đạt trang trọng, nhấn mạnh.',
     ],
     units: [
       {
@@ -3340,7 +3501,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Diễn đạt tự nhiên',
         titleEn: 'Natural Expression',
         emoji: '🗣️',
-        vocabCircleIds: ['it'],
+        vocabCircleIds: ['it', 'arts-culture'],
         grammar: [
           {
             id: 'b2-phrasal',
@@ -3518,6 +3679,199 @@ export const CEFR_LEVELS: CefrLevel[] = [
               qz('"Hit the books" nghĩa là:', ['học hành chăm chỉ', 'đánh sách'], 0),
               qz('Trật tự đúng:', ['dogs and cats', 'cats and dogs'], 1),
               qz('Chọn thành ngữ ĐÚNG:', ['a cake of piece', 'a piece of cake'], 1),
+            ],
+          },
+        ],
+      },
+      {
+        id: 'b2-advanced-structures',
+        titleVi: 'Cấu trúc nâng cao',
+        titleEn: 'Advanced Structures',
+        emoji: '🎓',
+        vocabCircleIds: ['science-tech'],
+        grammar: [
+          {
+            id: 'b2-mixed-conditional',
+            titleVi: 'Câu điều kiện hỗn hợp (Mixed Conditionals)',
+            titleEn: 'Mixed Conditionals',
+            structure: 'If + had + V3, S + would + V (nguyên mẫu)',
+            explainVi:
+              'Kết hợp điều kiện loại 3 (giả định trái với QUÁ KHỨ) ở mệnh đề IF với kết quả loại 2 ' +
+              '(ảnh hưởng đến HIỆN TẠI) ở mệnh đề chính. Dùng khi một việc không xảy ra trong quá khứ ' +
+              'vẫn còn ảnh hưởng đến bây giờ.',
+            examples: [
+              ex(
+                'If I had studied medicine, I would be a doctor now.',
+                'Nếu ngày xưa tôi học y, giờ tôi đã là bác sĩ.',
+              ),
+              ex(
+                'If she hadn’t missed the flight, she would be in Paris now.',
+                'Nếu cô ấy không lỡ chuyến bay, giờ cô ấy đang ở Paris.',
+              ),
+              ex(
+                'If we had saved more money, we wouldn’t be in debt now.',
+                'Nếu chúng tôi tiết kiệm nhiều hơn, giờ chúng tôi đã không nợ nần.',
+              ),
+              ex(
+                'If you hadn’t helped me then, I wouldn’t be here today.',
+                'Nếu lúc đó bạn không giúp tôi, giờ tôi đã không ở đây.',
+              ),
+              ex(
+                'If he had taken that job, he would be living abroad now.',
+                'Nếu anh ấy nhận công việc đó, giờ anh ấy đã đang sống ở nước ngoài.',
+              ),
+            ],
+            tipVi:
+              'Nhận diện mixed conditional: mệnh đề IF nói về QUÁ KHỨ (had + V3), mệnh đề chính nói ' +
+              'về HIỆN TẠI (would + V nguyên mẫu, KHÔNG có "have").',
+            mistakes: [
+              mis(
+                'If I had studied medicine, I would have been a doctor now.',
+                'If I had studied medicine, I would be a doctor now.',
+                'Kết quả ở HIỆN TẠI dùng "would + V", không dùng "would have + V3".',
+              ),
+              mis(
+                'If she didn’t miss the flight, she would be in Paris now.',
+                'If she hadn’t missed the flight, she would be in Paris now.',
+                'Hành động ở quá khứ → "hadn\'t + V3", không dùng "didn\'t".',
+              ),
+              mis(
+                'If we had saved more money, we won’t be in debt now.',
+                'If we had saved more money, we wouldn’t be in debt now.',
+                'Mệnh đề chính dùng "would", không dùng "will".',
+              ),
+              mis(
+                'If you didn’t helped me, I wouldn’t be here.',
+                'If you hadn’t helped me, I wouldn’t be here.',
+                'Mệnh đề IF về quá khứ dùng "hadn\'t + V3".',
+              ),
+              mis(
+                'If he had take that job, he would be living abroad.',
+                'If he had taken that job, he would be living abroad.',
+                'Sau "had" dùng V3 (taken), không phải nguyên mẫu.',
+              ),
+            ],
+            quiz: [
+              qz(
+                'If I ___ harder at school, I would have a better job now.',
+                ['studied', 'had studied'],
+                1,
+              ),
+              qz(
+                'Mệnh đề chính của mixed conditional thường dùng:',
+                ['would + V', 'would have + V3'],
+                0,
+              ),
+              qz(
+                'If she ___ the flight, she would be in Paris now.',
+                ["hadn't missed", "didn't miss"],
+                0,
+              ),
+              qz(
+                'Mixed conditional kết hợp giả định về:',
+                ['quá khứ và hiện tại', 'hiện tại và tương lai'],
+                0,
+              ),
+              qz('If we ___ more money, we wouldn’t be in debt now.', ['had saved', 'saved'], 0),
+              qz(
+                'Chọn câu ĐÚNG:',
+                [
+                  'If I had studied, I would have been rich now.',
+                  'If I had studied, I would be rich now.',
+                ],
+                1,
+              ),
+              qz('If he ___ that job, he would be living abroad now.', ['had taken', 'took'], 0),
+              qz(
+                'If you hadn’t helped me, I ___ here today.',
+                ["wouldn't be", "wouldn't have been"],
+                0,
+              ),
+              qz(
+                'Kết quả ở hiện tại nhưng nguyên nhân ở quá khứ dùng:',
+                ['conditional loại 2', 'mixed conditional'],
+                1,
+              ),
+              qz('If I ___ born in Japan, I would speak Japanese now.', ['was', 'had been'], 1),
+            ],
+          },
+          {
+            id: 'b2-inversion',
+            titleVi: 'Đảo ngữ để nhấn mạnh (Inversion)',
+            titleEn: 'Inversion for Emphasis',
+            structure: 'Never/Rarely/Not only + trợ động từ + S + V',
+            explainVi:
+              'Đưa trạng từ phủ định/giới hạn (never, rarely, hardly, not only, seldom, little) lên ' +
+              'đầu câu để NHẤN MẠNH, sau đó đảo trợ động từ ra trước chủ ngữ giống câu hỏi.\n' +
+              'Ví dụ: "I have never seen…" → "Never have I seen…"',
+            examples: [
+              ex(
+                'Never have I seen such a beautiful sunset.',
+                'Chưa bao giờ tôi thấy hoàng hôn đẹp như vậy.',
+              ),
+              ex(
+                'Not only did she pass the exam, but she also got the highest score.',
+                'Cô ấy không những đỗ kỳ thi mà còn đạt điểm cao nhất.',
+              ),
+              ex('Rarely does he arrive late.', 'Anh ấy hiếm khi đến muộn.'),
+              ex(
+                'Hardly had I arrived when the phone rang.',
+                'Tôi vừa mới đến thì điện thoại reo.',
+              ),
+              ex(
+                'Little did they know what was waiting for them.',
+                'Họ chẳng hề biết điều gì đang chờ đợi họ.',
+              ),
+            ],
+            tipVi:
+              'Đảo ngữ chỉ dùng trong văn viết trang trọng hoặc muốn nhấn mạnh mạnh mẽ — không dùng ' +
+              'trong hội thoại thường ngày.',
+            mistakes: [
+              mis(
+                'Never I have seen such a thing.',
+                'Never have I seen such a thing.',
+                'Đảo trợ động từ "have" ra trước chủ ngữ "I".',
+              ),
+              mis(
+                'Not only she passed the exam, but also got the highest score.',
+                'Not only did she pass the exam, but she also got the highest score.',
+                'Câu quá khứ đơn cần thêm trợ động từ "did" khi đảo ngữ.',
+              ),
+              mis(
+                'Rarely he arrives late.',
+                'Rarely does he arrive late.',
+                'Câu hiện tại đơn cần trợ động từ "does" khi đảo ngữ.',
+              ),
+              mis(
+                'Hardly I had arrived when the phone rang.',
+                'Hardly had I arrived when the phone rang.',
+                'Đảo "had" ra trước chủ ngữ.',
+              ),
+              mis(
+                'Little they knew what was waiting.',
+                'Little did they know what was waiting.',
+                'Câu quá khứ đơn cần "did" + động từ nguyên mẫu (know).',
+              ),
+            ],
+            quiz: [
+              qz('Never ___ I seen such a beautiful view.', ['have', 'has'], 0),
+              qz('Rarely ___ he arrive late.', ['does', 'do'], 0),
+              qz(
+                'Not only ___ she pass the exam, but she also got a scholarship.',
+                ['did', 'she'],
+                0,
+              ),
+              qz('Hardly ___ I arrived when it started to rain.', ['I had', 'had I'], 1),
+              qz('Đảo ngữ thường dùng trong:', ['văn nói thân mật', 'văn viết trang trọng'], 1),
+              qz('Little ___ they know the truth.', ['did', 'they'], 0),
+              qz(
+                'Chọn câu ĐÚNG:',
+                ['Never I have felt so happy.', 'Never have I felt so happy.'],
+                1,
+              ),
+              qz('Seldom ___ we see such heavy rain.', ['do', 'does'], 0),
+              qz('Not only ___ he a good teacher, but also a kind friend.', ['is', 'he is'], 0),
+              qz('Đảo ngữ đưa trạng từ phủ định lên đầu câu để:', ['nhấn mạnh', 'hỏi'], 0),
             ],
           },
         ],
