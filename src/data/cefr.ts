@@ -1960,7 +1960,15 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Kinh nghiệm & trải nghiệm',
         titleEn: 'Experiences',
         emoji: '🌍',
-        vocabCircleIds: ['sports', 'emotions', 'media'],
+        vocabCircleIds: [
+          'sports',
+          'emotions',
+          'media',
+          'sports-extended',
+          'emotions-extended',
+          'entertainment-media',
+          'relationships-b1',
+        ],
         grammar: [
           {
             id: 'b1-present-perfect',
@@ -2144,7 +2152,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Kế hoạch & dự đoán tương lai',
         titleEn: 'Future Plans & Predictions',
         emoji: '🔮',
-        vocabCircleIds: ['jobs'],
+        vocabCircleIds: ['jobs', 'workplace', 'money-finance'],
         grammar: [
           {
             id: 'b1-will-going-to',
@@ -2281,7 +2289,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Câu điều kiện',
         titleEn: 'Conditionals',
         emoji: '🔀',
-        vocabCircleIds: ['nature'],
+        vocabCircleIds: ['nature', 'environment-issues'],
         grammar: [
           {
             id: 'b1-cond-0',
@@ -2479,7 +2487,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Lời khuyên & bổn phận',
         titleEn: 'Advice & Obligation',
         emoji: '💡',
-        vocabCircleIds: ['city-places', 'opinions'],
+        vocabCircleIds: ['city-places', 'opinions', 'city-life', 'opinions-extended'],
         grammar: [
           {
             id: 'b1-should',
@@ -2597,7 +2605,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Mệnh đề & dạng động từ',
         titleEn: 'Clauses & Verb Forms',
         emoji: '🔗',
-        vocabCircleIds: ['school'],
+        vocabCircleIds: ['school', 'education-further', 'technology-use', 'problems-solutions'],
         grammar: [
           {
             id: 'b1-relative',
@@ -2774,7 +2782,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Thuật lại sự việc',
         titleEn: 'Narrating Past Events',
         emoji: '📖',
-        vocabCircleIds: ['news'],
+        vocabCircleIds: ['news', 'narrative-extra'],
         grammar: [
           {
             id: 'b1-past-continuous',
