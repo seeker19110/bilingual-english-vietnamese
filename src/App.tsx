@@ -18,6 +18,7 @@ const Speaking = lazyWithRetry(() => import('./pages/Speaking'))
 const CommonPhrases = lazyWithRetry(() => import('./pages/CommonPhrases'))
 const History = lazyWithRetry(() => import('./pages/History'))
 const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'))
+const Profile = lazyWithRetry(() => import('./pages/Profile'))
 const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
 
 // Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng
@@ -178,6 +179,14 @@ export default function App() {
                       element={
                         <RequireAuth>
                           <Dashboard />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/profile"
+                      element={
+                        <RequireAuth>
+                          <Profile />
                         </RequireAuth>
                       }
                     />
