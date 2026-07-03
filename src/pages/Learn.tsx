@@ -41,6 +41,7 @@ import {
   findCircleOfWord,
   getCircleProgress,
   getLearningPath,
+  getCefrLevelOfCircle,
   loadCurriculum,
   isCurriculumReady,
 } from '../lib/curriculum'
@@ -188,14 +189,7 @@ export default function Learn() {
       <Layout back />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
-        {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
-        <PageHeader
-          title={isA ? 'Học theo lộ trình' : 'Learning Path'}
-          subtitle={isA ? `${DAILY_GOAL} từ mới mỗi ngày` : `${DAILY_GOAL} new words a day`}
-        />
-        <VocabMilestone userId={uid} refreshKey={refresh} />
-
-        {/* Tab bar */}
+        {/* Tab bar — đặt LÊN ĐẦU trang cho gọn (tiêu đề hạ xuống dưới) */}
         <div className="grid grid-cols-5 gap-1.5 mb-4">
           {TABS.map(({ key, icon: Icon, labelA, labelB, badge, active, inactive }) => (
             <button
@@ -214,8 +208,15 @@ export default function Learn() {
           ))}
         </div>
 
+        {/* Tiêu đề trang — dưới thanh tab (người dùng muốn phần đầu trang gọn) */}
+        <PageHeader
+          title={isA ? 'Học theo lộ trình' : 'Learning Path'}
+          subtitle={isA ? `${DAILY_GOAL} từ mới mỗi ngày` : `${DAILY_GOAL} new words a day`}
+        />
+        <VocabMilestone userId={uid} refreshKey={refresh} />
+
         {/* Tab Lộ trình dùng dữ liệu tĩnh (FOUNDATION) nên hiện ngay, không cần chờ tải từ điển */}
-        {tab === 'roadmap' && <RoadmapTab uid={uid} isA={isA} onProgress={bump} />}
+        {tab === 'roadmap' && <RoadmapTab uid={uid} isA={isA} />}
 
         {tab !== 'roadmap' &&
           (!ready ? (
@@ -717,11 +718,19 @@ function TodayLesson({
 
   // ── Đang học ──────────────────────────────────────────────────────────
   if (!card) return null // idx luôn trong batch ở phase này; guard để TS narrow kiểu
+  // Cấp CEFR của vòng đang học (null với vòng mở rộng) — hiện chip nhỏ cho biết
+  // từ hôm nay thuộc cấp nào (từ vựng giờ học THEO CẤP: hết A1 mới sang A2…).
+  const circleLevel = circle ? getCefrLevelOfCircle(circle.id) : null
   return (
     <div className="animate-fade-in">
-      {/* Tên chủ đề + tiến độ vòng */}
+      {/* Tên chủ đề + cấp CEFR + tiến độ vòng */}
       {circle && (
         <div className="flex items-center justify-center gap-1.5 text-xs text-zinc-400 mb-2">
+          {circleLevel && (
+            <span className="px-1.5 py-0.5 rounded bg-accent-500/15 text-accent-300 theme-light:text-accent-800 font-bold text-[11px]">
+              {circleLevel}
+            </span>
+          )}
           <span>{circle.emoji}</span>
           <span>{isA ? circle.titleVi : circle.titleEn}</span>
           {circleProgress && circleProgress.total > 0 && (

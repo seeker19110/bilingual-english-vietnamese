@@ -267,6 +267,28 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   `theme-light:text-red-700` (quên áp quy ước màu đỏ sẵn có ở Writing/Chat/Speaking) → sửa ngay,
   gate a11y nay **63 test**, vẫn 0 critical/serious. Đã merge: **PR #176**.
 
+## Đã xong (đợt cải tổ lộ trình CEFR — 2026-07-03)
+
+- **Mỗi cấp CEFR 1 trang riêng** `/learning-path/a1…b2` (`src/pages/CefrLevelPage.tsx`):
+  thẻ tổng quan (2 thanh tiến độ từ vựng + ngữ pháp, can-do thu gọn được), thẻ **"Học tiếp"**
+  trỏ đúng mục kế tiếp chưa xong, unit đánh số "Phần 1..n" học theo trình tự
+  **① Từ vựng → ② Ngữ pháp → ③ Hội thoại**. URL sai cấp → tự về `/learning-path`.
+- **Ẩn mục đã hoàn thành 100% theo từng thành phần** (yêu cầu người dùng): vòng từ vựng
+  thuộc hết / bài ngữ pháp đã đánh dấu xong / hội thoại đã xem → ẩn, gom vào nút
+  "Đã hoàn thành n mục · Xem lại"; unit xong hết thu gọn còn 1 dòng (bấm mở lại được).
+- **Theo dõi tiến độ ngữ pháp + hội thoại** (`src/lib/cefrProgress.ts` + 13 unit test):
+  nút "Đã học xong bài này" trong bài ngữ pháp; hội thoại tự ghi "đã xem" khi mở;
+  luật khóa cấp (≥70% từ vựng cấp trước) gom về 1 chỗ (`computeLockedMap`).
+- **Tab "Lộ trình" thành tổng quan 4 cấp** (RoadmapTab viết lại): mỗi cấp 1 thẻ có 2 thanh
+  tiến độ + nhãn "Bạn đang ở đây"/khóa + nút vào trang cấp. Màn chi tiết (bài ngữ pháp,
+  flashcard, hội thoại) tách sang `src/components/CefrLessonViews.tsx` dùng chung.
+- **Từ vựng "Hôm nay" học THEO CẤP** (chốt với người dùng): `getCircles()` xếp vòng nền tảng
+  theo đúng thứ tự vòng trong lộ trình A1→B2 (hết A1 mới sang A2…), phần mở rộng từ điển vẫn
+  nằm sau cùng; thẻ từ hiện chip cấp (A1…) — `src/lib/curriculum.ts` + test thứ tự.
+- **Hạ tiêu đề "Học theo lộ trình" xuống dưới thanh tab** (gọn đầu trang — yêu cầu người dùng).
+- Gate a11y thêm `/learning-path/a1` (4 theme). Đã verify bằng cách lái app thật (Playwright):
+  ẩn/hiện mục hoàn thành, khóa B2, redirect URL sai, tiến độ giữ nguyên sau reload.
+
 ## ⚠️ Cần làm tay (chưa xong)
 
 - _(Hiện không còn mục nào.)_ ~~Đặt Cloudflare trước VPS~~ — ĐÃ XONG (xem "Đã xong" ở trên,
@@ -309,6 +331,11 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   `.refine(fn, { error, params })` — khác cú pháp `message`/`errorMap` của v3).
 
 ## Nợ kỹ thuật (chỗ "làm tạm" cần quay lại)
+
+- **Tiến độ ngữ pháp/hội thoại CEFR chỉ nằm localStorage** (`et_cefr_grammar_*`,
+  `et_cefr_dialogue_*`) — chưa đồng bộ Supabase như từ vựng/SRS (`progressSync.ts`).
+  Muốn đồng bộ cần thêm cột vào bảng `learning_progress` (migration) — làm sau khi
+  người dùng xác nhận (đổi schema phải hỏi trước, CLAUDE.md mục 12).
 
 - **a11y**: gate nay **63 test** — login + Trang chủ (chiều A) ×4 theme + Trang chủ chiều B ×2
   theme sáng + menu giao diện đã mở ×4 theme + 10 trang × 4 theme (/progress, /dictionary,

@@ -2,13 +2,16 @@ import { describe, it, expect, beforeEach, beforeAll } from 'vitest'
 import {
   DAILY_GOAL,
   wordKey,
+  getCircles,
   getLearningPath,
   getTodayBatch,
   getPathProgress,
   getDailyLearned,
   bumpDailyLearned,
+  getCefrLevelOfCircle,
   loadCurriculum,
 } from './curriculum'
+import { loadCefr } from '../data/cefrLoader'
 
 // Dictionary giờ nạp ĐỘNG → phải await loadCurriculum() trước khi test các hàm dùng nó
 beforeAll(async () => {
@@ -19,6 +22,42 @@ describe('wordKey', () => {
   it('chuẩn hoá: bỏ khoảng trắng + viết thường', () => {
     expect(wordKey('  Hello ')).toBe('hello')
     expect(wordKey('I')).toBe(wordKey('i'))
+  })
+})
+
+describe('getCircles — thứ tự theo lộ trình CEFR', () => {
+  it('các vòng nền tảng xếp đúng thứ tự xuất hiện trong A1→B2', async () => {
+    const levels = await loadCefr()
+    // Thứ tự kỳ vọng: duyệt cấp → unit → vocabCircleIds, khử trùng giữ lần đầu.
+    const expected: string[] = []
+    const seen = new Set<string>()
+    for (const lv of levels) {
+      for (const u of lv.units) {
+        for (const id of u.vocabCircleIds) {
+          if (!seen.has(id)) {
+            seen.add(id)
+            expected.push(id)
+          }
+        }
+      }
+    }
+    const ids = getCircles()
+      .map((c) => c.id)
+      .slice(0, expected.length)
+    expect(ids).toEqual(expected)
+  })
+
+  it('vòng mở rộng (extra-*) nằm SAU toàn bộ vòng nền tảng', () => {
+    const ids = getCircles().map((c) => c.id)
+    const firstExtra = ids.findIndex((id) => id.startsWith('extra-'))
+    expect(firstExtra).toBeGreaterThan(0)
+    // Không còn vòng nền tảng nào sau vòng extra đầu tiên
+    expect(ids.slice(firstExtra).every((id) => id.startsWith('extra-'))).toBe(true)
+  })
+
+  it('getCefrLevelOfCircle: vòng A1 đầu tiên là A1, extra không có cấp', () => {
+    expect(getCefrLevelOfCircle('greetings')).toBe('A1')
+    expect(getCefrLevelOfCircle('extra-1')).toBeNull()
   })
 })
 
