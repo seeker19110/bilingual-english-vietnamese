@@ -320,6 +320,36 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   "Thuộc ≥70%..." sẵn có (không cần làm mờ cả thẻ). Verify: chạy lại toàn bộ `/learning-path`
   4 theme + full E2E suite (68/68) xanh.
 
+## Đã xong (mở rộng từ vựng + đào sâu B1/B2 — 2026-07-03)
+
+- **8 vòng từ vựng chủ đề mới** (`src/data/curriculum.ts`, FOUNDATION), ~16 từ/vòng có
+  câu ví dụ song ngữ, đã rà KHÔNG trùng với 618 từ nền tảng sẵn có: A1 `countries` (Quốc
+  tịch & đất nước), A1 `communication` (Điện thoại & liên lạc), A2 `restaurant` (Nhà hàng
+  & gọi món), A2 `festivals` (Lễ hội & tiệc tùng), B1 `opinions` (Ý kiến & tranh luận), B1
+  `news` (Tin tức & sự kiện), B2 `arts-culture` (Nghệ thuật & văn hóa), B2 `science-tech`
+  (Khoa học & công nghệ).
+- **Làm giàu 6 unit CEFR có sẵn**: gắn `countries`→`a1-greetings`, `communication`→`a1-actions`,
+  `restaurant`→`a2-shopping`, `festivals`→`a2-past`, `opinions`→`b1-modals`,
+  `arts-culture`→`b2-natural` (thêm vào `vocabCircleIds`, không đổi ngữ pháp unit cũ).
+- **Đào sâu B1 & B2** (theo yêu cầu người dùng — 2 cấp trước đó ít unit/vòng từ vựng hơn
+  A1/A2): thêm hẳn 1 unit MỚI mỗi cấp, cả ngữ pháp lẫn từ vựng —
+  - B1 `b1-narrative` "Thuật lại sự việc": 2 bài ngữ pháp mới (quá khứ tiếp diễn
+    was/were+V-ing, quá khứ hoàn thành had+V3) + vòng từ vựng `news` + 2 hội thoại mẫu.
+  - B2 `b2-advanced-structures` "Cấu trúc nâng cao": 2 bài ngữ pháp mới (câu điều kiện
+    hỗn hợp mixed conditionals, đảo ngữ inversion) + vòng từ vựng `science-tech` + 2 hội
+    thoại mẫu.
+  - Mỗi bài ngữ pháp đủ 3 phần làm giàu (tipVi, 5 lỗi thường gặp, 10 câu quiz) đúng chuẩn
+    các bài cũ. Thêm 1 dòng canDo cho B1 (thuật lại chuyện) và B2 (câu điều kiện hỗn hợp +
+    đảo ngữ).
+  - B1: 5→6 unit, 13→15 bài ngữ pháp. B2: 5→6 unit, 12→14 bài ngữ pháp.
+- Tổng: FOUNDATION 34→42 vòng, ~618→772 từ. Đã chạy lại `scripts/gen-curriculum-json.ts` +
+  `scripts/gen-learn-json.ts` để đồng bộ `public/data/{curriculum,cefr,dialogues}.json`
+  (client đọc qua fetch, không bundle thẳng — xem comment đầu 2 script).
+- Verify: build/typecheck/lint/format/test/size-limit xanh; lái app thật bằng Playwright
+  (đánh dấu toàn bộ từ đã thuộc để mở khóa B1/B2) — xác nhận 2 unit mới hiện đúng trong
+  trang cấp, bài ngữ pháp mới render đủ ví dụ có nghe/lỗi thường gặp/quiz, hội thoại mới
+  phát đúng 2 giọng theo tên nhân vật; full E2E suite (68/68, gồm a11y 4 theme) xanh.
+
 ## ⚠️ Cần làm tay (chưa xong)
 
 - **Chạy migration `0007_learning_progress_cefr.sql` trên Supabase production**
