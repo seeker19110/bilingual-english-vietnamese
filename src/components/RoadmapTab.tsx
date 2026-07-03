@@ -11,16 +11,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  BookOpen,
-  ChevronDown,
-  ChevronRight,
-  CheckCircle2,
-  Layers,
-  Lock,
-  MapPin,
-  Sparkles,
-} from 'lucide-react'
+import { BookOpen, ChevronRight, CheckCircle2, Layers, Lock, MapPin, Sparkles } from 'lucide-react'
 import type { CefrLevel } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
 import { loadCefr } from '../data/cefrLoader'
@@ -175,15 +166,12 @@ export default function RoadmapTab({ uid, isA }: { uid: string; isA: boolean }) 
               </div>
             </div>
 
-            {/* Mục tiêu can-do — thu gọn được để thẻ không bị dài, mặc định đóng */}
-            <details className="mt-3 pt-3 border-t border-zinc-800/80 group">
-              <summary className="cursor-pointer list-none text-xs font-semibold text-zinc-300 flex items-center gap-1.5 select-none">
+            {/* Mục tiêu can-do — luôn hiện sẵn, không cần bấm xổ xuống */}
+            <div className="mt-3 pt-3 border-t border-zinc-800/80">
+              <p className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
                 <Sparkles className={`w-3.5 h-3.5 shrink-0 ${a.text}`} />
-                <span className="flex-1">
-                  {isA ? 'Học xong, bạn có thể…' : "After this level, you'll be able to…"}
-                </span>
-                <ChevronDown className="w-3.5 h-3.5 text-zinc-400 transition-transform group-open:rotate-180" />
-              </summary>
+                {isA ? 'Học xong, bạn có thể…' : "After this level, you'll be able to…"}
+              </p>
               <ul className="space-y-1.5 mt-2.5">
                 {level.canDo.map((c, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-zinc-300 leading-snug">
@@ -192,7 +180,7 @@ export default function RoadmapTab({ uid, isA }: { uid: string; isA: boolean }) 
                   </li>
                 ))}
               </ul>
-            </details>
+            </div>
 
             {/* Vào trang cấp / trạng thái khóa */}
             {locked ? (
