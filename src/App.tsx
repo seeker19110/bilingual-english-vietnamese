@@ -31,6 +31,9 @@ const Lessons = lazyWithRetry(() => import('./pages/Lessons'))
 // Trang Học theo lộ trình cũng dùng toàn bộ từ điển (qua lib/curriculum) — lazy-load.
 const Learn = lazyWithRetry(() => import('./pages/Learn'))
 
+// Trang riêng của từng cấp CEFR (/learning-path/a1…b2) — lazy-load tương tự.
+const CefrLevelPage = lazyWithRetry(() => import('./pages/CefrLevelPage'))
+
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
 // Hiện khung skeleton nhấp nháy thay vì chữ trơ, đỡ cảm giác đơ.
 function PageLoading() {
@@ -139,6 +142,14 @@ export default function App() {
                       element={
                         <RequireAuth>
                           <Learn />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/learning-path/:levelId"
+                      element={
+                        <RequireAuth>
+                          <CefrLevelPage />
                         </RequireAuth>
                       }
                     />
