@@ -1,4 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
+// Chặn import supabase thật (thiếu env trong test) — giống srs.test.ts/vocab.test.ts.
+vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+
 import {
   UNLOCK_PCT,
   getDoneGrammar,
@@ -70,7 +74,10 @@ const BY_ID: Record<string, Circle> = {
 const A1 = level('A1', [unit('u1', ['g1', 'g2'], ['c1']), unit('u2', ['g3'], ['c2'])])
 const A2 = level('A2', [unit('u3', ['g4'], ['c3'])])
 
-beforeEach(() => localStorage.clear())
+beforeEach(() => {
+  localStorage.clear()
+  vi.clearAllMocks()
+})
 
 describe('đánh dấu bài ngữ pháp đã học', () => {
   it('mặc định rỗng, mark/unmark hoạt động và tách theo user', () => {
@@ -93,6 +100,23 @@ describe('hội thoại đã xem', () => {
     markDialogueViewed('u1', 'a1-greetings', 'Morning greeting')
     expect(getViewedDialogues('u1').has(dialogueKey('a1-greetings', 'Morning greeting'))).toBe(true)
     expect(getViewedDialogues('u2').size).toBe(0)
+  })
+
+  it('xem lại hội thoại đã xem → không đẩy đồng bộ thừa', async () => {
+    const { pushProgress } = await import('./progressSync')
+    markDialogueViewed('u1', 'a1-greetings', 'Morning greeting')
+    markDialogueViewed('u1', 'a1-greetings', 'Morning greeting')
+    expect(getViewedDialogues('u1').size).toBe(1)
+    expect(vi.mocked(pushProgress)).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('đồng bộ Supabase khi đánh dấu', () => {
+  it('mark/unmark bài ngữ pháp đều gọi pushProgress', async () => {
+    const { pushProgress } = await import('./progressSync')
+    markGrammarDone('u1', 'g1')
+    unmarkGrammarDone('u1', 'g1')
+    expect(vi.mocked(pushProgress)).toHaveBeenCalledTimes(2)
   })
 })
 

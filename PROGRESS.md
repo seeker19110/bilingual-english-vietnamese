@@ -288,10 +288,21 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
 - **Hạ tiêu đề "Học theo lộ trình" xuống dưới thanh tab** (gọn đầu trang — yêu cầu người dùng).
 - Gate a11y thêm `/learning-path/a1` (4 theme). Đã verify bằng cách lái app thật (Playwright):
   ẩn/hiện mục hoàn thành, khóa B2, redirect URL sai, tiến độ giữ nguyên sau reload.
+  Đã merge: **PR #180**.
+- **Đồng bộ tiến độ ngữ pháp/hội thoại lên Supabase** (yêu cầu người dùng 2026-07-03):
+  migration `0007` thêm cột `cefr_grammar`/`cefr_dialogues` vào `learning_progress`
+  (kèm cập nhật `schema.sql`); `progressSync.ts` đẩy/kéo + hợp nhất union 2 tập mới
+  (`pullProgress` đổi sang `select('*')` để DB chưa chạy 0007 không gãy phần kéo cũ);
+  `cefrProgress.ts` gọi `pushProgress` khi mark/unmark bài ngữ pháp + khi xem hội thoại
+  lần đầu (xem lại không đẩy thừa). ⚠️ Chạy migration TRƯỚC khi deploy — xem "Cần làm tay".
 
 ## ⚠️ Cần làm tay (chưa xong)
 
-- _(Hiện không còn mục nào.)_ ~~Đặt Cloudflare trước VPS~~ — ĐÃ XONG (xem "Đã xong" ở trên,
+- **Chạy migration `0007_learning_progress_cefr.sql` trên Supabase production**
+  (Dashboard → SQL Editor) — **TRƯỚC khi deploy code mới lên VPS**. Nếu deploy code
+  trước, upsert của `progressSync.ts` lỗi "column does not exist" → đồng bộ tiến độ
+  (kể cả từ vựng/SRS) tạm ngưng tới khi chạy migration (kéo về vẫn chạy nhờ `select('*')`).
+- ~~Đặt Cloudflare trước VPS~~ — ĐÃ XONG (xem "Đã xong" ở trên,
   kiểm chứng bằng log IP thật 2026-07-02).
 - _(Hiện không còn mục nào.)_ ~~Chạy migration `0005_lockdown_cost_columns.sql` +
   `0006_pronunciations_rls.sql` trên Supabase production~~ — ĐÃ XONG: người dùng xác nhận
@@ -332,10 +343,11 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
 
 ## Nợ kỹ thuật (chỗ "làm tạm" cần quay lại)
 
-- **Tiến độ ngữ pháp/hội thoại CEFR chỉ nằm localStorage** (`et_cefr_grammar_*`,
-  `et_cefr_dialogue_*`) — chưa đồng bộ Supabase như từ vựng/SRS (`progressSync.ts`).
-  Muốn đồng bộ cần thêm cột vào bảng `learning_progress` (migration) — làm sau khi
-  người dùng xác nhận (đổi schema phải hỏi trước, CLAUDE.md mục 12).
+- ~~Tiến độ ngữ pháp/hội thoại CEFR chỉ nằm localStorage~~ ĐÃ XONG (người dùng yêu cầu
+  2026-07-03): đồng bộ qua 2 cột mới `cefr_grammar`/`cefr_dialogues` của bảng
+  `learning_progress` (migration `0007`, hợp nhất kiểu union giống learned/hard).
+  ⚠️ Còn bước LÀM TAY: chạy migration 0007 trên Supabase production TRƯỚC khi deploy
+  (xem "Cần làm tay").
 
 - **a11y**: gate nay **63 test** — login + Trang chủ (chiều A) ×4 theme + Trang chủ chiều B ×2
   theme sáng + menu giao diện đã mở ×4 theme + 10 trang × 4 theme (/progress, /dictionary,
