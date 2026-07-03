@@ -296,6 +296,23 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   `cefrProgress.ts` gọi `pushProgress` khi mark/unmark bài ngữ pháp + khi xem hội thoại
   lần đầu (xem lại không đẩy thừa). ⚠️ Chạy migration TRƯỚC khi deploy — xem "Cần làm tay".
 
+## Đã xong (đưa 4 tab học vào trang từng cấp — 2026-07-03)
+
+- **Chuyển 4 tab Hôm nay · Ôn SRS · Từ khó · Kiểm tra** từ trang `/learning-path` vào
+  **trang riêng của từng cấp** `/learning-path/a1…b2` (yêu cầu người dùng): thanh tab đầu
+  trang cấp thêm tab "Bài học" (danh sách unit như cũ) + 4 tab học; cấp còn khóa thì ẩn
+  thanh tab. Nội dung 4 tab tách ra `src/components/StudyTabs.tsx` (từ `Learn.tsx` cũ).
+- **Dữ liệu 4 tab LỌC THEO TỪ VỰNG CỦA CẤP**: helper mới `getLevelWords()` +
+  `getBeyondCefrWords()` + `getTodayBatchFrom()` trong `src/lib/curriculum.ts` (khử trùng
+  cùng luật với `getLearningPath` → mỗi từ thuộc đúng 1 cấp; có unit test). Cấp cuối (B2)
+  học tiếp phần NGOÀI lộ trình CEFR (vòng nền tảng lẻ + cụm "Mở rộng" từ điển) để không
+  mồ côi phần mở rộng. Giới hạn ngày (20 từ/lượt, tối đa 100, quiz mở batch) vẫn CHUNG toàn app.
+- **Trang `/learning-path` chỉ còn tổng quan**: mốc từ vựng + bản đồ 4 cấp (`RoadmapTab`).
+  Nút "Kiểm tra" trong `QuickActions` đổi thành "Lộ trình" (tab Kiểm tra giờ nằm trong cấp).
+  Preload audio 20 từ "hôm nay" chuyển theo sang trang cấp.
+- Lưu ý hành vi: badge Ôn SRS/Từ khó giờ đếm THEO CẤP → từ đến hạn ôn của cấp nào thì vào
+  trang cấp đó để ôn (tổng toàn app vẫn xem ở `/progress`).
+
 ## ⚠️ Cần làm tay (chưa xong)
 
 - **Chạy migration `0007_learning_progress_cefr.sql` trên Supabase production**

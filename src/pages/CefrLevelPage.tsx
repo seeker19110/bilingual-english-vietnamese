@@ -9,6 +9,11 @@
 //      ① Từ vựng → ② Ngữ pháp → ③ Hội thoại.
 //   Mục nào đã hoàn thành 100% thì ẨN đi (gom vào nút "Đã hoàn thành n mục —
 //   Xem lại"); unit xong hết thì thu gọn thành 1 dòng.
+//
+// THANH TAB TRÊN ĐẦU (chuyển từ trang /learning-path vào từng cấp):
+//   Bài học · Hôm nay · Ôn SRS · Từ khó · Kiểm tra — 4 tab học lấy dữ liệu
+//   THEO TỪ VỰNG CỦA CẤP (components/StudyTabs.tsx); cấp cuối (B2) học tiếp
+//   cả phần ngoài lộ trình CEFR. Cấp còn khóa thì ẩn thanh tab.
 // ──────────────────────────────────────────────────────────────────────
 
 import { useEffect, useMemo, useState } from 'react'
@@ -18,8 +23,12 @@ import {
   ChevronRight,
   ChevronDown,
   BookOpen,
+  Brain,
+  ClipboardList,
   GraduationCap,
   Sparkles,
+  Star,
+  Target,
   CheckCircle2,
   Check,
   Layers,
@@ -32,6 +41,7 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
 import { GrammarDetail, VocabFlash, DialogueView } from '../components/CefrLessonViews'
+import { TodayLesson, SRSReview, HardWords, QuizTab } from '../components/StudyTabs'
 import { ACCENT, type AccentClasses } from '../lib/cefrAccent'
 import type { CefrLevel, CefrUnit, GrammarLesson } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
@@ -41,7 +51,15 @@ import { loadFoundation } from '../data/curriculumLoader'
 import { getDialogues } from '../data/dialoguesLoader'
 import { useAuth } from '../context/useAuth'
 import { getDirection } from '../lib/storage'
-import { getLearnedWords } from '../lib/vocab'
+import { getLearnedWords, getDifficultWords } from '../lib/vocab'
+import { getDueWords } from '../lib/srs'
+import {
+  loadCurriculum,
+  isCurriculumReady,
+  getLevelWords,
+  getBeyondCefrWords,
+} from '../lib/curriculum'
+import { preloadLearnData } from '../lib/preloader'
 import {
   getDoneGrammar,
   getViewedDialogues,
@@ -57,6 +75,9 @@ import {
 // % an toàn (0 khi total = 0, không chia cho 0).
 const pct = (done: number, total: number) => (total > 0 ? Math.round((done / total) * 100) : 0)
 
+// Tab trên trang cấp: 'lessons' = danh sách bài; 4 tab còn lại là tab học theo cấp.
+type StudyTab = 'lessons' | 'today' | 'srs' | 'hard' | 'quiz'
+
 export default function CefrLevelPage() {
   const { levelId } = useParams<{ levelId: string }>()
   const nav = useNavigate()
@@ -66,6 +87,15 @@ export default function CefrLevelPage() {
   const [levels, setLevels] = useState<CefrLevel[]>([])
   const [circleById, setCircleById] = useState<Record<string, Circle>>({})
   const [ready, setReady] = useState(false)
+
+  // Tab đang mở (mặc định: danh sách bài của cấp).
+  const [tab, setTab] = useState<StudyTab>('lessons')
+  // Các tab học cần TOÀN BỘ từ điển (nạp động, nặng hơn cefr+foundation) —
+  // gate riêng để tab "Bài học" vẫn hiện ngay không phải chờ.
+  const [dictReady, setDictReady] = useState(isCurriculumReady())
+  useEffect(() => {
+    loadCurriculum().then(() => setDictReady(true))
+  }, [])
 
   // Màn con đang mở (giữ nguyên mẫu của RoadmapTab cũ: hội thoại đè lên flashcard
   // để xem xong hội thoại quay lại đúng màn flashcard).
@@ -108,6 +138,44 @@ export default function CefrLevelPage() {
     level?.units.forEach((u) => u.grammar.forEach((g) => map.set(g.id, ++n)))
     return map
   }, [level])
+
+  // Preload audio 20 từ "hôm nay" khi browser rảnh (chuyển từ trang /learning-path
+  // sang đây vì tab "Hôm nay" giờ nằm ở trang cấp).
+  useEffect(() => {
+    if (!uid) return
+    const run = () => {
+      void preloadLearnData(uid)
+    }
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(run, { timeout: 3000 })
+      return () => cancelIdleCallback(id)
+    }
+    const tid = setTimeout(run, 500)
+    return () => clearTimeout(tid)
+  }, [uid])
+
+  // Từ vựng dùng cho 4 tab học: từ của CẤP này; cấp CUỐI (B2) cộng thêm phần
+  // ngoài lộ trình CEFR để học tiếp sau khi xong cấp.
+  const studyPool = useMemo(() => {
+    if (!dictReady || !level) return []
+    const words = getLevelWords(level.id)
+    const isLast = levels[levels.length - 1]?.id === level.id
+    return isLast ? [...words, ...getBeyondCefrWords()] : words
+  }, [dictReady, level, levels])
+
+  // Badge trên tab: số từ CỦA CẤP cần ôn SRS / đã đánh dấu khó.
+  // `refresh` là khóa invalidation thủ công (dữ liệu đọc từ localStorage).
+  const srsDue = useMemo(
+    () => (uid ? getDueWords(uid, studyPool).length : 0),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [uid, studyPool, refresh],
+  )
+  const hardCount = useMemo(() => {
+    if (!uid) return 0
+    const hard = getDifficultWords(uid)
+    return studyPool.filter((w) => hard.has(w.word.toLowerCase())).length
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uid, studyPool, refresh])
 
   if (!user) return null
   // Dữ liệu đã tải mà không tìm thấy cấp (URL sai kiểu /learning-path/c9) → về lộ trình.
@@ -207,9 +275,70 @@ export default function CefrLevelPage() {
   // Đánh số bài ngữ pháp liên tục trong cả cấp (Bài 1, Bài 2, …)
   let lessonStart = 0
 
+  // Cấp còn khóa → chỉ hiện màn khóa (không có thanh tab / tab học).
+  const activeTab: StudyTab = locked ? 'lessons' : tab
+
+  // Thanh tab của trang cấp (kiểu dáng giữ nguyên từ trang /learning-path cũ).
+  type TabDef = {
+    key: StudyTab
+    icon: typeof Target
+    labelA: string
+    labelB: string
+    badge?: number
+    active: string
+    inactive: string
+  }
+  const TABS: TabDef[] = [
+    {
+      key: 'lessons',
+      icon: BookOpen,
+      labelA: 'Bài học',
+      labelB: 'Lessons',
+      active: 'bg-teal-500/20 text-teal-300 theme-light:text-teal-800 border border-teal-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
+    {
+      key: 'today',
+      icon: Target,
+      labelA: 'Hôm nay',
+      labelB: 'Today',
+      active:
+        'bg-accent-500/20 text-accent-300 theme-light:text-accent-800 border border-accent-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
+    {
+      key: 'srs',
+      icon: Brain,
+      labelA: 'Ôn SRS',
+      labelB: 'SRS',
+      badge: srsDue,
+      active: 'bg-sky-500/20 text-sky-300 theme-light:text-sky-800 border border-sky-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
+    {
+      key: 'hard',
+      icon: Star,
+      labelA: 'Từ khó',
+      labelB: 'Hard',
+      badge: hardCount,
+      active:
+        'bg-amber-500/20 text-amber-300 theme-light:text-amber-800 border border-amber-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
+    {
+      key: 'quiz',
+      icon: ClipboardList,
+      labelA: 'Kiểm tra',
+      labelB: 'Quiz',
+      active:
+        'bg-violet-500/20 text-violet-300 theme-light:text-violet-800 border border-violet-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
+  ]
+
   return shell(
     <div className="animate-fade-in">
-      {/* Về trang lộ trình (tab Lộ trình của /learning-path) */}
+      {/* Về trang lộ trình (tổng quan 4 cấp ở /learning-path) */}
       <button
         onClick={() => nav('/learning-path')}
         className="flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200 transition mb-3"
@@ -217,173 +346,231 @@ export default function CefrLevelPage() {
         <ChevronLeft className="w-4 h-4" /> {isA ? 'Lộ trình A1 → B2' : 'Roadmap A1 → B2'}
       </button>
 
+      {/* Thanh tab học của cấp — ẩn khi cấp còn khóa */}
+      {!locked && (
+        <div className="grid grid-cols-5 gap-1.5 mb-4">
+          {TABS.map(({ key, icon: Icon, labelA, labelB, badge, active, inactive }) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`relative flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl text-xs font-medium transition ${activeTab === key ? active : inactive}`}
+            >
+              <Icon className="w-4 h-4" />
+              <span>{isA ? labelA : labelB}</span>
+              {badge != null && badge > 0 && (
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[11px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                  {badge > 99 ? '99+' : badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+
       <PageHeader
         title={isA ? level.titleVi : level.titleEn}
         subtitle={level.subtitleVi}
         className="mb-4"
       />
 
-      {/* Thẻ tổng quan cấp độ */}
-      <div className={`glass rounded-2xl p-5 mb-4 border ${accent.ring}`}>
-        <div className="flex items-start gap-3">
-          <GraduationCap className={`w-6 h-6 shrink-0 ${accent.text}`} />
-          <div className="flex-1">
-            <p className="text-base text-zinc-300 leading-snug">{level.goalVi}</p>
-            <div className="flex flex-wrap gap-x-3 gap-y-1 mt-3 text-sm text-zinc-400">
-              <span className="flex items-center gap-1">
-                <Layers className="w-3.5 h-3.5" /> {level.units.length} {isA ? 'chủ đề' : 'units'}
-              </span>
-              <span className="flex items-center gap-1">
-                <BookOpen className="w-3.5 h-3.5" /> {grammar.total}{' '}
-                {isA ? 'bài ngữ pháp' : 'grammar points'}
-              </span>
-              <span className="flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5" /> {vocab.total} {isA ? 'từ vựng' : 'words'}
-              </span>
-            </div>
+      {/* 4 tab học theo cấp — cần từ điển nạp xong mới render */}
+      {activeTab !== 'lessons' &&
+        (!dictReady ? (
+          <div className="glass rounded-xl p-8 text-center animate-fade-in">
+            <p className="text-zinc-400 text-sm">
+              {isA ? 'Đang tải từ vựng…' : 'Loading vocabulary…'}
+            </p>
           </div>
-        </div>
+        ) : (
+          // key={level.id}: đổi cấp (điều hướng giữa các trang cấp) → remount để
+          // batch/câu hỏi khởi tạo lại theo đúng từ vựng của cấp mới.
+          <>
+            {activeTab === 'today' && (
+              <TodayLesson key={level.id} uid={uid} isA={isA} pool={studyPool} onProgress={bump} />
+            )}
+            {activeTab === 'srs' && (
+              <SRSReview key={level.id} uid={uid} isA={isA} pool={studyPool} onUpdate={bump} />
+            )}
+            {activeTab === 'hard' && (
+              <HardWords key={level.id} uid={uid} isA={isA} pool={studyPool} onUpdate={bump} />
+            )}
+            {activeTab === 'quiz' && (
+              <QuizTab key={level.id} uid={uid} isA={isA} pool={studyPool} />
+            )}
+          </>
+        ))}
 
-        {/* 2 thanh tiến độ: từ vựng + ngữ pháp */}
-        <div className="mt-4 space-y-3">
-          <div>
-            <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-zinc-400">{isA ? 'Từ vựng' : 'Vocabulary'}</span>
-              <span className={`font-semibold ${accent.text}`}>
-                {vocab.done}/{vocab.total} ({pct(vocab.done, vocab.total)}%)
-              </span>
-            </div>
-            <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full ${accent.bar} transition-all`}
-                style={{ width: `${pct(vocab.done, vocab.total)}%` }}
-              />
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-zinc-400">{isA ? 'Ngữ pháp' : 'Grammar'}</span>
-              <span className={`font-semibold ${accent.text}`}>
-                {grammar.done}/{grammar.total} ({pct(grammar.done, grammar.total)}%)
-              </span>
-            </div>
-            <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full ${accent.bar} transition-all`}
-                style={{ width: `${pct(grammar.done, grammar.total)}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Mục tiêu can-do — thu gọn được để không đẩy nội dung học xuống */}
-        <details className="mt-4 pt-4 border-t border-zinc-800/80 group">
-          <summary className="cursor-pointer list-none text-sm font-semibold text-zinc-300 flex items-center gap-1.5 select-none">
-            <Sparkles className={`w-4 h-4 shrink-0 ${accent.text}`} />
-            <span className="flex-1">
-              {isA ? 'Hoàn thành cấp này, bạn có thể…' : 'After this level, you will be able to…'}
-            </span>
-            <ChevronDown className="w-4 h-4 text-zinc-400 transition-transform group-open:rotate-180" />
-          </summary>
-          <ul className="space-y-2 mt-3">
-            {level.canDo.map((c, i) => (
-              <li key={i} className="flex items-start gap-2 text-base text-zinc-300 leading-snug">
-                <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${accent.text}`} />
-                <span>{c}</span>
-              </li>
-            ))}
-          </ul>
-        </details>
-      </div>
-
-      {locked ? (
-        /* Màn khóa — cấp này chưa mở */
-        <div className="glass rounded-2xl p-6 text-center space-y-3 border border-zinc-700/60">
-          <Lock className="w-8 h-8 text-zinc-400 mx-auto" />
-          <p className="text-white font-semibold text-lg">
-            {isA ? `Cấp ${level.id} đang bị khóa` : `${level.id} is locked`}
-          </p>
-          <p className="text-sm text-zinc-400 leading-relaxed">
-            {isA
-              ? `Hoàn thành ≥70% từ vựng của cấp ${prevLevel?.id ?? ''} để mở khóa.`
-              : `Complete ≥70% vocabulary in ${prevLevel?.id ?? 'the previous level'} to unlock.`}
-          </p>
-          {prevLevel && (
-            <button
-              onClick={() => nav(`/learning-path/${prevLevel.id.toLowerCase()}`)}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
-            >
-              {isA ? `Học tiếp cấp ${prevLevel.id}` : `Continue ${prevLevel.id}`}
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-      ) : (
+      {activeTab === 'lessons' && (
         <>
-          {/* Học tiếp / hoàn thành cấp */}
-          {nextOnClick ? (
-            <button
-              onClick={nextOnClick}
-              className={`w-full glass rounded-2xl p-4 mb-4 flex items-center gap-3 text-left border ${accent.ring} hover:border-zinc-500 transition`}
-            >
-              <div
-                className={`w-10 h-10 rounded-xl ${accent.soft} flex items-center justify-center shrink-0`}
-              >
-                <Play className={`w-5 h-5 fill-current ${accent.text}`} />
+          {/* Thẻ tổng quan cấp độ */}
+          <div className={`glass rounded-2xl p-5 mb-4 border ${accent.ring}`}>
+            <div className="flex items-start gap-3">
+              <GraduationCap className={`w-6 h-6 shrink-0 ${accent.text}`} />
+              <div className="flex-1">
+                <p className="text-base text-zinc-300 leading-snug">{level.goalVi}</p>
+                <div className="flex flex-wrap gap-x-3 gap-y-1 mt-3 text-sm text-zinc-400">
+                  <span className="flex items-center gap-1">
+                    <Layers className="w-3.5 h-3.5" /> {level.units.length}{' '}
+                    {isA ? 'chủ đề' : 'units'}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <BookOpen className="w-3.5 h-3.5" /> {grammar.total}{' '}
+                    {isA ? 'bài ngữ pháp' : 'grammar points'}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5" /> {vocab.total} {isA ? 'từ vựng' : 'words'}
+                  </span>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-zinc-400">
-                  {isA ? 'Học tiếp' : 'Continue'} · {isA ? 'Phần' : 'Part'}{' '}
-                  {(next?.unitIndex ?? 0) + 1} — {isA ? next?.unit.titleVi : next?.unit.titleEn}
-                </p>
-                <p className="text-sm font-semibold text-white truncate mt-0.5">{nextLabel}</p>
+            </div>
+
+            {/* 2 thanh tiến độ: từ vựng + ngữ pháp */}
+            <div className="mt-4 space-y-3">
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-zinc-400">{isA ? 'Từ vựng' : 'Vocabulary'}</span>
+                  <span className={`font-semibold ${accent.text}`}>
+                    {vocab.done}/{vocab.total} ({pct(vocab.done, vocab.total)}%)
+                  </span>
+                </div>
+                <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${accent.bar} transition-all`}
+                    style={{ width: `${pct(vocab.done, vocab.total)}%` }}
+                  />
+                </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0" />
-            </button>
-          ) : (
-            <div className="glass rounded-2xl p-5 mb-4 text-center space-y-2">
-              <PartyPopper className="w-8 h-8 text-amber-400 theme-light:text-amber-700 mx-auto" />
-              <p className="text-white font-semibold">
-                {isA
-                  ? `Chúc mừng! Bạn đã hoàn thành cấp ${level.id} 🎉`
-                  : `Congrats! You finished ${level.id} 🎉`}
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-zinc-400">{isA ? 'Ngữ pháp' : 'Grammar'}</span>
+                  <span className={`font-semibold ${accent.text}`}>
+                    {grammar.done}/{grammar.total} ({pct(grammar.done, grammar.total)}%)
+                  </span>
+                </div>
+                <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${accent.bar} transition-all`}
+                    style={{ width: `${pct(grammar.done, grammar.total)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Mục tiêu can-do — thu gọn được để không đẩy nội dung học xuống */}
+            <details className="mt-4 pt-4 border-t border-zinc-800/80 group">
+              <summary className="cursor-pointer list-none text-sm font-semibold text-zinc-300 flex items-center gap-1.5 select-none">
+                <Sparkles className={`w-4 h-4 shrink-0 ${accent.text}`} />
+                <span className="flex-1">
+                  {isA
+                    ? 'Hoàn thành cấp này, bạn có thể…'
+                    : 'After this level, you will be able to…'}
+                </span>
+                <ChevronDown className="w-4 h-4 text-zinc-400 transition-transform group-open:rotate-180" />
+              </summary>
+              <ul className="space-y-2 mt-3">
+                {level.canDo.map((c, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-base text-zinc-300 leading-snug"
+                  >
+                    <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${accent.text}`} />
+                    <span>{c}</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </div>
+
+          {locked ? (
+            /* Màn khóa — cấp này chưa mở */
+            <div className="glass rounded-2xl p-6 text-center space-y-3 border border-zinc-700/60">
+              <Lock className="w-8 h-8 text-zinc-400 mx-auto" />
+              <p className="text-white font-semibold text-lg">
+                {isA ? `Cấp ${level.id} đang bị khóa` : `${level.id} is locked`}
               </p>
-              {nextLevel && !(lockedMap.get(nextLevel.id) ?? false) && (
+              <p className="text-sm text-zinc-400 leading-relaxed">
+                {isA
+                  ? `Hoàn thành ≥70% từ vựng của cấp ${prevLevel?.id ?? ''} để mở khóa.`
+                  : `Complete ≥70% vocabulary in ${prevLevel?.id ?? 'the previous level'} to unlock.`}
+              </p>
+              {prevLevel && (
                 <button
-                  onClick={() => nav(`/learning-path/${nextLevel.id.toLowerCase()}`)}
+                  onClick={() => nav(`/learning-path/${prevLevel.id.toLowerCase()}`)}
                   className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
                 >
-                  {isA ? `Sang cấp ${nextLevel.id}` : `Go to ${nextLevel.id}`}
+                  {isA ? `Học tiếp cấp ${prevLevel.id}` : `Continue ${prevLevel.id}`}
                   <ChevronRight className="w-4 h-4" />
                 </button>
               )}
             </div>
-          )}
+          ) : (
+            <>
+              {/* Học tiếp / hoàn thành cấp */}
+              {nextOnClick ? (
+                <button
+                  onClick={nextOnClick}
+                  className={`w-full glass rounded-2xl p-4 mb-4 flex items-center gap-3 text-left border ${accent.ring} hover:border-zinc-500 transition`}
+                >
+                  <div
+                    className={`w-10 h-10 rounded-xl ${accent.soft} flex items-center justify-center shrink-0`}
+                  >
+                    <Play className={`w-5 h-5 fill-current ${accent.text}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-zinc-400">
+                      {isA ? 'Học tiếp' : 'Continue'} · {isA ? 'Phần' : 'Part'}{' '}
+                      {(next?.unitIndex ?? 0) + 1} — {isA ? next?.unit.titleVi : next?.unit.titleEn}
+                    </p>
+                    <p className="text-sm font-semibold text-white truncate mt-0.5">{nextLabel}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0" />
+                </button>
+              ) : (
+                <div className="glass rounded-2xl p-5 mb-4 text-center space-y-2">
+                  <PartyPopper className="w-8 h-8 text-amber-400 theme-light:text-amber-700 mx-auto" />
+                  <p className="text-white font-semibold">
+                    {isA
+                      ? `Chúc mừng! Bạn đã hoàn thành cấp ${level.id} 🎉`
+                      : `Congrats! You finished ${level.id} 🎉`}
+                  </p>
+                  {nextLevel && !(lockedMap.get(nextLevel.id) ?? false) && (
+                    <button
+                      onClick={() => nav(`/learning-path/${nextLevel.id.toLowerCase()}`)}
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
+                    >
+                      {isA ? `Sang cấp ${nextLevel.id}` : `Go to ${nextLevel.id}`}
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              )}
 
-          {/* Danh sách unit — "Phần 1..n", trình tự: từ vựng → ngữ pháp → hội thoại */}
-          <div className="space-y-3">
-            {level.units.map((unit, ui) => {
-              const start = lessonStart
-              lessonStart += unit.grammar.length
-              return (
-                <UnitSection
-                  key={unit.id}
-                  unit={unit}
-                  index={ui}
-                  isA={isA}
-                  accent={accent}
-                  circleById={circleById}
-                  learned={learned}
-                  doneGrammar={doneGrammar}
-                  viewedDialogues={viewedDialogues}
-                  lessonStartIndex={start}
-                  onOpenLesson={setLesson}
-                  onOpenCircle={setCircle}
-                  onOpenDialogue={openDialogue}
-                />
-              )
-            })}
-          </div>
+              {/* Danh sách unit — "Phần 1..n", trình tự: từ vựng → ngữ pháp → hội thoại */}
+              <div className="space-y-3">
+                {level.units.map((unit, ui) => {
+                  const start = lessonStart
+                  lessonStart += unit.grammar.length
+                  return (
+                    <UnitSection
+                      key={unit.id}
+                      unit={unit}
+                      index={ui}
+                      isA={isA}
+                      accent={accent}
+                      circleById={circleById}
+                      learned={learned}
+                      doneGrammar={doneGrammar}
+                      viewedDialogues={viewedDialogues}
+                      lessonStartIndex={start}
+                      onOpenLesson={setLesson}
+                      onOpenCircle={setCircle}
+                      onOpenDialogue={openDialogue}
+                    />
+                  )
+                })}
+              </div>
+            </>
+          )}
         </>
       )}
 
