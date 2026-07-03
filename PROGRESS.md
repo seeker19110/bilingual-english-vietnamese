@@ -362,11 +362,18 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
 - **B1: 169→377 từ** (+13 vòng: workplace, money-finance, education-further,
   technology-use, entertainment-media, sports-extended, emotions-extended,
   environment-issues, city-life, opinions-extended, narrative-extra, relationships-b1,
-  problems-solutions). **PR #187** (đang chờ duyệt/merge).
+  problems-solutions). **PR #187** (gộp chung với 2 fix logic ở mục dưới).
+- **B2: 130→386 từ** (+16 vòng: business-extended, technology-advanced, medical-advanced,
+  social-issues, arts-culture-advanced, science-advanced, environment-advanced,
+  abstract-concepts, communication-advanced, law-justice, politics-government,
+  travel-advanced, food-culture-advanced, mental-health, education-advanced,
+  economy-global). Gộp vào **PR #187** (đẩy thêm commit sau khi vá 2 lỗi logic).
 - Mỗi vòng ~16 từ có câu ví dụ song ngữ, gắn vào `vocabCircleIds` của unit CEFR có sẵn theo
   đúng chủ đề (không tạo unit/ngữ pháp mới). Rà không trùng khóa từ (`word`, không phân biệt
   hoa/thường) bằng script kiểm tra riêng sau mỗi đợt.
-- Còn lại: **B2 (130→~375 từ)** để hoàn tất mục tiêu 1500 từ toàn lộ trình.
+- **Hoàn tất mục tiêu**: tổng lộ trình CEFR 771→**1523 từ** (A1 378, A2 382, B1 377, B2 386).
+  Verify: build/typecheck/lint/format/test (105/105)/size-limit xanh; full E2E suite
+  (68/68, a11y 4 theme) xanh.
 
 ## Đã xong (audit logic/đồng nhất + vá 2 lỗi — 2026-07-03)
 

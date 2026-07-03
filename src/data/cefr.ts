@@ -2963,7 +2963,12 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Giả định & tiếc nuối',
         titleEn: 'Hypotheticals & Regrets',
         emoji: '🎭',
-        vocabCircleIds: ['personality'],
+        vocabCircleIds: [
+          'personality',
+          'abstract-concepts',
+          'politics-government',
+          'education-advanced',
+        ],
         grammar: [
           {
             id: 'b2-cond-2',
@@ -3153,7 +3158,15 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Câu bị động',
         titleEn: 'The Passive Voice',
         emoji: '🔁',
-        vocabCircleIds: ['business', 'it', 'environment'],
+        vocabCircleIds: [
+          'business',
+          'it',
+          'environment',
+          'business-extended',
+          'environment-advanced',
+          'law-justice',
+          'economy-global',
+        ],
         grammar: [
           {
             id: 'b2-passive',
@@ -3279,7 +3292,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Câu tường thuật',
         titleEn: 'Reported Speech',
         emoji: '💬',
-        vocabCircleIds: ['social'],
+        vocabCircleIds: ['social', 'social-issues', 'communication-advanced'],
         grammar: [
           {
             id: 'b2-reported-statements',
@@ -3397,7 +3410,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Suy đoán & mệnh đề quan hệ',
         titleEn: 'Deduction & Relative Clauses',
         emoji: '🧩',
-        vocabCircleIds: ['medical'],
+        vocabCircleIds: ['medical', 'medical-advanced', 'mental-health'],
         grammar: [
           {
             id: 'b2-modals-deduction',
@@ -3529,7 +3542,14 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Diễn đạt tự nhiên',
         titleEn: 'Natural Expression',
         emoji: '🗣️',
-        vocabCircleIds: ['it', 'arts-culture'],
+        vocabCircleIds: [
+          'it',
+          'arts-culture',
+          'technology-advanced',
+          'arts-culture-advanced',
+          'travel-advanced',
+          'food-culture-advanced',
+        ],
         grammar: [
           {
             id: 'b2-phrasal',
@@ -3716,7 +3736,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
         titleVi: 'Cấu trúc nâng cao',
         titleEn: 'Advanced Structures',
         emoji: '🎓',
-        vocabCircleIds: ['science-tech'],
+        vocabCircleIds: ['science-tech', 'science-advanced'],
         grammar: [
           {
             id: 'b2-mixed-conditional',
