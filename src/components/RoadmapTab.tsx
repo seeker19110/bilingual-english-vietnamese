@@ -84,7 +84,12 @@ export default function RoadmapTab({ uid, isA }: { uid: string; isA: boolean }) 
         return (
           <div
             key={level.id}
-            className={`glass rounded-2xl p-4 border ${isCurrent ? a.ring : 'border-transparent'} ${locked ? 'opacity-80' : ''}`}
+            // KHÔNG dùng opacity để làm mờ thẻ khóa: opacity nhân vào cả chữ bên trong,
+            // làm tương phản chữ (đã sát ngưỡng AA) tụt dưới 4.5:1 ở theme nền sáng
+            // (Blue sky/Pink) — bắt được khi /learning-path hiện thẳng bản đồ lộ trình
+            // (trước đây tab "Lộ trình" không phải mặc định nên chưa lộ). Trạng thái khóa
+            // đã có Lock icon + dòng "Thuộc ≥70%..." bên dưới, không cần làm mờ cả thẻ.
+            className={`glass rounded-2xl p-4 border ${isCurrent ? a.ring : 'border-transparent'}`}
           >
             <div className="flex items-start gap-3">
               {/* Badge cấp */}

@@ -312,6 +312,13 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   Preload audio 20 từ "hôm nay" chuyển theo sang trang cấp.
 - Lưu ý hành vi: badge Ôn SRS/Từ khó giờ đếm THEO CẤP → từ đến hạn ôn của cấp nào thì vào
   trang cấp đó để ôn (tổng toàn app vẫn xem ở `/progress`).
+- **Fix a11y `color-contrast` (RoadmapTab, bắt bởi CI PR #182)**: thẻ cấp bị khóa dùng
+  `opacity-80` để làm mờ cả khối — làm chữ bên trong (vốn đã sát ngưỡng AA) tụt dưới 4.5:1
+  ở theme nền sáng (Blue sky/Pink). Lỗi này CÓ SẴN từ trước nhưng chưa bị gate bắt vì tab
+  "Lộ trình" không phải tab mặc định của `/learning-path` cũ; nay trang chỉ còn đúng bản đồ
+  lộ trình nên lộ ra. Bỏ hẳn `opacity-80`, giữ nguyên trạng thái khóa bằng Lock icon + dòng
+  "Thuộc ≥70%..." sẵn có (không cần làm mờ cả thẻ). Verify: chạy lại toàn bộ `/learning-path`
+  4 theme + full E2E suite (68/68) xanh.
 
 ## ⚠️ Cần làm tay (chưa xong)
 
