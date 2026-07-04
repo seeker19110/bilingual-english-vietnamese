@@ -487,6 +487,22 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   20 câu xen kẽ 2 chiều, tốc độ mặc định 10/20 đúng theo user mới/cũ, test-out đánh dấu đúng cả
   vòng + không tính vào bộ đếm ngày).
 
+## Đã xong (nghiên cứu cải tiến UI/UX — 2026-07-04)
+
+> Theo yêu cầu người dùng "nghiên cứu cải tiến luôn ui/ux". CHỈ tài liệu, không đổi code.
+> Kết quả: `docs/research/cai-tien-ui-ux.md` — khảo sát bằng Playwright thật (12 trang +
+> 6 luồng tương tác ở khổ mobile 375×812, đo cuộn ngang/vùng chạm/vị trí phần tử bằng máy),
+> đối chiếu checklist mobile-first + UI/UX 4 trạng thái của khung (BO-SUNG-chat-luong-Nhom-2).
+
+- 11 vấn đề xếp hạng (3 🔴): trang chủ là menu tĩnh không có "Học tiếp"/SRS due (U1); không có
+  bottom-nav, đổi chế độ nào cũng phải về Home (U2); onboarding hỏi 3 câu nhưng KHÔNG nơi nào
+  đọc lại câu trả lời (U3 — "AI sẽ điều chỉnh độ khó" chưa được thực hiện). Bug layout thật đo
+  được: hàng nhập Chat tràn 15px ở 375px vì input thiếu `min-w-0` (U4); throttle 10s giữa mỗi
+  tin chat (U5); lỗi kỹ thuật tiếng Anh phơi nguyên văn ra UI (U6). Kèm 5 mục nhỏ U7–U11.
+- Kế hoạch 5 đợt PR nhỏ (U-1 vá điểm → U-5 bottom-nav) + 4 câu hỏi cần người dùng chốt
+  (bottom-nav?, throttle 10s→3s?, vị trí thẻ Học tiếp, badge "Không giới hạn") — xem mục 5–6
+  của tài liệu.
+
 ## ⚠️ Cần làm tay (chưa xong)
 
 - **Điền dữ liệu tần suất từ thật cho phần "Mở rộng"** (đợt 4 ở trên): cần 1 wordlist tần suất
