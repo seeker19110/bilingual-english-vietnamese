@@ -93,33 +93,56 @@ function buildQuiz(userId: string, pool: DictEntry[]): QuizQuestion[] {
 }
 
 // ── Tab Hôm nay ───────────────────────────────────────────────────────────────
-// Số câu mini-quiz cần đúng 100% để mở batch mới
-const MINI_QUIZ_SIZE = 5
+// Mini-quiz mở batch mới: hỏi ĐỦ cả batch (không chỉ 5/20 từ) để mọi từ vừa học
+// đều được kiểm tra ít nhất 1 lần, trộn đều 2 chiều EN→VI và VI→EN (testing
+// effect 2 chiều bền hơn 1 chiều nhận biết).
 const MINI_QUIZ_CHOICES = 4
 
+type QuizDirection = 'en-vi' | 'vi-en'
+
 interface MiniQuizQ {
-  word: string
+  word: string // key để tra lại DictEntry gốc (map lỗi sai → flashcard ôn lại)
+  direction: QuizDirection
+  prompt: string // cái hiển thị lớn để hỏi (từ tiếng Anh hoặc nghĩa tiếng Việt)
   correct: string
   options: string[]
 }
 
 function buildMiniQuiz(batch: DictEntry[], pool: DictEntry[]): MiniQuizQ[] {
   const allMeanings = pool.map((w) => w.vi)
-  const qs = [...batch].sort(() => Math.random() - 0.5).slice(0, MINI_QUIZ_SIZE)
-  return qs.map((q) => {
-    const wrongs = allMeanings
-      .filter((m) => m !== q.vi)
+  const allWords = pool.map((w) => w.word)
+  const qs = [...batch].sort(() => Math.random() - 0.5)
+  return qs.map((q, i) => {
+    // Xen kẽ 2 chiều theo thứ tự đã xáo trộn — mỗi từ chỉ hỏi 1 chiều/lượt.
+    const direction: QuizDirection = i % 2 === 0 ? 'en-vi' : 'vi-en'
+    if (direction === 'en-vi') {
+      const wrongs = allMeanings
+        .filter((m) => m !== q.vi)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, MINI_QUIZ_CHOICES - 1)
+      return {
+        word: q.word,
+        direction,
+        prompt: q.word,
+        correct: q.vi,
+        options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5),
+      }
+    }
+    const wrongs = allWords
+      .filter((w) => w !== q.word)
       .sort(() => Math.random() - 0.5)
       .slice(0, MINI_QUIZ_CHOICES - 1)
     return {
       word: q.word,
-      correct: q.vi,
-      options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5),
+      direction,
+      prompt: q.vi,
+      correct: q.word,
+      options: [q.word, ...wrongs].sort(() => Math.random() - 0.5),
     }
   })
 }
 
-type TodayPhase = 'learning' | 'batch-done' | 'mini-quiz' | 'daily-max'
+type TodayPhase = 'learning' | 'batch-done' | 'mini-quiz' | 'mini-quiz-review' | 'daily-max'
 
 // ── Màn "Xong batch": câu + hội thoại dựng TỪ CHÍNH 20 từ vừa học ─────────────
 // "Câu thông dụng" lấy thẳng ví dụ của CHÍNH 20 từ trong batch (ex_en/ex_vi),
@@ -327,6 +350,9 @@ export function TodayLesson({
   const [quizSel, setQuizSel] = useState<string | null>(null)
   const [quizAns, setQuizAns] = useState<boolean[]>([])
   const [quizDone, setQuizDone] = useState(false)
+  // Từ trả lời sai trong mini-quiz — ôn lại flashcard TRƯỚC KHI cho làm lại quiz.
+  const [wrongWords, setWrongWords] = useState<DictEntry[]>([])
+  const [reviewIdx, setReviewIdx] = useState(0)
 
   const progress = useMemo(() => getPathProgress(getLearnedWords(uid)), [uid])
   const card = batch[idx]
@@ -382,10 +408,28 @@ export function TodayLesson({
     const newAns = [...quizAns, ok]
     setQuizAns(newAns)
     if (quizIdx + 1 >= quizQs.length) {
+      const wrongKeys = new Set(
+        quizQs.filter((_, i) => !newAns[i]).map((qq) => qq.word.toLowerCase()),
+      )
+      setWrongWords(batch.filter((w) => wrongKeys.has(w.word.toLowerCase())))
       setQuizDone(true)
     } else {
       setQuizIdx((q) => q + 1)
       setQuizSel(null)
+    }
+  }
+
+  // Xem lại flashcard của từng từ trả lời sai TRƯỚC KHI làm lại quiz.
+  function startWrongReview() {
+    setReviewIdx(0)
+    setPhase('mini-quiz-review')
+  }
+
+  function reviewNext() {
+    if (reviewIdx + 1 >= wrongWords.length) {
+      startMiniQuiz()
+    } else {
+      setReviewIdx((i) => i + 1)
     }
   }
 
@@ -492,10 +536,17 @@ export function TodayLesson({
             {isA ? 'Ôn lại rồi thử lại nhé!' : 'Review and try again!'}
           </p>
           <button
-            onClick={startMiniQuiz}
+            onClick={wrongWords.length > 0 ? startWrongReview : startMiniQuiz}
             className="w-full py-3 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 font-medium transition"
           >
-            <RotateCcw className="w-4 h-4 inline mr-1" /> {isA ? 'Làm lại kiểm tra' : 'Retry quiz'}
+            <RotateCcw className="w-4 h-4 inline mr-1" />
+            {wrongWords.length > 0
+              ? isA
+                ? `Ôn lại ${wrongWords.length} từ sai rồi làm lại`
+                : `Review ${wrongWords.length} missed words then retry`
+              : isA
+                ? 'Làm lại kiểm tra'
+                : 'Retry quiz'}
           </button>
           <button
             onClick={() => setPhase('batch-done')}
@@ -526,9 +577,15 @@ export function TodayLesson({
         </div>
         <div className="text-center py-4">
           <p className="text-xs text-zinc-400 mb-3 uppercase tracking-wide">
-            {isA ? 'Nghĩa tiếng Việt của từ này là?' : 'Vietnamese meaning?'}
+            {q.direction === 'en-vi'
+              ? isA
+                ? 'Nghĩa tiếng Việt của từ này là?'
+                : 'Vietnamese meaning?'
+              : isA
+                ? 'Từ tiếng Anh của nghĩa này là?'
+                : 'English word for this meaning?'}
           </p>
-          <p className="text-4xl font-bold text-white">{q.word}</p>
+          <p className="text-4xl font-bold text-white">{q.prompt}</p>
         </div>
         <div className="space-y-2.5">
           {q.options.map((opt) => {
@@ -566,6 +623,49 @@ export function TodayLesson({
             <ChevronRight className="w-4 h-4" />
           </button>
         )}
+      </div>
+    )
+  }
+
+  // ── Ôn lại flashcard của từ trả lời sai TRƯỚC KHI làm lại mini-quiz ────
+  if (phase === 'mini-quiz-review') {
+    const reviewCard = wrongWords[reviewIdx]
+    if (!reviewCard) return null // wrongWords không rỗng khi vào phase này
+    return (
+      <div className="animate-fade-in">
+        <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
+          <span>{isA ? 'Ôn lại từ đã trả lời sai' : 'Review missed words'}</span>
+          <span>
+            {reviewIdx + 1}/{wrongWords.length}
+          </span>
+        </div>
+        <div className="h-1 bg-zinc-800 rounded-full mb-4">
+          <div
+            className="h-full bg-violet-500 rounded-full transition-all"
+            style={{ width: `${((reviewIdx + 1) / wrongWords.length) * 100}%` }}
+          />
+        </div>
+
+        <WordCard
+          key={reviewCard.word}
+          card={reviewCard}
+          isA={isA}
+          uid={uid}
+          onUpdate={onProgress}
+        />
+
+        <button
+          onClick={reviewNext}
+          className="w-full flex items-center justify-center gap-2 bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 transition py-3 rounded-xl text-sm font-medium mt-3"
+        >
+          {reviewIdx + 1 >= wrongWords.length
+            ? isA
+              ? 'Làm lại kiểm tra'
+              : 'Retry quiz'
+            : isA
+              ? 'Từ tiếp theo'
+              : 'Next word'}
+        </button>
       </div>
     )
   }
