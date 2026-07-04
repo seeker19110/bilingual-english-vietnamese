@@ -37,7 +37,7 @@ export const t = {
     writeDescA: 'Nộp bài viết, AI chấm theo tiêu chí IELTS, chỉ lỗi và ước lượng band.',
     phrasesTitleA: 'Các câu thông dụng',
     phrasesDescA:
-      "300+ chủ thể (I'm, We are, Could you…), mỗi chủ thể nhiều câu thực tế, có phát âm.",
+      "1.000+ chủ thể (I'm, We are, Could you…), mỗi chủ thể nhiều câu thực tế, có phát âm.",
     dictTitleA: 'Từ điển',
     dictDescA: 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
     lessonsTitleA: 'Các bài hội thoại mẫu thông dụng',
@@ -45,7 +45,9 @@ export const t = {
       'Hội thoại mẫu theo chủ đề đời sống hằng ngày, mỗi bài 40 đoạn song ngữ có phát âm.',
     tagPopular: 'Phổ biến',
     tagKeyFeature: 'Tính năng chính',
-    tagUnlimited: 'Không giới hạn',
+    tagDictCount: '10.000+ từ',
+    tagLessonsCount: '350 bài học',
+    tagPhrasesCount: '1.000 chủ đề',
 
     // Mode cards — Direction B
     chatTitleB: 'Chat với gia sư',
@@ -56,7 +58,8 @@ export const t = {
     writeTitleB: 'Luyện viết & chấm điểm',
     writeDescB: 'Nộp bài viết tiếng Việt, AI chấm và chỉ lỗi bằng tiếng Anh.',
     phrasesTitleB: 'Các câu thông dụng',
-    phrasesDescB: '300+ chủ thể câu tiếng Anh/Việt thông dụng, mỗi chủ thể có nhiều ví dụ thực tế.',
+    phrasesDescB:
+      '1.000+ chủ thể câu tiếng Anh/Việt thông dụng, mỗi chủ thể có nhiều ví dụ thực tế.',
     dictTitleB: 'Từ điển',
     dictDescB: 'Tra 10.000 từ tiếng Việt–Anh thông dụng với loại từ và ví dụ.',
     lessonsTitleB: 'Bài học',
@@ -186,14 +189,16 @@ export const t = {
     writeDescA: 'Submit your essay, AI grades it by IELTS criteria and estimates your band.',
     phrasesTitleA: 'Common Sentences',
     phrasesDescA:
-      "300+ subjects (I'm, We are, Could you…), each with real-life sentences and audio.",
+      "1,000+ subjects (I'm, We are, Could you…), each with real-life sentences and audio.",
     dictTitleA: 'Dictionary',
     dictDescA: 'Look up 10,000 common English words: part of speech, Vietnamese meaning, examples.',
     lessonsTitleA: 'Lessons',
     lessonsDescA: 'Sample dialogues on everyday topics, 40 bilingual exchanges per lesson.',
     tagPopular: 'Popular',
     tagKeyFeature: 'Key feature',
-    tagUnlimited: 'Unlimited',
+    tagDictCount: '10,000+ words',
+    tagLessonsCount: '350 lessons',
+    tagPhrasesCount: '1,000 topics',
 
     // Mode cards — Direction B
     chatTitleB: 'Chat with tutor',
@@ -204,7 +209,7 @@ export const t = {
     writeTitleB: 'Writing & scoring',
     writeDescB: 'Submit your Vietnamese writing, AI grades it and points out errors in English.',
     phrasesTitleB: 'Common Sentences',
-    phrasesDescB: '300+ subjects with real-life English/Vietnamese sentences and audio.',
+    phrasesDescB: '1,000+ subjects with real-life English/Vietnamese sentences and audio.',
     dictTitleB: 'Dictionary',
     dictDescB: 'Look up 10,000 common Vietnamese–English words with part of speech and examples.',
     lessonsTitleB: 'Common sample dialogues',
