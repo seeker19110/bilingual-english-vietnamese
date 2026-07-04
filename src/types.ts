@@ -19,6 +19,11 @@ export interface DictEntry {
   // Cấp CEFR ƯỚC LƯỢNG bằng AI (scripts/tag-cefr-levels.ts) — không phải mọi từ đều có,
   // và giá trị là ước lượng (chưa qua kiểm tra tay), không phải nguồn CEFR chính thức.
   level?: CefrWordLevel
+  // HẠNG tần suất (1 = thông dụng nhất), gắn bằng scripts/tag-word-frequency.ts từ nguồn
+  // SUBTLEX-US (Brysbaert & New, 2009) — dùng để sắp phần "Mở rộng" của lộ trình học theo
+  // tần suất tăng dần thay vì alphabet (V3, docs/research/cai-tien-lo-trinh-hoc.md). Từ
+  // không có trong SUBTLEX-US thì không có field này.
+  freq?: number
 }
 
 export interface User {

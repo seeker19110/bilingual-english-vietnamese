@@ -68,6 +68,25 @@ describe('getCircles — thứ tự theo lộ trình CEFR', () => {
     expect(ids.slice(firstExtra).every((id) => id.startsWith('extra-'))).toBe(true)
   })
 
+  // V3, docs/research/cai-tien-lo-trinh-hoc.md: phần "Mở rộng" sắp theo TẦN SUẤT tăng dần
+  // (scripts/tag-word-frequency.ts gắn field `freq`), không còn giữ alphabet.
+  it('từ trong phần Mở rộng sắp theo freq TĂNG DẦN, từ chưa có freq dồn hết về cuối', () => {
+    const extraWords = getCircles()
+      .filter((c) => c.id.startsWith('extra-'))
+      .flatMap((c) => c.words)
+    const withFreq = extraWords.filter((w) => w.freq != null)
+    // Có ít nhất vài từ đã gắn freq thật (chạy tag:freq trước khi test) để phép so sánh có ý nghĩa.
+    expect(withFreq.length).toBeGreaterThan(0)
+    for (let i = 1; i < withFreq.length; i++) {
+      expect(withFreq[i]!.freq!).toBeGreaterThanOrEqual(withFreq[i - 1]!.freq!)
+    }
+    // Sau từ KHÔNG có freq đầu tiên, mọi từ còn lại cũng phải không có freq (dồn về cuối).
+    const firstNoFreqIdx = extraWords.findIndex((w) => w.freq == null)
+    if (firstNoFreqIdx !== -1) {
+      expect(extraWords.slice(firstNoFreqIdx).every((w) => w.freq == null)).toBe(true)
+    }
+  })
+
   it('getCefrLevelOfCircle: vòng A1 đầu tiên là A1, extra không có cấp', () => {
     expect(getCefrLevelOfCircle('greetings')).toBe('A1')
     expect(getCefrLevelOfCircle('extra-1')).toBeNull()

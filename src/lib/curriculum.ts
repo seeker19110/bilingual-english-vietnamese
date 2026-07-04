@@ -145,8 +145,17 @@ export function getCircles(): Circle[] {
   const foundationKeys = new Set<string>()
   FOUNDATION.forEach((c) => c.words.forEach((w) => foundationKeys.add(wordKey(w.word))))
 
-  // Các từ còn lại trong từ điển, giữ nguyên thứ tự (alphabet) làm phần mở rộng
-  const rest = ENTRIES.filter((e) => !foundationKeys.has(wordKey(e.word)))
+  // Các từ còn lại trong từ điển — sắp theo TẦN SUẤT tăng dần (từ thông dụng trước, đúng
+  // luật Zipf) thay vì giữ nguyên alphabet như trước (V3, docs/research/cai-tien-lo-trinh-hoc.md).
+  // `freq` gắn bằng scripts/tag-word-frequency.ts (nguồn SUBTLEX-US); từ CHƯA có freq xếp
+  // CUỐI, giữ nguyên thứ tự cũ (alphabet) làm tiebreak — sort ổn định (Array.sort từ ES2019).
+  // Dùng Number.MAX_SAFE_INTEGER (không phải Infinity) làm giá trị thay thế: Infinity - Infinity
+  // = NaN sẽ phá vỡ tính ổn định của sort khi so 2 từ đều chưa có freq.
+  const rest = ENTRIES.filter((e) => !foundationKeys.has(wordKey(e.word))).sort((a, b) => {
+    const fa = a.freq ?? Number.MAX_SAFE_INTEGER
+    const fb = b.freq ?? Number.MAX_SAFE_INTEGER
+    return fa - fb
+  })
 
   // Gom phần mở rộng thành các cụm DAILY_GOAL từ → mỗi cụm là 1 "vòng"
   const extra: Circle[] = []

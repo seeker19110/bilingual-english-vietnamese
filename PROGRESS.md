@@ -475,10 +475,64 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   trang A1 → badge hiện đúng tổng 2 (trước đây sẽ là 1, chỉ đếm từ A1); (2) 3 lần bấm
   "Quên" liên tiếp → từ tự vào `et_hard_*` (Từ khó); (3) seed 40 thẻ đến hạn → phiên đầu
   đúng "1/30" (bị cắt ở cap), không phải 1/40. Full E2E suite (68/68, a11y 4 theme) xanh.
-- Còn lại theo kế hoạch 6 đợt: Đợt 2 (mini-quiz đủ 20 từ/2 chiều) → Đợt 3 (tốc độ học
-  5/10/20) → Đợt 4 (tần suất NGSL/SUBTLEX cho "Mở rộng" + chạy `tag:cefr`) → Đợt 5 (xen
-  kẽ từ vựng↔ngữ pháp + nút "Tôi đã biết vòng này") → Đợt 6 (quiz ngữ pháp, streak
-  freeze, cân nhắc FSRS — để sau).
+
+## Đã xong (cải tiến lộ trình học — Đợt 2/6 — 2026-07-04)
+
+- **V4 — Mini-quiz hỏi ĐỦ cả batch, trộn 2 chiều**: trước đây chỉ hỏi 5/20 từ, 1 chiều
+  (EN→VI) — 15 từ chưa từng được kiểm tra đã tính là thuộc. Nay `buildMiniQuiz`
+  (`StudyTabs.tsx`) hỏi hết batch (tối đa = tốc độ học đã chọn), trộn nửa EN→VI/nửa
+  VI→EN, gộp nhãn "Phần 1/2" khi >10 câu cho đỡ dài mắt (không tách phiên thật). Trả lời
+  sai → hiện lại `WordCard` (flashcard) của từ đó NGAY trước khi qua câu tiếp theo
+  (testing effect — sửa lỗi lúc còn nhớ ngữ cảnh câu hỏi).
+- Verify: build/typecheck/lint/test (118/118)/format xanh; lái app thật bằng Playwright —
+  xác nhận badge hiện "1/20" (không phải "1/5"), nhãn "Phần 1/2" xuất hiện đúng lúc, và cố
+  ý chọn sai → flashcard hiện lại trước khi tiếp tục. Full E2E suite (68/68, a11y 4 theme,
+  gồm cả màn kết quả AI) xanh.
+
+## Đã xong (cải tiến lộ trình học — Đợt 3/6 — 2026-07-04)
+
+- **V7 — Tốc độ học tùy chọn 5/10/20 từ/ngày**: `getDailyGoal()`/`setDailyGoal()`
+  (`lib/curriculum.ts`) — chọn ở trang Hồ sơ (`/profile`, 3 nút Nhẹ nhàng·Vừa·Nhanh).
+  Trần ngày = 5×tốc độ (`getDailyAllowance`), giữ nguyên công thức cũ. **Mặc định MỚI
+  10** cho người dùng chưa từng học từ nào; **người ĐÃ có tiến độ trước khi có tính năng
+  này grandfather giữ 20** — chốt 1 LẦN DUY NHẤT ngay lúc đọc đầu tiên rồi lưu lại
+  (không tự đổi lại nếu learned count tăng sau đó). Cập nhật `TodayLesson`/`BatchDoneView`
+  (`StudyTabs.tsx`), `Dashboard.tsx`, `Dictionary.tsx`, `preloader.ts` dùng tốc độ THẬT
+  của từng người thay vì hằng số 20 cố định; đồng bộ lại copy FAQ (`index.html`) +
+  `CLAUDE.md` mục 13.
+- 6 test mới (`curriculum.test.ts`). Verify: build/typecheck/lint/test (124/124)/format/
+  size-limit xanh; lái app thật bằng Playwright — xác nhận mặc định 10 cho user mới, đổi
+  sang 20 ở Hồ sơ thì Dashboard + batch "Hôm nay" đều theo đúng tốc độ mới ngay (học đủ 20
+  từ mới hết batch, nút "Kiểm tra để học thêm 20 từ"). Full E2E suite (68/68, a11y 4 theme)
+  xanh.
+
+## Đã xong (cải tiến lộ trình học — Đợt 4/6 — 2026-07-04)
+
+- **V3 — "Mở rộng" sắp theo TẦN SUẤT thay vì alphabet**: thêm field `freq?: number`
+  (`src/types.ts` + `api/_lib/dictionaryData.ts`) — hạng tần suất, 1 = thông dụng nhất.
+  Script mới `scripts/tag-word-frequency.ts` (`npm run tag:freq`) gắn `freq` cho từ điển
+  (`public/data/dictionary/chunk-*.json`) bằng tra cứu OFFLINE THUẦN TÚY (không cần API
+  key/mạng, khác `tag:cefr` cần AI) — **đã chạy thật** ngay trong phiên này (an toàn, không
+  tốn chi phí/quota): 9.540/10.006 từ có freq, 466 từ không có (idiom/cụm nhiều từ không có
+  trong nguồn). `getCircles()` (`lib/curriculum.ts`) sắp phần "Mở rộng" theo `freq` tăng
+  dần, từ chưa có `freq` dồn về cuối (sort ổn định, giữ alphabet làm tiebreak).
+  ⚠️ **Đổi nguồn dữ liệu so với đề xuất ban đầu** — đã hỏi lại và người dùng đồng ý: kế
+  hoạch gốc là NGSL (2.800 từ, CC BY) + SUBTLEX-US, nhưng NGSL không có gói npm lẫn nguồn
+  tải trực tiếp ổn định (trang chính thức chặn request không phải trình duyệt, 403) trong
+  môi trường chạy script của phiên này. Dùng RIÊNG **SUBTLEX-US** qua gói npm
+  `subtlex-word-frequencies` (ISC, tác giả `wooorm`, 74.286 từ, nguồn Brysbaert & New 2009)
+  — một nguồn liên tục từ thông dụng nhất tới hiếm nhất đã đủ đáp ứng đúng mục tiêu (không
+  cần phân 2 tầng NGSL/SUBTLEX). Thêm `subtlex-word-frequencies` vào devDependencies (chỉ
+  dùng ở script offline, KHÔNG vào bundle client).
+- 1 test mới (`curriculum.test.ts`, kiểm chứng thứ tự freq tăng dần trên dữ liệu THẬT sau
+  khi chạy `tag:freq`). Verify: build/typecheck/lint/test (125/125)/format/size-limit xanh
+  (dictionary chunk nặng hơn ~5-10kB/chunk do thêm field `freq` nhưng là chunk tải động,
+  không tính vào ngân sách Initial JS/CSS — không đổi 112.55/116kB). Full E2E suite (68/68,
+  a11y 4 theme) xanh. Đã kiểm mẫu tay: "a"→hạng 6, "about"→51, "above"→1337,
+  "ability"→2723, "abandon"→5021 — đúng trực giác thông dụng.
+- Không chạy `npm run tag:cefr` (gắn nhãn CEFR bằng AI) trong đợt này — giữ nguyên quyết
+  định cũ (PROGRESS.md, PR #150): cần API key + có chi phí/quota nên để người dùng tự chạy
+  trên máy có `.env`, khác `tag:freq` (offline, miễn phí, đã chạy thật).
 
 ## ⚠️ Cần làm tay (chưa xong)
 
@@ -498,10 +552,14 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
-- **Đợt 2/6 cải tiến lộ trình học** (docs/research/cai-tien-lo-trinh-hoc.md): mini-quiz mở
-  batch hỏi đủ 20 từ (chia 2 màn 10 câu), trộn 2 chiều EN→VI/VI→EN (hiện chỉ 5 câu, 1 chiều);
-  câu sai hiện lại flashcard từ đó trước khi cho làm lại. File chính: `StudyTabs.tsx`
-  (`buildMiniQuiz`).
+- **Đợt 5/6 cải tiến lộ trình học** (docs/research/cai-tien-lo-trinh-hoc.md, V5 V6):
+  `findNextStep` xen kẽ vòng từ vựng↔bài ngữ pháp (thay vì học hết 100% từ vựng unit mới
+  tới ngữ pháp — người dùng đã đồng ý đổi hành vi này); thêm bước gợi ý "🎧 Nghe hội thoại
+  mở đầu" ĐẦU unit; nút "Tôi đã biết vòng này" (quiz 10 câu vượt vòng, không tính vào bộ
+  đếm ngày). File chính: `lib/cefrProgress.ts`, `CefrLevelPage.tsx`, `CefrLessonViews.tsx`.
+- **Đợt 6/6 cải tiến lộ trình học** (V8 V2 V9): quiz ngữ pháp trộn vào tab Kiểm tra; streak
+  freeze (1 vé nghỉ/tuần); CÂN NHẮC (không bắt buộc làm) FSRS thay SM-2 — để sau cùng theo
+  đúng thứ tự kế hoạch.
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
 - Chạy thật `npm run tag:cefr` (cần key AI) rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR

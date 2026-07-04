@@ -24,6 +24,8 @@ export interface DictEntry {
   ipa_vi?: string
   // Cấp CEFR ước lượng bằng AI (scripts/tag-cefr-levels.ts) — không phải mọi từ đều có.
   level?: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
+  // Hạng tần suất SUBTLEX-US (scripts/tag-word-frequency.ts) — xem src/types.ts.
+  freq?: number
 }
 
 // api/_lib/ → ../../public/data/dictionary
