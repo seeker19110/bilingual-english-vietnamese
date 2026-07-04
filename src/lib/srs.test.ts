@@ -21,6 +21,13 @@ describe('SRS — SM-2', () => {
     expect(stats.due).toBe(1) // due = now → đến hạn ngay
   })
 
+  it('addToSRS(uid, word, 7) — test-out: due đẩy xa 7 ngày, không phải ngay hôm nay', () => {
+    addToSRS('u1', 'apple', 7)
+    const due = getNextReview('u1', 'apple')!.getTime()
+    expect(Math.round((due - Date.now()) / MS_DAY)).toBe(7)
+    expect(getDueWords('u1', [W('apple')])).toEqual([]) // chưa đến hạn ôn hôm nay
+  })
+
   it('addToSRS idempotent — không ghi đè thẻ đã có tiến độ', () => {
     addToSRS('u1', 'apple')
     reviewWord('u1', 'apple', 'good') // reps=1, due đẩy về tương lai

@@ -71,6 +71,7 @@ import {
   levelGrammarCounts,
   computeLockedMapPersisted,
   findNextStep,
+  isUnitFresh,
 } from '../lib/cefrProgress'
 
 // % an toàn (0 khi total = 0, không chia cho 0).
@@ -104,6 +105,11 @@ export default function CefrLevelPage() {
   const [circle, setCircle] = useState<Circle | null>(null)
   const [dialogue, setDialogue] = useState<Dialogue | null>(null)
 
+  // Hội thoại của TỪNG UNIT trong cấp — nạp trước (nhẹ, dialogues.json cache 1 lần
+  // toàn app) để thẻ "Học tiếp" có thể gợi ý "🎧 Nghe hội thoại mở đầu" khi vào 1
+  // unit hoàn toàn mới, TRƯỚC vòng từ vựng đầu tiên (V5, comprehensible input).
+  const [unitDialogues, setUnitDialogues] = useState<Record<string, Dialogue[]>>({})
+
   // Khóa invalidation thủ công: bump() để tính lại tiến độ sau khi học/đánh dấu.
   const [refresh, setRefresh] = useState(0)
   const bump = () => setRefresh((k) => k + 1)
@@ -118,6 +124,21 @@ export default function CefrLevelPage() {
 
   const uid = user?.id ?? ''
   const level = levels.find((l) => l.id === (levelId ?? '').toUpperCase())
+
+  // Nạp hội thoại của mọi unit trong cấp đang xem (getDialogues cache cả file 1 lần,
+  // gọi lại cho unit khác chỉ là tra cứu trong bộ nhớ — không tốn thêm request mạng).
+  useEffect(() => {
+    if (!level) return
+    let alive = true
+    Promise.all(level.units.map((u) => getDialogues(u.id).then((ds) => [u.id, ds] as const))).then(
+      (pairs) => {
+        if (alive) setUnitDialogues(Object.fromEntries(pairs))
+      },
+    )
+    return () => {
+      alive = false
+    }
+  }, [level])
 
   // `refresh`/`ready` là khóa invalidation thủ công (dữ liệu đọc từ localStorage)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -255,10 +276,35 @@ export default function CefrLevelPage() {
   const grammar = levelGrammarCounts(level, doneGrammar)
   const next = locked ? null : findNextStep(level, circleById, learned, doneGrammar)
 
+  // Gợi ý "🎧 Nghe hội thoại mở đầu" TRƯỚC vòng từ vựng đầu tiên khi unit hoàn toàn MỚI
+  // (chưa động tới từ vựng/ngữ pháp nào) — comprehensible input: nghe trước, học từ sau
+  // (V5, docs/research/cai-tien-lo-trinh-hoc.md). CHỈ gợi ý hội thoại ĐẦU TIÊN của unit
+  // (không phải mọi hội thoại — unit có 2-3 hội thoại thì các hội thoại còn lại vẫn xem
+  // bình thường ở mục "③ Hội thoại", không chặn đường vào từ vựng). Không bắt buộc: chỉ
+  // là 1 gợi ý trong thẻ "Học tiếp", người dùng vẫn bấm học mục khác tùy ý.
+  const freshUnitForDialogue =
+    next?.kind === 'vocab' && isUnitFresh(next.unit, circleById, learned, doneGrammar)
+      ? next.unit
+      : null
+  const openingDialogue = freshUnitForDialogue
+    ? (unitDialogues[freshUnitForDialogue.id] ?? [])[0]
+    : undefined
+  const unviewedFirstDialogue =
+    openingDialogue && freshUnitForDialogue
+      ? viewedDialogues.has(dialogueKey(freshUnitForDialogue.id, openingDialogue.titleEn))
+        ? undefined
+        : openingDialogue
+      : undefined
+
   // Mục "Học tiếp": nhãn + hành động mở đúng màn.
   let nextLabel = ''
   let nextOnClick: (() => void) | null = null
-  if (next?.kind === 'vocab' && next.circleId) {
+  if (unviewedFirstDialogue && freshUnitForDialogue) {
+    const d = unviewedFirstDialogue
+    const unitId = freshUnitForDialogue.id
+    nextLabel = `🎧 ${isA ? 'Nghe hội thoại mở đầu' : 'Listen to the opening dialogue'}: ${isA ? d.titleVi : d.titleEn}`
+    nextOnClick = () => openDialogue(unitId, d)
+  } else if (next?.kind === 'vocab' && next.circleId) {
     const c = circleById[next.circleId]
     if (c) {
       const done = circleDoneCount(c, learned)

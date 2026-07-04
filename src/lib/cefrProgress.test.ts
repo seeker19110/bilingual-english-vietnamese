@@ -21,6 +21,7 @@ import {
   computeLockedMapPersisted,
   getUnlockedLevels,
   findNextStep,
+  isUnitFresh,
 } from './cefrProgress'
 import type { CefrLevel, CefrUnit, GrammarLesson } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
@@ -230,5 +231,57 @@ describe('findNextStep — trình tự từ vựng trước, ngữ pháp sau, th
     const learned = new Set(['apple', 'banana', 'cat', 'dog'])
     const done = new Set(['g1', 'g2', 'g3'])
     expect(findNextStep(A1, BY_ID, learned, done)).toBeNull()
+  })
+})
+
+// V5, docs/research/cai-tien-lo-trinh-hoc.md — unit CÓ NHIỀU vòng từ vựng xen kẽ với
+// ngữ pháp: vòng 1 → bài 1 → vòng 2 → bài 2 …, không bắt học hết 100% từ vựng mới sang ngữ pháp.
+const BY_ID_MULTI: Record<string, Circle> = {
+  ...BY_ID,
+  c4: circle('c4', ['grape', 'kiwi']),
+}
+const A1_MULTI = level('A1', [unit('u1', ['g1', 'g2'], ['c1', 'c4'])])
+
+describe('findNextStep — XEN KẼ từ vựng↔ngữ pháp trong unit nhiều vòng', () => {
+  it('chưa học gì → vòng từ vựng ĐẦU TIÊN (c1)', () => {
+    const step = findNextStep(A1_MULTI, BY_ID_MULTI, new Set(), new Set())
+    expect(step).toMatchObject({ kind: 'vocab', circleId: 'c1' })
+  })
+
+  it('xong vòng 1 (c1) → bài ngữ pháp 1 (g1), CHƯA sang vòng 2', () => {
+    const learned = new Set(['apple', 'banana'])
+    const step = findNextStep(A1_MULTI, BY_ID_MULTI, learned, new Set())
+    expect(step).toMatchObject({ kind: 'grammar', lessonId: 'g1' })
+  })
+
+  it('xong vòng 1 + bài 1 → vòng 2 (c4), CHƯA sang bài 2', () => {
+    const learned = new Set(['apple', 'banana'])
+    const done = new Set(['g1'])
+    const step = findNextStep(A1_MULTI, BY_ID_MULTI, learned, done)
+    expect(step).toMatchObject({ kind: 'vocab', circleId: 'c4' })
+  })
+
+  it('xong vòng 1 + bài 1 + vòng 2 → bài ngữ pháp 2 (g2)', () => {
+    const learned = new Set(['apple', 'banana', 'grape', 'kiwi'])
+    const done = new Set(['g1'])
+    const step = findNextStep(A1_MULTI, BY_ID_MULTI, learned, done)
+    expect(step).toMatchObject({ kind: 'grammar', lessonId: 'g2' })
+  })
+})
+
+describe('isUnitFresh — unit hoàn toàn chưa động tới (gợi ý nghe hội thoại mở đầu)', () => {
+  it('chưa học từ vựng/ngữ pháp nào → fresh', () => {
+    const u = A1.units[0]!
+    expect(isUnitFresh(u, BY_ID, new Set(), new Set())).toBe(true)
+  })
+
+  it('đã học 1 từ trong unit → không còn fresh', () => {
+    const u = A1.units[0]!
+    expect(isUnitFresh(u, BY_ID, new Set(['apple']), new Set())).toBe(false)
+  })
+
+  it('đã học xong 1 bài ngữ pháp trong unit → không còn fresh', () => {
+    const u = A1.units[0]!
+    expect(isUnitFresh(u, BY_ID, new Set(), new Set(['g1']))).toBe(false)
   })
 })

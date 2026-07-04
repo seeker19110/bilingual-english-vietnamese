@@ -43,12 +43,20 @@ function save(uid: string, data: Record<string, SRSCard>) {
   localStorage.setItem(KEY(uid), JSON.stringify(data))
 }
 
-// Thêm từ vào SRS khi đánh dấu "đã thuộc" — due = ngay bây giờ để ôn luôn hôm nay
-export function addToSRS(uid: string, word: string) {
+// Thêm từ vào SRS khi đánh dấu "đã thuộc" — due = ngay bây giờ để ôn luôn hôm nay.
+// `intervalDays` tùy chọn (mặc định 1 = hành vi cũ, due ngay hôm nay): dùng cho "Tôi đã
+// biết vòng này" (test-out, V6 docs/research/cai-tien-lo-trinh-hoc.md) — từ ĐÃ chứng minh
+// biết rồi nên vào SRS với khoảng ôn dài hơn ngay từ đầu (vd 7 ngày), không cần ôn ngay hôm nay.
+export function addToSRS(uid: string, word: string, intervalDays = 1) {
   const data = load(uid)
   const key = word.toLowerCase()
   if (!data[key]) {
-    data[key] = { interval: 1, ease: 2.5, due: Date.now(), reps: 0 }
+    data[key] = {
+      interval: intervalDays,
+      ease: 2.5,
+      due: intervalDays <= 1 ? Date.now() : Date.now() + intervalDays * MS,
+      reps: 0,
+    }
     save(uid, data)
     pushProgress(uid) // đồng bộ lịch ôn lên Supabase
   }

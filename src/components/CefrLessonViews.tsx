@@ -26,6 +26,7 @@ import {
   Pause,
   Square,
   Volume2,
+  GraduationCap,
 } from 'lucide-react'
 import {
   speak,
@@ -258,6 +259,38 @@ export function QuizCard({ item, isA }: { item: QuizItem; isA: boolean }) {
   )
 }
 
+// ── "Tôi đã biết vòng này" — test-out (V6, docs/research/cai-tien-lo-trinh-hoc.md) ──────
+// Người đã biết sẵn từ vựng (vd đã biết tiếng Anh cơ bản) không phải lật từng thẻ — quiz
+// nhanh, đúng đủ ngưỡng → cả vòng vào SRS luôn (interval dài hơn, KHÔNG tính vào bộ đếm
+// ngày vì không "học mới" theo đúng nghĩa).
+const TEST_OUT_SIZE = 10
+const TEST_OUT_CHOICES = 4
+const TEST_OUT_PASS_RATIO = 0.9 // ≥9/10
+export const TEST_OUT_INTERVAL_DAYS = 7
+
+interface TestOutQ {
+  word: string
+  correct: string
+  options: string[]
+}
+
+function buildTestOutQuiz(circle: Circle): TestOutQ[] {
+  const size = Math.min(TEST_OUT_SIZE, circle.words.length)
+  const shuffled = [...circle.words].sort(() => Math.random() - 0.5).slice(0, size)
+  const meanings = circle.words.map((w) => w.vi)
+  return shuffled.map((q) => {
+    const wrongs = meanings
+      .filter((m) => m !== q.vi)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, TEST_OUT_CHOICES - 1)
+    return {
+      word: q.word,
+      correct: q.vi,
+      options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5),
+    }
+  })
+}
+
 // ── Flashcard cho 1 vòng từ vựng (gắn vào lộ trình) ───────────────────────────
 export function VocabFlash({
   circle,
@@ -300,6 +333,40 @@ export function VocabFlash({
     setIdx((i) => i + 1)
   }
 
+  // "Tôi đã biết vòng này" — test-out (V6): quiz nhanh thay vì lật từng thẻ.
+  const [testOut, setTestOut] = useState<'off' | 'quiz' | 'passed' | 'failed'>('off')
+  const [testOutQs] = useState<TestOutQ[]>(() => buildTestOutQuiz(circle))
+  const [testOutIdx, setTestOutIdx] = useState(0)
+  const [testOutSel, setTestOutSel] = useState<string | null>(null)
+  const [testOutAns, setTestOutAns] = useState<boolean[]>([])
+
+  function testOutNext() {
+    const q = testOutQs[testOutIdx]
+    if (!q) return
+    const newAns = [...testOutAns, testOutSel === q.correct]
+    setTestOutAns(newAns)
+    if (testOutIdx + 1 >= testOutQs.length) {
+      const score = newAns.filter(Boolean).length
+      const passed = score >= Math.ceil(testOutQs.length * TEST_OUT_PASS_RATIO)
+      if (passed) {
+        // Cả vòng vào SRS luôn (interval dài hơn — đã chứng minh biết rồi, không cần ôn
+        // ngay hôm nay) — KHÔNG bumpDailyLearned vì đây không phải "học mới" theo đúng nghĩa.
+        const learnedSet = getLearnedWords(uid)
+        for (const w of circle.words) {
+          if (!learnedSet.has(w.word.toLowerCase())) {
+            markLearned(uid, w.word)
+            addToSRS(uid, w.word, TEST_OUT_INTERVAL_DAYS)
+          }
+        }
+        onProgress()
+      }
+      setTestOut(passed ? 'passed' : 'failed')
+    } else {
+      setTestOutIdx((i) => i + 1)
+      setTestOutSel(null)
+    }
+  }
+
   return (
     <div className="animate-fade-in">
       <button
@@ -314,53 +381,85 @@ export function VocabFlash({
         <span>{isA ? circle.titleVi : circle.titleEn}</span>
       </div>
 
-      {done || !card ? (
-        <div className="glass rounded-xl p-8 text-center space-y-3">
-          <Check className="w-10 h-10 text-accent-400 mx-auto" />
-          <p className="text-white font-semibold">{isA ? 'Xong bộ từ này!' : 'Set complete!'}</p>
-          {circle.sentences.length > 0 && (
-            <div className="text-left pt-3 border-t border-zinc-800 space-y-2">
-              <p className="text-xs font-semibold text-zinc-400 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-teal-400 theme-light:text-teal-800" />
-                {isA ? 'Câu thông dụng' : 'Common sentences'}
-              </p>
-              {circle.sentences.map((s, i) => (
+      {testOut === 'quiz' &&
+        (() => {
+          const q = testOutQs[testOutIdx]
+          if (!q) return null
+          return (
+            <div className="animate-fade-in space-y-4">
+              <div className="flex items-center justify-between text-xs text-zinc-400 mb-1">
+                <span className="text-violet-400 font-medium">
+                  {isA ? 'Tôi đã biết vòng này' : 'I already know this'}
+                </span>
+                <span>
+                  {testOutIdx + 1}/{testOutQs.length}
+                </span>
+              </div>
+              <div className="h-1 bg-zinc-800 rounded-full">
                 <div
-                  key={i}
-                  className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3"
-                >
-                  <KaraokeText
-                    text={s.en}
-                    lang="en-US"
-                    textClass="font-medium text-[15px] leading-snug text-teal-300 theme-light:text-teal-800"
-                    buttonClass="w-full"
-                  />
-                  <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>{s.vi}</p>
-                </div>
-              ))}
-            </div>
-          )}
-          {dialogues.length > 0 && (
-            <div className="text-left pt-3 border-t border-zinc-800 space-y-1.5">
-              <p className="text-xs font-semibold text-zinc-400 flex items-center gap-1.5">
-                <MessageCircle className="w-3.5 h-3.5 text-teal-400 theme-light:text-teal-800" />
-                {isA ? 'Hội thoại mẫu' : 'Sample dialogues'}
-              </p>
-              {dialogues.map((dl, i) => (
+                  className="h-full bg-violet-500 rounded-full transition-all"
+                  style={{ width: `${(testOutIdx / testOutQs.length) * 100}%` }}
+                />
+              </div>
+              <div className="text-center py-4">
+                <p className="text-xs text-zinc-400 mb-3 uppercase tracking-wide">
+                  {isA ? 'Nghĩa tiếng Việt của từ này là?' : 'Vietnamese meaning?'}
+                </p>
+                <p className="text-4xl font-bold text-white">{q.word}</p>
+              </div>
+              <div className="space-y-2.5">
+                {q.options.map((opt) => {
+                  let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
+                  if (testOutSel !== null) {
+                    if (opt === q.correct)
+                      cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300'
+                    else if (opt === testOutSel)
+                      cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
+                    else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
+                  }
+                  return (
+                    <button
+                      key={opt}
+                      onClick={() => {
+                        if (testOutSel === null) setTestOutSel(opt)
+                      }}
+                      className={`w-full text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
+                    >
+                      {opt}
+                    </button>
+                  )
+                })}
+              </div>
+              {testOutSel !== null && (
                 <button
-                  key={i}
-                  onClick={() => onOpenDialogue(dl)}
-                  className="w-full flex items-center gap-2 text-left px-3 py-2.5 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:border-zinc-600 transition"
+                  onClick={testOutNext}
+                  className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-violet-500 hover:bg-violet-400 text-white font-semibold transition animate-fade-in"
                 >
-                  <MessageCircle className="w-4 h-4 shrink-0 text-teal-400 theme-light:text-teal-800" />
-                  <span className="flex-1 min-w-0 text-sm font-medium text-zinc-200 truncate">
-                    {isA ? dl.titleVi : dl.titleEn}
-                  </span>
-                  <ChevronRight className="w-4 h-4 text-zinc-400 shrink-0" />
+                  {testOutIdx + 1 >= testOutQs.length
+                    ? isA
+                      ? 'Xem kết quả'
+                      : 'See results'
+                    : isA
+                      ? 'Câu tiếp theo'
+                      : 'Next'}
+                  <ChevronRight className="w-4 h-4" />
                 </button>
-              ))}
+              )}
             </div>
-          )}
+          )
+        })()}
+
+      {testOut === 'passed' && (
+        <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-3">
+          <p className="text-4xl">🏆</p>
+          <p className="text-white font-semibold">
+            {isA ? 'Chính xác! Bạn đã biết vòng này' : 'Correct! You know this set'}
+          </p>
+          <p className="text-sm text-zinc-400">
+            {isA
+              ? `Đã đánh dấu thuộc cả ${circle.words.length} từ, vào SRS ôn lại sau ${TEST_OUT_INTERVAL_DAYS} ngày.`
+              : `Marked all ${circle.words.length} words as learned, scheduled to review in ${TEST_OUT_INTERVAL_DAYS} days.`}
+          </p>
           <button
             onClick={onBack}
             className="w-full mt-2 py-3 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
@@ -368,38 +467,132 @@ export function VocabFlash({
             {isA ? 'Quay lại' : 'Back'}
           </button>
         </div>
-      ) : (
-        <>
-          <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
-            <span>
-              {isA ? 'Từ' : 'Word'} {idx + 1}/{cards.length}
-            </span>
-          </div>
-          <div className="h-1 bg-zinc-800 rounded-full mb-4">
-            <div
-              className="h-full bg-accent-500 rounded-full transition-all"
-              style={{ width: `${(idx / cards.length) * 100}%` }}
-            />
-          </div>
-
-          <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onProgress} />
-
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => setIdx((i) => i + 1)}
-              className="flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition py-3 rounded-xl text-sm font-medium"
-            >
-              <X className="w-4 h-4" /> {isA ? 'Để sau' : 'Later'}
-            </button>
-            <button
-              onClick={learn}
-              className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 transition py-3 rounded-xl text-sm font-medium"
-            >
-              <Check className="w-4 h-4" /> {isA ? 'Đã thuộc' : 'Got it'}
-            </button>
-          </div>
-        </>
       )}
+
+      {testOut === 'failed' && (
+        <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-3">
+          <p className="text-4xl">📚</p>
+          <p className="text-white font-semibold">
+            {isA
+              ? `Cần đúng ≥${Math.ceil(testOutQs.length * TEST_OUT_PASS_RATIO)}/${testOutQs.length} để qua vòng`
+              : `Need ≥${Math.ceil(testOutQs.length * TEST_OUT_PASS_RATIO)}/${testOutQs.length} to skip this set`}
+          </p>
+          <p className="text-sm text-zinc-400">
+            {isA
+              ? 'Chưa đủ — học bình thường bằng thẻ từ nhé!'
+              : "Not quite — let's learn with flashcards instead!"}
+          </p>
+          <button
+            onClick={() => setTestOut('off')}
+            className="w-full mt-2 py-3 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
+          >
+            {isA ? 'Học bằng thẻ từ' : 'Learn with flashcards'}
+          </button>
+        </div>
+      )}
+
+      {testOut === 'off' && !done && card && (
+        <button
+          onClick={() => {
+            setTestOutIdx(0)
+            setTestOutSel(null)
+            setTestOutAns([])
+            setTestOut('quiz')
+          }}
+          className="w-full flex items-center justify-center gap-2 mb-3 py-2.5 rounded-xl bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 text-sm font-medium border border-violet-500/25 transition"
+        >
+          <GraduationCap className="w-4 h-4" />
+          {isA ? 'Tôi đã biết vòng này — kiểm tra để qua nhanh' : 'I already know this — test out'}
+        </button>
+      )}
+
+      {testOut === 'off' &&
+        (done || !card ? (
+          <div className="glass rounded-xl p-8 text-center space-y-3">
+            <Check className="w-10 h-10 text-accent-400 mx-auto" />
+            <p className="text-white font-semibold">{isA ? 'Xong bộ từ này!' : 'Set complete!'}</p>
+            {circle.sentences.length > 0 && (
+              <div className="text-left pt-3 border-t border-zinc-800 space-y-2">
+                <p className="text-xs font-semibold text-zinc-400 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-teal-400 theme-light:text-teal-800" />
+                  {isA ? 'Câu thông dụng' : 'Common sentences'}
+                </p>
+                {circle.sentences.map((s, i) => (
+                  <div
+                    key={i}
+                    className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3"
+                  >
+                    <KaraokeText
+                      text={s.en}
+                      lang="en-US"
+                      textClass="font-medium text-[15px] leading-snug text-teal-300 theme-light:text-teal-800"
+                      buttonClass="w-full"
+                    />
+                    <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>{s.vi}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            {dialogues.length > 0 && (
+              <div className="text-left pt-3 border-t border-zinc-800 space-y-1.5">
+                <p className="text-xs font-semibold text-zinc-400 flex items-center gap-1.5">
+                  <MessageCircle className="w-3.5 h-3.5 text-teal-400 theme-light:text-teal-800" />
+                  {isA ? 'Hội thoại mẫu' : 'Sample dialogues'}
+                </p>
+                {dialogues.map((dl, i) => (
+                  <button
+                    key={i}
+                    onClick={() => onOpenDialogue(dl)}
+                    className="w-full flex items-center gap-2 text-left px-3 py-2.5 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:border-zinc-600 transition"
+                  >
+                    <MessageCircle className="w-4 h-4 shrink-0 text-teal-400 theme-light:text-teal-800" />
+                    <span className="flex-1 min-w-0 text-sm font-medium text-zinc-200 truncate">
+                      {isA ? dl.titleVi : dl.titleEn}
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-zinc-400 shrink-0" />
+                  </button>
+                ))}
+              </div>
+            )}
+            <button
+              onClick={onBack}
+              className="w-full mt-2 py-3 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
+            >
+              {isA ? 'Quay lại' : 'Back'}
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
+              <span>
+                {isA ? 'Từ' : 'Word'} {idx + 1}/{cards.length}
+              </span>
+            </div>
+            <div className="h-1 bg-zinc-800 rounded-full mb-4">
+              <div
+                className="h-full bg-accent-500 rounded-full transition-all"
+                style={{ width: `${(idx / cards.length) * 100}%` }}
+              />
+            </div>
+
+            <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onProgress} />
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setIdx((i) => i + 1)}
+                className="flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition py-3 rounded-xl text-sm font-medium"
+              >
+                <X className="w-4 h-4" /> {isA ? 'Để sau' : 'Later'}
+              </button>
+              <button
+                onClick={learn}
+                className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 transition py-3 rounded-xl text-sm font-medium"
+              >
+                <Check className="w-4 h-4" /> {isA ? 'Đã thuộc' : 'Got it'}
+              </button>
+            </div>
+          </>
+        ))}
     </div>
   )
 }

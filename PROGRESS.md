@@ -534,6 +534,42 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   định cũ (PROGRESS.md, PR #150): cần API key + có chi phí/quota nên để người dùng tự chạy
   trên máy có `.env`, khác `tag:freq` (offline, miễn phí, đã chạy thật).
 
+## Đã xong (cải tiến lộ trình học — Đợt 5/6 — 2026-07-04)
+
+- **V5 — Xen kẽ từ vựng↔ngữ pháp**: `findNextStep` (`lib/cefrProgress.ts`) trước đây bắt
+  học hết 100% mọi vòng từ vựng của unit rồi mới gợi ý ngữ pháp — unit lớn (vd 6 vòng ≈
+  120 từ) mất cả tuần chỉ lật thẻ trước khi gặp bài ngữ pháp đầu tiên. Nay ghép xen kẽ
+  (`interleave()`): vòng 1 → bài 1 → vòng 2 → bài 2 … hết loại nào thì tiếp loại kia. Người
+  dùng vẫn tự do bấm học mục nào tùy thích (đây chỉ là GỢI Ý "Học tiếp", không khoá đường
+  vào các mục khác).
+- **V5 — "🎧 Nghe hội thoại mở đầu"**: khi vào 1 unit HOÀN TOÀN MỚI (`isUnitFresh` — chưa
+  động tới từ vựng/ngữ pháp nào) và unit có hội thoại, thẻ "Học tiếp" gợi ý nghe hội thoại
+  ĐẦU TIÊN của unit trước khi vào vòng từ vựng đầu tiên (comprehensible input: nghe trước,
+  học từ sau). Chỉ gợi ý hội thoại đầu, không chặn đường vào từ vựng nếu unit có 2-3 hội
+  thoại — các hội thoại còn lại vẫn xem bình thường ở mục "③ Hội thoại". `CefrLevelPage.tsx`
+  nạp hội thoại của mọi unit trong cấp trước (dialogues.json cache 1 lần toàn app, không
+  tốn thêm request mạng).
+- **V6 — "Tôi đã biết vòng này" (test-out)**: nút mới trong `VocabFlash`
+  (`CefrLessonViews.tsx`) — quiz nhanh tối đa 10 câu (EN→VI) lấy từ vòng đang học, đúng
+  ≥90% (≥9/10) → cả vòng vào SRS luôn với **interval dài hơn (7 ngày)** thay vì due ngay
+  hôm nay (`addToSRS()` thêm tham số `intervalDays` tùy chọn, mặc định 1 = hành vi cũ, KHÔNG
+  đổi mọi lời gọi hiện có), và **KHÔNG tính vào bộ đếm "từ mới hôm nay"** (không gọi
+  `bumpDailyLearned`) vì đây không phải "học mới" theo đúng nghĩa. Trả lời sai → quay lại
+  học bằng flashcard bình thường, không mất gì.
+- 8 test mới (`cefrProgress.test.ts` +7: xen kẽ nhiều vòng + `isUnitFresh`, `srs.test.ts`
+  +1: `addToSRS` với `intervalDays`). Verify: build/typecheck/lint/test (133/133)/format/
+  size-limit xanh. **Lái app thật bằng Playwright** (không chỉ đọc code) trên đúng unit
+  `a1-greetings` (3 vòng từ vựng + 3 bài ngữ pháp, có 3 hội thoại) — xác nhận cả 5 kịch
+  bản: (1) unit mới → "Học tiếp" hiện "🎧 Nghe hội thoại mở đầu"; (2) xem xong hội thoại →
+  gợi ý chuyển sang vòng từ vựng; (3) học xong TRỌN vòng 1 (greetings, 16 từ) → "Học tiếp"
+  là bài ngữ pháp 1, KHÔNG nhảy sang vòng 2 (letters); (4) test-out trả lời đúng ≥9/10 →
+  cả 16 từ vào learned + SRS due đúng 7 ngày sau (không phải hôm nay), KHÔNG tăng bộ đếm
+  ngày; (5) test-out trả lời sai → về flashcard bình thường. Full E2E suite (68/68, a11y 4
+  theme, gồm `/learning-path/a1` — vốn đã phủ trạng thái mặc định mới có gợi ý hội thoại)
+  xanh. Màn quiz test-out tái dùng nguyên className đã qua kiểm a11y của mini-quiz
+  (`StudyTabs.tsx`) nên không cần thêm route gate mới.
+- Còn lại: Đợt 6/6 (quiz ngữ pháp trong tab Kiểm tra, streak freeze, cân nhắc FSRS).
+
 ## ⚠️ Cần làm tay (chưa xong)
 
 - **Chạy migration `0007_learning_progress_cefr.sql` VÀ `0008_learning_progress_cefr_unlocked.sql`
@@ -552,11 +588,6 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
-- **Đợt 5/6 cải tiến lộ trình học** (docs/research/cai-tien-lo-trinh-hoc.md, V5 V6):
-  `findNextStep` xen kẽ vòng từ vựng↔bài ngữ pháp (thay vì học hết 100% từ vựng unit mới
-  tới ngữ pháp — người dùng đã đồng ý đổi hành vi này); thêm bước gợi ý "🎧 Nghe hội thoại
-  mở đầu" ĐẦU unit; nút "Tôi đã biết vòng này" (quiz 10 câu vượt vòng, không tính vào bộ
-  đếm ngày). File chính: `lib/cefrProgress.ts`, `CefrLevelPage.tsx`, `CefrLessonViews.tsx`.
 - **Đợt 6/6 cải tiến lộ trình học** (V8 V2 V9): quiz ngữ pháp trộn vào tab Kiểm tra; streak
   freeze (1 vé nghỉ/tuần); CÂN NHẮC (không bắt buộc làm) FSRS thay SM-2 — để sau cùng theo
   đúng thứ tự kế hoạch.

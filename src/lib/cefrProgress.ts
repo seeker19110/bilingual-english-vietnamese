@@ -199,14 +199,30 @@ export function computeLockedMapPersisted(
 }
 
 // ── Mục học tiếp theo trong 1 cấp ───────────────────────────────────────
-// Duyệt unit theo thứ tự; trong mỗi unit ưu tiên TỪ VỰNG trước, NGỮ PHÁP sau
-// (đúng trình tự hiển thị). Hội thoại không bắt buộc nên không tính.
+// XEN KẼ từ vựng↔ngữ pháp trong mỗi unit: vòng 1 → bài 1 → vòng 2 → bài 2 …
+// (V5, docs/research/cai-tien-lo-trinh-hoc.md) — trước đây bắt học hết 100% từ
+// vựng của unit rồi mới gợi ý ngữ pháp, khiến unit lớn (vd 6 vòng ≈ 120 từ) mất
+// cả tuần chỉ lật thẻ trước khi gặp bài ngữ pháp đầu tiên. Người dùng vẫn tự do
+// bấm học mục nào tùy thích (đây chỉ là GỢI Ý "Học tiếp"). Hội thoại không bắt
+// buộc nên không tính vào thứ tự này.
 export interface NextStep {
   unitIndex: number
   unit: CefrUnit
   kind: 'vocab' | 'grammar'
   circleId?: string
   lessonId?: string
+}
+
+// Ghép xen kẽ 2 danh sách theo chỉ số: a0, b0, a1, b1, … hết danh sách nào thì
+// tiếp tục danh sách kia (không cắt bớt, không yêu cầu 2 danh sách bằng độ dài).
+function interleave<A, B>(as: A[], bs: B[]): Array<{ a: A } | { b: B }> {
+  const out: Array<{ a: A } | { b: B }> = []
+  const max = Math.max(as.length, bs.length)
+  for (let i = 0; i < max; i++) {
+    if (i < as.length) out.push({ a: as[i]! })
+    if (i < bs.length) out.push({ b: bs[i]! })
+  }
+  return out
 }
 
 export function findNextStep(
@@ -218,17 +234,31 @@ export function findNextStep(
   for (let i = 0; i < level.units.length; i++) {
     const unit = level.units[i]
     if (!unit) continue
-    for (const id of unit.vocabCircleIds) {
-      const c = byId[id]
-      if (c && circleDoneCount(c, learned) < c.words.length) {
-        return { unitIndex: i, unit, kind: 'vocab', circleId: id }
-      }
-    }
-    for (const g of unit.grammar) {
-      if (!doneGrammar.has(g.id)) {
-        return { unitIndex: i, unit, kind: 'grammar', lessonId: g.id }
+    const steps = interleave(unit.vocabCircleIds, unit.grammar)
+    for (const step of steps) {
+      if ('a' in step) {
+        const c = byId[step.a]
+        if (c && circleDoneCount(c, learned) < c.words.length) {
+          return { unitIndex: i, unit, kind: 'vocab', circleId: step.a }
+        }
+      } else if (!doneGrammar.has(step.b.id)) {
+        return { unitIndex: i, unit, kind: 'grammar', lessonId: step.b.id }
       }
     }
   }
   return null
+}
+
+// Unit hoàn toàn "mới" (chưa động tới từ vựng lẫn ngữ pháp nào) — dùng để gợi ý
+// nghe hội thoại mở đầu TRƯỚC khi vào vòng từ vựng đầu tiên (V5, comprehensible
+// input: nghe trước, học từ sau).
+export function isUnitFresh(
+  unit: CefrUnit,
+  byId: Record<string, Circle>,
+  learned: Set<string>,
+  doneGrammar: Set<string>,
+): boolean {
+  const vocab = unitVocabCounts(unit, byId, learned)
+  const grammar = unitGrammarCounts(unit, doneGrammar)
+  return vocab.done === 0 && grammar.done === 0
 }
