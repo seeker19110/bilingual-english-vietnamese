@@ -16,7 +16,7 @@ export default function VoiceToggle() {
       type="button"
       onClick={toggle}
       title="Chọn giọng đọc (áp dụng cho cả app)"
-      className="flex rounded-full bg-zinc-800 p-0.5 text-[11px] leading-none shrink-0 cursor-pointer"
+      className="tap-44 flex rounded-full bg-zinc-800 p-0.5 text-[11px] leading-none shrink-0 cursor-pointer"
     >
       <span
         className={`px-2 py-1 rounded-full transition ${
