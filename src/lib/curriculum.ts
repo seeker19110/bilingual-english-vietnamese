@@ -117,6 +117,18 @@ export function isCurriculumReady(): boolean {
 // phần nền tảng và từ điển.
 export const wordKey = (word: string) => word.trim().toLowerCase()
 
+// So sánh 2 từ theo hạng tần suất (freq tăng dần: số nhỏ = thông dụng hơn, học
+// trước) — đúng luật Zipf (2.000-2.800 từ thông dụng nhất phủ ~90% văn bản
+// thường gặp). Từ CHƯA CÓ freq (scripts/assign-word-freq.ts chưa điền) xếp SAU
+// CÙNG; Array.prototype.sort ổn định (ES2019+) nên thứ tự gốc giữ nguyên giữa
+// các từ cùng thiếu freq — không random, không đổi kết quả giữa các lần build.
+export function compareByFreq(a: DictEntry, b: DictEntry): number {
+  if (a.freq == null && b.freq == null) return 0
+  if (a.freq == null) return 1
+  if (b.freq == null) return -1
+  return a.freq - b.freq
+}
+
 // ── Xây dựng các vòng MỞ RỘNG từ dictionary (memo hóa 1 lần) ────────────
 let _circlesCache: Circle[] | null = null
 
@@ -135,8 +147,9 @@ export function getCircles(): Circle[] {
   const foundationKeys = new Set<string>()
   FOUNDATION.forEach((c) => c.words.forEach((w) => foundationKeys.add(wordKey(w.word))))
 
-  // Các từ còn lại trong từ điển, giữ nguyên thứ tự (alphabet) làm phần mở rộng
-  const rest = ENTRIES.filter((e) => !foundationKeys.has(wordKey(e.word)))
+  // Các từ còn lại trong từ điển làm phần mở rộng — sắp theo TẦN SUẤT thay vì
+  // alphabet (xem compareByFreq bên dưới), đúng luật Zipf.
+  const rest = ENTRIES.filter((e) => !foundationKeys.has(wordKey(e.word))).sort(compareByFreq)
 
   // Gom phần mở rộng thành các cụm DAILY_GOAL từ → mỗi cụm là 1 "vòng"
   const extra: Circle[] = []
