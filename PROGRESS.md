@@ -408,6 +408,43 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   E2E suite (68/68, a11y 4 theme) xanh sau khi sửa.
 - ⚠️ Cần chạy migration `0008` trên production TRƯỚC khi deploy (xem "Cần làm tay").
 
+## Đã xong (audit sâu lần 2 + Sentry — 2026-07-04)
+
+> Theo yêu cầu người dùng "audit sâu và fix". Container phiên này clone mới nên
+> `node_modules` trống lúc đầu (mọi lệnh gate tưởng hỏng) — cài lại bằng `npm ci` là hết,
+> không phải lỗi code. Sau khi cài: build/typecheck/lint/test (110/110) đều xanh, không phát
+> hiện lỗi nghiêm trọng nào. Viết script kiểm tra cấu trúc dữ liệu CEFR/từ vựng (89 vòng,
+> 61 bài, 23 unit): 0 tham chiếu gãy, 0 quiz sai index/trùng đáp án, 0 vòng mồ côi.
+
+- **Nhãn "thứ" trên biểu đồ streak lệch múi giờ** — `getActivity7Days`/`getActivityCalendar`
+  (`src/lib/stats.ts`) dùng `d.getDay()` (thứ theo giờ LOCAL của trình duyệt) trong khi ngày
+  hiển thị (`dow`) đã tính theo giờ Việt Nam (`vnDateStr`) → người xem ở múi giờ khác VN có
+  thể thấy nhãn thứ lệch 1 ngày so với ô thực tế. Thêm `vnDayOfWeek()` (`src/lib/date.ts`,
+  cùng cách tính offset +7h với `vnDateStr`) thay `d.getDay()` ở cả 2 hàm. 2 test mới.
+- **1 từ trùng giữa 2 vòng ở A1** (`"I"` — chữ cái trong vòng `letters` trùng đại từ "tôi"
+  trong vòng `greetings`) — đã cân nhắc nhưng KHÔNG sửa: muốn hết trùng phải đổi cách định danh
+  từ toàn cục (`word.toLowerCase()`, dùng chung cho learned/SRS/hard-words toàn app) sang định
+  danh theo từng vòng — rủi ro cao (có thể làm mất tiến độ đã lưu của người dùng thật) so với
+  lợi ích cực nhỏ (lệch 1/379 từ A1, và cả 2 đều nằm ở unit đầu tiên nên thực tế học gần như
+  cùng lúc). Giữ nguyên, ghi lại ở đây để không audit lại nhầm là bug chưa biết.
+- **Thêm Sentry (observability)** — bắt lỗi thật khi chạy production, cả client lẫn server:
+  - Client: `src/lib/errorTracking.ts` (`initErrorTracking()` gọi ở `main.tsx`,
+    `captureException()` gọi trong `ErrorBoundary.componentDidCatch`). Tải `@sentry/react` bằng
+    `import()` ĐỘNG, tách riêng chunk `vendor-sentry` (`vite.config.ts` `manualChunks`) — không
+    nằm trong bundle khởi động nên KHÔNG tính vào ngân sách `size-limit` (đã verify: 112.51kB →
+    112.58kB, gần như không đổi vì chunk chỉ tải khi thật sự dùng).
+  - Server: `api/_lib/sentry.ts` (`initSentryServer()` gọi trong `server.ts` sau
+    `dotenv.config()`, `captureServerException()` gọi ở catch của `wrapEdge` + bộ hẹn giờ nhắc
+    học).
+  - CẢ 2 đều **no-op hoàn toàn nếu chưa đặt `SENTRY_DSN`/`VITE_SENTRY_DSN`** (`.env.example`) —
+    an toàn merge ngay, không ảnh hưởng gì tới hành vi hiện tại cho tới khi người dùng tự thêm
+    DSN thật. Không bật performance tracing/session replay (chỉ bắt exception, tránh vượt quota
+    free). CSP hiện có (`connect-src ... https:`) đã đủ rộng cho domain ingest của Sentry,
+    không cần sửa `server.ts` CSP_HEADER.
+- Verify: build/typecheck/lint/test (112/112, +2 so với đợt trước)/size-limit xanh.
+- ⚠️ Cần làm tay: tạo project Sentry (miễn phí, sentry.io) rồi điền `SENTRY_DSN` +
+  `VITE_SENTRY_DSN` vào `.env` trên VPS (xem "Cần làm tay" bên dưới).
+
 ## ⚠️ Cần làm tay (chưa xong)
 
 - **Chạy migration `0007_learning_progress_cefr.sql` VÀ `0008_learning_progress_cefr_unlocked.sql`

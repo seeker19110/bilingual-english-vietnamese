@@ -8,9 +8,13 @@ import './index.css'
 import App from './App'
 import { applyTheme, getTheme } from './lib/theme'
 import { unlockAudio } from './lib/tts'
+import { initErrorTracking } from './lib/errorTracking'
 
 // Áp dụng theme đã lưu NGAY trước khi render để tránh nhấp nháy màu
 applyTheme(getTheme())
+
+// Bật Sentry (error tracking) — no-op nếu chưa cấu hình VITE_SENTRY_DSN (xem errorTracking.ts).
+initErrorTracking()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

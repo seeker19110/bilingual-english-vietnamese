@@ -15,6 +15,11 @@ import * as dotenv from 'dotenv'
 // vì handler đọc process.env ngay lúc module load
 dotenv.config()
 
+import { initSentryServer, captureServerException } from './api/_lib/sentry.js'
+
+// Bật Sentry (error tracking) — no-op nếu chưa cấu hình SENTRY_DSN (xem api/_lib/sentry.ts).
+initSentryServer()
+
 import ttsHandler from './api/tts.js'
 import aiHandler from './api/ai.js'
 import pronunciationHandler from './api/pronunciation.js'
@@ -85,6 +90,7 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
       res.send(await webRes.text())
     } catch (err) {
       console.error('[server] Lỗi handler:', err)
+      captureServerException(err, { path: req.originalUrl, method: req.method })
       res.status(500).json({ error: 'Internal server error' })
     }
   }
@@ -201,7 +207,10 @@ function startReminderScheduler() {
         if (r.sent || r.skipped)
           console.log(`[reminder] ${hour}h UTC → gửi ${r.sent}, bỏ qua ${r.skipped} (đã học)`)
       })
-      .catch((err) => console.error('[reminder] lỗi gửi nhắc:', err))
+      .catch((err) => {
+        console.error('[reminder] lỗi gửi nhắc:', err)
+        captureServerException(err, { context: 'reminder-scheduler', hour })
+      })
   }, 60_000) // kiểm tra mỗi phút, gửi 1 lần khi sang giờ mới
   console.log('   Nhắc học : bật (gửi đúng giờ mỗi người chọn)')
 }

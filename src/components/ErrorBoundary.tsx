@@ -1,7 +1,8 @@
 // ErrorBoundary — bắt mọi lỗi render trong cây con và hiện màn hình thân thiện
 // (kèm nút thử lại) thay vì để app trắng xoá. Đặc biệt quan trọng vì app lazy-load
 // rất nhiều chunk: chỉ cần 1 chunk lỗi mạng là cả trang có thể sập nếu không bắt.
-import { Component, type ReactNode } from 'react'
+import { Component, type ReactNode, type ErrorInfo } from 'react'
+import { captureException } from '../lib/errorTracking'
 
 interface Props {
   children: ReactNode
@@ -18,9 +19,11 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true }
   }
 
-  componentDidCatch(error: unknown) {
-    // Ghi log ra console để debug; không gửi đi đâu (giữ riêng tư + miễn phí).
+  componentDidCatch(error: unknown, errorInfo: ErrorInfo) {
+    // Ghi log ra console để debug.
     console.error('[ErrorBoundary] Lỗi render:', error)
+    // Gửi lên Sentry nếu đã cấu hình VITE_SENTRY_DSN — no-op an toàn nếu chưa (xem errorTracking.ts).
+    void captureException(error, { componentStack: errorInfo.componentStack })
   }
 
   handleReload = () => {
