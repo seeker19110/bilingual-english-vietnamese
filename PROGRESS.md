@@ -445,7 +445,54 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 - ⚠️ Cần làm tay: tạo project Sentry (miễn phí, sentry.io) rồi điền `SENTRY_DSN` +
   `VITE_SENTRY_DSN` vào `.env` trên VPS (xem "Cần làm tay" bên dưới).
 
+## Đã xong (cải tiến lộ trình học — 5 đợt theo docs/research/cai-tien-lo-trinh-hoc.md — 2026-07-04)
+
+> Theo kế hoạch trong `docs/research/cai-tien-lo-trinh-hoc.md` (PR #189, đã duyệt thứ tự làm
+> "làm hết" + đồng ý đổi mặc định tốc độ 10 + đồng ý xen kẽ từ vựng↔ngữ pháp). Mỗi đợt 1 commit
+> riêng trên cùng nhánh, verify đầy đủ (build/typecheck/lint/test/size + lái app thật bằng
+> Playwright) trước khi sang đợt tiếp theo.
+
+- **Đợt 1 — SRS toàn cục + cap phiên + leech**: tab Ôn SRS trước đây lọc theo từ vựng CẤP đang
+  mở (`studyPool`) → từ cấp khác đến hạn không hiện, quên dần. Giờ mặc định ôn TOÀN BỘ lộ trình
+  (`getLearningPath()`), có toggle lọc "chỉ cấp này" (`SRSReview`, `CefrLevelPage.tsx`). Cap
+  `SRS_SESSION_CAP = 30` thẻ/phiên, ưu tiên thẻ quá hạn lâu nhất (`getDueWords(uid, pool, limit)`
+  — `lib/srs.ts`), tránh ngợp khi quay lại sau vài ngày nghỉ. Thẻ bị "Quên" ≥3 lần tự vào diện
+  leech (`lapses`, `getLeechWords`) — gộp vào tab Từ khó cùng đánh dấu tay.
+- **Đợt 2 — Mini-quiz đủ 20 từ, 2 chiều**: mini-quiz mở batch trước chỉ hỏi 5/20 từ, 1 chiều
+  (EN→VI). Giờ hỏi ĐỦ cả batch, xen kẽ đều EN→VI/VI→EN (`buildMiniQuiz`, `StudyTabs.tsx`). Trả
+  lời sai → ôn lại flashcard ĐÚNG những từ sai (phase `mini-quiz-review`) trước khi cho làm lại.
+- **Đợt 3 — Chọn tốc độ học 5/10/20 từ/ngày**: `getDailySpeed`/`setDailySpeed` (`lib/curriculum.ts`,
+  localStorage `et_speed_<uid>`). Người dùng MỚI (chưa thuộc từ nào) mặc định **10** (trong
+  khuyến nghị 10-20 từ/ngày); người dùng ĐÃ CÓ tiến độ trước đó giữ nguyên **20** để không đổi
+  trải nghiệm đột ngột. Chọn ở trang Hồ sơ (`Profile.tsx`). Trần ngày = 5× tốc độ (công thức cũ,
+  chỉ đổi từ `DAILY_GOAL` cố định sang theo từng người — `getDailyMax`). Cập nhật copy liên quan
+  (FAQ `index.html`, `Home.tsx`, `README.md`, `CLAUDE.md`).
+- **Đợt 4 — Hạ tầng sắp "Mở rộng" theo tần suất (CHƯA chạy dữ liệu thật)**: thêm
+  `DictEntry.freq` + `compareByFreq()` để `getCircles()` sắp ~8.500 từ "Mở rộng" theo tần suất
+  (luật Zipf) thay vì alphabet, từ thiếu `freq` xếp cuối/giữ nguyên thứ tự cũ. **Chưa điền freq
+  thật** — môi trường phiên làm việc không có wordlist tần suất thật (NGSL/SUBTLEX) nên KHÔNG tự
+  bịa dữ liệu (theo CLAUDE.md mục 5). Đã dựng sẵn `scripts/assign-word-freq.ts` (đọc wordlist
+  `.txt`/`.csv` thật, idempotent, an toàn Ctrl+C, cùng mô hình `scripts/tag-cefr-levels.ts`) +
+  `api/_lib/wordFreq.ts` (logic thuần, có test) — chạy khi có file wordlist thật (xem "Tiếp theo").
+- **Đợt 5 — Xen kẽ từ vựng↔ngữ pháp + nút "Tôi đã biết vòng này"**: `findNextStep`
+  (`lib/cefrProgress.ts`) giờ xen kẽ vòng từ vựng ↔ bài ngữ pháp TRONG 1 unit (vòng 1 → bài 1 →
+  vòng 2 → bài 2 …) thay vì bắt xong 100% từ vựng mới gợi ý ngữ pháp — tránh unit lớn (~120 từ)
+  khiến nhiều ngày liền chỉ lật thẻ. Chỉ đổi thứ tự gợi ý, không đổi ngưỡng "xong vòng" (vẫn
+  100%). Thêm nút "Tôi đã biết vòng này" trên màn flashcard (`VocabFlash`, `CefrLessonViews.tsx`)
+  — quiz nhanh tối đa 10 câu, đúng ≥90% → đánh dấu CẢ VÒNG đã thuộc, vào SRS với interval dài 7
+  ngày (`addToSRSKnown`, `lib/srs.ts`) thay vì due ngay hôm nay, KHÔNG tính vào bộ đếm học/ngày.
+- Verify mỗi đợt: build/typecheck/lint (0 cảnh báo)/format/test (136/136 cuối đợt 5, +24 so với
+  đầu phiên)/size-limit đều xanh + lái app thật bằng Playwright (seed localStorage giả lập
+  session, xác nhận UI đúng hành vi: badge SRS đếm toàn cục, cap 30 + ưu tiên quá hạn, mini-quiz
+  20 câu xen kẽ 2 chiều, tốc độ mặc định 10/20 đúng theo user mới/cũ, test-out đánh dấu đúng cả
+  vòng + không tính vào bộ đếm ngày).
+
 ## ⚠️ Cần làm tay (chưa xong)
+
+- **Điền dữ liệu tần suất từ thật cho phần "Mở rộng"** (đợt 4 ở trên): cần 1 wordlist tần suất
+  thật (NGSL — https://www.newgeneralservicelist.com, giấy phép CC BY — hoặc SUBTLEX-US cho phần
+  còn lại), tải về máy rồi chạy `FREQ_LIST=đường-dẫn npm run tag:freq`. Hạ tầng đã sẵn sàng
+  (`scripts/assign-word-freq.ts`), chỉ thiếu file wordlist thật.
 
 - **Chạy migration `0007_learning_progress_cefr.sql` VÀ `0008_learning_progress_cefr_unlocked.sql`
   trên Supabase production** (Dashboard → SQL Editor) — **TRƯỚC khi deploy code mới lên VPS**.
