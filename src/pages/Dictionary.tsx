@@ -27,7 +27,7 @@ import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { POS_LABEL, POS_COLOR, POS_LIST } from '../lib/pos'
 import { getLearnedWords } from '../lib/vocab'
-import { loadCurriculum, getTodayBatch } from '../lib/curriculum'
+import { loadCurriculum, getTodayBatch, getDailyGoal } from '../lib/curriculum'
 
 const PAGE_SIZE = 3
 type Tab = 'search' | 'flashcard' | 'pos'
@@ -122,7 +122,7 @@ export default function Dictionary() {
   useEffect(() => {
     if (!user) return
     loadCurriculum()
-      .then(() => setTodayWords(getTodayBatch(getLearnedWords(user.id))))
+      .then(() => setTodayWords(getTodayBatch(getLearnedWords(user.id), getDailyGoal(user.id))))
       .catch(() => {
         /* lỗi nạp dữ liệu — bỏ qua, vẫn tra từ được */
       })

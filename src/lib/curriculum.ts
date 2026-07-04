@@ -10,8 +10,8 @@
 //
 //   - getLearningPath(): toàn bộ chuỗi từ theo thứ tự học.
 //   - getCircles():       chuỗi đó nhưng gom theo "vòng tròn" (chủ đề / cụm mở rộng).
-//   - getTodayBatch():    lấy 20 từ KẾ TIẾP chưa thuộc (mục tiêu mỗi ngày).
-//   - daily counter:      đếm số từ đã học trong ngày (mục tiêu 20/ngày).
+//   - getTodayBatch():    lấy N từ KẾ TIẾP chưa thuộc (N = tốc độ học đã chọn, getDailyGoal()).
+//   - daily counter:      đếm số từ đã học trong ngày (mục tiêu tùy chọn 5/10/20, mặc định 10).
 //   - random queue:       hàng đợi ôn tập ngẫu nhiên KHÔNG lặp trong 1 vòng.
 // ──────────────────────────────────────────────────────────────────────
 
@@ -22,11 +22,55 @@ import { loadDictionary } from '../data/dictionary/loader'
 import { loadFoundation } from '../data/curriculumLoader'
 import { vnDateStr } from './date'
 import { loadCefr } from '../data/cefrLoader'
+import { getLearnedWords } from './vocab'
 
-// Mục tiêu 20 từ/ngày — khớp với tài liệu (CLAUDE.md), FAQ trong index.html và UI tab "Hôm nay".
+// Kích thước "vòng" cố định cho phần Mở rộng (getCircles()) — đây là cách CHIA
+// DỮ LIỆU dùng chung toàn app (không đổi theo người dùng), KHÁC với "tốc độ học"
+// cá nhân (DAILY_GOAL_OPTIONS/getDailyGoal bên dưới). Cũng là kích thước batch
+// MẶC ĐỊNH cho các hàm getTodayBatch*/getDailyAllowance khi không truyền tham số
+// (giữ nguyên hành vi cũ 20 từ/lượt cho code/test gọi không kèm uid).
 export const DAILY_GOAL = 20
-// Tối đa 100 từ/ngày (5 batch × 20 từ). Mỗi batch thêm phải pass quiz 100%.
+// Tối đa 100 từ/ngày với tốc độ mặc định cũ (5 batch × 20 từ) — xem getDailyMax()
+// cho trần THEO TỪNG NGƯỜI DÙNG (5× tốc độ đã chọn).
 export const DAILY_MAX = 100
+
+// ── Tốc độ học (V7, docs/research/cai-tien-lo-trinh-hoc.md) ──────────────────
+// Người dùng chọn 1 trong 3 mức ở trang Hồ sơ — Nakata (2015): 10-20 từ/ngày là
+// vùng tối ưu, 20 là ngưỡng TRÊN dễ khiến người mới hụt mục tiêu liên tục.
+export const DAILY_GOAL_OPTIONS = [5, 10, 20] as const
+export type DailyGoalOption = (typeof DAILY_GOAL_OPTIONS)[number]
+// Số batch tối đa/ngày (mỗi batch thêm phải pass quiz 100%) — trần ngày = số này × tốc độ.
+export const DAILY_MAX_MULTIPLIER = 5
+
+const DAILY_GOAL_KEY = (uid: string) => `et_daily_goal_${uid}`
+
+function isDailyGoalOption(n: number): n is DailyGoalOption {
+  return (DAILY_GOAL_OPTIONS as readonly number[]).includes(n)
+}
+
+// Tốc độ học đã chọn của user. Nếu CHƯA từng chọn: chốt 1 LẦN DUY NHẤT ngay lúc
+// đọc đầu tiên rồi lưu lại luôn (không tính lại mỗi lần gọi) — NGƯỜI ĐÃ CÓ tiến độ
+// trước khi có tính năng này (learned > 0) giữ 20 như cũ; NGƯỜI MỚI mặc định 10.
+// Chốt 1 lần để không bị đổi về sau nếu learned count tăng lên.
+export function getDailyGoal(uid: string): DailyGoalOption {
+  const raw = localStorage.getItem(DAILY_GOAL_KEY(uid))
+  if (raw != null) {
+    const n = Number(raw)
+    if (isDailyGoalOption(n)) return n
+  }
+  const fallback: DailyGoalOption = getLearnedWords(uid).size > 0 ? 20 : 10
+  setDailyGoal(uid, fallback)
+  return fallback
+}
+
+export function setDailyGoal(uid: string, goal: DailyGoalOption) {
+  localStorage.setItem(DAILY_GOAL_KEY(uid), String(goal))
+}
+
+// Trần số từ mới/ngày của user = tốc độ đã chọn × DAILY_MAX_MULTIPLIER.
+export function getDailyMax(uid: string): number {
+  return getDailyGoal(uid) * DAILY_MAX_MULTIPLIER
+}
 
 // Dữ liệu từ điển — KHÔNG import tĩnh nữa (file ~2MB). Nạp ĐỘNG bằng
 // dynamic import() qua loadCurriculum() để Vite tách dictionary.json thành
@@ -267,5 +311,6 @@ export function bumpDailyQuizPasses(uid: string): number {
 
 // Số từ được phép học hôm nay: DAILY_GOAL × (quizPasses + 1), tối đa DAILY_MAX
 export function getDailyAllowance(uid: string): number {
-  return Math.min(DAILY_GOAL * (getDailyQuizPasses(uid) + 1), DAILY_MAX)
+  const goal = getDailyGoal(uid)
+  return Math.min(goal * (getDailyQuizPasses(uid) + 1), goal * DAILY_MAX_MULTIPLIER)
 }

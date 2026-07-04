@@ -1,6 +1,16 @@
-import { describe, it, expect, beforeEach, beforeAll } from 'vitest'
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest'
+
+// curriculum.ts import getDailyGoal→getLearnedWords (vocab.ts)→pushProgress (progressSync.ts)
+// →supabase — stub để test chạy OFFLINE, giống stats.test.ts/srs.test.ts.
+vi.mock('./supabase', () => ({ supabase: {} }))
+vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+
 import {
   DAILY_GOAL,
+  DAILY_GOAL_OPTIONS,
+  getDailyGoal,
+  setDailyGoal,
+  getDailyMax,
   wordKey,
   getCircles,
   getLearningPath,
@@ -165,5 +175,42 @@ describe('bộ đếm học trong ngày', () => {
   it('đếm tách biệt theo user', () => {
     bumpDailyLearned('u1')
     expect(getDailyLearned('u2')).toBe(0)
+  })
+})
+
+describe('tốc độ học (getDailyGoal/setDailyGoal) — V7', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('người dùng MỚI (chưa học từ nào) mặc định 10', () => {
+    expect(getDailyGoal('new-user')).toBe(10)
+  })
+
+  it('người dùng ĐÃ có tiến độ (learned > 0) grandfather giữ 20', () => {
+    localStorage.setItem('et_learned_old-user', JSON.stringify(['apple']))
+    expect(getDailyGoal('old-user')).toBe(20)
+  })
+
+  it('mặc định được CHỐT 1 LẦN — không đổi dù learned words đổi sau đó', () => {
+    expect(getDailyGoal('u3')).toBe(10) // chưa học gì → mặc định 10, đã lưu lại
+    localStorage.setItem('et_learned_u3', JSON.stringify(['apple', 'banana']))
+    expect(getDailyGoal('u3')).toBe(10) // vẫn 10, không tự đổi thành 20
+  })
+
+  it('setDailyGoal ghi đè lựa chọn, đọc lại đúng giá trị mới', () => {
+    setDailyGoal('u4', 20)
+    expect(getDailyGoal('u4')).toBe(20)
+    setDailyGoal('u4', 5)
+    expect(getDailyGoal('u4')).toBe(5)
+  })
+
+  it('DAILY_GOAL_OPTIONS đúng 3 mức 5/10/20', () => {
+    expect(DAILY_GOAL_OPTIONS).toEqual([5, 10, 20])
+  })
+
+  it('getDailyMax = tốc độ × 5', () => {
+    setDailyGoal('u5', 5)
+    expect(getDailyMax('u5')).toBe(25)
+    setDailyGoal('u5', 20)
+    expect(getDailyMax('u5')).toBe(100)
   })
 })

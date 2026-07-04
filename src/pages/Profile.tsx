@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TrendingUp, History as HistoryIcon, LogOut, Mail, Flame, BookOpen } from 'lucide-react'
 import Layout from '../components/Layout'
@@ -8,19 +9,41 @@ import { useCloudSync } from '../lib/useCloudSync'
 import { getStreak, getDirection } from '../lib/storage'
 import { getLearnedCount } from '../lib/vocab'
 import { logout } from '../lib/auth'
+import {
+  DAILY_GOAL_OPTIONS,
+  getDailyGoal,
+  setDailyGoal,
+  type DailyGoalOption,
+} from '../lib/curriculum'
+
+const PACE_LABEL: Record<DailyGoalOption, { vi: string; en: string }> = {
+  5: { vi: 'Nhẹ nhàng', en: 'Gentle' },
+  10: { vi: 'Vừa', en: 'Moderate' },
+  20: { vi: 'Nhanh', en: 'Fast' },
+}
 
 export default function Profile() {
   const nav = useNavigate()
   const { user } = useAuth()
   const { T } = useLang()
   useCloudSync(user?.id) // kéo lượt dùng mới nhất từ Supabase
+  const [goal, setGoal] = useState<DailyGoalOption | null>(null)
 
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
 
   const isA = getDirection() === 'A'
-  const streak = getStreak(user.id)
-  const learned = getLearnedCount(user.id)
+  const uid = user.id
+  const streak = getStreak(uid)
+  const learned = getLearnedCount(uid)
+  // goal đọc lười (không phải useState(() => ...)) vì getDailyGoal() có thể TỰ GHI
+  // giá trị mặc định lần đầu (side effect) — tránh gọi trong initializer render đầu.
+  const currentGoal = goal ?? getDailyGoal(uid)
+
+  function pickGoal(n: DailyGoalOption) {
+    setDailyGoal(uid, n)
+    setGoal(n)
+  }
 
   async function handleLogout() {
     await logout()
@@ -84,6 +107,34 @@ export default function Profile() {
               <p className="text-xl font-bold text-white leading-none">{learned}</p>
               <p className="text-xs text-zinc-400 mt-1">{isA ? 'từ đã thuộc' : 'words learned'}</p>
             </div>
+          </div>
+        </section>
+
+        {/* Tốc độ học từ mới */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
+          <p className="font-semibold text-white text-[15px]">
+            {isA ? 'Tốc độ học từ mới' : 'New word pace'}
+          </p>
+          <p className="text-sm text-zinc-400 mt-0.5 mb-3">
+            {isA
+              ? 'Số từ mới mỗi lượt — mở thêm bằng kiểm tra, tối đa 5 lượt/ngày'
+              : 'New words per round — unlock more via quiz, up to 5 rounds/day'}
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {DAILY_GOAL_OPTIONS.map((n) => (
+              <button
+                key={n}
+                onClick={() => pickGoal(n)}
+                aria-pressed={currentGoal === n}
+                className={`py-2.5 rounded-xl text-sm font-medium border transition ${
+                  currentGoal === n
+                    ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
+                    : 'bg-zinc-900/60 border-zinc-800 text-zinc-300 hover:border-zinc-600'
+                }`}
+              >
+                {n} · {isA ? PACE_LABEL[n].vi : PACE_LABEL[n].en}
+              </button>
+            ))}
           </div>
         </section>
 

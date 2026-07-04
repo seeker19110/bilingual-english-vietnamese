@@ -1,6 +1,7 @@
 // ──────────────────────────────────────────────────────────────────────────
 // PRELOADER trang HỌC — nạp TOÀN BỘ từ điển (~560KB, cho lộ trình) + preload audio
-// 20 từ "hôm nay". CHỈ trang cấp CEFR (/learning-path/a1…b2 — nơi có tab "Hôm nay")
+// batch "hôm nay" (kích thước = tốc độ học đã chọn, 5/10/20). CHỈ trang cấp CEFR
+// (/learning-path/a1…b2 — nơi có tab "Hôm nay")
 // import file này → curriculum + dữ liệu FOUNDATION (~100KB) KHÔNG lọt vào bundle
 // khởi động (chỉ nằm trong chunk của trang đó).
 // Việc nạp trước chunk Bài học/Cụm từ (nhẹ) tách sang preloadBrowse.ts.
@@ -8,7 +9,7 @@
 // Audio lưu IndexedDB (bền qua lần đóng/mở tab) nên lần sau khỏi tải lại.
 // ──────────────────────────────────────────────────────────────────────────
 
-import { loadCurriculum, getTodayBatch } from './curriculum'
+import { loadCurriculum, getTodayBatch, getDailyGoal } from './curriculum'
 import { getLearnedWords } from './vocab'
 import { getAccessToken } from './authHeader'
 import { getVoicePref } from './tts'
@@ -96,7 +97,7 @@ export async function preloadLearnData(userId: string): Promise<void> {
 
   // Preload audio cho Today batch (20 từ hôm nay) — tuần tự, chậm, kick-off không await.
   const learned = getLearnedWords(userId)
-  const todayWords = getTodayBatch(learned)
+  const todayWords = getTodayBatch(learned, getDailyGoal(userId))
   const voice = getVoicePref()
   void (async () => {
     for (const entry of todayWords) {
