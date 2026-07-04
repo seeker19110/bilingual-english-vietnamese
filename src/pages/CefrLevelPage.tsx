@@ -41,7 +41,13 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
 import { GrammarDetail, VocabFlash, DialogueView } from '../components/CefrLessonViews'
-import { TodayLesson, SRSReview, HardWords, QuizTab } from '../components/StudyTabs'
+import {
+  TodayLesson,
+  SRSReview,
+  HardWords,
+  QuizTab,
+  type GrammarQuizSource,
+} from '../components/StudyTabs'
 import { ACCENT, type AccentClasses } from '../lib/cefrAccent'
 import type { CefrLevel, CefrUnit, GrammarLesson } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
@@ -160,6 +166,27 @@ export default function CefrLevelPage() {
     level?.units.forEach((u) => u.grammar.forEach((g) => map.set(g.id, ++n)))
     return map
   }, [level])
+
+  // Nguồn câu quiz NGỮ PHÁP cho tab "Kiểm tra" (V8, docs/research/cai-tien-lo-trinh-hoc.md):
+  // CHỈ lấy từ các bài đã đánh dấu "Đã học xong" — ngữ pháp chưa học không nên bị hỏi.
+  const grammarQuizPool = useMemo((): GrammarQuizSource[] => {
+    const out: GrammarQuizSource[] = []
+    if (!level) return out
+    for (const u of level.units) {
+      for (const g of u.grammar) {
+        if (doneGrammar.has(g.id) && g.quiz) {
+          for (const item of g.quiz) out.push({ lessonId: g.id, item })
+        }
+      }
+    }
+    return out
+  }, [level, doneGrammar])
+
+  // Mở lại 1 bài ngữ pháp theo id (dùng khi trả lời sai câu quiz ngữ pháp ở tab Kiểm tra).
+  function openLessonById(lessonId: string) {
+    const g = level?.units.flatMap((u) => u.grammar).find((x) => x.id === lessonId)
+    if (g) setLesson(g)
+  }
 
   // Preload audio 20 từ "hôm nay" khi browser rảnh (chuyển từ trang /learning-path
   // sang đây vì tab "Hôm nay" giờ nằm ở trang cấp).
@@ -454,7 +481,14 @@ export default function CefrLevelPage() {
               <HardWords key={level.id} uid={uid} isA={isA} pool={studyPool} onUpdate={bump} />
             )}
             {activeTab === 'quiz' && (
-              <QuizTab key={level.id} uid={uid} isA={isA} pool={studyPool} />
+              <QuizTab
+                key={level.id}
+                uid={uid}
+                isA={isA}
+                pool={studyPool}
+                grammarPool={grammarQuizPool}
+                onOpenLesson={openLessonById}
+              />
             )}
           </>
         ))}

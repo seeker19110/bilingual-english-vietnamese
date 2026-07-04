@@ -191,6 +191,7 @@ export function setDirection(dir: Direction) {
 // Dữ liệu đọc từ localStorage (đã được pullUserData đồng bộ từ Supabase tối đa 365 ngày),
 // nên streak nhất quán giữa các máy.
 const STREAK_MAX_DAYS = 365
+const MS_DAY = 86_400_000
 
 function hasActivityOn(usage: DailyUsage | null): boolean {
   if (!usage) return false
@@ -203,7 +204,29 @@ function hasActivityOn(usage: DailyUsage | null): boolean {
   return total > 0
 }
 
+// ── Vé nghỉ streak (streak freeze) — V2, docs/research/cai-tien-lo-trinh-hoc.md ────────
+// 1 "vé nghỉ"/tuần: ngày đầu tiên bị bỏ lỡ trong 1 tuần KHÔNG làm đứt streak (cơ chế đã
+// được chứng minh giảm churn 21% — Duolingo). Lưu CỤC BỘ (localStorage), CHƯA đồng bộ
+// Supabase — tính năng nhẹ, thêm cột/migration mới cho việc này chưa xứng đáng ở giai
+// đoạn này; có thể lệch nhẹ nếu đổi thiết bị đúng lúc dùng vé (chấp nhận được, xem PROGRESS.md).
+const STREAK_FREEZE_KEY = (uid: string) => `et_streak_freeze_${uid}`
+const STREAK_FREEZE_COOLDOWN_DAYS = 7 // tối thiểu số ngày giữa 2 lần dùng vé (~1 vé/tuần)
+
+function getStreakFreezeDates(userId: string): string[] {
+  return get<string[]>(STREAK_FREEZE_KEY(userId)) ?? []
+}
+
+// Số ngày giữa 2 chuỗi "yyyy-mm-dd" — so bằng mốc UTC nửa đêm (chuỗi ngày không có múi
+// giờ, không liên quan tới DST) nên phép trừ luôn ra đúng số ngày nguyên.
+function daysBetweenDateStr(a: string, b: string): number {
+  return Math.round(
+    Math.abs(new Date(`${a}T00:00:00Z`).getTime() - new Date(`${b}T00:00:00Z`).getTime()) / MS_DAY,
+  )
+}
+
 export function getStreak(userId: string): number {
+  const freezeDates = getStreakFreezeDates(userId)
+  let newFreezeDate: string | null = null
   let streak = 0
   const today = new Date()
   for (let i = 0; i < STREAK_MAX_DAYS; i++) {
@@ -213,11 +236,24 @@ export function getStreak(userId: string): number {
     const usage = get<DailyUsage>(K.usage(userId, dateStr))
     if (hasActivityOn(usage)) {
       streak++
-    } else if (i > 0) {
-      // Ngày trước không có hoạt động → streak đứt
-      break
+      continue
     }
-    // i === 0 (hôm nay) chưa học: cho qua, kiểm tra hôm qua xem streak còn không
+    if (i === 0) continue // hôm nay chưa học: cho qua, kiểm tra hôm qua xem streak còn không
+
+    // Ngày này KHÔNG có hoạt động — thử bắc cầu bằng vé nghỉ trước khi chịu đứt streak.
+    const alreadyFrozen = freezeDates.includes(dateStr)
+    const candidates = newFreezeDate ? [...freezeDates, newFreezeDate] : freezeDates
+    const usedRecently = candidates.some(
+      (f) => daysBetweenDateStr(f, dateStr) < STREAK_FREEZE_COOLDOWN_DAYS,
+    )
+    if (alreadyFrozen || !usedRecently) {
+      if (!alreadyFrozen) newFreezeDate = dateStr // ghi nhớ để lưu lại sau vòng lặp
+      continue // bắc cầu qua ngày nghỉ — streak không đứt (không cộng thêm cho ngày này)
+    }
+    break // hết vé (đã dùng trong 7 ngày gần đây) → streak đứt ở đây như cũ
+  }
+  if (newFreezeDate) {
+    set(STREAK_FREEZE_KEY(userId), [...freezeDates, newFreezeDate])
   }
   return Math.min(streak, STREAK_MAX_DAYS)
 }

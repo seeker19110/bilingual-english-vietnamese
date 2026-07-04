@@ -570,6 +570,46 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   (`StudyTabs.tsx`) nên không cần thêm route gate mới.
 - Còn lại: Đợt 6/6 (quiz ngữ pháp trong tab Kiểm tra, streak freeze, cân nhắc FSRS).
 
+## Đã xong (cải tiến lộ trình học — Đợt 6/6 (chốt) — 2026-07-04)
+
+> Hoàn tất kế hoạch 6 đợt trong `docs/research/cai-tien-lo-trinh-hoc.md` (PR #189).
+
+- **V8 — Quiz ngữ pháp trong tab "Kiểm tra"**: `buildQuiz()` (`StudyTabs.tsx`) trộn tối đa
+  3 câu quiz ngữ pháp (`GrammarLesson.quiz`, đã có sẵn dữ liệu) — CHỈ lấy từ các bài **đã
+  đánh dấu "Đã học xong"** (`grammarQuizPool` tính ở `CefrLevelPage.tsx` từ `doneGrammar`) —
+  cùng với câu hỏi từ vựng như cũ (tổng vẫn ~10 câu/lượt). Câu ngữ pháp hiện dạng câu có
+  chỗ trống (`item.q`, vd "I ___ a student.") thay vì từ đơn. Trả lời sai câu ngữ pháp →
+  màn kết quả hiện nút "Mở lại bài" mở đúng bài ngữ pháp đó (`onOpenLesson`, tra theo
+  `lessonId` trong `level.units`). Ngữ pháp trước đây không có vòng lặp củng cố như từ
+  vựng (nút "Đã học xong" không yêu cầu gì) — nay được ôn lại gián tiếp qua tab Kiểm tra.
+- **V2 (phần còn lại) — Vé nghỉ streak (streak freeze)**: `getStreak()` (`lib/storage.ts`)
+  tự động bắc cầu qua NGÀY ĐẦU TIÊN bị bỏ lỡ trong ~7 ngày gần nhất (1 vé/tuần, cơ chế đã
+  chứng minh giảm churn 21% ở Duolingo) — streak không đứt vì 1 lần nghỉ. Ghi nhớ ngày đã
+  dùng vé (`et_streak_freeze_<uid>`) để không dùng lặp trong cùng 1 tuần và để idempotent
+  (gọi lại nhiều lần cho cùng dữ liệu ra cùng kết quả). ⚠️ **Lưu CỤC BỘ (localStorage),
+  CHƯA đồng bộ Supabase** — thêm cột/migration cho tính năng nhẹ này chưa xứng đáng ở giai
+  đoạn này; chấp nhận lệch nhẹ nếu đổi thiết bị đúng lúc dùng vé (ghi chú lại đây, không
+  phải bug chưa biết).
+- **V9 — FSRS: KHÔNG làm trong đợt này** (đúng khuyến nghị của tài liệu nghiên cứu: "cân
+  nhắc, KHÔNG gấp", để sau khi 1-5 chạy ổn). SM-2 hiện tại + các cải tiến cap-ôn/leech (Đợt
+  1. đã giải quyết phần lớn nỗi đau trước mắt; migrate sang FSRS cần thêm dependency +
+     migrate toàn bộ `SRSCard` (localStorage + Supabase) — để lại làm việc riêng nếu người
+     dùng muốn, không gộp vào đợt cải tiến lộ trình này.
+- 15 test mới (`storage.test.ts` +6: streak freeze bắc cầu/cooldown/idempotent — đã tự tay
+  dựng lại từng ca để bắt lỗi tính sai streak trước khi chốt, xem lịch sử sửa test trong
+  commit; `curriculum`/`cefrProgress` không đổi thêm ở đợt này). Verify: build/typecheck/
+  lint/test (139/139)/format/size-limit xanh. **Lái app thật bằng Playwright** trên unit
+  `a1-greetings` (bài `a1-be` có sẵn 10 câu quiz) — xác nhận: (1) tab Kiểm tra hiện câu hỏi
+  dạng "___" (ngữ pháp) xen giữa các câu từ vựng; (2) trả lời sai câu ngữ pháp → nút "Mở
+  lại bài" xuất hiện, bấm vào mở đúng `GrammarDetail` của bài đó; (3) seed lịch sử hoạt
+  động có 1 ngày nghỉ ở giữa (2 ngày trước) → trang `/progress` hiện đúng streak bắc cầu
+  (4 ngày liên tiếp, không phải đứt còn 2) và `et_streak_freeze_*` ghi đúng ngày đã dùng
+  vé. Full E2E suite (68/68, a11y 4 theme) xanh.
+- **Tổng kết 6 đợt cải tiến lộ trình học (2026-07-04)**: đã đóng V1-V8 + phần bắt buộc của
+  V2 trong `docs/research/cai-tien-lo-trinh-hoc.md`; V9 (FSRS) để lại tùy chọn cho tương
+  lai theo đúng khuyến nghị ban đầu. Xem PR #191 (đợt 1) → theo dõi lịch sử commit nhánh
+  `claude/continue-previous-uv3o7f` cho các đợt 2-6 (gộp cùng PR).
+
 ## ⚠️ Cần làm tay (chưa xong)
 
 - **Chạy migration `0007_learning_progress_cefr.sql` VÀ `0008_learning_progress_cefr_unlocked.sql`
@@ -588,9 +628,13 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
-- **Đợt 6/6 cải tiến lộ trình học** (V8 V2 V9): quiz ngữ pháp trộn vào tab Kiểm tra; streak
-  freeze (1 vé nghỉ/tuần); CÂN NHẮC (không bắt buộc làm) FSRS thay SM-2 — để sau cùng theo
-  đúng thứ tự kế hoạch.
+- **Kế hoạch cải tiến lộ trình học (docs/research/cai-tien-lo-trinh-hoc.md) đã HOÀN TẤT
+  6/6 đợt** (2026-07-04). Còn tùy chọn duy nhất chưa làm: **V9 — cân nhắc FSRS** thay SM-2
+  (giảm 20-30% lượt ôn) — KHÔNG gấp, chỉ làm nếu người dùng muốn (thêm dependency + migrate
+  `SRSCard` localStorage/Supabase, nên là việc riêng, không gộp chung đợt cải tiến này).
+- Đồng bộ Supabase cho "vé nghỉ streak" (`et_streak_freeze_*`) — hiện chỉ lưu cục bộ
+  (xem "Đợt 6/6"); nếu muốn nhất quán streak giữa nhiều thiết bị thì cần thêm cột +
+  migration vào bảng `learning_progress`, tùy chọn không cấp bách.
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
 - Chạy thật `npm run tag:cefr` (cần key AI) rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR

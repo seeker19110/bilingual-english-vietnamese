@@ -59,41 +59,74 @@ import {
 } from '../lib/curriculum'
 import { getDialogues } from '../data/dialoguesLoader'
 import type { Dialogue } from '../data/dialogues'
+import type { QuizItem } from '../data/cefr'
 
 // ── Quiz (tab Kiểm tra) ──────────────────────────────────────────────────────
 const QUIZ_SIZE = 10
 const CHOICES = 4
+// V8, docs/research/cai-tien-lo-trinh-hoc.md: trộn tối đa 2-3 câu quiz NGỮ PHÁP (lấy từ
+// các bài đã "học xong") vào tab Kiểm tra — ngữ pháp trước đây không có vòng lặp củng cố
+// như từ vựng (nút "Đã học xong" không yêu cầu gì, quiz trong bài không lưu kết quả).
+const GRAMMAR_QUIZ_COUNT = 3
 
-interface QuizQuestion {
-  word: string
-  correct: string
-  options: string[]
+// 1 câu quiz ngữ pháp lấy từ GrammarLesson.quiz (src/data/cefr.ts) + lessonId để "mở lại
+// bài đó" khi trả lời sai.
+export interface GrammarQuizSource {
+  lessonId: string
+  item: QuizItem
 }
 
-// Câu hỏi + đáp án nhiễu đều lấy trong `pool` (từ vựng của cấp đang học).
-function buildQuiz(userId: string, pool: DictEntry[]): QuizQuestion[] {
+interface QuizQuestion {
+  kind: 'vocab' | 'grammar'
+  prompt: string // vocab: từ tiếng Anh · grammar: câu có chỗ trống (item.q)
+  correct: string
+  options: string[]
+  lessonId?: string // chỉ có ở kind 'grammar'
+}
+
+// Câu hỏi từ vựng lấy trong `pool` (từ vựng của cấp đang học); câu hỏi ngữ pháp lấy trong
+// `grammarPool` (đã lọc sẵn CHỈ các bài đã học xong, xem CefrLevelPage.tsx).
+function buildQuiz(
+  userId: string,
+  pool: DictEntry[],
+  grammarPool: GrammarQuizSource[],
+): QuizQuestion[] {
+  const grammarQs: QuizQuestion[] = [...grammarPool]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, GRAMMAR_QUIZ_COUNT)
+    .map(({ lessonId, item }) => ({
+      kind: 'grammar',
+      prompt: item.q,
+      correct: item.options[item.answer] ?? '',
+      options: item.options,
+      lessonId,
+    }))
+
+  const vocabSize = Math.max(QUIZ_SIZE - grammarQs.length, 0)
   const learned = getLearnedWords(userId)
   const shuffled = [...pool].sort(() => Math.random() - 0.5)
   const learnedPool = shuffled.filter(
     (w) => learned.has(w.word) || learned.has(w.word.toLowerCase()),
   )
   const cands =
-    learnedPool.length >= QUIZ_SIZE
+    learnedPool.length >= vocabSize
       ? learnedPool
-      : [...learnedPool, ...shuffled.slice(0, QUIZ_SIZE - learnedPool.length)]
-  const qs = cands.slice(0, QUIZ_SIZE)
+      : [...learnedPool, ...shuffled.slice(0, vocabSize - learnedPool.length)]
   const meanings = pool.map((w) => w.vi)
-  return qs.map((q) => {
+  const vocabQs: QuizQuestion[] = cands.slice(0, vocabSize).map((q) => {
     const wrongs = meanings
       .filter((m) => m !== q.vi)
       .sort(() => Math.random() - 0.5)
       .slice(0, CHOICES - 1)
     return {
-      word: q.word,
+      kind: 'vocab',
+      prompt: q.word,
       correct: q.vi,
       options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5),
     }
   })
+
+  return [...vocabQs, ...grammarQs].sort(() => Math.random() - 0.5)
 }
 
 // ── Tab Hôm nay ───────────────────────────────────────────────────────────────
@@ -995,9 +1028,21 @@ export function HardWords({
 }
 
 // ── Tab Kiểm tra ──────────────────────────────────────────────────────────────
-export function QuizTab({ uid, isA, pool }: { uid: string; isA: boolean; pool: DictEntry[] }) {
+export function QuizTab({
+  uid,
+  isA,
+  pool,
+  grammarPool,
+  onOpenLesson,
+}: {
+  uid: string
+  isA: boolean
+  pool: DictEntry[]
+  grammarPool: GrammarQuizSource[]
+  onOpenLesson: (lessonId: string) => void
+}) {
   const nav = useNavigate()
-  const [questions] = useState<QuizQuestion[]>(() => buildQuiz(uid, pool))
+  const [questions] = useState<QuizQuestion[]>(() => buildQuiz(uid, pool, grammarPool))
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState<string | null>(null)
   const [answers, setAnswers] = useState<boolean[]>([])
@@ -1018,7 +1063,7 @@ export function QuizTab({ uid, isA, pool }: { uid: string; isA: boolean; pool: D
   const q = questions[current]
   if (!q) return null // current luôn hợp lệ ở nhánh này; guard để TS narrow kiểu
   const score = answers.filter(Boolean).length
-  const pct = Math.round((score / QUIZ_SIZE) * 100)
+  const pct = Math.round((score / questions.length) * 100)
 
   function pick(opt: string) {
     if (selected === null) setSelected(opt)
@@ -1058,7 +1103,7 @@ export function QuizTab({ uid, isA, pool }: { uid: string; isA: boolean; pool: D
         <div className="glass rounded-xl p-8 text-center space-y-2">
           <p className="text-4xl">{grade.emoji}</p>
           <p className="text-2xl font-bold text-white">
-            {score}/{QUIZ_SIZE}
+            {score}/{questions.length}
           </p>
           <p className="text-zinc-400">{grade.label}</p>
           <div className="h-2 bg-zinc-800 rounded-full overflow-hidden mt-3">
@@ -1075,8 +1120,16 @@ export function QuizTab({ uid, isA, pool }: { uid: string; isA: boolean; pool: D
               className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm ${answers[i] ? 'bg-accent-500/10 text-accent-300' : 'bg-rose-500/10 text-rose-300'}`}
             >
               <span>{answers[i] ? '✓' : '✗'}</span>
-              <span className="font-medium">{qq.word}</span>
+              <span className="font-medium truncate">{qq.prompt}</span>
               <span className="text-zinc-400 flex-1 truncate">= {qq.correct}</span>
+              {!answers[i] && qq.kind === 'grammar' && qq.lessonId && (
+                <button
+                  onClick={() => onOpenLesson(qq.lessonId!)}
+                  className="text-xs text-violet-300 hover:text-violet-200 underline underline-offset-2 shrink-0"
+                >
+                  {isA ? 'Mở lại bài' : 'Review'}
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -1103,16 +1156,24 @@ export function QuizTab({ uid, isA, pool }: { uid: string; isA: boolean; pool: D
       <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
         <div
           className="h-full bg-violet-500 rounded-full transition-all"
-          style={{ width: `${(current / QUIZ_SIZE) * 100}%` }}
+          style={{ width: `${(current / questions.length) * 100}%` }}
         />
       </div>
       <div className="text-center py-6">
         <p className="text-xs text-zinc-400 mb-3 uppercase tracking-wide">
-          {isA
-            ? `Câu ${current + 1}/${QUIZ_SIZE} — Nghĩa tiếng Việt của từ này là?`
-            : `Q ${current + 1}/${QUIZ_SIZE} — Vietnamese meaning?`}
+          {q.kind === 'vocab'
+            ? isA
+              ? `Câu ${current + 1}/${questions.length} — Nghĩa tiếng Việt của từ này là?`
+              : `Q ${current + 1}/${questions.length} — Vietnamese meaning?`
+            : isA
+              ? `Câu ${current + 1}/${questions.length} — Điền vào chỗ trống`
+              : `Q ${current + 1}/${questions.length} — Fill in the blank`}
         </p>
-        <p className="text-4xl font-bold text-white">{q.word}</p>
+        {q.kind === 'vocab' ? (
+          <p className="text-4xl font-bold text-white">{q.prompt}</p>
+        ) : (
+          <p className="text-xl font-semibold text-white leading-snug px-2">{q.prompt}</p>
+        )}
       </div>
       <div className="space-y-2.5">
         {q.options.map((opt) => {
