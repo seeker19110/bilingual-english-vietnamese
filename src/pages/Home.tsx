@@ -45,13 +45,13 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       glow: 'shadow-lime-500/20',
       ring: 'hover:border-lime-500/40',
       tag: {
-        label: isA ? '20 từ/ngày' : '20/day',
+        label: isA ? '5-20 từ/ngày' : '5-20/day',
         cls: 'bg-lime-500/15 text-lime-300 theme-light:text-lime-800 border border-lime-500/20',
       },
       title: isA ? 'Học theo lộ trình' : 'Learning Path',
       desc: isA
-        ? 'Bắt đầu từ chữ cái, số... mỗi ngày 20 từ mới theo vòng tròn liên quan, kèm câu thông dụng.'
-        : 'Start from letters and numbers — 20 new words a day in related circles, with common sentences.',
+        ? 'Bắt đầu từ chữ cái, số... mỗi ngày 5-20 từ mới (tự chọn tốc độ) theo vòng tròn liên quan, kèm câu thông dụng.'
+        : 'Start from letters and numbers — 5-20 new words a day (pick your pace) in related circles, with common sentences.',
     },
     {
       path: '/lessons',

@@ -22,11 +22,45 @@ import { loadDictionary } from '../data/dictionary/loader'
 import { loadFoundation } from '../data/curriculumLoader'
 import { vnDateStr } from './date'
 import { loadCefr } from '../data/cefrLoader'
+import { getLearnedCount } from './vocab'
 
-// Mục tiêu 20 từ/ngày — khớp với tài liệu (CLAUDE.md), FAQ trong index.html và UI tab "Hôm nay".
+// Kích thước cụm "Mở rộng" khi gom phần từ vựng ngoài nền tảng (thuần cấu trúc dữ
+// liệu, KHÔNG phải tốc độ học của người dùng — xem getDailySpeed() bên dưới).
 export const DAILY_GOAL = 20
-// Tối đa 100 từ/ngày (5 batch × 20 từ). Mỗi batch thêm phải pass quiz 100%.
+// Legacy: trần cũ khi tốc độ luôn cố định 20 từ/ngày (5×20). Giữ để không phá vỡ
+// chỗ nào còn tham chiếu tĩnh; luồng học thật dùng getDailyMax(uid) theo tốc độ đã chọn.
 export const DAILY_MAX = 100
+
+// ── Tốc độ học: cho chọn 5/10/20 từ/ngày (mặc định mới 10) ─────────────
+// Người dùng MỚI (chưa có từ nào đã thuộc) mặc định 10 — trong khuyến nghị
+// 10–20 từ/ngày, dễ đạt mục tiêu mỗi ngày hơn 20. Người dùng ĐÃ HỌC (có tiến độ
+// trước khi tính năng này ra mắt) giữ nguyên 20 để không đổi trải nghiệm đột ngột.
+export type DailySpeed = 5 | 10 | 20
+export const DAILY_SPEEDS: DailySpeed[] = [5, 10, 20]
+const NEW_USER_DEFAULT_SPEED: DailySpeed = 10
+const EXISTING_USER_DEFAULT_SPEED: DailySpeed = 20
+const SPEED_KEY = (uid: string) => `et_speed_${uid}`
+
+export function getDailySpeed(uid: string): DailySpeed {
+  try {
+    const raw = localStorage.getItem(SPEED_KEY(uid))
+    const n = raw ? Number(raw) : NaN
+    if (n === 5 || n === 10 || n === 20) return n
+  } catch {
+    /* localStorage không khả dụng → dùng mặc định bên dưới */
+  }
+  return getLearnedCount(uid) > 0 ? EXISTING_USER_DEFAULT_SPEED : NEW_USER_DEFAULT_SPEED
+}
+
+export function setDailySpeed(uid: string, speed: DailySpeed): void {
+  localStorage.setItem(SPEED_KEY(uid), String(speed))
+}
+
+// Trần từ/ngày theo tốc độ đã chọn: 5 batch × tốc độ (công thức cũ, chỉ đổi từ
+// DAILY_GOAL cố định sang tốc độ của từng người).
+export function getDailyMax(uid: string): number {
+  return getDailySpeed(uid) * 5
+}
 
 // Dữ liệu từ điển — KHÔNG import tĩnh nữa (file ~2MB). Nạp ĐỘNG bằng
 // dynamic import() qua loadCurriculum() để Vite tách dictionary.json thành
@@ -265,7 +299,8 @@ export function bumpDailyQuizPasses(uid: string): number {
   return next
 }
 
-// Số từ được phép học hôm nay: DAILY_GOAL × (quizPasses + 1), tối đa DAILY_MAX
+// Số từ được phép học hôm nay: tốc độ đã chọn × (quizPasses + 1), tối đa getDailyMax(uid)
 export function getDailyAllowance(uid: string): number {
-  return Math.min(DAILY_GOAL * (getDailyQuizPasses(uid) + 1), DAILY_MAX)
+  const speed = getDailySpeed(uid)
+  return Math.min(speed * (getDailyQuizPasses(uid) + 1), speed * 5)
 }

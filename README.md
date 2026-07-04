@@ -13,7 +13,7 @@
 - **Chat gia sư AI** — trò chuyện, sửa lỗi và giải thích bằng tiếng Việt
 - **Luyện viết + chấm điểm IELTS** — chỉ lỗi, ước lượng band
 - **Luyện nói song ngữ** — nói → AI nghe (STT Whisper) → trả lời bằng **giọng ngôn ngữ đích** + sửa lỗi bằng **giọng tiếng mẹ đẻ** (TTS hai giọng)
-- **Học theo lộ trình** — từ vựng theo chủ đề, mục tiêu 20 từ/ngày, ôn tập SRS, chấm phát âm
+- **Học theo lộ trình** — từ vựng theo chủ đề, tốc độ 5-20 từ/ngày (tự chọn), ôn tập SRS, chấm phát âm
 - **Lộ trình CEFR A1 → B2** — giáo trình ngữ pháp đầy đủ, ví dụ bấm nghe
 - **Từ điển 7.400+ từ** + **Bài học hội thoại** + **Bảng tiến độ** (streak, biểu đồ)
 - Giao diện song ngữ, hỗ trợ hai chiều (Vi ↔ En)

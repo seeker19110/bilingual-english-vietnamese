@@ -40,8 +40,6 @@ import {
   type Rating,
 } from '../lib/srs'
 import {
-  DAILY_GOAL,
-  DAILY_MAX,
   getTodayBatchFrom,
   getPathProgress,
   getDailyLearned,
@@ -49,6 +47,8 @@ import {
   getDailyQuizPasses,
   bumpDailyQuizPasses,
   getDailyAllowance,
+  getDailySpeed,
+  getDailyMax,
   findCircleOfWord,
   getCircleProgress,
   getCefrLevelOfCircle,
@@ -163,7 +163,9 @@ function BatchDoneView({
   const learnedToday = getDailyLearned(uid) - dailyStart
   const totalToday = getDailyLearned(uid)
   const quizPasses = getDailyQuizPasses(uid)
-  const canLearnMore = totalToday < DAILY_MAX
+  const speed = getDailySpeed(uid)
+  const dailyMax = getDailyMax(uid)
+  const canLearnMore = totalToday < dailyMax
 
   // Câu ví dụ từ CHÍNH các từ vừa học (mỗi từ có sẵn ex_en/ex_vi) → đổi theo batch.
   const sentences = useMemo(() => {
@@ -215,20 +217,20 @@ function BatchDoneView({
               <strong className="text-accent-300">{learnedToday}</strong>
               {` từ trong lượt này · Tổng hôm nay: `}
               <strong className="text-accent-300">{totalToday}</strong>
-              {`/${DAILY_MAX}`}
+              {`/${dailyMax}`}
             </>
           ) : (
             <>
               Learned <strong className="text-accent-300">{learnedToday}</strong> words · Today
-              total: <strong className="text-accent-300">{totalToday}</strong>/{DAILY_MAX}
+              total: <strong className="text-accent-300">{totalToday}</strong>/{dailyMax}
             </>
           )}
         </p>
         {canLearnMore && (
           <p className="text-xs text-zinc-400 mt-2">
             {isA
-              ? `Còn ${DAILY_MAX - totalToday} từ có thể học hôm nay — kiểm tra để mở thêm.`
-              : `${DAILY_MAX - totalToday} more words available today — pass a quiz to unlock.`}
+              ? `Còn ${dailyMax - totalToday} từ có thể học hôm nay — kiểm tra để mở thêm.`
+              : `${dailyMax - totalToday} more words available today — pass a quiz to unlock.`}
           </p>
         )}
       </div>
@@ -305,15 +307,15 @@ function BatchDoneView({
         </div>
       )}
 
-      {canLearnMore && quizPasses < DAILY_MAX / DAILY_GOAL - 1 && (
+      {canLearnMore && quizPasses < dailyMax / speed - 1 && (
         <button
           onClick={onStartQuiz}
           className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 font-medium transition"
         >
           <ClipboardList className="w-4 h-4" />
           {isA
-            ? `Kiểm tra để học thêm 20 từ (còn ${DAILY_MAX - totalToday} từ hôm nay)`
-            : `Quiz to unlock 20 more words (${DAILY_MAX - totalToday} left today)`}
+            ? `Kiểm tra để học thêm ${speed} từ (còn ${dailyMax - totalToday} từ hôm nay)`
+            : `Quiz to unlock ${speed} more words (${dailyMax - totalToday} left today)`}
         </button>
       )}
     </div>
@@ -331,15 +333,18 @@ export function TodayLesson({
   pool: DictEntry[]
   onProgress: () => void
 }) {
+  const dailyMax = getDailyMax(uid)
+  const speed = getDailySpeed(uid)
+
   // Phase bắt đầu dựa trên trạng thái ngày hiện tại
   const [phase, setPhase] = useState<TodayPhase>(() => {
     const learned = getDailyLearned(uid)
-    if (learned >= DAILY_MAX) return 'daily-max'
+    if (learned >= dailyMax) return 'daily-max'
     if (learned >= getDailyAllowance(uid)) return 'batch-done'
     return 'learning'
   })
   const [batch, setBatch] = useState<DictEntry[]>(() =>
-    getTodayBatchFrom(pool, getLearnedWords(uid)),
+    getTodayBatchFrom(pool, getLearnedWords(uid), speed),
   )
   const [idx, setIdx] = useState(0)
   const [dailyStart] = useState(() => getDailyLearned(uid))
@@ -374,7 +379,7 @@ export function TodayLesson({
     if (nextIdx >= batch.length) {
       // Hết batch → check tổng hôm nay
       const totalToday = getDailyLearned(uid) // đã bump rồi
-      if (totalToday >= DAILY_MAX) setPhase('daily-max')
+      if (totalToday >= dailyMax) setPhase('daily-max')
       else setPhase('batch-done')
     } else {
       setIdx(nextIdx)
@@ -385,7 +390,7 @@ export function TodayLesson({
     const nextIdx = idx + 1
     if (nextIdx >= batch.length) {
       const totalToday = getDailyLearned(uid)
-      if (totalToday >= DAILY_MAX) setPhase('daily-max')
+      if (totalToday >= dailyMax) setPhase('daily-max')
       else setPhase('batch-done')
     } else {
       setIdx(nextIdx)
@@ -435,7 +440,7 @@ export function TodayLesson({
 
   function unlockNextBatch() {
     bumpDailyQuizPasses(uid)
-    const newBatch = getTodayBatchFrom(pool, getLearnedWords(uid))
+    const newBatch = getTodayBatchFrom(pool, getLearnedWords(uid), speed)
     setBatch(newBatch)
     setIdx(0)
     setPhase('learning')
@@ -468,8 +473,8 @@ export function TodayLesson({
         <Trophy className="w-10 h-10 text-amber-400 mx-auto" />
         <p className="text-white font-semibold">
           {isA
-            ? `Xuất sắc! Đã học đủ ${DAILY_MAX} từ hôm nay 🎉`
-            : `Amazing! ${DAILY_MAX} words learned today 🎉`}
+            ? `Xuất sắc! Đã học đủ ${dailyMax} từ hôm nay 🎉`
+            : `Amazing! ${dailyMax} words learned today 🎉`}
         </p>
         <p className="text-sm text-zinc-400">
           {isA ? 'Quay lại vào ngày mai để tiếp tục.' : 'Come back tomorrow to continue.'}

@@ -1,4 +1,9 @@
-import { describe, it, expect, beforeEach, beforeAll } from 'vitest'
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest'
+
+// getDailySpeed() (curriculum.ts) đọc getLearnedCount() từ ./vocab, kéo theo
+// progressSync → supabase — mock để test chạy OFFLINE (giống srs.test.ts).
+vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+
 import {
   DAILY_GOAL,
   wordKey,
@@ -13,6 +18,11 @@ import {
   bumpDailyLearned,
   getCefrLevelOfCircle,
   loadCurriculum,
+  getDailySpeed,
+  setDailySpeed,
+  getDailyMax,
+  getDailyAllowance,
+  bumpDailyQuizPasses,
 } from './curriculum'
 import { loadCefr } from '../data/cefrLoader'
 
@@ -165,5 +175,39 @@ describe('bộ đếm học trong ngày', () => {
   it('đếm tách biệt theo user', () => {
     bumpDailyLearned('u1')
     expect(getDailyLearned('u2')).toBe(0)
+  })
+})
+
+describe('Tốc độ học 5/10/20 từ/ngày', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('người dùng MỚI (chưa có từ đã thuộc) mặc định 10', () => {
+    expect(getDailySpeed('new-user')).toBe(10)
+  })
+
+  it('người dùng ĐÃ HỌC (có tiến độ trước đó) giữ mặc định 20', () => {
+    localStorage.setItem('et_learned_existing-user', JSON.stringify(['apple']))
+    expect(getDailySpeed('existing-user')).toBe(20)
+  })
+
+  it('setDailySpeed ghi đè mặc định, đọc lại đúng giá trị đã chọn', () => {
+    setDailySpeed('u1', 5)
+    expect(getDailySpeed('u1')).toBe(5)
+  })
+
+  it('getDailyMax = 5 × tốc độ đã chọn', () => {
+    setDailySpeed('u1', 5)
+    expect(getDailyMax('u1')).toBe(25)
+    setDailySpeed('u1', 20)
+    expect(getDailyMax('u1')).toBe(100)
+  })
+
+  it('getDailyAllowance tăng theo số lần pass quiz, cap tại getDailyMax', () => {
+    setDailySpeed('u1', 5)
+    expect(getDailyAllowance('u1')).toBe(5)
+    bumpDailyQuizPasses('u1')
+    expect(getDailyAllowance('u1')).toBe(10)
+    for (let i = 0; i < 10; i++) bumpDailyQuizPasses('u1')
+    expect(getDailyAllowance('u1')).toBe(getDailyMax('u1')) // cap, không vượt quá
   })
 })
