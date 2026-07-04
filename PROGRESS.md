@@ -565,12 +565,51 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 Verify mỗi đợt như các đợt lộ trình học trước: typecheck/lint(0 cảnh báo)/format/test/build/
 size-limit xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
 
+## Đã xong (hoàn tất đợt 4 + đợt 6 cải tiến lộ trình học — 2026-07-04)
+
+> ⚠️ Phiên làm việc này ban đầu triển khai LẠI TOÀN BỘ 6 đợt của
+> `docs/research/cai-tien-lo-trinh-hoc.md` trên 1 nhánh riêng — không biết rằng một session
+> song song khác ĐÃ merge phần lớn cùng kế hoạch đó (đợt 1,2,3,5 ở trên) qua PR #190 trước
+> khi PR của phiên này kịp merge. Phát hiện xung đột khi chuẩn bị merge (PR #191, đã ĐÓNG
+> không merge). Đã dựng lại nhánh từ `main` mới nhất (đã có #190) và chỉ mang sang 2 phần
+> KHÔNG trùng với #190:
+
+- **Hoàn tất Đợt 4 — chạy thật script gắn tần suất**: hạ tầng `api/_lib/wordFreq.ts` +
+  `scripts/assign-word-freq.ts` (từ PR #190) đã sẵn sàng nhưng chưa có wordlist thật. Chạy
+  thật bằng nguồn **SUBTLEX-US** (gói npm `subtlex-word-frequencies`, giấy phép ISC, tác giả
+  `wooorm`, 74.286 từ, nguồn Brysbaert & New 2009) — sinh wordlist `.txt` (sắp theo tần suất
+  giảm dần) từ gói rồi chạy `FREQ_LIST=... npm run tag:freq`. Kết quả: **9.540/10.006 từ có
+  freq** (466 từ không có, chủ yếu cụm nhiều từ/idiom — xếp cuối phần "Mở rộng" như thiết
+  kế). Đã hỏi người dùng trước khi chọn nguồn thay thế NGSL (NGSL không có gói npm/nguồn tải
+  trực tiếp ổn định trong môi trường chạy script) — được đồng ý. Idempotent (chạy lại không
+  đổi gì). Đã kiểm mẫu tay: "a"→hạng 6, "about"→51, "above"→1337 — đúng trực giác thông dụng.
+- **Mới — V8: Quiz ngữ pháp trong tab "Kiểm tra"**: `buildQuiz()` (`StudyTabs.tsx`) trộn tối
+  đa 3 câu quiz ngữ pháp (`GrammarLesson.quiz`, dữ liệu có sẵn) — CHỈ lấy từ bài **đã đánh dấu
+  "Đã học xong"** (`grammarQuizPool` tính ở `CefrLevelPage.tsx` từ `doneGrammar`) — trộn cùng
+  câu từ vựng như cũ (tổng vẫn ~10 câu/lượt). Câu ngữ pháp hiện dạng câu có chỗ trống (vd "I
+  ___ a student.") thay vì từ đơn. Trả lời sai → nút "Mở lại bài" mở đúng bài ngữ pháp đó.
+  Ngữ pháp trước đây không có vòng lặp củng cố như từ vựng — nay ôn lại gián tiếp qua tab
+  Kiểm tra.
+- **Mới — V2 (phần còn lại): Vé nghỉ streak**: `getStreak()` (`lib/storage.ts`) tự động bắc
+  cầu qua NGÀY ĐẦU TIÊN bị bỏ lỡ trong ~7 ngày gần nhất (1 vé/tuần, giảm churn 21% ở
+  Duolingo). Ghi nhớ ngày đã dùng vé (`et_streak_freeze_<uid>`) để không dùng lặp trong cùng
+  1 tuần + idempotent. ⚠️ Lưu CỤC BỘ (localStorage), CHƯA đồng bộ Supabase — thêm cột/migration
+  cho tính năng nhẹ này chưa xứng đáng ở giai đoạn này.
+- **V9 (FSRS thay SM-2): KHÔNG làm** — đúng khuyến nghị "cân nhắc, không gấp" của tài liệu
+  nghiên cứu gốc.
+- 6 test mới (`storage.test.ts` — file mới, streak freeze bắc cầu/cooldown/idempotent).
+  Verify: build/typecheck/lint/test (149/149)/format/size-limit xanh. Lái app thật bằng
+  Playwright — xác nhận: (1) tab Kiểm tra hiện câu hỏi dạng "___" xen giữa câu từ vựng; (2)
+  seed lịch sử có 1 ngày nghỉ ở giữa → `/progress` hiện đúng streak bắc cầu (4, không đứt còn 2) + `et_streak_freeze_*` ghi đúng ngày dùng vé. Full E2E suite (68/68, a11y 4 theme) xanh.
+- **Bài học rút ra**: khi nhiều phiên làm việc có thể chạy song song trên cùng repo, nên kiểm
+  tra PR đang mở/mới merge trên GitHub TRƯỚC khi bắt đầu 1 kế hoạch lớn đã có trong tài liệu
+  research — tránh trùng công sức. Không có cách nào phiên này biết trước về phiên kia (không
+  có cơ chế khoá/thông báo giữa các session Claude Code chạy độc lập).
+
 ## ⚠️ Cần làm tay (chưa xong)
 
-- **Điền dữ liệu tần suất từ thật cho phần "Mở rộng"** (đợt 4 ở trên): cần 1 wordlist tần suất
-  thật (NGSL — https://www.newgeneralservicelist.com, giấy phép CC BY — hoặc SUBTLEX-US cho phần
-  còn lại), tải về máy rồi chạy `FREQ_LIST=đường-dẫn npm run tag:freq`. Hạ tầng đã sẵn sàng
-  (`scripts/assign-word-freq.ts`), chỉ thiếu file wordlist thật.
+- ~~Điền dữ liệu tần suất từ thật cho phần "Mở rộng"~~ — ĐÃ XONG (xem "Đã xong" bên dưới):
+  chạy thật bằng nguồn SUBTLEX-US (gói npm `subtlex-word-frequencies`), 9.540/10.006 từ có freq.
 
 - **Chạy migration `0007_learning_progress_cefr.sql` VÀ `0008_learning_progress_cefr_unlocked.sql`
   trên Supabase production** (Dashboard → SQL Editor) — **TRƯỚC khi deploy code mới lên VPS**.
