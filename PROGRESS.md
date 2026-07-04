@@ -503,6 +503,68 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   (bottom-nav?, throttle 10s→3s?, vị trí thẻ Học tiếp, badge "Không giới hạn") — xem mục 5–6
   của tài liệu.
 
+## Đang làm dở — TRIỂN KHAI kế hoạch UI/UX (bắt đầu 2026-07-04, dừng giữa chừng theo yêu cầu người dùng)
+
+> Người dùng đã duyệt "triển khai luôn" toàn bộ kế hoạch ở `docs/research/cai-tien-ui-ux.md`,
+> dùng phương án khuyến nghị cho cả 4 câu hỏi mở (đồng ý bottom-nav; giảm throttle 10s→3s; thẻ
+> "Học tiếp" đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng; bỏ bớt badge "Không giới hạn" dư thừa).
+> Đã merge **U-1 (một phần)**; **U-2 → U-5 + giảm throttle CHƯA làm** — làm tiếp theo đúng thứ tự
+> này ở phiên sau, không cần hỏi lại 4 câu đã chốt.
+
+### U-1 (một phần) — ĐÃ MERGE
+
+- `lib/ai.ts`: lỗi kỹ thuật ("Invalid API response...") không còn phơi ra UI — thông điệp song
+  ngữ thân thiện, chi tiết kỹ thuật vẫn `console.warn` + Sentry (`captureException`). Giữ nguyên
+  message server đã thân thiện sẵn. +7 test (`lib/ai.test.ts`).
+- `Chat.tsx`: `min-w-0` cho input — sửa bug tràn 15px ở 375px (đã ĐO THẬT bằng Playwright, xem
+  tài liệu nghiên cứu mục U4).
+- Vùng chạm ≥44px (`tap-44`, lớp có sẵn trong `index.css` — mở rộng vùng bấm vô hình, KHÔNG đổi
+  kích thước hiển thị): avatar mở Hồ sơ (`Layout.tsx`), toggle Nữ/Nam (`VoiceToggle.tsx`),
+  breadcrumb "‹ Lộ trình A1 → B2" (`CefrLevelPage.tsx`).
+- Copy lỗi thời: Login "Dữ liệu lưu máy bạn" (sai từ khi có Supabase sync) → phản ánh đúng thực
+  tế; FAQ `index.html` "7400+ từ" → "10.000+ từ" (khớp số thật ở trang Từ điển).
+- `History.tsx`: empty state thêm nút CTA đi đúng trang luyện tập (chat/writing/speaking) theo
+  tab đang rỗng — trước đó chỉ có thông điệp, không có hành động (đúng checklist khung).
+
+### U-1 — CÒN LẠI (chưa làm, làm tiếp trước khi sang U-2)
+
+- Bỏ bớt/gộp badge "Không giới hạn" lặp trên 3/7 card ở Home — quyết định: bỏ khỏi card không
+  cần nhấn mạnh, hoặc đổi thành số liệu hữu ích hơn (vd số bài/số từ). Cần chọn 1 hướng.
+- Vùng chạm chip từ vựng xếp sát nhau (`Dictionary.tsx` mục "Chủ đề phổ biến", chip vòng từ vựng
+  trong unit `CefrLevelPage.tsx`) — **CỐ Ý CHƯA** áp `tap-44` vì các chip nằm cạnh nhau chỉ cách
+  `gap-1.5`; mở vùng chạm vô hình lên 44px có thể chồng lấn sang chip bên cạnh → bấm nhầm. Cần
+  tăng `gap` trước rồi mới áp `tap-44`, hoặc chỉ tăng padding nhẹ (`py-1` → `py-1.5`/`py-2`) —
+  cần thử nghiệm kỹ hơn, không hợp với tinh thần "vá nhanh" của đợt này.
+
+### U-2 → U-5 + giảm throttle — CHƯA LÀM, làm theo đúng thứ tự trong tài liệu
+
+1. **U-2**: thẻ "Học tiếp" đầu trang Home (`Home.tsx`) — đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng
+   đọc. Đọc `findNextStep` (`lib/cefrProgress.ts`, cần load `loadCefr()`+`loadFoundation()` như
+   `CefrLevelPage.tsx` đang làm) + `getSRSStats` (`lib/srs.ts`) + `getDailyLearned`/
+   `getDailySpeed` (`lib/curriculum.ts`) để hiện: mục kế tiếp, số thẻ SRS đến hạn, tiến độ mục
+   tiêu ngày. Bấm vào đi thẳng `/learning-path/<cấp>` với tab tương ứng (cần thêm cách truyền
+   tab đích qua query param hoặc state, vì `CefrLevelPage` hiện luôn mở tab "Bài học" mặc định).
+2. **U-3**: nối `saveOnboarding()` (`lib/cloud.ts:273`) — hiện GHI nhưng KHÔNG NƠI NÀO ĐỌC LẠI
+   (đã xác nhận bằng grep toàn repo). Cần: (a) hàm đọc lại onboarding từ Supabase/cache; (b)
+   `level` → mặc định `Level` của `Chat.tsx`/`Speaking.tsx` SetupScreen (hiện cứng `'intermediate'`)
+   - nếu ≥ Trung cấp thì gợi ý banner test-out ở trang A1; (c) `dailyMinutes` → map sang tốc độ
+     5/10/20 qua `setDailySpeed()` (`lib/curriculum.ts`, đã có từ đợt lộ trình học).
+3. **U-4**: gọn header 4 tab học trang cấp (`CefrLevelPage.tsx`) — thu tiêu đề "A1 — Sơ cấp/Người
+   mới bắt đầu" thành 1 dòng nhỏ khi KHÔNG phải tab "Bài học"; đổi "Tổng đã thuộc: 0/10199"
+   (`StudyTabs.tsx`, dùng `getPathProgress` toàn lộ trình) → tiến độ CỦA CẤP (dùng
+   `levelVocabCounts` đã có trong `lib/cefrProgress.ts`); cân nhắc bỏ `QuickActions` ở 4 tab học.
+4. **U-5** (đổi lớn nhất): bottom tab bar cố định 4 mục Trang chủ·Lộ trình·Luyện tập·Tiến độ
+   (component mới, thêm vào `App.tsx` ngoài `<Routes>`, chú ý `pb-safe` + không che nội dung
+   cuối trang hiện có — nhiều trang đã có thanh dưới riêng vd input Chat, cần rà từng trang);
+   dời `QuickActions` (Chia sẻ/Nhắc học) sang trang Hồ sơ/Tiến độ. Kèm: lưu Set "đã xem" cho
+   `Lessons.tsx`/`CommonPhrases.tsx` (localStorage, mẫu giống `cefrProgress.ts`) + nút "Tiếp tục
+   bài N".
+5. **Giảm throttle chat**: `useApiThrottle.ts` — đổi `delayMs = 10000` mặc định thành `3000`
+   (đã chốt: không tăng trần chi phí vì lượt/ngày cap riêng qua `daily_usage`).
+
+Verify mỗi đợt như các đợt lộ trình học trước: typecheck/lint(0 cảnh báo)/format/test/build/
+size-limit xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
+
 ## ⚠️ Cần làm tay (chưa xong)
 
 - **Điền dữ liệu tần suất từ thật cho phần "Mở rộng"** (đợt 4 ở trên): cần 1 wordlist tần suất
