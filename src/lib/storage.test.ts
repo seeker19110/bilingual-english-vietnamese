@@ -1,0 +1,84 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
+// storage.ts kéo theo cloud→supabase (sẽ ném lỗi khi thiếu env) — getStreak chỉ đọc
+// localStorage nên chỉ cần stub supabase là đủ chạy offline.
+vi.mock('./supabase', () => ({ supabase: {} }))
+
+import { getStreak } from './storage'
+import { vnDateStr } from './date'
+
+const usageKey = (uid: string, date: string) => `et_usage_${uid}_${date}`
+const dayAgo = (n: number) => {
+  const d = new Date()
+  d.setDate(d.getDate() - n)
+  return vnDateStr(d)
+}
+const activity = (date: string, learnCount = 1) => ({
+  date,
+  chatCount: 0,
+  writingCount: 0,
+  speakingCount: 0,
+  sttCount: 0,
+  learnCount,
+})
+const setActivity = (uid: string, daysAgo: number) => {
+  const date = dayAgo(daysAgo)
+  localStorage.setItem(usageKey(uid, date), JSON.stringify(activity(date)))
+}
+
+describe('getStreak — vé nghỉ streak (V2, docs/research/cai-tien-lo-trinh-hoc.md)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('học liên tục 5 ngày (kể cả hôm nay) → streak 5', () => {
+    for (let i = 0; i <= 4; i++) setActivity('u1', i)
+    expect(getStreak('u1')).toBe(5)
+  })
+
+  it('chưa học hôm nay nhưng học đủ 4 ngày trước → vẫn tính streak 4 (không phạt "hôm nay")', () => {
+    for (let i = 1; i <= 4; i++) setActivity('u1', i)
+    expect(getStreak('u1')).toBe(4)
+  })
+
+  it('nghỉ 1 ngày giữa chuỗi, CHƯA dùng vé nào → tự động bắc cầu, streak không đứt', () => {
+    // Học hôm nay + 2 ngày trước, NGHỈ 1 ngày (3 ngày trước), rồi học tiếp 4-6 ngày trước.
+    setActivity('u1', 0)
+    setActivity('u1', 1)
+    setActivity('u1', 2)
+    // ngày 3 nghỉ (không set activity)
+    setActivity('u1', 4)
+    setActivity('u1', 5)
+    setActivity('u1', 6)
+    expect(getStreak('u1')).toBe(6) // 3 ngày (0,1,2) + bắc cầu ngày 3 + 3 ngày (4,5,6)
+  })
+
+  it('vé nghỉ CHỈ dùng được 1 lần — nghỉ 2 đợt cách nhau <7 ngày thì đợt sau vẫn đứt streak', () => {
+    setActivity('u1', 0)
+    setActivity('u1', 1)
+    // ngày 2 nghỉ → bắc cầu bằng vé (đợt 1)
+    setActivity('u1', 3)
+    // ngày 4 nghỉ nữa (cách ngày 2 chỉ 2 ngày, còn trong cooldown 7 ngày) → hết vé, đứt ở đây
+    setActivity('u1', 5)
+    setActivity('u1', 6)
+    // Đếm được: ngày 0,1 (2) + bắc cầu ngày 2 (không cộng) + ngày 3 (1) = 3, rồi đứt ở ngày 4
+    // (5, 6 không còn được tính vì streak đã đứt trước khi tới đó).
+    expect(getStreak('u1')).toBe(3)
+  })
+
+  it('gọi getStreak nhiều lần cho cùng dữ liệu → kết quả ổn định (idempotent)', () => {
+    setActivity('u1', 0)
+    setActivity('u1', 2)
+    const first = getStreak('u1')
+    const second = getStreak('u1')
+    const third = getStreak('u1')
+    expect(second).toBe(first)
+    expect(third).toBe(first)
+  })
+
+  it('nghỉ nhiều ngày (không đủ điều kiện vé) → streak đứt đúng chỗ như cũ', () => {
+    setActivity('u1', 0)
+    setActivity('u1', 1)
+    // nghỉ liền 2 ngày (2, 3) — chỉ ngày 2 được bắc cầu bằng vé, ngày 3 vẫn nghỉ → đứt hẳn
+    setActivity('u1', 4) // không được tính vì streak đã đứt trước khi quét tới đây
+    expect(getStreak('u1')).toBe(2) // chỉ đếm 0, 1 — bắc cầu ngày 2 không cộng, đứt ở ngày 3
+  })
+})
