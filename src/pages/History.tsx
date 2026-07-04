@@ -1,5 +1,14 @@
 import { useState } from 'react'
-import { MessageCircle, PenLine, Mic, ChevronDown, ChevronUp, Clock } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import {
+  MessageCircle,
+  PenLine,
+  Mic,
+  ChevronDown,
+  ChevronUp,
+  ChevronRight,
+  Clock,
+} from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
@@ -279,7 +288,15 @@ function SpeakingCard({ s }: { s: SpeakingSession }) {
 
 type ActiveTab = 'chat' | 'writing' | 'speaking'
 
+// Route + nhãn CTA "Bắt đầu luyện tập" theo đúng tab đang rỗng.
+const EMPTY_CTA: Record<ActiveTab, { path: string; label: string }> = {
+  chat: { path: '/chat', label: 'Chat với gia sư' },
+  writing: { path: '/writing', label: 'Luyện viết & chấm điểm' },
+  speaking: { path: '/speaking', label: 'Luyện nói song ngữ' },
+}
+
 export default function History() {
+  const nav = useNavigate()
   const { user } = useAuth()
   useCloudSync(user?.id)
 
@@ -334,7 +351,13 @@ export default function History() {
           <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
             <Clock className="w-12 h-12 text-zinc-600 mb-3" />
             <p className="text-zinc-400 text-sm">Chưa có lịch sử nào.</p>
-            <p className="text-zinc-400 text-xs mt-1">Bắt đầu luyện tập để xem lại ở đây!</p>
+            <p className="text-zinc-400 text-xs mt-1 mb-4">Bắt đầu luyện tập để xem lại ở đây!</p>
+            <button
+              onClick={() => nav(EMPTY_CTA[tab].path)}
+              className="flex items-center gap-1.5 bg-accent-500/15 hover:bg-accent-500/25 text-accent-300 theme-light:text-accent-800 text-sm font-medium px-4 py-2.5 rounded-xl transition"
+            >
+              {EMPTY_CTA[tab].label} <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         ) : (
           <div className="space-y-3 animate-fade-in">

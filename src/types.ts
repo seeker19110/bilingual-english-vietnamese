@@ -19,6 +19,11 @@ export interface DictEntry {
   // Cấp CEFR ƯỚC LƯỢNG bằng AI (scripts/tag-cefr-levels.ts) — không phải mọi từ đều có,
   // và giá trị là ước lượng (chưa qua kiểm tra tay), không phải nguồn CEFR chính thức.
   level?: CefrWordLevel
+  // Hạng tần suất trong tiếng Anh (số càng nhỏ = càng thông dụng) — điền bằng
+  // scripts/assign-word-freq.ts từ 1 wordlist tần suất thật (NGSL/SUBTLEX...).
+  // Chưa mọi từ đều có; getCircles() (lib/curriculum.ts) dùng để sắp phần "Mở
+  // rộng" theo tần suất thay vì alphabet, từ thiếu freq xếp cuối.
+  freq?: number
 }
 
 export interface User {

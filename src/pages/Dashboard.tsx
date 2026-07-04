@@ -28,7 +28,7 @@ import {
 } from '../lib/storage'
 import { getLearnedWords, getLearnedCount } from '../lib/vocab'
 import { getSRSStats } from '../lib/srs'
-import { loadCurriculum, getPathProgress, getDailyLearned, DAILY_GOAL } from '../lib/curriculum'
+import { loadCurriculum, getPathProgress, getDailyLearned, getDailySpeed } from '../lib/curriculum'
 import {
   getActivity7Days,
   getWeekTotal,
@@ -155,6 +155,7 @@ export default function Dashboard() {
       writing: getWritingProgress(user.id),
       learnedToday: getDailyLearned(user.id),
       learnedTotal: getLearnedCount(user.id),
+      dailySpeed: getDailySpeed(user.id),
       path: ready ? getPathProgress(getLearnedWords(user.id)) : { done: 0, total: 0 },
       srs: getSRSStats(user.id),
       usage,
@@ -294,10 +295,10 @@ export default function Dashboard() {
                 {vi ? 'Từ mới hôm nay' : 'New words today'}
               </span>
               <span className="text-sm font-semibold text-lime-300 theme-light:text-lime-800">
-                {stats.learnedToday}/{DAILY_GOAL}
+                {stats.learnedToday}/{stats.dailySpeed}
               </span>
             </div>
-            <Bar pct={(stats.learnedToday / DAILY_GOAL) * 100} color="bg-lime-500" />
+            <Bar pct={(stats.learnedToday / stats.dailySpeed) * 100} color="bg-lime-500" />
           </div>
 
           {/* Lượt dùng còn lại hôm nay */}

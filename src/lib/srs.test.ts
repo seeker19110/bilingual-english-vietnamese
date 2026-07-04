@@ -4,7 +4,15 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 // thiếu env trong test). Chỉ cần stub pushProgress là cả chuỗi import supabase không chạy.
 vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
 
-import { addToSRS, reviewWord, getDueWords, getSRSStats, getNextReview } from './srs'
+import {
+  addToSRS,
+  addToSRSKnown,
+  reviewWord,
+  getDueWords,
+  getSRSStats,
+  getNextReview,
+  getLeechWords,
+} from './srs'
 import type { DictEntry } from '../types'
 
 const W = (word: string): DictEntry => ({ word }) as DictEntry
@@ -59,5 +67,47 @@ describe('SRS — SM-2', () => {
 
   it('getNextReview trả null cho từ chưa vào SRS', () => {
     expect(getNextReview('u1', 'unknown')).toBeNull()
+  })
+
+  it('getDueWords với limit: cap số thẻ + ưu tiên thẻ quá hạn lâu nhất trước', () => {
+    vi.useFakeTimers()
+    const base = new Date('2026-01-10T00:00:00Z')
+    vi.setSystemTime(base)
+    addToSRS('u1', 'apple') // due = base (quá hạn lâu nhất)
+    vi.setSystemTime(new Date(base.getTime() + 1000))
+    addToSRS('u1', 'banana') // due sau apple 1s
+    vi.setSystemTime(new Date(base.getTime() + 2000))
+    addToSRS('u1', 'cherry') // due sau cùng
+    vi.setSystemTime(new Date(base.getTime() + 3000)) // cả 3 đều đến hạn lúc này
+
+    const words = [W('cherry'), W('banana'), W('apple')]
+    const capped = getDueWords('u1', words, 2)
+    expect(capped.map((e) => e.word)).toEqual(['apple', 'banana']) // quá hạn lâu nhất trước
+    expect(getDueWords('u1', words).length).toBe(3) // không limit → trả hết
+    vi.useRealTimers()
+  })
+
+  it('getLeechWords: từ bị "Quên" ≥3 lần tự vào diện leech', () => {
+    addToSRS('u1', 'apple')
+    reviewWord('u1', 'apple', 'again')
+    reviewWord('u1', 'apple', 'again')
+    expect(getLeechWords('u1', [W('apple')])).toHaveLength(0) // mới 2 lần, chưa phải leech
+    reviewWord('u1', 'apple', 'again')
+    expect(getLeechWords('u1', [W('apple')]).map((e) => e.word)).toContain('apple')
+  })
+
+  it('addToSRSKnown (test-out): due XA hơn addToSRS thường, KHÔNG đến hạn ngay hôm nay', () => {
+    addToSRSKnown('u1', 'apple', 7)
+    expect(getDueWords('u1', [W('apple')])).toHaveLength(0) // chưa đến hạn
+    const next = getNextReview('u1', 'apple')!.getTime()
+    expect(Math.round((next - Date.now()) / 86_400_000)).toBe(7)
+  })
+
+  it('addToSRSKnown idempotent — không ghi đè thẻ đã có tiến độ', () => {
+    addToSRSKnown('u1', 'apple', 7)
+    reviewWord('u1', 'apple', 'good')
+    const due1 = getNextReview('u1', 'apple')?.getTime()
+    addToSRSKnown('u1', 'apple', 7)
+    expect(getNextReview('u1', 'apple')?.getTime()).toBe(due1)
   })
 })

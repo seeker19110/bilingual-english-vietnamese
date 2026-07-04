@@ -1,4 +1,9 @@
-import { describe, it, expect, beforeEach, beforeAll } from 'vitest'
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest'
+
+// getDailySpeed() (curriculum.ts) đọc getLearnedCount() từ ./vocab, kéo theo
+// progressSync → supabase — mock để test chạy OFFLINE (giống srs.test.ts).
+vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+
 import {
   DAILY_GOAL,
   wordKey,
@@ -13,8 +18,15 @@ import {
   bumpDailyLearned,
   getCefrLevelOfCircle,
   loadCurriculum,
+  getDailySpeed,
+  setDailySpeed,
+  getDailyMax,
+  getDailyAllowance,
+  bumpDailyQuizPasses,
+  compareByFreq,
 } from './curriculum'
 import { loadCefr } from '../data/cefrLoader'
+import type { DictEntry } from '../types'
 
 // Dictionary giờ nạp ĐỘNG → phải await loadCurriculum() trước khi test các hàm dùng nó
 beforeAll(async () => {
@@ -165,5 +177,63 @@ describe('bộ đếm học trong ngày', () => {
   it('đếm tách biệt theo user', () => {
     bumpDailyLearned('u1')
     expect(getDailyLearned('u2')).toBe(0)
+  })
+})
+
+describe('compareByFreq — sắp phần "Mở rộng" theo tần suất', () => {
+  const W = (word: string, freq?: number): DictEntry => ({ word, freq }) as DictEntry
+
+  it('freq nhỏ hơn (thông dụng hơn) đứng trước', () => {
+    expect(compareByFreq(W('the', 1), W('abandon', 5000))).toBeLessThan(0)
+    expect(compareByFreq(W('abandon', 5000), W('the', 1))).toBeGreaterThan(0)
+  })
+
+  it('từ thiếu freq luôn xếp SAU từ có freq, bất kể freq lớn thế nào', () => {
+    expect(compareByFreq(W('rare', 999_999), W('missing', undefined))).toBeLessThan(0)
+    expect(compareByFreq(W('missing', undefined), W('rare', 999_999))).toBeGreaterThan(0)
+  })
+
+  it('cả 2 đều thiếu freq → coi bằng nhau (giữ thứ tự gốc nhờ sort ổn định)', () => {
+    expect(compareByFreq(W('a'), W('b'))).toBe(0)
+  })
+
+  it('dùng làm comparator thật cho .sort(): thông dụng trước, thiếu freq xếp cuối', () => {
+    const words = [W('rare', 500), W('missing1'), W('the', 1), W('missing2'), W('cat', 50)]
+    const sorted = words.sort(compareByFreq).map((w) => w.word)
+    expect(sorted).toEqual(['the', 'cat', 'rare', 'missing1', 'missing2'])
+  })
+})
+
+describe('Tốc độ học 5/10/20 từ/ngày', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('người dùng MỚI (chưa có từ đã thuộc) mặc định 10', () => {
+    expect(getDailySpeed('new-user')).toBe(10)
+  })
+
+  it('người dùng ĐÃ HỌC (có tiến độ trước đó) giữ mặc định 20', () => {
+    localStorage.setItem('et_learned_existing-user', JSON.stringify(['apple']))
+    expect(getDailySpeed('existing-user')).toBe(20)
+  })
+
+  it('setDailySpeed ghi đè mặc định, đọc lại đúng giá trị đã chọn', () => {
+    setDailySpeed('u1', 5)
+    expect(getDailySpeed('u1')).toBe(5)
+  })
+
+  it('getDailyMax = 5 × tốc độ đã chọn', () => {
+    setDailySpeed('u1', 5)
+    expect(getDailyMax('u1')).toBe(25)
+    setDailySpeed('u1', 20)
+    expect(getDailyMax('u1')).toBe(100)
+  })
+
+  it('getDailyAllowance tăng theo số lần pass quiz, cap tại getDailyMax', () => {
+    setDailySpeed('u1', 5)
+    expect(getDailyAllowance('u1')).toBe(5)
+    bumpDailyQuizPasses('u1')
+    expect(getDailyAllowance('u1')).toBe(10)
+    for (let i = 0; i < 10; i++) bumpDailyQuizPasses('u1')
+    expect(getDailyAllowance('u1')).toBe(getDailyMax('u1')) // cap, không vượt quá
   })
 })

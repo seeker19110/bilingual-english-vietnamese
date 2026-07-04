@@ -534,7 +534,7 @@ export default function Chat() {
                 placeholder={isA ? 'Nhập tiếng Anh...' : 'Type in Vietnamese...'}
                 disabled={loading || limitHit || isThrottled}
                 inputMode="text"
-                className="flex-1 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-base sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-accent-500/60 focus:bg-zinc-900 transition disabled:opacity-50"
+                className="flex-1 min-w-0 bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-2.5 text-base sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-accent-500/60 focus:bg-zinc-900 transition disabled:opacity-50"
               />
 
               <button

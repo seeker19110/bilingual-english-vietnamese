@@ -78,7 +78,7 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
             onClick={() => nav('/profile')}
             aria-label={T.profile}
             title={T.profile}
-            className="flex items-center gap-2 shrink-0 hover:opacity-85 transition min-w-0"
+            className="tap-44 flex items-center gap-2 shrink-0 hover:opacity-85 transition min-w-0"
           >
             <span className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0">
               {user.name[0]?.toUpperCase()}

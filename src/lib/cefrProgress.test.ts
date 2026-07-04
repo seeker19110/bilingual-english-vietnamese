@@ -208,13 +208,13 @@ describe('computeLockedMapPersisted — grandfather: đã mở thì không khóa
   })
 })
 
-describe('findNextStep — trình tự từ vựng trước, ngữ pháp sau, theo unit', () => {
+describe('findNextStep — xen kẽ từ vựng ↔ ngữ pháp trong 1 unit, theo unit', () => {
   it('chưa học gì → vòng từ vựng đầu tiên của unit 1', () => {
     const step = findNextStep(A1, BY_ID, new Set(), new Set())
     expect(step).toMatchObject({ unitIndex: 0, kind: 'vocab', circleId: 'c1' })
   })
 
-  it('xong từ vựng unit 1 → sang ngữ pháp unit 1', () => {
+  it('xong vòng từ vựng đầu (chỉ 1 vòng trong unit) → sang ngữ pháp bài 1', () => {
     const step = findNextStep(A1, BY_ID, new Set(['apple', 'banana']), new Set())
     expect(step).toMatchObject({ unitIndex: 0, kind: 'grammar', lessonId: 'g1' })
   })
@@ -230,5 +230,37 @@ describe('findNextStep — trình tự từ vựng trước, ngữ pháp sau, th
     const learned = new Set(['apple', 'banana', 'cat', 'dog'])
     const done = new Set(['g1', 'g2', 'g3'])
     expect(findNextStep(A1, BY_ID, learned, done)).toBeNull()
+  })
+
+  it('unit có NHIỀU vòng từ vựng: xen kẽ vòng 1 → bài 1 → vòng 2 → bài 2 (không bắt xong hết từ vựng mới tới ngữ pháp)', () => {
+    const byId: Record<string, Circle> = {
+      cA: circle('cA', ['apple']),
+      cB: circle('cB', ['banana']),
+    }
+    const multi = level('A1', [unit('u1', ['g1', 'g2'], ['cA', 'cB'])])
+
+    // Chưa học gì → vòng cA trước (thứ tự j=0)
+    expect(findNextStep(multi, byId, new Set(), new Set())).toMatchObject({
+      kind: 'vocab',
+      circleId: 'cA',
+    })
+
+    // Xong vòng cA → sang bài g1 (KHÔNG nhảy thẳng qua vòng cB — đúng interleaving)
+    expect(findNextStep(multi, byId, new Set(['apple']), new Set())).toMatchObject({
+      kind: 'grammar',
+      lessonId: 'g1',
+    })
+
+    // Xong cA + g1 → tới vòng cB (thứ tự j=1)
+    expect(findNextStep(multi, byId, new Set(['apple']), new Set(['g1']))).toMatchObject({
+      kind: 'vocab',
+      circleId: 'cB',
+    })
+
+    // Xong cA + cB + g1 → tới bài g2
+    expect(findNextStep(multi, byId, new Set(['apple', 'banana']), new Set(['g1']))).toMatchObject({
+      kind: 'grammar',
+      lessonId: 'g2',
+    })
   })
 })

@@ -445,7 +445,132 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 - ⚠️ Cần làm tay: tạo project Sentry (miễn phí, sentry.io) rồi điền `SENTRY_DSN` +
   `VITE_SENTRY_DSN` vào `.env` trên VPS (xem "Cần làm tay" bên dưới).
 
+## Đã xong (cải tiến lộ trình học — 5 đợt theo docs/research/cai-tien-lo-trinh-hoc.md — 2026-07-04)
+
+> Theo kế hoạch trong `docs/research/cai-tien-lo-trinh-hoc.md` (PR #189, đã duyệt thứ tự làm
+> "làm hết" + đồng ý đổi mặc định tốc độ 10 + đồng ý xen kẽ từ vựng↔ngữ pháp). Mỗi đợt 1 commit
+> riêng trên cùng nhánh, verify đầy đủ (build/typecheck/lint/test/size + lái app thật bằng
+> Playwright) trước khi sang đợt tiếp theo.
+
+- **Đợt 1 — SRS toàn cục + cap phiên + leech**: tab Ôn SRS trước đây lọc theo từ vựng CẤP đang
+  mở (`studyPool`) → từ cấp khác đến hạn không hiện, quên dần. Giờ mặc định ôn TOÀN BỘ lộ trình
+  (`getLearningPath()`), có toggle lọc "chỉ cấp này" (`SRSReview`, `CefrLevelPage.tsx`). Cap
+  `SRS_SESSION_CAP = 30` thẻ/phiên, ưu tiên thẻ quá hạn lâu nhất (`getDueWords(uid, pool, limit)`
+  — `lib/srs.ts`), tránh ngợp khi quay lại sau vài ngày nghỉ. Thẻ bị "Quên" ≥3 lần tự vào diện
+  leech (`lapses`, `getLeechWords`) — gộp vào tab Từ khó cùng đánh dấu tay.
+- **Đợt 2 — Mini-quiz đủ 20 từ, 2 chiều**: mini-quiz mở batch trước chỉ hỏi 5/20 từ, 1 chiều
+  (EN→VI). Giờ hỏi ĐỦ cả batch, xen kẽ đều EN→VI/VI→EN (`buildMiniQuiz`, `StudyTabs.tsx`). Trả
+  lời sai → ôn lại flashcard ĐÚNG những từ sai (phase `mini-quiz-review`) trước khi cho làm lại.
+- **Đợt 3 — Chọn tốc độ học 5/10/20 từ/ngày**: `getDailySpeed`/`setDailySpeed` (`lib/curriculum.ts`,
+  localStorage `et_speed_<uid>`). Người dùng MỚI (chưa thuộc từ nào) mặc định **10** (trong
+  khuyến nghị 10-20 từ/ngày); người dùng ĐÃ CÓ tiến độ trước đó giữ nguyên **20** để không đổi
+  trải nghiệm đột ngột. Chọn ở trang Hồ sơ (`Profile.tsx`). Trần ngày = 5× tốc độ (công thức cũ,
+  chỉ đổi từ `DAILY_GOAL` cố định sang theo từng người — `getDailyMax`). Cập nhật copy liên quan
+  (FAQ `index.html`, `Home.tsx`, `README.md`, `CLAUDE.md`).
+- **Đợt 4 — Hạ tầng sắp "Mở rộng" theo tần suất (CHƯA chạy dữ liệu thật)**: thêm
+  `DictEntry.freq` + `compareByFreq()` để `getCircles()` sắp ~8.500 từ "Mở rộng" theo tần suất
+  (luật Zipf) thay vì alphabet, từ thiếu `freq` xếp cuối/giữ nguyên thứ tự cũ. **Chưa điền freq
+  thật** — môi trường phiên làm việc không có wordlist tần suất thật (NGSL/SUBTLEX) nên KHÔNG tự
+  bịa dữ liệu (theo CLAUDE.md mục 5). Đã dựng sẵn `scripts/assign-word-freq.ts` (đọc wordlist
+  `.txt`/`.csv` thật, idempotent, an toàn Ctrl+C, cùng mô hình `scripts/tag-cefr-levels.ts`) +
+  `api/_lib/wordFreq.ts` (logic thuần, có test) — chạy khi có file wordlist thật (xem "Tiếp theo").
+- **Đợt 5 — Xen kẽ từ vựng↔ngữ pháp + nút "Tôi đã biết vòng này"**: `findNextStep`
+  (`lib/cefrProgress.ts`) giờ xen kẽ vòng từ vựng ↔ bài ngữ pháp TRONG 1 unit (vòng 1 → bài 1 →
+  vòng 2 → bài 2 …) thay vì bắt xong 100% từ vựng mới gợi ý ngữ pháp — tránh unit lớn (~120 từ)
+  khiến nhiều ngày liền chỉ lật thẻ. Chỉ đổi thứ tự gợi ý, không đổi ngưỡng "xong vòng" (vẫn
+  100%). Thêm nút "Tôi đã biết vòng này" trên màn flashcard (`VocabFlash`, `CefrLessonViews.tsx`)
+  — quiz nhanh tối đa 10 câu, đúng ≥90% → đánh dấu CẢ VÒNG đã thuộc, vào SRS với interval dài 7
+  ngày (`addToSRSKnown`, `lib/srs.ts`) thay vì due ngay hôm nay, KHÔNG tính vào bộ đếm học/ngày.
+- Verify mỗi đợt: build/typecheck/lint (0 cảnh báo)/format/test (136/136 cuối đợt 5, +24 so với
+  đầu phiên)/size-limit đều xanh + lái app thật bằng Playwright (seed localStorage giả lập
+  session, xác nhận UI đúng hành vi: badge SRS đếm toàn cục, cap 30 + ưu tiên quá hạn, mini-quiz
+  20 câu xen kẽ 2 chiều, tốc độ mặc định 10/20 đúng theo user mới/cũ, test-out đánh dấu đúng cả
+  vòng + không tính vào bộ đếm ngày).
+
+## Đã xong (nghiên cứu cải tiến UI/UX — 2026-07-04)
+
+> Theo yêu cầu người dùng "nghiên cứu cải tiến luôn ui/ux". CHỈ tài liệu, không đổi code.
+> Kết quả: `docs/research/cai-tien-ui-ux.md` — khảo sát bằng Playwright thật (12 trang +
+> 6 luồng tương tác ở khổ mobile 375×812, đo cuộn ngang/vùng chạm/vị trí phần tử bằng máy),
+> đối chiếu checklist mobile-first + UI/UX 4 trạng thái của khung (BO-SUNG-chat-luong-Nhom-2).
+
+- 11 vấn đề xếp hạng (3 🔴): trang chủ là menu tĩnh không có "Học tiếp"/SRS due (U1); không có
+  bottom-nav, đổi chế độ nào cũng phải về Home (U2); onboarding hỏi 3 câu nhưng KHÔNG nơi nào
+  đọc lại câu trả lời (U3 — "AI sẽ điều chỉnh độ khó" chưa được thực hiện). Bug layout thật đo
+  được: hàng nhập Chat tràn 15px ở 375px vì input thiếu `min-w-0` (U4); throttle 10s giữa mỗi
+  tin chat (U5); lỗi kỹ thuật tiếng Anh phơi nguyên văn ra UI (U6). Kèm 5 mục nhỏ U7–U11.
+- Kế hoạch 5 đợt PR nhỏ (U-1 vá điểm → U-5 bottom-nav) + 4 câu hỏi cần người dùng chốt
+  (bottom-nav?, throttle 10s→3s?, vị trí thẻ Học tiếp, badge "Không giới hạn") — xem mục 5–6
+  của tài liệu.
+
+## Đang làm dở — TRIỂN KHAI kế hoạch UI/UX (bắt đầu 2026-07-04, dừng giữa chừng theo yêu cầu người dùng)
+
+> Người dùng đã duyệt "triển khai luôn" toàn bộ kế hoạch ở `docs/research/cai-tien-ui-ux.md`,
+> dùng phương án khuyến nghị cho cả 4 câu hỏi mở (đồng ý bottom-nav; giảm throttle 10s→3s; thẻ
+> "Học tiếp" đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng; bỏ bớt badge "Không giới hạn" dư thừa).
+> Đã merge **U-1 (một phần)**; **U-2 → U-5 + giảm throttle CHƯA làm** — làm tiếp theo đúng thứ tự
+> này ở phiên sau, không cần hỏi lại 4 câu đã chốt.
+
+### U-1 (một phần) — ĐÃ MERGE
+
+- `lib/ai.ts`: lỗi kỹ thuật ("Invalid API response...") không còn phơi ra UI — thông điệp song
+  ngữ thân thiện, chi tiết kỹ thuật vẫn `console.warn` + Sentry (`captureException`). Giữ nguyên
+  message server đã thân thiện sẵn. +7 test (`lib/ai.test.ts`).
+- `Chat.tsx`: `min-w-0` cho input — sửa bug tràn 15px ở 375px (đã ĐO THẬT bằng Playwright, xem
+  tài liệu nghiên cứu mục U4).
+- Vùng chạm ≥44px (`tap-44`, lớp có sẵn trong `index.css` — mở rộng vùng bấm vô hình, KHÔNG đổi
+  kích thước hiển thị): avatar mở Hồ sơ (`Layout.tsx`), toggle Nữ/Nam (`VoiceToggle.tsx`),
+  breadcrumb "‹ Lộ trình A1 → B2" (`CefrLevelPage.tsx`).
+- Copy lỗi thời: Login "Dữ liệu lưu máy bạn" (sai từ khi có Supabase sync) → phản ánh đúng thực
+  tế; FAQ `index.html` "7400+ từ" → "10.000+ từ" (khớp số thật ở trang Từ điển).
+- `History.tsx`: empty state thêm nút CTA đi đúng trang luyện tập (chat/writing/speaking) theo
+  tab đang rỗng — trước đó chỉ có thông điệp, không có hành động (đúng checklist khung).
+
+### U-1 — CÒN LẠI (chưa làm, làm tiếp trước khi sang U-2)
+
+- Bỏ bớt/gộp badge "Không giới hạn" lặp trên 3/7 card ở Home — quyết định: bỏ khỏi card không
+  cần nhấn mạnh, hoặc đổi thành số liệu hữu ích hơn (vd số bài/số từ). Cần chọn 1 hướng.
+- Vùng chạm chip từ vựng xếp sát nhau (`Dictionary.tsx` mục "Chủ đề phổ biến", chip vòng từ vựng
+  trong unit `CefrLevelPage.tsx`) — **CỐ Ý CHƯA** áp `tap-44` vì các chip nằm cạnh nhau chỉ cách
+  `gap-1.5`; mở vùng chạm vô hình lên 44px có thể chồng lấn sang chip bên cạnh → bấm nhầm. Cần
+  tăng `gap` trước rồi mới áp `tap-44`, hoặc chỉ tăng padding nhẹ (`py-1` → `py-1.5`/`py-2`) —
+  cần thử nghiệm kỹ hơn, không hợp với tinh thần "vá nhanh" của đợt này.
+
+### U-2 → U-5 + giảm throttle — CHƯA LÀM, làm theo đúng thứ tự trong tài liệu
+
+1. **U-2**: thẻ "Học tiếp" đầu trang Home (`Home.tsx`) — đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng
+   đọc. Đọc `findNextStep` (`lib/cefrProgress.ts`, cần load `loadCefr()`+`loadFoundation()` như
+   `CefrLevelPage.tsx` đang làm) + `getSRSStats` (`lib/srs.ts`) + `getDailyLearned`/
+   `getDailySpeed` (`lib/curriculum.ts`) để hiện: mục kế tiếp, số thẻ SRS đến hạn, tiến độ mục
+   tiêu ngày. Bấm vào đi thẳng `/learning-path/<cấp>` với tab tương ứng (cần thêm cách truyền
+   tab đích qua query param hoặc state, vì `CefrLevelPage` hiện luôn mở tab "Bài học" mặc định).
+2. **U-3**: nối `saveOnboarding()` (`lib/cloud.ts:273`) — hiện GHI nhưng KHÔNG NƠI NÀO ĐỌC LẠI
+   (đã xác nhận bằng grep toàn repo). Cần: (a) hàm đọc lại onboarding từ Supabase/cache; (b)
+   `level` → mặc định `Level` của `Chat.tsx`/`Speaking.tsx` SetupScreen (hiện cứng `'intermediate'`)
+   - nếu ≥ Trung cấp thì gợi ý banner test-out ở trang A1; (c) `dailyMinutes` → map sang tốc độ
+     5/10/20 qua `setDailySpeed()` (`lib/curriculum.ts`, đã có từ đợt lộ trình học).
+3. **U-4**: gọn header 4 tab học trang cấp (`CefrLevelPage.tsx`) — thu tiêu đề "A1 — Sơ cấp/Người
+   mới bắt đầu" thành 1 dòng nhỏ khi KHÔNG phải tab "Bài học"; đổi "Tổng đã thuộc: 0/10199"
+   (`StudyTabs.tsx`, dùng `getPathProgress` toàn lộ trình) → tiến độ CỦA CẤP (dùng
+   `levelVocabCounts` đã có trong `lib/cefrProgress.ts`); cân nhắc bỏ `QuickActions` ở 4 tab học.
+4. **U-5** (đổi lớn nhất): bottom tab bar cố định 4 mục Trang chủ·Lộ trình·Luyện tập·Tiến độ
+   (component mới, thêm vào `App.tsx` ngoài `<Routes>`, chú ý `pb-safe` + không che nội dung
+   cuối trang hiện có — nhiều trang đã có thanh dưới riêng vd input Chat, cần rà từng trang);
+   dời `QuickActions` (Chia sẻ/Nhắc học) sang trang Hồ sơ/Tiến độ. Kèm: lưu Set "đã xem" cho
+   `Lessons.tsx`/`CommonPhrases.tsx` (localStorage, mẫu giống `cefrProgress.ts`) + nút "Tiếp tục
+   bài N".
+5. **Giảm throttle chat**: `useApiThrottle.ts` — đổi `delayMs = 10000` mặc định thành `3000`
+   (đã chốt: không tăng trần chi phí vì lượt/ngày cap riêng qua `daily_usage`).
+
+Verify mỗi đợt như các đợt lộ trình học trước: typecheck/lint(0 cảnh báo)/format/test/build/
+size-limit xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
+
 ## ⚠️ Cần làm tay (chưa xong)
+
+- **Điền dữ liệu tần suất từ thật cho phần "Mở rộng"** (đợt 4 ở trên): cần 1 wordlist tần suất
+  thật (NGSL — https://www.newgeneralservicelist.com, giấy phép CC BY — hoặc SUBTLEX-US cho phần
+  còn lại), tải về máy rồi chạy `FREQ_LIST=đường-dẫn npm run tag:freq`. Hạ tầng đã sẵn sàng
+  (`scripts/assign-word-freq.ts`), chỉ thiếu file wordlist thật.
 
 - **Chạy migration `0007_learning_progress_cefr.sql` VÀ `0008_learning_progress_cefr_unlocked.sql`
   trên Supabase production** (Dashboard → SQL Editor) — **TRƯỚC khi deploy code mới lên VPS**.

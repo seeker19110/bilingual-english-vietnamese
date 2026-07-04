@@ -58,6 +58,7 @@ import {
   isCurriculumReady,
   getLevelWords,
   getBeyondCefrWords,
+  getLearningPath,
 } from '../lib/curriculum'
 import { preloadLearnData } from '../lib/preloader'
 import {
@@ -163,12 +164,17 @@ export default function CefrLevelPage() {
     return isLast ? [...words, ...getBeyondCefrWords()] : words
   }, [dictReady, level, levels])
 
-  // Badge trên tab: số từ CỦA CẤP cần ôn SRS / đã đánh dấu khó.
+  // Toàn bộ từ đã học (mọi cấp + Mở rộng) — dùng riêng cho tab Ôn SRS để KHÔNG
+  // bỏ sót từ đến hạn của cấp khác (trước đây lọc theo studyPool khiến từ A1
+  // đến hạn không hiện khi đang học trang B1 → quên dần).
+  const allWordsPool = useMemo(() => (dictReady ? getLearningPath() : []), [dictReady])
+
+  // Badge trên tab: số từ CẦN ÔN SRS (toàn bộ lộ trình) / đã đánh dấu khó của cấp này.
   // `refresh` là khóa invalidation thủ công (dữ liệu đọc từ localStorage).
   const srsDue = useMemo(
-    () => (uid ? getDueWords(uid, studyPool).length : 0),
+    () => (uid ? getDueWords(uid, allWordsPool).length : 0),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [uid, studyPool, refresh],
+    [uid, allWordsPool, refresh],
   )
   const hardCount = useMemo(() => {
     if (!uid) return 0
@@ -226,6 +232,7 @@ export default function CefrLevelPage() {
         circle={circle}
         isA={isA}
         uid={uid}
+        pool={studyPool}
         onProgress={bump}
         onBack={() => setCircle(null)}
         onOpenDialogue={(d) => openDialogue(circle.id, d)}
@@ -341,7 +348,7 @@ export default function CefrLevelPage() {
       {/* Về trang lộ trình (tổng quan 4 cấp ở /learning-path) */}
       <button
         onClick={() => nav('/learning-path')}
-        className="flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200 transition mb-3"
+        className="tap-44 flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200 transition mb-3"
       >
         <ChevronLeft className="w-4 h-4" /> {isA ? 'Lộ trình A1 → B2' : 'Roadmap A1 → B2'}
       </button>
@@ -389,7 +396,14 @@ export default function CefrLevelPage() {
               <TodayLesson key={level.id} uid={uid} isA={isA} pool={studyPool} onProgress={bump} />
             )}
             {activeTab === 'srs' && (
-              <SRSReview key={level.id} uid={uid} isA={isA} pool={studyPool} onUpdate={bump} />
+              <SRSReview
+                key={level.id}
+                uid={uid}
+                isA={isA}
+                pool={allWordsPool}
+                levelPool={studyPool}
+                onUpdate={bump}
+              />
             )}
             {activeTab === 'hard' && (
               <HardWords key={level.id} uid={uid} isA={isA} pool={studyPool} onUpdate={bump} />
