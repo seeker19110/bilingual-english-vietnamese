@@ -17,7 +17,7 @@
 // ──────────────────────────────────────────────────────────────────────
 
 import { useEffect, useMemo, useState } from 'react'
-import { useParams, useNavigate, Navigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, Navigate } from 'react-router-dom'
 import {
   ChevronLeft,
   ChevronRight,
@@ -84,10 +84,12 @@ const pct = (done: number, total: number) => (total > 0 ? Math.round((done / tot
 
 // Tab trên trang cấp: 'lessons' = danh sách bài; 4 tab còn lại là tab học theo cấp.
 type StudyTab = 'lessons' | 'today' | 'srs' | 'hard' | 'quiz'
+const STUDY_TABS: StudyTab[] = ['lessons', 'today', 'srs', 'hard', 'quiz']
 
 export default function CefrLevelPage() {
   const { levelId } = useParams<{ levelId: string }>()
   const nav = useNavigate()
+  const [searchParams] = useSearchParams()
   const { user } = useAuth()
   const isA = getDirection() === 'A'
 
@@ -95,8 +97,12 @@ export default function CefrLevelPage() {
   const [circleById, setCircleById] = useState<Record<string, Circle>>({})
   const [ready, setReady] = useState(false)
 
-  // Tab đang mở (mặc định: danh sách bài của cấp).
-  const [tab, setTab] = useState<StudyTab>('lessons')
+  // Tab đang mở — cho phép mở thẳng qua URL `?tab=` (vd link "Học tiếp" ở Home),
+  // mặc định danh sách bài của cấp nếu không có/param không hợp lệ.
+  const [tab, setTab] = useState<StudyTab>(() => {
+    const t = searchParams.get('tab')
+    return (STUDY_TABS as string[]).includes(t ?? '') ? (t as StudyTab) : 'lessons'
+  })
   // Các tab học cần TOÀN BỘ từ điển (nạp động, nặng hơn cefr+foundation) —
   // gate riêng để tab "Bài học" vẫn hiện ngay không phải chờ.
   const [dictReady, setDictReady] = useState(isCurriculumReady())

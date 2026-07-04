@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   MessageCircle,
@@ -12,6 +12,8 @@ import {
   History,
   Target,
   TrendingUp,
+  Play,
+  Brain,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getStreak, getDirection, setDirection } from '../lib/storage'
@@ -20,6 +22,19 @@ import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import { useCloudSync } from '../lib/useCloudSync'
+import type { CefrLevel } from '../data/cefr'
+import type { Circle } from '../data/curriculum'
+import { loadCefr } from '../data/cefrLoader'
+import { loadFoundation } from '../data/curriculumLoader'
+import { getLearnedWords } from '../lib/vocab'
+import {
+  getDoneGrammar,
+  computeLockedMapPersisted,
+  findNextStep,
+  circleDoneCount,
+} from '../lib/cefrProgress'
+import { getSRSStats } from '../lib/srs'
+import { getDailyLearned, getDailyMax } from '../lib/curriculum'
 
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
 function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
@@ -130,10 +145,42 @@ export default function Home() {
   const [dir, setDir] = useState<Direction>(getDirection)
   const [voice, setVoice] = useState<Voice>(getVoicePref)
 
+  // Dữ liệu cho thẻ "Học tiếp" — chỉ cần lộ trình CEFR + vòng nền tảng (không cần
+  // nạp toàn bộ từ điển ~10k từ như trang /learning-path, findNextStep chỉ tham
+  // chiếu circleById theo unit).
+  const [cefrLevels, setCefrLevels] = useState<CefrLevel[]>([])
+  const [circleById, setCircleById] = useState<Record<string, Circle>>({})
+  useEffect(() => {
+    Promise.all([loadCefr(), loadFoundation()]).then(([lv, foundation]) => {
+      setCefrLevels(lv)
+      setCircleById(Object.fromEntries(foundation.map((c) => [c.id, c])))
+    })
+  }, [])
+
+  const uid = user?.id ?? ''
+  const learned = useMemo(() => getLearnedWords(uid), [uid])
+  const doneGrammar = useMemo(() => getDoneGrammar(uid), [uid])
+  const lockedMap = useMemo(
+    () => computeLockedMapPersisted(uid, cefrLevels, circleById, learned),
+    [uid, cefrLevels, circleById, learned],
+  )
+  // Cấp đầu tiên chưa khóa mà vẫn còn mục chưa xong — "đang học dở".
+  const continueLevel = useMemo(() => {
+    for (const lv of cefrLevels) {
+      if (lockedMap.get(lv.id)) continue
+      const next = findNextStep(lv, circleById, learned, doneGrammar)
+      if (next) return { level: lv, next }
+    }
+    return null
+  }, [cefrLevels, circleById, learned, doneGrammar, lockedMap])
+
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
 
   const streak = getStreak(user.id)
+  const srsDue = getSRSStats(user.id).due
+  const dailyLearned = getDailyLearned(user.id)
+  const dailyMax = getDailyMax(user.id)
 
   function toggleDir() {
     const next: Direction = dir === 'A' ? 'B' : 'A'
@@ -155,11 +202,76 @@ export default function Home() {
   const MODES = getModes(dir, T)
   const isA = dir === 'A'
 
+  // Nhãn mục "Học tiếp" (vòng từ vựng hoặc bài ngữ pháp kế tiếp chưa xong).
+  let nextLabel = ''
+  if (continueLevel) {
+    const { next } = continueLevel
+    if (next.kind === 'vocab' && next.circleId) {
+      const c = circleById[next.circleId]
+      if (c) {
+        const done = circleDoneCount(c, learned)
+        nextLabel = `${c.emoji} ${isA ? c.titleVi : c.titleEn} (${done}/${c.words.length})`
+      }
+    } else if (next.kind === 'grammar' && next.lessonId) {
+      const g = next.unit.grammar.find((x) => x.id === next.lessonId)
+      if (g) nextLabel = isA ? g.titleVi : g.titleEn
+    }
+  }
+
+  function goToNextStep() {
+    if (!continueLevel) return
+    nav(`/learning-path/${continueLevel.level.id.toLowerCase()}`)
+  }
+
+  function goToSrs() {
+    if (!continueLevel) return
+    nav(`/learning-path/${continueLevel.level.id.toLowerCase()}?tab=srs`)
+  }
+
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout title={T.greeting(user.name)} back={false} />
 
       <main className="max-w-3xl mx-auto px-4 py-6">
+        {/* ── Thẻ "Học tiếp" — mục kế tiếp trong lộ trình CEFR ─────────────── */}
+        {continueLevel && nextLabel && (
+          <div className="mb-3 animate-fade-in">
+            <button
+              onClick={goToNextStep}
+              aria-label={`${isA ? 'Học tiếp' : 'Continue'} — ${continueLevel.level.id}: ${nextLabel}`}
+              className="w-full glass rounded-2xl p-4 flex items-center gap-3 text-left border border-zinc-800/80 hover:border-accent-500/40 transition active:scale-[0.99]"
+            >
+              <div className="w-11 h-11 rounded-xl bg-accent-500/15 flex items-center justify-center shrink-0">
+                <Play className="w-5 h-5 fill-current text-accent-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-zinc-400">
+                  {isA ? 'Học tiếp' : 'Continue'} · {continueLevel.level.id}
+                </p>
+                <p className="text-sm font-semibold text-white truncate mt-0.5">{nextLabel}</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-400 shrink-0" />
+            </button>
+
+            {(srsDue > 0 || dailyMax > 0) && (
+              <div className="flex gap-2 mt-2">
+                {srsDue > 0 && (
+                  <button
+                    onClick={goToSrs}
+                    className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300 theme-light:text-sky-800 hover:border-sky-500/50 transition"
+                  >
+                    <Brain className="w-3.5 h-3.5" />
+                    {srsDue} {isA ? 'thẻ cần ôn' : 'due'}
+                  </button>
+                )}
+                <span className="flex items-center px-3 py-1.5 rounded-xl bg-zinc-900/60 border border-zinc-800/60 text-xs text-zinc-400">
+                  {dailyLearned}/{dailyMax} {isA ? 'từ hôm nay' : 'words today'}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ── Chọn chiều học + streak + giọng đọc (3 cột căn giữa) ──────────── */}
         <div className="mb-6 grid grid-cols-3 gap-3 animate-fade-in">
           {/* Chiều học — icon trên, text giữa, nhãn dưới, căn giữa */}
