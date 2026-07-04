@@ -221,3 +221,18 @@ export function getStreak(userId: string): number {
   }
   return Math.min(streak, STREAK_MAX_DAYS)
 }
+
+// Số ngày kể từ lần cuối có hoạt động (0 = có học hôm nay, 1 = lần cuối là hôm qua…).
+// null = chưa từng có hoạt động ghi nhận (trong cửa sổ STREAK_MAX_DAYS). Dùng để nhận
+// biết người dùng "vừa quay lại sau khi nghỉ" → hiện phiên ôn SRS nhẹ nhàng hơn
+// (xem docs/research/cai-tien-lo-trinh-hoc.md, mục V2).
+export function daysSinceLastStudy(userId: string): number | null {
+  const today = new Date()
+  for (let i = 0; i < STREAK_MAX_DAYS; i++) {
+    const d = new Date(today)
+    d.setDate(d.getDate() - i)
+    const usage = get<DailyUsage>(K.usage(userId, vnDateStr(d)))
+    if (hasActivityOn(usage)) return i
+  }
+  return null
+}

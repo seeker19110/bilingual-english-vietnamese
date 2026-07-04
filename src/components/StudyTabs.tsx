@@ -3,11 +3,14 @@
 //
 // Trước đây nằm ở trang /learning-path (Learn.tsx); nay mỗi cấp CEFR có
 // TRANG RIÊNG (/learning-path/a1…b2) nên 4 tab này chuyển vào trang cấp
-// (CefrLevelPage) và GIỚI HẠN theo từ vựng của cấp qua prop `pool`:
+// (CefrLevelPage). "Hôm nay"/"Từ khó"/"Kiểm tra" GIỚI HẠN theo từ vựng của
+// cấp qua prop `pool`:
 //   - pool = getLevelWords(cấp); riêng cấp CUỐI (B2) cộng thêm phần ngoài
 //     lộ trình CEFR (getBeyondCefrWords) để học tiếp sau khi xong B2.
 //   - Giới hạn ngày (20 từ/lượt, tối đa 100/ngày, quiz mở batch) vẫn tính
 //     CHUNG toàn app (lib/curriculum.ts), KHÔNG tách theo cấp.
+// "Ôn SRS" dùng TOÀN BỘ lộ trình (mọi cấp) qua `pool` riêng — ôn tập không nên
+// bị chặn theo cấp đang xem (xem docs/research/cai-tien-lo-trinh-hoc.md, V1).
 // Yêu cầu: đã await loadCurriculum() trước khi render (trang cấp lo việc này).
 // ──────────────────────────────────────────────────────────────────────
 
@@ -28,9 +31,17 @@ import { useNavigate } from 'react-router-dom'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import WordCard from './WordCard'
 import type { DictEntry } from '../types'
-import { markStudiedToday } from '../lib/storage'
+import { markStudiedToday, daysSinceLastStudy } from '../lib/storage'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
-import { addToSRS, reviewWord, getDueWords, getSRSStats, type Rating } from '../lib/srs'
+import {
+  addToSRS,
+  reviewWord,
+  getDueSession,
+  getSRSStats,
+  SESSION_CAP,
+  WELCOME_BACK_CAP,
+  type Rating,
+} from '../lib/srs'
 import {
   DAILY_GOAL,
   DAILY_MAX,
@@ -624,37 +635,66 @@ export function TodayLesson({
 }
 
 // ── Tab Ôn SRS ────────────────────────────────────────────────────────────────
+// Ôn SRS dùng TOÀN BỘ từ đã học (mọi cấp + Mở rộng) qua `pool` — trước đây lọc
+// theo cấp đang xem khiến từ cấp khác đến hạn ôn không bao giờ hiện ra, rơi rụng
+// dần mà người học không biết (V1, docs/research/cai-tien-lo-trinh-hoc.md). Có
+// nút "Chỉ cấp này" (dùng `levelPool`) cho ai muốn tập trung 1 cấp.
 export function SRSReview({
   uid,
   isA,
   pool,
+  levelPool,
   onUpdate,
 }: {
   uid: string
   isA: boolean
   pool: DictEntry[]
+  levelPool: DictEntry[]
   onUpdate: () => void
 }) {
-  const [due, setDue] = useState<DictEntry[]>(() => getDueWords(uid, pool))
-  const [idx, setIdx] = useState(0)
-  const [sessionDone, setDone] = useState(0)
+  const [onlyThisLevel, setOnlyThisLevel] = useState(false)
+  const effectivePool = onlyThisLevel ? levelPool : pool
 
-  const card = due[idx]
+  // Quay lại sau ≥3 ngày nghỉ → phiên "khởi động nhẹ" nhỏ hơn hẳn, không dội cả
+  // backlog (V2). Tính 1 lần lúc mở tab là đủ, không cần theo dõi sống.
+  const [gapDays] = useState(() => daysSinceLastStudy(uid))
+  const isWelcomeBack = gapDays !== null && gapDays >= 3
+  const cap = isWelcomeBack ? WELCOME_BACK_CAP : SESSION_CAP
+
+  const startSession = () => getDueSession(uid, effectivePool, cap)
+  const [session, setSession] = useState(startSession)
+  const [due, setDue] = useState<DictEntry[]>(() => session.cards)
+  const [sessionDone, setDone] = useState(0)
+  const sessionSize = session.cards.length
+  // Số thẻ đến hạn nhưng CHƯA vào phiên này vì vượt cap — mời ôn tiếp, không dội hết 1 lần.
+  const backlogRemaining = Math.max(session.totalDue - sessionSize, 0)
+
+  // Đổi bộ lọc "chỉ cấp này" → dựng lại phiên từ đầu.
+  useEffect(() => {
+    const s = startSession()
+    setSession(s)
+    setDue(s.cards)
+    setDone(0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onlyThisLevel])
+
+  function startNewSession() {
+    const s = startSession()
+    setSession(s)
+    setDue(s.cards)
+    setDone(0)
+  }
+
+  const card = due[0]
 
   function rate(rating: Rating) {
     if (!card) return
     reviewWord(uid, card.word, rating)
     setDone((n) => n + 1)
     onUpdate()
-    const nextIdx = idx + 1
-    if (nextIdx >= due.length) {
-      // Kiểm tra xem còn thẻ "again" nào đến hạn không
-      const remaining = getDueWords(uid, pool)
-      setDue(remaining)
-      setIdx(0)
-    } else {
-      setIdx(nextIdx)
-    }
+    // 'again' → đẩy thẻ xuống cuối hàng đợi CỦA PHIÊN NÀY để ôn lại sớm, không kéo
+    // thêm thẻ mới từ backlog (giữ đúng giới hạn cap của phiên).
+    setDue((prev) => (rating === 'again' ? [...prev.slice(1), prev[0]!] : prev.slice(1)))
   }
 
   const stats = getSRSStats(uid)
@@ -669,13 +709,28 @@ export function SRSReview({
               ? 'Ôn tập xong hôm nay!'
               : 'All caught up!'
             : isA
-              ? 'Không có từ nào của phần này cần ôn hôm nay'
-              : 'No words due today in this level'}
+              ? 'Không có từ nào cần ôn hôm nay'
+              : 'No words due today'}
         </p>
         {sessionDone > 0 && (
           <p className="text-sm text-zinc-400">
             {isA ? `Đã ôn ${sessionDone} thẻ` : `Reviewed ${sessionDone} cards`}
           </p>
+        )}
+        {backlogRemaining > 0 && (
+          <div className="pt-1">
+            <p className="text-sm text-zinc-400 mb-2">
+              {isA
+                ? `Còn ${backlogRemaining} thẻ khác đến hạn`
+                : `${backlogRemaining} more cards due`}
+            </p>
+            <button
+              onClick={startNewSession}
+              className="px-4 py-2 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 text-sm font-medium transition"
+            >
+              {isA ? 'Ôn tiếp phiên mới →' : 'Start another session →'}
+            </button>
+          </div>
         )}
         <div className="text-xs text-zinc-400 space-y-1 pt-2 border-t border-zinc-800">
           <p>{isA ? `Tổng trong SRS: ${stats.total} từ` : `Total in SRS: ${stats.total} words`}</p>
@@ -687,22 +742,43 @@ export function SRSReview({
             </p>
           )}
         </div>
+        {levelPool.length > 0 && levelPool.length !== pool.length && (
+          <button
+            onClick={() => setOnlyThisLevel((v) => !v)}
+            className="text-xs text-zinc-400 hover:text-zinc-300 underline underline-offset-2"
+          >
+            {onlyThisLevel
+              ? isA
+                ? 'Đang lọc: chỉ cấp này — bấm để ôn tất cả'
+                : 'Filtering: this level only — tap for all levels'
+              : isA
+                ? 'Chỉ ôn từ cấp này'
+                : 'Only review this level'}
+          </button>
+        )}
       </div>
     )
   }
 
   return (
     <div className="animate-fade-in">
+      {isWelcomeBack && (
+        <div className="mb-3 rounded-xl bg-accent-500/10 border border-accent-500/30 px-4 py-2.5 text-sm text-accent-300 theme-light:text-accent-800">
+          {isA
+            ? '👋 Chào mừng quay lại! Bắt đầu nhẹ nhàng với vài thẻ trước nhé.'
+            : "👋 Welcome back! Let's warm up with a few cards first."}
+        </div>
+      )}
       <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
         <span>{isA ? 'Ôn SRS' : 'SRS Review'}</span>
         <span>
-          {idx + 1}/{due.length} {isA ? 'cần ôn' : 'due'}
+          {sessionSize - due.length + 1}/{sessionSize} {isA ? 'cần ôn' : 'due'}
         </span>
       </div>
       <div className="h-1 bg-zinc-800 rounded-full mb-4">
         <div
           className="h-full bg-sky-500 rounded-full transition-all"
-          style={{ width: `${(idx / Math.max(due.length, 1)) * 100}%` }}
+          style={{ width: `${((sessionSize - due.length) / Math.max(sessionSize, 1)) * 100}%` }}
         />
       </div>
 

@@ -4,10 +4,12 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 // thiếu env trong test). Chỉ cần stub pushProgress là cả chuỗi import supabase không chạy.
 vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
 
-import { addToSRS, reviewWord, getDueWords, getSRSStats, getNextReview } from './srs'
+import { addToSRS, reviewWord, getDueWords, getDueSession, getSRSStats, getNextReview } from './srs'
+import { isDifficult } from './vocab'
 import type { DictEntry } from '../types'
 
 const W = (word: string): DictEntry => ({ word }) as DictEntry
+const MS_DAY = 86_400_000
 
 describe('SRS — SM-2', () => {
   beforeEach(() => localStorage.clear())
@@ -59,5 +61,36 @@ describe('SRS — SM-2', () => {
 
   it('getNextReview trả null cho từ chưa vào SRS', () => {
     expect(getNextReview('u1', 'unknown')).toBeNull()
+  })
+
+  it('reviewWord("again") ≥3 lần → tự động vào "Từ khó" (leech)', () => {
+    addToSRS('u1', 'apple')
+    reviewWord('u1', 'apple', 'again')
+    reviewWord('u1', 'apple', 'again')
+    expect(isDifficult('u1', 'apple')).toBe(false) // mới 2 lần — chưa tới ngưỡng
+    reviewWord('u1', 'apple', 'again')
+    expect(isDifficult('u1', 'apple')).toBe(true) // lần 3 — tự động đánh dấu khó
+  })
+
+  it('getDueSession giới hạn số thẻ theo cap, ưu tiên quá hạn lâu nhất trước', () => {
+    vi.useFakeTimers()
+    addToSRS('u1', 'apple') // due = now
+    vi.advanceTimersByTime(MS_DAY)
+    addToSRS('u1', 'banana') // due = now (1 ngày sau apple) → apple quá hạn LÂU hơn
+    vi.advanceTimersByTime(MS_DAY)
+    addToSRS('u1', 'cherry')
+
+    const session = getDueSession('u1', [W('apple'), W('banana'), W('cherry')], 2)
+    expect(session.totalDue).toBe(3)
+    expect(session.cards.map((e) => e.word)).toEqual(['apple', 'banana']) // 2 quá hạn lâu nhất
+    vi.useRealTimers()
+  })
+
+  it('getDueSession chỉ trả thẻ đến hạn, không kể thẻ chưa vào SRS/chưa tới hạn', () => {
+    addToSRS('u1', 'apple')
+    reviewWord('u1', 'banana', 'good') // due tương lai
+    const session = getDueSession('u1', [W('apple'), W('banana'), W('cherry')], 30)
+    expect(session.cards.map((e) => e.word)).toEqual(['apple'])
+    expect(session.totalDue).toBe(1)
   })
 })

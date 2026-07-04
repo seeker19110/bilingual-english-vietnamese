@@ -58,6 +58,7 @@ import {
   isCurriculumReady,
   getLevelWords,
   getBeyondCefrWords,
+  getLearningPath,
 } from '../lib/curriculum'
 import { preloadLearnData } from '../lib/preloader'
 import {
@@ -163,12 +164,17 @@ export default function CefrLevelPage() {
     return isLast ? [...words, ...getBeyondCefrWords()] : words
   }, [dictReady, level, levels])
 
-  // Badge trên tab: số từ CỦA CẤP cần ôn SRS / đã đánh dấu khó.
+  // Toàn bộ lộ trình (mọi cấp + Mở rộng) — nguồn cho tab "Ôn SRS", KHÔNG lọc theo
+  // cấp đang xem (V1, docs/research/cai-tien-lo-trinh-hoc.md): từ đến hạn ôn ở cấp
+  // khác vẫn phải hiện ra, tránh rơi rụng kiến thức đã học mà không biết.
+  const allWordsPool = useMemo(() => (dictReady ? getLearningPath() : []), [dictReady])
+
+  // Badge trên tab: số từ cần ôn SRS (TOÀN BỘ lộ trình) / đã đánh dấu khó CỦA CẤP.
   // `refresh` là khóa invalidation thủ công (dữ liệu đọc từ localStorage).
   const srsDue = useMemo(
-    () => (uid ? getDueWords(uid, studyPool).length : 0),
+    () => (uid ? getDueWords(uid, allWordsPool).length : 0),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [uid, studyPool, refresh],
+    [uid, allWordsPool, refresh],
   )
   const hardCount = useMemo(() => {
     if (!uid) return 0
@@ -389,7 +395,14 @@ export default function CefrLevelPage() {
               <TodayLesson key={level.id} uid={uid} isA={isA} pool={studyPool} onProgress={bump} />
             )}
             {activeTab === 'srs' && (
-              <SRSReview key={level.id} uid={uid} isA={isA} pool={studyPool} onUpdate={bump} />
+              <SRSReview
+                key={level.id}
+                uid={uid}
+                isA={isA}
+                pool={allWordsPool}
+                levelPool={studyPool}
+                onUpdate={bump}
+              />
             )}
             {activeTab === 'hard' && (
               <HardWords key={level.id} uid={uid} isA={isA} pool={studyPool} onUpdate={bump} />

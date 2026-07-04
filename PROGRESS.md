@@ -445,6 +445,41 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 - ⚠️ Cần làm tay: tạo project Sentry (miễn phí, sentry.io) rồi điền `SENTRY_DSN` +
   `VITE_SENTRY_DSN` vào `.env` trên VPS (xem "Cần làm tay" bên dưới).
 
+## Đã xong (cải tiến lộ trình học — Đợt 1/6 — 2026-07-04)
+
+> Theo kế hoạch `docs/research/cai-tien-lo-trinh-hoc.md` (nghiên cứu SLA/Zipf/Nakata/
+> Duolingo churn/FSRS, PR #189). Người dùng đã duyệt bắt đầu từ Đợt 1 + chốt trước 3
+> quyết định cho các đợt sau (xem "Quyết định quan trọng"): mặc định 10 từ/ngày (Đợt 3),
+> xen kẽ từ vựng↔ngữ pháp (Đợt 5), dùng NGSL+SUBTLEX (Đợt 4).
+
+- **V1 — Ôn SRS không còn bị chia theo cấp CEFR**: trước đây tab "Ôn SRS" (và badge)
+  lọc theo `pool` của cấp đang xem — từ cấp khác đến hạn ôn không bao giờ hiện ra, rơi
+  rụng dần mà người học không biết. Nay `SRSReview` nhận `pool` = TOÀN BỘ lộ trình
+  (`getLearningPath()`, mọi cấp + Mở rộng) + `levelPool` (cấp đang xem) cho nút tùy chọn
+  "Chỉ ôn từ cấp này" (hiện ở màn hoàn thành phiên). Badge due trên tab cũng đổi sang đếm
+  toàn cục.
+- **V2 — Chống ngợp khi quay lại sau khi nghỉ**: `getDueSession()` (`lib/srs.ts`) giới
+  hạn phiên ôn tối đa **30 thẻ** (`SESSION_CAP`), ưu tiên thẻ quá hạn LÂU NHẤT rồi tới
+  thẻ DỄ QUÊN NHẤT (ease thấp) trước; backlog vượt cap không mất, hiện nút "Ôn tiếp phiên
+  mới →" thay vì dội hết một lần. Thêm `daysSinceLastStudy()` (`lib/storage.ts`) — quay
+  lại sau ≥3 ngày nghỉ → phiên "khởi động nhẹ" chỉ **10 thẻ** (`WELCOME_BACK_CAP`) kèm
+  banner chào mừng, KHÔNG hiện tổng backlog (đúng đề xuất nghiên cứu).
+- **V10 — Leech tự động**: thêm `lapses?: number` vào `SRSCard` (optional, dữ liệu cũ
+  coi như 0, không cần migrate). `reviewWord()` đếm số lần "Quên" liên tiếp; ≥3 lần tự
+  gọi `markDifficult()` (`lib/vocab.ts`, hàm mới — CHỈ thêm vào "Từ khó", khác
+  `toggleDifficult` bấm tay có thể bật/tắt) — từ khó nhớ không còn chiếm thời gian ôn
+  không tương xứng với việc phải tự bấm ⭐.
+- 8 test mới (`srs.test.ts` +4, `storage.test.ts` file mới +3, leech +1). Verify: build/
+  typecheck/lint/test (118/118)/format/size-limit xanh; **lái app thật bằng Playwright**
+  (không chỉ đọc code) — xác nhận: (1) seed 2 thẻ SRS ở 2 "cấp" khác nhau, mở tab Ôn SRS ở
+  trang A1 → badge hiện đúng tổng 2 (trước đây sẽ là 1, chỉ đếm từ A1); (2) 3 lần bấm
+  "Quên" liên tiếp → từ tự vào `et_hard_*` (Từ khó); (3) seed 40 thẻ đến hạn → phiên đầu
+  đúng "1/30" (bị cắt ở cap), không phải 1/40. Full E2E suite (68/68, a11y 4 theme) xanh.
+- Còn lại theo kế hoạch 6 đợt: Đợt 2 (mini-quiz đủ 20 từ/2 chiều) → Đợt 3 (tốc độ học
+  5/10/20) → Đợt 4 (tần suất NGSL/SUBTLEX cho "Mở rộng" + chạy `tag:cefr`) → Đợt 5 (xen
+  kẽ từ vựng↔ngữ pháp + nút "Tôi đã biết vòng này") → Đợt 6 (quiz ngữ pháp, streak
+  freeze, cân nhắc FSRS — để sau).
+
 ## ⚠️ Cần làm tay (chưa xong)
 
 - **Chạy migration `0007_learning_progress_cefr.sql` VÀ `0008_learning_progress_cefr_unlocked.sql`
@@ -463,6 +498,10 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
+- **Đợt 2/6 cải tiến lộ trình học** (docs/research/cai-tien-lo-trinh-hoc.md): mini-quiz mở
+  batch hỏi đủ 20 từ (chia 2 màn 10 câu), trộn 2 chiều EN→VI/VI→EN (hiện chỉ 5 câu, 1 chiều);
+  câu sai hiện lại flashcard từ đó trước khi cho làm lại. File chính: `StudyTabs.tsx`
+  (`buildMiniQuiz`).
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
 - Chạy thật `npm run tag:cefr` (cần key AI) rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR
@@ -479,6 +518,12 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 
 ## Quyết định quan trọng (trỏ tới ADR nếu có)
 
+- **Cải tiến lộ trình học (docs/research/cai-tien-lo-trinh-hoc.md) — người dùng đã chốt
+  trước 2026-07-04** (áp dụng khi làm tới đợt tương ứng, xem "Tiếp theo"):
+  - Đợt 3: đổi mặc định tốc độ học **20→10 từ/ngày** cho người dùng MỚI (người cũ giữ 20).
+  - Đợt 4: dùng **NGSL (2.800 từ, CC BY) + SUBTLEX-US** để sắp lại phần "Mở rộng" theo tần suất.
+  - Đợt 5: đổi gợi ý "Học tiếp" sang **xen kẽ từ vựng↔ngữ pháp** (thay vì học hết 100% từ
+    vựng unit mới tới ngữ pháp).
 - GIỮ NGUYÊN phiên bản: Tailwind 3, ESLint 8 (`.eslintrc.cjs`) — KHÔNG nâng v4/flat config.
 - **Perf budget: chọn `size-limit` thay Lighthouse CI.** Lighthouse 12.6 không đo được
   app trong môi trường sandbox/CI hiện có (lỗi `NO_FCP` ở mọi cấu hình: full/headless-shell,

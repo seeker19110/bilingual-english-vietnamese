@@ -81,3 +81,14 @@ export function toggleDifficult(userId: string, word: string): boolean {
 export function isDifficult(userId: string, word: string): boolean {
   return getDifficultWords(userId).has(word.toLowerCase())
 }
+
+// Tự động thêm vào "Từ khó" khi 1 thẻ SRS bị đánh "Quên" nhiều lần liên tiếp (leech).
+// Khác toggleDifficult (bấm tay ⭐, có thể bật/tắt) — hàm này CHỈ thêm, không xoá.
+export function markDifficult(userId: string, word: string) {
+  const set = getDifficultWords(userId)
+  const key = word.toLowerCase()
+  if (set.has(key)) return
+  set.add(key)
+  localStorage.setItem(HARD_KEY(userId), JSON.stringify([...set]))
+  pushProgress(userId) // đồng bộ lên Supabase
+}
