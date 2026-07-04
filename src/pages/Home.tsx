@@ -47,7 +47,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       glow: 'shadow-amber-500/20',
       ring: 'hover:border-amber-500/40',
       tag: {
-        label: T.tagUnlimited,
+        label: T.tagDictCount,
         cls: 'bg-amber-500/15 text-amber-300 theme-light:text-amber-800 border border-amber-500/20',
       },
       title: isA ? T.dictTitleA : T.dictTitleB,
@@ -75,7 +75,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       glow: 'shadow-rose-500/20',
       ring: 'hover:border-rose-500/40',
       tag: {
-        label: T.tagUnlimited,
+        label: T.tagLessonsCount,
         cls: 'bg-rose-500/15 text-rose-300 theme-light:text-rose-700 border border-rose-500/20',
       },
       title: isA ? T.lessonsTitleA : T.lessonsTitleB,
@@ -88,7 +88,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       glow: 'shadow-teal-500/20',
       ring: 'hover:border-teal-500/40',
       tag: {
-        label: T.tagUnlimited,
+        label: T.tagPhrasesCount,
         cls: 'bg-teal-500/15 text-teal-300 theme-light:text-teal-800 border border-teal-500/20',
       },
       title: isA ? T.phrasesTitleA : T.phrasesTitleB,
