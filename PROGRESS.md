@@ -508,8 +508,30 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 > Người dùng đã duyệt "triển khai luôn" toàn bộ kế hoạch ở `docs/research/cai-tien-ui-ux.md`,
 > dùng phương án khuyến nghị cho cả 4 câu hỏi mở (đồng ý bottom-nav; giảm throttle 10s→3s; thẻ
 > "Học tiếp" đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng; bỏ bớt badge "Không giới hạn" dư thừa).
-> Đã merge **U-1 (một phần)**; **U-2 → U-5 + giảm throttle CHƯA làm** — làm tiếp theo đúng thứ tự
-> này ở phiên sau, không cần hỏi lại 4 câu đã chốt.
+> Đã merge **U-1 (một phần)** + **U-2**; **U-3 → U-5 + giảm throttle CHƯA làm** — làm tiếp theo
+> đúng thứ tự này ở phiên sau, không cần hỏi lại 4 câu đã chốt.
+
+### U-2 — ĐÃ LÀM (chưa merge, xem nhánh làm việc hiện tại)
+
+- Thẻ **"Học tiếp"** đầu trang Home (`Home.tsx`), đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng đọc —
+  đọc `findNextStep` (`lib/cefrProgress.ts`, cần `loadCefr()`+`loadFoundation()` như
+  `CefrLevelPage.tsx`) để tìm CẤP đầu tiên chưa khóa còn mục chưa xong, hiện đúng vòng từ vựng
+  hoặc bài ngữ pháp kế tiếp. Bấm vào đi thẳng `/learning-path/<cấp>` (tab "Bài học" mặc định, đã
+  có sẵn nút "Học tiếp" nổi bật ở đầu — 1 chạm nữa là vào đúng màn).
+  2 chip phụ (không lồng trong nút chính, tránh nút-trong-nút sai HTML):
+  số thẻ SRS đến hạn (`getSRSStats`, TOÀN lộ trình — không cần nạp từ điển) bấm vào mở thẳng
+  `/learning-path/<cấp>?tab=srs`; tiến độ mục tiêu ngày (`getDailyLearned`/`getDailyMax`,
+  `lib/curriculum.ts`) chỉ hiển thị, không bấm được.
+- **`CefrLevelPage.tsx`** thêm hỗ trợ mở thẳng tab qua URL `?tab=today|srs|hard|quiz|lessons`
+  (dùng `useSearchParams`, tab không hợp lệ/thiếu → mặc định "Bài học" như cũ) — hạ tầng cần
+  thiết để chip SRS ở Home điều hướng đúng tab.
+- Không hiện thẻ khi: dữ liệu chưa tải xong, hoặc TOÀN BỘ lộ trình A1→B2 đã hoàn thành (edge
+  case hiếm, không có "cấp đang học dở" nào để gợi ý).
+- Verify: build/typecheck/lint (0 cảnh báo)/format/test (149/149)/size-limit (112.84/116 kB JS)
+  đều xanh; lái app thật bằng Playwright (seed localStorage giả lập user mới + user có thẻ SRS
+  đến hạn) — xác nhận thẻ hiện đúng vòng từ vựng đầu tiên (A1 "Đại từ & lời chào"), chip SRS bấm
+  vào mở đúng tab Ôn SRS và hiện đúng từ đến hạn; quét axe thật cả 4 theme trên Home — 0
+  critical/serious. Full E2E suite (68/68) vẫn xanh.
 
 ### U-1 (một phần) — ĐÃ MERGE
 
@@ -536,30 +558,24 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   tăng `gap` trước rồi mới áp `tap-44`, hoặc chỉ tăng padding nhẹ (`py-1` → `py-1.5`/`py-2`) —
   cần thử nghiệm kỹ hơn, không hợp với tinh thần "vá nhanh" của đợt này.
 
-### U-2 → U-5 + giảm throttle — CHƯA LÀM, làm theo đúng thứ tự trong tài liệu
+### U-3 → U-5 + giảm throttle — CHƯA LÀM, làm theo đúng thứ tự trong tài liệu (U-2 đã xong, xem trên)
 
-1. **U-2**: thẻ "Học tiếp" đầu trang Home (`Home.tsx`) — đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng
-   đọc. Đọc `findNextStep` (`lib/cefrProgress.ts`, cần load `loadCefr()`+`loadFoundation()` như
-   `CefrLevelPage.tsx` đang làm) + `getSRSStats` (`lib/srs.ts`) + `getDailyLearned`/
-   `getDailySpeed` (`lib/curriculum.ts`) để hiện: mục kế tiếp, số thẻ SRS đến hạn, tiến độ mục
-   tiêu ngày. Bấm vào đi thẳng `/learning-path/<cấp>` với tab tương ứng (cần thêm cách truyền
-   tab đích qua query param hoặc state, vì `CefrLevelPage` hiện luôn mở tab "Bài học" mặc định).
-2. **U-3**: nối `saveOnboarding()` (`lib/cloud.ts:273`) — hiện GHI nhưng KHÔNG NƠI NÀO ĐỌC LẠI
+1. **U-3**: nối `saveOnboarding()` (`lib/cloud.ts:273`) — hiện GHI nhưng KHÔNG NƠI NÀO ĐỌC LẠI
    (đã xác nhận bằng grep toàn repo). Cần: (a) hàm đọc lại onboarding từ Supabase/cache; (b)
    `level` → mặc định `Level` của `Chat.tsx`/`Speaking.tsx` SetupScreen (hiện cứng `'intermediate'`)
    - nếu ≥ Trung cấp thì gợi ý banner test-out ở trang A1; (c) `dailyMinutes` → map sang tốc độ
      5/10/20 qua `setDailySpeed()` (`lib/curriculum.ts`, đã có từ đợt lộ trình học).
-3. **U-4**: gọn header 4 tab học trang cấp (`CefrLevelPage.tsx`) — thu tiêu đề "A1 — Sơ cấp/Người
+2. **U-4**: gọn header 4 tab học trang cấp (`CefrLevelPage.tsx`) — thu tiêu đề "A1 — Sơ cấp/Người
    mới bắt đầu" thành 1 dòng nhỏ khi KHÔNG phải tab "Bài học"; đổi "Tổng đã thuộc: 0/10199"
    (`StudyTabs.tsx`, dùng `getPathProgress` toàn lộ trình) → tiến độ CỦA CẤP (dùng
    `levelVocabCounts` đã có trong `lib/cefrProgress.ts`); cân nhắc bỏ `QuickActions` ở 4 tab học.
-4. **U-5** (đổi lớn nhất): bottom tab bar cố định 4 mục Trang chủ·Lộ trình·Luyện tập·Tiến độ
+3. **U-5** (đổi lớn nhất): bottom tab bar cố định 4 mục Trang chủ·Lộ trình·Luyện tập·Tiến độ
    (component mới, thêm vào `App.tsx` ngoài `<Routes>`, chú ý `pb-safe` + không che nội dung
    cuối trang hiện có — nhiều trang đã có thanh dưới riêng vd input Chat, cần rà từng trang);
    dời `QuickActions` (Chia sẻ/Nhắc học) sang trang Hồ sơ/Tiến độ. Kèm: lưu Set "đã xem" cho
    `Lessons.tsx`/`CommonPhrases.tsx` (localStorage, mẫu giống `cefrProgress.ts`) + nút "Tiếp tục
    bài N".
-5. **Giảm throttle chat**: `useApiThrottle.ts` — đổi `delayMs = 10000` mặc định thành `3000`
+4. **Giảm throttle chat**: `useApiThrottle.ts` — đổi `delayMs = 10000` mặc định thành `3000`
    (đã chốt: không tăng trần chi phí vì lượt/ngày cap riêng qua `daily_usage`).
 
 Verify mỗi đợt như các đợt lộ trình học trước: typecheck/lint(0 cảnh báo)/format/test/build/
