@@ -199,8 +199,12 @@ export function computeLockedMapPersisted(
 }
 
 // ── Mục học tiếp theo trong 1 cấp ───────────────────────────────────────
-// Duyệt unit theo thứ tự; trong mỗi unit ưu tiên TỪ VỰNG trước, NGỮ PHÁP sau
-// (đúng trình tự hiển thị). Hội thoại không bắt buộc nên không tính.
+// Duyệt unit theo thứ tự; TRONG mỗi unit XEN KẼ từ vựng ↔ ngữ pháp (vòng 1 →
+// bài 1 → vòng 2 → bài 2 …) thay vì bắt xong 100% từ vựng mới tới ngữ pháp —
+// đúng nguyên tắc interleaving (trộn dạng bài giữ chú ý tốt hơn học 1 dạng kéo
+// dài, xem docs/research/cai-tien-lo-trinh-hoc.md mục V5). Hết loại nào (vòng
+// hoặc bài) thì tiếp tục loại còn lại. Hội thoại không bắt buộc nên không tính.
+// CHỈ đổi thứ tự gợi ý — không đổi dữ liệu/ngưỡng "xong vòng" (vẫn 100%).
 export interface NextStep {
   unitIndex: number
   unit: CefrUnit
@@ -218,14 +222,17 @@ export function findNextStep(
   for (let i = 0; i < level.units.length; i++) {
     const unit = level.units[i]
     if (!unit) continue
-    for (const id of unit.vocabCircleIds) {
-      const c = byId[id]
-      if (c && circleDoneCount(c, learned) < c.words.length) {
-        return { unitIndex: i, unit, kind: 'vocab', circleId: id }
+    const maxLen = Math.max(unit.vocabCircleIds.length, unit.grammar.length)
+    for (let j = 0; j < maxLen; j++) {
+      const circleId = unit.vocabCircleIds[j]
+      if (circleId != null) {
+        const c = byId[circleId]
+        if (c && circleDoneCount(c, learned) < c.words.length) {
+          return { unitIndex: i, unit, kind: 'vocab', circleId }
+        }
       }
-    }
-    for (const g of unit.grammar) {
-      if (!doneGrammar.has(g.id)) {
+      const g = unit.grammar[j]
+      if (g && !doneGrammar.has(g.id)) {
         return { unitIndex: i, unit, kind: 'grammar', lessonId: g.id }
       }
     }

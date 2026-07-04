@@ -50,6 +50,26 @@ export function addToSRS(uid: string, word: string) {
   }
 }
 
+// Từ "đã biết sẵn" qua test-out (nút "Tôi đã biết vòng này" — quiz ≥90% đúng)
+// vào SRS với interval DÀI HƠN addToSRS() thường (mặc định 7 ngày): người dùng
+// đã CHỨNG MINH thuộc từ qua quiz nên không cần ôn ngay hôm nay như từ mới học
+// lần đầu.
+const KNOWN_INTERVAL_DAYS = 7
+export function addToSRSKnown(uid: string, word: string, intervalDays = KNOWN_INTERVAL_DAYS) {
+  const data = load(uid)
+  const key = word.toLowerCase()
+  if (!data[key]) {
+    data[key] = {
+      interval: intervalDays,
+      ease: 2.5,
+      due: Date.now() + intervalDays * MS,
+      reps: 1,
+    }
+    save(uid, data)
+    pushProgress(uid) // đồng bộ lịch ôn lên Supabase
+  }
+}
+
 // Cập nhật lịch ôn sau khi người dùng đánh giá 1 thẻ
 export function reviewWord(uid: string, word: string, rating: Rating) {
   const data = load(uid)

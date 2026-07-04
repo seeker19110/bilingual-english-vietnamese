@@ -232,6 +232,7 @@ export default function CefrLevelPage() {
         circle={circle}
         isA={isA}
         uid={uid}
+        pool={studyPool}
         onProgress={bump}
         onBack={() => setCircle(null)}
         onOpenDialogue={(d) => openDialogue(circle.id, d)}

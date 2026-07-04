@@ -4,7 +4,15 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 // thiếu env trong test). Chỉ cần stub pushProgress là cả chuỗi import supabase không chạy.
 vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
 
-import { addToSRS, reviewWord, getDueWords, getSRSStats, getNextReview, getLeechWords } from './srs'
+import {
+  addToSRS,
+  addToSRSKnown,
+  reviewWord,
+  getDueWords,
+  getSRSStats,
+  getNextReview,
+  getLeechWords,
+} from './srs'
 import type { DictEntry } from '../types'
 
 const W = (word: string): DictEntry => ({ word }) as DictEntry
@@ -86,5 +94,20 @@ describe('SRS — SM-2', () => {
     expect(getLeechWords('u1', [W('apple')])).toHaveLength(0) // mới 2 lần, chưa phải leech
     reviewWord('u1', 'apple', 'again')
     expect(getLeechWords('u1', [W('apple')]).map((e) => e.word)).toContain('apple')
+  })
+
+  it('addToSRSKnown (test-out): due XA hơn addToSRS thường, KHÔNG đến hạn ngay hôm nay', () => {
+    addToSRSKnown('u1', 'apple', 7)
+    expect(getDueWords('u1', [W('apple')])).toHaveLength(0) // chưa đến hạn
+    const next = getNextReview('u1', 'apple')!.getTime()
+    expect(Math.round((next - Date.now()) / 86_400_000)).toBe(7)
+  })
+
+  it('addToSRSKnown idempotent — không ghi đè thẻ đã có tiến độ', () => {
+    addToSRSKnown('u1', 'apple', 7)
+    reviewWord('u1', 'apple', 'good')
+    const due1 = getNextReview('u1', 'apple')?.getTime()
+    addToSRSKnown('u1', 'apple', 7)
+    expect(getNextReview('u1', 'apple')?.getTime()).toBe(due1)
   })
 })

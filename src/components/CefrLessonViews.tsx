@@ -26,6 +26,8 @@ import {
   Pause,
   Square,
   Volume2,
+  Zap,
+  RotateCcw,
 } from 'lucide-react'
 import {
   speak,
@@ -45,7 +47,7 @@ import type { Dialogue } from '../data/dialogues'
 import { getDialogues } from '../data/dialoguesLoader'
 import type { DictEntry } from '../types'
 import { getLearnedWords, markLearned } from '../lib/vocab'
-import { addToSRS } from '../lib/srs'
+import { addToSRS, addToSRSKnown } from '../lib/srs'
 import { bumpDailyLearned } from '../lib/curriculum'
 import { markStudiedToday } from '../lib/storage'
 import { isGrammarDone, markGrammarDone, unmarkGrammarDone } from '../lib/cefrProgress'
@@ -259,10 +261,42 @@ export function QuizCard({ item, isA }: { item: QuizItem; isA: boolean }) {
 }
 
 // ── Flashcard cho 1 vòng từ vựng (gắn vào lộ trình) ───────────────────────────
+// ── Test-out: "Tôi đã biết vòng này" — quiz nhanh thay vì lật từng thẻ ────────
+// Cho người đã biết sẵn từ vựng (VD: đã học tiếng Anh trước đó) bỏ qua lật thẻ.
+// Đúng ≥90% → đánh dấu CẢ VÒNG đã thuộc, vào SRS với interval dài (7 ngày, xem
+// addToSRSKnown) — KHÔNG tính vào bộ đếm học/ngày (không phải từ mới học).
+const TESTOUT_QUIZ_SIZE = 10
+const TESTOUT_CHOICES = 4
+const TESTOUT_PASS_RATIO = 0.9
+
+interface TestOutQ {
+  word: string
+  correct: string
+  options: string[]
+}
+
+function buildTestOutQuiz(circleWords: DictEntry[], pool: DictEntry[]): TestOutQ[] {
+  const size = Math.min(TESTOUT_QUIZ_SIZE, circleWords.length)
+  const qs = [...circleWords].sort(() => Math.random() - 0.5).slice(0, size)
+  const meanings = pool.map((w) => w.vi)
+  return qs.map((q) => {
+    const wrongs = meanings
+      .filter((m) => m !== q.vi)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, TESTOUT_CHOICES - 1)
+    return {
+      word: q.word,
+      correct: q.vi,
+      options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5),
+    }
+  })
+}
+
 export function VocabFlash({
   circle,
   isA,
   uid,
+  pool,
   onProgress,
   onBack,
   onOpenDialogue,
@@ -270,6 +304,7 @@ export function VocabFlash({
   circle: Circle
   isA: boolean
   uid: string
+  pool: DictEntry[]
   onProgress: () => void
   onBack: () => void
   onOpenDialogue: (d: Dialogue) => void
@@ -290,6 +325,44 @@ export function VocabFlash({
     getDialogues(circle.id).then(setDialogues)
   }, [circle.id])
 
+  // Test-out ("Tôi đã biết vòng này")
+  const [testOutMode, setTestOutMode] = useState<'quiz' | 'passed' | 'failed' | null>(null)
+  const [testOutQs, setTestOutQs] = useState<TestOutQ[]>([])
+  const [testOutIdx, setTestOutIdx] = useState(0)
+  const [testOutSel, setTestOutSel] = useState<string | null>(null)
+  const [testOutAns, setTestOutAns] = useState<boolean[]>([])
+
+  function startTestOut() {
+    setTestOutQs(buildTestOutQuiz(circle.words, pool))
+    setTestOutIdx(0)
+    setTestOutSel(null)
+    setTestOutAns([])
+    setTestOutMode('quiz')
+  }
+
+  function testOutNext() {
+    const q = testOutQs[testOutIdx]
+    if (!q) return
+    const newAns = [...testOutAns, testOutSel === q.correct]
+    if (testOutIdx + 1 >= testOutQs.length) {
+      const passed = newAns.filter(Boolean).length >= Math.ceil(newAns.length * TESTOUT_PASS_RATIO)
+      if (passed) {
+        for (const w of circle.words) {
+          markLearned(uid, w.word)
+          addToSRSKnown(uid, w.word)
+        }
+        markStudiedToday(uid) // ghi nhận có học hôm nay → tính streak (đồng bộ server)
+        onProgress()
+      }
+      setTestOutAns(newAns)
+      setTestOutMode(passed ? 'passed' : 'failed')
+    } else {
+      setTestOutAns(newAns)
+      setTestOutIdx((i) => i + 1)
+      setTestOutSel(null)
+    }
+  }
+
   function learn() {
     if (!card) return
     markLearned(uid, card.word)
@@ -298,6 +371,111 @@ export function VocabFlash({
     markStudiedToday(uid) // ghi nhận có học hôm nay → tính streak (đồng bộ server)
     onProgress()
     setIdx((i) => i + 1)
+  }
+
+  if (testOutMode === 'quiz') {
+    const q = testOutQs[testOutIdx]
+    if (!q) return null
+    return (
+      <div className="animate-fade-in space-y-4">
+        <div className="flex items-center justify-between text-xs text-zinc-400 mb-1">
+          <span className="text-violet-400 font-medium">
+            {isA ? 'Kiểm tra "Đã biết vòng này"' : 'Test-out quiz'}
+          </span>
+          <span>
+            {testOutIdx + 1}/{testOutQs.length}
+          </span>
+        </div>
+        <div className="h-1 bg-zinc-800 rounded-full">
+          <div
+            className="h-full bg-violet-500 rounded-full transition-all"
+            style={{ width: `${(testOutIdx / testOutQs.length) * 100}%` }}
+          />
+        </div>
+        <div className="text-center py-4">
+          <p className="text-xs text-zinc-400 mb-3 uppercase tracking-wide">
+            {isA ? 'Nghĩa tiếng Việt của từ này là?' : 'Vietnamese meaning?'}
+          </p>
+          <p className="text-4xl font-bold text-white">{q.word}</p>
+        </div>
+        <div className="space-y-2.5">
+          {q.options.map((opt) => {
+            let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
+            if (testOutSel !== null) {
+              if (opt === q.correct) cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300'
+              else if (opt === testOutSel) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
+              else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
+            }
+            return (
+              <button
+                key={opt}
+                onClick={() => {
+                  if (testOutSel === null) setTestOutSel(opt)
+                }}
+                className={`w-full text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
+              >
+                {opt}
+              </button>
+            )
+          })}
+        </div>
+        {testOutSel !== null && (
+          <button
+            onClick={testOutNext}
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-violet-500 hover:bg-violet-400 text-white font-semibold transition animate-fade-in"
+          >
+            {testOutIdx + 1 >= testOutQs.length
+              ? isA
+                ? 'Xem kết quả'
+                : 'See results'
+              : isA
+                ? 'Câu tiếp theo'
+                : 'Next'}
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+    )
+  }
+
+  if (testOutMode === 'passed' || testOutMode === 'failed') {
+    const score = testOutAns.filter(Boolean).length
+    const passed = testOutMode === 'passed'
+    return (
+      <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-3">
+        <p className="text-4xl">{passed ? '🏆' : '📚'}</p>
+        <p className="text-white font-semibold">
+          {passed
+            ? isA
+              ? `Chính xác! ${score}/${testOutAns.length} — đã đánh dấu cả vòng là đã thuộc`
+              : `Nice! ${score}/${testOutAns.length} — whole set marked as known`
+            : isA
+              ? `${score}/${testOutAns.length} — cần đúng ≥90% để qua vòng`
+              : `${score}/${testOutAns.length} — need ≥90% to test out`}
+        </p>
+        {!passed && (
+          <p className="text-sm text-zinc-400">
+            {isA ? 'Học lần lượt từng thẻ bên dưới nhé!' : "Let's go through the flashcards!"}
+          </p>
+        )}
+        <div className="flex gap-3 pt-1">
+          {!passed && (
+            <button
+              onClick={startTestOut}
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium transition"
+            >
+              <RotateCcw className="w-4 h-4" /> {isA ? 'Thử lại' : 'Retry'}
+            </button>
+          )}
+          <button
+            onClick={() => (passed ? onBack() : setTestOutMode(null))}
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold transition"
+          >
+            {passed ? (isA ? 'Quay lại' : 'Back') : isA ? 'Học bình thường' : 'Learn normally'}
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -313,6 +491,16 @@ export function VocabFlash({
         <span>{circle.emoji}</span>
         <span>{isA ? circle.titleVi : circle.titleEn}</span>
       </div>
+
+      {idx === 0 && !done && pool.length >= TESTOUT_CHOICES && (
+        <button
+          onClick={startTestOut}
+          className="w-full flex items-center justify-center gap-2 mb-3 py-2.5 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 text-violet-300 text-sm font-medium transition"
+        >
+          <Zap className="w-4 h-4" />{' '}
+          {isA ? 'Tôi đã biết vòng này — kiểm tra nhanh' : 'I already know this set — quick test'}
+        </button>
+      )}
 
       {done || !card ? (
         <div className="glass rounded-xl p-8 text-center space-y-3">
