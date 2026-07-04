@@ -96,30 +96,59 @@ function buildQuiz(userId: string, pool: DictEntry[]): QuizQuestion[] {
 }
 
 // ── Tab Hôm nay ───────────────────────────────────────────────────────────────
-// Số câu mini-quiz cần đúng 100% để mở batch mới
-const MINI_QUIZ_SIZE = 5
+// Mini-quiz hỏi ĐỦ cả batch (tối đa DAILY_GOAL từ) thay vì chỉ 5 câu, để không có
+// từ nào "lọt lưới" chưa từng được kiểm tra trước khi tính là đã học (V4,
+// docs/research/cai-tien-lo-trinh-hoc.md). Trộn 2 CHIỀU: nửa EN→VI (nhìn từ, chọn
+// nghĩa — dễ hơn) và nửa VI→EN (nhìn nghĩa, chọn từ — khó hơn, đúng testing effect).
+// Cần đúng 100% để mở batch mới.
 const MINI_QUIZ_CHOICES = 4
+// Nhóm hiển thị 10 câu/"phần" cho đỡ dài mắt (không tách phiên, vẫn 1 luồng liên tục).
+const MINI_QUIZ_GROUP = 10
+
+type QuizDirection = 'en2vi' | 'vi2en'
 
 interface MiniQuizQ {
-  word: string
+  entry: DictEntry // để hiện lại flashcard khi trả lời sai
+  direction: QuizDirection
+  prompt: string
   correct: string
   options: string[]
 }
 
 function buildMiniQuiz(batch: DictEntry[], pool: DictEntry[]): MiniQuizQ[] {
-  const allMeanings = pool.map((w) => w.vi)
-  const qs = [...batch].sort(() => Math.random() - 0.5).slice(0, MINI_QUIZ_SIZE)
-  return qs.map((q) => {
-    const wrongs = allMeanings
-      .filter((m) => m !== q.vi)
+  const enPool = pool.map((w) => w.word)
+  const viPool = pool.map((w) => w.vi)
+  const shuffled = [...batch].sort(() => Math.random() - 0.5)
+  const half = Math.ceil(shuffled.length / 2)
+  const qs = shuffled.map((q, i): MiniQuizQ => {
+    const direction: QuizDirection = i < half ? 'en2vi' : 'vi2en'
+    if (direction === 'en2vi') {
+      const wrongs = viPool
+        .filter((m) => m !== q.vi)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, MINI_QUIZ_CHOICES - 1)
+      return {
+        entry: q,
+        direction,
+        prompt: q.word,
+        correct: q.vi,
+        options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5),
+      }
+    }
+    const wrongs = enPool
+      .filter((w) => w !== q.word)
       .sort(() => Math.random() - 0.5)
       .slice(0, MINI_QUIZ_CHOICES - 1)
     return {
-      word: q.word,
-      correct: q.vi,
-      options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5),
+      entry: q,
+      direction,
+      prompt: q.vi,
+      correct: q.word,
+      options: [q.word, ...wrongs].sort(() => Math.random() - 0.5),
     }
   })
+  // Trộn lại thứ tự câu hỏi để 2 chiều xen kẽ ngẫu nhiên, không dồn thành 2 khối.
+  return qs.sort(() => Math.random() - 0.5)
 }
 
 type TodayPhase = 'learning' | 'batch-done' | 'mini-quiz' | 'daily-max'
@@ -330,6 +359,8 @@ export function TodayLesson({
   const [quizSel, setQuizSel] = useState<string | null>(null)
   const [quizAns, setQuizAns] = useState<boolean[]>([])
   const [quizDone, setQuizDone] = useState(false)
+  // Trả lời sai → hiện lại flashcard của từ đó trước khi cho qua câu tiếp theo.
+  const [reviewCard, setReviewCard] = useState<DictEntry | null>(null)
 
   const progress = useMemo(() => getPathProgress(getLearnedWords(uid)), [uid])
   const card = batch[idx]
@@ -375,21 +406,34 @@ export function TodayLesson({
     setQuizSel(null)
     setQuizAns([])
     setQuizDone(false)
+    setReviewCard(null)
     setPhase('mini-quiz')
+  }
+
+  function advanceQuiz() {
+    if (quizIdx + 1 >= quizQs.length) {
+      setQuizDone(true)
+    } else {
+      setQuizIdx((i) => i + 1)
+      setQuizSel(null)
+    }
   }
 
   function quizNext() {
     const q = quizQs[quizIdx]
     if (!q) return
     const ok = quizSel === q.correct
-    const newAns = [...quizAns, ok]
-    setQuizAns(newAns)
-    if (quizIdx + 1 >= quizQs.length) {
-      setQuizDone(true)
-    } else {
-      setQuizIdx((q) => q + 1)
-      setQuizSel(null)
+    setQuizAns((prev) => [...prev, ok])
+    if (!ok) {
+      setReviewCard(q.entry) // sai → hiện lại flashcard của từ này trước khi qua câu tiếp theo
+      return
     }
+    advanceQuiz()
+  }
+
+  function continueAfterReview() {
+    setReviewCard(null)
+    advanceQuiz()
   }
 
   function unlockNextBatch() {
@@ -510,12 +554,43 @@ export function TodayLesson({
       )
     }
 
+    // Trả lời sai → hiện lại flashcard của từ đó NGAY trước khi qua câu tiếp theo
+    // (testing effect: sửa lỗi ngay lúc còn nhớ ngữ cảnh câu hỏi).
+    if (reviewCard) {
+      return (
+        <div className="animate-fade-in space-y-4">
+          <div className="glass rounded-xl px-4 py-3 text-center">
+            <p className="text-sm text-rose-300 font-medium">
+              {isA
+                ? 'Chưa đúng — xem lại từ này rồi tiếp tục nhé'
+                : 'Not quite — review then continue'}
+            </p>
+          </div>
+          <WordCard
+            key={reviewCard.word}
+            card={reviewCard}
+            isA={isA}
+            uid={uid}
+            onUpdate={onProgress}
+          />
+          <button
+            onClick={continueAfterReview}
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-violet-500 hover:bg-violet-400 text-white font-semibold transition"
+          >
+            {isA ? 'Tiếp tục' : 'Continue'} <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      )
+    }
+
     if (!q) return null // quizIdx luôn hợp lệ ở nhánh này; guard để TS narrow kiểu
     return (
       <div className="animate-fade-in space-y-4">
         <div className="flex items-center justify-between text-xs text-zinc-400 mb-1">
           <span className="text-violet-400 font-medium">
             {isA ? 'Kiểm tra mở batch mới' : 'Quiz to unlock next batch'}
+            {quizQs.length > MINI_QUIZ_GROUP &&
+              ` · ${isA ? 'Phần' : 'Part'} ${Math.floor(quizIdx / MINI_QUIZ_GROUP) + 1}/${Math.ceil(quizQs.length / MINI_QUIZ_GROUP)}`}
           </span>
           <span>
             {quizIdx + 1}/{quizQs.length}
@@ -529,9 +604,15 @@ export function TodayLesson({
         </div>
         <div className="text-center py-4">
           <p className="text-xs text-zinc-400 mb-3 uppercase tracking-wide">
-            {isA ? 'Nghĩa tiếng Việt của từ này là?' : 'Vietnamese meaning?'}
+            {q.direction === 'en2vi'
+              ? isA
+                ? 'Nghĩa tiếng Việt của từ này là?'
+                : 'Vietnamese meaning?'
+              : isA
+                ? 'Từ tiếng Anh có nghĩa này là?'
+                : 'English word for this meaning?'}
           </p>
-          <p className="text-4xl font-bold text-white">{q.word}</p>
+          <p className="text-4xl font-bold text-white">{q.prompt}</p>
         </div>
         <div className="space-y-2.5">
           {q.options.map((opt) => {
