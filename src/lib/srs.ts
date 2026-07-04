@@ -11,7 +11,15 @@ export interface SRSCard {
   ease: number // hệ số dễ (1.3 – 2.5)
   due: number // Unix ms — thời điểm cần ôn lại
   reps: number // tổng số lần đã ôn
+  lapses?: number // số lần bấm "Quên" — thẻ cũ chưa có coi như 0
 }
+
+// Từ ≥3 lần "Quên" bị xem là "leech" — tự động xếp vào diện cần chú ý (tab Từ khó).
+const LEECH_THRESHOLD = 3
+
+// Cap số thẻ ôn mỗi phiên để tránh dồn quá nhiều sau khi nghỉ vài ngày —
+// dễ ngợp và bỏ học (theo nghiên cứu Duolingo về lý do bỏ học).
+export const SRS_SESSION_CAP = 30
 
 export type Rating = 'again' | 'hard' | 'good' | 'easy'
 
@@ -53,6 +61,7 @@ export function reviewWord(uid: string, word: string, rating: Rating) {
     case 'again':
       card.interval = 0
       card.ease = Math.max(1.3, card.ease - 0.2)
+      card.lapses = (card.lapses ?? 0) + 1
       break
     case 'hard':
       card.interval = Math.max(1, Math.round(card.interval * 1.2))
@@ -78,14 +87,31 @@ export function reviewWord(uid: string, word: string, rating: Rating) {
   pushProgress(uid) // đồng bộ lịch ôn lên Supabase
 }
 
-// Lấy các từ đến hạn ôn hôm nay
-export function getDueWords(uid: string, words: DictEntry[]): DictEntry[] {
+// Lấy các từ đến hạn ôn hôm nay.
+// `limit`: cap số thẻ trả về (mặc định không cap — dùng cho đếm badge/thống kê),
+// ưu tiên thẻ quá hạn LÂU NHẤT rồi tới ease THẤP NHẤT trước, tránh cảm giác ngợp
+// khi danh sách due dồn lại sau vài ngày nghỉ (chỉ áp khi gọi có limit, ví dụ
+// phiên ôn thật trong SRSReview).
+export function getDueWords(uid: string, words: DictEntry[], limit?: number): DictEntry[] {
   const data = load(uid)
   const now = Date.now()
-  return words.filter((w) => {
+  const due = words.filter((w) => {
     const c = data[w.word.toLowerCase()]
     return c && c.due <= now
   })
+  if (limit == null) return due
+  const sorted = [...due].sort((a, b) => {
+    const ca = data[a.word.toLowerCase()]!
+    const cb = data[b.word.toLowerCase()]!
+    return ca.due - cb.due || ca.ease - cb.ease
+  })
+  return sorted.slice(0, limit)
+}
+
+// Từ bị đánh "Quên" ≥3 lần — tự động coi là "leech", cần chú ý thêm (tab Từ khó).
+export function getLeechWords(uid: string, words: DictEntry[]): DictEntry[] {
+  const data = load(uid)
+  return words.filter((w) => (data[w.word.toLowerCase()]?.lapses ?? 0) >= LEECH_THRESHOLD)
 }
 
 // Thống kê SRS của user

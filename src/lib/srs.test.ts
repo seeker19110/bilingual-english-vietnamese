@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 // thiếu env trong test). Chỉ cần stub pushProgress là cả chuỗi import supabase không chạy.
 vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
 
-import { addToSRS, reviewWord, getDueWords, getSRSStats, getNextReview } from './srs'
+import { addToSRS, reviewWord, getDueWords, getSRSStats, getNextReview, getLeechWords } from './srs'
 import type { DictEntry } from '../types'
 
 const W = (word: string): DictEntry => ({ word }) as DictEntry
@@ -59,5 +59,32 @@ describe('SRS — SM-2', () => {
 
   it('getNextReview trả null cho từ chưa vào SRS', () => {
     expect(getNextReview('u1', 'unknown')).toBeNull()
+  })
+
+  it('getDueWords với limit: cap số thẻ + ưu tiên thẻ quá hạn lâu nhất trước', () => {
+    vi.useFakeTimers()
+    const base = new Date('2026-01-10T00:00:00Z')
+    vi.setSystemTime(base)
+    addToSRS('u1', 'apple') // due = base (quá hạn lâu nhất)
+    vi.setSystemTime(new Date(base.getTime() + 1000))
+    addToSRS('u1', 'banana') // due sau apple 1s
+    vi.setSystemTime(new Date(base.getTime() + 2000))
+    addToSRS('u1', 'cherry') // due sau cùng
+    vi.setSystemTime(new Date(base.getTime() + 3000)) // cả 3 đều đến hạn lúc này
+
+    const words = [W('cherry'), W('banana'), W('apple')]
+    const capped = getDueWords('u1', words, 2)
+    expect(capped.map((e) => e.word)).toEqual(['apple', 'banana']) // quá hạn lâu nhất trước
+    expect(getDueWords('u1', words).length).toBe(3) // không limit → trả hết
+    vi.useRealTimers()
+  })
+
+  it('getLeechWords: từ bị "Quên" ≥3 lần tự vào diện leech', () => {
+    addToSRS('u1', 'apple')
+    reviewWord('u1', 'apple', 'again')
+    reviewWord('u1', 'apple', 'again')
+    expect(getLeechWords('u1', [W('apple')])).toHaveLength(0) // mới 2 lần, chưa phải leech
+    reviewWord('u1', 'apple', 'again')
+    expect(getLeechWords('u1', [W('apple')]).map((e) => e.word)).toContain('apple')
   })
 })

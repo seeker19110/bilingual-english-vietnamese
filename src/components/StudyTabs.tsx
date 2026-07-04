@@ -30,7 +30,15 @@ import WordCard from './WordCard'
 import type { DictEntry } from '../types'
 import { markStudiedToday } from '../lib/storage'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
-import { addToSRS, reviewWord, getDueWords, getSRSStats, type Rating } from '../lib/srs'
+import {
+  addToSRS,
+  reviewWord,
+  getDueWords,
+  getSRSStats,
+  getLeechWords,
+  SRS_SESSION_CAP,
+  type Rating,
+} from '../lib/srs'
 import {
   DAILY_GOAL,
   DAILY_MAX,
@@ -624,20 +632,35 @@ export function TodayLesson({
 }
 
 // ── Tab Ôn SRS ────────────────────────────────────────────────────────────────
+// `pool` = TOÀN BỘ từ đã học (mọi cấp + Mở rộng) — mặc định ôn theo pool này để
+// không bỏ sót từ cấp khác đến hạn. `levelPool` = riêng từ vựng của cấp đang mở,
+// dùng khi người dùng bật lọc "Chỉ cấp này". Mỗi phiên cap SRS_SESSION_CAP thẻ,
+// ưu tiên thẻ quá hạn lâu nhất, để tránh cảm giác ngợp khi quay lại sau vài ngày.
 export function SRSReview({
   uid,
   isA,
   pool,
+  levelPool,
   onUpdate,
 }: {
   uid: string
   isA: boolean
   pool: DictEntry[]
+  levelPool: DictEntry[]
   onUpdate: () => void
 }) {
-  const [due, setDue] = useState<DictEntry[]>(() => getDueWords(uid, pool))
+  const [onlyThisLevel, setOnlyThisLevel] = useState(false)
+  const activePool = onlyThisLevel ? levelPool : pool
+  const [due, setDue] = useState<DictEntry[]>(() => getDueWords(uid, activePool, SRS_SESSION_CAP))
   const [idx, setIdx] = useState(0)
   const [sessionDone, setDone] = useState(0)
+
+  function toggleScope() {
+    const next = !onlyThisLevel
+    setOnlyThisLevel(next)
+    setDue(getDueWords(uid, next ? levelPool : pool, SRS_SESSION_CAP))
+    setIdx(0)
+  }
 
   const card = due[idx]
 
@@ -649,7 +672,7 @@ export function SRSReview({
     const nextIdx = idx + 1
     if (nextIdx >= due.length) {
       // Kiểm tra xem còn thẻ "again" nào đến hạn không
-      const remaining = getDueWords(uid, pool)
+      const remaining = getDueWords(uid, activePool, SRS_SESSION_CAP)
       setDue(remaining)
       setIdx(0)
     } else {
@@ -658,6 +681,22 @@ export function SRSReview({
   }
 
   const stats = getSRSStats(uid)
+  const totalDue = getDueWords(uid, activePool).length
+
+  const scopeToggle = (
+    <button
+      onClick={toggleScope}
+      className="text-xs text-zinc-400 hover:text-zinc-200 underline underline-offset-2 transition"
+    >
+      {onlyThisLevel
+        ? isA
+          ? 'Đang lọc: chỉ cấp này — bấm để ôn tất cả'
+          : 'Filter: this level only — tap for all levels'
+        : isA
+          ? 'Đang ôn: tất cả các cấp — bấm để chỉ lọc cấp này'
+          : 'Reviewing: all levels — tap to filter this level'}
+    </button>
+  )
 
   if (!card) {
     return (
@@ -669,8 +708,8 @@ export function SRSReview({
               ? 'Ôn tập xong hôm nay!'
               : 'All caught up!'
             : isA
-              ? 'Không có từ nào của phần này cần ôn hôm nay'
-              : 'No words due today in this level'}
+              ? 'Không có từ nào cần ôn hôm nay'
+              : 'No words due today'}
         </p>
         {sessionDone > 0 && (
           <p className="text-sm text-zinc-400">
@@ -687,6 +726,9 @@ export function SRSReview({
             </p>
           )}
         </div>
+        {levelPool.length > 0 && levelPool.length !== pool.length && (
+          <div className="pt-1">{scopeToggle}</div>
+        )}
       </div>
     )
   }
@@ -697,6 +739,7 @@ export function SRSReview({
         <span>{isA ? 'Ôn SRS' : 'SRS Review'}</span>
         <span>
           {idx + 1}/{due.length} {isA ? 'cần ôn' : 'due'}
+          {totalDue > due.length ? ` (${totalDue} ${isA ? 'tổng' : 'total'})` : ''}
         </span>
       </div>
       <div className="h-1 bg-zinc-800 rounded-full mb-4">
@@ -750,11 +793,16 @@ export function SRSReview({
           ? 'Quên → ôn sớm   ·   Dễ → ôn sau lâu hơn'
           : 'Again = review soon  ·  Easy = review later'}
       </p>
+      {levelPool.length > 0 && levelPool.length !== pool.length && (
+        <p className="text-center mt-2">{scopeToggle}</p>
+      )}
     </div>
   )
 }
 
 // ── Tab Từ khó ────────────────────────────────────────────────────────────────
+// Gồm từ đánh dấu ⭐ thủ công VÀ "leech" tự động (≥3 lần bấm "Quên" ở SRS) —
+// cả 2 loại đều cần chú ý thêm nên gộp chung 1 danh sách.
 export function HardWords({
   uid,
   isA,
@@ -767,10 +815,13 @@ export function HardWords({
   onUpdate: () => void
 }) {
   const [hardSet, setHardSet] = useState(() => getDifficultWords(uid))
-  const hardWords = useMemo(
-    () => pool.filter((w) => hardSet.has(w.word.toLowerCase())),
-    [pool, hardSet],
-  )
+  const leechWords = useMemo(() => getLeechWords(uid, pool), [uid, pool])
+  const hardWords = useMemo(() => {
+    const leechKeys = new Set(leechWords.map((w) => w.word.toLowerCase()))
+    return pool.filter(
+      (w) => hardSet.has(w.word.toLowerCase()) || leechKeys.has(w.word.toLowerCase()),
+    )
+  }, [pool, hardSet, leechWords])
   const [idx, setIdx] = useState(0)
 
   function refresh() {
