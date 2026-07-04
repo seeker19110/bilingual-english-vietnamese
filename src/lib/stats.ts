@@ -9,7 +9,7 @@ import type { CefrLevel } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
 import { getWritingSubs } from './storage'
 import { parseJson } from './ai'
-import { vnDateStr } from './date'
+import { vnDateStr, vnDayOfWeek } from './date'
 
 const DAY_MS = 86_400_000
 const dayStr = vnDateStr
@@ -46,7 +46,7 @@ export function getActivity7Days(uid: string): DayActivity[] {
   for (let i = 6; i >= 0; i--) {
     const d = new Date(today.getTime() - i * DAY_MS)
     const count = usageTotal(readUsage(uid, dayStr(d)))
-    out.push({ date: dayStr(d), dow: d.getDay(), count, active: count > 0 })
+    out.push({ date: dayStr(d), dow: vnDayOfWeek(d), count, active: count > 0 })
   }
   return out
 }
@@ -72,7 +72,7 @@ export function getActivityCalendar(uid: string, totalDays = 35): ActivityCalend
   for (let i = totalDays - 1; i >= 0; i--) {
     const d = new Date(today.getTime() - i * DAY_MS)
     const count = usageTotal(readUsage(uid, dayStr(d)))
-    days.push({ date: dayStr(d), dow: d.getDay(), count, active: count > 0 })
+    days.push({ date: dayStr(d), dow: vnDayOfWeek(d), count, active: count > 0 })
   }
   // Đổi getDay() (0 = CN) sang chỉ số cột bắt đầu từ Thứ 2 (0 = T2 … 6 = CN).
   const firstColumn = ((days[0]?.dow ?? 0) + 6) % 7

@@ -13,3 +13,12 @@ const VN_OFFSET_MS = 7 * 60 * 60 * 1000
 export function vnDateStr(d: Date = new Date()): string {
   return new Date(d.getTime() + VN_OFFSET_MS).toISOString().slice(0, 10)
 }
+
+// Thứ trong tuần (0 = Chủ nhật … 6 = Thứ bảy) THEO GIỜ VIỆT NAM của thời điểm `d`.
+// Dùng .getUTCDay() trên thời điểm đã dịch +7h — cùng cách tính với vnDateStr() — để
+// nhãn "thứ" trên biểu đồ luôn khớp với ngày (YYYY-MM-DD) hiển thị, bất kể múi giờ của
+// trình duyệt người xem là gì. Nếu dùng d.getDay() (thứ theo giờ LOCAL của trình duyệt)
+// thì người xem ở múi giờ khác VN có thể thấy nhãn thứ lệch 1 ngày so với ngày thực tế.
+export function vnDayOfWeek(d: Date = new Date()): number {
+  return new Date(d.getTime() + VN_OFFSET_MS).getUTCDay()
+}

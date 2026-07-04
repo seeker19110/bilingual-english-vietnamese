@@ -62,6 +62,14 @@ export default defineConfig(({ mode }) => {
         output: {
           // Chiến lược chunk thông minh: nhóm vendor theo tính năng, tránh duplicate code
           manualChunks(id) {
+            // Nhóm riêng: Sentry (error tracking) — CHỈ tải khi thực sự cần (dynamic import
+            // trong lib/errorTracking.ts, chỉ chạy khi có VITE_SENTRY_DSN). Tách chunk riêng
+            // để KHÔNG bị gộp vào vendor-misc (đang tải eager lúc khởi động) — nếu gộp chung,
+            // Sentry sẽ luôn nằm trong bundle đầu tiên dù không dùng, vượt ngân sách size-limit
+            // (.size-limit.json chỉ đo index/vendor-core/vendor-supabase/vendor-ui/vendor-misc).
+            if (id.includes('node_modules/@sentry')) {
+              return 'vendor-sentry'
+            }
             // Nhóm 1: React + Router (core framework)
             if (
               id.includes('node_modules/react') ||
