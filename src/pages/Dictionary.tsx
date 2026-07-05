@@ -24,7 +24,7 @@ import type { DictEntry } from '../types'
 import { searchDictionary, fetchWordOfDay } from '../lib/dictionaryApi'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
-import { POS_LABEL, POS_COLOR, POS_LIST } from '../lib/pos'
+import { POS_LABEL, POS_COLOR, POS_LIST, LEVEL_COLOR } from '../lib/pos'
 import { getLearnedWords } from '../lib/vocab'
 import { loadCurriculum, getTodayBatch } from '../lib/curriculum'
 
@@ -300,7 +300,7 @@ export default function Dictionary() {
                     aria-pressed={!posFilter}
                     className={`text-xs px-2.5 py-1 rounded-full border transition ${
                       !posFilter
-                        ? 'bg-accent-500/20 text-accent-300 border-accent-500/40'
+                        ? 'bg-accent-500/20 text-accent-300 theme-light:text-accent-800 border-accent-500/40'
                         : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                     }`}
                   >
@@ -398,6 +398,14 @@ export default function Dictionary() {
                               >
                                 {POS_LABEL[e.pos] || e.pos}
                               </button>
+                              {e.level && (
+                                <span
+                                  title={isA ? `Cấp CEFR ${e.level}` : `CEFR level ${e.level}`}
+                                  className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${LEVEL_COLOR[e.level] ?? 'bg-zinc-700 text-zinc-300 theme-light:text-zinc-100'}`}
+                                >
+                                  {e.level}
+                                </span>
+                              )}
                               <PronounceButton word={e.word} />
                               {isLearned && (
                                 <span className="flex items-center gap-0.5 text-[11px] text-accent-400 ml-auto">
@@ -436,7 +444,7 @@ export default function Dictionary() {
                                     <KaraokeText
                                       text={e.ex_en}
                                       lang="en-US"
-                                      textClass="text-xs text-accent-300/80 italic leading-relaxed"
+                                      textClass="text-xs text-accent-300/80 theme-light:text-accent-800 italic leading-relaxed"
                                       buttonClass="w-full pl-7 pr-3 py-2 hover:bg-accent-500/5 active:bg-accent-500/10 text-left transition"
                                       iconSize="xs"
                                     />
@@ -462,7 +470,7 @@ export default function Dictionary() {
                                       <KaraokeText
                                         text={ex.en}
                                         lang="en-US"
-                                        textClass="text-xs text-accent-300/70 italic leading-relaxed"
+                                        textClass="text-xs text-accent-300/70 theme-light:text-accent-800 italic leading-relaxed"
                                         buttonClass="w-full pl-7 pr-3 py-1.5 hover:bg-accent-500/5 active:bg-accent-500/10 text-left transition"
                                         iconSize="xs"
                                       />

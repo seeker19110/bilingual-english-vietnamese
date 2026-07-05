@@ -866,6 +866,27 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   thật sự (amazed/amazing...) — KHÔNG đụng vì có giá trị sư phạm riêng, giữ nguyên theo đúng phạm
   vi đã thống nhất.
 
+## Đã xong (badge CEFR ở trang Từ điển — 2026-07-05)
+
+- Hạ tầng dữ liệu `level` (100% từ đã gắn CEFR) có sẵn nhưng chưa hiển thị ở UI. Thêm badge cấp
+  CEFR (A1-C2) cạnh badge loại từ trong kết quả tra từ (`src/pages/Dictionary.tsx`) — chỉ hiện khi
+  `e.level` có giá trị.
+- `LEVEL_COLOR` (`src/lib/pos.ts`) dùng ĐÚNG màu accent đã gán cho A1/A2/B1/B2 ở lộ trình học
+  (xem `accent` trong `data/cefr.ts`: A1=emerald, A2=sky, B1=violet, B2=amber) để giữ màu ngữ
+  nghĩa nhất quán toàn app (CLAUDE.md mục 4.8); C1/C2 dùng rose/cyan (2 màu chưa dùng cho pos/level
+  nào khác, tránh trùng màu "idiom" đã là fuchsia).
+- **Phát hiện thêm 1 lỗi a11y có sẵn TỪ TRƯỚC** khi tự viết E2E tạm để kiểm contrast badge mới:
+  gate a11y chính thức (`e2e/a11y.spec.ts`) quét `/dictionary` nhưng CHƯA BAO GIỜ có kết quả tìm
+  kiếm thật trong lúc quét (không mock `/api/dictionary` hay chunk tĩnh) → 2 lỗi `color-contrast`
+  ở theme sáng (Blue sky/Pink) lọt lưới bấy lâu: (1) câu ví dụ tiếng Anh trong kết quả tra từ
+  (`text-accent-300/80` và `/70`, 2 chỗ ở `KaraokeText`) thiếu `theme-light:text-accent-800`;
+  (2) chip lọc loại từ "Tất cả" ở trạng thái đang chọn cũng thiếu `theme-light:text-accent-800`.
+  Đã sửa cả 3 chỗ, tự viết E2E tạm (mock chunk từ điển, dựng đủ 6 cấp CEFR) kiểm lại đủ 4 theme —
+  0 critical/serious, đã xoá file test tạm sau khi xác nhận (không đưa vào gate CI vì cần
+  mock chunk tĩnh phức tạp hơn `mockClaude`, để dành nếu cần mở rộng gate sau).
+- Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.29/116 kB JS)/a11y đầy đủ
+  63 test đều xanh.
+
 ## ⏭️ Còn lại của Đợt 1 (A1-B2, chỉ còn cụm từ) + Đợt 2 (C1-C2) — làm ở phiên sau
 
 > Việc lớn, làm qua NHIỀU phiên. Nếu hit session limit giữa chừng: dừng, KHÔNG tự relaunch hàng
