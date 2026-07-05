@@ -2,12 +2,14 @@
 import { useState, useEffect, useRef } from 'react'
 
 interface UseApiThrottleOptions {
-  delayMs?: number // Khoảng thời gian giữa các lần gọi (mặc định: 10000ms = 10s)
+  delayMs?: number // Khoảng thời gian giữa các lần gọi (mặc định: 3000ms = 3s)
   onCountdown?: (remaining: number) => void // Callback mỗi khi countdown thay đổi
 }
 
+// 3s chỉ đủ chặn double-click/bão request — giới hạn lượt/ngày đã có riêng qua
+// daily_usage nên không cần throttle nặng tay hơn (đã chốt với người dùng).
 export function useApiThrottle(options: UseApiThrottleOptions = {}) {
-  const { delayMs = 10000, onCountdown } = options
+  const { delayMs = 3000, onCountdown } = options
   const [isThrottled, setIsThrottled] = useState(false)
   const [countdown, setCountdown] = useState(0)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)

@@ -1,12 +1,14 @@
 import { useState, useMemo, useEffect, useRef, useDeferredValue } from 'react'
-import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
+import { Search, X, ChevronRight, Loader2, Play } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import { useLang } from '../context/useLang'
+import { useAuth } from '../context/useAuth'
 import KaraokeText from '../components/KaraokeText'
 import VoiceToggle from '../components/VoiceToggle'
 import { loadIndex, loadSubject } from '../data/patterns/loader'
 import type { SubjectMeta, Subject } from '../data/patterns/loader'
+import { getViewedIds, markViewed } from '../lib/viewedTracking'
 
 const PAGE_SIZE = 7
 
@@ -192,6 +194,8 @@ function interleave(items: SubjectMeta[]): SubjectMeta[] {
 
 export default function CommonPhrases() {
   const { T } = useLang()
+  const { user } = useAuth()
+  const uid = user?.id ?? ''
 
   const [indexData, setIndexData] = useState<SubjectMeta[]>([])
   const [search, setSearch] = useState('')
@@ -201,10 +205,21 @@ export default function CommonPhrases() {
   const [selected, setSelected] = useState<Subject | null>(null)
   const [loading, setLoading] = useState(false)
   const sentinelRef = useRef<HTMLDivElement>(null)
+  // Khóa invalidation thủ công cho Set "đã xem" — bump() sau khi mở 1 chủ đề để
+  // CTA "Tiếp tục" tính lại đúng khi quay lại danh sách.
+  const [viewedRefresh, setViewedRefresh] = useState(0)
 
   useEffect(() => {
     loadIndex().then(setIndexData)
   }, [])
+
+  // Chủ đề đầu tiên (theo thứ tự danh sách gốc) CHƯA xem — gợi ý "Tiếp tục".
+  const nextUnviewed = useMemo(() => {
+    if (!uid || indexData.length === 0) return null
+    const viewed = getViewedIds('phrases', uid)
+    return indexData.find((m) => !viewed.has(m.starter)) ?? null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uid, indexData, viewedRefresh])
 
   const filtered = useMemo(() => {
     let list = indexData
@@ -249,6 +264,10 @@ export default function CommonPhrases() {
     setSelected(subj)
     setLoading(false)
     window.scrollTo({ top: 0 })
+    if (uid) {
+      markViewed('phrases', uid, meta.starter)
+      setViewedRefresh((k) => k + 1)
+    }
   }
 
   // ── Màn hình chi tiết: 100 câu của 1 chủ thể ──────────────────────
@@ -305,6 +324,24 @@ export default function CommonPhrases() {
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:py-6 space-y-4">
           {/* Tiêu đề trang — đặt ngay dưới AppHeader, cỡ chữ lớn */}
           <PageHeader title={T.phrasesPageTitle} subtitle={T.phrasesPageSub} />
+
+          {/* Gợi ý "Tiếp tục" — chủ đề đầu tiên chưa xem, ẩn khi đang tìm kiếm */}
+          {nextUnviewed && !search.trim() && (
+            <button
+              onClick={() => openSubject(nextUnviewed)}
+              className="w-full flex items-center gap-3 bg-accent-500/10 hover:bg-accent-500/15 border border-accent-500/30 rounded-2xl px-4 py-3 transition text-left"
+            >
+              <div className="w-9 h-9 rounded-xl bg-accent-500/20 flex items-center justify-center shrink-0">
+                <Play className="w-4 h-4 text-accent-400 theme-light:text-accent-800" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-accent-400 theme-light:text-accent-800 font-medium">
+                  {T.phrasesContinue}
+                </p>
+                <p className="text-sm font-semibold text-white truncate">{nextUnviewed.starter}</p>
+              </div>
+            </button>
+          )}
 
           {/* Ô tìm kiếm — chỉ hiện ở trên trên desktop */}
           <div className="hidden sm:block relative">

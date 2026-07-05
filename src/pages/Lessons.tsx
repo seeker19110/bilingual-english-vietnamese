@@ -6,6 +6,8 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import VoiceToggle from '../components/VoiceToggle'
 import { getDirection } from '../lib/storage'
+import { useAuth } from '../context/useAuth'
+import { getViewedIds, markViewed } from '../lib/viewedTracking'
 import {
   speak,
   stopSpeaking,
@@ -143,12 +145,17 @@ const WordText = memo(function WordText({
 export default function Lessons() {
   const dir: Direction = getDirection()
   const isA = dir === 'A'
+  const { user } = useAuth()
+  const uid = user?.id ?? ''
   const [index, setIndex] = useState<LessonMeta[]>([])
   const [query, setQuery] = useState('')
   const deferredQuery = useDeferredValue(query)
   const [selectedMeta, setSelectedMeta] = useState<LessonMeta | null>(null)
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [loadingLesson, setLoadingLesson] = useState(false)
+  // Khóa invalidation thủ công cho Set "đã xem" (đọc từ localStorage) — bump()
+  // sau khi đánh dấu 1 bài để CTA "Tiếp tục bài N" tính lại đúng khi quay lại danh sách.
+  const [viewedRefresh, setViewedRefresh] = useState(0)
 
   useEffect(() => {
     loadIndex().then(setIndex)
@@ -167,10 +174,22 @@ export default function Lessons() {
         setLoadingLesson(false)
       }
     })
+    if (uid) {
+      markViewed('lessons', uid, String(selectedMeta.id))
+      setViewedRefresh((k) => k + 1)
+    }
     return () => {
       alive = false
     }
-  }, [selectedMeta])
+  }, [selectedMeta, uid])
+
+  // Bài đầu tiên (theo thứ tự danh sách) CHƯA xem — gợi ý "Tiếp tục bài N".
+  const nextUnviewed = useMemo(() => {
+    if (!uid || index.length === 0) return null
+    const viewed = getViewedIds('lessons', uid)
+    return index.find((m) => !viewed.has(String(m.id))) ?? null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uid, index, viewedRefresh])
 
   // ── Màn hình chi tiết bài học ─────────────────────────────────────────────
   if (selectedMeta) {
@@ -217,6 +236,27 @@ export default function Lessons() {
                   : 'Conversation lessons'
             }
           />
+          {/* Gợi ý "Tiếp tục bài N" — bài đầu tiên chưa xem, ẩn khi đang tìm kiếm */}
+          {nextUnviewed && !query.trim() && (
+            <button
+              onClick={() => setSelectedMeta(nextUnviewed)}
+              className="w-full flex items-center gap-3 bg-accent-500/10 hover:bg-accent-500/15 border border-accent-500/30 rounded-2xl px-4 py-3 mb-4 transition text-left"
+            >
+              <div className="w-9 h-9 rounded-xl bg-accent-500/20 flex items-center justify-center shrink-0">
+                <Play className="w-4 h-4 text-accent-400 theme-light:text-accent-800" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-accent-400 theme-light:text-accent-800 font-medium">
+                  {isA ? 'Tiếp tục' : 'Continue'}
+                </p>
+                <p className="text-sm font-semibold text-white truncate">
+                  {isA
+                    ? `Bài ${nextUnviewed.id}: ${nextUnviewed.title}`
+                    : `Lesson ${nextUnviewed.id}`}
+                </p>
+              </div>
+            </button>
+          )}
           {/* Search bar — chỉ hiện ở trên trên desktop */}
           <div className="hidden sm:block mb-4">
             <SearchBar query={query} setQuery={setQuery} isA={isA} variant="desktop" />

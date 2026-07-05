@@ -503,16 +503,14 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   (bottom-nav?, throttle 10s→3s?, vị trí thẻ Học tiếp, badge "Không giới hạn") — xem mục 5–6
   của tài liệu.
 
-## Đang làm dở — TRIỂN KHAI kế hoạch UI/UX (bắt đầu 2026-07-04, dừng giữa chừng theo yêu cầu người dùng)
+## ĐÃ XONG — TRIỂN KHAI kế hoạch UI/UX (2026-07-04 → 2026-07-05)
 
 > Người dùng đã duyệt "triển khai luôn" toàn bộ kế hoạch ở `docs/research/cai-tien-ui-ux.md`,
 > dùng phương án khuyến nghị cho cả 4 câu hỏi mở (đồng ý bottom-nav; giảm throttle 10s→3s; thẻ
 > "Học tiếp" đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng; bỏ bớt badge "Không giới hạn" dư thừa).
-> Đã merge **U-1** (phần vá nhanh + badge PR #194) + **U-2** (PR #193) + **U-3** (PR #195) +
-> **U-4** (PR #197) + **U-5 phần chính** (bottom-nav, nhánh hiện tại); còn **giảm throttle**
->
-> - phần phụ của U-5 (đánh dấu "đã xem" Lessons/CommonPhrases + nút "Tiếp tục bài N" — tách
->   riêng, xem "Còn lại" bên dưới U-5).
+> Đã merge **U-1** (PR #194) + **U-2** (PR #193) + **U-3** (PR #195) + **U-4** (PR #197) +
+> **U-5** (bottom-nav, PR #198) + **giảm throttle + "đã xem" Lessons/CommonPhrases** (nhánh
+> làm việc hiện tại) — toàn bộ kế hoạch đã triển khai xong.
 
 ### U-3 — ĐÃ LÀM (2026-07-05, nhánh làm việc hiện tại)
 
@@ -641,13 +639,27 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   fixed-position của Playwright khi chụp fullPage) — xác nhận lại bằng cuộn thật + bounding box
   thật, không có che phủ thật. Full E2E suite 73/73 xanh (68 cũ + 5 mới).
 
-### Còn lại — làm tiếp theo phiên sau
+### Giảm throttle + "đã xem" Lessons/CommonPhrases — ĐÃ LÀM (2026-07-05, nhánh làm việc hiện tại)
 
-1. **Giảm throttle chat**: `useApiThrottle.ts` — đổi `delayMs = 10000` mặc định thành `3000`
-   (đã chốt: không tăng trần chi phí vì lượt/ngày cap riêng qua `daily_usage`).
-2. **Phần phụ của U-5 (tách riêng, độc lập với bottom-nav)**: lưu Set "đã xem" cho
-   `Lessons.tsx`/`CommonPhrases.tsx` (localStorage, mẫu giống `cefrProgress.ts`) + nút "Tiếp
-   tục bài N".
+> Kế hoạch `docs/research/cai-tien-ui-ux.md` xem như đã triển khai hết (U-1 → U-5 + throttle).
+
+- **Giảm throttle**: `useApiThrottle.ts` — mặc định `delayMs` đổi từ `10000` xuống `3000`; bỏ
+  override `delayMs: 10000` tường minh ở `Chat.tsx`/`Writing.tsx`/`Speaking.tsx` (dùng chung
+  mặc định mới của hook, tránh lặp giá trị 3 nơi). Đã chốt: không tăng trần chi phí vì lượt/ngày
+  cap riêng qua `daily_usage`, throttle chỉ cần đủ chặn double-click/bão request.
+- **`lib/viewedTracking.ts` (mới)**: Set "đã xem" tổng quát theo `namespace` (readSet/writeSet
+  localStorage, mẫu giống `cefrProgress.ts`) — dùng chung cho cả Lessons và CommonPhrases thay
+  vì viết trùng 2 lần. 6 test mới (`viewedTracking.test.ts`).
+- **`Lessons.tsx`/`CommonPhrases.tsx`**: đánh dấu đã xem khi mở 1 bài/chủ đề; thẻ CTA "Tiếp tục"
+  đầu danh sách trỏ tới mục đầu tiên (theo thứ tự danh sách gốc) CHƯA xem — ẩn khi đang tìm
+  kiếm. Lessons dùng `meta.id` (số thứ tự 1..350, khớp "Bài N"); CommonPhrases dùng
+  `meta.starter` (chuỗi duy nhất, không có field id riêng).
+- 2 test E2E mới (`e2e/continue-viewing.spec.ts`): gợi ý đúng mục đầu tiên, đổi đúng sau khi
+  xem xong mục trước. Phát hiện phụ: màn chi tiết CommonPhrases chỉ có nút back ở header (về
+  thẳng Home) — không có nút "quay lại danh sách" riêng như Lessons (`LessonView`'s "←
+  Danh sách") — ghi nhận, không sửa (ngoài phạm vi đợt này).
+- Verify: typecheck/lint (0 cảnh báo)/format/test (166/166)/build/size-limit (114.33/116 kB)
+  xanh. Full E2E suite 75/75 xanh (73 cũ + 2 mới).
 
 Verify mỗi đợt như các đợt trước: typecheck/lint(0 cảnh báo)/format/test/build/size-limit
 xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
