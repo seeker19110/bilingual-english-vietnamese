@@ -11,6 +11,11 @@ export const t = {
     write: 'Viết',
     resetsAt: 'Làm mới lúc',
 
+    // BottomNav (U-5)
+    navPath: 'Lộ trình',
+    navPractice: 'Luyện tập',
+    navProgress: 'Tiến độ',
+
     // Home
     greeting: (name: string) => `Xin chào, ${name}`,
     dirLabelA: '🇻🇳 Người Việt học tiếng Anh',
@@ -162,6 +167,11 @@ export const t = {
     speak: 'Speak',
     write: 'Write',
     resetsAt: 'Resets at',
+
+    // BottomNav (U-5)
+    navPath: 'Path',
+    navPractice: 'Practice',
+    navProgress: 'Progress',
 
     // Home
     greeting: (name: string) => `Hello, ${name}`,

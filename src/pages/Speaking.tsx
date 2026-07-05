@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send, Award } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import QuickActions from '../components/QuickActions'
 import EvaluationResultView from '../components/EvaluationResultView'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
@@ -676,7 +675,7 @@ export default function Speaking() {
   const userTurns = session?.messages.filter((m) => m.role === 'user').length ?? 0
 
   return (
-    <div className="h-[100dvh] bg-zinc-950 flex flex-col">
+    <div className="h-[calc(100dvh-var(--bnav-h))] bg-zinc-950 flex flex-col">
       <Layout
         subtitle={
           session
@@ -703,10 +702,6 @@ export default function Speaking() {
             />
           </div>
           <SetupScreen onStart={startSession} dir={dir} defaultLevel={onboarding?.level} />
-          {/* Hàng hành động nhanh ở đáy màn thiết lập */}
-          <div className="max-w-md mx-auto w-full px-4 pb-8">
-            <QuickActions />
-          </div>
         </div>
       ) : evaluation ? (
         <EvaluationResultView

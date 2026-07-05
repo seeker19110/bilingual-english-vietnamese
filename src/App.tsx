@@ -7,6 +7,7 @@ import { ToastProvider } from './context/ToastProvider'
 import { useAuth } from './context/useAuth'
 import { CardListSkeleton } from './components/Skeleton'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import BottomNav from './components/BottomNav'
 import { lazyWithRetry } from './lib/lazyWithRetry'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
 // (thường do app vừa deploy bản mới, chunk cũ không còn) thay vì sập trang.
@@ -205,6 +206,7 @@ export default function App() {
                   </Routes>
                 </Suspense>
               </ErrorBoundary>
+              <BottomNav />
             </BrowserRouter>
           </ToastProvider>
         </LangProvider>

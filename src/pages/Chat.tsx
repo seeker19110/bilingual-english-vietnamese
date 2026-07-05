@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import { Send, Plus, ChevronDown, Sparkles, Award } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import QuickActions from '../components/QuickActions'
 import KaraokeText from '../components/KaraokeText'
 import EvaluationResultView from '../components/EvaluationResultView'
 import {
@@ -412,7 +411,7 @@ export default function Chat() {
   const prevSessions = getChatSessions(user.id).slice(0, 3)
 
   return (
-    <div className="h-[100dvh] bg-zinc-950 flex flex-col">
+    <div className="h-[calc(100dvh-var(--bnav-h))] bg-zinc-950 flex flex-col">
       <Layout
         subtitle={
           session
@@ -469,11 +468,6 @@ export default function Chat() {
               ))}
             </div>
           )}
-
-          {/* Hàng hành động nhanh ở đáy màn thiết lập */}
-          <div className="max-w-md mx-auto w-full px-4 pb-8">
-            <QuickActions />
-          </div>
         </div>
       ) : evaluation ? (
         <EvaluationResultView

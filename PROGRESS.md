@@ -509,8 +509,10 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 > dùng phương án khuyến nghị cho cả 4 câu hỏi mở (đồng ý bottom-nav; giảm throttle 10s→3s; thẻ
 > "Học tiếp" đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng; bỏ bớt badge "Không giới hạn" dư thừa).
 > Đã merge **U-1** (phần vá nhanh + badge PR #194) + **U-2** (PR #193) + **U-3** (PR #195) +
-> **U-4** (nhánh hiện tại); **U-5 + giảm throttle CHƯA làm** — làm tiếp theo đúng thứ tự này ở
-> phiên sau, không cần hỏi lại 4 câu đã chốt.
+> **U-4** (PR #197) + **U-5 phần chính** (bottom-nav, nhánh hiện tại); còn **giảm throttle**
+>
+> - phần phụ của U-5 (đánh dấu "đã xem" Lessons/CommonPhrases + nút "Tiếp tục bài N" — tách
+>   riêng, xem "Còn lại" bên dưới U-5).
 
 ### U-3 — ĐÃ LÀM (2026-07-05, nhánh làm việc hiện tại)
 
@@ -598,19 +600,57 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   xanh; lái app thật bằng Playwright — xác nhận tiêu đề gọn 1 dòng + QuickActions ẩn ở 4 tab
   học, "Tổng đã thuộc: 0/378" đúng tổng A1 (không phải 0/10199). Full E2E suite 68/68 xanh.
 
-### U-5 + giảm throttle — CHƯA LÀM, làm tiếp theo (U-2, U-3, U-4 đã xong, xem trên)
+### U-5 (phần chính) — ĐÃ LÀM (2026-07-05, nhánh làm việc hiện tại)
 
-1. **U-5** (đổi lớn nhất): bottom tab bar cố định 4 mục Trang chủ·Lộ trình·Luyện tập·Tiến độ
-   (component mới, thêm vào `App.tsx` ngoài `<Routes>`, chú ý `pb-safe` + không che nội dung
-   cuối trang hiện có — nhiều trang đã có thanh dưới riêng vd input Chat, cần rà từng trang);
-   dời `QuickActions` (Chia sẻ/Nhắc học) sang trang Hồ sơ/Tiến độ. Kèm: lưu Set "đã xem" cho
-   `Lessons.tsx`/`CommonPhrases.tsx` (localStorage, mẫu giống `cefrProgress.ts`) + nút "Tiếp tục
-   bài N".
-2. **Giảm throttle chat**: `useApiThrottle.ts` — đổi `delayMs = 10000` mặc định thành `3000`
+> Quyết định người dùng chốt trước khi làm: tab "Luyện tập" **nhớ chế độ dùng gần nhất**
+> (không mở sheet chọn) — Chat/Nói/Viết là 3 route độc lập, chưa có trang gộp chung.
+
+- **`components/BottomNav.tsx` (mới)**: bottom tab bar cố định 4 mục Trang chủ · Lộ trình ·
+  Luyện tập · Tiến độ — CHỈ hiện < 640px (`sm:hidden`, khớp breakpoint `sm:` Tailwind). Tab
+  "Luyện tập" đọc/ghi `et_last_practice_<uid>` (localStorage) mỗi khi vào `/chat`/`/speaking`/
+  `/writing` — bấm vào đưa thẳng tới route đã dùng gần nhất, mặc định `/chat` cho user chưa
+  từng vào. Ẩn hoàn toàn ở `/login`, `/onboarding` (kiểm tra theo path, không chỉ dựa `!user`
+  vì user context vẫn còn khi ở /onboarding). Gắn vào `App.tsx` (sibling `<Routes>`, trong
+  `<BrowserRouter>`).
+- **`index.css`**: biến `--bnav-h` (0 trên desktop, `4rem + safe-area` dưới 640px qua media
+  query khớp breakpoint `sm:`) — mọi trang dùng chung 1 biểu thức
+  `calc(...+var(--bnav-h))`/`h-[calc(100dvh-var(--bnav-h))]` mà KHÔNG cần viết class riêng cho
+  từng breakpoint (biến tự về 0 trên desktop).
+- **Rà toàn bộ trang** (nội dung/thanh dưới không bị BottomNav che — đây là rủi ro cao nhất
+  của đợt này theo tài liệu gốc):
+  - 7 trang layout cố định viewport (`h-dvh`/`h-[100dvh]`): `Chat.tsx`, `Speaking.tsx` (sticky
+    input/nút ghi âm), `Lessons.tsx`/`CommonPhrases.tsx` (cả list lẫn detail — có thanh tìm
+    kiếm cố định dưới ở list), `Dictionary.tsx` — đổi sang
+    `h-[calc(100dvh-var(--bnav-h))]`; các flex-child "dính đáy" (input/search) tự động dời
+    lên trên nav vì cả khối flex ngắn lại, không cần sửa riêng từng phần tử.
+  - 7 trang cuộn thường (`min-h-dvh`): `Home.tsx`, `CefrLevelPage.tsx`, `Dashboard.tsx`,
+    `Learn.tsx`, `Profile.tsx`, `Writing.tsx` (2 màn), `History.tsx` — thêm
+    `pb-[calc(1.5rem+var(--bnav-h))]` (hoặc tương ứng) vào `<main>`.
+- **`QuickActions`** (Chia sẻ/Nhắc học): bỏ khỏi 9 trang (Chat/Writing/Speaking/History/
+  Dictionary/Lessons/CommonPhrases/Learn/CefrLevelPage) — chỉ còn ở `Dashboard.tsx` (đã có
+  sẵn) + `Profile.tsx` (mới thêm), theo đúng đề xuất gốc "dời sang Hồ sơ/Tiến độ".
+- Nhãn "Trang chủ/Lộ trình/Luyện tập/Tiến độ" đi qua i18n (`T.home` có sẵn + 3 key mới
+  `navPath`/`navPractice`/`navProgress`) theo **ngôn ngữ giao diện**, không theo chiều học A/B
+  (tránh lặp lại lỗi đã sửa ở U-1 — xem PR #194).
+- 5 test E2E mới (`e2e/bottomnav.spec.ts`): hiện/ẩn đúng route, tab Luyện tập nhớ đúng chế độ,
+  input Chat không bị che, QuickActions đúng vị trí mới, cuộn thật xuống đáy Home vẫn bấm được
+  nút cuối trang.
+- Verify: typecheck/lint (0 cảnh báo)/format/test (160/160)/build/size-limit (114.3/116 kB —
+  tăng ~1.35kB do BottomNav + icon mới) xanh. Lái app thật bằng Playwright khổ mobile 390×844 —
+  phát hiện ban đầu dùng `fullPage` screenshot cho ảnh sai (nav "dán" giữa trang, quirk render
+  fixed-position của Playwright khi chụp fullPage) — xác nhận lại bằng cuộn thật + bounding box
+  thật, không có che phủ thật. Full E2E suite 73/73 xanh (68 cũ + 5 mới).
+
+### Còn lại — làm tiếp theo phiên sau
+
+1. **Giảm throttle chat**: `useApiThrottle.ts` — đổi `delayMs = 10000` mặc định thành `3000`
    (đã chốt: không tăng trần chi phí vì lượt/ngày cap riêng qua `daily_usage`).
+2. **Phần phụ của U-5 (tách riêng, độc lập với bottom-nav)**: lưu Set "đã xem" cho
+   `Lessons.tsx`/`CommonPhrases.tsx` (localStorage, mẫu giống `cefrProgress.ts`) + nút "Tiếp
+   tục bài N".
 
-Verify mỗi đợt như các đợt lộ trình học trước: typecheck/lint(0 cảnh báo)/format/test/build/
-size-limit xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
+Verify mỗi đợt như các đợt trước: typecheck/lint(0 cảnh báo)/format/test/build/size-limit
+xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
 
 ## Đã xong (hoàn tất đợt 4 + đợt 6 cải tiến lộ trình học — 2026-07-04)
 
