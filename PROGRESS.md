@@ -733,9 +733,9 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   Môi trường phiên làm việc hiện tại không có key AI nào (`GEMINI_API_KEY`/`GROQ_API_KEY`/
   `ANTHROPIC_API_KEY`) — đã hỏi lại người dùng, xác nhận giữ quyết định cũ: **tự chạy trên máy có
   `.env`**.
-- Zod validate input (đợt 3, tùy chọn) — cân nhắc `api/ai.ts` (logic cắt/sanitize message phức
-  tạp, cố tình lenient — giá trị thêm thấp hơn 2 đợt trước); query param của
-  `api/dictionary.ts`/`api/pronunciation.ts` đã sanitize kỹ bằng tay, giá trị thêm Zod thấp hơn.
+- ~~Zod validate input (đợt 3)~~ ĐÃ XONG (2026-07-05) — xem "Quyết định quan trọng" bên dưới.
+  Query param của `api/dictionary.ts`/`api/pronunciation.ts` vẫn giữ nguyên (đã sanitize kỹ
+  bằng tay, giá trị thêm Zod thấp — GET query, không phải JSON body).
 - a11y đã hoàn tất (gồm cả màn kết quả AI qua mock API). Không còn hạng mục a11y chừa lại.
   Nếu cần phủ thêm: trạng thái STT thật (ghi âm trình duyệt) — giá trị thấp vì luồng STT
   dùng chung UI bong bóng đã được gate qua màn kết quả Speaking.
@@ -749,10 +749,17 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   được baseline để đặt ngưỡng. `size-limit` gác kích thước bundle (đòn bẩy perf chính của SPA),
   deterministic, không cần browser, verify được cả local lẫn CI. Cân nhắc lại Lighthouse sau
   nếu chạy ổn trên runner thật.
-- Zod (validate input): trước đây đánh giá giá trị thấp (ưu tiên E2E/a11y trước) — nay bắt đầu
-  làm THEO ĐỢT NHỎ (không "big bang" cả `api/`): đợt 1 xong `stt.ts`/`tts.ts` (PR #156), đợt 2 —
-  `push.ts`, xem "Đang làm". Bản Zod dùng là v4 (`z.string({ error })`,
-  `.refine(fn, { error, params })` — khác cú pháp `message`/`errorMap` của v3).
+- Zod (validate input): trước đây đánh giá giá trị thấp (ưu tiên E2E/a11y trước) — làm THEO ĐỢT
+  NHỎ (không "big bang" cả `api/`): đợt 1 `stt.ts`/`tts.ts` (PR #156), đợt 2 `push.ts`, **đợt 3
+  (cuối) — `ai.ts` (2026-07-05, nhánh làm việc hiện tại): schema CHỈ định hình lại logic lenient
+  cũ (cắt bớt tin nhắn/nội dung, mặc định max_tokens/system) qua `.catch()`/`.transform()`,
+  KHÔNG siết chặt thêm — duy nhất giữ nguyên 1 hành vi từ chối (413 khi tổng nội dung quá lớn).
+  2 điểm khác `stt.ts`/`tts.ts`: (a) response lỗi lồng `{ error: { message } }` (không phẳng như
+  stt/tts) để khớp `src/lib/ai.ts:58` đọc `err.error?.message`; (b) không dùng `readJsonBody` vì
+  body đã đọc qua `req.text()` để kiểm tra `MAX_BODY_BYTES` trước đó — Request stream chỉ đọc
+  được 1 lần. +6 test mới (`api/ai.test.ts`, tổng 16/16). Toàn bộ rollout Zod đã xong.** Bản Zod
+  dùng là v4 (`z.string({ error })`, `.refine(fn, { error, params })` — khác cú pháp
+  `message`/`errorMap` của v3).
 
 ## Nợ kỹ thuật (chỗ "làm tạm" cần quay lại)
 
