@@ -1,0 +1,1032 @@
+[
+  {
+    "word": "a.m.",
+    "pos": "adv",
+    "vi": "buổi sáng",
+    "ex_en": "I wake up at 6 a.m.",
+    "ex_vi": "Tôi thức dậy lúc 6 giờ sáng.",
+    "ipa_en": "/ˌeɪˈɛm/",
+    "ipa_vi": "/ɓuəj˧˩˧/",
+    "level": "A1"
+  },
+  {
+    "word": "cd",
+    "pos": "n",
+    "vi": "đĩa CD",
+    "ex_en": "I have a CD of my favorite songs.",
+    "ex_vi": "Tôi có một đĩa CD nhạc yêu thích.",
+    "ipa_en": "/ˌsiˈdi/",
+    "ipa_vi": "/ɗiə˧˩˧/",
+    "level": "A1"
+  },
+  {
+    "word": "hamburger",
+    "pos": "n",
+    "vi": "bánh hamburger",
+    "ex_en": "We ate a hamburger for lunch.",
+    "ex_vi": "Chúng tôi ăn hamburger vào bữa trưa.",
+    "ipa_en": "/ˈhæmˌbɜrgər/",
+    "ipa_vi": "/ɓaɲ˦˥/",
+    "level": "A1"
+  },
+  {
+    "word": "mr.",
+    "pos": "n",
+    "vi": "ông",
+    "ex_en": "Mr. Smith is my teacher.",
+    "ex_vi": "Ông Smith là giáo viên của tôi.",
+    "ipa_en": "/ˈmɪstər/",
+    "ipa_vi": "/oŋ˧/",
+    "level": "A1"
+  },
+  {
+    "word": "okay",
+    "pos": "adj",
+    "vi": "ổn, được",
+    "ex_en": "Is everything okay?",
+    "ex_vi": "Mọi thứ có ổn không?",
+    "ipa_en": "/oʊˈkeɪ/",
+    "ipa_vi": "/on˧˩˧/",
+    "level": "A1"
+  },
+  {
+    "word": "snowy",
+    "pos": "adj",
+    "vi": "có tuyết, phủ tuyết",
+    "ex_en": "It was a snowy day in December.",
+    "ex_vi": "Đó là một ngày có tuyết vào tháng Mười Hai.",
+    "ipa_en": "/ˈsnoʊi/",
+    "ipa_vi": "/kɔ˦˥/",
+    "level": "A1"
+  },
+  {
+    "word": "worker",
+    "pos": "n",
+    "vi": "công nhân, người lao động",
+    "ex_en": "My father is a factory worker.",
+    "ex_vi": "Bố tôi là công nhân nhà máy.",
+    "ipa_en": "/ˈwɜrkər/",
+    "ipa_vi": "/koŋ˧/",
+    "level": "A1"
+  },
+  {
+    "word": "angrily",
+    "pos": "adv",
+    "vi": "một cách giận dữ",
+    "ex_en": "He shouted angrily at the driver.",
+    "ex_vi": "Anh ấy hét lên giận dữ với người lái xe.",
+    "ipa_en": "/ˈæŋgrəli/",
+    "ipa_vi": "/mot̚˨˩ʔ/",
+    "level": "A2"
+  },
+  {
+    "word": "beginner",
+    "pos": "n",
+    "vi": "người mới bắt đầu",
+    "ex_en": "This class is for beginners.",
+    "ex_vi": "Lớp học này dành cho người mới bắt đầu.",
+    "ipa_en": "/bɪˈgɪnər/",
+    "ipa_vi": "/ŋɯəːj˨˩/",
+    "level": "A2"
+  },
+  {
+    "word": "camping",
+    "pos": "n",
+    "vi": "cắm trại",
+    "ex_en": "We went camping in the mountains.",
+    "ex_vi": "Chúng tôi đi cắm trại ở vùng núi.",
+    "ipa_en": "/ˈkæmpɪŋ/",
+    "ipa_vi": "/kam˦˥/",
+    "level": "A2"
+  },
+  {
+    "word": "cooler",
+    "pos": "n",
+    "vi": "thùng giữ lạnh",
+    "ex_en": "We packed drinks in the cooler.",
+    "ex_vi": "Chúng tôi để đồ uống trong thùng giữ lạnh.",
+    "ipa_en": "/ˈkulər/",
+    "ipa_vi": "/tʰuŋ˨˩/",
+    "level": "A2"
+  },
+  {
+    "word": "elderly",
+    "pos": "adj",
+    "vi": "cao tuổi, già",
+    "ex_en": "She takes care of her elderly parents.",
+    "ex_vi": "Cô ấy chăm sóc cha mẹ cao tuổi của mình.",
+    "ipa_en": "/ˈɛldərli/",
+    "ipa_vi": "/kaw˧/",
+    "level": "A2"
+  },
+  {
+    "word": "frighten",
+    "pos": "v",
+    "vi": "làm sợ hãi",
+    "ex_en": "The loud noise frightened the baby.",
+    "ex_vi": "Tiếng ồn lớn làm em bé sợ hãi.",
+    "ipa_en": "/ˈfraɪtən/",
+    "ipa_vi": "/lam˨˩/",
+    "level": "A2"
+  },
+  {
+    "word": "grace",
+    "pos": "n",
+    "vi": "sự duyên dáng",
+    "ex_en": "She danced with grace.",
+    "ex_vi": "Cô ấy nhảy múa với sự duyên dáng.",
+    "ipa_en": "/greɪs/",
+    "ipa_vi": "/sɯ˨˩ʔ/",
+    "level": "A2"
+  },
+  {
+    "word": "guidebook",
+    "pos": "n",
+    "vi": "sách hướng dẫn",
+    "ex_en": "I bought a guidebook for the trip.",
+    "ex_vi": "Tôi đã mua một cuốn sách hướng dẫn cho chuyến đi.",
+    "ipa_en": "/ˈgaɪdˌbʊk/",
+    "ipa_vi": "/sak̚˦˥/",
+    "level": "A2"
+  },
+  {
+    "word": "headteacher",
+    "pos": "n",
+    "vi": "hiệu trưởng",
+    "ex_en": "The headteacher gave a speech at the assembly.",
+    "ex_vi": "Hiệu trưởng đã phát biểu trong buổi lễ chào cờ.",
+    "ipa_en": "/ˈhɛdˌtitʃər/",
+    "ipa_vi": "/hiəw˨˩ʔ/",
+    "level": "A2"
+  },
+  {
+    "word": "ill",
+    "pos": "adj",
+    "vi": "ốm, bệnh",
+    "ex_en": "He felt ill and stayed home.",
+    "ex_vi": "Anh ấy cảm thấy ốm và ở nhà.",
+    "ipa_en": "/ɪl/",
+    "ipa_vi": "/om˦˥/",
+    "level": "A2"
+  },
+  {
+    "word": "inner",
+    "pos": "adj",
+    "vi": "bên trong, nội tâm",
+    "ex_en": "She has a strong inner strength.",
+    "ex_vi": "Cô ấy có sức mạnh nội tâm lớn.",
+    "ipa_en": "/ˈɪnər/",
+    "ipa_vi": "/ɓen˧/",
+    "level": "A2"
+  },
+  {
+    "word": "laziness",
+    "pos": "n",
+    "vi": "sự lười biếng",
+    "ex_en": "His laziness caused him to fail the exam.",
+    "ex_vi": "Sự lười biếng khiến anh ấy thi trượt.",
+    "ipa_en": "/ˈleɪzinəs/",
+    "ipa_vi": "/sɯ˨˩ʔ/",
+    "level": "A2"
+  },
+  {
+    "word": "lip",
+    "pos": "n",
+    "vi": "môi",
+    "ex_en": "She has red lips.",
+    "ex_vi": "Cô ấy có đôi môi đỏ.",
+    "ipa_en": "/lɪp/",
+    "ipa_vi": "/moj˧/",
+    "level": "A2"
+  },
+  {
+    "word": "marvelous",
+    "pos": "adj",
+    "vi": "tuyệt vời, kỳ diệu",
+    "ex_en": "The view from the top was marvelous.",
+    "ex_vi": "Khung cảnh từ trên đỉnh thật tuyệt vời.",
+    "ipa_en": "/ˈmɑrvələs/",
+    "ipa_vi": "/twiət̚˨˩ʔ/",
+    "level": "A2"
+  },
+  {
+    "word": "noun",
+    "pos": "n",
+    "vi": "danh từ",
+    "ex_en": "\"Dog\" is a noun.",
+    "ex_vi": "\"Dog\" là một danh từ.",
+    "ipa_en": "/naʊn/",
+    "ipa_vi": "/zaɲ˧/",
+    "level": "A2"
+  },
+  {
+    "word": "pea",
+    "pos": "n",
+    "vi": "đậu Hà Lan",
+    "ex_en": "I don't like eating peas.",
+    "ex_vi": "Tôi không thích ăn đậu Hà Lan.",
+    "ipa_en": "/pi/",
+    "ipa_vi": "/ɗəw˨˩ʔ/",
+    "level": "A2"
+  },
+  {
+    "word": "perfectly",
+    "pos": "adv",
+    "vi": "hoàn hảo, một cách hoàn hảo",
+    "ex_en": "She sang the song perfectly.",
+    "ex_vi": "Cô ấy hát bài hát một cách hoàn hảo.",
+    "ipa_en": "/ˈpɜrfɪktli/",
+    "ipa_vi": "/hwan˨˩/",
+    "level": "A2"
+  },
+  {
+    "word": "plural",
+    "pos": "n",
+    "vi": "số nhiều",
+    "ex_en": "\"Cats\" is the plural of \"cat\".",
+    "ex_vi": "\"Cats\" là số nhiều của \"cat\".",
+    "ipa_en": "/ˈplʊrəl/",
+    "ipa_vi": "/so˦˥/",
+    "level": "A2"
+  },
+  {
+    "word": "pronounce",
+    "pos": "v",
+    "vi": "phát âm",
+    "ex_en": "How do you pronounce this word?",
+    "ex_vi": "Bạn phát âm từ này như thế nào?",
+    "ipa_en": "/prəˈnaʊns/",
+    "ipa_vi": "/fat̚˦˥/",
+    "level": "A2"
+  },
+  {
+    "word": "rob",
+    "pos": "v",
+    "vi": "cướp, ăn cắp",
+    "ex_en": "Two men tried to rob the bank.",
+    "ex_vi": "Hai người đàn ông cố gắng cướp ngân hàng.",
+    "ipa_en": "/rɑb/",
+    "ipa_vi": "/kɯəːp̚˦˥/",
+    "level": "A2"
+  },
+  {
+    "word": "scenery",
+    "pos": "n",
+    "vi": "phong cảnh",
+    "ex_en": "The scenery in the countryside is beautiful.",
+    "ex_vi": "Phong cảnh ở vùng quê rất đẹp.",
+    "ipa_en": "/ˈsinəri/",
+    "ipa_vi": "/fɔŋ˧/",
+    "level": "A2"
+  },
+  {
+    "word": "sew",
+    "pos": "v",
+    "vi": "may, khâu",
+    "ex_en": "My grandmother taught me how to sew.",
+    "ex_vi": "Bà tôi dạy tôi cách may vá.",
+    "ipa_en": "/soʊ/",
+    "ipa_vi": "/maj˧/",
+    "level": "A2"
+  },
+  {
+    "word": "sleepless",
+    "pos": "adj",
+    "vi": "mất ngủ",
+    "ex_en": "I had a sleepless night before the exam.",
+    "ex_vi": "Tôi đã có một đêm mất ngủ trước kỳ thi.",
+    "ipa_en": "/ˈsliplɪs/",
+    "ipa_vi": "/mət̚˦˥/",
+    "level": "A2"
+  },
+  {
+    "word": "softly",
+    "pos": "adv",
+    "vi": "nhẹ nhàng, êm ái",
+    "ex_en": "She spoke softly to the child.",
+    "ex_vi": "Cô ấy nói nhẹ nhàng với đứa trẻ.",
+    "ipa_en": "/ˈsɔftli/",
+    "ipa_vi": "/ɲɛ˨˩ʔ/",
+    "level": "A2"
+  },
+  {
+    "word": "stomachache",
+    "pos": "n",
+    "vi": "đau bụng",
+    "ex_en": "I have a stomachache after eating too much.",
+    "ex_vi": "Tôi bị đau bụng sau khi ăn quá nhiều.",
+    "ipa_en": "/ˈstʌməkˌeɪk/",
+    "ipa_vi": "/ɗaw˧/",
+    "level": "A2"
+  },
+  {
+    "word": "terrify",
+    "pos": "v",
+    "vi": "làm kinh hãi",
+    "ex_en": "The horror movie terrified the children.",
+    "ex_vi": "Bộ phim kinh dị làm bọn trẻ sợ hãi.",
+    "ipa_en": "/ˈtɛrəˌfaɪ/",
+    "ipa_vi": "/lam˨˩/",
+    "level": "A2"
+  },
+  {
+    "word": "toothbrush",
+    "pos": "n",
+    "vi": "bàn chải đánh răng",
+    "ex_en": "I bought a new toothbrush.",
+    "ex_vi": "Tôi đã mua một cái bàn chải đánh răng mới.",
+    "ipa_en": "/ˈtuθˌbrʌʃ/",
+    "ipa_vi": "/ɓan˨˩/",
+    "level": "A2"
+  },
+  {
+    "word": "washing-up",
+    "pos": "n",
+    "vi": "việc rửa bát",
+    "ex_en": "Can you help me with the washing-up?",
+    "ex_vi": "Bạn có thể giúp tôi rửa bát không?",
+    "ipa_en": "/ˈwɑʃɪŋˌʌp/",
+    "ipa_vi": "/viək̚˨˩ʔ/",
+    "level": "A2"
+  },
+  {
+    "word": "accurately",
+    "pos": "adv",
+    "vi": "một cách chính xác",
+    "ex_en": "Please answer the questions accurately.",
+    "ex_vi": "Hãy trả lời câu hỏi một cách chính xác.",
+    "ipa_en": "/ˈækjərətli/",
+    "ipa_vi": "/mot̚˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "addressee",
+    "pos": "n",
+    "vi": "người nhận (thư)",
+    "ex_en": "Write the addressee's name on the envelope.",
+    "ex_vi": "Viết tên người nhận lên phong bì.",
+    "ipa_en": "/ˌædrɛˈsi/",
+    "ipa_vi": "/ŋɯəːj˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "adviser",
+    "pos": "n",
+    "vi": "cố vấn",
+    "ex_en": "She works as an adviser for the company.",
+    "ex_vi": "Cô ấy làm cố vấn cho công ty.",
+    "ipa_en": "/ədˈvaɪzər/",
+    "ipa_vi": "/ko˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "amazed",
+    "pos": "adj",
+    "vi": "ngạc nhiên, kinh ngạc",
+    "ex_en": "I was amazed by the magic show.",
+    "ex_vi": "Tôi rất ngạc nhiên bởi màn ảo thuật.",
+    "ipa_en": "/əˈmeɪzd/",
+    "ipa_vi": "/ŋak̚˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "annoyance",
+    "pos": "n",
+    "vi": "sự khó chịu",
+    "ex_en": "He couldn't hide his annoyance.",
+    "ex_vi": "Anh ấy không thể giấu sự khó chịu của mình.",
+    "ipa_en": "/əˈnɔɪəns/",
+    "ipa_vi": "/sɯ˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "anyhow",
+    "pos": "adv",
+    "vi": "dù sao thì",
+    "ex_en": "Anyhow, we should try our best.",
+    "ex_vi": "Dù sao thì, chúng ta cũng nên cố gắng hết sức.",
+    "ipa_en": "/ˈɛnihaʊ/",
+    "ipa_vi": "/zu˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "babysit",
+    "pos": "v",
+    "vi": "trông trẻ",
+    "ex_en": "She babysits her neighbor's kids on weekends.",
+    "ex_vi": "Cô ấy trông trẻ cho hàng xóm vào cuối tuần.",
+    "ipa_en": "/ˈbeɪbiˌsɪt/",
+    "ipa_vi": "/tɕoŋ˧/",
+    "level": "B1"
+  },
+  {
+    "word": "beautifully",
+    "pos": "adv",
+    "vi": "một cách xinh đẹp",
+    "ex_en": "She sings beautifully.",
+    "ex_vi": "Cô ấy hát một cách tuyệt đẹp.",
+    "ipa_en": "/ˈbjutɪfəli/",
+    "ipa_vi": "/mot̚˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "brainstorming",
+    "pos": "n",
+    "vi": "động não",
+    "ex_en": "We had a brainstorming session for new ideas.",
+    "ex_vi": "Chúng tôi đã có một buổi động não để tìm ý tưởng mới.",
+    "ipa_en": "/ˈbreɪnˌstɔrmɪŋ/",
+    "ipa_vi": "/ɗoŋ˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "breeding",
+    "pos": "n",
+    "vi": "sự nhân giống",
+    "ex_en": "The farm focuses on breeding healthy cattle.",
+    "ex_vi": "Trang trại tập trung vào việc nhân giống gia súc khỏe mạnh.",
+    "ipa_en": "/ˈbridɪŋ/",
+    "ipa_vi": "/sɯ˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "calculator",
+    "pos": "n",
+    "vi": "máy tính",
+    "ex_en": "I used a calculator to solve the math problem.",
+    "ex_vi": "Tôi đã dùng máy tính để giải bài toán.",
+    "ipa_en": "/ˈkælkjəˌleɪtər/",
+    "ipa_vi": "/maj˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "canteen",
+    "pos": "n",
+    "vi": "căng tin",
+    "ex_en": "We had lunch at the school canteen.",
+    "ex_vi": "Chúng tôi ăn trưa ở căng tin trường.",
+    "ipa_en": "/kænˈtin/",
+    "ipa_vi": "/kaŋ˧/",
+    "level": "B1"
+  },
+  {
+    "word": "cashpoint",
+    "pos": "n",
+    "vi": "máy rút tiền",
+    "ex_en": "I need to find a cashpoint to get some money.",
+    "ex_vi": "Tôi cần tìm một máy rút tiền để lấy ít tiền.",
+    "ipa_en": "/ˈkæʃˌpɔɪnt/",
+    "ipa_vi": "/maj˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "characterize",
+    "pos": "v",
+    "vi": "đặc trưng cho",
+    "ex_en": "Honesty characterizes a good friend.",
+    "ex_vi": "Sự trung thực đặc trưng cho một người bạn tốt.",
+    "ipa_en": "/ˈkærəktəˌraɪz/",
+    "ipa_vi": "/ɗak̚˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "closely",
+    "pos": "adv",
+    "vi": "chặt chẽ, sát sao",
+    "ex_en": "Please read the instructions closely.",
+    "ex_vi": "Hãy đọc kỹ hướng dẫn một cách chặt chẽ.",
+    "ipa_en": "/ˈkloʊsli/",
+    "ipa_vi": "/tɕat̚˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "complicated",
+    "pos": "adj",
+    "vi": "phức tạp",
+    "ex_en": "The instructions were too complicated to follow.",
+    "ex_vi": "Hướng dẫn quá phức tạp để làm theo.",
+    "ipa_en": "/ˈkɑmpləˌkeɪtɪd/",
+    "ipa_vi": "/fɯk̚˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "continual",
+    "pos": "adj",
+    "vi": "liên tục",
+    "ex_en": "There has been continual rain this week.",
+    "ex_vi": "Tuần này có mưa liên tục.",
+    "ipa_en": "/kənˈtɪnjuəl/",
+    "ipa_vi": "/liən˧/",
+    "level": "B1"
+  },
+  {
+    "word": "cultivate",
+    "pos": "v",
+    "vi": "trồng trọt, canh tác",
+    "ex_en": "Farmers cultivate rice in this region.",
+    "ex_vi": "Nông dân trồng trọt lúa ở vùng này.",
+    "ipa_en": "/ˈkʌltəˌveɪt/",
+    "ipa_vi": "/tɕoŋ˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "dangerously",
+    "pos": "adv",
+    "vi": "một cách nguy hiểm",
+    "ex_en": "He was driving dangerously fast.",
+    "ex_vi": "Anh ấy đang lái xe nhanh một cách nguy hiểm.",
+    "ipa_en": "/ˈdeɪndʒərəsli/",
+    "ipa_vi": "/mot̚˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "delighted",
+    "pos": "adj",
+    "vi": "vui mừng, hài lòng",
+    "ex_en": "She was delighted to see her old friend.",
+    "ex_vi": "Cô ấy rất vui mừng khi gặp lại bạn cũ.",
+    "ipa_en": "/dɪˈlaɪtɪd/",
+    "ipa_vi": "/vuj˧/",
+    "level": "B1"
+  },
+  {
+    "word": "devastating",
+    "pos": "adj",
+    "vi": "tàn phá, tàn khốc",
+    "ex_en": "The earthquake had a devastating effect on the city.",
+    "ex_vi": "Trận động đất gây ra ảnh hưởng tàn phá cho thành phố.",
+    "ipa_en": "/ˈdɛvəˌsteɪtɪŋ/",
+    "ipa_vi": "/tan˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "discomfort",
+    "pos": "n",
+    "vi": "sự khó chịu",
+    "ex_en": "The tight shoes caused her some discomfort.",
+    "ex_vi": "Đôi giày chật gây cho cô ấy sự khó chịu.",
+    "ipa_en": "/dɪsˈkʌmfərt/",
+    "ipa_vi": "/sɯ˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "dusty",
+    "pos": "adj",
+    "vi": "bụi bặm",
+    "ex_en": "The road was dusty after the dry season.",
+    "ex_vi": "Con đường đầy bụi sau mùa khô.",
+    "ipa_en": "/ˈdʌsti/",
+    "ipa_vi": "/ɓuj˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "emotionally",
+    "pos": "adv",
+    "vi": "về mặt cảm xúc",
+    "ex_en": "She was emotionally exhausted after the trip.",
+    "ex_vi": "Cô ấy kiệt sức về mặt cảm xúc sau chuyến đi.",
+    "ipa_en": "/ɪˈmoʊʃənəli/",
+    "ipa_vi": "/ve˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "entertainer",
+    "pos": "n",
+    "vi": "người giải trí",
+    "ex_en": "The clown was a great entertainer at the party.",
+    "ex_vi": "Chú hề là một người giải trí tuyệt vời tại bữa tiệc.",
+    "ipa_en": "/ˌɛntərˈteɪnər/",
+    "ipa_vi": "/ŋɯəːj˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "evenly",
+    "pos": "adv",
+    "vi": "đều, đồng đều",
+    "ex_en": "Divide the cake evenly among the children.",
+    "ex_vi": "Chia bánh đều cho các em nhỏ.",
+    "ipa_en": "/ˈivənli/",
+    "ipa_vi": "/ɗew˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "extinct",
+    "pos": "adj",
+    "vi": "tuyệt chủng",
+    "ex_en": "The dinosaurs became extinct millions of years ago.",
+    "ex_vi": "Khủng long đã tuyệt chủng hàng triệu năm trước.",
+    "ipa_en": "/ɪkˈstɪŋkt/",
+    "ipa_vi": "/twiət̚˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "farming",
+    "pos": "n",
+    "vi": "nghề nông, canh tác",
+    "ex_en": "His family has done farming for generations.",
+    "ex_vi": "Gia đình anh ấy đã làm nghề nông qua nhiều thế hệ.",
+    "ipa_en": "/ˈfɑrmɪŋ/",
+    "ipa_vi": "/ŋe˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "favourable",
+    "pos": "adj",
+    "vi": "thuận lợi",
+    "ex_en": "The weather conditions were favourable for the trip.",
+    "ex_vi": "Điều kiện thời tiết thuận lợi cho chuyến đi.",
+    "ipa_en": "/ˈfeɪvərəbəl/",
+    "ipa_vi": "/tʰwən˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "film-maker",
+    "pos": "n",
+    "vi": "nhà làm phim",
+    "ex_en": "She wants to become a film-maker.",
+    "ex_vi": "Cô ấy muốn trở thành nhà làm phim.",
+    "ipa_en": "/ˈfɪlmˌmeɪkər/",
+    "ipa_vi": "/ɲa˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "fragment",
+    "pos": "n",
+    "vi": "mảnh, đoạn",
+    "ex_en": "She found a fragment of the broken vase.",
+    "ex_vi": "Cô ấy tìm thấy một mảnh của chiếc bình vỡ.",
+    "ipa_en": "/ˈfrægmənt/",
+    "ipa_vi": "/maɲ˧˩˧/",
+    "level": "B1"
+  },
+  {
+    "word": "fright",
+    "pos": "n",
+    "vi": "sự sợ hãi",
+    "ex_en": "The sudden noise gave me a fright.",
+    "ex_vi": "Tiếng động bất ngờ làm tôi sợ hãi.",
+    "ipa_en": "/fraɪt/",
+    "ipa_vi": "/sɯ˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "furnish",
+    "pos": "v",
+    "vi": "trang bị đồ đạc",
+    "ex_en": "They furnished the apartment with new furniture.",
+    "ex_vi": "Họ trang bị đồ đạc mới cho căn hộ.",
+    "ipa_en": "/ˈfɜrnɪʃ/",
+    "ipa_vi": "/tɕaŋ˧/",
+    "level": "B1"
+  },
+  {
+    "word": "gardening",
+    "pos": "n",
+    "vi": "làm vườn",
+    "ex_en": "My mother enjoys gardening on weekends.",
+    "ex_vi": "Mẹ tôi thích làm vườn vào cuối tuần.",
+    "ipa_en": "/ˈgɑrdənɪŋ/",
+    "ipa_vi": "/lam˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "glide",
+    "pos": "n",
+    "vi": "sự lướt, sự trôi",
+    "ex_en": "The bird's glide across the sky was graceful.",
+    "ex_vi": "Sự lướt bay của con chim trên bầu trời rất duyên dáng.",
+    "ipa_en": "/glaɪd/",
+    "ipa_vi": "/sɯ˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "grouping",
+    "pos": "n",
+    "vi": "sự phân nhóm",
+    "ex_en": "The teacher used random grouping for the activity.",
+    "ex_vi": "Giáo viên đã sử dụng cách phân nhóm ngẫu nhiên cho hoạt động.",
+    "ipa_en": "/ˈgraʊpɪŋ/",
+    "ipa_vi": "/sɯ˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "handshake",
+    "pos": "n",
+    "vi": "cái bắt tay",
+    "ex_en": "They greeted each other with a firm handshake.",
+    "ex_vi": "Họ chào nhau bằng một cái bắt tay chắc chắn.",
+    "ipa_en": "/ˈhændˌʃeɪk/",
+    "ipa_vi": "/kaj˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "hearted",
+    "pos": "adj",
+    "vi": "có tấm lòng",
+    "ex_en": "She is a warm-hearted person who helps everyone.",
+    "ex_vi": "Cô ấy là người có tấm lòng ấm áp, luôn giúp đỡ mọi người.",
+    "ipa_en": "/ˈhɑrtɪd/",
+    "ipa_vi": "/kɔ˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "horrify",
+    "pos": "v",
+    "vi": "làm kinh hoàng",
+    "ex_en": "The news horrified everyone in the town.",
+    "ex_vi": "Tin tức làm mọi người trong thị trấn kinh hoàng.",
+    "ipa_en": "/ˈhɔrəˌfaɪ/",
+    "ipa_vi": "/lam˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "idiom",
+    "pos": "n",
+    "vi": "thành ngữ",
+    "ex_en": "\"Break a leg\" is a common idiom.",
+    "ex_vi": "\"Break a leg\" là một thành ngữ phổ biến.",
+    "ipa_en": "/ˈɪdiəm/",
+    "ipa_vi": "/tʰaɲ˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "immigrate",
+    "pos": "v",
+    "vi": "nhập cư",
+    "ex_en": "Many people immigrate to find better job opportunities.",
+    "ex_vi": "Nhiều người nhập cư để tìm cơ hội việc làm tốt hơn.",
+    "ipa_en": "/ˈɪməˌgreɪt/",
+    "ipa_vi": "/ɲəp̚˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "indoors",
+    "pos": "adv",
+    "vi": "trong nhà",
+    "ex_en": "We stayed indoors because of the rain.",
+    "ex_vi": "Chúng tôi ở trong nhà vì trời mưa.",
+    "ipa_en": "/ˈɪnˌdɔrz/",
+    "ipa_vi": "/tɕɔŋ˧/",
+    "level": "B1"
+  },
+  {
+    "word": "inhale",
+    "pos": "v",
+    "vi": "hít vào",
+    "ex_en": "Inhale deeply and then exhale slowly.",
+    "ex_vi": "Hít vào thật sâu rồi thở ra từ từ.",
+    "ipa_en": "/ɪnˈheɪl/",
+    "ipa_vi": "/hit̚˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "inscribe",
+    "pos": "v",
+    "vi": "khắc, ghi khắc",
+    "ex_en": "His name was inscribed on the trophy.",
+    "ex_vi": "Tên của anh ấy được khắc trên chiếc cúp.",
+    "ipa_en": "/ɪnˈskraɪb/",
+    "ipa_vi": "/xak̚˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "interviewee",
+    "pos": "n",
+    "vi": "người được phỏng vấn",
+    "ex_en": "The interviewee answered every question confidently.",
+    "ex_vi": "Người được phỏng vấn đã trả lời mọi câu hỏi một cách tự tin.",
+    "ipa_en": "/ˌɪntərvjuˈi/",
+    "ipa_vi": "/ŋɯəːj˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "jogging",
+    "pos": "n",
+    "vi": "chạy bộ",
+    "ex_en": "I go jogging every morning.",
+    "ex_vi": "Tôi đi chạy bộ mỗi sáng.",
+    "ipa_en": "/ˈdʒɑgɪŋ/",
+    "ipa_vi": "/tɕaj˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "lately",
+    "pos": "adv",
+    "vi": "gần đây, dạo này",
+    "ex_en": "I haven't seen him lately.",
+    "ex_vi": "Gần đây tôi không gặp anh ấy.",
+    "ipa_en": "/ˈleɪtli/",
+    "ipa_vi": "/gən˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "lighter",
+    "pos": "n",
+    "vi": "cái bật lửa",
+    "ex_en": "He used a lighter to light the candle.",
+    "ex_vi": "Anh ấy dùng cái bật lửa để thắp nến.",
+    "ipa_en": "/ˈlaɪtər/",
+    "ipa_vi": "/kaj˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "lovingly",
+    "pos": "adv",
+    "vi": "một cách trìu mến",
+    "ex_en": "She looked at her baby lovingly.",
+    "ex_vi": "Cô ấy nhìn con mình một cách trìu mến.",
+    "ipa_en": "/ˈlʌvɪŋli/",
+    "ipa_vi": "/mot̚˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "mentally",
+    "pos": "adv",
+    "vi": "về mặt tinh thần",
+    "ex_en": "He prepared himself mentally before the match.",
+    "ex_vi": "Anh ấy đã chuẩn bị bản thân về mặt tinh thần trước trận đấu.",
+    "ipa_en": "/ˈmɛntəli/",
+    "ipa_vi": "/ve˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "misty",
+    "pos": "adj",
+    "vi": "mờ sương",
+    "ex_en": "The mountains looked misty in the early morning.",
+    "ex_vi": "Những ngọn núi trông mờ sương vào sáng sớm.",
+    "ipa_en": "/ˈmɪsti/",
+    "ipa_vi": "/məː˨˩/",
+    "level": "B1"
+  },
+  {
+    "word": "motionless",
+    "pos": "adj",
+    "vi": "bất động",
+    "ex_en": "The cat remained motionless, watching the bird.",
+    "ex_vi": "Con mèo đứng bất động, quan sát con chim.",
+    "ipa_en": "/ˈmoʊʃənləs/",
+    "ipa_vi": "/ɓət̚˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "nap",
+    "pos": "n",
+    "vi": "giấc ngủ ngắn",
+    "ex_en": "I took a short nap after lunch.",
+    "ex_vi": "Tôi đã ngủ một giấc ngắn sau bữa trưa.",
+    "ipa_en": "/næp/",
+    "ipa_vi": "/zək̚˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "newly",
+    "pos": "adv",
+    "vi": "mới đây, vừa mới",
+    "ex_en": "They are a newly married couple.",
+    "ex_vi": "Họ là một cặp vợ chồng mới cưới.",
+    "ipa_en": "/ˈnuli/",
+    "ipa_vi": "/məːj˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "normally",
+    "pos": "adv",
+    "vi": "thông thường",
+    "ex_en": "Normally, I wake up at 7 a.m.",
+    "ex_vi": "Thông thường, tôi thức dậy lúc 7 giờ sáng.",
+    "ipa_en": "/ˈnɔrməli/",
+    "ipa_vi": "/tʰoŋ˧/",
+    "level": "B1"
+  },
+  {
+    "word": "old-fashioned",
+    "pos": "adj",
+    "vi": "lỗi thời, cổ hủ",
+    "ex_en": "My grandfather has some old-fashioned ideas.",
+    "ex_vi": "Ông tôi có một số quan điểm lỗi thời.",
+    "ipa_en": "/ˈoʊldˈfæʃənd/",
+    "ipa_vi": "/loj˧˩˧/",
+    "level": "B1"
+  },
+  {
+    "word": "outer",
+    "pos": "adj",
+    "vi": "bên ngoài",
+    "ex_en": "The outer layer of the cake was chocolate.",
+    "ex_vi": "Lớp bên ngoài của chiếc bánh là sô cô la.",
+    "ipa_en": "/ˈaʊtər/",
+    "ipa_vi": "/ɓen˧/",
+    "level": "B1"
+  },
+  {
+    "word": "overjoyed",
+    "pos": "adj",
+    "vi": "vô cùng vui sướng",
+    "ex_en": "She was overjoyed when she heard the good news.",
+    "ex_vi": "Cô ấy vô cùng vui sướng khi nghe tin tốt.",
+    "ipa_en": "/ˌoʊvərˈdʒɔɪd/",
+    "ipa_vi": "/vo˧/",
+    "level": "B1"
+  },
+  {
+    "word": "part-time",
+    "pos": "adj",
+    "vi": "bán thời gian",
+    "ex_en": "She has a part-time job at a café.",
+    "ex_vi": "Cô ấy có một công việc bán thời gian ở quán cà phê.",
+    "ipa_en": "/ˈpɑrtˈtaɪm/",
+    "ipa_vi": "/ɓan˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "phoenix",
+    "pos": "n",
+    "vi": "chim phượng hoàng",
+    "ex_en": "The phoenix is a mythical bird that rises from ashes.",
+    "ex_vi": "Phượng hoàng là loài chim thần thoại hồi sinh từ tro tàn.",
+    "ipa_en": "/ˈfinɪks/",
+    "ipa_vi": "/tɕim˧/",
+    "level": "B1"
+  },
+  {
+    "word": "pleasantly",
+    "pos": "adv",
+    "vi": "một cách dễ chịu",
+    "ex_en": "I was pleasantly surprised by the gift.",
+    "ex_vi": "Tôi đã ngạc nhiên một cách dễ chịu trước món quà.",
+    "ipa_en": "/ˈplɛzəntli/",
+    "ipa_vi": "/mot̚˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "postcard",
+    "pos": "n",
+    "vi": "bưu thiếp",
+    "ex_en": "I sent a postcard from Paris.",
+    "ex_vi": "Tôi đã gửi một tấm bưu thiếp từ Paris.",
+    "ipa_en": "/ˈpoʊstˌkɑrd/",
+    "ipa_vi": "/ɓɯw˧/",
+    "level": "B1"
+  },
+  {
+    "word": "procrastination",
+    "pos": "n",
+    "vi": "sự trì hoãn",
+    "ex_en": "Procrastination often leads to stress before deadlines.",
+    "ex_vi": "Sự trì hoãn thường dẫn đến căng thẳng trước hạn chót.",
+    "ipa_en": "/proʊˌkræstəˈneɪʃən/",
+    "ipa_vi": "/sɯ˨˩ʔ/",
+    "level": "B1"
+  },
+  {
+    "word": "purify",
+    "pos": "v",
+    "vi": "thanh lọc, làm sạch",
+    "ex_en": "This machine purifies the water.",
+    "ex_vi": "Chiếc máy này thanh lọc nước.",
+    "ipa_en": "/ˈpjʊrəˌfaɪ/",
+    "ipa_vi": "/tʰaɲ˧/",
+    "level": "B1"
+  },
+  {
+    "word": "rearrange",
+    "pos": "v",
+    "vi": "sắp xếp lại",
+    "ex_en": "We need to rearrange the furniture in the living room.",
+    "ex_vi": "Chúng ta cần sắp xếp lại đồ đạc trong phòng khách.",
+    "ipa_en": "/ˌriəˈreɪndʒ/",
+    "ipa_vi": "/sap̚˦˥/",
+    "level": "B1"
+  },
+  {
+    "word": "relaxing",
+    "pos": "adj",
+    "vi": "thư giãn",
+    "ex_en": "We had a relaxing weekend at the beach.",
+    "ex_vi": "Chúng tôi đã có một kỳ nghỉ cuối tuần thư giãn ở bãi biển.",
+    "ipa_en": "/rɪˈlæksɪŋ/",
+    "ipa_vi": "/tʰɯ˧/",
+    "level": "B1"
+  },
+  {
+    "word": "retell",
+    "pos": "v",
+    "vi": "kể lại",
+    "ex_en": "Can you retell the story in your own words?",
+    "ex_vi": "Bạn có thể kể lại câu chuyện bằng lời của mình không?",
+    "ipa_en": "/riˈtɛl/",
+    "ipa_vi": "/ke˧˩˧/",
+    "level": "B1"
+  },
+  {
+    "word": "roadside",
+    "pos": "n",
+    "vi": "ven đường",
+    "ex_en": "There was a small shop by the roadside.",
+    "ex_vi": "Có một cửa hàng nhỏ ven đường.",
+    "ipa_en": "/ˈroʊdˌsaɪd/",
+    "ipa_vi": "/vɛn˧/",
+    "level": "B1"
+  }
+]

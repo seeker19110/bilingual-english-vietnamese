@@ -766,6 +766,52 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   đã chạy trên Dashboard → SQL Editor (2026-07-02). Lỗ RLS (cột chi phí + cache phát âm
   dùng chung) đã đóng thật trên DB đang chạy, không chỉ trong schema.
 
+## ⏸️ ĐANG LÀM DỞ — DỪNG do chạm giới hạn phiên (2026-07-05)
+
+> Theo CLAUDE.md mục 3: hit session limit → dừng, ghi lại tiến độ, **chờ người dùng cho phép
+> tiếp tục** (không tự chạy thêm agent/việc nặng cho tới khi được xác nhận phiên đã có hạn mức
+> lại — thông báo giới hạn ghi "resets 8:40am UTC").
+
+- **Bối cảnh:** người dùng yêu cầu xoá 409 từ đơn không có trong CEFR-J/Words-CEFR-Dataset (chủ
+  yếu idiom + từ lóng công nghệ/thương hiệu như bitcoin/ipad/javascript — xem PR #204), thay
+  bằng 409 từ CEFR-J thật (chưa có trong từ điển, ưu tiên A1/A2 rồi B1) để đạt ~10.000 từ **100%
+  có nhãn CEFR từ nguồn thật, không dùng AI**. Người dùng xác nhận qua `AskUserQuestion`: chọn
+  phương án xoá + thay thế (không phải giữ nguyên + gắn tay, cũng không phải để trống).
+- **Đã xác nhận an toàn xoá:** research agent xác nhận `src/data/curriculum.ts` (circle nền
+  tảng) tự chứa dữ liệu riêng, không tham chiếu cứng vào `public/data/dictionary/`; SRS/tiến độ
+  học của người dùng lưu theo string từ, từ bị xoá chỉ "mồ côi" (biến mất khỏi danh sách, không
+  crash). Không có ràng buộc DB nào khoá cứng.
+- **Đã chọn danh sách 409 từ thay thế** (script tại
+  `/tmp/.../scratchpad/selected-409.csv` — thư mục scratchpad phiên, KHÔNG nằm trong repo, cần
+  tạo lại nếu mất): lọc từ CEFR-J chưa có trong từ điển, ưu tiên A1 (26) → A2 (112) → B1 (271,
+  đủ 409). Đã dọn tay ~30 từ trùng lặp/rác phát hiện qua rà 2 vòng (biến thể Anh-Anh/Anh-Mỹ đã
+  có sẵn dạng khác trong từ điển như "criticise" khi đã có "criticize", từ rời rạc do lỗi tách
+  từ của CEFR-J như "ness", viết tắt mơ hồ như "id"/"pc"/"cv").
+- **Đã giao 4 agent song song viết nội dung đầy đủ** (vi/ex_en/ex_vi/ipa_en/ipa_vi — level/pos
+  giữ nguyên từ CEFR-J) cho 4 lô ~102 từ, theo đúng quy ước IPA tiếng Việt của từ điển (thanh
+  điệu Bắc Bộ, chỉ phiên âm ÂM TIẾT ĐẦU của bản dịch `vi`). **3/4 lô đã xong và đã kiểm tra**
+  (khớp 100% word/pos/level, spot-check IPA tay ~15 từ đều đúng quy tắc): lô 0 (103 từ), lô 2
+  (102 từ), lô 3 (102 từ) = **307/409 từ đã có nội dung đầy đủ**, lưu tại
+  `/tmp/.../scratchpad/entries-batch-{0,2,3}.json` (KHÔNG nằm trong repo — thư mục scratchpad
+  phiên, mất khi phiên/container bị dọn). **Lô 1 (102 từ) CHƯA XONG** — agent bị dừng giữa
+  chừng vì "hit session limit" (không phải lỗi code/logic).
+- **CHƯA đụng vào** `public/data/dictionary/` cho việc xoá/thay 409 từ này (mới ở bước chuẩn bị
+  nội dung, chưa merge vào file thật) — dữ liệu dictionary hiện tại vẫn nguyên trạng PR #204 (đã
+  gắn nhãn CEFR tầng 1+2 thật, còn 409 từ chưa có nhãn = đúng 409 từ định thay).
+- **CI của PR #204 vẫn báo failure** sau 4 lần rerun nhưng log tải về đều lỗi 404 (nghi hạn chế
+  môi trường CI mô phỏng của phiên này, không phải lỗi code — verify local nhiều lần đều xanh:
+  build/typecheck/lint/test/format).
+- **Việc cần làm tiếp khi phiên có hạn mức trở lại** (theo thứ tự):
+  1. Giao lại đúng lô 1 (102 từ — danh sách trong PROGRESS.md này hoặc tạo lại từ
+     `selected-409.csv` nếu file scratchpad đã mất, xem lệnh Python trong lịch sử hội thoại).
+  2. Gộp 4 file JSON đã duyệt vào `public/data/dictionary/chunk-*.json`: xoá 409 entry chưa có
+     `level`, chèn 409 entry mới (dàn đều lại ~1000 từ/chunk).
+  3. Chạy `scripts/assign-word-freq.ts` (nguồn SUBTLEX-US, gói `subtlex-word-frequencies` —
+     đã dùng trước đó, xem "Đợt 4" ở trên) để điền `freq` cho 409 từ mới.
+  4. Build/typecheck/lint/test/format đầy đủ, tự kiểm mẫu tay vài chục entry.
+  5. Cập nhật `PROGRESS.md` (xoá mục "ĐANG LÀM DỞ" này, ghi kết quả cuối), commit, push, merge
+     PR #204 (sau khi xác nhận CI hoặc quyết định bỏ qua CI do lỗi môi trường).
+
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
