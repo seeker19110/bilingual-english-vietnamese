@@ -14,6 +14,7 @@ import {
   getLevelWords,
   getBeyondCefrWords,
   getPathProgress,
+  getPoolProgress,
   getDailyLearned,
   bumpDailyLearned,
   getCefrLevelOfCircle,
@@ -161,6 +162,26 @@ describe('getPathProgress', () => {
     const path = getLearningPath()
     const learned = new Set([wordKey(path[0].word), wordKey(path[1].word)])
     expect(getPathProgress(learned).done).toBe(2)
+  })
+})
+
+describe('getPoolProgress — tiến độ của 1 danh sách bất kỳ (vd 1 cấp CEFR)', () => {
+  const W = (word: string): DictEntry => ({ word }) as DictEntry
+
+  it('pool rỗng → total 0, không lỗi', () => {
+    expect(getPoolProgress([], new Set())).toEqual({ done: 0, total: 0 })
+  })
+
+  it('chỉ đếm từ TRONG pool, bỏ qua từ đã thuộc ở ngoài pool (khác cấp)', () => {
+    const pool = [W('apple'), W('banana')]
+    const learned = new Set([wordKey('apple'), wordKey('outside-word')])
+    expect(getPoolProgress(pool, learned)).toEqual({ done: 1, total: 2 })
+  })
+
+  it('total luôn bằng độ dài pool, không phải toàn bộ lộ trình', () => {
+    const pool = [W('a'), W('b'), W('c')]
+    expect(getPoolProgress(pool, new Set()).total).toBe(3)
+    expect(getPoolProgress(pool, new Set()).total).not.toBe(getLearningPath().length)
   })
 })
 

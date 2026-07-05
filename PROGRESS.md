@@ -508,9 +508,9 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 > Người dùng đã duyệt "triển khai luôn" toàn bộ kế hoạch ở `docs/research/cai-tien-ui-ux.md`,
 > dùng phương án khuyến nghị cho cả 4 câu hỏi mở (đồng ý bottom-nav; giảm throttle 10s→3s; thẻ
 > "Học tiếp" đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng; bỏ bớt badge "Không giới hạn" dư thừa).
-> Đã merge **U-1** (phần vá nhanh + badge PR #194) + **U-2** (PR #193) + **U-3** (nhánh hiện
-> tại); **U-4 → U-5 + giảm throttle CHƯA làm** — làm tiếp theo đúng thứ tự này ở phiên sau,
-> không cần hỏi lại 4 câu đã chốt.
+> Đã merge **U-1** (phần vá nhanh + badge PR #194) + **U-2** (PR #193) + **U-3** (PR #195) +
+> **U-4** (nhánh hiện tại); **U-5 + giảm throttle CHƯA làm** — làm tiếp theo đúng thứ tự này ở
+> phiên sau, không cần hỏi lại 4 câu đã chốt.
 
 ### U-3 — ĐÃ LÀM (2026-07-05, nhánh làm việc hiện tại)
 
@@ -580,19 +580,33 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   tăng `gap` trước rồi mới áp `tap-44`, hoặc chỉ tăng padding nhẹ (`py-1` → `py-1.5`/`py-2`) —
   cần thử nghiệm kỹ hơn, không hợp với tinh thần "vá nhanh" của đợt này.
 
-### U-4 → U-5 + giảm throttle — CHƯA LÀM, làm theo đúng thứ tự trong tài liệu (U-2, U-3 đã xong, xem trên)
+### U-4 — ĐÃ LÀM (2026-07-05, nhánh làm việc hiện tại)
 
-2. **U-4**: gọn header 4 tab học trang cấp (`CefrLevelPage.tsx`) — thu tiêu đề "A1 — Sơ cấp/Người
-   mới bắt đầu" thành 1 dòng nhỏ khi KHÔNG phải tab "Bài học"; đổi "Tổng đã thuộc: 0/10199"
-   (`StudyTabs.tsx`, dùng `getPathProgress` toàn lộ trình) → tiến độ CỦA CẤP (dùng
-   `levelVocabCounts` đã có trong `lib/cefrProgress.ts`); cân nhắc bỏ `QuickActions` ở 4 tab học.
-3. **U-5** (đổi lớn nhất): bottom tab bar cố định 4 mục Trang chủ·Lộ trình·Luyện tập·Tiến độ
+- **`CefrLevelPage.tsx`**: tiêu đề cấp ("A1 — Sơ cấp") chỉ hiện to (`PageHeader` + subtitle) ở
+  tab "Bài học" — 4 tab học (Hôm nay/Ôn SRS/Từ khó/Kiểm tra) đã có ngữ cảnh riêng (vd "Từ
+  3/10") nên thu tiêu đề thành 1 dòng nhỏ, đỡ chiếm chỗ màn hình nhỏ.
+- **`StudyTabs.tsx`**: "Tổng đã thuộc: 0/10199" (tab Hôm nay) trước đây dùng `getPathProgress`
+  (toàn bộ lộ trình ~10.199 từ) — gây hiểu lầm khi đang xem riêng 1 cấp. Đổi sang tiến độ CỦA
+  CẤP: thêm `getPoolProgress(pool, learned)` (`lib/curriculum.ts`, tổng quát hóa từ
+  `getPathProgress` — cùng logic đếm, nhận `pool` bất kỳ thay vì luôn `getLearningPath()`) rồi
+  gọi với `pool` đã lọc theo cấp sẵn có ở trang cha — không cần truyền thêm `level`/`circleById`
+  qua nhiều lớp component.
+- **`QuickActions`** (Chia sẻ/Nhắc học): chỉ hiện ở tab "Bài học" — 4 tab học không cần lặp lại.
+- 3 test mới cho `getPoolProgress` (`curriculum.test.ts`: pool rỗng, chỉ đếm từ trong pool,
+  total khác toàn lộ trình).
+- Verify: typecheck/lint (0 cảnh báo)/format/test (160/160)/build/size-limit (112.95/116 kB)
+  xanh; lái app thật bằng Playwright — xác nhận tiêu đề gọn 1 dòng + QuickActions ẩn ở 4 tab
+  học, "Tổng đã thuộc: 0/378" đúng tổng A1 (không phải 0/10199). Full E2E suite 68/68 xanh.
+
+### U-5 + giảm throttle — CHƯA LÀM, làm tiếp theo (U-2, U-3, U-4 đã xong, xem trên)
+
+1. **U-5** (đổi lớn nhất): bottom tab bar cố định 4 mục Trang chủ·Lộ trình·Luyện tập·Tiến độ
    (component mới, thêm vào `App.tsx` ngoài `<Routes>`, chú ý `pb-safe` + không che nội dung
    cuối trang hiện có — nhiều trang đã có thanh dưới riêng vd input Chat, cần rà từng trang);
    dời `QuickActions` (Chia sẻ/Nhắc học) sang trang Hồ sơ/Tiến độ. Kèm: lưu Set "đã xem" cho
    `Lessons.tsx`/`CommonPhrases.tsx` (localStorage, mẫu giống `cefrProgress.ts`) + nút "Tiếp tục
    bài N".
-4. **Giảm throttle chat**: `useApiThrottle.ts` — đổi `delayMs = 10000` mặc định thành `3000`
+2. **Giảm throttle chat**: `useApiThrottle.ts` — đổi `delayMs = 10000` mặc định thành `3000`
    (đã chốt: không tăng trần chi phí vì lượt/ngày cap riêng qua `daily_usage`).
 
 Verify mỗi đợt như các đợt lộ trình học trước: typecheck/lint(0 cảnh báo)/format/test/build/

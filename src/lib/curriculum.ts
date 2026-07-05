@@ -244,14 +244,21 @@ export function getTodayBatch(learned: Set<string>, size = DAILY_GOAL): DictEntr
   return getTodayBatchFrom(getLearningPath(), learned, size)
 }
 
-// Tiến độ tổng: đã thuộc bao nhiêu / tổng lộ trình
-export function getPathProgress(learned: Set<string>): { done: number; total: number } {
-  const path = getLearningPath()
+// Tiến độ đã thuộc bao nhiêu / tổng của 1 danh sách từ bất kỳ (1 cấp, hoặc cả lộ trình).
+export function getPoolProgress(
+  pool: DictEntry[],
+  learned: Set<string>,
+): { done: number; total: number } {
   let done = 0
-  for (const e of path) {
+  for (const e of pool) {
     if (learned.has(wordKey(e.word)) || learned.has(e.word)) done++
   }
-  return { done, total: path.length }
+  return { done, total: pool.length }
+}
+
+// Tiến độ tổng: đã thuộc bao nhiêu / tổng lộ trình
+export function getPathProgress(learned: Set<string>): { done: number; total: number } {
+  return getPoolProgress(getLearningPath(), learned)
 }
 
 // ── Bộ đếm "học trong ngày" (mục tiêu 20/ngày) ────────────────────────
