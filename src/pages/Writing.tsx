@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { PenLine, Send, RotateCcw, ChevronDown, Trophy } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import QuickActions from '../components/QuickActions'
 import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
@@ -86,7 +85,7 @@ function ResultView({
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout title={isA ? 'Kết quả chấm bài' : 'Writing Results'} />
-      <main className="max-w-2xl mx-auto px-4 py-6 space-y-4 animate-fade-up">
+      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-4 animate-fade-up">
         <div className="glass rounded-2xl p-6 text-center">
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-violet-500/25">
             <Trophy className="w-6 h-6 text-white" />
@@ -311,7 +310,7 @@ export default function Writing() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
-      <main className="max-w-2xl mx-auto px-4 py-6 space-y-4 animate-fade-up">
+      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-4 animate-fade-up">
         {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
         <PageHeader
           title={isA ? 'Luyện viết & chấm điểm' : 'Writing Practice & Grading'}
@@ -421,9 +420,6 @@ export default function Writing() {
             ? 'AI chấm theo tiêu chí IELTS — Task Response · Coherence · Lexical · Grammar'
             : 'AI grades Vietnamese writing — Task Response · Coherence · Lexical · Grammar'}
         </p>
-
-        {/* Hàng hành động nhanh ở đáy trang */}
-        <QuickActions />
       </main>
     </div>
   )

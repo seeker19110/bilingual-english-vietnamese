@@ -232,7 +232,7 @@ export default function Home() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout title={T.greeting(user.name)} back={false} />
 
-      <main className="max-w-3xl mx-auto px-4 py-6">
+      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
         {/* ── Thẻ "Học tiếp" — mục kế tiếp trong lộ trình CEFR ─────────────── */}
         {continueLevel && nextLabel && (
           <div className="mb-3 animate-fade-in">

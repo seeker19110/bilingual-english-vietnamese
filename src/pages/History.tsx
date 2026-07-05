@@ -11,7 +11,6 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import QuickActions from '../components/QuickActions'
 import { getChatSessions, getWritingSubs, getSpeakingSessions, getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { useCloudSync } from '../lib/useCloudSync'
@@ -317,7 +316,7 @@ export default function History() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
 
-      <main className="max-w-3xl mx-auto px-4 py-5">
+      <main className="max-w-3xl mx-auto px-4 pt-5 pb-[calc(1.25rem+var(--bnav-h))]">
         {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
         <PageHeader title="Lịch sử học" subtitle="Xem lại chat, bài viết và buổi luyện nói" />
 
@@ -366,9 +365,6 @@ export default function History() {
             {tab === 'speaking' && speakings.map((s) => <SpeakingCard key={s.id} s={s} />)}
           </div>
         )}
-
-        {/* Hàng hành động nhanh ở đáy trang */}
-        <QuickActions />
       </main>
     </div>
   )

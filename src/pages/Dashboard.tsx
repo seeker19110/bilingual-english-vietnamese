@@ -185,7 +185,7 @@ export default function Dashboard() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout streak={stats.streak} />
 
-      <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
         <PageHeader
           title={vi ? 'Tiến độ học' : 'Your Progress'}

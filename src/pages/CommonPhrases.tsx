@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect, useRef, useDeferredValue } from 'react'
 import { Search, X, ChevronRight, Loader2 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import QuickActions from '../components/QuickActions'
 import { useLang } from '../context/useLang'
 import KaraokeText from '../components/KaraokeText'
 import VoiceToggle from '../components/VoiceToggle'
@@ -256,7 +255,7 @@ export default function CommonPhrases() {
   if (selected) {
     const c = getColor(selected.color)
     return (
-      <div className="h-dvh overflow-hidden bg-zinc-950 flex flex-col">
+      <div className="h-[calc(100dvh-var(--bnav-h))] overflow-hidden bg-zinc-950 flex flex-col">
         <Layout title={selected.starter} back extra={<VoiceToggle />} />
         <main className="flex-1 overflow-hidden max-w-3xl mx-auto w-full px-4 py-4 flex flex-col">
           {/* danh sách câu cuộn trong khung cố định, không đẩy trang xuống */}
@@ -299,7 +298,7 @@ export default function CommonPhrases() {
   const shown = sorted.slice(0, visible)
 
   return (
-    <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
+    <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
       <Layout back extra={<VoiceToggle />} />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
@@ -398,9 +397,6 @@ export default function CommonPhrases() {
           {filtered.length === 0 && (
             <div className="text-center py-16 text-zinc-400 text-sm">{T.phrasesNoResult}</div>
           )}
-
-          {/* Hàng hành động nhanh ở đáy trang */}
-          <QuickActions />
         </div>
       </main>
 

@@ -4,7 +4,6 @@ import { startListening, isSTTSupported } from '../lib/stt'
 import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronounceScore'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import QuickActions from '../components/QuickActions'
 import VoiceToggle from '../components/VoiceToggle'
 import { getDirection } from '../lib/storage'
 import {
@@ -177,7 +176,7 @@ export default function Lessons() {
   if (selectedMeta) {
     const c = getColor(selectedMeta.id)
     return (
-      <div className="h-dvh overflow-hidden bg-zinc-950 flex flex-col">
+      <div className="h-[calc(100dvh-var(--bnav-h))] overflow-hidden bg-zinc-950 flex flex-col">
         <Layout
           title={selectedMeta.title}
           subtitle={selectedMeta.situation}
@@ -200,7 +199,7 @@ export default function Lessons() {
   // Mobile: h-dvh flex col, search cố định dưới cùng
   // Desktop (sm+): layout thường, search ở trên
   return (
-    <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
+    <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
       <Layout back extra={<VoiceToggle />} />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
@@ -223,9 +222,6 @@ export default function Lessons() {
             <SearchBar query={query} setQuery={setQuery} isA={isA} variant="desktop" />
           </div>
           <LessonList lessons={index} isA={isA} query={deferredQuery} onSelect={setSelectedMeta} />
-
-          {/* Hàng hành động nhanh ở đáy trang */}
-          <QuickActions />
         </div>
       </main>
 

@@ -9,7 +9,6 @@
 
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import QuickActions from '../components/QuickActions'
 import VocabMilestone from '../components/VocabMilestone'
 import RoadmapTab from '../components/RoadmapTab'
 import { getDirection } from '../lib/storage'
@@ -25,7 +24,7 @@ export default function Learn() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout back />
 
-      <main className="max-w-3xl mx-auto px-4 py-6">
+      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
         <PageHeader
           title={isA ? 'Học theo lộ trình' : 'Learning Path'}
           subtitle={isA ? 'Lộ trình chuẩn CEFR A1 → B2' : 'CEFR roadmap A1 → B2'}
@@ -33,9 +32,6 @@ export default function Learn() {
         <VocabMilestone userId={user.id} />
 
         <RoadmapTab uid={user.id} isA={isA} />
-
-        {/* Hàng hành động nhanh ở đáy trang */}
-        <QuickActions />
       </main>
     </div>
   )

@@ -11,7 +11,6 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import QuickActions from '../components/QuickActions'
 import VoiceToggle from '../components/VoiceToggle'
 import PronounceButton from '../components/PronounceButton'
 import VocabMilestone from '../components/VocabMilestone'
@@ -217,7 +216,7 @@ export default function Dictionary() {
   if (!user) return null
 
   return (
-    <div className="bg-zinc-950 flex flex-col h-dvh sm:h-auto sm:block sm:min-h-dvh">
+    <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
       <Layout extra={<VoiceToggle />} />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
@@ -618,9 +617,6 @@ export default function Dictionary() {
               ))}
             </div>
           )}
-
-          {/* Hàng hành động nhanh ở đáy trang */}
-          <QuickActions />
         </div>
       </main>
 

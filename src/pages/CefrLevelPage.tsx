@@ -41,7 +41,6 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import QuickActions from '../components/QuickActions'
 import { GrammarDetail, VocabFlash, DialogueView } from '../components/CefrLessonViews'
 import {
   TodayLesson,
@@ -258,7 +257,9 @@ export default function CefrLevelPage() {
     return (
       <div className="min-h-dvh bg-zinc-950">
         <Layout back />
-        <main className="max-w-3xl mx-auto px-4 py-6">{children}</main>
+        <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
+          {children}
+        </main>
       </div>
     )
   }
@@ -710,9 +711,6 @@ export default function CefrLevelPage() {
           )}
         </>
       )}
-
-      {/* Chỉ hiện Chia sẻ/Nhắc học ở tab "Bài học" — 4 tab học đã đủ dày nội dung riêng. */}
-      {activeTab === 'lessons' && <QuickActions />}
     </div>,
   )
 }

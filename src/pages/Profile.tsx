@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
+import QuickActions from '../components/QuickActions'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useCloudSync } from '../lib/useCloudSync'
@@ -54,7 +55,7 @@ export default function Profile() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout streak={streak} />
 
-      <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader
           title={isA ? 'Hồ sơ cá nhân' : 'Profile'}
           subtitle={
@@ -184,6 +185,11 @@ export default function Profile() {
             </div>
           </button>
         </section>
+
+        {/* Hàng hành động nhanh (Chia sẻ/Nhắc học) — dời từ các trang luyện tập/nội
+            dung sang đây theo U-5 (docs/research/cai-tien-ui-ux.md), tránh lặp lại
+            ở mọi trang giờ đã có bottom-nav để điều hướng nhanh. */}
+        <QuickActions />
 
         {/* Đăng xuất */}
         <button
