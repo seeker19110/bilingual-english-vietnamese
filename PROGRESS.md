@@ -508,8 +508,30 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
 > Người dùng đã duyệt "triển khai luôn" toàn bộ kế hoạch ở `docs/research/cai-tien-ui-ux.md`,
 > dùng phương án khuyến nghị cho cả 4 câu hỏi mở (đồng ý bottom-nav; giảm throttle 10s→3s; thẻ
 > "Học tiếp" đặt TRÊN hàng 3 ô Ngôn ngữ/Streak/Giọng; bỏ bớt badge "Không giới hạn" dư thừa).
-> Đã merge **U-1 (một phần)** + **U-2**; **U-3 → U-5 + giảm throttle CHƯA làm** — làm tiếp theo
-> đúng thứ tự này ở phiên sau, không cần hỏi lại 4 câu đã chốt.
+> Đã merge **U-1** (phần vá nhanh + badge PR #194) + **U-2** (PR #193) + **U-3** (nhánh hiện
+> tại); **U-4 → U-5 + giảm throttle CHƯA làm** — làm tiếp theo đúng thứ tự này ở phiên sau,
+> không cần hỏi lại 4 câu đã chốt.
+
+### U-3 — ĐÃ LÀM (2026-07-05, nhánh làm việc hiện tại)
+
+- **`src/lib/onboarding.ts` (mới)**: chiều ĐỌC cho dữ liệu onboarding (trước chỉ ghi qua
+  `saveOnboarding`, không nơi nào đọc lại). 2 tầng như profile: cache localStorage
+  (`et_onboarding_<uid>`, ghi ngay lúc onboarding xong) → Supabase `profiles`
+  (`user_level`/`goal`/`daily_minutes`, fetch nền cho thiết bị mới). Kèm hook `useOnboarding()`
+  - `minutesToSpeed()` (5→5, 10→10, 20/30→20). 9 test mới (`onboarding.test.ts`, mock supabase).
+- **`Onboarding.tsx`**: sau khi lưu → cache local + `setDailySpeed(minutesToSpeed(minutes))` —
+  phút/ngày khai lúc onboarding giờ đặt luôn tốc độ học từ vựng (trước đây bị bỏ qua, ai cũng
+  nhận mặc định 10).
+- **`Chat.tsx` / `Speaking.tsx`**: SetupScreen nhận `defaultLevel` từ onboarding thay vì cứng
+  `'intermediate'`. Onboarding về trễ (thiết bị mới) chỉ áp lại khi người dùng CHƯA tự bấm chọn
+  (ref `levelTouched` — không ghi đè lựa chọn tay).
+- **`CefrLevelPage.tsx`**: banner gợi ý test-out ở trang A1 khi khai trình độ ≥ Trung cấp —
+  chỉ hiện khi từ vựng A1 < ngưỡng mở A2 (`UNLOCK_PCT`), có nút X đóng (ghi nhớ
+  `et_a1_testout_dismissed_<uid>`), trỏ tới nút "Tôi đã biết vòng này — kiểm tra nhanh" có sẵn.
+- Verify: typecheck/lint (0 cảnh báo)/format/test (157/157)/build/size-limit (112.96/116 kB)
+  xanh; lái app thật bằng Playwright khổ mobile 375px (9/9 kịch bản: mặc định trình độ theo
+  cache, không cache giữ Trung cấp như cũ, banner A1 hiện/ẩn/nhớ sau reload, flow onboarding
+  thật ghi đúng cache + tốc độ 20). Full E2E suite 68/68 xanh.
 
 ### U-2 — ĐÃ LÀM (chưa merge, xem nhánh làm việc hiện tại)
 
@@ -558,13 +580,8 @@ dictionaryApi}.ts`, `api/{_lib/usage,push,dictionary}.ts`) khiến ranh giới "
   tăng `gap` trước rồi mới áp `tap-44`, hoặc chỉ tăng padding nhẹ (`py-1` → `py-1.5`/`py-2`) —
   cần thử nghiệm kỹ hơn, không hợp với tinh thần "vá nhanh" của đợt này.
 
-### U-3 → U-5 + giảm throttle — CHƯA LÀM, làm theo đúng thứ tự trong tài liệu (U-2 đã xong, xem trên)
+### U-4 → U-5 + giảm throttle — CHƯA LÀM, làm theo đúng thứ tự trong tài liệu (U-2, U-3 đã xong, xem trên)
 
-1. **U-3**: nối `saveOnboarding()` (`lib/cloud.ts:273`) — hiện GHI nhưng KHÔNG NƠI NÀO ĐỌC LẠI
-   (đã xác nhận bằng grep toàn repo). Cần: (a) hàm đọc lại onboarding từ Supabase/cache; (b)
-   `level` → mặc định `Level` của `Chat.tsx`/`Speaking.tsx` SetupScreen (hiện cứng `'intermediate'`)
-   - nếu ≥ Trung cấp thì gợi ý banner test-out ở trang A1; (c) `dailyMinutes` → map sang tốc độ
-     5/10/20 qua `setDailySpeed()` (`lib/curriculum.ts`, đã có từ đợt lộ trình học).
 2. **U-4**: gọn header 4 tab học trang cấp (`CefrLevelPage.tsx`) — thu tiêu đề "A1 — Sơ cấp/Người
    mới bắt đầu" thành 1 dòng nhỏ khi KHÔNG phải tab "Bài học"; đổi "Tổng đã thuộc: 0/10199"
    (`StudyTabs.tsx`, dùng `getPathProgress` toàn lộ trình) → tiến độ CỦA CẤP (dùng

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Plane, Briefcase, GraduationCap, MessageCircle, ChevronRight, Check } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { saveOnboarding } from '../lib/cloud'
+import { cacheOnboarding, minutesToSpeed } from '../lib/onboarding'
+import { setDailySpeed } from '../lib/curriculum'
 
 type OnboardLevel = 'beginner' | 'intermediate' | 'advanced'
 type OnboardGoal = 'daily' | 'travel' | 'work' | 'ielts'
@@ -70,6 +72,10 @@ export default function Onboarding() {
     if (!user) return
     setSaving(true)
     await saveOnboarding(user.id, { level, goal, dailyMinutes: minutes })
+    // U-3: dùng lại dữ liệu vừa khai ngay trong app — cache local để Chat/Speaking
+    // đọc được trình độ, và map phút/ngày → tốc độ học từ vựng (5/10/20 từ/ngày).
+    cacheOnboarding(user.id, { level, goal, dailyMinutes: minutes })
+    setDailySpeed(user.id, minutesToSpeed(minutes))
     await refresh()
     nav('/', { replace: true })
   }

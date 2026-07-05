@@ -36,6 +36,8 @@ import {
   MessageCircle,
   Play,
   PartyPopper,
+  X,
+  Zap,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -77,7 +79,9 @@ import {
   levelGrammarCounts,
   computeLockedMapPersisted,
   findNextStep,
+  UNLOCK_PCT,
 } from '../lib/cefrProgress'
+import { useOnboarding } from '../lib/onboarding'
 
 // % an toàn (0 khi total = 0, không chia cho 0).
 const pct = (done: number, total: number) => (total > 0 ? Math.round((done / total) * 100) : 0)
@@ -130,6 +134,25 @@ export default function CefrLevelPage() {
 
   const uid = user?.id ?? ''
   const level = levels.find((l) => l.id === (levelId ?? '').toUpperCase())
+
+  // U-3: trình độ khai lúc onboarding — nếu ≥ Trung cấp thì gợi ý test-out ở A1
+  // ("Tôi đã biết vòng này" trong vòng từ vựng) thay vì học lại từng thẻ.
+  const onboarding = useOnboarding(user?.id)
+  const [testoutDismissed, setTestoutDismissed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(`et_a1_testout_dismissed_${uid}`) === '1'
+    } catch {
+      return false
+    }
+  })
+  function dismissTestout() {
+    try {
+      localStorage.setItem(`et_a1_testout_dismissed_${uid}`, '1')
+    } catch {
+      /* localStorage bị chặn — banner vẫn ẩn trong phiên này nhờ state */
+    }
+    setTestoutDismissed(true)
+  }
 
   // `refresh`/`ready` là khóa invalidation thủ công (dữ liệu đọc từ localStorage)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -288,6 +311,17 @@ export default function CefrLevelPage() {
   const vocab = levelVocabCounts(level, circleById, learned)
   const grammar = levelGrammarCounts(level, doneGrammar)
   const next = locked ? null : findNextStep(level, circleById, learned, doneGrammar)
+
+  // Banner gợi ý test-out (U-3): chỉ ở A1, người khai trình độ ≥ Trung cấp, chưa
+  // bấm đóng, và từ vựng A1 chưa đạt ngưỡng mở A2 (đạt rồi thì gợi ý hết tác dụng).
+  const showTestoutBanner =
+    level.id === 'A1' &&
+    !locked &&
+    !testoutDismissed &&
+    onboarding != null &&
+    onboarding.level !== 'beginner' &&
+    vocab.total > 0 &&
+    vocab.done / vocab.total < UNLOCK_PCT
 
   // Mục "Học tiếp": nhãn + hành động mở đúng màn.
   let nextLabel = ''
@@ -559,6 +593,47 @@ export default function CefrLevelPage() {
             </div>
           ) : (
             <>
+              {/* Gợi ý test-out cho người đã có nền (U-3) */}
+              {showTestoutBanner && (
+                <div className="glass rounded-2xl p-4 mb-4 border border-sky-500/30 flex items-start gap-3 animate-fade-in">
+                  <Zap className="w-5 h-5 text-sky-400 theme-light:text-sky-700 shrink-0 mt-0.5" />
+                  <p className="flex-1 text-sm text-zinc-300 leading-relaxed">
+                    {isA ? (
+                      <>
+                        Bạn khai trình độ{' '}
+                        <strong className="text-white">
+                          {onboarding?.level === 'advanced' ? 'Nâng cao' : 'Trung cấp'}
+                        </strong>{' '}
+                        khi bắt đầu? Không cần học lại từng thẻ — mở một vòng từ vựng rồi bấm{' '}
+                        <strong className="text-white">
+                          “Tôi đã biết vòng này — kiểm tra nhanh”
+                        </strong>{' '}
+                        để vượt nhanh các vòng đã biết.
+                      </>
+                    ) : (
+                      <>
+                        You said your level is{' '}
+                        <strong className="text-white">
+                          {onboarding?.level === 'advanced' ? 'Advanced' : 'Intermediate'}
+                        </strong>
+                        ? No need to relearn every card — open a vocabulary set and tap{' '}
+                        <strong className="text-white">
+                          “I already know this set — quick test”
+                        </strong>{' '}
+                        to skip ahead.
+                      </>
+                    )}
+                  </p>
+                  <button
+                    onClick={dismissTestout}
+                    aria-label={isA ? 'Đóng gợi ý' : 'Dismiss suggestion'}
+                    className="tap-44 shrink-0 text-zinc-400 hover:text-zinc-200 transition"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
               {/* Học tiếp / hoàn thành cấp */}
               {nextOnClick ? (
                 <button

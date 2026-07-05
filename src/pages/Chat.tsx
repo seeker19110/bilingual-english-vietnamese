@@ -17,6 +17,7 @@ import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { useApiThrottle } from '../lib/useApiThrottle'
+import { useOnboarding } from '../lib/onboarding'
 import { callClaude, parseJson } from '../lib/ai'
 import { chatSystemPrompt, chatFullEvaluationPrompt, situationLabel } from '../prompts'
 import {
@@ -39,14 +40,23 @@ function SetupScreen({
   loading,
   error,
   dir,
+  defaultLevel,
 }: {
   onStart: (situation: string, level: Level) => void
   loading: boolean
   error: string
   dir: Direction
+  // Trình độ khai lúc onboarding (U-3) — làm mặc định thay vì cứng 'intermediate'
+  defaultLevel?: Level
 }) {
   const [situation, setSituation] = useState('job_interview')
-  const [level, setLevel] = useState<Level>('intermediate')
+  const [level, setLevel] = useState<Level>(defaultLevel ?? 'intermediate')
+  // Onboarding có thể về TRỄ (thiết bị mới phải fetch DB) — chỉ áp lại mặc định
+  // khi người dùng CHƯA tự bấm chọn, tránh ghi đè lựa chọn tay.
+  const levelTouched = useRef(false)
+  useEffect(() => {
+    if (defaultLevel && !levelTouched.current) setLevel(defaultLevel)
+  }, [defaultLevel])
   const isA = dir === 'A'
 
   return (
@@ -94,7 +104,10 @@ function SetupScreen({
             {LEVELS.map((l) => (
               <button
                 key={l.value}
-                onClick={() => setLevel(l.value)}
+                onClick={() => {
+                  levelTouched.current = true
+                  setLevel(l.value)
+                }}
                 className={`py-2.5 rounded-xl text-sm font-medium border transition active:scale-[0.97] ${
                   level === l.value
                     ? 'bg-gradient-to-br from-accent-600 to-accent-500 border-transparent text-white shadow-md shadow-accent-500/20'
@@ -235,6 +248,7 @@ export default function Chat() {
   useCloudSync(user.id) // kéo lịch sử + lượt dùng từ Supabase khi mở trang
   const dir = getDirection()
   const isA = dir === 'A'
+  const onboarding = useOnboarding(user.id) // trình độ khai lúc onboarding (U-3)
 
   const [session, setSession] = useState<ChatSession | null>(null)
   const [input, setInput] = useState('')
@@ -422,7 +436,13 @@ export default function Chat() {
               }
             />
           </div>
-          <SetupScreen onStart={startSession} loading={loading} error={error} dir={dir} />
+          <SetupScreen
+            onStart={startSession}
+            loading={loading}
+            error={error}
+            dir={dir}
+            defaultLevel={onboarding?.level}
+          />
 
           {prevSessions.length > 0 && (
             <div className="max-w-sm mx-auto w-full px-4 pb-8 animate-fade-in delay-200">
