@@ -766,73 +766,47 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   đã chạy trên Dashboard → SQL Editor (2026-07-02). Lỗ RLS (cột chi phí + cache phát âm
   dùng chung) đã đóng thật trên DB đang chạy, không chỉ trong schema.
 
-## 🚧 ĐANG LÀM — Bổ sung 100% từ CEFR A1→C2 vào từ điển, chia 2 đợt (2026-07-05)
+## Đã xong (thay 409 từ đầu tiên của Đợt 1 CEFR A1-B2 — 2026-07-05)
 
-> Việc lớn, làm qua NHIỀU phiên — xem "Trạng thái" bên dưới trước khi tiếp tục ở phiên mới.
-> Nếu hit session limit giữa chừng: dừng, KHÔNG tự relaunch hàng loạt agent, ghi lại đúng đã
-> làm tới đâu vào đây rồi chờ người dùng (theo CLAUDE.md mục 3).
-
-**Bối cảnh & quyết định của người dùng:**
-
-- Bắt đầu từ việc xoá 409 từ đơn không có trong CEFR-J/Words-CEFR-Dataset (idiom + từ lóng công
-  nghệ/thương hiệu như bitcoin/ipad/javascript — xem PR #204), thay bằng 409 từ CEFR-J thật.
-- Người dùng sau đó yêu cầu mở rộng: **bổ sung 100% từ CEFR A1→C2** còn thiếu trong từ điển
-  (không chỉ 409 từ ban đầu). Đối chiếu toàn bộ wordlist CEFR-J/Octanove với từ điển hiện có
-  (nền tảng `curriculum.ts` + mở rộng `public/data/dictionary/`):
-
-  | Cấp      | Tổng CEFR-J | Thiếu     | Từ đơn    | Cụm từ  |
-  | -------- | ----------- | --------- | --------- | ------- |
-  | A1       | 1.084       | 48        | 39        | 9       |
-  | A2       | 1.383       | 161       | 125       | 36      |
-  | B1       | 2.390       | 443       | 397       | 46      |
-  | B2       | 2.765       | 997       | 974       | 23      |
-  | C1       | 1.026       | 600       | 596       | 4       |
-  | C2       | 999         | 807       | 801       | 6       |
-  | **Tổng** |             | **3.056** | **2.932** | **124** |
-
-- **Đã chốt chia 2 đợt** (theo đúng ranh giới sản phẩm sẵn có — CEFR chuẩn A1-B2 vs phần Mở
-  rộng ngoài CEFR C1-C2):
-  - **Đợt 1 — A1→B2 hoàn chỉnh: 1.649 từ** (409 đã chọn/đang làm + ~1.240 từ nữa)
-  - **Đợt 2 — C1→C2: 1.407 từ** (600 + 807) — làm SAU khi Đợt 1 xong, PR riêng.
-- Cụm nhiều từ (124 từ, vd "good morning", "bus stop") gắn `pos` theo vai trò ngữ pháp thật
-  (n/v/adj...) như các entry cụm từ đã có sẵn trong từ điển (KHÔNG dùng `pos: "idiom"` — nhãn đó
-  chỉ dành cho thành ngữ nghĩa bóng thật sự).
-- **Đã xác nhận an toàn xoá/thêm:** research agent xác nhận `src/data/curriculum.ts` (circle nền
+- **Bối cảnh:** người dùng yêu cầu bổ sung 100% từ CEFR A1→C2 còn thiếu trong từ điển (không chỉ
+  409 từ ban đầu). Đối chiếu toàn bộ wordlist CEFR-J/Octanove với từ điển hiện có (nền tảng
+  `curriculum.ts` + mở rộng `public/data/dictionary/`) cho thấy **tổng 3.056 từ thiếu** (A1=48,
+  A2=161, B1=443, B2=997, C1=600, C2=807; 2.932 từ đơn + 124 cụm từ). Đã chốt chia **2 đợt**: Đợt
+  1 = A1→B2 hoàn chỉnh (1.649 từ), Đợt 2 = C1→C2 (1.407 từ, làm sau, PR riêng).
+- **Đã hoàn tất 409/1.649 từ của Đợt 1** — xoá 409 từ đơn không có trong CEFR-J/Words-CEFR-Dataset
+  (idiom + từ lóng công nghệ/thương hiệu: bitcoin/ipad/javascript/paypal...), thay bằng 409 từ
+  CEFR-J thật (ưu tiên A1=26 → A2=112 → B1=271), viết đầy đủ nội dung (vi/ex_en/ex_vi/ipa_en/
+  ipa_vi) qua 4 agent song song theo đúng quy ước IPA tiếng Việt của từ điển (thanh điệu Bắc Bộ,
+  chỉ phiên âm âm tiết đầu bản dịch `vi`). Đã kiểm tra khớp 100% word/pos/level + spot-check IPA
+  tay ~20 từ đều đúng quy tắc trước khi gộp.
+- **Đã gộp vào `public/data/dictionary/` thật:** xoá 409 entry cũ, chèn 409 entry mới, sắp lại
+  alphabet + dàn đều 10 chunk (~1000/chunk). Chạy `scripts/assign-word-freq.ts` (SUBTLEX-US, gói
+  `subtlex-word-frequencies`) điền `freq` cho 373/409 từ mới (36 từ có dấu chấm/gạch nối như
+  "a.m."/"mrs." không khớp wordlist, giữ nguyên như thiết kế cũ — xếp cuối phần Mở rộng).
+- **Kết quả: 10.006/10.006 từ (100%) đã có nhãn CEFR** — không còn từ nào thiếu `level`, không
+  trùng từ (`10.006 unique`), không thiếu field bắt buộc nào.
+- Verify: build ✅ · typecheck ✅ · lint ✅ (0 cảnh báo) · format ✅ · test ✅ (201/201) ·
+  size-limit ✅ (114.33/116 kB JS, 8.91/9 kB CSS).
+- An toàn xoá đã được xác nhận trước (research agent): `src/data/curriculum.ts` (circle nền
   tảng) tự chứa dữ liệu riêng, không tham chiếu cứng vào `public/data/dictionary/`; SRS/tiến độ
-  học của người dùng lưu theo string từ, từ bị xoá chỉ "mồ côi" (biến mất khỏi danh sách, không
-  crash). Không có ràng buộc DB nào khoá cứng.
+  học của người dùng lưu theo string từ, từ bị xoá chỉ "mồ côi" (không crash).
+- **CI của PR #204 báo failure** nhiều lần rerun nhưng log tải về lỗi 404 liên tục — nghi hạn chế
+  môi trường CI mô phỏng của phiên làm việc này, không phải lỗi code thật (verify local nhiều lần
+  đều xanh).
 
-**Trạng thái Đợt 1 (1.649 từ) — tiến độ 409 từ đầu tiên:**
+## ⏭️ Còn lại của Đợt 1 (A1-B2) + Đợt 2 (C1-C2) — làm ở phiên sau
 
-- Danh sách 409 từ đã chọn (lọc CEFR-J chưa có trong dict, ưu tiên A1→A2→B1, đã dọn ~30 từ
-  trùng/rác qua rà 2 vòng — BrE/AmE trùng nghĩa như "criticise" khi đã có "criticize", từ rời
-  rạc do lỗi tách của CEFR-J như "ness", viết tắt mơ hồ "id"/"pc"/"cv") + toàn bộ nội dung đã
-  duyệt lưu **AN TOÀN TRONG REPO** (không phải scratchpad nữa) tại `.wip-cefr-word-swap/`:
-  - `selected-409.csv` — danh sách 409 từ (word,pos,level)
-  - `entries-batch-0.json` (103), `entries-batch-2.json` (102), `entries-batch-3.json` (102) —
-    **307/409 đã có nội dung đầy đủ + đã kiểm tra** (khớp 100% word/pos/level, spot-check IPA
-    tay ~15 từ đều đúng quy tắc thanh điệu)
-  - `batch-1.csv` (102 từ) — đang giao lại agent viết (lần đầu bị dừng do hit session limit,
-    lần 2 ghi thẳng vào `.wip-cefr-word-swap/entries-batch-1.json` thay vì scratchpad)
-- **CHƯA đụng vào** `public/data/dictionary/` cho 409 từ này (chưa merge) — dictionary hiện tại
-  vẫn đúng trạng thái PR #204 (tầng 1+2 thật đã chạy, còn 409 từ chưa có `level` = đúng 409 từ
-  định thay).
-- **CI của PR #204 báo failure** sau 4 lần rerun nhưng log tải về lỗi 404 liên tục — nghi hạn chế
-  môi trường CI mô phỏng, không phải lỗi code (verify local nhiều lần đều xanh: build/typecheck/
-  lint/test/format).
+> Việc lớn, làm qua NHIỀU phiên. Nếu hit session limit giữa chừng: dừng, KHÔNG tự relaunch hàng
+> loạt agent, ghi lại đúng đã làm tới đâu rồi chờ người dùng (theo CLAUDE.md mục 3).
 
-**Việc cần làm tiếp (theo thứ tự, có thể trải nhiều phiên):**
-
-1. Đợi/kiểm `entries-batch-1.json` xong → gộp 4 file (409 từ) vào `public/data/dictionary/`:
-   xoá 409 entry chưa có `level`, chèn 409 entry mới (dàn đều lại ~1000 từ/chunk), xoá thư mục
-   `.wip-cefr-word-swap/` sau khi gộp xong.
-2. Chọn tiếp ~1.240 từ A1-B2 còn thiếu (loại các từ đã dùng cho 409), lọc trùng/rác như đã làm,
-   chia lô ~100 từ/agent, lặp lại quy trình (nhiều lượt/nhiều phiên — ĐỪNG launch quá nhiều agent
-   cùng lúc, rút kinh nghiệm lần chạm giới hạn vừa rồi).
-3. Sau khi đủ 1.649 từ Đợt 1: chạy `scripts/assign-word-freq.ts` (SUBTLEX-US, gói
-   `subtlex-word-frequencies` — xem "Đợt 4" ở trên) điền `freq`, build/typecheck/lint/test/format,
-   tự kiểm mẫu tay, cập nhật PROGRESS.md, commit/push, merge PR #204 (hoặc PR mới).
-4. Bắt đầu Đợt 2 (C1-C2, 1.407 từ) — PR riêng, quy trình tương tự.
+- **Còn ~1.240 từ A1-B2** để hoàn tất Đợt 1 (đủ 1.649) — chọn tiếp từ CEFR-J chưa có trong dict
+  (loại các từ đã dùng cho 409 từ vừa xong), lọc trùng/rác như đã làm (BrE/AmE trùng nghĩa, từ
+  rời rạc do lỗi tách của CEFR-J, viết tắt mơ hồ), chia lô ~100 từ/agent — nhiều lượt/nhiều phiên,
+  đừng launch quá nhiều agent song song cùng lúc (rút kinh nghiệm lần chạm giới hạn phiên).
+- **Đợt 2 — C1→C2 (1.407 từ)**: làm sau khi Đợt 1 xong hẳn, PR riêng, quy trình tương tự (chọn
+  từ → viết nội dung theo lô → gộp → freq → verify → commit).
+- Cụm nhiều từ (124 từ tổng, vd "good morning", "bus stop") gắn `pos` theo vai trò ngữ pháp thật
+  (n/v/adj...), KHÔNG dùng `pos: "idiom"` (nhãn đó chỉ dành cho thành ngữ nghĩa bóng thật sự).
 
 ## Tiếp theo
 
@@ -840,14 +814,9 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
 
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
-- Chạy thật `NO_AI_FALLBACK=1 npm run tag:cefr` trên file gốc để GHI vào
-  `public/data/dictionary/` kết quả tầng 1 (lemma) + tầng 2 (Words-CEFR-Dataset) mới thêm — dry
-  run trên bản sao cho thấy sẽ phủ thêm ~3.798 từ miễn phí (còn lại ~409/10.006 từ, ~4%, thật sự
-  cần AI: chủ yếu cụm từ/idiom + thuật ngữ công nghệ/tên thương hiệu). Sau đó cân nhắc hiển thị
-  badge CEFR trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu trước). Phần ~409 từ còn lại vẫn
-  cần key AI (`GEMINI_API_KEY`/`GROQ_API_KEY`/`ANTHROPIC_API_KEY`) cho tầng 3 (fallback) — môi
-  trường phiên làm việc hiện tại không có key nào, giữ quyết định cũ: **tự chạy trên máy có
-  `.env`**.
+- ~~Chạy thật `NO_AI_FALLBACK=1 npm run tag:cefr` trên file gốc~~ ĐÃ XONG (2026-07-05) — 100%
+  từ điển (10.006/10.006) đã có nhãn CEFR thật, không cần AI (xem "Đã xong" ở trên). Còn lại:
+  cân nhắc hiển thị badge CEFR trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu đã xong).
 - ~~Zod validate input (đợt 3)~~ ĐÃ XONG (2026-07-05) — xem "Quyết định quan trọng" bên dưới.
   Query param của `api/dictionary.ts`/`api/pronunciation.ts` vẫn giữ nguyên (đã sanitize kỹ
   bằng tay, giá trị thêm Zod thấp — GET query, không phải JSON body).
