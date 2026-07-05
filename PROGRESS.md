@@ -794,19 +794,52 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   môi trường CI mô phỏng của phiên làm việc này, không phải lỗi code thật (verify local nhiều lần
   đều xanh).
 
-## ⏭️ Còn lại của Đợt 1 (A1-B2) + Đợt 2 (C1-C2) — làm ở phiên sau
+## Đã xong (hoàn tất 1.059 từ đơn còn lại của Đợt 1 A1-B2 — 2026-07-05, PR #205)
+
+- **Quyết định đổi hướng so với batch 409 trước:** batch 409 dùng cách "swap" (xoá từ rác, thay
+  từ CEFR-J thật, giữ nguyên tổng 10.006). Kiểm tra lại trước khi làm tiếp: chạy thử tier 1+2 của
+  `tag:cefr` (bỏ qua field `level` có sẵn) trên toàn bộ dict hiện tại → **100% từ đều tra được**,
+  tức là KHÔNG còn "từ rác thật sự" nào để swap nữa (batch 409 đã dọn sạch). Từ đây **đổi sang
+  GROW từ điển** (thêm thẳng, không xoá gì) — an toàn hơn, không có gì để cân nhắc đánh đổi.
+  `size-limit` không bị ảnh hưởng (dictionary là JSON tĩnh fetch runtime qua `fetch()`, không nằm
+  trong bundle JS mà `size-limit` đo).
+- **Đối chiếu lại CEFR-J v1.5 (A1-B2) với dict sau batch 409** (10.006 từ) → còn thiếu 1.271 mục.
+  Lọc: 125 cụm nhiều từ (hoãn — cần gắn `pos` theo vai trò ngữ pháp thật, không dùng `idiom`), 15
+  mảnh vỡ/viết tắt mơ hồ (`'m/'re/'s`, `mr/mrs/ms/dr/pm/id/cv/eco`, `ness` do CEFR-J tách từ lỗi,
+  tên riêng `smith/englishman`, lỗi chính tả `mommie`), 67 từ trùng nghĩa BrE/AmE với từ đã có
+  (colour/color, organise/organize, gramme/gram, litre/liter, cheque/check, gaol/jail... — dùng
+  hàm chuyển đổi hậu tố BrE→AmE tự viết + danh sách bất quy tắc, xem lịch sử chat để tái tạo nếu
+  cần) → còn lại **1.059 từ đơn** thật sự cần thêm.
+- **Viết nội dung qua 4 round, 11 agent song song** (batch ~90-125 từ/agent, tối đa 3 agent chạy
+  cùng lúc — theo đúng khuyến cáo "đừng launch quá nhiều agent song song" ở lần trước): round 1
+  (311 từ: hết A1=3+A2=6+B1=114 còn thiếu + 194 B2), round 2 (188 từ B2 — 1 agent lỗi do chạm giới
+  hạn phiên, chạy lại thành công), round 3 (282 từ B2), round 4 (278 từ B2, xong tròn 1.059).
+- **Kiểm tra chất lượng bằng script tự viết** (không lưu vào repo, chỉ dùng tạm trong phiên):
+  đối chiếu thanh điệu Unicode (combining diacritic) của ÂM TIẾT ĐẦU trong `vi` với ký hiệu thanh
+  trong `ipa_vi` — bắt được **25/1.059 lỗi thật** (2.4%) trước khi gộp, chủ yếu 2 dạng lặp lại
+  nhiều agent: (1) "sự"/"tự" (thanh nặng) bị phiên nhầm thành thanh ngang — lỗi phổ biến nhất dù
+  đã nhắc trong prompt từ round 2 trở đi; (2) khi `vi` là cụm nhiều chữ, agent phiên âm nhầm sang
+  chữ thứ 2/3 thay vì chữ đầu (vd "được trân trọng" → phiên nhầm "trân"). Cũng chuẩn hoá 1 agent
+  dùng sai ký hiệu `ɨ` thay vì `ɯ` cho nguyên âm "ư" (quy ước cũ dùng ɯ 1.574 lần, ɨ 0 lần).
+- Chạy `scripts/assign-word-freq.ts` (SUBTLEX-US) sau mỗi round — điền freq cho ~85% từ mới mỗi
+  lô (phần còn lại là từ hiếm không có trong SUBTLEX, giữ nguyên như thiết kế cũ).
+- **Kết quả: từ điển 10.006 → 11.065 từ** (100% có `level`, không trùng, không thiếu field).
+- Verify mỗi round: build/typecheck/lint(0 cảnh báo)/format/test(201/201)/size-limit
+  (114.33/116 kB JS — không đổi vì dictionary không nằm trong bundle) — xanh cả 4 lần.
+- PR: https://github.com/seeker19110/bilingual-english-vietnamese/pull/205
+
+## ⏭️ Còn lại của Đợt 1 (A1-B2, chỉ còn cụm từ) + Đợt 2 (C1-C2) — làm ở phiên sau
 
 > Việc lớn, làm qua NHIỀU phiên. Nếu hit session limit giữa chừng: dừng, KHÔNG tự relaunch hàng
 > loạt agent, ghi lại đúng đã làm tới đâu rồi chờ người dùng (theo CLAUDE.md mục 3).
 
-- **Còn ~1.240 từ A1-B2** để hoàn tất Đợt 1 (đủ 1.649) — chọn tiếp từ CEFR-J chưa có trong dict
-  (loại các từ đã dùng cho 409 từ vừa xong), lọc trùng/rác như đã làm (BrE/AmE trùng nghĩa, từ
-  rời rạc do lỗi tách của CEFR-J, viết tắt mơ hồ), chia lô ~100 từ/agent — nhiều lượt/nhiều phiên,
-  đừng launch quá nhiều agent song song cùng lúc (rút kinh nghiệm lần chạm giới hạn phiên).
-- **Đợt 2 — C1→C2 (1.407 từ)**: làm sau khi Đợt 1 xong hẳn, PR riêng, quy trình tương tự (chọn
-  từ → viết nội dung theo lô → gộp → freq → verify → commit).
-- Cụm nhiều từ (124 từ tổng, vd "good morning", "bus stop") gắn `pos` theo vai trò ngữ pháp thật
-  (n/v/adj...), KHÔNG dùng `pos: "idiom"` (nhãn đó chỉ dành cho thành ngữ nghĩa bóng thật sự).
+- **125 cụm nhiều từ** còn lại của Đợt 1 (vd "good morning", "bus stop", "each other") — gắn
+  `pos` theo vai trò ngữ pháp thật (n/v/adj...), KHÔNG dùng `pos: "idiom"` (nhãn đó chỉ dành cho
+  thành ngữ nghĩa bóng thật sự). Phức tạp hơn từ đơn nên để lô riêng, chưa làm.
+- **Đợt 2 — C1→C2 (1.407 từ)**: làm sau khi Đợt 1 xong hẳn (kể cả phần cụm từ), PR riêng, quy
+  trình tương tự (đối chiếu Octanove C1/C2 wordlist → lọc trùng/rác → viết nội dung theo lô →
+  gộp → freq → verify → commit). Nhớ chạy lại kiểm tra script đối chiếu thanh điệu trước khi gộp
+  mỗi lô — bắt lỗi hiệu quả, chi phí thấp.
 
 ## Tiếp theo
 
