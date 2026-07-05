@@ -3,18 +3,25 @@
 // (public/data/dictionary/chunk-*.json, ~10.000 từ hiện chưa có cấp độ nào — xem CLAUDE.md
 // mục 13 "Còn: gắn nhãn CEFR cho từ vựng mở rộng").
 //
-// NGUỒN DỮ LIỆU (ưu tiên — tra cứu THẬT, không phải AI đoán):
-//   CEFR-J Vocabulary Profile v1.5 (A1-B2, Yukio Tono/Tokyo University of Foreign Studies)
-//   + Octanove Vocabulary Profile C1/C2 v1.0 (Octanove Labs) — data/cefrj/*.csv.
-//   GIẤY PHÉP: CEFR-J dùng được cho thương mại, miễn phí, BẮT BUỘC ghi nguồn; Octanove
-//   C1/C2 theo CC BY-SA 4.0 (ghi nguồn + giữ cùng giấy phép nếu phát hành lại bản sửa đổi).
-//   Chi tiết trích dẫn: xem data/cefrj/SOURCE.md. Tải từ:
-//   https://github.com/openlanguageprofiles/olp-en-cefrj
+// 3 TẦNG tra cứu, ưu tiên miễn phí + chính xác trước, AI chỉ dùng khi thật sự cần:
+//   Tầng 1 — CEFR-J Vocabulary Profile v1.5 (A1-B2, Yukio Tono/Tokyo University of Foreign
+//   Studies) + Octanove Vocabulary Profile C1/C2 v1.0 (Octanove Labs) — data/cefrj/*.csv, thử
+//   cả dạng gốc lẫn dạng suy ra từ biến thể (số nhiều/quá khứ/gerund/so sánh — quy tắc chuẩn,
+//   xem api/_lib/cefrjLookup.ts:deriveLemmaCandidates). GIẤY PHÉP: CEFR-J dùng được cho
+//   thương mại, miễn phí, BẮT BUỘC ghi nguồn; Octanove theo CC BY-SA 4.0. Chi tiết:
+//   data/cefrj/SOURCE.md. Tải từ: https://github.com/openlanguageprofiles/olp-en-cefrj
 //
-//   Từ nào KHÔNG có trong 2 wordlist trên mới rơi xuống AI ƯỚC LƯỢNG (fallback) — coi nhãn
-//   AI là gợi ý, có thể sai lệch; sửa tay từng từ trực tiếp trong file JSON nếu phát hiện sai.
+//   Tầng 2 — Words-CEFR-Dataset (MIT, Maximax67) — data/words-cefr-dataset/subset.csv, bản
+//   trích lọc chỉ giữ từ khớp từ điển dự án. Phủ thêm từ biến thể/ít phổ biến hơn CEFR-J
+//   không có. Giá trị NGUYÊN đã spot-check khớp CEFR-J gốc (tin cậy cao); giá trị THẬP PHÂN là
+//   nội suy theo tần suất (tin cậy thấp hơn, coi như gợi ý). Chi tiết + giấy phép:
+//   data/words-cefr-dataset/SOURCE.md. Tải từ: https://github.com/Maximax67/Words-CEFR-Dataset
 //
-// Nhà cung cấp AI (chỉ dùng cho phần fallback): ưu tiên GEMINI_API_KEY (free quota) →
+//   Tầng 3 — AI ƯỚC LƯỢNG (fallback), chỉ cho từ KHÔNG có ở tầng 1+2 (chủ yếu cụm từ/idiom +
+//   từ mới/hiếm như tên thương hiệu, thuật ngữ công nghệ). Coi nhãn AI là gợi ý, có thể sai
+//   lệch; sửa tay từng từ trực tiếp trong file JSON nếu phát hiện sai.
+//
+// Nhà cung cấp AI (chỉ dùng cho tầng 3): ưu tiên GEMINI_API_KEY (free quota) →
 // GROQ_API_KEY (free) → ANTHROPIC_API_KEY (trả phí) — khớp thứ tự ưu tiên trong
 // .env.example / api/ai.ts.
 //
@@ -22,15 +29,16 @@
 // Ghi lại file chunk sau MỖI batch, không mất tiến độ khi Ctrl+C.
 //
 // Biến môi trường (tuỳ chọn):
-//   LIMIT=200        chỉ gọi AI cho tối đa 200 từ (tra wordlist CEFR-J/Octanove KHÔNG bị giới
-//                     hạn vì miễn phí, không tốn quota — LIMIT chỉ để chạy thử phần fallback AI)
-//   BATCH_SIZE=40     số từ / 1 lần gọi AI (mặc định 40) — chỉ áp dụng cho phần fallback AI
+//   LIMIT=200        chỉ gọi AI cho tối đa 200 từ (tầng 1+2 KHÔNG bị giới hạn vì miễn phí,
+//                     không tốn quota — LIMIT chỉ để chạy thử phần fallback AI)
+//   BATCH_SIZE=40     số từ / 1 lần gọi AI (mặc định 40) — chỉ áp dụng cho tầng 3 (AI)
 //   DICT_DIR=...      đổi thư mục chunk (mặc định public/data/dictionary)
 //   CEFRJ_DIR=...     đổi thư mục wordlist CEFR-J (mặc định data/cefrj)
+//   WORDS_CEFR_DIR=...  đổi thư mục Words-CEFR-Dataset (mặc định data/words-cefr-dataset)
 //
 // Chạy: npm run tag:cefr
 //   Thử trước với số nhỏ: LIMIT=40 npm run tag:cefr
-//   Chỉ dùng wordlist, không gọi AI cho phần thiếu: NO_AI_FALLBACK=1 npm run tag:cefr
+//   Chỉ dùng wordlist (tầng 1+2), không gọi AI cho phần thiếu: NO_AI_FALLBACK=1 npm run tag:cefr
 
 import * as dotenv from 'dotenv'
 import * as fs from 'node:fs'
@@ -48,9 +56,15 @@ import {
 import {
   parseCefrjCsv,
   buildCefrjIndex,
-  lookupCefrLevel,
+  lookupCefrLevelWithLemma,
   type CefrjRow,
 } from '../api/_lib/cefrjLookup.ts'
+import {
+  parseWordsCefrCsv,
+  buildWordsCefrIndex,
+  lookupWordsCefrLevel,
+  type WordsCefrRow,
+} from '../api/_lib/wordsCefrDataset.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
@@ -62,6 +76,9 @@ const DICT_DIR = process.env.DICT_DIR
 const CEFRJ_DIR = process.env.CEFRJ_DIR
   ? path.resolve(PROJECT_ROOT, process.env.CEFRJ_DIR)
   : path.join(PROJECT_ROOT, 'data/cefrj')
+const WORDS_CEFR_DIR = process.env.WORDS_CEFR_DIR
+  ? path.resolve(PROJECT_ROOT, process.env.WORDS_CEFR_DIR)
+  : path.join(PROJECT_ROOT, 'data/words-cefr-dataset')
 const NO_AI_FALLBACK = process.env.NO_AI_FALLBACK === '1'
 const AI_TIMEOUT_MS = 30_000
 const RETRY_DELAY_MS = 5000
@@ -93,6 +110,17 @@ function loadCefrjIndex(): ReturnType<typeof buildCefrjIndex> {
     rows.push(...parseCefrjCsv(fs.readFileSync(filePath, 'utf-8')))
   }
   return buildCefrjIndex(rows)
+}
+
+// ── Words-CEFR-Dataset (MIT) — tầng 2, xem data/words-cefr-dataset/SOURCE.md. ────────────
+function loadWordsCefrIndex(): ReturnType<typeof buildWordsCefrIndex> {
+  const filePath = path.join(WORDS_CEFR_DIR, 'subset.csv')
+  if (!fs.existsSync(filePath)) {
+    console.warn(`⚠️  Không tìm thấy subset.csv trong ${WORDS_CEFR_DIR} — bỏ qua tầng 2.`)
+    return buildWordsCefrIndex([])
+  }
+  const rows: WordsCefrRow[] = parseWordsCefrCsv(fs.readFileSync(filePath, 'utf-8'))
+  return buildWordsCefrIndex(rows)
 }
 
 // ── Chọn provider theo key có sẵn (giống thứ tự ưu tiên api/ai.ts) — chỉ gọi khi wordlist
@@ -204,14 +232,15 @@ async function main(): Promise<void> {
   console.log('🚀 Bắt đầu gắn nhãn CEFR cho từ vựng mở rộng')
   console.log(`📋 Nguồn từ điển: ${path.relative(PROJECT_ROOT, DICT_DIR)} (${files.length} chunk)`)
   console.log(
-    '📚 Ưu tiên tra wordlist CEFR-J (A1-B2, © Tono Lab/TUFS) + Octanove (C1-C2, CC BY-SA 4.0)',
+    '📚 Tầng 1: CEFR-J (A1-B2, © Tono Lab/TUFS) + Octanove (C1-C2, CC BY-SA 4.0) — kể cả dạng',
   )
-  console.log(
-    `   — ${path.relative(PROJECT_ROOT, CEFRJ_DIR)}, xem data/cefrj/SOURCE.md để trích dẫn đúng.`,
-  )
-  console.log('🤖 AI chỉ dùng để ước lượng phần từ KHÔNG có trong wordlist (fallback).')
+  console.log('   biến thể (số nhiều/quá khứ/gerund...) suy về dạng gốc. Xem data/cefrj/SOURCE.md.')
+  console.log('📚 Tầng 2: Words-CEFR-Dataset (MIT, Maximax67) — bổ sung từ tầng 1 không có. Xem')
+  console.log('   data/words-cefr-dataset/SOURCE.md.')
+  console.log('🤖 Tầng 3: AI chỉ ước lượng phần từ KHÔNG có ở tầng 1+2 (fallback).')
 
   const cefrjIndex = loadCefrjIndex()
+  const wordsCefrIndex = loadWordsCefrIndex()
 
   let providerInfo: { provider: Provider; key: string } | null = null
   const getProvider = (): { provider: Provider; key: string } => {
@@ -221,7 +250,9 @@ async function main(): Promise<void> {
 
   const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
   let totalSkippedAlready = 0
-  let totalFromWordlist = 0
+  let totalFromCefrj = 0
+  let totalFromWordsCefrConfirmed = 0
+  let totalFromWordsCefrEstimated = 0
   let totalFromAi = 0
   let totalFailed = 0
   let totalSkippedNoAi = 0
@@ -245,20 +276,31 @@ async function main(): Promise<void> {
 
     if (todoIdx.length === 0) continue
 
-    // Đợt 1 — tra wordlist CEFR-J/Octanove: miễn phí, tra cứu THẬT, không giới hạn LIMIT
-    // (không gọi AI nên không tốn quota/chi phí).
+    // Tầng 1+2 — tra wordlist (CEFR-J/Octanove rồi Words-CEFR-Dataset): miễn phí, tra cứu
+    // THẬT, không giới hạn LIMIT (không gọi AI nên không tốn quota/chi phí).
     let fileChanged = false
     const needsAiIdx: number[] = []
     for (const idx of todoIdx) {
       const e = entries[idx]!
-      const level = lookupCefrLevel(cefrjIndex, e.word, e.pos)
-      if (level) {
-        e.level = level
-        totalFromWordlist++
+
+      const cefrjLevel = lookupCefrLevelWithLemma(cefrjIndex, e.word, e.pos)
+      if (cefrjLevel) {
+        e.level = cefrjLevel
+        totalFromCefrj++
         fileChanged = true
-      } else {
-        needsAiIdx.push(idx)
+        continue
       }
+
+      const wordsCefrResult = lookupWordsCefrLevel(wordsCefrIndex, e.word, e.pos)
+      if (wordsCefrResult) {
+        e.level = wordsCefrResult.level
+        if (wordsCefrResult.confidence === 'confirmed') totalFromWordsCefrConfirmed++
+        else totalFromWordsCefrEstimated++
+        fileChanged = true
+        continue
+      }
+
+      needsAiIdx.push(idx)
     }
     if (fileChanged) fs.writeFileSync(filePath, JSON.stringify(entries))
 
@@ -270,7 +312,7 @@ async function main(): Promise<void> {
     }
     if (aiProcessedThisRun >= limit) continue
 
-    // Đợt 2 — AI ước lượng phần còn lại (không có trong wordlist).
+    // Tầng 3 — AI ước lượng phần còn lại (không có ở tầng 1+2).
     console.log(`\n📦 ${file} — ${needsAiIdx.length} từ không có trong wordlist, nhờ AI ước lượng`)
     const bar = new cliProgress.SingleBar(
       {
@@ -332,25 +374,43 @@ async function main(): Promise<void> {
     bar.stop()
   }
 
+  const totalFromWordlist =
+    totalFromCefrj + totalFromWordsCefrConfirmed + totalFromWordsCefrEstimated
   console.log('\n📊 Kết quả:')
-  console.log(`   📚 Từ wordlist CEFR-J/Octanove (miễn phí, chính xác): ${totalFromWordlist}`)
-  console.log(`   🤖 Từ AI ước lượng (fallback)                       : ${totalFromAi}`)
-  console.log(`   ⏭️  Đã có nhãn từ trước                              : ${totalSkippedAlready}`)
+  console.log(`   📚 Tầng 1 — CEFR-J/Octanove (chính xác, kể cả dạng biến thể): ${totalFromCefrj}`)
+  console.log(
+    `   📚 Tầng 2 — Words-CEFR-Dataset, khớp CEFR-J gốc (tin cậy cao): ${totalFromWordsCefrConfirmed}`,
+  )
+  console.log(
+    `   📚 Tầng 2 — Words-CEFR-Dataset, nội suy theo tần suất (tin cậy thấp hơn): ${totalFromWordsCefrEstimated}`,
+  )
+  console.log(
+    `   📚 Tổng miễn phí (tầng 1+2)                                  : ${totalFromWordlist}`,
+  )
+  console.log(`   🤖 Tầng 3 — AI ước lượng (fallback)                          : ${totalFromAi}`)
+  console.log(
+    `   ⏭️  Đã có nhãn từ trước                                       : ${totalSkippedAlready}`,
+  )
   if (totalSkippedNoAi > 0) {
-    console.log(`   ⏸️  Bỏ qua (NO_AI_FALLBACK=1, chưa gọi AI)           : ${totalSkippedNoAi}`)
+    console.log(
+      `   ⏸️  Bỏ qua (NO_AI_FALLBACK=1, chưa gọi AI)                    : ${totalSkippedNoAi}`,
+    )
   }
-  console.log(`   ❌ AI không gắn được                                : ${totalFailed}`)
+  console.log(`   ❌ AI không gắn được                                         : ${totalFailed}`)
   if (totalFailed > 0) {
     console.log(
       '   → Chạy lại lệnh cũ để thử lại các từ chưa gắn được (script tự bỏ qua từ đã xong).',
     )
   }
   console.log(
-    `\n📝 Nguồn wordlist: CEFR-J v1.5 (Yukio Tono, Tokyo University of Foreign Studies) + ` +
-      `Octanove C1/C2 v1.0 (CC BY-SA 4.0) — chi tiết trích dẫn xem data/cefrj/SOURCE.md.`,
+    `\n📝 Nguồn tầng 1: CEFR-J v1.5 (Tono, TUFS) + Octanove C1/C2 v1.0 (CC BY-SA 4.0) — xem ` +
+      `data/cefrj/SOURCE.md.`,
   )
   console.log(
-    '⚠️  Phần còn lại do AI ƯỚC LƯỢNG (không tra được wordlist), chưa qua kiểm tra tay — spot-check trước khi tin tưởng hoàn toàn.',
+    `📝 Nguồn tầng 2: Words-CEFR-Dataset (MIT, Maximax67) — xem data/words-cefr-dataset/SOURCE.md.`,
+  )
+  console.log(
+    '⚠️  Phần "nội suy theo tần suất" (tầng 2) và phần AI ước lượng (tầng 3) chưa qua kiểm tra tay — spot-check trước khi tin tưởng hoàn toàn.',
   )
 }
 

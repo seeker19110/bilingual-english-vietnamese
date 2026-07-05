@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { parseCefrjCsv, buildCefrjIndex, lookupCefrLevel } from './cefrjLookup'
+import {
+  parseCefrjCsv,
+  buildCefrjIndex,
+  lookupCefrLevel,
+  deriveLemmaCandidates,
+  lookupCefrLevelWithLemma,
+} from './cefrjLookup'
 
 describe('parseCefrjCsv', () => {
   it('bỏ qua dòng header ("CEFR" không phải cấp độ hợp lệ)', () => {
@@ -67,5 +73,58 @@ describe('buildCefrjIndex + lookupCefrLevel', () => {
     const index = buildCefrjIndex(rows)
     expect(lookupCefrLevel(index, 'adviser', 'n')).toBe('B1')
     expect(lookupCefrLevel(index, 'advisor', 'n')).toBe('B1')
+  })
+})
+
+describe('deriveLemmaCandidates', () => {
+  it('danh từ số nhiều: -ies→-y, -ves→-fe/-f, -es sau âm rít, -s thường', () => {
+    expect(deriveLemmaCandidates('activities', 'n')).toContain('activity')
+    expect(deriveLemmaCandidates('knives', 'n')).toEqual(expect.arrayContaining(['knife', 'knif']))
+    expect(deriveLemmaCandidates('boxes', 'n')).toContain('box')
+    expect(deriveLemmaCandidates('accounts', 'n')).toContain('account')
+  })
+
+  it('không áp quy tắc số nhiều cho từ kết thúc "ss"', () => {
+    expect(deriveLemmaCandidates('class', 'n')).not.toContain('clas')
+  })
+
+  it('động từ: -ed/-ing (kể cả nhân đôi phụ âm + "e" câm), -ied, -s ngôi 3', () => {
+    expect(deriveLemmaCandidates('accepted', 'v')).toContain('accept')
+    expect(deriveLemmaCandidates('used', 'v')).toContain('use')
+    expect(deriveLemmaCandidates('stopped', 'v')).toContain('stop')
+    expect(deriveLemmaCandidates('running', 'v')).toContain('run')
+    expect(deriveLemmaCandidates('applied', 'v')).toContain('apply')
+    expect(deriveLemmaCandidates('tries', 'v')).toContain('try')
+  })
+
+  it('tính từ/trạng từ: -ier/-iest→-y, -er/-est', () => {
+    expect(deriveLemmaCandidates('happier', 'adj')).toContain('happy')
+    expect(deriveLemmaCandidates('happiest', 'adj')).toContain('happy')
+    expect(deriveLemmaCandidates('faster', 'adj')).toContain('fast')
+  })
+
+  it('không sinh ứng viên cho pos không khớp quy tắc nào (idiom)', () => {
+    expect(deriveLemmaCandidates('actions', 'idiom')).toEqual([])
+  })
+
+  it('không trả về chính từ gốc (đã lọc trùng)', () => {
+    expect(deriveLemmaCandidates('cats', 'n')).not.toContain('cats')
+  })
+})
+
+describe('lookupCefrLevelWithLemma', () => {
+  it('khớp trực tiếp trước khi thử lemma', () => {
+    const index = buildCefrjIndex([{ headwords: ['action'], pos: 'noun', level: 'A1' }])
+    expect(lookupCefrLevelWithLemma(index, 'action', 'n')).toBe('A1')
+  })
+
+  it('khớp qua dạng gốc suy ra từ biến thể khi wordlist chỉ có dạng gốc', () => {
+    const index = buildCefrjIndex([{ headwords: ['action'], pos: 'noun', level: 'A1' }])
+    expect(lookupCefrLevelWithLemma(index, 'actions', 'n')).toBe('A1')
+  })
+
+  it('trả về undefined khi cả dạng gốc lẫn mọi ứng viên lemma đều không có trong wordlist', () => {
+    const index = buildCefrjIndex([{ headwords: ['action'], pos: 'noun', level: 'A1' }])
+    expect(lookupCefrLevelWithLemma(index, 'blockchain', 'n')).toBeUndefined()
   })
 })

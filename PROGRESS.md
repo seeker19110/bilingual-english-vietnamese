@@ -114,7 +114,36 @@
   sau khi kiểm): **5.799/10.006 từ (~58%) gắn được nhãn chỉ bằng wordlist, không tốn AI** — phần
   còn lại (~4.200 từ, đa số từ ít phổ biến/idiom) mới cần AI ước lượng. Build/typecheck/lint/test
   (183/183) đều xanh. **CHƯA chạy thật trên file gốc** (vẫn cần quyết định có chạy AI cho phần
-  còn thiếu không — xem "Tiếp theo").
+  còn thiếu không — xem "Tiếp theo"). Đã merge: **PR #202**.
+- **Chạy thật `tag:cefr` (chỉ wordlist) trên file gốc (2026-07-05)** — chạy
+  `NO_AI_FALLBACK=1 npm run tag:cefr` trên `public/data/dictionary/chunk-*.json` thật:
+  **5.799/10.006 từ (~58%) đã có nhãn CEFR**, phân bố A1=969/A2=1073/B1=1732/B2=1545/C1=345/C2=135,
+  không tốn AI. Đã merge: **PR #203**.
+- **Thêm 2 tầng tra cứu miễn phí nữa (lemma + Words-CEFR-Dataset), phủ ~96% phần còn lại
+  (2026-07-05)** — người dùng hỏi tiếp có nguồn miễn phí nào bổ sung không cho ~4.207 từ chưa
+  gắn được nhãn; phân tích cho thấy phần lớn là BIẾN THỂ (số nhiều/quá khứ/gerund...) của từ đã
+  có trong CEFR-J, không phải từ hoàn toàn mới. Thêm 2 tầng:
+  (a) **`deriveLemmaCandidates` + `lookupCefrLevelWithLemma`** (`api/_lib/cefrjLookup.ts`) — suy
+  dạng gốc theo quy tắc tiếng Anh chuẩn (pos-aware: số nhiều/động từ/so sánh), tra lại chính
+  CEFR-J/Octanove (không hạ độ tin cậy vì vẫn cùng nguồn xác định).
+  (b) **Words-CEFR-Dataset** (MIT, Maximax67 — `github.com/Maximax67/Words-CEFR-Dataset`) —
+  `api/_lib/wordsCefrDataset.ts` tra cấp CEFR đã tính sẵn cho ~172.000 từ tiếng Anh (suy luận từ
+  CEFR-J + tần suất Google Ngrams + lemma/stem). Chỉ commit **bản trích lọc**
+  `data/words-cefr-dataset/subset.csv` (19.811/248.185 dòng gốc, ~280KB — chỉ giữ từ khớp từ
+  điển dự án, script tái tạo: `scripts/extract-words-cefr-subset.ts` /
+  `npm run extract:words-cefr`), không commit nguyên ~13MB gốc. Đã spot-check 6 từ đối chiếu
+  CEFR-J thật (abandon/accept/action/happy/record×2) → **khớp 100%** khi giá trị dataset là số
+  NGUYÊN → dùng làm tín hiệu "tin cậy cao" (`confidence: 'confirmed'`); số THẬP PHÂN = nội suy
+  theo tần suất (không có trong CEFR-J gốc) → `confidence: 'estimated'`, tin cậy thấp hơn (dữ
+  liệu vẫn ghi nhãn CEFR bình thường, chỉ khác ở mức tin cậy hiển thị trong log script).
+  `scripts/tag-cefr-levels.ts` nay chạy đủ 3 tầng: CEFR-J(+lemma) → Words-CEFR-Dataset → AI
+  (fallback cuối). +20 test `cefrjLookup.test.ts`, +9 test `wordsCefrDataset.test.ts` (tổng
+  201/201). Chạy thử trên bản sao dữ liệu thật (đã có sẵn 5.799 từ từ PR #203): thêm được
+  **3.798 từ nữa miễn phí** (662 qua lemma-CEFR-J + 1.757 Words-CEFR-Dataset tin cậy cao + 1.379
+  tin cậy thấp hơn) → chỉ còn **409/10.006 từ (~4%)** thật sự cần AI (chủ yếu cụm từ/idiom +
+  thuật ngữ công nghệ/tên thương hiệu như "bitcoin", "javascript", "ipad" — không có trong bất
+  kỳ wordlist CEFR miễn phí nào). Build/typecheck/lint/test đều xanh. **CHƯA chạy thật để GHI
+  vào file gốc** (mới dry-run bản sao) — xem "Tiếp theo".
 - **docs:** đồng bộ nốt `PROJECT.md` (còn sót từ đợt PR #148: chưa cập nhật khi #149/#150 merge —
   i18n Login/`tsconfig.e2e.json`/hạ tầng CEFR ghi nhầm là "chưa xong"/"tiếp theo"). Đã merge: **PR #151**.
 - **fix(learning-path):** 5 unit tái dùng trùng tên nhân vật giữa các bài (Mai, Lan×2, Linh, Trang)
@@ -743,14 +772,14 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
 
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
-- Chạy thật `npm run tag:cefr` trên file gốc rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR
-  trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu trước, UI sau khi có dữ liệu thật để kiểm tra).
-  Nay ưu tiên tra wordlist CEFR-J/Octanove (miễn phí, không cần key) — thử thật cho thấy phủ được
-  ~58% từ (5.799/10.006) không tốn AI; **~42% còn lại vẫn cần key AI** (`GEMINI_API_KEY`/
-  `GROQ_API_KEY`/`ANTHROPIC_API_KEY`) cho phần fallback. Môi trường phiên làm việc hiện tại không
-  có key nào — giữ quyết định cũ: **tự chạy trên máy có `.env`** (có thể chạy
-  `NO_AI_FALLBACK=1 npm run tag:cefr` trước để lấy ngay phần miễn phí, rồi chạy tiếp không giới
-  hạn để AI xử lý phần thiếu khi có key).
+- Chạy thật `NO_AI_FALLBACK=1 npm run tag:cefr` trên file gốc để GHI vào
+  `public/data/dictionary/` kết quả tầng 1 (lemma) + tầng 2 (Words-CEFR-Dataset) mới thêm — dry
+  run trên bản sao cho thấy sẽ phủ thêm ~3.798 từ miễn phí (còn lại ~409/10.006 từ, ~4%, thật sự
+  cần AI: chủ yếu cụm từ/idiom + thuật ngữ công nghệ/tên thương hiệu). Sau đó cân nhắc hiển thị
+  badge CEFR trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu trước). Phần ~409 từ còn lại vẫn
+  cần key AI (`GEMINI_API_KEY`/`GROQ_API_KEY`/`ANTHROPIC_API_KEY`) cho tầng 3 (fallback) — môi
+  trường phiên làm việc hiện tại không có key nào, giữ quyết định cũ: **tự chạy trên máy có
+  `.env`**.
 - ~~Zod validate input (đợt 3)~~ ĐÃ XONG (2026-07-05) — xem "Quyết định quan trọng" bên dưới.
   Query param của `api/dictionary.ts`/`api/pronunciation.ts` vẫn giữ nguyên (đã sanitize kỹ
   bằng tay, giá trị thêm Zod thấp — GET query, không phải JSON body).

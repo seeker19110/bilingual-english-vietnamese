@@ -25,6 +25,7 @@
     "seed:pronunciation": "tsx scripts/seed-pronunciations.ts",
     "tag:cefr": "tsx scripts/tag-cefr-levels.ts",
     "tag:freq": "tsx scripts/assign-word-freq.ts",
+    "extract:words-cefr": "tsx scripts/extract-words-cefr-subset.ts",
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts",
     "seed:all": "tsx scripts/seed-all.ts",
     "seed:verify": "tsx scripts/seed-all.ts --verify",

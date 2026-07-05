@@ -111,3 +111,88 @@ export function lookupCefrLevel(
 
   return index.byWordUnambiguous.get(w)
 }
+
+function stripDoubledFinalConsonant(stem: string): string | null {
+  if (stem.length < 3) return null
+  const last = stem[stem.length - 1]!
+  if (last === stem[stem.length - 2] && !'aeiouwxy'.includes(last)) return stem.slice(0, -1)
+  return null
+}
+
+// Sinh các dạng GỐC có thể của 1 từ biến thể (số nhiều/quá khứ/gerund/so sánh...), pos-aware
+// để tránh sinh sai (vd không áp quy tắc động từ cho danh từ). Đây là quy tắc tiếng Anh CHUẨN
+// (regular inflection), không đoán ngữ nghĩa — an toàn dùng để tra lại wordlist CEFR-J, vì
+// wordlist vẫn là nguồn xác định cấp độ cuối cùng (hàm này chỉ chuẩn hoá TỪ, không chuẩn hoá
+// CẤP ĐỘ). Không phủ được các dạng bất quy tắc (child→children, go→went...).
+export function deriveLemmaCandidates(word: string, pos: string): string[] {
+  const w = word.trim().toLowerCase()
+  const candidates = new Set<string>()
+  const add = (s: string): void => {
+    if (s.length >= 2) candidates.add(s)
+  }
+
+  if (pos === 'n' || pos === 'pron') {
+    if (w.endsWith('ies') && w.length > 4) add(w.slice(0, -3) + 'y')
+    if (w.endsWith('ves') && w.length > 4) {
+      add(w.slice(0, -3) + 'fe')
+      add(w.slice(0, -3) + 'f')
+    }
+    if (/(?:[sxz]|ch|sh)es$/.test(w) && w.length > 4) add(w.slice(0, -2))
+    if (w.endsWith('s') && !w.endsWith('ss') && w.length > 3) add(w.slice(0, -1))
+  }
+
+  if (pos === 'v') {
+    if (w.endsWith('ied') && w.length > 4) add(w.slice(0, -3) + 'y')
+    if (w.endsWith('ed') && w.length > 3) {
+      const stem = w.slice(0, -2)
+      add(stem)
+      add(stem + 'e')
+      const undoubled = stripDoubledFinalConsonant(stem)
+      if (undoubled) add(undoubled)
+    }
+    if (w.endsWith('ing') && w.length > 4) {
+      const stem = w.slice(0, -3)
+      add(stem)
+      add(stem + 'e')
+      const undoubled = stripDoubledFinalConsonant(stem)
+      if (undoubled) add(undoubled)
+    }
+    if (w.endsWith('ies') && w.length > 4) add(w.slice(0, -3) + 'y') // "tries" (ngôi 3 số ít)
+    if (/(?:[sxz]|ch|sh)es$/.test(w) && w.length > 4) add(w.slice(0, -2))
+    if (w.endsWith('s') && !w.endsWith('ss') && w.length > 3) add(w.slice(0, -1))
+  }
+
+  if (pos === 'adj' || pos === 'adv') {
+    if (w.endsWith('iest') && w.length > 5) add(w.slice(0, -4) + 'y')
+    if (w.endsWith('ier') && w.length > 4) add(w.slice(0, -3) + 'y')
+    if (w.endsWith('est') && w.length > 4) {
+      add(w.slice(0, -3))
+      add(w.slice(0, -2))
+    }
+    if (w.endsWith('er') && w.length > 3) {
+      add(w.slice(0, -2))
+      add(w.slice(0, -1))
+    }
+  }
+
+  candidates.delete(w)
+  return [...candidates]
+}
+
+// Tra CEFR-J: thử dạng gốc trước, không có thì thử các dạng GỐC suy ra từ biến thể (đều tra
+// lại wordlist CEFR-J thật — không hạ thấp độ tin cậy so với lookupCefrLevel thường).
+export function lookupCefrLevelWithLemma(
+  index: CefrjIndex,
+  word: string,
+  pos: string,
+): CefrWordLevel | undefined {
+  const direct = lookupCefrLevel(index, word, pos)
+  if (direct) return direct
+
+  for (const candidate of deriveLemmaCandidates(word, pos)) {
+    const level = lookupCefrLevel(index, candidate, pos)
+    if (level) return level
+  }
+
+  return undefined
+}
