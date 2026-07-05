@@ -828,6 +828,44 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   (114.33/116 kB JS — không đổi vì dictionary không nằm trong bundle) — xanh cả 4 lần.
 - PR: https://github.com/seeker19110/bilingual-english-vietnamese/pull/205
 
+## Đã xong (dọn từ trùng lặp lãng phí lượt học — 2026-07-05)
+
+- Người dùng phát hiện lộ trình học có nhiều **từ giống nhau bị tách thành 2 mục riêng** (biến thể
+  số nhiều/chia thì của cùng 1 từ gốc, vd `account`/`accounts`, `allow`/`allows`) → tốn 1 lượt học
+  hằng ngày cho thứ về bản chất người dùng đã biết. Kiểm tra thực tế:
+  - Trùng giữa Nền tảng (`curriculum.ts`) và Mở rộng (từ điển): **không phải vấn đề** — code
+    (`getCircles()` trong `src/lib/curriculum.ts:146-152`) đã tự loại theo `wordKey` từ trước.
+  - Trong 11.065 từ của từ điển Mở rộng: **675 nhóm cùng gốc từ / 1.474 từ liên quan** — phần lớn
+    là số nhiều (-s/-es) hoặc động từ chia thì ngôi 3 (-s) của đúng 1 từ đã có.
+- **Tiêu chí lọc (theo quyết định người dùng):** chỉ gộp cặp có **CÙNG `pos`** (loại trừ 72 cặp
+  khác `pos` như `act`(v)/`acts`(n), `blue`(adj)/`blues`(n) — nghĩa khác hẳn, không phải số nhiều
+  thật). Trong 461 cặp cùng `pos`, loại thêm thủ công **17 cặp** trông giống số nhiều nhưng thực
+  chất khác nghĩa/chức năng ngữ pháp:
+  - Đại từ sở hữu tuyệt đối khác tính từ sở hữu: `hers/ours/theirs/yours` (giữ cả 2, không phải số
+    nhiều của `her/our/their/your`).
+  - Nghĩa lệch hẳn khỏi số nhiều đơn thuần: `sometimes`≠`sometime`, `backwards`≠`backward` (thêm
+    nghĩa "lạc hậu"), `glasses`(kính mắt)≠`glass`(ly/vật liệu), `guts`(can đảm, thành ngữ)≠`gut`
+    (ruột), `credits`(cuối phim)≠`credit`(tín dụng), `nerves`(sắc thái riêng)≠`nerve`, `terms`
+    (điều khoản)≠`term`(thuật ngữ/học kỳ), `stairs`(cả cầu thang)≠`stair`(1 bậc), `sales`(doanh
+    số)≠`sale`(giảm giá), `utilities`(dịch vụ công ích)≠`utility`(tiện ích), `stats`(còn nghĩa
+    "ngay lập tức", thân mật)≠`stat`.
+  - **Pluralia tantum** (tiếng Anh luôn nói số nhiều, không có dạng số ít tự nhiên): `pajamas`,
+    `trousers` — giữ nguyên cả 2, không xoá.
+- **Còn lại 444 cặp** gộp an toàn (chiếm 370/444 đã có nhãn rõ "(số nhiều)"/"số nhiều của..." ngay
+  trong bản dịch `vi` — tín hiệu đáng tin sẵn có trong dữ liệu; 74 cặp còn lại là chia động từ ngôi
+  3 số ít hoặc diễn đạt khác chữ nhưng cùng nghĩa, đã soát tay từng dòng). Xoá **444 mục trùng**
+  khỏi `public/data/dictionary/chunk-*.json`, giữ dạng gốc/số ít (đúng đề xuất: thông dụng hơn,
+  nhiều `freq` thấp hơn). Không có trường hợp bắc cầu (mục vừa bị xoá vừa là đích giữ lại của cặp
+  khác). Kết quả: **từ điển 11.065 → 10.621 từ**, không còn nhóm biến thể số nhiều/chia thì thuần
+  tuý bị tách đôi.
+- Build/typecheck/lint (0 cảnh báo)/format/test (201/201) đều xanh — không có test nào hard-code
+  tổng số từ nên không cần sửa gì khác. `dictionary` là JSON tĩnh fetch runtime, không nằm trong
+  bundle JS nên `size-limit` không đổi.
+- ⚠️ Chưa làm (nằm ngoài phạm vi đợt này): 125 cụm nhiều từ trùng lặp dạng cụm (vd cần xem lại
+  "each other"/"one another"...) và rà lại các biến thể `-ing`/`-ed` mang nghĩa tính từ khác nhau
+  thật sự (amazed/amazing...) — KHÔNG đụng vì có giá trị sư phạm riêng, giữ nguyên theo đúng phạm
+  vi đã thống nhất.
+
 ## ⏭️ Còn lại của Đợt 1 (A1-B2, chỉ còn cụm từ) + Đợt 2 (C1-C2) — làm ở phiên sau
 
 > Việc lớn, làm qua NHIỀU phiên. Nếu hit session limit giữa chừng: dừng, KHÔNG tự relaunch hàng
