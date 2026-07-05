@@ -29,13 +29,19 @@ import { fetchWithTimeout } from './_lib/fetchTimeout'
 const mockedFetch = vi.mocked(fetchWithTimeout)
 const mockedRefund = vi.mocked(refundUsage)
 
-// Request hợp lệ tối thiểu cho /api/claude
-function makeRequest(): Request {
+// Request hợp lệ tối thiểu cho /api/claude — cho phép ghi đè body để test validate/sanitize.
+function makeRequest(body?: object): Request {
   return new Request('http://localhost/api/claude', {
     method: 'POST',
     headers: { 'content-type': 'application/json', Authorization: 'Bearer x' },
-    body: JSON.stringify({ messages: [{ role: 'user', content: 'Hello' }], mode: 'chat' }),
+    body: JSON.stringify(body ?? { messages: [{ role: 'user', content: 'Hello' }], mode: 'chat' }),
   })
+}
+
+// Đọc lại body JSON handler gửi cho Groq (mockedFetch.mock.calls[0] = [url, options]).
+function lastGroqRequestBody(): { max_tokens: number; messages: { content?: unknown }[] } {
+  const options = mockedFetch.mock.calls[0]?.[1] as { body: string }
+  return JSON.parse(options.body)
 }
 
 // Ép handler đi nhánh Groq: chỉ có GROQ_API_KEY, không có Gemini/Anthropic.
@@ -139,5 +145,64 @@ describe('handler /api/claude — nhánh Groq và hoàn lượt', () => {
     const res = await handler(makeRequest())
     expect(res.status).toBe(504)
     expect(mockedRefund).toHaveBeenCalledTimes(1)
+  })
+})
+
+// Đợt 3 rollout Zod (api/ai.ts) — schema CHỈ định hình lại logic lenient cũ (cắt bớt/mặc định),
+// KHÔNG được siết chặt thêm: input sai kiểu/thiếu field vẫn phải trả 200 như trước, không phải
+// 400 mới. Duy nhất hành vi từ chối giữ nguyên là 413 khi tổng nội dung quá lớn.
+describe('handler /api/claude — validate/sanitize (Zod, đợt 3)', () => {
+  beforeEach(() => {
+    mockedFetch.mockResolvedValue(
+      new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {
+        status: 200,
+      }),
+    )
+  })
+
+  it('messages rỗng → vẫn 200 (không bị từ chối)', async () => {
+    const res = await handler(makeRequest({ messages: [], mode: 'chat' }))
+    expect(res.status).toBe(200)
+  })
+
+  it('messages không phải mảng → coi như rỗng, vẫn 200 (không regress về 400)', async () => {
+    const res = await handler(makeRequest({ messages: 'không phải mảng', mode: 'chat' }))
+    expect(res.status).toBe(200)
+  })
+
+  it('1 phần tử messages không phải object → giữ nguyên, vẫn 200', async () => {
+    const res = await handler(makeRequest({ messages: [42], mode: 'chat' }))
+    expect(res.status).toBe(200)
+  })
+
+  it('thiếu max_tokens → mặc định 1024 (forward đúng cho Groq)', async () => {
+    const res = await handler(
+      makeRequest({ messages: [{ role: 'user', content: 'Hi' }], mode: 'chat' }),
+    )
+    expect(res.status).toBe(200)
+    expect(lastGroqRequestBody().max_tokens).toBe(1024)
+  })
+
+  it('tin nhắn dài hơn 2000 ký tự → cắt đúng còn 2000 ký tự khi forward cho Groq', async () => {
+    const longContent = 'a'.repeat(3000)
+    const res = await handler(
+      makeRequest({ messages: [{ role: 'user', content: longContent }], mode: 'chat' }),
+    )
+    expect(res.status).toBe(200)
+    const forwarded = lastGroqRequestBody().messages
+    const userMsg = forwarded.find((m) => m.content === 'a'.repeat(2000))
+    expect(userMsg).toBeDefined()
+  })
+
+  it('tổng nội dung vượt 40000 ký tự → 413, KHÔNG hoàn lượt (chưa trừ lượt)', async () => {
+    // 21 tin × 2000 ký tự (đã bị cắt còn 2000/tin) = 42000 > 40000, dưới 64KB body-guard.
+    const messages = Array.from({ length: 21 }, () => ({
+      role: 'user' as const,
+      content: 'a'.repeat(2000),
+    }))
+    const res = await handler(makeRequest({ messages, mode: 'chat' }))
+    expect(res.status).toBe(413)
+    expect(mockedRefund).not.toHaveBeenCalled()
+    expect(mockedFetch).not.toHaveBeenCalled()
   })
 })

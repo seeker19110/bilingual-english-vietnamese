@@ -8,6 +8,7 @@
 // BẢO MẬT: Server tự quyết định model và giới hạn max_tokens,
 // không tin giá trị client gửi lên (tránh bị gọi model đắt / token lớn).
 
+import { z } from 'zod'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -20,6 +21,7 @@ import { checkAndConsumeUsage, refundUsage, isUsageMode } from './_lib/usage'
 import { callGemini } from './_lib/geminiApi'
 import { fetchWithTimeout } from './_lib/fetchTimeout'
 import { jsonResponse, getClientIp } from './_lib/http'
+import { validateBody } from './_lib/validation'
 
 // Thời gian chờ tối đa cho 1 lần gọi AI (ms) — tránh treo vô hạn khi nhà cung cấp chậm.
 const AI_TIMEOUT_MS = 30_000
@@ -70,6 +72,56 @@ function parseGroqText(groqData: unknown): string {
   }
   return text
 }
+
+// Xử lý 1 tin nhắn — object có field `content` thì cắt bớt content (nếu là string) + giữ
+// nguyên role; còn lại (không phải object / không có content) thì giữ nguyên KHÔNG đổi. Handler
+// này CỐ TÌNH lenient (không từ chối input lạ, chỉ coi như rỗng/cắt bớt) — Zod ở đây định hình
+// lại logic cũ, KHÔNG siết chặt thêm.
+function sanitizeMessage(msg: unknown): unknown {
+  if (typeof msg === 'object' && msg !== null && 'content' in msg) {
+    const m = msg as { role?: unknown; content?: unknown }
+    return {
+      role: m.role,
+      content:
+        typeof m.content === 'string' ? m.content.trim().slice(0, MAX_MSG_CONTENT) : m.content,
+    }
+  }
+  return msg
+}
+
+function sumStringContent(messages: unknown[]): number {
+  return messages.reduce((sum: number, msg: unknown) => {
+    const m = msg as { content?: unknown }
+    return sum + (typeof m?.content === 'string' ? m.content.length : 0)
+  }, 0)
+}
+
+// Schema validate body /api/claude — xem api/ai.ts đầu file: server tự quyết định model/giới
+// hạn, KHÔNG tin giá trị client gửi lên. `.catch()` tái tạo đúng hành vi lenient cũ (input sai
+// kiểu → coi như rỗng/mặc định, KHÔNG từ chối) — duy nhất `.refine()` cuối vẫn từ chối (413) khi
+// tổng nội dung quá lớn, giống hệt logic cũ.
+const AiBodySchema = z
+  .object({
+    // Client gửi nhưng server KHÔNG dùng — model do server quyết định (ALLOWED_MODEL).
+    model: z.string().optional(),
+    messages: z
+      .array(z.unknown())
+      .catch([])
+      .transform((arr) => arr.slice(-30).map(sanitizeMessage)),
+    max_tokens: z
+      .number()
+      .catch(1024)
+      .transform((v) => Math.min(v, MAX_TOKENS_LIMIT)),
+    system: z
+      .string()
+      .catch('')
+      .transform((v) => v.slice(0, 8000)),
+    mode: z.unknown().transform((v) => (isUsageMode(v) ? v : 'chat')),
+  })
+  .refine((d) => sumStringContent(d.messages) <= MAX_TOTAL_CONTENT, {
+    error: 'Nội dung hội thoại quá dài',
+    params: { status: 413 },
+  })
 
 export default async function handler(req: Request): Promise<Response> {
   const corsHeaders = getCorsHeaders(req)
@@ -142,50 +194,34 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Parse và kiểm tra body
-  let parsed: { system?: string; messages?: unknown[]; max_tokens?: number; mode?: string }
+  let rawBody: unknown
   try {
-    parsed = JSON.parse(rawText)
+    rawBody = JSON.parse(rawText)
   } catch {
     return jsonResponse({ error: { message: 'Body không hợp lệ (cần JSON)' } }, 400, allHeaders)
   }
 
-  // Giới hạn kích thước từng tin nhắn và tổng nội dung
-  const rawMessages = Array.isArray(parsed.messages) ? parsed.messages.slice(-30) : []
-  const sanitizedMessages = rawMessages.map((msg: unknown) => {
-    if (typeof msg === 'object' && msg !== null && 'content' in msg) {
-      const m = msg as { role?: unknown; content?: unknown }
-      return {
-        role: m.role,
-        // Cắt bớt nội dung quá dài để tránh tốn token / bị inject
-        content:
-          typeof m.content === 'string' ? m.content.trim().slice(0, MAX_MSG_CONTENT) : m.content,
-      }
-    }
-    return msg
-  })
-
-  // Từ chối nếu tổng nội dung quá lớn
-  const totalContent = sanitizedMessages.reduce((sum: number, msg: unknown) => {
-    const m = msg as { content?: unknown }
-    return sum + (typeof m?.content === 'string' ? m.content.length : 0)
-  }, 0)
-  if (totalContent > MAX_TOTAL_CONTENT) {
-    return jsonResponse({ error: { message: 'Nội dung hội thoại quá dài' } }, 413, allHeaders)
+  // Validate + sanitize (Zod) — schema tái tạo đúng logic lenient cũ (cắt bớt tin nhắn/nội
+  // dung, mặc định max_tokens/system, coi messages sai kiểu là rỗng), chỉ từ chối (413) khi
+  // tổng nội dung quá lớn. Không dùng readJsonBody (api/_lib/validation.ts) vì body Request đã
+  // đọc qua req.text() ở trên để kiểm tra MAX_BODY_BYTES — stream chỉ đọc được 1 lần.
+  const parsedBody = validateBody(AiBodySchema, rawBody)
+  if (!parsedBody.ok) {
+    return jsonResponse(
+      { error: { message: parsedBody.error.message } },
+      parsedBody.error.status,
+      allHeaders,
+    )
   }
-
-  // Server quyết định max_tokens + system — không tin giá trị client gửi lên
-  const maxTokens = Math.min(
-    typeof parsed.max_tokens === 'number' ? parsed.max_tokens : 1024,
-    MAX_TOKENS_LIMIT,
-  )
-  // Prompt nền của client (cắt độ dài) + guardrail cố định phía server prepend vào đầu.
-  const clientSystem = typeof parsed.system === 'string' ? parsed.system.slice(0, 8000) : ''
-  const system = SYSTEM_GUARDRAIL + clientSystem
+  const sanitizedMessages = parsedBody.data.messages
+  const maxTokens = parsedBody.data.max_tokens
+  // Prompt nền của client (đã cắt độ dài trong schema) + guardrail cố định phía server prepend vào đầu.
+  const system = SYSTEM_GUARDRAIL + parsedBody.data.system
 
   // ── Giới hạn lượt dùng ở SERVER (theo gói Free/Pro) ──────────────────────────
   // mode do client gửi: 'chat' | 'writing' | 'speaking' (mặc định 'chat').
   // Server đếm authoritative trong daily_usage → client không tự vượt giới hạn được.
-  const mode = isUsageMode(parsed.mode) ? parsed.mode : 'chat'
+  const mode = parsedBody.data.mode
   const gate = await checkAndConsumeUsage(authResult.userId, mode)
   if (!gate.ok) {
     logSecurityEvent('USAGE_LIMIT', clientIp, { path: '/api/claude', mode })
