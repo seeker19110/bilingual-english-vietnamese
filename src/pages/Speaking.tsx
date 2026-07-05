@@ -9,6 +9,7 @@ import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { useApiThrottle } from '../lib/useApiThrottle'
+import { useOnboarding } from '../lib/onboarding'
 import { callClaude, parseJson } from '../lib/ai'
 import { speakingSystemPrompt, speakingFullEvaluationPrompt, situationLabel } from '../prompts'
 import { startListening, isSTTSupported } from '../lib/stt'
@@ -63,9 +64,24 @@ function sttErrorMessage(code: string, isA: boolean): string {
 }
 
 // ── Setup Screen ─────────────────────────────────────────────────────────
-function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void; dir: Direction }) {
+function SetupScreen({
+  onStart,
+  dir,
+  defaultLevel,
+}: {
+  onStart: (s: string, l: Level) => void
+  dir: Direction
+  // Trình độ khai lúc onboarding (U-3) — làm mặc định thay vì cứng 'intermediate'
+  defaultLevel?: Level
+}) {
   const [situation, setSituation] = useState('small_talk')
-  const [level, setLevel] = useState<Level>('intermediate')
+  const [level, setLevel] = useState<Level>(defaultLevel ?? 'intermediate')
+  // Onboarding có thể về TRỄ (thiết bị mới phải fetch DB) — chỉ áp lại mặc định
+  // khi người dùng CHƯA tự bấm chọn, tránh ghi đè lựa chọn tay.
+  const levelTouched = useRef(false)
+  useEffect(() => {
+    if (defaultLevel && !levelTouched.current) setLevel(defaultLevel)
+  }, [defaultLevel])
   const isA = dir === 'A'
 
   return (
@@ -140,7 +156,10 @@ function SetupScreen({ onStart, dir }: { onStart: (s: string, l: Level) => void;
             {LEVELS.map((l) => (
               <button
                 key={l.value}
-                onClick={() => setLevel(l.value)}
+                onClick={() => {
+                  levelTouched.current = true
+                  setLevel(l.value)
+                }}
                 className={`py-2.5 rounded-xl text-sm font-medium border transition active:scale-[0.97] ${
                   level === l.value
                     ? 'bg-gradient-to-br from-sky-600 to-cyan-500 border-transparent text-white shadow-md shadow-sky-500/20'
@@ -311,6 +330,7 @@ export default function Speaking() {
   const user = useAuth().user! // RequireAuth đã đảm bảo có user trước khi vào trang
   const toast = useToast()
   useCloudSync(user.id) // kéo lịch sử + lượt dùng từ Supabase khi mở trang
+  const onboarding = useOnboarding(user.id) // trình độ khai lúc onboarding (U-3)
   const dir: Direction = getDirection()
   const isA = dir === 'A'
 
@@ -682,7 +702,7 @@ export default function Speaking() {
               }
             />
           </div>
-          <SetupScreen onStart={startSession} dir={dir} />
+          <SetupScreen onStart={startSession} dir={dir} defaultLevel={onboarding?.level} />
           {/* Hàng hành động nhanh ở đáy màn thiết lập */}
           <div className="max-w-md mx-auto w-full px-4 pb-8">
             <QuickActions />
