@@ -261,9 +261,9 @@ export default function Chat() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Rate limit 10s giữa các lần gọi API
+  // Rate limit chặn double-click/bão request — giới hạn lượt/ngày đã cap riêng
+  // qua daily_usage nên throttle chỉ cần mức nhẹ (mặc định 3s của hook).
   const { isThrottled, throttle } = useApiThrottle({
-    delayMs: 10000,
     onCountdown: setThrottleCountdown,
   })
 
@@ -306,7 +306,7 @@ export default function Chat() {
       setSession(newSession)
       setLastIdx(0)
       incrementUsage(user.id, 'chatCount')
-      throttle() // Rate limit 10s sau lần gọi thành công
+      throttle() // Rate limit sau lần gọi thành công
     } catch (e) {
       const msg = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
       setError(msg)
@@ -357,7 +357,7 @@ export default function Chat() {
       saveChatSession(final)
       setLastIdx(final.messages.length - 1)
       incrementUsage(user.id, 'chatCount')
-      throttle() // Rate limit 10s sau lần gọi thành công
+      throttle() // Rate limit sau lần gọi thành công
     } catch (e) {
       const msg = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
       setError(msg)

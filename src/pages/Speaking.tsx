@@ -362,9 +362,9 @@ export default function Speaking() {
   const canRecord = isRecordingSupported()
   const sttSupported = canRecord || isSTTSupported()
 
-  // Rate limit 10s giữa các lần gọi API
+  // Rate limit chặn double-click/bão request — giới hạn lượt/ngày đã cap riêng
+  // qua daily_usage nên throttle chỉ cần mức nhẹ (mặc định 3s của hook).
   const { isThrottled, throttle } = useApiThrottle({
-    delayMs: 10000,
     onCountdown: setThrottleCountdown,
   })
 
@@ -447,7 +447,7 @@ export default function Speaking() {
       setSession(s)
       setLastIdx(0)
       incrementUsage(user.id, 'speakingCount')
-      throttle() // Rate limit 10s sau lần gọi thành công
+      throttle() // Rate limit sau lần gọi thành công
       if (!muted) {
         setSpeaking(true)
         // Chiều A: giọng Anh trước, không có feedback khi mở đầu
@@ -590,7 +590,7 @@ export default function Speaking() {
       saveSpeakingSession(final)
       setLastIdx(final.messages.length - 1)
       incrementUsage(user.id, 'speakingCount')
-      throttle() // Rate limit 10s sau lần gọi thành công
+      throttle() // Rate limit sau lần gọi thành công
       if (!muted && isTTSSupported()) {
         setSpeaking(true)
         await speakBilingual(

@@ -204,9 +204,9 @@ export default function Writing() {
   const [result, setResult] = useState<WritingSubmission | null>(null)
   const [throttleCountdown, setThrottleCountdown] = useState(0)
 
-  // Rate limit 10s giữa các lần gọi API
+  // Rate limit chặn double-click/bão request — giới hạn lượt/ngày đã cap riêng
+  // qua daily_usage nên throttle chỉ cần mức nhẹ (mặc định 3s của hook).
   const { isThrottled, throttle } = useApiThrottle({
-    delayMs: 10000,
     onCountdown: setThrottleCountdown,
   })
 
@@ -283,7 +283,7 @@ export default function Writing() {
       saveWritingSub(sub)
       setResult(sub)
       incrementUsage(user.id, 'writingCount')
-      throttle() // Rate limit 10s sau lần gọi thành công
+      throttle() // Rate limit sau lần gọi thành công
     } catch (e) {
       const m = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
       setError(m)

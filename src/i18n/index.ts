@@ -151,6 +151,7 @@ export const t = {
     phrasesBack: 'Quay lại',
     phrasesNoResult: 'Không tìm thấy kết quả phù hợp.',
     phrasesLoadMore: 'Tải thêm',
+    phrasesContinue: 'Tiếp tục',
 
     // Parts of speech
     posPageTitle: 'Từ loại',
@@ -306,6 +307,7 @@ export const t = {
     phrasesBack: 'Back',
     phrasesNoResult: 'No results found.',
     phrasesLoadMore: 'Load more',
+    phrasesContinue: 'Continue',
 
     // Parts of speech
     posPageTitle: 'Parts of Speech',
