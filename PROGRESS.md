@@ -100,6 +100,21 @@
   Gemini free) nên dừng hỏi người dùng trước khi chạy thật, theo CLAUDE.md mục 12. Đã hỏi người
   dùng có muốn chạy ngay trong phiên không — chọn **tự chạy sau** trên máy có `.env`. Đã merge:
   **PR #150**.
+- **Đổi nguồn gắn nhãn CEFR: wordlist THẬT trước, AI chỉ fallback (2026-07-05)** — người dùng hỏi
+  có wordlist CEFR miễn phí nào không; đã nghiên cứu và xác nhận **CEFR-J Vocabulary Profile v1.5**
+  (A1-B2, Yukio Tono/Tokyo University of Foreign Studies — dùng thương mại được, miễn phí, chỉ cần
+  ghi nguồn) + **Octanove Vocabulary Profile C1/C2 v1.0** (CC BY-SA 4.0), tải từ
+  `openlanguageprofiles/olp-en-cefrj`, lưu ở `data/cefrj/*.csv` + `data/cefrj/SOURCE.md` (nguồn +
+  giấy phép + trích dẫn bắt buộc). Thêm `api/_lib/cefrjLookup.ts` (logic thuần, có test — 11 test:
+  parse CSV bỏ header/dòng hỏng, tách biến thể viết cách nhau bằng "/", tra theo pos rồi fallback
+  cấp DUY NHẤT của từ khi không mâu thuẫn). `scripts/tag-cefr-levels.ts` nay tra wordlist này
+  TRƯỚC (miễn phí, không giới hạn `LIMIT`, không cần API key) — AI (Gemini/Groq/Anthropic) CHỈ
+  gọi cho từ không có trong wordlist (thêm biến `NO_AI_FALLBACK=1` để chạy thử chỉ bằng wordlist).
+  Đã chạy thử thật trên bản sao `public/data/dictionary/chunk-*.json` (không đụng file gốc, xoá
+  sau khi kiểm): **5.799/10.006 từ (~58%) gắn được nhãn chỉ bằng wordlist, không tốn AI** — phần
+  còn lại (~4.200 từ, đa số từ ít phổ biến/idiom) mới cần AI ước lượng. Build/typecheck/lint/test
+  (183/183) đều xanh. **CHƯA chạy thật trên file gốc** (vẫn cần quyết định có chạy AI cho phần
+  còn thiếu không — xem "Tiếp theo").
 - **docs:** đồng bộ nốt `PROJECT.md` (còn sót từ đợt PR #148: chưa cập nhật khi #149/#150 merge —
   i18n Login/`tsconfig.e2e.json`/hạ tầng CEFR ghi nhầm là "chưa xong"/"tiếp theo"). Đã merge: **PR #151**.
 - **fix(learning-path):** 5 unit tái dùng trùng tên nhân vật giữa các bài (Mai, Lan×2, Linh, Trang)
@@ -728,11 +743,14 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
 
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
-- Chạy thật `npm run tag:cefr` (cần key AI) rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR
+- Chạy thật `npm run tag:cefr` trên file gốc rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR
   trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu trước, UI sau khi có dữ liệu thật để kiểm tra).
-  Môi trường phiên làm việc hiện tại không có key AI nào (`GEMINI_API_KEY`/`GROQ_API_KEY`/
-  `ANTHROPIC_API_KEY`) — đã hỏi lại người dùng, xác nhận giữ quyết định cũ: **tự chạy trên máy có
-  `.env`**.
+  Nay ưu tiên tra wordlist CEFR-J/Octanove (miễn phí, không cần key) — thử thật cho thấy phủ được
+  ~58% từ (5.799/10.006) không tốn AI; **~42% còn lại vẫn cần key AI** (`GEMINI_API_KEY`/
+  `GROQ_API_KEY`/`ANTHROPIC_API_KEY`) cho phần fallback. Môi trường phiên làm việc hiện tại không
+  có key nào — giữ quyết định cũ: **tự chạy trên máy có `.env`** (có thể chạy
+  `NO_AI_FALLBACK=1 npm run tag:cefr` trước để lấy ngay phần miễn phí, rồi chạy tiếp không giới
+  hạn để AI xử lý phần thiếu khi có key).
 - ~~Zod validate input (đợt 3)~~ ĐÃ XONG (2026-07-05) — xem "Quyết định quan trọng" bên dưới.
   Query param của `api/dictionary.ts`/`api/pronunciation.ts` vẫn giữ nguyên (đã sanitize kỹ
   bằng tay, giá trị thêm Zod thấp — GET query, không phải JSON body).
