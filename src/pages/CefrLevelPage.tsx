@@ -441,11 +441,19 @@ export default function CefrLevelPage() {
         </div>
       )}
 
-      <PageHeader
-        title={isA ? level.titleVi : level.titleEn}
-        subtitle={level.subtitleVi}
-        className="mb-4"
-      />
+      {/* Tiêu đề: to + phụ đề ở tab "Bài học"; gọn 1 dòng ở 4 tab học (đỡ chiếm chỗ,
+          vì các tab đó đã có ngữ cảnh riêng — vd "Từ 3/10" — không cần tiêu đề to). */}
+      {activeTab === 'lessons' ? (
+        <PageHeader
+          title={isA ? level.titleVi : level.titleEn}
+          subtitle={level.subtitleVi}
+          className="mb-4"
+        />
+      ) : (
+        <p className="text-sm font-semibold text-zinc-300 mb-4">
+          {isA ? level.titleVi : level.titleEn}
+        </p>
+      )}
 
       {/* 4 tab học theo cấp — cần từ điển nạp xong mới render */}
       {activeTab !== 'lessons' &&
@@ -703,7 +711,8 @@ export default function CefrLevelPage() {
         </>
       )}
 
-      <QuickActions />
+      {/* Chỉ hiện Chia sẻ/Nhắc học ở tab "Bài học" — 4 tab học đã đủ dày nội dung riêng. */}
+      {activeTab === 'lessons' && <QuickActions />}
     </div>,
   )
 }

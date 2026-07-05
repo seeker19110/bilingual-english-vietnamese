@@ -41,7 +41,7 @@ import {
 } from '../lib/srs'
 import {
   getTodayBatchFrom,
-  getPathProgress,
+  getPoolProgress,
   getDailyLearned,
   bumpDailyLearned,
   getDailyQuizPasses,
@@ -392,7 +392,9 @@ export function TodayLesson({
   const [wrongWords, setWrongWords] = useState<DictEntry[]>([])
   const [reviewIdx, setReviewIdx] = useState(0)
 
-  const progress = useMemo(() => getPathProgress(getLearnedWords(uid)), [uid])
+  // Tiến độ CỦA CẤP này (pool đã lọc theo cấp ở trang cha) — trước đây dùng
+  // getPathProgress (cả lộ trình, ~10.000 từ) gây khó hiểu khi đang xem 1 cấp.
+  const progress = useMemo(() => getPoolProgress(pool, getLearnedWords(uid)), [pool, uid])
   const card = batch[idx]
   const circle = card ? findCircleOfWord(card.word) : undefined
 
