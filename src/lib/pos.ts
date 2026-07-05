@@ -158,3 +158,16 @@ export const POS_LABEL: Record<string, string> = Object.fromEntries(
 export const POS_COLOR: Record<string, string> = Object.fromEntries(
   POS_LIST.map((p) => [p.code, p.color]),
 )
+
+// Màu badge theo cấp CEFR của từ (field `level` trong DictEntry) — A1/A2/B1/B2 dùng
+// ĐÚNG màu accent đã gán cho từng cấp ở lộ trình học (xem `accent` trong data/cefr.ts:
+// A1=emerald, A2=sky, B1=violet, B2=amber) để giữ màu ngữ nghĩa nhất quán toàn app.
+// C1/C2 (ngoài lộ trình 4 cấp) dùng 2 màu còn lại chưa dùng cho pos/level nào khác.
+export const LEVEL_COLOR: Record<string, string> = {
+  A1: 'bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800',
+  A2: 'bg-sky-500/15 text-sky-300 theme-light:text-sky-800',
+  B1: 'bg-violet-500/15 text-violet-300 theme-light:text-violet-800',
+  B2: 'bg-amber-500/15 text-amber-300 theme-light:text-amber-800',
+  C1: 'bg-rose-500/15 text-rose-300 theme-light:text-rose-800',
+  C2: 'bg-cyan-500/15 text-cyan-300 theme-light:text-cyan-800',
+}
