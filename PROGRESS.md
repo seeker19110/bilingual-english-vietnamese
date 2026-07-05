@@ -114,7 +114,36 @@
   sau khi kiểm): **5.799/10.006 từ (~58%) gắn được nhãn chỉ bằng wordlist, không tốn AI** — phần
   còn lại (~4.200 từ, đa số từ ít phổ biến/idiom) mới cần AI ước lượng. Build/typecheck/lint/test
   (183/183) đều xanh. **CHƯA chạy thật trên file gốc** (vẫn cần quyết định có chạy AI cho phần
-  còn thiếu không — xem "Tiếp theo").
+  còn thiếu không — xem "Tiếp theo"). Đã merge: **PR #202**.
+- **Chạy thật `tag:cefr` (chỉ wordlist) trên file gốc (2026-07-05)** — chạy
+  `NO_AI_FALLBACK=1 npm run tag:cefr` trên `public/data/dictionary/chunk-*.json` thật:
+  **5.799/10.006 từ (~58%) đã có nhãn CEFR**, phân bố A1=969/A2=1073/B1=1732/B2=1545/C1=345/C2=135,
+  không tốn AI. Đã merge: **PR #203**.
+- **Thêm 2 tầng tra cứu miễn phí nữa (lemma + Words-CEFR-Dataset), phủ ~96% phần còn lại
+  (2026-07-05)** — người dùng hỏi tiếp có nguồn miễn phí nào bổ sung không cho ~4.207 từ chưa
+  gắn được nhãn; phân tích cho thấy phần lớn là BIẾN THỂ (số nhiều/quá khứ/gerund...) của từ đã
+  có trong CEFR-J, không phải từ hoàn toàn mới. Thêm 2 tầng:
+  (a) **`deriveLemmaCandidates` + `lookupCefrLevelWithLemma`** (`api/_lib/cefrjLookup.ts`) — suy
+  dạng gốc theo quy tắc tiếng Anh chuẩn (pos-aware: số nhiều/động từ/so sánh), tra lại chính
+  CEFR-J/Octanove (không hạ độ tin cậy vì vẫn cùng nguồn xác định).
+  (b) **Words-CEFR-Dataset** (MIT, Maximax67 — `github.com/Maximax67/Words-CEFR-Dataset`) —
+  `api/_lib/wordsCefrDataset.ts` tra cấp CEFR đã tính sẵn cho ~172.000 từ tiếng Anh (suy luận từ
+  CEFR-J + tần suất Google Ngrams + lemma/stem). Chỉ commit **bản trích lọc**
+  `data/words-cefr-dataset/subset.csv` (19.811/248.185 dòng gốc, ~280KB — chỉ giữ từ khớp từ
+  điển dự án, script tái tạo: `scripts/extract-words-cefr-subset.ts` /
+  `npm run extract:words-cefr`), không commit nguyên ~13MB gốc. Đã spot-check 6 từ đối chiếu
+  CEFR-J thật (abandon/accept/action/happy/record×2) → **khớp 100%** khi giá trị dataset là số
+  NGUYÊN → dùng làm tín hiệu "tin cậy cao" (`confidence: 'confirmed'`); số THẬP PHÂN = nội suy
+  theo tần suất (không có trong CEFR-J gốc) → `confidence: 'estimated'`, tin cậy thấp hơn (dữ
+  liệu vẫn ghi nhãn CEFR bình thường, chỉ khác ở mức tin cậy hiển thị trong log script).
+  `scripts/tag-cefr-levels.ts` nay chạy đủ 3 tầng: CEFR-J(+lemma) → Words-CEFR-Dataset → AI
+  (fallback cuối). +20 test `cefrjLookup.test.ts`, +9 test `wordsCefrDataset.test.ts` (tổng
+  201/201). Chạy thử trên bản sao dữ liệu thật (đã có sẵn 5.799 từ từ PR #203): thêm được
+  **3.798 từ nữa miễn phí** (662 qua lemma-CEFR-J + 1.757 Words-CEFR-Dataset tin cậy cao + 1.379
+  tin cậy thấp hơn) → chỉ còn **409/10.006 từ (~4%)** thật sự cần AI (chủ yếu cụm từ/idiom +
+  thuật ngữ công nghệ/tên thương hiệu như "bitcoin", "javascript", "ipad" — không có trong bất
+  kỳ wordlist CEFR miễn phí nào). Build/typecheck/lint/test đều xanh. **CHƯA chạy thật để GHI
+  vào file gốc** (mới dry-run bản sao) — xem "Tiếp theo".
 - **docs:** đồng bộ nốt `PROJECT.md` (còn sót từ đợt PR #148: chưa cập nhật khi #149/#150 merge —
   i18n Login/`tsconfig.e2e.json`/hạ tầng CEFR ghi nhầm là "chưa xong"/"tiếp theo"). Đã merge: **PR #151**.
 - **fix(learning-path):** 5 unit tái dùng trùng tên nhân vật giữa các bài (Mai, Lan×2, Linh, Trang)
@@ -737,20 +766,57 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   đã chạy trên Dashboard → SQL Editor (2026-07-02). Lỗ RLS (cột chi phí + cache phát âm
   dùng chung) đã đóng thật trên DB đang chạy, không chỉ trong schema.
 
+## Đã xong (thay 409 từ đầu tiên của Đợt 1 CEFR A1-B2 — 2026-07-05)
+
+- **Bối cảnh:** người dùng yêu cầu bổ sung 100% từ CEFR A1→C2 còn thiếu trong từ điển (không chỉ
+  409 từ ban đầu). Đối chiếu toàn bộ wordlist CEFR-J/Octanove với từ điển hiện có (nền tảng
+  `curriculum.ts` + mở rộng `public/data/dictionary/`) cho thấy **tổng 3.056 từ thiếu** (A1=48,
+  A2=161, B1=443, B2=997, C1=600, C2=807; 2.932 từ đơn + 124 cụm từ). Đã chốt chia **2 đợt**: Đợt
+  1 = A1→B2 hoàn chỉnh (1.649 từ), Đợt 2 = C1→C2 (1.407 từ, làm sau, PR riêng).
+- **Đã hoàn tất 409/1.649 từ của Đợt 1** — xoá 409 từ đơn không có trong CEFR-J/Words-CEFR-Dataset
+  (idiom + từ lóng công nghệ/thương hiệu: bitcoin/ipad/javascript/paypal...), thay bằng 409 từ
+  CEFR-J thật (ưu tiên A1=26 → A2=112 → B1=271), viết đầy đủ nội dung (vi/ex_en/ex_vi/ipa_en/
+  ipa_vi) qua 4 agent song song theo đúng quy ước IPA tiếng Việt của từ điển (thanh điệu Bắc Bộ,
+  chỉ phiên âm âm tiết đầu bản dịch `vi`). Đã kiểm tra khớp 100% word/pos/level + spot-check IPA
+  tay ~20 từ đều đúng quy tắc trước khi gộp.
+- **Đã gộp vào `public/data/dictionary/` thật:** xoá 409 entry cũ, chèn 409 entry mới, sắp lại
+  alphabet + dàn đều 10 chunk (~1000/chunk). Chạy `scripts/assign-word-freq.ts` (SUBTLEX-US, gói
+  `subtlex-word-frequencies`) điền `freq` cho 373/409 từ mới (36 từ có dấu chấm/gạch nối như
+  "a.m."/"mrs." không khớp wordlist, giữ nguyên như thiết kế cũ — xếp cuối phần Mở rộng).
+- **Kết quả: 10.006/10.006 từ (100%) đã có nhãn CEFR** — không còn từ nào thiếu `level`, không
+  trùng từ (`10.006 unique`), không thiếu field bắt buộc nào.
+- Verify: build ✅ · typecheck ✅ · lint ✅ (0 cảnh báo) · format ✅ · test ✅ (201/201) ·
+  size-limit ✅ (114.33/116 kB JS, 8.91/9 kB CSS).
+- An toàn xoá đã được xác nhận trước (research agent): `src/data/curriculum.ts` (circle nền
+  tảng) tự chứa dữ liệu riêng, không tham chiếu cứng vào `public/data/dictionary/`; SRS/tiến độ
+  học của người dùng lưu theo string từ, từ bị xoá chỉ "mồ côi" (không crash).
+- **CI của PR #204 báo failure** nhiều lần rerun nhưng log tải về lỗi 404 liên tục — nghi hạn chế
+  môi trường CI mô phỏng của phiên làm việc này, không phải lỗi code thật (verify local nhiều lần
+  đều xanh).
+
+## ⏭️ Còn lại của Đợt 1 (A1-B2) + Đợt 2 (C1-C2) — làm ở phiên sau
+
+> Việc lớn, làm qua NHIỀU phiên. Nếu hit session limit giữa chừng: dừng, KHÔNG tự relaunch hàng
+> loạt agent, ghi lại đúng đã làm tới đâu rồi chờ người dùng (theo CLAUDE.md mục 3).
+
+- **Còn ~1.240 từ A1-B2** để hoàn tất Đợt 1 (đủ 1.649) — chọn tiếp từ CEFR-J chưa có trong dict
+  (loại các từ đã dùng cho 409 từ vừa xong), lọc trùng/rác như đã làm (BrE/AmE trùng nghĩa, từ
+  rời rạc do lỗi tách của CEFR-J, viết tắt mơ hồ), chia lô ~100 từ/agent — nhiều lượt/nhiều phiên,
+  đừng launch quá nhiều agent song song cùng lúc (rút kinh nghiệm lần chạm giới hạn phiên).
+- **Đợt 2 — C1→C2 (1.407 từ)**: làm sau khi Đợt 1 xong hẳn, PR riêng, quy trình tương tự (chọn
+  từ → viết nội dung theo lô → gộp → freq → verify → commit).
+- Cụm nhiều từ (124 từ tổng, vd "good morning", "bus stop") gắn `pos` theo vai trò ngữ pháp thật
+  (n/v/adj...), KHÔNG dùng `pos: "idiom"` (nhãn đó chỉ dành cho thành ngữ nghĩa bóng thật sự).
+
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
-- Chạy thật `npm run tag:cefr` trên file gốc rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR
-  trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu trước, UI sau khi có dữ liệu thật để kiểm tra).
-  Nay ưu tiên tra wordlist CEFR-J/Octanove (miễn phí, không cần key) — thử thật cho thấy phủ được
-  ~58% từ (5.799/10.006) không tốn AI; **~42% còn lại vẫn cần key AI** (`GEMINI_API_KEY`/
-  `GROQ_API_KEY`/`ANTHROPIC_API_KEY`) cho phần fallback. Môi trường phiên làm việc hiện tại không
-  có key nào — giữ quyết định cũ: **tự chạy trên máy có `.env`** (có thể chạy
-  `NO_AI_FALLBACK=1 npm run tag:cefr` trước để lấy ngay phần miễn phí, rồi chạy tiếp không giới
-  hạn để AI xử lý phần thiếu khi có key).
+- ~~Chạy thật `NO_AI_FALLBACK=1 npm run tag:cefr` trên file gốc~~ ĐÃ XONG (2026-07-05) — 100%
+  từ điển (10.006/10.006) đã có nhãn CEFR thật, không cần AI (xem "Đã xong" ở trên). Còn lại:
+  cân nhắc hiển thị badge CEFR trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu đã xong).
 - ~~Zod validate input (đợt 3)~~ ĐÃ XONG (2026-07-05) — xem "Quyết định quan trọng" bên dưới.
   Query param của `api/dictionary.ts`/`api/pronunciation.ts` vẫn giữ nguyên (đã sanitize kỹ
   bằng tay, giá trị thêm Zod thấp — GET query, không phải JSON body).
