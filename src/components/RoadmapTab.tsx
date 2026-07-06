@@ -1,9 +1,9 @@
 // ──────────────────────────────────────────────────────────────────────
-// BẢN ĐỒ LỘ TRÌNH — TỔNG QUAN 4 CẤP CEFR (A1 → B2)
+// BẢN ĐỒ LỘ TRÌNH — TỔNG QUAN 6 CẤP CEFR (A1 → C2)
 //
 // Là nội dung chính của trang /learning-path (Learn.tsx): mỗi cấp 1 thẻ
 // (tiến độ từ vựng + ngữ pháp, trạng thái khóa, nhãn "Bạn đang ở đây") —
-// bấm vào để mở TRANG RIÊNG của cấp (/learning-path/a1…b2).
+// bấm vào để mở TRANG RIÊNG của cấp (/learning-path/a1…c2).
 // Các màn chi tiết (bài ngữ pháp, flashcard, hội thoại) ở
 // src/components/CefrLessonViews.tsx + src/pages/CefrLevelPage.tsx;
 // các tab học (Hôm nay/Ôn SRS/Từ khó/Kiểm tra) ở src/components/StudyTabs.tsx.
