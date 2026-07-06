@@ -777,7 +777,7 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   đa 3 câu quiz ngữ pháp (`GrammarLesson.quiz`, dữ liệu có sẵn) — CHỈ lấy từ bài **đã đánh dấu
   "Đã học xong"** (`grammarQuizPool` tính ở `CefrLevelPage.tsx` từ `doneGrammar`) — trộn cùng
   câu từ vựng như cũ (tổng vẫn ~10 câu/lượt). Câu ngữ pháp hiện dạng câu có chỗ trống (vd "I
-  ___ a student.") thay vì từ đơn. Trả lời sai → nút "Mở lại bài" mở đúng bài ngữ pháp đó.
+  \_\_\_ a student.") thay vì từ đơn. Trả lời sai → nút "Mở lại bài" mở đúng bài ngữ pháp đó.
   Ngữ pháp trước đây không có vòng lặp củng cố như từ vựng — nay ôn lại gián tiếp qua tab
   Kiểm tra.
 - **Mới — V2 (phần còn lại): Vé nghỉ streak**: `getStreak()` (`lib/storage.ts`) tự động bắc
@@ -789,8 +789,8 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   nghiên cứu gốc.
 - 6 test mới (`storage.test.ts` — file mới, streak freeze bắc cầu/cooldown/idempotent).
   Verify: build/typecheck/lint/test (149/149)/format/size-limit xanh. Lái app thật bằng
-  Playwright — xác nhận: (1) tab Kiểm tra hiện câu hỏi dạng "___" xen giữa câu từ vựng; (2)
-  seed lịch sử có 1 ngày nghỉ ở giữa → `/progress` hiện đúng streak bắc cầu (4, không đứt còn 2) + `et_streak_freeze_*` ghi đúng ngày dùng vé. Full E2E suite (68/68, a11y 4 theme) xanh.
+  Playwright — xác nhận: (1) tab Kiểm tra hiện câu hỏi dạng "_\_\_" xen giữa câu từ vựng; (2)
+  seed lịch sử có 1 ngày nghỉ ở giữa → `/progress` hiện đúng streak bắc cầu (4, không đứt còn 2) + `et_streak_freeze_\*` ghi đúng ngày dùng vé. Full E2E suite (68/68, a11y 4 theme) xanh.
 - **Bài học rút ra**: khi nhiều phiên làm việc có thể chạy song song trên cùng repo, nên kiểm
   tra PR đang mở/mới merge trên GitHub TRƯỚC khi bắt đầu 1 kế hoạch lớn đã có trong tài liệu
   research — tránh trùng công sức. Không có cách nào phiên này biết trước về phiên kia (không
@@ -1051,6 +1051,25 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
 
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
+- **Bổ sung dạng biến thể của từ vào từ điển (word forms)** — người dùng yêu cầu 2026-07-06.
+  Kế hoạch 5 bước: `docs/research/bo-sung-dang-bien-the-tu-dien.md` (PR #213 đã merge).
+  - [x] **Bước 1 — Nền dữ liệu**: thêm `WordForms`/`forms`/`base` vào `DictEntry`
+        (`src/types.ts` + `api/_lib/dictionaryData.ts`); bảng bất quy tắc soạn tay
+        (`src/data/irregularForms.ts`: 153 động từ, 65 số nhiều, 8 so sánh, 86 không đếm được,
+        23 plurale-tantum, đuôi ghép -f/-man); quy tắc chính tả thuần (`src/lib/wordForms.ts`,
+        35 unit test); script sinh + kiểm định chéo (`scripts/gen-word-forms.ts`,
+        `npm run gen:word-forms`). **8.740 từ có forms, 200 bất quy tắc**; đã rà mẫu tay,
+        0 lỗi chia đôi/không đếm được/plurale-tantum, kiểm chéo 98 dạng bất quy tắc khớp
+        entry đã soạn tay (còn 1 cảnh báo could/can là modal — đúng chủ ý).
+  - [x] **Bước 3 — UI trang Từ điển**: khối "Các dạng của từ"
+        (`src/components/WordFormsBlock.tsx`, 6 render test) trong thẻ kết quả tra từ — chip
+        song ngữ + phát âm từng dạng, đánh dấu bất quy tắc, danh từ không đếm được ghi rõ.
+  - [x] **Bước 5 — Khi HỌC từ mới**: gắn `WordFormsBlock` vào `WordCard` (lộ trình) và
+        `Flashcard` (Từ điển) — hiện sau khi lật thẻ.
+  - [ ] **Bước 2 — Vá dạng bất quy tắc còn thiếu + gắn `base`**: thêm ~40-60 entry biến thể
+        còn thiếu (hid, woken, geese, leaves…) và điền trường `base` cho entry biến thể để hiện
+        link "Xem từ gốc" (UI đã sẵn sàng, chỉ chờ dữ liệu `base`).
+  - [ ] **Bước 4 — Search hiểu biến thể**: tra "books"/"played"/"went" trả về từ gốc.
 - ~~Chạy thật `NO_AI_FALLBACK=1 npm run tag:cefr` trên file gốc~~ ĐÃ XONG (2026-07-05) — 100%
   từ điển đã có nhãn CEFR thật, không cần AI. ~~Badge CEFR trên trang Từ điển~~ ĐÃ XONG
   (2026-07-05, PR #207) — hiển thị badge A1-C2 cạnh badge loại từ trong kết quả tra từ.
