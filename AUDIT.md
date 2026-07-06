@@ -6,11 +6,103 @@
 
 ## Mục lục tổng
 
+- **[PHẦN D — Audit bản dịch toàn dự án (2026-07-06, mới nhất)](#phần-d--audit-bản-dịch-toàn-dự-án-2026-07-06)** — rà chất lượng dịch Anh⇄Việt TOÀN BỘ dữ liệu sau đợt mở rộng lớn (từ điển 12.073 mục, C1/C2, hội thoại, bài học, tiêu đề, chuỗi giao diện). Kết luận: **chất lượng rất cao**, không có lỗi dịch hệ thống; 3 điểm nhỏ (số liệu quảng bá "40 đoạn" sai, bất đối xứng nhãn "Bài học", đồng nhất thuật ngữ `actuary`) **đã vá**.
 - **[PHẦN A00 — Đợt rà logic/đồng nhất (2026-07-03, mới nhất)](#phần-a00--đợt-rà-logicđồng-nhất-2026-07-03)** — 2 phát hiện logic (khóa lại cấp CEFR do tăng từ vựng, ranh giới ngày tính theo UTC), đã vá toàn bộ.
 - **[PHẦN A0 — Đợt rà bổ sung (2026-07-02, mới nhất)](#phần-a0--đợt-rà-bổ-sung-2026-07-02)** — 6 phát hiện mới theo checklist §1.5, đã vá toàn bộ trong cùng PR.
 - **[PHẦN A — Audit source code v2 (2026-06-28)](#phần-a--audit-source-code-v2-2026-06-28)** — báo cáo audit đầy đủ nhất: bảo mật, ISO/IEC 25010, sổ phát hiện, yêu cầu kiểm thử, nợ kỹ thuật, lộ trình. **Đọc phần này trước.**
 - **[PHẦN B — Audit source code v1 (2026-06-20, lịch sử)](#phần-b--audit-source-code-v1-2026-06-20-lịch-sử)** — bản audit đầu tiên (bảo mật, mobile-first, đa thiết bị). Mọi phát hiện ở đây **đã RESOLVED**, đối chiếu tại PHẦN A §4.1. Giữ lại để tra cứu bằng chứng/snippet gốc.
 - **[PHẦN C — Audit bản dịch & đồng bộ từ vựng (2026-06-27)](#phần-c--audit-bản-dịch--đồng-bộ-từ-vựng-2026-06-27)** — chất lượng dịch Anh⇄Việt của từ điển + câu song ngữ, khác chủ đề (nội dung, không phải code) nhưng gộp chung cho gọn. Có 1 mục còn cần quyết định (§5 phần này).
+
+---
+
+## PHẦN D — Audit bản dịch toàn dự án (2026-07-06)
+
+> Ngày: 2026-07-06 · Theo yêu cầu người dùng: _"audit chất lượng các bản dịch tiếng Anh
+> tiếng Việt bao gồm tất cả dự án bao gồm cả tiêu đề, từ điển, đối thoại…"_
+> Phạm vi: TOÀN BỘ dữ liệu song ngữ sau đợt mở rộng lớn kể từ PHẦN C (2026-06-27) — từ điển
+> đã tăng lên **12.073 mục** (thêm C1/C2), curriculum lên 325 vòng, cùng hội thoại, bài học,
+> giáo trình CEFR, tiêu đề và chuỗi giao diện (i18n).
+
+### D.1. Phương pháp (3 lớp)
+
+1. **Quét tự động toàn bộ** (`scratchpad/audit.py`) — ~22.000 cặp Anh–Việt:
+   trống/thiếu, EN≡VI (chưa dịch), **lệch số** (số trong EN vs VI), lẫn tiếng Anh trong ô VI,
+   mojibake/ký tự hỏng, placeholder (`undefined/null/TODO…`), cách đôi, ví dụ thiếu từ chính.
+2. **Kiểm nhất quán nghĩa từ điển** — cờ mục mà thuật ngữ ở `vi` không lặp lại trong `ex_vi`.
+3. **Đọc tay mẫu ngữ nghĩa** (~380 mục) trải khắp: 120 mục C1/C2 + 60 mục A1–B2 + 50 mục
+   "nghi bất nhất" + 40 câu form-examples + 8 hội thoại đầy đủ + 3 bài học đầy đủ + **toàn bộ
+   ~380 cặp tiêu đề** (hội thoại/CEFR/curriculum) + **toàn bộ bảng i18n** (`src/i18n/index.ts`).
+
+### D.2. Số liệu đã quét
+
+| Nguồn                                           | Số cặp/mục | Cờ tự động | Lỗi dịch thật |
+| ----------------------------------------------- | ---------- | ---------- | ------------- |
+| Từ điển (`public/data/dictionary/chunk-*.json`) | 12.073 mục | 30         | 0             |
+| Hội thoại (`dialogues.json`)                    | 2.433 dòng | 3          | 0             |
+| Giáo trình CEFR (`cefr.json`)                   | 357 cặp    | 0          | 0             |
+| Curriculum (`curriculum.json`)                  | 5.076 từ   | 2          | 0             |
+| Form-examples + Extra-examples                  | 2.098 cặp  | 0          | 0             |
+| Tiêu đề (hội thoại + CEFR + curriculum)         | ~380 cặp   | 0          | 0             |
+| Chuỗi giao diện i18n (vi/en)                    | ~150 khóa  | 0          | 0             |
+
+**Toàn bộ 35 cờ tự động đều là báo nhầm hợp lệ** (đối chiếu như PHẦN C):
+
+- Động từ bất quy tắc chia thì trong ví dụ: `bite→bit`, `cling→clung`, `dig→dug`,
+  `fling→flung`, `fry→fried`, `kneel→knelt`, `stride→strode`, `sweep→swept`, `weep→wept`,
+  `sting→stung`, `shrink→shrank`, `flee→fled`… (23 mục) → đúng.
+- "Lệch số": số viết bằng chữ trong tiếng Anh, viết bằng chữ số trong tiếng Việt —
+  `nineteen ninety` = "năm 1990", `octogenarian` = "cụ già ngoài 80 tuổi" → đúng.
+- Placeholder: từ tiếng Anh hợp lệ `null` / `nullify` → đúng.
+- EN≡VI: bài đánh vần (`S-C-H-O-O-L`, `A, E, I, O, U`) và từ mượn (`golf`, `vitamin`) → đúng.
+
+### D.3. Kết luận: chất lượng bản dịch RẤT CAO
+
+Trên ~380 mục đọc tay trải khắp mọi cấp độ và mọi loại nội dung, **không tìm thấy lỗi dịch
+sai nghĩa nào**. Đáng chú ý, các chỗ máy dịch hay sai đều được xử lý chuẩn:
+
+- Bất quy tắc số nhiều: `oxen` = "đôi bò", `phenomena` = "hiện tượng", `indices` = "bảng chỉ mục".
+- Sắc thái/kính ngữ trong bài học (tiểu từ "ạ" khi nói với bác sĩ, giọng thân mật với bạn bè).
+- Đúng văn hóa Việt: cà phê "phin", "bảy nghìn đồng", tên riêng Việt (Lan, Minh, Khánh, Tuấn…).
+- Cấu trúc nâng cao C2 (mệnh đề phân từ, đảo ngữ) dịch mượt và chính xác.
+
+Kết quả này nhất quán với PHẦN C (2026-06-27): dữ liệu song ngữ đã được biên tập kỹ.
+
+### D.4. Phát hiện nhỏ — ĐÃ VÁ
+
+Không có lỗi dịch sai; 3 mục dưới đây là **đồng nhất/độ chính xác số liệu**, đã sửa trong cùng đợt:
+
+1. **✅ Số liệu "40 đoạn" trong tiêu đề/mô tả SAI thực tế → đã sửa "10–20 đoạn".**
+   `src/i18n/index.ts` (`lessonsDescA/B`, `lessonsPageSub`, cả vi & en) ghi _"mỗi bài 40 đoạn
+   song ngữ" / "40 bilingual exchanges per lesson"_. Thực tế: 350 bài học trung bình **13 đoạn**
+   (min 10, max 20); 139 hội thoại trung bình **17,5 dòng** (max 20) — không bài nào tới 40. Sai
+   ở CẢ vi lẫn en (số liệu quảng bá lỗi thời). Đã đổi toàn bộ 6 chỗ thành "10–20 đoạn".
+2. **✅ Bất đối xứng nhãn "Bài học" → đã đồng nhất.** Trước: `lessonsTitleA` vi = "Các bài hội
+   thoại mẫu thông dụng" / en = "Lessons"; `lessonsTitleB` vi = "Bài học" / en = "Common sample
+   dialogues" — lệch nhau. Nay cả A và B dùng chung vi = **"Các bài hội thoại mẫu"** / en =
+   **"Sample dialogues"**.
+3. **✅ Đồng nhất thuật ngữ `actuary` → đã sửa.** `vi` = "chuyên viên tính toán bảo hiểm" nhưng
+   `ex_vi` dùng "chuyên viên định phí" (cả hai đều đúng, chỉ khác cách gọi). Đã đổi `ex_vi` thành
+   "Một chuyên viên tính toán bảo hiểm tính rủi ro cho công ty." ở cả 3 nơi chứa câu này
+   (`dictionary/chunk-000.json`, `cefrC1C2Vocab.json`, `curriculum.json`). Hiếm — không thấy ca
+   tương tự trong mẫu 50 mục "nghi bất nhất".
+
+### D.5. Ngoài phạm vi bản dịch (ghi nhận để tham khảo)
+
+Không phải lỗi dịch, nhưng phát hiện khi rà — thuộc **gắn cấp CEFR / mô hình hóa dữ liệu**:
+
+- Vài mục gắn cấp CEFR trông thấp so với độ khó: `opera`=A1, `cola`=A2, `quantitative`=B1.
+- Một số **dạng chia của từ tồn tại như mục từ điển riêng**: `killed`, `recorded`, `grown`,
+  `higher`, `higher`… (nên là dạng của `kill`/`record`/`grow`/`high`, không phải lemma riêng).
+
+Hai nhóm này để chủ dự án cân nhắc xử lý ở đợt dọn dữ liệu sau (không ảnh hưởng chất lượng dịch).
+
+### D.6. Cách chạy lại
+
+```bash
+# script quét đặt trong scratchpad phiên này (audit.py / semantic.py); chạy lại:
+python3 scratchpad/audit.py       # quét tự động ~22.000 cặp → findings.txt
+python3 scratchpad/semantic.py    # nhất quán nghĩa + trích mẫu C1/C2
+```
 
 ---
 

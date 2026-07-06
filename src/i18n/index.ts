@@ -45,9 +45,9 @@ export const t = {
       "1.000+ chủ thể (I'm, We are, Could you…), mỗi chủ thể nhiều câu thực tế, có phát âm.",
     dictTitleA: 'Từ điển',
     dictDescA: 'Tra 10.000 từ tiếng Anh thông dụng: loại từ, nghĩa tiếng Việt, ví dụ minh họa.',
-    lessonsTitleA: 'Các bài hội thoại mẫu thông dụng',
+    lessonsTitleA: 'Các bài hội thoại mẫu',
     lessonsDescA:
-      'Hội thoại mẫu theo chủ đề đời sống hằng ngày, mỗi bài 40 đoạn song ngữ có phát âm.',
+      'Hội thoại mẫu theo chủ đề đời sống hằng ngày, mỗi bài 10–20 đoạn song ngữ có phát âm.',
     tagPopular: 'Phổ biến',
     tagKeyFeature: 'Tính năng chính',
     tagDictCount: '10.000+ từ',
@@ -67,8 +67,8 @@ export const t = {
       '1.000+ chủ thể câu tiếng Anh/Việt thông dụng, mỗi chủ thể có nhiều ví dụ thực tế.',
     dictTitleB: 'Từ điển',
     dictDescB: 'Tra 10.000 từ tiếng Việt–Anh thông dụng với loại từ và ví dụ.',
-    lessonsTitleB: 'Bài học',
-    lessonsDescB: 'Hội thoại mẫu tiếng Việt hàng ngày, 40 đoạn song ngữ mỗi bài.',
+    lessonsTitleB: 'Các bài hội thoại mẫu',
+    lessonsDescB: 'Hội thoại mẫu tiếng Việt hàng ngày, 10–20 đoạn song ngữ mỗi bài.',
 
     // Login
     loginBrand: 'Gia sư tiếng Anh AI',
@@ -138,7 +138,7 @@ export const t = {
 
     // Lessons
     lessonsPageTitle: 'Bài học hội thoại',
-    lessonsPageSub: 'Mỗi bài 40 đoạn hội thoại song ngữ',
+    lessonsPageSub: 'Mỗi bài 10–20 đoạn hội thoại song ngữ',
 
     // Phrases
     phrasesPageTitle: 'Các câu thông dụng',
@@ -203,8 +203,8 @@ export const t = {
       "1,000+ subjects (I'm, We are, Could you…), each with real-life sentences and audio.",
     dictTitleA: 'Dictionary',
     dictDescA: 'Look up 10,000 common English words: part of speech, Vietnamese meaning, examples.',
-    lessonsTitleA: 'Lessons',
-    lessonsDescA: 'Sample dialogues on everyday topics, 40 bilingual exchanges per lesson.',
+    lessonsTitleA: 'Sample dialogues',
+    lessonsDescA: 'Sample dialogues on everyday topics, 10–20 bilingual exchanges per lesson.',
     tagPopular: 'Popular',
     tagKeyFeature: 'Key feature',
     tagDictCount: '10,000+ words',
@@ -223,8 +223,8 @@ export const t = {
     phrasesDescB: '1,000+ subjects with real-life English/Vietnamese sentences and audio.',
     dictTitleB: 'Dictionary',
     dictDescB: 'Look up 10,000 common Vietnamese–English words with part of speech and examples.',
-    lessonsTitleB: 'Common sample dialogues',
-    lessonsDescB: 'Everyday Vietnamese dialogues, 40 bilingual exchanges per lesson.',
+    lessonsTitleB: 'Sample dialogues',
+    lessonsDescB: 'Everyday Vietnamese dialogues, 10–20 bilingual exchanges per lesson.',
 
     // Login
     loginBrand: 'AI Language Tutor',
@@ -294,7 +294,7 @@ export const t = {
 
     // Lessons
     lessonsPageTitle: 'Conversation lessons',
-    lessonsPageSub: '40 bilingual exchanges per lesson',
+    lessonsPageSub: '10–20 bilingual exchanges per lesson',
 
     // Phrases
     phrasesPageTitle: 'Common Sentences',
