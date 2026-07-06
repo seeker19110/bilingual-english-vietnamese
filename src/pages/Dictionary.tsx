@@ -14,7 +14,7 @@ import PageHeader from '../components/PageHeader'
 import VoiceToggle from '../components/VoiceToggle'
 import PronounceButton from '../components/PronounceButton'
 import VocabMilestone from '../components/VocabMilestone'
-import WordOfTheDay from '../components/WordOfTheDay'
+import StudyPanel from '../components/StudyPanel'
 import KaraokeText from '../components/KaraokeText'
 import Flashcard from '../components/Flashcard'
 import WordIllustration from '../components/WordIllustration'
@@ -27,7 +27,6 @@ import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { POS_LABEL, POS_COLOR, POS_LIST, LEVEL_COLOR } from '../lib/pos'
 import { getLearnedWords } from '../lib/vocab'
-import { loadCurriculum, getTodayBatch } from '../lib/curriculum'
 
 const PAGE_SIZE = 3
 type Tab = 'search' | 'flashcard' | 'pos'
@@ -93,7 +92,7 @@ export default function Dictionary() {
 
   const [learnedWords, setLearnedWords] = useState<Set<string>>(new Set())
 
-  // Kết quả tìm kiếm + thẻ "Từ vựng hôm nay" lấy TỪ SERVER (không tải cả từ điển về máy).
+  // Kết quả tìm kiếm lấy TỪ SERVER (không tải cả từ điển về máy).
   const [searchResults, setSearchResults] = useState<DictEntry[]>([])
   const [searchPosGroups, setSearchPosGroups] = useState<[string, number][]>([])
   const [searchMatched, setSearchMatched] = useState(0)
@@ -101,7 +100,6 @@ export default function Dictionary() {
   const [searchError, setSearchError] = useState(false) // true khi lỗi mạng (khác "không có kết quả")
   const [retryKey, setRetryKey] = useState(0) // tăng để gọi lại tìm kiếm sau lỗi mạng
   const [totalWords, setTotalWords] = useState(0)
-  const [todayWords, setTodayWords] = useState<DictEntry[]>([])
   const [extraExamples, setExtraExamples] = useState<Record<string, [ExPair, ExPair]>>({})
 
   useEffect(() => {
@@ -116,17 +114,6 @@ export default function Dictionary() {
         /* lỗi mạng — bỏ qua, trang vẫn dùng được để tra từ */
       })
   }, [])
-
-  // "Từ vựng hôm nay" = đúng batch các từ ở tab "Hôm nay" của lộ trình học.
-  // Nạp lại khi học thêm từ (learnedKey đổi) để bỏ từ đã thuộc khỏi danh sách.
-  useEffect(() => {
-    if (!user) return
-    loadCurriculum()
-      .then(() => setTodayWords(getTodayBatch(getLearnedWords(user.id))))
-      .catch(() => {
-        /* lỗi nạp dữ liệu — bỏ qua, vẫn tra từ được */
-      })
-  }, [user, learnedKey])
 
   // Gọi API tìm kiếm mỗi khi từ khóa đổi (deferredQuery đã được React hoãn để gõ mượt).
   // Hủy request cũ khi gõ tiếp để tránh kết quả về trễ ghi đè kết quả mới.
@@ -229,7 +216,7 @@ export default function Dictionary() {
           />
 
           <VocabMilestone userId={user.id} refreshKey={learnedKey} />
-          <WordOfTheDay entries={todayWords} isA={isA} />
+          <StudyPanel uid={user.id} isA={isA} onProgress={() => setLearnedKey((k) => k + 1)} />
 
           {/* Tab bar */}
           <div className="flex gap-2 mb-4">
