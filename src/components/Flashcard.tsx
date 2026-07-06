@@ -5,6 +5,8 @@ import { markLearned, unmarkLearned } from '../lib/vocab'
 import { fetchRandomEntries } from '../lib/dictionaryApi'
 import PronounceButton from './PronounceButton'
 import KaraokeText from './KaraokeText'
+import WordFormsBlock from './WordFormsBlock'
+import { getDirection } from '../lib/storage'
 
 interface Props {
   userId: string
@@ -129,6 +131,20 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
           </>
         )}
       </button>
+
+      {/* Các dạng của từ — hiện sau khi lật để học kèm cách chia */}
+      {flipped && (
+        <div className="mb-4 flex justify-center">
+          <div className="w-full max-w-md">
+            <WordFormsBlock
+              forms={card.forms}
+              base={card.base}
+              word={card.word}
+              isA={getDirection() === 'A'}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Nút phát âm từ + câu ví dụ (có karaoke) — tách khỏi nút lật để bấm không bị lật thẻ */}
       <div className="flex flex-col items-center gap-2 mb-4">
