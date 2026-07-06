@@ -1004,6 +1004,22 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
 - Verify thật bằng E2E (không chỉ đọc code): `npx playwright test e2e/a11y.spec.ts --grep
 learning-path` — 12/12 pass (route `/learning-path/c1` × 4 theme, render dữ liệu thật qua `npm
 run dev`), 0 critical/serious.
+- **Rà thêm sau khi user hỏi lại "còn 121 từ chưa vào lộ trình"**: đối chiếu cho thấy 121 từ này
+  KHÔNG phải thiếu sót — 112 từ (44 C1 + 68 C2) đã được dạy ở A1-B2 (loại để tránh dạy trùng, đúng
+  thiết kế) + **9 từ bị gắn nhầm nhãn C1/C2** dù là từ rất cơ bản: `cannot/trying/standing` (dạng
+  ngữ pháp cơ bản, không phải từ nâng cao), `congratulations/papa` (từ vựng A1-A2 thông thường),
+  `buck/demon/gosh/jerk` (từ lóng/thân mật thông dụng, không phải đăng ký học thuật C1/C2) — khớp
+  đúng comment gốc của script ("chỉ bỏ ~9 từ"). Đã **sửa lại `level` đúng** cho 9 từ này (thay vì
+  chỉ lọc khỏi lộ trình, giữ nguyên nhãn sai trong từ điển): `cannot→A1, trying→A1, standing→A1,
+papa→A1, congratulations→A2, buck→B1, demon→B1, gosh→B1, jerk→B2`. Chạy lại 3 script sinh dữ liệu
+  (`gen-cefr-c1c2-vocab.ts` → không đổi số lượng C1/C2 vì 9 từ này vốn đã bị lọc khỏi vòng học, chỉ
+  đổi `level` hiển thị đúng ở Từ điển/`Mở rộng`; `gen-curriculum-json.ts`/`gen-learn-json.ts` không
+  đổi vì không ảnh hưởng nội dung vòng). Build/typecheck/lint/test (201/201)/size-limit đều xanh.
+- **Xác nhận thứ tự học trong vòng/cấp đã đúng theo tần suất** (yêu cầu người dùng): vòng C1/C2 tự
+  sinh VÀ phần "Mở rộng" đều đã sắp từ thông dụng → hiếm bên trong mỗi vòng (`compareByFreq`/
+  `pick()`, có sẵn từ trước) — spot-check thật (vd vòng `cefr-c1-noun-1`: witch(2053)→closet(2091)→
+  …→ruby(3873), tăng dần đúng thứ tự). Vòng nền tảng A1-B2 (soạn tay) CỐ Ý không sắp theo tần suất
+  mà theo chủ đề sư phạm (vd "hello" phải học trước "nice to meet you") — không đổi.
 
 ## Tiếp theo
 
