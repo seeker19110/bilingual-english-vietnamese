@@ -983,11 +983,27 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   **Từ điển: 11.632 → 12.062 từ.**
 - **→ Đợt 2 (C1-C2) đã HOÀN TẤT HẲN.** Cả 2 đợt bổ sung từ điển theo chuẩn CEFR-J/Octanove (A1→C2)
   nay đã xong 100%.
-- ⚠️ **Còn lại (quyết định sản phẩm, CHƯA làm):** chạy lại `scripts/gen-cefr-c1c2-vocab.ts` để 430
-  từ mới có thể vào các vòng từ vựng C1/C2 của lộ trình học — CHƯA làm trong PR này vì script này
-  sinh lại TOÀN BỘ ID vòng C1/C2 (43+98 vòng hiện có), có thể đổi cấu trúc vòng và ảnh hưởng tiến
-  độ SRS/lộ trình của người dùng thật đang học cấp C1/C2 (rủi ro tương tự đã ghi nhận ở đợt mở
-  cấp C1-C2 trước, PR #209) — cần hỏi người dùng trước khi chạy, theo CLAUDE.md mục 12.
+
+## Đã xong (chạy lại `gen-cefr-c1c2-vocab.ts` — đưa 1.316 từ Đợt 2 vào lộ trình — 2026-07-06)
+
+- **Kiểm tra theo yêu cầu người dùng "đủ từ vựng cho các cấp học chưa?"**: đối chiếu số từ đã
+  gắn nhãn CEFR trong từ điển (C1 1.305 / C2 2.368) với số từ ĐÃ VÀO file vòng học sinh sẵn
+  `cefrC1C2Vocab.json` (C1 687/50 vòng, C2 1.561/105 vòng — sinh 1 lần duy nhất lúc PR #209, TRƯỚC
+  cả 3 vòng batch 1-3 và batch 4-14 của Đợt 2) → phát hiện **thiếu 1.425 từ (~39%)** chưa vào lộ
+  trình vì chưa chạy lại script sau khi từ điển thêm 1.316 từ CEFR C1/C2 mới. A1/A2/B1/B2 KHÔNG bị
+  vấn đề này vì phần "Mở rộng" lấy trực tiếp từ từ điển lúc chạy, không qua file sinh sẵn.
+- Người dùng xác nhận chạy sau khi được giải thích rủi ro cụ thể (tiến độ "đã học từ nào"/SRS lưu
+  theo CHỮ của từ, không theo ID vòng → không mất tiến độ từ vựng đã học; chỉ có nhóm/vòng đang
+  học dở có thể đổi thành phần từ do thứ tự tần suất dịch chuyển khi thêm từ mới — đã có sẵn cơ chế
+  "grandfather" `cefr_unlocked` chống khóa lại cấp, migration 0008).
+- Chạy `npx tsx scripts/gen-cefr-c1c2-vocab.ts`: **C1 687→1.257 từ (50→87 vòng), C2 1.561→2.295 từ
+  (105→149 vòng)**. Chạy tiếp 2 script phụ thuộc (bắt buộc theo comment đầu file, KHÔNG nằm trong
+  `npm run build`): `gen-curriculum-json.ts` (325 vòng, 5.076 từ, làm giàu `ipa_en` từ từ điển) +
+  `gen-learn-json.ts` (6 cấp, 78 bài ngữ pháp, đồng bộ `public/data/cefr.json`).
+  Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.31/116 kB JS) đều xanh.
+- Verify thật bằng E2E (không chỉ đọc code): `npx playwright test e2e/a11y.spec.ts --grep
+learning-path` — 12/12 pass (route `/learning-path/c1` × 4 theme, render dữ liệu thật qua `npm
+run dev`), 0 critical/serious.
 
 ## Tiếp theo
 
