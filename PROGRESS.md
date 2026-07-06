@@ -960,11 +960,18 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
 
 > Việc lớn, làm qua NHIỀU phiên. Nếu hit session limit giữa chừng: dừng, KHÔNG tự relaunch hàng
 > loạt agent, ghi lại đúng đã làm tới đâu rồi chờ người dùng (theo CLAUDE.md mục 3).
+>
+> ⚠️ **KHÔNG nhầm với "Mở cấp C1–C2 vào lộ trình học"** (đã xong, PR #209, xem mục "Đã xong (mở
+> cấp C1–C2...)" ở trên) — việc đó DÙNG LẠI 2.248 từ C1/C2 đã có sẵn trong từ điển để xây bài
+> học. Mục NÀY là việc khác: bổ sung ~1.407 từ CEFR-J C1/C2 **CÒN THIẾU HẲN** trong từ điển (đối
+> chiếu Octanove/CEFR-J cho thấy từ điển hiện tại chưa phủ 100% wordlist chuẩn), song song với
+> Đợt 1 (đã xong, A1-B2, PR #204/#205/#208). Làm xong Đợt 2 sẽ có THÊM từ mới để lộ trình C1/C2
+> dùng lại (chạy lại `scripts/gen-cefr-c1c2-vocab.ts` sau khi gộp từ mới vào từ điển).
 
-- **Đợt 2 — C1→C2 (1.407 từ)**: làm sau khi Đợt 1 xong hẳn (kể cả phần cụm từ), PR riêng, quy
-  trình tương tự (đối chiếu Octanove C1/C2 wordlist → lọc trùng/rác → viết nội dung theo lô →
-  gộp → freq → verify → commit). Nhớ chạy lại kiểm tra script đối chiếu thanh điệu trước khi gộp
-  mỗi lô — bắt lỗi hiệu quả, chi phí thấp.
+- **Đợt 2 — C1→C2 (~1.407 từ CEFR-J còn thiếu trong từ điển)**: PR riêng, quy trình tương tự Đợt
+  1 (đối chiếu Octanove C1/C2 wordlist với từ điển hiện tại → lọc trùng/rác → viết nội dung theo
+  lô → gộp → freq → verify → commit). Nhớ chạy lại kiểm tra script đối chiếu thanh điệu trước khi
+  gộp mỗi lô — bắt lỗi hiệu quả, chi phí thấp.
 
 ## Tiếp theo
 
