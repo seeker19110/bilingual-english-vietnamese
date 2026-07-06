@@ -10,6 +10,7 @@
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import VocabMilestone from '../components/VocabMilestone'
+import StudyPanel from '../components/StudyPanel'
 import RoadmapTab from '../components/RoadmapTab'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
@@ -30,6 +31,7 @@ export default function Learn() {
           subtitle={isA ? 'Lộ trình chuẩn CEFR A1 → C2' : 'CEFR roadmap A1 → C2'}
         />
         <VocabMilestone userId={user.id} />
+        <StudyPanel uid={user.id} isA={isA} />
 
         <RoadmapTab uid={user.id} isA={isA} />
       </main>
