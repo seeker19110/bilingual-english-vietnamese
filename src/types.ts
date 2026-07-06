@@ -7,6 +7,26 @@ export type Direction = 'A' | 'B'
 // cho lộ trình) — từ điển mở rộng có cả từ nâng cao nên cần thêm C1/C2.
 export type CefrWordLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
 
+// Các DẠNG BIẾN THỂ của một từ (word forms) — sinh bằng scripts/gen-word-forms.ts.
+// Hiển thị NGAY TRONG phần nghĩa của từ gốc (trang Từ điển + thẻ học từ) để người
+// học nắm luôn cách chia. Chỉ điền field khi dạng đó THỰC SỰ tồn tại và khác từ gốc;
+// bỏ trống nếu không áp dụng (danh từ không đếm được → không có plural; động từ khiếm
+// khuyết → không chia). Xem docs/research/bo-sung-dang-bien-the-tu-dien.md.
+export interface WordForms {
+  // Danh từ
+  plural?: string // số nhiều: 'books', 'children' — bỏ trống nếu không đếm được
+  uncountable?: boolean // true → UI ghi "(không đếm được)", KHÔNG hiện plural
+  // Động từ
+  v3s?: string // ngôi 3 số ít (V-s): goes, watches
+  ving?: string // dạng V-ing: going, running
+  past?: string // quá khứ (V2): went, played
+  pastPart?: string // quá khứ phân từ (V3): gone — CHỈ lưu khi khác past
+  // Tính từ / trạng từ
+  comparative?: string // so sánh hơn: bigger — CHỈ lưu khi có dạng -er thật
+  superlative?: string // so sánh nhất: biggest
+  irregular?: boolean // true → dạng bất quy tắc (UI đánh dấu nổi bật để học thuộc)
+}
+
 // Cấu trúc 1 mục từ điển — khớp với dữ liệu trong public/data/dictionary/chunk-*.json
 export interface DictEntry {
   word: string // từ tiếng Anh
@@ -24,6 +44,11 @@ export interface DictEntry {
   // Chưa mọi từ đều có; getCircles() (lib/curriculum.ts) dùng để sắp phần "Mở
   // rộng" theo tần suất thay vì alphabet, từ thiếu freq xếp cuối.
   freq?: number
+  // Các dạng biến thể của từ (số nhiều, các thì, so sánh…) — chỉ có ở từ GỐC.
+  forms?: WordForms
+  // CHỈ có ở entry là một dạng biến thể (went → base: 'go') — trỏ về từ gốc để UI
+  // hiện link "Xem từ gốc" và để search gộp về từ gốc.
+  base?: string
 }
 
 export interface User {

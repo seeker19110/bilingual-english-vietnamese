@@ -418,7 +418,7 @@ export default function CefrLevelPage() {
         onClick={() => nav('/learning-path')}
         className="tap-44 flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200 transition mb-3"
       >
-        <ChevronLeft className="w-4 h-4" /> {isA ? 'Lộ trình A1 → B2' : 'Roadmap A1 → B2'}
+        <ChevronLeft className="w-4 h-4" /> {isA ? 'Lộ trình A1 → C2' : 'Roadmap A1 → C2'}
       </button>
 
       {/* Thanh tab học của cấp — ẩn khi cấp còn khóa */}

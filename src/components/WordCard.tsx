@@ -3,6 +3,7 @@ import { Eye, Star } from 'lucide-react'
 import PronounceButton from './PronounceButton'
 import KaraokeText from './KaraokeText'
 import PronunciationCheck from './PronunciationCheck'
+import WordFormsBlock from './WordFormsBlock'
 import type { ExPair } from '../data/extra-examples'
 import { loadExtraExamples } from '../data/extraExamplesLoader'
 
@@ -118,6 +119,15 @@ export default function WordCard({
           )}
         </button>
       </div>
+
+      {/* Các dạng của từ — hiện sau khi lật thẻ để học kèm cách chia */}
+      {flipped && (
+        <div className="mb-3 flex justify-center">
+          <div className="w-full max-w-md">
+            <WordFormsBlock forms={card.forms} base={card.base} word={card.word} isA={isA} />
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col items-center gap-2 mb-3">
         <PronounceButton word={card.word} />

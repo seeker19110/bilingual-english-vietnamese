@@ -14,6 +14,20 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
+// Các dạng biến thể của từ — đồng bộ với WordForms trong src/types.ts.
+// (Server giữ định nghĩa riêng để không phụ thuộc code React; nội dung phải khớp.)
+export interface WordForms {
+  plural?: string
+  uncountable?: boolean
+  v3s?: string
+  ving?: string
+  past?: string
+  pastPart?: string
+  comparative?: string
+  superlative?: string
+  irregular?: boolean
+}
+
 export interface DictEntry {
   word: string
   pos: string
@@ -24,6 +38,9 @@ export interface DictEntry {
   ipa_vi?: string
   // Cấp CEFR ước lượng bằng AI (scripts/tag-cefr-levels.ts) — không phải mọi từ đều có.
   level?: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
+  freq?: number
+  forms?: WordForms // các dạng biến thể (chỉ ở từ gốc)
+  base?: string // trỏ về từ gốc (chỉ ở entry là dạng biến thể)
 }
 
 // api/_lib/ → ../../public/data/dictionary

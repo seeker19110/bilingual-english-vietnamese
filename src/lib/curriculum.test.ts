@@ -119,12 +119,14 @@ describe('getLevelWords / getBeyondCefrWords — từ vựng theo cấp', () => 
     expect(a2.filter((k) => a1.has(k))).toEqual([])
   })
 
-  it('tổng từ của 4 cấp + phần ngoài CEFR = đúng lộ trình phẳng', () => {
+  it('tổng từ của 6 cấp + phần ngoài CEFR = đúng lộ trình phẳng', () => {
     const total =
       getLevelWords('A1').length +
       getLevelWords('A2').length +
       getLevelWords('B1').length +
       getLevelWords('B2').length +
+      getLevelWords('C1').length +
+      getLevelWords('C2').length +
       getBeyondCefrWords().length
     expect(total).toBe(getLearningPath().length)
   })

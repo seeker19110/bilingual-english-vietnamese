@@ -37,6 +37,19 @@ export const ACCENT: Record<
     soft: 'bg-amber-500/10',
     ring: 'border-amber-500/30',
   },
+  // C1/C2 dùng rose/cyan — khớp LEVEL_COLOR badge cấp CEFR ở src/lib/pos.ts.
+  rose: {
+    bar: 'bg-rose-500',
+    text: 'text-rose-300 theme-light:text-rose-800',
+    soft: 'bg-rose-500/10',
+    ring: 'border-rose-500/30',
+  },
+  cyan: {
+    bar: 'bg-cyan-500',
+    text: 'text-cyan-300 theme-light:text-cyan-800',
+    soft: 'bg-cyan-500/10',
+    ring: 'border-cyan-500/30',
+  },
 }
 
 export type AccentClasses = (typeof ACCENT)[keyof typeof ACCENT]

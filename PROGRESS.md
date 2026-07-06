@@ -13,8 +13,8 @@
   (https://en-vi.donghanhcungban.com). Đang **áp bộ khung** lên dự án có sẵn
   theo `docs/framework/AP-DUNG-vao-du-an-co-san.md` — Lớp 1 (hàng rào) xong;
   Lớp 2 (E2E, a11y, bundle-size, i18n Login) đã đóng — còn rà nợ kỹ thuật
-  nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro, chạy thật
-  script gắn nhãn CEFR).
+  nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro). Cả 2 đợt bổ
+  sung từ điển theo chuẩn CEFR-J/Octanove (A1→C2) đã hoàn tất.
 
 ## Đã xong (đợt áp khung)
 
@@ -100,6 +100,50 @@
   Gemini free) nên dừng hỏi người dùng trước khi chạy thật, theo CLAUDE.md mục 12. Đã hỏi người
   dùng có muốn chạy ngay trong phiên không — chọn **tự chạy sau** trên máy có `.env`. Đã merge:
   **PR #150**.
+- **Đổi nguồn gắn nhãn CEFR: wordlist THẬT trước, AI chỉ fallback (2026-07-05)** — người dùng hỏi
+  có wordlist CEFR miễn phí nào không; đã nghiên cứu và xác nhận **CEFR-J Vocabulary Profile v1.5**
+  (A1-B2, Yukio Tono/Tokyo University of Foreign Studies — dùng thương mại được, miễn phí, chỉ cần
+  ghi nguồn) + **Octanove Vocabulary Profile C1/C2 v1.0** (CC BY-SA 4.0), tải từ
+  `openlanguageprofiles/olp-en-cefrj`, lưu ở `data/cefrj/*.csv` + `data/cefrj/SOURCE.md` (nguồn +
+  giấy phép + trích dẫn bắt buộc). Thêm `api/_lib/cefrjLookup.ts` (logic thuần, có test — 11 test:
+  parse CSV bỏ header/dòng hỏng, tách biến thể viết cách nhau bằng "/", tra theo pos rồi fallback
+  cấp DUY NHẤT của từ khi không mâu thuẫn). `scripts/tag-cefr-levels.ts` nay tra wordlist này
+  TRƯỚC (miễn phí, không giới hạn `LIMIT`, không cần API key) — AI (Gemini/Groq/Anthropic) CHỈ
+  gọi cho từ không có trong wordlist (thêm biến `NO_AI_FALLBACK=1` để chạy thử chỉ bằng wordlist).
+  Đã chạy thử thật trên bản sao `public/data/dictionary/chunk-*.json` (không đụng file gốc, xoá
+  sau khi kiểm): **5.799/10.006 từ (~58%) gắn được nhãn chỉ bằng wordlist, không tốn AI** — phần
+  còn lại (~4.200 từ, đa số từ ít phổ biến/idiom) mới cần AI ước lượng. Build/typecheck/lint/test
+  (183/183) đều xanh. **CHƯA chạy thật trên file gốc** (vẫn cần quyết định có chạy AI cho phần
+  còn thiếu không — xem "Tiếp theo"). Đã merge: **PR #202**.
+- **Chạy thật `tag:cefr` (chỉ wordlist) trên file gốc (2026-07-05)** — chạy
+  `NO_AI_FALLBACK=1 npm run tag:cefr` trên `public/data/dictionary/chunk-*.json` thật:
+  **5.799/10.006 từ (~58%) đã có nhãn CEFR**, phân bố A1=969/A2=1073/B1=1732/B2=1545/C1=345/C2=135,
+  không tốn AI. Đã merge: **PR #203**.
+- **Thêm 2 tầng tra cứu miễn phí nữa (lemma + Words-CEFR-Dataset), phủ ~96% phần còn lại
+  (2026-07-05)** — người dùng hỏi tiếp có nguồn miễn phí nào bổ sung không cho ~4.207 từ chưa
+  gắn được nhãn; phân tích cho thấy phần lớn là BIẾN THỂ (số nhiều/quá khứ/gerund...) của từ đã
+  có trong CEFR-J, không phải từ hoàn toàn mới. Thêm 2 tầng:
+  (a) **`deriveLemmaCandidates` + `lookupCefrLevelWithLemma`** (`api/_lib/cefrjLookup.ts`) — suy
+  dạng gốc theo quy tắc tiếng Anh chuẩn (pos-aware: số nhiều/động từ/so sánh), tra lại chính
+  CEFR-J/Octanove (không hạ độ tin cậy vì vẫn cùng nguồn xác định).
+  (b) **Words-CEFR-Dataset** (MIT, Maximax67 — `github.com/Maximax67/Words-CEFR-Dataset`) —
+  `api/_lib/wordsCefrDataset.ts` tra cấp CEFR đã tính sẵn cho ~172.000 từ tiếng Anh (suy luận từ
+  CEFR-J + tần suất Google Ngrams + lemma/stem). Chỉ commit **bản trích lọc**
+  `data/words-cefr-dataset/subset.csv` (19.811/248.185 dòng gốc, ~280KB — chỉ giữ từ khớp từ
+  điển dự án, script tái tạo: `scripts/extract-words-cefr-subset.ts` /
+  `npm run extract:words-cefr`), không commit nguyên ~13MB gốc. Đã spot-check 6 từ đối chiếu
+  CEFR-J thật (abandon/accept/action/happy/record×2) → **khớp 100%** khi giá trị dataset là số
+  NGUYÊN → dùng làm tín hiệu "tin cậy cao" (`confidence: 'confirmed'`); số THẬP PHÂN = nội suy
+  theo tần suất (không có trong CEFR-J gốc) → `confidence: 'estimated'`, tin cậy thấp hơn (dữ
+  liệu vẫn ghi nhãn CEFR bình thường, chỉ khác ở mức tin cậy hiển thị trong log script).
+  `scripts/tag-cefr-levels.ts` nay chạy đủ 3 tầng: CEFR-J(+lemma) → Words-CEFR-Dataset → AI
+  (fallback cuối). +20 test `cefrjLookup.test.ts`, +9 test `wordsCefrDataset.test.ts` (tổng
+  201/201). Chạy thử trên bản sao dữ liệu thật (đã có sẵn 5.799 từ từ PR #203): thêm được
+  **3.798 từ nữa miễn phí** (662 qua lemma-CEFR-J + 1.757 Words-CEFR-Dataset tin cậy cao + 1.379
+  tin cậy thấp hơn) → chỉ còn **409/10.006 từ (~4%)** thật sự cần AI (chủ yếu cụm từ/idiom +
+  thuật ngữ công nghệ/tên thương hiệu như "bitcoin", "javascript", "ipad" — không có trong bất
+  kỳ wordlist CEFR miễn phí nào). Build/typecheck/lint/test đều xanh. **CHƯA chạy thật để GHI
+  vào file gốc** (mới dry-run bản sao) — xem "Tiếp theo".
 - **docs:** đồng bộ nốt `PROJECT.md` (còn sót từ đợt PR #148: chưa cập nhật khi #149/#150 merge —
   i18n Login/`tsconfig.e2e.json`/hạ tầng CEFR ghi nhầm là "chưa xong"/"tiếp theo"). Đã merge: **PR #151**.
 - **fix(learning-path):** 5 unit tái dùng trùng tên nhân vật giữa các bài (Mai, Lan×2, Linh, Trang)
@@ -266,6 +310,53 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   `color-contrast (serious)` ở 2 theme sáng (Blue sky/Pink) do nút Đăng xuất thiếu biến thể
   `theme-light:text-red-700` (quên áp quy ước màu đỏ sẵn có ở Writing/Chat/Speaking) → sửa ngay,
   gate a11y nay **63 test**, vẫn 0 critical/serious. Đã merge: **PR #176**.
+
+## Đã xong (mở cấp C1–C2, lộ trình đủ 6 cấp — 2026-07-06)
+
+> Yêu cầu người dùng: "thêm đầy đủ cấp học C1-C2 của CEFR vào lộ trình, gộp Đợt 2
+> CEFR C1-C2 (1.407 từ)". Kế hoạch + quyết định chi tiết: `docs/research/lo-trinh-cefr-c1-c2.md`.
+
+- **Mở rộng lộ trình A1→B2 thành A1→C2 (6 cấp).** Kiến trúc vốn data-driven từ
+  `CEFR_LEVELS` nên chủ yếu là THÊM DỮ LIỆU: `RoadmapTab`/`Home`/`CefrLevelPage`
+  tự render 6 cấp; chuỗi mở khóa B2→C1→C2 tự nối; phần "học tiếp ngoài CEFR"
+  (`getBeyondCefrWords`) tự dời từ B2 sang C2 (bám `levels[last]`).
+- **Từ vựng C1/C2 lấy TỰ ĐỘNG từ từ điển đã gắn nhãn** (không gõ tay): 2.357 từ
+  C1/C2 trong từ điển đều có sẵn nghĩa TV + câu ví dụ song ngữ + freq. Script mới
+  `scripts/gen-cefr-c1c2-vocab.ts` lọc (bỏ ~9 từ gắn nhầm có `freq<2000` như
+  "trying/cannot/standing"; khử ~100 từ trùng nền tảng), sắp theo tần suất, cắt
+  thành vòng 16 từ → `src/data/cefrC1C2Vocab.json` (**C1 687 từ/43 vòng · C2 1.561
+  từ/98 vòng**). Wrapper `src/data/cefrC1C2Vocab.ts` gắn kiểu; `curriculum.ts` nối
+  vào `FOUNDATION` (`FOUNDATION_BASE` A1–B2 + vòng C1/C2). Script idempotent (bỏ
+  qua vòng "cefr-c1-_"/"cefr-c2-_" khi đọc key nền tảng → chạy lại an toàn).
+- **Ngữ pháp C1/C2 soạn tay** (`src/data/cefrAdvanced.ts`, cùng chuẩn làm giàu như
+  A1–B2): **C1 10 bài** (rút gọn mệnh đề quan hệ, câu chẻ It/Wh-cleft, đảo ngữ phủ
+  định & điều kiện, V-ing/to-V đổi nghĩa, thức giả định + wish, nhượng bộ) ·
+  **C2 7 bài** (đảo ngữ nâng cao & fronting, lược bỏ/thay thế, danh từ hóa, mệnh đề
+  phân từ/tuyệt đối, giả định trang trọng, tình thái/hedging). `buildUnits()` ghép
+  nhóm vòng từ vựng vào từng Phần; các Phần dư (nhiều vòng hơn bài ngữ pháp) thành
+  "Từ vựng nâng cao N". 4 hội thoại mẫu C1/C2 (`dialogues.ts`).
+- **Màu:** accent **rose (C1)** / **cyan (C2)** thêm vào `cefrAccent.ts` +
+  `Dashboard.tsx` (khớp `LEVEL_COLOR` badge từ đã có — AA đã kiểm qua `/dictionary`).
+  Nhãn "A1 → B2" → "A1 → C2" (`Learn.tsx`, `CefrLevelPage.tsx`, `RoadmapTab.tsx`).
+- **Không đổi schema DB:** cột `cefr_grammar`/`cefr_dialogues`/`cefr_unlocked` là
+  mảng id chuỗi tự do → C1/C2 dùng chung, không cần migration.
+- Regen JSON: `gen-curriculum-json.ts` (230 vòng, 3.772 từ) + `gen-learn-json.ts`
+  (6 cấp, 78 bài ngữ pháp, 131 hội thoại).
+- Verify: build/typecheck/lint (0 cảnh báo)/test (201/201)/size-limit (114.31/116 kB)
+  xanh; E2E a11y thêm `/learning-path/c1` — 0 critical/serious ở 4 theme; lái app
+  thật (Playwright) xác nhận bản đồ 6 cấp + trang C1/C2 mở khóa render đủ vòng từ
+  vựng/ngữ pháp/hội thoại.
+- **Bổ sung (2 việc tùy chọn — cùng ngày):**
+  - **Gom từ vựng C1/C2 THEO CHỦ ĐỀ** thay vì đánh số theo tần suất: generator phân
+    từ vào 10 chủ đề (Kinh doanh/Luật pháp/Khoa học/Y học/Môi trường/Nghệ thuật/Xã
+    hội/Cảm xúc/Tư duy/Giao tiếp) qua nghĩa TV + gốc từ tiếng Anh; ~7% khớp chủ đề,
+    còn lại gom theo loại từ (Danh/Động/Tính-trạng từ nâng cao), nhóm lớn cắt ≤5
+    vòng/Phần. Mô hình unit đổi: Phần NGỮ PHÁP (kèm hội thoại) trước, Phần TỪ VỰNG
+    theo chủ đề sau (`cefrC1C2Vocab.json` xuất `c1Units`/`c2Units`; `buildUnits` ghép).
+  - **Hội thoại cho MỌI Phần ngữ pháp C1/C2** (12 hội thoại, mỗi Phần 1 hội thoại
+    dùng đúng cấu trúc bài) → dialogues.json 65 chủ đề / 139 hội thoại.
+  - Verify lại: gate xanh (test 201/201) + E2E a11y `/learning-path/c1` 4 theme +
+    lái app thật xác nhận Phần ngữ pháp (có hội thoại) + Phần từ vựng chủ đề render đúng.
 
 ## Đã xong (đợt cải tổ lộ trình CEFR — 2026-07-03)
 
@@ -686,7 +777,7 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   đa 3 câu quiz ngữ pháp (`GrammarLesson.quiz`, dữ liệu có sẵn) — CHỈ lấy từ bài **đã đánh dấu
   "Đã học xong"** (`grammarQuizPool` tính ở `CefrLevelPage.tsx` từ `doneGrammar`) — trộn cùng
   câu từ vựng như cũ (tổng vẫn ~10 câu/lượt). Câu ngữ pháp hiện dạng câu có chỗ trống (vd "I
-  ___ a student.") thay vì từ đơn. Trả lời sai → nút "Mở lại bài" mở đúng bài ngữ pháp đó.
+  \_\_\_ a student.") thay vì từ đơn. Trả lời sai → nút "Mở lại bài" mở đúng bài ngữ pháp đó.
   Ngữ pháp trước đây không có vòng lặp củng cố như từ vựng — nay ôn lại gián tiếp qua tab
   Kiểm tra.
 - **Mới — V2 (phần còn lại): Vé nghỉ streak**: `getStreak()` (`lib/storage.ts`) tự động bắc
@@ -698,8 +789,8 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   nghiên cứu gốc.
 - 6 test mới (`storage.test.ts` — file mới, streak freeze bắc cầu/cooldown/idempotent).
   Verify: build/typecheck/lint/test (149/149)/format/size-limit xanh. Lái app thật bằng
-  Playwright — xác nhận: (1) tab Kiểm tra hiện câu hỏi dạng "___" xen giữa câu từ vựng; (2)
-  seed lịch sử có 1 ngày nghỉ ở giữa → `/progress` hiện đúng streak bắc cầu (4, không đứt còn 2) + `et_streak_freeze_*` ghi đúng ngày dùng vé. Full E2E suite (68/68, a11y 4 theme) xanh.
+  Playwright — xác nhận: (1) tab Kiểm tra hiện câu hỏi dạng "_\_\_" xen giữa câu từ vựng; (2)
+  seed lịch sử có 1 ngày nghỉ ở giữa → `/progress` hiện đúng streak bắc cầu (4, không đứt còn 2) + `et_streak_freeze_\*` ghi đúng ngày dùng vé. Full E2E suite (68/68, a11y 4 theme) xanh.
 - **Bài học rút ra**: khi nhiều phiên làm việc có thể chạy song song trên cùng repo, nên kiểm
   tra PR đang mở/mới merge trên GitHub TRƯỚC khi bắt đầu 1 kế hoạch lớn đã có trong tài liệu
   research — tránh trùng công sức. Không có cách nào phiên này biết trước về phiên kia (không
@@ -722,17 +813,266 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   đã chạy trên Dashboard → SQL Editor (2026-07-02). Lỗ RLS (cột chi phí + cache phát âm
   dùng chung) đã đóng thật trên DB đang chạy, không chỉ trong schema.
 
+## Đã xong (thay 409 từ đầu tiên của Đợt 1 CEFR A1-B2 — 2026-07-05)
+
+- **Bối cảnh:** người dùng yêu cầu bổ sung 100% từ CEFR A1→C2 còn thiếu trong từ điển (không chỉ
+  409 từ ban đầu). Đối chiếu toàn bộ wordlist CEFR-J/Octanove với từ điển hiện có (nền tảng
+  `curriculum.ts` + mở rộng `public/data/dictionary/`) cho thấy **tổng 3.056 từ thiếu** (A1=48,
+  A2=161, B1=443, B2=997, C1=600, C2=807; 2.932 từ đơn + 124 cụm từ). Đã chốt chia **2 đợt**: Đợt
+  1 = A1→B2 hoàn chỉnh (1.649 từ), Đợt 2 = C1→C2 (1.407 từ, làm sau, PR riêng).
+- **Đã hoàn tất 409/1.649 từ của Đợt 1** — xoá 409 từ đơn không có trong CEFR-J/Words-CEFR-Dataset
+  (idiom + từ lóng công nghệ/thương hiệu: bitcoin/ipad/javascript/paypal...), thay bằng 409 từ
+  CEFR-J thật (ưu tiên A1=26 → A2=112 → B1=271), viết đầy đủ nội dung (vi/ex_en/ex_vi/ipa_en/
+  ipa_vi) qua 4 agent song song theo đúng quy ước IPA tiếng Việt của từ điển (thanh điệu Bắc Bộ,
+  chỉ phiên âm âm tiết đầu bản dịch `vi`). Đã kiểm tra khớp 100% word/pos/level + spot-check IPA
+  tay ~20 từ đều đúng quy tắc trước khi gộp.
+- **Đã gộp vào `public/data/dictionary/` thật:** xoá 409 entry cũ, chèn 409 entry mới, sắp lại
+  alphabet + dàn đều 10 chunk (~1000/chunk). Chạy `scripts/assign-word-freq.ts` (SUBTLEX-US, gói
+  `subtlex-word-frequencies`) điền `freq` cho 373/409 từ mới (36 từ có dấu chấm/gạch nối như
+  "a.m."/"mrs." không khớp wordlist, giữ nguyên như thiết kế cũ — xếp cuối phần Mở rộng).
+- **Kết quả: 10.006/10.006 từ (100%) đã có nhãn CEFR** — không còn từ nào thiếu `level`, không
+  trùng từ (`10.006 unique`), không thiếu field bắt buộc nào.
+- Verify: build ✅ · typecheck ✅ · lint ✅ (0 cảnh báo) · format ✅ · test ✅ (201/201) ·
+  size-limit ✅ (114.33/116 kB JS, 8.91/9 kB CSS).
+- An toàn xoá đã được xác nhận trước (research agent): `src/data/curriculum.ts` (circle nền
+  tảng) tự chứa dữ liệu riêng, không tham chiếu cứng vào `public/data/dictionary/`; SRS/tiến độ
+  học của người dùng lưu theo string từ, từ bị xoá chỉ "mồ côi" (không crash).
+- **CI của PR #204 báo failure** nhiều lần rerun nhưng log tải về lỗi 404 liên tục — nghi hạn chế
+  môi trường CI mô phỏng của phiên làm việc này, không phải lỗi code thật (verify local nhiều lần
+  đều xanh).
+
+## Đã xong (hoàn tất 1.059 từ đơn còn lại của Đợt 1 A1-B2 — 2026-07-05, PR #205)
+
+- **Quyết định đổi hướng so với batch 409 trước:** batch 409 dùng cách "swap" (xoá từ rác, thay
+  từ CEFR-J thật, giữ nguyên tổng 10.006). Kiểm tra lại trước khi làm tiếp: chạy thử tier 1+2 của
+  `tag:cefr` (bỏ qua field `level` có sẵn) trên toàn bộ dict hiện tại → **100% từ đều tra được**,
+  tức là KHÔNG còn "từ rác thật sự" nào để swap nữa (batch 409 đã dọn sạch). Từ đây **đổi sang
+  GROW từ điển** (thêm thẳng, không xoá gì) — an toàn hơn, không có gì để cân nhắc đánh đổi.
+  `size-limit` không bị ảnh hưởng (dictionary là JSON tĩnh fetch runtime qua `fetch()`, không nằm
+  trong bundle JS mà `size-limit` đo).
+- **Đối chiếu lại CEFR-J v1.5 (A1-B2) với dict sau batch 409** (10.006 từ) → còn thiếu 1.271 mục.
+  Lọc: 125 cụm nhiều từ (hoãn — cần gắn `pos` theo vai trò ngữ pháp thật, không dùng `idiom`), 15
+  mảnh vỡ/viết tắt mơ hồ (`'m/'re/'s`, `mr/mrs/ms/dr/pm/id/cv/eco`, `ness` do CEFR-J tách từ lỗi,
+  tên riêng `smith/englishman`, lỗi chính tả `mommie`), 67 từ trùng nghĩa BrE/AmE với từ đã có
+  (colour/color, organise/organize, gramme/gram, litre/liter, cheque/check, gaol/jail... — dùng
+  hàm chuyển đổi hậu tố BrE→AmE tự viết + danh sách bất quy tắc, xem lịch sử chat để tái tạo nếu
+  cần) → còn lại **1.059 từ đơn** thật sự cần thêm.
+- **Viết nội dung qua 4 round, 11 agent song song** (batch ~90-125 từ/agent, tối đa 3 agent chạy
+  cùng lúc — theo đúng khuyến cáo "đừng launch quá nhiều agent song song" ở lần trước): round 1
+  (311 từ: hết A1=3+A2=6+B1=114 còn thiếu + 194 B2), round 2 (188 từ B2 — 1 agent lỗi do chạm giới
+  hạn phiên, chạy lại thành công), round 3 (282 từ B2), round 4 (278 từ B2, xong tròn 1.059).
+- **Kiểm tra chất lượng bằng script tự viết** (không lưu vào repo, chỉ dùng tạm trong phiên):
+  đối chiếu thanh điệu Unicode (combining diacritic) của ÂM TIẾT ĐẦU trong `vi` với ký hiệu thanh
+  trong `ipa_vi` — bắt được **25/1.059 lỗi thật** (2.4%) trước khi gộp, chủ yếu 2 dạng lặp lại
+  nhiều agent: (1) "sự"/"tự" (thanh nặng) bị phiên nhầm thành thanh ngang — lỗi phổ biến nhất dù
+  đã nhắc trong prompt từ round 2 trở đi; (2) khi `vi` là cụm nhiều chữ, agent phiên âm nhầm sang
+  chữ thứ 2/3 thay vì chữ đầu (vd "được trân trọng" → phiên nhầm "trân"). Cũng chuẩn hoá 1 agent
+  dùng sai ký hiệu `ɨ` thay vì `ɯ` cho nguyên âm "ư" (quy ước cũ dùng ɯ 1.574 lần, ɨ 0 lần).
+- Chạy `scripts/assign-word-freq.ts` (SUBTLEX-US) sau mỗi round — điền freq cho ~85% từ mới mỗi
+  lô (phần còn lại là từ hiếm không có trong SUBTLEX, giữ nguyên như thiết kế cũ).
+- **Kết quả: từ điển 10.006 → 11.065 từ** (100% có `level`, không trùng, không thiếu field).
+- Verify mỗi round: build/typecheck/lint(0 cảnh báo)/format/test(201/201)/size-limit
+  (114.33/116 kB JS — không đổi vì dictionary không nằm trong bundle) — xanh cả 4 lần.
+- PR: https://github.com/seeker19110/bilingual-english-vietnamese/pull/205
+
+## Đã xong (dọn từ trùng lặp lãng phí lượt học — 2026-07-05)
+
+- Người dùng phát hiện lộ trình học có nhiều **từ giống nhau bị tách thành 2 mục riêng** (biến thể
+  số nhiều/chia thì của cùng 1 từ gốc, vd `account`/`accounts`, `allow`/`allows`) → tốn 1 lượt học
+  hằng ngày cho thứ về bản chất người dùng đã biết. Kiểm tra thực tế:
+  - Trùng giữa Nền tảng (`curriculum.ts`) và Mở rộng (từ điển): **không phải vấn đề** — code
+    (`getCircles()` trong `src/lib/curriculum.ts:146-152`) đã tự loại theo `wordKey` từ trước.
+  - Trong 11.065 từ của từ điển Mở rộng: **675 nhóm cùng gốc từ / 1.474 từ liên quan** — phần lớn
+    là số nhiều (-s/-es) hoặc động từ chia thì ngôi 3 (-s) của đúng 1 từ đã có.
+- **Tiêu chí lọc (theo quyết định người dùng):** chỉ gộp cặp có **CÙNG `pos`** (loại trừ 72 cặp
+  khác `pos` như `act`(v)/`acts`(n), `blue`(adj)/`blues`(n) — nghĩa khác hẳn, không phải số nhiều
+  thật). Trong 461 cặp cùng `pos`, loại thêm thủ công **17 cặp** trông giống số nhiều nhưng thực
+  chất khác nghĩa/chức năng ngữ pháp:
+  - Đại từ sở hữu tuyệt đối khác tính từ sở hữu: `hers/ours/theirs/yours` (giữ cả 2, không phải số
+    nhiều của `her/our/their/your`).
+  - Nghĩa lệch hẳn khỏi số nhiều đơn thuần: `sometimes`≠`sometime`, `backwards`≠`backward` (thêm
+    nghĩa "lạc hậu"), `glasses`(kính mắt)≠`glass`(ly/vật liệu), `guts`(can đảm, thành ngữ)≠`gut`
+    (ruột), `credits`(cuối phim)≠`credit`(tín dụng), `nerves`(sắc thái riêng)≠`nerve`, `terms`
+    (điều khoản)≠`term`(thuật ngữ/học kỳ), `stairs`(cả cầu thang)≠`stair`(1 bậc), `sales`(doanh
+    số)≠`sale`(giảm giá), `utilities`(dịch vụ công ích)≠`utility`(tiện ích), `stats`(còn nghĩa
+    "ngay lập tức", thân mật)≠`stat`.
+  - **Pluralia tantum** (tiếng Anh luôn nói số nhiều, không có dạng số ít tự nhiên): `pajamas`,
+    `trousers` — giữ nguyên cả 2, không xoá.
+- **Còn lại 444 cặp** gộp an toàn (chiếm 370/444 đã có nhãn rõ "(số nhiều)"/"số nhiều của..." ngay
+  trong bản dịch `vi` — tín hiệu đáng tin sẵn có trong dữ liệu; 74 cặp còn lại là chia động từ ngôi
+  3 số ít hoặc diễn đạt khác chữ nhưng cùng nghĩa, đã soát tay từng dòng). Xoá **444 mục trùng**
+  khỏi `public/data/dictionary/chunk-*.json`, giữ dạng gốc/số ít (đúng đề xuất: thông dụng hơn,
+  nhiều `freq` thấp hơn). Không có trường hợp bắc cầu (mục vừa bị xoá vừa là đích giữ lại của cặp
+  khác). Kết quả: **từ điển 11.065 → 10.621 từ**, không còn nhóm biến thể số nhiều/chia thì thuần
+  tuý bị tách đôi.
+- Build/typecheck/lint (0 cảnh báo)/format/test (201/201) đều xanh — không có test nào hard-code
+  tổng số từ nên không cần sửa gì khác. `dictionary` là JSON tĩnh fetch runtime, không nằm trong
+  bundle JS nên `size-limit` không đổi.
+- ⚠️ Chưa làm (nằm ngoài phạm vi đợt này): 125 cụm nhiều từ trùng lặp dạng cụm (vd cần xem lại
+  "each other"/"one another"...) và rà lại các biến thể `-ing`/`-ed` mang nghĩa tính từ khác nhau
+  thật sự (amazed/amazing...) — KHÔNG đụng vì có giá trị sư phạm riêng, giữ nguyên theo đúng phạm
+  vi đã thống nhất.
+
+## Đã xong (badge CEFR ở trang Từ điển — 2026-07-05)
+
+- Hạ tầng dữ liệu `level` (100% từ đã gắn CEFR) có sẵn nhưng chưa hiển thị ở UI. Thêm badge cấp
+  CEFR (A1-C2) cạnh badge loại từ trong kết quả tra từ (`src/pages/Dictionary.tsx`) — chỉ hiện khi
+  `e.level` có giá trị.
+- `LEVEL_COLOR` (`src/lib/pos.ts`) dùng ĐÚNG màu accent đã gán cho A1/A2/B1/B2 ở lộ trình học
+  (xem `accent` trong `data/cefr.ts`: A1=emerald, A2=sky, B1=violet, B2=amber) để giữ màu ngữ
+  nghĩa nhất quán toàn app (CLAUDE.md mục 4.8); C1/C2 dùng rose/cyan (2 màu chưa dùng cho pos/level
+  nào khác, tránh trùng màu "idiom" đã là fuchsia).
+- **Phát hiện thêm 1 lỗi a11y có sẵn TỪ TRƯỚC** khi tự viết E2E tạm để kiểm contrast badge mới:
+  gate a11y chính thức (`e2e/a11y.spec.ts`) quét `/dictionary` nhưng CHƯA BAO GIỜ có kết quả tìm
+  kiếm thật trong lúc quét (không mock `/api/dictionary` hay chunk tĩnh) → 2 lỗi `color-contrast`
+  ở theme sáng (Blue sky/Pink) lọt lưới bấy lâu: (1) câu ví dụ tiếng Anh trong kết quả tra từ
+  (`text-accent-300/80` và `/70`, 2 chỗ ở `KaraokeText`) thiếu `theme-light:text-accent-800`;
+  (2) chip lọc loại từ "Tất cả" ở trạng thái đang chọn cũng thiếu `theme-light:text-accent-800`.
+  Đã sửa cả 3 chỗ, tự viết E2E tạm (mock chunk từ điển, dựng đủ 6 cấp CEFR) kiểm lại đủ 4 theme —
+  0 critical/serious, đã xoá file test tạm sau khi xác nhận (không đưa vào gate CI vì cần
+  mock chunk tĩnh phức tạp hơn `mockClaude`, để dành nếu cần mở rộng gate sau).
+- Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.29/116 kB JS)/a11y đầy đủ
+  63 test đều xanh.
+
+## Đã xong (125 cụm nhiều từ còn lại của Đợt 1 A1-B2 — 2026-07-06)
+
+- Hoàn tất phần cuối của Đợt 1: **125 cụm nhiều từ** trong CEFR-J A1-B2 mà từ điển còn thiếu
+  (vd "good morning", "bus stop", "each other", "according to"). Đối chiếu lại CEFR-J v1.5:
+  145 cụm A1-B2 tổng, 20 đã có sẵn → còn đúng 125 cụm cần thêm.
+- **Gắn `pos` theo vai trò ngữ pháp THẬT** (không dùng `idiom`): phần lớn là `n` (danh từ ghép
+  như "bus stop"), số ít `prep` ("according to", "next to", "instead of"...), `adv` ("all right",
+  "face to face", "next door", "upside down"), `pron` ("each other", "no one"), `adj` ("de facto",
+  "fed up", "worn out", "environmentally friendly"), `interj` ("good morning/afternoon/night"),
+  `v` cho cụm bán trợ động từ ("have to", "used to", "ought to"). Giữ `level` đúng từ CEFR-J.
+- **Kiểm chất lượng bằng chính script đối chiếu thanh điệu** (thanh của âm tiết ĐẦU trong `vi` so
+  với ký hiệu thanh cuối `ipa_vi`) như các đợt trước — bắt được **2/125 lỗi copy-paste** trước khi
+  gộp (air conditioning "điều" thanh huyền bị gắn nhầm ˨˩ʔ; travel agent "nhân" bị gắn nhầm IPA của
+  từ khác) → đã sửa, chạy lại 0 lỗi.
+- Phân bố cụm mới lên 10 chunk theo round-robin (giữ chunk cân bằng). Chạy `tag:freq` (SUBTLEX-US)
+  sau khi gộp — cụm nhiều từ hầu hết không có trong wordlist đơn từ nên giữ nguyên (xếp cuối phần
+  Mở rộng, đúng thiết kế). Kết quả: **từ điển 10.621 → 10.746 từ** (100% có `level`, không trùng,
+  0 pos/level không hợp lệ, không thiếu field bắt buộc).
+- Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.29/116 kB — dictionary là
+  JSON tĩnh, không nằm trong bundle) đều xanh.
+- **→ Đợt 1 (A1-B2) đã HOÀN TẤT HẲN** (cả từ đơn lẫn cụm nhiều từ). Còn lại: Đợt 2 (C1-C2).
+
+## Đã xong (hoàn tất Đợt 2 — bổ sung 430 từ CEFR-J/Octanove C1/C2 còn thiếu — 2026-07-06)
+
+- **Bối cảnh:** Đợt 2 làm qua nhiều phiên (batch 1-3 ở phiên trước, batch 4-14 ở phiên này) —
+  đối chiếu wordlist Octanove C1/C2 (2.137 dòng) với từ điển hiện có, loại 60 cặp trùng pos
+  trong chính wordlist + 4 dòng lỗi chính tả nguồn (`chauffer`→đã có `chauffeur`, `minster`→đã
+  có `minister`, `porten`→đã có `portent`) + biến thể chính tả Anh/Mỹ (`neutralize/neutralise`…
+  chỉ giữ 1 dạng), còn đúng **430 từ thật sự thiếu hẳn** (201 C1 / 229 C2) — khớp gần đúng con số
+  ~432 ước tính ở phiên trước (chênh 2 từ do cách gộp trùng khác biệt nhỏ, không ảnh hưởng).
+- **Viết nội dung bằng 5 agent song song** (batch 10-14, ~86 từ/batch) + 1 batch viết tay (batch
+  14, do agent tương ứng bị treo giữa batch vì hết giới hạn phiên) — mỗi từ đủ 8 field
+  (`word/pos/vi/ex_en/ex_vi/ipa_en/ipa_vi/level`), giữ nguyên `pos`/`level` theo Octanove.
+- **Tự động hoá kiểm tra thanh điệu `ipa_vi`** (khác cách làm tay của các đợt trước): dựng
+  **lookup table 1.317 âm tiết tiếng Việt → phiên âm chuẩn**, rút từ chính 11.632 từ có sẵn
+  trong từ điển (âm tiết ĐẦU của `vi` → phần `ipa_vi` trước hậu tố thanh, đã lọc entry tự thân
+  nhất quán). Script tự động ĐỐI CHIẾU + SỬA `ipa_vi` của 430 từ mới theo lookup này (83/430 entry
+  được sửa lại — chủ yếu batch do 1 agent chọn nhầm âm tiết trong cụm "một cách..."), phần còn
+  lại (không có trong lookup) verify tay bằng script đối chiếu tông y như các đợt trước. Kết quả
+  cuối: **0 lỗi thanh điệu / 430 entry, 0 trùng lặp với từ điển hiện có**.
+- Phát hiện thêm 1 lỗi chính tả nguồn Octanove: `unscathing` (không phải từ tiếng Anh thật) →
+  sửa thành `unscathed` (đúng nghĩa "không hề hấn gì").
+- Phân bổ 430 entry lên 10 chunk theo round-robin (giữ chunk cân bằng, mỗi chunk +43). Chạy
+  `FREQ_LIST=<subtlex> npm run tag:freq`: **371/430 từ mới có freq thật** (SUBTLEX-US), 59 từ
+  hiếm không có trong wordlist giữ nguyên (xếp cuối phần Mở rộng, đúng thiết kế có sẵn).
+  Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.31/116 kB JS) đều xanh.
+  **Từ điển: 11.632 → 12.062 từ.**
+- **→ Đợt 2 (C1-C2) đã HOÀN TẤT HẲN.** Cả 2 đợt bổ sung từ điển theo chuẩn CEFR-J/Octanove (A1→C2)
+  nay đã xong 100%.
+
+## Đã xong (chạy lại `gen-cefr-c1c2-vocab.ts` — đưa 1.316 từ Đợt 2 vào lộ trình — 2026-07-06)
+
+- **Kiểm tra theo yêu cầu người dùng "đủ từ vựng cho các cấp học chưa?"**: đối chiếu số từ đã
+  gắn nhãn CEFR trong từ điển (C1 1.305 / C2 2.368) với số từ ĐÃ VÀO file vòng học sinh sẵn
+  `cefrC1C2Vocab.json` (C1 687/50 vòng, C2 1.561/105 vòng — sinh 1 lần duy nhất lúc PR #209, TRƯỚC
+  cả 3 vòng batch 1-3 và batch 4-14 của Đợt 2) → phát hiện **thiếu 1.425 từ (~39%)** chưa vào lộ
+  trình vì chưa chạy lại script sau khi từ điển thêm 1.316 từ CEFR C1/C2 mới. A1/A2/B1/B2 KHÔNG bị
+  vấn đề này vì phần "Mở rộng" lấy trực tiếp từ từ điển lúc chạy, không qua file sinh sẵn.
+- Người dùng xác nhận chạy sau khi được giải thích rủi ro cụ thể (tiến độ "đã học từ nào"/SRS lưu
+  theo CHỮ của từ, không theo ID vòng → không mất tiến độ từ vựng đã học; chỉ có nhóm/vòng đang
+  học dở có thể đổi thành phần từ do thứ tự tần suất dịch chuyển khi thêm từ mới — đã có sẵn cơ chế
+  "grandfather" `cefr_unlocked` chống khóa lại cấp, migration 0008).
+- Chạy `npx tsx scripts/gen-cefr-c1c2-vocab.ts`: **C1 687→1.257 từ (50→87 vòng), C2 1.561→2.295 từ
+  (105→149 vòng)**. Chạy tiếp 2 script phụ thuộc (bắt buộc theo comment đầu file, KHÔNG nằm trong
+  `npm run build`): `gen-curriculum-json.ts` (325 vòng, 5.076 từ, làm giàu `ipa_en` từ từ điển) +
+  `gen-learn-json.ts` (6 cấp, 78 bài ngữ pháp, đồng bộ `public/data/cefr.json`).
+  Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.31/116 kB JS) đều xanh.
+- Verify thật bằng E2E (không chỉ đọc code): `npx playwright test e2e/a11y.spec.ts --grep
+learning-path` — 12/12 pass (route `/learning-path/c1` × 4 theme, render dữ liệu thật qua `npm
+run dev`), 0 critical/serious.
+- **Rà thêm sau khi user hỏi lại "còn 121 từ chưa vào lộ trình"**: đối chiếu cho thấy 121 từ này
+  KHÔNG phải thiếu sót — 112 từ (44 C1 + 68 C2) đã được dạy ở A1-B2 (loại để tránh dạy trùng, đúng
+  thiết kế) + **9 từ bị gắn nhầm nhãn C1/C2** dù là từ rất cơ bản: `cannot/trying/standing` (dạng
+  ngữ pháp cơ bản, không phải từ nâng cao), `congratulations/papa` (từ vựng A1-A2 thông thường),
+  `buck/demon/gosh/jerk` (từ lóng/thân mật thông dụng, không phải đăng ký học thuật C1/C2) — khớp
+  đúng comment gốc của script ("chỉ bỏ ~9 từ"). Đã **sửa lại `level` đúng** cho 9 từ này (thay vì
+  chỉ lọc khỏi lộ trình, giữ nguyên nhãn sai trong từ điển): `cannot→A1, trying→A1, standing→A1,
+papa→A1, congratulations→A2, buck→B1, demon→B1, gosh→B1, jerk→B2`. Chạy lại 3 script sinh dữ liệu
+  (`gen-cefr-c1c2-vocab.ts` → không đổi số lượng C1/C2 vì 9 từ này vốn đã bị lọc khỏi vòng học, chỉ
+  đổi `level` hiển thị đúng ở Từ điển/`Mở rộng`; `gen-curriculum-json.ts`/`gen-learn-json.ts` không
+  đổi vì không ảnh hưởng nội dung vòng). Build/typecheck/lint/test (201/201)/size-limit đều xanh.
+- **Xác nhận thứ tự học trong vòng/cấp đã đúng theo tần suất** (yêu cầu người dùng): vòng C1/C2 tự
+  sinh VÀ phần "Mở rộng" đều đã sắp từ thông dụng → hiếm bên trong mỗi vòng (`compareByFreq`/
+  `pick()`, có sẵn từ trước) — spot-check thật (vd vòng `cefr-c1-noun-1`: witch(2053)→closet(2091)→
+  …→ruby(3873), tăng dần đúng thứ tự). Vòng nền tảng A1-B2 (soạn tay) CỐ Ý không sắp theo tần suất
+  mà theo chủ đề sư phạm (vd "hello" phải học trước "nice to meet you") — không đổi.
+
+## Đã xong (kiểm tra + vá nốt phần thiếu thật của CEFR-J/Octanove — 2026-07-06)
+
+- **Yêu cầu người dùng**: "liệt kê các từ không có trong từ điển trong 5000 từ theo tiêu chuẩn
+  CEFR" → sau khi hỏi rõ nguồn ("Words-CEFR-Dataset" tần suất Google Ngram vs "CEFR-J/Octanove"
+  sư phạm), thử cả 2: đối chiếu top 5.000/10.000 từ tần suất cao nhất (Words-CEFR-Dataset, tải
+  bản gốc 248.185 dòng từ GitHub Maximax67) cho thấy càng mở rộng càng lẫn nhiều rác (danh từ
+  riêng dù đã lọc NNP/NNPS, viết tắt/mã đơn vị, thuật ngữ luật/y khoa/hoá học quá hẹp, thậm chí
+  vài từ tục) — **không dùng nguồn này để thêm từ**.
+- **Đối chiếu TOÀN BỘ CEFR-J (A1-B2, 6.867 headword) + Octanove (C1-C2) — 8.653 headword duy
+  nhất — với từ điển dự án**: phát hiện lỗi so khớp ban đầu (CEFR-J gộp biến thể Anh/Mỹ vào 1
+  headword dạng `"color/colour"`, so chuỗi y hệt bị trật dù cả 2 biến thể đã có trong từ điển) →
+  sửa lại bằng cách tách từng biến thể trước khi so khớp. Kết quả cuối: chỉ **11 từ thật sự
+  thiếu** (phần còn lại là mảnh rút gọn ngữ pháp `'m/'re/'s`, lỗi gán nhãn `smith`, hoặc lỗi
+  chính tả nguồn CEFR-J/Octanove đã sửa từ đợt trước — `chauffer/porten/unscathing`).
+- Thêm **11 từ**: `cheque, id` (A2) · `afterwards, cv, englishman` (B1) · `facilities, lyrics,
+means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J/Octanove gốc, `ipa_vi`
+  tra qua lookup âm tiết đầu dựng từ chính từ điển (cùng cách các đợt trước). Từ điển: 12.062 →
+  12.073. Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.31/116 kB) đều
+  xanh.
+- **→ CEFR-J/Octanove coi như đã phủ 100% (99,87%, phần "thiếu" còn lại không phải từ vựng
+  thật).** 10/11 từ (A2-B2) tự động vào "Mở rộng" (đọc thẳng từ điển). Riêng `minster` (C2) CHƯA
+  chạy lại `gen-cefr-c1c2-vocab.ts` để vào lộ trình — để dành gộp đợt bổ sung nội dung sau (chỉ 1
+  từ, không đáng xáo trộn thứ tự nhóm từ đang học dở ngay bây giờ).
+
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
-- Chạy thật `npm run tag:cefr` (cần key AI) rồi review mẫu kết quả + cân nhắc hiển thị badge CEFR
-  trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu trước, UI sau khi có dữ liệu thật để kiểm tra).
-  Môi trường phiên làm việc hiện tại không có key AI nào (`GEMINI_API_KEY`/`GROQ_API_KEY`/
-  `ANTHROPIC_API_KEY`) — đã hỏi lại người dùng, xác nhận giữ quyết định cũ: **tự chạy trên máy có
-  `.env`**.
+- **Bổ sung dạng biến thể của từ vào từ điển (word forms)** — người dùng yêu cầu 2026-07-06.
+  Kế hoạch 5 bước: `docs/research/bo-sung-dang-bien-the-tu-dien.md` (PR #213 đã merge).
+  - [x] **Bước 1 — Nền dữ liệu**: thêm `WordForms`/`forms`/`base` vào `DictEntry`
+        (`src/types.ts` + `api/_lib/dictionaryData.ts`); bảng bất quy tắc soạn tay
+        (`src/data/irregularForms.ts`: 153 động từ, 65 số nhiều, 8 so sánh, 86 không đếm được,
+        23 plurale-tantum, đuôi ghép -f/-man); quy tắc chính tả thuần (`src/lib/wordForms.ts`,
+        35 unit test); script sinh + kiểm định chéo (`scripts/gen-word-forms.ts`,
+        `npm run gen:word-forms`). **8.740 từ có forms, 200 bất quy tắc**; đã rà mẫu tay,
+        0 lỗi chia đôi/không đếm được/plurale-tantum, kiểm chéo 98 dạng bất quy tắc khớp
+        entry đã soạn tay (còn 1 cảnh báo could/can là modal — đúng chủ ý).
+  - [x] **Bước 3 — UI trang Từ điển**: khối "Các dạng của từ"
+        (`src/components/WordFormsBlock.tsx`, 6 render test) trong thẻ kết quả tra từ — chip
+        song ngữ + phát âm từng dạng, đánh dấu bất quy tắc, danh từ không đếm được ghi rõ.
+  - [x] **Bước 5 — Khi HỌC từ mới**: gắn `WordFormsBlock` vào `WordCard` (lộ trình) và
+        `Flashcard` (Từ điển) — hiện sau khi lật thẻ.
+  - [ ] **Bước 2 — Vá dạng bất quy tắc còn thiếu + gắn `base`**: thêm ~40-60 entry biến thể
+        còn thiếu (hid, woken, geese, leaves…) và điền trường `base` cho entry biến thể để hiện
+        link "Xem từ gốc" (UI đã sẵn sàng, chỉ chờ dữ liệu `base`).
+  - [ ] **Bước 4 — Search hiểu biến thể**: tra "books"/"played"/"went" trả về từ gốc.
+- ~~Chạy thật `NO_AI_FALLBACK=1 npm run tag:cefr` trên file gốc~~ ĐÃ XONG (2026-07-05) — 100%
+  từ điển đã có nhãn CEFR thật, không cần AI. ~~Badge CEFR trên trang Từ điển~~ ĐÃ XONG
+  (2026-07-05, PR #207) — hiển thị badge A1-C2 cạnh badge loại từ trong kết quả tra từ.
 - ~~Zod validate input (đợt 3)~~ ĐÃ XONG (2026-07-05) — xem "Quyết định quan trọng" bên dưới.
   Query param của `api/dictionary.ts`/`api/pronunciation.ts` vẫn giữ nguyên (đã sanitize kỹ
   bằng tay, giá trị thêm Zod thấp — GET query, không phải JSON body).

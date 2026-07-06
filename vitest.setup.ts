@@ -8,6 +8,12 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { vi } from 'vitest'
 
+// Env Supabase GIẢ để createClient (src/lib/supabase.ts) không ném lỗi khi test component
+// có nhập chuỗi phụ thuộc Supabase (vd PronounceButton → authHeader → supabase). Không kết
+// nối mạng thật — chỉ để khởi tạo client offline.
+vi.stubEnv('VITE_SUPABASE_URL', 'http://localhost:54321')
+vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'test-anon-key')
+
 const PUBLIC_DIR = join(dirname(fileURLToPath(import.meta.url)), 'public')
 
 vi.stubGlobal('fetch', async (input: RequestInfo | URL): Promise<Response> => {
