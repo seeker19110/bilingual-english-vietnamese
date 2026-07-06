@@ -1,10 +1,10 @@
 // ──────────────────────────────────────────────────────────────────────
-// TRANG /learning-path — TỔNG QUAN LỘ TRÌNH CEFR (A1 → B2)
+// TRANG /learning-path — TỔNG QUAN LỘ TRÌNH CEFR (A1 → C2)
 //
 // Các tab học (Hôm nay · Ôn SRS · Từ khó · Kiểm tra) đã CHUYỂN vào trang
-// riêng của từng cấp (/learning-path/a1…b2 — CefrLevelPage.tsx, nội dung
+// riêng của từng cấp (/learning-path/a1…c2 — CefrLevelPage.tsx, nội dung
 // tab ở components/StudyTabs.tsx). Trang này chỉ còn: mốc từ vựng + bản đồ
-// 4 cấp (RoadmapTab) để chọn cấp muốn học.
+// 6 cấp (RoadmapTab) để chọn cấp muốn học.
 // ──────────────────────────────────────────────────────────────────────
 
 import Layout from '../components/Layout'
@@ -27,7 +27,7 @@ export default function Learn() {
       <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
         <PageHeader
           title={isA ? 'Học theo lộ trình' : 'Learning Path'}
-          subtitle={isA ? 'Lộ trình chuẩn CEFR A1 → B2' : 'CEFR roadmap A1 → B2'}
+          subtitle={isA ? 'Lộ trình chuẩn CEFR A1 → C2' : 'CEFR roadmap A1 → C2'}
         />
         <VocabMilestone userId={user.id} />
 

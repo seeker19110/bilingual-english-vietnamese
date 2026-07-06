@@ -21,6 +21,10 @@
 // thêm bài vào mảng grammar[] hoặc thêm unit vào units[] là UI tự cập nhật.
 // ──────────────────────────────────────────────────────────────────────────
 
+// Hai cấp nâng cao C1/C2 soạn riêng (file lớn) — nối vào cuối CEFR_LEVELS.
+// (import type sẽ được các file khác dùng lại; C1_LEVEL/C2_LEVEL là dữ liệu thật.)
+import { C1_LEVEL, C2_LEVEL } from './cefrAdvanced'
+
 // Một ví dụ minh họa (Anh ↔ Việt) — dùng chung cho ngữ pháp.
 export interface Example {
   en: string
@@ -78,13 +82,13 @@ export interface CefrUnit {
 
 // Một cấp độ CEFR.
 export interface CefrLevel {
-  id: 'A1' | 'A2' | 'B1' | 'B2'
+  id: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
   titleVi: string
   titleEn: string
   subtitleVi: string // vd: "Người mới bắt đầu"
   goalVi: string // mục tiêu tổng quát của cả cấp
   // Màu nhấn (Tailwind) cho UI — dùng để phân biệt các cấp.
-  accent: 'emerald' | 'sky' | 'violet' | 'amber'
+  accent: 'emerald' | 'sky' | 'violet' | 'amber' | 'rose' | 'cyan'
   // Mục tiêu "Tôi có thể…" theo CEFR (tiếng Việt).
   canDo: string[]
   units: CefrUnit[]
@@ -3926,6 +3930,9 @@ export const CEFR_LEVELS: CefrLevel[] = [
       },
     ],
   },
+  // ══ Cấp nâng cao C1 & C2 (soạn ở src/data/cefrAdvanced.ts) ══
+  C1_LEVEL,
+  C2_LEVEL,
 ]
 
 // Tiện ích: tổng số bài ngữ pháp trong 1 cấp (để hiển thị thống kê).

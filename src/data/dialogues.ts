@@ -3887,6 +3887,181 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       'male',
     ),
   ],
+
+  // ════════ C1 — UNITS ════════
+  'c1-relative': [
+    dlg(
+      'Phỏng vấn xin việc',
+      'A job interview',
+      [
+        d('A', 'Tell me about a project you are proud of.', 'Kể cho tôi về một dự án bạn tự hào.'),
+        d(
+          'B',
+          'The app I built last year, which now has thousands of users, was the highlight.',
+          'Ứng dụng tôi xây năm ngoái, hiện có hàng nghìn người dùng, là điểm nhấn.',
+        ),
+        d(
+          'A',
+          'Impressive. And the team working with you — how large was it?',
+          'Ấn tượng đấy. Còn nhóm làm việc cùng bạn — quy mô thế nào?',
+        ),
+        d(
+          'B',
+          'A small team of five, all of whom were very dedicated.',
+          'Một nhóm nhỏ năm người, tất cả đều rất tận tâm.',
+        ),
+        d(
+          'A',
+          'The skills required for this role are demanding. Are you ready?',
+          'Kỹ năng đòi hỏi cho vị trí này khá cao. Bạn đã sẵn sàng chưa?',
+        ),
+        d(
+          'B',
+          'Absolutely. The challenges you mentioned are exactly the ones I enjoy.',
+          'Chắc chắn rồi. Những thử thách anh nêu đúng là điều tôi thích.',
+        ),
+        d(
+          'A',
+          'Great. Anyone joining us must learn fast. That suits you?',
+          'Tốt. Ai gia nhập chúng tôi đều phải học nhanh. Điều đó hợp với bạn chứ?',
+        ),
+        d(
+          'B',
+          'It does. Learning quickly is something I take pride in.',
+          'Vâng. Học nhanh là điều tôi tự hào.',
+        ),
+      ],
+      sp('Nhà tuyển dụng', 'Recruiter'),
+      sp('Ứng viên', 'Candidate'),
+      'female',
+      'male',
+    ),
+  ],
+  'c1-inversion': [
+    dlg(
+      'Bàn về một cuốn sách',
+      'Discussing a book',
+      [
+        d(
+          'A',
+          'Never have I read such a gripping novel.',
+          'Chưa bao giờ tôi đọc một cuốn tiểu thuyết cuốn hút đến vậy.',
+        ),
+        d(
+          'B',
+          'Really? Rarely do you praise a book like that.',
+          'Thật à? Hiếm khi bạn khen một cuốn sách như thế.',
+        ),
+        d(
+          'A',
+          'No sooner had I started than I finished it in one night.',
+          'Tôi vừa bắt đầu là đọc xong luôn trong một đêm.',
+        ),
+        d(
+          'B',
+          'Not only is the plot clever, but the writing is beautiful too.',
+          'Không chỉ cốt truyện thông minh, mà văn phong cũng đẹp.',
+        ),
+        d(
+          'A',
+          'Had I known it was this good, I would have read it sooner.',
+          'Nếu biết nó hay thế này, tôi đã đọc sớm hơn.',
+        ),
+        d(
+          'B',
+          'Should you want the sequel, I can lend it to you.',
+          'Nếu bạn muốn phần tiếp theo, tôi cho mượn.',
+        ),
+        d('A', 'Only then will I be truly happy!', 'Chỉ khi đó tôi mới thực sự vui!'),
+      ],
+      sp('Thu', 'Thu'),
+      sp('Nam', 'Nam'),
+      'female',
+      'male',
+    ),
+  ],
+
+  // ════════ C2 — UNITS ════════
+  'c2-inversion': [
+    dlg(
+      'Tranh luận học thuật',
+      'An academic debate',
+      [
+        d(
+          'A',
+          'So convincing was her argument that the panel fell silent.',
+          'Lập luận của cô ấy thuyết phục đến mức cả hội đồng lặng đi.',
+        ),
+        d(
+          'B',
+          'Indeed. Only by examining the data did they grasp her point.',
+          'Đúng vậy. Chỉ khi xem xét dữ liệu họ mới hiểu ý cô.',
+        ),
+        d(
+          'A',
+          'Such was the impact that the policy was revised.',
+          'Ảnh hưởng lớn đến mức chính sách được sửa lại.',
+        ),
+        d(
+          'B',
+          'Gone are the days when opinions outweighed evidence.',
+          'Cái thời ý kiến lấn át bằng chứng đã qua rồi.',
+        ),
+        d(
+          'A',
+          'Not until the final slide did the audience applaud.',
+          'Mãi tới slide cuối khán giả mới vỗ tay.',
+        ),
+        d(
+          'B',
+          'Well deserved. Rarely do we see such rigor.',
+          'Xứng đáng. Hiếm khi ta thấy sự chặt chẽ đến thế.',
+        ),
+      ],
+      sp('Hà', 'Ha'),
+      sp('Tuấn', 'Tuan'),
+      'female',
+      'male',
+    ),
+  ],
+  'c2-modality': [
+    dlg(
+      'Quyết định cuối tuần',
+      'A weekend decision',
+      [
+        d(
+          'A',
+          'The forecast looks grim; it may well rain all day.',
+          'Dự báo ảm đạm; rất có thể mưa cả ngày.',
+        ),
+        d(
+          'B',
+          'Then we might as well stay in and watch films.',
+          'Vậy thì ở nhà xem phim cũng được chứ sao.',
+        ),
+        d(
+          'A',
+          'I would sooner go hiking than sit around, honestly.',
+          'Thật ra tôi thà đi leo núi còn hơn ngồi không.',
+        ),
+        d('B', 'Be that as it may, safety comes first.', 'Dù vậy đi nữa, an toàn vẫn trên hết.'),
+        d(
+          'A',
+          "You're right. I cannot but agree with you.",
+          'Bạn nói đúng. Tôi không thể không đồng ý.',
+        ),
+        d(
+          'B',
+          'Come what may, we will enjoy the weekend anyway.',
+          'Dù có chuyện gì, ta vẫn tận hưởng cuối tuần.',
+        ),
+      ],
+      sp('Linh', 'Linh'),
+      sp('Bảo', 'Bao'),
+      'female',
+      'male',
+    ),
+  ],
 }
 
 // Tiện ích: lấy danh sách hội thoại của 1 bài (rỗng nếu chưa có).

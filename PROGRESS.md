@@ -311,6 +311,42 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   `theme-light:text-red-700` (quên áp quy ước màu đỏ sẵn có ở Writing/Chat/Speaking) → sửa ngay,
   gate a11y nay **63 test**, vẫn 0 critical/serious. Đã merge: **PR #176**.
 
+## Đã xong (mở cấp C1–C2, lộ trình đủ 6 cấp — 2026-07-06)
+
+> Yêu cầu người dùng: "thêm đầy đủ cấp học C1-C2 của CEFR vào lộ trình, gộp Đợt 2
+> CEFR C1-C2 (1.407 từ)". Kế hoạch + quyết định chi tiết: `docs/research/lo-trinh-cefr-c1-c2.md`.
+
+- **Mở rộng lộ trình A1→B2 thành A1→C2 (6 cấp).** Kiến trúc vốn data-driven từ
+  `CEFR_LEVELS` nên chủ yếu là THÊM DỮ LIỆU: `RoadmapTab`/`Home`/`CefrLevelPage`
+  tự render 6 cấp; chuỗi mở khóa B2→C1→C2 tự nối; phần "học tiếp ngoài CEFR"
+  (`getBeyondCefrWords`) tự dời từ B2 sang C2 (bám `levels[last]`).
+- **Từ vựng C1/C2 lấy TỰ ĐỘNG từ từ điển đã gắn nhãn** (không gõ tay): 2.357 từ
+  C1/C2 trong từ điển đều có sẵn nghĩa TV + câu ví dụ song ngữ + freq. Script mới
+  `scripts/gen-cefr-c1c2-vocab.ts` lọc (bỏ ~9 từ gắn nhầm có `freq<2000` như
+  "trying/cannot/standing"; khử ~100 từ trùng nền tảng), sắp theo tần suất, cắt
+  thành vòng 16 từ → `src/data/cefrC1C2Vocab.json` (**C1 687 từ/43 vòng · C2 1.561
+  từ/98 vòng**). Wrapper `src/data/cefrC1C2Vocab.ts` gắn kiểu; `curriculum.ts` nối
+  vào `FOUNDATION` (`FOUNDATION_BASE` A1–B2 + vòng C1/C2). Script idempotent (bỏ
+  qua vòng "cefr-c1-_"/"cefr-c2-_" khi đọc key nền tảng → chạy lại an toàn).
+- **Ngữ pháp C1/C2 soạn tay** (`src/data/cefrAdvanced.ts`, cùng chuẩn làm giàu như
+  A1–B2): **C1 10 bài** (rút gọn mệnh đề quan hệ, câu chẻ It/Wh-cleft, đảo ngữ phủ
+  định & điều kiện, V-ing/to-V đổi nghĩa, thức giả định + wish, nhượng bộ) ·
+  **C2 7 bài** (đảo ngữ nâng cao & fronting, lược bỏ/thay thế, danh từ hóa, mệnh đề
+  phân từ/tuyệt đối, giả định trang trọng, tình thái/hedging). `buildUnits()` ghép
+  nhóm vòng từ vựng vào từng Phần; các Phần dư (nhiều vòng hơn bài ngữ pháp) thành
+  "Từ vựng nâng cao N". 4 hội thoại mẫu C1/C2 (`dialogues.ts`).
+- **Màu:** accent **rose (C1)** / **cyan (C2)** thêm vào `cefrAccent.ts` +
+  `Dashboard.tsx` (khớp `LEVEL_COLOR` badge từ đã có — AA đã kiểm qua `/dictionary`).
+  Nhãn "A1 → B2" → "A1 → C2" (`Learn.tsx`, `CefrLevelPage.tsx`, `RoadmapTab.tsx`).
+- **Không đổi schema DB:** cột `cefr_grammar`/`cefr_dialogues`/`cefr_unlocked` là
+  mảng id chuỗi tự do → C1/C2 dùng chung, không cần migration.
+- Regen JSON: `gen-curriculum-json.ts` (230 vòng, 3.772 từ) + `gen-learn-json.ts`
+  (6 cấp, 78 bài ngữ pháp, 131 hội thoại).
+- Verify: build/typecheck/lint (0 cảnh báo)/test (201/201)/size-limit (114.31/116 kB)
+  xanh; E2E a11y thêm `/learning-path/c1` — 0 critical/serious ở 4 theme; lái app
+  thật (Playwright) xác nhận bản đồ 6 cấp + trang C1/C2 mở khóa render đủ vòng từ
+  vựng/ngữ pháp/hội thoại.
+
 ## Đã xong (đợt cải tổ lộ trình CEFR — 2026-07-03)
 
 - **Mỗi cấp CEFR 1 trang riêng** `/learning-path/a1…b2` (`src/pages/CefrLevelPage.tsx`):

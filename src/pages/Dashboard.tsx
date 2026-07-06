@@ -78,6 +78,16 @@ const ACCENT: Record<LevelProgress['accent'], { bar: string; text: string; soft:
     text: 'text-amber-300 theme-light:text-amber-800',
     soft: 'bg-amber-500/10',
   },
+  rose: {
+    bar: 'bg-rose-500',
+    text: 'text-rose-300 theme-light:text-rose-800',
+    soft: 'bg-rose-500/10',
+  },
+  cyan: {
+    bar: 'bg-cyan-500',
+    text: 'text-cyan-300 theme-light:text-cyan-800',
+    soft: 'bg-cyan-500/10',
+  },
 }
 
 // Một thẻ số liệu nhỏ (icon + số to + nhãn).

@@ -11,6 +11,9 @@
 // ──────────────────────────────────────────────────────────────────────────
 
 import type { DictEntry } from '../types'
+// Vòng từ vựng C1/C2 SINH TỰ ĐỘNG từ từ điển đã gắn nhãn CEFR
+// (scripts/gen-cefr-c1c2-vocab.ts). Nối vào cuối FOUNDATION bên dưới.
+import { CEFR_C1C2_CIRCLES } from './cefrC1C2Vocab'
 
 export interface Circle {
   id: string
@@ -31,7 +34,8 @@ const w = (word: string, pos: string, vi: string, ex_en: string, ex_vi: string):
   ex_vi,
 })
 
-export const FOUNDATION: Circle[] = [
+// Phần nền tảng THỦ CÔNG (A1–B2). C1/C2 nối thêm ở FOUNDATION bên dưới.
+const FOUNDATION_BASE: Circle[] = [
   // ── Vòng 1: Chữ cái ──────────────────────────────────────────────────────
   {
     id: 'letters',
@@ -9024,3 +9028,7 @@ export const FOUNDATION: Circle[] = [
     ],
   },
 ]
+
+// FOUNDATION = phần nền tảng thủ công (A1–B2) + các vòng C1/C2 sinh tự động từ
+// từ điển. Ghép ở đây để mọi nơi (loader, gen script) dùng chung một danh sách.
+export const FOUNDATION: Circle[] = [...FOUNDATION_BASE, ...CEFR_C1C2_CIRCLES]

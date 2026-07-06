@@ -89,7 +89,8 @@ const AUTHED_ROUTES = [
   '/history',
   '/phrases',
   '/learning-path',
-  '/learning-path/a1', // trang riêng cấp CEFR (đại diện — 4 cấp dùng chung layout)
+  '/learning-path/a1', // trang riêng cấp CEFR (6 cấp A1–C2 dùng chung layout)
+  '/learning-path/c1', // cấp nâng cao (accent rose) — quét cả màn khóa
   '/chat',
   '/writing',
   '/speaking',
