@@ -777,7 +777,7 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   đa 3 câu quiz ngữ pháp (`GrammarLesson.quiz`, dữ liệu có sẵn) — CHỈ lấy từ bài **đã đánh dấu
   "Đã học xong"** (`grammarQuizPool` tính ở `CefrLevelPage.tsx` từ `doneGrammar`) — trộn cùng
   câu từ vựng như cũ (tổng vẫn ~10 câu/lượt). Câu ngữ pháp hiện dạng câu có chỗ trống (vd "I
-  ___ a student.") thay vì từ đơn. Trả lời sai → nút "Mở lại bài" mở đúng bài ngữ pháp đó.
+  \_\_\_ a student.") thay vì từ đơn. Trả lời sai → nút "Mở lại bài" mở đúng bài ngữ pháp đó.
   Ngữ pháp trước đây không có vòng lặp củng cố như từ vựng — nay ôn lại gián tiếp qua tab
   Kiểm tra.
 - **Mới — V2 (phần còn lại): Vé nghỉ streak**: `getStreak()` (`lib/storage.ts`) tự động bắc
@@ -789,8 +789,8 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   nghiên cứu gốc.
 - 6 test mới (`storage.test.ts` — file mới, streak freeze bắc cầu/cooldown/idempotent).
   Verify: build/typecheck/lint/test (149/149)/format/size-limit xanh. Lái app thật bằng
-  Playwright — xác nhận: (1) tab Kiểm tra hiện câu hỏi dạng "___" xen giữa câu từ vựng; (2)
-  seed lịch sử có 1 ngày nghỉ ở giữa → `/progress` hiện đúng streak bắc cầu (4, không đứt còn 2) + `et_streak_freeze_*` ghi đúng ngày dùng vé. Full E2E suite (68/68, a11y 4 theme) xanh.
+  Playwright — xác nhận: (1) tab Kiểm tra hiện câu hỏi dạng "_\_\_" xen giữa câu từ vựng; (2)
+  seed lịch sử có 1 ngày nghỉ ở giữa → `/progress` hiện đúng streak bắc cầu (4, không đứt còn 2) + `et_streak_freeze_\*` ghi đúng ngày dùng vé. Full E2E suite (68/68, a11y 4 theme) xanh.
 - **Bài học rút ra**: khi nhiều phiên làm việc có thể chạy song song trên cùng repo, nên kiểm
   tra PR đang mở/mới merge trên GitHub TRƯỚC khi bắt đầu 1 kế hoạch lớn đã có trong tài liệu
   research — tránh trùng công sức. Không có cách nào phiên này biết trước về phiên kia (không
@@ -1027,6 +1027,11 @@ papa→A1, congratulations→A2, buck→B1, demon→B1, gosh→B1, jerk→B2`. C
 
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
+- **Bổ sung dạng biến thể của từ vào từ điển (word forms)** — người dùng yêu cầu 2026-07-06:
+  số nhiều, V-s/V-ing/V2/V3, so sánh hơn/nhất hiển thị NGAY TRONG phần nghĩa của từ gốc,
+  ở cả trang Từ điển lẫn thẻ học từ của lộ trình; search hiểu biến thể (books → book).
+  **Kế hoạch chi tiết 5 bước: `docs/research/bo-sung-dang-bien-the-tu-dien.md`** — đang chờ
+  người dùng duyệt kế hoạch trước khi code (nhánh `claude/dictionary-word-expansion-hxheuf`).
 - ~~Chạy thật `NO_AI_FALLBACK=1 npm run tag:cefr` trên file gốc~~ ĐÃ XONG (2026-07-05) — 100%
   từ điển đã có nhãn CEFR thật, không cần AI. ~~Badge CEFR trên trang Từ điển~~ ĐÃ XONG
   (2026-07-05, PR #207) — hiển thị badge A1-C2 cạnh badge loại từ trong kết quả tra từ.
