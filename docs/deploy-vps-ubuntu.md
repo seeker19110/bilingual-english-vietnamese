@@ -415,6 +415,17 @@ BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
 
 ## Cập nhật code mới (deploy lại)
 
+> ⚠️ **Luôn kiểm tra migration TRƯỚC khi deploy.** Nếu code mới có thêm cột/bảng (vd
+> `cefr_grammar`, `cefr_unlocked`...) mà chưa chạy migration tương ứng trên Supabase production,
+> các thao tác ghi (`upsert`/`update`) sẽ lỗi "column does not exist" — đồng bộ tiến độ tạm ngưng
+> tới khi chạy migration (đọc về vẫn chạy được nhờ `select('*')`, chỉ ghi bị chặn).
+>
+> Cách kiểm tra: xem `git log -p -- supabase/migrations/` giữa bản đang chạy trên VPS và bản sắp
+> deploy (hoặc đơn giản hơn — đọc mục "Cần làm tay" trong `PROGRESS.md` của bản code sắp deploy).
+> File migration nào CHƯA từng chạy trên Dashboard này → vào **Supabase Dashboard → SQL Editor**,
+> dán nội dung file `supabase/migrations/NNNN_*.sql` theo đúng thứ tự số tăng dần và bấm **Run**
+> — làm việc này TRƯỚC bước `git pull` bên dưới.
+
 ```bash
 cd /var/www/english-tutor
 git pull origin main
@@ -428,6 +439,9 @@ Hoặc tạo script tự động (`~/deploy-english-tutor.sh`):
 ```bash
 #!/bin/bash
 set -e
+
+# ⚠️ Trước khi chạy script này: đã chạy hết migration mới trong supabase/migrations/
+# trên Supabase Dashboard → SQL Editor chưa? Xem cảnh báo phía trên mục này trong tài liệu.
 
 cd /var/www/english-tutor
 echo "📥 Pull code mới..."
@@ -449,7 +463,7 @@ pm2 status
 
 ```bash
 chmod +x ~/deploy-english-tutor.sh
-~/deploy-english-tutor.sh   # mỗi lần update chạy lệnh này
+~/deploy-english-tutor.sh   # mỗi lần update chạy lệnh này (đã chạy migration trước đó)
 ```
 
 ---
