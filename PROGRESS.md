@@ -887,14 +887,33 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
 - Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.29/116 kB JS)/a11y đầy đủ
   63 test đều xanh.
 
-## ⏭️ Còn lại của Đợt 1 (A1-B2, chỉ còn cụm từ) + Đợt 2 (C1-C2) — làm ở phiên sau
+## Đã xong (125 cụm nhiều từ còn lại của Đợt 1 A1-B2 — 2026-07-06)
+
+- Hoàn tất phần cuối của Đợt 1: **125 cụm nhiều từ** trong CEFR-J A1-B2 mà từ điển còn thiếu
+  (vd "good morning", "bus stop", "each other", "according to"). Đối chiếu lại CEFR-J v1.5:
+  145 cụm A1-B2 tổng, 20 đã có sẵn → còn đúng 125 cụm cần thêm.
+- **Gắn `pos` theo vai trò ngữ pháp THẬT** (không dùng `idiom`): phần lớn là `n` (danh từ ghép
+  như "bus stop"), số ít `prep` ("according to", "next to", "instead of"...), `adv` ("all right",
+  "face to face", "next door", "upside down"), `pron` ("each other", "no one"), `adj` ("de facto",
+  "fed up", "worn out", "environmentally friendly"), `interj` ("good morning/afternoon/night"),
+  `v` cho cụm bán trợ động từ ("have to", "used to", "ought to"). Giữ `level` đúng từ CEFR-J.
+- **Kiểm chất lượng bằng chính script đối chiếu thanh điệu** (thanh của âm tiết ĐẦU trong `vi` so
+  với ký hiệu thanh cuối `ipa_vi`) như các đợt trước — bắt được **2/125 lỗi copy-paste** trước khi
+  gộp (air conditioning "điều" thanh huyền bị gắn nhầm ˨˩ʔ; travel agent "nhân" bị gắn nhầm IPA của
+  từ khác) → đã sửa, chạy lại 0 lỗi.
+- Phân bố cụm mới lên 10 chunk theo round-robin (giữ chunk cân bằng). Chạy `tag:freq` (SUBTLEX-US)
+  sau khi gộp — cụm nhiều từ hầu hết không có trong wordlist đơn từ nên giữ nguyên (xếp cuối phần
+  Mở rộng, đúng thiết kế). Kết quả: **từ điển 10.621 → 10.746 từ** (100% có `level`, không trùng,
+  0 pos/level không hợp lệ, không thiếu field bắt buộc).
+- Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.29/116 kB — dictionary là
+  JSON tĩnh, không nằm trong bundle) đều xanh.
+- **→ Đợt 1 (A1-B2) đã HOÀN TẤT HẲN** (cả từ đơn lẫn cụm nhiều từ). Còn lại: Đợt 2 (C1-C2).
+
+## ⏭️ Còn lại: Đợt 2 (C1-C2) — làm ở phiên sau
 
 > Việc lớn, làm qua NHIỀU phiên. Nếu hit session limit giữa chừng: dừng, KHÔNG tự relaunch hàng
 > loạt agent, ghi lại đúng đã làm tới đâu rồi chờ người dùng (theo CLAUDE.md mục 3).
 
-- **125 cụm nhiều từ** còn lại của Đợt 1 (vd "good morning", "bus stop", "each other") — gắn
-  `pos` theo vai trò ngữ pháp thật (n/v/adj...), KHÔNG dùng `pos: "idiom"` (nhãn đó chỉ dành cho
-  thành ngữ nghĩa bóng thật sự). Phức tạp hơn từ đơn nên để lô riêng, chưa làm.
 - **Đợt 2 — C1→C2 (1.407 từ)**: làm sau khi Đợt 1 xong hẳn (kể cả phần cụm từ), PR riêng, quy
   trình tương tự (đối chiếu Octanove C1/C2 wordlist → lọc trùng/rác → viết nội dung theo lô →
   gộp → freq → verify → commit). Nhớ chạy lại kiểm tra script đối chiếu thanh điệu trước khi gộp
@@ -907,8 +926,8 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
 - ~~Chạy thật `NO_AI_FALLBACK=1 npm run tag:cefr` trên file gốc~~ ĐÃ XONG (2026-07-05) — 100%
-  từ điển (10.006/10.006) đã có nhãn CEFR thật, không cần AI (xem "Đã xong" ở trên). Còn lại:
-  cân nhắc hiển thị badge CEFR trên trang Từ điển (chưa làm UI — hạ tầng dữ liệu đã xong).
+  từ điển đã có nhãn CEFR thật, không cần AI. ~~Badge CEFR trên trang Từ điển~~ ĐÃ XONG
+  (2026-07-05, PR #207) — hiển thị badge A1-C2 cạnh badge loại từ trong kết quả tra từ.
 - ~~Zod validate input (đợt 3)~~ ĐÃ XONG (2026-07-05) — xem "Quyết định quan trọng" bên dưới.
   Query param của `api/dictionary.ts`/`api/pronunciation.ts` vẫn giữ nguyên (đã sanitize kỹ
   bằng tay, giá trị thêm Zod thấp — GET query, không phải JSON body).
