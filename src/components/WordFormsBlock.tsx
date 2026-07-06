@@ -1,6 +1,20 @@
+import { useEffect, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import type { WordForms } from '../types'
 import PronounceButton from './PronounceButton'
+import KaraokeText from './KaraokeText'
+import { loadFormExamples } from '../data/formExamplesLoader'
+import type { ExPair } from '../data/form-examples'
+
+// Cache module-level để không fetch lại /data/form-examples.json mỗi lần component mount.
+let _formExCache: Record<string, [ExPair, ExPair]> | null = null
+loadFormExamples()
+  .then((d) => {
+    _formExCache = d
+  })
+  .catch(() => {
+    // Lỗi mạng → không có ví dụ, phần chip dạng từ vẫn hiển thị bình thường.
+  })
 
 interface Props {
   forms?: WordForms
@@ -33,6 +47,24 @@ const ORDER: (keyof WordForms)[] = [
 ]
 
 export default function WordFormsBlock({ forms, base, word, isA, onPick }: Props) {
+  // Ví dụ cho từng dạng (nạp lười 1 lần, dùng chung mọi nơi). Hook phải chạy TRƯỚC mọi
+  // early-return bên dưới để tuân thủ quy tắc hook của React.
+  const [formEx, setFormEx] = useState<Record<string, [ExPair, ExPair]>>(_formExCache ?? {})
+  useEffect(() => {
+    if (_formExCache) {
+      setFormEx(_formExCache)
+      return
+    }
+    loadFormExamples()
+      .then((d) => {
+        _formExCache = d
+        setFormEx(d)
+      })
+      .catch(() => {
+        // Lỗi mạng → giữ formEx rỗng, chip dạng từ vẫn hiển thị bình thường.
+      })
+  }, [])
+
   // Entry là DẠNG BIẾN THỂ → chỉ hiện liên kết/chú thích về từ gốc.
   if (base) {
     const content = (
@@ -75,6 +107,14 @@ export default function WordFormsBlock({ forms, base, word, isA, onPick }: Props
   }).filter((x): x is { key: keyof WordForms; val: string } => x !== null)
 
   if (items.length === 0) return null
+
+  // Các dạng có kèm ví dụ (khoá `word|formKey` trong form-examples.json).
+  const itemsWithEx = items
+    .map(({ key, val }) => ({ key, val, examples: formEx[`${word.toLowerCase()}|${key}`] }))
+    .filter(
+      (x): x is { key: keyof WordForms; val: string; examples: [ExPair, ExPair] } =>
+        x.examples != null,
+    )
 
   const irregular = !!forms.irregular
 
@@ -130,6 +170,49 @@ export default function WordFormsBlock({ forms, base, word, isA, onPick }: Props
           )
         })}
       </div>
+
+      {/* Ví dụ cho từng dạng (2 câu/dạng) — chỉ hiện dạng nào có sẵn ví dụ. */}
+      {itemsWithEx.length > 0 && (
+        <div className="mt-2 space-y-2">
+          {itemsWithEx.map(({ key, val, examples }) => {
+            const label = LABELS[key] ?? { vi: key, en: key }
+            return (
+              <div
+                key={key}
+                className="rounded-lg border border-zinc-800/70 bg-zinc-900/40 overflow-hidden"
+              >
+                <p className="px-3 pt-2 text-[11px] text-zinc-400">
+                  <span className="uppercase tracking-wide">{isA ? label.vi : label.en}</span>
+                  <span className="ml-1.5 font-medium text-zinc-200">{val}</span>
+                </p>
+                <div className="divide-y divide-zinc-800/50">
+                  {examples.map((ex, idx) => (
+                    <div key={idx} className="relative">
+                      <span className="absolute left-3 top-2 text-[11px] text-zinc-500 font-mono select-none">
+                        {idx + 1}.
+                      </span>
+                      <KaraokeText
+                        text={ex.en}
+                        lang="en-US"
+                        textClass="text-xs text-accent-300/80 theme-light:text-accent-800 italic leading-relaxed"
+                        buttonClass="w-full pl-7 pr-3 py-1.5 hover:bg-accent-500/5 active:bg-accent-500/10 text-left transition"
+                        iconSize="xs"
+                      />
+                      <KaraokeText
+                        text={ex.vi}
+                        lang="vi-VN"
+                        textClass="text-xs text-zinc-400 leading-relaxed"
+                        buttonClass="w-full pl-7 pr-3 py-1.5 hover:bg-sky-500/5 active:bg-sky-500/10 text-left transition"
+                        iconSize="xs"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

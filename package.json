@@ -26,6 +26,7 @@
     "tag:cefr": "tsx scripts/tag-cefr-levels.ts",
     "tag:freq": "tsx scripts/assign-word-freq.ts",
     "gen:word-forms": "tsx scripts/gen-word-forms.ts",
+    "gen:form-examples": "tsx scripts/gen-form-examples.ts",
     "extract:words-cefr": "tsx scripts/extract-words-cefr-subset.ts",
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts",
     "seed:all": "tsx scripts/seed-all.ts",

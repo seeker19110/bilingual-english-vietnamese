@@ -1066,6 +1066,14 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
         song ngữ + phát âm từng dạng, đánh dấu bất quy tắc, danh từ không đếm được ghi rõ.
   - [x] **Bước 5 — Khi HỌC từ mới**: gắn `WordFormsBlock` vào `WordCard` (lộ trình) và
         `Flashcard` (Từ điển) — hiện sau khi lật thẻ.
+  - [x] **Ví dụ cho từng dạng (Lô 1)** — người dùng yêu cầu 2026-07-06. Mỗi dạng biến thể có
+        **2 ví dụ song ngữ** (câu luôn chứa chính dạng đó, vd `go|past` → "went…"). Nguồn soạn
+        tay `src/data/form-examples.ts` (khoá `word|formKey`, shape `[ExPair, ExPair]` như
+        `extra-examples.ts`) → sinh + KIỂM ĐỊNH chéo từ điển `npm run gen:form-examples`
+        (`scripts/gen-form-examples.ts`) → `public/data/form-examples.json`, nạp lười qua
+        `formExamplesLoader.ts`; `WordFormsBlock` render 2 ví dụ (bấm nghe `KaraokeText`) dưới
+        dạng nào có sẵn. **251 ô = 502 ví dụ, 0 cảnh báo** (bất quy tắc + A1–B2 hay gặp).
+        Kế hoạch/quyết định: `docs/research/vi-du-dang-tu.md`. Lô sau: thêm khoá theo tần suất từ.
   - [ ] **Bước 2 — Vá dạng bất quy tắc còn thiếu + gắn `base`**: thêm ~40-60 entry biến thể
         còn thiếu (hid, woken, geese, leaves…) và điền trường `base` cho entry biến thể để hiện
         link "Xem từ gốc" (UI đã sẵn sàng, chỉ chờ dữ liệu `base`).
