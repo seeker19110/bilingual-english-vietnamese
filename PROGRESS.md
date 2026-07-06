@@ -1074,6 +1074,11 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
         `formExamplesLoader.ts`; `WordFormsBlock` render 2 ví dụ (bấm nghe `KaraokeText`) dưới
         dạng nào có sẵn. **251 ô = 502 ví dụ, 0 cảnh báo** (bất quy tắc + A1–B2 hay gặp).
         Kế hoạch/quyết định: `docs/research/vi-du-dang-tu.md`. Lô sau: thêm khoá theo tần suất từ.
+  - [x] **Ví dụ cho từng dạng (Lô 2)** — phủ NỐT toàn bộ dạng **bất quy tắc trong A1–B2**: thêm
+        **140 ô = 280 ví dụ** (past, pastPart, số nhiều bất quy tắc kiểu Latin/Hy Lạp như
+        analysis→analyses, so sánh bất quy tắc well/badly/much/little). Sau Lô 2:
+        **391 ô = 782 ví dụ, 0 cảnh báo**, và **250/250 ô bất quy tắc A1–B2 đã phủ 100%**
+        (đối chiếu chéo từ điển). Lô sau (nếu mở rộng): dạng THƯỜNG theo tần suất từ.
   - [ ] **Bước 2 — Vá dạng bất quy tắc còn thiếu + gắn `base`**: thêm ~40-60 entry biến thể
         còn thiếu (hid, woken, geese, leaves…) và điền trường `base` cho entry biến thể để hiện
         link "Xem từ gốc" (UI đã sẵn sàng, chỉ chờ dữ liệu `base`).
