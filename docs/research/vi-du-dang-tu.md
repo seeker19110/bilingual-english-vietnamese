@@ -55,7 +55,19 @@ Mỗi từ trong từ điển chỉ giữ **MỘT loại từ (pos) chính**, n�
   so sánh thường A1–B2 (hơn/nhất), V-ing & quá khứ động từ thường, V-s ngôi 3, số nhiều thường.
 - Test: `WordFormsBlock.test.tsx` thêm ca kiểm chứng ví dụ render (mock loader).
 
-## 6. Lô tiếp theo (khi cần mở rộng)
+## 6. Lô 2 — phủ nốt toàn bộ bất quy tắc A1–B2
+
+- Thêm **140 ô = 280 ví dụ** cho các dạng bất quy tắc A1–B2 còn thiếu sau Lô 1:
+  - Động từ quá khứ V2 (67 ô): be→was, do→did, say→said, rise→rose, shake→shook…
+  - Động từ phân từ V3 (34 ô): been, done, ridden, shown, woken, sworn…
+  - Danh từ số nhiều bất quy tắc (31 ô): analysis→analyses, crisis→crises,
+    criterion→criteria, half→halves, thief→thieves, deer→deer, species→species…
+  - So sánh bất quy tắc (8 ô): well→better/best, badly→worse/worst, much→more/most,
+    little→least, many→most.
+- Sau Lô 2: **391 ô = 782 ví dụ, 0 cảnh báo**. Đối chiếu chéo từ điển: **250/250 ô bất quy tắc
+  trong A1–B2 đã có ví dụ (phủ 100%)**.
+
+## 7. Lô tiếp theo (khi cần mở rộng)
 
 - Chỉ cần **thêm khoá vào `src/data/form-examples.ts`** rồi `npm run gen:form-examples` — UI tự nhận.
-- Ưu tiên tiếp theo: mở rộng số lượng theo tần suất từ (SUBTLEX) trong dải A1–B2 còn thiếu.
+- Ưu tiên tiếp theo: mở rộng dạng **THƯỜNG (quy tắc)** theo tần suất từ (SUBTLEX) trong dải A1–B2.

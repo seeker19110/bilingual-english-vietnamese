@@ -1174,4 +1174,652 @@ export const FORM_EXAMPLES: Record<string, [ExPair, ExPair]> = {
     { en: 'The girls are singing on the stage.', vi: 'Các cô bé đang hát trên sân khấu.' },
     { en: 'Three girls joined the dance class.', vi: 'Ba cô bé tham gia lớp học nhảy.' },
   ],
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // 10) LÔ 2 — ĐỘNG TỪ BẤT QUY TẮC (quá khứ V2) còn thiếu ở A1–B2
+  // ══════════════════════════════════════════════════════════════════════════
+  'arise|past': [
+    { en: 'A problem arose during the meeting.', vi: 'Một vấn đề nảy sinh trong cuộc họp.' },
+    {
+      en: 'Several questions arose after his speech.',
+      vi: 'Nhiều câu hỏi nảy sinh sau bài phát biểu.',
+    },
+  ],
+  'be|past': [
+    { en: 'I was very tired last night.', vi: 'Tối qua tôi rất mệt.' },
+    { en: 'They were at home yesterday.', vi: 'Hôm qua họ ở nhà.' },
+  ],
+  'beat|past': [
+    { en: 'Our team beat theirs last week.', vi: 'Tuần trước đội tôi thắng đội họ.' },
+    { en: 'She beat me at chess yesterday.', vi: 'Hôm qua cô ấy thắng tôi cờ vua.' },
+  ],
+  'bend|past': [
+    { en: 'He bent down to pick up the coin.', vi: 'Anh ấy cúi xuống nhặt đồng xu.' },
+    { en: 'She bent the wire into a circle.', vi: 'Cô ấy uốn sợi dây thành vòng tròn.' },
+  ],
+  'bet|past': [
+    { en: 'I bet ten dollars on that game.', vi: 'Tôi đặt cược mười đô vào trận đó.' },
+    { en: 'He bet me that it would rain.', vi: 'Anh ấy cá với tôi là trời sẽ mưa.' },
+  ],
+  'bind|past': [
+    {
+      en: 'She bound the books together with a rope.',
+      vi: 'Cô ấy buộc mấy quyển sách lại bằng dây.',
+    },
+    { en: 'The nurse bound the wound carefully.', vi: 'Y tá băng vết thương cẩn thận.' },
+  ],
+  'bite|past': [
+    { en: 'The dog bit the mailman yesterday.', vi: 'Hôm qua con chó cắn người đưa thư.' },
+    { en: 'I bit into the apple happily.', vi: 'Tôi cắn một miếng táo ngon lành.' },
+  ],
+  'bleed|past': [
+    { en: 'His nose bled after the fall.', vi: 'Mũi anh ấy chảy máu sau cú ngã.' },
+    { en: 'The cut bled for a few minutes.', vi: 'Vết cắt chảy máu vài phút.' },
+  ],
+  'blow|past': [
+    { en: 'The wind blew hard all night.', vi: 'Gió thổi mạnh suốt đêm.' },
+    { en: 'She blew out the candles on her cake.', vi: 'Cô ấy thổi tắt nến trên bánh.' },
+  ],
+  'breed|past': [
+    { en: 'They bred dogs for many years.', vi: 'Họ nuôi chó giống nhiều năm.' },
+    { en: 'The farmer bred cattle on his land.', vi: 'Người nông dân nuôi bò trên đất của mình.' },
+  ],
+  'burn|past': [
+    { en: 'I burned the rice this morning.', vi: 'Sáng nay tôi làm cháy cơm.' },
+    { en: 'The candle burned all night.', vi: 'Cây nến cháy suốt đêm.' },
+  ],
+  'burst|past': [
+    { en: 'The balloon burst with a loud bang.', vi: 'Quả bóng nổ đánh bùm một tiếng.' },
+    { en: 'The pipe burst during the cold night.', vi: 'Đường ống vỡ trong đêm lạnh.' },
+  ],
+  'dig|past': [
+    { en: 'They dug a hole for the tree.', vi: 'Họ đào một cái hố để trồng cây.' },
+    { en: 'The dog dug up the garden.', vi: 'Con chó đào bới khu vườn.' },
+  ],
+  'dive|past': [
+    { en: 'She dived into the swimming pool.', vi: 'Cô ấy nhảy xuống hồ bơi.' },
+    { en: 'He dived off the high board.', vi: 'Anh ấy nhảy từ ván cao xuống.' },
+  ],
+  'do|past': [
+    { en: 'I did my homework last night.', vi: 'Tối qua tôi làm bài tập.' },
+    { en: 'She did the dishes after dinner.', vi: 'Cô ấy rửa bát sau bữa tối.' },
+  ],
+  'feed|past': [
+    { en: 'I fed the chickens this morning.', vi: 'Sáng nay tôi cho gà ăn.' },
+    { en: 'She fed the baby before bed.', vi: 'Cô ấy cho em bé ăn trước khi ngủ.' },
+  ],
+  'flee|past': [
+    { en: 'The thief fled when he saw the police.', vi: 'Tên trộm bỏ chạy khi thấy cảnh sát.' },
+    { en: 'Many people fled the flooded area.', vi: 'Nhiều người chạy khỏi vùng ngập lụt.' },
+  ],
+  'forbid|past': [
+    { en: 'The teacher forbade phones in class.', vi: 'Cô giáo cấm dùng điện thoại trong lớp.' },
+    { en: 'Her parents forbade her from going out late.', vi: 'Bố mẹ cấm cô ấy đi chơi khuya.' },
+  ],
+  'foresee|past': [
+    { en: 'Nobody foresaw the sudden storm.', vi: 'Không ai lường trước cơn bão bất ngờ.' },
+    {
+      en: 'He foresaw the problem before it happened.',
+      vi: 'Anh ấy lường trước vấn đề trước khi nó xảy ra.',
+    },
+  ],
+  'forgive|past': [
+    { en: 'She forgave him for being late.', vi: 'Cô ấy tha thứ cho anh ấy vì đến muộn.' },
+    { en: 'I forgave my friend after we talked.', vi: 'Tôi tha lỗi cho bạn sau khi trò chuyện.' },
+  ],
+  'freeze|past': [
+    { en: 'The lake froze during the winter.', vi: 'Hồ nước đóng băng vào mùa đông.' },
+    { en: 'My hands froze in the cold wind.', vi: 'Tay tôi cóng trong gió lạnh.' },
+  ],
+  'hang|past': [
+    { en: 'She hung the picture on the wall.', vi: 'Cô ấy treo bức tranh lên tường.' },
+    { en: 'He hung his coat by the door.', vi: 'Anh ấy treo áo khoác cạnh cửa.' },
+  ],
+  'have|past': [
+    {
+      en: 'We had a great time at the party.',
+      vi: 'Chúng tôi có khoảng thời gian vui ở bữa tiệc.',
+    },
+    { en: 'I had breakfast at seven this morning.', vi: 'Sáng nay tôi ăn sáng lúc bảy giờ.' },
+  ],
+  'kneel|past': [
+    { en: 'She knelt down to pray.', vi: 'Cô ấy quỳ xuống cầu nguyện.' },
+    { en: 'He knelt beside the crying child.', vi: 'Anh ấy quỳ xuống bên đứa trẻ đang khóc.' },
+  ],
+  'lay|past': [
+    { en: 'She laid the baby on the bed.', vi: 'Cô ấy đặt em bé lên giường.' },
+    { en: 'He laid the books on the table.', vi: 'Anh ấy đặt sách lên bàn.' },
+  ],
+  'lean|past': [
+    { en: 'He leaned against the wall.', vi: 'Anh ấy tựa vào tường.' },
+    { en: 'She leaned forward to listen.', vi: 'Cô ấy nghiêng người về phía trước để nghe.' },
+  ],
+  'leap|past': [
+    { en: 'The cat leaped onto the roof.', vi: 'Con mèo nhảy lên mái nhà.' },
+    { en: 'He leaped over the fence easily.', vi: 'Anh ấy nhảy qua hàng rào dễ dàng.' },
+  ],
+  'learn|past': [
+    { en: 'I learned to swim last summer.', vi: 'Mùa hè năm ngoái tôi học bơi.' },
+    { en: 'She learned English very quickly.', vi: 'Cô ấy học tiếng Anh rất nhanh.' },
+  ],
+  'lend|past': [
+    { en: 'I lent him my umbrella yesterday.', vi: 'Hôm qua tôi cho anh ấy mượn ô.' },
+    { en: 'She lent me some money last week.', vi: 'Tuần trước cô ấy cho tôi vay ít tiền.' },
+  ],
+  'misunderstand|past': [
+    {
+      en: 'I misunderstood the question on the test.',
+      vi: 'Tôi hiểu sai câu hỏi trong bài kiểm tra.',
+    },
+    { en: 'She misunderstood what I meant.', vi: 'Cô ấy hiểu nhầm ý của tôi.' },
+  ],
+  'offset|past': [
+    { en: 'The gains offset the losses this year.', vi: 'Lợi nhuận bù lại phần thua lỗ năm nay.' },
+    { en: 'New sales offset the extra costs.', vi: 'Doanh số mới bù đắp chi phí phát sinh.' },
+  ],
+  'outgrow|past': [
+    { en: 'He outgrew his shoes in a month.', vi: 'Anh ấy lớn nhanh, một tháng đã chật giày.' },
+    { en: 'She outgrew her old bicycle.', vi: 'Cô bé lớn hơn chiếc xe đạp cũ của mình.' },
+  ],
+  'overcome|past': [
+    { en: 'She overcame her fear of flying.', vi: 'Cô ấy vượt qua nỗi sợ đi máy bay.' },
+    {
+      en: 'He overcame many difficulties in life.',
+      vi: 'Anh ấy vượt qua nhiều khó khăn trong đời.',
+    },
+  ],
+  'overhear|past': [
+    { en: 'I overheard them talking about the plan.', vi: 'Tôi tình cờ nghe họ bàn về kế hoạch.' },
+    { en: 'She overheard the news by accident.', vi: 'Cô ấy vô tình nghe được tin đó.' },
+  ],
+  'overtake|past': [
+    {
+      en: 'The car overtook the truck on the highway.',
+      vi: 'Chiếc xe vượt xe tải trên đường cao tốc.',
+    },
+    { en: 'Their sales overtook ours last year.', vi: 'Năm ngoái doanh số họ vượt qua chúng tôi.' },
+  ],
+  'overthrow|past': [
+    { en: 'The people overthrew the cruel king.', vi: 'Người dân lật đổ vị vua tàn ác.' },
+    { en: 'The army overthrew the government.', vi: 'Quân đội lật đổ chính phủ.' },
+  ],
+  'prove|past': [
+    { en: 'He proved that he was right.', vi: 'Anh ấy chứng minh mình đúng.' },
+    { en: 'The test proved the theory.', vi: 'Thí nghiệm chứng minh lý thuyết đó.' },
+  ],
+  'quit|past': [
+    { en: 'She quit her job last month.', vi: 'Tháng trước cô ấy nghỉ việc.' },
+    { en: 'He quit smoking two years ago.', vi: 'Anh ấy bỏ thuốc lá hai năm trước.' },
+  ],
+  'rebuild|past': [
+    { en: 'They rebuilt the house after the fire.', vi: 'Họ xây lại ngôi nhà sau vụ cháy.' },
+    { en: 'The city rebuilt the old bridge.', vi: 'Thành phố xây lại cây cầu cũ.' },
+  ],
+  'redo|past': [
+    { en: 'I redid the exercise because of a mistake.', vi: 'Tôi làm lại bài tập vì có lỗi sai.' },
+    { en: 'She redid her hair before the party.', vi: 'Cô ấy làm lại tóc trước bữa tiệc.' },
+  ],
+  'rewrite|past': [
+    { en: 'He rewrote the essay three times.', vi: 'Anh ấy viết lại bài luận ba lần.' },
+    { en: 'She rewrote the letter more clearly.', vi: 'Cô ấy viết lại lá thư rõ ràng hơn.' },
+  ],
+  'rise|past': [
+    { en: 'The sun rose at six this morning.', vi: 'Sáng nay mặt trời mọc lúc sáu giờ.' },
+    { en: 'Prices rose sharply last year.', vi: 'Năm ngoái giá cả tăng mạnh.' },
+  ],
+  'say|past': [
+    { en: 'She said hello to everyone.', vi: 'Cô ấy chào tất cả mọi người.' },
+    { en: 'He said he would come tomorrow.', vi: 'Anh ấy nói mai sẽ đến.' },
+  ],
+  'seek|past': [
+    { en: 'They sought help from the police.', vi: 'Họ tìm đến cảnh sát để nhờ giúp.' },
+    { en: 'She sought advice from her teacher.', vi: 'Cô ấy xin lời khuyên từ cô giáo.' },
+  ],
+  'sew|past': [
+    { en: 'She sewed a button on my shirt.', vi: 'Cô ấy khâu một cái cúc lên áo tôi.' },
+    { en: 'My mother sewed the dress herself.', vi: 'Mẹ tôi tự may chiếc váy.' },
+  ],
+  'shake|past': [
+    { en: 'He shook my hand warmly.', vi: 'Anh ấy bắt tay tôi thân mật.' },
+    {
+      en: 'The earthquake shook the whole city.',
+      vi: 'Trận động đất làm rung chuyển cả thành phố.',
+    },
+  ],
+  'shine|past': [
+    { en: 'The sun shone brightly all day.', vi: 'Mặt trời chiếu sáng rực suốt ngày.' },
+    { en: 'Her eyes shone with happiness.', vi: 'Đôi mắt cô ấy sáng lên vì hạnh phúc.' },
+  ],
+  'shoot|past': [
+    { en: 'The hunter shot a bird.', vi: 'Người thợ săn bắn một con chim.' },
+    { en: 'She shot the ball into the net.', vi: 'Cô ấy sút bóng vào lưới.' },
+  ],
+  'show|past': [
+    { en: 'He showed me his new phone.', vi: 'Anh ấy cho tôi xem điện thoại mới.' },
+    { en: 'She showed the guests around the house.', vi: 'Cô ấy dẫn khách đi xem quanh nhà.' },
+  ],
+  'shrink|past': [
+    { en: 'My shirt shrank in the wash.', vi: 'Áo tôi co lại sau khi giặt.' },
+    {
+      en: 'The market shrank during the crisis.',
+      vi: 'Thị trường thu hẹp trong thời kỳ khủng hoảng.',
+    },
+  ],
+  'shut|past': [
+    { en: 'She shut the door quietly.', vi: 'Cô ấy đóng cửa nhẹ nhàng.' },
+    { en: 'He shut his eyes and fell asleep.', vi: 'Anh ấy nhắm mắt và ngủ thiếp đi.' },
+  ],
+  'slide|past': [
+    { en: 'The children slid down the hill.', vi: 'Bọn trẻ trượt xuống đồi.' },
+    { en: 'The book slid off the table.', vi: 'Quyển sách trượt khỏi bàn.' },
+  ],
+  'spin|past': [
+    { en: 'The wheel spun quickly.', vi: 'Bánh xe quay nhanh.' },
+    { en: 'She spun around and laughed.', vi: 'Cô ấy xoay một vòng rồi cười.' },
+  ],
+  'split|past': [
+    { en: 'We split the bill after dinner.', vi: 'Chúng tôi chia tiền sau bữa tối.' },
+    { en: 'They split the cake into four pieces.', vi: 'Họ chia bánh thành bốn phần.' },
+  ],
+  'spread|past': [
+    { en: 'She spread butter on the bread.', vi: 'Cô ấy phết bơ lên bánh mì.' },
+    { en: 'The news spread very fast.', vi: 'Tin tức lan rất nhanh.' },
+  ],
+  'stick|past': [
+    { en: 'The stamp stuck to the envelope.', vi: 'Con tem dính vào phong bì.' },
+    { en: 'The car stuck in the mud.', vi: 'Chiếc xe mắc kẹt trong bùn.' },
+  ],
+  'stink|past': [
+    { en: 'The old fish stank terribly.', vi: 'Con cá cũ bốc mùi kinh khủng.' },
+    { en: 'His shoes stank after the game.', vi: 'Giày anh ấy hôi sau trận đấu.' },
+  ],
+  'swear|past': [
+    { en: 'He swore to tell the truth.', vi: 'Anh ấy thề nói sự thật.' },
+    { en: 'She swore she had locked the door.', vi: 'Cô ấy thề là đã khóa cửa.' },
+  ],
+  'sweep|past': [
+    { en: 'She swept the floor this morning.', vi: 'Sáng nay cô ấy quét nhà.' },
+    { en: 'He swept the leaves off the path.', vi: 'Anh ấy quét lá khỏi lối đi.' },
+  ],
+  'swing|past': [
+    { en: 'The child swung on the gate.', vi: 'Đứa trẻ đu trên cánh cổng.' },
+    { en: 'He swung the bat and missed.', vi: 'Anh ấy vung gậy nhưng đánh trượt.' },
+  ],
+  'tear|past': [
+    { en: 'She tore the paper in half.', vi: 'Cô ấy xé đôi tờ giấy.' },
+    { en: 'He tore his shirt on a nail.', vi: 'Anh ấy làm rách áo vào cái đinh.' },
+  ],
+  'undertake|past': [
+    { en: 'She undertook a difficult project.', vi: 'Cô ấy nhận một dự án khó.' },
+    { en: 'They undertook the work happily.', vi: 'Họ nhận việc một cách vui vẻ.' },
+  ],
+  'undo|past': [
+    { en: 'He undid the knot carefully.', vi: 'Anh ấy tháo nút thắt cẩn thận.' },
+    { en: 'She undid the buttons on her coat.', vi: 'Cô ấy cởi cúc áo khoác.' },
+  ],
+  'uphold|past': [
+    { en: 'The court upheld the decision.', vi: 'Tòa án giữ nguyên phán quyết.' },
+    { en: 'They upheld the old traditions.', vi: 'Họ gìn giữ những truyền thống xưa.' },
+  ],
+  'weave|past': [
+    { en: 'She wove a basket from bamboo.', vi: 'Cô ấy đan một cái giỏ từ tre.' },
+    { en: 'He wove the threads into cloth.', vi: 'Anh ấy dệt các sợi chỉ thành vải.' },
+  ],
+  'weep|past': [
+    { en: 'She wept when she heard the news.', vi: 'Cô ấy khóc khi nghe tin.' },
+    { en: 'He wept with joy at the wedding.', vi: 'Anh ấy khóc vì vui trong đám cưới.' },
+  ],
+  'withdraw|past': [
+    { en: 'She withdrew some money from the bank.', vi: 'Cô ấy rút ít tiền từ ngân hàng.' },
+    { en: 'He withdrew from the competition.', vi: 'Anh ấy rút khỏi cuộc thi.' },
+  ],
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // 11) LÔ 2 — ĐỘNG TỪ BẤT QUY TẮC (phân từ V3, khác V2) còn thiếu ở A1–B2
+  // ══════════════════════════════════════════════════════════════════════════
+  'arise|pastPart': [
+    { en: 'A new problem has arisen today.', vi: 'Một vấn đề mới vừa nảy sinh hôm nay.' },
+    { en: 'Many questions have arisen since then.', vi: 'Nhiều câu hỏi đã nảy sinh kể từ đó.' },
+  ],
+  'be|pastPart': [
+    { en: 'I have been to Hanoi many times.', vi: 'Tôi đã đến Hà Nội nhiều lần.' },
+    { en: 'She has been very busy this week.', vi: 'Tuần này cô ấy rất bận.' },
+  ],
+  'beat|pastPart': [
+    { en: 'Our team has beaten them twice.', vi: 'Đội tôi đã thắng họ hai lần.' },
+    { en: 'The old record has been beaten again.', vi: 'Kỷ lục cũ lại bị phá lần nữa.' },
+  ],
+  'bite|pastPart': [
+    { en: 'I have been bitten by a mosquito.', vi: 'Tôi bị muỗi đốt.' },
+    { en: 'The dog has bitten someone before.', vi: 'Con chó từng cắn người trước đây.' },
+  ],
+  'blow|pastPart': [
+    { en: 'The wind has blown the roof off.', vi: 'Gió đã thổi bay mái nhà.' },
+    { en: 'The candles have been blown out.', vi: 'Những cây nến đã bị thổi tắt.' },
+  ],
+  'do|pastPart': [
+    { en: 'I have done all my homework.', vi: 'Tôi đã làm xong hết bài tập.' },
+    { en: 'She has done a great job.', vi: 'Cô ấy đã làm rất tốt.' },
+  ],
+  'forbid|pastPart': [
+    { en: 'Smoking is forbidden in this building.', vi: 'Hút thuốc bị cấm trong tòa nhà này.' },
+    { en: 'He has forbidden them to leave.', vi: 'Anh ấy đã cấm họ rời đi.' },
+  ],
+  'foresee|pastPart': [
+    { en: 'Nobody could have foreseen this.', vi: 'Không ai có thể lường trước điều này.' },
+    {
+      en: 'The danger had been foreseen by experts.',
+      vi: 'Nguy cơ đã được các chuyên gia lường trước.',
+    },
+  ],
+  'forgive|pastPart': [
+    { en: 'She has forgiven him already.', vi: 'Cô ấy đã tha thứ cho anh ấy rồi.' },
+    { en: 'I have forgiven my old friend.', vi: 'Tôi đã tha thứ cho người bạn cũ.' },
+  ],
+  'freeze|pastPart': [
+    { en: 'The lake has frozen completely.', vi: 'Hồ nước đã đóng băng hoàn toàn.' },
+    { en: 'The meat is still frozen.', vi: 'Miếng thịt vẫn còn đông đá.' },
+  ],
+  'get|pastPart': [
+    { en: 'The weather has gotten colder.', vi: 'Thời tiết đã trở lạnh hơn.' },
+    { en: 'She has gotten much better at English.', vi: 'Cô ấy đã giỏi tiếng Anh hơn nhiều.' },
+  ],
+  'outgrow|pastPart': [
+    { en: 'He has outgrown all his clothes.', vi: 'Cậu bé đã lớn hơn hết quần áo của mình.' },
+    { en: 'She has outgrown her old toys.', vi: 'Cô bé đã quá lớn so với đồ chơi cũ.' },
+  ],
+  'overcome|pastPart': [
+    { en: 'She has overcome her fear.', vi: 'Cô ấy đã vượt qua nỗi sợ.' },
+    { en: 'They have overcome many problems.', vi: 'Họ đã vượt qua nhiều vấn đề.' },
+  ],
+  'overtake|pastPart': [
+    {
+      en: 'We have been overtaken by a faster car.',
+      vi: 'Chúng tôi bị một chiếc xe nhanh hơn vượt qua.',
+    },
+    { en: 'Our sales have overtaken last year.', vi: 'Doanh số của chúng tôi đã vượt năm ngoái.' },
+  ],
+  'overthrow|pastPart': [
+    { en: 'The king has been overthrown.', vi: 'Nhà vua đã bị lật đổ.' },
+    { en: 'The old rules have been overthrown.', vi: 'Những luật lệ cũ đã bị lật đổ.' },
+  ],
+  'prove|pastPart': [
+    {
+      en: 'He has proven himself a good leader.',
+      vi: 'Anh ấy đã chứng tỏ mình là người lãnh đạo giỏi.',
+    },
+    {
+      en: 'The method has been proven to work.',
+      vi: 'Phương pháp đã được chứng minh là hiệu quả.',
+    },
+  ],
+  'redo|pastPart': [
+    { en: 'The kitchen has been redone recently.', vi: 'Nhà bếp mới được làm lại gần đây.' },
+    { en: 'She has redone her homework.', vi: 'Cô ấy đã làm lại bài tập.' },
+  ],
+  'rewrite|pastPart': [
+    { en: 'The essay has been rewritten.', vi: 'Bài luận đã được viết lại.' },
+    { en: 'He has rewritten the whole story.', vi: 'Anh ấy đã viết lại toàn bộ câu chuyện.' },
+  ],
+  'ride|pastPart': [
+    { en: 'I have ridden a horse before.', vi: 'Tôi từng cưỡi ngựa rồi.' },
+    { en: 'She has never ridden a motorbike.', vi: 'Cô ấy chưa bao giờ đi xe máy.' },
+  ],
+  'rise|pastPart': [
+    { en: 'The sun has risen over the hills.', vi: 'Mặt trời đã mọc lên trên những ngọn đồi.' },
+    { en: 'Prices have risen again this month.', vi: 'Giá cả lại tăng trong tháng này.' },
+  ],
+  'run|pastPart': [
+    { en: 'I have run five kilometers today.', vi: 'Hôm nay tôi đã chạy năm ki-lô-mét.' },
+    { en: 'She has run this shop for years.', vi: 'Cô ấy đã điều hành cửa hàng này nhiều năm.' },
+  ],
+  'sew|pastPart': [
+    { en: 'The dress has been sewn by hand.', vi: 'Chiếc váy được may bằng tay.' },
+    { en: 'She has sewn a new curtain.', vi: 'Cô ấy đã may một cái rèm mới.' },
+  ],
+  'shake|pastPart': [
+    { en: 'He was badly shaken by the accident.', vi: 'Anh ấy hoảng loạn vì vụ tai nạn.' },
+    { en: 'They have shaken hands on the deal.', vi: 'Họ đã bắt tay chốt thỏa thuận.' },
+  ],
+  'show|pastPart': [
+    { en: 'She has shown great courage.', vi: 'Cô ấy đã thể hiện lòng dũng cảm lớn.' },
+    { en: 'The film has been shown many times.', vi: 'Bộ phim đã được chiếu nhiều lần.' },
+  ],
+  'shrink|pastPart': [
+    { en: 'My sweater has shrunk in the wash.', vi: 'Áo len của tôi bị co sau khi giặt.' },
+    { en: 'The company has shrunk in size.', vi: 'Công ty đã thu nhỏ quy mô.' },
+  ],
+  'stink|pastPart': [
+    { en: 'The kitchen has stunk all day.', vi: 'Nhà bếp bốc mùi cả ngày.' },
+    { en: 'His shoes have stunk since the match.', vi: 'Giày anh ấy hôi từ sau trận đấu.' },
+  ],
+  'swear|pastPart': [
+    { en: 'He has sworn to protect them.', vi: 'Anh ấy đã thề bảo vệ họ.' },
+    { en: 'The witness has been sworn in.', vi: 'Nhân chứng đã tuyên thệ.' },
+  ],
+  'swim|pastPart': [
+    { en: 'She has swum across the river.', vi: 'Cô ấy đã bơi qua sông.' },
+    { en: 'I have never swum in the sea.', vi: 'Tôi chưa bao giờ bơi ở biển.' },
+  ],
+  'tear|pastPart': [
+    { en: 'The page has been torn out.', vi: 'Trang giấy đã bị xé ra.' },
+    { en: 'He has torn his new jacket.', vi: 'Anh ấy đã làm rách áo khoác mới.' },
+  ],
+  'undertake|pastPart': [
+    { en: 'She has undertaken a big task.', vi: 'Cô ấy đã nhận một nhiệm vụ lớn.' },
+    { en: 'They have undertaken the repairs.', vi: 'Họ đã đảm nhận việc sửa chữa.' },
+  ],
+  'undo|pastPart': [
+    { en: 'The damage cannot be undone.', vi: 'Thiệt hại không thể khắc phục được.' },
+    { en: 'He has undone all my work.', vi: 'Anh ấy đã làm hỏng hết công việc của tôi.' },
+  ],
+  'wake|pastPart': [
+    { en: 'I have just woken up.', vi: 'Tôi vừa mới thức dậy.' },
+    { en: 'The baby has woken the whole house.', vi: 'Em bé làm cả nhà thức giấc.' },
+  ],
+  'weave|pastPart': [
+    { en: 'The basket has been woven by hand.', vi: 'Cái giỏ được đan bằng tay.' },
+    { en: 'She has woven a beautiful rug.', vi: 'Cô ấy đã dệt một tấm thảm đẹp.' },
+  ],
+  'withdraw|pastPart': [
+    { en: 'The money has been withdrawn.', vi: 'Số tiền đã được rút.' },
+    { en: 'He has withdrawn from the race.', vi: 'Anh ấy đã rút khỏi cuộc đua.' },
+  ],
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // 12) LÔ 2 — DANH TỪ SỐ NHIỀU BẤT QUY TẮC còn thiếu ở A1–B2
+  // ══════════════════════════════════════════════════════════════════════════
+  'aircraft|plural': [
+    { en: 'Three aircraft landed at the airport.', vi: 'Ba chiếc máy bay hạ cánh xuống sân bay.' },
+    { en: 'The airline has many aircraft.', vi: 'Hãng hàng không có nhiều máy bay.' },
+  ],
+  'analysis|plural': [
+    {
+      en: 'The scientists did several analyses.',
+      vi: 'Các nhà khoa học thực hiện nhiều phân tích.',
+    },
+    { en: 'These analyses took many weeks.', vi: 'Những phân tích này mất nhiều tuần.' },
+  ],
+  'appendix|plural': [
+    { en: 'The book has three appendices.', vi: 'Quyển sách có ba phụ lục.' },
+    { en: 'Read the appendices at the end.', vi: 'Hãy đọc các phụ lục ở cuối sách.' },
+  ],
+  'basis|plural': [
+    { en: 'There are two bases for this plan.', vi: 'Có hai cơ sở cho kế hoạch này.' },
+    { en: 'Both bases of the theory are strong.', vi: 'Cả hai nền tảng của lý thuyết đều vững.' },
+  ],
+  'calf|plural': [
+    { en: 'The cow has two calves.', vi: 'Con bò có hai con bê.' },
+    { en: 'The calves are drinking milk.', vi: 'Mấy con bê đang bú sữa.' },
+  ],
+  'crisis|plural': [
+    { en: 'The country faced many crises.', vi: 'Đất nước đối mặt nhiều cuộc khủng hoảng.' },
+    { en: 'Both crises were solved quickly.', vi: 'Cả hai khủng hoảng đều được giải quyết nhanh.' },
+  ],
+  'criterion|plural': [
+    { en: 'There are five criteria for the job.', vi: 'Có năm tiêu chí cho công việc này.' },
+    { en: 'All the criteria were met.', vi: 'Tất cả tiêu chí đều được đáp ứng.' },
+  ],
+  'curriculum|plural': [
+    { en: 'The school updated its curricula.', vi: 'Trường cập nhật các chương trình học.' },
+    {
+      en: 'Different curricula suit different students.',
+      vi: 'Các chương trình học khác nhau hợp với từng học sinh.',
+    },
+  ],
+  'deer|plural': [
+    { en: 'We saw three deer in the forest.', vi: 'Chúng tôi thấy ba con hươu trong rừng.' },
+    { en: 'The deer ran into the trees.', vi: 'Đàn hươu chạy vào rừng cây.' },
+  ],
+  'diagnosis|plural': [
+    { en: 'The doctor made two diagnoses.', vi: 'Bác sĩ đưa ra hai chẩn đoán.' },
+    { en: 'Both diagnoses were correct.', vi: 'Cả hai chẩn đoán đều đúng.' },
+  ],
+  'half|plural': [
+    { en: 'She cut the apple into two halves.', vi: 'Cô ấy cắt quả táo thành hai nửa.' },
+    { en: 'Both halves of the game were exciting.', vi: 'Cả hai hiệp đấu đều hấp dẫn.' },
+  ],
+  'hero|plural': [
+    { en: 'The soldiers are national heroes.', vi: 'Những người lính là anh hùng dân tộc.' },
+    { en: 'Children love stories about heroes.', vi: 'Trẻ em thích những câu chuyện về anh hùng.' },
+  ],
+  'index|plural': [
+    { en: 'The book has two indices.', vi: 'Quyển sách có hai bảng chỉ mục.' },
+    { en: 'The stock indices rose today.', vi: 'Các chỉ số chứng khoán tăng hôm nay.' },
+  ],
+  'loaf|plural': [
+    { en: 'She bought three loaves of bread.', vi: 'Cô ấy mua ba ổ bánh mì.' },
+    { en: 'The loaves are still warm.', vi: 'Những ổ bánh vẫn còn ấm.' },
+  ],
+  'matrix|plural': [
+    { en: 'The math problem uses two matrices.', vi: 'Bài toán dùng hai ma trận.' },
+    { en: 'We multiplied the matrices together.', vi: 'Chúng tôi nhân các ma trận với nhau.' },
+  ],
+  'nucleus|plural': [
+    { en: 'Atoms have nuclei at their center.', vi: 'Nguyên tử có hạt nhân ở trung tâm.' },
+    { en: 'The nuclei are very small.', vi: 'Các hạt nhân rất nhỏ.' },
+  ],
+  'ox|plural': [
+    { en: 'The farmer has two oxen.', vi: 'Người nông dân có hai con bò.' },
+    { en: 'The oxen pulled the heavy cart.', vi: 'Đôi bò kéo chiếc xe nặng.' },
+  ],
+  'phenomenon|plural': [
+    { en: 'These are natural phenomena.', vi: 'Đây là những hiện tượng tự nhiên.' },
+    {
+      en: 'Scientists study strange phenomena.',
+      vi: 'Các nhà khoa học nghiên cứu những hiện tượng lạ.',
+    },
+  ],
+  'quiz|plural': [
+    { en: 'We had two quizzes this week.', vi: 'Tuần này chúng tôi có hai bài kiểm tra nhỏ.' },
+    { en: 'The quizzes were quite easy.', vi: 'Các bài kiểm tra khá dễ.' },
+  ],
+  'radius|plural': [
+    { en: 'Draw two radii in the circle.', vi: 'Vẽ hai bán kính trong đường tròn.' },
+    { en: 'The radii are equal in length.', vi: 'Các bán kính bằng nhau về độ dài.' },
+  ],
+  'salmon|plural': [
+    { en: 'We caught three salmon in the river.', vi: 'Chúng tôi bắt được ba con cá hồi ở sông.' },
+    { en: 'The salmon swim upstream to lay eggs.', vi: 'Cá hồi bơi ngược dòng để đẻ trứng.' },
+  ],
+  'scarf|plural': [
+    { en: 'She has many colorful scarves.', vi: 'Cô ấy có nhiều chiếc khăn quàng sặc sỡ.' },
+    {
+      en: 'The scarves keep us warm in winter.',
+      vi: 'Những chiếc khăn giữ ấm cho chúng ta vào mùa đông.',
+    },
+  ],
+  'self|plural': [
+    { en: 'They found their true selves.', vi: 'Họ tìm thấy con người thật của mình.' },
+    {
+      en: 'We should believe in our better selves.',
+      vi: 'Chúng ta nên tin vào phần tốt đẹp trong mình.',
+    },
+  ],
+  'series|plural': [
+    { en: 'I watched two series last month.', vi: 'Tháng trước tôi xem hai bộ phim dài tập.' },
+    { en: 'Both series were very popular.', vi: 'Cả hai bộ phim đều rất nổi tiếng.' },
+  ],
+  'shelf|plural': [
+    { en: 'The books are on the shelves.', vi: 'Những quyển sách ở trên kệ.' },
+    { en: 'She cleaned all the shelves.', vi: 'Cô ấy lau sạch hết các kệ.' },
+  ],
+  'species|plural': [
+    { en: 'This forest has many species of birds.', vi: 'Khu rừng này có nhiều loài chim.' },
+    { en: 'Some species are in danger.', vi: 'Một số loài đang gặp nguy hiểm.' },
+  ],
+  'stimulus|plural': [
+    { en: 'The brain responds to stimuli.', vi: 'Não phản ứng với các kích thích.' },
+    {
+      en: 'Different stimuli cause different reactions.',
+      vi: 'Các kích thích khác nhau gây phản ứng khác nhau.',
+    },
+  ],
+  'thesis|plural': [
+    { en: 'The students wrote their theses.', vi: 'Các sinh viên viết luận văn của mình.' },
+    { en: 'Both theses were about history.', vi: 'Cả hai luận văn đều về lịch sử.' },
+  ],
+  'thief|plural': [
+    { en: 'The police caught two thieves.', vi: 'Cảnh sát bắt được hai tên trộm.' },
+    { en: 'The thieves ran away quickly.', vi: 'Bọn trộm bỏ chạy nhanh chóng.' },
+  ],
+  'trout|plural': [
+    { en: 'We caught five trout in the lake.', vi: 'Chúng tôi bắt được năm con cá hồi vân ở hồ.' },
+    { en: 'The trout live in cold water.', vi: 'Cá hồi vân sống ở vùng nước lạnh.' },
+  ],
+  'volcano|plural': [
+    { en: 'Indonesia has many volcanoes.', vi: 'Indonesia có nhiều núi lửa.' },
+    { en: 'The volcanoes are still active.', vi: 'Những ngọn núi lửa vẫn còn hoạt động.' },
+  ],
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // 13) LÔ 2 — SO SÁNH BẤT QUY TẮC (tính từ / trạng từ) còn thiếu ở A1–B2
+  // ══════════════════════════════════════════════════════════════════════════
+  'little|superlative': [
+    {
+      en: 'This is the least expensive shirt in the shop.',
+      vi: 'Đây là chiếc áo rẻ nhất trong cửa hàng.',
+    },
+    { en: 'He did the least work of everyone.', vi: 'Anh ấy làm ít việc nhất trong tất cả.' },
+  ],
+  'many|superlative': [
+    {
+      en: 'He has the most books in the library.',
+      vi: 'Anh ấy có nhiều sách nhất trong thư viện.',
+    },
+    {
+      en: 'She got the most points in the game.',
+      vi: 'Cô ấy được nhiều điểm nhất trong trò chơi.',
+    },
+  ],
+  'much|comparative': [
+    { en: 'I need to study more this week.', vi: 'Tuần này tôi cần học nhiều hơn.' },
+    { en: 'She works more than her brother.', vi: 'Cô ấy làm việc nhiều hơn anh trai mình.' },
+  ],
+  'much|superlative': [
+    { en: 'This dish costs the most on the menu.', vi: 'Món này đắt nhất trong thực đơn.' },
+    { en: 'He helped the most during the move.', vi: 'Anh ấy giúp nhiều nhất khi chuyển nhà.' },
+  ],
+  'badly|comparative': [
+    { en: 'He did worse on the second test.', vi: 'Anh ấy làm bài kiểm tra thứ hai tệ hơn.' },
+    { en: 'My cough got worse overnight.', vi: 'Cơn ho của tôi nặng hơn sau một đêm.' },
+  ],
+  'badly|superlative': [
+    {
+      en: 'Of all the teams, we played worst.',
+      vi: 'Trong tất cả các đội, chúng tôi chơi tệ nhất.',
+    },
+    {
+      en: 'He was hurt worst in the accident.',
+      vi: 'Anh ấy bị thương nặng nhất trong vụ tai nạn.',
+    },
+  ],
+  'well|comparative': [
+    { en: 'She sings better than me.', vi: 'Cô ấy hát hay hơn tôi.' },
+    { en: 'He feels better after resting.', vi: 'Anh ấy thấy khỏe hơn sau khi nghỉ ngơi.' },
+  ],
+  'well|superlative': [
+    { en: 'Of all the singers, she sang best.', vi: 'Trong tất cả ca sĩ, cô ấy hát hay nhất.' },
+    { en: 'He knows this city best.', vi: 'Anh ấy hiểu rõ thành phố này nhất.' },
+  ],
 }
