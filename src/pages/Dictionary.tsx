@@ -18,6 +18,7 @@ import WordOfTheDay from '../components/WordOfTheDay'
 import KaraokeText from '../components/KaraokeText'
 import Flashcard from '../components/Flashcard'
 import WordIllustration from '../components/WordIllustration'
+import WordFormsBlock from '../components/WordFormsBlock'
 import type { ExPair } from '../data/extra-examples'
 import { loadExtraExamples } from '../data/extraExamplesLoader'
 import type { DictEntry } from '../types'
@@ -425,6 +426,18 @@ export default function Dictionary() {
                             {e.ipa_vi && (
                               <p className="text-xs text-zinc-400 font-mono mb-2">{e.ipa_vi}</p>
                             )}
+
+                            {/* Các dạng biến thể của từ (số nhiều, các thì, so sánh…) */}
+                            <WordFormsBlock
+                              forms={e.forms}
+                              base={e.base}
+                              word={e.word}
+                              isA={isA}
+                              onPick={(w) => {
+                                setQuery(w)
+                                setPosFilter(null)
+                              }}
+                            />
 
                             <WordIllustration word={e.word} />
 

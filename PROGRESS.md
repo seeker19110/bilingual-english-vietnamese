@@ -1027,11 +1027,25 @@ papa→A1, congratulations→A2, buck→B1, demon→B1, gosh→B1, jerk→B2`. C
 
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
-- **Bổ sung dạng biến thể của từ vào từ điển (word forms)** — người dùng yêu cầu 2026-07-06:
-  số nhiều, V-s/V-ing/V2/V3, so sánh hơn/nhất hiển thị NGAY TRONG phần nghĩa của từ gốc,
-  ở cả trang Từ điển lẫn thẻ học từ của lộ trình; search hiểu biến thể (books → book).
-  **Kế hoạch chi tiết 5 bước: `docs/research/bo-sung-dang-bien-the-tu-dien.md`** — đang chờ
-  người dùng duyệt kế hoạch trước khi code (nhánh `claude/dictionary-word-expansion-hxheuf`).
+- **Bổ sung dạng biến thể của từ vào từ điển (word forms)** — người dùng yêu cầu 2026-07-06.
+  Kế hoạch 5 bước: `docs/research/bo-sung-dang-bien-the-tu-dien.md` (PR #213 đã merge).
+  - [x] **Bước 1 — Nền dữ liệu**: thêm `WordForms`/`forms`/`base` vào `DictEntry`
+        (`src/types.ts` + `api/_lib/dictionaryData.ts`); bảng bất quy tắc soạn tay
+        (`src/data/irregularForms.ts`: 153 động từ, 65 số nhiều, 8 so sánh, 86 không đếm được,
+        23 plurale-tantum, đuôi ghép -f/-man); quy tắc chính tả thuần (`src/lib/wordForms.ts`,
+        35 unit test); script sinh + kiểm định chéo (`scripts/gen-word-forms.ts`,
+        `npm run gen:word-forms`). **8.740 từ có forms, 200 bất quy tắc**; đã rà mẫu tay,
+        0 lỗi chia đôi/không đếm được/plurale-tantum, kiểm chéo 98 dạng bất quy tắc khớp
+        entry đã soạn tay (còn 1 cảnh báo could/can là modal — đúng chủ ý).
+  - [x] **Bước 3 — UI trang Từ điển**: khối "Các dạng của từ"
+        (`src/components/WordFormsBlock.tsx`, 6 render test) trong thẻ kết quả tra từ — chip
+        song ngữ + phát âm từng dạng, đánh dấu bất quy tắc, danh từ không đếm được ghi rõ.
+  - [x] **Bước 5 — Khi HỌC từ mới**: gắn `WordFormsBlock` vào `WordCard` (lộ trình) và
+        `Flashcard` (Từ điển) — hiện sau khi lật thẻ.
+  - [ ] **Bước 2 — Vá dạng bất quy tắc còn thiếu + gắn `base`**: thêm ~40-60 entry biến thể
+        còn thiếu (hid, woken, geese, leaves…) và điền trường `base` cho entry biến thể để hiện
+        link "Xem từ gốc" (UI đã sẵn sàng, chỉ chờ dữ liệu `base`).
+  - [ ] **Bước 4 — Search hiểu biến thể**: tra "books"/"played"/"went" trả về từ gốc.
 - ~~Chạy thật `NO_AI_FALLBACK=1 npm run tag:cefr` trên file gốc~~ ĐÃ XONG (2026-07-05) — 100%
   từ điển đã có nhãn CEFR thật, không cần AI. ~~Badge CEFR trên trang Từ điển~~ ĐÃ XONG
   (2026-07-05, PR #207) — hiển thị badge A1-C2 cạnh badge loại từ trong kết quả tra từ.
