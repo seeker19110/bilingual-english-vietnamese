@@ -13,8 +13,8 @@
   (https://en-vi.donghanhcungban.com). Đang **áp bộ khung** lên dự án có sẵn
   theo `docs/framework/AP-DUNG-vao-du-an-co-san.md` — Lớp 1 (hàng rào) xong;
   Lớp 2 (E2E, a11y, bundle-size, i18n Login) đã đóng — còn rà nợ kỹ thuật
-  nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro, chạy thật
-  script gắn nhãn CEFR).
+  nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro). Cả 2 đợt bổ
+  sung từ điển theo chuẩn CEFR-J/Octanove (A1→C2) đã hoàn tất.
 
 ## Đã xong (đợt áp khung)
 
@@ -956,15 +956,38 @@ xanh + lái app thật bằng Playwright ở khổ mobile trước khi commit.
   JSON tĩnh, không nằm trong bundle) đều xanh.
 - **→ Đợt 1 (A1-B2) đã HOÀN TẤT HẲN** (cả từ đơn lẫn cụm nhiều từ). Còn lại: Đợt 2 (C1-C2).
 
-## ⏭️ Còn lại: Đợt 2 (C1-C2) — làm ở phiên sau
+## Đã xong (hoàn tất Đợt 2 — bổ sung 430 từ CEFR-J/Octanove C1/C2 còn thiếu — 2026-07-06)
 
-> Việc lớn, làm qua NHIỀU phiên. Nếu hit session limit giữa chừng: dừng, KHÔNG tự relaunch hàng
-> loạt agent, ghi lại đúng đã làm tới đâu rồi chờ người dùng (theo CLAUDE.md mục 3).
-
-- **Đợt 2 — C1→C2 (1.407 từ)**: làm sau khi Đợt 1 xong hẳn (kể cả phần cụm từ), PR riêng, quy
-  trình tương tự (đối chiếu Octanove C1/C2 wordlist → lọc trùng/rác → viết nội dung theo lô →
-  gộp → freq → verify → commit). Nhớ chạy lại kiểm tra script đối chiếu thanh điệu trước khi gộp
-  mỗi lô — bắt lỗi hiệu quả, chi phí thấp.
+- **Bối cảnh:** Đợt 2 làm qua nhiều phiên (batch 1-3 ở phiên trước, batch 4-14 ở phiên này) —
+  đối chiếu wordlist Octanove C1/C2 (2.137 dòng) với từ điển hiện có, loại 60 cặp trùng pos
+  trong chính wordlist + 4 dòng lỗi chính tả nguồn (`chauffer`→đã có `chauffeur`, `minster`→đã
+  có `minister`, `porten`→đã có `portent`) + biến thể chính tả Anh/Mỹ (`neutralize/neutralise`…
+  chỉ giữ 1 dạng), còn đúng **430 từ thật sự thiếu hẳn** (201 C1 / 229 C2) — khớp gần đúng con số
+  ~432 ước tính ở phiên trước (chênh 2 từ do cách gộp trùng khác biệt nhỏ, không ảnh hưởng).
+- **Viết nội dung bằng 5 agent song song** (batch 10-14, ~86 từ/batch) + 1 batch viết tay (batch
+  14, do agent tương ứng bị treo giữa batch vì hết giới hạn phiên) — mỗi từ đủ 8 field
+  (`word/pos/vi/ex_en/ex_vi/ipa_en/ipa_vi/level`), giữ nguyên `pos`/`level` theo Octanove.
+- **Tự động hoá kiểm tra thanh điệu `ipa_vi`** (khác cách làm tay của các đợt trước): dựng
+  **lookup table 1.317 âm tiết tiếng Việt → phiên âm chuẩn**, rút từ chính 11.632 từ có sẵn
+  trong từ điển (âm tiết ĐẦU của `vi` → phần `ipa_vi` trước hậu tố thanh, đã lọc entry tự thân
+  nhất quán). Script tự động ĐỐI CHIẾU + SỬA `ipa_vi` của 430 từ mới theo lookup này (83/430 entry
+  được sửa lại — chủ yếu batch do 1 agent chọn nhầm âm tiết trong cụm "một cách..."), phần còn
+  lại (không có trong lookup) verify tay bằng script đối chiếu tông y như các đợt trước. Kết quả
+  cuối: **0 lỗi thanh điệu / 430 entry, 0 trùng lặp với từ điển hiện có**.
+- Phát hiện thêm 1 lỗi chính tả nguồn Octanove: `unscathing` (không phải từ tiếng Anh thật) →
+  sửa thành `unscathed` (đúng nghĩa "không hề hấn gì").
+- Phân bổ 430 entry lên 10 chunk theo round-robin (giữ chunk cân bằng, mỗi chunk +43). Chạy
+  `FREQ_LIST=<subtlex> npm run tag:freq`: **371/430 từ mới có freq thật** (SUBTLEX-US), 59 từ
+  hiếm không có trong wordlist giữ nguyên (xếp cuối phần Mở rộng, đúng thiết kế có sẵn).
+  Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.31/116 kB JS) đều xanh.
+  **Từ điển: 11.632 → 12.062 từ.**
+- **→ Đợt 2 (C1-C2) đã HOÀN TẤT HẲN.** Cả 2 đợt bổ sung từ điển theo chuẩn CEFR-J/Octanove (A1→C2)
+  nay đã xong 100%.
+- ⚠️ **Còn lại (quyết định sản phẩm, CHƯA làm):** chạy lại `scripts/gen-cefr-c1c2-vocab.ts` để 430
+  từ mới có thể vào các vòng từ vựng C1/C2 của lộ trình học — CHƯA làm trong PR này vì script này
+  sinh lại TOÀN BỘ ID vòng C1/C2 (43+98 vòng hiện có), có thể đổi cấu trúc vòng và ảnh hưởng tiến
+  độ SRS/lộ trình của người dùng thật đang học cấp C1/C2 (rủi ro tương tự đã ghi nhận ở đợt mở
+  cấp C1-C2 trước, PR #209) — cần hỏi người dùng trước khi chạy, theo CLAUDE.md mục 12.
 
 ## Tiếp theo
 
