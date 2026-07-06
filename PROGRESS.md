@@ -1021,6 +1021,30 @@ papa→A1, congratulations→A2, buck→B1, demon→B1, gosh→B1, jerk→B2`. C
   …→ruby(3873), tăng dần đúng thứ tự). Vòng nền tảng A1-B2 (soạn tay) CỐ Ý không sắp theo tần suất
   mà theo chủ đề sư phạm (vd "hello" phải học trước "nice to meet you") — không đổi.
 
+## Đã xong (kiểm tra + vá nốt phần thiếu thật của CEFR-J/Octanove — 2026-07-06)
+
+- **Yêu cầu người dùng**: "liệt kê các từ không có trong từ điển trong 5000 từ theo tiêu chuẩn
+  CEFR" → sau khi hỏi rõ nguồn ("Words-CEFR-Dataset" tần suất Google Ngram vs "CEFR-J/Octanove"
+  sư phạm), thử cả 2: đối chiếu top 5.000/10.000 từ tần suất cao nhất (Words-CEFR-Dataset, tải
+  bản gốc 248.185 dòng từ GitHub Maximax67) cho thấy càng mở rộng càng lẫn nhiều rác (danh từ
+  riêng dù đã lọc NNP/NNPS, viết tắt/mã đơn vị, thuật ngữ luật/y khoa/hoá học quá hẹp, thậm chí
+  vài từ tục) — **không dùng nguồn này để thêm từ**.
+- **Đối chiếu TOÀN BỘ CEFR-J (A1-B2, 6.867 headword) + Octanove (C1-C2) — 8.653 headword duy
+  nhất — với từ điển dự án**: phát hiện lỗi so khớp ban đầu (CEFR-J gộp biến thể Anh/Mỹ vào 1
+  headword dạng `"color/colour"`, so chuỗi y hệt bị trật dù cả 2 biến thể đã có trong từ điển) →
+  sửa lại bằng cách tách từng biến thể trước khi so khớp. Kết quả cuối: chỉ **11 từ thật sự
+  thiếu** (phần còn lại là mảnh rút gọn ngữ pháp `'m/'re/'s`, lỗi gán nhãn `smith`, hoặc lỗi
+  chính tả nguồn CEFR-J/Octanove đã sửa từ đợt trước — `chauffer/porten/unscathing`).
+- Thêm **11 từ**: `cheque, id` (A2) · `afterwards, cv, englishman` (B1) · `facilities, lyrics,
+means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J/Octanove gốc, `ipa_vi`
+  tra qua lookup âm tiết đầu dựng từ chính từ điển (cùng cách các đợt trước). Từ điển: 12.062 →
+  12.073. Build/typecheck/lint (0 cảnh báo)/format/test (201/201)/size-limit (114.31/116 kB) đều
+  xanh.
+- **→ CEFR-J/Octanove coi như đã phủ 100% (99,87%, phần "thiếu" còn lại không phải từ vựng
+  thật).** 10/11 từ (A2-B2) tự động vào "Mở rộng" (đọc thẳng từ điển). Riêng `minster` (C2) CHƯA
+  chạy lại `gen-cefr-c1c2-vocab.ts` để vào lộ trình — để dành gộp đợt bổ sung nội dung sau (chỉ 1
+  từ, không đáng xáo trộn thứ tự nhóm từ đang học dở ngay bây giờ).
+
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
