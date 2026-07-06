@@ -7,12 +7,19 @@
 import type { Circle } from './curriculum'
 import data from './cefrC1C2Vocab.json'
 
-// Các vòng từ vựng C1 + C2 (đã lọc + sắp theo tần suất).
+// Các vòng từ vựng C1 + C2 (đã lọc + gom theo chủ đề/loại từ + sắp theo tần suất).
 export const CEFR_C1C2_CIRCLES = data.circles as unknown as Circle[]
 
-// id các vòng gom theo từng "Phần" (unit) của cấp — dùng ở src/data/cefrAdvanced.ts.
-export const C1_UNIT_CIRCLE_IDS = data.c1UnitCircleIds as string[][]
-export const C2_UNIT_CIRCLE_IDS = data.c2UnitCircleIds as string[][]
+// 1 "Phần" (unit) TỪ VỰNG theo chủ đề: gom vài vòng cùng chủ đề (hoặc cùng loại từ).
+export interface VocabUnitDef {
+  id: string
+  titleVi: string
+  titleEn: string
+  emoji: string
+  circleIds: string[]
+}
+export const C1_VOCAB_UNITS = data.c1Units as VocabUnitDef[]
+export const C2_VOCAB_UNITS = data.c2Units as VocabUnitDef[]
 
 // Số từ mỗi cấp (để hiển thị/thống kê nếu cần).
 export const C1_WORD_COUNT = data.c1WordCount as number

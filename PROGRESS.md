@@ -346,6 +346,17 @@ wordSync?.msgId===...` — hết phát (mute/gửi tin mới/dừng) tự tắt 
   xanh; E2E a11y thêm `/learning-path/c1` — 0 critical/serious ở 4 theme; lái app
   thật (Playwright) xác nhận bản đồ 6 cấp + trang C1/C2 mở khóa render đủ vòng từ
   vựng/ngữ pháp/hội thoại.
+- **Bổ sung (2 việc tùy chọn — cùng ngày):**
+  - **Gom từ vựng C1/C2 THEO CHỦ ĐỀ** thay vì đánh số theo tần suất: generator phân
+    từ vào 10 chủ đề (Kinh doanh/Luật pháp/Khoa học/Y học/Môi trường/Nghệ thuật/Xã
+    hội/Cảm xúc/Tư duy/Giao tiếp) qua nghĩa TV + gốc từ tiếng Anh; ~7% khớp chủ đề,
+    còn lại gom theo loại từ (Danh/Động/Tính-trạng từ nâng cao), nhóm lớn cắt ≤5
+    vòng/Phần. Mô hình unit đổi: Phần NGỮ PHÁP (kèm hội thoại) trước, Phần TỪ VỰNG
+    theo chủ đề sau (`cefrC1C2Vocab.json` xuất `c1Units`/`c2Units`; `buildUnits` ghép).
+  - **Hội thoại cho MỌI Phần ngữ pháp C1/C2** (12 hội thoại, mỗi Phần 1 hội thoại
+    dùng đúng cấu trúc bài) → dialogues.json 65 chủ đề / 139 hội thoại.
+  - Verify lại: gate xanh (test 201/201) + E2E a11y `/learning-path/c1` 4 theme +
+    lái app thật xác nhận Phần ngữ pháp (có hội thoại) + Phần từ vựng chủ đề render đúng.
 
 ## Đã xong (đợt cải tổ lộ trình CEFR — 2026-07-03)
 

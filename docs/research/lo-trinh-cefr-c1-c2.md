@@ -95,8 +95,24 @@ Cùng chuẩn "làm giàu" như A1–B2 (cấu trúc + giải thích TV + ví d�
   đúng (vòng từ vựng + bài ngữ pháp có cấu trúc + hội thoại); mở 1 bài ngữ pháp C1
   thấy đủ nội dung.
 
-## 8. Còn có thể làm tiếp (không bắt buộc)
+## 8. Bổ sung sau (đã làm — 2 việc tùy chọn)
 
-- Bổ sung thêm hội thoại cho các Phần C1/C2 còn lại (hiện có 4 hội thoại mẫu).
-- Gom vòng từ vựng C1/C2 theo CHỦ ĐỀ thay vì đánh số theo tần suất (cần công sức
-  phân loại — hiện dùng freq, nhất quán với mục "Mở rộng").
+**(a) Gom vòng từ vựng theo CHỦ ĐỀ.** Generator phân mỗi từ vào 1 nhóm dựa trên
+NGHĨA tiếng Việt (khớp từ khóa) + gốc từ tiếng Anh đặc trưng (vd `-ology`→khoa học,
+`juris-`→luật): 10 chủ đề (Kinh doanh, Luật pháp, Khoa học, Y học, Môi trường, Nghệ
+thuật, Xã hội, Cảm xúc, Tư duy, Giao tiếp). Từ không khớp chủ đề (đa số từ nâng cao
+trừu tượng/chung — chỉ ~7% khớp được chủ đề) gom theo LOẠI TỪ (Danh/Động/Tính-trạng
+từ nâng cao). Nhóm lớn cắt thành nhiều "Phần" ≤5 vòng để không có unit khổng lồ.
+→ Mô hình unit C1/C2 đổi: **Phần NGỮ PHÁP** (soạn tay, kèm hội thoại, không có bước
+từ vựng) đứng trước, rồi **Phần TỪ VỰNG theo chủ đề** (không có ngữ pháp) — mỗi Phần
+mạch lạc. `buildUnits()` trong `cefrAdvanced.ts` ghép 2 loại; `cefrC1C2Vocab.json`
+xuất thêm `c1Units`/`c2Units` (mô tả Phần từ vựng).
+
+**(b) Thêm hội thoại cho MỌI Phần ngữ pháp.** Mỗi bài ngữ pháp C1/C2 (6 Phần C1 + 6
+Phần C2) nay có 1 hội thoại minh họa dùng chính cấu trúc bài đó (`dialogues.ts`,
+tổng **12 hội thoại C1/C2**, dialogues.json 65 chủ đề / 139 hội thoại).
+
+## 9. Còn có thể làm tiếp (không bắt buộc)
+
+- Nâng độ phủ phân loại chủ đề (hiện ~7% từ khớp chủ đề; còn lại theo loại từ) —
+  cần từ điển chủ đề chi tiết hơn hoặc phân loại bằng AI.

@@ -4062,6 +4062,283 @@ export const DIALOGUES: Record<string, Dialogue[]> = {
       'male',
     ),
   ],
+
+  // ── C1 — thêm hội thoại cho các Phần ngữ pháp còn lại ──
+  'c1-cleft': [
+    dlg(
+      'Ai xứng đáng giải thưởng?',
+      'Who deserves the prize?',
+      [
+        d('A', 'It was Mai who led the whole project.', 'Chính Mai là người dẫn dắt cả dự án.'),
+        d(
+          'B',
+          'True, but what really mattered was the teamwork.',
+          'Đúng, nhưng điều thực sự quan trọng là sự phối hợp.',
+        ),
+        d(
+          'A',
+          'It was her idea that saved us three months.',
+          'Chính ý tưởng của cô ấy giúp tiết kiệm ba tháng.',
+        ),
+        d(
+          'B',
+          'What impressed me most was how calm she stayed.',
+          'Điều làm tôi ấn tượng nhất là cô ấy luôn bình tĩnh.',
+        ),
+        d(
+          'A',
+          'All she asked for was a fair chance.',
+          'Tất cả những gì cô ấy xin chỉ là một cơ hội công bằng.',
+        ),
+        d('B', 'Then it is Mai who should get the prize.', 'Vậy chính Mai nên nhận giải.'),
+      ],
+      sp('Quân', 'Quan'),
+      sp('Hương', 'Huong'),
+      'male',
+      'female',
+    ),
+  ],
+  'c1-verb-patterns': [
+    dlg(
+      'Chuyện cũ và thói quen',
+      'Old habits and memories',
+      [
+        d('A', 'I remember meeting you at university.', 'Tôi nhớ đã gặp bạn ở đại học.'),
+        d(
+          'B',
+          'Me too! But remember to bring the photos next time.',
+          'Tôi cũng thế! Nhưng nhớ mang ảnh vào lần sau nhé.',
+        ),
+        d('A', 'I finally stopped smoking last year.', 'Cuối cùng tôi đã bỏ thuốc năm ngoái.'),
+        d(
+          'B',
+          'Well done. I stopped to think about quitting too.',
+          'Giỏi lắm. Tôi cũng dừng lại để nghĩ đến việc bỏ.',
+        ),
+        d(
+          'A',
+          "I regret not starting sooner, but I don't regret trying.",
+          'Tôi tiếc vì không bắt đầu sớm hơn, nhưng không tiếc vì đã thử.',
+        ),
+        d(
+          'B',
+          'Why not try using an app to stay motivated?',
+          'Sao không thử dùng ứng dụng để giữ động lực?',
+        ),
+      ],
+      sp('Đạt', 'Dat'),
+      sp('Vy', 'Vy'),
+      'male',
+      'female',
+    ),
+  ],
+  'c1-subjunctive': [
+    dlg(
+      'Lời khuyên của bác sĩ',
+      "The doctor's advice",
+      [
+        d('A', 'The doctor suggested that I rest more.', 'Bác sĩ khuyên tôi nghỉ ngơi nhiều hơn.'),
+        d(
+          'B',
+          'It is essential that you take the medicine on time.',
+          'Điều cốt yếu là bạn uống thuốc đúng giờ.',
+        ),
+        d('A', 'I wish I had seen him earlier.', 'Ước gì tôi đi khám sớm hơn.'),
+        d(
+          'B',
+          'He insisted that you not skip any appointment.',
+          'Ông ấy nhấn mạnh bạn đừng bỏ buổi hẹn nào.',
+        ),
+        d('A', 'If only I had listened to my body.', 'Giá mà tôi đã lắng nghe cơ thể mình.'),
+        d(
+          'B',
+          'It is important that you stay positive now.',
+          'Điều quan trọng bây giờ là bạn giữ tinh thần lạc quan.',
+        ),
+      ],
+      sp('Trang', 'Trang'),
+      sp('Sơn', 'Son'),
+      'female',
+      'male',
+    ),
+  ],
+  'c1-cohesion': [
+    dlg(
+      'Chuyến đi dù trời mưa',
+      'A trip despite the rain',
+      [
+        d(
+          'A',
+          'Despite the rain, the trip was wonderful.',
+          'Dù trời mưa, chuyến đi vẫn tuyệt vời.',
+        ),
+        d('B', 'Although we got wet, nobody complained.', 'Mặc dù bị ướt, không ai phàn nàn cả.'),
+        d(
+          'A',
+          'I loved the mountains, whereas you preferred the beach.',
+          'Tôi thích núi, trong khi bạn thích biển hơn.',
+        ),
+        d(
+          'B',
+          'The road was hard; however, the view was worth it.',
+          'Đường khó đi; tuy nhiên, cảnh đẹp rất đáng.',
+        ),
+        d('A', 'In spite of being tired, I would go again.', 'Dù mệt, tôi vẫn muốn đi lần nữa.'),
+        d(
+          'B',
+          'So would I. Next time, even in the rain!',
+          'Tôi cũng vậy. Lần sau, kể cả trời mưa!',
+        ),
+      ],
+      sp('Ngọc', 'Ngoc'),
+      sp('Phong', 'Phong'),
+      'female',
+      'male',
+    ),
+  ],
+
+  // ── C2 — thêm hội thoại cho các Phần ngữ pháp còn lại ──
+  'c2-ellipsis': [
+    dlg(
+      'Cùng sở thích',
+      'Sharing tastes',
+      [
+        d('A', 'I love classical music.', 'Tôi thích nhạc cổ điển.'),
+        d('B', 'So do I. And jazz too.', 'Tôi cũng vậy. Và cả jazz nữa.'),
+        d('A', "I can't stand loud parties.", 'Tôi không chịu nổi tiệc ồn ào.'),
+        d('B', 'Neither can I, to be honest.', 'Thành thật thì tôi cũng thế.'),
+        d('A', "If you'd like to leave early, do so.", 'Nếu bạn muốn về sớm thì cứ về.'),
+        d(
+          'B',
+          "I might, but I haven't decided yet. Have you?",
+          'Có thể, nhưng tôi chưa quyết. Còn bạn?',
+        ),
+        d(
+          'A',
+          "I have, actually. I'll stay a bit longer.",
+          'Tôi quyết rồi. Tôi sẽ ở lại thêm chút.',
+        ),
+      ],
+      sp('Mai', 'Mai'),
+      sp('Hùng', 'Hung'),
+      'female',
+      'male',
+    ),
+  ],
+  'c2-nominalization': [
+    dlg(
+      'Báo cáo nghiên cứu',
+      'A research report',
+      [
+        d(
+          'A',
+          'The introduction of the new method improved accuracy.',
+          'Việc áp dụng phương pháp mới cải thiện độ chính xác.',
+        ),
+        d(
+          'B',
+          'Yes, the improvement in results was significant.',
+          'Đúng, sự cải thiện về kết quả là đáng kể.',
+        ),
+        d(
+          'A',
+          'Her refusal to cut corners made the difference.',
+          'Việc cô ấy từ chối làm ẩu đã tạo nên khác biệt.',
+        ),
+        d(
+          'B',
+          'The reduction in errors surprised the whole team.',
+          'Việc giảm lỗi khiến cả nhóm bất ngờ.',
+        ),
+        d(
+          'A',
+          'Our decision to retest everything paid off.',
+          'Quyết định kiểm tra lại mọi thứ của chúng ta rất đáng.',
+        ),
+        d(
+          'B',
+          'A clear demonstration of good science.',
+          'Một minh chứng rõ ràng cho khoa học tốt.',
+        ),
+      ],
+      sp('Tâm', 'Tam'),
+      sp('Khoa', 'Khoa'),
+      'female',
+      'male',
+    ),
+  ],
+  'c2-participle': [
+    dlg(
+      'Buổi cắm trại',
+      'The camping trip',
+      [
+        d(
+          'A',
+          'Not knowing the trail, we asked a ranger.',
+          'Vì không biết đường mòn, chúng tôi hỏi kiểm lâm.',
+        ),
+        d(
+          'B',
+          'The sun having set, we pitched the tent quickly.',
+          'Mặt trời đã lặn, chúng tôi dựng lều thật nhanh.',
+        ),
+        d(
+          'A',
+          'Exhausted, I fell asleep in minutes.',
+          'Kiệt sức, tôi ngủ thiếp đi chỉ trong vài phút.',
+        ),
+        d(
+          'B',
+          'The fire lit, we shared stories all night.',
+          'Lửa đã nhóm, chúng tôi kể chuyện suốt đêm.',
+        ),
+        d(
+          'A',
+          'Weather permitting, we will climb higher tomorrow.',
+          'Nếu thời tiết cho phép, mai ta sẽ leo cao hơn.',
+        ),
+        d('B', 'The trip over, we already miss it.', 'Chuyến đi kết thúc, mà ta đã thấy nhớ rồi.'),
+      ],
+      sp('Yến', 'Yen'),
+      sp('Kiên', 'Kien'),
+      'female',
+      'male',
+    ),
+  ],
+  'c2-formal-subjunctive': [
+    dlg(
+      'Quyết định khó khăn',
+      'A hard decision',
+      [
+        d(
+          'A',
+          'The budget is tight. Be that as it may, we must deliver.',
+          'Ngân sách eo hẹp. Dù vậy đi nữa, ta vẫn phải hoàn thành.',
+        ),
+        d(
+          'B',
+          'Come what may, the team will stand together.',
+          'Dù có chuyện gì, cả nhóm sẽ sát cánh.',
+        ),
+        d('A', "Let's write everything down lest we forget.", 'Hãy ghi lại mọi thứ kẻo quên.'),
+        d(
+          'B',
+          'If they cut funding, then so be it — we adapt.',
+          'Nếu họ cắt tài trợ thì cũng đành vậy — ta thích nghi.',
+        ),
+        d(
+          'A',
+          'Agreed. Be that as it may, quality comes first.',
+          'Đồng ý. Dù thế nào, chất lượng vẫn trên hết.',
+        ),
+        d('B', 'Come what may, we finish this properly.', 'Dù có chuyện gì, ta làm cho tử tế.'),
+      ],
+      sp('Dũng', 'Dung'),
+      sp('Lệ', 'Le'),
+      'male',
+      'female',
+    ),
+  ],
 }
 
 // Tiện ích: lấy danh sách hội thoại của 1 bài (rỗng nếu chưa có).

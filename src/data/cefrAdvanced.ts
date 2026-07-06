@@ -17,7 +17,7 @@
 // ──────────────────────────────────────────────────────────────────────────
 
 import type { CefrLevel, CefrUnit, GrammarLesson, Example, CommonMistake, QuizItem } from './cefr'
-import { C1_UNIT_CIRCLE_IDS, C2_UNIT_CIRCLE_IDS } from './cefrC1C2Vocab'
+import { C1_VOCAB_UNITS, C2_VOCAB_UNITS, type VocabUnitDef } from './cefrC1C2Vocab'
 
 // Helper rút gọn (bản sao của cefr.ts — dùng type-only import nên phải tự khai báo).
 const ex = (en: string, vi: string): Example => ({ en, vi })
@@ -42,42 +42,31 @@ interface GrammarUnitMeta {
   grammar: GrammarLesson[]
 }
 
-// Ghép các Phần (unit) của cấp nâng cao: mỗi Phần = 1 nhóm vòng từ vựng (sinh tự
-// động) + (nếu có) 1 nhóm bài ngữ pháp. Nếu số nhóm từ vựng NHIỀU hơn số Phần ngữ
-// pháp → các Phần dư chỉ có từ vựng ("Từ vựng nâng cao N"). Nhờ vậy TẤT CẢ vòng từ
-// vựng đều được gắn vào cấp (không bỏ sót), UI tự bỏ qua bước thiếu.
-function buildUnits(
-  prefix: string,
-  grammarUnits: GrammarUnitMeta[],
-  circleGroups: string[][],
-): CefrUnit[] {
-  const n = Math.max(grammarUnits.length, circleGroups.length)
-  const units: CefrUnit[] = []
-  for (let i = 0; i < n; i++) {
-    const g = grammarUnits[i]
-    const ids = circleGroups[i] ?? []
-    if (g) {
-      units.push({
-        id: g.id,
-        titleVi: g.titleVi,
-        titleEn: g.titleEn,
-        emoji: g.emoji,
-        grammar: g.grammar,
-        vocabCircleIds: ids,
-      })
-    } else {
-      const k = i - grammarUnits.length + 1
-      units.push({
-        id: `${prefix}-vocab-${k}`,
-        titleVi: `Từ vựng nâng cao ${k}`,
-        titleEn: `Advanced vocabulary ${k}`,
-        emoji: '📚',
-        grammar: [],
-        vocabCircleIds: ids,
-      })
-    }
-  }
-  return units
+// Ghép các Phần (unit) của cấp nâng cao. Khác A1–B2 (mỗi Phần trộn từ vựng + ngữ
+// pháp): ở C1/C2, TỪ VỰNG gom theo CHỦ ĐỀ (sinh tự động) nên tách riêng khỏi ngữ
+// pháp cho mạch lạc:
+//   • Trước: các Phần NGỮ PHÁP (soạn tay) — kèm hội thoại, không có bước từ vựng.
+//   • Sau:   các Phần TỪ VỰNG theo chủ đề (Kinh doanh, Khoa học… rồi danh/động/
+//            tính-trạng từ nâng cao) — không có bước ngữ pháp.
+// UI (UnitSection) tự bỏ qua bước nào không có.
+function buildUnits(grammarUnits: GrammarUnitMeta[], vocabUnits: VocabUnitDef[]): CefrUnit[] {
+  const grammar: CefrUnit[] = grammarUnits.map((g) => ({
+    id: g.id,
+    titleVi: g.titleVi,
+    titleEn: g.titleEn,
+    emoji: g.emoji,
+    grammar: g.grammar,
+    vocabCircleIds: [],
+  }))
+  const vocab: CefrUnit[] = vocabUnits.map((v) => ({
+    id: v.id,
+    titleVi: v.titleVi,
+    titleEn: v.titleEn,
+    emoji: v.emoji,
+    grammar: [],
+    vocabCircleIds: v.circleIds,
+  }))
+  return [...grammar, ...vocab]
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -941,7 +930,7 @@ export const C1_LEVEL: CefrLevel = {
     'Diễn đạt trôi chảy, tự nhiên và linh hoạt; hiểu văn bản dài, phức tạp và nắm được hàm ý.',
   accent: 'rose',
   canDo: C1_CAN_DO,
-  units: buildUnits('c1', C1_GRAMMAR_UNITS, C1_UNIT_CIRCLE_IDS),
+  units: buildUnits(C1_GRAMMAR_UNITS, C1_VOCAB_UNITS),
 }
 
 export const C2_LEVEL: CefrLevel = {
@@ -953,5 +942,5 @@ export const C2_LEVEL: CefrLevel = {
     'Hiểu hầu như mọi thứ dễ dàng, diễn đạt chính xác và tinh tế như người bản xứ có học vấn cao.',
   accent: 'cyan',
   canDo: C2_CAN_DO,
-  units: buildUnits('c2', C2_GRAMMAR_UNITS, C2_UNIT_CIRCLE_IDS),
+  units: buildUnits(C2_GRAMMAR_UNITS, C2_VOCAB_UNITS),
 }
