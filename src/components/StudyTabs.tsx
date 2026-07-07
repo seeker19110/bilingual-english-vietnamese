@@ -52,6 +52,8 @@ import {
   findCircleOfWord,
   getCircleProgress,
   getCefrLevelOfCircle,
+  isQuizPass,
+  QUIZ_PASS_THRESHOLD_PCT,
 } from '../lib/curriculum'
 import { getDialogues } from '../data/dialoguesLoader'
 import type { Dialogue } from '../data/dialogues'
@@ -539,38 +541,40 @@ export function TodayLesson({
   // ── Mini-quiz mở batch mới ────────────────────────────────────────────
   if (phase === 'mini-quiz') {
     const q = quizQs[quizIdx]
-    const allRight = quizAns.length === quizQs.length && quizAns.every(Boolean)
+    const score = quizAns.filter(Boolean).length
+    const passed = quizAns.length === quizQs.length && isQuizPass(score, quizQs.length)
 
     if (quizDone) {
-      if (allRight) {
+      if (passed) {
         return (
           <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-3">
             <p className="text-4xl">🏆</p>
             <p className="text-white font-semibold">
-              {isA ? 'Xuất sắc! 100% đúng!' : 'Perfect! 100% correct!'}
+              {isA
+                ? `Xuất sắc! ${score}/${quizQs.length} đúng!`
+                : `Great! ${score}/${quizQs.length} correct!`}
             </p>
             <p className="text-sm text-zinc-400">
               {isA
-                ? 'Bạn đã mở được 20 từ mới. Tiếp tục thôi!'
-                : 'You unlocked 20 more words. Keep going!'}
+                ? `Bạn đã mở được ${speed} từ mới. Tiếp tục thôi!`
+                : `You unlocked ${speed} more words. Keep going!`}
             </p>
             <button
               onClick={unlockNextBatch}
               className="mt-2 w-full py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold transition"
             >
-              {isA ? 'Học 20 từ tiếp theo →' : 'Learn next 20 words →'}
+              {isA ? `Học ${speed} từ tiếp theo →` : `Learn next ${speed} words →`}
             </button>
           </div>
         )
       }
-      const score = quizAns.filter(Boolean).length
       return (
         <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-3">
           <p className="text-4xl">📚</p>
           <p className="text-white font-semibold">
             {isA
-              ? `${score}/${quizQs.length} — Cần đúng 100% để mở batch mới`
-              : `${score}/${quizQs.length} — Need 100% to unlock next batch`}
+              ? `${score}/${quizQs.length} — Cần đạt ≥${QUIZ_PASS_THRESHOLD_PCT}% để mở batch mới`
+              : `${score}/${quizQs.length} — Need ≥${QUIZ_PASS_THRESHOLD_PCT}% to unlock next batch`}
           </p>
           <p className="text-sm text-zinc-400">
             {isA ? 'Ôn lại rồi thử lại nhé!' : 'Review and try again!'}
@@ -1065,6 +1069,12 @@ export function QuizTab({
     const newAnswers = [...answers, ok]
     setAnswers(newAnswers)
     if (current + 1 >= questions.length) {
+      // Đạt ≥ ngưỡng chung → cũng tính là 1 lần "kiểm tra đạt", mở thêm từ mới cho
+      // hôm nay giống mini-quiz ở tab "Hôm nay" (trần tối đa/ngày vẫn giữ nguyên).
+      const passedFinal = isQuizPass(newAnswers.filter(Boolean).length, questions.length)
+      if (passedFinal && getDailyLearned(uid) < getDailyMax(uid)) {
+        bumpDailyQuizPasses(uid)
+      }
       setDone(true)
     } else {
       setCurrent((c) => c + 1)
@@ -1088,6 +1098,10 @@ export function QuizTab({
           : pct >= 50
             ? { emoji: '💪', label: isA ? 'Cố lên!' : 'Keep going!' }
             : { emoji: '📚', label: isA ? 'Cần ôn thêm' : 'Study more' }
+    // Đạt ngưỡng chung đã mở thêm từ mới cho hôm nay ở tab "Hôm nay" (xem next()) —
+    // báo cho người dùng biết, trừ khi đã đạt trần tối đa/ngày (không còn gì để mở thêm).
+    const unlockedMore =
+      isQuizPass(score, questions.length) && getDailyLearned(uid) < getDailyMax(uid)
     return (
       <div className="animate-fade-in space-y-4">
         <div className="glass rounded-xl p-8 text-center space-y-2">
@@ -1102,6 +1116,13 @@ export function QuizTab({
               style={{ width: `${pct}%` }}
             />
           </div>
+          {unlockedMore && (
+            <p className="text-xs text-accent-300 pt-1">
+              {isA
+                ? `🎉 Đạt ≥${QUIZ_PASS_THRESHOLD_PCT}% — đã mở thêm ${getDailySpeed(uid)} từ mới cho hôm nay ở tab "Hôm nay"!`
+                : `🎉 Scored ≥${QUIZ_PASS_THRESHOLD_PCT}% — unlocked ${getDailySpeed(uid)} more words for today in the "Today" tab!`}
+            </p>
+          )}
         </div>
         <div className="space-y-1.5">
           {questions.map((qq, i) => (

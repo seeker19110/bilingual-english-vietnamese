@@ -25,6 +25,8 @@ import {
   getDailyAllowance,
   bumpDailyQuizPasses,
   compareByFreq,
+  isQuizPass,
+  QUIZ_PASS_THRESHOLD_PCT,
 } from './curriculum'
 import { loadCefr } from '../data/cefrLoader'
 import type { DictEntry } from '../types'
@@ -258,5 +260,32 @@ describe('Tốc độ học 5/10/20 từ/ngày', () => {
     expect(getDailyAllowance('u1')).toBe(10)
     for (let i = 0; i < 10; i++) bumpDailyQuizPasses('u1')
     expect(getDailyAllowance('u1')).toBe(getDailyMax('u1')) // cap, không vượt quá
+  })
+})
+
+// Ngưỡng "đạt" dùng chung cho mini-quiz (tab "Hôm nay") VÀ quiz tổng hợp (tab "Kiểm tra") —
+// cả 2 nơi đều gọi isQuizPass() để mở thêm từ mới, tránh lệch ngưỡng giữa 2 cơ chế.
+describe('isQuizPass — ngưỡng đạt để mở thêm từ mới', () => {
+  it(`đúng ngưỡng ${QUIZ_PASS_THRESHOLD_PCT}% → đạt`, () => {
+    expect(isQuizPass(9, 10)).toBe(true) // 90%
+    expect(isQuizPass(18, 20)).toBe(true) // 90%
+  })
+
+  it('dưới ngưỡng dù chỉ 1 câu → không đạt', () => {
+    expect(isQuizPass(8, 10)).toBe(false) // 80%
+    expect(isQuizPass(4, 5)).toBe(false) // 80% — quiz 5 câu cần đúng cả 5
+  })
+
+  it('đúng 100% → luôn đạt', () => {
+    expect(isQuizPass(5, 5)).toBe(true)
+    expect(isQuizPass(20, 20)).toBe(true)
+  })
+
+  it('0 câu hỏi (total=0) → không đạt, tránh chia cho 0', () => {
+    expect(isQuizPass(0, 0)).toBe(false)
+  })
+
+  it('0 câu đúng → không đạt', () => {
+    expect(isQuizPass(0, 10)).toBe(false)
   })
 })

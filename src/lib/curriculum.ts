@@ -324,3 +324,14 @@ export function getDailyAllowance(uid: string): number {
   const speed = getDailySpeed(uid)
   return Math.min(speed * (getDailyQuizPasses(uid) + 1), speed * 5)
 }
+
+// ── Ngưỡng "đạt" bài kiểm tra ──────────────────────────────────────────
+// DÙNG CHUNG cho mọi bài kiểm tra mở từ mới trong app (mini-quiz mở batch ở tab
+// "Hôm nay" VÀ quiz tổng hợp ở tab "Kiểm tra" — StudyTabs.tsx) để nhất quán:
+// đạt ≥ ngưỡng này ở bài nào cũng tính là 1 lần "pass" (bumpDailyQuizPasses).
+export const QUIZ_PASS_THRESHOLD_PCT = 90
+
+export function isQuizPass(score: number, total: number): boolean {
+  if (total <= 0) return false
+  return Math.round((score / total) * 100) >= QUIZ_PASS_THRESHOLD_PCT
+}
