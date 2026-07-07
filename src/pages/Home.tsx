@@ -161,8 +161,8 @@ export default function Home() {
   const learned = useMemo(() => getLearnedWords(uid), [uid])
   const doneGrammar = useMemo(() => getDoneGrammar(uid), [uid])
   const lockedMap = useMemo(
-    () => computeLockedMapPersisted(uid, cefrLevels, circleById, learned),
-    [uid, cefrLevels, circleById, learned],
+    () => computeLockedMapPersisted(uid, cefrLevels, circleById, learned, doneGrammar),
+    [uid, cefrLevels, circleById, learned, doneGrammar],
   )
   // Cấp đầu tiên chưa khóa mà vẫn còn mục chưa xong — "đang học dở".
   const continueLevel = useMemo(() => {

@@ -65,11 +65,13 @@ describe('getCircles — thứ tự theo lộ trình CEFR', () => {
     expect(ids).toEqual(expected)
   })
 
-  it('vòng mở rộng (extra-*) nằm SAU toàn bộ vòng nền tảng', () => {
+  it('nếu còn vòng mở rộng (extra-*, từ chưa gắn nhãn cấp) thì luôn nằm SAU toàn bộ vòng nền tảng', () => {
+    // Từ 100% từ điển đã được gắn nhãn CEFR và gán vào đúng cấp (A1–C2) qua các
+    // vòng "Mở rộng theo cấp" (cefr-a1-*…cefr-c2-*), "extra-*" (dành cho từ CHƯA
+    // gắn nhãn) hiện có thể KHÔNG tồn tại — bất biến chỉ áp dụng khi có.
     const ids = getCircles().map((c) => c.id)
     const firstExtra = ids.findIndex((id) => id.startsWith('extra-'))
-    expect(firstExtra).toBeGreaterThan(0)
-    // Không còn vòng nền tảng nào sau vòng extra đầu tiên
+    if (firstExtra === -1) return
     expect(ids.slice(firstExtra).every((id) => id.startsWith('extra-'))).toBe(true)
   })
 

@@ -142,11 +142,13 @@ export function levelGrammarCounts(level: CefrLevel, doneGrammar: Set<string>): 
 }
 
 // ── Khóa cấp ────────────────────────────────────────────────────────────
-// A1 luôn mở; cấp sau bị khóa khi từ vựng cấp TRƯỚC chưa đạt UNLOCK_PCT.
+// A1 luôn mở; cấp sau bị khóa cho tới khi cấp TRƯỚC đạt ĐỦ CẢ HAI: ≥70% từ vựng
+// (UNLOCK_PCT) VÀ 100% ngữ pháp (mọi bài đã đánh dấu "Đã học xong").
 export function computeLockedMap(
   levels: CefrLevel[],
   byId: Record<string, Circle>,
   learned: Set<string>,
+  doneGrammar: Set<string>,
 ): Map<CefrLevel['id'], boolean> {
   const map = new Map<CefrLevel['id'], boolean>()
   levels.forEach((l, idx) => {
@@ -155,8 +157,11 @@ export function computeLockedMap(
       map.set(l.id, false)
       return
     }
-    const { done, total } = levelVocabCounts(prev, byId, learned)
-    map.set(l.id, total > 0 && done / total < UNLOCK_PCT)
+    const vocab = levelVocabCounts(prev, byId, learned)
+    const grammar = levelGrammarCounts(prev, doneGrammar)
+    const vocabOk = vocab.total === 0 || vocab.done / vocab.total >= UNLOCK_PCT
+    const grammarOk = grammar.total === 0 || grammar.done === grammar.total
+    map.set(l.id, !(vocabOk && grammarOk))
   })
   return map
 }
@@ -178,9 +183,10 @@ export function computeLockedMapPersisted(
   levels: CefrLevel[],
   byId: Record<string, Circle>,
   learned: Set<string>,
+  doneGrammar: Set<string>,
 ): Map<CefrLevel['id'], boolean> {
   const everUnlocked = getUnlockedLevels(uid)
-  const liveMap = computeLockedMap(levels, byId, learned)
+  const liveMap = computeLockedMap(levels, byId, learned, doneGrammar)
   const result = new Map<CefrLevel['id'], boolean>()
   let changed = false
   for (const l of levels) {
