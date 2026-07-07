@@ -3,6 +3,7 @@ import { PenLine, Send, RotateCcw, ChevronDown, Trophy } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../lib/storage'
+import { addMistakes } from '../lib/mistakes'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
@@ -281,6 +282,17 @@ export default function Writing() {
         submittedAt: Date.now(),
       }
       saveWritingSub(sub)
+      // Thu lỗi vào SỔ LỖI CÁ NHÂN để ôn lại sau (đề xuất A — mistakes.ts).
+      addMistakes(
+        user.id,
+        (data.errors ?? []).map((e) => ({
+          wrong: e.original,
+          corrected: e.corrected,
+          explanation: e.explanation,
+          source: 'writing' as const,
+          dir,
+        })),
+      )
       setResult(sub)
       incrementUsage(user.id, 'writingCount')
       throttle() // Rate limit sau lần gọi thành công

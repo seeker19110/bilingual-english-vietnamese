@@ -1049,6 +1049,19 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
 
+- **Cải tiến sư phạm (theo `docs/research/danh-gia-tien-trien-hoc-2026-07-07.md`)** — 8 đề xuất A→H,
+  thứ tự khuyến nghị A → B → D → C → E → F → G/H, mỗi đề xuất 1 PR nhỏ.
+  - [x] **A — Sổ lỗi cá nhân (Mistake Bank)**: thu lỗi AI sửa ở Chat/Viết/Nói thành thẻ ôn cá nhân
+        hóa. Tầng dữ liệu `src/lib/mistakes.ts` (localStorage-only, CHƯA đồng bộ Supabase để tránh
+        migration — giống "vé nghỉ streak"; gộp lỗi trùng + đếm `count`, ưu tiên lỗi lặp nhiều, giãn
+        cách ôn 2 ngày, cap 200 thẻ; 14 unit test). Bắt lỗi tại nguồn: Viết (`errors[]`), Nói
+        (`ai.corrected`/`feedback` + câu học viên), Chat (`parseAssistantReply` — chỉ có giải thích,
+        câu đúng để rỗng). Trang ôn `/mistakes` (`src/pages/MistakeBank.tsx`): tab Cần ôn (thẻ câu
+        sai → tự sửa → lật đáp án, nút Đã nhớ/Vẫn khó/Xóa) + tab Tất cả; thẻ tóm tắt trên
+        `/progress` (số lỗi cần ôn). **Đồng bộ Supabase để đợt sau** (sau khi migration production đã chạy).
+  - [ ] **B — Nối lộ trình ↔ 3 chế độ AI**: nút "Luyện từ hôm nay bằng hội thoại" bơm từ vừa học
+        vào prompt Chat/Nói (`targetWords?`), AI khuyến khích học viên dùng.
+  - [ ] **C/D/E/F/G/H** — xem tài liệu đề xuất (sản xuất chủ động, nghe hiểu, ôn ngữ pháp, giữ chân…).
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
 - **Bổ sung dạng biến thể của từ vào từ điển (word forms)** — người dùng yêu cầu 2026-07-06.
