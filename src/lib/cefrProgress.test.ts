@@ -145,26 +145,41 @@ describe('đếm tiến độ từ vựng / ngữ pháp', () => {
   })
 })
 
-describe('computeLockedMap — luật mở khóa 70% từ vựng cấp trước', () => {
-  it('A1 luôn mở; A2 khóa khi A1 chưa đạt ngưỡng', () => {
-    const map = computeLockedMap([A1, A2], BY_ID, new Set())
+// A1 có 3 bài ngữ pháp: g1, g2 (unit u1) + g3 (unit u2).
+const A1_ALL_GRAMMAR_DONE = new Set(['g1', 'g2', 'g3'])
+
+describe('computeLockedMap — luật mở khóa ≥70% từ vựng + 100% ngữ pháp cấp trước', () => {
+  it('A1 luôn mở; A2 khóa khi A1 chưa đạt ngưỡng nào cả', () => {
+    const map = computeLockedMap([A1, A2], BY_ID, new Set(), new Set())
     expect(map.get('A1')).toBe(false)
     expect(map.get('A2')).toBe(true)
   })
 
-  it('A2 mở khi từ vựng A1 đạt ≥ UNLOCK_PCT', () => {
+  it('A2 mở khi từ vựng A1 đạt ≥ UNLOCK_PCT VÀ ngữ pháp A1 xong 100%', () => {
     // A1 có 4 từ → cần ceil(4 × 0.7) = 3 từ để đạt 75% ≥ 70%
     const learned = new Set(['apple', 'banana', 'cat'])
-    const map = computeLockedMap([A1, A2], BY_ID, learned)
+    const map = computeLockedMap([A1, A2], BY_ID, learned, A1_ALL_GRAMMAR_DONE)
     expect(3 / 4).toBeGreaterThanOrEqual(UNLOCK_PCT)
     expect(map.get('A2')).toBe(false)
+  })
+
+  it('A2 VẪN khóa nếu từ vựng A1 đủ 70% nhưng ngữ pháp A1 chưa xong hết', () => {
+    const learned = new Set(['apple', 'banana', 'cat'])
+    const map = computeLockedMap([A1, A2], BY_ID, learned, new Set(['g1', 'g2'])) // thiếu g3
+    expect(map.get('A2')).toBe(true)
+  })
+
+  it('A2 VẪN khóa nếu ngữ pháp A1 xong hết nhưng từ vựng A1 chưa đủ 70%', () => {
+    const learned = new Set(['apple']) // 1/4 = 25% < 70%
+    const map = computeLockedMap([A1, A2], BY_ID, learned, A1_ALL_GRAMMAR_DONE)
+    expect(map.get('A2')).toBe(true)
   })
 })
 
 describe('computeLockedMapPersisted — grandfather: đã mở thì không khóa lại', () => {
   it('mở khóa A2 và ghi nhớ lại khi đạt ngưỡng lần đầu', () => {
     const learned = new Set(['apple', 'banana', 'cat'])
-    const map = computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned)
+    const map = computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned, A1_ALL_GRAMMAR_DONE)
     expect(map.get('A2')).toBe(false)
     expect(getUnlockedLevels('u1').has('A2')).toBe(true)
   })
@@ -172,7 +187,7 @@ describe('computeLockedMapPersisted — grandfather: đã mở thì không khóa
   it('KHÔNG khóa lại A2 dù tổng từ vựng A1 tăng lên sau này (thêm từ mới)', () => {
     // Lần 1: học đủ để mở khóa A2 với A1 nhỏ (4 từ)
     const learned = new Set(['apple', 'banana', 'cat'])
-    computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned)
+    computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned, A1_ALL_GRAMMAR_DONE)
 
     // Lần 2: A1 được thêm nhiều từ mới (giả lập tăng từ vựng) → % tụt dưới 70%
     const biggerA1: CefrLevel = {
@@ -188,19 +203,25 @@ describe('computeLockedMapPersisted — grandfather: đã mở thì không khóa
       c9: circle('c9', ['x9', 'x10']),
       c10: circle('c10', ['x11', 'x12']),
     }
-    const liveMap = computeLockedMap([biggerA1, A2], biggerById, learned)
+    const liveMap = computeLockedMap([biggerA1, A2], biggerById, learned, new Set())
     expect(liveMap.get('A2')).toBe(true) // % tụt dưới ngưỡng nếu tính sống
 
-    const persistedMap = computeLockedMapPersisted('u1', [biggerA1, A2], biggerById, learned)
+    const persistedMap = computeLockedMapPersisted(
+      'u1',
+      [biggerA1, A2],
+      biggerById,
+      learned,
+      new Set(),
+    )
     expect(persistedMap.get('A2')).toBe(false) // vẫn mở nhờ grandfather
   })
 
   it('không ghi/đồng bộ thừa khi trạng thái không đổi giữa 2 lần gọi', () => {
     const learned = new Set(['apple', 'banana', 'cat'])
-    computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned)
+    computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned, A1_ALL_GRAMMAR_DONE)
     const afterFirst = [...JSON.parse(localStorage.getItem('et_cefr_unlocked_u1') ?? '[]')].sort()
 
-    const map = computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned)
+    const map = computeLockedMapPersisted('u1', [A1, A2], BY_ID, learned, A1_ALL_GRAMMAR_DONE)
     const afterSecond = [...JSON.parse(localStorage.getItem('et_cefr_unlocked_u1') ?? '[]')].sort()
 
     expect(map.get('A2')).toBe(false)

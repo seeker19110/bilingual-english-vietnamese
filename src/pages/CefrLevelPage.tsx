@@ -162,8 +162,8 @@ export default function CefrLevelPage() {
   const viewedDialogues = useMemo(() => getViewedDialogues(uid), [uid, refresh])
 
   const lockedMap = useMemo(
-    () => computeLockedMapPersisted(uid, levels, circleById, learned),
-    [uid, levels, circleById, learned],
+    () => computeLockedMapPersisted(uid, levels, circleById, learned, doneGrammar),
+    [uid, levels, circleById, learned, doneGrammar],
   )
 
   // Số thứ tự "Bài N" liên tục trong cả cấp (ổn định dù có ẩn bài đã xong).

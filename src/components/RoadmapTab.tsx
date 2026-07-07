@@ -48,8 +48,8 @@ export default function RoadmapTab({ uid, isA }: { uid: string; isA: boolean }) 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const doneGrammar = useMemo(() => getDoneGrammar(uid), [uid, ready])
   const lockedMap = useMemo(
-    () => computeLockedMapPersisted(uid, levels, circleById, learned),
-    [uid, levels, circleById, learned],
+    () => computeLockedMapPersisted(uid, levels, circleById, learned, doneGrammar),
+    [uid, levels, circleById, learned, doneGrammar],
   )
 
   if (!ready) {

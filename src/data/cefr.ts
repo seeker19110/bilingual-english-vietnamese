@@ -24,6 +24,16 @@
 // Hai cấp nâng cao C1/C2 soạn riêng (file lớn) — nối vào cuối CEFR_LEVELS.
 // (import type sẽ được các file khác dùng lại; C1_LEVEL/C2_LEVEL là dữ liệu thật.)
 import { C1_LEVEL, C2_LEVEL } from './cefrAdvanced'
+// Vòng từ vựng "Mở rộng" A1–B2 SINH TỰ ĐỘNG (scripts/gen-a1b2-extra-vocab.ts) — từ
+// đã gắn nhãn CEFR trong từ điển nhưng chưa có trong vòng nền tảng thủ công bên
+// dưới. Nối vào CUỐI units[] của từng cấp qua vocabOnlyUnits() (xem sau `qz`).
+import {
+  A1_EXTRA_VOCAB_UNITS,
+  A2_EXTRA_VOCAB_UNITS,
+  B1_EXTRA_VOCAB_UNITS,
+  B2_EXTRA_VOCAB_UNITS,
+} from './cefrA1B2ExtraVocab'
+import type { VocabUnitDef } from './cefrC1C2Vocab'
 
 // Một ví dụ minh họa (Anh ↔ Việt) — dùng chung cho ngữ pháp.
 export interface Example {
@@ -109,6 +119,18 @@ const qz = (q: string, options: string[], answer: number, explainVi?: string): Q
   answer,
   explainVi,
 })
+
+// Chuyển các "Phần" từ vựng theo chủ đề (sinh tự động) thành CefrUnit thuần từ
+// vựng (không có ngữ pháp) — nối vào cuối units[] của 1 cấp A1–B2.
+const vocabOnlyUnits = (defs: VocabUnitDef[]): CefrUnit[] =>
+  defs.map((v) => ({
+    id: v.id,
+    titleVi: v.titleVi,
+    titleEn: v.titleEn,
+    emoji: v.emoji,
+    grammar: [],
+    vocabCircleIds: v.circleIds,
+  }))
 
 export const CEFR_LEVELS: CefrLevel[] = [
   // ══════════════════════════════════════════════════════════════════════════
@@ -1161,6 +1183,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
           },
         ],
       },
+      ...vocabOnlyUnits(A1_EXTRA_VOCAB_UNITS),
     ],
   },
 
@@ -1937,6 +1960,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
           },
         ],
       },
+      ...vocabOnlyUnits(A2_EXTRA_VOCAB_UNITS),
     ],
   },
 
@@ -2940,6 +2964,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
           },
         ],
       },
+      ...vocabOnlyUnits(B1_EXTRA_VOCAB_UNITS),
     ],
   },
 
@@ -3928,6 +3953,7 @@ export const CEFR_LEVELS: CefrLevel[] = [
           },
         ],
       },
+      ...vocabOnlyUnits(B2_EXTRA_VOCAB_UNITS),
     ],
   },
   // ══ Cấp nâng cao C1 & C2 (soạn ở src/data/cefrAdvanced.ts) ══
