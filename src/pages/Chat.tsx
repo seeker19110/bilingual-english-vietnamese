@@ -11,6 +11,7 @@ import {
   incrementUsage,
   getDirection,
 } from '../lib/storage'
+import { addMistake } from '../lib/mistakes'
 import { stopSpeaking } from '../lib/tts'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
@@ -151,6 +152,32 @@ function SetupScreen({
   )
 }
 
+// Tách câu thoại (💬) và phần nhận xét (✅) từ nội dung 1 tin nhắn của gia sư.
+// Dùng chung cho Bubble (hiển thị) và luồng bắt lỗi vào SỔ LỖI CÁ NHÂN (mistakes.ts).
+function parseAssistantReply(content: string): { speech: string; feedback: string } {
+  const lines = content.split('\n')
+  const speechLines: string[] = []
+  const feedbackLines: string[] = []
+  let inFeedback = false
+  for (const line of lines) {
+    if (line.startsWith('✅')) {
+      inFeedback = true
+      // Cắt nhãn đầu dòng: "Nhận xét:" (chiều A, CÓ DẤU) hoặc "Feedback:" (chiều B).
+      // Bản không dấu "Nhan xet" giữ lại phòng khi AI bỏ dấu.
+      feedbackLines.push(
+        line.replace(/^✅\s*(Nhận xét|Nhan xet|Feedback):\s*/i, '').replace(/^✅\s*/i, ''),
+      )
+      continue
+    }
+    if (inFeedback) feedbackLines.push(line)
+    else speechLines.push(line.replace(/^💬\s*/, ''))
+  }
+  return {
+    speech: speechLines.join('\n').trim(),
+    feedback: feedbackLines.join('\n').trim(),
+  }
+}
+
 // ── Message Bubble ────────────────────────────────────────────────────────────
 function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direction }) {
   // Chiều A: AI nói tiếng Anh, giải thích tiếng Việt
@@ -168,25 +195,7 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
     )
   }
 
-  const lines = msg.content.split('\n')
-  const speechLines: string[] = []
-  const feedbackLines: string[] = []
-  let inFeedback = false
-  for (const line of lines) {
-    if (line.startsWith('✅')) {
-      inFeedback = true
-      // Cắt nhãn đầu dòng: "Nhận xét:" (chiều A, CÓ DẤU) hoặc "Feedback:" (chiều B).
-      // Bản không dấu "Nhan xet" giữ lại phòng khi AI bỏ dấu.
-      feedbackLines.push(
-        line.replace(/^✅\s*(Nhận xét|Nhan xet|Feedback):\s*/i, '').replace(/^✅\s*/i, ''),
-      )
-      continue
-    }
-    if (inFeedback) feedbackLines.push(line)
-    else speechLines.push(line.replace(/^💬\s*/, ''))
-  }
-  const speechText = speechLines.join('\n').trim()
-  const feedbackText = feedbackLines.join('\n').trim()
+  const { speech: speechText, feedback: feedbackText } = parseAssistantReply(msg.content)
 
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
@@ -356,6 +365,18 @@ export default function Chat() {
       setSession(final)
       saveChatSession(final)
       setLastIdx(final.messages.length - 1)
+      // Nếu gia sư có phần "✅ Nhận xét" → thu vào SỔ LỖI CÁ NHÂN. Chat không tách riêng
+      // "câu đúng" nên chỉ lưu câu học viên (wrong) + giải thích; câu đúng để rỗng.
+      const { feedback } = parseAssistantReply(reply)
+      if (feedback) {
+        addMistake(user.id, {
+          wrong: userMsg.content,
+          corrected: '',
+          explanation: feedback,
+          source: 'chat',
+          dir,
+        })
+      }
       incrementUsage(user.id, 'chatCount')
       throttle() // Rate limit sau lần gọi thành công
     } catch (e) {

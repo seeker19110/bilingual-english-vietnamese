@@ -21,6 +21,7 @@ const History = lazyWithRetry(() => import('./pages/History'))
 const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'))
 const Profile = lazyWithRetry(() => import('./pages/Profile'))
 const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
+const MistakeBank = lazyWithRetry(() => import('./pages/MistakeBank'))
 
 // Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng
 // thực sự bấm vào, không gộp vào bundle chính để app khởi động nhanh hơn.
@@ -191,6 +192,14 @@ export default function App() {
                       element={
                         <RequireAuth>
                           <Dashboard />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/mistakes"
+                      element={
+                        <RequireAuth>
+                          <MistakeBank />
                         </RequireAuth>
                       }
                     />

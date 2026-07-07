@@ -1,0 +1,139 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import {
+  addMistake,
+  addMistakes,
+  getMistakes,
+  getDueMistakes,
+  getMistakeStats,
+  markReviewed,
+  deleteMistake,
+  type MistakeInput,
+} from './mistakes'
+
+const M = (over: Partial<MistakeInput> = {}): MistakeInput => ({
+  wrong: 'she go to school',
+  corrected: 'she goes to school',
+  explanation: 'Ngôi thứ 3 số ít thêm -s.',
+  source: 'chat',
+  dir: 'A',
+  ...over,
+})
+
+describe('Mistake Bank (sổ lỗi cá nhân)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('addMistake lưu 1 lỗi với count=1, chưa ôn', () => {
+    addMistake('u1', M())
+    const all = getMistakes('u1')
+    expect(all).toHaveLength(1)
+    expect(all[0].count).toBe(1)
+    expect(all[0].reviewCount).toBe(0)
+    expect(all[0].lastReviewedAt).toBeNull()
+    expect(all[0].corrected).toBe('she goes to school')
+  })
+
+  it('lỗi trùng (sau chuẩn hóa) → gộp, tăng count thay vì tạo bản mới', () => {
+    addMistake('u1', M())
+    addMistake('u1', M({ wrong: '  She GO to school ' })) // khác hoa/thường + khoảng trắng
+    const all = getMistakes('u1')
+    expect(all).toHaveLength(1)
+    expect(all[0].count).toBe(2)
+  })
+
+  it('bỏ qua lỗi rỗng / câu sai = câu đúng / thiếu cả câu đúng lẫn giải thích', () => {
+    addMistake('u1', M({ wrong: '' }))
+    addMistake('u1', M({ wrong: 'same', corrected: 'same' }))
+    addMistake('u1', M({ corrected: '', explanation: '' }))
+    expect(getMistakes('u1')).toHaveLength(0)
+  })
+
+  it('nguồn Chat: cho phép corrected rỗng miễn là có giải thích', () => {
+    addMistake('u1', M({ corrected: '', explanation: 'Nhớ chia động từ.' }))
+    expect(getMistakes('u1')).toHaveLength(1)
+  })
+
+  it('addMistakes thêm mảng lỗi (vd errors của bài viết)', () => {
+    addMistakes('u1', [M({ wrong: 'aa', corrected: 'aaa' }), M({ wrong: 'bb', corrected: 'bbb' })])
+    expect(getMistakes('u1')).toHaveLength(2)
+  })
+
+  it('getDueMistakes: đã ôn trong 2 ngày thì tạm không cần ôn; ưu tiên lỗi lặp nhiều', () => {
+    addMistake('u1', M({ wrong: 'rare', corrected: 'rare2' })) // count 1
+    addMistake('u1', M({ wrong: 'often', corrected: 'often2' }))
+    addMistake('u1', M({ wrong: 'often', corrected: 'often2' })) // count 2
+    const due = getDueMistakes('u1')
+    expect(due[0].wrong).toBe('often') // lặp nhiều hơn → đứng trước
+    // Ôn "often" xong → rời khỏi danh sách cần ôn
+    markReviewed('u1', due[0].id)
+    expect(getDueMistakes('u1').map((m) => m.wrong)).not.toContain('often')
+    // Sau > 2 ngày, "often" lại cần ôn
+    const later = Date.now() + 3 * 86_400_000
+    expect(getDueMistakes('u1', later).map((m) => m.wrong)).toContain('often')
+  })
+
+  it('lỗi lặp lại (gộp) đánh dấu cần ôn lại dù trước đó đã ôn', () => {
+    addMistake('u1', M())
+    const id = getMistakes('u1')[0].id
+    markReviewed('u1', id)
+    expect(getMistakeStats('u1').due).toBe(0)
+    addMistake('u1', M()) // mắc lại lỗi cũ
+    expect(getMistakeStats('u1').due).toBe(1)
+  })
+
+  it('deleteMistake xóa đúng thẻ', () => {
+    addMistake('u1', M({ wrong: 'aa', corrected: 'aaa' }))
+    addMistake('u1', M({ wrong: 'bb', corrected: 'bbb' }))
+    const id = getMistakes('u1').find((m) => m.wrong === 'aa')!.id
+    deleteMistake('u1', id)
+    const all = getMistakes('u1')
+    expect(all).toHaveLength(1)
+    expect(all[0].wrong).toBe('bb')
+  })
+
+  it('getMistakeStats trả tổng + số cần ôn', () => {
+    addMistake('u1', M({ wrong: 'aa', corrected: 'aaa' }))
+    addMistake('u1', M({ wrong: 'bb', corrected: 'bbb' }))
+    markReviewed('u1', getMistakes('u1')[0].id)
+    expect(getMistakeStats('u1')).toEqual({ total: 2, due: 1 })
+  })
+
+  it('không lẫn dữ liệu giữa 2 user', () => {
+    addMistake('u1', M())
+    expect(getMistakes('u2')).toHaveLength(0)
+  })
+
+  it('cắt trường quá dài về tối đa 500 ký tự', () => {
+    addMistake('u1', M({ wrong: 'x'.repeat(600), corrected: 'y'.repeat(600) }))
+    const m = getMistakes('u1')[0]
+    expect(m.wrong.length).toBe(500)
+    expect(m.corrected.length).toBe(500)
+  })
+
+  it('an toàn với localStorage hỏng (JSON lỗi) → coi như rỗng', () => {
+    localStorage.setItem('et_mistakes_u1', '{bad json')
+    expect(getMistakes('u1')).toEqual([])
+    addMistake('u1', M()) // vẫn ghi được đè lên
+    expect(getMistakes('u1')).toHaveLength(1)
+  })
+
+  it('userId rỗng → không lưu, không lỗi', () => {
+    addMistake('', M())
+    expect(getMistakes('')).toEqual([])
+  })
+
+  it('vượt trần MAX_MISTAKES: giữ lại thẻ hay lặp / mới nhất', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+    // Thêm 205 lỗi khác nhau, count=1
+    for (let i = 0; i < 205; i++) {
+      vi.advanceTimersByTime(1000)
+      addMistake('u1', M({ wrong: `w${i}`, corrected: `c${i}` }))
+    }
+    // Thêm 1 lỗi lặp nhiều lần → count cao, phải được giữ
+    for (let k = 0; k < 5; k++) addMistake('u1', M({ wrong: 'sticky', corrected: 'sticky2' }))
+    const all = getMistakes('u1')
+    expect(all.length).toBeLessThanOrEqual(200)
+    expect(all.find((m) => m.wrong === 'sticky')).toBeTruthy()
+    vi.useRealTimers()
+  })
+})

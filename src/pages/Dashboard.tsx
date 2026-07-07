@@ -12,6 +12,8 @@ import {
   TrendingUp,
   CalendarDays,
   Trophy,
+  BookMarked,
+  ArrowRight,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -28,6 +30,7 @@ import {
 } from '../lib/storage'
 import { getLearnedWords, getLearnedCount } from '../lib/vocab'
 import { getSRSStats } from '../lib/srs'
+import { getMistakeStats } from '../lib/mistakes'
 import { loadCurriculum, getPathProgress, getDailyLearned, getDailySpeed } from '../lib/curriculum'
 import {
   getActivity7Days,
@@ -168,6 +171,7 @@ export default function Dashboard() {
       dailySpeed: getDailySpeed(user.id),
       path: ready ? getPathProgress(getLearnedWords(user.id)) : { done: 0, total: 0 },
       srs: getSRSStats(user.id),
+      mistakes: getMistakeStats(user.id),
       usage,
       limit,
       chatN: getChatSessions(user.id).length,
@@ -380,6 +384,45 @@ export default function Dashboard() {
             />
           </div>
         </section>
+
+        {/* ── Sổ lỗi cá nhân ──────────────────────────────────────────── */}
+        {stats.mistakes.total > 0 && (
+          <section className="animate-fade-in">
+            <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
+              <BookMarked className="w-4 h-4 text-rose-400" />{' '}
+              {vi ? 'Sổ lỗi của tôi' : 'Mistake Bank'}
+            </h2>
+            <button
+              onClick={() => nav('/mistakes')}
+              className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-rose-500/40 rounded-2xl p-4 flex items-center justify-between transition group text-left"
+            >
+              <div>
+                <p className="text-sm text-zinc-200">
+                  {stats.mistakes.due > 0
+                    ? vi
+                      ? `${stats.mistakes.due} lỗi cần ôn hôm nay`
+                      : `${stats.mistakes.due} mistakes to review`
+                    : vi
+                      ? 'Không có lỗi cần ôn hôm nay'
+                      : 'No mistakes due today'}
+                </p>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  {vi
+                    ? `${stats.mistakes.total} lỗi đã ghi từ Chat · Viết · Nói`
+                    : `${stats.mistakes.total} recorded from Chat · Writing · Speaking`}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {stats.mistakes.due > 0 && (
+                  <span className="text-sm font-bold text-rose-300 theme-light:text-rose-700 bg-rose-500/10 rounded-full w-8 h-8 flex items-center justify-center">
+                    {stats.mistakes.due}
+                  </span>
+                )}
+                <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:text-rose-400 transition" />
+              </div>
+            </button>
+          </section>
+        )}
 
         {/* ── Lộ trình CEFR ───────────────────────────────────────────── */}
         <section className="animate-fade-in">

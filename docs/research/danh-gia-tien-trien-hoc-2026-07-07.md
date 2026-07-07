@@ -1,5 +1,7 @@
 # Đánh giá & đề xuất: giúp việc học tiến triển tốt hơn (2026-07-07)
 
+> **Cập nhật tiến độ:** Đề xuất **A — Sổ lỗi cá nhân ĐÃ TRIỂN KHAI** (localStorage, `src/lib/mistakes.ts` + trang `/mistakes`; xem PROGRESS.md mục "Tiếp theo"). Các đề xuất B→H vẫn theo thứ tự khuyến nghị bên dưới.
+>
 > Ngày: 2026-07-07 · Trạng thái: **ĐỀ XUẤT — chờ người dùng chốt ưu tiên trước khi code**
 > Người đánh giá: AI (đọc trực tiếp mã nguồn, số liệu thật).
 > Mục tiêu: sau khi engine từ vựng/SRS đã trưởng thành, tìm **biên giới tiếp theo** để người học
@@ -11,8 +13,9 @@
 ## 1. Tóm tắt cho người bận (TL;DR)
 
 Tài liệu 2026-07-04 (đợt 1–5) đã **triển khai gần hết** và rất tốt — xem mục 2. Engine **từ vựng
-+ SRS** giờ ngang tầm các app lớn. Nhưng đánh giá lại toàn hệ thống lộ ra **một điểm nghẽn lớn về
-sư phạm còn bỏ trống**:
+
+- SRS** giờ ngang tầm các app lớn. Nhưng đánh giá lại toàn hệ thống lộ ra **một điểm nghẽn lớn về
+  sư phạm còn bỏ trống**:
 
 > **Người học đang học từ vựng trong một "silo" tách biệt hoàn toàn với 3 chế độ AI
 > (Chat / Viết / Nói).** Từ vừa học không bao giờ quay lại trong hội thoại; lỗi AI sửa trong
@@ -23,16 +26,16 @@ Ba khoảng trống này chính là chặng "recognition → production → use"
 coi là khó nhất và quyết định việc có **dùng được** ngoại ngữ hay không. Vá chúng vừa **tăng hiệu
 quả học rõ rệt**, vừa **tận dụng đúng điểm khác biệt của sản phẩm** (đã có sẵn AI + TTS 2 giọng).
 
-| #     | Đề xuất                                                                                 | Vì sao quan trọng                            | Độ khó | Ưu tiên |
-| ----- | -------------------------------------------------------------------------------------- | -------------------------------------------- | ------ | ------- |
-| **A** | **Sổ lỗi cá nhân** — thu lỗi AI sửa ở Chat/Viết/Nói → thành thẻ ôn cá nhân hóa          | Tài liệu ôn giá trị nhất đang bị vứt đi       | Vừa    | 🔴 Cao  |
+| #     | Đề xuất                                                                                       | Vì sao quan trọng                          | Độ khó | Ưu tiên |
+| ----- | --------------------------------------------------------------------------------------------- | ------------------------------------------ | ------ | ------- |
+| **A** | **Sổ lỗi cá nhân** — thu lỗi AI sửa ở Chat/Viết/Nói → thành thẻ ôn cá nhân hóa                | Tài liệu ôn giá trị nhất đang bị vứt đi    | Vừa    | 🔴 Cao  |
 | **B** | **Nối lộ trình ↔ 3 chế độ AI** — "luyện từ hôm nay bằng hội thoại", gợi ý chủ đề từ từ đã học | Đóng vòng recognition→use, tăng chuyển hóa | Vừa    | 🔴 Cao  |
-| **C** | **Bài luyện sản xuất chủ động** — gõ chính tả / nhắc lại bằng giọng cho từ đã học        | Recall mạnh hơn recognition nhiều lần         | Vừa    | 🟡 TB   |
+| **C** | **Bài luyện sản xuất chủ động** — gõ chính tả / nhắc lại bằng giọng cho từ đã học             | Recall mạnh hơn recognition nhiều lần      | Vừa    | 🟡 TB   |
 | **D** | **Nghe hiểu thành dạng bài chính** — audio→chọn nghĩa / chép chính tả (tận dụng cache TTS $0) | Kỹ năng nghe đang bị bỏ ngỏ                | Dễ–Vừa | 🟡 TB   |
-| **E** | **Ngữ pháp có vòng lặp ôn nhẹ** — theo dõi mastery + nhắc ôn, không chỉ "tự khai xong"   | Ngữ pháp chưa có retention loop                | Vừa    | 🟡 TB   |
-| **F** | **Giữ chân: streak freeze + tổng kết tuần**                                             | Giảm churn (đợt 6 cũ còn treo)                | Dễ     | 🟢 Thấp |
-| **G** | **Chấm phát âm cấp âm vị** (thay Levenshtein-trên-STT)                                   | Đúng lời hứa "gia sư giọng nói"                | Cao/$$ | 🟢 Thấp |
-| **H** | **SM-2 → FSRS**                                                                          | Giảm 20–30% lượt ôn (đợt 6 cũ)                | Cao    | 🟢 Thấp |
+| **E** | **Ngữ pháp có vòng lặp ôn nhẹ** — theo dõi mastery + nhắc ôn, không chỉ "tự khai xong"        | Ngữ pháp chưa có retention loop            | Vừa    | 🟡 TB   |
+| **F** | **Giữ chân: streak freeze + tổng kết tuần**                                                   | Giảm churn (đợt 6 cũ còn treo)             | Dễ     | 🟢 Thấp |
+| **G** | **Chấm phát âm cấp âm vị** (thay Levenshtein-trên-STT)                                        | Đúng lời hứa "gia sư giọng nói"            | Cao/$$ | 🟢 Thấp |
+| **H** | **SM-2 → FSRS**                                                                               | Giảm 20–30% lượt ôn (đợt 6 cũ)             | Cao    | 🟢 Thấp |
 
 **Khuyến nghị của tôi:** làm **A → B** trước (giá trị sư phạm cao nhất, tận dụng hạ tầng sẵn có,
 độc đáo so với đối thủ), rồi **C/D/E**. F/G/H để sau. Chi tiết + lý do ở mục 4–5.
@@ -134,7 +137,7 @@ quả học rõ rệt**, vừa **tận dụng đúng điểm khác biệt của 
 ### A — Sổ lỗi cá nhân (Mistake Bank) 🔴
 
 - **Ý tưởng:** mỗi lần AI sửa lỗi trong Chat/Viết/Nói, lưu lại `{ câu sai, câu đúng, giải thích,
-  nguồn, thời điểm }`. Thêm 1 mục "Ôn lỗi của tôi" (có thể nằm trong `/progress` hoặc tab học) hiển
+nguồn, thời điểm }`. Thêm 1 mục "Ôn lỗi của tôi" (có thể nằm trong `/progress` hoặc tab học) hiển
   thị lại dưới dạng thẻ: cho xem câu sai → tự sửa → lật xem đáp án đúng. Lỗi lặp nhiều lần được ưu tiên.
 - **Vì sao:** biến phản hồi đang "bay hơi" thành vòng lặp ôn cá nhân hóa — thứ **không app từ vựng
   đại trà nào làm được** vì họ không có AI hội thoại như dự án này.

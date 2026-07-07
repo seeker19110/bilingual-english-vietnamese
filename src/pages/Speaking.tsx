@@ -4,6 +4,7 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import EvaluationResultView from '../components/EvaluationResultView'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
+import { addMistake } from '../lib/mistakes'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
@@ -589,6 +590,16 @@ export default function Speaking() {
       setSession(final)
       saveSpeakingSession(final)
       setLastIdx(final.messages.length - 1)
+      // Nếu AI có sửa lỗi → thu vào SỔ LỖI CÁ NHÂN (câu sai = câu học viên vừa nói).
+      if (ai.corrected?.trim() || ai.feedback?.trim()) {
+        addMistake(user.id, {
+          wrong: text,
+          corrected: ai.corrected ?? '',
+          explanation: ai.feedback ?? '',
+          source: 'speaking',
+          dir,
+        })
+      }
       incrementUsage(user.id, 'speakingCount')
       throttle() // Rate limit sau lần gọi thành công
       if (!muted && isTTSSupported()) {
