@@ -53,7 +53,7 @@ test.describe('BottomNav (U-5)', () => {
     await expect(input).toBeVisible()
     const box = await input.boundingBox()
     expect(box).not.toBeNull()
-    if (box) expect(box.y + box.height).toBeLessThanOrEqual(844 - 64)
+    if (box) expect(box.y + box.height).toBeLessThanOrEqual(844 - 72)
   })
 
   test('QuickActions (Chia sẻ/Nhắc học) chỉ còn ở Profile, không còn ở Chat/Lessons', async ({
