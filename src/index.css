@@ -2,16 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Chiều cao BottomNav (components/BottomNav.tsx: h-16 = 4rem nội dung, chỉ
+/* Chiều cao BottomNav (components/BottomNav.tsx: h-[4.5rem] nội dung, chỉ
    hiện < 640px khớp breakpoint sm: của Tailwind) — 0 trên desktop (nav ẩn) để
    các trang dùng chung 1 biểu thức calc(...+var(--bnav-h)) mà KHÔNG cần viết
-   riêng class cho từng breakpoint. Đổi h-16 ở BottomNav.tsx thì đổi 4rem ở đây. */
+   riêng class cho từng breakpoint. Đổi h-[4.5rem] ở BottomNav.tsx thì đổi 4.5rem ở đây. */
 :root {
   --bnav-h: 0px;
 }
 @media (max-width: 639px) {
   :root {
-    --bnav-h: calc(4rem + max(12px, env(safe-area-inset-bottom)));
+    --bnav-h: calc(4.5rem + max(12px, env(safe-area-inset-bottom)));
   }
 }
 

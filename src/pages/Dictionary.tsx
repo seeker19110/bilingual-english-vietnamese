@@ -250,7 +250,6 @@ export default function Dictionary() {
                 <input
                   id="dict-search-desktop"
                   name="search"
-                  autoFocus
                   aria-label={isA ? 'Tìm kiếm từ điển' : 'Search dictionary'}
                   role="searchbox"
                   value={query}
@@ -636,7 +635,6 @@ export default function Dictionary() {
             <input
               id="dict-search-mobile"
               name="search"
-              autoFocus
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value)

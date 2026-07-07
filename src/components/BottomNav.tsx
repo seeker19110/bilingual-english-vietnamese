@@ -85,7 +85,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="sm:hidden fixed bottom-0 inset-x-0 z-40 h-16 pb-safe bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 grid grid-cols-4"
+      className="sm:hidden fixed bottom-0 inset-x-0 z-40 h-[4.5rem] pb-safe bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 grid grid-cols-4"
       aria-label={T.home}
     >
       {TABS.map(({ key, to, icon: Icon, label, active }) => (
@@ -93,13 +93,13 @@ export default function BottomNav() {
           key={key}
           to={to}
           aria-current={active ? 'page' : undefined}
-          className={`tap-44 flex flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition ${
+          className={`tap-44 flex flex-col items-center justify-center gap-1 text-center text-xs font-medium leading-tight transition ${
             active
               ? 'text-accent-400 theme-light:text-accent-800'
               : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <Icon className="w-5 h-5" />
+          <Icon className="w-6 h-6" />
           {label}
         </Link>
       ))}
