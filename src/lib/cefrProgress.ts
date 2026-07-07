@@ -141,37 +141,45 @@ export function levelGrammarCounts(level: CefrLevel, doneGrammar: Set<string>): 
   )
 }
 
-// ── Khóa cấp ────────────────────────────────────────────────────────────
-// A1 luôn mở; cấp sau bị khóa cho tới khi cấp TRƯỚC đạt ĐỦ CẢ HAI: ≥70% từ vựng
-// (UNLOCK_PCT) VÀ 100% ngữ pháp (mọi bài đã đánh dấu "Đã học xong").
-export function computeLockedMap(
-  levels: CefrLevel[],
+// ── Điều kiện DỰ THI cuối cấp ────────────────────────────────────────────
+// Đã học đủ để được thi: ≥70% từ vựng (UNLOCK_PCT) VÀ 100% ngữ pháp của cấp.
+// (Trước đây đây CHÍNH là điều kiện tự mở khóa cấp sau; nay chỉ để bật nút "Thi
+// cuối cấp" — cấp sau mở khóa khi THI ĐẠT, xem computeLockedMap.)
+export function isExamEligible(
+  level: CefrLevel,
   byId: Record<string, Circle>,
   learned: Set<string>,
   doneGrammar: Set<string>,
+): boolean {
+  const vocab = levelVocabCounts(level, byId, learned)
+  const grammar = levelGrammarCounts(level, doneGrammar)
+  const vocabOk = vocab.total === 0 || vocab.done / vocab.total >= UNLOCK_PCT
+  const grammarOk = grammar.total === 0 || grammar.done === grammar.total
+  return vocabOk && grammarOk
+}
+
+// ── Khóa cấp ────────────────────────────────────────────────────────────
+// A1 luôn mở; cấp sau bị khóa cho tới khi THI ĐẠT bài thi cuối cấp TRƯỚC
+// (examPassed = tập id cấp đã thi đạt, xem lib/cefrExam.ts getPassedExamLevels).
+// Người dùng đã mở khóa từ trước (grandfather) được giữ ở computeLockedMapPersisted.
+export function computeLockedMap(
+  levels: CefrLevel[],
+  examPassed: Set<string>,
 ): Map<CefrLevel['id'], boolean> {
   const map = new Map<CefrLevel['id'], boolean>()
   levels.forEach((l, idx) => {
     const prev = idx > 0 ? levels[idx - 1] : undefined
-    if (!prev) {
-      map.set(l.id, false)
-      return
-    }
-    const vocab = levelVocabCounts(prev, byId, learned)
-    const grammar = levelGrammarCounts(prev, doneGrammar)
-    const vocabOk = vocab.total === 0 || vocab.done / vocab.total >= UNLOCK_PCT
-    const grammarOk = grammar.total === 0 || grammar.done === grammar.total
-    map.set(l.id, !(vocabOk && grammarOk))
+    map.set(l.id, prev ? !examPassed.has(prev.id) : false)
   })
   return map
 }
 
 // ── Grandfather: cấp đã từng mở khóa thì không bao giờ khóa lại ─────────
-// %` ở computeLockedMap tính SỐNG trên tổng từ vựng HIỆN TẠI của cấp trước — khi
-// thêm từ vựng mới (vd PR #185-187), tổng đó tăng lên, khiến % của người dùng ĐÃ
-// từng đạt ngưỡng tụt xuống dưới UNLOCK_PCT và bị khóa lại dù đang học dở cấp sau.
-// Ghi nhớ lại các cấp đã từng mở khóa (localStorage + Supabase, đồng bộ đổi máy)
-// để chặn hồi tố việc khóa lại này.
+// QUAN TRỌNG khi ra mắt bài THI cuối cấp: trước đây cấp sau tự mở khi cấp trước
+// đạt ≥70% từ vựng + 100% ngữ pháp; nay cần THI ĐẠT. Người dùng đã mở khóa cấp
+// theo luật cũ (đã ghi vào et_cefr_unlocked_*) PHẢI được giữ nguyên — không bị
+// khóa lại vì chưa thi (chống hồi tố). Với họ, bài thi thành TÙY CHỌN lấy chứng
+// nhận. (Cột này cũng chống hồi tố khi tổng từ vựng cấp trước tăng thêm sau này.)
 const UNLOCKED_KEY = (uid: string) => `et_cefr_unlocked_${uid}`
 
 export function getUnlockedLevels(uid: string): Set<string> {
@@ -181,12 +189,10 @@ export function getUnlockedLevels(uid: string): Set<string> {
 export function computeLockedMapPersisted(
   uid: string,
   levels: CefrLevel[],
-  byId: Record<string, Circle>,
-  learned: Set<string>,
-  doneGrammar: Set<string>,
+  examPassed: Set<string>,
 ): Map<CefrLevel['id'], boolean> {
   const everUnlocked = getUnlockedLevels(uid)
-  const liveMap = computeLockedMap(levels, byId, learned, doneGrammar)
+  const liveMap = computeLockedMap(levels, examPassed)
   const result = new Map<CefrLevel['id'], boolean>()
   let changed = false
   for (const l of levels) {

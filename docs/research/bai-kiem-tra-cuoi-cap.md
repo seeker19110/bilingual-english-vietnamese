@@ -1,6 +1,8 @@
 # Nghiên cứu & Thiết kế: Bài kiểm tra cuối cấp (End-of-level Assessment)
 
-> Ngày: 2026-07-07 · Trạng thái: **ĐỀ XUẤT — chờ người dùng duyệt trước khi code**
+> Ngày: 2026-07-07 · Trạng thái: **ĐÃ TRIỂN KHAI** (quyết định người dùng: CHẶN lên cấp ·
+> đề đầy đủ 4 phần · ngưỡng ≥70%). Code: `src/lib/cefrExam.ts`,
+> `src/components/CefrExam.tsx`, migration `0009` — xem PROGRESS.md.
 > Nhánh: `claude/end-of-level-assessments-r9p54c`
 > Mục tiêu: mỗi cấp CEFR (A1→C2) có **1 bài thi cuối cấp chất lượng cao**; **đạt ≥70% mới "qua"
 > cấp** và mở khóa cấp tiếp theo. Bài thi kiểm tra tổng hợp (từ vựng + ngữ pháp + nghe + đọc)
@@ -11,7 +13,7 @@
 ## 1. Tóm tắt cho người bận (TL;DR)
 
 Hiện tại **không có bài thi thật**: cấp sau tự mở khóa khi cấp trước đạt "≥70% từ vựng + 100%
-ngữ pháp (tự bấm *Đã học xong*)". Nghĩa là học viên có thể lật thẻ cho đủ % và bấm "đã học" mà
+ngữ pháp (tự bấm _Đã học xong_)". Nghĩa là học viên có thể lật thẻ cho đủ % và bấm "đã học" mà
 **chưa từng chứng minh** mình dùng được kiến thức. Tab "Kiểm tra" hiện có chỉ là quiz luyện tập
 nhẹ (10 câu, làm lại vô hạn, không chặn tiến độ).
 
@@ -48,19 +50,19 @@ computeLockedMapPersisted(): "grandfather" — cấp đã từng mở thì khôn
 ### 2.2 Tab "Kiểm tra" hiện có — `src/components/StudyTabs.tsx > QuizTab`
 
 - 10 câu: `QUIZ_SIZE=10`, tối đa `GRAMMAR_QUIZ_COUNT=3` câu ngữ pháp (chỉ lấy từ bài đã "học xong")
-  + còn lại là từ vựng **1 chiều EN→VI**, 4 lựa chọn.
+  - còn lại là từ vựng **1 chiều EN→VI**, 4 lựa chọn.
 - Không lưu kết quả, làm lại vô hạn; đạt ≥90% (`QUIZ_PASS_THRESHOLD_PCT`) chỉ để **mở thêm từ mới
   trong ngày**, không liên quan lên cấp.
 - → Đây là **luyện tập**, không phải **thi cuối cấp**. Bài thi mới sẽ nằm RIÊNG, không đụng tab này.
 
 ### 2.3 Kho dữ liệu tận dụng được để dựng đề
 
-| Nguồn | Hàm/tệp | Dùng cho phần |
-| --- | --- | --- |
-| Từ vựng theo cấp | `getLevelWords(levelId)` — `lib/curriculum.ts` | Từ vựng (EN→VI, VI→EN) |
-| Quiz từng bài ngữ pháp | `GrammarLesson.quiz[]` — `data/cefr.ts` | Ngữ pháp (điền chỗ trống) |
-| Ví dụ có audio | `DictEntry.ex_en/ex_vi`, `KaraokeText`, `/api/tts` | Nghe |
-| Hội thoại mẫu | `data/dialogues.ts`, `dialoguesLoader` | Đọc hiểu |
+| Nguồn                  | Hàm/tệp                                            | Dùng cho phần             |
+| ---------------------- | -------------------------------------------------- | ------------------------- |
+| Từ vựng theo cấp       | `getLevelWords(levelId)` — `lib/curriculum.ts`     | Từ vựng (EN→VI, VI→EN)    |
+| Quiz từng bài ngữ pháp | `GrammarLesson.quiz[]` — `data/cefr.ts`            | Ngữ pháp (điền chỗ trống) |
+| Ví dụ có audio         | `DictEntry.ex_en/ex_vi`, `KaraokeText`, `/api/tts` | Nghe                      |
+| Hội thoại mẫu          | `data/dialogues.ts`, `dialoguesLoader`             | Đọc hiểu                  |
 
 Mỗi cấp có **hàng trăm từ** + **hàng chục** câu quiz ngữ pháp → kho đủ lớn để rút ngẫu nhiên
 mà không trùng lặp giữa các lần thi.
@@ -89,12 +91,12 @@ khóa từ trước (grandfather qua `et_cefr_unlocked_*`) **không bị khóa l
 
 Tổng **~24 câu**, 4 phần, mỗi câu 1 điểm, đạt khi **tổng ≥ 70%** (≥ 17/24):
 
-| Phần | Số câu | Dạng | Nguồn |
-| --- | --- | --- | --- |
-| ① Từ vựng | 8 | Trắc nghiệm 4 đáp án, **trộn 2 chiều** EN→VI và VI→EN | `getLevelWords`, ưu tiên từ đã học |
-| ② Ngữ pháp | 8 | Điền chỗ trống 4 đáp án | `GrammarLesson.quiz` các bài của cấp |
-| ③ Nghe | 4 | Nghe audio (từ/câu) → chọn nghĩa/từ đúng | TTS ví dụ của từ trong cấp |
-| ④ Đọc hiểu | 4 | Đọc 1 hội thoại → trả lời câu hỏi | `dialogues` của cấp |
+| Phần       | Số câu | Dạng                                                  | Nguồn                                |
+| ---------- | ------ | ----------------------------------------------------- | ------------------------------------ |
+| ① Từ vựng  | 8      | Trắc nghiệm 4 đáp án, **trộn 2 chiều** EN→VI và VI→EN | `getLevelWords`, ưu tiên từ đã học   |
+| ② Ngữ pháp | 8      | Điền chỗ trống 4 đáp án                               | `GrammarLesson.quiz` các bài của cấp |
+| ③ Nghe     | 4      | Nghe audio (từ/câu) → chọn nghĩa/từ đúng              | TTS ví dụ của từ trong cấp           |
+| ④ Đọc hiểu | 4      | Đọc 1 hội thoại → trả lời câu hỏi                     | `dialogues` của cấp                  |
 
 - **Xáo trộn**: thứ tự câu + thứ tự đáp án ngẫu nhiên mỗi lần; kho rút > số câu nên mỗi lần thi
   đề khác nhau (chống học vẹt).
@@ -110,7 +112,7 @@ Tổng **~24 câu**, 4 phần, mỗi câu 1 điểm, đạt khi **tổng ≥ 70%
 - `EXAM_PASS_PCT = 0.70` — **đạt khi ≥ 70%** (đồng bộ với `UNLOCK_PCT` sẵn có). Yêu cầu người dùng
   ghi ">70%"; đề xuất dùng **≥70%** cho nhất quán toàn app (mốc tròn, 17/24). Nếu muốn **>70%
   nghiêm ngặt** (tức ≥ 71%, phải 18/24) thì đổi 1 hằng số — nêu ở "Cần quyết định".
-- (Tùy chọn nâng cao, chưa làm v1) *sàn từng phần*: không phần nào < 50% — tránh "gánh điểm" 1 kỹ năng.
+- (Tùy chọn nâng cao, chưa làm v1) _sàn từng phần_: không phần nào < 50% — tránh "gánh điểm" 1 kỹ năng.
 
 ### 3.4 Thi lại
 
@@ -149,7 +151,7 @@ Thêm cột **`cefr_exams jsonb default '{}'`** vào `learning_progress` (migrat
 
 - **Không thêm tab thứ 6** (5 tab đã chật trên mobile). Thay vào đó, trên trang cấp
   (`CefrLevelPage.tsx`) thêm **thẻ CTA nổi bật** khi đủ điều kiện dự thi:
-  *"🎓 Bạn đã sẵn sàng — Thi cuối cấp A1"* (nếu chưa đạt điều kiện thì hiện tiến độ còn thiếu).
+  _"🎓 Bạn đã sẵn sàng — Thi cuối cấp A1"_ (nếu chưa đạt điều kiện thì hiện tiến độ còn thiếu).
 - **Màn thi riêng** (full-screen, 1 câu/màn, thanh tiến độ) — component mới `CefrExam.tsx`
   (dựng lại từ khung `QuizTab`, thêm phần Nghe/Đọc).
 - **Màn kết quả**: đạt → chứng nhận 🎓 + điểm; trượt → câu sai + mở lại bài + "Thi lại".
@@ -165,11 +167,11 @@ như các component hiện tại.
 
 ## 4. Kế hoạch triển khai (3 đợt — mỗi đợt 1 PR nhỏ, kiểm tra được)
 
-| Đợt | Nội dung | Tệp chính |
-| --- | --- | --- |
+| Đợt   | Nội dung                                                                                                                   | Tệp chính                                                                          |
+| ----- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | **1** | Migration 0009 `cefr_exams` · `lib/cefrExam.ts` · nối `progressSync` · bộ dựng đề `buildExam()` + chấm điểm + test ca biên | `supabase/migrations/0009_*.sql`, `src/lib/cefrExam.ts`, `src/lib/progressSync.ts` |
-| **2** | Màn thi `CefrExam.tsx` (4 phần) + màn chứng nhận + thẻ CTA trên trang cấp | `src/components/CefrExam.tsx`, `src/pages/CefrLevelPage.tsx` |
-| **3** | Nối mở khóa (`computeLockedMap`) + grandfather + huy hiệu ở RoadmapTab/Dashboard | `src/lib/cefrProgress.ts`, `RoadmapTab.tsx`, `Dashboard.tsx` |
+| **2** | Màn thi `CefrExam.tsx` (4 phần) + màn chứng nhận + thẻ CTA trên trang cấp                                                  | `src/components/CefrExam.tsx`, `src/pages/CefrLevelPage.tsx`                       |
+| **3** | Nối mở khóa (`computeLockedMap`) + grandfather + huy hiệu ở RoadmapTab/Dashboard                                           | `src/lib/cefrProgress.ts`, `RoadmapTab.tsx`, `Dashboard.tsx`                       |
 
 Mỗi đợt qua đủ **cổng commit** (build · typecheck · lint 0 cảnh báo · test · format) theo CLAUDE.md.
 Migration 0009 **chạy trên Supabase production TRƯỚC khi deploy** đợt 1 (giống lưu ý 0007).

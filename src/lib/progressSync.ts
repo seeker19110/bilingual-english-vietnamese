@@ -18,6 +18,9 @@ const SRS = (uid: string) => `srs_${uid}`
 const CEFR_GRAMMAR = (uid: string) => `et_cefr_grammar_${uid}`
 const CEFR_DIALOGUE = (uid: string) => `et_cefr_dialogue_${uid}`
 const CEFR_UNLOCKED = (uid: string) => `et_cefr_unlocked_${uid}`
+// Kết quả bài thi cuối cấp (map levelId → {passed,bestPct,attempts,lastAt}) —
+// migration 0009. Khớp key trong lib/cefrExam.ts (EXAM_KEY).
+const CEFR_EXAMS = (uid: string) => `et_cefr_exams_${uid}`
 
 // Cấu trúc 1 thẻ SRS (khớp src/lib/srs.ts) — chỉ cần để merge theo số lần ôn (reps).
 interface SRSLike {
@@ -25,6 +28,52 @@ interface SRSLike {
   ease: number
   due: number
   reps: number
+}
+
+// Cấu trúc 1 kết quả thi cuối cấp (khớp src/lib/cefrExam.ts ExamResult).
+interface ExamResultLike {
+  passed: boolean
+  bestPct: number
+  attempts: number
+  lastAt: string
+}
+
+function readExamMap(key: string): Record<string, ExamResultLike> {
+  try {
+    const r = localStorage.getItem(key)
+    const obj = r ? (JSON.parse(r) as unknown) : {}
+    return obj && typeof obj === 'object' ? (obj as Record<string, ExamResultLike>) : {}
+  } catch {
+    return {}
+  }
+}
+
+// Hợp nhất kết quả thi 2 nguồn: dữ liệu chỉ "tốt lên" — passed = OR, bestPct =
+// max, attempts = max, lastAt = mới hơn.
+function mergeExamMaps(
+  a: Record<string, ExamResultLike>,
+  b: Record<string, ExamResultLike>,
+): Record<string, ExamResultLike> {
+  const out: Record<string, ExamResultLike> = {}
+  for (const key of new Set([...Object.keys(a), ...Object.keys(b)])) {
+    const x = a[key]
+    const y = b[key]
+    if (!x) {
+      if (y) out[key] = y
+      continue
+    }
+    if (!y) {
+      out[key] = x
+      continue
+    }
+    out[key] = {
+      passed: x.passed || y.passed,
+      bestPct: Math.max(x.bestPct ?? 0, y.bestPct ?? 0),
+      attempts: Math.max(x.attempts ?? 0, y.attempts ?? 0),
+      lastAt: (x.lastAt ?? '') >= (y.lastAt ?? '') ? x.lastAt : y.lastAt,
+    }
+  }
+  return out
 }
 
 function readArr(key: string): string[] {
@@ -61,6 +110,7 @@ export function pushProgress(userId: string): void {
         cefr_grammar: readArr(CEFR_GRAMMAR(userId)),
         cefr_dialogues: readArr(CEFR_DIALOGUE(userId)),
         cefr_unlocked: readArr(CEFR_UNLOCKED(userId)),
+        cefr_exams: readExamMap(CEFR_EXAMS(userId)),
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id' },
@@ -90,6 +140,7 @@ export async function pullProgress(userId: string): Promise<void> {
     cefr_grammar?: string[]
     cefr_dialogues?: string[]
     cefr_unlocked?: string[]
+    cefr_exams?: Record<string, ExamResultLike>
   }
 
   // learned/hard/cefr_*: dữ liệu chỉ tăng dần → lấy hợp của local và cloud
@@ -108,6 +159,9 @@ export async function pullProgress(userId: string): Promise<void> {
     ...(cloud.cefr_unlocked ?? []),
   ])
 
+  // cefr_exams: hợp nhất theo cấp, giữ kết quả "tốt hơn" (xem mergeExamMaps).
+  const cefrExams = mergeExamMaps(readExamMap(CEFR_EXAMS(userId)), cloud.cefr_exams ?? {})
+
   // SRS: merge theo từ-khoá, giữ thẻ có nhiều lần ôn hơn (tiến bộ hơn)
   const merged: Record<string, SRSLike> = { ...(cloud.srs ?? {}) }
   for (const [k, v] of Object.entries(readObj(SRS(userId)))) {
@@ -122,6 +176,7 @@ export async function pullProgress(userId: string): Promise<void> {
     localStorage.setItem(CEFR_GRAMMAR(userId), JSON.stringify([...cefrGrammar]))
     localStorage.setItem(CEFR_DIALOGUE(userId), JSON.stringify([...cefrDialogues]))
     localStorage.setItem(CEFR_UNLOCKED(userId), JSON.stringify([...cefrUnlocked]))
+    localStorage.setItem(CEFR_EXAMS(userId), JSON.stringify(cefrExams))
   } catch {
     /* hết dung lượng — bỏ qua */
   }

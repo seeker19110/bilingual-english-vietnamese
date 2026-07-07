@@ -31,6 +31,7 @@ import {
 import { getLearnedWords, getLearnedCount } from '../lib/vocab'
 import { getSRSStats } from '../lib/srs'
 import { getMistakeStats } from '../lib/mistakes'
+import { getExamMap } from '../lib/cefrExam'
 import { loadCurriculum, getPathProgress, getDailyLearned, getDailySpeed } from '../lib/curriculum'
 import {
   getActivity7Days,
@@ -138,6 +139,8 @@ export default function Dashboard() {
 
   const [ready, setReady] = useState(false)
   const [cefr, setCefr] = useState<LevelProgress[]>([])
+  // Kết quả thi cuối cấp — để hiện huy hiệu "🎓 Đã qua" cạnh từng cấp.
+  const examMap = useMemo(() => getExamMap(user?.id ?? ''), [user])
 
   // Nạp dữ liệu từ điển (cho tiến độ lộ trình) + tiến độ CEFR — đều bất đồng bộ.
   useEffect(() => {
@@ -445,11 +448,18 @@ export default function Dashboard() {
             ) : (
               cefr.map((l) => {
                 const c = ACCENT[l.accent]
+                const exam = examMap[l.id]
                 return (
                   <div key={l.id}>
                     <div className="flex items-center justify-between mb-1.5 text-sm">
-                      <span className={`font-semibold ${c.text}`}>
+                      <span className={`font-semibold ${c.text} flex items-center gap-1.5`}>
                         {vi ? l.titleVi : l.titleEn}
+                        {exam?.passed && (
+                          <span className="flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 theme-light:text-amber-800">
+                            <GraduationCap className="w-2.5 h-2.5" />
+                            {exam.bestPct}%
+                          </span>
+                        )}
                       </span>
                       <span className="text-zinc-400 text-xs">
                         {l.doneWords}/{l.totalWords} {vi ? 'từ' : 'words'} · {l.pct}%
