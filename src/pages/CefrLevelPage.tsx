@@ -78,8 +78,11 @@ import {
   levelGrammarCounts,
   computeLockedMapPersisted,
   findNextStep,
+  isExamEligible,
   UNLOCK_PCT,
 } from '../lib/cefrProgress'
+import { getExamMap } from '../lib/cefrExam'
+import CefrExam from '../components/CefrExam'
 import { useOnboarding } from '../lib/onboarding'
 
 // % an toàn (0 khi total = 0, không chia cho 0).
@@ -118,6 +121,8 @@ export default function CefrLevelPage() {
   const [lesson, setLesson] = useState<GrammarLesson | null>(null)
   const [circle, setCircle] = useState<Circle | null>(null)
   const [dialogue, setDialogue] = useState<Dialogue | null>(null)
+  // Đang làm bài thi cuối cấp (màn thi toàn màn hình đè lên trang cấp).
+  const [examing, setExaming] = useState(false)
 
   // Khóa invalidation thủ công: bump() để tính lại tiến độ sau khi học/đánh dấu.
   const [refresh, setRefresh] = useState(0)
@@ -161,9 +166,16 @@ export default function CefrLevelPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const viewedDialogues = useMemo(() => getViewedDialogues(uid), [uid, refresh])
 
+  // Kết quả thi cuối cấp (để mở khóa + hiện điểm/huy hiệu + CTA "Thi cuối cấp").
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const examMap = useMemo(() => getExamMap(uid), [uid, refresh])
+  const examPassed = useMemo(
+    () => new Set(Object.keys(examMap).filter((id) => examMap[id]?.passed)),
+    [examMap],
+  )
   const lockedMap = useMemo(
-    () => computeLockedMapPersisted(uid, levels, circleById, learned, doneGrammar),
-    [uid, levels, circleById, learned, doneGrammar],
+    () => computeLockedMapPersisted(uid, levels, examPassed),
+    [uid, levels, examPassed],
   )
 
   // Số thứ tự "Bài N" liên tục trong cả cấp (ổn định dù có ẩn bài đã xong).
@@ -308,10 +320,33 @@ export default function CefrLevelPage() {
       />,
     )
   }
+  if (examing) {
+    return shell(
+      <CefrExam
+        uid={uid}
+        isA={isA}
+        level={level}
+        accent={accent}
+        onClose={() => {
+          setExaming(false)
+          bump() // cập nhật kết quả thi + mở khóa cấp sau nếu vừa đạt
+        }}
+        onOpenLesson={(id) => {
+          setExaming(false)
+          openLessonById(id)
+        }}
+      />,
+    )
+  }
 
   const vocab = levelVocabCounts(level, circleById, learned)
   const grammar = levelGrammarCounts(level, doneGrammar)
   const next = locked ? null : findNextStep(level, circleById, learned, doneGrammar)
+
+  // Bài thi cuối cấp: đủ điều kiện dự thi (≥70% từ vựng + 100% ngữ pháp) + kết quả.
+  const examResult = examMap[level.id]
+  const examPassedThis = examResult?.passed ?? false
+  const examEligible = !locked && isExamEligible(level, circleById, learned, doneGrammar)
 
   // Banner gợi ý test-out (U-3): chỉ ở A1, người khai trình độ ≥ Trung cấp, chưa
   // bấm đóng, và từ vựng A1 chưa đạt ngưỡng mở A2 (đạt rồi thì gợi ý hết tác dụng).
@@ -587,8 +622,8 @@ export default function CefrLevelPage() {
               </p>
               <p className="text-sm text-zinc-400 leading-relaxed">
                 {isA
-                  ? `Hoàn thành ≥70% từ vựng của cấp ${prevLevel?.id ?? ''} để mở khóa.`
-                  : `Complete ≥70% vocabulary in ${prevLevel?.id ?? 'the previous level'} to unlock.`}
+                  ? `Thi đạt bài kiểm tra cuối cấp ${prevLevel?.id ?? ''} (≥70%) để mở khóa.`
+                  : `Pass the ${prevLevel?.id ?? 'previous level'} end-of-level exam (≥70%) to unlock.`}
               </p>
               {prevLevel && (
                 <button
@@ -641,6 +676,43 @@ export default function CefrLevelPage() {
                     <X className="w-4 h-4" />
                   </button>
                 </div>
+              )}
+
+              {/* Thẻ CTA bài thi cuối cấp — khi đủ điều kiện dự thi hoặc đã qua */}
+              {(examEligible || examPassedThis) && (
+                <button
+                  onClick={() => setExaming(true)}
+                  className={`w-full glass rounded-2xl p-4 mb-4 flex items-center gap-3 text-left border transition hover:border-zinc-500 ${examPassedThis ? 'border-amber-500/40' : accent.ring} animate-fade-in`}
+                >
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${examPassedThis ? 'bg-amber-500/15' : accent.soft}`}
+                  >
+                    <GraduationCap
+                      className={`w-5 h-5 ${examPassedThis ? 'text-amber-300 theme-light:text-amber-800' : accent.text}`}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white">
+                      {examPassedThis
+                        ? isA
+                          ? `🎓 Đã qua cấp ${level.id} · điểm cao nhất ${examResult?.bestPct}%`
+                          : `🎓 ${level.id} passed · best ${examResult?.bestPct}%`
+                        : isA
+                          ? `🎓 Sẵn sàng — Thi cuối cấp ${level.id}`
+                          : `🎓 Ready — take the ${level.id} exam`}
+                    </p>
+                    <p className="text-xs text-zinc-400 mt-0.5">
+                      {examPassedThis
+                        ? isA
+                          ? 'Thi lại để cải thiện điểm (không bắt buộc).'
+                          : 'Retake to improve your score (optional).'
+                        : isA
+                          ? 'Đạt ≥70% để qua cấp và mở khóa cấp tiếp theo.'
+                          : 'Score ≥70% to pass and unlock the next level.'}
+                    </p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0" />
+                </button>
               )}
 
               {/* Học tiếp / hoàn thành cấp */}

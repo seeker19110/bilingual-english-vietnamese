@@ -16,6 +16,27 @@
   nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro). Cả 2 đợt bổ
   sung từ điển theo chuẩn CEFR-J/Octanove (A1→C2) đã hoàn tất.
 
+## Bài thi cuối cấp CEFR (End-of-level assessment)
+
+Triển khai thiết kế ở `docs/research/bai-kiem-tra-cuoi-cap.md` (quyết định người dùng:
+**CHẶN lên cấp** · **đề đầy đủ 4 phần** · ngưỡng **≥70%**). Mỗi cấp A1→C2 có 1 bài thi
+tổng hợp xáo trộn (Từ vựng 2 chiều · Ngữ pháp · Nghe TTS · Đọc hiểu hội thoại, ~24 câu).
+
+- **Data/logic**: `src/lib/cefrExam.ts` — `buildExam()` (dựng đề từ kho của cấp,
+  chống học vẹt), `scoreExam()`, lưu kết quả `saveExamAttempt`/`getExamMap`
+  (localStorage `et_cefr_exams_*` + đồng bộ Supabase). Migration **0009**
+  `learning_progress.cefr_exams jsonb` — **chạy TRƯỚC deploy** (giống 0007/0008).
+- **Đồng bộ**: `progressSync.ts` thêm `cefr_exams`, merge = giữ điểm cao/passed OR/attempts max.
+- **Mở khóa**: `computeLockedMap` nay gate theo **THI ĐẠT cấp trước** (`getPassedExamLevels`);
+  điều kiện cũ (≥70% từ vựng + 100% ngữ pháp) trở thành **điều kiện DỰ THI** (`isExamEligible`).
+  Grandfather qua `et_cefr_unlocked_*` — người đã mở khóa theo luật cũ KHÔNG bị khóa lại.
+- **UI**: `src/components/CefrExam.tsx` (màn thi toàn màn hình + màn chứng nhận/thi lại),
+  thẻ CTA "🎓 Thi cuối cấp" trên `CefrLevelPage`, huy hiệu "đã qua + điểm" ở
+  `RoadmapTab` và `Dashboard`.
+- **Test**: `src/lib/cefrExam.test.ts` (13) + cập nhật `cefrProgress.test.ts` (gate thi + grandfather).
+
+> Còn lại khi deploy: chạy migration 0009 trên Supabase production TRƯỚC khi deploy code.
+
 ## Đã xong (đợt áp khung)
 
 - Prettier + eslint-config-prettier; format toàn repo; `format:check` trong CI.

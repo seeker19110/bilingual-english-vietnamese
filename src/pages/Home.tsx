@@ -33,6 +33,7 @@ import {
   findNextStep,
   circleDoneCount,
 } from '../lib/cefrProgress'
+import { getPassedExamLevels } from '../lib/cefrExam'
 import { getSRSStats } from '../lib/srs'
 import { getDailyLearned, getDailyMax } from '../lib/curriculum'
 
@@ -160,9 +161,10 @@ export default function Home() {
   const uid = user?.id ?? ''
   const learned = useMemo(() => getLearnedWords(uid), [uid])
   const doneGrammar = useMemo(() => getDoneGrammar(uid), [uid])
+  const examPassed = useMemo(() => getPassedExamLevels(uid), [uid])
   const lockedMap = useMemo(
-    () => computeLockedMapPersisted(uid, cefrLevels, circleById, learned, doneGrammar),
-    [uid, cefrLevels, circleById, learned, doneGrammar],
+    () => computeLockedMapPersisted(uid, cefrLevels, examPassed),
+    [uid, cefrLevels, examPassed],
   )
   // Cấp đầu tiên chưa khóa mà vẫn còn mục chưa xong — "đang học dở".
   const continueLevel = useMemo(() => {
