@@ -28,6 +28,7 @@ Tất cả phải viết idempotent (`create or replace`, `if not exists`) để
 | `0006_pronunciations_rls.sql`              | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                            |
 | `0007_learning_progress_cefr.sql`          | ⚠️ **CHƯA XÁC NHẬN** — chạy trên Dashboard TRƯỚC khi deploy bản có `cefr_grammar`/`cefr_dialogues` (PR #181 trở đi).                    |
 | `0008_learning_progress_cefr_unlocked.sql` | ⚠️ **CHƯA XÁC NHẬN** — chạy trên Dashboard TRƯỚC khi deploy bản có `cefr_unlocked` (đợt CEFR sau PR #181).                              |
+| `0009_learning_progress_cefr_exams.sql`    | ⚠️ **CHƯA XÁC NHẬN** — chạy trên Dashboard TRƯỚC khi deploy bản có bài thi cuối cấp (`cefr_exams`).                                     |
 
-Nếu bạn (người vận hành) đã chạy `0007`/`0008` trên production, cập nhật dòng tương ứng thành
+Nếu bạn (người vận hành) đã chạy `0007`/`0008`/`0009` trên production, cập nhật dòng tương ứng thành
 ✅ kèm ngày chạy — đừng để trạng thái cũ trôi nổi qua nhiều phiên làm việc.
