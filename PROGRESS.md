@@ -1184,6 +1184,9 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
 
 ## Quyết định quan trọng (trỏ tới ADR nếu có)
 
+- **Thanh toán Pro: KHÔNG làm (2026-07-11).** Quyết định của người dùng — muốn dự án dùng miễn phí
+  vì cộng đồng. Việc "thanh toán Pro" trong nợ kỹ thuật/mục 13 CLAUDE.md coi như **đóng, không phải
+  làm tiếp**; không tự đề xuất hay nhắc lại ở đầu phiên. Chỉ mở lại khi người dùng chủ động báo.
 - GIỮ NGUYÊN phiên bản: Tailwind 3, ESLint 8 (`.eslintrc.cjs`) — KHÔNG nâng v4/flat config.
 - **Perf budget: chọn `size-limit` thay Lighthouse CI.** Lighthouse 12.6 không đo được
   app trong môi trường sandbox/CI hiện có (lỗi `NO_FCP` ở mọi cấu hình: full/headless-shell,
@@ -1210,12 +1213,10 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
   nhắc chạy migration trước khi `git pull`/build/reload — đúng nguyên nhân gây lỗi "column does
   not exist" đã gặp phải với 0007/0008); thêm bảng "Trạng thái trên Supabase production" vào
   `supabase/migrations/README.md` để không phải lục lại lịch sử `PROGRESS.md` mỗi lần deploy.
-  ⚠️ 0007/0008 vẫn ghi CHƯA XÁC NHẬN trong bảng đó — cần người vận hành tự xác nhận đã chạy hay
-  chưa (không đoán khi chưa chắc).
-- **Branch protection cho nhánh `main`** — CHƯA kiểm tra được: các tool GitHub MCP hiện có trong
-  phiên làm việc không có endpoint đọc/ghi branch protection rules (cần quyền repo admin). Cần
-  người dùng tự vào GitHub → Settings → Branches để kiểm tra/bật (khuyến nghị tối thiểu: yêu cầu
-  PR trước khi merge vào `main`, yêu cầu CI xanh — đã có sẵn 2 workflow `quality`/`e2e`).
+  ~~0007/0008 vẫn ghi CHƯA XÁC NHẬN~~ ĐÃ XONG — người dùng xác nhận đã chạy cả 0007/0008/0009
+  trên Supabase Dashboard production (2026-07-11).
+- ~~Branch protection cho nhánh `main`~~ ĐÃ XONG (2026-07-11) — người dùng tự bật qua GitHub →
+  Settings → Branches: yêu cầu PR trước khi merge + yêu cầu 2 CI check `quality`/`e2e` xanh.
 
 - ~~Tiến độ ngữ pháp/hội thoại CEFR chỉ nằm localStorage~~ ĐÃ XONG (người dùng yêu cầu
   2026-07-03): đồng bộ qua 2 cột mới `cefr_grammar`/`cefr_dialogues` của bảng
