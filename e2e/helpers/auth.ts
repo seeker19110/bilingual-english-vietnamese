@@ -9,7 +9,8 @@ import type { Page } from '@playwright/test'
 // ref 'e2e' suy từ VITE_SUPABASE_URL=https://e2e.supabase.co (xem playwright.config.ts)
 const SUPABASE_AUTH_KEY = 'sb-e2e-auth-token'
 const PROFILE_CACHE_KEY = 'gsa_profile_v1'
-const USER_ID = 'e2e-user-0001'
+// Export để các file E2E khác seed localStorage đúng key theo user (vd `et_vlog_<uid>`).
+export const USER_ID = 'e2e-user-0001'
 const USER_NAME = 'E2E Tester'
 
 // Tên 4 theme (đồng bộ src/lib/theme.ts). Dùng để E2E quét a11y ở mọi theme.

@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
-import { mockLogin, type ThemeName } from './helpers/auth'
+import { mockLogin, USER_ID, type ThemeName } from './helpers/auth'
 
 // Quét a11y bằng axe-core (WCAG 2.0/2.1 A & AA). Loại 'meta-viewport' vì dự án
 // CHỦ ĐỘNG khóa zoom (đánh đổi 1 mục a11y, bù bằng sàn chữ ≥11px — CLAUDE.md mục 8).
@@ -95,6 +95,7 @@ const AUTHED_ROUTES = [
   '/writing',
   '/speaking',
   '/profile',
+  '/vlog', // màn "chưa bắt đầu thử thách" — các trạng thái khác quét riêng bên dưới
 ]
 for (const route of AUTHED_ROUTES) {
   for (const theme of THEMES) {
@@ -227,6 +228,95 @@ for (const theme of RESULT_THEMES) {
     await page.goto('/speaking')
     await page.getByRole('button', { name: /Bắt đầu luyện nói/ }).click()
     await expect(page.getByText(/What did you do last weekend/)).toBeVisible()
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+}
+
+// ── /vlog — các trạng thái khác của thử thách "Vlog 1 phút / 30 ngày" ───────────
+// Trạng thái "chưa bắt đầu" đã quét chung với AUTHED_ROUTES ở trên. 3 trạng thái
+// dưới đây cần seed localStorage (khóa `et_vlog_<uid>` — src/lib/vlog.ts) để bỏ
+// qua bước tương tác (bấm bắt đầu/quay/nộp — cần camera thật, không mock ở đây).
+// Ghi âm/quay hình KHÔNG cần cho các trạng thái này (đều là màn tĩnh sau khi có
+// dữ liệu challenge), nên không cần mock getUserMedia/MediaRecorder.
+
+// Ngày theo giờ VN (khớp src/lib/date.ts vnDateStr), tính ở NODE lúc dựng test data
+// (chạy trước khi trang tải — chỉ lệch múi giờ nếu máy CI đặt giờ hệ thống khác UTC,
+// không xảy ra trên GitHub Actions runner).
+function vnDateOffset(offsetDays: number): string {
+  const ms = Date.now() - offsetDays * 86400000 + 7 * 3600000
+  return new Date(ms).toISOString().slice(0, 10)
+}
+
+async function seedVlogChallenge(page: Page, challenge: unknown) {
+  await page.addInitScript(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+    key: `et_vlog_${USER_ID}`,
+    value: challenge,
+  })
+}
+
+for (const theme of THEMES) {
+  test(`a11y: /vlog — đã bắt đầu, chưa nộp hôm nay theme=${theme} — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await mockLogin(page, 'vi', theme)
+    await seedVlogChallenge(page, { startDate: vnDateOffset(0), round: 1, entries: {} })
+    await page.goto('/vlog', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByText(/Vlog 1 phút/)).toBeVisible()
+    await page.waitForTimeout(500)
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+
+  test(`a11y: /vlog — đã nộp hôm nay (màn nhận xét AI) theme=${theme} — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await mockLogin(page, 'vi', theme)
+    const today = vnDateOffset(0)
+    const feedback = JSON.stringify({
+      praise: 'Bạn kể chuyện rất tự nhiên!',
+      corrections: [
+        {
+          original: 'I eat breakfast',
+          better: 'I ate breakfast',
+          explain: 'Thì quá khứ vì đã ăn rồi.',
+        },
+      ],
+      upgrade: 'This morning I had a delicious bowl of pho.',
+    })
+    await seedVlogChallenge(page, {
+      startDate: today,
+      round: 1,
+      entries: {
+        [today]: {
+          day: today,
+          challengeDay: 1,
+          topicDay: 1,
+          transcript: 'I eat breakfast this morning with banh mi',
+          feedback,
+          durationSec: 42,
+          wordCount: 8,
+          round: 1,
+        },
+      },
+    })
+    await page.goto('/vlog', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByText(/Đã nộp vlog hôm nay/)).toBeVisible()
+    await page.waitForTimeout(500)
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+
+  test(`a11y: /vlog — chuỗi bị gián đoạn (màn tiếp tục/bắt đầu lại) theme=${theme} — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await mockLogin(page, 'vi', theme)
+    await seedVlogChallenge(page, { startDate: vnDateOffset(5), round: 1, entries: {} })
+    await page.goto('/vlog', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByText(/Chuỗi bị gián đoạn/)).toBeVisible()
     const { critical, unexpectedSerious } = await scan(page)
     expect(critical).toEqual([])
     expect(unexpectedSerious).toEqual([])

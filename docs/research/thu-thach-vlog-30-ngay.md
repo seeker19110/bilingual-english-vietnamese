@@ -1,6 +1,7 @@
 # Nghiên cứu & kế hoạch: Thử thách "English Vlog 1 phút/ngày" (30 ngày)
 
-> Ngày: 2026-07-11 · Trạng thái: **ĐỀ XUẤT — CHỜ NGƯỜI DÙNG DUYỆT** (chưa code)
+> Ngày: 2026-07-11 · Trạng thái: **ĐÃ TRIỂN KHAI XONG** (PR #230, #231, #233 + nhánh
+> follow-up nhắc push/E2E) — xem "Đã xong" trong `PROGRESS.md` để biết chi tiết.
 > Nguồn ý tưởng: người dùng — "Mỗi ngày quay 1 video ngắn bằng tiếng Anh về một việc bạn làm
 > (ăn gì, nghĩ gì, thấy gì trên đường). Ban đầu khó lắm nhưng tiến bộ cực nhanh."
 > Phương pháp: đọc mã nguồn thật (STT/TTS/usage/streak/push đã có) + tra cứu nghiên cứu
@@ -171,23 +172,21 @@ transcript · feedback (jsonb) · duration_sec · word_count · created_at`.
 | Bảng 30 ô + trang mới làm phình bundle chính                 | Lazy route chunk riêng; đo `size-limit` trong CI (đã có gate)                                   |
 | Lạm dụng gọi AI nhiều lần/ngày                               | Unique `user_id+day` + đếm lượt server sẵn có; nộp lại trong ngày = ghi đè, tốn lượt như thường |
 
-## 7. Kế hoạch triển khai (4 PR nhỏ, tuần tự)
+## 7. Kế hoạch triển khai — ĐÃ XONG
 
-| PR  | Nội dung                                                                                                                                       | Kiểm tra được bằng                                        |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| 1   | Trang `/vlog` (lazy) + data 30 chủ đề (`src/data/vlogTopics.ts`) + quay video/audio ≤ 180s + lưu/xem lại/tải về (IndexedDB, `src/lib/vlog.ts`) | Quay & xem lại được trên mobile, chưa cần backend         |
-| 2   | Nộp vlog: audio → `/api/stt` → transcript → `/api/claude` (prompt `src/prompts/vlog.ts`) → hiện feedback; migration **0010** `vlog_entries`    | Nộp thật nhận feedback; unit test lib + ca biên ngày/lượt |
-| 3   | Game hóa: bảng 30 ô, huy hiệu mốc, vé nghỉ, màn tổng kết ngày 30 + so sánh ngày 1/30, vòng mới                                                 | Test logic mốc/đứt chuỗi; smoke luồng trọn vẹn            |
-| 4   | Nhắc push "chưa quay vlog", card Trang chủ + ô Dashboard, i18n chiều B, E2E + a11y 4 theme                                                     | CI e2e + axe xanh; Lighthouse không tụt                   |
+| PR                                         | Nội dung                                                                                                                                                                   | Trạng thái  |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **#230**                                   | Nền tảng: data 30 chủ đề, prompt AI, ghi hình video/audio ≤ 180s + lưu IndexedDB, trạng thái thử thách (`src/lib/vlog.ts`), migration **0010** `vlog_entries`              | ✅ Đã merge |
+| **#231**                                   | Tự động chạy migration Supabase khi deploy (hạ tầng chung, mở đường cho `0010` tự áp)                                                                                      | ✅ Đã merge |
+| **#233**                                   | Trang `/vlog` hoàn chỉnh: quay → nộp → feedback AI, bảng 30 ô, huy hiệu mốc, vé nghỉ, màn tổng kết so sánh ngày 1/30, vòng mới; kiểm thử THẬT bằng Playwright + camera giả | ✅ Đã merge |
+| follow-up (`claude/vlog-followups-t3xq7z`) | Nhắc push "chưa quay vlog" (nội dung riêng khi đang trong thử thách), gate a11y `/vlog` (4 trạng thái × 4 theme, 16 test)                                                  | ✅ Hoàn tất |
 
-Mỗi PR qua đủ cổng commit/merge (CLAUDE.md mục 8–9). Ước lượng: PR 1–2 là phần nặng
-(MediaRecorder + pipeline), PR 3–4 nhẹ hơn vì tái dùng hạ tầng sẵn có.
+Còn lại ngoài phạm vi: i18n gộp vào từ điển trung tâm, E2E cho luồng quay/nộp thật (cần
+mock `getUserMedia` sâu hơn mức a11y tĩnh hiện có).
 
-## 8. Câu hỏi cần người dùng chốt trước khi code
+## 8. Câu hỏi đã chốt cùng người dùng (2026-07-11)
 
-1. **Lưu video local-only** (đề xuất, chi phí 0, riêng tư) — đồng ý? Hay muốn có tùy chọn
-   upload lên Supabase Storage (tốn dung lượng, phải trả phí khi đông người dùng)?
-2. **Tính lượt**: 1 vlog = 1 lượt `stt` + 1 lượt `chat` (đề xuất, không cần migration) —
-   đồng ý? Hay muốn cột lượt riêng `vlog_count` (kiểm soát chặt hơn, thêm migration)?
-3. **Luật nghỉ**: dùng chung vé nghỉ 1 ngày/tuần như streak (đề xuất) — đồng ý?
-4. **Phạm vi PR 1**: bắt đầu đúng theo bảng mục 7 — đồng ý cho làm PR 1?
+1. **Lưu video local-only** — ✅ đồng ý (chi phí 0, riêng tư tối đa).
+2. **Tính lượt**: 1 vlog = 1 lượt `stt` + 1 lượt `chat` sẵn có — ✅ đồng ý, không thêm cột.
+3. **Luật nghỉ**: dùng chung vé nghỉ 1 ngày/tuần như streak — ✅ đồng ý.
+4. **Trần ghi hình**: nâng từ đề xuất ban đầu 60s lên **180 giây** (quyết định người dùng).

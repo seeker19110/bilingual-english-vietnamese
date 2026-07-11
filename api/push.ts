@@ -33,6 +33,13 @@ if (VAPID_PUBLIC && VAPID_PRIVATE) {
 // Giờ UTC mặc định để nhắc khi người dùng chưa chọn giờ (13 UTC = 20:00 giờ VN).
 const DEFAULT_REMIND_UTC_HOUR = 13
 
+// Cửa sổ "còn đang trong thử thách vlog gần đây" — ước lượng NỚI TAY, chỉ để chọn
+// NỘI DUNG thông báo cho thân thiện hơn (không phải luật vé nghỉ chính xác của
+// src/lib/vlog.ts — logic đó dùng localStorage nên không gọi được từ server).
+// Ai có ít nhất 1 dòng vlog_entries trong N ngày gần nhất được nhắc bằng nội dung
+// vlog; còn lại vẫn nhận thông điệp nhắc học chung như trước.
+const VLOG_RECENT_WINDOW_DAYS = 8
+
 function todayStr(): string {
   return vnDateStr()
 }
@@ -77,10 +84,36 @@ export async function sendReminders(
     if (total > 0) studied.add(r.user_id)
   }
 
-  const payload = JSON.stringify({
+  // Ai CHƯA học hôm nay mà gần đây có tham gia thử thách vlog → nhắc bằng nội dung
+  // vlog cụ thể hơn (thân mật, gắn liền tính năng vừa quay). Best-effort: bảng
+  // vlog_entries có thể chưa tồn tại (migration 0010 chưa chạy) — lỗi thì bỏ qua,
+  // mọi người vẫn nhận thông điệp chung như trước (không vỡ tính năng nhắc học).
+  const notStudiedIds = userIds.filter((id) => !studied.has(id))
+  const vlogActive = new Set<string>()
+  if (notStudiedIds.length > 0) {
+    const since = vnDateStr(new Date(Date.now() - VLOG_RECENT_WINDOW_DAYS * 86_400_000))
+    const { data: vlogRows, error: vlogErr } = await supabase
+      .from('vlog_entries')
+      .select('user_id')
+      .in('user_id', notStudiedIds)
+      .gte('day', since)
+    if (vlogErr) {
+      console.warn('[push] không đọc được vlog_entries (bảng chưa tạo?):', vlogErr.message)
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const r of (vlogRows ?? []) as any[]) vlogActive.add(r.user_id)
+    }
+  }
+
+  const genericPayload = JSON.stringify({
     title: '🇻🇳→🇬🇧 Tới giờ học rồi!',
     body: 'Chỉ cần vài phút mỗi ngày. Hôm nay bạn chưa học — vào học để giữ streak nhé! 🔥',
     url: '/',
+  })
+  const vlogPayload = JSON.stringify({
+    title: '🎬 Chưa quay vlog hôm nay!',
+    body: 'Chỉ 1 phút thôi — quay 1 video kể chuyện hôm nay để giữ chuỗi 30 ngày nhé!',
+    url: '/vlog',
   })
 
   let sent = 0,
@@ -96,7 +129,7 @@ export async function sendReminders(
       try {
         await webpush.sendNotification(
           { endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth_key } },
-          payload,
+          vlogActive.has(row.user_id) ? vlogPayload : genericPayload,
         )
         sent++
       } catch (err: unknown) {
