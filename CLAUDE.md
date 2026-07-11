@@ -143,12 +143,12 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
    `api/_lib/security.ts` (`validateAuth`) — repo hiện sạch, không còn debug log tạm (ghi chú cũ đã lỗi thời).
 3. ~~Thanh toán Pro chưa có~~ **KHÔNG LÀM** — quyết định 2026-07-11: dự án miễn phí vì cộng đồng.
    Chỉ quay lại khi người dùng chủ động báo làm phần này.
-4. **Sentry + migration production (CẦN LÀM TAY, AI không có quyền truy cập)** — code Sentry đã xong
-   (no-op tới khi có DSN, xem `.env.example`), chỉ còn: lấy DSN miễn phí tại sentry.io → điền
-   `SENTRY_DSN`/`VITE_SENTRY_DSN` vào `.env` trên VPS → build lại + `pm2 restart`. Migration
-   `0007`/`0008`/`0009` (xem `supabase/migrations/README.md`) chưa xác nhận đã chạy trên Supabase
-   production — chạy trên Dashboard → SQL Editor TRƯỚC khi deploy code kế tiếp.
-5. **Branch protection cho nhánh `main` (CẦN LÀM TAY, cần quyền admin repo)** — GitHub → Settings →
+4. ~~Migration 0007/0008/0009 chưa xác nhận trên Supabase production~~ ĐÃ XONG (người dùng xác nhận
+   2026-07-11, xem `supabase/migrations/README.md`).
+5. **Sentry chưa bật (CẦN LÀM TAY, AI không có quyền truy cập)** — code Sentry đã xong (no-op tới
+   khi có DSN, xem `.env.example`), chỉ còn: lấy DSN miễn phí tại sentry.io → điền
+   `SENTRY_DSN`/`VITE_SENTRY_DSN` vào `.env` trên VPS → build lại + `pm2 restart`.
+6. **Branch protection cho nhánh `main` (CẦN LÀM TAY, cần quyền admin repo)** — GitHub → Settings →
    Branches → thêm rule cho `main`: yêu cầu PR trước khi merge + yêu cầu 2 CI check `quality`/`e2e`
    xanh (đã có sẵn workflow, chỉ cần bật rule).
 
