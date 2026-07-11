@@ -69,6 +69,11 @@ App **không chạy được** nếu chưa tạo bảng trong database.
    - `Project URL` → `VITE_SUPABASE_URL` và `SUPABASE_URL`
    - `anon public` key → `VITE_SUPABASE_ANON_KEY`
    - `service_role` key (bí mật!) → `SUPABASE_SERVICE_ROLE_KEY`
+4. Lấy connection string Postgres (**Project Settings → Database → Connection string** →
+   mục **"Direct connection"**, KHÔNG dùng "Transaction pooler") → điền `[YOUR-PASSWORD]`
+   bằng mật khẩu DB thật → dán vào `SUPABASE_DB_URL`. Dùng cho migration tự động khi
+   deploy (`npm run migrate`, xem mục "Cập nhật code mới" bên dưới) — khác với
+   `SUPABASE_URL` ở trên (đó là REST API, không chạy được lệnh SQL tạo bảng/cột).
 
 > Dùng `STORAGE_DRIVER=local` thì **không cần** tạo Storage bucket trên Supabase.
 
@@ -149,6 +154,9 @@ VITE_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_URL=https://xxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
 
+# ── Migration Supabase tự động khi deploy (Bước 0 mục 4) ──
+SUPABASE_DB_URL=postgresql://postgres:mat-khau-that@db.xxxx.supabase.co:5432/postgres
+
 # ── AI + TTS ──
 ANTHROPIC_API_KEY=sk-ant-...
 GOOGLE_TTS_API_KEY=AIza...
@@ -172,6 +180,8 @@ PORT=3001
 > **Thiếu `TTS_ENCRYPTION_MASTER_KEY`** → audio cache mã hóa/giải mã thất bại, app fallback giọng trình duyệt.
 > **Thiếu `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY`** → đăng nhập lỗi.
 > **Bỏ trống `ALLOWED_ORIGINS`** = cho phép mọi domain gọi API (chỉ dùng lúc dev).
+> **Thiếu `SUPABASE_DB_URL`** → `npm run migrate` báo lỗi rõ ràng, deploy dừng lại (vẫn
+> dán tay migration vào SQL Editor được như trước — xem "Cập nhật code mới" bên dưới).
 
 ```bash
 npm install
@@ -415,56 +425,35 @@ BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
 
 ## Cập nhật code mới (deploy lại)
 
-> ⚠️ **Luôn kiểm tra migration TRƯỚC khi deploy.** Nếu code mới có thêm cột/bảng (vd
-> `cefr_grammar`, `cefr_unlocked`...) mà chưa chạy migration tương ứng trên Supabase production,
-> các thao tác ghi (`upsert`/`update`) sẽ lỗi "column does not exist" — đồng bộ tiến độ tạm ngưng
-> tới khi chạy migration (đọc về vẫn chạy được nhờ `select('*')`, chỉ ghi bị chặn).
->
-> Cách kiểm tra: xem `git log -p -- supabase/migrations/` giữa bản đang chạy trên VPS và bản sắp
-> deploy (hoặc đơn giản hơn — đọc mục "Cần làm tay" trong `PROGRESS.md` của bản code sắp deploy).
-> File migration nào CHƯA từng chạy trên Dashboard này → vào **Supabase Dashboard → SQL Editor**,
-> dán nội dung file `supabase/migrations/NNNN_*.sql` theo đúng thứ tự số tăng dần và bấm **Run**
-> — làm việc này TRƯỚC bước `git pull` bên dưới.
+**Cách khuyên dùng: chạy `bash deploy.sh`** (file có sẵn ở gốc repo, đã theo dõi trong Git —
+xem nội dung tại `deploy.sh`). Script này tự làm hết: pull code → cài thư viện → **tự động
+chạy mọi migration Supabase còn thiếu** (`npm run migrate`, dừng deploy ngay nếu migration
+lỗi) → build → `pm2 restart` kèm nạp lại `.env`.
+
+```bash
+cd /var/www/english-tutor   # hoặc đường dẫn thật trên VPS của bạn
+bash deploy.sh
+```
+
+> ⚠️ **Cần có `SUPABASE_DB_URL` trong `.env`** để bước migration tự động chạy được (xem
+> Bước 0 mục 4 + Bước 4 phía trên). Không có bước chuẩn bị nào khác — script tự tạo bảng
+> theo dõi `_schema_migrations` ở lần chạy đầu tiên. Thiếu biến này → `npm run migrate`
+> báo lỗi rõ ràng và dừng deploy (`set -e`); điền `SUPABASE_DB_URL` rồi chạy lại
+> `bash deploy.sh`. Xem chi tiết + trạng thái từng migration tại `supabase/migrations/README.md`.
+
+<details>
+<summary>Deploy thủ công từng bước (không dùng <code>deploy.sh</code>)</summary>
 
 ```bash
 cd /var/www/english-tutor
 git pull origin main
 npm install        # chỉ cần nếu package.json đổi
+npm run migrate    # chạy migration Supabase còn thiếu (cần SUPABASE_DB_URL trong .env)
 npm run build      # chỉ cần nếu code frontend thay đổi
 pm2 reload ecosystem.config.cjs   # zero-downtime restart
 ```
 
-Hoặc tạo script tự động (`~/deploy-english-tutor.sh`):
-
-```bash
-#!/bin/bash
-set -e
-
-# ⚠️ Trước khi chạy script này: đã chạy hết migration mới trong supabase/migrations/
-# trên Supabase Dashboard → SQL Editor chưa? Xem cảnh báo phía trên mục này trong tài liệu.
-
-cd /var/www/english-tutor
-echo "📥 Pull code mới..."
-git pull origin main
-
-echo "📦 Cài thư viện..."
-npm install
-
-echo "🔨 Build frontend..."
-npm run build
-
-echo "🔄 Reload app..."
-pm2 reload ecosystem.config.cjs
-
-echo "✅ Deploy xong!"
-curl -s http://localhost:3001/api/health && echo
-pm2 status
-```
-
-```bash
-chmod +x ~/deploy-english-tutor.sh
-~/deploy-english-tutor.sh   # mỗi lần update chạy lệnh này (đã chạy migration trước đó)
-```
+</details>
 
 ---
 

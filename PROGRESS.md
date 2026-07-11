@@ -16,15 +16,37 @@
   nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro). Cả 2 đợt bổ
   sung từ điển theo chuẩn CEFR-J/Octanove (A1→C2) đã hoàn tất.
 
-## Thử thách "English Vlog 1 phút/ngày" (30 ngày) — ĐANG CHỜ DUYỆT KẾ HOẠCH
+## Thử thách "English Vlog 1 phút/ngày" (30 ngày) — ĐANG LÀM (nền tảng xong, chưa nối UI)
 
-Ý tưởng game hóa do người dùng đề xuất (2026-07-11). Đã nghiên cứu sư phạm + thiết kế
-kỹ thuật chi tiết ở `docs/research/thu-thach-vlog-30-ngay.md`. Điểm chính: quay video
-≤ 180s/ngày (mục tiêu ~1 phút; trần 180s — người dùng chốt 2026-07-11) theo chủ đề sát đời sống VN → video **chỉ lưu trên máy người dùng** (IndexedDB,
-chi phí storage = 0) → audio gửi `/api/stt` sẵn có → AI sửa lỗi tiếng Việt qua `/api/claude`
-→ bảng 30 ô + huy hiệu mốc 3·7·14·21·30 + tổng kết so sánh video ngày 1 vs ngày 30.
-Chia 4 PR nhỏ. **Chưa code — chờ người dùng chốt 4 câu hỏi ở mục 8 của tài liệu**
-(lưu local-only? · tính lượt stt+chat? · vé nghỉ chung? · duyệt PR 1?).
+Ý tưởng game hóa do người dùng đề xuất (2026-07-11). Kế hoạch + nghiên cứu sư phạm ở
+`docs/research/thu-thach-vlog-30-ngay.md`. Người dùng đã DUYỆT cả 4 quyết định thiết kế
+(video local-only, lượt stt+chat sẵn có, vé nghỉ chung với streak, trần ghi hình **180
+giây**) — đã merge PR #230 (`main`): 30 chủ đề (`src/data/vlogTopics.ts`), prompt AI
+(`src/prompts/vlog.ts`), ghi hình kép + kho video IndexedDB (`src/lib/vlogRecorder.ts`,
+`vlogVideo.ts`), trạng thái thử thách + huy hiệu mốc (`src/lib/vlog.ts`, 26 test), đồng
+bộ Supabase (`src/lib/vlogCloud.ts`), migration `0010_vlog_entries.sql`. **Còn lại:**
+ráp trang `/vlog` (quay → nộp → feedback → bảng 30 ô) + nối Trang chủ/Dashboard + E2E/a11y.
+
+## Tự động chạy migration Supabase khi deploy — ĐÃ XONG (2026-07-11)
+
+Trước đây mỗi migration mới phải dán tay vào Supabase Dashboard → SQL Editor trước khi
+deploy (dễ quên, đã từng gây lỗi "column does not exist" với 0007/0008). Nay
+`deploy.sh` (bước 6/8) tự chạy `npm run migrate` (`scripts/run-migrations.ts`, dùng
+thư viện `pg`) — kết nối THẲNG Postgres qua connection string `SUPABASE_DB_URL` (biến
+MỚI, khác `SUPABASE_URL` là REST API không chạy được DDL), tự tạo bảng theo dõi
+`_schema_migrations` ở lần chạy đầu (không cần bootstrap), tìm file
+`supabase/migrations/NNNN_*.sql` chưa áp dụng và chạy lần lượt — mỗi file trong 1
+transaction riêng (rollback nếu lỗi, không đánh dấu "đã áp dụng"). Dừng deploy ngay
+nếu 1 migration lỗi. **Quyết định thiết kế**: cân nhắc giữa RPC Supabase chạy SQL bất
+kỳ (không cần secret mới nhưng tạo 1 hàm "thực thi SQL tuỳ ý" trên DB, bị chặn bởi bộ
+lọc an toàn vì rủi ro bảo mật) và kết nối Postgres trực tiếp — **người dùng chọn kết
+nối trực tiếp** (2026-07-11): cần thêm 1 secret `SUPABASE_DB_URL` (connection string
+"Direct connection", KHÔNG dùng Transaction pooler) nhưng không tạo cơ chế thực thi SQL
+tuỳ ý nào trên DB. **Cần làm TAY trên VPS**: điền `SUPABASE_DB_URL` vào `.env` (lấy ở
+Supabase Dashboard → Project Settings → Database → Connection string) — sau đó mọi
+migration còn thiếu (kể cả `0001`–`0009` chạy lại an toàn vì idempotent, và
+`0010_vlog_entries.sql` đang chờ) tự áp mỗi lần `bash deploy.sh`. Chi tiết:
+`supabase/migrations/README.md`, `docs/deploy-vps-ubuntu.md` mục "Cập nhật code mới".
 
 ## Bài thi cuối cấp CEFR (End-of-level assessment)
 
