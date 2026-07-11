@@ -11,17 +11,18 @@
 ## 1. Tóm tắt cho người bận (TL;DR)
 
 **Đề xuất:** thêm chế độ **"Vlog 1 phút" — thử thách 30 ngày** tại trang mới `/vlog`:
-mỗi ngày người học quay 1 video ≤ 60 giây nói về đời sống của mình theo chủ đề gợi ý,
+mỗi ngày người học quay 1 video nói về đời sống của mình theo chủ đề gợi ý (mục tiêu ~1 phút,
+trần **180 giây** — quyết định người dùng 2026-07-11, nâng từ 60s),
 app **tự nghe lại** (STT Whisper đã có) → **AI sửa lỗi + khen ngợi bằng tiếng Việt**
 (qua `/api/claude` đã có) → tô 1 ô trên **bảng 30 ngày**, có huy hiệu mốc 3·7·14·21·30.
 
 **3 quyết định thiết kế quan trọng nhất** (đều nghiêng về **chi phí ≈ 0**):
 
-| #   | Quyết định                                                                                | Lý do                                                                                                                     |
-| --- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **Video KHÔNG upload lên server** — lưu ngay trên máy người dùng (IndexedDB) + nút tải về | 1 phút video ≈ 5–15 MB; 30 ngày × nhiều người dùng sẽ vượt gói Supabase Storage miễn phí ngay. Chỉ text lên DB (≈ vài KB) |
-| 2   | **Chỉ gửi ÂM THANH lên server để nhận diện** (ghi song song 1 luồng audio-only)           | Tái dùng nguyên pipeline `/api/stt` hiện có (giới hạn ~6 MB ≈ 1–2 phút — vừa khít vlog 1 phút); video không rời máy       |
-| 3   | **Không thêm cột đếm lượt mới** — 1 vlog tiêu 1 lượt `stt` + 1 lượt `chat` sẵn có         | Không cần migration cho usage; free hiện 10 stt + 15 chat/ngày → thừa cho 1–2 vlog/ngày                                   |
+| #   | Quyết định                                                                                | Lý do                                                                                                                                |
+| --- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | **Video KHÔNG upload lên server** — lưu ngay trên máy người dùng (IndexedDB) + nút tải về | 1 phút video ≈ 5–15 MB; 30 ngày × nhiều người dùng sẽ vượt gói Supabase Storage miễn phí ngay. Chỉ text lên DB (≈ vài KB)            |
+| 2   | **Chỉ gửi ÂM THANH lên server để nhận diện** (ghi song song 1 luồng audio-only)           | Tái dùng nguyên pipeline `/api/stt` hiện có (giới hạn ~6 MB; audio opus ~1 MB/phút → trần 180s ≈ 3 MB, vẫn lọt); video không rời máy |
+| 3   | **Không thêm cột đếm lượt mới** — 1 vlog tiêu 1 lượt `stt` + 1 lượt `chat` sẵn có         | Không cần migration cho usage; free hiện 10 stt + 15 chat/ngày → thừa cho 1–2 vlog/ngày                                              |
 
 **Điểm khác biệt so với "tự quay bằng điện thoại rồi đăng TikTok":** có AI phản hồi từng ngày
 (nghiên cứu chỉ ra vlog tự do KHÔNG cải thiện độ chính xác nếu thiếu phản hồi — mục 2),
@@ -68,8 +69,8 @@ confetti/haptics), tính năng này **lấp đúng lỗ hổng lớp cảm xúc*
 
 1. **Vào `/vlog`** (từ card Trang chủ hoặc thông báo push) → thấy bảng 30 ô + ô hôm nay
    nhấp nháy + **chủ đề gợi ý của ngày** (xem 3.3) kèm 6–8 từ/cụm gợi ý (bấm nghe TTS được).
-2. **Bấm quay** → xin quyền camera+mic → đếm ngược 3-2-1 → quay tối đa **60 giây**
-   (vòng tròn tiến độ, tự dừng ở 60s; dừng sớm được nếu ≥ 10s). Quay lại được (tối đa vài lần).
+2. **Bấm quay** → xin quyền camera+mic → đếm ngược 3-2-1 → quay tối đa **180 giây**
+   (vòng tròn tiến độ, tự dừng ở 180s; dừng sớm được nếu ≥ 10s). Quay lại được (tối đa vài lần).
 3. **Xem lại video** của chính mình (bước tự-quan-sát — self-monitoring, chính là chỗ
    "ban đầu khó lắm nhưng tiến bộ cực nhanh") → bấm **"Nộp vlog hôm nay"**.
 4. App gửi **âm thanh** (không gửi video) lên `/api/stt` → transcript → gửi transcript +
@@ -114,8 +115,9 @@ nói bằng tiếng Việt — tái dùng `lib/direction.ts` như mọi chế đ
   **2 MediaRecorder song song trên cùng stream**:
   - 1 recorder video (`video/mp4` trên iOS Safari, `video/webm;codecs=vp8` nơi khác — dò bằng
     `MediaRecorder.isTypeSupported`, cùng pattern `sttServer.ts:27` đang dùng cho audio);
-  - 1 recorder **audio-only** (webm/opus ≈ ~1 MB/phút) từ `new MediaStream(stream.getAudioTracks())`
-    → gửi thẳng vào pipeline `/api/stt` hiện có, **không đụng** giới hạn 6 MB.
+  - 1 recorder **audio-only** (webm/opus ≈ ~1 MB/phút → trần 180s ≈ ~3 MB) từ
+    `new MediaStream(stream.getAudioTracks())` → gửi thẳng vào pipeline `/api/stt` hiện có,
+    **vẫn lọt** giới hạn ~6 MB kể cả khi quay hết trần 180 giây.
 - **Lưu video**: IndexedDB (API thô, không thêm thư viện — giữ ngân sách bundle), key theo
   `uid + ngày`. Giữ tối đa **video ngày 1 + 7 video gần nhất** (dọn tự động, ~100 MB trần) để
   không phình bộ nhớ máy; luôn có nút **"Tải video về máy"** trước khi bị dọn. Ghi rõ trong UI:
@@ -171,12 +173,12 @@ transcript · feedback (jsonb) · duration_sec · word_count · created_at`.
 
 ## 7. Kế hoạch triển khai (4 PR nhỏ, tuần tự)
 
-| PR  | Nội dung                                                                                                                                    | Kiểm tra được bằng                                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| 1   | Trang `/vlog` (lazy) + data 30 chủ đề (`src/data/vlogTopics.ts`) + quay video/audio 60s + lưu/xem lại/tải về (IndexedDB, `src/lib/vlog.ts`) | Quay & xem lại được trên mobile, chưa cần backend         |
-| 2   | Nộp vlog: audio → `/api/stt` → transcript → `/api/claude` (prompt `src/prompts/vlog.ts`) → hiện feedback; migration **0010** `vlog_entries` | Nộp thật nhận feedback; unit test lib + ca biên ngày/lượt |
-| 3   | Game hóa: bảng 30 ô, huy hiệu mốc, vé nghỉ, màn tổng kết ngày 30 + so sánh ngày 1/30, vòng mới                                              | Test logic mốc/đứt chuỗi; smoke luồng trọn vẹn            |
-| 4   | Nhắc push "chưa quay vlog", card Trang chủ + ô Dashboard, i18n chiều B, E2E + a11y 4 theme                                                  | CI e2e + axe xanh; Lighthouse không tụt                   |
+| PR  | Nội dung                                                                                                                                       | Kiểm tra được bằng                                        |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| 1   | Trang `/vlog` (lazy) + data 30 chủ đề (`src/data/vlogTopics.ts`) + quay video/audio ≤ 180s + lưu/xem lại/tải về (IndexedDB, `src/lib/vlog.ts`) | Quay & xem lại được trên mobile, chưa cần backend         |
+| 2   | Nộp vlog: audio → `/api/stt` → transcript → `/api/claude` (prompt `src/prompts/vlog.ts`) → hiện feedback; migration **0010** `vlog_entries`    | Nộp thật nhận feedback; unit test lib + ca biên ngày/lượt |
+| 3   | Game hóa: bảng 30 ô, huy hiệu mốc, vé nghỉ, màn tổng kết ngày 30 + so sánh ngày 1/30, vòng mới                                                 | Test logic mốc/đứt chuỗi; smoke luồng trọn vẹn            |
+| 4   | Nhắc push "chưa quay vlog", card Trang chủ + ô Dashboard, i18n chiều B, E2E + a11y 4 theme                                                     | CI e2e + axe xanh; Lighthouse không tụt                   |
 
 Mỗi PR qua đủ cổng commit/merge (CLAUDE.md mục 8–9). Ước lượng: PR 1–2 là phần nặng
 (MediaRecorder + pipeline), PR 3–4 nhẹ hơn vì tái dùng hạ tầng sẵn có.
