@@ -23,6 +23,7 @@ import {
   Home,
   Star,
   MessageCircle,
+  Mic,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
@@ -195,6 +196,7 @@ function BatchDoneView({
   dailyStart: number
   onStartQuiz: () => void
 }) {
+  const nav = useNavigate()
   const learnedToday = getDailyLearned(uid) - dailyStart
   const totalToday = getDailyLearned(uid)
   const quizPasses = getDailyQuizPasses(uid)
@@ -268,6 +270,24 @@ function BatchDoneView({
               : `${dailyMax - totalToday} more words available today — pass a quiz to unlock.`}
           </p>
         )}
+      </div>
+
+      {/* Nối lộ trình ↔ Chat/Nói: mang từ vừa học sang hội thoại AI để LUYỆN DÙNG. */}
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          onClick={() => nav('/chat', { state: { targetWords: batch.map((w) => w.word) } })}
+          className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 font-medium transition"
+        >
+          <MessageCircle className="w-4 h-4" />
+          {isA ? 'Luyện qua Chat' : 'Practice via Chat'}
+        </button>
+        <button
+          onClick={() => nav('/speaking', { state: { targetWords: batch.map((w) => w.word) } })}
+          className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 font-medium transition"
+        >
+          <Mic className="w-4 h-4" />
+          {isA ? 'Luyện qua Nói' : 'Practice via Speaking'}
+        </button>
       </div>
 
       {sentences.length > 0 && (

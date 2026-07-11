@@ -23,8 +23,23 @@ const LEVEL_DESC_B: Record<Level, string> = {
   advanced: 'C1+ Vietnamese, complex expression',
 }
 
+// Chèn gợi ý dùng các từ vừa học vào cuối prompt (mục B — nối lộ trình ↔ Chat/Nói).
+// targetWords rỗng/undefined → không đổi hành vi prompt hiện có.
+function targetWordsHint(targetWords: string[] | undefined, dir: Direction): string {
+  if (!targetWords || targetWords.length === 0) return ''
+  const list = targetWords.join(', ')
+  return dir === 'A'
+    ? `\n\nHọc viên vừa học các từ mới sau: ${list}. Hãy khéo léo dẫn dắt hội thoại để học viên có cơ hội DÙNG các từ này, và khen ngợi khi họ dùng đúng.`
+    : `\n\nThe learner just learned these new words: ${list}. Gently steer the conversation so they get a chance to USE these words, and praise them when used correctly.`
+}
+
 // ─── Chat ──────────────────────────────────────────────────────────────
-export function chatSystemPrompt(situation: string, level: Level, dir: Direction = 'A'): string {
+export function chatSystemPrompt(
+  situation: string,
+  level: Level,
+  dir: Direction = 'A',
+  targetWords?: string[],
+): string {
   if (dir === 'A') {
     return `Bạn là Emma — gia sư tiếng Anh thân mật, nhẹ nhàng, người Mỹ, đang dạy người Việt như một người bạn đồng hành chứ không phải giám khảo khó tính. Hãy xưng tên "Emma" khi giới thiệu hoặc khi phù hợp trong hội thoại. Trình độ học viên: ${LEVEL_DESC_A[level]}.
 Tình huống đóng vai: "${situation}".
@@ -41,7 +56,7 @@ ${VIET_COMMON_ERRORS}
 💬 [Câu thoại tiếng Anh — phần hội thoại chính]
 ✅ Nhận xét: [Tiếng Việt — chỉ khi có lỗi, để trống nếu ổn]
 
-Bắt đầu bằng câu mở đầu phù hợp tình huống.`
+Bắt đầu bằng câu mở đầu phù hợp tình huống.${targetWordsHint(targetWords, dir)}`
   }
 
   return `You are Linh — a warm, gentle Vietnamese tutor, Vietnamese native, teaching English speakers like a supportive friend, not a strict examiner. Introduce yourself as "Linh" at the start or when appropriate. Learner level: ${LEVEL_DESC_B[level]}.
@@ -57,7 +72,7 @@ REPLY FORMAT (required):
 💬 [Vietnamese dialogue line — main conversation]
 ✅ Feedback: [English — only if there is an error, leave blank if correct]
 
-Start with an opening line appropriate for the situation.`
+Start with an opening line appropriate for the situation.${targetWordsHint(targetWords, dir)}`
 }
 
 // ─── Speaking (JSON, 2 giọng) ───────────────────────────────────
@@ -68,6 +83,7 @@ export function speakingSystemPrompt(
   situation: string,
   level: Level,
   dir: Direction = 'A',
+  targetWords?: string[],
 ): string {
   if (dir === 'A') {
     return `Bạn là Emma — gia sư tiếng Anh thân mật, nhẹ nhàng, người Mỹ, đang dạy người Việt như một người bạn đồng hành chứ không phải giám khảo khó tính. Xưng tên "Emma" khi mở đầu hoặc khi tự nhiên. Trình độ học viên: ${LEVEL_DESC_A[level]}.
@@ -88,7 +104,7 @@ QUAN TRỌNG — Trả về JSON (không có markdown):
   "corrected": "<câu đúng tiếng Anh nếu có sửa, chuỗi rỗng nếu không>"
 }
 
-Bắt đầu bằng câu mở đầu phù hợp (chỉ điền speech, hai trường kia để rỗng).`
+Bắt đầu bằng câu mở đầu phù hợp (chỉ điền speech, hai trường kia để rỗng).${targetWordsHint(targetWords, dir)}`
   }
 
   return `You are Linh — a warm, gentle Vietnamese tutor, Vietnamese native, teaching English speakers like a supportive friend, not a strict examiner. Introduce yourself as "Linh" at the start or when natural. Learner level: ${LEVEL_DESC_B[level]}.
@@ -107,7 +123,7 @@ IMPORTANT — Return JSON only (no markdown):
   "corrected": "<corrected Vietnamese sentence if applicable, empty string if none>"
 }
 
-Start with an opening line for the situation (fill speech only, leave the other two empty).`
+Start with an opening line for the situation (fill speech only, leave the other two empty).${targetWordsHint(targetWords, dir)}`
 }
 
 // ─── Writing ─────────────────────────────────────────────────────

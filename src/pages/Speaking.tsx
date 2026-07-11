@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
-import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send, Award } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
+import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send, Award, Target } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import EvaluationResultView from '../components/EvaluationResultView'
@@ -68,13 +69,17 @@ function SetupScreen({
   onStart,
   dir,
   defaultLevel,
+  targetWords,
 }: {
   onStart: (s: string, l: Level) => void
   dir: Direction
   // Trình độ khai lúc onboarding (U-3) — làm mặc định thay vì cứng 'intermediate'
   defaultLevel?: Level
+  // Từ vừa học ở lộ trình (mục B — nối lộ trình ↔ Nói), truyền qua điều hướng.
+  targetWords?: string[]
 }) {
-  const [situation, setSituation] = useState('small_talk')
+  // Có từ mục tiêu → mặc định "Tự do" để AI rảnh tay dẫn hội thoại quanh các từ này.
+  const [situation, setSituation] = useState(targetWords?.length ? 'free' : 'small_talk')
   const [level, setLevel] = useState<Level>(defaultLevel ?? 'intermediate')
   // Onboarding có thể về TRỄ (thiết bị mới phải fetch DB) — chỉ áp lại mặc định
   // khi người dùng CHƯA tự bấm chọn, tránh ghi đè lựa chọn tay.
@@ -171,6 +176,20 @@ function SetupScreen({
             ))}
           </div>
         </div>
+
+        {targetWords && targetWords.length > 0 && (
+          <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-xl px-4 py-3">
+            <div className="flex items-center gap-1.5 mb-1.5 text-cyan-300">
+              <Target className="w-3.5 h-3.5" />
+              <span className="text-xs font-semibold">
+                {isA
+                  ? 'Từ vừa học — thử dùng trong hội thoại'
+                  : 'Words you just learned — try using them'}
+              </span>
+            </div>
+            <p className="text-xs text-cyan-200/80">{targetWords.join(', ')}</p>
+          </div>
+        )}
 
         <button
           onClick={() => onStart(situation, level)}
@@ -333,6 +352,13 @@ export default function Speaking() {
   const onboarding = useOnboarding(user.id) // trình độ khai lúc onboarding (U-3)
   const dir: Direction = getDirection()
   const isA = dir === 'A'
+  const location = useLocation()
+  // Từ vừa học ở lộ trình, bơm sẵn vào prompt (mục B — nối lộ trình ↔ Chat/Nói).
+  // Chỉ đọc 1 lần lúc vào trang — không đổi giữa các lượt gửi trong cùng phiên.
+  const [targetWords] = useState<string[] | undefined>(() => {
+    const w = (location.state as { targetWords?: string[] } | null)?.targetWords
+    return w && w.length > 0 ? w : undefined
+  })
 
   // Chiều A: STT tiếng Anh, TTS speech=EN + feedback=VI
   // Chiều B: STT tiếng Việt, TTS speech=VI + feedback=EN
@@ -423,7 +449,7 @@ export default function Speaking() {
     }
     setLoading(true)
     setError('')
-    const sys = speakingSystemPrompt(situationLabel(situation, dir), level, dir)
+    const sys = speakingSystemPrompt(situationLabel(situation, dir), level, dir, targetWords)
     try {
       const raw = await callClaude([], sys, 1024, 'speaking')
       const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
@@ -573,7 +599,12 @@ export default function Speaking() {
       role: m.role,
       content: m.role === 'assistant' ? (m.speechEn ?? m.content) : m.content,
     }))
-    const sys = speakingSystemPrompt(situationLabel(session.situation, dir), session.level, dir)
+    const sys = speakingSystemPrompt(
+      situationLabel(session.situation, dir),
+      session.level,
+      dir,
+      targetWords,
+    )
     try {
       const raw = await callClaude(history, sys, 1024, 'speaking')
       const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
@@ -712,7 +743,12 @@ export default function Speaking() {
               }
             />
           </div>
-          <SetupScreen onStart={startSession} dir={dir} defaultLevel={onboarding?.level} />
+          <SetupScreen
+            onStart={startSession}
+            dir={dir}
+            defaultLevel={onboarding?.level}
+            targetWords={targetWords}
+          />
         </div>
       ) : evaluation ? (
         <EvaluationResultView

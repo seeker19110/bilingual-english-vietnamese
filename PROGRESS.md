@@ -1080,8 +1080,18 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
         câu đúng để rỗng). Trang ôn `/mistakes` (`src/pages/MistakeBank.tsx`): tab Cần ôn (thẻ câu
         sai → tự sửa → lật đáp án, nút Đã nhớ/Vẫn khó/Xóa) + tab Tất cả; thẻ tóm tắt trên
         `/progress` (số lỗi cần ôn). **Đồng bộ Supabase để đợt sau** (sau khi migration production đã chạy).
-  - [ ] **B — Nối lộ trình ↔ 3 chế độ AI**: nút "Luyện từ hôm nay bằng hội thoại" bơm từ vừa học
-        vào prompt Chat/Nói (`targetWords?`), AI khuyến khích học viên dùng.
+  - [x] **B — Nối lộ trình ↔ 3 chế độ AI**: màn "Hoàn thành bài hôm nay" (`BatchDoneView` trong
+        `src/components/StudyTabs.tsx`) có 2 nút **"Luyện qua Chat"/"Luyện qua Nói"**, điều hướng
+        sang `/chat`/`/speaking` kèm `navigate(path, { state: { targetWords } })` (mẫu điều hướng
+        MỚI trong dự án — trước đây chỉ dùng query param; đã rà không có chỗ nào khác cần đổi theo).
+        `chatSystemPrompt`/`speakingSystemPrompt` (`src/prompts/index.ts`) nhận thêm tham số
+        optional `targetWords?: string[]` → nội suy 1 đoạn nhắc AI "khéo léo dẫn dắt để học viên
+        DÙNG các từ này, khen khi dùng đúng" (song ngữ theo `dir`); không truyền → hành vi cũ y
+        nguyên. `Chat.tsx`/`Speaking.tsx` đọc `useLocation().state` 1 LẦN lúc vào trang (giữ nguyên
+        suốt phiên, không lưu vào `ChatSession`/`SpeakingSession` để KHÔNG phải đổi schema Supabase
+        `chat_sessions`/`speaking_sessions`), truyền vào cả 2 lượt gọi prompt (mở phiên + mỗi lượt
+        gửi); `SetupScreen` hiện chip "Từ vừa học" + mặc định tình huống "Tự do" khi có từ mục
+        tiêu. Chỉ áp dụng chiều A (lộ trình CEFR hiện chỉ có chiều Việt→Anh).
   - [ ] **C/D/E/F/G/H** — xem tài liệu đề xuất (sản xuất chủ động, nghe hiểu, ôn ngữ pháp, giữ chân…).
 - Thanh toán Pro (cổng nâng cấp gói) — cần quyết định sản phẩm (nhà cung cấp, giá, webhook) trước
   khi code; theo CLAUDE.md mục 12 phải dừng hỏi người dùng trước khi bắt đầu.
