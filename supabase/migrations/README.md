@@ -6,30 +6,49 @@ chạy phần thay đổi mới** thay vì chạy lại toàn bộ `schema.sql`.
 ## Cách dùng
 
 - DB mới (lần đầu): chạy `../schema.sql` (đã gồm mọi thứ, idempotent).
-- DB đã có sẵn: vào Supabase Dashboard → SQL Editor → chạy lần lượt các file
-  `NNNN_*.sql` theo thứ tự số tăng dần mà bạn CHƯA chạy.
+- DB đã có sẵn (production): **tự động** khi deploy qua `bash deploy.sh` — xem mục
+  "Chạy tự động khi deploy" bên dưới. Chỉ cần dán tay vào Dashboard khi KHÔNG dùng
+  `deploy.sh` (ví dụ deploy thủ công/nơi khác) hoặc chưa điền `SUPABASE_DB_URL`.
 
 Mỗi file đặt tên `NNNN_mo-ta-ngan.sql` (số thứ tự 4 chữ số + mô tả).
-Tất cả phải viết idempotent (`create or replace`, `if not exists`) để chạy lại an toàn.
+Tất cả phải viết idempotent (`create or replace`, `if not exists`) để chạy lại an toàn —
+quy ước này BẮT BUỘC vì cơ chế tự động bên dưới có thể chạy lại 1 file nếu bước ghi
+trạng thái "đã áp dụng" bị lỗi giữa chừng (xem `scripts/run-migrations.ts`).
+
+## Chạy tự động khi deploy (khuyên dùng)
+
+`deploy.sh` (bước 6/8) tự chạy `npm run migrate` (`scripts/run-migrations.ts`) — script
+này kết nối THẲNG Postgres bằng connection string `SUPABASE_DB_URL` (biến MỚI, khác
+`SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` — 2 biến đó là REST API, không chạy được
+lệnh SQL DDL như tạo bảng/cột), tự tạo bảng theo dõi `_schema_migrations` ở lần chạy
+đầu tiên (không cần bootstrap thủ công), rồi tìm mọi file `NNNN_*.sql` CHƯA có trong
+bảng đó và áp dụng lần lượt — mỗi file chạy trong 1 transaction riêng (rollback nếu
+lỗi, không đánh dấu "đã áp dụng"). Deploy dừng ngay nếu 1 migration lỗi.
+
+**Cần làm 1 lần**: điền `SUPABASE_DB_URL` vào `.env` trên VPS (lấy ở Supabase
+Dashboard → Project Settings → Database → Connection string → mục **"Direct
+connection"**, không dùng "Transaction pooler") — xem `docs/deploy-vps-ubuntu.md`
+Bước 0 mục 4 + Bước 4. Sau đó mọi migration mới tự chạy mỗi lần `bash deploy.sh`.
+
+Vì `0001`–`0009` đều viết idempotent (đã chạy tay trên production từ trước), lần đầu
+tiên chạy `npm run migrate` trên production sẽ áp lại chúng một cách an toàn (chỉ tốn
+thêm vài trăm ms) rồi mới tới `0010` — không cần đánh dấu hay bỏ qua thủ công.
 
 ## Trạng thái trên Supabase production
 
-> Cập nhật mục này mỗi khi chạy 1 migration mới trên Dashboard production — đây là nơi DUY NHẤT
-> cần xem trước khi deploy (thay vì phải lục lại lịch sử `PROGRESS.md`). Xem thêm cảnh báo ở
-> `docs/deploy-vps-ubuntu.md` mục "Cập nhật code mới (deploy lại)".
+| File                                       | Đã chạy trên production?                                                                                                            |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `0001_consume_usage.sql`                   | ✅ Đã chạy (đếm lượt đang chạy thật trên production).                                                                               |
+| `0002_learn_count.sql`                     | ✅ Đã chạy (streak đang chạy thật).                                                                                                 |
+| `0003_remind_hour.sql`                     | ✅ Đã chạy (nhắc học đẩy thông báo đang chạy thật).                                                                                 |
+| `0004_refund_usage.sql`                    | ✅ Đã chạy (hoàn lượt khi provider lỗi đang chạy thật).                                                                             |
+| `0005_lockdown_cost_columns.sql`           | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                        |
+| `0006_pronunciations_rls.sql`              | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                        |
+| `0007_learning_progress_cefr.sql`          | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                        |
+| `0008_learning_progress_cefr_unlocked.sql` | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                        |
+| `0009_learning_progress_cefr_exams.sql`    | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                        |
+| `0010_vlog_entries.sql`                    | ❌ CHƯA CHẠY — bảng `vlog_entries` cho thử thách "Vlog 1 phút / 30 ngày". Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền). |
 
-| File                                       | Đã chạy trên production?                                                                                                                |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `0001_consume_usage.sql`                   | Có từ trước quy ước theo dõi này — chưa có ghi chú xác nhận riêng, suy ra ĐÃ CHẠY vì tính năng đếm lượt đang chạy thật trên production. |
-| `0002_learn_count.sql`                     | (như trên) — streak đang chạy thật trên production.                                                                                     |
-| `0003_remind_hour.sql`                     | (như trên) — nhắc học đẩy thông báo đang chạy thật.                                                                                     |
-| `0004_refund_usage.sql`                    | (như trên) — hoàn lượt khi provider lỗi đang chạy thật.                                                                                 |
-| `0005_lockdown_cost_columns.sql`           | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                            |
-| `0006_pronunciations_rls.sql`              | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                            |
-| `0007_learning_progress_cefr.sql`          | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                            |
-| `0008_learning_progress_cefr_unlocked.sql` | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                            |
-| `0009_learning_progress_cefr_exams.sql`    | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                            |
-| `0010_vlog_entries.sql`                    | ❌ CHƯA CHẠY — bảng `vlog_entries` cho thử thách "Vlog 1 phút / 30 ngày". Chạy TRƯỚC khi deploy code vlog lên VPS.                      |
-
-Nếu bạn (người vận hành) chạy migration mới, cập nhật dòng tương ứng thành
-✅ kèm ngày chạy — đừng để trạng thái cũ trôi nổi qua nhiều phiên làm việc.
+> Sau khi `SUPABASE_DB_URL` đã điền, bảng này **không còn cần cập nhật tay** mỗi lần
+> chạy migration — `deploy.sh` tự ghi vào `_schema_migrations` trên Supabase. Chỉ cần
+> sửa bảng trên khi deploy KHÔNG qua `deploy.sh` (dán tay vào Dashboard).

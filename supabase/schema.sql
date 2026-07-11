@@ -324,3 +324,14 @@ alter table public.vlog_entries enable row level security;
 drop policy if exists "own vlog" on public.vlog_entries;
 create policy "own vlog" on public.vlog_entries
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- ── 14. _schema_migrations: bảng theo dõi migration đã áp dụng, cho phép deploy.sh
+-- TỰ ĐỘNG chạy các file supabase/migrations/NNNN_*.sql còn thiếu mỗi lần deploy, không
+-- cần dán tay vào SQL Editor nữa (xem scripts/run-migrations.ts, kết nối THẲNG Postgres
+-- bằng SUPABASE_DB_URL — không qua RPC/PostgREST, không hàm/quyền đặc biệt nào ở đây).
+-- Script cũng tự tạo bảng này ở lần chạy đầu nếu chưa có — dòng dưới chỉ để DB mới tạo
+-- từ schema.sql có sẵn luôn, không bắt buộc.
+create table if not exists public._schema_migrations (
+  filename   text primary key,
+  applied_at timestamptz not null default now()
+);
