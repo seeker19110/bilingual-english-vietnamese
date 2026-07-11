@@ -123,6 +123,13 @@ alter table public.learning_progress
 alter table public.learning_progress
   add column if not exists cefr_unlocked jsonb not null default '[]';
 
+-- Cột thêm sau (migration 0009): kết quả bài thi cuối cấp CEFR — map
+-- { levelId → { passed, bestPct, attempts, lastAt } } (xem lib/cefrExam.ts).
+-- (Bổ sung vào đây 2026-07-11 khi rà soát: schema.sql từng thiếu dòng này dù
+-- migration 0009 đã chạy production — DB mới tạo từ schema.sql sẽ gãy progressSync.)
+alter table public.learning_progress
+  add column if not exists cefr_exams jsonb not null default '{}';
+
 -- ── 7. Bật Row Level Security cho tất cả bảng ─────────────────────────
 alter table public.profiles            enable row level security;
 alter table public.chat_sessions       enable row level security;
@@ -294,3 +301,26 @@ begin
   ) using p_user_id, p_day;
 end;
 $$;
+
+-- ── 13. vlog_entries: thử thách "Vlog 1 phút / 30 ngày" (migration 0010) ─────
+-- Chỉ lưu TEXT (transcript + phản hồi AI + vị trí trong thử thách) — video KHÔNG
+-- upload, chỉ nằm trên máy người dùng (IndexedDB). Mỗi ngày 1 dòng (unique user_id+day),
+-- nộp lại trong ngày = upsert ghi đè. Xem docs/research/thu-thach-vlog-30-ngay.md mục 4.2.
+create table if not exists public.vlog_entries (
+  id              uuid primary key default gen_random_uuid(),
+  user_id         uuid not null references auth.users(id) on delete cascade,
+  day             date not null,                 -- ngày nộp vlog (múi giờ VN, 'YYYY-MM-DD')
+  challenge_round int not null default 1,        -- vòng thử thách thứ mấy (sau ngày 30 mời vòng mới)
+  challenge_day   int not null,                  -- ngày thứ mấy trong thử thách (1..30)
+  topic_day       int not null,                  -- chủ đề gợi ý của ngày (index trong src/data/vlogTopics.ts)
+  transcript      text not null,                 -- transcript từ Whisper (/api/stt)
+  feedback        jsonb,                         -- phản hồi AI có cấu trúc (null = chưa/lỗi feedback)
+  duration_sec    int not null default 0,        -- thời lượng nói (giây, client tự tính)
+  word_count      int not null default 0,        -- số từ trong transcript (tính nhịp nói từ/phút)
+  created_at      timestamptz default now(),
+  unique (user_id, day)                          -- mỗi ngày 1 vlog; nộp lại = ghi đè (upsert)
+);
+alter table public.vlog_entries enable row level security;
+drop policy if exists "own vlog" on public.vlog_entries;
+create policy "own vlog" on public.vlog_entries
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);

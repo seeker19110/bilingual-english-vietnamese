@@ -16,6 +16,16 @@
   nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro). Cả 2 đợt bổ
   sung từ điển theo chuẩn CEFR-J/Octanove (A1→C2) đã hoàn tất.
 
+## Thử thách "English Vlog 1 phút/ngày" (30 ngày) — ĐANG CHỜ DUYỆT KẾ HOẠCH
+
+Ý tưởng game hóa do người dùng đề xuất (2026-07-11). Đã nghiên cứu sư phạm + thiết kế
+kỹ thuật chi tiết ở `docs/research/thu-thach-vlog-30-ngay.md`. Điểm chính: quay video
+≤ 180s/ngày (mục tiêu ~1 phút; trần 180s — người dùng chốt 2026-07-11) theo chủ đề sát đời sống VN → video **chỉ lưu trên máy người dùng** (IndexedDB,
+chi phí storage = 0) → audio gửi `/api/stt` sẵn có → AI sửa lỗi tiếng Việt qua `/api/claude`
+→ bảng 30 ô + huy hiệu mốc 3·7·14·21·30 + tổng kết so sánh video ngày 1 vs ngày 30.
+Chia 4 PR nhỏ. **Chưa code — chờ người dùng chốt 4 câu hỏi ở mục 8 của tài liệu**
+(lưu local-only? · tính lượt stt+chat? · vé nghỉ chung? · duyệt PR 1?).
+
 ## Bài thi cuối cấp CEFR (End-of-level assessment)
 
 Triển khai thiết kế ở `docs/research/bai-kiem-tra-cuoi-cap.md` (quyết định người dùng:

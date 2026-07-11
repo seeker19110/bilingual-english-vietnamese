@@ -29,6 +29,7 @@ Tất cả phải viết idempotent (`create or replace`, `if not exists`) để
 | `0007_learning_progress_cefr.sql`          | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                            |
 | `0008_learning_progress_cefr_unlocked.sql` | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                            |
 | `0009_learning_progress_cefr_exams.sql`    | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                            |
+| `0010_vlog_entries.sql`                    | ❌ CHƯA CHẠY — bảng `vlog_entries` cho thử thách "Vlog 1 phút / 30 ngày". Chạy TRƯỚC khi deploy code vlog lên VPS.                      |
 
 Nếu bạn (người vận hành) chạy migration mới, cập nhật dòng tương ứng thành
 ✅ kèm ngày chạy — đừng để trạng thái cũ trôi nổi qua nhiều phiên làm việc.
