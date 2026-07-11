@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 // localStorage nên chỉ cần stub supabase là đủ chạy offline.
 vi.mock('./supabase', () => ({ supabase: {} }))
 
-import { getStreak } from './storage'
+import { getStreak, hasStudiedToday, shouldCelebrateStreak, markStreakCelebrated } from './storage'
 import { vnDateStr } from './date'
 
 const usageKey = (uid: string, date: string) => `et_usage_${uid}_${date}`
@@ -80,5 +80,41 @@ describe('getStreak — vé nghỉ streak (V2, docs/research/cai-tien-lo-trinh-h
     // nghỉ liền 2 ngày (2, 3) — chỉ ngày 2 được bắc cầu bằng vé, ngày 3 vẫn nghỉ → đứt hẳn
     setActivity('u1', 4) // không được tính vì streak đã đứt trước khi quét tới đây
     expect(getStreak('u1')).toBe(2) // chỉ đếm 0, 1 — bắc cầu ngày 2 không cộng, đứt ở ngày 3
+  })
+})
+
+describe('Khoảnh khắc streak — 1 lần/ngày (V-2, cai-tien-trai-nghiem-hoc-2026-07-11.md)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('hasStudiedToday: false khi chưa có hoạt động, true sau khi có', () => {
+    expect(hasStudiedToday('u1')).toBe(false)
+    setActivity('u1', 0)
+    expect(hasStudiedToday('u1')).toBe(true)
+  })
+
+  it('chưa học hôm nay → KHÔNG ăn mừng (kể cả khi có streak từ hôm qua)', () => {
+    setActivity('u1', 1)
+    expect(shouldCelebrateStreak('u1')).toBe(false)
+  })
+
+  it('đã học hôm nay + chưa ăn mừng → ăn mừng; sau khi đánh dấu → không lặp lại', () => {
+    setActivity('u1', 0)
+    expect(shouldCelebrateStreak('u1')).toBe(true)
+    markStreakCelebrated('u1')
+    expect(shouldCelebrateStreak('u1')).toBe(false) // idempotent trong cùng ngày
+  })
+
+  it('đánh dấu của NGÀY HÔM QUA không chặn ăn mừng hôm nay', () => {
+    setActivity('u1', 0)
+    localStorage.setItem('et_streak_celebrated_u1', dayAgo(1)) // ăn mừng lần cuối: hôm qua
+    expect(shouldCelebrateStreak('u1')).toBe(true)
+  })
+
+  it('mỗi người dùng đánh dấu riêng — không ảnh hưởng lẫn nhau', () => {
+    setActivity('u1', 0)
+    setActivity('u2', 0)
+    markStreakCelebrated('u1')
+    expect(shouldCelebrateStreak('u1')).toBe(false)
+    expect(shouldCelebrateStreak('u2')).toBe(true)
   })
 })

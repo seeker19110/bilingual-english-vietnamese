@@ -28,8 +28,9 @@ import { useNavigate } from 'react-router-dom'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import WordCard from './WordCard'
 import type { DictEntry } from '../types'
-import { markStudiedToday } from '../lib/storage'
+import { markStudiedToday, shouldCelebrateStreak, markStreakCelebrated } from '../lib/storage'
 import { haptics, vibrate } from '../lib/haptics'
+import StreakCelebration from './StreakCelebration'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
 import {
   addToSRS,
@@ -394,6 +395,9 @@ export function TodayLesson({
   // Từ trả lời sai trong mini-quiz — ôn lại flashcard TRƯỚC KHI cho làm lại quiz.
   const [wrongWords, setWrongWords] = useState<DictEntry[]>([])
   const [reviewIdx, setReviewIdx] = useState(0)
+  // Khoảnh khắc streak — "đỉnh" cảm xúc, bắn 1 lần/ngày khi xong batch đầu tiên
+  // (V-2, docs/research/cai-tien-trai-nghiem-hoc-2026-07-11.md).
+  const [celebrating, setCelebrating] = useState(false)
 
   // Tiến độ CỦA CẤP này (pool đã lọc theo cấp ở trang cha) — trước đây dùng
   // getPathProgress (cả lộ trình, ~10.000 từ) gây khó hiểu khi đang xem 1 cấp.
@@ -420,6 +424,8 @@ export function TodayLesson({
       const totalToday = getDailyLearned(uid) // đã bump rồi
       if (totalToday >= dailyMax) setPhase('daily-max')
       else setPhase('batch-done')
+      // Lần ĐẦU hoàn thành bài trong ngày → màn "🔥 Chuỗi N ngày" (1 lần/ngày)
+      if (shouldCelebrateStreak(uid)) setCelebrating(true)
     } else {
       setIdx(nextIdx)
     }
@@ -503,6 +509,20 @@ export function TodayLesson({
             : 'Review SRS to retain more, or move to the next level.'}
         </p>
       </div>
+    )
+  }
+
+  // ── Khoảnh khắc streak (overlay toàn màn, 1 lần/ngày) — hiện TRƯỚC màn xong bài
+  if (celebrating) {
+    return (
+      <StreakCelebration
+        uid={uid}
+        isA={isA}
+        onDone={() => {
+          markStreakCelebrated(uid)
+          setCelebrating(false)
+        }}
+      />
     )
   }
 

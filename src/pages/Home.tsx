@@ -16,7 +16,7 @@ import {
   Brain,
 } from 'lucide-react'
 import Layout from '../components/Layout'
-import { getStreak, getDirection, setDirection } from '../lib/storage'
+import { getStreak, hasStudiedToday, getDirection, setDirection } from '../lib/storage'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
 import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
@@ -180,6 +180,7 @@ export default function Home() {
   if (!user) return null
 
   const streak = getStreak(user.id)
+  const studiedToday = hasStudiedToday(user.id) // ô streak 3 trạng thái (V-2, E2)
   const srsDue = getSRSStats(user.id).due
   const dailyLearned = getDailyLearned(user.id)
   const dailyMax = getDailyMax(user.id)
@@ -300,24 +301,31 @@ export default function Home() {
             </span>
           </button>
 
-          {/* Streak — cột giữa, căn giữa hoàn toàn */}
+          {/* Streak — 3 trạng thái (V-2, E2): đã giữ hôm nay ✓ · CHƯA giữ (viền đậm
+              nhắc nhở) · chưa có chuỗi (🌱 mời gọi thay 💤 trống rỗng) */}
           <div
             className={`flex flex-col items-center justify-center gap-1 rounded-2xl py-3 border ${
               streak > 0
-                ? 'bg-orange-500/10 border-orange-500/25'
+                ? studiedToday
+                  ? 'bg-orange-500/10 border-orange-500/25'
+                  : 'bg-orange-500/15 border-orange-500/60'
                 : 'bg-zinc-900/40 border-zinc-800/40'
             }`}
           >
-            <span className="text-xl leading-none">{streak > 0 ? '🔥' : '💤'}</span>
+            <span className="text-xl leading-none">{streak > 0 ? '🔥' : '🌱'}</span>
             <p
               className={`text-sm font-bold leading-none ${streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
             >
               {streak}
             </p>
             <p
-              className={`text-[11px] leading-none ${streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
+              className={`text-[11px] leading-none text-center ${
+                streak > 0
+                  ? `text-orange-400 ${studiedToday ? '' : 'font-semibold'}`
+                  : 'text-zinc-400'
+              }`}
             >
-              {T.streakDays}
+              {streak > 0 ? (studiedToday ? T.streakDoneToday : T.streakKeepToday) : T.streakStart}
             </p>
           </div>
 

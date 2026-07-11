@@ -1086,8 +1086,25 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
       fade-in thay keyframe mới); JS không đổi 114.69/116 kB. Verify: typecheck/lint 0 cảnh
       báo/test 279/279/build/size xanh + lái app thật (ảnh giữa chuyển động xác nhận thẻ xoay 3D
       phối cảnh thật, quiz pop/shake đúng màu ngữ nghĩa).
-- [ ] **V-2 — Hệ "Khoảnh khắc" + streak chủ động (E1 E2 E4)**: component `Celebration` + confetti
-      CSS lazy-chunk, màn "🔥 Streak +1" 1 lần/ngày, ô streak Home 3 trạng thái (bỏ 💤), SRS due +4h.
+- [x] **V-2 — Hệ "Khoảnh khắc" + streak chủ động (E1 E2 E4)**:
+  - `Celebration.tsx` (overlay ăn mừng dùng chung, **render qua portal** — tổ tiên trong
+    tab học có transform từ `animate-fade-in` fill-mode both làm `fixed` neo sai, bug bắt
+    được khi lái app thật) + `confetti.ts` (CSS thuần tự tiêm style, **chunk lazy riêng**
+    qua `import()` — 0 chi phí bundle đầu trang; tôn trọng reduced-motion).
+  - `StreakCelebration.tsx`: màn "🔥 Chuỗi N ngày!" + hàng 7 chấm tuần (chấm hôm nay nổi
+    bật; ngày vé-nghỉ bắc cầu hiện chấm RỖNG — không vẽ ✓ giả) + câu động viên theo mốc
+    3/7/14/30/100 ngày. Bắn 1 LẦN/NGÀY sau batch đầu tiên: `shouldCelebrateStreak`/
+    `markStreakCelebrated` (`storage.ts`, khóa `et_streak_celebrated_*` theo ngày VN,
+    5 unit test); reload không lặp (đã kiểm thật).
+  - Ô streak Trang chủ 3 trạng thái (`Home.tsx` + 3 key i18n vi/en): đã học hôm nay →
+    "đã giữ hôm nay ✓" · CHƯA học (streak sống) → viền cam đậm "giữ chuỗi hôm nay!" ·
+    streak 0 → 🌱 "bắt đầu chuỗi hôm nay" (bỏ 💤 đóng khung tiêu cực).
+  - SRS due +4h cho thẻ MỚI (`NEW_CARD_DELAY_MS`, `srs.ts`): badge "Ôn SRS" không nhảy
+    số NGAY khi vừa học xong (E4 "vừa xong đã nợ"); ôn cùng ngày buổi tối vẫn giữ.
+    Chỉ ảnh hưởng thẻ tạo mới, 3 test SRS cập nhật theo.
+  - Verify: typecheck/lint 0 cảnh báo/test 284/284/build/size (JS 114.78/116 · CSS
+    9.17/9.2) + **full E2E 79/79** (a11y 4 theme) + lái app thật: màn streak giữa màn
+    đúng, confetti rơi, không lặp sau reload, badge SRS im sau khi học, 3 trạng thái Home.
 - [ ] **V-3 — Vòng cung phiên** (gộp đề xuất B sư phạm: nút "Luyện ngay bằng hội thoại" + `targetWords`).
 - [ ] **V-4 — Mốc + huy hiệu** · **V-5 — Home "Hôm nay" + sửa 0/12245 (E7)** · **V-6 — Âm UI (mặc định BẬT)**.
 
