@@ -23,6 +23,9 @@ const Profile = lazyWithRetry(() => import('./pages/Profile'))
 const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
 const MistakeBank = lazyWithRetry(() => import('./pages/MistakeBank'))
 
+// Thử thách "Vlog 1 phút — 30 ngày" — ghi hình/IndexedDB chỉ tải khi bấm vào.
+const Vlog = lazyWithRetry(() => import('./pages/Vlog'))
+
 // Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng
 // thực sự bấm vào, không gộp vào bundle chính để app khởi động nhanh hơn.
 const Dictionary = lazyWithRetry(() => import('./pages/Dictionary'))
@@ -200,6 +203,14 @@ export default function App() {
                       element={
                         <RequireAuth>
                           <MistakeBank />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/vlog"
+                      element={
+                        <RequireAuth>
+                          <Vlog />
                         </RequireAuth>
                       }
                     />

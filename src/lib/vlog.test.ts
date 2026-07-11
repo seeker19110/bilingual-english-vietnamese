@@ -11,9 +11,11 @@ import {
   getKeepDates,
   countWords,
   calcWpm,
+  mergeCloudEntries,
   VLOG_MILESTONES,
   type VlogChallenge,
   type VlogEntryLocal,
+  type CloudEntryForMerge,
 } from './vlog'
 import { vnDateStr } from './date'
 
@@ -231,6 +233,65 @@ describe('getKeepDates — video ngày 1 + 7 video gần nhất', () => {
     const c = mkChallenge(3, [3, 2, 0])
     expect(getKeepDates(c)).toEqual([dayAgo(3), dayAgo(2), dayAgo(0)])
     expect(getKeepDates(mkChallenge(0, []))).toEqual([])
+  })
+})
+
+describe('mergeCloudEntries — đồng bộ đổi máy không mất tiến độ', () => {
+  beforeEach(() => localStorage.clear())
+
+  const mkCloud = (
+    day: string,
+    round: number,
+    feedback: string | null = null,
+  ): CloudEntryForMerge => ({
+    day,
+    round,
+    challengeDay: 1,
+    topicDay: 1,
+    transcript: 'from cloud',
+    feedback,
+    durationSec: 20,
+    wordCount: 2,
+  })
+
+  it('không có gì từ cloud → giữ nguyên local (kể cả null)', () => {
+    expect(mergeCloudEntries('u1', [])).toBeNull()
+    startChallenge('u1')
+    const before = getChallenge('u1')
+    expect(mergeCloudEntries('u1', [])).toEqual(before)
+  })
+
+  it('máy MỚI (chưa có challenge local) → dựng challenge từ cloud, startDate = ngày sớm nhất của vòng mới nhất', () => {
+    const cloud = [mkCloud(dayAgo(3), 1), mkCloud(dayAgo(1), 1), mkCloud(dayAgo(0), 1)]
+    const merged = mergeCloudEntries('u1', cloud)
+    expect(merged).not.toBeNull()
+    expect(merged!.round).toBe(1)
+    expect(merged!.startDate).toBe(dayAgo(3))
+    expect(Object.keys(merged!.entries)).toHaveLength(3)
+    // Đã ghi vào localStorage — gọi lại getChallenge phải thấy đúng dữ liệu vừa hợp nhất
+    expect(getChallenge('u1')).toEqual(merged)
+  })
+
+  it('máy ĐÃ có challenge → KHÔNG đụng startDate/round, chỉ bổ sung entry thiếu', () => {
+    startChallenge('u1') // startDate = hôm nay, round 1
+    saveEntry('u1', mkEntry(today()))
+    const before = getChallenge('u1')!
+    const cloud = [mkCloud(dayAgo(2), 1), mkCloud(today(), 1)] // dayAgo(2) mới với máy này
+    const merged = mergeCloudEntries('u1', cloud)!
+    expect(merged.startDate).toBe(before.startDate)
+    expect(merged.round).toBe(before.round)
+    expect(Object.keys(merged.entries)).toHaveLength(2) // thêm dayAgo(2), giữ today()
+  })
+
+  it('cùng ngày: cloud có feedback, local chưa → cloud thắng; local đã có feedback → giữ local', () => {
+    startChallenge('u1')
+    saveEntry('u1', { ...mkEntry(today()), feedback: null })
+    const merged1 = mergeCloudEntries('u1', [mkCloud(today(), 1, '{"praise":"tot"}')])!
+    expect(merged1.entries[today()].feedback).toBe('{"praise":"tot"}')
+
+    saveEntry('u1', { ...mkEntry(today()), feedback: '{"praise":"local"}' })
+    const merged2 = mergeCloudEntries('u1', [mkCloud(today(), 1, '{"praise":"cloud-cu"}')])!
+    expect(merged2.entries[today()].feedback).toBe('{"praise":"local"}')
   })
 })
 

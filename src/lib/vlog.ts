@@ -105,6 +105,69 @@ export function getChallenge(uid: string): VlogChallenge | null {
   return readChallenge(uid)
 }
 
+// 1 entry kéo từ Supabase (lib/vlogCloud.ts, đã đổi camelCase) — kiểu tối thiểu cần
+// để hợp nhất, tránh phụ thuộc chéo vào vlogCloud.ts (giống cách vlogCloud.ts tự định
+// nghĩa kiểu tối thiểu thay vì import ngược lại file này).
+export interface CloudEntryForMerge {
+  day: string
+  round: number
+  challengeDay: number
+  topicDay: number
+  transcript: string
+  feedback: string | null
+  durationSec: number
+  wordCount: number
+}
+
+// Hợp nhất entries kéo từ Supabase vào challenge LOCAL — cho phép đổi máy/xóa cache
+// không mất tiến độ thử thách. KHÔNG đụng startDate/round nếu máy này đã có challenge
+// (tránh phá luật vé nghỉ đang tính dở); chỉ dùng dữ liệu cloud để DỰNG LẠI challenge
+// khi máy này hoàn toàn chưa có (vd vừa đăng nhập trên thiết bị mới) — suy ra startDate
+// từ ngày nộp SỚM NHẤT của vòng mới nhất trong dữ liệu cloud.
+// Luật hợp nhất từng entry: ngày chỉ có ở cloud → thêm mới; ngày có ở cả 2 và bản cloud
+// có feedback còn bản local thì không → cloud thắng (đầy đủ hơn); các trường hợp khác
+// giữ nguyên bản local (máy này vừa nộp là bản mới nhất).
+export function mergeCloudEntries(
+  uid: string,
+  cloudEntries: CloudEntryForMerge[],
+): VlogChallenge | null {
+  if (cloudEntries.length === 0) return readChallenge(uid)
+
+  const cur = readChallenge(uid)
+  const maxRound = Math.max(...cloudEntries.map((e) => e.round))
+  const earliestOfMaxRound = cloudEntries
+    .filter((e) => e.round === maxRound)
+    .map((e) => e.day)
+    .sort()[0]
+  const base: VlogChallenge = cur ?? {
+    startDate: earliestOfMaxRound ?? vnDateStr(),
+    round: maxRound,
+    entries: {},
+  }
+
+  const entries = { ...base.entries }
+  for (const e of cloudEntries) {
+    const existing = entries[e.day]
+    const cloudMoreComplete = !existing || (!!e.feedback && !existing.feedback)
+    if (cloudMoreComplete) {
+      entries[e.day] = {
+        day: e.day,
+        challengeDay: e.challengeDay,
+        topicDay: e.topicDay,
+        transcript: e.transcript,
+        feedback: e.feedback,
+        durationSec: e.durationSec,
+        wordCount: e.wordCount,
+        round: e.round,
+      }
+    }
+  }
+
+  const next: VlogChallenge = { ...base, round: Math.max(base.round, maxRound), entries }
+  writeChallenge(uid, next)
+  return next
+}
+
 // Bắt đầu thử thách: chưa có → vòng 1; đã có → mở vòng mới (round + 1), entries
 // vòng cũ GIỮ NGUYÊN trong map (lịch sử — mỗi entry đã tự mang `round` của nó).
 export function startChallenge(uid: string): VlogChallenge {
