@@ -148,8 +148,7 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 5. **Sentry chưa bật (CẦN LÀM TAY, AI không có quyền truy cập)** — code Sentry đã xong (no-op tới
    khi có DSN, xem `.env.example`), chỉ còn: lấy DSN miễn phí tại sentry.io → điền
    `SENTRY_DSN`/`VITE_SENTRY_DSN` vào `.env` trên VPS → build lại + `pm2 restart`.
-6. **Branch protection cho nhánh `main` (CẦN LÀM TAY, cần quyền admin repo)** — GitHub → Settings →
-   Branches → thêm rule cho `main`: yêu cầu PR trước khi merge + yêu cầu 2 CI check `quality`/`e2e`
-   xanh (đã có sẵn workflow, chỉ cần bật rule).
+6. ~~Branch protection cho nhánh `main`~~ ĐÃ XONG (người dùng xác nhận 2026-07-11) — rule yêu cầu
+   PR trước khi merge + 2 CI check `quality`/`e2e` xanh đã bật trên GitHub Settings → Branches.
 
 Chú thích: `[x]` xong · `[~]` làm một phần · `[ ]` chưa làm.
