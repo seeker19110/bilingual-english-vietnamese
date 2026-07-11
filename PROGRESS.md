@@ -1184,6 +1184,9 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
 
 ## Quyết định quan trọng (trỏ tới ADR nếu có)
 
+- **Thanh toán Pro: KHÔNG làm (2026-07-11).** Quyết định của người dùng — muốn dự án dùng miễn phí
+  vì cộng đồng. Việc "thanh toán Pro" trong nợ kỹ thuật/mục 13 CLAUDE.md coi như **đóng, không phải
+  làm tiếp**; không tự đề xuất hay nhắc lại ở đầu phiên. Chỉ mở lại khi người dùng chủ động báo.
 - GIỮ NGUYÊN phiên bản: Tailwind 3, ESLint 8 (`.eslintrc.cjs`) — KHÔNG nâng v4/flat config.
 - **Perf budget: chọn `size-limit` thay Lighthouse CI.** Lighthouse 12.6 không đo được
   app trong môi trường sandbox/CI hiện có (lỗi `NO_FCP` ở mọi cấu hình: full/headless-shell,
