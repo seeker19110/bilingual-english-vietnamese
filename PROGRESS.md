@@ -16,16 +16,40 @@
   nhỏ lẻ (xem "Nợ kỹ thuật") + việc sản phẩm mới (thanh toán Pro). Cả 2 đợt bổ
   sung từ điển theo chuẩn CEFR-J/Octanove (A1→C2) đã hoàn tất.
 
-## Thử thách "English Vlog 1 phút/ngày" (30 ngày) — ĐANG LÀM (nền tảng xong, chưa nối UI)
+## Thử thách "English Vlog 1 phút/ngày" (30 ngày) — ĐÃ XONG (2026-07-11)
 
 Ý tưởng game hóa do người dùng đề xuất (2026-07-11). Kế hoạch + nghiên cứu sư phạm ở
 `docs/research/thu-thach-vlog-30-ngay.md`. Người dùng đã DUYỆT cả 4 quyết định thiết kế
 (video local-only, lượt stt+chat sẵn có, vé nghỉ chung với streak, trần ghi hình **180
-giây**) — đã merge PR #230 (`main`): 30 chủ đề (`src/data/vlogTopics.ts`), prompt AI
-(`src/prompts/vlog.ts`), ghi hình kép + kho video IndexedDB (`src/lib/vlogRecorder.ts`,
-`vlogVideo.ts`), trạng thái thử thách + huy hiệu mốc (`src/lib/vlog.ts`, 26 test), đồng
-bộ Supabase (`src/lib/vlogCloud.ts`), migration `0010_vlog_entries.sql`. **Còn lại:**
-ráp trang `/vlog` (quay → nộp → feedback → bảng 30 ô) + nối Trang chủ/Dashboard + E2E/a11y.
+giây**). Hoàn tất qua 4 PR đã merge vào `main`:
+
+- **PR #230** — nền tảng: 30 chủ đề (`src/data/vlogTopics.ts`), prompt AI
+  (`src/prompts/vlog.ts`), ghi hình kép + kho video IndexedDB (`src/lib/vlogRecorder.ts`,
+  `vlogVideo.ts`), trạng thái thử thách + huy hiệu mốc (`src/lib/vlog.ts`), đồng bộ
+  Supabase (`src/lib/vlogCloud.ts`), migration `0010_vlog_entries.sql`.
+- **PR #231** — tự động chạy migration Supabase khi deploy (không riêng vlog, xem mục
+  dưới) — mở đường để `0010_vlog_entries.sql` tự áp khi deploy tiếp theo.
+- **PR #233** — trang `/vlog` hoàn chỉnh: bảng 30 ô, huy hiệu, luồng quay (đếm ngược →
+  ghi hình/chỉ-âm-thanh → xem lại → nộp, fallback gõ tay), màn thử thách đứt
+  (tiếp tục/bắt đầu lại), màn hoàn thành 30 ngày (so sánh video ngày 1 vs 30); thêm
+  `mergeCloudEntries()` vào `lib/vlog.ts` (đổi máy không mất tiến độ); route + card
+  Trang chủ. Kiểm thử THẬT bằng Playwright + camera giả (ảnh chụp xác nhận luồng quay
+  hoạt động đúng, không chỉ chạy test suite).
+- **PR follow-up (nhánh `claude/vlog-followups-t3xq7z`)** — nhắc push hằng ngày phân
+  biệt nội dung: người đang trong thử thách vlog gần đây (có `vlog_entries` trong 8
+  ngày) nhận thông điệp riêng "🎬 Chưa quay vlog hôm nay!" trỏ `/vlog` thay vì thông
+  điệp chung (`api/push.ts` `sendReminders`, +6 test, fail-open nếu bảng `vlog_entries`
+  chưa tồn tại); + gate a11y `/vlog` ở 4 trạng thái × 4 theme (chưa bắt đầu, đã bắt đầu
+  chưa nộp, đã nộp có nhận xét AI, chuỗi bị gián đoạn) — 16 test mới, 0 critical/serious
+  ở mọi theme ngay từ lần chạy đầu.
+
+**Còn lại (ngoài phạm vi, không chặn dùng thật):** i18n gộp vào từ điển trung tâm (hiện
+dùng ternary `isA ? vi : en` như `Speaking.tsx`); E2E cho luồng quay/nộp thật (cần mock
+`getUserMedia` sâu hơn, các trạng thái tĩnh đã có gate a11y).
+
+**Cần làm tay trên VPS trước khi chạy thật:** điền `SUPABASE_DB_URL` vào `.env`
+(xem mục "Tự động chạy migration Supabase khi deploy" dưới đây) rồi `bash deploy.sh` —
+migration `0010_vlog_entries.sql` sẽ tự áp.
 
 ## Tự động chạy migration Supabase khi deploy — ĐÃ XONG (2026-07-11)
 
