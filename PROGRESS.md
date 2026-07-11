@@ -1105,7 +1105,20 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
   - Verify: typecheck/lint 0 cảnh báo/test 284/284/build/size (JS 114.78/116 · CSS
     9.17/9.2) + **full E2E 79/79** (a11y 4 theme) + lái app thật: màn streak giữa màn
     đúng, confetti rơi, không lặp sau reload, badge SRS im sau khi học, 3 trạng thái Home.
-- [ ] **V-3 — Vòng cung phiên** (gộp đề xuất B sư phạm: nút "Luyện ngay bằng hội thoại" + `targetWords`).
+- [x] **V-3 — Vòng cung phiên học + GỘP đề xuất B sư phạm (E6)**:
+  - **Đề xuất B (nối lộ trình ↔ chế độ AI)**: `chatSystemPrompt`/`speakingSystemPrompt` nhận
+    tham số optional `targetWords?` (khối "TỪ MỤC TIÊU" trong prompt, cả 2 chiều A/B — AI dẫn
+    dắt học viên DÙNG từ vừa học, khen khi dùng đúng); Chat/Speaking đọc `?words=a,b,c` (cap 20),
+    hiện chip "🎯 Luyện N từ vừa học" trên màn thiết lập, lưu `targetWords` vào session (types
+    optional — không đổi schema Supabase) để tin nhắn sau vẫn giữ mục tiêu.
+  - **Màn kết batch (`BatchDoneView`)**: phân cấp CTA — nút CHÍNH "Luyện ngay N từ này bằng
+    hội thoại" (→ `/chat?words=`), phụ "🎤 Hoặc luyện nói với giọng thật" (→ `/speaking?words=`),
+    cuối "Muốn học thêm? Kiểm tra ngắn để mở N từ tiếp theo →" (viết lại copy cũ).
+  - **Màn mở phiên**: thẻ 1 dòng ở thẻ đầu tiên "Lượt này: N từ mới · ~X phút (+ SRS chờ)" —
+    tự biến mất từ thẻ 2, không thêm bước bấm.
+  - **Màn đạt trần ngày**: thêm móc "🔥 Hẹn mai nhé — chuỗi sẽ thành N+1 ngày!".
+  - Verify: test 284/284, **E2E 79/79**, size JS 115.17/116 · CSS 9.14/9.2; lái app thật:
+    URL truyền từ đúng, chip 🎯 hiện đủ 10 từ trên màn thiết lập Chat.
 - [ ] **V-4 — Mốc + huy hiệu** · **V-5 — Home "Hôm nay" + sửa 0/12245 (E7)** · **V-6 — Âm UI (mặc định BẬT)**.
 
 ## Tiếp theo

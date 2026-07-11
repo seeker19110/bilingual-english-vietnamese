@@ -28,7 +28,12 @@ import { useNavigate } from 'react-router-dom'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import WordCard from './WordCard'
 import type { DictEntry } from '../types'
-import { markStudiedToday, shouldCelebrateStreak, markStreakCelebrated } from '../lib/storage'
+import {
+  markStudiedToday,
+  shouldCelebrateStreak,
+  markStreakCelebrated,
+  getStreak,
+} from '../lib/storage'
 import { haptics, vibrate } from '../lib/haptics'
 import StreakCelebration from './StreakCelebration'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
@@ -197,6 +202,7 @@ function BatchDoneView({
   dailyStart: number
   onStartQuiz: () => void
 }) {
+  const nav = useNavigate()
   const learnedToday = getDailyLearned(uid) - dailyStart
   const totalToday = getDailyLearned(uid)
   const quizPasses = getDailyQuizPasses(uid)
@@ -266,8 +272,8 @@ function BatchDoneView({
         {canLearnMore && (
           <p className="text-xs text-zinc-400 mt-2">
             {isA
-              ? `Còn ${dailyMax - totalToday} từ có thể học hôm nay — kiểm tra để mở thêm.`
-              : `${dailyMax - totalToday} more words available today — pass a quiz to unlock.`}
+              ? `Còn ${dailyMax - totalToday} từ có thể học hôm nay.`
+              : `${dailyMax - totalToday} more words available today.`}
           </p>
         )}
       </div>
@@ -344,6 +350,26 @@ function BatchDoneView({
         </div>
       )}
 
+      {/* ── CTA: 1 nút chính + các lựa chọn phụ (V-3 "vòng cung phiên" + đề xuất B) ──
+          Nút chính: LUYỆN NGAY các từ vừa học bằng hội thoại — đóng vòng
+          recognition → use (từ được bơm vào prompt Chat/Nói qua ?words=). */}
+      <button
+        onClick={() => nav(`/chat?words=${encodeURIComponent(batch.map((w) => w.word).join(','))}`)}
+        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold transition"
+      >
+        <MessageCircle className="w-4 h-4" />
+        {isA
+          ? `Luyện ngay ${batch.length} từ này bằng hội thoại`
+          : `Practice these ${batch.length} words in a chat`}
+      </button>
+      <button
+        onClick={() =>
+          nav(`/speaking?words=${encodeURIComponent(batch.map((w) => w.word).join(','))}`)
+        }
+        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 theme-light:text-sky-700 text-sm font-medium transition"
+      >
+        🎤 {isA ? 'Hoặc luyện nói với giọng thật' : 'Or practice speaking aloud'}
+      </button>
       {canLearnMore && quizPasses < dailyMax / speed - 1 && (
         <button
           onClick={onStartQuiz}
@@ -351,8 +377,8 @@ function BatchDoneView({
         >
           <ClipboardList className="w-4 h-4" />
           {isA
-            ? `Kiểm tra để học thêm ${speed} từ (còn ${dailyMax - totalToday} từ hôm nay)`
-            : `Quiz to unlock ${speed} more words (${dailyMax - totalToday} left today)`}
+            ? `Muốn học thêm? Kiểm tra ngắn để mở ${speed} từ tiếp theo →`
+            : `Want more? Short quiz unlocks ${speed} more words →`}
         </button>
       )}
     </div>
@@ -528,6 +554,7 @@ export function TodayLesson({
 
   // ── Đã đạt 100 từ/ngày ────────────────────────────────────────────────
   if (phase === 'daily-max') {
+    const streakTomorrow = getStreak(uid) + 1
     return (
       <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-2">
         <Trophy className="w-10 h-10 text-amber-400 mx-auto" />
@@ -536,8 +563,11 @@ export function TodayLesson({
             ? `Xuất sắc! Đã học đủ ${dailyMax} từ hôm nay 🎉`
             : `Amazing! ${dailyMax} words learned today 🎉`}
         </p>
-        <p className="text-sm text-zinc-400">
-          {isA ? 'Quay lại vào ngày mai để tiếp tục.' : 'Come back tomorrow to continue.'}
+        {/* Móc quay lại: cho thấy phần thưởng cụ thể của ngày mai (V-3 "kết" phiên) */}
+        <p className="text-sm text-orange-400">
+          {isA
+            ? `🔥 Hẹn mai nhé — chuỗi sẽ thành ${streakTomorrow} ngày!`
+            : `🔥 See you tomorrow — your streak becomes ${streakTomorrow} days!`}
         </p>
         <p className="text-xs text-zinc-400 pt-1">
           {isA
@@ -745,8 +775,27 @@ export function TodayLesson({
   // Cấp CEFR của vòng đang học (null với vòng mở rộng) — hiện chip nhỏ cho biết
   // từ hôm nay thuộc cấp nào.
   const circleLevel = circle ? getCefrLevelOfCircle(circle.id) : null
+  // Màn mở phiên (V-3): 1 dòng cho biết lượt này gồm gì — chỉ hiện ở thẻ ĐẦU,
+  // tự biến mất khi sang thẻ 2 (không thêm bước bấm nào).
+  const srsWaiting = idx === 0 ? getDueWords(uid, pool).length : 0
   return (
     <div className="animate-fade-in">
+      {idx === 0 && (
+        <div className="glass rounded-xl px-4 py-2.5 mb-3 text-center">
+          <p className="text-sm text-white font-medium">
+            {isA
+              ? `Lượt này: ${batch.length} từ mới · ~${Math.max(2, Math.round(batch.length / 2))} phút`
+              : `This round: ${batch.length} new words · ~${Math.max(2, Math.round(batch.length / 2))} min`}
+          </p>
+          {srsWaiting > 0 && (
+            <p className="text-xs text-zinc-400 mt-0.5">
+              {isA
+                ? `+ ${srsWaiting} thẻ SRS đang chờ ôn sau đó`
+                : `+ ${srsWaiting} SRS cards waiting after`}
+            </p>
+          )}
+        </div>
+      )}
       {/* Tên chủ đề + cấp CEFR + tiến độ vòng */}
       {circle && (
         <div className="flex items-center justify-center gap-1.5 text-xs text-zinc-400 mb-2">

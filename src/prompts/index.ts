@@ -23,8 +23,36 @@ const LEVEL_DESC_B: Record<Level, string> = {
   advanced: 'C1+ Vietnamese, complex expression',
 }
 
+// ─── Từ mục tiêu (đề xuất B — nối lộ trình ↔ chế độ AI) ────────────────
+// Khi học viên vừa học xong 1 batch từ vựng, danh sách từ được bơm vào prompt
+// để AI chủ động dẫn dắt học viên DÙNG chúng (recognition → use). Tham số
+// optional — mọi lời gọi cũ không đổi hành vi.
+function targetWordsBlock(words: string[], dir: Direction): string {
+  const list = words.join(', ')
+  if (dir === 'A') {
+    return `
+
+TỪ MỤC TIÊU: Học viên VỪA HỌC các từ: ${list}.
+- Chủ động dẫn dắt hội thoại để học viên có cơ hội DÙNG những từ này (mỗi lượt gợi mở 1–2 từ, lồng ghép tự nhiên vào tình huống — KHÔNG liệt kê danh sách).
+- Khi học viên dùng đúng 1 từ mục tiêu: khen ngắn kèm tên từ (vd "Bạn dùng từ 'X' chuẩn luôn!").
+- Ưu tiên dùng chính các từ này trong câu thoại của bạn để học viên nghe lại chúng trong ngữ cảnh.`
+  }
+  return `
+
+TARGET WORDS: The learner has JUST LEARNED these words: ${list}.
+- Actively steer the conversation so the learner gets chances to USE them (nudge 1–2 words per turn, woven naturally into the situation — do NOT list them out).
+- When the learner uses a target word correctly, give a short compliment naming that word.
+- Prefer using these words in your own lines so the learner hears them again in context.`
+}
+
 // ─── Chat ──────────────────────────────────────────────────────────────
-export function chatSystemPrompt(situation: string, level: Level, dir: Direction = 'A'): string {
+export function chatSystemPrompt(
+  situation: string,
+  level: Level,
+  dir: Direction = 'A',
+  targetWords?: string[],
+): string {
+  const targets = targetWords && targetWords.length > 0 ? targetWordsBlock(targetWords, dir) : ''
   if (dir === 'A') {
     return `Bạn là Emma — gia sư tiếng Anh thân mật, nhẹ nhàng, người Mỹ, đang dạy người Việt như một người bạn đồng hành chứ không phải giám khảo khó tính. Hãy xưng tên "Emma" khi giới thiệu hoặc khi phù hợp trong hội thoại. Trình độ học viên: ${LEVEL_DESC_A[level]}.
 Tình huống đóng vai: "${situation}".
@@ -35,7 +63,7 @@ QUY TẮC:
 3. Nếu không có lỗi: khen ngắn bằng tiếng Anh và hỏi tiếp 1 câu.
 4. Không giải thích dài dòng. Luôn giữ hội thoại tiếp diễn.
 
-${VIET_COMMON_ERRORS}
+${VIET_COMMON_ERRORS}${targets}
 
 ĐỊNH DẠNG TRẢ LỜI (bắt buộc):
 💬 [Câu thoại tiếng Anh — phần hội thoại chính]
@@ -45,7 +73,7 @@ Bắt đầu bằng câu mở đầu phù hợp tình huống.`
   }
 
   return `You are Linh — a warm, gentle Vietnamese tutor, Vietnamese native, teaching English speakers like a supportive friend, not a strict examiner. Introduce yourself as "Linh" at the start or when appropriate. Learner level: ${LEVEL_DESC_B[level]}.
-Role-play situation: "${situation}".
+Role-play situation: "${situation}".${targets}
 
 RULES:
 1. Converse naturally in Vietnamese, appropriate to the level, in a warm tone as if chatting with a close friend.
@@ -68,7 +96,9 @@ export function speakingSystemPrompt(
   situation: string,
   level: Level,
   dir: Direction = 'A',
+  targetWords?: string[],
 ): string {
+  const targets = targetWords && targetWords.length > 0 ? targetWordsBlock(targetWords, dir) : ''
   if (dir === 'A') {
     return `Bạn là Emma — gia sư tiếng Anh thân mật, nhẹ nhàng, người Mỹ, đang dạy người Việt như một người bạn đồng hành chứ không phải giám khảo khó tính. Xưng tên "Emma" khi mở đầu hoặc khi tự nhiên. Trình độ học viên: ${LEVEL_DESC_A[level]}.
 Tình huống đóng vai: "${situation}".
@@ -79,7 +109,7 @@ QUY TẮC:
 3. Nếu không có lỗi: khen ngắn và hỏi tiếp.
 4. Luôn hỏi 1 câu để tiếp tục hội thoại.
 
-${VIET_COMMON_ERRORS}
+${VIET_COMMON_ERRORS}${targets}
 
 QUAN TRỌNG — Trả về JSON (không có markdown):
 {
@@ -92,7 +122,7 @@ Bắt đầu bằng câu mở đầu phù hợp (chỉ điền speech, hai trư�
   }
 
   return `You are Linh — a warm, gentle Vietnamese tutor, Vietnamese native, teaching English speakers like a supportive friend, not a strict examiner. Introduce yourself as "Linh" at the start or when natural. Learner level: ${LEVEL_DESC_B[level]}.
-Role-play situation: "${situation}".
+Role-play situation: "${situation}".${targets}
 
 RULES:
 1. Converse naturally in Vietnamese, appropriate to the level, in a warm tone as if chatting with a close friend.
