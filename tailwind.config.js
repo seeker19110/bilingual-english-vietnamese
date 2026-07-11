@@ -61,6 +61,18 @@ export default {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
+        // Phản hồi ĐÚNG trong quiz: nút phồng nhẹ rồi về
+        'pop-correct': {
+          '0%': { transform: 'scale(1)' },
+          '45%': { transform: 'scale(1.06)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        // Phản hồi SAI trong quiz: lắc ngang
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%, 60%': { transform: 'translateX(-5px)' },
+          '40%, 80%': { transform: 'translateX(5px)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.35s ease-out both',
@@ -68,6 +80,8 @@ export default {
         'scale-in': 'scale-in 0.25s ease-out both',
         'pulse-ring': 'pulse-ring 1.4s ease-out infinite',
         shimmer: 'shimmer 2s linear infinite',
+        'pop-correct': 'pop-correct 0.3s ease-out both',
+        shake: 'shake 0.35s ease-in-out both',
       },
     },
   },

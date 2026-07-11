@@ -1,6 +1,8 @@
 # Audit & đặc tả: Trải nghiệm học tự nhiên, lôi cuốn (lớp cảm xúc — engagement)
 
-> Ngày: 2026-07-11 · Trạng thái: **ĐỀ XUẤT + ĐẶC TẢ CHI TIẾT — chờ người dùng duyệt trước khi code**
+> Ngày: 2026-07-11 · Trạng thái: **ĐÃ DUYỆT (2026-07-11) — đang triển khai theo thứ tự V-1 → V-6**
+> Quyết định người dùng: ① thứ tự V-1 → V-2 trước; ② V-3 GỘP đề xuất B sư phạm (nút "Luyện
+> ngay bằng hội thoại"); ③ SRS due +4h đồng ý; ④ Âm UI: LÀM, mặc định BẬT (toggle trong Hồ sơ).
 > Phương pháp: lái app THẬT bằng Playwright khổ mobile 375×812 (14 ảnh chụp: luồng học trọn 1 batch
 > 10 từ từ thẻ đầu → màn hoàn thành, trang chủ mới/có tiến độ, lộ trình, trang cấp A1, Tiến độ,
 > Sổ lỗi, bài ngữ pháp) + đọc mã nguồn xác nhận từng phát hiện. Không suy đoán.

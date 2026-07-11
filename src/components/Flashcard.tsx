@@ -7,6 +7,7 @@ import PronounceButton from './PronounceButton'
 import KaraokeText from './KaraokeText'
 import WordFormsBlock from './WordFormsBlock'
 import { getDirection } from '../lib/storage'
+import { haptics } from '../lib/haptics'
 
 interface Props {
   userId: string
@@ -50,9 +51,11 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
   function rate(remembered: boolean) {
     if (!card) return
     if (remembered) {
+      haptics.success()
       markLearned(userId, card.word)
       setKnown((k) => k + 1)
     } else {
+      haptics.tap()
       // Chưa nhớ → bỏ đánh dấu (nếu trước đó từng đánh dấu thuộc)
       unmarkLearned(userId, card.word)
     }
@@ -107,30 +110,44 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
         />
       </div>
 
-      {/* Thẻ — bấm để lật */}
-      <button
-        onClick={() => setFlipped((f) => !f)}
-        className="glass w-full rounded-2xl p-6 sm:p-8 min-h-[160px] sm:min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition mb-4"
-      >
-        {!flipped ? (
-          <>
-            <span className="font-bold text-white text-2xl mb-2">{card.word}</span>
-            {card.ipa_en && (
-              <span className="text-sm text-accent-400/90 theme-light:text-accent-800 font-mono">
-                {card.ipa_en}
+      {/* Thẻ — bấm để lật (lật 3D, đồng bộ WordCard; reduced-motion → swap tức thì).
+          key theo từ → thẻ mới trượt vào khi chuyển. */}
+      <div key={card.word} className="animate-fade-in">
+        <button
+          onClick={() => {
+            haptics.tap()
+            setFlipped((f) => !f)
+          }}
+          aria-pressed={flipped}
+          className="w-full flip-scene mb-4"
+        >
+          <div className={`flip-inner ${flipped ? 'flipped' : ''}`}>
+            {/* Mặt trước */}
+            <div
+              aria-hidden={flipped}
+              className="flip-face glass w-full rounded-2xl p-6 sm:p-8 min-h-[160px] sm:min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition-colors"
+            >
+              <span className="font-bold text-white text-2xl mb-2">{card.word}</span>
+              {card.ipa_en && (
+                <span className="text-sm text-accent-400/90 theme-light:text-accent-800 font-mono">
+                  {card.ipa_en}
+                </span>
+              )}
+              <span className="flex items-center gap-1 text-xs text-zinc-400 mt-4">
+                <Eye className="w-3.5 h-3.5" /> Bấm để xem nghĩa
               </span>
-            )}
-            <span className="flex items-center gap-1 text-xs text-zinc-400 mt-4">
-              <Eye className="w-3.5 h-3.5" /> Bấm để xem nghĩa
-            </span>
-          </>
-        ) : (
-          <>
-            <span className="text-lg text-zinc-100 font-medium mb-2">{card.vi}</span>
-            {card.ex_vi && <span className="text-xs text-zinc-400 mt-0.5">{card.ex_vi}</span>}
-          </>
-        )}
-      </button>
+            </div>
+            {/* Mặt sau (xoay sẵn 180°) */}
+            <div
+              aria-hidden={!flipped}
+              className="flip-face flip-back glass w-full rounded-2xl p-6 sm:p-8 min-h-[160px] sm:min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition-colors"
+            >
+              <span className="text-lg text-zinc-100 font-medium mb-2">{card.vi}</span>
+              {card.ex_vi && <span className="text-xs text-zinc-400 mt-0.5">{card.ex_vi}</span>}
+            </div>
+          </div>
+        </button>
+      </div>
 
       {/* Các dạng của từ — hiện sau khi lật để học kèm cách chia */}
       {flipped && (

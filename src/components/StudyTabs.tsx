@@ -29,6 +29,7 @@ import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import WordCard from './WordCard'
 import type { DictEntry } from '../types'
 import { markStudiedToday } from '../lib/storage'
+import { haptics, vibrate } from '../lib/haptics'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
 import {
   addToSRS,
@@ -407,6 +408,7 @@ export function TodayLesson({
 
   function learn() {
     if (!card) return
+    haptics.success() // phản hồi xúc giác khi thuộc thêm 1 từ
     markLearned(uid, card.word)
     addToSRS(uid, card.word)
     bumpDailyLearned(uid)
@@ -424,6 +426,7 @@ export function TodayLesson({
   }
 
   function skip() {
+    haptics.tap()
     const nextIdx = idx + 1
     if (nextIdx >= batch.length) {
       const totalToday = getDailyLearned(uid)
@@ -635,15 +638,22 @@ export function TodayLesson({
           {q.options.map((opt) => {
             let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
             if (quizSel !== null) {
-              if (opt === q.correct) cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300'
-              else if (opt === quizSel) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
+              // Đúng → phồng nhẹ; đáp án sai đã chọn → lắc ngang (phản hồi tức thì)
+              if (opt === q.correct)
+                cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300 animate-pop-correct'
+              else if (opt === quizSel)
+                cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300 animate-shake'
               else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
             }
             return (
               <button
                 key={opt}
                 onClick={() => {
-                  if (quizSel === null) setQuizSel(opt)
+                  if (quizSel === null) {
+                    setQuizSel(opt)
+                    if (opt === q.correct) haptics.success()
+                    else vibrate(60)
+                  }
                 }}
                 className={`w-full text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
               >
@@ -690,13 +700,9 @@ export function TodayLesson({
           />
         </div>
 
-        <WordCard
-          key={reviewCard.word}
-          card={reviewCard}
-          isA={isA}
-          uid={uid}
-          onUpdate={onProgress}
-        />
+        <div key={reviewCard.word} className="animate-fade-in">
+          <WordCard card={reviewCard} isA={isA} uid={uid} onUpdate={onProgress} />
+        </div>
 
         <button
           onClick={reviewNext}
@@ -739,10 +745,14 @@ export function TodayLesson({
         </div>
       )}
 
-      {/* Tiến độ trong lượt */}
+      {/* Tiến độ trong lượt — số bước pop nhẹ khi nhảy, thanh chạy mượt */}
       <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
         <span>
-          {isA ? 'Từ' : 'Word'} {idx + 1}/{batch.length}
+          {isA ? 'Từ' : 'Word'}{' '}
+          <span key={idx} className="inline-block animate-pop-correct">
+            {idx + 1}
+          </span>
+          /{batch.length}
         </span>
         <span className="text-zinc-400">
           {isA ? 'Tổng đã thuộc' : 'Total learned'}: {progress.done}/{progress.total}
@@ -750,12 +760,15 @@ export function TodayLesson({
       </div>
       <div className="h-1 bg-zinc-800 rounded-full mb-4">
         <div
-          className="h-full bg-accent-500 rounded-full transition-all"
+          className="h-full bg-accent-500 rounded-full transition-all duration-300"
           style={{ width: `${(idx / batch.length) * 100}%` }}
         />
       </div>
 
-      <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onProgress} />
+      {/* key theo từ → thẻ mới trượt vào khi chuyển */}
+      <div key={card.word} className="animate-fade-in">
+        <WordCard card={card} isA={isA} uid={uid} onUpdate={onProgress} />
+      </div>
 
       <div className="grid grid-cols-2 gap-3">
         <button
@@ -810,6 +823,9 @@ export function SRSReview({
 
   function rate(rating: Rating) {
     if (!card) return
+    // Nhớ/Dễ → rung "thành công"; Quên/Khó → rung chạm thường
+    if (rating === 'good' || rating === 'easy') haptics.success()
+    else haptics.tap()
     reviewWord(uid, card.word, rating)
     setDone((n) => n + 1)
     onUpdate()
@@ -893,7 +909,10 @@ export function SRSReview({
         />
       </div>
 
-      <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onUpdate} />
+      {/* key theo từ → thẻ mới trượt vào khi chuyển */}
+      <div key={card.word} className="animate-fade-in">
+        <WordCard card={card} isA={isA} uid={uid} onUpdate={onUpdate} />
+      </div>
 
       {/* Rating buttons */}
       <div className="grid grid-cols-4 gap-2 mt-2">
@@ -1060,7 +1079,11 @@ export function QuizTab({
   const pct = Math.round((score / questions.length) * 100)
 
   function pick(opt: string) {
-    if (selected === null) setSelected(opt)
+    if (selected === null) {
+      setSelected(opt)
+      if (opt === q?.correct) haptics.success()
+      else vibrate(60)
+    }
   }
 
   function next() {
@@ -1190,8 +1213,11 @@ export function QuizTab({
         {q.options.map((opt) => {
           let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
           if (selected !== null) {
-            if (opt === q.correct) cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300'
-            else if (opt === selected) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
+            // Đúng → phồng nhẹ; đáp án sai đã chọn → lắc ngang (đồng bộ mini-quiz)
+            if (opt === q.correct)
+              cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300 animate-pop-correct'
+            else if (opt === selected)
+              cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300 animate-shake'
             else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
           }
           return (

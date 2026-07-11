@@ -1066,6 +1066,31 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
   chạy lại `gen-cefr-c1c2-vocab.ts` để vào lộ trình — để dành gộp đợt bổ sung nội dung sau (chỉ 1
   từ, không đáng xáo trộn thứ tự nhóm từ đang học dở ngay bây giờ).
 
+## Đang làm (cải tiến trải nghiệm học — lớp cảm xúc, 2026-07-11)
+
+> Audit + đặc tả: `docs/research/cai-tien-trai-nghiem-hoc-2026-07-11.md` (khảo sát app thật bằng
+> Playwright mobile 375×812 + đọc mã nguồn; 9 phát hiện E1-E9, kế hoạch 6 đợt V-1..V-6).
+> Người dùng đã duyệt: thứ tự V-1→V-2 trước · V-3 gộp đề xuất B sư phạm · SRS due +4h ·
+> âm UI làm, mặc định BẬT.
+
+- [x] **V-1 — "Juice" thao tác học (E3)**: lật thẻ 3D thật (class `flip-*` trong `index.css`,
+      áp cho `WordCard.tsx` + `Flashcard.tsx`, 2 mặt render đồng thời grid overlay + `aria-hidden`
+      mặt khuất; reduced-motion → swap tức thì như cũ); thẻ mới fade-in khi chuyển (key theo từ,
+      tái dùng keyframe sẵn có); quiz đúng → nút phồng `animate-pop-correct`, sai → lắc
+      `animate-shake` (2 keyframe mới `tailwind.config.js`), cả mini-quiz + tab Kiểm tra;
+      haptic phủ toàn luồng học (`haptics.success()` khi Đã thuộc/đúng/Nhớ-Dễ, `tap()` khi
+      lật/Để sau/Quên-Khó, `vibrate(60)` khi sai) — trước đây `haptics.ts` chỉ Speaking dùng.
+      Số đếm "Từ n/10" pop nhẹ khi nhảy, progress bar chạy mượt `duration-300`.
+      ⚠️ **Nới ngân sách CSS `size-limit` 9 → 9.2 kB** (thực đo 9.13 kB): chi phí thật của
+      keyframes + class lật 3D sau khi đã tối ưu (gom class ngắn thay arbitrary utility, tái dùng
+      fade-in thay keyframe mới); JS không đổi 114.69/116 kB. Verify: typecheck/lint 0 cảnh
+      báo/test 279/279/build/size xanh + lái app thật (ảnh giữa chuyển động xác nhận thẻ xoay 3D
+      phối cảnh thật, quiz pop/shake đúng màu ngữ nghĩa).
+- [ ] **V-2 — Hệ "Khoảnh khắc" + streak chủ động (E1 E2 E4)**: component `Celebration` + confetti
+      CSS lazy-chunk, màn "🔥 Streak +1" 1 lần/ngày, ô streak Home 3 trạng thái (bỏ 💤), SRS due +4h.
+- [ ] **V-3 — Vòng cung phiên** (gộp đề xuất B sư phạm: nút "Luyện ngay bằng hội thoại" + `targetWords`).
+- [ ] **V-4 — Mốc + huy hiệu** · **V-5 — Home "Hôm nay" + sửa 0/12245 (E7)** · **V-6 — Âm UI (mặc định BẬT)**.
+
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).
