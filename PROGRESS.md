@@ -1066,6 +1066,61 @@ means, remains, times` (B2) · `minster` (C2) — cấp lấy đúng theo CEFR-J
   chạy lại `gen-cefr-c1c2-vocab.ts` để vào lộ trình — để dành gộp đợt bổ sung nội dung sau (chỉ 1
   từ, không đáng xáo trộn thứ tự nhóm từ đang học dở ngay bây giờ).
 
+## Đang làm (cải tiến trải nghiệm học — lớp cảm xúc, 2026-07-11)
+
+> Audit + đặc tả: `docs/research/cai-tien-trai-nghiem-hoc-2026-07-11.md` (khảo sát app thật bằng
+> Playwright mobile 375×812 + đọc mã nguồn; 9 phát hiện E1-E9, kế hoạch 6 đợt V-1..V-6).
+> Người dùng đã duyệt: thứ tự V-1→V-2 trước · V-3 gộp đề xuất B sư phạm · SRS due +4h ·
+> âm UI làm, mặc định BẬT.
+
+- [x] **V-1 — "Juice" thao tác học (E3)**: lật thẻ 3D thật (class `flip-*` trong `index.css`,
+      áp cho `WordCard.tsx` + `Flashcard.tsx`, 2 mặt render đồng thời grid overlay + `aria-hidden`
+      mặt khuất; reduced-motion → swap tức thì như cũ); thẻ mới fade-in khi chuyển (key theo từ,
+      tái dùng keyframe sẵn có); quiz đúng → nút phồng `animate-pop-correct`, sai → lắc
+      `animate-shake` (2 keyframe mới `tailwind.config.js`), cả mini-quiz + tab Kiểm tra;
+      haptic phủ toàn luồng học (`haptics.success()` khi Đã thuộc/đúng/Nhớ-Dễ, `tap()` khi
+      lật/Để sau/Quên-Khó, `vibrate(60)` khi sai) — trước đây `haptics.ts` chỉ Speaking dùng.
+      Số đếm "Từ n/10" pop nhẹ khi nhảy, progress bar chạy mượt `duration-300`.
+      ⚠️ **Nới ngân sách CSS `size-limit` 9 → 9.2 kB** (thực đo 9.13 kB): chi phí thật của
+      keyframes + class lật 3D sau khi đã tối ưu (gom class ngắn thay arbitrary utility, tái dùng
+      fade-in thay keyframe mới); JS không đổi 114.69/116 kB. Verify: typecheck/lint 0 cảnh
+      báo/test 279/279/build/size xanh + lái app thật (ảnh giữa chuyển động xác nhận thẻ xoay 3D
+      phối cảnh thật, quiz pop/shake đúng màu ngữ nghĩa).
+- [x] **V-2 — Hệ "Khoảnh khắc" + streak chủ động (E1 E2 E4)**:
+  - `Celebration.tsx` (overlay ăn mừng dùng chung, **render qua portal** — tổ tiên trong
+    tab học có transform từ `animate-fade-in` fill-mode both làm `fixed` neo sai, bug bắt
+    được khi lái app thật) + `confetti.ts` (CSS thuần tự tiêm style, **chunk lazy riêng**
+    qua `import()` — 0 chi phí bundle đầu trang; tôn trọng reduced-motion).
+  - `StreakCelebration.tsx`: màn "🔥 Chuỗi N ngày!" + hàng 7 chấm tuần (chấm hôm nay nổi
+    bật; ngày vé-nghỉ bắc cầu hiện chấm RỖNG — không vẽ ✓ giả) + câu động viên theo mốc
+    3/7/14/30/100 ngày. Bắn 1 LẦN/NGÀY sau batch đầu tiên: `shouldCelebrateStreak`/
+    `markStreakCelebrated` (`storage.ts`, khóa `et_streak_celebrated_*` theo ngày VN,
+    5 unit test); reload không lặp (đã kiểm thật).
+  - Ô streak Trang chủ 3 trạng thái (`Home.tsx` + 3 key i18n vi/en): đã học hôm nay →
+    "đã giữ hôm nay ✓" · CHƯA học (streak sống) → viền cam đậm "giữ chuỗi hôm nay!" ·
+    streak 0 → 🌱 "bắt đầu chuỗi hôm nay" (bỏ 💤 đóng khung tiêu cực).
+  - SRS due +4h cho thẻ MỚI (`NEW_CARD_DELAY_MS`, `srs.ts`): badge "Ôn SRS" không nhảy
+    số NGAY khi vừa học xong (E4 "vừa xong đã nợ"); ôn cùng ngày buổi tối vẫn giữ.
+    Chỉ ảnh hưởng thẻ tạo mới, 3 test SRS cập nhật theo.
+  - Verify: typecheck/lint 0 cảnh báo/test 284/284/build/size (JS 114.78/116 · CSS
+    9.17/9.2) + **full E2E 79/79** (a11y 4 theme) + lái app thật: màn streak giữa màn
+    đúng, confetti rơi, không lặp sau reload, badge SRS im sau khi học, 3 trạng thái Home.
+- [x] **V-3 — Vòng cung phiên học + GỘP đề xuất B sư phạm (E6)**:
+  - **Đề xuất B (nối lộ trình ↔ chế độ AI)**: `chatSystemPrompt`/`speakingSystemPrompt` nhận
+    tham số optional `targetWords?` (khối "TỪ MỤC TIÊU" trong prompt, cả 2 chiều A/B — AI dẫn
+    dắt học viên DÙNG từ vừa học, khen khi dùng đúng); Chat/Speaking đọc `?words=a,b,c` (cap 20),
+    hiện chip "🎯 Luyện N từ vừa học" trên màn thiết lập, lưu `targetWords` vào session (types
+    optional — không đổi schema Supabase) để tin nhắn sau vẫn giữ mục tiêu.
+  - **Màn kết batch (`BatchDoneView`)**: phân cấp CTA — nút CHÍNH "Luyện ngay N từ này bằng
+    hội thoại" (→ `/chat?words=`), phụ "🎤 Hoặc luyện nói với giọng thật" (→ `/speaking?words=`),
+    cuối "Muốn học thêm? Kiểm tra ngắn để mở N từ tiếp theo →" (viết lại copy cũ).
+  - **Màn mở phiên**: thẻ 1 dòng ở thẻ đầu tiên "Lượt này: N từ mới · ~X phút (+ SRS chờ)" —
+    tự biến mất từ thẻ 2, không thêm bước bấm.
+  - **Màn đạt trần ngày**: thêm móc "🔥 Hẹn mai nhé — chuỗi sẽ thành N+1 ngày!".
+  - Verify: test 284/284, **E2E 79/79**, size JS 115.17/116 · CSS 9.14/9.2; lái app thật:
+    URL truyền từ đúng, chip 🎯 hiện đủ 10 từ trên màn thiết lập Chat.
+- [ ] **V-4 — Mốc + huy hiệu** · **V-5 — Home "Hôm nay" + sửa 0/12245 (E7)** · **V-6 — Âm UI (mặc định BẬT)**.
+
 ## Tiếp theo
 
 > Làm tăng dần, mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (theo CLAUDE.md mục 3).

@@ -78,6 +78,10 @@ export interface ChatSession {
   level: Level
   messages: Message[]
   createdAt: number
+  // Từ mục tiêu (đề xuất B): batch từ vừa học được bơm vào prompt để AI dẫn dắt
+  // học viên DÙNG chúng. Optional — phiên thường không có. Chỉ lưu local (không
+  // đổi schema Supabase; đồng bộ phiên chat bỏ qua field lạ an toàn).
+  targetWords?: string[]
 }
 
 export interface WritingSubmission {
@@ -96,6 +100,10 @@ export interface SpeakingSession {
   level: Level
   messages: Message[]
   createdAt: number
+  // Từ mục tiêu (đề xuất B): batch từ vừa học được bơm vào prompt để AI dẫn dắt
+  // học viên DÙNG chúng. Optional — phiên thường không có. Chỉ lưu local (không
+  // đổi schema Supabase; đồng bộ phiên chat bỏ qua field lạ an toàn).
+  targetWords?: string[]
 }
 
 // Kết quả chấm điểm cuối phiên Chat/Speaking (nút "Kết thúc & chấm điểm").

@@ -224,6 +224,27 @@ function daysBetweenDateStr(a: string, b: string): number {
   )
 }
 
+// Hôm nay đã có hoạt động học nào chưa (chat/viết/nói/STT/học từ) — dùng cho
+// trạng thái ô streak ở Trang chủ ("giữ chuỗi hôm nay" vs "đã giữ ✓").
+export function hasStudiedToday(userId: string): boolean {
+  return hasActivityOn(get<DailyUsage>(K.usage(userId, todayStr())))
+}
+
+// ── Khoảnh khắc streak (V-2, docs/research/cai-tien-trai-nghiem-hoc-2026-07-11.md) ──
+// Màn ăn mừng "🔥 Streak +1" chỉ hiện MỖI NGÀY 1 LẦN (lần đầu hoàn thành bài trong
+// ngày). Ghi ngày (giờ VN) đã ăn mừng gần nhất để idempotent — reload/học thêm batch
+// trong cùng ngày không bắn lặp.
+const STREAK_CELEBRATED_KEY = (uid: string) => `et_streak_celebrated_${uid}`
+
+export function shouldCelebrateStreak(userId: string): boolean {
+  if (!hasStudiedToday(userId)) return false
+  return localStorage.getItem(STREAK_CELEBRATED_KEY(userId)) !== todayStr()
+}
+
+export function markStreakCelebrated(userId: string) {
+  localStorage.setItem(STREAK_CELEBRATED_KEY(userId), todayStr())
+}
+
 export function getStreak(userId: string): number {
   const freezeDates = getStreakFreezeDates(userId)
   let newFreezeDate: string | null = null

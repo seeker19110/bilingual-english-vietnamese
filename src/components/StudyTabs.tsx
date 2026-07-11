@@ -28,7 +28,14 @@ import { useNavigate } from 'react-router-dom'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import WordCard from './WordCard'
 import type { DictEntry } from '../types'
-import { markStudiedToday } from '../lib/storage'
+import {
+  markStudiedToday,
+  shouldCelebrateStreak,
+  markStreakCelebrated,
+  getStreak,
+} from '../lib/storage'
+import { haptics, vibrate } from '../lib/haptics'
+import StreakCelebration from './StreakCelebration'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
 import {
   addToSRS,
@@ -195,6 +202,7 @@ function BatchDoneView({
   dailyStart: number
   onStartQuiz: () => void
 }) {
+  const nav = useNavigate()
   const learnedToday = getDailyLearned(uid) - dailyStart
   const totalToday = getDailyLearned(uid)
   const quizPasses = getDailyQuizPasses(uid)
@@ -264,8 +272,8 @@ function BatchDoneView({
         {canLearnMore && (
           <p className="text-xs text-zinc-400 mt-2">
             {isA
-              ? `Còn ${dailyMax - totalToday} từ có thể học hôm nay — kiểm tra để mở thêm.`
-              : `${dailyMax - totalToday} more words available today — pass a quiz to unlock.`}
+              ? `Còn ${dailyMax - totalToday} từ có thể học hôm nay.`
+              : `${dailyMax - totalToday} more words available today.`}
           </p>
         )}
       </div>
@@ -342,6 +350,26 @@ function BatchDoneView({
         </div>
       )}
 
+      {/* ── CTA: 1 nút chính + các lựa chọn phụ (V-3 "vòng cung phiên" + đề xuất B) ──
+          Nút chính: LUYỆN NGAY các từ vừa học bằng hội thoại — đóng vòng
+          recognition → use (từ được bơm vào prompt Chat/Nói qua ?words=). */}
+      <button
+        onClick={() => nav(`/chat?words=${encodeURIComponent(batch.map((w) => w.word).join(','))}`)}
+        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold transition"
+      >
+        <MessageCircle className="w-4 h-4" />
+        {isA
+          ? `Luyện ngay ${batch.length} từ này bằng hội thoại`
+          : `Practice these ${batch.length} words in a chat`}
+      </button>
+      <button
+        onClick={() =>
+          nav(`/speaking?words=${encodeURIComponent(batch.map((w) => w.word).join(','))}`)
+        }
+        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 theme-light:text-sky-700 text-sm font-medium transition"
+      >
+        🎤 {isA ? 'Hoặc luyện nói với giọng thật' : 'Or practice speaking aloud'}
+      </button>
       {canLearnMore && quizPasses < dailyMax / speed - 1 && (
         <button
           onClick={onStartQuiz}
@@ -349,8 +377,8 @@ function BatchDoneView({
         >
           <ClipboardList className="w-4 h-4" />
           {isA
-            ? `Kiểm tra để học thêm ${speed} từ (còn ${dailyMax - totalToday} từ hôm nay)`
-            : `Quiz to unlock ${speed} more words (${dailyMax - totalToday} left today)`}
+            ? `Muốn học thêm? Kiểm tra ngắn để mở ${speed} từ tiếp theo →`
+            : `Want more? Short quiz unlocks ${speed} more words →`}
         </button>
       )}
     </div>
@@ -393,6 +421,9 @@ export function TodayLesson({
   // Từ trả lời sai trong mini-quiz — ôn lại flashcard TRƯỚC KHI cho làm lại quiz.
   const [wrongWords, setWrongWords] = useState<DictEntry[]>([])
   const [reviewIdx, setReviewIdx] = useState(0)
+  // Khoảnh khắc streak — "đỉnh" cảm xúc, bắn 1 lần/ngày khi xong batch đầu tiên
+  // (V-2, docs/research/cai-tien-trai-nghiem-hoc-2026-07-11.md).
+  const [celebrating, setCelebrating] = useState(false)
 
   // Tiến độ CỦA CẤP này (pool đã lọc theo cấp ở trang cha) — trước đây dùng
   // getPathProgress (cả lộ trình, ~10.000 từ) gây khó hiểu khi đang xem 1 cấp.
@@ -407,6 +438,7 @@ export function TodayLesson({
 
   function learn() {
     if (!card) return
+    haptics.success() // phản hồi xúc giác khi thuộc thêm 1 từ
     markLearned(uid, card.word)
     addToSRS(uid, card.word)
     bumpDailyLearned(uid)
@@ -418,12 +450,15 @@ export function TodayLesson({
       const totalToday = getDailyLearned(uid) // đã bump rồi
       if (totalToday >= dailyMax) setPhase('daily-max')
       else setPhase('batch-done')
+      // Lần ĐẦU hoàn thành bài trong ngày → màn "🔥 Chuỗi N ngày" (1 lần/ngày)
+      if (shouldCelebrateStreak(uid)) setCelebrating(true)
     } else {
       setIdx(nextIdx)
     }
   }
 
   function skip() {
+    haptics.tap()
     const nextIdx = idx + 1
     if (nextIdx >= batch.length) {
       const totalToday = getDailyLearned(uid)
@@ -503,8 +538,23 @@ export function TodayLesson({
     )
   }
 
+  // ── Khoảnh khắc streak (overlay toàn màn, 1 lần/ngày) — hiện TRƯỚC màn xong bài
+  if (celebrating) {
+    return (
+      <StreakCelebration
+        uid={uid}
+        isA={isA}
+        onDone={() => {
+          markStreakCelebrated(uid)
+          setCelebrating(false)
+        }}
+      />
+    )
+  }
+
   // ── Đã đạt 100 từ/ngày ────────────────────────────────────────────────
   if (phase === 'daily-max') {
+    const streakTomorrow = getStreak(uid) + 1
     return (
       <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-2">
         <Trophy className="w-10 h-10 text-amber-400 mx-auto" />
@@ -513,8 +563,11 @@ export function TodayLesson({
             ? `Xuất sắc! Đã học đủ ${dailyMax} từ hôm nay 🎉`
             : `Amazing! ${dailyMax} words learned today 🎉`}
         </p>
-        <p className="text-sm text-zinc-400">
-          {isA ? 'Quay lại vào ngày mai để tiếp tục.' : 'Come back tomorrow to continue.'}
+        {/* Móc quay lại: cho thấy phần thưởng cụ thể của ngày mai (V-3 "kết" phiên) */}
+        <p className="text-sm text-orange-400">
+          {isA
+            ? `🔥 Hẹn mai nhé — chuỗi sẽ thành ${streakTomorrow} ngày!`
+            : `🔥 See you tomorrow — your streak becomes ${streakTomorrow} days!`}
         </p>
         <p className="text-xs text-zinc-400 pt-1">
           {isA
@@ -635,15 +688,22 @@ export function TodayLesson({
           {q.options.map((opt) => {
             let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
             if (quizSel !== null) {
-              if (opt === q.correct) cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300'
-              else if (opt === quizSel) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
+              // Đúng → phồng nhẹ; đáp án sai đã chọn → lắc ngang (phản hồi tức thì)
+              if (opt === q.correct)
+                cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300 animate-pop-correct'
+              else if (opt === quizSel)
+                cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300 animate-shake'
               else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
             }
             return (
               <button
                 key={opt}
                 onClick={() => {
-                  if (quizSel === null) setQuizSel(opt)
+                  if (quizSel === null) {
+                    setQuizSel(opt)
+                    if (opt === q.correct) haptics.success()
+                    else vibrate(60)
+                  }
                 }}
                 className={`w-full text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
               >
@@ -690,13 +750,9 @@ export function TodayLesson({
           />
         </div>
 
-        <WordCard
-          key={reviewCard.word}
-          card={reviewCard}
-          isA={isA}
-          uid={uid}
-          onUpdate={onProgress}
-        />
+        <div key={reviewCard.word} className="animate-fade-in">
+          <WordCard card={reviewCard} isA={isA} uid={uid} onUpdate={onProgress} />
+        </div>
 
         <button
           onClick={reviewNext}
@@ -719,8 +775,27 @@ export function TodayLesson({
   // Cấp CEFR của vòng đang học (null với vòng mở rộng) — hiện chip nhỏ cho biết
   // từ hôm nay thuộc cấp nào.
   const circleLevel = circle ? getCefrLevelOfCircle(circle.id) : null
+  // Màn mở phiên (V-3): 1 dòng cho biết lượt này gồm gì — chỉ hiện ở thẻ ĐẦU,
+  // tự biến mất khi sang thẻ 2 (không thêm bước bấm nào).
+  const srsWaiting = idx === 0 ? getDueWords(uid, pool).length : 0
   return (
     <div className="animate-fade-in">
+      {idx === 0 && (
+        <div className="glass rounded-xl px-4 py-2.5 mb-3 text-center">
+          <p className="text-sm text-white font-medium">
+            {isA
+              ? `Lượt này: ${batch.length} từ mới · ~${Math.max(2, Math.round(batch.length / 2))} phút`
+              : `This round: ${batch.length} new words · ~${Math.max(2, Math.round(batch.length / 2))} min`}
+          </p>
+          {srsWaiting > 0 && (
+            <p className="text-xs text-zinc-400 mt-0.5">
+              {isA
+                ? `+ ${srsWaiting} thẻ SRS đang chờ ôn sau đó`
+                : `+ ${srsWaiting} SRS cards waiting after`}
+            </p>
+          )}
+        </div>
+      )}
       {/* Tên chủ đề + cấp CEFR + tiến độ vòng */}
       {circle && (
         <div className="flex items-center justify-center gap-1.5 text-xs text-zinc-400 mb-2">
@@ -739,10 +814,14 @@ export function TodayLesson({
         </div>
       )}
 
-      {/* Tiến độ trong lượt */}
+      {/* Tiến độ trong lượt — số bước pop nhẹ khi nhảy, thanh chạy mượt */}
       <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
         <span>
-          {isA ? 'Từ' : 'Word'} {idx + 1}/{batch.length}
+          {isA ? 'Từ' : 'Word'}{' '}
+          <span key={idx} className="inline-block animate-pop-correct">
+            {idx + 1}
+          </span>
+          /{batch.length}
         </span>
         <span className="text-zinc-400">
           {isA ? 'Tổng đã thuộc' : 'Total learned'}: {progress.done}/{progress.total}
@@ -750,12 +829,15 @@ export function TodayLesson({
       </div>
       <div className="h-1 bg-zinc-800 rounded-full mb-4">
         <div
-          className="h-full bg-accent-500 rounded-full transition-all"
+          className="h-full bg-accent-500 rounded-full transition-all duration-300"
           style={{ width: `${(idx / batch.length) * 100}%` }}
         />
       </div>
 
-      <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onProgress} />
+      {/* key theo từ → thẻ mới trượt vào khi chuyển */}
+      <div key={card.word} className="animate-fade-in">
+        <WordCard card={card} isA={isA} uid={uid} onUpdate={onProgress} />
+      </div>
 
       <div className="grid grid-cols-2 gap-3">
         <button
@@ -810,6 +892,9 @@ export function SRSReview({
 
   function rate(rating: Rating) {
     if (!card) return
+    // Nhớ/Dễ → rung "thành công"; Quên/Khó → rung chạm thường
+    if (rating === 'good' || rating === 'easy') haptics.success()
+    else haptics.tap()
     reviewWord(uid, card.word, rating)
     setDone((n) => n + 1)
     onUpdate()
@@ -893,7 +978,10 @@ export function SRSReview({
         />
       </div>
 
-      <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onUpdate} />
+      {/* key theo từ → thẻ mới trượt vào khi chuyển */}
+      <div key={card.word} className="animate-fade-in">
+        <WordCard card={card} isA={isA} uid={uid} onUpdate={onUpdate} />
+      </div>
 
       {/* Rating buttons */}
       <div className="grid grid-cols-4 gap-2 mt-2">
@@ -1060,7 +1148,11 @@ export function QuizTab({
   const pct = Math.round((score / questions.length) * 100)
 
   function pick(opt: string) {
-    if (selected === null) setSelected(opt)
+    if (selected === null) {
+      setSelected(opt)
+      if (opt === q?.correct) haptics.success()
+      else vibrate(60)
+    }
   }
 
   function next() {
@@ -1190,8 +1282,11 @@ export function QuizTab({
         {q.options.map((opt) => {
           let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
           if (selected !== null) {
-            if (opt === q.correct) cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300'
-            else if (opt === selected) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
+            // Đúng → phồng nhẹ; đáp án sai đã chọn → lắc ngang (đồng bộ mini-quiz)
+            if (opt === q.correct)
+              cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300 animate-pop-correct'
+            else if (opt === selected)
+              cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300 animate-shake'
             else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
           }
           return (

@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send, Award } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -68,11 +69,14 @@ function SetupScreen({
   onStart,
   dir,
   defaultLevel,
+  practiceWords,
 }: {
   onStart: (s: string, l: Level) => void
   dir: Direction
   // Trình độ khai lúc onboarding (U-3) — làm mặc định thay vì cứng 'intermediate'
   defaultLevel?: Level
+  // Từ mục tiêu đến từ màn "xong batch" của lộ trình (?words=..., đề xuất B)
+  practiceWords?: string[]
 }) {
   const [situation, setSituation] = useState('small_talk')
   const [level, setLevel] = useState<Level>(defaultLevel ?? 'intermediate')
@@ -124,6 +128,18 @@ function SetupScreen({
       )}
 
       <div className="w-full max-w-sm space-y-4 mt-4 animate-fade-up delay-200">
+        {/* Từ mục tiêu từ lộ trình — AI sẽ dẫn dắt để học viên DÙNG các từ này */}
+        {practiceWords && practiceWords.length > 0 && (
+          <div className="bg-teal-500/10 border border-teal-500/30 rounded-xl px-4 py-3">
+            <p className="text-xs font-semibold text-teal-300 theme-light:text-teal-800 mb-1">
+              🎯{' '}
+              {isA
+                ? `Luyện ${practiceWords.length} từ vừa học`
+                : `Practice ${practiceWords.length} new words`}
+            </p>
+            <p className="text-xs text-zinc-400 break-words">{practiceWords.join(' · ')}</p>
+          </div>
+        )}
         <div>
           <label
             htmlFor="speaking-situation"
@@ -334,6 +350,19 @@ export default function Speaking() {
   const dir: Direction = getDirection()
   const isA = dir === 'A'
 
+  // Từ mục tiêu từ màn "xong batch" của lộ trình (?words=a,b,c — đề xuất B, V-3).
+  // Cap 20 từ để prompt không phình; đọc 1 lần khi vào trang.
+  const [searchParams] = useSearchParams()
+  const practiceWords = useMemo(
+    () =>
+      (searchParams.get('words') ?? '')
+        .split(',')
+        .map((w) => w.trim())
+        .filter(Boolean)
+        .slice(0, 20),
+    [searchParams],
+  )
+
   // Chiều A: STT tiếng Anh, TTS speech=EN + feedback=VI
   // Chiều B: STT tiếng Việt, TTS speech=VI + feedback=EN
   const sttLang = isA ? ('en' as const) : ('vi' as const)
@@ -423,7 +452,8 @@ export default function Speaking() {
     }
     setLoading(true)
     setError('')
-    const sys = speakingSystemPrompt(situationLabel(situation, dir), level, dir)
+    const targets = practiceWords.length > 0 ? practiceWords : undefined
+    const sys = speakingSystemPrompt(situationLabel(situation, dir), level, dir, targets)
     try {
       const raw = await callClaude([], sys, 1024, 'speaking')
       const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
@@ -443,6 +473,7 @@ export default function Speaking() {
         level,
         messages: [msg],
         createdAt: Date.now(),
+        ...(targets ? { targetWords: targets } : {}),
       }
       saveSpeakingSession(s)
       setSession(s)
@@ -573,7 +604,12 @@ export default function Speaking() {
       role: m.role,
       content: m.role === 'assistant' ? (m.speechEn ?? m.content) : m.content,
     }))
-    const sys = speakingSystemPrompt(situationLabel(session.situation, dir), session.level, dir)
+    const sys = speakingSystemPrompt(
+      situationLabel(session.situation, dir),
+      session.level,
+      dir,
+      session.targetWords,
+    )
     try {
       const raw = await callClaude(history, sys, 1024, 'speaking')
       const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
@@ -712,7 +748,12 @@ export default function Speaking() {
               }
             />
           </div>
-          <SetupScreen onStart={startSession} dir={dir} defaultLevel={onboarding?.level} />
+          <SetupScreen
+            onStart={startSession}
+            dir={dir}
+            defaultLevel={onboarding?.level}
+            practiceWords={practiceWords}
+          />
         </div>
       ) : evaluation ? (
         <EvaluationResultView

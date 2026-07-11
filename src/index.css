@@ -285,6 +285,29 @@
     }
   }
 
+  /* Lật thẻ 3D (WordCard/Flashcard) — gom class ngắn thay arbitrary utility
+     (selector escape của Tailwind dài, tốn ngân sách CSS). Reduced-motion
+     toàn cục đã tắt transition → tự thành swap tức thì. */
+  .flip-scene {
+    perspective: 1000px;
+  }
+  .flip-inner {
+    display: grid;
+    transform-style: preserve-3d;
+    transition: transform 0.3s;
+  }
+  .flip-inner.flipped {
+    transform: rotateY(180deg);
+  }
+  .flip-face {
+    grid-area: 1/1;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .flip-back {
+    transform: rotateY(180deg);
+  }
+
   /* Gradient text — theo màu nhấn của theme */
   .gradient-text-accent {
     background: linear-gradient(135deg, rgb(var(--a-500)), rgb(var(--a-300)));

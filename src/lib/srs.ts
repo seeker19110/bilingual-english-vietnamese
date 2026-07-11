@@ -39,12 +39,18 @@ function save(uid: string, data: Record<string, SRSCard>) {
   localStorage.setItem(KEY(uid), JSON.stringify(data))
 }
 
-// Thêm từ vào SRS khi đánh dấu "đã thuộc" — due = ngay bây giờ để ôn luôn hôm nay
+// Từ MỚI học đến hạn ôn sau 4 GIỜ (không phải ngay lập tức): ôn cùng ngày buổi
+// tối vẫn giữ spacing ngắn đầu tiên, nhưng badge "Ôn SRS" không nhảy số NGAY khi
+// vừa học xong batch — tránh cảm giác "vừa xong đã nợ" (E4, xem
+// docs/research/cai-tien-trai-nghiem-hoc-2026-07-11.md). Chỉ ảnh hưởng thẻ TẠO MỚI.
+export const NEW_CARD_DELAY_MS = 4 * 3_600_000
+
+// Thêm từ vào SRS khi đánh dấu "đã thuộc" — due = +4h để ôn lại trong ngày
 export function addToSRS(uid: string, word: string) {
   const data = load(uid)
   const key = word.toLowerCase()
   if (!data[key]) {
-    data[key] = { interval: 1, ease: 2.5, due: Date.now(), reps: 0 }
+    data[key] = { interval: 1, ease: 2.5, due: Date.now() + NEW_CARD_DELAY_MS, reps: 0 }
     save(uid, data)
     pushProgress(uid) // đồng bộ lịch ôn lên Supabase
   }

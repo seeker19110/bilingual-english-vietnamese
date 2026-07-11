@@ -12,6 +12,7 @@ import {
   getSRSStats,
   getNextReview,
   getLeechWords,
+  NEW_CARD_DELAY_MS,
 } from './srs'
 import type { DictEntry } from '../types'
 
@@ -20,11 +21,15 @@ const W = (word: string): DictEntry => ({ word }) as DictEntry
 describe('SRS — SM-2', () => {
   beforeEach(() => localStorage.clear())
 
-  it('addToSRS tạo thẻ mặc định (interval 1, ease 2.5, reps 0)', () => {
+  it('addToSRS tạo thẻ mặc định — KHÔNG đến hạn ngay, đến hạn sau 4h (E4)', () => {
+    vi.useFakeTimers()
     addToSRS('u1', 'apple')
     const stats = getSRSStats('u1')
     expect(stats.total).toBe(1)
-    expect(stats.due).toBe(1) // due = now → đến hạn ngay
+    expect(stats.due).toBe(0) // vừa học xong KHÔNG "nợ" ôn ngay
+    vi.advanceTimersByTime(NEW_CARD_DELAY_MS + 1000)
+    expect(getSRSStats('u1').due).toBe(1) // sau 4h mới đến hạn (ôn cùng ngày buổi tối)
+    vi.useRealTimers()
   })
 
   it('addToSRS idempotent — không ghi đè thẻ đã có tiến độ', () => {
@@ -58,11 +63,14 @@ describe('SRS — SM-2', () => {
   })
 
   it('getDueWords chỉ trả từ đến hạn', () => {
-    addToSRS('u1', 'apple') // due = now → đến hạn
-    reviewWord('u1', 'banana', 'good') // tạo thẻ banana, due tương lai
+    vi.useFakeTimers()
+    addToSRS('u1', 'apple') // due = +4h
+    reviewWord('u1', 'banana', 'good') // tạo thẻ banana, due +1 ngày
+    vi.advanceTimersByTime(NEW_CARD_DELAY_MS + 1000) // qua mốc 4h — apple đến hạn, banana chưa
     const due = getDueWords('u1', [W('apple'), W('banana')]).map((e) => e.word)
     expect(due).toContain('apple')
     expect(due).not.toContain('banana')
+    vi.useRealTimers()
   })
 
   it('getNextReview trả null cho từ chưa vào SRS', () => {
@@ -73,12 +81,13 @@ describe('SRS — SM-2', () => {
     vi.useFakeTimers()
     const base = new Date('2026-01-10T00:00:00Z')
     vi.setSystemTime(base)
-    addToSRS('u1', 'apple') // due = base (quá hạn lâu nhất)
+    addToSRS('u1', 'apple') // due = base + 4h (quá hạn lâu nhất)
     vi.setSystemTime(new Date(base.getTime() + 1000))
     addToSRS('u1', 'banana') // due sau apple 1s
     vi.setSystemTime(new Date(base.getTime() + 2000))
     addToSRS('u1', 'cherry') // due sau cùng
-    vi.setSystemTime(new Date(base.getTime() + 3000)) // cả 3 đều đến hạn lúc này
+    // Qua mốc +4h của cả 3 thẻ → cả 3 đều đến hạn lúc này
+    vi.setSystemTime(new Date(base.getTime() + NEW_CARD_DELAY_MS + 3000))
 
     const words = [W('cherry'), W('banana'), W('apple')]
     const capped = getDueWords('u1', words, 2)

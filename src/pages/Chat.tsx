@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Send, Plus, ChevronDown, Sparkles, Award } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -41,6 +42,7 @@ function SetupScreen({
   error,
   dir,
   defaultLevel,
+  practiceWords,
 }: {
   onStart: (situation: string, level: Level) => void
   loading: boolean
@@ -48,6 +50,8 @@ function SetupScreen({
   dir: Direction
   // Trình độ khai lúc onboarding (U-3) — làm mặc định thay vì cứng 'intermediate'
   defaultLevel?: Level
+  // Từ mục tiêu đến từ màn "xong batch" của lộ trình (?words=..., đề xuất B)
+  practiceWords?: string[]
 }) {
   const [situation, setSituation] = useState('job_interview')
   const [level, setLevel] = useState<Level>(defaultLevel ?? 'intermediate')
@@ -72,6 +76,18 @@ function SetupScreen({
       </p>
 
       <div className="w-full max-w-sm space-y-4 animate-fade-up delay-150">
+        {/* Từ mục tiêu từ lộ trình — AI sẽ dẫn dắt để học viên DÙNG các từ này */}
+        {practiceWords && practiceWords.length > 0 && (
+          <div className="bg-teal-500/10 border border-teal-500/30 rounded-xl px-4 py-3">
+            <p className="text-xs font-semibold text-teal-300 theme-light:text-teal-800 mb-1">
+              🎯{' '}
+              {isA
+                ? `Luyện ${practiceWords.length} từ vừa học`
+                : `Practice ${practiceWords.length} new words`}
+            </p>
+            <p className="text-xs text-zinc-400 break-words">{practiceWords.join(' · ')}</p>
+          </div>
+        )}
         {/* Tình huống */}
         <div>
           <label htmlFor="situation" className="text-xs font-medium text-zinc-400 mb-2 block">
@@ -258,6 +274,19 @@ export default function Chat() {
   const isA = dir === 'A'
   const onboarding = useOnboarding(user.id) // trình độ khai lúc onboarding (U-3)
 
+  // Từ mục tiêu từ màn "xong batch" của lộ trình (?words=a,b,c — đề xuất B, V-3).
+  // Cap 20 từ để prompt không phình; đọc 1 lần khi vào trang.
+  const [searchParams] = useSearchParams()
+  const practiceWords = useMemo(
+    () =>
+      (searchParams.get('words') ?? '')
+        .split(',')
+        .map((w) => w.trim())
+        .filter(Boolean)
+        .slice(0, 20),
+    [searchParams],
+  )
+
   const [session, setSession] = useState<ChatSession | null>(null)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -298,7 +327,8 @@ export default function Chat() {
     }
     setLoading(true)
     setError('')
-    const sys = chatSystemPrompt(situationLabel(situation, dir), level, dir)
+    const targets = practiceWords.length > 0 ? practiceWords : undefined
+    const sys = chatSystemPrompt(situationLabel(situation, dir), level, dir, targets)
     try {
       const reply = await callClaude([], sys)
       const newSession: ChatSession = {
@@ -310,6 +340,7 @@ export default function Chat() {
           { id: crypto.randomUUID(), role: 'assistant', content: reply, timestamp: Date.now() },
         ],
         createdAt: Date.now(),
+        ...(targets ? { targetWords: targets } : {}),
       }
       saveChatSession(newSession)
       setSession(newSession)
@@ -352,7 +383,12 @@ export default function Chat() {
     setError('')
     setLastIdx(updated.messages.length)
     const history = updated.messages.map((m) => ({ role: m.role, content: m.content }))
-    const sys = chatSystemPrompt(situationLabel(session.situation, dir), session.level, dir)
+    const sys = chatSystemPrompt(
+      situationLabel(session.situation, dir),
+      session.level,
+      dir,
+      session.targetWords,
+    )
     try {
       const reply = await callClaude(history, sys)
       const assistantMsg: Message = {
@@ -462,6 +498,7 @@ export default function Chat() {
             error={error}
             dir={dir}
             defaultLevel={onboarding?.level}
+            practiceWords={practiceWords}
           />
 
           {prevSessions.length > 0 && (

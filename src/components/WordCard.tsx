@@ -14,6 +14,7 @@ loadExtraExamples().then((d) => {
 })
 import type { DictEntry } from '../types'
 import { isDifficult, toggleDifficult } from '../lib/vocab'
+import { haptics } from '../lib/haptics'
 
 // ── Thẻ từ chung ─────────────────────────────────────────────────────────────
 // Tách ra file riêng để cả trang Học (Learn.tsx) lẫn tab Lộ trình (RoadmapTab)
@@ -85,12 +86,22 @@ export default function WordCard({
           />
         </button>
 
+        {/* Lật thẻ 3D: 2 mặt render đồng thời trong grid overlay (cao = max 2 mặt),
+            xoay rotateY 180°; reduced-motion toàn cục tắt transition → thành swap tức thì. */}
         <button
-          onClick={() => setFlipped((f) => !f)}
-          className="glass w-full rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition"
+          onClick={() => {
+            haptics.tap()
+            setFlipped((f) => !f)
+          }}
+          aria-pressed={flipped}
+          className="w-full flip-scene"
         >
-          {!flipped ? (
-            <>
+          <div className={`flip-inner ${flipped ? 'flipped' : ''}`}>
+            {/* Mặt trước — từ + IPA */}
+            <div
+              aria-hidden={flipped}
+              className="flip-face glass w-full rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition-colors"
+            >
               <span className="font-bold text-white text-3xl mb-2">{card.word}</span>
               {card.ipa_en && (
                 <span className="text-sm text-accent-400/90 theme-light:text-accent-800 font-mono">
@@ -100,9 +111,12 @@ export default function WordCard({
               <span className="flex items-center gap-1 text-xs text-zinc-400 mt-4">
                 <Eye className="w-3.5 h-3.5" /> {isA ? 'Bấm để xem nghĩa' : 'Tap to flip'}
               </span>
-            </>
-          ) : (
-            <>
+            </div>
+            {/* Mặt sau — nghĩa + ví dụ (xoay sẵn 180° để hiện đúng chiều khi lật) */}
+            <div
+              aria-hidden={!flipped}
+              className="flip-face flip-back glass w-full rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition-colors"
+            >
               <span className="text-xl text-zinc-100 font-medium mb-2">{card.vi}</span>
               {card.ex_vi && <span className="text-xs text-zinc-400 mt-0.5">{card.ex_vi}</span>}
               {extraExamples[card.word.toLowerCase()] && (
@@ -115,8 +129,8 @@ export default function WordCard({
                   ))}
                 </div>
               )}
-            </>
-          )}
+            </div>
+          </div>
         </button>
       </div>
 
