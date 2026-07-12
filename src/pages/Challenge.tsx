@@ -152,7 +152,7 @@ function TopicCard({ topic, isA }: { topic: ChallengeTopic; isA: boolean }) {
           <HintChip key={h.en} text={isA ? h.en : h.vi} lang={isA ? 'en-US' : 'vi-VN'} />
         ))}
       </div>
-      <p className="text-[11px] text-zinc-500 mb-1">
+      <p className="text-xs text-zinc-400 mb-1">
         {isA ? '🔊 Bấm nghe câu mẫu trước khi quay:' : '🔊 Tap to hear a sample before recording:'}
       </p>
       <div>
