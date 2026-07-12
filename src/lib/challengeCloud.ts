@@ -1,23 +1,23 @@
-// vlogCloud.ts — Đồng bộ entries thử thách "Vlog 1 phút / 30 ngày" lên Supabase.
+// challengeCloud.ts — Đồng bộ entries thử thách "Challenge 1 phút / 30 ngày" lên Supabase.
 //
 // Cùng triết lý với cloud.ts / progressSync.ts: localStorage/IndexedDB là nguồn
-// hiển thị TỨC THÌ (offline-first); mỗi lần nộp vlog xong (đã có transcript +
-// feedback) ta ĐẨY 1 dòng lên bảng `vlog_entries` kiểu "bắn rồi quên"; khi mở
-// trang /vlog ta KÉO toàn bộ entries về và HỢP NHẤT với bản local (đổi máy không
+// hiển thị TỨC THÌ (offline-first); mỗi lần nộp challenge xong (đã có transcript +
+// feedback) ta ĐẨY 1 dòng lên bảng `challenge_entries` kiểu "bắn rồi quên"; khi mở
+// trang /challenge ta KÉO toàn bộ entries về và HỢP NHẤT với bản local (đổi máy không
 // mất tiến độ thử thách). Video KHÔNG bao giờ upload — chỉ text lên DB.
 //
-// Bảng `vlog_entries` (migration 0010, RLS owner-only): mỗi (user_id, day) 1 dòng,
+// Bảng `challenge_entries` (migration 0010, RLS owner-only): mỗi (user_id, day) 1 dòng,
 // nộp lại trong ngày = upsert ghi đè. Xem supabase/schema.sql.
 //
-// LƯU Ý: file này KHÔNG import từ ./vlog (tránh phụ thuộc chéo) — kiểu input dưới
-// đây khớp cấu trúc (structural typing) với VlogEntryLocal của lib/vlog.ts.
+// LƯU Ý: file này KHÔNG import từ ./challenge (tránh phụ thuộc chéo) — kiểu input dưới
+// đây khớp cấu trúc (structural typing) với ChallengeEntryLocal của lib/challenge.ts.
 
 import { supabase } from './supabase'
 
 // ── Kiểu dữ liệu ──────────────────────────────────────────────────────────────
 
-// 1 dòng DB đúng như cột bảng vlog_entries (snake_case).
-export interface CloudVlogEntry {
+// 1 dòng DB đúng như cột bảng challenge_entries (snake_case).
+export interface CloudChallengeEntry {
   id?: string
   user_id: string
   day: string // 'YYYY-MM-DD' (cột date trả về dạng chuỗi)
@@ -31,10 +31,10 @@ export interface CloudVlogEntry {
   created_at?: string | null
 }
 
-// Kiểu camelCase phía app — TỐI THIỂU đủ để upsert/merge; VlogEntryLocal (lib/vlog.ts)
+// Kiểu camelCase phía app — TỐI THIỂU đủ để upsert/merge; ChallengeEntryLocal (lib/challenge.ts)
 // khớp cấu trúc nên truyền thẳng vào được. `round`/`challengeRound` đều nhận
 // (tên nào có thì dùng, không có thì mặc định vòng 1).
-export interface VlogEntryLike {
+export interface ChallengeEntryLike {
   day: string // 'YYYY-MM-DD'
   round?: number
   challengeRound?: number
@@ -71,7 +71,7 @@ function feedbackToString(fb: unknown): string | null {
 }
 
 // ── Chuyển đổi giữa hàng DB (snake_case) và kiểu app (camelCase) ─────────────
-function entryToRow(userId: string, e: VlogEntryLike) {
+function entryToRow(userId: string, e: ChallengeEntryLike) {
   return {
     user_id: userId,
     day: e.day,
@@ -85,7 +85,7 @@ function entryToRow(userId: string, e: VlogEntryLike) {
   }
 }
 
-export function cloudVlogToLocal(r: CloudVlogEntry): VlogEntryLike {
+export function cloudChallengeToLocal(r: CloudChallengeEntry): ChallengeEntryLike {
   return {
     day: typeof r.day === 'string' ? r.day.slice(0, 10) : '',
     round: typeof r.challenge_round === 'number' ? r.challenge_round : 1,
@@ -114,40 +114,40 @@ async function currentUserId(): Promise<string | null> {
 // ── PUSH: upsert 1 entry sau khi có transcript + feedback ─────────────────────
 // Lỗi mạng / chưa đăng nhập → bỏ qua êm (console.warn) — bản local vẫn là nguồn
 // hiển thị tức thì, lần nộp sau (hoặc lần merge sau) sẽ đẩy bù.
-export async function upsertVlogEntryCloud(entry: VlogEntryLike): Promise<void> {
+export async function upsertChallengeEntryCloud(entry: ChallengeEntryLike): Promise<void> {
   try {
     const userId = await currentUserId()
     if (!userId) {
-      console.warn('[vlogCloud] chưa đăng nhập — bỏ qua đồng bộ vlog')
+      console.warn('[challengeCloud] chưa đăng nhập — bỏ qua đồng bộ challenge')
       return
     }
     const { error } = await supabase
-      .from('vlog_entries')
+      .from('challenge_entries')
       .upsert(entryToRow(userId, entry), { onConflict: 'user_id,day' })
-    if (error) console.warn('[vlogCloud] đồng bộ vlog lỗi:', error.message)
+    if (error) console.warn('[challengeCloud] đồng bộ challenge lỗi:', error.message)
   } catch (e) {
-    console.warn('[vlogCloud] đồng bộ vlog lỗi:', e)
+    console.warn('[challengeCloud] đồng bộ challenge lỗi:', e)
   }
 }
 
 // ── PULL: kéo toàn bộ entries của user hiện tại ───────────────────────────────
 // Trả null khi lỗi mạng / chưa đăng nhập (caller giữ nguyên bản local).
-export async function fetchVlogEntriesCloud(): Promise<CloudVlogEntry[] | null> {
+export async function fetchChallengeEntriesCloud(): Promise<CloudChallengeEntry[] | null> {
   try {
     const userId = await currentUserId()
     if (!userId) return null
     const { data, error } = await supabase
-      .from('vlog_entries')
+      .from('challenge_entries')
       .select('*')
       .eq('user_id', userId)
       .order('day', { ascending: true })
     if (error) {
-      console.warn('[vlogCloud] kéo vlog lỗi:', error.message)
+      console.warn('[challengeCloud] kéo challenge lỗi:', error.message)
       return null
     }
-    return (data ?? []) as CloudVlogEntry[]
+    return (data ?? []) as CloudChallengeEntry[]
   } catch (e) {
-    console.warn('[vlogCloud] kéo vlog lỗi:', e)
+    console.warn('[challengeCloud] kéo challenge lỗi:', e)
     return null
   }
 }
@@ -159,9 +159,9 @@ export async function fetchVlogEntriesCloud(): Promise<CloudVlogEntry[] | null> 
 //   3. Cả hai (hoặc không bên nào) có feedback → bản có createdAt MỚI HƠN thắng;
 //      thiếu createdAt để so (bản local không lưu) → ưu tiên LOCAL (máy này vừa
 //      nộp là bản mới nhất, đồng thời là nguồn hiển thị tức thì).
-// Kết quả sắp theo `day` tăng dần. Generic T: truyền VlogEntryLocal[] vào thì
+// Kết quả sắp theo `day` tăng dần. Generic T: truyền ChallengeEntryLocal[] vào thì
 // nhận lại đúng kiểu đó (merge chỉ CHỌN entry, không tự dựng entry mới).
-export function mergeVlogEntries<T extends VlogEntryLike>(local: T[], cloud: T[]): T[] {
+export function mergeChallengeEntries<T extends ChallengeEntryLike>(local: T[], cloud: T[]): T[] {
   const byDay = new Map<string, T>()
   // Nạp cloud trước, local sau — khi trùng ngày, pick() quyết định bản thắng.
   for (const c of cloud) byDay.set(c.day, c)
@@ -173,7 +173,7 @@ export function mergeVlogEntries<T extends VlogEntryLike>(local: T[], cloud: T[]
 }
 
 // Chọn giữa bản local và cloud cùng ngày theo luật 2–3 ở trên.
-function pick<T extends VlogEntryLike>(local: T, cloud: T): T {
+function pick<T extends ChallengeEntryLike>(local: T, cloud: T): T {
   const localHasFb = !!local.feedback
   const cloudHasFb = !!cloud.feedback
   if (localHasFb !== cloudHasFb) return localHasFb ? local : cloud

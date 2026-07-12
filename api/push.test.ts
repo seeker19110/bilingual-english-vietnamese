@@ -1,6 +1,6 @@
 // Test sendReminders (api/push.ts) — tập trung nhánh MỚI: chọn nội dung thông báo
-// theo việc user có đang tham gia thử thách vlog gần đây hay không (mục "Nhắc hằng
-// ngày" — docs/research/thu-thach-vlog-30-ngay.md). Mock DB + web-push để chạy OFFLINE.
+// theo việc user có đang tham gia thử thách challenge gần đây hay không (mục "Nhắc hằng
+// ngày" — docs/research/thu-thach-challenge-30-ngay.md). Mock DB + web-push để chạy OFFLINE.
 //
 // push.ts đọc VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY ở TOP-LEVEL module (side effect lúc
 // import) nên phải stub env TRƯỚC khi import — dùng import() động trong beforeAll,
@@ -43,8 +43,8 @@ type Row = { user_id: string; endpoint: string; p256dh: string; auth_key: string
 function makeSupabase(opts: {
   subs: Row[]
   usageRows?: Record<string, unknown>[]
-  vlogRows?: { user_id: string }[]
-  vlogError?: { message: string } | null
+  challengeRows?: { user_id: string }[]
+  challengeError?: { message: string } | null
 }) {
   return {
     from: (table: string) => {
@@ -66,11 +66,14 @@ function makeSupabase(opts: {
           }),
         }
       }
-      if (table === 'vlog_entries') {
+      if (table === 'challenge_entries') {
         return {
           select: () => ({
             in: () => ({
-              gte: async () => ({ data: opts.vlogRows ?? [], error: opts.vlogError ?? null }),
+              gte: async () => ({
+                data: opts.challengeRows ?? [],
+                error: opts.challengeError ?? null,
+              }),
             }),
           }),
         }
@@ -87,13 +90,13 @@ const sub = (id: string): Row => ({
   auth_key: 'auth',
 })
 
-describe('sendReminders — chọn nội dung theo hoạt động vlog gần đây', () => {
-  it('chưa học hôm nay + có vlog_entries trong 8 ngày gần đây → nhận payload challenge (url /challenge)', async () => {
+describe('sendReminders — chọn nội dung theo hoạt động challenge gần đây', () => {
+  it('chưa học hôm nay + có challenge_entries trong 8 ngày gần đây → nhận payload challenge (url /challenge)', async () => {
     mockedGet.mockReturnValue(
       makeSupabase({
         subs: [sub('u1')],
         usageRows: [],
-        vlogRows: [{ user_id: 'u1' }],
+        challengeRows: [{ user_id: 'u1' }],
       }) as never,
     )
     const result = await sendReminders(13)
@@ -103,12 +106,12 @@ describe('sendReminders — chọn nội dung theo hoạt động vlog gần đ�
     expect(payload.title).toMatch(/challenge/i)
   })
 
-  it('chưa học hôm nay + KHÔNG có vlog_entries gần đây → nhận payload chung (url /)', async () => {
+  it('chưa học hôm nay + KHÔNG có challenge_entries gần đây → nhận payload chung (url /)', async () => {
     mockedGet.mockReturnValue(
       makeSupabase({
         subs: [sub('u2')],
         usageRows: [],
-        vlogRows: [],
+        challengeRows: [],
       }) as never,
     )
     const result = await sendReminders(13)
@@ -117,12 +120,12 @@ describe('sendReminders — chọn nội dung theo hoạt động vlog gần đ�
     expect(payload.url).toBe('/')
   })
 
-  it('đã học hôm nay (kể cả chỉ vlog — tính vào stt_count/chat_count) → bỏ qua, KHÔNG gửi', async () => {
+  it('đã học hôm nay (kể cả chỉ challenge — tính vào stt_count/chat_count) → bỏ qua, KHÔNG gửi', async () => {
     mockedGet.mockReturnValue(
       makeSupabase({
         subs: [sub('u3')],
         usageRows: [{ user_id: 'u3', stt_count: 1, chat_count: 1 }],
-        vlogRows: [{ user_id: 'u3' }], // dù có vlog_entries gần đây, đã học rồi thì không nhắc
+        challengeRows: [{ user_id: 'u3' }], // dù có challenge_entries gần đây, đã học rồi thì không nhắc
       }) as never,
     )
     const result = await sendReminders(13)
@@ -130,12 +133,12 @@ describe('sendReminders — chọn nội dung theo hoạt động vlog gần đ�
     expect(mockedSend).not.toHaveBeenCalled()
   })
 
-  it('bảng vlog_entries lỗi (migration 0010 chưa chạy) → fail-open về payload chung, không ném', async () => {
+  it('bảng challenge_entries lỗi (migration 0010 chưa chạy) → fail-open về payload chung, không ném', async () => {
     mockedGet.mockReturnValue(
       makeSupabase({
         subs: [sub('u4')],
         usageRows: [],
-        vlogError: { message: 'relation "vlog_entries" does not exist' },
+        challengeError: { message: 'relation "challenge_entries" does not exist' },
       }) as never,
     )
     const result = await sendReminders(13)
@@ -147,9 +150,9 @@ describe('sendReminders — chọn nội dung theo hoạt động vlog gần đ�
   it('nhiều user cùng lượt gửi — mỗi người nhận đúng payload theo trạng thái riêng', async () => {
     mockedGet.mockReturnValue(
       makeSupabase({
-        subs: [sub('vlog-user'), sub('generic-user')],
+        subs: [sub('challenge-user'), sub('generic-user')],
         usageRows: [],
-        vlogRows: [{ user_id: 'vlog-user' }],
+        challengeRows: [{ user_id: 'challenge-user' }],
       }) as never,
     )
     const result = await sendReminders(13)

@@ -1,19 +1,19 @@
 // ──────────────────────────────────────────────────────────────────────────
-// PROMPT phản hồi VLOG 1 PHÚT (thử thách 30 ngày)
-// (xem kế hoạch: docs/research/thu-thach-vlog-30-ngay.md, mục 3.1 bước 4)
+// PROMPT phản hồi CHALLENGE 1 PHÚT (thử thách 30 ngày)
+// (xem kế hoạch: docs/research/thu-thach-challenge-30-ngay.md, mục 3.1 bước 4)
 //
-// Luồng: học viên quay vlog → audio lên /api/stt → transcript → transcript +
-// chủ đề vào prompt này → gửi /api/claude → AI trả JSON `VlogFeedback`
+// Luồng: học viên quay challenge → audio lên /api/stt → transcript → transcript +
+// chủ đề vào prompt này → gửi /api/claude → AI trả JSON `ChallengeFeedback`
 // (client parse bằng parseJson trong src/lib/ai.ts — giống Speaking/Writing).
 //
 // Chiều A: học viên người Việt NÓI tiếng Anh — khen + giải thích bằng tiếng Việt.
 // Chiều B: học viên nước ngoài NÓI tiếng Việt — khen + giải thích bằng tiếng Anh.
 // ──────────────────────────────────────────────────────────────────────────
 import type { Direction } from '../types'
-import type { VlogTopic } from '../data/vlogTopics'
+import type { ChallengeTopic } from '../data/challengeTopics'
 
-// 1 lỗi đáng sửa trong vlog (AI chỉ chọn 2–3 lỗi, không dội bom lỗi).
-export interface VlogCorrection {
+// 1 lỗi đáng sửa trong challenge (AI chỉ chọn 2–3 lỗi, không dội bom lỗi).
+export interface ChallengeCorrection {
   /** Trích nguyên văn cách nói của học viên trong transcript */
   original: string
   /** Cách nói tự nhiên hơn (bằng ngôn ngữ đích) */
@@ -22,24 +22,24 @@ export interface VlogCorrection {
   explain: string
 }
 
-// JSON phản hồi vlog mà AI phải trả về — client parse bằng parseJson<VlogFeedback>.
-export interface VlogFeedback {
-  /** 1 lời khen CỤ THỂ dựa trên nội dung vlog, bằng tiếng mẹ đẻ của học viên */
+// JSON phản hồi challenge mà AI phải trả về — client parse bằng parseJson<ChallengeFeedback>.
+export interface ChallengeFeedback {
+  /** 1 lời khen CỤ THỂ dựa trên nội dung challenge, bằng tiếng mẹ đẻ của học viên */
   praise: string
   /** 2–3 lỗi đáng sửa nhất (có thể ít hơn nếu học viên nói gần như chuẩn) */
-  corrections: VlogCorrection[]
-  /** 1 câu nâng cấp (bằng ngôn ngữ đích) gợi ý dùng thử trong vlog ngày mai */
+  corrections: ChallengeCorrection[]
+  /** 1 câu nâng cấp (bằng ngôn ngữ đích) gợi ý dùng thử trong challenge ngày mai */
   upgrade: string
 }
 
-// Build system prompt phản hồi vlog: nhận transcript (từ STT) + chủ đề + chiều học.
-export function vlogFeedbackSystemPrompt(
+// Build system prompt phản hồi challenge: nhận transcript (từ STT) + chủ đề + chiều học.
+export function challengeFeedbackSystemPrompt(
   transcript: string,
-  topic: VlogTopic,
+  topic: ChallengeTopic,
   dir: Direction = 'A',
 ): string {
   if (dir === 'A') {
-    return `Bạn là Emma — gia sư tiếng Anh thân mật, nhẹ nhàng, người Mỹ, đang nhận xét vlog nói 1 phút của học viên người Việt (thử thách vlog 30 ngày). Bạn là người bạn đồng hành, không phải giám khảo khó tính.
+    return `Bạn là Emma — gia sư tiếng Anh thân mật, nhẹ nhàng, người Mỹ, đang nhận xét challenge nói 1 phút của học viên người Việt (thử thách challenge 30 ngày). Bạn là người bạn đồng hành, không phải giám khảo khó tính.
 
 Chủ đề gợi ý của hôm nay (ngày ${topic.day}/30): "${topic.titleEn}" (${topic.titleVi}).
 Transcript lời học viên nói (do máy nhận diện giọng nói tạo tự động):
@@ -55,7 +55,7 @@ LƯU Ý VỀ TRANSCRIPT (quan trọng):
 QUY TẮC PHẢN HỒI:
 1. "praise": đúng 1 lời khen CỤ THỂ bám vào nội dung học viên vừa nói (nhắc lại 1 ý/từ hay họ đã dùng) — bằng tiếng Việt, giọng thân mật, động viên. KHÔNG khen chung chung kiểu "bạn nói tốt lắm".
 2. "corrections": chọn 2–3 lỗi ĐÁNG SỬA NHẤT (ảnh hưởng nhiều nhất tới giao tiếp) — KHÔNG liệt kê mọi lỗi để học viên không nản. Nếu học viên nói gần như chuẩn thì được phép ít hơn (1 hoặc 0 lỗi). Ưu tiên lỗi điển hình của người Việt: thiếu "-s/-es", sai thì quá khứ, quên mạo từ a/an/the, quên "be", sai giới từ, dịch word-by-word từ tiếng Việt. "explain" viết ngắn gọn bằng TIẾNG VIỆT (1–2 câu).
-3. "upgrade": đúng 1 câu tiếng Anh tự nhiên, sát chủ đề, hơi cao hơn trình độ hiện tại của học viên một chút — để học viên dùng thử trong vlog ngày mai.
+3. "upgrade": đúng 1 câu tiếng Anh tự nhiên, sát chủ đề, hơi cao hơn trình độ hiện tại của học viên một chút — để học viên dùng thử trong challenge ngày mai.
 
 QUAN TRỌNG — Trả về CHỈ JSON hợp lệ (không có markdown, không chữ nào ngoài JSON):
 {
@@ -67,7 +67,7 @@ QUAN TRỌNG — Trả về CHỈ JSON hợp lệ (không có markdown, không c
 }`
   }
 
-  return `You are Linh — a warm, gentle Vietnamese tutor, Vietnamese native, giving feedback on a 1-minute spoken vlog by an English-speaking learner of Vietnamese (30-day vlog challenge). You are a supportive companion, not a strict examiner.
+  return `You are Linh — a warm, gentle Vietnamese tutor, Vietnamese native, giving feedback on a 1-minute spoken challenge by an English-speaking learner of Vietnamese (30-day challenge challenge). You are a supportive companion, not a strict examiner.
 
 Today's suggested topic (day ${topic.day}/30): "${topic.titleVi}" (${topic.titleEn}).
 Transcript of what the learner said (auto-generated by speech recognition):
@@ -83,7 +83,7 @@ NOTES ABOUT THE TRANSCRIPT (important):
 FEEDBACK RULES:
 1. "praise": exactly 1 SPECIFIC compliment grounded in what the learner actually said (mention an idea or a nice word they used) — in English, warm and encouraging. Do NOT give generic praise like "you speak well".
 2. "corrections": pick the 2–3 MOST WORTH FIXING errors (the ones that affect communication most) — do NOT list every error, so the learner does not feel discouraged. If the speech is nearly correct, fewer (1 or 0) is fine. Pay attention to typical learner issues in Vietnamese: wrong tones/word choice, wrong classifier, wrong word order, unnatural word-by-word phrasing from English. Write "explain" briefly in ENGLISH (1–2 sentences).
-3. "upgrade": exactly 1 natural Vietnamese sentence on the topic, slightly above the learner's current level — for the learner to try in tomorrow's vlog.
+3. "upgrade": exactly 1 natural Vietnamese sentence on the topic, slightly above the learner's current level — for the learner to try in tomorrow's challenge.
 
 IMPORTANT — Return ONLY valid JSON (no markdown, nothing outside the JSON):
 {

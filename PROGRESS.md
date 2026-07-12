@@ -49,7 +49,21 @@ dùng ternary `isA ? vi : en` như `Speaking.tsx`); E2E cho luồng quay/nộp t
 
 **Cần làm tay trên VPS trước khi chạy thật:** điền `SUPABASE_DB_URL` vào `.env`
 (xem mục "Tự động chạy migration Supabase khi deploy" dưới đây) rồi `bash deploy.sh` —
-migration `0010_vlog_entries.sql` sẽ tự áp.
+migration `0010_challenge_entries.sql` sẽ tự áp.
+
+**[Cập nhật 2026-07-12] Đổi tên "Vlog" → "Challenge"** — tính năng này chưa mở cho
+người dùng thật (migration `0010` chưa từng chạy trên production) nên đã đổi tên toàn
+diện, không chỉ tiêu đề: route `/vlog` → `/challenge`, mọi file/biến/hàm nội bộ
+(`vlogTopics.ts` → `challengeTopics.ts`, `lib/vlog.ts` → `lib/challenge.ts`,
+`lib/vlogCloud.ts`/`vlogRecorder.ts`/`vlogVideo.ts` → `challengeCloud.ts`/
+`challengeRecorder.ts`/`challengeVideo.ts`, `prompts/vlog.ts` → `prompts/challenge.ts`,
+`pages/Vlog.tsx` → `pages/Challenge.tsx`), bảng Supabase `vlog_entries` →
+`challenge_entries` (migration đổi tên thành `0010_challenge_entries.sql`), khóa
+localStorage `et_vlog_<uid>` → `et_challenge_<uid>`. Đồng thời thêm nút "🔊 nghe câu
+mẫu" (TTS Chirp 3 HD, cả giọng nữ/nam) trước khi tự quay, và gộp việc pre-generate
+audio câu mẫu vào `npm run seed:all` (nhóm `challenge`) thay vì giữ script riêng.
+`docs/research/thu-thach-vlog-30-ngay.md` và các mục PR #230/#231/#233 phía trên GIỮ
+NGUYÊN tên gọi cũ — đó là bản ghi lịch sử tại thời điểm merge, không phải tài liệu sống.
 
 ## Tự động chạy migration Supabase khi deploy — ĐÃ XONG (2026-07-11)
 
@@ -69,7 +83,7 @@ nối trực tiếp** (2026-07-11): cần thêm 1 secret `SUPABASE_DB_URL` (conn
 tuỳ ý nào trên DB. **Cần làm TAY trên VPS**: điền `SUPABASE_DB_URL` vào `.env` (lấy ở
 Supabase Dashboard → Project Settings → Database → Connection string) — sau đó mọi
 migration còn thiếu (kể cả `0001`–`0009` chạy lại an toàn vì idempotent, và
-`0010_vlog_entries.sql` đang chờ) tự áp mỗi lần `bash deploy.sh`. Chi tiết:
+`0010_challenge_entries.sql` đang chờ) tự áp mỗi lần `bash deploy.sh`. Chi tiết:
 `supabase/migrations/README.md`, `docs/deploy-vps-ubuntu.md` mục "Cập nhật code mới".
 
 ## Bài thi cuối cấp CEFR (End-of-level assessment)

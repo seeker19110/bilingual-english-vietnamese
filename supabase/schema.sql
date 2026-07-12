@@ -302,27 +302,27 @@ begin
 end;
 $$;
 
--- ── 13. vlog_entries: thử thách "Vlog 1 phút / 30 ngày" (migration 0010) ─────
+-- ── 13. challenge_entries: thử thách "Challenge 1 phút / 30 ngày" (migration 0010) ─────
 -- Chỉ lưu TEXT (transcript + phản hồi AI + vị trí trong thử thách) — video KHÔNG
 -- upload, chỉ nằm trên máy người dùng (IndexedDB). Mỗi ngày 1 dòng (unique user_id+day),
--- nộp lại trong ngày = upsert ghi đè. Xem docs/research/thu-thach-vlog-30-ngay.md mục 4.2.
-create table if not exists public.vlog_entries (
+-- nộp lại trong ngày = upsert ghi đè. Xem docs/research/thu-thach-challenge-30-ngay.md mục 4.2.
+create table if not exists public.challenge_entries (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null references auth.users(id) on delete cascade,
-  day             date not null,                 -- ngày nộp vlog (múi giờ VN, 'YYYY-MM-DD')
+  day             date not null,                 -- ngày nộp challenge (múi giờ VN, 'YYYY-MM-DD')
   challenge_round int not null default 1,        -- vòng thử thách thứ mấy (sau ngày 30 mời vòng mới)
   challenge_day   int not null,                  -- ngày thứ mấy trong thử thách (1..30)
-  topic_day       int not null,                  -- chủ đề gợi ý của ngày (index trong src/data/vlogTopics.ts)
+  topic_day       int not null,                  -- chủ đề gợi ý của ngày (index trong src/data/challengeTopics.ts)
   transcript      text not null,                 -- transcript từ Whisper (/api/stt)
   feedback        jsonb,                         -- phản hồi AI có cấu trúc (null = chưa/lỗi feedback)
   duration_sec    int not null default 0,        -- thời lượng nói (giây, client tự tính)
   word_count      int not null default 0,        -- số từ trong transcript (tính nhịp nói từ/phút)
   created_at      timestamptz default now(),
-  unique (user_id, day)                          -- mỗi ngày 1 vlog; nộp lại = ghi đè (upsert)
+  unique (user_id, day)                          -- mỗi ngày 1 challenge; nộp lại = ghi đè (upsert)
 );
-alter table public.vlog_entries enable row level security;
-drop policy if exists "own vlog" on public.vlog_entries;
-create policy "own vlog" on public.vlog_entries
+alter table public.challenge_entries enable row level security;
+drop policy if exists "own challenge" on public.challenge_entries;
+create policy "own challenge" on public.challenge_entries
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- ── 14. _schema_migrations: bảng theo dõi migration đã áp dụng, cho phép deploy.sh

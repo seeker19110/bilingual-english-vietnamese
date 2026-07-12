@@ -236,7 +236,7 @@ for (const theme of RESULT_THEMES) {
 
 // ── /challenge — các trạng thái khác của thử thách "Challenge 1 phút / 30 ngày" ──
 // Trạng thái "chưa bắt đầu" đã quét chung với AUTHED_ROUTES ở trên. 3 trạng thái
-// dưới đây cần seed localStorage (khóa `et_vlog_<uid>` — src/lib/vlog.ts) để bỏ
+// dưới đây cần seed localStorage (khóa `et_challenge_<uid>` — src/lib/challenge.ts) để bỏ
 // qua bước tương tác (bấm bắt đầu/quay/nộp — cần camera thật, không mock ở đây).
 // Ghi âm/quay hình KHÔNG cần cho các trạng thái này (đều là màn tĩnh sau khi có
 // dữ liệu challenge), nên không cần mock getUserMedia/MediaRecorder.
@@ -249,9 +249,9 @@ function vnDateOffset(offsetDays: number): string {
   return new Date(ms).toISOString().slice(0, 10)
 }
 
-async function seedVlogChallenge(page: Page, challenge: unknown) {
+async function seedChallengeState(page: Page, challenge: unknown) {
   await page.addInitScript(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
-    key: `et_vlog_${USER_ID}`,
+    key: `et_challenge_${USER_ID}`,
     value: challenge,
   })
 }
@@ -261,7 +261,7 @@ for (const theme of THEMES) {
     page,
   }) => {
     await mockLogin(page, 'vi', theme)
-    await seedVlogChallenge(page, { startDate: vnDateOffset(0), round: 1, entries: {} })
+    await seedChallengeState(page, { startDate: vnDateOffset(0), round: 1, entries: {} })
     await page.goto('/challenge', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Challenge 1 phút/)).toBeVisible()
     await page.waitForTimeout(500)
@@ -286,7 +286,7 @@ for (const theme of THEMES) {
       ],
       upgrade: 'This morning I had a delicious bowl of pho.',
     })
-    await seedVlogChallenge(page, {
+    await seedChallengeState(page, {
       startDate: today,
       round: 1,
       entries: {
@@ -314,7 +314,7 @@ for (const theme of THEMES) {
     page,
   }) => {
     await mockLogin(page, 'vi', theme)
-    await seedVlogChallenge(page, { startDate: vnDateOffset(5), round: 1, entries: {} })
+    await seedChallengeState(page, { startDate: vnDateOffset(5), round: 1, entries: {} })
     await page.goto('/challenge', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Chuỗi bị gián đoạn/)).toBeVisible()
     const { critical, unexpectedSerious } = await scan(page)

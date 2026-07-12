@@ -1,8 +1,8 @@
-// src/lib/vlogRecorder.ts — Ghi hình vlog cho thử thách "Vlog 1 phút — 30 ngày"
-// (docs/research/thu-thach-vlog-30-ngay.md, mục 4.1).
+// src/lib/challengeRecorder.ts — Ghi hình challenge cho thử thách "Challenge 1 phút — 30 ngày"
+// (docs/research/thu-thach-challenge-30-ngay.md, mục 4.1).
 //
 // Chạy SONG SONG 2 MediaRecorder trên CÙNG 1 stream:
-//   (a) recorder VIDEO  — lưu local (IndexedDB, src/lib/vlogVideo.ts), KHÔNG upload;
+//   (a) recorder VIDEO  — lưu local (IndexedDB, src/lib/challengeVideo.ts), KHÔNG upload;
 //   (b) recorder AUDIO-only — blob nhỏ (~1 MB/phút) gửi lên /api/stt như pipeline sẵn có.
 // Nhờ vậy video không bao giờ rời máy người dùng, còn âm thanh vẫn vừa giới hạn ~6 MB
 // của /api/stt (trần 180 giây ≈ 3 MB webm/opus).
@@ -12,18 +12,18 @@
 
 // ── Hằng số thời lượng (UI dùng chung, không "số ma thuật") ──────────────────
 // Trần ghi hình: tự dừng khi chạm mốc này.
-export const MAX_VLOG_SEC = 180
-// Sàn thời lượng: UI chặn nộp khi vlog ngắn hơn mốc này (tránh "điểm danh" 5 giây).
-export const MIN_VLOG_SEC = 10
+export const MAX_CHALLENGE_SEC = 180
+// Sàn thời lượng: UI chặn nộp khi challenge ngắn hơn mốc này (tránh "điểm danh" 5 giây).
+export const MIN_CHALLENGE_SEC = 10
 
 // ── Mã lỗi (message của Error) — UI so sánh để hiện hướng dẫn phù hợp ────────
 // Người dùng từ chối quyền camera/mic → UI gợi ý bật quyền hoặc fallback chỉ-âm-thanh.
-export const VLOG_ERR_PERMISSION = 'vlog-permission-denied'
+export const CHALLENGE_ERR_PERMISSION = 'challenge-permission-denied'
 // Trình duyệt không hỗ trợ ghi hình (thiếu getUserMedia/MediaRecorder).
-export const VLOG_ERR_UNSUPPORTED = 'vlog-recording-unsupported'
+export const CHALLENGE_ERR_UNSUPPORTED = 'challenge-recording-unsupported'
 
-// Trình duyệt có đủ đồ nghề để quay vlog không (cần getUserMedia + MediaRecorder).
-export function isVlogRecordingSupported(): boolean {
+// Trình duyệt có đủ đồ nghề để quay challenge không (cần getUserMedia + MediaRecorder).
+export function isChallengeRecordingSupported(): boolean {
   return (
     typeof navigator !== 'undefined' &&
     !!navigator.mediaDevices?.getUserMedia &&
@@ -32,7 +32,7 @@ export function isVlogRecordingSupported(): boolean {
 }
 
 // Kết quả 1 lần quay: video (null khi chế độ chỉ-âm-thanh) + audio + thời lượng.
-export interface VlogRecording {
+export interface ChallengeRecording {
   videoBlob: Blob | null
   videoMime: string | null
   audioBlob: Blob
@@ -41,16 +41,16 @@ export interface VlogRecording {
 }
 
 // Handle điều khiển phiên quay đang chạy.
-export interface VlogRecorderHandle {
-  // Dừng quay + trả kết quả. Nếu đã tự dừng ở MAX_VLOG_SEC thì trả kết quả đã chốt.
-  stop: () => Promise<VlogRecording>
+export interface ChallengeRecorderHandle {
+  // Dừng quay + trả kết quả. Nếu đã tự dừng ở MAX_CHALLENGE_SEC thì trả kết quả đã chốt.
+  stop: () => Promise<ChallengeRecording>
   // Hủy quay: dừng + nhả camera/mic, KHÔNG trả kết quả (bỏ dữ liệu đã ghi).
   cancel: () => void
   // Stream đang quay — UI gắn vào <video muted> để người dùng thấy mình lúc quay.
   stream: MediaStream
 }
 
-// Độ rộng khung hình lý tưởng (≤ 720 đủ nét cho vlog tự xem, nhẹ bộ nhớ máy).
+// Độ rộng khung hình lý tưởng (≤ 720 đủ nét cho challenge tự xem, nhẹ bộ nhớ máy).
 const VIDEO_IDEAL_WIDTH = 720
 
 // Chọn mime đầu tiên trình duyệt hỗ trợ trong danh sách ưu tiên; '' = để mặc định.
@@ -92,13 +92,15 @@ function stopRecorder(rec: MediaRecorder, chunks: Blob[], fallbackMime: string):
   })
 }
 
-// Bắt đầu quay vlog. `video: false` = chế độ chỉ-âm-thanh (fallback khi từ chối camera
+// Bắt đầu quay challenge. `video: false` = chế độ chỉ-âm-thanh (fallback khi từ chối camera
 // hoặc người dùng ngại quay mặt). Ném Error có message:
-//   VLOG_ERR_UNSUPPORTED — máy không hỗ trợ ghi hình;
-//   VLOG_ERR_PERMISSION  — người dùng từ chối quyền camera/mic.
-export async function startVlogRecording(opts: { video: boolean }): Promise<VlogRecorderHandle> {
-  if (!isVlogRecordingSupported()) {
-    throw new Error(VLOG_ERR_UNSUPPORTED)
+//   CHALLENGE_ERR_UNSUPPORTED — máy không hỗ trợ ghi hình;
+//   CHALLENGE_ERR_PERMISSION  — người dùng từ chối quyền camera/mic.
+export async function startChallengeRecording(opts: {
+  video: boolean
+}): Promise<ChallengeRecorderHandle> {
+  if (!isChallengeRecordingSupported()) {
+    throw new Error(CHALLENGE_ERR_UNSUPPORTED)
   }
 
   let stream: MediaStream
@@ -106,7 +108,7 @@ export async function startVlogRecording(opts: { video: boolean }): Promise<Vlog
     stream = await navigator.mediaDevices.getUserMedia(
       opts.video
         ? {
-            // Camera trước, khung ≤ 720px — đủ cho vlog tự xem, không phình IndexedDB.
+            // Camera trước, khung ≤ 720px — đủ cho challenge tự xem, không phình IndexedDB.
             video: { facingMode: 'user', width: { ideal: VIDEO_IDEAL_WIDTH } },
             audio: true,
           }
@@ -121,7 +123,7 @@ export async function startVlogRecording(opts: { video: boolean }): Promise<Vlog
         e.name === 'PermissionDeniedError' ||
         e.name === 'SecurityError')
     ) {
-      throw new Error(VLOG_ERR_PERMISSION)
+      throw new Error(CHALLENGE_ERR_PERMISSION)
     }
     throw e instanceof Error ? e : new Error(String(e))
   }
@@ -159,11 +161,11 @@ export async function startVlogRecording(opts: { video: boolean }): Promise<Vlog
 
   // Chốt kết quả ĐÚNG 1 LẦN: stop() thủ công và auto-stop 180s đều đi qua đây,
   // gọi lần 2 trả lại promise đã có (idempotent — không dừng đúp, không mất blob).
-  let finalized: Promise<VlogRecording> | null = null
-  const finalize = (): Promise<VlogRecording> => {
+  let finalized: Promise<ChallengeRecording> | null = null
+  const finalize = (): Promise<ChallengeRecording> => {
     if (finalized) return finalized
     clearTimeout(autoStopTimer)
-    const durationSec = Math.min(MAX_VLOG_SEC, Math.round((Date.now() - startedAt) / 1000))
+    const durationSec = Math.min(MAX_CHALLENGE_SEC, Math.round((Date.now() - startedAt) / 1000))
     finalized = (async () => {
       try {
         const [audioBlob, videoBlob] = await Promise.all([
@@ -184,10 +186,10 @@ export async function startVlogRecording(opts: { video: boolean }): Promise<Vlog
     return finalized
   }
 
-  // Tự dừng khi chạm trần MAX_VLOG_SEC (180 giây) — kể cả khi UI quên gọi stop().
+  // Tự dừng khi chạm trần MAX_CHALLENGE_SEC (180 giây) — kể cả khi UI quên gọi stop().
   const autoStopTimer = setTimeout(() => {
     void finalize()
-  }, MAX_VLOG_SEC * 1000)
+  }, MAX_CHALLENGE_SEC * 1000)
 
   return {
     stream,

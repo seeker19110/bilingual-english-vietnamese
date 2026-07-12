@@ -46,7 +46,7 @@ import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
 import { FOUNDATION } from '../src/data/curriculum.ts'
-import { VLOG_TOPICS } from '../src/data/vlogTopics.ts'
+import { CHALLENGE_TOPICS } from '../src/data/challengeTopics.ts'
 import { loadSubjectsInDisplayOrder, PREF_VOICE_IDS } from './_lib/patternOrder.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -256,7 +256,7 @@ function loadPatternTasks(): PatternTask[] {
   tasks.push(...laterLessonTasks)
 
   // ── Ưu tiên 6: câu mẫu Challenge 30 ngày (trang /challenge) — chỉ female/male ─
-  for (const t of VLOG_TOPICS) {
+  for (const t of CHALLENGE_TOPICS) {
     for (const s of t.sampleEn) add(s, 'en-US', 'challenge', PREF_VOICE_IDS)
     for (const s of t.sampleVi) add(s, 'vi-VN', 'challenge', PREF_VOICE_IDS)
   }
