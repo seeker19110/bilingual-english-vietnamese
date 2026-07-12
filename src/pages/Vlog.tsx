@@ -115,6 +115,21 @@ function HintChip({ text, lang }: { text: string; lang: 'en-US' | 'vi-VN' }) {
   )
 }
 
+// ── Câu mẫu — bấm để nghe TTS chất lượng cao trước khi tự quay/ghi âm ─────────
+// Audio đã được thu thập sẵn (npm run prefetch:tts-vlog) nên bấm phát gần như tức
+// thì, không phải đợi Google TTS tạo mới ở lần bấm đầu tiên.
+function SampleLine({ text, lang }: { text: string; lang: 'en-US' | 'vi-VN' }) {
+  return (
+    <button
+      onClick={() => void speak(text, lang)}
+      className="tap-44 w-full flex items-start gap-2 text-left px-2 py-1.5 -mx-2 rounded-lg hover:bg-zinc-800/60 transition"
+    >
+      <Volume2 className="w-3.5 h-3.5 text-zinc-500 shrink-0 mt-0.5" />
+      <span className="text-xs text-zinc-400 italic">“{text}”</span>
+    </button>
+  )
+}
+
 // ── Thẻ chủ đề của ngày ────────────────────────────────────────────────────────
 function TopicCard({ topic, isA }: { topic: VlogTopic; isA: boolean }) {
   return (
@@ -129,11 +144,12 @@ function TopicCard({ topic, isA }: { topic: VlogTopic; isA: boolean }) {
           <HintChip key={h.en} text={isA ? h.en : h.vi} lang={isA ? 'en-US' : 'vi-VN'} />
         ))}
       </div>
-      <div className="space-y-1">
+      <p className="text-[11px] text-zinc-500 mb-1">
+        {isA ? '🔊 Bấm nghe câu mẫu trước khi quay:' : '🔊 Tap to hear a sample before recording:'}
+      </p>
+      <div>
         {(isA ? topic.sampleEn : topic.sampleVi).map((s, i) => (
-          <p key={i} className="text-xs text-zinc-400 italic">
-            “{s}”
-          </p>
+          <SampleLine key={i} text={s} lang={isA ? 'en-US' : 'vi-VN'} />
         ))}
       </div>
     </div>
