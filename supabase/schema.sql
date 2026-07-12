@@ -305,7 +305,7 @@ $$;
 -- ── 13. challenge_entries: thử thách "Challenge 1 phút / 30 ngày" (migration 0010) ─────
 -- Chỉ lưu TEXT (transcript + phản hồi AI + vị trí trong thử thách) — video KHÔNG
 -- upload, chỉ nằm trên máy người dùng (IndexedDB). Mỗi ngày 1 dòng (unique user_id+day),
--- nộp lại trong ngày = upsert ghi đè. Xem docs/research/thu-thach-challenge-30-ngay.md mục 4.2.
+-- nộp lại trong ngày = upsert ghi đè. Xem docs/research/thu-thach-vlog-30-ngay.md mục 4.2.
 create table if not exists public.challenge_entries (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null references auth.users(id) on delete cascade,

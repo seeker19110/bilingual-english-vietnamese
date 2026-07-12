@@ -1,5 +1,5 @@
 // src/lib/challengeVideo.ts — Kho VIDEO challenge cục bộ bằng IndexedDB THÔ (không thư viện,
-// giữ ngân sách bundle — docs/research/thu-thach-challenge-30-ngay.md mục 4.1).
+// giữ ngân sách bundle — docs/research/thu-thach-vlog-30-ngay.md mục 4.1).
 //
 // Nguyên tắc: video CHỈ nằm trên máy người dùng (không upload — chi phí 0, riêng tư
 // tối đa); transcript + feedback mới là dữ liệu chính (đồng bộ Supabase ở lib/challenge.ts).

@@ -1,6 +1,6 @@
 // Test sendReminders (api/push.ts) — tập trung nhánh MỚI: chọn nội dung thông báo
 // theo việc user có đang tham gia thử thách challenge gần đây hay không (mục "Nhắc hằng
-// ngày" — docs/research/thu-thach-challenge-30-ngay.md). Mock DB + web-push để chạy OFFLINE.
+// ngày" — docs/research/thu-thach-vlog-30-ngay.md). Mock DB + web-push để chạy OFFLINE.
 //
 // push.ts đọc VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY ở TOP-LEVEL module (side effect lúc
 // import) nên phải stub env TRƯỚC khi import — dùng import() động trong beforeAll,

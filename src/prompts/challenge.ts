@@ -1,6 +1,6 @@
 // ──────────────────────────────────────────────────────────────────────────
 // PROMPT phản hồi CHALLENGE 1 PHÚT (thử thách 30 ngày)
-// (xem kế hoạch: docs/research/thu-thach-challenge-30-ngay.md, mục 3.1 bước 4)
+// (xem kế hoạch: docs/research/thu-thach-vlog-30-ngay.md, mục 3.1 bước 4)
 //
 // Luồng: học viên quay challenge → audio lên /api/stt → transcript → transcript +
 // chủ đề vào prompt này → gửi /api/claude → AI trả JSON `ChallengeFeedback`

@@ -1,4 +1,4 @@
-// src/lib/challenge.ts — Trạng thái thử thách "Challenge 30 ngày" (docs/research/thu-thach-challenge-30-ngay.md).
+// src/lib/challenge.ts — Trạng thái thử thách "Challenge 30 ngày" (docs/research/thu-thach-vlog-30-ngay.md).
 //
 // Phạm vi file này: LOGIC THUẦN + lưu localStorage (key `et_challenge_<uid>` theo quy ước
 // `et_*_<uid>` của storage.ts). Đồng bộ Supabase (bảng challenge_entries) làm ở bước sau —

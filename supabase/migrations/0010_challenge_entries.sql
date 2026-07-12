@@ -1,6 +1,6 @@
 -- 0010_challenge_entries.sql
 -- Bảng mới `challenge_entries` — lưu TRANSCRIPT + PHẢN HỒI AI của thử thách
--- "Challenge 1 phút / 30 ngày" (xem docs/research/thu-thach-challenge-30-ngay.md mục 4.2).
+-- "Challenge 1 phút / 30 ngày" (xem docs/research/thu-thach-vlog-30-ngay.md mục 4.2).
 --
 -- BỐI CẢNH: video KHÔNG upload lên server (chỉ nằm trên máy người dùng — IndexedDB).
 -- Bảng này chỉ lưu phần TEXT (vài KB/ngày): transcript từ Whisper, phản hồi AI (jsonb),

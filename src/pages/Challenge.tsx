@@ -1,5 +1,5 @@
 // src/pages/Challenge.tsx — Thử thách "Challenge 1 phút / 30 ngày"
-// (docs/research/thu-thach-challenge-30-ngay.md). Mỗi ngày quay 1 video ngắn theo chủ đề
+// (docs/research/thu-thach-vlog-30-ngay.md). Mỗi ngày quay 1 video ngắn theo chủ đề
 // gợi ý → audio gửi /api/stt nhận diện → AI (prompts/challenge.ts) khen + sửa lỗi + gợi ý
 // câu nâng cấp. Video KHÔNG upload — chỉ lưu trên máy (IndexedDB, lib/challengeVideo.ts).
 import { useEffect, useMemo, useRef, useState } from 'react'

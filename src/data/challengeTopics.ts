@@ -1,6 +1,6 @@
 // ──────────────────────────────────────────────────────────────────────────
 // 30 CHỦ ĐỀ CHALLENGE — thử thách "Challenge 1 phút" 30 ngày
-// (xem kế hoạch: docs/research/thu-thach-challenge-30-ngay.md, mục 3.3)
+// (xem kế hoạch: docs/research/thu-thach-vlog-30-ngay.md, mục 3.3)
 //
 // Chủ đề sát đời sống Việt Nam, KHÓ DẦN theo tuần:
 //   Tuần 1 (ngày 1–7):   mô tả trực tiếp, đơn giản (ăn gì, đường đi làm, thời tiết…)
