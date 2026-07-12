@@ -586,7 +586,7 @@ export default function Vlog() {
         <Layout />
         <main className="max-w-lg mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
           <PageHeader
-            title={isA ? 'Vlog 1 phút — 30 ngày' : '1-Minute Vlog — 30 Days'}
+            title={isA ? 'Challenge 1 phút — 30 ngày' : '1-Minute Challenge — 30 Days'}
             subtitle={
               isA
                 ? 'Mỗi ngày quay 1 video ngắn kể về cuộc sống của bạn — AI nghe, khen và sửa lỗi.'
@@ -685,7 +685,7 @@ export default function Vlog() {
 
       <main className="max-w-lg mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
         <PageHeader
-          title={isA ? 'Vlog 1 phút — 30 ngày' : '1-Minute Vlog — 30 Days'}
+          title={isA ? 'Challenge 1 phút — 30 ngày' : '1-Minute Challenge — 30 Days'}
           subtitle={
             isA
               ? `Vòng ${challenge.round} · Ngày ${dayInfo?.day}/${VLOG_CHALLENGE_DAYS}${syncedOnce ? '' : ' · đang đồng bộ...'}`
@@ -732,7 +732,7 @@ export default function Vlog() {
           <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 space-y-3 animate-fade-in">
             <p className="text-sm font-semibold text-white flex items-center gap-1.5">
               <Check className="w-4 h-4 text-accent-400" />
-              {isA ? 'Đã nộp vlog hôm nay!' : "Today's vlog submitted!"}
+              {isA ? 'Đã nộp challenge hôm nay!' : "Today's challenge submitted!"}
             </p>
             {parsedFeedback ? (
               <div className="space-y-2.5">
@@ -795,7 +795,7 @@ export default function Vlog() {
                 )}
                 <button
                   onClick={startCountdown}
-                  aria-label={isA ? 'Bắt đầu quay vlog' : 'Start recording vlog'}
+                  aria-label={isA ? 'Bắt đầu quay challenge' : 'Start recording challenge'}
                   className="tap-44 w-20 h-20 rounded-full bg-gradient-to-br from-rose-500 to-red-500 shadow-xl shadow-rose-500/30 flex items-center justify-center active:scale-95 transition"
                 >
                   {wantVideo && canRecord ? (

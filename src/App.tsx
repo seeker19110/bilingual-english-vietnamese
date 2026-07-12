@@ -207,7 +207,7 @@ export default function App() {
                       }
                     />
                     <Route
-                      path="/vlog"
+                      path="/challenge"
                       element={
                         <RequireAuth>
                           <Vlog />

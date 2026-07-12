@@ -111,9 +111,9 @@ export async function sendReminders(
     url: '/',
   })
   const vlogPayload = JSON.stringify({
-    title: '🎬 Chưa quay vlog hôm nay!',
+    title: '🎬 Chưa quay challenge hôm nay!',
     body: 'Chỉ 1 phút thôi — quay 1 video kể chuyện hôm nay để giữ chuỗi 30 ngày nhé!',
-    url: '/vlog',
+    url: '/challenge',
   })
 
   let sent = 0,

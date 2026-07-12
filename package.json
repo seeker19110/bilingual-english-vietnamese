@@ -29,7 +29,6 @@
     "gen:form-examples": "tsx scripts/gen-form-examples.ts",
     "extract:words-cefr": "tsx scripts/extract-words-cefr-subset.ts",
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts",
-    "prefetch:tts-vlog": "tsx scripts/prefetch-tts-vlog.ts",
     "seed:all": "tsx scripts/seed-all.ts",
     "seed:verify": "tsx scripts/seed-all.ts --verify",
     "sync:storage": "tsx scripts/sync-storage-to-vps.ts",

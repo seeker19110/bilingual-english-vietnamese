@@ -88,7 +88,7 @@ const sub = (id: string): Row => ({
 })
 
 describe('sendReminders — chọn nội dung theo hoạt động vlog gần đây', () => {
-  it('chưa học hôm nay + có vlog_entries trong 8 ngày gần đây → nhận payload vlog (url /vlog)', async () => {
+  it('chưa học hôm nay + có vlog_entries trong 8 ngày gần đây → nhận payload challenge (url /challenge)', async () => {
     mockedGet.mockReturnValue(
       makeSupabase({
         subs: [sub('u1')],
@@ -99,8 +99,8 @@ describe('sendReminders — chọn nội dung theo hoạt động vlog gần đ�
     const result = await sendReminders(13)
     expect(result).toEqual({ sent: 1, skipped: 0, expired: 0 })
     const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
-    expect(payload.url).toBe('/vlog')
-    expect(payload.title).toMatch(/vlog/i)
+    expect(payload.url).toBe('/challenge')
+    expect(payload.title).toMatch(/challenge/i)
   })
 
   it('chưa học hôm nay + KHÔNG có vlog_entries gần đây → nhận payload chung (url /)', async () => {
@@ -155,7 +155,7 @@ describe('sendReminders — chọn nội dung theo hoạt động vlog gần đ�
     const result = await sendReminders(13)
     expect(result).toEqual({ sent: 2, skipped: 0, expired: 0 })
     const payloads = mockedSend.mock.calls.map((c) => JSON.parse(c[1] as string).url)
-    expect(payloads.sort()).toEqual(['/', '/vlog'])
+    expect(payloads.sort()).toEqual(['/', '/challenge'])
   })
 })
 
