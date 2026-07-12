@@ -2,6 +2,11 @@
 
 > Ngày: 2026-07-11 · Trạng thái: **ĐÃ TRIỂN KHAI XONG** (PR #230, #231, #233 + nhánh
 > follow-up nhắc push/E2E) — xem "Đã xong" trong `PROGRESS.md` để biết chi tiết.
+> **[2026-07-12] Lưu ý:** tính năng đã đổi tên "Vlog" → "Challenge" (route `/vlog` →
+> `/challenge`, `vlogTopics.ts` → `challengeTopics.ts`, `lib/vlog.ts` → `lib/challenge.ts`,
+> v.v. — xem mục "Đổi tên Vlog → Challenge" trong `PROGRESS.md`). Tài liệu này GIỮ NGUYÊN
+> tên gọi/đường dẫn cũ vì là bản ghi nghiên cứu tại thời điểm thiết kế, không phải tài
+> liệu sống — đối chiếu tên file thật trong code khi cần.
 > Nguồn ý tưởng: người dùng — "Mỗi ngày quay 1 video ngắn bằng tiếng Anh về một việc bạn làm
 > (ăn gì, nghĩ gì, thấy gì trên đường). Ban đầu khó lắm nhưng tiến bộ cực nhanh."
 > Phương pháp: đọc mã nguồn thật (STT/TTS/usage/streak/push đã có) + tra cứu nghiên cứu

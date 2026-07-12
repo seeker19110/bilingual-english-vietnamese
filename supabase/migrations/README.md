@@ -36,18 +36,18 @@ thêm vài trăm ms) rồi mới tới `0010` — không cần đánh dấu hay 
 
 ## Trạng thái trên Supabase production
 
-| File                                       | Đã chạy trên production?                                                                                                            |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `0001_consume_usage.sql`                   | ✅ Đã chạy (đếm lượt đang chạy thật trên production).                                                                               |
-| `0002_learn_count.sql`                     | ✅ Đã chạy (streak đang chạy thật).                                                                                                 |
-| `0003_remind_hour.sql`                     | ✅ Đã chạy (nhắc học đẩy thông báo đang chạy thật).                                                                                 |
-| `0004_refund_usage.sql`                    | ✅ Đã chạy (hoàn lượt khi provider lỗi đang chạy thật).                                                                             |
-| `0005_lockdown_cost_columns.sql`           | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                        |
-| `0006_pronunciations_rls.sql`              | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                        |
-| `0007_learning_progress_cefr.sql`          | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                        |
-| `0008_learning_progress_cefr_unlocked.sql` | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                        |
-| `0009_learning_progress_cefr_exams.sql`    | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                        |
-| `0010_vlog_entries.sql`                    | ❌ CHƯA CHẠY — bảng `vlog_entries` cho thử thách "Vlog 1 phút / 30 ngày". Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền). |
+| File                                       | Đã chạy trên production?                                                                                                                      |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0001_consume_usage.sql`                   | ✅ Đã chạy (đếm lượt đang chạy thật trên production).                                                                                         |
+| `0002_learn_count.sql`                     | ✅ Đã chạy (streak đang chạy thật).                                                                                                           |
+| `0003_remind_hour.sql`                     | ✅ Đã chạy (nhắc học đẩy thông báo đang chạy thật).                                                                                           |
+| `0004_refund_usage.sql`                    | ✅ Đã chạy (hoàn lượt khi provider lỗi đang chạy thật).                                                                                       |
+| `0005_lockdown_cost_columns.sql`           | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                                  |
+| `0006_pronunciations_rls.sql`              | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                                  |
+| `0007_learning_progress_cefr.sql`          | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                  |
+| `0008_learning_progress_cefr_unlocked.sql` | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                  |
+| `0009_learning_progress_cefr_exams.sql`    | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                  |
+| `0010_challenge_entries.sql`               | ❌ CHƯA CHẠY — bảng `challenge_entries` cho thử thách "Challenge 1 phút / 30 ngày". Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền). |
 
 > Sau khi `SUPABASE_DB_URL` đã điền, bảng này **không còn cần cập nhật tay** mỗi lần
 > chạy migration — `deploy.sh` tự ghi vào `_schema_migrations` trên Supabase. Chỉ cần

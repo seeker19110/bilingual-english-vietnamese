@@ -1,7 +1,7 @@
-// src/pages/Vlog.tsx — Thử thách "Vlog 1 phút / 30 ngày"
+// src/pages/Challenge.tsx — Thử thách "Challenge 1 phút / 30 ngày"
 // (docs/research/thu-thach-vlog-30-ngay.md). Mỗi ngày quay 1 video ngắn theo chủ đề
-// gợi ý → audio gửi /api/stt nhận diện → AI (prompts/vlog.ts) khen + sửa lỗi + gợi ý
-// câu nâng cấp. Video KHÔNG upload — chỉ lưu trên máy (IndexedDB, lib/vlogVideo.ts).
+// gợi ý → audio gửi /api/stt nhận diện → AI (prompts/challenge.ts) khen + sửa lỗi + gợi ý
+// câu nâng cấp. Video KHÔNG upload — chỉ lưu trên máy (IndexedDB, lib/challengeVideo.ts).
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Video, Mic, RotateCcw, Send, Square, Type, Trophy, Check, Volume2 } from 'lucide-react'
 import Layout from '../components/Layout'
@@ -17,8 +17,8 @@ import { callClaude, parseJson } from '../lib/ai'
 import { speak } from '../lib/tts'
 import { haptics } from '../lib/haptics'
 import { getAuthHeader } from '../lib/authHeader'
-import { getTopicForDay, type VlogTopic } from '../data/vlogTopics'
-import { vlogFeedbackSystemPrompt, type VlogFeedback } from '../prompts/vlog'
+import { getTopicForDay, type ChallengeTopic } from '../data/challengeTopics'
+import { challengeFeedbackSystemPrompt, type ChallengeFeedback } from '../prompts/challenge'
 import {
   getChallenge,
   startChallenge,
@@ -32,22 +32,26 @@ import {
   countWords,
   calcWpm,
   mergeCloudEntries,
-  VLOG_MILESTONES,
-  VLOG_CHALLENGE_DAYS,
-  type VlogChallenge,
-  type VlogEntryLocal,
-} from '../lib/vlog'
+  CHALLENGE_MILESTONES,
+  CHALLENGE_TOTAL_DAYS,
+  type ChallengeState,
+  type ChallengeEntryLocal,
+} from '../lib/challenge'
 import {
-  startVlogRecording,
-  isVlogRecordingSupported,
-  MAX_VLOG_SEC,
-  MIN_VLOG_SEC,
-  VLOG_ERR_PERMISSION,
-  type VlogRecorderHandle,
-  type VlogRecording,
-} from '../lib/vlogRecorder'
-import { saveVlogVideo, getVlogVideo, pruneVlogVideos } from '../lib/vlogVideo'
-import { upsertVlogEntryCloud, fetchVlogEntriesCloud, cloudVlogToLocal } from '../lib/vlogCloud'
+  startChallengeRecording,
+  isChallengeRecordingSupported,
+  MAX_CHALLENGE_SEC,
+  MIN_CHALLENGE_SEC,
+  CHALLENGE_ERR_PERMISSION,
+  type ChallengeRecorderHandle,
+  type ChallengeRecording,
+} from '../lib/challengeRecorder'
+import { saveChallengeVideo, getChallengeVideo, pruneChallengeVideos } from '../lib/challengeVideo'
+import {
+  upsertChallengeEntryCloud,
+  fetchChallengeEntriesCloud,
+  cloudChallengeToLocal,
+} from '../lib/challengeCloud'
 
 type Stage = 'idle' | 'countdown' | 'recording' | 'reviewing' | 'typed' | 'submitting'
 
@@ -76,7 +80,11 @@ function blobToBase64(blob: Blob): Promise<string> {
   })
 }
 
-async function transcribeVlogAudio(blob: Blob, mime: string, lang: 'en' | 'vi'): Promise<string> {
+async function transcribeChallengeAudio(
+  blob: Blob,
+  mime: string,
+  lang: 'en' | 'vi',
+): Promise<string> {
   const b64 = await blobToBase64(blob)
   const auth = await getAuthHeader()
   const resp = await fetch('/api/stt', {
@@ -97,7 +105,7 @@ async function transcribeVlogAudio(blob: Blob, mime: string, lang: 'en' | 'vi'):
 }
 
 // Entry của 1 ngày cụ thể trong VÒNG hiện tại (bỏ qua lịch sử vòng cũ trùng ngày — hiếm).
-function entryForDay(challenge: VlogChallenge, day: string): VlogEntryLocal | null {
+function entryForDay(challenge: ChallengeState, day: string): ChallengeEntryLocal | null {
   const e = challenge.entries[day]
   return e && e.round === challenge.round ? e : null
 }
@@ -115,8 +123,23 @@ function HintChip({ text, lang }: { text: string; lang: 'en-US' | 'vi-VN' }) {
   )
 }
 
+// ── Câu mẫu — bấm để nghe TTS chất lượng cao trước khi tự quay/ghi âm ─────────
+// Audio đã được thu thập sẵn (npm run seed:all — nhóm "challenge") nên bấm phát gần
+// như tức thì, không phải đợi Google TTS tạo mới ở lần bấm đầu tiên.
+function SampleLine({ text, lang }: { text: string; lang: 'en-US' | 'vi-VN' }) {
+  return (
+    <button
+      onClick={() => void speak(text, lang)}
+      className="tap-44 w-full flex items-start gap-2 text-left px-2 py-1.5 -mx-2 rounded-lg hover:bg-zinc-800/60 transition"
+    >
+      <Volume2 className="w-3.5 h-3.5 text-zinc-500 shrink-0 mt-0.5" />
+      <span className="text-xs text-zinc-400 italic">“{text}”</span>
+    </button>
+  )
+}
+
 // ── Thẻ chủ đề của ngày ────────────────────────────────────────────────────────
-function TopicCard({ topic, isA }: { topic: VlogTopic; isA: boolean }) {
+function TopicCard({ topic, isA }: { topic: ChallengeTopic; isA: boolean }) {
   return (
     <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
       <p className="text-xs text-zinc-400 mb-1">
@@ -129,11 +152,12 @@ function TopicCard({ topic, isA }: { topic: VlogTopic; isA: boolean }) {
           <HintChip key={h.en} text={isA ? h.en : h.vi} lang={isA ? 'en-US' : 'vi-VN'} />
         ))}
       </div>
-      <div className="space-y-1">
+      <p className="text-xs text-zinc-400 mb-1">
+        {isA ? '🔊 Bấm nghe câu mẫu trước khi quay:' : '🔊 Tap to hear a sample before recording:'}
+      </p>
+      <div>
         {(isA ? topic.sampleEn : topic.sampleVi).map((s, i) => (
-          <p key={i} className="text-xs text-zinc-400 italic">
-            “{s}”
-          </p>
+          <SampleLine key={i} text={s} lang={isA ? 'en-US' : 'vi-VN'} />
         ))}
       </div>
     </div>
@@ -146,16 +170,16 @@ function ChallengeBoard({
   todayDay,
   isA,
 }: {
-  challenge: VlogChallenge
+  challenge: ChallengeState
   todayDay: number
   isA: boolean
 }) {
   const days = useMemo(() => {
-    const byDay = new Map<number, VlogEntryLocal>()
+    const byDay = new Map<number, ChallengeEntryLocal>()
     for (const e of Object.values(challenge.entries)) {
       if (e.round === challenge.round) byDay.set(e.challengeDay, e)
     }
-    return Array.from({ length: VLOG_CHALLENGE_DAYS }, (_, i) => ({
+    return Array.from({ length: CHALLENGE_TOTAL_DAYS }, (_, i) => ({
       day: i + 1,
       entry: byDay.get(i + 1) ?? null,
     }))
@@ -203,7 +227,7 @@ function MilestoneRow({ earned, isA }: { earned: number[]; isA: boolean }) {
   const earnedSet = new Set(earned)
   return (
     <div className="flex justify-between gap-1">
-      {VLOG_MILESTONES.map((m) => {
+      {CHALLENGE_MILESTONES.map((m) => {
         const has = earnedSet.has(m)
         const meta = MILESTONE_LABEL[m]
         return (
@@ -228,14 +252,14 @@ function MilestoneRow({ earned, isA }: { earned: number[]; isA: boolean }) {
 }
 
 // ── Video/audio đã lưu local của 1 ngày (dùng cho màn tổng kết) ────────────────
-function VlogPlayback({ uid, day, label }: { uid: string; day: string; label: string }) {
+function ChallengePlayback({ uid, day, label }: { uid: string; day: string; label: string }) {
   const [media, setMedia] = useState<{ url: string; kind: 'video' | 'audio' } | null | undefined>(
     undefined,
   )
   useEffect(() => {
     let alive = true
     let objectUrl: string | null = null
-    getVlogVideo(uid, day).then((v) => {
+    getChallengeVideo(uid, day).then((v) => {
       if (!alive) return
       if (!v) {
         setMedia(null)
@@ -273,7 +297,7 @@ function VlogPlayback({ uid, day, label }: { uid: string; day: string; label: st
   )
 }
 
-export default function Vlog() {
+export default function Challenge() {
   const user = useAuth().user!
   const toast = useToast()
   const dir: Direction = getDirection()
@@ -282,18 +306,18 @@ export default function Vlog() {
 
   const { isThrottled, throttle } = useApiThrottle()
 
-  const [challenge, setChallenge] = useState<VlogChallenge | null>(() => getChallenge(uid))
+  const [challenge, setChallenge] = useState<ChallengeState | null>(() => getChallenge(uid))
   const [syncedOnce, setSyncedOnce] = useState(false)
 
   // Kéo entries đã đồng bộ từ Supabase 1 lần khi vào trang — hợp nhất vào state local
   // (đổi máy không mất tiến độ). Lỗi mạng/chưa đăng nhập → bỏ qua êm, dùng bản local.
   useEffect(() => {
     let alive = true
-    fetchVlogEntriesCloud()
+    fetchChallengeEntriesCloud()
       .then((rows) => {
         if (!alive || !rows || rows.length === 0) return
         const forMerge = rows.map((r) => {
-          const local = cloudVlogToLocal(r)
+          const local = cloudChallengeToLocal(r)
           return {
             day: local.day,
             round: local.challengeRound ?? local.round ?? 1,
@@ -320,17 +344,17 @@ export default function Vlog() {
   const todaysEntry = challenge ? entryForDay(challenge, todayStr) : null
   const topic = getTopicForDay(dayInfo?.day ?? 1)
   const earnedMilestones = challenge ? getEarnedMilestones(challenge) : []
-  const isComplete = earnedMilestones.includes(VLOG_CHALLENGE_DAYS)
+  const isComplete = earnedMilestones.includes(CHALLENGE_TOTAL_DAYS)
 
   // Ngày 1 vs ngày 30 (video + nhịp nói) cho màn tổng kết khi hoàn thành 30 ngày.
   const completionStats = useMemo(() => {
     if (!challenge || !isComplete) return null
     const entries = Object.values(challenge.entries).filter((e) => e.round === challenge.round)
-    const first = entries.reduce<VlogEntryLocal | null>(
+    const first = entries.reduce<ChallengeEntryLocal | null>(
       (min, e) => (!min || e.challengeDay < min.challengeDay ? e : min),
       null,
     )
-    const last = entries.reduce<VlogEntryLocal | null>(
+    const last = entries.reduce<ChallengeEntryLocal | null>(
       (max, e) => (!max || e.challengeDay > max.challengeDay ? e : max),
       null,
     )
@@ -345,18 +369,18 @@ export default function Vlog() {
   }, [challenge, isComplete])
 
   // ── Ghi hình ──────────────────────────────────────────────────────────────
-  const canRecord = isVlogRecordingSupported()
+  const canRecord = isChallengeRecordingSupported()
   const [stage, setStage] = useState<Stage>('idle')
   const [reRecording, setReRecording] = useState(false)
   const [wantVideo, setWantVideo] = useState(true)
   const [countdown, setCountdown] = useState(3)
   const [elapsedSec, setElapsedSec] = useState(0)
-  const [recording, setRecording] = useState<VlogRecording | null>(null)
+  const [recording, setRecording] = useState<ChallengeRecording | null>(null)
   const [typedText, setTypedText] = useState('')
   const [submitError, setSubmitError] = useState('')
   const [celebrateMilestone, setCelebrateMilestone] = useState<number | null>(null)
 
-  const handleRef = useRef<VlogRecorderHandle | null>(null)
+  const handleRef = useRef<ChallengeRecorderHandle | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const livePreviewRef = useRef<HTMLVideoElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -403,7 +427,7 @@ export default function Vlog() {
 
   async function beginRecording() {
     try {
-      const handle = await startVlogRecording({ video: wantVideo })
+      const handle = await startChallengeRecording({ video: wantVideo })
       handleRef.current = handle
       setStage('recording')
       setElapsedSec(0)
@@ -411,12 +435,12 @@ export default function Vlog() {
       timerRef.current = setInterval(() => {
         setElapsedSec((s) => {
           const next = s + 1
-          if (next >= MAX_VLOG_SEC) void stopRecording()
+          if (next >= MAX_CHALLENGE_SEC) void stopRecording()
           return next
         })
       }, 1000)
     } catch (e) {
-      if (e instanceof Error && e.message === VLOG_ERR_PERMISSION && wantVideo) {
+      if (e instanceof Error && e.message === CHALLENGE_ERR_PERMISSION && wantVideo) {
         // Bị từ chối quyền camera → tự động thử lại CHỈ ghi âm trước khi bỏ cuộc.
         setWantVideo(false)
         toast.info(
@@ -425,14 +449,14 @@ export default function Vlog() {
             : 'No camera permission — switching to audio-only.',
         )
         try {
-          const handle = await startVlogRecording({ video: false })
+          const handle = await startChallengeRecording({ video: false })
           handleRef.current = handle
           setStage('recording')
           setElapsedSec(0)
           timerRef.current = setInterval(() => {
             setElapsedSec((s) => {
               const next = s + 1
-              if (next >= MAX_VLOG_SEC) void stopRecording()
+              if (next >= MAX_CHALLENGE_SEC) void stopRecording()
               return next
             })
           }, 1000)
@@ -502,7 +526,7 @@ export default function Vlog() {
           throw new Error(isA ? 'Hãy gõ vài câu trước đã.' : 'Type a few sentences first.')
       } else {
         if (!recording) throw new Error('missing recording')
-        transcript = await transcribeVlogAudio(
+        transcript = await transcribeChallengeAudio(
           recording.audioBlob,
           recording.audioMime,
           isA ? 'en' : 'vi',
@@ -510,11 +534,11 @@ export default function Vlog() {
         incrementUsage(uid, 'sttCount')
       }
 
-      const sys = vlogFeedbackSystemPrompt(transcript, topic, dir)
+      const sys = challengeFeedbackSystemPrompt(transcript, topic, dir)
       const raw = await callClaude([], sys, 1024, 'chat')
       incrementUsage(uid, 'chatCount')
       throttle()
-      const feedback = parseJson<VlogFeedback>(raw)
+      const feedback = parseJson<ChallengeFeedback>(raw)
 
       const wordCount = countWords(transcript)
       const durationSec = isTyped ? 0 : (recording?.durationSec ?? 0)
@@ -531,10 +555,15 @@ export default function Vlog() {
       setChallenge(nextChallenge)
 
       if (!isTyped && recording?.videoBlob) {
-        await saveVlogVideo(uid, todayStr, recording.videoBlob, recording.videoMime ?? 'video/webm')
+        await saveChallengeVideo(
+          uid,
+          todayStr,
+          recording.videoBlob,
+          recording.videoMime ?? 'video/webm',
+        )
       }
-      void pruneVlogVideos(uid, getKeepDates(nextChallenge))
-      void upsertVlogEntryCloud({
+      void pruneChallengeVideos(uid, getKeepDates(nextChallenge))
+      void upsertChallengeEntryCloud({
         day: todayStr,
         challengeRound: nextChallenge.round,
         challengeDay: dayInfo.day,
@@ -570,7 +599,7 @@ export default function Vlog() {
         <Layout />
         <main className="max-w-lg mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
           <PageHeader
-            title={isA ? 'Vlog 1 phút — 30 ngày' : '1-Minute Vlog — 30 Days'}
+            title={isA ? 'Challenge 1 phút — 30 ngày' : '1-Minute Challenge — 30 Days'}
             subtitle={
               isA
                 ? 'Mỗi ngày quay 1 video ngắn kể về cuộc sống của bạn — AI nghe, khen và sửa lỗi.'
@@ -647,8 +676,10 @@ export default function Vlog() {
     )
   }
 
-  const parsedFeedback: VlogFeedback | null =
-    todaysEntry?.feedback && !reRecording ? parseJson<VlogFeedback>(todaysEntry.feedback) : null
+  const parsedFeedback: ChallengeFeedback | null =
+    todaysEntry?.feedback && !reRecording
+      ? parseJson<ChallengeFeedback>(todaysEntry.feedback)
+      : null
 
   return (
     <div className="min-h-dvh bg-zinc-950">
@@ -669,11 +700,11 @@ export default function Vlog() {
 
       <main className="max-w-lg mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
         <PageHeader
-          title={isA ? 'Vlog 1 phút — 30 ngày' : '1-Minute Vlog — 30 Days'}
+          title={isA ? 'Challenge 1 phút — 30 ngày' : '1-Minute Challenge — 30 Days'}
           subtitle={
             isA
-              ? `Vòng ${challenge.round} · Ngày ${dayInfo?.day}/${VLOG_CHALLENGE_DAYS}${syncedOnce ? '' : ' · đang đồng bộ...'}`
-              : `Round ${challenge.round} · Day ${dayInfo?.day}/${VLOG_CHALLENGE_DAYS}${syncedOnce ? '' : ' · syncing...'}`
+              ? `Vòng ${challenge.round} · Ngày ${dayInfo?.day}/${CHALLENGE_TOTAL_DAYS}${syncedOnce ? '' : ' · đang đồng bộ...'}`
+              : `Round ${challenge.round} · Day ${dayInfo?.day}/${CHALLENGE_TOTAL_DAYS}${syncedOnce ? '' : ' · syncing...'}`
           }
         />
 
@@ -688,16 +719,16 @@ export default function Vlog() {
             </p>
             <p className="text-xs text-zinc-400">
               {isA
-                ? `${completionStats.totalEntries} vlog đã nộp · nhịp nói ${completionStats.firstWpm} → ${completionStats.lastWpm} từ/phút`
-                : `${completionStats.totalEntries} vlogs submitted · pace ${completionStats.firstWpm} → ${completionStats.lastWpm} wpm`}
+                ? `${completionStats.totalEntries} challenge đã nộp · nhịp nói ${completionStats.firstWpm} → ${completionStats.lastWpm} từ/phút`
+                : `${completionStats.totalEntries} challenges submitted · pace ${completionStats.firstWpm} → ${completionStats.lastWpm} wpm`}
             </p>
             <div className="flex gap-3 text-left">
-              <VlogPlayback
+              <ChallengePlayback
                 uid={uid}
                 day={completionStats.first.day}
                 label={isA ? 'Ngày 1' : 'Day 1'}
               />
-              <VlogPlayback
+              <ChallengePlayback
                 uid={uid}
                 day={completionStats.last.day}
                 label={isA ? 'Ngày 30' : 'Day 30'}
@@ -716,7 +747,7 @@ export default function Vlog() {
           <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 space-y-3 animate-fade-in">
             <p className="text-sm font-semibold text-white flex items-center gap-1.5">
               <Check className="w-4 h-4 text-accent-400" />
-              {isA ? 'Đã nộp vlog hôm nay!' : "Today's vlog submitted!"}
+              {isA ? 'Đã nộp challenge hôm nay!' : "Today's challenge submitted!"}
             </p>
             {parsedFeedback ? (
               <div className="space-y-2.5">
@@ -740,15 +771,15 @@ export default function Vlog() {
             ) : (
               <p className="text-xs text-zinc-400">
                 {isA
-                  ? 'Chưa có nhận xét AI (có thể do lỗi tạm thời) — vlog vẫn được tính.'
-                  : 'No AI feedback yet (possibly a temporary error) — your vlog still counts.'}
+                  ? 'Chưa có nhận xét AI (có thể do lỗi tạm thời) — challenge vẫn được tính.'
+                  : 'No AI feedback yet (possibly a temporary error) — your challenge still counts.'}
               </p>
             )}
             <button
               onClick={() => setReRecording(true)}
               className="tap-44 w-full py-2.5 rounded-xl bg-zinc-800/80 border border-zinc-700/60 text-xs text-zinc-300 hover:border-zinc-600 transition"
             >
-              {isA ? 'Quay lại vlog hôm nay' : "Re-record today's vlog"}
+              {isA ? 'Quay lại challenge hôm nay' : "Re-record today's challenge"}
             </button>
           </div>
         )}
@@ -779,7 +810,7 @@ export default function Vlog() {
                 )}
                 <button
                   onClick={startCountdown}
-                  aria-label={isA ? 'Bắt đầu quay vlog' : 'Start recording vlog'}
+                  aria-label={isA ? 'Bắt đầu quay challenge' : 'Start recording challenge'}
                   className="tap-44 w-20 h-20 rounded-full bg-gradient-to-br from-rose-500 to-red-500 shadow-xl shadow-rose-500/30 flex items-center justify-center active:scale-95 transition"
                 >
                   {wantVideo && canRecord ? (
@@ -791,8 +822,8 @@ export default function Vlog() {
                 <p className="text-xs text-zinc-400 text-center">
                   {canRecord
                     ? isA
-                      ? `Tối đa ${MAX_VLOG_SEC}s, tối thiểu ${MIN_VLOG_SEC}s`
-                      : `Up to ${MAX_VLOG_SEC}s, at least ${MIN_VLOG_SEC}s`
+                      ? `Tối đa ${MAX_CHALLENGE_SEC}s, tối thiểu ${MIN_CHALLENGE_SEC}s`
+                      : `Up to ${MAX_CHALLENGE_SEC}s, at least ${MIN_CHALLENGE_SEC}s`
                     : isA
                       ? 'Trình duyệt không hỗ trợ ghi hình — gõ tay bên dưới.'
                       : "Browser doesn't support recording — type below instead."}
@@ -833,21 +864,21 @@ export default function Vlog() {
                   </div>
                 )}
                 <p className="text-sm text-red-400 theme-light:text-red-700 font-mono">
-                  🔴 {elapsedSec}s / {MAX_VLOG_SEC}s
+                  🔴 {elapsedSec}s / {MAX_CHALLENGE_SEC}s
                 </p>
                 <button
                   onClick={() => void stopRecording()}
-                  disabled={elapsedSec < MIN_VLOG_SEC}
+                  disabled={elapsedSec < MIN_CHALLENGE_SEC}
                   aria-label={isA ? 'Dừng quay' : 'Stop recording'}
                   className="tap-44 w-16 h-16 rounded-full bg-red-500 disabled:opacity-40 flex items-center justify-center active:scale-95 transition"
                 >
                   <Square className="w-6 h-6 text-white fill-current" />
                 </button>
-                {elapsedSec < MIN_VLOG_SEC && (
+                {elapsedSec < MIN_CHALLENGE_SEC && (
                   <p className="text-[11px] text-zinc-400">
                     {isA
-                      ? `Nói thêm ${MIN_VLOG_SEC - elapsedSec}s nữa mới dừng được`
-                      : `${MIN_VLOG_SEC - elapsedSec}s more before you can stop`}
+                      ? `Nói thêm ${MIN_CHALLENGE_SEC - elapsedSec}s nữa mới dừng được`
+                      : `${MIN_CHALLENGE_SEC - elapsedSec}s more before you can stop`}
                   </p>
                 )}
               </div>
@@ -881,7 +912,7 @@ export default function Vlog() {
                     className="tap-44 flex-1 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-black font-semibold flex items-center justify-center gap-1.5 transition"
                   >
                     <Send className="w-4 h-4" />
-                    {isA ? 'Nộp vlog' : 'Submit'}
+                    {isA ? 'Nộp challenge' : 'Submit'}
                   </button>
                 </div>
               </div>
@@ -895,8 +926,8 @@ export default function Vlog() {
                   rows={5}
                   placeholder={
                     isA
-                      ? 'Gõ những gì bạn định nói trong vlog hôm nay...'
-                      : "Type what you'd say in today's vlog..."
+                      ? 'Gõ những gì bạn định nói trong challenge hôm nay...'
+                      : "Type what you'd say in today's challenge..."
                   }
                   className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3 text-base sm:text-sm text-white placeholder:text-zinc-400 outline-none focus:border-accent-500/60 transition resize-none"
                 />
@@ -915,7 +946,7 @@ export default function Vlog() {
                     className="tap-44 flex-1 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 disabled:opacity-40 text-black font-semibold flex items-center justify-center gap-1.5 transition"
                   >
                     <Send className="w-4 h-4" />
-                    {isA ? 'Nộp vlog' : 'Submit'}
+                    {isA ? 'Nộp challenge' : 'Submit'}
                   </button>
                 </div>
               </div>
@@ -926,8 +957,8 @@ export default function Vlog() {
                 <span className="w-8 h-8 border-2 border-zinc-700 border-t-accent-400 rounded-full animate-spin" />
                 <p className="text-xs text-zinc-400">
                   {isA
-                    ? 'Đang nhận diện & chấm vlog của bạn...'
-                    : 'Transcribing & grading your vlog...'}
+                    ? 'Đang nhận diện & chấm challenge của bạn...'
+                    : 'Transcribing & grading your challenge...'}
                 </p>
               </div>
             )}

@@ -46,6 +46,7 @@ import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
 import { FOUNDATION } from '../src/data/curriculum.ts'
+import { CHALLENGE_TOPICS } from '../src/data/challengeTopics.ts'
 import { loadSubjectsInDisplayOrder, PREF_VOICE_IDS } from './_lib/patternOrder.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -77,7 +78,8 @@ const PATTERN_ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/prefetch-tts-errors
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
 
 // ── Nhóm (category) ─────────────────────────────────────────────────────────
-type CatId = 'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest'
+type CatId =
+  'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest' | 'challenge'
 
 const CATEGORIES: { id: CatId; label: string }[] = [
   { id: 'pron', label: 'Phát âm từ điển (pronunciations)' },
@@ -86,6 +88,7 @@ const CATEGORIES: { id: CatId; label: string }[] = [
   { id: 'lessons-early', label: 'Hội thoại 50 bài đầu (Luyện nói)' },
   { id: 'patterns', label: 'Câu mẫu trang Cụm từ' },
   { id: 'lessons-rest', label: 'Hội thoại các bài còn lại' },
+  { id: 'challenge', label: 'Câu mẫu Challenge 30 ngày' },
 ]
 
 // ── Kiểu dữ liệu ────────────────────────────────────────────────────────────
@@ -137,6 +140,7 @@ function oldHashText(text: string, lang: Lang, voice: VoiceId): string {
 //   3. Lesson turns (50 bài đầu)        → Luyện nói beginner instant
 //   4. Pattern sentences                → Cụm từ page
 //   5. Lesson turns còn lại             → cache dần, ít urgent hơn
+//   6. Câu mẫu Challenge 30 ngày        → trang /challenge, ít urgent nhất
 //
 // Lesson turns: mỗi turn chỉ seed ĐÚNG 1 giọng (voiceA hoặc voiceB) thay vì cả 4.
 // Giống logic Lessons.tsx — speakerAGender/speakerBGender quyết định giọng từng nhân vật,
@@ -250,6 +254,12 @@ function loadPatternTasks(): PatternTask[] {
 
   // ── Ưu tiên 5: lesson turns còn lại ────────────────────────────────────────
   tasks.push(...laterLessonTasks)
+
+  // ── Ưu tiên 6: câu mẫu Challenge 30 ngày (trang /challenge) — chỉ female/male ─
+  for (const t of CHALLENGE_TOPICS) {
+    for (const s of t.sampleEn) add(s, 'en-US', 'challenge', PREF_VOICE_IDS)
+    for (const s of t.sampleVi) add(s, 'vi-VN', 'challenge', PREF_VOICE_IDS)
+  }
 
   return tasks
 }

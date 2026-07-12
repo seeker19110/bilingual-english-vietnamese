@@ -1,5 +1,5 @@
 // ──────────────────────────────────────────────────────────────────────────
-// 30 CHỦ ĐỀ VLOG — thử thách "Vlog 1 phút" 30 ngày
+// 30 CHỦ ĐỀ CHALLENGE — thử thách "Challenge 1 phút" 30 ngày
 // (xem kế hoạch: docs/research/thu-thach-vlog-30-ngay.md, mục 3.3)
 //
 // Chủ đề sát đời sống Việt Nam, KHÓ DẦN theo tuần:
@@ -16,24 +16,24 @@
 // ──────────────────────────────────────────────────────────────────────────
 
 // 1 từ/cụm gợi ý song ngữ (bấm nghe TTS được ở UI).
-export interface VlogHintWord {
+export interface ChallengeHintWord {
   en: string
   vi: string
 }
 
 // Tuần của thử thách (1..4) — tuần 4 dài 9 ngày (ngày 22–30).
-export type VlogWeek = 1 | 2 | 3 | 4
+export type ChallengeWeek = 1 | 2 | 3 | 4
 
-// 1 chủ đề vlog của 1 ngày trong thử thách.
-export interface VlogTopic {
+// 1 chủ đề challenge của 1 ngày trong thử thách.
+export interface ChallengeTopic {
   /** Ngày trong thử thách: 1..30 */
   day: number
   titleEn: string
   titleVi: string
   /** Tuần của thử thách: 1..4 */
-  week: VlogWeek
+  week: ChallengeWeek
   /** 6–8 từ/cụm gợi ý hữu dụng cho chủ đề */
-  hintWords: VlogHintWord[]
+  hintWords: ChallengeHintWord[]
   /** 2 câu mẫu tiếng Anh tự nhiên (A2–B1) — chiều A nói tiếng Anh */
   sampleEn: string[]
   /** 2 câu mẫu tiếng Việt tương ứng — chiều B nói tiếng Việt */
@@ -41,14 +41,14 @@ export interface VlogTopic {
 }
 
 // Hằng số của thử thách — tránh "số ma thuật" rải rác trong code.
-export const VLOG_TOTAL_DAYS = 30
-const VLOG_FIRST_DAY = 1
+export const CHALLENGE_TOPICS_TOTAL_DAYS = 30
+const CHALLENGE_FIRST_DAY = 1
 const WEEK_1_LAST_DAY = 7
 const WEEK_2_LAST_DAY = 14
 const WEEK_3_LAST_DAY = 21
 
 // Suy ra tuần từ ngày (tuần 4 gồm ngày 22–30) — tính tự động để không lệch dữ liệu.
-function weekOfDay(day: number): VlogWeek {
+function weekOfDay(day: number): ChallengeWeek {
   if (day <= WEEK_1_LAST_DAY) return 1
   if (day <= WEEK_2_LAST_DAY) return 2
   if (day <= WEEK_3_LAST_DAY) return 3
@@ -56,19 +56,27 @@ function weekOfDay(day: number): VlogWeek {
 }
 
 // Rút gọn: tạo 1 từ/cụm gợi ý.
-const h = (en: string, vi: string): VlogHintWord => ({ en, vi })
+const h = (en: string, vi: string): ChallengeHintWord => ({ en, vi })
 
 // Rút gọn: tạo 1 chủ đề (week tự tính từ day).
 const topic = (
   day: number,
   titleEn: string,
   titleVi: string,
-  hintWords: VlogHintWord[],
+  hintWords: ChallengeHintWord[],
   sampleEn: string[],
   sampleVi: string[],
-): VlogTopic => ({ day, titleEn, titleVi, week: weekOfDay(day), hintWords, sampleEn, sampleVi })
+): ChallengeTopic => ({
+  day,
+  titleEn,
+  titleVi,
+  week: weekOfDay(day),
+  hintWords,
+  sampleEn,
+  sampleVi,
+})
 
-export const VLOG_TOPICS: VlogTopic[] = [
+export const CHALLENGE_TOPICS: ChallengeTopic[] = [
   // ═══════ TUẦN 1 — MÔ TẢ TRỰC TIẾP, ĐƠN GIẢN ═══════
   topic(
     1,
@@ -529,11 +537,11 @@ export const VLOG_TOPICS: VlogTopic[] = [
     ],
     [
       'For me, the hardest part of learning English is speaking, because I am shy about my pronunciation.',
-      'I think the only way to improve is to practice a little every day, like this vlog.',
+      'I think the only way to improve is to practice a little every day, like this challenge.',
     ],
     [
       'Với tôi, khó nhất khi học tiếng Việt là phát âm cho đúng thanh điệu.',
-      'Tôi nghĩ cách duy nhất để tiến bộ là luyện một chút mỗi ngày, như quay vlog này vậy.',
+      'Tôi nghĩ cách duy nhất để tiến bộ là luyện một chút mỗi ngày, như quay challenge này vậy.',
     ],
   ),
 
@@ -728,11 +736,11 @@ export const VLOG_TOPICS: VlogTopic[] = [
       h('proud of how far I have come', 'tự hào vì mình đã đi được xa'),
     ],
     [
-      'Thirty days ago, I was so nervous that I deleted my first vlog three times.',
+      'Thirty days ago, I was so nervous that I deleted my first challenge three times.',
       'Today I just talk naturally, and I am really proud of how far I have come.',
     ],
     [
-      'Ba mươi ngày trước, tôi run tới mức xóa đi quay lại cái vlog đầu tiên ba lần.',
+      'Ba mươi ngày trước, tôi run tới mức xóa đi quay lại cái challenge đầu tiên ba lần.',
       'Còn hôm nay tôi nói tự nhiên hơn hẳn, và tôi thật sự tự hào vì mình đã đi được xa như vậy.',
     ],
   ),
@@ -740,14 +748,14 @@ export const VLOG_TOPICS: VlogTopic[] = [
 
 // Lấy chủ đề theo ngày trong thử thách — kẹp về khoảng 1..30 để không bao giờ
 // trả undefined (ngày < 1 → ngày 1, ngày > 30 → ngày 30, NaN → ngày 1).
-export function getTopicForDay(day: number): VlogTopic {
-  const safeDay = Number.isFinite(day) ? Math.trunc(day) : VLOG_FIRST_DAY
-  const clamped = Math.min(Math.max(safeDay, VLOG_FIRST_DAY), VLOG_TOTAL_DAYS)
-  const found = VLOG_TOPICS[clamped - VLOG_FIRST_DAY]
+export function getTopicForDay(day: number): ChallengeTopic {
+  const safeDay = Number.isFinite(day) ? Math.trunc(day) : CHALLENGE_FIRST_DAY
+  const clamped = Math.min(Math.max(safeDay, CHALLENGE_FIRST_DAY), CHALLENGE_TOPICS_TOTAL_DAYS)
+  const found = CHALLENGE_TOPICS[clamped - CHALLENGE_FIRST_DAY]
   if (!found) {
-    // Không thể xảy ra vì VLOG_TOPICS luôn đủ 30 phần tử — nhánh này chỉ để
+    // Không thể xảy ra vì CHALLENGE_TOPICS luôn đủ 30 phần tử — nhánh này chỉ để
     // thỏa noUncheckedIndexedAccess của TypeScript strict.
-    throw new Error(`Không tìm thấy chủ đề vlog cho ngày ${clamped}`)
+    throw new Error(`Không tìm thấy chủ đề challenge cho ngày ${clamped}`)
   }
   return found
 }

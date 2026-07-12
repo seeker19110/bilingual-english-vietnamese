@@ -1,16 +1,16 @@
-// src/lib/vlogVideo.ts — Kho VIDEO vlog cục bộ bằng IndexedDB THÔ (không thư viện,
+// src/lib/challengeVideo.ts — Kho VIDEO challenge cục bộ bằng IndexedDB THÔ (không thư viện,
 // giữ ngân sách bundle — docs/research/thu-thach-vlog-30-ngay.md mục 4.1).
 //
 // Nguyên tắc: video CHỈ nằm trên máy người dùng (không upload — chi phí 0, riêng tư
-// tối đa); transcript + feedback mới là dữ liệu chính (đồng bộ Supabase ở lib/vlog.ts).
+// tối đa); transcript + feedback mới là dữ liệu chính (đồng bộ Supabase ở lib/challenge.ts).
 // Vì là tính năng PHỤ TRỢ, mọi hàm ở đây bắt lỗi (máy không có IndexedDB, hết quota,
-// chế độ riêng tư Safari…) và trả null/false/[] ÊM ÁI — không bao giờ throw vỡ luồng nộp vlog.
+// chế độ riêng tư Safari…) và trả null/false/[] ÊM ÁI — không bao giờ throw vỡ luồng nộp challenge.
 //
 // Khóa bản ghi: `${uid}_${dateStr}` với dateStr dạng YYYY-MM-DD (giờ VN — vnDateStr).
-// Chính sách dọn dẹp (giữ video ngày 1 + 7 video gần nhất) do lib/vlog.ts TÍNH
-// (getKeepDates) rồi gọi pruneVlogVideos ở đây — file này chỉ biết lưu/xóa.
+// Chính sách dọn dẹp (giữ video ngày 1 + 7 video gần nhất) do lib/challenge.ts TÍNH
+// (getKeepDates) rồi gọi pruneChallengeVideos ở đây — file này chỉ biết lưu/xóa.
 
-const DB_NAME = 'et_vlog_videos'
+const DB_NAME = 'et_challenge_videos'
 const DB_VERSION = 1
 const STORE = 'videos'
 // dateStr luôn dài đúng 10 ký tự (YYYY-MM-DD) — dùng để tách ngày ra khỏi khóa
@@ -77,7 +77,7 @@ async function withStore<T>(
 
 // Lưu (ghi đè) video của 1 ngày. Trả false khi lưu không được (hết quota, không
 // hỗ trợ…) — UI có thể nhắc "tải video về máy" thay vì chặn luồng nộp.
-export function saveVlogVideo(
+export function saveChallengeVideo(
   uid: string,
   dateStr: string,
   blob: Blob,
@@ -91,7 +91,7 @@ export function saveVlogVideo(
 }
 
 // Đọc video của 1 ngày. null = không có / không đọc được.
-export function getVlogVideo(
+export function getChallengeVideo(
   uid: string,
   dateStr: string,
 ): Promise<{ blob: Blob; mime: string } | null> {
@@ -103,7 +103,7 @@ export function getVlogVideo(
 }
 
 // Xóa video của 1 ngày. Trả false khi thao tác không thực hiện được.
-export function deleteVlogVideo(uid: string, dateStr: string): Promise<boolean> {
+export function deleteChallengeVideo(uid: string, dateStr: string): Promise<boolean> {
   return withStore('readwrite', false, async (store) => {
     await reqToPromise(store.delete(videoKey(uid, dateStr)))
     return true
@@ -111,7 +111,7 @@ export function deleteVlogVideo(uid: string, dateStr: string): Promise<boolean> 
 }
 
 // Liệt kê các NGÀY (YYYY-MM-DD) đang có video của uid này. [] khi lỗi/không có.
-export function listVlogVideoKeys(uid: string): Promise<string[]> {
+export function listChallengeVideoKeys(uid: string): Promise<string[]> {
   return withStore<string[]>('readonly', [], async (store) => {
     const keys = await reqToPromise(store.getAllKeys())
     const prefix = `${uid}_`
@@ -122,15 +122,15 @@ export function listVlogVideoKeys(uid: string): Promise<string[]> {
 }
 
 // Dọn kho: xóa MỌI video của uid KHÔNG nằm trong keepDates (chính sách "ngày 1 +
-// 7 video gần nhất" do lib/vlog.ts tính qua getKeepDates). Trả số video đã xóa
+// 7 video gần nhất" do lib/challenge.ts tính qua getKeepDates). Trả số video đã xóa
 // (0 khi không có gì để xóa hoặc khi kho không truy cập được).
-export async function pruneVlogVideos(uid: string, keepDates: string[]): Promise<number> {
-  const dates = await listVlogVideoKeys(uid)
+export async function pruneChallengeVideos(uid: string, keepDates: string[]): Promise<number> {
+  const dates = await listChallengeVideoKeys(uid)
   const keep = new Set(keepDates)
   const toDelete = dates.filter((d) => !keep.has(d))
   let deleted = 0
   for (const d of toDelete) {
-    if (await deleteVlogVideo(uid, d)) deleted++
+    if (await deleteChallengeVideo(uid, d)) deleted++
   }
   return deleted
 }

@@ -12,11 +12,11 @@ import {
   countWords,
   calcWpm,
   mergeCloudEntries,
-  VLOG_MILESTONES,
-  type VlogChallenge,
-  type VlogEntryLocal,
+  CHALLENGE_MILESTONES,
+  type ChallengeState,
+  type ChallengeEntryLocal,
   type CloudEntryForMerge,
-} from './vlog'
+} from './challenge'
 import { vnDateStr } from './date'
 
 // ── Tiện ích dựng dữ liệu test ───────────────────────────────────────────────
@@ -28,7 +28,7 @@ const dayAgo = (n: number) => {
 const today = () => dayAgo(0)
 
 // Entry tối thiểu để nộp (round do saveEntry tự đóng dấu).
-const mkEntry = (day: string, challengeDay = 1): Omit<VlogEntryLocal, 'round'> => ({
+const mkEntry = (day: string, challengeDay = 1): Omit<ChallengeEntryLocal, 'round'> => ({
   day,
   challengeDay,
   topicDay: challengeDay,
@@ -44,8 +44,8 @@ const mkChallenge = (
   startDaysAgo: number,
   submittedDaysAgo: number[],
   round = 1,
-): VlogChallenge => {
-  const entries: Record<string, VlogEntryLocal> = {}
+): ChallengeState => {
+  const entries: Record<string, ChallengeEntryLocal> = {}
   submittedDaysAgo.forEach((n, i) => {
     const day = dayAgo(n)
     entries[day] = { ...mkEntry(day, i + 1), round }
@@ -74,9 +74,9 @@ describe('startChallenge / getChallenge — vòng và lịch sử', () => {
   })
 
   it('dữ liệu localStorage hỏng → coi như chưa có thử thách, không throw', () => {
-    localStorage.setItem('et_vlog_u1', '{"broken":')
+    localStorage.setItem('et_challenge_u1', '{"broken":')
     expect(getChallenge('u1')).toBeNull()
-    localStorage.setItem('et_vlog_u1', JSON.stringify({ startDate: 1, round: 'x' }))
+    localStorage.setItem('et_challenge_u1', JSON.stringify({ startDate: 1, round: 'x' }))
     expect(getChallenge('u1')).toBeNull()
   })
 
@@ -160,7 +160,7 @@ describe('resume vs restart sau khi đứt', () => {
 
   // Dựng trạng thái ĐỨT trong localStorage: bắt đầu -5, nộp -5 -4, lỡ -3 -2 -1
   const seedBroken = () => {
-    localStorage.setItem('et_vlog_u1', JSON.stringify(mkChallenge(5, [5, 4])))
+    localStorage.setItem('et_challenge_u1', JSON.stringify(mkChallenge(5, [5, 4])))
     expect(getChallengeDay(getChallenge('u1')!, today()).isBroken).toBe(true)
   }
 
@@ -202,12 +202,12 @@ describe('Huy hiệu mốc — theo SỐ NGÀY ĐÃ NỘP, không phải ngày l
       29,
       Array.from({ length: 30 }, (_, i) => i),
     )
-    expect(getEarnedMilestones(thirty)).toEqual([...VLOG_MILESTONES])
+    expect(getEarnedMilestones(thirty)).toEqual([...CHALLENGE_MILESTONES])
   })
 
   it('chỉ đếm vòng HIỆN TẠI — entry vòng cũ không tính', () => {
     const c = mkChallenge(5, [5, 3, 1], 1)
-    const roundTwo: VlogChallenge = { ...c, round: 2, startDate: today() }
+    const roundTwo: ChallengeState = { ...c, round: 2, startDate: today() }
     expect(getEarnedMilestones(roundTwo)).toEqual([])
   })
 
