@@ -24,11 +24,11 @@ bash scripts/deploy.sh
 Có bật GitHub Actions auto-deploy (`.github/workflows/deploy.yml`, chạy sau khi CI
 xanh trên `main`) thì không cần làm gì thêm — xem `docs/DEPLOY.md` để setup SSH secret.
 
-## Sau khi deploy: migration DB (nếu có)
+## Migration DB
 
-`scripts/deploy.sh` **không** tự chạy migration Supabase. Nếu `main` có file mới
-trong `supabase/migrations/`, chạy `npm run migrate` (cần `SUPABASE_DB_URL` trong
-`.env`) hoặc dán tay vào Supabase SQL Editor — xem `supabase/migrations/README.md`.
+`scripts/deploy.sh`, `deploy.sh` (gốc repo) và auto-deploy (`deploy.yml`) đều **tự chạy**
+`npm run migrate` (áp mọi file mới trong `supabase/migrations/` còn thiếu) — cần
+`SUPABASE_DB_URL` trong `.env` trên VPS, xem `supabase/migrations/README.md`.
 
 ## Biến môi trường bắt buộc (tóm tắt)
 
@@ -40,11 +40,11 @@ Xem đầy đủ ở `.env.example`. Nhóm chính: `VITE_SUPABASE_URL`/`VITE_SUP
 
 ## Troubleshooting nhanh
 
-| Vấn đề | Lệnh kiểm tra |
-| --- | --- |
-| App không start | `pm2 logs english-tutor --lines 50` |
-| Nginx 502 | `pm2 status` + `curl http://localhost:3001/api/health` |
-| Đăng nhập lỗi | Kiểm tra `.env` có đủ `VITE_SUPABASE_*`; reload `pm2 restart english-tutor --update-env` |
-| SSL hết hạn | `sudo certbot renew --dry-run` |
+| Vấn đề          | Lệnh kiểm tra                                                                            |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| App không start | `pm2 logs english-tutor --lines 50`                                                      |
+| Nginx 502       | `pm2 status` + `curl http://localhost:3001/api/health`                                   |
+| Đăng nhập lỗi   | Kiểm tra `.env` có đủ `VITE_SUPABASE_*`; reload `pm2 restart english-tutor --update-env` |
+| SSL hết hạn     | `sudo certbot renew --dry-run`                                                           |
 
 Chi tiết đầy đủ + troubleshooting mở rộng: `docs/deploy-vps-ubuntu.md`, `docs/DEPLOY.md`.

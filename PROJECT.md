@@ -18,7 +18,7 @@
 - **Chat** — trò chuyện theo tình huống, sửa lỗi + giải thích bằng tiếng mẹ đẻ (`/api/claude`).
 - **Luyện viết** — chấm kiểu IELTS, chỉ lỗi, ước lượng band.
 - **Luyện nói song ngữ** — ghi âm → STT (Whisper qua Groq/OpenAI) → trả lời giọng ngôn ngữ đích
-  + sửa lỗi giọng tiếng mẹ đẻ (Google Cloud TTS, cache mã hoá).
+  - sửa lỗi giọng tiếng mẹ đẻ (Google Cloud TTS, cache mã hoá).
 - Nút "Kết thúc & chấm điểm" cuối phiên Chat/Speaking (chấm kiểu IELTS Speaking, không lưu DB).
 - Giới hạn lượt/ngày theo tính năng (chat/writing/speaking/stt), đồng bộ Supabase
   (`daily_usage`), atomic qua RPC `consume_usage`/`refund_usage`.
@@ -77,18 +77,18 @@
 > Nguồn: `supabase/schema.sql`. Mọi bảng người dùng bật RLS, policy `auth.uid() = user_id`
 > (hoặc `= id` với `profiles`).
 
-| Bảng                   | Cột chính                                                                                                    | Ghi chú                                                                        |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
-| `profiles`             | `id`, `name`, `plan` (`free`\|`pro`), `onboarded`, `user_level`, `goal`, `daily_minutes`                     | Tự tạo qua trigger `handle_new_user`. Client KHÔNG ghi được `plan`.            |
-| `chat_sessions`        | `id`, `user_id`, `situation`, `level`, `messages` (jsonb), `created_at`                                      | Lịch sử Chat.                                                                  |
-| `writing_submissions`  | `id`, `user_id`, `essay_prompt`, `essay`, `feedback`, `submitted_at`                                          | Lịch sử chấm bài.                                                              |
-| `speaking_sessions`    | `id`, `user_id`, `situation`, `level`, `messages` (jsonb), `created_at`                                      | Lịch sử luyện nói.                                                             |
-| `daily_usage`          | `user_id`, `day`, `chat_count`, `writing_count`, `speaking_count`, `stt_count`, `learn_count`                | PK `(user_id, day)`. 4 cột đếm lượt chỉ `service_role`/RPC ghi được.           |
-| `tts_cache`            | `hash` (SHA-256 text+lang+voice), `lang`, `voice`, `audio_url`                                               | Public read, chỉ service role ghi.                                            |
-| `pronunciations`       | tương tự `tts_cache`, cache audio phát âm từ                                                                  | Public read, chỉ service role ghi (RLS thêm ở migration `0006`).              |
-| `learning_progress`    | `user_id` (PK), `learned`/`hard`, `srs`, `cefr_grammar`, `cefr_dialogues`, `cefr_unlocked`, `cefr_exams`     | Đồng bộ tiến độ học đổi máy không mất; `cefr_exams` = kết quả thi cuối cấp.    |
-| `push_subscriptions`   | `id`, `user_id`, `endpoint`, `p256dh`, `auth_key`, `remind_hour`                                              | Web Push nhắc học.                                                             |
-| `challenge_entries`    | `id`, `user_id`, `day`, video/nhận xét AI                                                                     | Thử thách 30 ngày (migration `0010`, chưa chạy production).                   |
+| Bảng                  | Cột chính                                                                                                | Ghi chú                                                                     |
+| --------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `profiles`            | `id`, `name`, `plan` (`free`\|`pro`), `onboarded`, `user_level`, `goal`, `daily_minutes`                 | Tự tạo qua trigger `handle_new_user`. Client KHÔNG ghi được `plan`.         |
+| `chat_sessions`       | `id`, `user_id`, `situation`, `level`, `messages` (jsonb), `created_at`                                  | Lịch sử Chat.                                                               |
+| `writing_submissions` | `id`, `user_id`, `essay_prompt`, `essay`, `feedback`, `submitted_at`                                     | Lịch sử chấm bài.                                                           |
+| `speaking_sessions`   | `id`, `user_id`, `situation`, `level`, `messages` (jsonb), `created_at`                                  | Lịch sử luyện nói.                                                          |
+| `daily_usage`         | `user_id`, `day`, `chat_count`, `writing_count`, `speaking_count`, `stt_count`, `learn_count`            | PK `(user_id, day)`. 4 cột đếm lượt chỉ `service_role`/RPC ghi được.        |
+| `tts_cache`           | `hash` (SHA-256 text+lang+voice), `lang`, `voice`, `audio_url`                                           | Public read, chỉ service role ghi.                                          |
+| `pronunciations`      | tương tự `tts_cache`, cache audio phát âm từ                                                             | Public read, chỉ service role ghi (RLS thêm ở migration `0006`).            |
+| `learning_progress`   | `user_id` (PK), `learned`/`hard`, `srs`, `cefr_grammar`, `cefr_dialogues`, `cefr_unlocked`, `cefr_exams` | Đồng bộ tiến độ học đổi máy không mất; `cefr_exams` = kết quả thi cuối cấp. |
+| `push_subscriptions`  | `id`, `user_id`, `endpoint`, `p256dh`, `auth_key`, `remind_hour`                                         | Web Push nhắc học.                                                          |
+| `challenge_entries`   | `id`, `user_id`, `day`, video/nhận xét AI                                                                | Thử thách 30 ngày (migration `0010`, chưa chạy production).                 |
 
 **Hàm DB:** `consume_usage`/`refund_usage` — kiểm tra + tăng/hoàn lượt atomic (SELECT FOR
 UPDATE), fail-open khi RPC lỗi (ưu tiên không chặn nhầm người dùng hợp lệ).

@@ -343,8 +343,7 @@ BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
 ## Cập nhật code mới (deploy lại)
 
 > Có 2 cách: **tự động** (GitHub Actions, chạy sau khi CI pass trên `main` — xem
-> `docs/DEPLOY.md`, hiện KHÔNG chạy migration) hoặc **thủ công bằng `deploy.sh`** (đầy đủ
-> nhất, có chạy migration) mô tả dưới đây.
+> `docs/DEPLOY.md`, cũng chạy migration) hoặc **thủ công bằng `deploy.sh`** mô tả dưới đây.
 
 **Cách khuyên dùng khi có migration mới: chạy `bash deploy.sh`** (file có sẵn ở gốc repo, đã theo dõi trong Git —
 xem nội dung tại `deploy.sh`). Script này tự làm hết: pull code → cài thư viện → **tự động

@@ -43,12 +43,13 @@ pm2 restart english-tutor --update-env      # reload sau khi sửa .env
 ⚠️ Không đổi `TTS_ENCRYPTION_MASTER_KEY` — đổi sẽ làm toàn bộ audio cache cũ không
 mở được.
 
-## Migration DB (nếu `main` có file mới trong `supabase/migrations/`)
+## Migration DB
 
-`scripts/deploy.sh` không tự chạy migration. Chạy tay:
+`scripts/deploy.sh` tự chạy `npm run migrate` (cần `SUPABASE_DB_URL` trong `.env`, xem
+`.env.example`) — không cần chạy tay trừ khi muốn kiểm tra ngoài luồng deploy:
 
 ```bash
-npm run migrate     # cần SUPABASE_DB_URL trong .env, xem .env.example
+npm run migrate
 ```
 
 ## Pre-cache audio (sau deploy lần đầu, tuỳ chọn)

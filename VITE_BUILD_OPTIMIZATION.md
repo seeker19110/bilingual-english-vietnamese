@@ -6,14 +6,14 @@ phải Lighthouse — xem `LIGHTHOUSE_OPTIMIZATION.md`.
 
 ## 1. Chunk strategy (`manualChunks` trong `vite.config.ts`)
 
-| Chunk | Chứa | Ghi chú |
-| --- | --- | --- |
-| `vendor-sentry` | `@sentry/*` | Tách riêng vì chỉ tải khi có `VITE_SENTRY_DSN` (dynamic import) |
-| `vendor-core` | react, react-dom, react-router | Ít đổi → cache trình duyệt lâu |
-| `vendor-supabase` | `@supabase/supabase-js` | |
-| `vendor-ui` | `lucide-react` | |
-| `vendor-misc` | mọi package `node_modules` còn lại | Gộp 1 file thay vì tách từng package — tránh nhiều request nhỏ |
-| `js/[name]-[hash:8].js` | app code (mỗi route/component) | Tách theo route qua `React.lazy()` |
+| Chunk                   | Chứa                               | Ghi chú                                                         |
+| ----------------------- | ---------------------------------- | --------------------------------------------------------------- |
+| `vendor-sentry`         | `@sentry/*`                        | Tách riêng vì chỉ tải khi có `VITE_SENTRY_DSN` (dynamic import) |
+| `vendor-core`           | react, react-dom, react-router     | Ít đổi → cache trình duyệt lâu                                  |
+| `vendor-supabase`       | `@supabase/supabase-js`            |                                                                 |
+| `vendor-ui`             | `lucide-react`                     |                                                                 |
+| `vendor-misc`           | mọi package `node_modules` còn lại | Gộp 1 file thay vì tách từng package — tránh nhiều request nhỏ  |
+| `js/[name]-[hash:8].js` | app code (mỗi route/component)     | Tách theo route qua `React.lazy()`                              |
 
 Dữ liệu lazy-load (từ điển/mẫu câu/bài học) có tiền tố riêng để không trùng tên:
 `dict-*`, `pattern-*`, `lesson-*` (xem hàm `chunkFileNames` trong `vite.config.ts`).

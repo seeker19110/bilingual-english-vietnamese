@@ -33,9 +33,9 @@ Biến `direction` (`Direction` trong `src/types.ts`) quyết định: (1) promp
 Chi tiết đầy đủ: `BILINGUAL_SYSTEM.md`.
 
 | Chiều học                     | Hội thoại (đích) | Giải thích (mẹ đẻ) |
-| ------------------------------ | ------------------ | -------------------- |
-| A — Việt học Anh                | giọng English       | giọng tiếng Việt      |
-| B — Người nước ngoài học Việt   | giọng tiếng Việt    | giọng English          |
+| ----------------------------- | ---------------- | ------------------ |
+| A — Việt học Anh              | giọng English    | giọng tiếng Việt   |
+| B — Người nước ngoài học Việt | giọng tiếng Việt | giọng English      |
 
 **Mẹo kỹ thuật cốt lõi:** AI trả JSON tách riêng phần hội thoại và phần giải thích (2 trường),
 app gọi TTS 2 lần với 2 giọng khác nhau — không nhét cả hai thứ tiếng vào một lần đọc.
@@ -69,13 +69,13 @@ nhận xét.
 
 ## 5. Rủi ro & cách xử lý (vẫn còn giá trị)
 
-| Rủi ro                       | Cách giảm                                                                  |
-| ------------------------------ | ----------------------------------------------------------------------------- |
-| Chi phí API vượt kiểm soát     | Giới hạn lượt chặt, model rẻ, cache TTS, atomic đếm lượt server-side          |
-| Đối thủ lớn (ELSA, Talkpal)     | Bám USP: giọng tiếng Việt giải thích + miễn phí + nội dung Việt + gộp 3 kỹ năng |
-| Giọng nói khó làm/nghe giả      | Tách riêng giọng đích và giọng mẹ đẻ, dùng TTS chất lượng cao (Google Cloud)    |
-| Độ trễ nói (STT→AI→TTS)         | Cache câu mẫu hay lặp; đọc giọng ngay khi có kết quả                           |
-| Phụ thuộc 1 nhà cung cấp API    | Đã thiết kế đổi được provider (Groq/OpenAI cho STT, nhiều lựa chọn cho chat)   |
+| Rủi ro                       | Cách giảm                                                                       |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| Chi phí API vượt kiểm soát   | Giới hạn lượt chặt, model rẻ, cache TTS, atomic đếm lượt server-side            |
+| Đối thủ lớn (ELSA, Talkpal)  | Bám USP: giọng tiếng Việt giải thích + miễn phí + nội dung Việt + gộp 3 kỹ năng |
+| Giọng nói khó làm/nghe giả   | Tách riêng giọng đích và giọng mẹ đẻ, dùng TTS chất lượng cao (Google Cloud)    |
+| Độ trễ nói (STT→AI→TTS)      | Cache câu mẫu hay lặp; đọc giọng ngay khi có kết quả                            |
+| Phụ thuộc 1 nhà cung cấp API | Đã thiết kế đổi được provider (Groq/OpenAI cho STT, nhiều lựa chọn cho chat)    |
 
 ## 6. Marketing (chưa triển khai, tham khảo khi cần)
 

@@ -18,16 +18,16 @@ việc có dùng được ngoại ngữ hay không.
 
 ## Đề xuất & ưu tiên
 
-| # | Đề xuất | Vì sao quan trọng | Ưu tiên | Trạng thái |
-| - | ------- | ------------------ | ------- | ---------- |
-| A | Sổ lỗi cá nhân — thu lỗi AI sửa ở Chat/Viết/Nói → thẻ ôn cá nhân hóa | Tài liệu ôn giá trị nhất đang bị vứt | 🔴 Cao | ✅ Đã xong |
-| B | Nối lộ trình ↔ 3 chế độ AI — nút "luyện từ hôm nay bằng hội thoại" | Đóng vòng recognition→use | 🔴 Cao | ⏳ Có nền (`targetWords`), thiếu nút CTA |
-| C | Bài luyện sản xuất chủ động — gõ chính tả/nói lại cho từ đã học | Recall mạnh hơn recognition | 🟡 TB | Chưa làm |
-| D | Nghe hiểu thành dạng bài chính — audio→chọn nghĩa/chép chính tả | Tận dụng cache TTS $0 | 🟡 TB | Chưa làm |
-| E | Ngữ pháp có vòng lặp ôn nhẹ — theo dõi mastery + nhắc ôn | Ngữ pháp chưa có retention loop | 🟡 TB | Chưa làm |
-| F | Giữ chân: streak freeze + tổng kết tuần | Giảm churn | 🟢 Thấp | Streak freeze đã có; tổng kết tuần chưa |
-| G | Chấm phát âm cấp âm vị (thay Levenshtein-trên-STT) | Đúng lời hứa "gia sư giọng nói" | 🟢 Thấp | Chưa làm, tốn tiền — chờ có Pro |
-| H | SM-2 → FSRS | Giảm 20–30% lượt ôn | 🟢 Thấp | Chưa làm |
+| #   | Đề xuất                                                              | Vì sao quan trọng                    | Ưu tiên | Trạng thái                               |
+| --- | -------------------------------------------------------------------- | ------------------------------------ | ------- | ---------------------------------------- |
+| A   | Sổ lỗi cá nhân — thu lỗi AI sửa ở Chat/Viết/Nói → thẻ ôn cá nhân hóa | Tài liệu ôn giá trị nhất đang bị vứt | 🔴 Cao  | ✅ Đã xong                               |
+| B   | Nối lộ trình ↔ 3 chế độ AI — nút "luyện từ hôm nay bằng hội thoại"   | Đóng vòng recognition→use            | 🔴 Cao  | ⏳ Có nền (`targetWords`), thiếu nút CTA |
+| C   | Bài luyện sản xuất chủ động — gõ chính tả/nói lại cho từ đã học      | Recall mạnh hơn recognition          | 🟡 TB   | Chưa làm                                 |
+| D   | Nghe hiểu thành dạng bài chính — audio→chọn nghĩa/chép chính tả      | Tận dụng cache TTS $0                | 🟡 TB   | Chưa làm                                 |
+| E   | Ngữ pháp có vòng lặp ôn nhẹ — theo dõi mastery + nhắc ôn             | Ngữ pháp chưa có retention loop      | 🟡 TB   | Chưa làm                                 |
+| F   | Giữ chân: streak freeze + tổng kết tuần                              | Giảm churn                           | 🟢 Thấp | Streak freeze đã có; tổng kết tuần chưa  |
+| G   | Chấm phát âm cấp âm vị (thay Levenshtein-trên-STT)                   | Đúng lời hứa "gia sư giọng nói"      | 🟢 Thấp | Chưa làm, tốn tiền — chờ có Pro          |
+| H   | SM-2 → FSRS                                                          | Giảm 20–30% lượt ôn                  | 🟢 Thấp | Chưa làm                                 |
 
 **Thứ tự khuyến nghị:** A → B (giá trị sư phạm cao nhất/giờ code, tận dụng đúng thứ đối thủ không
 có — AI hội thoại + TTS 2 giọng) → D (rẻ) → C → E → F → G/H (sau).

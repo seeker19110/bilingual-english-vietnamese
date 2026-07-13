@@ -5,9 +5,9 @@
 ## 1. Tổng quan
 
 | Chiều | Học viên         | Giao diện  | Hội thoại (đích) | Giải thích (mẹ đẻ) |
-| ----- | ----------------- | ---------- | ----------------- | -------------------- |
-| **A** | Người Việt        | Tiếng Việt | Anh (en-US)        | Việt (vi-VN)          |
-| **B** | Người nước ngoài   | Tiếng Anh  | Việt (vi-VN)       | Anh (en-US)            |
+| ----- | ---------------- | ---------- | ---------------- | ------------------ |
+| **A** | Người Việt       | Tiếng Việt | Anh (en-US)      | Việt (vi-VN)       |
+| **B** | Người nước ngoài | Tiếng Anh  | Việt (vi-VN)     | Anh (en-US)        |
 
 Chuyển đổi: Home → nút gạt ngôn ngữ (góc trên phải) → toggle A ↔ B, lưu `localStorage`
 (`et_direction`).
@@ -19,9 +19,11 @@ Chuyển đổi: Home → nút gạt ngôn ngữ (góc trên phải) → toggle 
 - **Prompt:** mọi hàm prompt trong `src/prompts/index.ts` nhận `dir: Direction`, trả prompt
   tiếng Việt (chiều A) hoặc tiếng Anh (chiều B). Chat/Speaking yêu cầu AI trả JSON:
   ```json
-  { "speech": "<câu hội thoại — đọc bằng giọng ngôn ngữ đích>",
+  {
+    "speech": "<câu hội thoại — đọc bằng giọng ngôn ngữ đích>",
     "feedback": "<sửa lỗi/giải thích — đọc bằng giọng tiếng mẹ đẻ, rỗng nếu không có lỗi>",
-    "corrected": "<câu đúng>" }
+    "corrected": "<câu đúng>"
+  }
   ```
 - **Giao diện (i18n):** `src/context/LangProvider.tsx` + `src/lib/uiLang.ts` quản lý `uiLang`
   độc lập với `direction`. Toggle ở Home đổi cả hai cùng lúc:
@@ -58,12 +60,12 @@ Supabase Storage, **mã hoá AES-256-GCM** — chỉ người đã đăng nhập
 
 ## 4. Trang dùng hệ thống này
 
-| Trang                   | Dùng gì                                                            |
-| ------------------------ | ------------------------------------------------------------------- |
-| `src/pages/Chat.tsx`     | prompt `chatSystemPrompt(situation, level, dir)`, chỉ text          |
-| `src/pages/Speaking.tsx` | + STT (`sttLang = isA ? 'en' : 'vi'`) + `speakBilingual` 2 giọng     |
-| `src/pages/Writing.tsx`  | `writingSystemPrompt(dir)`, chỉ text, feedback theo `dir`            |
-| `src/pages/Home.tsx`     | nút gạt chiều + render mô tả tính năng theo `dir`                    |
+| Trang                    | Dùng gì                                                          |
+| ------------------------ | ---------------------------------------------------------------- |
+| `src/pages/Chat.tsx`     | prompt `chatSystemPrompt(situation, level, dir)`, chỉ text       |
+| `src/pages/Speaking.tsx` | + STT (`sttLang = isA ? 'en' : 'vi'`) + `speakBilingual` 2 giọng |
+| `src/pages/Writing.tsx`  | `writingSystemPrompt(dir)`, chỉ text, feedback theo `dir`        |
+| `src/pages/Home.tsx`     | nút gạt chiều + render mô tả tính năng theo `dir`                |
 
 ## 5. Thêm tính năng mới dùng Direction
 
@@ -93,13 +95,13 @@ VITE_SUPABASE_URL=... VITE_SUPABASE_ANON_KEY=...
 
 ## 7. File liên quan
 
-| File                            | Vai trò                                        |
-| -------------------------------- | ------------------------------------------------ |
-| `src/types.ts`                   | `Direction`, `SITUATIONS`, `LEVELS`               |
-| `src/lib/storage.ts`             | get/set direction (localStorage)                  |
-| `src/lib/tts.ts`                 | `speak()`, `speakBilingual()`                     |
-| `src/lib/stt.ts` / `sttServer.ts`| STT trình duyệt / STT server                      |
-| `src/prompts/index.ts`           | prompt chat/speaking/writing theo `dir`           |
-| `src/context/LangProvider.tsx`   | ngữ cảnh `uiLang`                                 |
-| `api/ai.ts`                      | endpoint `/api/claude` (chat/chấm bài)            |
-| `api/tts.ts` / `api/stt.ts`      | endpoint TTS (Google Cloud) / STT (Groq/OpenAI)   |
+| File                              | Vai trò                                         |
+| --------------------------------- | ----------------------------------------------- |
+| `src/types.ts`                    | `Direction`, `SITUATIONS`, `LEVELS`             |
+| `src/lib/storage.ts`              | get/set direction (localStorage)                |
+| `src/lib/tts.ts`                  | `speak()`, `speakBilingual()`                   |
+| `src/lib/stt.ts` / `sttServer.ts` | STT trình duyệt / STT server                    |
+| `src/prompts/index.ts`            | prompt chat/speaking/writing theo `dir`         |
+| `src/context/LangProvider.tsx`    | ngữ cảnh `uiLang`                               |
+| `api/ai.ts`                       | endpoint `/api/claude` (chat/chấm bài)          |
+| `api/tts.ts` / `api/stt.ts`       | endpoint TTS (Google Cloud) / STT (Groq/OpenAI) |

@@ -40,13 +40,13 @@ sang uuid thật). Coi như bắt đầu lại — hợp lý vì app còn đang 
 
 ## Code liên quan
 
-| File | Vai trò |
-| --- | --- |
-| `src/lib/supabase.ts` | Supabase client phía browser (anon key) |
-| `src/lib/auth.ts` | `register`/`login`/`logout`/`getCurrentUser`/`loginWithGoogle` — gọi Supabase Auth thật |
-| `src/context/AuthProvider.tsx` + `authContext.ts` + `useAuth.ts` | Context/hook `useAuth()` cho toàn app |
-| `src/App.tsx` | Bọc app bằng `AuthProvider`; `RequireAuth` chặn route chưa đăng nhập |
-| `src/lib/storage.ts` | Chỉ còn `register`/`login`/`logout`/`getCurrentUser` cho **guest localStorage** (không dùng cho auth thật); các hàm lưu chat/viết/nói/lượt dùng vẫn ở đây |
+| File                                                             | Vai trò                                                                                                                                                   |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/supabase.ts`                                            | Supabase client phía browser (anon key)                                                                                                                   |
+| `src/lib/auth.ts`                                                | `register`/`login`/`logout`/`getCurrentUser`/`loginWithGoogle` — gọi Supabase Auth thật                                                                   |
+| `src/context/AuthProvider.tsx` + `authContext.ts` + `useAuth.ts` | Context/hook `useAuth()` cho toàn app                                                                                                                     |
+| `src/App.tsx`                                                    | Bọc app bằng `AuthProvider`; `RequireAuth` chặn route chưa đăng nhập                                                                                      |
+| `src/lib/storage.ts`                                             | Chỉ còn `register`/`login`/`logout`/`getCurrentUser` cho **guest localStorage** (không dùng cho auth thật); các hàm lưu chat/viết/nói/lượt dùng vẫn ở đây |
 
 ⚠️ `SUPABASE_SERVICE_ROLE_KEY` trong `.env` phải là **service_role key** thật (Project
 Settings → API, dòng `service_role`) — KHÔNG phải `anon` key. Nhầm 2 key này khiến

@@ -27,11 +27,11 @@ EFL vlog trên INATESOL/ResearchGate/BJET 2024; Duolingo blog về streak).
 
 ## 3 quyết định thiết kế quan trọng nhất (đều nghiêng về chi phí ≈ 0)
 
-| # | Quyết định | Lý do |
-| - | ---------- | ----- |
-| 1 | **Video KHÔNG upload lên server** — lưu trên máy (IndexedDB) + nút tải về | 1 phút video ≈ 5–15MB; 30 ngày × nhiều người dùng sẽ vượt gói Storage miễn phí ngay |
-| 2 | **Chỉ gửi ÂM THANH lên server** để nhận diện (ghi song song 1 luồng audio-only) | Tái dùng nguyên pipeline `/api/stt` (giới hạn ~6MB; audio opus ~1MB/phút → 180s ≈ 3MB, vẫn lọt) |
-| 3 | **Không thêm cột đếm lượt mới** — 1 vlog tiêu 1 lượt `stt` + 1 lượt `chat` sẵn có | Free hiện 10 stt + 15 chat/ngày — thừa cho 1–2 vlog/ngày, không cần migration usage |
+| #   | Quyết định                                                                        | Lý do                                                                                           |
+| --- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| 1   | **Video KHÔNG upload lên server** — lưu trên máy (IndexedDB) + nút tải về         | 1 phút video ≈ 5–15MB; 30 ngày × nhiều người dùng sẽ vượt gói Storage miễn phí ngay             |
+| 2   | **Chỉ gửi ÂM THANH lên server** để nhận diện (ghi song song 1 luồng audio-only)   | Tái dùng nguyên pipeline `/api/stt` (giới hạn ~6MB; audio opus ~1MB/phút → 180s ≈ 3MB, vẫn lọt) |
+| 3   | **Không thêm cột đếm lượt mới** — 1 vlog tiêu 1 lượt `stt` + 1 lượt `chat` sẵn có | Free hiện 10 stt + 15 chat/ngày — thừa cho 1–2 vlog/ngày, không cần migration usage             |
 
 ## Thiết kế chính
 
@@ -42,7 +42,7 @@ EFL vlog trên INATESOL/ResearchGate/BJET 2024; Duolingo blog về streak).
 - **Server**: không thêm endpoint mới, tái dùng `/api/stt` + `/api/claude` (prompt riêng
   `src/prompts/vlog.ts`). Bảng mới `vlog_entries` (migration `0010`, RLS owner-only):
   `id · user_id · day (unique/user) · challenge_day · topic_id · transcript · feedback (jsonb) ·
-  duration_sec · word_count · created_at`.
+duration_sec · word_count · created_at`.
 - **Game hóa**: tái dùng pattern có sẵn — bảng 30 ô kiểu lịch, huy hiệu mốc, **vé nghỉ chung với
   streak** (1 ngày/tuần, không phát minh luật mới), màn tổng kết ngày 30 so sánh video ngày 1 vs 30.
 - **30 chủ đề** sát đời sống Việt Nam (soạn tay, song ngữ, gợi ý — không ép buộc), dùng chung cho

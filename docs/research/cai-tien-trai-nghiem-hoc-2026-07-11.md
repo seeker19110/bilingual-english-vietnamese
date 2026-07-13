@@ -17,17 +17,17 @@ App có nền cơ học và sư phạm tốt nhưng lớp **cảm xúc gần nh�
 diễn ra câm lặng, thao tác học không có phản hồi xúc giác/chuyển động — học 1 batch giống điền
 form hơn là chơi 1 màn game.
 
-| # | Phát hiện | Tác động |
-| - | --------- | -------- |
-| E1 | Khoảnh khắc thành tựu câm lặng (xong bài/quiz/lên mốc/streak: chỉ text tĩnh) | 🔴 Mất "đỉnh" cảm xúc mỗi phiên |
-| E2 | Streak thụ động — tăng không ai báo; 0 ngày hiện 💤 tiêu cực | 🔴 Bỏ phí cơ chế giữ chân #1 |
-| E3 | Thẻ từ & quiz không có "juice" — lật tức thì, đúng/sai chỉ đổi màu, 0 haptic | 🔴 Cảm giác "điền form" |
-| E4 | Vừa học xong đã "nợ" — badge Ôn SRS nhảy ngay khi vừa thuộc | 🟡 Giết cảm giác hoàn thành |
-| E5 | Mốc từ vựng bị chôn — đạt mốc không có gì xảy ra, 0 huy hiệu | 🟡 Bỏ phí hệ thành tựu sẵn có |
-| E6 | Phiên học không có "vòng cung" — vào thẳng thẻ 1/10, xong bài không có CTA chính | 🟡 Thiếu nhịp mở–cao trào–đóng |
-| E7 | "Tổng đã thuộc: 0/12245" gây nản ở trang tổng quan/Từ điển | 🟡 | 
-| E8 | Trang chủ người học cũ ≈ người mới — thẻ Học tiếp lép vế giữa 7 card menu | 🟢 |
-| E9 | App không có "giọng nói" UI — 0 âm phản hồi ngoài TTS | 🟢 Tùy chọn |
+| #   | Phát hiện                                                                        | Tác động                        |
+| --- | -------------------------------------------------------------------------------- | ------------------------------- |
+| E1  | Khoảnh khắc thành tựu câm lặng (xong bài/quiz/lên mốc/streak: chỉ text tĩnh)     | 🔴 Mất "đỉnh" cảm xúc mỗi phiên |
+| E2  | Streak thụ động — tăng không ai báo; 0 ngày hiện 💤 tiêu cực                     | 🔴 Bỏ phí cơ chế giữ chân #1    |
+| E3  | Thẻ từ & quiz không có "juice" — lật tức thì, đúng/sai chỉ đổi màu, 0 haptic     | 🔴 Cảm giác "điền form"         |
+| E4  | Vừa học xong đã "nợ" — badge Ôn SRS nhảy ngay khi vừa thuộc                      | 🟡 Giết cảm giác hoàn thành     |
+| E5  | Mốc từ vựng bị chôn — đạt mốc không có gì xảy ra, 0 huy hiệu                     | 🟡 Bỏ phí hệ thành tựu sẵn có   |
+| E6  | Phiên học không có "vòng cung" — vào thẳng thẻ 1/10, xong bài không có CTA chính | 🟡 Thiếu nhịp mở–cao trào–đóng  |
+| E7  | "Tổng đã thuộc: 0/12245" gây nản ở trang tổng quan/Từ điển                       | 🟡                              |
+| E8  | Trang chủ người học cũ ≈ người mới — thẻ Học tiếp lép vế giữa 7 card menu        | 🟢                              |
+| E9  | App không có "giọng nói" UI — 0 âm phản hồi ngoài TTS                            | 🟢 Tùy chọn                     |
 
 **Ràng buộc cứng**: ngân sách `size-limit` chỉ còn ~1.7kB → mọi hiệu ứng phải CSS thuần/mã cực nhẹ
 hoặc tách chunk lazy.

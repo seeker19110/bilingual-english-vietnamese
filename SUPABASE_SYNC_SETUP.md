@@ -24,11 +24,11 @@ xem `supabase/migrations/README.md`.
 Trên VPS: file `.env` cạnh `server.ts` (xem `docs/deploy-vps-ubuntu.md`). Lúc dev:
 file `.env` ở gốc dự án.
 
-| Biến | Dùng ở đâu | Lấy ở đâu |
-| --- | --- | --- |
-| `VITE_SUPABASE_URL` | Frontend (login + đồng bộ) | Project Settings → API → Project URL |
-| `VITE_SUPABASE_ANON_KEY` | Frontend | Project Settings → API → `anon`/`public` key |
-| `GEMINI_API_KEY` / `GROQ_API_KEY` / `ANTHROPIC_API_KEY` | Server (gọi AI) — cần ít nhất 1 trong 3 | xem `.env.example` |
+| Biến                                                    | Dùng ở đâu                              | Lấy ở đâu                                    |
+| ------------------------------------------------------- | --------------------------------------- | -------------------------------------------- |
+| `VITE_SUPABASE_URL`                                     | Frontend (login + đồng bộ)              | Project Settings → API → Project URL         |
+| `VITE_SUPABASE_ANON_KEY`                                | Frontend                                | Project Settings → API → `anon`/`public` key |
+| `GEMINI_API_KEY` / `GROQ_API_KEY` / `ANTHROPIC_API_KEY` | Server (gọi AI) — cần ít nhất 1 trong 3 | xem `.env.example`                           |
 
 ⚠️ Hai biến `VITE_*` **bắt buộc có tiền tố `VITE_`** thì frontend mới đọc được. Thiếu
 thì đăng nhập luôn báo sai dù mật khẩu đúng. Sau khi thêm biến, khởi động lại app

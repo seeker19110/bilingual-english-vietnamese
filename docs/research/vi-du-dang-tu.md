@@ -5,11 +5,11 @@
 
 ## Quyết định đã chốt
 
-| Vấn đề    | Lựa chọn                                                                     |
-| --------- | ------------------------------------------------------------------------------ |
-| Phạm vi   | Dạng **bất quy tắc** + từ CEFR A1–B2 hay gặp (không phủ 100% ~12.649 ô)         |
-| Lưu trữ   | File riêng, nạp lười (`public/data/form-examples.json`) — không phình từ điển   |
-| Cách soạn | Viết tay theo lô nhỏ, mỗi dạng đúng **2 ví dụ** song ngữ                        |
+| Vấn đề    | Lựa chọn                                                                      |
+| --------- | ----------------------------------------------------------------------------- |
+| Phạm vi   | Dạng **bất quy tắc** + từ CEFR A1–B2 hay gặp (không phủ 100% ~12.649 ô)       |
+| Lưu trữ   | File riêng, nạp lười (`public/data/form-examples.json`) — không phình từ điển |
+| Cách soạn | Viết tay theo lô nhỏ, mỗi dạng đúng **2 ví dụ** song ngữ                      |
 
 ## Kiến trúc
 

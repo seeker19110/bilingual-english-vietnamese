@@ -7,26 +7,22 @@
 
 **Cách 1 — Tự động (đang dùng):** push/merge PR vào `main` → GitHub Actions (`.github/workflows/ci.yml`)
 chạy lint/type/test/build; nếu **CI xanh**, `.github/workflows/deploy.yml` tự SSH vào VPS, pull code,
-`npm install`, build, `pm2 reload` (không downtime), rồi health-check `/api/health`.
+`npm install`, **chạy migration Supabase còn thiếu** (`npm run migrate`), build, `pm2 reload`
+(không downtime), rồi health-check `/api/health`. Cần secrets `VPS_HOST`, `VPS_USER`,
+`VPS_SSH_KEY` trong GitHub → Settings → Secrets and variables → Actions.
 
-> ⚠️ Deploy tự động qua GitHub Actions **chưa chạy `npm run migrate`** — nếu PR có thêm migration
-> Supabase mới (`supabase/migrations/*.sql`), phải tự SSH vào VPS chạy `npm run migrate` một lần
-> (hoặc dùng Cách 2 bên dưới, script này CÓ chạy migrate). Cần secrets `VPS_HOST`, `VPS_USER`,
-> `VPS_SSH_KEY` trong GitHub → Settings → Secrets and variables → Actions.
-
-**Cách 2 — Thủ công trên VPS** (đầy đủ nhất, có chạy migration tự động):
+**Cách 2 — Thủ công trên VPS:**
 
 ```bash
 ssh root@160.30.172.203
 cd /var/www/english-tutor
-bash deploy.sh
+bash deploy.sh          # hoặc: bash scripts/deploy.sh
 ```
 
-`deploy.sh` (ở gốc repo) tự làm: pull code mới nhất từ `origin/main` → `npm ci` → chạy migration
-Supabase còn thiếu (`npm run migrate`, dừng deploy nếu lỗi) → build → `pm2 restart --update-env`.
-
-> Repo còn `scripts/deploy.sh` — bản cũ hơn, KHÔNG có bước migration, đang không được tài liệu nào
-> gọi tới. Nên dùng `deploy.sh` ở gốc repo (khớp với `docs/deploy-vps-ubuntu.md`).
+Cả `deploy.sh` (gốc repo) và `scripts/deploy.sh` đều tự làm: pull code mới nhất từ
+`origin/main` → cài dependencies → **chạy migration Supabase còn thiếu** (`npm run migrate`,
+dừng deploy nếu lỗi) → build → restart PM2. Cần `SUPABASE_DB_URL` trong `.env` trên VPS để
+bước migration chạy được — xem `supabase/migrations/README.md`.
 
 ## Xử lý sự cố nhanh
 
