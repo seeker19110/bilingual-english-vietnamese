@@ -258,97 +258,14 @@ curl http://localhost:3001/api/health
 
 ### 7a. Tạo config Nginx
 
-File config chuẩn đã có sẵn trong repo tại `nginx/en-vi.conf`. Copy lên VPS:
+File config chuẩn đã có sẵn trong repo tại `nginx/en-vi.conf` (đọc file đó để biết chi tiết:
+`/js/`, `/assets/` được serve thẳng từ `dist/` không qua Express để giảm tải; `/uploads/` serve
+file audio TTS; `/api/` và phần còn lại proxy về Express port 3001; có sẵn dòng `include` cho
+Cloudflare real-IP — xem `docs/cloudflare-setup.md` nếu dùng). Copy lên VPS:
 
 ```bash
 # Từ thư mục dự án trên VPS
 sudo cp nginx/en-vi.conf /etc/nginx/sites-available/en-vi
-sudo nginx -t && sudo systemctl reload nginx
-```
-
-> **Điểm khác biệt so với config cũ:** `/js/` và `/assets/` (file có hash) giờ được Nginx
-> serve trực tiếp từ `dist/` mà **không qua Express** → TTFB giảm ~80ms, không tốn RAM Node.js.
-> `open_file_cache` giữ metadata file trong RAM → không cần `stat()` ổ cứng mỗi request.
-> Còn nếu muốn tự tạo tay, nội dung như sau (thay domain nếu cần):
-
-```nginx
-# ── HTTP → HTTPS redirect ──
-server {
-    listen 80;
-    server_name en-vi.donghanhcungban.com;
-    server_tokens off;
-
-    return 301 https://$host$request_uri;
-}
-
-# ── HTTPS + HTTP/2 ──
-server {
-    listen 443 ssl http2;  # HTTP/2 bật ở đây
-    server_name en-vi.donghanhcungban.com;
-    server_tokens off;
-
-    client_max_body_size 10M;
-
-    # ── SSL/TLS (Certbot sẽ tự thêm sau) ──
-    ssl_certificate /etc/letsencrypt/live/en-vi.donghanhcungban.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/en-vi.donghanhcungban.com/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-
-    # ── Compression ──
-    gzip on;
-    gzip_vary on;
-    gzip_types text/plain text/css application/json application/javascript application/xml image/svg+xml;
-    gzip_min_length 1024;
-    gzip_comp_level 6;
-
-    # ── HTTP/2 optimization ──
-    http2_max_field_size 16k;
-    http2_max_header_size 32k;
-
-    # ── Serve file audio TTS trực tiếp từ ổ cứng — nhanh hơn qua Express ──
-    location /uploads/ {
-        alias /var/www/english-tutor/uploads/;
-        add_header Cache-Control "public, max-age=31536000, immutable";
-        add_header Access-Control-Allow-Origin "*";
-    }
-
-    # ── index.html: không cache (luôn lấy bản mới) ──
-    location = /index.html {
-        expires -1;
-        add_header Cache-Control "no-cache, no-store, must-revalidate";
-        add_header Pragma "no-cache";
-        proxy_pass http://localhost:3001;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # ── API + assets ──
-    location / {
-        proxy_pass http://localhost:3001;
-        proxy_http_version 1.1;
-
-        # WebSocket (luyện nói) + headers cần thiết
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-
-        # Timeout cho API dài hơi (TTS/STT)
-        proxy_connect_timeout 30s;
-        proxy_send_timeout 30s;
-        proxy_read_timeout 30s;
-    }
-}
-```
-
-```bash
 sudo ln -s /etc/nginx/sites-available/en-vi /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 ```
@@ -425,7 +342,11 @@ BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
 
 ## Cập nhật code mới (deploy lại)
 
-**Cách khuyên dùng: chạy `bash deploy.sh`** (file có sẵn ở gốc repo, đã theo dõi trong Git —
+> Có 2 cách: **tự động** (GitHub Actions, chạy sau khi CI pass trên `main` — xem
+> `docs/DEPLOY.md`, hiện KHÔNG chạy migration) hoặc **thủ công bằng `deploy.sh`** (đầy đủ
+> nhất, có chạy migration) mô tả dưới đây.
+
+**Cách khuyên dùng khi có migration mới: chạy `bash deploy.sh`** (file có sẵn ở gốc repo, đã theo dõi trong Git —
 xem nội dung tại `deploy.sh`). Script này tự làm hết: pull code → cài thư viện → **tự động
 chạy mọi migration Supabase còn thiếu** (`npm run migrate`, dừng deploy ngay nếu migration
 lỗi) → build → `pm2 restart` kèm nạp lại `.env`.

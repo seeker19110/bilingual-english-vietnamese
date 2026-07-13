@@ -25,19 +25,9 @@ File code kèm theo: đặt tại `lib/env.ts`. Cần cài Zod nếu chưa có:
 npm install zod
 ```
 
-**Cách dùng:** thay vì gọi `process.env.X` rải rác khắp nơi, hãy import từ file này:
-
-```ts
-import { clientEnv, serverEnv } from '@/lib/env'
-
-// Ở client (component, hook):
-const url = clientEnv.NEXT_PUBLIC_SUPABASE_URL
-
-// Ở server (API route, server action):
-const key = serverEnv.SUPABASE_SERVICE_ROLE_KEY
-```
-
-**Lợi ích:** nếu thiếu hoặc sai một biến, app dừng _ngay khi khởi động_ với thông báo rõ ràng, thay vì lỗi khó hiểu lúc người dùng đang thao tác. Nhớ đổi tên biến trong file cho khớp dự án.
+**Cách dùng:** import `clientEnv`/`serverEnv` từ file này thay vì gọi `process.env.X` rải rác.
+**Lợi ích:** thiếu/sai biến → app dừng _ngay khi khởi động_ với thông báo rõ, thay vì lỗi khó hiểu
+lúc người dùng đang thao tác. Đổi tên biến trong file cho khớp dự án.
 
 ---
 
@@ -87,12 +77,9 @@ npx supabase db push
 
 **Luôn commit thư mục `supabase/migrations/` vào Git** — đây chính là "phiên bản" của CSDL.
 
-**Về rollback (quan trọng, cần hiểu đúng):** Supabase chạy migration theo chiều tiến, không tự lùi. "Rollback được" nghĩa là:
-
-- Viết một migration _bù trừ_ để hoàn tác thay đổi (ví dụ thêm cột thì viết migration xóa cột đó), **hoặc**
-- Khôi phục từ backup / Point-in-Time Recovery của Supabase.
-
-→ Vì vậy: trước mỗi migration đụng dữ liệu thật, đảm bảo đã có backup và đã nghĩ sẵn đường lùi.
+**Về rollback:** Supabase chạy migration theo chiều tiến, không tự lùi. "Rollback được" nghĩa là viết
+migration _bù trừ_ (thêm cột thì viết migration xóa cột) hoặc khôi phục từ backup/Point-in-Time
+Recovery. Trước mỗi migration đụng dữ liệu thật, đảm bảo đã có backup và đã nghĩ sẵn đường lùi.
 
 ---
 
@@ -108,7 +95,9 @@ File mẫu kèm theo: đặt tại `docs/adr/0000-template.md`. Mỗi quyết đ
 
 **Khi nào viết ADR?** Khi chọn giữa các phương án có đánh đổi đáng kể: chọn thư viện chính, cấu trúc dữ liệu cốt lõi, kiến trúc xác thực, cách tổ chức cache TTS... Không cần viết cho quyết định nhỏ.
 
-**Đặc biệt giá trị với bạn:** vì bạn dùng AI nhiều, ADR giúp một phiên Claude Code mới (hoặc chính bạn vài tháng sau) hiểu _tại sao_ mọi thứ như hiện tại, tránh vô tình lật ngược quyết định cũ. Nên trỏ `CLAUDE.md` đọc `docs/adr/` trước khi đề xuất thay đổi lớn về kiến trúc.
+**Giá trị:** ADR giúp một phiên Claude Code mới (hoặc chính bạn vài tháng sau) hiểu _tại sao_ mọi thứ
+như hiện tại, tránh vô tình lật ngược quyết định cũ. Nên trỏ `CLAUDE.md` đọc `docs/adr/` trước khi đề
+xuất thay đổi lớn về kiến trúc.
 
 ---
 

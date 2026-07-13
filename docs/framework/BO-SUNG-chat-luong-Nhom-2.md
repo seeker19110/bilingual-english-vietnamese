@@ -24,8 +24,8 @@
 
 ## 1. Mobile-first (cụ thể hóa)
 
-Khung yêu cầu "mobile-first; responsive" nhưng chưa nói _kiểm cái gì_. Phần lớn người dùng vào
-bằng điện thoại — thiết kế cho màn nhỏ trước, rồi mở rộng ra màn lớn (`sm:`, `md:`, `lg:` của Tailwind).
+Khung yêu cầu "mobile-first; responsive" nhưng chưa nói _kiểm cái gì_ — thiết kế cho màn nhỏ trước,
+rồi mở rộng ra màn lớn (`sm:`, `md:`, `lg:` của Tailwind).
 
 **Checklist mobile-first (đối chiếu cho mỗi màn hình):**
 
@@ -46,8 +46,7 @@ bằng điện thoại — thiết kế cho màn nhỏ trước, rồi mở rộ
 
 ## 2. Performance budget & Lighthouse CI
 
-Khung nói "Lighthouse ≥ 90" nhưng để nó là việc _nhớ chạy tay_ thì sớm muộn cũng quên.
-Biến nó thành **cổng tự động** chạy trên mỗi PR.
+Khung nói "Lighthouse ≥ 90" — biến nó thành **cổng tự động** chạy trên mỗi PR thay vì việc nhớ chạy tay.
 
 ### Ngân sách hiệu năng (đặt mục tiêu cụ thể trong `PROJECT.md` mục 3)
 
@@ -78,7 +77,7 @@ Workflow `.github/workflows/lighthouse-ci.yml` (đã kèm) chạy build, dựng 
 
 ## 3. Accessibility tự động (a11y)
 
-A11y không chỉ là đạo đức — nó là chất lượng đo được và ảnh hưởng SEO. Tự động hóa hai tầng:
+A11y là chất lượng đo được, ảnh hưởng SEO. Tự động hóa hai tầng:
 
 **Tầng tĩnh — ESLint:** `eslint-config-next` đã bật sẵn bộ rule **jsx-a11y cốt lõi** (thiếu `alt`,
 `label` rời rạc, `onClick` trên thẻ không tương tác...) — không cần cài gói riêng. `eslint.config.mjs`
@@ -104,8 +103,8 @@ linter tĩnh không thấy: tương phản màu thực tế, thứ tự heading,
 
 ## 4. Kiểm thử mở rộng — E2E (Playwright) + coverage
 
-Khung mô tả kim tự tháp (nhiều unit → ít integration → vài E2E) nhưng chỉ cấu hình Vitest (unit).
-Bổ sung tầng đỉnh và một mức sàn cho đáy.
+Khung mô tả kim tự tháp test (nhiều unit → ít integration → vài E2E) nhưng chỉ cấu hình Vitest (unit) —
+bổ sung tầng đỉnh (E2E) và mức sàn coverage cho đáy.
 
 ### E2E với Playwright
 

@@ -171,7 +171,8 @@ Nếu bất kỳ mục nào ❌ → sửa trước, chạy lại toàn bộ, KH�
 5. **Thiết lập hàng rào tự động** (pre-commit + CI) — theo file hướng dẫn cấu hình.
 6. **Bắt đầu thực hiện theo từng giai đoạn** của KHUNG 1, qua cổng đầy đủ ở mỗi bước.
 
-> Quy tắc vàng ở bước 2: AI **không được** chỉ làm theo yêu cầu một cách thụ động. Nếu AI thấy cách tốt hơn hoặc rủi ro tiềm ẩn, AI phải nói ra. Mục tiêu là dự án _hoàn hảo nhất_, không phải làm cho xong.
+> Quy tắc vàng ở bước 2: AI **không được** chỉ làm theo yêu cầu thụ động — thấy cách tốt hơn hoặc rủi ro
+> tiềm ẩn phải nói ra. Mục tiêu là dự án _hoàn hảo nhất_, không phải làm cho xong.
 
 ---
 

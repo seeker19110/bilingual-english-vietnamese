@@ -1,8 +1,8 @@
 # KHUNG 1 — Quy trình & Tiêu chuẩn phát triển phần mềm
 
-> **File khung chung (master), tái sử dụng cho MỌI dự án.**
-> Đây là "cuốn sổ tay" định nghĩa: làm gì, theo trình tự nào, và đạt tiêu chuẩn gì ở mỗi giai đoạn.
-> Cặp đôi với **KHUNG 2** (luật AI + mẫu định nghĩa dự án). Từ hai khung này + yêu cầu một dự án cụ thể, ta sinh ra `PROJECT.md` và `CLAUDE.md` riêng cho dự án đó.
+> **File khung chung (master), tái sử dụng cho MỌI dự án.** "Cuốn sổ tay" định nghĩa: làm gì, theo
+> trình tự nào, đạt tiêu chuẩn gì ở mỗi giai đoạn. Cặp đôi với **KHUNG 2** (luật AI + mẫu định nghĩa dự
+> án) — từ hai khung này + yêu cầu cụ thể, sinh ra `PROJECT.md` và `CLAUDE.md` riêng cho dự án.
 
 ---
 

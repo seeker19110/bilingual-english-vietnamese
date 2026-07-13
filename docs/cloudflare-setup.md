@@ -109,10 +109,8 @@ sudo nginx -t && sudo systemctl reload nginx
 
 ## (Tùy chọn, nâng cao) Chặn truy cập thẳng vào IP VPS
 
-Sau khi xác nhận Cloudflare chạy ổn, có thể giới hạn firewall VPS chỉ nhận traffic
-từ dải IP Cloudflare trên cổng 80/443 — tăng thêm 1 lớp bảo vệ (dù
-`cloudflare-realip.conf` đã tự chống giả mạo IP mà không cần bước này). **Rủi ro:
-nếu bạn tắt Cloudflare Proxy sau này mà quên gỡ rule firewall, site sẽ không truy
-cập được** — vì vậy đây là bước TÙY CHỌN, cân nhắc kỹ trước khi bật, và luôn giữ
-port 22 (SSH) mở để không tự khóa mình ngoài VPS. Không bắt buộc để đóng lỗ bảo
-mật chính (đã đóng bằng `real_ip` ở trên).
+Có thể giới hạn firewall VPS chỉ nhận traffic từ dải IP Cloudflare trên cổng
+80/443 để thêm 1 lớp bảo vệ — không bắt buộc vì `cloudflare-realip.conf` đã tự
+chống giả mạo IP. **Rủi ro:** nếu sau này tắt Cloudflare Proxy mà quên gỡ rule
+firewall, site sẽ không truy cập được — luôn giữ port 22 (SSH) mở để không tự
+khóa mình ngoài VPS.

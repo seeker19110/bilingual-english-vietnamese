@@ -1,37 +1,28 @@
-﻿# 🇬🇧 Bilingual English - Vietnamese AI Tutor
+# 🇬🇧🇻🇳 Gia sư ngôn ngữ AI song ngữ Việt ⇄ Anh
 
-**Gia sư tiếng Anh AI song ngữ Anh - Việt** — Luyện nói, viết và trò chuyện với AI, nhận phản hồi bằng **tiếng Việt**.
+Web app gia sư AI **hai chiều**: người Việt học tiếng Anh, hoặc người nước ngoài học tiếng Việt qua tiếng Anh. Điểm khác biệt: AI **sửa lỗi & giải thích bằng GIỌNG tiếng mẹ đẻ** của học viên (TTS hai giọng riêng), không chỉ bằng chữ.
 
-Ứng dụng giúp người Việt học tiếng Anh hiệu quả hơn nhờ:
+Đang chạy thật tại **https://en-vi.donghanhcungban.com**.
 
-- AI hội thoại bằng giọng Anh chuẩn
-- Sửa lỗi & giải thích bằng **giọng tiếng Việt tự nhiên**
-- Hỗ trợ cả chiều ngược: người nước ngoài học tiếng Việt
+## ✨ Tính năng
 
-## ✨ Tính năng chính
+- **Chat gia sư AI** — trò chuyện theo tình huống, sửa lỗi, giải thích bằng tiếng mẹ đẻ; có "Kết thúc & chấm điểm" cuối phiên.
+- **Luyện viết + chấm điểm kiểu IELTS** — chỉ lỗi, ước lượng band.
+- **Luyện nói song ngữ** (tính năng chính) — nói → STT (Whisper) → AI trả lời bằng **giọng ngôn ngữ đích** + sửa lỗi bằng **giọng tiếng mẹ đẻ** (TTS 2 giọng riêng).
+- **Lộ trình học** — từ vựng theo chủ đề (tốc độ 5/10/20 từ/ngày), ôn tập SRS, chấm phát âm.
+- **Lộ trình chuẩn CEFR A1 → C2** — ngữ pháp + hội thoại + bài thi cuối cấp.
+- **Từ điển 12.000+ từ** đã gắn nhãn CEFR, đầy đủ nghĩa + ví dụ song ngữ có audio.
+- **Bảng tiến độ** — streak, biểu đồ, % hoàn thành theo cấp.
+- Hai chiều học (nút gạt A ↔ B), song ngữ toàn giao diện, **4 theme** (mặc định Xanh đêm).
 
-- **Chat gia sư AI** — trò chuyện, sửa lỗi và giải thích bằng tiếng Việt
-- **Luyện viết + chấm điểm IELTS** — chỉ lỗi, ước lượng band
-- **Luyện nói song ngữ** — nói → AI nghe (STT Whisper) → trả lời bằng **giọng ngôn ngữ đích** + sửa lỗi bằng **giọng tiếng mẹ đẻ** (TTS hai giọng)
-- **Học theo lộ trình** — từ vựng theo chủ đề, tốc độ 5-20 từ/ngày (tự chọn), ôn tập SRS, chấm phát âm
-- **Lộ trình CEFR A1 → B2** — giáo trình ngữ pháp đầy đủ, ví dụ bấm nghe
-- **Từ điển 7.400+ từ** + **Bài học hội thoại** + **Bảng tiến độ** (streak, biểu đồ)
-- Giao diện song ngữ, hỗ trợ hai chiều (Vi ↔ En)
-- **4 giao diện màu**: 🌙 Xanh đêm (mặc định) · ☀️ Blue sky · 🌸 Pink · 🎉 Rực rỡ
+## 🚀 Công nghệ
 
-## 🚀 Công nghệ sử dụng
+- **Frontend:** React 18 + Vite 7 + TypeScript 5.2 (strict) + Tailwind CSS 3 (mã gốc do Lovable sinh ra).
+- **Backend & dữ liệu:** Express (`server.ts`) + Supabase (Auth, Postgres có RLS, Storage).
+- **AI:** chat/chấm bài qua `/api/claude` · STT Whisper qua Groq/OpenAI (`/api/stt`) · TTS Google Cloud (`/api/tts`, cache mã hoá AES-256-GCM).
+- **Deploy:** VPS Ubuntu (PM2 + Nginx + Let's Encrypt) sau Cloudflare.
 
-- React + TypeScript + Vite
-- Tailwind CSS (hệ thống theme bằng biến CSS) + Lucide Icons
-- React Router · PWA (offline)
-- Backend: Express (`server.ts`) + Supabase (Auth, Postgres + RLS)
-- AI: Claude / Gemini (chat & chấm bài) · Whisper Groq/OpenAI (STT) · Google Cloud TTS
-
-## 📁 Cấu trúc dự án
-
-- `src/` — Source code chính
-- `App-Gia-Su-Tieng-Anh-AI.md` — Kế hoạch sản phẩm chi tiết
-- `.env.example` — Biến môi trường
+Chi tiết đầy đủ (schema DB, API, MoSCoW): xem `PROJECT.md`. Trạng thái/tiến độ: xem `PROGRESS.md`. Quy ước làm việc với AI: xem `CLAUDE.md`.
 
 ## 🛠️ Chạy dự án cục bộ
 
@@ -39,5 +30,8 @@
 git clone https://github.com/seeker19110/bilingual-english-vietnamese.git
 cd bilingual-english-vietnamese
 npm install
+cp .env.example .env   # điền key Supabase/AI/TTS
 npm run dev
 ```
+
+Lệnh khác: `npm run build` (build) · `npm run typecheck` · `npm run lint` · `npm test` · `npm run test:e2e` (Playwright) · `npm start` (chạy `server.ts` bằng `tsx`).
