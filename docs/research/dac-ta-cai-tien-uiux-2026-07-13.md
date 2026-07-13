@@ -27,37 +27,23 @@
 ### A1. Theme toggle: chuyển từ cycle sang menu chọn trực tiếp
 
 - **File:** `src/components/ThemeToggle.tsx`
-- **Hiện trạng (đã xác nhận):** bấm nút là gọi `cycleTheme()` nhảy thẳng sang theme kế tiếp
-  trong mảng `THEMES` (`src/lib/theme.ts`), không có popover, người dùng không thấy trước danh
-  sách/tên/trạng thái đang chọn.
-- **Việc cần làm:** đổi hành vi bấm nút thành mở popover/menu liệt kê toàn bộ `THEMES` dạng ô
-  màu (swatch) + tên (dùng `labelVi`/`labelEn` đã có sẵn) + đánh dấu theme đang chọn (`aria-current`
-  hoặc dấu check) + bấm chọn thẳng theme đó (gọi `setTheme(t.value)`), đóng menu sau khi chọn.
-  Giữ nguyên `aria-label` hiện có (đã tốt cho screen reader), chỉ thêm phần hiển thị trực quan.
-  Đóng menu khi click ra ngoài / phím Esc; điều hướng được bằng bàn phím (arrow/Enter) để giữ
-  a11y.
+- **Hiện trạng (đã xác nhận):** bấm nút gọi `cycleTheme()` nhảy sang theme kế tiếp trong mảng
+  `THEMES` (`src/lib/theme.ts`) — không có popover, không thấy trước danh sách/tên/trạng thái.
+- **Việc cần làm:** đổi thành popover/menu liệt kê `THEMES` (swatch + `labelVi`/`labelEn`) + đánh
+  dấu theme đang chọn (`aria-current`) + bấm chọn thẳng (`setTheme(t.value)`), đóng khi chọn/click
+  ngoài/Esc, điều hướng được bằng bàn phím. Giữ nguyên `aria-label` hiện có.
 - **Không đụng:** `src/lib/theme.ts`, `src/context/useTheme.ts`, hệ biến CSS `--a-*` — chỉ đổi
   UI của nút bấm.
 
 ### A2. Màn Luyện nói (Speaking) thiếu mô tả cấp độ — thiếu nhất quán với Chat
 
-- **File cần sửa:** `src/pages/Speaking.tsx`
-- **File tham khảo (đã đúng, copy cách làm từ đây):** `src/pages/Chat.tsx` dòng 137-141
-- **Hiện trạng (đã xác nhận):** dữ liệu `descA`/`descB` cho từng mức độ **đã có sẵn** trong
-  `LEVELS` (`src/types.ts:167-180`, ví dụ `descA: 'A1–A2, câu đơn giản'`). `Chat.tsx` đã render
-  dòng mô tả này dưới 3 nút chọn cấp độ:
-  ```tsx
-  <p className="text-xs text-zinc-400 mt-1.5 text-center">
-    {isA
-      ? LEVELS.find((l) => l.value === level)?.descA
-      : LEVELS.find((l) => l.value === level)?.descB}
-  </p>
-  ```
-  `Speaking.tsx` (quanh dòng 167-189, khối `<div>` chứa nhãn "Trình độ" + `grid grid-cols-3`)
-  **không có** đoạn này.
-- **Việc cần làm:** thêm đúng đoạn `<p>` mô tả cấp độ như trên vào `Speaking.tsx`, đặt ngay sau
-  khối `grid grid-cols-3 gap-2` chứa các nút cấp độ (trước nút "Bắt đầu luyện nói →"). Không cần
-  đổi dữ liệu `LEVELS`, không cần đổi `Chat.tsx`.
+- **File cần sửa:** `src/pages/Speaking.tsx` · **tham khảo:** `src/pages/Chat.tsx` dòng 137-141.
+- **Hiện trạng:** dữ liệu `descA`/`descB` cho từng mức độ đã có sẵn trong `LEVELS`
+  (`src/types.ts:167-180`, vd `descA: 'A1–A2, câu đơn giản'`). `Chat.tsx` đã render dòng mô tả này
+  dưới 3 nút chọn cấp độ (`<p className="text-xs ...">{isA ? descA : descB}</p>`); `Speaking.tsx`
+  (quanh dòng 167-189) không có.
+- **Việc cần làm:** thêm cùng đoạn `<p>` mô tả cấp độ vào `Speaking.tsx`, ngay sau khối
+  `grid grid-cols-3 gap-2` (trước nút "Bắt đầu luyện nói →"). Không đổi `LEVELS`/`Chat.tsx`.
 
 ## 2. Việc cần làm — nhóm B: Kiểm tra & thống nhất số liệu Từ điển (ưu tiên 2)
 
