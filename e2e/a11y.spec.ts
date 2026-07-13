@@ -54,7 +54,7 @@ for (const theme of THEMES) {
   test(`a11y: trang chủ theme=${theme} — 0 critical, không có serious mới`, async ({ page }) => {
     await mockLogin(page, 'vi', theme)
     await page.goto('/')
-    await expect(page.getByText(/Xin chào/)).toBeVisible()
+    await expect(page.getByRole('banner').getByText(/Xin chào/)).toBeVisible()
     const { critical, unexpectedSerious } = await scan(page)
     expect(critical).toEqual([])
     expect(unexpectedSerious).toEqual([])
@@ -71,7 +71,7 @@ for (const theme of ['blue-sky', 'pink'] as ThemeName[]) {
     await mockLogin(page, 'en', theme)
     await page.addInitScript(() => localStorage.setItem('et_direction', 'B'))
     await page.goto('/')
-    await expect(page.getByText(/Hello,/)).toBeVisible()
+    await expect(page.getByRole('banner').getByText(/Hello,/)).toBeVisible()
     const { critical, unexpectedSerious } = await scan(page)
     expect(critical).toEqual([])
     expect(unexpectedSerious).toEqual([])

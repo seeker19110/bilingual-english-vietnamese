@@ -8,13 +8,13 @@ test.describe('Trang chủ sau đăng nhập (song ngữ)', () => {
     await mockLogin(page, 'vi')
     await page.goto('/')
     await expect(page).not.toHaveURL(/\/login/)
-    await expect(page.getByText(/Xin chào/)).toBeVisible()
+    await expect(page.getByRole('banner').getByText(/Xin chào/)).toBeVisible()
   })
 
   test('tiếng Anh: lời chào đổi sang tiếng Anh khi ui_lang=en', async ({ page }) => {
     await mockLogin(page, 'en')
     await page.goto('/')
     await expect(page).not.toHaveURL(/\/login/)
-    await expect(page.getByText(/Hello,/)).toBeVisible()
+    await expect(page.getByRole('banner').getByText(/Hello,/)).toBeVisible()
   })
 })
