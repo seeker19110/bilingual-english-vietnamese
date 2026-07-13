@@ -27,7 +27,7 @@ export default function ThemeToggle() {
       onClick={cycleTheme}
       title={`${lang === 'vi' ? 'Giao diện' : 'Theme'}: ${label} — ${lang === 'vi' ? 'bấm để đổi sang' : 'tap to switch to'} ${nextLabel}`}
       aria-label={`${lang === 'vi' ? 'Đổi giao diện' : 'Change theme'} (${lang === 'vi' ? 'hiện tại' : 'current'}: ${label})`}
-      className="flex items-center justify-center text-zinc-400 hover:text-white transition p-2.5 rounded-lg hover:bg-zinc-800/50 shrink-0"
+      className="tap-44 flex items-center justify-center text-zinc-400 hover:text-white transition p-2.5 rounded-lg hover:bg-zinc-800/50 shrink-0"
     >
       <Palette className="w-5 h-5" />
     </button>
