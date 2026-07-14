@@ -47,9 +47,9 @@ Tailwind v4 cấu hình theme bằng CSS. Thêm khối `@theme inline` để cá
 }
 ```
 
-> Dùng `@theme inline` (không phải `@theme`) để Tailwind sinh ra `var(--background)` thay vì "nướng cứng"
-> giá trị màu — nhờ vậy đổi `data-theme` là màu đổi theo. (Tailwind v3: thay bằng `theme.extend.colors`
-> trỏ `'background': 'var(--background)'` trong `tailwind.config`.)
+> Dùng `@theme inline` (không phải `@theme`) để Tailwind sinh `var(--background)` thay vì "nướng cứng" giá
+> trị màu — đổi `data-theme` là màu đổi theo. Tailwind v3: dùng `theme.extend.colors` trỏ
+> `'background': 'var(--background)'` trong `tailwind.config` thay vì khối CSS này.
 
 Giờ viết UI bằng token, ví dụ:
 

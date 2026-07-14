@@ -3,6 +3,11 @@
 > Runbook `KHOI-TAO-du-an-moi.md` dành cho dự án mới (từ `create-next-app`). File này dành cho
 > **dự án đã phát triển** — cách "đắp" khung lên code có sẵn một cách an toàn, **tăng dần, không làm lại từ đầu**.
 
+> **Trạng thái áp dụng cho dự án này (bilingual-english-vietnamese)** — khớp `CLAUDE.md`/`PROGRESS.md`:
+> đang ở **GĐ 4–5** (phát triển + nâng chất lượng, đã deploy thật); **Lớp 1 (hàng rào) đã xong**, **Lớp 2
+> (E2E, a11y, bundle-size, i18n) đã đóng** — còn vài nợ kỹ thuật lẻ tẻ ghi ở `PROGRESS.md`. Runbook dưới
+> đây là tài liệu phương pháp chung, không cần đọc lại mỗi phiên trừ khi áp khung cho phần mới.
+
 ## Nguyên tắc cốt lõi
 
 1. **Không "big bang".** Đừng dừng dự án để viết lại. Áp khung theo từng lớp, ưu tiên **giá trị cao / rủi ro thấp** trước.
@@ -23,16 +28,10 @@
 
 ## Mang khung sang dự án (một lệnh)
 
-Từ repo khung, chạy `copy-framework.sh` trỏ tới dự án đích:
-
-```bash
-bash copy-framework.sh /đường-dẫn/tới/dự-án
-```
-
-Script **không đè** file đang chạy: tài liệu khung + `CLAUDE.md` (nếu chưa có) copy thẳng; file cấu hình
-theo stack được đưa vào `_framework-dropins/` để bạn tự merge. Sau đó **mở phiên Claude Code trong dự án đích**
-→ AI tự đọc `CLAUDE.md` và chạy Bước 0 (tự dò stack). _Vì sao phải copy chứ không "đưa link": một phiên
-chỉ tự nạp luật từ chính repo của nó (và `~/.claude/CLAUDE.md`), không đọc được repo khác qua link._
+Từ repo khung: `bash copy-framework.sh /đường-dẫn/tới/dự-án`. Script **không đè** file đang chạy: tài
+liệu khung + `CLAUDE.md` (nếu chưa có) copy thẳng; file cấu hình theo stack đưa vào `_framework-dropins/`
+để tự merge. Sau đó mở phiên Claude Code trong dự án đích → AI tự đọc `CLAUDE.md` và chạy Bước 0 (một
+phiên chỉ tự nạp luật từ chính repo của nó, không đọc được repo khác qua link).
 
 ---
 

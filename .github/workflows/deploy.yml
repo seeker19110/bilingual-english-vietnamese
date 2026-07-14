@@ -33,6 +33,9 @@ jobs:
             echo "📦 Install dependencies..."
             npm install
 
+            echo "🗄️  Chạy migration Supabase còn thiếu..."
+            npm run migrate
+
             echo "🔨 Build..."
             npm run build
 

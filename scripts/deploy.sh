@@ -47,11 +47,18 @@ echo "── [3/6] Dọn build & dữ liệu CŨ (tránh sót, vd lessons 1000 b
 rm -rf dist                              # dist gitignore → xoá tay để build lại sạch
 git clean -fd public/data || true        # bỏ file rác không-theo-dõi trong public/data
 
-echo "── [4/6] Cài dependencies (npm ci) + build ─────"
+echo "── [4/7] Cài dependencies (npm ci) ─────────────"
 npm ci || npm install                    # npm ci: cài đúng lockfile; lỗi → fallback install
+
+echo "── [5/7] Chạy migration Supabase còn thiếu ─────"
+# Tự áp mọi file supabase/migrations/*.sql chưa chạy (cần SUPABASE_DB_URL trong .env —
+# xem supabase/migrations/README.md). Dừng deploy nếu migration lỗi (set -e ở trên).
+npm run migrate
+
+echo "── [6/7] Build ──────────────────────────────────"
 npm run build
 
-echo "── [5/6] Cập nhật .env (nếu cần) ──────────────"
+echo "── [7/7] Cập nhật .env (nếu cần) ──────────────"
 ENV_FILE="$APP_DIR/.env"
 
 add_env() {
@@ -78,7 +85,7 @@ done
 # CRON_SECRET: chỉ thêm nếu bạn điền ở phần CONFIG (mặc định trống → bỏ qua).
 add_env "CRON_SECRET" "$CRON_SECRET"
 
-echo "── [6/6] Restart PM2 + kiểm tra health ─────────"
+echo "── [7/7] Restart PM2 + kiểm tra health ─────────"
 pm2 startOrRestart ecosystem.config.cjs --update-env || pm2 restart "$PM2_PROCESS" --update-env
 pm2 save || true
 sleep 3
@@ -98,7 +105,5 @@ echo "  🌐  https://en-vi.donghanhcungban.com"
 echo "═══════════════════════════════════════════════"
 echo ""
 echo "  Nhắc:"
-echo "  • Nếu main có migration DB mới (supabase/migrations/*.sql) →"
-echo "    chạy nó trên Supabase Dashboard (SQL Editor) cho đủ tính năng."
 echo "  • App là PWA: máy đang xem có thể giữ cache cũ → bấm Ctrl+Shift+R"
 echo "    (hoặc xoá site data) để thấy bản mới."

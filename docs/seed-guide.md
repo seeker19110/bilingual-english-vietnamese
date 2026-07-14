@@ -50,12 +50,8 @@ Bắt buộc có trong `.env`: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
   `pron` → `curriculum` → `cefr` → `lessons-early` (50 bài đầu) → `patterns` (Cụm từ)
   → `lessons-rest`.
 
-> ⚠️ **Lưu ý "số liệu nhảy loạn xạ" (ĐÃ SỬA):** trước đây hàm đọc DB phân trang
-> 1000 dòng/lần bằng `.range()` **mà không `ORDER BY`**. Postgres không đảm bảo thứ
-> tự dòng giữa các trang → với `tts_cache` hàng trăm nghìn dòng, các trang chồng/lọt
-> dòng ngẫu nhiên → mỗi lần chạy ra số khác nhau. Nay đã **luôn sắp xếp theo khóa
-> duy nhất** (`tts_cache`→`hash`, `pronunciations`→`word,voice`) nên số liệu **ổn
-> định, chạy lại y hệt** (xem `fetchAllRows` trong `scripts/seed-all.ts`).
+> Số liệu ổn định giữa các lần chạy (đọc DB có `ORDER BY` theo khóa duy nhất —
+> xem `fetchAllRows` trong `scripts/seed-all.ts`).
 
 Dòng đầu khi audit: `xong (27330 phát âm, 301227 câu TTS)` = **tổng số dòng thật**
 trong DB. Con số này có thể **lớn hơn** `done` của báo cáo vì DB còn chứa **bản ghi

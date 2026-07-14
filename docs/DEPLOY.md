@@ -1,137 +1,75 @@
-# 🚀 Deploy Guide — English Tutor
+# Deploy — tóm tắt nhanh
 
-## Quick Fix cho 502 Bad Gateway
+> Hướng dẫn đầy đủ (Node, Nginx, HTTPS, `.env`...): **`docs/deploy-vps-ubuntu.md`**.
+> File này chỉ tóm tắt cách deploy code mới + xử lý sự cố nhanh.
 
-VPS không có `compression` package. Fix ngay:
+## Cách deploy
+
+**Cách 1 — Tự động (đang dùng):** push/merge PR vào `main` → GitHub Actions (`.github/workflows/ci.yml`)
+chạy lint/type/test/build; nếu **CI xanh**, `.github/workflows/deploy.yml` tự SSH vào VPS, pull code,
+`npm install`, **chạy migration Supabase còn thiếu** (`npm run migrate`), build, `pm2 reload`
+(không downtime), rồi health-check `/api/health`. Cần secrets `VPS_HOST`, `VPS_USER`,
+`VPS_SSH_KEY` trong GitHub → Settings → Secrets and variables → Actions.
+
+**Cách 2 — Thủ công trên VPS:**
 
 ```bash
-# SSH vào VPS
 ssh root@160.30.172.203
-
-# Vào thư mục app
 cd /var/www/english-tutor
-
-# Cài dependencies + build
-npm install
-npm run build
-
-# Restart PM2
-pm2 restart english-tutor
-
-# Check status
-pm2 logs english-tutor --lines 10
+bash deploy.sh          # hoặc: bash scripts/deploy.sh
 ```
 
----
+Cả `deploy.sh` (gốc repo) và `scripts/deploy.sh` đều tự làm: pull code mới nhất từ
+`origin/main` → cài dependencies → **chạy migration Supabase còn thiếu** (`npm run migrate`,
+dừng deploy nếu lỗi) → build → restart PM2. Cần `SUPABASE_DB_URL` trong `.env` trên VPS để
+bước migration chạy được — xem `supabase/migrations/README.md`.
 
-## Option 1: Manual Deploy (chạy script)
+## Xử lý sự cố nhanh
+
+**502 Bad Gateway** — Express chưa chạy hoặc lỗi:
 
 ```bash
-# Local machine
-bash scripts/deploy.sh
+pm2 logs english-tutor --lines 50
+pm2 status
+curl http://localhost:3001/api/health
 ```
 
-Điều kiện:
+Thiếu package sau khi pull code mới → `npm ci` rồi `npm run build` lại.
 
-- Có SSH key setup hoặc password SSH
-- Node.js v22+
-
----
-
-## Option 2: Auto Deploy (GitHub Actions)
-
-GitHub Actions sẽ auto deploy khi push lên `main`.
-
-### Setup:
-
-1. **Tạo SSH key trên VPS:**
-
-```bash
-ssh-keygen -t ed25519 -f /root/.ssh/github-deploy -N ""
-cat /root/.ssh/github-deploy.pub >> /root/.ssh/authorized_keys
-```
-
-2. **Add secrets vào GitHub:**
-   - Go to: `Settings` → `Secrets and variables` → `Actions`
-   - Thêm 3 secrets:
-     - `VPS_HOST`: `160.30.172.203`
-     - `VPS_USER`: `root`
-     - `VPS_SSH_KEY`: (nội dung file `/root/.ssh/github-deploy`)
-
-3. **Push code lên main:**
-
-```bash
-git push origin main
-```
-
-GitHub Actions sẽ tự động deploy! ✅
-
----
-
-## Troubleshooting
-
-### 502 Bad Gateway
-
-- Check: `pm2 logs english-tutor --lines 50`
-- Nếu lỗi `compression not found`: `npm install`
-- Nếu lỗi build: `npm run build` check error message
-
-### Port 3001 đang dùng
+**Port 3001 đang bị chiếm:**
 
 ```bash
 lsof -i :3001
 kill -9 <PID>
 ```
 
-### PM2 không restart
+**PM2 không chịu restart:**
 
 ```bash
 pm2 delete english-tutor
 pm2 start ecosystem.config.cjs --name english-tutor
 ```
 
-### Clear cache
+**Xóa sạch cài lại (khi nghi cache/node_modules hỏng):**
 
 ```bash
 cd /var/www/english-tutor
 rm -rf dist node_modules
-npm install
-npm run build
+npm ci && npm run build
 pm2 restart english-tutor
 ```
 
----
+## Checklist trước khi coi là "đã deploy xong"
 
-## Deploy Status
+- [ ] `.env` trên VPS có đủ biến (xem `docs/deploy-vps-ubuntu.md` Bước 4)
+- [ ] `ecosystem.config.cjs` → `interpreter` khớp `which node` trên VPS (Node ≥ 22)
+- [ ] Nginx đã trỏ `/api/` về port 3001 (`nginx/en-vi.conf`)
+- [ ] SSL Let's Encrypt còn hạn (`sudo certbot renew --dry-run`)
+- [ ] `curl https://en-vi.donghanhcungban.com/api/health` trả `{"status":"ok",...}`
 
-Xem logs realtime:
+## File liên quan
 
-```bash
-pm2 logs english-tutor -f
-```
-
-Health check:
-
-```bash
-curl http://localhost:3001/api/health
-```
-
----
-
-## Deployment Checklist
-
-- [ ] SSH key setup (Option 2)
-- [ ] GitHub secrets added (Option 2)
-- [ ] VPS `.env` có đủ biến (SUPABASE_URL, API keys, etc.)
-- [ ] PM2 ecosystem.config.cjs chạy Node v22
-- [ ] Nginx proxy setup tới port 3001
-- [ ] SSL Let's Encrypt auto-renew hoạt động
-
----
-
-## Files
-
-- `scripts/deploy.sh` — Manual deploy script
-- `.github/workflows/deploy.yml` — GitHub Actions auto deploy
-- `ecosystem.config.cjs` — PM2 config
-- `docs/deploy-vps-ubuntu.md` — Full setup guide
+- `deploy.sh` — script deploy thủ công/đầy đủ (có migration)
+- `.github/workflows/deploy.yml` — deploy tự động sau khi CI pass
+- `ecosystem.config.cjs` — cấu hình PM2
+- `docs/deploy-vps-ubuntu.md` — hướng dẫn đầy đủ từ đầu (setup VPS lần đầu)

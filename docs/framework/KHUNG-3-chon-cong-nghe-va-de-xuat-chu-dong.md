@@ -50,7 +50,7 @@ nêu thiếu sót/rủi ro/cơ hội kèm **đề xuất cụ thể**, để ng�
 | 19  | **Vận hành sau ra mắt**        | Quy trình sự cố, cập nhật phụ thuộc, nợ kỹ thuật.                                                |
 
 > **Quy tắc vàng:** thà nêu thừa một góp ý còn hơn để người dùng phát hiện thiếu sót lúc đã code xong.
-> Trình bày gọn (mỗi mục 1–2 dòng + đề xuất), không thuyết giảng. Người dùng chọn, AI không tự quyết.
+> Trình bày gọn, không thuyết giảng — người dùng chọn, AI không tự quyết.
 
 ---
 

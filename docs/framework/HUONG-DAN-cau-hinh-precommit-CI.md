@@ -154,7 +154,8 @@ Trong `tsconfig.json`, đảm bảo `compilerOptions` có (Next đã bật `stri
 }
 ```
 
-> `noUncheckedIndexedAccess` rất đáng giá: buộc kiểm tra trước khi truy cập phần tử mảng/object → tránh lỗi `undefined`. Nếu thấy quá chặt lúc mới bắt đầu, có thể tạm tắt `noUnusedLocals`/`noUnusedParameters` (ESLint đã lo phần này).
+> `noUncheckedIndexedAccess` đáng giá: buộc kiểm tra trước khi truy cập phần tử mảng/object → tránh lỗi
+> `undefined`. Quá chặt lúc mới bắt đầu thì tạm tắt `noUnusedLocals`/`noUnusedParameters` (ESLint đã lo phần này).
 
 ---
 
@@ -283,11 +284,9 @@ jobs:
         run: npm run build
 ```
 
-> CI chạy trên máy chủ sạch nên bắt được lỗi kiểu "máy tôi chạy được mà". Mọi pull request sẽ hiển thị xanh/đỏ theo kết quả này.
->
-> File `ci.yml` kèm theo có một step kiểm tra đầu job: **nếu chưa có `package.json`** (repo mới chỉ có
-> khung) thì các bước build/test được bỏ qua để CI vẫn xanh; **khi dự án thật được tạo**, toàn bộ hàng rào
-> tự kích hoạt. Khi đã có app, có thể xóa step guard này nếu muốn CI luôn chạy đầy đủ.
+> CI chạy trên máy chủ sạch nên bắt được lỗi kiểu "máy tôi chạy được mà". File `ci.yml` kèm theo có một
+> step guard đầu job: nếu chưa có `package.json` (repo mới chỉ có khung) thì bỏ qua build/test để CI vẫn
+> xanh; khi dự án thật được tạo, toàn bộ hàng rào tự kích hoạt — có thể xóa step guard này sau đó.
 
 ---
 

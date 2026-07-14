@@ -1,3 +1,5 @@
+⚠️ File này đã gộp nội dung vào tài liệu khác — xem bên dưới.
+
 # TTS_CACHE_SETUP.md — đã gộp vào tài liệu khác
 
 > File này (hướng dẫn cache TTS cho câu) đã **lỗi thời** sau khi gộp nhánh chính

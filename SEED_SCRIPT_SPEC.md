@@ -1,281 +1,53 @@
-# Script: Seed 10,000 Từ Phát Âm (Bulk TTS Cache)
+# Script: Seed trước audio phát âm từ điển
 
-## Tổng quan
+> ⚠️ Bản spec gốc (Next.js, `words.json`, biến `NEXT_PUBLIC_*`, 1 giọng, luôn upload
+> Supabase Storage) đã lỗi thời. Nội dung dưới đây mô tả **script thật đang chạy**:
+> `scripts/seed-pronunciations.ts`.
 
-Script chạy 1 lần duy nhất trên máy local:
+## Mục đích
 
-- Đọc danh sách 10,000 từ
-- Bỏ qua từ đã có trong DB (resume được nếu bị dừng)
-- Gọi Google TTS theo batch, tránh rate limit
-- Upload mp3 lên Supabase Storage
-- Hiển thị progress bar trong terminal
-- Ghi log lỗi ra file để retry sau
+Chạy 1 lần (hoặc mỗi khi có từ mới) để tạo trước audio cho **toàn bộ từ điển**, thay vì
+để người dùng đợi TTS ở lần tra đầu tiên.
 
----
-
-## Cấu trúc file
-
-```
-scripts/
-  seed-pronunciations.ts    ← Script chính
-  words.json                ← Danh sách 10,000 từ của bạn
-  seed-errors.json          ← Tự động tạo, chứa từ bị lỗi
-```
-
----
-
-## 1. Cài thêm dependencies
+## Cách chạy
 
 ```bash
-npm install tsx dotenv cli-progress @types/cli-progress
+npm run seed:pronunciation
 ```
 
-- `tsx` — chạy TypeScript trực tiếp không cần compile
-- `dotenv` — đọc file .env.local
-- `cli-progress` — progress bar trong terminal
+- Nguồn từ mặc định: toàn bộ `public/data/dictionary/chunk-*.json`.
+- Đổi nguồn bằng biến `WORDS_FILE=<file.json>` hoặc `DICT_DIR=<thư mục chunk>`.
+- Retry các từ lỗi:
+  ```bash
+  WORDS_FILE=scripts/seed-errors.json npm run seed:pronunciation
+  ```
 
----
+## Cách hoạt động
 
-## 2. scripts/words.json
+- Tạo **2 giọng** (`female`, `male`) cho mỗi từ — người dùng chọn giọng ở nút loa
+  (`female2`/`male2` chỉ dùng cho hội thoại bài học, không seed vào bảng `pronunciations`).
+- Tái dùng logic gọi TTS + lưu file từ `api/_lib/googleTts.ts` + `api/_lib/supabaseAdmin.ts`
+  (không viết lại lần 2) — audio lưu qua `saveAudio()` (`api/_lib/fileStorage.ts`), tự
+  chọn local VPS hay Supabase Storage theo `STORAGE_DRIVER`.
+- Bỏ qua (từ, giọng) đã có sẵn trong DB đúng `VOICE_VERSION` hiện tại → chạy lại an
+  toàn, resume được nếu bị dừng giữa chừng.
+- Chạy song song theo batch (`BATCH_SIZE = 15`), có retry tự động tới 5 vòng
+  (`MAX_ROUNDS`) khi gặp lỗi tạm thời.
+- Progress bar trong terminal; từ lỗi (sau hết vòng retry) ghi vào `scripts/seed-errors.json`.
 
-```json
-["apple", "beautiful", "challenge", "...10000 từ của bạn..."]
-```
+## Lưu ý chi phí/hạn mức
 
----
+- Google TTS: free tier theo ký tự/tháng — từ vựng ngắn nên tốn rất ít.
+- Storage: nếu `STORAGE_DRIVER=local` (mặc định) thì audio nằm trên ổ cứng VPS, không
+  tính vào hạn mức Supabase Storage.
 
-## 3. scripts/seed-pronunciations.ts
+## Công cụ khuyên dùng hơn: `npm run seed:all`
 
-```typescript
-import * as dotenv from 'dotenv'
-import * as fs from 'fs'
-import * as path from 'path'
-import { createClient } from '@supabase/supabase-js'
-import cliProgress from 'cli-progress'
-
-// Load .env.local
-dotenv.config({ path: '.env.local' })
-
-// ── Config ──────────────────────────────────────────────────────
-const BATCH_SIZE = 5 // Số từ xử lý song song cùng lúc
-const DELAY_MS = 300 // Nghỉ giữa các batch (tránh rate limit)
-const LANG = 'en-US'
-const VOICE = 'en-US-Journey-F' // Giọng tự nhiên nhất
-
-const WORDS_FILE = path.join(__dirname, 'words.json')
-const ERRORS_FILE = path.join(__dirname, 'seed-errors.json')
-
-// ── Supabase Client ─────────────────────────────────────────────
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!, // Cần service role để upload
-)
-
-// ── Google TTS ──────────────────────────────────────────────────
-async function generateAudio(word: string): Promise<Buffer> {
-  const res = await fetch(
-    `https://texttospeech.googleapis.com/v1/text:synthesize?key=${process.env.GOOGLE_TTS_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        input: { text: word },
-        voice: { languageCode: LANG, name: VOICE },
-        audioConfig: { audioEncoding: 'MP3', speakingRate: 0.9 },
-      }),
-    },
-  )
-
-  if (!res.ok) throw new Error(`TTS API lỗi ${res.status}: ${res.statusText}`)
-  const data = await res.json()
-  return Buffer.from(data.audioContent, 'base64')
-}
-
-// ── Upload lên Supabase Storage ─────────────────────────────────
-async function uploadAudio(word: string, buffer: Buffer): Promise<string> {
-  const fileName = `${word}.mp3`
-
-  const { error } = await supabase.storage.from('pronunciations').upload(fileName, buffer, {
-    contentType: 'audio/mpeg',
-    upsert: false, // Không ghi đè nếu đã có
-  })
-
-  // Bỏ qua lỗi "đã tồn tại"
-  if (error && !error.message.includes('already exists')) {
-    throw new Error(`Upload lỗi: ${error.message}`)
-  }
-
-  const { data } = supabase.storage.from('pronunciations').getPublicUrl(fileName)
-
-  return data.publicUrl
-}
-
-// ── Lưu vào DB ──────────────────────────────────────────────────
-async function saveToDb(word: string, audioUrl: string): Promise<void> {
-  const { error } = await supabase
-    .from('pronunciations')
-    .upsert({ word, audio_url: audioUrl, lang: LANG }, { onConflict: 'word' })
-
-  if (error) throw new Error(`DB lỗi: ${error.message}`)
-}
-
-// ── Xử lý 1 từ (TTS → Upload → DB) ────────────────────────────
-async function processWord(word: string): Promise<'ok' | 'skip' | 'error'> {
-  try {
-    const buffer = await generateAudio(word)
-    const audioUrl = await uploadAudio(word, buffer)
-    await saveToDb(word, audioUrl)
-    return 'ok'
-  } catch (err) {
-    return 'error'
-  }
-}
-
-// ── Hàm chờ ────────────────────────────────────────────────────
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
-// ── MAIN ────────────────────────────────────────────────────────
-async function main() {
-  console.log('🚀 Bắt đầu seed phát âm...\n')
-
-  // 1. Đọc danh sách từ
-  const allWords: string[] = JSON.parse(fs.readFileSync(WORDS_FILE, 'utf-8'))
-  console.log(`📋 Tổng số từ: ${allWords.length}`)
-
-  // 2. Lấy từ đã có trong DB (để bỏ qua — resume được)
-  const { data: existing } = await supabase.from('pronunciations').select('word')
-
-  const done = new Set(existing?.map((r) => r.word) ?? [])
-  const todo = allWords.filter((w) => !done.has(w.toLowerCase()))
-
-  console.log(`✅ Đã có: ${done.size} từ`)
-  console.log(`⏳ Cần tạo: ${todo.length} từ\n`)
-
-  if (todo.length === 0) {
-    console.log('🎉 Tất cả đã được cache rồi!')
-    return
-  }
-
-  // 3. Setup progress bar
-  const bar = new cliProgress.SingleBar(
-    {
-      format: 'Tiến độ |{bar}| {percentage}% | {value}/{total} từ | ✓{ok} ✗{errors}',
-      barCompleteChar: '█',
-      barIncompleteChar: '░',
-      hideCursor: true,
-    },
-    cliProgress.Presets.shades_classic,
-  )
-
-  bar.start(todo.length, 0, { ok: 0, errors: 0 })
-
-  // 4. Xử lý theo batch
-  let countOk = 0
-  let countError = 0
-  const errorWords: string[] = []
-
-  for (let i = 0; i < todo.length; i += BATCH_SIZE) {
-    const batch = todo.slice(i, i + BATCH_SIZE)
-
-    const results = await Promise.all(batch.map((word) => processWord(word.toLowerCase())))
-
-    results.forEach((result, idx) => {
-      if (result === 'ok') {
-        countOk++
-      } else if (result === 'error') {
-        countError++
-        errorWords.push(batch[idx])
-      }
-    })
-
-    bar.update(Math.min(i + BATCH_SIZE, todo.length), {
-      ok: countOk,
-      errors: countError,
-    })
-
-    // Nghỉ giữa các batch
-    if (i + BATCH_SIZE < todo.length) {
-      await sleep(DELAY_MS)
-    }
-  }
-
-  bar.stop()
-
-  // 5. Ghi file lỗi để retry sau
-  if (errorWords.length > 0) {
-    fs.writeFileSync(ERRORS_FILE, JSON.stringify(errorWords, null, 2))
-    console.log(`\n⚠️  ${errorWords.length} từ bị lỗi → xem file: seed-errors.json`)
-    console.log(
-      `   Chạy lại với: WORDS_FILE=scripts/seed-errors.json npx tsx scripts/seed-pronunciations.ts`,
-    )
-  }
-
-  console.log(`\n✅ Hoàn thành! Thành công: ${countOk} | Lỗi: ${countError}`)
-}
-
-main().catch(console.error)
-```
-
----
-
-## 4. Thêm lệnh vào package.json
-
-```json
-{
-  "scripts": {
-    "seed:pronunciation": "npx tsx scripts/seed-pronunciations.ts"
-  }
-}
-```
-
----
-
-## 5. Chạy script
+`scripts/seed-all.ts` gộp seed phát âm từ điển + câu ví dụ CEFR/giáo trình/hội thoại
+vào 1 lệnh có báo cáo tiến độ (%) và menu chọn nhóm cần seed. Xem chi tiết:
+`docs/seed-guide.md`.
 
 ```bash
-# Lần đầu — seed toàn bộ
-npm run seed:pronunciation
-
-# Nếu bị dừng giữa chừng → chạy lại, script tự bỏ qua từ đã có
-npm run seed:pronunciation
-
-# Retry những từ bị lỗi
-WORDS_FILE=scripts/seed-errors.json npm run seed:pronunciation
+npm run seed:all             # menu tương tác
+npm run seed:all -- --check  # chỉ xem báo cáo, không seed
 ```
-
----
-
-## 6. Output trong terminal
-
-```
-🚀 Bắt đầu seed phát âm...
-
-📋 Tổng số từ: 10000
-✅ Đã có: 3200 từ
-⏳ Cần tạo: 6800 từ
-
-Tiến độ |████████░░░░░░░░| 48% | 3264/6800 từ | ✓3260 ✗4
-
-✅ Hoàn thành! Thành công: 6795 | Lỗi: 5
-⚠️  5 từ bị lỗi → xem file: seed-errors.json
-```
-
----
-
-## 7. Ước tính thời gian
-
-| Số từ  | BATCH_SIZE=5 + delay 300ms | Thực tế  |
-| ------ | -------------------------- | -------- |
-| 1,000  | ~4 phút                    | ~5 phút  |
-| 5,000  | ~20 phút                   | ~25 phút |
-| 10,000 | ~40 phút                   | ~50 phút |
-
-> Có thể tăng BATCH_SIZE lên 10 nếu mạng ổn định để chạy nhanh hơn.
-
----
-
-## 8. Lưu ý quan trọng
-
-- **Không đóng terminal** khi đang chạy — nếu lỡ đóng, chạy lại bình thường, script tự resume
-- **Google TTS free tier**: 1 triệu ký tự/tháng — 10,000 từ trung bình ~5 ký tự/từ = 50,000 ký tự → **hoàn toàn free**
-- **Supabase Storage free tier**: 1GB → 10,000 file mp3 ~30KB/file = ~300MB → **vừa đủ free**
