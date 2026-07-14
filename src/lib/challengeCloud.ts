@@ -151,34 +151,3 @@ export async function fetchChallengeEntriesCloud(): Promise<CloudChallengeEntry[
     return null
   }
 }
-
-// ── MERGE: hợp nhất entries local + cloud theo `day` ─────────────────────────
-// Luật merge (mỗi ngày chỉ giữ 1 entry, chọn bản "đầy đủ/mới hơn"):
-//   1. Ngày chỉ có ở 1 bên → giữ nguyên bên đó.
-//   2. Chỉ 1 bên có feedback → bên đó thắng (đã có phản hồi AI = trọn vẹn hơn).
-//   3. Cả hai (hoặc không bên nào) có feedback → bản có createdAt MỚI HƠN thắng;
-//      thiếu createdAt để so (bản local không lưu) → ưu tiên LOCAL (máy này vừa
-//      nộp là bản mới nhất, đồng thời là nguồn hiển thị tức thì).
-// Kết quả sắp theo `day` tăng dần. Generic T: truyền ChallengeEntryLocal[] vào thì
-// nhận lại đúng kiểu đó (merge chỉ CHỌN entry, không tự dựng entry mới).
-export function mergeChallengeEntries<T extends ChallengeEntryLike>(local: T[], cloud: T[]): T[] {
-  const byDay = new Map<string, T>()
-  // Nạp cloud trước, local sau — khi trùng ngày, pick() quyết định bản thắng.
-  for (const c of cloud) byDay.set(c.day, c)
-  for (const l of local) {
-    const c = byDay.get(l.day)
-    byDay.set(l.day, c ? pick(l, c) : l)
-  }
-  return [...byDay.values()].sort((a, b) => a.day.localeCompare(b.day))
-}
-
-// Chọn giữa bản local và cloud cùng ngày theo luật 2–3 ở trên.
-function pick<T extends ChallengeEntryLike>(local: T, cloud: T): T {
-  const localHasFb = !!local.feedback
-  const cloudHasFb = !!cloud.feedback
-  if (localHasFb !== cloudHasFb) return localHasFb ? local : cloud
-  if (local.createdAt && cloud.createdAt) {
-    return local.createdAt >= cloud.createdAt ? local : cloud
-  }
-  return local
-}

@@ -7,7 +7,7 @@
 // Video KHÔNG lưu ở đây (xem lib/challengeVideo.ts — IndexedDB); ở đây chỉ giữ transcript,
 // feedback và tiến độ — dữ liệu chính, nhẹ (vài KB), an toàn khi mất video local.
 
-import { vnDateStr } from './date'
+import { vnDateStr, daysBetween, addDays } from './date'
 
 // ── Hằng số thử thách ────────────────────────────────────────────────────────
 // Độ dài 1 vòng thử thách (ngày).
@@ -81,23 +81,6 @@ function writeChallenge(uid: string, challenge: ChallengeState): void {
     // Đầy bộ nhớ / private mode — không vỡ luồng; dữ liệu thật sẽ có bản sync Supabase.
     console.warn('[challenge] không ghi được localStorage (bỏ qua):', err)
   }
-}
-
-// ── Tiện ích ngày (chuỗi YYYY-MM-DD, so bằng mốc UTC nửa đêm như storage.ts) ──
-const MS_DAY = 86_400_000
-
-function dateStrToMs(d: string): number {
-  return new Date(`${d}T00:00:00Z`).getTime()
-}
-
-// Số ngày từ a đến b (b sau a → dương).
-function daysBetween(a: string, b: string): number {
-  return Math.round((dateStrToMs(b) - dateStrToMs(a)) / MS_DAY)
-}
-
-// Ngày cách `d` đúng `n` ngày (n âm = lùi về quá khứ).
-function addDays(d: string, n: number): string {
-  return new Date(dateStrToMs(d) + n * MS_DAY).toISOString().slice(0, 10)
 }
 
 // ── API chính ────────────────────────────────────────────────────────────────

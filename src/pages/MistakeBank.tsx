@@ -125,14 +125,14 @@ function ReviewCard({
           <div className="flex gap-2 pt-1">
             <button
               onClick={onSkip}
-              className="flex-1 flex items-center justify-center gap-1.5 border border-zinc-700/70 hover:border-zinc-600 text-zinc-300 rounded-xl py-2.5 text-sm transition hover:bg-zinc-800/50 active:scale-[0.98]"
+              className="tap-44 flex-1 flex items-center justify-center gap-1.5 border border-zinc-700/70 hover:border-zinc-600 text-zinc-300 rounded-xl py-2.5 text-sm transition hover:bg-zinc-800/50 active:scale-[0.98]"
             >
               <RotateCcw className="w-4 h-4" />
               {isA ? 'Vẫn khó' : 'Still hard'}
             </button>
             <button
               onClick={onRemembered}
-              className="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 text-white font-semibold rounded-xl py-2.5 text-sm transition active:scale-[0.98]"
+              className="tap-44 flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 text-white font-semibold rounded-xl py-2.5 text-sm transition active:scale-[0.98]"
             >
               <Check className="w-4 h-4" />
               {isA ? 'Đã nhớ' : 'Got it'}
@@ -254,13 +254,13 @@ export default function MistakeBank() {
             <div className="flex gap-2 justify-center">
               <button
                 onClick={() => nav('/chat')}
-                className="text-sm bg-gradient-to-r from-accent-600 to-accent-500 text-white font-medium px-4 py-2.5 rounded-xl transition active:scale-[0.98]"
+                className="tap-44 text-sm bg-gradient-to-r from-accent-600 to-accent-500 text-white font-medium px-4 py-2.5 rounded-xl transition active:scale-[0.98]"
               >
                 {isA ? 'Luyện Chat →' : 'Practise Chat →'}
               </button>
               <button
                 onClick={() => nav('/writing')}
-                className="text-sm border border-zinc-700/70 text-zinc-300 px-4 py-2.5 rounded-xl transition hover:bg-zinc-800/50"
+                className="tap-44 text-sm border border-zinc-700/70 text-zinc-300 px-4 py-2.5 rounded-xl transition hover:bg-zinc-800/50"
               >
                 {isA ? 'Luyện Viết' : 'Writing'}
               </button>
@@ -272,7 +272,7 @@ export default function MistakeBank() {
             <div className="flex gap-2">
               <button
                 onClick={() => setTab('review')}
-                className={`flex-1 py-2 rounded-xl text-sm font-medium border transition ${
+                className={`tap-44 flex-1 py-2 rounded-xl text-sm font-medium border transition ${
                   tab === 'review'
                     ? 'bg-accent-500/15 border-accent-500/40 text-accent-300 theme-light:text-accent-800'
                     : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:text-zinc-300'
@@ -282,7 +282,7 @@ export default function MistakeBank() {
               </button>
               <button
                 onClick={() => setTab('all')}
-                className={`flex-1 py-2 rounded-xl text-sm font-medium border transition ${
+                className={`tap-44 flex-1 py-2 rounded-xl text-sm font-medium border transition ${
                   tab === 'all'
                     ? 'bg-accent-500/15 border-accent-500/40 text-accent-300 theme-light:text-accent-800'
                     : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:text-zinc-300'
