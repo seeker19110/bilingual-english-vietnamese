@@ -450,8 +450,13 @@ export function TodayLesson({
       const totalToday = getDailyLearned(uid) // đã bump rồi
       if (totalToday >= dailyMax) setPhase('daily-max')
       else setPhase('batch-done')
-      // Lần ĐẦU hoàn thành bài trong ngày → màn "🔥 Chuỗi N ngày" (1 lần/ngày)
-      if (shouldCelebrateStreak(uid)) setCelebrating(true)
+      // Lần ĐẦU hoàn thành bài trong ngày → màn "🔥 Chuỗi N ngày" (1 lần/ngày).
+      // Đánh dấu đã ăn mừng NGAY (không đợi onDone) — rời trang giữa chừng vẫn
+      // không hiện lại màn này trong cùng ngày.
+      if (shouldCelebrateStreak(uid)) {
+        markStreakCelebrated(uid)
+        setCelebrating(true)
+      }
     } else {
       setIdx(nextIdx)
     }
@@ -545,7 +550,6 @@ export function TodayLesson({
         uid={uid}
         isA={isA}
         onDone={() => {
-          markStreakCelebrated(uid)
           setCelebrating(false)
         }}
       />

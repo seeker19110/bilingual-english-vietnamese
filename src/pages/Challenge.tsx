@@ -305,6 +305,12 @@ export default function Challenge() {
   const uid = user.id
 
   const { isThrottled, throttle } = useApiThrottle()
+  // Khóa chống nộp trùng (double-click/double-tap trước khi React re-render ẩn nút) —
+  // ref đọc/ghi ĐỒNG BỘ, không như state (có thể còn giá trị cũ khi hàm gọi lại ngay lập tức).
+  const submittingRef = useRef(false)
+  // Cache transcript đã nhận diện — bấm "Nộp" lại sau khi bước chấm AI lỗi (mạng/rate-limit)
+  // thì dùng lại, KHÔNG nhận diện giọng nói lần 2 (tốn oan 1 lượt STT cho cùng 1 bản ghi).
+  const transcriptCacheRef = useRef<string | null>(null)
 
   const [challenge, setChallenge] = useState<ChallengeState | null>(() => getChallenge(uid))
   const [syncedOnce, setSyncedOnce] = useState(false)
@@ -483,6 +489,7 @@ export default function Challenge() {
     const url = URL.createObjectURL(result.videoBlob ?? result.audioBlob)
     setPreviewUrl(url)
     setRecording(result)
+    transcriptCacheRef.current = null // bản ghi mới — bỏ transcript cache của lần trước
     setStage('reviewing')
   }
 
@@ -490,15 +497,26 @@ export default function Challenge() {
     if (previewUrl) URL.revokeObjectURL(previewUrl)
     setPreviewUrl(null)
     setRecording(null)
+    transcriptCacheRef.current = null
     setStage('idle')
     setElapsedSec(0)
   }
 
   async function submitEntry() {
-    if (!challenge || !dayInfo || isThrottled) {
+    if (!challenge || !dayInfo || isThrottled || submittingRef.current) {
       if (isThrottled) toast.error(isA ? 'Chờ chút rồi thử lại...' : 'Please wait...')
       return
     }
+    submittingRef.current = true
+    try {
+      await submitEntryInner()
+    } finally {
+      submittingRef.current = false
+    }
+  }
+
+  async function submitEntryInner() {
+    if (!challenge || !dayInfo) return
     const usage = getUsage(uid)
     const isTyped = stage === 'typed'
     if (!isTyped && usage.sttCount >= LIMITS[user.plan].stt) {
@@ -526,12 +544,19 @@ export default function Challenge() {
           throw new Error(isA ? 'Hãy gõ vài câu trước đã.' : 'Type a few sentences first.')
       } else {
         if (!recording) throw new Error('missing recording')
-        transcript = await transcribeChallengeAudio(
-          recording.audioBlob,
-          recording.audioMime,
-          isA ? 'en' : 'vi',
-        )
-        incrementUsage(uid, 'sttCount')
+        // Nộp lại sau khi bước chấm AI lỗi (mạng/rate-limit) → dùng lại transcript đã
+        // nhận diện, KHÔNG gọi STT lần 2 cho cùng 1 bản ghi (tốn oan lượt sttCount).
+        if (transcriptCacheRef.current) {
+          transcript = transcriptCacheRef.current
+        } else {
+          transcript = await transcribeChallengeAudio(
+            recording.audioBlob,
+            recording.audioMime,
+            isA ? 'en' : 'vi',
+          )
+          incrementUsage(uid, 'sttCount')
+          transcriptCacheRef.current = transcript
+        }
       }
 
       const sys = challengeFeedbackSystemPrompt(transcript, topic, dir)
@@ -581,6 +606,7 @@ export default function Challenge() {
       if (previewUrl) URL.revokeObjectURL(previewUrl)
       setPreviewUrl(null)
       setRecording(null)
+      transcriptCacheRef.current = null
       setTypedText('')
       setReRecording(false)
       setStage('idle')
@@ -924,6 +950,7 @@ export default function Challenge() {
                   value={typedText}
                   onChange={(e) => setTypedText(e.target.value)}
                   rows={5}
+                  aria-label={isA ? 'Nội dung challenge hôm nay' : "Today's challenge text"}
                   placeholder={
                     isA
                       ? 'Gõ những gì bạn định nói trong challenge hôm nay...'
