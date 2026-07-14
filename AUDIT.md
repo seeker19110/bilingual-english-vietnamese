@@ -5,13 +5,37 @@
 > rút gọn mạnh (bỏ bảng chi tiết/checklist dài dòng, giữ phát hiện + cách vá). Chi tiết đầy đủ
 > hơn (nếu cần) nằm trong lịch sử git tại các PR liên quan.
 
-## Trạng thái hiện tại (2026-07-13)
+## Trạng thái hiện tại (2026-07-14)
 
 **Không có phát hiện nào đang mở (OPEN).** Mọi Critical/High/Medium đã vá và có test hồi quy.
 Hạ tầng kiểm thử hiện tại (đã vượt xa yêu cầu ban đầu của audit v2 — xem PHẦN A §6 cũ):
 Vitest (unit, coverage ratchet), Playwright E2E + quét a11y bằng axe (0 critical/serious ở mọi
 route chính × 4 theme, gồm cả màn kết quả AI), CI gate (lint/typecheck/test/build/format/E2E)
 trên mọi PR. Số lượng test tăng dần theo thời gian — xem `PROGRESS.md` cho số hiện tại.
+
+## PHẦN E — Audit toàn diện tính năng mới (2026-07-14)
+
+Rà 3 lớp (bảo mật / logic-correctness / chất lượng code+a11y) tập trung vào các tính năng thêm
+sau đợt audit 2026-07-13 chưa được audit sâu: Challenge 1 phút/30 ngày (+ migration tự động khi
+deploy), Sổ lỗi cá nhân, bài thi cuối cấp CEFR, gamification streak. **Bảo mật: sạch, không phát
+hiện nào** (RLS `challenge_entries` đúng, video Challenge chỉ lưu IndexedDB không upload, không
+endpoint nào thiếu `validateAuth`, rate-limit/đếm lượt server-side không bypass được). 9 phát
+hiện logic/chất lượng, đã vá hết cùng đợt:
+
+- **Medium:** `Challenge.tsx` nộp lại sau khi AI chấm lỗi sẽ chạy lại STT tốn oan lượt — vá bằng
+  cache transcript (`transcriptCacheRef`), chỉ nhận diện lại khi có bản ghi mới.
+- **Low:** `submitEntry` có thể chạy 2 lần đồng thời do double-click trước khi React re-render —
+  vá bằng khóa `submittingRef` (đồng bộ, không phụ thuộc state).
+- **Low:** màn ăn mừng streak có thể hiện lại trong ngày nếu rời trang giữa chừng — vá bằng đánh
+  dấu `markStreakCelebrated` ngay khi hiện màn, không đợi đóng.
+- **Medium × 3 (chất lượng code):** `api/push.ts` dùng `as any[]` ở 3 chỗ (vi phạm luật "không
+  any") → thay bằng interface hàng DB; `challengeCloud.ts` có hàm `mergeChallengeEntries` chết
+  (không ai gọi, trùng `mergeCloudEntries` đang dùng thật) → xóa; `challenge.ts` tự viết lại
+  helper ngày trùng `storage.ts` → gom về `src/lib/date.ts` dùng chung.
+- **Low × 3:** thiếu `aria-label` cho textarea gõ tay ở Challenge; thiếu `tap-44` ở vài nút
+  MistakeBank; sót chữ lặp "challenge challenge" trong prompt sau đổi tên Vlog→Challenge.
+
+Cổng chất lượng sau vá: build/typecheck/lint(0 cảnh báo)/format/test (320/320) đều xanh.
 
 ## PHẦN D — Audit bản dịch toàn dự án (2026-07-06)
 
