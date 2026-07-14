@@ -8,7 +8,7 @@ import type {
 } from '../types'
 // Mỗi lần lưu xuống localStorage, ta cũng đẩy bản ghi lên Supabase (bắn rồi quên)
 import { pushChatSession, pushWritingSub, pushSpeakingSession, pushLearnDay } from './cloud'
-import { vnDateStr } from './date'
+import { vnDateStr, daysBetween } from './date'
 
 // ─── Keys ────────────────────────────────────────────────────────────────────
 const K = {
@@ -191,7 +191,6 @@ export function setDirection(dir: Direction) {
 // Dữ liệu đọc từ localStorage (đã được pullUserData đồng bộ từ Supabase tối đa 365 ngày),
 // nên streak nhất quán giữa các máy.
 const STREAK_MAX_DAYS = 365
-const MS_DAY = 86_400_000
 
 function hasActivityOn(usage: DailyUsage | null): boolean {
   if (!usage) return false
@@ -216,12 +215,9 @@ function getStreakFreezeDates(userId: string): string[] {
   return get<string[]>(STREAK_FREEZE_KEY(userId)) ?? []
 }
 
-// Số ngày giữa 2 chuỗi "yyyy-mm-dd" — so bằng mốc UTC nửa đêm (chuỗi ngày không có múi
-// giờ, không liên quan tới DST) nên phép trừ luôn ra đúng số ngày nguyên.
+// Số ngày giữa 2 chuỗi "yyyy-mm-dd" (luôn dương) — dùng helper dùng chung `date.ts`.
 function daysBetweenDateStr(a: string, b: string): number {
-  return Math.round(
-    Math.abs(new Date(`${a}T00:00:00Z`).getTime() - new Date(`${b}T00:00:00Z`).getTime()) / MS_DAY,
-  )
+  return Math.abs(daysBetween(a, b))
 }
 
 // Hôm nay đã có hoạt động học nào chưa (chat/viết/nói/STT/học từ) — dùng cho

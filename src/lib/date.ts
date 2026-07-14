@@ -22,3 +22,23 @@ export function vnDateStr(d: Date = new Date()): string {
 export function vnDayOfWeek(d: Date = new Date()): number {
   return new Date(d.getTime() + VN_OFFSET_MS).getUTCDay()
 }
+
+// ── Tiện ích so/dịch chuỗi ngày "YYYY-MM-DD" (mốc UTC nửa đêm — chuỗi ngày không
+// gắn múi giờ nên phép trừ/cộng theo mốc UTC luôn ra đúng số ngày nguyên, dùng
+// chung cho storage.ts (vé nghỉ streak) và challenge.ts (thử thách 30 ngày) để
+// cả app chỉ có MỘT luật tính ngày). ──────────────────────────────────────────
+export const MS_DAY = 86_400_000
+
+export function dateStrToMs(d: string): number {
+  return new Date(`${d}T00:00:00Z`).getTime()
+}
+
+// Số ngày từ a đến b (b sau a → dương, có thể âm).
+export function daysBetween(a: string, b: string): number {
+  return Math.round((dateStrToMs(b) - dateStrToMs(a)) / MS_DAY)
+}
+
+// Ngày cách `d` đúng `n` ngày (n âm = lùi về quá khứ).
+export function addDays(d: string, n: number): string {
+  return new Date(dateStrToMs(d) + n * MS_DAY).toISOString().slice(0, 10)
+}

@@ -33,6 +33,25 @@ if (VAPID_PUBLIC && VAPID_PRIVATE) {
 // Giờ UTC mặc định để nhắc khi người dùng chưa chọn giờ (13 UTC = 20:00 giờ VN).
 const DEFAULT_REMIND_UTC_HOUR = 13
 
+// Kiểu tối thiểu cho các hàng đọc từ Supabase trong file này — tránh `any`.
+interface PushSubscriptionRow {
+  user_id: string
+  endpoint: string
+  p256dh: string
+  auth_key: string
+}
+interface DailyUsageRow {
+  user_id: string
+  chat_count: number | null
+  writing_count: number | null
+  speaking_count: number | null
+  stt_count: number | null
+  learn_count: number | null
+}
+interface ChallengeEntryUserRow {
+  user_id: string
+}
+
 // Cửa sổ "còn đang trong thử thách challenge gần đây" — ước lượng NỚI TAY, chỉ để chọn
 // NỘI DUNG thông báo cho thân thiện hơn (không phải luật vé nghỉ chính xác của
 // src/lib/challenge.ts — logic đó dùng localStorage nên không gọi được từ server).
@@ -65,16 +84,14 @@ export async function sendReminders(
   if (!subs?.length) return { sent: 0, skipped: 0, expired: 0 }
 
   // Tập user đã học hôm nay → bỏ qua, khỏi nhắc.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const userIds = [...new Set((subs as any[]).map((s) => s.user_id))]
+  const userIds = [...new Set((subs as PushSubscriptionRow[]).map((s) => s.user_id))]
   const { data: usageRows } = await supabase
     .from('daily_usage')
     .select('user_id, chat_count, writing_count, speaking_count, stt_count, learn_count')
     .eq('day', todayStr())
     .in('user_id', userIds)
   const studied = new Set<string>()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  for (const r of (usageRows ?? []) as any[]) {
+  for (const r of (usageRows ?? []) as DailyUsageRow[]) {
     const total =
       (r.chat_count ?? 0) +
       (r.writing_count ?? 0) +
@@ -103,8 +120,8 @@ export async function sendReminders(
         challengeErr.message,
       )
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      for (const r of (challengeRows ?? []) as any[]) challengeActive.add(r.user_id)
+      for (const r of (challengeRows ?? []) as ChallengeEntryUserRow[])
+        challengeActive.add(r.user_id)
     }
   }
 
@@ -123,8 +140,7 @@ export async function sendReminders(
     skipped = 0
   const expired: string[] = []
   await Promise.all(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (subs as any[]).map(async (row) => {
+    (subs as PushSubscriptionRow[]).map(async (row) => {
       if (studied.has(row.user_id)) {
         skipped++
         return
