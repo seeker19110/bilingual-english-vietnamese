@@ -48,6 +48,16 @@ Ba chế độ:
 - **Nhịp làm việc theo giới hạn giờ (usage limit).** Kiểm tra mức dùng giới hạn trước khi quyết định tiếp:
   - **≥ 70%:** hoàn tất việc đang làm, cập nhật `PROGRESS.md`, **tạo PR rồi DỪNG — chờ người dùng cho phép** mới làm tiếp.
   - **< 70%:** sau khi PR được **merge**, **tự động tiếp tục** mục kế tiếp trong `PROGRESS.md` (không cần hỏi).
+- **Phân việc theo độ phức tạp (quyết định 2026-07-15, áp dụng từ nay).** LUÔN đọc kỹ đặc tả
+  liên quan (`docs/research/*.md`) trước khi giao việc — không đoán. Rồi chọn người làm:
+  - **Việc phức tạp** (quyết định kiến trúc, đụng nhiều file/luồng liên quan nhau, cần hiểu sâu
+    ngữ cảnh trước đó trong phiên) → **Opus (mình) tự làm**, không giao.
+  - **Việc vừa** (viết 1 tính năng/component/hàm rõ ràng đã có đặc tả cụ thể, ít phụ thuộc
+    ngữ cảnh phiên hiện tại) → **giao subagent Sonnet** ("coder").
+  - **Việc cơ học** (đổi tên hàng loạt, format, việc lặp lại theo khuôn mẫu rõ ràng, không cần
+    quyết định) → **giao subagent Haiku** ("mechanical").
+  - Khi giao việc: viết brief đầy đủ ngữ cảnh (đường dẫn file, quy ước dự án liên quan, tiêu chí
+    chấp nhận) — subagent không thấy được hội thoại trước đó.
 
 ## 4. Nguyên tắc kỹ thuật bất biến
 
