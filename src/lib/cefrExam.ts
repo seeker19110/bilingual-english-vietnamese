@@ -18,6 +18,7 @@
 import type { DictEntry } from '../types'
 import type { QuizItem, CefrLevel } from '../data/cefr'
 import type { Dialogue } from '../data/dialogues'
+import type { Voice } from './tts'
 import { pushProgress } from './progressSync'
 
 // Ngưỡng đạt: ≥70% tổng điểm (đồng bộ với UNLOCK_PCT của lộ trình).
@@ -132,6 +133,9 @@ export interface ExamQuestion {
   prompt: string // vocab: từ · grammar: câu có "___" · reading: câu hỏi (ngôn ngữ đích)
   audioText?: string // listening: nội dung đọc (ẩn chữ)
   audioLang?: 'en-US' | 'vi-VN'
+  // listening: giọng NGẪU NHIÊN mỗi câu (chống học vẹt theo 1 giọng quen — xem
+  // đặc tả mục ③ N2). Không đặt cho các phần khác — speak() tự dùng giọng global.
+  audioVoice?: Voice
   passage?: ExamPassage // reading: hội thoại để đọc
   correct: string
   options: string[]
@@ -161,6 +165,13 @@ function shuffle<T>(arr: readonly T[]): T[] {
     ;[a[i], a[j]] = [a[j] as T, a[i] as T]
   }
   return a
+}
+
+// 4 giọng ngẫu nhiên cho câu Nghe — thi lại (đề mới) nghe giọng khác, chống
+// học vẹt theo 1 giọng quen thay vì nghe hiểu thật (đặc tả mục ③ N2).
+const LISTENING_VOICES: Voice[] = ['female', 'female2', 'male', 'male2']
+function randomVoice(): Voice {
+  return LISTENING_VOICES[Math.floor(Math.random() * LISTENING_VOICES.length)] as Voice
 }
 
 // Lấy tối đa `n` phương án nhiễu KHÁC `correct`, không trùng nhau.
@@ -270,6 +281,7 @@ function buildListeningQuestions(
         prompt: '',
         audioText: q.word,
         audioLang: 'en-US',
+        audioVoice: randomVoice(),
         correct: q.vi,
         options: shuffle([q.vi, ...distractors]),
         wordKey: q.word,
@@ -285,6 +297,7 @@ function buildListeningQuestions(
         prompt: '',
         audioText: q.vi,
         audioLang: 'vi-VN',
+        audioVoice: randomVoice(),
         correct: q.word,
         options: shuffle([q.word, ...distractors]),
         wordKey: q.word,
