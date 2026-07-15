@@ -198,6 +198,17 @@ export function getTotalSubmitted(challenge: ChallengeState): number {
   return Object.keys(challenge.entries).length
 }
 
+// Đã từng có 1 tuần nộp ĐỦ 7/7 ngày chưa (bất kỳ tuần nào trong lịch sử, không chỉ
+// tuần hiện tại) — dùng cho huy hiệu "Tuần trọn vẹn" (② M2, lib/achievements.ts).
+export function hasPerfectWeek(challenge: ChallengeState): boolean {
+  const byWeek = new Map<string, number>()
+  for (const day of Object.keys(challenge.entries)) {
+    const wk = weekStartOf(day)
+    byWeek.set(wk, (byWeek.get(wk) ?? 0) + 1)
+  }
+  return [...byWeek.values()].some((n) => n >= CHALLENGE_WEEK_DAYS)
+}
+
 // Số thứ tự cho cột `challengeDay` (di sản schema cũ — giờ = "bài nộp thứ mấy").
 // Nộp lại trong ngày giữ nguyên số cũ (idempotent, không nhảy số).
 export function nextChallengeDay(challenge: ChallengeState, todayStr: string): number {

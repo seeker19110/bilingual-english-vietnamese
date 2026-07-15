@@ -6,6 +6,7 @@ import RateToggle from '../components/RateToggle'
 import PageHeader from '../components/PageHeader'
 import EvaluationResultView from '../components/EvaluationResultView'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
+import { checkNewAchievements, achievementMessage } from '../lib/achievements'
 import { addMistake } from '../lib/mistakes'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
@@ -481,6 +482,8 @@ export default function Speaking() {
       setLastIdx(0)
       incrementUsage(user.id, 'speakingCount')
       throttle() // Rate limit sau lần gọi thành công
+      // Huy hiệu mới (kỹ năng — ② M2) — phiên MỚI vừa được lưu (getSpeakingSessions tăng 1).
+      for (const a of checkNewAchievements(user.id)) toast.success(achievementMessage(a, isA))
       if (!muted) {
         setSpeaking(true)
         // Chiều A: giọng Anh trước, không có feedback khi mở đầu

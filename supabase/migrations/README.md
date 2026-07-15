@@ -50,6 +50,7 @@ thêm vài trăm ms) rồi mới tới `0010` — không cần đánh dấu hay 
 | `0010_challenge_entries.sql`               | ❌ CHƯA CHẠY — bảng `challenge_entries` cho thử thách "Challenge 1 phút / 30 ngày". Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền). |
 | `0011_learning_progress_placement.sql`     | ❌ CHƯA CHẠY — cột `placement` cho bài test xếp lớp đầu vào. Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                        |
 | `0012_learning_progress_weekly_goal.sql`   | ❌ CHƯA CHẠY — cột `weekly_goal` cho mục tiêu tuần (② M1). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                          |
+| `0013_learning_progress_achievements.sql`  | ❌ CHƯA CHẠY — cột `achievements` cho huy hiệu & mốc (② M2). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                        |
 
 > Sau khi `SUPABASE_DB_URL` đã điền, bảng này **không còn cần cập nhật tay** mỗi lần
 > chạy migration — `deploy.sh` tự ghi vào `_schema_migrations` trên Supabase. Chỉ cần
