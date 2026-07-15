@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Eye, Star } from 'lucide-react'
 import PronounceButton from './PronounceButton'
+import WordVoiceCycleButton from './WordVoiceCycleButton'
 import KaraokeText from './KaraokeText'
 import PronunciationCheck from './PronunciationCheck'
 import WordFormsBlock from './WordFormsBlock'
@@ -144,7 +145,10 @@ export default function WordCard({
       )}
 
       <div className="flex flex-col items-center gap-2 mb-3">
-        <PronounceButton word={card.word} />
+        <div className="flex flex-row items-center gap-2">
+          <PronounceButton word={card.word} />
+          <WordVoiceCycleButton word={card.word} />
+        </div>
         {card.ex_en && (
           <KaraokeText text={card.ex_en} lang="en-US" textClass="text-sm text-zinc-400 italic" />
         )}
