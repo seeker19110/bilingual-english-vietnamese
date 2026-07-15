@@ -25,7 +25,7 @@ export function vnDayOfWeek(d: Date = new Date()): number {
 
 // ── Tiện ích so/dịch chuỗi ngày "YYYY-MM-DD" (mốc UTC nửa đêm — chuỗi ngày không
 // gắn múi giờ nên phép trừ/cộng theo mốc UTC luôn ra đúng số ngày nguyên, dùng
-// chung cho storage.ts (vé nghỉ streak) và challenge.ts (thử thách 30 ngày) để
+// chung cho storage.ts (vé nghỉ streak) và challenge.ts (challenge chu kỳ tuần) để
 // cả app chỉ có MỘT luật tính ngày). ──────────────────────────────────────────
 export const MS_DAY = 86_400_000
 
@@ -41,4 +41,12 @@ export function daysBetween(a: string, b: string): number {
 // Ngày cách `d` đúng `n` ngày (n âm = lùi về quá khứ).
 export function addDays(d: string, n: number): string {
   return new Date(dateStrToMs(d) + n * MS_DAY).toISOString().slice(0, 10)
+}
+
+// Thứ 2 (YYYY-MM-DD) của tuần chứa ngày `d` — LUẬT TUẦN DUY NHẤT của app
+// (mục tiêu tuần lib/weeklyGoal.ts + challenge chu kỳ tuần lib/challenge.ts).
+// Chuỗi ngày không gắn múi giờ → lấy thứ theo mốc UTC nửa đêm (như daysBetween).
+export function weekStartOf(d: string): string {
+  const dow = new Date(dateStrToMs(d)).getUTCDay() // 0 = CN … 6 = T7
+  return addDays(d, -((dow + 6) % 7)) // lùi về Thứ 2: T2=0 … CN=6
 }

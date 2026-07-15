@@ -1,8 +1,10 @@
 // ──────────────────────────────────────────────────────────────────────────
-// 30 CHỦ ĐỀ CHALLENGE — thử thách "Challenge 1 phút" 30 ngày
-// (xem kế hoạch: docs/research/thu-thach-vlog-30-ngay.md, mục 3.3)
+// 30 CHỦ ĐỀ CHALLENGE — thử thách "Challenge 1 phút"
+// (soạn cho khung 30 ngày cũ — docs/research/thu-thach-vlog-30-ngay.md, mục 3.3;
+// từ 2026-07-15 challenge chạy CHU KỲ TUẦN: chủ đề xoay vòng theo TỔNG số bài
+// đã nộp — hết 30 chủ đề quay lại từ đầu, xem src/pages/Challenge.tsx)
 //
-// Chủ đề sát đời sống Việt Nam, KHÓ DẦN theo tuần:
+// Chủ đề sát đời sống Việt Nam, KHÓ DẦN theo "tuần chủ đề" (nhóm 1–7, 8–14…):
 //   Tuần 1 (ngày 1–7):   mô tả trực tiếp, đơn giản (ăn gì, đường đi làm, thời tiết…)
 //   Tuần 2 (ngày 8–14):  kể chuyện quá khứ (chuyện buồn cười, đi chợ, cơn mưa…)
 //   Tuần 3 (ngày 15–21): ý kiến nhẹ nhàng (trà sữa, xe máy vs xe buýt…)

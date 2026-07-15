@@ -180,13 +180,13 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
       glow: 'shadow-rose-500/20',
       ring: 'hover:border-rose-500/40',
       tag: {
-        label: isA ? '30 ngày' : '30 days',
+        label: isA ? 'mỗi tuần' : 'weekly',
         cls: 'bg-rose-500/15 text-rose-300 theme-light:text-rose-800 border border-rose-500/20',
       },
       title: isA ? 'Challenge 1 phút' : '1-Minute Challenge',
       desc: isA
-        ? 'Thử thách 30 ngày: mỗi ngày quay 1 video ngắn kể về cuộc sống — AI khen và sửa lỗi.'
-        : '30-day challenge: record a short daily video about your life — AI praises and corrects.',
+        ? 'Mỗi ngày quay 1 video ngắn kể về cuộc sống — AI khen và sửa lỗi. Bảng tuần Thứ 2 → CN.'
+        : 'Record a short daily video about your life — AI praises and corrects. Weekly board Mon → Sun.',
     },
   ]
 }

@@ -24,7 +24,7 @@ const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
 const Placement = lazyWithRetry(() => import('./pages/Placement'))
 const MistakeBank = lazyWithRetry(() => import('./pages/MistakeBank'))
 
-// Thử thách "Challenge 1 phút — 30 ngày" — ghi hình/IndexedDB chỉ tải khi bấm vào.
+// Thử thách "Challenge 1 phút" (chu kỳ tuần) — ghi hình/IndexedDB chỉ tải khi bấm vào.
 const Challenge = lazyWithRetry(() => import('./pages/Challenge'))
 
 // Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng

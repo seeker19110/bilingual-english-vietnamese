@@ -1,4 +1,4 @@
-// src/lib/challengeRecorder.ts — Ghi hình challenge cho thử thách "Challenge 1 phút — 30 ngày"
+// src/lib/challengeRecorder.ts — Ghi hình challenge cho thử thách "Challenge 1 phút" (chu kỳ tuần)
 // (docs/research/thu-thach-vlog-30-ngay.md, mục 4.1).
 //
 // Chạy SONG SONG 2 MediaRecorder trên CÙNG 1 stream:

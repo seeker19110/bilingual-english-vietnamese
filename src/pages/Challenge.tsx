@@ -1,7 +1,8 @@
-// src/pages/Challenge.tsx — Thử thách "Challenge 1 phút / 30 ngày"
-// (docs/research/thu-thach-vlog-30-ngay.md). Mỗi ngày quay 1 video ngắn theo chủ đề
-// gợi ý → audio gửi /api/stt nhận diện → AI (prompts/challenge.ts) khen + sửa lỗi + gợi ý
-// câu nâng cấp. Video KHÔNG upload — chỉ lưu trên máy (IndexedDB, lib/challengeVideo.ts).
+// src/pages/Challenge.tsx — Thử thách "Challenge 1 phút" theo CHU KỲ TUẦN (Thứ 2 → CN).
+// Quyết định 2026-07-15: bỏ khung 30 ngày, chuyển tuần — đồng bộ luật tuần với mục tiêu
+// tuần (lib/weeklyGoal.ts). Mỗi ngày quay 1 video ngắn theo chủ đề gợi ý → audio gửi
+// /api/stt nhận diện → AI (prompts/challenge.ts) khen + sửa lỗi + gợi ý câu nâng cấp.
+// Video KHÔNG upload — chỉ lưu trên máy (IndexedDB, lib/challengeVideo.ts).
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Video, Mic, RotateCcw, Send, Square, Type, Trophy, Check, Volume2 } from 'lucide-react'
 import Layout from '../components/Layout'
@@ -17,25 +18,26 @@ import { callClaude, parseJson } from '../lib/ai'
 import { speak } from '../lib/tts'
 import { haptics } from '../lib/haptics'
 import { getAuthHeader } from '../lib/authHeader'
-import { getTopicForDay, type ChallengeTopic } from '../data/challengeTopics'
+import {
+  getTopicForDay,
+  CHALLENGE_TOPICS_TOTAL_DAYS,
+  type ChallengeTopic,
+} from '../data/challengeTopics'
 import { challengeFeedbackSystemPrompt, type ChallengeFeedback } from '../prompts/challenge'
 import {
   getChallenge,
   startChallenge,
-  resumeChallenge,
-  restartChallenge,
   saveEntry,
-  getChallengeDay,
-  getEarnedMilestones,
-  getNewMilestone,
+  getWeekCells,
+  getTotalSubmitted,
+  nextChallengeDay,
   getKeepDates,
   countWords,
   calcWpm,
   mergeCloudEntries,
-  CHALLENGE_MILESTONES,
-  CHALLENGE_TOTAL_DAYS,
   type ChallengeState,
   type ChallengeEntryLocal,
+  type WeekCell,
 } from '../lib/challenge'
 import {
   startChallengeRecording,
@@ -54,15 +56,6 @@ import {
 } from '../lib/challengeCloud'
 
 type Stage = 'idle' | 'countdown' | 'recording' | 'reviewing' | 'typed' | 'submitting'
-
-const MILESTONE_LABEL: Record<number, { emoji: string; vi: string; en: string }> = {
-  1: { emoji: '🎬', vi: 'Mở màn', en: 'Kickoff' },
-  3: { emoji: '🔥', vi: 'Khởi động', en: 'Warming up' },
-  7: { emoji: '🏅', vi: 'Tuần đầu', en: 'First week' },
-  14: { emoji: '🚀', vi: 'Nửa chặng', en: 'Halfway' },
-  21: { emoji: '💪', vi: 'Thành thói quen', en: 'Habit formed' },
-  30: { emoji: '🏆', vi: 'Hoàn thành', en: 'Completed' },
-}
 
 // Đọc Blob → base64 thô (bỏ tiền tố data:...;base64,) — cùng cách sttServer.ts làm,
 // nhân bản nhỏ vì hàm đó không export (gắn chặt vào Recorder riêng của nó).
@@ -104,10 +97,9 @@ async function transcribeChallengeAudio(
   return text.trim()
 }
 
-// Entry của 1 ngày cụ thể trong VÒNG hiện tại (bỏ qua lịch sử vòng cũ trùng ngày — hiếm).
+// Entry của 1 ngày cụ thể (khóa ngày là duy nhất — chu kỳ tuần không còn phân vòng).
 function entryForDay(challenge: ChallengeState, day: string): ChallengeEntryLocal | null {
-  const e = challenge.entries[day]
-  return e && e.round === challenge.round ? e : null
+  return challenge.entries[day] ?? null
 }
 
 // ── Từ gợi ý — bấm để nghe TTS ────────────────────────────────────────────────
@@ -142,9 +134,7 @@ function SampleLine({ text, lang }: { text: string; lang: 'en-US' | 'vi-VN' }) {
 function TopicCard({ topic, isA }: { topic: ChallengeTopic; isA: boolean }) {
   return (
     <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
-      <p className="text-xs text-zinc-400 mb-1">
-        {isA ? `Chủ đề ngày ${topic.day}/30` : `Day ${topic.day}/30 topic`}
-      </p>
+      <p className="text-xs text-zinc-400 mb-1">{isA ? 'Chủ đề hôm nay' : "Today's topic"}</p>
       <p className="text-lg font-semibold text-white mb-2">{isA ? topic.titleVi : topic.titleEn}</p>
       <p className="text-xs text-zinc-400 mb-3">{isA ? topic.titleEn : topic.titleVi}</p>
       <div className="flex flex-wrap gap-1.5 mb-3">
@@ -164,85 +154,57 @@ function TopicCard({ topic, isA }: { topic: ChallengeTopic; isA: boolean }) {
   )
 }
 
-// ── Bảng 30 ô ────────────────────────────────────────────────────────────────
-function ChallengeBoard({
-  challenge,
-  todayDay,
-  isA,
-}: {
-  challenge: ChallengeState
-  todayDay: number
-  isA: boolean
-}) {
-  const days = useMemo(() => {
-    const byDay = new Map<number, ChallengeEntryLocal>()
-    for (const e of Object.values(challenge.entries)) {
-      if (e.round === challenge.round) byDay.set(e.challengeDay, e)
-    }
-    return Array.from({ length: CHALLENGE_TOTAL_DAYS }, (_, i) => ({
-      day: i + 1,
-      entry: byDay.get(i + 1) ?? null,
-    }))
-  }, [challenge])
+// ── Bảng tuần 7 ô (Thứ 2 → Chủ nhật) ─────────────────────────────────────────
+const WEEK_LABELS_VI = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']
+const WEEK_LABELS_EN = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
+function WeekBoard({ cells, isA }: { cells: WeekCell[]; isA: boolean }) {
+  const labels = isA ? WEEK_LABELS_VI : WEEK_LABELS_EN
   return (
     <div
-      className="grid grid-cols-5 gap-1.5"
+      className="grid grid-cols-7 gap-1.5"
       role="list"
-      aria-label={isA ? 'Bảng 30 ngày thử thách' : '30-day challenge board'}
+      aria-label={
+        isA ? 'Bảng tuần thử thách (Thứ 2 → Chủ nhật)' : 'Weekly challenge board (Mon → Sun)'
+      }
     >
-      {days.map(({ day, entry }) => {
-        const isToday = day === todayDay
-        const done = !!entry
-        const isFuture = day > todayDay
+      {cells.map((c, i) => {
+        const done = !!c.entry
+        const state = done
+          ? isA
+            ? 'đã nộp'
+            : 'submitted'
+          : c.isFuture
+            ? isA
+              ? 'chưa tới'
+              : 'upcoming'
+            : isA
+              ? 'chưa nộp'
+              : 'not submitted'
         return (
           <div
-            key={day}
+            key={c.date}
             role="listitem"
-            aria-label={
-              done
-                ? `${isA ? 'Ngày' : 'Day'} ${day}: ${isA ? 'đã nộp' : 'submitted'}`
-                : `${isA ? 'Ngày' : 'Day'} ${day}${isFuture ? (isA ? ' — chưa tới' : ' — upcoming') : ''}`
-            }
-            className={`aspect-square rounded-lg flex items-center justify-center text-[11px] font-semibold border transition ${
-              done
-                ? 'bg-accent-500 text-black border-transparent'
-                : isToday
-                  ? 'bg-accent-500/15 border-accent-500/60 text-accent-300 theme-light:text-accent-800 animate-pulse'
-                  : isFuture
-                    ? 'bg-zinc-900/50 border-zinc-800/50 text-zinc-400'
-                    : 'bg-zinc-800/60 border-zinc-700/60 text-zinc-400'
-            }`}
+            aria-label={`${labels[i]} ${c.date}: ${state}`}
+            className="flex flex-col items-center gap-1"
           >
-            {done ? <Check className="w-3.5 h-3.5" /> : day}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-// ── Hàng huy hiệu mốc ──────────────────────────────────────────────────────────
-function MilestoneRow({ earned, isA }: { earned: number[]; isA: boolean }) {
-  const earnedSet = new Set(earned)
-  return (
-    <div className="flex justify-between gap-1">
-      {CHALLENGE_MILESTONES.map((m) => {
-        const has = earnedSet.has(m)
-        const meta = MILESTONE_LABEL[m]
-        return (
-          <div key={m} className="flex flex-col items-center gap-1 flex-1 min-w-0">
             <span
-              className={`w-9 h-9 rounded-full flex items-center justify-center text-base shrink-0 ${
-                has
-                  ? 'bg-accent-500/20 border border-accent-500/50'
-                  : 'bg-zinc-900/60 border border-zinc-800/60 opacity-40'
+              className={`w-full aspect-square rounded-lg flex items-center justify-center text-[11px] font-semibold border transition ${
+                done
+                  ? 'bg-accent-500 text-black border-transparent'
+                  : c.isToday
+                    ? 'bg-accent-500/15 border-accent-500/60 text-accent-300 theme-light:text-accent-800 animate-pulse'
+                    : c.isFuture
+                      ? 'bg-zinc-900/50 border-zinc-800/50 text-zinc-400'
+                      : 'bg-zinc-800/60 border-zinc-700/60 text-zinc-400'
               }`}
             >
-              {meta?.emoji}
+              {done ? <Check className="w-3.5 h-3.5" /> : Number(c.date.slice(8))}
             </span>
-            <span className="text-[10px] text-zinc-400 text-center leading-tight truncate w-full">
-              {isA ? meta?.vi : meta?.en}
+            <span
+              className={`text-[10px] ${c.isToday ? 'text-accent-400 theme-light:text-accent-800 font-bold' : 'text-zinc-400'}`}
+            >
+              {labels[i]}
             </span>
           </div>
         )
@@ -346,33 +308,35 @@ export default function Challenge() {
   }, [uid])
 
   const todayStr = vnDateStr()
-  const dayInfo = challenge ? getChallengeDay(challenge, todayStr) : null
   const todaysEntry = challenge ? entryForDay(challenge, todayStr) : null
-  const topic = getTopicForDay(dayInfo?.day ?? 1)
-  const earnedMilestones = challenge ? getEarnedMilestones(challenge) : []
-  const isComplete = earnedMilestones.includes(CHALLENGE_TOTAL_DAYS)
+  // 7 ô của tuần hiện tại (Thứ 2 → CN) — nguồn duy nhất cho bảng + tổng kết tuần.
+  const cells = useMemo(
+    () => (challenge ? getWeekCells(challenge, todayStr) : []),
+    [challenge, todayStr],
+  )
+  const weekCount = cells.filter((c) => c.entry).length
+  const totalSubmitted = challenge ? getTotalSubmitted(challenge) : 0
+  // Chủ đề xoay vòng theo TỔNG số bài đã nộp (hết 30 chủ đề thì quay lại từ đầu);
+  // hôm nay đã nộp thì giữ đúng chủ đề của bài hôm nay (nộp lại không đổi đề).
+  const topic = getTopicForDay(
+    todaysEntry?.topicDay ?? (totalSubmitted % CHALLENGE_TOPICS_TOTAL_DAYS) + 1,
+  )
 
-  // Ngày 1 vs ngày 30 (video + nhịp nói) cho màn tổng kết khi hoàn thành 30 ngày.
-  const completionStats = useMemo(() => {
-    if (!challenge || !isComplete) return null
-    const entries = Object.values(challenge.entries).filter((e) => e.round === challenge.round)
-    const first = entries.reduce<ChallengeEntryLocal | null>(
-      (min, e) => (!min || e.challengeDay < min.challengeDay ? e : min),
-      null,
-    )
-    const last = entries.reduce<ChallengeEntryLocal | null>(
-      (max, e) => (!max || e.challengeDay > max.challengeDay ? e : max),
-      null,
-    )
+  // Tổng kết tuần (hiện vào Chủ nhật): số ngày nộp + nhịp nói đầu tuần → cuối tuần.
+  const isSunday = cells[6]?.isToday ?? false
+  const weekStats = useMemo(() => {
+    const entries = cells.filter((c) => c.entry).map((c) => c.entry as ChallengeEntryLocal)
+    const first = entries[0]
+    const last = entries[entries.length - 1]
     if (!first || !last) return null
     return {
+      count: entries.length,
       first,
       last,
-      totalEntries: entries.length,
       firstWpm: calcWpm(first.wordCount, first.durationSec),
       lastWpm: calcWpm(last.wordCount, last.durationSec),
     }
-  }, [challenge, isComplete])
+  }, [cells])
 
   // ── Ghi hình ──────────────────────────────────────────────────────────────
   const canRecord = isChallengeRecordingSupported()
@@ -384,7 +348,8 @@ export default function Challenge() {
   const [recording, setRecording] = useState<ChallengeRecording | null>(null)
   const [typedText, setTypedText] = useState('')
   const [submitError, setSubmitError] = useState('')
-  const [celebrateMilestone, setCelebrateMilestone] = useState<number | null>(null)
+  // Ăn mừng "tuần trọn vẹn 7/7" — bắn khi bài nộp hôm nay lấp đủ ô cuối cùng của tuần.
+  const [celebrateWeek, setCelebrateWeek] = useState(false)
 
   const handleRef = useRef<ChallengeRecorderHandle | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -503,7 +468,7 @@ export default function Challenge() {
   }
 
   async function submitEntry() {
-    if (!challenge || !dayInfo || isThrottled || submittingRef.current) {
+    if (!challenge || isThrottled || submittingRef.current) {
       if (isThrottled) toast.error(isA ? 'Chờ chút rồi thử lại...' : 'Please wait...')
       return
     }
@@ -516,7 +481,7 @@ export default function Challenge() {
   }
 
   async function submitEntryInner() {
-    if (!challenge || !dayInfo) return
+    if (!challenge) return
     const usage = getUsage(uid)
     const isTyped = stage === 'typed'
     if (!isTyped && usage.sttCount >= LIMITS[user.plan].stt) {
@@ -567,10 +532,13 @@ export default function Challenge() {
 
       const wordCount = countWords(transcript)
       const durationSec = isTyped ? 0 : (recording?.durationSec ?? 0)
-      const beforeMilestones = getEarnedMilestones(challenge)
+      // Tuần đã trọn 7/7 TRƯỚC khi nộp chưa — để chỉ ăn mừng đúng lúc lấp ô cuối
+      // (nộp lại trong ngày Chủ nhật không bắn lặp).
+      const beforeComplete = getWeekCells(challenge, todayStr).every((c) => c.entry)
+      const entryChallengeDay = nextChallengeDay(challenge, todayStr)
       const nextChallenge = saveEntry(uid, {
         day: todayStr,
-        challengeDay: dayInfo.day,
+        challengeDay: entryChallengeDay,
         topicDay: topic.day,
         transcript,
         feedback: feedback ? JSON.stringify(feedback) : null,
@@ -591,7 +559,7 @@ export default function Challenge() {
       void upsertChallengeEntryCloud({
         day: todayStr,
         challengeRound: nextChallenge.round,
-        challengeDay: dayInfo.day,
+        challengeDay: entryChallengeDay,
         topicDay: topic.day,
         transcript,
         feedback: feedback ? JSON.stringify(feedback) : null,
@@ -599,9 +567,9 @@ export default function Challenge() {
         wordCount,
       })
 
-      const newMilestone = getNewMilestone(beforeMilestones, getEarnedMilestones(nextChallenge))
+      const nowComplete = getWeekCells(nextChallenge, todayStr).every((c) => c.entry)
       haptics.success()
-      if (newMilestone) setCelebrateMilestone(newMilestone)
+      if (!beforeComplete && nowComplete) setCelebrateWeek(true)
 
       if (previewUrl) URL.revokeObjectURL(previewUrl)
       setPreviewUrl(null)
@@ -625,11 +593,11 @@ export default function Challenge() {
         <Layout />
         <main className="max-w-lg mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
           <PageHeader
-            title={isA ? 'Challenge 1 phút — 30 ngày' : '1-Minute Challenge — 30 Days'}
+            title={isA ? 'Challenge 1 phút mỗi ngày' : 'Daily 1-Minute Challenge'}
             subtitle={
               isA
-                ? 'Mỗi ngày quay 1 video ngắn kể về cuộc sống của bạn — AI nghe, khen và sửa lỗi.'
-                : 'Record a short video about your life every day — AI listens, praises, and corrects.'
+                ? 'Mỗi ngày quay 1 video ngắn kể về cuộc sống của bạn — AI nghe, khen và sửa lỗi. Tuần tính từ Thứ 2 đến Chủ nhật.'
+                : 'Record a short video about your life every day — AI listens, praises, and corrects. Weeks run Monday to Sunday.'
             }
           />
           <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 space-y-3 animate-fade-in">
@@ -660,42 +628,8 @@ export default function Challenge() {
               onClick={() => setChallenge(startChallenge(uid))}
               className="w-full mt-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold transition active:scale-[0.98]"
             >
-              {isA ? '🎬 Bắt đầu thử thách 30 ngày' : '🎬 Start the 30-day challenge'}
+              {isA ? '🎬 Bắt đầu thử thách' : '🎬 Start the challenge'}
             </button>
-          </div>
-        </main>
-      </div>
-    )
-  }
-
-  // ── Thử thách đã đứt: cho chọn tiếp tục hoặc bắt đầu lại ─────────────────────
-  if (dayInfo?.isBroken) {
-    return (
-      <div className="min-h-dvh bg-zinc-950">
-        <Layout />
-        <main className="max-w-lg mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
-          <PageHeader title={isA ? 'Chuỗi bị gián đoạn' : 'Streak interrupted'} />
-          <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 space-y-4 text-center animate-fade-in">
-            <p className="text-4xl">😅</p>
-            <p className="text-sm text-zinc-300">
-              {isA
-                ? 'Bạn đã lỡ quá số ngày nghỉ cho phép. Không sao — chọn cách bạn muốn tiếp tục nhé.'
-                : "You've missed more days than allowed. No worries — choose how you'd like to continue."}
-            </p>
-            <div className="space-y-2">
-              <button
-                onClick={() => setChallenge(resumeChallenge(uid))}
-                className="w-full py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-black font-semibold transition"
-              >
-                {isA ? 'Tiếp tục từ ngày đã đến' : 'Continue where I left off'}
-              </button>
-              <button
-                onClick={() => setChallenge(restartChallenge(uid))}
-                className="w-full py-3 rounded-xl bg-zinc-800/80 border border-zinc-700/60 text-zinc-300 hover:border-zinc-600 transition"
-              >
-                {isA ? 'Bắt đầu lại từ ngày 1' : 'Start over from day 1'}
-              </button>
-            </div>
           </div>
         </main>
       </div>
@@ -710,62 +644,60 @@ export default function Challenge() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
-      {celebrateMilestone != null && (
+      {celebrateWeek && (
         <Celebration
-          icon={MILESTONE_LABEL[celebrateMilestone]?.emoji ?? '🎉'}
-          title={
+          icon="🏆"
+          title={isA ? 'Tuần trọn vẹn 7/7!' : 'Perfect week 7/7!'}
+          subtitle={
             isA
-              ? `Ngày ${celebrateMilestone} — ${MILESTONE_LABEL[celebrateMilestone]?.vi}!`
-              : `Day ${celebrateMilestone} — ${MILESTONE_LABEL[celebrateMilestone]?.en}!`
+              ? 'Bạn đã nộp challenge đủ cả 7 ngày trong tuần — quá xuất sắc!'
+              : 'You submitted a challenge every single day this week — outstanding!'
           }
-          subtitle={isA ? 'Tiếp tục phát huy nhé!' : 'Keep it up!'}
-          ctaLabel={isA ? 'Tiếp tục' : 'Continue'}
-          onDone={() => setCelebrateMilestone(null)}
+          ctaLabel={isA ? 'Tuyệt vời' : 'Awesome'}
+          onDone={() => setCelebrateWeek(false)}
         />
       )}
 
       <main className="max-w-lg mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
         <PageHeader
-          title={isA ? 'Challenge 1 phút — 30 ngày' : '1-Minute Challenge — 30 Days'}
+          title={isA ? 'Challenge 1 phút mỗi ngày' : 'Daily 1-Minute Challenge'}
           subtitle={
             isA
-              ? `Vòng ${challenge.round} · Ngày ${dayInfo?.day}/${CHALLENGE_TOTAL_DAYS}${syncedOnce ? '' : ' · đang đồng bộ...'}`
-              : `Round ${challenge.round} · Day ${dayInfo?.day}/${CHALLENGE_TOTAL_DAYS}${syncedOnce ? '' : ' · syncing...'}`
+              ? `Tuần này ${weekCount}/7 ngày · tổng ${totalSubmitted} challenge${syncedOnce ? '' : ' · đang đồng bộ...'}`
+              : `This week ${weekCount}/7 days · ${totalSubmitted} total${syncedOnce ? '' : ' · syncing...'}`
           }
         />
 
-        <ChallengeBoard challenge={challenge} todayDay={dayInfo?.day ?? 1} isA={isA} />
-        <MilestoneRow earned={earnedMilestones} isA={isA} />
+        <WeekBoard cells={cells} isA={isA} />
 
-        {isComplete && completionStats && !showRecordFlow && (
+        {/* Tổng kết tuần — hiện vào Chủ nhật (cuối chu kỳ), so bài đầu ↔ cuối tuần */}
+        {isSunday && weekStats && !showRecordFlow && (
           <div className="bg-accent-500/10 border border-accent-500/30 rounded-2xl p-4 text-center space-y-3">
             <Trophy className="w-8 h-8 text-accent-400 mx-auto" />
             <p className="text-sm font-semibold text-white">
-              {isA ? 'Bạn đã hoàn thành 30 ngày!' : "You've completed 30 days!"}
+              {isA
+                ? `Tổng kết tuần: ${weekStats.count}/7 ngày`
+                : `Week recap: ${weekStats.count}/7 days`}
             </p>
             <p className="text-xs text-zinc-400">
               {isA
-                ? `${completionStats.totalEntries} challenge đã nộp · nhịp nói ${completionStats.firstWpm} → ${completionStats.lastWpm} từ/phút`
-                : `${completionStats.totalEntries} challenges submitted · pace ${completionStats.firstWpm} → ${completionStats.lastWpm} wpm`}
+                ? `Nhịp nói ${weekStats.firstWpm} → ${weekStats.lastWpm} từ/phút · sang tuần mới bảng sẽ làm mới`
+                : `Pace ${weekStats.firstWpm} → ${weekStats.lastWpm} wpm · the board resets next week`}
             </p>
-            <div className="flex gap-3 text-left">
-              <ChallengePlayback
-                uid={uid}
-                day={completionStats.first.day}
-                label={isA ? 'Ngày 1' : 'Day 1'}
-              />
-              <ChallengePlayback
-                uid={uid}
-                day={completionStats.last.day}
-                label={isA ? 'Ngày 30' : 'Day 30'}
-              />
-            </div>
-            <button
-              onClick={() => setChallenge(startChallenge(uid))}
-              className="w-full py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-black font-semibold transition"
-            >
-              {isA ? '🔁 Bắt đầu vòng mới' : '🔁 Start a new round'}
-            </button>
+            {weekStats.first.day !== weekStats.last.day && (
+              <div className="flex gap-3 text-left">
+                <ChallengePlayback
+                  uid={uid}
+                  day={weekStats.first.day}
+                  label={isA ? 'Đầu tuần' : 'Start of week'}
+                />
+                <ChallengePlayback
+                  uid={uid}
+                  day={weekStats.last.day}
+                  label={isA ? 'Cuối tuần' : 'End of week'}
+                />
+              </div>
+            )}
           </div>
         )}
 

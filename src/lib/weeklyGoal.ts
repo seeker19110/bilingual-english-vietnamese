@@ -12,7 +12,7 @@
 // progressSync.ts, giống placement).
 // ──────────────────────────────────────────────────────────────────────
 
-import { vnDateStr, vnDayOfWeek, addDays } from './date'
+import { vnDateStr, vnDayOfWeek, weekStartOf } from './date'
 import { getActivityCalendar, type DayActivity } from './stats'
 import { pushProgress } from './progressSync'
 
@@ -58,10 +58,9 @@ export function setWeeklyGoal(uid: string, goal: WeeklyGoal): void {
 }
 
 // Thứ 2 (YYYY-MM-DD) của tuần chứa thời điểm `d` — theo giờ Việt Nam.
+// (Luật Thứ-2-đầu-tuần nằm ở date.ts weekStartOf — dùng chung với challenge.)
 export function weekStartStr(d: Date = new Date()): string {
-  // vnDayOfWeek: 0 = CN … 6 = T7 → số ngày phải lùi để về Thứ 2: T2=0 … CN=6.
-  const back = (vnDayOfWeek(d) + 6) % 7
-  return addDays(vnDateStr(d), -back)
+  return weekStartOf(vnDateStr(d))
 }
 
 // Các ngày ĐÃ TRÔI QUA của tuần này (Thứ 2 → hôm nay), kèm cờ có học hay không.

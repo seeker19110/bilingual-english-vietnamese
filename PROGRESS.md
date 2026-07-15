@@ -42,8 +42,10 @@ deploy (`deploy.sh` → `npm run migrate`, cần `SUPABASE_DB_URL`) · audit b�
 (RLS theo cột chặn tự nâng Pro/bypass lượt, timeout fetch, refund lượt khi provider lỗi, ranh
 giới ngày theo giờ VN — chi tiết `AUDIT.md`).
 
-**Tính năng mới (chưa mở cho người dùng thật):** Thử thách "Challenge 1 phút/ngày" 30 ngày
-(`/challenge`) — code xong, migration `0010_challenge_entries.sql` **chưa chạy trên production**.
+**Tính năng mới (chưa mở cho người dùng thật):** Thử thách "Challenge 1 phút/ngày"
+(`/challenge`) — từ 2026-07-15 chạy **CHU KỲ TUẦN** Thứ 2→CN (bảng 7 ô, tổng kết tuần vào CN,
+ăn mừng 7/7; bỏ vòng 30 ngày/vé nghỉ/mốc — huy hiệu sẽ quay lại ở M2). Code xong, migration
+`0010_challenge_entries.sql` **chưa chạy trên production**.
 
 **i18n/UX:** song ngữ toàn site kể cả `/login` · bottom-nav mobile (Trang chủ/Lộ trình/Luyện
 tập/Tiến độ) · thẻ "Học tiếp" ở Home · karaoke (sáng chữ theo giọng đọc) áp dụng mọi TTS >1 từ ·
@@ -76,8 +78,9 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   tuần từ Thứ 2 giờ VN, cùng luật "ngày có học" với streak) + chọn ở `/profile` + vòng tiến độ
   `GoalRing` ở Dashboard + màn ăn mừng 1 lần/tuần (`WeeklyGoalCelebration`, nối sau màn streak
   trong StudyTabs) + đồng bộ cột `weekly_goal` (migration `0012`, hợp nhất updatedAt mới hơn
-  thắng) — code xong, chờ merge. **Tiếp theo:** Challenge chu kỳ TUẦN (xem quyết định mới bên
-  dưới), rồi PR #8 (huy hiệu, ② M2) theo bảng ưu tiên.
+  thắng) — code xong, chờ merge; CÙNG PR đó: Challenge chuyển CHU KỲ TUẦN (xem quyết định mới
+  bên dưới). **Tiếp theo:** PR #8 (huy hiệu, ② M2) theo bảng ưu tiên — gồm cả huy hiệu
+  challenge 10/30/100 bài + "7/7 ngày trong tuần" thay mốc 30 ngày cũ.
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
@@ -106,11 +109,14 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   M5/M5b của `docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md`: route `/challenge` thành
   trang Giải đấu tuần (redirect giữ link cũ), quay challenge = hoạt động ghi điểm (+15/ngày),
   bỏ khung 30 ngày chuyển chu kỳ tuần; dữ liệu `challenge_entries` + huy hiệu cũ giữ nguyên.
-  **[Bổ sung 2026-07-15, sau PR #7]** Người dùng yêu cầu "Challenge tính theo tuần luôn cho
-  đồng bộ" (với mục tiêu tuần vừa làm) → KÉO phần "gọn challenge → chu kỳ tuần" (mục 16 bảng
-  ưu tiên) LÊN LÀM NGAY sau PR #7, KHÔNG đợi tới giải đấu (mục 14–15): bảng 7 ô Thứ 2→CN thay
-  bảng 30 ô, dùng chung luật tuần của `lib/weeklyGoal.ts` (`weekStartStr`); phần bảng xếp hạng
-  /điểm giải vẫn để lại làm ở mục 14–15 như cũ.
+  **[Bổ sung 2026-07-15, làm cùng PR #7]** Người dùng yêu cầu "Challenge tính theo tuần luôn
+  cho đồng bộ" (với mục tiêu tuần vừa làm) → phần "gọn challenge → chu kỳ tuần" (mục 16 bảng
+  ưu tiên) ĐÃ LÀM NGAY, không đợi tới giải đấu (mục 14–15): bảng 7 ô Thứ 2→CN thay bảng 30 ô
+  (dùng chung luật tuần `weekStartOf` của `lib/date.ts` với mục tiêu tuần), bỏ vé nghỉ/resume/
+  restart/mốc 30 ngày, chủ đề xoay vòng theo tổng số bài đã nộp, tổng kết TUẦN vào Chủ nhật
+  (so video đầu↔cuối tuần), ăn mừng "tuần trọn vẹn 7/7". Schema `challenge_entries` GIỮ NGUYÊN
+  (cột `challenge_day`/`round` để nguyên — dữ liệu cũ không mất; prompt AI KHÔNG sửa để khỏi
+  phải chạy lại eval). Phần bảng xếp hạng/điểm giải vẫn ở mục 14–15 như cũ.
 
 - **Thanh toán Pro: KHÔNG làm (2026-07-11).** Dự án dùng miễn phí cho cộng đồng. Không tự đề
   xuất lại — chỉ mở khi người dùng chủ động báo.

@@ -1,24 +1,23 @@
-// src/lib/challenge.ts — Trạng thái thử thách "Challenge 30 ngày" (docs/research/thu-thach-vlog-30-ngay.md).
+// src/lib/challenge.ts — Trạng thái thử thách "Challenge 1 phút" theo CHU KỲ TUẦN.
+//
+// LỊCH SỬ: ban đầu là "Challenge 30 ngày" (docs/research/thu-thach-vlog-30-ngay.md);
+// quyết định 2026-07-15 (người dùng, xem PROGRESS.md): bỏ khung vòng 30 ngày/vé nghỉ/
+// mốc, chuyển CHU KỲ TUẦN Thứ 2 → CN — đồng bộ luật tuần với mục tiêu tuần
+// (lib/weeklyGoal.ts, cùng weekStartOf của date.ts). Schema dữ liệu GIỮ NGUYÊN
+// (entries vẫn mang challengeDay/round cũ — lịch sử người dùng không mất).
 //
 // Phạm vi file này: LOGIC THUẦN + lưu localStorage (key `et_challenge_<uid>` theo quy ước
-// `et_*_<uid>` của storage.ts). Đồng bộ Supabase (bảng challenge_entries) làm ở bước sau —
-// vì vậy kiểu dữ liệu export ở đây là "hợp đồng" cho cả UI lẫn tầng sync.
+// `et_*_<uid>` của storage.ts). Đồng bộ Supabase: lib/challengeCloud.ts (bảng challenge_entries).
 //
 // Video KHÔNG lưu ở đây (xem lib/challengeVideo.ts — IndexedDB); ở đây chỉ giữ transcript,
 // feedback và tiến độ — dữ liệu chính, nhẹ (vài KB), an toàn khi mất video local.
 
-import { vnDateStr, daysBetween, addDays } from './date'
+import { vnDateStr, addDays, weekStartOf } from './date'
 
 // ── Hằng số thử thách ────────────────────────────────────────────────────────
-// Độ dài 1 vòng thử thách (ngày).
-export const CHALLENGE_TOTAL_DAYS = 30
-// Các mốc huy hiệu — theo SỐ NGÀY ĐÃ NỘP trong vòng hiện tại (không phải ngày lịch).
-export const CHALLENGE_MILESTONES = [1, 3, 7, 14, 21, 30] as const
-// Vé nghỉ: 1 ngày lỡ ĐẦU TIÊN trong mỗi cửa sổ 7 ngày được "bắc cầu" — GIỮ ĐÚNG
-// luật + cooldown của getStreak trong storage.ts (STREAK_FREEZE_COOLDOWN_DAYS = 7)
-// để toàn app chỉ có MỘT luật nghỉ, người dùng không phải nhớ 2 kiểu.
-const CHALLENGE_FREEZE_COOLDOWN_DAYS = 7
-// Số video local cần giữ ngoài video ngày 1 (chính sách dọn IndexedDB, mục 4.1).
+// Số ngày 1 tuần challenge (Thứ 2 → CN).
+export const CHALLENGE_WEEK_DAYS = 7
+// Số video local gần nhất cần giữ (chính sách dọn IndexedDB) — đúng 1 tuần.
 const KEEP_RECENT_VIDEOS = 7
 
 // ── Kiểu dữ liệu ─────────────────────────────────────────────────────────────
@@ -39,15 +38,9 @@ export interface ChallengeEntryLocal {
 }
 
 export interface ChallengeState {
-  startDate: string // ngày bắt đầu (hoặc mốc resume) của vòng hiện tại — YYYY-MM-DD giờ VN
-  round: number // vòng thứ mấy (1, 2, …) — "bắt đầu lại" mở vòng mới
+  startDate: string // ngày bắt đầu tham gia (giữ lại từ mô hình cũ — chỉ để tham khảo)
+  round: number // di sản mô hình vòng 30 ngày — GIỮ để entries/cloud cũ đọc được, UI tuần không dùng
   entries: Record<string, ChallengeEntryLocal> // khóa = ngày nộp (YYYY-MM-DD), mọi vòng
-}
-
-// Kết quả tính "hôm nay là ngày thứ mấy của thử thách".
-export interface ChallengeDayInfo {
-  day: number // số thứ tự ngày thử thách của HÔM NAY (= số ngày đã nộp, +1 nếu hôm nay chưa nộp)
-  isBroken: boolean // true = lỡ quá vé nghỉ → UI cho chọn resume/restart
 }
 
 // ── localStorage (đọc/ghi an toàn — cùng phong cách storage.ts) ──────────────
@@ -151,29 +144,11 @@ export function mergeCloudEntries(
   return next
 }
 
-// Bắt đầu thử thách: chưa có → vòng 1; đã có → mở vòng mới (round + 1), entries
-// vòng cũ GIỮ NGUYÊN trong map (lịch sử — mỗi entry đã tự mang `round` của nó).
+// Bắt đầu thử thách lần đầu (chu kỳ tuần không có "vòng mới" — đã có thì giữ nguyên).
 export function startChallenge(uid: string): ChallengeState {
   const cur = readChallenge(uid)
-  const next: ChallengeState = cur
-    ? { startDate: vnDateStr(), round: cur.round + 1, entries: cur.entries }
-    : { startDate: vnDateStr(), round: 1, entries: {} }
-  writeChallenge(uid, next)
-  return next
-}
-
-// "Bắt đầu lại" sau khi đứt: vòng mới tinh (đếm ngày/mốc từ 0), lịch sử vòng cũ giữ nguyên.
-export function restartChallenge(uid: string): ChallengeState {
-  return startChallenge(uid)
-}
-
-// "Tiếp tục từ ngày đã đến" sau khi đứt: GIỮ vòng + entries, chỉ dời startDate về hôm
-// nay để khoảng ngày bị lỡ nằm ngoài cửa sổ xét vé nghỉ → hết trạng thái "đứt", và
-// challengeDay (tính theo số ngày ĐÃ nộp — xem getChallengeDay) tự nối tiếp.
-export function resumeChallenge(uid: string): ChallengeState | null {
-  const cur = readChallenge(uid)
-  if (!cur) return null
-  const next: ChallengeState = { ...cur, startDate: vnDateStr() }
+  if (cur) return cur
+  const next: ChallengeState = { startDate: vnDateStr(), round: 1, entries: {} }
   writeChallenge(uid, next)
   return next
 }
@@ -191,76 +166,49 @@ export function saveEntry(uid: string, entry: Omit<ChallengeEntryLocal, 'round'>
   return next
 }
 
-// Các ngày ĐÃ NỘP của vòng hiện tại, tăng dần theo ngày. `upTo` (tùy chọn) chặn
-// các entry "tương lai" (đồng hồ máy lệch) khi tính cho 1 hôm cụ thể.
-function submittedDays(challenge: ChallengeState, upTo?: string): string[] {
-  return Object.values(challenge.entries)
-    .filter((e) => e.round === challenge.round && (!upTo || e.day <= upTo))
-    .map((e) => e.day)
-    .sort()
+// Toàn bộ ngày ĐÃ NỘP (mọi vòng cũ lẫn mới — khóa ngày là duy nhất), tăng dần.
+function submittedDays(challenge: ChallengeState): string[] {
+  return Object.keys(challenge.entries).sort()
 }
 
-// Hôm nay là ngày thứ mấy của thử thách + đã "đứt" chưa.
-//
-// LUẬT VÉ NGHỈ (mô phỏng đúng getStreak trong storage.ts): duyệt từng ngày lịch từ
-// startDate đến HÔM QUA (hôm nay chưa nộp KHÔNG tính là lỡ — như getStreak bỏ qua i===0);
-// ngày không có bài được "bắc cầu" nếu chưa có ngày bắc cầu nào khác cách nó < 7 ngày
-// (cooldown CHALLENGE_FREEZE_COOLDOWN_DAYS — cùng số với STREAK_FREEZE_COOLDOWN_DAYS).
-// Lỡ khi hết vé → isBroken. Khác storage.ts: KHÔNG cần lưu danh sách vé đã dùng —
-// entries còn nguyên vẹn trong state nên mỗi lần tính lại đều ra cùng kết quả (thuần túy,
-// dễ test); storage.ts phải lưu vì dữ liệu usage cũ có thể bị dọn.
-//
-// SỐ NGÀY (`day`): theo số ngày ĐÃ NỘP của vòng hiện tại — ngày được bắc cầu KHÔNG
-// chiếm số (nhất quán với streak: ngày đóng băng không cộng chuỗi), nhờ đó không có
-// "ô trống" giữa bảng 30 ô và resume tự nối tiếp đúng chỗ.
-export function getChallengeDay(challenge: ChallengeState, todayStr: string): ChallengeDayInfo {
-  const days = submittedDays(challenge, todayStr)
-  const submittedSet = new Set(days)
-  const day = days.length + (submittedSet.has(todayStr) ? 0 : 1)
-
-  // Đồng hồ lệch khiến hôm nay < startDate → chưa tới ngày bắt đầu, coi như chưa đứt.
-  const span = daysBetween(challenge.startDate, todayStr)
-  if (span <= 0) return { day, isBroken: false }
-
-  const bridged: string[] = [] // các ngày đã bắc cầu bằng vé trong lần duyệt này
-  for (let i = 0; i < span; i++) {
-    const d = addDays(challenge.startDate, i) // chỉ tới HÔM QUA (i < span)
-    if (submittedSet.has(d)) continue
-    // Ngày lỡ — thử dùng vé: chỉ được khi KHÔNG có vé nào khác trong vòng < 7 ngày.
-    const usedRecently = bridged.some(
-      (f) => Math.abs(daysBetween(f, d)) < CHALLENGE_FREEZE_COOLDOWN_DAYS,
-    )
-    if (usedRecently) return { day, isBroken: true } // hết vé → đứt
-    bridged.push(d)
-  }
-  return { day, isBroken: false }
+// ── Chu kỳ TUẦN (Thứ 2 → CN, cùng luật weekStartOf với mục tiêu tuần) ─────────
+export interface WeekCell {
+  date: string // YYYY-MM-DD
+  entry: ChallengeEntryLocal | null // bài đã nộp ngày này (null = chưa/không nộp)
+  isToday: boolean
+  isFuture: boolean // ngày chưa tới trong tuần
 }
 
-// ── Huy hiệu mốc ─────────────────────────────────────────────────────────────
-// Các mốc ĐÃ đạt của vòng hiện tại — theo số ngày đã nộp (1, 3, 7, 14, 21, 30).
-export function getEarnedMilestones(challenge: ChallengeState): number[] {
-  const submitted = submittedDays(challenge).length
-  return CHALLENGE_MILESTONES.filter((m) => submitted >= m)
+// 7 ô của tuần chứa `todayStr` — UI tô ô đã nộp, đánh dấu hôm nay, làm mờ ngày chưa tới.
+export function getWeekCells(challenge: ChallengeState, todayStr: string): WeekCell[] {
+  const start = weekStartOf(todayStr)
+  return Array.from({ length: CHALLENGE_WEEK_DAYS }, (_, i) => {
+    const date = addDays(start, i)
+    return {
+      date,
+      entry: challenge.entries[date] ?? null,
+      isToday: date === todayStr,
+      isFuture: date > todayStr,
+    }
+  })
 }
 
-// Mốc VỪA đạt giữa 2 lần tính (trước/sau khi nộp) — UI bắn confetti khi khác null.
-// Trả mốc lớn nhất mới xuất hiện (bình thường mỗi lần nộp chỉ thêm tối đa 1 mốc).
-export function getNewMilestone(before: number[], after: number[]): number | null {
-  const prev = new Set(before)
-  const fresh = after.filter((m) => !prev.has(m))
-  return fresh.length > 0 ? Math.max(...fresh) : null
+// Tổng số challenge đã nộp từ trước tới nay (mọi tuần) — hiện ở UI + xoay chủ đề.
+export function getTotalSubmitted(challenge: ChallengeState): number {
+  return Object.keys(challenge.entries).length
+}
+
+// Số thứ tự cho cột `challengeDay` (di sản schema cũ — giờ = "bài nộp thứ mấy").
+// Nộp lại trong ngày giữ nguyên số cũ (idempotent, không nhảy số).
+export function nextChallengeDay(challenge: ChallengeState, todayStr: string): number {
+  return challenge.entries[todayStr]?.challengeDay ?? getTotalSubmitted(challenge) + 1
 }
 
 // ── Chính sách giữ video local ───────────────────────────────────────────────
-// Danh sách NGÀY cần giữ video trong IndexedDB: ngày nộp ĐẦU TIÊN của vòng hiện tại
-// (video "ngày 1" — để so sánh ngày 1 vs ngày 30) + 7 ngày nộp gần nhất.
+// Giữ 7 video của các ngày nộp GẦN NHẤT (đúng 1 tuần — đủ cho màn tổng kết tuần).
 // Đưa thẳng vào challengeVideo.pruneChallengeVideos(uid, keepDates).
 export function getKeepDates(challenge: ChallengeState): string[] {
-  const days = submittedDays(challenge) // đã sort tăng dần
-  const first = days[0]
-  if (first === undefined) return []
-  const keep = new Set<string>([first, ...days.slice(-KEEP_RECENT_VIDEOS)])
-  return [...keep].sort()
+  return submittedDays(challenge).slice(-KEEP_RECENT_VIDEOS)
 }
 
 // ── Thống kê nhịp nói ────────────────────────────────────────────────────────
