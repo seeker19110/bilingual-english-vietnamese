@@ -24,6 +24,8 @@ const CEFR_EXAMS = (uid: string) => `et_cefr_exams_${uid}`
 // Kết quả bài test xếp lớp gần nhất ({cefr,appLevel,lastAt}) — migration 0011.
 // Khớp key trong lib/placementResult.ts (KEY).
 const PLACEMENT = (uid: string) => `et_placement_${uid}`
+// Mục tiêu tuần ({goal,updatedAt}) — migration 0012. Khớp key lib/weeklyGoal.ts (KEY).
+const WEEKLY_GOAL = (uid: string) => `et_weekly_goal_${uid}`
 
 // Cấu trúc 1 thẻ SRS (khớp src/lib/srs.ts) — chỉ cần để merge theo số lần ôn (reps).
 interface SRSLike {
@@ -69,6 +71,35 @@ function mergePlacement(
   if (!local) return cloud
   if (!cloud) return local
   return (local.lastAt ?? '') >= (cloud.lastAt ?? '') ? local : cloud
+}
+
+// Cấu trúc mục tiêu tuần (khớp src/lib/weeklyGoal.ts WeeklyGoalSaved).
+interface WeeklyGoalLike {
+  goal: number
+  updatedAt: string
+}
+
+function readWeeklyGoal(key: string): WeeklyGoalLike | null {
+  try {
+    const r = localStorage.getItem(key)
+    if (!r) return null
+    const obj = JSON.parse(r) as unknown
+    if (obj && typeof obj === 'object' && 'updatedAt' in obj) return obj as WeeklyGoalLike
+    return null
+  } catch {
+    return null
+  }
+}
+
+// Hợp nhất: bản có updatedAt MỚI HƠN thắng (đây là lựa chọn cài đặt của người
+// dùng — không có khái niệm "tốt lên", giống placement).
+function mergeWeeklyGoal(
+  local: WeeklyGoalLike | null,
+  cloud: WeeklyGoalLike | null,
+): WeeklyGoalLike | null {
+  if (!local) return cloud
+  if (!cloud) return local
+  return (local.updatedAt ?? '') >= (cloud.updatedAt ?? '') ? local : cloud
 }
 
 function readExamMap(key: string): Record<string, ExamResultLike> {
@@ -145,6 +176,7 @@ export function pushProgress(userId: string): void {
         cefr_unlocked: readArr(CEFR_UNLOCKED(userId)),
         cefr_exams: readExamMap(CEFR_EXAMS(userId)),
         placement: readPlacement(PLACEMENT(userId)) ?? {},
+        weekly_goal: readWeeklyGoal(WEEKLY_GOAL(userId)) ?? {},
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id' },
@@ -176,6 +208,7 @@ export async function pullProgress(userId: string): Promise<void> {
     cefr_unlocked?: string[]
     cefr_exams?: Record<string, ExamResultLike>
     placement?: PlacementLike
+    weekly_goal?: WeeklyGoalLike
   }
 
   // learned/hard/cefr_*: dữ liệu chỉ tăng dần → lấy hợp của local và cloud
@@ -202,6 +235,12 @@ export async function pullProgress(userId: string): Promise<void> {
   const cloudPlacement = cloud.placement && 'lastAt' in cloud.placement ? cloud.placement : null
   const placement = mergePlacement(readPlacement(PLACEMENT(userId)), cloudPlacement)
 
+  // weekly_goal: hợp nhất theo updatedAt mới hơn (cloud rỗng '{}' khi chưa từng
+  // chỉnh → không có updatedAt → coi như null).
+  const cloudWeeklyGoal =
+    cloud.weekly_goal && 'updatedAt' in cloud.weekly_goal ? cloud.weekly_goal : null
+  const weeklyGoal = mergeWeeklyGoal(readWeeklyGoal(WEEKLY_GOAL(userId)), cloudWeeklyGoal)
+
   // SRS: merge theo từ-khoá, giữ thẻ có nhiều lần ôn hơn (tiến bộ hơn)
   const merged: Record<string, SRSLike> = { ...(cloud.srs ?? {}) }
   for (const [k, v] of Object.entries(readObj(SRS(userId)))) {
@@ -218,6 +257,7 @@ export async function pullProgress(userId: string): Promise<void> {
     localStorage.setItem(CEFR_UNLOCKED(userId), JSON.stringify([...cefrUnlocked]))
     localStorage.setItem(CEFR_EXAMS(userId), JSON.stringify(cefrExams))
     if (placement) localStorage.setItem(PLACEMENT(userId), JSON.stringify(placement))
+    if (weeklyGoal) localStorage.setItem(WEEKLY_GOAL(userId), JSON.stringify(weeklyGoal))
   } catch {
     /* hết dung lượng — bỏ qua */
   }

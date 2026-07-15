@@ -71,7 +71,13 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   `api/_lib/aiConfig.ts` mới tách), logic chấm thuần `scripts/lib/evalScoring.ts` + test (vào CI),
   luật eval khi đổi prompt/model ghi ở CLAUDE.md §8 — code xong, chờ merge. ⚠️ Số baseline
   (`docs/research/eval-tutor-baseline.md`) CẦN NGƯỜI CÓ KEY chạy `npm run eval:tutor -- --write-baseline`
-  (sandbox Claude không có key AI). **Tiếp theo:** PR #6 (trap phát âm Việt + coach tip, ① G1).
+  (sandbox Claude không có key AI). PR #6 (trap phát âm Việt + coach tip, ① G1) — đã merge
+  (PR #244, 2026-07-15). PR #7 (mục tiêu tuần, ② M1) — `lib/weeklyGoal.ts` (3/5/7 ngày/tuần,
+  tuần từ Thứ 2 giờ VN, cùng luật "ngày có học" với streak) + chọn ở `/profile` + vòng tiến độ
+  `GoalRing` ở Dashboard + màn ăn mừng 1 lần/tuần (`WeeklyGoalCelebration`, nối sau màn streak
+  trong StudyTabs) + đồng bộ cột `weekly_goal` (migration `0012`, hợp nhất updatedAt mới hơn
+  thắng) — code xong, chờ merge. **Tiếp theo:** Challenge chu kỳ TUẦN (xem quyết định mới bên
+  dưới), rồi PR #8 (huy hiệu, ② M2) theo bảng ưu tiên.
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
@@ -100,6 +106,11 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   M5/M5b của `docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md`: route `/challenge` thành
   trang Giải đấu tuần (redirect giữ link cũ), quay challenge = hoạt động ghi điểm (+15/ngày),
   bỏ khung 30 ngày chuyển chu kỳ tuần; dữ liệu `challenge_entries` + huy hiệu cũ giữ nguyên.
+  **[Bổ sung 2026-07-15, sau PR #7]** Người dùng yêu cầu "Challenge tính theo tuần luôn cho
+  đồng bộ" (với mục tiêu tuần vừa làm) → KÉO phần "gọn challenge → chu kỳ tuần" (mục 16 bảng
+  ưu tiên) LÊN LÀM NGAY sau PR #7, KHÔNG đợi tới giải đấu (mục 14–15): bảng 7 ô Thứ 2→CN thay
+  bảng 30 ô, dùng chung luật tuần của `lib/weeklyGoal.ts` (`weekStartStr`); phần bảng xếp hạng
+  /điểm giải vẫn để lại làm ở mục 14–15 như cũ.
 
 - **Thanh toán Pro: KHÔNG làm (2026-07-11).** Dự án dùng miễn phí cho cộng đồng. Không tự đề
   xuất lại — chỉ mở khi người dùng chủ động báo.
