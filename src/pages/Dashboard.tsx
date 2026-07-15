@@ -14,6 +14,7 @@ import {
   Trophy,
   BookMarked,
   ArrowRight,
+  CalendarCheck,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -41,6 +42,7 @@ import {
   getWritingProgress,
   type LevelProgress,
 } from '../lib/stats'
+import { getWeeklyProgress, type WeeklyProgress } from '../lib/weeklyGoal'
 import { LIMITS } from '../types'
 
 // Màu ô heatmap theo số hoạt động trong ngày (đậm dần).
@@ -118,6 +120,62 @@ function StatCard({
   )
 }
 
+// Vòng tiến độ MỤC TIÊU TUẦN (② M1) — SVG tròn, % = số ngày đã học / mục tiêu.
+// Dùng stroke="currentColor" + class text-* để ăn theo design tokens (--a-*).
+function GoalRing({ done, goal }: { done: number; goal: number }) {
+  const size = 72
+  const stroke = 8
+  const r = (size - stroke) / 2
+  const c = 2 * Math.PI * r
+  const pct = Math.min(1, goal > 0 ? done / goal : 0)
+  return (
+    <div className="relative w-[72px] h-[72px] shrink-0" aria-hidden="true">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          strokeWidth={stroke}
+          fill="none"
+          stroke="currentColor"
+          className="text-zinc-800"
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          strokeWidth={stroke}
+          fill="none"
+          strokeLinecap="round"
+          stroke="currentColor"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - pct)}
+          className="text-accent-400 transition-all"
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-white">
+        {done}/{goal}
+      </span>
+    </div>
+  )
+}
+
+// Dòng động viên theo trạng thái mục tiêu tuần.
+function weeklyLine(p: WeeklyProgress, vi: boolean): string {
+  if (p.achieved)
+    return vi
+      ? '🎉 Đã đạt mục tiêu tuần này — giữ nhịp nhé!'
+      : '🎉 Weekly goal reached — keep the rhythm!'
+  const left = p.goal - p.daysDone
+  if (left === 1)
+    return vi
+      ? 'Chỉ còn 1 ngày học nữa là đạt mục tiêu tuần!'
+      : 'Just 1 more study day to hit your weekly goal!'
+  return vi
+    ? `Đã học ${p.daysDone}/${p.goal} ngày tuần này — mỗi ngày một chút nhé!`
+    : `${p.daysDone}/${p.goal} days this week — a little every day!`
+}
+
 // Thanh tiến độ ngang đơn giản.
 function Bar({ pct, color }: { pct: number; color: string }) {
   return (
@@ -168,6 +226,7 @@ export default function Dashboard() {
       week: getActivity7Days(user.id),
       weekTotal: getWeekTotal(user.id),
       calendar: getActivityCalendar(user.id, 35),
+      weekly: getWeeklyProgress(user.id),
       writing: getWritingProgress(user.id),
       learnedToday: getDailyLearned(user.id),
       learnedTotal: getLearnedCount(user.id),
@@ -251,6 +310,34 @@ export default function Dashboard() {
                 <span className="text-[11px] text-zinc-400">{dow[d.dow]}</span>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* ── Mục tiêu tuần (② M1) ────────────────────────────────────── */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 animate-fade-in">
+          <div className="flex items-center gap-4">
+            <GoalRing done={stats.weekly.daysDone} goal={stats.weekly.goal} />
+            <div className="min-w-0 flex-1">
+              <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+                <CalendarCheck className="w-4 h-4 text-accent-400" />
+                {vi ? 'Mục tiêu tuần' : 'Weekly goal'}
+              </h2>
+              {/* Số liệu cho screen reader — vòng SVG bên trái là aria-hidden */}
+              <p className="text-sm text-zinc-200 mt-1">
+                <span className="sr-only">
+                  {vi
+                    ? `Đã học ${stats.weekly.daysDone} trên ${stats.weekly.goal} ngày mục tiêu. `
+                    : `Studied ${stats.weekly.daysDone} of ${stats.weekly.goal} goal days. `}
+                </span>
+                {weeklyLine(stats.weekly, vi)}
+              </p>
+              <button
+                onClick={() => nav('/profile')}
+                className="text-xs text-accent-400 theme-light:text-accent-800 hover:underline mt-1.5"
+              >
+                {vi ? 'Đổi mục tiêu ở Hồ sơ →' : 'Change goal in Profile →'}
+              </button>
+            </div>
           </div>
         </section>
 

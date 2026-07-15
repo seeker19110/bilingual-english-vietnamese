@@ -36,6 +36,8 @@ import {
 } from '../lib/storage'
 import { haptics, vibrate } from '../lib/haptics'
 import StreakCelebration from './StreakCelebration'
+import WeeklyGoalCelebration from './WeeklyGoalCelebration'
+import { shouldCelebrateWeeklyGoal, markWeeklyGoalCelebrated } from '../lib/weeklyGoal'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
 import {
   addToSRS,
@@ -424,6 +426,9 @@ export function TodayLesson({
   // Khoảnh khắc streak — "đỉnh" cảm xúc, bắn 1 lần/ngày khi xong batch đầu tiên
   // (V-2, docs/research/cai-tien-trai-nghiem-hoc-2026-07-11.md).
   const [celebrating, setCelebrating] = useState(false)
+  // Khoảnh khắc ĐẠT MỤC TIÊU TUẦN — 1 lần/tuần, hiện SAU màn streak nếu trùng ngày
+  // (② M1, docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md).
+  const [weekCelebrating, setWeekCelebrating] = useState(false)
 
   // Tiến độ CỦA CẤP này (pool đã lọc theo cấp ở trang cha) — trước đây dùng
   // getPathProgress (cả lộ trình, ~10.000 từ) gây khó hiểu khi đang xem 1 cấp.
@@ -456,6 +461,12 @@ export function TodayLesson({
       if (shouldCelebrateStreak(uid)) {
         markStreakCelebrated(uid)
         setCelebrating(true)
+      }
+      // Hôm nay vừa thành "ngày có học" → có thể vừa chạm mục tiêu tuần.
+      // Đánh dấu NGAY (không đợi onDone) để rời trang giữa chừng không bắn lặp.
+      if (shouldCelebrateWeeklyGoal(uid)) {
+        markWeeklyGoalCelebrated(uid)
+        setWeekCelebrating(true)
       }
     } else {
       setIdx(nextIdx)
@@ -551,6 +562,19 @@ export function TodayLesson({
         isA={isA}
         onDone={() => {
           setCelebrating(false)
+        }}
+      />
+    )
+  }
+
+  // ── Khoảnh khắc mục tiêu tuần (1 lần/tuần) — hiện SAU màn streak (nếu có)
+  if (weekCelebrating) {
+    return (
+      <WeeklyGoalCelebration
+        uid={uid}
+        isA={isA}
+        onDone={() => {
+          setWeekCelebrating(false)
         }}
       />
     )

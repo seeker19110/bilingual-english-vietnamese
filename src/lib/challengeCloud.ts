@@ -1,4 +1,4 @@
-// challengeCloud.ts — Đồng bộ entries thử thách "Challenge 1 phút / 30 ngày" lên Supabase.
+// challengeCloud.ts — Đồng bộ entries thử thách "Challenge 1 phút" (chu kỳ tuần) lên Supabase.
 //
 // Cùng triết lý với cloud.ts / progressSync.ts: localStorage/IndexedDB là nguồn
 // hiển thị TỨC THÌ (offline-first); mỗi lần nộp challenge xong (đã có transcript +
