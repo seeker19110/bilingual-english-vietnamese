@@ -53,8 +53,9 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
-- **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT, chờ người dùng chốt 3 câu
-  hỏi cuối tài liệu rồi làm theo bảng ưu tiên 14 PR:
+- **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT + người dùng ĐÃ CHỐT cả 3
+  quyết định (2026-07-15: theo thứ tự ưu tiên · LÀM Azure · LÀM giải đấu tuần M5) → cứ theo
+  bảng ưu tiên 16 PR mà làm, đang ở PR #1 (placement lib):
   `docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md` (① chấm phát âm 2 giai đoạn · ② động
   lực duy trì · ③ nghe đa dạng · ④ placement test · ⑤ eval độ tin cậy AI). Tài liệu này KẾ THỪA
   các đề xuất D/H và V-4/V-5 bên dưới — khi làm theo nó thì đánh dấu mục trùng ở dưới.

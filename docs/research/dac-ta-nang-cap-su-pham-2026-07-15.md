@@ -110,7 +110,7 @@ hiệu), V-5 (Home "Hôm nay"), V-6 (âm UI) chưa làm.
 → Nền đã khá; cái thiếu so với Duolingo là **mục tiêu tuần**, **huy hiệu/mốc**, **nhắc thông
 minh**, và **luồng quay lại sau khi bỏ bẵng** (comeback).
 
-### Thiết kế — 4 mảnh, mỗi mảnh 1 PR
+### Thiết kế — 5 mảnh (M5 giải đấu chia 2 PR, còn lại mỗi mảnh 1 PR)
 
 **M1 — Mục tiêu tuần (weekly goal).**
 
@@ -129,8 +129,31 @@ minh**, và **luồng quay lại sau khi bỏ bẵng** (comeback).
   âm ≥90 lần đầu) · đặc biệt (học đủ 7 ngày liên tiếp trước 8h sáng…— chọn vui, không ép).
 - `src/lib/achievements.ts`: `checkNewAchievements(stats)` chạy sau mỗi phiên học — pure
   function, dễ test ca biên. Huy hiệu mới → toast + confetti, xem lại ở `/profile`.
-- **Không làm leaderboard/giải đấu**: cần đông người dùng + so găng dễ gây áp lực tiêu cực —
-  trái định vị "gia sư đồng hành nhẹ nhàng". Ghi rõ là quyết định, không phải bỏ sót.
+  **M5 — Giải đấu tuần (leaderboard) — NGƯỜI DÙNG CHỐT LÀM (2026-07-15).**
+
+> AI từng đề xuất KHÔNG làm (áp lực so găng, cần đông người dùng); người dùng quyết định LÀM
+> để việc học đỡ nhàm. Thiết kế dưới đây giữ tinh thần "đồng hành nhẹ nhàng" bằng các biện
+> pháp giảm mặt trái — đây là điều kiện đi kèm, không cắt khi triển khai.
+
+- **Điểm tuần** tính Ở SERVER từ dữ liệu đã có (không tin client — CLAUDE.md §4.2): từ
+  `daily_usage` (đã đếm atomic qua `consume_usage`) + `learning_progress`. Công thức đợt đầu,
+  hằng số đặt tên trong `api/_lib/leaderboard.ts`: 1 điểm/từ mới thuộc · 1 điểm/thẻ SRS ôn ·
+  5 điểm/phiên Chat·Viết·Nói. Client KHÔNG gửi điểm lên — server tự tổng hợp.
+- **Tham gia opt-in + nickname:** mặc định KHÔNG vào giải. Bật ở `/profile` → chọn nickname
+  (validate server: 3–20 ký tự, lọc từ bậy cơ bản, không trùng). Bảng xếp hạng chỉ hiện
+  nickname + điểm — KHÔNG lộ email/tên thật/uid (cột `nickname`, `league_opt_in` trong
+  `profiles`, migration mới; RLS: đọc bảng xếp hạng qua API server, không mở SELECT chéo user).
+- **Cơ chế giải:** giải TUẦN (Thứ 2 → CN, UTC+7 cố định — ghi rõ để khỏi lệch ngày), bảng ≤30
+  người (đủ đông mới chia bảng; ít người dùng thì 1 bảng chung — xử lý ca "bảng 2 người" ngay
+  từ đầu). Top 3 cuối tuần → huy hiệu (nối M2). **Không có xuống hạng/bêu tên** — chỉ thăng
+  hạng và ghi nhận; người không chơi tuần đó đơn giản là vắng mặt, không bị trừ gì.
+- **API:** `GET /api/leaderboard` (auth) → `{ me: {rank, points}, top: [{nickname, points}],
+weekEnds }`. Cache server 5 phút (đủ tươi, đỡ query). UI: mục "🏆 Giải đấu tuần" ở Dashboard
+  - trang `/league` đơn giản.
+- **Chống gian lận mức hợp lý:** điểm chỉ từ counters server-side; trần điểm/ngày (= trần
+  lượt dùng sẵn có) nên không farm vô hạn được. Không làm hơn ở quy mô hiện tại.
+- Chia PR: (1) `feat(league): migration + tính điểm tuần + /api/leaderboard` · (2)
+  `feat(league): opt-in nickname + UI bảng xếp hạng + huy hiệu top 3`.
 
 **M3 — Nhắc thông minh (nâng cấp push sẵn có).**
 
@@ -330,11 +353,15 @@ Xếp theo **hiệu quả sư phạm / chi phí công sức**, mỗi dòng ≈ 1
 | 11  | Comeback + Home Hôm nay (V-5)  | ② M4     | Vừa      | $0                       |
 | 12  | Nhắc thông minh                | ② M3     | Vừa      | $0                       |
 | 13  | Nút 👍/👎 + tutor_feedback     | ⑤ T3     | Nhỏ      | $0                       |
-| 14  | Azure pronounce API + UI âm vị | ① G2     | Lớn      | Free tier → cần theo dõi |
+| 14  | Giải đấu tuần: điểm + API      | ② M5     | Vừa      | $0                       |
+| 15  | Giải đấu tuần: opt-in + UI     | ② M5     | Vừa      | $0                       |
+| 16  | Azure pronounce API + UI âm vị | ① G2     | Lớn      | Free tier → cần theo dõi |
 
-**Điểm cần NGƯỜI DÙNG quyết trước khi bắt đầu:**
+**QUYẾT ĐỊNH CỦA NGƯỜI DÙNG (chốt 2026-07-15):**
 
-1. Đồng ý thứ tự trên, hay muốn đẩy hạng mục nào lên trước?
-2. Hạng mục ① Giai đoạn 2 (Azure) — chấp nhận thêm 1 dịch vụ ngoài (key mới trên VPS, free
-   tier 5h/tháng) hay dừng ở Giai đoạn 1 miễn phí?
-3. Mục ② M2: xác nhận KHÔNG làm leaderboard/giải đấu (khác Duolingo, đúng định vị app)?
+1. ✅ Làm theo thứ tự ưu tiên trên.
+2. ✅ LÀM Azure Pronunciation Assessment (① Giai đoạn 2) — chấp nhận thêm dịch vụ ngoài;
+   khi làm tới sẽ cần người dùng tự tạo key Azure (AI không có quyền) và điền
+   `AZURE_SPEECH_KEY`/`AZURE_SPEECH_REGION` vào `.env` trên VPS.
+3. ✅ LÀM giải đấu tuần (đảo đề xuất ban đầu của AI — xem M5, kèm điều kiện giảm mặt trái:
+   opt-in + nickname ẩn danh + không xuống hạng/bêu tên).
