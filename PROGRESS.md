@@ -53,12 +53,20 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
-- **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT + người dùng ĐÃ CHỐT cả 3
-  quyết định (2026-07-15: theo thứ tự ưu tiên · LÀM Azure · LÀM giải đấu tuần M5) → cứ theo
-  bảng ưu tiên 16 PR mà làm, đang ở PR #1 (placement lib):
+- **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT + người dùng ĐÃ CHỐT cả 4
+  quyết định (2026-07-15: theo thứ tự ưu tiên · LÀM Azure · LÀM giải đấu tuần M5 · THAY Challenge
+  bằng giải đấu tuần M5b) → theo bảng ưu tiên 17 PR mà làm:
   `docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md` (① chấm phát âm 2 giai đoạn · ② động
-  lực duy trì · ③ nghe đa dạng · ④ placement test · ⑤ eval độ tin cậy AI). Tài liệu này KẾ THỪA
-  các đề xuất D/H và V-4/V-5 bên dưới — khi làm theo nó thì đánh dấu mục trùng ở dưới.
+  lực duy trì (kể cả giải đấu tuần) · ③ nghe đa dạng · ④ placement test · ⑤ eval độ tin cậy AI).
+  Tài liệu này KẾ THỪA các đề xuất D/H và V-4/V-5 bên dưới — khi làm theo nó thì đánh dấu mục
+  trùng ở dưới. **Đã xong:** PR #1 (`lib/placement.ts` thuật toán bậc thang), PR #2 (trang
+  `/placement` + nối onboarding) — PR #239, đã merge 2026-07-15. PR #3 (tốc độ phát TTS, ③ N1)
+  — `RateToggle` toàn cục + `getRatePref`/`setRatePref` (`lib/tts.ts`) + `preservesPitch` +
+  nối vào CefrLessonViews/Lessons/KaraokeText/Speaking/CommonPhrases/Dictionary — code xong,
+  chờ merge. **Tiếp theo:** PR #4 (xoay giọng nghe, ③ N2).
+- **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
+  trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
+  giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
 - **Cải tiến sư phạm** (`docs/research/danh-gia-tien-trien-hoc-2026-07-07.md`, đề xuất A→H):
   A (Sổ lỗi cá nhân) đã xong. Còn B (nối lộ trình↔3 chế độ AI — nút "Luyện từ hôm nay bằng hội
   thoại", đã có `targetWords?` nhưng chưa có nút CTA riêng) → C/D/E/F/G/H (sản xuất chủ động,

@@ -118,6 +118,21 @@ export function setVoicePref(voice: Voice): void {
   localStorage.setItem(VOICE_KEY, voice)
 }
 
+// ── Tốc độ phát toàn cục (0.75× / 1× / 1.25×) ───────────────────────────────
+// Cùng cơ chế với giọng đọc ở trên: lưu localStorage, mọi nơi gọi speak()/
+// speakBilingual() không truyền `rate` sẽ tự dùng giá trị này làm mặc định.
+export type Rate = 0.75 | 1 | 1.25
+const RATE_KEY = 'tts_rate'
+
+export function getRatePref(): Rate {
+  const v = Number(localStorage.getItem(RATE_KEY))
+  return v === 0.75 || v === 1.25 ? v : 1
+}
+
+export function setRatePref(rate: Rate): void {
+  localStorage.setItem(RATE_KEY, String(rate))
+}
+
 export function isTTSSupported(): boolean {
   return true // Google TTS luôn hoạt động (không phụ thuộc trình duyệt)
 }
@@ -305,6 +320,12 @@ async function speakViaGoogle(
     audio.pause()
     audio.src = blobUrl
     audio.playbackRate = rate
+    // Giữ nguyên cao độ giọng khi tăng/giảm tốc — không thì 1.25× nghe như "chuột
+    // kêu", 0.75× nghe trầm/ù. Safari (kể cả iOS) chỉ hỗ trợ qua tiền tố webkit;
+    // trình duyệt nào không có cả 2 thuộc tính thì bỏ qua (chấp nhận đổi cao độ).
+    const a = audio as HTMLAudioElement & { webkitPreservesPitch?: boolean }
+    if ('preservesPitch' in audio) audio.preservesPitch = true
+    else if ('webkitPreservesPitch' in audio) a.webkitPreservesPitch = true
     currentBlobUrl = blobUrl
     currentAudioId = audioId
     // Lưu resolve để stopSpeaking() có thể unblock Promise này mà không cần onerror
@@ -404,7 +425,7 @@ export async function speak(
   text: string,
   lang: Lang,
   voice: Voice = getVoicePref(),
-  rate = 1,
+  rate: Rate = getRatePref(),
   onWord?: (idx: number) => void,
 ): Promise<void> {
   try {
@@ -424,7 +445,7 @@ export async function speakBilingual(
   speechLang: Lang = 'en-US',
   feedbackLang: Lang = 'vi-VN',
   voice: Voice = getVoicePref(),
-  rate = 1,
+  rate: Rate = getRatePref(),
   onSpeechWord?: (idx: number) => void,
   onFeedbackWord?: (idx: number) => void,
 ) {

@@ -36,6 +36,8 @@ import {
   resumeCurrentAudio,
   unlockAudio,
   prefetchSpeech,
+  getRatePref,
+  setRatePref,
 } from '../lib/tts'
 import type { Voice } from '../lib/tts'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
@@ -615,7 +617,7 @@ export function DialogueView({
   const [activeLine, setActiveLine] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)
   const [paused, setPaused] = useState(false)
-  const [speed, setSpeed] = useState<DlgSpeed>(1)
+  const [speed, setSpeed] = useState<DlgSpeed>(getRatePref())
   const [mode, setMode] = useState<DlgMode>('en')
   // Từ đang đọc của dòng đang phát (chỉ theo dõi khi audio đang đọc CHÍNH `ln.en` — đúng văn
   // bản mà KaraokeText hiển thị) — cho karaoke sáng chữ trong lúc "Phát tất cả", không chỉ khi
@@ -627,7 +629,7 @@ export function DialogueView({
 
   const stopRef = useRef(false)
   const pauseRef = useRef(false)
-  const speedRef = useRef<DlgSpeed>(1)
+  const speedRef = useRef<DlgSpeed>(getRatePref())
   const modeRef = useRef<DlgMode>('en')
 
   // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng thứ 2 cho B
@@ -657,6 +659,7 @@ export function DialogueView({
   function changeSpeed(s: DlgSpeed) {
     setSpeed(s)
     speedRef.current = s
+    setRatePref(s)
   }
   function changeMode(m: DlgMode) {
     setMode(m)

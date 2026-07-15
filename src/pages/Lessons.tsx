@@ -5,6 +5,7 @@ import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronou
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import VoiceToggle from '../components/VoiceToggle'
+import RateToggle from '../components/RateToggle'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { getViewedIds, markViewed } from '../lib/viewedTracking'
@@ -15,6 +16,8 @@ import {
   resumeCurrentAudio,
   unlockAudio,
   prefetchSpeech,
+  getRatePref,
+  setRatePref,
 } from '../lib/tts'
 import { loadIndex, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
 import type { Direction } from '../types'
@@ -200,7 +203,12 @@ export default function Lessons() {
           title={selectedMeta.title}
           subtitle={selectedMeta.situation}
           back
-          extra={<VoiceToggle />}
+          extra={
+            <div className="flex items-center gap-1.5">
+              <VoiceToggle />
+              <RateToggle />
+            </div>
+          }
         />
         {loadingLesson || !lesson ? (
           <div className="flex-1 flex items-center justify-center text-zinc-400">
@@ -219,7 +227,15 @@ export default function Lessons() {
   // Desktop (sm+): layout thường, search ở trên
   return (
     <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
-      <Layout back extra={<VoiceToggle />} />
+      <Layout
+        back
+        extra={
+          <div className="flex items-center gap-1.5">
+            <VoiceToggle />
+            <RateToggle />
+          </div>
+        }
+      />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2">
@@ -445,13 +461,13 @@ function LessonView({
   const [activeTurn, setActiveTurn] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)
   const [paused, setPaused] = useState(false)
-  const [speed, setSpeed] = useState<Speed>(1)
+  const [speed, setSpeed] = useState<Speed>(getRatePref())
   const [mode, setMode] = useState<AudioMode>('en')
   const [wordSync, setWordSync] = useState<WordSync | null>(null)
 
   const stopRef = useRef(false)
   const pauseRef = useRef(false)
-  const speedRef = useRef<Speed>(1)
+  const speedRef = useRef<Speed>(getRatePref())
   const modeRef = useRef<AudioMode>('en')
   const turnRefs = useRef<(HTMLDivElement | null)[]>([])
   const wordSyncRef = useRef<WordSync | null>(null)
@@ -467,6 +483,7 @@ function LessonView({
   function changeSpeed(s: Speed) {
     setSpeed(s)
     speedRef.current = s
+    setRatePref(s)
   }
   function changeMode(m: AudioMode) {
     setMode(m)
