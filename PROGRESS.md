@@ -53,6 +53,11 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT, chờ người dùng chốt 3 câu
+  hỏi cuối tài liệu rồi làm theo bảng ưu tiên 14 PR:
+  `docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md` (① chấm phát âm 2 giai đoạn · ② động
+  lực duy trì · ③ nghe đa dạng · ④ placement test · ⑤ eval độ tin cậy AI). Tài liệu này KẾ THỪA
+  các đề xuất D/H và V-4/V-5 bên dưới — khi làm theo nó thì đánh dấu mục trùng ở dưới.
 - **Cải tiến sư phạm** (`docs/research/danh-gia-tien-trien-hoc-2026-07-07.md`, đề xuất A→H):
   A (Sổ lỗi cá nhân) đã xong. Còn B (nối lộ trình↔3 chế độ AI — nút "Luyện từ hôm nay bằng hội
   thoại", đã có `targetWords?` nhưng chưa có nút CTA riêng) → C/D/E/F/G/H (sản xuất chủ động,
