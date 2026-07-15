@@ -1,7 +1,10 @@
 import { useState, useRef } from 'react'
-import { Mic, Square, Loader2, RotateCcw } from 'lucide-react'
+import { Mic, Square, Loader2, RotateCcw, Volume2 } from 'lucide-react'
 import { startListening, isSTTSupported } from '../lib/stt'
 import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronounceScore'
+import type { WordScore } from '../lib/pronounceScore'
+import { coachTips } from '../lib/pronounceCoach'
+import { speak } from '../lib/tts'
 
 interface Props {
   target: string
@@ -14,7 +17,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
   const [status, setStatus] = useState<'idle' | 'listening'>('idle')
   const [score, setScore] = useState<number | null>(null)
   const [heard, setHeard] = useState('')
-  const [words, setWords] = useState<Array<{ word: string; ok: boolean }>>([])
+  const [words, setWords] = useState<WordScore[]>([])
   const [error, setError] = useState('')
   const stopRef = useRef<(() => void) | null>(null)
 
@@ -60,6 +63,20 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
   }
 
   const fb = score !== null ? pronounceFeedback(score, isA) : null
+
+  // Gợi ý sửa lỗi phát âm (tối đa 2) — CHỈ chiều A (người Việt học tiếng Anh):
+  // bảng WORD_TRAPS (src/data/pronunciationTraps.ts) soạn riêng cho lỗi người Việt
+  // đọc TIẾNG ANH, tip luôn viết bằng tiếng Việt. Ở chiều B (target là tiếng Việt),
+  // luật "nuốt âm cuối" vẫn có thể khớp nhầm trên từ tiếng Việt (vd "một"/"mộ") và
+  // hiện tip tiếng Việt cho người học tiếng Việt bằng giao diện tiếng Anh — sai cả
+  // ngôn ngữ lẫn ý nghĩa, nên tắt hẳn ở chiều B tới khi có bảng lỗi riêng cho chiều B.
+  const tips = isA
+    ? coachTips(
+        words
+          .filter((w) => w.trapHit && w.spokenWord)
+          .map((w) => ({ target: w.word, spoken: w.spokenWord! })),
+      )
+    : []
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -120,6 +137,27 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
           <p className="text-xs text-zinc-400">
             {isA ? 'Bạn đọc' : 'You said'}: "<span className="text-zinc-400">{heard}</span>"
           </p>
+
+          {/* Gợi ý huấn luyện viên lỗi: vì sao sai + nút nghe lại từ đúng */}
+          {tips.length > 0 && (
+            <div className="flex flex-col gap-1.5 text-left">
+              {tips.map((tip, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-2 rounded-lg border border-amber-500/25 bg-amber-500/10 px-2.5 py-1.5"
+                >
+                  <button
+                    onClick={() => void speak(tip.word, lang === 'en' ? 'en-US' : 'vi-VN')}
+                    aria-label={isA ? `Nghe lại từ "${tip.word}"` : `Listen to "${tip.word}"`}
+                    className="tap-44 flex-shrink-0 text-amber-300 hover:text-amber-200 transition"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                  </button>
+                  <p className="text-xs text-amber-200/90 leading-relaxed">{tip.tipVi}</p>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Nút thử lại */}
           <button

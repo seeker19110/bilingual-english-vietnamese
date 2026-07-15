@@ -50,4 +50,30 @@ describe('scoreWords', () => {
     const r = scoreWords('the cat sat', 'the cat')
     expect(r[2].ok).toBe(false)
   })
+
+  it('lỗi phát âm điển hình (th→t) → gắn trapHit + spokenWord', () => {
+    // Lưu ý: "three"/"tree" lệch Levenshtein chỉ 1 ký tự nên rơi trong ngưỡng
+    // "đúng" của scoreWords — không thể minh hoạ nhánh trapHit. Dùng "think"/
+    // "sink" (lệch 2 ký tự, vượt ngưỡng) — cũng là 1 cặp có trong WORD_TRAPS.
+    const r = scoreWords('think days', 'sink days')
+    expect(r[0]).toMatchObject({ word: 'think', ok: false, trapHit: true, spokenWord: 'sink' })
+    // Từ đúng thì không cần trapHit — falsy hoặc không có
+    expect(r[1].ok).toBe(true)
+    expect(r[1].trapHit).toBeFalsy()
+  })
+
+  it('từ sai không nằm trong bảng lỗi quen thuộc → trapHit=false', () => {
+    const r = scoreWords('hello', 'banana')
+    expect(r[0].ok).toBe(false)
+    expect(r[0].trapHit).toBe(false)
+  })
+
+  it('câu nói ngắn hơn target (thiếu từ cuối) → từ thiếu KHÔNG gắn trapHit (không có gì để so sánh)', () => {
+    const r = scoreWords('three days ago', 'three days')
+    const missing = r[2]
+    expect(missing.word).toBe('ago')
+    expect(missing.ok).toBe(false)
+    expect(missing.trapHit).toBeUndefined()
+    expect(missing.spokenWord).toBeUndefined()
+  })
 })
