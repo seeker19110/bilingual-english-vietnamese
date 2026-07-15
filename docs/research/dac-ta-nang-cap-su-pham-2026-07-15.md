@@ -129,7 +129,8 @@ minh**, và **luồng quay lại sau khi bỏ bẵng** (comeback).
   âm ≥90 lần đầu) · đặc biệt (học đủ 7 ngày liên tiếp trước 8h sáng…— chọn vui, không ép).
 - `src/lib/achievements.ts`: `checkNewAchievements(stats)` chạy sau mỗi phiên học — pure
   function, dễ test ca biên. Huy hiệu mới → toast + confetti, xem lại ở `/profile`.
-  **M5 — Giải đấu tuần (leaderboard) — NGƯỜI DÙNG CHỐT LÀM (2026-07-15).**
+
+**M5 — Giải đấu tuần (leaderboard) — NGƯỜI DÙNG CHỐT LÀM (2026-07-15).**
 
 > AI từng đề xuất KHÔNG làm (áp lực so găng, cần đông người dùng); người dùng quyết định LÀM
 > để việc học đỡ nhàm. Thiết kế dưới đây giữ tinh thần "đồng hành nhẹ nhàng" bằng các biện
