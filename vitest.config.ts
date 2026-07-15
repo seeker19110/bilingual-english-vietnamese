@@ -5,7 +5,9 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   test: {
     environment: 'happy-dom',
-    include: ['src/**/*.test.{ts,tsx}', 'api/**/*.test.ts'],
+    // scripts/**/*.test.ts = test cho tiện ích script THUẦN (vd scripts/lib/evalScoring.test.ts) —
+    // không tốn API, chỉ logic. KHÔNG gồm chính script chạy AI (scripts/eval-tutor.ts) vì nó tốn phí.
+    include: ['src/**/*.test.{ts,tsx}', 'api/**/*.test.ts', 'scripts/**/*.test.ts'],
     // Mock fetch('/data/...') → đọc thẳng public/ để test chạy offline (không cần server).
     setupFiles: ['./vitest.setup.ts'],
     coverage: {

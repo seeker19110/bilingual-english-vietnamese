@@ -65,8 +65,13 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   nối vào CefrLessonViews/Lessons/KaraokeText/Speaking/CommonPhrases/Dictionary — PR #240, đã
   merge 2026-07-15. PR #4 (xoay giọng nghe, ③ N2) — random giọng câu Nghe bài thi/placement
   (`ExamQuestion.audioVoice`) + `WordVoiceCycleButton` ở flashcard (xoay 4 giọng); hội thoại
-  CEFR đã tự khác giọng theo vai A/B từ trước, không cần sửa — code xong, chờ merge.
-  **Tiếp theo:** PR #5 (golden set + eval baseline, ⑤ T1).
+  CEFR đã tự khác giọng theo vai A/B từ trước, không cần sửa — PR #241, đã merge 2026-07-15.
+  PR #5 (golden set + eval baseline, ⑤ T1) — `scripts/eval-tutor-fixtures.json` (~60 câu),
+  `scripts/eval-tutor.ts` (`npm run eval:tutor`, gọi đúng prompt+model+guardrail production qua
+  `api/_lib/aiConfig.ts` mới tách), logic chấm thuần `scripts/lib/evalScoring.ts` + test (vào CI),
+  luật eval khi đổi prompt/model ghi ở CLAUDE.md §8 — code xong, chờ merge. ⚠️ Số baseline
+  (`docs/research/eval-tutor-baseline.md`) CẦN NGƯỜI CÓ KEY chạy `npm run eval:tutor -- --write-baseline`
+  (sandbox Claude không có key AI). **Tiếp theo:** PR #6 (trap phát âm Việt + coach tip, ① G1).
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.

@@ -1,0 +1,493 @@
+[
+  {
+    "id": "t3s-01",
+    "input": "She go to work every morning.",
+    "kind": "error",
+    "expectedErrors": ["third_person_s"],
+    "level": "beginner",
+    "note": "go → goes"
+  },
+  {
+    "id": "t3s-02",
+    "input": "My brother watch TV a lot.",
+    "kind": "error",
+    "expectedErrors": ["third_person_s"],
+    "level": "beginner",
+    "note": "watch → watches"
+  },
+  {
+    "id": "t3s-03",
+    "input": "He always forget his keys.",
+    "kind": "error",
+    "expectedErrors": ["third_person_s"],
+    "level": "beginner",
+    "note": "forget → forgets"
+  },
+
+  {
+    "id": "pl-01",
+    "input": "I have three book in my bag.",
+    "kind": "error",
+    "expectedErrors": ["plural_s"],
+    "level": "beginner",
+    "note": "book → books"
+  },
+  {
+    "id": "pl-02",
+    "input": "There are many student in the class.",
+    "kind": "error",
+    "expectedErrors": ["plural_s"],
+    "level": "beginner",
+    "note": "student → students"
+  },
+  {
+    "id": "pl-03",
+    "input": "She bought two apple at the market.",
+    "kind": "error",
+    "expectedErrors": ["plural_s"],
+    "level": "beginner",
+    "note": "apple → apples"
+  },
+  {
+    "id": "pl-04",
+    "input": "I need some informations about the trip.",
+    "kind": "error",
+    "expectedErrors": ["plural_s"],
+    "level": "intermediate",
+    "note": "information là danh từ không đếm được"
+  },
+
+  {
+    "id": "art-01",
+    "input": "I am student at university.",
+    "kind": "error",
+    "expectedErrors": ["article"],
+    "level": "beginner",
+    "note": "thiếu 'a' → a student"
+  },
+  {
+    "id": "art-02",
+    "input": "She is best teacher in the school.",
+    "kind": "error",
+    "expectedErrors": ["article"],
+    "level": "beginner",
+    "note": "the best teacher"
+  },
+  {
+    "id": "art-03",
+    "input": "I saw elephant at the zoo.",
+    "kind": "error",
+    "expectedErrors": ["article"],
+    "level": "beginner",
+    "note": "an elephant"
+  },
+  {
+    "id": "art-04",
+    "input": "I like to play the football after school.",
+    "kind": "error",
+    "expectedErrors": ["article"],
+    "level": "beginner",
+    "note": "thừa 'the' → play football"
+  },
+  {
+    "id": "art-05",
+    "input": "Water is important for the life.",
+    "kind": "error",
+    "expectedErrors": ["article"],
+    "level": "intermediate",
+    "note": "thừa 'the' → for life"
+  },
+
+  {
+    "id": "ten-01",
+    "input": "Yesterday I go to the market.",
+    "kind": "error",
+    "expectedErrors": ["tense"],
+    "level": "beginner",
+    "note": "go → went"
+  },
+  {
+    "id": "ten-02",
+    "input": "Last night we watch a movie together.",
+    "kind": "error",
+    "expectedErrors": ["tense"],
+    "level": "beginner",
+    "note": "watch → watched"
+  },
+  {
+    "id": "ten-03",
+    "input": "I have seen him yesterday.",
+    "kind": "error",
+    "expectedErrors": ["tense"],
+    "level": "intermediate",
+    "note": "present perfect + yesterday → saw"
+  },
+  {
+    "id": "ten-04",
+    "input": "When I was young, I can swim very fast.",
+    "kind": "error",
+    "expectedErrors": ["tense"],
+    "level": "intermediate",
+    "note": "can → could"
+  },
+  {
+    "id": "ten-05",
+    "input": "Tomorrow I will went to Hanoi.",
+    "kind": "error",
+    "expectedErrors": ["tense"],
+    "level": "beginner",
+    "note": "will went → will go"
+  },
+  {
+    "id": "ten-06",
+    "input": "I didn't saw the movie last week.",
+    "kind": "error",
+    "expectedErrors": ["tense"],
+    "level": "intermediate",
+    "note": "didn't saw → didn't see"
+  },
+
+  {
+    "id": "aux-01",
+    "input": "You like coffee?",
+    "kind": "error",
+    "expectedErrors": ["aux_verb"],
+    "level": "beginner",
+    "note": "thiếu 'Do' → Do you like coffee?"
+  },
+  {
+    "id": "aux-02",
+    "input": "Where you live?",
+    "kind": "error",
+    "expectedErrors": ["aux_verb"],
+    "level": "beginner",
+    "note": "Where do you live?"
+  },
+  {
+    "id": "aux-03",
+    "input": "She not know the answer.",
+    "kind": "error",
+    "expectedErrors": ["aux_verb"],
+    "level": "beginner",
+    "note": "thiếu 'does' → does not know"
+  },
+
+  {
+    "id": "mbe-01",
+    "input": "I very tired today.",
+    "kind": "error",
+    "expectedErrors": ["missing_be"],
+    "level": "beginner",
+    "note": "thiếu 'am' → I am very tired"
+  },
+  {
+    "id": "mbe-02",
+    "input": "He a doctor at the hospital.",
+    "kind": "error",
+    "expectedErrors": ["missing_be"],
+    "level": "beginner",
+    "note": "thiếu 'is' → He is a doctor"
+  },
+  {
+    "id": "mbe-03",
+    "input": "They happy to see you.",
+    "kind": "error",
+    "expectedErrors": ["missing_be"],
+    "level": "beginner",
+    "note": "thiếu 'are' → They are happy"
+  },
+
+  {
+    "id": "xbe-01",
+    "input": "I am go to school now.",
+    "kind": "error",
+    "expectedErrors": ["extra_be"],
+    "level": "beginner",
+    "note": "thừa 'am' → I go / I am going"
+  },
+  {
+    "id": "xbe-02",
+    "input": "She is want a new phone.",
+    "kind": "error",
+    "expectedErrors": ["extra_be"],
+    "level": "beginner",
+    "note": "thừa 'is' → She wants"
+  },
+
+  {
+    "id": "pre-01",
+    "input": "I am good in English.",
+    "kind": "error",
+    "expectedErrors": ["preposition"],
+    "level": "beginner",
+    "note": "good in → good at"
+  },
+  {
+    "id": "pre-02",
+    "input": "It depends of the weather.",
+    "kind": "error",
+    "expectedErrors": ["preposition"],
+    "level": "intermediate",
+    "note": "depends of → depends on"
+  },
+  {
+    "id": "pre-03",
+    "input": "I will meet you in Monday.",
+    "kind": "error",
+    "expectedErrors": ["preposition"],
+    "level": "beginner",
+    "note": "in Monday → on Monday"
+  },
+  {
+    "id": "pre-04",
+    "input": "She is interested on music.",
+    "kind": "error",
+    "expectedErrors": ["preposition"],
+    "level": "intermediate",
+    "note": "interested on → interested in"
+  },
+  {
+    "id": "pre-05",
+    "input": "I arrived to the airport early.",
+    "kind": "error",
+    "expectedErrors": ["preposition"],
+    "level": "intermediate",
+    "note": "arrived to → arrived at"
+  },
+
+  {
+    "id": "adj-01",
+    "input": "I bought a red big car.",
+    "kind": "error",
+    "expectedErrors": ["adjective_order"],
+    "level": "intermediate",
+    "note": "a big red car"
+  },
+  {
+    "id": "adj-02",
+    "input": "He wore a cotton white shirt.",
+    "kind": "error",
+    "expectedErrors": ["adjective_order"],
+    "level": "intermediate",
+    "note": "a white cotton shirt"
+  },
+
+  {
+    "id": "prn-01",
+    "input": "Me and my friend went to the party.",
+    "kind": "error",
+    "expectedErrors": ["pronoun"],
+    "level": "intermediate",
+    "note": "Me and → My friend and I"
+  },
+  {
+    "id": "prn-02",
+    "input": "Her is my older sister.",
+    "kind": "error",
+    "expectedErrors": ["pronoun"],
+    "level": "beginner",
+    "note": "Her → She"
+  },
+  {
+    "id": "prn-03",
+    "input": "Him and me are classmates.",
+    "kind": "error",
+    "expectedErrors": ["pronoun"],
+    "level": "intermediate",
+    "note": "Him and me → He and I"
+  },
+
+  {
+    "id": "wbw-01",
+    "input": "I have 20 years old.",
+    "kind": "error",
+    "expectedErrors": ["word_by_word"],
+    "level": "beginner",
+    "note": "dịch 'có ... tuổi' → I am 20 years old"
+  },
+  {
+    "id": "wbw-02",
+    "input": "I very like this song.",
+    "kind": "error",
+    "expectedErrors": ["word_by_word"],
+    "level": "beginner",
+    "note": "'rất thích' → I really like / I like it a lot"
+  },
+  {
+    "id": "wbw-03",
+    "input": "Please open the light, it is dark.",
+    "kind": "error",
+    "expectedErrors": ["word_by_word"],
+    "level": "beginner",
+    "note": "'mở đèn' → turn on the light"
+  },
+  {
+    "id": "wbw-04",
+    "input": "She has a good look, everyone likes her.",
+    "kind": "error",
+    "expectedErrors": ["word_by_word"],
+    "level": "intermediate",
+    "note": "'có ngoại hình đẹp' → She looks good / good-looking"
+  },
+
+  {
+    "id": "mix-01",
+    "input": "He don't like two apple.",
+    "kind": "error",
+    "expectedErrors": ["aux_verb", "plural_s"],
+    "level": "beginner",
+    "note": "doesn't + apples"
+  },
+  {
+    "id": "mix-02",
+    "input": "I am student and I very like it.",
+    "kind": "error",
+    "expectedErrors": ["article", "word_by_word"],
+    "level": "beginner",
+    "note": "a student + really like"
+  },
+  {
+    "id": "mix-03",
+    "input": "My father work in a office.",
+    "kind": "error",
+    "expectedErrors": ["third_person_s", "article"],
+    "level": "beginner",
+    "note": "works + an office"
+  },
+  {
+    "id": "mix-04",
+    "input": "Yesterday I don't go to school because I sick.",
+    "kind": "error",
+    "expectedErrors": ["tense", "missing_be"],
+    "level": "beginner",
+    "note": "didn't go + I was sick"
+  },
+
+  {
+    "id": "ok-01",
+    "input": "I went to the market yesterday.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "beginner"
+  },
+  {
+    "id": "ok-02",
+    "input": "She goes to school every day.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "beginner"
+  },
+  {
+    "id": "ok-03",
+    "input": "There are many students in the class.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "beginner"
+  },
+  {
+    "id": "ok-04",
+    "input": "I am really tired today.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "beginner"
+  },
+  {
+    "id": "ok-05",
+    "input": "He is a good doctor.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "beginner"
+  },
+  {
+    "id": "ok-06",
+    "input": "I have been living here for three years.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "intermediate"
+  },
+  {
+    "id": "ok-07",
+    "input": "Could you tell me how to get to the station?",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "intermediate"
+  },
+  {
+    "id": "ok-08",
+    "input": "If I had more time, I would travel around the world.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "intermediate",
+    "note": "câu điều kiện loại 2 — dễ bị AI 'sửa' nhầm"
+  },
+  {
+    "id": "ok-09",
+    "input": "The weather has been quite unpredictable lately.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "advanced"
+  },
+  {
+    "id": "ok-10",
+    "input": "I'm looking forward to meeting you next week.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "intermediate",
+    "note": "'looking forward to + V-ing' đúng — dễ bị sửa nhầm thành 'to meet'"
+  },
+  {
+    "id": "ok-11",
+    "input": "She sells beautiful handmade jewelry at the market.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "intermediate"
+  },
+  {
+    "id": "ok-12",
+    "input": "Despite the rain, we decided to go hiking.",
+    "kind": "correct",
+    "expectedErrors": [],
+    "level": "advanced"
+  },
+
+  {
+    "id": "edge-01",
+    "input": "Hello",
+    "kind": "edge",
+    "expectedErrors": [],
+    "level": "beginner",
+    "note": "1 từ — không có gì để sửa"
+  },
+  { "id": "edge-02", "input": "Yes.", "kind": "edge", "expectedErrors": [], "level": "beginner" },
+  {
+    "id": "edge-03",
+    "input": "😊👍",
+    "kind": "edge",
+    "expectedErrors": [],
+    "level": "beginner",
+    "note": "chỉ emoji — không được bịa lỗi ngữ pháp"
+  },
+  {
+    "id": "edge-04",
+    "input": "Tôi muốn học tiếng Anh với bạn.",
+    "kind": "edge",
+    "expectedErrors": [],
+    "level": "beginner",
+    "note": "học viên viết bằng tiếng Việt — nên dẫn dắt, không 'chấm ngữ pháp tiếng Anh'"
+  },
+  {
+    "id": "edge-05",
+    "input": "I want to learn tiếng Anh with you.",
+    "kind": "edge",
+    "expectedErrors": [],
+    "level": "beginner",
+    "note": "trộn Việt-Anh"
+  },
+  {
+    "id": "edge-06",
+    "input": "OK thanks bye",
+    "kind": "edge",
+    "expectedErrors": [],
+    "level": "beginner"
+  }
+]
