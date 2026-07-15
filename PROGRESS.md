@@ -47,7 +47,8 @@ giới ngày theo giờ VN — chi tiết `AUDIT.md`).
 
 **i18n/UX:** song ngữ toàn site kể cả `/login` · bottom-nav mobile (Trang chủ/Lộ trình/Luyện
 tập/Tiến độ) · thẻ "Học tiếp" ở Home · karaoke (sáng chữ theo giọng đọc) áp dụng mọi TTS >1 từ ·
-chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
+chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px · Home: gộp 3 thẻ Chat/Luyện nói/Luyện viết
+thành 1 thẻ "Học cùng gia sư AI" (header + 3 nút con, PR #243, đã merge 2026-07-15).
 
 ## Tiếp theo
 
@@ -69,9 +70,15 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   PR #5 (golden set + eval baseline, ⑤ T1) — `scripts/eval-tutor-fixtures.json` (~60 câu),
   `scripts/eval-tutor.ts` (`npm run eval:tutor`, gọi đúng prompt+model+guardrail production qua
   `api/_lib/aiConfig.ts` mới tách), logic chấm thuần `scripts/lib/evalScoring.ts` + test (vào CI),
-  luật eval khi đổi prompt/model ghi ở CLAUDE.md §8 — code xong, chờ merge. ⚠️ Số baseline
+  luật eval khi đổi prompt/model ghi ở CLAUDE.md §8 — PR #242, đã merge 2026-07-15. ⚠️ Số baseline
   (`docs/research/eval-tutor-baseline.md`) CẦN NGƯỜI CÓ KEY chạy `npm run eval:tutor -- --write-baseline`
-  (sandbox Claude không có key AI). **Tiếp theo:** PR #6 (trap phát âm Việt + coach tip, ① G1).
+  (sandbox Claude không có key AI). PR #6 (trap phát âm Việt + coach tip, ① G1) —
+  `src/data/pronunciationTraps.ts` (~66 cặp từ dễ lẫn soạn tay, 10 nhóm ngữ âm + luật chung
+  "nuốt âm cuối"), `src/lib/pronounceCoach.ts` (`findTrap`/`coachTips`), nối vào
+  `scoreWords`/`PronunciationCheck.tsx` (tip + nút nghe lại) — **CHỈ chiều A** (bảng lỗi soạn
+  riêng cho người Việt đọc tiếng Anh; chiều B tắt hẳn tip vì luật "nuốt âm cuối" khớp nhầm trên
+  từ tiếng Việt — xem PR #244 để biết chi tiết, chiều B cần bảng lỗi riêng ở đợt sau). PR #244,
+  đã merge 2026-07-15. **Tiếp theo:** PR #7 (mục tiêu tuần, ② M1).
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
