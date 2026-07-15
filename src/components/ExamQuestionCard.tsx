@@ -70,7 +70,9 @@ export default function ExamQuestionCard({
       <div className="text-center py-2">
         {q.promptKind === 'audio' ? (
           <button
-            onClick={() => q.audioText && q.audioLang && void speak(q.audioText, q.audioLang)}
+            onClick={() =>
+              q.audioText && q.audioLang && void speak(q.audioText, q.audioLang, q.audioVoice)
+            }
             className={`inline-flex items-center gap-2 px-5 py-4 rounded-2xl ${accent.soft} border ${accent.ring} ${accent.text} font-semibold transition hover:opacity-90`}
           >
             <Volume2 className="w-6 h-6" />

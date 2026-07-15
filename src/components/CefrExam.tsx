@@ -92,7 +92,7 @@ export default function CefrExam({
   // Tự phát audio khi vào 1 câu NGHE (và dừng audio khi rời câu/màn).
   useEffect(() => {
     if (!done && q?.promptKind === 'audio' && q.audioText && q.audioLang) {
-      void speak(q.audioText, q.audioLang)
+      void speak(q.audioText, q.audioLang, q.audioVoice)
     }
     return () => stopSpeaking()
   }, [q, done])
