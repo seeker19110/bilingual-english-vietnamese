@@ -21,6 +21,7 @@ const History = lazyWithRetry(() => import('./pages/History'))
 const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'))
 const Profile = lazyWithRetry(() => import('./pages/Profile'))
 const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
+const Placement = lazyWithRetry(() => import('./pages/Placement'))
 const MistakeBank = lazyWithRetry(() => import('./pages/MistakeBank'))
 
 // Thử thách "Challenge 1 phút — 30 ngày" — ghi hình/IndexedDB chỉ tải khi bấm vào.
@@ -110,6 +111,7 @@ export default function App() {
                   <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/onboarding" element={<Onboarding />} />
+                    <Route path="/placement" element={<Placement />} />
                     <Route
                       path="/"
                       element={

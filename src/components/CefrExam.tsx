@@ -22,24 +22,12 @@ import {
   buildExam,
   scoreExam,
   saveExamAttempt,
+  levelGrammarSources,
   EXAM_PASS_PCT,
   type ExamQuestion,
-  type GrammarExamSource,
 } from '../lib/cefrExam'
 import ExamQuestionCard from './ExamQuestionCard'
 import { PART_META } from '../lib/examParts'
-
-// Gom mọi câu quiz ngữ pháp của cấp (không lọc "đã học xong": điều kiện dự thi đã
-// yêu cầu học đủ ngữ pháp; đề thi phủ toàn cấp).
-function levelGrammarSources(level: CefrLevel): GrammarExamSource[] {
-  const out: GrammarExamSource[] = []
-  for (const u of level.units) {
-    for (const g of u.grammar) {
-      if (g.quiz) for (const item of g.quiz) out.push({ lessonId: g.id, item })
-    }
-  }
-  return out
-}
 
 export default function CefrExam({
   uid,

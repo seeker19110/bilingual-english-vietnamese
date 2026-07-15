@@ -130,6 +130,11 @@ alter table public.learning_progress
 alter table public.learning_progress
   add column if not exists cefr_exams jsonb not null default '{}';
 
+-- Cột thêm sau (migration 0011): kết quả bài test xếp lớp gần nhất — { cefr,
+-- appLevel, lastAt } (xem lib/placement.ts, lib/placementResult.ts).
+alter table public.learning_progress
+  add column if not exists placement jsonb not null default '{}';
+
 -- ── 7. Bật Row Level Security cho tất cả bảng ─────────────────────────
 alter table public.profiles            enable row level security;
 alter table public.chat_sessions       enable row level security;
