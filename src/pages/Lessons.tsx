@@ -15,6 +15,8 @@ import {
   resumeCurrentAudio,
   unlockAudio,
   prefetchSpeech,
+  getRatePref,
+  setRatePref,
 } from '../lib/tts'
 import { loadIndex, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
 import type { Direction } from '../types'
@@ -445,13 +447,13 @@ function LessonView({
   const [activeTurn, setActiveTurn] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)
   const [paused, setPaused] = useState(false)
-  const [speed, setSpeed] = useState<Speed>(1)
+  const [speed, setSpeed] = useState<Speed>(getRatePref())
   const [mode, setMode] = useState<AudioMode>('en')
   const [wordSync, setWordSync] = useState<WordSync | null>(null)
 
   const stopRef = useRef(false)
   const pauseRef = useRef(false)
-  const speedRef = useRef<Speed>(1)
+  const speedRef = useRef<Speed>(getRatePref())
   const modeRef = useRef<AudioMode>('en')
   const turnRefs = useRef<(HTMLDivElement | null)[]>([])
   const wordSyncRef = useRef<WordSync | null>(null)
@@ -467,6 +469,7 @@ function LessonView({
   function changeSpeed(s: Speed) {
     setSpeed(s)
     speedRef.current = s
+    setRatePref(s)
   }
   function changeMode(m: AudioMode) {
     setMode(m)
