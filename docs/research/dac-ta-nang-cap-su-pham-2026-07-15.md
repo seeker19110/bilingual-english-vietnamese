@@ -150,11 +150,42 @@ minh**, và **luồng quay lại sau khi bỏ bẵng** (comeback).
   hạng và ghi nhận; người không chơi tuần đó đơn giản là vắng mặt, không bị trừ gì.
 - **API:** `GET /api/leaderboard` (auth) → `{ me: {rank, points}, top: [{nickname, points}],
 weekEnds }`. Cache server 5 phút (đủ tươi, đỡ query). UI: mục "🏆 Giải đấu tuần" ở Dashboard
-  - trang `/league` đơn giản.
+  - trang giải đấu (xem phần thay thế Challenge bên dưới).
 - **Chống gian lận mức hợp lý:** điểm chỉ từ counters server-side; trần điểm/ngày (= trần
   lượt dùng sẵn có) nên không farm vô hạn được. Không làm hơn ở quy mô hiện tại.
-- Chia PR: (1) `feat(league): migration + tính điểm tuần + /api/leaderboard` · (2)
-  `feat(league): opt-in nickname + UI bảng xếp hạng + huy hiệu top 3`.
+
+**M5b — THAY trang Challenge bằng Giải đấu tuần, Challenge thành hoạt động ghi điểm
+(NGƯỜI DÙNG CHỐT 2026-07-15).**
+
+Challenge 30 ngày (route `/challenge`, PR #230–233) không còn là tính năng đứng riêng —
+**Giải đấu tuần tiếp quản trang này**, còn phần lõi của Challenge (quay video ngắn theo chủ đề
+→ STT → AI sửa lỗi tiếng Việt) trở thành **hoạt động ghi điểm giá trị nhất của giải**:
+
+- **Giữ nguyên (tái dùng, không viết lại):** pipeline quay + IndexedDB
+  (`challengeRecorder.ts`/`challengeVideo.ts`), 30 chủ đề (`challengeTopics.ts`), prompt AI
+  (`prompts/challenge.ts`), bảng `challenge_entries` (migration 0010) + cách tính lượt
+  (1 challenge = 1 lượt stt + 1 lượt chat, không đổi), luật ≥10s mới cho nộp, unique
+  `user_id+day` (mỗi ngày 1 challenge — đồng thời là trần điểm challenge/ngày).
+- **Thay đổi:** route `/challenge` đổi thành trang "🏆 Giải đấu tuần" (redirect 1 dòng từ
+  đường cũ để bookmark/lịch sử không vỡ). Bỏ khung "vòng 30 ngày" (bảng 30 ô, resume/restart,
+  mốc 3/7/14/21/30) → thay bằng **chu kỳ TUẦN**: bảng 7 ô Thứ 2→CN, nộp challenge tô ô hôm đó
+  và cộng điểm giải; cuối tuần có màn tổng kết tuần (thay tổng kết ngày 30). Logic vòng/round
+  trong `lib/challenge.ts` gọn lại đáng kể — phần lịch sử entries GIỮ NGUYÊN schema (cột
+  `challenge_day`/`round` cũ để nguyên, dữ liệu người dùng cũ không mất; UI mới không dùng tới).
+- **Điểm challenge trong công thức giải:** +15 điểm/challenge nộp (cao nhất bảng điểm — nói
+  chủ động là hoạt động sư phạm giá trị nhất, và mỗi ngày chỉ nộp được 1 nên không farm).
+  Server đếm TRỰC TIẾP từ `challenge_entries` (đã là dữ liệu server-side, RLS owner) — client
+  không gửi điểm.
+- **Huy hiệu:** mốc 3/7/14/21/30 ngày liên tục cũ → chuyển thành huy hiệu M2 theo TỔNG SỐ
+  challenge đã nộp (10/30/100) + huy hiệu "nộp đủ 7/7 ngày trong 1 tuần giải". Huy hiệu người
+  dùng đã đạt trước đó không bị thu hồi (dữ liệu chỉ "tốt lên" — nguyên tắc sẵn có của app).
+- **Không cần giải đấu vẫn quay được:** người KHÔNG opt-in giải vẫn thấy phần quay + feedback
+  AI như cũ (giá trị học không bị khóa sau tính năng thi đua) — chỉ phần bảng xếp hạng yêu cầu
+  opt-in + nickname.
+- Chia PR (thay cho 2 PR cũ của M5): (1) `feat(league): migration + tính điểm tuần (usage +
+challenge_entries) + /api/leaderboard` · (2) `feat(league): trang Giải đấu tuần thay
+/challenge (bảng 7 ô + quay challenge + xếp hạng) + opt-in nickname` · (3)
+  `refactor(challenge): gọn logic 30 ngày còn chu kỳ tuần + huy hiệu M2 + redirect`.
 
 **M3 — Nhắc thông minh (nâng cấp push sẵn có).**
 
@@ -355,8 +386,9 @@ Xếp theo **hiệu quả sư phạm / chi phí công sức**, mỗi dòng ≈ 1
 | 12  | Nhắc thông minh                | ② M3     | Vừa      | $0                       |
 | 13  | Nút 👍/👎 + tutor_feedback     | ⑤ T3     | Nhỏ      | $0                       |
 | 14  | Giải đấu tuần: điểm + API      | ② M5     | Vừa      | $0                       |
-| 15  | Giải đấu tuần: opt-in + UI     | ② M5     | Vừa      | $0                       |
-| 16  | Azure pronounce API + UI âm vị | ① G2     | Lớn      | Free tier → cần theo dõi |
+| 15  | Trang giải đấu thay /challenge | ② M5b    | Lớn      | $0                       |
+| 16  | Gọn challenge → chu kỳ tuần    | ② M5b    | Vừa      | $0                       |
+| 17  | Azure pronounce API + UI âm vị | ① G2     | Lớn      | Free tier → cần theo dõi |
 
 **QUYẾT ĐỊNH CỦA NGƯỜI DÙNG (chốt 2026-07-15):**
 
@@ -366,3 +398,7 @@ Xếp theo **hiệu quả sư phạm / chi phí công sức**, mỗi dòng ≈ 1
    `AZURE_SPEECH_KEY`/`AZURE_SPEECH_REGION` vào `.env` trên VPS.
 3. ✅ LÀM giải đấu tuần (đảo đề xuất ban đầu của AI — xem M5, kèm điều kiện giảm mặt trái:
    opt-in + nickname ẩn danh + không xuống hạng/bêu tên).
+4. ✅ **THAY Challenge bằng Giải đấu tuần + tích hợp challenge vào giải** (xem M5b): trang
+   `/challenge` trở thành trang giải đấu; quay challenge = hoạt động ghi điểm cao nhất
+   (+15/ngày); bỏ khung 30 ngày, chuyển chu kỳ tuần; dữ liệu + huy hiệu cũ của người dùng
+   giữ nguyên, phần quay + AI feedback vẫn dùng được không cần vào giải.
