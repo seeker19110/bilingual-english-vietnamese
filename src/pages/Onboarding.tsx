@@ -1,6 +1,14 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Plane, Briefcase, GraduationCap, MessageCircle, ChevronRight, Check } from 'lucide-react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import {
+  Plane,
+  Briefcase,
+  GraduationCap,
+  MessageCircle,
+  ChevronRight,
+  Check,
+  Sparkles,
+} from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { saveOnboarding } from '../lib/cloud'
 import { cacheOnboarding, minutesToSpeed } from '../lib/onboarding'
@@ -61,9 +69,13 @@ const MINUTES = [5, 10, 20, 30] as const
 
 export default function Onboarding() {
   const nav = useNavigate()
+  const location = useLocation()
   const { user, refresh } = useAuth()
-  const [step, setStep] = useState(0)
-  const [level, setLevel] = useState<OnboardLevel>('beginner')
+  // Tới từ /placement sau khi làm bài test xếp lớp: đã biết trình độ đề xuất →
+  // bỏ qua bước chọn trình độ thủ công (vẫn cho quay lại step 0 nếu muốn đổi ý).
+  const presetLevel = (location.state as { presetLevel?: OnboardLevel } | null)?.presetLevel
+  const [step, setStep] = useState(presetLevel ? 1 : 0)
+  const [level, setLevel] = useState<OnboardLevel>(presetLevel ?? 'beginner')
   const [goal, setGoal] = useState<OnboardGoal>('daily')
   const [minutes, setMinutes] = useState<number>(10)
   const [saving, setSaving] = useState(false)
@@ -99,7 +111,19 @@ export default function Onboarding() {
       {step === 0 && (
         <div className="w-full max-w-sm animate-fade-in">
           <h1 className="text-2xl font-bold text-white mb-1">Trình độ của bạn?</h1>
-          <p className="text-zinc-400 text-sm mb-6">AI sẽ điều chỉnh độ khó phù hợp.</p>
+          <p className="text-zinc-400 text-sm mb-4">AI sẽ điều chỉnh độ khó phù hợp.</p>
+          <button
+            onClick={() => nav('/placement', { state: { from: 'onboarding' } })}
+            className="w-full flex items-center gap-3 p-4 mb-4 rounded-2xl border border-accent-500/40 bg-accent-500/10 text-left hover:bg-accent-500/15 transition-all"
+          >
+            <Sparkles className="w-5 h-5 text-accent-400 shrink-0" />
+            <div className="flex-1">
+              <p className="font-semibold text-[15px] text-white">Làm bài test 5 phút</p>
+              <p className="text-xs text-zinc-400 mt-0.5">Xếp đúng trình độ — khuyên dùng</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-accent-400 shrink-0" />
+          </button>
+          <p className="text-xs text-zinc-500 mb-3">Hoặc tự chọn:</p>
           <div className="space-y-3">
             {LEVELS.map((l) => (
               <button
@@ -132,6 +156,18 @@ export default function Onboarding() {
       {/* Bước 1: Mục tiêu */}
       {step === 1 && (
         <div className="w-full max-w-sm animate-fade-in">
+          {presetLevel && (
+            <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-xl bg-accent-500/10 border border-accent-500/30 text-xs text-accent-300">
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              Đã xếp trình độ từ bài test —{' '}
+              <button
+                onClick={() => setStep(0)}
+                className="underline underline-offset-2 hover:text-accent-200"
+              >
+                đổi thủ công
+              </button>
+            </div>
+          )}
           <h1 className="text-2xl font-bold text-white mb-1">Bạn học tiếng Anh để?</h1>
           <p className="text-zinc-400 text-sm mb-6">AI sẽ ưu tiên chủ đề và tình huống phù hợp.</p>
           <div className="space-y-3">

@@ -21,6 +21,9 @@ const CEFR_UNLOCKED = (uid: string) => `et_cefr_unlocked_${uid}`
 // Kết quả bài thi cuối cấp (map levelId → {passed,bestPct,attempts,lastAt}) —
 // migration 0009. Khớp key trong lib/cefrExam.ts (EXAM_KEY).
 const CEFR_EXAMS = (uid: string) => `et_cefr_exams_${uid}`
+// Kết quả bài test xếp lớp gần nhất ({cefr,appLevel,lastAt}) — migration 0011.
+// Khớp key trong lib/placementResult.ts (KEY).
+const PLACEMENT = (uid: string) => `et_placement_${uid}`
 
 // Cấu trúc 1 thẻ SRS (khớp src/lib/srs.ts) — chỉ cần để merge theo số lần ôn (reps).
 interface SRSLike {
@@ -36,6 +39,36 @@ interface ExamResultLike {
   bestPct: number
   attempts: number
   lastAt: string
+}
+
+// Cấu trúc kết quả placement (khớp src/lib/placementResult.ts PlacementSaved).
+interface PlacementLike {
+  cefr: string
+  appLevel: string
+  lastAt: string
+}
+
+function readPlacement(key: string): PlacementLike | null {
+  try {
+    const r = localStorage.getItem(key)
+    if (!r) return null
+    const obj = JSON.parse(r) as unknown
+    if (obj && typeof obj === 'object' && 'lastAt' in obj) return obj as PlacementLike
+    return null
+  } catch {
+    return null
+  }
+}
+
+// Hợp nhất: giữ bản có lastAt MỚI HƠN (placement là "chụp trình độ tại thời điểm
+// thi", không có khái niệm tốt/xấu như điểm thi cuối cấp).
+function mergePlacement(
+  local: PlacementLike | null,
+  cloud: PlacementLike | null,
+): PlacementLike | null {
+  if (!local) return cloud
+  if (!cloud) return local
+  return (local.lastAt ?? '') >= (cloud.lastAt ?? '') ? local : cloud
 }
 
 function readExamMap(key: string): Record<string, ExamResultLike> {
@@ -111,6 +144,7 @@ export function pushProgress(userId: string): void {
         cefr_dialogues: readArr(CEFR_DIALOGUE(userId)),
         cefr_unlocked: readArr(CEFR_UNLOCKED(userId)),
         cefr_exams: readExamMap(CEFR_EXAMS(userId)),
+        placement: readPlacement(PLACEMENT(userId)) ?? {},
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id' },
@@ -141,6 +175,7 @@ export async function pullProgress(userId: string): Promise<void> {
     cefr_dialogues?: string[]
     cefr_unlocked?: string[]
     cefr_exams?: Record<string, ExamResultLike>
+    placement?: PlacementLike
   }
 
   // learned/hard/cefr_*: dữ liệu chỉ tăng dần → lấy hợp của local và cloud
@@ -162,6 +197,11 @@ export async function pullProgress(userId: string): Promise<void> {
   // cefr_exams: hợp nhất theo cấp, giữ kết quả "tốt hơn" (xem mergeExamMaps).
   const cefrExams = mergeExamMaps(readExamMap(CEFR_EXAMS(userId)), cloud.cefr_exams ?? {})
 
+  // placement: hợp nhất theo lastAt mới hơn (cloud.placement rỗng '{}' khi chưa
+  // từng thi → không có lastAt → coi như null).
+  const cloudPlacement = cloud.placement && 'lastAt' in cloud.placement ? cloud.placement : null
+  const placement = mergePlacement(readPlacement(PLACEMENT(userId)), cloudPlacement)
+
   // SRS: merge theo từ-khoá, giữ thẻ có nhiều lần ôn hơn (tiến bộ hơn)
   const merged: Record<string, SRSLike> = { ...(cloud.srs ?? {}) }
   for (const [k, v] of Object.entries(readObj(SRS(userId)))) {
@@ -177,6 +217,7 @@ export async function pullProgress(userId: string): Promise<void> {
     localStorage.setItem(CEFR_DIALOGUE(userId), JSON.stringify([...cefrDialogues]))
     localStorage.setItem(CEFR_UNLOCKED(userId), JSON.stringify([...cefrUnlocked]))
     localStorage.setItem(CEFR_EXAMS(userId), JSON.stringify(cefrExams))
+    if (placement) localStorage.setItem(PLACEMENT(userId), JSON.stringify(placement))
   } catch {
     /* hết dung lượng — bỏ qua */
   }

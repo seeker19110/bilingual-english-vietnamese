@@ -16,16 +16,25 @@
 // ──────────────────────────────────────────────────────────────────────
 
 import type { DictEntry } from '../types'
-import type { QuizItem } from '../data/cefr'
+import type { QuizItem, CefrLevel } from '../data/cefr'
 import type { Dialogue } from '../data/dialogues'
 import { pushProgress } from './progressSync'
 
 // Ngưỡng đạt: ≥70% tổng điểm (đồng bộ với UNLOCK_PCT của lộ trình).
 export const EXAM_PASS_PCT = 0.7
 
+// Số câu mỗi phần — kiểu chung cho cả đề thi cuối cấp (EXAM_PLAN) lẫn đề test
+// xếp lớp (PLACEMENT_ROUND_PLAN, lib/placement.ts).
+export interface ExamPlan {
+  vocab: number
+  grammar: number
+  listening: number
+  reading: number
+}
+
 // Số câu mong muốn mỗi phần (tổng ~24). Nếu kho mỏng thì lấy ít hơn (chấm theo
 // tổng thực tế), nhưng điều kiện dự thi đã bảo đảm kho đủ lớn ở hầu hết trường hợp.
-export const EXAM_PLAN = { vocab: 8, grammar: 8, listening: 4, reading: 4 } as const
+export const EXAM_PLAN: ExamPlan = { vocab: 8, grammar: 8, listening: 4, reading: 4 }
 
 const CHOICES = 4
 
@@ -141,7 +150,7 @@ export interface BuildExamParams {
   learned: Set<string> // từ đã thuộc (ưu tiên hỏi)
   grammar: GrammarExamSource[] // câu quiz ngữ pháp của cấp
   dialogues: Dialogue[] // hội thoại của cấp
-  plan?: typeof EXAM_PLAN
+  plan?: ExamPlan
 }
 
 // Xáo trộn 1 mảng (bản sao, không đụng mảng gốc).
@@ -314,6 +323,19 @@ function buildReadingQuestions(isA: boolean, dialogues: Dialogue[], count: numbe
       options: shuffle([answer, ...distractors]),
     })
   })
+  return out
+}
+
+// Gom mọi câu quiz ngữ pháp của 1 cấp (không lọc "đã học xong": người gọi tự quyết
+// định điều kiện dự thi). Dùng chung cho bài thi cuối cấp (CefrExam.tsx) và bài
+// test xếp lớp (pages/Placement.tsx).
+export function levelGrammarSources(level: CefrLevel): GrammarExamSource[] {
+  const out: GrammarExamSource[] = []
+  for (const u of level.units) {
+    for (const g of u.grammar) {
+      if (g.quiz) for (const item of g.quiz) out.push({ lessonId: g.id, item })
+    }
+  }
   return out
 }
 

@@ -53,6 +53,12 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT + người dùng ĐÃ CHỐT cả 3
+  quyết định (2026-07-15: theo thứ tự ưu tiên · LÀM Azure · LÀM giải đấu tuần M5) → cứ theo
+  bảng ưu tiên 16 PR mà làm, đang ở PR #1 (placement lib):
+  `docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md` (① chấm phát âm 2 giai đoạn · ② động
+  lực duy trì · ③ nghe đa dạng · ④ placement test · ⑤ eval độ tin cậy AI). Tài liệu này KẾ THỪA
+  các đề xuất D/H và V-4/V-5 bên dưới — khi làm theo nó thì đánh dấu mục trùng ở dưới.
 - **Cải tiến sư phạm** (`docs/research/danh-gia-tien-trien-hoc-2026-07-07.md`, đề xuất A→H):
   A (Sổ lỗi cá nhân) đã xong. Còn B (nối lộ trình↔3 chế độ AI — nút "Luyện từ hôm nay bằng hội
   thoại", đã có `targetWords?` nhưng chưa có nút CTA riêng) → C/D/E/F/G/H (sản xuất chủ động,
@@ -73,6 +79,11 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
 - `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) trên VPS nếu chưa có — cần cho STT.
 
 ## Quyết định quan trọng
+
+- **Challenge 30 ngày → nhập vào Giải đấu tuần (2026-07-15, quyết định người dùng).** Khi làm
+  M5/M5b của `docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md`: route `/challenge` thành
+  trang Giải đấu tuần (redirect giữ link cũ), quay challenge = hoạt động ghi điểm (+15/ngày),
+  bỏ khung 30 ngày chuyển chu kỳ tuần; dữ liệu `challenge_entries` + huy hiệu cũ giữ nguyên.
 
 - **Thanh toán Pro: KHÔNG làm (2026-07-11).** Dự án dùng miễn phí cho cộng đồng. Không tự đề
   xuất lại — chỉ mở khi người dùng chủ động báo.

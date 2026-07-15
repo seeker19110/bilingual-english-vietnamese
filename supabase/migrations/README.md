@@ -48,6 +48,7 @@ thêm vài trăm ms) rồi mới tới `0010` — không cần đánh dấu hay 
 | `0008_learning_progress_cefr_unlocked.sql` | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                  |
 | `0009_learning_progress_cefr_exams.sql`    | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                  |
 | `0010_challenge_entries.sql`               | ❌ CHƯA CHẠY — bảng `challenge_entries` cho thử thách "Challenge 1 phút / 30 ngày". Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền). |
+| `0011_learning_progress_placement.sql`     | ❌ CHƯA CHẠY — cột `placement` cho bài test xếp lớp đầu vào. Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                        |
 
 > Sau khi `SUPABASE_DB_URL` đã điền, bảng này **không còn cần cập nhật tay** mỗi lần
 > chạy migration — `deploy.sh` tự ghi vào `_schema_migrations` trên Supabase. Chỉ cần
