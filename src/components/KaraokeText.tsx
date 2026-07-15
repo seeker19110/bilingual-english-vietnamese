@@ -9,7 +9,7 @@
 
 import { useState, useRef } from 'react'
 import { Volume2, Square } from 'lucide-react'
-import { speak, stopSpeaking, type Voice } from '../lib/tts'
+import { speak, stopSpeaking, getRatePref, type Voice } from '../lib/tts'
 
 // Class thụt lề cho dòng phụ (vd bản dịch) đặt ngay dưới KaraokeText (iconSize 'sm')
 // để thẳng hàng với phần văn bản: 36px = cột icon w-7 (28px) + gap-2 (8px).
@@ -67,7 +67,7 @@ export default function KaraokeText({
     wordIdxRef.current = null
     setWordIdx(null)
     try {
-      await speak(text, lang, voice, 1, onWord)
+      await speak(text, lang, voice, getRatePref(), onWord)
     } catch {
       // lỗi mạng / TTS → im lặng
     } finally {
