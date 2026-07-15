@@ -2,6 +2,8 @@
 // so sánh chuỗi người dùng đọc (lấy từ Web Speech STT) với từ/câu mục tiêu.
 // Không cần API key — dùng độ tương đồng Levelshtein chuẩn hóa.
 
+import { findTrap } from './pronounceCoach'
+
 // Chuẩn hóa: thường hóa, bỏ dấu câu, gộp khoảng trắng
 function normalize(s: string): string {
   return s
@@ -53,8 +55,19 @@ export function pronounceFeedback(score: number, isA: boolean): { label: string;
   return { label: isA ? 'Chưa rõ, thử lại' : 'Unclear, try again', color: 'text-rose-400' }
 }
 
-// So sánh từng từ: trả về mảng { word, ok } — dùng để highlight từng từ đúng/sai
-export function scoreWords(target: string, spoken: string): Array<{ word: string; ok: boolean }> {
+// Kết quả chấm 1 từ: ok = đúng/sai; trapHit/spokenWord chỉ có khi sai VÀ có từ
+// STT nghe được ở vị trí đó (không thể chẩn đoán lỗi khi không có gì để so sánh).
+export interface WordScore {
+  word: string
+  ok: boolean
+  trapHit?: boolean
+  spokenWord?: string
+}
+
+// So sánh từng từ: trả về mảng { word, ok, trapHit?, spokenWord? } — dùng để
+// highlight từng từ đúng/sai và (nếu sai) tra xem có phải lỗi phát âm điển hình
+// của người Việt không (xem src/lib/pronounceCoach.ts).
+export function scoreWords(target: string, spoken: string): WordScore[] {
   const targetWords = normalize(target).split(' ').filter(Boolean)
   const spokenWords = normalize(spoken).split(' ').filter(Boolean)
   // DP alignment đơn giản: ghép từng từ target với từ spoken gần nhất (theo thứ tự)
@@ -66,6 +79,9 @@ export function scoreWords(target: string, spoken: string): Array<{ word: string
     const dist = levenshtein(tw, sw)
     const ok = dist <= Math.max(1, Math.floor(tw.length * 0.25))
     if (ok || dist <= tw.length / 2) si++ // tiêu thụ từ spoken chỉ khi khớp được
-    return { word: tw, ok }
+    if (ok) return { word: tw, ok }
+    // Sai và có từ spoken để so sánh → tra xem có phải lỗi "chuyển di" quen thuộc không
+    const trap = findTrap(tw, sw)
+    return { word: tw, ok, trapHit: !!trap, spokenWord: sw }
   })
 }
