@@ -6,6 +6,7 @@ import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import KaraokeText from '../components/KaraokeText'
 import VoiceToggle from '../components/VoiceToggle'
+import RateToggle from '../components/RateToggle'
 import { loadIndex, loadSubject } from '../data/patterns/loader'
 import type { SubjectMeta, Subject } from '../data/patterns/loader'
 import { getViewedIds, markViewed } from '../lib/viewedTracking'
@@ -275,7 +276,16 @@ export default function CommonPhrases() {
     const c = getColor(selected.color)
     return (
       <div className="h-[calc(100dvh-var(--bnav-h))] overflow-hidden bg-zinc-950 flex flex-col">
-        <Layout title={selected.starter} back extra={<VoiceToggle />} />
+        <Layout
+          title={selected.starter}
+          back
+          extra={
+            <div className="flex items-center gap-1.5">
+              <VoiceToggle />
+              <RateToggle />
+            </div>
+          }
+        />
         <main className="flex-1 overflow-hidden max-w-3xl mx-auto w-full px-4 py-4 flex flex-col">
           {/* danh sách câu cuộn trong khung cố định, không đẩy trang xuống */}
           <div className="flex-1 overflow-y-auto space-y-2 pr-0.5">
@@ -318,7 +328,15 @@ export default function CommonPhrases() {
 
   return (
     <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
-      <Layout back extra={<VoiceToggle />} />
+      <Layout
+        back
+        extra={
+          <div className="flex items-center gap-1.5">
+            <VoiceToggle />
+            <RateToggle />
+          </div>
+        }
+      />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:py-6 space-y-4">

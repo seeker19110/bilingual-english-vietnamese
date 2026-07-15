@@ -12,6 +12,7 @@ import {
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import VoiceToggle from '../components/VoiceToggle'
+import RateToggle from '../components/RateToggle'
 import PronounceButton from '../components/PronounceButton'
 import VocabMilestone from '../components/VocabMilestone'
 import StudyPanel from '../components/StudyPanel'
@@ -205,7 +206,14 @@ export default function Dictionary() {
 
   return (
     <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
-      <Layout extra={<VoiceToggle />} />
+      <Layout
+        extra={
+          <div className="flex items-center gap-1.5">
+            <VoiceToggle />
+            <RateToggle />
+          </div>
+        }
+      />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
         <div className="max-w-3xl mx-auto px-4 py-6 pb-24 sm:pb-6">

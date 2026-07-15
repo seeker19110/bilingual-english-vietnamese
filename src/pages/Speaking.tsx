@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send, Award } from 'lucide-react'
 import Layout from '../components/Layout'
+import RateToggle from '../components/RateToggle'
 import PageHeader from '../components/PageHeader'
 import EvaluationResultView from '../components/EvaluationResultView'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
@@ -15,7 +16,7 @@ import { callClaude, parseJson } from '../lib/ai'
 import { speakingSystemPrompt, speakingFullEvaluationPrompt, situationLabel } from '../prompts'
 import { startListening, isSTTSupported } from '../lib/stt'
 import { startRecording, isRecordingSupported, type Recorder } from '../lib/sttServer'
-import { speakBilingual, stopSpeaking, isTTSSupported } from '../lib/tts'
+import { speakBilingual, stopSpeaking, isTTSSupported, getRatePref } from '../lib/tts'
 import { haptics } from '../lib/haptics'
 import {
   SITUATIONS,
@@ -490,7 +491,7 @@ export default function Speaking() {
           isA ? 'en-US' : 'vi-VN',
           isA ? 'vi-VN' : 'en-US',
           undefined,
-          1,
+          getRatePref(),
           (wi) => setWordSync({ msgId: msg.id, field: 'speech', wordIdx: wi }),
         )
         setSpeaking(false)
@@ -646,7 +647,7 @@ export default function Speaking() {
           isA ? 'en-US' : 'vi-VN',
           isA ? 'vi-VN' : 'en-US',
           undefined,
-          1,
+          getRatePref(),
           (wi) => setWordSync({ msgId: aiMsg.id, field: 'speech', wordIdx: wi }),
           (wi) => setWordSync({ msgId: aiMsg.id, field: 'feedback', wordIdx: wi }),
         )
@@ -669,7 +670,7 @@ export default function Speaking() {
       isA ? 'en-US' : 'vi-VN',
       isA ? 'vi-VN' : 'en-US',
       undefined,
-      1,
+      getRatePref(),
       (wi) => setWordSync({ msgId: msg.id, field: 'speech', wordIdx: wi }),
       (wi) => setWordSync({ msgId: msg.id, field: 'feedback', wordIdx: wi }),
     )
@@ -733,6 +734,7 @@ export default function Speaking() {
               }`
             : undefined
         }
+        extra={<RateToggle />}
       />
 
       {!session ? (
