@@ -15,6 +15,7 @@ import {
   Play,
   Brain,
   Video,
+  Bot,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getStreak, hasStudiedToday, getDirection, setDirection } from '../lib/storage'
@@ -39,10 +40,47 @@ import { getSRSStats } from '../lib/srs'
 import { getDailyLearned, getDailyMax } from '../lib/curriculum'
 
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
-function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
+type IconType = typeof MessageCircle
+interface ModeTag {
+  label: string
+  cls: string
+}
+interface ModeSubItem {
+  path: string
+  icon: IconType
+  label: string
+  color: string
+  // Mô tả đầy đủ cho aria-label (label hiện trên nút chỉ ngắn gọn "Chat"/"Nói"/"Viết")
+  fullDesc: string
+}
+type ModeCard =
+  | {
+      kind: 'link'
+      path: string
+      icon: IconType
+      gradient: string
+      glow: string
+      ring: string
+      tag: ModeTag
+      title: string
+      desc: string
+    }
+  | {
+      kind: 'group'
+      icon: IconType
+      gradient: string
+      glow: string
+      tag: ModeTag
+      title: string
+      desc: string
+      items: ModeSubItem[]
+    }
+
+function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[] {
   const isA = dir === 'A'
   return [
     {
+      kind: 'link',
       path: '/dictionary',
       icon: BookOpen,
       gradient: 'from-amber-500 to-orange-400',
@@ -56,6 +94,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       desc: isA ? T.dictDescA : T.dictDescB,
     },
     {
+      kind: 'link',
       path: '/learning-path',
       icon: Target,
       gradient: 'from-lime-500 to-green-400',
@@ -71,6 +110,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
         : 'Start from letters and numbers — 5-20 new words a day (pick your pace) in related circles, with common sentences.',
     },
     {
+      kind: 'link',
       path: '/lessons',
       icon: GraduationCap,
       gradient: 'from-rose-500 to-pink-400',
@@ -84,6 +124,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       desc: isA ? T.lessonsDescA : T.lessonsDescB,
     },
     {
+      kind: 'link',
       path: '/phrases',
       icon: MessagesSquare,
       gradient: 'from-teal-500 to-accent-400',
@@ -97,45 +138,42 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']) {
       desc: isA ? T.phrasesDescA : T.phrasesDescB,
     },
     {
-      path: '/chat',
-      icon: MessageCircle,
-      gradient: 'from-accent-500 to-accent-400',
+      kind: 'group',
+      icon: Bot,
+      gradient: 'from-accent-500 via-sky-500 to-violet-500',
       glow: 'shadow-accent-500/20',
-      ring: 'hover:border-accent-500/40',
       tag: {
-        label: T.tagPopular,
+        label: T.tagTutorModes,
         cls: 'bg-accent-500/15 text-accent-300 theme-light:text-accent-700 border border-accent-500/20',
       },
-      title: isA ? T.chatTitleA : T.chatTitleB,
-      desc: isA ? T.chatDescA : T.chatDescB,
+      title: isA ? T.tutorTitleA : T.tutorTitleB,
+      desc: isA ? T.tutorDescA : T.tutorDescB,
+      items: [
+        {
+          path: '/chat',
+          icon: MessageCircle,
+          label: T.chat,
+          color: 'text-accent-400',
+          fullDesc: `${isA ? T.chatTitleA : T.chatTitleB}. ${isA ? T.chatDescA : T.chatDescB}`,
+        },
+        {
+          path: '/speaking',
+          icon: Mic,
+          label: T.speak,
+          color: 'text-sky-400',
+          fullDesc: `${isA ? T.speakTitleA : T.speakTitleB}. ${isA ? T.speakDescA : T.speakDescB}`,
+        },
+        {
+          path: '/writing',
+          icon: PenLine,
+          label: T.write,
+          color: 'text-violet-400',
+          fullDesc: `${isA ? T.writeTitleA : T.writeTitleB}. ${isA ? T.writeDescA : T.writeDescB}`,
+        },
+      ],
     },
     {
-      path: '/speaking',
-      icon: Mic,
-      gradient: 'from-sky-500 to-cyan-400',
-      glow: 'shadow-sky-500/20',
-      ring: 'hover:border-sky-500/40',
-      tag: {
-        label: T.tagKeyFeature,
-        cls: 'bg-sky-500/15 text-sky-300 theme-light:text-sky-700 border border-sky-500/20',
-      },
-      title: isA ? T.speakTitleA : T.speakTitleB,
-      desc: isA ? T.speakDescA : T.speakDescB,
-    },
-    {
-      path: '/writing',
-      icon: PenLine,
-      gradient: 'from-violet-500 to-purple-400',
-      glow: 'shadow-violet-500/20',
-      ring: 'hover:border-violet-500/40',
-      tag: {
-        label: 'IELTS',
-        cls: 'bg-violet-500/15 text-violet-300 theme-light:text-violet-700 border border-violet-500/20',
-      },
-      title: isA ? T.writeTitleA : T.writeTitleB,
-      desc: isA ? T.writeDescA : T.writeDescB,
-    },
-    {
+      kind: 'link',
       path: '/challenge',
       icon: Video,
       gradient: 'from-rose-500 to-red-400',
@@ -371,13 +409,63 @@ export default function Home() {
         <div className="space-y-3">
           {MODES.map((m, i) => {
             const Icon = m.icon
+            const delay = { animationDelay: `${100 + i * 60}ms` }
+
+            // Thẻ gộp "Học cùng gia sư AI": 1 header + 3 nút con (Chat/Nói/Viết)
+            // — gộp vì cả 3 đều là hội thoại với AI, chỉ khác kênh (chữ/giọng nói/bài viết).
+            if (m.kind === 'group') {
+              return (
+                <div
+                  key="tutor-group"
+                  className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-up"
+                  style={delay}
+                >
+                  <div className="flex items-center gap-4 mb-3">
+                    <div
+                      className={`w-12 h-12 rounded-xl bg-gradient-to-br ${m.gradient} flex items-center justify-center shrink-0 shadow-lg ${m.glow}`}
+                    >
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="font-semibold text-white text-[15px]">{m.title}</p>
+                        <span
+                          className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}
+                        >
+                          {m.tag.label}
+                        </span>
+                      </div>
+                      <p className="text-sm text-zinc-400 leading-relaxed line-clamp-2">{m.desc}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    {m.items.map((sub) => {
+                      const SubIcon = sub.icon
+                      return (
+                        <button
+                          key={sub.path}
+                          onClick={() => nav(sub.path)}
+                          aria-label={sub.fullDesc}
+                          className="tap-44 flex flex-col items-center justify-center gap-1.5 rounded-xl py-3 border border-zinc-800/60 bg-zinc-950/40 hover:bg-zinc-800/60 hover:border-zinc-700 transition active:scale-[0.98]"
+                        >
+                          <SubIcon className={`w-5 h-5 ${sub.color}`} />
+                          <span className="text-xs font-medium text-zinc-200">{sub.label}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            }
+
             return (
               <button
                 key={m.path}
                 onClick={() => nav(m.path)}
                 aria-label={`${m.title}. ${m.desc}`}
                 className={`w-full bg-zinc-900/80 border border-zinc-800/80 ${m.ring} rounded-2xl p-4 text-left flex items-center gap-4 transition-all duration-200 group hover:bg-zinc-800/60 active:scale-[0.99] animate-fade-up`}
-                style={{ animationDelay: `${100 + i * 60}ms` }}
+                style={delay}
               >
                 <div
                   className={`w-12 h-12 rounded-xl bg-gradient-to-br ${m.gradient} flex items-center justify-center shrink-0 shadow-lg ${m.glow} transition-transform group-hover:scale-105`}
