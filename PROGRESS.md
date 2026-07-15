@@ -78,9 +78,17 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   tuần từ Thứ 2 giờ VN, cùng luật "ngày có học" với streak) + chọn ở `/profile` + vòng tiến độ
   `GoalRing` ở Dashboard + màn ăn mừng 1 lần/tuần (`WeeklyGoalCelebration`, nối sau màn streak
   trong StudyTabs) + đồng bộ cột `weekly_goal` (migration `0012`, hợp nhất updatedAt mới hơn
-  thắng) — code xong, chờ merge; CÙNG PR đó: Challenge chuyển CHU KỲ TUẦN (xem quyết định mới
-  bên dưới). **Tiếp theo:** PR #8 (huy hiệu, ② M2) theo bảng ưu tiên — gồm cả huy hiệu
-  challenge 10/30/100 bài + "7/7 ngày trong tuần" thay mốc 30 ngày cũ.
+  thắng) — ĐÃ MERGE (PR #246, 2026-07-15), CÙNG PR đó: Challenge chuyển CHU KỲ TUẦN (xem quyết
+  định mới bên dưới). PR #8 (huy hiệu, ② M2) — `src/data/achievements.ts` (~19 huy hiệu tĩnh,
+  5 nhóm: streak 7/30/100/365 · từ vựng 100/500/1000 · qua cấp CEFR A1-C2 (6) · kỹ năng 10 phiên
+  nói/10 bài viết đã chấm · challenge 10/30/100 bài + tuần trọn vẹn 7/7) + `src/lib/achievements.ts`
+  (`checkNewAchievements` — CHỈ so dữ liệu ĐÃ CÓ SẴN, không thêm tracking mới; "chỉ cộng thêm",
+  không thu hồi) — gọi ở 5 điểm chạm (học từ mới StudyTabs, nộp challenge, chấm bài viết, luyện
+  nói, thi cuối cấp) + toast khi vừa đạt + lưới huy hiệu ở `/profile` (backfill huy hiệu cũ khi
+  mở trang). ⚠️ KHÔNG làm "điểm phát âm ≥90 lần đầu" như đặc tả gốc — `pronounceScore.ts` chưa
+  lưu lịch sử điểm, thêm tracking mới sẽ vượt phạm vi 1 PR nhỏ; thay bằng nhóm kỹ năng/challenge
+  hiện có. Đồng bộ cột `achievements` (migration `0013`, hợp union) — code xong, chờ merge.
+  **Tiếp theo:** PR #9 (bài luyện nghe dictation, ③ N3) theo bảng ưu tiên.
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.

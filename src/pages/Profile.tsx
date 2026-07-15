@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   TrendingUp,
@@ -9,17 +9,25 @@ import {
   BookOpen,
   Gauge,
   CalendarCheck,
+  Award,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
+import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { getStreak, getDirection } from '../lib/storage'
 import { getLearnedCount } from '../lib/vocab'
 import { getDailySpeed, setDailySpeed, DAILY_SPEEDS, type DailySpeed } from '../lib/curriculum'
 import { getWeeklyGoal, setWeeklyGoal, WEEKLY_GOALS, type WeeklyGoal } from '../lib/weeklyGoal'
+import {
+  checkNewAchievements,
+  achievementMessage,
+  getEarnedAchievements,
+} from '../lib/achievements'
+import { ACHIEVEMENTS } from '../data/achievements'
 import { logout } from '../lib/auth'
 
 const SPEED_LABEL: Record<DailySpeed, { vi: string; en: string }> = {
@@ -39,9 +47,25 @@ export default function Profile() {
   const nav = useNavigate()
   const { user } = useAuth()
   const { T } = useLang()
+  const toast = useToast()
   useCloudSync(user?.id) // kéo lượt dùng mới nhất từ Supabase
   const [speed, setSpeed] = useState<DailySpeed>(() => getDailySpeed(user?.id ?? ''))
   const [weekGoal, setWeekGoal] = useState<WeeklyGoal>(() => getWeeklyGoal(user?.id ?? ''))
+  const [earned, setEarned] = useState<Set<string>>(() => getEarnedAchievements(user?.id ?? ''))
+
+  // Backfill lúc mở trang: bắt các huy hiệu đã đủ điều kiện nhưng chưa từng được
+  // ghi nhận (vd người dùng cũ đạt streak_7 TRƯỚC khi tính năng này ra mắt) —
+  // vẫn báo toast, không bỏ lỡ niềm vui chỉ vì thứ tự trang ghé thăm.
+  useEffect(() => {
+    if (!user) return
+    const isA = getDirection() === 'A'
+    const fresh = checkNewAchievements(user.id)
+    if (fresh.length > 0) {
+      setEarned(getEarnedAchievements(user.id))
+      for (const a of fresh) toast.success(achievementMessage(a, isA))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id])
 
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
@@ -189,6 +213,43 @@ export default function Profile() {
               ? 'Tuần tính từ Thứ 2. Ngày có học bất kỳ hoạt động nào (từ vựng, chat, viết, nói) đều được tính — cùng luật với chuỗi ngày.'
               : 'Weeks start on Monday. Any study activity (vocab, chat, writing, speaking) counts — same rule as your streak.'}
           </p>
+        </section>
+
+        {/* Huy hiệu & mốc (② M2) */}
+        <section className="animate-fade-in">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+              <Award className="w-4 h-4 text-amber-400" />
+              {isA ? 'Huy hiệu & mốc' : 'Achievements'}
+            </h2>
+            <span className="text-xs text-zinc-400">
+              {earned.size}/{ACHIEVEMENTS.length}
+            </span>
+          </div>
+          <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 grid grid-cols-4 gap-3">
+            {ACHIEVEMENTS.map((a) => {
+              const has = earned.has(a.id)
+              const name = isA ? a.nameVi : a.nameEn
+              return (
+                <div key={a.id} className="flex flex-col items-center gap-1 text-center">
+                  <span
+                    title={name}
+                    aria-label={`${name}${has ? (isA ? ' — đã đạt' : ' — earned') : isA ? ' — chưa đạt' : ' — locked'}`}
+                    className={`w-11 h-11 rounded-full flex items-center justify-center text-lg shrink-0 ${
+                      has
+                        ? 'bg-amber-500/15 border border-amber-500/40'
+                        : 'bg-zinc-900/60 border border-zinc-800/60 opacity-40 grayscale'
+                    }`}
+                  >
+                    {a.icon}
+                  </span>
+                  <span className="text-[10px] text-zinc-400 text-center leading-tight line-clamp-2">
+                    {name}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
         </section>
 
         {/* Điều hướng nhanh */}

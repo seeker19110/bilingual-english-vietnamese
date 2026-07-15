@@ -4,6 +4,7 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { addMistakes } from '../lib/mistakes'
+import { checkNewAchievements, achievementMessage } from '../lib/achievements'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
@@ -296,6 +297,8 @@ export default function Writing() {
       setResult(sub)
       incrementUsage(user.id, 'writingCount')
       throttle() // Rate limit sau lần gọi thành công
+      // Huy hiệu mới (kỹ năng — ② M2) — bài viết vừa được chấm + lưu.
+      for (const a of checkNewAchievements(user.id)) toast.success(achievementMessage(a, isA))
     } catch (e) {
       const m = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
       setError(m)

@@ -54,6 +54,7 @@ import {
   fetchChallengeEntriesCloud,
   cloudChallengeToLocal,
 } from '../lib/challengeCloud'
+import { checkNewAchievements, achievementMessage } from '../lib/achievements'
 
 type Stage = 'idle' | 'countdown' | 'recording' | 'reviewing' | 'typed' | 'submitting'
 
@@ -570,6 +571,8 @@ export default function Challenge() {
       const nowComplete = getWeekCells(nextChallenge, todayStr).every((c) => c.entry)
       haptics.success()
       if (!beforeComplete && nowComplete) setCelebrateWeek(true)
+      // Huy hiệu mới (② M2) — sau khi lưu entry để getTotalSubmitted/hasPerfectWeek thấy bài vừa nộp.
+      for (const a of checkNewAchievements(uid)) toast.success(achievementMessage(a, isA))
 
       if (previewUrl) URL.revokeObjectURL(previewUrl)
       setPreviewUrl(null)

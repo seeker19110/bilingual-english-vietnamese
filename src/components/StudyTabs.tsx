@@ -38,6 +38,8 @@ import { haptics, vibrate } from '../lib/haptics'
 import StreakCelebration from './StreakCelebration'
 import WeeklyGoalCelebration from './WeeklyGoalCelebration'
 import { shouldCelebrateWeeklyGoal, markWeeklyGoalCelebrated } from '../lib/weeklyGoal'
+import { checkNewAchievements, achievementMessage } from '../lib/achievements'
+import { useToast } from '../context/ToastProvider'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
 import {
   addToSRS,
@@ -400,6 +402,7 @@ export function TodayLesson({
 }) {
   const dailyMax = getDailyMax(uid)
   const speed = getDailySpeed(uid)
+  const toast = useToast()
 
   // Phase bắt đầu dựa trên trạng thái ngày hiện tại
   const [phase, setPhase] = useState<TodayPhase>(() => {
@@ -449,6 +452,9 @@ export function TodayLesson({
     bumpDailyLearned(uid)
     markStudiedToday(uid) // ghi nhận có học hôm nay → tính streak (đồng bộ server)
     onProgress()
+    // Huy hiệu mới (chuỗi ngày/khối lượng từ vựng — ② M2) — kiểm tra sau mỗi từ học
+    // xong vì đây là điểm chạm thường xuyên nhất, bắt kịp lúc vừa đạt mốc.
+    for (const a of checkNewAchievements(uid)) toast.success(achievementMessage(a, isA))
     const nextIdx = idx + 1
     if (nextIdx >= batch.length) {
       // Hết batch → check tổng hôm nay

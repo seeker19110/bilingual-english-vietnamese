@@ -26,6 +26,8 @@ const CEFR_EXAMS = (uid: string) => `et_cefr_exams_${uid}`
 const PLACEMENT = (uid: string) => `et_placement_${uid}`
 // Mục tiêu tuần ({goal,updatedAt}) — migration 0012. Khớp key lib/weeklyGoal.ts (KEY).
 const WEEKLY_GOAL = (uid: string) => `et_weekly_goal_${uid}`
+// Huy hiệu đã đạt (mảng id) — migration 0013. Khớp key lib/achievements.ts (KEY).
+const ACHIEVEMENTS = (uid: string) => `et_achievements_${uid}`
 
 // Cấu trúc 1 thẻ SRS (khớp src/lib/srs.ts) — chỉ cần để merge theo số lần ôn (reps).
 interface SRSLike {
@@ -177,6 +179,7 @@ export function pushProgress(userId: string): void {
         cefr_exams: readExamMap(CEFR_EXAMS(userId)),
         placement: readPlacement(PLACEMENT(userId)) ?? {},
         weekly_goal: readWeeklyGoal(WEEKLY_GOAL(userId)) ?? {},
+        achievements: readArr(ACHIEVEMENTS(userId)),
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id' },
@@ -209,6 +212,7 @@ export async function pullProgress(userId: string): Promise<void> {
     cefr_exams?: Record<string, ExamResultLike>
     placement?: PlacementLike
     weekly_goal?: WeeklyGoalLike
+    achievements?: string[]
   }
 
   // learned/hard/cefr_*: dữ liệu chỉ tăng dần → lấy hợp của local và cloud
@@ -225,6 +229,10 @@ export async function pullProgress(userId: string): Promise<void> {
   const cefrUnlocked = new Set<string>([
     ...readArr(CEFR_UNLOCKED(userId)),
     ...(cloud.cefr_unlocked ?? []),
+  ])
+  const achievements = new Set<string>([
+    ...readArr(ACHIEVEMENTS(userId)),
+    ...(cloud.achievements ?? []),
   ])
 
   // cefr_exams: hợp nhất theo cấp, giữ kết quả "tốt hơn" (xem mergeExamMaps).
@@ -256,6 +264,7 @@ export async function pullProgress(userId: string): Promise<void> {
     localStorage.setItem(CEFR_DIALOGUE(userId), JSON.stringify([...cefrDialogues]))
     localStorage.setItem(CEFR_UNLOCKED(userId), JSON.stringify([...cefrUnlocked]))
     localStorage.setItem(CEFR_EXAMS(userId), JSON.stringify(cefrExams))
+    localStorage.setItem(ACHIEVEMENTS(userId), JSON.stringify([...achievements]))
     if (placement) localStorage.setItem(PLACEMENT(userId), JSON.stringify(placement))
     if (weeklyGoal) localStorage.setItem(WEEKLY_GOAL(userId), JSON.stringify(weeklyGoal))
   } catch {

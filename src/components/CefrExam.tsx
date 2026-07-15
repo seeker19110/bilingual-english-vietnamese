@@ -28,6 +28,8 @@ import {
 } from '../lib/cefrExam'
 import ExamQuestionCard from './ExamQuestionCard'
 import { PART_META } from '../lib/examParts'
+import { checkNewAchievements, achievementMessage } from '../lib/achievements'
+import { useToast } from '../context/ToastProvider'
 
 export default function CefrExam({
   uid,
@@ -44,6 +46,8 @@ export default function CefrExam({
   onClose: () => void
   onOpenLesson: (lessonId: string) => void
 }) {
+  const toast = useToast()
+
   // Nạp hội thoại của tất cả unit trong cấp (cho phần Đọc) — async.
   const [dialogues, setDialogues] = useState<Dialogue[] | null>(null)
   useEffect(() => {
@@ -140,6 +144,8 @@ export default function CefrExam({
       setSavedPct(s.pct)
       setDone(true)
       stopSpeaking()
+      // Huy hiệu "Qua cấp X" (② M2) — kiểm tra sau khi lưu kết quả thi.
+      for (const a of checkNewAchievements(uid)) toast.success(achievementMessage(a, isA))
     } else {
       setCurrent((c) => c + 1)
       setSelected(null)
