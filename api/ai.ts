@@ -17,7 +17,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from './_lib/security'
-import { checkAndConsumeUsage, refundUsage, isUsageMode } from './_lib/usage'
+import { checkAndConsumeUsage, refundUsage, type UsageMode } from './_lib/usage'
 import { callGemini } from './_lib/geminiApi'
 import { fetchWithTimeout } from './_lib/fetchTimeout'
 import { jsonResponse, getClientIp } from './_lib/http'
@@ -87,6 +87,15 @@ function sumStringContent(messages: unknown[]): number {
   }, 0)
 }
 
+// Mode HỢP LỆ cho /api/claude — CHỈ 3 giá trị này (khớp CallMode ở src/lib/ai.ts). Cố ý
+// KHÔNG dùng isUsageMode() chung của usage.ts (nay còn có 'stt'/'pronounce' — các mode đó đếm
+// vào /api/stt và /api/pronounce-assess riêng): dùng chung sẽ cho phép client gửi
+// mode:'stt'/'pronounce' để /api/claude ÂM THẦM trừ nhầm sang cột đếm khác, né giới hạn chat.
+const CHAT_ENDPOINT_MODES = new Set<UsageMode>(['chat', 'writing', 'speaking'])
+function isChatEndpointMode(v: unknown): v is 'chat' | 'writing' | 'speaking' {
+  return typeof v === 'string' && CHAT_ENDPOINT_MODES.has(v as UsageMode)
+}
+
 // Schema validate body /api/claude — xem api/ai.ts đầu file: server tự quyết định model/giới
 // hạn, KHÔNG tin giá trị client gửi lên. `.catch()` tái tạo đúng hành vi lenient cũ (input sai
 // kiểu → coi như rỗng/mặc định, KHÔNG từ chối) — duy nhất `.refine()` cuối vẫn từ chối (413) khi
@@ -107,7 +116,7 @@ const AiBodySchema = z
       .string()
       .catch('')
       .transform((v) => v.slice(0, 8000)),
-    mode: z.unknown().transform((v) => (isUsageMode(v) ? v : 'chat')),
+    mode: z.unknown().transform((v) => (isChatEndpointMode(v) ? v : 'chat')),
   })
   .refine((d) => sumStringContent(d.messages) <= MAX_TOTAL_CONTENT, {
     error: 'Nội dung hội thoại quá dài',

@@ -147,16 +147,46 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   từ các đoạn code khác trông giống — phải tự chạy `npx playwright test e2e/a11y.spec.ts` để
   bắt được lỗi này (không thấy qua build/lint/unit test). `vite.config.ts` thêm
   `/api/leaderboard` vào `API_ROUTES` (dev server proxy — thiếu dòng này thì trang gọi API mới
-  sẽ 404 im lặng lúc `npm run dev`/E2E). Code xong (đủ 117/117 E2E xanh), chờ merge. **Tiếp
-  theo:** PR #16
-  (`refactor(challenge): gọn logic 30 ngày còn chu kỳ tuần + huy hiệu M2 + redirect`) — LƯU Ý:
-  phần "gọn logic 30 ngày → chu kỳ tuần" + "huy hiệu M2" trong đặc tả THỰC RA đã làm xong từ PR
-  #246/#247 (xem "Quyết định quan trọng" bên dưới) và trang giải đấu ở PR #15 KHÔNG tách route
-  riêng nên không cần "redirect" — rà lại đặc tả trước khi làm PR #16, có thể PR #16 không còn
-  việc gì để làm nữa (coi như M5/M5b đã xong ở #14+#15). Nếu vậy, chuyển thẳng sang PR #17
-  (Azure Pronunciation Assessment, ① G2) hoặc quay lại PR #10 (vá prompt theo eval) nếu có
-  người chạy được baseline T1 (`npm run eval:tutor -- --write-baseline`, cần key AI thật,
-  sandbox không có).
+  sẽ 404 im lặng lúc `npm run dev`/E2E). ĐÃ MERGE (PR #254, 2026-07-16). **PR #16 KHÔNG CÒN VIỆC
+  GÌ ĐỂ LÀM** (rà lại đặc tả sau khi #14+#15 merge, 2026-07-16): "gọn logic 30 ngày → chu kỳ
+  tuần" đã xong ở PR #246, "huy hiệu M2" đã xong ở PR #247, và trang giải đấu ở PR #15 KHÔNG
+  tách route riêng (gộp vào `/challenge` có sẵn) nên không có "đường cũ" nào cần redirect →
+  ② M5/M5b (Giải đấu tuần) coi như ĐÃ XONG HẲN sau PR #14+#15, bỏ qua PR #16. **Tiếp theo:**
+  PR #17 (Azure Pronunciation Assessment, ① G2 — người dùng đã chốt làm 2026-07-15) hoặc quay
+  lại PR #10 (vá prompt theo eval) nếu có người chạy được baseline T1
+  (`npm run eval:tutor -- --write-baseline`, cần key AI thật, sandbox không có). Cả 2 việc còn
+  lại trong bảng ưu tiên đều cần MỘT bước của người dùng trước khi làm tiếp: PR #17 cần tự tạo
+  `AZURE_SPEECH_KEY`/`AZURE_SPEECH_REGION` (chỉ cần lúc DEPLOY THẬT, code viết được ngay không
+  cần key) — sandbox vẫn research pricing/API hiện hành trước khi code theo đúng KHUNG 3; PR
+  #10 cần người có key AI chạy baseline trước.
+- PR #17 (Azure Pronunciation Assessment — SERVER, ① Giai đoạn 2 phần 1/2): research-first
+  (KHUNG 3) trước khi code — xác nhận lại free tier F0 (5h audio/tháng), REST API
+  "recognition/conversation" (KHÔNG SDK), header `Pronunciation-Assessment` base64 JSON
+  (`ReferenceText`/`GradingSystem`/`Granularity`/`Dimension`/`PhonemeAlphabet`), response
+  `NBest[].PronunciationAssessment`/`Words[].Phonemes[]` — nguồn: Microsoft Learn + Q&A
+  (link trong lịch sử chat phiên này). Migration `0016_pronounce_usage.sql` — cột
+  `daily_usage.pronounce_count` + mở rộng danh sách cột hợp lệ của RPC
+  `consume_usage`/`refund_usage` (0001/0004) — free 10/ngày, pro 100/ngày
+  (`api/_lib/usage.ts` thêm mode `'pronounce'`, `src/types.ts` LIMITS đồng bộ). Thư viện mới
+  `api/_lib/azurePronounce.ts`: hàm THUẦN `parseAzurePronounceResponse` (parse response Azure
+  → shape rút gọn `{overall,accuracy,fluency,completeness,words:[{word,score,errorType,
+phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc định SAPI để khớp ký
+  hiệu IPA đã có sẵn trong `src/data/pronunciationTraps.ts`, PR client sau map thẳng không cần
+  bảng chuyển đổi) tách riêng khỏi `assessPronunciation` (gọi mạng) để test bằng fixture, không
+  cần key thật — 12 test. Handler `api/pronounce-assess.ts` (đăng ký `server.ts` + parser JSON
+  riêng 5MB do audio base64 lớn hơn giới hạn mặc định 64kb, giống `/api/stt`; `vite.config.ts`
+  API_ROUTES cho dev) — chưa cấu hình `AZURE_SPEECH_KEY`/`AZURE_SPEECH_REGION` → 503
+  `{fallback:true}` NGAY, KHÔNG trừ lượt (client PR sau tự rơi về Giai đoạn 1 miễn phí); lỗi
+  Azure sau khi đã trừ lượt → hoàn lượt (đúng nguyên tắc "đường đi của tiền" của `/api/claude`)
+  — 9 test. **Tác dụng phụ phát hiện được khi làm việc này:** `isUsageMode()` (dùng để validate
+  `mode` gửi lên `/api/claude`) trước đó chấp nhận CẢ `'stt'` (và giờ sẽ chấp nhận cả
+  `'pronounce'` nếu không sửa) — cho phép client gửi `mode:'stt'`/`'pronounce'` lên
+  `/api/claude` để đếm nhầm sang cột khác, né giới hạn chat. Đã vá: `api/ai.ts` giờ dùng
+  `CHAT_ENDPOINT_MODES` riêng (chỉ `chat`/`writing`/`speaking`) thay vì tái dùng `isUsageMode`
+  dùng chung — thêm 5 test ca biên (`mode` lạ/số/null đều rơi về `'chat'`). **Chưa làm ở PR
+  này (để PR sau):** client WAV convert (`src/lib/wav.ts`) + UI điểm âm vị chi tiết + fallback
+  Giai đoạn 1 khi hết lượt/lỗi/chiều B. Code xong (typecheck/lint/build/size xanh, test
+  518/518 gồm 26 test mới), chờ merge.
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
@@ -200,6 +230,11 @@ Supabase production" ở `supabase/migrations/README.md` (0010–0013 sẽ tự 
 - `SENTRY_DSN`/`VITE_SENTRY_DSN` — lấy miễn phí ở sentry.io, điền vào `.env` VPS, build lại +
   `pm2 restart` (code Sentry đã xong, hiện no-op).
 - `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) trên VPS nếu chưa có — cần cho STT.
+- `AZURE_SPEECH_KEY`/`AZURE_SPEECH_REGION` — TÙY CHỌN, chỉ cần khi muốn bật chấm phát âm chi
+  tiết qua Azure (① Giai đoạn 2, PR #17). Tạo resource "Speech service" (free tier F0, 5h
+  audio/tháng) ở Azure Portal → Keys and Endpoint, điền vào `.env` VPS. Thiếu 2 biến này thì
+  `/api/pronounce-assess` tự trả lỗi "chưa cấu hình" (client rơi về Giai đoạn 1 miễn phí),
+  KHÔNG làm vỡ app — không bắt buộc phải làm ngay.
 
 ## Quyết định quan trọng
 

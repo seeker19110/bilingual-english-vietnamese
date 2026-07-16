@@ -143,11 +143,12 @@ describe('refundUsage', () => {
 })
 
 describe('isUsageMode', () => {
-  it('chỉ chấp nhận 4 mode hợp lệ', () => {
+  it('chỉ chấp nhận 5 mode hợp lệ', () => {
     expect(isUsageMode('chat')).toBe(true)
     expect(isUsageMode('stt')).toBe(true)
     expect(isUsageMode('writing')).toBe(true)
     expect(isUsageMode('speaking')).toBe(true)
+    expect(isUsageMode('pronounce')).toBe(true)
     expect(isUsageMode('hack')).toBe(false)
     expect(isUsageMode(null)).toBe(false)
   })

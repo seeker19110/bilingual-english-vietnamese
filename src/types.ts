@@ -130,6 +130,8 @@ export interface DailyUsage {
   writingCount: number
   speakingCount: number
   sttCount: number // số lần nhận diện giọng nói (STT) — đếm riêng vì tốn API riêng
+  // Số lần chấm phát âm chi tiết qua Azure (① Giai đoạn 2) — đếm riêng, tốn API riêng.
+  pronounceCount?: number
   // Số từ vựng đã học trong ngày (tab Lộ trình / Hôm nay). KHÔNG tốn API, không tính
   // vào giới hạn gói — chỉ để ghi nhận "có học hôm nay" cho chuỗi ngày liên tiếp (streak).
   learnCount?: number
@@ -138,10 +140,10 @@ export interface DailyUsage {
 // Giới hạn theo gói
 export const LIMITS: Record<
   Plan,
-  { chat: number; writing: number; speaking: number; stt: number }
+  { chat: number; writing: number; speaking: number; stt: number; pronounce: number }
 > = {
-  free: { chat: 15, writing: 3, speaking: 5, stt: 10 },
-  pro: { chat: 999, writing: 30, speaking: 60, stt: 100 },
+  free: { chat: 15, writing: 3, speaking: 5, stt: 10, pronounce: 10 },
+  pro: { chat: 999, writing: 30, speaking: 60, stt: 100, pronounce: 100 },
 }
 
 // Chiều A: nhãn tiếng Việt | Chiều B: nhãn tiếng Anh

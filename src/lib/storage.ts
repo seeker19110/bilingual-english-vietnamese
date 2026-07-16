@@ -142,10 +142,13 @@ export function getUsage(userId: string): DailyUsage {
     writingCount: 0,
     speakingCount: 0,
     sttCount: 0,
+    pronounceCount: 0,
     learnCount: 0,
   }
-  // Bản local cũ có thể thiếu sttCount/learnCount (lưu trước khi thêm tính năng) — bù mặc định.
+  // Bản local cũ có thể thiếu sttCount/pronounceCount/learnCount (lưu trước khi thêm tính
+  // năng) — bù mặc định.
   if (u.sttCount == null) u.sttCount = 0
+  if (u.pronounceCount == null) u.pronounceCount = 0
   if (u.learnCount == null) u.learnCount = 0
   return u
 }
@@ -156,7 +159,7 @@ export function getUsage(userId: string): DailyUsage {
 // (tránh đếm trùng / bị sửa localStorage để gian lận giới hạn).
 export function incrementUsage(
   userId: string,
-  field: 'chatCount' | 'writingCount' | 'speakingCount' | 'sttCount',
+  field: 'chatCount' | 'writingCount' | 'speakingCount' | 'sttCount' | 'pronounceCount',
 ) {
   const usage = getUsage(userId)
   usage[field]++
@@ -199,6 +202,7 @@ function hasActivityOn(usage: DailyUsage | null): boolean {
     usage.writingCount +
     usage.speakingCount +
     (usage.sttCount ?? 0) +
+    (usage.pronounceCount ?? 0) +
     (usage.learnCount ?? 0)
   return total > 0
 }

@@ -36,23 +36,24 @@ thêm vài trăm ms) rồi mới tới `0010` — không cần đánh dấu hay 
 
 ## Trạng thái trên Supabase production
 
-| File                                       | Đã chạy trên production?                                                                                                                      |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `0001_consume_usage.sql`                   | ✅ Đã chạy (đếm lượt đang chạy thật trên production).                                                                                         |
-| `0002_learn_count.sql`                     | ✅ Đã chạy (streak đang chạy thật).                                                                                                           |
-| `0003_remind_hour.sql`                     | ✅ Đã chạy (nhắc học đẩy thông báo đang chạy thật).                                                                                           |
-| `0004_refund_usage.sql`                    | ✅ Đã chạy (hoàn lượt khi provider lỗi đang chạy thật).                                                                                       |
-| `0005_lockdown_cost_columns.sql`           | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                                  |
-| `0006_pronunciations_rls.sql`              | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                                  |
-| `0007_learning_progress_cefr.sql`          | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                  |
-| `0008_learning_progress_cefr_unlocked.sql` | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                  |
-| `0009_learning_progress_cefr_exams.sql`    | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                  |
-| `0010_challenge_entries.sql`               | ❌ CHƯA CHẠY — bảng `challenge_entries` cho thử thách "Challenge 1 phút / 30 ngày". Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền). |
-| `0011_learning_progress_placement.sql`     | ❌ CHƯA CHẠY — cột `placement` cho bài test xếp lớp đầu vào. Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                        |
-| `0012_learning_progress_weekly_goal.sql`   | ❌ CHƯA CHẠY — cột `weekly_goal` cho mục tiêu tuần (② M1). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                          |
-| `0013_learning_progress_achievements.sql`  | ❌ CHƯA CHẠY — cột `achievements` cho huy hiệu & mốc (② M2). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                        |
-| `0014_tutor_feedback.sql`                  | ❌ CHƯA CHẠY — bảng `tutor_feedback` cho nút 👍/👎 (⑤ T3). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                          |
-| `0015_league.sql`                          | ❌ CHƯA CHẠY — cột `nickname`/`league_opt_in` cho Giải đấu tuần (② M5). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).             |
+| File                                       | Đã chạy trên production?                                                                                                                            |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0001_consume_usage.sql`                   | ✅ Đã chạy (đếm lượt đang chạy thật trên production).                                                                                               |
+| `0002_learn_count.sql`                     | ✅ Đã chạy (streak đang chạy thật).                                                                                                                 |
+| `0003_remind_hour.sql`                     | ✅ Đã chạy (nhắc học đẩy thông báo đang chạy thật).                                                                                                 |
+| `0004_refund_usage.sql`                    | ✅ Đã chạy (hoàn lượt khi provider lỗi đang chạy thật).                                                                                             |
+| `0005_lockdown_cost_columns.sql`           | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                                        |
+| `0006_pronunciations_rls.sql`              | ✅ Đã chạy (người dùng xác nhận 2026-07-02).                                                                                                        |
+| `0007_learning_progress_cefr.sql`          | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                        |
+| `0008_learning_progress_cefr_unlocked.sql` | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                        |
+| `0009_learning_progress_cefr_exams.sql`    | ✅ Đã chạy (người dùng xác nhận 2026-07-11).                                                                                                        |
+| `0010_challenge_entries.sql`               | ❌ CHƯA CHẠY — bảng `challenge_entries` cho thử thách "Challenge 1 phút / 30 ngày". Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).       |
+| `0011_learning_progress_placement.sql`     | ❌ CHƯA CHẠY — cột `placement` cho bài test xếp lớp đầu vào. Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                              |
+| `0012_learning_progress_weekly_goal.sql`   | ❌ CHƯA CHẠY — cột `weekly_goal` cho mục tiêu tuần (② M1). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                                |
+| `0013_learning_progress_achievements.sql`  | ❌ CHƯA CHẠY — cột `achievements` cho huy hiệu & mốc (② M2). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                              |
+| `0014_tutor_feedback.sql`                  | ❌ CHƯA CHẠY — bảng `tutor_feedback` cho nút 👍/👎 (⑤ T3). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                                |
+| `0015_league.sql`                          | ❌ CHƯA CHẠY — cột `nickname`/`league_opt_in` cho Giải đấu tuần (② M5). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền).                   |
+| `0016_pronounce_usage.sql`                 | ❌ CHƯA CHẠY — cột `pronounce_count` cho chấm phát âm chi tiết qua Azure (① Giai đoạn 2). Tự áp khi deploy lần tới (cần `SUPABASE_DB_URL` đã điền). |
 
 > Sau khi `SUPABASE_DB_URL` đã điền, bảng này **không còn cần cập nhật tay** mỗi lần
 > chạy migration — `deploy.sh` tự ghi vào `_schema_migrations` trên Supabase. Chỉ cần

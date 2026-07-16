@@ -7,3 +7,11 @@ export function base64ToBytes(b64: string): Uint8Array {
   for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
   return bytes
 }
+
+// Chiều ngược lại — dùng cho header cần base64 (vd Pronunciation-Assessment của Azure Speech,
+// xem api/_lib/azurePronounce.ts). btoa() chỉ nhận chuỗi Latin1 nên phải đi qua bytes trước.
+export function bytesToBase64(bytes: Uint8Array): string {
+  let binary = ''
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]!) // i < length nên có
+  return btoa(binary)
+}
