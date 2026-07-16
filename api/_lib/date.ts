@@ -14,3 +14,24 @@ const VN_OFFSET_MS = 7 * 60 * 60 * 1000
 export function vnDateStr(d: Date = new Date()): string {
   return new Date(d.getTime() + VN_OFFSET_MS).toISOString().slice(0, 10)
 }
+
+// ── Tiện ích so/dịch chuỗi ngày "YYYY-MM-DD" — PHẢI khớp src/lib/date.ts (client)
+// để nội dung nhắc học theo ngữ cảnh (② M3, api/_lib/reminderContent.ts) tính
+// streak/tuần cùng luật với client. ─────────────────────────────────────────
+const MS_DAY = 86_400_000
+
+function dateStrToMs(d: string): number {
+  return new Date(`${d}T00:00:00Z`).getTime()
+}
+
+// Ngày cách `d` đúng `n` ngày (n âm = lùi về quá khứ).
+export function addDays(d: string, n: number): string {
+  return new Date(dateStrToMs(d) + n * MS_DAY).toISOString().slice(0, 10)
+}
+
+// Thứ 2 (YYYY-MM-DD) của tuần chứa ngày `d` (chuỗi ngày không gắn múi giờ → lấy
+// thứ theo mốc UTC nửa đêm, giống src/lib/date.ts weekStartOf).
+export function weekStartOf(d: string): string {
+  const dow = new Date(dateStrToMs(d)).getUTCDay() // 0 = CN … 6 = T7
+  return addDays(d, -((dow + 6) % 7)) // lùi về Thứ 2: T2=0 … CN=6
+}

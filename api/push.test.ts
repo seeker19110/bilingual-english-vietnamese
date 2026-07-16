@@ -45,6 +45,13 @@ function makeSupabase(opts: {
   usageRows?: Record<string, unknown>[]
   challengeRows?: { user_id: string }[]
   challengeError?: { message: string } | null
+  // Nội dung nhắc theo ngữ cảnh (② M3): dữ liệu 14 ngày gần nhất + srs/weekly_goal.
+  recentUsageRows?: { user_id: string; day: string; [k: string]: unknown }[]
+  progressRows?: {
+    user_id: string
+    srs?: Record<string, { due?: number }>
+    weekly_goal?: { goal?: number }
+  }[]
 }) {
   return {
     from: (table: string) => {
@@ -60,9 +67,23 @@ function makeSupabase(opts: {
       if (table === 'daily_usage') {
         return {
           select: () => ({
+            // Nhánh "đã học hôm nay" — .eq('day', today).in('user_id', ids).
             eq: () => ({
               in: async () => ({ data: opts.usageRows ?? [] }),
             }),
+            // Nhánh "14 ngày gần nhất" (② M3) — .in('user_id', ids).gte(day).lt(day).
+            in: () => ({
+              gte: () => ({
+                lt: async () => ({ data: opts.recentUsageRows ?? [], error: null }),
+              }),
+            }),
+          }),
+        }
+      }
+      if (table === 'learning_progress') {
+        return {
+          select: () => ({
+            in: async () => ({ data: opts.progressRows ?? [] }),
           }),
         }
       }
@@ -159,6 +180,96 @@ describe('sendReminders — chọn nội dung theo hoạt động challenge gầ
     expect(result).toEqual({ sent: 2, skipped: 0, expired: 0 })
     const payloads = mockedSend.mock.calls.map((c) => JSON.parse(c[1] as string).url)
     expect(payloads.sort()).toEqual(['/', '/challenge'])
+  })
+})
+
+describe('sendReminders — nội dung theo ngữ cảnh (② M3: streak/SRS/mục tiêu tuần)', () => {
+  it('có streak liên tục 6 ngày trước (14 ngày gần nhất) → nhắc "mất chuỗi", ưu tiên hơn challenge', () => {
+    return (async () => {
+      mockedGet.mockReturnValue(
+        makeSupabase({
+          subs: [sub('u5')],
+          usageRows: [],
+          challengeRows: [{ user_id: 'u5' }], // có challenge nhưng streak phải thắng
+          // 6 ngày liên tục kết thúc HÔM QUA (2026-07-15) — "hôm nay" giả lập là 2026-07-16.
+          recentUsageRows: Array.from({ length: 6 }, (_, i) => ({
+            user_id: 'u5',
+            day: `2026-07-${String(10 + i).padStart(2, '0')}`,
+            chat_count: 1,
+          })),
+        }) as never,
+      )
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-07-16T06:00:00Z')) // ~13h VN, "hôm nay" = 2026-07-16
+      const result = await sendReminders(13)
+      vi.useRealTimers()
+      expect(result.sent).toBe(1)
+      const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
+      expect(payload.title).toContain('mất chuỗi')
+      expect(payload.body).toContain('6')
+    })()
+  })
+
+  it('không streak, có SRS đến hạn → nhắc ôn SRS', () => {
+    return (async () => {
+      mockedGet.mockReturnValue(
+        makeSupabase({
+          subs: [sub('u6')],
+          usageRows: [],
+          challengeRows: [],
+          progressRows: [
+            {
+              user_id: 'u6',
+              srs: {
+                apple: { due: 1 },
+                banana: { due: 1 },
+                cherry: { due: Date.now() + 999_999_999 },
+              },
+            },
+          ],
+        }) as never,
+      )
+      const result = await sendReminders(13)
+      expect(result.sent).toBe(1)
+      const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
+      expect(payload.title).toContain('ôn')
+      expect(payload.body).toContain('2') // chỉ 2/3 thẻ đã đến hạn (due <= now)
+    })()
+  })
+
+  it('không streak, không SRS, gần đạt mục tiêu tuần (còn 1 ngày) → nhắc mục tiêu tuần', () => {
+    return (async () => {
+      mockedGet.mockReturnValue(
+        makeSupabase({
+          subs: [sub('u7')],
+          usageRows: [],
+          challengeRows: [],
+          progressRows: [{ user_id: 'u7', weekly_goal: { goal: 3 } }],
+          recentUsageRows: [
+            { user_id: 'u7', day: '2026-07-13', chat_count: 1 },
+            { user_id: 'u7', day: '2026-07-14', chat_count: 1 },
+          ],
+        }) as never,
+      )
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-07-16T06:00:00Z'))
+      const result = await sendReminders(13)
+      vi.useRealTimers()
+      expect(result.sent).toBe(1)
+      const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
+      expect(payload.title).toContain('mục tiêu tuần')
+    })()
+  })
+
+  it('lỗi truy vấn daily_usage mở rộng → fail-open, vẫn gửi được (rơi về challenge/chung)', () => {
+    return (async () => {
+      const supa = makeSupabase({ subs: [sub('u8')], usageRows: [], challengeRows: [] })
+      mockedGet.mockReturnValue(supa as never)
+      const result = await sendReminders(13)
+      expect(result.sent).toBe(1)
+      const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
+      expect(payload.url).toBe('/')
+    })()
   })
 })
 

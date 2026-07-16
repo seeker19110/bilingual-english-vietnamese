@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { vnDateStr } from './date'
+import { vnDateStr, addDays, weekStartOf } from './date'
 
 describe('vnDateStr — ngày theo giờ Việt Nam (UTC+7)', () => {
   it('giờ tối UTC cùng ngày với giờ VN → không đổi ngày', () => {
@@ -18,5 +18,30 @@ describe('vnDateStr — ngày theo giờ Việt Nam (UTC+7)', () => {
 
   it('mặc định dùng thời điểm hiện tại khi không truyền tham số', () => {
     expect(vnDateStr()).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+})
+
+describe('addDays — dịch chuỗi ngày (PHẢI khớp src/lib/date.ts)', () => {
+  it('lùi/tiến đúng số ngày, kể cả qua ranh giới tháng/năm', () => {
+    expect(addDays('2026-07-16', -1)).toBe('2026-07-15')
+    expect(addDays('2026-07-16', 1)).toBe('2026-07-17')
+    expect(addDays('2026-01-01', -1)).toBe('2025-12-31')
+    expect(addDays('2026-07-16', 0)).toBe('2026-07-16')
+  })
+})
+
+describe('weekStartOf — Thứ 2 của tuần (PHẢI khớp src/lib/date.ts)', () => {
+  it('giữa tuần (Thứ 5, 2026-07-16) → Thứ 2 cùng tuần (2026-07-13)', () => {
+    expect(weekStartOf('2026-07-16')).toBe('2026-07-13')
+  })
+
+  it('đúng Thứ 2 → chính nó', () => {
+    expect(weekStartOf(weekStartOf('2026-07-16'))).toBe(weekStartOf('2026-07-16'))
+  })
+
+  it('Chủ nhật → vẫn thuộc tuần bắt đầu Thứ 2 trước đó (khác ngày, không đổi tuần)', () => {
+    const mon = weekStartOf('2026-07-16')
+    const sun = addDays(mon, 6)
+    expect(weekStartOf(sun)).toBe(mon)
   })
 })
