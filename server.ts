@@ -27,6 +27,7 @@ import sttHandler from './api/stt.js'
 import pushHandler, { sendReminders } from './api/push.js'
 import dictionaryHandler from './api/dictionary.js'
 import leaderboardHandler from './api/leaderboard.js'
+import pronounceAssessHandler from './api/pronounce-assess.js'
 
 const app = express()
 
@@ -51,6 +52,9 @@ app.use(compression({ threshold: 1024 }))
 // cho route này TRƯỚC parser JSON 64kb mặc định bên dưới (Express chạy middleware theo
 // thứ tự — nếu để parser 64kb chạy trước, body audio sẽ bị chặn 413 trước khi tới handler).
 app.post('/api/stt', express.json({ limit: '10mb' }), wrapEdge(sttHandler))
+// /api/pronounce-assess cũng nhận audio base64 (câu ngắn ~30s, nhẹ hơn STT hội thoại tự do)
+// — cùng lý do cần parser riêng thay vì giới hạn 64kb mặc định.
+app.post('/api/pronounce-assess', express.json({ limit: '5mb' }), wrapEdge(pronounceAssessHandler))
 
 app.use(express.json({ limit: '64kb' }))
 

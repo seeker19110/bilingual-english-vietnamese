@@ -230,6 +230,7 @@ export async function pullUserData(userId: string): Promise<void> {
           writingCount: u.writing_count ?? 0,
           speakingCount: u.speaking_count ?? 0,
           sttCount: u.stt_count ?? 0,
+          pronounceCount: u.pronounce_count ?? 0,
           learnCount: u.learn_count ?? 0,
         } satisfies DailyUsage)
       }

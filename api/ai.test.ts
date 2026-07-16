@@ -18,7 +18,6 @@ vi.mock('./_lib/security', () => ({
 vi.mock('./_lib/usage', () => ({
   checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const })),
   refundUsage: vi.fn(async () => {}),
-  isUsageMode: (v: unknown) => v === 'chat' || v === 'writing' || v === 'speaking' || v === 'stt',
 }))
 vi.mock('./_lib/fetchTimeout', () => ({ fetchWithTimeout: vi.fn() }))
 
@@ -205,4 +204,28 @@ describe('handler /api/claude — validate/sanitize (Zod, đợt 3)', () => {
     expect(mockedRefund).not.toHaveBeenCalled()
     expect(mockedFetch).not.toHaveBeenCalled()
   })
+})
+
+// Chặn lỗ hổng: /api/claude CHỈ được đếm vào chat/writing/speaking — mode 'stt'/'pronounce'
+// là của /api/stt và /api/pronounce-assess, đếm nhầm vào đây sẽ giúp client né giới hạn chat
+// bằng cách rút quota của mode khác (xem ghi chú CHAT_ENDPOINT_MODES ở api/ai.ts).
+describe('handler /api/claude — mode lạ (không phải chat/writing/speaking) → coi như "chat"', () => {
+  beforeEach(() => {
+    mockedFetch.mockResolvedValue(
+      new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {
+        status: 200,
+      }),
+    )
+  })
+
+  it.each(['stt', 'pronounce', 'hack', 123, null])(
+    'mode=%p → checkAndConsumeUsage("chat")',
+    async (mode) => {
+      const { checkAndConsumeUsage } = await import('./_lib/usage')
+      const mockedConsume = vi.mocked(checkAndConsumeUsage)
+      mockedConsume.mockClear()
+      await handler(makeRequest({ messages: [{ role: 'user', content: 'Hi' }], mode }))
+      expect(mockedConsume).toHaveBeenCalledWith('user-test', 'chat')
+    },
+  )
 })

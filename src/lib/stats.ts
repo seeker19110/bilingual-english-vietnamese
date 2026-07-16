@@ -24,12 +24,19 @@ function readUsage(uid: string, date: string): DailyUsage | null {
   }
 }
 
-// Tổng số hoạt động trong 1 ngày (chat + viết + nói + STT + HỌC TỪ VỰNG).
+// Tổng số hoạt động trong 1 ngày (chat + viết + nói + STT + chấm phát âm + HỌC TỪ VỰNG).
 // PHẢI gồm learnCount để KHỚP với getStreak() (storage.ts) — nếu không, ngày chỉ học
 // từ vựng vẫn cộng streak nhưng lại hiện TRỐNG trên biểu đồ/lịch ở Dashboard (lệch số liệu).
 function usageTotal(u: DailyUsage | null): number {
   if (!u) return 0
-  return u.chatCount + u.writingCount + u.speakingCount + (u.sttCount ?? 0) + (u.learnCount ?? 0)
+  return (
+    u.chatCount +
+    u.writingCount +
+    u.speakingCount +
+    (u.sttCount ?? 0) +
+    (u.pronounceCount ?? 0) +
+    (u.learnCount ?? 0)
+  )
 }
 
 export interface DayActivity {

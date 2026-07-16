@@ -67,6 +67,8 @@ create table if not exists public.daily_usage (
 -- Bổ sung cột cho DB cũ đã tạo bảng trước khi có stt_count / learn_count (chạy lại an toàn).
 alter table public.daily_usage add column if not exists stt_count   integer not null default 0;
 alter table public.daily_usage add column if not exists learn_count integer not null default 0;
+-- Cột thêm sau (migration 0016): lượt chấm phát âm chi tiết qua Azure (① Giai đoạn 2).
+alter table public.daily_usage add column if not exists pronounce_count integer not null default 0;
 
 -- ── 6. tts_cache: cache audio Google TTS dùng chung cho mọi user ─────────────
 -- hash = SHA-256(text + lang + voice)[0:32] → key tìm nhanh, tên file trên Storage
@@ -276,7 +278,7 @@ declare
   v_current integer;
 begin
   -- Chỉ chấp nhận đúng 4 cột đếm hợp lệ (an toàn dù %I đã quote định danh)
-  if p_col not in ('chat_count', 'writing_count', 'speaking_count', 'stt_count') then
+  if p_col not in ('chat_count', 'writing_count', 'speaking_count', 'stt_count', 'pronounce_count') then
     raise exception 'cot dem khong hop le: %', p_col;
   end if;
 
@@ -318,7 +320,7 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  if p_col not in ('chat_count', 'writing_count', 'speaking_count', 'stt_count') then
+  if p_col not in ('chat_count', 'writing_count', 'speaking_count', 'stt_count', 'pronounce_count') then
     raise exception 'cot dem khong hop le: %', p_col;
   end if;
 

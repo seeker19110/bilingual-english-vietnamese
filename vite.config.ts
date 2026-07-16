@@ -127,6 +127,7 @@ const API_ROUTES: { prefix: string; module: string }[] = [
   { prefix: '/api/claude', module: '/api/ai.ts' },
   { prefix: '/api/dictionary', module: '/api/dictionary.ts' },
   { prefix: '/api/leaderboard', module: '/api/leaderboard.ts' },
+  { prefix: '/api/pronounce-assess', module: '/api/pronounce-assess.ts' },
 ]
 
 function apiEdgeDevMiddleware(): Plugin {

@@ -11,12 +11,14 @@
 import { getSupabaseAdmin } from './supabaseAdmin'
 import { vnDateStr } from './date'
 
-export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt'
+export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
 
 // Giới hạn theo gói — PHẢI khớp với src/types.ts (LIMITS) để client/server đồng nhất.
+// pronounce: chấm phát âm chi tiết qua Azure (① Giai đoạn 2) — free tier Azure 5h audio/tháng
+// ÷ ~5s/câu ≈ 3.600 câu/tháng, 10/ngày/người an toàn ở quy mô hiện tại (xem đặc tả).
 const LIMITS: Record<'free' | 'pro', Record<UsageMode, number>> = {
-  free: { chat: 15, writing: 3, speaking: 5, stt: 10 },
-  pro: { chat: 999, writing: 30, speaking: 60, stt: 100 },
+  free: { chat: 15, writing: 3, speaking: 5, stt: 10, pronounce: 10 },
+  pro: { chat: 999, writing: 30, speaking: 60, stt: 100, pronounce: 100 },
 }
 
 // Tên cột tương ứng trong bảng daily_usage
@@ -25,10 +27,11 @@ const COLUMN: Record<UsageMode, string> = {
   writing: 'writing_count',
   speaking: 'speaking_count',
   stt: 'stt_count',
+  pronounce: 'pronounce_count',
 }
 
 export function isUsageMode(v: unknown): v is UsageMode {
-  return v === 'chat' || v === 'writing' || v === 'speaking' || v === 'stt'
+  return v === 'chat' || v === 'writing' || v === 'speaking' || v === 'stt' || v === 'pronounce'
 }
 
 function today(): string {
