@@ -19,8 +19,8 @@ phiên chính (Tầng 1) và thi hành đúng như đã viết. Chạy ở effor
    - `route: spec` → agent `spec-executor`
    - `route: standard` → agent `standard-worker`
    - `route: mechanical` → agent `mechanical-worker`
-   Chuyển cho worker **đầy đủ brief** của việc đó từ PLAN.md (đường dẫn file,
-   đặc tả, tiêu chí chấp nhận) — worker không thấy PLAN.md hay hội thoại trước.
+     Chuyển cho worker **đầy đủ brief** của việc đó từ PLAN.md (đường dẫn file,
+     đặc tả, tiêu chí chấp nhận) — worker không thấy PLAN.md hay hội thoại trước.
 4. **Nghiệm thu** kết quả mỗi worker theo đúng **tiêu chí chấp nhận** trong plan.
 5. **Gọi reviewer** (agent `reviewer`) soát diff sau khi worker xong, trước khi
    báo lên phiên chính.

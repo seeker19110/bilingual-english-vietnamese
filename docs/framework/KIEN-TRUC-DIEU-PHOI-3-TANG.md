@@ -26,12 +26,12 @@ worker vướng đặc tả → dừng việc đó và báo lên (không tự v�
 
 ## Tầng 3 — Workers (định tuyến 2 trục: độ phức tạp × độ kín đặc tả)
 
-| `route:`     | Agent                 | Model · effort  | Khi nào                                                            |
-| ------------ | --------------------- | --------------- | ----------------------------------------------------------------- |
-| `complex`    | `complex-implementer` | Opus · high     | Phức tạp, còn chỗ tự quyết trong ranh giới brief                  |
-| `spec`       | `spec-executor`       | Opus · low      | Phức tạp nhưng đặc tả kín — chỉ thi hành                          |
-| `standard`   | `standard-worker`     | Sonnet · medium | Việc vừa có đặc tả cụ thể (kế thừa "coder" cũ)                    |
-| `mechanical` | `mechanical-worker`   | Haiku           | Cơ học theo mẫu/thông báo (kế thừa "mechanical" cũ)              |
+| `route:`     | Agent                 | Model · effort  | Khi nào                                             |
+| ------------ | --------------------- | --------------- | --------------------------------------------------- |
+| `complex`    | `complex-implementer` | Opus · high     | Phức tạp, còn chỗ tự quyết trong ranh giới brief    |
+| `spec`       | `spec-executor`       | Opus · low      | Phức tạp nhưng đặc tả kín — chỉ thi hành            |
+| `standard`   | `standard-worker`     | Sonnet · medium | Việc vừa có đặc tả cụ thể (kế thừa "coder" cũ)      |
+| `mechanical` | `mechanical-worker`   | Haiku           | Cơ học theo mẫu/thông báo (kế thừa "mechanical" cũ) |
 
 **`reviewer` (Sonnet)** — hậu kiểm bằng skill `code-review` sau khi worker xong,
 trước khi phiên chính duyệt cuối. Không nằm trong bảng route; do coordinator gọi.
