@@ -9,7 +9,13 @@ import { z } from 'zod'
 import { getSupabaseAdmin } from './_lib/supabaseAdmin'
 import { getCorsHeaders, SECURITY_HEADERS, validateAuth } from './_lib/security'
 import { validateBody } from './_lib/validation'
-import { vnDateStr } from './_lib/date'
+import { vnDateStr, addDays } from './_lib/date'
+import {
+  pickReminderMessage,
+  computeStreakAtRisk,
+  computeWeeklyDaysDone,
+  type ReminderMessage,
+} from './_lib/reminderContent'
 
 // Chỉ validate phần `subscription` (bắt buộc + đúng kiểu dữ liệu) — action/remindHour/hour/secret
 // giữ nguyên cách kiểm tra tay hiện có (vốn đã an toàn: có typeof guard trước khi dùng).
@@ -48,9 +54,28 @@ interface DailyUsageRow {
   stt_count: number | null
   learn_count: number | null
 }
+// Bản có thêm `day` — dùng cho truy vấn nhiều ngày (nội dung nhắc theo ngữ cảnh,
+// ② M3) khác truy vấn "đã học hôm nay" ở trên (chỉ lọc đúng 1 ngày, không cần day).
+interface DailyUsageDayRow extends DailyUsageRow {
+  day: string
+}
 interface ChallengeEntryUserRow {
   user_id: string
 }
+// Cột `srs`/`weekly_goal` của learning_progress — chỉ khai kiểu tối thiểu cần dùng.
+interface LearningProgressRow {
+  user_id: string
+  srs?: Record<string, { due?: number }> | null
+  weekly_goal?: { goal?: number } | null
+}
+
+// Cửa sổ ngày để tính streak/tuần cho nội dung nhắc theo ngữ cảnh (② M3) — khớp
+// mốc "14 ngày gần nhất" đặc tả nhắc tới cho phần giờ thông minh (không làm ở
+// PR này) để nhất quán, đồng thời giữ chi phí truy vấn Supabase hợp lý.
+const REMINDER_LOOKBACK_DAYS = 14
+// PHẢI khớp DEFAULT_WEEKLY_GOAL của src/lib/weeklyGoal.ts (api/_lib không import
+// từ src/lib — xem quy ước ở api/_lib/date.ts).
+const DEFAULT_WEEKLY_GOAL = 5
 
 // Cửa sổ "còn đang trong thử thách challenge gần đây" — ước lượng NỚI TAY, chỉ để chọn
 // NỘI DUNG thông báo cho thân thiện hơn (không phải luật vé nghỉ chính xác của
@@ -125,15 +150,76 @@ export async function sendReminders(
     }
   }
 
-  const genericPayload = JSON.stringify({
+  // Nội dung NHẮC THEO NGỮ CẢNH (② M3) — chỉ cần tính cho người CHƯA học hôm
+  // nay (người đã học không nhận nhắc, xem vòng lặp gửi bên dưới). Dùng dữ liệu
+  // ĐÃ CÓ SẴN, không thêm tracking mới (xem api/_lib/reminderContent.ts).
+  // Best-effort: lỗi truy vấn learning_progress/daily_usage mở rộng KHÔNG được
+  // làm vỡ việc gửi — rơi về nội dung chung/challenge như cũ.
+  const reminderMessages = new Map<string, ReminderMessage>()
+  if (notStudiedIds.length > 0) {
+    const lookbackStart = addDays(todayStr(), -(REMINDER_LOOKBACK_DAYS - 1))
+    const [{ data: recentUsageRows, error: recentUsageErr }, { data: progressRows }] =
+      await Promise.all([
+        supabase
+          .from('daily_usage')
+          .select('user_id, day, chat_count, writing_count, speaking_count, stt_count, learn_count')
+          .in('user_id', notStudiedIds)
+          .gte('day', lookbackStart)
+          .lt('day', todayStr()),
+        supabase
+          .from('learning_progress')
+          .select('user_id, srs, weekly_goal')
+          .in('user_id', notStudiedIds),
+      ])
+    if (recentUsageErr) {
+      console.warn('[push] không đọc được daily_usage mở rộng:', recentUsageErr.message)
+    }
+
+    const activeDaysByUser = new Map<string, Set<string>>()
+    for (const r of (recentUsageRows ?? []) as DailyUsageDayRow[]) {
+      const total =
+        (r.chat_count ?? 0) +
+        (r.writing_count ?? 0) +
+        (r.speaking_count ?? 0) +
+        (r.stt_count ?? 0) +
+        (r.learn_count ?? 0)
+      if (total <= 0) continue
+      const set = activeDaysByUser.get(r.user_id) ?? new Set<string>()
+      set.add(r.day)
+      activeDaysByUser.set(r.user_id, set)
+    }
+    const progressByUser = new Map<string, LearningProgressRow>()
+    for (const r of (progressRows ?? []) as LearningProgressRow[]) progressByUser.set(r.user_id, r)
+
+    const nowMs = Date.now()
+    for (const uid of notStudiedIds) {
+      const activeDays = activeDaysByUser.get(uid) ?? new Set<string>()
+      const progress = progressByUser.get(uid)
+      const srsDue = Object.values(progress?.srs ?? {}).filter(
+        (c) => typeof c?.due === 'number' && c.due <= nowMs,
+      ).length
+      const weeklyGoal =
+        typeof progress?.weekly_goal?.goal === 'number'
+          ? progress.weekly_goal.goal
+          : DEFAULT_WEEKLY_GOAL
+      reminderMessages.set(
+        uid,
+        pickReminderMessage({
+          streakDaysAtRisk: computeStreakAtRisk(activeDays, todayStr()),
+          srsDue,
+          weeklyGoal,
+          weeklyDaysDone: computeWeeklyDaysDone(activeDays, todayStr()),
+          challengeActive: challengeActive.has(uid),
+        }),
+      )
+    }
+  }
+  // Fallback nếu vì lý do gì đó thiếu message tính sẵn (không nên xảy ra —
+  // pickReminderMessage() luôn trả về ít nhất nội dung chung chung).
+  const fallbackPayload = JSON.stringify({
     title: '🇻🇳→🇬🇧 Tới giờ học rồi!',
     body: 'Chỉ cần vài phút mỗi ngày. Hôm nay bạn chưa học — vào học để giữ streak nhé! 🔥',
     url: '/',
-  })
-  const challengePayload = JSON.stringify({
-    title: '🎬 Chưa quay challenge hôm nay!',
-    body: 'Chỉ 1 phút thôi — quay 1 video kể chuyện hôm nay để giữ chuỗi 30 ngày nhé!',
-    url: '/challenge',
   })
 
   let sent = 0,
@@ -146,9 +232,10 @@ export async function sendReminders(
         return
       }
       try {
+        const msg = reminderMessages.get(row.user_id)
         await webpush.sendNotification(
           { endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth_key } },
-          challengeActive.has(row.user_id) ? challengePayload : genericPayload,
+          msg ? JSON.stringify(msg) : fallbackPayload,
         )
         sent++
       } catch (err: unknown) {
