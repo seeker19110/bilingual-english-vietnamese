@@ -1,27 +1,79 @@
-// ── Spaced Repetition System (SRS) — thuật toán SM-2 đơn giản ──────────────
+// ── Spaced Repetition System (SRS) — thuật toán FSRS ──────────────────────
 // Mỗi từ được học xong → tự động vào SRS.
 // Khi ôn, người dùng đánh giá: Quên / Khó / Nhớ / Dễ
 // Hệ thống tính khoảng cách ôn tiếp theo dựa trên đánh giá.
+//
+// [Nâng cấp 2026-07-16, đề xuất H — thay SM-2 tự viết bằng thư viện `ts-fsrs`
+// (mã nguồn mở, MIT, cùng thuật toán Anki đang dùng từ bản 23.10). Nghiên cứu +
+// quyết định đánh đổi ở docs/research/sm2-den-fsrs-2026-07-16.md — người dùng
+// đã CHỌN "cắt hẳn, đặt lại từ New": mọi thẻ SRS cũ (từ vựng LẪN ngữ pháp, vì
+// đề xuất E dùng chung engine này) coi như học lại từ đầu, không cố suy diễn
+// lịch sử cũ (app trước đây không lưu log từng lượt ôn nên không thể tái tạo
+// chính xác như Anki chuyển đổi engine cho người dùng cũ). Đổi KHO LƯU
+// (`srs_${uid}` sang field mới) đồng nghĩa "cắt" tự nhiên — không cần code dọn
+// dữ liệu cũ riêng, dữ liệu cũ chỉ đơn giản không còn được đọc đúng field nữa.]
+//
+// enable_short_term=false: bỏ bước "học trong vài phút" kiểu Anki (mặc định
+// FSRS có bước ôn lại sau 1-10 phút) — app học/ôn theo NGÀY, không có màn hình
+// nào mở chờ vài phút để ôn lại ngay; tương đương chọn "Ignore learning steps"
+// trong cài đặt Anki. Xem docs/research/sm2-den-fsrs-2026-07-16.md.
 
+import { fsrs, createEmptyCard, Rating as FsrsRating } from 'ts-fsrs'
+import type { Card as FsrsCard, Grade, State } from 'ts-fsrs'
 import type { DictEntry } from '../types'
 import { pushProgress } from './progressSync'
 
-export interface SRSCard {
-  interval: number // khoảng cách ôn (số ngày)
-  ease: number // hệ số dễ (1.3 – 2.5)
-  due: number // Unix ms — thời điểm cần ôn lại
-  reps: number // tổng số lần đã ôn
-  lapses?: number // số lần bấm "Quên" — thẻ cũ chưa có coi như 0
+export type Rating = 'again' | 'hard' | 'good' | 'easy'
+
+const RATING_MAP: Record<Rating, Grade> = {
+  again: FsrsRating.Again,
+  hard: FsrsRating.Hard,
+  good: FsrsRating.Good,
+  easy: FsrsRating.Easy,
 }
 
-// Từ ≥3 lần "Quên" bị xem là "leech" — tự động xếp vào diện cần chú ý (tab Từ khó).
+const scheduler = fsrs({ enable_short_term: false })
+
+// Từ ≥3 lần "Quên" SAU KHI đã học được (state Review, đúng ngữ nghĩa FSRS —
+// KHÔNG tính lần trượt đầu tiên lúc thẻ còn mới) bị xem là "leech" — tự động
+// xếp vào diện cần chú ý (tab Từ khó).
 const LEECH_THRESHOLD = 3
 
 // Cap số thẻ ôn mỗi phiên để tránh dồn quá nhiều sau khi nghỉ vài ngày —
 // dễ ngợp và bỏ học (theo nghiên cứu Duolingo về lý do bỏ học).
 export const SRS_SESSION_CAP = 30
 
-export type Rating = 'again' | 'hard' | 'good' | 'easy'
+// Dạng LƯU trong localStorage — JSON-safe (Date của FSRS Card → epoch ms).
+// Field còn lại khớp 1:1 field của `Card` (ts-fsrs) để có thể truyền THẲNG
+// object này vào `scheduler.next()` làm CardInput mà không cần dựng lại.
+export interface SRSCard {
+  due: number
+  stability: number
+  difficulty: number
+  /** @deprecated Field cũ của FSRS (sẽ bỏ ở ts-fsrs 6.0.0) — vẫn cần điền vì kiểu CardInput hiện còn bắt buộc, KHÔNG dùng làm input tính toán (thuật toán tự suy elapsed từ due/last_review + now). */
+  elapsed_days: number
+  scheduled_days: number
+  learning_steps: number
+  reps: number
+  lapses: number
+  state: State // 0 New · 1 Learning · 2 Review · 3 Relearning
+  last_review: number | null
+}
+
+function toStored(card: FsrsCard): SRSCard {
+  return {
+    due: card.due.getTime(),
+    stability: card.stability,
+    difficulty: card.difficulty,
+    elapsed_days: card.elapsed_days,
+    scheduled_days: card.scheduled_days,
+    learning_steps: card.learning_steps,
+    reps: card.reps,
+    lapses: card.lapses,
+    state: card.state,
+    last_review: card.last_review ? card.last_review.getTime() : null,
+  }
+}
 
 const KEY = (uid: string) => `srs_${uid}`
 const MS = 86_400_000 // 1 ngày tính bằng ms
@@ -43,6 +95,7 @@ function save(uid: string, data: Record<string, SRSCard>) {
 // tối vẫn giữ spacing ngắn đầu tiên, nhưng badge "Ôn SRS" không nhảy số NGAY khi
 // vừa học xong batch — tránh cảm giác "vừa xong đã nợ" (E4, xem
 // docs/research/cai-tien-trai-nghiem-hoc-2026-07-11.md). Chỉ ảnh hưởng thẻ TẠO MỚI.
+// Quyết định UX này ĐỘC LẬP với thuật toán bên dưới (SM-2 trước đây / FSRS bây giờ).
 export const NEW_CARD_DELAY_MS = 4 * 3_600_000
 
 // Thêm từ vào SRS khi đánh dấu "đã thuộc" — due = +4h để ôn lại trong ngày
@@ -50,7 +103,9 @@ export function addToSRS(uid: string, word: string) {
   const data = load(uid)
   const key = word.toLowerCase()
   if (!data[key]) {
-    data[key] = { interval: 1, ease: 2.5, due: Date.now() + NEW_CARD_DELAY_MS, reps: 0 }
+    const now = Date.now()
+    const card = createEmptyCard(new Date(now))
+    data[key] = { ...toStored(card), due: now + NEW_CARD_DELAY_MS }
     save(uid, data)
     pushProgress(uid) // đồng bộ lịch ôn lên Supabase
   }
@@ -59,18 +114,17 @@ export function addToSRS(uid: string, word: string) {
 // Từ "đã biết sẵn" qua test-out (nút "Tôi đã biết vòng này" — quiz ≥90% đúng)
 // vào SRS với interval DÀI HƠN addToSRS() thường (mặc định 7 ngày): người dùng
 // đã CHỨNG MINH thuộc từ qua quiz nên không cần ôn ngay hôm nay như từ mới học
-// lần đầu.
+// lần đầu. Chạy 1 lượt 'good' ảo qua FSRS để có stability/difficulty hợp lý
+// (không tự bịa số) rồi ghi đè `due` theo `intervalDays` yêu cầu.
 const KNOWN_INTERVAL_DAYS = 7
 export function addToSRSKnown(uid: string, word: string, intervalDays = KNOWN_INTERVAL_DAYS) {
   const data = load(uid)
   const key = word.toLowerCase()
   if (!data[key]) {
-    data[key] = {
-      interval: intervalDays,
-      ease: 2.5,
-      due: Date.now() + intervalDays * MS,
-      reps: 1,
-    }
+    const now = Date.now()
+    const empty = createEmptyCard(new Date(now))
+    const { card } = scheduler.next(empty, new Date(now), FsrsRating.Good)
+    data[key] = { ...toStored(card), due: now + intervalDays * MS }
     save(uid, data)
     pushProgress(uid) // đồng bộ lịch ôn lên Supabase
   }
@@ -80,44 +134,24 @@ export function addToSRSKnown(uid: string, word: string, intervalDays = KNOWN_IN
 export function reviewWord(uid: string, word: string, rating: Rating) {
   const data = load(uid)
   const key = word.toLowerCase()
-  const card: SRSCard = data[key] ?? { interval: 0, ease: 2.5, due: 0, reps: 0 }
   const now = Date.now()
-
-  switch (rating) {
-    case 'again':
-      card.interval = 0
-      card.ease = Math.max(1.3, card.ease - 0.2)
-      card.lapses = (card.lapses ?? 0) + 1
-      break
-    case 'hard':
-      card.interval = Math.max(1, Math.round(card.interval * 1.2))
-      card.ease = Math.max(1.3, card.ease - 0.15)
-      break
-    case 'good':
-      card.interval =
-        card.reps === 0 ? 1 : card.reps === 1 ? 4 : Math.round(card.interval * card.ease)
-      break
-    case 'easy':
-      card.interval = card.reps === 0 ? 4 : Math.round(card.interval * card.ease * 1.3)
-      card.ease = Math.min(2.5, card.ease + 0.15)
-      break
-  }
-
-  card.reps += 1
+  const existing: SRSCard = data[key] ?? toStored(createEmptyCard(new Date(now)))
+  const { card } = scheduler.next(existing, new Date(now), RATING_MAP[rating])
+  const stored = toStored(card)
   // 'again' (Quên): hẹn ôn lại NGAY trong phiên này (due = bây giờ) — đúng như gợi ý UI
   // "Quên → ôn sớm" và để SRSReview tải lại thẻ này cho người dùng drill tới khi nhớ.
-  // Các mức khác tối thiểu 1 ngày.
-  card.due = rating === 'again' ? now : now + Math.max(card.interval, 1) * MS
-  data[key] = card
+  // Quyết định UX riêng của app, ĐỘC LẬP với lịch FSRS tự tính cho 'again'.
+  if (rating === 'again') stored.due = now
+  data[key] = stored
   save(uid, data)
   pushProgress(uid) // đồng bộ lịch ôn lên Supabase
 }
 
 // Lấy các từ đến hạn ôn hôm nay.
 // `limit`: cap số thẻ trả về (mặc định không cap — dùng cho đếm badge/thống kê),
-// ưu tiên thẻ quá hạn LÂU NHẤT rồi tới ease THẤP NHẤT trước, tránh cảm giác ngợp
-// khi danh sách due dồn lại sau vài ngày nghỉ (chỉ áp khi gọi có limit, ví dụ
-// phiên ôn thật trong SRSReview).
+// ưu tiên thẻ quá hạn LÂU NHẤT rồi tới độ khó (difficulty) CAO NHẤT trước, tránh
+// cảm giác ngợp khi danh sách due dồn lại sau vài ngày nghỉ (chỉ áp khi gọi có
+// limit, ví dụ phiên ôn thật trong SRSReview).
 export function getDueWords(uid: string, words: DictEntry[], limit?: number): DictEntry[] {
   const data = load(uid)
   const now = Date.now()
@@ -129,12 +163,13 @@ export function getDueWords(uid: string, words: DictEntry[], limit?: number): Di
   const sorted = [...due].sort((a, b) => {
     const ca = data[a.word.toLowerCase()]!
     const cb = data[b.word.toLowerCase()]!
-    return ca.due - cb.due || ca.ease - cb.ease
+    return ca.due - cb.due || cb.difficulty - ca.difficulty
   })
   return sorted.slice(0, limit)
 }
 
-// Từ bị đánh "Quên" ≥3 lần — tự động coi là "leech", cần chú ý thêm (tab Từ khó).
+// Từ bị đánh "Quên" ≥3 lần SAU KHI đã học được — tự động coi là "leech", cần
+// chú ý thêm (tab Từ khó).
 export function getLeechWords(uid: string, words: DictEntry[]): DictEntry[] {
   const data = load(uid)
   return words.filter((w) => (data[w.word.toLowerCase()]?.lapses ?? 0) >= LEECH_THRESHOLD)
@@ -158,7 +193,7 @@ export function getNextReview(uid: string, word: string): Date | null {
   return card ? new Date(card.due) : null
 }
 
-// ── Ngữ pháp: dùng CHUNG kho SM-2 này (đề xuất E,
+// ── Ngữ pháp: dùng CHUNG kho FSRS này (đề xuất E,
 // docs/research/danh-gia-tien-trien-hoc-2026-07-07.md — "spacing áp cho mọi loại kiến thức,
 // không riêng từ vựng"). Tiền tố `grammar:` để khoá KHÔNG đụng namespace với từ tiếng Anh
 // (word) đang lưu trong cùng 1 kho `srs_${uid}`.
@@ -188,7 +223,7 @@ export function getDueGrammarLessonIds(uid: string, lessonIds: string[], limit?:
   const sorted = [...due].sort((a, b) => {
     const ca = data[grammarKey(a)]!
     const cb = data[grammarKey(b)]!
-    return ca.due - cb.due || ca.ease - cb.ease
+    return ca.due - cb.due || cb.difficulty - ca.difficulty
   })
   return sorted.slice(0, limit)
 }

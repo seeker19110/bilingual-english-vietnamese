@@ -87,6 +87,9 @@ type ModeCard =
       title: string
       desc: string
       items: ModeSubItem[]
+      // Hiện khối "Mẹo" (trước đây đứng riêng ở cuối trang Home) NGAY TRONG thẻ này —
+      // chỉ 1 thẻ group cần hiện mẹo (Hội thoại + Câu thông dụng), không lặp ở thẻ group khác.
+      showTip?: boolean
     }
 
 function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[] {
@@ -123,32 +126,33 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
         : 'Start from letters and numbers — 5-20 new words a day (pick your pace) in related circles, with common sentences.',
     },
     {
-      kind: 'link',
-      path: '/lessons',
+      kind: 'group',
       icon: GraduationCap,
       gradient: 'from-rose-500 to-pink-400',
       glow: 'shadow-rose-500/20',
-      ring: 'hover:border-rose-500/40',
       tag: {
-        label: T.tagLessonsCount,
+        label: T.tagDialoguesPhrases,
         cls: 'bg-rose-500/15 text-rose-300 theme-light:text-rose-700 border border-rose-500/20',
       },
-      title: isA ? T.lessonsTitleA : T.lessonsTitleB,
-      desc: isA ? T.lessonsDescA : T.lessonsDescB,
-    },
-    {
-      kind: 'link',
-      path: '/phrases',
-      icon: MessagesSquare,
-      gradient: 'from-teal-500 to-accent-400',
-      glow: 'shadow-teal-500/20',
-      ring: 'hover:border-teal-500/40',
-      tag: {
-        label: T.tagPhrasesCount,
-        cls: 'bg-teal-500/15 text-teal-300 theme-light:text-teal-800 border border-teal-500/20',
-      },
-      title: isA ? T.phrasesTitleA : T.phrasesTitleB,
-      desc: isA ? T.phrasesDescA : T.phrasesDescB,
+      title: isA ? T.dialoguesPhrasesTitleA : T.dialoguesPhrasesTitleB,
+      desc: isA ? T.dialoguesPhrasesDescA : T.dialoguesPhrasesDescB,
+      showTip: true,
+      items: [
+        {
+          path: '/lessons',
+          icon: GraduationCap,
+          label: isA ? T.lessonsTitleA : T.lessonsTitleB,
+          color: 'text-rose-400',
+          fullDesc: isA ? T.lessonsDescA : T.lessonsDescB,
+        },
+        {
+          path: '/phrases',
+          icon: MessagesSquare,
+          label: isA ? T.phrasesTitleA : T.phrasesTitleB,
+          color: 'text-teal-400',
+          fullDesc: isA ? T.phrasesDescA : T.phrasesDescB,
+        },
+      ],
     },
     {
       kind: 'group',
@@ -511,12 +515,14 @@ export default function Home() {
             const Icon = m.icon
             const delay = { animationDelay: `${100 + i * 60}ms` }
 
-            // Thẻ gộp "Học cùng gia sư AI": 1 header + 3 nút con (Chat/Nói/Viết)
-            // — gộp vì cả 3 đều là hội thoại với AI, chỉ khác kênh (chữ/giọng nói/bài viết).
+            // Thẻ gộp nhiều nút con cùng chủ đề (vd "Học cùng gia sư AI": Chat/Nói/Viết —
+            // gộp vì cả 3 đều là hội thoại với AI, chỉ khác kênh; hay "Hội thoại + Câu thông
+            // dụng" — gộp vì cùng nhóm nội dung mẫu câu/hội thoại có sẵn).
             if (m.kind === 'group') {
+              const gridCls = m.items.length === 2 ? 'grid-cols-2' : 'grid-cols-3'
               return (
                 <div
-                  key="tutor-group"
+                  key={m.title}
                   className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-up"
                   style={delay}
                 >
@@ -539,7 +545,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className={`grid ${gridCls} gap-2`}>
                     {m.items.map((sub) => {
                       const SubIcon = sub.icon
                       return (
@@ -555,6 +561,34 @@ export default function Home() {
                       )
                     })}
                   </div>
+
+                  {/* Mẹo — trước đây đứng riêng ở cuối trang Home, nay gộp vào NGAY thẻ
+                      liên quan (Hội thoại + Câu thông dụng dẫn sang Luyện nói). */}
+                  {m.showTip && (
+                    <div className="mt-3 glass rounded-xl p-3 text-xs text-zinc-400">
+                      <strong className="text-zinc-400">{T.tip}</strong>{' '}
+                      {T.tipBody(
+                        `<strong class="text-teal-400">${T.tipPhrases}</strong>`,
+                        `<strong class="text-sky-400">${T.tipSpeaking}</strong>`,
+                      )
+                        .split(/(<strong[^>]*>.*?<\/strong>)/g)
+                        .map((part, idx) => {
+                          if (part.startsWith('<strong')) {
+                            // theme-light: sắc độ đậm hơn để đạt AA trên nền sáng (Blue sky/Pink)
+                            const color = part.includes('teal')
+                              ? 'text-teal-400 theme-light:text-teal-700'
+                              : 'text-sky-400 theme-light:text-sky-700'
+                            const text = part.replace(/<[^>]+>/g, '')
+                            return (
+                              <strong key={idx} className={color}>
+                                {text}
+                              </strong>
+                            )
+                          }
+                          return part
+                        })}
+                    </div>
+                  )}
                 </div>
               )
             }
@@ -620,31 +654,6 @@ export default function Home() {
               {isA ? 'Lịch sử' : 'History'}
             </span>
           </button>
-        </div>
-
-        {/* ── Tip ──────────────────────────────────────────────────────── */}
-        <div className="mt-6 glass rounded-xl p-4 text-xs text-zinc-400 animate-fade-in delay-400">
-          <strong className="text-zinc-400">{T.tip}</strong>{' '}
-          {T.tipBody(
-            `<strong class="text-teal-400">${T.tipPhrases}</strong>`,
-            `<strong class="text-sky-400">${T.tipSpeaking}</strong>`,
-          )
-            .split(/(<strong[^>]*>.*?<\/strong>)/g)
-            .map((part, idx) => {
-              if (part.startsWith('<strong')) {
-                // theme-light: sắc độ đậm hơn để đạt AA trên nền sáng (Blue sky/Pink)
-                const color = part.includes('teal')
-                  ? 'text-teal-400 theme-light:text-teal-700'
-                  : 'text-sky-400 theme-light:text-sky-700'
-                const text = part.replace(/<[^>]+>/g, '')
-                return (
-                  <strong key={idx} className={color}>
-                    {text}
-                  </strong>
-                )
-              }
-              return part
-            })}
         </div>
       </main>
     </div>

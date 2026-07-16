@@ -234,10 +234,38 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   (không hỏi người dùng tự chấm như thẻ từ vựng). `CefrLevelPage.tsx` thêm badge số đỏ trên
   tab "Kiểm tra" hiện số bài ngữ pháp đến hạn (cùng kiểu badge với tab "Ôn SRS"). Không cần
   bảng Supabase mới (đồng bộ qua `pushProgress` như mọi state SRS/grammar khác). 5 test mới
-  (`srs.test.ts`), build/typecheck/lint/size xanh, test 551/551. **H** (SM-2 → FSRS, giảm
-  20-30% lượt ôn) — CHƯA làm, ưu tiên thấp, để sau. **F** (giữ chân) — streak freeze đã có từ
-  trước; "tổng kết tuần" nay có thể coi là đã phủ một phần qua mục tiêu tuần (`weeklyGoal.ts`,
-  PR #246) + màn ăn mừng, dù không phải 1 màn "tổng kết" riêng.
+  (`srs.test.ts`), build/typecheck/lint/size xanh, test 551/551. **H (SM-2 → FSRS) ĐÃ XONG
+  (2026-07-16, research-first theo KHUNG 3 trước — xem
+  `docs/research/sm2-den-fsrs-2026-07-16.md`)**: thay ruột `src/lib/srs.ts` dùng thư viện
+  `ts-fsrs@5.4.1` (FSRS-6, MIT, xác nhận field thật qua `node_modules/ts-fsrs/dist/index.d.ts`
+  thay vì đoán) với `enable_short_term: false` (bỏ bước học theo PHÚT kiểu Anki mặc định, giữ
+  đúng nhịp học theo NGÀY của app) — giữ NGUYÊN mọi chữ ký hàm public
+  (`addToSRS`/`reviewWord`/`getDueWords`/`getSRSStats`/`getNextReview`/`getLeechWords`/
+  `addToSRSKnown` + 3 hàm ngữ pháp ở trên) nên KHÔNG phải sửa `StudyTabs.tsx`/`Flashcard.tsx`/
+  `Challenge.tsx`/`cefrProgress.ts`, áp dụng tự động cho CẢ từ vựng lẫn ngữ pháp (dùng chung 1
+  engine từ đề xuất E). **Quyết định người dùng (2 điểm hỏi trước khi code):** làm NGAY + hướng
+  chuyển đổi **"cắt hẳn, đặt lại từ New"** (khác khuyến nghị "chuyển dần" của tôi) — mọi thẻ SRS
+  cũ (từ vựng + ngữ pháp) coi như học lại từ đầu, thực hiện tự nhiên qua đổi shape lưu
+  `localStorage` (dữ liệu SM-2 cũ không còn khớp field mới). **Phát hiện qua test thật (không
+  suy đoán công thức, chạy `node --input-type=module` trực tiếp `ts-fsrs` trước khi viết
+  assertion):** `lapses` (leech/tab Từ khó) giờ chỉ tăng khi trượt SAU KHI đã học được — không
+  tính lần trượt đầu tiên lúc thẻ còn mới (ngữ nghĩa hợp lý hơn SM-2 cũ); tie-break độ ưu tiên ôn
+  đổi "ease thấp nhất" → "difficulty cao nhất" trước (cùng ý định: thẻ khó hơn ôn trước).
+  **Bundle vượt ngân sách 5.71kB (116→121.71kB brotli, đo thật bằng `npm run size`)** — người
+  dùng chọn nâng `.size-limit.json` lên 123kB thay vì huỷ, chấp nhận đổi ~5% bundle đầu lấy lợi
+  ích giảm 20-30% lượt ôn. Build/typecheck/lint/format/size xanh, test 551/551. **F** (giữ
+  chân) — streak freeze đã có từ trước; "tổng kết tuần" nay có thể coi là đã phủ một phần qua
+  mục tiêu tuần (`weeklyGoal.ts`, PR #246) + màn ăn mừng, dù không phải 1 màn "tổng kết" riêng.
+- **Gộp thẻ Home (2026-07-16, theo yêu cầu người dùng)**: 2 thẻ riêng "Các bài hội thoại mẫu"
+  (`/lessons`) + "Các câu thông dụng" (`/phrases`) gộp thành 1 thẻ "Hội thoại và các câu thông
+  dụng" (`src/pages/Home.tsx`), dùng lại đúng kiểu thẻ "group" đã có sẵn cho thẻ gia sư AI (1
+  header + nút con) — sửa `ModeCard` type + render để chấp nhận lưới 2 HOẶC 3 nút con (trước
+  chỉ cứng `grid-cols-3`). Khối "💡 Mẹo" (gợi ý bắt đầu từ Câu thông dụng rồi sang Luyện nói)
+  chuyển từ đứng riêng ở CUỐI trang Home vào NGAY trong thẻ gộp này (field `showTip` mới trên
+  kiểu `group`). Thêm i18n `dialoguesPhrasesTitleA/B`, `dialoguesPhrasesDescA/B`,
+  `tagDialoguesPhrases` (cả 2 ngôn ngữ giao diện, giữ nguyên các key cũ vì `Lessons.tsx`/
+  `CommonPhrases.tsx` không đổi, 2 trang đó vẫn còn nguyên). Build/typecheck/lint/size xanh,
+  test 551/551, E2E 117/117 (a11y Home cả 4 theme).
 - **Bổ sung dạng biến thể từ điển** (`docs/research/bo-sung-dang-bien-the-tu-dien.md`) — **Bước
   2 + Bước 4 ĐÃ XONG (2026-07-16, "thêm tất cả")**:
   - **Bước 2 (gắn `base`)**: rà toàn bộ `IRREGULAR_VERBS`/`IRREGULAR_PLURALS`/
