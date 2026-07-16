@@ -215,17 +215,25 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
-- **Cải tiến sư phạm** (`docs/research/danh-gia-tien-trien-hoc-2026-07-07.md`, đề xuất A→H):
-  A (Sổ lỗi cá nhân) đã xong. **B đã xong (rà lại 2026-07-16, ghi chú cũ "chưa có nút CTA riêng"
-  đã LỖI THỜI):** nút "Luyện ngay N từ này bằng hội thoại"/"luyện nói với giọng thật" đã có sẵn
-  ở màn batch-done (`StudyTabs.tsx`, `?words=`) TỪ TRƯỚC; PR #11 (M4) bổ sung thêm lối vào từ
-  Home cho người không đang giữa phiên học. Còn C/D/E/F/G/H (sản xuất chủ động, nghe hiểu, ôn
-  ngữ pháp, giữ chân — xem tài liệu; D/H đã kế thừa vào đặc tả M2-M5 ở trên).
+- **Cải tiến sư phạm** (`docs/research/danh-gia-tien-trien-hoc-2026-07-07.md`, đề xuất A→H —
+  bảng trạng thái trong tài liệu đó đã CŨ, rà lại 2026-07-16 theo việc thực đã merge): A (Sổ
+  lỗi cá nhân) đã xong. B đã xong — nút "Luyện ngay N từ này bằng hội thoại" có sẵn ở màn
+  batch-done (`StudyTabs.tsx`, `?words=`) TỪ TRƯỚC; PR #11 (M4) bổ sung lối vào từ Home. **C
+  (sản xuất chủ động, gõ chính tả) + D (nghe hiểu) đã xong** — PR #248 (③ N3, tab "Nghe" ở
+  trang cấp CEFR) làm đúng cả 2: "Chọn nghĩa" (D) + "Gõ lại"/dictation (C). **G (chấm phát âm
+  cấp âm vị) đã xong** — PR #255/#256 (Azure Pronunciation Assessment, ① Giai đoạn 2). Còn
+  **E** (ngữ pháp có vòng ôn lặp theo mastery — hiện chỉ có checkbox "đã học xong", CHƯA vào
+  SRS) và **H** (SM-2 → FSRS, giảm 20-30% lượt ôn) — cả 2 CHƯA làm, chưa có PR nào trong đặc tả
+  2026-07-15 phủ tới. **F** (giữ chân) — streak freeze đã có từ trước; "tổng kết tuần" nay có
+  thể coi là đã phủ một phần qua mục tiêu tuần (`weeklyGoal.ts`, PR #246) + màn ăn mừng, dù
+  không phải 1 màn "tổng kết" riêng.
 - **Bổ sung dạng biến thể từ điển** (`docs/research/bo-sung-dang-bien-the-tu-dien.md`): Bước 2
   (vá ~40-60 dạng bất quy tắc còn thiếu + gắn `base` để hiện "Xem từ gốc") và Bước 4 (search
   hiểu biến thể: "books"/"went" → trả về từ gốc) chưa làm.
-- Gamification: V-4 (mốc + huy hiệu), V-5 (Home "Hôm nay"), V-6 (âm UI) chưa làm — xem lịch sử
-  PR gamification gần nhất.
+- Gamification: **V-4 (mốc + huy hiệu) đã xong** (PR #8/#247, `src/data/achievements.ts`) và
+  **V-5 (Home "Hôm nay") đã xong** (PR #11/#249, comeback + gợi ý luyện nói) — dòng cũ ghi
+  "chưa làm" đã LỖI THỜI. Còn **V-6 (âm UI — hiệu ứng âm thanh khi đúng/sai/đạt mốc)** CHƯA làm
+  (không tìm thấy code liên quan khi rà lại 2026-07-16).
 - Thanh toán Pro — **đóng, không làm** (xem "Quyết định quan trọng").
 
 ## 🔴 KHẨN CẤP — Auto deploy đang lỗi liên tục (phát hiện 2026-07-15)
