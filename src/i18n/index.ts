@@ -9,6 +9,7 @@ export const t = {
     chat: 'Chat',
     speak: 'Nói',
     write: 'Viết',
+    listen: 'Nghe',
     resetsAt: 'Làm mới lúc',
 
     // BottomNav (U-5)
@@ -32,8 +33,8 @@ export const t = {
     tip: '💡 Mẹo:',
     tipBody: (phrases: string, speaking: string) =>
       `Bắt đầu với ${phrases} để nắm vốn câu giao tiếp thực tế. Rồi luyện với ${speaking} để rèn phản xạ và phát âm.`,
-    tipPhrases: 'Các câu thông dụng',
-    tipSpeaking: 'Luyện nói',
+    tipPhrases: 'Nghe',
+    tipSpeaking: 'Nói',
 
     // Mode cards — Direction A
     chatTitleA: 'Chat với gia sư',
@@ -44,8 +45,9 @@ export const t = {
     writeTitleA: 'Luyện viết & chấm điểm',
     writeDescA: 'Nộp bài viết, AI chấm theo tiêu chí IELTS, chỉ lỗi và ước lượng band.',
     tutorTitleA: 'Học cùng gia sư AI',
-    tutorDescA: 'Chat, luyện nói hoặc luyện viết — AI sửa lỗi và giải thích bằng tiếng Việt.',
-    tagTutorModes: '3 cách học',
+    tutorDescA:
+      'Nghe hội thoại mẫu, chat, luyện nói hoặc luyện viết — AI sửa lỗi và giải thích bằng tiếng Việt.',
+    tagTutorModes: '4 cách học',
     phrasesTitleA: 'Các câu thông dụng',
     phrasesDescA:
       "1.000+ chủ thể (I'm, We are, Could you…), mỗi chủ thể nhiều câu thực tế, có phát âm.",
@@ -57,10 +59,8 @@ export const t = {
     tagDictCount: '10.000+ từ',
     tagLessonsCount: '350 bài học',
     tagPhrasesCount: '1.000 chủ đề',
-    dialoguesPhrasesTitleA: 'Hội thoại và các câu thông dụng',
-    dialoguesPhrasesDescA:
-      'Hội thoại mẫu theo tình huống đời sống + kho câu thông dụng thực tế, đều có phát âm.',
-    tagDialoguesPhrases: '350 bài · 1.000 chủ đề',
+    listenDescA: 'Hội thoại mẫu theo tình huống đời sống + kho câu thông dụng thực tế, có phát âm.',
+    listenPickerTitle: 'Chọn nội dung để nghe',
 
     // Mode cards — Direction B
     chatTitleB: 'Chat với gia sư',
@@ -71,7 +71,8 @@ export const t = {
     writeTitleB: 'Luyện viết & chấm điểm',
     writeDescB: 'Nộp bài viết tiếng Việt, AI chấm và chỉ lỗi bằng tiếng Anh.',
     tutorTitleB: 'Học cùng gia sư AI',
-    tutorDescB: 'Chat, luyện nói hoặc luyện viết — AI sửa lỗi và giải thích bằng tiếng Anh.',
+    tutorDescB:
+      'Nghe hội thoại mẫu, chat, luyện nói hoặc luyện viết — AI sửa lỗi và giải thích bằng tiếng Anh.',
     phrasesTitleB: 'Các câu thông dụng',
     phrasesDescB:
       '1.000+ chủ thể câu tiếng Anh/Việt thông dụng, mỗi chủ thể có nhiều ví dụ thực tế.',
@@ -79,9 +80,7 @@ export const t = {
     dictDescB: 'Tra 10.000 từ tiếng Việt–Anh thông dụng với loại từ và ví dụ.',
     lessonsTitleB: 'Các bài hội thoại mẫu',
     lessonsDescB: 'Hội thoại mẫu tiếng Việt hàng ngày, 10–20 đoạn song ngữ mỗi bài.',
-    dialoguesPhrasesTitleB: 'Hội thoại và các câu thông dụng',
-    dialoguesPhrasesDescB:
-      'Hội thoại mẫu tiếng Việt hàng ngày + kho câu thông dụng thực tế, đều có phát âm.',
+    listenDescB: 'Hội thoại mẫu tiếng Việt hàng ngày + kho câu thông dụng thực tế, có phát âm.',
 
     // Login
     loginBrand: 'Gia sư tiếng Anh AI',
@@ -180,6 +179,7 @@ export const t = {
     chat: 'Chat',
     speak: 'Speak',
     write: 'Write',
+    listen: 'Listen',
     resetsAt: 'Resets at',
 
     // BottomNav (U-5)
@@ -203,7 +203,7 @@ export const t = {
     tip: '💡 Tip:',
     tipBody: (phrases: string, speaking: string) =>
       `Start with ${phrases} to build practical vocabulary. Then move to ${speaking} to train your reflexes and pronunciation.`,
-    tipPhrases: 'Common Sentences',
+    tipPhrases: 'Listen',
     tipSpeaking: 'Speaking',
 
     // Mode cards — Direction A
@@ -215,8 +215,9 @@ export const t = {
     writeTitleA: 'Writing & scoring',
     writeDescA: 'Submit your essay, AI grades it by IELTS criteria and estimates your band.',
     tutorTitleA: 'Study with your AI tutor',
-    tutorDescA: 'Chat, practice speaking, or writing — AI corrects and explains in Vietnamese.',
-    tagTutorModes: '3 ways to learn',
+    tutorDescA:
+      'Listen to sample dialogues, chat, practice speaking, or writing — AI corrects and explains in Vietnamese.',
+    tagTutorModes: '4 ways to learn',
     phrasesTitleA: 'Common Sentences',
     phrasesDescA:
       "1,000+ subjects (I'm, We are, Could you…), each with real-life sentences and audio.",
@@ -227,10 +228,9 @@ export const t = {
     tagDictCount: '10,000+ words',
     tagLessonsCount: '350 lessons',
     tagPhrasesCount: '1,000 topics',
-    dialoguesPhrasesTitleA: 'Dialogues & Common Sentences',
-    dialoguesPhrasesDescA:
-      'Sample dialogues by everyday situation + a library of common sentences, both with audio.',
-    tagDialoguesPhrases: '350 lessons · 1,000 topics',
+    listenDescA:
+      'Sample dialogues by everyday situation + a library of common sentences, with audio.',
+    listenPickerTitle: 'Choose what to listen to',
 
     // Mode cards — Direction B
     chatTitleB: 'Chat with tutor',
@@ -241,16 +241,15 @@ export const t = {
     writeTitleB: 'Writing & scoring',
     writeDescB: 'Submit your Vietnamese writing, AI grades it and points out errors in English.',
     tutorTitleB: 'Study with your AI tutor',
-    tutorDescB: 'Chat, practice speaking, or writing — AI corrects and explains in English.',
+    tutorDescB:
+      'Listen to sample dialogues, chat, practice speaking, or writing — AI corrects and explains in English.',
     phrasesTitleB: 'Common Sentences',
     phrasesDescB: '1,000+ subjects with real-life English/Vietnamese sentences and audio.',
     dictTitleB: 'Dictionary',
     dictDescB: 'Look up 10,000 common Vietnamese–English words with part of speech and examples.',
     lessonsTitleB: 'Sample dialogues',
     lessonsDescB: 'Everyday Vietnamese dialogues, 10–20 bilingual exchanges per lesson.',
-    dialoguesPhrasesTitleB: 'Dialogues & Common Sentences',
-    dialoguesPhrasesDescB:
-      'Everyday Vietnamese dialogues + a library of common sentences, both with audio.',
+    listenDescB: 'Everyday Vietnamese dialogues + a library of common sentences, with audio.',
 
     // Login
     loginBrand: 'AI Language Tutor',
