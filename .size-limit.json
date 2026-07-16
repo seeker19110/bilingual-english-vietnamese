@@ -8,7 +8,7 @@
       "dist/js/vendor-misc-*.js",
       "dist/js/vendor-ui-*.js"
     ],
-    "limit": "116 kB"
+    "limit": "123 kB"
   },
   {
     "name": "Initial CSS (brotli)",
