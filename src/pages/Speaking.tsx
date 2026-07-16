@@ -1,6 +1,17 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send, Award } from 'lucide-react'
+import {
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
+  ChevronDown,
+  Plus,
+  Send,
+  Award,
+  ThumbsUp,
+  ThumbsDown,
+} from 'lucide-react'
 import Layout from '../components/Layout'
 import RateToggle from '../components/RateToggle'
 import PageHeader from '../components/PageHeader'
@@ -8,6 +19,7 @@ import EvaluationResultView from '../components/EvaluationResultView'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
 import { checkNewAchievements, achievementMessage } from '../lib/achievements'
 import { addMistake } from '../lib/mistakes'
+import { reportTutorFeedback } from '../lib/tutorFeedback'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
@@ -259,12 +271,33 @@ function SpeakBubble({
   onPlay,
   isNew,
   wordSync,
+  dir,
+  userId,
+  userInput,
 }: {
   msg: Message
   onPlay?: () => void
   isNew?: boolean
   wordSync: SpkWordSync | null
+  dir: Direction
+  // uid học viên — dùng để ghi vòng phản hồi (mục ⑤ T3) khi bấm 👎
+  userId: string
+  // câu học viên vừa nói NGAY TRƯỚC tin nhắn AI này — làm user_input khi ghi phản hồi
+  userInput: string
 }) {
+  // Vòng phản hồi người dùng (mục ⑤ T3) — mỗi tin nhắn vote tối đa 1 lần, chỉ lưu cục bộ
+  // (không lưu Supabase trạng thái đã vote, mất khi tải lại trang là chấp nhận được).
+  const [voted, setVoted] = useState<'up' | 'down' | null>(null)
+
+  const handleVote = (vote: 'up' | 'down') => {
+    if (voted) return
+    setVoted(vote)
+    // Chỉ ghi DB khi tín hiệu ÂM (👎) — 👍 chỉ đổi UI, không gọi API (quyết định đã chốt).
+    if (vote === 'down') {
+      void reportTutorFeedback(userId, 'speaking', userInput, msg.feedbackVi ?? '')
+    }
+  }
+
   if (msg.role === 'user') {
     return (
       <div className={`flex justify-end ${isNew ? 'animate-fade-in' : ''}`}>
@@ -312,7 +345,41 @@ function SpeakBubble({
                 className="text-amber-200 theme-light:text-amber-800"
                 highlightClass="bg-amber-500/25 text-amber-100 theme-light:text-amber-900"
               />
+              {/* Vote nhận xét đúng/sai — mục ⑤ T3, xem tutorFeedback.ts */}
+              <div className="flex items-center gap-0.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleVote('up')}
+                  disabled={!!voted}
+                  aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
+                  className={`tap-44 flex items-center justify-center rounded-full transition ${
+                    voted === 'up'
+                      ? 'text-accent-400'
+                      : 'text-zinc-500 hover:text-zinc-300 disabled:opacity-40'
+                  }`}
+                >
+                  <ThumbsUp className="w-3 h-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleVote('down')}
+                  disabled={!!voted}
+                  aria-label={dir === 'A' ? 'Nhận xét sai/thiếu' : 'Feedback is wrong/incomplete'}
+                  className={`tap-44 flex items-center justify-center rounded-full transition ${
+                    voted === 'down'
+                      ? 'text-rose-400'
+                      : 'text-zinc-500 hover:text-zinc-300 disabled:opacity-40'
+                  }`}
+                >
+                  <ThumbsDown className="w-3 h-3" />
+                </button>
+              </div>
             </div>
+            {voted === 'down' && (
+              <p className="text-[10px] text-zinc-500 mt-1 pl-5">
+                {dir === 'A' ? 'Đã ghi nhận, cảm ơn bạn!' : 'Recorded, thank you!'}
+              </p>
+            )}
             {msg.correctedEn && (
               <p className="text-accent-400 theme-light:text-accent-800 mt-1.5 pl-4">
                 → {msg.correctedEn}
@@ -776,6 +843,11 @@ export default function Speaking() {
                 isNew={i >= lastIdx}
                 onPlay={m.role === 'assistant' ? () => playMsg(m) : undefined}
                 wordSync={speaking ? wordSync : null}
+                dir={dir}
+                userId={user.id}
+                userInput={
+                  session.messages[i - 1]?.role === 'user' ? session.messages[i - 1]!.content : ''
+                }
               />
             ))}
             {loading && <TypingDots />}
