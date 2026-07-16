@@ -8,6 +8,7 @@ import KaraokeText from './KaraokeText'
 import WordFormsBlock from './WordFormsBlock'
 import { getDirection } from '../lib/storage'
 import { haptics } from '../lib/haptics'
+import { sound } from '../lib/sound'
 
 interface Props {
   userId: string
@@ -52,10 +53,12 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
     if (!card) return
     if (remembered) {
       haptics.success()
+      sound.correct()
       markLearned(userId, card.word)
       setKnown((k) => k + 1)
     } else {
       haptics.tap()
+      sound.wrong()
       // Chưa nhớ → bỏ đánh dấu (nếu trước đó từng đánh dấu thuộc)
       unmarkLearned(userId, card.word)
     }

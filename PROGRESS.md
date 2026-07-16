@@ -215,17 +215,73 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
-- **Cải tiến sư phạm** (`docs/research/danh-gia-tien-trien-hoc-2026-07-07.md`, đề xuất A→H):
-  A (Sổ lỗi cá nhân) đã xong. **B đã xong (rà lại 2026-07-16, ghi chú cũ "chưa có nút CTA riêng"
-  đã LỖI THỜI):** nút "Luyện ngay N từ này bằng hội thoại"/"luyện nói với giọng thật" đã có sẵn
-  ở màn batch-done (`StudyTabs.tsx`, `?words=`) TỪ TRƯỚC; PR #11 (M4) bổ sung thêm lối vào từ
-  Home cho người không đang giữa phiên học. Còn C/D/E/F/G/H (sản xuất chủ động, nghe hiểu, ôn
-  ngữ pháp, giữ chân — xem tài liệu; D/H đã kế thừa vào đặc tả M2-M5 ở trên).
-- **Bổ sung dạng biến thể từ điển** (`docs/research/bo-sung-dang-bien-the-tu-dien.md`): Bước 2
-  (vá ~40-60 dạng bất quy tắc còn thiếu + gắn `base` để hiện "Xem từ gốc") và Bước 4 (search
-  hiểu biến thể: "books"/"went" → trả về từ gốc) chưa làm.
-- Gamification: V-4 (mốc + huy hiệu), V-5 (Home "Hôm nay"), V-6 (âm UI) chưa làm — xem lịch sử
-  PR gamification gần nhất.
+- **Cải tiến sư phạm** (`docs/research/danh-gia-tien-trien-hoc-2026-07-07.md`, đề xuất A→H —
+  bảng trạng thái trong tài liệu đó đã CŨ, rà lại 2026-07-16 theo việc thực đã merge): A (Sổ
+  lỗi cá nhân) đã xong. B đã xong — nút "Luyện ngay N từ này bằng hội thoại" có sẵn ở màn
+  batch-done (`StudyTabs.tsx`, `?words=`) TỪ TRƯỚC; PR #11 (M4) bổ sung lối vào từ Home. **C
+  (sản xuất chủ động, gõ chính tả) + D (nghe hiểu) đã xong** — PR #248 (③ N3, tab "Nghe" ở
+  trang cấp CEFR) làm đúng cả 2: "Chọn nghĩa" (D) + "Gõ lại"/dictation (C). **G (chấm phát âm
+  cấp âm vị) đã xong** — PR #255/#256 (Azure Pronunciation Assessment, ① Giai đoạn 2). **E (ngữ
+  pháp có vòng ôn lặp theo mastery) ĐÃ XONG (2026-07-16, "thêm tất cả" — người dùng chọn trộn
+  vào tab Kiểm tra sẵn có thay vì làm màn ôn riêng)**: tận dụng LẠI engine SM-2 có sẵn
+  (`src/lib/srs.ts`) thay vì viết engine mới — thêm 3 hàm mỏng `addGrammarToSRS`/
+  `reviewGrammar`/`getDueGrammarLessonIds`, dùng tiền tố khoá `grammar:<lessonId>` để chia sẻ
+  chung kho `srs_${uid}` với thẻ từ vựng mà KHÔNG đụng namespace (có test xác nhận 1 lessonId
+  trùng tên 1 từ tiếng Anh vẫn tách biệt hoàn toàn 2 lịch ôn). `cefrProgress.ts`
+  `markGrammarDone()` tự vào vòng ôn khi đánh dấu "đã học xong". `StudyTabs.tsx` `buildQuiz()`
+  (tab Kiểm tra) nay ưu tiên chọn bài ngữ pháp ĐẾN HẠN trước (hết bài due mới rơi về ngẫu
+  nhiên như cũ); trả lời đúng/sai tự suy ra đánh giá 'good'/'again' cập nhật lịch ôn tiếp theo
+  (không hỏi người dùng tự chấm như thẻ từ vựng). `CefrLevelPage.tsx` thêm badge số đỏ trên
+  tab "Kiểm tra" hiện số bài ngữ pháp đến hạn (cùng kiểu badge với tab "Ôn SRS"). Không cần
+  bảng Supabase mới (đồng bộ qua `pushProgress` như mọi state SRS/grammar khác). 5 test mới
+  (`srs.test.ts`), build/typecheck/lint/size xanh, test 551/551. **H** (SM-2 → FSRS, giảm
+  20-30% lượt ôn) — CHƯA làm, ưu tiên thấp, để sau. **F** (giữ chân) — streak freeze đã có từ
+  trước; "tổng kết tuần" nay có thể coi là đã phủ một phần qua mục tiêu tuần (`weeklyGoal.ts`,
+  PR #246) + màn ăn mừng, dù không phải 1 màn "tổng kết" riêng.
+- **Bổ sung dạng biến thể từ điển** (`docs/research/bo-sung-dang-bien-the-tu-dien.md`) — **Bước
+  2 + Bước 4 ĐÃ XONG (2026-07-16, "thêm tất cả")**:
+  - **Bước 2 (gắn `base`)**: rà toàn bộ `IRREGULAR_VERBS`/`IRREGULAR_PLURALS`/
+    `IRREGULAR_COMPARATIVES` (`src/data/irregularForms.ts`) so với từ điển, có kiểm tra **khớp
+    pos** trước khi động vào (phát hiện vài từ đồng âm khác nghĩa mà từ điển chỉ lưu 1 nghĩa —
+    vd "bear" chỉ có nghĩa danh từ "con gấu" dù bảng động từ bất quy tắc có "bear→borne"; tương
+    tự "ring/spring/speed/dream/mistake" chỉ có nghĩa danh từ, "echo" chỉ có nghĩa động từ dù
+    bảng số nhiều bất quy tắc kỳ vọng danh từ — **14 dạng bị BỎ QUA có chủ đích** vì lệch pos,
+    không tự suy đoán/gộp nghĩa). 138 entry ĐÃ CÓ trong từ điển được gắn thêm `base` (vd
+    went/gone→go, children→child, better/best→good). 95 entry CÒN THIẾU hẳn (64 dạng động từ +
+    31 số nhiều bất quy tắc, vd hid/geese/appendices) được soạn tay theo đúng quy ước có sẵn
+    (`vi`: "đã... (quá khứ/phân từ của X)" hoặc "những... (số nhiều của X)") và thêm vào 10 file
+    `public/data/dictionary/chunk-*.json` (round-robin, tổng 12.073→12.168 từ) — `pos`/`level`
+    lấy nguyên từ entry gốc, `ipa_vi` KHÔNG tự bịa mà tái dùng đúng phiên âm đã xác minh của
+    "đã"/"những" (mọi `vi` mới đều cố tình bắt đầu bằng 1 trong 2 từ này). **7 dạng bị bỏ qua**
+    vì từ gốc còn thiếu hẳn trong từ điển (louse/elf/parenthesis/fungus/memorandum/vertex/
+    torpedo) — để dành đợt bổ sung từ điển sau. **Nợ kỹ thuật MỚI phát hiện (chưa sửa, ghi nhận
+    để đợt sau)**: entry có sẵn "played" có trường `forms` tự tham chiếu vô nghĩa
+    (`{"v3s":"playeds","ving":"playedding","past":"playedded"}`) — có vẻ script sinh forms gốc
+    từng chạy nhầm lên cả các từ đã ở dạng biến thể; cần rà lại toàn bộ để tìm entry tương tự.
+  - **Bước 4 (search hiểu biến thể)**: `src/lib/dictionaryApi.ts` xây `formsIndexCache` (dạng
+    biến thể QUY TẮC từ trường `forms` đã tính sẵn → từ gốc) 1 lần rồi tái dùng; `searchDictionary`
+    trả thêm `matchedForm` khi query khớp đúng 1 dạng KHÔNG có entry riêng (vd "books"/"played")
+    và bản thân query đó CHƯA PHẢI 1 headword thật (tránh gợi ý nhầm khi 1 dạng biến thể trùng
+    với 1 từ độc lập khác, có test riêng cho ca này). `src/pages/Dictionary.tsx` hiện dòng gợi ý
+    `"books" là 1 dạng của "book"` ngay trên dải chip lọc loại từ. 7 test mới
+    (`src/lib/dictionaryApi.test.ts`, mock `loadDictionary`). Build/typecheck/lint/size xanh,
+    test 546/546. **Chưa xác nhận được qua trình duyệt thật** (môi trường phiên này không có
+    `.env`/khoá Supabase nên `/dictionary` không load được để chạy Playwright sống) — đã bù bằng
+    kiểm tra JSON hợp lệ + đếm entry đúng 12.168 bằng script + 7 unit test bao phủ đủ ca biên.
+- Gamification: **V-4 (mốc + huy hiệu) đã xong** (PR #8/#247, `src/data/achievements.ts`) và
+  **V-5 (Home "Hôm nay") đã xong** (PR #11/#249, comeback + gợi ý luyện nói) — dòng cũ ghi
+  "chưa làm" đã LỖI THỜI. **V-6 (âm UI) ĐÃ XONG (2026-07-16, người dùng chọn "thêm tất cả"
+  3 việc còn lại):** `src/lib/sound.ts` (mới) — tổng hợp beep bằng Web Audio API (oscillator),
+  KHÔNG tải file audio nào ($0 chi phí); `sound.correct()`/`sound.wrong()` (nốt cao/trầm ngắn)
+  gọi cặp với `haptics.success()`/nhánh rung sai đã có sẵn ở mọi nơi chấm đúng/sai (quiz trắc
+  nghiệm × 3 chỗ trong `StudyTabs.tsx`, dictation, đánh giá SRS, `Flashcard.tsx`, nộp
+  `Challenge.tsx`); `sound.milestone()` (hợp âm 3 nốt tăng dần) gọi trong `Celebration.tsx`
+  (dùng chung cho màn ăn mừng streak/mục tiêu tuần/huy hiệu/tuần trọn vẹn — không cần sửa
+  từng nơi gọi `<Celebration>`). Toggle bật/tắt ở `/profile` (`isSoundEnabled`/
+  `setSoundEnabled`, mặc định BẬT, tự phát thử 1 tiếng khi bật) — 5 test cho phần thuần
+  (bật/tắt + xác nhận không bao giờ throw kể cả khi jsdom không có `AudioContext`, đúng nhánh
+  "trình duyệt không hỗ trợ" thật). E2E a11y `/profile` + `/learning-path/a1` (nơi
+  `StudyTabs`/`Flashcard` render) đều xanh ở cả 4 theme.
 - Thanh toán Pro — **đóng, không làm** (xem "Quyết định quan trọng").
 
 ## 🔴 KHẨN CẤP — Auto deploy đang lỗi liên tục (phát hiện 2026-07-15)

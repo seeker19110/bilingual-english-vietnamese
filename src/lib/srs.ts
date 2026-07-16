@@ -157,3 +157,38 @@ export function getNextReview(uid: string, word: string): Date | null {
   const card = data[word.toLowerCase()]
   return card ? new Date(card.due) : null
 }
+
+// ── Ngữ pháp: dùng CHUNG kho SM-2 này (đề xuất E,
+// docs/research/danh-gia-tien-trien-hoc-2026-07-07.md — "spacing áp cho mọi loại kiến thức,
+// không riêng từ vựng"). Tiền tố `grammar:` để khoá KHÔNG đụng namespace với từ tiếng Anh
+// (word) đang lưu trong cùng 1 kho `srs_${uid}`.
+const grammarKey = (lessonId: string) => `grammar:${lessonId}`
+
+// Vào vòng ôn khi 1 bài ngữ pháp được đánh dấu "đã học xong" (gọi từ markGrammarDone).
+export function addGrammarToSRS(uid: string, lessonId: string) {
+  addToSRS(uid, grammarKey(lessonId))
+}
+
+// Cập nhật lịch ôn sau khi trả lời 1 câu quiz ngữ pháp — đúng → 'good', sai → 'again'
+// (suy ra tự động từ đúng/sai, không hỏi người dùng tự đánh giá như thẻ từ vựng).
+export function reviewGrammar(uid: string, lessonId: string, rating: Rating) {
+  reviewWord(uid, grammarKey(lessonId), rating)
+}
+
+// Các bài ngữ pháp đến hạn ôn trong số `lessonIds` đã học xong — cùng thứ tự ưu tiên
+// (quá hạn lâu nhất trước) như getDueWords.
+export function getDueGrammarLessonIds(uid: string, lessonIds: string[], limit?: number): string[] {
+  const data = load(uid)
+  const now = Date.now()
+  const due = lessonIds.filter((id) => {
+    const c = data[grammarKey(id)]
+    return c && c.due <= now
+  })
+  if (limit == null) return due
+  const sorted = [...due].sort((a, b) => {
+    const ca = data[grammarKey(a)]!
+    const cb = data[grammarKey(b)]!
+    return ca.due - cb.due || ca.ease - cb.ease
+  })
+  return sorted.slice(0, limit)
+}

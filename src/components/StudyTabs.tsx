@@ -38,6 +38,7 @@ import {
   getStreak,
 } from '../lib/storage'
 import { haptics, vibrate } from '../lib/haptics'
+import { sound } from '../lib/sound'
 import StreakCelebration from './StreakCelebration'
 import WeeklyGoalCelebration from './WeeklyGoalCelebration'
 import { shouldCelebrateWeeklyGoal, markWeeklyGoalCelebrated } from '../lib/weeklyGoal'
@@ -50,6 +51,8 @@ import {
   getDueWords,
   getSRSStats,
   getLeechWords,
+  getDueGrammarLessonIds,
+  reviewGrammar,
   SRS_SESSION_CAP,
   type Rating,
 } from '../lib/srs'
@@ -105,21 +108,33 @@ interface QuizQuestion {
 
 // Câu hỏi từ vựng lấy trong `pool` (từ vựng của cấp đang học); câu hỏi ngữ pháp lấy trong
 // `grammarPool` (đã lọc sẵn CHỈ các bài đã học xong, xem CefrLevelPage.tsx).
+// Đề xuất E (docs/research/danh-gia-tien-trien-hoc-2026-07-07.md): ưu tiên bài ngữ pháp ĐẾN
+// HẠN ôn (getDueGrammarLessonIds, xem lib/srs.ts) trước — hết bài due mới rơi về ngẫu nhiên
+// như cũ, để bài học lâu không bị "quên" trong lúc bài mới học liên tục được hỏi lại.
 function buildQuiz(
   userId: string,
   pool: DictEntry[],
   grammarPool: GrammarQuizSource[],
 ): QuizQuestion[] {
-  const grammarQs: QuizQuestion[] = [...grammarPool]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, GRAMMAR_QUIZ_COUNT)
-    .map(({ lessonId, item }) => ({
-      kind: 'grammar',
-      prompt: item.q,
-      correct: item.options[item.answer] ?? '',
-      options: item.options,
-      lessonId,
-    }))
+  const dueLessonIds = new Set(
+    getDueGrammarLessonIds(
+      userId,
+      grammarPool.map((g) => g.lessonId),
+    ),
+  )
+  const due = grammarPool.filter((g) => dueLessonIds.has(g.lessonId))
+  const rest = grammarPool.filter((g) => !dueLessonIds.has(g.lessonId))
+  const chosenGrammar = [
+    ...[...due].sort(() => Math.random() - 0.5),
+    ...[...rest].sort(() => Math.random() - 0.5),
+  ].slice(0, GRAMMAR_QUIZ_COUNT)
+  const grammarQs: QuizQuestion[] = chosenGrammar.map(({ lessonId, item }) => ({
+    kind: 'grammar',
+    prompt: item.q,
+    correct: item.options[item.answer] ?? '',
+    options: item.options,
+    lessonId,
+  }))
 
   const vocabSize = Math.max(QUIZ_SIZE - grammarQs.length, 0)
   const learned = getLearnedWords(userId)
@@ -464,6 +479,7 @@ export function TodayLesson({
   function learn() {
     if (!card) return
     haptics.success() // phản hồi xúc giác khi thuộc thêm 1 từ
+    sound.correct()
     markLearned(uid, card.word)
     addToSRS(uid, card.word)
     bumpDailyLearned(uid)
@@ -752,8 +768,13 @@ export function TodayLesson({
                 onClick={() => {
                   if (quizSel === null) {
                     setQuizSel(opt)
-                    if (opt === q.correct) haptics.success()
-                    else vibrate(60)
+                    if (opt === q.correct) {
+                      haptics.success()
+                      sound.correct()
+                    } else {
+                      vibrate(60)
+                      sound.wrong()
+                    }
                   }
                 }}
                 className={`w-full text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
@@ -950,8 +971,13 @@ export function SRSReview({
   function rate(rating: Rating) {
     if (!card) return
     // Nhớ/Dễ → rung "thành công"; Quên/Khó → rung chạm thường
-    if (rating === 'good' || rating === 'easy') haptics.success()
-    else haptics.tap()
+    if (rating === 'good' || rating === 'easy') {
+      haptics.success()
+      sound.correct()
+    } else {
+      haptics.tap()
+      sound.wrong()
+    }
     reviewWord(uid, card.word, rating)
     setDone((n) => n + 1)
     onUpdate()
@@ -1207,8 +1233,13 @@ export function QuizTab({
   function pick(opt: string) {
     if (selected === null) {
       setSelected(opt)
-      if (opt === q?.correct) haptics.success()
-      else vibrate(60)
+      if (opt === q?.correct) {
+        haptics.success()
+        sound.correct()
+      } else {
+        vibrate(60)
+        sound.wrong()
+      }
     }
   }
 
@@ -1217,6 +1248,9 @@ export function QuizTab({
     const ok = selected === q.correct
     const newAnswers = [...answers, ok]
     setAnswers(newAnswers)
+    if (q.kind === 'grammar' && q.lessonId) {
+      reviewGrammar(uid, q.lessonId, ok ? 'good' : 'again') // đề xuất E — cập nhật lịch ôn
+    }
     if (current + 1 >= questions.length) {
       // Đạt ≥ ngưỡng chung → cũng tính là 1 lần "kiểm tra đạt", mở thêm từ mới cho
       // hôm nay giống mini-quiz ở tab "Hôm nay" (trần tối đa/ngày vẫn giữ nguyên).
@@ -1436,8 +1470,13 @@ function MeaningPractice({
   function pick(opt: string) {
     if (selected === null) {
       setSelected(opt)
-      if (opt === q?.correct) haptics.success()
-      else vibrate(60)
+      if (opt === q?.correct) {
+        haptics.success()
+        sound.correct()
+      } else {
+        vibrate(60)
+        sound.wrong()
+      }
     }
   }
 
@@ -1577,8 +1616,13 @@ function DictationPractice({
     if (!typed.trim() || !item) return
     setChecked(true)
     const s = scorePronunciation(item.text, typed)
-    if (s >= DICTATION_PASS_PCT) haptics.success()
-    else vibrate(60)
+    if (s >= DICTATION_PASS_PCT) {
+      haptics.success()
+      sound.correct()
+    } else {
+      vibrate(60)
+      sound.wrong()
+    }
   }
 
   function next() {

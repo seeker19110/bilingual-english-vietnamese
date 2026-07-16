@@ -13,6 +13,9 @@ import {
   getNextReview,
   getLeechWords,
   NEW_CARD_DELAY_MS,
+  addGrammarToSRS,
+  reviewGrammar,
+  getDueGrammarLessonIds,
 } from './srs'
 import type { DictEntry } from '../types'
 
@@ -118,5 +121,66 @@ describe('SRS — SM-2', () => {
     const due1 = getNextReview('u1', 'apple')?.getTime()
     addToSRSKnown('u1', 'apple', 7)
     expect(getNextReview('u1', 'apple')?.getTime()).toBe(due1)
+  })
+})
+
+describe('SRS ngữ pháp (đề xuất E) — dùng chung kho SM-2, khoá tiền tố grammar:', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('addGrammarToSRS: KHÔNG đến hạn ngay, đến hạn sau 4h giống thẻ từ vựng', () => {
+    vi.useFakeTimers()
+    addGrammarToSRS('u1', 'a1-be')
+    expect(getDueGrammarLessonIds('u1', ['a1-be'])).toEqual([])
+    vi.advanceTimersByTime(NEW_CARD_DELAY_MS + 1000)
+    expect(getDueGrammarLessonIds('u1', ['a1-be'])).toEqual(['a1-be'])
+    vi.useRealTimers()
+  })
+
+  it('reviewGrammar("again") → đến hạn ôn lại ngay', () => {
+    addGrammarToSRS('u1', 'a1-be')
+    reviewGrammar('u1', 'a1-be', 'good') // đẩy due ra tương lai trước
+    reviewGrammar('u1', 'a1-be', 'again')
+    expect(getDueGrammarLessonIds('u1', ['a1-be'])).toEqual(['a1-be'])
+  })
+
+  it('reviewGrammar("good") → đẩy due ra tương lai, không còn đến hạn hôm nay', () => {
+    vi.useFakeTimers()
+    addGrammarToSRS('u1', 'a1-be')
+    vi.advanceTimersByTime(NEW_CARD_DELAY_MS + 1000)
+    expect(getDueGrammarLessonIds('u1', ['a1-be'])).toEqual(['a1-be'])
+    reviewGrammar('u1', 'a1-be', 'good')
+    expect(getDueGrammarLessonIds('u1', ['a1-be'])).toEqual([])
+    vi.useRealTimers()
+  })
+
+  it('getDueGrammarLessonIds chỉ trả bài đến hạn, không đụng namespace với từ vựng', () => {
+    vi.useFakeTimers()
+    addToSRS('u1', 'a1-be') // TỪ VỰNG trùng tên với 1 lessonId — không được lẫn lộn
+    addGrammarToSRS('u1', 'a1-be')
+    vi.advanceTimersByTime(NEW_CARD_DELAY_MS + 1000)
+    expect(getDueGrammarLessonIds('u1', ['a1-be'])).toEqual(['a1-be'])
+    expect(getDueWords('u1', [{ word: 'a1-be' } as DictEntry]).map((e) => e.word)).toEqual([
+      'a1-be',
+    ])
+    // Đánh giá riêng ngữ pháp không ảnh hưởng thẻ từ vựng cùng tên và ngược lại.
+    reviewGrammar('u1', 'a1-be', 'good')
+    expect(getDueGrammarLessonIds('u1', ['a1-be'])).toEqual([])
+    expect(getDueWords('u1', [{ word: 'a1-be' } as DictEntry]).map((e) => e.word)).toEqual([
+      'a1-be',
+    ])
+    vi.useRealTimers()
+  })
+
+  it('getDueGrammarLessonIds với limit: ưu tiên bài quá hạn lâu nhất trước', () => {
+    vi.useFakeTimers()
+    const base = new Date('2026-01-10T00:00:00Z')
+    vi.setSystemTime(base)
+    addGrammarToSRS('u1', 'lesson-a')
+    vi.setSystemTime(new Date(base.getTime() + 1000))
+    addGrammarToSRS('u1', 'lesson-b')
+    vi.setSystemTime(new Date(base.getTime() + NEW_CARD_DELAY_MS + 2000))
+    const capped = getDueGrammarLessonIds('u1', ['lesson-b', 'lesson-a'], 1)
+    expect(capped).toEqual(['lesson-a'])
+    vi.useRealTimers()
   })
 })

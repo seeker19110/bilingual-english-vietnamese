@@ -115,11 +115,11 @@ describe('hội thoại đã xem', () => {
 })
 
 describe('đồng bộ Supabase khi đánh dấu', () => {
-  it('mark/unmark bài ngữ pháp đều gọi pushProgress', async () => {
+  it('mark/unmark bài ngữ pháp đều gọi pushProgress (mark gọi 2 lần: ghi cờ xong + vào SRS ngữ pháp — đề xuất E, xem lib/srs.ts)', async () => {
     const { pushProgress } = await import('./progressSync')
     markGrammarDone('u1', 'g1')
     unmarkGrammarDone('u1', 'g1')
-    expect(vi.mocked(pushProgress)).toHaveBeenCalledTimes(2)
+    expect(vi.mocked(pushProgress)).toHaveBeenCalledTimes(3)
   })
 })
 
