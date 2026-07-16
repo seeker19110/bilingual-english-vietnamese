@@ -118,8 +118,8 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   src/lib" đã có từ trước). Giờ nhắc vẫn do người dùng tự chọn như cũ (`remind_hour`) — ĐÃ
   MERGE (PR #250, 2026-07-16). PR #13 (nút 👍/👎 + bảng `tutor_feedback`, ⑤ T3) — migration
   `0014` + `lib/tutorFeedback.ts` + nút vote cạnh mỗi khối "✅ Nhận xét" ở Chat.tsx/Speaking.tsx
-  (👎 lưu `{userInput, aiFeedback}`, 👍 chỉ đổi UI không ghi DB, vote 1 lần/tin nhắn) — code
-  xong, chờ merge. PR #14 (giải đấu tuần: migration + tính điểm tuần + `/api/leaderboard`,
+  (👎 lưu `{userInput, aiFeedback}`, 👍 chỉ đổi UI không ghi DB, vote 1 lần/tin nhắn) — ĐÃ MERGE
+  (PR #252, 2026-07-16). PR #14 (giải đấu tuần: migration + tính điểm tuần + `/api/leaderboard`,
   ② M5 phần 1/3) — migration `0015_league.sql` (cột `profiles.nickname`/`league_opt_in`,
   unique index không phân biệt hoa thường, khoá quyền ghi client như cột `plan` — chỉ server
   ghi được qua API mới); `api/_lib/leaderboard.ts` (hàm thuần: `currentWeekRange` tái dùng
@@ -133,12 +133,30 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   `POST {action:'set-nickname'|'opt-out'}` — trùng tên dựa vào unique index DB (bắt lỗi
   Postgres `23505` trả 409 thân thiện) thay vì tự query kiểm tra trước (tránh race condition).
   Điểm tính HOÀN TOÀN ở server từ dữ liệu server-side sẵn có (daily_usage/challenge_entries),
-  client không gửi điểm lên (CLAUDE.md §4.2). **Chưa làm ở PR này (để PR #15):** UI trang giải
-  đấu (bảng 7 ô + form chọn nickname) — API đã sẵn sàng để trang đó gọi. Code xong, chờ merge.
-  **Tiếp theo:** PR #15 (`feat(league): trang Giải đấu tuần thay /challenge + opt-in
-nickname`) rồi PR #16 (`refactor(challenge): gọn logic 30 ngày còn chu kỳ tuần`) — hoặc quay
-  lại PR #10 (vá prompt theo eval) nếu có người chạy được baseline T1
-  (`npm run eval:tutor -- --write-baseline`, cần key AI thật, sandbox không có).
+  client không gửi điểm lên (CLAUDE.md §4.2) — ĐÃ MERGE (PR #253, 2026-07-16). PR #15 (trang
+  Giải đấu tuần + opt-in nickname, ② M5 phần 2/3) — thêm `LeagueSection` (mới,
+  `src/components/LeagueSection.tsx`) vào NGAY trang `/challenge` hiện có thay vì tách route
+  riêng (challenge = hoạt động ghi điểm cao nhất của giải, gộp chung 1 trang hợp lý hơn tách
+  đôi — giữ đúng tinh thần "quay challenge vẫn dùng được không cần vào giải" của đặc tả): gọi
+  `/api/leaderboard` qua `src/lib/leaderboardApi.ts` (mới) — chưa opt-in thì hiện ô nhập
+  nickname + nút "Tham gia"; đã opt-in thì hiện hạng/điểm của mình + nút "Rời giải"; luôn hiện
+  top bảng xếp hạng (kể cả chưa tham gia, để tạo động lực). Phát hiện qua E2E: nút "Thử lại"
+  thiếu biến thể `theme-light:text-accent-800` → contrast 1.97 trên nền sáng (theme Blue
+  sky/Pink), đã vá — bài học: MỌI màu `accent-400`/`red-400`... đặt trực tiếp trên nền
+  `zinc-900` (tự đổi sáng/tối theo theme) đều phải kèm `theme-light:` tương ứng, không suy đoán
+  từ các đoạn code khác trông giống — phải tự chạy `npx playwright test e2e/a11y.spec.ts` để
+  bắt được lỗi này (không thấy qua build/lint/unit test). `vite.config.ts` thêm
+  `/api/leaderboard` vào `API_ROUTES` (dev server proxy — thiếu dòng này thì trang gọi API mới
+  sẽ 404 im lặng lúc `npm run dev`/E2E). Code xong (đủ 117/117 E2E xanh), chờ merge. **Tiếp
+  theo:** PR #16
+  (`refactor(challenge): gọn logic 30 ngày còn chu kỳ tuần + huy hiệu M2 + redirect`) — LƯU Ý:
+  phần "gọn logic 30 ngày → chu kỳ tuần" + "huy hiệu M2" trong đặc tả THỰC RA đã làm xong từ PR
+  #246/#247 (xem "Quyết định quan trọng" bên dưới) và trang giải đấu ở PR #15 KHÔNG tách route
+  riêng nên không cần "redirect" — rà lại đặc tả trước khi làm PR #16, có thể PR #16 không còn
+  việc gì để làm nữa (coi như M5/M5b đã xong ở #14+#15). Nếu vậy, chuyển thẳng sang PR #17
+  (Azure Pronunciation Assessment, ① G2) hoặc quay lại PR #10 (vá prompt theo eval) nếu có
+  người chạy được baseline T1 (`npm run eval:tutor -- --write-baseline`, cần key AI thật,
+  sandbox không có).
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
