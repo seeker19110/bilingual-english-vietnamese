@@ -232,8 +232,18 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   hiểu biến thể: "books"/"went" → trả về từ gốc) chưa làm.
 - Gamification: **V-4 (mốc + huy hiệu) đã xong** (PR #8/#247, `src/data/achievements.ts`) và
   **V-5 (Home "Hôm nay") đã xong** (PR #11/#249, comeback + gợi ý luyện nói) — dòng cũ ghi
-  "chưa làm" đã LỖI THỜI. Còn **V-6 (âm UI — hiệu ứng âm thanh khi đúng/sai/đạt mốc)** CHƯA làm
-  (không tìm thấy code liên quan khi rà lại 2026-07-16).
+  "chưa làm" đã LỖI THỜI. **V-6 (âm UI) ĐÃ XONG (2026-07-16, người dùng chọn "thêm tất cả"
+  3 việc còn lại):** `src/lib/sound.ts` (mới) — tổng hợp beep bằng Web Audio API (oscillator),
+  KHÔNG tải file audio nào ($0 chi phí); `sound.correct()`/`sound.wrong()` (nốt cao/trầm ngắn)
+  gọi cặp với `haptics.success()`/nhánh rung sai đã có sẵn ở mọi nơi chấm đúng/sai (quiz trắc
+  nghiệm × 3 chỗ trong `StudyTabs.tsx`, dictation, đánh giá SRS, `Flashcard.tsx`, nộp
+  `Challenge.tsx`); `sound.milestone()` (hợp âm 3 nốt tăng dần) gọi trong `Celebration.tsx`
+  (dùng chung cho màn ăn mừng streak/mục tiêu tuần/huy hiệu/tuần trọn vẹn — không cần sửa
+  từng nơi gọi `<Celebration>`). Toggle bật/tắt ở `/profile` (`isSoundEnabled`/
+  `setSoundEnabled`, mặc định BẬT, tự phát thử 1 tiếng khi bật) — 5 test cho phần thuần
+  (bật/tắt + xác nhận không bao giờ throw kể cả khi jsdom không có `AudioContext`, đúng nhánh
+  "trình duyệt không hỗ trợ" thật). E2E a11y `/profile` + `/learning-path/a1` (nơi
+  `StudyTabs`/`Flashcard` render) đều xanh ở cả 4 theme.
 - Thanh toán Pro — **đóng, không làm** (xem "Quyết định quan trọng").
 
 ## 🔴 KHẨN CẤP — Auto deploy đang lỗi liên tục (phát hiện 2026-07-15)

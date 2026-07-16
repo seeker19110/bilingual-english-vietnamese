@@ -10,6 +10,8 @@ import {
   Gauge,
   CalendarCheck,
   Award,
+  Volume2,
+  VolumeX,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -22,6 +24,7 @@ import { getStreak, getDirection } from '../lib/storage'
 import { getLearnedCount } from '../lib/vocab'
 import { getDailySpeed, setDailySpeed, DAILY_SPEEDS, type DailySpeed } from '../lib/curriculum'
 import { getWeeklyGoal, setWeeklyGoal, WEEKLY_GOALS, type WeeklyGoal } from '../lib/weeklyGoal'
+import { isSoundEnabled, setSoundEnabled, sound } from '../lib/sound'
 import {
   checkNewAchievements,
   achievementMessage,
@@ -52,6 +55,7 @@ export default function Profile() {
   const [speed, setSpeed] = useState<DailySpeed>(() => getDailySpeed(user?.id ?? ''))
   const [weekGoal, setWeekGoal] = useState<WeeklyGoal>(() => getWeeklyGoal(user?.id ?? ''))
   const [earned, setEarned] = useState<Set<string>>(() => getEarnedAchievements(user?.id ?? ''))
+  const [soundOn, setSoundOn] = useState<boolean>(() => isSoundEnabled())
 
   // Backfill lúc mở trang: bắt các huy hiệu đã đủ điều kiện nhưng chưa từng được
   // ghi nhận (vd người dùng cũ đạt streak_7 TRƯỚC khi tính năng này ra mắt) —
@@ -84,6 +88,13 @@ export default function Profile() {
     if (!user) return
     setWeeklyGoal(user.id, g)
     setWeekGoal(g)
+  }
+
+  // Bật/tắt âm thanh phản hồi UI (V-6) — bật thử ngay 1 tiếng "đúng" để nghe được hiệu ứng.
+  function chooseSound(enabled: boolean) {
+    setSoundEnabled(enabled)
+    setSoundOn(enabled)
+    if (enabled) sound.correct()
   }
 
   async function handleLogout() {
@@ -212,6 +223,49 @@ export default function Profile() {
             {isA
               ? 'Tuần tính từ Thứ 2. Ngày có học bất kỳ hoạt động nào (từ vựng, chat, viết, nói) đều được tính — cùng luật với chuỗi ngày.'
               : 'Weeks start on Monday. Any study activity (vocab, chat, writing, speaking) counts — same rule as your streak.'}
+          </p>
+        </section>
+
+        {/* Âm thanh phản hồi UI (V-6) — đúng/sai/đạt mốc */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
+          <div className="flex items-center gap-2 mb-3">
+            {soundOn ? (
+              <Volume2 className="w-4 h-4 text-accent-400" />
+            ) : (
+              <VolumeX className="w-4 h-4 text-accent-400" />
+            )}
+            <span className="text-sm font-semibold text-white">
+              {isA ? 'Âm thanh khi học' : 'Study sound effects'}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => chooseSound(true)}
+              aria-pressed={soundOn}
+              className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium border transition ${
+                soundOn
+                  ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
+                  : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'
+              }`}
+            >
+              <Volume2 className="w-4 h-4" /> {isA ? 'Bật' : 'On'}
+            </button>
+            <button
+              onClick={() => chooseSound(false)}
+              aria-pressed={!soundOn}
+              className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium border transition ${
+                !soundOn
+                  ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
+                  : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'
+              }`}
+            >
+              <VolumeX className="w-4 h-4" /> {isA ? 'Tắt' : 'Off'}
+            </button>
+          </div>
+          <p className="text-xs text-zinc-400 mt-3">
+            {isA
+              ? 'Tiếng "ting" nhỏ khi trả lời đúng/sai và khi đạt mốc (streak, huy hiệu). Không cần tải gì thêm.'
+              : 'A small "ting" when you answer right/wrong and when you hit a milestone (streak, achievements). No download needed.'}
           </p>
         </section>
 

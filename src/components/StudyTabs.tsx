@@ -38,6 +38,7 @@ import {
   getStreak,
 } from '../lib/storage'
 import { haptics, vibrate } from '../lib/haptics'
+import { sound } from '../lib/sound'
 import StreakCelebration from './StreakCelebration'
 import WeeklyGoalCelebration from './WeeklyGoalCelebration'
 import { shouldCelebrateWeeklyGoal, markWeeklyGoalCelebrated } from '../lib/weeklyGoal'
@@ -464,6 +465,7 @@ export function TodayLesson({
   function learn() {
     if (!card) return
     haptics.success() // phản hồi xúc giác khi thuộc thêm 1 từ
+    sound.correct()
     markLearned(uid, card.word)
     addToSRS(uid, card.word)
     bumpDailyLearned(uid)
@@ -752,8 +754,13 @@ export function TodayLesson({
                 onClick={() => {
                   if (quizSel === null) {
                     setQuizSel(opt)
-                    if (opt === q.correct) haptics.success()
-                    else vibrate(60)
+                    if (opt === q.correct) {
+                      haptics.success()
+                      sound.correct()
+                    } else {
+                      vibrate(60)
+                      sound.wrong()
+                    }
                   }
                 }}
                 className={`w-full text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
@@ -950,8 +957,13 @@ export function SRSReview({
   function rate(rating: Rating) {
     if (!card) return
     // Nhớ/Dễ → rung "thành công"; Quên/Khó → rung chạm thường
-    if (rating === 'good' || rating === 'easy') haptics.success()
-    else haptics.tap()
+    if (rating === 'good' || rating === 'easy') {
+      haptics.success()
+      sound.correct()
+    } else {
+      haptics.tap()
+      sound.wrong()
+    }
     reviewWord(uid, card.word, rating)
     setDone((n) => n + 1)
     onUpdate()
@@ -1207,8 +1219,13 @@ export function QuizTab({
   function pick(opt: string) {
     if (selected === null) {
       setSelected(opt)
-      if (opt === q?.correct) haptics.success()
-      else vibrate(60)
+      if (opt === q?.correct) {
+        haptics.success()
+        sound.correct()
+      } else {
+        vibrate(60)
+        sound.wrong()
+      }
     }
   }
 
@@ -1436,8 +1453,13 @@ function MeaningPractice({
   function pick(opt: string) {
     if (selected === null) {
       setSelected(opt)
-      if (opt === q?.correct) haptics.success()
-      else vibrate(60)
+      if (opt === q?.correct) {
+        haptics.success()
+        sound.correct()
+      } else {
+        vibrate(60)
+        sound.wrong()
+      }
     }
   }
 
@@ -1577,8 +1599,13 @@ function DictationPractice({
     if (!typed.trim() || !item) return
     setChecked(true)
     const s = scorePronunciation(item.text, typed)
-    if (s >= DICTATION_PASS_PCT) haptics.success()
-    else vibrate(60)
+    if (s >= DICTATION_PASS_PCT) {
+      haptics.success()
+      sound.correct()
+    } else {
+      vibrate(60)
+      sound.wrong()
+    }
   }
 
   function next() {

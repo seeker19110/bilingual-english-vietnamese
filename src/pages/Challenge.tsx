@@ -18,6 +18,7 @@ import { vnDateStr } from '../lib/date'
 import { callClaude, parseJson } from '../lib/ai'
 import { speak } from '../lib/tts'
 import { haptics } from '../lib/haptics'
+import { sound } from '../lib/sound'
 import { getAuthHeader } from '../lib/authHeader'
 import {
   getTopicForDay,
@@ -571,6 +572,7 @@ export default function Challenge() {
 
       const nowComplete = getWeekCells(nextChallenge, todayStr).every((c) => c.entry)
       haptics.success()
+      sound.correct()
       if (!beforeComplete && nowComplete) setCelebrateWeek(true)
       // Huy hiệu mới (② M2) — sau khi lưu entry để getTotalSubmitted/hasPerfectWeek thấy bài vừa nộp.
       for (const a of checkNewAchievements(uid)) toast.success(achievementMessage(a, isA))

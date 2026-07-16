@@ -8,6 +8,7 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { haptics } from '../lib/haptics'
+import { sound } from '../lib/sound'
 
 export default function Celebration({
   icon,
@@ -28,6 +29,7 @@ export default function Celebration({
 
   useEffect(() => {
     haptics.success()
+    sound.milestone()
     // Confetti: chunk lazy, lỗi tải (mạng yếu) thì bỏ qua êm — ăn mừng vẫn hiện.
     let alive = true
     import('../lib/confetti')
