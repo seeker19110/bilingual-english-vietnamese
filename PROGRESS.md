@@ -266,6 +266,20 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   `tagDialoguesPhrases` (cả 2 ngôn ngữ giao diện, giữ nguyên các key cũ vì `Lessons.tsx`/
   `CommonPhrases.tsx` không đổi, 2 trang đó vẫn còn nguyên). Build/typecheck/lint/size xanh,
   test 551/551, E2E 117/117 (a11y Home cả 4 theme).
+- **Gộp tiếp thành nút "Nghe" trong thẻ gia sư AI (2026-07-16, theo yêu cầu người dùng)**: thẻ
+  "Hội thoại và các câu thông dụng" ở trên bị XÓA hẳn — gộp thành 1 nút con "Nghe" (icon
+  `Headphones`) NGAY trong thẻ "Học cùng gia sư AI" (nay 4 nút: Nghe · Chat · Nói · Viết, lưới
+  2×2). **Quyết định người dùng khi hỏi trước khi code:** bấm "Nghe" mở 1 màn chọn nhỏ (modal,
+  style giống hộp chọn giờ nhắc học ở `QuickActions.tsx`) cho chọn tiếp "Các bài hội thoại mẫu"
+  (`/lessons`) hay "Các câu thông dụng" (`/phrases`), KHÔNG vào thẳng 1 trang cố định. State
+  `showListenPicker` mới trong `Home.tsx`; sub-item "Nghe" dùng path giả `LISTEN_PICKER_PATH`
+  để phân biệt với nav() bình thường trong `onClick` chung của mọi nút con nhóm. Khối "💡 Mẹo"
+  đổi chữ tham chiếu "Câu thông dụng" → "Nghe" cho khớp nút mới (`tipPhrases`). Xóa hẳn các key
+  i18n `dialoguesPhrasesTitleA/B`/`dialoguesPhrasesDescA/B`/`tagDialoguesPhrases` (không còn
+  dùng ở đâu, xác nhận bằng grep trước khi xóa) — thêm `listen`/`listenDescA/B`/
+  `listenPickerTitle`. Đã tự xác nhận bằng Playwright chụp ảnh thật (không chỉ đọc code): thẻ
+  gộp hiện đúng 4 nút, bấm "Nghe" mở đúng modal 2 lựa chọn. Build/typecheck/lint/format/size
+  xanh, test 551/551, E2E a11y Home 8/8 (cả 4 theme, không lỗi mới).
 - **Bổ sung dạng biến thể từ điển** (`docs/research/bo-sung-dang-bien-the-tu-dien.md`) — **Bước
   2 + Bước 4 ĐÃ XONG (2026-07-16, "thêm tất cả")**:
   - **Bước 2 (gắn `base`)**: rà toàn bộ `IRREGULAR_VERBS`/`IRREGULAR_PLURALS`/
