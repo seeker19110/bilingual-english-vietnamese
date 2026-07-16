@@ -227,9 +227,36 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   2026-07-15 phủ tới. **F** (giữ chân) — streak freeze đã có từ trước; "tổng kết tuần" nay có
   thể coi là đã phủ một phần qua mục tiêu tuần (`weeklyGoal.ts`, PR #246) + màn ăn mừng, dù
   không phải 1 màn "tổng kết" riêng.
-- **Bổ sung dạng biến thể từ điển** (`docs/research/bo-sung-dang-bien-the-tu-dien.md`): Bước 2
-  (vá ~40-60 dạng bất quy tắc còn thiếu + gắn `base` để hiện "Xem từ gốc") và Bước 4 (search
-  hiểu biến thể: "books"/"went" → trả về từ gốc) chưa làm.
+- **Bổ sung dạng biến thể từ điển** (`docs/research/bo-sung-dang-bien-the-tu-dien.md`) — **Bước
+  2 + Bước 4 ĐÃ XONG (2026-07-16, "thêm tất cả")**:
+  - **Bước 2 (gắn `base`)**: rà toàn bộ `IRREGULAR_VERBS`/`IRREGULAR_PLURALS`/
+    `IRREGULAR_COMPARATIVES` (`src/data/irregularForms.ts`) so với từ điển, có kiểm tra **khớp
+    pos** trước khi động vào (phát hiện vài từ đồng âm khác nghĩa mà từ điển chỉ lưu 1 nghĩa —
+    vd "bear" chỉ có nghĩa danh từ "con gấu" dù bảng động từ bất quy tắc có "bear→borne"; tương
+    tự "ring/spring/speed/dream/mistake" chỉ có nghĩa danh từ, "echo" chỉ có nghĩa động từ dù
+    bảng số nhiều bất quy tắc kỳ vọng danh từ — **14 dạng bị BỎ QUA có chủ đích** vì lệch pos,
+    không tự suy đoán/gộp nghĩa). 138 entry ĐÃ CÓ trong từ điển được gắn thêm `base` (vd
+    went/gone→go, children→child, better/best→good). 95 entry CÒN THIẾU hẳn (64 dạng động từ +
+    31 số nhiều bất quy tắc, vd hid/geese/appendices) được soạn tay theo đúng quy ước có sẵn
+    (`vi`: "đã... (quá khứ/phân từ của X)" hoặc "những... (số nhiều của X)") và thêm vào 10 file
+    `public/data/dictionary/chunk-*.json` (round-robin, tổng 12.073→12.168 từ) — `pos`/`level`
+    lấy nguyên từ entry gốc, `ipa_vi` KHÔNG tự bịa mà tái dùng đúng phiên âm đã xác minh của
+    "đã"/"những" (mọi `vi` mới đều cố tình bắt đầu bằng 1 trong 2 từ này). **7 dạng bị bỏ qua**
+    vì từ gốc còn thiếu hẳn trong từ điển (louse/elf/parenthesis/fungus/memorandum/vertex/
+    torpedo) — để dành đợt bổ sung từ điển sau. **Nợ kỹ thuật MỚI phát hiện (chưa sửa, ghi nhận
+    để đợt sau)**: entry có sẵn "played" có trường `forms` tự tham chiếu vô nghĩa
+    (`{"v3s":"playeds","ving":"playedding","past":"playedded"}`) — có vẻ script sinh forms gốc
+    từng chạy nhầm lên cả các từ đã ở dạng biến thể; cần rà lại toàn bộ để tìm entry tương tự.
+  - **Bước 4 (search hiểu biến thể)**: `src/lib/dictionaryApi.ts` xây `formsIndexCache` (dạng
+    biến thể QUY TẮC từ trường `forms` đã tính sẵn → từ gốc) 1 lần rồi tái dùng; `searchDictionary`
+    trả thêm `matchedForm` khi query khớp đúng 1 dạng KHÔNG có entry riêng (vd "books"/"played")
+    và bản thân query đó CHƯA PHẢI 1 headword thật (tránh gợi ý nhầm khi 1 dạng biến thể trùng
+    với 1 từ độc lập khác, có test riêng cho ca này). `src/pages/Dictionary.tsx` hiện dòng gợi ý
+    `"books" là 1 dạng của "book"` ngay trên dải chip lọc loại từ. 7 test mới
+    (`src/lib/dictionaryApi.test.ts`, mock `loadDictionary`). Build/typecheck/lint/size xanh,
+    test 546/546. **Chưa xác nhận được qua trình duyệt thật** (môi trường phiên này không có
+    `.env`/khoá Supabase nên `/dictionary` không load được để chạy Playwright sống) — đã bù bằng
+    kiểm tra JSON hợp lệ + đếm entry đúng 12.168 bằng script + 7 unit test bao phủ đủ ca biên.
 - Gamification: **V-4 (mốc + huy hiệu) đã xong** (PR #8/#247, `src/data/achievements.ts`) và
   **V-5 (Home "Hôm nay") đã xong** (PR #11/#249, comeback + gợi ý luyện nói) — dòng cũ ghi
   "chưa làm" đã LỖI THỜI. **V-6 (âm UI) ĐÃ XONG (2026-07-16, người dùng chọn "thêm tất cả"

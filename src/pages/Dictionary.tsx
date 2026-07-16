@@ -97,6 +97,11 @@ export default function Dictionary() {
   const [searchResults, setSearchResults] = useState<DictEntry[]>([])
   const [searchPosGroups, setSearchPosGroups] = useState<[string, number][]>([])
   const [searchMatched, setSearchMatched] = useState(0)
+  // Bước 4 (bo-sung-dang-bien-the-tu-dien.md): query khớp đúng 1 dạng biến thể không có entry
+  // riêng (vd "books"/"played") — hiện gợi ý nhỏ "là dạng của X" phía trên kết quả.
+  const [searchMatchedForm, setSearchMatchedForm] = useState<{ form: string; base: string } | null>(
+    null,
+  )
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState(false) // true khi lỗi mạng (khác "không có kết quả")
   const [retryKey, setRetryKey] = useState(0) // tăng để gọi lại tìm kiếm sau lỗi mạng
@@ -124,6 +129,7 @@ export default function Dictionary() {
       setSearchResults([])
       setSearchPosGroups([])
       setSearchMatched(0)
+      setSearchMatchedForm(null)
       setSearchError(false)
       return
     }
@@ -136,6 +142,7 @@ export default function Dictionary() {
         setSearchResults(r.results)
         setSearchPosGroups(r.posGroups)
         setSearchMatched(r.matched)
+        setSearchMatchedForm(r.matchedForm ?? null)
         setSearchError(false)
       })
       .catch((err) => {
@@ -144,6 +151,7 @@ export default function Dictionary() {
           setSearchResults([])
           setSearchPosGroups([])
           setSearchMatched(0)
+          setSearchMatchedForm(null)
           setSearchError(true)
         }
       })
@@ -285,6 +293,27 @@ export default function Dictionary() {
                   </button>
                 )}
               </div>
+
+              {/* Gợi ý dạng biến thể (Bước 4) — "books" là số nhiều của "book" */}
+              {searchMatchedForm && (
+                <p className="text-xs text-zinc-400 mb-3 animate-fade-in">
+                  {isA ? (
+                    <>
+                      "{searchMatchedForm.form}" là 1 dạng của{' '}
+                      <span className="text-accent-400 theme-light:text-accent-800 font-medium">
+                        "{searchMatchedForm.base}"
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      "{searchMatchedForm.form}" is a form of{' '}
+                      <span className="text-accent-400 theme-light:text-accent-800 font-medium">
+                        "{searchMatchedForm.base}"
+                      </span>
+                    </>
+                  )}
+                </p>
+              )}
 
               {/* POS filter chips — hiện khi có ≥2 loại từ trong kết quả */}
               {query && posGroups.length > 1 && (

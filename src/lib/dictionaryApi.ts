@@ -18,6 +18,37 @@ export interface DictSearchResult {
   matched: number // số từ khớp truy vấn
   posGroups: [string, number][] // [loại từ, số lượng] để vẽ chip lọc
   results: DictEntry[] // kết quả (đã cắt bớt)
+  // Có khi query khớp ĐÚNG 1 dạng biến thể (vd "books"/"played") không có entry riêng —
+  // trả kèm để UI hiện "'books' là số nhiều của 'book'" (Bước 4, bo-sung-dang-bien-the-tu-dien.md).
+  matchedForm?: { form: string; base: string }
+}
+
+// ── Chỉ mục dạng biến thể → từ gốc (Bước 4: search hiểu biến thể) ────────────────────────
+// Xây 1 LẦN từ trường `forms` đã tính sẵn của toàn bộ từ điển (KHÔNG tính lại thuật toán biến
+// thể ở đây) — tra "books"/"played" trả về entry gốc "book"/"play" dù 2 từ đó không có entry
+// riêng (chỉ dạng BẤT QUY TẮC mới có entry riêng, xem quyết định thiết kế trong tài liệu).
+let formsIndexCache: Map<string, string> | null = null
+let wordSetCache: Set<string> | null = null
+
+function buildFormsIndex(entries: DictEntry[]): Map<string, string> {
+  const index = new Map<string, string>()
+  for (const e of entries) {
+    if (!e.forms) continue
+    const candidates = [
+      e.forms.plural,
+      e.forms.v3s,
+      e.forms.ving,
+      e.forms.past,
+      e.forms.pastPart,
+      e.forms.comparative,
+      e.forms.superlative,
+    ]
+    for (const f of candidates) {
+      const key = f?.toLowerCase()
+      if (key && !index.has(key)) index.set(key, e.word)
+    }
+  }
+  return index
 }
 
 // Phát hiện chuỗi tiếng Việt (có dấu) — giống logic server cũ.
@@ -44,6 +75,7 @@ export async function searchDictionary(
   if (!query) return { total: entries.length, matched: 0, posGroups: [], results: [] }
 
   let matches: DictEntry[]
+  let matchedForm: { form: string; base: string } | undefined
   if (hasVietnamese(query)) {
     matches = entries.filter((e) => e.vi.toLowerCase().includes(query))
   } else {
@@ -56,6 +88,22 @@ export async function searchDictionary(
       else if (w.includes(query)) contains.push(e)
     }
     matches = [...starts, ...contains]
+
+    // Bước 4: query khớp ĐÚNG 1 dạng biến thể không có entry riêng (vd "books"/"played") —
+    // chỉ kích hoạt khi KHÔNG có entry nào trùng khớp chính xác (query đã là 1 từ thật rồi
+    // thì không cần "gợi ý" gì thêm, vd tránh nhầm khi chính "leaves" cũng là 1 từ độc lập).
+    if (!wordSetCache) wordSetCache = new Set(entries.map((e) => e.word.toLowerCase()))
+    if (!wordSetCache.has(query)) {
+      if (!formsIndexCache) formsIndexCache = buildFormsIndex(entries)
+      const base = formsIndexCache.get(query)
+      if (base) {
+        const baseEntry = entries.find((e) => e.word === base)
+        if (baseEntry) {
+          matchedForm = { form: query, base }
+          if (!matches.some((m) => m.word === base)) matches = [baseEntry, ...matches]
+        }
+      }
+    }
   }
 
   // Đếm loại từ trên TOÀN BỘ kết quả khớp (trước khi lọc pos) → chip giữ tổng đầy đủ.
@@ -70,6 +118,7 @@ export async function searchDictionary(
     matched: matches.length,
     posGroups,
     results: filtered.slice(0, MAX_RESULTS),
+    matchedForm,
   }
 }
 
