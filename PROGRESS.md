@@ -87,8 +87,16 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   nói, thi cuối cấp) + toast khi vừa đạt + lưới huy hiệu ở `/profile` (backfill huy hiệu cũ khi
   mở trang). ⚠️ KHÔNG làm "điểm phát âm ≥90 lần đầu" như đặc tả gốc — `pronounceScore.ts` chưa
   lưu lịch sử điểm, thêm tracking mới sẽ vượt phạm vi 1 PR nhỏ; thay bằng nhóm kỹ năng/challenge
-  hiện có. Đồng bộ cột `achievements` (migration `0013`, hợp union) — code xong, chờ merge.
-  **Tiếp theo:** PR #9 (bài luyện nghe dictation, ③ N3) theo bảng ưu tiên.
+  hiện có. Đồng bộ cột `achievements` (migration `0013`, hợp union) — ĐÃ MERGE (PR #247,
+  2026-07-16). PR #9 (bài luyện nghe dictation, ③ N3) — tab thứ 6 "Nghe" ở trang cấp CEFR
+  (`components/StudyTabs.tsx` `ListeningTab`, `pages/CefrLevelPage.tsx`), 2 chế độ: "Chọn nghĩa"
+  (tái dùng `buildListeningQuestions` của `cefrExam.ts` — xuất khẩu thêm, cùng engine phần Nghe
+  đề thi cuối cấp, tái dùng `ExamQuestionCard`) + "Gõ lại" (dictation — `lib/listening.ts` dựng
+  câu từ hội thoại/ví dụ từ điển của cấp, chấm bằng `scorePronunciation`/`scoreWords` đã có).
+  Tốc độ mặc định theo cấp (A1-A2 0.9× · B1-B2 1× · C1-C2 1.1×, `LISTENING_RATE_BY_LEVEL`) —
+  nới kiểu `rate` của `speak()`/`speakBilingual()` từ `Rate` (0.75/1/1.25) sang `number` để nhận
+  giá trị này (RateToggle không đổi). code xong, chờ merge. **Tiếp theo:** PR #10 (vá prompt theo
+  eval, ⑤ T2) theo bảng ưu tiên — chờ số liệu baseline T1 trước (cần người có key AI chạy).
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
@@ -103,10 +111,30 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   PR gamification gần nhất.
 - Thanh toán Pro — **đóng, không làm** (xem "Quyết định quan trọng").
 
+## 🔴 KHẨN CẤP — Auto deploy đang lỗi liên tục (phát hiện 2026-07-15)
+
+**Production ĐANG CHẠY CODE CŨ từ 2026-07-13** — mọi PR merge sau `028dfdc` (audit UI/UX
+2026-07-13) đến nay (kể cả PR #246/#247 hôm nay) **CHƯA lên production**. Nguyên nhân: bước
+`npm run migrate` trong `.github/workflows/deploy.yml` báo lỗi
+`Thiếu SUPABASE_DB_URL trong .env` → script thoát bằng `exit 1` → toàn bộ deploy dừng ngay
+(`set -e`), không build/không reload PM2. Đã lỗi **8 lần liên tiếp** (2026-07-14 00:05 →
+2026-07-15 23:36), y hệt nhau mỗi lần.
+
+**AI KHÔNG tự sửa được** — cần SSH/quyền VPS mà AI không có. **Việc người dùng cần làm:**
+
+1. Lấy connection string ở Supabase Dashboard → Project Settings → Database → Connection
+   string → **"Direct connection"** (không dùng "Transaction pooler").
+2. SSH vào VPS, thêm `SUPABASE_DB_URL=...` vào `/var/www/english-tutor/.env`.
+3. Trigger lại workflow "Deploy to VPS" trên GitHub Actions (hoặc đợi lần push tiếp theo).
+
+Xem `docs/deploy-vps-ubuntu.md`. Sau khi sửa, xác nhận lại bảng "Trạng thái migration trên
+Supabase production" ở `supabase/migrations/README.md` (0010–0013 sẽ tự áp).
+
 ## ⚠️ Cần làm tay (không cần PR)
 
 - Migration `0010_challenge_entries.sql` — chạy khi có `SUPABASE_DB_URL` trong `.env` VPS rồi
-  `bash deploy.sh` (tự áp mọi migration còn thiếu).
+  `bash deploy.sh` (tự áp mọi migration còn thiếu). **Xem mục khẩn cấp ở trên — đây chính là
+  nguyên nhân chặn auto deploy.**
 - `SENTRY_DSN`/`VITE_SENTRY_DSN` — lấy miễn phí ở sentry.io, điền vào `.env` VPS, build lại +
   `pm2 restart` (code Sentry đã xong, hiện no-op).
 - `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) trên VPS nếu chưa có — cần cho STT.

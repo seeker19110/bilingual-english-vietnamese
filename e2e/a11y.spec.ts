@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { mockLogin, USER_ID, type ThemeName } from './helpers/auth'
+import { muteTts } from './helpers/tts'
 
 // Quét a11y bằng axe-core (WCAG 2.0/2.1 A & AA). Loại 'meta-viewport' vì dự án
 // CHỦ ĐỘNG khóa zoom (đánh đổi 1 mục a11y, bù bằng sàn chữ ≥11px — CLAUDE.md mục 8).
@@ -126,31 +127,6 @@ async function mockClaude(page: Page, text: string) {
       body: JSON.stringify({ content: [{ text }] }),
     }),
   )
-}
-
-// Vô hiệu hóa TTS để trang Nói không treo: chặn /api/tts (rớt về Web Speech) và làm
-// speechSynthesis kết thúc NGAY (headless không có giọng đọc → onend có thể không bao
-// giờ bắn → await speakBilingual() treo). Stub gọi onend ở tick sau để Promise resolve.
-async function muteTts(page: Page) {
-  await page.route('**/api/tts', (route) => route.abort())
-  await page.addInitScript(() => {
-    const synth = {
-      speak: (u: SpeechSynthesisUtterance) => {
-        const handler = u.onend
-        if (handler)
-          setTimeout(() => handler.call(u, new Event('end') as unknown as SpeechSynthesisEvent), 0)
-      },
-      cancel() {},
-      pause() {},
-      resume() {},
-      getVoices: () => [] as SpeechSynthesisVoice[],
-    }
-    try {
-      Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: synth })
-    } catch {
-      /* trình duyệt không cho ghi đè — bỏ qua, fallback vẫn resolve qua onerror */
-    }
-  })
 }
 
 // Chat: 💬 = câu thoại, ✅ = nhận xét (tiếng mẹ đẻ). Bong bóng tách 2 phần → màu amber.
@@ -305,6 +281,35 @@ for (const theme of THEMES) {
     await page.goto('/challenge', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Đã nộp challenge hôm nay/)).toBeVisible()
     await page.waitForTimeout(500)
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+}
+
+// ── Tab "Nghe" (luyện nghe theo cấp, ③ N3) — 2 chế độ: Chọn nghĩa (mặc định) và
+// Gõ lại (dictation). A1 luôn mở khóa nên vào thẳng qua ?tab=listening.
+for (const theme of THEMES) {
+  test(`a11y: /learning-path/a1 tab Nghe — Chọn nghĩa theme=${theme} — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await muteTts(page)
+    await mockLogin(page, 'vi', theme)
+    await page.goto('/learning-path/a1?tab=listening', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByRole('button', { name: /Nghe lại/ })).toBeVisible()
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+
+  test(`a11y: /learning-path/a1 tab Nghe — Gõ lại theme=${theme} — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await muteTts(page)
+    await mockLogin(page, 'vi', theme)
+    await page.goto('/learning-path/a1?tab=listening', { waitUntil: 'domcontentloaded' })
+    await page.getByRole('button', { name: /Gõ lại/ }).click()
+    await expect(page.getByPlaceholder(/Gõ lại câu vừa nghe/)).toBeVisible()
     const { critical, unexpectedSerious } = await scan(page)
     expect(critical).toEqual([])
     expect(unexpectedSerious).toEqual([])

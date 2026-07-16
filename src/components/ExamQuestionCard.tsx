@@ -20,6 +20,7 @@ export default function ExamQuestionCard({
   onPick,
   onNext,
   nextLabel,
+  rate,
 }: {
   q: ExamQuestion
   isA: boolean
@@ -31,6 +32,10 @@ export default function ExamQuestionCard({
   onNext: () => void
   // Nhãn nút cuối cùng (mặc định "Nộp bài/Submit") — khác nhau giữa 2 nơi dùng.
   nextLabel?: { last: string; more: string }
+  // Tốc độ phát nút "Nghe lại" — mặc định undefined = dùng getRatePref() (lựa
+  // chọn toàn cục) như cũ. Bài luyện nghe theo cấp (③ N3) truyền tốc độ gợi ý
+  // riêng theo cấp (lib/listening.ts) — không ảnh hưởng đề thi/placement.
+  rate?: number
 }) {
   const meta = PART_META[q.part]
   const MetaIcon = meta.icon
@@ -71,7 +76,7 @@ export default function ExamQuestionCard({
         {q.promptKind === 'audio' ? (
           <button
             onClick={() =>
-              q.audioText && q.audioLang && void speak(q.audioText, q.audioLang, q.audioVoice)
+              q.audioText && q.audioLang && void speak(q.audioText, q.audioLang, q.audioVoice, rate)
             }
             className={`inline-flex items-center gap-2 px-5 py-4 rounded-2xl ${accent.soft} border ${accent.ring} ${accent.text} font-semibold transition hover:opacity-90`}
           >
