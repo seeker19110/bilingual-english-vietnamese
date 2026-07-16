@@ -206,6 +206,18 @@ alter table public.profiles add column if not exists user_level    text         
 alter table public.profiles add column if not exists goal          text             default 'daily';
 alter table public.profiles add column if not exists daily_minutes integer          default 10;
 
+-- ── 9c. Cột thêm sau (migration 0015): Giải đấu tuần — nickname công khai + trạng thái
+-- opt-in (mặc định KHÔNG vào giải). Xem api/_lib/leaderboard.ts + api/leaderboard.ts.
+alter table public.profiles add column if not exists nickname text;
+alter table public.profiles add column if not exists league_opt_in boolean not null default false;
+create unique index if not exists profiles_nickname_unique_idx
+  on public.profiles (lower(nickname))
+  where nickname is not null;
+-- Phải qua kiểm tra server (trùng tên, lọc từ bậy — api/leaderboard.ts) nên KHÔNG cho
+-- client ghi thẳng như các cột onboarding khác (khác cách 8b làm vì cột chưa tồn tại
+-- lúc chạy tới đoạn 8b ở trên).
+revoke update (nickname, league_opt_in) on public.profiles from authenticated, anon;
+
 -- ── 10. Bảng lưu push subscription để gửi thông báo nhắc học ───────────────
 create table if not exists public.push_subscriptions (
   id          uuid primary key default gen_random_uuid(),
