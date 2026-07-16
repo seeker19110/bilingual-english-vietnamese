@@ -185,8 +185,33 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   `CHAT_ENDPOINT_MODES` riêng (chỉ `chat`/`writing`/`speaking`) thay vì tái dùng `isUsageMode`
   dùng chung — thêm 5 test ca biên (`mode` lạ/số/null đều rơi về `'chat'`). **Chưa làm ở PR
   này (để PR sau):** client WAV convert (`src/lib/wav.ts`) + UI điểm âm vị chi tiết + fallback
-  Giai đoạn 1 khi hết lượt/lỗi/chiều B. Code xong (typecheck/lint/build/size xanh, test
-  518/518 gồm 26 test mới), chờ merge.
+  Giai đoạn 1 khi hết lượt/lỗi/chiều B. ĐÃ MERGE (PR #255, 2026-07-16). PR #17 phần 2/2
+  (client): `src/lib/wav.ts` — hàm THUẦN `toMonoPcm16kHz` (downmix nhiều kênh + resample nội
+  suy tuyến tính) + `encodeWavPcm16` (đóng gói header RIFF/WAVE/fmt/data 44 byte + PCM16) tách
+  khỏi `blobToWav16kMono` (wrapper gọi `AudioContext.decodeAudioData` — CHỈ chạy được ở trình
+  duyệt thật, không test bằng vitest/jsdom) — 10 test cho 2 hàm thuần (mono passthrough,
+  downmix stereo, upsample/downsample đúng tỉ lệ, clamp biên độ, lượng tử hoá đúng int16).
+  `src/lib/audioRecorder.ts` (mới, KHÔNG dùng lại `challengeRecorder.ts` — module đó gắn chặt
+  hằng số/luồng dành cho Challenge quay video 180s, dùng chung sẽ lẫn ngữ nghĩa): ghi âm
+  NGẮN chỉ-âm-thanh, trần mặc định 15s, cùng kiểu mã lỗi permission/unsupported như
+  `challengeRecorder.ts` để nhất quán. `src/lib/pronounceAssessApi.ts`: convert WAV rồi gọi
+  `/api/pronounce-assess`, phân biệt `fallback:true` (chưa cấu hình/hết lượt → nên rơi về
+  Giai đoạn 1) với lỗi cứng (audio hỏng/mạng lỗi → báo thử lại) — 6 test (mock `blobToWav16kMono`
+  - `fetch`). UI: `src/components/DetailedPronunciationCheck.tsx` (mới) — nút "Chấm chi tiết
+    bằng AI (beta)" ghi âm → chấm → hiện overall/accuracy/fluency/completeness + chip màu theo
+    điểm từng từ (bấm để xem từng âm vị, cùng ngưỡng màu 85/65/40 với `pronounceFeedback` của
+    Giai đoạn 1 cho nhất quán cảm nhận) — nối vào `PronunciationCheck.tsx`, CHỈ hiện khi
+    `lang==='en'` (Azure chưa hỗ trợ vi-VN). **Phát hiện qua E2E a11y (đã vá TRƯỚC KHI commit):**
+    nút "Chấm chi tiết..." dùng `text-violet-300` không kèm `theme-light:` → lặp đúng lỗi contrast
+    đã gặp ở PR #254 — lần này áp `theme-light:` cho MỌI màu cố định (violet/emerald/lime/amber/
+    rose) ngay từ đầu thay vì để a11y test bắt sau. Đã tự xác nhận nút thực sự render trong DOM
+    lúc quét (không phải quét "trúng" 1 trang không hiện component) trước khi tin cậy kết quả
+    xanh. **Không tự map phoneme → tip tiếng Việt của bảng trap Giai đoạn 1** như đặc tả gốc dự
+    kiến — Azure chấm theo `referenceText` mình cung cấp (không phải transcript độc lập như STT),
+    nên logic "spoken khác target → tra bảng trap" của Giai đoạn 1 không áp dụng trực tiếp được;
+    UI Giai đoạn 2 hiện điểm âm vị trực tiếp, việc map tip cụ thể để ngỏ cho đợt sau nếu cần. Code
+    xong (build/typecheck/lint/size xanh, test 534/534, E2E 117/117 gồm quét a11y `/dictionary`
+    xác nhận nút mới không vỡ contrast), chờ merge.
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
