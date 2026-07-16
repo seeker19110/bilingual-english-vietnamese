@@ -221,12 +221,23 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   batch-done (`StudyTabs.tsx`, `?words=`) TỪ TRƯỚC; PR #11 (M4) bổ sung lối vào từ Home. **C
   (sản xuất chủ động, gõ chính tả) + D (nghe hiểu) đã xong** — PR #248 (③ N3, tab "Nghe" ở
   trang cấp CEFR) làm đúng cả 2: "Chọn nghĩa" (D) + "Gõ lại"/dictation (C). **G (chấm phát âm
-  cấp âm vị) đã xong** — PR #255/#256 (Azure Pronunciation Assessment, ① Giai đoạn 2). Còn
-  **E** (ngữ pháp có vòng ôn lặp theo mastery — hiện chỉ có checkbox "đã học xong", CHƯA vào
-  SRS) và **H** (SM-2 → FSRS, giảm 20-30% lượt ôn) — cả 2 CHƯA làm, chưa có PR nào trong đặc tả
-  2026-07-15 phủ tới. **F** (giữ chân) — streak freeze đã có từ trước; "tổng kết tuần" nay có
-  thể coi là đã phủ một phần qua mục tiêu tuần (`weeklyGoal.ts`, PR #246) + màn ăn mừng, dù
-  không phải 1 màn "tổng kết" riêng.
+  cấp âm vị) đã xong** — PR #255/#256 (Azure Pronunciation Assessment, ① Giai đoạn 2). **E (ngữ
+  pháp có vòng ôn lặp theo mastery) ĐÃ XONG (2026-07-16, "thêm tất cả" — người dùng chọn trộn
+  vào tab Kiểm tra sẵn có thay vì làm màn ôn riêng)**: tận dụng LẠI engine SM-2 có sẵn
+  (`src/lib/srs.ts`) thay vì viết engine mới — thêm 3 hàm mỏng `addGrammarToSRS`/
+  `reviewGrammar`/`getDueGrammarLessonIds`, dùng tiền tố khoá `grammar:<lessonId>` để chia sẻ
+  chung kho `srs_${uid}` với thẻ từ vựng mà KHÔNG đụng namespace (có test xác nhận 1 lessonId
+  trùng tên 1 từ tiếng Anh vẫn tách biệt hoàn toàn 2 lịch ôn). `cefrProgress.ts`
+  `markGrammarDone()` tự vào vòng ôn khi đánh dấu "đã học xong". `StudyTabs.tsx` `buildQuiz()`
+  (tab Kiểm tra) nay ưu tiên chọn bài ngữ pháp ĐẾN HẠN trước (hết bài due mới rơi về ngẫu
+  nhiên như cũ); trả lời đúng/sai tự suy ra đánh giá 'good'/'again' cập nhật lịch ôn tiếp theo
+  (không hỏi người dùng tự chấm như thẻ từ vựng). `CefrLevelPage.tsx` thêm badge số đỏ trên
+  tab "Kiểm tra" hiện số bài ngữ pháp đến hạn (cùng kiểu badge với tab "Ôn SRS"). Không cần
+  bảng Supabase mới (đồng bộ qua `pushProgress` như mọi state SRS/grammar khác). 5 test mới
+  (`srs.test.ts`), build/typecheck/lint/size xanh, test 551/551. **H** (SM-2 → FSRS, giảm
+  20-30% lượt ôn) — CHƯA làm, ưu tiên thấp, để sau. **F** (giữ chân) — streak freeze đã có từ
+  trước; "tổng kết tuần" nay có thể coi là đã phủ một phần qua mục tiêu tuần (`weeklyGoal.ts`,
+  PR #246) + màn ăn mừng, dù không phải 1 màn "tổng kết" riêng.
 - **Bổ sung dạng biến thể từ điển** (`docs/research/bo-sung-dang-bien-the-tu-dien.md`) — **Bước
   2 + Bước 4 ĐÃ XONG (2026-07-16, "thêm tất cả")**:
   - **Bước 2 (gắn `base`)**: rà toàn bộ `IRREGULAR_VERBS`/`IRREGULAR_PLURALS`/

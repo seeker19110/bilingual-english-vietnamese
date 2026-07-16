@@ -63,7 +63,7 @@ import { getDialogues } from '../data/dialoguesLoader'
 import { useAuth } from '../context/useAuth'
 import { getDirection } from '../lib/storage'
 import { getLearnedWords, getDifficultWords } from '../lib/vocab'
-import { getDueWords } from '../lib/srs'
+import { getDueWords, getDueGrammarLessonIds } from '../lib/srs'
 import {
   loadCurriculum,
   isCurriculumReady,
@@ -277,6 +277,15 @@ export default function CefrLevelPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid, studyPool, refresh])
 
+  // Badge trên tab "Kiểm tra": số bài NGỮ PHÁP đến hạn ôn (đề xuất E — spacing áp cho cả
+  // ngữ pháp, không riêng từ vựng, xem lib/srs.ts getDueGrammarLessonIds).
+  const grammarDue = useMemo(() => {
+    if (!uid) return 0
+    const ids = [...new Set(grammarQuizPool.map((g) => g.lessonId))]
+    return getDueGrammarLessonIds(uid, ids).length
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uid, grammarQuizPool, refresh])
+
   if (!user) return null
   // Dữ liệu đã tải mà không tìm thấy cấp (URL sai kiểu /learning-path/c9) → về lộ trình.
   if (ready && !level) return <Navigate to="/learning-path" replace />
@@ -467,6 +476,7 @@ export default function CefrLevelPage() {
       icon: ClipboardList,
       labelA: 'Kiểm tra',
       labelB: 'Quiz',
+      badge: grammarDue,
       active:
         'bg-violet-500/20 text-violet-300 theme-light:text-violet-800 border border-violet-500/40',
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',

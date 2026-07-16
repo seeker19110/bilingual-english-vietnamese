@@ -17,6 +17,7 @@
 import type { CefrLevel, CefrUnit } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
 import { pushProgress } from './progressSync'
+import { addGrammarToSRS } from './srs'
 
 // Ngưỡng mở khóa cấp tiếp theo: thuộc ≥70% từ vựng của cấp trước.
 export const UNLOCK_PCT = 0.7
@@ -48,6 +49,7 @@ export function markGrammarDone(uid: string, lessonId: string) {
   const set = getDoneGrammar(uid)
   set.add(lessonId)
   writeSet(GRAMMAR_KEY(uid), set)
+  addGrammarToSRS(uid, lessonId) // vào vòng ôn lặp (đề xuất E) — xem lib/srs.ts
   pushProgress(uid) // đồng bộ lên Supabase
 }
 
