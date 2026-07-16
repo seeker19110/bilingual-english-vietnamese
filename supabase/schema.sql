@@ -340,6 +340,23 @@ drop policy if exists "own challenge" on public.challenge_entries;
 create policy "own challenge" on public.challenge_entries
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+-- ── 13a. tutor_feedback: người dùng báo AI sửa sai/bỏ sót (migration 0014) ─────
+-- Ghi khi bấm 👎 cạnh khối "✅ Nhận xét" ở Chat/Speaking — dùng để bổ sung ca sai
+-- vào golden set eval (⑤ T1/T3). Xem docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md.
+create table if not exists public.tutor_feedback (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  source      text not null,              -- 'chat' | 'speaking'
+  user_input  text not null,              -- câu học viên vừa nói/gõ ngay trước lượt AI này
+  ai_feedback text not null,              -- nội dung khối "✅ Nhận xét" AI đã đưa ra
+  created_at  timestamptz not null default now()
+);
+create index if not exists tutor_feedback_user_idx on public.tutor_feedback(user_id, created_at desc);
+alter table public.tutor_feedback enable row level security;
+drop policy if exists "own tutor feedback" on public.tutor_feedback;
+create policy "own tutor feedback" on public.tutor_feedback
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
 -- ── 14. _schema_migrations: bảng theo dõi migration đã áp dụng, cho phép deploy.sh
 -- TỰ ĐỘNG chạy các file supabase/migrations/NNNN_*.sql còn thiếu mỗi lần deploy, không
 -- cần dán tay vào SQL Editor nữa (xem scripts/run-migrations.ts, kết nối THẲNG Postgres
