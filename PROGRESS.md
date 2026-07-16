@@ -147,16 +147,18 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   từ các đoạn code khác trông giống — phải tự chạy `npx playwright test e2e/a11y.spec.ts` để
   bắt được lỗi này (không thấy qua build/lint/unit test). `vite.config.ts` thêm
   `/api/leaderboard` vào `API_ROUTES` (dev server proxy — thiếu dòng này thì trang gọi API mới
-  sẽ 404 im lặng lúc `npm run dev`/E2E). Code xong (đủ 117/117 E2E xanh), chờ merge. **Tiếp
-  theo:** PR #16
-  (`refactor(challenge): gọn logic 30 ngày còn chu kỳ tuần + huy hiệu M2 + redirect`) — LƯU Ý:
-  phần "gọn logic 30 ngày → chu kỳ tuần" + "huy hiệu M2" trong đặc tả THỰC RA đã làm xong từ PR
-  #246/#247 (xem "Quyết định quan trọng" bên dưới) và trang giải đấu ở PR #15 KHÔNG tách route
-  riêng nên không cần "redirect" — rà lại đặc tả trước khi làm PR #16, có thể PR #16 không còn
-  việc gì để làm nữa (coi như M5/M5b đã xong ở #14+#15). Nếu vậy, chuyển thẳng sang PR #17
-  (Azure Pronunciation Assessment, ① G2) hoặc quay lại PR #10 (vá prompt theo eval) nếu có
-  người chạy được baseline T1 (`npm run eval:tutor -- --write-baseline`, cần key AI thật,
-  sandbox không có).
+  sẽ 404 im lặng lúc `npm run dev`/E2E). ĐÃ MERGE (PR #254, 2026-07-16). **PR #16 KHÔNG CÒN VIỆC
+  GÌ ĐỂ LÀM** (rà lại đặc tả sau khi #14+#15 merge, 2026-07-16): "gọn logic 30 ngày → chu kỳ
+  tuần" đã xong ở PR #246, "huy hiệu M2" đã xong ở PR #247, và trang giải đấu ở PR #15 KHÔNG
+  tách route riêng (gộp vào `/challenge` có sẵn) nên không có "đường cũ" nào cần redirect →
+  ② M5/M5b (Giải đấu tuần) coi như ĐÃ XONG HẲN sau PR #14+#15, bỏ qua PR #16. **Tiếp theo:**
+  PR #17 (Azure Pronunciation Assessment, ① G2 — người dùng đã chốt làm 2026-07-15) hoặc quay
+  lại PR #10 (vá prompt theo eval) nếu có người chạy được baseline T1
+  (`npm run eval:tutor -- --write-baseline`, cần key AI thật, sandbox không có). Cả 2 việc còn
+  lại trong bảng ưu tiên đều cần MỘT bước của người dùng trước khi làm tiếp: PR #17 cần tự tạo
+  `AZURE_SPEECH_KEY`/`AZURE_SPEECH_REGION` (chỉ cần lúc DEPLOY THẬT, code viết được ngay không
+  cần key) — sandbox vẫn research pricing/API hiện hành trước khi code theo đúng KHUNG 3; PR
+  #10 cần người có key AI chạy baseline trước.
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
