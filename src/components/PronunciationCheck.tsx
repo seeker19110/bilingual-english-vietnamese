@@ -5,6 +5,7 @@ import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronou
 import type { WordScore } from '../lib/pronounceScore'
 import { coachTips } from '../lib/pronounceCoach'
 import { speak } from '../lib/tts'
+import DetailedPronunciationCheck from './DetailedPronunciationCheck'
 
 interface Props {
   target: string
@@ -182,6 +183,9 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
       )}
 
       {error && <p className="text-xs text-rose-400/80">{error}</p>}
+
+      {/* Chấm chi tiết bằng AI (① Giai đoạn 2, Azure) — CHỈ tiếng Anh, Azure chưa hỗ trợ vi-VN */}
+      {lang === 'en' && <DetailedPronunciationCheck target={target} isA={isA} />}
     </div>
   )
 }
