@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Send, Plus, ChevronDown, Sparkles, Award, ThumbsUp, ThumbsDown } from 'lucide-react'
+import { Send, Plus, ChevronDown, Sparkles, Award } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import KaraokeText from '../components/KaraokeText'
@@ -267,33 +267,39 @@ function Bubble({
                 buttonClass="flex-1"
                 iconSize="xs"
               />
-              {/* Vote nhận xét đúng/sai — mục ⑤ T3, xem tutorFeedback.ts */}
+              {/* Vote nhận xét đúng/sai — mục ⑤ T3, xem tutorFeedback.ts.
+                  Emoji thô (không phải icon lucide) — tránh phình vendor-ui chunk
+                  chỉ vì 2 icon dùng đúng 1 chỗ, và nhất quán với ✅ ngay cạnh đây. */}
               <div className="flex items-center gap-0.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => handleVote('up')}
                   disabled={!!voted}
                   aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
-                  className={`tap-44 flex items-center justify-center rounded-full transition ${
-                    voted === 'up'
-                      ? 'text-accent-400'
-                      : 'text-zinc-500 hover:text-zinc-300 disabled:opacity-40'
+                  className={`tap-44 flex items-center justify-center rounded-full text-xs transition ${
+                    voted === null
+                      ? 'opacity-60 hover:opacity-100'
+                      : voted === 'up'
+                        ? ''
+                        : 'disabled:opacity-25'
                   }`}
                 >
-                  <ThumbsUp className="w-3 h-3" />
+                  👍
                 </button>
                 <button
                   type="button"
                   onClick={() => handleVote('down')}
                   disabled={!!voted}
                   aria-label={dir === 'A' ? 'Nhận xét sai/thiếu' : 'Feedback is wrong/incomplete'}
-                  className={`tap-44 flex items-center justify-center rounded-full transition ${
-                    voted === 'down'
-                      ? 'text-rose-400'
-                      : 'text-zinc-500 hover:text-zinc-300 disabled:opacity-40'
+                  className={`tap-44 flex items-center justify-center rounded-full text-xs transition ${
+                    voted === null
+                      ? 'opacity-60 hover:opacity-100'
+                      : voted === 'down'
+                        ? ''
+                        : 'disabled:opacity-25'
                   }`}
                 >
-                  <ThumbsDown className="w-3 h-3" />
+                  👎
                 </button>
               </div>
             </div>
