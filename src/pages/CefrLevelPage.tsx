@@ -11,9 +11,11 @@
 //   Xem lại"); unit xong hết thì thu gọn thành 1 dòng.
 //
 // THANH TAB TRÊN ĐẦU (chuyển từ trang /learning-path vào từng cấp):
-//   Bài học · Hôm nay · Ôn SRS · Từ khó · Kiểm tra — 4 tab học lấy dữ liệu
+//   Bài học · Hôm nay · Ôn SRS · Từ khó · Kiểm tra · Nghe — 5 tab học lấy dữ liệu
 //   THEO TỪ VỰNG CỦA CẤP (components/StudyTabs.tsx); cấp cuối (B2) học tiếp
-//   cả phần ngoài lộ trình CEFR. Cấp còn khóa thì ẩn thanh tab.
+//   cả phần ngoài lộ trình CEFR. Tab "Nghe" (③ N3, thêm 2026-07-16) dùng thêm
+//   hội thoại TOÀN CẤP (levelDialogues) cho dạng bài dictation. Cấp còn khóa thì
+//   ẩn thanh tab.
 // ──────────────────────────────────────────────────────────────────────
 
 import { useEffect, useMemo, useState } from 'react'
@@ -38,6 +40,7 @@ import {
   PartyPopper,
   X,
   Zap,
+  Headphones,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -47,6 +50,7 @@ import {
   SRSReview,
   HardWords,
   QuizTab,
+  ListeningTab,
   type GrammarQuizSource,
 } from '../components/StudyTabs'
 import { ACCENT, type AccentClasses } from '../lib/cefrAccent'
@@ -88,9 +92,10 @@ import { useOnboarding } from '../lib/onboarding'
 // % an toàn (0 khi total = 0, không chia cho 0).
 const pct = (done: number, total: number) => (total > 0 ? Math.round((done / total) * 100) : 0)
 
-// Tab trên trang cấp: 'lessons' = danh sách bài; 4 tab còn lại là tab học theo cấp.
-type StudyTab = 'lessons' | 'today' | 'srs' | 'hard' | 'quiz'
-const STUDY_TABS: StudyTab[] = ['lessons', 'today', 'srs', 'hard', 'quiz']
+// Tab trên trang cấp: 'lessons' = danh sách bài; 5 tab còn lại là tab học theo cấp
+// ('listening' = luyện nghe, ③ N3 — thêm 2026-07-16).
+type StudyTab = 'lessons' | 'today' | 'srs' | 'hard' | 'quiz' | 'listening'
+const STUDY_TABS: StudyTab[] = ['lessons', 'today', 'srs', 'hard', 'quiz', 'listening']
 
 export default function CefrLevelPage() {
   const { levelId } = useParams<{ levelId: string }>()
@@ -138,6 +143,21 @@ export default function CefrLevelPage() {
 
   const uid = user?.id ?? ''
   const level = levels.find((l) => l.id === (levelId ?? '').toUpperCase())
+
+  // Hội thoại của TOÀN CẤP (mọi unit) — dùng cho tab "Nghe" (③ N3, dictation lấy
+  // câu từ hội thoại). Tải riêng theo cấp (giống CefrExam.tsx) — chỉ chạy khi có
+  // `level`, không chặn các tab khác.
+  const [levelDialogues, setLevelDialogues] = useState<Dialogue[]>([])
+  useEffect(() => {
+    if (!level) return
+    let alive = true
+    Promise.all(level.units.map((u) => getDialogues(u.id))).then((lists) => {
+      if (alive) setLevelDialogues(lists.flat())
+    })
+    return () => {
+      alive = false
+    }
+  }, [level])
 
   // U-3: trình độ khai lúc onboarding — nếu ≥ Trung cấp thì gợi ý test-out ở A1
   // ("Tôi đã biết vòng này" trong vòng từ vựng) thay vì học lại từng thẻ.
@@ -444,6 +464,14 @@ export default function CefrLevelPage() {
         'bg-violet-500/20 text-violet-300 theme-light:text-violet-800 border border-violet-500/40',
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
     },
+    {
+      key: 'listening',
+      icon: Headphones,
+      labelA: 'Nghe',
+      labelB: 'Listen',
+      active: 'bg-sky-500/20 text-sky-300 theme-light:text-sky-800 border border-sky-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
   ]
 
   return shell(
@@ -458,7 +486,7 @@ export default function CefrLevelPage() {
 
       {/* Thanh tab học của cấp — ẩn khi cấp còn khóa */}
       {!locked && (
-        <div className="grid grid-cols-5 gap-1.5 mb-4">
+        <div className="grid grid-cols-6 gap-1.5 mb-4">
           {TABS.map(({ key, icon: Icon, labelA, labelB, badge, active, inactive }) => (
             <button
               key={key}
@@ -491,7 +519,7 @@ export default function CefrLevelPage() {
         </p>
       )}
 
-      {/* 4 tab học theo cấp — cần từ điển nạp xong mới render */}
+      {/* 5 tab học theo cấp — cần từ điển nạp xong mới render */}
       {activeTab !== 'lessons' &&
         (!dictReady ? (
           <div className="glass rounded-xl p-8 text-center animate-fade-in">
@@ -527,6 +555,17 @@ export default function CefrLevelPage() {
                 pool={studyPool}
                 grammarPool={grammarQuizPool}
                 onOpenLesson={openLessonById}
+              />
+            )}
+            {activeTab === 'listening' && (
+              <ListeningTab
+                key={level.id}
+                isA={isA}
+                levelId={level.id}
+                accent={accent}
+                pool={studyPool}
+                learned={learned}
+                dialogues={levelDialogues}
               />
             )}
           </>

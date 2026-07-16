@@ -425,7 +425,11 @@ export async function speak(
   text: string,
   lang: Lang,
   voice: Voice = getVoicePref(),
-  rate: Rate = getRatePref(),
+  // number (không phải Rate): bài luyện nghe (③ N3, lib/listening.ts) cần tốc độ
+  // mặc định theo cấp CEFR (0.9×/1×/1.1×) — giá trị NGOÀI 3 mức của RateToggle
+  // (0.75/1/1.25). Rate vẫn là kiểu CHUẨN cho lựa chọn người dùng lưu/đọc
+  // (getRatePref/setRatePref/RateToggle) — chỉ nới lỏng tham số phát thực tế.
+  rate: number = getRatePref(),
   onWord?: (idx: number) => void,
 ): Promise<void> {
   try {
@@ -445,7 +449,7 @@ export async function speakBilingual(
   speechLang: Lang = 'en-US',
   feedbackLang: Lang = 'vi-VN',
   voice: Voice = getVoicePref(),
-  rate: Rate = getRatePref(),
+  rate: number = getRatePref(),
   onSpeechWord?: (idx: number) => void,
   onFeedbackWord?: (idx: number) => void,
 ) {

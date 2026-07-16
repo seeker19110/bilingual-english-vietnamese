@@ -255,7 +255,9 @@ function buildGrammarQuestions(grammar: GrammarExamSource[], count: number): Exa
 }
 
 // Nghe: phát audio ngôn ngữ ĐÍCH → chọn nghĩa/từ đúng (ẩn chữ được phát).
-function buildListeningQuestions(
+// Xuất khẩu để tái dùng ở bài luyện nghe riêng (③ N3, lib/listening.ts) — cùng
+// logic với phần Nghe của đề thi cuối cấp, không viết lại (nguyên tắc DRY).
+export function buildListeningQuestions(
   isA: boolean,
   words: DictEntry[],
   learned: Set<string>,
