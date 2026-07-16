@@ -13,6 +13,7 @@ import {
   getDirection,
 } from '../lib/storage'
 import { addMistake } from '../lib/mistakes'
+import { reportTutorFeedback } from '../lib/tutorFeedback'
 import { stopSpeaking } from '../lib/tts'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
@@ -195,11 +196,29 @@ function parseAssistantReply(content: string): { speech: string; feedback: strin
 }
 
 // ── Message Bubble ────────────────────────────────────────────────────────────
-function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direction }) {
+function Bubble({
+  msg,
+  isNew,
+  dir,
+  userId,
+  userInput,
+}: {
+  msg: Message
+  isNew?: boolean
+  dir: Direction
+  // uid học viên — dùng để ghi vòng phản hồi (mục ⑤ T3) khi bấm 👎
+  userId: string
+  // câu học viên vừa gõ NGAY TRƯỚC tin nhắn AI này — làm user_input khi ghi phản hồi
+  userInput: string
+}) {
   // Chiều A: AI nói tiếng Anh, giải thích tiếng Việt
   // Chiều B: AI nói tiếng Việt, giải thích tiếng Anh
   const speechLang = dir === 'A' ? ('en-US' as const) : ('vi-VN' as const)
   const feedbackLang = dir === 'A' ? ('vi-VN' as const) : ('en-US' as const)
+  // Vòng phản hồi người dùng (mục ⑤ T3) — mỗi tin nhắn vote tối đa 1 lần, chỉ lưu cục bộ
+  // (không lưu Supabase trạng thái đã vote, mất khi tải lại trang là chấp nhận được).
+  // Khai báo TRƯỚC early-return bên dưới để không vi phạm rules-of-hooks.
+  const [voted, setVoted] = useState<'up' | 'down' | null>(null)
 
   if (msg.role === 'user') {
     return (
@@ -212,6 +231,15 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
   }
 
   const { speech: speechText, feedback: feedbackText } = parseAssistantReply(msg.content)
+
+  const handleVote = (vote: 'up' | 'down') => {
+    if (voted) return
+    setVoted(vote)
+    // Chỉ ghi DB khi tín hiệu ÂM (👎) — 👍 chỉ đổi UI, không gọi API (quyết định đã chốt).
+    if (vote === 'down') {
+      void reportTutorFeedback(userId, 'chat', userInput, feedbackText)
+    }
+  }
 
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
@@ -239,7 +267,47 @@ function Bubble({ msg, isNew, dir }: { msg: Message; isNew?: boolean; dir: Direc
                 buttonClass="flex-1"
                 iconSize="xs"
               />
+              {/* Vote nhận xét đúng/sai — mục ⑤ T3, xem tutorFeedback.ts.
+                  Emoji thô (không phải icon lucide) — tránh phình vendor-ui chunk
+                  chỉ vì 2 icon dùng đúng 1 chỗ, và nhất quán với ✅ ngay cạnh đây. */}
+              <div className="flex items-center gap-0.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleVote('up')}
+                  disabled={!!voted}
+                  aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
+                  className={`tap-44 flex items-center justify-center rounded-full text-xs transition ${
+                    voted === null
+                      ? 'opacity-60 hover:opacity-100'
+                      : voted === 'up'
+                        ? ''
+                        : 'disabled:opacity-25'
+                  }`}
+                >
+                  👍
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleVote('down')}
+                  disabled={!!voted}
+                  aria-label={dir === 'A' ? 'Nhận xét sai/thiếu' : 'Feedback is wrong/incomplete'}
+                  className={`tap-44 flex items-center justify-center rounded-full text-xs transition ${
+                    voted === null
+                      ? 'opacity-60 hover:opacity-100'
+                      : voted === 'down'
+                        ? ''
+                        : 'disabled:opacity-25'
+                  }`}
+                >
+                  👎
+                </button>
+              </div>
             </div>
+            {voted === 'down' && (
+              <p className="text-[10px] text-zinc-500 mt-1 pl-5">
+                {dir === 'A' ? 'Đã ghi nhận, cảm ơn bạn!' : 'Recorded, thank you!'}
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -537,7 +605,16 @@ export default function Chat() {
         <>
           <div className="flex-1 min-h-0 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
             {session.messages.map((m, i) => (
-              <Bubble key={m.id} msg={m} isNew={i >= lastIdx} dir={dir} />
+              <Bubble
+                key={m.id}
+                msg={m}
+                isNew={i >= lastIdx}
+                dir={dir}
+                userId={user.id}
+                userInput={
+                  session.messages[i - 1]?.role === 'user' ? session.messages[i - 1]!.content : ''
+                }
+              />
             ))}
             {loading && <TypingDots />}
             {error && (
