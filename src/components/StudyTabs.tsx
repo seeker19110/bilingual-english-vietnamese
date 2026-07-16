@@ -404,14 +404,21 @@ export function TodayLesson({
   isA,
   pool,
   onProgress,
+  sessionCap,
 }: {
   uid: string
   isA: boolean
   pool: DictEntry[]
   onProgress: () => void
+  // Giới hạn RIÊNG cho batch ĐẦU của phiên này (không đổi tốc độ đã lưu) — dùng
+  // cho luồng "quay lại sau khi bỏ bẵng" (② M4, lib/comeback.ts): phiên đầu chỉ
+  // vài từ thay vì đủ tốc độ đã chọn. Các batch mở thêm sau (unlock qua quiz)
+  // vẫn dùng tốc độ bình thường.
+  sessionCap?: number
 }) {
   const dailyMax = getDailyMax(uid)
   const speed = getDailySpeed(uid)
+  const initialBatchSize = sessionCap ?? speed
   const toast = useToast()
 
   // Phase bắt đầu dựa trên trạng thái ngày hiện tại
@@ -422,7 +429,7 @@ export function TodayLesson({
     return 'learning'
   })
   const [batch, setBatch] = useState<DictEntry[]>(() =>
-    getTodayBatchFrom(pool, getLearnedWords(uid), speed),
+    getTodayBatchFrom(pool, getLearnedWords(uid), initialBatchSize),
   )
   const [idx, setIdx] = useState(0)
   const [dailyStart] = useState(() => getDailyLearned(uid))
@@ -912,23 +919,29 @@ export function SRSReview({
   pool,
   levelPool,
   onUpdate,
+  sessionCap,
 }: {
   uid: string
   isA: boolean
   pool: DictEntry[]
   levelPool: DictEntry[]
   onUpdate: () => void
+  // Giới hạn số thẻ phiên này — mặc định SRS_SESSION_CAP; luồng "quay lại sau
+  // khi bỏ bẵng" (② M4, lib/comeback.ts) truyền cap nhỏ hơn (COMEBACK_SRS_CARDS)
+  // để không đập nguyên nợ ôn vào mặt.
+  sessionCap?: number
 }) {
+  const cap = sessionCap ?? SRS_SESSION_CAP
   const [onlyThisLevel, setOnlyThisLevel] = useState(false)
   const activePool = onlyThisLevel ? levelPool : pool
-  const [due, setDue] = useState<DictEntry[]>(() => getDueWords(uid, activePool, SRS_SESSION_CAP))
+  const [due, setDue] = useState<DictEntry[]>(() => getDueWords(uid, activePool, cap))
   const [idx, setIdx] = useState(0)
   const [sessionDone, setDone] = useState(0)
 
   function toggleScope() {
     const next = !onlyThisLevel
     setOnlyThisLevel(next)
-    setDue(getDueWords(uid, next ? levelPool : pool, SRS_SESSION_CAP))
+    setDue(getDueWords(uid, next ? levelPool : pool, cap))
     setIdx(0)
   }
 
@@ -945,7 +958,7 @@ export function SRSReview({
     const nextIdx = idx + 1
     if (nextIdx >= due.length) {
       // Kiểm tra xem còn thẻ "again" nào đến hạn không
-      const remaining = getDueWords(uid, activePool, SRS_SESSION_CAP)
+      const remaining = getDueWords(uid, activePool, cap)
       setDue(remaining)
       setIdx(0)
     } else {

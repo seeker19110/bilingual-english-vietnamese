@@ -16,6 +16,8 @@ import {
   Brain,
   Video,
   Bot,
+  X,
+  Sparkles,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import { getStreak, hasStudiedToday, getDirection, setDirection } from '../lib/storage'
@@ -28,7 +30,7 @@ import type { CefrLevel } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
 import { loadCefr } from '../data/cefrLoader'
 import { loadFoundation } from '../data/curriculumLoader'
-import { getLearnedWords } from '../lib/vocab'
+import { getLearnedWords, getRecentlyLearnedWords } from '../lib/vocab'
 import {
   getDoneGrammar,
   computeLockedMapPersisted,
@@ -38,6 +40,17 @@ import {
 import { getPassedExamLevels } from '../lib/cefrExam'
 import { getSRSStats } from '../lib/srs'
 import { getDailyLearned, getDailyMax } from '../lib/curriculum'
+import {
+  shouldShowComeback,
+  dismissComebackToday,
+  comebackDaysAway,
+  COMEBACK_SRS_CARDS,
+  COMEBACK_NEW_WORDS,
+} from '../lib/comeback'
+
+// Số từ vừa học tối đa gợi ý cho 1 phiên Speaking (② M4) — đủ để AI có ngữ cảnh,
+// không phình prompt (giống cap 20 từ ở StudyTabs.tsx cho `?words=` từ URL).
+const RECENT_WORDS_FOR_SPEAKING = 8
 
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
 type IconType = typeof MessageCircle
@@ -199,6 +212,9 @@ export default function Home() {
 
   const [dir, setDir] = useState<Direction>(getDirection)
   const [voice, setVoice] = useState<Voice>(getVoicePref)
+  // Đóng banner "quay lại" (② M4) NGAY trong phiên này — dismissComebackToday()
+  // ghi localStorage để không hiện lại trong ngày hôm nay ở lần mở app sau.
+  const [comebackClosed, setComebackClosed] = useState(false)
 
   // Dữ liệu cho thẻ "Học tiếp" — chỉ cần lộ trình CEFR + vòng nền tảng (không cần
   // nạp toàn bộ từ điển ~10k từ như trang /learning-path, findNextStep chỉ tham
@@ -229,6 +245,20 @@ export default function Home() {
     }
     return null
   }, [cefrLevels, circleById, learned, doneGrammar, lockedMap])
+
+  // Luồng "quay lại sau khi bỏ bẵng" (② M4) — chỉ hiện khi có nơi để trỏ CTA tới.
+  const showComeback = !comebackClosed && !!continueLevel && shouldShowComeback(uid)
+  const daysAway = showComeback ? comebackDaysAway(uid) : 0
+  function closeComeback() {
+    dismissComebackToday(uid)
+    setComebackClosed(true)
+  }
+
+  // N từ học GẦN NHẤT — gợi ý "Luyện nói với từ vừa học" (nối đề xuất B,
+  // docs/research/danh-gia-tien-trien-hoc-2026-07-07.md; đã có CTA tương tự
+  // ngay sau khi học xong 1 batch ở StudyTabs.tsx — đây là lối vào từ Home,
+  // cho người KHÔNG đang giữa phiên học).
+  const recentWords = getRecentlyLearnedWords(uid, RECENT_WORDS_FOR_SPEAKING)
 
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
@@ -293,6 +323,76 @@ export default function Home() {
         {/* Trang chủ dùng Layout title (chỉ là <p>) thay vì PageHeader nên cần <h1>
             riêng cho screen reader/SEO — ẩn trực quan vì tên đã hiện trong header. */}
         <h1 className="sr-only">{T.greeting(user.name)}</h1>
+
+        {/* ── Luồng "quay lại sau khi bỏ bẵng" (② M4) — bỏ ≥3 ngày → chào +
+            đề xuất phiên RÚT GỌN thay vì đập nguyên nợ ôn vào mặt ─────────── */}
+        {showComeback && continueLevel && (
+          <div className="mb-3 glass rounded-2xl p-4 border border-accent-500/30 animate-fade-in">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl shrink-0" aria-hidden="true">
+                👋
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-white font-semibold text-sm">
+                  {isA ? 'Mừng bạn quay lại!' : 'Welcome back!'}
+                </p>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  {isA
+                    ? `Đã ${daysAway} ngày rồi — bắt đầu nhẹ nhàng thôi, không cần ôn hết nợ cũ.`
+                    : `It's been ${daysAway} days — let's ease back in, no need to clear the backlog.`}
+                </p>
+              </div>
+              <button
+                onClick={closeComeback}
+                aria-label={isA ? 'Đóng' : 'Dismiss'}
+                className="tap-44 shrink-0 text-zinc-400 hover:text-zinc-200 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex gap-2 mt-3">
+              {srsDue > 0 && (
+                <button
+                  onClick={() =>
+                    nav(
+                      `/learning-path/${continueLevel.level.id.toLowerCase()}?tab=srs&cap=${COMEBACK_SRS_CARDS}`,
+                    )
+                  }
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 theme-light:text-sky-800 text-sm font-medium transition"
+                >
+                  <Brain className="w-4 h-4" />
+                  {isA
+                    ? `Ôn ${Math.min(srsDue, COMEBACK_SRS_CARDS)} thẻ`
+                    : `Review ${Math.min(srsDue, COMEBACK_SRS_CARDS)} cards`}
+                </button>
+              )}
+              <button
+                onClick={() =>
+                  nav(
+                    `/learning-path/${continueLevel.level.id.toLowerCase()}?tab=today&cap=${COMEBACK_NEW_WORDS}`,
+                  )
+                }
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-accent-500/15 hover:bg-accent-500/25 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
+              >
+                <Sparkles className="w-4 h-4" />
+                {isA ? `Học ${COMEBACK_NEW_WORDS} từ mới` : `Learn ${COMEBACK_NEW_WORDS} words`}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Gợi ý "Luyện nói với từ vừa học" (② M4, nối đề xuất B) ────────── */}
+        {recentWords.length > 0 && (
+          <button
+            onClick={() => nav(`/speaking?words=${encodeURIComponent(recentWords.join(','))}`)}
+            className="tap-44 w-full flex items-center justify-center gap-1.5 mb-3 px-3 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300 theme-light:text-sky-800 hover:border-sky-500/50 transition animate-fade-in"
+          >
+            <Mic className="w-3.5 h-3.5 shrink-0" />
+            {isA
+              ? `Luyện nói với ${recentWords.length} từ vừa học`
+              : `Practice speaking with ${recentWords.length} recent words`}
+          </button>
+        )}
 
         {/* ── Thẻ "Học tiếp" — mục kế tiếp trong lộ trình CEFR ─────────────── */}
         {continueLevel && nextLabel && (

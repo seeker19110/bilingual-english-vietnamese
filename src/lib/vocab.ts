@@ -25,6 +25,21 @@ export function getLearnedCount(userId: string): number {
   return getLearnedWords(userId).size
 }
 
+// N từ HỌC GẦN NHẤT, mới nhất trước — dùng cho gợi ý "Luyện nói với từ vừa học"
+// ở Home (② M4). Đọc THẲNG mảng localStorage (không qua Set) để giữ đúng thứ tự
+// chèn — markLearned() luôn thêm vào cuối nên mảng đã là thứ tự thời gian tăng dần.
+// Xấp xỉ (không hoàn hảo qua nhiều thiết bị do hợp nhất ở progressSync.ts) — chấp
+// nhận được cho 1 gợi ý, không phải số liệu cần chính xác tuyệt đối.
+export function getRecentlyLearnedWords(userId: string, n: number): string[] {
+  try {
+    const raw = localStorage.getItem(KEY(userId))
+    const arr = raw ? (JSON.parse(raw) as string[]) : []
+    return arr.slice(-n).reverse()
+  } catch {
+    return []
+  }
+}
+
 // Ghi đè toàn bộ Set xuống localStorage
 function save(userId: string, set: Set<string>) {
   localStorage.setItem(KEY(userId), JSON.stringify([...set]))
