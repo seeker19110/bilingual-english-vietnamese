@@ -117,9 +117,11 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   `addDays`/`weekStartOf` (mirror `src/lib/date.ts`, đúng quy ước "api/_lib không import từ
   src/lib" đã có từ trước). Giờ nhắc vẫn do người dùng tự chọn như cũ (`remind_hour`) — ĐÃ
   MERGE (PR #250, 2026-07-16). PR #13 (nút 👍/👎 + bảng `tutor_feedback`, ⑤ T3) — migration
-  `0014` + `lib/tutorFeedback.ts` xong; đang nối UI vào Chat.tsx/Speaking.tsx. **Tiếp theo
-  sau #13:** PR #14-15 (giải đấu tuần, ② M5/M5b) hoặc quay lại PR #10 nếu có người chạy được
-  baseline T1 (`npm run eval:tutor -- --write-baseline`, cần key AI thật, sandbox không có).
+  `0014` + `lib/tutorFeedback.ts` + nút vote cạnh mỗi khối "✅ Nhận xét" ở Chat.tsx/Speaking.tsx
+  (👎 lưu `{userInput, aiFeedback}`, 👍 chỉ đổi UI không ghi DB, vote 1 lần/tin nhắn) — code
+  xong, chờ merge. **Tiếp theo sau #13:** PR #14-16 (giải đấu tuần thay Challenge, ② M5/M5b)
+  hoặc quay lại PR #10 nếu có người chạy được baseline T1
+  (`npm run eval:tutor -- --write-baseline`, cần key AI thật, sandbox không có).
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
