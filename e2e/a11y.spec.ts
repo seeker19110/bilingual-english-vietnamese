@@ -315,3 +315,44 @@ for (const theme of THEMES) {
     expect(unexpectedSerious).toEqual([])
   })
 }
+
+// ── Home: banner "quay lại sau khi bỏ bẵng" (② M4) + gợi ý "Luyện nói với từ
+// vừa học" — 2 trạng thái không hiện ở lần quét trang chủ mặc định (user E2E mới
+// tinh không kích hoạt điều kiện) nên cần seed riêng.
+async function seedOldActivity(page: Page, offsetDays: number) {
+  const ms = Date.now() - offsetDays * 86400000 + 7 * 3600000
+  const date = new Date(ms).toISOString().slice(0, 10)
+  await page.addInitScript(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+    key: `et_usage_${USER_ID}_${date}`,
+    value: { date, chatCount: 0, writingCount: 0, speakingCount: 0, learnCount: 1 },
+  })
+}
+
+for (const theme of THEMES) {
+  test(`a11y: Home — banner quay lại theme=${theme} — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await seedOldActivity(page, 5)
+    await mockLogin(page, 'vi', theme)
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByText(/Mừng bạn quay lại/)).toBeVisible()
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+
+  test(`a11y: Home — gợi ý luyện nói với từ vừa học theme=${theme} — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await page.addInitScript(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+      key: `et_learned_${USER_ID}`,
+      value: ['apple', 'banana', 'cherry'],
+    })
+    await mockLogin(page, 'vi', theme)
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByText(/Luyện nói với 3 từ vừa học/)).toBeVisible()
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+}

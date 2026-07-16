@@ -114,6 +114,13 @@ export default function CefrLevelPage() {
     const t = searchParams.get('tab')
     return (STUDY_TABS as string[]).includes(t ?? '') ? (t as StudyTab) : 'lessons'
   })
+  // Giới hạn phiên RIÊNG cho tab đang mở qua URL `?cap=` — dùng cho luồng "quay
+  // lại sau khi bỏ bẵng" (② M4, lib/comeback.ts): Home trỏ tới `?tab=today&cap=3`
+  // hoặc `?tab=srs&cap=5` để phiên đầu nhẹ nhàng hơn, không đổi tốc độ đã lưu.
+  const sessionCap = useMemo(() => {
+    const n = Number(searchParams.get('cap'))
+    return Number.isFinite(n) && n > 0 ? n : undefined
+  }, [searchParams])
   // Các tab học cần TOÀN BỘ từ điển (nạp động, nặng hơn cefr+foundation) —
   // gate riêng để tab "Bài học" vẫn hiện ngay không phải chờ.
   const [dictReady, setDictReady] = useState(isCurriculumReady())
@@ -532,7 +539,14 @@ export default function CefrLevelPage() {
           // batch/câu hỏi khởi tạo lại theo đúng từ vựng của cấp mới.
           <>
             {activeTab === 'today' && (
-              <TodayLesson key={level.id} uid={uid} isA={isA} pool={studyPool} onProgress={bump} />
+              <TodayLesson
+                key={level.id}
+                uid={uid}
+                isA={isA}
+                pool={studyPool}
+                onProgress={bump}
+                sessionCap={sessionCap}
+              />
             )}
             {activeTab === 'srs' && (
               <SRSReview
@@ -542,6 +556,7 @@ export default function CefrLevelPage() {
                 pool={allWordsPool}
                 levelPool={studyPool}
                 onUpdate={bump}
+                sessionCap={sessionCap}
               />
             )}
             {activeTab === 'hard' && (

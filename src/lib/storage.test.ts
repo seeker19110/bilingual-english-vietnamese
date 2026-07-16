@@ -4,7 +4,13 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 // localStorage nên chỉ cần stub supabase là đủ chạy offline.
 vi.mock('./supabase', () => ({ supabase: {} }))
 
-import { getStreak, hasStudiedToday, shouldCelebrateStreak, markStreakCelebrated } from './storage'
+import {
+  getStreak,
+  hasStudiedToday,
+  shouldCelebrateStreak,
+  markStreakCelebrated,
+  daysSinceLastActivity,
+} from './storage'
 import { vnDateStr } from './date'
 
 const usageKey = (uid: string, date: string) => `et_usage_${uid}_${date}`
@@ -116,5 +122,30 @@ describe('Khoảnh khắc streak — 1 lần/ngày (V-2, cai-tien-trai-nghiem-ho
     markStreakCelebrated('u1')
     expect(shouldCelebrateStreak('u1')).toBe(false)
     expect(shouldCelebrateStreak('u2')).toBe(true)
+  })
+})
+
+describe('daysSinceLastActivity — luồng "quay lại sau khi bỏ bẵng" (② M4)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('đã học hôm nay → 0', () => {
+    setActivity('u1', 0)
+    expect(daysSinceLastActivity('u1')).toBe(0)
+  })
+
+  it('chưa học hôm nay, học 3 ngày trước gần nhất → 3', () => {
+    setActivity('u1', 5)
+    setActivity('u1', 3)
+    expect(daysSinceLastActivity('u1')).toBe(3)
+  })
+
+  it('chưa từng học → null (không có mốc "quay lại")', () => {
+    expect(daysSinceLastActivity('u1')).toBeNull()
+  })
+
+  it('hoạt động ngoài maxLookback → null (quá lâu, không tính "vừa quay lại")', () => {
+    setActivity('u1', 10)
+    expect(daysSinceLastActivity('u1', 5)).toBeNull()
+    expect(daysSinceLastActivity('u1', 10)).toBe(10)
   })
 })

@@ -95,15 +95,25 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   câu từ hội thoại/ví dụ từ điển của cấp, chấm bằng `scorePronunciation`/`scoreWords` đã có).
   Tốc độ mặc định theo cấp (A1-A2 0.9× · B1-B2 1× · C1-C2 1.1×, `LISTENING_RATE_BY_LEVEL`) —
   nới kiểu `rate` của `speak()`/`speakBilingual()` từ `Rate` (0.75/1/1.25) sang `number` để nhận
-  giá trị này (RateToggle không đổi). code xong, chờ merge. **Tiếp theo:** PR #10 (vá prompt theo
-  eval, ⑤ T2) theo bảng ưu tiên — chờ số liệu baseline T1 trước (cần người có key AI chạy).
+  giá trị này (RateToggle không đổi) — ĐÃ MERGE (PR #248, 2026-07-16). PR #10 (vá prompt theo
+  eval, ⑤ T2) BỊ CHẶN — cần baseline T1 trước (`npm run eval:tutor -- --write-baseline`, cần
+  người có key AI, sandbox không có) → **bỏ qua tạm, làm PR #11 (comeback + Home "Hôm nay", ② M4)
+  trước**. PR #11 — `lib/comeback.ts` (bỏ ≥3 ngày → banner "Mừng bạn quay lại" + phiên rút gọn
+  5 thẻ SRS/3 từ mới qua `?tab=srs&cap=5`/`?tab=today&cap=3` mới thêm ở `TodayLesson`/`SRSReview`
+  — CHỈ giới hạn batch/due list phiên đó, KHÔNG đổi tốc độ đã lưu) + `storage.daysSinceLastActivity`
+  (mới) + `vocab.getRecentlyLearnedWords` (mới, cho gợi ý "Luyện nói với từ vừa học" ở Home —
+  nối đề xuất B đã có CTA sẵn ở StudyTabs, đây là lối vào từ Home cho người không đang giữa
+  phiên học) — code xong, chờ merge. **Tiếp theo:** PR #12 (nhắc thông minh, ② M3) theo bảng
+  ưu tiên, hoặc quay lại PR #10 nếu có người chạy được baseline T1 trước đó.
 - **Quy tắc phân việc theo độ phức tạp** (CLAUDE.md mục 3, quyết định 2026-07-15): đọc đặc tả
   trước khi giao việc; việc phức tạp Opus tự làm, việc vừa giao subagent Sonnet, việc cơ học
   giao subagent Haiku — áp dụng cho mọi PR tiếp theo của mục trên.
 - **Cải tiến sư phạm** (`docs/research/danh-gia-tien-trien-hoc-2026-07-07.md`, đề xuất A→H):
-  A (Sổ lỗi cá nhân) đã xong. Còn B (nối lộ trình↔3 chế độ AI — nút "Luyện từ hôm nay bằng hội
-  thoại", đã có `targetWords?` nhưng chưa có nút CTA riêng) → C/D/E/F/G/H (sản xuất chủ động,
-  nghe hiểu, ôn ngữ pháp, giữ chân — xem tài liệu).
+  A (Sổ lỗi cá nhân) đã xong. **B đã xong (rà lại 2026-07-16, ghi chú cũ "chưa có nút CTA riêng"
+  đã LỖI THỜI):** nút "Luyện ngay N từ này bằng hội thoại"/"luyện nói với giọng thật" đã có sẵn
+  ở màn batch-done (`StudyTabs.tsx`, `?words=`) TỪ TRƯỚC; PR #11 (M4) bổ sung thêm lối vào từ
+  Home cho người không đang giữa phiên học. Còn C/D/E/F/G/H (sản xuất chủ động, nghe hiểu, ôn
+  ngữ pháp, giữ chân — xem tài liệu; D/H đã kế thừa vào đặc tả M2-M5 ở trên).
 - **Bổ sung dạng biến thể từ điển** (`docs/research/bo-sung-dang-bien-the-tu-dien.md`): Bước 2
   (vá ~40-60 dạng bất quy tắc còn thiếu + gắn `base` để hiện "Xem từ gốc") và Bước 4 (search
   hiểu biến thể: "books"/"went" → trả về từ gốc) chưa làm.

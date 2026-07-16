@@ -226,6 +226,21 @@ export function hasStudiedToday(userId: string): boolean {
   return hasActivityOn(get<DailyUsage>(K.usage(userId, todayStr())))
 }
 
+// Số ngày kể từ lần hoạt động gần nhất (② M4, luồng "quay lại sau khi bỏ bẵng" —
+// docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md). 0 = đã học hôm nay.
+// null = không tìm thấy hoạt động nào trong `maxLookback` ngày gần đây (người
+// dùng MỚI chưa từng học, hoặc đã vắng quá lâu để khung "chào mừng quay lại"
+// còn phù hợp) — nơi gọi coi null là "không hiện luồng quay lại".
+export function daysSinceLastActivity(userId: string, maxLookback = 60): number | null {
+  const today = new Date()
+  for (let i = 0; i <= maxLookback; i++) {
+    const d = new Date(today)
+    d.setDate(d.getDate() - i)
+    if (hasActivityOn(get<DailyUsage>(K.usage(userId, vnDateStr(d))))) return i
+  }
+  return null
+}
+
 // ── Khoảnh khắc streak (V-2, docs/research/cai-tien-trai-nghiem-hoc-2026-07-11.md) ──
 // Màn ăn mừng "🔥 Streak +1" chỉ hiện MỖI NGÀY 1 LẦN (lần đầu hoàn thành bài trong
 // ngày). Ghi ngày (giờ VN) đã ăn mừng gần nhất để idempotent — reload/học thêm batch
