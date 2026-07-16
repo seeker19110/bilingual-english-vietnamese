@@ -8,6 +8,7 @@ import { Video, Mic, RotateCcw, Send, Square, Type, Trophy, Check, Volume2 } fro
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import Celebration from '../components/Celebration'
+import LeagueSection from '../components/LeagueSection'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useApiThrottle } from '../lib/useApiThrottle'
@@ -672,6 +673,8 @@ export default function Challenge() {
         />
 
         <WeekBoard cells={cells} isA={isA} />
+
+        <LeagueSection isA={isA} />
 
         {/* Tổng kết tuần — hiện vào Chủ nhật (cuối chu kỳ), so bài đầu ↔ cuối tuần */}
         {isSunday && weekStats && !showRecordFlow && (
