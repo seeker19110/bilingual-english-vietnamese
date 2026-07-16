@@ -57,6 +57,10 @@ export const t = {
     tagDictCount: '10.000+ từ',
     tagLessonsCount: '350 bài học',
     tagPhrasesCount: '1.000 chủ đề',
+    dialoguesPhrasesTitleA: 'Hội thoại và các câu thông dụng',
+    dialoguesPhrasesDescA:
+      'Hội thoại mẫu theo tình huống đời sống + kho câu thông dụng thực tế, đều có phát âm.',
+    tagDialoguesPhrases: '350 bài · 1.000 chủ đề',
 
     // Mode cards — Direction B
     chatTitleB: 'Chat với gia sư',
@@ -75,6 +79,9 @@ export const t = {
     dictDescB: 'Tra 10.000 từ tiếng Việt–Anh thông dụng với loại từ và ví dụ.',
     lessonsTitleB: 'Các bài hội thoại mẫu',
     lessonsDescB: 'Hội thoại mẫu tiếng Việt hàng ngày, 10–20 đoạn song ngữ mỗi bài.',
+    dialoguesPhrasesTitleB: 'Hội thoại và các câu thông dụng',
+    dialoguesPhrasesDescB:
+      'Hội thoại mẫu tiếng Việt hàng ngày + kho câu thông dụng thực tế, đều có phát âm.',
 
     // Login
     loginBrand: 'Gia sư tiếng Anh AI',
@@ -220,6 +227,10 @@ export const t = {
     tagDictCount: '10,000+ words',
     tagLessonsCount: '350 lessons',
     tagPhrasesCount: '1,000 topics',
+    dialoguesPhrasesTitleA: 'Dialogues & Common Sentences',
+    dialoguesPhrasesDescA:
+      'Sample dialogues by everyday situation + a library of common sentences, both with audio.',
+    tagDialoguesPhrases: '350 lessons · 1,000 topics',
 
     // Mode cards — Direction B
     chatTitleB: 'Chat with tutor',
@@ -237,6 +248,9 @@ export const t = {
     dictDescB: 'Look up 10,000 common Vietnamese–English words with part of speech and examples.',
     lessonsTitleB: 'Sample dialogues',
     lessonsDescB: 'Everyday Vietnamese dialogues, 10–20 bilingual exchanges per lesson.',
+    dialoguesPhrasesTitleB: 'Dialogues & Common Sentences',
+    dialoguesPhrasesDescB:
+      'Everyday Vietnamese dialogues + a library of common sentences, both with audio.',
 
     // Login
     loginBrand: 'AI Language Tutor',
