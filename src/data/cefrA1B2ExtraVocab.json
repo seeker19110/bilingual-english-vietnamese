@@ -141,7 +141,7 @@
           "ipa_vi": "/viək̚˨˩ʔ/",
           "freq": 2154,
           "level": "A1",
-          "forms": { "plural": "smokings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "healthier",
@@ -1256,7 +1256,7 @@
           "ipa_vi": "/viək̚˨˩ʔ/",
           "freq": 1019,
           "level": "A1",
-          "forms": { "plural": "speakings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "sun",
@@ -1444,7 +1444,7 @@
           "ipa_vi": "/ɲaj˧˩˧/",
           "level": "A1",
           "freq": 1230,
-          "forms": { "plural": "dancings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "note",
@@ -2014,7 +2014,7 @@
           "ipa_vi": "/viək̚˨˩ʔ/",
           "freq": 1931,
           "level": "A1",
-          "forms": { "plural": "shoppings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "example",
@@ -2472,7 +2472,7 @@
           "ipa_vi": "/mon˧/",
           "freq": 2646,
           "level": "A1",
-          "forms": { "plural": "swimmings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "result",
@@ -3429,7 +3429,7 @@
           "ipa_vi": "/ɲaː˨˩/",
           "freq": 7815,
           "level": "A1",
-          "forms": { "plural": "housings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "des",
@@ -4073,7 +4073,7 @@
           "ipa_vi": "/sɯ˨˩ʔ/",
           "freq": 23087,
           "level": "A1",
-          "forms": { "plural": "fastings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "upkeep",
@@ -7951,7 +7951,7 @@
           "ipa_vi": "/kwaːŋ˧˩˧/",
           "freq": 5321,
           "level": "A2",
-          "forms": { "plural": "advertisings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "shares",
@@ -7986,7 +7986,7 @@
           "ipa_vi": "/ŋaːɲ˨˩/",
           "freq": 9383,
           "level": "A2",
-          "forms": { "plural": "bankings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "ups",
@@ -8502,7 +8502,7 @@
           "ipa_vi": "/ka˧/",
           "level": "A2",
           "freq": 1439,
-          "forms": { "plural": "singings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "tune",
@@ -10722,7 +10722,7 @@
           "ipa_vi": "/viək̚˨˩ʔ/",
           "freq": 2200,
           "level": "A2",
-          "forms": { "plural": "cookings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "request",
@@ -12461,7 +12461,7 @@
           "ipa_vi": "/mon˧/",
           "freq": 4183,
           "level": "A2",
-          "forms": { "plural": "bowlings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "statue",
@@ -13052,7 +13052,7 @@
           "ipa_vi": "/lɛw˧/",
           "level": "A2",
           "freq": 5116,
-          "forms": { "plural": "climbings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "controls",
@@ -13418,7 +13418,7 @@
           "ipa_vi": "/ɗiəw˨˩/",
           "freq": 5913,
           "level": "A2",
-          "forms": { "plural": "nursings" }
+          "forms": { "uncountable": true }
         }
       ],
       "sentences": []
@@ -13832,7 +13832,7 @@
           "ipa_vi": "/mon˧/",
           "freq": 6954,
           "level": "A2",
-          "forms": { "plural": "skatings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "convenience",
@@ -13904,7 +13904,7 @@
           "ipa_vi": "/mon˧/",
           "freq": 7347,
           "level": "A2",
-          "forms": { "plural": "surfings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "fisherman",
@@ -14009,7 +14009,7 @@
           "ipa_vi": "/tɕɯət̚˨˩ʔ/",
           "freq": 7716,
           "level": "A2",
-          "forms": { "plural": "skiings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "amendment",
@@ -14128,7 +14128,7 @@
           "ipa_vi": "/viək̚˨˩ʔ/",
           "freq": 8043,
           "level": "A2",
-          "forms": { "plural": "sewings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "toaster",
@@ -14185,7 +14185,7 @@
           "ipa_vi": "/suət̚˦˥/",
           "freq": 8155,
           "level": "A2",
-          "forms": { "plural": "publishings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "scenery",
@@ -14541,7 +14541,7 @@
           "ipa_vi": "/he˨˩ʔ/",
           "level": "A2",
           "freq": 9967,
-          "forms": { "plural": "heatings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "tights",
@@ -14801,7 +14801,7 @@
           "ipa_vi": "/tɕɯəːt̚˨˩ʔ/",
           "level": "A2",
           "freq": 11595,
-          "forms": { "plural": "snowboardings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "removal",
@@ -15145,7 +15145,7 @@
           "ipa_vi": "/mon˧/",
           "freq": 14688,
           "level": "A2",
-          "forms": { "plural": "fencings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "tram",
@@ -15675,7 +15675,7 @@
           "ipa_vi": "/tɕɯəːt̚˨˩ʔ/",
           "level": "A2",
           "freq": 23221,
-          "forms": { "plural": "skateboardings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "replies",
@@ -15854,7 +15854,7 @@
           "ipa_vi": "/ɗi˧/",
           "freq": 27028,
           "level": "A2",
-          "forms": { "plural": "cyclings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "framework",
@@ -15971,7 +15971,7 @@
           "ipa_vi": "/viək̚˨˩ʔ/",
           "freq": 31918,
           "level": "A2",
-          "forms": { "plural": "downsizings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "designation",
@@ -16067,7 +16067,7 @@
           "ipa_vi": "/sɯ˨˩ʔ/",
           "freq": 41602,
           "level": "A2",
-          "forms": { "plural": "overcrowdings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "superlative",
@@ -22386,7 +22386,7 @@
           "ipa_vi": "/ke˦˥/",
           "freq": 7334,
           "level": "B1",
-          "forms": { "plural": "accountings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "inc",
@@ -27849,7 +27849,7 @@
           "ipa_vi": "/ɗua˧/",
           "freq": 3877,
           "level": "B1",
-          "forms": { "plural": "racings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "bacon",
@@ -29568,7 +29568,7 @@
           "ipa_vi": "/kwiən˨˩/",
           "freq": 5416,
           "level": "B1",
-          "forms": { "plural": "boxings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "jewel",
@@ -30255,7 +30255,7 @@
           "ipa_vi": "/mon˧/",
           "freq": 5936,
           "level": "B1",
-          "forms": { "plural": "divings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "syndrome",
@@ -32281,7 +32281,7 @@
           "ipa_vi": "/in˧/",
           "freq": 8456,
           "level": "B1",
-          "forms": { "plural": "printings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "indication",
@@ -33415,7 +33415,7 @@
           "ipa_vi": "/tɕaj˨˩ʔ/",
           "level": "B1",
           "freq": 10246,
-          "forms": { "plural": "joggings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "disc",
@@ -34886,7 +34886,7 @@
           "ipa_vi": "/ŋe˨˩/",
           "level": "B1",
           "freq": 13420,
-          "forms": { "plural": "farmings" }
+          "forms": { "uncountable": true }
         }
       ],
       "sentences": []
@@ -34955,7 +34955,7 @@
           "ipa_vi": "/viək̚˨˩ʔ/",
           "freq": 13647,
           "level": "B1",
-          "forms": { "plural": "recyclings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "railway",
@@ -35176,7 +35176,7 @@
           "ipa_vi": "/viək̚˨˩ʔ/",
           "level": "B1",
           "freq": 14149,
-          "forms": { "plural": "ironings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "railing",
@@ -36666,7 +36666,7 @@
           "ipa_vi": "/zaːw˧/",
           "freq": 23802,
           "level": "B1",
-          "forms": { "plural": "networkings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "measurement",
@@ -36914,7 +36914,7 @@
           "ipa_vi": "/ɗoŋ˨˩ʔ/",
           "level": "B1",
           "freq": 27184,
-          "forms": { "plural": "brainstormings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "nutrient",
@@ -37460,7 +37460,7 @@
           "ipa_vi": "/lɯət̚˦˥/",
           "level": "B1",
           "freq": 38875,
-          "forms": { "plural": "windsurfings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "adaptability",
@@ -50132,7 +50132,7 @@
           "ipa_vi": "/tiəp̚˦˥/",
           "freq": 7100,
           "level": "B2",
-          "forms": { "plural": "marketings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "commerce",
@@ -53976,7 +53976,7 @@
           "ipa_vi": "/sɯ˨˩ʔ/",
           "level": "B2",
           "freq": 2543,
-          "forms": { "plural": "huntings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "estate",
@@ -54273,7 +54273,7 @@
           "ipa_vi": "/ɗaːɲ˦˥/",
           "freq": 3042,
           "level": "B2",
-          "forms": { "plural": "gamblings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "admiral",
@@ -58872,7 +58872,7 @@
           "ipa_vi": "/sɯ˨˩ʔ/",
           "freq": 8171,
           "level": "B2",
-          "forms": { "plural": "processings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "rival",
@@ -59547,7 +59547,7 @@
           "ipa_vi": "/sɯ˨˩ʔ/",
           "level": "B2",
           "freq": 8839,
-          "forms": { "plural": "coachings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "statistics",
@@ -59771,7 +59771,7 @@
           "ipa_vi": "/ləp̚˨˩ʔ/",
           "freq": 9113,
           "level": "B2",
-          "forms": { "plural": "programmings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "wage",
@@ -60160,7 +60160,7 @@
           "ipa_vi": "/tɯ˧/",
           "freq": 9598,
           "level": "B2",
-          "forms": { "plural": "consultings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "proceedings",
@@ -62116,7 +62116,7 @@
           "ipa_vi": "/saːn˧˩˧/",
           "freq": 13047,
           "level": "B2",
-          "forms": { "plural": "manufacturings" }
+          "forms": { "uncountable": true }
         }
       ],
       "sentences": []
@@ -65513,7 +65513,7 @@
           "ipa_vi": "/viək̚˨˩ʔ/",
           "freq": 22271,
           "level": "B2",
-          "forms": { "plural": "moonlightings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "vapor",
@@ -66320,7 +66320,7 @@
           "ipa_vi": "/tin˧/",
           "freq": 26140,
           "level": "B2",
-          "forms": { "plural": "computings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "seesaw",

@@ -18116,7 +18116,7 @@
           "ipa_vi": "/ɗəw˦˥/",
           "freq": 4788,
           "level": "C2",
-          "forms": { "plural": "wrestlings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "wig",
@@ -29865,7 +29865,7 @@
           "ipa_vi": "/viək̚˨˩ʔ/",
           "freq": 39524,
           "level": "C2",
-          "forms": { "plural": "freelancings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "hubcap",
@@ -30102,7 +30102,7 @@
           "ipa_vi": "/kɯ˧˩˧/",
           "freq": 40645,
           "level": "C2",
-          "forms": { "plural": "weightliftings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "glassware",
@@ -30738,7 +30738,7 @@
           "ipa_vi": "/mon˧/",
           "freq": 46590,
           "level": "C2",
-          "forms": { "plural": "kayakings" }
+          "forms": { "uncountable": true }
         },
         {
           "word": "philanthropy",
