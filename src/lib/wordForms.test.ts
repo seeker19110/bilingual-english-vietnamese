@@ -193,6 +193,16 @@ describe('computeForms — tổng hợp theo loại từ', () => {
     expect(computeForms('information', 'n')).toEqual({ uncountable: true })
     expect(computeForms('furniture', 'n')).toEqual({ uncountable: true })
   })
+  it('danh động từ (gerund) chỉ thể thao/lĩnh vực hoạt động → uncountable (rà 2026-07-17, không bịa "smokings"/"computings")', () => {
+    expect(computeForms('smoking', 'n')).toEqual({ uncountable: true })
+    expect(computeForms('computing', 'n')).toEqual({ uncountable: true })
+    expect(computeForms('swimming', 'n')).toEqual({ uncountable: true })
+    // gerund KHÁC vẫn giữ số nhiều hợp lệ (findings/warnings/meetings/buildings…) — CỐ Ý
+    // không đụng, vì có cách dùng số nhiều thật trong tiếng Anh.
+    expect(computeForms('meeting', 'n')).toEqual({ plural: 'meetings' })
+    expect(computeForms('finding', 'n')).toEqual({ plural: 'findings' })
+    expect(computeForms('building', 'n')).toEqual({ plural: 'buildings' })
+  })
   it('danh từ chỉ-có-số-nhiều → undefined (không bịa +es)', () => {
     expect(computeForms('jeans', 'n')).toBeUndefined()
     expect(computeForms('scissors', 'n')).toBeUndefined()

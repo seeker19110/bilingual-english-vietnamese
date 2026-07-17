@@ -339,9 +339,22 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   - Xác minh: quét script không còn chuỗi rác ở MỌI file data; Playwright sống trên
     `/dictionary` (5 kịch bản: "played" hiện nút Xem từ gốc, "books" gợi ý dạng của book,
     "playeds" hết gợi ý rác, "corps" hiện "corps (không đổi)", "axis"→axes + "sunglasses" không
-    chip số nhiều). 9 unit test mới (`wordForms.test.ts`). **Nợ nhỏ còn lại (ghi nhận, chưa
-    làm)**: số nhiều kiểu "smokings/computings" của danh từ gerund không đếm được — hợp lệ ngữ
-    pháp máy nhưng không tự nhiên, cần rà danh sách UNCOUNTABLE bổ sung đợt sau.
+    chip số nhiều). 9 unit test mới (`wordForms.test.ts`). ~~**Nợ nhỏ còn lại**: số nhiều kiểu
+    "smokings/computings" của gerund không đếm được~~ **ĐÃ TRẢ (2026-07-17, xem mục ngay dưới)**.
+- **Dọn nợ gerund plural (2026-07-17, tiếp nối mục "Dọn forms rác từ điển" ở trên)**: rà tay 206
+  ứng viên danh từ đuôi "-ing" có `forms.plural` — LOẠI các từ không thật sự là gerund (king,
+  ring, spring, thing, morning, darling, duckling, pudding… trùng đuôi ngẫu nhiên, không liên
+  quan động từ, số nhiều vốn đúng) và các gerund CÓ số nhiều hợp lệ theo ngữ cảnh riêng
+  (findings/warnings/meetings/buildings/trainings/hostings/mailings/sailings/bearings… — CỐ Ý
+  không đụng, tiếng Anh thật sự dùng số nhiều những từ này). Chỉ chặn **62 từ có độ tin cậy
+  cao**: thể thao/sở thích/lĩnh vực hoạt động thuần túy KHÔNG BAO GIỜ chia số nhiều trong tiếng
+  Anh chuẩn (smoking, computing, swimming, boxing, camping, jogging, hiking, cycling, gambling,
+  gardening, marketing, parking, shopping, wrestling… đủ 62 từ, xem `src/data/irregularForms.ts`
+  → `UNCOUNTABLE_NOUNS`). Thêm vào set có sẵn (không tạo type mới) — tái sinh đủ chuỗi dữ liệu.
+  Xác minh diff: ĐÚNG 62 entry đổi `forms` (plural→uncountable), không tác dụng phụ. 3 unit test
+  mới (`wordForms.test.ts`) + Playwright sống trên `/dictionary` (smoking/computing/swimming
+  hiện "không đếm được"; meeting/building VẪN giữ số nhiều — xác nhận không chặn oan). Build/
+  typecheck/lint/format/size xanh, test 556/556, E2E 117/117.
 - Gamification: **V-4 (mốc + huy hiệu) đã xong** (PR #8/#247, `src/data/achievements.ts`) và
   **V-5 (Home "Hôm nay") đã xong** (PR #11/#249, comeback + gợi ý luyện nói) — dòng cũ ghi
   "chưa làm" đã LỖI THỜI. **V-6 (âm UI) ĐÃ XONG (2026-07-16, người dùng chọn "thêm tất cả"
