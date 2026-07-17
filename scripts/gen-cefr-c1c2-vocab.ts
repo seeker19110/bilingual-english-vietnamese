@@ -61,22 +61,27 @@ if (fs.existsSync(CURRICULUM_JSON)) {
 // ── 3. Lọc từ C1/C2, khử trùng, sắp theo tần suất ─────────────────────────
 function pick(level: 'C1' | 'C2'): DictEntry[] {
   const seen = new Set<string>()
-  return dict
-    .filter((e) => e.level === level && !foundationKeys.has(wordKey(e.word)))
-    .filter((e) => e.freq == null || e.freq >= MIN_FREQ_RANK) // bỏ từ quá thông dụng (gắn nhầm)
-    .filter((e) => {
-      const k = wordKey(e.word)
-      if (seen.has(k)) return false
-      seen.add(k)
-      return true
-    })
-    .sort((a, b) => {
-      // freq nhỏ = thông dụng hơn, học trước; thiếu freq xếp sau cùng.
-      if (a.freq == null && b.freq == null) return 0
-      if (a.freq == null) return 1
-      if (b.freq == null) return -1
-      return a.freq - b.freq
-    })
+  return (
+    dict
+      .filter((e) => e.level === level && !foundationKeys.has(wordKey(e.word)))
+      // Entry BIẾN THỂ (có base: went, geese…) chỉ để tra cứu — không thành thẻ học
+      // riêng trong vòng từ vựng (tránh trùng thẻ với từ gốc trong SRS).
+      .filter((e) => !e.base)
+      .filter((e) => e.freq == null || e.freq >= MIN_FREQ_RANK) // bỏ từ quá thông dụng (gắn nhầm)
+      .filter((e) => {
+        const k = wordKey(e.word)
+        if (seen.has(k)) return false
+        seen.add(k)
+        return true
+      })
+      .sort((a, b) => {
+        // freq nhỏ = thông dụng hơn, học trước; thiếu freq xếp sau cùng.
+        if (a.freq == null && b.freq == null) return 0
+        if (a.freq == null) return 1
+        if (b.freq == null) return -1
+        return a.freq - b.freq
+      })
+  )
 }
 
 const c1Words = pick('C1')

@@ -37,9 +37,20 @@ describe('pluralize — số nhiều danh từ', () => {
     expect(pluralize('analysis')).toBe('analyses')
     expect(pluralize('quiz')).toBe('quizzes')
   })
+  it('bất quy tắc Hy Lạp / Latin bổ sung (rà 2026-07-16)', () => {
+    expect(pluralize('axis')).toBe('axes')
+    expect(pluralize('oasis')).toBe('oases')
+    expect(pluralize('emphasis')).toBe('emphases')
+    expect(pluralize('alumnus')).toBe('alumni')
+    expect(pluralize('genus')).toBe('genera')
+  })
   it('danh từ bất biến', () => {
     expect(pluralize('sheep')).toBe('sheep')
     expect(pluralize('fish')).toBe('fish')
+    // "corps" TUYỆT ĐỐI không thành "corpses" (nghĩa khác hẳn: xác chết)
+    expect(pluralize('corps')).toBe('corps')
+    expect(pluralize('headquarters')).toBe('headquarters')
+    expect(pluralize('offspring')).toBe('offspring')
   })
   it('từ ghép đuôi -man/-woman/-f/-fe', () => {
     expect(pluralize('housewife')).toBe('housewives')
@@ -135,6 +146,12 @@ describe('comparativeForms — so sánh hơn/nhất', () => {
     expect(comparativeForms('beautiful')).toBeNull()
     expect(comparativeForms('expensive')).toBeNull()
   })
+  it('tính từ phân từ đuôi -ied → null (không có "frieder")', () => {
+    expect(comparativeForms('fried')).toBeNull()
+    expect(comparativeForms('dried')).toBeNull()
+    // nhưng "red" (không phải phân từ) vẫn có dạng -er bình thường
+    expect(comparativeForms('red')).toEqual({ comparative: 'redder', superlative: 'reddest' })
+  })
   it('bất quy tắc', () => {
     expect(comparativeForms('good')).toEqual({ comparative: 'better', superlative: 'best' })
     expect(comparativeForms('bad')).toEqual({ comparative: 'worse', superlative: 'worst' })
@@ -180,6 +197,19 @@ describe('computeForms — tổng hợp theo loại từ', () => {
     expect(computeForms('jeans', 'n')).toBeUndefined()
     expect(computeForms('scissors', 'n')).toBeUndefined()
     expect(computeForms('pajamas', 'n')).toBeUndefined()
+    // bổ sung rà 2026-07-16 — số ít không có entry / danh từ cặp
+    expect(computeForms('sunglasses', 'n')).toBeUndefined()
+    expect(computeForms('amenities', 'n')).toBeUndefined()
+  })
+  it('danh từ riêng / ký hiệu → undefined (không bịa "jesuses"/"gpses")', () => {
+    expect(computeForms('jesus', 'n')).toBeUndefined()
+    expect(computeForms('gps', 'n')).toBeUndefined()
+    expect(computeForms('les', 'n')).toBeUndefined()
+  })
+  it('bệnh / môn chơi → uncountable (không bịa "diabeteses"/"tennises")', () => {
+    expect(computeForms('diabetes', 'n')).toEqual({ uncountable: true })
+    expect(computeForms('tennis', 'n')).toEqual({ uncountable: true })
+    expect(computeForms('chess', 'n')).toEqual({ uncountable: true })
   })
   it('trạng từ thường KHÔNG chia so sánh (dùng more/most)', () => {
     expect(computeForms('strictly', 'adv')).toBeUndefined()
