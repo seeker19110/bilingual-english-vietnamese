@@ -17,6 +17,7 @@ import {
   UNCOUNTABLE_NOUNS,
   NO_INFLECTION,
   PLURAL_ONLY_NOUNS,
+  NO_PLURAL_NOUNS,
   F_TO_VES_SUFFIXES,
   MAN_SUFFIX_EXCEPTIONS,
 } from '../data/irregularForms'
@@ -166,6 +167,10 @@ export function comparativeForms(
   const irr = IRREGULAR_COMPARATIVES[w]
   if (irr) return { comparative: irr[0], superlative: irr[1] }
 
+  // Tính từ phân từ đuôi -ied (fried, dried) KHÔNG có dạng -er/-est ("frieder" sai) —
+  // heuristic âm tiết đếm chúng là 1 âm tiết nên phải chặn riêng trước.
+  if (w.endsWith('ied')) return null
+
   const syl = countSyllables(w)
   // 2 âm tiết kết thúc -y: happy→happier/happiest, easy→easier/easiest
   if (syl === 2 && /[^aeiou]y$/.test(w)) {
@@ -199,6 +204,8 @@ export function computeForms(word: string, pos: string): WordForms | undefined {
     if (UNCOUNTABLE_NOUNS.has(w)) return { uncountable: true }
     // Danh từ chỉ có số nhiều (jeans, scissors…) → không sinh dạng số nhiều nữa.
     if (PLURAL_ONLY_NOUNS.has(w)) return undefined
+    // Danh từ riêng / ký hiệu (Jesus, GPS, Les…) → không chia, không hiện gì.
+    if (NO_PLURAL_NOUNS.has(w)) return undefined
     const plural = pluralize(w)
     // Danh từ bất biến (sheep) hoặc bất quy tắc (children) → đánh dấu để UI hiện rõ.
     const irregular = !!IRREGULAR_PLURALS[w]

@@ -114,7 +114,7 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   lượng nới tay chỉ để chọn nội dung, không phải số hiển thị chính thức). `api/push.ts`
   `sendReminders()` gọi các hàm này (Supabase query mới: `daily_usage` mở rộng 14 ngày +
   `learning_progress.srs`/`weekly_goal`), fail-open nếu lỗi. `api/_lib/date.ts` thêm
-  `addDays`/`weekStartOf` (mirror `src/lib/date.ts`, đúng quy ước "api/_lib không import từ
+  `addDays`/`weekStartOf` (mirror `src/lib/date.ts`, đúng quy ước "api/\_lib không import từ
   src/lib" đã có từ trước). Giờ nhắc vẫn do người dùng tự chọn như cũ (`remind_hour`) — ĐÃ
   MERGE (PR #250, 2026-07-16). PR #13 (nút 👍/👎 + bảng `tutor_feedback`, ⑤ T3) — migration
   `0014` + `lib/tutorFeedback.ts` + nút vote cạnh mỗi khối "✅ Nhận xét" ở Chat.tsx/Speaking.tsx
@@ -296,10 +296,9 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
     lấy nguyên từ entry gốc, `ipa_vi` KHÔNG tự bịa mà tái dùng đúng phiên âm đã xác minh của
     "đã"/"những" (mọi `vi` mới đều cố tình bắt đầu bằng 1 trong 2 từ này). **7 dạng bị bỏ qua**
     vì từ gốc còn thiếu hẳn trong từ điển (louse/elf/parenthesis/fungus/memorandum/vertex/
-    torpedo) — để dành đợt bổ sung từ điển sau. **Nợ kỹ thuật MỚI phát hiện (chưa sửa, ghi nhận
-    để đợt sau)**: entry có sẵn "played" có trường `forms` tự tham chiếu vô nghĩa
-    (`{"v3s":"playeds","ving":"playedding","past":"playedded"}`) — có vẻ script sinh forms gốc
-    từng chạy nhầm lên cả các từ đã ở dạng biến thể; cần rà lại toàn bộ để tìm entry tương tự.
+    torpedo) — để dành đợt bổ sung từ điển sau. ~~**Nợ kỹ thuật MỚI phát hiện (chưa sửa)**:
+    entry "played" có trường `forms` tự tham chiếu vô nghĩa~~ **ĐÃ TRẢ XONG (2026-07-17, xem
+    mục "Dọn forms rác từ điển" bên dưới)**.
   - **Bước 4 (search hiểu biến thể)**: `src/lib/dictionaryApi.ts` xây `formsIndexCache` (dạng
     biến thể QUY TẮC từ trường `forms` đã tính sẵn → từ gốc) 1 lần rồi tái dùng; `searchDictionary`
     trả thêm `matchedForm` khi query khớp đúng 1 dạng KHÔNG có entry riêng (vd "books"/"played")
@@ -310,6 +309,39 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
     test 546/546. **Chưa xác nhận được qua trình duyệt thật** (môi trường phiên này không có
     `.env`/khoá Supabase nên `/dictionary` không load được để chạy Playwright sống) — đã bù bằng
     kiểm tra JSON hợp lệ + đếm entry đúng 12.168 bằng script + 7 unit test bao phủ đủ ca biên.
+- **Dọn forms rác từ điển (2026-07-17, trả nợ kỹ thuật "played" ở trên — rà TOÀN BỘ 12.168
+  entry)**: 3 lớp rác cùng gốc rễ (script `gen-word-forms.ts` tin quy tắc mù quáng):
+  - **194 entry là dạng chia QUY TẮC của từ khác** (played/buying/goes/has/is/causes… + danh từ
+    gentlemen/pajamas) từng bị coi như từ gốc → sinh forms chồng đuôi ("playedded"). Sửa TRONG
+    generator (idempotent, chạy lại không tái nhiễm): thêm lượt 1 lập chỉ mục "dạng chia → từ
+    gốc" (kể cả dạng chia ĐỘNG TỪ GIẢ ĐỊNH cho danh từ/tính từ gốc — bắt "displayed" dù
+    "display" mang pos n; ưu tiên từ gốc là động từ thật nên "does"→do chứ không →doe); lượt 2
+    bỏ forms + gắn `base` trỏ về từ gốc cho các entry này (194 base mới — search/UI "Xem từ
+    gốc" dùng được ngay). Guard chống bắt oan: không đụng động từ bất quy tắc GỐC (feed ← fee),
+    không tính khoá comparative ("flatter" động từ ≠ so sánh của flat), danh từ gerund
+    (building/meeting) giữ nguyên số nhiều hợp lệ.
+  - **Tính từ phân từ đuôi -ied** (fried/dried) bị sinh "frieder/friedest" → chặn trong
+    `comparativeForms` ("red" 1 âm tiết thật vẫn có redder/reddest).
+  - **Số nhiều vô nghĩa/SAI NGHĨA cho danh từ đặc biệt** — nặng nhất `corps→"corpses"` (= xác
+    chết!), axis→"axises", oasis→"oasises", alumnus→"alumnuses", tennis→"tennises",
+    sunglasses→"sunglasseses", jesus→"jesuses"… Bổ sung danh sách ngoại lệ ở
+    `src/data/irregularForms.ts`: 10 bất quy tắc Hy Lạp/Latin (axes/oases/emphases/alumni/
+    genera…), 8 bất biến (corps/chassis/headquarters/offspring…), 16 không đếm được (bệnh/môn
+    chơi: diabetes/tennis/chess…), 29 chỉ-có-số-nhiều (sunglasses/amenities + số nhiều mà SỐ ÍT
+    chưa có entry: cubs/lads/babes…), và set MỚI `NO_PLURAL_NOUNS` (danh từ riêng/ký hiệu:
+    jesus/gps/les… — không chia, không hiện gì).
+  - **Quyết định kèm theo**: entry biến thể (có `base`) bị LOẠI khỏi bộ chọn từ của vòng học
+    (`gen-cefr-c1c2-vocab.ts` + `gen-a1b2-extra-vocab.ts` thêm filter `!e.base`) — biến thể để
+    TRA CỨU, không thành thẻ học riêng (tránh trùng thẻ "played"/"goes" với thẻ play/go trong
+    SRS; ~324 thẻ biến thể rút khỏi vòng A1-B2, 5 khỏi C1/C2). Tiến độ người học KHÔNG mất —
+    lưu theo TỪ (`et_learned_`), vòng chỉ là suy diễn. Đã tái sinh chuỗi dữ liệu đủ thứ tự:
+    dictionary → cefrC1C2Vocab → cefrA1B2ExtraVocab → curriculum.json → learn → form-examples.
+  - Xác minh: quét script không còn chuỗi rác ở MỌI file data; Playwright sống trên
+    `/dictionary` (5 kịch bản: "played" hiện nút Xem từ gốc, "books" gợi ý dạng của book,
+    "playeds" hết gợi ý rác, "corps" hiện "corps (không đổi)", "axis"→axes + "sunglasses" không
+    chip số nhiều). 9 unit test mới (`wordForms.test.ts`). **Nợ nhỏ còn lại (ghi nhận, chưa
+    làm)**: số nhiều kiểu "smokings/computings" của danh từ gerund không đếm được — hợp lệ ngữ
+    pháp máy nhưng không tự nhiên, cần rà danh sách UNCOUNTABLE bổ sung đợt sau.
 - Gamification: **V-4 (mốc + huy hiệu) đã xong** (PR #8/#247, `src/data/achievements.ts`) và
   **V-5 (Home "Hôm nay") đã xong** (PR #11/#249, comeback + gợi ý luyện nói) — dòng cũ ghi
   "chưa làm" đã LỖI THỜI. **V-6 (âm UI) ĐÃ XONG (2026-07-16, người dùng chọn "thêm tất cả"

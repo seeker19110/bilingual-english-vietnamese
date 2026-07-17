@@ -8,6 +8,10 @@
 //   - BỎ QUA entry vốn đã là DẠNG BIẾN THỂ (went, children…) — không gắn forms cho chúng,
 //     nếu không sẽ sinh bậy ("childrens"). Nhận diện qua: nghĩa có "… của <từ gốc>", hoặc
 //     word trùng một dạng bất quy tắc đã biết.
+//   - BỎ QUA cả entry là dạng biến thể QUY TẮC của từ khác trong từ điển (played, buying,
+//     causes, gentlemen…) — dò bằng 2 lượt: lượt 1 tính forms của mọi từ gốc để lập chỉ mục
+//     "dạng chia → từ gốc"; lượt 2 entry động từ/danh từ nào trùng chỉ mục thì coi là biến
+//     thể → không sinh forms (tránh "playedded") và gắn `base` trỏ về từ gốc nếu chưa có.
 //   - KIỂM ĐỊNH CHÉO: đối chiếu dạng bất quy tắc script sinh ra với các entry biến thể có
 //     sẵn (đã soạn tay) — lệch thì in cảnh báo (không tự ghi đè, để người rà).
 //   - Chỉ ghi form là chuỗi chữ cái hợp lệ, không trùng chính từ gốc (trừ danh từ bất biến).
@@ -92,6 +96,10 @@ function loadChunks(): { file: string; entries: DictEntry[] }[] {
   }))
 }
 
+// Các khoá của forms là DẠNG CHIA thật sự (không tính so sánh hơn/nhất của tính từ —
+// "flatter" vừa là so sánh của "flat" vừa là động từ gốc "nịnh hót" hợp lệ).
+const INFLECTION_KEYS = ['plural', 'v3s', 'ving', 'past', 'pastPart'] as const
+
 function main(): void {
   const chunks = loadChunks()
   const all = chunks.flatMap((c) => c.entries)
@@ -107,8 +115,80 @@ function main(): void {
   let withForms = 0
   let irregularCount = 0
   let skippedVariant = 0
+  let regularVariant = 0
+  let baseAdded = 0
   const warnings: string[] = []
 
+  // ── LƯỢT 1: lập chỉ mục "dạng chia quy tắc → từ gốc" từ forms của MỌI từ gốc ──
+  // inflectionOwners: mọi dạng chia (kể cả số nhiều) — dùng bắt động từ đã chia
+  // (played, causes…). pluralOwners: RIÊNG dạng số nhiều — dùng bắt danh từ đã ở dạng
+  // số nhiều mà các guard cũ bỏ sót (gentlemen ← gentleman, đuôi -men không có "s").
+  // hypotheticalOwners: từ điển chỉ lưu 1 nghĩa/từ nên từ gốc có thể mang pos khác
+  // ("display" là [n] nhưng "displayed" vẫn là động từ đã chia) → tính THÊM dạng chia
+  // ĐỘNG TỪ GIẢ ĐỊNH cho mọi danh từ/tính từ gốc, để riêng và chỉ tra khi chỉ mục
+  // thật không khớp (ưu tiên từ gốc là động từ thật: does ← do[v], không phải doe[n]).
+  const inflectionOwners = new Map<string, string[]>()
+  const pluralOwners = new Map<string, string>()
+  const hypotheticalOwners = new Map<string, string[]>()
+  for (const e of all) {
+    if (isVariantEntry(e, knownSurfaces)) continue
+    if (e.pos === 'n' && looksAlreadyPlural(e.word, allWords)) continue
+    const owner = e.word.toLowerCase()
+    const forms = computeForms(e.word, e.pos)
+    if (forms) {
+      for (const key of INFLECTION_KEYS) {
+        const surface = forms[key]
+        if (typeof surface !== 'string' || surface === owner) continue
+        const owners = inflectionOwners.get(surface)
+        if (owners) owners.push(owner)
+        else inflectionOwners.set(surface, [owner])
+        if (key === 'plural' && !pluralOwners.has(surface)) pluralOwners.set(surface, owner)
+      }
+    }
+    if (e.pos === 'n' || e.pos === 'adj') {
+      const vforms = computeForms(e.word, 'v')
+      if (!vforms) continue
+      for (const key of ['v3s', 'ving', 'past', 'pastPart'] as const) {
+        const surface = vforms[key]
+        if (typeof surface !== 'string' || surface === owner) continue
+        const owners = hypotheticalOwners.get(surface)
+        if (owners) owners.push(owner)
+        else hypotheticalOwners.set(surface, [owner])
+      }
+    }
+  }
+
+  // Chọn 1 từ gốc từ danh sách owner (cảnh báo nếu nhiều ứng viên khác nhau).
+  function pickOwner(w: string, owners: string[] | undefined): string | undefined {
+    const list = owners?.filter((o) => o !== w)
+    if (!list?.length) return undefined
+    if (new Set(list).size > 1) {
+      warnings.push(
+        `⚠️  "${w}" là dạng chia của NHIỀU từ gốc (${list.join(', ')}) — lấy từ đầu tiên`,
+      )
+    }
+    return list[0]
+  }
+
+  // Entry này có phải dạng biến thể QUY TẮC của một từ khác? Trả về từ gốc nếu phải.
+  // Chỉ áp cho pos 'v' (mọi dạng chia) và pos 'n' (chỉ dạng số nhiều) — danh từ gerund
+  // (building, meeting…) trùng V-ing của động từ nhưng là danh từ hợp lệ, KHÔNG bắt oan.
+  function findRegularVariantBase(e: DictEntry): string | undefined {
+    const w = e.word.toLowerCase()
+    if (e.pos === 'v') {
+      // Động từ bất quy tắc GỐC (feed, sing…) không bao giờ là dạng chia quy tắc của từ
+      // khác — guard tránh bắt oan kiểu feed ← fee[n]+"d".
+      if (IRREGULAR_VERBS[w]) return undefined
+      return pickOwner(w, inflectionOwners.get(w)) ?? pickOwner(w, hypotheticalOwners.get(w))
+    }
+    if (e.pos === 'n') {
+      const owner = pluralOwners.get(w)
+      if (owner && owner !== w) return owner
+    }
+    return undefined
+  }
+
+  // ── LƯỢT 2: tính forms cho từng entry, bỏ qua mọi loại biến thể ──
   for (const c of chunks) {
     for (const e of c.entries) {
       // Luôn tính lại từ đầu → xoá forms cũ trước (idempotent).
@@ -121,6 +201,17 @@ function main(): void {
       // Danh từ vốn đã là số nhiều → không gắn dạng số nhiều (tránh chia đôi).
       if (e.pos === 'n' && looksAlreadyPlural(e.word, allWords)) {
         skippedVariant++
+        continue
+      }
+      // Dạng biến thể QUY TẮC (played, buying, causes, gentlemen…) → không sinh forms,
+      // gắn `base` trỏ về từ gốc (giữ nguyên base soạn tay nếu đã có).
+      const variantBase = findRegularVariantBase(e)
+      if (variantBase) {
+        regularVariant++
+        if (!e.base) {
+          e.base = variantBase
+          baseAdded++
+        }
         continue
       }
 
@@ -179,6 +270,9 @@ function main(): void {
   console.log(`Gắn forms:            ${withForms}`)
   console.log(`  trong đó bất quy tắc: ${irregularCount}`)
   console.log(`Bỏ qua (là biến thể): ${skippedVariant}`)
+  console.log(
+    `Bỏ qua (biến thể QUY TẮC của từ khác): ${regularVariant} (gắn base mới: ${baseAdded})`,
+  )
   console.log(`Kiểm chéo bất quy tắc: ${crossChecked} (lệch nhẹ: ${crossMismatch})`)
   if (warnings.length) {
     console.log(`\n── Cảnh báo (${warnings.length}) ──`)

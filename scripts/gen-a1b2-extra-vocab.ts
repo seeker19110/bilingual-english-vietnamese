@@ -63,20 +63,25 @@ if (fs.existsSync(CURRICULUM_JSON)) {
 // tần suất thấp là bình thường (không phải dấu hiệu gắn nhầm nhãn).
 function pick(level: Level): DictEntry[] {
   const seen = new Set<string>()
-  return dict
-    .filter((e) => e.level === level && !foundationKeys.has(wordKey(e.word)))
-    .filter((e) => {
-      const k = wordKey(e.word)
-      if (seen.has(k)) return false
-      seen.add(k)
-      return true
-    })
-    .sort((a, b) => {
-      if (a.freq == null && b.freq == null) return 0
-      if (a.freq == null) return 1
-      if (b.freq == null) return -1
-      return a.freq - b.freq
-    })
+  return (
+    dict
+      .filter((e) => e.level === level && !foundationKeys.has(wordKey(e.word)))
+      // Entry BIẾN THỂ (có base: went, geese…) chỉ để tra cứu — không thành thẻ học
+      // riêng trong vòng từ vựng (tránh trùng thẻ với từ gốc trong SRS).
+      .filter((e) => !e.base)
+      .filter((e) => {
+        const k = wordKey(e.word)
+        if (seen.has(k)) return false
+        seen.add(k)
+        return true
+      })
+      .sort((a, b) => {
+        if (a.freq == null && b.freq == null) return 0
+        if (a.freq == null) return 1
+        if (b.freq == null) return -1
+        return a.freq - b.freq
+      })
+  )
 }
 
 const LEVELS: Level[] = ['A1', 'A2', 'B1', 'B2']
