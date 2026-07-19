@@ -103,6 +103,60 @@ describe('generateAudioFromGoogle — xoay vòng key', () => {
   })
 })
 
+describe('probeApiKeys + setActiveKeyPool', () => {
+  it('probe từng key song song, trả về key nào 200 và key nào lỗi', async () => {
+    process.env.GOOGLE_TTS_API_KEYS = 'key-a,key-b,key-c'
+    delete process.env.GOOGLE_TTS_API_KEY
+    mockGoogleResponse((apiKey) => {
+      if (apiKey === 'key-b') return new Response('RESOURCE_EXHAUSTED', { status: 429 })
+      return new Response(JSON.stringify({ audioContent: Buffer.from('x').toString('base64') }), {
+        status: 200,
+      })
+    })
+    const { probeApiKeys } = await import('./googleTts')
+    const { working, total } = await probeApiKeys()
+    expect(total).toEqual(['key-a', 'key-b', 'key-c'])
+    expect(working).toEqual(['key-a', 'key-c'])
+  })
+
+  it('setActiveKeyPool thu hẹp bể — chỉ xoay vòng qua key được truyền vào', async () => {
+    process.env.GOOGLE_TTS_API_KEYS = 'key-a,key-b,key-c'
+    delete process.env.GOOGLE_TTS_API_KEY
+    const usedKeys: string[] = []
+    mockGoogleResponse((apiKey) => {
+      usedKeys.push(apiKey)
+      return new Response(JSON.stringify({ audioContent: Buffer.from('x').toString('base64') }), {
+        status: 200,
+      })
+    })
+    const { generateAudioFromGoogle, setActiveKeyPool } = await import('./googleTts')
+    setActiveKeyPool(['key-a', 'key-c'])
+    await generateAudioFromGoogle('a')
+    await generateAudioFromGoogle('b')
+    await generateAudioFromGoogle('c')
+    expect(usedKeys).toEqual(['key-a', 'key-c', 'key-a'])
+  })
+
+  it('setActiveKeyPool(null) → quay lại đọc toàn bộ key từ biến môi trường', async () => {
+    process.env.GOOGLE_TTS_API_KEYS = 'key-a,key-b'
+    delete process.env.GOOGLE_TTS_API_KEY
+    const usedKeys: string[] = []
+    mockGoogleResponse((apiKey) => {
+      usedKeys.push(apiKey)
+      return new Response(JSON.stringify({ audioContent: Buffer.from('x').toString('base64') }), {
+        status: 200,
+      })
+    })
+    const { generateAudioFromGoogle, setActiveKeyPool } = await import('./googleTts')
+    setActiveKeyPool(['key-a'])
+    await generateAudioFromGoogle('x')
+    setActiveKeyPool(null)
+    await generateAudioFromGoogle('y')
+    await generateAudioFromGoogle('z')
+    expect(usedKeys).toEqual(['key-a', 'key-a', 'key-b'])
+  })
+})
+
 describe('hasGoogleTtsKey', () => {
   it('false khi chưa cấu hình key nào', async () => {
     delete process.env.GOOGLE_TTS_API_KEY

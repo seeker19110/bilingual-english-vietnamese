@@ -31,6 +31,8 @@ import cliProgress from 'cli-progress'
 import {
   generateAudioFromGoogle,
   hasGoogleTtsKey,
+  probeApiKeys,
+  setActiveKeyPool,
   VOICE_IDS,
   VOICE_VERSION,
   type Lang,
@@ -240,6 +242,23 @@ async function main(): Promise<void> {
     )
     process.exit(1)
   }
+
+  // Probe trước: chỉ xoay vòng qua key CÒN DÙNG ĐƯỢC lúc này (quota có thể đã cạn từ
+  // lần seed trước trong ngày) — tránh phí hàng loạt request 429 vào key đã cạn.
+  console.log('🔑 Kiểm tra key TTS còn dùng được...')
+  const { working, total } = await probeApiKeys()
+  if (working.length === 0) {
+    console.error(
+      '❌ Không key GOOGLE_TTS nào dùng được lúc này (có thể tất cả đã hết quota) — thử lại sau.',
+    )
+    process.exit(1)
+  }
+  setActiveKeyPool(working)
+  console.log(
+    working.length === total.length
+      ? `   ✓ ${working.length}/${total.length} key dùng được — xoay vòng đủ cả bể.`
+      : `   ⚠️  ${working.length}/${total.length} key dùng được — ${total.length - working.length} key đã cạn quota, tạm loại khỏi vòng xoay lượt chạy này.`,
+  )
 
   const allTasks = collectTasks()
 

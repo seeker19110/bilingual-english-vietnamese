@@ -37,6 +37,8 @@ import cliProgress from 'cli-progress'
 import {
   generateAudioFromGoogle,
   hasGoogleTtsKey,
+  probeApiKeys,
+  setActiveKeyPool,
   VOICE_IDS,
   VOICE_VERSION,
   type Lang,
@@ -398,6 +400,18 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
   }
 }
 
+// In ra MẪU lỗi thật ngay khi gặp (chỉ lần đầu mỗi loại) — trước đây script chỉ đếm số
+// lỗi, không bao giờ lộ ra LÝ DO lỗi (kể cả file lỗi cuối cùng cũng chỉ lưu từ/câu, không
+// lưu message), nên không ai đoán được là hết quota (429), lỗi mạng hay lỗi Storage/DB.
+const seenErrorMessages = new Set<string>()
+function logSampleError(message: string): void {
+  const key = message.slice(0, 80)
+  if (seenErrorMessages.has(key)) return
+  seenErrorMessages.add(key)
+  if (seenErrorMessages.size > 8) return // đủ mẫu, tránh spam nếu có nhiều loại lỗi khác nhau
+  process.stdout.write(`\n🔎 Mẫu lỗi mới: ${message.slice(0, 200)}\n`)
+}
+
 // Trạng thái rate limit thích nghi — dùng chung trong 1 pass
 interface RateState {
   limit: number // ngưỡng req hiện tại
@@ -436,6 +450,7 @@ async function runBatch(
       counters.errors++
       newReqs++
       if (result.message.includes('429')) rate.has429 = true
+      logSampleError(result.message)
       failed.push({ task: tasks[idx]!, message: result.message }) // idx khớp tasks nên có
     }
   })
@@ -920,6 +935,24 @@ async function main(): Promise<void> {
     await verifyDb(allByCat)
     return
   }
+
+  // ── Probe key TTS: chỉ xoay vòng qua key CÒN DÙNG ĐƯỢC lúc này ─────────────
+  // Quota Google TTS có thể đã cạn từ lần seed trước trong ngày — probe trước (1 request
+  // nhỏ/key) để loại luôn key đã cạn, tránh phí hàng loạt request 429 vào key đó suốt lượt chạy.
+  console.log('🔑 Kiểm tra key TTS còn dùng được...')
+  const { working, total } = await probeApiKeys()
+  if (working.length === 0) {
+    console.error(
+      '❌ Không key GOOGLE_TTS nào dùng được lúc này (có thể tất cả đã hết quota) — thử lại sau.',
+    )
+    process.exit(1)
+  }
+  setActiveKeyPool(working)
+  console.log(
+    working.length === total.length
+      ? `   ✓ ${working.length}/${total.length} key dùng được — xoay vòng đủ cả bể.`
+      : `   ⚠️  ${working.length}/${total.length} key dùng được — ${total.length - working.length} key đã cạn quota, tạm loại khỏi vòng xoay lượt chạy này.`,
+  )
 
   // ── Chế độ seed tất cả không hỏi (CI/cron) ────────────────────────────────
   if (SEED_ALL_FLAG) {
