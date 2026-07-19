@@ -86,10 +86,13 @@ Nguyên tắc thay RLS: **mọi handler API tự kiểm `user_id` khớp với s
 
 ### 3.3 Cloudflare R2
 
+- **Quyết định 2026-07-19: chỉ dùng 1 tài khoản Cloudflare, 1 bucket R2** (không sharding nhiều tài khoản để né giới hạn free — vi phạm tinh thần ToS, không tương xứng công sức ở quy mô app hiện tại). Nếu sau này gần chạm 10GB, ưu tiên trả phí thêm dung lượng ($0.015/GB/tháng) hoặc bật LRU dọn cache cũ (xem dưới), không mở thêm tài khoản.
 - Thêm driver `r2` vào `api/_lib/fileStorage.ts` cạnh `local`/`supabase` hiện có, dùng `@aws-sdk/client-s3` (R2 tương thích S3 API).
 - Biến môi trường mới: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `STORAGE_DRIVER=r2`.
 - Bucket **private** (không public read) — vì đã mã hóa AES-256-GCM ở tầng ứng dụng nên không bắt buộc private, nhưng vẫn nên để private làm lớp phòng thủ thứ hai (defense in depth).
 - Logic `ttsCrypto.ts`, luồng `validateAuth` gate trước khi trả key giải mã: **giữ nguyên 100%**, không đổi.
+- **Theo dõi dung lượng:** thêm mục nhỏ trong admin/log định kỳ (hoặc script tay chạy khi cần) đọc tổng dung lượng bucket qua R2 API, cảnh báo khi vượt ~8GB (80% ngưỡng free).
+- **Cơ chế dọn cache (LRU) — làm ở GĐ D nếu còn thời gian, không bắt buộc ngay:** thêm cột `last_accessed_at` vào `tts_cache`/`pronunciations`, cập nhật mỗi lần cache hit; cron dọn định kỳ xóa entry lâu không dùng nhất khi tổng dung lượng gần ngưỡng. Đây là giải pháp bền vững thay vì mở thêm tài khoản.
 
 ---
 
