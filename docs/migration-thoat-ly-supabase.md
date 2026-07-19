@@ -1,6 +1,6 @@
 # Kế hoạch + đặc tả: Rời khỏi Supabase (Auth + DB + Storage)
 
-> Trạng thái: **Giai đoạn A ĐÃ XONG (2026-07-19)** — PostgreSQL 16 tự host đã cài trên VPS, database `english_tutor` + user `tutor_app` đã tạo, `postgres/schema.sql` đã áp thành công (`npm run migrate:pg`). Đang chờ duyệt để bắt đầu Giai đoạn B (Auth.js).
+> Trạng thái: **Giai đoạn A ĐÃ XONG 100% (2026-07-20)** — PostgreSQL 16 tự host đã cài trên VPS, database `english_tutor` + user `tutor_app` đã tạo (14 bảng xác nhận đủ), `postgres/schema.sql` đã áp thành công (`npm run migrate:pg`), cron backup `pg_dump` hàng ngày đã thiết lập + test thành công. Đang chờ duyệt để bắt đầu Giai đoạn B (Auth.js).
 > Quyết định 2026-07-19: app đang thử nghiệm, **bỏ qua migrate dữ liệu người dùng cũ** — Postgres mới bắt đầu từ schema rỗng. Điều này bỏ hẳn phần script di trú dữ liệu, giảm rủi ro lớn nhất của việc đổi hạ tầng.
 
 ## 0. Phạm vi & công nghệ thay thế đã chốt
@@ -104,7 +104,7 @@ Nguyên tắc thay RLS: **mọi handler API tự kiểm `user_id` khớp với s
 
 ## 4. Chia giai đoạn triển khai (mỗi giai đoạn = 1 PR riêng, có cổng duyệt)
 
-1. ✅ **GĐ A — Hạ tầng nền (XONG 2026-07-19):** đã cài PostgreSQL 16 trên VPS, tạo database `english_tutor` + user riêng `tutor_app` (không dùng superuser), Postgres chỉ nghe `localhost` (không mở ra internet). `postgres/schema.sql` đã áp thành công qua `npm run migrate:pg`. Chưa đổi code app đang chạy — DB mới chạy song song, chưa có gì đọc/ghi vào đó. **Còn thiếu:** cron backup `pg_dump` hàng ngày (bước 7 trong `docs/setup-postgresql-vps.md`) — cần làm trước khi Postgres này chứa dữ liệu thật ở GĐ C.
+1. ✅ **GĐ A — Hạ tầng nền (XONG 2026-07-19):** đã cài PostgreSQL 16 trên VPS, tạo database `english_tutor` + user riêng `tutor_app` (không dùng superuser), Postgres chỉ nghe `localhost` (không mở ra internet). `postgres/schema.sql` đã áp thành công qua `npm run migrate:pg`. Chưa đổi code app đang chạy — DB mới chạy song song, chưa có gì đọc/ghi vào đó. Cron backup `pg_dump` hàng ngày (3h sáng, giữ 7 bản gần nhất) đã thiết lập và test chạy tay thành công — **GĐ A hoàn tất 100%, không còn việc dang dở**.
 2. **GĐ B — Auth.js thay Supabase Auth:** cài `@auth/express`, viết provider Credentials + Google, bảng `users`/`sessions`, viết lại `src/lib/auth.ts` + `api/_lib/security.ts`. App tạm thời vẫn dùng Supabase cho DB nghiệp vụ khác (auth tách biệt được vì code hiện đã module hóa qua `validateAuth`). _Kiểm tra:_ đăng ký/đăng nhập email + Google chạy được, JWT/session cũ Supabase không còn được chấp nhận.
 3. **GĐ C — Chuyển toàn bộ bảng nghiệp vụ sang Postgres tự host + viết route API thay client-query:** từng bảng một (bắt đầu từ `daily_usage`/`profiles` vì nhiều nơi phụ thuộc nhất), thêm route Express + `requireUser()`, sửa `src/lib/cloud.ts` v.v. gọi API thay vì Supabase client trực tiếp. _Kiểm tra:_ mỗi bảng xong chạy được toàn bộ luồng liên quan (vd xong `daily_usage` → test đếm lượt đúng).
 4. **GĐ D — Cloudflare R2 thay storage driver:** thêm driver `r2`, đổi `STORAGE_DRIVER=r2` trên `.env` VPS, test cache TTS + pronunciation qua R2.
