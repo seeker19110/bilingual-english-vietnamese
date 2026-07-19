@@ -3,6 +3,7 @@
 > Trạng thái: **Giai đoạn A ĐÃ XONG 100%** — PostgreSQL 16 tự host đã cài trên VPS, database `english_tutor` + user `tutor_app` đã tạo (14 bảng xác nhận đủ), `postgres/schema.sql` đã áp thành công (`npm run migrate:pg`), cron backup `pg_dump` hàng ngày đã thiết lập + test thành công.
 > **Giai đoạn B + C (lõi): ĐÃ CUTOVER THÀNH CÔNG trên production (2026-07-20).** Auth tự viết (Bearer token, không dùng `@auth/express`) đã thay Supabase Auth hoàn toàn — đăng ký, đăng nhập email, đăng nhập Google, đăng xuất đều đã smoke test qua trên `en-vi.donghanhcungban.com`. 2 lỗi phát hiện lúc smoke test đã fix (PR #270): màn hình tối khi đăng xuất (thiếu `refresh()` sau `logout()`), CSP chặn script Google Identity Services. Google OAuth Client ID ban đầu gõ nhầm domain (`en-vn` thay vì `en-vi`) — đã tự sửa. `profiles`/`daily_usage`/`learning_progress` đã chuyển sang Postgres tự host, xác nhận hoạt động đúng (học từ vựng + F5 giữ tiến độ).
 > Quyết định 2026-07-19: app đang thử nghiệm, **bỏ qua migrate dữ liệu người dùng cũ** — Postgres mới bắt đầu từ schema rỗng. Điều này bỏ hẳn phần script di trú dữ liệu, giảm rủi ro lớn nhất của việc đổi hạ tầng.
+> **🎉 GIAI ĐOẠN A→D ĐÃ HOÀN TẤT & XÁC NHẬN HOẠT ĐỘNG TRÊN PRODUCTION (2026-07-20).** Auth, DB lõi (profiles/daily_usage/learning_progress) và Storage (Cloudflare R2) đã rời khỏi Supabase thành công, qua smoke test thật. Việc còn lại xem mục 8 ("CÒN LẠI ngoài phạm vi lõi") — lịch sử chat/viết/nói, bảng xếp hạng, thử thách, feedback AI vẫn đang dùng Supabase, chưa migrate.
 
 ## 0. Phạm vi & công nghệ thay thế đã chốt
 
@@ -159,7 +160,7 @@ Sau mục 8, phần LÕI (đăng nhập + đếm lượt dùng AI + tiến độ
 
 > **ĐÃ CUTOVER trên production 2026-07-20** — xác nhận qua smoke test thật: đăng ký, đăng nhập email, đăng nhập Google, đăng xuất, học từ vựng + F5 giữ tiến độ. 2 lỗi phát hiện lúc smoke test đã fix (PR #270): màn hình tối khi đăng xuất, CSP chặn Google Identity Services. Google OAuth Client ID gõ nhầm domain lúc đầu (`en-vn` → `en-vi`) — đã tự sửa trên Google Cloud Console. Lỗi Chat 502 phát hiện lúc test là do hết quota/billing API AI (không liên quan migration) — người dùng chủ động gác lại, không chặn cutover.
 
-## 10. Giai đoạn D — Cloudflare R2 (code đã xong, chưa deploy)
+## 10. Giai đoạn D — Cloudflare R2 (ĐÃ DEPLOY + XÁC NHẬN hoạt động trên production 2026-07-20)
 
 Đã thêm driver `r2` vào `api/_lib/fileStorage.ts` (`STORAGE_DRIVER=r2`), dùng `@aws-sdk/client-s3` (R2 tương thích S3 API).
 
@@ -170,6 +171,8 @@ Sau mục 8, phần LÕI (đăng nhập + đếm lượt dùng AI + tiến độ
 - Test: `api/_lib/fileStorage.test.ts` (3 test — thiếu biến môi trường bắt buộc, upload đúng key + URL không lỗi dấu `/`).
 - **Kiểm tra:** build ✅ · typecheck ✅ · lint (0 cảnh báo) ✅ · test 574/574 ✅.
 - **CHƯA làm:** cơ chế LRU dọn cache khi gần ngưỡng 10GB (đã có cột `last_accessed_at` sẵn trong `postgres/schema.sql` từ trước, chưa viết cron dùng tới) — không bắt buộc ngay, làm khi thật sự cần theo dõi dung lượng.
+
+**Sự cố phụ phát hiện lúc smoke test D (PR #272, đã fix):** Google TTS đôi khi lỗi 403 "billing chưa bật" dù bể còn key khác dùng được — nguyên nhân là `generateAudioFromGoogle()` trước đây CHỈ chuyển key khi gặp 429 (hết quota), không chuyển khi gặp 403 (billing). Đã sửa `api/_lib/googleTts.ts`: coi 403 billing cũng là lỗi chuyển key, thêm bể "khỏe mạnh" probe định kỳ (15 phút) tự loại tạm key hỏng khỏi vòng xoay chính. Xác nhận qua log production: `[googleTts] Kiểm tra bể key: 1/3 còn dùng được` — tra từ mới nghe được audio, xác nhận cả TTS lẫn upload R2 hoạt động thông suốt.
 
 ### Việc tay cần làm trên VPS để bật Giai đoạn D
 
