@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
     'SUPABASE_URL',
     'SUPABASE_SERVICE_ROLE_KEY',
     'GOOGLE_TTS_API_KEY',
+    'GOOGLE_TTS_API_KEYS',
     'TTS_ENCRYPTION_MASTER_KEY',
     'ANTHROPIC_API_KEY',
     'OPENAI_API_KEY',

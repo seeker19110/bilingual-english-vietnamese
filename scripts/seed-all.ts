@@ -36,6 +36,7 @@ import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
 import {
   generateAudioFromGoogle,
+  hasGoogleTtsKey,
   VOICE_IDS,
   VOICE_VERSION,
   type Lang,
@@ -879,14 +880,15 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
 
 // ── MAIN ─────────────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
-  const missing = [
-    'SUPABASE_URL',
-    'SUPABASE_SERVICE_ROLE_KEY',
-    'GOOGLE_TTS_API_KEY',
-    'TTS_ENCRYPTION_MASTER_KEY',
-  ].filter((k) => !process.env[k])
+  const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'TTS_ENCRYPTION_MASTER_KEY'].filter(
+    (k) => !process.env[k],
+  )
   if (missing.length > 0) {
     console.error(`❌ Thiếu biến môi trường: ${missing.join(', ')}`)
+    process.exit(1)
+  }
+  if (!hasGoogleTtsKey()) {
+    console.error('❌ Thiếu biến môi trường: GOOGLE_TTS_API_KEY hoặc GOOGLE_TTS_API_KEYS')
     process.exit(1)
   }
 

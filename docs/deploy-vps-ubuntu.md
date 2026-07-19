@@ -160,6 +160,8 @@ SUPABASE_DB_URL=postgresql://postgres:mat-khau-that@db.xxxx.supabase.co:5432/pos
 # ── AI + TTS ──
 ANTHROPIC_API_KEY=sk-ant-...
 GOOGLE_TTS_API_KEY=AIza...
+# (Tùy chọn) nhiều key TTS xoay vòng để tránh hết quota — xem .env.example
+# GOOGLE_TTS_API_KEYS=AIza...key1,AIza...key2
 
 # ── Mã hóa audio cache (bắt buộc — 32 byte base64) ──
 # Tạo key: node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
