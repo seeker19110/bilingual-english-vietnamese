@@ -1,7 +1,7 @@
 # Kế hoạch + đặc tả: Rời khỏi Supabase (Auth + DB + Storage)
 
 > Trạng thái: **Giai đoạn A ĐÃ XONG 100%** — PostgreSQL 16 tự host đã cài trên VPS, database `english_tutor` + user `tutor_app` đã tạo (14 bảng xác nhận đủ), `postgres/schema.sql` đã áp thành công (`npm run migrate:pg`), cron backup `pg_dump` hàng ngày đã thiết lập + test thành công.
-> **Giai đoạn B: CODE ĐÃ XONG, CHƯA DEPLOY (2026-07-20).** Quyết định kiến trúc (research-first, xem mục 3.2 sửa lại bên dưới): **KHÔNG dùng `@auth/express`** — tự viết auth giữ nguyên mô hình Bearer token (khớp đúng SPA hiện có, miễn nhiễm CSRF theo thiết kế, tránh phải sửa lại toàn bộ lớp gọi API sang cookie). Người dùng xác nhận **chấp nhận reset toàn bộ tài khoản hiện có** (app thử nghiệm) — không cần cầu nối dữ liệu Supabase cũ. Danh sách file đã viết ở mục 6 bên dưới. **CHƯA cutover production** — VPS vẫn chạy Supabase Auth y nguyên cho tới khi đủ phần GĐ C (mục `profiles`) để deploy đồng bộ, tránh vỡ tính năng khác.
+> **Giai đoạn B + C (lõi): ĐÃ CUTOVER THÀNH CÔNG trên production (2026-07-20).** Auth tự viết (Bearer token, không dùng `@auth/express`) đã thay Supabase Auth hoàn toàn — đăng ký, đăng nhập email, đăng nhập Google, đăng xuất đều đã smoke test qua trên `en-vi.donghanhcungban.com`. 2 lỗi phát hiện lúc smoke test đã fix (PR #270): màn hình tối khi đăng xuất (thiếu `refresh()` sau `logout()`), CSP chặn script Google Identity Services. Google OAuth Client ID ban đầu gõ nhầm domain (`en-vn` thay vì `en-vi`) — đã tự sửa. `profiles`/`daily_usage`/`learning_progress` đã chuyển sang Postgres tự host, xác nhận hoạt động đúng (học từ vựng + F5 giữ tiến độ).
 > Quyết định 2026-07-19: app đang thử nghiệm, **bỏ qua migrate dữ liệu người dùng cũ** — Postgres mới bắt đầu từ schema rỗng. Điều này bỏ hẳn phần script di trú dữ liệu, giảm rủi ro lớn nhất của việc đổi hạ tầng.
 
 ## 0. Phạm vi & công nghệ thay thế đã chốt
@@ -155,4 +155,27 @@ Nguyên tắc thay RLS: **mọi handler API tự kiểm `user_id` khớp với s
 
 ## 9. Trạng thái tổng thể trước khi cutover thật (deploy `.env` production)
 
-Sau mục 8, phần LÕI (đăng nhập + đếm lượt dùng AI + tiến độ học từ vựng) đã an toàn để cutover — đây là 3 tính năng quan trọng nhất. Phần CÒN LẠI ở mục 8 (lịch sử chat/viết/nói, bảng xếp hạng, thử thách, feedback AI) sẽ **mất đồng bộ cloud tạm thời** sau cutover cho tới khi làm nốt — dữ liệu vẫn còn ở localStorage từng máy, không mất hẳn, chỉ không đồng bộ đa thiết bị. Cân nhắc: cutover ngay (chấp nhận gián đoạn tạm các tính năng phụ) hay làm nốt toàn bộ mục 8 "CÒN LẠI" trước khi cutover.
+Sau mục 8, phần LÕI (đăng nhập + đếm lượt dùng AI + tiến độ học từ vựng) đã an toàn để cutover — đây là 3 tính năng quan trọng nhất. Phần CÒN LẠI ở mục 8 (lịch sử chat/viết/nói, bảng xếp hạng, thử thách, feedback AI) sẽ **mất đồng bộ cloud tạm thời** sau cutover cho tới khi làm nốt — dữ liệu vẫn còn ở localStorage từng máy, không mất hẳn, chỉ không đồng bộ đa thiết bị.
+
+> **ĐÃ CUTOVER trên production 2026-07-20** — xác nhận qua smoke test thật: đăng ký, đăng nhập email, đăng nhập Google, đăng xuất, học từ vựng + F5 giữ tiến độ. 2 lỗi phát hiện lúc smoke test đã fix (PR #270): màn hình tối khi đăng xuất, CSP chặn Google Identity Services. Google OAuth Client ID gõ nhầm domain lúc đầu (`en-vn` → `en-vi`) — đã tự sửa trên Google Cloud Console. Lỗi Chat 502 phát hiện lúc test là do hết quota/billing API AI (không liên quan migration) — người dùng chủ động gác lại, không chặn cutover.
+
+## 10. Giai đoạn D — Cloudflare R2 (code đã xong, chưa deploy)
+
+Đã thêm driver `r2` vào `api/_lib/fileStorage.ts` (`STORAGE_DRIVER=r2`), dùng `@aws-sdk/client-s3` (R2 tương thích S3 API).
+
+**Sửa 1 điểm so với đặc tả gốc (mục 3.3):** đọc kỹ `api/tts.ts`/`api/pronunciation.ts` mới phát hiện `audio_url` trả thẳng cho client và **trình duyệt fetch trực tiếp, không qua xác thực** — bảo mật thật nằm ở khóa giải mã AES-256-GCM (chỉ trả sau khi `validateAuth`), không nằm ở việc chặn tải file thô (file `pronunciations` còn không hề mã hóa, vốn thiết kế public-read từ đầu). Vì vậy **bucket R2 PHẢI để public-read** (bật "Public access" trên Cloudflare Dashboard) — khác với đặc tả gốc ghi "private" (sai, đã sửa).
+
+- Key trong bucket = `{bucket cũ}/{fileName}` (vd `tts-cache/en-US/female/<hash>.mp3`) — dùng 1 bucket Cloudflare duy nhất, phân vùng bằng tiền tố, không cần tạo nhiều bucket.
+- Biến môi trường mới: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` — xem `.env.example`.
+- Test: `api/_lib/fileStorage.test.ts` (3 test — thiếu biến môi trường bắt buộc, upload đúng key + URL không lỗi dấu `/`).
+- **Kiểm tra:** build ✅ · typecheck ✅ · lint (0 cảnh báo) ✅ · test 574/574 ✅.
+- **CHƯA làm:** cơ chế LRU dọn cache khi gần ngưỡng 10GB (đã có cột `last_accessed_at` sẵn trong `postgres/schema.sql` từ trước, chưa viết cron dùng tới) — không bắt buộc ngay, làm khi thật sự cần theo dõi dung lượng.
+
+### Việc tay cần làm trên VPS để bật Giai đoạn D
+
+1. Tạo tài khoản Cloudflare (email riêng, không gắn GitHub/Google cá nhân — đã bàn ở phần trước).
+2. Cloudflare Dashboard → R2 → tạo bucket (vd `english-tutor-audio`) → bật **Public access** (nhận domain dạng `pub-xxxxxxxx.r2.dev`, hoặc gắn domain riêng).
+3. R2 → Manage R2 API Tokens → tạo token có quyền Object Read & Write cho đúng bucket → lấy `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`.
+4. Điền 5 biến vào `.env` VPS (mẫu trong `.env.example`), đổi `STORAGE_DRIVER=local` → `STORAGE_DRIVER=r2`.
+5. `git pull && npm ci && npm run build && pm2 restart english-tutor`.
+6. Smoke test: mở 1 trang có audio (vd Từ điển tra 1 từ, hoặc trang Luyện nói), xác nhận nghe được — kiểm tra Cloudflare Dashboard → R2 → bucket thấy file mới xuất hiện.
