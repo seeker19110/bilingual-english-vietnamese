@@ -1,4 +1,4 @@
-// challengeCloud.ts — Đồng bộ entries thử thách "Challenge 1 phút" (chu kỳ tuần) lên Supabase.
+// challengeCloud.ts — Đồng bộ entries thử thách "Challenge 1 phút" (chu kỳ tuần) lên server.
 //
 // Cùng triết lý với cloud.ts / progressSync.ts: localStorage/IndexedDB là nguồn
 // hiển thị TỨC THÌ (offline-first); mỗi lần nộp challenge xong (đã có transcript +
@@ -6,13 +6,13 @@
 // trang /challenge ta KÉO toàn bộ entries về và HỢP NHẤT với bản local (đổi máy không
 // mất tiến độ thử thách). Video KHÔNG bao giờ upload — chỉ text lên DB.
 //
-// Bảng `challenge_entries` (migration 0010, RLS owner-only): mỗi (user_id, day) 1 dòng,
-// nộp lại trong ngày = upsert ghi đè. Xem supabase/schema.sql.
+// Giai đoạn C (rời Supabase): đọc/ghi qua /api/challenge (Postgres tự host), server tự
+// kiểm user từ Bearer token — thay client upsert Supabase dựa vào RLS trước đây.
 //
 // LƯU Ý: file này KHÔNG import từ ./challenge (tránh phụ thuộc chéo) — kiểu input dưới
 // đây khớp cấu trúc (structural typing) với ChallengeEntryLocal của lib/challenge.ts.
 
-import { supabase } from './supabase'
+import { getAuthHeader, getStoredToken } from './authHeader'
 
 // ── Kiểu dữ liệu ──────────────────────────────────────────────────────────────
 
@@ -20,7 +20,7 @@ import { supabase } from './supabase'
 export interface CloudChallengeEntry {
   id?: string
   user_id: string
-  day: string // 'YYYY-MM-DD' (cột date trả về dạng chuỗi)
+  day: string // 'YYYY-MM-DD' (server trả day::text)
   challenge_round: number
   challenge_day: number
   topic_day: number
@@ -47,19 +47,7 @@ export interface ChallengeEntryLike {
   createdAt?: string // chỉ có ở bản kéo từ cloud — dùng khi so "mới hơn" lúc merge
 }
 
-// ── Chuyển đổi feedback: chuỗi JSON (local) ⇄ jsonb (DB) ─────────────────────
-// Local giữ feedback dạng CHUỖI JSON; cột DB là jsonb. Khi đẩy: parse thành object
-// thật để jsonb truy vấn được; chuỗi không phải JSON hợp lệ thì gửi nguyên chuỗi
-// (jsonb vẫn chứa được string). Khi kéo: object → stringify lại thành chuỗi.
-function feedbackToJson(fb: string | null): unknown {
-  if (fb === null || fb === '') return null
-  try {
-    return JSON.parse(fb) as unknown
-  } catch {
-    return fb
-  }
-}
-
+// Khi kéo về: jsonb object → stringify lại thành chuỗi (local giữ feedback dạng chuỗi JSON).
 function feedbackToString(fb: unknown): string | null {
   if (fb === null || fb === undefined) return null
   if (typeof fb === 'string') return fb
@@ -67,21 +55,6 @@ function feedbackToString(fb: unknown): string | null {
     return JSON.stringify(fb)
   } catch {
     return null
-  }
-}
-
-// ── Chuyển đổi giữa hàng DB (snake_case) và kiểu app (camelCase) ─────────────
-function entryToRow(userId: string, e: ChallengeEntryLike) {
-  return {
-    user_id: userId,
-    day: e.day,
-    challenge_round: e.challengeRound ?? e.round ?? 1,
-    challenge_day: e.challengeDay,
-    topic_day: e.topicDay,
-    transcript: e.transcript,
-    feedback: feedbackToJson(e.feedback),
-    duration_sec: e.durationSec,
-    word_count: e.wordCount,
   }
 }
 
@@ -100,31 +73,30 @@ export function cloudChallengeToLocal(r: CloudChallengeEntry): ChallengeEntryLik
   }
 }
 
-// Lấy id user đang đăng nhập (null nếu chưa đăng nhập / lỗi) — getSession đọc
-// từ bộ nhớ phiên, không tốn request mạng.
-async function currentUserId(): Promise<string | null> {
-  try {
-    const { data } = await supabase.auth.getSession()
-    return data.session?.user.id ?? null
-  } catch {
-    return null
-  }
-}
-
 // ── PUSH: upsert 1 entry sau khi có transcript + feedback ─────────────────────
 // Lỗi mạng / chưa đăng nhập → bỏ qua êm (console.warn) — bản local vẫn là nguồn
 // hiển thị tức thì, lần nộp sau (hoặc lần merge sau) sẽ đẩy bù.
 export async function upsertChallengeEntryCloud(entry: ChallengeEntryLike): Promise<void> {
   try {
-    const userId = await currentUserId()
-    if (!userId) {
+    if (!getStoredToken()) {
       console.warn('[challengeCloud] chưa đăng nhập — bỏ qua đồng bộ challenge')
       return
     }
-    const { error } = await supabase
-      .from('challenge_entries')
-      .upsert(entryToRow(userId, entry), { onConflict: 'user_id,day' })
-    if (error) console.warn('[challengeCloud] đồng bộ challenge lỗi:', error.message)
+    const resp = await fetch('/api/challenge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+      body: JSON.stringify({
+        day: entry.day,
+        challengeRound: entry.challengeRound ?? entry.round ?? 1,
+        challengeDay: entry.challengeDay,
+        topicDay: entry.topicDay,
+        transcript: entry.transcript,
+        feedback: entry.feedback,
+        durationSec: entry.durationSec,
+        wordCount: entry.wordCount,
+      }),
+    })
+    if (!resp.ok) console.warn('[challengeCloud] đồng bộ challenge lỗi: HTTP', resp.status)
   } catch (e) {
     console.warn('[challengeCloud] đồng bộ challenge lỗi:', e)
   }
@@ -134,18 +106,14 @@ export async function upsertChallengeEntryCloud(entry: ChallengeEntryLike): Prom
 // Trả null khi lỗi mạng / chưa đăng nhập (caller giữ nguyên bản local).
 export async function fetchChallengeEntriesCloud(): Promise<CloudChallengeEntry[] | null> {
   try {
-    const userId = await currentUserId()
-    if (!userId) return null
-    const { data, error } = await supabase
-      .from('challenge_entries')
-      .select('*')
-      .eq('user_id', userId)
-      .order('day', { ascending: true })
-    if (error) {
-      console.warn('[challengeCloud] kéo challenge lỗi:', error.message)
+    if (!getStoredToken()) return null
+    const resp = await fetch('/api/challenge', { headers: getAuthHeader() })
+    if (!resp.ok) {
+      console.warn('[challengeCloud] kéo challenge lỗi: HTTP', resp.status)
       return null
     }
-    return (data ?? []) as CloudChallengeEntry[]
+    const data = (await resp.json()) as { entries?: CloudChallengeEntry[] }
+    return Array.isArray(data.entries) ? data.entries : []
   } catch (e) {
     console.warn('[challengeCloud] kéo challenge lỗi:', e)
     return null

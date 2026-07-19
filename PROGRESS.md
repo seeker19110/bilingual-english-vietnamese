@@ -55,6 +55,19 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **Rời Supabase (2026-07-19→20, xem `docs/migration-thoat-ly-supabase.md`)**: GĐ A (Postgres 16
+  tự host trên VPS) + GĐ B (auth tự viết Bearer token thay Supabase Auth) + GĐ C lõi
+  (profiles/daily_usage/learning_progress qua `/api/profile`/`/api/progress`) + GĐ D (Cloudflare
+  R2 thay storage) **ĐÃ CUTOVER + XÁC NHẬN trên production**. **GĐ C phần còn lại ĐÃ CODE XONG
+  (2026-07-19, 2 nhánh):** (1) PR #274 — `tts_cache`/`pronunciations`/`push_subscriptions` sang
+  `pgPool`; (2) nhánh `claude/dong-bo-tiep-tuc-rr5ghs` (đã merge nhánh #274 vào cho đồng bộ) —
+  route mới `/api/history` (lịch sử chat/viết/nói + learn_count, thay `cloud.ts` query Supabase),
+  `/api/challenge` (thay `challengeCloud.ts`), `/api/tutor-feedback` (thay `tutorFeedback.ts`),
+  `api/leaderboard.ts` sang `pgPool`, XÓA `src/lib/supabase.ts` (client hết sạch Supabase),
+  thêm 6 route mới vào dev proxy `vite.config.ts`. **Còn GĐ E (dọn dẹp, PR sau):** gỡ
+  `@supabase/supabase-js` + `supabaseAdmin.ts` + driver `supabase` của `fileStorage.ts` + biến
+  `SUPABASE_*` + thư mục `supabase/`, cập nhật `CLAUDE.md` mục 6 + `docs/deploy-vps-ubuntu.md`.
+
 - **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT + người dùng ĐÃ CHỐT cả 4
   quyết định (2026-07-15: theo thứ tự ưu tiên · LÀM Azure · LÀM giải đấu tuần M5 · THAY Challenge
   bằng giải đấu tuần M5b) → theo bảng ưu tiên 17 PR mà làm:

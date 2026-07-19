@@ -2,13 +2,14 @@
 // trong docs/research/dac-ta-nang-cap-su-pham-2026-07-15.md).
 //
 // Người dùng bấm 👎 cạnh khối "✅ Nhận xét" (Chat/Speaking) khi thấy AI sửa SAI hoặc
-// BỎ SÓT lỗi → ghi 1 dòng vào bảng `tutor_feedback` (migration 0014, RLS owner-only).
+// BỎ SÓT lỗi → ghi 1 dòng vào bảng `tutor_feedback` qua /api/tutor-feedback (Giai đoạn C —
+// server tự kiểm user từ Bearer token, thay client insert Supabase dựa vào RLS trước đây).
 // CHỈ ghi khi người dùng CHỦ ĐỘNG bấm — không tự động thu thập gì khác. Định kỳ (thủ
 // công, đọc SQL trực tiếp) dùng dữ liệu này bổ sung ca sai vào golden set eval (⑤ T1).
 //
 // "Bắn rồi quên" — không throw, giống challengeCloud.ts/progressSync.ts.
 
-import { supabase } from './supabase'
+import { getAuthHeader, getStoredToken } from './authHeader'
 
 export type TutorFeedbackSource = 'chat' | 'speaking'
 
@@ -19,11 +20,15 @@ export async function reportTutorFeedback(
   aiFeedback: string,
 ): Promise<void> {
   if (!userId || !userInput.trim() || !aiFeedback.trim()) return
-  const { error } = await supabase.from('tutor_feedback').insert({
-    user_id: userId,
-    source,
-    user_input: userInput,
-    ai_feedback: aiFeedback,
-  })
-  if (error) console.warn('[tutorFeedback] lưu lỗi:', error.message)
+  if (!getStoredToken()) return
+  try {
+    const resp = await fetch('/api/tutor-feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+      body: JSON.stringify({ source, userInput, aiFeedback }),
+    })
+    if (!resp.ok) console.warn('[tutorFeedback] lưu lỗi: HTTP', resp.status)
+  } catch (e) {
+    console.warn('[tutorFeedback] lưu lỗi:', e)
+  }
 }

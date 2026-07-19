@@ -14,7 +14,7 @@
 // api/_lib/leaderboard.ts. Client KHÔNG gửi điểm lên.
 
 import { z } from 'zod'
-import { getSupabaseAdmin } from './_lib/supabaseAdmin'
+import { getPgPool } from './_lib/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -59,14 +59,10 @@ async function computeRankedEntries(weekStart: string, weekEnd: string): Promise
     return cache.entries
   }
 
-  const supabase = getSupabaseAdmin()
-  const { data: profiles, error: profilesErr } = await supabase
-    .from('profiles')
-    .select('id, nickname, league_opt_in')
-    .eq('league_opt_in', true)
-  if (profilesErr) throw new Error(profilesErr.message)
-
-  const opted = (profiles ?? []) as ProfileRow[]
+  const pool = getPgPool()
+  const { rows: opted } = await pool.query<ProfileRow>(
+    `select id, nickname, league_opt_in from public.profiles where league_opt_in = true`,
+  )
   if (opted.length === 0) {
     const entries = rankEntries([])
     cache = { weekStart, computedAt: Date.now(), entries }
@@ -74,35 +70,36 @@ async function computeRankedEntries(weekStart: string, weekEnd: string): Promise
   }
   const optedIds = opted.map((p) => p.id)
 
-  const [{ data: usageRows, error: usageErr }, { data: challengeRows, error: challengeErr }] =
-    await Promise.all([
-      supabase
-        .from('daily_usage')
-        .select('user_id, learn_count, chat_count, writing_count, speaking_count')
-        .in('user_id', optedIds)
-        .gte('day', weekStart)
-        .lte('day', weekEnd),
-      supabase
-        .from('challenge_entries')
-        .select('user_id')
-        .in('user_id', optedIds)
-        .gte('day', weekStart)
-        .lte('day', weekEnd),
-    ])
-  if (usageErr) throw new Error(usageErr.message)
-  // challenge_entries có thể chưa tồn tại (migration 0010 chưa chạy) — best-effort, không vỡ
-  // bảng xếp hạng nếu thiếu, chỉ thiếu điểm challenge.
-  if (challengeErr)
-    console.warn('[leaderboard] không đọc được challenge_entries:', challengeErr.message)
+  const { rows: usageRows } = await pool.query<UsageRow>(
+    `select user_id, learn_count, chat_count, writing_count, speaking_count
+       from public.daily_usage
+      where user_id = any($1) and day >= $2 and day <= $3`,
+    [optedIds, weekStart, weekEnd],
+  )
+  // Điểm challenge best-effort — lỗi đọc bảng không làm vỡ bảng xếp hạng, chỉ thiếu điểm.
+  let challengeRows: ChallengeRow[] = []
+  try {
+    const res = await pool.query<ChallengeRow>(
+      `select user_id from public.challenge_entries
+        where user_id = any($1) and day >= $2::date and day <= $3::date`,
+      [optedIds, weekStart, weekEnd],
+    )
+    challengeRows = res.rows
+  } catch (err) {
+    console.warn(
+      '[leaderboard] không đọc được challenge_entries:',
+      err instanceof Error ? err.message : err,
+    )
+  }
 
   const usageByUser = new Map<string, WeeklyUsageRow[]>()
-  for (const r of (usageRows ?? []) as UsageRow[]) {
+  for (const r of usageRows) {
     const list = usageByUser.get(r.user_id) ?? []
     list.push(r)
     usageByUser.set(r.user_id, list)
   }
   const challengeCountByUser = new Map<string, number>()
-  for (const r of (challengeRows ?? []) as ChallengeRow[]) {
+  for (const r of challengeRows) {
     challengeCountByUser.set(r.user_id, (challengeCountByUser.get(r.user_id) ?? 0) + 1)
   }
 
@@ -149,12 +146,16 @@ export default async function handler(req: Request): Promise<Response> {
     const mine = ranked.find((e) => e.userId === auth.userId) ?? null
 
     // Trạng thái opt-in/nickname của MÌNH luôn cần chính xác (kể cả chưa vào top) — đọc riêng.
-    const supabase = getSupabaseAdmin()
-    const { data: myProfile } = await supabase
-      .from('profiles')
-      .select('nickname, league_opt_in')
-      .eq('id', auth.userId)
-      .maybeSingle()
+    let myProfile: { nickname: string | null; league_opt_in: boolean } | null = null
+    try {
+      const { rows } = await getPgPool().query<{
+        nickname: string | null
+        league_opt_in: boolean
+      }>(`select nickname, league_opt_in from public.profiles where id = $1`, [auth.userId])
+      myProfile = rows[0] ?? null
+    } catch (err) {
+      console.warn('[leaderboard] không đọc được profile:', err)
+    }
 
     return jsonResponse(
       {
@@ -184,27 +185,28 @@ export default async function handler(req: Request): Promise<Response> {
     if (!result.ok)
       return jsonResponse({ error: result.error.message }, result.error.status, allHeaders)
 
-    const supabase = getSupabaseAdmin()
+    const pool = getPgPool()
 
     if (result.data.action === 'set-nickname') {
       const validation = validateNickname(result.data.nickname)
       if (!validation.ok) return jsonResponse({ error: validation.reason }, 400, allHeaders)
 
-      const { error } = await supabase
-        .from('profiles')
-        .update({ nickname: validation.nickname, league_opt_in: true })
-        .eq('id', auth.userId)
-
-      if (error) {
-        // 23505 = unique_violation (Postgres) — trùng nickname với người khác.
-        if (error.code === '23505') {
+      try {
+        await pool.query(
+          `update public.profiles set nickname = $1, league_opt_in = true where id = $2`,
+          [validation.nickname, auth.userId],
+        )
+      } catch (err) {
+        // 23505 = unique_violation (Postgres) — trùng nickname với người khác
+        // (unique index case-insensitive profiles_nickname_unique_idx).
+        if ((err as { code?: string }).code === '23505') {
           return jsonResponse(
             { error: 'Biệt danh này đã có người dùng, chọn tên khác nhé' },
             409,
             allHeaders,
           )
         }
-        console.error('[leaderboard] lỗi lưu nickname:', error.message)
+        console.error('[leaderboard] lỗi lưu nickname:', err)
         return jsonResponse({ error: 'Không lưu được biệt danh' }, 500, allHeaders)
       }
       cache = null // bảng xếp hạng vừa đổi thành viên — bỏ cache cũ
@@ -212,12 +214,12 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     // action === 'opt-out'
-    const { error } = await supabase
-      .from('profiles')
-      .update({ league_opt_in: false })
-      .eq('id', auth.userId)
-    if (error) {
-      console.error('[leaderboard] lỗi opt-out:', error.message)
+    try {
+      await pool.query(`update public.profiles set league_opt_in = false where id = $1`, [
+        auth.userId,
+      ])
+    } catch (err) {
+      console.error('[leaderboard] lỗi opt-out:', err)
       return jsonResponse({ error: 'Không cập nhật được trạng thái' }, 500, allHeaders)
     }
     cache = null

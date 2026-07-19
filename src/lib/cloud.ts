@@ -1,17 +1,15 @@
-// cloud.ts — Đồng bộ dữ liệu người dùng lên Supabase (chat, viết, nói, lượt dùng).
+// cloud.ts — Đồng bộ dữ liệu người dùng lên server (chat, viết, nói, lượt dùng).
 //
 // Ý tưởng: localStorage vẫn là "bộ nhớ đệm" cho đọc nhanh + chạy offline.
-// Mỗi lần lưu, ta ĐẨY (push) bản ghi lên Supabase theo kiểu "bắn rồi quên"
-// (không chặn giao diện). Khi mở app/trang, ta KÉO (pull) dữ liệu từ Supabase
+// Mỗi lần lưu, ta ĐẨY (push) bản ghi lên server theo kiểu "bắn rồi quên"
+// (không chặn giao diện). Khi mở app/trang, ta KÉO (pull) dữ liệu từ server
 // về ghi đè vào localStorage để các máy/trình duyệt khác thấy cùng dữ liệu.
 //
-// Tất cả bảng đã bật RLS (xem supabase/schema.sql) nên client chỉ đọc/ghi được
-// dữ liệu của chính tài khoản đang đăng nhập — an toàn dù dùng anon key.
+// Giai đoạn C (rời Supabase): mọi đọc/ghi đi qua /api/history (Postgres tự host),
+// server tự kiểm user từ Bearer token — thay client query Supabase dựa vào RLS trước đây.
 
-import { supabase } from './supabase'
-import { getAuthHeader } from './authHeader'
-import type { ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Level } from '../types'
-import { vnDateStr } from './date'
+import { getAuthHeader, getStoredToken } from './authHeader'
+import type { ChatSession, WritingSubmission, SpeakingSession, DailyUsage } from '../types'
 
 // Khóa localStorage — PHẢI khớp với storage.ts để dùng chung bộ nhớ đệm
 const K = {
@@ -29,215 +27,108 @@ function setLocal<T>(key: string, val: T) {
   }
 }
 
-function todayStr() {
-  return vnDateStr()
+// Đẩy 1 bản ghi lên server kiểu "bắn rồi quên" — lỗi mạng / chưa đăng nhập chỉ warn,
+// KHÔNG làm vỡ giao diện (vẫn còn bản localStorage, lần lưu sau sẽ đẩy bù).
+function firePost(body: unknown, where: string) {
+  if (!getStoredToken()) return // chưa đăng nhập — không có gì để đồng bộ
+  void fetch('/api/history', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+    body: JSON.stringify(body),
+  })
+    .then((resp) => {
+      if (!resp.ok) console.warn(`[cloud] đồng bộ ${where} lỗi: HTTP`, resp.status)
+    })
+    .catch((err) => console.warn(`[cloud] đồng bộ ${where} lỗi:`, err))
 }
 
-// Ghi log lỗi đồng bộ nhẹ nhàng — KHÔNG làm vỡ giao diện (vẫn còn bản localStorage)
-function warn(where: string, error: { message: string } | null) {
-  if (error) console.warn(`[cloud] đồng bộ ${where} lỗi:`, error.message)
-}
-
-// ── Chuyển đổi giữa hàng DB (snake_case) và kiểu của app (camelCase) ──────────
-function isValidLevel(v: unknown): v is Level {
-  return v === 'beginner' || v === 'intermediate' || v === 'advanced'
-}
-
-function rowToChat(r: unknown): ChatSession {
-  if (!r || typeof r !== 'object') throw new Error('Invalid chat row')
-  const row = r as Record<string, unknown>
-  return {
-    id: typeof row.id === 'string' ? row.id : '',
-    userId: typeof row.user_id === 'string' ? row.user_id : '',
-    situation: typeof row.situation === 'string' ? row.situation : '',
-    level: isValidLevel(row.level) ? row.level : 'beginner',
-    messages: Array.isArray(row.messages) ? row.messages : [],
-    createdAt:
-      typeof row.created_at === 'number' || typeof row.created_at === 'string'
-        ? Number(row.created_at)
-        : Date.now(),
-  }
-}
-function chatToRow(s: ChatSession) {
-  return {
-    id: s.id,
-    user_id: s.userId,
-    situation: s.situation,
-    level: s.level,
-    messages: s.messages,
-    created_at: s.createdAt,
-  }
-}
-function rowToSpeaking(r: unknown): SpeakingSession {
-  if (!r || typeof r !== 'object') throw new Error('Invalid speaking row')
-  const row = r as Record<string, unknown>
-  return {
-    id: typeof row.id === 'string' ? row.id : '',
-    userId: typeof row.user_id === 'string' ? row.user_id : '',
-    situation: typeof row.situation === 'string' ? row.situation : '',
-    level: isValidLevel(row.level) ? row.level : 'beginner',
-    messages: Array.isArray(row.messages) ? row.messages : [],
-    createdAt:
-      typeof row.created_at === 'number' || typeof row.created_at === 'string'
-        ? Number(row.created_at)
-        : Date.now(),
-  }
-}
-function speakingToRow(s: SpeakingSession) {
-  return {
-    id: s.id,
-    user_id: s.userId,
-    situation: s.situation,
-    level: s.level,
-    messages: s.messages,
-    created_at: s.createdAt,
-  }
-}
-function rowToWriting(r: unknown): WritingSubmission {
-  if (!r || typeof r !== 'object') throw new Error('Invalid writing row')
-  const row = r as Record<string, unknown>
-  return {
-    id: typeof row.id === 'string' ? row.id : '',
-    userId: typeof row.user_id === 'string' ? row.user_id : '',
-    essayPrompt: typeof row.essay_prompt === 'string' ? row.essay_prompt : '',
-    essay: typeof row.essay === 'string' ? row.essay : '',
-    feedback: typeof row.feedback === 'string' ? row.feedback : '',
-    submittedAt:
-      typeof row.submitted_at === 'number' || typeof row.submitted_at === 'string'
-        ? Number(row.submitted_at)
-        : Date.now(),
-  }
-}
-function writingToRow(s: WritingSubmission) {
-  return {
-    id: s.id,
-    user_id: s.userId,
-    essay_prompt: s.essayPrompt,
-    essay: s.essay,
-    feedback: s.feedback,
-    submitted_at: s.submittedAt,
-  }
-}
-
-// ── PUSH: đẩy 1 bản ghi lên Supabase (bắn rồi quên) ──────────────────────────
+// ── PUSH: đẩy 1 bản ghi lên server ───────────────────────────────────────────
 export function pushChatSession(s: ChatSession) {
-  void supabase
-    .from('chat_sessions')
-    .upsert(chatToRow(s))
-    .then(({ error }) => warn('chat', error))
+  firePost(
+    {
+      action: 'chat',
+      session: {
+        id: s.id,
+        situation: s.situation,
+        level: s.level,
+        messages: s.messages,
+        createdAt: s.createdAt,
+      },
+    },
+    'chat',
+  )
 }
 export function pushSpeakingSession(s: SpeakingSession) {
-  void supabase
-    .from('speaking_sessions')
-    .upsert(speakingToRow(s))
-    .then(({ error }) => warn('speaking', error))
+  firePost(
+    {
+      action: 'speaking',
+      session: {
+        id: s.id,
+        situation: s.situation,
+        level: s.level,
+        messages: s.messages,
+        createdAt: s.createdAt,
+      },
+    },
+    'speaking',
+  )
 }
 export function pushWritingSub(s: WritingSubmission) {
-  void supabase
-    .from('writing_submissions')
-    .upsert(writingToRow(s))
-    .then(({ error }) => warn('writing', error))
+  firePost(
+    {
+      action: 'writing',
+      submission: {
+        id: s.id,
+        essayPrompt: s.essayPrompt,
+        essay: s.essay,
+        feedback: s.feedback,
+        submittedAt: s.submittedAt,
+      },
+    },
+    'writing',
+  )
 }
-// BẢO MẬT (bất biến): KHÔNG có hàm đẩy các cột đếm lượt (chat/writing/speaking/stt) từ
-// client. Các cột đó do SERVER đếm authoritative (api/_lib/usage.ts qua RPC consume_usage)
-// và client KHÔNG được phép ghi — quyền ghi đã bị thu hồi ở DB (supabase/migrations/
-// 0005_lockdown_cost_columns.sql). Nếu ghi từ client thì DB trả lỗi quyền. Client chỉ đẩy
-// learn_count (streak, không tốn API) qua pushLearnDay dưới đây.
+// BẢO MẬT (bất biến): KHÔNG có hàm đẩy các cột đếm lượt tốn API (chat/writing/speaking/
+// stt/pronounce) từ client. Các cột đó do SERVER đếm authoritative (api/_lib/usage.ts,
+// hàm SQL consume_usage) và /api/history CHỈ nhận learn_count (action 'learn-day').
 
-// Đẩy RIÊNG cột learn_count (số từ học trong ngày) để ghi nhận streak — KHÔNG đụng
-// các cột chat/writing/speaking/stt (server là nguồn sự thật của các lượt đó, tránh
-// ghi đè làm sai giới hạn gói). Upsert chỉ kèm learn_count nên onConflict chỉ cập nhật cột này.
-// Nếu DB chưa có cột learn_count (chưa chạy migration) → lỗi được nuốt êm, streak vẫn chạy ở client.
-export function pushLearnDay(userId: string, day: string, learnCount: number) {
-  void supabase
-    .from('daily_usage')
-    .upsert({ user_id: userId, day, learn_count: learnCount }, { onConflict: 'user_id,day' })
-    .then(({ error }) => warn('learn day', error))
+// Đẩy RIÊNG cột learn_count (số từ học trong ngày) để ghi nhận streak — không tốn API AI
+// nên client được phép là nguồn của số này.
+export function pushLearnDay(_userId: string, day: string, learnCount: number) {
+  firePost({ action: 'learn-day', day, learnCount }, 'learn day')
 }
 
 // ── PULL: kéo toàn bộ dữ liệu của user về ghi vào localStorage ────────────────
 // Gọi khi đăng nhập / mở trang. Lỗi mạng sẽ bị nuốt (vẫn dùng được bản local cũ).
 export async function pullUserData(userId: string): Promise<void> {
-  const date = todayStr()
-  // Kéo 365 ngày gần nhất để getStreak() tính được chuỗi ngày liên tiếp tối đa 1 năm
-  // (đồng bộ đủ dữ liệu daily_usage từ Supabase về localStorage cho mọi máy).
-  const startDate = (() => {
-    const d = new Date()
-    d.setDate(d.getDate() - 365)
-    return d.toISOString().slice(0, 10)
-  })()
-  const results = await Promise.allSettled([
-    supabase
-      .from('chat_sessions')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false }),
-    supabase
-      .from('writing_submissions')
-      .select('*')
-      .eq('user_id', userId)
-      .order('submitted_at', { ascending: false }),
-    supabase
-      .from('speaking_sessions')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false }),
-    supabase
-      .from('daily_usage')
-      .select('*')
-      .eq('user_id', userId)
-      .gte('day', startDate)
-      .order('day', { ascending: false }),
-  ])
-
-  const [chatResult, writingResult, speakingResult, usageResult] = results
-
-  if (chatResult.status === 'fulfilled') {
-    const chat = chatResult.value
-    if (!chat.error && chat.data) setLocal(K.chat(userId), chat.data.map(rowToChat))
-    else if (chat.error) warn('pull chat', chat.error)
-  } else {
-    console.warn('[cloud] chat query rejected:', chatResult.reason)
+  if (!getStoredToken()) return
+  let data: {
+    chat?: ChatSession[]
+    writing?: WritingSubmission[]
+    speaking?: SpeakingSession[]
+    usage?: DailyUsage[]
+  }
+  try {
+    const resp = await fetch('/api/history', { headers: getAuthHeader() })
+    if (!resp.ok) {
+      console.warn('[cloud] kéo dữ liệu lỗi: HTTP', resp.status)
+      return
+    }
+    data = (await resp.json()) as typeof data
+  } catch (err) {
+    console.warn('[cloud] kéo dữ liệu lỗi:', err instanceof Error ? err.message : err)
+    return
   }
 
-  if (writingResult.status === 'fulfilled') {
-    const writing = writingResult.value
-    if (!writing.error && writing.data) setLocal(K.writing(userId), writing.data.map(rowToWriting))
-    else if (writing.error) warn('pull writing', writing.error)
-  } else {
-    console.warn('[cloud] writing query rejected:', writingResult.reason)
-  }
-
-  if (speakingResult.status === 'fulfilled') {
-    const speaking = speakingResult.value
-    if (!speaking.error && speaking.data)
-      setLocal(K.speaking(userId), speaking.data.map(rowToSpeaking))
-    else if (speaking.error) warn('pull speaking', speaking.error)
-  } else {
-    console.warn('[cloud] speaking query rejected:', speakingResult.reason)
-  }
-
-  if (usageResult.status === 'fulfilled') {
-    const usage = usageResult.value
-    if (!usage.error && Array.isArray(usage.data)) {
-      // Lưu từng ngày vào localStorage để getStreak() tính đúng streak nhiều ngày
-      for (const row of usage.data) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const u = row as any
-        const day: string = u.day ?? date
-        setLocal(K.usage(userId, day), {
-          date: day,
-          chatCount: u.chat_count ?? 0,
-          writingCount: u.writing_count ?? 0,
-          speakingCount: u.speaking_count ?? 0,
-          sttCount: u.stt_count ?? 0,
-          pronounceCount: u.pronounce_count ?? 0,
-          learnCount: u.learn_count ?? 0,
-        } satisfies DailyUsage)
-      }
-    } else if (usage.error) warn('pull usage', usage.error)
-  } else {
-    console.warn('[cloud] usage query rejected:', usageResult.reason)
+  if (Array.isArray(data.chat)) setLocal(K.chat(userId), data.chat)
+  if (Array.isArray(data.writing)) setLocal(K.writing(userId), data.writing)
+  if (Array.isArray(data.speaking)) setLocal(K.speaking(userId), data.speaking)
+  if (Array.isArray(data.usage)) {
+    // Lưu từng ngày vào localStorage để getStreak() tính đúng streak nhiều ngày
+    // (server trả tối đa 365 ngày gần nhất, đủ cho chuỗi 1 năm).
+    for (const u of data.usage) {
+      if (u && typeof u.date === 'string') setLocal(K.usage(userId, u.date), u)
+    }
   }
 }
 

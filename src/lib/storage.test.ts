@@ -1,8 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-
-// storage.ts kéo theo cloud→supabase (sẽ ném lỗi khi thiếu env) — getStreak chỉ đọc
-// localStorage nên chỉ cần stub supabase là đủ chạy offline.
-vi.mock('./supabase', () => ({ supabase: {} }))
+import { describe, it, expect, beforeEach } from 'vitest'
 
 import {
   getStreak,
