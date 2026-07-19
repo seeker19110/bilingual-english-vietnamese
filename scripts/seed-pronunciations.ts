@@ -91,7 +91,10 @@ async function processTask(
     const { word, voice } = task
     const supabase = getSupabaseAdmin()
     const audioBuffer = await generateAudioFromGoogle(word, voice)
-    const fileName = `${word}-${voice}.mp3`
+    // encodeURIComponent — GIỐNG HỆT api/pronunciation.ts (API thật) — để hỗ trợ từ
+    // có dấu (café, naïve...). Supabase Storage từ chối tên file chứa ký tự ngoài ASCII
+    // (báo "Invalid key"), encode thì luôn ra tên file hợp lệ mà vẫn map đúng 1-1 với từ gốc.
+    const fileName = `${encodeURIComponent(word)}-${voice}.mp3`
 
     // upsert: true — ghi đè nếu đã tồn tại, để script chạy lại an toàn (không lỗi
     // khi 1 từ đã được upload Storage nhưng chưa kịp lưu vào DB ở lần chạy trước).
