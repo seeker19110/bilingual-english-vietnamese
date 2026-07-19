@@ -50,7 +50,7 @@ const VOICE_MAP: Record<Lang, Record<VoiceId, { name: string; ssmlGender: 'FEMAL
 //      chỉ khi mọi key đều hết quota mới trả lỗi (client lúc đó mới fallback Web Speech).
 // GOOGLE_TTS_API_KEYS: nhiều key cách nhau dấu phẩy hoặc xuống dòng.
 // GOOGLE_TTS_API_KEY: 1 key (giữ tương thích ngược), tự gộp vào bể nếu chưa có.
-function getApiKeyPool(): string[] {
+function allConfiguredKeys(): string[] {
   const fromList = (process.env.GOOGLE_TTS_API_KEYS || '')
     .split(/[,\n]/)
     .map((k) => k.trim())
@@ -61,10 +61,27 @@ function getApiKeyPool(): string[] {
   return pool
 }
 
+// Bể key ĐANG DÙNG cho lần chạy hiện tại — mặc định = toàn bộ key cấu hình trong biến
+// môi trường. Script seed hàng loạt có thể THU HẸP bể này qua setActiveKeyPool() sau khi
+// probeApiKeys() xác định key nào còn dùng được, để không phí request vào key đã cạn quota.
+// api/tts.ts (chạy thật trên server) KHÔNG gọi setActiveKeyPool() nên luôn dùng toàn bộ key.
+let activePoolOverride: string[] | null = null
+
+function getApiKeyPool(): string[] {
+  return activePoolOverride ?? allConfiguredKeys()
+}
+
+// Giới hạn bể key đang xoay vòng (dùng ở script seed, sau khi probe). Truyền null để
+// quay lại đọc toàn bộ từ biến môi trường như mặc định.
+export function setActiveKeyPool(keys: string[] | null): void {
+  activePoolOverride = keys
+  nextKeyIndex = 0
+}
+
 // Có cấu hình ít nhất 1 key hay chưa — dùng ở scripts/vite.config.ts để kiểm tra
 // biến môi trường mà không cần biết chi tiết tên biến GOOGLE_TTS_API_KEY(S).
 export function hasGoogleTtsKey(): boolean {
-  return getApiKeyPool().length > 0
+  return allConfiguredKeys().length > 0
 }
 
 // Con trỏ round-robin — sống trong bộ nhớ tiến trình Node (server.ts chạy liên tục
@@ -120,6 +137,26 @@ async function callGoogleTts(
 
   // Google trả base64 → decode thành dữ liệu nhị phân để upload lên Supabase Storage.
   return base64ToBytes(data.audioContent).buffer as ArrayBuffer
+}
+
+// Thử 1 key bằng request TTS nhỏ nhất có thể (1 ký tự) — chỉ để biết key CÒN DÙNG ĐƯỢC
+// hay không (còn quota + hợp lệ), không cần audio trả về.
+async function probeKey(apiKey: string): Promise<boolean> {
+  try {
+    await callGoogleTts(apiKey, 'a', VOICE_MAP['en-US'][DEFAULT_VOICE], 'en-US')
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Thử TOÀN BỘ key đã cấu hình (song song), trả về key nào còn dùng được lúc này.
+// Dùng ở đầu các script seed hàng loạt: quota Google TTS có thể đã cạn từ lần chạy
+// trước trong ngày, probe trước giúp KHÔNG phí hàng loạt request 429 vào key đã cạn.
+export async function probeApiKeys(): Promise<{ working: string[]; total: string[] }> {
+  const total = allConfiguredKeys()
+  const results = await Promise.all(total.map((key) => probeKey(key)))
+  return { working: total.filter((_, i) => results[i]), total }
 }
 
 export async function generateAudioFromGoogle(

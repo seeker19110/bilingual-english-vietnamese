@@ -37,6 +37,8 @@ import cliProgress from 'cli-progress'
 import {
   generateAudioFromGoogle,
   hasGoogleTtsKey,
+  probeApiKeys,
+  setActiveKeyPool,
   VOICE_IDS,
   VOICE_VERSION,
   type Lang,
@@ -933,6 +935,24 @@ async function main(): Promise<void> {
     await verifyDb(allByCat)
     return
   }
+
+  // ── Probe key TTS: chỉ xoay vòng qua key CÒN DÙNG ĐƯỢC lúc này ─────────────
+  // Quota Google TTS có thể đã cạn từ lần seed trước trong ngày — probe trước (1 request
+  // nhỏ/key) để loại luôn key đã cạn, tránh phí hàng loạt request 429 vào key đó suốt lượt chạy.
+  console.log('🔑 Kiểm tra key TTS còn dùng được...')
+  const { working, total } = await probeApiKeys()
+  if (working.length === 0) {
+    console.error(
+      '❌ Không key GOOGLE_TTS nào dùng được lúc này (có thể tất cả đã hết quota) — thử lại sau.',
+    )
+    process.exit(1)
+  }
+  setActiveKeyPool(working)
+  console.log(
+    working.length === total.length
+      ? `   ✓ ${working.length}/${total.length} key dùng được — xoay vòng đủ cả bể.`
+      : `   ⚠️  ${working.length}/${total.length} key dùng được — ${total.length - working.length} key đã cạn quota, tạm loại khỏi vòng xoay lượt chạy này.`,
+  )
 
   // ── Chế độ seed tất cả không hỏi (CI/cron) ────────────────────────────────
   if (SEED_ALL_FLAG) {
