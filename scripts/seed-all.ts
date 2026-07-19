@@ -398,6 +398,18 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
   }
 }
 
+// In ra MẪU lỗi thật ngay khi gặp (chỉ lần đầu mỗi loại) — trước đây script chỉ đếm số
+// lỗi, không bao giờ lộ ra LÝ DO lỗi (kể cả file lỗi cuối cùng cũng chỉ lưu từ/câu, không
+// lưu message), nên không ai đoán được là hết quota (429), lỗi mạng hay lỗi Storage/DB.
+const seenErrorMessages = new Set<string>()
+function logSampleError(message: string): void {
+  const key = message.slice(0, 80)
+  if (seenErrorMessages.has(key)) return
+  seenErrorMessages.add(key)
+  if (seenErrorMessages.size > 8) return // đủ mẫu, tránh spam nếu có nhiều loại lỗi khác nhau
+  process.stdout.write(`\n🔎 Mẫu lỗi mới: ${message.slice(0, 200)}\n`)
+}
+
 // Trạng thái rate limit thích nghi — dùng chung trong 1 pass
 interface RateState {
   limit: number // ngưỡng req hiện tại
@@ -436,6 +448,7 @@ async function runBatch(
       counters.errors++
       newReqs++
       if (result.message.includes('429')) rate.has429 = true
+      logSampleError(result.message)
       failed.push({ task: tasks[idx]!, message: result.message }) // idx khớp tasks nên có
     }
   })
