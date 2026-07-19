@@ -13,8 +13,7 @@ export default defineConfig(({ mode }) => {
   // Environment Variables vào process.env). Lúc "npm run dev", .env KHÔNG tự nạp vào process.env
   // nên ta gán tay các biến server-only cần dùng.
   for (const key of [
-    'SUPABASE_URL',
-    'SUPABASE_SERVICE_ROLE_KEY',
+    'DATABASE_URL',
     'GOOGLE_TTS_API_KEY',
     'GOOGLE_TTS_API_KEYS',
     'TTS_ENCRYPTION_MASTER_KEY',

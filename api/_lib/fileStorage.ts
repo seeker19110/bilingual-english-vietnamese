@@ -1,8 +1,7 @@
 // api/_lib/fileStorage.ts
 // Lớp trừu tượng lưu file audio — tự chọn backend dựa vào biến môi trường:
-//   STORAGE_DRIVER=local   → lưu vào thư mục uploads/ trên VPS
+//   STORAGE_DRIVER=local (hoặc không set) → lưu vào thư mục uploads/ trên VPS
 //   STORAGE_DRIVER=r2      → Cloudflare R2 (Giai đoạn D — xem docs/migration-thoat-ly-supabase.md)
-//   STORAGE_DRIVER không set hoặc =supabase → dùng Supabase Storage (mặc định cũ)
 //
 // Giao diện dùng: saveAudio(bucket, fileName, data) → trả về URL công khai
 // Code gọi không cần biết đang lưu ở đâu.
@@ -14,7 +13,6 @@
 // còn không hề mã hóa — vốn thiết kế public-read từ đầu, xem comment bảng trong
 // postgres/schema.sql). Để bucket R2 private sẽ làm vỡ hoàn toàn việc phát audio.
 
-import { getSupabaseAdmin } from './supabaseAdmin'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
 // Chỉ import fs khi chạy trên Node.js (VPS) — không chạy được trên Vercel Edge.
@@ -29,10 +27,6 @@ async function getNodeModules() {
     pathModule = (await dynImport('path')) as typeof import('path')
   }
   return { fs: fsPromises, path: pathModule! }
-}
-
-function isLocalMode(): boolean {
-  return process.env.STORAGE_DRIVER === 'local'
 }
 
 function isR2Mode(): boolean {
@@ -58,13 +52,10 @@ export async function saveAudio(
   data: ArrayBuffer,
   baseUrl = '',
 ): Promise<string> {
-  if (isLocalMode()) {
-    return saveLocal(bucket, fileName, data, baseUrl)
-  }
   if (isR2Mode()) {
     return saveR2(bucket, fileName, data)
   }
-  return saveSupabase(bucket, fileName, data)
+  return saveLocal(bucket, fileName, data, baseUrl)
 }
 
 // ── Local storage ────────────────────────────────────────────────────────────
@@ -136,21 +127,4 @@ async function saveR2(bucket: string, fileName: string, data: ArrayBuffer): Prom
   )
 
   return `${publicBaseUrl.replace(/\/$/, '')}/${key}`
-}
-
-// ── Supabase Storage ─────────────────────────────────────────────────────────
-
-async function saveSupabase(bucket: string, fileName: string, data: ArrayBuffer): Promise<string> {
-  const supabase = getSupabaseAdmin()
-
-  const { error: uploadError } = await supabase.storage
-    .from(bucket)
-    .upload(fileName, data, { contentType: 'audio/mpeg', upsert: true })
-
-  if (uploadError) {
-    throw new Error(`Upload Supabase thất bại: ${uploadError.message}`)
-  }
-
-  const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(fileName)
-  return urlData.publicUrl
 }

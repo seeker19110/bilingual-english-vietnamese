@@ -8,7 +8,8 @@
 //   - Chạy script 1 lần → TOÀN BỘ câu được cache → mọi người dùng sau chỉ đọc file sẵn.
 //   - Script resume được: chạy lại sẽ bỏ qua câu đã có trong bảng tts_cache.
 //
-// Dữ liệu seed (giống api/tts.ts — mã hóa AES-256-GCM, lưu qua saveAudio theo STORAGE_DRIVER):
+// Dữ liệu seed (giống api/tts.ts — mã hóa AES-256-GCM, lưu Postgres tự host qua pgPool,
+// file qua saveAudio theo STORAGE_DRIVER):
 //   - Tiếng Anh (lang=en-US) và Tiếng Việt (lang=vi-VN)
 //   - CEFR + Cụm từ: chỉ 2 giọng female/male — đều phát qua getVoicePref (female2/male2
 //     chỉ dùng cho hội thoại Lessons). Câu Cụm từ seed theo thứ tự hiển thị (phổ biến nhất trước).
@@ -41,7 +42,7 @@ import {
 import { CEFR_LEVELS } from '../src/data/cefr.ts'
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
-import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
+import { getPgPool } from '../api/_lib/pgPool.ts'
 import { loadSubjectsInDisplayOrder, PREF_VOICE_IDS } from './_lib/patternOrder.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -55,7 +56,7 @@ const MAX_ROUNDS = 5 // số vòng retry tối đa
 const ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/prefetch-tts-errors.json')
 
 // URL gốc của server — chỉ cần khi STORAGE_DRIVER=local (lưu file lên VPS) để tạo link đầy đủ.
-// Khi dùng Supabase Storage (mặc định) thì biến này bị bỏ qua.
+// Khi dùng Cloudflare R2 (STORAGE_DRIVER=r2) thì biến này bị bỏ qua.
 const BASE_URL = process.env.BASE_URL || ''
 
 // --force (hoặc FORCE=1): tạo lại + GHI ĐÈ tất cả, kể cả câu đã có trong tts_cache.
@@ -136,18 +137,15 @@ async function processTask(
   const hash = hashText(text, lang, voice)
 
   try {
-    const supabase = getSupabaseAdmin()
+    const pool = getPgPool()
 
     // Kiểm tra cache trước để không tốn tiền TTS với câu đã có.
     // Bỏ qua bước này khi --force để tạo lại + ghi đè bản ghi cũ (vd. cache hỏng).
     if (!FORCE) {
-      const { data: cached } = await supabase
-        .from('tts_cache')
-        .select('audio_url')
-        .eq('hash', hash)
-        .maybeSingle()
-
-      if (cached) return { status: 'skip' }
+      const { rows } = await pool.query('select audio_url from public.tts_cache where hash = $1', [
+        hash,
+      ])
+      if (rows.length > 0) return { status: 'skip' }
     }
 
     // Gọi Google TTS → mp3 gốc
@@ -156,16 +154,17 @@ async function processTask(
     // Mã hóa AES-256-GCM TRƯỚC khi lưu (khoá suy từ hash) — giống api/tts.ts.
     const encrypted = await encryptAudio(audioBuffer, hash)
 
-    // Lưu file qua saveAudio → tôn trọng STORAGE_DRIVER (local VPS hoặc Supabase Storage).
+    // Lưu file qua saveAudio → tôn trọng STORAGE_DRIVER (local VPS hoặc Cloudflare R2).
     const fileName = `${lang}/${voice}/${hash}.mp3`
     const audioUrl = await saveAudio('tts-cache', fileName, encrypted, BASE_URL)
 
     // Lưu vào DB — upsert để idempotent nếu 2 process chạy song song
-    const { error: dbError } = await supabase
-      .from('tts_cache')
-      .upsert({ hash, lang, voice, audio_url: audioUrl }, { onConflict: 'hash' })
-
-    if (dbError) throw new Error(`Lưu DB lỗi: ${dbError.message}`)
+    await pool.query(
+      `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
+       values ($1, $2, $3, $4, now())
+       on conflict (hash) do update set audio_url = excluded.audio_url, last_accessed_at = now()`,
+      [hash, lang, voice, audioUrl],
+    )
 
     return { status: 'ok' }
   } catch (err) {
@@ -229,9 +228,7 @@ async function runPass(
 // ── MAIN ─────────────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
   // Kiểm tra biến môi trường — thêm TTS_ENCRYPTION_MASTER_KEY vì giờ có mã hóa.
-  const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'TTS_ENCRYPTION_MASTER_KEY'].filter(
-    (k) => !process.env[k],
-  )
+  const missing = ['DATABASE_URL', 'TTS_ENCRYPTION_MASTER_KEY'].filter((k) => !process.env[k])
   if (missing.length > 0) {
     console.error(`❌ Thiếu biến môi trường trong .env: ${missing.join(', ')}`)
     process.exit(1)

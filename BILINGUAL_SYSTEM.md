@@ -50,8 +50,9 @@ speakBilingual(
 )
 ```
 
-Gọi `/api/tts` (`api/tts.ts`, Google Cloud TTS). Audio cache theo hash trên bảng `tts_cache` +
-Supabase Storage, **mã hoá AES-256-GCM** — chỉ người đã đăng nhập nhận được khoá giải mã.
+Gọi `/api/tts` (`api/tts.ts`, Google Cloud TTS). Audio cache theo hash trên bảng `tts_cache`
+(Postgres tự host) + file lưu local VPS hoặc Cloudflare R2, **mã hoá AES-256-GCM** — chỉ
+người đã đăng nhập nhận được khoá giải mã.
 
 **STT** — `src/lib/stt.ts` (Web Speech API, fallback) + `src/lib/sttServer.ts` (ghi âm
 `MediaRecorder` → base64 → `/api/stt`). Server (`api/stt.ts`) ưu tiên Whisper qua **Groq**
@@ -83,14 +84,14 @@ const isA = dir === 'A'
 
 ```bash
 # Server-only
-SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=...
+DATABASE_URL=...      # PostgreSQL tự host
 GOOGLE_TTS_API_KEY=... TTS_ENCRYPTION_MASTER_KEY=...
 GROQ_API_KEY=...      # Whisper STT (ưu tiên) + Llama
 OPENAI_API_KEY=...    # fallback STT
 ANTHROPIC_API_KEY=... # fallback chat
 
 # Public
-VITE_SUPABASE_URL=... VITE_SUPABASE_ANON_KEY=...
+VITE_GOOGLE_CLIENT_ID=... # Google OAuth (auth tự viết)
 ```
 
 ## 7. File liên quan

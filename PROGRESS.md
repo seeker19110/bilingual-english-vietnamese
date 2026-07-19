@@ -11,8 +11,9 @@
 GĐ 4–5 (Phát triển + nâng chất lượng). Sản phẩm đã deploy thật
 (https://en-vi.donghanhcungban.com). Đã áp xong Lớp 1 (hàng rào: Prettier/ESLint/TS
 strict/husky/CI) và Lớp 2 (E2E Playwright + a11y AA toàn site + coverage ratchet + bundle-size
-budget) của `docs/framework/AP-DUNG-vao-du-an-co-san.md`. Không có việc code nào đang mở; còn
-vài thao tác THỦ CÔNG trên VPS/Supabase (xem "Cần làm tay").
+budget) của `docs/framework/AP-DUNG-vao-du-an-co-san.md`. **Đã rời Supabase hoàn toàn
+(2026-07-19→20, Giai đoạn A→E) — xem `docs/migration-thoat-ly-supabase.md`.** Không có việc
+code nào đang mở; còn vài thao tác THỦ CÔNG trên VPS (xem "Cần làm tay").
 
 ## Đã xong — tóm tắt theo mảng
 
@@ -64,9 +65,34 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
   route mới `/api/history` (lịch sử chat/viết/nói + learn_count, thay `cloud.ts` query Supabase),
   `/api/challenge` (thay `challengeCloud.ts`), `/api/tutor-feedback` (thay `tutorFeedback.ts`),
   `api/leaderboard.ts` sang `pgPool`, XÓA `src/lib/supabase.ts` (client hết sạch Supabase),
-  thêm 6 route mới vào dev proxy `vite.config.ts`. **Còn GĐ E (dọn dẹp, PR sau):** gỡ
-  `@supabase/supabase-js` + `supabaseAdmin.ts` + driver `supabase` của `fileStorage.ts` + biến
-  `SUPABASE_*` + thư mục `supabase/`, cập nhật `CLAUDE.md` mục 6 + `docs/deploy-vps-ubuntu.md`.
+  thêm 6 route mới vào dev proxy `vite.config.ts`. **GĐ E (dọn dẹp) ĐÃ XONG (2026-07-20,
+  cùng phiên):** gỡ `@supabase/supabase-js` khỏi `package.json`, xóa `api/_lib/supabaseAdmin.ts`
+  - nhánh driver `supabase` trong `fileStorage.ts` (mặc định còn `local`/`r2`), xóa biến
+    `SUPABASE_*`/`VITE_SUPABASE_*` khỏi `.env.example`/`vite-env.d.ts`/`vitest.setup.ts`/
+    `playwright.config.ts`, xóa thư mục `supabase/` (schema cũ còn trong git history) — sửa
+    3 script seed còn gọi Supabase trực tiếp sang `pgPool`+`saveAudio()`
+    (`scripts/seed-pronunciations.ts`, `scripts/prefetch-tts-patterns.ts`, `scripts/seed-all.ts`),
+    xóa 2 công cụ di trú 1 lần đã hết tác dụng sau GĐ D
+    (`scripts/check-supabase-audio.ts`, `scripts/sync-storage-to-vps.ts`) + script migration
+    Supabase cũ (`scripts/run-migrations.ts`, đã có `run-pg-migrations.ts` thay thế). **Phát
+    hiện + vá 1 lỗi nghiêm trọng lúc dọn dẹp:** `deploy.sh`, `scripts/deploy.sh` (2 script deploy
+    khác nhau, xem ghi chú dưới) và `.github/workflows/deploy.yml` đều gọi `npm run migrate`
+    (script Supabase cũ vừa xóa) — nếu không sửa thì **deploy tiếp theo sẽ crash ngay bước
+    migration** (`set -e`). Đã đổi cả 3 chỗ sang `npm run migrate:pg`. Cập nhật
+    `CLAUDE.md` mục 4+6, `docs/deploy-vps-ubuntu.md` (viết lại Bước 0 + khối `.env` mẫu +
+    troubleshooting), `docs/DEPLOY.md`, `docs/seed-guide.md`, `DEPLOY_QUICK_GUIDE.md`,
+    `DEPLOY_STEPS.md`, `BILINGUAL_SYSTEM.md`. Xóa 4 doc gốc đã hoàn toàn lỗi thời
+    (`SUPABASE_SYNC_SETUP.md`, `AUTH_SETUP.md`, `PRONUNCIATION_CACHE_SETUP.md`,
+    `TTS_CACHE_SETUP.md`, `PRONUNCIATION_CACHE_SPEC.md` — 2 file cuối tự ghi "có thể xóa" sẵn
+    trong nội dung). Build/typecheck/lint/format/size/test xanh trước khi commit (xem PR).
+    **Bổ sung cùng PR (2026-07-20, theo yêu cầu "copy hết dữ liệu TTS từ VPS, cache qua R2"):**
+    `scripts/sync-storage-to-r2.ts` (`npm run sync:r2`) — đẩy audio ĐÃ CACHE TRƯỚC KHI bật R2
+    (còn nằm ở `uploads/` local, DB vẫn trỏ `/uploads/...`) lên Cloudflare R2 qua `saveAudio()`
+    rồi cập nhật lại `audio_url`; an toàn chạy lại (bỏ qua dòng đã trỏ R2), có `--dry-run`/
+    `--force`/`BUCKET`/`LIMIT`. **CHƯA CHẠY TRÊN VPS** — sandbox không có SSH/quyền VPS lẫn key
+    R2 thật, chỉ viết + soát code (build/typecheck/lint xanh). Việc người dùng cần làm: SSH vào
+    VPS, chạy `STORAGE_DRIVER=r2 npm run sync:r2 -- --dry-run` xem trước rồi bỏ `--dry-run` để
+    chạy thật — xem hướng dẫn đầy đủ ở `docs/migration-thoat-ly-supabase.md` mục 10 bước 7.
 
 - **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT + người dùng ĐÃ CHỐT cả 4
   quyết định (2026-07-15: theo thứ tự ưu tiên · LÀM Azure · LÀM giải đấu tuần M5 · THAY Challenge
@@ -384,30 +410,13 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   `StudyTabs`/`Flashcard` render) đều xanh ở cả 4 theme.
 - Thanh toán Pro — **đóng, không làm** (xem "Quyết định quan trọng").
 
-## 🔴 KHẨN CẤP — Auto deploy đang lỗi liên tục (phát hiện 2026-07-15)
-
-**Production ĐANG CHẠY CODE CŨ từ 2026-07-13** — mọi PR merge sau `028dfdc` (audit UI/UX
-2026-07-13) đến nay (kể cả PR #246/#247 hôm nay) **CHƯA lên production**. Nguyên nhân: bước
-`npm run migrate` trong `.github/workflows/deploy.yml` báo lỗi
-`Thiếu SUPABASE_DB_URL trong .env` → script thoát bằng `exit 1` → toàn bộ deploy dừng ngay
-(`set -e`), không build/không reload PM2. Đã lỗi **8 lần liên tiếp** (2026-07-14 00:05 →
-2026-07-15 23:36), y hệt nhau mỗi lần.
-
-**AI KHÔNG tự sửa được** — cần SSH/quyền VPS mà AI không có. **Việc người dùng cần làm:**
-
-1. Lấy connection string ở Supabase Dashboard → Project Settings → Database → Connection
-   string → **"Direct connection"** (không dùng "Transaction pooler").
-2. SSH vào VPS, thêm `SUPABASE_DB_URL=...` vào `/var/www/english-tutor/.env`.
-3. Trigger lại workflow "Deploy to VPS" trên GitHub Actions (hoặc đợi lần push tiếp theo).
-
-Xem `docs/deploy-vps-ubuntu.md`. Sau khi sửa, xác nhận lại bảng "Trạng thái migration trên
-Supabase production" ở `supabase/migrations/README.md` (0010–0013 sẽ tự áp).
+> ~~🔴 KHẨN CẤP — Auto deploy lỗi liên tục (thiếu `SUPABASE_DB_URL`, phát hiện 2026-07-15)~~
+> **ĐÃ HẾT HIỆU LỰC (2026-07-20)** — production đã rời hẳn Supabase (Giai đoạn A→E), deploy
+> giờ dùng `DATABASE_URL` (Postgres tự host) + `npm run migrate:pg`, không còn phụ thuộc
+> `SUPABASE_DB_URL`. Xem `docs/migration-thoat-ly-supabase.md`.
 
 ## ⚠️ Cần làm tay (không cần PR)
 
-- Migration `0010_challenge_entries.sql` — chạy khi có `SUPABASE_DB_URL` trong `.env` VPS rồi
-  `bash deploy.sh` (tự áp mọi migration còn thiếu). **Xem mục khẩn cấp ở trên — đây chính là
-  nguyên nhân chặn auto deploy.**
 - `SENTRY_DSN`/`VITE_SENTRY_DSN` — lấy miễn phí ở sentry.io, điền vào `.env` VPS, build lại +
   `pm2 restart` (code Sentry đã xong, hiện no-op).
 - `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) trên VPS nếu chưa có — cần cho STT.
@@ -443,6 +452,20 @@ Supabase production" ở `supabase/migrations/README.md` (0010–0013 sẽ tự 
 
 ## Nợ kỹ thuật còn mở
 
+- **E2E `mockLogin` (`e2e/helpers/auth.ts`) không còn khớp luồng đăng nhập thật (phát hiện
+  2026-07-20 khi dọn Giai đoạn E)** — từ khi `src/lib/auth.ts` chuyển sang Bearer token tự
+  viết, `AuthProvider` LUÔN gọi thật `GET /api/auth?action=me` lúc mount; helper E2E chỉ gieo
+  trước `localStorage` (profile cache) chứ không mock được request mạng này. Các spec dùng
+  `mockLogin` (6 file) có thể đang chạy nhờ nhánh lỗi 401 tình cờ chứ không phải luồng đăng
+  nhập thật được mô phỏng đúng. Cần: `page.route()` chặn `/api/auth?action=me` trả user giả,
+  hoặc chạy E2E với Postgres test đã seed sẵn user `e2e-user-0001`. Chưa làm — xem comment
+  chi tiết đầu `e2e/helpers/auth.ts`.
+- **2 script deploy trùng lặp** (`deploy.sh` gốc repo, đơn giản — và `scripts/deploy.sh`,
+  đầy đủ hơn: dọn `dist`/`public/data`, tự thêm biến `.env` thiếu, health check) — không rõ
+  cái nào là "chính thức" (`docs/DEPLOY.md`/`DEPLOY_STEPS.md` nhắc cả 2, `.github/workflows/
+deploy.yml` lại tự inline các bước, không gọi file nào). Cả 2 đã được vá bug `npm run
+migrate` (Giai đoạn E) nhưng nên gộp lại 1 script khi có dịp — người dùng xác nhận trước
+  vì đây là quyết định vận hành (giữ cái nào, xóa cái nào).
 - Không còn hạng mục a11y/kiểm thử lớn nào mở. Xem "Tiếp theo" ở trên cho việc sản phẩm còn dở.
 - `docs/research/thu-thach-vlog-30-ngay.md` dùng tên cũ "Vlog" (tính năng đã đổi tên thành
   "Challenge" — route `/challenge`, bảng `challenge_entries`) — tài liệu đó là ghi chép lịch sử

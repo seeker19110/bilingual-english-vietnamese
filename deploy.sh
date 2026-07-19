@@ -7,13 +7,12 @@
 # Việc nó làm:
 #   1. Lấy code mới nhất từ Git (fetch tất cả PR đã merge)
 #   2. Xóa mọi local changes để code sạch
-#   3. Cài thư viện -> chạy migration Supabase còn thiếu -> build -> khởi động lại app
+#   3. Cài thư viện -> chạy migration Postgres tự host còn thiếu -> build -> khởi động lại app
 #   4. Hiển thị danh sách các thay đổi được kéo
 #
-# Migration Supabase: TỰ ĐỘNG áp mọi file supabase/migrations/*.sql chưa chạy (script
-# scripts/run-migrations.ts, kết nối THẲNG Postgres qua SUPABASE_DB_URL trong .env —
-# xem chi tiết supabase/migrations/README.md + docs/deploy-vps-ubuntu.md). Không cần
-# bước chuẩn bị nào khác ngoài điền SUPABASE_DB_URL 1 lần vào .env.
+# Migration: TỰ ĐỘNG áp mọi file postgres/migrations/*.sql chưa chạy (script
+# scripts/run-pg-migrations.ts, kết nối THẲNG Postgres tự host qua DATABASE_URL trong
+# .env — xem docs/setup-postgresql-vps.md + docs/deploy-vps-ubuntu.md).
 
 set -e   # Gặp lỗi ở bất kỳ bước nào là dừng ngay, không deploy code lỗi.
 
@@ -42,8 +41,8 @@ echo "---"
 echo "==> 5/8 Cài thư viện theo package-lock.json"
 npm ci
 
-echo "==> 6/8 Chạy migration Supabase còn thiếu (dừng deploy nếu lỗi)"
-npm run migrate
+echo "==> 6/8 Chạy migration Postgres tự host còn thiếu (dừng deploy nếu lỗi)"
+npm run migrate:pg
 
 echo "==> 7/8 Build frontend"
 npm run build

@@ -1,17 +1,19 @@
 import type { Page } from '@playwright/test'
 
-// Giả "đã đăng nhập" cho E2E mà KHÔNG cần backend thật:
-// - Supabase đọc session từ localStorage (getSession không gọi mạng nếu chưa hết hạn).
-// - toAppUser() trả về ngay nếu có cached profile (gsa_profile_v1) onboarded=true,
-//   chỉ refresh ngầm ở nền (fail thì chỉ warn) — xem src/lib/auth.ts.
-// Nhờ vậy app vào thẳng trang sau đăng nhập, dựng UI theo ui_lang để test en/vi.
-
-// ref 'e2e' suy từ VITE_SUPABASE_URL=https://e2e.supabase.co (xem playwright.config.ts)
-const SUPABASE_AUTH_KEY = 'sb-e2e-auth-token'
+// Giả "đã đăng nhập" cho E2E bằng cách gieo trước localStorage — profile cache
+// (gsa_profile_v1) cho UI hiện đúng trạng thái onboarded=true ngay lập tức.
+//
+// ⚠️ NỢ KỸ THUẬT (phát hiện ở Giai đoạn E rời Supabase, chưa sửa): từ khi
+// src/lib/auth.ts chuyển sang Bearer token tự viết (Giai đoạn B), AuthProvider
+// LUÔN gọi thật `GET /api/auth?action=me` khi mount — khoá `authKey` giả bên dưới
+// KHÔNG còn được auth.ts đọc (đó là tên khoá kiểu Supabase cũ, để lại làm tư liệu).
+// Muốn mockLogin hoạt động đúng cần: (a) page.route() chặn `/api/auth?action=me`
+// trả profile giả, hoặc (b) chạy E2E với backend Postgres thật đã seed sẵn user
+// e2e-user-0001. Chưa việc nào được làm — các spec dùng mockLogin có thể đang
+// phụ thuộc vào nhánh lỗi mạng (401) của getCurrentUser() để hoạt động tình cờ.
 const PROFILE_CACHE_KEY = 'gsa_profile_v1'
 // Export để các file E2E khác seed localStorage đúng key theo user (vd `et_challenge_<uid>`).
 export const USER_ID = 'e2e-user-0001'
-const USER_NAME = 'E2E Tester'
 
 // Tên 4 theme (đồng bộ src/lib/theme.ts). Dùng để E2E quét a11y ở mọi theme.
 export type ThemeName = 'dark-blue' | 'blue-sky' | 'pink' | 'vibrant'
@@ -21,35 +23,15 @@ export async function mockLogin(
   uiLang: 'vi' | 'en' = 'vi',
   theme?: ThemeName,
 ): Promise<void> {
-  const nowSec = Math.floor(Date.now() / 1000)
-  const oneYear = 60 * 60 * 24 * 365
-  const session = {
-    access_token: 'e2e-fake-access-token',
-    refresh_token: 'e2e-fake-refresh-token',
-    token_type: 'bearer',
-    expires_in: oneYear,
-    expires_at: nowSec + oneYear, // xa tương lai → getSession không refresh (không gọi mạng)
-    user: {
-      id: USER_ID,
-      aud: 'authenticated',
-      role: 'authenticated',
-      email: 'e2e@example.com',
-      user_metadata: { name: USER_NAME },
-      app_metadata: { provider: 'email', providers: ['email'] },
-    },
-  }
   const profile = { id: USER_ID, plan: 'free', onboarded: true, ts: Date.now() }
 
   await page.addInitScript(
     (data) => {
-      localStorage.setItem(data.authKey, JSON.stringify(data.session))
       localStorage.setItem(data.profileKey, JSON.stringify(data.profile))
       localStorage.setItem('ui_lang', data.uiLang)
       if (data.theme) localStorage.setItem('ui_theme', data.theme)
     },
     {
-      authKey: SUPABASE_AUTH_KEY,
-      session,
       profileKey: PROFILE_CACHE_KEY,
       profile,
       uiLang,

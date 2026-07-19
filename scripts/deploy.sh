@@ -50,10 +50,10 @@ git clean -fd public/data || true        # bỏ file rác không-theo-dõi trong
 echo "── [4/7] Cài dependencies (npm ci) ─────────────"
 npm ci || npm install                    # npm ci: cài đúng lockfile; lỗi → fallback install
 
-echo "── [5/7] Chạy migration Supabase còn thiếu ─────"
-# Tự áp mọi file supabase/migrations/*.sql chưa chạy (cần SUPABASE_DB_URL trong .env —
-# xem supabase/migrations/README.md). Dừng deploy nếu migration lỗi (set -e ở trên).
-npm run migrate
+echo "── [5/7] Chạy migration Postgres tự host còn thiếu ─────"
+# Tự áp mọi file postgres/migrations/*.sql chưa chạy (cần DATABASE_URL trong .env —
+# xem postgres/migrations/README.md). Dừng deploy nếu migration lỗi (set -e ở trên).
+npm run migrate:pg
 
 echo "── [6/7] Build ──────────────────────────────────"
 npm run build

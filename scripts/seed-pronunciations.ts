@@ -10,8 +10,10 @@
 // Tạo CẢ 2 giọng (nữ + nam — xem api/_lib/googleTts.ts) cho mỗi từ, vì app cho học viên
 // chọn giọng khi nghe phát âm (PronounceButton.tsx). Vậy tổng số lần gọi TTS = số từ × 2.
 //
-// Logic gọi Google TTS + Supabase được TÁI DÙNG từ api/_lib/ (cùng 1 chỗ với api/pronunciation.ts)
-// để không phải viết/duy trì 2 bản giống nhau — sửa 1 nơi là cả app + script đều theo.
+// Logic gọi Google TTS + lưu file/DB được TÁI DÙNG từ api/_lib/ (cùng 1 chỗ với
+// api/pronunciation.ts) để không phải viết/duy trì 2 bản giống nhau — sửa 1 nơi là cả
+// app + script đều theo. BASE_URL=https://... khi STORAGE_DRIVER=local (mặc định lưu
+// đường dẫn tương đối /uploads/... nếu không đặt).
 //
 // Chạy: npm run seed:pronunciation
 
@@ -28,7 +30,8 @@ import {
   VOICE_VERSION,
   type VoiceId,
 } from '../api/_lib/googleTts.ts'
-import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
+import { getPgPool } from '../api/_lib/pgPool.ts'
+import { saveAudio } from '../api/_lib/fileStorage.ts'
 
 // Thư mục gốc của project (1 cấp trên thư mục scripts/), để mọi đường dẫn file
 // đều đúng dù bạn chạy lệnh từ đâu.
@@ -51,6 +54,7 @@ const PRON_VOICE_IDS: VoiceId[] = ['female', 'male']
 // Thư mục chứa chunk từ điển — đây là nguồn mặc định
 const DEFAULT_DICT_DIR = path.join(PROJECT_ROOT, 'public/data/dictionary')
 const ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
+const BASE_URL = process.env.BASE_URL || ''
 
 // 1 tác vụ = tạo audio cho 1 (từ, giọng) cụ thể.
 interface Task {
@@ -89,33 +93,23 @@ async function processTask(
 ): Promise<{ status: 'ok' } | { status: 'error'; message: string }> {
   try {
     const { word, voice } = task
-    const supabase = getSupabaseAdmin()
     const audioBuffer = await generateAudioFromGoogle(word, voice)
     // encodeURIComponent — GIỐNG HỆT api/pronunciation.ts (API thật) — để hỗ trợ từ
-    // có dấu (café, naïve...). Supabase Storage từ chối tên file chứa ký tự ngoài ASCII
-    // (báo "Invalid key"), encode thì luôn ra tên file hợp lệ mà vẫn map đúng 1-1 với từ gốc.
+    // có dấu (café, naïve...) trong URL, dù key trong tên file thô vẫn hợp lệ với R2/local.
     const fileName = `${encodeURIComponent(word)}-${voice}.mp3`
 
-    // upsert: true — ghi đè nếu đã tồn tại, để script chạy lại an toàn (không lỗi
-    // khi 1 từ đã được upload Storage nhưng chưa kịp lưu vào DB ở lần chạy trước).
-    const { error: uploadError } = await supabase.storage
-      .from('pronunciations')
-      .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: true })
-    if (uploadError) throw new Error(`Upload lỗi: ${uploadError.message}`)
+    const audioUrl = await saveAudio('pronunciations', fileName, audioBuffer, BASE_URL)
 
-    const { data: publicUrlData } = supabase.storage.from('pronunciations').getPublicUrl(fileName)
-
-    const { error: dbError } = await supabase.from('pronunciations').upsert(
-      {
-        word,
-        voice,
-        audio_url: publicUrlData.publicUrl,
-        lang: 'en-US',
-        voice_version: VOICE_VERSION,
-      },
-      { onConflict: 'word,voice' },
+    // upsert theo (word, voice) — script chạy lại an toàn (không lỗi khi 1 từ đã
+    // upload xong nhưng chưa kịp lưu DB ở lần chạy trước).
+    await getPgPool().query(
+      `insert into public.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
+       values ($1, $2, $3, 'en-US', $4, now())
+       on conflict (word, voice) do update set
+         audio_url = excluded.audio_url, voice_version = excluded.voice_version,
+         last_accessed_at = now()`,
+      [word, voice, audioUrl, VOICE_VERSION],
     )
-    if (dbError) throw new Error(`Lưu DB lỗi: ${dbError.message}`)
 
     return { status: 'ok' }
   } catch (err) {
@@ -172,7 +166,7 @@ async function runPass(
 
 // ── MAIN ──────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
-  const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'].filter((key) => !process.env[key])
+  const missing = ['DATABASE_URL'].filter((key) => !process.env[key])
   if (missing.length > 0) {
     console.error(`❌ Thiếu biến môi trường trong .env: ${missing.join(', ')}`)
     process.exit(1)
@@ -216,21 +210,10 @@ async function main(): Promise<void> {
   )
 
   // Lấy danh sách (từ, giọng) đã có trong DB — bỏ qua để resume được nếu bị dừng giữa chừng
-  const supabase = getSupabaseAdmin()
-  const { data: existing, error: selectError } = await supabase
-    .from('pronunciations')
-    .select('word, voice')
-  if (selectError) {
-    console.error(`❌ Không đọc được bảng pronunciations: ${selectError.message}`)
-    process.exit(1)
-  }
-
-  const done = new Set(
-    (existing ?? []).map((row) => {
-      const r = row as { word: string; voice: string }
-      return `${r.word}:${r.voice}`
-    }),
+  const { rows: existing } = await getPgPool().query<{ word: string; voice: string }>(
+    'select word, voice from public.pronunciations',
   )
+  const done = new Set(existing.map((r) => `${r.word}:${r.voice}`))
 
   const allTasks: Task[] = []
   for (const w of allWords) {

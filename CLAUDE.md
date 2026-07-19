@@ -63,7 +63,7 @@ Ba chế độ:
 ## 4. Nguyên tắc kỹ thuật bất biến
 
 1. **Type safety:** TypeScript `strict` (đã bật), không `any`. Dữ liệu ngoài (API, form, CSDL) validate lúc chạy bằng **Zod** _(đang bổ sung dần — xem PROGRESS)_.
-2. **Bảo mật:** không tin client; logic nhạy cảm (kiểm quyền, đếm lượt, gọi AI) luôn ở server (`api/`, `server.ts`); RLS Supabase bật và đã test; không lộ secret.
+2. **Bảo mật:** không tin client; logic nhạy cảm (kiểm quyền, đếm lượt, gọi AI) luôn ở server (`api/`, `server.ts`); mọi handler API tự kiểm `user_id` khớp token qua `validateAuth()` trước khi query Postgres (thay Row Level Security cũ của Supabase); không lộ secret.
 3. **Xử lý lỗi:** mọi thao tác có thể fail (mạng, CSDL, AI) đều có nhánh lỗi + trạng thái tải/rỗng/lỗi trên UI.
 4. **Rõ ràng & DRY:** không lặp logic; hàm nhỏ làm một việc; tên tự giải thích; không "số/chuỗi ma thuật".
 5. **Accessibility:** WCAG AA (tương phản, bàn phím, nhãn input, alt ảnh); lint `jsx-a11y` + axe trong E2E _(đang bổ sung)_.
@@ -81,12 +81,12 @@ Ba chế độ:
 ## 6. Công nghệ (stack) & lệnh
 
 - **Frontend:** React 18 + Vite 7 + TypeScript 5.2 (`strict`) + Tailwind CSS 3 (mã gốc do Lovable sinh ra).
-- **Backend & dữ liệu:** Express (`server.ts`) + **Supabase** (Auth, DB có RLS, Storage). Handler API trong `api/`.
-- **AI:** gọi qua biến môi trường, ưu tiên model rẻ. Chat qua `/api/claude`. **STT** Whisper qua **Groq hoặc OpenAI** (`/api/stt`, tự chọn theo key). **TTS** Google Cloud qua `/api/tts` (audio cache **mã hóa AES-256-GCM** trên Supabase Storage; Web Speech API chỉ là fallback).
+- **Backend & dữ liệu:** Express (`server.ts`) + **PostgreSQL tự host trên VPS** (thư viện `pg`, `api/_lib/pgPool.ts`) — đã rời hẳn Supabase (xem `docs/migration-thoat-ly-supabase.md`). Auth tự viết (Bearer token, `api/auth.ts` + `api/_lib/authService.ts`, email/password + Google Identity Services). Handler API trong `api/`.
+- **AI:** gọi qua biến môi trường, ưu tiên model rẻ. Chat qua `/api/claude`. **STT** Whisper qua **Groq hoặc OpenAI** (`/api/stt`, tự chọn theo key). **TTS** Google Cloud qua `/api/tts` (audio cache **mã hóa AES-256-GCM**, lưu local VPS hoặc Cloudflare R2 tùy `STORAGE_DRIVER` — `api/_lib/fileStorage.ts`; Web Speech API chỉ là fallback).
 - **Deploy:** VPS Ubuntu (PM2 + Nginx + Let's Encrypt), đang chạy tại https://en-vi.donghanhcungban.com — xem `docs/deploy-vps-ubuntu.md`.
 - **GIỮ NGUYÊN PHIÊN BẢN — KHÔNG nâng React/TS/Tailwind/ESLint.** Dự án cố tình dùng **Tailwind 3** (không phải v4) và **ESLint 8 với `.eslintrc.cjs`** (không phải flat config). Tài liệu khung có nhắc Tailwind v4 / ESLint flat config — chỉ để **tham khảo**, KHÔNG áp vào dự án này.
-- **Lệnh:** dev `npm run dev` · build `npm run build` · typecheck `npm run typecheck` (gộp cả `tsconfig.json` + `tsconfig.api.json` + `tsconfig.e2e.json`) · lint `npm run lint` (max-warnings 0) · format `npm run format` (Prettier — đang thêm ở bước khung) · test `npm test` (`vitest run`) · E2E `npm run test:e2e` (Playwright) · start `npm start` (`tsx server.ts`) · migration Supabase `npm run migrate` (tự chạy trong `deploy.sh`, xem `supabase/migrations/README.md`).
-- **Cấu trúc:** `src/` (React: `pages/`, `components/`, `lib/`, `data/`, `prompts/`), `api/` (handler kiểu serverless), `server.ts` (Express gắn handler), `supabase/` (`schema.sql`), `scripts/` (seed/sync), `docs/`.
+- **Lệnh:** dev `npm run dev` · build `npm run build` · typecheck `npm run typecheck` (gộp cả `tsconfig.json` + `tsconfig.api.json` + `tsconfig.e2e.json`) · lint `npm run lint` (max-warnings 0) · format `npm run format` (Prettier — đang thêm ở bước khung) · test `npm test` (`vitest run`) · E2E `npm run test:e2e` (Playwright) · start `npm start` (`tsx server.ts`) · migration Postgres tự host `npm run migrate:pg` (tự chạy trong `deploy.sh`, xem `postgres/migrations/README.md`).
+- **Cấu trúc:** `src/` (React: `pages/`, `components/`, `lib/`, `data/`, `prompts/`), `api/` (handler kiểu serverless), `server.ts` (Express gắn handler), `postgres/` (`schema.sql` + `migrations/`), `scripts/` (seed/sync), `docs/`.
 - **Đặt tên:** component PascalCase (`src/components`), tiện ích camelCase (`src/lib`), prompt gửi AI để riêng trong `src/prompts/`.
 
 ## 7. Quy ước khi viết code & cách làm việc
@@ -134,7 +134,7 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 - [x] Chế độ Luyện viết + chấm điểm (MVP) — chấm kiểu IELTS
 - [x] Giới hạn lượt — lượt dùng đã đồng bộ lên Supabase (`daily_usage`); gói `plan` đọc từ bảng `profiles`. **Quyết định 2026-07-11: dự án dùng MIỄN PHÍ cho cộng đồng — KHÔNG làm thanh toán Pro cho tới khi người dùng chủ động yêu cầu lại.** Không tự đề xuất/nhắc việc này ở đầu phiên hay trong danh sách nợ kỹ thuật.
 - [x] Deploy VPS (Express `server.ts` + PM2 + Nginx + Let's Encrypt) — ĐÃ deploy thật tại https://en-vi.donghanhcungban.com (PM2 process `english-tutor`, port 3001, dùng chung VPS 160.30.172.203 với app "xboss" ở port 3000 — không ảnh hưởng nhau). SSL Let's Encrypt tự renew. Lưu ý: `ecosystem.config.cjs` trên VPS dùng `interpreter: /usr/bin/node` (Node hệ thống v22, **bắt buộc**) — nhớ đồng bộ nếu sửa file này. (code + hướng dẫn: `docs/deploy-vps-ubuntu.md`)
-- [x] Đồng bộ Supabase — chat/viết/nói/lượt dùng lưu lên DB (RLS), login Supabase thống nhất cho mọi trang. Xem `SUPABASE_SYNC_SETUP.md` + `supabase/schema.sql`
+- [x] Đồng bộ dữ liệu — chat/viết/nói/lượt dùng lưu lên DB, login thống nhất cho mọi trang. **[Cập nhật 2026-07-20]** Đã rời Supabase hoàn toàn sang PostgreSQL tự host + auth Bearer token tự viết. Xem `docs/migration-thoat-ly-supabase.md` + `postgres/schema.sql`
 - [x] Chế độ Luyện nói song ngữ — TTS chính Google Cloud TTS qua `/api/tts` (cache mã hóa AES-256-GCM trên Supabase Storage, bắt buộc đăng nhập mới lấy được khoá giải mã), Web Speech API chỉ còn fallback. **STT thật**: ghi âm trình duyệt (`MediaRecorder`, `src/lib/sttServer.ts`) → base64 lên `/api/stt` → Whisper qua Groq hoặc OpenAI (`api/stt.ts` + `api/_lib/openaiStt.ts`, có `GROQ_API_KEY` thì dùng Groq `whisper-large-v3-turbo`, không thì OpenAI `gpt-4o-mini-transcribe`); Web Speech API (`src/lib/stt.ts`) chỉ còn dự phòng. Cần `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`).
 - [x] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng) — `lib/direction.ts`
 - [x] Chế độ Học theo lộ trình (`/learn`) — curriculum nền tảng theo vòng tròn chủ đề rồi nối tiếp bằng từ điển; tốc độ học **5/10/20 từ/ngày, tự chọn ở Hồ sơ** (`lib/curriculum.ts` — `getDailySpeed`/`setDailySpeed`; mặc định 10 cho người dùng mới, người dùng cũ giữ 20); ôn ngẫu nhiên không lặp trong 1 vòng; học xong hiện câu thông dụng ráp từ các từ vừa học. Dữ liệu: `src/data/curriculum.ts`, logic: `src/lib/curriculum.ts`

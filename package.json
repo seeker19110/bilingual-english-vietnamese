@@ -32,9 +32,7 @@
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts",
     "seed:all": "tsx scripts/seed-all.ts",
     "seed:verify": "tsx scripts/seed-all.ts --verify",
-    "sync:storage": "tsx scripts/sync-storage-to-vps.ts",
-    "check:supabase": "tsx scripts/check-supabase-audio.ts",
-    "migrate": "tsx scripts/run-migrations.ts",
+    "sync:r2": "tsx scripts/sync-storage-to-r2.ts",
     "migrate:pg": "tsx scripts/run-pg-migrations.ts",
     "prepare": "husky"
   },
@@ -43,7 +41,6 @@
     "@fontsource-variable/inter": "^5.2.8",
     "@sentry/node": "^10.63.0",
     "@sentry/react": "^10.63.0",
-    "@supabase/supabase-js": "^2.108.2",
     "bcryptjs": "^3.0.3",
     "compression": "^1.7.4",
     "express": "^4.21.2",

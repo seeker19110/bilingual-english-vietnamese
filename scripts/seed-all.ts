@@ -47,7 +47,8 @@ import {
 import { CEFR_LEVELS } from '../src/data/cefr.ts'
 import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
-import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
+import type { QueryResultRow } from 'pg'
+import { getPgPool } from '../api/_lib/pgPool.ts'
 import { FOUNDATION } from '../src/data/curriculum.ts'
 import { CHALLENGE_TOPICS } from '../src/data/challengeTopics.ts'
 import { loadSubjectsInDisplayOrder, PREF_VOICE_IDS } from './_lib/patternOrder.ts'
@@ -317,32 +318,24 @@ function loadPronTasks(wordsFile?: string): PronTask[] {
 
 // ── Xử lý 1 tác vụ ──────────────────────────────────────────────────────────
 async function processTask(task: AnyTask): Promise<TaskResult> {
-  const supabase = getSupabaseAdmin()
+  const pool = getPgPool()
 
   try {
     if (task.type === 'pron') {
       const { word, voice } = task
       const audioBuffer = await generateAudioFromGoogle(word, voice, 'en-US')
       // encodeURIComponent — GIỐNG HỆT api/pronunciation.ts (API thật) — để hỗ trợ từ
-      // có dấu (café, naïve...). Supabase Storage từ chối tên file chứa ký tự ngoài ASCII
-      // (báo "Invalid key"), encode thì luôn ra tên file hợp lệ mà vẫn map đúng 1-1 với từ gốc.
+      // có dấu (café, naïve...) trong URL, dù key thô vẫn hợp lệ với R2/local.
       const fileName = `${encodeURIComponent(word)}-${voice}.mp3`
-      const { error: uploadError } = await supabase.storage
-        .from('pronunciations')
-        .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: true })
-      if (uploadError) throw new Error(`Upload lỗi: ${uploadError.message}`)
-      const { data: urlData } = supabase.storage.from('pronunciations').getPublicUrl(fileName)
-      const { error: dbError } = await supabase.from('pronunciations').upsert(
-        {
-          word,
-          voice,
-          audio_url: urlData.publicUrl,
-          lang: 'en-US',
-          voice_version: VOICE_VERSION,
-        },
-        { onConflict: 'word,voice' },
+      const audioUrl = await saveAudio('pronunciations', fileName, audioBuffer, BASE_URL)
+      await pool.query(
+        `insert into public.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
+         values ($1, $2, $3, 'en-US', $4, now())
+         on conflict (word, voice) do update set
+           audio_url = excluded.audio_url, voice_version = excluded.voice_version,
+           last_accessed_at = now()`,
+        [word, voice, audioUrl, VOICE_VERSION],
       )
-      if (dbError) throw new Error(`DB lỗi: ${dbError.message}`)
       return { status: 'ok' }
     }
 
@@ -352,23 +345,21 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
     const oldHash = oldHashText(text, lang, voice)
 
     if (!FORCE) {
-      const { data: cached } = await supabase
-        .from('tts_cache')
-        .select('audio_url')
-        .eq('hash', hash)
-        .maybeSingle()
-      if (cached) return { status: 'skip' }
+      const { rows } = await pool.query('select audio_url from public.tts_cache where hash = $1', [
+        hash,
+      ])
+      if (rows.length > 0) return { status: 'skip' }
     }
 
     // Trước khi gọi Google TTS: thử remap từ cache cũ (hash thiếu VOICE_VERSION).
     // Nếu có → tải về → giải mã bằng oldHash → re-encrypt bằng hash mới → upload.
     // Không tốn API quota, chỉ tốn băng thông Storage.
     if (!FORCE) {
-      const { data: oldCached } = await supabase
-        .from('tts_cache')
-        .select('audio_url')
-        .eq('hash', oldHash)
-        .maybeSingle()
+      const { rows: oldRows } = await pool.query<{ audio_url: string }>(
+        'select audio_url from public.tts_cache where hash = $1',
+        [oldHash],
+      )
+      const oldCached = oldRows[0]
       if (oldCached?.audio_url) {
         try {
           const res = await fetch(oldCached.audio_url)
@@ -377,10 +368,13 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
             const newCipher = await encryptAudio(plain, hash)
             const fileName = `${lang}/${voice}/${hash}.mp3`
             const audioUrl = await saveAudio('tts-cache', fileName, newCipher, BASE_URL)
-            const { error } = await supabase
-              .from('tts_cache')
-              .upsert({ hash, lang, voice, audio_url: audioUrl }, { onConflict: 'hash' })
-            if (error) throw new Error(`DB lỗi: ${error.message}`)
+            await pool.query(
+              `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
+               values ($1, $2, $3, $4, now())
+               on conflict (hash) do update set
+                 audio_url = excluded.audio_url, last_accessed_at = now()`,
+              [hash, lang, voice, audioUrl],
+            )
             return { status: 'remapped' }
           }
         } catch {
@@ -393,10 +387,13 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
     const encrypted = await encryptAudio(audioBuffer, hash)
     const fileName = `${lang}/${voice}/${hash}.mp3`
     const audioUrl = await saveAudio('tts-cache', fileName, encrypted, BASE_URL)
-    const { error: dbError } = await supabase
-      .from('tts_cache')
-      .upsert({ hash, lang, voice, audio_url: audioUrl }, { onConflict: 'hash' })
-    if (dbError) throw new Error(`DB lỗi: ${dbError.message}`)
+    await pool.query(
+      `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
+       values ($1, $2, $3, $4, now())
+       on conflict (hash) do update set
+         audio_url = excluded.audio_url, last_accessed_at = now()`,
+      [hash, lang, voice, audioUrl],
+    )
     return { status: 'ok' }
   } catch (err) {
     return { status: 'error', message: err instanceof Error ? err.message : String(err) }
@@ -537,32 +534,28 @@ async function seedWithRetry(tasks: AnyTask[], baseLabel: string): Promise<AnyTa
 }
 
 // ── Đọc TẤT CẢ dòng 1 bảng (phân trang ỔN ĐỊNH theo khóa) ───────────────────
-// Supabase mặc định trả tối đa 1000 dòng/query → phải phân trang mới đếm đúng.
-//
-// ⚠️ LỖI "số liệu nhảy loạn xạ": nếu phân trang bằng `.range()` mà KHÔNG kèm
-// ORDER BY thì Postgres/PostgREST KHÔNG đảm bảo thứ tự dòng giống nhau giữa các
-// trang. Với hàng trăm nghìn dòng (tts_cache 300k+ → 300+ trang) các trang bị
-// CHỒNG/LỌT dòng ngẫu nhiên → số dòng gom vào Set đổi mỗi lần chạy → báo cáo
-// (và --verify) nhảy số.
-//
-// Cách sửa: LUÔN sắp xếp theo một bộ cột tạo KHÓA DUY NHẤT (orderCols):
+// Postgres tự host — phân trang bằng LIMIT/OFFSET vẫn cần ORDER BY theo khóa DUY
+// NHẤT (orderCols) để thứ tự trang ổn định giữa các lần gọi:
 //   • tts_cache       → ['hash']          (primary key)
 //   • pronunciations  → ['word','voice']  (unique (word,voice))
-// Thứ tự TỔNG + ổn định → phân trang không lọt/trùng → đếm chuẩn, lặp lại y hệt.
-async function fetchAllRows<T>(table: string, columns: string, orderCols: string[]): Promise<T[]> {
-  const supabase = getSupabaseAdmin()
+// Không có ORDER BY ổn định → các trang có thể CHỒNG/LỌT dòng ngẫu nhiên → số
+// dòng gom vào Set đổi mỗi lần chạy → báo cáo (và --verify) nhảy số.
+async function fetchAllRows<T extends QueryResultRow>(
+  table: string,
+  columns: string,
+  orderCols: string[],
+): Promise<T[]> {
+  const pool = getPgPool()
   const PAGE = 1000
   const out: T[] = []
-  for (let from = 0; ; from += PAGE) {
-    // Áp ORDER BY cho từng cột khóa rồi mới phân trang (range = limit/offset).
-    let query = supabase.from(table).select(columns).order(orderCols[0]!, { ascending: true })
-    for (let i = 1; i < orderCols.length; i++)
-      query = query.order(orderCols[i]!, { ascending: true })
-    const { data, error } = await query.range(from, from + PAGE - 1)
-    if (error) throw new Error(`Đọc bảng ${table} lỗi: ${error.message}`)
-    if (!data || data.length === 0) break
-    out.push(...(data as T[]))
-    if (data.length < PAGE) break
+  const orderBy = orderCols.join(', ')
+  for (let offset = 0; ; offset += PAGE) {
+    const { rows } = await pool.query<T>(
+      `select ${columns} from public.${table} order by ${orderBy} limit ${PAGE} offset ${offset}`,
+    )
+    if (rows.length === 0) break
+    out.push(...rows)
+    if (rows.length < PAGE) break
   }
   return out
 }
@@ -898,9 +891,7 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
 
 // ── MAIN ─────────────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
-  const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'TTS_ENCRYPTION_MASTER_KEY'].filter(
-    (k) => !process.env[k],
-  )
+  const missing = ['DATABASE_URL', 'TTS_ENCRYPTION_MASTER_KEY'].filter((k) => !process.env[k])
   if (missing.length > 0) {
     console.error(`❌ Thiếu biến môi trường: ${missing.join(', ')}`)
     process.exit(1)
