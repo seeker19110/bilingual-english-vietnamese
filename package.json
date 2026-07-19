@@ -35,6 +35,7 @@
     "sync:storage": "tsx scripts/sync-storage-to-vps.ts",
     "check:supabase": "tsx scripts/check-supabase-audio.ts",
     "migrate": "tsx scripts/run-migrations.ts",
+    "migrate:pg": "tsx scripts/run-pg-migrations.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -42,9 +43,12 @@
     "@sentry/node": "^10.63.0",
     "@sentry/react": "^10.63.0",
     "@supabase/supabase-js": "^2.108.2",
+    "bcryptjs": "^3.0.3",
     "compression": "^1.7.4",
     "express": "^4.21.2",
+    "google-auth-library": "^10.9.0",
     "lucide-react": "^0.400.0",
+    "pg": "^8.22.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.1",
@@ -80,7 +84,6 @@
     "happy-dom": "^20.10.6",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
-    "pg": "^8.22.0",
     "postcss": "^8.4.39",
     "prettier": "^3.9.1",
     "rollup-plugin-visualizer": "^7.0.1",

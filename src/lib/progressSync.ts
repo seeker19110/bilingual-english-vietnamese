@@ -9,7 +9,7 @@
 // localStorage vẫn là bộ đệm đọc nhanh + chạy offline. Khi kéo về, ta HỢP NHẤT
 // (không ghi đè mất dữ liệu): learned/hard/cefr_* lấy hợp (union), SRS giữ thẻ tiến bộ hơn.
 
-import { supabase } from './supabase'
+import { getAuthHeader } from './authHeader'
 
 const LEARNED = (uid: string) => `et_learned_${uid}`
 const HARD = (uid: string) => `et_hard_${uid}`
@@ -162,56 +162,58 @@ function readObj(key: string): Record<string, SRSLike> {
   }
 }
 
-// Đẩy toàn bộ tiến độ hiện tại lên Supabase (bắn rồi quên — không chặn giao diện).
+// Đẩy toàn bộ tiến độ hiện tại lên server (bắn rồi quên — không chặn giao diện).
+// Giai đoạn C: gọi POST /api/progress thay Supabase client trực tiếp (không còn RLS
+// bảo vệ sau khi cutover khỏi Supabase Auth ở Giai đoạn B).
 export function pushProgress(userId: string): void {
   if (!userId) return
-  void supabase
-    .from('learning_progress')
-    .upsert(
-      {
-        user_id: userId,
-        learned: readArr(LEARNED(userId)),
-        hard: readArr(HARD(userId)),
-        srs: readObj(SRS(userId)),
-        cefr_grammar: readArr(CEFR_GRAMMAR(userId)),
-        cefr_dialogues: readArr(CEFR_DIALOGUE(userId)),
-        cefr_unlocked: readArr(CEFR_UNLOCKED(userId)),
-        cefr_exams: readExamMap(CEFR_EXAMS(userId)),
-        placement: readPlacement(PLACEMENT(userId)) ?? {},
-        weekly_goal: readWeeklyGoal(WEEKLY_GOAL(userId)) ?? {},
-        achievements: readArr(ACHIEVEMENTS(userId)),
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'user_id' },
-    )
-    .then(({ error }) => {
-      if (error) console.warn('[progress] đẩy tiến độ lỗi:', error.message)
-    })
+  void fetch('/api/progress', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+    body: JSON.stringify({
+      learned: readArr(LEARNED(userId)),
+      hard: readArr(HARD(userId)),
+      srs: readObj(SRS(userId)),
+      cefrGrammar: readArr(CEFR_GRAMMAR(userId)),
+      cefrDialogues: readArr(CEFR_DIALOGUE(userId)),
+      cefrUnlocked: readArr(CEFR_UNLOCKED(userId)),
+      cefrExams: readExamMap(CEFR_EXAMS(userId)),
+      placement: readPlacement(PLACEMENT(userId)) ?? {},
+      weeklyGoal: readWeeklyGoal(WEEKLY_GOAL(userId)) ?? {},
+      achievements: readArr(ACHIEVEMENTS(userId)),
+    }),
+  }).then(
+    (resp) => {
+      if (!resp.ok) console.warn('[progress] đẩy tiến độ lỗi: HTTP', resp.status)
+    },
+    (err: unknown) => console.warn('[progress] đẩy tiến độ lỗi:', err),
+  )
 }
 
-// Kéo tiến độ từ Supabase → HỢP NHẤT với bản local → ghi lại localStorage → đẩy bản
+// Kéo tiến độ từ server → HỢP NHẤT với bản local → ghi lại localStorage → đẩy bản
 // hợp nhất lên (để mọi máy hội tụ). Lỗi mạng bị nuốt — vẫn dùng bản local.
 export async function pullProgress(userId: string): Promise<void> {
   if (!userId) return
-  // select('*') thay vì liệt kê cột: nếu DB CHƯA chạy migration 0007 (thiếu 2 cột
-  // cefr_*) thì kéo về vẫn chạy được các phần cũ, không gãy cả pull.
-  const { data, error } = await supabase
-    .from('learning_progress')
-    .select('*')
-    .eq('user_id', userId)
-    .maybeSingle()
-  if (error || !data) return
+  let data: unknown
+  try {
+    const resp = await fetch('/api/progress', { headers: getAuthHeader() })
+    if (!resp.ok) return
+    data = await resp.json()
+  } catch {
+    return
+  }
+  if (!data) return
 
   const cloud = data as {
     learned?: string[]
     hard?: string[]
     srs?: Record<string, SRSLike>
-    cefr_grammar?: string[]
-    cefr_dialogues?: string[]
-    cefr_unlocked?: string[]
-    cefr_exams?: Record<string, ExamResultLike>
+    cefrGrammar?: string[]
+    cefrDialogues?: string[]
+    cefrUnlocked?: string[]
+    cefrExams?: Record<string, ExamResultLike>
     placement?: PlacementLike
-    weekly_goal?: WeeklyGoalLike
+    weeklyGoal?: WeeklyGoalLike
     achievements?: string[]
   }
 
@@ -220,15 +222,15 @@ export async function pullProgress(userId: string): Promise<void> {
   const hard = new Set<string>([...readArr(HARD(userId)), ...(cloud.hard ?? [])])
   const cefrGrammar = new Set<string>([
     ...readArr(CEFR_GRAMMAR(userId)),
-    ...(cloud.cefr_grammar ?? []),
+    ...(cloud.cefrGrammar ?? []),
   ])
   const cefrDialogues = new Set<string>([
     ...readArr(CEFR_DIALOGUE(userId)),
-    ...(cloud.cefr_dialogues ?? []),
+    ...(cloud.cefrDialogues ?? []),
   ])
   const cefrUnlocked = new Set<string>([
     ...readArr(CEFR_UNLOCKED(userId)),
-    ...(cloud.cefr_unlocked ?? []),
+    ...(cloud.cefrUnlocked ?? []),
   ])
   const achievements = new Set<string>([
     ...readArr(ACHIEVEMENTS(userId)),
@@ -236,7 +238,7 @@ export async function pullProgress(userId: string): Promise<void> {
   ])
 
   // cefr_exams: hợp nhất theo cấp, giữ kết quả "tốt hơn" (xem mergeExamMaps).
-  const cefrExams = mergeExamMaps(readExamMap(CEFR_EXAMS(userId)), cloud.cefr_exams ?? {})
+  const cefrExams = mergeExamMaps(readExamMap(CEFR_EXAMS(userId)), cloud.cefrExams ?? {})
 
   // placement: hợp nhất theo lastAt mới hơn (cloud.placement rỗng '{}' khi chưa
   // từng thi → không có lastAt → coi như null).
@@ -246,7 +248,7 @@ export async function pullProgress(userId: string): Promise<void> {
   // weekly_goal: hợp nhất theo updatedAt mới hơn (cloud rỗng '{}' khi chưa từng
   // chỉnh → không có updatedAt → coi như null).
   const cloudWeeklyGoal =
-    cloud.weekly_goal && 'updatedAt' in cloud.weekly_goal ? cloud.weekly_goal : null
+    cloud.weeklyGoal && 'updatedAt' in cloud.weeklyGoal ? cloud.weeklyGoal : null
   const weeklyGoal = mergeWeeklyGoal(readWeeklyGoal(WEEKLY_GOAL(userId)), cloudWeeklyGoal)
 
   // SRS: merge theo từ-khoá, giữ thẻ có nhiều lần ôn hơn (tiến bộ hơn)

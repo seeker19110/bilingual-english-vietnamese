@@ -62,16 +62,22 @@ export default function Login() {
     }
   }
 
-  // Đăng nhập bằng Google — chuyển hướng sang Google, không cần await kết quả.
-  // Sau khi quay lại, AuthProvider sẽ tự nhận session và điều hướng.
+  // Đăng nhập bằng Google — Giai đoạn B dùng Google Identity Services (popup/One Tap ngay
+  // trên trang, KHÔNG redirect rời trang như Supabase OAuth trước đây).
   async function googleSignIn() {
     setError('')
     setLoading(true)
     try {
-      await loginWithGoogle()
-      // Trình duyệt sẽ rời trang ngay; không cần làm gì thêm ở đây.
+      const u = await loginWithGoogle()
+      if (!u) {
+        setError(T.errGoogle)
+        return
+      }
+      await refresh()
+      nav('/')
     } catch {
       setError(T.errGoogle)
+    } finally {
       setLoading(false)
     }
   }

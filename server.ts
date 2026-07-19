@@ -28,6 +28,9 @@ import pushHandler, { sendReminders } from './api/push.js'
 import dictionaryHandler from './api/dictionary.js'
 import leaderboardHandler from './api/leaderboard.js'
 import pronounceAssessHandler from './api/pronounce-assess.js'
+import authHandler from './api/auth.js'
+import profileHandler from './api/profile.js'
+import progressHandler from './api/progress.js'
 
 const app = express()
 
@@ -130,6 +133,9 @@ app.all('/api/pronunciation', wrapEdge(pronunciationHandler))
 app.all('/api/push', wrapEdge(pushHandler))
 app.all('/api/dictionary', wrapEdge(dictionaryHandler))
 app.all('/api/leaderboard', wrapEdge(leaderboardHandler))
+app.all('/api/auth', wrapEdge(authHandler))
+app.all('/api/profile', wrapEdge(profileHandler))
+app.all('/api/progress', wrapEdge(progressHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

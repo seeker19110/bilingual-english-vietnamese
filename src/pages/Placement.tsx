@@ -163,7 +163,7 @@ export default function Placement() {
     const cached = getCachedOnboarding(user.id)
     const goal = cached?.goal ?? 'daily'
     const dailyMinutes = cached?.dailyMinutes ?? 10
-    await saveOnboarding(user.id, { level: res.appLevel, goal, dailyMinutes })
+    await saveOnboarding({ level: res.appLevel, goal, dailyMinutes })
     cacheOnboarding(user.id, { level: res.appLevel, goal, dailyMinutes })
     setDailySpeed(user.id, minutesToSpeed(dailyMinutes))
   }

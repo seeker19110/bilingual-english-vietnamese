@@ -1,7 +1,7 @@
 // api/_lib/security.ts — Middleware bảo mật dùng chung cho tất cả API endpoints
 // Import file này ở đầu mỗi handler để có CORS, rate limit, auth validation, v.v.
 
-import { getSupabaseAdmin } from './supabaseAdmin'
+import { validateSessionToken } from './authService'
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 // Đọc danh sách domain cho phép từ biến môi trường ALLOWED_ORIGINS (phân cách bằng dấu phẩy).
@@ -92,8 +92,9 @@ export function checkRateLimit(ip: string, maxPerMin = 60, bucket = 'default'): 
 }
 
 // ── Auth Validation ───────────────────────────────────────────────────────────
-// Đọc JWT từ header Authorization: Bearer <token>
-// Xác thực với Supabase — trả về userId nếu hợp lệ, null nếu không.
+// Đọc session token từ header Authorization: Bearer <token>
+// Tra bảng `sessions` trên Postgres tự host (Giai đoạn B — thay Supabase Auth) — trả về
+// userId nếu hợp lệ + chưa hết hạn, null nếu không. Xem api/_lib/authService.ts.
 //
 // SKIP_AUTH=true chỉ dùng khi dev local (phòng khi client chưa gửi token).
 // TUYỆT ĐỐI KHÔNG bật SKIP_AUTH trên production!
@@ -122,10 +123,7 @@ export async function validateAuth(req: Request): Promise<{ userId: string } | n
   if (!token) return null
 
   try {
-    const supabase = getSupabaseAdmin()
-    const { data, error } = await supabase.auth.getUser(token)
-    if (error || !data.user) return null
-    return { userId: data.user.id }
+    return await validateSessionToken(token)
   } catch {
     return null
   }

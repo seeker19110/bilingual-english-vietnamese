@@ -1,18 +1,14 @@
-// Test lib onboarding (U-3): cache localStorage, đọc từ Supabase (mock), map
+// Test lib onboarding (U-3): cache localStorage, đọc từ GET /api/profile (mock fetch), map
 // phút/ngày → tốc độ học.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { supabase } from './supabase'
 import { getCachedOnboarding, cacheOnboarding, fetchOnboarding, minutesToSpeed } from './onboarding'
 
-vi.mock('./supabase', () => ({ supabase: { from: vi.fn() } }))
-
-// Giả lập chuỗi supabase.from('profiles').select(...).eq(...).maybeSingle()
-function mockProfileRow(row: unknown, error: unknown = null) {
-  vi.mocked(supabase.from).mockReturnValue({
-    select: () => ({
-      eq: () => ({ maybeSingle: async () => ({ data: row, error }) }),
-    }),
-  } as never)
+// Giả lập GET /api/profile trả về body cho trước (hoặc lỗi HTTP nếu ok=false).
+function mockProfileResponse(body: unknown, ok = true) {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => ({ ok, json: async () => body }) as unknown as Response),
+  )
 }
 
 beforeEach(() => {
@@ -66,10 +62,10 @@ describe('cache localStorage', () => {
 
 describe('fetchOnboarding', () => {
   it('hàng hợp lệ → trả dữ liệu VÀ tự ghi cache', async () => {
-    mockProfileRow({
-      user_level: 'intermediate',
+    mockProfileResponse({
+      userLevel: 'intermediate',
       goal: 'ielts',
-      daily_minutes: 30,
+      dailyMinutes: 30,
       onboarded: true,
     })
     const d = await fetchOnboarding('u1')
@@ -78,15 +74,20 @@ describe('fetchOnboarding', () => {
   })
 
   it('chưa onboarded → null (không cache)', async () => {
-    mockProfileRow({ user_level: 'beginner', goal: 'daily', daily_minutes: 10, onboarded: false })
+    mockProfileResponse({
+      userLevel: 'beginner',
+      goal: 'daily',
+      dailyMinutes: 10,
+      onboarded: false,
+    })
     expect(await fetchOnboarding('u1')).toBeNull()
     expect(getCachedOnboarding('u1')).toBeNull()
   })
 
-  it('lỗi DB hoặc user_level lạ → null', async () => {
-    mockProfileRow(null, { message: 'network' })
+  it('lỗi HTTP hoặc userLevel lạ → null', async () => {
+    mockProfileResponse(null, false)
     expect(await fetchOnboarding('u1')).toBeNull()
-    mockProfileRow({ user_level: 'weird', onboarded: true })
+    mockProfileResponse({ userLevel: 'weird', onboarded: true })
     expect(await fetchOnboarding('u1')).toBeNull()
   })
 })

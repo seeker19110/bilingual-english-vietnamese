@@ -4,7 +4,7 @@
 // Chiến lược 2 tầng giống profile (lib/auth.ts): cache localStorage (~1ms, ghi
 // ngay lúc onboarding xong) → Supabase (chạy nền, cho thiết bị mới chưa có cache).
 import { useEffect, useState } from 'react'
-import { supabase } from './supabase'
+import { getAuthHeader } from './authHeader'
 import type { Level } from '../types'
 import type { DailySpeed } from './curriculum'
 
@@ -45,22 +45,29 @@ export function cacheOnboarding(uid: string, data: OnboardingData): void {
   }
 }
 
-// Đọc từ bảng profiles (cột user_level/goal/daily_minutes — xem supabase/schema.sql).
+// Đọc từ GET /api/profile (Giai đoạn C — trước đây gọi thẳng Supabase `profiles` qua RLS).
 // Trả null khi chưa onboarded / lỗi mạng / dữ liệu lạ. Thành công thì tự ghi cache.
 export async function fetchOnboarding(uid: string): Promise<OnboardingData | null> {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('user_level, goal, daily_minutes, onboarded')
-    .eq('id', uid)
-    .maybeSingle()
-  if (error || !data?.onboarded || !isValidLevel(data.user_level)) return null
-  const result: OnboardingData = {
-    level: data.user_level,
-    goal: typeof data.goal === 'string' ? data.goal : 'daily',
-    dailyMinutes: typeof data.daily_minutes === 'number' ? data.daily_minutes : 10,
+  try {
+    const resp = await fetch('/api/profile', { headers: getAuthHeader() })
+    if (!resp.ok) return null
+    const data = (await resp.json()) as {
+      onboarded: boolean
+      userLevel: string
+      goal: string
+      dailyMinutes: number
+    }
+    if (!data.onboarded || !isValidLevel(data.userLevel)) return null
+    const result: OnboardingData = {
+      level: data.userLevel,
+      goal: data.goal,
+      dailyMinutes: data.dailyMinutes,
+    }
+    cacheOnboarding(uid, result)
+    return result
+  } catch {
+    return null
   }
-  cacheOnboarding(uid, result)
-  return result
 }
 
 // Map "phút mỗi ngày" chọn lúc onboarding (5/10/20/30) → tốc độ học từ vựng

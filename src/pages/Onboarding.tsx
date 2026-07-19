@@ -83,7 +83,7 @@ export default function Onboarding() {
   async function finish() {
     if (!user) return
     setSaving(true)
-    await saveOnboarding(user.id, { level, goal, dailyMinutes: minutes })
+    await saveOnboarding({ level, goal, dailyMinutes: minutes })
     // U-3: dùng lại dữ liệu vừa khai ngay trong app — cache local để Chat/Speaking
     // đọc được trình độ, và map phút/ngày → tốc độ học từ vựng (5/10/20 từ/ngày).
     cacheOnboarding(user.id, { level, goal, dailyMinutes: minutes })
