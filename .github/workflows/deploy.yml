@@ -9,6 +9,14 @@ on:
     types: [completed]
     branches: [main]
 
+# Nhiều lần push/merge lên main gần nhau → nhiều lần CI pass gần nhau → nhiều job deploy
+# có thể được GitHub Actions chạy SONG SONG (mặc định không tự xếp hàng), cả 2 cùng SSH
+# vào VPS pull/build/reload PM2 cùng lúc → đụng nhau. concurrency group ép các lần deploy
+# XẾP HÀNG (cancel-in-progress: false = không huỷ lần đang chạy, lần sau đợi lần trước xong).
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false
+
 jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
