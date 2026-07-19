@@ -134,4 +134,25 @@ Nguyên tắc thay RLS: **mọi handler API tự kiểm `user_id` khớp với s
 
 1. Tạo **Google OAuth Client ID** tại [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → Create Credentials → OAuth client ID → Application type **Web application** → Authorized JavaScript origins: `https://en-vi.donghanhcungban.com` (và `http://localhost:5173` nếu muốn test dev) → KHÔNG cần điền Redirect URI. Copy Client ID, điền **CẢ 2 biến** `GOOGLE_CLIENT_ID` và `VITE_GOOGLE_CLIENT_ID` trong `.env` trên VPS (cùng giá trị).
 2. Xác nhận **chấp nhận reset toàn bộ tài khoản người dùng hiện có** khi cutover (đã xác nhận 2026-07-20) — không có bước nào khác cần làm thêm cho việc này vì app đang thử nghiệm.
-3. Chưa cutover ngay — chờ AI làm xong phần `profiles`/`daily_usage`/`learning_progress` của Giai đoạn C (nêu ở mục 3.2) trước khi đổi `.env` production.
+
+## 8. Giai đoạn C (lõi tối thiểu): profiles + daily_usage + learning_progress — ĐÃ XONG (2026-07-20)
+
+**Phạm vi đã làm** (đủ để không vỡ tính năng khi cutover Auth, KHÔNG phải toàn bộ GĐ C):
+
+- `api/_lib/usage.ts`: đổi từ Supabase RPC (`consume_usage`/`refund_usage` qua PostgREST) sang gọi thẳng 2 hàm SQL cùng tên trên Postgres tự host qua `pg` — đã có sẵn từ `postgres/schema.sql` (Giai đoạn A). Bỏ luôn nhánh dự phòng "fallback non-atomic" (không cần nữa vì hàm SQL luôn tồn tại). Test viết lại toàn bộ (`api/_lib/usage.test.ts`, mock `pgPool` thay Supabase).
+- `api/profile.ts` (route mới): `GET /api/profile` (đọc plan/onboarded/user_level/goal/daily_minutes, tự tạo profile nếu chưa có), `POST /api/profile` (lưu kết quả onboarding). Thay `ensureProfile()`/`saveOnboarding()`/`fetchOnboarding()` trong `src/lib/cloud.ts` + `src/lib/onboarding.ts` vốn gọi thẳng Supabase client qua RLS.
+- `api/progress.ts` (route mới): `GET`/`POST /api/progress` — đọc/ghi toàn bộ `learning_progress` (learned/hard/srs/cefr_*/placement/weekly_goal/achievements). Thay `pushProgress()`/`pullProgress()` trong `src/lib/progressSync.ts`.
+- Dọn dẹp: xóa hẳn `ensureProfile()` (không còn ai gọi sau khi `auth.ts` viết lại ở GĐ B), bỏ tham số `userId` thừa khỏi `saveOnboarding()` (2 nơi gọi `Onboarding.tsx`/`Placement.tsx` đã cập nhật theo).
+- Test: viết lại `src/lib/onboarding.test.ts` (mock `fetch` thay Supabase client).
+- **Kiểm tra:** build ✅ · typecheck ✅ · lint (0 cảnh báo) ✅ · test 571/571 ✅.
+
+**CÒN LẠI ngoài phạm vi lõi tối thiểu** (chưa làm, liệt kê để không quên trước khi coi GĐ C xong hẳn):
+
+- `src/lib/cloud.ts` — `pushChatSession`/`pushSpeakingSession`/`pushWritingSub`/`pullUserData` (lịch sử chat/viết/nói) vẫn gọi Supabase client trực tiếp.
+- `api/leaderboard.ts` — đọc/ghi `profiles`(nickname, league_opt_in)/`daily_usage`/`challenge_entries` qua `getSupabaseAdmin()`, chưa đổi sang `pgPool`.
+- `src/lib/challengeCloud.ts`, `src/lib/tutorFeedback.ts` — chưa đổi.
+- `src/lib/mistakes.ts` — KHÔNG cần đổi (chủ động chỉ dùng localStorage, không đụng Supabase — xem comment đầu file).
+
+## 9. Trạng thái tổng thể trước khi cutover thật (deploy `.env` production)
+
+Sau mục 8, phần LÕI (đăng nhập + đếm lượt dùng AI + tiến độ học từ vựng) đã an toàn để cutover — đây là 3 tính năng quan trọng nhất. Phần CÒN LẠI ở mục 8 (lịch sử chat/viết/nói, bảng xếp hạng, thử thách, feedback AI) sẽ **mất đồng bộ cloud tạm thời** sau cutover cho tới khi làm nốt — dữ liệu vẫn còn ở localStorage từng máy, không mất hẳn, chỉ không đồng bộ đa thiết bị. Cân nhắc: cutover ngay (chấp nhận gián đoạn tạm các tính năng phụ) hay làm nốt toàn bộ mục 8 "CÒN LẠI" trước khi cutover.

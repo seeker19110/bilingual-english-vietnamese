@@ -9,6 +9,7 @@
 // dữ liệu của chính tài khoản đang đăng nhập — an toàn dù dùng anon key.
 
 import { supabase } from './supabase'
+import { getAuthHeader } from './authHeader'
 import type { ChatSession, WritingSubmission, SpeakingSession, DailyUsage, Level } from '../types'
 import { vnDateStr } from './date'
 
@@ -240,49 +241,19 @@ export async function pullUserData(userId: string): Promise<void> {
   }
 }
 
-// ── profiles: đảm bảo có hồ sơ + đọc gói + trạng thái onboarding ──────────────
-export async function ensureProfile(
-  userId: string,
-  name: string,
-): Promise<{ plan: 'free' | 'pro'; onboarded: boolean }> {
-  const { data, error } = await supabase
-    .from('profiles')
-    .upsert({ id: userId, name }, { onConflict: 'id', ignoreDuplicates: true })
-    .select('plan, onboarded')
-    .maybeSingle()
-
-  if (error) {
-    warn('profile', error)
-    return { plan: 'free', onboarded: false }
-  }
-  if (data?.plan !== undefined) {
-    return { plan: data.plan === 'pro' ? 'pro' : 'free', onboarded: !!data.onboarded }
-  }
-
-  const { data: existing } = await supabase
-    .from('profiles')
-    .select('plan, onboarded')
-    .eq('id', userId)
-    .maybeSingle()
-  return {
-    plan: existing?.plan === 'pro' ? 'pro' : 'free',
-    onboarded: !!existing?.onboarded,
-  }
-}
-
 // ── Lưu kết quả onboarding ────────────────────────────────────────────────────
-export async function saveOnboarding(
-  userId: string,
-  data: { level: string; goal: string; dailyMinutes: number },
-) {
-  const { error } = await supabase
-    .from('profiles')
-    .update({
-      user_level: data.level,
-      goal: data.goal,
-      daily_minutes: data.dailyMinutes,
-      onboarded: true,
+// Giai đoạn C: gọi POST /api/profile thay Supabase client — không còn Supabase session
+// sau khi cutover khỏi Supabase Auth (Giai đoạn B). Server tự xác định user từ token
+// (getAuthHeader()), không cần truyền userId nữa.
+export async function saveOnboarding(data: { level: string; goal: string; dailyMinutes: number }) {
+  try {
+    const resp = await fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+      body: JSON.stringify({ action: 'onboarding', ...data }),
     })
-    .eq('id', userId)
-  if (error) warn('onboarding', error)
+    if (!resp.ok) console.warn('[cloud] lưu onboarding lỗi: HTTP', resp.status)
+  } catch (err) {
+    console.warn('[cloud] lưu onboarding lỗi:', err instanceof Error ? err.message : err)
+  }
 }
