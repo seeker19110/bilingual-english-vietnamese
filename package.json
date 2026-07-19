@@ -35,6 +35,7 @@
     "sync:storage": "tsx scripts/sync-storage-to-vps.ts",
     "check:supabase": "tsx scripts/check-supabase-audio.ts",
     "migrate": "tsx scripts/run-migrations.ts",
+    "migrate:pg": "tsx scripts/run-pg-migrations.ts",
     "prepare": "husky"
   },
   "dependencies": {
