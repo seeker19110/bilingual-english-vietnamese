@@ -29,8 +29,7 @@ Biến môi trường thêm:
 - `WORDS_FILE=scripts/seed-errors.json` — chỉ seed lại danh sách từ trong file (retry lỗi).
 - `BASE_URL=...` — host để ghép `audio_url` khi lưu Storage (mặc định lấy từ `.env`).
 
-Bắt buộc có trong `.env`: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
-`GOOGLE_TTS_API_KEY`, `TTS_ENCRYPTION_MASTER_KEY`.
+Bắt buộc có trong `.env`: `DATABASE_URL`, `GOOGLE_TTS_API_KEY`, `TTS_ENCRYPTION_MASTER_KEY`.
 
 ---
 

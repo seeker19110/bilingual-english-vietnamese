@@ -17,15 +17,15 @@ Internet
    │
 [Nginx :443]  ← nhận HTTPS, tên miền, gzip, serve file audio tĩnh /uploads/
    │
-[Express :3001]  ← server.ts: api/*.ts + phục vụ React build (dist/)
+[Express :3001]  ← server.ts: api/*.ts (auth Bearer token tự viết) + phục vụ React build (dist/)
    │
-[Supabase]  ← database (bảng user, lịch sử học, tts_cache), auth (RLS)
+[PostgreSQL tự host]  ← database (user, lịch sử học, tts_cache...) — cùng VPS
+   │
+[Cloudflare R2 hoặc /uploads/ local]  ← audio cache TTS/phát âm (STORAGE_DRIVER)
 ```
 
-App chạy bằng **PM2** trên **Node.js 22** (yêu cầu tối thiểu).
-
-> ⚠️ **Bắt buộc Node 22 trở lên.** Node 20 thiếu WebSocket gốc → thư viện Supabase
-> ném lỗi khi xác thực → **mọi request đăng nhập bị `AUTH_FAILED`**.
+App chạy bằng **PM2** trên **Node.js 22** (yêu cầu tối thiểu — dùng cho `tsx`/ESM và các
+thư viện hiện tại, không còn ràng buộc riêng nào từ Supabase).
 
 ---
 
@@ -47,7 +47,7 @@ App chạy bằng **PM2** trên **Node.js 22** (yêu cầu tối thiểu).
 
 | Tiện ích                       | Bắt buộc?      | Bước      |
 | ------------------------------ | -------------- | --------- |
-| Bảng Supabase (`schema.sql`)   | ✅             | Bước 0    |
+| PostgreSQL tự host + bảng      | ✅             | Bước 0    |
 | Firewall `ufw`                 | ✅ Nên có      | Bước 1    |
 | Node.js 22                     | ✅             | Bước 2    |
 | Nginx + PM2 + log rotation     | ✅             | Bước 3    |
@@ -58,24 +58,23 @@ App chạy bằng **PM2** trên **Node.js 22** (yêu cầu tối thiểu).
 
 ---
 
-## Bước 0 — Chuẩn bị Supabase (tạo bảng + lấy key)
+## Bước 0 — Cài PostgreSQL tự host + tạo bảng
 
-App **không chạy được** nếu chưa tạo bảng trong database.
+App **không chạy được** nếu chưa có database. Xem hướng dẫn đầy đủ (cài đặt, tạo user
+riêng không dùng superuser, backup) tại **`docs/setup-postgresql-vps.md`** — tóm tắt:
 
-1. Mở **Supabase Dashboard → SQL Editor → New query**.
-2. Mở file `supabase/schema.sql` trong repo, copy toàn bộ nội dung, dán vào và bấm **Run**.
-   - Tạo các bảng: `profiles`, `daily_usage`, `tts_cache`, `pronunciations`, `chat_sessions`, `writing_submissions`, `speaking_sessions` kèm Row Level Security (RLS).
-3. Lấy các key (**Project Settings → API**):
-   - `Project URL` → `VITE_SUPABASE_URL` và `SUPABASE_URL`
-   - `anon public` key → `VITE_SUPABASE_ANON_KEY`
-   - `service_role` key (bí mật!) → `SUPABASE_SERVICE_ROLE_KEY`
-4. Lấy connection string Postgres (**Project Settings → Database → Connection string** →
-   mục **"Direct connection"**, KHÔNG dùng "Transaction pooler") → điền `[YOUR-PASSWORD]`
-   bằng mật khẩu DB thật → dán vào `SUPABASE_DB_URL`. Dùng cho migration tự động khi
-   deploy (`npm run migrate`, xem mục "Cập nhật code mới" bên dưới) — khác với
-   `SUPABASE_URL` ở trên (đó là REST API, không chạy được lệnh SQL tạo bảng/cột).
+1. Cài PostgreSQL 16+ qua `apt`, tạo database `english_tutor` + user riêng `tutor_app`
+   (không dùng superuser cho app).
+2. Ghi connection string vào `.env` VPS: `DATABASE_URL=postgresql://tutor_app:MAT_KHAU@localhost:5432/english_tutor`.
+3. Áp schema: `npm run migrate:pg` (đọc `postgres/schema.sql` + mọi file trong
+   `postgres/migrations/*.sql` chưa chạy — tạo bảng `users`, `sessions`, `profiles`,
+   `daily_usage`, `tts_cache`, `pronunciations`, `learning_progress`... quyền kiểm tra
+   nằm trong code `api/`, không còn Row Level Security của Supabase).
+4. Thiết lập cron `pg_dump` backup hàng ngày (Postgres tự host không có backup tự động
+   như Supabase — xem mục 7 của `docs/setup-postgresql-vps.md`).
 
-> Dùng `STORAGE_DRIVER=local` thì **không cần** tạo Storage bucket trên Supabase.
+> Dùng `STORAGE_DRIVER=local` (mặc định) thì **không cần** cấu hình Cloudflare R2 —
+> audio lưu thẳng vào thư mục `uploads/` trên VPS.
 
 ---
 
@@ -146,16 +145,12 @@ nano .env
 Nội dung `.env` đầy đủ (xem `.env.example` trong repo để có danh sách mới nhất):
 
 ```env
-# ── Supabase (frontend) ──
-VITE_SUPABASE_URL=https://xxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJ...
+# ── PostgreSQL tự host (Bước 0) ──
+DATABASE_URL=postgresql://tutor_app:mat-khau-that@localhost:5432/english_tutor
 
-# ── Supabase (server) ──
-SUPABASE_URL=https://xxxx.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJ...
-
-# ── Migration Supabase tự động khi deploy (Bước 0 mục 4) ──
-SUPABASE_DB_URL=postgresql://postgres:mat-khau-that@db.xxxx.supabase.co:5432/postgres
+# ── Auth tự viết (Bearer token) — Google OAuth Client ID, CẢ 2 biến CÙNG giá trị ──
+GOOGLE_CLIENT_ID=xxxxxxxxxx.apps.googleusercontent.com
+VITE_GOOGLE_CLIENT_ID=xxxxxxxxxx.apps.googleusercontent.com
 
 # ── AI + TTS ──
 ANTHROPIC_API_KEY=sk-ant-...
@@ -171,19 +166,20 @@ TTS_ENCRYPTION_MASTER_KEY=...
 # ── Bảo mật: chỉ cho domain thật gọi API ──
 ALLOWED_ORIGINS=https://en-vi.donghanhcungban.com
 
-# ── Lưu audio TTS trên ổ đĩa VPS (miễn phí, không tốn Supabase Storage) ──
+# ── Lưu audio TTS — local (mặc định, ổ đĩa VPS) hoặc r2 (Cloudflare R2) ──
 STORAGE_DRIVER=local
 UPLOADS_DIR=/var/www/english-tutor/uploads
+# STORAGE_DRIVER=r2 cần thêm R2_ACCOUNT_ID/R2_ACCESS_KEY_ID/R2_SECRET_ACCESS_KEY/
+# R2_BUCKET/R2_PUBLIC_BASE_URL — xem .env.example.
 
 # ── Cổng app (3001 vì 3000 đã bị app khác dùng) ──
 PORT=3001
 ```
 
 > **Thiếu `TTS_ENCRYPTION_MASTER_KEY`** → audio cache mã hóa/giải mã thất bại, app fallback giọng trình duyệt.
-> **Thiếu `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY`** → đăng nhập lỗi.
+> **Thiếu `DATABASE_URL`** → app không kết nối được database, mọi request lỗi 500.
 > **Bỏ trống `ALLOWED_ORIGINS`** = cho phép mọi domain gọi API (chỉ dùng lúc dev).
-> **Thiếu `SUPABASE_DB_URL`** → `npm run migrate` báo lỗi rõ ràng, deploy dừng lại (vẫn
-> dán tay migration vào SQL Editor được như trước — xem "Cập nhật code mới" bên dưới).
+> Xem đầy đủ mọi biến (kể cả tùy chọn) tại `.env.example`.
 
 ```bash
 npm install
@@ -349,19 +345,17 @@ BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
 
 **Cách khuyên dùng khi có migration mới: chạy `bash deploy.sh`** (file có sẵn ở gốc repo, đã theo dõi trong Git —
 xem nội dung tại `deploy.sh`). Script này tự làm hết: pull code → cài thư viện → **tự động
-chạy mọi migration Supabase còn thiếu** (`npm run migrate`, dừng deploy ngay nếu migration
-lỗi) → build → `pm2 restart` kèm nạp lại `.env`.
+chạy mọi migration Postgres tự host còn thiếu** (`npm run migrate:pg`, dừng deploy ngay nếu
+migration lỗi) → build → `pm2 restart` kèm nạp lại `.env`.
 
 ```bash
 cd /var/www/english-tutor   # hoặc đường dẫn thật trên VPS của bạn
 bash deploy.sh
 ```
 
-> ⚠️ **Cần có `SUPABASE_DB_URL` trong `.env`** để bước migration tự động chạy được (xem
-> Bước 0 mục 4 + Bước 4 phía trên). Không có bước chuẩn bị nào khác — script tự tạo bảng
-> theo dõi `_schema_migrations` ở lần chạy đầu tiên. Thiếu biến này → `npm run migrate`
-> báo lỗi rõ ràng và dừng deploy (`set -e`); điền `SUPABASE_DB_URL` rồi chạy lại
-> `bash deploy.sh`. Xem chi tiết + trạng thái từng migration tại `supabase/migrations/README.md`.
+> ⚠️ **Cần có `DATABASE_URL` trong `.env`** (xem Bước 0 + Bước 4 phía trên). Script tự tạo
+> bảng theo dõi `_schema_migrations` ở lần chạy đầu tiên. Xem chi tiết + trạng thái từng
+> migration tại `postgres/migrations/README.md`.
 
 <details>
 <summary>Deploy thủ công từng bước (không dùng <code>deploy.sh</code>)</summary>
@@ -370,7 +364,7 @@ bash deploy.sh
 cd /var/www/english-tutor
 git pull origin main
 npm install        # chỉ cần nếu package.json đổi
-npm run migrate    # chạy migration Supabase còn thiếu (cần SUPABASE_DB_URL trong .env)
+npm run migrate:pg # chạy migration Postgres tự host còn thiếu (cần DATABASE_URL trong .env)
 npm run build      # chỉ cần nếu code frontend thay đổi
 pm2 reload ecosystem.config.cjs   # zero-downtime restart
 ```
@@ -413,7 +407,9 @@ df -h                                            # ổ cứng tổng thể
 ## Backup
 
 Audio cache **có thể tạo lại** bằng script seed (chỉ tốn thêm Google TTS quota).
-Dữ liệu quan trọng (tài khoản, lịch sử học) nằm trên **Supabase** — bật backup ở Supabase Dashboard.
+Dữ liệu quan trọng (tài khoản, lịch sử học) nằm trên **PostgreSQL tự host** — cron
+`pg_dump` hàng ngày đã thiết lập theo `docs/setup-postgresql-vps.md` mục 7 (Postgres
+tự host không có backup tự động như Supabase, tự chịu trách nhiệm backup).
 
 ```bash
 # Backup uploads thủ công
@@ -456,13 +452,14 @@ Nếu app không trả lời, kiểm tra port trong `.env` (`PORT=3001`) và `ec
 
 ```bash
 # Kiểm tra đủ key chưa
-grep -E "^(VITE_SUPABASE|ANTHROPIC|GOOGLE_TTS|TTS_ENCRYPTION|ALLOWED_ORIGINS)" .env
+grep -E "^(DATABASE_URL|GOOGLE_CLIENT_ID|ANTHROPIC|GOOGLE_TTS|TTS_ENCRYPTION|ALLOWED_ORIGINS)" .env
 
 # Reload sau khi sửa .env
 pm2 reload ecosystem.config.cjs --update-env
 ```
 
-Hay gặp: `ALLOWED_ORIGINS` không có domain của bạn → bị chặn CORS.
+Hay gặp: `ALLOWED_ORIGINS` không có domain của bạn → bị chặn CORS. `DATABASE_URL` sai/DB
+chưa chạy → mọi request lỗi 500 (`pm2 logs english-tutor` sẽ thấy lỗi kết nối Postgres).
 
 ### Audio không phát / fallback về giọng trình duyệt
 

@@ -20,9 +20,9 @@ bash deploy.sh          # hoặc: bash scripts/deploy.sh
 ```
 
 Cả `deploy.sh` (gốc repo) và `scripts/deploy.sh` đều tự làm: pull code mới nhất từ
-`origin/main` → cài dependencies → **chạy migration Supabase còn thiếu** (`npm run migrate`,
-dừng deploy nếu lỗi) → build → restart PM2. Cần `SUPABASE_DB_URL` trong `.env` trên VPS để
-bước migration chạy được — xem `supabase/migrations/README.md`.
+`origin/main` → cài dependencies → **chạy migration Postgres tự host còn thiếu**
+(`npm run migrate:pg`, dừng deploy nếu lỗi) → build → restart PM2. Cần `DATABASE_URL`
+trong `.env` trên VPS để bước migration chạy được — xem `postgres/migrations/README.md`.
 
 ## Xử lý sự cố nhanh
 

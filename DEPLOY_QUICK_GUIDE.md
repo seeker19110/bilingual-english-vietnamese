@@ -36,7 +36,7 @@ curl https://en-vi.donghanhcungban.com/api/health
 ```bash
 pm2 logs english-tutor --lines 50          # app không start
 curl http://localhost:3001/api/health      # Nginx 502 → kiểm tra app có chạy không
-grep -E "^VITE_SUPABASE|^SUPABASE_URL" .env  # đăng nhập lỗi → thiếu biến
+grep -E "^DATABASE_URL|^GOOGLE_CLIENT_ID" .env  # đăng nhập lỗi / lỗi DB → thiếu biến
 pm2 restart english-tutor --update-env      # reload sau khi sửa .env
 ```
 
@@ -45,11 +45,11 @@ mở được.
 
 ## Migration DB
 
-`scripts/deploy.sh` tự chạy `npm run migrate` (cần `SUPABASE_DB_URL` trong `.env`, xem
+`scripts/deploy.sh` tự chạy `npm run migrate:pg` (cần `DATABASE_URL` trong `.env`, xem
 `.env.example`) — không cần chạy tay trừ khi muốn kiểm tra ngoài luồng deploy:
 
 ```bash
-npm run migrate
+npm run migrate:pg
 ```
 
 ## Pre-cache audio (sau deploy lần đầu, tuỳ chọn)

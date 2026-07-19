@@ -42,8 +42,8 @@ jobs:
             echo "📦 Install dependencies..."
             npm install
 
-            echo "🗄️  Chạy migration Supabase còn thiếu..."
-            npm run migrate
+            echo "🗄️  Chạy migration Postgres tự host còn thiếu..."
+            npm run migrate:pg
 
             echo "🔨 Build..."
             npm run build
