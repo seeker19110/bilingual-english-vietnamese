@@ -4,10 +4,10 @@
 // Trả về: { audio_url: string, key_b64: string, iv_b64: string, cached: boolean }
 //
 // Luồng xử lý:
-//   1. Hash (text + lang + voice) → tìm trong bảng tts_cache (Supabase DB)
+//   1. Hash (text + lang + voice) → tìm trong bảng tts_cache (Postgres tự host)
 //   2. Cache HIT → trả audio_url + khoá giải mã luôn, không tốn API
 //   3. Cache MISS → gọi Google TTS → MÃ HÓA AES-256-GCM → lưu file qua saveAudio()
-//      (local VPS hoặc Supabase Storage tùy STORAGE_DRIVER, xem api/_lib/fileStorage.ts)
+//      (local VPS hoặc Cloudflare R2 tùy STORAGE_DRIVER, xem api/_lib/fileStorage.ts)
 //      → lưu DB → trả URL + khoá giải mã
 //
 // Chiến lược cache dùng chung: câu nào đã phát sinh 1 lần thì mọi user sau dùng lại,
@@ -21,7 +21,7 @@
 // Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
 import { z } from 'zod'
-import { getSupabaseAdmin } from './_lib/supabaseAdmin'
+import { getPgPool } from './_lib/pgPool'
 import {
   generateAudioFromGoogle,
   isValidVoice,
@@ -143,11 +143,11 @@ export default async function handler(req: Request): Promise<Response> {
 
   const { text, lang, voice } = parsed.data
 
-  let supabase
+  let pool
   try {
-    supabase = getSupabaseAdmin()
+    pool = getPgPool()
   } catch (err) {
-    console.error('[tts] Failed to initialize Supabase admin:', err)
+    console.error('[tts] Failed to initialize Postgres pool:', err)
     return jsonResponse({ error: 'Server configuration error' }, 500, allHeaders)
   }
 
@@ -156,14 +156,18 @@ export default async function handler(req: Request): Promise<Response> {
   // nữa nên sẽ tạo lại bằng giọng mới thay vì phát lại audio cũ.
   const textHash = await hashText(text + lang + voice + VOICE_VERSION)
 
-  const { data: cachedRow } = await supabase
-    .from('tts_cache')
-    .select('audio_url')
-    .eq('hash', textHash)
-    .maybeSingle()
+  const { rows: cachedRows } = await pool.query<{ audio_url: string }>(
+    'select audio_url from public.tts_cache where hash = $1',
+    [textHash],
+  )
 
-  const cachedUrl = (cachedRow as { audio_url?: string } | null)?.audio_url
+  const cachedUrl = cachedRows[0]?.audio_url
   if (cachedUrl) {
+    // Cập nhật last_accessed_at (bắn rồi quên — dùng cho LRU dọn cache khi gần ngưỡng
+    // 10GB R2 sau này, xem docs/migration-thoat-ly-supabase.md mục 3.3). Không chặn response.
+    void pool
+      .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
+      .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
     const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
     return jsonResponse({ audio_url: cachedUrl, key_b64, iv_b64, cached: true }, 200, allHeaders)
   }
@@ -224,12 +228,17 @@ export default async function handler(req: Request): Promise<Response> {
 
   // ── BƯỚC 4: Lưu vào DB ─────────────────────────────────────────────────────
 
-  const { error: insertError } = await supabase
-    .from('tts_cache')
-    .upsert({ hash: textHash, lang, voice, audio_url: audioUrl }, { onConflict: 'hash' })
-
-  if (insertError) {
-    console.error('Lỗi lưu tts_cache:', insertError.message)
+  try {
+    await pool.query(
+      `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
+       values ($1, $2, $3, $4, now())
+       on conflict (hash) do update set
+         lang = excluded.lang, voice = excluded.voice, audio_url = excluded.audio_url,
+         last_accessed_at = now()`,
+      [textHash, lang, voice, audioUrl],
+    )
+  } catch (err) {
+    console.error('Lỗi lưu tts_cache:', err instanceof Error ? err.message : err)
   }
 
   const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)

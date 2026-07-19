@@ -1,6 +1,6 @@
 // Test sendReminders (api/push.ts) — tập trung nhánh MỚI: chọn nội dung thông báo
 // theo việc user có đang tham gia thử thách challenge gần đây hay không (mục "Nhắc hằng
-// ngày" — docs/research/thu-thach-vlog-30-ngay.md). Mock DB + web-push để chạy OFFLINE.
+// ngày" — docs/research/thu-thach-vlog-30-ngay.md). Mock Postgres pool + web-push để chạy OFFLINE.
 //
 // push.ts đọc VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY ở TOP-LEVEL module (side effect lúc
 // import) nên phải stub env TRƯỚC khi import — dùng import() động trong beforeAll,
@@ -12,12 +12,12 @@ import { describe, it, expect, beforeEach, afterEach, vi, beforeAll } from 'vite
 vi.mock('web-push', () => ({
   default: { setVapidDetails: vi.fn(), sendNotification: vi.fn(async () => undefined) },
 }))
-vi.mock('./_lib/supabaseAdmin', () => ({ getSupabaseAdmin: vi.fn() }))
+vi.mock('./_lib/pgPool', () => ({ getPgPool: vi.fn() }))
 
-import { getSupabaseAdmin } from './_lib/supabaseAdmin'
+import { getPgPool } from './_lib/pgPool'
 import webpush from 'web-push'
 
-const mockedGet = vi.mocked(getSupabaseAdmin)
+const mockedGetPool = vi.mocked(getPgPool)
 const mockedSend = vi.mocked(webpush.sendNotification)
 
 let sendReminders: typeof import('./push').sendReminders
@@ -34,74 +34,46 @@ beforeEach(() => {
 })
 afterEach(() => {
   vi.restoreAllMocks()
-  mockedGet.mockReset()
+  mockedGetPool.mockReset()
   mockedSend.mockClear()
 })
 
 type Row = { user_id: string; endpoint: string; p256dh: string; auth_key: string }
 
-function makeSupabase(opts: {
+function mockPool(opts: {
   subs: Row[]
   usageRows?: Record<string, unknown>[]
   challengeRows?: { user_id: string }[]
-  challengeError?: { message: string } | null
-  // Nội dung nhắc theo ngữ cảnh (② M3): dữ liệu 14 ngày gần nhất + srs/weekly_goal.
+  challengeError?: Error | null
   recentUsageRows?: { user_id: string; day: string; [k: string]: unknown }[]
+  recentUsageError?: Error | null
   progressRows?: {
     user_id: string
     srs?: Record<string, { due?: number }>
     weekly_goal?: { goal?: number }
   }[]
 }) {
-  return {
-    from: (table: string) => {
-      if (table === 'push_subscriptions') {
-        return {
-          select: () => ({
-            or: async () => ({ data: opts.subs }),
-            eq: async () => ({ data: opts.subs }),
-          }),
-          delete: () => ({ in: vi.fn(async () => ({ error: null })) }),
-        }
-      }
-      if (table === 'daily_usage') {
-        return {
-          select: () => ({
-            // Nhánh "đã học hôm nay" — .eq('day', today).in('user_id', ids).
-            eq: () => ({
-              in: async () => ({ data: opts.usageRows ?? [] }),
-            }),
-            // Nhánh "14 ngày gần nhất" (② M3) — .in('user_id', ids).gte(day).lt(day).
-            in: () => ({
-              gte: () => ({
-                lt: async () => ({ data: opts.recentUsageRows ?? [], error: null }),
-              }),
-            }),
-          }),
-        }
-      }
-      if (table === 'learning_progress') {
-        return {
-          select: () => ({
-            in: async () => ({ data: opts.progressRows ?? [] }),
-          }),
-        }
-      }
-      if (table === 'challenge_entries') {
-        return {
-          select: () => ({
-            in: () => ({
-              gte: async () => ({
-                data: opts.challengeRows ?? [],
-                error: opts.challengeError ?? null,
-              }),
-            }),
-          }),
-        }
-      }
-      throw new Error(`bảng không mong đợi trong test: ${table}`)
-    },
-  }
+  const query = vi.fn(async (sql: string) => {
+    if (sql.includes('from public.push_subscriptions')) {
+      return { rows: opts.subs }
+    }
+    if (sql.includes('from public.daily_usage') && sql.includes('day = $1 and user_id')) {
+      return { rows: opts.usageRows ?? [] }
+    }
+    if (sql.includes('from public.challenge_entries')) {
+      if (opts.challengeError) throw opts.challengeError
+      return { rows: opts.challengeRows ?? [] }
+    }
+    if (sql.includes('from public.daily_usage') && sql.includes('day >= $2 and day < $3')) {
+      if (opts.recentUsageError) throw opts.recentUsageError
+      return { rows: opts.recentUsageRows ?? [] }
+    }
+    if (sql.includes('from public.learning_progress')) {
+      return { rows: opts.progressRows ?? [] }
+    }
+    throw new Error(`câu SQL không mong đợi trong test: ${sql}`)
+  })
+  return { query } as unknown as ReturnType<typeof getPgPool>
 }
 
 const sub = (id: string): Row => ({
@@ -113,12 +85,8 @@ const sub = (id: string): Row => ({
 
 describe('sendReminders — chọn nội dung theo hoạt động challenge gần đây', () => {
   it('chưa học hôm nay + có challenge_entries trong 8 ngày gần đây → nhận payload challenge (url /challenge)', async () => {
-    mockedGet.mockReturnValue(
-      makeSupabase({
-        subs: [sub('u1')],
-        usageRows: [],
-        challengeRows: [{ user_id: 'u1' }],
-      }) as never,
+    mockedGetPool.mockReturnValue(
+      mockPool({ subs: [sub('u1')], usageRows: [], challengeRows: [{ user_id: 'u1' }] }),
     )
     const result = await sendReminders(13)
     expect(result).toEqual({ sent: 1, skipped: 0, expired: 0 })
@@ -128,13 +96,7 @@ describe('sendReminders — chọn nội dung theo hoạt động challenge gầ
   })
 
   it('chưa học hôm nay + KHÔNG có challenge_entries gần đây → nhận payload chung (url /)', async () => {
-    mockedGet.mockReturnValue(
-      makeSupabase({
-        subs: [sub('u2')],
-        usageRows: [],
-        challengeRows: [],
-      }) as never,
-    )
+    mockedGetPool.mockReturnValue(mockPool({ subs: [sub('u2')], usageRows: [], challengeRows: [] }))
     const result = await sendReminders(13)
     expect(result).toEqual({ sent: 1, skipped: 0, expired: 0 })
     const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
@@ -142,12 +104,12 @@ describe('sendReminders — chọn nội dung theo hoạt động challenge gầ
   })
 
   it('đã học hôm nay (kể cả chỉ challenge — tính vào stt_count/chat_count) → bỏ qua, KHÔNG gửi', async () => {
-    mockedGet.mockReturnValue(
-      makeSupabase({
+    mockedGetPool.mockReturnValue(
+      mockPool({
         subs: [sub('u3')],
         usageRows: [{ user_id: 'u3', stt_count: 1, chat_count: 1 }],
-        challengeRows: [{ user_id: 'u3' }], // dù có challenge_entries gần đây, đã học rồi thì không nhắc
-      }) as never,
+        challengeRows: [{ user_id: 'u3' }],
+      }),
     )
     const result = await sendReminders(13)
     expect(result).toEqual({ sent: 0, skipped: 1, expired: 0 })
@@ -155,12 +117,12 @@ describe('sendReminders — chọn nội dung theo hoạt động challenge gầ
   })
 
   it('bảng challenge_entries lỗi (migration 0010 chưa chạy) → fail-open về payload chung, không ném', async () => {
-    mockedGet.mockReturnValue(
-      makeSupabase({
+    mockedGetPool.mockReturnValue(
+      mockPool({
         subs: [sub('u4')],
         usageRows: [],
-        challengeError: { message: 'relation "challenge_entries" does not exist' },
-      }) as never,
+        challengeError: new Error('relation "challenge_entries" does not exist'),
+      }),
     )
     const result = await sendReminders(13)
     expect(result).toEqual({ sent: 1, skipped: 0, expired: 0 })
@@ -169,12 +131,12 @@ describe('sendReminders — chọn nội dung theo hoạt động challenge gầ
   })
 
   it('nhiều user cùng lượt gửi — mỗi người nhận đúng payload theo trạng thái riêng', async () => {
-    mockedGet.mockReturnValue(
-      makeSupabase({
+    mockedGetPool.mockReturnValue(
+      mockPool({
         subs: [sub('challenge-user'), sub('generic-user')],
         usageRows: [],
         challengeRows: [{ user_id: 'challenge-user' }],
-      }) as never,
+      }),
     )
     const result = await sendReminders(13)
     expect(result).toEqual({ sent: 2, skipped: 0, expired: 0 })
@@ -186,8 +148,8 @@ describe('sendReminders — chọn nội dung theo hoạt động challenge gầ
 describe('sendReminders — nội dung theo ngữ cảnh (② M3: streak/SRS/mục tiêu tuần)', () => {
   it('có streak liên tục 6 ngày trước (14 ngày gần nhất) → nhắc "mất chuỗi", ưu tiên hơn challenge', () => {
     return (async () => {
-      mockedGet.mockReturnValue(
-        makeSupabase({
+      mockedGetPool.mockReturnValue(
+        mockPool({
           subs: [sub('u5')],
           usageRows: [],
           challengeRows: [{ user_id: 'u5' }], // có challenge nhưng streak phải thắng
@@ -197,7 +159,7 @@ describe('sendReminders — nội dung theo ngữ cảnh (② M3: streak/SRS/m�
             day: `2026-07-${String(10 + i).padStart(2, '0')}`,
             chat_count: 1,
           })),
-        }) as never,
+        }),
       )
       vi.useFakeTimers()
       vi.setSystemTime(new Date('2026-07-16T06:00:00Z')) // ~13h VN, "hôm nay" = 2026-07-16
@@ -212,8 +174,8 @@ describe('sendReminders — nội dung theo ngữ cảnh (② M3: streak/SRS/m�
 
   it('không streak, có SRS đến hạn → nhắc ôn SRS', () => {
     return (async () => {
-      mockedGet.mockReturnValue(
-        makeSupabase({
+      mockedGetPool.mockReturnValue(
+        mockPool({
           subs: [sub('u6')],
           usageRows: [],
           challengeRows: [],
@@ -227,7 +189,7 @@ describe('sendReminders — nội dung theo ngữ cảnh (② M3: streak/SRS/m�
               },
             },
           ],
-        }) as never,
+        }),
       )
       const result = await sendReminders(13)
       expect(result.sent).toBe(1)
@@ -239,8 +201,8 @@ describe('sendReminders — nội dung theo ngữ cảnh (② M3: streak/SRS/m�
 
   it('không streak, không SRS, gần đạt mục tiêu tuần (còn 1 ngày) → nhắc mục tiêu tuần', () => {
     return (async () => {
-      mockedGet.mockReturnValue(
-        makeSupabase({
+      mockedGetPool.mockReturnValue(
+        mockPool({
           subs: [sub('u7')],
           usageRows: [],
           challengeRows: [],
@@ -249,7 +211,7 @@ describe('sendReminders — nội dung theo ngữ cảnh (② M3: streak/SRS/m�
             { user_id: 'u7', day: '2026-07-13', chat_count: 1 },
             { user_id: 'u7', day: '2026-07-14', chat_count: 1 },
           ],
-        }) as never,
+        }),
       )
       vi.useFakeTimers()
       vi.setSystemTime(new Date('2026-07-16T06:00:00Z'))
@@ -263,8 +225,14 @@ describe('sendReminders — nội dung theo ngữ cảnh (② M3: streak/SRS/m�
 
   it('lỗi truy vấn daily_usage mở rộng → fail-open, vẫn gửi được (rơi về challenge/chung)', () => {
     return (async () => {
-      const supa = makeSupabase({ subs: [sub('u8')], usageRows: [], challengeRows: [] })
-      mockedGet.mockReturnValue(supa as never)
+      mockedGetPool.mockReturnValue(
+        mockPool({
+          subs: [sub('u8')],
+          usageRows: [],
+          challengeRows: [],
+          recentUsageError: new Error('timeout'),
+        }),
+      )
       const result = await sendReminders(13)
       expect(result.sent).toBe(1)
       const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
@@ -281,7 +249,7 @@ describe('sendReminders — thiếu VAPID key', () => {
     const mod = await import('./push')
     const result = await mod.sendReminders(13)
     expect(result).toEqual({ sent: 0, skipped: 0, expired: 0 })
-    expect(mockedGet).not.toHaveBeenCalled()
+    expect(mockedGetPool).not.toHaveBeenCalled()
     // Khôi phục cho các test khác trong tiến trình (module cache đã bị reset).
     vi.stubEnv('VAPID_PUBLIC_KEY', 'pub-test')
     vi.stubEnv('VAPID_PRIVATE_KEY', 'priv-test')
