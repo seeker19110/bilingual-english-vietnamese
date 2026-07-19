@@ -108,8 +108,8 @@ Nguyên tắc thay RLS: **mọi handler API tự kiểm `user_id` khớp với s
 
 ---
 
-## 5. Rủi ro còn lại cần bạn xác nhận thêm khi tới lúc làm
+## 5. Các điểm đã chốt bổ sung (2026-07-19)
 
-- Email xác nhận đăng ký / quên mật khẩu: Supabase Auth có sẵn gửi email này miễn phí; Auth.js tự host cần tự tích hợp SMTP (vd Resend/Gmail SMTP miễn phí hạn mức) — **chưa có trong đặc tả này, cần chốt ở GĐ B**.
-- Rate-limit đăng nhập (chống brute-force) Supabase có sẵn — tự host cần tự thêm (vd `express-rate-limit`).
-- Google OAuth cần đăng ký lại OAuth Client ID/Secret mới (callback URL đổi từ domain Supabase sang domain app) — việc tay trên Google Cloud Console, AI không tự làm được.
+- **Email xác nhận đăng ký / quên mật khẩu: dùng Gmail SMTP** (`donghanhcungban.org@gmail.com`) qua `nodemailer` — cần tạo "Mật khẩu ứng dụng" (App Password) trong Google Account (bật 2FA trước), không dùng mật khẩu Gmail thường vì Google chặn SMTP login thường từ 2022. Biến môi trường mới: `GMAIL_USER`, `GMAIL_APP_PASSWORD`. Giới hạn ~500 email/ngày — đủ dư cho quy mô app hiện tại; nếu sau này tăng trưởng và chạm giới hạn/bị flag spam, chuyển sang Resend (đã đánh giá là phương án dự phòng).
+- **Rate-limit đăng nhập:** thêm `express-rate-limit` trên route `/login`, `/register` (vd giới hạn 5 lần/15 phút/IP) ở GĐ B, mặc định không cần hỏi thêm.
+- **Google OAuth Client ID/Secret mới:** việc tay của bạn trên Google Cloud Console (tạo OAuth Client mới, đổi callback URL từ domain Supabase sang `https://en-vi.donghanhcungban.com/api/auth/callback/google`) — AI sẽ nhắc cụ thể khi tới GĐ B, không tự làm được vì cần đăng nhập Google Console.
