@@ -90,7 +90,9 @@ async function dbObjectPaths(bucket: Bucket): Promise<Set<string>> {
     'word, voice',
     ['word', 'voice'],
   )
-  return new Set(rows.map((r) => `${r.word}-${r.voice}.mp3`))
+  // encodeURIComponent — GIỐNG HỆT api/pronunciation.ts / seed-all.ts (tên file thật trên
+  // Storage), nếu không từ có dấu (café...) sẽ bị báo nhầm "orphan" dù thực ra khớp DB.
+  return new Set(rows.map((r) => `${encodeURIComponent(r.word)}-${r.voice}.mp3`))
 }
 
 // ── Liệt kê ĐỆ QUY mọi object trong 1 bucket (Storage list theo từng thư mục) ─

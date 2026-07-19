@@ -323,7 +323,10 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
     if (task.type === 'pron') {
       const { word, voice } = task
       const audioBuffer = await generateAudioFromGoogle(word, voice, 'en-US')
-      const fileName = `${word}-${voice}.mp3`
+      // encodeURIComponent — GIỐNG HỆT api/pronunciation.ts (API thật) — để hỗ trợ từ
+      // có dấu (café, naïve...). Supabase Storage từ chối tên file chứa ký tự ngoài ASCII
+      // (báo "Invalid key"), encode thì luôn ra tên file hợp lệ mà vẫn map đúng 1-1 với từ gốc.
+      const fileName = `${encodeURIComponent(word)}-${voice}.mp3`
       const { error: uploadError } = await supabase.storage
         .from('pronunciations')
         .upload(fileName, audioBuffer, { contentType: 'audio/mpeg', upsert: true })
