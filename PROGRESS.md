@@ -85,6 +85,14 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
     (`SUPABASE_SYNC_SETUP.md`, `AUTH_SETUP.md`, `PRONUNCIATION_CACHE_SETUP.md`,
     `TTS_CACHE_SETUP.md`, `PRONUNCIATION_CACHE_SPEC.md` — 2 file cuối tự ghi "có thể xóa" sẵn
     trong nội dung). Build/typecheck/lint/format/size/test xanh trước khi commit (xem PR).
+    **Bổ sung cùng PR (2026-07-20, theo yêu cầu "copy hết dữ liệu TTS từ VPS, cache qua R2"):**
+    `scripts/sync-storage-to-r2.ts` (`npm run sync:r2`) — đẩy audio ĐÃ CACHE TRƯỚC KHI bật R2
+    (còn nằm ở `uploads/` local, DB vẫn trỏ `/uploads/...`) lên Cloudflare R2 qua `saveAudio()`
+    rồi cập nhật lại `audio_url`; an toàn chạy lại (bỏ qua dòng đã trỏ R2), có `--dry-run`/
+    `--force`/`BUCKET`/`LIMIT`. **CHƯA CHẠY TRÊN VPS** — sandbox không có SSH/quyền VPS lẫn key
+    R2 thật, chỉ viết + soát code (build/typecheck/lint xanh). Việc người dùng cần làm: SSH vào
+    VPS, chạy `STORAGE_DRIVER=r2 npm run sync:r2 -- --dry-run` xem trước rồi bỏ `--dry-run` để
+    chạy thật — xem hướng dẫn đầy đủ ở `docs/migration-thoat-ly-supabase.md` mục 10 bước 7.
 
 - **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT + người dùng ĐÃ CHỐT cả 4
   quyết định (2026-07-15: theo thứ tự ưu tiên · LÀM Azure · LÀM giải đấu tuần M5 · THAY Challenge

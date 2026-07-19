@@ -32,6 +32,7 @@
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts",
     "seed:all": "tsx scripts/seed-all.ts",
     "seed:verify": "tsx scripts/seed-all.ts --verify",
+    "sync:r2": "tsx scripts/sync-storage-to-r2.ts",
     "migrate:pg": "tsx scripts/run-pg-migrations.ts",
     "prepare": "husky"
   },

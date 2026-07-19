@@ -187,3 +187,14 @@ Sau mục 8, phần LÕI (đăng nhập + đếm lượt dùng AI + tiến độ
 4. Điền 5 biến vào `.env` VPS (mẫu trong `.env.example`), đổi `STORAGE_DRIVER=local` → `STORAGE_DRIVER=r2`.
 5. `git pull && npm ci && npm run build && pm2 restart english-tutor`.
 6. Smoke test: mở 1 trang có audio (vd Từ điển tra 1 từ, hoặc trang Luyện nói), xác nhận nghe được — kiểm tra Cloudflare Dashboard → R2 → bucket thấy file mới xuất hiện.
+7. **(Tùy chọn) Đẩy nốt audio CŨ đã cache trước khi bật R2 lên R2** — bước 1-6 chỉ làm
+   audio MỚI tự lên R2; audio cũ vẫn nằm ở `uploads/` local + DB vẫn trỏ `/uploads/...`.
+   Script `scripts/sync-storage-to-r2.ts` (`npm run sync:r2`) đọc `tts_cache`/
+   `pronunciations`, đẩy file local tương ứng lên R2 qua `saveAudio()` rồi cập nhật lại
+   `audio_url`. Chạy trên VPS:
+   ```bash
+   STORAGE_DRIVER=r2 npm run sync:r2 -- --dry-run   # xem trước — đếm, KHÔNG tải/ghi gì
+   STORAGE_DRIVER=r2 npm run sync:r2                # chạy thật
+   ```
+   An toàn chạy lại nhiều lần (tự bỏ qua dòng đã trỏ R2); file local KHÔNG bị xóa, tự dọn
+   tay `uploads/` sau khi xác nhận R2 ổn nếu muốn giải phóng dung lượng VPS.
