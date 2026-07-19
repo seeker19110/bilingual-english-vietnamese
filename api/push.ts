@@ -6,7 +6,7 @@
 
 import webpush from 'web-push'
 import { z } from 'zod'
-import { getSupabaseAdmin } from './_lib/supabaseAdmin'
+import { getPgPool } from './_lib/pgPool'
 import { getCorsHeaders, SECURITY_HEADERS, validateAuth } from './_lib/security'
 import { validateBody } from './_lib/validation'
 import { vnDateStr, addDays } from './_lib/date'
@@ -96,27 +96,30 @@ export async function sendReminders(
   hour: number,
 ): Promise<{ sent: number; skipped: number; expired: number }> {
   if (!VAPID_PUBLIC || !VAPID_PRIVATE) return { sent: 0, skipped: 0, expired: 0 }
-  const supabase = getSupabaseAdmin()
+  const pool = getPgPool()
 
   // Lấy các subscription tới giờ nhắc: đúng remind_hour, HOẶC chưa đặt giờ (null) thì
   // dùng giờ mặc định.
-  let query = supabase.from('push_subscriptions').select('*')
-  query =
-    hour === DEFAULT_REMIND_UTC_HOUR
-      ? query.or(`remind_hour.eq.${hour},remind_hour.is.null`)
-      : query.eq('remind_hour', hour)
-  const { data: subs } = await query
-  if (!subs?.length) return { sent: 0, skipped: 0, expired: 0 }
+  const { rows: subs } = await (hour === DEFAULT_REMIND_UTC_HOUR
+    ? pool.query<PushSubscriptionRow>(
+        'select user_id, endpoint, p256dh, auth_key from public.push_subscriptions where remind_hour = $1 or remind_hour is null',
+        [hour],
+      )
+    : pool.query<PushSubscriptionRow>(
+        'select user_id, endpoint, p256dh, auth_key from public.push_subscriptions where remind_hour = $1',
+        [hour],
+      ))
+  if (!subs.length) return { sent: 0, skipped: 0, expired: 0 }
 
   // Tập user đã học hôm nay → bỏ qua, khỏi nhắc.
-  const userIds = [...new Set((subs as PushSubscriptionRow[]).map((s) => s.user_id))]
-  const { data: usageRows } = await supabase
-    .from('daily_usage')
-    .select('user_id, chat_count, writing_count, speaking_count, stt_count, learn_count')
-    .eq('day', todayStr())
-    .in('user_id', userIds)
+  const userIds = [...new Set(subs.map((s) => s.user_id))]
+  const { rows: usageRows } = await pool.query<DailyUsageRow>(
+    `select user_id, chat_count, writing_count, speaking_count, stt_count, learn_count
+       from public.daily_usage where day = $1 and user_id = any($2::uuid[])`,
+    [todayStr(), userIds],
+  )
   const studied = new Set<string>()
-  for (const r of (usageRows ?? []) as DailyUsageRow[]) {
+  for (const r of usageRows) {
     const total =
       (r.chat_count ?? 0) +
       (r.writing_count ?? 0) +
@@ -127,26 +130,23 @@ export async function sendReminders(
   }
 
   // Ai CHƯA học hôm nay mà gần đây có tham gia thử thách challenge → nhắc bằng nội dung
-  // challenge cụ thể hơn (thân mật, gắn liền tính năng vừa quay). Best-effort: bảng
-  // challenge_entries có thể chưa tồn tại (migration 0010 chưa chạy) — lỗi thì bỏ qua,
-  // mọi người vẫn nhận thông điệp chung như trước (không vỡ tính năng nhắc học).
+  // challenge cụ thể hơn (thân mật, gắn liền tính năng vừa quay). Best-effort: lỗi thì bỏ
+  // qua, mọi người vẫn nhận thông điệp chung như trước (không vỡ tính năng nhắc học).
   const notStudiedIds = userIds.filter((id) => !studied.has(id))
   const challengeActive = new Set<string>()
   if (notStudiedIds.length > 0) {
-    const since = vnDateStr(new Date(Date.now() - CHALLENGE_RECENT_WINDOW_DAYS * 86_400_000))
-    const { data: challengeRows, error: challengeErr } = await supabase
-      .from('challenge_entries')
-      .select('user_id')
-      .in('user_id', notStudiedIds)
-      .gte('day', since)
-    if (challengeErr) {
-      console.warn(
-        '[push] không đọc được challenge_entries (bảng chưa tạo?):',
-        challengeErr.message,
+    try {
+      const since = vnDateStr(new Date(Date.now() - CHALLENGE_RECENT_WINDOW_DAYS * 86_400_000))
+      const { rows: challengeRows } = await pool.query<ChallengeEntryUserRow>(
+        'select user_id from public.challenge_entries where user_id = any($1::uuid[]) and day >= $2',
+        [notStudiedIds, since],
       )
-    } else {
-      for (const r of (challengeRows ?? []) as ChallengeEntryUserRow[])
-        challengeActive.add(r.user_id)
+      for (const r of challengeRows) challengeActive.add(r.user_id)
+    } catch (err) {
+      console.warn(
+        '[push] không đọc được challenge_entries:',
+        err instanceof Error ? err.message : err,
+      )
     }
   }
 
@@ -158,25 +158,32 @@ export async function sendReminders(
   const reminderMessages = new Map<string, ReminderMessage>()
   if (notStudiedIds.length > 0) {
     const lookbackStart = addDays(todayStr(), -(REMINDER_LOOKBACK_DAYS - 1))
-    const [{ data: recentUsageRows, error: recentUsageErr }, { data: progressRows }] =
-      await Promise.all([
-        supabase
-          .from('daily_usage')
-          .select('user_id, day, chat_count, writing_count, speaking_count, stt_count, learn_count')
-          .in('user_id', notStudiedIds)
-          .gte('day', lookbackStart)
-          .lt('day', todayStr()),
-        supabase
-          .from('learning_progress')
-          .select('user_id, srs, weekly_goal')
-          .in('user_id', notStudiedIds),
+    let recentUsageRows: DailyUsageDayRow[] = []
+    let progressRows: LearningProgressRow[] = []
+    try {
+      const [recentUsageResult, progressResult] = await Promise.all([
+        pool.query<DailyUsageDayRow>(
+          `select user_id, day, chat_count, writing_count, speaking_count, stt_count, learn_count
+             from public.daily_usage
+            where user_id = any($1::uuid[]) and day >= $2 and day < $3`,
+          [notStudiedIds, lookbackStart, todayStr()],
+        ),
+        pool.query<LearningProgressRow>(
+          'select user_id, srs, weekly_goal from public.learning_progress where user_id = any($1::uuid[])',
+          [notStudiedIds],
+        ),
       ])
-    if (recentUsageErr) {
-      console.warn('[push] không đọc được daily_usage mở rộng:', recentUsageErr.message)
+      recentUsageRows = recentUsageResult.rows
+      progressRows = progressResult.rows
+    } catch (err) {
+      console.warn(
+        '[push] không đọc được daily_usage/learning_progress mở rộng:',
+        err instanceof Error ? err.message : err,
+      )
     }
 
     const activeDaysByUser = new Map<string, Set<string>>()
-    for (const r of (recentUsageRows ?? []) as DailyUsageDayRow[]) {
+    for (const r of recentUsageRows) {
       const total =
         (r.chat_count ?? 0) +
         (r.writing_count ?? 0) +
@@ -189,7 +196,7 @@ export async function sendReminders(
       activeDaysByUser.set(r.user_id, set)
     }
     const progressByUser = new Map<string, LearningProgressRow>()
-    for (const r of (progressRows ?? []) as LearningProgressRow[]) progressByUser.set(r.user_id, r)
+    for (const r of progressRows) progressByUser.set(r.user_id, r)
 
     const nowMs = Date.now()
     for (const uid of notStudiedIds) {
@@ -226,7 +233,7 @@ export async function sendReminders(
     skipped = 0
   const expired: string[] = []
   await Promise.all(
-    (subs as PushSubscriptionRow[]).map(async (row) => {
+    subs.map(async (row) => {
       if (studied.has(row.user_id)) {
         skipped++
         return
@@ -252,7 +259,9 @@ export async function sendReminders(
   )
 
   if (expired.length) {
-    await supabase.from('push_subscriptions').delete().in('endpoint', expired)
+    await pool.query('delete from public.push_subscriptions where endpoint = any($1::text[])', [
+      expired,
+    ])
   }
 
   return { sent, skipped, expired: expired.length }
@@ -300,47 +309,36 @@ export default async function handler(req: Request): Promise<Response> {
       })
     }
     const sub = subResult.data
+    const pool = getPgPool()
 
-    const supabase = getSupabaseAdmin()
     if (action === 'subscribe') {
-      // Lưu subscription (các cột chắc chắn có) — bước này KHÔNG được lỗi.
-      const { error } = await supabase.from('push_subscriptions').upsert(
-        {
-          user_id: auth.userId,
-          endpoint: sub.endpoint,
-          p256dh: sub.keys.p256dh,
-          auth_key: sub.keys.auth,
-        },
-        { onConflict: 'user_id,endpoint' },
-      )
-      if (error)
-        return new Response(JSON.stringify({ error: error.message }), { status: 500, headers })
-
-      // Lưu giờ nhắc (UTC 0–23) RIÊNG, best-effort: nếu DB chưa chạy migration 0003
-      // (chưa có cột remind_hour) thì bỏ qua, vẫn nhắc theo giờ mặc định — không vỡ tính năng.
+      // Lưu subscription — bước này KHÔNG được lỗi.
       const rh = body.remindHour
       const remindHour = typeof rh === 'number' && rh >= 0 && rh <= 23 ? Math.round(rh) : null
-      if (remindHour != null) {
-        const { error: rhErr } = await supabase
-          .from('push_subscriptions')
-          .update({ remind_hour: remindHour })
-          .eq('user_id', auth.userId)
-          .eq('endpoint', sub.endpoint)
-        if (rhErr)
-          console.warn(
-            '[push] chưa lưu được remind_hour (chạy migration 0003_remind_hour.sql?):',
-            rhErr.message,
-          )
+      try {
+        await pool.query(
+          `insert into public.push_subscriptions (user_id, endpoint, p256dh, auth_key, remind_hour)
+           values ($1, $2, $3, $4, $5)
+           on conflict (user_id, endpoint) do update set
+             p256dh = excluded.p256dh, auth_key = excluded.auth_key,
+             remind_hour = coalesce(excluded.remind_hour, public.push_subscriptions.remind_hour)`,
+          [auth.userId, sub.endpoint, sub.keys.p256dh, sub.keys.auth, remindHour],
+        )
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err)
+        return new Response(JSON.stringify({ error: message }), { status: 500, headers })
       }
       return new Response(JSON.stringify({ ok: true }), { headers })
     } else {
-      const { error: delErr } = await supabase
-        .from('push_subscriptions')
-        .delete()
-        .eq('user_id', auth.userId)
-        .eq('endpoint', sub.endpoint)
-      if (delErr)
-        return new Response(JSON.stringify({ error: delErr.message }), { status: 500, headers })
+      try {
+        await pool.query(
+          'delete from public.push_subscriptions where user_id = $1 and endpoint = $2',
+          [auth.userId, sub.endpoint],
+        )
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err)
+        return new Response(JSON.stringify({ error: message }), { status: 500, headers })
+      }
       return new Response(JSON.stringify({ ok: true }), { headers })
     }
   }
@@ -369,14 +367,16 @@ export default async function handler(req: Request): Promise<Response> {
     if (!secret || body.secret !== secret) {
       return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers })
     }
-    const supabase = getSupabaseAdmin()
-    const { error: delErr, count } = await supabase
-      .from('push_subscriptions')
-      .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000')
-    if (delErr)
-      return new Response(JSON.stringify({ error: delErr.message }), { status: 500, headers })
-    return new Response(JSON.stringify({ ok: true, deleted: count }), { headers })
+    const pool = getPgPool()
+    let deleted = 0
+    try {
+      const result = await pool.query('delete from public.push_subscriptions')
+      deleted = result.rowCount ?? 0
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      return new Response(JSON.stringify({ error: message }), { status: 500, headers })
+    }
+    return new Response(JSON.stringify({ ok: true, deleted }), { headers })
   }
 
   return new Response(JSON.stringify({ error: 'Action không hợp lệ' }), { status: 400, headers })
