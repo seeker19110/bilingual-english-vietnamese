@@ -1,6 +1,7 @@
 # Kế hoạch + đặc tả: Rời khỏi Supabase (Auth + DB + Storage)
 
-> Trạng thái: **Giai đoạn A ĐÃ XONG 100% (2026-07-20)** — PostgreSQL 16 tự host đã cài trên VPS, database `english_tutor` + user `tutor_app` đã tạo (14 bảng xác nhận đủ), `postgres/schema.sql` đã áp thành công (`npm run migrate:pg`), cron backup `pg_dump` hàng ngày đã thiết lập + test thành công. Đang chờ duyệt để bắt đầu Giai đoạn B (Auth.js).
+> Trạng thái: **Giai đoạn A ĐÃ XONG 100%** — PostgreSQL 16 tự host đã cài trên VPS, database `english_tutor` + user `tutor_app` đã tạo (14 bảng xác nhận đủ), `postgres/schema.sql` đã áp thành công (`npm run migrate:pg`), cron backup `pg_dump` hàng ngày đã thiết lập + test thành công.
+> **Giai đoạn B: CODE ĐÃ XONG, CHƯA DEPLOY (2026-07-20).** Quyết định kiến trúc (research-first, xem mục 3.2 sửa lại bên dưới): **KHÔNG dùng `@auth/express`** — tự viết auth giữ nguyên mô hình Bearer token (khớp đúng SPA hiện có, miễn nhiễm CSRF theo thiết kế, tránh phải sửa lại toàn bộ lớp gọi API sang cookie). Người dùng xác nhận **chấp nhận reset toàn bộ tài khoản hiện có** (app thử nghiệm) — không cần cầu nối dữ liệu Supabase cũ. Danh sách file đã viết ở mục 6 bên dưới. **CHƯA cutover production** — VPS vẫn chạy Supabase Auth y nguyên cho tới khi đủ phần GĐ C (mục `profiles`) để deploy đồng bộ, tránh vỡ tính năng khác.
 > Quyết định 2026-07-19: app đang thử nghiệm, **bỏ qua migrate dữ liệu người dùng cũ** — Postgres mới bắt đầu từ schema rỗng. Điều này bỏ hẳn phần script di trú dữ liệu, giảm rủi ro lớn nhất của việc đổi hạ tầng.
 
 ## 0. Phạm vi & công nghệ thay thế đã chốt
@@ -81,14 +82,16 @@ Nguyên tắc thay RLS: **mọi handler API tự kiểm `user_id` khớp với s
 - `DATABASE_URL` thay cho `SUPABASE_DB_URL`, dùng thư viện `pg` (node-postgres) hoặc giữ Postgres.js nếu đang dùng — cần đọc `scripts/run-migrations.ts` để biết driver hiện tại và tái dùng.
 - Backup: thêm cron `pg_dump` hàng ngày lên đúng chỗ lưu trữ đang có (hoặc R2!) — **DB tự host nghĩa là tự chịu trách nhiệm backup**, Supabase từng làm việc này miễn phí.
 
-### 3.2 Auth.js (NextAuth) tự host trên Express
+### 3.2 Auth tự viết (Bearer token) — ĐÃ SỬA so với đặc tả gốc (research-first 2026-07-20)
 
-- App này là Vite SPA + Express, KHÔNG phải Next.js → dùng `@auth/express` (gói Auth.js chính thức cho Express, không phải bản Next-only) hoặc tự implement luồng OAuth/credentials tối giản nếu `@auth/express` chưa đủ ổn định — cần research-first (theo KHUNG 3) xác nhận version ổn định trước khi chọn.
-- Provider cần: **Credentials** (email/password, tự hash bằng `bcrypt`/`argon2`, so khớp `password_hash`) + **Google OAuth**.
-- Session: dùng **database session** (lưu bảng `sessions` trong Postgres cùng chỗ), KHÔNG dùng JWT-only, để có thể revoke (đăng xuất từ xa, khớp hành vi Supabase hiện tại).
-- Server: thay `validateAuth()` trong `api/_lib/security.ts` — đọc cookie session (hoặc header) → tra bảng `sessions` → trả `userId`. Interface hàm giữ nguyên chữ ký để giảm chỗ phải sửa ở các handler gọi nó.
-- Client: viết `src/lib/auth.ts` mới với cùng interface public (`register`, `login`, `loginWithGoogle`, `logout`, `getCurrentUser`) để `AuthProvider.tsx` và các nơi gọi không phải đổi nhiều — chỉ đổi bên trong triển khai.
-- **Việc lớn nhất ở bước này:** chuyển toàn bộ query DB phía client (`src/lib/cloud.ts`, `progressSync.ts`, `mistakes.ts`, `onboarding.ts`, `challengeCloud.ts`, `tutorFeedback.ts`) thành gọi API route mới ở server (vì không còn RLS bảo vệ client query trực tiếp). Mỗi file này cần 1 route Express tương ứng, có `requireUser()` kiểm quyền tay.
+**Quyết định đã đổi:** KHÔNG dùng `@auth/express`. Research (đọc tài liệu authjs.dev/reference/express + @auth/pg-adapter) cho thấy Auth.js xây quanh **cookie session**, còn app hiện dùng **100% Bearer token trong header** (`authHeader.ts` gắn `Authorization: Bearer` vào mọi request — khớp kiểu SPA gọi API rời, giống hệt cách Supabase Auth đang hoạt động). Ép sang cookie đòi hỏi: sửa lại MỌI nơi gọi API (10+ file), đổi CORS sang whitelist origin cụ thể, và tự viết CSRF protection cho các route `api/*.ts` (không chạy qua middleware Auth.js). Bearer token miễn nhiễm CSRF theo thiết kế (trình duyệt không tự gắn header tùy ý). → Tự viết auth tối giản, tái dùng đúng bảng `users`/`sessions` đã tạo ở GĐ A.
+
+- Provider: **Credentials** (email/password, hash bằng `bcryptjs` 12 rounds) + **Google** (Google Identity Services — client nhận ID token trực tiếp trong popup, KHÔNG redirect rời trang; server verify bằng `google-auth-library`).
+- Session: token ngẫu nhiên 32 byte (`crypto.randomBytes`), CHỈ lưu **hash SHA-256** của token trong bảng `sessions` (không lưu token gốc — lộ DB không đồng nghĩa lộ token dùng được), hạn 30 ngày, revoke được (đăng xuất xóa row).
+- Server: `api/_lib/authService.ts` (logic auth thuần) + `api/auth.ts` (handler `POST /api/auth` action `register`/`login`/`google`/`logout`, `GET /api/auth?action=me`). `validateAuth()` trong `api/_lib/security.ts` đổi từ gọi Supabase sang tra bảng `sessions` qua `api/_lib/pgPool.ts` (Pool `pg` mới, dùng `DATABASE_URL`) — **chữ ký hàm giữ nguyên**, không phải sửa 10+ handler khác đang gọi `validateAuth()`.
+- Client: viết lại `src/lib/auth.ts` + `src/lib/authHeader.ts` (token lưu `localStorage`, đồng bộ đa tab qua sự kiện `storage`) — giữ nguyên interface public (`register`, `login`, `loginWithGoogle`, `logout`, `getCurrentUser`) nên `AuthProvider.tsx`/`Login.tsx` chỉ sửa phần gọi Google (không còn redirect, trả `AppUser` trực tiếp).
+- Test: `api/_lib/authService.test.ts` (7 test — hash/verify mật khẩu, session hết hạn, email trùng khi đăng ký).
+- **Việc CÒN LẠI trước khi có thể deploy GĐ B lên production (đã gộp 1 phần GĐ C vào đây):** luồng đăng ký/đăng nhập cần tạo `profiles` — đã làm (`ensureProfileRow` trong `authService.ts`, dùng Postgres mới trực tiếp, không qua Supabase). Nhưng **toàn bộ query DB khác phía client** (`src/lib/cloud.ts`, `progressSync.ts`, `mistakes.ts`, `onboarding.ts`, `challengeCloud.ts`, `tutorFeedback.ts`) **vẫn đang gọi Supabase client dựa vào RLS `auth.uid()`** — một khi cutover, KHÔNG còn Supabase session nên các lời gọi này sẽ bị RLS chặn hết. Đây chính là phần lõi còn lại của GĐ C, PHẢI xong tối thiểu các route quan trọng nhất (`daily_usage`, `learning_progress`) trước khi cutover, nếu không người dùng đăng nhập được nhưng mất lịch sử/tiến độ ngay lập tức.
 
 ### 3.3 Cloudflare R2
 
@@ -117,5 +120,18 @@ Nguyên tắc thay RLS: **mọi handler API tự kiểm `user_id` khớp với s
 ## 5. Các điểm đã chốt bổ sung (2026-07-19)
 
 - **Email xác nhận đăng ký / quên mật khẩu: dùng Gmail SMTP** (`donghanhcungban.org@gmail.com`) qua `nodemailer` — cần tạo "Mật khẩu ứng dụng" (App Password) trong Google Account (bật 2FA trước), không dùng mật khẩu Gmail thường vì Google chặn SMTP login thường từ 2022. Biến môi trường mới: `GMAIL_USER`, `GMAIL_APP_PASSWORD`. Giới hạn ~500 email/ngày — đủ dư cho quy mô app hiện tại; nếu sau này tăng trưởng và chạm giới hạn/bị flag spam, chuyển sang Resend (đã đánh giá là phương án dự phòng).
-- **Rate-limit đăng nhập:** thêm `express-rate-limit` trên route `/login`, `/register` (vd giới hạn 5 lần/15 phút/IP) ở GĐ B, mặc định không cần hỏi thêm.
-- **Google OAuth Client ID/Secret mới:** việc tay của bạn trên Google Cloud Console (tạo OAuth Client mới, đổi callback URL từ domain Supabase sang `https://en-vi.donghanhcungban.com/api/auth/callback/google`) — AI sẽ nhắc cụ thể khi tới GĐ B, không tự làm được vì cần đăng nhập Google Console.
+- **Rate-limit đăng nhập:** ĐÃ LÀM khác kế hoạch — tái dùng `checkRateLimit()` in-memory sẵn có trong `api/_lib/security.ts` (10 request/phút/IP cho toàn bộ `/api/auth`) thay vì thêm thư viện `express-rate-limit` mới — không cần thêm dependency, cùng cơ chế các route khác (`tts`, `leaderboard`...) đang dùng.
+- **Google OAuth Client ID mới:** việc tay của bạn trên Google Cloud Console — nhưng **ĐÃ ĐỔI CÁCH LÀM** so với kế hoạch gốc: dùng **Google Identity Services** (client-side popup, KHÔNG redirect qua server) nên **KHÔNG cần khai báo Redirect URI** — chỉ cần khai **Authorized JavaScript origin** = domain app (`https://en-vi.donghanhcungban.com`). Xem hướng dẫn lấy Client ID ở mục 7 bên dưới.
+- **Email xác nhận đăng ký / quên mật khẩu (Gmail SMTP): CHƯA LÀM trong GĐ B này** — code hiện tại đăng ký xong đăng nhập được NGAY, không gửi email xác thực, chưa có luồng "quên mật khẩu". Đây là thiếu sót cần bổ sung trước khi cutover production (không thể để người dùng thật không có cách khôi phục mật khẩu).
+
+## 6. File đã tạo/sửa ở Giai đoạn B (2026-07-20, chưa deploy)
+
+**Mới:** `api/_lib/pgPool.ts`, `api/_lib/authService.ts`, `api/_lib/authService.test.ts`, `api/auth.ts`.
+**Sửa:** `api/_lib/security.ts` (`validateAuth`), `src/lib/auth.ts`, `src/lib/authHeader.ts`, `src/context/AuthProvider.tsx`, `src/pages/Login.tsx` (Google Sign-In), `server.ts` (đăng ký route `/api/auth`), `package.json` (thêm `bcryptjs`, `google-auth-library`; chuyển `pg` từ devDependencies sang dependencies), `.env.example` (`GOOGLE_CLIENT_ID`, `VITE_GOOGLE_CLIENT_ID`), `src/vite-env.d.ts`.
+**Trạng thái kiểm tra:** build ✅ · typecheck ✅ · lint (0 cảnh báo) ✅ · test 574/574 ✅.
+
+## 7. Việc tay bạn cần làm trước khi cutover Giai đoạn B
+
+1. Tạo **Google OAuth Client ID** tại [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → Create Credentials → OAuth client ID → Application type **Web application** → Authorized JavaScript origins: `https://en-vi.donghanhcungban.com` (và `http://localhost:5173` nếu muốn test dev) → KHÔNG cần điền Redirect URI. Copy Client ID, điền **CẢ 2 biến** `GOOGLE_CLIENT_ID` và `VITE_GOOGLE_CLIENT_ID` trong `.env` trên VPS (cùng giá trị).
+2. Xác nhận **chấp nhận reset toàn bộ tài khoản người dùng hiện có** khi cutover (đã xác nhận 2026-07-20) — không có bước nào khác cần làm thêm cho việc này vì app đang thử nghiệm.
+3. Chưa cutover ngay — chờ AI làm xong phần `profiles`/`daily_usage`/`learning_progress` của Giai đoạn C (nêu ở mục 3.2) trước khi đổi `.env` production.

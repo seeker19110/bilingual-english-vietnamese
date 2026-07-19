@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback, type ReactNode } from 'react'
+import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
 import { AuthContext } from './authContext'
-import { getCurrentUser, clearProfileCache } from '../lib/auth'
-import { supabase } from '../lib/supabase'
+import { getCurrentUser } from '../lib/auth'
 import { preloadBrowseChunks } from '../lib/preloadBrowse'
 import { resetPreload } from '../lib/preloadState'
 import { clearAudioCache } from '../lib/audioCache'
@@ -10,28 +9,30 @@ import type { User } from '../types'
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const wasLoggedIn = useRef(false)
 
   const refresh = useCallback(async () => {
     const u = await getCurrentUser()
+    // Token vừa mất (đăng xuất / hết hạn) mà trước đó đang đăng nhập → dọn state client-only
+    // (Giai đoạn B: không còn onAuthStateChange của Supabase để bắt sự kiện SIGNED_OUT).
+    if (wasLoggedIn.current && !u) {
+      resetPreload()
+      void clearAudioCache()
+    }
+    wasLoggedIn.current = !!u
     setUser(u)
   }, [])
 
   useEffect(() => {
-    // Lấy session lần đầu
     refresh().finally(() => setLoading(false))
 
-    // Lắng nghe thay đổi auth (đăng nhập / đăng xuất / token refresh)
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event: string) => {
-      if (event === 'SIGNED_OUT') {
-        resetPreload()
-        clearProfileCache()
-        void clearAudioCache()
-      }
-      refresh()
-    })
-    return () => subscription.unsubscribe()
+    // Bearer token không tự "hết hạn giữa chừng" như cookie — chỉ cần đồng bộ lại giữa các
+    // tab khi 1 tab đăng xuất/đăng nhập (localStorage 'storage' event chỉ bắn ở TAB KHÁC).
+    function onStorage(e: StorageEvent) {
+      if (e.key === null || e.key === 'gsa_session_token_v1') refresh()
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
   }, [refresh])
 
   // Khi user đăng nhập xong → CHỈ warm-up nhẹ chunk đầu của trang Bài học + Cụm từ

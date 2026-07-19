@@ -1,87 +1,28 @@
-// Wrapper đăng nhập/đăng ký qua Supabase Auth
-// Giữ cùng tên hàm với storage.ts để Login.tsx thay import tối giản nhất
-import { supabase } from './supabase'
-import { ensureProfile } from './cloud'
+// src/lib/auth.ts — Đăng nhập/đăng ký (Giai đoạn B: gọi /api/auth tự viết, thay Supabase Auth).
+// Giữ NGUYÊN chữ ký export (register/login/loginWithGoogle/logout/getCurrentUser) như cũ để
+// AuthProvider.tsx + Login.tsx không phải sửa nơi gọi.
+import { setStoredToken, clearStoredToken, getAuthHeader } from './authHeader'
 import type { User as AppUser, Plan } from '../types'
 
-// Cache profile trong localStorage để lần tiếp theo mở app không cần gọi DB
-// (chỉ cache khi đã onboarded — state ổn định, không thay đổi nữa)
-const PROFILE_CACHE_KEY = 'gsa_profile_v1'
-// TTL 5 phút: quá hạn thì lấy lại gói từ DB. Tránh trường hợp user nâng cấp Pro nhưng
-// cache cũ vẫn báo Free → bị chặn nhầm bởi giới hạn gói Free phía client.
-const PROFILE_TTL_MS = 5 * 60 * 1000
-
-function getCachedProfile(userId: string): { plan: string; onboarded: boolean } | null {
-  try {
-    const raw = localStorage.getItem(PROFILE_CACHE_KEY)
-    if (!raw) return null
-    const c = JSON.parse(raw) as { id: string; plan: string; onboarded: boolean; ts?: number }
-    // Bỏ cache nếu sai user, chưa onboarded (chưa ổn định), hoặc đã quá hạn TTL
-    if (c.id !== userId || !c.onboarded) return null
-    if (typeof c.ts !== 'number' || Date.now() - c.ts > PROFILE_TTL_MS) return null
-    return c
-  } catch {
-    return null
-  }
-}
-
-function setCachedProfile(userId: string, profile: { plan: 'free' | 'pro'; onboarded: boolean }) {
-  try {
-    localStorage.setItem(
-      PROFILE_CACHE_KEY,
-      JSON.stringify({ id: userId, ...profile, ts: Date.now() }),
-    )
-  } catch {
-    /* localStorage đầy/bị chặn — bỏ qua, chỉ là cache */
-  }
-}
-
-export function clearProfileCache() {
-  localStorage.removeItem(PROFILE_CACHE_KEY)
-}
-
-// Chuyển Supabase user → kiểu User của app.
-// Chiến lược 2 tầng: cache localStorage → DB (nền).
-// Lần đầu / chưa onboarded: đợi DB (~400ms). Lần sau: cache (~1ms), DB chạy nền.
-async function toAppUser(sbUser: {
+interface AuthApiUser {
   id: string
-  email?: string
-  user_metadata?: { name?: string }
-}): Promise<AppUser> {
-  const name = sbUser.user_metadata?.name ?? sbUser.email?.split('@')[0] ?? 'Học viên'
+  email: string
+  name: string
+  plan: Plan
+  onboarded: boolean
+  createdAt: number
+}
 
-  const cached = getCachedProfile(sbUser.id)
-  if (cached) {
-    // Refresh plan ngầm (không block UI) — cập nhật khi user nâng cấp Pro
-    void ensureProfile(sbUser.id, name)
-      .then((p) => setCachedProfile(sbUser.id, p))
-      .catch((err) =>
-        console.warn(
-          '[auth] Background profile refresh failed:',
-          err instanceof Error ? err.message : err,
-        ),
-      )
-    return {
-      id: sbUser.id,
-      email: sbUser.email ?? '',
-      name,
-      plan: cached.plan as Plan,
-      onboarded: true,
-      createdAt: Date.now(),
-    }
-  }
-
-  // Không cache (lần đầu hoặc chưa onboarded) — fetch DB thật
-  const profile = await ensureProfile(sbUser.id, name)
-  if (profile.onboarded) setCachedProfile(sbUser.id, profile)
-  return {
-    id: sbUser.id,
-    email: sbUser.email ?? '',
-    name,
-    plan: profile.plan as Plan,
-    onboarded: profile.onboarded,
-    createdAt: Date.now(),
-  }
+async function callAuthApi(
+  body: Record<string, unknown>,
+): Promise<{ token: string; user: AuthApiUser } | null> {
+  const resp = await fetch('/api/auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!resp.ok) return null
+  return (await resp.json()) as { token: string; user: AuthApiUser }
 }
 
 export async function register(
@@ -89,48 +30,112 @@ export async function register(
   name: string,
   password: string,
 ): Promise<AppUser | null> {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { data: { name } },
-  })
-  if (error || !data.user) return null
-  return await toAppUser(data.user)
+  const result = await callAuthApi({ action: 'register', email, name, password })
+  if (!result) return null
+  setStoredToken(result.token)
+  return result.user
 }
 
 export async function login(email: string, password: string): Promise<AppUser | null> {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-  if (error || !data.user) return null
-  return await toAppUser(data.user)
+  const result = await callAuthApi({ action: 'login', email, password })
+  if (!result) return null
+  setStoredToken(result.token)
+  return result.user
 }
 
-// Đăng nhập bằng Google (OAuth qua Supabase).
-// Lưu ý: hàm này KHÔNG trả về user ngay — nó chuyển hướng trình duyệt sang
-// trang đăng nhập Google. Sau khi Google trả về, Supabase tự đọc token trên URL
-// và AuthProvider (onAuthStateChange) sẽ cập nhật user.
-// Cần bật Google provider trong Supabase Dashboard → Authentication → Providers.
-export async function loginWithGoogle(): Promise<void> {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      // Quay lại đúng trang hiện tại sau khi đăng nhập xong
-      redirectTo: window.location.origin,
-    },
+// Đăng nhập bằng Google — dùng Google Identity Services (script tải trong index.html),
+// trả về Promise<AppUser|null> thay vì void như bản Supabase cũ (không còn redirect rời
+// trang — GIS hiện popup/One Tap ngay trên trang hiện tại).
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: {
+            client_id: string
+            callback: (resp: { credential: string }) => void
+          }) => void
+          prompt: () => void
+          renderButton: (parent: HTMLElement, options: Record<string, unknown>) => void
+        }
+      }
+    }
+  }
+}
+
+let googleInitPromise: Promise<void> | null = null
+
+function loadGoogleScript(): Promise<void> {
+  if (googleInitPromise) return googleInitPromise
+  googleInitPromise = new Promise((resolve, reject) => {
+    if (window.google?.accounts?.id) {
+      resolve()
+      return
+    }
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.defer = true
+    script.onload = () => resolve()
+    script.onerror = () => reject(new Error('Không tải được Google Identity Services'))
+    document.head.appendChild(script)
   })
-  if (error) throw error
+  return googleInitPromise
+}
+
+export async function loginWithGoogle(): Promise<AppUser | null> {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined
+  if (!clientId) throw new Error('Thiếu VITE_GOOGLE_CLIENT_ID')
+
+  await loadGoogleScript()
+
+  return new Promise((resolve, reject) => {
+    window.google!.accounts.id.initialize({
+      client_id: clientId,
+      callback: (resp) => {
+        void callAuthApi({ action: 'google', idToken: resp.credential })
+          .then((result) => {
+            if (!result) {
+              resolve(null)
+              return
+            }
+            setStoredToken(result.token)
+            resolve(result.user)
+          })
+          .catch(reject)
+      },
+    })
+    window.google!.accounts.id.prompt()
+  })
 }
 
 export async function logout() {
-  await supabase.auth.signOut()
+  await callAuthApi({ action: 'logout' }).catch(() => undefined)
+  clearStoredToken()
 }
 
-// Lấy user hiện tại (async — gọi 1 lần khi app khởi động).
-// Dùng getSession() (đọc localStorage ~1ms) thay getUser() (gọi mạng ~500ms).
-// Supabase client tự refresh token hết hạn qua onAuthStateChange — không cần validate thủ công.
+// Lấy user hiện tại (gọi khi app khởi động + sau mỗi lần đăng nhập/đăng ký).
 export async function getCurrentUser(): Promise<AppUser | null> {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-  if (!session?.user) return null
-  return await toAppUser(session.user)
+  const auth = getAuthHeader()
+  if (!auth.Authorization) return null
+
+  const resp = await fetch('/api/auth?action=me', { headers: auth })
+  if (!resp.ok) {
+    if (resp.status === 401) clearStoredToken() // token hết hạn/thu hồi — dọn luôn
+    return null
+  }
+  const profile = (await resp.json()) as {
+    id: string
+    email: string
+    name: string
+    plan: Plan
+    onboarded: boolean
+  }
+  return { ...profile, createdAt: Date.now() }
+}
+
+// Giữ export này (dùng ở AuthProvider.tsx khi SIGNED_OUT) — Giai đoạn B không còn cache
+// profile riêng trong localStorage (đã gộp vào getCurrentUser gọi thẳng /api/auth?action=me).
+export function clearProfileCache() {
+  /* no-op — giữ lại export để AuthProvider.tsx không phải sửa import */
 }
