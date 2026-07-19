@@ -129,6 +129,12 @@ const API_ROUTES: { prefix: string; module: string }[] = [
   { prefix: '/api/dictionary', module: '/api/dictionary.ts' },
   { prefix: '/api/leaderboard', module: '/api/leaderboard.ts' },
   { prefix: '/api/pronounce-assess', module: '/api/pronounce-assess.ts' },
+  { prefix: '/api/auth', module: '/api/auth.ts' },
+  { prefix: '/api/profile', module: '/api/profile.ts' },
+  { prefix: '/api/progress', module: '/api/progress.ts' },
+  { prefix: '/api/history', module: '/api/history.ts' },
+  { prefix: '/api/challenge', module: '/api/challenge.ts' },
+  { prefix: '/api/tutor-feedback', module: '/api/tutor-feedback.ts' },
 ]
 
 function apiEdgeDevMiddleware(): Plugin {

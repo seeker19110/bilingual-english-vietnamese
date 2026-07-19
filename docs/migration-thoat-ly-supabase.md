@@ -147,12 +147,17 @@ Nguyên tắc thay RLS: **mọi handler API tự kiểm `user_id` khớp với s
 - Test: viết lại `src/lib/onboarding.test.ts` (mock `fetch` thay Supabase client).
 - **Kiểm tra:** build ✅ · typecheck ✅ · lint (0 cảnh báo) ✅ · test 571/571 ✅.
 
-**CÒN LẠI ngoài phạm vi lõi tối thiểu** (chưa làm, liệt kê để không quên trước khi coi GĐ C xong hẳn):
+**CÒN LẠI ngoài phạm vi lõi tối thiểu** — **ĐÃ LÀM XONG (2026-07-19, cùng đợt 2 PR):**
 
-- `src/lib/cloud.ts` — `pushChatSession`/`pushSpeakingSession`/`pushWritingSub`/`pullUserData` (lịch sử chat/viết/nói) vẫn gọi Supabase client trực tiếp.
-- `api/leaderboard.ts` — đọc/ghi `profiles`(nickname, league_opt_in)/`daily_usage`/`challenge_entries` qua `getSupabaseAdmin()`, chưa đổi sang `pgPool`.
-- `src/lib/challengeCloud.ts`, `src/lib/tutorFeedback.ts` — chưa đổi.
+- `src/lib/cloud.ts` (lịch sử chat/viết/nói + learn_count) → route mới `GET/POST /api/history` (`api/history.ts`) — upsert có mệnh đề `WHERE user_id` thay vai trò RLS cũ (không chiếm được bản ghi của user khác); GIỮ bất biến "client không có đường ghi cột đếm lượt tốn API", chỉ nhận `learn_count` qua action `learn-day`.
+- `src/lib/challengeCloud.ts` → route mới `GET/POST /api/challenge` (`api/challenge.ts`) — upsert theo `(user_id, day)`; chuyển đổi feedback chuỗi↔jsonb dời lên server; `day::text` khi SELECT tránh lệch múi giờ cột `date`.
+- `src/lib/tutorFeedback.ts` → route mới `POST /api/tutor-feedback` (`api/tutor-feedback.ts`).
+- `api/leaderboard.ts` — đã đổi `getSupabaseAdmin()` → `getPgPool()` (giữ cache 5 phút, bắt lỗi `23505` trùng nickname như cũ).
+- `src/lib/supabase.ts` đã XÓA (không còn ai import phía client); `vite.config.ts` bổ sung `auth`/`profile`/`progress`/`history`/`challenge`/`tutor-feedback` vào `API_ROUTES` (dev proxy).
+- Riêng `tts_cache`/`pronunciations`/`push_subscriptions` (server-side) làm ở PR #274 (nhánh `claude/db-migrate-tts-push`, đã merge vào nhánh này).
 - `src/lib/mistakes.ts` — KHÔNG cần đổi (chủ động chỉ dùng localStorage, không đụng Supabase — xem comment đầu file).
+
+Sau đợt này + PR #274: **GĐ C XONG HẲN** — không còn code nào đọc/ghi Supabase DB. Còn GĐ E (dọn dẹp): gỡ `@supabase/supabase-js`, `api/_lib/supabaseAdmin.ts`, driver `supabase` trong `fileStorage.ts`, biến `SUPABASE_*`/`VITE_SUPABASE_*`, thư mục `supabase/`, cập nhật docs.
 
 ## 9. Trạng thái tổng thể trước khi cutover thật (deploy `.env` production)
 

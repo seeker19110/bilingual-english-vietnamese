@@ -3,21 +3,19 @@
 //   - voice: "female" (mặc định) | "female2" | "male" | "male2" — bỏ qua thì dùng giọng nữ.
 //
 // Luồng xử lý (cache phát âm từ điển):
-//   1. Tìm từ + giọng trong bảng `pronunciations` (Supabase) — có rồi thì trả luôn audio_url
-//      (cache HIT, không tốn tiền gọi Google TTS). Mỗi (word, voice) là 1 dòng riêng,
-//      vì cùng 1 từ có thể có nhiều file audio khác nhau theo giọng.
+//   1. Tìm từ + giọng trong bảng `pronunciations` (Postgres tự host) — có rồi thì trả luôn
+//      audio_url (cache HIT, không tốn tiền gọi Google TTS). Mỗi (word, voice) là 1 dòng
+//      riêng, vì cùng 1 từ có thể có nhiều file audio khác nhau theo giọng.
 //   2. Chưa có (cache MISS) → gọi Google Cloud TTS để tạo file mp3 đúng giọng được chọn.
-//   3. Upload file mp3 lên Supabase Storage (bucket "pronunciations").
+//   3. Upload file mp3 qua saveAudio() (local VPS hoặc Cloudflare R2 tùy STORAGE_DRIVER).
 //   4. Lưu audio_url vào bảng `pronunciations` để lần sau khỏi tạo lại.
 //
 // Cách test cục bộ: chạy `npm run dev`, mở
 //   http://localhost:5173/api/pronunciation?word=apple
 //   http://localhost:5173/api/pronunciation?word=apple&voice=male
 // (vite.config.ts đã gắn middleware gọi thẳng handler này, không cần deploy lên Vercel).
-//
-// Hướng dẫn tạo bảng Supabase + bucket Storage + lấy API key: xem PRONUNCIATION_CACHE_SETUP.md
 
-import { getSupabaseAdmin } from './_lib/supabaseAdmin'
+import { getPgPool } from './_lib/pgPool'
 import {
   generateAudioFromGoogle,
   isValidVoice,
@@ -99,9 +97,9 @@ export default async function handler(req: Request): Promise<Response> {
   }
   const voice = voiceParam
 
-  let supabase
+  let pool
   try {
-    supabase = getSupabaseAdmin()
+    pool = getPgPool()
   } catch (err) {
     return jsonResponse({ error: (err as Error).message }, 500, allHeaders)
   }
@@ -111,15 +109,21 @@ export default async function handler(req: Request): Promise<Response> {
   // (vd: nâng lên Chirp 3 HD), các dòng cũ có voice_version khác (hoặc NULL — audio
   // seed bằng giọng đời cũ) sẽ bị coi là MISS → tạo lại bằng giọng mới rồi GHI ĐÈ
   // (upsert theo word,voice). Nhờ vậy audio từ-đơn luôn trùng khớp với audio câu ví dụ.
-  const { data: cachedRow } = await supabase
-    .from('pronunciations')
-    .select('audio_url, voice_version')
-    .eq('word', word)
-    .eq('voice', voice)
-    .maybeSingle()
-
-  const cached = cachedRow as { audio_url?: string; voice_version?: string | null } | null
+  const { rows: cachedRows } = await pool.query<{
+    audio_url: string
+    voice_version: string | null
+  }>('select audio_url, voice_version from public.pronunciations where word = $1 and voice = $2', [
+    word,
+    voice,
+  ])
+  const cached = cachedRows[0]
   if (cached?.audio_url && cached.voice_version === VOICE_VERSION) {
+    void pool
+      .query(
+        'update public.pronunciations set last_accessed_at = now() where word = $1 and voice = $2',
+        [word, voice],
+      )
+      .catch((err: unknown) => console.warn('[pronunciation] cập nhật last_accessed_at lỗi:', err))
     return jsonResponse({ audio_url: cached.audio_url, cached: true }, 200, allHeaders)
   }
 
@@ -165,17 +169,19 @@ export default async function handler(req: Request): Promise<Response> {
   // ── BƯỚC 5: Lưu vào DB ────────────────────────────
   // upsert theo cặp (word, voice) — cột unique composite — nếu lỡ có request trùng
   // từ+giọng chạy song song thì không bị lỗi vi phạm unique constraint.
-  const { error: insertError } = await supabase
-    .from('pronunciations')
-    .upsert(
-      { word, voice, audio_url: audioUrl, lang: 'en-US', voice_version: VOICE_VERSION },
-      { onConflict: 'word,voice' },
+  try {
+    await pool.query(
+      `insert into public.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
+       values ($1, $2, $3, 'en-US', $4, now())
+       on conflict (word, voice) do update set
+         audio_url = excluded.audio_url, voice_version = excluded.voice_version,
+         last_accessed_at = now()`,
+      [word, voice, audioUrl, VOICE_VERSION],
     )
-
-  if (insertError) {
+  } catch (err) {
     // Audio đã tạo & upload xong nên vẫn trả về cho user dùng được ngay —
     // chỉ là cache DB chưa lưu, lần tra sau sẽ phải tạo lại.
-    console.error('Lỗi lưu cache pronunciations:', insertError.message)
+    console.error('Lỗi lưu cache pronunciations:', err instanceof Error ? err.message : err)
   }
 
   return jsonResponse({ audio_url: audioUrl, cached: false }, 200, allHeaders)
