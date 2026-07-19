@@ -20,7 +20,12 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
-import { generateAudioFromGoogle, VOICE_VERSION, type VoiceId } from '../api/_lib/googleTts.ts'
+import {
+  generateAudioFromGoogle,
+  hasGoogleTtsKey,
+  VOICE_VERSION,
+  type VoiceId,
+} from '../api/_lib/googleTts.ts'
 import { getSupabaseAdmin } from '../api/_lib/supabaseAdmin.ts'
 
 // Thư mục gốc của project (1 cấp trên thư mục scripts/), để mọi đường dẫn file
@@ -162,11 +167,15 @@ async function runPass(
 
 // ── MAIN ──────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
-  const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GOOGLE_TTS_API_KEY'].filter(
-    (key) => !process.env[key],
-  )
+  const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'].filter((key) => !process.env[key])
   if (missing.length > 0) {
     console.error(`❌ Thiếu biến môi trường trong .env: ${missing.join(', ')}`)
+    process.exit(1)
+  }
+  if (!hasGoogleTtsKey()) {
+    console.error(
+      '❌ Thiếu biến môi trường trong .env: GOOGLE_TTS_API_KEY hoặc GOOGLE_TTS_API_KEYS',
+    )
     process.exit(1)
   }
 

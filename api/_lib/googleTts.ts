@@ -42,17 +42,46 @@ const VOICE_MAP: Record<Lang, Record<VoiceId, { name: string; ssmlGender: 'FEMAL
   },
 }
 
-export async function generateAudioFromGoogle(
-  text: string,
-  voice: VoiceId = DEFAULT_VOICE,
-  lang: Lang = 'en-US',
-): Promise<ArrayBuffer> {
-  const apiKey = process.env.GOOGLE_TTS_API_KEY
-  if (!apiKey) {
-    throw new Error('Server chưa cấu hình GOOGLE_TTS_API_KEY')
-  }
+// ── Xoay vòng nhiều API key ──────────────────────────────────────────────────
+// Mỗi API key Google Cloud TTS có hạn mức (quota) riêng theo project. Khi có nhiều
+// project/key, ta gộp thành 1 "bể" key rồi:
+//   1. Chia đều lượt gọi giữa các key (round-robin) — đỡ dồn hết vào 1 key.
+//   2. Key nào báo hết quota (429) → TỰ ĐỘNG thử key kế tiếp trong cùng 1 lần gọi,
+//      chỉ khi mọi key đều hết quota mới trả lỗi (client lúc đó mới fallback Web Speech).
+// GOOGLE_TTS_API_KEYS: nhiều key cách nhau dấu phẩy hoặc xuống dòng.
+// GOOGLE_TTS_API_KEY: 1 key (giữ tương thích ngược), tự gộp vào bể nếu chưa có.
+function getApiKeyPool(): string[] {
+  const fromList = (process.env.GOOGLE_TTS_API_KEYS || '')
+    .split(/[,\n]/)
+    .map((k) => k.trim())
+    .filter(Boolean)
+  const single = process.env.GOOGLE_TTS_API_KEY?.trim()
+  const pool = [...fromList]
+  if (single && !pool.includes(single)) pool.push(single)
+  return pool
+}
 
-  const voiceConfig = VOICE_MAP[lang][voice]
+// Có cấu hình ít nhất 1 key hay chưa — dùng ở scripts/vite.config.ts để kiểm tra
+// biến môi trường mà không cần biết chi tiết tên biến GOOGLE_TTS_API_KEY(S).
+export function hasGoogleTtsKey(): boolean {
+  return getApiKeyPool().length > 0
+}
+
+// Con trỏ round-robin — sống trong bộ nhớ tiến trình Node (server.ts chạy liên tục
+// trên VPS, không phải serverless "nguội" mỗi request) nên xoay vòng đúng qua nhiều lần gọi.
+let nextKeyIndex = 0
+
+function isQuotaError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err)
+  return /\(429\)|RESOURCE_EXHAUSTED|quota/i.test(msg)
+}
+
+async function callGoogleTts(
+  apiKey: string,
+  text: string,
+  voiceConfig: { name: string; ssmlGender: 'FEMALE' | 'MALE' },
+  lang: Lang,
+): Promise<ArrayBuffer> {
   // Tiếng Anh đọc chậm hơn 1 chút để học viên nghe rõ; tiếng Việt tốc độ bình thường
   const speakingRate = lang === 'en-US' ? 0.9 : 1.0
 
@@ -91,4 +120,40 @@ export async function generateAudioFromGoogle(
 
   // Google trả base64 → decode thành dữ liệu nhị phân để upload lên Supabase Storage.
   return base64ToBytes(data.audioContent).buffer as ArrayBuffer
+}
+
+export async function generateAudioFromGoogle(
+  text: string,
+  voice: VoiceId = DEFAULT_VOICE,
+  lang: Lang = 'en-US',
+): Promise<ArrayBuffer> {
+  const pool = getApiKeyPool()
+  if (pool.length === 0) {
+    throw new Error('Server chưa cấu hình GOOGLE_TTS_API_KEY (hoặc GOOGLE_TTS_API_KEYS)')
+  }
+
+  const voiceConfig = VOICE_MAP[lang][voice]
+
+  // Điểm bắt đầu xoay vòng — mỗi lần gọi hàm này tăng con trỏ lên 1, chia đều tải
+  // giữa các key qua nhiều request khác nhau (không phải lúc nào cũng bắt đầu từ key #0).
+  const startIndex = nextKeyIndex % pool.length
+  nextKeyIndex = (nextKeyIndex + 1) % pool.length
+
+  let lastError: unknown
+  for (let attempt = 0; attempt < pool.length; attempt++) {
+    const apiKey = pool[(startIndex + attempt) % pool.length]!
+    try {
+      return await callGoogleTts(apiKey, text, voiceConfig, lang)
+    } catch (err) {
+      lastError = err
+      // Chỉ thử key khác khi lỗi là HẾT QUOTA (429) — lỗi khác (sai tham số, mạng lỗi...)
+      // không liên quan tới key nên thử key khác cũng lỗi y hệt, ném lỗi ngay cho nhanh.
+      if (!isQuotaError(err)) throw err
+      if (pool.length > 1 && attempt < pool.length - 1) {
+        console.warn('[googleTts] Key hết quota (429) — chuyển sang key kế tiếp trong bể')
+      }
+    }
+  }
+
+  throw lastError
 }

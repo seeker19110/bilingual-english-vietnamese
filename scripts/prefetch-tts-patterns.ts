@@ -30,6 +30,7 @@ import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
 import {
   generateAudioFromGoogle,
+  hasGoogleTtsKey,
   VOICE_IDS,
   VOICE_VERSION,
   type Lang,
@@ -226,14 +227,17 @@ async function runPass(
 // ── MAIN ─────────────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
   // Kiểm tra biến môi trường — thêm TTS_ENCRYPTION_MASTER_KEY vì giờ có mã hóa.
-  const missing = [
-    'SUPABASE_URL',
-    'SUPABASE_SERVICE_ROLE_KEY',
-    'GOOGLE_TTS_API_KEY',
-    'TTS_ENCRYPTION_MASTER_KEY',
-  ].filter((k) => !process.env[k])
+  const missing = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'TTS_ENCRYPTION_MASTER_KEY'].filter(
+    (k) => !process.env[k],
+  )
   if (missing.length > 0) {
     console.error(`❌ Thiếu biến môi trường trong .env: ${missing.join(', ')}`)
+    process.exit(1)
+  }
+  if (!hasGoogleTtsKey()) {
+    console.error(
+      '❌ Thiếu biến môi trường trong .env: GOOGLE_TTS_API_KEY hoặc GOOGLE_TTS_API_KEYS',
+    )
     process.exit(1)
   }
 
