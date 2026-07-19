@@ -87,12 +87,23 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
     trong nội dung). Build/typecheck/lint/format/size/test xanh trước khi commit (xem PR).
     **Bổ sung cùng PR (2026-07-20, theo yêu cầu "copy hết dữ liệu TTS từ VPS, cache qua R2"):**
     `scripts/sync-storage-to-r2.ts` (`npm run sync:r2`) — đẩy audio ĐÃ CACHE TRƯỚC KHI bật R2
-    (còn nằm ở `uploads/` local, DB vẫn trỏ `/uploads/...`) lên Cloudflare R2 qua `saveAudio()`
-    rồi cập nhật lại `audio_url`; an toàn chạy lại (bỏ qua dòng đã trỏ R2), có `--dry-run`/
-    `--force`/`BUCKET`/`LIMIT`. **CHƯA CHẠY TRÊN VPS** — sandbox không có SSH/quyền VPS lẫn key
-    R2 thật, chỉ viết + soát code (build/typecheck/lint xanh). Việc người dùng cần làm: SSH vào
-    VPS, chạy `STORAGE_DRIVER=r2 npm run sync:r2 -- --dry-run` xem trước rồi bỏ `--dry-run` để
-    chạy thật — xem hướng dẫn đầy đủ ở `docs/migration-thoat-ly-supabase.md` mục 10 bước 7.
+    lên Cloudflare R2 qua `saveAudio()` rồi cập nhật `audio_url`; an toàn chạy lại, có
+    `--dry-run`/`--force`/`BUCKET`/`LIMIT`. **Bản đầu SAI — đã sửa (2026-07-20, người dùng chạy
+    thử trên VPS thật báo "0 dòng" ở cả 2 bucket):** bản đầu đọc danh sách file cần đồng bộ TỪ
+    DB (`select ... from tts_cache`), nhưng quyết định 2026-07-19 "bỏ qua migrate dữ liệu người
+    dùng cũ" khiến Postgres tự host khởi động RỖNG — DB không có dòng nào dù `uploads/` trên VPS
+    vẫn còn hàng nghìn file audio cache từ trước cutover, nên script cũ luôn thấy "0 dòng" và
+    không đẩy được gì (bug thật, không phải môi trường thiếu dữ liệu). **Đã viết lại:** quét
+    THẲNG ổ đĩa (`uploads/tts-cache/**/*.mp3`, `uploads/pronunciations/*.mp3`), suy
+    hash/lang/voice (tts-cache) hoặc word/voice (pronunciations) từ TÊN FILE, upload lên R2 rồi
+    `INSERT ... ON CONFLICT` tái tạo dòng DB — không cần dòng DB có sẵn. An toàn 100% cho
+    tts-cache (VOICE_VERSION nằm trong hash, hash cũ tự động không khớp nếu giọng đã đổi); với
+    pronunciations phải GIẢ ĐỊNH `voice_version = VOICE_VERSION hiện tại` (không suy được từ tên
+    file, ghi rõ trong code — rủi ro thấp vì hằng số này chưa từng đổi). **VẪN CHƯA CHẠY THẬT
+    TRÊN VPS** (chỉ soát code, build/typecheck/lint/test xanh) — việc người dùng cần làm: SSH vào
+    VPS, `git pull`, `find uploads/tts-cache uploads/pronunciations -name '*.mp3' | wc -l` xem số
+    file thật, rồi `STORAGE_DRIVER=r2 npm run sync:r2 -- --dry-run` xem trước → bỏ `--dry-run`
+    chạy thật — xem `docs/migration-thoat-ly-supabase.md` mục 10 bước 7.
 
 - **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT + người dùng ĐÃ CHỐT cả 4
   quyết định (2026-07-15: theo thứ tự ưu tiên · LÀM Azure · LÀM giải đấu tuần M5 · THAY Challenge
