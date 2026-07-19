@@ -76,6 +76,7 @@ function getApiKeyPool(): string[] {
 export function setActiveKeyPool(keys: string[] | null): void {
   activePoolOverride = keys
   nextKeyIndex = 0
+  healthyPoolCache = null // đổi bể key gốc → cache "khỏe mạnh" cũ không còn đúng nữa
 }
 
 // Có cấu hình ít nhất 1 key hay chưa — dùng ở scripts/vite.config.ts để kiểm tra
@@ -88,9 +89,16 @@ export function hasGoogleTtsKey(): boolean {
 // trên VPS, không phải serverless "nguội" mỗi request) nên xoay vòng đúng qua nhiều lần gọi.
 let nextKeyIndex = 0
 
-function isQuotaError(err: unknown): boolean {
+// Lỗi coi là "do CHÍNH key này", nên thử key khác trong bể thay vì báo lỗi ngay:
+//   429 / RESOURCE_EXHAUSTED / quota → hết hạn mức key này
+//   403 kèm "billing"                → project của key này chưa bật thanh toán
+// Lỗi khác (sai tham số, mạng lỗi, timeout...) không liên quan tới KEY cụ thể nào
+// → thử key khác cũng lỗi y hệt, ném lỗi ngay cho nhanh (giữ nguyên hành vi cũ).
+function isSkippableKeyError(err: unknown): boolean {
   const msg = err instanceof Error ? err.message : String(err)
-  return /\(429\)|RESOURCE_EXHAUSTED|quota/i.test(msg)
+  // [\s\S]* thay vì .* — JSON lỗi Google trả về có thể pretty-print (chứa xuống dòng thật)
+  // giữa "(403)" và "billing", .* mặc định KHÔNG khớp qua dấu xuống dòng.
+  return /\(429\)|RESOURCE_EXHAUSTED|quota/i.test(msg) || /\(403\)[\s\S]*billing/i.test(msg)
 }
 
 async function callGoogleTts(
@@ -159,12 +167,41 @@ export async function probeApiKeys(): Promise<{ working: string[]; total: string
   return { working: total.filter((_, i) => results[i]), total }
 }
 
+// ── Bể key "khỏe mạnh" dùng khi chạy thật (api/tts.ts) ───────────────────────
+// Khác probeApiKeys() (chỉ dùng tay ở script seed): hàm này TỰ ĐỘNG probe lại theo chu kỳ,
+// cache kết quả trong bộ nhớ để KHÔNG probe lại ở mọi request (tốn thêm 1 lượt gọi Google mỗi
+// key). Key hết quota/billing chưa bật sẽ bị LOẠI TẠM khỏi vòng xoay chính cho tới lần probe
+// kế tiếp — tránh phí request đầu tiên của mỗi lượt gọi vào key đã biết là hỏng. Quota Google
+// thường reset theo ngày và billing có thể được bật bất kỳ lúc nào → probe lại định kỳ để
+// TỰ ĐỘNG đưa key trở lại khi đã dùng được, không cần restart server.
+const HEALTHY_POOL_TTL_MS = 15 * 60_000 // 15 phút
+let healthyPoolCache: { keys: string[]; checkedAt: number } | null = null
+
+async function getHealthyKeyPool(): Promise<string[]> {
+  const fullPool = getApiKeyPool()
+  // 0-1 key: không có gì để loại trừ, probe chỉ tốn thêm 1 request vô ích.
+  if (fullPool.length <= 1) return fullPool
+
+  if (healthyPoolCache && Date.now() - healthyPoolCache.checkedAt < HEALTHY_POOL_TTL_MS) {
+    return healthyPoolCache.keys
+  }
+
+  const results = await Promise.all(fullPool.map((key) => probeKey(key)))
+  const healthy = fullPool.filter((_, i) => results[i])
+  healthyPoolCache = { keys: healthy, checkedAt: Date.now() }
+  console.log(`[googleTts] Kiểm tra bể key: ${healthy.length}/${fullPool.length} còn dùng được`)
+
+  // TOÀN BỘ key đều fail (probe có thể sai — vd Google tạm lag) → vẫn thử cả bể gốc thay vì
+  // chặn hẳn, để generateAudioFromGoogle tự báo lỗi thật qua đường gọi thật (không phải probe).
+  return healthy.length > 0 ? healthy : fullPool
+}
+
 export async function generateAudioFromGoogle(
   text: string,
   voice: VoiceId = DEFAULT_VOICE,
   lang: Lang = 'en-US',
 ): Promise<ArrayBuffer> {
-  const pool = getApiKeyPool()
+  const pool = await getHealthyKeyPool()
   if (pool.length === 0) {
     throw new Error('Server chưa cấu hình GOOGLE_TTS_API_KEY (hoặc GOOGLE_TTS_API_KEYS)')
   }
@@ -183,11 +220,12 @@ export async function generateAudioFromGoogle(
       return await callGoogleTts(apiKey, text, voiceConfig, lang)
     } catch (err) {
       lastError = err
-      // Chỉ thử key khác khi lỗi là HẾT QUOTA (429) — lỗi khác (sai tham số, mạng lỗi...)
-      // không liên quan tới key nên thử key khác cũng lỗi y hệt, ném lỗi ngay cho nhanh.
-      if (!isQuotaError(err)) throw err
+      // Chỉ thử key khác khi lỗi DO CHÍNH KEY này (hết quota 429 / billing chưa bật 403) —
+      // lỗi khác (sai tham số, mạng lỗi...) không liên quan tới key nên thử key khác cũng
+      // lỗi y hệt, ném lỗi ngay cho nhanh.
+      if (!isSkippableKeyError(err)) throw err
       if (pool.length > 1 && attempt < pool.length - 1) {
-        console.warn('[googleTts] Key hết quota (429) — chuyển sang key kế tiếp trong bể')
+        console.warn('[googleTts] Key lỗi (quota/billing) — chuyển sang key kế tiếp trong bể')
       }
     }
   }
