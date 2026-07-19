@@ -48,7 +48,7 @@ const GOAL_LABEL: Record<WeeklyGoal, { vi: string; en: string }> = {
 
 export default function Profile() {
   const nav = useNavigate()
-  const { user } = useAuth()
+  const { user, refresh } = useAuth()
   const { T } = useLang()
   const toast = useToast()
   useCloudSync(user?.id) // kéo lượt dùng mới nhất từ Supabase
@@ -99,6 +99,10 @@ export default function Profile() {
 
   async function handleLogout() {
     await logout()
+    // Giai đoạn B: không còn onAuthStateChange của Supabase tự bắn sự kiện SIGNED_OUT —
+    // phải tự refresh() để AuthProvider cập nhật user=null trước khi điều hướng, nếu không
+    // Login.tsx (thấy user cũ còn trong context) sẽ redirect ngược lại '/' → màn hình trống.
+    await refresh()
     nav('/login')
   }
 
