@@ -41,8 +41,12 @@ const app = express()
 // static.cloudflareinsights.com: script beacon Cloudflare tự chèn khi bật proxy
 // (xem docs/cloudflare-setup.md) — cần cho phép cả script-src (tải file) lẫn
 // connect-src (báo cáo RUM qua cdn-cgi/rum), nếu không sẽ bị chặn CSP.
+// https://accounts.google.com trong script-src: tải script Google Identity Services
+// (đăng nhập Google — Giai đoạn B, xem src/lib/auth.ts loadGoogleScript()).
+// frame-src https://accounts.google.com: khung One Tap/popup chọn tài khoản Google hiện
+// TRONG trang (không có directive này thì rơi về default-src 'self', chặn hẳn khung Google).
 const CSP_HEADER =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-ancestors 'self'"
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://accounts.google.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://accounts.google.com; frame-ancestors 'self'"
 
 // Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
 app.disable('x-powered-by')
