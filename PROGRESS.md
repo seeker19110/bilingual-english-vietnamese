@@ -99,11 +99,19 @@ chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
     `INSERT ... ON CONFLICT` tái tạo dòng DB — không cần dòng DB có sẵn. An toàn 100% cho
     tts-cache (VOICE_VERSION nằm trong hash, hash cũ tự động không khớp nếu giọng đã đổi); với
     pronunciations phải GIẢ ĐỊNH `voice_version = VOICE_VERSION hiện tại` (không suy được từ tên
-    file, ghi rõ trong code — rủi ro thấp vì hằng số này chưa từng đổi). **VẪN CHƯA CHẠY THẬT
-    TRÊN VPS** (chỉ soát code, build/typecheck/lint/test xanh) — việc người dùng cần làm: SSH vào
-    VPS, `git pull`, `find uploads/tts-cache uploads/pronunciations -name '*.mp3' | wc -l` xem số
-    file thật, rồi `STORAGE_DRIVER=r2 npm run sync:r2 -- --dry-run` xem trước → bỏ `--dry-run`
-    chạy thật — xem `docs/migration-thoat-ly-supabase.md` mục 10 bước 7.
+    file, ghi rõ trong code — rủi ro thấp vì hằng số này chưa từng đổi). **Bug thứ 2 phát hiện
+    khi chạy thật trên VPS (2026-07-20, sau khi merge bản quét ổ đĩa):** bucket `tts-cache` có
+    quá nhiều file (bằng chứng thật — VPS báo lỗi) khiến `walkMp3()` crash
+    `RangeError: Maximum call stack size exceeded` — nguyên nhân: `out.push(...(await
+walkMp3(...)))` dùng spread để gộp mảng con vào `out`, mà spread truyền MỖI phần tử thành 1
+    đối số riêng cho `.push()` → tràn giới hạn số đối số của V8 khi thư mục có hàng chục nghìn
+    file. Sửa: đổi `walkMp3` sang nhận `out` làm tham số TRUYỀN QUA THAM CHIẾU (gom bằng
+    `out.push(rel)` từng phần tử, không spread mảng con) — đã tự kiểm bằng cách tạo 150.000 file
+    giả trong sandbox và chạy hàm mới, xác nhận không lỗi (bản cũ chắc chắn crash ở quy mô này).
+    **VẪN CHƯA CHẠY THẬT TRÊN VPS SAU BẢN VÁ NÀY** (chỉ soát code + tự kiểm hàm quét file,
+    build/typecheck/lint/test xanh) — việc người dùng cần làm: SSH vào VPS, `git pull`,
+    `STORAGE_DRIVER=r2 npm run sync:r2 -- --dry-run` xem trước → bỏ `--dry-run` chạy thật — xem
+    `docs/migration-thoat-ly-supabase.md` mục 10 bước 7.
 
 - **Nâng cấp 5 hạng mục sư phạm còn thua app lớn** — ĐẶC TẢ ĐÃ VIẾT + người dùng ĐÃ CHỐT cả 4
   quyết định (2026-07-15: theo thứ tự ưu tiên · LÀM Azure · LÀM giải đấu tuần M5 · THAY Challenge

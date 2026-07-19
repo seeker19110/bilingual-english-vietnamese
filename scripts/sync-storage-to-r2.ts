@@ -87,14 +87,17 @@ function resolveBuckets(): Bucket[] {
 }
 
 // ── Quét đệ quy tìm mọi file .mp3 dưới 1 thư mục (đường dẫn TƯƠNG ĐỐI so với gốc) ──
-async function walkMp3(root: string, dir = ''): Promise<string[]> {
+// Gom vào `out` DÙNG CHUNG QUA THAM CHIẾU (không spread mảng con vào .push()) — với
+// hàng chục nghìn file trong 1 thư mục, `out.push(...bigArray)` tràn giới hạn số đối
+// số của hàm (V8 RangeError: Maximum call stack size exceeded), xác nhận thật khi
+// chạy trên VPS 2026-07-20 (bucket tts-cache thật sự có ngần ấy file).
+async function walkMp3(root: string, dir = '', out: string[] = []): Promise<string[]> {
   const full = path.join(root, dir)
-  if (!fs.existsSync(full)) return []
+  if (!fs.existsSync(full)) return out
   const entries = await fs.promises.readdir(full, { withFileTypes: true })
-  const out: string[] = []
   for (const entry of entries) {
     const rel = dir ? `${dir}/${entry.name}` : entry.name
-    if (entry.isDirectory()) out.push(...(await walkMp3(root, rel)))
+    if (entry.isDirectory()) await walkMp3(root, rel, out)
     else if (entry.isFile() && entry.name.endsWith('.mp3')) out.push(rel)
   }
   return out
