@@ -112,13 +112,7 @@ const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms
 
 // ── Nhóm (category) ─────────────────────────────────────────────────────────
 type CatId =
-  | 'pron'
-  | 'curriculum'
-  | 'cefr'
-  | 'lessons-early'
-  | 'patterns'
-  | 'lessons-rest'
-  | 'challenge'
+  'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest' | 'challenge'
 
 const CATEGORIES: { id: CatId; label: string }[] = [
   { id: 'pron', label: 'Phát âm từ điển (pronunciations)' },
