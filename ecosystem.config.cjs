@@ -30,6 +30,9 @@ module.exports = {
       // với loader tsx nạp qua node_args (không qua binary ./node_modules/.bin/tsx
       // như fork mode cũ — binary đó spawn process con, phá cơ chế chia port cluster).
       script: 'server.ts',
+      // Khai báo tường minh 'node' — không thì PM2 tự đoán interpreter theo đuôi
+      // file .ts (một số bản PM2 đoán ra 'bun'), VPS không cài bun nên start lỗi.
+      interpreter: 'node',
       node_args: '--import tsx',
       exec_mode: 'cluster',
       instances: 1,
