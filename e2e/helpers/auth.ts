@@ -1,17 +1,11 @@
 import type { Page } from '@playwright/test'
 
-// Giả "đã đăng nhập" cho E2E bằng cách gieo trước localStorage — profile cache
-// (gsa_profile_v1) cho UI hiện đúng trạng thái onboarded=true ngay lập tức.
-//
-// ⚠️ NỢ KỸ THUẬT (phát hiện ở Giai đoạn E rời Supabase, chưa sửa): từ khi
-// src/lib/auth.ts chuyển sang Bearer token tự viết (Giai đoạn B), AuthProvider
-// LUÔN gọi thật `GET /api/auth?action=me` khi mount — khoá `authKey` giả bên dưới
-// KHÔNG còn được auth.ts đọc (đó là tên khoá kiểu Supabase cũ, để lại làm tư liệu).
-// Muốn mockLogin hoạt động đúng cần: (a) page.route() chặn `/api/auth?action=me`
-// trả profile giả, hoặc (b) chạy E2E với backend Postgres thật đã seed sẵn user
-// e2e-user-0001. Chưa việc nào được làm — các spec dùng mockLogin có thể đang
-// phụ thuộc vào nhánh lỗi mạng (401) của getCurrentUser() để hoạt động tình cờ.
-const PROFILE_CACHE_KEY = 'gsa_profile_v1'
+// Giả "đã đăng nhập" cho E2E: gieo trước token Bearer giả (đúng key mà
+// src/lib/authHeader.ts đọc — gsa_session_token_v1) + chặn network `GET
+// /api/auth?action=me` (gọi thật khi AuthProvider mount, xem src/lib/auth.ts
+// getCurrentUser()) trả về profile giả — E2E chạy bằng `npm run dev` (Vite),
+// không có backend Postgres thật nên không thể để request đó đi thật.
+const TOKEN_KEY = 'gsa_session_token_v1'
 // Export để các file E2E khác seed localStorage đúng key theo user (vd `et_challenge_<uid>`).
 export const USER_ID = 'e2e-user-0001'
 
@@ -23,19 +17,28 @@ export async function mockLogin(
   uiLang: 'vi' | 'en' = 'vi',
   theme?: ThemeName,
 ): Promise<void> {
-  const profile = { id: USER_ID, plan: 'free', onboarded: true, ts: Date.now() }
+  const profile = {
+    id: USER_ID,
+    email: 'e2e@example.com',
+    name: 'E2E User',
+    plan: 'free',
+    onboarded: true,
+  }
 
   await page.addInitScript(
     (data) => {
-      localStorage.setItem(data.profileKey, JSON.stringify(data.profile))
+      localStorage.setItem(data.tokenKey, 'e2e-fake-token')
       localStorage.setItem('ui_lang', data.uiLang)
       if (data.theme) localStorage.setItem('ui_theme', data.theme)
     },
     {
-      profileKey: PROFILE_CACHE_KEY,
-      profile,
+      tokenKey: TOKEN_KEY,
       uiLang,
       theme: theme ?? null,
     },
+  )
+
+  await page.route('**/api/auth?action=me', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(profile) }),
   )
 }
