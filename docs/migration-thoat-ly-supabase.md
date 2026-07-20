@@ -142,7 +142,7 @@ Nguyên tắc thay RLS: **mọi handler API tự kiểm `user_id` khớp với s
 
 - `api/_lib/usage.ts`: đổi từ Supabase RPC (`consume_usage`/`refund_usage` qua PostgREST) sang gọi thẳng 2 hàm SQL cùng tên trên Postgres tự host qua `pg` — đã có sẵn từ `postgres/schema.sql` (Giai đoạn A). Bỏ luôn nhánh dự phòng "fallback non-atomic" (không cần nữa vì hàm SQL luôn tồn tại). Test viết lại toàn bộ (`api/_lib/usage.test.ts`, mock `pgPool` thay Supabase).
 - `api/profile.ts` (route mới): `GET /api/profile` (đọc plan/onboarded/user_level/goal/daily_minutes, tự tạo profile nếu chưa có), `POST /api/profile` (lưu kết quả onboarding). Thay `ensureProfile()`/`saveOnboarding()`/`fetchOnboarding()` trong `src/lib/cloud.ts` + `src/lib/onboarding.ts` vốn gọi thẳng Supabase client qua RLS.
-- `api/progress.ts` (route mới): `GET`/`POST /api/progress` — đọc/ghi toàn bộ `learning_progress` (learned/hard/srs/cefr_*/placement/weekly_goal/achievements). Thay `pushProgress()`/`pullProgress()` trong `src/lib/progressSync.ts`.
+- `api/progress.ts` (route mới): `GET`/`POST /api/progress` — đọc/ghi toàn bộ `learning_progress` (learned/hard/srs/cefr\_\*/placement/weekly_goal/achievements). Thay `pushProgress()`/`pullProgress()` trong `src/lib/progressSync.ts`.
 - Dọn dẹp: xóa hẳn `ensureProfile()` (không còn ai gọi sau khi `auth.ts` viết lại ở GĐ B), bỏ tham số `userId` thừa khỏi `saveOnboarding()` (2 nơi gọi `Onboarding.tsx`/`Placement.tsx` đã cập nhật theo).
 - Test: viết lại `src/lib/onboarding.test.ts` (mock `fetch` thay Supabase client).
 - **Kiểm tra:** build ✅ · typecheck ✅ · lint (0 cảnh báo) ✅ · test 571/571 ✅.
@@ -189,12 +189,13 @@ Sau mục 8, phần LÕI (đăng nhập + đếm lượt dùng AI + tiến độ
 6. Smoke test: mở 1 trang có audio (vd Từ điển tra 1 từ, hoặc trang Luyện nói), xác nhận nghe được — kiểm tra Cloudflare Dashboard → R2 → bucket thấy file mới xuất hiện.
 7. **(Tùy chọn) Đẩy nốt audio CŨ đã cache trước khi bật R2 lên R2** — bước 1-6 chỉ làm
    audio MỚI tự lên R2; audio cũ vẫn nằm ở `uploads/` local + DB vẫn trỏ `/uploads/...`.
-   Script `scripts/sync-storage-to-r2.ts` (`npm run sync:r2`) đọc `tts_cache`/
-   `pronunciations`, đẩy file local tương ứng lên R2 qua `saveAudio()` rồi cập nhật lại
-   `audio_url`. Chạy trên VPS:
+   `scripts/seed-all.ts` (menu "s", hoặc cờ `--sync-r2` — gộp từ script
+   `sync-storage-to-r2.ts` riêng, xóa 2026-07-20) quét thẳng ổ đĩa, đẩy file lên R2 qua
+   `saveAudio()` rồi cập nhật lại `audio_url`. Chạy trên VPS:
    ```bash
-   STORAGE_DRIVER=r2 npm run sync:r2 -- --dry-run   # xem trước — đếm, KHÔNG tải/ghi gì
-   STORAGE_DRIVER=r2 npm run sync:r2                # chạy thật
+   STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2 --dry-run   # xem trước — đếm, KHÔNG tải/ghi gì
+   STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2              # chạy thật
    ```
-   An toàn chạy lại nhiều lần (tự bỏ qua dòng đã trỏ R2); file local KHÔNG bị xóa, tự dọn
-   tay `uploads/` sau khi xác nhận R2 ổn nếu muốn giải phóng dung lượng VPS.
+   An toàn chạy lại nhiều lần (tự bỏ qua dòng đã trỏ R2); file local KHÔNG bị xóa. Muốn xác
+   nhận thật rồi xoá file local lấy lại dung lượng — dùng menu "v" (cờ `--verify-r2
+--delete-verified --yes`, xem `docs/seed-guide.md` mục 5).
