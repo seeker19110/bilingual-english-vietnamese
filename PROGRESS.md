@@ -50,10 +50,12 @@ rồi mới bật mới → app chết ~10s mỗi lần deploy (thấy trong log
 delete+start MỘT lần vì PM2 không đổi được exec_mode qua reload) — đã kiểm chứng bằng PM2
 thật trong sandbox: 3.766 request liên tục xuyên 2 lần reload, 0 request rớt.
 
-**Tính năng mới (chưa mở cho người dùng thật):** Thử thách "Challenge 1 phút/ngày"
-(`/challenge`) — từ 2026-07-15 chạy **CHU KỲ TUẦN** Thứ 2→CN (bảng 7 ô, tổng kết tuần vào CN,
-ăn mừng 7/7; bỏ vòng 30 ngày/vé nghỉ/mốc — huy hiệu sẽ quay lại ở M2). Code xong, migration
-`0010_challenge_entries.sql` **chưa chạy trên production**.
+**Tính năng mới:** Thử thách "Challenge 1 phút/ngày" (`/challenge`) — từ 2026-07-15 chạy
+**CHU KỲ TUẦN** Thứ 2→CN (bảng 7 ô, tổng kết tuần vào CN, ăn mừng 7/7; bỏ vòng 30 ngày/vé
+nghỉ/mốc — huy hiệu sẽ quay lại ở M2). ~~Migration `0010_challenge_entries.sql` chưa chạy trên
+production~~ **hết hiệu lực (2026-07-20)** — ghi chú từ thời Supabase; sau khi rời hẳn sang
+Postgres tự host, bảng `challenge_entries` đã có sẵn trong `postgres/schema.sql` (baseline khi
+khởi tạo DB mới) nên tự động có qua `npm run migrate:pg`, không cần chạy riêng.
 
 **i18n/UX:** song ngữ toàn site kể cả `/login` · bottom-nav mobile (Trang chủ/Lộ trình/Luyện
 tập/Tiến độ) · thẻ "Học tiếp" ở Home · karaoke (sáng chữ theo giọng đọc) áp dụng mọi TTS >1 từ ·
@@ -487,14 +489,11 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   mode nếu chưa tìm ra cách nạp TypeScript tương thích với Node cluster** (ví dụ: build sẵn
   ra JS thay vì chạy `.ts` trực tiếp, hoặc dùng `interpreter` trỏ thẳng vào binary tsx thay
   vì `node_args`). Đổi lại: reload có vài giây downtime như trước PR #283 (chấp nhận được).
-- **E2E `mockLogin` (`e2e/helpers/auth.ts`) không còn khớp luồng đăng nhập thật (phát hiện
-  2026-07-20 khi dọn Giai đoạn E)** — từ khi `src/lib/auth.ts` chuyển sang Bearer token tự
-  viết, `AuthProvider` LUÔN gọi thật `GET /api/auth?action=me` lúc mount; helper E2E chỉ gieo
-  trước `localStorage` (profile cache) chứ không mock được request mạng này. Các spec dùng
-  `mockLogin` (6 file) có thể đang chạy nhờ nhánh lỗi 401 tình cờ chứ không phải luồng đăng
-  nhập thật được mô phỏng đúng. Cần: `page.route()` chặn `/api/auth?action=me` trả user giả,
-  hoặc chạy E2E với Postgres test đã seed sẵn user `e2e-user-0001`. Chưa làm — xem comment
-  chi tiết đầu `e2e/helpers/auth.ts`.
+- ~~**E2E `mockLogin` không còn khớp luồng đăng nhập thật**~~ **ĐÃ TRẢ XONG (PR #282,
+  2026-07-20)** — `e2e/helpers/auth.ts` nay gieo đúng key Bearer token
+  (`gsa_session_token_v1`) VÀ dùng `page.route()` chặn `GET /api/auth?action=me` trả profile
+  giả. Dòng cũ ghi "chưa làm" đã lỗi thời (viết trước PR #282, xác nhận lại 2026-07-20 khi
+  quét toàn diện nợ kỹ thuật).
 - **2 script deploy trùng lặp** (`deploy.sh` gốc repo, đơn giản — và `scripts/deploy.sh`,
   đầy đủ hơn: dọn `dist`/`public/data`, tự thêm biến `.env` thiếu, health check) — không rõ
   cái nào là "chính thức" (`docs/DEPLOY.md`/`DEPLOY_STEPS.md` nhắc cả 2, `.github/workflows/
