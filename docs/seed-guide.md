@@ -192,7 +192,11 @@ VERIFY_DECRYPT=20 npm run seed:verify   # 4. (tùy chọn) chắc chắn audio g
 # Nếu dùng STORAGE_DRIVER=r2: đẩy nốt audio cache cũ (seed trước khi bật R2) lên Cloudflare
 STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2 --dry-run   # 5. Xem trước
 STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2              # 6. Chạy thật
-npm run seed:all -- --verify-r2                               # 7. (tùy chọn) đối chiếu R2 thật + xoá local an toàn
+
+# 7. (tùy chọn) Đối chiếu R2 thật + xoá file local đã an toàn — CHẠY TRÊN VPS
+npm run seed:all -- --verify-r2                              # 7a. chỉ đối chiếu, in báo cáo
+npm run seed:all -- --verify-r2 --delete-verified             # 7b. xem trước sẽ xoá bao nhiêu (CHƯA xoá)
+npm run seed:all -- --verify-r2 --delete-verified --yes       # 7c. xoá thật (chỉ file đã khớp R2)
 ```
 
 Nếu seed bị lỗi giữa chừng: danh sách lỗi được ghi ra `scripts/seed-errors.json`
