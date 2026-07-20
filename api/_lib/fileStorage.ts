@@ -103,6 +103,13 @@ function getR2Client(): S3Client {
     region: 'auto',
     endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
     credentials: { accessKeyId, secretAccessKey },
+    // Từ ~cuối 2024, @aws-sdk/client-s3 mặc định requestChecksumCalculation=WHEN_SUPPORTED
+    // (tự gắn checksum CRC32 vào MỌI request PUT, kể cả không ai yêu cầu) — Cloudflare R2
+    // không tương thích hoàn toàn với cơ chế checksum này của AWS S3 gốc, gây lỗi
+    // "SignatureDoesNotMatch" dù key ĐÚNG (xác nhận thật khi chạy trên VPS 2026-07-20 —
+    // đổi key mới vẫn lỗi y hệt, đọc thẳng mã nguồn SDK trong node_modules mới tìm ra).
+    // WHEN_REQUIRED trả lại hành vi cũ: chỉ tính checksum khi API operation THẬT SỰ đòi hỏi.
+    requestChecksumCalculation: 'WHEN_REQUIRED',
   })
   return r2Client
 }
