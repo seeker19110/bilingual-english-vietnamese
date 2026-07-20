@@ -143,7 +143,8 @@ async function callGoogleTts(
     throw new Error('Google TTS không trả về audio')
   }
 
-  // Google trả base64 → decode thành dữ liệu nhị phân để upload lên Supabase Storage.
+  // Google trả base64 → decode thành dữ liệu nhị phân để upload qua saveAudio() (local VPS
+  // hoặc Cloudflare R2 tùy STORAGE_DRIVER).
   return base64ToBytes(data.audioContent).buffer as ArrayBuffer
 }
 

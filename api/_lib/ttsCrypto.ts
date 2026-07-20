@@ -1,9 +1,10 @@
 // api/_lib/ttsCrypto.ts
 // Mã hóa AES-256-GCM cho audio TTS cache (câu ví dụ, cụm từ — nội dung TĨNH, lưu lâu dài
-// trên Supabase Storage, bucket "tts-cache"). Mục tiêu: ai có link Storage cũng không nghe
-// được nội dung nếu chưa đăng nhập — server chỉ trả khoá giải mã cho request có JWT Supabase
-// hợp lệ (việc xác thực JWT đã được api/tts.ts thực hiện qua validateAuth() ở api/_lib/security.ts
-// TRƯỚC khi gọi tới các hàm trong file này — file này không tự kiểm tra auth nữa, tránh trùng logic).
+// local VPS hoặc Cloudflare R2 tùy STORAGE_DRIVER, thư mục/prefix "tts-cache"). Mục tiêu: ai
+// có link cũng không nghe được nội dung nếu chưa đăng nhập — server chỉ trả khoá giải mã cho
+// request có Bearer token hợp lệ (việc xác thực đã được api/tts.ts thực hiện qua validateAuth()
+// ở api/_lib/security.ts TRƯỚC khi gọi tới các hàm trong file này — file này không tự kiểm tra
+// auth nữa, tránh trùng logic).
 //
 // Cách sinh khoá: KHÔNG lưu khoá riêng cho từng file vào DB (đỡ phải thêm cột/migration).
 // Khoá + iv được "suy ra" (derive) từ `hash` (cột khoá cache, đã có sẵn) bằng HMAC-SHA256 với 1

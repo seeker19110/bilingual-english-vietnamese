@@ -1,7 +1,7 @@
 // Text-to-Speech — gọi Google TTS qua /api/tts (server-side, có cache dùng chung)
-// Audio cache được MÃ HÓA AES-256-GCM trên Supabase Storage: ai có link cũng không
-// nghe được nội dung nếu chưa đăng nhập — server chỉ trả khoá giải mã (key_b64/iv_b64)
-// cho request có JWT Supabase hợp lệ, gửi qua header Authorization: Bearer <token>.
+// Audio cache được MÃ HÓA AES-256-GCM (lưu local VPS hoặc Cloudflare R2 tùy STORAGE_DRIVER):
+// ai có link cũng không nghe được nội dung nếu chưa đăng nhập — server chỉ trả khoá giải mã
+// (key_b64/iv_b64) cho request có Bearer token hợp lệ, gửi qua header Authorization: Bearer <token>.
 // Fallback về Web Speech API nếu /api/tts lỗi (mất mạng, server timeout, chưa đăng nhập...).
 
 import { getAccessToken } from './authHeader'

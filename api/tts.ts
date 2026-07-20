@@ -15,8 +15,8 @@
 // này đọc cả câu/đoạn — dùng cho câu ví dụ, cụm từ, hội thoại trong Chat/Speaking.
 //
 // Bảo mật: file audio (bucket/thư mục "tts-cache") bị MÃ HÓA AES-256-GCM trước khi lưu —
-// ai có link cũng không nghe được nếu không có khoá, và khoá chỉ phát cho request có JWT
-// Supabase hợp lệ. validateAuth() ở dưới đã bắt buộc đăng nhập cho TOÀN BỘ endpoint
+// ai có link cũng không nghe được nếu không có khoá, và khoá chỉ phát cho request có Bearer
+// token hợp lệ. validateAuth() ở dưới đã bắt buộc đăng nhập cho TOÀN BỘ endpoint
 // này (không có chế độ ẩn danh) nên mọi response thành công đều kèm khoá giải mã.
 // Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
@@ -124,8 +124,8 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }
 
-  // Xác thực người dùng qua Supabase JWT — bắt buộc, vì audio cache bị mã hóa và
-  // khoá giải mã chỉ phát cho người đã đăng nhập.
+  // Xác thực người dùng qua Bearer token tự viết (validateAuth) — bắt buộc, vì audio
+  // cache bị mã hóa và khoá giải mã chỉ phát cho người đã đăng nhập.
   const authResult = await validateAuth(req)
   if (!authResult) {
     logSecurityEvent('AUTH_FAILED', clientIp, { path: '/api/tts' })
@@ -212,7 +212,7 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Không thể tạo audio — thử lại sau' }, 500, allHeaders)
   }
 
-  // ── BƯỚC 3: Mã hóa AES-256-GCM rồi lưu file (local VPS hoặc Supabase Storage tùy
+  // ── BƯỚC 3: Mã hóa AES-256-GCM rồi lưu file (local VPS hoặc Cloudflare R2 tùy
   // STORAGE_DRIVER) ── Mã hóa TRƯỚC khi lưu — file luôn là ciphertext, không phải mp3 gốc.
   const encryptedData = await encryptAudio(audioData, textHash)
   const fileName = `${lang}/${voice}/${textHash}.mp3`

@@ -39,7 +39,7 @@ if (VAPID_PUBLIC && VAPID_PRIVATE) {
 // Giờ UTC mặc định để nhắc khi người dùng chưa chọn giờ (13 UTC = 20:00 giờ VN).
 const DEFAULT_REMIND_UTC_HOUR = 13
 
-// Kiểu tối thiểu cho các hàng đọc từ Supabase trong file này — tránh `any`.
+// Kiểu tối thiểu cho các hàng đọc từ Postgres trong file này — tránh `any`.
 interface PushSubscriptionRow {
   user_id: string
   endpoint: string
@@ -71,7 +71,7 @@ interface LearningProgressRow {
 
 // Cửa sổ ngày để tính streak/tuần cho nội dung nhắc theo ngữ cảnh (② M3) — khớp
 // mốc "14 ngày gần nhất" đặc tả nhắc tới cho phần giờ thông minh (không làm ở
-// PR này) để nhất quán, đồng thời giữ chi phí truy vấn Supabase hợp lý.
+// PR này) để nhất quán, đồng thời giữ chi phí truy vấn Postgres hợp lý.
 const REMINDER_LOOKBACK_DAYS = 14
 // PHẢI khớp DEFAULT_WEEKLY_GOAL của src/lib/weeklyGoal.ts (api/_lib không import
 // từ src/lib — xem quy ước ở api/_lib/date.ts).
