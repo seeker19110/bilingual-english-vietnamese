@@ -26,7 +26,7 @@ cd /var/www/english-tutor
 git pull origin main
 npm install          # chỉ cần khi package.json đổi
 npm run build
-pm2 reload ecosystem.config.cjs   # zero-downtime
+bash scripts/pm2-reload.sh   # reload zero-downtime + health check
 pm2 status
 curl https://en-vi.donghanhcungban.com/api/health
 ```
@@ -37,7 +37,7 @@ curl https://en-vi.donghanhcungban.com/api/health
 pm2 logs english-tutor --lines 50          # app không start
 curl http://localhost:3001/api/health      # Nginx 502 → kiểm tra app có chạy không
 grep -E "^DATABASE_URL|^GOOGLE_CLIENT_ID" .env  # đăng nhập lỗi / lỗi DB → thiếu biến
-pm2 restart english-tutor --update-env      # reload sau khi sửa .env
+bash scripts/pm2-reload.sh                  # reload (zero-downtime) sau khi sửa .env
 ```
 
 ⚠️ Không đổi `TTS_ENCRYPTION_MASTER_KEY` — đổi sẽ làm toàn bộ audio cache cũ không
@@ -68,7 +68,7 @@ Chạy lại an toàn — tự bỏ qua audio đã có.
 ```bash
 git log --oneline | head -10
 git reset --hard <commit-hash>
-npm run build && pm2 reload ecosystem.config.cjs
+npm run build && bash scripts/pm2-reload.sh
 ```
 
 ## Checklist trước khi deploy
@@ -76,5 +76,5 @@ npm run build && pm2 reload ecosystem.config.cjs
 - [ ] Code đã merge vào `main` trên GitHub
 - [ ] `.env` trên VPS đủ biến (xem `.env.example`)
 - [ ] `ALLOWED_ORIGINS=https://en-vi.donghanhcungban.com`, `PORT=3001`
-- [ ] `ecosystem.config.cjs` có `interpreter: '/usr/bin/node'` (Node 22 hệ thống)
+- [ ] PM2 chạy bằng Node ≥ 22 (`pm2 info english-tutor | grep -i 'node.js version'` — cluster mode dùng Node của PM2)
 - [ ] SSL Let's Encrypt còn hiệu lực (tự renew 90 ngày)

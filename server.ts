@@ -239,9 +239,24 @@ function startReminderScheduler() {
 
 // ── Khởi động ─────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`✅ English Tutor đang chạy tại http://localhost:${PORT}`)
   console.log(`   NODE_ENV : ${process.env.NODE_ENV || 'production'}`)
   console.log(`   Node.js  : ${process.version}`)
   startReminderScheduler()
+  // Báo PM2 là app ĐÃ nhận request được (đi với wait_ready trong ecosystem.config.cjs).
+  // Khi reload, PM2 đợi tín hiệu này từ process MỚI rồi mới tắt process CŨ → không có
+  // khoảng chết. Chạy ngoài PM2 (npm start tay) thì process.send không tồn tại → bỏ qua.
+  process.send?.('ready')
 })
+
+// Tắt êm (graceful shutdown): PM2 gửi SIGINT khi stop/reload. Ngừng nhận kết nối mới,
+// đóng ngay kết nối keep-alive đang rảnh, chờ request đang chạy xong rồi thoát.
+// Quá 5s chưa xong thì thoát luôn (PM2 còn kill_timeout để SIGKILL nếu process kẹt).
+function shutdown() {
+  server.close(() => process.exit(0))
+  server.closeIdleConnections()
+  setTimeout(() => process.exit(0), 5000).unref()
+}
+process.on('SIGINT', shutdown)
+process.on('SIGTERM', shutdown)

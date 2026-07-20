@@ -194,40 +194,18 @@ npm run build
 nano ecosystem.config.cjs
 ```
 
-Nội dung cho VPS này (Node hệ thống `/usr/bin/node`, port 3001):
+File này đã có sẵn trong repo — dùng **cluster mode (1 instance) + `wait_ready`** để
+`pm2 reload` là zero-downtime thật (process mới sẵn sàng rồi mới tắt process cũ,
+xem comment trong `ecosystem.config.cjs`). Port mặc định 3001 — đổi trong `env.PORT`
+nếu cổng đã bị app khác dùng.
 
-```js
-module.exports = {
-  apps: [
-    {
-      name: 'english-tutor',
-      script: './node_modules/.bin/tsx',
-      args: 'server.ts',
+Lưu ý: cluster mode chạy bằng Node của chính PM2 (không có trường `interpreter`) —
+PM2 phải được cài bằng Node ≥ 22 (VPS này: Node hệ thống v22, `/usr/bin/node`).
 
-      // Đường dẫn Node — lấy bằng: which node (Node hệ thống) hoặc: nvm which 22 (NVM)
-      interpreter: '/usr/bin/node',
-
-      env: {
-        NODE_ENV: 'production',
-        PORT: 3001, // đổi nếu cổng này đã bị app khác dùng
-      },
-
-      restart_delay: 3000,
-      max_restarts: 10,
-      min_uptime: '10s',
-      error_file: './logs/pm2-error.log',
-      out_file: './logs/pm2-out.log',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss',
-      merge_logs: true,
-    },
-  ],
-}
-```
-
-Kiểm tra:
+Kiểm tra Node mà PM2 dùng:
 
 ```bash
-grep interpreter ecosystem.config.cjs
+pm2 info english-tutor | grep -i 'node.js version'
 ```
 
 ---
@@ -346,7 +324,7 @@ BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
 **Cách khuyên dùng khi có migration mới: chạy `bash deploy.sh`** (file có sẵn ở gốc repo, đã theo dõi trong Git —
 xem nội dung tại `deploy.sh`). Script này tự làm hết: pull code → cài thư viện → **tự động
 chạy mọi migration Postgres tự host còn thiếu** (`npm run migrate:pg`, dừng deploy ngay nếu
-migration lỗi) → build → `pm2 restart` kèm nạp lại `.env`.
+migration lỗi) → build → reload PM2 zero-downtime kèm nạp lại `.env` (`scripts/pm2-reload.sh`).
 
 ```bash
 cd /var/www/english-tutor   # hoặc đường dẫn thật trên VPS của bạn
@@ -366,7 +344,7 @@ git pull origin main
 npm install        # chỉ cần nếu package.json đổi
 npm run migrate:pg # chạy migration Postgres tự host còn thiếu (cần DATABASE_URL trong .env)
 npm run build      # chỉ cần nếu code frontend thay đổi
-pm2 reload ecosystem.config.cjs   # zero-downtime restart
+bash scripts/pm2-reload.sh   # reload zero-downtime + health check
 ```
 
 </details>
@@ -378,9 +356,9 @@ pm2 reload ecosystem.config.cjs   # zero-downtime restart
 VPS này đang có 2 app PM2:
 
 - **`xboss`** (id 0) — Next.js, port 3000, interpreter riêng
-- **`english-tutor`** (id 3) — Express, port 3001, interpreter `/usr/bin/node`
+- **`english-tutor`** — Express, port 3001, cluster mode (Node của PM2, hệ thống v22)
 
-Mỗi app có `interpreter` và `PORT` riêng trong `ecosystem.config.cjs` của mình → không xung đột.
+Mỗi app có `PORT` riêng trong `ecosystem.config.cjs` của mình → không xung đột.
 
 ---
 
@@ -430,11 +408,11 @@ crontab -e
 pm2 logs english-tutor --lines 50
 ```
 
-Hay gặp: sai `interpreter` trong `ecosystem.config.cjs` — kiểm tra:
+Hay gặp: PM2 chạy bằng Node < 22 (cluster mode dùng Node của chính PM2) — kiểm tra:
 
 ```bash
-grep interpreter ecosystem.config.cjs
-which node   # hoặc nvm which 22
+pm2 info english-tutor | grep -i 'node.js version'   # phải >= 22
+which node   # Node hệ thống, nơi PM2 được cài
 ```
 
 ### Nginx 502 Bad Gateway

@@ -47,8 +47,8 @@ npm run migrate:pg
 echo "==> 7/8 Build frontend"
 npm run build
 
-echo "==> 8/8 Khởi động lại app qua PM2 (kèm nạp lại biến môi trường)"
-pm2 restart english-tutor --update-env
+echo "==> 8/8 Reload app qua PM2 (zero-downtime, kèm nạp lại biến môi trường)"
+bash scripts/pm2-reload.sh
 
 echo "==> ✅ Xong! Deploy hoàn tất."
 echo "🎉 Code đã cập nhật, tất cả PR đã merge được kéy thành công."

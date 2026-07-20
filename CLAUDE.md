@@ -133,7 +133,7 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 - [x] Chế độ Chat (MVP) — gọi AI thật qua `/api/claude` (edge function ép model + token)
 - [x] Chế độ Luyện viết + chấm điểm (MVP) — chấm kiểu IELTS
 - [x] Giới hạn lượt — lượt dùng đã đồng bộ lên Supabase (`daily_usage`); gói `plan` đọc từ bảng `profiles`. **Quyết định 2026-07-11: dự án dùng MIỄN PHÍ cho cộng đồng — KHÔNG làm thanh toán Pro cho tới khi người dùng chủ động yêu cầu lại.** Không tự đề xuất/nhắc việc này ở đầu phiên hay trong danh sách nợ kỹ thuật.
-- [x] Deploy VPS (Express `server.ts` + PM2 + Nginx + Let's Encrypt) — ĐÃ deploy thật tại https://en-vi.donghanhcungban.com (PM2 process `english-tutor`, port 3001, dùng chung VPS 160.30.172.203 với app "xboss" ở port 3000 — không ảnh hưởng nhau). SSL Let's Encrypt tự renew. Lưu ý: `ecosystem.config.cjs` trên VPS dùng `interpreter: /usr/bin/node` (Node hệ thống v22, **bắt buộc**) — nhớ đồng bộ nếu sửa file này. (code + hướng dẫn: `docs/deploy-vps-ubuntu.md`)
+- [x] Deploy VPS (Express `server.ts` + PM2 + Nginx + Let's Encrypt) — ĐÃ deploy thật tại https://en-vi.donghanhcungban.com (PM2 process `english-tutor`, port 3001, dùng chung VPS 160.30.172.203 với app "xboss" ở port 3000 — không ảnh hưởng nhau). SSL Let's Encrypt tự renew. **[Cập nhật 2026-07-20]** PM2 chạy **cluster mode (1 instance) + `wait_ready`** → reload zero-downtime thật (`scripts/pm2-reload.sh` — mọi đường deploy đều gọi script này; PM2 phải cài bằng Node ≥ 22, cluster mode dùng Node của chính PM2, không còn trường `interpreter`). (code + hướng dẫn: `docs/deploy-vps-ubuntu.md`)
 - [x] Đồng bộ dữ liệu — chat/viết/nói/lượt dùng lưu lên DB, login thống nhất cho mọi trang. **[Cập nhật 2026-07-20]** Đã rời Supabase hoàn toàn sang PostgreSQL tự host + auth Bearer token tự viết. Xem `docs/migration-thoat-ly-supabase.md` + `postgres/schema.sql`
 - [x] Chế độ Luyện nói song ngữ — TTS chính Google Cloud TTS qua `/api/tts` (cache mã hóa AES-256-GCM trên Supabase Storage, bắt buộc đăng nhập mới lấy được khoá giải mã), Web Speech API chỉ còn fallback. **STT thật**: ghi âm trình duyệt (`MediaRecorder`, `src/lib/sttServer.ts`) → base64 lên `/api/stt` → Whisper qua Groq hoặc OpenAI (`api/stt.ts` + `api/_lib/openaiStt.ts`, có `GROQ_API_KEY` thì dùng Groq `whisper-large-v3-turbo`, không thì OpenAI `gpt-4o-mini-transcribe`); Web Speech API (`src/lib/stt.ts`) chỉ còn dự phòng. Cần `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`).
 - [x] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng) — `lib/direction.ts`
@@ -152,7 +152,8 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 1. STT đã xong (Whisper Groq/OpenAI qua `/api/stt`) **và đã đếm lượt riêng** (mode `stt` tách khỏi
    `speaking`: cột `stt_count`, giới hạn free 10/pro 100 — `api/_lib/usage.ts`, `src/types.ts`). Còn: thêm
    `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) vào `.env` trên VPS.
-2. Repo GitHub đồng bộ VPS: `ecosystem.config.cjs` đã khớp `interpreter: /usr/bin/node`; đã rà lại
+2. Repo GitHub đồng bộ VPS: `ecosystem.config.cjs` đã chuyển cluster mode 2026-07-20 (deploy kế tiếp
+   tự chuyển fork→cluster qua `scripts/pm2-reload.sh`, chịu vài giây downtime MỘT lần); đã rà lại
    `api/_lib/security.ts` (`validateAuth`) — repo hiện sạch, không còn debug log tạm (ghi chú cũ đã lỗi thời).
 3. ~~Thanh toán Pro chưa có~~ **KHÔNG LÀM** — quyết định 2026-07-11: dự án miễn phí vì cộng đồng.
    Chỉ quay lại khi người dùng chủ động báo làm phần này.
