@@ -80,7 +80,10 @@ async function listAllR2Objects(): Promise<Map<string, number>> {
     }
     continuationToken = res.IsTruncated ? res.NextContinuationToken : undefined
     pages++
-    if (pages % 20 === 0) process.stdout.write(`\r📥 Đang liệt kê object trên R2... ${result.size.toLocaleString('vi-VN')} object`)
+    if (pages % 20 === 0)
+      process.stdout.write(
+        `\r📥 Đang liệt kê object trên R2... ${result.size.toLocaleString('vi-VN')} object`,
+      )
   } while (continuationToken)
   console.log(`\r📥 R2 hiện có ${result.size.toLocaleString('vi-VN')} object.                    `)
   return result
@@ -116,23 +119,35 @@ async function main(): Promise<void> {
   for (const bucket of BUCKETS) {
     const rels = await walkMp3(path.join(UPLOADS_ROOT, bucket))
     for (const rel of rels) {
-      localFiles.push({ bucket, rel, fullPath: path.join(UPLOADS_ROOT, bucket, rel), r2Key: `${bucket}/${rel}` })
+      localFiles.push({
+        bucket,
+        rel,
+        fullPath: path.join(UPLOADS_ROOT, bucket, rel),
+        r2Key: `${bucket}/${rel}`,
+      })
     }
   }
-  console.log(`📁 Ổ đĩa VPS có ${localFiles.length.toLocaleString('vi-VN')} file .mp3 (2 thư mục cộng lại).\n`)
+  console.log(
+    `📁 Ổ đĩa VPS có ${localFiles.length.toLocaleString('vi-VN')} file .mp3 (2 thư mục cộng lại).\n`,
+  )
 
   const missing: LocalFile[] = []
   const sizeMismatch: LocalFile[] = []
   const verified: LocalFile[] = []
 
   const bar = new cliProgress.SingleBar(
-    { format: '  |{bar}| {percentage}% | {value}/{total}', barCompleteChar: '█', barIncompleteChar: '░', hideCursor: true },
+    {
+      format: '  |{bar}| {percentage}% | {value}/{total}',
+      barCompleteChar: '█',
+      barIncompleteChar: '░',
+      hideCursor: true,
+    },
     cliProgress.Presets.shades_classic,
   )
   bar.start(localFiles.length, 0)
 
   for (let i = 0; i < localFiles.length; i++) {
-    const f = localFiles[i]
+    const f = localFiles[i]!
     const r2Size = r2Objects.get(f.r2Key)
     if (r2Size === undefined) {
       missing.push(f)
@@ -173,7 +188,9 @@ async function main(): Promise<void> {
   }
 
   if (!DELETE_VERIFIED) {
-    console.log('\nℹ️  Muốn xoá file local đã xác nhận khớp R2: thêm --delete-verified (xem trước) rồi --yes (xoá thật).')
+    console.log(
+      '\nℹ️  Muốn xoá file local đã xác nhận khớp R2: thêm --delete-verified (xem trước) rồi --yes (xoá thật).',
+    )
     return
   }
 
@@ -183,31 +200,45 @@ async function main(): Promise<void> {
     return
   }
   if (!CONFIRM_YES) {
-    console.log(`\n👀 XEM TRƯỚC: sẽ xoá ${verified.length.toLocaleString('vi-VN')} file local đã khớp R2 (chưa xoá — thêm --yes để xoá thật).`)
+    console.log(
+      `\n👀 XEM TRƯỚC: sẽ xoá ${verified.length.toLocaleString('vi-VN')} file local đã khớp R2 (chưa xoá — thêm --yes để xoá thật).`,
+    )
     return
   }
 
-  console.log(`\n🗑️  Đang xoá ${verified.length.toLocaleString('vi-VN')} file local đã xác nhận khớp R2...`)
+  console.log(
+    `\n🗑️  Đang xoá ${verified.length.toLocaleString('vi-VN')} file local đã xác nhận khớp R2...`,
+  )
   let deleted = 0
   let deleteErrors = 0
   const delBar = new cliProgress.SingleBar(
-    { format: '  |{bar}| {percentage}% | {value}/{total}', barCompleteChar: '█', barIncompleteChar: '░', hideCursor: true },
+    {
+      format: '  |{bar}| {percentage}% | {value}/{total}',
+      barCompleteChar: '█',
+      barIncompleteChar: '░',
+      hideCursor: true,
+    },
     cliProgress.Presets.shades_classic,
   )
   delBar.start(verified.length, 0)
   for (let i = 0; i < verified.length; i++) {
+    const f = verified[i]!
     try {
-      await fs.promises.unlink(verified[i].fullPath)
+      await fs.promises.unlink(f.fullPath)
       deleted++
     } catch (err) {
       deleteErrors++
-      console.error(`\n❌ Không xoá được ${verified[i].fullPath}: ${err instanceof Error ? err.message : String(err)}`)
+      console.error(
+        `\n❌ Không xoá được ${f.fullPath}: ${err instanceof Error ? err.message : String(err)}`,
+      )
     }
     if (i % 500 === 0) delBar.update(i)
   }
   delBar.update(verified.length)
   delBar.stop()
-  console.log(`\n✅ Đã xoá ${deleted.toLocaleString('vi-VN')} file. ${deleteErrors > 0 ? `❌ Lỗi: ${deleteErrors}` : ''}`)
+  console.log(
+    `\n✅ Đã xoá ${deleted.toLocaleString('vi-VN')} file. ${deleteErrors > 0 ? `❌ Lỗi: ${deleteErrors}` : ''}`,
+  )
   console.log('ℹ️  Chạy `du -sh uploads/` để xem dung lượng đã giải phóng.')
 }
 
