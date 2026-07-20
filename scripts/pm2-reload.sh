@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-# pm2-reload.sh — Reload app qua PM2 KHÔNG DOWNTIME + health check.
+# pm2-reload.sh — Reload app qua PM2 + health check.
 #
 # Được gọi từ: .github/workflows/deploy.yml, deploy.sh, scripts/deploy.sh
 # (một chỗ duy nhất giữ logic reload — sửa ở đây là đủ, không sửa 3 nơi).
 #
-# Cơ chế zero-downtime: ecosystem.config.cjs chạy cluster mode + wait_ready →
-# "pm2 reload" khởi động process MỚI, đợi nó báo ready rồi mới tắt process CŨ.
-#
-# Trường hợp đặc biệt (tự xử lý): PM2 KHÔNG đổi được exec_mode qua reload.
-# Nếu process đang chạy fork mode cũ (hoặc chưa chạy) → delete + start một lần
-# (chịu vài giây downtime DUY NHẤT lần chuyển đổi này).
+# [2026-07-20] ĐÃ THỬ cluster mode + wait_ready để reload zero-downtime thật,
+# nhưng cluster mode + loader ESM (--import tsx) làm worker crash ngay khi
+# khởi động mà KHÔNG in được log gì — lỗi tương thích Node cluster + ESM
+# loader. ROLLBACK về fork mode (ecosystem.config.cjs) — chấp nhận vài giây
+# downtime mỗi lần reload cho tới khi có cách khác để chạy zero-downtime.
 # ─────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
@@ -19,26 +18,11 @@ PORT="${PORT:-3001}"
 HEALTH_URL="http://localhost:$PORT/api/health"
 MAX_WAIT=30   # giây tối đa đợi health OK sau reload
 
-# Đọc exec_mode hiện tại của process từ PM2 (jlist = JSON). Không có process → "none".
-CURRENT_MODE=$(pm2 jlist 2>/dev/null | node -e "
-  let raw = '';
-  process.stdin.on('data', (c) => (raw += c));
-  process.stdin.on('end', () => {
-    // pm2 jlist đôi khi in kèm dòng log trước JSON → cắt từ ký tự '[' đầu tiên
-    const json = raw.slice(raw.indexOf('['));
-    const apps = JSON.parse(json || '[]');
-    const app = apps.find((a) => a.name === '$PM2_PROCESS');
-    console.log(app ? app.pm2_env.exec_mode : 'none');
-  });
-" 2>/dev/null || echo 'none')
-
-if [ "$CURRENT_MODE" = "cluster_mode" ]; then
-  echo "🔄 Reload PM2 (cluster + wait_ready → zero-downtime)..."
+if pm2 describe "$PM2_PROCESS" >/dev/null 2>&1; then
+  echo "🔄 Reload PM2 ($PM2_PROCESS)..."
   pm2 reload ecosystem.config.cjs --update-env
 else
-  echo "🔀 exec_mode hiện tại: $CURRENT_MODE — cần delete + start để áp cluster mode"
-  echo "   (một lần duy nhất, chịu vài giây downtime)"
-  pm2 delete "$PM2_PROCESS" 2>/dev/null || true
+  echo "🔀 $PM2_PROCESS chưa chạy — start mới..."
   pm2 start ecosystem.config.cjs
 fi
 pm2 save || true
