@@ -27,8 +27,8 @@
   Từ vựng → Ngữ pháp → Hội thoại, tab Hôm nay/Ôn SRS/Từ khó/Kiểm tra, **bài thi cuối cấp** chặn
   lên cấp (≥70%, `src/lib/cefrExam.ts`).
 - Từ điển **12.073 mục**, 100% đã gắn nhãn CEFR (A1–C2), nghĩa + ví dụ song ngữ có audio.
-- **Thử thách "Challenge 1 phút/ngày"** (`/challenge`, 30 ngày) — chưa mở cho người dùng thật
-  (migration `0010` chưa chạy production, xem PROGRESS.md).
+- **Thử thách "Challenge 1 phút/ngày"** (`/challenge`) — chu kỳ tuần Thứ 2→CN, đã mở cho người
+  dùng thật.
 - **Bảng tiến độ** (`/progress`) — streak, biểu đồ 7 ngày, % hoàn thành theo cấp CEFR.
 - **Trang cá nhân** (`/profile`) — huy hiệu gói, streak, số từ đã học, đăng xuất.
 - Mở chiều B (dạy tiếng Việt cho người nước ngoài) — nút gạt chiều học.
@@ -88,7 +88,7 @@
 | `pronunciations`      | tương tự `tts_cache`, cache audio phát âm từ                                                             | Public read, chỉ service role ghi (RLS thêm ở migration `0006`).            |
 | `learning_progress`   | `user_id` (PK), `learned`/`hard`, `srs`, `cefr_grammar`, `cefr_dialogues`, `cefr_unlocked`, `cefr_exams` | Đồng bộ tiến độ học đổi máy không mất; `cefr_exams` = kết quả thi cuối cấp. |
 | `push_subscriptions`  | `id`, `user_id`, `endpoint`, `p256dh`, `auth_key`, `remind_hour`                                         | Web Push nhắc học.                                                          |
-| `challenge_entries`   | `id`, `user_id`, `day`, video/nhận xét AI                                                                | Thử thách 30 ngày (migration `0010`, chưa chạy production).                 |
+| `challenge_entries`   | `id`, `user_id`, `day`/`round`, video/nhận xét AI                                                        | Thử thách — nay chạy chu kỳ tuần (xem PROGRESS.md), bảng đã có sẵn trong `postgres/schema.sql`. |
 
 **Hàm DB:** `consume_usage`/`refund_usage` — kiểm tra + tăng/hoàn lượt atomic (SELECT FOR
 UPDATE), fail-open khi RPC lỗi (ưu tiên không chặn nhầm người dùng hợp lệ).
