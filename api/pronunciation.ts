@@ -1,4 +1,4 @@
-// api/pronunciation.ts — Vercel Edge Function
+// api/pronunciation.ts — chạy qua server.ts (Express) khi deploy VPS
 // Endpoint: GET /api/pronunciation?word=apple&voice=female
 //   - voice: "female" (mặc định) | "female2" | "male" | "male2" — bỏ qua thì dùng giọng nữ.
 //
@@ -36,7 +36,7 @@ import { jsonResponse, getClientIp } from './_lib/http'
 // Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),
 // dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.). Ngăn ký tự lạ.
 // \p{L}=letter, \p{M}=combining mark; cờ u để bật Unicode. An toàn: giá trị chỉ dùng làm
-// cache key + text cho TTS (query Supabase parameterized, không nối chuỗi SQL).
+// cache key + text cho TTS (query Postgres parameterized, không nối chuỗi SQL).
 const WORD_SAFE_PATTERN = /^[\p{L}\p{M}0-9\s'’.-]+$/u
 
 export default async function handler(req: Request): Promise<Response> {
@@ -62,7 +62,7 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }
 
-  // Xác thực người dùng qua Supabase JWT
+  // Xác thực người dùng qua Bearer token tự viết (validateAuth)
   const authResult = await validateAuth(req)
   if (!authResult) {
     logSecurityEvent('AUTH_FAILED', clientIp, { path: '/api/pronunciation' })
@@ -154,7 +154,7 @@ export default async function handler(req: Request): Promise<Response> {
     )
   }
 
-  // ── BƯỚC 3: Lưu file audio (local VPS hoặc Supabase Storage tùy STORAGE_DRIVER) ──
+  // ── BƯỚC 3: Lưu file audio (local VPS hoặc Cloudflare R2 tùy STORAGE_DRIVER) ──
   // Tên file có hậu tố giọng (-female/-male) vì 1 từ có thể có nhiều file audio.
   const fileName = `${encodeURIComponent(word)}-${voice}.mp3`
   const origin = req.headers.get('origin') || ''

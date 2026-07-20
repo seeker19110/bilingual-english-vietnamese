@@ -41,7 +41,8 @@ function getUploadsRoot(): string {
 
 /**
  * Lưu file audio và trả về URL để trình duyệt tải về.
- * @param bucket  Tên bucket Supabase (hoặc tên thư mục con khi dùng local)
+ * @param bucket  Tên prefix/thư mục con (vd "tts-cache", "pronunciations") — dùng làm tên
+ *                bucket con trên R2 hoặc thư mục con dưới UPLOADS_DIR khi lưu local
  * @param fileName  Đường dẫn file, ví dụ: "en-US/female/abc123.mp3"
  * @param data  Nội dung file dạng ArrayBuffer
  * @param baseUrl  URL gốc của server (chỉ cần khi local mode), ví dụ: "https://yourdomain.com"

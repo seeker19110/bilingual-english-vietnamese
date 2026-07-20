@@ -1,4 +1,4 @@
-// Vercel Serverless Function — proxy gọi Anthropic API
+// api/ai.ts — chạy qua server.ts (Express) khi deploy VPS — proxy gọi Anthropic API
 // Giữ API key ở phía server (biến môi trường ANTHROPIC_API_KEY, KHÔNG có tiền tố VITE_
 // nên sẽ không bị đóng gói vào file JS gửi cho browser).
 //
@@ -159,7 +159,7 @@ export default async function handler(req: Request): Promise<Response> {
     )
   }
 
-  // Xác thực người dùng qua Supabase JWT
+  // Xác thực người dùng qua Bearer token tự viết (validateAuth)
   const authResult = await validateAuth(req)
   if (!authResult) {
     logSecurityEvent('AUTH_FAILED', clientIp, { path: '/api/claude' })
