@@ -1,8 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-
-// stats.ts kéo theo storage→cloud→supabase và ai→supabase (sẽ ném lỗi khi thiếu env).
-// getActivity7Days chỉ đọc localStorage nên chỉ cần stub supabase là đủ chạy offline.
-vi.mock('./supabase', () => ({ supabase: {} }))
+import { describe, it, expect, beforeEach } from 'vitest'
 
 import { getActivity7Days, getWeekTotal } from './stats'
 import { vnDateStr } from './date'

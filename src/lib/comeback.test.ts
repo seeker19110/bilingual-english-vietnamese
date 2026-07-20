@@ -1,8 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-
-// comeback.ts → storage.ts → cloud.ts → supabase (ném lỗi khi thiếu env). Stub để
-// chạy offline — giống storage.test.ts (daysSinceLastActivity chỉ đọc localStorage).
-vi.mock('./supabase', () => ({ supabase: {} }))
+import { describe, it, expect, beforeEach } from 'vitest'
 
 import {
   shouldShowComeback,

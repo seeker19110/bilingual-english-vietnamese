@@ -1,8 +1,9 @@
 # Script: Seed trước audio phát âm từ điển
 
 > ⚠️ Bản spec gốc (Next.js, `words.json`, biến `NEXT_PUBLIC_*`, 1 giọng, luôn upload
-> Supabase Storage) đã lỗi thời. Nội dung dưới đây mô tả **script thật đang chạy**:
-> `scripts/seed-pronunciations.ts`.
+> Supabase Storage) đã lỗi thời — dự án cũng đã rời hẳn Supabase (Postgres tự host qua
+> `pgPool`, xem `docs/migration-thoat-ly-supabase.md`). Nội dung dưới đây mô tả **script thật
+> đang chạy**: `scripts/seed-pronunciations.ts`.
 
 ## Mục đích
 
@@ -26,9 +27,9 @@ npm run seed:pronunciation
 
 - Tạo **2 giọng** (`female`, `male`) cho mỗi từ — người dùng chọn giọng ở nút loa
   (`female2`/`male2` chỉ dùng cho hội thoại bài học, không seed vào bảng `pronunciations`).
-- Tái dùng logic gọi TTS + lưu file từ `api/_lib/googleTts.ts` + `api/_lib/supabaseAdmin.ts`
+- Tái dùng logic gọi TTS + lưu file từ `api/_lib/googleTts.ts` + `api/_lib/pgPool.ts`
   (không viết lại lần 2) — audio lưu qua `saveAudio()` (`api/_lib/fileStorage.ts`), tự
-  chọn local VPS hay Supabase Storage theo `STORAGE_DRIVER`.
+  chọn lưu local VPS hay Cloudflare R2 theo `STORAGE_DRIVER`.
 - Bỏ qua (từ, giọng) đã có sẵn trong DB đúng `VOICE_VERSION` hiện tại → chạy lại an
   toàn, resume được nếu bị dừng giữa chừng.
 - Chạy song song theo batch (`BATCH_SIZE = 15`), có retry tự động tới 5 vòng
@@ -38,8 +39,8 @@ npm run seed:pronunciation
 ## Lưu ý chi phí/hạn mức
 
 - Google TTS: free tier theo ký tự/tháng — từ vựng ngắn nên tốn rất ít.
-- Storage: nếu `STORAGE_DRIVER=local` (mặc định) thì audio nằm trên ổ cứng VPS, không
-  tính vào hạn mức Supabase Storage.
+- Storage: nếu `STORAGE_DRIVER=local` (mặc định) thì audio nằm trên ổ cứng VPS; nếu
+  `STORAGE_DRIVER=r2` thì tính vào hạn mức Cloudflare R2 (free tier 10GB).
 
 ## Công cụ khuyên dùng hơn: `npm run seed:all`
 

@@ -1,10 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-// weeklyGoal → progressSync → supabase (ném lỗi khi thiếu env). Chỉ cần biết
-// pushProgress ĐƯỢC GỌI khi đổi mục tiêu — mock hẳn progressSync cho gọn.
+// Chỉ cần biết pushProgress ĐƯỢC GỌI khi đổi mục tiêu — mock hẳn progressSync cho gọn.
 vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
-// stats.ts (getActivityCalendar) kéo theo storage → supabase — stub như storage.test.ts.
-vi.mock('./supabase', () => ({ supabase: {} }))
 
 import { pushProgress } from './progressSync'
 import {
