@@ -478,6 +478,15 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## Nợ kỹ thuật còn mở
 
+- **PM2 cluster mode ĐÃ ROLLBACK về fork mode (2026-07-20, PR #285).** PR #283/#284 từng
+  chuyển sang cluster mode (1 instance) + `wait_ready` để reload zero-downtime, nhưng khi
+  chạy thật trên VPS, worker crash ngay khi khởi động MÀ KHÔNG in được log gì (lỗi tương
+  thích giữa Node `cluster` module và cách nạp `server.ts` qua loader ESM `--import tsx`) →
+  app down hẳn, phải rollback khẩn cấp. `ecosystem.config.cjs` đã về đúng cấu hình fork mode
+  cũ (`script: './node_modules/.bin/tsx'`, không có `exec_mode`). **KHÔNG thử lại cluster
+  mode nếu chưa tìm ra cách nạp TypeScript tương thích với Node cluster** (ví dụ: build sẵn
+  ra JS thay vì chạy `.ts` trực tiếp, hoặc dùng `interpreter` trỏ thẳng vào binary tsx thay
+  vì `node_args`). Đổi lại: reload có vài giây downtime như trước PR #283 (chấp nhận được).
 - **E2E `mockLogin` (`e2e/helpers/auth.ts`) không còn khớp luồng đăng nhập thật (phát hiện
   2026-07-20 khi dọn Giai đoạn E)** — từ khi `src/lib/auth.ts` chuyển sang Bearer token tự
   viết, `AuthProvider` LUÔN gọi thật `GET /api/auth?action=me` lúc mount; helper E2E chỉ gieo
