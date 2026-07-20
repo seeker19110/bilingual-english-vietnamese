@@ -1,8 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-// achievements.ts kéo theo storage/vocab/cefrExam → cloud/progressSync → supabase
-// (ném lỗi khi thiếu env). Stub cả 2 lớp để chạy offline, giống storage.test.ts.
-vi.mock('./supabase', () => ({ supabase: {} }))
+// Chỉ cần biết pushProgress ĐƯỢC GỌI khi đạt huy hiệu mới — mock hẳn progressSync cho gọn.
 vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
 
 import { pushProgress } from './progressSync'

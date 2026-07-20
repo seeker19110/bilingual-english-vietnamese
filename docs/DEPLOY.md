@@ -7,8 +7,9 @@
 
 **Cách 1 — Tự động (đang dùng):** push/merge PR vào `main` → GitHub Actions (`.github/workflows/ci.yml`)
 chạy lint/type/test/build; nếu **CI xanh**, `.github/workflows/deploy.yml` tự SSH vào VPS, pull code,
-`npm install`, **chạy migration Supabase còn thiếu** (`npm run migrate`), build, `pm2 reload`
-(không downtime), rồi health-check `/api/health`. Cần secrets `VPS_HOST`, `VPS_USER`,
+`npm install`, **chạy migration Postgres tự host còn thiếu** (`npm run migrate:pg`), build,
+`scripts/pm2-reload.sh` (PM2 chạy **fork mode** — có vài giây downtime khi reload, xem ghi chú
+trong `ecosystem.config.cjs`), rồi health-check `/api/health`. Cần secrets `VPS_HOST`, `VPS_USER`,
 `VPS_SSH_KEY` trong GitHub → Settings → Secrets and variables → Actions.
 
 **Cách 2 — Thủ công trên VPS:**
@@ -47,7 +48,7 @@ kill -9 <PID>
 
 ```bash
 pm2 delete english-tutor
-pm2 start ecosystem.config.cjs --name english-tutor
+pm2 start ecosystem.config.cjs
 ```
 
 **Xóa sạch cài lại (khi nghi cache/node_modules hỏng):**

@@ -18,7 +18,8 @@ Web app gia sư AI **hai chiều**: người Việt học tiếng Anh, hoặc ng
 ## 🚀 Công nghệ
 
 - **Frontend:** React 18 + Vite 7 + TypeScript 5.2 (strict) + Tailwind CSS 3 (mã gốc do Lovable sinh ra).
-- **Backend & dữ liệu:** Express (`server.ts`) + Supabase (Auth, Postgres có RLS, Storage).
+- **Backend & dữ liệu:** Express (`server.ts`) + PostgreSQL tự host trên VPS. Auth tự viết
+  (Bearer token, `api/auth.ts`).
 - **AI:** chat/chấm bài qua `/api/claude` · STT Whisper qua Groq/OpenAI (`/api/stt`) · TTS Google Cloud (`/api/tts`, cache mã hoá AES-256-GCM).
 - **Deploy:** VPS Ubuntu (PM2 + Nginx + Let's Encrypt) sau Cloudflare.
 
@@ -30,7 +31,7 @@ Chi tiết đầy đủ (schema DB, API, MoSCoW): xem `PROJECT.md`. Trạng thá
 git clone https://github.com/seeker19110/bilingual-english-vietnamese.git
 cd bilingual-english-vietnamese
 npm install
-cp .env.example .env   # điền key Supabase/AI/TTS
+cp .env.example .env   # điền DATABASE_URL/AI/TTS
 npm run dev
 ```
 
