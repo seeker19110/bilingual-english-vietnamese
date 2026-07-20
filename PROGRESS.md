@@ -41,7 +41,14 @@ ratchet + bundle-size budget (`size-limit`, thay Lighthouse CI) · a11y AA toàn
 Sentry error tracking (code xong, no-op tới khi có DSN) · auto-run migration Supabase khi
 deploy (`deploy.sh` → `npm run migrate`, cần `SUPABASE_DB_URL`) · audit bảo mật/logic nhiều đợt
 (RLS theo cột chặn tự nâng Pro/bypass lượt, timeout fetch, refund lượt khi provider lỗi, ranh
-giới ngày theo giờ VN — chi tiết `AUDIT.md`).
+giới ngày theo giờ VN — chi tiết `AUDIT.md`) · **deploy zero-downtime (2026-07-20)**: PM2
+chuyển cluster mode (1 instance) + `wait_ready` (`server.ts` gửi `process.send('ready')` sau
+`app.listen` + graceful shutdown SIGINT/SIGTERM) — trước đó fork mode `pm2 reload` = tắt cũ
+rồi mới bật mới → app chết ~10s mỗi lần deploy (thấy trong log deploy: 9 lần curl
+"Couldn't connect"); logic reload + health check gom về `scripts/pm2-reload.sh` (cả
+`deploy.yml`/`deploy.sh`/`scripts/deploy.sh` cùng gọi, tự phát hiện fork mode cũ để
+delete+start MỘT lần vì PM2 không đổi được exec_mode qua reload) — đã kiểm chứng bằng PM2
+thật trong sandbox: 3.766 request liên tục xuyên 2 lần reload, 0 request rớt.
 
 **Tính năng mới (chưa mở cho người dùng thật):** Thử thách "Challenge 1 phút/ngày"
 (`/challenge`) — từ 2026-07-15 chạy **CHU KỲ TUẦN** Thứ 2→CN (bảng 7 ô, tổng kết tuần vào CN,

@@ -48,13 +48,7 @@ jobs:
             echo "🔨 Build..."
             npm run build
 
-            echo "🔄 Reload PM2 (graceful, hạn chế downtime)..."
-            pm2 reload ecosystem.config.cjs
-
-            echo "⏳ Chờ app sẵn sàng (health check có retry)..."
-            for i in $(seq 1 15); do
-              curl -fsS http://localhost:3001/api/health >/dev/null && { echo "✅ Deploy thành công — health OK (sau ${i}s)"; exit 0; }
-              sleep 1
-            done
-            echo "⚠️  Health check failed sau 15s — app chưa phản hồi ở cổng 3001"
-            exit 1
+            # Reload zero-downtime + health check — logic chung ở scripts/pm2-reload.sh
+            # (cluster mode + wait_ready; tự xử lý chuyển đổi fork→cluster lần đầu)
+            bash scripts/pm2-reload.sh
+            echo "✅ Deploy thành công"

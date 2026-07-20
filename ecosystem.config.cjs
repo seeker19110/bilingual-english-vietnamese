@@ -5,29 +5,41 @@
 //
 // Cách dùng:
 //   pm2 start ecosystem.config.cjs
-//   pm2 reload ecosystem.config.cjs   ← zero-downtime khi update code
+//   bash scripts/pm2-reload.sh           ← reload zero-downtime (deploy dùng script này)
 //
-// QUAN TRỌNG: Phải dùng Node.js >= 22. Node 20 thiếu WebSocket gốc nên
-// Supabase auth (supabase.auth.getUser) ném lỗi → mọi request đăng nhập
-// bị AUTH_FAILED.
-// VPS này dùng Node hệ thống (không qua NVM) — Ubuntu 24.04, Node v22.22.3.
-// Lấy đường dẫn bằng:
-//   which node
-// Rồi cập nhật giá trị interpreter bên dưới cho khớp.
+// ZERO-DOWNTIME (từ 2026-07-20): chạy CLUSTER MODE (1 instance) + wait_ready.
+// Khi reload, PM2 khởi động process MỚI, đợi nó báo 'ready' (server.ts gửi sau khi
+// app.listen thành công) rồi MỚI tắt process cũ → không còn khoảng chết ~10s như
+// fork mode (fork mode reload = tắt cũ trước, khởi động mới sau).
+//
+// LƯU Ý CHUYỂN ĐỔI: PM2 KHÔNG đổi được exec_mode qua "pm2 reload" — lần đầu áp
+// cấu hình này phải "pm2 delete english-tutor && pm2 start ecosystem.config.cjs"
+// (scripts/pm2-reload.sh tự phát hiện và làm việc này, chịu vài giây downtime MỘT lần).
+//
+// QUAN TRỌNG: Phải dùng Node.js >= 22. Node 20 thiếu WebSocket gốc nên auth ném lỗi.
+// Cluster mode luôn chạy bằng node của chính PM2 (bỏ qua trường interpreter) —
+// VPS này cài PM2 bằng Node hệ thống v22 (/usr/bin/node, không qua NVM) nên khớp.
+// Kiểm tra bằng: pm2 info english-tutor → dòng "node.js version".
 
 module.exports = {
   apps: [
     {
       name: 'english-tutor',
 
-      // Dùng tsx để chạy TypeScript trực tiếp — không cần bước compile thêm
-      script: './node_modules/.bin/tsx',
-      args: 'server.ts',
+      // Cluster mode bắt buộc script là file chạy bằng node → chạy thẳng server.ts
+      // với loader tsx nạp qua node_args (không qua binary ./node_modules/.bin/tsx
+      // như fork mode cũ — binary đó spawn process con, phá cơ chế chia port cluster).
+      script: 'server.ts',
+      node_args: '--import tsx',
+      exec_mode: 'cluster',
+      instances: 1,
 
-      // !! Sửa đường dẫn này thành kết quả của lệnh: which node
-      // VPS hiện tại (Ubuntu 24.04, Node hệ thống v22.22.3): /usr/bin/node
-      // (bắt buộc Node >= 22 — xem ghi chú WebSocket phía trên)
-      interpreter: '/usr/bin/node',
+      // Đợi tín hiệu process.send('ready') từ app (server.ts) tối đa 30s trước khi
+      // coi là online — cốt lõi của reload zero-downtime.
+      wait_ready: true,
+      listen_timeout: 30000,
+      // Sau khi gửi SIGINT cho process cũ, đợi tối đa 8s cho graceful shutdown rồi SIGKILL.
+      kill_timeout: 8000,
 
       // Biến môi trường production — các secret vẫn để trong .env
       // PORT=3001 vì cổng 3000 đã bị app "xboss" (Next.js) chiếm trên VPS này

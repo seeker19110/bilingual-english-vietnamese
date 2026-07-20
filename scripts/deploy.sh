@@ -85,18 +85,10 @@ done
 # CRON_SECRET: chỉ thêm nếu bạn điền ở phần CONFIG (mặc định trống → bỏ qua).
 add_env "CRON_SECRET" "$CRON_SECRET"
 
-echo "── [7/7] Restart PM2 + kiểm tra health ─────────"
-pm2 startOrRestart ecosystem.config.cjs --update-env || pm2 restart "$PM2_PROCESS" --update-env
-pm2 save || true
-sleep 3
-
-echo "  → Health check:"
-if curl -fsS "http://localhost:$PORT/api/health" >/dev/null 2>&1; then
-  echo "    ✅ /api/health OK (port $PORT)"
-else
-  echo "    ⚠️  /api/health KHÔNG phản hồi — xem log bên dưới:"
-fi
-pm2 logs "$PM2_PROCESS" --lines 20 --nostream || true
+echo "── [7/7] Reload PM2 (zero-downtime) + kiểm tra health ─────────"
+# Logic reload + health check dùng chung ở scripts/pm2-reload.sh
+# (cluster mode + wait_ready; tự xử lý chuyển đổi fork→cluster lần đầu)
+PORT="$PORT" bash "$APP_DIR/scripts/pm2-reload.sh"
 
 echo ""
 echo "═══════════════════════════════════════════════"
