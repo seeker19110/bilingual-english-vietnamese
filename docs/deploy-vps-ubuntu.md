@@ -319,16 +319,19 @@ BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
 ## Cập nhật code mới (deploy lại)
 
 > Có 2 cách: **tự động** (GitHub Actions, chạy sau khi CI pass trên `main` — xem
-> `docs/DEPLOY.md`, cũng chạy migration) hoặc **thủ công bằng `deploy.sh`** mô tả dưới đây.
+> `docs/DEPLOY.md`, cũng chạy migration) hoặc **thủ công bằng `scripts/deploy.sh`** mô tả
+> dưới đây (cùng 1 script — `deploy.yml` cũng gọi thẳng file này, không còn 2 bản trùng
+> lặp như trước).
 
-**Cách khuyên dùng khi có migration mới: chạy `bash deploy.sh`** (file có sẵn ở gốc repo, đã theo dõi trong Git —
-xem nội dung tại `deploy.sh`). Script này tự làm hết: pull code → cài thư viện → **tự động
-chạy mọi migration Postgres tự host còn thiếu** (`npm run migrate:pg`, dừng deploy ngay nếu
-migration lỗi) → build → reload PM2 zero-downtime kèm nạp lại `.env` (`scripts/pm2-reload.sh`).
+**Cách khuyên dùng khi có migration mới: chạy `bash scripts/deploy.sh`**. Script này tự làm
+hết: pull code → dọn `dist`/`public/data` cũ → cài thư viện → **tự động chạy mọi migration
+Postgres tự host còn thiếu** (`npm run migrate:pg`, dừng deploy ngay nếu migration lỗi) →
+build → reload PM2 kèm nạp lại `.env` (`scripts/pm2-reload.sh`, có vài giây downtime — xem
+ghi chú fork mode trong `ecosystem.config.cjs`).
 
 ```bash
 cd /var/www/english-tutor   # hoặc đường dẫn thật trên VPS của bạn
-bash deploy.sh
+bash scripts/deploy.sh
 ```
 
 > ⚠️ **Cần có `DATABASE_URL` trong `.env`** (xem Bước 0 + Bước 4 phía trên). Script tự tạo
@@ -336,7 +339,7 @@ bash deploy.sh
 > migration tại `postgres/migrations/README.md`.
 
 <details>
-<summary>Deploy thủ công từng bước (không dùng <code>deploy.sh</code>)</summary>
+<summary>Deploy thủ công từng bước (không dùng <code>scripts/deploy.sh</code>)</summary>
 
 ```bash
 cd /var/www/english-tutor
@@ -344,7 +347,7 @@ git pull origin main
 npm install        # chỉ cần nếu package.json đổi
 npm run migrate:pg # chạy migration Postgres tự host còn thiếu (cần DATABASE_URL trong .env)
 npm run build      # chỉ cần nếu code frontend thay đổi
-bash scripts/pm2-reload.sh   # reload zero-downtime + health check
+bash scripts/pm2-reload.sh   # reload + health check
 ```
 
 </details>

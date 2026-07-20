@@ -26,9 +26,9 @@ xanh trên `main`) thì không cần làm gì thêm — xem `docs/DEPLOY.md` đ�
 
 ## Migration DB
 
-`scripts/deploy.sh`, `deploy.sh` (gốc repo) và auto-deploy (`deploy.yml`) đều **tự chạy**
-`npm run migrate:pg` (áp mọi file mới trong `postgres/migrations/` còn thiếu) — cần
-`DATABASE_URL` trong `.env` trên VPS, xem `postgres/migrations/README.md`.
+`scripts/deploy.sh` (dùng chung cho cả thủ công VÀ auto-deploy `deploy.yml`, không còn bản
+trùng lặp riêng) **tự chạy** `npm run migrate:pg` (áp mọi file mới trong `postgres/migrations/`
+còn thiếu) — cần `DATABASE_URL` trong `.env` trên VPS, xem `postgres/migrations/README.md`.
 
 ## Biến môi trường bắt buộc (tóm tắt)
 

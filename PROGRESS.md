@@ -494,12 +494,11 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   (`gsa_session_token_v1`) VÀ dùng `page.route()` chặn `GET /api/auth?action=me` trả profile
   giả. Dòng cũ ghi "chưa làm" đã lỗi thời (viết trước PR #282, xác nhận lại 2026-07-20 khi
   quét toàn diện nợ kỹ thuật).
-- **2 script deploy trùng lặp** (`deploy.sh` gốc repo, đơn giản — và `scripts/deploy.sh`,
-  đầy đủ hơn: dọn `dist`/`public/data`, tự thêm biến `.env` thiếu, health check) — không rõ
-  cái nào là "chính thức" (`docs/DEPLOY.md`/`DEPLOY_STEPS.md` nhắc cả 2, `.github/workflows/
-deploy.yml` lại tự inline các bước, không gọi file nào). Cả 2 đã được vá bug `npm run
-migrate` (Giai đoạn E) nhưng nên gộp lại 1 script khi có dịp — người dùng xác nhận trước
-  vì đây là quyết định vận hành (giữ cái nào, xóa cái nào).
+- ~~**2 script deploy trùng lặp**~~ **ĐÃ GỘP (2026-07-20, người dùng xác nhận giữ
+  `scripts/deploy.sh`)** — xóa hẳn `deploy.sh` gốc repo (kém đầy đủ hơn); `.github/workflows/
+deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash scripts/deploy.sh` (1 nguồn
+  chân lý duy nhất cho cả thủ công lẫn tự động). Đã cập nhật mọi doc còn nhắc `deploy.sh` gốc
+  (`docs/DEPLOY.md`, `docs/deploy-vps-ubuntu.md`, `DEPLOY_STEPS.md`, `CLAUDE.md`).
 - Không còn hạng mục a11y/kiểm thử lớn nào mở. Xem "Tiếp theo" ở trên cho việc sản phẩm còn dở.
 - `docs/research/thu-thach-vlog-30-ngay.md` dùng tên cũ "Vlog" (tính năng đã đổi tên thành
   "Challenge" — route `/challenge`, bảng `challenge_entries`) — tài liệu đó là ghi chép lịch sử

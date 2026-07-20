@@ -34,21 +34,4 @@ jobs:
           script: |
             set -e
             cd /var/www/english-tutor
-
-            echo "📥 Pull code..."
-            git fetch origin main
-            git reset --hard origin/main
-
-            echo "📦 Install dependencies..."
-            npm install
-
-            echo "🗄️  Chạy migration Postgres tự host còn thiếu..."
-            npm run migrate:pg
-
-            echo "🔨 Build..."
-            npm run build
-
-            # Reload zero-downtime + health check — logic chung ở scripts/pm2-reload.sh
-            # (cluster mode + wait_ready; tự xử lý chuyển đổi fork→cluster lần đầu)
-            bash scripts/pm2-reload.sh
-            echo "✅ Deploy thành công"
+            bash scripts/deploy.sh
