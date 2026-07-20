@@ -54,7 +54,17 @@ export async function saveAudio(
   baseUrl = '',
 ): Promise<string> {
   if (isR2Mode()) {
-    return saveR2(bucket, fileName, data)
+    try {
+      return await saveR2(bucket, fileName, data)
+    } catch (err) {
+      // R2 lỗi (thiếu key, mạng, quota...) → ghi tạm vào ổ đĩa local để không mất audio vừa
+      // sinh (tốn tiền gọi TTS). File sẽ nằm ở /uploads/ tới khi chạy lại
+      // `npm run seed:all -- --sync-r2` đẩy lên R2 — xem docs/seed-guide.md mục 5.
+      console.error(
+        `⚠️  Ghi R2 thất bại (${bucket}/${fileName}), fallback sang local: ${err instanceof Error ? err.message : String(err)}`,
+      )
+      return saveLocal(bucket, fileName, data, baseUrl)
+    }
   }
   return saveLocal(bucket, fileName, data, baseUrl)
 }
