@@ -1,12 +1,14 @@
 // scripts/seed-all.ts
-// Công cụ seed audio (phát âm + TTS câu) có BÁO CÁO TIẾN ĐỘ + MENU chọn việc.
+// Công cụ seed audio (phát âm + TTS câu) có BÁO CÁO TIẾN ĐỘ + MENU chọn việc, GỘP LUÔN
+// việc đồng bộ audio cache cũ (đang nằm local VPS) lên Cloudflare R2 — trước đây tách
+// riêng ở scripts/sync-storage-to-r2.ts (đã gộp vào đây 2026-07-20, xem mục "s" ở menu).
 //
 // Khi chạy `npm run seed:all`:
 //   1. Kiểm tra DB → báo cáo bao nhiêu % mỗi nhóm đã seed xong (sẵn sàng cho client).
-//   2. Hiện menu: seed riêng 1 nhóm · seed tất cả · thoát.
+//   2. Hiện menu: seed riêng 1 nhóm · seed tất cả · đồng bộ audio local → R2 · thoát.
 //   3. Sau mỗi lần seed, kiểm tra lại + hiện menu mới (lặp đến khi bạn thoát).
 //
-// Các nhóm (theo thứ tự ưu tiên client cần):
+// Các nhóm seed nội dung (theo thứ tự ưu tiên client cần):
 //   - pron          Phát âm từ điển (pronunciations)
 //   - curriculum    Câu + ví dụ giáo trình nền tảng (/learn)
 //   - cefr          Ví dụ ngữ pháp CEFR (Roadmap)
@@ -14,18 +16,34 @@
 //   - patterns      Câu mẫu trang Cụm từ
 //   - lessons-rest  Hội thoại các bài còn lại
 //
-// Cờ / biến môi trường:
+// Cờ / biến môi trường (SEED nội dung):
 //   --check  (CHECK=1)       Chỉ in báo cáo rồi thoát (không seed, không menu).
 //   --verify (VERIFY=1)      Kiểm tra KỸ DB: đối chiếu 2 chiều (thiếu / thừa / lệch đường dẫn).
 //   --all    (SEED_ALL=1/YES=1) Seed tất cả ngay, không hỏi menu (dùng cho CI/cron).
-//   --force  (FORCE=1)       Tạo lại + ghi đè cả audio đã có.
+//   --force  (FORCE=1)       Tạo lại + ghi đè cả audio đã có (dùng chung cho cả seed VÀ sync R2).
 //   LIMIT=20                 Giới hạn số tác vụ mỗi nhóm (debug).
 //   VERIFY_DECRYPT=20        (kèm --verify) Tải + giải mã thử 20 file để chắc dùng được.
 //   WORDS_FILE=...           Đọc danh sách từ cần phát âm từ file (retry lỗi).
 //
-// Chạy: npm run seed:all   ·   Xem báo cáo: npm run seed:all -- --check   ·   Kiểm tra kỹ: npm run seed:all -- --verify
+// Cờ / biến môi trường (ĐỒNG BỘ audio local → R2 — cần STORAGE_DRIVER=r2):
+//   --sync-r2  (SYNC_R2=1)   Chạy đồng bộ ngay, không hỏi menu (dùng cho CI/cron).
+//   --dry-run  (DRY_RUN=1)   (kèm --sync-r2) Chỉ ĐẾM, không tải lên R2/ghi DB.
+//   BUCKET=tts-cache         (kèm --sync-r2) Chỉ 1 bucket (tts-cache | pronunciations).
 //
-// 📖 Hướng dẫn chi tiết (báo cáo / remap / verify): docs/seed-guide.md
+// Cờ / biến môi trường (KIỂM TRA + DỌN file local đã đồng bộ R2 — trước ở
+// scripts/verify-r2-sync.ts riêng, gộp vào đây 2026-07-20):
+//   --verify-r2                Đối chiếu ổ đĩa VPS ↔ R2 thật (không đọc DB), in báo cáo.
+//   --skip-size-check           (kèm --verify-r2) Chỉ kiểm tra CÓ MẶT, bỏ qua so kích thước.
+//   --delete-verified           (kèm --verify-r2) Xem trước sẽ xoá bao nhiêu file local đã
+//                                khớp R2 (CHƯA xoá gì — cần thêm --yes mới xoá thật).
+//   --yes                       (kèm --delete-verified) Xác nhận xoá THẬT, từng file, chỉ
+//                                file đã xác nhận khớp R2 — file thiếu/lệch luôn được giữ lại.
+//
+// Chạy: npm run seed:all   ·   Báo cáo: npm run seed:all -- --check   ·   Kiểm tra kỹ: npm run seed:all -- --verify
+// Đồng bộ R2: STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2 --dry-run  (rồi bỏ --dry-run)
+// Xoá local đã an toàn: npm run seed:all -- --verify-r2 --delete-verified (xem trước) rồi --yes
+//
+// 📖 Hướng dẫn chi tiết (báo cáo / remap / verify / R2): docs/seed-guide.md
 
 import * as crypto from 'node:crypto'
 import * as dotenv from 'dotenv'
@@ -34,6 +52,7 @@ import * as path from 'node:path'
 import * as readline from 'node:readline/promises'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
+import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import {
   generateAudioFromGoogle,
   hasGoogleTtsKey,
@@ -75,6 +94,16 @@ const CHECK_ONLY = process.argv.includes('--check') || process.env.CHECK === '1'
 const VERIFY_ONLY = process.argv.includes('--verify') || process.env.VERIFY === '1'
 const SEED_ALL_FLAG =
   process.argv.includes('--all') || process.env.SEED_ALL === '1' || process.env.YES === '1'
+const SYNC_R2_FLAG = process.argv.includes('--sync-r2') || process.env.SYNC_R2 === '1'
+const SYNC_DRY_RUN = process.argv.includes('--dry-run') || process.env.DRY_RUN === '1'
+const SYNC_ONLY_BUCKET = process.env.BUCKET || ''
+const SYNC_BATCH_SIZE = 15 // upload song song mỗi đợt — vừa phải, tránh dồn ép R2 API
+// Thư mục gốc chứa file local — phải khớp api/_lib/fileStorage.ts (getUploadsRoot).
+const SYNC_UPLOADS_ROOT = process.env.UPLOADS_DIR || path.join(process.cwd(), 'uploads')
+const VERIFY_R2_FLAG = process.argv.includes('--verify-r2')
+const VERIFY_SKIP_SIZE_CHECK = process.argv.includes('--skip-size-check')
+const VERIFY_DELETE_VERIFIED = process.argv.includes('--delete-verified')
+const VERIFY_CONFIRM_YES = process.argv.includes('--yes')
 
 const PRON_ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
 const PATTERN_ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/prefetch-tts-errors.json')
@@ -83,7 +112,13 @@ const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms
 
 // ── Nhóm (category) ─────────────────────────────────────────────────────────
 type CatId =
-  'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest' | 'challenge'
+  | 'pron'
+  | 'curriculum'
+  | 'cefr'
+  | 'lessons-early'
+  | 'patterns'
+  | 'lessons-rest'
+  | 'challenge'
 
 const CATEGORIES: { id: CatId; label: string }[] = [
   { id: 'pron', label: 'Phát âm từ điển (pronunciations)' },
@@ -314,6 +349,446 @@ function loadPronTasks(wordsFile?: string): PronTask[] {
     return aHigh - bHigh
   })
   return tasks
+}
+
+// ── Đồng bộ audio local → Cloudflare R2 ─────────────────────────────────────
+// Đẩy audio đang nằm trên ổ đĩa VPS (STORAGE_DRIVER=local, thư mục UPLOADS_DIR) lên
+// Cloudflare R2 + TÁI TẠO dòng Postgres tương ứng (tts_cache/pronunciations). Gộp vào
+// đây (trước ở scripts/sync-storage-to-r2.ts riêng, xóa 2026-07-20) vì cùng mục đích
+// "đưa audio cache vào trạng thái sẵn sàng cho client" như phần seed nội dung ở trên.
+//
+// ⚠️ Nguồn dữ liệu là Ổ ĐĨA, không phải DB: quyết định 2026-07-19 ("bỏ qua migrate dữ
+// liệu người dùng cũ") khiến Postgres tự host bắt đầu từ schema RỖNG dù uploads/ trên
+// VPS vẫn còn audio cache từ trước cutover. Script quét ổ đĩa trực tiếp, suy ra
+// (hash/lang/voice) hoặc (word/voice) từ TÊN FILE, rồi INSERT/UPDATE dòng DB.
+//
+// An toàn chạy lại nhiều lần: file đã có dòng DB trỏ R2 (không phải /uploads/) → bỏ
+// qua, trừ khi --force. File local KHÔNG bị xóa sau khi đồng bộ.
+type R2Bucket = 'tts-cache' | 'pronunciations'
+
+function resolveSyncBuckets(): R2Bucket[] {
+  const list = (SYNC_ONLY_BUCKET ? [SYNC_ONLY_BUCKET] : ['tts-cache', 'pronunciations']).filter(
+    (b): b is R2Bucket => b === 'tts-cache' || b === 'pronunciations',
+  )
+  if (list.length === 0) {
+    console.error(
+      `❌ BUCKET không hợp lệ: ${SYNC_ONLY_BUCKET} (chỉ nhận tts-cache | pronunciations)`,
+    )
+    process.exit(1)
+  }
+  return list
+}
+
+// Quét đệ quy tìm mọi file .mp3 dưới 1 thư mục (đường dẫn TƯƠNG ĐỐI so với gốc). Gom vào
+// `out` DÙNG CHUNG QUA THAM CHIẾU (không spread mảng con vào .push()) — với hàng chục nghìn
+// file, `out.push(...bigArray)` tràn giới hạn số đối số của V8 (RangeError).
+async function walkMp3(root: string, dir = '', out: string[] = []): Promise<string[]> {
+  const full = path.join(root, dir)
+  if (!fs.existsSync(full)) return out
+  const entries = await fs.promises.readdir(full, { withFileTypes: true })
+  for (const entry of entries) {
+    const rel = dir ? `${dir}/${entry.name}` : entry.name
+    if (entry.isDirectory()) await walkMp3(root, rel, out)
+    else if (entry.isFile() && entry.name.endsWith('.mp3')) out.push(rel)
+  }
+  return out
+}
+
+// tts-cache: <lang>/<voice>/<hash>.mp3 — 3 phần cố định, suy trực tiếp từ đường dẫn.
+function parseTtsCacheKey(key: string): { lang: string; voice: string; hash: string } | null {
+  const parts = key.split('/')
+  if (parts.length !== 3) return null
+  const [lang, voice, file] = parts
+  if (!lang || !voice || !file?.endsWith('.mp3')) return null
+  return { lang, voice, hash: file.slice(0, -'.mp3'.length) }
+}
+
+// pronunciations: <word-encoded>-<voice>.mp3 — khớp suffix dài nhất trước
+// (female2/male2 trước female/male) để tránh cắt nhầm từ có gạch nối kết thúc trùng ký tự.
+const VOICE_SUFFIXES = [...VOICE_IDS].sort((a, b) => b.length - a.length)
+function parsePronunciationKey(key: string): { word: string; voice: VoiceId } | null {
+  if (!key.endsWith('.mp3')) return null
+  const base = key.slice(0, -'.mp3'.length)
+  for (const voice of VOICE_SUFFIXES) {
+    const suffix = `-${voice}`
+    if (base.endsWith(suffix)) {
+      const encodedWord = base.slice(0, -suffix.length)
+      if (!encodedWord) continue
+      try {
+        return { word: decodeURIComponent(encodedWord), voice }
+      } catch {
+        return null // encodeURIComponent lỗi (hiếm) — bỏ qua file này
+      }
+    }
+  }
+  return null
+}
+
+interface SyncCounters {
+  skip: number
+  uploaded: number
+  parseError: number
+  errors: number
+}
+
+const seenSyncErrorMessages = new Set<string>()
+function logSyncSampleError(message: string): void {
+  const key = message.slice(0, 100)
+  if (seenSyncErrorMessages.has(key)) return
+  seenSyncErrorMessages.add(key)
+  if (seenSyncErrorMessages.size > 8) return
+  process.stdout.write(`\n🔎 Mẫu lỗi mới: ${message.slice(0, 300)}\n`)
+}
+
+async function syncTtsCacheFile(key: string, counters: SyncCounters, samples: string[]) {
+  const parsed = parseTtsCacheKey(key)
+  if (!parsed) {
+    counters.parseError++
+    if (samples.length < 5) samples.push(key)
+    return
+  }
+  const pool = getPgPool()
+  if (!FORCE) {
+    const { rows } = await pool.query<{ audio_url: string }>(
+      'select audio_url from public.tts_cache where hash = $1',
+      [parsed.hash],
+    )
+    if (rows[0] && !rows[0].audio_url.includes('/uploads/')) {
+      counters.skip++
+      return
+    }
+  }
+  if (SYNC_DRY_RUN) {
+    counters.uploaded++
+    return
+  }
+  try {
+    const localPath = path.join(SYNC_UPLOADS_ROOT, 'tts-cache', key)
+    const buf = await fs.promises.readFile(localPath)
+    const arrayBuffer = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
+    const audioUrl = await saveAudio('tts-cache', key, arrayBuffer)
+    await pool.query(
+      `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
+       values ($1, $2, $3, $4, now())
+       on conflict (hash) do update set audio_url = excluded.audio_url, last_accessed_at = now()`,
+      [parsed.hash, parsed.lang, parsed.voice, audioUrl],
+    )
+    counters.uploaded++
+  } catch (err) {
+    counters.errors++
+    const message = err instanceof Error ? err.message : String(err)
+    logSyncSampleError(message)
+    if (samples.length < 5) samples.push(`${key} → ${message}`)
+  }
+}
+
+async function syncPronunciationFile(key: string, counters: SyncCounters, samples: string[]) {
+  const parsed = parsePronunciationKey(key)
+  if (!parsed) {
+    counters.parseError++
+    if (samples.length < 5) samples.push(key)
+    return
+  }
+  const pool = getPgPool()
+  if (!FORCE) {
+    const { rows } = await pool.query<{ audio_url: string }>(
+      'select audio_url from public.pronunciations where word = $1 and voice = $2',
+      [parsed.word, parsed.voice],
+    )
+    if (rows[0] && !rows[0].audio_url.includes('/uploads/')) {
+      counters.skip++
+      return
+    }
+  }
+  if (SYNC_DRY_RUN) {
+    counters.uploaded++
+    return
+  }
+  try {
+    const localPath = path.join(SYNC_UPLOADS_ROOT, 'pronunciations', key)
+    const buf = await fs.promises.readFile(localPath)
+    const arrayBuffer = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
+    const audioUrl = await saveAudio('pronunciations', key, arrayBuffer)
+    // voice_version = VOICE_VERSION hiện tại — GIẢ ĐỊNH (không xác nhận được từ tên
+    // file), chấp nhận được vì hằng số này hiếm đổi.
+    await pool.query(
+      `insert into public.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
+       values ($1, $2, $3, 'en-US', $4, now())
+       on conflict (word, voice) do update set audio_url = excluded.audio_url, last_accessed_at = now()`,
+      [parsed.word, parsed.voice, audioUrl, VOICE_VERSION],
+    )
+    counters.uploaded++
+  } catch (err) {
+    counters.errors++
+    const message = err instanceof Error ? err.message : String(err)
+    logSyncSampleError(message)
+    if (samples.length < 5) samples.push(`${key} → ${message}`)
+  }
+}
+
+async function syncR2Bucket(bucket: R2Bucket): Promise<SyncCounters> {
+  process.stdout.write(`\n📤 Bucket "${bucket}" — đang quét ổ đĩa...`)
+  const files = await walkMp3(path.join(SYNC_UPLOADS_ROOT, bucket))
+  console.log(` ${files.length.toLocaleString('vi-VN')} file .mp3`)
+
+  const counters: SyncCounters = { skip: 0, uploaded: 0, parseError: 0, errors: 0 }
+  const samples: string[] = []
+  const syncFile = bucket === 'tts-cache' ? syncTtsCacheFile : syncPronunciationFile
+
+  const bar = new cliProgress.SingleBar(
+    {
+      format: `  |{bar}| {percentage}% | {value}/{total} | ⏭{skip} ${SYNC_DRY_RUN ? 'sẽ tải' : '↑'}{uploaded} ⚠{parseError} ✗{errors}`,
+      barCompleteChar: '█',
+      barIncompleteChar: '░',
+      hideCursor: true,
+    },
+    cliProgress.Presets.shades_classic,
+  )
+  bar.start(files.length, 0, { ...counters })
+
+  for (let i = 0; i < files.length; i += SYNC_BATCH_SIZE) {
+    await Promise.all(
+      files.slice(i, i + SYNC_BATCH_SIZE).map((f) => syncFile(f, counters, samples)),
+    )
+    bar.update(Math.min(i + SYNC_BATCH_SIZE, files.length), { ...counters })
+  }
+  bar.stop()
+
+  console.log(
+    `  ⏭ Đã ở R2: ${counters.skip}  ${SYNC_DRY_RUN ? 'sẽ tải' : '↑ Đã tải lên'}: ${counters.uploaded}  ⚠ Tên file lạ (bỏ qua): ${counters.parseError}  ✗ Lỗi: ${counters.errors}`,
+  )
+  if (samples.length > 0) {
+    console.log('     Ví dụ (tên lạ/lỗi):')
+    for (const s of samples) console.log(`       • ${s}`)
+  }
+  return counters
+}
+
+async function runR2Sync(): Promise<void> {
+  const missing = [
+    'DATABASE_URL',
+    'R2_ACCOUNT_ID',
+    'R2_ACCESS_KEY_ID',
+    'R2_SECRET_ACCESS_KEY',
+    'R2_BUCKET',
+    'R2_PUBLIC_BASE_URL',
+  ].filter((k) => !process.env[k])
+  if (missing.length > 0) {
+    console.error(`❌ Thiếu biến môi trường: ${missing.join(', ')}`)
+    return
+  }
+  if (process.env.STORAGE_DRIVER !== 'r2') {
+    console.error(
+      '❌ Cần STORAGE_DRIVER=r2 khi chạy đồng bộ (saveAudio() mới upload lên R2) — vd:\n' +
+        '   STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2 --dry-run',
+    )
+    return
+  }
+
+  console.log(
+    '🔄 Quét ổ đĩa VPS → đẩy audio lên Cloudflare R2 + tái tạo dòng DB' +
+      (SYNC_DRY_RUN ? ' (DRY-RUN: chỉ đếm)' : '') +
+      (FORCE ? ' (FORCE: ghi đè cả dòng đã ở R2)' : ''),
+  )
+  console.log(`📁 Thư mục nguồn: ${SYNC_UPLOADS_ROOT}`)
+
+  const buckets = resolveSyncBuckets()
+  const totals: SyncCounters = { skip: 0, uploaded: 0, parseError: 0, errors: 0 }
+  for (const bucket of buckets) {
+    const c = await syncR2Bucket(bucket)
+    totals.skip += c.skip
+    totals.uploaded += c.uploaded
+    totals.parseError += c.parseError
+    totals.errors += c.errors
+  }
+
+  console.log('\n──────────────────────────────────────────────')
+  console.log(
+    `📦 TỔNG: ⏭ đã ở R2 ${totals.skip}  ${SYNC_DRY_RUN ? 'sẽ tải' : '↑ đã tải lên'} ${totals.uploaded}  ⚠ tên lạ ${totals.parseError}  ✗ lỗi ${totals.errors}`,
+  )
+  if (SYNC_DRY_RUN) {
+    console.log('ℹ️  Đây là DRY-RUN — chưa tải/ghi gì. Bỏ --dry-run để chạy thật.')
+  } else if (totals.errors === 0) {
+    console.log('✅ Mọi audio trên ổ đĩa đã có dòng DB trỏ về R2.')
+  }
+}
+
+// ── Kiểm tra ổ đĩa ↔ R2 THẬT (không qua DB) + tuỳ chọn dọn file local đã an toàn ────
+// Khác runR2Sync() (đối chiếu qua audio_url trong DB), hàm này liệt kê TRỰC TIẾP object
+// trên R2 (ListObjectsV2) rồi so với file trên ổ đĩa — bắt được cả trường hợp DB đã trỏ
+// R2 nhưng file thật ra chưa lên/bị hỏng. Chỉ dùng để XÁC NHẬN trước khi xoá local lấy
+// lại dung lượng — KHÔNG đụng gì tới nội dung R2/DB.
+function getR2Client(): S3Client {
+  const accountId = process.env.R2_ACCOUNT_ID
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY
+  if (!accountId || !accessKeyId || !secretAccessKey) {
+    throw new Error('Thiếu R2_ACCOUNT_ID/R2_ACCESS_KEY_ID/R2_SECRET_ACCESS_KEY trong .env')
+  }
+  return new S3Client({
+    region: 'auto',
+    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+    credentials: { accessKeyId, secretAccessKey },
+    requestChecksumCalculation: 'WHEN_REQUIRED',
+  })
+}
+
+// Liệt kê TOÀN BỘ key trong bucket R2 (phân trang 1000 key/lần) → Map<key, size byte>.
+async function listAllR2Objects(): Promise<Map<string, number>> {
+  const r2Bucket = process.env.R2_BUCKET
+  if (!r2Bucket) throw new Error('Thiếu R2_BUCKET trong .env')
+  const client = getR2Client()
+  const result = new Map<string, number>()
+  let continuationToken: string | undefined
+  let pages = 0
+  process.stdout.write('📥 Đang liệt kê object trên R2...')
+  do {
+    const res = await client.send(
+      new ListObjectsV2Command({ Bucket: r2Bucket, ContinuationToken: continuationToken }),
+    )
+    for (const obj of res.Contents ?? []) {
+      if (obj.Key) result.set(obj.Key, obj.Size ?? -1)
+    }
+    continuationToken = res.IsTruncated ? res.NextContinuationToken : undefined
+    pages++
+    if (pages % 20 === 0)
+      process.stdout.write(
+        `\r📥 Đang liệt kê object trên R2... ${result.size.toLocaleString('vi-VN')} object`,
+      )
+  } while (continuationToken)
+  console.log(`\r📥 R2 hiện có ${result.size.toLocaleString('vi-VN')} object.                    `)
+  return result
+}
+
+interface VerifyLocalFile {
+  bucket: R2Bucket
+  rel: string
+  fullPath: string
+  r2Key: string
+}
+
+async function runVerifyR2(): Promise<void> {
+  if (VERIFY_DELETE_VERIFIED && !VERIFY_CONFIRM_YES) {
+    console.log('ℹ️  Chế độ XEM TRƯỚC (--delete-verified không kèm --yes) — sẽ KHÔNG xoá gì.\n')
+  }
+
+  const r2Objects = await listAllR2Objects()
+
+  const localFiles: VerifyLocalFile[] = []
+  for (const bucket of ['tts-cache', 'pronunciations'] as R2Bucket[]) {
+    const rels = await walkMp3(path.join(SYNC_UPLOADS_ROOT, bucket))
+    for (const rel of rels) {
+      localFiles.push({
+        bucket,
+        rel,
+        fullPath: path.join(SYNC_UPLOADS_ROOT, bucket, rel),
+        r2Key: `${bucket}/${rel}`,
+      })
+    }
+  }
+  console.log(
+    `📁 Ổ đĩa VPS có ${localFiles.length.toLocaleString('vi-VN')} file .mp3 (2 thư mục cộng lại).\n`,
+  )
+
+  const missing: VerifyLocalFile[] = []
+  const sizeMismatch: VerifyLocalFile[] = []
+  const verified: VerifyLocalFile[] = []
+
+  const bar = new cliProgress.SingleBar(
+    { format: '  |{bar}| {percentage}% | {value}/{total}', hideCursor: true },
+    cliProgress.Presets.shades_classic,
+  )
+  bar.start(localFiles.length, 0)
+
+  for (let i = 0; i < localFiles.length; i++) {
+    const f = localFiles[i]!
+    const r2Size = r2Objects.get(f.r2Key)
+    if (r2Size === undefined) {
+      missing.push(f)
+    } else if (!VERIFY_SKIP_SIZE_CHECK) {
+      const localSize = (await fs.promises.stat(f.fullPath)).size
+      if (localSize !== r2Size) sizeMismatch.push(f)
+      else verified.push(f)
+    } else {
+      verified.push(f)
+    }
+    if (i % 500 === 0) bar.update(i)
+  }
+  bar.update(localFiles.length)
+  bar.stop()
+
+  console.log('\n──────────────────────────────────────────────')
+  console.log(`✅ Khớp R2 (an toàn): ${verified.length.toLocaleString('vi-VN')}`)
+  console.log(`❌ THIẾU trên R2: ${missing.length.toLocaleString('vi-VN')}`)
+  console.log(`⚠️  Kích thước LỆCH: ${sizeMismatch.length.toLocaleString('vi-VN')}`)
+
+  if (missing.length > 0) {
+    console.log('\n   Ví dụ file thiếu trên R2:')
+    for (const f of missing.slice(0, 10)) console.log(`     • ${f.r2Key}`)
+  }
+  if (sizeMismatch.length > 0) {
+    console.log('\n   Ví dụ file lệch kích thước:')
+    for (const f of sizeMismatch.slice(0, 10)) console.log(`     • ${f.r2Key}`)
+  }
+
+  const allSafe = missing.length === 0 && sizeMismatch.length === 0
+  if (allSafe) {
+    console.log('\n🎉 TOÀN BỘ file local đã có bản khớp trên R2 — an toàn để xoá local.')
+  } else {
+    console.log(
+      `\n⛔ CHƯA an toàn xoá toàn bộ — còn ${missing.length + sizeMismatch.length} file chưa khớp R2.` +
+        ' Chạy lại đồng bộ (menu "s" hoặc --sync-r2, không cần --force) rồi verify lại.',
+    )
+  }
+
+  if (!VERIFY_DELETE_VERIFIED) {
+    console.log(
+      '\nℹ️  Muốn xoá file local đã xác nhận khớp R2: thêm --delete-verified (xem trước) rồi --yes (xoá thật).',
+    )
+    return
+  }
+
+  // Chỉ xoá TỪNG FILE đã verified — file missing/mismatch luôn được GIỮ LẠI dù dùng --delete-verified.
+  if (verified.length === 0) {
+    console.log('\nℹ️  Không có file nào để xoá (0 file đã xác nhận khớp R2).')
+    return
+  }
+  if (!VERIFY_CONFIRM_YES) {
+    console.log(
+      `\n👀 XEM TRƯỚC: sẽ xoá ${verified.length.toLocaleString('vi-VN')} file local đã khớp R2 (chưa xoá — thêm --yes để xoá thật).`,
+    )
+    return
+  }
+
+  console.log(
+    `\n🗑️  Đang xoá ${verified.length.toLocaleString('vi-VN')} file local đã xác nhận khớp R2...`,
+  )
+  let deleted = 0
+  let deleteErrors = 0
+  const delBar = new cliProgress.SingleBar(
+    { format: '  |{bar}| {percentage}% | {value}/{total}', hideCursor: true },
+    cliProgress.Presets.shades_classic,
+  )
+  delBar.start(verified.length, 0)
+  for (let i = 0; i < verified.length; i++) {
+    const f = verified[i]!
+    try {
+      await fs.promises.unlink(f.fullPath)
+      deleted++
+    } catch (err) {
+      deleteErrors++
+      console.error(
+        `\n❌ Không xoá được ${f.fullPath}: ${err instanceof Error ? err.message : String(err)}`,
+      )
+    }
+    if (i % 500 === 0) delBar.update(i)
+  }
+  delBar.update(verified.length)
+  delBar.stop()
+  console.log(
+    `\n✅ Đã xoá ${deleted.toLocaleString('vi-VN')} file. ${deleteErrors > 0 ? `❌ Lỗi: ${deleteErrors}` : ''}`,
+  )
+  console.log('ℹ️  Chạy `du -sh uploads/` để xem dung lượng đã giải phóng.')
 }
 
 // ── Xử lý 1 tác vụ ──────────────────────────────────────────────────────────
@@ -849,8 +1324,7 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
 
       const pending = stats.filter((s) => s.remaining.length > 0)
       if (pending.length === 0 && !FORCE) {
-        console.log('\n✨ Mọi nhóm đã seed đủ. Thoát.')
-        return
+        console.log('\n✨ Mọi nhóm nội dung đã seed đủ.')
       }
 
       console.log('\n── Chọn việc tiếp theo ──')
@@ -860,16 +1334,28 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
         console.log(`  ${i + 1}) ${s.label}  (${mark})`)
       })
       console.log('  a) Seed TẤT CẢ nhóm còn thiếu')
+      console.log('  s) Đồng bộ audio local → Cloudflare R2 (cần STORAGE_DRIVER=r2)')
+      console.log('  v) Kiểm tra ổ đĩa ↔ R2 thật + xoá local đã an toàn (--yes mới xoá)')
       console.log('  r) Làm mới báo cáo')
       console.log('  q) Thoát')
 
-      const ans = (await rl.question('\nNhập lựa chọn (số / a / r / q): ')).trim().toLowerCase()
+      const ans = (await rl.question('\nNhập lựa chọn (số / a / s / v / r / q): '))
+        .trim()
+        .toLowerCase()
 
       if (ans === 'q' || ans === '') {
         console.log('👋 Thoát.')
         return
       }
       if (ans === 'r') continue
+      if (ans === 's') {
+        await runR2Sync()
+        continue
+      }
+      if (ans === 'v') {
+        await runVerifyR2()
+        continue
+      }
       if (ans === 'a') {
         await seedCategories(
           stats,
@@ -891,6 +1377,16 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
 
 // ── MAIN ─────────────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
+  // 2 chế độ R2 không cần key TTS (không gọi Google) — tách trước các check khác.
+  if (SYNC_R2_FLAG) {
+    await runR2Sync()
+    return
+  }
+  if (VERIFY_R2_FLAG) {
+    await runVerifyR2()
+    return
+  }
+
   const missing = ['DATABASE_URL', 'TTS_ENCRYPTION_MASTER_KEY'].filter((k) => !process.env[k])
   if (missing.length > 0) {
     console.error(`❌ Thiếu biến môi trường: ${missing.join(', ')}`)

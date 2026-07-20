@@ -139,29 +139,44 @@ Kết luận cuối:
 
 ---
 
-## 5. Đồng bộ audio cache cũ lên Cloudflare R2 (`sync:r2`)
+## 5. Đồng bộ audio cache cũ lên Cloudflare R2 (menu "s"/"v" trong `seed:all`)
 
 > Mục 5 và 6 cũ (`sync:storage`/`check:supabase`, đồng bộ với **Supabase Storage**) đã hết
 > hiệu lực — dự án đã rời hẳn Supabase, 2 script đó đã bị xóa
 > (`scripts/sync-storage-to-vps.ts`, `scripts/check-supabase-audio.ts`). Xem
-> `docs/migration-thoat-ly-supabase.md`.
+> `docs/migration-thoat-ly-supabase.md`. **[2026-07-20]** 2 script R2 riêng
+> (`scripts/sync-storage-to-r2.ts`, `scripts/verify-r2-sync.ts`) cũng đã GỘP HẲN vào
+> `scripts/seed-all.ts` (menu "s"/"v" hoặc cờ `--sync-r2`/`--verify-r2`) — 1 file seed
+> duy nhất cho mọi việc audio cache.
 
 Với `STORAGE_DRIVER=local` (mặc định), `saveAudio()` ghi thẳng vào `UPLOADS_DIR` trên VPS —
 không cần bước đồng bộ nào. Với `STORAGE_DRIVER=r2`, audio mới tự động lên Cloudflare R2, nhưng
-audio đã cache TRƯỚC KHI bật R2 (còn nằm trên ổ VPS) cần đẩy lên bằng
-`scripts/sync-storage-to-r2.ts`:
+audio đã cache TRƯỚC KHI bật R2 (còn nằm trên ổ VPS) cần đẩy lên bằng menu "s" (hoặc cờ
+`--sync-r2`) của `seed:all`:
 
 ```bash
 # CHẠY TRÊN VPS
-STORAGE_DRIVER=r2 npm run sync:r2 -- --dry-run   # xem trước, không tải
-STORAGE_DRIVER=r2 npm run sync:r2                # chạy thật
-STORAGE_DRIVER=r2 npm run sync:r2 -- --force     # chạy lại, ghi đè cả file đã có trên R2
-BUCKET=pronunciations npm run sync:r2            # chỉ 1 bucket
+STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2 --dry-run   # xem trước, không tải
+STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2              # chạy thật
+STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2 --force      # chạy lại, ghi đè cả file đã có trên R2
+BUCKET=pronunciations npm run seed:all -- --sync-r2          # chỉ 1 bucket
 ```
 
 An toàn chạy lại nhiều lần: quét thẳng ổ đĩa (`uploads/tts-cache/**/*.mp3`,
 `uploads/pronunciations/*.mp3`), suy hash/lang/voice (hoặc word/voice) từ TÊN FILE, upload lên
 R2 rồi `INSERT ... ON CONFLICT` tái tạo dòng DB — không cần dòng DB có sẵn.
+
+Sau khi đồng bộ, muốn **xác nhận thật** (đối chiếu trực tiếp với R2, không qua DB) rồi **xoá
+file local** lấy lại dung lượng — dùng menu "v" (hoặc cờ `--verify-r2`):
+
+```bash
+npm run seed:all -- --verify-r2                              # chỉ đối chiếu, in báo cáo
+npm run seed:all -- --verify-r2 --delete-verified             # xem trước sẽ xoá bao nhiêu (CHƯA xoá)
+npm run seed:all -- --verify-r2 --delete-verified --yes       # xoá thật (chỉ file đã khớp R2)
+```
+
+`--yes` bắt buộc mới xoá thật; file thiếu/lệch kích thước trên R2 luôn được GIỮ LẠI dù dùng
+`--delete-verified`.
 
 ---
 
@@ -175,8 +190,9 @@ npm run seed:verify             # 3. Kiểm tra: thiếu / thừa / đường d�
 VERIFY_DECRYPT=20 npm run seed:verify   # 4. (tùy chọn) chắc chắn audio giải mã được
 
 # Nếu dùng STORAGE_DRIVER=r2: đẩy nốt audio cache cũ (seed trước khi bật R2) lên Cloudflare
-STORAGE_DRIVER=r2 npm run sync:r2 -- --dry-run   # 5. Xem trước
-STORAGE_DRIVER=r2 npm run sync:r2                # 6. Chạy thật
+STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2 --dry-run   # 5. Xem trước
+STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2              # 6. Chạy thật
+npm run seed:all -- --verify-r2                               # 7. (tùy chọn) đối chiếu R2 thật + xoá local an toàn
 ```
 
 Nếu seed bị lỗi giữa chừng: danh sách lỗi được ghi ra `scripts/seed-errors.json`
