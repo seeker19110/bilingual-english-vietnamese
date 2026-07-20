@@ -3,8 +3,17 @@
 // việc đồng bộ audio cache cũ (đang nằm local VPS) lên Cloudflare R2 — trước đây tách
 // riêng ở scripts/sync-storage-to-r2.ts (đã gộp vào đây 2026-07-20, xem mục "s" ở menu).
 //
+// [2026-07-20] 2 thay đổi mặc định (theo yêu cầu: "mặc định lưu trên R2 nếu seed mới" +
+// "thống kê cả ở R2"):
+//   - `STORAGE_DRIVER` mặc định = 'r2' nếu `.env`/shell chưa set gì — audio MỚI seed tự
+//     lên Cloudflare R2, không cần nhớ prefix `STORAGE_DRIVER=r2` mỗi lần chạy. Vẫn tôn
+//     trọng nếu bạn set `STORAGE_DRIVER=local` rõ ràng (vd test tay trên máy dev).
+//   - Báo cáo giờ có thêm mục "☁️ THỰC TẾ TRÊN CLOUDFLARE R2" — đếm object THẬT trên R2
+//     (ListObjectsV2, không qua DB/ổ đĩa) vì ổ đĩa local có thể đã xóa sau khi đồng bộ,
+//     không còn đối chiếu qua walkMp3 được nữa. Tự bỏ qua nếu chưa cấu hình đủ biến R2_*.
+//
 // Khi chạy `npm run seed:all`:
-//   1. Kiểm tra DB → báo cáo bao nhiêu % mỗi nhóm đã seed xong (sẵn sàng cho client).
+//   1. Kiểm tra DB (+ R2 nếu đã cấu hình) → báo cáo bao nhiêu % mỗi nhóm đã seed xong.
 //   2. Hiện menu: seed riêng 1 nhóm · seed tất cả · đồng bộ audio local → R2 · thoát.
 //   3. Sau mỗi lần seed, kiểm tra lại + hiện menu mới (lặp đến khi bạn thoát).
 //
@@ -74,6 +83,11 @@ import { loadSubjectsInDisplayOrder, PREF_VOICE_IDS } from './_lib/patternOrder.
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
+
+// Mặc định lưu audio MỚI seed lên Cloudflare R2 — không cần nhớ prefix
+// `STORAGE_DRIVER=r2` mỗi lần chạy. Chỉ áp khi `.env`/shell CHƯA set gì (tôn trọng
+// lựa chọn rõ ràng của người dùng, vd STORAGE_DRIVER=local để test tay trên máy dev).
+if (!process.env.STORAGE_DRIVER) process.env.STORAGE_DRIVER = 'r2'
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
 // Pronunciations chỉ cần 2 giọng cơ bản — female2/male2 chỉ dùng cho TTS hội thoại
@@ -1104,6 +1118,45 @@ function printReport(stats: CatStat[]): void {
     console.log(`\nℹ️  Còn ${(grandTotal - grandDone).toLocaleString('vi-VN')} tác vụ chưa seed.`)
 }
 
+// ── Thống kê THẬT trên Cloudflare R2 (đếm object thật, không qua DB/ổ đĩa) ──────
+// Khác báo cáo ở trên (đếm DÒNG DB, tin audio_url là đúng): hàm này liệt kê TRỰC TIẾP
+// object trên R2 — cần khi ổ đĩa local đã xóa (không còn đối chiếu được qua walkMp3 nữa),
+// muốn biết THẬT SỰ đang có bao nhiêu file trên R2. Mỗi object là 1 key duy nhất trong
+// Map (listAllR2Objects) nên không đếm trùng.
+let cachedR2Counts: Record<string, number> | null = null
+async function getR2Counts(forceRefresh = false): Promise<Record<string, number> | null> {
+  if (cachedR2Counts && !forceRefresh) return cachedR2Counts
+  const missing = ['R2_ACCOUNT_ID', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET'].filter(
+    (k) => !process.env[k],
+  )
+  if (missing.length > 0) return null // R2 chưa cấu hình đủ — bỏ qua, không phải lỗi
+  try {
+    const objects = await listAllR2Objects()
+    const counts: Record<string, number> = {}
+    for (const key of objects.keys()) {
+      const bucket = key.split('/')[0] ?? 'khác'
+      counts[bucket] = (counts[bucket] ?? 0) + 1
+    }
+    cachedR2Counts = counts
+    return counts
+  } catch (err) {
+    console.error(
+      `⚠️  Không lấy được thống kê R2: ${err instanceof Error ? err.message : String(err)}`,
+    )
+    return null
+  }
+}
+
+function printR2Report(r2Counts: Record<string, number> | null): void {
+  if (!r2Counts) return // R2 chưa cấu hình trong .env — im lặng bỏ qua
+  const total = Object.values(r2Counts).reduce((s, n) => s + n, 0)
+  console.log('\n☁️  THỰC TẾ TRÊN CLOUDFLARE R2 (đếm object thật, không qua DB)')
+  for (const [bucket, n] of Object.entries(r2Counts).sort((a, b) => b[1] - a[1])) {
+    console.log(`  • ${bucket}: ${n.toLocaleString('vi-VN')} file`)
+  }
+  console.log(`  📦 TỔNG trên R2: ${total.toLocaleString('vi-VN')} file`)
+}
+
 // ── KIỂM TRA KỸ DB: đối chiếu dữ liệu đã seed với tập KỲ VỌNG ────────────────
 // Khác `audit()` (chỉ đếm có/thiếu). Hàm này đối chiếu HAI CHIỀU vì đã seed rất nhiều:
 //   • Chiều thiếu : câu kỳ vọng nào CHƯA có trong DB (theo nhóm).
@@ -1315,6 +1368,7 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
     for (;;) {
       const stats = await audit(allByCat)
       printReport(stats)
+      printR2Report(await getR2Counts())
 
       const pending = stats.filter((s) => s.remaining.length > 0)
       if (pending.length === 0 && !FORCE) {
@@ -1411,6 +1465,7 @@ async function main(): Promise<void> {
   // ── Chế độ chỉ xem báo cáo ────────────────────────────────────────────────
   if (CHECK_ONLY) {
     printReport(await audit(allByCat))
+    printR2Report(await getR2Counts())
     return
   }
 
@@ -1448,12 +1503,14 @@ async function main(): Promise<void> {
     )
     // In lại báo cáo cuối để biết đã 100% chưa
     printReport(await audit(allByCat))
+    printR2Report(await getR2Counts(true)) // làm mới — vừa upload thêm audio mới
     return
   }
 
   // ── Không có TTY (không gõ được) mà không kèm cờ → in báo cáo + hướng dẫn ──
   if (!process.stdin.isTTY) {
     printReport(await audit(allByCat))
+    printR2Report(await getR2Counts())
     console.log('\nℹ️  Không có bàn phím tương tác. Chạy `npm run seed:all -- --all` để seed hết,')
     console.log('   hoặc `npm run seed:all -- --check` để chỉ xem báo cáo.')
     return
