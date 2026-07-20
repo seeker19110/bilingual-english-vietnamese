@@ -141,6 +141,19 @@ interface Counters {
   errors: number
 }
 
+// In ra MẪU lỗi thật ngay khi gặp (chỉ lần đầu mỗi loại) — nếu không, lỗi chỉ lộ ra ở
+// dòng tổng kết CUỐI bucket; với 730k+ file chạy hàng giờ, Ctrl+C giữa chừng (hoặc mất
+// SSH) sẽ mất luôn thông tin lỗi thật, chỉ còn con số ✗ mà không biết vì sao — bài học
+// rút ra từ scripts/seed-all.ts (đã có kiểu log này từ trước, xem logSampleError ở đó).
+const seenErrorMessages = new Set<string>()
+function logSampleError(message: string): void {
+  const key = message.slice(0, 100)
+  if (seenErrorMessages.has(key)) return
+  seenErrorMessages.add(key)
+  if (seenErrorMessages.size > 8) return // đủ mẫu, tránh spam nếu có nhiều loại lỗi khác nhau
+  process.stdout.write(`\n🔎 Mẫu lỗi mới: ${message.slice(0, 300)}\n`)
+}
+
 async function syncTtsCacheFile(key: string, counters: Counters, samples: string[]) {
   const parsed = parseTtsCacheKey(key)
   if (!parsed) {
@@ -177,8 +190,9 @@ async function syncTtsCacheFile(key: string, counters: Counters, samples: string
     counters.uploaded++
   } catch (err) {
     counters.errors++
-    if (samples.length < 5)
-      samples.push(`${key} → ${err instanceof Error ? err.message : String(err)}`)
+    const message = err instanceof Error ? err.message : String(err)
+    logSampleError(message)
+    if (samples.length < 5) samples.push(`${key} → ${message}`)
   }
 }
 
@@ -220,8 +234,9 @@ async function syncPronunciationFile(key: string, counters: Counters, samples: s
     counters.uploaded++
   } catch (err) {
     counters.errors++
-    if (samples.length < 5)
-      samples.push(`${key} → ${err instanceof Error ? err.message : String(err)}`)
+    const message = err instanceof Error ? err.message : String(err)
+    logSampleError(message)
+    if (samples.length < 5) samples.push(`${key} → ${message}`)
   }
 }
 
