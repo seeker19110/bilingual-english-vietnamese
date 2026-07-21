@@ -11,6 +11,7 @@ import {
   DEFAULT_VOICE,
   DEFAULT_MALE_VOICE,
   VOICE_OPTIONS,
+  getCachedAllowedVoices,
   type VoiceId,
 } from './voiceTiers'
 
@@ -129,7 +130,9 @@ const LEGACY_VOICE_MAP: Record<string, Voice> = {
   male2: 'Charon',
 }
 
-export function getVoicePref(): Voice {
+// Giọng "gốc" người dùng đã chọn tay (VoicePicker/VoiceMenu) — luôn dùng làm giọng cố định
+// khi chế độ ngẫu nhiên TẮT, và làm "hạt giống" xác định GIỚI TÍNH khi chế độ ngẫu nhiên BẬT.
+function getStoredVoice(): Voice {
   const raw = localStorage.getItem(VOICE_KEY) ?? ''
   if (isValidVoiceId(raw)) return raw
   return LEGACY_VOICE_MAP[raw] ?? DEFAULT_VOICE
@@ -137,6 +140,63 @@ export function getVoicePref(): Voice {
 
 export function setVoicePref(voice: Voice): void {
   localStorage.setItem(VOICE_KEY, voice)
+}
+
+// ── Chế độ giọng NGẪU NHIÊN (toàn cục, bật ở trang Cài đặt) ────────────────
+// Khi bật: TOÀN BỘ trang (Từ điển, Chat, Luyện nói, Cụm từ...) đều random, nhưng vẫn giữ
+// ĐÚNG 1 giọng xuyên suốt trong 1 phiên (sessionStorage, không phải mỗi câu 1 giọng khác —
+// nói chuyện giữa chừng đổi giọng liên tục sẽ rất rối). Giọng random chỉ đổi khi: mở tab mới
+// (sessionStorage của tab mới trống), người dùng bấm "Đổi giọng khác" ở Cài đặt, hoặc đổi
+// giới tính (Nữ/Nam) — vẫn cùng GIỚI TÍNH với giọng đã chọn tay (getStoredVoice), chỉ đổi
+// giọng cụ thể trong giới tính đó.
+const RANDOM_KEY = 'tts_voice_random'
+const RANDOM_PICK_KEY = 'tts_voice_random_pick' // sessionStorage: "<gender>:<voiceId>"
+
+export function getVoiceRandomPref(): boolean {
+  return localStorage.getItem(RANDOM_KEY) === '1'
+}
+
+export function setVoiceRandomPref(on: boolean): void {
+  localStorage.setItem(RANDOM_KEY, on ? '1' : '0')
+}
+
+// Bốc lại 1 giọng ngẫu nhiên mới ngay (nút "Đổi giọng khác" ở Cài đặt) — huỷ giọng đang giữ
+// cho phiên hiện tại, lần gọi getVoicePref() kế tiếp sẽ bốc lại.
+export function reshuffleRandomVoice(): void {
+  try {
+    sessionStorage.removeItem(RANDOM_PICK_KEY)
+  } catch {
+    /* sessionStorage bị chặn — không có gì để xoá */
+  }
+}
+
+function pickAndRememberRandomVoice(gender: 'female' | 'male'): Voice {
+  const allowed = new Set(getCachedAllowedVoices())
+  const candidates = VOICE_OPTIONS.filter((v) => v.gender === gender && allowed.has(v.id))
+  const pool = candidates.length > 0 ? candidates : VOICE_OPTIONS.filter((v) => v.gender === gender)
+  const pick = pool[Math.floor(Math.random() * pool.length)]!.id
+  try {
+    sessionStorage.setItem(RANDOM_PICK_KEY, `${gender}:${pick}`)
+  } catch {
+    /* sessionStorage có thể bị chặn (chế độ ẩn danh khắt khe) — vẫn dùng được, chỉ mất tính
+       "giữ nguyên trong phiên", mỗi lần gọi sẽ bốc lại. */
+  }
+  return pick
+}
+
+export function getVoicePref(): Voice {
+  const stored = getStoredVoice()
+  if (!getVoiceRandomPref()) return stored
+  const gender = VOICE_OPTIONS.find((v) => v.id === stored)?.gender ?? 'female'
+  let cached: string | null = null
+  try {
+    cached = sessionStorage.getItem(RANDOM_PICK_KEY)
+  } catch {
+    /* sessionStorage bị chặn — bỏ qua, coi như chưa có giọng nào được bốc trong phiên */
+  }
+  const [cachedGender, cachedVoice] = cached?.split(':') ?? []
+  if (cachedGender === gender && cachedVoice && isValidVoiceId(cachedVoice)) return cachedVoice
+  return pickAndRememberRandomVoice(gender)
 }
 
 export { DEFAULT_VOICE, DEFAULT_MALE_VOICE }

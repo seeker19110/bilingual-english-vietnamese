@@ -99,3 +99,28 @@ export function pickRandomVoice(
   const pool = candidates.length > 0 ? candidates : VOICE_OPTIONS.filter((v) => v.gender === gender)
   return pool[Math.floor(Math.random() * pool.length)]!.id
 }
+
+// ── Cache "giọng gói hiện tại cho phép" ─────────────────────────────────────
+// lib/tts.ts (chế độ giọng ngẫu nhiên toàn cục) không biết `plan` thật của user — chỉ
+// AuthProvider mới biết sau khi đăng nhập. Nên AuthProvider ghi cache này mỗi khi có user,
+// còn tts.ts chỉ ĐỌC để random trong đúng phạm vi gói, tránh random ra giọng rồi bị server
+// clamp âm thầm về DEFAULT_VOICE (clampVoiceToPlan, api/_lib/voiceAccess.ts).
+const ALLOWED_CACHE_KEY = 'voice_allowed_cache'
+const SAFE_DEFAULT_ALLOWED: VoiceId[] = ['Kore', 'Puck'] // gói Free — an toàn trước khi có cache
+
+export function cacheAllowedVoices(plan: Plan, now: Date = new Date()): void {
+  localStorage.setItem(ALLOWED_CACHE_KEY, JSON.stringify(getAllowedVoices(plan, now)))
+}
+
+export function getCachedAllowedVoices(): VoiceId[] {
+  try {
+    const raw = localStorage.getItem(ALLOWED_CACHE_KEY)
+    if (!raw) return SAFE_DEFAULT_ALLOWED
+    const arr: unknown = JSON.parse(raw)
+    return Array.isArray(arr) && arr.every((v) => isValidVoiceId(String(v)))
+      ? (arr as VoiceId[])
+      : SAFE_DEFAULT_ALLOWED
+  } catch {
+    return SAFE_DEFAULT_ALLOWED
+  }
+}

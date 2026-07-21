@@ -4,6 +4,7 @@ import { getCurrentUser } from '../lib/auth'
 import { preloadBrowseChunks } from '../lib/preloadBrowse'
 import { resetPreload } from '../lib/preloadState'
 import { clearAudioCache } from '../lib/audioCache'
+import { cacheAllowedVoices } from '../lib/voiceTiers'
 import type { User } from '../types'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -21,6 +22,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     wasLoggedIn.current = !!u
     setUser(u)
+    // Cache giọng gói thật (Free/Pro/VIP) để chế độ "giọng ngẫu nhiên" (lib/tts.ts) chỉ random
+    // đúng trong phạm vi được phép — tránh random ra giọng rồi bị server âm thầm hạ xuống.
+    if (u) cacheAllowedVoices(u.plan)
   }, [])
 
   useEffect(() => {
