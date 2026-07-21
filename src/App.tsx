@@ -9,6 +9,7 @@ import { CardListSkeleton } from './components/Skeleton'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import BottomNav from './components/BottomNav'
 import { lazyWithRetry } from './lib/lazyWithRetry'
+import { refreshAppSettings } from './lib/appSettings'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
 // (thường do app vừa deploy bản mới, chunk cũ không còn) thay vì sập trang.
 const Login = lazyWithRetry(() => import('./pages/Login'))
@@ -103,6 +104,11 @@ function usePrefetchPages() {
 
 export default function App() {
   usePrefetchPages()
+  // Đồng bộ hạn mức/khuyến mãi thật từ server ngay lúc mở app (public, không cần đăng
+  // nhập) — trước đó dùng bản cache localStorage hoặc mặc định tĩnh (xem lib/appSettings.ts).
+  useEffect(() => {
+    void refreshAppSettings()
+  }, [])
   return (
     <AuthProvider>
       <ThemeProvider>

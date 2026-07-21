@@ -20,11 +20,11 @@ import { startListening, isSTTSupported } from '../lib/stt'
 import { startRecording, isRecordingSupported, type Recorder } from '../lib/sttServer'
 import { speakBilingual, stopSpeaking, isTTSSupported, getRatePref } from '../lib/tts'
 import { effectivePlan } from '../lib/promo'
+import { getLimits } from '../lib/appSettings'
 import { haptics } from '../lib/haptics'
 import {
   SITUATIONS,
   LEVELS,
-  LIMITS,
   type Level,
   type SpeakingSession,
   type Message,
@@ -505,7 +505,7 @@ export default function Speaking() {
 
   async function startSession(situation: string, level: Level) {
     const usage = getUsage(user.id)
-    if (usage.speakingCount >= LIMITS[effectivePlan(user.plan)].speaking) {
+    if (usage.speakingCount >= getLimits()[effectivePlan(user.plan)].speaking) {
       setLimitHit(true)
       return
     }
@@ -589,7 +589,7 @@ export default function Speaking() {
     // ── Chưa ghi → bắt đầu ghi ──────────────────────────────────────────
     if (!session) return
     // Chặn nếu hết lượt nhận diện giọng nói (STT) trong ngày — đếm riêng với hội thoại.
-    if (getUsage(user.id).sttCount >= LIMITS[effectivePlan(user.plan)].stt) {
+    if (getUsage(user.id).sttCount >= getLimits()[effectivePlan(user.plan)].stt) {
       setLimitHit(true)
       toast.error(
         isA
@@ -650,7 +650,7 @@ export default function Speaking() {
       return
     }
     const usage = getUsage(user.id)
-    if (usage.speakingCount >= LIMITS[effectivePlan(user.plan)].speaking) {
+    if (usage.speakingCount >= getLimits()[effectivePlan(user.plan)].speaking) {
       setLimitHit(true)
       return
     }
@@ -749,7 +749,7 @@ export default function Speaking() {
   async function endAndGrade() {
     if (!session || loading || evaluating) return
     const usage = getUsage(user.id)
-    if (usage.speakingCount >= LIMITS[effectivePlan(user.plan)].speaking) {
+    if (usage.speakingCount >= getLimits()[effectivePlan(user.plan)].speaking) {
       setLimitHit(true)
       return
     }

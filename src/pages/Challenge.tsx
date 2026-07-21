@@ -13,8 +13,9 @@ import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useApiThrottle } from '../lib/useApiThrottle'
 import { getUsage, incrementUsage, getDirection } from '../lib/storage'
-import { LIMITS, type Direction } from '../types'
+import type { Direction } from '../types'
 import { effectivePlan } from '../lib/promo'
+import { getLimits } from '../lib/appSettings'
 import { vnDateStr } from '../lib/date'
 import { callClaude, parseJson } from '../lib/ai'
 import { speak } from '../lib/tts'
@@ -488,7 +489,7 @@ export default function Challenge() {
     if (!challenge) return
     const usage = getUsage(uid)
     const isTyped = stage === 'typed'
-    if (!isTyped && usage.sttCount >= LIMITS[effectivePlan(user.plan)].stt) {
+    if (!isTyped && usage.sttCount >= getLimits()[effectivePlan(user.plan)].stt) {
       toast.error(
         isA
           ? 'Hết lượt nhận diện giọng nói hôm nay. Bạn có thể gõ tay thay vào.'
@@ -496,7 +497,7 @@ export default function Challenge() {
       )
       return
     }
-    if (usage.chatCount >= LIMITS[effectivePlan(user.plan)].chat) {
+    if (usage.chatCount >= getLimits()[effectivePlan(user.plan)].chat) {
       toast.error(
         isA ? 'Hết lượt AI hôm nay. Thử lại ngày mai.' : "You've used all AI turns today.",
       )
