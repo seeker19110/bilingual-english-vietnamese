@@ -155,7 +155,10 @@ export default function AdminSettings() {
                         min={0}
                         max={1_000_000}
                         value={settings.limits[plan][mode]}
-                        onChange={(e) => updateLimit(plan, mode, Math.max(0, Number(e.target.value)))}
+                        onChange={(e) => {
+                          const n = Number(e.target.value)
+                          updateLimit(plan, mode, Number.isFinite(n) ? Math.max(0, n) : 0)
+                        }}
                         className="w-28 bg-zinc-800 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-right text-white"
                       />
                     </label>

@@ -8,7 +8,13 @@
 
 import { z } from 'zod'
 import { getPgPool } from './_lib/pgPool'
-import { validateAuth, getCorsHeaders, SECURITY_HEADERS, logSecurityEvent } from './_lib/security'
+import {
+  validateAuth,
+  getCorsHeaders,
+  SECURITY_HEADERS,
+  checkRateLimit,
+  logSecurityEvent,
+} from './_lib/security'
 import { getUserById } from './_lib/authService'
 import { isAdminEmail } from './_lib/adminAuth'
 import { getAppSettings, invalidateSettingsCache } from './_lib/settings'
@@ -37,6 +43,10 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: allHeaders })
 
   const clientIp = getClientIp(req)
+  if (!checkRateLimit(clientIp, 20, 'admin-settings')) {
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/admin-settings' })
+    return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
+  }
 
   const auth = await validateAuth(req)
   if (!auth) return jsonResponse({ error: 'Unauthorized' }, 401, allHeaders)

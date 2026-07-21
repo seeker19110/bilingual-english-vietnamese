@@ -61,6 +61,18 @@ khởi tạo DB mới) nên tự động có qua `npm run migrate:pg`, không c�
 tập/Tiến độ) · thẻ "Học tiếp" ở Home · karaoke (sáng chữ theo giọng đọc) áp dụng mọi TTS >1 từ ·
 chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
 
+**Giọng TTS 14 giọng + gói VIP + admin cấu hình (2026-07-21, nhánh
+`claude/chirp-3-hd-voice-upgrade-c06eds`, CHƯA MERGE — xem "Cần làm tay"):** mở rộng từ 4 → 14
+giọng Chirp3-HD thật (7 nữ/7 nam, xác minh qua Google TTS `voices.list`) cho cả en-US/vi-VN ·
+mọi user tự chọn giọng ở trang Hồ sơ (`VoicePicker`), lưu toàn cục áp dụng mọi trang · thêm gói
+`vip` (bên cạnh free/pro) · **quyết định người dùng 2026-07-21:** hạn mức free=5/pro=100/
+vip=không giới hạn (lượt/tính năng/ngày), khuyến mãi ra mắt hiện đang bật (mọi user = VIP tới
+hết 31/12/2026, cấu hình được) · trang `/admin-settings` (admin xác thực qua `ADMIN_EMAILS`
+trong `.env`) cho chỉnh 15 hạn mức + bật/tắt khuyến mãi lưu trong bảng `app_settings` — server
+(`usage.ts`/`voiceAccess.ts`, cache 30s) và client (`src/lib/appSettings.ts`, đồng bộ lúc mở
+app qua ETag/If-None-Match, không fetch thừa khi chưa đổi gì) đều đọc từ đây, không còn hard-
+code trong nhiều file rời rạc.
+
 ## Tiếp theo
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
@@ -445,6 +457,16 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## ⚠️ Cần làm tay (không cần PR)
 
+- **Nâng cấp giọng TTS 14 giọng + gói VIP + admin cấu hình (nhánh
+  `claude/chirp-3-hd-voice-upgrade-c06eds`, chưa merge — 2026-07-21):**
+  1. `npm run migrate:pg` trên VPS để tạo bảng `app_settings`
+     (`postgres/migrations/0001_app_settings.sql`).
+  2. Thêm `ADMIN_EMAILS=donghanhcungban.org@gmail.com` vào `.env` VPS (xác thực trang
+     `/admin-settings`, xem `api/_lib/adminAuth.ts`).
+  3. **QUAN TRỌNG:** toàn bộ code nhánh này viết trong sandbox KHÔNG có `node_modules`
+     cài sẵn nên CHƯA từng chạy `npm run build`/`typecheck`/`lint`/`test`/`test:e2e` thật —
+     PHẢI chạy đủ cổng mục 8 CLAUDE.md trước khi merge/deploy, đừng tin chỉ vì đã review
+     code bằng mắt.
 - `SENTRY_DSN`/`VITE_SENTRY_DSN` — lấy miễn phí ở sentry.io, điền vào `.env` VPS, build lại +
   `pm2 restart` (code Sentry đã xong, hiện no-op).
 - `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) trên VPS nếu chưa có — cần cho STT.
