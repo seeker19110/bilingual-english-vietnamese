@@ -252,6 +252,10 @@
     content: '';
     position: absolute;
     inset: min(0px, calc((100% - 44px) / 2));
+    /* Vô hình để MỞ RỘNG vùng chạm, không được chặn click/tap của các phần tử
+       bên dưới — nếu không, các nút gộp nhiều phần tử con (VoiceMenu, RateToggle)
+       sẽ bị lớp này che mất, bấm vào không phản ứng gì. */
+    pointer-events: none;
   }
 
   /* Safe area cho iPhone / notch / bottom bar */

@@ -67,7 +67,7 @@ export default function VoiceMenu({ plan, isA }: Props) {
         <button
           type="button"
           onClick={() => gender !== 'female' && toggleGender()}
-          className={`px-2 py-1 rounded-full transition cursor-pointer ${
+          className={`px-3 py-1.5 rounded-full transition cursor-pointer ${
             gender === 'female'
               ? 'bg-accent-500/30 text-accent-300 theme-light:text-accent-800'
               : 'text-zinc-400'
@@ -78,7 +78,7 @@ export default function VoiceMenu({ plan, isA }: Props) {
         <button
           type="button"
           onClick={() => gender !== 'male' && toggleGender()}
-          className={`px-2 py-1 rounded-full transition cursor-pointer ${
+          className={`px-3 py-1.5 rounded-full transition cursor-pointer ${
             gender === 'male'
               ? 'bg-accent-500/30 text-accent-300 theme-light:text-accent-800'
               : 'text-zinc-400'
