@@ -368,7 +368,7 @@ export default function Profile() {
             vào trang; user thường bấm vào chỉ thấy thông báo "không có quyền". */}
         <button
           onClick={() => nav('/admin-settings')}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-700 transition text-xs font-medium animate-fade-in"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 transition text-xs font-medium animate-fade-in"
         >
           Cấu hình hệ thống (Admin)
         </button>

@@ -60,7 +60,7 @@ export default function VoicePicker({ plan, isA }: Props) {
         </span>
       </div>
       {promoActive && (
-        <p className="text-xs text-emerald-400 mb-3">
+        <p className="text-xs text-emerald-400 theme-light:text-emerald-800 mb-3">
           {isA
             ? '🎁 Miễn phí dùng đủ 14 giọng tới hết 31/12/2026'
             : '🎁 All 14 voices free until Dec 31, 2026'}
@@ -75,7 +75,7 @@ export default function VoicePicker({ plan, isA }: Props) {
           <label htmlFor="voice-random-toggle" className="text-sm font-medium text-white block">
             {isA ? '🎲 Giọng ngẫu nhiên' : '🎲 Random voice'}
           </label>
-          <p className="text-xs text-zinc-500 mt-0.5">
+          <p className="text-xs text-zinc-400 mt-0.5">
             {isA
               ? 'Đổi giọng cụ thể mỗi phiên (giữ nguyên giới tính), áp dụng mọi trang'
               : 'Changes the specific voice each session (same gender), applies everywhere'}
@@ -158,7 +158,7 @@ export default function VoicePicker({ plan, isA }: Props) {
           </div>
         </div>
       ))}
-      <p className="text-[11px] text-zinc-500 mt-1">
+      <p className="text-[11px] text-zinc-400 mt-1">
         {isA
           ? '⚡ = giọng phát ngay lập tức. Giọng khác chậm hơn 1 chút ở lần phát đầu tiên.'
           : '⚡ = plays instantly. Other voices are slightly slower the first time.'}
