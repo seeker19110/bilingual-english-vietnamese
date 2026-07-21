@@ -19,6 +19,7 @@ import type { DictEntry } from '../types'
 import type { QuizItem, CefrLevel } from '../data/cefr'
 import type { Dialogue } from '../data/dialogues'
 import type { Voice } from './tts'
+import { VOICE_OPTIONS } from './voiceTiers'
 import { pushProgress } from './progressSync'
 
 // Ngưỡng đạt: ≥70% tổng điểm (đồng bộ với UNLOCK_PCT của lộ trình).
@@ -167,9 +168,9 @@ function shuffle<T>(arr: readonly T[]): T[] {
   return a
 }
 
-// 4 giọng ngẫu nhiên cho câu Nghe — thi lại (đề mới) nghe giọng khác, chống
+// 14 giọng ngẫu nhiên cho câu Nghe — thi lại (đề mới) nghe giọng khác, chống
 // học vẹt theo 1 giọng quen thay vì nghe hiểu thật (đặc tả mục ③ N2).
-const LISTENING_VOICES: Voice[] = ['female', 'female2', 'male', 'male2']
+const LISTENING_VOICES: Voice[] = VOICE_OPTIONS.map((v) => v.id)
 function randomVoice(): Voice {
   return LISTENING_VOICES[Math.floor(Math.random() * LISTENING_VOICES.length)] as Voice
 }

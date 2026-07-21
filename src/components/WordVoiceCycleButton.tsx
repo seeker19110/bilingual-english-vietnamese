@@ -2,23 +2,22 @@ import { useState } from 'react'
 import { RotateCw, Loader2 } from 'lucide-react'
 import { getAuthHeader } from '../lib/authHeader'
 import { playAudioUrl, type Voice } from '../lib/tts'
+import { VOICE_OPTIONS } from '../lib/voiceTiers'
 
 interface Props {
   word: string
 }
 
-// Thứ tự xoay vòng cố định 4 giọng — mỗi lần bấm chuyển sang giọng kế tiếp trong vòng.
-const VOICE_CYCLE: Voice[] = ['female', 'female2', 'male', 'male2']
+// Thứ tự xoay vòng cố định 14 giọng — mỗi lần bấm chuyển sang giọng kế tiếp trong vòng.
+const VOICE_CYCLE: Voice[] = VOICE_OPTIONS.map((v) => v.id)
 
-// Nhãn tiếng Việt ngắn gọn cho từng giọng, hiển thị cạnh icon để người dùng biết đang nghe giọng nào.
-const VOICE_LABEL: Record<Voice, string> = {
-  female: 'Nữ 1',
-  female2: 'Nữ 2',
-  male: 'Nam 1',
-  male2: 'Nam 2',
-}
+// Nhãn ngắn gọn cho từng giọng (tên riêng + nhãn giới tính), hiển thị cạnh icon để người
+// dùng biết đang nghe giọng nào.
+const VOICE_LABEL: Record<Voice, string> = Object.fromEntries(
+  VOICE_OPTIONS.map((v) => [v.id, `${v.gender === 'female' ? 'Nữ' : 'Nam'} · ${v.id}`]),
+) as Record<Voice, string>
 
-// Nút phụ "nghe giọng khác" — xoay vòng 4 giọng TTS cho CÙNG 1 từ, phục vụ luyện nghe đa giọng
+// Nút phụ "nghe giọng khác" — xoay vòng 14 giọng TTS cho CÙNG 1 từ, phục vụ luyện nghe đa giọng
 // (N2 trong đặc tả nâng cấp sư phạm). Khác PronounceButton: giọng ở đây KHÔNG lấy từ global pref
 // mà tự xoay vòng nội bộ, và KHÔNG có fallback Web Speech API khi lỗi (bấm lại là được, không
 // cần thiết phải luôn phát được — đây là nút phụ, không phải nút loa chính).

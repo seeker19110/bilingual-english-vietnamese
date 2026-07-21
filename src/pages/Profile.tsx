@@ -16,6 +16,7 @@ import {
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
+import VoicePicker from '../components/VoicePicker'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useToast } from '../context/ToastProvider'
@@ -231,6 +232,9 @@ export default function Profile() {
               : 'Weeks start on Monday. Any study activity (vocab, chat, writing, speaking) counts — same rule as your streak.'}
           </p>
         </section>
+
+        {/* Chọn giọng đọc — 14 giọng Chirp3-HD, áp dụng toàn cục */}
+        <VoicePicker plan={user.plan} isA={isA} />
 
         {/* Âm thanh phản hồi UI (V-6) — đúng/sai/đạt mốc */}
         <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
