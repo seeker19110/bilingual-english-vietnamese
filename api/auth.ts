@@ -19,6 +19,7 @@ import {
   ensureProfileRow,
   getUserById,
 } from './_lib/authService'
+import type { Plan } from './_lib/plan'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -52,7 +53,7 @@ const BodySchema = z.union([RegisterSchema, LoginSchema, GoogleSchema, LogoutSch
 function authResponse(
   token: string,
   user: { id: string; email: string },
-  profile: { plan: 'free' | 'pro'; onboarded: boolean; name: string },
+  profile: { plan: Plan; onboarded: boolean; name: string },
 ) {
   return {
     token,

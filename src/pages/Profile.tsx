@@ -132,12 +132,14 @@ export default function Profile() {
             </p>
             <span
               className={`inline-block mt-2 text-[11px] px-2.5 py-1 rounded-full font-medium ${
-                user.plan === 'pro'
-                  ? 'bg-amber-500/15 text-amber-300 theme-light:text-amber-800 border border-amber-500/20'
-                  : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                user.plan === 'vip'
+                  ? 'bg-violet-500/15 text-violet-300 theme-light:text-violet-800 border border-violet-500/20'
+                  : user.plan === 'pro'
+                    ? 'bg-amber-500/15 text-amber-300 theme-light:text-amber-800 border border-amber-500/20'
+                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
               }`}
             >
-              {user.plan === 'pro' ? T.planPro : T.planFree}
+              {user.plan === 'vip' ? T.planVip : user.plan === 'pro' ? T.planPro : T.planFree}
             </span>
           </div>
         </section>

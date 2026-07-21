@@ -9,6 +9,7 @@
 import { z } from 'zod'
 import { getPgPool } from './_lib/pgPool'
 import { ensureProfileRow } from './_lib/authService'
+import { normalizePlan } from './_lib/plan'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -58,7 +59,7 @@ export default async function handler(req: Request): Promise<Response> {
     const row = rows[0]
     return jsonResponse(
       {
-        plan: row?.plan === 'pro' ? 'pro' : 'free',
+        plan: normalizePlan(row?.plan),
         onboarded: !!row?.onboarded,
         name: row?.name ?? '',
         userLevel: row?.user_level ?? 'beginner',
