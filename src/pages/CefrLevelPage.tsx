@@ -327,6 +327,7 @@ export default function CefrLevelPage() {
         dialogue={dialogue}
         isA={isA}
         accent={accent}
+        plan={user?.plan ?? 'free'}
         onBack={() => setDialogue(null)}
       />,
     )

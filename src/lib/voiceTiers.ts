@@ -82,3 +82,20 @@ export { isFullAccessPromoActive as isVoicePromoActive } from './promo'
 export function getAllowedVoices(plan: Plan, now: Date = new Date()): VoiceId[] {
   return VOICE_TIERS[effectivePlan(plan, now)]
 }
+
+// Chọn NGẪU NHIÊN 1 giọng thuộc đúng giới tính, chỉ trong số giọng gói hiện tại được dùng
+// (server sẽ clamp về giọng hợp lệ nếu client lỡ gửi giọng ngoài quyền — xem
+// api/_lib/voiceAccess.ts — nhưng random ngay trong danh sách allowed để UI hiển thị đúng
+// giọng thực sự phát ra). Dùng cho màn hội thoại 2 nhân vật (DialogueView/LessonView) để mỗi
+// lần mở nghe được giọng khác nhau, giúp người dùng thử nhiều giọng rồi chọn giọng ưng ý làm
+// mặc định (setVoicePref) thay vì luôn cố định 1 giọng như trước.
+export function pickRandomVoice(
+  gender: 'female' | 'male',
+  plan: Plan,
+  now: Date = new Date(),
+): VoiceId {
+  const allowed = new Set(getAllowedVoices(plan, now))
+  const candidates = VOICE_OPTIONS.filter((v) => v.gender === gender && allowed.has(v.id))
+  const pool = candidates.length > 0 ? candidates : VOICE_OPTIONS.filter((v) => v.gender === gender)
+  return pool[Math.floor(Math.random() * pool.length)]!.id
+}
