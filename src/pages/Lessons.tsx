@@ -4,8 +4,7 @@ import { startListening, isSTTSupported } from '../lib/stt'
 import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronounceScore'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import VoiceToggle from '../components/VoiceToggle'
-import RateToggle from '../components/RateToggle'
+import VoiceMenu from '../components/VoiceMenu'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { getViewedIds, markViewed } from '../lib/viewedTracking'
@@ -204,12 +203,7 @@ export default function Lessons() {
           title={selectedMeta.title}
           subtitle={selectedMeta.situation}
           back
-          extra={
-            <div className="flex items-center gap-1.5">
-              <VoiceToggle />
-              <RateToggle />
-            </div>
-          }
+          extra={<VoiceMenu plan={user?.plan ?? 'free'} isA={isA} />}
         />
         {loadingLesson || !lesson ? (
           <div className="flex-1 flex items-center justify-center text-zinc-400">
@@ -228,15 +222,7 @@ export default function Lessons() {
   // Desktop (sm+): layout thường, search ở trên
   return (
     <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
-      <Layout
-        back
-        extra={
-          <div className="flex items-center gap-1.5">
-            <VoiceToggle />
-            <RateToggle />
-          </div>
-        }
-      />
+      <Layout back extra={<VoiceMenu plan={user?.plan ?? 'free'} isA={isA} />} />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2">

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send, Award } from 'lucide-react'
 import Layout from '../components/Layout'
 import RateToggle from '../components/RateToggle'
+import VoiceMenu from '../components/VoiceMenu'
 import PageHeader from '../components/PageHeader'
 import EvaluationResultView from '../components/EvaluationResultView'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
@@ -800,7 +801,12 @@ export default function Speaking() {
               }`
             : undefined
         }
-        extra={<RateToggle />}
+        extra={
+          <div className="flex items-center gap-1.5">
+            <VoiceMenu plan={user.plan} isA={isA} />
+            <RateToggle />
+          </div>
+        }
       />
 
       {!session ? (
