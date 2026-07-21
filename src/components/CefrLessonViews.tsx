@@ -10,7 +10,7 @@
 // component chỉ export component).
 // ──────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import {
   ChevronRight,
   ChevronLeft,
@@ -40,8 +40,10 @@ import {
   setRatePref,
 } from '../lib/tts'
 import type { Voice } from '../lib/tts'
-import { VOICE_OPTIONS } from '../lib/voiceTiers'
+import { pickRandomVoice } from '../lib/voiceTiers'
+import type { Plan } from '../types'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
+import VoiceRoleBadge from './VoiceRoleBadge'
 import WordCard from './WordCard'
 import { InlinePronounce } from '../pages/Lessons'
 import type { GrammarLesson, QuizItem } from '../data/cefr'
@@ -608,11 +610,13 @@ export function DialogueView({
   dialogue,
   isA,
   accent,
+  plan,
   onBack,
 }: {
   dialogue: Dialogue
   isA: boolean
   accent: AccentClasses
+  plan: Plan
   onBack: () => void
 }) {
   const [activeLine, setActiveLine] = useState<number | null>(null)
@@ -633,14 +637,19 @@ export function DialogueView({
   const speedRef = useRef<DlgSpeed>(getRatePref())
   const modeRef = useRef<DlgMode>('en')
 
-  // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng THỨ 2 của giới đó cho B
-  // để 2 nhân vật luôn có giọng khác nhau. Giống cách làm ở src/pages/Lessons.tsx (LessonView).
+  // Phân giọng cho từng nhân vật — RANDOM trong số giọng gói hiện tại cho phép (đúng giới
+  // tính của vai), đổi mỗi lần mở hội thoại khác/mở lại (dialogue.titleEn đổi) để người dùng
+  // nghe thử được nhiều giọng; nếu cùng giới mà trùng giọng thì random lại B tối đa vài lần.
+  // Giống cách làm ở src/pages/Lessons.tsx (LessonView).
   const genderA = dialogue.speakerAGender ?? 'female'
   const genderB = dialogue.speakerBGender ?? 'male'
-  const voicesOfGender = (g: 'female' | 'male') => VOICE_OPTIONS.filter((v) => v.gender === g)
-  const voiceA: Voice = voicesOfGender(genderA)[0]!.id
-  const voiceB: Voice =
-    genderB === genderA ? voicesOfGender(genderB)[1]!.id : voicesOfGender(genderB)[0]!.id
+  const { voiceA, voiceB } = useMemo<{ voiceA: Voice; voiceB: Voice }>(() => {
+    const a = pickRandomVoice(genderA, plan)
+    let b = pickRandomVoice(genderB, plan)
+    for (let i = 0; i < 5 && b === a; i++) b = pickRandomVoice(genderB, plan)
+    return { voiceA: a, voiceB: b }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogue.titleEn, genderA, genderB, plan])
 
   // Dừng audio khi back
   useEffect(
@@ -858,6 +867,12 @@ export function DialogueView({
               </span>
             </div>
           )}
+        </div>
+
+        {/* Giọng đang phát cho từng nhân vật (random mỗi lần mở) + nút đặt làm mặc định */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 px-1">
+          <VoiceRoleBadge voice={voiceA} gender={genderA} label="A" isA={isA} />
+          <VoiceRoleBadge voice={voiceB} gender={genderB} label="B" isA={isA} />
         </div>
       </div>
 

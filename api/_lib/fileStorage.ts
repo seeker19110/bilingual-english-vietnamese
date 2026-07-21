@@ -14,20 +14,15 @@
 // postgres/schema.sql). Để bucket R2 private sẽ làm vỡ hoàn toàn việc phát audio.
 
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import * as fs from 'node:fs/promises'
+import * as path from 'node:path'
 
-// Chỉ import fs khi chạy trên Node.js (VPS) — không chạy được trên Vercel Edge.
-// Dùng `new Function` để esbuild không phân tích static và không bundle fs vào Edge bundle.
-let fsPromises: typeof import('fs/promises') | null = null
-let pathModule: typeof import('path') | null = null
-
-async function getNodeModules() {
-  if (!fsPromises) {
-    const dynImport = new Function('m', 'return import(m)') as (m: string) => Promise<unknown>
-    fsPromises = (await dynImport('fs/promises')) as typeof import('fs/promises')
-    pathModule = (await dynImport('path')) as typeof import('path')
-  }
-  return { fs: fsPromises, path: pathModule! }
-}
+// Server chỉ chạy Node.js (Express/VPS, xem server.ts) — không còn deploy Vercel Edge, nên
+// import thẳng 'fs/promises' + 'path' như bình thường. (Trước đây dùng `new Function('m',
+// 'return import(m)')` để né esbuild bundle fs vào Edge bundle — chiêu này cũng khiến
+// saveLocal() lỗi "A dynamic import callback was not specified" khi chạy dưới Vitest, vì
+// dynamic import gọi từ 1 Function tạo bằng `new Function` không có host-defined module
+// record để Node gắn importModuleDynamically callback vào.)
 
 function isR2Mode(): boolean {
   return process.env.STORAGE_DRIVER === 'r2'
@@ -77,8 +72,6 @@ async function saveLocal(
   data: ArrayBuffer,
   baseUrl: string,
 ): Promise<string> {
-  const { fs, path } = await getNodeModules()
-
   // Ví dụ: /root/bilingual-english-vietnamese/uploads/tts-cache/en-US/female/abc.mp3
   const fullPath = path.join(getUploadsRoot(), bucket, fileName)
   const dir = path.dirname(fullPath)

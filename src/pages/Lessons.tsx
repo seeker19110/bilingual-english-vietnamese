@@ -4,8 +4,7 @@ import { startListening, isSTTSupported } from '../lib/stt'
 import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronounceScore'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import VoiceToggle from '../components/VoiceToggle'
-import RateToggle from '../components/RateToggle'
+import VoiceMenu from '../components/VoiceMenu'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { getViewedIds, markViewed } from '../lib/viewedTracking'
@@ -18,10 +17,12 @@ import {
   prefetchSpeech,
   getRatePref,
   setRatePref,
+  type Voice,
 } from '../lib/tts'
-import { VOICE_OPTIONS } from '../lib/voiceTiers'
+import { pickRandomVoice } from '../lib/voiceTiers'
+import VoiceRoleBadge from '../components/VoiceRoleBadge'
 import { loadIndex, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
-import type { Direction } from '../types'
+import type { Direction, Plan } from '../types'
 
 const PAGE_SIZE = 10
 
@@ -204,12 +205,7 @@ export default function Lessons() {
           title={selectedMeta.title}
           subtitle={selectedMeta.situation}
           back
-          extra={
-            <div className="flex items-center gap-1.5">
-              <VoiceToggle />
-              <RateToggle />
-            </div>
-          }
+          extra={<VoiceMenu plan={user?.plan ?? 'free'} isA={isA} />}
         />
         {loadingLesson || !lesson ? (
           <div className="flex-1 flex items-center justify-center text-zinc-400">
@@ -217,7 +213,13 @@ export default function Lessons() {
             {isA ? 'Đang tải bài học…' : 'Loading lesson…'}
           </div>
         ) : (
-          <LessonView lesson={lesson} isA={isA} color={c} onBack={() => setSelectedMeta(null)} />
+          <LessonView
+            lesson={lesson}
+            isA={isA}
+            color={c}
+            plan={user?.plan ?? 'free'}
+            onBack={() => setSelectedMeta(null)}
+          />
         )}
       </div>
     )
@@ -228,15 +230,7 @@ export default function Lessons() {
   // Desktop (sm+): layout thường, search ở trên
   return (
     <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
-      <Layout
-        back
-        extra={
-          <div className="flex items-center gap-1.5">
-            <VoiceToggle />
-            <RateToggle />
-          </div>
-        }
-      />
+      <Layout back extra={<VoiceMenu plan={user?.plan ?? 'free'} isA={isA} />} />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2">
@@ -438,21 +432,27 @@ function LessonView({
   lesson,
   isA,
   color,
+  plan,
   onBack,
 }: {
   lesson: Lesson
   isA: boolean
   color: (typeof COLORS)[0]
+  plan: Plan
   onBack: () => void
 }) {
-  // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng THỨ 2 của giới đó cho B
-  // để 2 nhân vật luôn có giọng khác nhau.
+  // Phân giọng cho từng nhân vật — RANDOM trong số giọng gói hiện tại cho phép (đúng giới
+  // tính của vai), đổi mỗi lần mở bài học khác/mở lại, để người dùng nghe thử nhiều giọng rồi
+  // chọn giọng ưng ý làm mặc định (nút "Đặt mặc định" ở VoiceRoleBadge).
   const genderA = lesson.speakerAGender ?? 'female'
   const genderB = lesson.speakerBGender ?? 'male'
-  const voicesOfGender = (g: 'female' | 'male') => VOICE_OPTIONS.filter((v) => v.gender === g)
-  const voiceA = voicesOfGender(genderA)[0]!.id
-  const voiceB =
-    genderB === genderA ? voicesOfGender(genderB)[1]!.id : voicesOfGender(genderB)[0]!.id
+  const { voiceA, voiceB } = useMemo<{ voiceA: Voice; voiceB: Voice }>(() => {
+    const a = pickRandomVoice(genderA, plan)
+    let b = pickRandomVoice(genderB, plan)
+    for (let i = 0; i < 5 && b === a; i++) b = pickRandomVoice(genderB, plan)
+    return { voiceA: a, voiceB: b }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lesson.id, genderA, genderB, plan])
 
   const [activeTurn, setActiveTurn] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)
@@ -743,6 +743,12 @@ function LessonView({
                 </span>
               </div>
             )}
+          </div>
+
+          {/* Giọng đang phát cho từng nhân vật (random mỗi lần mở) + nút đặt làm mặc định */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 px-1">
+            <VoiceRoleBadge voice={voiceA} gender={genderA} label="A" isA={isA} />
+            <VoiceRoleBadge voice={voiceB} gender={genderB} label="B" isA={isA} />
           </div>
         </div>
       </div>

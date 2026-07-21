@@ -82,3 +82,45 @@ export { isFullAccessPromoActive as isVoicePromoActive } from './promo'
 export function getAllowedVoices(plan: Plan, now: Date = new Date()): VoiceId[] {
   return VOICE_TIERS[effectivePlan(plan, now)]
 }
+
+// Chọn NGẪU NHIÊN 1 giọng thuộc đúng giới tính, chỉ trong số giọng gói hiện tại được dùng
+// (server sẽ clamp về giọng hợp lệ nếu client lỡ gửi giọng ngoài quyền — xem
+// api/_lib/voiceAccess.ts — nhưng random ngay trong danh sách allowed để UI hiển thị đúng
+// giọng thực sự phát ra). Dùng cho màn hội thoại 2 nhân vật (DialogueView/LessonView) để mỗi
+// lần mở nghe được giọng khác nhau, giúp người dùng thử nhiều giọng rồi chọn giọng ưng ý làm
+// mặc định (setVoicePref) thay vì luôn cố định 1 giọng như trước.
+export function pickRandomVoice(
+  gender: 'female' | 'male',
+  plan: Plan,
+  now: Date = new Date(),
+): VoiceId {
+  const allowed = new Set(getAllowedVoices(plan, now))
+  const candidates = VOICE_OPTIONS.filter((v) => v.gender === gender && allowed.has(v.id))
+  const pool = candidates.length > 0 ? candidates : VOICE_OPTIONS.filter((v) => v.gender === gender)
+  return pool[Math.floor(Math.random() * pool.length)]!.id
+}
+
+// ── Cache "giọng gói hiện tại cho phép" ─────────────────────────────────────
+// lib/tts.ts (chế độ giọng ngẫu nhiên toàn cục) không biết `plan` thật của user — chỉ
+// AuthProvider mới biết sau khi đăng nhập. Nên AuthProvider ghi cache này mỗi khi có user,
+// còn tts.ts chỉ ĐỌC để random trong đúng phạm vi gói, tránh random ra giọng rồi bị server
+// clamp âm thầm về DEFAULT_VOICE (clampVoiceToPlan, api/_lib/voiceAccess.ts).
+const ALLOWED_CACHE_KEY = 'voice_allowed_cache'
+const SAFE_DEFAULT_ALLOWED: VoiceId[] = ['Kore', 'Puck'] // gói Free — an toàn trước khi có cache
+
+export function cacheAllowedVoices(plan: Plan, now: Date = new Date()): void {
+  localStorage.setItem(ALLOWED_CACHE_KEY, JSON.stringify(getAllowedVoices(plan, now)))
+}
+
+export function getCachedAllowedVoices(): VoiceId[] {
+  try {
+    const raw = localStorage.getItem(ALLOWED_CACHE_KEY)
+    if (!raw) return SAFE_DEFAULT_ALLOWED
+    const arr: unknown = JSON.parse(raw)
+    return Array.isArray(arr) && arr.every((v) => isValidVoiceId(String(v)))
+      ? (arr as VoiceId[])
+      : SAFE_DEFAULT_ALLOWED
+  } catch {
+    return SAFE_DEFAULT_ALLOWED
+  }
+}
