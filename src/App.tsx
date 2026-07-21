@@ -40,6 +40,10 @@ const Learn = lazyWithRetry(() => import('./pages/Learn'))
 // Trang riêng của từng cấp CEFR (/learning-path/a1…b2) — lazy-load tương tự.
 const CefrLevelPage = lazyWithRetry(() => import('./pages/CefrLevelPage'))
 
+// Trang cấu hình hạn mức/khuyến mãi — chỉ admin (ADMIN_EMAILS) dùng được, lazy-load vì
+// hiếm khi truy cập.
+const AdminSettings = lazyWithRetry(() => import('./pages/AdminSettings'))
+
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
 // Hiện khung skeleton nhấp nháy thay vì chữ trơ, đỡ cảm giác đơ.
 function PageLoading() {
@@ -197,6 +201,14 @@ export default function App() {
                       element={
                         <RequireAuth>
                           <Dashboard />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/admin-settings"
+                      element={
+                        <RequireAuth>
+                          <AdminSettings />
                         </RequireAuth>
                       }
                     />

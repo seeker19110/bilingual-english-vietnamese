@@ -147,7 +147,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Không tin voice client gửi lên — hạ về giọng cho phép đúng gói của user (fail-safe,
   // không lỗi cứng: UI đã tự ẩn lựa chọn ngoài quyền, nhánh này chỉ chặn gọi thẳng API).
   const { plan } = await ensureProfileRow(authResult.userId, '')
-  const voice = clampVoiceToPlan(parsed.data.voice, plan)
+  const voice = await clampVoiceToPlan(parsed.data.voice, plan)
 
   let pool
   try {

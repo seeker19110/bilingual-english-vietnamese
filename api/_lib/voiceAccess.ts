@@ -11,15 +11,19 @@ const VOICE_TIERS: Record<Plan, VoiceId[]> = {
   vip: VOICE_IDS,
 }
 
-function getAllowedVoices(plan: Plan, now: Date): VoiceId[] {
-  return VOICE_TIERS[effectivePlan(plan, now)]
+async function getAllowedVoices(plan: Plan, now: Date): Promise<VoiceId[]> {
+  return VOICE_TIERS[await effectivePlan(plan, now)]
 }
 
 // Trả về đúng voice nếu user được phép dùng; nếu không (bị hạ gói / hết khuyến mãi / cố tình
 // gửi voice ngoài quyền) → âm thầm hạ về DEFAULT_VOICE thay vì lỗi cứng, giữ trải nghiệm mượt
 // (giống cách app fail-open ở usage.ts) — UI phía client đã tự ẩn lựa chọn ngoài quyền rồi,
 // nên nhánh này chỉ chặn trường hợp cố tình gọi thẳng API.
-export function clampVoiceToPlan(voice: VoiceId, plan: Plan, now: Date = new Date()): VoiceId {
-  const allowed = getAllowedVoices(plan, now)
+export async function clampVoiceToPlan(
+  voice: VoiceId,
+  plan: Plan,
+  now: Date = new Date(),
+): Promise<VoiceId> {
+  const allowed = await getAllowedVoices(plan, now)
   return allowed.includes(voice) ? voice : DEFAULT_VOICE
 }

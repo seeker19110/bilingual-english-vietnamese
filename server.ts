@@ -34,6 +34,7 @@ import progressHandler from './api/progress.js'
 import historyHandler from './api/history.js'
 import challengeHandler from './api/challenge.js'
 import tutorFeedbackHandler from './api/tutor-feedback.js'
+import adminSettingsHandler from './api/admin-settings.js'
 
 const app = express()
 
@@ -146,6 +147,7 @@ app.all('/api/progress', wrapEdge(progressHandler))
 app.all('/api/history', wrapEdge(historyHandler))
 app.all('/api/challenge', wrapEdge(challengeHandler))
 app.all('/api/tutor-feedback', wrapEdge(tutorFeedbackHandler))
+app.all('/api/admin-settings', wrapEdge(adminSettingsHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
