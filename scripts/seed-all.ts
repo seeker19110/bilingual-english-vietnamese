@@ -178,11 +178,35 @@ function hashText(text: string, lang: Lang, voice: VoiceId): string {
     .digest('hex')
     .slice(0, 32)
 }
-// Hash cũ (sai): thiếu VOICE_VERSION — dùng để tìm entry đã seed trước đây
+// Hash cũ (sai): thiếu VOICE_VERSION — dùng để tìm entry đã seed trước đây (từ hồi
+// VOICE_VERSION chưa tồn tại, trước cả đợt đổi tên giọng bên dưới).
 function oldHashText(text: string, lang: Lang, voice: VoiceId): string {
   return crypto
     .createHash('sha256')
     .update(text + lang + voice)
+    .digest('hex')
+    .slice(0, 32)
+}
+
+// ── Đổi tên giọng 2026-07-21: 'female'/'male'/'female2'/'male2' → tên thật Chirp3-HD
+// ('Kore'/'Puck'/'Aoede'/'Charon') + VOICE_VERSION 'chirp3hd-v2' → 'chirp3hd-v3'. Âm thanh
+// SINH RA GIỐNG HỆT (cùng 1 giọng Google, chỉ đổi định danh trong app) — nên có thể "gắn
+// nhãn lại" cache cũ dưới tên/hash MỚI thay vì gọi lại Google TTS tốn tiền.
+const OLD_VOICE_VERSION = 'chirp3hd-v2'
+const OLD_VOICE_ALIAS: Partial<Record<VoiceId, string>> = {
+  Kore: 'female',
+  Puck: 'male',
+  Aoede: 'female2',
+  Charon: 'male2',
+}
+// Hash theo lược đồ tên giọng CŨ (trước đợt đổi tên 2026-07-21) — null nếu voice này
+// không tồn tại trước đợt đổi tên (10 giọng mới hoàn toàn, không có tiền thân).
+function legacyVoiceNameHash(text: string, lang: Lang, voice: VoiceId): string | null {
+  const oldVoiceName = OLD_VOICE_ALIAS[voice]
+  if (!oldVoiceName) return null
+  return crypto
+    .createHash('sha256')
+    .update(text + lang + oldVoiceName + OLD_VOICE_VERSION)
     .digest('hex')
     .slice(0, 32)
 }
@@ -837,6 +861,32 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
   try {
     if (task.type === 'pron') {
       const { word, voice } = task
+
+      // Trước khi gọi Google TTS: thử remap từ cache cũ dưới TÊN GIỌNG CŨ (đợt đổi tên
+      // 2026-07-21: female→Kore, male→Puck...) — audio KHÔNG mã hoá (khác tts_cache) nên
+      // chỉ cần copy nguyên audio_url sang dòng mới, không cần tải/upload lại gì cả.
+      if (!FORCE) {
+        const oldVoiceName = OLD_VOICE_ALIAS[voice]
+        if (oldVoiceName) {
+          const { rows: oldRows } = await pool.query<{ audio_url: string }>(
+            'select audio_url from public.pronunciations where word = $1 and voice = $2',
+            [word, oldVoiceName],
+          )
+          const oldAudioUrl = oldRows[0]?.audio_url
+          if (oldAudioUrl) {
+            await pool.query(
+              `insert into public.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
+               values ($1, $2, $3, 'en-US', $4, now())
+               on conflict (word, voice) do update set
+                 audio_url = excluded.audio_url, voice_version = excluded.voice_version,
+                 last_accessed_at = now()`,
+              [word, voice, oldAudioUrl, VOICE_VERSION],
+            )
+            return { status: 'remapped' }
+          }
+        }
+      }
+
       const audioBuffer = await generateAudioFromGoogle(word, voice, 'en-US')
       // encodeURIComponent — GIỐNG HỆT api/pronunciation.ts (API thật) — để hỗ trợ từ
       // có dấu (café, naïve...) trong URL, dù key thô vẫn hợp lệ với R2/local.
@@ -856,7 +906,6 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
     // pattern task
     const { text, lang, voice } = task
     const hash = hashText(text, lang, voice)
-    const oldHash = oldHashText(text, lang, voice)
 
     if (!FORCE) {
       const { rows } = await pool.query('select audio_url from public.tts_cache where hash = $1', [
@@ -865,16 +914,27 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
       if (rows.length > 0) return { status: 'skip' }
     }
 
-    // Trước khi gọi Google TTS: thử remap từ cache cũ (hash thiếu VOICE_VERSION).
-    // Nếu có → tải về → giải mã bằng oldHash → re-encrypt bằng hash mới → upload.
+    // Trước khi gọi Google TTS: thử remap từ cache cũ, theo 2 lược đồ hash cũ (thử lần
+    // lượt, dừng ở lược đồ đầu tiên tìm thấy):
+    //   1. Thiếu hẳn VOICE_VERSION (từ hồi khái niệm này chưa tồn tại)
+    //   2. Đúng VOICE_VERSION cũ NHƯNG tên giọng cũ (đợt đổi tên 2026-07-21:
+    //      female/male/female2/male2 → Kore/Puck/Aoede/Charon — CÙNG 1 giọng Google,
+    //      chỉ đổi định danh trong app)
+    // Nếu có → tải về → giải mã bằng hash cũ → re-encrypt bằng hash mới → upload.
     // Không tốn API quota, chỉ tốn băng thông Storage.
     if (!FORCE) {
-      const { rows: oldRows } = await pool.query<{ audio_url: string }>(
-        'select audio_url from public.tts_cache where hash = $1',
-        [oldHash],
-      )
-      const oldCached = oldRows[0]
-      if (oldCached?.audio_url) {
+      const legacyHashes = [
+        oldHashText(text, lang, voice),
+        legacyVoiceNameHash(text, lang, voice),
+      ].filter((h): h is string => h !== null)
+
+      for (const oldHash of legacyHashes) {
+        const { rows: oldRows } = await pool.query<{ audio_url: string }>(
+          'select audio_url from public.tts_cache where hash = $1',
+          [oldHash],
+        )
+        const oldCached = oldRows[0]
+        if (!oldCached?.audio_url) continue
         try {
           const res = await fetch(oldCached.audio_url)
           if (res.ok) {
@@ -892,7 +952,7 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
             return { status: 'remapped' }
           }
         } catch {
-          // Remap thất bại (file hỏng, mạng lỗi...) → tiếp tục generate mới bên dưới
+          // Remap thất bại (file hỏng, mạng lỗi...) → thử lược đồ kế tiếp / generate mới bên dưới
         }
       }
     }
