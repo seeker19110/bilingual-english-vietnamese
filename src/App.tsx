@@ -102,12 +102,32 @@ function usePrefetchPages() {
   }, [])
 }
 
+// Chu kỳ đồng bộ định kỳ khi app mở lâu (không đóng tab) — 1h là đủ mới cho cấu hình hiếm
+// khi đổi (admin sửa hạn mức/khuyến mãi), và hầu như MIỄN PHÍ nhờ ETag/If-None-Match (xem
+// refreshAppSettings() ở lib/appSettings.ts): admin chưa đổi gì → server trả 304 rỗng.
+// Cân nhắc đã chọn polling thay vì server đẩy (WebSocket/SSE): cấu hình này đổi rất hiếm
+// (admin sửa tay), không cần độ trễ tức thời — dựng thêm kết nối bền (WebSocket/SSE) chỉ để
+// đẩy vài con số hiếm khi đổi là thừa hạ tầng so với lợi ích, trong khi polling 1h + ETag đã
+// gần như miễn phí và không cần thêm gì ở server.
+const APP_SETTINGS_POLL_MS = 60 * 60 * 1000
+
 export default function App() {
   usePrefetchPages()
-  // Đồng bộ hạn mức/khuyến mãi thật từ server ngay lúc mở app (public, không cần đăng
-  // nhập) — trước đó dùng bản cache localStorage hoặc mặc định tĩnh (xem lib/appSettings.ts).
+  // Đồng bộ hạn mức/khuyến mãi thật từ server: ngay lúc mở app, định kỳ mỗi 1h nếu app mở
+  // lâu, và mỗi lần quay lại tab (visibilitychange) — trình duyệt thường tạm dừng
+  // setInterval khi tab ẩn/máy ngủ, nên bắt thêm sự kiện này để không phải đợi đủ 1h mới
+  // đồng bộ lại sau khi user quay lại dùng tiếp.
   useEffect(() => {
     void refreshAppSettings()
+    const interval = setInterval(() => void refreshAppSettings(), APP_SETTINGS_POLL_MS)
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void refreshAppSettings()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
   }, [])
   return (
     <AuthProvider>
