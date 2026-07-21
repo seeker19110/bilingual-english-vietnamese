@@ -12,6 +12,7 @@ import { randomBytes, createHash } from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import { OAuth2Client } from 'google-auth-library'
 import { getPgPool } from './pgPool'
+import { normalizePlan, type Plan } from './plan'
 
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 30 ngày — khớp thời hạn session Supabase cũ
 const BCRYPT_ROUNDS = 12
@@ -190,7 +191,7 @@ export async function revokeSession(rawToken: string): Promise<void> {
 
 // ── Profile (tối thiểu cho luồng auth — phần còn lại của `profiles` thuộc Giai đoạn C) ──
 export interface ProfileInfo {
-  plan: 'free' | 'pro'
+  plan: Plan
   onboarded: boolean
   name: string
 }
@@ -209,7 +210,7 @@ export async function ensureProfileRow(userId: string, name: string): Promise<Pr
   )
   const row = rows[0]
   return {
-    plan: row?.plan === 'pro' ? 'pro' : 'free',
+    plan: normalizePlan(row?.plan),
     onboarded: !!row?.onboarded,
     name: row?.name ?? name,
   }

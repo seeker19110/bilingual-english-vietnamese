@@ -6,9 +6,18 @@
 
 import { getAccessToken } from './authHeader'
 import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
+import {
+  isValidVoiceId,
+  DEFAULT_VOICE,
+  DEFAULT_MALE_VOICE,
+  VOICE_OPTIONS,
+  type VoiceId,
+} from './voiceTiers'
 
 type Lang = 'en-US' | 'vi-VN'
-export type Voice = 'female' | 'female2' | 'male' | 'male2'
+export type Voice = VoiceId
+
+const MALE_VOICE_IDS = new Set(VOICE_OPTIONS.filter((v) => v.gender === 'male').map((v) => v.id))
 
 // ── Thẻ <audio> DUY NHẤT dùng chung cho mọi lần phát ────────────────────────
 // iOS/Safari (kể cả khi cài PWA) chỉ cho JavaScript phát audio trên một thẻ
@@ -105,18 +114,33 @@ export function resumeCurrentAudio() {
   if ('speechSynthesis' in window) window.speechSynthesis.resume()
 }
 
-// ── Giọng đọc toàn cục (nữ/nam) ─────────────────────────────────────────────
+// ── Giọng đọc toàn cục (1-trong-14 giọng Chirp3-HD) ─────────────────────────
 // Lưu lựa chọn của người dùng vào localStorage để giữ nguyên qua các lần mở app.
-// Mọi nút loa (KaraokeText, PronounceButton) đọc giá trị này lúc bấm, nên đổi 1 chỗ là áp dụng tất cả.
+// Mọi nút loa (KaraokeText, PronounceButton) đọc giá trị này lúc bấm, nên đổi ở Cài đặt
+// (VoicePicker trong Profile.tsx) hoặc VoiceToggle nhanh trên header là áp dụng khắp app.
 const VOICE_KEY = 'tts_voice'
 
+// Giá trị cũ (trước khi mở rộng lên 14 giọng) — map sang giọng mới tương ứng để không mất
+// lựa chọn đã lưu của user cũ.
+const LEGACY_VOICE_MAP: Record<string, Voice> = {
+  female: 'Kore',
+  female2: 'Aoede',
+  male: 'Puck',
+  male2: 'Charon',
+}
+
 export function getVoicePref(): Voice {
-  return localStorage.getItem(VOICE_KEY) === 'male' ? 'male' : 'female'
+  const raw = localStorage.getItem(VOICE_KEY) ?? ''
+  if (isValidVoiceId(raw)) return raw
+  return LEGACY_VOICE_MAP[raw] ?? DEFAULT_VOICE
 }
 
 export function setVoicePref(voice: Voice): void {
   localStorage.setItem(VOICE_KEY, voice)
 }
+
+export { DEFAULT_VOICE, DEFAULT_MALE_VOICE }
+export type { VoiceId } from './voiceTiers'
 
 // ── Tốc độ phát toàn cục (0.75× / 1× / 1.25×) ───────────────────────────────
 // Cùng cơ chế với giọng đọc ở trên: lưu localStorage, mọi nơi gọi speak()/
@@ -407,10 +431,11 @@ function speakViaWebSpeech(
     }
 
     // Cố chọn giọng nam/nữ khớp ngôn ngữ nếu trình duyệt có sẵn (không phải lúc nào cũng có)
+    const isMale = MALE_VOICE_IDS.has(voice)
     const wanted = window.speechSynthesis.getVoices().find((v) => {
       if (!v.lang.startsWith(lang.slice(0, 2))) return false
       const n = v.name.toLowerCase()
-      return voice === 'male'
+      return isMale
         ? n.includes('male') || n.includes('david') || n.includes('nam')
         : n.includes('female') || n.includes('zira') || n.includes('samantha') || n.includes('nữ')
     })

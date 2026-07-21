@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { getPgPool } from './pgPool'
 import { checkAndConsumeUsage, refundUsage, isUsageMode } from './usage'
+import { invalidateSettingsCache } from './settings'
 
 // Mock Pool Postgres để test logic đếm/hoàn lượt OFFLINE (không cần DB thật).
 vi.mock('./pgPool', () => ({ getPgPool: vi.fn() }))
@@ -8,16 +9,49 @@ const mockedGetPool = vi.mocked(getPgPool)
 
 beforeEach(() => {
   vi.spyOn(console, 'warn').mockImplementation(() => {})
+  // getAppSettings() cache trong bộ nhớ tiến trình (TTL 30s) — reset giữa các test để mock
+  // pool mới không bị "ăn" giá trị cache từ test trước.
+  invalidateSettingsCache()
 })
 afterEach(() => {
   vi.restoreAllMocks()
 })
 
-// query giả: phân biệt câu lệnh theo chuỗi SQL (chứa 'profiles' / 'consume_usage' / 'refund_usage').
-function mockPool(opts: { plan?: 'free' | 'pro'; consumeResult?: boolean; queryError?: Error }) {
+// Dòng app_settings giả — promo_until: null (tắt khuyến mãi) trừ khi test cố tình bật, để
+// không làm nhiễu các assertion về hạn mức riêng từng gói.
+const FAKE_SETTINGS_ROW = {
+  free_chat_limit: 5,
+  free_writing_limit: 5,
+  free_speaking_limit: 5,
+  free_stt_limit: 5,
+  free_pronounce_limit: 5,
+  pro_chat_limit: 100,
+  pro_writing_limit: 100,
+  pro_speaking_limit: 100,
+  pro_stt_limit: 100,
+  pro_pronounce_limit: 100,
+  vip_chat_limit: 1_000_000,
+  vip_writing_limit: 1_000_000,
+  vip_speaking_limit: 1_000_000,
+  vip_stt_limit: 1_000_000,
+  vip_pronounce_limit: 1_000_000,
+  promo_until: null as string | null,
+  updated_at: '2026-01-01T00:00:00.000Z',
+}
+
+// query giả: phân biệt câu lệnh theo chuỗi SQL (chứa 'profiles' / 'app_settings' /
+// 'consume_usage' / 'refund_usage').
+function mockPool(opts: {
+  plan?: 'free' | 'pro'
+  consumeResult?: boolean
+  queryError?: Error
+  promoUntil?: string | null
+}) {
   const query = vi.fn(async (sql: string) => {
     if (opts.queryError) throw opts.queryError
     if (sql.includes('from public.profiles')) return { rows: [{ plan: opts.plan ?? 'free' }] }
+    if (sql.includes('from public.app_settings'))
+      return { rows: [{ ...FAKE_SETTINGS_ROW, promo_until: opts.promoUntil ?? null }] }
     if (sql.includes('consume_usage'))
       return { rows: [{ consume_usage: opts.consumeResult ?? true }] }
     if (sql.includes('refund_usage')) return { rows: [] }
@@ -53,7 +87,18 @@ describe('checkAndConsumeUsage', () => {
     const consumeCall = vi
       .mocked(pool.query)
       .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
-    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 60])
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 100])
+  })
+
+  it('khuyến mãi đang bật → mọi gói (kể cả free) được nâng thành vip (không giới hạn)', async () => {
+    const future = new Date(Date.now() + 86_400_000).toISOString()
+    const pool = mockPool({ plan: 'free', consumeResult: true, promoUntil: future })
+    mockedGetPool.mockReturnValue(pool)
+    await checkAndConsumeUsage('u1', 'chat')
+    const consumeCall = vi
+      .mocked(pool.query)
+      .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'chat_count', 1_000_000])
   })
 })
 

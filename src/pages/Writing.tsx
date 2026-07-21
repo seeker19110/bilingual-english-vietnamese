@@ -11,7 +11,9 @@ import { useCloudSync } from '../lib/useCloudSync'
 import { useApiThrottle } from '../lib/useApiThrottle'
 import { callClaude, parseJson } from '../lib/ai'
 import { writingSystemPrompt } from '../prompts'
-import { LIMITS, type WritingSubmission, type Direction } from '../types'
+import type { WritingSubmission, Direction } from '../types'
+import { effectivePlan } from '../lib/promo'
+import { getLimits } from '../lib/appSettings'
 
 // Đề bài mẫu — Chiều A: đề IELTS tiếng Anh | Chiều B: đề viết tiếng Việt
 const SAMPLE_PROMPTS_A = [
@@ -253,7 +255,7 @@ export default function Writing() {
       return
     }
     const usage = getUsage(user.id)
-    if (usage.writingCount >= LIMITS[user.plan].writing) {
+    if (usage.writingCount >= getLimits()[effectivePlan(user.plan)].writing) {
       setError(
         isA ? 'Bạn đã dùng hết lượt chấm bài hôm nay.' : "You've used all grading sessions today.",
       )

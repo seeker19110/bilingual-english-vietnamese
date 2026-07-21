@@ -23,6 +23,7 @@ import {
 import Layout from '../components/Layout'
 import { getStreak, hasStudiedToday, getDirection, setDirection } from '../lib/storage'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
+import { VOICE_OPTIONS, DEFAULT_VOICE, DEFAULT_MALE_VOICE } from '../lib/voiceTiers'
 import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
@@ -273,9 +274,12 @@ export default function Home() {
     setVoicePref(v)
   }
 
-  // Bấm cả khối để đổi giọng Nữ ↔ Nam (giống ô Ngôn ngữ học)
+  const voiceGender = VOICE_OPTIONS.find((v) => v.id === voice)?.gender ?? 'female'
+
+  // Bấm cả khối để đổi giọng Nữ ↔ Nam (giống ô Ngôn ngữ học) — chọn 1 trong 14 giọng cụ thể
+  // thì vào trang Cài đặt (Profile.tsx → VoicePicker).
   function toggleVoice() {
-    chooseVoice(voice === 'female' ? 'male' : 'female')
+    chooseVoice(voiceGender === 'female' ? DEFAULT_MALE_VOICE : DEFAULT_VOICE)
   }
 
   const MODES = getModes(dir, T)
@@ -484,12 +488,12 @@ export default function Home() {
             type="button"
             onClick={toggleVoice}
             title={isA ? 'Nhấn để đổi giọng đọc' : 'Tap to switch voice'}
-            aria-label={`${isA ? 'Giọng đọc' : 'Voice'}: ${voice === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'}`}
+            aria-label={`${isA ? 'Giọng đọc' : 'Voice'}: ${voiceGender === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'} (${voice})`}
             className="flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3 border bg-zinc-900/80 border-zinc-700/60 hover:border-zinc-600 transition-all active:scale-[0.98]"
           >
             <Mic className="w-4 h-4 text-zinc-400" />
             <span className="text-xs font-semibold leading-none text-center text-zinc-200">
-              {voice === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'}
+              {voiceGender === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'}
             </span>
             <span className="text-[11px] leading-none text-center text-zinc-400">
               {isA ? 'Giọng đọc' : 'Voice'}

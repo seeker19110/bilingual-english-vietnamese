@@ -19,6 +19,7 @@ import {
   getRatePref,
   setRatePref,
 } from '../lib/tts'
+import { VOICE_OPTIONS } from '../lib/voiceTiers'
 import { loadIndex, loadLesson, type Lesson, type LessonMeta } from '../data/lessons/loader'
 import type { Direction } from '../types'
 
@@ -444,19 +445,14 @@ function LessonView({
   color: (typeof COLORS)[0]
   onBack: () => void
 }) {
-  // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng thứ 2 cho B
-  // để 2 nhân vật luôn có giọng khác nhau (female vs female2, male vs male2)
+  // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng THỨ 2 của giới đó cho B
+  // để 2 nhân vật luôn có giọng khác nhau.
   const genderA = lesson.speakerAGender ?? 'female'
   const genderB = lesson.speakerBGender ?? 'male'
-  const voiceA = genderA === 'female' ? 'female' : 'male'
+  const voicesOfGender = (g: 'female' | 'male') => VOICE_OPTIONS.filter((v) => v.gender === g)
+  const voiceA = voicesOfGender(genderA)[0]!.id
   const voiceB =
-    genderB === genderA
-      ? genderB === 'female'
-        ? 'female2'
-        : 'male2'
-      : genderB === 'female'
-        ? 'female'
-        : 'male'
+    genderB === genderA ? voicesOfGender(genderB)[1]!.id : voicesOfGender(genderB)[0]!.id
 
   const [activeTurn, setActiveTurn] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)

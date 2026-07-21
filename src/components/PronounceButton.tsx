@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
 import { getAuthHeader } from '../lib/authHeader'
 import { getVoicePref, playAudioUrl } from '../lib/tts'
+import { VOICE_OPTIONS } from '../lib/voiceTiers'
 
 interface Props {
   word: string
@@ -16,14 +17,14 @@ export default function PronounceButton({ word }: Props) {
   const [audioUrls, setAudioUrls] = useState<Record<string, string>>({})
 
   function speakWithWebSpeech() {
-    const voice = getVoicePref()
+    const gender = VOICE_OPTIONS.find((v) => v.id === getVoicePref())?.gender ?? 'female'
     const utterance = new SpeechSynthesisUtterance(word)
     utterance.lang = 'en-US'
     const voices = window.speechSynthesis.getVoices()
     const preferred = voices.find(
       (v) =>
         v.lang.startsWith('en') &&
-        (voice === 'male'
+        (gender === 'male'
           ? v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david')
           : v.name.toLowerCase().includes('female') ||
             v.name.toLowerCase().includes('zira') ||

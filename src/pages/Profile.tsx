@@ -16,6 +16,7 @@ import {
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
+import VoicePicker from '../components/VoicePicker'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useToast } from '../context/ToastProvider'
@@ -132,12 +133,14 @@ export default function Profile() {
             </p>
             <span
               className={`inline-block mt-2 text-[11px] px-2.5 py-1 rounded-full font-medium ${
-                user.plan === 'pro'
-                  ? 'bg-amber-500/15 text-amber-300 theme-light:text-amber-800 border border-amber-500/20'
-                  : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                user.plan === 'vip'
+                  ? 'bg-violet-500/15 text-violet-300 theme-light:text-violet-800 border border-violet-500/20'
+                  : user.plan === 'pro'
+                    ? 'bg-amber-500/15 text-amber-300 theme-light:text-amber-800 border border-amber-500/20'
+                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
               }`}
             >
-              {user.plan === 'pro' ? T.planPro : T.planFree}
+              {user.plan === 'vip' ? T.planVip : user.plan === 'pro' ? T.planPro : T.planFree}
             </span>
           </div>
         </section>
@@ -229,6 +232,9 @@ export default function Profile() {
               : 'Weeks start on Monday. Any study activity (vocab, chat, writing, speaking) counts — same rule as your streak.'}
           </p>
         </section>
+
+        {/* Chọn giọng đọc — 14 giọng Chirp3-HD, áp dụng toàn cục */}
+        <VoicePicker plan={user.plan} isA={isA} />
 
         {/* Âm thanh phản hồi UI (V-6) — đúng/sai/đạt mốc */}
         <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
@@ -357,6 +363,15 @@ export default function Profile() {
             dung sang đây theo U-5 (docs/research/cai-tien-ui-ux.md), tránh lặp lại
             ở mọi trang giờ đã có bottom-nav để điều hướng nhanh. */}
         <QuickActions />
+
+        {/* Cấu hình hệ thống — chỉ hiện link, server tự kiểm quyền admin (ADMIN_EMAILS) khi
+            vào trang; user thường bấm vào chỉ thấy thông báo "không có quyền". */}
+        <button
+          onClick={() => nav('/admin-settings')}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-700 transition text-xs font-medium animate-fade-in"
+        >
+          Cấu hình hệ thống (Admin)
+        </button>
 
         {/* Đăng xuất */}
         <button

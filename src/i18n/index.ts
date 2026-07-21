@@ -29,6 +29,7 @@ export const t = {
     streakStart: 'bắt đầu chuỗi hôm nay',
     planFree: 'Gói Miễn phí',
     planPro: 'Gói Pro',
+    planVip: 'Gói VIP',
     unlimited: 'Không giới hạn lượt dùng',
     tip: '💡 Mẹo:',
     tipBody: (phrases: string, speaking: string) =>
@@ -199,6 +200,7 @@ export const t = {
     streakStart: 'start your streak',
     planFree: 'Free Plan',
     planPro: 'Pro Plan',
+    planVip: 'VIP Plan',
     unlimited: 'Unlimited usage',
     tip: '💡 Tip:',
     tipBody: (phrases: string, speaking: string) =>

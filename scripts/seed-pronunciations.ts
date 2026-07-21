@@ -28,6 +28,7 @@ import {
   probeApiKeys,
   setActiveKeyPool,
   VOICE_VERSION,
+  DEFAULT_SEED_VOICE_IDS,
   type VoiceId,
 } from '../api/_lib/googleTts.ts'
 import { getPgPool } from '../api/_lib/pgPool.ts'
@@ -47,9 +48,10 @@ const DELAY_MS = 0 // không cần nghỉ giữa batch với BATCH_SIZE vừa ph
 const RETRY_DELAY_MS = 5000 // nghỉ giữa các vòng retry (ms) để tránh rate-limit tạm thời
 const MAX_ROUNDS = 5 // số vòng retry tối đa
 
-// Pronunciations chỉ cần 2 giọng cơ bản (người dùng chỉ chọn female/male)
-// female2/male2 dùng cho bài học hội thoại, không cần seed vào bảng pronunciations
-const PRON_VOICE_IDS: VoiceId[] = ['female', 'male']
+// Pronunciations chỉ seed trước 8 giọng mặc định (4 nữ + 4 nam phổ biến nhất) trong số 14
+// giọng hiện có (xem api/_lib/googleTts.ts) — 6 giọng còn lại tự tạo lúc người dùng chủ động
+// chọn, không seed trước.
+const PRON_VOICE_IDS: VoiceId[] = DEFAULT_SEED_VOICE_IDS
 
 // Thư mục chứa chunk từ điển — đây là nguồn mặc định
 const DEFAULT_DICT_DIR = path.join(PROJECT_ROOT, 'public/data/dictionary')

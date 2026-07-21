@@ -64,7 +64,7 @@ không phải lỗi.
 ### Vì sao có remap
 
 Khóa cache 1 câu = `hash(text + lang + voice + VOICE_VERSION)` (32 hex đầu của SHA-256).
-Khi đổi giọng TTS, ta tăng `VOICE_VERSION` (hiện là `chirp3hd-v2`, ở
+Khi đổi giọng TTS, ta tăng `VOICE_VERSION` (hiện là `chirp3hd-v3`, ở
 `api/_lib/googleTts.ts`) → **hash đổi** → mọi câu đã seed trước đó không còn khớp.
 
 Nhưng audio cũ vẫn nằm trên Storage, chỉ là **đã mã hóa bằng khóa suy từ hash cũ**.
@@ -73,13 +73,24 @@ Tạo lại bằng cách gọi Google TTS sẽ **tốn quota**. Remap tránh đi
 ### Remap chạy thế nào
 
 Trong `processTask` (`scripts/seed-all.ts`), với mỗi câu chưa có ở hash mới, **trước
-khi gọi Google** script thử:
+khi gọi Google** script thử LẦN LƯỢT 2 lược đồ hash cũ:
 
-1. Tìm bản ghi ở **hash cũ** = `hash(text + lang + voice)` (thiếu `VOICE_VERSION`).
-2. Nếu có → **tải audio cũ → giải mã bằng hash cũ → mã hóa lại bằng hash mới → upload**
-   → ghi dòng `tts_cache` mới.
-3. Chỉ tốn **băng thông Storage**, **0 quota Google**. Đếm vào cột `↺ remapped`.
-4. Remap lỗi (file hỏng/mạng) → tự chuyển sang gọi Google tạo mới (`✓ ok`).
+1. `hash(text + lang + voice)` — thiếu hẳn `VOICE_VERSION` (từ hồi khái niệm này chưa
+   tồn tại).
+2. `hash(text + lang + TÊN_GIỌNG_CŨ + 'chirp3hd-v2')` — đúng `VOICE_VERSION` cũ nhưng
+   TÊN giọng cũ (đợt đổi tên 2026-07-21: `female/male/female2/male2` →
+   `Kore/Puck/Aoede/Charon` — CÙNG 1 giọng Google Chirp3-HD thật, chỉ đổi định danh
+   trong app; xem `OLD_VOICE_ALIAS` trong `scripts/seed-all.ts`).
+
+Gặp lược đồ nào khớp trước thì dùng lược đồ đó: **tải audio cũ → giải mã bằng hash
+cũ → mã hóa lại bằng hash mới → upload** → ghi dòng `tts_cache` mới. Chỉ tốn **băng
+thông Storage**, **0 quota Google**. Đếm vào cột `↺ remapped`. Remap lỗi (file
+hỏng/mạng, hoặc cả 2 lược đồ đều không có) → tự chuyển sang gọi Google tạo mới
+(`✓ ok`).
+
+`pronunciations` (âm 1 từ, không mã hóa) cũng có remap tương tự cho đợt đổi tên giọng
+— vì KHÔNG mã hóa nên chỉ cần copy nguyên `audio_url` sang dòng `(word, tên_giọng_mới)`
+mới, không cần tải/giải mã/upload lại gì.
 
 ### Cách kích hoạt remap
 

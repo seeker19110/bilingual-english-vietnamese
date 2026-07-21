@@ -15,11 +15,14 @@
 
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import type { VoiceId } from '../../api/_lib/googleTts.ts'
+import { DEFAULT_SEED_VOICE_IDS, type VoiceId } from '../../api/_lib/googleTts.ts'
 
-// Giọng cần seed cho các nhóm phát theo lựa chọn người dùng — female trước
-// (DEFAULT_VOICE), rồi male. (Lessons dùng giọng riêng per-turn, không qua hằng này.)
-export const PREF_VOICE_IDS: VoiceId[] = ['female', 'male']
+// Giọng cần seed TRƯỚC cho các nhóm phát theo lựa chọn người dùng — 8 giọng mặc định
+// (4 nữ + 4 nam phổ biến nhất, xem DEFAULT_SEED_VOICE_IDS) trong số 14 giọng hiện có (xem
+// api/_lib/googleTts.ts) — 6 giọng còn lại vẫn hoạt động bình thường, chỉ tự tạo audio lúc
+// phát lần đầu (cache-on-demand qua /api/tts) thay vì có sẵn ngay. (Lessons dùng giọng riêng
+// per-turn, không qua hằng này.)
+export const PREF_VOICE_IDS: VoiceId[] = DEFAULT_SEED_VOICE_IDS
 
 export interface Sentence {
   en: string
@@ -77,4 +80,15 @@ function interleaveByCategory(items: Subject[]): Subject[] {
     }
   }
   return result
+}
+
+// Đọc public/data/patterns/seed-index.json (ghi bởi scripts/rank-common-patterns.ts, chạy
+// `npm run rank:patterns`) — map starter → chỉ số các câu THÔNG DỤNG NHẤT (theo tần suất từ
+// thật) cần seed trước. Trả về null nếu file chưa tồn tại (chưa chạy rank:patterns lần nào)
+// — seed-all.ts khi đó fallback về seed ĐỦ 100 câu/chủ thể như trước (an toàn, không vỡ script
+// cũ), chỉ tối ưu khi đã có file này.
+export function loadPatternSeedIndex(patternDir: string): Record<string, number[]> | null {
+  const indexPath = path.join(patternDir, 'seed-index.json')
+  if (!fs.existsSync(indexPath)) return null
+  return JSON.parse(fs.readFileSync(indexPath, 'utf8')) as Record<string, number[]>
 }

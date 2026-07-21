@@ -40,6 +40,7 @@ import {
   setRatePref,
 } from '../lib/tts'
 import type { Voice } from '../lib/tts'
+import { VOICE_OPTIONS } from '../lib/voiceTiers'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import WordCard from './WordCard'
 import { InlinePronounce } from '../pages/Lessons'
@@ -632,20 +633,14 @@ export function DialogueView({
   const speedRef = useRef<DlgSpeed>(getRatePref())
   const modeRef = useRef<DlgMode>('en')
 
-  // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng thứ 2 cho B
-  // để 2 nhân vật luôn có giọng khác nhau (female vs female2, male vs male2).
-  // Giống cách làm ở src/pages/Lessons.tsx (LessonView).
+  // Phân giọng cho từng nhân vật — nếu cùng giới thì dùng giọng THỨ 2 của giới đó cho B
+  // để 2 nhân vật luôn có giọng khác nhau. Giống cách làm ở src/pages/Lessons.tsx (LessonView).
   const genderA = dialogue.speakerAGender ?? 'female'
   const genderB = dialogue.speakerBGender ?? 'male'
-  const voiceA: Voice = genderA === 'female' ? 'female' : 'male'
+  const voicesOfGender = (g: 'female' | 'male') => VOICE_OPTIONS.filter((v) => v.gender === g)
+  const voiceA: Voice = voicesOfGender(genderA)[0]!.id
   const voiceB: Voice =
-    genderB === genderA
-      ? genderB === 'female'
-        ? 'female2'
-        : 'male2'
-      : genderB === 'female'
-        ? 'female'
-        : 'male'
+    genderB === genderA ? voicesOfGender(genderB)[1]!.id : voicesOfGender(genderB)[0]!.id
 
   // Dừng audio khi back
   useEffect(

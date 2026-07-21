@@ -24,6 +24,8 @@ import {
   VOICE_VERSION,
 } from './_lib/googleTts'
 import { saveAudio } from './_lib/fileStorage'
+import { ensureProfileRow } from './_lib/authService'
+import { clampVoiceToPlan } from './_lib/voiceAccess'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -95,7 +97,10 @@ export default async function handler(req: Request): Promise<Response> {
       allHeaders,
     )
   }
-  const voice = voiceParam
+  // Không tin voice client gửi lên — hạ về giọng cho phép đúng gói của user (fail-safe,
+  // không lỗi cứng: UI đã tự ẩn lựa chọn ngoài quyền, nhánh này chỉ chặn gọi thẳng API).
+  const { plan } = await ensureProfileRow(authResult.userId, '')
+  const voice = await clampVoiceToPlan(voiceParam, plan)
 
   let pool
   try {

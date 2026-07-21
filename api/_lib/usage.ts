@@ -6,14 +6,14 @@
 
 import { getPgPool } from './pgPool'
 import { vnDateStr } from './date'
+import { normalizePlan, type Plan } from './plan'
+import { effectivePlan } from './promo'
+import { getAppSettings } from './settings'
 
 export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
 
-// Giới hạn theo gói — PHẢI khớp với src/types.ts (LIMITS) để client/server đồng nhất.
-const LIMITS: Record<'free' | 'pro', Record<UsageMode, number>> = {
-  free: { chat: 15, writing: 3, speaking: 5, stt: 10, pronounce: 10 },
-  pro: { chat: 999, writing: 30, speaking: 60, stt: 100, pronounce: 100 },
-}
+// Hạn mức theo gói ĐỌC TỪ DB (bảng app_settings, admin chỉnh qua /api/admin-settings) —
+// xem settings.ts để biết giá trị mặc định khi DB chưa có dòng cấu hình.
 
 // Tên cột tương ứng trong bảng daily_usage
 const COLUMN: Record<UsageMode, string> = {
@@ -32,8 +32,8 @@ function today(): string {
   return vnDateStr()
 }
 
-function limitMessage(plan: 'free' | 'pro'): string {
-  return plan === 'pro'
+function limitMessage(plan: Plan): string {
+  return plan === 'pro' || plan === 'vip'
     ? 'Bạn đã dùng hết lượt hôm nay. Thử lại vào ngày mai nhé.'
     : 'Hết lượt miễn phí hôm nay. Thử lại ngày mai hoặc nâng cấp gói Pro.'
 }
@@ -53,8 +53,9 @@ export async function checkAndConsumeUsage(
       'select plan from public.profiles where id = $1',
       [userId],
     )
-    const plan = profileRows[0]?.plan === 'pro' ? 'pro' : 'free'
-    const limit = LIMITS[plan][mode]
+    const plan = await effectivePlan(normalizePlan(profileRows[0]?.plan))
+    const { limits } = await getAppSettings()
+    const limit = limits[plan][mode]
 
     // ── Kiểm tra + tăng ATOMIC qua hàm SQL (chống race condition 2 request song song) ──
     const { rows } = await pool.query<{ consume_usage: boolean }>(
