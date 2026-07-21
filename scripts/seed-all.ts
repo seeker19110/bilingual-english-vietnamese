@@ -28,6 +28,10 @@
 // Cờ / biến môi trường (SEED nội dung):
 //   --check  (CHECK=1)       Chỉ in báo cáo rồi thoát (không seed, không menu).
 //   --verify (VERIFY=1)      Kiểm tra KỸ DB: đối chiếu 2 chiều (thiếu / thừa / lệch đường dẫn).
+//   --clean-orphans          (kèm --verify) Xoá bản ghi + file THỪA (orphan) phát hiện được —
+//                             mặc định CHỈ XEM TRƯỚC, thêm --yes để xoá thật. Vd sau đợt đổi
+//                             tên giọng: female2/male2.mp3 không còn dùng nữa, chiếm dung
+//                             lượng oan → npm run seed:all -- --verify --clean-orphans --yes
 //   --all    (SEED_ALL=1/YES=1) Seed tất cả ngay, không hỏi menu (dùng cho CI/cron).
 //   --force  (FORCE=1)       Tạo lại + ghi đè cả audio đã có (dùng chung cho cả seed VÀ sync R2).
 //   LIMIT=20                 Giới hạn số tác vụ mỗi nhóm (debug).
@@ -61,7 +65,7 @@ import * as path from 'node:path'
 import * as readline from 'node:readline/promises'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
-import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3'
+import { S3Client, ListObjectsV2Command, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import {
   generateAudioFromGoogle,
   hasGoogleTtsKey,
@@ -113,6 +117,9 @@ const BASE_URL = process.env.BASE_URL || ''
 const FORCE = process.argv.includes('--force') || process.env.FORCE === '1'
 const CHECK_ONLY = process.argv.includes('--check') || process.env.CHECK === '1'
 const VERIFY_ONLY = process.argv.includes('--verify') || process.env.VERIFY === '1'
+// Xoá THẬT các bản ghi + file dư thừa (orphan) phát hiện được lúc --verify — mặc định
+// (không có --yes) chỉ XEM TRƯỚC, không xoá gì. Dùng chung --yes với luồng sync R2 cũ.
+const CLEAN_ORPHANS = process.argv.includes('--clean-orphans')
 const SEED_ALL_FLAG =
   process.argv.includes('--all') || process.env.SEED_ALL === '1' || process.env.YES === '1'
 const SYNC_R2_FLAG = process.argv.includes('--sync-r2') || process.env.SYNC_R2 === '1'
@@ -721,6 +728,100 @@ async function listAllR2Objects(): Promise<Map<string, number>> {
   } while (continuationToken)
   console.log(`\r📥 R2 hiện có ${result.size.toLocaleString('vi-VN')} object.                    `)
   return result
+}
+
+// Xoá file audio thật (local hoặc R2) ứng với 1 audio_url — tự nhận diện driver theo URL
+// (R2_PUBLIC_BASE_URL khớp tiền tố → R2, ngược lại → local dưới UPLOADS_DIR).
+async function deleteStoredFile(audioUrl: string): Promise<void> {
+  const r2Base = (process.env.R2_PUBLIC_BASE_URL || '').replace(/\/$/, '')
+  if (r2Base && audioUrl.startsWith(r2Base + '/')) {
+    const bucket = process.env.R2_BUCKET
+    if (!bucket) throw new Error('Thiếu R2_BUCKET trong .env')
+    const key = audioUrl.slice(r2Base.length + 1)
+    await getR2Client().send(new DeleteObjectCommand({ Bucket: bucket, Key: key }))
+    return
+  }
+  const marker = '/uploads/'
+  const idx = audioUrl.indexOf(marker)
+  if (idx === -1) throw new Error(`Không nhận diện được đường dẫn lưu trữ: ${audioUrl}`)
+  const relative = audioUrl.slice(idx + marker.length)
+  await fs.promises.unlink(path.join(SYNC_UPLOADS_ROOT, relative))
+}
+
+// Xoá THẬT các bản ghi + file dư thừa (orphan) phát hiện ở verifyDb() — mặc định (không có
+// --yes) CHỈ XEM TRƯỚC, không xoá gì. CHỈ xoá file nếu KHÔNG có bản ghi nào khác (còn nằm
+// trong tập kỳ vọng) đang trỏ tới CÙNG audio_url — trường hợp remap giọng mới DÙNG LẠI
+// audio_url của giọng cũ (xem OLD_VOICE_ALIAS) thì xoá file sẽ làm hỏng cả bản ghi đang
+// dùng thật, nên những trường hợp đó chỉ xoá bản ghi DB thừa, GIỮ NGUYÊN file.
+async function cleanOrphans(
+  ttsOrphans: { hash: string; audio_url: string }[],
+  pronOrphansList: { word: string; voice: string; audio_url: string }[],
+  activeAudioUrls: Set<string>,
+): Promise<void> {
+  const pool = getPgPool()
+  const totalCandidates = ttsOrphans.length + pronOrphansList.length
+  if (totalCandidates === 0) {
+    console.log('\n✨ Không có bản ghi dư thừa nào để dọn.')
+    return
+  }
+
+  const fileDeletable = [...ttsOrphans, ...pronOrphansList].filter(
+    (r) => !activeAudioUrls.has(r.audio_url),
+  ).length
+
+  if (!VERIFY_CONFIRM_YES) {
+    console.log(
+      `\n👀 XEM TRƯỚC (--clean-orphans): sẽ xoá ${totalCandidates} bản ghi DB` +
+        ` (${fileDeletable} kèm xoá file thật — ${totalCandidates - fileDeletable} bản ghi` +
+        ` còn lại dùng CHUNG file với bản ghi đang hoạt động nên GIỮ LẠI file, chỉ xoá bản` +
+        ` ghi thừa). Thêm --yes để xoá thật (vd: npm run seed:all -- --verify --clean-orphans --yes).`,
+    )
+    return
+  }
+
+  console.log(`\n🗑️  Đang xoá ${totalCandidates} bản ghi dư thừa (--yes đã bật)...`)
+  let filesDeleted = 0
+  let fileErrors = 0
+  let rowsDeleted = 0
+
+  for (const r of ttsOrphans) {
+    if (!activeAudioUrls.has(r.audio_url)) {
+      try {
+        await deleteStoredFile(r.audio_url)
+        filesDeleted++
+      } catch (err) {
+        fileErrors++
+        console.error(
+          `❌ Không xoá được file ${r.audio_url}: ${err instanceof Error ? err.message : String(err)}`,
+        )
+      }
+    }
+    await pool.query('delete from public.tts_cache where hash = $1', [r.hash])
+    rowsDeleted++
+  }
+  for (const r of pronOrphansList) {
+    if (!activeAudioUrls.has(r.audio_url)) {
+      try {
+        await deleteStoredFile(r.audio_url)
+        filesDeleted++
+      } catch (err) {
+        fileErrors++
+        console.error(
+          `❌ Không xoá được file ${r.audio_url}: ${err instanceof Error ? err.message : String(err)}`,
+        )
+      }
+    }
+    await pool.query('delete from public.pronunciations where word = $1 and voice = $2', [
+      r.word,
+      r.voice,
+    ])
+    rowsDeleted++
+  }
+
+  console.log(
+    `✅ Đã xoá ${rowsDeleted} bản ghi DB, ${filesDeleted} file` +
+      (fileErrors ? `, ❌ ${fileErrors} file lỗi (xem log ở trên).` : '.'),
+  )
 }
 
 interface VerifyLocalFile {
@@ -1346,6 +1447,14 @@ async function verifyDb(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
     console.log(
       '     (thường là female2/male2 đã đổi tên (đợt 2026-07-21) — an toàn để xóa, app không còn đọc tới)',
     )
+  }
+
+  if (CLEAN_ORPHANS) {
+    const activeAudioUrls = new Set<string>([
+      ...ttsRows.filter((r) => expectedTts.has(r.hash)).map((r) => r.audio_url),
+      ...pronRows.filter((r) => expectedPron.has(`${r.word}:${r.voice}`)).map((r) => r.audio_url),
+    ])
+    await cleanOrphans(orphans, pronOrphans, activeAudioUrls)
   }
 
   // 5) Nhất quán đường dẫn: audio_url phải chứa `${lang}/${voice}/${hash}.mp3`

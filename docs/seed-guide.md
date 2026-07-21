@@ -123,13 +123,24 @@ Khác báo cáo thường (chỉ đếm thiếu), verify đối chiếu **HAI CH
 
 1. **Chiều THIẾU** (theo nhóm): câu kỳ vọng nào **chưa có** trong DB.
    `✅` đủ · `⚠️` còn thiếu.
-2. **Chiều THỪA — orphan**: bản ghi `tts_cache` **có trong DB nhưng không còn kỳ vọng**,
-   gom theo `lang/voice`. Thường là:
-   - giọng `female2`/`male2` đã bỏ ở curriculum/CEFR/Cụm từ (giờ chỉ seed `female`/`male`), hoặc
+2. **Chiều THỪA — orphan**: bản ghi `tts_cache` **và** `pronunciations` **có trong DB nhưng
+   không còn kỳ vọng**, gom theo `lang/voice` (tts_cache) hoặc `voice` (pronunciations).
+   Thường là:
+   - giọng `female`/`male`/`female2`/`male2` đã đổi tên (đợt 2026-07-21 → `Kore`/`Puck`/
+     `Aoede`/`Charon`) — app hiện tại không bao giờ đọc tới tên cũ nữa, hoặc
    - audio của `VOICE_VERSION` **cũ** còn sót.
 
-   Orphan **vô hại** (chỉ tốn ít dung lượng, không bao giờ bị phát). Muốn dọn sạch:
-   chạy `supabase/refresh-tts-voices.sql` trong SQL Editor (xóa dòng cache cũ) rồi seed lại.
+   Orphan **vô hại** (chỉ tốn dung lượng, không bao giờ bị phát) nhưng nếu muốn dọn sạch
+   để lấy lại dung lượng:
+
+   ```bash
+   npm run seed:all -- --verify --clean-orphans           # XEM TRƯỚC — chưa xóa gì
+   npm run seed:all -- --verify --clean-orphans --yes     # Xóa THẬT (DB + file)
+   ```
+
+   An toàn: nếu 1 file đang được bản ghi KHÁC (còn nằm trong tập kỳ vọng) dùng chung — vd
+   remap giọng mới trỏ vào audio_url của giọng cũ (xem mục 3) — lệnh **chỉ xóa bản ghi
+   thừa, GIỮ NGUYÊN file** (không đụng vào file đang thực sự được dùng).
 
 3. **Nhất quán đường dẫn**: `audio_url` phải chứa đúng `${lang}/${voice}/${hash}.mp3`.
 4. **Giải mã thử** (khi đặt `VERIFY_DECRYPT=N`): tải N file + giải mã bằng khóa suy từ
