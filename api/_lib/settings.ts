@@ -10,6 +10,11 @@ export interface AppSettings {
   limits: Record<Plan, Record<UsageMode, number>>
   // null = không có khuyến mãi đang chạy (áp hạn mức thật ngay)
   promoUntil: string | null
+  // "Token" để client so sánh — chính là updated_at của dòng cấu hình (ISO string). Client
+  // gửi lại qua header If-None-Match (xem api/app-settings.ts); server trả 304 nếu trùng,
+  // client bỏ qua parse/ghi cache — KHÔNG cần tự viết cơ chế so token riêng, tận dụng đúng
+  // ngữ nghĩa ETag/If-None-Match chuẩn HTTP.
+  updatedAt: string
 }
 
 // Mặc định dùng khi DB CHƯA có dòng cấu hình hoặc query lỗi (fail-open, giống mọi nơi khác
@@ -22,6 +27,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     vip: { chat: 1_000_000, writing: 1_000_000, speaking: 1_000_000, stt: 1_000_000, pronounce: 1_000_000 },
   },
   promoUntil: '2027-01-01T00:00:00+07:00',
+  updatedAt: '1970-01-01T00:00:00.000Z',
 }
 
 interface AppSettingsRow {
@@ -41,6 +47,7 @@ interface AppSettingsRow {
   vip_stt_limit: number
   vip_pronounce_limit: number
   promo_until: Date | null
+  updated_at: Date
 }
 
 function rowToSettings(row: AppSettingsRow): AppSettings {
@@ -69,6 +76,7 @@ function rowToSettings(row: AppSettingsRow): AppSettings {
       },
     },
     promoUntil: row.promo_until ? new Date(row.promo_until).toISOString() : null,
+    updatedAt: new Date(row.updated_at).toISOString(),
   }
 }
 

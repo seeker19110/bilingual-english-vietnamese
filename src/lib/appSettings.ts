@@ -11,11 +11,14 @@ export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
 export interface AppSettings {
   limits: Record<Plan, Record<UsageMode, number>>
   promoUntil: string | null
+  // Token so sánh (= updated_at ở server) — dùng làm ETag/If-None-Match, xem refreshAppSettings().
+  updatedAt: string
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
   limits: DEFAULT_LIMITS,
   promoUntil: '2027-01-01T00:00:00+07:00',
+  updatedAt: '1970-01-01T00:00:00.000Z',
 }
 
 const CACHE_KEY = 'app_settings_cache'
@@ -25,8 +28,12 @@ function loadFromLocalStorage(): AppSettings | null {
     const raw = localStorage.getItem(CACHE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw) as Partial<AppSettings>
-    if (!parsed.limits) return null
-    return { limits: parsed.limits as AppSettings['limits'], promoUntil: parsed.promoUntil ?? null }
+    if (!parsed.limits || !parsed.updatedAt) return null
+    return {
+      limits: parsed.limits as AppSettings['limits'],
+      promoUntil: parsed.promoUntil ?? null,
+      updatedAt: parsed.updatedAt,
+    }
   } catch {
     return null
   }
@@ -42,11 +49,18 @@ export function getLimits(): Record<Plan, Record<UsageMode, number>> {
   return current.limits
 }
 
-// Gọi 1 lần lúc app khởi động (App.tsx) — public, không cần header đăng nhập. Lỗi mạng/server
-// thì bỏ qua êm, giữ nguyên giá trị cache/mặc định đang có (fail-open, không chặn app chạy).
+// Gọi 1 lần lúc app khởi động (App.tsx) — public, không cần header đăng nhập.
+//
+// Gửi kèm If-None-Match: token (updatedAt) đang có trong cache — admin CHƯA đổi gì thì
+// server trả 304 (rỗng), ta GIỮ NGUYÊN cache hiện có, không cần parse/ghi lại gì cả. Chỉ khi
+// admin đã đổi (token khác) server mới trả body mới + token mới, lúc đó mới cập nhật cache.
+// Lỗi mạng/server thì bỏ qua êm, giữ nguyên giá trị cache/mặc định đang có (fail-open).
 export async function refreshAppSettings(): Promise<void> {
   try {
-    const res = await fetch('/api/app-settings')
+    const res = await fetch('/api/app-settings', {
+      headers: { 'If-None-Match': `"${current.updatedAt}"` },
+    })
+    if (res.status === 304) return // Không đổi gì — cache hiện tại vẫn đúng, khỏi làm gì thêm
     if (!res.ok) return
     const data = (await res.json()) as AppSettings
     current = data

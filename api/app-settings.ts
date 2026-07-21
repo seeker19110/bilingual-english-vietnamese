@@ -3,6 +3,10 @@
 // khuyến mãi, không phải dữ liệu riêng tư của user nào) — khác api/admin-settings.ts (đọc/SỬA,
 // bắt buộc admin). Client dùng src/lib/appSettings.ts để gọi + cache endpoint này.
 //
+// Hỗ trợ ETag/If-None-Match (token = updated_at của dòng cấu hình) — client gửi lại token
+// đã có, admin CHƯA đổi gì thì trả 304 rỗng (không tốn băng thông parse lại JSON mỗi lần mở
+// app), đổi rồi thì mới trả body mới + token mới.
+//
 // GET /api/app-settings
 
 import { getAppSettings } from './_lib/settings'
@@ -21,9 +25,16 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const settings = await getAppSettings()
-  // Cache ngắn ở CDN/trình duyệt — số này hiếm khi đổi, admin sửa xong vẫn có độ trễ chấp
-  // nhận được (client tự fetch lại mỗi lần mở app).
-  return jsonResponse(settings, 200, { ...allHeaders, 'Cache-Control': 'public, max-age=60' })
+  const etag = `"${settings.updatedAt}"`
+
+  // Cache ngắn ở CDN/trình duyệt cộng thêm cơ chế ETag — số này hiếm khi đổi.
+  const headers = { ...allHeaders, 'Cache-Control': 'public, max-age=60', ETag: etag }
+
+  if (req.headers.get('if-none-match') === etag) {
+    return new Response(null, { status: 304, headers })
+  }
+
+  return jsonResponse(settings, 200, headers)
 }
 
 export const config = { runtime: 'edge' }
