@@ -69,6 +69,7 @@ import {
   setActiveKeyPool,
   VOICE_IDS,
   VOICE_VERSION,
+  DEFAULT_SEED_VOICE_IDS,
   type Lang,
   type VoiceId,
 } from '../api/_lib/googleTts.ts'
@@ -90,8 +91,10 @@ dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 if (!process.env.STORAGE_DRIVER) process.env.STORAGE_DRIVER = 'r2'
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
-// Pronunciations chỉ cần 2 giọng cơ bản — female2/male2 chỉ dùng cho TTS hội thoại
-const PRON_VOICE_IDS: VoiceId[] = ['female', 'male']
+// Pronunciations chỉ seed trước 8 giọng mặc định (4 nữ + 4 nam phổ biến nhất) — 6 giọng
+// còn lại trong số 14 giọng hiện có (xem api/_lib/googleTts.ts) không seed trước, tự tạo
+// lúc người dùng chủ động chọn.
+const PRON_VOICE_IDS: VoiceId[] = DEFAULT_SEED_VOICE_IDS
 
 const BATCH_SIZE = 50 // số tác vụ song song
 const DELAY_MS = 0 // không cần delay
@@ -248,14 +251,20 @@ function loadPatternTasks(): PatternTask[] {
     turns?: Array<{ speaker: string; en: string; vi: string }>
   }
 
+  // Khớp đúng logic phân giọng ở client (src/pages/Lessons.tsx LessonView, src/components/
+  // CefrLessonViews.tsx DialogueView): A lấy giọng ĐẦU của giới mình, B lấy giọng ĐẦU của
+  // giới B — trừ khi B cùng giới với A thì lấy giọng THỨ 2 để 2 nhân vật luôn khác giọng.
+  const FEMALE_VOICES: VoiceId[] = ['Kore', 'Aoede']
+  const MALE_VOICES: VoiceId[] = ['Puck', 'Charon']
+  const voicesOfGender = (g: 'female' | 'male') => (g === 'female' ? FEMALE_VOICES : MALE_VOICES)
+
   for (const file of lessonFiles) {
     const chunks = JSON.parse(fs.readFileSync(path.join(lessonDir, file), 'utf8')) as LessonRaw[]
     for (const lesson of chunks) {
       const gA = lesson.speakerAGender ?? 'female'
       const gB = lesson.speakerBGender ?? 'male'
-      const voiceA: VoiceId = gA === 'female' ? 'female' : 'male'
-      const voiceB: VoiceId =
-        gB === gA ? (gB === 'female' ? 'female2' : 'male2') : gB === 'female' ? 'female' : 'male'
+      const voiceA: VoiceId = voicesOfGender(gA)[0]!
+      const voiceB: VoiceId = gB === gA ? voicesOfGender(gB)[1]! : voicesOfGender(gB)[0]!
 
       const isEarly = lessonCount < 50
       const cat: CatId = isEarly ? 'lessons-early' : 'lessons-rest'

@@ -15,11 +15,14 @@
 
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import type { VoiceId } from '../../api/_lib/googleTts.ts'
+import { DEFAULT_SEED_VOICE_IDS, type VoiceId } from '../../api/_lib/googleTts.ts'
 
-// Giọng cần seed cho các nhóm phát theo lựa chọn người dùng — female trước
-// (DEFAULT_VOICE), rồi male. (Lessons dùng giọng riêng per-turn, không qua hằng này.)
-export const PREF_VOICE_IDS: VoiceId[] = ['female', 'male']
+// Giọng cần seed TRƯỚC cho các nhóm phát theo lựa chọn người dùng — 8 giọng mặc định
+// (4 nữ + 4 nam phổ biến nhất, xem DEFAULT_SEED_VOICE_IDS) trong số 14 giọng hiện có (xem
+// api/_lib/googleTts.ts) — 6 giọng còn lại vẫn hoạt động bình thường, chỉ tự tạo audio lúc
+// phát lần đầu (cache-on-demand qua /api/tts) thay vì có sẵn ngay. (Lessons dùng giọng riêng
+// per-turn, không qua hằng này.)
+export const PREF_VOICE_IDS: VoiceId[] = DEFAULT_SEED_VOICE_IDS
 
 export interface Sentence {
   en: string

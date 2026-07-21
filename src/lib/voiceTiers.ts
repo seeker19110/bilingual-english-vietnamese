@@ -51,10 +51,27 @@ export function isValidVoiceId(value: string): value is VoiceId {
   return (VOICE_IDS as string[]).includes(value)
 }
 
+// 4 giọng nữ + 4 giọng nam PHỔ BIẾN NHẤT, phong cách khác nhau — seed sẵn TRƯỚC (script
+// seed-all.ts/seed-pronunciations.ts, PHẢI khớp tay với DEFAULT_SEED_VOICE_IDS trong
+// api/_lib/googleTts.ts) nên phát ngay lập tức; hiện TRƯỚC cho người dùng chọn/xoay vòng
+// (VoicePicker.tsx, WordVoiceCycleButton.tsx). 6 giọng còn lại vẫn dùng được bình thường,
+// chỉ tự tạo audio (chậm hơn 1 chút) ở lần phát đầu khi người dùng CHỦ ĐỘNG chọn.
+export const DEFAULT_SEED_VOICE_IDS: VoiceId[] = [
+  'Kore',
+  'Aoede',
+  'Leda',
+  'Zephyr',
+  'Puck',
+  'Charon',
+  'Fenrir',
+  'Orus',
+]
+
 // Gói nào được dùng giọng nào NGOÀI thời gian khuyến mãi (xem FREE_PROMO_UNTIL bên dưới).
+// Gói Pro trùng đúng 8 giọng đã seed sẵn (nhanh) — VIP mở thêm 6 giọng còn lại (tạo động).
 const VOICE_TIERS: Record<Plan, VoiceId[]> = {
   free: ['Kore', 'Puck'],
-  pro: ['Kore', 'Aoede', 'Leda', 'Zephyr', 'Puck', 'Charon', 'Fenrir', 'Orus'],
+  pro: DEFAULT_SEED_VOICE_IDS,
   vip: VOICE_IDS,
 }
 

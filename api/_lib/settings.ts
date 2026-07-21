@@ -24,7 +24,13 @@ const DEFAULT_SETTINGS: AppSettings = {
   limits: {
     free: { chat: 5, writing: 5, speaking: 5, stt: 5, pronounce: 5 },
     pro: { chat: 100, writing: 100, speaking: 100, stt: 100, pronounce: 100 },
-    vip: { chat: 1_000_000, writing: 1_000_000, speaking: 1_000_000, stt: 1_000_000, pronounce: 1_000_000 },
+    vip: {
+      chat: 1_000_000,
+      writing: 1_000_000,
+      speaking: 1_000_000,
+      stt: 1_000_000,
+      pronounce: 1_000_000,
+    },
   },
   promoUntil: '2027-01-01T00:00:00+07:00',
   updatedAt: '1970-01-01T00:00:00.000Z',

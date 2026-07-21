@@ -6,10 +6,18 @@
 
 import { getAccessToken } from './authHeader'
 import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
-import { isValidVoiceId, DEFAULT_VOICE, DEFAULT_MALE_VOICE, type VoiceId } from './voiceTiers'
+import {
+  isValidVoiceId,
+  DEFAULT_VOICE,
+  DEFAULT_MALE_VOICE,
+  VOICE_OPTIONS,
+  type VoiceId,
+} from './voiceTiers'
 
 type Lang = 'en-US' | 'vi-VN'
 export type Voice = VoiceId
+
+const MALE_VOICE_IDS = new Set(VOICE_OPTIONS.filter((v) => v.gender === 'male').map((v) => v.id))
 
 // ── Thẻ <audio> DUY NHẤT dùng chung cho mọi lần phát ────────────────────────
 // iOS/Safari (kể cả khi cài PWA) chỉ cho JavaScript phát audio trên một thẻ
@@ -423,10 +431,11 @@ function speakViaWebSpeech(
     }
 
     // Cố chọn giọng nam/nữ khớp ngôn ngữ nếu trình duyệt có sẵn (không phải lúc nào cũng có)
+    const isMale = MALE_VOICE_IDS.has(voice)
     const wanted = window.speechSynthesis.getVoices().find((v) => {
       if (!v.lang.startsWith(lang.slice(0, 2))) return false
       const n = v.name.toLowerCase()
-      return voice === 'male'
+      return isMale
         ? n.includes('male') || n.includes('david') || n.includes('nam')
         : n.includes('female') || n.includes('zira') || n.includes('samantha') || n.includes('nữ')
     })

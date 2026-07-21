@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import { Lock } from 'lucide-react'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
-import { VOICE_OPTIONS, getAllowedVoices, isVoicePromoActive } from '../lib/voiceTiers'
+import {
+  VOICE_OPTIONS,
+  DEFAULT_SEED_VOICE_IDS,
+  getAllowedVoices,
+  isVoicePromoActive,
+} from '../lib/voiceTiers'
 import type { Plan } from '../types'
 
 interface Props {
@@ -12,10 +17,13 @@ interface Props {
 // Bộ chọn ĐẦY ĐỦ 14 giọng Chirp3-HD (7 nữ + 7 nam) — đặt ở trang Cài đặt/Hồ sơ. Lựa chọn lưu
 // TOÀN CỤC (localStorage qua setVoicePref) nên áp dụng ngay cho mọi trang trong app (Chat,
 // Luyện nói, Từ điển, Lộ trình...) — không cần chỉnh riêng từng nơi. Giọng ngoài quyền gói
-// hiện mờ + khoá (nhưng vẫn hiện đủ 14 để biết có gì nếu nâng cấp).
+// hiện mờ + khoá (nhưng vẫn hiện đủ 14 để biết có gì nếu nâng cấp). 8 giọng đã seed sẵn (⚡,
+// DEFAULT_SEED_VOICE_IDS) hiện TRƯỚC trong mỗi hàng (đúng thứ tự VOICE_OPTIONS) và phát ngay
+// lập tức; 6 giọng còn lại vẫn chọn được, chỉ chậm hơn 1 chút ở lần phát đầu tiên.
 export default function VoicePicker({ plan, isA }: Props) {
   const [voice, setVoice] = useState<Voice>(getVoicePref())
   const allowed = new Set(getAllowedVoices(plan))
+  const seeded = new Set(DEFAULT_SEED_VOICE_IDS)
   const promoActive = isVoicePromoActive()
 
   function choose(v: Voice) {
@@ -50,6 +58,8 @@ export default function VoicePicker({ plan, isA }: Props) {
             {VOICE_OPTIONS.filter((v) => v.gender === gender).map((v) => {
               const isAllowed = allowed.has(v.id)
               const isSelected = voice === v.id
+              const isSeeded = seeded.has(v.id)
+              const slowHint = isA ? ' (tạo lần đầu chậm hơn 1 chút)' : ' (slower on first play)'
               return (
                 <button
                   key={v.id}
@@ -57,11 +67,13 @@ export default function VoicePicker({ plan, isA }: Props) {
                   onClick={() => choose(v.id)}
                   disabled={!isAllowed}
                   title={
-                    isAllowed
-                      ? v.id
-                      : isA
+                    !isAllowed
+                      ? isA
                         ? 'Nâng cấp gói để mở khoá giọng này'
                         : 'Upgrade your plan to unlock this voice'
+                      : isSeeded
+                        ? v.id
+                        : `${v.id}${slowHint}`
                   }
                   aria-pressed={isSelected}
                   className={`relative flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-medium border transition ${
@@ -74,12 +86,18 @@ export default function VoicePicker({ plan, isA }: Props) {
                 >
                   {!isAllowed && <Lock className="w-3 h-3 shrink-0" />}
                   {v.id}
+                  {isSeeded && isAllowed && <span aria-hidden>⚡</span>}
                 </button>
               )
             })}
           </div>
         </div>
       ))}
+      <p className="text-[11px] text-zinc-500 mt-1">
+        {isA
+          ? '⚡ = giọng phát ngay lập tức. Giọng khác chậm hơn 1 chút ở lần phát đầu tiên.'
+          : '⚡ = plays instantly. Other voices are slightly slower the first time.'}
+      </p>
     </section>
   )
 }

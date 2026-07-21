@@ -47,6 +47,22 @@ export const VOICE_IDS: VoiceId[] = [
   'Iapetus',
   'Umbriel',
 ]
+
+// 4 giọng nữ + 4 giọng nam PHỔ BIẾN NHẤT, phong cách khác nhau — seed sẵn TRƯỚC (script
+// seed-all.ts/seed-pronunciations.ts) nên phát ngay lập tức; hiện trước cho người dùng
+// chọn/xoay vòng (VoicePicker.tsx, WordVoiceCycleButton.tsx). 6 giọng còn lại trong
+// VOICE_IDS vẫn dùng được bình thường, chỉ tự tạo audio (chậm hơn 1 chút) ở lần phát đầu
+// tiên khi người dùng CHỦ ĐỘNG chọn, thay vì có sẵn ngay.
+export const DEFAULT_SEED_VOICE_IDS: VoiceId[] = [
+  'Kore',
+  'Aoede',
+  'Leda',
+  'Zephyr',
+  'Puck',
+  'Charon',
+  'Fenrir',
+  'Orus',
+]
 export const DEFAULT_VOICE: VoiceId = 'Kore'
 
 // "Phiên bản giọng" — tăng số này MỖI KHI đổi giọng trong VOICE_GENDER bên dưới.

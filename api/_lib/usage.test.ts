@@ -36,6 +36,7 @@ const FAKE_SETTINGS_ROW = {
   vip_stt_limit: 1_000_000,
   vip_pronounce_limit: 1_000_000,
   promo_until: null as string | null,
+  updated_at: '2026-01-01T00:00:00.000Z',
 }
 
 // query giả: phân biệt câu lệnh theo chuỗi SQL (chứa 'profiles' / 'app_settings' /

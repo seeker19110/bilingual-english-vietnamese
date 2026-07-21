@@ -1,13 +1,15 @@
 // api/_lib/voiceAccess.ts — Gói nào được dùng giọng Chirp3-HD nào (server = nguồn sự thật,
 // không tin client). PHẢI khớp tay với src/lib/voiceTiers.ts (dự án không share code
 // giữa api/ và src/ — 2 tsconfig riêng).
-import { VOICE_IDS, DEFAULT_VOICE, type VoiceId } from './googleTts'
+import { VOICE_IDS, DEFAULT_VOICE, DEFAULT_SEED_VOICE_IDS, type VoiceId } from './googleTts'
 import type { Plan } from './plan'
 import { effectivePlan } from './promo'
 
+// Gói Pro trùng đúng 8 giọng đã seed sẵn (nhanh, DEFAULT_SEED_VOICE_IDS) — VIP mở thêm 6
+// giọng còn lại (tạo động lúc chọn).
 const VOICE_TIERS: Record<Plan, VoiceId[]> = {
   free: ['Kore', 'Puck'],
-  pro: ['Kore', 'Aoede', 'Leda', 'Zephyr', 'Puck', 'Charon', 'Fenrir', 'Orus'],
+  pro: DEFAULT_SEED_VOICE_IDS,
   vip: VOICE_IDS,
 }
 

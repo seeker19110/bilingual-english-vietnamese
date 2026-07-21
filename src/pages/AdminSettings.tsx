@@ -72,7 +72,9 @@ export default function AdminSettings() {
 
   function updateLimit(plan: Plan, mode: UsageMode, value: number) {
     setSettings((prev) =>
-      prev ? { ...prev, limits: { ...prev.limits, [plan]: { ...prev.limits[plan], [mode]: value } } } : prev,
+      prev
+        ? { ...prev, limits: { ...prev.limits, [plan]: { ...prev.limits[plan], [mode]: value } } }
+        : prev,
     )
   }
 
@@ -104,8 +106,9 @@ export default function AdminSettings() {
   }
 
   return (
-    <Layout>
-      <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
+    <div className="min-h-dvh bg-zinc-950">
+      <Layout />
+      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-4">
         <PageHeader title="Cấu hình hệ thống (Admin)" />
 
         {loading && (
@@ -144,8 +147,13 @@ export default function AdminSettings() {
             </section>
 
             {PLANS.map(({ key: plan, label }) => (
-              <section key={plan} className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
-                <p className="text-sm font-semibold text-white mb-3">Hạn mức gói {label} (lượt/ngày)</p>
+              <section
+                key={plan}
+                className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4"
+              >
+                <p className="text-sm font-semibold text-white mb-3">
+                  Hạn mức gói {label} (lượt/ngày)
+                </p>
                 <div className="grid grid-cols-1 gap-2.5">
                   {MODES.map(({ key: mode, label: modeLabel }) => (
                     <label key={mode} className="flex items-center justify-between gap-3 text-sm">
@@ -178,7 +186,7 @@ export default function AdminSettings() {
             </button>
           </>
         )}
-      </div>
-    </Layout>
+      </main>
+    </div>
   )
 }

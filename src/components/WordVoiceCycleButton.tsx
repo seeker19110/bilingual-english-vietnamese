@@ -2,14 +2,17 @@ import { useState } from 'react'
 import { RotateCw, Loader2 } from 'lucide-react'
 import { getAuthHeader } from '../lib/authHeader'
 import { playAudioUrl, type Voice } from '../lib/tts'
-import { VOICE_OPTIONS } from '../lib/voiceTiers'
+import { VOICE_OPTIONS, DEFAULT_SEED_VOICE_IDS } from '../lib/voiceTiers'
 
 interface Props {
   word: string
 }
 
-// Thứ tự xoay vòng cố định 14 giọng — mỗi lần bấm chuyển sang giọng kế tiếp trong vòng.
-const VOICE_CYCLE: Voice[] = VOICE_OPTIONS.map((v) => v.id)
+// Xoay vòng 8 giọng đã seed sẵn (nhanh, phát ngay không phải chờ tạo mới) — không xoay hết
+// 14 giọng để tránh người dùng bấm "nghe giọng khác" trúng 1 trong 6 giọng chưa seed, phải
+// đợi Google TTS tạo mới ngay trong nút phụ này (trải nghiệm khựng). 6 giọng còn lại vẫn
+// chọn được bình thường ở VoicePicker.tsx (trang Cài đặt).
+const VOICE_CYCLE: Voice[] = DEFAULT_SEED_VOICE_IDS
 
 // Nhãn ngắn gọn cho từng giọng (tên riêng + nhãn giới tính), hiển thị cạnh icon để người
 // dùng biết đang nghe giọng nào.
