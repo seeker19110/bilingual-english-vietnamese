@@ -30,6 +30,7 @@
     "gen:form-examples": "tsx scripts/gen-form-examples.ts",
     "extract:words-cefr": "tsx scripts/extract-words-cefr-subset.ts",
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts",
+    "rank:patterns": "tsx scripts/rank-common-patterns.ts",
     "seed:all": "tsx scripts/seed-all.ts",
     "seed:verify": "tsx scripts/seed-all.ts --verify",
     "migrate:pg": "tsx scripts/run-pg-migrations.ts",

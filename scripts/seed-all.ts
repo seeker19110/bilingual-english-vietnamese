@@ -80,7 +80,11 @@ import type { QueryResultRow } from 'pg'
 import { getPgPool } from '../api/_lib/pgPool.ts'
 import { FOUNDATION } from '../src/data/curriculum.ts'
 import { CHALLENGE_TOPICS } from '../src/data/challengeTopics.ts'
-import { loadSubjectsInDisplayOrder, PREF_VOICE_IDS } from './_lib/patternOrder.ts'
+import {
+  loadSubjectsInDisplayOrder,
+  loadPatternSeedIndex,
+  PREF_VOICE_IDS,
+} from './_lib/patternOrder.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
@@ -295,17 +299,35 @@ function loadPatternTasks(): PatternTask[] {
   }
 
   // ── Ưu tiên 4: pattern sentences (Cụm từ page) — PHỔ BIẾN NHẤT TRƯỚC ────────
-  // Hai điều chỉnh để seed đúng cái app thật sự dùng, trước tiên:
-  //   • Chỉ 2 giọng female/male (PREF_VOICE_IDS): trang Cụm từ không bao giờ phát
-  //     female2/male2 → bỏ đi giảm một nửa tác vụ, không ảnh hưởng người dùng.
+  // Ba điều chỉnh để seed đúng cái app thật sự dùng, trước tiên:
+  //   • Chỉ 8 giọng mặc định (PREF_VOICE_IDS = DEFAULT_SEED_VOICE_IDS): trang Cụm từ
+  //     dùng global voice pref, có thể là bất kỳ giọng nào trong 14 — nhưng chỉ seed
+  //     trước 8 giọng phổ biến, 6 giọng còn lại tạo động khi user chọn.
   //   • Thứ tự hiển thị (loadSubjectsInDisplayOrder): I am, You are, We are, He is...
   //     lên trước; chủ thể hiếm seed sau → nếu seed dở dang vẫn có sẵn câu hay gặp nhất.
+  //   • CHỈ seed câu THÔNG DỤNG NHẤT trong mỗi chủ thể (top N/100, xem seed-index.json —
+  //     ghi bởi `npm run rank:patterns`, xếp hạng theo tần suất từ THẬT trong từ điển).
+  //     1.000 chủ thể × 100 câu × 8 giọng × 2 ngôn ngữ = 1,6 TRIỆU file nếu seed hết — quá
+  //     tốn. Câu KHÔNG nằm trong seed-index vẫn hoạt động bình thường, chỉ tự tạo audio
+  //     (chậm hơn 1 chút) ở lần người dùng THỰC SỰ bấm nghe (cache-on-demand qua /api/tts).
+  //     Chưa chạy rank:patterns lần nào (seed-index.json chưa tồn tại) → fallback seed ĐỦ
+  //     100 câu/chủ thể như trước (an toàn, không vỡ hành vi cũ).
   const patternDir = path.join(PROJECT_ROOT, 'public/data/patterns')
+  const patternSeedIndex = loadPatternSeedIndex(patternDir)
+  if (!patternSeedIndex) {
+    console.warn(
+      '[seed-all] Chưa có public/data/patterns/seed-index.json (chạy `npm run rank:patterns`' +
+        ' trước để chỉ seed câu thông dụng) — tạm seed ĐỦ 100 câu/chủ thể như cũ.',
+    )
+  }
   for (const subject of loadSubjectsInDisplayOrder(patternDir)) {
-    for (const { en, vi } of subject.sentences) {
+    const seedIdx = patternSeedIndex?.[subject.starter]
+    const seedSet = seedIdx ? new Set(seedIdx) : null
+    subject.sentences.forEach(({ en, vi }, idx) => {
+      if (seedSet && !seedSet.has(idx)) return // câu không thông dụng — để cache-on-demand
       add(en, 'en-US', 'patterns', PREF_VOICE_IDS)
       add(vi, 'vi-VN', 'patterns', PREF_VOICE_IDS)
-    }
+    })
   }
 
   // ── Ưu tiên 5: lesson turns còn lại ────────────────────────────────────────

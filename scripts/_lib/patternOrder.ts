@@ -81,3 +81,14 @@ function interleaveByCategory(items: Subject[]): Subject[] {
   }
   return result
 }
+
+// Đọc public/data/patterns/seed-index.json (ghi bởi scripts/rank-common-patterns.ts, chạy
+// `npm run rank:patterns`) — map starter → chỉ số các câu THÔNG DỤNG NHẤT (theo tần suất từ
+// thật) cần seed trước. Trả về null nếu file chưa tồn tại (chưa chạy rank:patterns lần nào)
+// — seed-all.ts khi đó fallback về seed ĐỦ 100 câu/chủ thể như trước (an toàn, không vỡ script
+// cũ), chỉ tối ưu khi đã có file này.
+export function loadPatternSeedIndex(patternDir: string): Record<string, number[]> | null {
+  const indexPath = path.join(patternDir, 'seed-index.json')
+  if (!fs.existsSync(indexPath)) return null
+  return JSON.parse(fs.readFileSync(indexPath, 'utf8')) as Record<string, number[]>
+}
