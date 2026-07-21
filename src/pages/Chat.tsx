@@ -21,6 +21,7 @@ import { useCloudSync } from '../lib/useCloudSync'
 import { useApiThrottle } from '../lib/useApiThrottle'
 import { useOnboarding } from '../lib/onboarding'
 import { callClaude, parseJson } from '../lib/ai'
+import { effectivePlan } from '../lib/promo'
 import { chatSystemPrompt, chatFullEvaluationPrompt, situationLabel } from '../prompts'
 import {
   SITUATIONS,
@@ -382,7 +383,7 @@ export default function Chat() {
 
   async function startSession(situation: string, level: Level) {
     const usage = getUsage(user.id)
-    const limit = LIMITS[user.plan]
+    const limit = LIMITS[effectivePlan(user.plan)]
     if (usage.chatCount >= limit.chat) {
       setLimitHit(true)
       return
@@ -432,7 +433,7 @@ export default function Chat() {
       return
     }
     const usage = getUsage(user.id)
-    const limit = LIMITS[user.plan]
+    const limit = LIMITS[effectivePlan(user.plan)]
     if (usage.chatCount >= limit.chat) {
       setLimitHit(true)
       return
@@ -497,7 +498,7 @@ export default function Chat() {
   async function endAndGrade() {
     if (!session || loading || evaluating) return
     const usage = getUsage(user.id)
-    const limit = LIMITS[user.plan]
+    const limit = LIMITS[effectivePlan(user.plan)]
     if (usage.chatCount >= limit.chat) {
       setLimitHit(true)
       return

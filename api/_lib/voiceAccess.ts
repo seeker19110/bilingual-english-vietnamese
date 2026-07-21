@@ -3,6 +3,7 @@
 // giữa api/ và src/ — 2 tsconfig riêng).
 import { VOICE_IDS, DEFAULT_VOICE, type VoiceId } from './googleTts'
 import type { Plan } from './plan'
+import { effectivePlan } from './promo'
 
 const VOICE_TIERS: Record<Plan, VoiceId[]> = {
   free: ['Kore', 'Puck'],
@@ -10,17 +11,8 @@ const VOICE_TIERS: Record<Plan, VoiceId[]> = {
   vip: VOICE_IDS,
 }
 
-// Khuyến mãi: mọi user (kể cả Free) được dùng ĐỦ 14 giọng tới hết ngày 31/12/2026 (giờ VN).
-// Sau mốc này, quyền lợi giọng quay về đúng theo gói ở VOICE_TIERS.
-export const FREE_PROMO_UNTIL = '2027-01-01T00:00:00+07:00'
-
-function isVoicePromoActive(now: Date): boolean {
-  return now.getTime() < new Date(FREE_PROMO_UNTIL).getTime()
-}
-
 function getAllowedVoices(plan: Plan, now: Date): VoiceId[] {
-  if (isVoicePromoActive(now)) return VOICE_IDS
-  return VOICE_TIERS[plan]
+  return VOICE_TIERS[effectivePlan(plan, now)]
 }
 
 // Trả về đúng voice nếu user được phép dùng; nếu không (bị hạ gói / hết khuyến mãi / cố tình

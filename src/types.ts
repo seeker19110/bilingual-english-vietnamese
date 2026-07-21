@@ -137,14 +137,25 @@ export interface DailyUsage {
   learnCount?: number
 }
 
-// Giới hạn theo gói
+// Giới hạn theo gói (quyết định người dùng chốt 2026-07-21): Free 5 lượt/tính năng/ngày,
+// Pro 100 lượt/tính năng/ngày, VIP không giới hạn (dùng số rất lớn thay Infinity).
+// Áp dụng THẬT từ 2027 — hiện đang trong khuyến mãi ra mắt (xem src/lib/promo.ts), mọi
+// user hiện được effectivePlan() nâng thành 'vip' khi tính hạn mức hiển thị.
+// PHẢI khớp với api/_lib/usage.ts (LIMITS) để client/server đồng nhất.
+const UNLIMITED = 1_000_000
 export const LIMITS: Record<
   Plan,
   { chat: number; writing: number; speaking: number; stt: number; pronounce: number }
 > = {
-  free: { chat: 15, writing: 3, speaking: 5, stt: 10, pronounce: 10 },
-  pro: { chat: 999, writing: 30, speaking: 60, stt: 100, pronounce: 100 },
-  vip: { chat: 999, writing: 60, speaking: 120, stt: 200, pronounce: 200 },
+  free: { chat: 5, writing: 5, speaking: 5, stt: 5, pronounce: 5 },
+  pro: { chat: 100, writing: 100, speaking: 100, stt: 100, pronounce: 100 },
+  vip: {
+    chat: UNLIMITED,
+    writing: UNLIMITED,
+    speaking: UNLIMITED,
+    stt: UNLIMITED,
+    pronounce: UNLIMITED,
+  },
 }
 
 // Chiều A: nhãn tiếng Việt | Chiều B: nhãn tiếng Anh

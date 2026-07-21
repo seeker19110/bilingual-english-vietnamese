@@ -44,6 +44,7 @@ import {
 } from '../lib/stats'
 import { getWeeklyProgress, type WeeklyProgress } from '../lib/weeklyGoal'
 import { LIMITS } from '../types'
+import { effectivePlan } from '../lib/promo'
 
 // Màu ô heatmap theo số hoạt động trong ngày (đậm dần).
 function heatColor(count: number): string {
@@ -220,7 +221,7 @@ export default function Dashboard() {
   const stats = useMemo(() => {
     if (!user) return null
     const usage = getUsage(user.id)
-    const limit = LIMITS[user.plan]
+    const limit = LIMITS[effectivePlan(user.plan)]
     return {
       streak: getStreak(user.id),
       week: getActivity7Days(user.id),

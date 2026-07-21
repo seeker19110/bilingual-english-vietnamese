@@ -7,16 +7,28 @@
 import { getPgPool } from './pgPool'
 import { vnDateStr } from './date'
 import { normalizePlan, type Plan } from './plan'
+import { effectivePlan } from './promo'
 
 export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
 
-// Giới hạn theo gói — PHẢI khớp với src/types.ts (LIMITS) để client/server đồng nhất.
-// vip: tạm đặt CAO HƠN pro (chưa có giá bán VIP cụ thể) — CẦN người dùng chốt lại con số
-// thật khi triển khai thanh toán, đây chỉ là placeholder hợp lý để không chặn nhầm.
+// Giới hạn theo gói (quyết định người dùng chốt 2026-07-21) — PHẢI khớp với src/types.ts
+// (LIMITS) để client/server đồng nhất:
+//   - Free: 5 lượt/tính năng/ngày
+//   - Pro:  100 lượt/tính năng/ngày
+//   - VIP:  KHÔNG giới hạn (dùng số rất lớn thay Infinity — cột limit trong SQL là integer)
+// Áp dụng THẬT từ 2027; hiện tại (khuyến mãi ra mắt) MỌI gói được effectivePlan() nâng
+// thành 'vip' — xem promo.ts.
+const UNLIMITED = 1_000_000
 const LIMITS: Record<Plan, Record<UsageMode, number>> = {
-  free: { chat: 15, writing: 3, speaking: 5, stt: 10, pronounce: 10 },
-  pro: { chat: 999, writing: 30, speaking: 60, stt: 100, pronounce: 100 },
-  vip: { chat: 999, writing: 60, speaking: 120, stt: 200, pronounce: 200 },
+  free: { chat: 5, writing: 5, speaking: 5, stt: 5, pronounce: 5 },
+  pro: { chat: 100, writing: 100, speaking: 100, stt: 100, pronounce: 100 },
+  vip: {
+    chat: UNLIMITED,
+    writing: UNLIMITED,
+    speaking: UNLIMITED,
+    stt: UNLIMITED,
+    pronounce: UNLIMITED,
+  },
 }
 
 // Tên cột tương ứng trong bảng daily_usage
@@ -57,7 +69,7 @@ export async function checkAndConsumeUsage(
       'select plan from public.profiles where id = $1',
       [userId],
     )
-    const plan = normalizePlan(profileRows[0]?.plan)
+    const plan = effectivePlan(normalizePlan(profileRows[0]?.plan))
     const limit = LIMITS[plan][mode]
 
     // ── Kiểm tra + tăng ATOMIC qua hàm SQL (chống race condition 2 request song song) ──
