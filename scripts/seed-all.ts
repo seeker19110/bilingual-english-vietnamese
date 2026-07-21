@@ -1326,6 +1326,28 @@ async function verifyDb(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
     )
   }
 
+  // 4b) Chiều THỪA ở pronunciations (giống mục 4 nhưng cho bảng phát âm — trước đây
+  // chỉ tts_cache có kiểm tra này, pronunciations bị bỏ sót). Ca điển hình sau đợt đổi
+  // tên giọng 2026-07-21: dòng voice='female2'/'male2' còn sót lại (chưa từng remap vì
+  // pronunciations trước giờ chỉ seed 2 giọng female/male, không có female2/male2) — vẫn
+  // chiếm chỗ trên Storage dù app hiện tại không bao giờ đọc tới.
+  const pronOrphans = pronRows.filter((r) => !expectedPron.has(`${r.word}:${r.voice}`))
+  const pronOrphanByVoice = new Map<string, number>()
+  for (const r of pronOrphans) {
+    pronOrphanByVoice.set(r.voice, (pronOrphanByVoice.get(r.voice) ?? 0) + 1)
+  }
+  console.log(
+    `\n🧹 Bản ghi pronunciations KHÔNG còn trong tập kỳ vọng: ${pronOrphans.length}/${pronRows.length}`,
+  )
+  if (pronOrphans.length > 0) {
+    for (const [voice, n] of [...pronOrphanByVoice.entries()].sort((a, b) => b[1] - a[1])) {
+      console.log(`     • ${voice}: ${n}`)
+    }
+    console.log(
+      '     (thường là female2/male2 đã đổi tên (đợt 2026-07-21) — an toàn để xóa, app không còn đọc tới)',
+    )
+  }
+
   // 5) Nhất quán đường dẫn: audio_url phải chứa `${lang}/${voice}/${hash}.mp3`
   let pathBad = 0
   const badSample: string[] = []
@@ -1405,7 +1427,9 @@ async function verifyDb(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
   if (totalMissing === 0 && pathBad === 0) {
     console.log(
       '✅ DB KHỚP tập kỳ vọng: mọi câu cần thiết đã có, đường dẫn đúng.' +
-        (orphans.length ? ` (còn ${orphans.length} bản ghi thừa có thể dọn)` : ''),
+        (orphans.length || pronOrphans.length
+          ? ` (còn ${orphans.length + pronOrphans.length} bản ghi thừa có thể dọn: ${orphans.length} tts_cache + ${pronOrphans.length} pronunciations)`
+          : ''),
     )
   } else {
     console.log(
