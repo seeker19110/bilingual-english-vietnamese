@@ -643,13 +643,33 @@ export function DialogueView({
   // Giống cách làm ở src/pages/Lessons.tsx (LessonView).
   const genderA = dialogue.speakerAGender ?? 'female'
   const genderB = dialogue.speakerBGender ?? 'male'
-  const { voiceA, voiceB } = useMemo<{ voiceA: Voice; voiceB: Voice }>(() => {
+  const initialVoices = useMemo<{ voiceA: Voice; voiceB: Voice }>(() => {
     const a = pickRandomVoice(genderA, plan)
     let b = pickRandomVoice(genderB, plan)
     for (let i = 0; i < 5 && b === a; i++) b = pickRandomVoice(genderB, plan)
     return { voiceA: a, voiceB: b }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogue.titleEn, genderA, genderB, plan])
+
+  const [voiceA, setVoiceA] = useState<Voice>(initialVoices.voiceA)
+  const [voiceB, setVoiceB] = useState<Voice>(initialVoices.voiceB)
+  const voiceARef = useRef<Voice>(initialVoices.voiceA)
+  const voiceBRef = useRef<Voice>(initialVoices.voiceB)
+  useEffect(() => {
+    setVoiceA(initialVoices.voiceA)
+    voiceARef.current = initialVoices.voiceA
+    setVoiceB(initialVoices.voiceB)
+    voiceBRef.current = initialVoices.voiceB
+  }, [initialVoices])
+
+  function changeVoiceA(v: Voice) {
+    setVoiceA(v)
+    voiceARef.current = v
+  }
+  function changeVoiceB(v: Voice) {
+    setVoiceB(v)
+    voiceBRef.current = v
+  }
 
   // Dừng audio khi back
   useEffect(
@@ -686,7 +706,7 @@ export function DialogueView({
     void (async () => {
       for (const ln of dialogue.lines) {
         if (stopRef.current) break
-        const v = ln.who === 'A' ? voiceA : voiceB
+        const v = ln.who === 'A' ? voiceARef.current : voiceBRef.current
         const m = modeRef.current
         if (m === 'en' || m === 'both') await prefetchSpeech(ln.en, 'en-US', v)
         if (m === 'vi' || m === 'both') await prefetchSpeech(ln.vi, 'vi-VN', v)
@@ -705,7 +725,7 @@ export function DialogueView({
 
       const curMode = modeRef.current
       const curSpeed = speedRef.current
-      const curVoice = ln.who === 'A' ? voiceA : voiceB
+      const curVoice = ln.who === 'A' ? voiceARef.current : voiceBRef.current
 
       // Chỉ theo dõi từ đang đọc khi văn bản CHÍNH LÀ ln.en (đúng câu KaraokeText hiển thị) —
       // ln.vi luôn hiện dạng chữ thường, không có karaoke.
@@ -871,8 +891,22 @@ export function DialogueView({
 
         {/* Giọng đang phát cho từng nhân vật (random mỗi lần mở) + nút đặt làm mặc định */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 px-1">
-          <VoiceRoleBadge voice={voiceA} gender={genderA} label="A" isA={isA} />
-          <VoiceRoleBadge voice={voiceB} gender={genderB} label="B" isA={isA} />
+          <VoiceRoleBadge
+            voice={voiceA}
+            gender={genderA}
+            label="A"
+            isA={isA}
+            plan={plan}
+            onChange={changeVoiceA}
+          />
+          <VoiceRoleBadge
+            voice={voiceB}
+            gender={genderB}
+            label="B"
+            isA={isA}
+            plan={plan}
+            onChange={changeVoiceB}
+          />
         </div>
       </div>
 
