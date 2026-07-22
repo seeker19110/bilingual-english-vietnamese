@@ -19,6 +19,9 @@ export type VoiceId =
   | 'Algieba'
   | 'Iapetus'
   | 'Umbriel'
+  // Giọng ElevenLabs riêng, chỉ VIP — khác hẳn 14 giọng Chirp3-HD (Google) ở trên,
+  // xem api/_lib/elevenLabsTts.ts.
+  | 'Rachel'
 
 export interface VoiceOption {
   id: VoiceId
@@ -41,7 +44,14 @@ export const VOICE_OPTIONS: VoiceOption[] = [
   { id: 'Algieba', gender: 'male' },
   { id: 'Iapetus', gender: 'male' },
   { id: 'Umbriel', gender: 'male' },
+  // Giọng ElevenLabs riêng — chỉ mở cho VIP (xem VOICE_TIERS bên dưới), không nằm trong
+  // DEFAULT_SEED_VOICE_IDS nên luôn tạo động ở lần phát đầu tiên (chậm hơn 1 chút).
+  { id: 'Rachel', gender: 'female' },
 ]
+
+// Giọng riêng ElevenLabs (khác nhóm Chirp3-HD/Google phía trên) — dùng để UI có thể gắn
+// nhãn/badge riêng nếu cần (hiện tại chỉ 1 giọng thử nghiệm).
+export const ELEVEN_VOICE_IDS: VoiceId[] = ['Rachel']
 
 export const VOICE_IDS: VoiceId[] = VOICE_OPTIONS.map((v) => v.id)
 export const DEFAULT_VOICE: VoiceId = 'Kore'

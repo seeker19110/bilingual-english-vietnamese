@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDown, Lock } from 'lucide-react'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
-import { VOICE_OPTIONS, DEFAULT_SEED_VOICE_IDS, getAllowedVoices } from '../lib/voiceTiers'
+import {
+  VOICE_OPTIONS,
+  DEFAULT_SEED_VOICE_IDS,
+  ELEVEN_VOICE_IDS,
+  getAllowedVoices,
+} from '../lib/voiceTiers'
 import type { Plan } from '../types'
 
 interface Props {
@@ -26,6 +31,7 @@ export default function VoiceMenu({ plan, isA }: Props) {
   const gender = genderOf(voice)
   const allowed = new Set(getAllowedVoices(plan))
   const seeded = new Set(DEFAULT_SEED_VOICE_IDS)
+  const eleven = new Set(ELEVEN_VOICE_IDS)
   const voicesOfGender = VOICE_OPTIONS.filter((v) => v.gender === gender)
 
   useEffect(() => {
@@ -114,6 +120,7 @@ export default function VoiceMenu({ plan, isA }: Props) {
               const isAllowed = allowed.has(v.id)
               const isSelected = voice === v.id
               const isSeeded = seeded.has(v.id)
+              const isEleven = eleven.has(v.id)
               return (
                 <button
                   key={v.id}
@@ -123,8 +130,8 @@ export default function VoiceMenu({ plan, isA }: Props) {
                   title={
                     !isAllowed
                       ? isA
-                        ? 'Nâng cấp gói để mở khoá giọng này'
-                        : 'Upgrade your plan to unlock this voice'
+                        ? 'Nâng cấp gói VIP để mở khoá giọng này'
+                        : 'Upgrade to VIP to unlock this voice'
                       : v.id
                   }
                   aria-pressed={isSelected}
@@ -139,6 +146,11 @@ export default function VoiceMenu({ plan, isA }: Props) {
                   {!isAllowed && <Lock className="w-3 h-3 shrink-0" />}
                   {v.id}
                   {isSeeded && isAllowed && <span aria-hidden>⚡</span>}
+                  {isEleven && isAllowed && (
+                    <span aria-hidden title="VIP">
+                      ✨
+                    </span>
+                  )}
                 </button>
               )
             })}
