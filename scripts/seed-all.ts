@@ -142,14 +142,18 @@ const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms
 type CatId =
   'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest' | 'challenge'
 
+// Thứ tự seed khi chạy --all (menu chọn riêng từng nhóm không phụ thuộc thứ tự này).
+// "Cụm từ" đặt CUỐI CÙNG vì số lượng lớn nhất (~313k câu) — ưu tiên seed xong các nhóm
+// nhỏ hơn (CEFR, hội thoại...) trước để có kết quả sớm, tránh dồn hết quota/thời gian
+// vào 1 nhóm ngay từ đầu.
 const CATEGORIES: { id: CatId; label: string }[] = [
   { id: 'pron', label: 'Phát âm từ điển (pronunciations)' },
   { id: 'curriculum', label: 'Câu + ví dụ giáo trình nền tảng (/learn)' },
   { id: 'cefr', label: 'Ví dụ ngữ pháp CEFR (Roadmap)' },
   { id: 'lessons-early', label: 'Hội thoại 50 bài đầu (Luyện nói)' },
-  { id: 'patterns', label: 'Câu mẫu trang Cụm từ' },
   { id: 'lessons-rest', label: 'Hội thoại các bài còn lại' },
   { id: 'challenge', label: 'Câu mẫu Challenge 30 ngày' },
+  { id: 'patterns', label: 'Câu mẫu trang Cụm từ' },
 ]
 
 // ── Kiểu dữ liệu ────────────────────────────────────────────────────────────
