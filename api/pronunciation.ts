@@ -26,6 +26,7 @@ import {
 import { saveAudio } from './_lib/fileStorage'
 import { ensureProfileRow } from './_lib/authService'
 import { clampVoiceToPlan } from './_lib/voiceAccess'
+import { isValidElevenVoice } from './_lib/elevenLabsTts'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -100,7 +101,11 @@ export default async function handler(req: Request): Promise<Response> {
   // Không tin voice client gửi lên — hạ về giọng cho phép đúng gói của user (fail-safe,
   // không lỗi cứng: UI đã tự ẩn lựa chọn ngoài quyền, nhánh này chỉ chặn gọi thẳng API).
   const { plan } = await ensureProfileRow(authResult.userId, '')
-  const voice = await clampVoiceToPlan(voiceParam, plan)
+  const clampedVoice = await clampVoiceToPlan(voiceParam, plan)
+  // Endpoint tra từ đơn này chỉ dùng Google TTS — giọng ElevenLabs (VIP) chỉ áp dụng cho
+  // câu/đoạn ở api/tts.ts. voiceParam đã qua isValidVoice() (Google-only) ở trên nên nhánh
+  // này thực tế không xảy ra, chỉ giữ để TypeScript hẹp kiểu về VoiceId của Google.
+  const voice = isValidElevenVoice(clampedVoice) ? DEFAULT_VOICE : clampedVoice
 
   let pool
   try {

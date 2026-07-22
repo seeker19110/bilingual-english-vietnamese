@@ -28,10 +28,10 @@ import {
   DEFAULT_VOICE,
   VOICE_VERSION,
   type Lang,
-  type VoiceId,
 } from './_lib/googleTts'
+import { generateAudioFromElevenLabs, isValidElevenVoice } from './_lib/elevenLabsTts'
 import { ensureProfileRow } from './_lib/authService'
-import { clampVoiceToPlan } from './_lib/voiceAccess'
+import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess'
 import { saveAudio } from './_lib/fileStorage'
 import { encryptAudio, getClientKeyMaterial } from './_lib/ttsCrypto'
 import {
@@ -79,7 +79,7 @@ const TtsBodySchema = z.object({
     .trim()
     .optional()
     .transform((v) => (v ? v : DEFAULT_VOICE))
-    .refine((v): v is VoiceId => isValidVoice(v), {
+    .refine((v): v is AnyVoiceId => isValidVoice(v) || isValidElevenVoice(v), {
       error: (ctx) => `voice không hợp lệ: ${ctx.input}`,
     }),
 })
@@ -194,9 +194,17 @@ export default async function handler(req: Request): Promise<Response> {
     )
   }
 
+  // Giọng ElevenLabs (VIP) dùng provider khác hẳn Google — text đọc y nguyên, provider
+  // tự nhận diện ngôn ngữ qua model đa ngôn ngữ nên không cần truyền `lang`.
+  const useElevenLabs = isValidElevenVoice(voice)
+
   let audioData: ArrayBuffer
   try {
-    audioData = await generateAudioFromGoogle(text, voice, lang)
+    if (isValidElevenVoice(voice)) {
+      audioData = await generateAudioFromElevenLabs(text)
+    } else {
+      audioData = await generateAudioFromGoogle(text, voice, lang)
+    }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     // 429 = hết quota Google TTS. Đây là tình huống VẬN HÀNH (cần nâng quota/bật billing),
@@ -214,7 +222,7 @@ export default async function handler(req: Request): Promise<Response> {
         },
       )
     }
-    console.error('[tts] Google TTS generation failed:', err)
+    console.error(`[tts] ${useElevenLabs ? 'ElevenLabs' : 'Google'} TTS generation failed:`, err)
     return jsonResponse({ error: 'Không thể tạo audio — thử lại sau' }, 500, allHeaders)
   }
 

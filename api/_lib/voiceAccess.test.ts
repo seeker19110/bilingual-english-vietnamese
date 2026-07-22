@@ -33,4 +33,16 @@ describe('clampVoiceToPlan', () => {
     mockedEffectivePlan.mockResolvedValue('vip')
     expect(await clampVoiceToPlan('Umbriel', 'free')).toBe('Umbriel')
   })
+
+  it('giọng ElevenLabs (Rachel) chỉ VIP mới dùng được — free/pro bị hạ về DEFAULT_VOICE', async () => {
+    mockedEffectivePlan.mockResolvedValue('free')
+    expect(await clampVoiceToPlan('Rachel', 'free')).toBe('Kore')
+    mockedEffectivePlan.mockResolvedValue('pro')
+    expect(await clampVoiceToPlan('Rachel', 'pro')).toBe('Kore')
+  })
+
+  it('vip được dùng giọng ElevenLabs (Rachel), không bị hạ', async () => {
+    mockedEffectivePlan.mockResolvedValue('vip')
+    expect(await clampVoiceToPlan('Rachel', 'vip')).toBe('Rachel')
+  })
 })

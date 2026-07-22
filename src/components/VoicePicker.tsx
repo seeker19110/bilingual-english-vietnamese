@@ -11,6 +11,7 @@ import {
 import {
   VOICE_OPTIONS,
   DEFAULT_SEED_VOICE_IDS,
+  ELEVEN_VOICE_IDS,
   getAllowedVoices,
   isVoicePromoActive,
 } from '../lib/voiceTiers'
@@ -32,6 +33,7 @@ export default function VoicePicker({ plan, isA }: Props) {
   const [random, setRandom] = useState(getVoiceRandomPref())
   const allowed = new Set(getAllowedVoices(plan))
   const seeded = new Set(DEFAULT_SEED_VOICE_IDS)
+  const eleven = new Set(ELEVEN_VOICE_IDS)
   const promoActive = isVoicePromoActive()
 
   function choose(v: Voice) {
@@ -124,7 +126,9 @@ export default function VoicePicker({ plan, isA }: Props) {
               const isAllowed = allowed.has(v.id)
               const isSelected = voice === v.id
               const isSeeded = seeded.has(v.id)
+              const isEleven = eleven.has(v.id)
               const slowHint = isA ? ' (tạo lần đầu chậm hơn 1 chút)' : ' (slower on first play)'
+              const elevenHint = isA ? ' — giọng đặc biệt VIP' : ' — special VIP voice'
               return (
                 <button
                   key={v.id}
@@ -134,11 +138,13 @@ export default function VoicePicker({ plan, isA }: Props) {
                   title={
                     !isAllowed
                       ? isA
-                        ? 'Nâng cấp gói để mở khoá giọng này'
-                        : 'Upgrade your plan to unlock this voice'
-                      : isSeeded
-                        ? v.id
-                        : `${v.id}${slowHint}`
+                        ? 'Nâng cấp gói VIP để mở khoá giọng này'
+                        : 'Upgrade to VIP to unlock this voice'
+                      : isEleven
+                        ? `${v.id}${elevenHint}`
+                        : isSeeded
+                          ? v.id
+                          : `${v.id}${slowHint}`
                   }
                   aria-pressed={isSelected}
                   className={`relative flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-medium border transition ${
@@ -152,6 +158,11 @@ export default function VoicePicker({ plan, isA }: Props) {
                   {!isAllowed && <Lock className="w-3 h-3 shrink-0" />}
                   {v.id}
                   {isSeeded && isAllowed && <span aria-hidden>⚡</span>}
+                  {isEleven && isAllowed && (
+                    <span aria-hidden title="VIP">
+                      ✨
+                    </span>
+                  )}
                 </button>
               )
             })}
