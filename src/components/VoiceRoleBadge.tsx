@@ -12,6 +12,7 @@ interface Props {
   isA: boolean
   plan: Plan
   onChange: (voice: Voice) => void
+  onSet?: () => void // gọi sau khi đặt mặc định — cha dùng để tự ẩn panel sau vài giây
 }
 
 const STEP_PX = 36 // vuốt mỗi 36px đổi 1 giọng
@@ -19,7 +20,15 @@ const STEP_PX = 36 // vuốt mỗi 36px đổi 1 giọng
 // Khối chọn giọng lớn cho 1 vai (A/B) trong màn hội thoại 2 nhân vật — vuốt lên/xuống (hoặc
 // bấm mũi tên) để đổi NGAY giọng đang phát trong số các giọng cùng giới tính mà gói hiện tại
 // cho phép, cộng nút "Đặt mặc định" để lưu lại giọng này làm pref toàn cục (setVoicePref).
-export default function VoiceRoleBadge({ voice, gender, label, isA, plan, onChange }: Props) {
+export default function VoiceRoleBadge({
+  voice,
+  gender,
+  label,
+  isA,
+  plan,
+  onChange,
+  onSet,
+}: Props) {
   const [justSet, setJustSet] = useState(false)
   const dragRef = useRef<{ startY: number; steps: number } | null>(null)
 
@@ -59,6 +68,7 @@ export default function VoiceRoleBadge({ voice, gender, label, isA, plan, onChan
     setVoicePref(voice)
     setJustSet(true)
     setTimeout(() => setJustSet(false), 1500)
+    onSet?.()
   }
 
   return (

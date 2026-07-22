@@ -624,6 +624,20 @@ export function DialogueView({
   const [paused, setPaused] = useState(false)
   const [speed, setSpeed] = useState<DlgSpeed>(getRatePref())
   const [mode, setMode] = useState<DlgMode>('en')
+  // Panel "Cài đặt giọng" ẩn mặc định, bấm nhãn ở thanh control mới hiện; đặt xong 1 giọng thì
+  // tự ẩn lại sau 3s (đỡ chiếm chỗ màn hình nhỏ).
+  const [voiceSettingsOpen, setVoiceSettingsOpen] = useState(false)
+  const hideVoiceSettingsRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(
+    () => () => {
+      if (hideVoiceSettingsRef.current) clearTimeout(hideVoiceSettingsRef.current)
+    },
+    [],
+  )
+  function handleVoiceSet() {
+    if (hideVoiceSettingsRef.current) clearTimeout(hideVoiceSettingsRef.current)
+    hideVoiceSettingsRef.current = setTimeout(() => setVoiceSettingsOpen(false), 3000)
+  }
   // Từ đang đọc của dòng đang phát (chỉ theo dõi khi audio đang đọc CHÍNH `ln.en` — đúng văn
   // bản mà KaraokeText hiển thị) — cho karaoke sáng chữ trong lúc "Phát tất cả", không chỉ khi
   // bấm nghe từng dòng riêng lẻ.
@@ -878,36 +892,55 @@ export function DialogueView({
             ))}
           </div>
 
-          {/* Đang phát dòng bao nhiêu */}
-          {playing && activeLine !== null && (
-            <div className="ml-auto flex items-center gap-1 shrink-0">
-              <div className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" />
-              <span className="text-[11px] text-zinc-400">
-                {activeLine + 1}/{dialogue.lines.length}
-              </span>
-            </div>
-          )}
+          {/* Nút mở/ẩn panel giọng — nằm ở phần còn dư của thanh control */}
+          <div className="ml-auto flex items-center gap-2 shrink-0">
+            {playing && activeLine !== null && (
+              <div className="flex items-center gap-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" />
+                <span className="text-[11px] text-zinc-400">
+                  {activeLine + 1}/{dialogue.lines.length}
+                </span>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => setVoiceSettingsOpen((o) => !o)}
+              aria-expanded={voiceSettingsOpen}
+              className={`px-1.5 py-0.5 rounded text-xs font-medium transition ${
+                voiceSettingsOpen
+                  ? 'bg-zinc-800 text-zinc-200'
+                  : 'text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              {isA ? 'Cài đặt giọng' : 'Voice settings'}
+            </button>
+          </div>
         </div>
 
-        {/* Giọng đang phát cho từng nhân vật (random mỗi lần mở) + nút đặt làm mặc định */}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 px-1">
-          <VoiceRoleBadge
-            voice={voiceA}
-            gender={genderA}
-            label="A"
-            isA={isA}
-            plan={plan}
-            onChange={changeVoiceA}
-          />
-          <VoiceRoleBadge
-            voice={voiceB}
-            gender={genderB}
-            label="B"
-            isA={isA}
-            plan={plan}
-            onChange={changeVoiceB}
-          />
-        </div>
+        {/* Giọng đang phát cho từng nhân vật (random mỗi lần mở) + nút đặt làm mặc định — chỉ
+            hiện khi bấm "Cài đặt giọng", tự ẩn 3s sau khi đặt mặc định */}
+        {voiceSettingsOpen && (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 px-1 animate-fade-in">
+            <VoiceRoleBadge
+              voice={voiceA}
+              gender={genderA}
+              label="A"
+              isA={isA}
+              plan={plan}
+              onChange={changeVoiceA}
+              onSet={handleVoiceSet}
+            />
+            <VoiceRoleBadge
+              voice={voiceB}
+              gender={genderB}
+              label="B"
+              isA={isA}
+              plan={plan}
+              onChange={changeVoiceB}
+              onSet={handleVoiceSet}
+            />
+          </div>
+        )}
       </div>
 
       <div className="glass rounded-2xl p-4 sm:p-5">
