@@ -1,10 +1,22 @@
 import { useState, useRef, useEffect, memo, useMemo, useDeferredValue } from 'react'
-import { Play, Pause, Square, Volume2, Loader2, Search, X, Mic, RotateCcw } from 'lucide-react'
+import type { PointerEvent } from 'react'
+import {
+  Play,
+  Pause,
+  Square,
+  Volume2,
+  Loader2,
+  Search,
+  X,
+  Mic,
+  RotateCcw,
+  ChevronUp,
+  ChevronDown,
+} from 'lucide-react'
 import { startListening, isSTTSupported } from '../lib/stt'
 import { scorePronunciation, pronounceFeedback, scoreWords } from '../lib/pronounceScore'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import VoiceMenu from '../components/VoiceMenu'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { getViewedIds, markViewed } from '../lib/viewedTracking'
@@ -201,12 +213,7 @@ export default function Lessons() {
     const c = getColor(selectedMeta.id)
     return (
       <div className="h-[calc(100dvh-var(--bnav-h))] overflow-hidden bg-zinc-950 flex flex-col">
-        <Layout
-          title={selectedMeta.title}
-          subtitle={selectedMeta.situation}
-          back
-          extra={<VoiceMenu plan={user?.plan ?? 'free'} isA={isA} />}
-        />
+        <Layout title={selectedMeta.title} subtitle={selectedMeta.situation} back />
         {loadingLesson || !lesson ? (
           <div className="flex-1 flex items-center justify-center text-zinc-400">
             <Loader2 className="w-5 h-5 animate-spin mr-2" />
@@ -230,7 +237,7 @@ export default function Lessons() {
   // Desktop (sm+): layout thường, search ở trên
   return (
     <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
-      <Layout back extra={<VoiceMenu plan={user?.plan ?? 'free'} isA={isA} />} />
+      <Layout back />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2">
@@ -446,13 +453,33 @@ function LessonView({
   // chọn giọng ưng ý làm mặc định (nút "Đặt mặc định" ở VoiceRoleBadge).
   const genderA = lesson.speakerAGender ?? 'female'
   const genderB = lesson.speakerBGender ?? 'male'
-  const { voiceA, voiceB } = useMemo<{ voiceA: Voice; voiceB: Voice }>(() => {
+  const initialVoices = useMemo<{ voiceA: Voice; voiceB: Voice }>(() => {
     const a = pickRandomVoice(genderA, plan)
     let b = pickRandomVoice(genderB, plan)
     for (let i = 0; i < 5 && b === a; i++) b = pickRandomVoice(genderB, plan)
     return { voiceA: a, voiceB: b }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson.id, genderA, genderB, plan])
+
+  const [voiceA, setVoiceA] = useState<Voice>(initialVoices.voiceA)
+  const [voiceB, setVoiceB] = useState<Voice>(initialVoices.voiceB)
+  const voiceARef = useRef<Voice>(initialVoices.voiceA)
+  const voiceBRef = useRef<Voice>(initialVoices.voiceB)
+  useEffect(() => {
+    setVoiceA(initialVoices.voiceA)
+    voiceARef.current = initialVoices.voiceA
+    setVoiceB(initialVoices.voiceB)
+    voiceBRef.current = initialVoices.voiceB
+  }, [initialVoices])
+
+  function changeVoiceA(v: Voice) {
+    setVoiceA(v)
+    voiceARef.current = v
+  }
+  function changeVoiceB(v: Voice) {
+    setVoiceB(v)
+    voiceBRef.current = v
+  }
 
   const [activeTurn, setActiveTurn] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)
@@ -467,6 +494,7 @@ function LessonView({
   const modeRef = useRef<AudioMode>('en')
   const turnRefs = useRef<(HTMLDivElement | null)[]>([])
   const wordSyncRef = useRef<WordSync | null>(null)
+  const speedDragRef = useRef<{ startY: number; steps: number } | null>(null)
 
   // Dừng audio khi thoát trang hoặc back về danh sách
   useEffect(() => {
@@ -517,7 +545,7 @@ function LessonView({
     void (async () => {
       for (const t of lesson.turns) {
         if (stopRef.current) break
-        const v = t.speaker === 'A' ? voiceA : voiceB
+        const v = t.speaker === 'A' ? voiceARef.current : voiceBRef.current
         const m = modeRef.current
         if (m === 'en' || m === 'both') await prefetchSpeech(t.en, 'en-US', v)
         if (m === 'vi' || m === 'both') await prefetchSpeech(t.vi, 'vi-VN', v)
@@ -538,7 +566,7 @@ function LessonView({
       const transText = isA ? t.vi : t.en
       const curMode = modeRef.current
       const curSpeed = speedRef.current
-      const curVoice = t.speaker === 'A' ? voiceA : voiceB
+      const curVoice = t.speaker === 'A' ? voiceARef.current : voiceBRef.current
 
       if (curMode === 'en') {
         await speak(t.en, 'en-US', curVoice, curSpeed, (wi) =>
@@ -607,7 +635,7 @@ function LessonView({
     const transText = isA ? t.vi : t.en
     const curMode = modeRef.current
     const curSpeed = speedRef.current
-    const curVoice = t.speaker === 'A' ? voiceA : voiceB
+    const curVoice = t.speaker === 'A' ? voiceARef.current : voiceBRef.current
 
     if (curMode === 'en') {
       await speak(t.en, 'en-US', curVoice, curSpeed, (wi) =>
@@ -634,6 +662,30 @@ function LessonView({
 
   const isIdle = !playing && !paused
   const SPEEDS: Speed[] = [0.75, 1, 1.25]
+
+  function stepSpeed(delta: number) {
+    const i = SPEEDS.indexOf(speedRef.current)
+    const next = SPEEDS[(i + delta + SPEEDS.length) % SPEEDS.length]
+    if (next !== undefined) changeSpeed(next)
+  }
+  function onSpeedPointerDown(e: PointerEvent<HTMLDivElement>) {
+    e.currentTarget.setPointerCapture(e.pointerId)
+    speedDragRef.current = { startY: e.clientY, steps: 0 }
+  }
+  function onSpeedPointerMove(e: PointerEvent<HTMLDivElement>) {
+    const d = speedDragRef.current
+    if (!d) return
+    const diff = e.clientY - d.startY
+    const targetSteps = Math.trunc(-diff / 32)
+    if (targetSteps !== d.steps) {
+      stepSpeed(targetSteps - d.steps)
+      d.steps = targetSteps
+    }
+  }
+  function onSpeedPointerUp() {
+    speedDragRef.current = null
+  }
+
   const MODES: { key: AudioMode; label: string }[] = [
     { key: 'en', label: 'EN' },
     { key: 'both', label: isA ? 'EN+VI' : 'VI+EN' },
@@ -697,21 +749,34 @@ function LessonView({
 
             <div className="h-3.5 w-px bg-zinc-700" />
 
-            {/* Tốc độ */}
-            <div className="flex items-center gap-1">
-              {SPEEDS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => changeSpeed(s)}
-                  className={`px-1.5 py-0.5 rounded text-xs font-medium transition ${
-                    speed === s
-                      ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40'
-                      : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
-                  }`}
-                >
-                  {s}×
-                </button>
-              ))}
+            {/* Tốc độ — chỉ hiện tốc độ hiện tại, vuốt lên/xuống (hoặc bấm mũi tên) để đổi */}
+            <div
+              onPointerDown={onSpeedPointerDown}
+              onPointerMove={onSpeedPointerMove}
+              onPointerUp={onSpeedPointerUp}
+              onPointerCancel={onSpeedPointerUp}
+              className="flex items-center gap-0.5 cursor-ns-resize touch-none select-none"
+              title={isA ? 'Vuốt lên/xuống để đổi tốc độ' : 'Swipe up/down to change speed'}
+            >
+              <button
+                type="button"
+                onClick={() => stepSpeed(-1)}
+                aria-label={isA ? 'Tốc độ chậm hơn' : 'Slower'}
+                className="text-zinc-500 hover:text-zinc-200 transition"
+              >
+                <ChevronUp className="w-3.5 h-3.5" />
+              </button>
+              <span className="min-w-[30px] text-center px-1.5 py-0.5 rounded text-xs font-medium bg-sky-500/20 text-sky-300 border border-sky-500/40">
+                {speed}×
+              </span>
+              <button
+                type="button"
+                onClick={() => stepSpeed(1)}
+                aria-label={isA ? 'Tốc độ nhanh hơn' : 'Faster'}
+                className="text-zinc-500 hover:text-zinc-200 transition"
+              >
+                <ChevronDown className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             <div className="h-3.5 w-px bg-zinc-700" />
@@ -745,10 +810,24 @@ function LessonView({
             )}
           </div>
 
-          {/* Giọng đang phát cho từng nhân vật (random mỗi lần mở) + nút đặt làm mặc định */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 px-1">
-            <VoiceRoleBadge voice={voiceA} gender={genderA} label="A" isA={isA} />
-            <VoiceRoleBadge voice={voiceB} gender={genderB} label="B" isA={isA} />
+          {/* Giọng đang phát cho từng nhân vật — vuốt lên/xuống để đổi ngay + nút đặt mặc định */}
+          <div className="flex gap-2 mt-2">
+            <VoiceRoleBadge
+              voice={voiceA}
+              gender={genderA}
+              label="A"
+              isA={isA}
+              plan={plan}
+              onChange={changeVoiceA}
+            />
+            <VoiceRoleBadge
+              voice={voiceB}
+              gender={genderB}
+              label="B"
+              isA={isA}
+              plan={plan}
+              onChange={changeVoiceB}
+            />
           </div>
         </div>
       </div>
