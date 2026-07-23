@@ -451,6 +451,45 @@ function loadPatternTasks(): PatternTask[] {
   return tasks
 }
 
+// Toàn bộ tác vụ pattern (Cụm từ) BỎ QUA seed-index — khác loadPatternTasks() (chỉ top-N,
+// dùng để SEED THẬT nên phải giới hạn vì tốn tiền API). Dùng riêng cho remap-only (KHÔNG
+// gọi API nên quét hết 100 câu/chủ thể không tốn phí gì) để tận dụng lại audio cache đã
+// seed đủ 100/chủ thể từ TRƯỚC khi có seed-index (hoặc dưới tên/hash giọng CŨ) cho cả 80
+// câu ngoài top-N — nếu không quét, cache cũ của các câu đó không bao giờ được remap sang
+// hash/tên giọng mới, coi như "chết" dù vẫn còn tốn chỗ trên Storage.
+function loadFullPatternTasks(): PatternTask[] {
+  const tasks: PatternTask[] = []
+  const seen = new Set<string>()
+  const patternDir = path.join(PROJECT_ROOT, 'public/data/patterns')
+  for (const subject of loadSubjectsInDisplayOrder(patternDir)) {
+    for (const { en, vi } of subject.sentences) {
+      for (const { text: rawText, lang } of [
+        { text: en, lang: 'en-US' as Lang },
+        { text: vi, lang: 'vi-VN' as Lang },
+      ]) {
+        const text = rawText.trim()
+        if (!text) continue
+        for (const voice of PREF_VOICE_IDS) {
+          const key = `${text}|${lang}|${voice}`
+          if (seen.has(key)) continue
+          seen.add(key)
+          tasks.push({ type: 'pattern', cat: 'patterns', text, lang, voice })
+        }
+      }
+    }
+  }
+  return tasks
+}
+
+// Hash tương ứng — dùng để BẢO VỆ khỏi bị verifyDb() coi là "orphan" và xoá nhầm: câu
+// pattern hợp lệ ở giọng/version hiện tại nhưng ngoài seed-index vẫn là cache hợp lệ,
+// /api/tts vẫn phục vụ đúng khi người dùng bấm nghe (cache-on-demand).
+function loadAllPatternHashes(): Set<string> {
+  const hashes = new Set<string>()
+  for (const t of loadFullPatternTasks()) hashes.add(hashText(t.text, t.lang, t.voice))
+  return hashes
+}
+
 function loadPronTasks(wordsFile?: string): PronTask[] {
   let words: string[]
   if (wordsFile) {
@@ -1539,8 +1578,13 @@ async function verifyDb(
     `  ${pronPresent === expectedPron.size ? '✅' : '⚠️'} ${'Phát âm (pron)'.padEnd(labelWidth)}  có ${pronPresent}/${expectedPron.size}  thiếu ${expectedPron.size - pronPresent}`,
   )
 
-  // 4) Chiều THỪA — orphan (DB có nhưng không còn kỳ vọng)
-  const orphans = ttsRows.filter((r) => !expectedTts.has(r.hash))
+  // 4) Chiều THỪA — orphan (DB có nhưng không còn kỳ vọng). Loại trừ thêm các câu pattern
+  // hợp lệ ở giọng/version hiện tại nhưng ngoài seed-index (seed đủ 100/chủ thể từ trước,
+  // hoặc seed dở dang) — KHÔNG coi là orphan, vì /api/tts vẫn phục vụ đúng các câu này.
+  const protectedPatternHashes = loadAllPatternHashes()
+  const orphans = ttsRows.filter(
+    (r) => !expectedTts.has(r.hash) && !protectedPatternHashes.has(r.hash),
+  )
   const orphanByVoice = new Map<string, number>()
   for (const r of orphans) {
     const k = `${r.lang}/${r.voice}`
@@ -1781,15 +1825,22 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
         continue
       }
       if (ans === 'm') {
+        // Remap-only KHÔNG gọi API nên không tốn phí — quét pattern ĐẦY ĐỦ 100 câu/chủ thể
+        // (loadFullPatternTasks, bỏ qua seed-index) thay vì chỉ top-N như allByCat, để cache
+        // cũ (giọng/hash cũ) của 80 câu ngoài top-N cũng được remap sang hash hiện tại, không
+        // bị bỏ quên "chết" trên Storage.
+        const remapAllByCat = new Map(allByCat)
+        remapAllByCat.set('patterns', loadFullPatternTasks())
+        const remapStats = await audit(remapAllByCat)
         await seedCategories(
-          stats,
+          remapStats,
           CATEGORIES.map((c) => c.id),
           true, // remapOnly
         )
         // Remap chỉ THÊM bản ghi dưới hash/tên giọng mới — bản ghi cũ (hash/tên giọng cũ)
         // không tự mất, nên sau khi remap xong luôn còn orphan để dọn. Xem trước rồi hỏi
         // xác nhận thay vì xoá luôn — orphan là dữ liệu Storage thật, xoá nhầm không hoàn tác được.
-        await verifyDb(allByCat, { cleanOrphans: true, confirmYes: false })
+        await verifyDb(remapAllByCat, { cleanOrphans: true, confirmYes: false })
         const confirm = (
           await rl.question(
             '\n🗑️  Xoá THẬT các bản ghi/file dư thừa (orphan) ở trên? (gõ "yes" để xoá, Enter để bỏ qua): ',
@@ -1798,7 +1849,7 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
           .trim()
           .toLowerCase()
         if (confirm === 'yes') {
-          await verifyDb(allByCat, { cleanOrphans: true, confirmYes: true })
+          await verifyDb(remapAllByCat, { cleanOrphans: true, confirmYes: true })
         } else {
           console.log('ℹ️  Bỏ qua — chưa xoá gì.')
         }
