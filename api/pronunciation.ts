@@ -18,9 +18,12 @@
 import { getPgPool } from './_lib/pgPool'
 import {
   generateAudioFromGoogle,
+  generateStudioAudioFromGoogle,
   isValidVoice,
+  isValidStudioVoice,
   DEFAULT_VOICE,
   VOICE_IDS,
+  STUDIO_VOICE_IDS,
   VOICE_VERSION,
 } from './_lib/googleTts'
 import { saveAudio } from './_lib/fileStorage'
@@ -91,9 +94,11 @@ export default async function handler(req: Request): Promise<Response> {
   }
   const word = rawWord
 
-  if (!isValidVoice(voiceParam)) {
+  if (!isValidVoice(voiceParam) && !isValidStudioVoice(voiceParam)) {
     return jsonResponse(
-      { error: `voice không hợp lệ: ${voiceParam} (chỉ nhận ${VOICE_IDS.join(' | ')})` },
+      {
+        error: `voice không hợp lệ: ${voiceParam} (chỉ nhận ${[...VOICE_IDS, ...STUDIO_VOICE_IDS].join(' | ')})`,
+      },
       400,
       allHeaders,
     )
@@ -102,9 +107,10 @@ export default async function handler(req: Request): Promise<Response> {
   // không lỗi cứng: UI đã tự ẩn lựa chọn ngoài quyền, nhánh này chỉ chặn gọi thẳng API).
   const { plan } = await ensureProfileRow(authResult.userId, '')
   const clampedVoice = await clampVoiceToPlan(voiceParam, plan)
-  // Endpoint tra từ đơn này chỉ dùng Google TTS — giọng ElevenLabs (VIP) chỉ áp dụng cho
-  // câu/đoạn ở api/tts.ts. voiceParam đã qua isValidVoice() (Google-only) ở trên nên nhánh
-  // này thực tế không xảy ra, chỉ giữ để TypeScript hẹp kiểu về VoiceId của Google.
+  // Endpoint tra từ đơn này luôn tiếng Anh (word) nên dùng được cả Chirp3-HD lẫn Studio —
+  // chỉ giọng ElevenLabs (VIP) không áp dụng ở đây (dành cho câu/đoạn ở api/tts.ts).
+  // clampedVoice đã qua isValidVoice()/isValidStudioVoice() (không có Eleven) ở trên nên
+  // nhánh isValidElevenVoice không thực sự xảy ra, chỉ giữ để TypeScript hẹp kiểu.
   const voice = isValidElevenVoice(clampedVoice) ? DEFAULT_VOICE : clampedVoice
 
   let pool
@@ -155,7 +161,9 @@ export default async function handler(req: Request): Promise<Response> {
 
   let audioData: ArrayBuffer
   try {
-    audioData = await generateAudioFromGoogle(word, voice, 'en-US')
+    audioData = isValidStudioVoice(voice)
+      ? await generateStudioAudioFromGoogle(word, voice)
+      : await generateAudioFromGoogle(word, voice, 'en-US')
   } catch (err) {
     return jsonResponse(
       { error: `Không thể tạo audio: ${(err as Error).message}` },

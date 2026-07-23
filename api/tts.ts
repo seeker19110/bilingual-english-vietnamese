@@ -24,10 +24,13 @@ import { z } from 'zod'
 import { getPgPool } from './_lib/pgPool'
 import {
   generateAudioFromGoogle,
+  generateStudioAudioFromGoogle,
   isValidVoice,
+  isValidStudioVoice,
   DEFAULT_VOICE,
   VOICE_VERSION,
   type Lang,
+  type VoiceId,
 } from './_lib/googleTts'
 import { generateAudioFromElevenLabs, isValidElevenVoice } from './_lib/elevenLabsTts'
 import { ensureProfileRow } from './_lib/authService'
@@ -79,9 +82,12 @@ const TtsBodySchema = z.object({
     .trim()
     .optional()
     .transform((v) => (v ? v : DEFAULT_VOICE))
-    .refine((v): v is AnyVoiceId => isValidVoice(v) || isValidElevenVoice(v), {
-      error: (ctx) => `voice không hợp lệ: ${ctx.input}`,
-    }),
+    .refine(
+      (v): v is AnyVoiceId => isValidVoice(v) || isValidElevenVoice(v) || isValidStudioVoice(v),
+      {
+        error: (ctx) => `voice không hợp lệ: ${ctx.input}`,
+      },
+    ),
 })
 
 // Hash đơn giản dùng để tạo tên file + key tìm kiếm trong DB (KHÔNG phải khoá mã hóa —
@@ -147,7 +153,18 @@ export default async function handler(req: Request): Promise<Response> {
   // Không tin voice client gửi lên — hạ về giọng cho phép đúng gói của user (fail-safe,
   // không lỗi cứng: UI đã tự ẩn lựa chọn ngoài quyền, nhánh này chỉ chặn gọi thẳng API).
   const { plan } = await ensureProfileRow(authResult.userId, '')
-  const voice = await clampVoiceToPlan(parsed.data.voice, plan)
+  let voice = await clampVoiceToPlan(parsed.data.voice, plan)
+
+  // Studio CHỈ có tiếng Anh (Google không có giọng Studio cho vi-VN) — nếu lỡ nhận Studio
+  // cho câu tiếng Việt (client fallback lỗi, hoặc gọi thẳng API), hạ về Chirp3-HD cùng giới
+  // tính thay vì lỗi cứng, giống các nhánh fail-safe khác ở trên.
+  const STUDIO_TO_CHIRP_FALLBACK: Partial<Record<AnyVoiceId, VoiceId>> = {
+    'Studio-O': 'Kore',
+    'Studio-Q': 'Puck',
+  }
+  if (lang !== 'en-US' && isValidStudioVoice(voice)) {
+    voice = STUDIO_TO_CHIRP_FALLBACK[voice] ?? DEFAULT_VOICE
+  }
 
   let pool
   try {
@@ -195,13 +212,20 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Giọng ElevenLabs (VIP) dùng provider khác hẳn Google — text đọc y nguyên, provider
-  // tự nhận diện ngôn ngữ qua model đa ngôn ngữ nên không cần truyền `lang`.
-  const useElevenLabs = isValidElevenVoice(voice)
+  // tự nhận diện ngôn ngữ qua model đa ngôn ngữ nên không cần truyền `lang`. Giọng Studio
+  // vẫn là Google Cloud TTS nhưng lang luôn 'en-US' (đã clamp ở trên).
+  const providerLabel = isValidElevenVoice(voice)
+    ? 'ElevenLabs'
+    : isValidStudioVoice(voice)
+      ? 'Google Studio'
+      : 'Google'
 
   let audioData: ArrayBuffer
   try {
     if (isValidElevenVoice(voice)) {
       audioData = await generateAudioFromElevenLabs(text)
+    } else if (isValidStudioVoice(voice)) {
+      audioData = await generateStudioAudioFromGoogle(text, voice)
     } else {
       audioData = await generateAudioFromGoogle(text, voice, lang)
     }
@@ -222,7 +246,7 @@ export default async function handler(req: Request): Promise<Response> {
         },
       )
     }
-    console.error(`[tts] ${useElevenLabs ? 'ElevenLabs' : 'Google'} TTS generation failed:`, err)
+    console.error(`[tts] ${providerLabel} TTS generation failed:`, err)
     return jsonResponse({ error: 'Không thể tạo audio — thử lại sau' }, 500, allHeaders)
   }
 

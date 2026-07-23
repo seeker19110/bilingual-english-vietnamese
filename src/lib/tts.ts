@@ -11,6 +11,7 @@ import {
   DEFAULT_VOICE,
   DEFAULT_MALE_VOICE,
   VOICE_OPTIONS,
+  STUDIO_VOICE_IDS,
   getCachedAllowedVoices,
   type VoiceId,
 } from './voiceTiers'
@@ -130,12 +131,23 @@ const LEGACY_VOICE_MAP: Record<string, Voice> = {
   male2: 'Charon',
 }
 
+// Người dùng CHƯA từng chọn giọng tay: nếu gói hiện tại (Pro/VIP) có giọng Studio (cao
+// cấp, chỉ tiếng Anh — xem voiceTiers.ts) thì dùng làm mặc định, để giới thiệu giọng cao
+// cấp ngay thay vì phải tự tìm trong VoicePicker. Free (hoặc Studio bị gỡ khỏi gói, hoặc
+// chưa đăng nhập nên getCachedAllowedVoices() trả về mặc định an toàn) → về Kore như cũ.
+// CHỈ áp dụng khi chưa có lựa chọn nào lưu — 1 khi người dùng bấm chọn giọng khác (dù là
+// Chirp3-HD hay Studio), VOICE_KEY được ghi và luôn dùng giá trị đó (xem setVoicePref).
+function getDefaultVoiceForUnsetPref(): Voice {
+  const allowed = getCachedAllowedVoices()
+  return STUDIO_VOICE_IDS.some((v) => allowed.includes(v)) ? STUDIO_VOICE_IDS[0]! : DEFAULT_VOICE
+}
+
 // Giọng "gốc" người dùng đã chọn tay (VoicePicker/VoiceMenu) — luôn dùng làm giọng cố định
 // khi chế độ ngẫu nhiên TẮT, và làm "hạt giống" xác định GIỚI TÍNH khi chế độ ngẫu nhiên BẬT.
 function getStoredVoice(): Voice {
   const raw = localStorage.getItem(VOICE_KEY) ?? ''
   if (isValidVoiceId(raw)) return raw
-  return LEGACY_VOICE_MAP[raw] ?? DEFAULT_VOICE
+  return LEGACY_VOICE_MAP[raw] ?? getDefaultVoiceForUnsetPref()
 }
 
 export function setVoicePref(voice: Voice): void {
@@ -305,7 +317,25 @@ function bufferToBlobUrl(buffer: ArrayBuffer): string {
 // và bộ nạp-trước cùng tải một câu (tải đôi + dễ dính 429).
 const inflight = new Map<string, Promise<ArrayBuffer>>()
 
-async function ensureAudioBuffer(text: string, lang: Lang, voice: Voice): Promise<ArrayBuffer> {
+// Studio (giọng cao cấp Pro/VIP mặc định mới — xem getDefaultVoiceForUnsetPref) CHỈ có
+// tiếng Anh. speak()/prefetchSpeech() không phân biệt lang khi lấy voice mặc định (dùng
+// chung 1 giọng toàn app), nên câu tiếng Việt (vd bản dịch ex_vi trong KaraokeText) có thể
+// nhận nhầm Studio — tự đổi về Chirp3-HD cùng giới tính thay vì gọi API lỗi/không phát được.
+const STUDIO_TO_CHIRP_FALLBACK: Partial<Record<Voice, Voice>> = {
+  'Studio-O': 'Kore',
+  'Studio-Q': 'Puck',
+}
+function resolveVoiceForLang(voice: Voice, lang: Lang): Voice {
+  if (lang === 'en-US') return voice
+  return STUDIO_TO_CHIRP_FALLBACK[voice] ?? voice
+}
+
+async function ensureAudioBuffer(
+  text: string,
+  lang: Lang,
+  voiceInput: Voice,
+): Promise<ArrayBuffer> {
+  const voice = resolveVoiceForLang(voiceInput, lang)
   const cacheKey = audioCacheKey(text, lang, voice)
 
   // Kiểm tra IndexedDB trước — nếu đã có thì khỏi gọi server

@@ -45,4 +45,14 @@ describe('clampVoiceToPlan', () => {
     mockedEffectivePlan.mockResolvedValue('vip')
     expect(await clampVoiceToPlan('Rachel', 'vip')).toBe('Rachel')
   })
+
+  it('giọng Studio (cao cấp, chỉ tiếng Anh) mở cho CẢ Pro lẫn VIP — free bị hạ về DEFAULT_VOICE', async () => {
+    mockedEffectivePlan.mockResolvedValue('free')
+    expect(await clampVoiceToPlan('Studio-O', 'free')).toBe('Kore')
+    mockedEffectivePlan.mockResolvedValue('pro')
+    expect(await clampVoiceToPlan('Studio-O', 'pro')).toBe('Studio-O')
+    expect(await clampVoiceToPlan('Studio-Q', 'pro')).toBe('Studio-Q')
+    mockedEffectivePlan.mockResolvedValue('vip')
+    expect(await clampVoiceToPlan('Studio-O', 'vip')).toBe('Studio-O')
+  })
 })

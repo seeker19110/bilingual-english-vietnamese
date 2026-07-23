@@ -98,6 +98,34 @@ function resolveVoiceConfig(
   return { name: `${lang}-Chirp3-HD-${voice}`, ssmlGender: VOICE_GENDER[voice] }
 }
 
+// ── Giọng "Studio" (cao cấp, Pro/VIP) ───────────────────────────────────────
+// Cùng provider/key pool Google Cloud TTS như Chirp3-HD ở trên, NHƯNG:
+//   - Google CHỈ có Studio cho en-US (không có cho vi-VN) — khác Chirp3-HD dùng được
+//     cho mọi ngôn ngữ app hỗ trợ. Nơi gọi (api/tts.ts, api/pronunciation.ts) PHẢI tự
+//     đảm bảo chỉ dùng Studio khi lang === 'en-US' (client: xem STUDIO_TO_CHIRP_FALLBACK
+//     trong src/lib/tts.ts).
+//   - Tên giọng gửi Google là `en-US-Studio-O`/`en-US-Studio-Q` (không có "-Chirp3-HD-").
+//   - Đắt hơn Chirp3-HD ~5 lần — chỉ mở cho gói Pro/VIP (xem voiceTiers.ts/voiceAccess.ts),
+//     không seed sẵn hàng loạt như Chirp3-HD, tạo động (cache-on-demand) khi người dùng
+//     Pro/VIP thực sự mở từ/câu.
+export type StudioVoiceId = 'Studio-O' | 'Studio-Q'
+export const STUDIO_VOICE_IDS: StudioVoiceId[] = ['Studio-O', 'Studio-Q']
+const STUDIO_VOICE_GENDER: Record<StudioVoiceId, 'FEMALE' | 'MALE'> = {
+  'Studio-O': 'FEMALE',
+  'Studio-Q': 'MALE',
+}
+
+export function isValidStudioVoice(value: string): value is StudioVoiceId {
+  return (STUDIO_VOICE_IDS as string[]).includes(value)
+}
+
+function resolveStudioVoiceConfig(voice: StudioVoiceId): {
+  name: string
+  ssmlGender: 'FEMALE' | 'MALE'
+} {
+  return { name: `en-US-${voice}`, ssmlGender: STUDIO_VOICE_GENDER[voice] }
+}
+
 // ── Xoay vòng nhiều API key ──────────────────────────────────────────────────
 // Mỗi API key Google Cloud TTS có hạn mức (quota) riêng theo project. Khi có nhiều
 // project/key, ta gộp thành 1 "bể" key rồi:
@@ -253,17 +281,17 @@ async function getHealthyKeyPool(): Promise<string[]> {
   return healthy.length > 0 ? healthy : fullPool
 }
 
-export async function generateAudioFromGoogle(
+// Vòng lặp xoay vòng key + retry dùng CHUNG cho cả Chirp3-HD và Studio (cùng provider/key
+// pool Google Cloud TTS, chỉ khác voiceConfig/lang gửi lên).
+async function callGoogleTtsWithKeyPool(
   text: string,
-  voice: VoiceId = DEFAULT_VOICE,
-  lang: Lang = 'en-US',
+  voiceConfig: { name: string; ssmlGender: 'FEMALE' | 'MALE' },
+  lang: Lang,
 ): Promise<ArrayBuffer> {
   const pool = await getHealthyKeyPool()
   if (pool.length === 0) {
     throw new Error('Server chưa cấu hình GOOGLE_TTS_API_KEY (hoặc GOOGLE_TTS_API_KEYS)')
   }
-
-  const voiceConfig = resolveVoiceConfig(voice, lang)
 
   // Điểm bắt đầu xoay vòng — mỗi lần gọi hàm này tăng con trỏ lên 1, chia đều tải
   // giữa các key qua nhiều request khác nhau (không phải lúc nào cũng bắt đầu từ key #0).
@@ -288,4 +316,21 @@ export async function generateAudioFromGoogle(
   }
 
   throw lastError
+}
+
+export async function generateAudioFromGoogle(
+  text: string,
+  voice: VoiceId = DEFAULT_VOICE,
+  lang: Lang = 'en-US',
+): Promise<ArrayBuffer> {
+  return callGoogleTtsWithKeyPool(text, resolveVoiceConfig(voice, lang), lang)
+}
+
+// Studio CHỈ có tiếng Anh — lang luôn 'en-US', không nhận tham số lang (nơi gọi phải tự
+// đảm bảo không gọi hàm này cho tiếng Việt, xem ghi chú ở STUDIO_VOICE_IDS phía trên).
+export async function generateStudioAudioFromGoogle(
+  text: string,
+  voice: StudioVoiceId,
+): Promise<ArrayBuffer> {
+  return callGoogleTtsWithKeyPool(text, resolveStudioVoiceConfig(voice), 'en-US')
 }

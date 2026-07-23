@@ -22,6 +22,12 @@ export type VoiceId =
   // Giọng ElevenLabs riêng, chỉ VIP — khác hẳn 14 giọng Chirp3-HD (Google) ở trên,
   // xem api/_lib/elevenLabsTts.ts.
   | 'Rachel'
+  // Giọng "Studio" cao cấp (Pro/VIP) — vẫn là Google Cloud TTS như Chirp3-HD, nhưng
+  // CHỈ có cho tiếng Anh (en-US) — Google không có Studio cho tiếng Việt. Xem
+  // STUDIO_VOICE_IDS bên dưới + STUDIO_TO_CHIRP_FALLBACK trong lib/tts.ts (đổi về
+  // giọng Chirp3-HD cùng giới tính nếu lỡ dùng cho câu tiếng Việt) + api/_lib/googleTts.ts.
+  | 'Studio-O'
+  | 'Studio-Q'
 
 export interface VoiceOption {
   id: VoiceId
@@ -47,11 +53,19 @@ export const VOICE_OPTIONS: VoiceOption[] = [
   // Giọng ElevenLabs riêng — chỉ mở cho VIP (xem VOICE_TIERS bên dưới), không nằm trong
   // DEFAULT_SEED_VOICE_IDS nên luôn tạo động ở lần phát đầu tiên (chậm hơn 1 chút).
   { id: 'Rachel', gender: 'female' },
+  // Giọng Studio cao cấp (Pro/VIP) — CHỈ tiếng Anh, xem ghi chú ở VoiceId union phía trên.
+  // Không nằm trong DEFAULT_SEED_VOICE_IDS → tạo động ở lần phát đầu tiên (chậm hơn 1 chút).
+  { id: 'Studio-O', gender: 'female' },
+  { id: 'Studio-Q', gender: 'male' },
 ]
 
 // Giọng riêng ElevenLabs (khác nhóm Chirp3-HD/Google phía trên) — dùng để UI có thể gắn
 // nhãn/badge riêng nếu cần (hiện tại chỉ 1 giọng thử nghiệm).
 export const ELEVEN_VOICE_IDS: VoiceId[] = ['Rachel']
+
+// Giọng Studio (Google Cloud TTS cao cấp, CHỈ tiếng Anh) — dùng để UI gắn badge riêng +
+// lib/tts.ts biết đường fallback về Chirp3-HD khi phát nội dung tiếng Việt.
+export const STUDIO_VOICE_IDS: VoiceId[] = ['Studio-O', 'Studio-Q']
 
 export const VOICE_IDS: VoiceId[] = VOICE_OPTIONS.map((v) => v.id)
 export const DEFAULT_VOICE: VoiceId = 'Kore'
@@ -78,10 +92,12 @@ export const DEFAULT_SEED_VOICE_IDS: VoiceId[] = [
 ]
 
 // Gói nào được dùng giọng nào NGOÀI thời gian khuyến mãi (xem FREE_PROMO_UNTIL bên dưới).
-// Gói Pro trùng đúng 8 giọng đã seed sẵn (nhanh) — VIP mở thêm 6 giọng còn lại (tạo động).
+// Gói Pro trùng đúng 8 giọng đã seed sẵn (nhanh) + 2 giọng Studio cao cấp (tạo động, chỉ
+// tiếng Anh) — VIP mở thêm 6 giọng Chirp3-HD còn lại + giọng ElevenLabs (đều đã có sẵn
+// trong VOICE_IDS vì VOICE_OPTIONS liệt kê đủ).
 const VOICE_TIERS: Record<Plan, VoiceId[]> = {
   free: ['Kore', 'Puck'],
-  pro: DEFAULT_SEED_VOICE_IDS,
+  pro: [...DEFAULT_SEED_VOICE_IDS, ...STUDIO_VOICE_IDS],
   vip: VOICE_IDS,
 }
 

@@ -68,14 +68,18 @@ import cliProgress from 'cli-progress'
 import { S3Client, ListObjectsV2Command, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import {
   generateAudioFromGoogle,
+  generateStudioAudioFromGoogle,
+  isValidStudioVoice,
   hasGoogleTtsKey,
   probeApiKeys,
   setActiveKeyPool,
   VOICE_IDS,
   VOICE_VERSION,
   DEFAULT_SEED_VOICE_IDS,
+  STUDIO_VOICE_IDS,
   type Lang,
   type VoiceId,
+  type StudioVoiceId,
 } from '../api/_lib/googleTts.ts'
 import { CEFR_LEVELS } from '../src/data/cefr.ts'
 import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
@@ -101,8 +105,10 @@ if (!process.env.STORAGE_DRIVER) process.env.STORAGE_DRIVER = 'r2'
 // ── Cấu hình ────────────────────────────────────────────────────────────────
 // Pronunciations chỉ seed trước 8 giọng mặc định (4 nữ + 4 nam phổ biến nhất) — 6 giọng
 // còn lại trong số 14 giọng hiện có (xem api/_lib/googleTts.ts) không seed trước, tự tạo
-// lúc người dùng chủ động chọn.
-const PRON_VOICE_IDS: VoiceId[] = DEFAULT_SEED_VOICE_IDS
+// lúc người dùng chủ động chọn. Kèm 2 giọng Studio (cao cấp, Pro/VIP — CHỈ tiếng Anh nên
+// pronunciations seed được toàn bộ, không như Cụm từ/hội thoại có cả tiếng Việt): free 1
+// triệu ký tự/tháng của Google TTS đủ seed thoải mái, không cần chờ cache-on-demand.
+const PRON_VOICE_IDS: AnyGoogleVoiceId[] = [...DEFAULT_SEED_VOICE_IDS, ...STUDIO_VOICE_IDS]
 
 const BATCH_SIZE = 50 // số tác vụ song song
 const DELAY_MS = 0 // không cần delay
@@ -157,18 +163,22 @@ const CATEGORIES: { id: CatId; label: string }[] = [
 ]
 
 // ── Kiểu dữ liệu ────────────────────────────────────────────────────────────
+// Giọng Studio (cao cấp, Pro/VIP, CHỈ tiếng Anh — xem api/_lib/googleTts.ts) seed CHUNG
+// luồng với Chirp3-HD ở đây (cùng bảng tts_cache/pronunciations, cùng cơ chế remap/retry),
+// chỉ khác hàm gọi Google TTS thực tế (xem processTask).
+type AnyGoogleVoiceId = VoiceId | StudioVoiceId
 interface PronTask {
   type: 'pron'
   cat: 'pron'
   word: string
-  voice: VoiceId
+  voice: AnyGoogleVoiceId
 }
 interface PatternTask {
   type: 'pattern'
   cat: CatId
   text: string
   lang: Lang
-  voice: VoiceId
+  voice: AnyGoogleVoiceId
 }
 type AnyTask = PronTask | PatternTask
 
@@ -181,8 +191,9 @@ type TaskResult =
   | { status: 'error'; message: string }
 
 // ── Hash cho pattern cache — phải khớp hoàn toàn với api/tts.ts ─────────────
-// Hash đúng (mới): có VOICE_VERSION — dùng cho mọi entry mới
-function hashText(text: string, lang: Lang, voice: VoiceId): string {
+// Hash đúng (mới): có VOICE_VERSION — dùng cho mọi entry mới (kể cả giọng Studio — hash chỉ
+// nối chuỗi, không quan tâm giọng thuộc Chirp3-HD hay Studio).
+function hashText(text: string, lang: Lang, voice: AnyGoogleVoiceId): string {
   return crypto
     .createHash('sha256')
     .update(text + lang + voice + VOICE_VERSION)
@@ -240,7 +251,12 @@ function loadPatternTasks(): PatternTask[] {
   const seen = new Set<string>()
 
   // voices: cho phép giới hạn giọng theo nhóm (vd. patterns chỉ cần female/male).
-  const add = (rawText: string, lang: Lang, cat: CatId, voices: readonly VoiceId[] = VOICE_IDS) => {
+  const add = (
+    rawText: string,
+    lang: Lang,
+    cat: CatId,
+    voices: readonly AnyGoogleVoiceId[] = VOICE_IDS,
+  ) => {
     const text = rawText.trim()
     if (!text) return
     for (const voice of voices) {
@@ -251,23 +267,29 @@ function loadPatternTasks(): PatternTask[] {
     }
   }
 
+  // Giọng cho câu ví dụ TIẾNG ANH ở curriculum/CEFR: 2 giọng Chirp3-HD mặc định (PREF_VOICE_IDS)
+  // + 2 giọng Studio (cao cấp, Pro/VIP) — Studio CHỈ tiếng Anh nên KHÔNG thêm vào bản dịch
+  // tiếng Việt (ex_vi/vi) bên dưới, vẫn chỉ PREF_VOICE_IDS như cũ.
+  const PREF_VOICE_IDS_EN: AnyGoogleVoiceId[] = [...PREF_VOICE_IDS, ...STUDIO_VOICE_IDS]
+
   // ── Ưu tiên 1: curriculum (câu thông dụng + ví dụ từng từ) ────────────────
-  // Phát qua KaraokeText/getVoicePref → chỉ 2 giọng female/male (xem PREF_VOICE_IDS).
+  // Phát qua KaraokeText/getVoicePref → chỉ 2 giọng female/male (xem PREF_VOICE_IDS), phần
+  // tiếng Anh seed thêm 2 giọng Studio (Pro/VIP mặc định mới, xem lib/tts.ts).
   for (const circle of FOUNDATION) {
-    for (const { en } of circle.sentences) add(en, 'en-US', 'curriculum', PREF_VOICE_IDS)
+    for (const { en } of circle.sentences) add(en, 'en-US', 'curriculum', PREF_VOICE_IDS_EN)
     for (const entry of circle.words) {
-      if (entry.ex_en) add(entry.ex_en, 'en-US', 'curriculum', PREF_VOICE_IDS)
+      if (entry.ex_en) add(entry.ex_en, 'en-US', 'curriculum', PREF_VOICE_IDS_EN)
       if (entry.ex_vi) add(entry.ex_vi, 'vi-VN', 'curriculum', PREF_VOICE_IDS)
     }
   }
 
   // ── Ưu tiên 2: CEFR grammar examples → Roadmap tab ────────────────────────
-  // Cũng phát qua KaraokeText/getVoicePref → chỉ 2 giọng female/male.
+  // Cũng phát qua KaraokeText/getVoicePref → chỉ 2 giọng female/male + Studio cho tiếng Anh.
   for (const level of CEFR_LEVELS) {
     for (const unit of level.units) {
       for (const lesson of unit.grammar) {
         for (const { en, vi } of lesson.examples) {
-          add(en, 'en-US', 'cefr', PREF_VOICE_IDS)
+          add(en, 'en-US', 'cefr', PREF_VOICE_IDS_EN)
           add(vi, 'vi-VN', 'cefr', PREF_VOICE_IDS)
         }
       }
@@ -479,8 +501,11 @@ function parseTtsCacheKey(key: string): { lang: string; voice: string; hash: str
 
 // pronunciations: <word-encoded>-<voice>.mp3 — khớp suffix dài nhất trước
 // (female2/male2 trước female/male) để tránh cắt nhầm từ có gạch nối kết thúc trùng ký tự.
-const VOICE_SUFFIXES = [...VOICE_IDS].sort((a, b) => b.length - a.length)
-function parsePronunciationKey(key: string): { word: string; voice: VoiceId } | null {
+// Kèm 2 giọng Studio (voice string 'Studio-O'/'Studio-Q' cũng dùng làm suffix file).
+const VOICE_SUFFIXES: AnyGoogleVoiceId[] = [...VOICE_IDS, ...STUDIO_VOICE_IDS].sort(
+  (a, b) => b.length - a.length,
+)
+function parsePronunciationKey(key: string): { word: string; voice: AnyGoogleVoiceId } | null {
   if (!key.endsWith('.mp3')) return null
   const base = key.slice(0, -'.mp3'.length)
   for (const voice of VOICE_SUFFIXES) {
@@ -976,7 +1001,8 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
       // Trước khi gọi Google TTS: thử remap từ cache cũ dưới TÊN GIỌNG CŨ (đợt đổi tên
       // 2026-07-21: female→Kore, male→Puck...) — audio KHÔNG mã hoá (khác tts_cache) nên
       // chỉ cần copy nguyên audio_url sang dòng mới, không cần tải/upload lại gì cả.
-      if (!FORCE) {
+      // Giọng Studio không có tiền thân (voice mới hoàn toàn) nên bỏ qua nhánh này.
+      if (!FORCE && !isValidStudioVoice(voice)) {
         const oldVoiceName = OLD_VOICE_ALIAS[voice]
         if (oldVoiceName) {
           const { rows: oldRows } = await pool.query<{ audio_url: string }>(
@@ -1006,7 +1032,9 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
         }
       }
 
-      const audioBuffer = await generateAudioFromGoogle(word, voice, 'en-US')
+      const audioBuffer = isValidStudioVoice(voice)
+        ? await generateStudioAudioFromGoogle(word, voice)
+        : await generateAudioFromGoogle(word, voice, 'en-US')
       // encodeURIComponent — GIỐNG HỆT api/pronunciation.ts (API thật) — để hỗ trợ từ
       // có dấu (café, naïve...) trong URL, dù key thô vẫn hợp lệ với R2/local.
       const fileName = `${encodeURIComponent(word)}-${voice}.mp3`
@@ -1040,8 +1068,9 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
     //      female/male/female2/male2 → Kore/Puck/Aoede/Charon — CÙNG 1 giọng Google,
     //      chỉ đổi định danh trong app)
     // Nếu có → tải về → giải mã bằng hash cũ → re-encrypt bằng hash mới → upload.
-    // Không tốn API quota, chỉ tốn băng thông Storage.
-    if (!FORCE) {
+    // Không tốn API quota, chỉ tốn băng thông Storage. Giọng Studio không có tiền thân
+    // (voice mới hoàn toàn, chưa từng đổi tên) nên bỏ qua nhánh này.
+    if (!FORCE && !isValidStudioVoice(voice)) {
       const legacyHashes = [
         oldHashText(text, lang, voice),
         legacyVoiceNameHash(text, lang, voice),
@@ -1083,7 +1112,9 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
       }
     }
 
-    const audioBuffer = await generateAudioFromGoogle(text, voice, lang)
+    const audioBuffer = isValidStudioVoice(voice)
+      ? await generateStudioAudioFromGoogle(text, voice)
+      : await generateAudioFromGoogle(text, voice, lang)
     const encrypted = await encryptAudio(audioBuffer, hash)
     const fileName = `${lang}/${voice}/${hash}.mp3`
     const audioUrl = await saveAudio('tts-cache', fileName, encrypted, BASE_URL)
