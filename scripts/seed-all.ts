@@ -761,6 +761,7 @@ async function cleanOrphans(
   ttsOrphans: { hash: string; audio_url: string }[],
   pronOrphansList: { word: string; voice: string; audio_url: string }[],
   activeAudioUrls: Set<string>,
+  confirmYes = VERIFY_CONFIRM_YES,
 ): Promise<void> {
   const pool = getPgPool()
   const totalCandidates = ttsOrphans.length + pronOrphansList.length
@@ -773,7 +774,7 @@ async function cleanOrphans(
     (r) => !activeAudioUrls.has(r.audio_url),
   ).length
 
-  if (!VERIFY_CONFIRM_YES) {
+  if (!confirmYes) {
     console.log(
       `\n👀 XEM TRƯỚC (--clean-orphans): sẽ xoá ${totalCandidates} bản ghi DB` +
         ` (${fileDeletable} kèm xoá file thật — ${totalCandidates - fileDeletable} bản ghi` +
@@ -960,7 +961,12 @@ async function runVerifyR2(): Promise<void> {
 }
 
 // ── Xử lý 1 tác vụ ──────────────────────────────────────────────────────────
-async function processTask(task: AnyTask): Promise<TaskResult> {
+// remapOnly=true: KHÔNG được gọi Google TTS trong bất kỳ trường hợp nào — dùng cho lựa
+// chọn menu "Remap TOÀN BỘ" / cờ --remap-only, chỉ tái dùng audio cache đã có sẵn (đổi
+// tên giọng, đổi lược đồ hash...), chạy nhanh vì không tốn round-trip API + không cần key.
+// Tác vụ không remap được sẽ trả lỗi rõ ràng (ghi vào file lỗi) để seed lại BÌNH THƯỜNG
+// (không --remap-only) khi có key, thay vì âm thầm bỏ qua.
+async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult> {
   const pool = getPgPool()
 
   try {
@@ -989,6 +995,14 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
             )
             return { status: 'remapped' }
           }
+        }
+      }
+
+      if (remapOnly) {
+        return {
+          status: 'error',
+          message:
+            'remap-only: chưa có cache giọng cũ để tái dùng — cần chạy seed thật (có key TTS)',
         }
       }
 
@@ -1062,6 +1076,13 @@ async function processTask(task: AnyTask): Promise<TaskResult> {
       }
     }
 
+    if (remapOnly) {
+      return {
+        status: 'error',
+        message: 'remap-only: chưa có cache giọng cũ để tái dùng — cần chạy seed thật (có key TTS)',
+      }
+    }
+
     const audioBuffer = await generateAudioFromGoogle(text, voice, lang)
     const encrypted = await encryptAudio(audioBuffer, hash)
     const fileName = `${lang}/${voice}/${hash}.mp3`
@@ -1114,20 +1135,21 @@ async function runBatch(
   processed: { value: number },
   total: number,
   rate: RateState,
+  remapOnly = false,
 ): Promise<void> {
-  const results = await Promise.all(tasks.map((t) => processTask(t)))
+  const results = await Promise.all(tasks.map((t) => processTask(t, remapOnly)))
   let newReqs = 0
   results.forEach((result, idx) => {
     if (result.status === 'ok') {
       counters.ok++
-      newReqs++
-    } // gọi Google TTS → tính rate
-    else if (result.status === 'remapped')
+      if (!remapOnly) newReqs++ // gọi Google TTS → tính rate (remapOnly không gọi API)
+    } else if (result.status === 'remapped') {
       counters.remapped++ // re-encrypt, không tốn API
-    else if (result.status === 'skip') counters.skip++
-    else {
+    } else if (result.status === 'skip') {
+      counters.skip++
+    } else {
       counters.errors++
-      newReqs++
+      if (!remapOnly) newReqs++
       if (result.message.includes('429')) rate.has429 = true
       logSampleError(result.message)
       failed.push({ task: tasks[idx]!, message: result.message }) // idx khớp tasks nên có
@@ -1137,8 +1159,8 @@ async function runBatch(
   processed.value = Math.min(processed.value + tasks.length, total)
   bar.update(processed.value, { ...counters })
   if (DELAY_MS > 0) await sleep(DELAY_MS)
-  // Kiểm tra ngưỡng rate limit
-  if (rate.count >= rate.limit) {
+  // remapOnly không gọi API → không cần nghỉ theo rate limit Google (chạy liên tục cho nhanh)
+  if (!remapOnly && rate.count >= rate.limit) {
     const prevReqs = rate.count
     const prev429 = rate.has429
     const next = nextRateState(prevReqs, prev429)
@@ -1159,6 +1181,7 @@ async function runBatch(
 async function runPass(
   tasks: AnyTask[],
   label: string,
+  remapOnly = false,
 ): Promise<Array<{ task: AnyTask; message: string }>> {
   const total = tasks.length
   console.log(`\n${label} — ${total} tác vụ`)
@@ -1181,7 +1204,16 @@ async function runPass(
   const failed: Array<{ task: AnyTask; message: string }> = []
 
   for (let i = 0; i < tasks.length; i += BATCH_SIZE) {
-    await runBatch(tasks.slice(i, i + BATCH_SIZE), failed, counters, bar, processed, total, rate)
+    await runBatch(
+      tasks.slice(i, i + BATCH_SIZE),
+      failed,
+      counters,
+      bar,
+      processed,
+      total,
+      rate,
+      remapOnly,
+    )
   }
 
   bar.stop()
@@ -1192,10 +1224,17 @@ async function runPass(
 }
 
 // ── Seed 1 danh sách: pass đầu + các vòng retry cho tới khi hết/ngừng giảm ───
-async function seedWithRetry(tasks: AnyTask[], baseLabel: string): Promise<AnyTask[]> {
+// remapOnly=true: chỉ chạy ĐÚNG 1 vòng — lỗi "chưa có cache cũ để remap" không tự hết dù
+// retry bao nhiêu lần (không gọi API để tạo mới), nên retry chỉ tốn thời gian vô ích.
+async function seedWithRetry(
+  tasks: AnyTask[],
+  baseLabel: string,
+  remapOnly = false,
+): Promise<AnyTask[]> {
   if (tasks.length === 0) return []
-  let failed = await runPass(tasks, `🟢 ${baseLabel} — Vòng 1`)
+  let failed = await runPass(tasks, `🟢 ${baseLabel} — Vòng 1`, remapOnly)
   let remaining = failed.map((f) => f.task)
+  if (remapOnly) return remaining
   let prevErr = Infinity
 
   for (let round = 2; round <= MAX_ROUNDS && remaining.length > 0; round++) {
@@ -1360,7 +1399,12 @@ function printR2Report(r2Counts: Record<string, number> | null): void {
 //                   (vd. female2/male2 của Cụm từ đã bỏ, hoặc VOICE_VERSION cũ) → "orphan".
 //   • Nhất quán   : audio_url có đúng dạng `${lang}/${voice}/${hash}.mp3` không.
 //   • (tùy chọn)  : VERIFY_DECRYPT=N → tải + giải mã thử N file để chắc dùng được thật.
-async function verifyDb(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
+async function verifyDb(
+  allByCat: Map<CatId, AnyTask[]>,
+  opts: { cleanOrphans?: boolean; confirmYes?: boolean } = {},
+): Promise<void> {
+  const doClean = opts.cleanOrphans ?? CLEAN_ORPHANS
+  const confirmYes = opts.confirmYes ?? VERIFY_CONFIRM_YES
   console.log('\n🔬 KIỂM TRA KỸ DB — đối chiếu hash kỳ vọng với dữ liệu đã seed')
 
   // 1) Tập KỲ VỌNG: hash TTS (kèm VOICE_VERSION) + key phát âm
@@ -1453,12 +1497,12 @@ async function verifyDb(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
     )
   }
 
-  if (CLEAN_ORPHANS) {
+  if (doClean) {
     const activeAudioUrls = new Set<string>([
       ...ttsRows.filter((r) => expectedTts.has(r.hash)).map((r) => r.audio_url),
       ...pronRows.filter((r) => expectedPron.has(`${r.word}:${r.voice}`)).map((r) => r.audio_url),
     ])
-    await cleanOrphans(orphans, pronOrphans, activeAudioUrls)
+    await cleanOrphans(orphans, pronOrphans, activeAudioUrls, confirmYes)
   }
 
   // 5) Nhất quán đường dẫn: audio_url phải chứa `${lang}/${voice}/${hash}.mp3`
@@ -1572,21 +1616,34 @@ function writeErrorFiles(remaining: AnyTask[]): void {
 }
 
 // ── Seed nhiều nhóm rồi báo kết quả ─────────────────────────────────────────
-async function seedCategories(stats: CatStat[], picked: CatId[]): Promise<void> {
+async function seedCategories(
+  stats: CatStat[],
+  picked: CatId[],
+  remapOnly = false,
+): Promise<AnyTask[]> {
   const tasks = picked.flatMap((id) => stats.find((s) => s.id === id)?.remaining ?? [])
   if (tasks.length === 0) {
     console.log('\n✅ Các nhóm đã chọn không còn gì để seed.')
-    return
+    return []
   }
   const label =
-    picked.length === CATEGORIES.length
+    (remapOnly ? 'Remap ' : '') +
+    (picked.length === CATEGORIES.length
       ? 'Seed TẤT CẢ'
-      : `Seed ${picked.map((id) => CATEGORIES.find((c) => c.id === id)?.label).join(' + ')}`
-  console.log(`\n🚀 ${label} — ${tasks.length} tác vụ${FORCE ? ' (FORCE: ghi đè)' : ''}`)
-  const remaining = await seedWithRetry(tasks, label)
+      : `Seed ${picked.map((id) => CATEGORIES.find((c) => c.id === id)?.label).join(' + ')}`)
+  console.log(
+    `\n🚀 ${label} — ${tasks.length} tác vụ${FORCE ? ' (FORCE: ghi đè)' : ''}${remapOnly ? ' (remap-only: không gọi API)' : ''}`,
+  )
+  const remaining = await seedWithRetry(tasks, label, remapOnly)
   writeErrorFiles(remaining)
   if (remaining.length === 0) console.log('\n🎉 Hoàn thành — không còn lỗi.')
+  else if (remapOnly)
+    console.log(
+      `\nℹ️  Còn ${remaining.length} tác vụ KHÔNG remap được (chưa có cache giọng cũ) —` +
+        ' cần seed thật (có key TTS) để tạo mới.',
+    )
   else console.log(`\n⚠️  Còn ${remaining.length} tác vụ chưa xong (xem file lỗi ở trên).`)
+  return remaining
 }
 
 // ── Menu tương tác ──────────────────────────────────────────────────────────
@@ -1610,12 +1667,13 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
         console.log(`  ${i + 1}) ${s.label}  (${mark})`)
       })
       console.log('  a) Seed TẤT CẢ nhóm còn thiếu')
+      console.log('  m) Remap TOÀN BỘ (không gọi API, nhanh) + dọn orphan sau đó')
       console.log('  s) Đồng bộ audio local → Cloudflare R2 (cần STORAGE_DRIVER=r2)')
       console.log('  v) Kiểm tra ổ đĩa ↔ R2 thật + xoá local đã an toàn (--yes mới xoá)')
       console.log('  r) Làm mới báo cáo')
       console.log('  q) Thoát')
 
-      const ans = (await rl.question('\nNhập lựa chọn (số / a / s / v / r / q): '))
+      const ans = (await rl.question('\nNhập lựa chọn (số / a / m / s / v / r / q): '))
         .trim()
         .toLowerCase()
 
@@ -1637,6 +1695,30 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
           stats,
           CATEGORIES.map((c) => c.id),
         )
+        continue
+      }
+      if (ans === 'm') {
+        await seedCategories(
+          stats,
+          CATEGORIES.map((c) => c.id),
+          true, // remapOnly
+        )
+        // Remap chỉ THÊM bản ghi dưới hash/tên giọng mới — bản ghi cũ (hash/tên giọng cũ)
+        // không tự mất, nên sau khi remap xong luôn còn orphan để dọn. Xem trước rồi hỏi
+        // xác nhận thay vì xoá luôn — orphan là dữ liệu Storage thật, xoá nhầm không hoàn tác được.
+        await verifyDb(allByCat, { cleanOrphans: true, confirmYes: false })
+        const confirm = (
+          await rl.question(
+            '\n🗑️  Xoá THẬT các bản ghi/file dư thừa (orphan) ở trên? (gõ "yes" để xoá, Enter để bỏ qua): ',
+          )
+        )
+          .trim()
+          .toLowerCase()
+        if (confirm === 'yes') {
+          await verifyDb(allByCat, { cleanOrphans: true, confirmYes: true })
+        } else {
+          console.log('ℹ️  Bỏ qua — chưa xoá gì.')
+        }
         continue
       }
       const n = parseInt(ans, 10)
