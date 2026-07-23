@@ -1708,18 +1708,26 @@ async function main(): Promise<void> {
   // nhỏ/key) để loại luôn key đã cạn, tránh phí hàng loạt request 429 vào key đó suốt lượt chạy.
   console.log('🔑 Kiểm tra key TTS còn dùng được...')
   const { working, total } = await probeApiKeys()
+  // KHÔNG dừng hẳn khi mọi key đều hết quota/lỗi: các tác vụ REMAP (đổi tên giọng, đổi
+  // cấu trúc hash...) không cần gọi Google TTS — chỉ copy/giải mã-mã hóa lại audio đã có
+  // sẵn trong cache — nên vẫn chạy được bình thường. Chỉ tác vụ THỰC SỰ cần tạo audio mới
+  // (không remap được) mới lỗi, và lỗi đó bị bắt riêng lẻ ở processTask() (không crash cả
+  // lượt chạy) — xem message "Server chưa cấu hình..." từ generateAudioFromGoogle().
   if (working.length === 0) {
-    console.error(
-      '❌ Không key GOOGLE_TTS nào dùng được lúc này (có thể tất cả đã hết quota) — thử lại sau.',
+    console.warn(
+      '⚠️  Không key GOOGLE_TTS nào dùng được lúc này (có thể tất cả đã hết quota) —' +
+        ' vẫn tiếp tục để chạy REMAP (đổi tên giọng/cấu trúc hash không cần gọi API);' +
+        ' tác vụ nào thực sự cần tạo audio mới sẽ báo lỗi riêng, không chặn cả lượt chạy.',
     )
-    process.exit(1)
   }
   setActiveKeyPool(working)
-  console.log(
-    working.length === total.length
-      ? `   ✓ ${working.length}/${total.length} key dùng được — xoay vòng đủ cả bể.`
-      : `   ⚠️  ${working.length}/${total.length} key dùng được — ${total.length - working.length} key đã cạn quota, tạm loại khỏi vòng xoay lượt chạy này.`,
-  )
+  if (working.length > 0) {
+    console.log(
+      working.length === total.length
+        ? `   ✓ ${working.length}/${total.length} key dùng được — xoay vòng đủ cả bể.`
+        : `   ⚠️  ${working.length}/${total.length} key dùng được — ${total.length - working.length} key đã cạn quota, tạm loại khỏi vòng xoay lượt chạy này.`,
+    )
+  }
 
   // ── Chế độ seed tất cả không hỏi (CI/cron) ────────────────────────────────
   if (SEED_ALL_FLAG) {
