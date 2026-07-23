@@ -244,3 +244,47 @@ describe('hasGoogleTtsKey', () => {
     expect(hasGoogleTtsKey()).toBe(true)
   })
 })
+
+describe('generateStudioAudioFromGoogle — giọng cao cấp, CHỈ tiếng Anh', () => {
+  it('gửi đúng tên giọng en-US-Studio-O/Q (không có "-Chirp3-HD-" như giọng thường)', async () => {
+    process.env.GOOGLE_TTS_API_KEY = 'key-a'
+    delete process.env.GOOGLE_TTS_API_KEYS
+    const sentVoiceNames: string[] = []
+    const sentSsmlGenders: string[] = []
+    vi.stubGlobal('fetch', async (_url: string, init: RequestInit) => {
+      const body = JSON.parse(init.body as string) as {
+        voice: { name: string; ssmlGender: string }
+      }
+      sentVoiceNames.push(body.voice.name)
+      sentSsmlGenders.push(body.voice.ssmlGender)
+      return new Response(JSON.stringify({ audioContent: Buffer.from('x').toString('base64') }), {
+        status: 200,
+      })
+    })
+    const { generateStudioAudioFromGoogle } = await import('./googleTts')
+    await generateStudioAudioFromGoogle('Hello', 'Studio-O')
+    await generateStudioAudioFromGoogle('Hi', 'Studio-Q')
+    expect(sentVoiceNames).toEqual(['en-US-Studio-O', 'en-US-Studio-Q'])
+    expect(sentSsmlGenders).toEqual(['FEMALE', 'MALE'])
+  })
+
+  it('không có key nào → throw lỗi rõ ràng, giống generateAudioFromGoogle', async () => {
+    delete process.env.GOOGLE_TTS_API_KEY
+    delete process.env.GOOGLE_TTS_API_KEYS
+    const { generateStudioAudioFromGoogle } = await import('./googleTts')
+    await expect(generateStudioAudioFromGoogle('hi', 'Studio-O')).rejects.toThrow(
+      /GOOGLE_TTS_API_KEY/,
+    )
+  })
+})
+
+describe('isValidStudioVoice', () => {
+  it('nhận đúng Studio-O/Studio-Q, từ chối giọng Chirp3-HD thường và chuỗi bất kỳ', async () => {
+    const { isValidStudioVoice } = await import('./googleTts')
+    expect(isValidStudioVoice('Studio-O')).toBe(true)
+    expect(isValidStudioVoice('Studio-Q')).toBe(true)
+    expect(isValidStudioVoice('Kore')).toBe(false)
+    expect(isValidStudioVoice('Rachel')).toBe(false)
+    expect(isValidStudioVoice('studio-o')).toBe(false) // phân biệt hoa/thường
+  })
+})

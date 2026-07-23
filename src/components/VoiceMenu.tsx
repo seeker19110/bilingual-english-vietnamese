@@ -6,6 +6,7 @@ import {
   VOICE_OPTIONS,
   DEFAULT_SEED_VOICE_IDS,
   ELEVEN_VOICE_IDS,
+  STUDIO_VOICE_IDS,
   getAllowedVoices,
 } from '../lib/voiceTiers'
 import type { Plan } from '../types'
@@ -32,6 +33,7 @@ export default function VoiceMenu({ plan, isA }: Props) {
   const allowed = new Set(getAllowedVoices(plan))
   const seeded = new Set(DEFAULT_SEED_VOICE_IDS)
   const eleven = new Set(ELEVEN_VOICE_IDS)
+  const studio = new Set(STUDIO_VOICE_IDS)
   const voicesOfGender = VOICE_OPTIONS.filter((v) => v.gender === gender)
 
   useEffect(() => {
@@ -121,6 +123,7 @@ export default function VoiceMenu({ plan, isA }: Props) {
               const isSelected = voice === v.id
               const isSeeded = seeded.has(v.id)
               const isEleven = eleven.has(v.id)
+              const isStudio = studio.has(v.id)
               return (
                 <button
                   key={v.id}
@@ -130,9 +133,13 @@ export default function VoiceMenu({ plan, isA }: Props) {
                   title={
                     !isAllowed
                       ? isA
-                        ? 'Nâng cấp gói VIP để mở khoá giọng này'
-                        : 'Upgrade to VIP to unlock this voice'
-                      : v.id
+                        ? 'Nâng cấp gói Pro/VIP để mở khoá giọng này'
+                        : 'Upgrade to Pro/VIP to unlock this voice'
+                      : isStudio
+                        ? isA
+                          ? `${v.id} — giọng Studio cao cấp (Pro/VIP), chỉ tiếng Anh`
+                          : `${v.id} — premium Studio voice (Pro/VIP), English only`
+                        : v.id
                   }
                   aria-pressed={isSelected}
                   className={`relative flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-medium border transition ${
@@ -149,6 +156,11 @@ export default function VoiceMenu({ plan, isA }: Props) {
                   {isEleven && isAllowed && (
                     <span aria-hidden title="VIP">
                       ✨
+                    </span>
+                  )}
+                  {isStudio && isAllowed && (
+                    <span aria-hidden title="Studio — Pro/VIP">
+                      🎓
                     </span>
                   )}
                 </button>
