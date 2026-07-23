@@ -428,6 +428,21 @@ async function speakViaGoogle(
   const audioId = crypto.randomUUID()
 
   await new Promise<void>((resolve, reject) => {
+    // Nếu có lượt phát TRƯỚC ĐÓ còn đang treo (currentResolve chưa được gọi) — vd người
+    // dùng bấm nút loa thứ hai trước khi câu đầu phát xong — giải phóng nó TRƯỚC KHI chiếm
+    // thẻ audio dùng chung. Thiếu bước này thì Promise của lượt phát trước sẽ treo MÃI MÃI
+    // (không bao giờ resolve/reject vì handler của nó bị gỡ ở clearAudioHandlers ngay dưới
+    // mà không ai gọi resolve() thay), khiến nút loa/vòng lặp "Phát tất cả" đang chờ nó bị
+    // kẹt vĩnh viễn ở trạng thái "đang phát". playToken++ để huỷ luôn phần sửa lỗi còn treo
+    // (nếu lượt trước là speakBilingual) — giống hệt logic stopSpeaking().
+    if (currentBlobUrl) {
+      URL.revokeObjectURL(currentBlobUrl)
+      currentBlobUrl = null
+    }
+    currentResolve?.()
+    currentResolve = null
+    playToken++
+
     // Tái dùng thẻ <audio> đã mở khoá (xem ghi chú đầu file) thay vì tạo mới mỗi câu
     const audio = getSharedAudio()
     clearAudioHandlers(audio)
