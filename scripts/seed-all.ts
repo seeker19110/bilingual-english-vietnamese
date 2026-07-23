@@ -1523,10 +1523,11 @@ function printR2Report(r2Counts: Record<string, number> | null): void {
 //   • (tùy chọn)  : VERIFY_DECRYPT=N → tải + giải mã thử N file để chắc dùng được thật.
 async function verifyDb(
   allByCat: Map<CatId, AnyTask[]>,
-  opts: { cleanOrphans?: boolean; confirmYes?: boolean } = {},
+  opts: { cleanOrphans?: boolean; confirmYes?: boolean; patternsAreFull?: boolean } = {},
 ): Promise<void> {
   const doClean = opts.cleanOrphans ?? CLEAN_ORPHANS
   const confirmYes = opts.confirmYes ?? VERIFY_CONFIRM_YES
+  const patternsAreFull = opts.patternsAreFull ?? false
   console.log('\n🔬 KIỂM TRA KỸ DB — đối chiếu hash kỳ vọng với dữ liệu đã seed')
 
   // 1) Tập KỲ VỌNG: hash TTS (kèm VOICE_VERSION) + key phát âm
@@ -1581,7 +1582,11 @@ async function verifyDb(
   // 4) Chiều THỪA — orphan (DB có nhưng không còn kỳ vọng). Loại trừ thêm các câu pattern
   // hợp lệ ở giọng/version hiện tại nhưng ngoài seed-index (seed đủ 100/chủ thể từ trước,
   // hoặc seed dở dang) — KHÔNG coi là orphan, vì /api/tts vẫn phục vụ đúng các câu này.
-  const protectedPatternHashes = loadAllPatternHashes()
+  // Chỉ quét thêm (tốn ~1,6 triệu hash — dễ OOM trên VPS ít RAM) khi THỰC SỰ sắp xoá
+  // (doClean) và allByCat chưa sẵn full patterns (patternsAreFull=false, vd nhánh remap
+  // "m" đã tự truyền patterns đủ 100/100 vào expectedTts rồi, quét lại là dư thừa).
+  const protectedPatternHashes =
+    doClean && !patternsAreFull ? loadAllPatternHashes() : new Set<string>()
   const orphans = ttsRows.filter(
     (r) => !expectedTts.has(r.hash) && !protectedPatternHashes.has(r.hash),
   )
@@ -1840,7 +1845,11 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
         // Remap chỉ THÊM bản ghi dưới hash/tên giọng mới — bản ghi cũ (hash/tên giọng cũ)
         // không tự mất, nên sau khi remap xong luôn còn orphan để dọn. Xem trước rồi hỏi
         // xác nhận thay vì xoá luôn — orphan là dữ liệu Storage thật, xoá nhầm không hoàn tác được.
-        await verifyDb(remapAllByCat, { cleanOrphans: true, confirmYes: false })
+        await verifyDb(remapAllByCat, {
+          cleanOrphans: true,
+          confirmYes: false,
+          patternsAreFull: true,
+        })
         const confirm = (
           await rl.question(
             '\n🗑️  Xoá THẬT các bản ghi/file dư thừa (orphan) ở trên? (gõ "yes" để xoá, Enter để bỏ qua): ',
@@ -1849,7 +1858,11 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
           .trim()
           .toLowerCase()
         if (confirm === 'yes') {
-          await verifyDb(remapAllByCat, { cleanOrphans: true, confirmYes: true })
+          await verifyDb(remapAllByCat, {
+            cleanOrphans: true,
+            confirmYes: true,
+            patternsAreFull: true,
+          })
         } else {
           console.log('ℹ️  Bỏ qua — chưa xoá gì.')
         }
