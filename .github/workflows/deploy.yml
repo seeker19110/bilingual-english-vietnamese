@@ -1,25 +1,25 @@
 name: Deploy to VPS
 
-# Chỉ deploy SAU KHI workflow CI chạy xong và PASS trên main — tránh lặp lỗi
-# đã xảy ra (PR #173: CI đỏ ở bước format:check nhưng deploy vẫn chạy vì trước
-# đây trigger độc lập trên cùng sự kiện push, không phụ thuộc kết quả CI).
+# Deploy NGAY khi có push lên main (chủ yếu là merge PR) — không đợi workflow CI (chạy lại
+# trên push main) hoàn tất nữa. Trước đây trigger qua `workflow_run` sau khi CI trên main
+# xong (PR #173: sửa vụ CI đỏ mà deploy vẫn chạy do 2 trigger độc lập) — nhưng branch
+# protection trên `main` đã YÊU CẦU 2 check `quality`/`e2e` xanh TRƯỚC KHI merge được, nên
+# lượt CI chạy lại trên push main chỉ là double-check dư thừa, làm chậm deploy vô ích.
+# Nếu sau này bỏ/nới lỏng branch protection, cần trả lại cơ chế đợi CI như cũ.
 on:
-  workflow_run:
-    workflows: ['CI']
-    types: [completed]
+  push:
     branches: [main]
 
-# Nhiều lần push/merge lên main gần nhau → nhiều lần CI pass gần nhau → nhiều job deploy
-# có thể được GitHub Actions chạy SONG SONG (mặc định không tự xếp hàng), cả 2 cùng SSH
-# vào VPS pull/build/reload PM2 cùng lúc → đụng nhau. concurrency group ép các lần deploy
-# XẾP HÀNG (cancel-in-progress: false = không huỷ lần đang chạy, lần sau đợi lần trước xong).
+# Nhiều lần push/merge lên main gần nhau → nhiều job deploy có thể được GitHub Actions chạy
+# SONG SONG (mặc định không tự xếp hàng), cả 2 cùng SSH vào VPS pull/build/reload PM2 cùng
+# lúc → đụng nhau. concurrency group ép các lần deploy XẾP HÀNG (cancel-in-progress: false =
+# không huỷ lần đang chạy, lần sau đợi lần trước xong).
 concurrency:
   group: deploy-vps
   cancel-in-progress: false
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
