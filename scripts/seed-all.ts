@@ -103,12 +103,22 @@ dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 if (!process.env.STORAGE_DRIVER) process.env.STORAGE_DRIVER = 'r2'
 
 // ── Cấu hình ────────────────────────────────────────────────────────────────
-// Pronunciations chỉ seed trước 8 giọng mặc định (4 nữ + 4 nam phổ biến nhất) — 6 giọng
-// còn lại trong số 14 giọng hiện có (xem api/_lib/googleTts.ts) không seed trước, tự tạo
-// lúc người dùng chủ động chọn. Kèm 2 giọng Studio (cao cấp, Pro/VIP — CHỈ tiếng Anh nên
-// pronunciations seed được toàn bộ, không như Cụm từ/hội thoại có cả tiếng Việt): free 1
-// triệu ký tự/tháng của Google TTS đủ seed thoải mái, không cần chờ cache-on-demand.
-const PRON_VOICE_IDS: AnyGoogleVoiceId[] = [...DEFAULT_SEED_VOICE_IDS, ...STUDIO_VOICE_IDS]
+// Quyết định 2026-07-23: seed ĐỦ cả 14 giọng Chirp3-HD (không chỉ 8 giọng mặc định) — 6
+// giọng "extra" luôn xếp SAU 8 giọng mặc định (+ Studio nếu có) trong mảng tác vụ mỗi mục,
+// nên trong 1 lượt seed liên tục (--all / "Seed TẤT CẢ"), 8 giọng mặc định luôn được xử lý
+// TRƯỚC 6 giọng còn lại (vòng lặp theo thứ tự mảng, batch theo batch) — tự nhiên seed
+// "đủ 100% nhóm mặc định rồi mới tới 6 giọng còn lại" mà không cần logic chờ/gate riêng.
+const EXTRA_VOICE_IDS: VoiceId[] = VOICE_IDS.filter((v) => !DEFAULT_SEED_VOICE_IDS.includes(v))
+
+// Pronunciations: 8 giọng mặc định (4 nữ + 4 nam phổ biến nhất) trước, kèm 2 giọng Studio
+// (cao cấp, Pro/VIP — CHỈ tiếng Anh nên pronunciations seed được toàn bộ, không như Cụm
+// từ/hội thoại có cả tiếng Việt: free 1 triệu ký tự/tháng của Google TTS đủ seed thoải
+// mái), rồi tới 6 giọng Chirp3-HD còn lại (EXTRA_VOICE_IDS) xếp SAU CÙNG.
+const PRON_VOICE_IDS: AnyGoogleVoiceId[] = [
+  ...DEFAULT_SEED_VOICE_IDS,
+  ...STUDIO_VOICE_IDS,
+  ...EXTRA_VOICE_IDS,
+]
 
 const BATCH_SIZE = 50 // số tác vụ song song
 const DELAY_MS = 0 // không cần delay
@@ -242,10 +252,11 @@ function legacyVoiceNameHash(text: string, lang: Lang, voice: VoiceId): string |
 //   5. Lesson turns còn lại             → cache dần, ít urgent hơn
 //   6. Câu mẫu Challenge 30 ngày        → trang /challenge, ít urgent nhất
 //
-// Lesson turns: mỗi turn chỉ seed ĐÚNG 1 giọng (voiceA hoặc voiceB) thay vì cả 4.
-// Giống logic Lessons.tsx — speakerAGender/speakerBGender quyết định giọng từng nhân vật,
-// nếu cùng giới thì B dùng giọng variant2 (female2/male2) để phân biệt.
-// Kết quả: ~5,900 tasks thay vì ~160,000 (giảm 96%).
+// Lesson turns: mỗi turn seed 7 biến thể giọng/nhân vật (ghép theo index xoay vòng, KHÔNG
+// phải 7×7=49 tổ hợp đầy đủ — xem LESSON_VOICE_VARIANTS bên dưới) + 1 biến thể Studio riêng
+// cho câu tiếng Anh. Trước 2026-07-23 chỉ seed đúng 1 giọng/nhân vật (~5.900 tác vụ, giảm 96%
+// so với seed đủ 7×7 tổ hợp) — quyết định 2026-07-23: chấp nhận tăng lại gần mức đó để phủ
+// tốt hơn các giọng ngẫu nhiên VIP có thể gặp (pickRandomVoice chọn bất kỳ trong 7 giọng/giới).
 function loadPatternTasks(): PatternTask[] {
   const tasks: PatternTask[] = []
   const seen = new Set<string>()
@@ -267,30 +278,36 @@ function loadPatternTasks(): PatternTask[] {
     }
   }
 
-  // Giọng cho câu ví dụ TIẾNG ANH ở curriculum/CEFR: 2 giọng Chirp3-HD mặc định (PREF_VOICE_IDS)
-  // + 2 giọng Studio (cao cấp, Pro/VIP) — Studio CHỈ tiếng Anh nên KHÔNG thêm vào bản dịch
-  // tiếng Việt (ex_vi/vi) bên dưới, vẫn chỉ PREF_VOICE_IDS như cũ.
-  const PREF_VOICE_IDS_EN: AnyGoogleVoiceId[] = [...PREF_VOICE_IDS, ...STUDIO_VOICE_IDS]
+  // Giọng cho câu ví dụ ở curriculum/CEFR/Cụm từ — 8 giọng mặc định (PREF_VOICE_IDS) rồi
+  // tới 6 giọng Chirp3-HD còn lại (EXTRA_VOICE_IDS, xếp SAU nên luôn seed sau khi 8 giọng
+  // mặc định xong). Riêng TIẾNG ANH có thêm 2 giọng Studio (cao cấp, Pro/VIP) — Studio CHỈ
+  // tiếng Anh nên KHÔNG thêm vào bản dịch tiếng Việt.
+  const PREF_VOICE_IDS_FULL: AnyGoogleVoiceId[] = [...PREF_VOICE_IDS, ...EXTRA_VOICE_IDS]
+  const PREF_VOICE_IDS_EN: AnyGoogleVoiceId[] = [
+    ...PREF_VOICE_IDS,
+    ...STUDIO_VOICE_IDS,
+    ...EXTRA_VOICE_IDS,
+  ]
 
   // ── Ưu tiên 1: curriculum (câu thông dụng + ví dụ từng từ) ────────────────
-  // Phát qua KaraokeText/getVoicePref → chỉ 2 giọng female/male (xem PREF_VOICE_IDS), phần
-  // tiếng Anh seed thêm 2 giọng Studio (Pro/VIP mặc định mới, xem lib/tts.ts).
+  // Phát qua KaraokeText/getVoicePref → seed đủ 14 giọng Chirp3-HD (8 mặc định trước, 6 còn
+  // lại sau) + tiếng Anh seed thêm 2 giọng Studio (Pro/VIP mặc định mới, xem lib/tts.ts).
   for (const circle of FOUNDATION) {
     for (const { en } of circle.sentences) add(en, 'en-US', 'curriculum', PREF_VOICE_IDS_EN)
     for (const entry of circle.words) {
       if (entry.ex_en) add(entry.ex_en, 'en-US', 'curriculum', PREF_VOICE_IDS_EN)
-      if (entry.ex_vi) add(entry.ex_vi, 'vi-VN', 'curriculum', PREF_VOICE_IDS)
+      if (entry.ex_vi) add(entry.ex_vi, 'vi-VN', 'curriculum', PREF_VOICE_IDS_FULL)
     }
   }
 
   // ── Ưu tiên 2: CEFR grammar examples → Roadmap tab ────────────────────────
-  // Cũng phát qua KaraokeText/getVoicePref → chỉ 2 giọng female/male + Studio cho tiếng Anh.
+  // Cũng phát qua KaraokeText/getVoicePref → seed đủ 14 giọng + Studio cho tiếng Anh.
   for (const level of CEFR_LEVELS) {
     for (const unit of level.units) {
       for (const lesson of unit.grammar) {
         for (const { en, vi } of lesson.examples) {
           add(en, 'en-US', 'cefr', PREF_VOICE_IDS_EN)
-          add(vi, 'vi-VN', 'cefr', PREF_VOICE_IDS)
+          add(vi, 'vi-VN', 'cefr', PREF_VOICE_IDS_FULL)
         }
       }
     }
@@ -313,41 +330,74 @@ function loadPatternTasks(): PatternTask[] {
   }
 
   // Khớp đúng logic phân giọng ở client (src/pages/Lessons.tsx LessonView, src/components/
-  // CefrLessonViews.tsx DialogueView): A lấy giọng ĐẦU của giới mình, B lấy giọng ĐẦU của
-  // giới B — trừ khi B cùng giới với A thì lấy giọng THỨ 2 để 2 nhân vật luôn khác giọng.
-  const FEMALE_VOICES: VoiceId[] = ['Kore', 'Aoede']
-  const MALE_VOICES: VoiceId[] = ['Puck', 'Charon']
-  const voicesOfGender = (g: 'female' | 'male') => (g === 'female' ? FEMALE_VOICES : MALE_VOICES)
+  // CefrLessonViews.tsx DialogueView): pickRandomVoice(gender, plan) chọn NGẪU NHIÊN 1 trong
+  // 7 giọng cùng giới cho MỖI nhân vật — nên seed đủ 7 biến thể/giới (không chỉ 2 giọng mặc
+  // định như trước) mới phủ được phần lớn tổ hợp user VIP có thể gặp. Quyết định 2026-07-23:
+  // chấp nhận tăng chi phí/khối lượng seed lessons trở lại gần mức trước đợt tối ưu "giảm 96%"
+  // (2 giọng/giới → 7 giọng/giới) để có coverage tốt hơn — xem PROGRESS.md.
+  // KHÔNG seed đủ 7×7=49 tổ hợp (A×B đầy đủ) — quá tốn; thay vào đó ghép theo INDEX xoay vòng
+  // (voiceA = giọng thứ i, voiceB = giọng thứ i+1 nếu cùng giới, thứ i nếu khác giới) → đúng 7
+  // biến thể/bài thay vì 49, vẫn phủ đủ 7 giọng ở CẢ 2 vị trí nhân vật.
+  // VOICE_IDS có thứ tự CỐ ĐỊNH "7 giọng nữ trước, 7 giọng nam sau" (xem googleTts.ts) —
+  // dựa vào đó tách 2 nhóm thay vì gọi lại VOICE_GENDER (không export từ googleTts.ts).
+  const FEMALE_VOICES_ALL: VoiceId[] = VOICE_IDS.slice(0, 7)
+  const MALE_VOICES_ALL: VoiceId[] = VOICE_IDS.slice(7, 14)
+  const voicesOfGender = (g: 'female' | 'male') =>
+    g === 'female' ? FEMALE_VOICES_ALL : MALE_VOICES_ALL
+  const LESSON_VOICE_VARIANTS = FEMALE_VOICES_ALL.length // = 7, khớp cả 2 giới
 
   for (const file of lessonFiles) {
     const chunks = JSON.parse(fs.readFileSync(path.join(lessonDir, file), 'utf8')) as LessonRaw[]
     for (const lesson of chunks) {
       const gA = lesson.speakerAGender ?? 'female'
       const gB = lesson.speakerBGender ?? 'male'
-      const voiceA: VoiceId = voicesOfGender(gA)[0]!
-      const voiceB: VoiceId = gB === gA ? voicesOfGender(gB)[1]! : voicesOfGender(gB)[0]!
+      const voicesA = voicesOfGender(gA)
+      const voicesB = voicesOfGender(gB)
 
       const isEarly = lessonCount < 50
       const cat: CatId = isEarly ? 'lessons-early' : 'lessons-rest'
       const bucket = isEarly ? tasks : laterLessonTasks
-      for (const turn of lesson.turns ?? []) {
-        const voice = turn.speaker === 'A' ? voiceA : voiceB
-        if (turn.en) {
-          const text = turn.en.trim()
-          if (!text) continue
-          const key = `${text}|en-US|${voice}`
-          if (!seen.has(key)) {
-            seen.add(key)
-            bucket.push({ type: 'pattern', cat, text, lang: 'en-US', voice })
+
+      for (let variant = 0; variant < LESSON_VOICE_VARIANTS; variant++) {
+        const voiceA: VoiceId = voicesA[variant]!
+        const voiceB: VoiceId =
+          gB === gA ? voicesB[(variant + 1) % LESSON_VOICE_VARIANTS]! : voicesB[variant]!
+        // Giọng Studio (chỉ tiếng Anh) — thêm 1 biến thể riêng cho câu tiếng Anh, KHÔNG lặp
+        // lại theo 7 index như Chirp3-HD (chỉ 1 giọng Studio/giới, không có "7 giọng Studio").
+        const studioA: StudioVoiceId = gA === 'female' ? 'Studio-O' : 'Studio-Q'
+        const studioB: StudioVoiceId = gB === 'female' ? 'Studio-O' : 'Studio-Q'
+
+        for (const turn of lesson.turns ?? []) {
+          const isA = turn.speaker === 'A'
+          const voice: AnyGoogleVoiceId = isA ? voiceA : voiceB
+          if (turn.en) {
+            const text = turn.en.trim()
+            if (text) {
+              const key = `${text}|en-US|${voice}`
+              if (!seen.has(key)) {
+                seen.add(key)
+                bucket.push({ type: 'pattern', cat, text, lang: 'en-US', voice })
+              }
+              // Biến thể Studio — chỉ tạo 1 lần (ở variant đầu tiên), không lặp lại 7 lần.
+              if (variant === 0) {
+                const studioVoice = isA ? studioA : studioB
+                const studioKey = `${text}|en-US|${studioVoice}`
+                if (!seen.has(studioKey)) {
+                  seen.add(studioKey)
+                  bucket.push({ type: 'pattern', cat, text, lang: 'en-US', voice: studioVoice })
+                }
+              }
+            }
           }
-        }
-        if (turn.vi) {
-          const text = turn.vi.trim()
-          if (!text) continue
-          const key = `${text}|vi-VN|${voice}`
-          if (!seen.has(key)) {
-            seen.add(key)
-            bucket.push({ type: 'pattern', cat, text, lang: 'vi-VN', voice })
+          if (turn.vi) {
+            const text = turn.vi.trim()
+            if (text) {
+              const key = `${text}|vi-VN|${voice}`
+              if (!seen.has(key)) {
+                seen.add(key)
+                bucket.push({ type: 'pattern', cat, text, lang: 'vi-VN', voice })
+              }
+            }
           }
         }
       }
@@ -357,9 +407,10 @@ function loadPatternTasks(): PatternTask[] {
 
   // ── Ưu tiên 4: pattern sentences (Cụm từ page) — PHỔ BIẾN NHẤT TRƯỚC ────────
   // Ba điều chỉnh để seed đúng cái app thật sự dùng, trước tiên:
-  //   • Chỉ 8 giọng mặc định (PREF_VOICE_IDS = DEFAULT_SEED_VOICE_IDS): trang Cụm từ
-  //     dùng global voice pref, có thể là bất kỳ giọng nào trong 14 — nhưng chỉ seed
-  //     trước 8 giọng phổ biến, 6 giọng còn lại tạo động khi user chọn.
+  //   • CHỈ 8 giọng mặc định (PREF_VOICE_IDS = DEFAULT_SEED_VOICE_IDS) — KHÔNG mở rộng
+  //     thêm 6 giọng/Studio như các nhóm khác (curriculum/CEFR/lessons/challenge/pron):
+  //     đây là nhóm LỚN NHẤT (xem ước tính bên dưới), mở rộng thêm sẽ tốn hơn nhiều lần.
+  //     6 giọng còn lại + Studio vẫn tạo động (cache-on-demand) khi user chọn ở trang này.
   //   • Thứ tự hiển thị (loadSubjectsInDisplayOrder): I am, You are, We are, He is...
   //     lên trước; chủ thể hiếm seed sau → nếu seed dở dang vẫn có sẵn câu hay gặp nhất.
   //   • CHỈ seed câu THÔNG DỤNG NHẤT trong mỗi chủ thể (top N/100, xem seed-index.json —
@@ -390,10 +441,11 @@ function loadPatternTasks(): PatternTask[] {
   // ── Ưu tiên 5: lesson turns còn lại ────────────────────────────────────────
   tasks.push(...laterLessonTasks)
 
-  // ── Ưu tiên 6: câu mẫu Challenge 30 ngày (trang /challenge) — chỉ female/male ─
+  // ── Ưu tiên 6: câu mẫu Challenge 30 ngày (trang /challenge) ─────────────────
+  // Seed đủ 14 giọng Chirp3-HD + Studio cho tiếng Anh (như curriculum/CEFR).
   for (const t of CHALLENGE_TOPICS) {
-    for (const s of t.sampleEn) add(s, 'en-US', 'challenge', PREF_VOICE_IDS)
-    for (const s of t.sampleVi) add(s, 'vi-VN', 'challenge', PREF_VOICE_IDS)
+    for (const s of t.sampleEn) add(s, 'en-US', 'challenge', PREF_VOICE_IDS_EN)
+    for (const s of t.sampleVi) add(s, 'vi-VN', 'challenge', PREF_VOICE_IDS_FULL)
   }
 
   return tasks
