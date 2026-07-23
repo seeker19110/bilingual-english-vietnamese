@@ -66,18 +66,24 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Điều hướng trang (HTML): network-first, fallback về cache khi offline.
+  // Điều hướng trang (HTML): network-first, LƯU bản thành công vào cache dưới key '/' (SPA —
+  // mọi route đều trả cùng index.html, React Router tự điều hướng phía client) để có app-shell
+  // dùng khi offline; fallback về bản đã lưu đó khi mất mạng.
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() =>
-        caches
-          .match(request)
-          .then(
-            (r) =>
-              r ||
-              caches.match('/').then((root) => root || new Response('Offline', { status: 503 })),
-          ),
-      ),
+      fetch(request)
+        .then((res) => {
+          if (res.ok) {
+            const copy = res.clone()
+            // waitUntil giữ SW sống tới khi ghi cache xong — nếu không, promise ghi cache có
+            // thể bị bỏ dở khi SW chuyển sang idle ngay sau khi trả response cho trang.
+            event.waitUntil(caches.open(SHELL_CACHE).then((c) => c.put('/', copy)))
+          }
+          return res
+        })
+        .catch(() =>
+          caches.match('/').then((root) => root || new Response('Offline', { status: 503 })),
+        ),
     )
     return
   }
