@@ -154,6 +154,41 @@ const PATTERN_ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/prefetch-tts-errors
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
 
+// ── Tự retry khi mất kết nối DB GIỮA CHỪNG (KHÁC lỗi nghiệp vụ) ─────────────────
+// Postgres có thể bị restart bên ngoài (auto-update hệ điều hành, thao tác thủ công...)
+// đúng lúc script đang chạy — biểu hiện qua lỗi 57P01 "terminating connection due to
+// administrator command" (xem log Postgres thật đã xác nhận, không phải do script/OOM).
+// Query cụ thể ĐANG chạy lúc đó bị văng, nhưng pool sẽ tự mở kết nối MỚI cho lần gọi kế
+// tiếp — nên chỉ cần thử lại vài lần thay vì để cả tiến trình (đang chạy hàng giờ) crash.
+const DB_RETRY_DELAYS_MS = [1000, 3000, 8000]
+function isTransientDbError(err: unknown): boolean {
+  const code = (err as { code?: string } | undefined)?.code
+  const message = err instanceof Error ? err.message : String(err)
+  return (
+    code === '57P01' || // administrator command (restart/shutdown)
+    code === '57P02' || // crash shutdown
+    code === '57P03' || // cannot connect now (đang khởi động lại)
+    code === 'ECONNRESET' ||
+    code === 'ETIMEDOUT' ||
+    message.includes('Connection terminated')
+  )
+}
+async function withDbRetry<T>(fn: () => Promise<T>, label: string): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fn()
+    } catch (err) {
+      if (!isTransientDbError(err) || attempt > DB_RETRY_DELAYS_MS.length) throw err
+      const delay = DB_RETRY_DELAYS_MS[attempt - 1]!
+      console.warn(
+        `\n⚠️  Mất kết nối DB tạm thời khi ${label} (thử ${attempt}/${DB_RETRY_DELAYS_MS.length}) —` +
+          ` nghỉ ${delay / 1000}s rồi thử lại...`,
+      )
+      await sleep(delay)
+    }
+  }
+}
+
 // ── Nhóm (category) ─────────────────────────────────────────────────────────
 type CatId =
   'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest' | 'challenge'
@@ -917,7 +952,10 @@ async function cleanOrphans(
         )
       }
     }
-    await pool.query('delete from public.tts_cache where hash = $1', [r.hash])
+    await withDbRetry(
+      () => pool.query('delete from public.tts_cache where hash = $1', [r.hash]),
+      `xoá orphan tts_cache ${r.hash}`,
+    )
     rowsDeleted++
   }
   for (const r of pronOrphansList) {
@@ -932,10 +970,14 @@ async function cleanOrphans(
         )
       }
     }
-    await pool.query('delete from public.pronunciations where word = $1 and voice = $2', [
-      r.word,
-      r.voice,
-    ])
+    await withDbRetry(
+      () =>
+        pool.query('delete from public.pronunciations where word = $1 and voice = $2', [
+          r.word,
+          r.voice,
+        ]),
+      `xoá orphan pronunciations ${r.word}/${r.voice}`,
+    )
     rowsDeleted++
   }
 
@@ -1390,8 +1432,12 @@ async function fetchAllRows<T extends QueryResultRow>(
   const out: T[] = []
   const orderBy = orderCols.join(', ')
   for (let offset = 0; ; offset += PAGE) {
-    const { rows } = await pool.query<T>(
-      `select ${columns} from public.${table} order by ${orderBy} limit ${PAGE} offset ${offset}`,
+    const { rows } = await withDbRetry(
+      () =>
+        pool.query<T>(
+          `select ${columns} from public.${table} order by ${orderBy} limit ${PAGE} offset ${offset}`,
+        ),
+      `đọc ${table} (offset ${offset})`,
     )
     if (rows.length === 0) break
     out.push(...rows)
