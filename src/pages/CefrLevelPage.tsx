@@ -666,8 +666,9 @@ export default function CefrLevelPage() {
               </div>
             </div>
 
-            {/* Mục tiêu can-do — thu gọn được để không đẩy nội dung học xuống */}
-            <details className="mt-4 pt-4 border-t border-zinc-800/80 group">
+            {/* Mục tiêu can-do — mặc định LUÔN MỞ ở mọi cấp (A1→C2), vẫn thu gọn được nếu
+                người dùng tự bấm ẩn (thuộc tính open chỉ set giá trị ban đầu). */}
+            <details open className="mt-4 pt-4 border-t border-zinc-800/80 group">
               <summary className="cursor-pointer list-none text-sm font-semibold text-zinc-300 flex items-center gap-1.5 select-none">
                 <Sparkles className={`w-4 h-4 shrink-0 ${accent.text}`} />
                 <span className="flex-1">
