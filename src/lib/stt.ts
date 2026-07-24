@@ -1,6 +1,30 @@
 // Speech-to-Text dùng Web Speech API (miễn phí, Chrome/Edge)
 // Khi production: thay bằng gpt-4o-mini-transcribe hoặc Deepgram
 
+// Web Speech API không có trong lib.dom.d.ts của TypeScript — khai tối thiểu phần dùng tới
+// (thay vì `any`) để vẫn có type safety mà không cần cài @types/dom-speech-recognition.
+interface SpeechRecognitionResultLike {
+  0: { transcript: string }
+  isFinal: boolean
+}
+interface SpeechRecognitionEventLike {
+  results: ArrayLike<SpeechRecognitionResultLike>
+}
+interface SpeechRecognitionErrorEventLike {
+  error: string
+}
+interface SpeechRecognitionLike {
+  lang: string
+  continuous: boolean
+  interimResults: boolean
+  onresult: ((e: SpeechRecognitionEventLike) => void) | null
+  onend: (() => void) | null
+  onerror: ((e: SpeechRecognitionErrorEventLike) => void) | null
+  start(): void
+  stop(): void
+}
+type SpeechRecognitionCtor = new () => SpeechRecognitionLike
+
 export function isSTTSupported(): boolean {
   return !!(
     (window as unknown as { SpeechRecognition?: unknown }).SpeechRecognition ??
@@ -19,15 +43,17 @@ export function startListening(
   onEnd: (lastTranscript: string) => void,
   onError: (err: string) => void,
 ): () => void {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const SRClass = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition
+  const w = window as unknown as {
+    SpeechRecognition?: SpeechRecognitionCtor
+    webkitSpeechRecognition?: SpeechRecognitionCtor
+  }
+  const SRClass = w.SpeechRecognition ?? w.webkitSpeechRecognition
   if (!SRClass) {
     onError('Trình duyệt không hỗ trợ nhận giọng nói. Dùng Chrome hoặc Edge.')
     return () => {}
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rec = new SRClass() as any
+  const rec = new SRClass()
   rec.lang = lang === 'en' ? 'en-US' : 'vi-VN'
   rec.continuous = false
   rec.interimResults = true
@@ -65,27 +91,25 @@ export function startListening(
     clearTimeout(maxTimer)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rec.onresult = (e: any) => {
+  rec.onresult = (e) => {
     gotSpeech = true
     if (noSpeechTimer) {
       clearTimeout(noSpeechTimer)
       noSpeechTimer = null
     }
-    const result = e.results[e.results.length - 1]
-    const t = result[0].transcript as string
+    const result = e.results[e.results.length - 1]!
+    const t = result[0].transcript
     lastTranscript = t
-    onResult({ transcript: t, isFinal: result.isFinal as boolean })
+    onResult({ transcript: t, isFinal: result.isFinal })
   }
 
   rec.onend = () => {
     clearTimers()
     onEnd(lastTranscript)
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rec.onerror = (e: any) => {
+  rec.onerror = (e) => {
     clearTimers()
-    onError(e.error as string)
+    onError(e.error)
   }
   rec.start()
 
