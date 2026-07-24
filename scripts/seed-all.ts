@@ -173,6 +173,26 @@ function isTransientDbError(err: unknown): boolean {
     message.includes('Connection terminated')
   )
 }
+// Chạy nhiều tác vụ ĐỒNG THỜI nhưng GIỚI HẠN số lượng cùng lúc — thay vì xử lý tuần tự
+// từng dòng (mỗi dòng 1 round-trip network, hàng trăm nghìn dòng × độ trễ mạng → hàng
+// giờ). Giới hạn để không mở quá nhiều kết nối DB cùng lúc (pool `max: 10` ở pgPool.ts) —
+// vượt quá không lỗi (pg tự xếp hàng) nhưng không có lợi thêm.
+const DELETE_CONCURRENCY = 12
+async function runWithConcurrency<T>(
+  items: T[],
+  concurrency: number,
+  worker: (item: T) => Promise<void>,
+): Promise<void> {
+  let index = 0
+  async function runOne(): Promise<void> {
+    while (index < items.length) {
+      const item = items[index++]!
+      await worker(item)
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, runOne))
+}
+
 async function withDbRetry<T>(fn: () => Promise<T>, label: string): Promise<T> {
   for (let attempt = 1; ; attempt++) {
     try {
@@ -949,7 +969,12 @@ async function cleanOrphans(
   )
   delBar.start(totalCandidates, 0)
 
-  for (const r of ttsOrphans) {
+  const bumpProgress = (): void => {
+    rowsDeleted++
+    if (rowsDeleted % 50 === 0) delBar.update(rowsDeleted)
+  }
+
+  await runWithConcurrency(ttsOrphans, DELETE_CONCURRENCY, async (r) => {
     if (!activeAudioUrls.has(r.audio_url)) {
       try {
         await deleteStoredFile(r.audio_url)
@@ -965,10 +990,9 @@ async function cleanOrphans(
       () => pool.query('delete from public.tts_cache where hash = $1', [r.hash]),
       `xoá orphan tts_cache ${r.hash}`,
     )
-    rowsDeleted++
-    if (rowsDeleted % 200 === 0) delBar.update(rowsDeleted)
-  }
-  for (const r of pronOrphansList) {
+    bumpProgress()
+  })
+  await runWithConcurrency(pronOrphansList, DELETE_CONCURRENCY, async (r) => {
     if (!activeAudioUrls.has(r.audio_url)) {
       try {
         await deleteStoredFile(r.audio_url)
@@ -988,9 +1012,8 @@ async function cleanOrphans(
         ]),
       `xoá orphan pronunciations ${r.word}/${r.voice}`,
     )
-    rowsDeleted++
-    if (rowsDeleted % 200 === 0) delBar.update(rowsDeleted)
-  }
+    bumpProgress()
+  })
   delBar.update(rowsDeleted)
   delBar.stop()
 
