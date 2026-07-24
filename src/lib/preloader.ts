@@ -10,6 +10,7 @@
 
 import { loadCurriculum, getTodayBatch } from './curriculum'
 import { getLearnedWords } from './vocab'
+import { getCachedOnboarding } from './onboarding'
 import { getAccessToken } from './authHeader'
 import { getVoicePref } from './tts'
 import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
@@ -96,7 +97,7 @@ export async function preloadLearnData(userId: string): Promise<void> {
 
   // Preload audio cho Today batch (20 từ hôm nay) — tuần tự, chậm, kick-off không await.
   const learned = getLearnedWords(userId)
-  const todayWords = getTodayBatch(learned)
+  const todayWords = getTodayBatch(learned, undefined, getCachedOnboarding(userId)?.ageGroup)
   const voice = getVoicePref()
   void (async () => {
     for (const entry of todayWords) {

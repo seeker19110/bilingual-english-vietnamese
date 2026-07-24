@@ -15,7 +15,7 @@
 //   - random queue:       hàng đợi ôn tập ngẫu nhiên KHÔNG lặp trong 1 vòng.
 // ──────────────────────────────────────────────────────────────────────
 
-import type { DictEntry } from '../types'
+import type { DictEntry, AgeGroup } from '../types'
 import type { Circle } from '../data/curriculum'
 import type { CefrLevel } from '../data/cefr'
 import { loadDictionary } from '../data/dictionary/loader'
@@ -129,21 +129,33 @@ export function compareByFreq(a: DictEntry, b: DictEntry): number {
   return a.freq - b.freq
 }
 
-// ── Xây dựng các vòng MỞ RỘNG từ dictionary (memo hóa 1 lần) ────────────
-let _circlesCache: Circle[] | null = null
+// ── Xây dựng các vòng MỞ RỘNG từ dictionary (memo hóa theo nhóm tuổi) ───
+// Chỉ 'nhi_dong' lọc khác — mọi giá trị khác (kể cả undefined) dùng CHUNG 1 cache
+// 'default' để không tốn thêm bộ nhớ/tính toán cho các nhóm không lọc gì.
+function circleCacheKey(ageGroup?: AgeGroup): 'nhi_dong' | 'default' {
+  return ageGroup === 'nhi_dong' ? 'nhi_dong' : 'default'
+}
+const _circlesCache = new Map<'nhi_dong' | 'default', Circle[]>()
 
-export function getCircles(): Circle[] {
-  if (_circlesCache) return _circlesCache
+export function getCircles(ageGroup?: AgeGroup): Circle[] {
+  const cacheKey = circleCacheKey(ageGroup)
+  const cached = _circlesCache.get(cacheKey)
+  if (cached) return cached
 
   // Xếp các vòng nền tảng THEO THỨ TỰ CEFR (A1→B2). Vòng nào không nằm trong
   // lộ trình CEFR (phòng hờ dữ liệu lệch) giữ nguyên thứ tự gốc, xếp sau cùng.
-  const byId = new Map(FOUNDATION.map((c) => [c.id, c]))
+  // Nhóm Nhi đồng: ẨN HẲN các vòng gắn `notForKids` (GĐ 4, PROGRESS.md 2026-07-22).
+  const foundation = cacheKey === 'nhi_dong' ? FOUNDATION.filter((c) => !c.notForKids) : FOUNDATION
+  const byId = new Map(foundation.map((c) => [c.id, c]))
   const inCefr = CEFR_CIRCLE_ORDER.map((id) => byId.get(id)).filter((c): c is Circle => c != null)
   const referenced = new Set(CEFR_CIRCLE_ORDER)
-  const rest0 = FOUNDATION.filter((c) => !referenced.has(c.id))
+  const rest0 = foundation.filter((c) => !referenced.has(c.id))
   const orderedFoundation = [...inCefr, ...rest0]
 
-  // Tập các từ đã có trong phần nền tảng → loại khỏi phần mở rộng để khỏi trùng
+  // Tập các từ đã có trong phần nền tảng → loại khỏi phần mở rộng để khỏi trùng.
+  // CHỦ Ý dùng FOUNDATION đầy đủ (không phải `foundation` đã lọc) — từ của vòng bị ẩn
+  // vẫn không được lọt vào phần "Mở rộng" (tránh học lại đúng từ đó qua đường khác,
+  // và giữ đúng ý định "ẩn hẳn khỏi luồng học" chứ không phải "chuyển sang chỗ khác").
   const foundationKeys = new Set<string>()
   FOUNDATION.forEach((c) => c.words.forEach((w) => foundationKeys.add(wordKey(w.word))))
 
@@ -166,19 +178,22 @@ export function getCircles(): Circle[] {
     })
   }
 
-  _circlesCache = [...orderedFoundation, ...extra]
-  return _circlesCache
+  const result = [...orderedFoundation, ...extra]
+  _circlesCache.set(cacheKey, result)
+  return result
 }
 
 // ── Lộ trình phẳng (mảng từ theo thứ tự học) ──────────────────────────
-let _pathCache: DictEntry[] | null = null
+const _pathCache = new Map<'nhi_dong' | 'default', DictEntry[]>()
 
-export function getLearningPath(): DictEntry[] {
-  if (_pathCache) return _pathCache
+export function getLearningPath(ageGroup?: AgeGroup): DictEntry[] {
+  const cacheKey = circleCacheKey(ageGroup)
+  const cached = _pathCache.get(cacheKey)
+  if (cached) return cached
   // Khử trùng theo key (vd: chữ cái "I" và đại từ "I") — giữ lần xuất hiện đầu,
   // để mỗi từ chỉ học 1 lần và đếm tiến độ không bị lệch.
   const seen = new Set<string>()
-  _pathCache = getCircles()
+  const result = getCircles(ageGroup)
     .flatMap((c) => c.words)
     .filter((w) => {
       const k = wordKey(w.word)
@@ -186,10 +201,14 @@ export function getLearningPath(): DictEntry[] {
       seen.add(k)
       return true
     })
-  return _pathCache
+  _pathCache.set(cacheKey, result)
+  return result
 }
 
-// Vòng (chủ đề) chứa 1 từ — để hiển thị tên chủ đề đang học
+// Vòng (chủ đề) chứa 1 từ — để hiển thị tên chủ đề đang học. KHÔNG cần tham số
+// ageGroup: chỉ tra cứu metadata của 1 từ ĐÃ CÓ trong lộ trình học của người gọi
+// (nếu là Nhi đồng thì từ đó chắc chắn không thuộc vòng bị ẩn) — dùng danh sách
+// đầy đủ (mặc định) để tra là đủ, không ảnh hưởng nội dung hiển thị.
 export function findCircleOfWord(word: string): Circle | undefined {
   const k = wordKey(word)
   return getCircles().find((c) => c.words.some((w) => wordKey(w.word) === k))
@@ -199,10 +218,13 @@ export function findCircleOfWord(word: string): Circle | undefined {
 // Duyệt getCircles() theo đúng thứ tự học và khử trùng theo wordKey GIỐNG
 // getLearningPath (giữ lần xuất hiện ĐẦU) → mỗi từ chỉ thuộc đúng 1 cấp,
 // tổng từ của 4 cấp + phần ngoài CEFR = đúng lộ trình phẳng.
-function collectPathWords(belongs: (circleId: string) => boolean): DictEntry[] {
+function collectPathWords(
+  belongs: (circleId: string) => boolean,
+  ageGroup?: AgeGroup,
+): DictEntry[] {
   const seen = new Set<string>()
   const out: DictEntry[] = []
-  for (const c of getCircles()) {
+  for (const c of getCircles(ageGroup)) {
     const keep = belongs(c.id)
     for (const w of c.words) {
       const k = wordKey(w.word)
@@ -215,14 +237,14 @@ function collectPathWords(belongs: (circleId: string) => boolean): DictEntry[] {
 }
 
 // Từ vựng của 1 cấp CEFR, theo thứ tự học trong lộ trình.
-export function getLevelWords(levelId: CefrLevel['id']): DictEntry[] {
-  return collectPathWords((id) => CIRCLE_LEVEL[id] === levelId)
+export function getLevelWords(levelId: CefrLevel['id'], ageGroup?: AgeGroup): DictEntry[] {
+  return collectPathWords((id) => CIRCLE_LEVEL[id] === levelId, ageGroup)
 }
 
 // Từ NGOÀI lộ trình CEFR (vòng nền tảng lẻ + cụm "Mở rộng" từ từ điển) —
 // trang cấp CUỐI (B2) học tiếp phần này sau khi thuộc hết từ của cấp.
-export function getBeyondCefrWords(): DictEntry[] {
-  return collectPathWords((id) => !(id in CIRCLE_LEVEL))
+export function getBeyondCefrWords(ageGroup?: AgeGroup): DictEntry[] {
+  return collectPathWords((id) => !(id in CIRCLE_LEVEL), ageGroup)
 }
 
 // ── Mục tiêu hôm nay: 20 từ KẾ TIẾP chưa thuộc ─────────────────────────
@@ -240,8 +262,12 @@ export function getTodayBatchFrom(
   return batch
 }
 
-export function getTodayBatch(learned: Set<string>, size = DAILY_GOAL): DictEntry[] {
-  return getTodayBatchFrom(getLearningPath(), learned, size)
+export function getTodayBatch(
+  learned: Set<string>,
+  size = DAILY_GOAL,
+  ageGroup?: AgeGroup,
+): DictEntry[] {
+  return getTodayBatchFrom(getLearningPath(ageGroup), learned, size)
 }
 
 // Tiến độ đã thuộc bao nhiêu / tổng của 1 danh sách từ bất kỳ (1 cấp, hoặc cả lộ trình).
@@ -257,8 +283,11 @@ export function getPoolProgress(
 }
 
 // Tiến độ tổng: đã thuộc bao nhiêu / tổng lộ trình
-export function getPathProgress(learned: Set<string>): { done: number; total: number } {
-  return getPoolProgress(getLearningPath(), learned)
+export function getPathProgress(
+  learned: Set<string>,
+  ageGroup?: AgeGroup,
+): { done: number; total: number } {
+  return getPoolProgress(getLearningPath(ageGroup), learned)
 }
 
 // ── Bộ đếm "học trong ngày" (mục tiêu 20/ngày) ────────────────────────

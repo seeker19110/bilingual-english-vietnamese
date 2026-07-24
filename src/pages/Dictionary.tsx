@@ -25,6 +25,7 @@ import type { DictEntry } from '../types'
 import { searchDictionary, fetchWordOfDay } from '../lib/dictionaryApi'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
+import { useOnboarding } from '../lib/onboarding'
 import { POS_LABEL, POS_COLOR, POS_LIST, LEVEL_COLOR } from '../lib/pos'
 import { getLearnedWords } from '../lib/vocab'
 
@@ -78,6 +79,7 @@ const QUICK_TOPICS = [
 
 export default function Dictionary() {
   const { user } = useAuth()
+  const onboarding = useOnboarding(user?.id) // nhóm tuổi (GĐ 4, PROGRESS.md) — lọc vòng từ vựng
   const dir = getDirection()
   const isA = dir === 'A'
   const [tab, setTab] = useState<Tab>('search')
@@ -224,7 +226,12 @@ export default function Dictionary() {
           />
 
           <VocabMilestone userId={user.id} refreshKey={learnedKey} />
-          <StudyPanel uid={user.id} isA={isA} onProgress={() => setLearnedKey((k) => k + 1)} />
+          <StudyPanel
+            uid={user.id}
+            isA={isA}
+            onProgress={() => setLearnedKey((k) => k + 1)}
+            ageGroup={onboarding?.ageGroup}
+          />
 
           {/* Tab bar */}
           <div className="flex gap-2 mb-4">

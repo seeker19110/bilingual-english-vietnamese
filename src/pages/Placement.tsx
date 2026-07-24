@@ -92,7 +92,7 @@ export default function Placement() {
     const dialogues: Dialogue[] = dialogueLists.flat()
     const qs = buildExam({
       isA,
-      words: getLevelWords(level.id),
+      words: getLevelWords(level.id, getCachedOnboarding(user.id)?.ageGroup),
       learned: getLearnedWords(user.id),
       grammar: levelGrammarSources(level),
       dialogues,

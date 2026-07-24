@@ -12,7 +12,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Target, Brain, Star, ClipboardList } from 'lucide-react'
 import { TodayLesson, SRSReview, HardWords, QuizTab } from './StudyTabs'
-import type { DictEntry } from '../types'
+import type { DictEntry, AgeGroup } from '../types'
 import { getDifficultWords } from '../lib/vocab'
 import { getDueWords } from '../lib/srs'
 import { loadCurriculum, isCurriculumReady, getLearningPath } from '../lib/curriculum'
@@ -23,11 +23,13 @@ export default function StudyPanel({
   uid,
   isA,
   onProgress,
+  ageGroup,
 }: {
   uid: string
   isA: boolean
   // Gọi khi học/ôn xong 1 từ để trang cha cập nhật (vd: "Mốc từ vựng", "Đã học").
   onProgress?: () => void
+  ageGroup?: AgeGroup
 }) {
   const [tab, setTab] = useState<StudyTab>('today')
   // Các tab học cần TOÀN BỘ từ điển (nạp động) — gate riêng để hiện trạng thái tải.
@@ -44,7 +46,10 @@ export default function StudyPanel({
   }, [])
 
   // Pool = toàn bộ từ trong lộ trình học (mọi cấp + phần mở rộng).
-  const pool = useMemo<DictEntry[]>(() => (ready ? getLearningPath() : []), [ready])
+  const pool = useMemo<DictEntry[]>(
+    () => (ready ? getLearningPath(ageGroup) : []),
+    [ready, ageGroup],
+  )
 
   // Badge trên tab: số từ CẦN ÔN SRS / số từ đã đánh dấu khó.
   // `refresh` là khóa invalidation thủ công (dữ liệu đọc từ localStorage).

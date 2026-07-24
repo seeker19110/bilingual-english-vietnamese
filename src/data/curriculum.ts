@@ -24,6 +24,12 @@ export interface Circle {
   words: DictEntry[]
   // Câu thông dụng ráp từ chính các từ trong vòng này
   sentences: { en: string; vi: string }[]
+  // Chủ đề KHÔNG phù hợp trẻ em (kinh doanh, chính trị, tài chính, sức khỏe tinh thần,
+  // mối quan hệ tình cảm...) — ẨN HẲN khỏi luồng học của nhóm tuổi 'nhi_dong' (GĐ 4,
+  // PROGRESS.md 2026-07-22). Chỉ áp cho vòng THỦ CÔNG bên dưới; vòng CEFR C1/C2 sinh tự
+  // động (cefrC1C2Vocab.ts) không gắn cờ này — thực tế không ai ở tốc độ học của trẻ
+  // em chạm tới mức C1/C2 trong thời gian ngắn.
+  notForKids?: boolean
 }
 
 // Rút gọn: hàm tạo 1 mục từ cho nhanh (ipa để trống — PronounceButton vẫn đọc được)
@@ -536,6 +542,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng 15: Kinh doanh & công sở ────────────────────────────────────────
   {
     id: 'business',
+    notForKids: true,
     titleVi: 'Kinh doanh & công sở',
     titleEn: 'Business & Office',
     emoji: '💼',
@@ -5304,6 +5311,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B1): Nơi làm việc ───────────────────────────────────────────
   {
     id: 'workplace',
+    notForKids: true,
     titleVi: 'Nơi làm việc',
     titleEn: 'Workplace',
     emoji: '💼',
@@ -5440,6 +5448,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B1): Tiền bạc & tài chính ──────────────────────────────────
   {
     id: 'money-finance',
+    notForKids: true,
     titleVi: 'Tiền bạc & tài chính',
     titleEn: 'Money & Finance',
     emoji: '💰',
@@ -6656,6 +6665,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B1): Mối quan hệ ───────────────────────────────────────────
   {
     id: 'relationships-b1',
+    notForKids: true,
     titleVi: 'Mối quan hệ',
     titleEn: 'Relationships',
     emoji: '🤝',
@@ -6928,6 +6938,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B2): Kinh doanh mở rộng ────────────────────────────────────
   {
     id: 'business-extended',
+    notForKids: true,
     titleVi: 'Kinh doanh mở rộng',
     titleEn: 'More Business',
     emoji: '🏢',
@@ -7200,6 +7211,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B2): Y tế nâng cao ──────────────────────────────────────────
   {
     id: 'medical-advanced',
+    notForKids: true,
     titleVi: 'Y tế nâng cao',
     titleEn: 'Advanced Medical',
     emoji: '🏥',
@@ -7312,6 +7324,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B2): Vấn đề xã hội ──────────────────────────────────────────
   {
     id: 'social-issues',
+    notForKids: true,
     titleVi: 'Vấn đề xã hội',
     titleEn: 'Social Issues',
     emoji: '⚖️',
@@ -7838,6 +7851,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B2): Khái niệm trừu tượng ───────────────────────────────────
   {
     id: 'abstract-concepts',
+    notForKids: true,
     titleVi: 'Khái niệm trừu tượng',
     titleEn: 'Abstract Concepts',
     emoji: '💡',
@@ -8098,6 +8112,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B2): Luật pháp & công lý ────────────────────────────────────
   {
     id: 'law-justice',
+    notForKids: true,
     titleVi: 'Luật pháp & công lý',
     titleEn: 'Law & Justice',
     emoji: '⚖️',
@@ -8222,6 +8237,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B2): Chính trị & chính quyền ────────────────────────────────
   {
     id: 'politics-government',
+    notForKids: true,
     titleVi: 'Chính trị & chính quyền',
     titleEn: 'Politics & Government',
     emoji: '🏛️',
@@ -8624,6 +8640,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B2): Sức khỏe tinh thần ─────────────────────────────────────
   {
     id: 'mental-health',
+    notForKids: true,
     titleVi: 'Sức khỏe tinh thần',
     titleEn: 'Mental Health',
     emoji: '🧠',
@@ -8896,6 +8913,7 @@ const FOUNDATION_BASE: Circle[] = [
   // ── Vòng mới (B2): Kinh tế toàn cầu ───────────────────────────────────────
   {
     id: 'economy-global',
+    notForKids: true,
     titleVi: 'Kinh tế toàn cầu',
     titleEn: 'Global Economy',
     emoji: '🌐',

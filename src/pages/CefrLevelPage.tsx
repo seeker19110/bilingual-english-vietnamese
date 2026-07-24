@@ -253,15 +253,18 @@ export default function CefrLevelPage() {
   // ngoài lộ trình CEFR để học tiếp sau khi xong cấp.
   const studyPool = useMemo(() => {
     if (!dictReady || !level) return []
-    const words = getLevelWords(level.id)
+    const words = getLevelWords(level.id, onboarding?.ageGroup)
     const isLast = levels[levels.length - 1]?.id === level.id
-    return isLast ? [...words, ...getBeyondCefrWords()] : words
-  }, [dictReady, level, levels])
+    return isLast ? [...words, ...getBeyondCefrWords(onboarding?.ageGroup)] : words
+  }, [dictReady, level, levels, onboarding?.ageGroup])
 
   // Toàn bộ từ đã học (mọi cấp + Mở rộng) — dùng riêng cho tab Ôn SRS để KHÔNG
   // bỏ sót từ đến hạn của cấp khác (trước đây lọc theo studyPool khiến từ A1
   // đến hạn không hiện khi đang học trang B1 → quên dần).
-  const allWordsPool = useMemo(() => (dictReady ? getLearningPath() : []), [dictReady])
+  const allWordsPool = useMemo(
+    () => (dictReady ? getLearningPath(onboarding?.ageGroup) : []),
+    [dictReady, onboarding?.ageGroup],
+  )
 
   // Badge trên tab: số từ CẦN ÔN SRS (toàn bộ lộ trình) / đã đánh dấu khó của cấp này.
   // `refresh` là khóa invalidation thủ công (dữ liệu đọc từ localStorage).
@@ -364,6 +367,7 @@ export default function CefrLevelPage() {
         isA={isA}
         level={level}
         accent={accent}
+        ageGroup={onboarding?.ageGroup}
         onClose={() => {
           setExaming(false)
           bump() // cập nhật kết quả thi + mở khóa cấp sau nếu vừa đạt
