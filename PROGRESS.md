@@ -118,10 +118,48 @@ code trong nhiều file rời rạc.
     → fallback, server trả ageGroup hợp lệ → giữ đúng giá trị).
   - **Việc người dùng cần làm:** `npm run migrate:pg` trên VPS (hoặc máy dev) để tạo cột
     `age_group` trước khi deploy — thiếu cột này thì `api/profile.ts` sẽ lỗi SQL ngay.
-  - **Tiếp theo (GĐ 2, CHƯA LÀM):** theme "Nhi đồng" vui nhộn — mở rộng `src/lib/theme.ts` +
-    bộ biến `--a-*` mới trong `src/index.css` (kiểm AA kỹ vì màu sặc sỡ dễ vi phạm tương phản),
-    tự áp + khoá cho nhóm Nhi đồng. Sau đó GĐ 3 (giọng điệu AI theo tuổi ở `src/prompts/
-index.ts`) và GĐ 4 tuỳ chọn (gắn nhãn tuổi cho nội dung `curriculum.ts`).
+    **GĐ 2 (theme "Nhi đồng" vui nhộn) — CODE XONG, cổng commit đã đạt (build/typecheck/lint/
+    format/test 613/613/size xanh):**
+  - `src/lib/theme.ts` — thêm `Theme = 'kid'` + hằng `KID_THEME` **tách riêng khỏi mảng
+    `THEMES`** (không lọt vào vòng lặp cycle của `ThemeToggle` — theme này bị khoá, không phải
+    lựa chọn tự do).
+  - `src/index.css` — bảng màu `[data-theme='kid']` (nền kem ấm `#FFFBEB`-ish + nhấn cam chuẩn
+    Tailwind orange-50..900). **Đã kiểm tương phản WCAG AA bằng tính toán thực tế** (script Node
+    dùng đúng công thức luminance/contrast ratio W3C, không đoán): text chính (`--c-white`)
+    ~16:1, text phụ (`--z-400`) ~6:1 trên nền thẻ/trang, nút `accent-500` nền cam + chữ đen
+    ~7.5:1, `accent-800` (dùng cho `theme-light:text-accent-800`) ~6.7-7:1 — đều vượt xa ngưỡng
+    AA 4.5:1 cho chữ thường.
+  - `tailwind.config.js` — thêm `[data-theme="kid"] &` vào biến thể `theme-light:` (trước chỉ
+    Blue sky/Pink) — **bắt buộc**, nếu không mọi chỗ đã sửa AA cho 2 theme sáng cũ sẽ KHÔNG áp
+    dụng cho theme mới (mù màu cố định amber/rose/sky/teal... trên nền sáng).
+  - `src/context/ThemeProvider.tsx` — đọc `age_group` qua `useOnboarding()` (đã có từ GĐ 1), tự
+    áp theme `kid` khi `ageGroup==='nhi_dong'` và chặn `setTheme()` (khoá cứng). **Chủ ý dùng
+    `applyTheme()` (chỉ đổi DOM hiển thị) thay vì `setTheme()`/`persistTheme()` khi khoá** —
+    KHÔNG ghi đè `localStorage(ui_theme)` để giữ nguyên lựa chọn theme thật của user; đổi nhóm
+    tuổi sau này (ra khỏi Nhi đồng) tự quay lại đúng theme đã chọn trước, không bị mất. Trong
+    lúc `useOnboarding` đang tải (chưa biết chắc `ageGroup`) KHÔNG ép đổi theme — tránh giật
+    theme mỗi lần load trang trước khi dữ liệu về.
+  - `src/components/ThemeToggle.tsx` — ẩn hẳn nút đổi giao diện khi `locked` (không hiện dạng
+    disabled, đơn giản hơn vì không có gì để đổi).
+  - `.size-limit.json` — CSS budget 9.5→9.7kB (đo thật: thêm theme thứ 5 tốn +0.08kB brotli,
+    ngân sách cũ chỉ còn dư 0.07kB nên chắc chắn vượt dù tối ưu).
+  - `e2e/a11y.spec.ts` + `e2e/helpers/auth.ts` — thêm 2 test a11y riêng cho theme `kid` (Home +
+    Profile, seed thẳng `localStorage.ui_theme='kid'` qua `mockLogin()` vì E2E không mock được
+    `/api/profile` để giả lập `age_group` thật — theme vẫn render y hệt, chỉ khác cách được áp).
+    **Phát hiện qua chạy E2E thật (không chỉ soát code):** ban đầu dùng `waitForTimeout(500)`
+    hoặc `expect().toBeVisible()` (chờ banner tĩnh "Xin chào") → **flaky/fail thật** vì thẻ "Học
+    tiếp" trên Home tính từ dữ liệu curriculum OFFLINE phía client (không phải fetch mạng, nên
+    banner tĩnh hiện gần như ngay lập tức nhưng thẻ động chưa kịp render) — bắt nhầm trạng thái
+    dựng dở, đo contrast sai (badge màu chưa áp override). Đã sửa đúng bằng
+    `page.waitForTimeout(1000)` (cùng pattern `AUTHED_ROUTES` đã dùng cho chính vấn đề này) —
+    xác nhận lại 8/8 lần chạy liên tiếp xanh (cả chế độ CI thật 1 worker lẫn dev nhiều worker).
+  - **Đã KHÔNG làm ở GĐ 2 này** (đúng phạm vi đã chốt, tránh phình việc): không thêm component
+    đặc thù (nút to tròn, hiệu ứng confetti) hay theme riêng cho 3 nhóm tuổi còn lại — chỉ
+    Nhi đồng có theme riêng, phần UI component lớn hơn để ngỏ nếu người dùng muốn làm thêm sau.
+  - **Tiếp theo (GĐ 3, CHƯA LÀM):** giọng điệu AI theo tuổi — thêm tham số `ageGroup` vào các
+    hàm sinh prompt trong `src/prompts/index.ts` (chat/speaking/writing), chỉ đổi giọng điệu,
+    KHÔNG lọc lại kho từ vựng/chủ đề. Sau đó GĐ 4 tuỳ chọn (gắn nhãn tuổi cho nội dung
+    `src/data/curriculum.ts`).
 
 - **Rời Supabase (2026-07-19→20, xem `docs/migration-thoat-ly-supabase.md`)**: GĐ A (Postgres 16
   tự host trên VPS) + GĐ B (auth tự viết Bearer token thay Supabase Auth) + GĐ C lõi

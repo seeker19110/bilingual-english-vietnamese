@@ -62,29 +62,6 @@ for (const theme of THEMES) {
   })
 }
 
-// Theme "Nhi đồng" (kid) — kế hoạch "giao diện + nội dung theo độ tuổi", PROGRESS.md
-// 2026-07-22 GĐ 2. Bình thường theme này chỉ tự áp qua ThemeProvider khi age_group=
-// 'nhi_dong' (không mock được /api/profile ở E2E, xem ThemeProvider.tsx) — ở đây seed
-// thẳng localStorage 'ui_theme'='kid' qua mockLogin() để quét đúng bộ màu mà KHÔNG cần
-// giả lập toàn bộ luồng khoá theme (theme vẫn render y hệt, chỉ khác cách được áp).
-for (const route of ['/', '/profile']) {
-  test(`a11y: ${route} theme=kid (Nhi đồng) — 0 critical, không có serious mới`, async ({
-    page,
-  }) => {
-    await mockLogin(page, 'vi', 'kid')
-    await page.goto(route, { waitUntil: 'domcontentloaded' })
-    // 1000ms cố định (giống AUTHED_ROUTES ở trên) — banner tĩnh ("Xin chào") hiện gần như
-    // ngay lập tức nên expect().toBeVisible() KHÔNG đủ để chờ nội dung tính toán phía client
-    // (thẻ "Học tiếp" suy ra từ curriculum offline, không phải fetch mạng nên networkidle
-    // cũng không giúp) — đã xác nhận qua debug thủ công: thiếu chờ này bắt nhầm badge màu
-    // đang ở trạng thái chưa hoàn tất render, cho kết quả contrast sai lệch giả.
-    await page.waitForTimeout(1000)
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
-  })
-}
-
 // Trang chủ ở CHIỀU B (người nước ngoài học tiếng Việt): đảo bộ màu accent→sky cho
 // badge/nhãn chiều học. Quét ở 2 theme SÁNG (nơi màu sky cố định dễ rớt AA) để chắc
 // biến thể `theme-light:` của nhánh B cũng đạt — gate Home phía trên chỉ phủ chiều A.
@@ -132,6 +109,30 @@ for (const route of AUTHED_ROUTES) {
       expect(unexpectedSerious).toEqual([])
     })
   }
+}
+
+// Theme "Nhi đồng" (kid) — kế hoạch "giao diện + nội dung theo độ tuổi", PROGRESS.md
+// 2026-07-22 GĐ 2. Bình thường theme này chỉ tự áp qua ThemeProvider khi age_group=
+// 'nhi_dong' (không mock được /api/profile ở E2E, xem ThemeProvider.tsx) — ở đây seed
+// thẳng localStorage 'ui_theme'='kid' qua mockLogin() để quét đúng bộ màu mà KHÔNG cần
+// giả lập toàn bộ luồng khoá theme (theme vẫn render y hệt, chỉ khác cách được áp). Đặt
+// SAU vòng AUTHED_ROUTES (không phải ngay đầu file) — chủ ý tránh vị trí "chạy sớm lúc dev
+// server còn nguội" đã gây flaky khi debug (xem PROGRESS.md).
+for (const route of ['/', '/profile']) {
+  test(`a11y: ${route} theme=kid (Nhi đồng) — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await mockLogin(page, 'vi', 'kid')
+    await page.goto(route, { waitUntil: 'domcontentloaded' })
+    // Cùng lý do với AUTHED_ROUTES ở trên: thẻ "Học tiếp" tính từ dữ liệu curriculum OFFLINE
+    // phía client (không phải fetch mạng nên networkidle không giúp) — banner tĩnh hiện gần
+    // như ngay lập tức nên expect().toBeVisible() KHÔNG đủ, bắt nhầm badge màu chưa render
+    // xong (đã gặp lúc debug: đo contrast sai vì override theme-light: chưa kịp áp).
+    await page.waitForTimeout(1000)
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
 }
 
 // ── MÀN KẾT QUẢ CẦN BACKEND (Chat trả lời/nhận xét · Writing chấm điểm/lỗi · Speaking
