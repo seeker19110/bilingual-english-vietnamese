@@ -1,4 +1,4 @@
-import type { Level, Direction } from '../types'
+import type { Level, Direction, AgeGroup } from '../types'
 
 // Các lỗi tiếng Anh ĐIỂN HÌNH của người Việt — chèn vào prompt chiều A để AI ưu tiên
 // soi đúng những lỗi này và giải thích theo tư duy tiếng Việt (hiệu quả sư phạm cao, $0).
@@ -45,14 +45,43 @@ TARGET WORDS: The learner has JUST LEARNED these words: ${list}.
 - Prefer using these words in your own lines so the learner hears them again in context.`
 }
 
+// ─── Giọng điệu theo nhóm tuổi (GĐ 3, PROGRESS.md 2026-07-22) ───────────────
+// CHỈ đổi giọng điệu/ví dụ minh hoạ — KHÔNG lọc lại kho từ vựng/chủ đề (chủ đề vẫn theo
+// `situation` học viên chọn). `thanh_nien`/`nguoi_lon`/không rõ (undefined, mặc định fallback
+// của user cũ) trả về CHUỖI RỖNG — giữ nguyên hành vi prompt hiện có, không thay đổi baseline
+// eval cho phần lớn người dùng hiện tại.
+function ageGroupToneBlock(ageGroup: AgeGroup | undefined, dir: Direction): string {
+  if (ageGroup === 'nhi_dong') {
+    return dir === 'A'
+      ? `
+
+HỌC VIÊN LÀ TRẺ EM (dưới 10 tuổi): câu thật ngắn, từ đơn giản, dùng nhiều emoji vui nhộn. Ví dụ minh hoạ gần gũi với trẻ em (trường học, gia đình, thú cưng, trò chơi) — KHÔNG dùng ví dụ người lớn (công việc, tiền bạc, tình yêu). Khen ngợi cụ thể, nhiệt tình như đang nói chuyện với 1 em bé.`
+      : `
+
+THE LEARNER IS A CHILD (under 10): keep sentences very short and simple, use lots of fun emoji. Use examples close to a child's world (school, family, pets, games) — avoid adult examples (work, money, romance). Give specific, enthusiastic praise as if talking to a young child.`
+  }
+  if (ageGroup === 'thieu_nien') {
+    return dir === 'A'
+      ? `
+
+HỌC VIÊN LÀ THIẾU NIÊN (10–15 tuổi): giọng điệu trẻ trung, gần gũi như bạn bè cùng lứa. Ví dụ minh hoạ ưu tiên chủ đề bạn bè, học tập, sở thích, mạng xã hội — tránh ví dụ quá "người lớn" (tài chính, hôn nhân).`
+      : `
+
+THE LEARNER IS A TEENAGER (10–15): keep a youthful, friendly peer-to-peer tone. Prefer examples about friends, school, hobbies, social media — avoid overly "adult" examples (finance, marriage).`
+  }
+  return ''
+}
+
 // ─── Chat ──────────────────────────────────────────────────────────────
 export function chatSystemPrompt(
   situation: string,
   level: Level,
   dir: Direction = 'A',
   targetWords?: string[],
+  ageGroup?: AgeGroup,
 ): string {
   const targets = targetWords && targetWords.length > 0 ? targetWordsBlock(targetWords, dir) : ''
+  const tone = ageGroupToneBlock(ageGroup, dir)
   if (dir === 'A') {
     return `Bạn là Emma — gia sư tiếng Anh thân mật, nhẹ nhàng, người Mỹ, đang dạy người Việt như một người bạn đồng hành chứ không phải giám khảo khó tính. Hãy xưng tên "Emma" khi giới thiệu hoặc khi phù hợp trong hội thoại. Trình độ học viên: ${LEVEL_DESC_A[level]}.
 Tình huống đóng vai: "${situation}".
@@ -63,7 +92,7 @@ QUY TẮC:
 3. Nếu không có lỗi: khen ngắn bằng tiếng Anh và hỏi tiếp 1 câu.
 4. Không giải thích dài dòng. Luôn giữ hội thoại tiếp diễn.
 
-${VIET_COMMON_ERRORS}${targets}
+${VIET_COMMON_ERRORS}${targets}${tone}
 
 ĐỊNH DẠNG TRẢ LỜI (bắt buộc):
 💬 [Câu thoại tiếng Anh — phần hội thoại chính]
@@ -73,7 +102,7 @@ Bắt đầu bằng câu mở đầu phù hợp tình huống.`
   }
 
   return `You are Linh — a warm, gentle Vietnamese tutor, Vietnamese native, teaching English speakers like a supportive friend, not a strict examiner. Introduce yourself as "Linh" at the start or when appropriate. Learner level: ${LEVEL_DESC_B[level]}.
-Role-play situation: "${situation}".${targets}
+Role-play situation: "${situation}".${targets}${tone}
 
 RULES:
 1. Converse naturally in Vietnamese, appropriate to the level, in a warm tone as if chatting with a close friend.
@@ -97,8 +126,10 @@ export function speakingSystemPrompt(
   level: Level,
   dir: Direction = 'A',
   targetWords?: string[],
+  ageGroup?: AgeGroup,
 ): string {
   const targets = targetWords && targetWords.length > 0 ? targetWordsBlock(targetWords, dir) : ''
+  const tone = ageGroupToneBlock(ageGroup, dir)
   if (dir === 'A') {
     return `Bạn là Emma — gia sư tiếng Anh thân mật, nhẹ nhàng, người Mỹ, đang dạy người Việt như một người bạn đồng hành chứ không phải giám khảo khó tính. Xưng tên "Emma" khi mở đầu hoặc khi tự nhiên. Trình độ học viên: ${LEVEL_DESC_A[level]}.
 Tình huống đóng vai: "${situation}".
@@ -109,7 +140,7 @@ QUY TẮC:
 3. Nếu không có lỗi: khen ngắn và hỏi tiếp.
 4. Luôn hỏi 1 câu để tiếp tục hội thoại.
 
-${VIET_COMMON_ERRORS}${targets}
+${VIET_COMMON_ERRORS}${targets}${tone}
 
 QUAN TRỌNG — Trả về JSON (không có markdown):
 {
@@ -122,7 +153,7 @@ Bắt đầu bằng câu mở đầu phù hợp (chỉ điền speech, hai trư�
   }
 
   return `You are Linh — a warm, gentle Vietnamese tutor, Vietnamese native, teaching English speakers like a supportive friend, not a strict examiner. Introduce yourself as "Linh" at the start or when natural. Learner level: ${LEVEL_DESC_B[level]}.
-Role-play situation: "${situation}".${targets}
+Role-play situation: "${situation}".${targets}${tone}
 
 RULES:
 1. Converse naturally in Vietnamese, appropriate to the level, in a warm tone as if chatting with a close friend.
@@ -141,10 +172,11 @@ Start with an opening line for the situation (fill speech only, leave the other 
 }
 
 // ─── Writing ─────────────────────────────────────────────────────
-export function writingSystemPrompt(dir: Direction = 'A'): string {
+export function writingSystemPrompt(dir: Direction = 'A', ageGroup?: AgeGroup): string {
+  const tone = ageGroupToneBlock(ageGroup, dir)
   if (dir === 'A') {
     return `Bạn là giám khảo IELTS Writing giàu kinh nghiệm, chấm bài cho người Việt học tiếng Anh.
-Giọng điệu: khích lệ, xây dựng.
+Giọng điệu: khích lệ, xây dựng.${tone}
 
 Trả về JSON (không có markdown):
 {
@@ -157,7 +189,7 @@ Trả về JSON (không có markdown):
   }
 
   return `You are an experienced writing tutor helping English speakers learn Vietnamese writing.
-Tone: encouraging, constructive.
+Tone: encouraging, constructive.${tone}
 
 Return JSON only (no markdown):
 {

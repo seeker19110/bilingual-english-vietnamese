@@ -29,6 +29,7 @@ import {
   QUIZ_PASS_THRESHOLD_PCT,
 } from './curriculum'
 import { loadCefr } from '../data/cefrLoader'
+import { FOUNDATION } from '../data/curriculum'
 import type { DictEntry } from '../types'
 
 // Dictionary giờ nạp ĐỘNG → phải await loadCurriculum() trước khi test các hàm dùng nó
@@ -289,5 +290,85 @@ describe('isQuizPass — ngưỡng đạt để mở thêm từ mới', () => {
 
   it('0 câu đúng → không đạt', () => {
     expect(isQuizPass(0, 10)).toBe(false)
+  })
+})
+
+// GĐ 4 (PROGRESS.md 2026-07-22) — ẩn hẳn vòng gắn `notForKids` khỏi luồng học của
+// nhóm tuổi Nhi đồng, KHÔNG ảnh hưởng các nhóm tuổi khác (mặc định undefined = y hệt cũ).
+describe('Lọc theo nhóm tuổi — ẩn vòng notForKids cho Nhi đồng (GĐ 4)', () => {
+  const notForKidsIds = FOUNDATION.filter((c) => c.notForKids).map((c) => c.id)
+
+  it('dữ liệu thật có ít nhất 1 vòng gắn notForKids (không phải test rỗng vô nghĩa)', () => {
+    expect(notForKidsIds.length).toBeGreaterThan(0)
+  })
+
+  it('getCircles() mặc định (không rõ nhóm tuổi) VẪN CÓ đủ vòng notForKids', () => {
+    const ids = new Set(getCircles().map((c) => c.id))
+    for (const id of notForKidsIds) expect(ids.has(id)).toBe(true)
+  })
+
+  it("getCircles('nhi_dong') ẨN HẲN mọi vòng notForKids", () => {
+    const ids = new Set(getCircles('nhi_dong').map((c) => c.id))
+    for (const id of notForKidsIds) expect(ids.has(id)).toBe(false)
+  })
+
+  it('các nhóm tuổi khác (thanh_nien/nguoi_lon) không lọc gì — giống hệt mặc định', () => {
+    const def = getCircles().map((c) => c.id)
+    expect(getCircles('thanh_nien').map((c) => c.id)).toEqual(def)
+    expect(getCircles('nguoi_lon').map((c) => c.id)).toEqual(def)
+  })
+
+  it("getLearningPath('nhi_dong') NGẮN HƠN mặc định và không chứa từ của vòng bị ẩn", () => {
+    const hiddenCircle = FOUNDATION.find((c) => c.notForKids)!
+    const hiddenWordKey = wordKey(hiddenCircle.words[0].word)
+    const full = getLearningPath()
+    const kidPath = getLearningPath('nhi_dong')
+    expect(kidPath.length).toBeLessThan(full.length)
+    expect(full.some((w) => wordKey(w.word) === hiddenWordKey)).toBe(true)
+    expect(kidPath.some((w) => wordKey(w.word) === hiddenWordKey)).toBe(false)
+  })
+
+  it('từ của vòng bị ẩn KHÔNG lọt sang phần "Mở rộng" (ẩn hẳn, không phải chuyển chỗ)', () => {
+    const hiddenCircle = FOUNDATION.find((c) => c.notForKids)!
+    const hiddenWordKey = wordKey(hiddenCircle.words[0].word)
+    // Nếu lọt vào "Mở rộng" thì vẫn xuất hiện trong kidExtraWords (chỉ khác vị trí, không khác
+    // nội dung) — bài test trên đã xác nhận KHÔNG xuất hiện trong cả lộ trình, ở đây xác nhận
+    // rõ thêm riêng phần "Mở rộng".
+    const kidExtraWords = getCircles('nhi_dong')
+      .filter((c) => c.id.startsWith('extra-'))
+      .flatMap((c) => c.words)
+    expect(kidExtraWords.some((w) => wordKey(w.word) === hiddenWordKey)).toBe(false)
+  })
+
+  it('getPathProgress: total của nhi_dong nhỏ hơn mặc định', () => {
+    const def = getPathProgress(new Set())
+    const kid = getPathProgress(new Set(), 'nhi_dong')
+    expect(kid.total).toBeLessThan(def.total)
+  })
+
+  it('getTodayBatch: không trả về từ thuộc vòng bị ẩn cho nhi_dong', () => {
+    const hiddenCircle = FOUNDATION.find((c) => c.notForKids)!
+    const hiddenWordKey = wordKey(hiddenCircle.words[0].word)
+    // Lấy hết lộ trình nhi_dong làm batch (size lớn) để chắc chắn quét hết, xác nhận không
+    // có từ vòng ẩn nào lọt qua.
+    const batch = getTodayBatch(new Set(), getLearningPath('nhi_dong').length, 'nhi_dong')
+    expect(batch.some((w) => wordKey(w.word) === hiddenWordKey)).toBe(false)
+  })
+
+  it('getLevelWords: cấp có chứa vòng bị ẩn (vd workplace/social-issues/medical-advanced) trả ít từ hơn cho nhi_dong', () => {
+    // 'workplace' là 1 trong các vòng notForKids đã xác nhận nằm trong lộ trình CEFR chính
+    // thức (cefr.ts) — cấp chứa nó phải có ÍT từ hơn khi lọc cho nhi_dong.
+    const levelId = getCefrLevelOfCircle('workplace')
+    expect(levelId).not.toBeNull()
+    const full = getLevelWords(levelId!)
+    const kid = getLevelWords(levelId!, 'nhi_dong')
+    expect(kid.length).toBeLessThan(full.length)
+  })
+
+  it('cache theo nhóm tuổi: gọi lại cùng ageGroup trả về cùng tham chiếu (không tính lại)', () => {
+    const a = getCircles('nhi_dong')
+    expect(getCircles('nhi_dong')).toBe(a)
+    const p = getLearningPath('nhi_dong')
+    expect(getLearningPath('nhi_dong')).toBe(p)
   })
 })

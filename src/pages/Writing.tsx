@@ -11,6 +11,7 @@ import { useCloudSync } from '../lib/useCloudSync'
 import { useApiThrottle } from '../lib/useApiThrottle'
 import { callClaude, parseJson } from '../lib/ai'
 import { writingSystemPrompt } from '../prompts'
+import { useOnboarding } from '../lib/onboarding'
 import type { WritingSubmission, Direction } from '../types'
 import { effectivePlan } from '../lib/promo'
 import { getLimits } from '../lib/appSettings'
@@ -197,6 +198,7 @@ export default function Writing() {
   const user = useAuth().user! // RequireAuth đã đảm bảo có user trước khi vào trang
   const toast = useToast()
   useCloudSync(user.id) // kéo lượt dùng từ Supabase khi mở trang
+  const onboarding = useOnboarding(user.id) // nhóm tuổi khai lúc onboarding (GĐ 3, PROGRESS.md)
   const dir: Direction = getDirection()
   const isA = dir === 'A'
   const samplePrompts = isA ? SAMPLE_PROMPTS_A : SAMPLE_PROMPTS_B
@@ -263,7 +265,7 @@ export default function Writing() {
     }
     setLoading(true)
     setError('')
-    const sys = writingSystemPrompt(dir)
+    const sys = writingSystemPrompt(dir, onboarding?.ageGroup)
     const userMsg = isA
       ? `De bai: ${essayPrompt}\n\nBai viet cua hoc vien:\n${essay}`
       : `Essay prompt: ${essayPrompt}\n\nLearner's Vietnamese essay:\n${essay}`

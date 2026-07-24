@@ -9,8 +9,10 @@ const TOKEN_KEY = 'gsa_session_token_v1'
 // Export để các file E2E khác seed localStorage đúng key theo user (vd `et_challenge_<uid>`).
 export const USER_ID = 'e2e-user-0001'
 
-// Tên 4 theme (đồng bộ src/lib/theme.ts). Dùng để E2E quét a11y ở mọi theme.
-export type ThemeName = 'dark-blue' | 'blue-sky' | 'pink' | 'vibrant'
+// Tên 4 theme tự chọn (đồng bộ src/lib/theme.ts). Dùng để E2E quét a11y ở mọi theme.
+// 'kid' (Nhi đồng) tách riêng — không nằm trong vòng lặp THEMES chính (không tự chọn được),
+// chỉ dùng ở vài test riêng quét theme này.
+export type ThemeName = 'dark-blue' | 'blue-sky' | 'pink' | 'vibrant' | 'kid'
 
 export async function mockLogin(
   page: Page,

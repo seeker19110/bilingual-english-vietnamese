@@ -13,6 +13,6 @@
   {
     "name": "Initial CSS (brotli)",
     "path": "dist/assets/index-*.css",
-    "limit": "9.5 kB"
+    "limit": "9.7 kB"
   }
 ]

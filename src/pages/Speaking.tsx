@@ -519,7 +519,13 @@ export default function Speaking() {
     setLoading(true)
     setError('')
     const targets = practiceWords.length > 0 ? practiceWords : undefined
-    const sys = speakingSystemPrompt(situationLabel(situation, dir), level, dir, targets)
+    const sys = speakingSystemPrompt(
+      situationLabel(situation, dir),
+      level,
+      dir,
+      targets,
+      onboarding?.ageGroup,
+    )
     try {
       const raw = await callClaude([], sys, 1024, 'speaking')
       const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
@@ -677,6 +683,7 @@ export default function Speaking() {
       session.level,
       dir,
       session.targetWords,
+      onboarding?.ageGroup,
     )
     try {
       const raw = await callClaude(history, sys, 1024, 'speaking')

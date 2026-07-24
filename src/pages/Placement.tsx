@@ -92,7 +92,7 @@ export default function Placement() {
     const dialogues: Dialogue[] = dialogueLists.flat()
     const qs = buildExam({
       isA,
-      words: getLevelWords(level.id),
+      words: getLevelWords(level.id, getCachedOnboarding(user.id)?.ageGroup),
       learned: getLearnedWords(user.id),
       grammar: levelGrammarSources(level),
       dialogues,
@@ -163,8 +163,9 @@ export default function Placement() {
     const cached = getCachedOnboarding(user.id)
     const goal = cached?.goal ?? 'daily'
     const dailyMinutes = cached?.dailyMinutes ?? 10
-    await saveOnboarding({ level: res.appLevel, goal, dailyMinutes })
-    cacheOnboarding(user.id, { level: res.appLevel, goal, dailyMinutes })
+    const ageGroup = cached?.ageGroup ?? 'nguoi_lon'
+    await saveOnboarding({ level: res.appLevel, goal, dailyMinutes, ageGroup })
+    cacheOnboarding(user.id, { level: res.appLevel, goal, dailyMinutes, ageGroup })
     setDailySpeed(user.id, minutesToSpeed(dailyMinutes))
   }
 

@@ -153,6 +153,46 @@
   --theme-color: #1c1428;
 }
 
+/* 🧸 Nhi đồng (kid) — nền kem ấm áp + nhấn cam rực rỡ, chỉ tự áp + khoá cho user
+   age_group='nhi_dong' (ThemeProvider.tsx), KHÔNG cho tự chọn qua ThemeToggle.
+   Đã kiểm tương phản WCAG AA bằng script tính toán thật (không đoán): text chính
+   (--c-white) ~16:1, text phụ (--z-400) ~6:1, nút accent-500 nền cam + chữ đen ~7.5:1,
+   accent-800 (dùng cho theme-light:text-accent-800) ~6.7-7:1 trên nền thẻ/trang — đều
+   vượt xa ngưỡng AA 4.5:1 cho chữ thường. */
+[data-theme='kid'] {
+  color-scheme: light;
+  --c-white: 40 22 12;
+  --z-50: 46 26 14;
+  --z-100: 66 42 22;
+  --z-200: 100 70 40;
+  --z-300: 132 98 60;
+  --z-400: 122 90 58;
+  --z-500: 176 148 100;
+  --z-600: 208 184 142;
+  --z-700: 230 212 180;
+  --z-800: 246 234 202;
+  --z-900: 253 245 222;
+  --z-950: 255 251 235;
+  --glass-bg: 253 245 222;
+  --glass-border: 246 234 202;
+  /* accent: orange (Tailwind orange-50..900 chuẩn, đã kiểm contrast) */
+  --a-50: 255 247 237;
+  --a-100: 255 237 213;
+  --a-200: 254 215 170;
+  --a-300: 253 186 116;
+  --a-400: 251 146 60;
+  --a-500: 249 115 22;
+  --a-600: 234 88 12;
+  /* a-700 CHỦ Ý đậm hơn chuẩn orange-700 (194 65 12, chỉ đạt 4.17:1 trên nền
+     bg-accent-500/15 — phát hiện qua E2E thật, xem PROGRESS.md) — dùng thẳng giá trị
+     orange-800 để `theme-light:text-accent-700` luôn đạt AA (~5.9:1) trên mọi nền thẻ nhạt. */
+  --a-700: 154 52 18;
+  --a-800: 154 52 18;
+  --a-900: 124 45 18;
+  --glow-accent: 0.5;
+  --theme-color: #fffbeb;
+}
+
 @layer base {
   html {
     /* Chặn iOS/Safari tự phóng to chữ khi xoay ngang màn hình */

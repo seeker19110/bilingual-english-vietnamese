@@ -13,9 +13,17 @@ import { useAuth } from '../context/useAuth'
 import { saveOnboarding } from '../lib/cloud'
 import { cacheOnboarding, minutesToSpeed } from '../lib/onboarding'
 import { setDailySpeed } from '../lib/curriculum'
+import type { AgeGroup } from '../types'
 
 type OnboardLevel = 'beginner' | 'intermediate' | 'advanced'
 type OnboardGoal = 'daily' | 'travel' | 'work' | 'ielts'
+
+const AGE_GROUPS: { value: AgeGroup; emoji: string; label: string; desc: string }[] = [
+  { value: 'nhi_dong', emoji: '🧸', label: 'Nhi đồng', desc: 'Dưới 10 tuổi' },
+  { value: 'thieu_nien', emoji: '🎒', label: 'Thiếu niên', desc: '10–15 tuổi' },
+  { value: 'thanh_nien', emoji: '🎓', label: 'Thanh niên', desc: '16–22 tuổi' },
+  { value: 'nguoi_lon', emoji: '💼', label: 'Người lớn', desc: '23 tuổi trở lên' },
+]
 
 const LEVELS: { value: OnboardLevel; emoji: string; label: string; desc: string }[] = [
   { value: 'beginner', emoji: '🌱', label: 'Cơ bản', desc: 'A1–A2 · Mới bắt đầu, biết ít từ' },
@@ -74,7 +82,8 @@ export default function Onboarding() {
   // Tới từ /placement sau khi làm bài test xếp lớp: đã biết trình độ đề xuất →
   // bỏ qua bước chọn trình độ thủ công (vẫn cho quay lại step 0 nếu muốn đổi ý).
   const presetLevel = (location.state as { presetLevel?: OnboardLevel } | null)?.presetLevel
-  const [step, setStep] = useState(presetLevel ? 1 : 0)
+  const [step, setStep] = useState(presetLevel ? 2 : 0)
+  const [ageGroup, setAgeGroup] = useState<AgeGroup>('nguoi_lon')
   const [level, setLevel] = useState<OnboardLevel>(presetLevel ?? 'beginner')
   const [goal, setGoal] = useState<OnboardGoal>('daily')
   const [minutes, setMinutes] = useState<number>(10)
@@ -83,10 +92,10 @@ export default function Onboarding() {
   async function finish() {
     if (!user) return
     setSaving(true)
-    await saveOnboarding({ level, goal, dailyMinutes: minutes })
+    await saveOnboarding({ level, goal, dailyMinutes: minutes, ageGroup })
     // U-3: dùng lại dữ liệu vừa khai ngay trong app — cache local để Chat/Speaking
     // đọc được trình độ, và map phút/ngày → tốc độ học từ vựng (5/10/20 từ/ngày).
-    cacheOnboarding(user.id, { level, goal, dailyMinutes: minutes })
+    cacheOnboarding(user.id, { level, goal, dailyMinutes: minutes, ageGroup })
     setDailySpeed(user.id, minutesToSpeed(minutes))
     await refresh()
     nav('/', { replace: true })
@@ -97,18 +106,55 @@ export default function Onboarding() {
       {/* Thanh tiến trình */}
       <div className="w-full max-w-sm mb-8">
         <div className="flex gap-1.5">
-          {[0, 1, 2].map((i) => (
+          {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
               className={`h-1 flex-1 rounded-full transition-all duration-300 ${i <= step ? 'bg-accent-500' : 'bg-zinc-800'}`}
             />
           ))}
         </div>
-        <p className="text-xs text-zinc-400 mt-2">Bước {step + 1} / 3</p>
+        <p className="text-xs text-zinc-400 mt-2">Bước {step + 1} / 4</p>
       </div>
 
-      {/* Bước 0: Trình độ */}
+      {/* Bước 0: Nhóm tuổi */}
       {step === 0 && (
+        <div className="w-full max-w-sm animate-fade-in">
+          <h1 className="text-2xl font-bold text-white mb-1">Bạn thuộc nhóm tuổi nào?</h1>
+          <p className="text-zinc-400 text-sm mb-4">
+            Giúp app hiển thị giao diện và nội dung phù hợp với bạn.
+          </p>
+          <div className="space-y-3">
+            {AGE_GROUPS.map((a) => (
+              <button
+                key={a.value}
+                onClick={() => setAgeGroup(a.value)}
+                aria-pressed={ageGroup === a.value}
+                className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all ${
+                  ageGroup === a.value
+                    ? 'bg-accent-500/15 border-accent-500/50 text-white'
+                    : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:border-zinc-700'
+                }`}
+              >
+                <span className="text-2xl">{a.emoji}</span>
+                <div className="text-left flex-1">
+                  <p className="font-semibold text-[15px]">{a.label}</p>
+                  <p className="text-xs text-zinc-400 mt-0.5">{a.desc}</p>
+                </div>
+                {ageGroup === a.value && <Check className="w-4 h-4 text-accent-400 shrink-0" />}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setStep(1)}
+            className="mt-6 w-full bg-accent-500 hover:bg-accent-400 text-black font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition"
+          >
+            Tiếp theo <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Bước 1: Trình độ */}
+      {step === 1 && (
         <div className="w-full max-w-sm animate-fade-in">
           <h1 className="text-2xl font-bold text-white mb-1">Trình độ của bạn?</h1>
           <p className="text-zinc-400 text-sm mb-4">AI sẽ điều chỉnh độ khó phù hợp.</p>
@@ -145,7 +191,7 @@ export default function Onboarding() {
             ))}
           </div>
           <button
-            onClick={() => setStep(1)}
+            onClick={() => setStep(2)}
             className="mt-6 w-full bg-accent-500 hover:bg-accent-400 text-black font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition"
           >
             Tiếp theo <ChevronRight className="w-4 h-4" />
@@ -153,15 +199,15 @@ export default function Onboarding() {
         </div>
       )}
 
-      {/* Bước 1: Mục tiêu */}
-      {step === 1 && (
+      {/* Bước 2: Mục tiêu */}
+      {step === 2 && (
         <div className="w-full max-w-sm animate-fade-in">
           {presetLevel && (
             <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-xl bg-accent-500/10 border border-accent-500/30 text-xs text-accent-300">
               <Sparkles className="w-3.5 h-3.5 shrink-0" />
               Đã xếp trình độ từ bài test —{' '}
               <button
-                onClick={() => setStep(0)}
+                onClick={() => setStep(1)}
                 className="underline underline-offset-2 hover:text-accent-200"
               >
                 đổi thủ công
@@ -214,13 +260,13 @@ export default function Onboarding() {
           </div>
           <div className="flex gap-3 mt-6">
             <button
-              onClick={() => setStep(0)}
+              onClick={() => setStep(1)}
               className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium py-3 rounded-2xl transition"
             >
               Quay lại
             </button>
             <button
-              onClick={() => setStep(2)}
+              onClick={() => setStep(3)}
               className="flex-1 bg-accent-500 hover:bg-accent-400 text-black font-semibold py-3 rounded-2xl flex items-center justify-center gap-2 transition"
             >
               Tiếp theo <ChevronRight className="w-4 h-4" />
@@ -229,8 +275,8 @@ export default function Onboarding() {
         </div>
       )}
 
-      {/* Bước 2: Thời gian */}
-      {step === 2 && (
+      {/* Bước 3: Thời gian */}
+      {step === 3 && (
         <div className="w-full max-w-sm animate-fade-in">
           <h1 className="text-2xl font-bold text-white mb-1">Học bao nhiêu phút mỗi ngày?</h1>
           <p className="text-zinc-400 text-sm mb-6">
@@ -255,7 +301,7 @@ export default function Onboarding() {
           </div>
           <div className="flex gap-3 mt-6">
             <button
-              onClick={() => setStep(1)}
+              onClick={() => setStep(2)}
               className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium py-3 rounded-2xl transition"
             >
               Quay lại

@@ -6,8 +6,12 @@ import { THEMES } from '../lib/theme'
 // Nút đổi giao diện: bấm là chuyển tuần tự sang theme kế tiếp trong danh sách
 // (Xanh đêm → Blue sky → Pink → Rực rỡ → quay lại Xanh đêm), không mở menu chọn.
 export default function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, locked } = useTheme()
   const { lang } = useLang()
+
+  // Nhóm tuổi Nhi đồng bị khoá cứng vào 1 theme riêng (kế hoạch "giao diện + nội dung
+  // theo độ tuổi") — không có gì để đổi nên ẩn hẳn nút, không hiện dạng disabled.
+  if (locked) return null
 
   const index = Math.max(
     THEMES.findIndex((t) => t.value === theme),

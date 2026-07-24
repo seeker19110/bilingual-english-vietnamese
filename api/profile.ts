@@ -20,12 +20,24 @@ import {
 import { validateBody, readJsonBody } from './_lib/validation'
 import { jsonResponse, getClientIp } from './_lib/http'
 
+const AGE_GROUPS = ['nhi_dong', 'thieu_nien', 'thanh_nien', 'nguoi_lon'] as const
+
 const OnboardingSchema = z.object({
   action: z.literal('onboarding'),
   level: z.enum(['beginner', 'intermediate', 'advanced']),
   goal: z.string().min(1).max(40),
   dailyMinutes: z.number().int().min(1).max(180),
+  ageGroup: z.enum(AGE_GROUPS).optional(),
 })
+
+// Đổi nhóm tuổi riêng (Profile.tsx, sau khi đã onboarded) — tách khỏi action 'onboarding'
+// vì chỉ đổi đúng 1 cột, không gửi lại level/goal/dailyMinutes không liên quan.
+const SetAgeGroupSchema = z.object({
+  action: z.literal('set-age-group'),
+  ageGroup: z.enum(AGE_GROUPS),
+})
+
+const BodySchema = z.union([OnboardingSchema, SetAgeGroupSchema])
 
 interface ProfileRow {
   plan: string
@@ -34,6 +46,7 @@ interface ProfileRow {
   user_level: string | null
   goal: string | null
   daily_minutes: number | null
+  age_group: string | null
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -53,7 +66,7 @@ export default async function handler(req: Request): Promise<Response> {
     await ensureProfileRow(auth.userId, '') // tạo profile nếu chưa có (an toàn, idempotent)
     const pool = getPgPool()
     const { rows } = await pool.query<ProfileRow>(
-      'select plan, onboarded, name, user_level, goal, daily_minutes from public.profiles where id = $1',
+      'select plan, onboarded, name, user_level, goal, daily_minutes, age_group from public.profiles where id = $1',
       [auth.userId],
     )
     const row = rows[0]
@@ -65,6 +78,9 @@ export default async function handler(req: Request): Promise<Response> {
         userLevel: row?.user_level ?? 'beginner',
         goal: row?.goal ?? 'daily',
         dailyMinutes: row?.daily_minutes ?? 10,
+        // NULL (chưa từng chọn) → 'nguoi_lon': mặc định an toàn, không ép giao diện/giọng
+        // điệu trẻ em lên người dùng chưa từng chọn nhóm tuổi.
+        ageGroup: row?.age_group ?? 'nguoi_lon',
       },
       200,
       allHeaders,
@@ -78,16 +94,32 @@ export default async function handler(req: Request): Promise<Response> {
   const parsedBody = await readJsonBody(req)
   if (!parsedBody.ok)
     return jsonResponse({ error: parsedBody.error.message }, parsedBody.error.status, allHeaders)
-  const result = validateBody(OnboardingSchema, parsedBody.raw)
+  const result = validateBody(BodySchema, parsedBody.raw)
   if (!result.ok)
     return jsonResponse({ error: result.error.message }, result.error.status, allHeaders)
 
   const pool = getPgPool()
+
+  if (result.data.action === 'set-age-group') {
+    await pool.query('update public.profiles set age_group = $1 where id = $2', [
+      result.data.ageGroup,
+      auth.userId,
+    ])
+    return jsonResponse({ ok: true }, 200, allHeaders)
+  }
+
   await pool.query(
     `update public.profiles
-       set user_level = $1, goal = $2, daily_minutes = $3, onboarded = true
+       set user_level = $1, goal = $2, daily_minutes = $3, onboarded = true,
+           age_group = coalesce($5, age_group)
      where id = $4`,
-    [result.data.level, result.data.goal, result.data.dailyMinutes, auth.userId],
+    [
+      result.data.level,
+      result.data.goal,
+      result.data.dailyMinutes,
+      auth.userId,
+      result.data.ageGroup ?? null,
+    ],
   )
   return jsonResponse({ ok: true }, 200, allHeaders)
 }

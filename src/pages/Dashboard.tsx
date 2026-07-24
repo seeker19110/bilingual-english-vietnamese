@@ -22,6 +22,7 @@ import QuickActions from '../components/QuickActions'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useCloudSync } from '../lib/useCloudSync'
+import { useOnboarding } from '../lib/onboarding'
 import {
   getStreak,
   getUsage,
@@ -195,6 +196,7 @@ export default function Dashboard() {
   const { T, lang } = useLang()
   const vi = lang === 'vi'
   useCloudSync(user?.id) // kéo lượt dùng mới nhất từ Supabase
+  const onboarding = useOnboarding(user?.id) // nhóm tuổi (GĐ 4, PROGRESS.md) — lọc % lộ trình
 
   const [ready, setReady] = useState(false)
   const [cefr, setCefr] = useState<LevelProgress[]>([])
@@ -232,7 +234,9 @@ export default function Dashboard() {
       learnedToday: getDailyLearned(user.id),
       learnedTotal: getLearnedCount(user.id),
       dailySpeed: getDailySpeed(user.id),
-      path: ready ? getPathProgress(getLearnedWords(user.id)) : { done: 0, total: 0 },
+      path: ready
+        ? getPathProgress(getLearnedWords(user.id), onboarding?.ageGroup)
+        : { done: 0, total: 0 },
       srs: getSRSStats(user.id),
       mistakes: getMistakeStats(user.id),
       usage,
@@ -241,7 +245,7 @@ export default function Dashboard() {
       writeN: getWritingSubs(user.id).length,
       speakN: getSpeakingSessions(user.id).length,
     }
-  }, [user, ready])
+  }, [user, ready, onboarding?.ageGroup])
 
   if (!user || !stats) return null
 

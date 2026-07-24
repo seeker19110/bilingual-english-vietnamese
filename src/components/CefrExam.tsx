@@ -12,6 +12,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { GraduationCap, RotateCcw, ArrowLeft } from 'lucide-react'
 import type { CefrLevel } from '../data/cefr'
+import type { AgeGroup } from '../types'
 import type { Dialogue } from '../data/dialogues'
 import type { AccentClasses } from '../lib/cefrAccent'
 import { getDialogues } from '../data/dialoguesLoader'
@@ -38,6 +39,7 @@ export default function CefrExam({
   accent,
   onClose,
   onOpenLesson,
+  ageGroup,
 }: {
   uid: string
   isA: boolean
@@ -45,6 +47,7 @@ export default function CefrExam({
   accent: AccentClasses
   onClose: () => void
   onOpenLesson: (lessonId: string) => void
+  ageGroup?: AgeGroup
 }) {
   const toast = useToast()
 
@@ -71,7 +74,7 @@ export default function CefrExam({
     if (dialogues == null) return
     const qs = buildExam({
       isA,
-      words: getLevelWords(level.id),
+      words: getLevelWords(level.id, ageGroup),
       learned: getLearnedWords(uid),
       grammar: grammarSources,
       dialogues,

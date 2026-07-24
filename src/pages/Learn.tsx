@@ -14,9 +14,11 @@ import StudyPanel from '../components/StudyPanel'
 import RoadmapTab from '../components/RoadmapTab'
 import { getDirection } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
+import { useOnboarding } from '../lib/onboarding'
 
 export default function Learn() {
   const { user } = useAuth()
+  const onboarding = useOnboarding(user?.id) // nhóm tuổi (GĐ 4, PROGRESS.md) — lọc vòng từ vựng
   const isA = getDirection() === 'A'
 
   if (!user) return null
@@ -31,7 +33,7 @@ export default function Learn() {
           subtitle={isA ? 'Lộ trình chuẩn CEFR A1 → C2' : 'CEFR roadmap A1 → C2'}
         />
         <VocabMilestone userId={user.id} />
-        <StudyPanel uid={user.id} isA={isA} />
+        <StudyPanel uid={user.id} isA={isA} ageGroup={onboarding?.ageGroup} />
 
         <RoadmapTab uid={user.id} isA={isA} />
       </main>

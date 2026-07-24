@@ -77,6 +77,170 @@ code trong nhiều file rời rạc.
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[Kế hoạch 2026-07-22] Giao diện + nội dung theo độ tuổi** — nhánh
+  `claude/ui-redesign-age-groups-rk71g8`. Ý tưởng: app đổi giao diện thị giác và giọng điệu nội
+  dung theo nhóm tuổi người dùng, đặc biệt nhóm Nhi đồng cần giao diện vui nhộn hơn hẳn. Đã
+  nghiên cứu code thật (`src/lib/theme.ts`, `postgres/schema.sql`, `src/pages/Onboarding.tsx`,
+  `src/pages/Profile.tsx`, `api/auth.ts`, `api/profile.ts`, `src/prompts/index.ts`) và **chốt
+  cùng người dùng** các quyết định sau:
+  - **4 nhóm tuổi:** Nhi đồng (<10) · Thiếu niên (10–15) · Thanh niên (16–22) · Người lớn (23+).
+  - **Cả giao diện lẫn nội dung** đổi theo tuổi (không chỉ 1 trong 2).
+  - **Lấy nhóm tuổi bằng cách hỏi lúc đăng ký/hồ sơ** — cột `age_group` trong `profiles`, KHÔNG
+    hỏi ngày sinh thật, chỉ cho chọn thẳng nhóm (tránh thu thập dữ liệu nhạy cảm trẻ em).
+  - **Nhóm Nhi đồng sẽ bị khoá cứng vào theme vui nhộn riêng** (GĐ 2, chưa làm) — không cho tự
+    đổi sang 4 theme người lớn hiện có.
+  - **4 giai đoạn nhỏ, mỗi giai đoạn 1 PR, dừng xin duyệt ở mỗi cổng.**
+
+  **GĐ 1 (nền tảng thu thập nhóm tuổi) — CODE XONG, cổng commit đã đạt (build/typecheck/lint/
+  format/test 613/613/size xanh — người dùng cần chạy migration thật để dùng được):**
+  - `postgres/migrations/0002_age_group.sql` (mới) — cột `profiles.age_group` (text, check 4
+    giá trị, cho phép NULL — user cũ chưa chọn tự fallback `'nguoi_lon'` ở code, KHÔNG ép migrate
+    ngược). Rollback: `alter table profiles drop column if exists age_group`.
+  - `api/profile.ts` — `GET` trả thêm `ageGroup` (NULL → `'nguoi_lon'`); `POST` mở rộng 2 action:
+    `onboarding` (nhận thêm `ageGroup` optional, giữ nguyên giá trị cũ nếu không gửi — dùng
+    `coalesce`) và action MỚI **`set-age-group`** (chỉ đổi đúng 1 cột — quyết định người dùng:
+    tách riêng khỏi action `onboarding` thay vì tái dùng, giống pattern `setDailySpeed`/
+    `setWeeklyGoal` chỉ đổi 1 giá trị). **Xác nhận sửa lại so với đề xuất ban đầu:** KHÔNG đụng
+    `api/auth.ts` action `register` — level/goal/dailyMinutes vốn không lưu lúc đăng ký mà lưu
+    sau đó qua `POST /api/profile` (từ bước cuối Onboarding), nhóm tuổi theo đúng luồng này.
+  - `src/types.ts` — thêm `export type AgeGroup`.
+  - `src/lib/onboarding.ts` — mở rộng `OnboardingData`/cache/`fetchOnboarding` theo đúng pattern
+    2 tầng (cache localStorage → server) đã có; thêm `pushAgeGroup()` (bắn-rồi-quên, dùng cho
+    Profile.tsx) + `isValidAgeGroup()`.
+  - `src/pages/Onboarding.tsx` — **thêm bước chọn nhóm tuổi làm BƯỚC ĐẦU TIÊN** (quyết định người
+    dùng: trước bước Trình độ, vì nhóm tuổi có thể ảnh hưởng giọng điệu các bước sau) — luồng
+    onboarding từ 3 → 4 bước, progress bar + số thứ tự các bước sau đã dịch lại đúng.
+  - `src/pages/Placement.tsx` — hàm `applyResultNow` (đổi trình độ từ trang Hồ sơ) giữ nguyên
+    `ageGroup` đã có khi ghi đè lại profile (không vô tình xoá về mặc định).
+  - `src/pages/Profile.tsx` — section mới "Nhóm tuổi" (pattern giống section tốc độ học/mục
+    tiêu tuần đã có), gọi action `set-age-group` riêng qua `pushAgeGroup()`.
+  - `src/lib/onboarding.test.ts` — cập nhật 3 test cũ theo field mới + 3 test mới (ageGroup lạ
+    → fallback, server trả ageGroup hợp lệ → giữ đúng giá trị).
+  - **Việc người dùng cần làm:** `npm run migrate:pg` trên VPS (hoặc máy dev) để tạo cột
+    `age_group` trước khi deploy — thiếu cột này thì `api/profile.ts` sẽ lỗi SQL ngay.
+    **GĐ 2 (theme "Nhi đồng" vui nhộn) — CODE XONG, cổng commit đã đạt (build/typecheck/lint/
+    format/test 613/613/size xanh):**
+  - `src/lib/theme.ts` — thêm `Theme = 'kid'` + hằng `KID_THEME` **tách riêng khỏi mảng
+    `THEMES`** (không lọt vào vòng lặp cycle của `ThemeToggle` — theme này bị khoá, không phải
+    lựa chọn tự do).
+  - `src/index.css` — bảng màu `[data-theme='kid']` (nền kem ấm `#FFFBEB`-ish + nhấn cam chuẩn
+    Tailwind orange-50..900). **Đã kiểm tương phản WCAG AA bằng tính toán thực tế** (script Node
+    dùng đúng công thức luminance/contrast ratio W3C, không đoán): text chính (`--c-white`)
+    ~16:1, text phụ (`--z-400`) ~6:1 trên nền thẻ/trang, nút `accent-500` nền cam + chữ đen
+    ~7.5:1, `accent-800` (dùng cho `theme-light:text-accent-800`) ~6.7-7:1 — đều vượt xa ngưỡng
+    AA 4.5:1 cho chữ thường.
+  - `tailwind.config.js` — thêm `[data-theme="kid"] &` vào biến thể `theme-light:` (trước chỉ
+    Blue sky/Pink) — **bắt buộc**, nếu không mọi chỗ đã sửa AA cho 2 theme sáng cũ sẽ KHÔNG áp
+    dụng cho theme mới (mù màu cố định amber/rose/sky/teal... trên nền sáng).
+  - `src/context/ThemeProvider.tsx` — đọc `age_group` qua `useOnboarding()` (đã có từ GĐ 1), tự
+    áp theme `kid` khi `ageGroup==='nhi_dong'` và chặn `setTheme()` (khoá cứng). **Chủ ý dùng
+    `applyTheme()` (chỉ đổi DOM hiển thị) thay vì `setTheme()`/`persistTheme()` khi khoá** —
+    KHÔNG ghi đè `localStorage(ui_theme)` để giữ nguyên lựa chọn theme thật của user; đổi nhóm
+    tuổi sau này (ra khỏi Nhi đồng) tự quay lại đúng theme đã chọn trước, không bị mất. Trong
+    lúc `useOnboarding` đang tải (chưa biết chắc `ageGroup`) KHÔNG ép đổi theme — tránh giật
+    theme mỗi lần load trang trước khi dữ liệu về.
+  - `src/components/ThemeToggle.tsx` — ẩn hẳn nút đổi giao diện khi `locked` (không hiện dạng
+    disabled, đơn giản hơn vì không có gì để đổi).
+  - `.size-limit.json` — CSS budget 9.5→9.7kB (đo thật: thêm theme thứ 5 tốn +0.08kB brotli,
+    ngân sách cũ chỉ còn dư 0.07kB nên chắc chắn vượt dù tối ưu).
+  - `e2e/a11y.spec.ts` + `e2e/helpers/auth.ts` — thêm 2 test a11y riêng cho theme `kid` (Home +
+    Profile, seed thẳng `localStorage.ui_theme='kid'` qua `mockLogin()` vì E2E không mock được
+    `/api/profile` để giả lập `age_group` thật — theme vẫn render y hệt, chỉ khác cách được áp).
+    **Phát hiện qua chạy E2E thật nhiều lần (không chỉ soát code), tìm đúng gốc rễ sau khi loại
+    trừ các nghi ngờ sai:** ban đầu nghi "flaky do timing" (banner tĩnh "Xin chào" hiện gần như
+    ngay lập tức nên `expect().toBeVisible()`/`waitForTimeout` ngắn không đủ chờ thẻ "Học tiếp"
+    tính từ curriculum OFFLINE phía client render xong) — đã thử tăng chờ lên 1000ms/2000ms, dời
+    vị trí test ra sau (tránh lúc dev server "nguội"), thêm tự-retry trong test: **vẫn fail y hệt
+    1 lần trong mỗi lần chạy đủ 97 test**, chứng tỏ KHÔNG PHẢI flaky. Thêm log debug in chi tiết
+    node/màu vi phạm khi fail → lộ đúng gốc rễ: `theme-light:text-accent-700` (badge "4 cách
+    học"/"Nói" ở Home, dùng chung code cho cả Blue sky/Pink/kid) chỉ đạt **4.17:1** trên nền
+    `bg-accent-500/15` của theme kid — THIẾU đúng 0.33 so với ngưỡng AA 4.5:1, một lỗi CONTRAST
+    THẬT (không phải trạng thái thoáng qua) mà bước tính tay ban đầu bỏ sót vì không kiểm hết
+    MỌI tổ hợp text/nền dùng `theme-light:`. Sửa bằng cách đổi `--a-700` (kid) sang giá trị
+    orange-800 (154 52 18) → đạt ~5.9:1. Xác nhận: **97/97 test a11y xanh** sau khi sửa (trước
+    đó luôn có đúng 1 fail, dù thử đủ cách chờ/retry). Bài học: KHÔNG vội kết luận "flaky do
+    timing" khi 1 test fail lặp lại nhiều lần với cùng 1 nội dung lỗi giống hệt nhau — phải in
+    chi tiết vi phạm ra để xác nhận trước khi chọn hướng sửa.
+  - **Đã KHÔNG làm ở GĐ 2 này** (đúng phạm vi đã chốt, tránh phình việc): không thêm component
+    đặc thù (nút to tròn, hiệu ứng confetti) hay theme riêng cho 3 nhóm tuổi còn lại — chỉ
+    Nhi đồng có theme riêng, phần UI component lớn hơn để ngỏ nếu người dùng muốn làm thêm sau.
+    **GĐ 3 (giọng điệu AI theo tuổi) — CODE XONG, cổng commit đã đạt (build/typecheck/lint/
+    format/test 618/618/size xanh):**
+  - `src/prompts/index.ts` — hàm mới `ageGroupToneBlock(ageGroup, dir)`: **CHỈ đổi giọng
+    điệu/ví dụ minh hoạ, KHÔNG lọc lại kho từ vựng/chủ đề** (chủ đề hội thoại vẫn theo
+    `situation` học viên tự chọn, đúng phạm vi đã chốt). Trả về khối hướng dẫn riêng cho
+    `nhi_dong` (câu ngắn, nhiều emoji, ví dụ trường học/gia đình/thú cưng/trò chơi, tránh ví dụ
+    người lớn) và `thieu_nien` (giọng trẻ trung ngang hàng, ví dụ bạn bè/học tập/sở thích/mạng
+    xã hội) — mỗi nhóm 1 đoạn riêng bằng cả tiếng Việt (chiều A) lẫn tiếng Anh (chiều B).
+    **`thanh_nien`/`nguoi_lon`/`undefined` (fallback mặc định của user cũ chưa từng chọn nhóm
+    tuổi) trả về CHUỖI RỖNG — giữ NGUYÊN 100% hành vi prompt hiện có**, không đổi baseline eval
+    cho phần lớn người dùng hiện tại (có test xác nhận `prompt(undefined) === prompt('nguoi_lon')
+=== prompt('thanh_nien')`).
+  - Thêm tham số `ageGroup?: AgeGroup` (optional, cuối danh sách tham số — không phá chữ ký cũ)
+    vào `chatSystemPrompt`, `speakingSystemPrompt`, `writingSystemPrompt`; chèn `${tone}` ngay
+    sau đoạn tình huống/giọng điệu sẵn có ở cả 2 chiều A/B của mỗi hàm.
+  - `src/pages/Chat.tsx`/`Speaking.tsx` — tái dùng `onboarding` (hook `useOnboarding(user.id)`
+    đã có sẵn từ trước, dùng để lấy trình độ mặc định) truyền thêm `onboarding?.ageGroup` vào cả
+    2 điểm gọi (bắt đầu phiên + gửi tin nhắn) mỗi trang.
+  - `src/pages/Writing.tsx` — **thêm mới** `useOnboarding(user.id)` (trang này trước đó chưa
+    dùng hook này) để lấy `ageGroup`, truyền vào `writingSystemPrompt`.
+  - `src/prompts/index.test.ts` (mới) — 5 test: mặc định không đổi (undefined/nguoi_lon/
+    thanh_nien cho ra prompt GIỐNG HỆT nhau), nhi_dong/thieu_nien thêm đúng khối riêng (không
+    lẫn nội dung 2 khối), cả speaking lẫn writing đều nhận đúng tham số.
+  - **⚠️ CẦN NGƯỜI CÓ KEY AI CHẠY (sandbox không có key):** theo CLAUDE.md §8, mọi PR sửa
+    `src/prompts/*` PHẢI chạy lại `npm run eval:tutor` và dán bảng so sánh với
+    `docs/research/eval-tutor-baseline.md` vào mô tả PR trước khi merge. Vì `thanh_nien`/
+    `nguoi_lon`/`undefined` cho prompt Y HỆT trước đây (đã có test xác nhận), **baseline không
+    nên đổi cho các nhóm này** — nhưng vẫn cần chạy để xác nhận đúng theo quy trình đã định,
+    và để có số liệu cho 2 nhóm mới (nhi_dong/thieu_nien) nếu muốn đánh giá riêng.
+    **GĐ 4 (ẩn vòng không phù hợp trẻ em khỏi luồng học) — CODE XONG, cổng commit đã đạt
+    (build/typecheck/lint/format/test 628/628/size/E2E a11y 97/97 xanh):**
+  - **Phát hiện qua nghiên cứu (trước khi code, đã báo lại người dùng và xác nhận vẫn làm):**
+    `lib/curriculum.ts` cache TOÀN CỤC (`_circlesCache`/`_pathCache`, không tham số) dùng
+    CHUNG cho mọi người dùng — để lọc theo nhóm tuổi phải đổi cache sang **Map theo nhóm
+    tuổi** (chỉ 2 khoá thực tế: `'nhi_dong'` và `'default'` — mọi nhóm khác hành xử y hệt
+    trước đây) và nối tham số `ageGroup` xuyên suốt **6 file tiêu thụ**: `CefrExam.tsx`,
+    `StudyPanel.tsx`, `CefrLevelPage.tsx`, `Placement.tsx`, `Dashboard.tsx`, `preloader.ts`
+    (+ `Learn.tsx`/`Dictionary.tsx` truyền prop xuống `StudyPanel`). `StudyTabs.tsx` **KHÔNG
+    cần sửa** — chỉ tiêu thụ `pool: DictEntry[]` đã được lọc sẵn từ trang cha, và
+    `findCircleOfWord`/`getCircleProgress` tra cứu metadata của 1 từ ĐÃ CÓ trong pool nên
+    dùng danh sách đầy đủ (mặc định) để tra là an toàn, không ảnh hưởng nội dung hiển thị.
+  - `src/data/curriculum.ts` — thêm `Circle.notForKids?: boolean`; gắn `true` cho **12 vòng**
+    chủ đề không phù hợp trẻ em (rà tay theo tiêu đề, không đoán): `business`, `workplace`,
+    `money-finance`, `business-extended` (kinh doanh/công sở/tài chính) · `medical-advanced`,
+    `mental-health` (y tế nâng cao/sức khỏe tinh thần) · `social-issues`, `law-justice`,
+    `politics-government`, `economy-global` (vấn đề xã hội/luật pháp/chính trị/kinh tế) ·
+    `abstract-concepts` (khái niệm trừu tượng) · `relationships-b1` (có từ "breakup" — chủ đề
+    tình cảm). **KHÔNG gắn cờ** cho các vòng auto-sinh C1/C2 (`cefrC1C2Vocab.ts`) — không ai
+    ở tốc độ học của trẻ em chạm mức C1/C2 trong thời gian ngắn, và các vòng đó không có tên
+    chủ đề thủ công để phân loại đáng tin cậy.
+  - `src/lib/curriculum.ts` — `getCircles(ageGroup?)`/`getLearningPath(ageGroup?)` lọc bỏ
+    vòng `notForKids` khi `ageGroup==='nhi_dong'`; nối `ageGroup?` (optional, mặc định
+    undefined = y hệt hành vi cũ) qua `getLevelWords`/`getBeyondCefrWords`/`getTodayBatch`/
+    `getPathProgress`/`collectPathWords`. Từ của vòng bị ẩn **CHỦ Ý** không lọt sang phần
+    "Mở rộng" (dùng `FOUNDATION` đầy đủ — không phải bản đã lọc — để tính tập từ cần loại
+    khỏi "Mở rộng", đúng ý định "ẩn hẳn" chứ không phải "chuyển chỗ").
+  - **⚠️ Phát hiện quan trọng khi test:** `FOUNDATION` trong `src/data/curriculum.ts` (TypeScript
+    nguồn) KHÔNG được dùng trực tiếp lúc chạy — `lib/curriculumLoader.ts` nạp từ file JSON
+    tĩnh đã sinh sẵn `public/data/curriculum.json` (qua `scripts/gen-curriculum-json.ts`, vì
+    lý do hiệu năng — Vite tách thành chunk riêng, không cần bundle 9000+ dòng TS). Sửa
+    `notForKids` trong file nguồn KHÔNG tự động phản ánh ra JSON — phải chạy lại
+    `npx tsx scripts/gen-curriculum-json.ts` (an toàn chạy lại, ghi đè) để đồng bộ. **Việc
+    người dùng cần làm khi deploy:** đảm bảo bước build/deploy có chạy lại script này (kiểm
+    tra `scripts/deploy.sh`/`package.json` xem đã tự động hay chưa — nếu chưa, chạy tay 1 lần
+    trước khi deploy nhánh này; nếu quên, `notForKids` sẽ không có tác dụng trên production
+    dù code đã đúng).
+  - `src/lib/curriculum.test.ts` — 11 test mới: xác nhận có ≥1 vòng gắn `notForKids` trong dữ
+    liệu thật (không phải test rỗng), mặc định/`thanh_nien`/`nguoi_lon` không lọc gì,
+    `nhi_dong` ẩn đúng và đủ 12 vòng, từ vòng ẩn không lọt qua cả lộ trình lẫn phần "Mở rộng",
+    `getPathProgress`/`getTodayBatch`/`getLevelWords` phản ánh đúng số liệu đã lọc (dùng
+    'workplace' — vòng thật nằm trong lộ trình CEFR chính thức qua `cefr.ts` — để xác nhận
+    cấp chứa nó có ít từ hơn cho nhi_dong), cache theo nhóm tuổi vẫn giữ đúng tham chiếu.
+  - Đã chạy lại `npx tsx scripts/gen-curriculum-json.ts` để đồng bộ JSON — diff chỉ thêm đúng
+    12 field `"notForKids":true` (216 byte), không đổi/mất dữ liệu khác (đã xác nhận qua
+    `git diff --stat`, kích thước gzip build không đổi vì file này tải lazy, không nằm trong
+    bundle chính).
+
 - **Rời Supabase (2026-07-19→20, xem `docs/migration-thoat-ly-supabase.md`)**: GĐ A (Postgres 16
   tự host trên VPS) + GĐ B (auth tự viết Bearer token thay Supabase Auth) + GĐ C lõi
   (profiles/daily_usage/learning_progress qua `/api/profile`/`/api/progress`) + GĐ D (Cloudflare

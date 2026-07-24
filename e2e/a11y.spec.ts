@@ -111,6 +111,29 @@ for (const route of AUTHED_ROUTES) {
   }
 }
 
+// Theme "Nhi đồng" (kid) — kế hoạch "giao diện + nội dung theo độ tuổi", PROGRESS.md
+// 2026-07-22 GĐ 2. Bình thường theme này chỉ tự áp qua ThemeProvider khi age_group=
+// 'nhi_dong' (không mock được /api/profile ở E2E, xem ThemeProvider.tsx) — ở đây seed
+// thẳng localStorage 'ui_theme'='kid' qua mockLogin() để quét đúng bộ màu mà KHÔNG cần
+// giả lập toàn bộ luồng khoá theme (theme vẫn render y hệt, chỉ khác cách được áp). Đặt
+// SAU vòng AUTHED_ROUTES (không phải ngay đầu file) — chủ ý tránh vị trí "chạy sớm lúc dev
+// server còn nguội" đã gây flaky khi debug (xem PROGRESS.md).
+for (const route of ['/', '/profile']) {
+  test(`a11y: ${route} theme=kid (Nhi đồng) — 0 critical, không có serious mới`, async ({
+    page,
+  }) => {
+    await mockLogin(page, 'vi', 'kid')
+    await page.goto(route, { waitUntil: 'domcontentloaded' })
+    // Cùng lý do với AUTHED_ROUTES ở trên: thẻ "Học tiếp" tính từ dữ liệu curriculum OFFLINE
+    // phía client (không phải fetch mạng nên networkidle không giúp) — banner tĩnh hiện gần
+    // như ngay lập tức nên expect().toBeVisible() KHÔNG đủ, bắt nhầm badge màu chưa render xong.
+    await page.waitForTimeout(1000)
+    const { critical, unexpectedSerious } = await scan(page)
+    expect(critical).toEqual([])
+    expect(unexpectedSerious).toEqual([])
+  })
+}
+
 // ── MÀN KẾT QUẢ CẦN BACKEND (Chat trả lời/nhận xét · Writing chấm điểm/lỗi · Speaking
 //    trả lời/sửa lỗi) ──────────────────────────────────────────────────────────────
 // Các UI này chỉ hiện SAU khi gọi AI nên axe lúc tải trang không thấy. E2E không có
