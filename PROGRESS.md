@@ -164,10 +164,38 @@ code trong nhiều file rời rạc.
   - **Đã KHÔNG làm ở GĐ 2 này** (đúng phạm vi đã chốt, tránh phình việc): không thêm component
     đặc thù (nút to tròn, hiệu ứng confetti) hay theme riêng cho 3 nhóm tuổi còn lại — chỉ
     Nhi đồng có theme riêng, phần UI component lớn hơn để ngỏ nếu người dùng muốn làm thêm sau.
-  - **Tiếp theo (GĐ 3, CHƯA LÀM):** giọng điệu AI theo tuổi — thêm tham số `ageGroup` vào các
-    hàm sinh prompt trong `src/prompts/index.ts` (chat/speaking/writing), chỉ đổi giọng điệu,
-    KHÔNG lọc lại kho từ vựng/chủ đề. Sau đó GĐ 4 tuỳ chọn (gắn nhãn tuổi cho nội dung
-    `src/data/curriculum.ts`).
+    **GĐ 3 (giọng điệu AI theo tuổi) — CODE XONG, cổng commit đã đạt (build/typecheck/lint/
+    format/test 618/618/size xanh):**
+  - `src/prompts/index.ts` — hàm mới `ageGroupToneBlock(ageGroup, dir)`: **CHỈ đổi giọng
+    điệu/ví dụ minh hoạ, KHÔNG lọc lại kho từ vựng/chủ đề** (chủ đề hội thoại vẫn theo
+    `situation` học viên tự chọn, đúng phạm vi đã chốt). Trả về khối hướng dẫn riêng cho
+    `nhi_dong` (câu ngắn, nhiều emoji, ví dụ trường học/gia đình/thú cưng/trò chơi, tránh ví dụ
+    người lớn) và `thieu_nien` (giọng trẻ trung ngang hàng, ví dụ bạn bè/học tập/sở thích/mạng
+    xã hội) — mỗi nhóm 1 đoạn riêng bằng cả tiếng Việt (chiều A) lẫn tiếng Anh (chiều B).
+    **`thanh_nien`/`nguoi_lon`/`undefined` (fallback mặc định của user cũ chưa từng chọn nhóm
+    tuổi) trả về CHUỖI RỖNG — giữ NGUYÊN 100% hành vi prompt hiện có**, không đổi baseline eval
+    cho phần lớn người dùng hiện tại (có test xác nhận `prompt(undefined) === prompt('nguoi_lon')
+=== prompt('thanh_nien')`).
+  - Thêm tham số `ageGroup?: AgeGroup` (optional, cuối danh sách tham số — không phá chữ ký cũ)
+    vào `chatSystemPrompt`, `speakingSystemPrompt`, `writingSystemPrompt`; chèn `${tone}` ngay
+    sau đoạn tình huống/giọng điệu sẵn có ở cả 2 chiều A/B của mỗi hàm.
+  - `src/pages/Chat.tsx`/`Speaking.tsx` — tái dùng `onboarding` (hook `useOnboarding(user.id)`
+    đã có sẵn từ trước, dùng để lấy trình độ mặc định) truyền thêm `onboarding?.ageGroup` vào cả
+    2 điểm gọi (bắt đầu phiên + gửi tin nhắn) mỗi trang.
+  - `src/pages/Writing.tsx` — **thêm mới** `useOnboarding(user.id)` (trang này trước đó chưa
+    dùng hook này) để lấy `ageGroup`, truyền vào `writingSystemPrompt`.
+  - `src/prompts/index.test.ts` (mới) — 5 test: mặc định không đổi (undefined/nguoi_lon/
+    thanh_nien cho ra prompt GIỐNG HỆT nhau), nhi_dong/thieu_nien thêm đúng khối riêng (không
+    lẫn nội dung 2 khối), cả speaking lẫn writing đều nhận đúng tham số.
+  - **⚠️ CẦN NGƯỜI CÓ KEY AI CHẠY (sandbox không có key):** theo CLAUDE.md §8, mọi PR sửa
+    `src/prompts/*` PHẢI chạy lại `npm run eval:tutor` và dán bảng so sánh với
+    `docs/research/eval-tutor-baseline.md` vào mô tả PR trước khi merge. Vì `thanh_nien`/
+    `nguoi_lon`/`undefined` cho prompt Y HỆT trước đây (đã có test xác nhận), **baseline không
+    nên đổi cho các nhóm này** — nhưng vẫn cần chạy để xác nhận đúng theo quy trình đã định,
+    và để có số liệu cho 2 nhóm mới (nhi_dong/thieu_nien) nếu muốn đánh giá riêng.
+  - **Tiếp theo (GĐ 4, tuỳ chọn — CHƯA LÀM):** gắn nhãn tuổi cho nội dung `src/data/
+curriculum.ts` để lọc nội dung sâu hơn theo tuổi (việc lớn, ~9000+ dòng dữ liệu, chưa có
+    trường phân loại) — chỉ làm nếu người dùng thấy cần sau khi dùng thử GĐ 1-3.
 
 - **Rời Supabase (2026-07-19→20, xem `docs/migration-thoat-ly-supabase.md`)**: GĐ A (Postgres 16
   tự host trên VPS) + GĐ B (auth tự viết Bearer token thay Supabase Auth) + GĐ C lõi

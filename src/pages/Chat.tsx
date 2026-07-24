@@ -397,7 +397,13 @@ export default function Chat() {
     setLoading(true)
     setError('')
     const targets = practiceWords.length > 0 ? practiceWords : undefined
-    const sys = chatSystemPrompt(situationLabel(situation, dir), level, dir, targets)
+    const sys = chatSystemPrompt(
+      situationLabel(situation, dir),
+      level,
+      dir,
+      targets,
+      onboarding?.ageGroup,
+    )
     try {
       const reply = await callClaude([], sys)
       const newSession: ChatSession = {
@@ -457,6 +463,7 @@ export default function Chat() {
       session.level,
       dir,
       session.targetWords,
+      onboarding?.ageGroup,
     )
     try {
       const reply = await callClaude(history, sys)
