@@ -304,10 +304,15 @@ export default function CefrLevelPage() {
   }
 
   // ── Khung trang chung ──────────────────────────────────────────────────
-  function shell(children: React.ReactNode) {
+  // headerBack: đích của nút back trên THANH HEADER trên cùng (khác nút "Quay lại"/"Back" bên
+  // trong từng màn con). Luôn lùi ĐÚNG 1 BƯỚC theo cấu trúc cấp — bất kể vào bằng cách nào
+  // (bấm tuần tự Lộ trình → Cấp → mục con, hay "tắt" thẳng từ nút Home) — KHÔNG về Trang chủ
+  // như Layout mặc định: từ màn con (hội thoại/từ vựng/ngữ pháp/thi) → về trang cấp; từ trang
+  // cấp (không mở màn con nào) → về danh sách cấp /learning-path.
+  function shell(children: React.ReactNode, headerBack?: () => void) {
     return (
       <div className="min-h-dvh bg-zinc-950">
-        <Layout back />
+        <Layout back onBack={headerBack ?? (() => nav('/learning-path'))} />
         <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
           {children}
         </main>
@@ -333,6 +338,7 @@ export default function CefrLevelPage() {
         plan={user?.plan ?? 'free'}
         onBack={() => setDialogue(null)}
       />,
+      () => setDialogue(null),
     )
   }
   if (circle) {
@@ -346,6 +352,7 @@ export default function CefrLevelPage() {
         onBack={() => setCircle(null)}
         onOpenDialogue={(d) => openDialogue(circle.id, d)}
       />,
+      () => setCircle(null),
     )
   }
   if (lesson) {
@@ -358,6 +365,7 @@ export default function CefrLevelPage() {
         onBack={() => setLesson(null)}
         onDoneChange={bump}
       />,
+      () => setLesson(null),
     )
   }
   if (examing) {
@@ -377,6 +385,7 @@ export default function CefrLevelPage() {
           openLessonById(id)
         }}
       />,
+      () => setExaming(false),
     )
   }
 

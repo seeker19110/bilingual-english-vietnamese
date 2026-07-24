@@ -11,11 +11,16 @@ interface Props {
   title?: string
   subtitle?: string
   back?: boolean
+  // Đích đến khi bấm back — mặc định về Trang chủ ('/'). Trang có PHÂN CẤP điều hướng riêng
+  // (vd CefrLevelPage: cấp → vòng từ vựng/bài ngữ pháp/hội thoại) truyền hàm này để back luôn
+  // lùi ĐÚNG 1 BƯỚC theo cấp bậc đó, KỂ CẢ khi người dùng vào "tắt" từ Home (vd nút "Học tiếp"
+  // nhảy thẳng vào 1 cấp) — không phụ thuộc lối vào, back luôn nhất quán theo cấu trúc trang.
+  onBack?: () => void
   extra?: ReactNode
   streak?: number
 }
 
-export default function Layout({ title, subtitle, back = true, extra, streak }: Props) {
+export default function Layout({ title, subtitle, back = true, onBack, extra, streak }: Props) {
   const nav = useNavigate()
   const { user } = useAuth()
   const { T } = useLang()
@@ -29,7 +34,7 @@ export default function Layout({ title, subtitle, back = true, extra, streak }: 
         {/* Back / Logo */}
         {back ? (
           <button
-            onClick={() => nav('/')}
+            onClick={onBack ?? (() => nav('/'))}
             aria-label={T.home}
             className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition shrink-0 -ml-1 p-3 rounded-lg hover:bg-zinc-800/50"
           >
