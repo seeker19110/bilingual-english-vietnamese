@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { RotateCw, Loader2 } from 'lucide-react'
 import { getAuthHeader } from '../lib/authHeader'
-import { playAudioUrl, type Voice } from '../lib/tts'
+import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
 import { VOICE_OPTIONS, DEFAULT_SEED_VOICE_IDS } from '../lib/voiceTiers'
 
 interface Props {
@@ -21,17 +21,47 @@ const VOICE_LABEL: Record<Voice, string> = Object.fromEntries(
   VOICE_OPTIONS.map((v) => [v.id, `${v.gender === 'female' ? 'Nữ' : 'Nam'} · ${v.id}`]),
 ) as Record<Voice, string>
 
-// Nút phụ "nghe giọng khác" — xoay vòng 14 giọng TTS cho CÙNG 1 từ, phục vụ luyện nghe đa giọng
-// (N2 trong đặc tả nâng cấp sư phạm). Khác PronounceButton: giọng ở đây KHÔNG lấy từ global pref
-// mà tự xoay vòng nội bộ, và KHÔNG có fallback Web Speech API khi lỗi (bấm lại là được, không
-// cần thiết phải luôn phát được — đây là nút phụ, không phải nút loa chính).
+function initialIndex(): number {
+  const idx = VOICE_CYCLE.indexOf(getVoicePref())
+  return idx >= 0 ? idx : 0
+}
+
+// Nút DUY NHẤT phát âm 1 từ, gộp "nghe" + "đổi giọng" làm một (2026-07-24, theo yêu cầu
+// người dùng — trước đây tách 2 nút: PronounceButton (giọng theo global pref) + nút phụ này
+// (giọng tự xoay vòng riêng) gây lệch giọng khó hiểu giữa 2 nút). Bấm 1 cái = xoay sang giọng
+// KẾ TIẾP trong vòng 8 giọng đã seed sẵn VÀ phát ngay — nhãn luôn khớp giọng vừa nghe.
 export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
-  const [voiceIndex, setVoiceIndex] = useState(0)
+  const [voiceIndex, setVoiceIndex] = useState(initialIndex)
   const [loading, setLoading] = useState(false)
   // Cache audio_url theo từng giọng đã tải — bấm lại đúng giọng cũ thì không gọi lại API.
   const [audioUrls, setAudioUrls] = useState<Partial<Record<Voice, string>>>({})
 
   const currentVoice = VOICE_CYCLE[voiceIndex] as Voice
+
+  // Dự phòng Web Speech API khi /api/pronunciation lỗi — nút này giờ là nút loa DUY NHẤT
+  // của thẻ nên phải có fallback như PronounceButton trước đây, không im lặng bỏ qua nữa.
+  function speakWithWebSpeech(voice: Voice) {
+    if (!('speechSynthesis' in window)) return
+    const gender = VOICE_OPTIONS.find((v) => v.id === voice)?.gender ?? 'female'
+    const utterance = new SpeechSynthesisUtterance(word)
+    utterance.lang = lang
+    const voices = window.speechSynthesis.getVoices()
+    const preferred = voices.find(
+      (v) =>
+        v.lang.startsWith(lang.slice(0, 2)) &&
+        (gender === 'male'
+          ? v.name.toLowerCase().includes('male') ||
+            v.name.toLowerCase().includes('david') ||
+            v.name.toLowerCase().includes('nam')
+          : v.name.toLowerCase().includes('female') ||
+            v.name.toLowerCase().includes('zira') ||
+            v.name.toLowerCase().includes('samantha') ||
+            v.name.toLowerCase().includes('nữ')),
+    )
+    if (preferred) utterance.voice = preferred
+    window.speechSynthesis.cancel()
+    window.speechSynthesis.speak(utterance)
+  }
 
   async function handleClick() {
     if (loading) return
@@ -64,28 +94,22 @@ export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
       setAudioUrls((prev) => ({ ...prev, [nextVoice]: audioUrl }))
       playAudioUrl(audioUrl)
     } catch (err) {
-      // Lỗi mạng/server: bỏ qua âm thầm, không throw, không crash UI — không có
-      // fallback Web Speech ở đây vì đây chỉ là nút phụ, người dùng bấm lại là được.
-      console.error('Lỗi nghe giọng khác:', err)
+      console.error('Lỗi nghe giọng khác, dùng tạm Web Speech:', err)
+      speakWithWebSpeech(nextVoice)
     } finally {
       setLoading(false)
     }
   }
 
-  // Nút phụ, nhỏ hơn và nhạt màu hơn nút loa chính (PronounceButton) để không cạnh tranh sự chú ý.
   return (
     <button
       onClick={handleClick}
       disabled={loading}
-      title="Nghe giọng khác"
-      aria-label="Nghe giọng khác"
-      className="tap-44 shrink-0 h-9 px-2.5 flex items-center gap-1 rounded-full bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-300 transition disabled:opacity-60 text-xs"
+      title="Nghe / đổi giọng"
+      aria-label="Nghe / đổi giọng"
+      className="tap-44 shrink-0 h-10 px-3.5 flex items-center gap-1.5 rounded-full bg-zinc-800 hover:bg-accent-500/20 text-zinc-300 hover:text-accent-300 transition disabled:opacity-60 text-sm font-medium"
     >
-      {loading ? (
-        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-      ) : (
-        <RotateCw className="w-3.5 h-3.5" />
-      )}
+      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCw className="w-4 h-4" />}
       <span>{VOICE_LABEL[currentVoice]}</span>
     </button>
   )
