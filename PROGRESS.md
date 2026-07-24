@@ -512,6 +512,33 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   VPS, `git pull`, thử `STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2 --dry-run` xác nhận
   chạy đúng trước khi tin tưởng hoàn toàn (chưa test bằng máy thật).
 
+- **Đợt tối ưu `scripts/seed-all.ts` — remap/verify/dọn orphan (2026-07-23→24, PR #308–#315,
+  đã merge hết).** Từ thực tế chạy thật trên VPS (bảng `tts_cache` phình tới ~1,25 triệu dòng
+  sau đợt mở rộng 14 giọng Chirp3-HD), phát hiện + sửa liền một mạch:
+  - #308: `verifyDb()` từng coi câu pattern hợp lệ (đúng giọng/version, chỉ đơn giản ngoài
+    top-N `seed-index.json`) là "orphan" → xoá nhầm cache còn dùng được; remap-only ("m")
+    trước đó chỉ quét top-N nên cache giọng cũ của các câu ngoài top-N không bao giờ được
+    remap. Sửa: bảo vệ hash pattern hợp lệ khỏi bị tính orphan + remap-only quét ĐỦ 100/100
+    câu/chủ thể (remap không tốn API nên quét hết không sao) — seed thật (tốn phí) vẫn giữ
+    nguyên top-N (mặc định 20/100, `TOP_N` khi chạy `npm run rank:patterns`).
+  - #310: nhánh remap gọi `verifyDb()` quét lặp lại 2 lần tập hash pattern đầy đủ (~1,6
+    triệu) → OOM. Thêm cờ `patternsAreFull` để bỏ bước quét dư thừa.
+  - #311: log Postgres xác nhận VPS bị **restart ngoài ý muốn** (nghi cập nhật hệ điều hành
+    tự động) giữa lúc script chạy hàng giờ → lỗi `57P01` làm crash toàn bộ tiến trình. Thêm
+    `withDbRetry()` (backoff 1s/3s/8s) cho các vòng đọc/xoá dài.
+  - #312: `cleanOrphans()` chạy im lặng suốt vòng xoá (có thể hàng trăm nghìn dòng) — thêm
+    progress bar (`cli-progress`).
+  - #313: vòng xoá orphan vốn TUẦN TỰ (1 dòng/lần, mỗi dòng 1 round-trip network) — đổi
+    sang chạy song song có giới hạn (`DELETE_CONCURRENCY = 12`, khớp pool DB `max: 10`).
+  - #314: `getR2Client()` tạo `S3Client` MỚI mỗi lần gọi (rò rỉ handle/socket) — cache lại 1
+    instance dùng chung, sửa OOM khi xoá nhiều orphan liên tục.
+  - #315: `fetchAllRows()` dùng LIMIT/OFFSET — mỗi trang phải quét & bỏ qua toàn bộ dòng
+    trước đó (O(n²)), ở bảng >1 triệu dòng thành "treo" thật sự. Đổi sang **keyset
+    pagination** (`where (khóa) > khóa_cuối`, dùng index). Đồng thời `verifyDb()` từng gom
+    CẢ bảng `tts_cache` (kèm `audio_url`) vào 1 mảng trong RAM cùng lúc với nhiều Set lớn —
+    đổi sang **stream từng trang** (`streamRows()`), bỏ hẳn mảng đầy đủ.
+  - Kết quả người dùng xác nhận: hết treo, hết OOM, tốc độ xoá orphan "cải thiện rất nhanh".
+
 ## Nợ kỹ thuật còn mở
 
 - **PM2 cluster mode ĐÃ ROLLBACK về fork mode (2026-07-20, PR #285).** PR #283/#284 từng
