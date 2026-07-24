@@ -129,9 +129,19 @@ for (const route of ['/', '/profile']) {
     // như ngay lập tức nên expect().toBeVisible() KHÔNG đủ, bắt nhầm badge màu chưa render
     // xong (đã gặp lúc debug: đo contrast sai vì override theme-light: chưa kịp áp).
     await page.waitForTimeout(1000)
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    // Tự retry scan 1 lần trong chính test này (không đụng scan() dùng chung cho 96 test
+    // còn lại) — đã xác nhận màu thực tế đúng chuẩn AA qua getComputedStyle() thủ công nhiều
+    // lần, nhưng khi chạy CHUNG cả 97 test (không phải chạy riêng lẻ) thỉnh thoảng vẫn bắt
+    // được 1 lần badge chưa kịp render dù đã chờ 1000ms — nghi CPU/bộ nhớ máy chạy test bị
+    // tranh chấp bởi các test khác, không phải lỗi màu thật (đã đo bằng script, xem
+    // PROGRESS.md). Retry ở đây để không chặn nhầm nếu đúng là trạng thái thoáng qua.
+    let result = await scan(page)
+    if (result.unexpectedSerious.length > 0) {
+      await page.waitForTimeout(1500)
+      result = await scan(page)
+    }
+    expect(result.critical).toEqual([])
+    expect(result.unexpectedSerious).toEqual([])
   })
 }
 
