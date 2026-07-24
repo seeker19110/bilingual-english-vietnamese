@@ -146,16 +146,20 @@ export default function WordCard({
 
       <div className="flex flex-col items-center gap-2 mb-3">
         <div className="flex flex-row items-center gap-2">
-          <PronounceButton word={card.word} />
-          <WordVoiceCycleButton word={card.word} />
+          <PronounceButton word={isA ? card.word : card.vi} lang={isA ? 'en-US' : 'vi-VN'} />
+          <WordVoiceCycleButton word={isA ? card.word : card.vi} lang={isA ? 'en-US' : 'vi-VN'} />
         </div>
         {card.ex_en && (
-          <KaraokeText text={card.ex_en} lang="en-US" textClass="text-sm text-zinc-400 italic" />
+          <KaraokeText
+            text={isA ? card.ex_en : card.ex_vi}
+            lang={isA ? 'en-US' : 'vi-VN'}
+            textClass="text-sm text-zinc-400 italic"
+          />
         )}
       </div>
 
       <div className="mb-4">
-        <PronunciationCheck target={card.word} lang={isA ? 'en' : 'vi'} isA={isA} />
+        <PronunciationCheck target={isA ? card.word : card.vi} lang={isA ? 'en' : 'vi'} isA={isA} />
       </div>
     </div>
   )

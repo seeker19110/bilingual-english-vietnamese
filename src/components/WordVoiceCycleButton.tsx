@@ -6,6 +6,7 @@ import { VOICE_OPTIONS, DEFAULT_SEED_VOICE_IDS } from '../lib/voiceTiers'
 
 interface Props {
   word: string
+  lang?: 'en-US' | 'vi-VN' // bỏ trống = tiếng Anh (mặc định cũ, giữ tương thích chỗ gọi chưa sửa)
 }
 
 // Xoay vòng 8 giọng đã seed sẵn (nhanh, phát ngay không phải chờ tạo mới) — không xoay hết
@@ -24,7 +25,7 @@ const VOICE_LABEL: Record<Voice, string> = Object.fromEntries(
 // (N2 trong đặc tả nâng cấp sư phạm). Khác PronounceButton: giọng ở đây KHÔNG lấy từ global pref
 // mà tự xoay vòng nội bộ, và KHÔNG có fallback Web Speech API khi lỗi (bấm lại là được, không
 // cần thiết phải luôn phát được — đây là nút phụ, không phải nút loa chính).
-export default function WordVoiceCycleButton({ word }: Props) {
+export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
   const [voiceIndex, setVoiceIndex] = useState(0)
   const [loading, setLoading] = useState(false)
   // Cache audio_url theo từng giọng đã tải — bấm lại đúng giọng cũ thì không gọi lại API.
@@ -50,7 +51,7 @@ export default function WordVoiceCycleButton({ word }: Props) {
     try {
       const headers = await getAuthHeader()
       const res = await fetch(
-        `/api/pronunciation?word=${encodeURIComponent(word)}&voice=${nextVoice}`,
+        `/api/pronunciation?word=${encodeURIComponent(word)}&voice=${nextVoice}&lang=${lang}`,
         { headers },
       )
       const data = (await res.json()) as { audio_url?: string; error?: string }

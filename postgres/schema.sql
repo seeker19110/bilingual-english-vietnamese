@@ -116,7 +116,7 @@ create table if not exists public.pronunciations (
   voice_version text,
   created_at    timestamptz default now(),
   last_accessed_at timestamptz not null default now(), -- Giai đoạn D: LRU dọn cache R2
-  unique (word, voice)
+  unique (word, voice, lang) -- kèm lang: tránh 1 chữ trùng cả 2 ngôn ngữ đè cache lẫn nhau
 );
 create index if not exists idx_pronunciations_word on public.pronunciations(word);
 

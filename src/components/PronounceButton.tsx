@@ -6,10 +6,11 @@ import { VOICE_OPTIONS } from '../lib/voiceTiers'
 
 interface Props {
   word: string
+  lang?: 'en-US' | 'vi-VN' // bỏ trống = tiếng Anh (mặc định cũ, giữ tương thích chỗ gọi chưa sửa)
 }
 
-// Nút loa phát âm 1 từ tiếng Anh — giọng nữ/nam lấy từ global pref (VoiceToggle trên header).
-export default function PronounceButton({ word }: Props) {
+// Nút loa phát âm 1 từ — giọng nữ/nam lấy từ global pref (VoiceToggle trên header).
+export default function PronounceButton({ word, lang = 'en-US' }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   // Nhớ audioUrl đã tải theo cặp "từ|giọng" — PHẢI có cả từ trong khoá, vì component này
   // hay bị dùng lại cho nhiều từ khác nhau (ví dụ chuyển thẻ flashcard) mà state không bị
@@ -19,16 +20,19 @@ export default function PronounceButton({ word }: Props) {
   function speakWithWebSpeech() {
     const gender = VOICE_OPTIONS.find((v) => v.id === getVoicePref())?.gender ?? 'female'
     const utterance = new SpeechSynthesisUtterance(word)
-    utterance.lang = 'en-US'
+    utterance.lang = lang
     const voices = window.speechSynthesis.getVoices()
     const preferred = voices.find(
       (v) =>
-        v.lang.startsWith('en') &&
+        v.lang.startsWith(lang.slice(0, 2)) &&
         (gender === 'male'
-          ? v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david')
+          ? v.name.toLowerCase().includes('male') ||
+            v.name.toLowerCase().includes('david') ||
+            v.name.toLowerCase().includes('nam')
           : v.name.toLowerCase().includes('female') ||
             v.name.toLowerCase().includes('zira') ||
-            v.name.toLowerCase().includes('samantha')),
+            v.name.toLowerCase().includes('samantha') ||
+            v.name.toLowerCase().includes('nữ')),
     )
     if (preferred) utterance.voice = preferred
     window.speechSynthesis.cancel()
@@ -44,7 +48,7 @@ export default function PronounceButton({ word }: Props) {
     }
 
     const voice = getVoicePref()
-    const cacheKey = `${word}|${voice}`
+    const cacheKey = `${word}|${voice}|${lang}`
     const cached = audioUrls[cacheKey]
     if (cached) {
       playAudio(cached)
@@ -56,7 +60,7 @@ export default function PronounceButton({ word }: Props) {
       // Gửi kèm JWT để server xác thực người dùng
       const headers = await getAuthHeader()
       const res = await fetch(
-        `/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}`,
+        `/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}&lang=${lang}`,
         { headers },
       )
       const data = (await res.json()) as { audio_url?: string; error?: string }
