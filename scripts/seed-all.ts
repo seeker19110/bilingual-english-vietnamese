@@ -1457,34 +1457,60 @@ async function seedWithRetry(
   return remaining
 }
 
-// ── Đọc TẤT CẢ dòng 1 bảng (phân trang ỔN ĐỊNH theo khóa) ───────────────────
-// Postgres tự host — phân trang bằng LIMIT/OFFSET vẫn cần ORDER BY theo khóa DUY
-// NHẤT (orderCols) để thứ tự trang ổn định giữa các lần gọi:
+// ── Đọc bảng theo trang bằng KEYSET (cursor), xử lý TỪNG TRANG (không gom hết) ──
+// KEYSET = `where (khóa) > (khóa_cuối_trang_trước)` thay cho OFFSET. OFFSET phải QUÉT &
+// BỎ QUA toàn bộ dòng trước mỗi trang → O(n²): ở bảng >1 triệu dòng, trang cuối phải quét
+// cả triệu dòng chỉ để lấy 1000 (chậm tới mức "treo"). Keyset dùng index khóa → mỗi trang
+// O(log n), tổng O(n). keyCols PHẢI là khóa DUY NHẤT & NOT NULL (PK/unique) và NẰM TRONG
+// `columns` (để đọc được giá trị cursor):
 //   • tts_cache       → ['hash']          (primary key)
 //   • pronunciations  → ['word','voice']  (unique (word,voice))
-// Không có ORDER BY ổn định → các trang có thể CHỒNG/LỌT dòng ngẫu nhiên → số
-// dòng gom vào Set đổi mỗi lần chạy → báo cáo (và --verify) nhảy số.
-async function fetchAllRows<T extends QueryResultRow>(
+// onPage nhận từng trang (tối đa 1000 dòng) → caller tự gom/aggregate, KHÔNG bắt buộc giữ
+// toàn bộ bảng trong RAM (tránh OOM khi bảng rất lớn).
+async function streamRows<T extends QueryResultRow>(
   table: string,
   columns: string,
-  orderCols: string[],
-): Promise<T[]> {
+  keyCols: string[],
+  onPage: (rows: T[]) => void,
+): Promise<void> {
   const pool = getPgPool()
   const PAGE = 1000
-  const out: T[] = []
-  const orderBy = orderCols.join(', ')
-  for (let offset = 0; ; offset += PAGE) {
+  const orderBy = keyCols.join(', ')
+  // So sánh bộ giá trị (row-value): `(a, b) > ($1, $2)` đúng bằng thứ tự ORDER BY a, b.
+  const keyTuple = keyCols.length === 1 ? keyCols[0]! : `(${keyCols.join(', ')})`
+  const placeholders =
+    keyCols.length === 1 ? '$1' : `(${keyCols.map((_, i) => `$${i + 1}`).join(', ')})`
+  let cursor: unknown[] | null = null
+  for (;;) {
+    const where = cursor ? `where ${keyTuple} > ${placeholders}` : ''
+    const params = cursor ?? []
     const { rows } = await withDbRetry(
       () =>
         pool.query<T>(
-          `select ${columns} from public.${table} order by ${orderBy} limit ${PAGE} offset ${offset}`,
+          `select ${columns} from public.${table} ${where} order by ${orderBy} limit ${PAGE}`,
+          params,
         ),
-      `đọc ${table} (offset ${offset})`,
+      `đọc ${table}`,
     )
     if (rows.length === 0) break
-    out.push(...rows)
+    onPage(rows)
+    const last = rows[rows.length - 1] as Record<string, unknown>
+    cursor = keyCols.map((c) => last[c])
     if (rows.length < PAGE) break
   }
+}
+
+// Gom TẤT CẢ dòng vào 1 mảng — tiện cho bảng NHỎ (vd pronunciations). Với bảng LỚN
+// (tts_cache >1 triệu dòng) nên dùng streamRows trực tiếp để không giữ hết trong RAM.
+async function fetchAllRows<T extends QueryResultRow>(
+  table: string,
+  columns: string,
+  keyCols: string[],
+): Promise<T[]> {
+  const out: T[] = []
+  await streamRows<T>(table, columns, keyCols, (rows) => {
+    for (const r of rows) out.push(r)
+  })
   return out
 }
 
@@ -1627,22 +1653,64 @@ async function verifyDb(
       else expectedTts.add(hashText(t.text, t.lang, t.voice))
     }
   }
+  // Bảo vệ câu pattern hợp lệ ở giọng/version hiện tại nhưng ngoài seed-index (seed đủ
+  // 100/chủ thể từ trước, hoặc dở dang) — KHÔNG coi là orphan, vì /api/tts vẫn phục vụ
+  // đúng. GỘP THẲNG vào expectedTts (thay vì 1 Set riêng ~1,6 triệu phần tử) để tiết kiệm
+  // RAM. Chỉ cần khi THỰC SỰ sắp xoá (doClean) và allByCat chưa có sẵn full patterns
+  // (patternsAreFull=false — nhánh remap "m" đã tự truyền đủ 100/100 vào expectedTts rồi).
+  if (doClean && !patternsAreFull) {
+    for (const h of loadAllPatternHashes()) expectedTts.add(h)
+  }
 
-  // 2) Đọc DB (phân trang đầy đủ)
+  // Bao nhiêu file cần giải mã thử (mục 6) — đọc TRƯỚC để gom mẫu ngay trong lúc stream,
+  // khỏi phải giữ lại toàn bộ dòng tts_cache chỉ để lọc mẫu ở cuối.
+  const sampleN = process.env.VERIFY_DECRYPT ? parseInt(process.env.VERIFY_DECRYPT, 10) : 0
+
+  // 2) Đọc DB — STREAM tts_cache (bảng lớn >1 triệu dòng) theo keyset, gom NGAY từng trang
+  // vào các cấu trúc nhỏ cần thiết thay vì giữ CẢ BẢNG trong RAM (audio_url dài → OOM).
   process.stdout.write('   Đang đọc DB...')
-  const ttsRows = await fetchAllRows<{
-    hash: string
-    lang: string
-    voice: string
-    audio_url: string
-  }>('tts_cache', 'hash, lang, voice, audio_url', ['hash'])
+  const dbHash = new Set<string>() // mọi hash đang có (mục 3: đối chiếu chiều thiếu)
+  // Orphan tts: dòng KHÔNG còn kỳ vọng (kèm lang/voice cho thống kê, audio_url để xoá file)
+  const orphans: { hash: string; lang: string; voice: string; audio_url: string }[] = []
+  const orphanByVoice = new Map<string, number>()
+  const activeTtsUrls = new Set<string>() // audio_url của dòng CÒN kỳ vọng (an toàn khi xoá)
+  let pathBad = 0 // mục 5: audio_url không đúng dạng lang/voice/hash.mp3
+  const badSample: string[] = []
+  // mục 6: mẫu file để giải mã thử (chỉ giữ tối đa sampleN dòng, không giữ cả bảng)
+  const decryptSample: { hash: string; audio_url: string }[] = []
+  let ttsCount = 0
+
+  await streamRows<{ hash: string; lang: string; voice: string; audio_url: string }>(
+    'tts_cache',
+    'hash, lang, voice, audio_url',
+    ['hash'],
+    (rows) => {
+      for (const r of rows) {
+        ttsCount++
+        dbHash.add(r.hash)
+        if (expectedTts.has(r.hash)) {
+          if (doClean) activeTtsUrls.add(r.audio_url)
+          if (sampleN > 0 && decryptSample.length < sampleN)
+            decryptSample.push({ hash: r.hash, audio_url: r.audio_url })
+        } else {
+          orphans.push({ hash: r.hash, lang: r.lang, voice: r.voice, audio_url: r.audio_url })
+          const k = `${r.lang}/${r.voice}`
+          orphanByVoice.set(k, (orphanByVoice.get(k) ?? 0) + 1)
+        }
+        if (!r.audio_url || !r.audio_url.includes(`${r.lang}/${r.voice}/${r.hash}.mp3`)) {
+          pathBad++
+          if (badSample.length < 5) badSample.push(r.hash)
+        }
+      }
+    },
+  )
+  // pronunciations nhỏ (~180k dòng) — gom cả mảng vẫn nhẹ.
   const pronRows = await fetchAllRows<{ word: string; voice: string; audio_url: string }>(
     'pronunciations',
     'word, voice, audio_url',
     ['word', 'voice'],
   )
-  const dbHash = new Set(ttsRows.map((r) => r.hash))
-  console.log(` xong (${ttsRows.length} câu TTS, ${pronRows.length} phát âm)`)
+  console.log(` xong (${ttsCount} câu TTS, ${pronRows.length} phát âm)`)
 
   // 3) Chiều THIẾU — theo nhóm
   const labelWidth = Math.max(...CATEGORIES.map((c) => c.label.length))
@@ -1667,25 +1735,9 @@ async function verifyDb(
     `  ${pronPresent === expectedPron.size ? '✅' : '⚠️'} ${'Phát âm (pron)'.padEnd(labelWidth)}  có ${pronPresent}/${expectedPron.size}  thiếu ${expectedPron.size - pronPresent}`,
   )
 
-  // 4) Chiều THỪA — orphan (DB có nhưng không còn kỳ vọng). Loại trừ thêm các câu pattern
-  // hợp lệ ở giọng/version hiện tại nhưng ngoài seed-index (seed đủ 100/chủ thể từ trước,
-  // hoặc seed dở dang) — KHÔNG coi là orphan, vì /api/tts vẫn phục vụ đúng các câu này.
-  // Chỉ quét thêm (tốn ~1,6 triệu hash — dễ OOM trên VPS ít RAM) khi THỰC SỰ sắp xoá
-  // (doClean) và allByCat chưa sẵn full patterns (patternsAreFull=false, vd nhánh remap
-  // "m" đã tự truyền patterns đủ 100/100 vào expectedTts rồi, quét lại là dư thừa).
-  const protectedPatternHashes =
-    doClean && !patternsAreFull ? loadAllPatternHashes() : new Set<string>()
-  const orphans = ttsRows.filter(
-    (r) => !expectedTts.has(r.hash) && !protectedPatternHashes.has(r.hash),
-  )
-  const orphanByVoice = new Map<string, number>()
-  for (const r of orphans) {
-    const k = `${r.lang}/${r.voice}`
-    orphanByVoice.set(k, (orphanByVoice.get(k) ?? 0) + 1)
-  }
-  console.log(
-    `\n🧹 Bản ghi tts_cache KHÔNG còn trong tập kỳ vọng: ${orphans.length}/${ttsRows.length}`,
-  )
+  // 4) Chiều THỪA — orphan (DB có nhưng không còn kỳ vọng). Đã gom trong lúc stream ở mục 2
+  // (dùng expectedTts đã GỘP sẵn pattern-bảo-vệ ở mục 1) → chỉ in báo cáo ở đây.
+  console.log(`\n🧹 Bản ghi tts_cache KHÔNG còn trong tập kỳ vọng: ${orphans.length}/${ttsCount}`)
   if (orphans.length > 0) {
     for (const [k, n] of [...orphanByVoice.entries()].sort((a, b) => b[1] - a[1])) {
       console.log(`     • ${k}: ${n}`)
@@ -1718,29 +1770,22 @@ async function verifyDb(
   }
 
   if (doClean) {
-    const activeAudioUrls = new Set<string>([
-      ...ttsRows.filter((r) => expectedTts.has(r.hash)).map((r) => r.audio_url),
-      ...pronRows.filter((r) => expectedPron.has(`${r.word}:${r.voice}`)).map((r) => r.audio_url),
-    ])
+    // activeTtsUrls đã gom trong stream (mục 2); chỉ cần thêm url của phát âm còn kỳ vọng.
+    const activeAudioUrls = activeTtsUrls
+    for (const r of pronRows) {
+      if (expectedPron.has(`${r.word}:${r.voice}`)) activeAudioUrls.add(r.audio_url)
+    }
     await cleanOrphans(orphans, pronOrphans, activeAudioUrls, confirmYes)
   }
 
   // 5) Nhất quán đường dẫn: audio_url phải chứa `${lang}/${voice}/${hash}.mp3`
-  let pathBad = 0
-  const badSample: string[] = []
-  for (const r of ttsRows) {
-    if (!r.audio_url || !r.audio_url.includes(`${r.lang}/${r.voice}/${r.hash}.mp3`)) {
-      pathBad++
-      if (badSample.length < 5) badSample.push(r.hash)
-    }
-  }
+  // (pathBad/badSample đã đếm trong lúc stream ở mục 2)
   console.log(
-    `\n🔗 audio_url khớp lang/voice/hash: ${ttsRows.length - pathBad}/${ttsRows.length}` +
+    `\n🔗 audio_url khớp lang/voice/hash: ${ttsCount - pathBad}/${ttsCount}` +
       (pathBad ? `  (✗ ${pathBad} lệch, vd: ${badSample.join(', ')})` : ' ✅'),
   )
 
-  // 6) (tùy chọn) Giải mã thử N file để chắc dùng được — VERIFY_DECRYPT=20
-  const sampleN = process.env.VERIFY_DECRYPT ? parseInt(process.env.VERIFY_DECRYPT, 10) : 0
+  // 6) (tùy chọn) Giải mã thử N file để chắc dùng được — VERIFY_DECRYPT=20 (mẫu đã gom ở mục 2)
   if (sampleN > 0) {
     // ⚠️ Ở STORAGE_DRIVER=local, audio_url thường là đường dẫn TƯƠNG ĐỐI
     // ('/uploads/...') khi seed/generate không đặt BASE_URL. Node `fetch` KHÔNG
@@ -1761,7 +1806,7 @@ async function verifyDb(
           ? `${verifyBase}${u.startsWith('/') ? '' : '/'}${u}`
           : u
 
-    const pick = ttsRows.filter((r) => expectedTts.has(r.hash)).slice(0, sampleN)
+    const pick = decryptSample
     let okDec = 0
     const reasons = new Map<string, number>() // gom LÝ DO fail để biết hỏng ở khâu nào
     const samples: string[] = []
