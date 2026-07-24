@@ -137,6 +137,17 @@ for (const route of ['/', '/profile']) {
     // PROGRESS.md). Retry ở đây để không chặn nhầm nếu đúng là trạng thái thoáng qua.
     let result = await scan(page)
     if (result.unexpectedSerious.length > 0) {
+      // eslint-disable-next-line no-console
+      console.log(
+        'DEBUG kid violation nodes:',
+        JSON.stringify(
+          (
+            await new AxeBuilder({ page }).withTags(['wcag2aa']).analyze()
+          ).violations
+            .filter((v) => v.id === 'color-contrast')
+            .flatMap((v) => v.nodes.map((n) => ({ target: n.target, summary: n.failureSummary }))),
+        ),
+      )
       await page.waitForTimeout(1500)
       result = await scan(page)
     }
