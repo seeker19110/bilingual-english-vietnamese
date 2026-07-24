@@ -741,10 +741,13 @@ export function DialogueView({
       const curSpeed = speedRef.current
       const curVoice = ln.who === 'A' ? voiceARef.current : voiceBRef.current
 
-      // Chỉ theo dõi từ đang đọc khi văn bản CHÍNH LÀ ln.en (đúng câu KaraokeText hiển thị) —
-      // ln.vi luôn hiện dạng chữ thường, không có karaoke.
+      // Chỉ theo dõi từ đang đọc khi văn bản CHÍNH LÀ câu KaraokeText đang hiển thị (đích học:
+      // ln.en ở chiều A, ln.vi ở chiều B) — câu còn lại luôn hiện dạng chữ thường, không karaoke.
+      const displayText = isA ? ln.en : ln.vi
       const onWordFor = (text: string) =>
-        text === ln.en ? (wi: number) => setDlgWordSync({ lineIdx: i, wordIdx: wi }) : undefined
+        text === displayText
+          ? (wi: number) => setDlgWordSync({ lineIdx: i, wordIdx: wi })
+          : undefined
 
       if (curMode === 'en') {
         await speak(ln.en, 'en-US', curVoice, curSpeed, onWordFor(ln.en))
@@ -984,8 +987,8 @@ export function DialogueView({
                     />
                   </div>
                   <KaraokeText
-                    text={ln.en}
-                    lang="en-US"
+                    text={isA ? ln.en : ln.vi}
+                    lang={isA ? 'en-US' : 'vi-VN'}
                     textClass={`font-medium text-[15px] leading-snug ${isB ? accent.text : 'text-zinc-100'}`}
                     buttonClass="w-full"
                     voice={ln.who === 'A' ? voiceA : voiceB}
@@ -995,7 +998,9 @@ export function DialogueView({
                         : undefined
                     }
                   />
-                  <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>{ln.vi}</p>
+                  <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>
+                    {isA ? ln.vi : ln.en}
+                  </p>
                 </div>
               </div>
             )

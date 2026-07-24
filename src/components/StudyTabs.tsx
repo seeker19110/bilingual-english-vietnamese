@@ -29,6 +29,8 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
+import RateToggle from './RateToggle'
+import VoiceToggle from './VoiceToggle'
 import WordCard from './WordCard'
 import type { DictEntry } from '../types'
 import {
@@ -309,11 +311,17 @@ function BatchDoneView({
 
       {sentences.length > 0 && (
         <div className="glass rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-teal-400" />
-            <span className="text-sm font-semibold text-white">
-              {isA ? 'Câu thông dụng từ những từ vừa học' : 'Common sentences from these words'}
-            </span>
+          <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-teal-400" />
+              <span className="text-sm font-semibold text-white">
+                {isA ? 'Câu thông dụng từ những từ vừa học' : 'Common sentences from these words'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <RateToggle />
+              <VoiceToggle />
+            </div>
           </div>
           <div className="space-y-2">
             {sentences.map((s, i) => (
@@ -321,13 +329,17 @@ function BatchDoneView({
                 key={i}
                 className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl px-4 py-3"
               >
+                {/* isA (học tiếng Anh): đích đọc = câu tiếng Anh, dịch hiện dưới = tiếng Việt.
+                    !isA (học tiếng Việt): đích đọc = câu tiếng Việt, dịch hiện dưới = tiếng Anh. */}
                 <KaraokeText
-                  text={s.en}
-                  lang="en-US"
+                  text={isA ? s.en : s.vi}
+                  lang={isA ? 'en-US' : 'vi-VN'}
                   textClass="font-medium text-[15px] leading-snug text-teal-300"
                   buttonClass="w-full"
                 />
-                <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>{s.vi}</p>
+                <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>
+                  {isA ? s.vi : s.en}
+                </p>
               </div>
             ))}
           </div>
@@ -336,11 +348,17 @@ function BatchDoneView({
 
       {dialogue && (
         <div className="glass rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <MessageCircle className="w-4 h-4 text-teal-400" />
-            <span className="text-sm font-semibold text-white">
-              {isA ? 'Hội thoại dùng các từ vừa học' : 'A conversation using these words'}
-            </span>
+          <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="w-4 h-4 text-teal-400" />
+              <span className="text-sm font-semibold text-white">
+                {isA ? 'Hội thoại dùng các từ vừa học' : 'A conversation using these words'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <RateToggle />
+              <VoiceToggle />
+            </div>
           </div>
           <p className="text-xs text-zinc-400 mb-3">{isA ? dialogue.titleVi : dialogue.titleEn}</p>
           <div className="space-y-2.5">
@@ -365,12 +383,14 @@ function BatchDoneView({
                       {name}
                     </span>
                     <KaraokeText
-                      text={ln.en}
-                      lang="en-US"
+                      text={isA ? ln.en : ln.vi}
+                      lang={isA ? 'en-US' : 'vi-VN'}
                       textClass={`font-medium text-[15px] leading-snug ${isB ? 'text-teal-300' : 'text-zinc-100'}`}
                       buttonClass="w-full"
                     />
-                    <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>{ln.vi}</p>
+                    <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>
+                      {isA ? ln.vi : ln.en}
+                    </p>
                   </div>
                 </div>
               )

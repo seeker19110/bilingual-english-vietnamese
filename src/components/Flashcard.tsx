@@ -47,6 +47,7 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
 
   const card = deck[idx]
   const done = deck.length > 0 && idx >= deck.length
+  const isA = getDirection() === 'A'
 
   // Xử lý khi học viên tự đánh giá
   function rate(remembered: boolean) {
@@ -156,23 +157,18 @@ export default function Flashcard({ userId, onLearnedChange }: Props) {
       {flipped && (
         <div className="mb-4 flex justify-center">
           <div className="w-full max-w-md">
-            <WordFormsBlock
-              forms={card.forms}
-              base={card.base}
-              word={card.word}
-              isA={getDirection() === 'A'}
-            />
+            <WordFormsBlock forms={card.forms} base={card.base} word={card.word} isA={isA} />
           </div>
         </div>
       )}
 
       {/* Nút phát âm từ + câu ví dụ (có karaoke) — tách khỏi nút lật để bấm không bị lật thẻ */}
       <div className="flex flex-col items-center gap-2 mb-4">
-        <PronounceButton word={card.word} />
+        <PronounceButton word={isA ? card.word : card.vi} lang={isA ? 'en-US' : 'vi-VN'} />
         {card.ex_en && (
           <KaraokeText
-            text={card.ex_en}
-            lang="en-US"
+            text={isA ? card.ex_en : card.ex_vi}
+            lang={isA ? 'en-US' : 'vi-VN'}
             textClass="text-xs text-zinc-400 italic"
             iconSize="xs"
           />
