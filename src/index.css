@@ -183,7 +183,10 @@
   --a-400: 251 146 60;
   --a-500: 249 115 22;
   --a-600: 234 88 12;
-  --a-700: 194 65 12;
+  /* a-700 CHỦ Ý đậm hơn chuẩn orange-700 (194 65 12, chỉ đạt 4.17:1 trên nền
+     bg-accent-500/15 — phát hiện qua E2E thật, xem PROGRESS.md) — dùng thẳng giá trị
+     orange-800 để `theme-light:text-accent-700` luôn đạt AA (~5.9:1) trên mọi nền thẻ nhạt. */
+  --a-700: 154 52 18;
   --a-800: 154 52 18;
   --a-900: 124 45 18;
   --glow-accent: 0.5;
