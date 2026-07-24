@@ -146,13 +146,21 @@ code trong nhiều file rời rạc.
   - `e2e/a11y.spec.ts` + `e2e/helpers/auth.ts` — thêm 2 test a11y riêng cho theme `kid` (Home +
     Profile, seed thẳng `localStorage.ui_theme='kid'` qua `mockLogin()` vì E2E không mock được
     `/api/profile` để giả lập `age_group` thật — theme vẫn render y hệt, chỉ khác cách được áp).
-    **Phát hiện qua chạy E2E thật (không chỉ soát code):** ban đầu dùng `waitForTimeout(500)`
-    hoặc `expect().toBeVisible()` (chờ banner tĩnh "Xin chào") → **flaky/fail thật** vì thẻ "Học
-    tiếp" trên Home tính từ dữ liệu curriculum OFFLINE phía client (không phải fetch mạng, nên
-    banner tĩnh hiện gần như ngay lập tức nhưng thẻ động chưa kịp render) — bắt nhầm trạng thái
-    dựng dở, đo contrast sai (badge màu chưa áp override). Đã sửa đúng bằng
-    `page.waitForTimeout(1000)` (cùng pattern `AUTHED_ROUTES` đã dùng cho chính vấn đề này) —
-    xác nhận lại 8/8 lần chạy liên tiếp xanh (cả chế độ CI thật 1 worker lẫn dev nhiều worker).
+    **Phát hiện qua chạy E2E thật nhiều lần (không chỉ soát code), tìm đúng gốc rễ sau khi loại
+    trừ các nghi ngờ sai:** ban đầu nghi "flaky do timing" (banner tĩnh "Xin chào" hiện gần như
+    ngay lập tức nên `expect().toBeVisible()`/`waitForTimeout` ngắn không đủ chờ thẻ "Học tiếp"
+    tính từ curriculum OFFLINE phía client render xong) — đã thử tăng chờ lên 1000ms/2000ms, dời
+    vị trí test ra sau (tránh lúc dev server "nguội"), thêm tự-retry trong test: **vẫn fail y hệt
+    1 lần trong mỗi lần chạy đủ 97 test**, chứng tỏ KHÔNG PHẢI flaky. Thêm log debug in chi tiết
+    node/màu vi phạm khi fail → lộ đúng gốc rễ: `theme-light:text-accent-700` (badge "4 cách
+    học"/"Nói" ở Home, dùng chung code cho cả Blue sky/Pink/kid) chỉ đạt **4.17:1** trên nền
+    `bg-accent-500/15` của theme kid — THIẾU đúng 0.33 so với ngưỡng AA 4.5:1, một lỗi CONTRAST
+    THẬT (không phải trạng thái thoáng qua) mà bước tính tay ban đầu bỏ sót vì không kiểm hết
+    MỌI tổ hợp text/nền dùng `theme-light:`. Sửa bằng cách đổi `--a-700` (kid) sang giá trị
+    orange-800 (154 52 18) → đạt ~5.9:1. Xác nhận: **97/97 test a11y xanh** sau khi sửa (trước
+    đó luôn có đúng 1 fail, dù thử đủ cách chờ/retry). Bài học: KHÔNG vội kết luận "flaky do
+    timing" khi 1 test fail lặp lại nhiều lần với cùng 1 nội dung lỗi giống hệt nhau — phải in
+    chi tiết vi phạm ra để xác nhận trước khi chọn hướng sửa.
   - **Đã KHÔNG làm ở GĐ 2 này** (đúng phạm vi đã chốt, tránh phình việc): không thêm component
     đặc thù (nút to tròn, hiệu ứng confetti) hay theme riêng cho 3 nhóm tuổi còn lại — chỉ
     Nhi đồng có theme riêng, phần UI component lớn hơn để ngỏ nếu người dùng muốn làm thêm sau.
