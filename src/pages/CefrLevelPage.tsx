@@ -476,6 +476,14 @@ export default function CefrLevelPage() {
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
     },
     {
+      key: 'listening',
+      icon: Headphones,
+      labelA: 'Nghe',
+      labelB: 'Listen',
+      active: 'bg-sky-500/20 text-sky-300 theme-light:text-sky-800 border border-sky-500/40',
+      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
+    },
+    {
       key: 'hard',
       icon: Star,
       labelA: 'Từ khó',
@@ -493,14 +501,6 @@ export default function CefrLevelPage() {
       badge: grammarDue,
       active:
         'bg-violet-500/20 text-violet-300 theme-light:text-violet-800 border border-violet-500/40',
-      inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
-    },
-    {
-      key: 'listening',
-      icon: Headphones,
-      labelA: 'Nghe',
-      labelB: 'Listen',
-      active: 'bg-sky-500/20 text-sky-300 theme-light:text-sky-800 border border-sky-500/40',
       inactive: 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200',
     },
   ]
