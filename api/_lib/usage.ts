@@ -6,7 +6,7 @@
 
 import { getPgPool } from './pgPool'
 import { vnDateStr } from './date'
-import { normalizePlan, type Plan } from './plan'
+import { resolvePlan, type Plan } from './plan'
 import { effectivePlan } from './promo'
 import { getAppSettings } from './settings'
 
@@ -48,12 +48,14 @@ export async function checkAndConsumeUsage(
     const day = today()
     const col = COLUMN[mode]
 
-    // Gói của user (mặc định 'free' nếu chưa có hồ sơ)
-    const { rows: profileRows } = await pool.query<{ plan: string }>(
-      'select plan from public.profiles where id = $1',
+    // Gói của user (mặc định 'free' nếu chưa có hồ sơ; Pro/VIP đã hết hạn → coi như free)
+    const { rows: profileRows } = await pool.query<{ plan: string; plan_expires_at: Date | null }>(
+      'select plan, plan_expires_at from public.profiles where id = $1',
       [userId],
     )
-    const plan = await effectivePlan(normalizePlan(profileRows[0]?.plan))
+    const plan = await effectivePlan(
+      resolvePlan(profileRows[0]?.plan, profileRows[0]?.plan_expires_at),
+    )
     const { limits } = await getAppSettings()
     const limit = limits[plan][mode]
 

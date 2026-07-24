@@ -36,6 +36,8 @@ import challengeHandler from './api/challenge.js'
 import tutorFeedbackHandler from './api/tutor-feedback.js'
 import adminSettingsHandler from './api/admin-settings.js'
 import appSettingsHandler from './api/app-settings.js'
+import adminGrantPlanHandler from './api/admin-grant-plan.js'
+import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 
 const app = express()
 
@@ -150,6 +152,7 @@ app.all('/api/challenge', wrapEdge(challengeHandler))
 app.all('/api/tutor-feedback', wrapEdge(tutorFeedbackHandler))
 app.all('/api/admin-settings', wrapEdge(adminSettingsHandler))
 app.all('/api/app-settings', wrapEdge(appSettingsHandler))
+app.all('/api/admin-grant-plan', wrapEdge(adminGrantPlanHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
@@ -241,6 +244,26 @@ function startReminderScheduler() {
   console.log('   Nhắc học : bật (gửi đúng giờ mỗi người chọn)')
 }
 
+// ── Dọn gói Pro/VIP hết hạn (1 lần/ngày) ─────────────────────────────────────
+// Chỉ dọn dữ liệu cho ĐÚNG (cột `plan` trong DB) — việc CHẶN quyền hết hạn đã tự áp ngay lúc
+// đọc plan (resolvePlan trong api/_lib/plan.ts), không phụ thuộc job này chạy đúng giờ hay không.
+function startPlanExpiryScheduler() {
+  let lastDaySent = new Date().getUTCDate()
+  setInterval(() => {
+    const day = new Date().getUTCDate()
+    if (day === lastDaySent) return
+    lastDaySent = day
+    void downgradeExpiredPlans()
+      .then((r) => {
+        if (r.downgraded > 0) console.log(`[plan-expiry] Đã hạ ${r.downgraded} gói hết hạn về free`)
+      })
+      .catch((err) => {
+        console.error('[plan-expiry] lỗi dọn gói hết hạn:', err)
+        captureServerException(err, { context: 'plan-expiry-scheduler' })
+      })
+  }, 60_000) // kiểm tra mỗi phút, chạy 1 lần khi sang ngày mới (UTC)
+}
+
 // ── Khởi động ─────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000
 const server = app.listen(PORT, () => {
@@ -248,6 +271,7 @@ const server = app.listen(PORT, () => {
   console.log(`   NODE_ENV : ${process.env.NODE_ENV || 'production'}`)
   console.log(`   Node.js  : ${process.version}`)
   startReminderScheduler()
+  startPlanExpiryScheduler()
   // Báo PM2 là app ĐÃ nhận request được (đi với wait_ready trong ecosystem.config.cjs).
   // Khi reload, PM2 đợi tín hiệu này từ process MỚI rồi mới tắt process CŨ → không có
   // khoảng chết. Chạy ngoài PM2 (npm start tay) thì process.send không tồn tại → bỏ qua.

@@ -39,8 +39,11 @@
 
 ## 3. Việc cố tình KHÔNG làm lúc này
 
-- **Thanh toán Pro** — quyết định 2026-07-11: dự án **miễn phí cho cộng đồng**, không làm cổng
-  thanh toán tới khi người dùng chủ động yêu cầu lại (xem `CLAUDE.md` mục 13).
+- **Cổng thanh toán thật (PayOS/Casso/webhook tự động)** — quyết định 2026-07-11: dự án
+  **miễn phí cho cộng đồng**, không tự đề xuất lại. **[Cập nhật 2026-07-24]** Đã chuẩn bị hạ
+  tầng kỹ thuật (hạn dùng gói `plan_expires_at`, cấp Pro/VIP thủ công qua
+  `/api/admin-grant-plan` — xem `PROGRESS.md`) theo yêu cầu người dùng, nhưng CHƯA nối cổng
+  thanh toán thật/chưa chốt giá/chưa siết hạn mức Free — vẫn miễn phí như cũ cho người dùng.
 - App di động riêng (native), ngôn ngữ ngoài Việt/Anh, học nhóm/lớp trực tiếp.
 
 ## 4. Yêu cầu phi chức năng
@@ -130,7 +133,8 @@ xem "Việc còn dang dở" trong `CLAUDE.md` mục 13 và "Cần làm tay" tron
 - **Chi phí API AI/STT/TTS** — giảm thiểu bằng đếm/giới hạn lượt server-side atomic, cache TTS
   dùng chung, model rẻ. Cơ chế đếm lượt **fail-open** (không chặn nhầm khi RPC lỗi) — đánh đổi
   có chủ đích, cần theo dõi log lỗi RPC nếu chi phí bất thường xuất hiện.
-- **Chưa có cổng thanh toán** — nâng gói Pro hiện chỉ đổi tay cột `plan`.
+- **Chưa có cổng thanh toán tự động** — nâng gói Pro/VIP hiện qua admin gọi tay
+  `/api/admin-grant-plan` (có hạn dùng, tự hết hạn về free — xem `PROGRESS.md` 2026-07-24).
 - **Chia sẻ VPS** với app khác ("xboss", port 3000) trên cùng máy — chưa ghi nhận ảnh hưởng.
 - **Phụ thuộc key bên thứ ba** (Groq/OpenAI, Google Cloud, provider chat) — thiếu key có fallback
   (Web Speech API) nhưng trải nghiệm giảm.

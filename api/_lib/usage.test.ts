@@ -43,13 +43,17 @@ const FAKE_SETTINGS_ROW = {
 // 'consume_usage' / 'refund_usage').
 function mockPool(opts: {
   plan?: 'free' | 'pro'
+  planExpiresAt?: string | null
   consumeResult?: boolean
   queryError?: Error
   promoUntil?: string | null
 }) {
   const query = vi.fn(async (sql: string) => {
     if (opts.queryError) throw opts.queryError
-    if (sql.includes('from public.profiles')) return { rows: [{ plan: opts.plan ?? 'free' }] }
+    if (sql.includes('from public.profiles'))
+      return {
+        rows: [{ plan: opts.plan ?? 'free', plan_expires_at: opts.planExpiresAt ?? null }],
+      }
     if (sql.includes('from public.app_settings'))
       return { rows: [{ ...FAKE_SETTINGS_ROW, promo_until: opts.promoUntil ?? null }] }
     if (sql.includes('consume_usage'))
@@ -82,6 +86,28 @@ describe('checkAndConsumeUsage', () => {
 
   it('gói pro dùng giới hạn cao hơn (đọc đúng plan + truyền đúng limit)', async () => {
     const pool = mockPool({ plan: 'pro', consumeResult: true })
+    mockedGetPool.mockReturnValue(pool)
+    await checkAndConsumeUsage('u1', 'speaking')
+    const consumeCall = vi
+      .mocked(pool.query)
+      .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 100])
+  })
+
+  it('gói pro đã HẾT HẠN (plan_expires_at trong quá khứ) → áp hạn mức free ngay, không chờ job dọn dữ liệu', async () => {
+    const past = new Date(Date.now() - 86_400_000).toISOString()
+    const pool = mockPool({ plan: 'pro', planExpiresAt: past, consumeResult: true })
+    mockedGetPool.mockReturnValue(pool)
+    await checkAndConsumeUsage('u1', 'speaking')
+    const consumeCall = vi
+      .mocked(pool.query)
+      .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 5])
+  })
+
+  it('gói pro CÒN HẠN (plan_expires_at trong tương lai) → vẫn áp hạn mức pro', async () => {
+    const future = new Date(Date.now() + 86_400_000).toISOString()
+    const pool = mockPool({ plan: 'pro', planExpiresAt: future, consumeResult: true })
     mockedGetPool.mockReturnValue(pool)
     await checkAndConsumeUsage('u1', 'speaking')
     const consumeCall = vi
