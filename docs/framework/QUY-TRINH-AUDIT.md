@@ -44,14 +44,14 @@ Chạy tuần tự. Mỗi tầng ghi rõ: **lệnh**, **tiêu chí đạt**, **n
 
 ### Tầng 1 — Cổng tự động (bắt buộc, luôn chạy)
 
-| Mục         | Lệnh                   | Tiêu chí đạt                                                       |
-| ----------- | ---------------------- | ------------------------------------------------------------------ |
-| Build       | `npm run build`        | Thoát 0, không lỗi vite/tsc                                        |
-| Typecheck   | `npm run typecheck`    | 0 lỗi (gộp `tsconfig` + `tsconfig.api.json` + `tsconfig.e2e.json`) |
-| Lint        | `npm run lint`         | 0 cảnh báo (`--max-warnings 0`)                                    |
-| Format      | `npm run format:check` | "All matched files use Prettier code style"                        |
-| Unit test   | `npm test`             | 100% pass; ghi số `X/Y`                                            |
-| Bundle size | `npm run size`         | JS ≤ 123 kB · CSS ≤ 9.4 kB (brotli)                                |
+| Mục         | Lệnh                   | Tiêu chí đạt                                                                                                            |
+| ----------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Build       | `npm run build`        | Thoát 0, không lỗi vite/tsc                                                                                             |
+| Typecheck   | `npm run typecheck`    | 0 lỗi (gộp `tsconfig` + `tsconfig.api.json` + `tsconfig.e2e.json`)                                                      |
+| Lint        | `npm run lint`         | 0 cảnh báo (`--max-warnings 0`)                                                                                         |
+| Format      | `npm run format:check` | "All matched files use Prettier code style"                                                                             |
+| Unit test   | `npm test`             | 100% pass; ghi số `X/Y`                                                                                                 |
+| Bundle size | `npm run size`         | JS ≤ 123 kB · CSS ≤ 9.7 kB (brotli) — ngưỡng thật đọc ở `.size-limit.json`/cấu hình size-limit, không hardcode số ở đây |
 
 - **Nếu fail:** dừng, ghi lỗi cụ thể vào báo cáo. Đây là fail chặn (blocking).
 - **Ai xử lý:** AI tự sửa được (lỗi code/format).
@@ -60,13 +60,13 @@ Chạy tuần tự. Mỗi tầng ghi rõ: **lệnh**, **tiêu chí đạt**, **n
 
 ### Tầng 2 — Bảo mật
 
-| Mục                     | Cách kiểm                                                                           | Tiêu chí đạt                                           |
-| ----------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| Secret hardcode         | Quét `sk-…`, `AIza…`, `api_key=…` trong `src`/`api`/`server.ts` (trừ `*.test.*`)    | 0 khớp                                                 |
-| `.env` bị track         | `git ls-files \| grep -E "^\.env($\|\.)"`                                           | chỉ `.env.example`                                     |
-| Lỗ hổng dependency      | `npm audit --omit=dev`                                                              | 0 mức high/critical (low/moderate: ghi nhận, cân nhắc) |
-| Logic nhạy cảm ở server | Rà `api/` + `server.ts`: kiểm quyền (`validateAuth`), đếm lượt, gọi AI đều ở server | không có logic nhạy cảm chạy ở client                  |
-| RLS Supabase            | Đối chiếu `supabase/schema.sql` — bảng có dữ liệu người dùng đều bật RLS            | mọi bảng người dùng có policy                          |
+| Mục                     | Cách kiểm                                                                                                                                                                                                                                                       | Tiêu chí đạt                                                    |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Secret hardcode         | Quét `sk-…`, `AIza…`, `api_key=…` trong `src`/`api`/`server.ts` (trừ `*.test.*`)                                                                                                                                                                                | 0 khớp                                                          |
+| `.env` bị track         | `git ls-files \| grep -E "^\.env($\|\.)"`                                                                                                                                                                                                                       | chỉ `.env.example`                                              |
+| Lỗ hổng dependency      | `npm audit --omit=dev`                                                                                                                                                                                                                                          | 0 mức high/critical (low/moderate: ghi nhận, cân nhắc)          |
+| Logic nhạy cảm ở server | Rà `api/` + `server.ts`: kiểm quyền (`validateAuth`), đếm lượt, gọi AI đều ở server                                                                                                                                                                             | không có logic nhạy cảm chạy ở client                           |
+| Kiểm quyền mỗi handler  | Đối chiếu `api/*.ts` — mọi endpoint đọc/sửa dữ liệu người dùng đều gọi `validateAuth()` (dự án đã rời Supabase, không còn RLS — xem `docs/migration-thoat-ly-supabase.md`); endpoint công khai có chủ đích (vd `app-settings.ts`) phải có comment giải thích rõ | mọi handler chạm dữ liệu riêng tư đều kiểm `user_id` khớp token |
 
 - **Nếu fail:** secret lộ = fail chặn, xử lý NGAY (xoay key nếu đã đẩy lên remote). `npm audit` high/critical =
   ghi vào báo cáo + đề xuất nâng phiên bản.
@@ -127,13 +127,13 @@ test** vào báo cáo (KHÔNG tự viết test trong lượt audit — đó là 
 
 ### Tầng 6 — Đối chiếu tài liệu & hạ tầng
 
-| Mục                      | Cách kiểm                                                                       | Tiêu chí đạt                                                            |
-| ------------------------ | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Git vs nhánh chính       | `git fetch origin main && git rev-list --left-right --count origin/main...HEAD` | biết rõ ahead/behind; nếu behind → cân nhắc rebase                      |
-| Working tree             | `git status -sb`                                                                | sạch, hoặc mọi thay đổi có chủ đích                                     |
-| PROGRESS.md khớp thực tế | Đọc PROGRESS + đối chiếu code/migration thật                                    | không có mục "đã xong" mà code chưa có (và ngược lại)                   |
-| Migration Supabase       | Đọc `supabase/migrations/README.md` — cột "Đã chạy production?"                 | biết migration nào chưa áp; **đọc file thật, không tin hook đầu phiên** |
-| Nợ kỹ thuật              | Đối chiếu danh sách nợ trong CLAUDE.md/PROGRESS với thực tế                     | mỗi nợ còn đúng, phân loại ai xử lý                                     |
+| Mục                        | Cách kiểm                                                                                                                                                                                                                                                                   | Tiêu chí đạt                                                                                              |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Git vs nhánh chính         | `git fetch origin main && git rev-list --left-right --count origin/main...HEAD`                                                                                                                                                                                             | biết rõ ahead/behind; nếu behind → cân nhắc rebase                                                        |
+| Working tree               | `git status -sb`                                                                                                                                                                                                                                                            | sạch, hoặc mọi thay đổi có chủ đích                                                                       |
+| PROGRESS.md khớp thực tế   | Đọc PROGRESS + đối chiếu code/migration thật                                                                                                                                                                                                                                | không có mục "đã xong" mà code chưa có (và ngược lại)                                                     |
+| Migration Postgres tự host | Đọc `postgres/migrations/README.md` (danh sách file) — **tự động áp khi deploy** (`scripts/deploy.sh` gọi `npm run migrate:pg` mỗi lượt, deploy tự chạy khi push lên `main`) nên KHÔNG cần thao tác tay như Supabase cũ; vẫn nên xác nhận qua log deploy nếu vừa đổi schema | biết mọi migration đã merge có nằm trong lần deploy gần nhất; **đọc file thật, không tin hook đầu phiên** |
+| Nợ kỹ thuật                | Đối chiếu danh sách nợ trong CLAUDE.md/PROGRESS với thực tế                                                                                                                                                                                                                 | mỗi nợ còn đúng, phân loại ai xử lý                                                                       |
 
 - **Ai xử lý:** AI đối chiếu + báo cáo; chạy migration production / rebase = cần người dùng xác nhận.
 
@@ -149,7 +149,7 @@ Xuất báo cáo theo **mẫu mục 10 CLAUDE.md**, rồi thêm phần phân lo�
 === BÁO CÁO AUDIT TOÀN DIỆN — <ngày giờ UTC> · nhánh <tên> ===
 
 TẦNG 1 — Cổng tự động
-Build ✅/❌ | Type ✅/❌ (lỗi:..) | Lint ✅/❌ (cảnh báo:..) | Format ✅/❌ | Test ✅/❌ (X/Y) | Size ✅/❌ (JS ../123kB · CSS ../9.4kB)
+Build ✅/❌ | Type ✅/❌ (lỗi:..) | Lint ✅/❌ (cảnh báo:..) | Format ✅/❌ | Test ✅/❌ (X/Y) | Size ✅/❌ (JS ../123kB · CSS ../9.7kB)
 
 TẦNG 2 — Bảo mật
 Secret hardcode ✅/❌ | .env sạch ✅/❌ | npm audit (high/critical: ..) | RLS ✅/❌

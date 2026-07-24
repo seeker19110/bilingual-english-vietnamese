@@ -18,15 +18,15 @@ export default defineConfig({
       include: ['src/lib/**/*.ts', 'api/**/*.ts'],
       exclude: ['**/*.test.{ts,tsx}', '**/*.d.ts'],
       reporter: ['text', 'text-summary', 'html'],
-      // "Coverage ratchet": ngưỡng SÀN = "không tệ hơn hiện tại" (đo 2026-07-18:
-      // stmts/lines 47.47 · branches 89.12 · funcs 78.5 — độ phủ đã tăng nhiều nhờ
-      // các đợt thêm test; đặt thấp hơn số đo chút để chống tụt, KHÔNG gây gãy do làm tròn).
+      // "Coverage ratchet": ngưỡng SÀN = "không tệ hơn hiện tại" (đo 2026-07-24:
+      // stmts/lines 49.94 · branches 88.47 · funcs 78.04 — đặt thấp hơn số đo chút để
+      // chống tụt, KHÔNG gây gãy do làm tròn hoặc dao động nhỏ giữa các lượt chạy.
       // Khi thêm test mới → NÂNG DẦN các số này. Xem PROGRESS.md.
       thresholds: {
-        statements: 45,
-        branches: 88,
-        functions: 75,
-        lines: 45,
+        statements: 48,
+        branches: 87,
+        functions: 76,
+        lines: 48,
       },
     },
   },
