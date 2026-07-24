@@ -863,19 +863,25 @@ async function runR2Sync(): Promise<void> {
 // trên R2 (ListObjectsV2) rồi so với file trên ổ đĩa — bắt được cả trường hợp DB đã trỏ
 // R2 nhưng file thật ra chưa lên/bị hỏng. Chỉ dùng để XÁC NHẬN trước khi xoá local lấy
 // lại dung lượng — KHÔNG đụng gì tới nội dung R2/DB.
+// Cache client DÙNG CHUNG — trước đây tạo S3Client MỚI mỗi lần gọi, mà deleteStoredFile()
+// gọi getR2Client() cho TỪNG file xoá (hàng trăm nghìn lần) → mỗi client giữ connection
+// pool/buffer riêng, heap phình dần → OOM. Giống getPgPool(): tạo 1 lần rồi tái dùng.
+let cachedR2Client: S3Client | null = null
 function getR2Client(): S3Client {
+  if (cachedR2Client) return cachedR2Client
   const accountId = process.env.R2_ACCOUNT_ID
   const accessKeyId = process.env.R2_ACCESS_KEY_ID
   const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY
   if (!accountId || !accessKeyId || !secretAccessKey) {
     throw new Error('Thiếu R2_ACCOUNT_ID/R2_ACCESS_KEY_ID/R2_SECRET_ACCESS_KEY trong .env')
   }
-  return new S3Client({
+  cachedR2Client = new S3Client({
     region: 'auto',
     endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
     credentials: { accessKeyId, secretAccessKey },
     requestChecksumCalculation: 'WHEN_REQUIRED',
   })
+  return cachedR2Client
 }
 
 // Liệt kê TOÀN BỘ key trong bucket R2 (phân trang 1000 key/lần) → Map<key, size byte>.
