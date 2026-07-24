@@ -612,7 +612,16 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   (bật/tắt + xác nhận không bao giờ throw kể cả khi jsdom không có `AudioContext`, đúng nhánh
   "trình duyệt không hỗ trợ" thật). E2E a11y `/profile` + `/learning-path/a1` (nơi
   `StudyTabs`/`Flashcard` render) đều xanh ở cả 4 theme.
-- Thanh toán Pro — **đóng, không làm** (xem "Quyết định quan trọng").
+- **Hạ tầng hạn dùng gói Pro/VIP (2026-07-24)** — chuẩn bị kỹ thuật cho thanh toán, CHƯA nối
+  cổng thanh toán thật/CHƯA chốt giá (xem "Quyết định quan trọng"): migration
+  `0004_plan_expires_at.sql` (cột `profiles.plan_expires_at`, nullable = vĩnh viễn) ·
+  `resolvePlan()` (`api/_lib/plan.ts`) coi Pro/VIP hết hạn là Free NGAY LÚC ĐỌC (áp ở
+  `usage.ts`/`authService.ts`/`api/profile.ts`, không phụ thuộc job chạy đúng giờ) · job dọn
+  dữ liệu `downgradeExpiredPlans()` (`api/_lib/planExpiry.ts`) chạy 1 lần/ngày trong
+  `server.ts` (theo mẫu `startReminderScheduler` có sẵn) · endpoint
+  `POST/GET /api/admin-grant-plan` (admin cấp/gia hạn Pro/VIP thủ công theo email + số ngày —
+  dùng tạm trong lúc chưa có cổng thanh toán tự động, admin xác nhận chuyển khoản tay rồi gọi
+  endpoint này).
 
 > ~~🔴 KHẨN CẤP — Auto deploy lỗi liên tục (thiếu `SUPABASE_DB_URL`, phát hiện 2026-07-15)~~
 > **ĐÃ HẾT HIỆU LỰC (2026-07-20)** — production đã rời hẳn Supabase (Giai đoạn A→E), deploy
@@ -621,6 +630,12 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## ⚠️ Cần làm tay (không cần PR)
 
+- **Hạ tầng hạn dùng gói Pro/VIP (2026-07-24):** deploy kế tiếp cần `npm run migrate:pg` trên
+  VPS để áp `postgres/migrations/0004_plan_expires_at.sql` (script deploy tự chạy, không cần
+  làm tay riêng nếu deploy qua `scripts/deploy.sh` như bình thường). Cách cấp Pro/VIP thủ công
+  (trong lúc chưa có cổng thanh toán thật): admin gọi
+  `POST /api/admin-grant-plan` body `{ "email": "...", "plan": "pro", "days": 30 }` (Bearer
+  token của admin, `days: null` = vĩnh viễn).
 - **Nâng cấp giọng TTS 14 giọng + gói VIP + admin cấu hình (nhánh
   `claude/chirp-3-hd-voice-upgrade-c06eds`, chưa merge — 2026-07-21):**
   1. `npm run migrate:pg` trên VPS để tạo bảng `app_settings`
@@ -655,8 +670,14 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   (cột `challenge_day`/`round` để nguyên — dữ liệu cũ không mất; prompt AI KHÔNG sửa để khỏi
   phải chạy lại eval). Phần bảng xếp hạng/điểm giải vẫn ở mục 14–15 như cũ.
 
-- **Thanh toán Pro: KHÔNG làm (2026-07-11).** Dự án dùng miễn phí cho cộng đồng. Không tự đề
-  xuất lại — chỉ mở khi người dùng chủ động báo.
+- **Thanh toán Pro: KHÔNG làm (2026-07-11)** → **[Cập nhật 2026-07-24]** người dùng chủ động
+  yêu cầu chuẩn bị TRƯỚC phần hạ tầng kỹ thuật (hạn dùng gói + cấp Pro thủ công qua admin —
+  xem mục "Đã xong"), **CHƯA quyết định giá/cổng thanh toán/có siết hạn mức Free hay không**.
+  App vẫn miễn phí như cũ, chưa có trang giá nào hiển thị cho người dùng thường. Việc còn lại
+  khi quyết định thu phí thật: chọn cổng (khuyến nghị Casso/SePay — chỉ cần tài khoản ngân
+  hàng cá nhân, KHÔNG cần hộ kinh doanh/MST như PayOS), chốt mức giá, trang `/upgrade` +
+  webhook thanh toán thật gọi `admin-grant-plan` (hoặc endpoint tương đương) tự động thay vì
+  admin gõ tay.
 - **Giữ nguyên phiên bản:** Tailwind 3, ESLint 8 (`.eslintrc.cjs`) — không nâng v4/flat config.
 - **Bundle-size budget (`size-limit`) thay Lighthouse CI** — Lighthouse không đo được trong môi
   trường sandbox/CI hiện có (`NO_FCP` ở mọi cấu hình). Cân nhắc lại nếu có runner thật sau này.

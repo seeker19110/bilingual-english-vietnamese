@@ -12,7 +12,7 @@ import { randomBytes, createHash } from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import { OAuth2Client } from 'google-auth-library'
 import { getPgPool } from './pgPool'
-import { normalizePlan, type Plan } from './plan'
+import { resolvePlan, type Plan } from './plan'
 
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 30 ngày — khớp thời hạn session Supabase cũ
 const BCRYPT_ROUNDS = 12
@@ -204,13 +204,15 @@ export async function ensureProfileRow(userId: string, name: string): Promise<Pr
     'insert into public.profiles (id, name) values ($1, $2) on conflict (id) do nothing',
     [userId, name],
   )
-  const { rows } = await pool.query<{ plan: string; onboarded: boolean; name: string | null }>(
-    'select plan, onboarded, name from public.profiles where id = $1',
-    [userId],
-  )
+  const { rows } = await pool.query<{
+    plan: string
+    plan_expires_at: Date | null
+    onboarded: boolean
+    name: string | null
+  }>('select plan, plan_expires_at, onboarded, name from public.profiles where id = $1', [userId])
   const row = rows[0]
   return {
-    plan: normalizePlan(row?.plan),
+    plan: resolvePlan(row?.plan, row?.plan_expires_at),
     onboarded: !!row?.onboarded,
     name: row?.name ?? name,
   }

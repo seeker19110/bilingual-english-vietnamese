@@ -9,7 +9,7 @@
 import { z } from 'zod'
 import { getPgPool } from './_lib/pgPool'
 import { ensureProfileRow } from './_lib/authService'
-import { normalizePlan } from './_lib/plan'
+import { resolvePlan } from './_lib/plan'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -41,6 +41,7 @@ const BodySchema = z.union([OnboardingSchema, SetAgeGroupSchema])
 
 interface ProfileRow {
   plan: string
+  plan_expires_at: Date | null
   onboarded: boolean
   name: string | null
   user_level: string | null
@@ -66,13 +67,14 @@ export default async function handler(req: Request): Promise<Response> {
     await ensureProfileRow(auth.userId, '') // tạo profile nếu chưa có (an toàn, idempotent)
     const pool = getPgPool()
     const { rows } = await pool.query<ProfileRow>(
-      'select plan, onboarded, name, user_level, goal, daily_minutes, age_group from public.profiles where id = $1',
+      'select plan, plan_expires_at, onboarded, name, user_level, goal, daily_minutes, age_group from public.profiles where id = $1',
       [auth.userId],
     )
     const row = rows[0]
     return jsonResponse(
       {
-        plan: normalizePlan(row?.plan),
+        plan: resolvePlan(row?.plan, row?.plan_expires_at),
+        planExpiresAt: row?.plan_expires_at ? new Date(row.plan_expires_at).toISOString() : null,
         onboarded: !!row?.onboarded,
         name: row?.name ?? '',
         userLevel: row?.user_level ?? 'beginner',
