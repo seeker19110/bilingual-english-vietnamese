@@ -940,6 +940,15 @@ async function cleanOrphans(
   let fileErrors = 0
   let rowsDeleted = 0
 
+  // Vòng lặp có thể chạy hàng trăm nghìn dòng (xoá từng dòng qua network) — không có
+  // progress bar trông như treo, không biết đang xoá tới đâu. Cập nhật mỗi 200 dòng để
+  // không làm chậm vòng lặp (in ra console mỗi dòng mới tốn thời gian).
+  const delBar = new cliProgress.SingleBar(
+    { format: '  |{bar}| {percentage}% | {value}/{total} bản ghi', hideCursor: true },
+    cliProgress.Presets.shades_classic,
+  )
+  delBar.start(totalCandidates, 0)
+
   for (const r of ttsOrphans) {
     if (!activeAudioUrls.has(r.audio_url)) {
       try {
@@ -948,7 +957,7 @@ async function cleanOrphans(
       } catch (err) {
         fileErrors++
         console.error(
-          `❌ Không xoá được file ${r.audio_url}: ${err instanceof Error ? err.message : String(err)}`,
+          `\n❌ Không xoá được file ${r.audio_url}: ${err instanceof Error ? err.message : String(err)}`,
         )
       }
     }
@@ -957,6 +966,7 @@ async function cleanOrphans(
       `xoá orphan tts_cache ${r.hash}`,
     )
     rowsDeleted++
+    if (rowsDeleted % 200 === 0) delBar.update(rowsDeleted)
   }
   for (const r of pronOrphansList) {
     if (!activeAudioUrls.has(r.audio_url)) {
@@ -966,7 +976,7 @@ async function cleanOrphans(
       } catch (err) {
         fileErrors++
         console.error(
-          `❌ Không xoá được file ${r.audio_url}: ${err instanceof Error ? err.message : String(err)}`,
+          `\n❌ Không xoá được file ${r.audio_url}: ${err instanceof Error ? err.message : String(err)}`,
         )
       }
     }
@@ -979,7 +989,10 @@ async function cleanOrphans(
       `xoá orphan pronunciations ${r.word}/${r.voice}`,
     )
     rowsDeleted++
+    if (rowsDeleted % 200 === 0) delBar.update(rowsDeleted)
   }
+  delBar.update(rowsDeleted)
+  delBar.stop()
 
   console.log(
     `✅ Đã xoá ${rowsDeleted} bản ghi DB, ${filesDeleted} file` +
