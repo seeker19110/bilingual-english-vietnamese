@@ -136,7 +136,12 @@ export async function pullUserData(userId: string): Promise<void> {
 // Giai đoạn C: gọi POST /api/profile thay Supabase client — không còn Supabase session
 // sau khi cutover khỏi Supabase Auth (Giai đoạn B). Server tự xác định user từ token
 // (getAuthHeader()), không cần truyền userId nữa.
-export async function saveOnboarding(data: { level: string; goal: string; dailyMinutes: number }) {
+export async function saveOnboarding(data: {
+  level: string
+  goal: string
+  dailyMinutes: number
+  ageGroup?: string
+}) {
   try {
     const resp = await fetch('/api/profile', {
       method: 'POST',

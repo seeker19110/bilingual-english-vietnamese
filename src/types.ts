@@ -2,6 +2,10 @@ export type Plan = 'free' | 'pro' | 'vip'
 export type Level = 'beginner' | 'intermediate' | 'advanced'
 // A = Người Việt học tiếng Anh | B = Người nước ngoài học tiếng Việt (qua tiếng Anh)
 export type Direction = 'A' | 'B'
+// Nhóm tuổi (kế hoạch 2026-07-22, PROGRESS.md) — người dùng tự chọn nhóm, KHÔNG hỏi
+// ngày sinh thật (tránh thu thập dữ liệu nhạy cảm trẻ em). Ảnh hưởng giao diện + giọng
+// điệu nội dung AI ở các giai đoạn sau; giai đoạn 1 chỉ thu thập + lưu.
+export type AgeGroup = 'nhi_dong' | 'thieu_nien' | 'thanh_nien' | 'nguoi_lon'
 
 // Cấp CEFR áp cho TỪNG TỪ vựng (khác CefrLevel['id'] trong src/data/cefr.ts chỉ có A1-B2
 // cho lộ trình) — từ điển mở rộng có cả từ nâng cao nên cần thêm C1/C2.

@@ -5,19 +5,24 @@
 // ngay lúc onboarding xong) → Supabase (chạy nền, cho thiết bị mới chưa có cache).
 import { useEffect, useState } from 'react'
 import { getAuthHeader } from './authHeader'
-import type { Level } from '../types'
+import type { Level, AgeGroup } from '../types'
 import type { DailySpeed } from './curriculum'
 
 export type OnboardingData = {
   level: Level
   goal: string
   dailyMinutes: number
+  ageGroup: AgeGroup
 }
 
 const KEY = (uid: string) => `et_onboarding_${uid}`
 
 function isValidLevel(v: unknown): v is Level {
   return v === 'beginner' || v === 'intermediate' || v === 'advanced'
+}
+
+export function isValidAgeGroup(v: unknown): v is AgeGroup {
+  return v === 'nhi_dong' || v === 'thieu_nien' || v === 'thanh_nien' || v === 'nguoi_lon'
 }
 
 // Đọc cache (sync). Trả null khi chưa có / dữ liệu hỏng — người gọi giữ mặc định cũ.
@@ -31,6 +36,7 @@ export function getCachedOnboarding(uid: string): OnboardingData | null {
       level: d.level,
       goal: typeof d.goal === 'string' ? d.goal : 'daily',
       dailyMinutes: typeof d.dailyMinutes === 'number' ? d.dailyMinutes : 10,
+      ageGroup: isValidAgeGroup(d.ageGroup) ? d.ageGroup : 'nguoi_lon',
     }
   } catch {
     return null
@@ -56,17 +62,37 @@ export async function fetchOnboarding(uid: string): Promise<OnboardingData | nul
       userLevel: string
       goal: string
       dailyMinutes: number
+      ageGroup?: string
     }
     if (!data.onboarded || !isValidLevel(data.userLevel)) return null
     const result: OnboardingData = {
       level: data.userLevel,
       goal: data.goal,
       dailyMinutes: data.dailyMinutes,
+      ageGroup: isValidAgeGroup(data.ageGroup) ? data.ageGroup : 'nguoi_lon',
     }
     cacheOnboarding(uid, result)
     return result
   } catch {
     return null
+  }
+}
+
+// Đổi riêng nhóm tuổi (Profile.tsx, sau khi đã onboarded) — cập nhật cache local NGAY
+// (đọc lại mượt) rồi bắn lên server kiểu "bắn rồi quên" (như mọi hàm push khác trong
+// lib/cloud.ts) — lỗi mạng chỉ warn, không làm vỡ UI.
+export async function pushAgeGroup(uid: string, ageGroup: AgeGroup): Promise<void> {
+  const cached = getCachedOnboarding(uid)
+  if (cached) cacheOnboarding(uid, { ...cached, ageGroup })
+  try {
+    const resp = await fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+      body: JSON.stringify({ action: 'set-age-group', ageGroup }),
+    })
+    if (!resp.ok) console.warn('[onboarding] lưu nhóm tuổi lỗi: HTTP', resp.status)
+  } catch (err) {
+    console.warn('[onboarding] lưu nhóm tuổi lỗi:', err instanceof Error ? err.message : err)
   }
 }
 

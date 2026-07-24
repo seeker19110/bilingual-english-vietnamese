@@ -77,6 +77,52 @@ code trong nhiều file rời rạc.
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[Kế hoạch 2026-07-22] Giao diện + nội dung theo độ tuổi** — nhánh
+  `claude/ui-redesign-age-groups-rk71g8`. Ý tưởng: app đổi giao diện thị giác và giọng điệu nội
+  dung theo nhóm tuổi người dùng, đặc biệt nhóm Nhi đồng cần giao diện vui nhộn hơn hẳn. Đã
+  nghiên cứu code thật (`src/lib/theme.ts`, `postgres/schema.sql`, `src/pages/Onboarding.tsx`,
+  `src/pages/Profile.tsx`, `api/auth.ts`, `api/profile.ts`, `src/prompts/index.ts`) và **chốt
+  cùng người dùng** các quyết định sau:
+  - **4 nhóm tuổi:** Nhi đồng (<10) · Thiếu niên (10–15) · Thanh niên (16–22) · Người lớn (23+).
+  - **Cả giao diện lẫn nội dung** đổi theo tuổi (không chỉ 1 trong 2).
+  - **Lấy nhóm tuổi bằng cách hỏi lúc đăng ký/hồ sơ** — cột `age_group` trong `profiles`, KHÔNG
+    hỏi ngày sinh thật, chỉ cho chọn thẳng nhóm (tránh thu thập dữ liệu nhạy cảm trẻ em).
+  - **Nhóm Nhi đồng sẽ bị khoá cứng vào theme vui nhộn riêng** (GĐ 2, chưa làm) — không cho tự
+    đổi sang 4 theme người lớn hiện có.
+  - **4 giai đoạn nhỏ, mỗi giai đoạn 1 PR, dừng xin duyệt ở mỗi cổng.**
+
+  **GĐ 1 (nền tảng thu thập nhóm tuổi) — CODE XONG, cổng commit đã đạt (build/typecheck/lint/
+  format/test 613/613/size xanh — người dùng cần chạy migration thật để dùng được):**
+  - `postgres/migrations/0002_age_group.sql` (mới) — cột `profiles.age_group` (text, check 4
+    giá trị, cho phép NULL — user cũ chưa chọn tự fallback `'nguoi_lon'` ở code, KHÔNG ép migrate
+    ngược). Rollback: `alter table profiles drop column if exists age_group`.
+  - `api/profile.ts` — `GET` trả thêm `ageGroup` (NULL → `'nguoi_lon'`); `POST` mở rộng 2 action:
+    `onboarding` (nhận thêm `ageGroup` optional, giữ nguyên giá trị cũ nếu không gửi — dùng
+    `coalesce`) và action MỚI **`set-age-group`** (chỉ đổi đúng 1 cột — quyết định người dùng:
+    tách riêng khỏi action `onboarding` thay vì tái dùng, giống pattern `setDailySpeed`/
+    `setWeeklyGoal` chỉ đổi 1 giá trị). **Xác nhận sửa lại so với đề xuất ban đầu:** KHÔNG đụng
+    `api/auth.ts` action `register` — level/goal/dailyMinutes vốn không lưu lúc đăng ký mà lưu
+    sau đó qua `POST /api/profile` (từ bước cuối Onboarding), nhóm tuổi theo đúng luồng này.
+  - `src/types.ts` — thêm `export type AgeGroup`.
+  - `src/lib/onboarding.ts` — mở rộng `OnboardingData`/cache/`fetchOnboarding` theo đúng pattern
+    2 tầng (cache localStorage → server) đã có; thêm `pushAgeGroup()` (bắn-rồi-quên, dùng cho
+    Profile.tsx) + `isValidAgeGroup()`.
+  - `src/pages/Onboarding.tsx` — **thêm bước chọn nhóm tuổi làm BƯỚC ĐẦU TIÊN** (quyết định người
+    dùng: trước bước Trình độ, vì nhóm tuổi có thể ảnh hưởng giọng điệu các bước sau) — luồng
+    onboarding từ 3 → 4 bước, progress bar + số thứ tự các bước sau đã dịch lại đúng.
+  - `src/pages/Placement.tsx` — hàm `applyResultNow` (đổi trình độ từ trang Hồ sơ) giữ nguyên
+    `ageGroup` đã có khi ghi đè lại profile (không vô tình xoá về mặc định).
+  - `src/pages/Profile.tsx` — section mới "Nhóm tuổi" (pattern giống section tốc độ học/mục
+    tiêu tuần đã có), gọi action `set-age-group` riêng qua `pushAgeGroup()`.
+  - `src/lib/onboarding.test.ts` — cập nhật 3 test cũ theo field mới + 3 test mới (ageGroup lạ
+    → fallback, server trả ageGroup hợp lệ → giữ đúng giá trị).
+  - **Việc người dùng cần làm:** `npm run migrate:pg` trên VPS (hoặc máy dev) để tạo cột
+    `age_group` trước khi deploy — thiếu cột này thì `api/profile.ts` sẽ lỗi SQL ngay.
+  - **Tiếp theo (GĐ 2, CHƯA LÀM):** theme "Nhi đồng" vui nhộn — mở rộng `src/lib/theme.ts` +
+    bộ biến `--a-*` mới trong `src/index.css` (kiểm AA kỹ vì màu sặc sỡ dễ vi phạm tương phản),
+    tự áp + khoá cho nhóm Nhi đồng. Sau đó GĐ 3 (giọng điệu AI theo tuổi ở `src/prompts/
+index.ts`) và GĐ 4 tuỳ chọn (gắn nhãn tuổi cho nội dung `curriculum.ts`).
+
 - **Rời Supabase (2026-07-19→20, xem `docs/migration-thoat-ly-supabase.md`)**: GĐ A (Postgres 16
   tự host trên VPS) + GĐ B (auth tự viết Bearer token thay Supabase Auth) + GĐ C lõi
   (profiles/daily_usage/learning_progress qua `/api/profile`/`/api/progress`) + GĐ D (Cloudflare

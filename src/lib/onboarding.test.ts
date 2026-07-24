@@ -34,11 +34,17 @@ describe('minutesToSpeed', () => {
 
 describe('cache localStorage', () => {
   it('ghi rồi đọc lại đúng dữ liệu, tách theo uid', () => {
-    cacheOnboarding('u1', { level: 'advanced', goal: 'work', dailyMinutes: 20 })
+    cacheOnboarding('u1', {
+      level: 'advanced',
+      goal: 'work',
+      dailyMinutes: 20,
+      ageGroup: 'thanh_nien',
+    })
     expect(getCachedOnboarding('u1')).toEqual({
       level: 'advanced',
       goal: 'work',
       dailyMinutes: 20,
+      ageGroup: 'thanh_nien',
     })
     expect(getCachedOnboarding('u2')).toBeNull() // uid khác không thấy cache của u1
   })
@@ -50,13 +56,22 @@ describe('cache localStorage', () => {
     expect(getCachedOnboarding('u1')).toBeNull()
   })
 
-  it('thiếu goal/dailyMinutes → điền mặc định (goal daily, 10 phút)', () => {
+  it('thiếu goal/dailyMinutes/ageGroup → điền mặc định (goal daily, 10 phút, người lớn)', () => {
     localStorage.setItem('et_onboarding_u1', JSON.stringify({ level: 'beginner' }))
     expect(getCachedOnboarding('u1')).toEqual({
       level: 'beginner',
       goal: 'daily',
       dailyMinutes: 10,
+      ageGroup: 'nguoi_lon',
     })
+  })
+
+  it('ageGroup lạ → về mặc định người lớn (không tin dữ liệu localStorage bị sửa tay)', () => {
+    localStorage.setItem(
+      'et_onboarding_u1',
+      JSON.stringify({ level: 'beginner', ageGroup: 'hacker' }),
+    )
+    expect(getCachedOnboarding('u1')?.ageGroup).toBe('nguoi_lon')
   })
 })
 
@@ -69,8 +84,25 @@ describe('fetchOnboarding', () => {
       onboarded: true,
     })
     const d = await fetchOnboarding('u1')
-    expect(d).toEqual({ level: 'intermediate', goal: 'ielts', dailyMinutes: 30 })
+    expect(d).toEqual({
+      level: 'intermediate',
+      goal: 'ielts',
+      dailyMinutes: 30,
+      ageGroup: 'nguoi_lon',
+    })
     expect(getCachedOnboarding('u1')).toEqual(d) // lần sau đọc cache, khỏi gọi DB
+  })
+
+  it('server trả ageGroup hợp lệ → giữ đúng giá trị đó (không phải luôn về mặc định)', async () => {
+    mockProfileResponse({
+      userLevel: 'beginner',
+      goal: 'daily',
+      dailyMinutes: 10,
+      ageGroup: 'nhi_dong',
+      onboarded: true,
+    })
+    const d = await fetchOnboarding('u1')
+    expect(d?.ageGroup).toBe('nhi_dong')
   })
 
   it('chưa onboarded → null (không cache)', async () => {

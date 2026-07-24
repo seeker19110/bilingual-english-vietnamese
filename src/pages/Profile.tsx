@@ -12,6 +12,7 @@ import {
   Award,
   Volume2,
   VolumeX,
+  Users,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -26,6 +27,7 @@ import { getLearnedCount } from '../lib/vocab'
 import { getDailySpeed, setDailySpeed, DAILY_SPEEDS, type DailySpeed } from '../lib/curriculum'
 import { getWeeklyGoal, setWeeklyGoal, WEEKLY_GOALS, type WeeklyGoal } from '../lib/weeklyGoal'
 import { isSoundEnabled, setSoundEnabled, sound } from '../lib/sound'
+import { useOnboarding, pushAgeGroup } from '../lib/onboarding'
 import {
   checkNewAchievements,
   achievementMessage,
@@ -33,6 +35,14 @@ import {
 } from '../lib/achievements'
 import { ACHIEVEMENTS } from '../data/achievements'
 import { logout } from '../lib/auth'
+import type { AgeGroup } from '../types'
+
+const AGE_GROUP_OPTIONS: { value: AgeGroup; emoji: string; vi: string; en: string }[] = [
+  { value: 'nhi_dong', emoji: '🧸', vi: 'Nhi đồng (<10)', en: 'Kids (<10)' },
+  { value: 'thieu_nien', emoji: '🎒', vi: 'Thiếu niên (10–15)', en: 'Teens (10–15)' },
+  { value: 'thanh_nien', emoji: '🎓', vi: 'Thanh niên (16–22)', en: 'Young adult (16–22)' },
+  { value: 'nguoi_lon', emoji: '💼', vi: 'Người lớn (23+)', en: 'Adult (23+)' },
+]
 
 const SPEED_LABEL: Record<DailySpeed, { vi: string; en: string }> = {
   5: { vi: 'Nhẹ nhàng', en: 'Light' },
@@ -57,6 +67,8 @@ export default function Profile() {
   const [weekGoal, setWeekGoal] = useState<WeeklyGoal>(() => getWeeklyGoal(user?.id ?? ''))
   const [earned, setEarned] = useState<Set<string>>(() => getEarnedAchievements(user?.id ?? ''))
   const [soundOn, setSoundOn] = useState<boolean>(() => isSoundEnabled())
+  const onboardingData = useOnboarding(user?.id)
+  const [ageGroup, setAgeGroupState] = useState<AgeGroup>('nguoi_lon')
 
   // Backfill lúc mở trang: bắt các huy hiệu đã đủ điều kiện nhưng chưa từng được
   // ghi nhận (vd người dùng cũ đạt streak_7 TRƯỚC khi tính năng này ra mắt) —
@@ -71,6 +83,12 @@ export default function Profile() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id])
+
+  // Đồng bộ state hiển thị khi cache/fetch onboarding có dữ liệu (có thể tới sau lần
+  // render đầu nếu thiết bị mới chưa có cache local).
+  useEffect(() => {
+    if (onboardingData) setAgeGroupState(onboardingData.ageGroup)
+  }, [onboardingData])
 
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
@@ -89,6 +107,14 @@ export default function Profile() {
     if (!user) return
     setWeeklyGoal(user.id, g)
     setWeekGoal(g)
+  }
+
+  // Đổi nhóm tuổi (kế hoạch "giao diện + nội dung theo độ tuổi", GĐ 1) — đổi state ngay
+  // để UI mượt, đẩy lên server kiểu "bắn rồi quên" như tốc độ học/mục tiêu tuần.
+  function chooseAgeGroup(a: AgeGroup) {
+    if (!user) return
+    setAgeGroupState(a)
+    void pushAgeGroup(user.id, a)
   }
 
   // Bật/tắt âm thanh phản hồi UI (V-6) — bật thử ngay 1 tiếng "đúng" để nghe được hiệu ứng.
@@ -167,6 +193,38 @@ export default function Profile() {
               <p className="text-xs text-zinc-400 mt-1">{isA ? 'từ đã thuộc' : 'words learned'}</p>
             </div>
           </div>
+        </section>
+
+        {/* Nhóm tuổi (kế hoạch "giao diện + nội dung theo độ tuổi", GĐ 1) */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
+          <div className="flex items-center gap-2 mb-3">
+            <Users className="w-4 h-4 text-accent-400" />
+            <span className="text-sm font-semibold text-white">
+              {isA ? 'Nhóm tuổi' : 'Age group'}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {AGE_GROUP_OPTIONS.map((a) => (
+              <button
+                key={a.value}
+                onClick={() => chooseAgeGroup(a.value)}
+                aria-pressed={ageGroup === a.value}
+                className={`flex items-center gap-2 py-2.5 px-3 rounded-xl text-sm font-medium border transition ${
+                  ageGroup === a.value
+                    ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
+                    : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'
+                }`}
+              >
+                <span className="text-lg shrink-0">{a.emoji}</span>
+                <span className="text-left">{isA ? a.vi : a.en}</span>
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-zinc-400 mt-3">
+            {isA
+              ? 'Giúp app hiển thị giao diện và nội dung phù hợp với bạn hơn.'
+              : 'Helps the app show a more suitable look and content for you.'}
+          </p>
         </section>
 
         {/* Tốc độ học: số từ mới/ngày */}
