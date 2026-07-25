@@ -1,0 +1,45 @@
+; postgres/pgbouncer.ini.example — Cấu hình PgBouncer MẪU cho GĐ2 kế hoạch scale 50k concurrent
+; (xem docs/research/dac-ta-gd2-scale-50k.md + docs/deploy-vps-ubuntu.md mục "GĐ2").
+;
+; ĐÂY LÀ FILE MẪU — KHÔNG chứa secret thật. Copy file này thành /etc/pgbouncer/pgbouncer.ini
+; trên VPS Postgres riêng, rồi điền đúng host/user/password thật (đọc từ .env DATABASE_URL
+; hiện có), không commit file đã điền secret vào git.
+;
+; Vì sao cần PgBouncer: `pg` Pool (api/_lib/pgPool.ts) mở tối đa PG_POOL_MAX kết nối THẬT tới
+; Postgres MỖI tiến trình Node (cluster mode nhiều tiến trình × nhiều VPS app = rất nhiều kết
+; nối thật). Postgres mặc định chỉ chịu được ~100-300 kết nối thật cùng lúc trước khi tốn nhiều
+; RAM/CPU cho quản lý connection. PgBouncer đứng giữa: nhận hàng nghìn kết nối "ảo" từ app, gom
+; lại thành ít kết nối thật tới Postgres (transaction pooling) — đúng cách hàng nghìn client vẫn
+; chạy được với vài chục kết nối Postgres thật.
+
+[databases]
+; Tên database ảo mà app kết nối tới (đặt trong DATABASE_URL mới, trỏ cổng PgBouncer 6432
+; thay vì cổng Postgres thật 5432) — map sang database Postgres thật bên dưới.
+english_tutor = host=127.0.0.1 port=5432 dbname=english_tutor
+
+[pgbouncer]
+listen_addr = 0.0.0.0
+listen_port = 6432
+
+; transaction: trả kết nối thật về pool ngay sau mỗi transaction — phù hợp app này vì
+; api/_lib/pgPool.ts không dùng session-level state (prepared statement cross-transaction,
+; advisory lock giữ xuyên nhiều query...). ĐỪNG đổi sang "session" trừ khi đã rà kỹ code.
+pool_mode = transaction
+
+; Tổng số kết nối "ảo" PgBouncer nhận từ mọi client (app) cùng lúc — đặt cao vì đây là hàng đợi
+; rẻ, không phải kết nối thật tới Postgres.
+max_client_conn = 2000
+
+; Số kết nối THẬT tới Postgres mỗi database — đây là con số cần nhân với số VPS app rồi so với
+; giới hạn thật của máy Postgres (xem max_connections trong postgresql.conf, thường cần tăng
+; theo — vd max_connections = default_pool_size + 20 dự phòng cho superuser/admin).
+; Gợi ý khởi điểm: default_pool_size = PG_POOL_MAX (env app) — điều chỉnh theo đo tải thật (k6).
+default_pool_size = 20
+
+; File user/password xác thực — KHÔNG đặt password trực tiếp trong file .ini này.
+auth_type = md5
+auth_file = /etc/pgbouncer/userlist.txt
+
+; Log tối thiểu, đủ để chẩn đoán khi có sự cố (không log query nội dung — tránh lộ dữ liệu
+; người dùng vào log PgBouncer).
+admin_users = pgbouncer_admin

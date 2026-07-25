@@ -537,3 +537,100 @@ curl https://en-vi.donghanhcungban.com/api/health
 du -sh /var/www/english-tutor/uploads/
 BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns -- --force
 ```
+
+---
+
+## GĐ2 (kế hoạch scale 50k concurrent): tách Postgres/Redis ra VPS riêng
+
+> Xem bối cảnh đầy đủ: `docs/research/ke-hoach-scale-30k-concurrent.md` (mục 4.1/5.1/5.2) +
+> `docs/research/dac-ta-gd2-scale-50k.md`. Bắt buộc phải làm TRƯỚC khi traffic thật tăng cao —
+> log deploy 2026-07-25 đã xác nhận VPS app hiện tại chỉ có 1 vCPU (xem `PROGRESS.md`), không đủ
+> chỗ chạy thêm Postgres/Redis nặng.
+>
+> ⚠️ Đây là **việc phải làm TAY** (mua máy, SSH, không tự động hoá được qua CI) — làm cẩn thận
+> từng bước, đừng xoá dữ liệu cũ cho tới khi xác nhận máy mới chạy ổn định.
+
+### Bước 1 — Tạo VPS Postgres/Redis mới
+
+Khuyến nghị (trong ngân sách $2.000/tháng đã chốt, xem đánh giá mục 4.1 kế hoạch scale): VPS cỡ
+trung 4 vCPU / 8GB RAM ở nhà cung cấp giá rẻ (Hetzner CX-series, Vultr, DigitalOcean) —
+**tách hẳn khỏi VPS app hiện tại** (đang dùng chung với app "xboss").
+
+### Bước 2 — Cài PostgreSQL + PgBouncer trên máy mới
+
+```bash
+sudo apt update
+sudo apt install -y postgresql postgresql-contrib pgbouncer
+sudo systemctl enable --now postgresql pgbouncer
+```
+
+Tạo database + user (đổi tên/mật khẩu thật, không dùng giá trị mẫu):
+
+```bash
+sudo -u postgres psql -c "create database english_tutor;"
+sudo -u postgres psql -c "create user english_tutor_app with encrypted password 'ĐỔI-MẬT-KHẨU-THẬT';"
+sudo -u postgres psql -c "grant all privileges on database english_tutor to english_tutor_app;"
+```
+
+Chạy schema + migration (từ máy có repo, trỏ `DATABASE_URL` tạm thời vào máy mới):
+
+```bash
+DATABASE_URL="postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:5432/english_tutor" \
+  npm run migrate:pg
+```
+
+### Bước 3 — Cấu hình PgBouncer
+
+Copy `postgres/pgbouncer.ini.example` (trong repo) thành `/etc/pgbouncer/pgbouncer.ini` trên máy
+mới, điền đúng host/dbname thật (đọc kỹ comment trong file — giải thích từng tham số). Tạo
+`/etc/pgbouncer/userlist.txt` theo định dạng PgBouncer (`"user" "md5hash"`), khớp user/password
+đã tạo ở Bước 2.
+
+```bash
+sudo systemctl restart pgbouncer
+```
+
+### Bước 4 — Cài Redis trên cùng máy (hoặc máy riêng nếu tải cao)
+
+```bash
+sudo apt install -y redis-server
+sudo systemctl enable --now redis-server
+```
+
+Đặt mật khẩu Redis (`requirepass` trong `/etc/redis/redis.conf`) — bắt buộc vì máy này sẽ mở
+cổng cho VPS app kết nối từ xa.
+
+### Bước 5 — Firewall: CHỈ cho phép IP VPS app
+
+```bash
+sudo ufw allow from <ip-vps-app> to any port 6432   # PgBouncer
+sudo ufw allow from <ip-vps-app> to any port 6379   # Redis
+sudo ufw enable
+```
+
+**TUYỆT ĐỐI không mở public 5432/6432/6379 ra Internet** — chỉ whitelist đúng IP VPS app.
+
+### Bước 6 — Chuyển VPS app sang dùng máy mới
+
+Trên VPS app, sửa `.env`:
+
+```bash
+DATABASE_URL=postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:6432/english_tutor
+REDIS_URL=redis://:MẬT-KHẨU-REDIS@<ip-vps-db>:6379
+PG_POOL_MAX=20   # khớp default_pool_size trong pgbouncer.ini — xem comment file mẫu
+```
+
+Reload app:
+
+```bash
+bash scripts/pm2-reload.sh
+curl http://localhost:3001/api/health
+```
+
+Thử 1 luồng thật (đăng nhập, tra từ điển, chat) trước khi coi bước này xong.
+
+### Rollback nếu có sự cố
+
+Đổi `DATABASE_URL`/`REDIS_URL` trong `.env` VPS app về giá trị CŨ (Postgres/Redis local trên
+VPS app hiện tại) rồi `bash scripts/pm2-reload.sh` lại — **KHÔNG xoá Postgres/Redis local cũ**
+cho tới khi xác nhận máy mới chạy ổn định qua vài ngày traffic thật.
