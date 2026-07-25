@@ -211,7 +211,13 @@ async function withDbRetry<T>(fn: () => Promise<T>, label: string): Promise<T> {
 
 // ── Nhóm (category) ─────────────────────────────────────────────────────────
 type CatId =
-  'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest' | 'challenge'
+  | 'pron'
+  | 'curriculum'
+  | 'cefr'
+  | 'lessons-early'
+  | 'patterns'
+  | 'lessons-rest'
+  | 'challenge'
 
 // Thứ tự seed khi chạy --all (menu chọn riêng từng nhóm không phụ thuộc thứ tự này).
 // "Cụm từ" đặt CUỐI CÙNG vì số lượng lớn nhất (~313k câu) — ưu tiên seed xong các nhóm
