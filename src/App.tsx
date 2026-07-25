@@ -8,6 +8,7 @@ import { useAuth } from './context/useAuth'
 import { CardListSkeleton } from './components/Skeleton'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import BottomNav from './components/BottomNav'
+import PromoEndingBanner from './components/PromoEndingBanner'
 import { lazyWithRetry } from './lib/lazyWithRetry'
 import { refreshAppSettings } from './lib/appSettings'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
@@ -66,7 +67,14 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   if (loading) return <PageLoading />
   if (!user) return <Navigate to="/login" replace />
   if (!user.onboarded) return <Navigate to="/onboarding" replace />
-  return <>{children}</>
+  return (
+    <>
+      {/* Chỉ hiện cho user đã đăng nhập + đã onboard — banner báo trước sắp hết
+          khuyến mãi, không cần thiết ở landing/login/onboarding. */}
+      <PromoEndingBanner />
+      {children}
+    </>
+  )
 }
 
 // Cập nhật thẻ <link rel="canonical"> theo route hiện tại để tránh lỗi SEO
