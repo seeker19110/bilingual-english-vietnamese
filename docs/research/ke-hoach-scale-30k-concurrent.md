@@ -1,8 +1,10 @@
-# Kế hoạch mở rộng: đáp ứng 30.000 người dùng ACTIVE CÙNG LÚC
+# Kế hoạch mở rộng: đáp ứng 50.000 người dùng ACTIVE CÙNG LÚC
 
-> Soạn 2026-07-25. Mục tiêu: nâng hạ tầng từ "1 VPS / 1 tiến trình fork" (đủ ~vài trăm–1.000
-> đồng thời) lên **30.000 người dùng đồng thời (concurrent)**. Đây là tài liệu KẾ HOẠCH — chưa
-> thực thi. Cần người dùng duyệt phạm vi + ngân sách trước khi bắt tay (cổng giai đoạn, CLAUDE.md §3).
+> Soạn 2026-07-25, **cập nhật mục tiêu 30k → 50.000 concurrent cùng ngày** (giữ tên file cũ để
+> không vỡ liên kết — nội dung đã cập nhật). Mục tiêu: nâng hạ tầng từ "1 VPS / 1 tiến trình
+> fork" (đủ ~vài trăm–1.000 đồng thời) lên **50.000 người dùng đồng thời (concurrent)**, trong
+> **ngân sách đã chốt: $2.000/tháng hạ tầng + AI ≤ ~$1,67/user/tháng** (xem mục 5.1). Đây là tài
+> liệu KẾ HOẠCH — GĐ1 đã xong (PR #321, #322), GĐ2–5 chưa làm.
 
 ## 0. TL;DR
 
@@ -97,22 +99,68 @@ Mục tiêu: gỡ nút thắt #5 — quan trọng nhất về tiền.
 2. Auto-restart + auto-scale (nếu dùng container/K8s hoặc VPS scaling).
 3. Backup Postgres tự động + kiểm thử phục hồi; kế hoạch rollback từng giai đoạn.
 
-## 4. Ước lượng tài nguyên (thô — cần k6 xác nhận)
+## 4. Ước lượng tài nguyên (thô — cần k6 xác nhận, đã cập nhật cho mục tiêu 50k)
 
-- **App**: giả định ~1.500–3.000 req đang bay đồng thời. Mỗi Node instance IO-bound gánh ~1–2k kết nối → cần **~8–16 vCPU** tổng cho tầng app (vd 2–4 máy 4 vCPU), có headroom.
-- **Redis**: 1 node (HA nếu cần) — tải rate limit + cache nhẹ với RAM.
-- **Postgres**: 1 primary khoẻ (4–8 vCPU) + 1 replica; PgBouncer gom kết nối.
-- **AI/chi phí**: **ràng buộc lớn nhất** — phải chốt ngân sách/ngày. Cache + queue để chặn trần.
+- **App**: 50k concurrent → ước ~2.500–4.500 req đang bay đồng thời (x1,67 so với ước lượng 30k
+  cũ). Mỗi Node instance IO-bound gánh ~1–2k kết nối → cần **~14–27 vCPU** tổng cho tầng app.
+- **Redis**: 1 node (cân nhắc thêm replica nếu ngân sách cho phép) — tải rate limit + cache.
+- **Postgres**: 1 primary khoẻ (6–8+ vCPU) + 1 replica; PgBouncer gom kết nối — tải tăng so với
+  30k, cần đo thật qua k6 trước khi chốt spec máy.
+- **AI/chi phí**: **ràng buộc lớn nhất**, càng găng hơn ở 50k. Cache + queue là BẮT BUỘC, không
+  còn là "nên làm" — thiếu chúng, chi phí AI ở quy mô 50k gần như chắc chắn vượt trần $1,67/user.
+
+### 4.1 Ngân sách $2.000/tháng có đủ cho 50k không? (đánh giá 2026-07-25)
+
+**Rất eo hẹp — chỉ khả thi nếu tự host toàn bộ (self-host), không dùng managed service cao cấp.**
+Lý do:
+
+- Riêng tầng app đã cần ~14–27 vCPU — tương đương 3–6 VPS cỡ trung (4–8 vCPU/máy) ở nhà cung cấp
+  giá rẻ (Hetzner/Vultr/DigitalOcean cỡ $40–80/máy/tháng) → **~$150–450/tháng** chỉ cho tầng app.
+- Postgres tự host (primary + replica, máy riêng khỏi VPS dùng chung hiện tại) → **~$150–300/tháng**
+  tự host; managed (Neon/RDS cỡ tương đương) có thể **gấp 2–4 lần** con số này ở mức tải 50k.
+- Redis tự host: **~$20–60/tháng**; managed (Upstash) tính theo lượt gọi — có thể rẻ hơn ở tải
+  vừa nhưng cần ước lượng kỹ ở 50k (rate limit + cache gọi rất nhiều lần/giây).
+- Load balancer + Nginx: dùng LB của nhà cung cấp (~$10–20/tháng) hoặc thêm 1 VPS nhỏ.
+- CDN/object storage cho audio TTS (Cloudflare R2): egress rẻ/miễn phí phần lớn — không đáng kể.
+
+**Tổng tự host ước tính: ~$350–850/tháng** cho hạ tầng lõi — **nằm trong ngân sách $2.000/tháng**,
+còn dư cho dự phòng/tăng trưởng. Nhưng nếu chọn managed service (Neon/Upstash/RDS tier cao, K8s
+managed...) ở quy mô 50k, **rất dễ vượt $2.000/tháng chỉ riêng phần DB+cache**, chưa tính app.
+
+**Hệ quả cho quyết định 5.2 (nền tảng deploy):** ngân sách này **gần như ép chọn tự host VPS**
+(mở rộng từ VPS hiện có, không chuyển sang managed cao cấp) để nằm trong $2.000/tháng — đổi lại
+gánh thêm công vận hành (patch OS, backup thủ công, HA tự dựng). Đây là khuyến nghị, cần bạn xác
+nhận trước khi thiết kế chi tiết GĐ2.
 
 ## 5. Rủi ro & điểm cần bạn quyết
 
-1. **Ngân sách hạ tầng + AI/tháng** — 30k concurrent là quy mô tốn kém; dự án đang "miễn phí cộng đồng". Cần con số trần.
-2. **Nền tảng deploy**: giữ VPS thủ công (Nginx+PM2) hay chuyển container/managed (Neon/Upstash/Fly/K8s)? Ảnh hưởng toàn bộ cách làm GĐ1–2.
-3. **Tự host hay thuê quản lý** Postgres/Redis (đánh đổi công sức vận hành vs chi phí).
-4. Cluster mode từng crash — GĐ1 bước build TS→JS là cách gỡ đã phân tích, cần thực nghiệm lại cẩn thận.
+1. ~~**Ngân sách hạ tầng + AI/tháng**~~ **ĐÃ CHỐT (2026-07-25, xem mục 5.1 dưới)**.
+2. **Nền tảng deploy**: giữ VPS thủ công (Nginx+PM2) hay chuyển container/managed (Neon/Upstash/Fly/K8s)? Ảnh hưởng toàn bộ cách làm GĐ1–2. **Vẫn CHƯA chốt** — GĐ1 đã làm trên nền VPS thủ công hiện có (chưa cần quyết định này), nhưng GĐ2 (PgBouncer/read-replica) cần chốt trước khi làm.
+3. **Tự host hay thuê quản lý** Postgres/Redis (đánh đổi công sức vận hành vs chi phí). Chưa chốt.
+4. Cluster mode từng crash — **ĐÃ LÀM GĐ1** (PR #321), đang vá thêm 1 lỗi phát hiện qua log deploy thật (PR #322, xem PROGRESS.md).
+
+### 5.1 Ngân sách (CHỐT 2026-07-25, quy mô nâng lên 50k cùng ngày)
+
+- **Hạ tầng: $2.000/tháng**, tính cho quy mô **tối đa 50.000 concurrent** (không phải mức khởi
+  động rồi tăng dần) — đây là ràng buộc CỨNG cho thiết kế GĐ2 (Postgres/Redis/LB): phải chọn
+  giải pháp vừa túi tiền này ở tải đỉnh, không phải "cứ dùng managed service tốt nhất rồi tính
+  sau". Xem đánh giá chi tiết ở mục 4.1 — **khả thi nếu tự host, eo hẹp/khó khả thi nếu managed
+  cao cấp**.
+- **AI: trần ≤ 1/3 doanh thu gói Pro dự kiến ($5/tháng/user) = ~$1,67/user/tháng.** Đây là thay
+  đổi mô hình sản phẩm quan trọng: **đảo ngược quyết định 2026-07-11** ("dự án dùng MIỄN PHÍ cho
+  cộng đồng — KHÔNG làm thanh toán Pro tới khi người dùng chủ động yêu cầu lại", xem CLAUDE.md
+  mục 13 + PROGRESS.md mục "Việc còn dang dở" #3). Người dùng dự án đã chủ động yêu cầu lại
+  (2026-07-25) — nhưng **thanh toán là 1 trong các việc CLAUDE.md mục 12 bắt buộc dừng lại hỏi
+  trước khi làm** ("đụng bảo mật, thanh toán, dữ liệu người dùng thật"). Việc thi hành gói Pro
+  $5/tháng (chọn cổng thanh toán, schema, luồng nâng/hạ cấp, thuế/hoá đơn nếu có...) là **một dự
+  án riêng, cần đặc tả riêng** — KHÔNG nằm trong phạm vi kế hoạch scale 30k concurrent này. Kế
+  hoạch này chỉ DÙNG con số $1,67/user/tháng làm trần thiết kế cho GĐ3 (cache/queue/circuit
+  breaker chi phí AI), không tự ý triển khai thu phí.
 
 ## 6. Đề xuất bắt đầu
 
-Làm **GĐ 1** trước (đa tiến trình + Redis rate limit) vì nó là nền cho mọi bước và rủi ro thấp,
-đo được ngay. Nhưng **trước GĐ1 cần bạn chốt mục 5.1 (ngân sách) và 5.2 (nền tảng deploy)** —
-hai quyết định này định hình cách triển khai.
+**GĐ 1 đã xong** (PR #321 merged, PR #322 đang vá 1 lỗi phát hiện qua log deploy thật — xem
+PROGRESS.md). Ngân sách (5.1) đã chốt. Còn thiếu trước khi làm GĐ2: chốt mục 5.2 (nền tảng
+deploy Postgres/Redis) — so sánh chi phí cụ thể trong ngân sách $2.000/tháng. Việc thu phí Pro
+(để hiện thực hoá trần ngân sách AI 5.1) là việc riêng, cần bạn xác nhận có muốn bắt đầu đặc tả
+tính năng đó ngay bây giờ hay để sau khi xong hạ tầng scale.
