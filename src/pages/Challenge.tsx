@@ -9,6 +9,8 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import Celebration from '../components/Celebration'
 import LeagueSection from '../components/LeagueSection'
+import ShareResultCard from '../components/ShareResultCard'
+import { buildChallengeShareContent } from '../lib/shareContent'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/ToastProvider'
 import { useApiThrottle } from '../lib/useApiThrottle'
@@ -708,6 +710,7 @@ export default function Challenge() {
                 />
               </div>
             )}
+            <ShareResultCard {...buildChallengeShareContent(weekStats, isA)} isA={isA} />
           </div>
         )}
 

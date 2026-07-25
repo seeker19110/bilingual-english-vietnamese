@@ -633,8 +633,8 @@ export default function Chat() {
             {limitHit && (
               <div className="text-center text-xs text-amber-400 theme-light:text-amber-800 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
                 {isA
-                  ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai hoặc nâng cấp lên Pro.'
-                  : "You've used all your sessions today. Come back tomorrow or upgrade to Pro."}
+                  ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai nhé!'
+                  : "You've used all your sessions today. Come back tomorrow!"}
               </div>
             )}
             <div ref={bottomRef} />

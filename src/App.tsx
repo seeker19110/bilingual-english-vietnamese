@@ -8,11 +8,14 @@ import { useAuth } from './context/useAuth'
 import { CardListSkeleton } from './components/Skeleton'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import BottomNav from './components/BottomNav'
+import PromoEndingBanner from './components/PromoEndingBanner'
 import { lazyWithRetry } from './lib/lazyWithRetry'
 import { refreshAppSettings } from './lib/appSettings'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
 // (thường do app vừa deploy bản mới, chunk cũ không còn) thay vì sập trang.
 const Login = lazyWithRetry(() => import('./pages/Login'))
+// Trang landing công khai (không cần đăng nhập) — điểm đến cho link quảng cáo TikTok/Facebook/SEO.
+const Landing = lazyWithRetry(() => import('./pages/Landing'))
 const Home = lazyWithRetry(() => import('./pages/Home'))
 const Chat = lazyWithRetry(() => import('./pages/Chat'))
 const Writing = lazyWithRetry(() => import('./pages/Writing'))
@@ -44,6 +47,7 @@ const CefrLevelPage = lazyWithRetry(() => import('./pages/CefrLevelPage'))
 // Trang cấu hình hạn mức/khuyến mãi — chỉ admin (ADMIN_EMAILS) dùng được, lazy-load vì
 // hiếm khi truy cập.
 const AdminSettings = lazyWithRetry(() => import('./pages/AdminSettings'))
+const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'))
 
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
 // Hiện khung skeleton nhấp nháy thay vì chữ trơ, đỡ cảm giác đơ.
@@ -63,7 +67,14 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   if (loading) return <PageLoading />
   if (!user) return <Navigate to="/login" replace />
   if (!user.onboarded) return <Navigate to="/onboarding" replace />
-  return <>{children}</>
+  return (
+    <>
+      {/* Chỉ hiện cho user đã đăng nhập + đã onboard — banner báo trước sắp hết
+          khuyến mãi, không cần thiết ở landing/login/onboarding. */}
+      <PromoEndingBanner />
+      {children}
+    </>
+  )
 }
 
 // Cập nhật thẻ <link rel="canonical"> theo route hiện tại để tránh lỗi SEO
@@ -140,6 +151,8 @@ export default function App() {
                 <Suspense fallback={<PageLoading />}>
                   <Routes>
                     <Route path="/login" element={<Login />} />
+                    {/* Công khai, KHÔNG bọc RequireAuth — vào được khi chưa đăng nhập */}
+                    <Route path="/welcome" element={<Landing />} />
                     <Route path="/onboarding" element={<Onboarding />} />
                     <Route path="/placement" element={<Placement />} />
                     <Route
@@ -235,6 +248,14 @@ export default function App() {
                       element={
                         <RequireAuth>
                           <AdminSettings />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/admin"
+                      element={
+                        <RequireAuth>
+                          <AdminDashboard />
                         </RequireAuth>
                       }
                     />
