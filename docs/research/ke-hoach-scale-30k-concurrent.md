@@ -135,8 +135,12 @@ nhận trước khi thiết kế chi tiết GĐ2.
 ## 5. Rủi ro & điểm cần bạn quyết
 
 1. ~~**Ngân sách hạ tầng + AI/tháng**~~ **ĐÃ CHỐT (2026-07-25, xem mục 5.1 dưới)**.
-2. **Nền tảng deploy**: giữ VPS thủ công (Nginx+PM2) hay chuyển container/managed (Neon/Upstash/Fly/K8s)? Ảnh hưởng toàn bộ cách làm GĐ1–2. **Vẫn CHƯA chốt** — GĐ1 đã làm trên nền VPS thủ công hiện có (chưa cần quyết định này), nhưng GĐ2 (PgBouncer/read-replica) cần chốt trước khi làm.
-3. **Tự host hay thuê quản lý** Postgres/Redis (đánh đổi công sức vận hành vs chi phí). Chưa chốt.
+2. ~~**Nền tảng deploy**~~ **ĐÃ CHỐT (2026-07-25): TỰ HOST** — giữ VPS thủ công (Nginx+PM2), mở
+   rộng thêm máy khi cần thay vì chuyển sang managed/container platform. Đúng như khuyến nghị ở
+   mục 4.1 (managed cao cấp dễ vượt ngân sách $2.000/tháng ở quy mô 50k). GĐ2 (PgBouncer/
+   read-replica/thêm VPS) sẽ thiết kế theo hướng tự host thuê thêm VPS giá rẻ (Hetzner/Vultr/
+   DigitalOcean cỡ trung), KHÔNG dùng Neon/Upstash/RDS/K8s managed.
+3. ~~**Tự host hay thuê quản lý** Postgres/Redis~~ **ĐÃ CHỐT cùng mục 5.2 — tự host cả hai.**
 4. Cluster mode từng crash — **ĐÃ LÀM GĐ1** (PR #321), đang vá thêm 1 lỗi phát hiện qua log deploy thật (PR #322, xem PROGRESS.md).
 
 ### 5.1 Ngân sách (CHỐT 2026-07-25, quy mô nâng lên 50k cùng ngày)
