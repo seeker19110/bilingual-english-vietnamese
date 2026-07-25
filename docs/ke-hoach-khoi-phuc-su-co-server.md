@@ -1,6 +1,7 @@
 # Kế hoạch khôi phục hoạt động server sau sự cố (Incident Recovery Plan)
 
 > File này trả lời câu hỏi **"server sập/gặp sự cố thì làm gì, theo thứ tự nào"** — khác với:
+>
 > - `docs/DEPLOY.md` — deploy code mới + fix nhanh vài lỗi phổ biến (502, port bận...).
 > - `docs/rollback-runbook.md` — rollback **cấu hình** khi 1 PR/thay đổi cụ thể gây lỗi.
 >
@@ -13,18 +14,18 @@
 
 ## 0. Thông tin cần có sẵn (điền trước, đừng tìm lúc đang sập)
 
-| Mục                  | Giá trị                                                          |
-| -------------------- | ----------------------------------------------------------------- |
-| VPS IP                | `160.30.172.203`                                                  |
-| Domain                | `en-vi.donghanhcungban.com`                                       |
-| Thư mục app           | `/var/www/english-tutor`                                          |
-| PM2 process           | `english-tutor` (port **3001** — port 3000 là app khác "xboss")   |
-| Health check          | `curl https://en-vi.donghanhcungban.com/api/health`               |
-| Database              | PostgreSQL tự host, db `english_tutor`, user `tutor_app`           |
-| Backup DB             | `/var/backups/english_tutor_YYYYMMDD.sql.gz` (cron 3h sáng, giữ 7 bản) |
-| Audio storage         | `STORAGE_DRIVER` — `local` (`uploads/` trên VPS) hoặc `r2` (Cloudflare R2) — kiểm tra `.env` VPS |
-| Nhà cung cấp VPS/domain | _(điền: tên nhà cung cấp, cách đăng nhập control panel để restart VPS nếu SSH không vào được)_ |
-| Người liên hệ khẩn    | _(điền: SĐT/email người quản trị dự phòng nếu không phải chỉ 1 người)_ |
+| Mục                     | Giá trị                                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------------------ |
+| VPS IP                  | `160.30.172.203`                                                                                 |
+| Domain                  | `en-vi.donghanhcungban.com`                                                                      |
+| Thư mục app             | `/var/www/english-tutor`                                                                         |
+| PM2 process             | `english-tutor` (port **3001** — port 3000 là app khác "xboss")                                  |
+| Health check            | `curl https://en-vi.donghanhcungban.com/api/health`                                              |
+| Database                | PostgreSQL tự host, db `english_tutor`, user `tutor_app`                                         |
+| Backup DB               | `/var/backups/english_tutor_YYYYMMDD.sql.gz` (cron 3h sáng, giữ 7 bản)                           |
+| Audio storage           | `STORAGE_DRIVER` — `local` (`uploads/` trên VPS) hoặc `r2` (Cloudflare R2) — kiểm tra `.env` VPS |
+| Nhà cung cấp VPS/domain | _(điền: tên nhà cung cấp, cách đăng nhập control panel để restart VPS nếu SSH không vào được)_   |
+| Người liên hệ khẩn      | _(điền: SĐT/email người quản trị dự phòng nếu không phải chỉ 1 người)_                           |
 
 > ⚠️ **Việc cần làm ngay (không thuộc phần code):** điền 2 dòng cuối bảng trên — kế hoạch này vô
 > dụng nếu không vào được VPS lúc sập và chỉ có 1 người biết cách xử lý.
@@ -76,17 +77,17 @@ sudo systemctl status nginx
 
 Dựa vào kết quả, đi tới đúng kịch bản ở **Phần 3**:
 
-| Triệu chứng                                                        | → Kịch bản |
-| -------------------------------------------------------------------- | ---------- |
-| `curl health` timeout/refused, SSH **không** vào được                | 3.1 VPS không phản hồi |
-| SSH vào được, `pm2 status` báo `errored`/`stopped`/restart liên tục   | 3.2 App (PM2) crash |
-| `df -h /` báo `100%` hoặc gần đầy                                     | 3.3 Hết dung lượng ổ đĩa |
-| `psql -c "SELECT 1"` lỗi, hoặc log báo `ECONNREFUSED`/`too many connections` tới Postgres | 3.4 Database lỗi/không kết nối được |
-| App chạy, health OK, nhưng **dữ liệu sai/thiếu** (mất bài học, mất lịch sử...) | 3.5 Mất/hỏng dữ liệu — cần restore backup |
-| Trình duyệt báo cảnh báo SSL / chứng chỉ hết hạn                      | 3.6 SSL hết hạn |
-| Site load được nhưng cực chậm, hoặc log có traffic bất thường tăng vọt | 3.7 Quá tải / nghi bị tấn công (DDoS) |
-| Nghi có truy cập trái phép (log lạ, file lạ, tài khoản lạ)             | 3.8 Nghi bị xâm nhập bảo mật |
-| Deploy mới nhất gây lỗi (biết rõ do PR nào)                            | → dùng `docs/rollback-runbook.md` thay vì file này |
+| Triệu chứng                                                                               | → Kịch bản                                         |
+| ----------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `curl health` timeout/refused, SSH **không** vào được                                     | 3.1 VPS không phản hồi                             |
+| SSH vào được, `pm2 status` báo `errored`/`stopped`/restart liên tục                       | 3.2 App (PM2) crash                                |
+| `df -h /` báo `100%` hoặc gần đầy                                                         | 3.3 Hết dung lượng ổ đĩa                           |
+| `psql -c "SELECT 1"` lỗi, hoặc log báo `ECONNREFUSED`/`too many connections` tới Postgres | 3.4 Database lỗi/không kết nối được                |
+| App chạy, health OK, nhưng **dữ liệu sai/thiếu** (mất bài học, mất lịch sử...)            | 3.5 Mất/hỏng dữ liệu — cần restore backup          |
+| Trình duyệt báo cảnh báo SSL / chứng chỉ hết hạn                                          | 3.6 SSL hết hạn                                    |
+| Site load được nhưng cực chậm, hoặc log có traffic bất thường tăng vọt                    | 3.7 Quá tải / nghi bị tấn công (DDoS)              |
+| Nghi có truy cập trái phép (log lạ, file lạ, tài khoản lạ)                                | 3.8 Nghi bị xâm nhập bảo mật                       |
+| Deploy mới nhất gây lỗi (biết rõ do PR nào)                                               | → dùng `docs/rollback-runbook.md` thay vì file này |
 
 ---
 
@@ -98,6 +99,7 @@ Dựa vào kết quả, đi tới đúng kịch bản ở **Phần 3**:
 khiến kernel không phản hồi SSH.
 
 **Xử lý:**
+
 1. Vào **control panel của nhà cung cấp VPS** (không qua SSH) — kiểm tra trạng thái máy (đang
    chạy/đã tắt), xem có cảnh báo (quá tải, vi phạm chính sách...) không.
 2. Nếu máy hiện "đang chạy" nhưng SSH vẫn không vào: dùng chức năng **console/VNC** của nhà cung
@@ -106,7 +108,7 @@ khiến kernel không phản hồi SSH.
 4. Sau khi VPS lên lại: SSH vào, chạy chẩn đoán Phần 2 lại từ đầu — PM2 thường **tự khởi động
    lại** app nếu đã chạy `pm2 startup` + `pm2 save` trước đó (kiểm tra: `pm2 status`; nếu app
    không tự lên, chạy `pm2 resurrect` hoặc `cd /var/www/english-tutor && pm2 start
-   ecosystem.config.cjs`).
+ecosystem.config.cjs`).
 5. Nếu nguyên nhân là **hết RAM** (kiểm tra `dmesg | grep -i "out of memory"` sau khi vào lại
    được) → xem thêm mục 3.7 (quá tải).
 
@@ -160,6 +162,7 @@ du -sh /root/.pm2/logs/* 2>/dev/null | sort -rh | head -10
 ```
 
 **Dọn theo thứ tự ưu tiên (an toàn → rủi ro tăng dần):**
+
 1. Log PM2 cũ (an toàn, tự sinh lại): `pm2 flush` (xoá log hiện tại) — vốn đã có
    `pm2-logrotate` (giới hạn 10MB/file, giữ 7 bản) nên nếu vẫn đầy → kiểm tra
    `pm2 conf pm2-logrotate` xem có bị tắt/đổi cấu hình không.
@@ -234,6 +237,7 @@ curl http://localhost:3001/api/health
 ```
 
 **Lưu ý quan trọng:**
+
 - Backup chạy **hàng ngày 3h sáng**, giữ 7 bản → dữ liệu mất **tối đa gần 24h** kể từ lần backup
   gần nhất (không phải real-time). Nếu cần khôi phục sát thời điểm sự cố hơn, không có cách nào
   khác ngoài backup gần nhất — đây là giới hạn đã biết (RPO ~24h), cân nhắc backup thường xuyên
@@ -282,6 +286,7 @@ sudo tail -n 5000 /var/log/nginx/access.log | awk '{print $1}' | sort | uniq -c 
 từ IP không quen, `crontab` có dòng lạ.
 
 **Xử lý (ưu tiên ngăn chặn trước, điều tra sau):**
+
 1. **Đổi ngay mọi secret** có khả năng đã lộ: mật khẩu Postgres (`tutor_app`), `JWT_SECRET`/khoá
    ký token trong `.env`, API key AI (Claude/Groq/OpenAI/Google TTS) — thu hồi key cũ ở nhà cung
    cấp, tạo key mới, cập nhật `.env`, `pm2 restart english-tutor --update-env`.
@@ -310,7 +315,7 @@ Không coi là "xong" cho tới khi đủ:
 - [ ] Nếu vừa restore DB: kiểm tra vài bản ghi gần nhất còn đúng không (không chỉ chạy được, mà
       dữ liệu đúng)
 - [ ] Nếu vừa đổi secret (mục 3.8): xác nhận `.env` VPS đã cập nhật VÀ đã `pm2 restart
-      --update-env` (PM2 không tự đọc lại `.env` khi chỉ sửa file)
+--update-env` (PM2 không tự đọc lại `.env` khi chỉ sửa file)
 
 ---
 
