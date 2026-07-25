@@ -87,17 +87,34 @@ Mục tiêu: gỡ nút thắt #5 — quan trọng nhất về tiền.
 
 ### GĐ 4 — Quan sát & kiểm chứng tải
 
-1. Bật **Sentry** (đang nợ — chỉ cần điền DSN) + metrics (Prometheus/Grafana hoặc APM sẵn có).
-2. **Load test k6**: kịch bản 30k VU (virtual users) mô phỏng nhịp thao tác thật; tìm trần thật từng tầng.
+1. Bật **Sentry** (đang nợ — chỉ cần điền DSN, **cần người dùng tự làm**: AI không có tài
+   khoản sentry.io để tạo DSN) + metrics (Prometheus/Grafana hoặc APM sẵn có).
+2. **Load test k6**: đã có kịch bản khởi điểm `scripts/load-test/k6-baseline.js`
+   (`npm run loadtest:k6`, cần cài k6 binary + set `BASE_URL`) — test 2 route nhẹ (health +
+   dictionary), ramp thận trọng từ `VU_TARGET` thấp (mặc định 100, tăng dần qua nhiều lần chạy,
+   KHÔNG nhảy thẳng lên 50k). Kịch bản đủ cho luồng có đăng nhập + gọi AI thật (chat/speaking/
+   stt) CHƯA viết — tốn tiền thật mỗi request, cần ngân sách test riêng, làm sau.
 3. Alert theo p95 latency, tỷ lệ lỗi, độ sâu queue, chi phí AI.
 
-**DoD GĐ4:** k6 30k VU đạt p95 < mục tiêu, tỷ lệ lỗi < 1%, không sập tầng nào.
+**DoD GĐ4:** k6 50k VU đạt p95 < mục tiêu, tỷ lệ lỗi < 1%, không sập tầng nào. **Chạy k6 là việc
+người dùng tự thực hiện** (nhắm vào staging hoặc production thật ở giờ ít traffic) — AI chỉ
+chuẩn bị kịch bản, không tự chạy load test nhắm vào production được (rủi ro làm sập dịch vụ
+đang phục vụ người dùng thật, cần người quyết định thời điểm).
 
 ### GĐ 5 — Vận hành & dự phòng
 
-1. Nginx/LB **≥ 2 máy** (bỏ single point of failure), health check tự loại instance chết.
-2. Auto-restart + auto-scale (nếu dùng container/K8s hoặc VPS scaling).
-3. Backup Postgres tự động + kiểm thử phục hồi; kế hoạch rollback từng giai đoạn.
+1. Nginx/LB **≥ 2 máy** (bỏ single point of failure), health check tự loại instance chết. **CẦN
+   MUA MÁY MỚI (Phần B, người dùng tự làm)** — chưa thực hiện được trong sandbox này.
+2. Auto-restart: **ĐÃ CÓ SẴN** (`ecosystem.config.cjs` — `restart_delay`/`max_restarts`/
+   `min_uptime`, PM2 tự khởi động lại khi crash). Auto-scale (container/K8s/VPS scaling theo
+   traffic): chưa làm, phụ thuộc quyết định 5.2 (đã chốt tự host VPS thường — auto-scale kiểu
+   này thường cần thêm công cụ giám sát + script riêng, ưu tiên thấp hơn LB/backup).
+3. Backup Postgres: **tự động ĐÃ CÓ SẴN** (`docs/setup-postgresql-vps.md` mục 7, cron `pg_dump`
+   hàng ngày). **Kiểm thử phục hồi: ĐÃ THÊM** `scripts/verify-pg-backup.sh` (mục 7.1 cùng doc) —
+   restore vào database tạm + kiểm tra dữ liệu, khuyến nghị chạy cron hàng tuần. Kế hoạch
+   rollback từng giai đoạn: đã có sẵn rải rác trong từng PR (GĐ1: rollback fork mode ghi trong
+   `ecosystem.config.cjs`; GĐ2: rollback giữ `.env` cũ trong runbook) — chưa gom thành 1 tài
+   liệu riêng, có thể làm nếu cần.
 
 ## 4. Ước lượng tài nguyên (thô — cần k6 xác nhận, đã cập nhật cho mục tiêu 50k)
 

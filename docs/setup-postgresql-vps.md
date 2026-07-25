@@ -82,6 +82,26 @@ sudo -u postgres crontab -e
 > `/var/backups` cần tồn tại và ghi được bởi user `postgres`:
 > `sudo mkdir -p /var/backups && sudo chown postgres:postgres /var/backups`.
 
+### 7.1 Kiểm thử phục hồi (BẮT BUỘC — GĐ5 kế hoạch scale, xem PROGRESS.md)
+
+Có backup KHÔNG có nghĩa là backup DÙNG ĐƯỢC — file có thể hỏng mà không ai biết cho tới lúc
+thật sự cần khôi phục. Chạy `scripts/verify-pg-backup.sh` (restore vào database TẠM, kiểm tra
+vài bảng cốt lõi có dữ liệu, rồi tự xoá database tạm — an toàn, không đụng dữ liệu thật):
+
+```bash
+bash scripts/verify-pg-backup.sh                              # tự tìm backup mới nhất
+bash scripts/verify-pg-backup.sh /var/backups/english_tutor_20260725.sql.gz  # chỉ định file
+```
+
+Nên thêm vào cron chạy **hàng tuần** (không cần hàng ngày — tốn tài nguyên hơn `pg_dump` vì
+phải restore thật), ghi log ra file để xem lại khi cần:
+
+```bash
+sudo -u postgres crontab -e
+# Thêm dòng (chạy 4h sáng Chủ nhật, sau giờ backup hàng ngày):
+0 4 * * 0 bash /var/www/english-tutor/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
+```
+
 ## 8. Xác nhận hoàn tất Giai đoạn A
 
 Báo lại kết quả các bước trên (đặc biệt bước 6 — `npm run migrate:pg` chạy thành
