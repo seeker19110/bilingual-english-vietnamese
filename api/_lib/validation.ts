@@ -31,8 +31,7 @@ export function validateBody<T>(schema: ZodType<T>, raw: unknown): ParseResult<T
   const result = schema.safeParse(raw)
   if (result.success) return { ok: true, data: result.data }
   const issue = result.error.issues[0] as
-    | { message: string; params?: { status?: number } }
-    | undefined
+    { message: string; params?: { status?: number } } | undefined
   const status = issue?.params?.status ?? 400
   return { ok: false, error: { status, message: issue?.message ?? 'Body không hợp lệ' } }
 }

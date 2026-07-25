@@ -37,10 +37,7 @@ const RESERVED_NAME_PHRASES = [
 
 // Bỏ dấu tiếng Việt — giống hệt stripDiacritics() ở api/_lib/leaderboard.ts.
 function stripDiacritics(s: string): string {
-  return s
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/đ/gi, 'd')
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd')
 }
 
 // Chuẩn hoá về chữ thường, bỏ dấu, gộp mọi ký tự không phải chữ/số thành 1 khoảng trắng — GIỮ

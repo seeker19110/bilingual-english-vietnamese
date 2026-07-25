@@ -59,8 +59,7 @@ export interface PlacementResult {
 }
 
 export type PlacementStep =
-  | { done: false; nextLevel: CefrId }
-  | { done: true; result: PlacementResult }
+  { done: false; nextLevel: CefrId } | { done: true; result: PlacementResult }
 
 // Ánh xạ CEFR → 3 mức trình độ app đang dùng (types.ts Level).
 export function cefrToAppLevel(id: CefrId): Level {
