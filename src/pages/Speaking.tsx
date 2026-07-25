@@ -1,6 +1,16 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Mic, MicOff, Volume2, VolumeX, ChevronDown, Plus, Send, Award } from 'lucide-react'
+import {
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
+  ChevronDown,
+  Plus,
+  Send,
+  Award,
+  Sparkles,
+} from 'lucide-react'
 import Layout from '../components/Layout'
 import RateToggle from '../components/RateToggle'
 import VoiceMenu from '../components/VoiceMenu'
@@ -512,6 +522,18 @@ export default function Speaking() {
     setPendingCountdown(0)
   }
 
+  // Nút "AI phản hồi" — nhờ AI chủ động gợi ý câu hỏi/chủ đề tiếp theo dựa trên
+  // câu trả lời gần nhất của nó, không cần học viên tự nói.
+  function requestAiFollowUp() {
+    if (!session || loading || isThrottled) return
+    void sendUserSpeech(
+      isA
+        ? 'Hãy chủ động gợi ý một câu hỏi hoặc chủ đề tiếp theo để mình tiếp tục hội thoại, dựa trên nội dung bạn vừa trả lời.'
+        : 'Please suggest a follow-up question or topic to continue our conversation, based on what you just said.',
+      true,
+    )
+  }
+
   // Dừng ghi âm server (chính) rồi gửi audio lên nhận diện. Gọi khi người dùng nhấn dừng
   // HOẶC khi quá thời lượng tối đa (recTimerRef).
   async function stopServerRecording() {
@@ -682,7 +704,9 @@ export default function Speaking() {
     stopRecRef.current = stop
   }
 
-  async function sendUserSpeech(text: string) {
+  // isSuggestionRequest: gọi từ nút "AI phản hồi" (gợi ý tiếp) — không ghi vào Sổ lỗi cá
+  // nhân vì đây là câu nhắc hệ thống, không phải học viên tự nói.
+  async function sendUserSpeech(text: string, isSuggestionRequest = false) {
     if (!session || loading) return
     if (isThrottled) {
       toast.error(
@@ -736,7 +760,7 @@ export default function Speaking() {
       saveSpeakingSession(final)
       setLastIdx(final.messages.length - 1)
       // Nếu AI có sửa lỗi → thu vào SỔ LỖI CÁ NHÂN (câu sai = câu học viên vừa nói).
-      if (ai.corrected?.trim() || ai.feedback?.trim()) {
+      if (!isSuggestionRequest && (ai.corrected?.trim() || ai.feedback?.trim())) {
         addMistake(user.id, {
           wrong: text,
           corrected: ai.corrected ?? '',
@@ -956,7 +980,7 @@ export default function Speaking() {
               )}
               {sttSupported ? (
                 <div className="flex flex-col items-center gap-3">
-                  <div className="flex items-center justify-between w-full max-w-xs">
+                  <div className="flex items-center justify-between w-full max-w-sm">
                     <button
                       onClick={() => {
                         stopSpeaking()
@@ -1026,6 +1050,16 @@ export default function Speaking() {
                       }`}
                     >
                       {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    </button>
+
+                    <button
+                      onClick={requestAiFollowUp}
+                      disabled={loading || limitHit || isThrottled || !!pendingConfirm}
+                      title={isA ? 'AI phản hồi (gợi ý tiếp)' : 'AI follow-up suggestion'}
+                      aria-label={isA ? 'AI phản hồi (gợi ý tiếp)' : 'AI follow-up suggestion'}
+                      className="tap-44 p-3 text-zinc-400 hover:text-amber-400 border border-zinc-800/80 hover:border-amber-500/50 rounded-xl transition hover:bg-zinc-800/50 disabled:opacity-40"
+                    >
+                      <Sparkles className="w-4 h-4" />
                     </button>
                   </div>
 
@@ -1114,6 +1148,15 @@ export default function Speaking() {
                       className={`tap-44 p-3 border rounded-xl transition shrink-0 ${muted ? 'text-zinc-400 border-zinc-800/80' : 'text-zinc-400 border-zinc-800/80 hover:border-zinc-700'}`}
                     >
                       {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    </button>
+                    <button
+                      onClick={requestAiFollowUp}
+                      disabled={loading || limitHit || isThrottled}
+                      title={isA ? 'AI phản hồi (gợi ý tiếp)' : 'AI follow-up suggestion'}
+                      aria-label={isA ? 'AI phản hồi (gợi ý tiếp)' : 'AI follow-up suggestion'}
+                      className="tap-44 p-3 text-zinc-400 hover:text-amber-400 border border-zinc-800/80 hover:border-amber-500/50 rounded-xl transition shrink-0 disabled:opacity-40"
+                    >
+                      <Sparkles className="w-4 h-4" />
                     </button>
                   </div>
                   <p className="text-center text-xs text-zinc-400">
