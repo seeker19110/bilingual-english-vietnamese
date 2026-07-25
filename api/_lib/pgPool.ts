@@ -16,7 +16,14 @@ export function getPgPool(): Pool {
     )
   }
 
-  cached = new Pool({ connectionString, max: 10 })
+  // PG_POOL_MAX cấu hình được qua .env (mặc định 10 — giữ nguyên hành vi cũ nếu không set).
+  // Khi tách Postgres ra VPS riêng + PgBouncer (GĐ2 kế hoạch scale, xem
+  // docs/research/dac-ta-gd2-scale-50k.md), tăng số này lên cho khớp default_pool_size của
+  // PgBouncer — không cần sửa code + build lại mỗi lần đổi.
+  const maxEnv = Number(process.env.PG_POOL_MAX)
+  const max = Number.isFinite(maxEnv) && maxEnv > 0 ? maxEnv : 10
+
+  cached = new Pool({ connectionString, max })
   cached.on('error', (err) => {
     // Lỗi kết nối idle (vd DB restart) — log, KHÔNG crash cả process.
     console.error('[pgPool] Lỗi kết nối idle:', err.message)
