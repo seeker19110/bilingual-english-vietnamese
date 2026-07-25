@@ -630,6 +630,20 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## ⚠️ Cần làm tay (không cần PR)
 
+- **Kế hoạch scale 50k concurrent (2026-07-25) — GĐ1-5 phần code/config/docs ĐÃ XONG
+  (PR #321-#326), còn lại là việc hạ tầng thật cần người dùng tự làm:**
+  1. **Mua thêm VPS** (khuyến nghị: tách Postgres/Redis ra 1 VPS riêng 6-8 vCPU trước tiên —
+     xem runbook `docs/deploy-vps-ubuntu.md` mục "GĐ2"), sau đó thêm 2-3 VPS app khi k6 xác
+     nhận cần (đo trước, đừng mua hết 1 lần).
+  2. **Chạy `bash scripts/verify-pg-backup.sh`** trên VPS ít nhất 1 lần để xác nhận backup
+     cron hiện có thật sự restore được (chưa từng kiểm chứng).
+  3. **Cài k6 + chạy `npm run loadtest:k6`** (`BASE_URL=... VU_TARGET=... k6 run
+scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_TARGET, KHÔNG
+     nhảy thẳng lên 50k. Đây là bước đo THẬT còn thiếu — mọi con số vCPU trong kế hoạch hiện
+     vẫn là ước lượng lý thuyết.
+  4. Xem `docs/rollback-runbook.md` nếu có sự cố khi triển khai các bước trên.
+  5. Xem `docs/research/ke-hoach-scale-30k-concurrent.md` (tên file cũ, nội dung đã cập nhật
+     mục tiêu 50k) để biết đầy đủ bối cảnh/ngân sách/quyết định đã chốt.
 - **Hạ tầng hạn dùng gói Pro/VIP (2026-07-24):** deploy kế tiếp cần `npm run migrate:pg` trên
   VPS để áp `postgres/migrations/0004_plan_expires_at.sql` (script deploy tự chạy, không cần
   làm tay riêng nếu deploy qua `scripts/deploy.sh` như bình thường). Cách cấp Pro/VIP thủ công
