@@ -13,6 +13,8 @@ import { refreshAppSettings } from './lib/appSettings'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
 // (thường do app vừa deploy bản mới, chunk cũ không còn) thay vì sập trang.
 const Login = lazyWithRetry(() => import('./pages/Login'))
+// Trang landing công khai (không cần đăng nhập) — điểm đến cho link quảng cáo TikTok/Facebook/SEO.
+const Landing = lazyWithRetry(() => import('./pages/Landing'))
 const Home = lazyWithRetry(() => import('./pages/Home'))
 const Chat = lazyWithRetry(() => import('./pages/Chat'))
 const Writing = lazyWithRetry(() => import('./pages/Writing'))
@@ -141,6 +143,8 @@ export default function App() {
                 <Suspense fallback={<PageLoading />}>
                   <Routes>
                     <Route path="/login" element={<Login />} />
+                    {/* Công khai, KHÔNG bọc RequireAuth — vào được khi chưa đăng nhập */}
+                    <Route path="/welcome" element={<Landing />} />
                     <Route path="/onboarding" element={<Onboarding />} />
                     <Route path="/placement" element={<Placement />} />
                     <Route

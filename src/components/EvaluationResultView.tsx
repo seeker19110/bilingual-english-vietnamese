@@ -1,5 +1,7 @@
 import { Trophy } from 'lucide-react'
 import type { Direction, EvaluationResult } from '../types'
+import ShareResultCard from './ShareResultCard'
+import { buildEvaluationShareContent } from '../lib/shareContent'
 
 // Thanh điểm 0–9 dùng chung — tách riêng vì Chat/Speaking đều cần (giống ScoreBar ở Writing.tsx
 // nhưng đặt ở component dùng chung để không lặp code giữa 2 trang).
@@ -139,6 +141,8 @@ export default function EvaluationResultView({
             </ul>
           </div>
         )}
+
+        <ShareResultCard {...buildEvaluationShareContent(evaluation, isA)} isA={isA} />
 
         <button
           onClick={onClose}
