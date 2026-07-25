@@ -1,7 +1,7 @@
 // api/_lib/security.ts — Middleware bảo mật dùng chung cho tất cả API endpoints
 // Import file này ở đầu mỗi handler để có CORS, rate limit, auth validation, v.v.
 
-import IORedis, { type Redis } from 'ioredis'
+import { Redis } from 'ioredis'
 import { validateSessionToken } from './authService'
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
@@ -101,7 +101,7 @@ function getRedis(): Redis | null {
   }
 
   try {
-    redisClient = new IORedis(url, {
+    redisClient = new Redis(url, {
       // Không thử lại vô hạn: request phải trả lời nhanh, hỏng thì rơi về Map.
       maxRetriesPerRequest: 1,
       enableOfflineQueue: false,
