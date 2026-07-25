@@ -7,16 +7,16 @@
 //   nộp lại trong ngày = ghi đè. Video KHÔNG bao giờ upload — chỉ text.
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { validateBody, readJsonBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { validateBody, readJsonBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const EntrySchema = z.object({
   day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),

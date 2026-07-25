@@ -2,9 +2,9 @@
 // /api/admin-settings (bảng public.app_settings, 1 dòng duy nhất id=1). Cache trong bộ
 // nhớ tiến trình (TTL ngắn) để không tra DB ở MỌI request tính lượt/giọng — usage.ts và
 // promo.ts nằm trên đường nóng nhất của app (gọi ở mọi request Chat/Speaking/TTS...).
-import { getPgPool } from './pgPool'
-import type { Plan } from './plan'
-import type { UsageMode } from './usage'
+import { getPgPool } from './pgPool.js'
+import type { Plan } from './plan.js'
+import type { UsageMode } from './usage.js'
 
 export interface AppSettings {
   limits: Record<Plan, Record<UsageMode, number>>

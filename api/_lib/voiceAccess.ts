@@ -8,10 +8,10 @@ import {
   STUDIO_VOICE_IDS,
   type VoiceId,
   type StudioVoiceId,
-} from './googleTts'
-import { ELEVEN_VOICE_IDS, type ElevenVoiceId } from './elevenLabsTts'
-import type { Plan } from './plan'
-import { effectivePlan } from './promo'
+} from './googleTts.js'
+import { ELEVEN_VOICE_IDS, type ElevenVoiceId } from './elevenLabsTts.js'
+import type { Plan } from './plan.js'
+import { effectivePlan } from './promo.js'
 
 // Gộp 3 nguồn giọng: Chirp3-HD (Google) + giọng đặc biệt ElevenLabs + giọng Studio
 // (Google Cloud TTS cao cấp, chỉ tiếng Anh).

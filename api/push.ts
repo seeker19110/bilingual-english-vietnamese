@@ -6,16 +6,16 @@
 
 import webpush from 'web-push'
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
-import { getCorsHeaders, SECURITY_HEADERS, validateAuth } from './_lib/security'
-import { validateBody } from './_lib/validation'
-import { vnDateStr, addDays } from './_lib/date'
+import { getPgPool } from './_lib/pgPool.js'
+import { getCorsHeaders, SECURITY_HEADERS, validateAuth } from './_lib/security.js'
+import { validateBody } from './_lib/validation.js'
+import { vnDateStr, addDays } from './_lib/date.js'
 import {
   pickReminderMessage,
   computeStreakAtRisk,
   computeWeeklyDaysDone,
   type ReminderMessage,
-} from './_lib/reminderContent'
+} from './_lib/reminderContent.js'
 
 // Chỉ validate phần `subscription` (bắt buộc + đúng kiểu dữ liệu) — action/remindHour/hour/secret
 // giữ nguyên cách kiểm tra tay hiện có (vốn đã an toàn: có typeof guard trước khi dùng).

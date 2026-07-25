@@ -14,17 +14,17 @@
 // api/_lib/leaderboard.ts. Client KHÔNG gửi điểm lên.
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { validateBody, readJsonBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
-import { vnDateStr } from './_lib/date'
+} from './_lib/security.js'
+import { validateBody, readJsonBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
+import { vnDateStr } from './_lib/date.js'
 import {
   currentWeekRange,
   computeWeeklyPoints,
@@ -34,7 +34,7 @@ import {
   type WeeklyUsageRow,
   type LeagueEntry,
   type RankedEntry,
-} from './_lib/leaderboard'
+} from './_lib/leaderboard.js'
 
 interface ProfileRow {
   id: string

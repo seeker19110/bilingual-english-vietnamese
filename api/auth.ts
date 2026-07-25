@@ -18,17 +18,17 @@ import {
   revokeSession,
   ensureProfileRow,
   getUserById,
-} from './_lib/authService'
-import type { Plan } from './_lib/plan'
+} from './_lib/authService.js'
+import type { Plan } from './_lib/plan.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { validateBody, readJsonBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { validateBody, readJsonBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const RegisterSchema = z.object({
   action: z.literal('register'),

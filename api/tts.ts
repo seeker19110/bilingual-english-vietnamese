@@ -21,7 +21,7 @@
 // Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
@@ -31,12 +31,12 @@ import {
   VOICE_VERSION,
   type Lang,
   type VoiceId,
-} from './_lib/googleTts'
-import { generateAudioFromElevenLabs, isValidElevenVoice } from './_lib/elevenLabsTts'
-import { ensureProfileRow } from './_lib/authService'
-import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess'
-import { saveAudio } from './_lib/fileStorage'
-import { encryptAudio, getClientKeyMaterial } from './_lib/ttsCrypto'
+} from './_lib/googleTts.js'
+import { generateAudioFromElevenLabs, isValidElevenVoice } from './_lib/elevenLabsTts.js'
+import { ensureProfileRow } from './_lib/authService.js'
+import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
+import { saveAudio } from './_lib/fileStorage.js'
+import { encryptAudio, getClientKeyMaterial } from './_lib/ttsCrypto.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -44,9 +44,9 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from './_lib/security'
-import { readJsonBody, validateBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { readJsonBody, validateBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
 

@@ -15,7 +15,7 @@
 //   http://localhost:5173/api/pronunciation?word=apple&voice=male
 // (vite.config.ts đã gắn middleware gọi thẳng handler này, không cần deploy lên Vercel).
 
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
@@ -27,19 +27,19 @@ import {
   VOICE_VERSION,
   type Lang,
   type VoiceId,
-} from './_lib/googleTts'
-import { saveAudio } from './_lib/fileStorage'
-import { ensureProfileRow } from './_lib/authService'
-import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess'
-import { isValidElevenVoice } from './_lib/elevenLabsTts'
+} from './_lib/googleTts.js'
+import { saveAudio } from './_lib/fileStorage.js'
+import { ensureProfileRow } from './_lib/authService.js'
+import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
+import { isValidElevenVoice } from './_lib/elevenLabsTts.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 // Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),
 // dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.). Ngăn ký tự lạ.

@@ -7,18 +7,18 @@
 // POST /api/profile  body { action: 'onboarding', level, goal, dailyMinutes }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
-import { ensureProfileRow } from './_lib/authService'
-import { resolvePlan } from './_lib/plan'
+import { getPgPool } from './_lib/pgPool.js'
+import { ensureProfileRow } from './_lib/authService.js'
+import { resolvePlan } from './_lib/plan.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { validateBody, readJsonBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { validateBody, readJsonBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const AGE_GROUPS = ['nhi_dong', 'thieu_nien', 'thanh_nien', 'nguoi_lon'] as const
 

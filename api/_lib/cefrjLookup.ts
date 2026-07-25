@@ -6,7 +6,7 @@
 // Tải từ: https://github.com/openlanguageprofiles/olp-en-cefrj
 // Tách logic thuần (không I/O) để test — scripts/tag-cefr-levels.ts lo đọc file CSV.
 
-import type { CefrWordLevel } from './cefrTagging'
+import type { CefrWordLevel } from './cefrTagging.js'
 
 const CEFR_LEVELS = new Set(['A1', 'A2', 'B1', 'B2', 'C1', 'C2'])
 

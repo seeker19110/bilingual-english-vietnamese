@@ -9,9 +9,14 @@
 //
 // GET /api/app-settings
 
-import { getAppSettings } from './_lib/settings'
-import { getCorsHeaders, SECURITY_HEADERS, checkRateLimit, logSecurityEvent } from './_lib/security'
-import { jsonResponse, getClientIp } from './_lib/http'
+import { getAppSettings } from './_lib/settings.js'
+import {
+  getCorsHeaders,
+  SECURITY_HEADERS,
+  checkRateLimit,
+  logSecurityEvent,
+} from './_lib/security.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }
