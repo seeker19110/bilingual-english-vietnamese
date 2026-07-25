@@ -36,6 +36,7 @@ const FAKE_SETTINGS_ROW = {
   vip_stt_limit: 1_000_000,
   vip_pronounce_limit: 1_000_000,
   promo_until: null as string | null,
+  ai_circuit_breaker: false,
   updated_at: '2026-01-01T00:00:00.000Z',
 }
 
@@ -47,6 +48,7 @@ function mockPool(opts: {
   consumeResult?: boolean
   queryError?: Error
   promoUntil?: string | null
+  aiCircuitBreaker?: boolean
 }) {
   const query = vi.fn(async (sql: string) => {
     if (opts.queryError) throw opts.queryError
@@ -55,7 +57,15 @@ function mockPool(opts: {
         rows: [{ plan: opts.plan ?? 'free', plan_expires_at: opts.planExpiresAt ?? null }],
       }
     if (sql.includes('from public.app_settings'))
-      return { rows: [{ ...FAKE_SETTINGS_ROW, promo_until: opts.promoUntil ?? null }] }
+      return {
+        rows: [
+          {
+            ...FAKE_SETTINGS_ROW,
+            promo_until: opts.promoUntil ?? null,
+            ai_circuit_breaker: opts.aiCircuitBreaker ?? false,
+          },
+        ],
+      }
     if (sql.includes('consume_usage'))
       return { rows: [{ consume_usage: opts.consumeResult ?? true }] }
     if (sql.includes('refund_usage')) return { rows: [] }
@@ -82,6 +92,14 @@ describe('checkAndConsumeUsage', () => {
   it('DB lỗi (query throw) → FAIL-OPEN (cho qua)', async () => {
     mockedGetPool.mockReturnValue(mockPool({ queryError: new Error('db down') }))
     expect(await checkAndConsumeUsage('u1', 'chat')).toEqual({ ok: true })
+  })
+
+  it('cầu dao AI bật → chặn ngay, không cần biết còn lượt hay không', async () => {
+    // consumeResult: true (rõ ràng còn lượt) nhưng vẫn phải chặn vì breaker bật trước.
+    mockedGetPool.mockReturnValue(mockPool({ aiCircuitBreaker: true, consumeResult: true }))
+    const r = await checkAndConsumeUsage('u1', 'chat')
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.message).toMatch(/bảo trì/i)
   })
 
   it('gói pro dùng giới hạn cao hơn (đọc đúng plan + truyền đúng limit)', async () => {

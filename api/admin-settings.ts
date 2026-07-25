@@ -36,6 +36,11 @@ const UpdateSchema = z.object({
     .string()
     .refine((v) => !Number.isNaN(new Date(v).getTime()), { error: 'promoUntil không hợp lệ' })
     .nullable(),
+  // Cầu dao khẩn cấp chặn toàn bộ lượt gọi AI — KHÔNG đặt .default() ở đây: client cũ (chưa
+  // có UI cho field này) sẽ không gửi lên, và nếu default về false thì MỖI LẦN admin lưu cấu
+  // hình khác (vd đổi hạn mức) sẽ vô tình bật lại AI dù trước đó đã chủ động tắt khẩn cấp. Xử
+  // lý "giữ nguyên giá trị cũ nếu client không gửi" ở handler bên dưới.
+  aiCircuitBreaker: z.boolean().optional(),
 })
 
 export default async function handler(req: Request): Promise<Response> {
@@ -72,6 +77,9 @@ export default async function handler(req: Request): Promise<Response> {
       return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
     }
     const { limits, promoUntil } = parsed.data
+    // Giữ nguyên giá trị cũ nếu client không gửi field này (xem comment ở UpdateSchema).
+    const aiCircuitBreaker =
+      parsed.data.aiCircuitBreaker ?? (await getAppSettings()).aiCircuitBreaker
 
     const pool = getPgPool()
     await pool.query(
@@ -82,7 +90,7 @@ export default async function handler(req: Request): Promise<Response> {
          pro_stt_limit = $9, pro_pronounce_limit = $10,
          vip_chat_limit = $11, vip_writing_limit = $12, vip_speaking_limit = $13,
          vip_stt_limit = $14, vip_pronounce_limit = $15,
-         promo_until = $16, updated_at = now()
+         promo_until = $16, ai_circuit_breaker = $17, updated_at = now()
        where id = 1`,
       [
         limits.free.chat,
@@ -101,6 +109,7 @@ export default async function handler(req: Request): Promise<Response> {
         limits.vip.stt,
         limits.vip.pronounce,
         promoUntil,
+        aiCircuitBreaker,
       ],
     )
     invalidateSettingsCache()

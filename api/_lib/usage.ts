@@ -38,6 +38,9 @@ function limitMessage(plan: Plan): string {
     : 'Hết lượt miễn phí hôm nay. Thử lại ngày mai hoặc nâng cấp gói Pro.'
 }
 
+const CIRCUIT_BREAKER_MESSAGE =
+  'Hệ thống AI đang tạm dừng để bảo trì. Vui lòng thử lại sau ít phút.'
+
 // Kiểm tra còn lượt không + tăng 1 (authoritative). FAIL-OPEN khi lỗi hạ tầng.
 export async function checkAndConsumeUsage(
   userId: string,
@@ -47,6 +50,14 @@ export async function checkAndConsumeUsage(
     const pool = getPgPool()
     const day = today()
     const col = COLUMN[mode]
+
+    // Cầu dao khẩn cấp (admin bật qua /api/admin-settings khi phát hiện chi phí AI bất
+    // thường) — chặn NGAY, trước khi động vào bảng daily_usage, không phân biệt gói/hạn mức.
+    // Xem postgres/migrations/0005_ai_circuit_breaker.sql.
+    const { aiCircuitBreaker } = await getAppSettings()
+    if (aiCircuitBreaker) {
+      return { ok: false, message: CIRCUIT_BREAKER_MESSAGE }
+    }
 
     // Gói của user (mặc định 'free' nếu chưa có hồ sơ; Pro/VIP đã hết hạn → coi như free)
     const { rows: profileRows } = await pool.query<{ plan: string; plan_expires_at: Date | null }>(
