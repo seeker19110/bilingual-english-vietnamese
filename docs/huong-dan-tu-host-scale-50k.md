@@ -31,14 +31,30 @@ Nếu chưa tick hết — DỪNG, làm xong các mục trên trước.
                           │
               ┌───────────┴───────────┐
               │                       │
-   VPS DB/Redis MỚI (mục 2-6)    Cloudflare R2 (audio TTS — mục 7, tuỳ chọn)
+   VPS DB/Redis MỚI (mục 2-6)    Cloudflare R2 (audio TTS)
    ├─ PostgreSQL + PgBouncer
    └─ Redis
 ```
 
 **Thứ tự làm:** DB/Redis trước (mục 2-6) vì đây là nút thắt rõ ràng nhất đã xác nhận qua log thật
-(VPS app hiện tại chỉ 1 vCPU — xem `PROGRESS.md`). Thêm VPS app / LB (mục 8) làm SAU, dựa vào số
-đo k6 thật (mục 9), không làm trước khi có số liệu.
+(VPS app hiện tại chỉ 1 vCPU — xem `PROGRESS.md`). Thêm VPS app / LB (mục 11) làm SAU, dựa vào số
+đo k6 thật (mục 10), không làm trước khi có số liệu.
+
+> ✅ **R2 đã bật và xác nhận hoạt động trên production từ 2026-07-20**
+> (`docs/migration-thoat-ly-supabase.md` mục 10 — `STORAGE_DRIVER=r2` đã set trên VPS, audio
+> mới tự động lên R2). Đây LÀ điều kiện tiên quyết cho mục 11 (thêm VPS app thứ 2) — nếu quay
+> lại `STORAGE_DRIVER=local`, 2 VPS app sẽ có 2 cache KHÔNG đồng bộ (cache-miss trùng lặp, tốn
+> tiền AI gọi lại). **Việc còn sót lại (tuỳ chọn nhưng nên làm):** audio đã cache TỪ TRƯỚC khi
+> bật R2 vẫn còn nằm ở `uploads/` local trên VPS app — chưa xác nhận đã chạy đồng bộ nốt lên R2
+> (xem mục 10 bước 7 của `docs/migration-thoat-ly-supabase.md`):
+>
+> ```bash
+> STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2 --dry-run   # xem trước, không ghi gì
+> STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2              # chạy thật, an toàn chạy lại nhiều lần
+> ```
+>
+> Chạy xong, xác nhận qua Cloudflare Dashboard → R2 → bucket thấy đủ file, rồi mới cân nhắc dùng
+> menu `v` (`--verify-r2 --delete-verified`) để xoá file local lấy lại dung lượng ổ đĩa.
 
 ---
 
@@ -132,6 +148,9 @@ Trên VPS app, sửa `.env` (`nano /var/www/english-tutor/.env` hoặc tương �
 DATABASE_URL=postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:6432/english_tutor
 REDIS_URL=redis://:MẬT-KHẨU-REDIS@<ip-vps-db>:6379
 PG_POOL_MAX=20   # khớp default_pool_size trong pgbouncer.ini — xem comment file mẫu
+# Migration/DDL nối THẲNG Postgres (5432), KHÔNG qua PgBouncer (6432) — một số DDL (vd
+# CREATE INDEX CONCURRENTLY) không chạy được qua transaction pooling.
+MIGRATE_DATABASE_URL=postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:5432/english_tutor
 ```
 
 Reload app (KHÔNG cần deploy lại toàn bộ code, chỉ đổi `.env`):

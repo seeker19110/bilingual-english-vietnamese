@@ -46,6 +46,7 @@ import {
   logSecurityEvent,
 } from './_lib/security.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
+import { withConcurrencyLimit } from './_lib/concurrencyLimiter.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
@@ -223,11 +224,15 @@ export default async function handler(req: Request): Promise<Response> {
   let audioData: ArrayBuffer
   try {
     if (isValidElevenVoice(voice)) {
-      audioData = await generateAudioFromElevenLabs(text)
+      audioData = await withConcurrencyLimit('elevenlabs', () => generateAudioFromElevenLabs(text))
     } else if (isValidStudioVoice(voice)) {
-      audioData = await generateStudioAudioFromGoogle(text, voice)
+      audioData = await withConcurrencyLimit('google-tts-studio', () =>
+        generateStudioAudioFromGoogle(text, voice),
+      )
     } else {
-      audioData = await generateAudioFromGoogle(text, voice, lang)
+      audioData = await withConcurrencyLimit('google-tts', () =>
+        generateAudioFromGoogle(text, voice, lang),
+      )
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)

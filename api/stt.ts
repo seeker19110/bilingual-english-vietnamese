@@ -13,6 +13,7 @@
 
 import { z } from 'zod'
 import { transcribeAudio, type SttLang } from './_lib/openaiStt.js'
+import { withConcurrencyLimit } from './_lib/concurrencyLimiter.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -114,7 +115,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   try {
-    const text = await transcribeAudio(audio, mime, lang)
+    const text = await withConcurrencyLimit('stt', () => transcribeAudio(audio, mime, lang))
     return jsonResponse({ text }, 200, allHeaders)
   } catch (err) {
     // Provider STT lỗi → người dùng không nhận được kết quả: hoàn lại lượt vừa trừ.

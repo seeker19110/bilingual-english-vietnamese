@@ -14,7 +14,7 @@
 // api/_lib/leaderboard.ts. Client KHÔNG gửi điểm lên.
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool, getPgReadPool } from './_lib/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -59,7 +59,9 @@ async function computeRankedEntries(weekStart: string, weekEnd: string): Promise
     return cache.entries
   }
 
-  const pool = getPgPool()
+  // Đọc THUẦN, đã cache 5 phút ở trên — an toàn dùng read-replica nếu có cấu hình
+  // DATABASE_URL_READ (xem api/_lib/pgPool.ts). Không set thì tự dùng chung pool ghi.
+  const pool = getPgReadPool()
   const { rows: opted } = await pool.query<ProfileRow>(
     `select id, nickname, league_opt_in from public.profiles where league_opt_in = true`,
   )

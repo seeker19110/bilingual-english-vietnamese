@@ -25,7 +25,12 @@ const SCHEMA_FILE = path.join(PROJECT_ROOT, 'postgres', 'schema.sql')
 const MIGRATIONS_DIR = path.join(PROJECT_ROOT, 'postgres', 'migrations')
 
 async function main(): Promise<void> {
-  const connectionString = process.env.DATABASE_URL
+  // Ưu tiên MIGRATE_DATABASE_URL nếu có — dùng khi DATABASE_URL (app) trỏ qua PgBouncer
+  // (transaction pooling, xem postgres/pgbouncer.ini.example): DDL/migration nên nối THẲNG
+  // Postgres (cổng 5432), không qua pooler, vì vài kiểu DDL (vd CREATE INDEX CONCURRENTLY)
+  // không chạy được trong 1 transaction/qua transaction pooling. Không set thì dùng DATABASE_URL
+  // như cũ (đúng hành vi hiện tại khi chưa tách PgBouncer).
+  const connectionString = process.env.MIGRATE_DATABASE_URL || process.env.DATABASE_URL
   if (!connectionString) {
     console.error(
       '[migrate:pg] Thiếu DATABASE_URL trong .env — vd ' +
