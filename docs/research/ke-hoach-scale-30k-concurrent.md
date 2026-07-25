@@ -87,11 +87,19 @@ Mục tiêu: gỡ nút thắt #5 — quan trọng nhất về tiền.
 
 ### GĐ 4 — Quan sát & kiểm chứng tải
 
-1. Bật **Sentry** (đang nợ — chỉ cần điền DSN) + metrics (Prometheus/Grafana hoặc APM sẵn có).
-2. **Load test k6**: kịch bản 30k VU (virtual users) mô phỏng nhịp thao tác thật; tìm trần thật từng tầng.
+1. Bật **Sentry** (đang nợ — chỉ cần điền DSN, **cần người dùng tự làm**: AI không có tài
+   khoản sentry.io để tạo DSN) + metrics (Prometheus/Grafana hoặc APM sẵn có).
+2. **Load test k6**: đã có kịch bản khởi điểm `scripts/load-test/k6-baseline.js`
+   (`npm run loadtest:k6`, cần cài k6 binary + set `BASE_URL`) — test 2 route nhẹ (health +
+   dictionary), ramp thận trọng từ `VU_TARGET` thấp (mặc định 100, tăng dần qua nhiều lần chạy,
+   KHÔNG nhảy thẳng lên 50k). Kịch bản đủ cho luồng có đăng nhập + gọi AI thật (chat/speaking/
+   stt) CHƯA viết — tốn tiền thật mỗi request, cần ngân sách test riêng, làm sau.
 3. Alert theo p95 latency, tỷ lệ lỗi, độ sâu queue, chi phí AI.
 
-**DoD GĐ4:** k6 30k VU đạt p95 < mục tiêu, tỷ lệ lỗi < 1%, không sập tầng nào.
+**DoD GĐ4:** k6 50k VU đạt p95 < mục tiêu, tỷ lệ lỗi < 1%, không sập tầng nào. **Chạy k6 là việc
+người dùng tự thực hiện** (nhắm vào staging hoặc production thật ở giờ ít traffic) — AI chỉ
+chuẩn bị kịch bản, không tự chạy load test nhắm vào production được (rủi ro làm sập dịch vụ
+đang phục vụ người dùng thật, cần người quyết định thời điểm).
 
 ### GĐ 5 — Vận hành & dự phòng
 
