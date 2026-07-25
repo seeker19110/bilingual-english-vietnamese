@@ -801,3 +801,12 @@ deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash script
 - `docs/research/thu-thach-vlog-30-ngay.md` dùng tên cũ "Vlog" (tính năng đã đổi tên thành
   "Challenge" — route `/challenge`, bảng `challenge_entries`) — tài liệu đó là ghi chép lịch sử
   tại thời điểm merge, cố ý giữ nguyên tên cũ, không phải lỗi.
+- **Kế hoạch khôi phục sự cố server (2026-07-25).** Thêm
+  `docs/ke-hoach-khoi-phuc-su-co-server.md` — quy trình ứng phó tổng thể khi server sập/gặp sự
+  cố (chẩn đoán nhanh, phân loại theo triệu chứng, xử lý từng kịch bản: VPS không phản hồi, PM2
+  crash, hết ổ đĩa, Postgres lỗi, restore backup, SSL hết hạn, quá tải/DDoS, nghi bị xâm nhập —
+  kèm checklist xác minh + mẫu post-mortem). Khác `docs/DEPLOY.md` (deploy + fix nhanh) và
+  `docs/rollback-runbook.md` (rollback cấu hình theo PR cụ thể) — 3 file bổ sung nhau, không
+  trùng. Đã liệt kê "cải tiến nên cân nhắc" cần người dùng quyết định (chưa tự làm): uptime
+  monitoring tự động, điền DSN Sentry, tăng tần suất backup Postgres, và điền thông tin liên hệ
+  khẩn/nhà cung cấp VPS vào bảng đầu file (việc duy nhất người dùng cần tự điền tay).

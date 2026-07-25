@@ -430,8 +430,12 @@ export default function Chat() {
     setLoading(false)
   }
 
-  async function sendMessage() {
-    if (!input.trim() || !session || loading) return
+  // overrideText: dùng cho nút "AI phản hồi" (gợi ý tiếp) — không lấy từ ô nhập, và không
+  // ghi vào Sổ lỗi cá nhân vì đây là câu nhắc hệ thống, không phải học viên tự viết.
+  async function sendMessage(overrideText?: string) {
+    const text = overrideText ?? input.trim()
+    const isSuggestionRequest = overrideText !== undefined
+    if (!text || !session || loading) return
     if (isThrottled) {
       toast.error(
         isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`,
@@ -447,7 +451,7 @@ export default function Chat() {
     const userMsg: Message = {
       id: crypto.randomUUID(),
       role: 'user',
-      content: input.trim(),
+      content: text,
       timestamp: Date.now(),
     }
     const updated = { ...session, messages: [...session.messages, userMsg] }
@@ -479,15 +483,17 @@ export default function Chat() {
       setLastIdx(final.messages.length - 1)
       // Nếu gia sư có phần "✅ Nhận xét" → thu vào SỔ LỖI CÁ NHÂN. Chat không tách riêng
       // "câu đúng" nên chỉ lưu câu học viên (wrong) + giải thích; câu đúng để rỗng.
-      const { feedback } = parseAssistantReply(reply)
-      if (feedback) {
-        addMistake(user.id, {
-          wrong: userMsg.content,
-          corrected: '',
-          explanation: feedback,
-          source: 'chat',
-          dir,
-        })
+      if (!isSuggestionRequest) {
+        const { feedback } = parseAssistantReply(reply)
+        if (feedback) {
+          addMistake(user.id, {
+            wrong: userMsg.content,
+            corrected: '',
+            explanation: feedback,
+            source: 'chat',
+            dir,
+          })
+        }
       }
       incrementUsage(user.id, 'chatCount')
       throttle() // Rate limit sau lần gọi thành công
@@ -498,6 +504,17 @@ export default function Chat() {
     }
     setLoading(false)
     setTimeout(() => inputRef.current?.focus(), 50)
+  }
+
+  // Nút "AI phản hồi" — nhờ AI chủ động gợi ý câu hỏi/chủ đề tiếp theo dựa trên
+  // câu trả lời gần nhất của nó, không cần học viên tự gõ.
+  function requestAiFollowUp() {
+    if (!session || loading || isThrottled) return
+    void sendMessage(
+      isA
+        ? 'Hãy chủ động gợi ý một câu hỏi hoặc chủ đề tiếp theo để mình tiếp tục hội thoại, dựa trên nội dung bạn vừa trả lời.'
+        : 'Please suggest a follow-up question or topic to continue our conversation, based on what you just said.',
+    )
   }
 
   // Kết thúc & chấm điểm cả phiên — gọi AI 1 lần thêm với prompt chấm điểm, tính
@@ -695,7 +712,7 @@ export default function Chat() {
               />
 
               <button
-                onClick={sendMessage}
+                onClick={() => sendMessage()}
                 disabled={!input.trim() || loading || limitHit || isThrottled}
                 className="p-2.5 bg-gradient-to-br from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-accent-500/20 active:scale-95 relative"
                 aria-label={isA ? 'Gửi tin nhắn' : 'Send message'}
@@ -706,6 +723,16 @@ export default function Chat() {
                     {throttleCountdown}s
                   </div>
                 )}
+              </button>
+
+              <button
+                onClick={requestAiFollowUp}
+                disabled={loading || limitHit || isThrottled}
+                className="p-2.5 text-zinc-400 hover:text-amber-400 border border-zinc-800/80 hover:border-amber-500/50 rounded-xl transition shrink-0 hover:bg-zinc-800/50 disabled:opacity-40"
+                title={isA ? 'AI phản hồi (gợi ý tiếp)' : 'AI follow-up suggestion'}
+                aria-label={isA ? 'AI phản hồi (gợi ý tiếp)' : 'AI follow-up suggestion'}
+              >
+                <Sparkles className="w-4 h-4" />
               </button>
             </div>
           </div>
