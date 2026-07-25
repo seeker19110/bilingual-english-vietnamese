@@ -103,9 +103,18 @@ chuẩn bị kịch bản, không tự chạy load test nhắm vào production �
 
 ### GĐ 5 — Vận hành & dự phòng
 
-1. Nginx/LB **≥ 2 máy** (bỏ single point of failure), health check tự loại instance chết.
-2. Auto-restart + auto-scale (nếu dùng container/K8s hoặc VPS scaling).
-3. Backup Postgres tự động + kiểm thử phục hồi; kế hoạch rollback từng giai đoạn.
+1. Nginx/LB **≥ 2 máy** (bỏ single point of failure), health check tự loại instance chết. **CẦN
+   MUA MÁY MỚI (Phần B, người dùng tự làm)** — chưa thực hiện được trong sandbox này.
+2. Auto-restart: **ĐÃ CÓ SẴN** (`ecosystem.config.cjs` — `restart_delay`/`max_restarts`/
+   `min_uptime`, PM2 tự khởi động lại khi crash). Auto-scale (container/K8s/VPS scaling theo
+   traffic): chưa làm, phụ thuộc quyết định 5.2 (đã chốt tự host VPS thường — auto-scale kiểu
+   này thường cần thêm công cụ giám sát + script riêng, ưu tiên thấp hơn LB/backup).
+3. Backup Postgres: **tự động ĐÃ CÓ SẴN** (`docs/setup-postgresql-vps.md` mục 7, cron `pg_dump`
+   hàng ngày). **Kiểm thử phục hồi: ĐÃ THÊM** `scripts/verify-pg-backup.sh` (mục 7.1 cùng doc) —
+   restore vào database tạm + kiểm tra dữ liệu, khuyến nghị chạy cron hàng tuần. Kế hoạch
+   rollback từng giai đoạn: đã có sẵn rải rác trong từng PR (GĐ1: rollback fork mode ghi trong
+   `ecosystem.config.cjs`; GĐ2: rollback giữ `.env` cũ trong runbook) — chưa gom thành 1 tài
+   liệu riêng, có thể làm nếu cần.
 
 ## 4. Ước lượng tài nguyên (thô — cần k6 xác nhận, đã cập nhật cho mục tiêu 50k)
 
