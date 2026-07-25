@@ -449,11 +449,17 @@ export default function Speaking() {
   const [wordSync, setWordSync] = useState<SpkWordSync | null>(null)
   const [evaluation, setEvaluation] = useState<EvaluationResult | null>(null)
   const [evaluating, setEvaluating] = useState(false)
+  // Câu vừa ghi âm/nhận diện xong, chờ người dùng xác nhận trước khi gửi AI —
+  // đếm ngược PENDING_CONFIRM_S rồi tự gửi, hoặc bấm "Ghi lại" để xoá và ghi âm lại.
+  const [pendingConfirm, setPendingConfirm] = useState<string | null>(null)
+  const [pendingCountdown, setPendingCountdown] = useState(0)
   const stopRecRef = useRef<(() => void) | null>(null) // dừng Web Speech (fallback)
   const recorderRef = useRef<Recorder | null>(null) // recorder server STT (chính)
   const recTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null) // tự dừng ghi âm khi quá lâu
+  const pendingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null) // đếm ngược xác nhận
   const bottomRef = useRef<HTMLDivElement>(null)
   const MAX_REC_MS = 60_000 // tự dừng ghi âm server sau 60s (tránh micro mở vô tận)
+  const PENDING_CONFIRM_S = 2 // số giây chờ xác nhận trước khi tự gửi câu vừa ghi âm
   // Ưu tiên ghi âm gửi server (chính xác, đa trình duyệt); Web Speech chỉ là dự phòng.
   const canRecord = isRecordingSupported()
   const sttSupported = canRecord || isSTTSupported()
@@ -474,9 +480,37 @@ export default function Speaking() {
       stopRecRef.current?.()
       recorderRef.current?.cancel()
       if (recTimerRef.current) clearTimeout(recTimerRef.current)
+      if (pendingTimerRef.current) clearInterval(pendingTimerRef.current)
     },
     [],
   )
+
+  // Hiện câu vừa ghi âm/nhận diện, đếm ngược rồi tự gửi cho AI — bấm "Ghi lại" để huỷ.
+  function startPendingConfirm(text: string) {
+    if (pendingTimerRef.current) clearInterval(pendingTimerRef.current)
+    setTranscript('')
+    setPendingConfirm(text)
+    let remaining = PENDING_CONFIRM_S
+    setPendingCountdown(remaining)
+    pendingTimerRef.current = setInterval(() => {
+      remaining -= 1
+      setPendingCountdown(remaining)
+      if (remaining <= 0) {
+        if (pendingTimerRef.current) clearInterval(pendingTimerRef.current)
+        pendingTimerRef.current = null
+        setPendingConfirm(null)
+        void sendUserSpeech(text)
+      }
+    }, 1000)
+  }
+
+  // "Ghi lại" — xoá câu đang chờ, không gửi AI, để người dùng ghi âm lại từ đầu.
+  function cancelPendingConfirm() {
+    if (pendingTimerRef.current) clearInterval(pendingTimerRef.current)
+    pendingTimerRef.current = null
+    setPendingConfirm(null)
+    setPendingCountdown(0)
+  }
 
   // Dừng ghi âm server (chính) rồi gửi audio lên nhận diện. Gọi khi người dùng nhấn dừng
   // HOẶC khi quá thời lượng tối đa (recTimerRef).
@@ -494,7 +528,7 @@ export default function Speaking() {
       const text = await r.stop()
       setProcessing(false)
       incrementUsage(user.id, 'sttCount') // đã gọi API STT thành công → tính 1 lượt
-      if (text.trim()) await sendUserSpeech(text.trim())
+      if (text.trim()) startPendingConfirm(text.trim())
       else setError(isA ? 'Không nghe rõ, thử nói lại nhé.' : "Didn't catch that, try again.")
     } catch (e) {
       setProcessing(false)
@@ -636,9 +670,9 @@ export default function Speaking() {
       // KHÔNG đếm sttCount cho nhánh Web Speech: nó chạy MIỄN PHÍ ở trình duyệt, không qua
       // /api/stt nên server không đếm → bump cục bộ chỉ gây lệch rồi bị pullUserData ghi đè.
       // (Đường tốn tiền là server STT/Whisper ở stopServerRecording — chỗ đó mới tính lượt.)
-      async (last) => {
+      (last) => {
         setRecording(false)
-        if (last.trim()) await sendUserSpeech(last.trim())
+        if (last.trim()) startPendingConfirm(last.trim())
       },
       (err) => {
         setError(sttErrorMessage(err, isA))
@@ -867,6 +901,26 @@ export default function Speaking() {
                 </div>
               </div>
             )}
+            {pendingConfirm && (
+              <div className="flex flex-col items-end gap-2 animate-fade-in">
+                <div className="max-w-[78%] bg-sky-600/20 border border-sky-500/25 text-sky-300 theme-light:text-sky-800 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm break-words">
+                  {pendingConfirm}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-zinc-400">
+                    {isA
+                      ? `Tự gửi sau ${pendingCountdown}s...`
+                      : `Sending in ${pendingCountdown}s...`}
+                  </span>
+                  <button
+                    onClick={cancelPendingConfirm}
+                    className="tap-44 text-xs font-medium text-red-400 border border-red-500/30 hover:bg-red-500/10 rounded-full px-3 py-1.5 transition"
+                  >
+                    {isA ? 'Ghi lại' : 'Re-record'}
+                  </button>
+                </div>
+              </div>
+            )}
             {error && (
               <p className="text-center text-xs text-red-400 theme-light:text-red-700 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
                 {error}
@@ -917,7 +971,9 @@ export default function Speaking() {
 
                     <button
                       onClick={toggleRecord}
-                      disabled={loading || limitHit || processing || isThrottled}
+                      disabled={
+                        loading || limitHit || processing || isThrottled || !!pendingConfirm
+                      }
                       aria-label={
                         recording
                           ? isA
