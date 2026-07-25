@@ -8,7 +8,6 @@
 import express from 'express'
 import compression from 'compression'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import * as dotenv from 'dotenv'
 
 // Nạp biến môi trường từ .env — phải chạy trước khi import các handler
@@ -72,7 +71,12 @@ app.post('/api/pronounce-assess', express.json({ limit: '5mb' }), wrapEdge(prono
 
 app.use(express.json({ limit: '64kb' }))
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+// Dùng process.cwd() thay vì __dirname (đường dẫn của CHÍNH file server.ts): khi chạy qua
+// `tsx` (dev/hiện tại) __dirname = gốc repo, nhưng khi chạy bản đã biên dịch
+// (dist-server/server.js — xem tsconfig.server.json) __dirname sẽ trỏ SAI vào dist-server/.
+// PM2 luôn set cwd = thư mục chứa ecosystem.config.cjs (gốc repo) ở cả 2 cách chạy nên
+// process.cwd() ổn định hơn.
+const __dirname = process.cwd()
 
 // ── Bọc Edge Function handler thành Express route ────────────────────────────
 // Edge Function: nhận (Request) → trả (Response)  [Web API chuẩn]

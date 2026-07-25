@@ -1,0 +1,29 @@
+{
+  // tsconfig.server.json — biên dịch server.ts + api/*.ts thành JS thật (dist-server/),
+  // để chạy production KHÔNG qua loader tsx nữa (khác tsconfig.api.json chỉ dùng để
+  // typecheck: noEmit true). Cần bước này vì Node `cluster` module (PM2 cluster mode)
+  // không tương thích với `--import tsx` (ESM loader) — xem ghi chú trong
+  // ecosystem.config.cjs + docs/research/dac-ta-gd1-scale-30k.md (Việc A).
+  //
+  // Import trong server.ts/api/*.ts đã ghi sẵn đuôi ".js" (vd './api/tts.js') nên tsc
+  // emit ra đúng cấu trúc thư mục là chạy được thẳng bằng `node`, không cần rewrite path.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "outDir": "dist-server",
+    "noEmit": false,
+    "declaration": false,
+    "sourceMap": true
+  },
+  "include": ["server.ts", "api/**/*.ts"],
+  "exclude": ["api/**/*.test.ts"]
+}

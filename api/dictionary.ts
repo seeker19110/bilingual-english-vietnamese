@@ -10,16 +10,16 @@
 //
 // Chạy trên Node (Express/VPS) vì cần đọc file từ điển — KHÔNG dùng Edge runtime.
 
-import { getAllEntries, type DictEntry } from './_lib/dictionaryData'
-import { vnDateStr } from './_lib/date'
+import { getAllEntries, type DictEntry } from './_lib/dictionaryData.js'
+import { vnDateStr } from './_lib/date.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const MAX_RESULTS = 200
 
@@ -44,7 +44,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   const clientIp = getClientIp(req)
   // Tra từ điển chỉ đọc RAM (không tốn tiền API) nên hạn mức rộng.
-  if (!checkRateLimit(clientIp, 120, 'dict')) {
+  if (!(await checkRateLimit(clientIp, 120, 'dict'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/dictionary' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

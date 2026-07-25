@@ -9,9 +9,14 @@
 //
 // GET /api/app-settings
 
-import { getAppSettings } from './_lib/settings'
-import { getCorsHeaders, SECURITY_HEADERS, checkRateLimit, logSecurityEvent } from './_lib/security'
-import { jsonResponse, getClientIp } from './_lib/http'
+import { getAppSettings } from './_lib/settings.js'
+import {
+  getCorsHeaders,
+  SECURITY_HEADERS,
+  checkRateLimit,
+  logSecurityEvent,
+} from './_lib/security.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }
@@ -19,7 +24,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'GET') return jsonResponse({ error: 'Method not allowed' }, 405, allHeaders)
 
   const clientIp = getClientIp(req)
-  if (!checkRateLimit(clientIp, 30, 'app-settings')) {
+  if (!(await checkRateLimit(clientIp, 30, 'app-settings'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/app-settings' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

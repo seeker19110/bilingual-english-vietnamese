@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/gen-data-manifest.mjs && tsc && tsc -p tsconfig.api.json && vite build",
+    "build": "node scripts/gen-data-manifest.mjs && tsc && tsc -p tsconfig.api.json && vite build && npm run build:server",
+    "build:server": "node -e \"require('fs').rmSync('dist-server',{recursive:true,force:true})\" && tsc -p tsconfig.server.json",
     "typecheck": "tsc && tsc -p tsconfig.api.json && tsc -p tsconfig.e2e.json",
     "typecheck:api": "tsc -p tsconfig.api.json",
     "typecheck:e2e": "tsc -p tsconfig.e2e.json",
@@ -45,6 +46,7 @@
     "compression": "^1.7.4",
     "express": "^4.21.2",
     "google-auth-library": "^10.9.0",
+    "ioredis": "^5.11.1",
     "lucide-react": "^0.400.0",
     "pg": "^8.22.0",
     "react": "^18.3.1",

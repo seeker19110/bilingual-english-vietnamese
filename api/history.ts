@@ -14,16 +14,16 @@
 // Client chỉ được ghi learn_count (streak, không tốn tiền API).
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { validateBody, readJsonBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { validateBody, readJsonBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const SessionSchema = z.object({
   id: z.string().uuid(),
@@ -91,7 +91,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: allHeaders })
 
   const clientIp = getClientIp(req)
-  if (!checkRateLimit(clientIp, 30, 'history')) {
+  if (!(await checkRateLimit(clientIp, 30, 'history'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/history' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

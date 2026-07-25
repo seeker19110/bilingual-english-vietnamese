@@ -7,19 +7,19 @@
 // POST /api/admin-settings   body: { limits: {free:{...},pro:{...},vip:{...}}, promoUntil: string|null }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security'
-import { getUserById } from './_lib/authService'
-import { isAdminEmail } from './_lib/adminAuth'
-import { getAppSettings, invalidateSettingsCache } from './_lib/settings'
-import { readJsonBody, validateBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { getUserById } from './_lib/authService.js'
+import { isAdminEmail } from './_lib/adminAuth.js'
+import { getAppSettings, invalidateSettingsCache } from './_lib/settings.js'
+import { readJsonBody, validateBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const LimitsSchema = z.object({
   chat: z.number().int().min(0).max(1_000_000),
@@ -43,7 +43,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: allHeaders })
 
   const clientIp = getClientIp(req)
-  if (!checkRateLimit(clientIp, 20, 'admin-settings')) {
+  if (!(await checkRateLimit(clientIp, 20, 'admin-settings'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/admin-settings' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

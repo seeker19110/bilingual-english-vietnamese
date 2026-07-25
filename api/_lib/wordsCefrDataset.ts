@@ -5,7 +5,7 @@
 //   https://github.com/Maximax67/Words-CEFR-Dataset
 // Tách logic thuần (không I/O) để test — scripts/tag-cefr-levels.ts lo đọc file CSV.
 
-import type { CefrWordLevel } from './cefrTagging'
+import type { CefrWordLevel } from './cefrTagging.js'
 
 export interface WordsCefrRow {
   word: string

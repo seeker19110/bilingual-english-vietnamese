@@ -9,19 +9,19 @@
 //      days = null → không giới hạn thời gian (vd VIP cấp vĩnh viễn); days > 0 → hết hạn sau N ngày.
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security'
-import { getUserById } from './_lib/authService'
-import { isAdminEmail } from './_lib/adminAuth'
-import { resolvePlan } from './_lib/plan'
-import { readJsonBody, validateBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { getUserById } from './_lib/authService.js'
+import { isAdminEmail } from './_lib/adminAuth.js'
+import { resolvePlan } from './_lib/plan.js'
+import { readJsonBody, validateBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const GrantSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
@@ -43,7 +43,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: allHeaders })
 
   const clientIp = getClientIp(req)
-  if (!checkRateLimit(clientIp, 20, 'admin-grant-plan')) {
+  if (!(await checkRateLimit(clientIp, 20, 'admin-grant-plan'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/admin-grant-plan' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

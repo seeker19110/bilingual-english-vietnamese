@@ -16,12 +16,12 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from './_lib/security'
-import { checkAndConsumeUsage, refundUsage, type UsageMode } from './_lib/usage'
-import { callGemini } from './_lib/geminiApi'
-import { fetchWithTimeout } from './_lib/fetchTimeout'
-import { jsonResponse, getClientIp } from './_lib/http'
-import { validateBody } from './_lib/validation'
+} from './_lib/security.js'
+import { checkAndConsumeUsage, refundUsage, type UsageMode } from './_lib/usage.js'
+import { callGemini } from './_lib/geminiApi.js'
+import { fetchWithTimeout } from './_lib/fetchTimeout.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
+import { validateBody } from './_lib/validation.js'
 // Model + guardrail tách sang aiConfig.ts để script eval offline (scripts/eval-tutor.ts)
 // dùng chung đúng một nguồn — đổi model ở đây tự động phản ánh vào bài đánh giá (⑤ T1).
 import {
@@ -29,7 +29,7 @@ import {
   GEMINI_CHAT_MODEL,
   GROQ_CHAT_MODEL,
   SYSTEM_GUARDRAIL,
-} from './_lib/aiConfig'
+} from './_lib/aiConfig.js'
 
 // Thời gian chờ tối đa cho 1 lần gọi AI (ms) — tránh treo vô hạn khi nhà cung cấp chậm.
 const AI_TIMEOUT_MS = 30_000
@@ -150,7 +150,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Rate limit: tối đa 5 request/phút mỗi IP
-  if (!checkRateLimit(clientIp, 5)) {
+  if (!(await checkRateLimit(clientIp, 5))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/claude' })
     return jsonResponse(
       { error: { message: 'Quá nhiều yêu cầu — thử lại sau 1 phút' } },

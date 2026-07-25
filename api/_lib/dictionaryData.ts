@@ -11,8 +11,7 @@
 // để giảm số module Vite. Endpoint server đọc trực tiếp bằng fs nên phải trỏ ĐÚNG public/.
 
 import { readdirSync, readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { dirname, join } from 'node:path'
+import { join } from 'node:path'
 
 // Các dạng biến thể của từ — đồng bộ với WordForms trong src/types.ts.
 // (Server giữ định nghĩa riêng để không phụ thuộc code React; nội dung phải khớp.)
@@ -43,15 +42,11 @@ export interface DictEntry {
   base?: string // trỏ về từ gốc (chỉ ở entry là dạng biến thể)
 }
 
-// api/_lib/ → ../../public/data/dictionary
-const DICT_DIR = join(
-  dirname(fileURLToPath(import.meta.url)),
-  '..',
-  '..',
-  'public',
-  'data',
-  'dictionary',
-)
+// Dùng process.cwd() thay vì import.meta.url của chính file này: khi biên dịch sang
+// dist-server/ (xem tsconfig.server.json) đường dẫn tương đối từ file đã build sẽ trỏ SAI
+// (dist-server/public/... không tồn tại — public/ chỉ nằm ở gốc repo). process.cwd() luôn
+// là gốc repo ở cả 3 môi trường: Vite dev, tsx production (cũ), và JS đã biên dịch (mới).
+const DICT_DIR = join(process.cwd(), 'public', 'data', 'dictionary')
 
 let _all: DictEntry[] | null = null
 

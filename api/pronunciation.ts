@@ -15,7 +15,7 @@
 //   http://localhost:5173/api/pronunciation?word=apple&voice=male
 // (vite.config.ts đã gắn middleware gọi thẳng handler này, không cần deploy lên Vercel).
 
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
@@ -27,19 +27,19 @@ import {
   VOICE_VERSION,
   type Lang,
   type VoiceId,
-} from './_lib/googleTts'
-import { saveAudio } from './_lib/fileStorage'
-import { ensureProfileRow } from './_lib/authService'
-import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess'
-import { isValidElevenVoice } from './_lib/elevenLabsTts'
+} from './_lib/googleTts.js'
+import { saveAudio } from './_lib/fileStorage.js'
+import { ensureProfileRow } from './_lib/authService.js'
+import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
+import { isValidElevenVoice } from './_lib/elevenLabsTts.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 // Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),
 // dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.). Ngăn ký tự lạ.
@@ -65,7 +65,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Rate limit TỔNG: 60 request/phút mỗi IP. Hầu hết là cache HIT (tra DB, gần như miễn phí),
   // nên hạn mức rộng để tra nhiều từ / lật nhiều thẻ liên tiếp không bị chặn. Đường tạo
   // audio mới (tốn tiền) có hạn mức riêng, chặt hơn ở BƯỚC 2.
-  if (!checkRateLimit(clientIp, 60, 'pron')) {
+  if (!(await checkRateLimit(clientIp, 60, 'pron'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/pronunciation' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }
@@ -173,7 +173,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Hạn mức RIÊNG cho đường tạo audio mới (tốn tiền API): 60 lần/phút mỗi IP.
   // Audio tạo ra được lưu vào bảng `pronunciations` + Storage nên chỉ tốn tiền LẦN ĐẦU;
   // các lần sau là cache HIT miễn phí. Hạn mức này chỉ để chặn vòng lặp lỗi bất thường.
-  if (!checkRateLimit(clientIp, 60, 'pron-gen')) {
+  if (!(await checkRateLimit(clientIp, 60, 'pron-gen'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, {
       path: '/api/pronunciation',
       stage: 'generate',

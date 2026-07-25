@@ -3,8 +3,8 @@
 // KHÔNG giới hạn lượt dùng AI) tới thời điểm đó. promo_until = null → tắt khuyến mãi, áp hạn
 // mức thật ngay. PHẢI khớp Ý NGHĨA với src/lib/promo.ts phía client (giá trị THẬT lấy từ DB,
 // client chỉ có bản tĩnh để hiển thị tạm — xem ghi chú trong file đó).
-import { getAppSettings } from './settings'
-import type { Plan } from './plan'
+import { getAppSettings } from './settings.js'
+import type { Plan } from './plan.js'
 
 export async function isFullAccessPromoActive(now: Date = new Date()): Promise<boolean> {
   const { promoUntil } = await getAppSettings()

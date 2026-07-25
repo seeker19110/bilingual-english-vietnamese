@@ -18,17 +18,17 @@ import {
   revokeSession,
   ensureProfileRow,
   getUserById,
-} from './_lib/authService'
-import type { Plan } from './_lib/plan'
+} from './_lib/authService.js'
+import type { Plan } from './_lib/plan.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { validateBody, readJsonBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { validateBody, readJsonBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const RegisterSchema = z.object({
   action: z.literal('register'),
@@ -74,7 +74,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   const clientIp = getClientIp(req)
   // Giới hạn chặt hơn route thường — chống dò mật khẩu/tạo tài khoản hàng loạt.
-  if (!checkRateLimit(clientIp, 10, 'auth')) {
+  if (!(await checkRateLimit(clientIp, 10, 'auth'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/auth' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

@@ -14,7 +14,7 @@
 // KHÔNG trừ lượt (giống nhánh hết quota của api/tts.ts) để client tự rơi về Giai đoạn 1.
 
 import { z } from 'zod'
-import { resolveAzurePronounceConfig, assessPronunciation } from './_lib/azurePronounce'
+import { resolveAzurePronounceConfig, assessPronunciation } from './_lib/azurePronounce.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -22,11 +22,11 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from './_lib/security'
-import { checkAndConsumeUsage, refundUsage } from './_lib/usage'
-import { readJsonBody, validateBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
-import { base64ToBytes } from './_lib/base64'
+} from './_lib/security.js'
+import { checkAndConsumeUsage, refundUsage } from './_lib/usage.js'
+import { readJsonBody, validateBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
+import { base64ToBytes } from './_lib/base64.js'
 
 // Giới hạn dung lượng base64 (~4MB chuỗi ≈ ~3MB audio thật) — câu chấm phát âm tối đa ~30s
 // (giới hạn Azure short-audio) nên nhẹ hơn nhiều so với STT hội thoại tự do (api/stt.ts).
@@ -79,7 +79,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Tốn tiền Azure trực tiếp nên giới hạn chặt hơn STT (Groq/OpenAI rẻ hơn nhiều).
-  if (!checkRateLimit(clientIp, 10)) {
+  if (!(await checkRateLimit(clientIp, 10))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/pronounce-assess' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

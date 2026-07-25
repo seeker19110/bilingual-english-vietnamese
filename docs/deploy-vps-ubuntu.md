@@ -186,6 +186,19 @@ npm install
 npm run build
 ```
 
+> `npm run build` giờ gồm cả `build:server` (biên dịch `server.ts` + `api/**/*.ts` sang
+> `dist-server/` — xem `tsconfig.server.json`). PM2 chạy thẳng `dist-server/server.js`,
+> KHÔNG còn qua loader `tsx` — đây là điều kiện để cluster mode chạy được (xem comment
+> trong `ecosystem.config.cjs`, mục 2026-07-25). **Luôn chạy `npm run build` trước mỗi
+> `pm2 start`/`pm2 reload`**, nếu không PM2 sẽ chạy JS cũ (chưa có thay đổi mới nhất).
+
+> **Rate limit + cluster mode:** khi chạy nhiều tiến trình (`instances: 'max'`), rate
+> limit phải dùng chung Redis mới đúng (mỗi tiến trình không còn Map riêng) — đặt biến
+> `REDIS_URL` trong `.env` TRƯỚC khi bật cluster mode ở tải thật. Không đặt thì vẫn chạy
+> được (rơi về Map in-memory mỗi tiến trình, đúng hành vi cũ) nhưng rate limit sẽ lỏng
+> hơn N lần (N = số tiến trình) — chấp nhận được khi traffic còn thấp, không nên dùng khi
+> traffic đông. Xem `api/_lib/security.ts`.
+
 ---
 
 ## Bước 5 — Cấu hình `ecosystem.config.cjs` (PM2)
@@ -194,10 +207,16 @@ npm run build
 nano ecosystem.config.cjs
 ```
 
-File này đã có sẵn trong repo — dùng **cluster mode (1 instance) + `wait_ready`** để
-`pm2 reload` là zero-downtime thật (process mới sẵn sàng rồi mới tắt process cũ,
-xem comment trong `ecosystem.config.cjs`). Port mặc định 3001 — đổi trong `env.PORT`
-nếu cổng đã bị app khác dùng.
+File này đã có sẵn trong repo — dùng **cluster mode** (`instances: 'max'`, PM2 tự fork
+1 tiến trình / CPU core) để tận dụng nhiều core. Port mặc định 3001 — đổi trong
+`env.PORT` nếu cổng đã bị app khác dùng.
+
+> Cluster mode từng bị rollback về fork mode ngày 2026-07-20 vì loader `tsx` không tương
+> thích Node `cluster` module (worker crash im lặng) — đã gỡ nguyên nhân bằng bước biên
+> dịch ở trên (`build:server`). **Lần đầu bật lại cluster mode trên VPS, theo dõi kỹ
+> `pm2 logs` + `pm2 status` sau `pm2 start`/`pm2 reload`** — nếu thấy tiến trình
+> "errored"/khởi động lại liên tục, rollback ngay về fork mode
+> (`instances: 1, exec_mode: 'fork'`) và báo lại, đừng để service down.
 
 Lưu ý: cluster mode chạy bằng Node của chính PM2 (không có trường `interpreter`) —
 PM2 phải được cài bằng Node ≥ 22 (VPS này: Node hệ thống v22, `/usr/bin/node`).

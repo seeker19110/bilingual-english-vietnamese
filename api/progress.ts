@@ -7,16 +7,16 @@
 //                             cefrExams, placement, weeklyGoal, achievements }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { validateBody, readJsonBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { validateBody, readJsonBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 // Giới hạn kích thước hợp lý — chặn payload bất thường (DoS/lỗi client) mà vẫn đủ rộng
 // cho người học nhiều năm (từ điển app hiện ~12.000 từ).
@@ -52,7 +52,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: allHeaders })
 
   const clientIp = getClientIp(req)
-  if (!checkRateLimit(clientIp, 30, 'progress')) {
+  if (!(await checkRateLimit(clientIp, 30, 'progress'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/progress' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

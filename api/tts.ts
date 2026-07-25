@@ -21,7 +21,7 @@
 // Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
@@ -31,12 +31,12 @@ import {
   VOICE_VERSION,
   type Lang,
   type VoiceId,
-} from './_lib/googleTts'
-import { generateAudioFromElevenLabs, isValidElevenVoice } from './_lib/elevenLabsTts'
-import { ensureProfileRow } from './_lib/authService'
-import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess'
-import { saveAudio } from './_lib/fileStorage'
-import { encryptAudio, getClientKeyMaterial } from './_lib/ttsCrypto'
+} from './_lib/googleTts.js'
+import { generateAudioFromElevenLabs, isValidElevenVoice } from './_lib/elevenLabsTts.js'
+import { ensureProfileRow } from './_lib/authService.js'
+import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
+import { saveAudio } from './_lib/fileStorage.js'
+import { encryptAudio, getClientKeyMaterial } from './_lib/ttsCrypto.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -44,9 +44,9 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from './_lib/security'
-import { readJsonBody, validateBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
+} from './_lib/security.js'
+import { readJsonBody, validateBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
 
@@ -127,7 +127,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Rate limit TỔNG: 60 request/phút mỗi IP. Phần lớn request là cache HIT (chỉ tra DB,
   // gần như miễn phí), nên hạn mức rộng để phát cả bài học / nghe nhiều câu liên tiếp
   // không bị chặn. Đường tạo audio mới (tốn tiền) có hạn mức riêng, chặt hơn ở BƯỚC 2.
-  if (!checkRateLimit(clientIp, 60, 'tts')) {
+  if (!(await checkRateLimit(clientIp, 60, 'tts'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/tts' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }
@@ -202,7 +202,7 @@ export default async function handler(req: Request): Promise<Response> {
   // hay tra nhiều từ vẫn mượt, mà mỗi IP không thể tạo quá 60 audio MỚI/phút (chặn vòng
   // lặp lỗi làm cháy hạn mức Google TTS). Giữ 60 để lần đầu "Phát tất cả" một bài học
   // chưa cache (chế độ EN+VI ~16 câu × 2 giọng) không bị chặn giữa chừng.
-  if (!checkRateLimit(clientIp, 60, 'tts-gen')) {
+  if (!(await checkRateLimit(clientIp, 60, 'tts-gen'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/tts', stage: 'generate' })
     return jsonResponse(
       { error: 'Quá nhiều yêu cầu tạo audio mới — thử lại sau 1 phút' },

@@ -726,15 +726,34 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## Nợ kỹ thuật còn mở
 
-- **PM2 cluster mode ĐÃ ROLLBACK về fork mode (2026-07-20, PR #285).** PR #283/#284 từng
-  chuyển sang cluster mode (1 instance) + `wait_ready` để reload zero-downtime, nhưng khi
-  chạy thật trên VPS, worker crash ngay khi khởi động MÀ KHÔNG in được log gì (lỗi tương
-  thích giữa Node `cluster` module và cách nạp `server.ts` qua loader ESM `--import tsx`) →
-  app down hẳn, phải rollback khẩn cấp. `ecosystem.config.cjs` đã về đúng cấu hình fork mode
-  cũ (`script: './node_modules/.bin/tsx'`, không có `exec_mode`). **KHÔNG thử lại cluster
-  mode nếu chưa tìm ra cách nạp TypeScript tương thích với Node cluster** (ví dụ: build sẵn
-  ra JS thay vì chạy `.ts` trực tiếp, hoặc dùng `interpreter` trỏ thẳng vào binary tsx thay
-  vì `node_args`). Đổi lại: reload có vài giây downtime như trước PR #283 (chấp nhận được).
+- **PM2 cluster mode: đã sửa nguyên nhân crash cũ, ĐANG CHỜ xác nhận thật trên VPS
+  (2026-07-25, nhánh `claude/project-100k-active-users-8292zf`, đặc tả
+  `docs/research/dac-ta-gd1-scale-30k.md` Việc A).** Bối cảnh: PM2 cluster mode ĐÃ ROLLBACK
+  về fork mode (2026-07-20, PR #285) vì PR #283/#284 làm worker crash im lặng khi chạy thật
+  trên VPS (Node `cluster` module không tương thích loader ESM `--import tsx`). Lần này gỡ
+  ĐÚNG nguyên nhân: thêm `tsconfig.server.json` + script `build:server` (`npm run build` gọi
+  kèm) biên dịch `server.ts` + `api/**/*.ts` sang JS thật ở `dist-server/` (ESM/NodeNext,
+  đã phải thêm đuôi `.js` vào ~150 import tương đối trong `api/` cho đúng chuẩn Node ESM).
+  `ecosystem.config.cjs` đổi `script: './dist-server/server.js'` (bỏ `interpreter: tsx`),
+  `instances: 'max'`, `exec_mode: 'cluster'`. Phát hiện thêm khi build thật: `server.ts` +
+  `api/_lib/dictionaryData.ts` dùng `__dirname`/`import.meta.url` để tìm `dist/` (frontend),
+  `uploads/`, `public/data/dictionary/` — các đường dẫn này SẼ SAI khi tính từ vị trí file đã
+  biên dịch (nằm trong `dist-server/`), đã sửa sang `process.cwd()` (ổn định vì PM2 luôn cwd
+  = gốc repo). **Đã kiểm chứng trong sandbox dev**: `node dist-server/server.js` chạy
+  standalone, `/api/health` 200, `/api/dictionary` đọc đúng 12.168 từ. **CHƯA kiểm chứng**:
+  chạy PM2 cluster mode thật nhiều tiến trình trên VPS (sandbox không có PM2 thật) — làm việc
+  này TRƯỚC khi coi nợ kỹ thuật đã hết; nếu worker vẫn lỗi, rollback ngay về fork mode
+  (`instances: 1, exec_mode: 'fork'`, giữ `script: './dist-server/server.js'` — không cần
+  quay lại tsx vì build đã đúng) và báo lại. Cũng cần đặt `REDIS_URL` (xem mục ngay bên dưới
+  — rate limit chuyển sang Redis) trước khi bật cluster mode ở tải thật, không thì rate
+  limit lỏng hơn N lần (N = số tiến trình).
+- **Rate limit chuyển từ `Map` in-memory sang Redis khi có `REDIS_URL` (2026-07-25, Việc B
+  cùng đặc tả trên).** `api/_lib/security.ts` `checkRateLimit()` giờ là async: có
+  `REDIS_URL` → đếm atomic qua Lua script (INCR + PEXPIRE có điều kiện) dùng chung mọi tiến
+  trình/máy; không có (hoặc Redis lỗi) → fallback `Map` in-memory y hệt hành vi cũ
+  (FAIL-OPEN, không bắt buộc — dev/local không cần Redis). Đã thêm dependency `ioredis`.
+  **Chưa kiểm chứng** bằng Redis thật nhiều tiến trình (sandbox không có Redis server) — cần
+  xác nhận trên VPS cùng lúc với cluster mode ở trên.
 - ~~**E2E `mockLogin` không còn khớp luồng đăng nhập thật**~~ **ĐÃ TRẢ XONG (PR #282,
   2026-07-20)** — `e2e/helpers/auth.ts` nay gieo đúng key Bearer token
   (`gsa_session_token_v1`) VÀ dùng `page.route()` chặn `GET /api/auth?action=me` trả profile

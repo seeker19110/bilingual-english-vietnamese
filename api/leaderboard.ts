@@ -14,17 +14,17 @@
 // api/_lib/leaderboard.ts. Client KHÔNG gửi điểm lên.
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from './_lib/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security'
-import { validateBody, readJsonBody } from './_lib/validation'
-import { jsonResponse, getClientIp } from './_lib/http'
-import { vnDateStr } from './_lib/date'
+} from './_lib/security.js'
+import { validateBody, readJsonBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
+import { vnDateStr } from './_lib/date.js'
 import {
   currentWeekRange,
   computeWeeklyPoints,
@@ -34,7 +34,7 @@ import {
   type WeeklyUsageRow,
   type LeagueEntry,
   type RankedEntry,
-} from './_lib/leaderboard'
+} from './_lib/leaderboard.js'
 
 interface ProfileRow {
   id: string
@@ -126,7 +126,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: allHeaders })
 
   const clientIp = getClientIp(req)
-  if (!checkRateLimit(clientIp, 30, 'leaderboard')) {
+  if (!(await checkRateLimit(clientIp, 30, 'leaderboard'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/leaderboard' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

@@ -6,7 +6,7 @@
 // mọi request chọn giọng ElevenLabs sẽ lỗi rõ ràng — client (src/lib/tts.ts) tự fallback
 // Web Speech API giống các lỗi TTS khác, không crash app.
 
-import { fetchWithTimeout } from './fetchTimeout'
+import { fetchWithTimeout } from './fetchTimeout.js'
 
 const TTS_TIMEOUT_MS = 30_000
 
