@@ -35,7 +35,7 @@ function today(): string {
 function limitMessage(plan: Plan): string {
   return plan === 'pro' || plan === 'vip'
     ? 'Bạn đã dùng hết lượt hôm nay. Thử lại vào ngày mai nhé.'
-    : 'Hết lượt miễn phí hôm nay. Thử lại ngày mai hoặc nâng cấp gói Pro.'
+    : 'Hết lượt miễn phí hôm nay. Thử lại vào ngày mai nhé!'
 }
 
 const CIRCUIT_BREAKER_MESSAGE =
