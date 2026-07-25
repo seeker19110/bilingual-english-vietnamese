@@ -9,6 +9,7 @@
 import { Share2 } from 'lucide-react'
 import { useState } from 'react'
 import { track } from '../lib/analytics'
+import { fetchReferralStats, buildReferralLink } from '../lib/referral'
 
 const BASE_URL =
   (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, '') ||
@@ -24,6 +25,7 @@ function drawShareImage(
   appName: string,
   title: string,
   lines: string[],
+  linkText: string,
 ) {
   canvas.width = CANVAS_W
   canvas.height = CANVAS_H
@@ -58,7 +60,7 @@ function drawShareImage(
 
   ctx.font = '400 32px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
   ctx.fillStyle = '#94a3b8'
-  ctx.fillText(BASE_URL.replace(/^https?:\/\//, ''), CANVAS_W / 2, CANVAS_H - 80)
+  ctx.fillText(linkText.replace(/^https?:\/\//, ''), CANVAS_W / 2, CANVAS_H - 80)
 }
 
 // Xuống dòng thủ công trên canvas theo maxWidth (canvas không tự wrap text).
@@ -108,8 +110,15 @@ export default function ShareResultCard({
 
     setBusy(true)
     try {
+      // Gắn MÃ MỜI của chính người chia sẻ vào link in trên ảnh → mỗi lượt khoe thành tích
+      // cũng là một lời mời, người xem quét/gõ link vào là đã tính cho người chia sẻ.
+      // Lấy mã ngay lúc bấm (không lấy sẵn lúc render) để không tốn 1 request cho mọi người
+      // chỉ xem kết quả mà không chia sẻ. Lỗi/chưa có mã → rơi về link trần, vẫn chia sẻ được.
+      const stats = await fetchReferralStats()
+      const linkText = stats ? buildReferralLink(stats.code) : BASE_URL
+
       const canvas = document.createElement('canvas')
-      drawShareImage(canvas, appName, title, lines)
+      drawShareImage(canvas, appName, title, lines, linkText)
 
       const blob = await new Promise<Blob | null>((resolve) =>
         canvas.toBlob((b) => resolve(b), 'image/png'),
@@ -125,7 +134,8 @@ export default function ShareResultCard({
       }
       if (nav.share && nav.canShare?.({ files: [file] })) {
         try {
-          await nav.share({ files: [file], title })
+          // Kèm link mời dạng CHỮ nữa: ảnh thì đẹp nhưng bấm không được, người nhận phải gõ tay.
+          await nav.share({ files: [file], title, text: `${title}\n${linkText}` })
           return
         } catch {
           // Người dùng huỷ chia sẻ hoặc trình duyệt lỗi — rơi xuống tải file bên dưới.

@@ -77,7 +77,11 @@ export type ClaimResult =
  * Ghi nhận "user này được mời bởi mã X" — CHƯA thưởng (chờ họ học phiên đầu tiên).
  * Gọi ngay sau khi đăng ký thành công.
  */
-export async function claimReferral(refereeId: string, rawCode: string): Promise<ClaimResult> {
+export async function claimReferral(
+  refereeId: string,
+  rawCode: string,
+  deviceHash: string | null = null,
+): Promise<ClaimResult> {
   const pool = getPgPool()
   const code = rawCode.trim().toUpperCase()
 
@@ -91,9 +95,9 @@ export async function claimReferral(refereeId: string, rawCode: string): Promise
 
   try {
     const { rowCount } = await pool.query(
-      `insert into public.referrals (referrer_id, referee_id) values ($1, $2)
+      `insert into public.referrals (referrer_id, referee_id, device_hash) values ($1, $2, $3)
        on conflict (referee_id) do nothing`,
-      [referrerId, refereeId],
+      [referrerId, refereeId, deviceHash],
     )
     // rowCount = 0 → đã có người mời trước đó, không ghi đè (1 người chỉ được mời 1 lần).
     if (rowCount === 0) return { ok: false, reason: 'already_referred' }
@@ -119,14 +123,35 @@ export async function rewardReferralIfEligible(refereeId: string): Promise<void>
     // Đánh dấu đã thưởng TRƯỚC KHI cấp gói, và chỉ khi đang còn chưa thưởng (rewarded_at is
     // null). Đây là chốt chống trao thưởng 2 lần khi 2 request song song cùng lúc hoàn thành
     // phiên học: chỉ đúng 1 request nhận được rowCount = 1.
-    const { rows } = await pool.query<{ referrer_id: string }>(
+    const { rows } = await pool.query<{ referrer_id: string; device_hash: string | null }>(
       `update public.referrals set rewarded_at = now()
        where referee_id = $1 and rewarded_at is null
-       returning referrer_id`,
+       returning referrer_id, device_hash`,
       [refereeId],
     )
     const referrerId = rows[0]?.referrer_id
     if (!referrerId) return // Không có lời mời, hoặc đã thưởng rồi.
+    const deviceHash = rows[0]?.device_hash ?? null
+
+    // Chống cày thưởng trên CÙNG MỘT MÁY: nếu thiết bị này đã từng được thưởng cho một lượt
+    // mời khác thì không thưởng nữa. Xem giới hạn của mã thiết bị ở src/lib/deviceId.ts —
+    // đây là hàng rào chi phí, không phải bảo mật tuyệt đối.
+    let deviceAlreadyRewarded = false
+    if (deviceHash) {
+      const { rows: deviceRows } = await pool.query<{ count: string }>(
+        `select count(*) as count from public.referrals
+         where device_hash = $1 and rewarded_at is not null and referee_id <> $2`,
+        [deviceHash, refereeId],
+      )
+      deviceAlreadyRewarded = Number(deviceRows[0]?.count ?? 0) > 0
+    }
+
+    if (deviceAlreadyRewarded) {
+      // KHÔNG khoá tài khoản, KHÔNG chặn học — chỉ không trao thưởng lượt này. Máy dùng chung
+      // (gia đình, phòng máy trường, quán net) rất phổ biến với học sinh nên phải xử nhẹ tay.
+      logSecurityEvent('REFERRAL_DEVICE_REUSED', 'system', { referrerId, refereeId })
+      return
+    }
 
     // Trần chống lạm dụng: đếm số lượt ĐÃ thưởng của người mời (kể cả lượt vừa đánh dấu).
     const { rows: countRows } = await pool.query<{ count: string }>(

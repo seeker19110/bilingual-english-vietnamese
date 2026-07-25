@@ -28,6 +28,13 @@ const ClaimSchema = z.object({
     .min(4)
     .max(12)
     .regex(/^[a-zA-Z0-9]+$/, 'Mã mời chỉ gồm chữ và số'),
+  // Dấu vân tay thiết bị (SHA-256 hex) — chống cày thưởng trên cùng máy. Tuỳ chọn: trình duyệt
+  // không hỗ trợ crypto.subtle sẽ gửi thiếu, server vẫn ghi nhận lời mời bình thường.
+  deviceHash: z
+    .string()
+    .trim()
+    .regex(/^[a-f0-9]{64}$/, 'Mã thiết bị không hợp lệ')
+    .optional(),
 })
 
 export default async function handler(req: Request): Promise<Response> {
@@ -57,7 +64,11 @@ export default async function handler(req: Request): Promise<Response> {
     if (!parsed.ok)
       return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
 
-    const result = await claimReferral(auth.userId, parsed.data.code)
+    const result = await claimReferral(
+      auth.userId,
+      parsed.data.code,
+      parsed.data.deviceHash ?? null,
+    )
     if (!result.ok) {
       // Không lộ chi tiết "mã này của ai" — chỉ báo lý do đủ để người dùng hiểu.
       const messages: Record<typeof result.reason, string> = {
