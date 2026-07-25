@@ -31,14 +31,21 @@ Nếu chưa tick hết — DỪNG, làm xong các mục trên trước.
                           │
               ┌───────────┴───────────┐
               │                       │
-   VPS DB/Redis MỚI (mục 2-6)    Cloudflare R2 (audio TTS — mục 7, tuỳ chọn)
+   VPS DB/Redis MỚI (mục 2-6)    Cloudflare R2 (audio TTS)
    ├─ PostgreSQL + PgBouncer
    └─ Redis
 ```
 
 **Thứ tự làm:** DB/Redis trước (mục 2-6) vì đây là nút thắt rõ ràng nhất đã xác nhận qua log thật
-(VPS app hiện tại chỉ 1 vCPU — xem `PROGRESS.md`). Thêm VPS app / LB (mục 8) làm SAU, dựa vào số
-đo k6 thật (mục 9), không làm trước khi có số liệu.
+(VPS app hiện tại chỉ 1 vCPU — xem `PROGRESS.md`). Thêm VPS app / LB (mục 11) làm SAU, dựa vào số
+đo k6 thật (mục 10), không làm trước khi có số liệu.
+
+> ⚠️ **R2 (Cloudflare object storage) KHÔNG phải tuỳ chọn nếu bạn định thêm VPS app thứ 2 trở
+> lên (mục 11).** Mặc định `STORAGE_DRIVER=local` lưu audio cache (TTS/pronunciation) vào ổ đĩa
+> **riêng của từng VPS** — 2 VPS app sẽ có 2 cache KHÔNG đồng bộ (cache-miss trùng lặp, tốn tiền
+> AI gọi lại từ đầu, có thể tạo 2 bản audio khác nhau cho cùng 1 từ tuỳ máy nào phục vụ request).
+> Bật `STORAGE_DRIVER=r2` (`.env.example` đã có mẫu, chỉ cần điền `R2_*`) **TRƯỚC** khi làm mục
+> 11 — không phải sau.
 
 ---
 
@@ -132,6 +139,9 @@ Trên VPS app, sửa `.env` (`nano /var/www/english-tutor/.env` hoặc tương �
 DATABASE_URL=postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:6432/english_tutor
 REDIS_URL=redis://:MẬT-KHẨU-REDIS@<ip-vps-db>:6379
 PG_POOL_MAX=20   # khớp default_pool_size trong pgbouncer.ini — xem comment file mẫu
+# Migration/DDL nối THẲNG Postgres (5432), KHÔNG qua PgBouncer (6432) — một số DDL (vd
+# CREATE INDEX CONCURRENTLY) không chạy được qua transaction pooling.
+MIGRATE_DATABASE_URL=postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:5432/english_tutor
 ```
 
 Reload app (KHÔNG cần deploy lại toàn bộ code, chỉ đổi `.env`):

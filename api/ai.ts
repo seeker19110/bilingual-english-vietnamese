@@ -20,6 +20,7 @@ import {
 import { checkAndConsumeUsage, refundUsage, type UsageMode } from './_lib/usage.js'
 import { callGemini } from './_lib/geminiApi.js'
 import { fetchWithTimeout } from './_lib/fetchTimeout.js'
+import { withConcurrencyLimit } from './_lib/concurrencyLimiter.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { validateBody } from './_lib/validation.js'
 // Model + guardrail tách sang aiConfig.ts để script eval offline (scripts/eval-tutor.ts)
@@ -231,12 +232,14 @@ export default async function handler(req: Request): Promise<Response> {
   // ── Nhánh Gemini (ưu tiên — FREE quota, kết quả tốt) ─────────────────────────
   if (geminiKey) {
     try {
-      const geminiText = await callGemini(
-        geminiKey,
-        GEMINI_CHAT_MODEL,
-        system,
-        sanitizedMessages as Array<{ role: 'user' | 'assistant'; content: string }>,
-        maxTokens,
+      const geminiText = await withConcurrencyLimit('gemini', () =>
+        callGemini(
+          geminiKey,
+          GEMINI_CHAT_MODEL,
+          system,
+          sanitizedMessages as Array<{ role: 'user' | 'assistant'; content: string }>,
+          maxTokens,
+        ),
       )
       // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc
       return jsonResponse({ content: [{ type: 'text', text: geminiText }] }, 200, allHeaders)
@@ -263,18 +266,20 @@ export default async function handler(req: Request): Promise<Response> {
     ]
     let groqResp: Response
     try {
-      groqResp = await fetchWithTimeout(
-        'https://api.groq.com/openai/v1/chat/completions',
-        {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${groqKey}`, 'content-type': 'application/json' },
-          body: JSON.stringify({
-            model: GROQ_CHAT_MODEL,
-            max_tokens: maxTokens,
-            messages: groqMessages,
-          }),
-        },
-        AI_TIMEOUT_MS,
+      groqResp = await withConcurrencyLimit('groq', () =>
+        fetchWithTimeout(
+          'https://api.groq.com/openai/v1/chat/completions',
+          {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${groqKey}`, 'content-type': 'application/json' },
+            body: JSON.stringify({
+              model: GROQ_CHAT_MODEL,
+              max_tokens: maxTokens,
+              messages: groqMessages,
+            }),
+          },
+          AI_TIMEOUT_MS,
+        ),
       )
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
@@ -321,18 +326,20 @@ export default async function handler(req: Request): Promise<Response> {
 
   let resp: Response
   try {
-    resp = await fetchWithTimeout(
-      'https://api.anthropic.com/v1/messages',
-      {
-        method: 'POST',
-        headers: {
-          'x-api-key': anthropicKey as string,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
+    resp = await withConcurrencyLimit('anthropic', () =>
+      fetchWithTimeout(
+        'https://api.anthropic.com/v1/messages',
+        {
+          method: 'POST',
+          headers: {
+            'x-api-key': anthropicKey as string,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify(safeBody),
         },
-        body: JSON.stringify(safeBody),
-      },
-      AI_TIMEOUT_MS,
+        AI_TIMEOUT_MS,
+      ),
     )
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err)
