@@ -15,6 +15,7 @@
 // Toàn bộ hàm ở đây THUẦN (không gọi Supabase) để dễ test — api/leaderboard.ts lo truy vấn.
 
 import { addDays, weekStartOf } from './date.js'
+import { isReservedName } from './reservedNames.js'
 
 export const LEAGUE_POINTS = {
   learnOrReview: 1, // 1 lượt học từ mới / ôn SRS (daily_usage.learn_count)
@@ -150,6 +151,11 @@ export function validateNickname(raw: string): NicknameValidation {
   }
   if (containsProfanity(nickname)) {
     return { ok: false, reason: 'Biệt danh chứa từ không phù hợp, vui lòng chọn tên khác' }
+  }
+  // Nickname hiển thị công khai trong bảng xếp hạng (xem api/leaderboard.ts `top`) — chặn
+  // giả danh admin/CSKH giống hệt tên đăng ký (xem api/_lib/reservedNames.ts).
+  if (isReservedName(nickname)) {
+    return { ok: false, reason: 'Tên này không thể sử dụng, vui lòng chọn tên khác' }
   }
   return { ok: true, nickname }
 }
