@@ -28,6 +28,8 @@ import {
   logSecurityEvent,
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
+import { sendVerificationCode, verifyCode, isEmailVerified } from './_lib/emailVerification.js'
+import { changeEmail } from './_lib/changeEmail.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { isReservedName } from './_lib/reservedNames.js'
 
@@ -56,7 +58,31 @@ const GoogleSchema = z.object({
   idToken: z.string().min(10),
 })
 const LogoutSchema = z.object({ action: z.literal('logout') })
-const BodySchema = z.union([RegisterSchema, LoginSchema, GoogleSchema, LogoutSchema])
+// Gửi lại mã xác thực email (cần đăng nhập) — chống email giả cày thưởng mời bạn.
+const SendVerificationSchema = z.object({ action: z.literal('send-verification') })
+const VerifyEmailSchema = z.object({
+  action: z.literal('verify-email'),
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'Mã xác thực gồm 6 chữ số'),
+})
+// Đổi email (cần đăng nhập). Mật khẩu bắt buộc với tài khoản email/password — xem
+// api/_lib/changeEmail.ts để biết vì sao.
+const ChangeEmailSchema = z.object({
+  action: z.literal('change-email'),
+  newEmail: z.string().trim().toLowerCase().email(),
+  password: z.string().min(1).max(200).optional(),
+})
+const BodySchema = z.union([
+  RegisterSchema,
+  LoginSchema,
+  GoogleSchema,
+  LogoutSchema,
+  SendVerificationSchema,
+  VerifyEmailSchema,
+  ChangeEmailSchema,
+])
 
 // Trả về đúng shape AppUser phía client mong đợi (xem src/types.ts) — email lấy từ input vì
 // bảng users hiện chưa cần trả qua API này (chỉ id cần thiết cho các nơi khác dùng).
@@ -106,6 +132,8 @@ export default async function handler(req: Request): Promise<Response> {
         name: profile.name,
         plan: profile.plan,
         onboarded: profile.onboarded,
+        // Để UI biết có cần nhắc xác thực email không (xem src/components/EmailVerifySection.tsx).
+        emailVerified: await isEmailVerified(auth.userId),
       },
       200,
       allHeaders,
@@ -132,6 +160,12 @@ export default async function handler(req: Request): Promise<Response> {
     }
     const profile = await ensureProfileRow(user.id, name)
     const token = await createSession(user.id)
+    // Gửi mã xác thực ngay sau khi tạo tài khoản. KHÔNG chặn đăng ký nếu gửi lỗi/chưa cấu hình
+    // SMTP — người dùng vẫn vào học được, chỉ là chưa mở khoá phần thưởng mời bạn (họ bấm
+    // "gửi lại mã" trong Hồ sơ sau). Xem api/_lib/emailVerification.ts.
+    await sendVerificationCode(user.id).catch((err) => {
+      console.error('[auth] Không gửi được mã xác thực lúc đăng ký:', err)
+    })
     return jsonResponse(authResponse(token, user, profile), 200, allHeaders)
   }
 
@@ -154,6 +188,68 @@ export default async function handler(req: Request): Promise<Response> {
     const profile = await ensureProfileRow(user.id, info.name)
     const token = await createSession(user.id)
     return jsonResponse(authResponse(token, user, profile), 200, allHeaders)
+  }
+
+  // ── Xác thực email (chống email giả cày thưởng mời bạn) ────────────────────
+  // Phải nằm TRƯỚC nhánh logout bên dưới vì đó là nhánh fallthrough cuối hàm.
+  if (result.data.action === 'send-verification') {
+    const auth = await validateAuth(req)
+    if (!auth) return jsonResponse({ error: 'Unauthorized' }, 401, allHeaders)
+
+    const sent = await sendVerificationCode(auth.userId)
+    if (!sent.ok) {
+      const messages: Record<typeof sent.reason, string> = {
+        already_verified: 'Email của bạn đã được xác thực rồi',
+        cooldown: 'Vui lòng đợi một phút trước khi gửi lại mã',
+        user_not_found: 'Không tìm thấy tài khoản',
+      }
+      return jsonResponse({ error: messages[sent.reason] }, 400, allHeaders)
+    }
+    // Trả trạng thái gửi thật để UI báo đúng: 'rejected' = địa chỉ không nhận được thư
+    // (nhiều khả năng gõ sai email), 'not_configured'/'error' = lỗi phía máy chủ.
+    return jsonResponse({ ok: true, mail: sent.mail }, 200, allHeaders)
+  }
+
+  if (result.data.action === 'verify-email') {
+    const auth = await validateAuth(req)
+    if (!auth) return jsonResponse({ error: 'Unauthorized' }, 401, allHeaders)
+
+    const verified = await verifyCode(auth.userId, result.data.code)
+    if (!verified.ok) {
+      const messages: Record<typeof verified.reason, string> = {
+        no_code: 'Chưa có mã nào đang chờ — hãy bấm gửi mã trước',
+        expired: 'Mã đã hết hạn, hãy gửi lại mã mới',
+        too_many_attempts: 'Nhập sai quá nhiều lần, hãy gửi lại mã mới',
+        wrong_code: 'Mã không đúng',
+      }
+      logSecurityEvent('EMAIL_VERIFY_FAILED', clientIp, { reason: verified.reason })
+      return jsonResponse({ error: messages[verified.reason] }, 400, allHeaders)
+    }
+    return jsonResponse({ ok: true }, 200, allHeaders)
+  }
+
+  if (result.data.action === 'change-email') {
+    const auth = await validateAuth(req)
+    if (!auth) return jsonResponse({ error: 'Unauthorized' }, 401, allHeaders)
+
+    const changed = await changeEmail(
+      auth.userId,
+      result.data.newEmail,
+      result.data.password ?? null,
+    )
+    if (!changed.ok) {
+      const messages: Record<typeof changed.reason, string> = {
+        user_not_found: 'Không tìm thấy tài khoản',
+        wrong_password: 'Mật khẩu không đúng',
+        password_required: 'Nhập mật khẩu hiện tại để đổi email',
+        email_taken: 'Email này đã được dùng cho tài khoản khác',
+        same_email: 'Email mới trùng email hiện tại',
+      }
+      logSecurityEvent('CHANGE_EMAIL_FAILED', clientIp, { reason: changed.reason })
+      return jsonResponse({ error: messages[changed.reason] }, 400, allHeaders)
+    }
+    logSecurityEvent('CHANGE_EMAIL_OK', clientIp, { userId: auth.userId })
+    return jsonResponse({ ok: true, mail: changed.mail }, 200, allHeaders)
   }
 
   // action === 'logout'
