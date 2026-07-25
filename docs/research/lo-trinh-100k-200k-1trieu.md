@@ -18,17 +18,49 @@
 
 ## Mốc 100k concurrent
 
-**Thay đổi so với 50k:** chủ yếu nhân đôi số máy, không đổi kiến trúc.
+> **QUYẾT ĐỊNH (2026-07-25):** 50k vận hành **tự host thủ công** (theo
+> `docs/huong-dan-tu-host-scale-50k.md`). Tới 100k, chuyển **TOÀN BỘ stack sang managed
+> auto-scale** — không tiếp tục tự host thêm VPS. Lý do: đúng ranh giới "vùng chuyển tiếp" đã
+> phân tích — 1 người vận hành thủ công ổn định tới ~100k, qua mốc đó nên trả tiền cho tự động
+> hoá thay vì tự làm tay.
 
-- Tầng app: 6-8 VPS app (thay vì 3-4), LB thật (Nginx/HAProxy) đã cấu hình ở mục 11 hướng dẫn
-  50k — không có gì mới về logic, chỉ thêm máy.
-- Tầng DB: 1 primary + **≥1 replica đã bật thật** (code đã sẵn sàng — `getPgReadPool()`, PR
-  #329) — route toàn bộ truy vấn đọc nặng (dictionary nếu sau này chuyển vào DB, leaderboard,
-  progress tổng hợp) qua đây.
-- Redis: cân nhắc Redis Sentinel (2-3 node) để có failover tự động — 1 node đơn ở mốc này bắt
-  đầu là điểm chết đáng lo (rate limit + cache TTS/pronunciation phụ thuộc hoàn toàn vào nó).
-- AI: bật `AI_CONCURRENCY_*` (đã có code, PR #329) — bắt buộc thật sự ở mốc này, không chỉ
-  "chuẩn bị sẵn" nữa, vì tần suất đụng rate limit nhà cung cấp tăng tuyến tính theo user.
+### Kiến trúc managed (thay thế hoàn toàn VPS tự host)
+
+| Tầng             | Dịch vụ                                                                | Thay thế cho                                  |
+| ---------------- | ---------------------------------------------------------------------- | --------------------------------------------- |
+| App              | Render / Fly.io / AWS Fargate (auto-scale)                             | VPS app + PM2 cluster mode + Nginx LB tự host |
+| Database         | Neon Postgres (serverless, auto-scale, backup tự động, replica có sẵn) | VPS Postgres + PgBouncer tự host              |
+| Cache/rate-limit | Upstash Redis (serverless)                                             | VPS Redis tự host                             |
+| Audio storage    | Cloudflare R2 (giữ nguyên — đã managed sẵn từ trước)                   | —                                             |
+
+**Code hiện tại đã tương thích thẳng** — `DATABASE_URL`/`REDIS_URL` chỉ là connection string,
+đổi sang Neon/Upstash không cần sửa code (`getPgPool()`/`getPgReadPool()` đã trừu tượng hoá).
+Riêng tầng app cần đóng gói lại thành container (Dockerfile) nếu Render/Fly.io yêu cầu — hiện
+app chạy trực tiếp qua PM2 trên VPS, chưa có Dockerfile trong repo.
+
+### Ước tính chi phí managed ở 100k concurrent (2026-07-25 — THÔ, cần k6 xác nhận)
+
+> Dao động rộng vì phụ thuộc TẢI TRUY VẤN THẬT, không chỉ số người dùng. Lấy báo giá chính thức
+> từ từng nhà cung cấp sau khi có số liệu k6, đừng dùng số này để chốt ngân sách thật.
+
+| Hạng mục                                                        | Ước tính/tháng             |
+| --------------------------------------------------------------- | -------------------------- |
+| App (Render/Fly.io/Fargate, auto-scale ~28-54 vCPU tương đương) | $800 – 2.500               |
+| Database (Neon, compute + storage tự scale)                     | $700 – 2.000               |
+| Redis (Upstash, theo lượt gọi hoặc gói cố định)                 | $100 – 1.000               |
+| CDN/Storage (Cloudflare R2 — không đổi)                         | $10 – 50                   |
+| **Tổng ước tính**                                               | **~$2.800 – $6.500/tháng** |
+
+**Việc cần làm trước khi chuyển:**
+
+1. Chạy k6 (`scripts/load-test/k6-baseline.js`) ở mức tải gần 100k để lấy số request/giây +
+   query/giây thật — input bắt buộc để báo giá managed chính xác.
+2. Đóng gói app thành container (viết `Dockerfile`, chưa có trong repo) nếu chọn Render/Fly.io/
+   Fargate.
+3. Export dữ liệu từ Postgres tự host (VPS) → import vào Neon; tương tự Redis (không cần export
+   vì chỉ là cache, mất dữ liệu ở đây không nghiêm trọng — tự build lại cache dần).
+4. Chạy song song (VPS cũ + managed mới) một thời gian, so sánh kết quả trước khi cắt hẳn DNS/
+   traffic sang managed.
 
 **⚠️ Cảnh báo an toàn:** nếu chưa bật Sentry (vẫn là nợ kỹ thuật) — ở 100k, sự cố sẽ xảy ra
 THƯỜNG XUYÊN hơn nhiều so với hiện tại mà không ai biết cho tới khi người dùng report. Bắt buộc
