@@ -40,12 +40,21 @@ Nếu chưa tick hết — DỪNG, làm xong các mục trên trước.
 (VPS app hiện tại chỉ 1 vCPU — xem `PROGRESS.md`). Thêm VPS app / LB (mục 11) làm SAU, dựa vào số
 đo k6 thật (mục 10), không làm trước khi có số liệu.
 
-> ⚠️ **R2 (Cloudflare object storage) KHÔNG phải tuỳ chọn nếu bạn định thêm VPS app thứ 2 trở
-> lên (mục 11).** Mặc định `STORAGE_DRIVER=local` lưu audio cache (TTS/pronunciation) vào ổ đĩa
-> **riêng của từng VPS** — 2 VPS app sẽ có 2 cache KHÔNG đồng bộ (cache-miss trùng lặp, tốn tiền
-> AI gọi lại từ đầu, có thể tạo 2 bản audio khác nhau cho cùng 1 từ tuỳ máy nào phục vụ request).
-> Bật `STORAGE_DRIVER=r2` (`.env.example` đã có mẫu, chỉ cần điền `R2_*`) **TRƯỚC** khi làm mục
-> 11 — không phải sau.
+> ✅ **R2 đã bật và xác nhận hoạt động trên production từ 2026-07-20**
+> (`docs/migration-thoat-ly-supabase.md` mục 10 — `STORAGE_DRIVER=r2` đã set trên VPS, audio
+> mới tự động lên R2). Đây LÀ điều kiện tiên quyết cho mục 11 (thêm VPS app thứ 2) — nếu quay
+> lại `STORAGE_DRIVER=local`, 2 VPS app sẽ có 2 cache KHÔNG đồng bộ (cache-miss trùng lặp, tốn
+> tiền AI gọi lại). **Việc còn sót lại (tuỳ chọn nhưng nên làm):** audio đã cache TỪ TRƯỚC khi
+> bật R2 vẫn còn nằm ở `uploads/` local trên VPS app — chưa xác nhận đã chạy đồng bộ nốt lên R2
+> (xem mục 10 bước 7 của `docs/migration-thoat-ly-supabase.md`):
+>
+> ```bash
+> STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2 --dry-run   # xem trước, không ghi gì
+> STORAGE_DRIVER=r2 npm run seed:all -- --sync-r2              # chạy thật, an toàn chạy lại nhiều lần
+> ```
+>
+> Chạy xong, xác nhận qua Cloudflare Dashboard → R2 → bucket thấy đủ file, rồi mới cân nhắc dùng
+> menu `v` (`--verify-r2 --delete-verified`) để xoá file local lấy lại dung lượng ổ đĩa.
 
 ---
 
