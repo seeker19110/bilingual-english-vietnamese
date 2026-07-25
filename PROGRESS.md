@@ -726,9 +726,10 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## Nợ kỹ thuật còn mở
 
-- **PM2 cluster mode: đã sửa nguyên nhân crash cũ, ĐANG CHỜ xác nhận thật trên VPS
-  (2026-07-25, nhánh `claude/project-100k-active-users-8292zf`, đặc tả
-  `docs/research/dac-ta-gd1-scale-30k.md` Việc A).** Bối cảnh: PM2 cluster mode ĐÃ ROLLBACK
+- **PM2 cluster mode: ĐÃ XÁC NHẬN chạy đúng cơ chế trên VPS thật (2026-07-25),
+  nhưng hiệu quả bị giới hạn bởi phần cứng — xem cuối mục.** (nhánh
+  `claude/project-100k-active-users-8292zf`, đặc tả `docs/research/dac-ta-gd1-scale-30k.md`
+  Việc A + fix PR #322.) Bối cảnh: PM2 cluster mode ĐÃ ROLLBACK
   về fork mode (2026-07-20, PR #285) vì PR #283/#284 làm worker crash im lặng khi chạy thật
   trên VPS (Node `cluster` module không tương thích loader ESM `--import tsx`). Lần này gỡ
   ĐÚNG nguyên nhân: thêm `tsconfig.server.json` + script `build:server` (`npm run build` gọi
@@ -740,13 +741,31 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   `uploads/`, `public/data/dictionary/` — các đường dẫn này SẼ SAI khi tính từ vị trí file đã
   biên dịch (nằm trong `dist-server/`), đã sửa sang `process.cwd()` (ổn định vì PM2 luôn cwd
   = gốc repo). **Đã kiểm chứng trong sandbox dev**: `node dist-server/server.js` chạy
-  standalone, `/api/health` 200, `/api/dictionary` đọc đúng 12.168 từ. **CHƯA kiểm chứng**:
-  chạy PM2 cluster mode thật nhiều tiến trình trên VPS (sandbox không có PM2 thật) — làm việc
-  này TRƯỚC khi coi nợ kỹ thuật đã hết; nếu worker vẫn lỗi, rollback ngay về fork mode
-  (`instances: 1, exec_mode: 'fork'`, giữ `script: './dist-server/server.js'` — không cần
-  quay lại tsx vì build đã đúng) và báo lại. Cũng cần đặt `REDIS_URL` (xem mục ngay bên dưới
-  — rate limit chuyển sang Redis) trước khi bật cluster mode ở tải thật, không thì rate
-  limit lỏng hơn N lần (N = số tiến trình).
+  standalone, `/api/health` 200, `/api/dictionary` đọc đúng 12.168 từ.
+
+  **[Cập nhật 2026-07-25, xác nhận trên VPS thật]** Deploy đầu tiên sau merge PR #321 phát hiện
+  `pm2 reload` không đổi được `exec_mode` của process đang chạy (log vẫn `ids: [ 1 ]`, cluster
+  mode chưa hề áp dụng) — đã vá bằng PR #322 (`scripts/pm2-reload.sh` tự phát hiện lệch
+  exec_mode → `pm2 delete` + `pm2 start`; đồng thời bật `wait_ready`/`kill_timeout` cho
+  zero-downtime thật). Deploy tiếp theo (commit `d801a8e`, run
+  [30154933490](https://github.com/seeker19110/bilingual-english-vietnamese/actions/runs/30154933490))
+  xác nhận log đúng như thiết kế: phát hiện đổi `fork_mode → cluster_mode`, xoá + start lại,
+  health check OK sau 1s.
+
+  **NHƯNG: log PM2 báo `App [english-tutor] launched (1 instances)`** — dù cấu hình
+  `instances: 'max'`, chỉ có **đúng 1 tiến trình** được tạo. Kết luận gần như chắc chắn: **VPS
+  hiện tại chỉ có 1 vCPU** (`'max'` = số core thật của máy). Cơ chế cluster mode ĐÃ ĐÚNG và chạy
+  ổn định, nhưng **không có lợi ích song song thật** cho tới khi máy có nhiều hơn 1 core — đây
+  là bằng chứng cụ thể xác nhận GĐ2 (thêm VPS, tách máy khỏi app "xboss" dùng chung) là điều
+  kiện BẮT BUỘC, không phải tuỳ chọn, để kế hoạch scale 50k concurrent
+  (`docs/research/ke-hoach-scale-30k-concurrent.md`) có ý nghĩa thực tế. Nợ kỹ thuật này coi là
+  **đã đóng về mặt cơ chế** (không cần sửa code thêm), còn mở về mặt **phần cứng** (chuyển sang
+  GĐ2).
+
+  Cũng cần đặt `REDIS_URL` (xem mục ngay bên dưới — rate limit chuyển sang Redis) trước khi bật
+  cluster mode nhiều tiến trình thật (sau khi thêm VPS ở GĐ2), không thì rate limit lỏng hơn N
+  lần (N = số tiến trình).
+
 - **Rate limit chuyển từ `Map` in-memory sang Redis khi có `REDIS_URL` (2026-07-25, Việc B
   cùng đặc tả trên).** `api/_lib/security.ts` `checkRateLimit()` giờ là async: có
   `REDIS_URL` → đếm atomic qua Lua script (INCR + PEXPIRE có điều kiện) dùng chung mọi tiến
