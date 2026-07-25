@@ -29,11 +29,21 @@ import {
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
+import { isReservedName } from './_lib/reservedNames.js'
 
 const RegisterSchema = z.object({
   action: z.literal('register'),
   email: z.string().trim().toLowerCase().email(),
-  name: z.string().trim().min(1).max(80),
+  name: z
+    .string()
+    .trim()
+    .min(1)
+    .max(80)
+    // Chặn tên dễ gây nhầm là admin/CSKH (giả danh lừa người dùng khác) — xem
+    // api/_lib/reservedNames.ts + docs/research/dac-ta-admin-dashboard-2026-07-25.md Phần B.
+    .refine((name) => !isReservedName(name), {
+      message: 'Tên này không thể sử dụng, vui lòng chọn tên khác',
+    }),
   password: z.string().min(6).max(200),
 })
 const LoginSchema = z.object({
