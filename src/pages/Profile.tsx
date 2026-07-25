@@ -295,7 +295,11 @@ export default function Profile() {
 
         {/* Xác thực email — chỉ hiện khi CHƯA xác thực; mở khoá thưởng mời bạn */}
         {user.emailVerified === false && (
-          <EmailVerifySection isA={isA} onVerified={() => void refresh()} />
+          <EmailVerifySection
+            isA={isA}
+            currentEmail={user.email}
+            onVerified={() => void refresh()}
+          />
         )}
 
         {/* Mời bạn cùng học — thưởng ngày gói Pro cho cả 2 bên (xem api/_lib/referral.ts) */}

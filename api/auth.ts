@@ -29,6 +29,7 @@ import {
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { sendVerificationCode, verifyCode, isEmailVerified } from './_lib/emailVerification.js'
+import { changeEmail } from './_lib/changeEmail.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { isReservedName } from './_lib/reservedNames.js'
 
@@ -66,6 +67,13 @@ const VerifyEmailSchema = z.object({
     .trim()
     .regex(/^\d{6}$/, 'Mã xác thực gồm 6 chữ số'),
 })
+// Đổi email (cần đăng nhập). Mật khẩu bắt buộc với tài khoản email/password — xem
+// api/_lib/changeEmail.ts để biết vì sao.
+const ChangeEmailSchema = z.object({
+  action: z.literal('change-email'),
+  newEmail: z.string().trim().toLowerCase().email(),
+  password: z.string().min(1).max(200).optional(),
+})
 const BodySchema = z.union([
   RegisterSchema,
   LoginSchema,
@@ -73,6 +81,7 @@ const BodySchema = z.union([
   LogoutSchema,
   SendVerificationSchema,
   VerifyEmailSchema,
+  ChangeEmailSchema,
 ])
 
 // Trả về đúng shape AppUser phía client mong đợi (xem src/types.ts) — email lấy từ input vì
@@ -216,6 +225,30 @@ export default async function handler(req: Request): Promise<Response> {
       return jsonResponse({ error: messages[verified.reason] }, 400, allHeaders)
     }
     return jsonResponse({ ok: true }, 200, allHeaders)
+  }
+
+  if (result.data.action === 'change-email') {
+    const auth = await validateAuth(req)
+    if (!auth) return jsonResponse({ error: 'Unauthorized' }, 401, allHeaders)
+
+    const changed = await changeEmail(
+      auth.userId,
+      result.data.newEmail,
+      result.data.password ?? null,
+    )
+    if (!changed.ok) {
+      const messages: Record<typeof changed.reason, string> = {
+        user_not_found: 'Không tìm thấy tài khoản',
+        wrong_password: 'Mật khẩu không đúng',
+        password_required: 'Nhập mật khẩu hiện tại để đổi email',
+        email_taken: 'Email này đã được dùng cho tài khoản khác',
+        same_email: 'Email mới trùng email hiện tại',
+      }
+      logSecurityEvent('CHANGE_EMAIL_FAILED', clientIp, { reason: changed.reason })
+      return jsonResponse({ error: messages[changed.reason] }, 400, allHeaders)
+    }
+    logSecurityEvent('CHANGE_EMAIL_OK', clientIp, { userId: auth.userId })
+    return jsonResponse({ ok: true, delivered: changed.delivered }, 200, allHeaders)
   }
 
   // action === 'logout'
