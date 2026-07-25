@@ -44,6 +44,7 @@ const CefrLevelPage = lazyWithRetry(() => import('./pages/CefrLevelPage'))
 // Trang cấu hình hạn mức/khuyến mãi — chỉ admin (ADMIN_EMAILS) dùng được, lazy-load vì
 // hiếm khi truy cập.
 const AdminSettings = lazyWithRetry(() => import('./pages/AdminSettings'))
+const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'))
 
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
 // Hiện khung skeleton nhấp nháy thay vì chữ trơ, đỡ cảm giác đơ.
@@ -235,6 +236,14 @@ export default function App() {
                       element={
                         <RequireAuth>
                           <AdminSettings />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/admin"
+                      element={
+                        <RequireAuth>
+                          <AdminDashboard />
                         </RequireAuth>
                       }
                     />
