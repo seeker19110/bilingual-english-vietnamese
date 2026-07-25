@@ -18,6 +18,7 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
 import VoicePicker from '../components/VoicePicker'
+import ReferralSection from '../components/ReferralSection'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useToast } from '../context/ToastProvider'
@@ -290,6 +291,9 @@ export default function Profile() {
               : 'Weeks start on Monday. Any study activity (vocab, chat, writing, speaking) counts — same rule as your streak.'}
           </p>
         </section>
+
+        {/* Mời bạn cùng học — thưởng ngày gói Pro cho cả 2 bên (xem api/_lib/referral.ts) */}
+        <ReferralSection isA={isA} />
 
         {/* Chọn giọng đọc — 14 giọng Chirp3-HD, áp dụng toàn cục */}
         <VoicePicker plan={user.plan} isA={isA} />

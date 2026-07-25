@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BookOpen, Eye, EyeOff, Mic, PenLine, MessageCircle } from 'lucide-react'
 import { login, register, loginWithGoogle } from '../lib/auth'
+import { claimPendingReferral } from '../lib/referral'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import type { UiLang } from '../lib/uiLang'
@@ -46,6 +47,9 @@ export default function Login() {
           setError(T.errEmailInvalid)
           return
         }
+        // Mời bạn: gửi mã đang chờ (lưu lúc vào landing qua link ?ref=) NGAY SAU khi đăng ký
+        // thành công — chưa trao thưởng ở đây, server chỉ ghi nhận lời mời (xem api/referral.ts).
+        await claimPendingReferral()
       } else {
         const u = await login(email.trim(), password)
         if (!u) {
@@ -73,6 +77,9 @@ export default function Login() {
         setError(T.errGoogle)
         return
       }
+      // Đăng nhập Google cũng là đường TẠO tài khoản mới (findOrCreateGoogleUser) nên cũng cần
+      // gửi mã mời đang chờ. Server tự từ chối nếu tài khoản đã được ghi nhận lời mời trước đó.
+      await claimPendingReferral()
       await refresh()
       nav('/')
     } catch {

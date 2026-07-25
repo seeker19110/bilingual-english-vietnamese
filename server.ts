@@ -37,6 +37,7 @@ import adminSettingsHandler from './api/admin-settings.js'
 import appSettingsHandler from './api/app-settings.js'
 import adminGrantPlanHandler from './api/admin-grant-plan.js'
 import analyticsHandler from './api/analytics.js'
+import referralHandler from './api/referral.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 
 const app = express()
@@ -159,6 +160,7 @@ app.all('/api/admin-settings', wrapEdge(adminSettingsHandler))
 app.all('/api/app-settings', wrapEdge(appSettingsHandler))
 app.all('/api/admin-grant-plan', wrapEdge(adminGrantPlanHandler))
 app.all('/api/analytics', wrapEdge(analyticsHandler))
+app.all('/api/referral', wrapEdge(referralHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
