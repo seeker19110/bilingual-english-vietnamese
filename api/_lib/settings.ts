@@ -10,6 +10,10 @@ export interface AppSettings {
   limits: Record<Plan, Record<UsageMode, number>>
   // null = không có khuyến mãi đang chạy (áp hạn mức thật ngay)
   promoUntil: string | null
+  // Cầu dao khẩn cấp chặn TOÀN BỘ lượt gọi AI (chat/writing/speaking/stt/pronounce) — admin bật
+  // qua /api/admin-settings khi phát hiện chi phí bất thường. Xem api/_lib/usage.ts +
+  // postgres/migrations/0005_ai_circuit_breaker.sql.
+  aiCircuitBreaker: boolean
   // "Token" để client so sánh — chính là updated_at của dòng cấu hình (ISO string). Client
   // gửi lại qua header If-None-Match (xem api/app-settings.ts); server trả 304 nếu trùng,
   // client bỏ qua parse/ghi cache — KHÔNG cần tự viết cơ chế so token riêng, tận dụng đúng
@@ -33,6 +37,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     },
   },
   promoUntil: '2027-01-01T00:00:00+07:00',
+  aiCircuitBreaker: false,
   updatedAt: '1970-01-01T00:00:00.000Z',
 }
 
@@ -53,6 +58,7 @@ interface AppSettingsRow {
   vip_stt_limit: number
   vip_pronounce_limit: number
   promo_until: Date | null
+  ai_circuit_breaker: boolean
   updated_at: Date
 }
 
@@ -82,6 +88,7 @@ function rowToSettings(row: AppSettingsRow): AppSettings {
       },
     },
     promoUntil: row.promo_until ? new Date(row.promo_until).toISOString() : null,
+    aiCircuitBreaker: Boolean(row.ai_circuit_breaker),
     updatedAt: new Date(row.updated_at).toISOString(),
   }
 }

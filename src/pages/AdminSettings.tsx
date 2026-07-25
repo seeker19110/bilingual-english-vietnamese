@@ -12,6 +12,7 @@ type LimitsByPlan = Record<Plan, Record<UsageMode, number>>
 interface AppSettings {
   limits: LimitsByPlan
   promoUntil: string | null
+  aiCircuitBreaker: boolean
 }
 
 const MODES: { key: UsageMode; label: string }[] = [
@@ -87,7 +88,11 @@ export default function AdminSettings() {
       const res = await fetch('/api/admin-settings', {
         method: 'POST',
         headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ limits: settings.limits, promoUntil }),
+        body: JSON.stringify({
+          limits: settings.limits,
+          promoUntil,
+          aiCircuitBreaker: settings.aiCircuitBreaker,
+        }),
       })
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string }
@@ -126,6 +131,30 @@ export default function AdminSettings() {
 
         {!loading && !forbidden && settings && (
           <>
+            <section className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4">
+              <p className="text-sm font-semibold text-red-200 mb-1 flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 shrink-0" />
+                Cầu dao khẩn cấp — chặn toàn bộ AI
+              </p>
+              <p className="text-xs text-red-300/80 mb-3">
+                Bật khi phát hiện chi phí gọi AI bất thường (lỗi vòng lặp, spam) cần dừng ngay trong
+                lúc điều tra — chặn TẤT CẢ lượt Chat/Viết/Nói/STT/Chấm phát âm của MỌI người dùng,
+                bất kể còn hạn mức hay không. Nhớ tắt lại sau khi xử lý xong.
+              </p>
+              <label className="flex items-center gap-2 text-sm text-red-100">
+                <input
+                  type="checkbox"
+                  checked={settings.aiCircuitBreaker}
+                  onChange={(e) =>
+                    setSettings((prev) =>
+                      prev ? { ...prev, aiCircuitBreaker: e.target.checked } : prev,
+                    )
+                  }
+                />
+                Đang bật — chặn toàn bộ lượt gọi AI
+              </label>
+            </section>
+
             <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
               <p className="text-sm font-semibold text-white mb-3">Khuyến mãi ra mắt</p>
               <label className="flex items-center gap-2 text-sm text-zinc-300 mb-3">
