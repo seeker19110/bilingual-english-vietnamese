@@ -19,7 +19,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'GET') return jsonResponse({ error: 'Method not allowed' }, 405, allHeaders)
 
   const clientIp = getClientIp(req)
-  if (!checkRateLimit(clientIp, 30, 'app-settings')) {
+  if (!(await checkRateLimit(clientIp, 30, 'app-settings'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/app-settings' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

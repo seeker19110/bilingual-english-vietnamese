@@ -150,7 +150,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Rate limit: tối đa 5 request/phút mỗi IP
-  if (!checkRateLimit(clientIp, 5)) {
+  if (!(await checkRateLimit(clientIp, 5))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/claude' })
     return jsonResponse(
       { error: { message: 'Quá nhiều yêu cầu — thử lại sau 1 phút' } },

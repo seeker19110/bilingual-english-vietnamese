@@ -34,32 +34,44 @@ describe('getCorsHeaders (H10 — CORS)', () => {
   })
 })
 
-describe('checkRateLimit', () => {
-  beforeEach(() => vi.useRealTimers())
+// Không set REDIS_URL trong test → toàn bộ khối này chạy nhánh FALLBACK Map in-memory,
+// tức xác nhận hành vi cũ được giữ nguyên khi môi trường chưa có Redis (dev local, CI).
+describe('checkRateLimit (fallback Map in-memory khi không có REDIS_URL)', () => {
+  beforeEach(() => {
+    delete process.env.REDIS_URL
+    vi.useRealTimers()
+  })
   afterEach(() => vi.useRealTimers())
 
-  it('cho qua tới hạn rồi chặn request vượt', () => {
+  it('không cấu hình REDIS_URL → vẫn đếm được bằng Map, không ném lỗi', async () => {
+    expect(process.env.REDIS_URL).toBeUndefined()
     const ip = 'ip-' + Math.random()
-    expect(checkRateLimit(ip, 3, 'b1')).toBe(true)
-    expect(checkRateLimit(ip, 3, 'b1')).toBe(true)
-    expect(checkRateLimit(ip, 3, 'b1')).toBe(true)
-    expect(checkRateLimit(ip, 3, 'b1')).toBe(false) // request thứ 4 → chặn
+    await expect(checkRateLimit(ip, 1, 'fallback')).resolves.toBe(true)
+    await expect(checkRateLimit(ip, 1, 'fallback')).resolves.toBe(false)
   })
 
-  it('bộ đếm tách biệt theo bucket', () => {
+  it('cho qua tới hạn rồi chặn request vượt', async () => {
     const ip = 'ip-' + Math.random()
-    expect(checkRateLimit(ip, 1, 'bucketA')).toBe(true)
-    expect(checkRateLimit(ip, 1, 'bucketA')).toBe(false)
+    expect(await checkRateLimit(ip, 3, 'b1')).toBe(true)
+    expect(await checkRateLimit(ip, 3, 'b1')).toBe(true)
+    expect(await checkRateLimit(ip, 3, 'b1')).toBe(true)
+    expect(await checkRateLimit(ip, 3, 'b1')).toBe(false) // request thứ 4 → chặn
+  })
+
+  it('bộ đếm tách biệt theo bucket', async () => {
+    const ip = 'ip-' + Math.random()
+    expect(await checkRateLimit(ip, 1, 'bucketA')).toBe(true)
+    expect(await checkRateLimit(ip, 1, 'bucketA')).toBe(false)
     // bucket khác vẫn còn lượt riêng
-    expect(checkRateLimit(ip, 1, 'bucketB')).toBe(true)
+    expect(await checkRateLimit(ip, 1, 'bucketB')).toBe(true)
   })
 
-  it('reset sau cửa sổ 60s', () => {
+  it('reset sau cửa sổ 60s', async () => {
     vi.useFakeTimers()
     const ip = 'ip-' + Math.random()
-    expect(checkRateLimit(ip, 1, 'win')).toBe(true)
-    expect(checkRateLimit(ip, 1, 'win')).toBe(false)
+    expect(await checkRateLimit(ip, 1, 'win')).toBe(true)
+    expect(await checkRateLimit(ip, 1, 'win')).toBe(false)
     vi.advanceTimersByTime(61_000)
-    expect(checkRateLimit(ip, 1, 'win')).toBe(true) // cửa sổ mới
+    expect(await checkRateLimit(ip, 1, 'win')).toBe(true) // cửa sổ mới
   })
 })

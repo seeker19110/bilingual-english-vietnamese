@@ -74,7 +74,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Rate limit: 15 request/phút mỗi IP (STT tốn tiền API nên giới hạn chặt vừa phải).
-  if (!checkRateLimit(clientIp, 15)) {
+  if (!(await checkRateLimit(clientIp, 15))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/stt' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

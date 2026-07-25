@@ -74,7 +74,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   const clientIp = getClientIp(req)
   // Giới hạn chặt hơn route thường — chống dò mật khẩu/tạo tài khoản hàng loạt.
-  if (!checkRateLimit(clientIp, 10, 'auth')) {
+  if (!(await checkRateLimit(clientIp, 10, 'auth'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/auth' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

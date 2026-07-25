@@ -1,6 +1,7 @@
 // api/_lib/security.ts — Middleware bảo mật dùng chung cho tất cả API endpoints
 // Import file này ở đầu mỗi handler để có CORS, rate limit, auth validation, v.v.
 
+import IORedis, { type Redis } from 'ioredis'
 import { validateSessionToken } from './authService'
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
@@ -56,8 +57,13 @@ export const SECURITY_HEADERS: Record<string, string> = {
 }
 
 // ── Rate Limiting ─────────────────────────────────────────────────────────────
-// Dùng in-memory Map — đơn giản, phù hợp với Edge Runtime (mỗi instance riêng).
-// Với traffic thật nên dùng Redis (Upstash) để rate limit toàn cụm.
+// HAI cơ chế, tự chọn theo biến môi trường REDIS_URL:
+//   1) CÓ REDIS_URL → đếm trên Redis (dùng chung cho MỌI tiến trình/máy). Bắt buộc khi
+//      chạy PM2 cluster nhiều instance: nếu mỗi instance đếm riêng thì 1 IP có thể vượt
+//      giới hạn gấp N lần (N = số instance).
+//   2) KHÔNG có REDIS_URL, hoặc Redis lỗi → quay về Map in-memory bên dưới (mỗi instance
+//      một bộ đếm riêng). Đây là FAIL-OPEN có chủ ý — giống triết lý ở usage.ts: thà rate
+//      limit lỏng hơn một chút còn hơn làm hỏng request của người dùng thật.
 //
 // LƯU Ý khi có Cloudflare trước VPS (xem docs/cloudflare-setup.md): IP lấy từ
 // header X-Forwarded-For (clientIp ở mỗi handler api/*.ts) CHỈ đáng tin nếu Nginx
@@ -67,19 +73,95 @@ export const SECURITY_HEADERS: Record<string, string> = {
 // limit này hoàn toàn.
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 
+// Cửa sổ đếm: 60 giây (giữ nguyên ý nghĩa `maxPerMin` — số request tối đa mỗi phút).
+const WINDOW_MS = 60_000
+
+// Script Lua: tăng bộ đếm, và CHỈ khi vừa tạo key mới (count == 1) mới đặt hạn dùng.
+// Nhờ vậy cửa sổ 60s tính từ request đầu tiên, không bị "gia hạn" mỗi lần gọi.
+const RATE_LIMIT_LUA = `
+local count = redis.call('INCR', KEYS[1])
+if count == 1 then
+  redis.call('PEXPIRE', KEYS[1], ARGV[1])
+end
+return count
+`
+
+// Client Redis dùng chung, khởi tạo lười (chỉ tạo ở lần gọi đầu có REDIS_URL).
+// `null` = đã kiểm tra và không dùng Redis; `undefined` = chưa kiểm tra lần nào.
+let redisClient: Redis | null | undefined
+let warnedRedisFallback = false
+
+function getRedis(): Redis | null {
+  if (redisClient !== undefined) return redisClient
+
+  const url = process.env.REDIS_URL
+  if (!url) {
+    redisClient = null // Không cấu hình Redis → dùng Map in-memory
+    return null
+  }
+
+  try {
+    redisClient = new IORedis(url, {
+      // Không thử lại vô hạn: request phải trả lời nhanh, hỏng thì rơi về Map.
+      maxRetriesPerRequest: 1,
+      enableOfflineQueue: false,
+      connectTimeout: 2000,
+    })
+    // Bắt sự kiện 'error' để lỗi kết nối nền không làm process crash (unhandled error).
+    redisClient.on('error', (err: Error) => warnRedisFallbackOnce(err))
+  } catch (err) {
+    warnRedisFallbackOnce(err)
+    redisClient = null
+  }
+  return redisClient
+}
+
+// Chỉ log cảnh báo MỘT lần — tránh spam log mỗi request khi Redis chết.
+function warnRedisFallbackOnce(err: unknown): void {
+  if (warnedRedisFallback) return
+  warnedRedisFallback = true
+  const message = err instanceof Error ? err.message : String(err)
+  console.warn(
+    `[Security] Redis lỗi (${message}) — rate limit tạm dùng Map in-memory mỗi instance.`,
+  )
+}
+
 // Trả về true nếu được phép, false nếu vượt quá giới hạn.
 // `bucket` cho phép một IP có NHIỀU bộ đếm riêng biệt — ví dụ tách "tổng số request"
 // (kể cả cache HIT, rất rẻ) với "số lần tạo audio mới" (cache MISS, tốn tiền Google TTS).
 // Nhờ vậy người dùng phát cả bài học / tra nhiều từ đã cache vẫn mượt, mà chi phí API
 // vẫn được giới hạn chặt ở đường tạo mới. Xem cách dùng trong api/tts.ts & api/pronunciation.ts.
-export function checkRateLimit(ip: string, maxPerMin = 60, bucket = 'default'): boolean {
-  const now = Date.now()
+export async function checkRateLimit(
+  ip: string,
+  maxPerMin = 60,
+  bucket = 'default',
+): Promise<boolean> {
   const key = `${bucket}:${ip}`
+
+  const redis = getRedis()
+  if (redis) {
+    try {
+      // Script Lua chạy nguyên khối trên Redis → INCR và PEXPIRE không bị chen giữa
+      // (tránh race: hai request cùng lúc đều thấy key mới và cùng đặt hạn dùng).
+      const count = (await redis.eval(RATE_LIMIT_LUA, 1, key, String(WINDOW_MS))) as number
+      return count <= maxPerMin
+    } catch (err) {
+      // Redis hỏng → KHÔNG làm vỡ request, chỉ cảnh báo 1 lần rồi dùng Map in-memory.
+      warnRedisFallbackOnce(err)
+    }
+  }
+
+  return checkRateLimitInMemory(key, maxPerMin)
+}
+
+// Phương án dự phòng: bộ đếm cửa sổ 60s trong bộ nhớ tiến trình (cơ chế cũ, giữ nguyên).
+function checkRateLimitInMemory(key: string, maxPerMin: number): boolean {
+  const now = Date.now()
   const entry = rateLimitMap.get(key)
 
   if (!entry || now > entry.resetAt) {
     // Bắt đầu cửa sổ mới (1 phút)
-    rateLimitMap.set(key, { count: 1, resetAt: now + 60_000 })
+    rateLimitMap.set(key, { count: 1, resetAt: now + WINDOW_MS })
     return true
   }
 

@@ -44,7 +44,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   const clientIp = getClientIp(req)
   // Tra từ điển chỉ đọc RAM (không tốn tiền API) nên hạn mức rộng.
-  if (!checkRateLimit(clientIp, 120, 'dict')) {
+  if (!(await checkRateLimit(clientIp, 120, 'dict'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/dictionary' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

@@ -79,7 +79,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Tốn tiền Azure trực tiếp nên giới hạn chặt hơn STT (Groq/OpenAI rẻ hơn nhiều).
-  if (!checkRateLimit(clientIp, 10)) {
+  if (!(await checkRateLimit(clientIp, 10))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/pronounce-assess' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }

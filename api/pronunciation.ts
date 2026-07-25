@@ -65,7 +65,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Rate limit TỔNG: 60 request/phút mỗi IP. Hầu hết là cache HIT (tra DB, gần như miễn phí),
   // nên hạn mức rộng để tra nhiều từ / lật nhiều thẻ liên tiếp không bị chặn. Đường tạo
   // audio mới (tốn tiền) có hạn mức riêng, chặt hơn ở BƯỚC 2.
-  if (!checkRateLimit(clientIp, 60, 'pron')) {
+  if (!(await checkRateLimit(clientIp, 60, 'pron'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/pronunciation' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }
@@ -173,7 +173,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Hạn mức RIÊNG cho đường tạo audio mới (tốn tiền API): 60 lần/phút mỗi IP.
   // Audio tạo ra được lưu vào bảng `pronunciations` + Storage nên chỉ tốn tiền LẦN ĐẦU;
   // các lần sau là cache HIT miễn phí. Hạn mức này chỉ để chặn vòng lặp lỗi bất thường.
-  if (!checkRateLimit(clientIp, 60, 'pron-gen')) {
+  if (!(await checkRateLimit(clientIp, 60, 'pron-gen'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, {
       path: '/api/pronunciation',
       stage: 'generate',

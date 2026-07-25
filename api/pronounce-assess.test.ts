@@ -8,7 +8,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 vi.mock('./_lib/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
-  checkRateLimit: () => true,
+  checkRateLimit: async () => true,
   validateAuth: async () => ({ userId: 'user-test' }),
   validateContentType: () => true,
   logSecurityEvent: () => {},

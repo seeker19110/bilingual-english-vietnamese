@@ -27,7 +27,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: allHeaders })
 
   const clientIp = getClientIp(req)
-  if (!checkRateLimit(clientIp, 10, 'tutor-feedback')) {
+  if (!(await checkRateLimit(clientIp, 10, 'tutor-feedback'))) {
     logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/tutor-feedback' })
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }
