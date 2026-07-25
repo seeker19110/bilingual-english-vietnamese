@@ -106,13 +106,33 @@ Mục tiêu: gỡ nút thắt #5 — quan trọng nhất về tiền.
 
 ## 5. Rủi ro & điểm cần bạn quyết
 
-1. **Ngân sách hạ tầng + AI/tháng** — 30k concurrent là quy mô tốn kém; dự án đang "miễn phí cộng đồng". Cần con số trần.
-2. **Nền tảng deploy**: giữ VPS thủ công (Nginx+PM2) hay chuyển container/managed (Neon/Upstash/Fly/K8s)? Ảnh hưởng toàn bộ cách làm GĐ1–2.
-3. **Tự host hay thuê quản lý** Postgres/Redis (đánh đổi công sức vận hành vs chi phí).
-4. Cluster mode từng crash — GĐ1 bước build TS→JS là cách gỡ đã phân tích, cần thực nghiệm lại cẩn thận.
+1. ~~**Ngân sách hạ tầng + AI/tháng**~~ **ĐÃ CHỐT (2026-07-25, xem mục 5.1 dưới)**.
+2. **Nền tảng deploy**: giữ VPS thủ công (Nginx+PM2) hay chuyển container/managed (Neon/Upstash/Fly/K8s)? Ảnh hưởng toàn bộ cách làm GĐ1–2. **Vẫn CHƯA chốt** — GĐ1 đã làm trên nền VPS thủ công hiện có (chưa cần quyết định này), nhưng GĐ2 (PgBouncer/read-replica) cần chốt trước khi làm.
+3. **Tự host hay thuê quản lý** Postgres/Redis (đánh đổi công sức vận hành vs chi phí). Chưa chốt.
+4. Cluster mode từng crash — **ĐÃ LÀM GĐ1** (PR #321), đang vá thêm 1 lỗi phát hiện qua log deploy thật (PR #322, xem PROGRESS.md).
+
+### 5.1 Ngân sách (CHỐT 2026-07-25)
+
+- **Hạ tầng: $2.000/tháng**, tính cho quy mô **tối đa 30.000 concurrent** (không phải mức khởi
+  động rồi tăng dần) — đây là ràng buộc CỨNG cho thiết kế GĐ2 (Postgres/Redis/LB): phải chọn
+  giải pháp vừa túi tiền này ở tải đỉnh, không phải "cứ dùng managed service tốt nhất rồi tính
+  sau". Cần so sánh chi phí cụ thể (self-host VPS thêm máy vs managed Neon/Upstash/Fly) trước khi
+  chọn ở GĐ2 — cùng lúc với quyết định 5.2.
+- **AI: trần ≤ 1/3 doanh thu gói Pro dự kiến ($5/tháng/user) = ~$1,67/user/tháng.** Đây là thay
+  đổi mô hình sản phẩm quan trọng: **đảo ngược quyết định 2026-07-11** ("dự án dùng MIỄN PHÍ cho
+  cộng đồng — KHÔNG làm thanh toán Pro tới khi người dùng chủ động yêu cầu lại", xem CLAUDE.md
+  mục 13 + PROGRESS.md mục "Việc còn dang dở" #3). Người dùng dự án đã chủ động yêu cầu lại
+  (2026-07-25) — nhưng **thanh toán là 1 trong các việc CLAUDE.md mục 12 bắt buộc dừng lại hỏi
+  trước khi làm** ("đụng bảo mật, thanh toán, dữ liệu người dùng thật"). Việc thi hành gói Pro
+  $5/tháng (chọn cổng thanh toán, schema, luồng nâng/hạ cấp, thuế/hoá đơn nếu có...) là **một dự
+  án riêng, cần đặc tả riêng** — KHÔNG nằm trong phạm vi kế hoạch scale 30k concurrent này. Kế
+  hoạch này chỉ DÙNG con số $1,67/user/tháng làm trần thiết kế cho GĐ3 (cache/queue/circuit
+  breaker chi phí AI), không tự ý triển khai thu phí.
 
 ## 6. Đề xuất bắt đầu
 
-Làm **GĐ 1** trước (đa tiến trình + Redis rate limit) vì nó là nền cho mọi bước và rủi ro thấp,
-đo được ngay. Nhưng **trước GĐ1 cần bạn chốt mục 5.1 (ngân sách) và 5.2 (nền tảng deploy)** —
-hai quyết định này định hình cách triển khai.
+**GĐ 1 đã xong** (PR #321 merged, PR #322 đang vá 1 lỗi phát hiện qua log deploy thật — xem
+PROGRESS.md). Ngân sách (5.1) đã chốt. Còn thiếu trước khi làm GĐ2: chốt mục 5.2 (nền tảng
+deploy Postgres/Redis) — so sánh chi phí cụ thể trong ngân sách $2.000/tháng. Việc thu phí Pro
+(để hiện thực hoá trần ngân sách AI 5.1) là việc riêng, cần bạn xác nhận có muốn bắt đầu đặc tả
+tính năng đó ngay bây giờ hay để sau khi xong hạ tầng scale.
