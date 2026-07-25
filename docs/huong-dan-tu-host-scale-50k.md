@@ -190,6 +190,10 @@ bash scripts/verify-pg-backup.sh
 Kỳ vọng: `✅ Phục hồi + kiểm tra OK`. Nếu lỗi, đọc kỹ log — sửa xong mới coi bước này hoàn tất.
 Thêm cron hàng tuần theo hướng dẫn trong `docs/setup-postgresql-vps.md` mục 7.1.
 
+**Bắt buộc thêm:** đẩy backup lên Cloudflare R2 — backup nằm cùng ổ đĩa với DB gốc (như cron
+trên) KHÔNG đủ an toàn, ổ hỏng mất cả 2. Xem `docs/setup-postgresql-vps.md` mục 7.2
+(`npm run backup:r2`, bucket R2 riêng + private, tách khỏi bucket audio public-read).
+
 ## 10. Đo tải thật bằng k6 (đừng bỏ qua — mọi con số trước đó là ước lượng)
 
 Cài k6 (https://k6.io/docs/get-started/installation/), rồi chạy tăng dần, **KHÔNG nhảy thẳng
