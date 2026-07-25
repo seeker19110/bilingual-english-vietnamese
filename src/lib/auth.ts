@@ -130,6 +130,7 @@ export async function getCurrentUser(): Promise<AppUser | null> {
     name: string
     plan: Plan
     onboarded: boolean
+    emailVerified?: boolean
   }
   return { ...profile, createdAt: Date.now() }
 }

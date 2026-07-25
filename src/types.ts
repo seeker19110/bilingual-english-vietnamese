@@ -61,6 +61,9 @@ export interface User {
   name: string
   plan: Plan
   onboarded: boolean
+  // Email đã xác thực chưa — chỉ có ở /api/auth?action=me (đăng nhập/đăng ký chưa trả về).
+  // undefined = chưa biết, KHÔNG suy ra là "chưa xác thực" để tránh nhắc nhầm người đã xác thực.
+  emailVerified?: boolean
   createdAt: number
 }
 

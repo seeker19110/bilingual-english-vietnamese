@@ -120,6 +120,17 @@ export async function rewardReferralIfEligible(refereeId: string): Promise<void>
   try {
     const pool = getPgPool()
 
+    // ĐIỀU KIỆN TIÊN QUYẾT: người được mời phải XÁC THỰC EMAIL. Đây là hàng rào chính chống
+    // email giả/dùng-một-lần để cày thưởng — mạnh hơn dấu vân tay thiết bị nhiều, vì kẻ gian
+    // phải sở hữu thật một hộp thư nhận được mã cho MỖI tài khoản.
+    // Chưa xác thực thì KHÔNG thưởng, nhưng cũng KHÔNG xoá lời mời: xác thực xong, lần học
+    // tiếp theo sẽ được thưởng bình thường.
+    const { rows: verifiedRows } = await pool.query<{ email_verified: Date | null }>(
+      'select email_verified from public.users where id = $1',
+      [refereeId],
+    )
+    if (verifiedRows[0]?.email_verified == null) return
+
     // Đánh dấu đã thưởng TRƯỚC KHI cấp gói, và chỉ khi đang còn chưa thưởng (rewarded_at is
     // null). Đây là chốt chống trao thưởng 2 lần khi 2 request song song cùng lúc hoàn thành
     // phiên học: chỉ đúng 1 request nhận được rowCount = 1.
