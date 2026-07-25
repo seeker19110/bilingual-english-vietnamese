@@ -9,7 +9,7 @@
 
 import { createHash, randomInt } from 'node:crypto'
 import { getPgPool } from './pgPool.js'
-import { sendMail } from './mailer.js'
+import { sendMail, type MailStatus } from './mailer.js'
 
 // Mã sống 15 phút — đủ để mở mail, đủ ngắn để mã lộ không dùng được lâu.
 const CODE_TTL_MS = 15 * 60 * 1000
@@ -28,7 +28,7 @@ function generateCode(): string {
 }
 
 export type SendResult =
-  | { ok: true; delivered: boolean }
+  | { ok: true; mail: MailStatus }
   | { ok: false; reason: 'already_verified' | 'cooldown' | 'user_not_found' }
 
 /**
@@ -69,7 +69,7 @@ export async function sendVerificationCode(userId: string): Promise<SendResult> 
     [userId, hashCode(code), expiresAt],
   )
 
-  const delivered = await sendMail({
+  const mail = await sendMail({
     to: user.email,
     subject: `${code} là mã xác thực Gia sư tiếng Anh AI`,
     text: `Mã xác thực của bạn là: ${code}\n\nMã có hiệu lực trong 15 phút.\nNếu bạn không đăng ký tài khoản, hãy bỏ qua email này.`,
@@ -79,9 +79,10 @@ export async function sendVerificationCode(userId: string): Promise<SendResult> 
 <p style="color:#666;font-size:13px">Nếu bạn không đăng ký tài khoản, hãy bỏ qua email này.</p>`,
   })
 
-  // delivered=false khi chưa cấu hình SMTP — vẫn trả ok:true vì mã ĐÃ được tạo hợp lệ trong DB
-  // (nơi gọi dùng cờ này để báo người dùng đúng tình trạng thay vì báo thành công giả).
-  return { ok: true, delivered }
+  // Vẫn trả ok:true kể cả khi gửi lỗi, vì mã ĐÃ được tạo hợp lệ trong DB. Trạng thái gửi trả
+  // kèm để nơi gọi báo ĐÚNG tình trạng cho người dùng thay vì báo "đã gửi" giả — đặc biệt
+  // mail='rejected' nghĩa là địa chỉ không nhận được thư, gần như chắc chắn gõ sai email.
+  return { ok: true, mail: mail.status }
 }
 
 export type VerifyResult =

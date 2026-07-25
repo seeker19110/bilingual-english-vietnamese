@@ -10,15 +10,20 @@ import { MailCheck, Loader2 } from 'lucide-react'
 import { getAuthHeader } from '../lib/authHeader'
 import { useToast } from '../context/ToastProvider'
 
-async function postAuth(body: Record<string, unknown>): Promise<{ ok: boolean; error?: string }> {
+// Trạng thái gửi mail từ server (xem api/_lib/mailer.ts) — quyết định thông báo hiện cho user.
+type MailStatus = 'sent' | 'rejected' | 'not_configured' | 'error'
+
+async function postAuth(
+  body: Record<string, unknown>,
+): Promise<{ ok: boolean; error?: string; mail?: MailStatus }> {
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'content-type': 'application/json', ...getAuthHeader() },
       body: JSON.stringify(body),
     })
-    const data = (await res.json().catch(() => ({}))) as { error?: string }
-    return res.ok ? { ok: true } : { ok: false, error: data.error }
+    const data = (await res.json().catch(() => ({}))) as { error?: string; mail?: MailStatus }
+    return res.ok ? { ok: true, mail: data.mail } : { ok: false, error: data.error }
   } catch {
     return { ok: false, error: 'Lỗi kết nối, thử lại sau' }
   }
@@ -46,6 +51,31 @@ export default function EmailVerifySection({
   const [password, setPassword] = useState('')
   const [changing, setChanging] = useState(false)
 
+  // Báo cho người dùng đúng tình trạng gửi thật, thay vì luôn nói "đã gửi".
+  // 'rejected' = máy chủ nhận từ chối thẳng địa chỉ → gần như chắc chắn gõ sai email, nên MỞ
+  // LUÔN ô đổi email cho họ sửa ngay thay vì bắt tự mò.
+  function handleMailStatus(mail?: MailStatus) {
+    if (mail === 'rejected') {
+      setEditing(true)
+      toast.error(
+        isA
+          ? 'Không gửi được tới email này — có thể bạn nhập sai. Kiểm tra và đổi lại nhé.'
+          : 'That address rejected the email — it may be wrong. Please check and change it.',
+      )
+      return
+    }
+    if (mail === 'not_configured' || mail === 'error') {
+      // Lỗi phía máy chủ, KHÔNG phải lỗi email người dùng — đừng đổ lỗi cho họ.
+      toast.error(
+        isA
+          ? 'Hệ thống gửi mail đang trục trặc, thử lại sau ít phút nhé.'
+          : 'Our mail service is having trouble — please try again shortly.',
+      )
+      return
+    }
+    toast.success(isA ? 'Đã gửi mã, kiểm tra hộp thư nhé' : 'Code sent — check your inbox')
+  }
+
   async function handleChangeEmail() {
     const email = newEmail.trim()
     if (!email.includes('@')) {
@@ -61,13 +91,11 @@ export default function EmailVerifySection({
     })
     setChanging(false)
     if (r.ok) {
-      toast.success(
-        isA ? 'Đã đổi email, mã mới đã gửi tới hộp thư mới' : 'Email changed — new code sent',
-      )
       setEditing(false)
       setPassword('')
       setNewEmail('')
       setSent(true)
+      handleMailStatus(r.mail)
       onVerified() // refresh() để trang đọc lại email mới
     } else {
       toast.error(r.error ?? (isA ? 'Không đổi được email' : 'Could not change email'))
@@ -78,12 +106,12 @@ export default function EmailVerifySection({
     setSending(true)
     const r = await postAuth({ action: 'send-verification' })
     setSending(false)
-    if (r.ok) {
-      setSent(true)
-      toast.success(isA ? 'Đã gửi mã, kiểm tra hộp thư nhé' : 'Code sent — check your inbox')
-    } else {
+    if (!r.ok) {
       toast.error(r.error ?? (isA ? 'Không gửi được mã' : 'Could not send code'))
+      return
     }
+    setSent(true)
+    handleMailStatus(r.mail)
   }
 
   async function handleVerify() {
@@ -162,6 +190,17 @@ export default function EmailVerifySection({
             {isA ? 'Đổi email & gửi mã mới' : 'Change email & send new code'}
           </button>
         </div>
+      )}
+
+      {/* Máy chủ nhận CHẤP NHẬN thư không có nghĩa là thư vào được hộp thư: có thể bị trả lại
+          sau đó hoặc rơi vào thư rác, và những việc đó báo về bất đồng bộ nên không thể biết
+          ngay. Vì vậy luôn cho người dùng lối thoát thay vì để họ ngồi chờ mã không bao giờ tới. */}
+      {sent && (
+        <p className="text-xs text-amber-200/70 theme-light:text-amber-800 mb-3">
+          {isA
+            ? 'Chưa nhận được sau vài phút? Xem thư rác/quảng cáo — hoặc email có thể sai, bấm "Sai email? Đổi" ở trên.'
+            : 'Nothing after a few minutes? Check spam — or the address may be wrong, use "Wrong email? Change" above.'}
+        </p>
       )}
 
       <div className="flex flex-col sm:flex-row gap-2">

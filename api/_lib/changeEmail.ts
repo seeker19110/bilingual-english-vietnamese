@@ -13,9 +13,10 @@
 import { getPgPool } from './pgPool.js'
 import { verifyPassword } from './authService.js'
 import { sendVerificationCode } from './emailVerification.js'
+import type { MailStatus } from './mailer.js'
 
 export type ChangeEmailResult =
-  | { ok: true; delivered: boolean }
+  | { ok: true; mail: MailStatus }
   | {
       ok: false
       reason:
@@ -62,5 +63,5 @@ export async function changeEmail(
   await pool.query('delete from public.email_verifications where user_id = $1', [userId])
 
   const sent = await sendVerificationCode(userId)
-  return { ok: true, delivered: sent.ok ? sent.delivered : false }
+  return { ok: true, mail: sent.ok ? sent.mail : 'error' }
 }

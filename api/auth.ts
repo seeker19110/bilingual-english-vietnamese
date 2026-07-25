@@ -205,8 +205,9 @@ export default async function handler(req: Request): Promise<Response> {
       }
       return jsonResponse({ error: messages[sent.reason] }, 400, allHeaders)
     }
-    // delivered=false = chưa cấu hình SMTP trên máy chủ. Báo thật thay vì "đã gửi" giả.
-    return jsonResponse({ ok: true, delivered: sent.delivered }, 200, allHeaders)
+    // Trả trạng thái gửi thật để UI báo đúng: 'rejected' = địa chỉ không nhận được thư
+    // (nhiều khả năng gõ sai email), 'not_configured'/'error' = lỗi phía máy chủ.
+    return jsonResponse({ ok: true, mail: sent.mail }, 200, allHeaders)
   }
 
   if (result.data.action === 'verify-email') {
@@ -248,7 +249,7 @@ export default async function handler(req: Request): Promise<Response> {
       return jsonResponse({ error: messages[changed.reason] }, 400, allHeaders)
     }
     logSecurityEvent('CHANGE_EMAIL_OK', clientIp, { userId: auth.userId })
-    return jsonResponse({ ok: true, delivered: changed.delivered }, 200, allHeaders)
+    return jsonResponse({ ok: true, mail: changed.mail }, 200, allHeaders)
   }
 
   // action === 'logout'
