@@ -11,8 +11,16 @@
 // zero-downtime thật, nhưng cluster mode + loader ESM (`--import tsx`) làm
 // worker crash ngay khi khởi động mà KHÔNG in được log gì (silent crash) —
 // lỗi tương thích đã biết giữa Node cluster module và custom ESM loader.
-// ROLLBACK về fork mode để khôi phục dịch vụ; PHẢI điều tra kỹ hơn trước khi
-// thử lại cluster mode (xem PROGRESS.md).
+// ROLLBACK về fork mode để khôi phục dịch vụ.
+//
+// [2026-07-25] ĐÃ GỠ nguyên nhân crash: thêm bước biên dịch server.ts + api/**/*.ts
+// thành JS thật qua `npm run build:server` (xem tsconfig.server.json), production giờ
+// chạy `node dist-server/server.js` trực tiếp — KHÔNG còn qua loader `tsx` nữa, nên
+// cluster mode chạy được (đã kiểm chứng chạy đơn lẻ + /api/health + /api/dictionary
+// trên sandbox dev; CHƯA kiểm chứng cluster mode thật nhiều tiến trình trên VPS —
+// làm việc đó TRƯỚC khi coi nợ kỹ thuật này đã hết, xem PROGRESS.md).
+// QUAN TRỌNG: phải chạy `npm run build` (gồm build:server) trên VPS TRƯỚC MỖI lần
+// `pm2 start`/`pm2 reload` — xem docs/deploy-vps-ubuntu.md.
 //
 // QUAN TRỌNG: Phải dùng Node.js >= 22. Node 20 thiếu WebSocket gốc nên
 // Supabase auth (supabase.auth.getUser) ném lỗi → mọi request đăng nhập
@@ -27,9 +35,14 @@ module.exports = {
     {
       name: 'english-tutor',
 
-      // Dùng tsx để chạy TypeScript trực tiếp — không cần bước compile thêm
-      script: './node_modules/.bin/tsx',
-      args: 'server.ts',
+      // Chạy JS đã biên dịch sẵn (npm run build:server) — không qua loader tsx nữa,
+      // đây là điều kiện để cluster mode chạy được (xem ghi chú 2026-07-25 ở trên).
+      script: './dist-server/server.js',
+
+      // Cluster mode: PM2 tự fork N tiến trình (N = số CPU core) và cân tải round-robin
+      // qua cổng chung — tận dụng nhiều core thay vì 1 tiến trình fork như trước.
+      instances: 'max',
+      exec_mode: 'cluster',
 
       // !! Sửa đường dẫn này thành kết quả của lệnh: which node
       // VPS hiện tại (Ubuntu 24.04, Node hệ thống v22.22.3): /usr/bin/node

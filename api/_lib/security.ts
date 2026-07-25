@@ -2,7 +2,7 @@
 // Import file này ở đầu mỗi handler để có CORS, rate limit, auth validation, v.v.
 
 import { Redis } from 'ioredis'
-import { validateSessionToken } from './authService'
+import { validateSessionToken } from './authService.js'
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 // Đọc danh sách domain cho phép từ biến môi trường ALLOWED_ORIGINS (phân cách bằng dấu phẩy).
