@@ -23,3 +23,4 @@ cơ chế `supabase/migrations/` cũ nhưng cho DB tự host trên VPS.
 | `0003_pronunciation_lang_key.sql` | Đổi khoá duy nhất bảng `pronunciations` từ `(word, voice)` thành `(word, voice, lang)` — tránh 1 chữ trùng giữa tiếng Anh/Việt đè cache lẫn nhau.                 |
 | `0004_plan_expires_at.sql`        | Cột `profiles.plan_expires_at` — hạn dùng gói Pro/VIP tự hết hạn, cấp gói thủ công qua admin.                                                                     |
 | `0005_ai_circuit_breaker.sql`     | Cột `app_settings.ai_circuit_breaker` — cầu dao khẩn cấp chặn toàn bộ lượt gọi AI (GĐ3 kế hoạch scale 50k, xem `docs/research/ke-hoach-scale-30k-concurrent.md`). |
+| `0006_analytics_events.sql`       | Bảng `analytics_events` — analytics tự viết (không dùng script bên thứ 3) đo hiệu quả kênh marketing, ghi qua `/api/analytics`, auth tuỳ chọn.                    |
