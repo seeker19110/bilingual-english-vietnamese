@@ -491,7 +491,10 @@ export default function Challenge() {
     if (!challenge) return
     const usage = getUsage(uid)
     const isTyped = stage === 'typed'
-    if (!isTyped && usage.sttCount >= getLimits()[effectivePlan(user.plan)].stt) {
+    // Gói Free: kho lượt tuần chung nằm ở server — để server tự chặn, không chặn cục bộ
+    // theo dữ liệu local nữa (sttCount/chatCount đếm theo ngày, không còn đúng ý nghĩa).
+    const plan = effectivePlan(user.plan)
+    if (plan !== 'free' && !isTyped && usage.sttCount >= getLimits()[plan].stt) {
       toast.error(
         isA
           ? 'Hết lượt nhận diện giọng nói hôm nay. Bạn có thể gõ tay thay vào.'
@@ -499,7 +502,7 @@ export default function Challenge() {
       )
       return
     }
-    if (usage.chatCount >= getLimits()[effectivePlan(user.plan)].chat) {
+    if (plan !== 'free' && usage.chatCount >= getLimits()[plan].chat) {
       toast.error(
         isA ? 'Hết lượt AI hôm nay. Thử lại ngày mai.' : "You've used all AI turns today.",
       )

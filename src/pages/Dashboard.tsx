@@ -45,6 +45,7 @@ import {
 } from '../lib/stats'
 import { getWeeklyProgress, type WeeklyProgress } from '../lib/weeklyGoal'
 import { effectivePlan } from '../lib/promo'
+import { fetchWeeklyCredit, type WeeklyCreditInfo } from '../lib/weeklyCredit'
 import { getLimits } from '../lib/appSettings'
 
 // Màu ô heatmap theo số hoạt động trong ngày (đậm dần).
@@ -200,6 +201,19 @@ export default function Dashboard() {
 
   const [ready, setReady] = useState(false)
   const [cefr, setCefr] = useState<LevelProgress[]>([])
+  // Gói Free: kho lượt AI tuần chung nằm ở server (weekly_ai_credit), không suy ra được
+  // từ dữ liệu local như Pro/VIP (per-mode, theo ngày) — phải hỏi server (usage-summary.ts).
+  const [weeklyCredit, setWeeklyCredit] = useState<WeeklyCreditInfo | null>(null)
+  useEffect(() => {
+    if (!user || effectivePlan(user.plan) !== 'free') return
+    let alive = true
+    fetchWeeklyCredit().then((info) => {
+      if (alive) setWeeklyCredit(info)
+    })
+    return () => {
+      alive = false
+    }
+  }, [user])
   // Kết quả thi cuối cấp — để hiện huy hiệu "🎓 Đã qua" cạnh từng cấp.
   const examMap = useMemo(() => getExamMap(user?.id ?? ''), [user])
 
@@ -410,41 +424,69 @@ export default function Dashboard() {
             <Bar pct={(stats.learnedToday / stats.dailySpeed) * 100} color="bg-lime-500" />
           </div>
 
-          {/* Lượt dùng còn lại hôm nay */}
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              {
-                icon: <MessageCircle className="w-4 h-4 text-accent-400" />,
-                label: vi ? 'Chat' : 'Chat',
-                used: stats.usage.chatCount,
-                max: stats.limit.chat,
-              },
-              {
-                icon: <Mic className="w-4 h-4 text-sky-400" />,
-                label: vi ? 'Nói' : 'Speak',
-                used: stats.usage.speakingCount,
-                max: stats.limit.speaking,
-              },
-              {
-                icon: <PenLine className="w-4 h-4 text-violet-400" />,
-                label: vi ? 'Viết' : 'Write',
-                used: stats.usage.writingCount,
-                max: stats.limit.writing,
-              },
-            ].map((m) => (
-              <div
-                key={m.label}
-                className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-3 text-center"
-              >
-                <div className="flex justify-center mb-1.5">{m.icon}</div>
-                <p className="text-base font-bold text-white leading-none">
-                  {m.used}
-                  <span className="text-zinc-400 text-xs">/{m.max}</span>
-                </p>
-                <p className="text-[11px] text-zinc-400 mt-1">{m.label}</p>
+          {/* Lượt dùng còn lại — gói Free: 1 kho lượt AI CHUNG theo tuần (xem
+              api/usage-summary.ts); Pro/VIP: giữ nguyên hiển thị theo từng tính năng/ngày. */}
+          {effectivePlan(user.plan) === 'free' ? (
+            <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-zinc-300 flex items-center gap-1.5">
+                  <MessageCircle className="w-4 h-4 text-accent-400" />
+                  {vi ? 'Lượt AI tuần này (chat + nói + viết...)' : 'AI credits this week'}
+                </span>
+                <span className="text-sm font-semibold text-accent-300">
+                  {weeklyCredit?.freeWeeklyCredit ?? '…'}/{weeklyCredit?.freeWeeklyCap ?? 35}
+                </span>
               </div>
-            ))}
-          </div>
+              <Bar
+                pct={
+                  weeklyCredit
+                    ? ((weeklyCredit.freeWeeklyCredit ?? 0) / weeklyCredit.freeWeeklyCap) * 100
+                    : 0
+                }
+                color="bg-accent-500"
+              />
+              <p className="text-[11px] text-zinc-500 mt-2">
+                {vi
+                  ? 'Học từ mới/hoàn thành bài mỗi ngày để được +5 lượt (tối đa 35/tuần, reset thứ Hai).'
+                  : 'Learn a new word or finish a lesson each day for +5 credits (up to 35/week, resets Monday).'}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                {
+                  icon: <MessageCircle className="w-4 h-4 text-accent-400" />,
+                  label: vi ? 'Chat' : 'Chat',
+                  used: stats.usage.chatCount,
+                  max: stats.limit.chat,
+                },
+                {
+                  icon: <Mic className="w-4 h-4 text-sky-400" />,
+                  label: vi ? 'Nói' : 'Speak',
+                  used: stats.usage.speakingCount,
+                  max: stats.limit.speaking,
+                },
+                {
+                  icon: <PenLine className="w-4 h-4 text-violet-400" />,
+                  label: vi ? 'Viết' : 'Write',
+                  used: stats.usage.writingCount,
+                  max: stats.limit.writing,
+                },
+              ].map((m) => (
+                <div
+                  key={m.label}
+                  className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-3 text-center"
+                >
+                  <div className="flex justify-center mb-1.5">{m.icon}</div>
+                  <p className="text-base font-bold text-white leading-none">
+                    {m.used}
+                    <span className="text-zinc-400 text-xs">/{m.max}</span>
+                  </p>
+                  <p className="text-[11px] text-zinc-400 mt-1">{m.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* ── Từ vựng ──────────────────────────────────────────────────── */}
