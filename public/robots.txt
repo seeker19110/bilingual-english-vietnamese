@@ -41,3 +41,4 @@ Disallow: /
 
 # Sitemap location for search engines
 Sitemap: https://en-vi.donghanhcungban.com/sitemap.xml
+Sitemap: https://en-vi.donghanhcungban.com/sitemap-words.xml
