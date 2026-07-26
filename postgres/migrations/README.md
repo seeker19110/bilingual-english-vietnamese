@@ -28,3 +28,4 @@ cơ chế `supabase/migrations/` cũ nhưng cho DB tự host trên VPS.
 | `0008_referral_device.sql`        | Cột `referrals.device_hash` — dấu vân tay thiết bị (best-effort) chỉ dùng để TỪ CHỐI THƯỞNG khi cày nhiều tài khoản trên cùng máy, không khoá tài khoản.          |
 | `0010_email_daily_usage.sql`      | Bảng `email_daily_usage` — đếm thư đã gửi mỗi ngày theo kênh, để tự chuyển sang kênh dự phòng (Amazon SES) khi kênh chính chạm trần hạn mức.                      |
 | `0009_email_verification.sql`     | Bảng `email_verifications` — mã 6 chữ số xác thực email, chống email giả cày thưởng mời bạn (cột `users.email_verified` đã có sẵn từ schema gốc).                 |
+| `0011_password_reset.sql`         | Bảng `password_resets` — quên mật khẩu, gửi link reset qua email (token dài, khác mã 6 chữ số của xác thực email vì đây là đường chiếm quyền tài khoản).          |
