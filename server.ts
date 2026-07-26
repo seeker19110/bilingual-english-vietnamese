@@ -15,9 +15,14 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 import { initSentryServer, captureServerException } from './api/_lib/sentry.js'
+import { warnIfClusterWithoutRedis } from './api/_lib/security.js'
 
 // Bật Sentry (error tracking) — no-op nếu chưa cấu hình SENTRY_DSN (xem api/_lib/sentry.ts).
 initSentryServer()
+
+// Cảnh báo ngay ở log khởi động nếu thiếu REDIS_URL khi chạy dưới PM2 — xem chi tiết
+// lý do trong warnIfClusterWithoutRedis() (api/_lib/security.ts).
+warnIfClusterWithoutRedis()
 
 import ttsHandler from './api/tts.js'
 import aiHandler from './api/ai.js'

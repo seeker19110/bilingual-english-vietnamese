@@ -126,6 +126,26 @@ function warnRedisFallbackOnce(err: unknown): void {
   )
 }
 
+// Cảnh báo LÚC KHỞI ĐỘNG (gọi 1 lần từ server.ts) nếu chạy dưới PM2 mà CHƯA đặt
+// REDIS_URL — khác với warnRedisFallbackOnce ở trên (chỉ bắn khi Redis THỰC SỰ lỗi
+// kết nối). Thiếu cấu hình REDIS_URL thì getRedis() âm thầm dùng Map in-memory, KHÔNG
+// đi qua nhánh lỗi nên không có cảnh báo nào — lỗ hổng im lặng: chạy cluster nhiều
+// instance mà quên Redis, rate limit lỏng gấp N lần (N = số instance) mà log không hề
+// báo cho tới khi bị lạm dụng thật. `NODE_APP_INSTANCE` do PM2 tự gắn cho MỌI tiến
+// trình nó quản lý (kể cả fork mode 1 instance) nên đây là tín hiệu đáng tin để biết
+// "đang chạy dưới PM2", không cần biết chính xác số instance.
+export function warnIfClusterWithoutRedis(): void {
+  const underPm2 = process.env.NODE_APP_INSTANCE !== undefined
+  if (underPm2 && !process.env.REDIS_URL) {
+    console.warn(
+      '[Security] ⚠️  Chạy dưới PM2 nhưng CHƯA đặt REDIS_URL trong .env — nếu ' +
+        "ecosystem.config.cjs đang bật cluster mode nhiều instance ('instances' > 1), " +
+        'rate limit (bao gồm giới hạn gọi AI trả phí) sẽ lỏng gấp N lần vì mỗi tiến ' +
+        'trình đếm riêng bằng Map in-memory. Xem docs/deploy-vps-ubuntu.md mục REDIS_URL.',
+    )
+  }
+}
+
 // Trả về true nếu được phép, false nếu vượt quá giới hạn.
 // `bucket` cho phép một IP có NHIỀU bộ đếm riêng biệt — ví dụ tách "tổng số request"
 // (kể cả cache HIT, rất rẻ) với "số lần tạo audio mới" (cache MISS, tốn tiền Google TTS).

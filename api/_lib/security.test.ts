@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { getCorsHeaders, checkRateLimit } from './security'
+import { getCorsHeaders, checkRateLimit, warnIfClusterWithoutRedis } from './security'
 
 // Request giả tối thiểu — chỉ cần headers.get('Origin').
 function reqWithOrigin(origin: string | null): Request {
@@ -73,5 +73,44 @@ describe('checkRateLimit (fallback Map in-memory khi không có REDIS_URL)', () 
     expect(await checkRateLimit(ip, 1, 'win')).toBe(false)
     vi.advanceTimersByTime(61_000)
     expect(await checkRateLimit(ip, 1, 'win')).toBe(true) // cửa sổ mới
+  })
+})
+
+describe('warnIfClusterWithoutRedis (cảnh báo lúc khởi động — H: rate limit lỏng khi cluster thiếu Redis)', () => {
+  const OLD_INSTANCE = process.env.NODE_APP_INSTANCE
+  const OLD_REDIS = process.env.REDIS_URL
+  let warnSpy: ReturnType<typeof vi.spyOn>
+
+  beforeEach(() => {
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+  })
+  afterEach(() => {
+    warnSpy.mockRestore()
+    if (OLD_INSTANCE === undefined) delete process.env.NODE_APP_INSTANCE
+    else process.env.NODE_APP_INSTANCE = OLD_INSTANCE
+    if (OLD_REDIS === undefined) delete process.env.REDIS_URL
+    else process.env.REDIS_URL = OLD_REDIS
+  })
+
+  it('chạy dưới PM2 (NODE_APP_INSTANCE có set) mà KHÔNG có REDIS_URL → cảnh báo', () => {
+    process.env.NODE_APP_INSTANCE = '0'
+    delete process.env.REDIS_URL
+    warnIfClusterWithoutRedis()
+    expect(warnSpy).toHaveBeenCalledTimes(1)
+    expect(warnSpy.mock.calls[0]?.[0]).toContain('REDIS_URL')
+  })
+
+  it('chạy dưới PM2 nhưng ĐÃ có REDIS_URL → không cảnh báo', () => {
+    process.env.NODE_APP_INSTANCE = '0'
+    process.env.REDIS_URL = 'redis://127.0.0.1:6379'
+    warnIfClusterWithoutRedis()
+    expect(warnSpy).not.toHaveBeenCalled()
+  })
+
+  it('không chạy dưới PM2 (dev local) → không cảnh báo dù thiếu REDIS_URL', () => {
+    delete process.env.NODE_APP_INSTANCE
+    delete process.env.REDIS_URL
+    warnIfClusterWithoutRedis()
+    expect(warnSpy).not.toHaveBeenCalled()
   })
 })
