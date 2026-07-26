@@ -130,6 +130,60 @@ pm2 set pm2-logrotate:compress true
 
 ---
 
+## Bước 3b — Cài Redis local (bắt buộc trước khi bật cluster mode nhiều tiến trình)
+
+> Vì sao cần: cluster mode (`instances: 'max'` trong `ecosystem.config.cjs`) chạy N tiến
+> trình Node song song, mỗi tiến trình vốn đếm rate limit bằng `Map` riêng trong bộ nhớ
+> (xem `api/_lib/security.ts`) — nếu không dùng chung 1 nơi đếm, 1 IP có thể vượt giới hạn
+> gấp N lần (N = số tiến trình), kể cả giới hạn gọi AI trả phí (Claude/Whisper/TTS). Cài
+> Redis NGAY TRÊN VPS app hiện tại (không cần VPS riêng — đó là việc của GĐ2 ở cuối file
+> này, dành cho quy mô lớn hơn nhiều) là cách rẻ nhất và độ trễ thấp nhất để giải quyết,
+> vì rate limit chỉ dùng nội bộ giữa các tiến trình trên CÙNG máy, không cần lộ ra mạng
+> ngoài. Nếu bỏ qua bước này: app vẫn chạy bình thường (rơi về `Map` in-memory, tự động
+> cảnh báo ở log khởi động — xem `warnIfClusterWithoutRedis()`), chỉ là rate limit lỏng
+> hơn khi có traffic đông.
+
+```bash
+sudo apt install -y redis-server
+```
+
+Đặt mật khẩu cho Redis (không để trắng, kể cả khi chỉ nghe cổng localhost — phòng trường
+hợp cấu hình mạng thay đổi sau này):
+
+```bash
+sudo nano /etc/redis/redis.conf
+```
+
+Tìm dòng `# requirepass foo bar` (khoảng dòng bắt đầu bằng `#requirepass`), bỏ comment và
+đổi thành mật khẩu mạnh riêng của bạn:
+
+```conf
+requirepass mat-khau-redis-that-cua-ban
+```
+
+Xác nhận Redis CHỈ nghe cổng nội bộ (mặc định `bind 127.0.0.1 -::1` đã đúng — không cần
+sửa gì thêm, không mở port 6379 ra ngoài qua `ufw`):
+
+```bash
+grep '^bind' /etc/redis/redis.conf
+```
+
+Khởi động lại Redis để áp dụng mật khẩu, rồi kiểm tra chạy được:
+
+```bash
+sudo systemctl restart redis-server
+sudo systemctl enable redis-server   # tự khởi động lại cùng VPS sau khi reboot
+redis-cli -a 'mat-khau-redis-that-cua-ban' ping   # phải trả về PONG
+```
+
+Ghi lại giá trị `REDIS_URL` để dán vào `.env` ở Bước 4 ngay sau đây:
+
+```
+REDIS_URL=redis://:mat-khau-redis-that-cua-ban@127.0.0.1:6379
+```
+
+---
+
 ## Bước 4 — Clone code, tạo `.env`, cài đặt, build
 
 ```bash
@@ -174,6 +228,9 @@ UPLOADS_DIR=/var/www/english-tutor/uploads
 
 # ── Cổng app (3001 vì 3000 đã bị app khác dùng) ──
 PORT=3001
+
+# ── Redis local (Bước 3b) — rate limit dùng chung khi PM2 chạy nhiều tiến trình ──
+REDIS_URL=redis://:mat-khau-redis-that-cua-ban@127.0.0.1:6379
 ```
 
 > **Thiếu `TTS_ENCRYPTION_MASTER_KEY`** → audio cache mã hóa/giải mã thất bại, app fallback giọng trình duyệt.
@@ -192,12 +249,12 @@ npm run build
 > trong `ecosystem.config.cjs`, mục 2026-07-25). **Luôn chạy `npm run build` trước mỗi
 > `pm2 start`/`pm2 reload`**, nếu không PM2 sẽ chạy JS cũ (chưa có thay đổi mới nhất).
 
-> **Rate limit + cluster mode:** khi chạy nhiều tiến trình (`instances: 'max'`), rate
-> limit phải dùng chung Redis mới đúng (mỗi tiến trình không còn Map riêng) — đặt biến
-> `REDIS_URL` trong `.env` TRƯỚC khi bật cluster mode ở tải thật. Không đặt thì vẫn chạy
-> được (rơi về Map in-memory mỗi tiến trình, đúng hành vi cũ) nhưng rate limit sẽ lỏng
-> hơn N lần (N = số tiến trình) — chấp nhận được khi traffic còn thấp, không nên dùng khi
-> traffic đông. Xem `api/_lib/security.ts`.
+> **Rate limit + cluster mode:** `REDIS_URL` ở trên (Bước 3b) đã đủ để rate limit dùng
+> chung đúng giữa mọi tiến trình PM2. Nếu bỏ qua Bước 3b và không đặt `REDIS_URL`, app vẫn
+> chạy được (rơi về Map in-memory mỗi tiến trình, đúng hành vi cũ — có cảnh báo ở log khởi
+> động, xem `warnIfClusterWithoutRedis()` trong `api/_lib/security.ts`) nhưng rate limit sẽ
+> lỏng hơn N lần (N = số tiến trình) — chấp nhận được khi traffic còn thấp, không nên dùng
+> khi traffic đông.
 
 ---
 
