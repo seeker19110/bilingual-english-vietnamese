@@ -107,7 +107,7 @@ async function processTask(
     await getPgPool().query(
       `insert into public.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
        values ($1, $2, $3, 'en-US', $4, now())
-       on conflict (word, voice) do update set
+       on conflict (word, voice, lang) do update set
          audio_url = excluded.audio_url, voice_version = excluded.voice_version,
          last_accessed_at = now()`,
       [word, voice, audioUrl, VOICE_VERSION],
