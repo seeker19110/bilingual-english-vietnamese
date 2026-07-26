@@ -155,9 +155,20 @@ describe('checkAndConsumeUsage — gói Pro/VIP (giữ nguyên cột riêng từ
     expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 100])
   })
 
-  it('khuyến mãi đang bật → mọi gói (kể cả free) được nâng thành vip (không giới hạn)', async () => {
+  it('khuyến mãi đang bật → free được nâng lên hạn mức pro (không phải kho tuần, không phải không giới hạn)', async () => {
     const future = new Date(Date.now() + 86_400_000).toISOString()
     const pool = mockPool({ plan: 'free', consumeResult: true, promoUntil: future })
+    mockedGetPool.mockReturnValue(pool)
+    await checkAndConsumeUsage('u1', 'chat')
+    const consumeCall = vi
+      .mocked(pool.query)
+      .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'chat_count', 100])
+  })
+
+  it('khuyến mãi đang bật → pro được nâng lên vip (không giới hạn)', async () => {
+    const future = new Date(Date.now() + 86_400_000).toISOString()
+    const pool = mockPool({ plan: 'pro', consumeResult: true, promoUntil: future })
     mockedGetPool.mockReturnValue(pool)
     await checkAndConsumeUsage('u1', 'chat')
     const consumeCall = vi

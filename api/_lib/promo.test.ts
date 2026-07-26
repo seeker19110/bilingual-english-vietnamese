@@ -46,10 +46,19 @@ describe('isFullAccessPromoActive', () => {
 })
 
 describe('effectivePlan', () => {
-  it('khuyến mãi đang bật → mọi gói (kể cả free) trả về vip', async () => {
+  it('khuyến mãi đang bật → free được nâng lên hạn mức pro (KHÔNG phải vip/không giới hạn)', async () => {
     mockedGetAppSettings.mockResolvedValue(settingsWith('2099-01-01T00:00:00Z'))
-    expect(await effectivePlan('free', new Date('2026-06-01'))).toBe('vip')
+    expect(await effectivePlan('free', new Date('2026-06-01'))).toBe('pro')
+  })
+
+  it('khuyến mãi đang bật → pro được nâng lên vip (không giới hạn)', async () => {
+    mockedGetAppSettings.mockResolvedValue(settingsWith('2099-01-01T00:00:00Z'))
     expect(await effectivePlan('pro', new Date('2026-06-01'))).toBe('vip')
+  })
+
+  it('khuyến mãi đang bật → vip giữ nguyên vip', async () => {
+    mockedGetAppSettings.mockResolvedValue(settingsWith('2099-01-01T00:00:00Z'))
+    expect(await effectivePlan('vip', new Date('2026-06-01'))).toBe('vip')
   })
 
   it('khuyến mãi tắt → giữ nguyên gói thật', async () => {

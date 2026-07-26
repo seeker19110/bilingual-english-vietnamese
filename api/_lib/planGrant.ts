@@ -11,6 +11,7 @@
 
 import { getPgPool } from './pgPool.js'
 import { resolvePlan, type Plan } from './plan.js'
+import { getAppSettings } from './settings.js'
 
 // Thứ hạng gói để so sánh cao/thấp — free < pro < vip.
 const PLAN_RANK: Record<Plan, number> = { free: 0, pro: 1, vip: 2 }
@@ -31,6 +32,10 @@ export interface PlanGrantResult {
  * @param grantPlan   gói muốn cấp ('pro' | 'vip')
  * @param days        số ngày cấp thêm (> 0)
  * @param now         mốc thời gian tham chiếu (cho test)
+ * @param promoUntil  hạn khuyến mãi hiện hành (null = không có). Quyết định 2026-07-26: cấp
+ *                    gói trả phí TRONG lúc khuyến mãi thì hạn dùng KHÔNG bị đếm lùi ngay —
+ *                    chỉ thực sự bắt đầu tính từ lúc khuyến mãi kết thúc (không thiệt thời
+ *                    gian vì khuyến mãi Free/Pro lúc đó vốn đã gần như đủ dùng).
  */
 export function computePlanGrant(
   currentPlanRaw: string | null | undefined,
@@ -38,6 +43,7 @@ export function computePlanGrant(
   grantPlan: Exclude<Plan, 'free'>,
   days: number,
   now: Date = new Date(),
+  promoUntil: Date | string | null = null,
 ): PlanGrantResult {
   // Gói ĐANG CÒN HIỆU LỰC (Pro/VIP hết hạn đã tự coi như free — xem plan.ts).
   const activePlan = resolvePlan(currentPlanRaw, currentExpiresAt, now)
@@ -52,11 +58,16 @@ export function computePlanGrant(
   // Số ngày âm/0 không hợp lệ — không làm gì (phòng lỗi gọi sai, không tự ý trừ hạn của user).
   const safeDays = Number.isFinite(days) && days > 0 ? Math.floor(days) : 0
 
-  // Mốc bắt đầu cộng: nếu gói cũ CÒN hiệu lực thì nối tiếp từ hạn cũ (không mất phần còn lại),
-  // nếu đã hết hạn/chưa có gì thì tính từ bây giờ.
+  // Mốc bắt đầu cộng: nối tiếp từ hạn cũ nếu còn hiệu lực (không mất phần còn lại), từ bây giờ
+  // nếu đã hết hạn/chưa có gì — NHƯNG không sớm hơn lúc khuyến mãi kết thúc (nếu đang trong lúc
+  // khuyến mãi): hạn mới luôn tính từ promoUntil trở đi, không đếm lùi trong lúc khuyến mãi.
   const currentExpiryMs =
     activePlan !== 'free' && currentExpiresAt != null ? new Date(currentExpiresAt).getTime() : 0
-  const base = Math.max(now.getTime(), currentExpiryMs)
+  const promoUntilMs =
+    promoUntil && now.getTime() < new Date(promoUntil).getTime()
+      ? new Date(promoUntil).getTime()
+      : 0
+  const base = Math.max(now.getTime(), currentExpiryMs, promoUntilMs)
   const newExpiry = new Date(base + safeDays * MS_DAY)
 
   // Ca 1: không bao giờ hạ cấp — giữ gói cao hơn trong 2 gói.
@@ -80,7 +91,15 @@ export async function grantPlanDays(
     'select plan, plan_expires_at from public.profiles where id = $1',
     [userId],
   )
-  const next = computePlanGrant(rows[0]?.plan, rows[0]?.plan_expires_at, grantPlan, days, now)
+  const { promoUntil } = await getAppSettings()
+  const next = computePlanGrant(
+    rows[0]?.plan,
+    rows[0]?.plan_expires_at,
+    grantPlan,
+    days,
+    now,
+    promoUntil,
+  )
 
   await pool.query(
     `insert into public.profiles (id, plan, plan_expires_at)

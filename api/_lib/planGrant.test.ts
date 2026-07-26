@@ -67,3 +67,34 @@ describe('computePlanGrant', () => {
     expect(r.planExpiresAt?.getTime()).toBe(daysFromNow(5).getTime())
   })
 })
+
+describe('computePlanGrant — cấp gói TRONG lúc khuyến mãi (2026-07-26): hạn không đếm lùi tới khi hết khuyến mãi', () => {
+  const PROMO_UNTIL = daysFromNow(20) // khuyến mãi còn 20 ngày nữa mới hết
+
+  it('cấp gói mới (chưa có gì) trong lúc khuyến mãi → hạn tính từ LÚC HẾT KHUYẾN MÃI, không phải từ bây giờ', () => {
+    const r = computePlanGrant('free', null, 'pro', 7, NOW, PROMO_UNTIL)
+    expect(r.plan).toBe('pro')
+    expect(r.planExpiresAt?.getTime()).toBe(PROMO_UNTIL.getTime() + 7 * MS_DAY)
+  })
+
+  it('gia hạn gói ĐANG CÒN HẠN trong lúc khuyến mãi, hạn cũ RƠI TRƯỚC lúc hết khuyến mãi → vẫn neo theo khuyến mãi (không mất, không sớm hơn)', () => {
+    const r = computePlanGrant('pro', daysFromNow(5), 'pro', 7, NOW, PROMO_UNTIL)
+    expect(r.planExpiresAt?.getTime()).toBe(PROMO_UNTIL.getTime() + 7 * MS_DAY)
+  })
+
+  it('gia hạn gói ĐANG CÒN HẠN, hạn cũ RƠI SAU lúc hết khuyến mãi → nối tiếp từ hạn cũ như bình thường (không cần neo theo khuyến mãi)', () => {
+    const r = computePlanGrant('pro', daysFromNow(30), 'pro', 7, NOW, PROMO_UNTIL)
+    expect(r.planExpiresAt?.getTime()).toBe(daysFromNow(37).getTime())
+  })
+
+  it('khuyến mãi ĐÃ HẾT HẠN (promoUntil ở quá khứ) → không ảnh hưởng gì, tính như bình thường', () => {
+    const pastPromo = daysFromNow(-1)
+    const r = computePlanGrant('free', null, 'pro', 7, NOW, pastPromo)
+    expect(r.planExpiresAt?.getTime()).toBe(daysFromNow(7).getTime())
+  })
+
+  it('không truyền promoUntil (mặc định null) → hành vi cũ, không bị ảnh hưởng', () => {
+    const r = computePlanGrant('free', null, 'pro', 7, NOW)
+    expect(r.planExpiresAt?.getTime()).toBe(daysFromNow(7).getTime())
+  })
+})
