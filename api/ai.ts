@@ -2,7 +2,7 @@
 // Giữ API key ở phía server (biến môi trường ANTHROPIC_API_KEY, KHÔNG có tiền tố VITE_
 // nên sẽ không bị đóng gói vào file JS gửi cho browser).
 //
-// Frontend (src/lib/ai.ts) chỉ gọi POST /api/claude với { system, messages, max_tokens }
+// Frontend (src/lib/ai.ts) chỉ gọi POST /api/agent với { system, messages, max_tokens }
 // — không hề biết và không cần gửi API key.
 //
 // BẢO MẬT: Server tự quyết định model và giới hạn max_tokens,
@@ -88,16 +88,16 @@ function sumStringContent(messages: unknown[]): number {
   }, 0)
 }
 
-// Mode HỢP LỆ cho /api/claude — CHỈ 3 giá trị này (khớp CallMode ở src/lib/ai.ts). Cố ý
+// Mode HỢP LỆ cho /api/agent — CHỈ 3 giá trị này (khớp CallMode ở src/lib/ai.ts). Cố ý
 // KHÔNG dùng isUsageMode() chung của usage.ts (nay còn có 'stt'/'pronounce' — các mode đó đếm
 // vào /api/stt và /api/pronounce-assess riêng): dùng chung sẽ cho phép client gửi
-// mode:'stt'/'pronounce' để /api/claude ÂM THẦM trừ nhầm sang cột đếm khác, né giới hạn chat.
+// mode:'stt'/'pronounce' để /api/agent ÂM THẦM trừ nhầm sang cột đếm khác, né giới hạn chat.
 const CHAT_ENDPOINT_MODES = new Set<UsageMode>(['chat', 'writing', 'speaking'])
 function isChatEndpointMode(v: unknown): v is 'chat' | 'writing' | 'speaking' {
   return typeof v === 'string' && CHAT_ENDPOINT_MODES.has(v as UsageMode)
 }
 
-// Schema validate body /api/claude — xem api/ai.ts đầu file: server tự quyết định model/giới
+// Schema validate body /api/agent — xem api/ai.ts đầu file: server tự quyết định model/giới
 // hạn, KHÔNG tin giá trị client gửi lên. `.catch()` tái tạo đúng hành vi lenient cũ (input sai
 // kiểu → coi như rỗng/mặc định, KHÔNG từ chối) — duy nhất `.refine()` cuối vẫn từ chối (413) khi
 // tổng nội dung quá lớn, giống hệt logic cũ.
@@ -142,7 +142,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   // Kiểm tra Content-Type phải là application/json
   if (!validateContentType(req)) {
-    logSecurityEvent('INVALID_CONTENT_TYPE', clientIp, { path: '/api/claude' })
+    logSecurityEvent('INVALID_CONTENT_TYPE', clientIp, { path: '/api/agent' })
     return jsonResponse(
       { error: { message: 'Content-Type phải là application/json' } },
       415,
@@ -152,7 +152,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   // Rate limit: tối đa 5 request/phút mỗi IP
   if (!(await checkRateLimit(clientIp, 5))) {
-    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/claude' })
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/agent' })
     return jsonResponse(
       { error: { message: 'Quá nhiều yêu cầu — thử lại sau 1 phút' } },
       429,
@@ -163,7 +163,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Xác thực người dùng qua Bearer token tự viết (validateAuth)
   const authResult = await validateAuth(req)
   if (!authResult) {
-    logSecurityEvent('AUTH_FAILED', clientIp, { path: '/api/claude' })
+    logSecurityEvent('AUTH_FAILED', clientIp, { path: '/api/agent' })
     return jsonResponse(
       { error: { message: 'Chưa đăng nhập hoặc phiên hết hạn' } },
       401,
@@ -225,7 +225,7 @@ export default async function handler(req: Request): Promise<Response> {
   const mode = parsedBody.data.mode
   const gate = await checkAndConsumeUsage(authResult.userId, mode)
   if (!gate.ok) {
-    logSecurityEvent('USAGE_LIMIT', clientIp, { path: '/api/claude', mode })
+    logSecurityEvent('USAGE_LIMIT', clientIp, { path: '/api/agent', mode })
     return jsonResponse({ error: { message: gate.message } }, 429, allHeaders)
   }
 

@@ -16,7 +16,7 @@
 
 - Đăng nhập/đăng ký tự viết — Bearer token + email/password + Google Identity Services
   (`src/lib/auth.ts`, `api/auth.ts`).
-- **Chat** — trò chuyện theo tình huống, sửa lỗi + giải thích bằng tiếng mẹ đẻ (`/api/claude`).
+- **Chat** — trò chuyện theo tình huống, sửa lỗi + giải thích bằng tiếng mẹ đẻ (`/api/agent`).
 - **Luyện viết** — chấm kiểu IELTS, chỉ lỗi, ước lượng band.
 - **Luyện nói song ngữ** — ghi âm → STT (Whisper qua Groq/OpenAI) → trả lời giọng ngôn ngữ đích
   - sửa lỗi giọng tiếng mẹ đẻ (Google Cloud TTS, cache mã hoá).
@@ -70,7 +70,7 @@
   `api/_lib/pgPool.ts`) — đã rời hẳn Supabase. Auth tự viết (Bearer token, `api/auth.ts` +
   `api/_lib/authService.ts`). Handler API kiểu serverless trong `api/`, gắn vào Express để chạy
   trên VPS.
-- **AI:** chat/chấm viết qua `/api/claude` (`api/ai.ts`, ép model/token ở server) · STT Whisper
+- **AI:** chat/chấm viết qua `/api/agent` (`api/ai.ts`, ép model/token ở server) · STT Whisper
   qua Groq (`whisper-large-v3-turbo`) hoặc OpenAI (`gpt-4o-mini-transcribe`), tự chọn theo key ·
   TTS Google Cloud (`/api/tts`), cache **mã hoá AES-256-GCM** lưu local VPS hoặc Cloudflare R2
   tùy `STORAGE_DRIVER` (`api/_lib/fileStorage.ts`), Web Speech API chỉ là fallback.
@@ -105,7 +105,7 @@ UPDATE), fail-open khi RPC lỗi (ưu tiên không chặn nhầm người dùng 
 - **Luồng:** client (React SPA) → `server.ts` (Express, gắn handler `api/*.ts`) → provider AI
   (Claude/Groq/OpenAI/Google TTS) + PostgreSQL tự host (`pgPool`). Mọi logic nhạy cảm chạy ở
   server.
-- **Endpoint chính:** `POST /api/claude` (`api/ai.ts`, chat/chấm bài) · `POST /api/stt`
+- **Endpoint chính:** `POST /api/agent` (`api/ai.ts`, chat/chấm bài) · `POST /api/stt`
   (`api/stt.ts`, rate limit + đếm lượt riêng + refund khi provider lỗi) · `POST /api/tts`
   (`api/tts.ts`, cache theo hash + mã hoá, chỉ trả khoá cho người đã đăng nhập) ·
   `GET/POST /api/dictionary`, `POST /api/pronunciation`, `POST /api/push`.

@@ -1,4 +1,4 @@
-// Gọi AI qua /api/claude — KHÔNG gửi API key từ browser.
+// Gọi AI qua /api/agent — KHÔNG gửi API key từ browser.
 // API key được giữ ở server: vite.config.ts (lúc dev) hoặc api/ai.ts (lúc deploy lên VPS).
 // Handler hỗ trợ Gemini (ưu tiên) / Groq / Anthropic — chọn dựa trên biến môi trường.
 
@@ -36,12 +36,12 @@ export async function callClaude(
   maxTokens = 1024,
   mode: CallMode = 'chat',
 ): Promise<string> {
-  // /api/claude: lúc "npm run dev" được vite.config.ts proxy thẳng tới Anthropic (key đọc từ .env phía server);
+  // /api/agent: lúc "npm run dev" được vite.config.ts proxy thẳng tới Anthropic (key đọc từ .env phía server);
   // lúc deploy lên Vercel, route này do api/claude.ts (serverless function) xử lý.
   const authHeader = await getAuthHeader()
   let resp: Response
   try {
-    resp = await fetch('/api/claude', {
+    resp = await fetch('/api/agent', {
       method: 'POST',
       headers: { 'content-type': 'application/json', ...authHeader },
       body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages, mode }),

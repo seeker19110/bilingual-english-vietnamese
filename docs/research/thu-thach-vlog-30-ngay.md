@@ -13,7 +13,7 @@
 
 Thêm chế độ **"Vlog 1 phút" — thử thách 30 ngày**: mỗi ngày quay 1 video (trần **180 giây**, quyết
 định người dùng 2026-07-11, nâng từ đề xuất ban đầu 60s) nói về đời sống theo chủ đề gợi ý, app
-**tự nghe lại** (STT Whisper có sẵn) → **AI sửa lỗi + khen ngợi bằng tiếng Việt** (`/api/claude`) →
+**tự nghe lại** (STT Whisper có sẵn) → **AI sửa lỗi + khen ngợi bằng tiếng Việt** (`/api/agent`) →
 tô 1 ô trên bảng 30 ngày, huy hiệu mốc 3·7·14·21·30.
 
 ## Cơ sở sư phạm
@@ -39,7 +39,7 @@ EFL vlog trên INATESOL/ResearchGate/BJET 2024; Duolingo blog về streak).
 - **Lưu video**: IndexedDB, giữ tối đa video ngày 1 + 7 video gần nhất (~100MB trần, dọn tự động),
   luôn có nút tải về trước khi bị dọn. Mất video khi xóa dữ liệu trình duyệt là đánh đổi chấp nhận
   được — transcript/feedback/tiến độ vẫn còn trên Supabase.
-- **Server**: không thêm endpoint mới, tái dùng `/api/stt` + `/api/claude` (prompt riêng
+- **Server**: không thêm endpoint mới, tái dùng `/api/stt` + `/api/agent` (prompt riêng
   `src/prompts/vlog.ts`). Bảng mới `vlog_entries` (migration `0010`, RLS owner-only):
   `id · user_id · day (unique/user) · challenge_day · topic_id · transcript · feedback (jsonb) ·
 duration_sec · word_count · created_at`.

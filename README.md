@@ -20,7 +20,7 @@ Web app gia sư AI **hai chiều**: người Việt học tiếng Anh, hoặc ng
 - **Frontend:** React 18 + Vite 7 + TypeScript 5.2 (strict) + Tailwind CSS 3 (mã gốc do Lovable sinh ra).
 - **Backend & dữ liệu:** Express (`server.ts`) + PostgreSQL tự host trên VPS. Auth tự viết
   (Bearer token, `api/auth.ts`).
-- **AI:** chat/chấm bài qua `/api/claude` · STT Whisper qua Groq/OpenAI (`/api/stt`) · TTS Google Cloud (`/api/tts`, cache mã hoá AES-256-GCM).
+- **AI:** chat/chấm bài qua `/api/agent` · STT Whisper qua Groq/OpenAI (`/api/stt`) · TTS Google Cloud (`/api/tts`, cache mã hoá AES-256-GCM).
 - **Deploy:** VPS Ubuntu (PM2 + Nginx + Let's Encrypt) sau Cloudflare.
 
 Chi tiết đầy đủ (schema DB, API, MoSCoW): xem `PROJECT.md`. Trạng thái/tiến độ: xem `PROGRESS.md`. Quy ước làm việc với AI: xem `CLAUDE.md`.

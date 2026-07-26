@@ -5,7 +5,7 @@ import { mockLogin } from './helpers/auth'
 test.use({ viewport: { width: 390, height: 844 } })
 
 async function mockClaude(page: Page) {
-  await page.route('**/api/claude', (route) =>
+  await page.route('**/api/agent', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',

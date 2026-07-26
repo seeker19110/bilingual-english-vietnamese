@@ -104,5 +104,5 @@ VITE_GOOGLE_CLIENT_ID=... # Google OAuth (auth tự viết)
 | `src/lib/stt.ts` / `sttServer.ts` | STT trình duyệt / STT server                    |
 | `src/prompts/index.ts`            | prompt chat/speaking/writing theo `dir`         |
 | `src/context/LangProvider.tsx`    | ngữ cảnh `uiLang`                               |
-| `api/ai.ts`                       | endpoint `/api/claude` (chat/chấm bài)          |
+| `api/ai.ts`                       | endpoint `/api/agent` (chat/chấm bài)           |
 | `api/tts.ts` / `api/stt.ts`       | endpoint TTS (Google Cloud) / STT (Groq/OpenAI) |

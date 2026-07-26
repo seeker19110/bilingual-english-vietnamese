@@ -1,4 +1,4 @@
-// Test handler /api/claude (api/ai.ts) — tập trung "đường đi của tiền" ở nhánh Groq:
+// Test handler /api/agent (api/ai.ts) — tập trung "đường đi của tiền" ở nhánh Groq:
 // mọi nhánh lỗi sau khi ĐÃ TRỪ lượt (checkAndConsumeUsage) phải HOÀN lượt (refundUsage),
 // kể cả khi Groq trả HTTP 200 nhưng body hỏng (không phải JSON / thiếu field) —
 // trước đây các nhánh body-hỏng quên hoàn, người dùng mất lượt mà không có câu trả lời.
@@ -28,9 +28,9 @@ import { fetchWithTimeout } from './_lib/fetchTimeout'
 const mockedFetch = vi.mocked(fetchWithTimeout)
 const mockedRefund = vi.mocked(refundUsage)
 
-// Request hợp lệ tối thiểu cho /api/claude — cho phép ghi đè body để test validate/sanitize.
+// Request hợp lệ tối thiểu cho /api/agent — cho phép ghi đè body để test validate/sanitize.
 function makeRequest(body?: object): Request {
-  return new Request('http://localhost/api/claude', {
+  return new Request('http://localhost/api/agent', {
     method: 'POST',
     headers: { 'content-type': 'application/json', Authorization: 'Bearer x' },
     body: JSON.stringify(body ?? { messages: [{ role: 'user', content: 'Hello' }], mode: 'chat' }),
@@ -63,14 +63,14 @@ afterEach(() => {
   }
 })
 
-describe('handler /api/claude — cổng vào (method/key/body)', () => {
+describe('handler /api/agent — cổng vào (method/key/body)', () => {
   it('OPTIONS (preflight CORS) → 204', async () => {
-    const res = await handler(new Request('http://localhost/api/claude', { method: 'OPTIONS' }))
+    const res = await handler(new Request('http://localhost/api/agent', { method: 'OPTIONS' }))
     expect(res.status).toBe(204)
   })
 
   it('GET → 405 Method not allowed', async () => {
-    const res = await handler(new Request('http://localhost/api/claude', { method: 'GET' }))
+    const res = await handler(new Request('http://localhost/api/agent', { method: 'GET' }))
     expect(res.status).toBe(405)
   })
 
@@ -84,7 +84,7 @@ describe('handler /api/claude — cổng vào (method/key/body)', () => {
 
   it('Body không phải JSON → 400', async () => {
     const res = await handler(
-      new Request('http://localhost/api/claude', {
+      new Request('http://localhost/api/agent', {
         method: 'POST',
         headers: { 'content-type': 'application/json', Authorization: 'Bearer x' },
         body: 'không phải json',
@@ -94,7 +94,7 @@ describe('handler /api/claude — cổng vào (method/key/body)', () => {
   })
 })
 
-describe('handler /api/claude — nhánh Groq và hoàn lượt', () => {
+describe('handler /api/agent — nhánh Groq và hoàn lượt', () => {
   it('Groq trả lời hợp lệ → 200, KHÔNG hoàn lượt', async () => {
     mockedFetch.mockResolvedValue(
       new Response(JSON.stringify({ choices: [{ message: { content: 'Hi there!' } }] }), {
@@ -150,7 +150,7 @@ describe('handler /api/claude — nhánh Groq và hoàn lượt', () => {
 // Đợt 3 rollout Zod (api/ai.ts) — schema CHỈ định hình lại logic lenient cũ (cắt bớt/mặc định),
 // KHÔNG được siết chặt thêm: input sai kiểu/thiếu field vẫn phải trả 200 như trước, không phải
 // 400 mới. Duy nhất hành vi từ chối giữ nguyên là 413 khi tổng nội dung quá lớn.
-describe('handler /api/claude — validate/sanitize (Zod, đợt 3)', () => {
+describe('handler /api/agent — validate/sanitize (Zod, đợt 3)', () => {
   beforeEach(() => {
     mockedFetch.mockResolvedValue(
       new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {
@@ -206,10 +206,10 @@ describe('handler /api/claude — validate/sanitize (Zod, đợt 3)', () => {
   })
 })
 
-// Chặn lỗ hổng: /api/claude CHỈ được đếm vào chat/writing/speaking — mode 'stt'/'pronounce'
+// Chặn lỗ hổng: /api/agent CHỈ được đếm vào chat/writing/speaking — mode 'stt'/'pronounce'
 // là của /api/stt và /api/pronounce-assess, đếm nhầm vào đây sẽ giúp client né giới hạn chat
 // bằng cách rút quota của mode khác (xem ghi chú CHAT_ENDPOINT_MODES ở api/ai.ts).
-describe('handler /api/claude — mode lạ (không phải chat/writing/speaking) → coi như "chat"', () => {
+describe('handler /api/agent — mode lạ (không phải chat/writing/speaking) → coi như "chat"', () => {
   beforeEach(() => {
     mockedFetch.mockResolvedValue(
       new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {

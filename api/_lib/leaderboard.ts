@@ -3,7 +3,7 @@
 //
 // NGUYÊN TẮC (CLAUDE.md §4.2 "không tin client"): điểm tính Ở SERVER từ dữ liệu server-side
 // ĐÃ CÓ SẴN — `daily_usage` (đếm atomic qua RPC consume_usage/pushLearnDay) + `challenge_entries`
-// (RLS owner, ghi qua /api/stt + /api/claude). Client KHÔNG gửi điểm lên, chỉ đọc kết quả.
+// (RLS owner, ghi qua /api/stt + /api/agent). Client KHÔNG gửi điểm lên, chỉ đọc kết quả.
 //
 // Công thức (đợt đầu, hằng số đặt tên — KHÔNG magic number, xem CLAUDE.md §4.4):
 //   1 điểm / (từ mới thuộc HOẶC thẻ SRS ôn) — cả 2 việc đều cộng `daily_usage.learn_count`
