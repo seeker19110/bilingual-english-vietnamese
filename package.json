@@ -36,6 +36,7 @@
     "seed:verify": "tsx scripts/seed-all.ts --verify",
     "migrate:pg": "tsx scripts/run-pg-migrations.ts",
     "backup:r2": "tsx scripts/backup-pg-to-r2.ts",
+    "restore:r2": "tsx scripts/restore-pg-from-r2.ts",
     "loadtest:k6": "k6 run scripts/load-test/k6-baseline.js",
     "prepare": "husky"
   },
