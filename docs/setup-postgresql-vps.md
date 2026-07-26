@@ -102,6 +102,34 @@ sudo -u postgres crontab -e
 0 4 * * 0 bash /var/www/english-tutor/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
 ```
 
+### 7.2 Đẩy backup lên Cloudflare R2 (BẮT BUỘC — backup không được nằm cùng ổ đĩa với DB gốc)
+
+Cron `pg_dump` ở mục 7 chỉ ghi vào `/var/backups` **trên chính máy Postgres**. Ổ đĩa/VPS đó hỏng
+→ mất CẢ database gốc LẪN toàn bộ backup cùng lúc — vi phạm nguyên tắc backup cơ bản (bản sao
+phải nằm ở "vùng hỏng" khác với dữ liệu gốc). `scripts/backup-pg-to-r2.ts` đẩy các file `.sql.gz`
+lên Cloudflare R2 (dùng lại tài khoản R2 đã có cho audio — xem `.env.example`), **bucket RIÊNG,
+để PRIVATE** (khác hẳn bucket audio phải public-read).
+
+```bash
+# .env: thêm R2_BACKUP_BUCKET (bucket MỚI, KHÁC R2_BUCKET của audio), để PRIVATE trên
+# Cloudflare Dashboard (KHÔNG bật Public access — file chứa toàn bộ dữ liệu người dùng).
+npm run backup:r2 -- --dry-run   # xem trước
+npm run backup:r2                 # chạy thật
+```
+
+Thêm vào cron, chạy NGAY SAU giờ `pg_dump` (mục 7) để backup mới nhất luôn được đẩy lên R2 kịp
+thời:
+
+```bash
+sudo -u postgres crontab -e
+# 3h05 sáng — 5 phút sau pg_dump (0 3 * * *) để chắc chắn file đã ghi xong local trước khi upload:
+5 3 * * * cd /var/www/english-tutor && npm run backup:r2 >> /var/log/pg-backup-r2.log 2>&1
+```
+
+An toàn chạy lại nhiều lần — file đã có trên R2 (đúng kích thước) sẽ tự bỏ qua, nên nếu R2 lỗi
+vài ngày, lần chạy kế tiếp tự bù các ngày còn thiếu. Mặc định giữ 30 ngày trên R2
+(`BACKUP_KEEP_DAYS`), tự xoá bản cũ hơn.
+
 ## 8. Xác nhận hoàn tất Giai đoạn A
 
 Báo lại kết quả các bước trên (đặc biệt bước 6 — `npm run migrate:pg` chạy thành
