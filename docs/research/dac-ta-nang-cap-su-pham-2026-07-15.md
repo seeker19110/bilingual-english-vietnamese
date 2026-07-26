@@ -330,7 +330,7 @@ model/token ép ở server. Nhưng **không có cách đo** AI sửa đúng bao 
 - `scripts/eval-tutor-fixtures.json`: ~60 câu học viên giả lập, soạn tay theo đúng các nhóm
   trong `VIET_COMMON_ERRORS` + câu ĐÚNG (đo false positive) + ca biên (câu trộn Việt-Anh, câu
   1 từ, emoji). Mỗi mục: `{ input, expectedErrors: [loại lỗi], level }`.
-- `scripts/eval-tutor.ts` (chạy tay, KHÔNG vào CI vì tốn phí API): gọi `/api/claude` với prompt
+- `scripts/eval-tutor.ts` (chạy tay, KHÔNG vào CI vì tốn phí API): gọi `/api/agent` với prompt
   chat/speaking thật → chấm tự động: có phát hiện lỗi không (recall) · có bịa lỗi ở câu đúng
   không (precision) · JSON đúng schema không · feedback có tiếng Việt không. Xuất bảng tổng +
   lưu `docs/research/eval-tutor-baseline.md`.

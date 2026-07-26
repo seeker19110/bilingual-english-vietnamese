@@ -137,13 +137,13 @@ for (const route of ['/', '/profile']) {
 // ── MÀN KẾT QUẢ CẦN BACKEND (Chat trả lời/nhận xét · Writing chấm điểm/lỗi · Speaking
 //    trả lời/sửa lỗi) ──────────────────────────────────────────────────────────────
 // Các UI này chỉ hiện SAU khi gọi AI nên axe lúc tải trang không thấy. E2E không có
-// backend thật → ta CHẶN /api/claude và trả câu mẫu cố định (đủ render màu amber/accent/
+// backend thật → ta CHẶN /api/agent và trả câu mẫu cố định (đủ render màu amber/accent/
 // red của phần sửa lỗi/điểm), rồi quét contrast ở CẢ 4 THEME (cam kết "AA ở mọi theme").
 // Đây là phần a11y còn chừa lại trong PROGRESS.md ("Tiếp theo").
 
-// Trả lời /api/claude bằng nội dung cố định để dựng UI kết quả.
+// Trả lời /api/agent bằng nội dung cố định để dựng UI kết quả.
 async function mockClaude(page: Page, text: string) {
-  await page.route('**/api/claude', (route) =>
+  await page.route('**/api/agent', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',

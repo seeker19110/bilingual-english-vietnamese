@@ -92,7 +92,7 @@ export async function transcribeAudio(
   }
 
   // Ném lỗi khi thiếu/sai kiểu trường `text` — để nơi gọi (api/stt.ts) hoàn lượt,
-  // giống nguyên tắc đã áp dụng cho nhánh Groq của /api/claude (xem parseGroqText
+  // giống nguyên tắc đã áp dụng cho nhánh Groq của /api/agent (xem parseGroqText
   // trong api/ai.ts): 200 nhưng body hỏng KHÔNG được coi là thành công. Chuỗi RỖNG
   // hợp lệ (im lặng thật, không phát hiện giọng nói) vẫn được trả về bình thường,
   // không throw — chỉ throw khi cấu trúc response sai (không phải im lặng).

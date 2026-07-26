@@ -151,7 +151,7 @@ app.get('/api/health', (_req, res) => {
 // ── API routes ────────────────────────────────────────────────────────────────
 // Thêm vào đây nếu tạo thêm file api/*.ts mới
 app.all('/api/tts', wrapEdge(ttsHandler))
-app.all('/api/claude', wrapEdge(aiHandler))
+app.all('/api/agent', wrapEdge(aiHandler))
 app.all('/api/pronunciation', wrapEdge(pronunciationHandler))
 app.all('/api/push', wrapEdge(pushHandler))
 app.all('/api/dictionary', wrapEdge(dictionaryHandler))

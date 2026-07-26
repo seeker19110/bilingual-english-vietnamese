@@ -3,7 +3,7 @@
 // (xem kế hoạch: docs/research/thu-thach-vlog-30-ngay.md, mục 3.1 bước 4)
 //
 // Luồng: học viên quay challenge → audio lên /api/stt → transcript → transcript +
-// chủ đề vào prompt này → gửi /api/claude → AI trả JSON `ChallengeFeedback`
+// chủ đề vào prompt này → gửi /api/agent → AI trả JSON `ChallengeFeedback`
 // (client parse bằng parseJson trong src/lib/ai.ts — giống Speaking/Writing).
 //
 // Chiều A: học viên người Việt NÓI tiếng Anh — khen + giải thích bằng tiếng Việt.

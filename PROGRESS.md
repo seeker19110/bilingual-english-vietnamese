@@ -420,11 +420,11 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   riêng 5MB do audio base64 lớn hơn giới hạn mặc định 64kb, giống `/api/stt`; `vite.config.ts`
   API_ROUTES cho dev) — chưa cấu hình `AZURE_SPEECH_KEY`/`AZURE_SPEECH_REGION` → 503
   `{fallback:true}` NGAY, KHÔNG trừ lượt (client PR sau tự rơi về Giai đoạn 1 miễn phí); lỗi
-  Azure sau khi đã trừ lượt → hoàn lượt (đúng nguyên tắc "đường đi của tiền" của `/api/claude`)
+  Azure sau khi đã trừ lượt → hoàn lượt (đúng nguyên tắc "đường đi của tiền" của `/api/agent`)
   — 9 test. **Tác dụng phụ phát hiện được khi làm việc này:** `isUsageMode()` (dùng để validate
-  `mode` gửi lên `/api/claude`) trước đó chấp nhận CẢ `'stt'` (và giờ sẽ chấp nhận cả
+  `mode` gửi lên `/api/agent`) trước đó chấp nhận CẢ `'stt'` (và giờ sẽ chấp nhận cả
   `'pronounce'` nếu không sửa) — cho phép client gửi `mode:'stt'`/`'pronounce'` lên
-  `/api/claude` để đếm nhầm sang cột khác, né giới hạn chat. Đã vá: `api/ai.ts` giờ dùng
+  `/api/agent` để đếm nhầm sang cột khác, né giới hạn chat. Đã vá: `api/ai.ts` giờ dùng
   `CHAT_ENDPOINT_MODES` riêng (chỉ `chat`/`writing`/`speaking`) thay vì tái dùng `isUsageMode`
   dùng chung — thêm 5 test ca biên (`mode` lạ/số/null đều rơi về `'chat'`). **Chưa làm ở PR
   này (để PR sau):** client WAV convert (`src/lib/wav.ts`) + UI điểm âm vị chi tiết + fallback
