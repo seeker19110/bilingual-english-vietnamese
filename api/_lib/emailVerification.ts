@@ -9,7 +9,8 @@
 
 import { createHash, randomInt } from 'node:crypto'
 import { getPgPool } from './pgPool.js'
-import { sendMail, type MailStatus } from './mailer.js'
+import type { MailStatus } from './mailer.js'
+import { sendMailWithQuota } from './mailQuota.js'
 
 // Mã sống 15 phút — đủ để mở mail, đủ ngắn để mã lộ không dùng được lâu.
 const CODE_TTL_MS = 15 * 60 * 1000
@@ -69,7 +70,7 @@ export async function sendVerificationCode(userId: string): Promise<SendResult> 
     [userId, hashCode(code), expiresAt],
   )
 
-  const mail = await sendMail({
+  const mail = await sendMailWithQuota({
     to: user.email,
     subject: `${code} là mã xác thực Gia sư tiếng Anh AI`,
     text: `Mã xác thực của bạn là: ${code}\n\nMã có hiệu lực trong 15 phút.\nNếu bạn không đăng ký tài khoản, hãy bỏ qua email này.`,

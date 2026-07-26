@@ -11,8 +11,15 @@ import { createHash } from 'node:crypto'
 
 vi.mock('./pgPool', () => ({ getPgPool: vi.fn() }))
 const mailState: { status: string } = { status: 'sent' }
-vi.mock('./mailer', () => ({
-  sendMail: async () => ({ status: mailState.status }),
+// emailVerification gửi qua mailQuota (kiểm soát hạn mức + tự chuyển kênh dự phòng) chứ không
+// gọi thẳng mailer — mock ở đúng tầng này, hành vi hạn mức/chuyển kênh có test riêng ở
+// mailQuota.test.ts, ở đây chỉ cần giả lập kết quả gửi cuối cùng.
+vi.mock('./mailQuota', () => ({
+  sendMailWithQuota: async () => ({
+    status: mailState.status,
+    channel: 'primary',
+    switchedToFallback: false,
+  }),
 }))
 
 import { sendVerificationCode, verifyCode, isEmailVerified } from './emailVerification'
