@@ -54,12 +54,14 @@ CURRENT_EXEC_MODE=$(pm2 jlist 2>/dev/null | node -e "
 
 if [ -z "$CURRENT_EXEC_MODE" ]; then
   echo "🔀 $PM2_PROCESS chưa chạy — start mới..."
-  pm2 start ecosystem.config.cjs
+  # --update-env: phòng trường hợp PM2 resurrect từ `pm2 save` cũ (sau reboot VPS) còn giữ
+  # env cũ trong dump — ép đọc lại .env mới nhất, không chỉ đọc file ecosystem.config.cjs.
+  pm2 start ecosystem.config.cjs --update-env
 elif [ "$CURRENT_EXEC_MODE" != "$DESIRED_EXEC_MODE" ]; then
   echo "⚠️  exec_mode đổi ($CURRENT_EXEC_MODE → $DESIRED_EXEC_MODE) — pm2 reload không áp dụng được,"
   echo "   phải xoá + start lại (có downtime vài giây LẦN NÀY)..."
   pm2 delete "$PM2_PROCESS" || true
-  pm2 start ecosystem.config.cjs
+  pm2 start ecosystem.config.cjs --update-env
 else
   echo "🔄 Reload PM2 ($PM2_PROCESS)..."
   pm2 reload ecosystem.config.cjs --update-env
