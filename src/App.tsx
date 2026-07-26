@@ -16,6 +16,8 @@ import { refreshAppSettings } from './lib/appSettings'
 const Login = lazyWithRetry(() => import('./pages/Login'))
 // Trang landing công khai (không cần đăng nhập) — điểm đến cho link quảng cáo TikTok/Facebook/SEO.
 const Landing = lazyWithRetry(() => import('./pages/Landing'))
+const LandingEn = lazyWithRetry(() => import('./pages/LandingEn'))
+const WordDetail = lazyWithRetry(() => import('./pages/WordDetail'))
 const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'))
 const Home = lazyWithRetry(() => import('./pages/Home'))
 const Chat = lazyWithRetry(() => import('./pages/Chat'))
@@ -154,6 +156,8 @@ export default function App() {
                     <Route path="/login" element={<Login />} />
                     {/* Công khai, KHÔNG bọc RequireAuth — vào được khi chưa đăng nhập */}
                     <Route path="/welcome" element={<Landing />} />
+                    <Route path="/learn-vietnamese" element={<LandingEn />} />
+                    <Route path="/tu-vung/:word" element={<WordDetail />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/onboarding" element={<Onboarding />} />
                     <Route path="/placement" element={<Placement />} />
