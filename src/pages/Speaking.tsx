@@ -46,6 +46,11 @@ import {
 // Số lượt trao đổi tối thiểu trước khi cho phép chấm điểm — tránh chấm khi mới 1 câu.
 const MIN_TURNS_TO_GRADE = 3
 
+// Chỉ gửi N tin nhắn GẦN NHẤT lên AI mỗi lượt hội thoại (không phải lúc chấm điểm cả phiên) —
+// hội thoại càng dài, gửi nguyên lịch sử càng tốn token gần như bậc hai. Vẫn lưu đủ session
+// để hiển thị UI, chỉ cắt phần gửi AI. Chấm điểm (endAndGrade) vẫn dùng TOÀN BỘ lịch sử.
+const MAX_AI_HISTORY = 20
+
 // JSON trả về từ AI — dùng chung cho cả 2 chiều
 // Chiều A: speech=EN, feedback=VI | Chiều B: speech=VI, feedback=EN
 interface AIResponse {
@@ -732,7 +737,7 @@ export default function Speaking() {
     setLoading(true)
     setError('')
     setLastIdx(updated.messages.length)
-    const history = updated.messages.map((m) => ({
+    const history = updated.messages.slice(-MAX_AI_HISTORY).map((m) => ({
       role: m.role,
       content: m.role === 'assistant' ? (m.speechEn ?? m.content) : m.content,
     }))
