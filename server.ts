@@ -35,6 +35,7 @@ import pronounceAssessHandler from './api/pronounce-assess.js'
 import authHandler from './api/auth.js'
 import profileHandler from './api/profile.js'
 import progressHandler from './api/progress.js'
+import usageSummaryHandler from './api/usage-summary.js'
 import historyHandler from './api/history.js'
 import challengeHandler from './api/challenge.js'
 import tutorFeedbackHandler from './api/tutor-feedback.js'
@@ -159,6 +160,7 @@ app.all('/api/leaderboard', wrapEdge(leaderboardHandler))
 app.all('/api/auth', wrapEdge(authHandler))
 app.all('/api/profile', wrapEdge(profileHandler))
 app.all('/api/progress', wrapEdge(progressHandler))
+app.all('/api/usage-summary', wrapEdge(usageSummaryHandler))
 app.all('/api/history', wrapEdge(historyHandler))
 app.all('/api/challenge', wrapEdge(challengeHandler))
 app.all('/api/tutor-feedback', wrapEdge(tutorFeedbackHandler))

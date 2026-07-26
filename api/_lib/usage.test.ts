@@ -46,6 +46,7 @@ function mockPool(opts: {
   plan?: 'free' | 'pro'
   planExpiresAt?: string | null
   consumeResult?: boolean
+  consumeWeeklyResult?: boolean
   queryError?: Error
   promoUntil?: string | null
   aiCircuitBreaker?: boolean
@@ -66,6 +67,11 @@ function mockPool(opts: {
           },
         ],
       }
+    // Gói Free: kho lượt tuần chung (xem 0012_free_weekly_ai_credit.sql)
+    if (sql.includes('consume_weekly_ai_credit'))
+      return { rows: [{ consume_weekly_ai_credit: opts.consumeWeeklyResult ?? true }] }
+    if (sql.includes('refund_weekly_ai_credit')) return { rows: [] }
+    // Gói Pro/VIP: cột riêng từng mode trong daily_usage (giữ nguyên như cũ)
     if (sql.includes('consume_usage'))
       return { rows: [{ consume_usage: opts.consumeResult ?? true }] }
     if (sql.includes('refund_usage')) return { rows: [] }
@@ -74,19 +80,30 @@ function mockPool(opts: {
   return { query } as unknown as ReturnType<typeof getPgPool>
 }
 
-describe('checkAndConsumeUsage', () => {
+describe('checkAndConsumeUsage — gói Free (kho lượt tuần chung)', () => {
   beforeEach(() => mockedGetPool.mockReset())
 
-  it('hàm SQL còn lượt (true) → ok', async () => {
-    mockedGetPool.mockReturnValue(mockPool({ consumeResult: true }))
+  it('còn lượt trong kho tuần (true) → ok', async () => {
+    mockedGetPool.mockReturnValue(mockPool({ consumeWeeklyResult: true }))
     expect(await checkAndConsumeUsage('u1', 'chat')).toEqual({ ok: true })
   })
 
-  it('hàm SQL hết lượt (false) → chặn kèm thông điệp', async () => {
-    mockedGetPool.mockReturnValue(mockPool({ consumeResult: false }))
+  it('hết lượt trong kho tuần (false) → chặn kèm thông điệp', async () => {
+    mockedGetPool.mockReturnValue(mockPool({ consumeWeeklyResult: false }))
     const r = await checkAndConsumeUsage('u1', 'chat')
     expect(r.ok).toBe(false)
-    if (!r.ok) expect(r.message).toMatch(/Hết lượt|hết lượt/)
+    if (!r.ok) expect(r.message).toMatch(/lượt/i)
+  })
+
+  it('mode khác nhau (chat/writing/speaking/stt/pronounce) đều dùng CHUNG 1 kho tuần', async () => {
+    const pool = mockPool({ consumeWeeklyResult: true })
+    mockedGetPool.mockReturnValue(pool)
+    await checkAndConsumeUsage('u1', 'stt')
+    const call = vi
+      .mocked(pool.query)
+      .mock.calls.find(([sql]) => (sql as string).includes('consume_weekly_ai_credit'))
+    // Không truyền cột riêng theo mode — chỉ userId + week_start, đúng ý "kho chung".
+    expect(call?.[1]).toEqual(['u1', expect.any(String)])
   })
 
   it('DB lỗi (query throw) → FAIL-OPEN (cho qua)', async () => {
@@ -95,12 +112,16 @@ describe('checkAndConsumeUsage', () => {
   })
 
   it('cầu dao AI bật → chặn ngay, không cần biết còn lượt hay không', async () => {
-    // consumeResult: true (rõ ràng còn lượt) nhưng vẫn phải chặn vì breaker bật trước.
-    mockedGetPool.mockReturnValue(mockPool({ aiCircuitBreaker: true, consumeResult: true }))
+    // consumeWeeklyResult: true (rõ ràng còn lượt) nhưng vẫn phải chặn vì breaker bật trước.
+    mockedGetPool.mockReturnValue(mockPool({ aiCircuitBreaker: true, consumeWeeklyResult: true }))
     const r = await checkAndConsumeUsage('u1', 'chat')
     expect(r.ok).toBe(false)
     if (!r.ok) expect(r.message).toMatch(/bảo trì/i)
   })
+})
+
+describe('checkAndConsumeUsage — gói Pro/VIP (giữ nguyên cột riêng từng mode)', () => {
+  beforeEach(() => mockedGetPool.mockReset())
 
   it('gói pro dùng giới hạn cao hơn (đọc đúng plan + truyền đúng limit)', async () => {
     const pool = mockPool({ plan: 'pro', consumeResult: true })
@@ -112,15 +133,15 @@ describe('checkAndConsumeUsage', () => {
     expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 100])
   })
 
-  it('gói pro đã HẾT HẠN (plan_expires_at trong quá khứ) → áp hạn mức free ngay, không chờ job dọn dữ liệu', async () => {
+  it('gói pro đã HẾT HẠN (plan_expires_at trong quá khứ) → rơi về Free ngay (kho lượt tuần), không chờ job dọn dữ liệu', async () => {
     const past = new Date(Date.now() - 86_400_000).toISOString()
-    const pool = mockPool({ plan: 'pro', planExpiresAt: past, consumeResult: true })
+    const pool = mockPool({ plan: 'pro', planExpiresAt: past, consumeWeeklyResult: true })
     mockedGetPool.mockReturnValue(pool)
     await checkAndConsumeUsage('u1', 'speaking')
     const consumeCall = vi
       .mocked(pool.query)
-      .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
-    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 5])
+      .mock.calls.find(([sql]) => (sql as string).includes('consume_weekly_ai_credit'))
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String)])
   })
 
   it('gói pro CÒN HẠN (plan_expires_at trong tương lai) → vẫn áp hạn mức pro', async () => {
@@ -134,9 +155,20 @@ describe('checkAndConsumeUsage', () => {
     expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 100])
   })
 
-  it('khuyến mãi đang bật → mọi gói (kể cả free) được nâng thành vip (không giới hạn)', async () => {
+  it('khuyến mãi đang bật → free được nâng lên hạn mức pro (không phải kho tuần, không phải không giới hạn)', async () => {
     const future = new Date(Date.now() + 86_400_000).toISOString()
     const pool = mockPool({ plan: 'free', consumeResult: true, promoUntil: future })
+    mockedGetPool.mockReturnValue(pool)
+    await checkAndConsumeUsage('u1', 'chat')
+    const consumeCall = vi
+      .mocked(pool.query)
+      .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'chat_count', 100])
+  })
+
+  it('khuyến mãi đang bật → pro được nâng lên vip (không giới hạn)', async () => {
+    const future = new Date(Date.now() + 86_400_000).toISOString()
+    const pool = mockPool({ plan: 'pro', consumeResult: true, promoUntil: future })
     mockedGetPool.mockReturnValue(pool)
     await checkAndConsumeUsage('u1', 'chat')
     const consumeCall = vi
@@ -149,8 +181,18 @@ describe('checkAndConsumeUsage', () => {
 describe('refundUsage', () => {
   beforeEach(() => mockedGetPool.mockReset())
 
-  it('gọi đúng hàm refund_usage với đúng cột', async () => {
-    const pool = mockPool({})
+  it('gói Free → hoàn vào kho lượt tuần chung (không phân biệt cột)', async () => {
+    const pool = mockPool({ plan: 'free' })
+    mockedGetPool.mockReturnValue(pool)
+    await refundUsage('u1', 'stt')
+    const refundCall = vi
+      .mocked(pool.query)
+      .mock.calls.find(([sql]) => (sql as string).includes('refund_weekly_ai_credit'))
+    expect(refundCall?.[1]).toEqual(['u1', expect.any(String), 35])
+  })
+
+  it('gói Pro/VIP → gọi đúng hàm refund_usage với đúng cột như cũ', async () => {
+    const pool = mockPool({ plan: 'pro' })
     mockedGetPool.mockReturnValue(pool)
     await refundUsage('u1', 'stt')
     const refundCall = vi

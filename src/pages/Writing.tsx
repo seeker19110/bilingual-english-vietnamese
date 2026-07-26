@@ -257,7 +257,12 @@ export default function Writing() {
       return
     }
     const usage = getUsage(user.id)
-    if (usage.writingCount >= getLimits()[effectivePlan(user.plan)].writing) {
+    // Gói Free: kho lượt tuần chung nằm ở server, không suy ra được từ dữ liệu local
+    // (writingCount đếm theo ngày, không còn đúng ý nghĩa) — để server tự chặn.
+    if (
+      effectivePlan(user.plan) !== 'free' &&
+      usage.writingCount >= getLimits()[effectivePlan(user.plan)].writing
+    ) {
       setError(
         isA ? 'Bạn đã dùng hết lượt chấm bài hôm nay.' : "You've used all grading sessions today.",
       )

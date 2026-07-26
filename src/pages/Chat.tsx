@@ -389,7 +389,9 @@ export default function Chat() {
   async function startSession(situation: string, level: Level) {
     const usage = getUsage(user.id)
     const limit = getLimits()[effectivePlan(user.plan)]
-    if (usage.chatCount >= limit.chat) {
+    // Gói Free: kho lượt tuần chung nằm ở server, không suy ra được từ dữ liệu local
+    // (chatCount đếm theo ngày/theo mode, không còn đúng ý nghĩa) — để server tự chặn.
+    if (effectivePlan(user.plan) !== 'free' && usage.chatCount >= limit.chat) {
       setLimitHit(true)
       return
     }
@@ -449,7 +451,9 @@ export default function Chat() {
     }
     const usage = getUsage(user.id)
     const limit = getLimits()[effectivePlan(user.plan)]
-    if (usage.chatCount >= limit.chat) {
+    // Gói Free: kho lượt tuần chung nằm ở server, không suy ra được từ dữ liệu local
+    // (chatCount đếm theo ngày/theo mode, không còn đúng ý nghĩa) — để server tự chặn.
+    if (effectivePlan(user.plan) !== 'free' && usage.chatCount >= limit.chat) {
       setLimitHit(true)
       return
     }
@@ -530,7 +534,9 @@ export default function Chat() {
     if (!session || loading || evaluating) return
     const usage = getUsage(user.id)
     const limit = getLimits()[effectivePlan(user.plan)]
-    if (usage.chatCount >= limit.chat) {
+    // Gói Free: kho lượt tuần chung nằm ở server, không suy ra được từ dữ liệu local
+    // (chatCount đếm theo ngày/theo mode, không còn đúng ý nghĩa) — để server tự chặn.
+    if (effectivePlan(user.plan) !== 'free' && usage.chatCount >= limit.chat) {
       setLimitHit(true)
       return
     }

@@ -567,7 +567,12 @@ export default function Speaking() {
 
   async function startSession(situation: string, level: Level) {
     const usage = getUsage(user.id)
-    if (usage.speakingCount >= getLimits()[effectivePlan(user.plan)].speaking) {
+    // Gói Free: kho lượt tuần chung nằm ở server, không suy ra được từ dữ liệu local
+    // (speakingCount đếm theo ngày, không còn đúng ý nghĩa) — để server tự chặn.
+    if (
+      effectivePlan(user.plan) !== 'free' &&
+      usage.speakingCount >= getLimits()[effectivePlan(user.plan)].speaking
+    ) {
       setLimitHit(true)
       return
     }
@@ -657,7 +662,11 @@ export default function Speaking() {
     // ── Chưa ghi → bắt đầu ghi ──────────────────────────────────────────
     if (!session) return
     // Chặn nếu hết lượt nhận diện giọng nói (STT) trong ngày — đếm riêng với hội thoại.
-    if (getUsage(user.id).sttCount >= getLimits()[effectivePlan(user.plan)].stt) {
+    // Gói Free: kho lượt tuần chung nằm ở server — để server tự chặn.
+    if (
+      effectivePlan(user.plan) !== 'free' &&
+      getUsage(user.id).sttCount >= getLimits()[effectivePlan(user.plan)].stt
+    ) {
       setLimitHit(true)
       toast.error(
         isA
@@ -720,7 +729,12 @@ export default function Speaking() {
       return
     }
     const usage = getUsage(user.id)
-    if (usage.speakingCount >= getLimits()[effectivePlan(user.plan)].speaking) {
+    // Gói Free: kho lượt tuần chung nằm ở server, không suy ra được từ dữ liệu local
+    // (speakingCount đếm theo ngày, không còn đúng ý nghĩa) — để server tự chặn.
+    if (
+      effectivePlan(user.plan) !== 'free' &&
+      usage.speakingCount >= getLimits()[effectivePlan(user.plan)].speaking
+    ) {
       setLimitHit(true)
       return
     }
@@ -820,7 +834,12 @@ export default function Speaking() {
   async function endAndGrade() {
     if (!session || loading || evaluating) return
     const usage = getUsage(user.id)
-    if (usage.speakingCount >= getLimits()[effectivePlan(user.plan)].speaking) {
+    // Gói Free: kho lượt tuần chung nằm ở server, không suy ra được từ dữ liệu local
+    // (speakingCount đếm theo ngày, không còn đúng ý nghĩa) — để server tự chặn.
+    if (
+      effectivePlan(user.plan) !== 'free' &&
+      usage.speakingCount >= getLimits()[effectivePlan(user.plan)].speaking
+    ) {
       setLimitHit(true)
       return
     }
