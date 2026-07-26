@@ -1,10 +1,14 @@
 // api/_lib/passwordReset.ts — Quên mật khẩu: gửi link reset qua email, người dùng tự điền mật
 // khẩu mới. Xem migration 0011 để biết vì sao dùng token ngẫu nhiên dài thay vì mã ngắn.
 //
-// BẢO MẬT — 2 điểm dễ sai nhất của tính năng "quên mật khẩu" trên MỌI hệ thống:
+// BẢO MẬT — 3 điểm dễ sai nhất của tính năng "quên mật khẩu" trên MỌI hệ thống:
 //   1. KHÔNG được để endpoint "yêu cầu reset" lộ được email nào có tồn tại trong hệ thống
 //      (dò email hàng loạt). Luôn trả về cùng 1 kết quả bất kể email có tồn tại hay không.
-//   2. Sau khi đổi mật khẩu thành công, PHẢI thu hồi toàn bộ session cũ — nếu không, kẻ tấn công
+//   2. KHÔNG được để THỜI GIAN PHẢN HỒI lộ điều tương tự — nhánh "email tồn tại" (phải hash mật
+//      khẩu... không, phải gửi mail, ghi DB) chậm hơn hẳn nhánh "không tồn tại" (chỉ 1 SELECT
+//      rồi dừng). Đo độ trễ vẫn dò được dù response body giống hệt nhau. App này nhiều trẻ em
+//      dùng nên khoá luôn kênh rò rỉ này — ép CẢ HAI nhánh chờ đủ MIN_RESPONSE_MS mới trả lời.
+//   3. Sau khi đổi mật khẩu thành công, PHẢI thu hồi toàn bộ session cũ — nếu không, kẻ tấn công
 //      chiếm được máy đang đăng nhập sẵn (session cũ) vẫn giữ được quyền truy cập dù chủ tài
 //      khoản vừa đổi mật khẩu vì lo bị lộ.
 
@@ -15,6 +19,17 @@ import { sendMailWithQuota } from './mailQuota.js'
 
 const TOKEN_TTL_MS = 30 * 60 * 1000 // 30 phút — dài hơn mã xác thực email vì phải mở mail rồi mới bấm link, không gõ tay ngay.
 const RESEND_COOLDOWN_MS = 60 * 1000
+
+// Sàn thời gian phản hồi cho MỌI nhánh của requestPasswordReset — che giấu chênh lệch thời gian
+// xử lý giữa "email tồn tại" (chậm: query thêm + gửi mail) và "không tồn tại"/"cooldown" (nhanh:
+// dừng sớm). Đặt cao hơn thời gian nhánh chậm nhất trong điều kiện bình thường; nếu nhánh chậm
+// vượt mốc này thì không che được nữa, nhưng đó là tình huống hạ tầng bất thường, không phải
+// điểm rò rỉ có thể khai thác lặp lại ổn định.
+const MIN_RESPONSE_MS = 400
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 function hashToken(rawToken: string): string {
   return createHash('sha256').update(rawToken).digest('hex')
@@ -31,8 +46,22 @@ function siteUrl(): string {
 /**
  * Yêu cầu reset mật khẩu. LUÔN trả về cùng 1 kết quả bất kể email có tồn tại hay không, để
  * KHÔNG lộ email nào có tài khoản (chống dò email hàng loạt) — xem chú thích bảo mật ở đầu file.
+ *
+ * Bọc ngoài `doRequestPasswordReset` để ép SÀN THỜI GIAN cố định (MIN_RESPONSE_MS) cho mọi
+ * nhánh — nếu chỉ đồng bộ nội dung trả về mà bỏ qua thời gian, kẻ dò email vẫn phân biệt được
+ * "tồn tại" (chậm hơn vì phải gửi mail) và "không tồn tại" (trả lời gần như ngay lập tức).
  */
 export async function requestPasswordReset(rawEmail: string): Promise<void> {
+  const startedAt = Date.now()
+  try {
+    await doRequestPasswordReset(rawEmail)
+  } finally {
+    const elapsed = Date.now() - startedAt
+    if (elapsed < MIN_RESPONSE_MS) await sleep(MIN_RESPONSE_MS - elapsed)
+  }
+}
+
+async function doRequestPasswordReset(rawEmail: string): Promise<void> {
   const pool = getPgPool()
   const email = rawEmail.trim().toLowerCase()
 
