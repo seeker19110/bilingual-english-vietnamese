@@ -1,0 +1,155 @@
+// src/pages/ResetPassword.tsx — Trang đích của link "Đặt mật khẩu mới" gửi qua email
+// (xem api/_lib/passwordReset.ts). Route /reset-password?token=... KHÔNG cần đăng nhập.
+import { useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Eye, EyeOff, KeyRound } from 'lucide-react'
+import { useLang } from '../context/useLang'
+
+async function postAuth(body: Record<string, unknown>): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const data = (await res.json().catch(() => ({}))) as { error?: string }
+    return res.ok ? { ok: true } : { ok: false, error: data.error }
+  } catch {
+    return { ok: false, error: 'Lỗi kết nối, thử lại sau' }
+  }
+}
+
+export default function ResetPassword() {
+  const nav = useNavigate()
+  const [searchParams] = useSearchParams()
+  const { T, lang } = useLang()
+  const isA = lang === 'vi'
+  const token = searchParams.get('token') ?? ''
+
+  const [password, setPassword] = useState('')
+  const [showPw, setShowPw] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [done, setDone] = useState(false)
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    if (password.length < 6) {
+      setError(isA ? 'Mật khẩu tối thiểu 6 ký tự' : 'Password must be at least 6 characters')
+      return
+    }
+    setLoading(true)
+    const r = await postAuth({ action: 'reset-password', token, newPassword: password })
+    setLoading(false)
+    if (r.ok) {
+      setDone(true)
+    } else {
+      setError(r.error ?? (isA ? 'Không đặt lại được mật khẩu' : 'Could not reset password'))
+    }
+  }
+
+  if (!token) {
+    return (
+      <div className="min-h-dvh bg-zinc-950 flex flex-col items-center justify-center px-4">
+        <p className="text-zinc-300 text-sm text-center max-w-sm">
+          {isA
+            ? 'Link không hợp lệ — thiếu mã xác nhận. Hãy mở link từ email gửi tới bạn.'
+            : 'Invalid link — missing token. Please open the link from your email.'}
+        </p>
+        <button
+          type="button"
+          onClick={() => nav('/login')}
+          className="tap-44 mt-4 text-accent-400 underline underline-offset-2 text-sm"
+        >
+          {isA ? 'Về trang đăng nhập' : 'Back to login'}
+        </button>
+      </div>
+    )
+  }
+
+  if (done) {
+    return (
+      <div className="min-h-dvh bg-zinc-950 flex flex-col items-center justify-center px-4 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-accent-500/15 text-accent-400 flex items-center justify-center mb-4">
+          <KeyRound className="w-7 h-7" />
+        </div>
+        <p className="text-white font-semibold mb-1">
+          {isA ? 'Đã đặt mật khẩu mới thành công!' : 'Password reset successful!'}
+        </p>
+        <p className="text-zinc-400 text-sm mb-5 max-w-sm">
+          {isA
+            ? 'Vì lý do an toàn, bạn cần đăng nhập lại trên mọi thiết bị bằng mật khẩu mới.'
+            : 'For security, please sign in again on all devices with your new password.'}
+        </p>
+        <button
+          type="button"
+          onClick={() => nav('/login')}
+          className="tap-44 rounded-xl bg-accent-500 px-6 py-3 text-sm font-semibold text-white"
+        >
+          {isA ? 'Đăng nhập ngay' : 'Sign in now'}
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-dvh bg-zinc-950 flex flex-col items-center justify-center px-4">
+      <div className="w-full max-w-sm glass rounded-2xl p-6 shadow-2xl shadow-black/40">
+        <h1 className="text-xl font-bold text-white mb-1">
+          {isA ? 'Đặt mật khẩu mới' : 'Set a new password'}
+        </h1>
+        <p className="text-zinc-400 text-sm mb-5">
+          {isA
+            ? 'Nhập mật khẩu mới cho tài khoản của bạn.'
+            : 'Enter a new password for your account.'}
+        </p>
+
+        <form onSubmit={submit} className="space-y-3">
+          <div className="relative">
+            <input
+              type={showPw ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={isA ? 'Mật khẩu mới' : 'New password'}
+              aria-label={isA ? 'Mật khẩu mới' : 'New password'}
+              minLength={6}
+              autoFocus
+              required
+              className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-4 py-3 pr-11 text-sm text-zinc-100 outline-none focus:border-accent-500/70"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPw((p) => !p)}
+              aria-label={showPw ? T.hidePassword : T.showPassword}
+              aria-pressed={showPw}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 p-0.5"
+            >
+              {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
+
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-3 py-2 text-xs text-red-400">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="tap-44 w-full rounded-xl bg-accent-500 py-3 text-sm font-semibold text-white disabled:opacity-60"
+          >
+            {loading
+              ? isA
+                ? 'Đang lưu...'
+                : 'Saving...'
+              : isA
+                ? 'Đặt mật khẩu mới'
+                : 'Set new password'}
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}

@@ -30,6 +30,7 @@ import {
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { sendVerificationCode, verifyCode, isEmailVerified } from './_lib/emailVerification.js'
 import { changeEmail } from './_lib/changeEmail.js'
+import { requestPasswordReset, resetPassword } from './_lib/passwordReset.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { isReservedName } from './_lib/reservedNames.js'
 
@@ -74,6 +75,17 @@ const ChangeEmailSchema = z.object({
   newEmail: z.string().trim().toLowerCase().email(),
   password: z.string().min(1).max(200).optional(),
 })
+// Quên mật khẩu: yêu cầu gửi link reset — KHÔNG cần đăng nhập (đây chính là lúc không đăng
+// nhập được). Không rate-limit riêng vì checkRateLimit theo IP ở đầu handler đã áp dụng chung.
+const RequestPasswordResetSchema = z.object({
+  action: z.literal('request-password-reset'),
+  email: z.string().trim().toLowerCase().email(),
+})
+const ResetPasswordSchema = z.object({
+  action: z.literal('reset-password'),
+  token: z.string().trim().min(20).max(200),
+  newPassword: z.string().min(6).max(200),
+})
 const BodySchema = z.union([
   RegisterSchema,
   LoginSchema,
@@ -82,6 +94,8 @@ const BodySchema = z.union([
   SendVerificationSchema,
   VerifyEmailSchema,
   ChangeEmailSchema,
+  RequestPasswordResetSchema,
+  ResetPasswordSchema,
 ])
 
 // Trả về đúng shape AppUser phía client mong đợi (xem src/types.ts) — email lấy từ input vì
@@ -250,6 +264,27 @@ export default async function handler(req: Request): Promise<Response> {
     }
     logSecurityEvent('CHANGE_EMAIL_OK', clientIp, { userId: auth.userId })
     return jsonResponse({ ok: true, mail: changed.mail }, 200, allHeaders)
+  }
+
+  if (result.data.action === 'request-password-reset') {
+    // LUÔN trả cùng 1 kết quả bất kể email có tồn tại hay không — chống dò email hàng loạt.
+    // Xem chú thích bảo mật trong api/_lib/passwordReset.ts.
+    await requestPasswordReset(result.data.email)
+    return jsonResponse({ ok: true }, 200, allHeaders)
+  }
+
+  if (result.data.action === 'reset-password') {
+    const reset = await resetPassword(result.data.token, result.data.newPassword)
+    if (!reset.ok) {
+      const messages: Record<typeof reset.reason, string> = {
+        invalid_or_expired: 'Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn',
+        already_used: 'Link này đã được dùng rồi — yêu cầu link mới nếu cần đổi lại',
+      }
+      logSecurityEvent('PASSWORD_RESET_FAILED', clientIp, { reason: reset.reason })
+      return jsonResponse({ error: messages[reset.reason] }, 400, allHeaders)
+    }
+    logSecurityEvent('PASSWORD_RESET_OK', clientIp, {})
+    return jsonResponse({ ok: true }, 200, allHeaders)
   }
 
   // action === 'logout'

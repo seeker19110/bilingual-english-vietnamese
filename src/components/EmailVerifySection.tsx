@@ -11,7 +11,7 @@ import { getAuthHeader } from '../lib/authHeader'
 import { useToast } from '../context/ToastProvider'
 
 // Trạng thái gửi mail từ server (xem api/_lib/mailer.ts) — quyết định thông báo hiện cho user.
-type MailStatus = 'sent' | 'rejected' | 'not_configured' | 'error'
+type MailStatus = 'sent' | 'rejected' | 'not_configured' | 'error' | 'quota_exceeded'
 
 async function postAuth(
   body: Record<string, unknown>,
@@ -61,6 +61,15 @@ export default function EmailVerifySection({
         isA
           ? 'Không gửi được tới email này — có thể bạn nhập sai. Kiểm tra và đổi lại nhé.'
           : 'That address rejected the email — it may be wrong. Please check and change it.',
+      )
+      return
+    }
+    if (mail === 'quota_exceeded') {
+      // Hệ thống đã gửi hết hạn mức thư trong ngày — lỗi phía mình, không phải lỗi người dùng.
+      toast.error(
+        isA
+          ? 'Hệ thống đang quá tải gửi mã, vui lòng thử lại sau vài giờ.'
+          : 'We have hit our daily sending limit — please try again in a few hours.',
       )
       return
     }

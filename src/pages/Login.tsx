@@ -5,6 +5,7 @@ import { login, register, loginWithGoogle } from '../lib/auth'
 import { claimPendingReferral } from '../lib/referral'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
+import { useToast } from '../context/ToastProvider'
 import type { UiLang } from '../lib/uiLang'
 
 // Nhãn tính năng lấy từ i18n theo `key` (icon + màu cố định, chữ dịch theo ngôn ngữ)
@@ -18,6 +19,8 @@ export default function Login() {
   const nav = useNavigate()
   const { user, refresh } = useAuth()
   const { T, lang, setLang } = useLang()
+  const toast = useToast()
+  const isA = lang === 'vi'
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -25,6 +28,34 @@ export default function Login() {
   const [showPw, setShowPw] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [forgotSending, setForgotSending] = useState(false)
+
+  // Quên mật khẩu: gửi link reset qua email. LUÔN hiện cùng 1 thông báo bất kể email có tồn tại
+  // hay không — server cũng cố ý không lộ điều đó (chống dò email hàng loạt), UI không được phá
+  // nguyên tắc này bằng cách hiện lỗi "email không tồn tại".
+  async function handleForgotPassword() {
+    if (!email.trim() || !email.includes('@')) {
+      toast.error(isA ? 'Nhập email trước khi bấm quên mật khẩu' : 'Enter your email first')
+      return
+    }
+    setForgotSending(true)
+    try {
+      await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ action: 'request-password-reset', email: email.trim() }),
+      })
+    } catch {
+      // Lỗi mạng — vẫn hiện thông báo chung bên dưới, không lộ thêm thông tin.
+    } finally {
+      setForgotSending(false)
+      toast.success(
+        isA
+          ? 'Nếu email này có tài khoản, link đặt lại mật khẩu đã được gửi tới.'
+          : 'If an account exists for this email, a reset link has been sent.',
+      )
+    }
+  }
 
   // Đã đăng nhập → về trang chủ
   if (user) {
@@ -197,6 +228,23 @@ export default function Login() {
               {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
+
+          {mode === 'login' && (
+            <button
+              type="button"
+              onClick={() => void handleForgotPassword()}
+              disabled={forgotSending}
+              className="tap-44 text-xs text-zinc-400 hover:text-zinc-300 underline underline-offset-2 disabled:opacity-60"
+            >
+              {forgotSending
+                ? isA
+                  ? 'Đang gửi...'
+                  : 'Sending...'
+                : isA
+                  ? 'Quên mật khẩu?'
+                  : 'Forgot password?'}
+            </button>
+          )}
 
           {error && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-3 py-2 text-xs text-red-400">
