@@ -231,6 +231,11 @@ export default async function handler(req: Request): Promise<Response> {
 
   // ── Nhánh Gemini (ưu tiên — FREE quota, kết quả tốt) ─────────────────────────
   if (geminiKey) {
+    // Log bắt đầu/kết thúc mỗi lần gọi thật (kể cả thành công) — trước đây chỉ log
+    // lúc bị chặn (401/429), nên khi Gemini/Groq chạy chậm hoặc treo giữa chừng thì
+    // không có dòng nào để tra — không suy luận được request có tới server hay không.
+    const startedAt = Date.now()
+    console.log(`[agent] gọi Gemini bắt đầu, mode=${mode}`)
     try {
       const geminiText = await withConcurrencyLimit('gemini', () =>
         callGemini(
@@ -241,10 +246,12 @@ export default async function handler(req: Request): Promise<Response> {
           maxTokens,
         ),
       )
+      console.log(`[agent] Gemini xong sau ${Date.now() - startedAt}ms`)
       // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc
       return jsonResponse({ content: [{ type: 'text', text: geminiText }] }, 200, allHeaders)
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
+      console.warn(`[agent] Gemini lỗi sau ${Date.now() - startedAt}ms: ${errMsg}`)
       // Provider lỗi → người dùng không nhận được trả lời: hoàn lại lượt vừa trừ.
       await refundUsage(authResult.userId, mode)
       // Lỗi timeout (AbortController) → 504, còn lại 502 (lỗi từ nhà cung cấp), không phải 500 của ta.
@@ -265,6 +272,8 @@ export default async function handler(req: Request): Promise<Response> {
       ...sanitizedMessages,
     ]
     let groqResp: Response
+    const groqStartedAt = Date.now()
+    console.log(`[agent] gọi Groq bắt đầu, mode=${mode}`)
     try {
       groqResp = await withConcurrencyLimit('groq', () =>
         fetchWithTimeout(
@@ -283,6 +292,7 @@ export default async function handler(req: Request): Promise<Response> {
       )
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
+      console.warn(`[agent] Groq lỗi sau ${Date.now() - groqStartedAt}ms: ${errMsg}`)
       await refundUsage(authResult.userId, mode)
       return jsonResponse(
         { error: { message: `Groq lỗi: ${errMsg.slice(0, 200)}` } },
@@ -290,6 +300,9 @@ export default async function handler(req: Request): Promise<Response> {
         allHeaders,
       )
     }
+    console.log(
+      `[agent] Groq phản hồi sau ${Date.now() - groqStartedAt}ms, status=${groqResp.status}`,
+    )
 
     if (!groqResp.ok) {
       const detail = await groqResp.text().catch(() => '')
