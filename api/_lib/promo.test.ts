@@ -7,19 +7,10 @@ const mockedGetAppSettings = vi.mocked(getAppSettings)
 
 function settingsWith(promoUntil: string | null) {
   return {
-    limits: {
-      free: { chat: 5, writing: 5, speaking: 5, stt: 5, pronounce: 5 },
-      pro: { chat: 100, writing: 100, speaking: 100, stt: 100, pronounce: 100 },
-      vip: {
-        chat: 1_000_000,
-        writing: 1_000_000,
-        speaking: 1_000_000,
-        stt: 1_000_000,
-        pronounce: 1_000_000,
-      },
-    },
+    limits: { pro: 100, vip: 1_000_000 },
     promoUntil,
     aiCircuitBreaker: false,
+    leaderboardEnabled: false,
     updatedAt: '2026-01-01T00:00:00.000Z',
   }
 }

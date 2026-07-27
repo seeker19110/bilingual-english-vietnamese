@@ -98,16 +98,18 @@ function resolveVoiceConfig(
   return { name: `${lang}-Chirp3-HD-${voice}`, ssmlGender: VOICE_GENDER[voice] }
 }
 
-// ── Giọng "Studio" (cao cấp, Pro/VIP) ───────────────────────────────────────
+// ── Giọng "Studio" (cao cấp, CHỈ VIP) ────────────────────────────────────────
 // Cùng provider/key pool Google Cloud TTS như Chirp3-HD ở trên, NHƯNG:
 //   - Google CHỈ có Studio cho en-US (không có cho vi-VN) — khác Chirp3-HD dùng được
 //     cho mọi ngôn ngữ app hỗ trợ. Nơi gọi (api/tts.ts, api/pronunciation.ts) PHẢI tự
 //     đảm bảo chỉ dùng Studio khi lang === 'en-US' (client: xem STUDIO_TO_CHIRP_FALLBACK
 //     trong src/lib/tts.ts).
 //   - Tên giọng gửi Google là `en-US-Studio-O`/`en-US-Studio-Q` (không có "-Chirp3-HD-").
-//   - Đắt hơn Chirp3-HD ~5 lần — chỉ mở cho gói Pro/VIP (xem voiceTiers.ts/voiceAccess.ts),
-//     không seed sẵn hàng loạt như Chirp3-HD, tạo động (cache-on-demand) khi người dùng
-//     Pro/VIP thực sự mở từ/câu.
+//   - Giá $24/1 triệu ký tự và KHÔNG có hạn mức miễn phí — đắt gấp 12 lần Chirp3-HD ($2,
+//     có 1 triệu ký tự miễn phí/tháng). Quyết định 2026-07-27: rút khỏi Pro, chỉ còn VIP
+//     (xem voiceTiers.ts/voiceAccess.ts) để chặn rủi ro chi phí ở gói rẻ. Không seed sẵn
+//     hàng loạt như Chirp3-HD, tạo động (cache-on-demand) khi người dùng VIP thực sự mở
+//     từ/câu.
 export type StudioVoiceId = 'Studio-O' | 'Studio-Q'
 export const STUDIO_VOICE_IDS: StudioVoiceId[] = ['Studio-O', 'Studio-Q']
 const STUDIO_VOICE_GENDER: Record<StudioVoiceId, 'FEMALE' | 'MALE'> = {

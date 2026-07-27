@@ -11,6 +11,8 @@ export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
 export interface AppSettings {
   limits: Record<Plan, Record<UsageMode, number>>
   promoUntil: string | null
+  // Bật/tắt bảng xếp hạng (Challenge.tsx → LeagueSection) — xem api/_lib/settings.ts.
+  leaderboardEnabled: boolean
   // Token so sánh (= updated_at ở server) — dùng làm ETag/If-None-Match, xem refreshAppSettings().
   updatedAt: string
 }
@@ -18,6 +20,7 @@ export interface AppSettings {
 const DEFAULT_SETTINGS: AppSettings = {
   limits: DEFAULT_LIMITS,
   promoUntil: '2027-01-01T00:00:00+07:00',
+  leaderboardEnabled: false,
   updatedAt: '1970-01-01T00:00:00.000Z',
 }
 
@@ -32,6 +35,7 @@ function loadFromLocalStorage(): AppSettings | null {
     return {
       limits: parsed.limits as AppSettings['limits'],
       promoUntil: parsed.promoUntil ?? null,
+      leaderboardEnabled: parsed.leaderboardEnabled ?? false,
       updatedAt: parsed.updatedAt,
     }
   } catch {
@@ -47,6 +51,10 @@ export function getAppSettings(): AppSettings {
 
 export function getLimits(): Record<Plan, Record<UsageMode, number>> {
   return current.limits
+}
+
+export function isLeaderboardEnabled(): boolean {
+  return current.leaderboardEnabled
 }
 
 // Gọi 1 lần lúc app khởi động (App.tsx) — public, không cần header đăng nhập.

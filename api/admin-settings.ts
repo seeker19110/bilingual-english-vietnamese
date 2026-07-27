@@ -21,16 +21,13 @@ import { getAppSettings, invalidateSettingsCache } from './_lib/settings.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
-const LimitsSchema = z.object({
-  chat: z.number().int().min(0).max(1_000_000),
-  writing: z.number().int().min(0).max(1_000_000),
-  speaking: z.number().int().min(0).max(1_000_000),
-  stt: z.number().int().min(0).max(1_000_000),
-  pronounce: z.number().int().min(0).max(1_000_000),
-})
-
+// Quyết định 2026-07-27: 1 hạn mức TỔNG lượt/ngày cho MỌI tính năng AI cộng lại (không còn
+// chia riêng chat/writing/speaking/stt/pronounce) — xem api/_lib/settings.ts.
 const UpdateSchema = z.object({
-  limits: z.object({ free: LimitsSchema, pro: LimitsSchema, vip: LimitsSchema }),
+  limits: z.object({
+    pro: z.number().int().min(0).max(1_000_000),
+    vip: z.number().int().min(0).max(1_000_000),
+  }),
   // null = tắt khuyến mãi; chuỗi = ISO datetime hợp lệ
   promoUntil: z
     .string()
@@ -41,6 +38,9 @@ const UpdateSchema = z.object({
   // hình khác (vd đổi hạn mức) sẽ vô tình bật lại AI dù trước đó đã chủ động tắt khẩn cấp. Xử
   // lý "giữ nguyên giá trị cũ nếu client không gửi" ở handler bên dưới.
   aiCircuitBreaker: z.boolean().optional(),
+  // Bật/tắt bảng xếp hạng — cùng lý do KHÔNG .default(): client cũ không gửi thì phải giữ
+  // nguyên giá trị đang có, không âm thầm bật/tắt lại.
+  leaderboardEnabled: z.boolean().optional(),
 })
 
 export default async function handler(req: Request): Promise<Response> {
@@ -78,39 +78,17 @@ export default async function handler(req: Request): Promise<Response> {
     }
     const { limits, promoUntil } = parsed.data
     // Giữ nguyên giá trị cũ nếu client không gửi field này (xem comment ở UpdateSchema).
-    const aiCircuitBreaker =
-      parsed.data.aiCircuitBreaker ?? (await getAppSettings()).aiCircuitBreaker
+    const current = await getAppSettings()
+    const aiCircuitBreaker = parsed.data.aiCircuitBreaker ?? current.aiCircuitBreaker
+    const leaderboardEnabled = parsed.data.leaderboardEnabled ?? current.leaderboardEnabled
 
     const pool = getPgPool()
     await pool.query(
       `update public.app_settings set
-         free_chat_limit = $1, free_writing_limit = $2, free_speaking_limit = $3,
-         free_stt_limit = $4, free_pronounce_limit = $5,
-         pro_chat_limit = $6, pro_writing_limit = $7, pro_speaking_limit = $8,
-         pro_stt_limit = $9, pro_pronounce_limit = $10,
-         vip_chat_limit = $11, vip_writing_limit = $12, vip_speaking_limit = $13,
-         vip_stt_limit = $14, vip_pronounce_limit = $15,
-         promo_until = $16, ai_circuit_breaker = $17, updated_at = now()
+         pro_daily_limit = $1, vip_daily_limit = $2,
+         promo_until = $3, ai_circuit_breaker = $4, leaderboard_enabled = $5, updated_at = now()
        where id = 1`,
-      [
-        limits.free.chat,
-        limits.free.writing,
-        limits.free.speaking,
-        limits.free.stt,
-        limits.free.pronounce,
-        limits.pro.chat,
-        limits.pro.writing,
-        limits.pro.speaking,
-        limits.pro.stt,
-        limits.pro.pronounce,
-        limits.vip.chat,
-        limits.vip.writing,
-        limits.vip.speaking,
-        limits.vip.stt,
-        limits.vip.pronounce,
-        promoUntil,
-        aiCircuitBreaker,
-      ],
+      [limits.pro, limits.vip, promoUntil, aiCircuitBreaker, leaderboardEnabled],
     )
     invalidateSettingsCache()
 

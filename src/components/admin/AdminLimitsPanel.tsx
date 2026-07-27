@@ -2,30 +2,24 @@
 // Tách ra từ src/pages/AdminSettings.tsx (giữ nguyên logic/API gọi /api/admin-settings) để
 // dùng chung được ở cả trang /admin-settings cũ (đứng riêng, có Layout/PageHeader) lẫn
 // trong 1 tab của trang /admin mới (không cần Layout/PageHeader vì AdminDashboard đã có sẵn).
+//
+// Quyết định 2026-07-27: hạn mức Pro/VIP đổi từ "5 số riêng theo chế độ (chat/writing/
+// speaking/stt/pronounce)" sang MỘT số TỔNG lượt/ngày mỗi gói — không còn chia lẻ. Free
+// KHÔNG hiện ở đây: từ trước Free đã enforce qua kho lượt chung cửa sổ trượt 7 ngày (xem
+// api/_lib/usage.ts), không đọc app_settings, nên không có gì để chỉnh ở màn này.
 import { useEffect, useState } from 'react'
 import { ShieldAlert, Loader2, Save } from 'lucide-react'
 import { useToast } from '../../context/ToastProvider'
 import { getAuthHeader } from '../../lib/authHeader'
-import type { Plan } from '../../types'
-
-type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
-type LimitsByPlan = Record<Plan, Record<UsageMode, number>>
 
 interface AppSettings {
-  limits: LimitsByPlan
+  limits: { pro: number; vip: number }
   promoUntil: string | null
   aiCircuitBreaker: boolean
+  leaderboardEnabled: boolean
 }
 
-const MODES: { key: UsageMode; label: string }[] = [
-  { key: 'chat', label: 'Chat' },
-  { key: 'writing', label: 'Luyện viết' },
-  { key: 'speaking', label: 'Luyện nói' },
-  { key: 'stt', label: 'STT (nhận diện giọng nói)' },
-  { key: 'pronounce', label: 'Chấm phát âm' },
-]
-const PLANS: { key: Plan; label: string }[] = [
-  { key: 'free', label: 'Free' },
+const PLANS: { key: 'pro' | 'vip'; label: string }[] = [
   { key: 'pro', label: 'Pro' },
   { key: 'vip', label: 'VIP' },
 ]
@@ -76,12 +70,8 @@ export default function AdminLimitsPanel({ onForbiddenChange }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function updateLimit(plan: Plan, mode: UsageMode, value: number) {
-    setSettings((prev) =>
-      prev
-        ? { ...prev, limits: { ...prev.limits, [plan]: { ...prev.limits[plan], [mode]: value } } }
-        : prev,
-    )
+  function updateLimit(plan: 'pro' | 'vip', value: number) {
+    setSettings((prev) => (prev ? { ...prev, limits: { ...prev.limits, [plan]: value } } : prev))
   }
 
   async function handleSave() {
@@ -97,6 +87,7 @@ export default function AdminLimitsPanel({ onForbiddenChange }: Props) {
           limits: settings.limits,
           promoUntil,
           aiCircuitBreaker: settings.aiCircuitBreaker,
+          leaderboardEnabled: settings.leaderboardEnabled,
         }),
       })
       if (!res.ok) {
@@ -176,34 +167,53 @@ export default function AdminLimitsPanel({ onForbiddenChange }: Props) {
             )}
           </section>
 
-          {PLANS.map(({ key: plan, label }) => (
-            <section
-              key={plan}
-              className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4"
-            >
-              <p className="text-sm font-semibold text-white mb-3">
-                Hạn mức gói {label} (lượt/ngày)
-              </p>
-              <div className="grid grid-cols-1 gap-2.5">
-                {MODES.map(({ key: mode, label: modeLabel }) => (
-                  <label key={mode} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="text-zinc-400">{modeLabel}</span>
-                    <input
-                      type="number"
-                      min={0}
-                      max={1_000_000}
-                      value={settings.limits[plan][mode]}
-                      onChange={(e) => {
-                        const n = Number(e.target.value)
-                        updateLimit(plan, mode, Number.isFinite(n) ? Math.max(0, n) : 0)
-                      }}
-                      className="w-28 bg-zinc-800 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-right text-white"
-                    />
-                  </label>
-                ))}
-              </div>
-            </section>
-          ))}
+          <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
+            <p className="text-sm font-semibold text-white mb-1">Bảng xếp hạng</p>
+            <p className="text-xs text-zinc-400 mb-3">
+              Đang TẮT mặc định (quyết định 2026-07-27): ở quy mô ít người dùng, bảng gần trống
+              khiến người mới thấy app "vắng vẻ" và bỏ đi. Chỉ bật lại khi đã đủ đông người dùng
+              hoạt động/tuần (tham khảo mốc ~200).
+            </p>
+            <label className="flex items-center gap-2 text-sm text-zinc-300">
+              <input
+                type="checkbox"
+                checked={settings.leaderboardEnabled}
+                onChange={(e) =>
+                  setSettings((prev) =>
+                    prev ? { ...prev, leaderboardEnabled: e.target.checked } : prev,
+                  )
+                }
+              />
+              Hiện bảng xếp hạng trong Challenge
+            </label>
+          </section>
+
+          <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
+            <p className="text-sm font-semibold text-white mb-1">Hạn mức lượt AI/ngày</p>
+            <p className="text-xs text-zinc-400 mb-3">
+              Một con số TỔNG cho mọi tính năng AI cộng lại (Chat + Luyện viết + Luyện nói + STT +
+              Chấm phát âm) — không còn chia riêng từng chế độ. Gói Free dùng kho lượt riêng (tối đa
+              35, +5/ngày học thật, tính theo 7 ngày gần nhất), không chỉnh được ở đây.
+            </p>
+            <div className="grid grid-cols-1 gap-2.5">
+              {PLANS.map(({ key: plan, label }) => (
+                <label key={plan} className="flex items-center justify-between gap-3 text-sm">
+                  <span className="text-zinc-400">Gói {label} (lượt/ngày)</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={1_000_000}
+                    value={settings.limits[plan]}
+                    onChange={(e) => {
+                      const n = Number(e.target.value)
+                      updateLimit(plan, Number.isFinite(n) ? Math.max(0, n) : 0)
+                    }}
+                    className="w-28 bg-zinc-800 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-right text-white"
+                  />
+                </label>
+              ))}
+            </div>
+          </section>
 
           <button
             type="button"

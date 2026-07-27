@@ -387,13 +387,13 @@ export default function AdminUsagePanel() {
 
           {/* ── Sức khoẻ hạn mức gói Free ──────────────────────────────── */}
           <Card
-            title="Kho lượt tuần của gói Free"
+            title="Kho lượt cửa sổ trượt 7 ngày của gói Free"
             icon={Wallet}
-            note={`Trần ${stats.freeCredit.cap} lượt/tuần. Nhiều người CẠN kho = hạn mức đang quá chặt (mất người dùng); nhiều người ĐẦY kho = tặng dư, có thể giảm để tiết kiệm.`}
+            note={`Trần tự nhiên ${stats.freeCredit.cap} lượt/cửa sổ 7 ngày (không reset theo tuần lịch). Nhiều người CẠN kho = hạn mức đang quá chặt (mất người dùng); nhiều người ĐẦY kho = tặng dư, có thể giảm để tiết kiệm.`}
           >
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               <Tile
-                label="Có kho tuần này"
+                label="Có kho hiện tại"
                 value={stats.freeCredit.users.toLocaleString('vi-VN')}
               />
               <Tile

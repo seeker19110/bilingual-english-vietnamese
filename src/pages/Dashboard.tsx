@@ -447,8 +447,8 @@ export default function Dashboard() {
               />
               <p className="text-[11px] text-zinc-500 mt-2">
                 {vi
-                  ? 'Học từ mới/hoàn thành bài mỗi ngày để được +5 lượt (tối đa 35/tuần, reset thứ Hai).'
-                  : 'Learn a new word or finish a lesson each day for +5 credits (up to 35/week, resets Monday).'}
+                  ? 'Học từ mới/hoàn thành bài mỗi ngày để được +5 lượt (tối đa 35, tính theo 7 ngày gần nhất).'
+                  : 'Learn a new word or finish a lesson each day for +5 credits (up to 35, based on the last 7 days).'}
               </p>
             </div>
           ) : (

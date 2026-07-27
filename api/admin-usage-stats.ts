@@ -5,7 +5,7 @@
 //
 // Khác gì /api/analytics-summary? File đó đọc bảng `analytics_events` — phễu MARKETING (xem
 // landing, bấm CTA, đăng ký). File này đọc dữ liệu VẬN HÀNH THẬT (daily_usage, profiles,
-// payments, weekly_ai_credit) để trả lời 3 câu hỏi tiền bạc:
+// payments, free_daily_credit) để trả lời 3 câu hỏi tiền bạc:
 //   1. Tính năng nào được dùng nhiều/ít → nên đầu tư thêm hay bỏ bớt?
 //   2. Chi phí AI ước tính bao nhiêu, ai đang ngốn nhiều nhất → có cần siết hạn mức không?
 //   3. Doanh thu Pro/VIP có bù nổi chi phí không → biên lãi/lỗ.
@@ -26,8 +26,8 @@ import { getUserById } from './_lib/authService.js'
 import { isAdminEmail } from './_lib/adminAuth.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { getUnitCostsUsd, getUsdVndRate, estimateCostUsd } from './_lib/aiCost.js'
-import { FREE_WEEKLY_CAP, type UsageMode } from './_lib/usage.js'
-import { vnDateStr, addDays, weekStartOf } from './_lib/date.js'
+import { FREE_WEEKLY_CAP, FREE_ROLLING_WINDOW_DAYS, type UsageMode } from './_lib/usage.js'
+import { vnDateStr, addDays } from './_lib/date.js'
 
 const DEFAULT_DAYS = 30
 const MAX_DAYS = 180
@@ -254,15 +254,23 @@ export default async function handler(req: Request): Promise<Response> {
         [days],
       ),
 
-      // ⑩ Sức khoẻ kho lượt tuần của gói Free — bao nhiêu người CẠN kho (chạm trần chặn,
-      // dấu hiệu hạn mức quá chặt) so với bao nhiêu người ĐẦY kho (dùng không hết).
+      // ⑩ Sức khoẻ kho lượt cửa sổ trượt 7 ngày của gói Free — bao nhiêu người CẠN kho (chạm
+      // trần chặn, dấu hiệu hạn mức quá chặt) so với bao nhiêu người ĐẦY kho (dùng không hết).
+      // Công thức PHẢI khớp consume_rolling_credit/usage-summary.ts (migration 0017): tổng
+      // bonus_earned trừ credits_spent trong FREE_ROLLING_WINDOW_DAYS ngày gần nhất, gộp theo
+      // user TRƯỚC rồi mới đếm số người cạn/đầy (không gộp thẳng toàn bảng).
       pool.query<{ users: number; total: number; exhausted: number; capped: number }>(
         `select count(*)::int as users,
-                coalesce(sum(credit), 0)::int as total,
-                count(*) filter (where credit = 0)::int as exhausted,
-                count(*) filter (where credit >= $2)::int as capped
-         from public.weekly_ai_credit where week_start = $1`,
-        [weekStartOf(today), FREE_WEEKLY_CAP],
+                coalesce(sum(available), 0)::int as total,
+                count(*) filter (where available <= 0)::int as exhausted,
+                count(*) filter (where available >= $3)::int as capped
+         from (
+           select user_id, sum(bonus_earned) - sum(credits_spent) as available
+           from public.free_daily_credit
+           where day > $1::date - $2::int and day <= $1::date
+           group by user_id
+         ) t`,
+        [today, FREE_ROLLING_WINDOW_DAYS, FREE_WEEKLY_CAP],
       ),
 
       // ⑪ Top người dùng theo tổng lượt AI — phát hiện lạm dụng / user cần mời lên gói cao

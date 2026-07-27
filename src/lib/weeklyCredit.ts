@@ -1,5 +1,8 @@
-// src/lib/weeklyCredit.ts — Đọc "còn bao nhiêu lượt" từ SERVER cho gói Free (kho lượt
-// tuần chung, xem api/usage-summary.ts + postgres/migrations/0012_free_weekly_ai_credit.sql).
+// src/lib/weeklyCredit.ts — Đọc "còn bao nhiêu lượt" từ SERVER cho gói Free (kho lượt chung,
+// cửa sổ TRƯỢT 7 ngày liền kề — xem api/usage-summary.ts +
+// postgres/migrations/0017_free_rolling_credit.sql). Tên file/biến giữ "weekly"/"freeWeekly*"
+// vì lịch sử (bản cũ 0012 dùng tuần lịch) — không đổi tên để tránh sửa lại mọi nơi hiển thị,
+// bản chất giờ là cửa sổ trượt chứ không phải tuần lịch.
 // Pro/VIP KHÔNG cần gọi API này — vẫn hiển thị đúng bằng dữ liệu local như cũ (per-mode,
 // đếm theo ngày, xem src/lib/storage.ts).
 //

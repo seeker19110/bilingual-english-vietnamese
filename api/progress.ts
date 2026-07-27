@@ -17,8 +17,8 @@ import {
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
-import { vnDateStr, weekStartOf } from './_lib/date.js'
-import { FREE_WEEKLY_BONUS_PER_DAY, FREE_WEEKLY_CAP } from './_lib/usage.js'
+import { vnDateStr } from './_lib/date.js'
+import { FREE_WEEKLY_BONUS_PER_DAY } from './_lib/usage.js'
 
 // Giới hạn kích thước hợp lý — chặn payload bất thường (DoS/lỗi client) mà vẫn đủ rộng
 // cho người học nhiều năm (từ điển app hiện ~12.000 từ).
@@ -104,14 +104,15 @@ export default async function handler(req: Request): Promise<Response> {
 
   const d = result.data
 
-  // Quyết định 2026-07-26: gói Free tích lượt AI theo tuần — +5 lượt mỗi ngày người
-  // dùng THỰC SỰ học (không bắt buộc dùng lượt AI). Ta không có sự kiện "học 1 từ"
-  // riêng, nhưng pushProgress() (src/lib/progressSync.ts) được gọi ĐÚNG lúc học từ
-  // mới/ôn từ/hoàn thành hội thoại/ngữ pháp — nên phát hiện qua so sánh độ dài mảng
-  // TRƯỚC/SAU: nếu bất kỳ mảng nào dài ra so với bản đang lưu → có hoạt động học thật
-  // trong request này, cộng thưởng (idempotent theo ngày, xem grant_weekly_ai_bonus).
-  // Không cộng khi chỉ đồng bộ lại dữ liệu cũ (pullProgress → pushProgress merge) mà
-  // không có gì mới.
+  // Quyết định 2026-07-26 (đổi cơ chế trượt 2026-07-27): gói Free tích lượt AI — +5 lượt
+  // mỗi ngày người dùng THỰC SỰ học (không bắt buộc dùng lượt AI), tính theo cửa sổ TRƯỢT
+  // 7 ngày liền kề (xem api/_lib/usage.ts, postgres/migrations/0017_free_rolling_credit.sql).
+  // Ta không có sự kiện "học 1 từ" riêng, nhưng pushProgress() (src/lib/progressSync.ts)
+  // được gọi ĐÚNG lúc học từ mới/ôn từ/hoàn thành hội thoại/ngữ pháp — nên phát hiện qua so
+  // sánh độ dài mảng TRƯỚC/SAU: nếu bất kỳ mảng nào dài ra so với bản đang lưu → có hoạt
+  // động học thật trong request này, cộng thưởng (idempotent theo ngày, xem
+  // grant_daily_bonus_rolling). Không cộng khi chỉ đồng bộ lại dữ liệu cũ (pullProgress →
+  // pushProgress merge) mà không có gì mới.
   const { rows: beforeRows } = await pool.query<{
     learned: string[]
     hard: string[]
@@ -132,17 +133,14 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (grewLearning) {
     try {
-      const day = vnDateStr()
-      await pool.query('select public.grant_weekly_ai_bonus($1, $2, $3, $4, $5)', [
+      await pool.query('select public.grant_daily_bonus_rolling($1, $2, $3)', [
         auth.userId,
-        day,
-        weekStartOf(day),
+        vnDateStr(),
         FREE_WEEKLY_BONUS_PER_DAY,
-        FREE_WEEKLY_CAP,
       ])
     } catch (err) {
       // FAIL-OPEN: lỗi cộng thưởng không được làm vỡ luồng lưu tiến độ chính.
-      console.warn('[progress] cộng thưởng lượt tuần lỗi → bỏ qua:', err)
+      console.warn('[progress] cộng thưởng lượt lỗi → bỏ qua:', err)
     }
   }
 

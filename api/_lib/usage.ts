@@ -5,7 +5,7 @@
 // Logic nghiệp vụ (giới hạn theo gói, FAIL-OPEN khi lỗi hạ tầng) giữ nguyên 100%.
 
 import { getPgPool } from './pgPool.js'
-import { vnDateStr, weekStartOf } from './date.js'
+import { vnDateStr } from './date.js'
 import { resolvePlan, type Plan } from './plan.js'
 import { effectivePlan } from './promo.js'
 import { getAppSettings } from './settings.js'
@@ -25,11 +25,18 @@ const COLUMN: Record<UsageMode, string> = {
   pronounce: 'pronounce_count',
 }
 
-// Quyết định 2026-07-26: gói Free đổi từ "5 lượt/tính năng/ngày" sang 1 KHO LƯỢT CHUNG
-// cho MỌI tính năng AI, tích luỹ theo tuần (xem postgres/migrations/0012_free_weekly_ai_credit.sql
-// + api/progress.ts nơi gọi grant_weekly_ai_bonus khi phát hiện học thật trong ngày).
+// Quyết định 2026-07-26 (đổi cơ chế trượt 2026-07-27): gói Free dùng 1 KHO LƯỢT CHUNG cho
+// MỌI tính năng AI, +5 lượt mỗi ngày có học thật. Từ 2026-07-27: cửa sổ TRƯỢT 7 ngày liền kề
+// thật (không phải tuần lịch reset thứ Hai như bản cũ 0012) — "còn bao nhiêu lượt hôm nay"
+// luôn = tổng bonus 7 ngày gần nhất trừ lượt đã dùng trong chính 7 ngày đó. Xem
+// postgres/migrations/0017_free_rolling_credit.sql + api/progress.ts (gọi
+// grant_daily_bonus_rolling khi phát hiện học thật trong ngày).
 export const FREE_WEEKLY_BONUS_PER_DAY = 5
-export const FREE_WEEKLY_CAP = 35
+export const FREE_ROLLING_WINDOW_DAYS = 7
+// Trần TỰ NHIÊN của cửa sổ trượt (không có cơ chế dồn bù ngày bỏ lỡ, nên không thể vượt quá
+// window × bonus/ngày) — giữ tên cũ FREE_WEEKLY_CAP để không phải sửa lại mọi nơi hiển thị UI
+// đã quen gọi "cap", dù bản chất giờ là trần cửa sổ trượt chứ không phải trần theo tuần lịch.
+export const FREE_WEEKLY_CAP = FREE_WEEKLY_BONUS_PER_DAY * FREE_ROLLING_WINDOW_DAYS
 
 export function isUsageMode(v: unknown): v is UsageMode {
   return v === 'chat' || v === 'writing' || v === 'speaking' || v === 'stt' || v === 'pronounce'
@@ -43,7 +50,7 @@ function limitMessage(plan: Plan): string {
   if (plan === 'pro' || plan === 'vip') {
     return 'Bạn đã dùng hết lượt hôm nay. Thử lại vào ngày mai nhé.'
   }
-  return 'Hết lượt tuần này rồi. Học thêm từ mới/bài học để có thêm lượt, hoặc đầu tuần sau (thứ Hai) kho lượt sẽ đầy lại nhé!'
+  return 'Hết lượt rồi. Học thêm từ mới/bài học để có thêm lượt — lượt cũ nhất trong 7 ngày qua sẽ tự nhường chỗ cho lượt mới mỗi ngày!'
 }
 
 const CIRCUIT_BREAKER_MESSAGE =
@@ -97,35 +104,36 @@ export async function checkAndConsumeUsage(
 
     const plan = await lookupPlan(userId)
 
-    // ── Gói Free: tiêu từ kho lượt tuần CHUNG (mọi mode), không phân biệt theo cột ──
+    // ── Gói Free: tiêu từ kho lượt CHUNG (mọi mode), cửa sổ trượt 7 ngày liền kề ──
     if (plan === 'free') {
-      const weekStart = weekStartOf(today())
-      const { rows } = await pool.query<{ consume_weekly_ai_credit: boolean }>(
-        'select public.consume_weekly_ai_credit($1, $2) as consume_weekly_ai_credit',
-        [userId, weekStart],
+      const { rows } = await pool.query<{ consume_rolling_credit: boolean }>(
+        'select public.consume_rolling_credit($1, $2, $3) as consume_rolling_credit',
+        [userId, today(), FREE_ROLLING_WINDOW_DAYS],
       )
-      const allowed = rows[0]?.consume_weekly_ai_credit
+      const allowed = rows[0]?.consume_rolling_credit
       if (allowed === false) return { ok: false, message: limitMessage(plan) }
       // Ghi thêm vào daily_usage CHỈ ĐỂ THỐNG KÊ (không dùng để chặn — gói Free đã bị chặn
-      // bằng kho lượt tuần ở trên). Không có dòng này, dashboard quản trị sẽ không thấy được
-      // người dùng Free — vốn là ĐA SỐ — dùng tính năng nào, tức là không đánh giá được chi
-      // phí theo tính năng. Hạn mức truyền vào là vô cực để không bao giờ chặn nhầm.
+      // bằng kho lượt cửa sổ trượt ở trên). Không có dòng này, dashboard quản trị sẽ không
+      // thấy được người dùng Free — vốn là ĐA SỐ — dùng tính năng nào, tức là không đánh giá
+      // được chi phí theo tính năng. Hạn mức truyền vào là vô cực để không bao giờ chặn nhầm.
       await bumpUsageStat(userId, today(), COLUMN[mode])
       return { ok: true }
     }
 
-    // ── Gói Pro/VIP: giữ nguyên logic cũ — mỗi mode 1 cột riêng trong daily_usage ──
+    // ── Gói Pro/VIP: 1 hạn mức TỔNG/ngày cho MỌI mode cộng lại (quyết định 2026-07-27) ──
+    // Vẫn ghi tăng đúng cột theo mode (giữ breakdown cho thống kê), nhưng ngưỡng chặn là
+    // SUM cả 5 cột so với limits.pro/limits.vip — xem consume_usage_total (migration 0016).
     const day = today()
     const col = COLUMN[mode]
     const { limits } = await getAppSettings()
-    const limit = limits[plan][mode]
+    const limit = limits[plan]
 
     // Kiểm tra + tăng ATOMIC qua hàm SQL (chống race condition 2 request song song)
-    const { rows } = await pool.query<{ consume_usage: boolean }>(
-      'select public.consume_usage($1, $2, $3, $4) as consume_usage',
+    const { rows } = await pool.query<{ consume_usage_total: boolean }>(
+      'select public.consume_usage_total($1, $2, $3, $4) as consume_usage_total',
       [userId, day, col, limit],
     )
-    const allowed = rows[0]?.consume_usage
+    const allowed = rows[0]?.consume_usage_total
 
     return allowed === false ? { ok: false, message: limitMessage(plan) } : { ok: true }
   } catch (err) {
@@ -142,12 +150,7 @@ export async function refundUsage(userId: string, mode: UsageMode): Promise<void
     const plan = await lookupPlan(userId)
 
     if (plan === 'free') {
-      const weekStart = weekStartOf(today())
-      await pool.query('select public.refund_weekly_ai_credit($1, $2, $3)', [
-        userId,
-        weekStart,
-        FREE_WEEKLY_CAP,
-      ])
+      await pool.query('select public.refund_rolling_credit($1, $2)', [userId, today()])
       // Trả lại luôn con số thống kê đã cộng ở checkAndConsumeUsage — nếu không, dashboard
       // sẽ đếm cả những lượt mà người dùng KHÔNG hề nhận được kết quả (provider lỗi), làm
       // chi phí ước tính cao hơn thực tế.
