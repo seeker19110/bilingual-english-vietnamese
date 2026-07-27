@@ -710,6 +710,15 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   hiện "gạch giá cũ", và **KHÔNG dùng lại trường `promoUntil` sẵn có** — trường đó là khuyến
   mãi HẠN MỨC LƯỢT DÙNG, khác hẳn giảm GIÁ BÁN. Chi tiết:
   `docs/research/dac-ta-thanh-toan-2026-07-25.md`.
+- **Cổng thanh toán ĐÃ CHỐT: SePay (2026-07-27)**, thay PayOS — PayOS đòi tư cách hộ kinh
+  doanh/MST, SePay chỉ cần **tài khoản ngân hàng cá nhân**. Đã đọc tài liệu thật (`docs.sepay.vn`)
+  và viết lại đặc tả. **SePay KHÁC PayOS về bản chất, đừng nhầm:** nó không phải cổng trung gian,
+  không giữ tiền, **không có `checkoutUrl`, không redirect** — chỉ theo dõi tài khoản ngân hàng
+  và bắn webhook khi tiền về. Hệ quả: khớp đơn bằng **mã tự sinh in trong nội dung chuyển khoản**,
+  UI hiện QR ngay trong app rồi **poll** trạng thái, chống trùng webhook theo trường `id` của
+  SePay (họ retry tới 7 lần trong 5 giờ), xác thực bằng header `Authorization: Apikey ...`. Phải
+  có đường xử lý tay cho ca người dùng gõ sai nội dung chuyển khoản (tiền vào nhưng không khớp
+  đơn nào) — dùng `/api/admin-grant-plan` sẵn có.
 - **Giữ nguyên phiên bản:** Tailwind 3, ESLint 8 (`.eslintrc.cjs`) — không nâng v4/flat config.
 - **Bundle-size budget (`size-limit`) thay Lighthouse CI** — Lighthouse không đo được trong môi
   trường sandbox/CI hiện có (`NO_FCP` ở mọi cấu hình). Cân nhắc lại nếu có runner thật sau này.
