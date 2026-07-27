@@ -111,10 +111,13 @@ export async function verifyGoogleIdToken(
 
 // Tìm user theo google_id; nếu chưa có mà email đã tồn tại (đăng ký email/password trước đó)
 // thì LIÊN KẾT (gắn google_id vào user cũ) thay vì tạo user trùng email.
+// Trả kèm `isNew` — cần để BIẾT có phải lần đăng nhập Google ĐẦU TIÊN không (chỉ tài khoản
+// mới mới được cấp quà dùng thử tự động, xem grantSignupTrial ở api/auth.ts — người dùng cũ
+// đăng nhập lại KHÔNG được cấp thêm).
 export async function findOrCreateGoogleUser(
   googleId: string,
   email: string,
-): Promise<AuthUserRow> {
+): Promise<{ user: AuthUserRow; isNew: boolean }> {
   const pool = getPgPool()
   const normalizedEmail = email.toLowerCase().trim()
 
@@ -122,7 +125,7 @@ export async function findOrCreateGoogleUser(
     'select id, email from public.users where google_id = $1',
     [googleId],
   )
-  if (byGoogle.rows[0]) return byGoogle.rows[0]
+  if (byGoogle.rows[0]) return { user: byGoogle.rows[0], isNew: false }
 
   const byEmail = await pool.query<AuthUserRow>(
     'select id, email from public.users where email = $1',
@@ -133,7 +136,7 @@ export async function findOrCreateGoogleUser(
       googleId,
       byEmail.rows[0].id,
     ])
-    return byEmail.rows[0]
+    return { user: byEmail.rows[0], isNew: false }
   }
 
   const { rows } = await pool.query<AuthUserRow>(
@@ -142,7 +145,7 @@ export async function findOrCreateGoogleUser(
   )
   const created = rows[0]
   if (!created) throw new Error('Không tạo được user Google mới')
-  return created
+  return { user: created, isNew: true }
 }
 
 export async function getUserById(userId: string): Promise<AuthUserRow | null> {

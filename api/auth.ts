@@ -29,7 +29,12 @@ import {
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { sendVerificationCode, verifyCode, isEmailVerified } from './_lib/emailVerification.js'
-import { grantEmailVerifyTrial, EMAIL_VERIFY_TRIAL_DAYS } from './_lib/trial.js'
+import {
+  grantEmailVerifyTrial,
+  EMAIL_VERIFY_TRIAL_DAYS,
+  grantSignupTrial,
+  SIGNUP_TRIAL_DAYS,
+} from './_lib/trial.js'
 import { changeEmail } from './_lib/changeEmail.js'
 import { requestPasswordReset, resetPassword } from './_lib/passwordReset.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
@@ -173,7 +178,7 @@ export default async function handler(req: Request): Promise<Response> {
       // Không nói rõ "email đã tồn tại" để tránh dò email hàng loạt — trả lỗi chung.
       return jsonResponse({ error: 'Không đăng ký được tài khoản này' }, 409, allHeaders)
     }
-    const profile = await ensureProfileRow(user.id, name)
+    await ensureProfileRow(user.id, name)
     const token = await createSession(user.id)
     // Gửi mã xác thực ngay sau khi tạo tài khoản. KHÔNG chặn đăng ký nếu gửi lỗi/chưa cấu hình
     // SMTP — người dùng vẫn vào học được, chỉ là chưa mở khoá phần thưởng mời bạn (họ bấm
@@ -181,7 +186,20 @@ export default async function handler(req: Request): Promise<Response> {
     await sendVerificationCode(user.id).catch((err) => {
       console.error('[auth] Không gửi được mã xác thực lúc đăng ký:', err)
     })
-    return jsonResponse(authResponse(token, user, profile), 200, allHeaders)
+    // Quà dùng thử Pro ngay lúc đăng ký (chiến lược tăng trưởng, xem api/_lib/trial.ts) —
+    // register luôn là tài khoản MỚI nên cấp thẳng, không cần kiểm tra thêm. Đọc lại profile
+    // SAU khi cấp để phản hồi đúng ngay gói 'pro', tránh client hiện tạm 'free' rồi mới đổi.
+    const signupTrialGranted = await grantSignupTrial(user.id)
+    const profile = await ensureProfileRow(user.id, name)
+    return jsonResponse(
+      {
+        ...authResponse(token, user, profile),
+        signupTrialGranted,
+        signupTrialDays: SIGNUP_TRIAL_DAYS,
+      },
+      200,
+      allHeaders,
+    )
   }
 
   if (result.data.action === 'login') {
@@ -199,10 +217,22 @@ export default async function handler(req: Request): Promise<Response> {
   if (result.data.action === 'google') {
     const info = await verifyGoogleIdToken(result.data.idToken)
     if (!info) return jsonResponse({ error: 'Google token không hợp lệ' }, 401, allHeaders)
-    const user = await findOrCreateGoogleUser(info.googleId, info.email)
-    const profile = await ensureProfileRow(user.id, info.name)
+    const { user, isNew } = await findOrCreateGoogleUser(info.googleId, info.email)
+    await ensureProfileRow(user.id, info.name)
     const token = await createSession(user.id)
-    return jsonResponse(authResponse(token, user, profile), 200, allHeaders)
+    // Quà dùng thử Pro ngay lúc đăng ký — CHỈ cho lần đăng nhập Google ĐẦU TIÊN (tài khoản
+    // mới tạo). Người dùng cũ đăng nhập lại (isNew=false) không được cấp thêm.
+    const signupTrialGranted = isNew ? await grantSignupTrial(user.id) : false
+    const profile = await ensureProfileRow(user.id, info.name)
+    return jsonResponse(
+      {
+        ...authResponse(token, user, profile),
+        signupTrialGranted,
+        signupTrialDays: SIGNUP_TRIAL_DAYS,
+      },
+      200,
+      allHeaders,
+    )
   }
 
   // ── Xác thực email (chống email giả cày thưởng mời bạn) ────────────────────

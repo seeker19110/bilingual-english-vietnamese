@@ -98,6 +98,24 @@ code trong nhiều file rời rạc.
     Anthropic/Groq/Google, chia (tiền tháng ÷ lượt tháng) rồi điền vào `.env` trên VPS. Chi phí
     TTS chưa tính (theo ký tự + có cache dùng chung, không tỉ lệ với số lượt).
 
+- **[2026-07-27] Trial Pro 14 ngày cho tài khoản MỚI đăng ký (cùng nhánh
+  `claude/feature-usage-dashboard-378z5q`).** Thay cho phương án mở khuyến mãi Pro cho TOÀN
+  BỘ user hiện có (được người dùng cân nhắc sau khi xem dashboard chi phí — rủi ro: chi phí
+  AI tăng ~x20 cho cả user cũ vốn không cần khuyến mãi mới ở lại).
+  - `postgres/migrations/0016_signup_trial.sql` — cột `profiles.signup_trial_granted_at`,
+    TÁCH RIÊNG khỏi `trial_granted_at` (quà xác thực email đã có, 5 ngày) — hai quà CỘNG DỒN
+    được, không đụng logic cũ.
+  - `api/_lib/trial.ts` — `SIGNUP_TRIAL_DAYS = 14` + `grantSignupTrial()`, cùng cơ chế
+    "giành quyền nhận 1 lần" atomic như quà xác thực email, dùng lại `grantPlanDays()`.
+  - `api/_lib/authService.ts` — `findOrCreateGoogleUser()` nay trả thêm `isNew` (cần để KHÔNG
+    cấp trial cho user Google cũ đăng nhập lại, chỉ cấp lần đầu tạo tài khoản).
+  - `api/auth.ts` — gọi `grantSignupTrial()` ở action `register` (luôn là tài khoản mới) và
+    `google` (chỉ khi `isNew`), **không** gọi ở `login` (giới hạn đúng phạm vi "tài khoản mới"
+    để bảo vệ chi phí AI). Response trả thêm `signupTrialGranted`/`signupTrialDays`.
+  - **Còn mở (chưa làm, đề xuất bước tiếp theo):** UI nhắc "còn X ngày dùng thử" + banner
+    upsell lúc trial sắp hết (Dashboard/Profile hiện chưa có chỗ hiển thị hạn Pro/VIP còn
+    lại) — cần 1 PR riêng theo đúng nhịp "chia nhỏ".
+
 - **[Kế hoạch 2026-07-22] Giao diện + nội dung theo độ tuổi** — nhánh
   `claude/ui-redesign-age-groups-rk71g8`. Ý tưởng: app đổi giao diện thị giác và giọng điệu nội
   dung theo nhóm tuổi người dùng, đặc biệt nhóm Nhi đồng cần giao diện vui nhộn hơn hẳn. Đã

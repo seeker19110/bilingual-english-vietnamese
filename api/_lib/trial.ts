@@ -47,3 +47,45 @@ export async function grantEmailVerifyTrial(userId: string): Promise<boolean> {
     return false
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Quà dùng thử Pro NGAY LÚC ĐĂNG KÝ tài khoản mới (quyết định 2026-07-27, chiến lược tăng
+// trưởng — thay cho việc mở khuyến mãi Pro cho TOÀN BỘ user hiện có, vốn tốn chi phí AI
+// không kiểm soát được cho những người vốn đã ở lại mà không cần khuyến mãi).
+//
+// TÁCH RIÊNG cột (`signup_trial_granted_at`) khỏi quà xác thực email ở trên
+// (`trial_granted_at`) — hai quà phục vụ 2 mục đích khác nhau nên CỘNG DỒN được:
+//   - Quà đăng ký: giảm ma sát ngay từ đầu, chỉ cấp cho tài khoản VỪA TẠO (không cấp khi
+//     user cũ đăng nhập lại — xem lời gọi ở api/auth.ts action 'register'/'google').
+//   - Quà xác thực email: khuyến khích xác thực (tốt cho chống gian lận mời bạn + khôi phục
+//     tài khoản), không đổi hành vi cũ.
+export const SIGNUP_TRIAL_DAYS = 14
+
+/**
+ * Cấp quà Pro cho tài khoản MỚI TẠO. CHỈ gọi ngay sau khi tạo user thành công (register,
+ * hoặc Google đăng nhập lần đầu) — KHÔNG gọi cho user cũ đăng nhập lại, để giới hạn đúng
+ * phạm vi "tài khoản mới" (bảo vệ chi phí AI, xem api/_lib/aiCost.ts).
+ *
+ * Idempotent + an toàn gọi song song (cùng cơ chế giành quyền 1 lần như trên). KHÔNG throw:
+ * lỗi tặng quà không được phép làm hỏng luồng đăng ký.
+ */
+export async function grantSignupTrial(userId: string): Promise<boolean> {
+  try {
+    const pool = getPgPool()
+
+    const { rowCount } = await pool.query(
+      `insert into public.profiles (id, signup_trial_granted_at)
+       values ($1, now())
+       on conflict (id) do update set signup_trial_granted_at = now()
+       where profiles.signup_trial_granted_at is null`,
+      [userId],
+    )
+    if (!rowCount) return false
+
+    await grantPlanDays(userId, 'pro', SIGNUP_TRIAL_DAYS)
+    return true
+  } catch (err) {
+    console.error('[trial] Lỗi khi cấp quà đăng ký tài khoản mới:', err)
+    return false
+  }
+}
