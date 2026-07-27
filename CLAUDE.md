@@ -161,9 +161,8 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
    Chỉ quay lại khi người dùng chủ động báo làm phần này.
 4. ~~Migration 0007/0008/0009 chưa xác nhận trên Supabase production~~ ĐÃ XONG (người dùng xác nhận
    2026-07-11, xem `supabase/migrations/README.md`).
-5. **Sentry chưa bật (CẦN LÀM TAY, AI không có quyền truy cập)** — code Sentry đã xong (no-op tới
-   khi có DSN, xem `.env.example`), chỉ còn: lấy DSN miễn phí tại sentry.io → điền
-   `SENTRY_DSN`/`VITE_SENTRY_DSN` vào `.env` trên VPS → build lại + `pm2 restart`.
+5. ~~Sentry chưa bật~~ **ĐÃ XONG (2026-07-27, người dùng xác nhận)** — đã điền
+   `SENTRY_DSN`/`VITE_SENTRY_DSN` trên VPS, đã thấy lỗi test được ghi nhận trên Sentry.
 6. ~~Branch protection cho nhánh `main`~~ ĐÃ XONG (người dùng xác nhận 2026-07-11) — rule yêu cầu
    PR trước khi merge + 2 CI check `quality`/`e2e` xanh đã bật trên GitHub Settings → Branches.
 
