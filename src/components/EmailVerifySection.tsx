@@ -3,7 +3,7 @@
 //
 // Vì sao không ép xác thực mới cho học: app miễn phí cho cộng đồng, chặn cứng sẽ đuổi cả người
 // học thật (mail vào spam, gõ nhầm email, học sinh không rành). Xác thực chỉ mở khoá phần
-// THƯỞNG mời bạn — xem api/_lib/referral.ts.
+// THƯỞNG mời bạn (api/_lib/referral.ts) và quà dùng thử Pro 5 ngày (api/_lib/trial.ts).
 
 import { useState } from 'react'
 import { MailCheck, Loader2 } from 'lucide-react'
@@ -13,17 +13,28 @@ import { useToast } from '../context/ToastProvider'
 // Trạng thái gửi mail từ server (xem api/_lib/mailer.ts) — quyết định thông báo hiện cho user.
 type MailStatus = 'sent' | 'rejected' | 'not_configured' | 'error' | 'quota_exceeded'
 
-async function postAuth(
-  body: Record<string, unknown>,
-): Promise<{ ok: boolean; error?: string; mail?: MailStatus }> {
+async function postAuth(body: Record<string, unknown>): Promise<{
+  ok: boolean
+  error?: string
+  mail?: MailStatus
+  trialGranted?: boolean
+  trialDays?: number
+}> {
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'content-type': 'application/json', ...getAuthHeader() },
       body: JSON.stringify(body),
     })
-    const data = (await res.json().catch(() => ({}))) as { error?: string; mail?: MailStatus }
-    return res.ok ? { ok: true, mail: data.mail } : { ok: false, error: data.error }
+    const data = (await res.json().catch(() => ({}))) as {
+      error?: string
+      mail?: MailStatus
+      trialGranted?: boolean
+      trialDays?: number
+    }
+    return res.ok
+      ? { ok: true, mail: data.mail, trialGranted: data.trialGranted, trialDays: data.trialDays }
+      : { ok: false, error: data.error }
   } catch {
     return { ok: false, error: 'Lỗi kết nối, thử lại sau' }
   }
@@ -132,7 +143,18 @@ export default function EmailVerifySection({
     const r = await postAuth({ action: 'verify-email', code: code.trim() })
     setVerifying(false)
     if (r.ok) {
-      toast.success(isA ? 'Đã xác thực email!' : 'Email verified!')
+      // Chỉ khoe quà khi server XÁC NHẬN vừa cấp (trialGranted) — người xác thực lại lần sau
+      // (vd sau khi đổi email) không được nhận nữa, không hứa hão.
+      const days = r.trialDays ?? 5
+      toast.success(
+        r.trialGranted
+          ? isA
+            ? `Đã xác thực email! Tặng bạn ${days} ngày dùng thử gói Pro 🎁`
+            : `Email verified! Enjoy ${days} days of Pro on us 🎁`
+          : isA
+            ? 'Đã xác thực email!'
+            : 'Email verified!',
+      )
       onVerified()
     } else {
       toast.error(r.error ?? (isA ? 'Mã không đúng' : 'Invalid code'))
@@ -149,8 +171,8 @@ export default function EmailVerifySection({
       </div>
       <p className="text-xs text-amber-200/80 theme-light:text-amber-800 mb-1">
         {isA
-          ? 'Xác thực email để mở khoá phần thưởng khi mời bạn. Bạn vẫn học bình thường nếu chưa xác thực.'
-          : 'Verify your email to unlock invite rewards. You can keep learning without it.'}
+          ? 'Xác thực email để nhận 5 ngày dùng thử gói Pro (tặng 1 lần) và mở khoá thưởng mời bạn. Bạn vẫn học bình thường nếu chưa xác thực.'
+          : 'Verify your email for a one-time 5-day Pro trial and to unlock invite rewards. You can keep learning without it.'}
       </p>
       <p className="text-xs text-amber-200/60 theme-light:text-amber-700 mb-3 break-all">
         {isA ? 'Mã gửi tới: ' : 'Code sent to: '}

@@ -29,6 +29,7 @@ import {
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { sendVerificationCode, verifyCode, isEmailVerified } from './_lib/emailVerification.js'
+import { grantEmailVerifyTrial, EMAIL_VERIFY_TRIAL_DAYS } from './_lib/trial.js'
 import { changeEmail } from './_lib/changeEmail.js'
 import { requestPasswordReset, resetPassword } from './_lib/passwordReset.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
@@ -239,7 +240,14 @@ export default async function handler(req: Request): Promise<Response> {
       logSecurityEvent('EMAIL_VERIFY_FAILED', clientIp, { reason: verified.reason })
       return jsonResponse({ error: messages[verified.reason] }, 400, allHeaders)
     }
-    return jsonResponse({ ok: true }, 200, allHeaders)
+    // Quà dùng thử Pro 5 ngày — chỉ lần đầu mỗi tài khoản (xem api/_lib/trial.ts).
+    // Không để lỗi tặng quà làm hỏng việc xác thực: hàm này tự nuốt lỗi, trả false.
+    const trialGranted = await grantEmailVerifyTrial(auth.userId)
+    return jsonResponse(
+      { ok: true, trialGranted, trialDays: EMAIL_VERIFY_TRIAL_DAYS },
+      200,
+      allHeaders,
+    )
   }
 
   if (result.data.action === 'change-email') {

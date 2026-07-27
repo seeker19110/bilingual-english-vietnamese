@@ -623,6 +623,15 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   `POST/GET /api/admin-grant-plan` (admin cấp/gia hạn Pro/VIP thủ công theo email + số ngày —
   dùng tạm trong lúc chưa có cổng thanh toán tự động, admin xác nhận chuyển khoản tay rồi gọi
   endpoint này).
+- **Dùng thử Pro 5 ngày khi xác thực email (2026-07-27)** — hạ rào quyết định mua trước khi
+  có cổng thanh toán thật: migration `0013_email_verify_trial.sql` (cột
+  `profiles.trial_granted_at`) · `grantEmailVerifyTrial()` (`api/_lib/trial.ts`) cấp 5 ngày Pro
+  qua `grantPlanDays()` dùng chung, **mỗi tài khoản đúng 1 lần vĩnh viễn** · nối vào nhánh
+  `verify-email` của `api/auth.ts`, trả `{ trialGranted, trialDays }` cho UI
+  (`EmailVerifySection.tsx`) khoe quà. **Vì sao cần cột riêng:** `changeEmail()` đặt lại
+  `users.email_verified = null`, nếu chỉ dựa vào cờ đó thì đổi email → xác thực lại → nhận thêm
+  quà, lặp vô hạn. Lỗi cấp quà bị nuốt có chủ đích — không được làm hỏng việc xác thực email.
+  **Deploy kế tiếp cần `npm run migrate:pg`** (tự chạy trong `scripts/deploy.sh`).
 
 > ~~🔴 KHẨN CẤP — Auto deploy lỗi liên tục (thiếu `SUPABASE_DB_URL`, phát hiện 2026-07-15)~~
 > **ĐÃ HẾT HIỆU LỰC (2026-07-20)** — production đã rời hẳn Supabase (Giai đoạn A→E), deploy
