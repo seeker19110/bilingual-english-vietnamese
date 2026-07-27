@@ -106,6 +106,27 @@ describe('checkAndConsumeUsage — gói Free (kho lượt tuần chung)', () => 
     expect(call?.[1]).toEqual(['u1', expect.any(String)])
   })
 
+  it('tiêu lượt thành công → ghi thêm daily_usage THEO MODE để thống kê (không chặn)', async () => {
+    const pool = mockPool({ consumeWeeklyResult: true })
+    mockedGetPool.mockReturnValue(pool)
+    await checkAndConsumeUsage('u1', 'writing')
+    const statCall = vi
+      .mocked(pool.query)
+      .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
+    // Đúng cột của mode + hạn mức vô cực (int4 max) → chỉ đếm, không bao giờ chặn.
+    expect(statCall?.[1]).toEqual(['u1', expect.any(String), 'writing_count', 2_147_483_647])
+  })
+
+  it('hết kho tuần → KHÔNG ghi thống kê (lượt bị chặn thì không tính là đã dùng)', async () => {
+    const pool = mockPool({ consumeWeeklyResult: false })
+    mockedGetPool.mockReturnValue(pool)
+    await checkAndConsumeUsage('u1', 'chat')
+    const statCall = vi
+      .mocked(pool.query)
+      .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
+    expect(statCall).toBeUndefined()
+  })
+
   it('DB lỗi (query throw) → FAIL-OPEN (cho qua)', async () => {
     mockedGetPool.mockReturnValue(mockPool({ queryError: new Error('db down') }))
     expect(await checkAndConsumeUsage('u1', 'chat')).toEqual({ ok: true })

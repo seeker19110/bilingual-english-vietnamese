@@ -44,6 +44,7 @@ import appSettingsHandler from './api/app-settings.js'
 import adminGrantPlanHandler from './api/admin-grant-plan.js'
 import analyticsHandler from './api/analytics.js'
 import analyticsSummaryHandler from './api/analytics-summary.js'
+import adminUsageStatsHandler from './api/admin-usage-stats.js'
 import referralHandler from './api/referral.js'
 import planPricesHandler from './api/plan-prices.js'
 import checkoutHandler from './api/checkout.js'
@@ -177,6 +178,7 @@ app.all('/api/app-settings', wrapEdge(appSettingsHandler))
 app.all('/api/admin-grant-plan', wrapEdge(adminGrantPlanHandler))
 app.all('/api/analytics', wrapEdge(analyticsHandler))
 app.all('/api/analytics-summary', wrapEdge(analyticsSummaryHandler))
+app.all('/api/admin-usage-stats', wrapEdge(adminUsageStatsHandler))
 app.all('/api/referral', wrapEdge(referralHandler))
 app.all('/api/plan-prices', wrapEdge(planPricesHandler))
 app.all('/api/checkout', wrapEdge(checkoutHandler))

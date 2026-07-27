@@ -60,6 +60,25 @@ export async function lookupPlan(userId: string): Promise<Plan> {
   return effectivePlan(resolvePlan(profileRows[0]?.plan, profileRows[0]?.plan_expires_at))
 }
 
+// Tăng 1 vào cột đếm của daily_usage THUẦN ĐỂ THỐNG KÊ, không kiểm hạn mức. Dùng lại đúng
+// hàm SQL consume_usage (đã atomic, đã whitelist tên cột) với hạn mức = int4 lớn nhất nên
+// nhánh "vượt hạn mức" không bao giờ xảy ra. FAIL-OPEN: hỏng thống kê KHÔNG được phép làm
+// hỏng lượt dùng thật của người học.
+const NO_LIMIT = 2_147_483_647
+
+async function bumpUsageStat(userId: string, day: string, col: string): Promise<void> {
+  try {
+    await getPgPool().query('select public.consume_usage($1, $2, $3, $4)', [
+      userId,
+      day,
+      col,
+      NO_LIMIT,
+    ])
+  } catch (err) {
+    console.warn('[usage] ghi thống kê lượt Free lỗi → bỏ qua:', err)
+  }
+}
+
 // Kiểm tra còn lượt không + tăng 1 (authoritative). FAIL-OPEN khi lỗi hạ tầng.
 export async function checkAndConsumeUsage(
   userId: string,
@@ -86,7 +105,13 @@ export async function checkAndConsumeUsage(
         [userId, weekStart],
       )
       const allowed = rows[0]?.consume_weekly_ai_credit
-      return allowed === false ? { ok: false, message: limitMessage(plan) } : { ok: true }
+      if (allowed === false) return { ok: false, message: limitMessage(plan) }
+      // Ghi thêm vào daily_usage CHỈ ĐỂ THỐNG KÊ (không dùng để chặn — gói Free đã bị chặn
+      // bằng kho lượt tuần ở trên). Không có dòng này, dashboard quản trị sẽ không thấy được
+      // người dùng Free — vốn là ĐA SỐ — dùng tính năng nào, tức là không đánh giá được chi
+      // phí theo tính năng. Hạn mức truyền vào là vô cực để không bao giờ chặn nhầm.
+      await bumpUsageStat(userId, today(), COLUMN[mode])
+      return { ok: true }
     }
 
     // ── Gói Pro/VIP: giữ nguyên logic cũ — mỗi mode 1 cột riêng trong daily_usage ──
@@ -123,6 +148,10 @@ export async function refundUsage(userId: string, mode: UsageMode): Promise<void
         weekStart,
         FREE_WEEKLY_CAP,
       ])
+      // Trả lại luôn con số thống kê đã cộng ở checkAndConsumeUsage — nếu không, dashboard
+      // sẽ đếm cả những lượt mà người dùng KHÔNG hề nhận được kết quả (provider lỗi), làm
+      // chi phí ước tính cao hơn thực tế.
+      await pool.query('select public.refund_usage($1, $2, $3)', [userId, today(), COLUMN[mode]])
       return
     }
 

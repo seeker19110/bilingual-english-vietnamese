@@ -78,6 +78,26 @@ code trong nhiều file rời rạc.
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-07-27] Dashboard "Sử dụng & chi phí" trong /admin — ĐÃ XONG (nhánh
+  `claude/feature-usage-dashboard-378z5q`).** Tab mới (mặc định) ở `/admin` trả lời 3 câu hỏi
+  vận hành: tính năng nào đáng giữ · chi phí AI bao nhiêu · doanh thu có bù nổi không.
+  - `api/admin-usage-stats.ts` (mới) — 11 truy vấn gộp: người dùng (tổng/mới/DAU/WAU/MAU/quay
+    lại/phân bổ gói hiệu lực) · lượt dùng + số người dùng THẬT của từng tính năng · lượt dùng
+    chia theo gói · doanh thu `payments` theo trạng thái/gói/chu kỳ/ngày · sức khoẻ kho lượt
+    tuần gói Free · top 10 người dùng nhiều nhất. Chỉ admin (`ADMIN_EMAILS`).
+  - `api/_lib/aiCost.ts` (mới) — đơn giá ƯỚC TÍNH USD/lượt cho từng chế độ, ghi đè được bằng
+    biến môi trường `AI_COST_*_USD` + `USD_VND_RATE` (đổi đơn giá KHÔNG cần deploy). Giá trị
+    rác/≤0 → giữ mặc định, KHÔNG rơi về 0 (số 0 trông như "miễn phí" → quyết định sai).
+  - **Vá lỗ hổng dữ liệu quan trọng:** gói Free tiêu lượt qua kho tuần (`weekly_ai_credit`) nên
+    trước đây KHÔNG hề ghi vào `daily_usage` → thống kê theo tính năng mù phần lớn người dùng.
+    `api/_lib/usage.ts` giờ ghi thêm vào `daily_usage` CHỈ ĐỂ THỐNG KÊ (hạn mức int4 max, không
+    bao giờ chặn; refund cũng trừ lại). Không đổi hành vi chặn lượt của bất kỳ gói nào.
+  - Khác `/api/analytics-summary` (phễu marketing từ `analytics_events`) — file mới đọc dữ liệu
+    vận hành thật. Lỗi DB → trả 500, KHÔNG fail-open thành số 0.
+  - **Còn mở:** đơn giá hiện là ước tính theo độ dài prompt điển hình. Khi có hoá đơn thật từ
+    Anthropic/Groq/Google, chia (tiền tháng ÷ lượt tháng) rồi điền vào `.env` trên VPS. Chi phí
+    TTS chưa tính (theo ký tự + có cache dùng chung, không tỉ lệ với số lượt).
+
 - **[Kế hoạch 2026-07-22] Giao diện + nội dung theo độ tuổi** — nhánh
   `claude/ui-redesign-age-groups-rk71g8`. Ý tưởng: app đổi giao diện thị giác và giọng điệu nội
   dung theo nhóm tuổi người dùng, đặc biệt nhóm Nhi đồng cần giao diện vui nhộn hơn hẳn. Đã
