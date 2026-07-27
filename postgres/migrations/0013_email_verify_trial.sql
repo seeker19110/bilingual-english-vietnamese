@@ -1,0 +1,13 @@
+-- 0013_email_verify_trial.sql — Dùng thử Pro 5 ngày khi xác thực email xong.
+--
+-- Quyết định 2026-07-27: tặng 5 ngày Pro NGAY khi người dùng xác thực email thành công.
+-- Mục đích: hạ rào quyết định mua (người dùng nếm thử giá trị thật của Pro trước khi trả tiền)
+-- và đồng thời tăng tỉ lệ xác thực email — vốn là hàng rào chống email giả của thưởng mời bạn.
+--
+-- Vì sao cần cột riêng thay vì dựa vào users.email_verified: đổi email (api/_lib/changeEmail.ts)
+-- ĐẶT LẠI email_verified = null, nên nếu chỉ dựa vào cờ đó, một người có thể đổi email → xác
+-- thực lại → nhận thêm 5 ngày Pro, lặp vô hạn. Cột này ghi dấu VĨNH VIỄN "tài khoản này đã
+-- nhận quà dùng thử rồi", không bao giờ bị xoá theo email.
+--
+-- Rollback: alter table public.profiles drop column if exists trial_granted_at;
+alter table public.profiles add column if not exists trial_granted_at timestamptz;
