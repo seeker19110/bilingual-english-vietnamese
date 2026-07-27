@@ -133,8 +133,8 @@ export default function VoicePicker({ plan, isA }: Props) {
               const slowHint = isA ? ' (tạo lần đầu chậm hơn 1 chút)' : ' (slower on first play)'
               const elevenHint = isA ? ' — giọng đặc biệt VIP' : ' — special VIP voice'
               const studioHint = isA
-                ? ' — giọng Studio cao cấp (Pro/VIP), chỉ tiếng Anh'
-                : ' — premium Studio voice (Pro/VIP), English only'
+                ? ' — giọng Studio cao cấp (VIP), chỉ tiếng Anh'
+                : ' — premium Studio voice (VIP), English only'
               return (
                 <button
                   key={v.id}
@@ -172,7 +172,7 @@ export default function VoicePicker({ plan, isA }: Props) {
                     </span>
                   )}
                   {isStudio && isAllowed && (
-                    <span aria-hidden title="Studio — Pro/VIP">
+                    <span aria-hidden title="Studio — VIP">
                       🎓
                     </span>
                   )}

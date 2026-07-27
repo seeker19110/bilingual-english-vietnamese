@@ -91,13 +91,19 @@ export const DEFAULT_SEED_VOICE_IDS: VoiceId[] = [
   'Orus',
 ]
 
-// Gói nào được dùng giọng nào NGOÀI thời gian khuyến mãi (xem FREE_PROMO_UNTIL bên dưới).
-// Gói Pro trùng đúng 8 giọng đã seed sẵn (nhanh) + 2 giọng Studio cao cấp (tạo động, chỉ
-// tiếng Anh) — VIP mở thêm 6 giọng Chirp3-HD còn lại + giọng ElevenLabs (đều đã có sẵn
-// trong VOICE_IDS vì VOICE_OPTIONS liệt kê đủ).
+// Gói nào được dùng giọng nào NGOÀI thời gian khuyến mãi.
+// PHẢI KHỚP TAY với VOICE_TIERS trong api/_lib/voiceAccess.ts (server là nguồn sự thật —
+// lệch nhau thì UI cho chọn giọng mà server âm thầm hạ về DEFAULT_VOICE).
+//
+// Free: 4 giọng (2 nữ Kore/Aoede + 2 nam Puck/Charon), đều đã seed sẵn nên phát ngay.
+// Pro: đúng 8 giọng đã seed sẵn.
+// VIP: tất cả (14 Chirp3-HD + ElevenLabs + 2 Studio) — VOICE_IDS liệt kê đủ.
+//
+// Quyết định 2026-07-27: giọng Studio chuyển từ Pro/VIP sang CHỈ VIP (chi phí Studio
+// $24/1 triệu ký tự và không có hạn mức miễn phí, đắt gấp 12 lần Chirp3-HD $2).
 const VOICE_TIERS: Record<Plan, VoiceId[]> = {
-  free: ['Kore', 'Puck'],
-  pro: [...DEFAULT_SEED_VOICE_IDS, ...STUDIO_VOICE_IDS],
+  free: ['Kore', 'Aoede', 'Puck', 'Charon'],
+  pro: [...DEFAULT_SEED_VOICE_IDS],
   vip: VOICE_IDS,
 }
 
@@ -132,7 +138,8 @@ export function pickRandomVoice(
 // còn tts.ts chỉ ĐỌC để random trong đúng phạm vi gói, tránh random ra giọng rồi bị server
 // clamp âm thầm về DEFAULT_VOICE (clampVoiceToPlan, api/_lib/voiceAccess.ts).
 const ALLOWED_CACHE_KEY = 'voice_allowed_cache'
-const SAFE_DEFAULT_ALLOWED: VoiceId[] = ['Kore', 'Puck'] // gói Free — an toàn trước khi có cache
+// Gói Free — an toàn trước khi có cache. PHẢI khớp VOICE_TIERS.free ở trên.
+const SAFE_DEFAULT_ALLOWED: VoiceId[] = ['Kore', 'Aoede', 'Puck', 'Charon']
 
 export function cacheAllowedVoices(plan: Plan, now: Date = new Date()): void {
   localStorage.setItem(ALLOWED_CACHE_KEY, JSON.stringify(getAllowedVoices(plan, now)))
