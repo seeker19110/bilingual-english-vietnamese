@@ -38,8 +38,9 @@ từ) dùng để sắp "Mở rộng" theo độ thông dụng thay vì alphabet
 **Hạ tầng/chất lượng:** CI gate (lint/typecheck/test/build/format/E2E) trên mọi PR · coverage
 ratchet + bundle-size budget (`size-limit`, thay Lighthouse CI) · a11y AA toàn site qua axe
 (kể cả màn kết quả AI, 4 theme) — **đã đóng nợ a11y** · Zod validate input toàn bộ `api/*.ts` ·
-Sentry error tracking (code xong, no-op tới khi có DSN) · auto-run migration Supabase khi
-deploy (`deploy.sh` → `npm run migrate`, cần `SUPABASE_DB_URL`) · audit bảo mật/logic nhiều đợt
+Sentry error tracking (**đã bật thật trên VPS, 2026-07-27** — DSN đã điền, đã xác nhận lỗi test
+ghi nhận được) · CI/CD tự deploy + tự chạy migration Postgres khi merge vào `main`
+(`npm run migrate:pg` trong pipeline deploy, không cần chạy tay) · audit bảo mật/logic nhiều đợt
 (RLS theo cột chặn tự nâng Pro/bypass lượt, timeout fetch, refund lượt khi provider lỗi, ranh
 giới ngày theo giờ VN — chi tiết `AUDIT.md`) · **deploy zero-downtime (2026-07-20)**: PM2
 chuyển cluster mode (1 instance) + `wait_ready` (`server.ts` gửi `process.send('ready')` sau
@@ -660,8 +661,8 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
      cài sẵn nên CHƯA từng chạy `npm run build`/`typecheck`/`lint`/`test`/`test:e2e` thật —
      PHẢI chạy đủ cổng mục 8 CLAUDE.md trước khi merge/deploy, đừng tin chỉ vì đã review
      code bằng mắt.
-- `SENTRY_DSN`/`VITE_SENTRY_DSN` — lấy miễn phí ở sentry.io, điền vào `.env` VPS, build lại +
-  `pm2 restart` (code Sentry đã xong, hiện no-op).
+- ~~`SENTRY_DSN`/`VITE_SENTRY_DSN`~~ **ĐÃ XONG (2026-07-27, người dùng xác nhận)** — đã điền
+  trên VPS, đã thấy lỗi test được ghi nhận trên Sentry. Không còn no-op.
 - `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) trên VPS nếu chưa có — cần cho STT.
 - `AZURE_SPEECH_KEY`/`AZURE_SPEECH_REGION` — TÙY CHỌN, chỉ cần khi muốn bật chấm phát âm chi
   tiết qua Azure (① Giai đoạn 2, PR #17). Tạo resource "Speech service" (free tier F0, 5h
