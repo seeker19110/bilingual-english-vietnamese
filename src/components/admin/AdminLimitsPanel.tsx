@@ -16,6 +16,7 @@ interface AppSettings {
   limits: { pro: number; vip: number }
   promoUntil: string | null
   aiCircuitBreaker: boolean
+  leaderboardEnabled: boolean
 }
 
 const PLANS: { key: 'pro' | 'vip'; label: string }[] = [
@@ -86,6 +87,7 @@ export default function AdminLimitsPanel({ onForbiddenChange }: Props) {
           limits: settings.limits,
           promoUntil,
           aiCircuitBreaker: settings.aiCircuitBreaker,
+          leaderboardEnabled: settings.leaderboardEnabled,
         }),
       })
       if (!res.ok) {
@@ -163,6 +165,27 @@ export default function AdminLimitsPanel({ onForbiddenChange }: Props) {
                 className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white"
               />
             )}
+          </section>
+
+          <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
+            <p className="text-sm font-semibold text-white mb-1">Bảng xếp hạng</p>
+            <p className="text-xs text-zinc-400 mb-3">
+              Đang TẮT mặc định (quyết định 2026-07-27): ở quy mô ít người dùng, bảng gần trống
+              khiến người mới thấy app "vắng vẻ" và bỏ đi. Chỉ bật lại khi đã đủ đông người dùng
+              hoạt động/tuần (tham khảo mốc ~200).
+            </p>
+            <label className="flex items-center gap-2 text-sm text-zinc-300">
+              <input
+                type="checkbox"
+                checked={settings.leaderboardEnabled}
+                onChange={(e) =>
+                  setSettings((prev) =>
+                    prev ? { ...prev, leaderboardEnabled: e.target.checked } : prev,
+                  )
+                }
+              />
+              Hiện bảng xếp hạng trong Challenge
+            </label>
           </section>
 
           <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">

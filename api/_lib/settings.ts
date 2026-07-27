@@ -16,6 +16,10 @@ export interface AppSettings {
   // qua /api/admin-settings khi phát hiện chi phí bất thường. Xem api/_lib/usage.ts +
   // postgres/migrations/0005_ai_circuit_breaker.sql.
   aiCircuitBreaker: boolean
+  // Bật/tắt bảng xếp hạng (Challenge.tsx → LeagueSection) — TẮT MẶC ĐỊNH (quyết định
+  // 2026-07-27): ở quy mô ít người dùng, bảng gần trống khiến người mới thấy app "vắng vẻ".
+  // Xem postgres/migrations/0018_leaderboard_toggle.sql.
+  leaderboardEnabled: boolean
   // "Token" để client so sánh — chính là updated_at của dòng cấu hình (ISO string). Client
   // gửi lại qua header If-None-Match (xem api/app-settings.ts); server trả 304 nếu trùng,
   // client bỏ qua parse/ghi cache — KHÔNG cần tự viết cơ chế so token riêng, tận dụng đúng
@@ -30,6 +34,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   limits: { pro: 30, vip: 300 },
   promoUntil: '2027-01-01T00:00:00+07:00',
   aiCircuitBreaker: false,
+  leaderboardEnabled: false,
   updatedAt: '1970-01-01T00:00:00.000Z',
 }
 
@@ -38,6 +43,7 @@ interface AppSettingsRow {
   vip_daily_limit: number
   promo_until: Date | null
   ai_circuit_breaker: boolean
+  leaderboard_enabled: boolean
   updated_at: Date
 }
 
@@ -46,6 +52,7 @@ function rowToSettings(row: AppSettingsRow): AppSettings {
     limits: { pro: row.pro_daily_limit, vip: row.vip_daily_limit },
     promoUntil: row.promo_until ? new Date(row.promo_until).toISOString() : null,
     aiCircuitBreaker: Boolean(row.ai_circuit_breaker),
+    leaderboardEnabled: Boolean(row.leaderboard_enabled),
     updatedAt: new Date(row.updated_at).toISOString(),
   }
 }

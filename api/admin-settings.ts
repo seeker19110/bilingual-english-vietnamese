@@ -38,6 +38,9 @@ const UpdateSchema = z.object({
   // hình khác (vd đổi hạn mức) sẽ vô tình bật lại AI dù trước đó đã chủ động tắt khẩn cấp. Xử
   // lý "giữ nguyên giá trị cũ nếu client không gửi" ở handler bên dưới.
   aiCircuitBreaker: z.boolean().optional(),
+  // Bật/tắt bảng xếp hạng — cùng lý do KHÔNG .default(): client cũ không gửi thì phải giữ
+  // nguyên giá trị đang có, không âm thầm bật/tắt lại.
+  leaderboardEnabled: z.boolean().optional(),
 })
 
 export default async function handler(req: Request): Promise<Response> {
@@ -75,16 +78,17 @@ export default async function handler(req: Request): Promise<Response> {
     }
     const { limits, promoUntil } = parsed.data
     // Giữ nguyên giá trị cũ nếu client không gửi field này (xem comment ở UpdateSchema).
-    const aiCircuitBreaker =
-      parsed.data.aiCircuitBreaker ?? (await getAppSettings()).aiCircuitBreaker
+    const current = await getAppSettings()
+    const aiCircuitBreaker = parsed.data.aiCircuitBreaker ?? current.aiCircuitBreaker
+    const leaderboardEnabled = parsed.data.leaderboardEnabled ?? current.leaderboardEnabled
 
     const pool = getPgPool()
     await pool.query(
       `update public.app_settings set
          pro_daily_limit = $1, vip_daily_limit = $2,
-         promo_until = $3, ai_circuit_breaker = $4, updated_at = now()
+         promo_until = $3, ai_circuit_breaker = $4, leaderboard_enabled = $5, updated_at = now()
        where id = 1`,
-      [limits.pro, limits.vip, promoUntil, aiCircuitBreaker],
+      [limits.pro, limits.vip, promoUntil, aiCircuitBreaker, leaderboardEnabled],
     )
     invalidateSettingsCache()
 

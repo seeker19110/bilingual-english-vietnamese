@@ -10,6 +10,7 @@ function settingsWith(promoUntil: string | null) {
     limits: { pro: 100, vip: 1_000_000 },
     promoUntil,
     aiCircuitBreaker: false,
+    leaderboardEnabled: false,
     updatedAt: '2026-01-01T00:00:00.000Z',
   }
 }
