@@ -1,25 +1,34 @@
 # Đặc tả triển khai — Thanh toán Pro/VIP (M2)
 
-> **Cập nhật 2026-07-27:** chốt giá gói năm (Pro 500k / VIP 750k) và **đổi cổng thanh toán từ
-> PayOS sang SePay** — PayOS đòi tư cách hộ kinh doanh, SePay chỉ cần tài khoản ngân hàng cá
+> **Cập nhật 2026-07-27 (lần 2 — CHỐT CUỐI, đã code xong):** đổi cấu trúc giá sang 3 chu kỳ
+> (10 ngày / tháng / năm), số tiền khác hẳn bản nháp lần 1 cùng ngày. **Code M2 đã hoàn tất** —
+> xem `PROGRESS.md` mục "M2 Thanh toán Pro/VIP qua SePay: CODE ĐÃ XONG" để biết chi tiết file/
+> API/test. Mục này giữ nguyên làm tài liệu tham chiếu kiến trúc, phần "Bảng giá" bên dưới đã
+> cập nhật theo số cuối cùng.
+>
+> Cập nhật 2026-07-27 (lần 1): chốt giá gói năm (Pro 500k / VIP 750k) và **đổi cổng thanh toán
+> từ PayOS sang SePay** — PayOS đòi tư cách hộ kinh doanh, SePay chỉ cần tài khoản ngân hàng cá
 > nhân. Mô hình SePay khác PayOS về bản chất (theo dõi sao kê thay vì cổng trung gian) nên các
 > mục Kiến trúc / Schema / API / Bảo mật đã được viết lại theo tài liệu thật.
 >
 > Ngày soạn: 2026-07-25 · **Đảo ngược quyết định 2026-07-11** trong `CLAUDE.md` mục 13.3
 > ("miễn phí, không làm thanh toán cho tới khi người dùng chủ động yêu cầu lại") — bạn đã chủ
-> động yêu cầu hôm nay, quyết định mới **thay thế** quyết định cũ. Cần cập nhật `CLAUDE.md` +
-> `PROGRESS.md` khi bắt đầu triển khai thật (không làm trong bước đặc tả này).
+> động yêu cầu hôm nay, quyết định mới **thay thế** quyết định cũ.
 
-## Bảng giá đã chốt
+## Bảng giá đã chốt (CUỐI CÙNG, 2026-07-27)
 
-> **Cập nhật 2026-07-27** — người dùng chốt lại giá gói NĂM (VIP 1tr → 750k). Giá gói THÁNG
-> giữ nguyên như bảng cũ vì lần chốt này chỉ nói tới giá năm.
+> Thay bảng giá "Tháng/Năm" nháp trước đó cùng ngày — cấu trúc đổi sang **3 chu kỳ**, thêm gói
+> 10 ngày (giá vào rẻ, dễ dùng thử thật thay vì chỉ dùng thử miễn phí 5 ngày).
 
-| Gói  | Tháng    | Năm      | Ghi chú                                      |
-| ---- | -------- | -------- | -------------------------------------------- |
-| Free | 0đ       | 0đ       | 10 lượt/ngày mỗi chế độ (đã chốt, tăng từ 5) |
-| Pro  | 75.000đ  | 500.000đ | Năm ~ giảm 44% so với 12×tháng (900k)        |
-| VIP  | 125.000đ | 750.000đ | Năm ~ giảm 50% so với 12×tháng (1.5tr)       |
+| Gói  | 10 ngày | Tháng   | Năm                          |
+| ---- | ------- | ------- | ---------------------------- |
+| Free | —       | —       | 0đ (10 lượt/ngày mỗi chế độ) |
+| Pro  | 20.000đ | 40.000đ | 360.000đ                     |
+| VIP  | 30.000đ | 75.000đ | 500.000đ                     |
+
+Lưu ở bảng `public.plan_prices` (migration `0014`) — đổi giá qua UPDATE trực tiếp hoặc endpoint
+admin sau này, KHÔNG cần deploy. `CYCLE_DAYS` (`api/_lib/prices.ts`): `10day`=10,
+`month`=30, `year`=365.
 
 Bảng giá này là giá NIÊM YẾT. Dịp lễ/Tết sẽ giảm thêm — xem mục "Khuyến mãi dịp lễ" bên dưới.
 
@@ -262,22 +271,24 @@ thanh toán/webhook. Có thể giao `standard-worker` riêng phần UI hiển th
 
 1. ~~Đổi Free 5→10 lượt/ngày qua `/api/admin-settings`~~ — độc lập, làm bất cứ lúc nào qua admin.
 2. ~~Đọc tài liệu cổng thanh toán thật~~ **ĐÃ XONG 2026-07-27** (SePay, xem mục "Cổng thanh toán").
-3. Thêm bảng giá vào `app_settings` (giá niêm yết + giá khuyến mãi + hạn) + migration `payments`.
-4. `api/_lib/sepay.ts` (dựng URL QR, sinh mã thanh toán, dò mã trong nội dung chuyển khoản) —
-   **thuần, không đụng DB**, để test kỹ mọi ca biên của việc dò mã.
-5. API `checkout` + `payment-webhook` + `payment-status` + toàn bộ test ở "Tiêu chí chấp nhận".
-6. UI `Profile.tsx` + màn hình QR chuyển khoản.
-7. Cập nhật `CLAUDE.md`/`PROGRESS.md`.
-8. Bạn đăng ký SePay + cấu hình `.env` VPS + webhook + lọc tiền tố → **chạy thử thanh toán thật
-   số tiền nhỏ (vd 2.000đ) trước khi công bố rộng rãi.** Không có cách nào kiểm chứng đường tiền
-   thật ngoài việc chuyển thật một lần.
+3. ~~Thêm bảng giá + migration `payments`~~ **ĐÃ XONG** — `plan_prices` (migration `0014`),
+   `payments` (migration `0015`).
+4. ~~`api/_lib/sepay.ts`~~ **ĐÃ XONG** — sinh mã, dựng URL QR, dò mã, xác thực API Key; 13 test.
+5. ~~API `checkout`/`payment-webhook`/`payment-status`/`payment-history`/`plan-prices`~~
+   **ĐÃ XONG** — 27 test handler-level phủ mọi ca ở mục "Tiêu chí chấp nhận" bên dưới.
+6. ~~UI `Profile.tsx` + màn hình QR chuyển khoản~~ **ĐÃ XONG** — `UpgradeSection.tsx`.
+7. ~~Cập nhật `CLAUDE.md`/`PROGRESS.md`~~ **ĐÃ XONG**.
+8. **CÒN LẠI — việc tay của bạn:** đăng ký SePay + cấu hình `.env` VPS + webhook + lọc tiền tố
+   → **chạy thử thanh toán thật số tiền nhỏ (vd 2.000đ) trước khi công bố rộng rãi.** Không có
+   cách nào kiểm chứng đường tiền thật ngoài việc chuyển thật một lần. Nhớ `npm run migrate:pg`
+   trước khi deploy (2 migration mới `0014`/`0015`).
 
-## Cần bạn quyết thêm
+## Quyết định 2026-07-27: theo đúng đề xuất, không hỏi lại
 
-1. ~~Tư cách pháp nhân~~ **ĐÃ GIẢI QUYẾT** — chọn SePay nên chỉ cần tài khoản ngân hàng cá nhân.
-2. Gói năm có tự động nhắc gia hạn (email/thông báo trong app khi gần hết hạn) không, hay để
-   `plan_expires_at` tự rơi về free và người dùng tự mua lại? (Đề xuất: nhắc trong app, không
-   cần email nếu chưa có hạ tầng email — kiểm tra trước, có vẻ dự án chưa có gửi email thật.)
-3. Có cho phép **downgrade/hoàn tiền** không (vd mua VIP rồi muốn về Pro)? Đề xuất giai đoạn đầu:
-   không hỗ trợ hoàn tiền tự động, xử lý tay từng ca hiếm qua admin — tránh code phức tạp không
-   cần thiết ngay từ đầu (nguyên tắc tránh phình phạm vi).
+Người dùng chọn "làm theo đề xuất của bạn" cho 2 câu hỏi mở trước đó:
+
+1. **Nhắc gia hạn:** trong app, KHÔNG gửi email (dự án chưa có hạ tầng email thật cho việc này).
+   Hiện tại `/profile` đã hiện gói + `planExpiresAt` sẵn có qua `resolvePlan()` — chưa có banner
+   nhắc riêng khi SẮP hết hạn; để ở đợt sau nếu thấy cần (không phải việc bắt buộc của M2).
+2. **Downgrade/hoàn tiền:** KHÔNG hỗ trợ tự động. Ca hiếm xử lý tay qua `/api/admin-grant-plan`
+   sẵn có — không cần viết thêm code cho M2.

@@ -20,6 +20,7 @@ import QuickActions from '../components/QuickActions'
 import VoicePicker from '../components/VoicePicker'
 import ReferralSection from '../components/ReferralSection'
 import EmailVerifySection from '../components/EmailVerifySection'
+import UpgradeSection from '../components/UpgradeSection'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useToast } from '../context/ToastProvider'
@@ -292,6 +293,9 @@ export default function Profile() {
               : 'Weeks start on Monday. Any study activity (vocab, chat, writing, speaking) counts — same rule as your streak.'}
           </p>
         </section>
+
+        {/* Nâng cấp Pro/VIP qua SePay — ẩn nếu đã VIP (xem UpgradeSection.tsx) */}
+        <UpgradeSection isA={isA} currentPlan={user.plan} />
 
         {/* Xác thực email — chỉ hiện khi CHƯA xác thực; mở khoá thưởng mời bạn */}
         {user.emailVerified === false && (

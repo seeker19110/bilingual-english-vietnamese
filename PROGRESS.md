@@ -702,23 +702,41 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   hàng cá nhân, KHÔNG cần hộ kinh doanh/MST như PayOS), chốt mức giá, trang `/upgrade` +
   webhook thanh toán thật gọi `admin-grant-plan` (hoặc endpoint tương đương) tự động thay vì
   admin gõ tay.
-- **Giá gói ĐÃ CHỐT (2026-07-27):** Pro 75.000đ/tháng · **500.000đ/năm** · VIP 125.000đ/tháng ·
-  **750.000đ/năm** (giá năm do người dùng chốt lần này; giá tháng giữ như bảng cũ vì lần chốt
-  chỉ nói tới giá năm). Đây là giá NIÊM YẾT — **dịp lễ/Tết sẽ giảm thêm**, mức và thời điểm
-  quyết định sau từng đợt. Hệ quả kỹ thuật bắt buộc: giá nằm trong `app_settings` (đổi giá
-  không cần deploy), mỗi gói/chu kỳ cần cả giá niêm yết + giá khuyến mãi + hạn khuyến mãi để UI
-  hiện "gạch giá cũ", và **KHÔNG dùng lại trường `promoUntil` sẵn có** — trường đó là khuyến
-  mãi HẠN MỨC LƯỢT DÙNG, khác hẳn giảm GIÁ BÁN. Chi tiết:
-  `docs/research/dac-ta-thanh-toan-2026-07-25.md`.
-- **Cổng thanh toán ĐÃ CHỐT: SePay (2026-07-27)**, thay PayOS — PayOS đòi tư cách hộ kinh
-  doanh/MST, SePay chỉ cần **tài khoản ngân hàng cá nhân**. Đã đọc tài liệu thật (`docs.sepay.vn`)
-  và viết lại đặc tả. **SePay KHÁC PayOS về bản chất, đừng nhầm:** nó không phải cổng trung gian,
-  không giữ tiền, **không có `checkoutUrl`, không redirect** — chỉ theo dõi tài khoản ngân hàng
-  và bắn webhook khi tiền về. Hệ quả: khớp đơn bằng **mã tự sinh in trong nội dung chuyển khoản**,
-  UI hiện QR ngay trong app rồi **poll** trạng thái, chống trùng webhook theo trường `id` của
-  SePay (họ retry tới 7 lần trong 5 giờ), xác thực bằng header `Authorization: Apikey ...`. Phải
-  có đường xử lý tay cho ca người dùng gõ sai nội dung chuyển khoản (tiền vào nhưng không khớp
-  đơn nào) — dùng `/api/admin-grant-plan` sẵn có.
+- **Giá gói ĐÃ CHỐT LẦN CUỐI (2026-07-27, thay bảng giá nháp cùng ngày):** Pro **20.000đ/10
+  ngày · 40.000đ/tháng · 360.000đ/năm**; VIP **30.000đ/10 ngày · 75.000đ/tháng · 500.000đ/năm**.
+  Đây là giá NIÊM YẾT — **dịp lễ/Tết sẽ giảm thêm**, mức và thời điểm quyết định sau từng đợt.
+- **M2 Thanh toán Pro/VIP qua SePay: CODE ĐÃ XONG (2026-07-27)** — thay PayOS (PayOS đòi tư
+  cách hộ kinh doanh/MST, SePay chỉ cần tài khoản ngân hàng cá nhân). **SePay KHÁC PayOS về bản
+  chất:** không phải cổng trung gian, không giữ tiền, không có `checkoutUrl`, không redirect —
+  chỉ theo dõi tài khoản ngân hàng và bắn webhook khi tiền về. Đã triển khai đúng mô hình đó:
+  - **Schema:** migration `0014_plan_prices.sql` (bảng `plan_prices` — 3 chu kỳ `10day`/`month`/
+    `year`, có `sale_price_vnd`/`sale_until` cho khuyến mãi dịp lễ sau này, ĐỘC LẬP với
+    `promoUntil` sẵn có trong `app_settings` — trường đó là hạn mức lượt dùng, khác hẳn giá bán)
+    · `0015_payments.sql` (bảng `payments`, UNIQUE `payment_code` + UNIQUE `provider_txn_id`
+    chống trùng webhook ở TẦNG DB).
+  - **Lib thuần (test kỹ, không đụng DB):** `api/_lib/prices.ts` (đọc giá + cache 30s + tính giá
+    hiệu lực khi có khuyến mãi) · `api/_lib/sepay.ts` (sinh mã `ENVI` + 8 ký tự tránh nhầm
+    0/O/1/I/L, dựng URL ảnh QR không gọi API ngoài, dò mã trong nội dung chuyển khoản không
+    phân biệt hoa/thường, xác thực API Key bằng `timingSafeEqual`).
+  - **API:** `GET /api/plan-prices` (công khai) · `POST /api/checkout` (tạo đơn, tự sinh mã, tự
+    retry nếu trùng) · `POST /api/payment-webhook` (SePay gọi — chống trùng bằng
+    `UPDATE ... WHERE status='pending'` + bắt lỗi `23505` cho ca hiếm hơn, kiểm tra đủ tiền mới
+    cấp gói qua `grantPlanDays()` dùng chung, luôn trả `{"success":true}` khi đã xử lý xong để
+    SePay không retry vô ích) · `GET /api/payment-status` (UI poll vì SePay không redirect) ·
+    `GET /api/payment-history`.
+  - **UI:** `UpgradeSection.tsx` trong `/profile` — chọn gói/chu kỳ → hiện QR + số tài khoản +
+    nội dung chuyển khoản (nút sao chép) + đếm ngược 30 phút, tự poll tới khi `paid`. Ẩn hẳn nếu
+    đã VIP.
+  - **Test:** 40 test mới (unit thuần cho sepay/prices + handler-level cho 5 API), phủ đủ ca
+    biên: sai khoá, tiền ra không liên quan, không khớp mã, thiếu tiền, webhook lặp, 2 webhook
+    song song, UNIQUE violation, đúng số ngày theo từng chu kỳ.
+  - **Còn lại là VIỆC TAY** (không phải code): đăng ký SePay + liên kết ngân hàng, điền
+    `SEPAY_WEBHOOK_API_KEY`/`SEPAY_BANK_ACCOUNT`/`SEPAY_BANK_CODE` trên VPS, tạo webhook trỏ
+    `/api/payment-webhook` + BẬT lọc tiền tố "ENVI", chạy `npm run migrate:pg` trước khi deploy,
+    và nên chạy thử chuyển khoản thật số tiền nhỏ trước khi công bố rộng rãi.
+  - Có đường xử lý tay cho ca người dùng gõ sai nội dung chuyển khoản (tiền vào nhưng không
+    khớp đơn nào) — dùng `/api/admin-grant-plan` sẵn có, xem mục "Ca lệch" trong đặc tả.
+  - Chi tiết đầy đủ: `docs/research/dac-ta-thanh-toan-2026-07-25.md`.
 - **Giữ nguyên phiên bản:** Tailwind 3, ESLint 8 (`.eslintrc.cjs`) — không nâng v4/flat config.
 - **Bundle-size budget (`size-limit`) thay Lighthouse CI** — Lighthouse không đo được trong môi
   trường sandbox/CI hiện có (`NO_FCP` ở mọi cấu hình). Cân nhắc lại nếu có runner thật sau này.
