@@ -184,7 +184,7 @@ export default function UpgradeSection({
               </button>
             </div>
           </div>
-          <p className="text-xs text-amber-300/90 mb-3">
+          <p className="text-xs text-amber-300 theme-light:text-amber-800 mb-3">
             {isA
               ? `Chuyển ĐÚNG nội dung ở trên — sai nội dung sẽ không tự động ghi nhận. Mã hết hạn sau ${mm}:${ss}.`
               : `Transfer with EXACT content above — wrong content won't auto-confirm. Code expires in ${mm}:${ss}.`}
@@ -211,7 +211,7 @@ export default function UpgradeSection({
                 onClick={() => setPlan(p)}
                 className={`flex-1 py-2 rounded-xl text-sm font-semibold border ${
                   plan === p
-                    ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                    ? 'bg-amber-500/15 text-amber-300 theme-light:text-amber-800 border-amber-500/40'
                     : 'bg-zinc-800/60 text-zinc-400 border-zinc-700'
                 }`}
               >
@@ -229,7 +229,7 @@ export default function UpgradeSection({
                   onClick={() => setCycle(c)}
                   className={`flex-1 py-2 rounded-xl text-xs border ${
                     cycle === c
-                      ? 'bg-accent-500/15 text-accent-300 border-accent-500/40'
+                      ? 'bg-accent-500/15 text-accent-300 theme-light:text-accent-800 border-accent-500/40'
                       : 'bg-zinc-800/60 text-zinc-400 border-zinc-700'
                   }`}
                 >
