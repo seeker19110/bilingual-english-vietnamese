@@ -17,12 +17,18 @@ import { effectivePlan } from './promo.js'
 // (Google Cloud TTS cao cấp, chỉ tiếng Anh).
 export type AnyVoiceId = VoiceId | ElevenVoiceId | StudioVoiceId
 
-// Gói Pro trùng đúng 8 giọng đã seed sẵn (nhanh, DEFAULT_SEED_VOICE_IDS) + 2 giọng Studio
-// cao cấp (tạo động, chỉ tiếng Anh) — VIP mở thêm 6 giọng Google còn lại + giọng ElevenLabs
-// riêng (tạo động lúc chọn, chi phí cao hơn).
+// Free: 4 giọng (2 nữ Kore/Aoede + 2 nam Puck/Charon) — đều nằm trong DEFAULT_SEED_VOICE_IDS
+// nên đã seed sẵn, phát ngay, KHÔNG phát sinh chi phí tạo audio động.
+// Pro: đúng 8 giọng đã seed sẵn (DEFAULT_SEED_VOICE_IDS).
+// VIP: 14 giọng Chirp3-HD + giọng ElevenLabs + 2 giọng Studio.
+//
+// Quyết định 2026-07-27: giọng Studio chuyển từ Pro/VIP sang CHỈ VIP. Lý do chi phí: Studio
+// giá $24/1 triệu ký tự và KHÔNG có hạn mức miễn phí hàng tháng, trong khi Chirp3-HD chỉ $2
+// và có 1 triệu ký tự miễn phí — đắt gấp 12 lần. Giữ Studio cho riêng VIP vừa chặn rủi ro chi
+// phí ở gói rẻ, vừa tạo lý do thật để nâng cấp lên VIP.
 const VOICE_TIERS: Record<Plan, AnyVoiceId[]> = {
-  free: ['Kore', 'Puck'],
-  pro: [...DEFAULT_SEED_VOICE_IDS, ...STUDIO_VOICE_IDS],
+  free: ['Kore', 'Aoede', 'Puck', 'Charon'],
+  pro: [...DEFAULT_SEED_VOICE_IDS],
   vip: [...VOICE_IDS, ...ELEVEN_VOICE_IDS, ...STUDIO_VOICE_IDS],
 }
 

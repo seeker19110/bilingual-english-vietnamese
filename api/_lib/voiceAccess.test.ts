@@ -10,11 +10,18 @@ beforeEach(() => {
 })
 
 describe('clampVoiceToPlan', () => {
-  it('free chỉ được Kore/Puck — voice khác bị hạ về DEFAULT_VOICE (Kore)', async () => {
+  it('free được đúng 4 giọng (2 nữ Kore/Aoede + 2 nam Puck/Charon)', async () => {
     mockedEffectivePlan.mockResolvedValue('free')
-    expect(await clampVoiceToPlan('Aoede', 'free')).toBe('Kore')
     expect(await clampVoiceToPlan('Kore', 'free')).toBe('Kore')
+    expect(await clampVoiceToPlan('Aoede', 'free')).toBe('Aoede')
     expect(await clampVoiceToPlan('Puck', 'free')).toBe('Puck')
+    expect(await clampVoiceToPlan('Charon', 'free')).toBe('Charon')
+  })
+
+  it('free: giọng ngoài 4 giọng đó bị hạ về DEFAULT_VOICE (Kore)', async () => {
+    mockedEffectivePlan.mockResolvedValue('free')
+    expect(await clampVoiceToPlan('Zephyr', 'free')).toBe('Kore')
+    expect(await clampVoiceToPlan('Umbriel', 'free')).toBe('Kore')
   })
 
   it('pro được 8 giọng cụ thể — giọng nằm ngoài (vd Umbriel) vẫn bị hạ về mặc định', async () => {
@@ -46,13 +53,19 @@ describe('clampVoiceToPlan', () => {
     expect(await clampVoiceToPlan('Rachel', 'vip')).toBe('Rachel')
   })
 
-  it('giọng Studio (cao cấp, chỉ tiếng Anh) mở cho CẢ Pro lẫn VIP — free bị hạ về DEFAULT_VOICE', async () => {
+  // Quyết định 2026-07-27: Studio đắt gấp 12 lần Chirp3-HD ($24 vs $2 mỗi triệu ký tự, và
+  // KHÔNG có hạn mức miễn phí) → rút khỏi Pro, chỉ còn VIP.
+  it('giọng Studio CHỈ VIP — free và pro đều bị hạ về DEFAULT_VOICE', async () => {
     mockedEffectivePlan.mockResolvedValue('free')
     expect(await clampVoiceToPlan('Studio-O', 'free')).toBe('Kore')
     mockedEffectivePlan.mockResolvedValue('pro')
-    expect(await clampVoiceToPlan('Studio-O', 'pro')).toBe('Studio-O')
-    expect(await clampVoiceToPlan('Studio-Q', 'pro')).toBe('Studio-Q')
+    expect(await clampVoiceToPlan('Studio-O', 'pro')).toBe('Kore')
+    expect(await clampVoiceToPlan('Studio-Q', 'pro')).toBe('Kore')
+  })
+
+  it('vip dùng được giọng Studio, không bị hạ', async () => {
     mockedEffectivePlan.mockResolvedValue('vip')
     expect(await clampVoiceToPlan('Studio-O', 'vip')).toBe('Studio-O')
+    expect(await clampVoiceToPlan('Studio-Q', 'vip')).toBe('Studio-Q')
   })
 })

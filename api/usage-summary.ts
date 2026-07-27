@@ -1,8 +1,8 @@
 // api/usage-summary.ts — Cho CLIENT (user đã đăng nhập, không cần admin) đọc "còn bao nhiêu
-// lượt AI" để hiển thị UI đúng — riêng gói Free giờ dùng kho lượt TUẦN chung (xem
-// postgres/migrations/0012_free_weekly_ai_credit.sql + api/_lib/usage.ts), không còn tính
-// theo NGÀY/theo TỪNG MODE như Pro/VIP, nên client không tự suy ra được từ dữ liệu local nữa
-// — phải hỏi server.
+// lượt AI" để hiển thị UI đúng — riêng gói Free giờ dùng kho lượt CHUNG theo cửa sổ TRƯỢT 7
+// ngày liền kề (xem postgres/migrations/0017_free_rolling_credit.sql + api/_lib/usage.ts),
+// không còn tính theo NGÀY/theo TỪNG MODE như Pro/VIP, nên client không tự suy ra được từ dữ
+// liệu local nữa — phải hỏi server.
 //
 // GET /api/usage-summary  (cần Authorization: Bearer)
 
@@ -15,8 +15,8 @@ import {
   logSecurityEvent,
 } from './_lib/security.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
-import { lookupPlan, FREE_WEEKLY_CAP } from './_lib/usage.js'
-import { vnDateStr, weekStartOf } from './_lib/date.js'
+import { lookupPlan, FREE_WEEKLY_CAP, FREE_ROLLING_WINDOW_DAYS } from './_lib/usage.js'
+import { vnDateStr } from './_lib/date.js'
 
 export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }
@@ -45,21 +45,24 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     const pool = getPgPool()
-    const weekStart = weekStartOf(vnDateStr())
-    // node-pg parse cột kiểu `date` (OID 1082) thành đối tượng Date (UTC nửa đêm) mặc định.
-    const { rows } = await pool.query<{ credit: number; week_start: Date }>(
-      'select credit, week_start from public.weekly_ai_credit where user_id = $1',
-      [auth.userId],
+    const today = vnDateStr()
+    // Cửa sổ trượt: tổng bonus_earned trừ credits_spent trong FREE_ROLLING_WINDOW_DAYS ngày
+    // gần nhất (kể cả hôm nay) — PHẢI cùng công thức với consume_rolling_credit (migration
+    // 0017), chỉ khác là KHÔNG khoá dòng (chỉ đọc để hiển thị, không tiêu lượt ở đây).
+    const { rows } = await pool.query<{ available: string | null }>(
+      `select coalesce(sum(bonus_earned), 0) - coalesce(sum(credits_spent), 0) as available
+       from public.free_daily_credit
+       where user_id = $1 and day > $2::date - $3::int and day <= $2::date`,
+      [auth.userId, today, FREE_ROLLING_WINDOW_DAYS],
     )
-    const row = rows[0]
-    // Chưa có dòng nào, hoặc dòng đang lưu thuộc tuần TRƯỚC (chưa được cộng thưởng
-    // ngày nào trong tuần hiện tại) → kho hiện tại = 0, KHÔNG phải giá trị cũ còn sót.
-    const weekStartStr = row ? row.week_start.toISOString().slice(0, 10) : null
-    const freeWeeklyCredit = row && weekStartStr === weekStart ? row.credit : 0
+    const rawAvailable = Number(rows[0]?.available ?? 0)
+    // Kẹp về [0, cap] — sum có thể âm nhất thời trong ca hiếm (đọc giữa lúc ghi), và không
+    // bao giờ vượt cap thật (không có cơ chế dồn bù) nhưng kẹp cho chắc, tránh hiện số âm/quá lớn.
+    const freeWeeklyCredit = Math.max(0, Math.min(rawAvailable, FREE_WEEKLY_CAP))
 
     return jsonResponse({ plan, freeWeeklyCredit, freeWeeklyCap: FREE_WEEKLY_CAP }, 200, allHeaders)
   } catch (err) {
-    console.warn('[usage-summary] lỗi đọc kho lượt tuần → fail-open (coi như 0):', err)
+    console.warn('[usage-summary] lỗi đọc kho lượt → fail-open (coi như 0):', err)
     return jsonResponse(
       { plan: 'free', freeWeeklyCredit: 0, freeWeeklyCap: FREE_WEEKLY_CAP },
       200,

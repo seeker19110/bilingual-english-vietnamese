@@ -17,7 +17,7 @@ import { useApiThrottle } from '../lib/useApiThrottle'
 import { getUsage, incrementUsage, getDirection } from '../lib/storage'
 import type { Direction } from '../types'
 import { effectivePlan } from '../lib/promo'
-import { getLimits } from '../lib/appSettings'
+import { getLimits, isLeaderboardEnabled } from '../lib/appSettings'
 import { vnDateStr } from '../lib/date'
 import { callClaude, parseJson } from '../lib/ai'
 import { speak } from '../lib/tts'
@@ -683,7 +683,11 @@ export default function Challenge() {
 
         <WeekBoard cells={cells} isA={isA} />
 
-        <LeagueSection isA={isA} />
+        {/* Bảng xếp hạng — bật/tắt qua /api/admin-settings (leaderboardEnabled), TẮT MẶC ĐỊNH
+            (quyết định 2026-07-27): ở quy mô ít người dùng, bảng gần trống khiến người mới
+            thấy app "vắng vẻ" và bỏ đi. Admin tự bật lại trong trang admin khi đủ đông người
+            dùng hoạt động/tuần, không cần deploy. */}
+        {isLeaderboardEnabled() && <LeagueSection isA={isA} />}
 
         {/* Tổng kết tuần — hiện vào Chủ nhật (cuối chu kỳ), so bài đầu ↔ cuối tuần */}
         {isSunday && weekStats && !showRecordFlow && (

@@ -137,8 +137,8 @@ export default function VoiceMenu({ plan, isA }: Props) {
                         : 'Upgrade to Pro/VIP to unlock this voice'
                       : isStudio
                         ? isA
-                          ? `${v.id} — giọng Studio cao cấp (Pro/VIP), chỉ tiếng Anh`
-                          : `${v.id} — premium Studio voice (Pro/VIP), English only`
+                          ? `${v.id} — giọng Studio cao cấp (VIP), chỉ tiếng Anh`
+                          : `${v.id} — premium Studio voice (VIP), English only`
                         : v.id
                   }
                   aria-pressed={isSelected}
@@ -159,7 +159,7 @@ export default function VoiceMenu({ plan, isA }: Props) {
                     </span>
                   )}
                   {isStudio && isAllowed && (
-                    <span aria-hidden title="Studio — Pro/VIP">
+                    <span aria-hidden title="Studio — VIP">
                       🎓
                     </span>
                   )}
