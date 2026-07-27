@@ -60,8 +60,11 @@ const app = express()
 // (đăng nhập Google — Giai đoạn B, xem src/lib/auth.ts loadGoogleScript()).
 // frame-src https://accounts.google.com: khung One Tap/popup chọn tài khoản Google hiện
 // TRONG trang (không có directive này thì rơi về default-src 'self', chặn hẳn khung Google).
+// style-src thêm https://accounts.google.com: nút/khung Google Identity Services tự chèn
+// thẻ <link> tải stylesheet https://accounts.google.com/gsi/style — thiếu domain này sẽ bị
+// CSP chặn (lỗi "violates style-src directive"), khiến nút đăng nhập Google mất style/không hiện.
 const CSP_HEADER =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://accounts.google.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://accounts.google.com; frame-ancestors 'self'"
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://accounts.google.com; frame-ancestors 'self'"
 
 // Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
 app.disable('x-powered-by')
