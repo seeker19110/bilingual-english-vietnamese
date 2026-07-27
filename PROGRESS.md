@@ -702,6 +702,14 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   hàng cá nhân, KHÔNG cần hộ kinh doanh/MST như PayOS), chốt mức giá, trang `/upgrade` +
   webhook thanh toán thật gọi `admin-grant-plan` (hoặc endpoint tương đương) tự động thay vì
   admin gõ tay.
+- **Giá gói ĐÃ CHỐT (2026-07-27):** Pro 75.000đ/tháng · **500.000đ/năm** · VIP 125.000đ/tháng ·
+  **750.000đ/năm** (giá năm do người dùng chốt lần này; giá tháng giữ như bảng cũ vì lần chốt
+  chỉ nói tới giá năm). Đây là giá NIÊM YẾT — **dịp lễ/Tết sẽ giảm thêm**, mức và thời điểm
+  quyết định sau từng đợt. Hệ quả kỹ thuật bắt buộc: giá nằm trong `app_settings` (đổi giá
+  không cần deploy), mỗi gói/chu kỳ cần cả giá niêm yết + giá khuyến mãi + hạn khuyến mãi để UI
+  hiện "gạch giá cũ", và **KHÔNG dùng lại trường `promoUntil` sẵn có** — trường đó là khuyến
+  mãi HẠN MỨC LƯỢT DÙNG, khác hẳn giảm GIÁ BÁN. Chi tiết:
+  `docs/research/dac-ta-thanh-toan-2026-07-25.md`.
 - **Giữ nguyên phiên bản:** Tailwind 3, ESLint 8 (`.eslintrc.cjs`) — không nâng v4/flat config.
 - **Bundle-size budget (`size-limit`) thay Lighthouse CI** — Lighthouse không đo được trong môi
   trường sandbox/CI hiện có (`NO_FCP` ở mọi cấu hình). Cân nhắc lại nếu có runner thật sau này.

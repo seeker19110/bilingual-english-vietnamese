@@ -7,11 +7,40 @@
 
 ## Bảng giá đã chốt
 
-| Gói  | Tháng    | Năm        | Ghi chú                                      |
-| ---- | -------- | ---------- | -------------------------------------------- |
-| Free | 0đ       | 0đ         | 10 lượt/ngày mỗi chế độ (đã chốt, tăng từ 5) |
-| Pro  | 75.000đ  | 500.000đ   | Năm ~ giảm 44% so với 12×tháng (900k)        |
-| VIP  | 125.000đ | 1.000.000đ | Năm ~ giảm 33% so với 12×tháng (1.5tr)       |
+> **Cập nhật 2026-07-27** — người dùng chốt lại giá gói NĂM (VIP 1tr → 750k). Giá gói THÁNG
+> giữ nguyên như bảng cũ vì lần chốt này chỉ nói tới giá năm.
+
+| Gói  | Tháng    | Năm      | Ghi chú                                      |
+| ---- | -------- | -------- | -------------------------------------------- |
+| Free | 0đ       | 0đ       | 10 lượt/ngày mỗi chế độ (đã chốt, tăng từ 5) |
+| Pro  | 75.000đ  | 500.000đ | Năm ~ giảm 44% so với 12×tháng (900k)        |
+| VIP  | 125.000đ | 750.000đ | Năm ~ giảm 50% so với 12×tháng (1.5tr)       |
+
+Bảng giá này là giá NIÊM YẾT. Dịp lễ/Tết sẽ giảm thêm — xem mục "Khuyến mãi dịp lễ" bên dưới.
+
+**Dùng thử Pro 5 ngày (đã làm xong, PR #347):** xác thực email → tặng 5 ngày Pro, mỗi tài khoản
+đúng 1 lần vĩnh viễn (`api/_lib/trial.ts`, cột `profiles.trial_granted_at`). Đây là bậc thang
+trước khi mua — khi làm UI giá nhớ nối tiếp: người vừa hết hạn dùng thử là nhóm dễ chuyển đổi
+nhất, nên chào giá đúng lúc đó.
+
+## Khuyến mãi dịp lễ (quyết định 2026-07-27)
+
+Giá lễ/Tết sẽ giảm sâu hơn giá niêm yết, thời điểm và mức giảm quyết định sau từng đợt. Yêu cầu
+kỹ thuật rút ra từ đó — phải tính TRƯỚC khi code, không chắp vá sau:
+
+1. **Giá nằm trong `app_settings`, KHÔNG hard-code** (đã ghi ở mục Schema) — đổi giá dịp lễ chỉ
+   là gọi `/api/admin-settings`, **không cần deploy**. Đây là lý do chính không được nhét bảng
+   giá vào code.
+2. **Cần cả giá niêm yết lẫn giá khuyến mãi**, không chỉ một con số: UI muốn hiện "gạch giá cũ →
+   giá mới" thì phải biết cả hai. Đề xuất mỗi gói/chu kỳ lưu `price_vnd` (niêm yết) +
+   `sale_price_vnd` (nullable = không giảm) + `sale_until` (nullable).
+3. **Đơn đã tạo giữ nguyên giá lúc tạo** — `payments.amount_vnd` đã chốt điều này (đọc lại bảng
+   giá sau khi hết khuyến mãi sẽ ra số khác, tuyệt đối không làm vậy).
+4. **Server tự đọc giá, không nhận giá từ client** — kể cả trong lúc khuyến mãi. Client gửi
+   `plan` + `cycle`, server tự quyết trả bao nhiêu tiền (nguyên tắc bảo mật #2 bên dưới).
+5. `app_settings` đã có sẵn `promoUntil` nhưng đó là **khuyến mãi HẠN MỨC LƯỢT DÙNG** (nới lượt
+   miễn phí), khác hoàn toàn với giảm GIÁ BÁN. Đừng dùng lại cùng một trường cho hai việc — đặt
+   trường riêng, nếu không sẽ có ngày nới lượt mà vô tình giảm giá theo (hoặc ngược lại).
 
 Hạn mức Pro/VIP: giữ cấu hình hiện có trong `app_settings` (Pro 100 lượt/ngày/chế độ, VIP gần
 không giới hạn) — chỉnh qua `/api/admin-settings`, không phải việc của đợt này.
@@ -71,7 +100,8 @@ create unique index if not exists payments_provider_order_idx on public.payments
 ```
 
 Giá bán KHÔNG hard-code trong code — thêm vào `app_settings` (giống `limits`) để đổi giá không
-cần deploy, đúng khuôn mẫu hiện có (`api/_lib/settings.ts`).
+cần deploy, đúng khuôn mẫu hiện có (`api/_lib/settings.ts`). Mỗi gói/chu kỳ cần 3 trường: giá
+niêm yết, giá khuyến mãi (nullable), hạn khuyến mãi (nullable) — xem mục "Khuyến mãi dịp lễ".
 
 ## API cần thêm
 
