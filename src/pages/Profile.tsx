@@ -460,14 +460,17 @@ export default function Profile() {
             ở mọi trang giờ đã có bottom-nav để điều hướng nhanh. */}
         <QuickActions />
 
-        {/* Cấu hình hệ thống — chỉ hiện link, server tự kiểm quyền admin (ADMIN_EMAILS) khi
-            vào trang; user thường bấm vào chỉ thấy thông báo "không có quyền". */}
-        <button
-          onClick={() => nav('/admin-settings')}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 transition text-xs font-medium animate-fade-in"
-        >
-          Cấu hình hệ thống (Admin)
-        </button>
+        {/* Cấu hình hệ thống — chỉ hiện với admin thật (cờ isAdmin do server tính từ
+            ADMIN_EMAILS, trả về ở /api/auth?action=me). Chỉ để ẩn UI khỏi người dùng thường —
+            mọi API admin vẫn TỰ kiểm lại quyền phía server, không tin cờ này. */}
+        {user?.isAdmin && (
+          <button
+            onClick={() => nav('/admin-settings')}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 transition text-xs font-medium animate-fade-in"
+          >
+            Cấu hình hệ thống (Admin)
+          </button>
+        )}
 
         {/* Đăng xuất */}
         <button

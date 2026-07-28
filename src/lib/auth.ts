@@ -325,6 +325,7 @@ export async function getCurrentUser(): Promise<AppUser | null> {
     onboarded: boolean
     planExpiresAt?: string | null
     emailVerified?: boolean
+    isAdmin?: boolean
   }
   return { ...profile, createdAt: Date.now() }
 }

@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Sliders, ShieldCheck, BarChart3, Activity } from 'lucide-react'
+import { Sliders, ShieldCheck, BarChart3, Activity, Crown } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import AdminLimitsPanel from '../components/admin/AdminLimitsPanel'
 import AdminGrantPlanPanel from '../components/admin/AdminGrantPlanPanel'
+import AdminVipWhitelistPanel from '../components/admin/AdminVipWhitelistPanel'
 import AdminAnalyticsPanel from '../components/admin/AdminAnalyticsPanel'
 import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 
@@ -15,7 +16,7 @@ import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 // Ghi chú: tab "Chặn tên tài khoản giả danh" CHƯA thêm vì chưa thấy code liên quan
 // (vd api/_lib/reservedNames.ts) trong repo lúc viết trang này — không bịa UI cho tính năng
 // chưa tồn tại. Thêm lại khi tính năng đó có thật.
-type TabKey = 'usage' | 'limits' | 'grant-plan' | 'analytics'
+type TabKey = 'usage' | 'limits' | 'grant-plan' | 'vip-whitelist' | 'analytics'
 
 const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   // "Sử dụng & chi phí" để đầu tiên và là tab mặc định — đây là màn cần nhìn mỗi ngày để
@@ -23,6 +24,7 @@ const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   { key: 'usage', label: 'Sử dụng & chi phí', icon: Activity },
   { key: 'limits', label: 'Hạn mức & khuyến mãi', icon: Sliders },
   { key: 'grant-plan', label: 'Cấp gói tay', icon: ShieldCheck },
+  { key: 'vip-whitelist', label: 'Danh sách VIP', icon: Crown },
   { key: 'analytics', label: 'Analytics', icon: BarChart3 },
 ]
 
@@ -66,6 +68,7 @@ export default function AdminDashboard() {
             {tab === 'usage' && <AdminUsagePanel />}
             {tab === 'limits' && <AdminLimitsPanel />}
             {tab === 'grant-plan' && <AdminGrantPlanPanel />}
+            {tab === 'vip-whitelist' && <AdminVipWhitelistPanel />}
             {tab === 'analytics' && <AdminAnalyticsPanel />}
           </div>
         </div>

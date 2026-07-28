@@ -38,6 +38,7 @@ import {
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { sendVerificationCode, verifyCode, isEmailVerified } from './_lib/emailVerification.js'
+import { isAdminEmail } from './_lib/adminAuth.js'
 import { grantSignupTrial, SIGNUP_TRIAL_DAYS } from './_lib/trial.js'
 import { changeEmail } from './_lib/changeEmail.js'
 import { requestPasswordReset, resetPassword } from './_lib/passwordReset.js'
@@ -199,6 +200,9 @@ export default async function handler(req: Request): Promise<Response> {
         planExpiresAt: profile.planExpiresAt,
         // Để UI biết có cần nhắc xác thực email không (xem src/components/EmailVerifySection.tsx).
         emailVerified: await isEmailVerified(auth.userId),
+        // Để UI ẩn/hiện link "/admin" — server tự kiểm lại quyền mỗi lần gọi API admin, đây
+        // chỉ là cờ hiển thị UI, không phải nguồn xác thực (xem api/_lib/adminAuth.ts).
+        isAdmin: isAdminEmail(user.email),
       },
       200,
       allHeaders,
