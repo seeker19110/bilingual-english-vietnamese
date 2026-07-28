@@ -67,6 +67,9 @@ export interface User {
   // Hạn gói Pro/VIP hiện tại (ISO string) — null/undefined = gói vĩnh viễn hoặc đang Free.
   // Dùng cho banner "còn X ngày dùng thử" (xem src/lib/planExpiry.ts).
   planExpiresAt?: string | null
+  // Chỉ để UI ẩn/hiện link "/admin" — server tự kiểm lại quyền thật mỗi lần gọi API admin
+  // (xem api/_lib/adminAuth.ts), cờ này không phải nguồn xác thực.
+  isAdmin?: boolean
   createdAt: number
 }
 

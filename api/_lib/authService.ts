@@ -384,10 +384,25 @@ export interface ProfileInfo {
 // chạy trong code server thay vì trigger DB ẩn) rồi trả thông tin hiện tại.
 export async function ensureProfileRow(userId: string, name: string): Promise<ProfileInfo> {
   const pool = getPgPool()
-  await pool.query(
-    'insert into public.profiles (id, name) values ($1, $2) on conflict (id) do nothing',
+  const inserted = await pool.query<{ id: string }>(
+    'insert into public.profiles (id, name) values ($1, $2) on conflict (id) do nothing returning id',
     [userId, name],
   )
+  // Profile vừa được tạo lần đầu (không phải user cũ) → nếu email nằm trong danh sách VIP
+  // (public.vip_whitelist, quản lý qua /admin) thì cấp VIP vĩnh viễn ngay, không cần chờ admin
+  // thao tác tay. Xem api/admin-vip-whitelist.ts.
+  if ((inserted.rowCount ?? 0) > 0) {
+    await pool.query(
+      `update public.profiles set plan = 'vip', plan_expires_at = null
+       where id = $1
+         and exists (
+           select 1 from public.vip_whitelist w
+           join public.users u on lower(u.email) = w.email
+           where u.id = $1
+         )`,
+      [userId],
+    )
+  }
   const { rows } = await pool.query<{
     plan: string
     plan_expires_at: Date | null
