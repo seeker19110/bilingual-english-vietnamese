@@ -11,6 +11,7 @@
 // ──────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect, useMemo, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import {
   ChevronRight,
   ChevronLeft,
@@ -28,6 +29,10 @@ import {
   Volume2,
   Zap,
   RotateCcw,
+  Mic,
+  Lock,
+  Drama,
+  Award,
 } from 'lucide-react'
 import {
   speak,
@@ -41,10 +46,11 @@ import {
 } from '../lib/tts'
 import type { Voice } from '../lib/tts'
 import { pickRandomVoice } from '../lib/voiceTiers'
-import type { Plan } from '../types'
+import type { Plan, EvaluationResult } from '../types'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import VoiceRoleBadge from './VoiceRoleBadge'
 import WordCard from './WordCard'
+import EvaluationResultView from './EvaluationResultView'
 import { InlinePronounce } from '../pages/Lessons'
 import type { GrammarLesson, QuizItem } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
@@ -54,9 +60,15 @@ import type { DictEntry } from '../types'
 import { getLearnedWords, markLearned } from '../lib/vocab'
 import { addToSRS, addToSRSKnown } from '../lib/srs'
 import { bumpDailyLearned } from '../lib/curriculum'
-import { markStudiedToday } from '../lib/storage'
+import { getUsage, incrementUsage, markStudiedToday } from '../lib/storage'
 import { isGrammarDone, markGrammarDone, unmarkGrammarDone } from '../lib/cefrProgress'
 import { ACCENT, type AccentClasses } from '../lib/cefrAccent'
+import { startRecording, isRecordingSupported, type Recorder } from '../lib/sttServer'
+import { callClaude, parseJson } from '../lib/ai'
+import { speakingFullEvaluationPrompt } from '../prompts'
+import { effectivePlan } from '../lib/promo'
+import { getLimits } from '../lib/appSettings'
+import { useApiThrottle } from '../lib/useApiThrottle'
 
 // ── Chi tiết 1 bài ngữ pháp ───────────────────────────────────────────────────
 export function GrammarDetail({
@@ -611,12 +623,14 @@ export function DialogueView({
   isA,
   accent,
   plan,
+  userId,
   onBack,
 }: {
   dialogue: Dialogue
   isA: boolean
   accent: AccentClasses
   plan: Plan
+  userId: string
   onBack: () => void
 }) {
   const [activeLine, setActiveLine] = useState<number | null>(null)
@@ -793,7 +807,232 @@ export function DialogueView({
     setDlgWordSync(null)
   }
 
-  const isIdle = !playing && !paused
+  // ── Chế độ "Đóng vai" ─────────────────────────────────────────────────────
+  // Người dùng chọn 1 vai (theo TÊN NHÂN VẬT thật, không phải chữ A/B) → dòng của vai
+  // kia AI đọc bằng TTS như bình thường, dòng của vai người dùng thì DỪNG lại chờ họ
+  // bấm ghi âm và tự đọc — viền hội thoại đang tới lượt sáng lên (dùng lại activeLine/
+  // isActive có sẵn) kèm chữ sáng dần theo TỐC ĐỘ ĐỌC ước lượng (không có timestamp thật
+  // từ STT theo lô nên mô phỏng bằng bộ đếm giờ theo số từ, cùng thang tốc độ 0.75/1/1.25×
+  // người dùng đã chọn ở thanh điều khiển). Hết hội thoại → gọi AI chấm điểm 1 lần bằng
+  // đúng prompt speakingFullEvaluationPrompt() đang dùng ở trang Luyện nói (Speaking.tsx).
+  const isPro = effectivePlan(plan) !== 'free'
+  const canRecord = isRecordingSupported()
+  const [rolePlay, setRolePlay] = useState<{ role: 'A' | 'B' } | null>(null)
+  const [rolePicker, setRolePicker] = useState(false)
+  const [rpIdx, setRpIdx] = useState<number | null>(null)
+  const [rpRecording, setRpRecording] = useState(false)
+  const [rpTranscribing, setRpTranscribing] = useState(false)
+  const [rpTranscripts, setRpTranscripts] = useState<Record<number, string>>({})
+  const [rpFinished, setRpFinished] = useState(false)
+  const [rpEvaluating, setRpEvaluating] = useState(false)
+  const [rpEvaluation, setRpEvaluation] = useState<EvaluationResult | null>(null)
+  const [rpError, setRpError] = useState('')
+  const rpStopRef = useRef(false)
+  const rpRecorderRef = useRef<Recorder | null>(null)
+  const rpResolveRef = useRef<((text: string) => void) | null>(null)
+  const rpWordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const { isThrottled: rpThrottled, throttle: rpThrottle } = useApiThrottle()
+
+  function stopWordPacer() {
+    if (rpWordTimerRef.current) {
+      clearInterval(rpWordTimerRef.current)
+      rpWordTimerRef.current = null
+    }
+  }
+  // "Sáng chữ theo tốc độ người đọc": không có mốc thời gian thật của giọng người dùng
+  // (STT chỉ trả text sau khi ghi xong) nên ước lượng bằng nhịp đều theo tốc độ đang chọn.
+  function startWordPacer(lineIdx: number, text: string) {
+    stopWordPacer()
+    const words = text.split(/\s+/).filter(Boolean)
+    if (words.length === 0) return
+    let wi = 0
+    setDlgWordSync({ lineIdx, wordIdx: 0 })
+    const msPerWord = Math.max(120, 320 / speedRef.current)
+    rpWordTimerRef.current = setInterval(() => {
+      wi++
+      if (wi >= words.length) {
+        stopWordPacer()
+        return
+      }
+      setDlgWordSync({ lineIdx, wordIdx: wi })
+    }, msPerWord)
+  }
+
+  function waitForUserTurn(i: number, text: string): Promise<string> {
+    return new Promise((resolve) => {
+      rpResolveRef.current = resolve
+      startWordPacer(i, text)
+    })
+  }
+
+  async function beginRolePlayRecording() {
+    if (!canRecord || rpIdx === null || rpRecording) return
+    unlockAudio()
+    try {
+      const rec = await startRecording(isA ? 'en' : 'vi')
+      rpRecorderRef.current = rec
+      setRpRecording(true)
+    } catch {
+      setRpError(
+        isA
+          ? 'Không mở được micro. Kiểm tra quyền truy cập trình duyệt.'
+          : 'Could not access microphone. Check browser permissions.',
+      )
+    }
+  }
+
+  async function finishRolePlayRecording() {
+    const rec = rpRecorderRef.current
+    if (!rec) return
+    setRpRecording(false)
+    setRpTranscribing(true)
+    stopWordPacer()
+    let text = ''
+    try {
+      text = await rec.stop()
+    } catch {
+      text = ''
+    }
+    rpRecorderRef.current = null
+    setRpTranscribing(false)
+    rpResolveRef.current?.(text)
+    rpResolveRef.current = null
+  }
+
+  function skipRolePlayLine() {
+    stopWordPacer()
+    if (rpRecorderRef.current) {
+      rpRecorderRef.current.cancel()
+      rpRecorderRef.current = null
+    }
+    setRpRecording(false)
+    rpResolveRef.current?.('')
+    rpResolveRef.current = null
+  }
+
+  async function startRolePlay(role: 'A' | 'B') {
+    unlockAudio()
+    rpStopRef.current = false
+    setRolePicker(false)
+    setRolePlay({ role })
+    setRpFinished(false)
+    setRpEvaluation(null)
+    setRpError('')
+    setRpTranscripts({})
+    setActiveLine(null)
+    setDlgWordSync(null)
+
+    for (let i = 0; i < dialogue.lines.length; i++) {
+      if (rpStopRef.current) break
+      const ln = dialogue.lines[i]
+      if (!ln) continue
+      setActiveLine(i)
+      setDlgWordSync(null)
+      const displayText = isA ? ln.en : ln.vi
+
+      if (ln.who === role) {
+        setRpIdx(i)
+        const text = await waitForUserTurn(i, displayText)
+        setRpIdx(null)
+        if (rpStopRef.current) break
+        setRpTranscripts((prev) => ({ ...prev, [i]: text }))
+      } else {
+        const v = ln.who === 'A' ? voiceARef.current : voiceBRef.current
+        const lang = isA ? 'en-US' : 'vi-VN'
+        await speak(displayText, lang, v, speedRef.current, (wi) =>
+          setDlgWordSync({ lineIdx: i, wordIdx: wi }),
+        )
+        if (!rpStopRef.current) await new Promise((r) => setTimeout(r, 400))
+      }
+    }
+
+    const wasStopped = rpStopRef.current
+    rpStopRef.current = false
+    setActiveLine(null)
+    setDlgWordSync(null)
+    setRpIdx(null)
+    if (!wasStopped) setRpFinished(true)
+    else setRolePlay(null)
+  }
+
+  function stopRolePlay() {
+    rpStopRef.current = true
+    stopWordPacer()
+    stopSpeaking()
+    if (rpRecorderRef.current) {
+      rpRecorderRef.current.cancel()
+      rpRecorderRef.current = null
+    }
+    rpResolveRef.current?.('')
+    rpResolveRef.current = null
+    setRpRecording(false)
+    setRpTranscribing(false)
+    setRolePlay(null)
+    setRpFinished(false)
+    setRpIdx(null)
+    setActiveLine(null)
+    setDlgWordSync(null)
+  }
+
+  function closeRolePlayResult() {
+    setRolePlay(null)
+    setRpFinished(false)
+    setRpEvaluation(null)
+    setRpTranscripts({})
+    setActiveLine(null)
+  }
+
+  async function gradeRolePlay() {
+    if (rpEvaluating || !rolePlay) return
+    const usage = getUsage(userId)
+    const planForLimit = effectivePlan(plan)
+    if (planForLimit !== 'free' && usage.speakingCount >= getLimits()[planForLimit].speaking) {
+      setRpError(
+        isA
+          ? 'Bạn đã dùng hết lượt chấm điểm hôm nay. Thử lại vào ngày mai nhé.'
+          : "You've used all your grading turns today. Try again tomorrow.",
+      )
+      return
+    }
+    if (rpThrottled) return
+    setRpEvaluating(true)
+    setRpError('')
+    const role = rolePlay.role
+    const sys = speakingFullEvaluationPrompt(isA ? 'A' : 'B')
+    const history = dialogue.lines.map((ln, i) => ({
+      role: ln.who === role ? ('user' as const) : ('assistant' as const),
+      content: ln.who === role ? (rpTranscripts[i] ?? '') : isA ? ln.en : ln.vi,
+    }))
+    try {
+      const raw = await callClaude(history, sys, 2048, 'speaking')
+      const data = parseJson<EvaluationResult>(raw)
+      if (!data) {
+        throw new Error(
+          isA
+            ? 'AI trả về định dạng không đúng. Thử lại.'
+            : 'AI returned invalid format. Please try again.',
+        )
+      }
+      setRpEvaluation(data)
+      incrementUsage(userId, 'speakingCount')
+      rpThrottle()
+    } catch (e) {
+      setRpError(e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error')
+    }
+    setRpEvaluating(false)
+  }
+
+  // Dừng đóng vai khi rời màn hình
+  useEffect(
+    () => () => {
+      rpStopRef.current = true
+      stopWordPacer()
+      if (rpRecorderRef.current) rpRecorderRef.current.cancel()
+    },
+    [],
+  )
+
+  const isIdle = !playing && !paused && !rolePlay
 
   const SPEEDS: DlgSpeed[] = [0.75, 1, 1.25]
   const MODES: { key: DlgMode; label: string }[] = [
@@ -801,6 +1040,26 @@ export function DialogueView({
     { key: 'both', label: isA ? 'EN+VI' : 'VI+EN' },
     { key: 'vi', label: 'VI' },
   ]
+
+  // Đang xem kết quả chấm điểm đóng vai → thay toàn bộ nội dung màn hội thoại.
+  if (rpEvaluation) {
+    return (
+      <EvaluationResultView
+        evaluation={rpEvaluation}
+        onClose={closeRolePlayResult}
+        dir={isA ? 'A' : 'B'}
+      />
+    )
+  }
+
+  const speakerName = (who: 'A' | 'B') =>
+    who === 'A'
+      ? isA
+        ? (dialogue.speakerA?.vi ?? 'A')
+        : (dialogue.speakerA?.en ?? 'A')
+      : isA
+        ? (dialogue.speakerB?.vi ?? 'B')
+        : (dialogue.speakerB?.en ?? 'B')
 
   return (
     <div className="animate-fade-in">
@@ -895,9 +1154,93 @@ export function DialogueView({
             ))}
           </div>
 
+          <div className="h-3.5 w-px bg-zinc-700" />
+
+          {/* Đóng vai — chỉ Pro/VIP. Free thấy nút khoá + link nâng cấp. */}
+          {!rolePlay && (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={
+                  () =>
+                    isPro
+                      ? setRolePicker((o) => !o)
+                      : setRolePicker((o) => !o) /* mở panel để hiện thông báo nâng cấp */
+                }
+                aria-expanded={rolePicker}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                  rolePicker
+                    ? 'bg-violet-500/20 text-violet-300 theme-light:text-violet-800'
+                    : 'bg-zinc-800 text-zinc-300 hover:text-white'
+                }`}
+              >
+                {isPro ? <Drama className="w-3 h-3" /> : <Lock className="w-3 h-3 text-zinc-500" />}
+                {isA ? 'Đóng vai' : 'Role-play'}
+              </button>
+              {rolePicker && (
+                <div className="absolute right-0 z-20 mt-1.5 w-64 glass rounded-xl p-3 animate-fade-in shadow-xl">
+                  {isPro ? (
+                    <>
+                      <p className="text-xs text-zinc-400 mb-2">
+                        {isA
+                          ? 'Chọn vai bạn muốn đọc — AI sẽ đọc vai còn lại, bạn nói vai của mình.'
+                          : 'Pick the role you want to read — AI reads the other role, you speak yours.'}
+                      </p>
+                      <div className="flex flex-col gap-1.5">
+                        <button
+                          onClick={() => void startRolePlay('A')}
+                          className="text-left px-3 py-2 rounded-lg bg-zinc-900/80 border border-zinc-800 hover:border-accent-500/50 text-sm text-zinc-100 transition"
+                        >
+                          {speakerName('A')}
+                        </button>
+                        <button
+                          onClick={() => void startRolePlay('B')}
+                          className="text-left px-3 py-2 rounded-lg bg-zinc-900/80 border border-zinc-800 hover:border-accent-500/50 text-sm text-zinc-100 transition"
+                        >
+                          {speakerName('B')}
+                        </button>
+                      </div>
+                      {!canRecord && (
+                        <p className="text-[11px] text-amber-400 mt-2">
+                          {isA
+                            ? 'Trình duyệt này không hỗ trợ ghi âm.'
+                            : 'This browser does not support recording.'}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-xs text-zinc-300 mb-2">
+                        {isA
+                          ? 'Đóng vai đọc hội thoại + AI chấm điểm là tính năng dành cho gói Pro/VIP.'
+                          : 'Dialogue role-play + AI grading is a Pro/VIP feature.'}
+                      </p>
+                      <Link
+                        to="/profile"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-accent-400 theme-light:text-accent-700 hover:underline"
+                      >
+                        {isA ? 'Nâng cấp Pro/VIP →' : 'Upgrade to Pro/VIP →'}
+                      </Link>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {rolePlay && (
+            <button
+              onClick={stopRolePlay}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-300 theme-light:text-red-700 text-xs font-medium transition"
+            >
+              <Square className="w-3 h-3 fill-current" />
+              {isA ? 'Dừng đóng vai' : 'Stop role-play'}
+            </button>
+          )}
+
           {/* Nút mở/ẩn panel giọng — nằm ở phần còn dư của thanh control */}
           <div className="ml-auto flex items-center gap-2 shrink-0">
-            {playing && activeLine !== null && (
+            {(playing || rolePlay) && activeLine !== null && (
               <div className="flex items-center gap-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse" />
                 <span className="text-[11px] text-zinc-400">
@@ -905,24 +1248,26 @@ export function DialogueView({
                 </span>
               </div>
             )}
-            <button
-              type="button"
-              onClick={() => setVoiceSettingsOpen((o) => !o)}
-              aria-expanded={voiceSettingsOpen}
-              className={`px-1.5 py-0.5 rounded text-xs font-medium transition ${
-                voiceSettingsOpen
-                  ? 'bg-zinc-800 text-zinc-200'
-                  : 'text-zinc-400 hover:text-zinc-200'
-              }`}
-            >
-              {isA ? 'Cài đặt giọng' : 'Voice settings'}
-            </button>
+            {!rolePlay && (
+              <button
+                type="button"
+                onClick={() => setVoiceSettingsOpen((o) => !o)}
+                aria-expanded={voiceSettingsOpen}
+                className={`px-1.5 py-0.5 rounded text-xs font-medium transition ${
+                  voiceSettingsOpen
+                    ? 'bg-zinc-800 text-zinc-200'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                {isA ? 'Cài đặt giọng' : 'Voice settings'}
+              </button>
+            )}
           </div>
         </div>
 
         {/* Giọng đang phát cho từng nhân vật (random mỗi lần mở) + nút đặt làm mặc định — chỉ
             hiện khi bấm "Cài đặt giọng", tự ẩn 3s sau khi đặt mặc định */}
-        {voiceSettingsOpen && (
+        {voiceSettingsOpen && !rolePlay && (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 px-1 animate-fade-in">
             <VoiceRoleBadge
               voice={voiceA}
@@ -944,6 +1289,40 @@ export function DialogueView({
             />
           </div>
         )}
+
+        {rpError && (
+          <p className="text-[11px] text-red-400 theme-light:text-red-700 mt-1.5 px-1">{rpError}</p>
+        )}
+
+        {/* Kết thúc đóng vai xong (chưa chấm) → mời chấm điểm hoặc nói lại */}
+        {rolePlay && rpFinished && (
+          <div className="flex items-center gap-2 mt-2 px-1 animate-fade-in">
+            <button
+              onClick={() => void gradeRolePlay()}
+              disabled={rpEvaluating || rpThrottled}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 disabled:opacity-50 text-accent-300 theme-light:text-accent-800 text-xs font-semibold transition"
+            >
+              {rpEvaluating ? (
+                isA ? (
+                  'Đang chấm điểm...'
+                ) : (
+                  'Grading...'
+                )
+              ) : (
+                <>
+                  <Award className="w-3.5 h-3.5" />
+                  {isA ? 'Kết thúc & chấm điểm' : 'Finish & grade'}
+                </>
+              )}
+            </button>
+            <button
+              onClick={() => void startRolePlay(rolePlay.role)}
+              className="text-xs text-zinc-400 hover:text-white transition"
+            >
+              {isA ? 'Đọc lại' : 'Read again'}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="glass rounded-2xl p-4 sm:p-5">
@@ -956,11 +1335,16 @@ export function DialogueView({
           {dialogue.lines.map((ln, i) => {
             const isB = ln.who === 'B'
             const isActive = activeLine === i
+            const isMyTurn = rolePlay !== null && rpIdx === i
             return (
               <div key={i} className={`flex ${isB ? 'justify-end' : 'justify-start'}`}>
                 <div
                   className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border transition-all ${
-                    isActive ? 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-accent-500/60' : ''
+                    isActive
+                      ? isMyTurn
+                        ? 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-accent-500/60 animate-pulse'
+                        : 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-accent-500/60'
+                      : ''
                   } ${isB ? `${accent.soft} ${accent.ring}` : 'bg-zinc-900/80 border-zinc-800/80'}`}
                 >
                   {/* Hàng đầu: tên người nói (trái) + nút micro chấm phát âm (phải) —
@@ -979,12 +1363,19 @@ export function DialogueView({
                         : isA
                           ? (dialogue.speakerB?.vi ?? 'B')
                           : (dialogue.speakerB?.en ?? 'B')}
+                      {isMyTurn && (
+                        <span className="ml-1.5 text-violet-400 theme-light:text-violet-800">
+                          {isA ? '· đến lượt bạn' : '· your turn'}
+                        </span>
+                      )}
                     </span>
-                    <InlinePronounce
-                      text={isA ? ln.en : ln.vi}
-                      lang={isA ? 'en-US' : 'vi-VN'}
-                      isA={isA}
-                    />
+                    {!rolePlay && (
+                      <InlinePronounce
+                        text={isA ? ln.en : ln.vi}
+                        lang={isA ? 'en-US' : 'vi-VN'}
+                        isA={isA}
+                      />
+                    )}
                   </div>
                   <KaraokeText
                     text={isA ? ln.en : ln.vi}
@@ -993,7 +1384,7 @@ export function DialogueView({
                     buttonClass="w-full"
                     voice={ln.who === 'A' ? voiceA : voiceB}
                     externalState={
-                      playing && dlgWordSync?.lineIdx === i
+                      (playing || rolePlay) && dlgWordSync?.lineIdx === i
                         ? { playing: true, wordIdx: dlgWordSync.wordIdx }
                         : undefined
                     }
@@ -1001,6 +1392,42 @@ export function DialogueView({
                   <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>
                     {isA ? ln.vi : ln.en}
                   </p>
+
+                  {/* Đến lượt người dùng trong chế độ đóng vai → nút ghi âm thay vì phát TTS */}
+                  {isMyTurn && (
+                    <div className="flex items-center gap-2 mt-2 pt-2 border-t border-zinc-800/60">
+                      {rpTranscribing ? (
+                        <span className="text-xs text-zinc-400">
+                          {isA ? 'Đang nhận diện...' : 'Transcribing...'}
+                        </span>
+                      ) : rpRecording ? (
+                        <button
+                          onClick={() => void finishRolePlayRecording()}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 theme-light:text-red-700 text-xs font-semibold animate-pulse transition"
+                        >
+                          <Square className="w-3 h-3 fill-current" />
+                          {isA ? 'Dừng ghi âm' : 'Stop recording'}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => void beginRolePlayRecording()}
+                          disabled={!canRecord}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-500/20 hover:bg-violet-500/30 disabled:opacity-50 text-violet-300 theme-light:text-violet-800 text-xs font-semibold transition"
+                        >
+                          <Mic className="w-3.5 h-3.5" />
+                          {isA ? 'Bấm để nói câu này' : 'Tap to say this line'}
+                        </button>
+                      )}
+                      {!rpRecording && !rpTranscribing && (
+                        <button
+                          onClick={skipRolePlayLine}
+                          className="text-xs text-zinc-500 hover:text-zinc-300 transition"
+                        >
+                          {isA ? 'Bỏ qua' : 'Skip'}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             )
