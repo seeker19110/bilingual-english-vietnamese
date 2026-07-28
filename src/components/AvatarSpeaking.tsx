@@ -1,8 +1,7 @@
-// src/components/AvatarSpeaking.tsx — Avatar 2D đổi hình miệng theo audio đang phát.
-// Vẫn là hình vẽ SVG THUẦN (không phải nhân vật thật/ảnh chụp) — cố tình giữ NHẸ (không dùng
-// ảnh/asset ngoài) để không phá nguyên tắc "băng thông thấp" của hướng viseme animation (xem
-// docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md) — chỉ nâng cấp PHẦN VẼ cho có tỉ lệ
-// khuôn mặt/tóc/mắt rõ ràng hơn bản placeholder tròn+2 chấm+1 nét kẻ trước đây.
+// src/components/AvatarSpeaking.tsx — Avatar robot 2D đổi hình miệng theo audio đang phát.
+// Đổi từ phong cách "khuôn mặt người vẽ tay" sang "robot AI" theo yêu cầu người dùng — vẫn là
+// SVG THUẦN vẽ tay (không dùng ảnh/asset ngoài, không phải ảnh robot thật/AI-generated có rủi ro
+// bản quyền) để giữ nguyên tắc băng thông thấp. Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md.
 
 import { useEffect, useRef, useState } from 'react'
 import { visemeAtTime, type Viseme, type VisemeFrame } from '../lib/viseme'
@@ -13,33 +12,21 @@ interface AvatarSpeakingProps {
   isPlaying: boolean
 }
 
-// Mỗi viseme là 1 CỤM hình miệng (viền môi + khoang miệng bên trong nếu miệng mở) — vẽ dạng
-// fill thay vì chỉ 1 nét kẻ, để trông giống hình miệng thật hơn thay vì 1 đường cong đơn giản.
-interface MouthShape {
-  lips: string // viền môi (fill được, khép kín)
-  inner?: string // khoang miệng/răng bên trong (chỉ có khi miệng mở)
+// Miệng robot vẽ dạng "màn hình LED" hình chữ nhật bo góc — đổi RỘNG/CAO theo viseme thay vì vẽ
+// môi/răng (không phù hợp thẩm mỹ robot). Toạ độ tâm cố định (50, 64), chỉ đổi kích thước.
+interface MouthLed {
+  width: number
+  height: number
+  // Số thanh chia dọc bên trong (tạo cảm giác "loa LED" nhiều đoạn) — nhiều hơn khi miệng mở to.
+  bars: number
 }
 
-const MOUTH_SHAPES: Record<Viseme, MouthShape> = {
-  // Miệng nghỉ: đường cong mỏng, hơi mỉm — không có khoang trong.
-  REST: { lips: 'M 38 62 Q 50 66 62 62 Q 50 64 38 62 Z' },
-  // Môi khép chặt (p/b/m): 1 dải mỏng nằm ngang.
-  PP: { lips: 'M 36 62 Q 50 60 64 62 Q 50 64.5 36 62 Z' },
-  // Răng trên chạm môi dưới (f/v): môi dưới nhô nhẹ, có 1 dải răng mỏng phía trên.
-  FF: {
-    lips: 'M 36 60 Q 50 68 64 60 Q 50 64 36 60 Z',
-    inner: 'M 40 60 L 60 60 L 60 62.5 L 40 62.5 Z',
-  },
-  // Miệng mở rộng (nguyên âm mở, vd a): khoang miệng hình oval lớn.
-  AA: {
-    lips: 'M 33 56 Q 50 84 67 56 Q 50 72 33 56 Z',
-    inner: 'M 40 60 Q 50 76 60 60 Q 50 68 40 60 Z',
-  },
-  // Môi tròn (nguyên âm tròn môi, vd o/u): khoang miệng hình tròn nhỏ.
-  OO: {
-    lips: 'M 42 54 Q 50 78 58 54 Q 50 66 42 54 Z',
-    inner: 'M 46 58 Q 50 70 54 58 Q 50 63 46 58 Z',
-  },
+const MOUTH_LEDS: Record<Viseme, MouthLed> = {
+  REST: { width: 14, height: 3, bars: 1 },
+  PP: { width: 8, height: 2, bars: 1 }, // môi khép (p/b/m) — thanh LED thu nhỏ nhất
+  FF: { width: 16, height: 3, bars: 2 }, // răng chạm môi dưới
+  AA: { width: 22, height: 12, bars: 4 }, // miệng mở rộng — LED cao nhất
+  OO: { width: 12, height: 10, bars: 1 }, // môi tròn — LED gần vuông, bo tròn nhiều
 }
 
 export default function AvatarSpeaking({ audioEl, timeline, isPlaying }: AvatarSpeakingProps) {
@@ -64,7 +51,11 @@ export default function AvatarSpeaking({ audioEl, timeline, isPlaying }: AvatarS
     }
   }, [audioEl, timeline, isPlaying])
 
-  const mouth = MOUTH_SHAPES[viseme]
+  const mouth = MOUTH_LEDS[viseme]
+  const mouthX = 50 - mouth.width / 2
+  const mouthY = 64 - mouth.height / 2
+  const barWidth = mouth.width / mouth.bars
+  const isSpeaking = viseme !== 'REST'
 
   return (
     <svg
@@ -75,41 +66,71 @@ export default function AvatarSpeaking({ audioEl, timeline, isPlaying }: AvatarS
       aria-label="Avatar AI đang nói"
       className="mx-auto"
     >
-      {/* Vai/áo — dùng màu nhấn thương hiệu (đổi theo theme) cho có điểm nhấn cá tính */}
-      <path d="M 14 120 Q 50 96 86 120 Z" className="fill-accent-500" />
-
-      {/* Cổ */}
-      <rect x="42" y="70" width="16" height="16" rx="4" className="fill-zinc-200" />
-
-      {/* Khuôn mặt */}
-      <ellipse cx="50" cy="46" rx="30" ry="34" className="fill-zinc-50 stroke-zinc-300" />
-
-      {/* Tóc — mái đơn giản phủ nửa trên đầu */}
+      {/* Vai/thân — tấm kim loại bo góc, viền accent phát sáng nhẹ */}
       <path
-        d="M 20 40 Q 18 8 50 8 Q 82 8 80 40 Q 80 20 50 20 Q 20 20 20 40 Z"
-        className="fill-accent-700"
+        d="M 16 120 L 16 104 Q 16 92 28 92 L 72 92 Q 84 92 84 104 L 84 120 Z"
+        className="fill-zinc-200 stroke-accent-500"
+        strokeWidth={1.5}
+      />
+      <rect x="40" y="82" width="20" height="14" rx="4" className="fill-zinc-300" />
+
+      {/* Ăng-ten nhỏ trên đầu */}
+      <line x1="50" y1="4" x2="50" y2="12" className="stroke-zinc-400" strokeWidth={2} />
+      <circle cx="50" cy="4" r="2.5" className="fill-accent-500" />
+
+      {/* Đầu robot — hình vòm kim loại */}
+      <path
+        d="M 22 46 Q 22 10 50 10 Q 78 10 78 46 L 78 62 Q 78 74 66 74 L 34 74 Q 22 74 22 62 Z"
+        className="fill-zinc-100 stroke-zinc-400"
+        strokeWidth={1.5}
       />
 
-      {/* Lông mày */}
-      <path d="M 28 34 Q 34 30 40 33" className="stroke-zinc-500" strokeWidth={2} fill="none" />
-      <path d="M 60 33 Q 66 30 72 34" className="stroke-zinc-500" strokeWidth={2} fill="none" />
+      {/* Đường mạch (circuit line) trang trí — nét mảnh màu nhấn thương hiệu */}
+      <path
+        d="M 26 40 L 34 40 L 34 34 L 40 34"
+        className="stroke-accent-400"
+        strokeWidth={1}
+        fill="none"
+        opacity={0.6}
+      />
+      <path
+        d="M 74 40 L 66 40 L 66 34 L 60 34"
+        className="stroke-accent-400"
+        strokeWidth={1}
+        fill="none"
+        opacity={0.6}
+      />
+      <circle cx="26" cy="40" r="1.2" className="fill-accent-400" opacity={0.8} />
+      <circle cx="74" cy="40" r="1.2" className="fill-accent-400" opacity={0.8} />
 
-      {/* Mắt: tròng trắng + con ngươi + chấm sáng nhỏ (tạo cảm giác có hồn hơn 2 chấm đặc) */}
-      <ellipse cx="36" cy="42" rx="6" ry="7" className="fill-white stroke-zinc-300" />
-      <circle cx="37" cy="43" r="3.2" className="fill-zinc-800" />
-      <circle cx="38.3" cy="41.3" r="1" className="fill-white" />
+      {/* Tấm visor che mắt — nền tối, 2 mắt LED tròn phát sáng */}
+      <rect x="30" y="34" width="40" height="14" rx="7" className="fill-zinc-800" />
+      <circle cx="40" cy="41" r="4" className="fill-accent-400" />
+      <circle cx="60" cy="41" r="4" className="fill-accent-400" />
+      <circle cx="41" cy="39.5" r="1.2" className="fill-white opacity-80" />
+      <circle cx="61" cy="39.5" r="1.2" className="fill-white opacity-80" />
 
-      <ellipse cx="64" cy="42" rx="6" ry="7" className="fill-white stroke-zinc-300" />
-      <circle cx="65" cy="43" r="3.2" className="fill-zinc-800" />
-      <circle cx="66.3" cy="41.3" r="1" className="fill-white" />
-
-      {/* Má hồng nhẹ */}
-      <ellipse cx="28" cy="56" rx="5" ry="3" className="fill-accent-300 opacity-40" />
-      <ellipse cx="72" cy="56" rx="5" ry="3" className="fill-accent-300 opacity-40" />
-
-      {/* Miệng — đổi hình theo viseme đang phát */}
-      {mouth.inner && <path d={mouth.inner} className="fill-zinc-800" />}
-      <path d={mouth.lips} className="fill-zinc-700" />
+      {/* Miệng — màn hình LED đổi kích thước/số thanh theo viseme đang phát */}
+      <rect
+        x={mouthX}
+        y={mouthY}
+        width={mouth.width}
+        height={mouth.height}
+        rx={mouth.height / 2}
+        className="fill-zinc-800"
+      />
+      {Array.from({ length: mouth.bars }).map((_, i) => (
+        <rect
+          key={i}
+          x={mouthX + i * barWidth + barWidth * 0.15}
+          y={mouthY + mouth.height * 0.2}
+          width={barWidth * 0.7}
+          height={mouth.height * 0.6}
+          rx={1}
+          className={isSpeaking ? 'fill-accent-400' : 'fill-accent-600'}
+          opacity={isSpeaking ? 0.95 : 0.5}
+        />
+      ))}
     </svg>
   )
 }
