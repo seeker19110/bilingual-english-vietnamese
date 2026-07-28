@@ -13,6 +13,7 @@ import {
   Volume2,
   VolumeX,
   Users,
+  Gift,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -293,6 +294,25 @@ export default function Profile() {
               : 'Weeks start on Monday. Any study activity (vocab, chat, writing, speaking) counts — same rule as your streak.'}
           </p>
         </section>
+
+        {/* Nhiệm vụ — streak/thi cấp CEFR/chia sẻ/mời bạn gom vào 1 trang (src/pages/Quests.tsx) */}
+        <button
+          type="button"
+          onClick={() => nav('/quests')}
+          className="tap-44 w-full flex items-center justify-between gap-3 bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 transition text-left"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center shrink-0">
+              <Gift className="w-5 h-5 text-accent-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">{isA ? 'Nhiệm vụ' : 'Quests'}</p>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                {isA ? 'Kiếm thêm ngày dùng gói Pro miễn phí' : 'Earn extra free days of Pro'}
+              </p>
+            </div>
+          </div>
+        </button>
 
         {/* Nâng cấp Pro/VIP qua SePay — ẩn nếu đã VIP (xem UpgradeSection.tsx) */}
         <UpgradeSection isA={isA} currentPlan={user.plan} />

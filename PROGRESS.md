@@ -166,17 +166,29 @@ code trong nhiều file rời rạc.
     này ở QUY MÔ HIỆN TẠI (giá trị thấp — 1 ngày Pro/7 ngày, không đáng để cày công phu). Nếu
     sau này phát hiện lạm dụng thật: cân nhắc thêm `device_hash` như referral (migration 0008)
     hoặc đổi thưởng sang phi tiền tệ (huy hiệu...).
-  - **Nghiên cứu thêm — đề xuất nhiệm vụ TIẾP THEO (chưa làm, cần xác nhận trước khi build,
-    vì đụng quyết định sản phẩm):** các nhiệm vụ dưới đây VERIFY ĐƯỢC HOÀN TOÀN Ở SERVER (an
-    toàn hơn hẳn "chia sẻ công khai") vì đều đọc dữ liệu đã có sẵn trong DB, không phụ thuộc
-    lời khai client:
-    1. "Học đủ N ngày liên tiếp trong tuần" — đọc từ `daily_usage`/streak đã có (`src/lib/
-stats.ts`), thưởng thêm lượt AI hoặc ngày Pro.
-    2. "Hoàn thành bài kiểm tra cuối 1 cấp CEFR" — đã có cột tiến độ `learning_progress.
-cefr_grammar`, chỉ cần thêm điều kiện thưởng.
-    3. "Mời bạn xác thực email" — đã có sẵn (referral), có thể chỉ cần thêm 1 mục trong UI
-       nhiệm vụ để gom tất cả phần thưởng vào 1 nơi thay vì rải rác nhiều trang.
-       Chưa build 3 mục này — chờ người dùng chọn ưu tiên trước khi làm PR tiếp theo.
+- **[2026-07-28] 3 nhiệm vụ verify server-side ĐÃ LÀM (tiếp Phần 4 ở trên, cùng nhánh).** Cả 3
+  đều tính lại TỪ DB, không tin số liệu client gửi lên trực tiếp.
+  1. **"Học liên tiếp 5 ngày"** (`streak_5`) — `getCurrentStreak()` đếm streak NGAY TỪ SERVER
+     dựa trên `free_daily_credit.bonus_earned` (bảng này được `api/progress.ts` ghi mỗi khi
+     phát hiện tiến độ học TĂNG THẬT — learned/hard/cefrGrammar/cefrDialogues dài ra so với
+     bản lưu trước — áp dụng cho MỌI gói, không riêng Free). Thưởng +1 ngày Pro, hồi sau 7
+     ngày. `POST /api/quests { action: 'claim-streak' }`.
+  2. **"Thi đạt cấp CEFR"** (`cefr_exam_<LEVEL>`) — đọc `learning_progress.cefr_exams[level].
+passed` (đã có sẵn từ trước, đồng bộ qua `/api/progress` khi thi). Cùng MỨC TIN CẬY với
+     luật mở khoá cấp tiếp theo app đã dùng từ trước — không phải lỗ hổng mới do nhiệm vụ này
+     tạo ra. Thưởng +1 ngày Pro/cấp, một lần duy nhất mãi mãi mỗi cấp (mô phỏng bằng cooldown
+     36.500 ngày, tái dùng đúng 1 cơ chế `claim_quest_if_ready`, không thêm bảng riêng).
+     `POST /api/quests { action: 'claim-cefr-exam', level }`. `src/components/CefrExam.tsx`
+     tự động gọi ngay sau khi thi đạt (chờ `pushProgressAsync()` đẩy xong lên server TRƯỚC —
+     hàm mới thêm vào `progressSync.ts`, bản awaitable của `pushProgress()` fire-and-forget cũ
+     — để tránh claim đọc phải dữ liệu cũ chưa kịp đồng bộ).
+  3. **"Mời bạn xác thực"** — KHÔNG đổi logic thưởng đã có (`api/_lib/referral.ts`), chỉ gộp
+     số liệu vào `GET /api/quests` để hiện chung 1 nơi.
+  - **Trang mới `/quests`** (`src/pages/Quests.tsx`) — hub duy nhất liệt kê cả 4 nhiệm vụ
+    (gồm cả "Chia sẻ công khai" ở Phần 4), đọc `GET /api/quests` (`getQuestsStatus()`). Link
+    vào từ Hồ sơ (`Profile.tsx`, thẻ "Nhiệm vụ" trước mục Nâng cấp Pro).
+  - `postgres/migrations` — KHÔNG cần thêm migration mới (tái dùng bảng `quest_claims` của
+    Phần 4, đúng mục tiêu thiết kế generic ban đầu).
 
 - **[Kế hoạch 2026-07-22] Giao diện + nội dung theo độ tuổi** — nhánh
   `claude/ui-redesign-age-groups-rk71g8`. Ý tưởng: app đổi giao diện thị giác và giọng điệu nội

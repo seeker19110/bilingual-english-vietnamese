@@ -30,6 +30,7 @@ const Profile = lazyWithRetry(() => import('./pages/Profile'))
 const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
 const Placement = lazyWithRetry(() => import('./pages/Placement'))
 const MistakeBank = lazyWithRetry(() => import('./pages/MistakeBank'))
+const Quests = lazyWithRetry(() => import('./pages/Quests'))
 
 // Thử thách "Challenge 1 phút" (chu kỳ tuần) — ghi hình/IndexedDB chỉ tải khi bấm vào.
 const Challenge = lazyWithRetry(() => import('./pages/Challenge'))
@@ -286,6 +287,14 @@ export default function App() {
                       element={
                         <RequireAuth>
                           <Profile />
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/quests"
+                      element={
+                        <RequireAuth>
+                          <Quests />
                         </RequireAuth>
                       }
                     />

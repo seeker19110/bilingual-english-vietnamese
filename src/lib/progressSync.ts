@@ -162,32 +162,40 @@ function readObj(key: string): Record<string, SRSLike> {
   }
 }
 
+// Bản CÓ THỂ AWAIT — dùng khi nơi gọi cần chắc chắn server đã nhận dữ liệu mới TRƯỚC khi làm
+// bước tiếp theo (vd claim nhiệm vụ "thi đạt cấp CEFR", server tự đọc lại DB để xác minh, xem
+// src/components/CefrExam.tsx). pushProgress() (bên dưới) vẫn giữ dạng bắn-rồi-quên cho mọi
+// nơi gọi khác không cần chờ.
+export async function pushProgressAsync(userId: string): Promise<void> {
+  if (!userId) return
+  try {
+    const resp = await fetch('/api/progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+      body: JSON.stringify({
+        learned: readArr(LEARNED(userId)),
+        hard: readArr(HARD(userId)),
+        srs: readObj(SRS(userId)),
+        cefrGrammar: readArr(CEFR_GRAMMAR(userId)),
+        cefrDialogues: readArr(CEFR_DIALOGUE(userId)),
+        cefrUnlocked: readArr(CEFR_UNLOCKED(userId)),
+        cefrExams: readExamMap(CEFR_EXAMS(userId)),
+        placement: readPlacement(PLACEMENT(userId)) ?? {},
+        weeklyGoal: readWeeklyGoal(WEEKLY_GOAL(userId)) ?? {},
+        achievements: readArr(ACHIEVEMENTS(userId)),
+      }),
+    })
+    if (!resp.ok) console.warn('[progress] đẩy tiến độ lỗi: HTTP', resp.status)
+  } catch (err) {
+    console.warn('[progress] đẩy tiến độ lỗi:', err)
+  }
+}
+
 // Đẩy toàn bộ tiến độ hiện tại lên server (bắn rồi quên — không chặn giao diện).
 // Giai đoạn C: gọi POST /api/progress thay Supabase client trực tiếp (không còn RLS
 // bảo vệ sau khi cutover khỏi Supabase Auth ở Giai đoạn B).
 export function pushProgress(userId: string): void {
-  if (!userId) return
-  void fetch('/api/progress', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-    body: JSON.stringify({
-      learned: readArr(LEARNED(userId)),
-      hard: readArr(HARD(userId)),
-      srs: readObj(SRS(userId)),
-      cefrGrammar: readArr(CEFR_GRAMMAR(userId)),
-      cefrDialogues: readArr(CEFR_DIALOGUE(userId)),
-      cefrUnlocked: readArr(CEFR_UNLOCKED(userId)),
-      cefrExams: readExamMap(CEFR_EXAMS(userId)),
-      placement: readPlacement(PLACEMENT(userId)) ?? {},
-      weeklyGoal: readWeeklyGoal(WEEKLY_GOAL(userId)) ?? {},
-      achievements: readArr(ACHIEVEMENTS(userId)),
-    }),
-  }).then(
-    (resp) => {
-      if (!resp.ok) console.warn('[progress] đẩy tiến độ lỗi: HTTP', resp.status)
-    },
-    (err: unknown) => console.warn('[progress] đẩy tiến độ lỗi:', err),
-  )
+  void pushProgressAsync(userId)
 }
 
 // Kéo tiến độ từ server → HỢP NHẤT với bản local → ghi lại localStorage → đẩy bản
