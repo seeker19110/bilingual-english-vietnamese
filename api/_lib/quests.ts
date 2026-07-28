@@ -89,7 +89,7 @@ export async function claimStreakQuest(userId: string): Promise<ClaimQuestResult
 // tiếp module frontend vào backend — chỉ cần đúng 6 chuỗi id, khai lại ở đây cho gọn nhẹ).
 export const CEFR_EXAM_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const
 export type CefrExamLevel = (typeof CEFR_EXAM_LEVELS)[number]
-export const CEFR_EXAM_QUEST_REWARD_DAYS = 1
+export const CEFR_EXAM_QUEST_REWARD_DAYS = 3
 // Nhiệm vụ "1 lần duy nhất mãi mãi mỗi cấp" — mô phỏng bằng cooldown cực lớn thay vì thêm
 // bảng/cột riêng, tái dùng đúng 1 cơ chế claim_quest_if_ready cho mọi loại nhiệm vụ.
 const CEFR_EXAM_QUEST_COOLDOWN_DAYS = 36_500 // ~100 năm

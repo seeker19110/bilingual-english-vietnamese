@@ -2,11 +2,14 @@
 // chiến lược tăng trưởng — thay cho việc mở khuyến mãi Pro cho TOÀN BỘ user hiện có, vốn tốn
 // chi phí AI không kiểm soát được cho những người vốn đã ở lại mà không cần khuyến mãi).
 //
-// QUYẾT ĐỊNH CUỐI (2026-07-28): cấp NGAY lúc tạo tài khoản, KHÔNG còn điều kiện xác thực email
-// (bản chỉnh 2026-07-28 trước đó từng gắn với xác thực — đã bỏ). Cấp cho MỌI kênh đăng ký lần
-// đầu: email/password (action 'register'), Google/Facebook/Apple (khi tài khoản mới, `isNew`)
-// — xem lời gọi ở api/auth.ts. Đăng nhập lại (login, hoặc OAuth với tài khoản đã tồn tại)
-// KHÔNG được cấp thêm.
+// QUYẾT ĐỊNH CUỐI (2026-07-28, chốt lại lần 2): cấp theo 2 đường tuỳ kênh đăng ký —
+//   - Email/password (action 'register'): KHÔNG cấp ngay — phải XÁC THỰC EMAIL (mã 6 số,
+//     action 'verify-email') trước mới được cấp. Chống lạm dụng email rác tạo hàng loạt để
+//     cày trial.
+//   - 4 kênh OAuth (Google/Facebook/Apple/Microsoft): coi như ĐÃ XÁC THỰC (provider tự verify
+//     email khi đăng nhập) nên cấp NGAY ở lần đăng nhập ĐẦU TIÊN (`isNew`, xem
+//     oauthLoginResponse() ở api/auth.ts). Đăng nhập lại (login, hoặc OAuth với tài khoản đã
+//     tồn tại) KHÔNG được cấp thêm.
 //
 // Luật: mỗi TÀI KHOẢN được nhận đúng MỘT lần, mãi mãi — không phụ thuộc email hiện tại, đổi
 // email sau đó KHÔNG được nhận thêm.

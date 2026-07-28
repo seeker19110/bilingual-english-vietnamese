@@ -147,10 +147,11 @@ function authResponse(
   }
 }
 
-// Dùng chung cho mọi kênh OAuth (Google/Facebook/Apple) — luồng giống hệt nhau: tạo/lấy hồ
-// sơ, tạo phiên, cấp quà dùng thử NGAY nếu là tài khoản mới (isNew), rồi trả về đúng shape
-// authResponse (đọc lại profile SAU khi cấp quà để phản hồi đúng gói 'pro' ngay từ đầu, tránh
-// client hiện tạm 'free' rồi mới đổi).
+// Dùng chung cho mọi kênh OAuth (Google/Facebook/Apple/Microsoft) — luồng giống hệt nhau:
+// tạo/lấy hồ sơ, tạo phiên, cấp quà dùng thử NGAY nếu là tài khoản mới (isNew) — 4 kênh này
+// coi như đã xác thực email nên KHÔNG cần chờ như email/password (xem action 'register') —
+// rồi trả về đúng shape authResponse (đọc lại profile SAU khi cấp quà để phản hồi đúng gói
+// 'pro' ngay từ đầu, tránh client hiện tạm 'free' rồi mới đổi).
 async function oauthLoginResponse(
   user: { id: string; email: string },
   isNew: boolean,
@@ -222,7 +223,7 @@ export default async function handler(req: Request): Promise<Response> {
       // Không nói rõ "email đã tồn tại" để tránh dò email hàng loạt — trả lỗi chung.
       return jsonResponse({ error: 'Không đăng ký được tài khoản này' }, 409, allHeaders)
     }
-    await ensureProfileRow(user.id, name)
+    const profile = await ensureProfileRow(user.id, name)
     const token = await createSession(user.id)
     // Gửi mã xác thực ngay sau khi tạo tài khoản. KHÔNG chặn đăng ký nếu gửi lỗi/chưa cấu hình
     // SMTP — người dùng vẫn vào học được, chỉ là chưa mở khoá phần thưởng mời bạn (họ bấm
@@ -230,21 +231,12 @@ export default async function handler(req: Request): Promise<Response> {
     await sendVerificationCode(user.id).catch((err) => {
       console.error('[auth] Không gửi được mã xác thực lúc đăng ký:', err)
     })
-    // Quà dùng thử Pro 14 ngày — cấp NGAY lúc đăng ký, không chờ xác thực email (quyết định
-    // 2026-07-28: bỏ điều kiện xác thực, đổi lại thành trial tự động cho MỌI tài khoản mới).
-    // Đọc lại profile SAU khi cấp để phản hồi đúng ngay gói 'pro', tránh client hiện tạm
-    // 'free' rồi mới đổi. Xem api/_lib/trial.ts.
-    const signupTrialGranted = await grantSignupTrial(user.id)
-    const profile = await ensureProfileRow(user.id, name)
-    return jsonResponse(
-      {
-        ...authResponse(token, user, profile),
-        signupTrialGranted,
-        signupTrialDays: SIGNUP_TRIAL_DAYS,
-      },
-      200,
-      allHeaders,
-    )
+    // KHÔNG cấp quà dùng thử ở đây (quyết định 2026-07-28, chốt lại lần 2): tài khoản
+    // email/password phải XÁC THỰC EMAIL trước mới được cấp (chống lạm dụng email rác tạo
+    // hàng loạt để cày trial). 4 kênh OAuth (Google/Facebook/Apple/Microsoft) COI NHƯ ĐÃ XÁC
+    // THỰC (provider tự verify email) nên vẫn cấp NGAY — xem oauthLoginResponse() +
+    // action 'verify-email' bên dưới.
+    return jsonResponse(authResponse(token, user, profile), 200, allHeaders)
   }
 
   if (result.data.action === 'login') {
@@ -322,10 +314,11 @@ export default async function handler(req: Request): Promise<Response> {
       logSecurityEvent('EMAIL_VERIFY_FAILED', clientIp, { reason: verified.reason })
       return jsonResponse({ error: messages[verified.reason] }, 400, allHeaders)
     }
-    // Không còn cấp quà dùng thử ở đây (quyết định 2026-07-28) — trial 14 ngày giờ cấp NGAY
-    // lúc đăng ký/đăng nhập lần đầu (xem action 'register'/'google' + api/_lib/trial.ts). Xác
-    // thực email giờ chỉ còn mở khoá thưởng mời bạn (api/_lib/referral.ts) + khôi phục tài khoản.
-    return jsonResponse({ ok: true }, 200, allHeaders)
+    // Quà dùng thử Pro 14 ngày — chỉ lần đầu mỗi tài khoản, CHỈ SAU KHI xác thực email thành
+    // công (quyết định 2026-07-28, chốt lại lần 2 — xem api/_lib/trial.ts). Không để lỗi tặng
+    // quà làm hỏng việc xác thực: hàm này tự nuốt lỗi, trả false.
+    const trialGranted = await grantSignupTrial(auth.userId)
+    return jsonResponse({ ok: true, trialGranted, trialDays: SIGNUP_TRIAL_DAYS }, 200, allHeaders)
   }
 
   if (result.data.action === 'change-email') {

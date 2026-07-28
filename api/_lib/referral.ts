@@ -8,8 +8,9 @@ import { getPgPool } from './pgPool.js'
 import { grantPlanDays } from './planGrant.js'
 import { logSecurityEvent } from './security.js'
 
-// Số ngày Pro thưởng cho MỖI BÊN khi 1 lượt mời thành công.
-export const REFERRAL_REWARD_DAYS = 7
+// Số ngày Pro thưởng cho MỖI BÊN khi 1 lượt mời thành công (quyết định 2026-07-28: giảm từ
+// 7 xuống 3 ngày, đồng bộ với thang thưởng nhiệm vụ mới — xem api/_lib/quests.ts).
+export const REFERRAL_REWARD_DAYS = 3
 
 // Trần số lượt mời ĐƯỢC THƯỞNG trên mỗi tài khoản — chống cày tài khoản ảo hàng loạt.
 // Vượt trần: người được mời VẪN dùng app bình thường, chỉ là người mời không được thưởng thêm.

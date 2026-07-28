@@ -98,21 +98,25 @@ code trong nhiều file rời rạc.
     Anthropic/Groq/Google, chia (tiền tháng ÷ lượt tháng) rồi điền vào `.env` trên VPS. Chi phí
     TTS chưa tính (theo ký tự + có cache dùng chung, không tỉ lệ với số lượt).
 
-- **[2026-07-27, CHỐT LẠI 2026-07-28] Trial Pro 14 ngày TỰ ĐỘNG cho MỌI tài khoản mới (cùng
-  nhánh `claude/feature-usage-dashboard-378z5q`).** Thay cho phương án mở khuyến mãi Pro cho
-  TOÀN BỘ user hiện có (rủi ro: chi phí AI tăng ~x20 cho cả user cũ vốn không cần khuyến mãi
-  mới ở lại). Lịch sử quyết định (đổi 2 lần trong cùng ngày 2026-07-28, chốt bản CUỐI): bản
-  đầu cấp ngay lúc đăng ký → đổi sang chỉ cấp sau khi xác thực email → **CHỐT: bỏ hẳn điều
-  kiện xác thực, quay lại cấp NGAY lúc đăng ký/đăng nhập lần đầu cho MỌI kênh** (đơn giản hơn,
-  không cần người dùng phải làm thêm bước để nhận ưu đãi tăng trưởng).
+- **[2026-07-27, CHỐT LẠI 2026-07-28 — lần 3] Trial Pro 14 ngày (cùng nhánh
+  `claude/feature-usage-dashboard-378z5q`).** Thay cho phương án mở khuyến mãi Pro cho TOÀN
+  BỘ user hiện có (rủi ro: chi phí AI tăng ~x20 cho cả user cũ vốn không cần khuyến mãi mới ở
+  lại). Lịch sử quyết định (đổi 3 lần trong cùng ngày 2026-07-28, chốt bản CUỐI): (1) cấp ngay
+  lúc đăng ký → (2) đổi sang chỉ cấp sau khi xác thực email cho MỌI kênh → (3) **CHỐT: tách
+  theo kênh** — 4 kênh OAuth (Google/Facebook/Apple/Microsoft) coi như đã xác thực nên cấp
+  NGAY ở lần đăng nhập đầu tiên; riêng email/password PHẢI xác thực mã 6 số trước mới được
+  cấp (chống lạm dụng email rác tạo hàng loạt để cày trial — OAuth không cày kiểu này được vì
+  cần tài khoản Google/Facebook/Apple/Microsoft thật).
   - `postgres/migrations/0019_signup_trial.sql` — cột `profiles.signup_trial_granted_at`.
     `trial_granted_at` (0013, quà xác thực email 5 ngày cũ) giữ nguyên không xoá (dữ liệu lịch
     sử), chỉ ngừng ghi — hàm `grantEmailVerifyTrial()` cũ đã XOÁ khỏi `api/_lib/trial.ts`.
   - `api/_lib/trial.ts` — chỉ còn 1 hàm `grantSignupTrial()` (`SIGNUP_TRIAL_DAYS = 14`), cơ chế
     "giành quyền nhận 1 lần" atomic, dùng lại `grantPlanDays()`.
-  - `api/auth.ts` — cấp NGAY ở `register` (email/password) và ở mọi kênh OAuth khi `isNew`
-    (Google/Facebook/Apple, xem mục ngay dưới) qua hàm dùng chung `oauthLoginResponse()`.
-    `verify-email` KHÔNG còn liên quan tới trial (chỉ còn mở khoá thưởng mời bạn).
+  - `api/auth.ts` — `register` (email/password) KHÔNG cấp ngay, chỉ gửi mã xác thực;
+    `verify-email` gọi `grantSignupTrial()` sau khi xác thực đúng mã (response
+    `trialGranted`/`trialDays`, `EmailVerifySection.tsx` hiện lại đúng số ngày 14 — sửa luôn
+    dòng copy tĩnh "5 ngày" sót lại từ bản rất cũ). 4 kênh OAuth cấp NGAY khi `isNew` qua hàm
+    dùng chung `oauthLoginResponse()`.
   - ~~Còn mở: UI nhắc "còn X ngày dùng thử"~~ **ĐÃ LÀM (2026-07-28)** — xem mục "Banner còn X
     ngày dùng gói Pro/VIP" ngay dưới.
 
@@ -198,13 +202,17 @@ passed` (đã có sẵn từ trước, đồng bộ qua `/api/progress` khi thi)
      tự động gọi ngay sau khi thi đạt (chờ `pushProgressAsync()` đẩy xong lên server TRƯỚC —
      hàm mới thêm vào `progressSync.ts`, bản awaitable của `pushProgress()` fire-and-forget cũ
      — để tránh claim đọc phải dữ liệu cũ chưa kịp đồng bộ).
-  3. **"Mời bạn xác thực"** — KHÔNG đổi logic thưởng đã có (`api/_lib/referral.ts`), chỉ gộp
-     số liệu vào `GET /api/quests` để hiện chung 1 nơi.
+  3. **"Mời bạn xác thực"** — gộp số liệu vào `GET /api/quests` để hiện chung 1 nơi.
   - **Trang mới `/quests`** (`src/pages/Quests.tsx`) — hub duy nhất liệt kê cả 4 nhiệm vụ
     (gồm cả "Chia sẻ công khai" ở Phần 4), đọc `GET /api/quests` (`getQuestsStatus()`). Link
     vào từ Hồ sơ (`Profile.tsx`, thẻ "Nhiệm vụ" trước mục Nâng cấp Pro).
   - `postgres/migrations` — KHÔNG cần thêm migration mới (tái dùng bảng `quest_claims` của
     Phần 4, đúng mục tiêu thiết kế generic ban đầu).
+  - **[Chỉnh 2026-07-28] Thang thưởng chốt theo yêu cầu người dùng:** Chia sẻ công khai = 1
+    ngày Pro · Học liên tiếp 5 ngày = 1 ngày Pro (2 mục này giữ nguyên) · **Thi đạt cấp CEFR
+    tăng từ 1 → 3 ngày Pro** (`CEFR_EXAM_QUEST_REWARD_DAYS`, `api/_lib/quests.ts`) · **Mời bạn
+    xác thực giảm từ 7 → 3 ngày Pro/bên** (`REFERRAL_REWARD_DAYS`, `api/_lib/referral.ts`) —
+    UI (`Quests.tsx`, `ReferralSection.tsx`) đọc số ngày động từ API, không cần sửa thêm.
 
 - **[Kế hoạch 2026-07-22] Giao diện + nội dung theo độ tuổi** — nhánh
   `claude/ui-redesign-age-groups-rk71g8`. Ý tưởng: app đổi giao diện thị giác và giọng điệu nội
