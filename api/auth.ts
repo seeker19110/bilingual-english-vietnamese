@@ -5,6 +5,9 @@
 // POST /api/auth  body { action: 'register', email, name, password }
 // POST /api/auth  body { action: 'login', email, password }
 // POST /api/auth  body { action: 'google', idToken }
+// POST /api/auth  body { action: 'facebook', accessToken }
+// POST /api/auth  body { action: 'apple', idToken, name? }
+// POST /api/auth  body { action: 'microsoft', idToken }
 // POST /api/auth  body { action: 'logout' }               (cần Authorization: Bearer)
 // GET  /api/auth?action=me                                 (cần Authorization: Bearer)
 
@@ -14,6 +17,12 @@ import {
   verifyUserPassword,
   verifyGoogleIdToken,
   findOrCreateGoogleUser,
+  verifyFacebookAccessToken,
+  findOrCreateFacebookUser,
+  verifyAppleIdToken,
+  findOrCreateAppleUser,
+  verifyMicrosoftIdToken,
+  findOrCreateMicrosoftUser,
   createSession,
   revokeSession,
   ensureProfileRow,
@@ -29,7 +38,7 @@ import {
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { sendVerificationCode, verifyCode, isEmailVerified } from './_lib/emailVerification.js'
-import { grantEmailVerifyTrial, EMAIL_VERIFY_TRIAL_DAYS } from './_lib/trial.js'
+import { grantSignupTrial, SIGNUP_TRIAL_DAYS } from './_lib/trial.js'
 import { changeEmail } from './_lib/changeEmail.js'
 import { requestPasswordReset, resetPassword } from './_lib/passwordReset.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
@@ -57,6 +66,21 @@ const LoginSchema = z.object({
 })
 const GoogleSchema = z.object({
   action: z.literal('google'),
+  idToken: z.string().min(10),
+})
+const FacebookSchema = z.object({
+  action: z.literal('facebook'),
+  accessToken: z.string().min(10),
+})
+const AppleSchema = z.object({
+  action: z.literal('apple'),
+  idToken: z.string().min(10),
+  // Chỉ có ở LẦN ĐẦU đăng nhập (Apple chỉ gửi tên 1 lần duy nhất, xem authService.ts) —
+  // các lần sau không gửi, server tự dùng phần trước @ của email.
+  name: z.string().trim().min(1).max(80).optional(),
+})
+const MicrosoftSchema = z.object({
+  action: z.literal('microsoft'),
   idToken: z.string().min(10),
 })
 const LogoutSchema = z.object({ action: z.literal('logout') })
@@ -91,6 +115,9 @@ const BodySchema = z.union([
   RegisterSchema,
   LoginSchema,
   GoogleSchema,
+  FacebookSchema,
+  AppleSchema,
+  MicrosoftSchema,
   LogoutSchema,
   SendVerificationSchema,
   VerifyEmailSchema,
@@ -104,7 +131,7 @@ const BodySchema = z.union([
 function authResponse(
   token: string,
   user: { id: string; email: string },
-  profile: { plan: Plan; onboarded: boolean; name: string },
+  profile: { plan: Plan; onboarded: boolean; name: string; planExpiresAt: string | null },
 ) {
   return {
     token,
@@ -114,8 +141,29 @@ function authResponse(
       name: profile.name,
       plan: profile.plan,
       onboarded: profile.onboarded,
+      planExpiresAt: profile.planExpiresAt,
       createdAt: Date.now(),
     },
+  }
+}
+
+// Dùng chung cho mọi kênh OAuth (Google/Facebook/Apple) — luồng giống hệt nhau: tạo/lấy hồ
+// sơ, tạo phiên, cấp quà dùng thử NGAY nếu là tài khoản mới (isNew), rồi trả về đúng shape
+// authResponse (đọc lại profile SAU khi cấp quà để phản hồi đúng gói 'pro' ngay từ đầu, tránh
+// client hiện tạm 'free' rồi mới đổi).
+async function oauthLoginResponse(
+  user: { id: string; email: string },
+  isNew: boolean,
+  name: string,
+) {
+  await ensureProfileRow(user.id, name)
+  const token = await createSession(user.id)
+  const signupTrialGranted = isNew ? await grantSignupTrial(user.id) : false
+  const profile = await ensureProfileRow(user.id, name)
+  return {
+    ...authResponse(token, user, profile),
+    signupTrialGranted,
+    signupTrialDays: SIGNUP_TRIAL_DAYS,
   }
 }
 
@@ -147,6 +195,7 @@ export default async function handler(req: Request): Promise<Response> {
         name: profile.name,
         plan: profile.plan,
         onboarded: profile.onboarded,
+        planExpiresAt: profile.planExpiresAt,
         // Để UI biết có cần nhắc xác thực email không (xem src/components/EmailVerifySection.tsx).
         emailVerified: await isEmailVerified(auth.userId),
       },
@@ -173,7 +222,7 @@ export default async function handler(req: Request): Promise<Response> {
       // Không nói rõ "email đã tồn tại" để tránh dò email hàng loạt — trả lỗi chung.
       return jsonResponse({ error: 'Không đăng ký được tài khoản này' }, 409, allHeaders)
     }
-    const profile = await ensureProfileRow(user.id, name)
+    await ensureProfileRow(user.id, name)
     const token = await createSession(user.id)
     // Gửi mã xác thực ngay sau khi tạo tài khoản. KHÔNG chặn đăng ký nếu gửi lỗi/chưa cấu hình
     // SMTP — người dùng vẫn vào học được, chỉ là chưa mở khoá phần thưởng mời bạn (họ bấm
@@ -181,7 +230,21 @@ export default async function handler(req: Request): Promise<Response> {
     await sendVerificationCode(user.id).catch((err) => {
       console.error('[auth] Không gửi được mã xác thực lúc đăng ký:', err)
     })
-    return jsonResponse(authResponse(token, user, profile), 200, allHeaders)
+    // Quà dùng thử Pro 14 ngày — cấp NGAY lúc đăng ký, không chờ xác thực email (quyết định
+    // 2026-07-28: bỏ điều kiện xác thực, đổi lại thành trial tự động cho MỌI tài khoản mới).
+    // Đọc lại profile SAU khi cấp để phản hồi đúng ngay gói 'pro', tránh client hiện tạm
+    // 'free' rồi mới đổi. Xem api/_lib/trial.ts.
+    const signupTrialGranted = await grantSignupTrial(user.id)
+    const profile = await ensureProfileRow(user.id, name)
+    return jsonResponse(
+      {
+        ...authResponse(token, user, profile),
+        signupTrialGranted,
+        signupTrialDays: SIGNUP_TRIAL_DAYS,
+      },
+      200,
+      allHeaders,
+    )
   }
 
   if (result.data.action === 'login') {
@@ -199,10 +262,29 @@ export default async function handler(req: Request): Promise<Response> {
   if (result.data.action === 'google') {
     const info = await verifyGoogleIdToken(result.data.idToken)
     if (!info) return jsonResponse({ error: 'Google token không hợp lệ' }, 401, allHeaders)
-    const user = await findOrCreateGoogleUser(info.googleId, info.email)
-    const profile = await ensureProfileRow(user.id, info.name)
-    const token = await createSession(user.id)
-    return jsonResponse(authResponse(token, user, profile), 200, allHeaders)
+    const { user, isNew } = await findOrCreateGoogleUser(info.googleId, info.email)
+    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
+  }
+
+  if (result.data.action === 'facebook') {
+    const info = await verifyFacebookAccessToken(result.data.accessToken)
+    if (!info) return jsonResponse({ error: 'Facebook token không hợp lệ' }, 401, allHeaders)
+    const { user, isNew } = await findOrCreateFacebookUser(info.facebookId, info.email)
+    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
+  }
+
+  if (result.data.action === 'apple') {
+    const info = await verifyAppleIdToken(result.data.idToken, result.data.name)
+    if (!info) return jsonResponse({ error: 'Apple token không hợp lệ' }, 401, allHeaders)
+    const { user, isNew } = await findOrCreateAppleUser(info.appleId, info.email)
+    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
+  }
+
+  if (result.data.action === 'microsoft') {
+    const info = await verifyMicrosoftIdToken(result.data.idToken)
+    if (!info) return jsonResponse({ error: 'Microsoft token không hợp lệ' }, 401, allHeaders)
+    const { user, isNew } = await findOrCreateMicrosoftUser(info.microsoftId, info.email)
+    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
   }
 
   // ── Xác thực email (chống email giả cày thưởng mời bạn) ────────────────────
@@ -240,14 +322,10 @@ export default async function handler(req: Request): Promise<Response> {
       logSecurityEvent('EMAIL_VERIFY_FAILED', clientIp, { reason: verified.reason })
       return jsonResponse({ error: messages[verified.reason] }, 400, allHeaders)
     }
-    // Quà dùng thử Pro 5 ngày — chỉ lần đầu mỗi tài khoản (xem api/_lib/trial.ts).
-    // Không để lỗi tặng quà làm hỏng việc xác thực: hàm này tự nuốt lỗi, trả false.
-    const trialGranted = await grantEmailVerifyTrial(auth.userId)
-    return jsonResponse(
-      { ok: true, trialGranted, trialDays: EMAIL_VERIFY_TRIAL_DAYS },
-      200,
-      allHeaders,
-    )
+    // Không còn cấp quà dùng thử ở đây (quyết định 2026-07-28) — trial 14 ngày giờ cấp NGAY
+    // lúc đăng ký/đăng nhập lần đầu (xem action 'register'/'google' + api/_lib/trial.ts). Xác
+    // thực email giờ chỉ còn mở khoá thưởng mời bạn (api/_lib/referral.ts) + khôi phục tài khoản.
+    return jsonResponse({ ok: true }, 200, allHeaders)
   }
 
   if (result.data.action === 'change-email') {

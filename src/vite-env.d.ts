@@ -7,6 +7,9 @@ interface ImportMetaEnv {
   // Google OAuth Client ID (auth tự viết — an toàn public vì Client ID không phải secret,
   // chỉ dùng để Google biết app nào đang xin đăng nhập)
   readonly VITE_GOOGLE_CLIENT_ID: string
+  readonly VITE_FACEBOOK_APP_ID: string
+  readonly VITE_APPLE_CLIENT_ID: string
+  readonly VITE_MICROSOFT_CLIENT_ID: string
 }
 
 interface ImportMeta {

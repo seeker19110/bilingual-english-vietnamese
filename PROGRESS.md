@@ -78,6 +78,134 @@ code trong nhiều file rời rạc.
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-07-27] Dashboard "Sử dụng & chi phí" trong /admin — ĐÃ XONG (nhánh
+  `claude/feature-usage-dashboard-378z5q`).** Tab mới (mặc định) ở `/admin` trả lời 3 câu hỏi
+  vận hành: tính năng nào đáng giữ · chi phí AI bao nhiêu · doanh thu có bù nổi không.
+  - `api/admin-usage-stats.ts` (mới) — 11 truy vấn gộp: người dùng (tổng/mới/DAU/WAU/MAU/quay
+    lại/phân bổ gói hiệu lực) · lượt dùng + số người dùng THẬT của từng tính năng · lượt dùng
+    chia theo gói · doanh thu `payments` theo trạng thái/gói/chu kỳ/ngày · sức khoẻ kho lượt
+    tuần gói Free · top 10 người dùng nhiều nhất. Chỉ admin (`ADMIN_EMAILS`).
+  - `api/_lib/aiCost.ts` (mới) — đơn giá ƯỚC TÍNH USD/lượt cho từng chế độ, ghi đè được bằng
+    biến môi trường `AI_COST_*_USD` + `USD_VND_RATE` (đổi đơn giá KHÔNG cần deploy). Giá trị
+    rác/≤0 → giữ mặc định, KHÔNG rơi về 0 (số 0 trông như "miễn phí" → quyết định sai).
+  - **Vá lỗ hổng dữ liệu quan trọng:** gói Free tiêu lượt qua kho tuần (`weekly_ai_credit`) nên
+    trước đây KHÔNG hề ghi vào `daily_usage` → thống kê theo tính năng mù phần lớn người dùng.
+    `api/_lib/usage.ts` giờ ghi thêm vào `daily_usage` CHỈ ĐỂ THỐNG KÊ (hạn mức int4 max, không
+    bao giờ chặn; refund cũng trừ lại). Không đổi hành vi chặn lượt của bất kỳ gói nào.
+  - Khác `/api/analytics-summary` (phễu marketing từ `analytics_events`) — file mới đọc dữ liệu
+    vận hành thật. Lỗi DB → trả 500, KHÔNG fail-open thành số 0.
+  - **Còn mở:** đơn giá hiện là ước tính theo độ dài prompt điển hình. Khi có hoá đơn thật từ
+    Anthropic/Groq/Google, chia (tiền tháng ÷ lượt tháng) rồi điền vào `.env` trên VPS. Chi phí
+    TTS chưa tính (theo ký tự + có cache dùng chung, không tỉ lệ với số lượt).
+
+- **[2026-07-27, CHỐT LẠI 2026-07-28] Trial Pro 14 ngày TỰ ĐỘNG cho MỌI tài khoản mới (cùng
+  nhánh `claude/feature-usage-dashboard-378z5q`).** Thay cho phương án mở khuyến mãi Pro cho
+  TOÀN BỘ user hiện có (rủi ro: chi phí AI tăng ~x20 cho cả user cũ vốn không cần khuyến mãi
+  mới ở lại). Lịch sử quyết định (đổi 2 lần trong cùng ngày 2026-07-28, chốt bản CUỐI): bản
+  đầu cấp ngay lúc đăng ký → đổi sang chỉ cấp sau khi xác thực email → **CHỐT: bỏ hẳn điều
+  kiện xác thực, quay lại cấp NGAY lúc đăng ký/đăng nhập lần đầu cho MỌI kênh** (đơn giản hơn,
+  không cần người dùng phải làm thêm bước để nhận ưu đãi tăng trưởng).
+  - `postgres/migrations/0019_signup_trial.sql` — cột `profiles.signup_trial_granted_at`.
+    `trial_granted_at` (0013, quà xác thực email 5 ngày cũ) giữ nguyên không xoá (dữ liệu lịch
+    sử), chỉ ngừng ghi — hàm `grantEmailVerifyTrial()` cũ đã XOÁ khỏi `api/_lib/trial.ts`.
+  - `api/_lib/trial.ts` — chỉ còn 1 hàm `grantSignupTrial()` (`SIGNUP_TRIAL_DAYS = 14`), cơ chế
+    "giành quyền nhận 1 lần" atomic, dùng lại `grantPlanDays()`.
+  - `api/auth.ts` — cấp NGAY ở `register` (email/password) và ở mọi kênh OAuth khi `isNew`
+    (Google/Facebook/Apple, xem mục ngay dưới) qua hàm dùng chung `oauthLoginResponse()`.
+    `verify-email` KHÔNG còn liên quan tới trial (chỉ còn mở khoá thưởng mời bạn).
+  - ~~Còn mở: UI nhắc "còn X ngày dùng thử"~~ **ĐÃ LÀM (2026-07-28)** — xem mục "Banner còn X
+    ngày dùng gói Pro/VIP" ngay dưới.
+
+- **[2026-07-28] Banner "còn X ngày dùng gói Pro/VIP" (cùng nhánh trên).** Cùng khuôn mẫu
+  `PromoEndingBanner.tsx` đã có (hàm thuần tách riêng để test ca biên ngày tháng, component chỉ
+  lo hiển thị) — nhưng đọc HẠN GÓI CỦA TỪNG USER (`profiles.plan_expires_at`) thay vì mốc
+  khuyến mãi toàn site. Dùng chung cho CẢ 2 trường hợp (cùng 1 cột DB): trial 14 ngày mới cấp
+  lẫn gói trả phí sắp hết hạn — không phân biệt được nguồn gốc (trial hay gia hạn) vì
+  `grantPlanDays()` gộp chung, nhưng banner "còn X ngày, gia hạn ngay" đúng cho cả 2 trường hợp.
+  - **Vá lỗ hổng dữ liệu:** `plan_expires_at` trước đây được server QUERY nhưng KHÔNG BAO GIỜ
+    trả ra ngoài — `api/_lib/authService.ts` (`ProfileInfo`/`ensureProfileRow()`) và
+    `api/auth.ts` (`authResponse()` + `GET ?action=me`) nay trả thêm `planExpiresAt` (null nếu
+    Free hoặc gói vĩnh viễn — tránh hiểu nhầm "Free sắp hết hạn" từ giá trị cột cũ sót lại).
+  - `src/lib/planExpiryBanner.ts` (mới, hàm thuần + test) + `src/components/PlanExpiryBanner.tsx`
+    (mới) — cửa sổ cảnh báo 5 ngày, đóng thì ẩn hết ngày hôm đó (giờ VN), hôm sau hiện lại nếu
+    vẫn còn hạn. Bấm "Gia hạn ngay" điều hướng tới `/profile` (nơi có `UpgradeSection`).
+  - Gắn vào `RequireAuth` trong `App.tsx` (cạnh `PromoEndingBanner`) — hiện ở MỌI trang đã đăng
+    nhập + đã onboard (rộng hơn yêu cầu ban đầu "Dashboard/Profile", nhất quán với cách
+    `PromoEndingBanner` đã làm).
+
+- **[2026-07-28] Đăng nhập Facebook + Apple + Microsoft (cùng nhánh trên).** Thêm 3 kênh OAuth
+  mới cạnh Google đã có, dùng chung hạ tầng `findOrCreateOAuthUser()` (refactor
+  `findOrCreateGoogleUser` thành hàm generic theo cột `google_id`/`facebook_id`/`apple_id`/
+  `microsoft_id`).
+  - `postgres/migrations/0020_facebook_apple_login.sql` — cột `users.facebook_id`/`apple_id`;
+    `0022_microsoft_login.sql` — cột `users.microsoft_id` (cùng khuôn mẫu `google_id`).
+  - `api/_lib/authService.ts` — `verifyFacebookAccessToken()` (verify qua Graph API
+    `debug_token` + `/me`, cần `FACEBOOK_APP_ID`/`FACEBOOK_APP_SECRET`); `verifyAppleIdToken()`
+    và `verifyMicrosoftIdToken()` (verify chữ ký JWT qua JWKS công khai bằng thư viện `jose`
+    mới thêm — KHÔNG cần Client Secret/private key vì không dùng luồng đổi authorization code
+    phía server). Microsoft dùng authority `common` (chấp nhận cả tài khoản công ty/trường lẫn
+    cá nhân outlook.com/hotmail.com) nên issuer chứa tenant id động — verify bằng REGEX thay vì
+    so khớp chuỗi cố định như Apple/Google.
+  - `src/lib/auth.ts` — `loginWithFacebook()`/`loginWithApple()`/`loginWithMicrosoft()` (tải SDK
+    động — Facebook JS SDK, Sign in with Apple JS, MSAL.js — mở popup, gửi token về
+    `/api/auth`). `src/pages/Login.tsx` — 3 nút mới cạnh nút Google.
+  - `server.ts` — CSP `script-src` thêm `connect.facebook.net`, `appleid.cdn-apple.com`,
+    `alcdn.msauth.net`.
+  - **Lưu ý Apple:** email/tên CHỈ được gửi ở LẦN ĐẦU người dùng đồng ý chia sẻ — client PHẢI
+    gửi kèm ngay lúc đó (đã làm), các lần đăng nhập sau id_token vẫn có email (kể cả địa chỉ
+    ẩn danh `@privaterelay.appleid.com`) nhưng không có tên.
+  - **VIỆC TAY BẮT BUỘC (ngoài khả năng AI) trước khi 3 nút này hoạt động:** tạo Facebook App
+    tại developers.facebook.com (lấy `FACEBOOK_APP_ID`/`FACEBOOK_APP_SECRET`) + tạo Apple
+    Services ID tại developer.apple.com (cần tài khoản Apple Developer Program TRẢ PHÍ, lấy
+    `APPLE_CLIENT_ID`) + tạo App registration tại portal.azure.com (lấy `MICROSOFT_CLIENT_ID`,
+    chọn loại "any organizational directory and personal Microsoft accounts") — điền vào
+    `.env` trên VPS. Xem `.env.example` để biết chi tiết từng bước. Chưa điền thì nút vẫn hiện
+    nhưng bấm vào sẽ báo lỗi kết nối (fail rõ ràng, không vỡ trang).
+  - **Chưa chạy migration `npm run migrate:pg`** — cần chạy trước khi deploy (gồm cả `0019`-
+    `0022` — xem mục nhiệm vụ ngay dưới).
+
+- **[2026-07-28] Nhiệm vụ (quest) cho user — mở đầu bằng "Chia sẻ công khai" (cùng nhánh
+  trên).** Nghiên cứu hạ tầng sẵn có (challenge/referral/weekly credit) rồi dựng bảng generic
+  `quest_claims` (khoá theo `user_id` + `quest_key` + thời gian hồi) để MỞ THÊM nhiệm vụ mới
+  sau này chỉ cần thêm hằng số, không cần migration mới — xem `api/_lib/quests.ts`.
+  - `postgres/migrations/0021_quest_claims.sql` — bảng `quest_claims` + hàm SQL atomic
+    `claim_quest_if_ready(user_id, quest_key, cooldown_days)`.
+  - Nhiệm vụ đầu tiên: **"Chia sẻ công khai"** — bấm "Chia sẻ kết quả" (màn chấm điểm Chat/
+    Challenge, `ShareResultCard.tsx`) và Web Share API xác nhận đã chọn nơi chia sẻ (không huỷ)
+    → thưởng **+1 ngày gói Pro**, hồi sau **7 ngày** (khớp cửa sổ trượt gói Free) — API
+    `POST /api/quests { action: 'claim-share' }`.
+  - ⚠️ **CẢNH BÁO ĐÃ CHỦ ĐỘNG NÊU (chưa xin thêm xác nhận, đã triển khai với rate-limit là lớp
+    phòng thủ duy nhất):** Web Share API KHÔNG cho server biết người dùng có thật sự đăng công
+    khai hay không — chỉ biết họ đã mở hộp thoại chia sẻ hệ điều hành và không bấm huỷ. Về mặt
+    lý thuyết một tài khoản có thể tự thưởng cho mình 1 ngày Pro mỗi 7 ngày mà không cần chia
+    sẻ thật (mở hộp thoại rồi chọn "Sao chép liên kết" gửi cho chính mình). Đã chấp nhận rủi ro
+    này ở QUY MÔ HIỆN TẠI (giá trị thấp — 1 ngày Pro/7 ngày, không đáng để cày công phu). Nếu
+    sau này phát hiện lạm dụng thật: cân nhắc thêm `device_hash` như referral (migration 0008)
+    hoặc đổi thưởng sang phi tiền tệ (huy hiệu...).
+- **[2026-07-28] 3 nhiệm vụ verify server-side ĐÃ LÀM (tiếp Phần 4 ở trên, cùng nhánh).** Cả 3
+  đều tính lại TỪ DB, không tin số liệu client gửi lên trực tiếp.
+  1. **"Học liên tiếp 5 ngày"** (`streak_5`) — `getCurrentStreak()` đếm streak NGAY TỪ SERVER
+     dựa trên `free_daily_credit.bonus_earned` (bảng này được `api/progress.ts` ghi mỗi khi
+     phát hiện tiến độ học TĂNG THẬT — learned/hard/cefrGrammar/cefrDialogues dài ra so với
+     bản lưu trước — áp dụng cho MỌI gói, không riêng Free). Thưởng +1 ngày Pro, hồi sau 7
+     ngày. `POST /api/quests { action: 'claim-streak' }`.
+  2. **"Thi đạt cấp CEFR"** (`cefr_exam_<LEVEL>`) — đọc `learning_progress.cefr_exams[level].
+passed` (đã có sẵn từ trước, đồng bộ qua `/api/progress` khi thi). Cùng MỨC TIN CẬY với
+     luật mở khoá cấp tiếp theo app đã dùng từ trước — không phải lỗ hổng mới do nhiệm vụ này
+     tạo ra. Thưởng +1 ngày Pro/cấp, một lần duy nhất mãi mãi mỗi cấp (mô phỏng bằng cooldown
+     36.500 ngày, tái dùng đúng 1 cơ chế `claim_quest_if_ready`, không thêm bảng riêng).
+     `POST /api/quests { action: 'claim-cefr-exam', level }`. `src/components/CefrExam.tsx`
+     tự động gọi ngay sau khi thi đạt (chờ `pushProgressAsync()` đẩy xong lên server TRƯỚC —
+     hàm mới thêm vào `progressSync.ts`, bản awaitable của `pushProgress()` fire-and-forget cũ
+     — để tránh claim đọc phải dữ liệu cũ chưa kịp đồng bộ).
+  3. **"Mời bạn xác thực"** — KHÔNG đổi logic thưởng đã có (`api/_lib/referral.ts`), chỉ gộp
+     số liệu vào `GET /api/quests` để hiện chung 1 nơi.
+  - **Trang mới `/quests`** (`src/pages/Quests.tsx`) — hub duy nhất liệt kê cả 4 nhiệm vụ
+    (gồm cả "Chia sẻ công khai" ở Phần 4), đọc `GET /api/quests` (`getQuestsStatus()`). Link
+    vào từ Hồ sơ (`Profile.tsx`, thẻ "Nhiệm vụ" trước mục Nâng cấp Pro).
+  - `postgres/migrations` — KHÔNG cần thêm migration mới (tái dùng bảng `quest_claims` của
+    Phần 4, đúng mục tiêu thiết kế generic ban đầu).
+
 - **[Kế hoạch 2026-07-22] Giao diện + nội dung theo độ tuổi** — nhánh
   `claude/ui-redesign-age-groups-rk71g8`. Ý tưởng: app đổi giao diện thị giác và giọng điệu nội
   dung theo nhóm tuổi người dùng, đặc biệt nhóm Nhi đồng cần giao diện vui nhộn hơn hẳn. Đã

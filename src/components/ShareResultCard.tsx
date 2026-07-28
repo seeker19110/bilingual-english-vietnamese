@@ -10,6 +10,8 @@ import { Share2 } from 'lucide-react'
 import { useState } from 'react'
 import { track } from '../lib/analytics'
 import { fetchReferralStats, buildReferralLink } from '../lib/referral'
+import { claimShareQuest } from '../lib/quests'
+import { useToast } from '../context/ToastProvider'
 
 const BASE_URL =
   (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, '') ||
@@ -103,6 +105,7 @@ export default function ShareResultCard({
   appName = 'Gia sư tiếng Anh AI',
 }: ShareResultCardProps) {
   const [busy, setBusy] = useState(false)
+  const toast = useToast()
 
   async function handleShare() {
     // Gọi track TRƯỚC khi chia sẻ/tải — không block nếu track lỗi (track() tự nuốt lỗi mạng).
@@ -136,6 +139,17 @@ export default function ShareResultCard({
         try {
           // Kèm link mời dạng CHỮ nữa: ảnh thì đẹp nhưng bấm không được, người nhận phải gõ tay.
           await nav.share({ files: [file], title, text: `${title}\n${linkText}` })
+          // Promise chỉ resolve khi người dùng ĐÃ CHỌN nơi chia sẻ (không huỷ) — tín hiệu tốt
+          // nhất hiện có, dù KHÔNG chứng minh được họ đã đăng công khai thật (xem cảnh báo ở
+          // api/_lib/quests.ts). Gọi sau khi share xong, không chặn/làm chậm luồng share.
+          void claimShareQuest().then((days) => {
+            if (!days) return
+            toast.success(
+              isA
+                ? `Cảm ơn bạn đã chia sẻ! Tặng thêm ${days} ngày dùng gói Pro 🎁`
+                : `Thanks for sharing! Here's ${days} extra day of Pro on us 🎁`,
+            )
+          })
           return
         } catch {
           // Người dùng huỷ chia sẻ hoặc trình duyệt lỗi — rơi xuống tải file bên dưới.

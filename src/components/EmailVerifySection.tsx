@@ -3,7 +3,8 @@
 //
 // Vì sao không ép xác thực mới cho học: app miễn phí cho cộng đồng, chặn cứng sẽ đuổi cả người
 // học thật (mail vào spam, gõ nhầm email, học sinh không rành). Xác thực chỉ mở khoá phần
-// THƯỞNG mời bạn (api/_lib/referral.ts) và quà dùng thử Pro 5 ngày (api/_lib/trial.ts).
+// THƯỞNG mời bạn (api/_lib/referral.ts) — quà dùng thử Pro 14 ngày (api/_lib/trial.ts) đã cấp
+// tự động ngay lúc đăng ký/đăng nhập lần đầu, không còn gắn với việc xác thực email nữa.
 
 import { useState } from 'react'
 import { MailCheck, Loader2 } from 'lucide-react'
@@ -17,8 +18,6 @@ async function postAuth(body: Record<string, unknown>): Promise<{
   ok: boolean
   error?: string
   mail?: MailStatus
-  trialGranted?: boolean
-  trialDays?: number
 }> {
   try {
     const res = await fetch('/api/auth', {
@@ -29,12 +28,8 @@ async function postAuth(body: Record<string, unknown>): Promise<{
     const data = (await res.json().catch(() => ({}))) as {
       error?: string
       mail?: MailStatus
-      trialGranted?: boolean
-      trialDays?: number
     }
-    return res.ok
-      ? { ok: true, mail: data.mail, trialGranted: data.trialGranted, trialDays: data.trialDays }
-      : { ok: false, error: data.error }
+    return res.ok ? { ok: true, mail: data.mail } : { ok: false, error: data.error }
   } catch {
     return { ok: false, error: 'Lỗi kết nối, thử lại sau' }
   }
@@ -143,18 +138,7 @@ export default function EmailVerifySection({
     const r = await postAuth({ action: 'verify-email', code: code.trim() })
     setVerifying(false)
     if (r.ok) {
-      // Chỉ khoe quà khi server XÁC NHẬN vừa cấp (trialGranted) — người xác thực lại lần sau
-      // (vd sau khi đổi email) không được nhận nữa, không hứa hão.
-      const days = r.trialDays ?? 5
-      toast.success(
-        r.trialGranted
-          ? isA
-            ? `Đã xác thực email! Tặng bạn ${days} ngày dùng thử gói Pro 🎁`
-            : `Email verified! Enjoy ${days} days of Pro on us 🎁`
-          : isA
-            ? 'Đã xác thực email!'
-            : 'Email verified!',
-      )
+      toast.success(isA ? 'Đã xác thực email!' : 'Email verified!')
       onVerified()
     } else {
       toast.error(r.error ?? (isA ? 'Mã không đúng' : 'Invalid code'))

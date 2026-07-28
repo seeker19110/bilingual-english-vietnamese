@@ -44,7 +44,9 @@ import appSettingsHandler from './api/app-settings.js'
 import adminGrantPlanHandler from './api/admin-grant-plan.js'
 import analyticsHandler from './api/analytics.js'
 import analyticsSummaryHandler from './api/analytics-summary.js'
+import adminUsageStatsHandler from './api/admin-usage-stats.js'
 import referralHandler from './api/referral.js'
+import questsHandler from './api/quests.js'
 import planPricesHandler from './api/plan-prices.js'
 import checkoutHandler from './api/checkout.js'
 import paymentWebhookHandler from './api/payment-webhook.js'
@@ -68,8 +70,13 @@ const app = express()
 // style-src thêm https://accounts.google.com: nút/khung Google Identity Services tự chèn
 // thẻ <link> tải stylesheet https://accounts.google.com/gsi/style — thiếu domain này sẽ bị
 // CSP chặn (lỗi "violates style-src directive"), khiến nút đăng nhập Google mất style/không hiện.
+// https://connect.facebook.net: tải Facebook JS SDK (đăng nhập Facebook, src/lib/auth.ts
+// loadFacebookScript()). https://appleid.cdn-apple.com: tải Sign in with Apple JS
+// (loadAppleScript()). https://alcdn.msauth.net: tải MSAL.js (đăng nhập Microsoft,
+// loadMicrosoftScript()). Cả 3 mở popup (window mới), KHÔNG nhúng iframe trong trang như
+// Google One Tap, nên KHÔNG cần thêm vào frame-src.
 const CSP_HEADER =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://accounts.google.com; frame-ancestors 'self'"
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://accounts.google.com https://connect.facebook.net https://appleid.cdn-apple.com https://alcdn.msauth.net; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://accounts.google.com; frame-ancestors 'self'"
 
 // Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
 app.disable('x-powered-by')
@@ -177,7 +184,9 @@ app.all('/api/app-settings', wrapEdge(appSettingsHandler))
 app.all('/api/admin-grant-plan', wrapEdge(adminGrantPlanHandler))
 app.all('/api/analytics', wrapEdge(analyticsHandler))
 app.all('/api/analytics-summary', wrapEdge(analyticsSummaryHandler))
+app.all('/api/admin-usage-stats', wrapEdge(adminUsageStatsHandler))
 app.all('/api/referral', wrapEdge(referralHandler))
+app.all('/api/quests', wrapEdge(questsHandler))
 app.all('/api/plan-prices', wrapEdge(planPricesHandler))
 app.all('/api/checkout', wrapEdge(checkoutHandler))
 app.all('/api/payment-webhook', wrapEdge(paymentWebhookHandler))

@@ -31,6 +31,8 @@ import ExamQuestionCard from './ExamQuestionCard'
 import { PART_META } from '../lib/examParts'
 import { checkNewAchievements, achievementMessage } from '../lib/achievements'
 import { useToast } from '../context/ToastProvider'
+import { pushProgressAsync } from '../lib/progressSync'
+import { claimCefrExamQuest } from '../lib/quests'
 
 export default function CefrExam({
   uid,
@@ -143,12 +145,29 @@ export default function CefrExam({
       // Chấm điểm + lưu kết quả (giữ điểm cao nhất, đồng bộ Supabase).
       const correct = newAnswers.filter(Boolean).length
       const s = scoreExam(correct, questions.length)
-      saveExamAttempt(uid, level.id, s.pct)
+      const attemptResult = saveExamAttempt(uid, level.id, s.pct)
       setSavedPct(s.pct)
       setDone(true)
       stopSpeaking()
       // Huy hiệu "Qua cấp X" (② M2) — kiểm tra sau khi lưu kết quả thi.
       for (const a of checkNewAchievements(uid)) toast.success(achievementMessage(a, isA))
+      // Nhiệm vụ "Thi đạt cấp CEFR" (+1 ngày Pro) — server tự đọc lại learning_progress để xác
+      // minh, nên phải CHỜ đẩy xong tiến độ mới nhất lên trước khi gọi claim (saveExamAttempt
+      // chỉ bắn-rồi-quên qua pushProgress ở trên, không đủ để chắc server đã có dữ liệu mới).
+      // Không chặn UI — chạy nền, chỉ báo nếu thành công.
+      if (attemptResult.passed) {
+        void (async () => {
+          await pushProgressAsync(uid)
+          const days = await claimCefrExamQuest(level.id)
+          if (days) {
+            toast.success(
+              isA
+                ? `Chúc mừng qua cấp ${level.id}! Tặng thêm ${days} ngày dùng gói Pro 🎁`
+                : `Congrats on passing ${level.id}! Here's ${days} extra day of Pro on us 🎁`,
+            )
+          }
+        })()
+      }
     } else {
       setCurrent((c) => c + 1)
       setSelected(null)

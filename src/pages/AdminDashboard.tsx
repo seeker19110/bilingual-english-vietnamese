@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { Sliders, ShieldCheck, BarChart3 } from 'lucide-react'
+import { Sliders, ShieldCheck, BarChart3, Activity } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import AdminLimitsPanel from '../components/admin/AdminLimitsPanel'
 import AdminGrantPlanPanel from '../components/admin/AdminGrantPlanPanel'
 import AdminAnalyticsPanel from '../components/admin/AdminAnalyticsPanel'
+import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 
 // Trang khung tổng quản trị (/admin) — gom các mục quản trị vào 1 nơi, điều hướng bằng tab.
 // Quyền admin do SERVER tự kiểm (ADMIN_EMAILS trong .env, xem api/_lib/adminAuth.ts) — client
@@ -14,16 +15,19 @@ import AdminAnalyticsPanel from '../components/admin/AdminAnalyticsPanel'
 // Ghi chú: tab "Chặn tên tài khoản giả danh" CHƯA thêm vì chưa thấy code liên quan
 // (vd api/_lib/reservedNames.ts) trong repo lúc viết trang này — không bịa UI cho tính năng
 // chưa tồn tại. Thêm lại khi tính năng đó có thật.
-type TabKey = 'limits' | 'grant-plan' | 'analytics'
+type TabKey = 'usage' | 'limits' | 'grant-plan' | 'analytics'
 
 const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
+  // "Sử dụng & chi phí" để đầu tiên và là tab mặc định — đây là màn cần nhìn mỗi ngày để
+  // quyết định chỉnh hạn mức/giá, các tab còn lại chỉ mở khi cần thao tác cụ thể.
+  { key: 'usage', label: 'Sử dụng & chi phí', icon: Activity },
   { key: 'limits', label: 'Hạn mức & khuyến mãi', icon: Sliders },
   { key: 'grant-plan', label: 'Cấp gói tay', icon: ShieldCheck },
   { key: 'analytics', label: 'Analytics', icon: BarChart3 },
 ]
 
 export default function AdminDashboard() {
-  const [tab, setTab] = useState<TabKey>('limits')
+  const [tab, setTab] = useState<TabKey>('usage')
 
   return (
     <div className="min-h-dvh bg-zinc-950">
@@ -59,6 +63,7 @@ export default function AdminDashboard() {
           </nav>
 
           <div className="flex-1 min-w-0 space-y-4">
+            {tab === 'usage' && <AdminUsagePanel />}
             {tab === 'limits' && <AdminLimitsPanel />}
             {tab === 'grant-plan' && <AdminGrantPlanPanel />}
             {tab === 'analytics' && <AdminAnalyticsPanel />}
