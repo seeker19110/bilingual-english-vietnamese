@@ -76,7 +76,7 @@ tên. Không cần làm gì thêm.
    VITE_MICROSOFT_CLIENT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
    ```
    Không cần Client Secret — MSAL.js chạy hoàn toàn phía trình duyệt (Authorization Code Flow
-   + PKCE), server chỉ verify chữ ký JWT qua JWKS công khai của Microsoft.
+   - PKCE), server chỉ verify chữ ký JWT qua JWKS công khai của Microsoft.
 
 ---
 
@@ -93,10 +93,10 @@ app đúng, tài khoản mới xuất hiện trong bảng `users` (Postgres).
 
 ## 5. Sự cố thường gặp
 
-| Lỗi | Nguyên nhân | Cách sửa |
-|---|---|---|
-| Facebook: "URL Blocked" | Domain chưa khớp **Valid OAuth Redirect URIs** | Thêm đúng domain, có dấu `/` cuối |
-| Facebook: đăng nhập được nhưng chỉ với vài tài khoản | App còn ở chế độ "Development" | Chuyển app sang "Live" ở App Review |
-| Apple: "invalid_client" | Domain/Return URL ở Services ID không khớp domain thật | Sửa lại Domains/Return URLs cho đúng `https://` + domain |
-| Microsoft: "AADSTS50011: redirect URI mismatch" | Redirect URI đăng ký sai loại (Web thay vì SPA) hoặc thiếu `/` cuối | Xóa, đăng ký lại đúng loại **SPA** |
-| Đăng nhập xong nhưng lỗi "Server chưa cấu hình ..." | Thiếu biến server-side (`FACEBOOK_APP_SECRET`, `APPLE_CLIENT_ID`, `MICROSOFT_CLIENT_ID`) | Kiểm tra lại `.env` trên VPS, restart PM2 |
+| Lỗi                                                  | Nguyên nhân                                                                              | Cách sửa                                                 |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Facebook: "URL Blocked"                              | Domain chưa khớp **Valid OAuth Redirect URIs**                                           | Thêm đúng domain, có dấu `/` cuối                        |
+| Facebook: đăng nhập được nhưng chỉ với vài tài khoản | App còn ở chế độ "Development"                                                           | Chuyển app sang "Live" ở App Review                      |
+| Apple: "invalid_client"                              | Domain/Return URL ở Services ID không khớp domain thật                                   | Sửa lại Domains/Return URLs cho đúng `https://` + domain |
+| Microsoft: "AADSTS50011: redirect URI mismatch"      | Redirect URI đăng ký sai loại (Web thay vì SPA) hoặc thiếu `/` cuối                      | Xóa, đăng ký lại đúng loại **SPA**                       |
+| Đăng nhập xong nhưng lỗi "Server chưa cấu hình ..."  | Thiếu biến server-side (`FACEBOOK_APP_SECRET`, `APPLE_CLIENT_ID`, `MICROSOFT_CLIENT_ID`) | Kiểm tra lại `.env` trên VPS, restart PM2                |
