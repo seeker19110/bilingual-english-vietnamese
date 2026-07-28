@@ -74,9 +74,40 @@ trong `.env`) cho chỉnh 15 hạn mức + bật/tắt khuyến mãi lưu trong 
 app qua ETag/If-None-Match, không fetch thừa khi chưa đổi gì) đều đọc từ đây, không còn hard-
 code trong nhiều file rời rạc.
 
+**Quản trị VIP/gói (2026-07-28):** Danh sách VIP whitelist (thêm/xoá email → tự cấp/hạ VIP vĩnh
+viễn, kể cả người chưa đăng ký) + Ma trận tính năng theo gói Free/Pro/VIP (admin bật/tắt từng
+tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem chi tiết trong "Tiếp theo" và
+`docs/` liên quan nếu cần đào sâu.
+
 ## Tiếp theo
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
+
+- **[2026-07-28] Danh sách VIP whitelist + Ma trận tính năng theo gói (Free/Pro/VIP) trong
+  `/admin` — ĐÃ XONG, ĐÃ MERGE (PR #357).** 2 tính năng quản trị mới, tự chạy migration qua CI/CD
+  (`npm run migrate:pg` trong pipeline deploy, không cần chạy tay):
+  - **Danh sách VIP** (tab "Danh sách VIP") — bảng `vip_whitelist` (migration `0023`), admin
+    thêm/xoá email. Thêm email → cấp VIP vĩnh viễn ngay nếu user đã có tài khoản, hoặc tự cấp lúc
+    người đó đăng ký sau này (`ensureProfileRow`, `api/_lib/authService.ts`). Xoá → hạ về Free
+    ngay (chỉ áp dụng cho VIP vĩnh viễn do whitelist cấp, không đụng VIP đã mua qua thanh toán có
+    hạn). API: `api/admin-vip-whitelist.ts`.
+  - **Ma trận tính năng theo gói** (tab "Tính năng theo gói") — 2 bảng mới `feature_catalog` +
+    `plan_feature_flags` (migration `0024`): danh mục tính năng × 3 gói, mỗi ô bật/tắt độc lập,
+    admin thêm/xoá tính năng được. Seed mặc định khớp đúng hành vi cũ (không đổi trải nghiệm ai):
+    10 tính năng bật cho cả 3 gói (chat/writing/speaking/learning_path/dictionary/lessons/
+    phrases/mistake_bank/challenge/quests) + `dialogue_roleplay` chỉ Pro/VIP (khớp gate `isPro`
+    cũ ở `CefrLessonViews.tsx`, nay đọc động từ ma trận). API: `api/plan-features.ts` (public,
+    ETag, cùng pattern `app-settings.ts`) + `api/admin-plan-features.ts` (admin). Client:
+    `src/lib/planFeatures.ts` (đồng bộ cùng nhịp `app-settings`) + `FeatureGate.tsx` bọc quanh
+    route — khoá + hiện màn "Nâng cấp gói" nếu admin tắt tính năng đó cho gói của user. Đây là
+    khoá phía UI/trải nghiệm (giống voice tiers/role-play cũ) — KHÔNG phải chống gian lận; hạn
+    mức lượt AI/ngày vẫn enforce riêng ở `api/_lib/usage.ts`, không đổi.
+  - Ẩn link "Cấu hình hệ thống (Admin)" khỏi trang Hồ sơ với user thường — chỉ hiện khi
+    `user.isAdmin` (cờ mới, server tính từ `ADMIN_EMAILS`, trả qua `/api/auth?action=me`). Chỉ ẩn
+    UI; mọi API admin vẫn tự kiểm quyền phía server như cũ (`isAdminEmail`).
+  - CI ban đầu đỏ 3 lần (typecheck 2 lỗi kiểu, format Prettier 2 file, CSS bundle vượt ngân sách
+    10kB đúng 31 byte do class `accent-accent-500` mới chưa dùng ở đâu khác) — đã sửa cả 3, CI
+    xanh (quality + e2e) trước khi merge.
 
 - **[2026-07-28] FIX: streak/từ đã thuộc hiện 0 trên thiết bị mới dù đã đồng bộ server — ĐÃ
   XONG.** Người dùng báo Dashboard hiện "0 ngày liên tiếp"/"0 từ đã thuộc" dù đã học trên máy
