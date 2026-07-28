@@ -126,7 +126,10 @@ export default function UpgradeSection({
   const ss = String(secondsLeft % 60).padStart(2, '0')
 
   return (
-    <section className="bg-zinc-900/80 border border-amber-500/30 rounded-2xl p-4 animate-fade-in">
+    <section
+      id="upgrade-section"
+      className="bg-zinc-900/80 border border-amber-500/30 rounded-2xl p-4 animate-fade-in scroll-mt-4"
+    >
       <div className="flex items-center gap-2 mb-3">
         <Crown className="w-4 h-4 text-amber-400" />
         <h2 className="text-sm font-semibold text-white">

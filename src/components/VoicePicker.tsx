@@ -43,8 +43,16 @@ export default function VoicePicker({ plan, isA }: Props) {
   // "31/12/2026" nên admin đổi mốc là banner nói sai.
   const { promoUntil } = getAppSettings()
 
+  // Giọng ngoài quyền gói: bấm vào KHÔNG chọn giọng, thay vào đó cuộn thẳng xuống khối
+  // "Nâng cấp Pro/VIP" (UpgradeSection.tsx, id="upgrade-section", cùng nằm trên trang Hồ sơ) —
+  // đỡ người dùng phải tự tìm nút nâng cấp ở đâu khi thấy giọng bị khoá.
   function choose(v: Voice) {
-    if (!allowed.has(v)) return
+    if (!allowed.has(v)) {
+      document
+        .getElementById('upgrade-section')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
     setVoice(v)
     setVoicePref(v)
   }
@@ -145,12 +153,12 @@ export default function VoicePicker({ plan, isA }: Props) {
                   key={v.id}
                   type="button"
                   onClick={() => choose(v.id)}
-                  disabled={!isAllowed}
+                  aria-disabled={!isAllowed}
                   title={
                     !isAllowed
                       ? isA
-                        ? 'Nâng cấp gói Pro/VIP để mở khoá giọng này'
-                        : 'Upgrade to Pro/VIP to unlock this voice'
+                        ? 'Nâng cấp gói Pro/VIP để mở khoá giọng này — bấm để xem gói'
+                        : 'Upgrade to Pro/VIP to unlock this voice — tap to see plans'
                       : isEleven
                         ? `${v.id}${elevenHint}`
                         : isStudio
@@ -159,13 +167,13 @@ export default function VoicePicker({ plan, isA }: Props) {
                             ? v.id
                             : `${v.id}${slowHint}`
                   }
-                  aria-pressed={isSelected}
+                  aria-pressed={isAllowed ? isSelected : undefined}
                   className={`relative flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-medium border transition ${
                     isSelected
                       ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
                       : isAllowed
                         ? 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
-                        : 'bg-zinc-900/50 border-zinc-800/60 text-zinc-600 cursor-not-allowed'
+                        : 'bg-zinc-900/50 border-zinc-800/60 text-zinc-600 hover:border-amber-500/50 hover:text-amber-400 cursor-pointer'
                   }`}
                 >
                   {!isAllowed && <Lock className="w-3 h-3 shrink-0" />}
