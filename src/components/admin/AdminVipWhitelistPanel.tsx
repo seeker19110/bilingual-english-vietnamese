@@ -133,7 +133,11 @@ export default function AdminVipWhitelistPanel() {
           disabled={adding}
           className="tap-44 w-full flex items-center justify-center gap-2 rounded-xl bg-accent-500 text-white font-semibold py-3 disabled:opacity-60"
         >
-          {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+          {adding ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <ShieldCheck className="w-4 h-4" />
+          )}
           Thêm vào danh sách VIP
         </button>
       </section>

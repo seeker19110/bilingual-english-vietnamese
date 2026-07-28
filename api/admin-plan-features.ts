@@ -75,7 +75,8 @@ export default async function handler(req: Request): Promise<Response> {
     if (!bodyResult.ok)
       return jsonResponse({ error: bodyResult.error.message }, bodyResult.error.status, allHeaders)
     const parsed = validateBody(ToggleSchema, bodyResult.raw)
-    if (!parsed.ok) return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
+    if (!parsed.ok)
+      return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
     const { featureKey, plan, enabled } = parsed.data
 
     const result = await pool.query(
@@ -97,7 +98,8 @@ export default async function handler(req: Request): Promise<Response> {
     if (!bodyResult.ok)
       return jsonResponse({ error: bodyResult.error.message }, bodyResult.error.status, allHeaders)
     const parsed = validateBody(CreateSchema, bodyResult.raw)
-    if (!parsed.ok) return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
+    if (!parsed.ok)
+      return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
     const { key, label, description } = parsed.data
 
     const client = await pool.connect()
@@ -137,7 +139,8 @@ export default async function handler(req: Request): Promise<Response> {
     if (!bodyResult.ok)
       return jsonResponse({ error: bodyResult.error.message }, bodyResult.error.status, allHeaders)
     const parsed = validateBody(DeleteSchema, bodyResult.raw)
-    if (!parsed.ok) return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
+    if (!parsed.ok)
+      return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
     const { key } = parsed.data
 
     await pool.query('delete from public.feature_catalog where key = $1', [key])
