@@ -55,6 +55,7 @@ import checkoutHandler from './api/checkout.js'
 import paymentWebhookHandler from './api/payment-webhook.js'
 import paymentStatusHandler from './api/payment-status.js'
 import paymentHistoryHandler from './api/payment-history.js'
+import avatarVisemesHandler from './api/avatar-visemes.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 
 const app = express()
@@ -198,6 +199,7 @@ app.all('/api/checkout', wrapEdge(checkoutHandler))
 app.all('/api/payment-webhook', wrapEdge(paymentWebhookHandler))
 app.all('/api/payment-status', wrapEdge(paymentStatusHandler))
 app.all('/api/payment-history', wrapEdge(paymentHistoryHandler))
+app.all('/api/avatar-visemes', wrapEdge(avatarVisemesHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
