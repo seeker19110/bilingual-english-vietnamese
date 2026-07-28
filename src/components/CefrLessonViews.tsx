@@ -1170,7 +1170,7 @@ export function DialogueView({
                 aria-expanded={rolePicker}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition ${
                   rolePicker
-                    ? 'bg-fuchsia-500/20 text-fuchsia-300 theme-light:text-fuchsia-800'
+                    ? 'bg-violet-500/20 text-violet-300 theme-light:text-violet-800'
                     : 'bg-zinc-800 text-zinc-300 hover:text-white'
                 }`}
               >
@@ -1342,7 +1342,7 @@ export function DialogueView({
                   className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border transition-all ${
                     isActive
                       ? isMyTurn
-                        ? 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-fuchsia-500/70 animate-pulse'
+                        ? 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-accent-500/60 animate-pulse'
                         : 'ring-2 ring-offset-1 ring-offset-zinc-950 ring-accent-500/60'
                       : ''
                   } ${isB ? `${accent.soft} ${accent.ring}` : 'bg-zinc-900/80 border-zinc-800/80'}`}
@@ -1364,7 +1364,7 @@ export function DialogueView({
                           ? (dialogue.speakerB?.vi ?? 'B')
                           : (dialogue.speakerB?.en ?? 'B')}
                       {isMyTurn && (
-                        <span className="ml-1.5 text-fuchsia-400 theme-light:text-fuchsia-700">
+                        <span className="ml-1.5 text-violet-400 theme-light:text-violet-800">
                           {isA ? '· đến lượt bạn' : '· your turn'}
                         </span>
                       )}
@@ -1412,7 +1412,7 @@ export function DialogueView({
                         <button
                           onClick={() => void beginRolePlayRecording()}
                           disabled={!canRecord}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-fuchsia-500/20 hover:bg-fuchsia-500/30 disabled:opacity-50 text-fuchsia-300 theme-light:text-fuchsia-800 text-xs font-semibold transition"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-500/20 hover:bg-violet-500/30 disabled:opacity-50 text-violet-300 theme-light:text-violet-800 text-xs font-semibold transition"
                         >
                           <Mic className="w-3.5 h-3.5" />
                           {isA ? 'Bấm để nói câu này' : 'Tap to say this line'}
