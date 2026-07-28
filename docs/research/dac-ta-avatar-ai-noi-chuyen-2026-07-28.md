@@ -86,6 +86,30 @@ vì có thanh điệu và âm khác tiếng Anh — cần bảng phoneme→visem
 - Nếu dùng cách A (SSML marks): sửa `api/tts.ts` để chèn mark + đọc `timepoints` từ response
   Google TTS. Nếu dùng cách B: thêm phụ thuộc `espeak-ng` trên VPS hoặc dict tĩnh.
 
+### 3.6. Cử động tay (đề xuất bổ sung — làm sau viseme, không làm cùng đợt)
+
+Người dùng hỏi thêm: có nên thêm cử động tay cho avatar tự nhiên hơn không? **Trả lời: hợp lý,
+cùng triết lý nhẹ-băng-thông như viseme — nhưng nên làm SAU khi viseme miệng đã chạy ổn, không
+gộp chung 1 đợt** (tránh phình phạm vi, đúng nguyên tắc chia nhỏ ở mục 3 CLAUDE.md).
+
+Cách làm khả thi, vẫn theo hướng "animation 2D ghép sẵn" chứ không AI-generate:
+
+- **Không đồng bộ theo lời nói** (đơn giản nhất): vài cử chỉ tay lặp lại ngẫu nhiên/định kỳ khi
+  avatar đang "nói" (audio đang phát) — ví dụ nghỉ tay, đưa tay nhẹ, gật đầu — chỉ cần 3-5 sprite
+  tư thế tay, đổi ngẫu nhiên mỗi vài giây trong lúc audio phát, dừng khi audio dừng. Chi phí gần
+  như 0 (không cần phân tích văn bản/audio thêm), tái dùng đúng cơ chế `setInterval` đã có ở 3.4.
+- **Đồng bộ nhẹ theo ngữ điệu** (nâng cao hơn, làm nếu cách trên chưa đủ tự nhiên): dùng biên độ
+  âm lượng audio (Web Audio API `AnalyserNode`, chạy hoàn toàn ở trình duyệt, không cần backend)
+  để tăng tần suất/biên độ cử chỉ khi giọng nói to/nhấn — không cần dữ liệu timing mới từ server.
+- **Không nên:** map cử chỉ tay theo ngữ nghĩa câu nói (kiểu "nói số thì giơ ngón tay") — cần
+  NLP/AI phân tích câu, phức tạp và dễ sai, không đáng effort cho lợi ích thẩm mỹ tăng thêm.
+
+Asset cần thêm: vài sprite tư thế tay/cánh tay (ước lượng thêm 20-50KB, cùng cơ chế cache vĩnh
+viễn như sprite miệng ở 3.3) — vẫn là việc thiết kế UI cần làm riêng, không phải AI tự tạo được.
+
+**Kết luận:** khả thi, effort nhỏ nếu chọn cách "không đồng bộ theo lời nói", nên xếp là bước 4
+(sau khi PoC + tích hợp viseme miệng ở mục 5 đã xong và được xác nhận ổn).
+
 ## 4. Việc CẦN đọc code thật trước khi ước lượng effort chính xác
 
 Tài liệu này KHÔNG khẳng định các điểm sau — phải đọc code lúc triển khai:
@@ -103,6 +127,8 @@ Tài liệu này KHÔNG khẳng định các điểm sau — phải đọc code 
    Luyện nói song ngữ.
 3. Đo lại băng thông/hiệu năng thực tế (Lighthouse, kích thước JSON timeline theo câu dài) trước
    khi coi là xong — đối chiếu ngân sách Core Web Vitals ở mục 4 CLAUDE.md.
+4. **(Tuỳ chọn, sau khi 1-3 ổn)** Thêm cử động tay kiểu "không đồng bộ theo lời nói" (xem 3.6) —
+   bước riêng, có thể bỏ qua nếu avatar chỉ-miệng đã đủ tự nhiên với người dùng thật.
 
 ## 6. Rủi ro / điểm cần quyết định trước khi làm
 
