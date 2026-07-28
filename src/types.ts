@@ -64,6 +64,9 @@ export interface User {
   // Email đã xác thực chưa — chỉ có ở /api/auth?action=me (đăng nhập/đăng ký chưa trả về).
   // undefined = chưa biết, KHÔNG suy ra là "chưa xác thực" để tránh nhắc nhầm người đã xác thực.
   emailVerified?: boolean
+  // Hạn gói Pro/VIP hiện tại (ISO string) — null/undefined = gói vĩnh viễn hoặc đang Free.
+  // Dùng cho banner "còn X ngày dùng thử" (xem src/lib/planExpiry.ts).
+  planExpiresAt?: string | null
   createdAt: number
 }
 

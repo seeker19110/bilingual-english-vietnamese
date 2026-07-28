@@ -131,7 +131,7 @@ const BodySchema = z.union([
 function authResponse(
   token: string,
   user: { id: string; email: string },
-  profile: { plan: Plan; onboarded: boolean; name: string },
+  profile: { plan: Plan; onboarded: boolean; name: string; planExpiresAt: string | null },
 ) {
   return {
     token,
@@ -141,6 +141,7 @@ function authResponse(
       name: profile.name,
       plan: profile.plan,
       onboarded: profile.onboarded,
+      planExpiresAt: profile.planExpiresAt,
       createdAt: Date.now(),
     },
   }
@@ -194,6 +195,7 @@ export default async function handler(req: Request): Promise<Response> {
         name: profile.name,
         plan: profile.plan,
         onboarded: profile.onboarded,
+        planExpiresAt: profile.planExpiresAt,
         // Để UI biết có cần nhắc xác thực email không (xem src/components/EmailVerifySection.tsx).
         emailVerified: await isEmailVerified(auth.userId),
       },

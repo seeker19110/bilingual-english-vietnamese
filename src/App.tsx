@@ -9,6 +9,7 @@ import { CardListSkeleton } from './components/Skeleton'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import BottomNav from './components/BottomNav'
 import PromoEndingBanner from './components/PromoEndingBanner'
+import PlanExpiryBanner from './components/PlanExpiryBanner'
 import { lazyWithRetry } from './lib/lazyWithRetry'
 import { refreshAppSettings } from './lib/appSettings'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
@@ -76,6 +77,8 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
       {/* Chỉ hiện cho user đã đăng nhập + đã onboard — banner báo trước sắp hết
           khuyến mãi, không cần thiết ở landing/login/onboarding. */}
       <PromoEndingBanner />
+      {/* Banner "còn X ngày dùng gói Pro/VIP" (trial hoặc gói trả phí sắp hết hạn) */}
+      <PlanExpiryBanner />
       {children}
     </>
   )

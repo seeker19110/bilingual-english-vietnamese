@@ -375,6 +375,9 @@ export interface ProfileInfo {
   plan: Plan
   onboarded: boolean
   name: string
+  // Hạn gói Pro/VIP hiện tại (ISO string), null = gói vĩnh viễn HOẶC đang Free. Cần cho UI
+  // hiển thị "còn X ngày dùng thử" (banner trial/upsell) — xem src/lib/planExpiry.ts.
+  planExpiresAt: string | null
 }
 
 // Tạo profile nếu chưa có (khớp hành vi trigger handle_new_user cũ của Supabase, nhưng
@@ -392,9 +395,14 @@ export async function ensureProfileRow(userId: string, name: string): Promise<Pr
     name: string | null
   }>('select plan, plan_expires_at, onboarded, name from public.profiles where id = $1', [userId])
   const row = rows[0]
+  const plan = resolvePlan(row?.plan, row?.plan_expires_at)
   return {
-    plan: resolvePlan(row?.plan, row?.plan_expires_at),
+    plan,
     onboarded: !!row?.onboarded,
     name: row?.name ?? name,
+    // Chỉ có ý nghĩa khi gói ĐANG hiệu lực và có hạn (không phải gói vĩnh viễn/Free) — Free
+    // luôn null dù cột DB có giá trị cũ sót lại (tránh hiểu nhầm "Free sắp hết hạn").
+    planExpiresAt:
+      plan !== 'free' && row?.plan_expires_at ? row.plan_expires_at.toISOString() : null,
   }
 }

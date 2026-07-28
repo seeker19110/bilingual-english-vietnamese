@@ -113,9 +113,25 @@ code trong nhiều file rời rạc.
   - `api/auth.ts` — cấp NGAY ở `register` (email/password) và ở mọi kênh OAuth khi `isNew`
     (Google/Facebook/Apple, xem mục ngay dưới) qua hàm dùng chung `oauthLoginResponse()`.
     `verify-email` KHÔNG còn liên quan tới trial (chỉ còn mở khoá thưởng mời bạn).
-  - **Còn mở (chưa làm, đề xuất bước tiếp theo):** UI nhắc "còn X ngày dùng thử" + banner
-    upsell lúc trial sắp hết (Dashboard/Profile hiện chưa có chỗ hiển thị hạn Pro/VIP còn
-    lại) — cần 1 PR riêng theo đúng nhịp "chia nhỏ".
+  - ~~Còn mở: UI nhắc "còn X ngày dùng thử"~~ **ĐÃ LÀM (2026-07-28)** — xem mục "Banner còn X
+    ngày dùng gói Pro/VIP" ngay dưới.
+
+- **[2026-07-28] Banner "còn X ngày dùng gói Pro/VIP" (cùng nhánh trên).** Cùng khuôn mẫu
+  `PromoEndingBanner.tsx` đã có (hàm thuần tách riêng để test ca biên ngày tháng, component chỉ
+  lo hiển thị) — nhưng đọc HẠN GÓI CỦA TỪNG USER (`profiles.plan_expires_at`) thay vì mốc
+  khuyến mãi toàn site. Dùng chung cho CẢ 2 trường hợp (cùng 1 cột DB): trial 14 ngày mới cấp
+  lẫn gói trả phí sắp hết hạn — không phân biệt được nguồn gốc (trial hay gia hạn) vì
+  `grantPlanDays()` gộp chung, nhưng banner "còn X ngày, gia hạn ngay" đúng cho cả 2 trường hợp.
+  - **Vá lỗ hổng dữ liệu:** `plan_expires_at` trước đây được server QUERY nhưng KHÔNG BAO GIỜ
+    trả ra ngoài — `api/_lib/authService.ts` (`ProfileInfo`/`ensureProfileRow()`) và
+    `api/auth.ts` (`authResponse()` + `GET ?action=me`) nay trả thêm `planExpiresAt` (null nếu
+    Free hoặc gói vĩnh viễn — tránh hiểu nhầm "Free sắp hết hạn" từ giá trị cột cũ sót lại).
+  - `src/lib/planExpiryBanner.ts` (mới, hàm thuần + test) + `src/components/PlanExpiryBanner.tsx`
+    (mới) — cửa sổ cảnh báo 5 ngày, đóng thì ẩn hết ngày hôm đó (giờ VN), hôm sau hiện lại nếu
+    vẫn còn hạn. Bấm "Gia hạn ngay" điều hướng tới `/profile` (nơi có `UpgradeSection`).
+  - Gắn vào `RequireAuth` trong `App.tsx` (cạnh `PromoEndingBanner`) — hiện ở MỌI trang đã đăng
+    nhập + đã onboard (rộng hơn yêu cầu ban đầu "Dashboard/Profile", nhất quán với cách
+    `PromoEndingBanner` đã làm).
 
 - **[2026-07-28] Đăng nhập Facebook + Apple + Microsoft (cùng nhánh trên).** Thêm 3 kênh OAuth
   mới cạnh Google đã có, dùng chung hạ tầng `findOrCreateOAuthUser()` (refactor

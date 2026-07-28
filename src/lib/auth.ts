@@ -10,6 +10,7 @@ interface AuthApiUser {
   name: string
   plan: Plan
   onboarded: boolean
+  planExpiresAt?: string | null
   createdAt: number
 }
 
@@ -322,6 +323,7 @@ export async function getCurrentUser(): Promise<AppUser | null> {
     name: string
     plan: Plan
     onboarded: boolean
+    planExpiresAt?: string | null
     emailVerified?: boolean
   }
   return { ...profile, createdAt: Date.now() }
