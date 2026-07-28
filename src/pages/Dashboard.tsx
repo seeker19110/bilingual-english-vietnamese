@@ -196,7 +196,10 @@ export default function Dashboard() {
   const { user } = useAuth()
   const { T, lang } = useLang()
   const vi = lang === 'vi'
-  useCloudSync(user?.id) // kéo lượt dùng mới nhất từ Supabase
+  // PHẢI dùng giá trị trả về (xem cảnh báo trong useCloudSync.ts) — thêm vào deps của mọi
+  // useMemo bên dưới đọc localStorage, nếu không stats sẽ đứng yên ở 0 trên thiết bị mới cho
+  // tới khi có lý do khác khiến deps đổi (bug đã xác nhận 2026-07-28).
+  const syncVersion = useCloudSync(user?.id)
   const onboarding = useOnboarding(user?.id) // nhóm tuổi (GĐ 4, PROGRESS.md) — lọc % lộ trình
 
   const [ready, setReady] = useState(false)
@@ -215,7 +218,10 @@ export default function Dashboard() {
     }
   }, [user])
   // Kết quả thi cuối cấp — để hiện huy hiệu "🎓 Đã qua" cạnh từng cấp.
-  const examMap = useMemo(() => getExamMap(user?.id ?? ''), [user])
+  // syncVersion: KHÔNG dùng trong thân hàm nhưng BẮT BUỘC có trong deps — báo hiệu cloud sync
+  // vừa kéo dữ liệu mới, cần đọc lại localStorage (xem cảnh báo trong useCloudSync.ts).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const examMap = useMemo(() => getExamMap(user?.id ?? ''), [user, syncVersion])
 
   // Nạp dữ liệu từ điển (cho tiến độ lộ trình) + tiến độ CEFR — đều bất đồng bộ.
   useEffect(() => {
@@ -231,7 +237,9 @@ export default function Dashboard() {
     return () => {
       alive = false
     }
-  }, [user])
+    // syncVersion: nạp lại tiến độ CEFR sau khi cloud sync xong (learned words vừa được kéo
+    // từ server về có thể khác bản local cũ trên thiết bị này).
+  }, [user, syncVersion])
 
   // Số liệu đọc tức thì từ localStorage (re-tính khi đã nạp xong dữ liệu).
   const stats = useMemo(() => {
@@ -259,7 +267,9 @@ export default function Dashboard() {
       writeN: getWritingSubs(user.id).length,
       speakN: getSpeakingSessions(user.id).length,
     }
-  }, [user, ready, onboarding?.ageGroup])
+    // syncVersion: bắt buộc có trong deps dù không dùng trong thân hàm — xem examMap ở trên.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, ready, onboarding?.ageGroup, syncVersion])
 
   if (!user || !stats) return null
 

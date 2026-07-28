@@ -198,7 +198,8 @@ export default function Home() {
   const nav = useNavigate()
   const { user } = useAuth()
   const { T, setLang } = useLang()
-  useCloudSync(user?.id) // kéo lượt dùng từ Supabase khi mở trang chủ
+  // PHẢI dùng giá trị trả về + thêm vào deps useMemo bên dưới (xem cảnh báo useCloudSync.ts).
+  const syncVersion = useCloudSync(user?.id)
 
   const [dir, setDir] = useState<Direction>(getDirection)
   const [voice, setVoice] = useState<Voice>(getVoicePref)
@@ -222,9 +223,13 @@ export default function Home() {
   }, [])
 
   const uid = user?.id ?? ''
-  const learned = useMemo(() => getLearnedWords(uid), [uid])
-  const doneGrammar = useMemo(() => getDoneGrammar(uid), [uid])
-  const examPassed = useMemo(() => getPassedExamLevels(uid), [uid])
+  // syncVersion: KHÔNG dùng trong thân hàm nhưng BẮT BUỘC có trong deps — báo hiệu cloud sync
+  // vừa kéo dữ liệu mới, cần đọc lại localStorage (xem cảnh báo trong useCloudSync.ts).
+  /* eslint-disable react-hooks/exhaustive-deps */
+  const learned = useMemo(() => getLearnedWords(uid), [uid, syncVersion])
+  const doneGrammar = useMemo(() => getDoneGrammar(uid), [uid, syncVersion])
+  const examPassed = useMemo(() => getPassedExamLevels(uid), [uid, syncVersion])
+  /* eslint-enable react-hooks/exhaustive-deps */
   const lockedMap = useMemo(
     () => computeLockedMapPersisted(uid, cefrLevels, examPassed),
     [uid, cefrLevels, examPassed],

@@ -78,6 +78,32 @@ code trong nhiều file rời rạc.
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-07-28] FIX: streak/từ đã thuộc hiện 0 trên thiết bị mới dù đã đồng bộ server — ĐÃ
+  XONG.** Người dùng báo Dashboard hiện "0 ngày liên tiếp"/"0 từ đã thuộc" dù đã học trên máy
+  khác. Điều tra qua đọc code (không đoán): luồng kéo dữ liệu server→localStorage
+  (`useCloudSync` → `pullUserData`/`pullProgress`, `src/lib/cloud.ts`/`progressSync.ts`) HOÀN
+  TOÀN ĐÚNG — server trả đủ `daily_usage`/`learning_progress`, merge đúng. **Lỗi thật nằm ở
+  RENDER**: `useCloudSync(user?.id)` được gọi mà bỏ qua giá trị trả về (`version`, tăng lên
+  sau khi kéo dữ liệu xong) ở `Dashboard.tsx` và `Home.tsx` — các `useMemo` đọc localStorage
+  (`stats`, `examMap`, `learned`, `doneGrammar`, `examPassed`...) có mảng deps KHÔNG chứa
+  `version`, nên dù component re-render sau khi đồng bộ xong, `useMemo` vẫn trả về giá trị đã
+  cache TỪ TRƯỚC lúc kéo dữ liệu (0/rỗng trên thiết bị mới) — không bao giờ tính lại cho tới
+  khi có lý do khác khiến deps đổi.
+  - `src/lib/useCloudSync.ts` — viết lại chú thích, cảnh báo RÕ RÀNG: bắt buộc dùng giá trị
+    trả về (`const version = useCloudSync(...)`) và thêm vào deps của MỌI `useMemo` đọc dữ
+    liệu qua localStorage, nếu không tái diễn đúng lỗi này ở trang khác sau này.
+  - `Dashboard.tsx` — `examMap`, `stats`, và effect nạp lại tiến độ CEFR nay có `syncVersion`
+    trong deps.
+  - `Home.tsx` — `learned`/`doneGrammar`/`examPassed` (từ đó kéo theo `lockedMap`/
+    `continueLevel` đúng dây chuyền) nay có `syncVersion` trong deps.
+  - Đã rà toàn bộ 7 trang gọi `useCloudSync` (`Home`/`Dashboard`/`Chat`/`Writing`/`Speaking`/
+    `Profile`/`History`) — CHỈ 2 trang trên có `useMemo` bị ảnh hưởng; các trang còn lại đọc
+    localStorage trực tiếp trong thân hàm render (không `useMemo`) nên tự làm mới đúng khi
+    component re-render sau đồng bộ, không cần sửa.
+  - **Chưa test được trên trình duyệt thật** (cần tài khoản + Postgres thật để tái hiện đúng
+    kịch bản "thiết bị mới") — đã xác minh chắc chắn qua đọc code (cơ chế `useMemo` deps của
+    React), cổng build/type/lint/test đều xanh.
+
 - **[2026-07-27] Dashboard "Sử dụng & chi phí" trong /admin — ĐÃ XONG (nhánh
   `claude/feature-usage-dashboard-378z5q`).** Tab mới (mặc định) ở `/admin` trả lời 3 câu hỏi
   vận hành: tính năng nào đáng giữ · chi phí AI bao nhiêu · doanh thu có bù nổi không.
