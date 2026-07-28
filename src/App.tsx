@@ -12,6 +12,8 @@ import PromoEndingBanner from './components/PromoEndingBanner'
 import PlanExpiryBanner from './components/PlanExpiryBanner'
 import { lazyWithRetry } from './lib/lazyWithRetry'
 import { refreshAppSettings } from './lib/appSettings'
+import { refreshPlanFeatures } from './lib/planFeatures'
+import FeatureGate from './components/FeatureGate'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
 // (thường do app vừa deploy bản mới, chunk cũ không còn) thay vì sập trang.
 const Login = lazyWithRetry(() => import('./pages/Login'))
@@ -137,9 +139,16 @@ export default function App() {
   // đồng bộ lại sau khi user quay lại dùng tiếp.
   useEffect(() => {
     void refreshAppSettings()
-    const interval = setInterval(() => void refreshAppSettings(), APP_SETTINGS_POLL_MS)
+    void refreshPlanFeatures()
+    const interval = setInterval(() => {
+      void refreshAppSettings()
+      void refreshPlanFeatures()
+    }, APP_SETTINGS_POLL_MS)
     const onVisible = () => {
-      if (document.visibilityState === 'visible') void refreshAppSettings()
+      if (document.visibilityState === 'visible') {
+        void refreshAppSettings()
+        void refreshPlanFeatures()
+      }
     }
     document.addEventListener('visibilitychange', onVisible)
     return () => {
@@ -177,7 +186,9 @@ export default function App() {
                       path="/chat"
                       element={
                         <RequireAuth>
-                          <Chat />
+                          <FeatureGate featureKey="chat">
+                            <Chat />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />
@@ -185,7 +196,9 @@ export default function App() {
                       path="/writing"
                       element={
                         <RequireAuth>
-                          <Writing />
+                          <FeatureGate featureKey="writing">
+                            <Writing />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />
@@ -193,7 +206,9 @@ export default function App() {
                       path="/speaking"
                       element={
                         <RequireAuth>
-                          <Speaking />
+                          <FeatureGate featureKey="speaking">
+                            <Speaking />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />
@@ -201,7 +216,9 @@ export default function App() {
                       path="/learning-path"
                       element={
                         <RequireAuth>
-                          <Learn />
+                          <FeatureGate featureKey="learning_path">
+                            <Learn />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />
@@ -209,7 +226,9 @@ export default function App() {
                       path="/learning-path/:levelId"
                       element={
                         <RequireAuth>
-                          <CefrLevelPage />
+                          <FeatureGate featureKey="learning_path">
+                            <CefrLevelPage />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />
@@ -217,7 +236,9 @@ export default function App() {
                       path="/dictionary"
                       element={
                         <RequireAuth>
-                          <Dictionary />
+                          <FeatureGate featureKey="dictionary">
+                            <Dictionary />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />
@@ -225,7 +246,9 @@ export default function App() {
                       path="/lessons"
                       element={
                         <RequireAuth>
-                          <Lessons />
+                          <FeatureGate featureKey="lessons">
+                            <Lessons />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />
@@ -233,7 +256,9 @@ export default function App() {
                       path="/phrases"
                       element={
                         <RequireAuth>
-                          <CommonPhrases />
+                          <FeatureGate featureKey="phrases">
+                            <CommonPhrases />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />
@@ -273,7 +298,9 @@ export default function App() {
                       path="/mistakes"
                       element={
                         <RequireAuth>
-                          <MistakeBank />
+                          <FeatureGate featureKey="mistake_bank">
+                            <MistakeBank />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />
@@ -281,7 +308,9 @@ export default function App() {
                       path="/challenge"
                       element={
                         <RequireAuth>
-                          <Challenge />
+                          <FeatureGate featureKey="challenge">
+                            <Challenge />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />
@@ -297,7 +326,9 @@ export default function App() {
                       path="/quests"
                       element={
                         <RequireAuth>
-                          <Quests />
+                          <FeatureGate featureKey="quests">
+                            <Quests />
+                          </FeatureGate>
                         </RequireAuth>
                       }
                     />

@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { Sliders, ShieldCheck, BarChart3, Activity, Crown } from 'lucide-react'
+import { Sliders, ShieldCheck, BarChart3, Activity, Crown, ToggleRight } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import AdminLimitsPanel from '../components/admin/AdminLimitsPanel'
 import AdminGrantPlanPanel from '../components/admin/AdminGrantPlanPanel'
 import AdminVipWhitelistPanel from '../components/admin/AdminVipWhitelistPanel'
+import AdminPlanFeaturesPanel from '../components/admin/AdminPlanFeaturesPanel'
 import AdminAnalyticsPanel from '../components/admin/AdminAnalyticsPanel'
 import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 
@@ -16,13 +17,14 @@ import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 // Ghi chú: tab "Chặn tên tài khoản giả danh" CHƯA thêm vì chưa thấy code liên quan
 // (vd api/_lib/reservedNames.ts) trong repo lúc viết trang này — không bịa UI cho tính năng
 // chưa tồn tại. Thêm lại khi tính năng đó có thật.
-type TabKey = 'usage' | 'limits' | 'grant-plan' | 'vip-whitelist' | 'analytics'
+type TabKey = 'usage' | 'limits' | 'plan-features' | 'grant-plan' | 'vip-whitelist' | 'analytics'
 
 const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   // "Sử dụng & chi phí" để đầu tiên và là tab mặc định — đây là màn cần nhìn mỗi ngày để
   // quyết định chỉnh hạn mức/giá, các tab còn lại chỉ mở khi cần thao tác cụ thể.
   { key: 'usage', label: 'Sử dụng & chi phí', icon: Activity },
   { key: 'limits', label: 'Hạn mức & khuyến mãi', icon: Sliders },
+  { key: 'plan-features', label: 'Tính năng theo gói', icon: ToggleRight },
   { key: 'grant-plan', label: 'Cấp gói tay', icon: ShieldCheck },
   { key: 'vip-whitelist', label: 'Danh sách VIP', icon: Crown },
   { key: 'analytics', label: 'Analytics', icon: BarChart3 },
@@ -67,6 +69,7 @@ export default function AdminDashboard() {
           <div className="flex-1 min-w-0 space-y-4">
             {tab === 'usage' && <AdminUsagePanel />}
             {tab === 'limits' && <AdminLimitsPanel />}
+            {tab === 'plan-features' && <AdminPlanFeaturesPanel />}
             {tab === 'grant-plan' && <AdminGrantPlanPanel />}
             {tab === 'vip-whitelist' && <AdminVipWhitelistPanel />}
             {tab === 'analytics' && <AdminAnalyticsPanel />}

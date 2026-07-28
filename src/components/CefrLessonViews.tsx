@@ -67,6 +67,7 @@ import { startRecording, isRecordingSupported, type Recorder } from '../lib/sttS
 import { callClaude, parseJson } from '../lib/ai'
 import { speakingFullEvaluationPrompt } from '../prompts'
 import { effectivePlan } from '../lib/promo'
+import { isFeatureEnabled } from '../lib/planFeatures'
 import { getLimits } from '../lib/appSettings'
 import { useApiThrottle } from '../lib/useApiThrottle'
 
@@ -815,7 +816,9 @@ export function DialogueView({
   // từ STT theo lô nên mô phỏng bằng bộ đếm giờ theo số từ, cùng thang tốc độ 0.75/1/1.25×
   // người dùng đã chọn ở thanh điều khiển). Hết hội thoại → gọi AI chấm điểm 1 lần bằng
   // đúng prompt speakingFullEvaluationPrompt() đang dùng ở trang Luyện nói (Speaking.tsx).
-  const isPro = effectivePlan(plan) !== 'free'
+  // Bật/tắt qua ma trận tính năng theo gói (feature key "dialogue_roleplay"), admin chỉnh ở
+  // tab "Tính năng theo gói" trong /admin — xem src/lib/planFeatures.ts.
+  const isPro = isFeatureEnabled(effectivePlan(plan), 'dialogue_roleplay')
   const canRecord = isRecordingSupported()
   const [rolePlay, setRolePlay] = useState<{ role: 'A' | 'B' } | null>(null)
   const [rolePicker, setRolePicker] = useState(false)
