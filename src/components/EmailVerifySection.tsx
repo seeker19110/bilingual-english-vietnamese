@@ -3,7 +3,8 @@
 //
 // Vì sao không ép xác thực mới cho học: app miễn phí cho cộng đồng, chặn cứng sẽ đuổi cả người
 // học thật (mail vào spam, gõ nhầm email, học sinh không rành). Xác thực chỉ mở khoá phần
-// THƯỞNG mời bạn (api/_lib/referral.ts) và quà dùng thử Pro 5 ngày (api/_lib/trial.ts).
+// THƯỞNG mời bạn (api/_lib/referral.ts) và quà dùng thử Pro 14 ngày (api/_lib/trial.ts) —
+// tài khoản Google được cấp quà này NGAY lúc đăng nhập lần đầu (Google đã tự xác minh email).
 
 import { useState } from 'react'
 import { MailCheck, Loader2 } from 'lucide-react'
@@ -145,7 +146,7 @@ export default function EmailVerifySection({
     if (r.ok) {
       // Chỉ khoe quà khi server XÁC NHẬN vừa cấp (trialGranted) — người xác thực lại lần sau
       // (vd sau khi đổi email) không được nhận nữa, không hứa hão.
-      const days = r.trialDays ?? 5
+      const days = r.trialDays ?? 14
       toast.success(
         r.trialGranted
           ? isA

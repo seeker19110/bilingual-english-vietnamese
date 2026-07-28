@@ -98,20 +98,26 @@ code trong nhiều file rời rạc.
     Anthropic/Groq/Google, chia (tiền tháng ÷ lượt tháng) rồi điền vào `.env` trên VPS. Chi phí
     TTS chưa tính (theo ký tự + có cache dùng chung, không tỉ lệ với số lượt).
 
-- **[2026-07-27] Trial Pro 14 ngày cho tài khoản MỚI đăng ký (cùng nhánh
-  `claude/feature-usage-dashboard-378z5q`).** Thay cho phương án mở khuyến mãi Pro cho TOÀN
-  BỘ user hiện có (được người dùng cân nhắc sau khi xem dashboard chi phí — rủi ro: chi phí
-  AI tăng ~x20 cho cả user cũ vốn không cần khuyến mãi mới ở lại).
-  - `postgres/migrations/0019_signup_trial.sql` — cột `profiles.signup_trial_granted_at`,
-    TÁCH RIÊNG khỏi `trial_granted_at` (quà xác thực email đã có, 5 ngày) — hai quà CỘNG DỒN
-    được, không đụng logic cũ.
-  - `api/_lib/trial.ts` — `SIGNUP_TRIAL_DAYS = 14` + `grantSignupTrial()`, cùng cơ chế
-    "giành quyền nhận 1 lần" atomic như quà xác thực email, dùng lại `grantPlanDays()`.
-  - `api/_lib/authService.ts` — `findOrCreateGoogleUser()` nay trả thêm `isNew` (cần để KHÔNG
-    cấp trial cho user Google cũ đăng nhập lại, chỉ cấp lần đầu tạo tài khoản).
-  - `api/auth.ts` — gọi `grantSignupTrial()` ở action `register` (luôn là tài khoản mới) và
-    `google` (chỉ khi `isNew`), **không** gọi ở `login` (giới hạn đúng phạm vi "tài khoản mới"
-    để bảo vệ chi phí AI). Response trả thêm `signupTrialGranted`/`signupTrialDays`.
+- **[2026-07-27, chỉnh lại 2026-07-28] Trial Pro 14 ngày cho tài khoản MỚI — CHỈ SAU KHI xác
+  thực (cùng nhánh `claude/feature-usage-dashboard-378z5q`).** Thay cho phương án mở khuyến
+  mãi Pro cho TOÀN BỘ user hiện có (được người dùng cân nhắc sau khi xem dashboard chi phí —
+  rủi ro: chi phí AI tăng ~x20 cho cả user cũ vốn không cần khuyến mãi mới ở lại).
+  **Quyết định 2026-07-28 (chỉnh so với bản đầu):** không cấp ngay lúc `register` nữa — email/
+  password phải XÁC THỰC EMAIL (mã 6 số) mới được cấp, chống lạm dụng email rác tạo hàng loạt
+  để cày trial. Google COI NHƯ ĐÃ XÁC THỰC (Google tự verify) nên vẫn cấp NGAY ở lần đăng nhập
+  đầu tiên. Đây là quà TỔNG 14 ngày DUY NHẤT — thay hẳn quà xác thực email 5 ngày cũ (0013),
+  không còn cộng dồn 2 quà như thiết kế ban đầu.
+  - `postgres/migrations/0019_signup_trial.sql` — cột `profiles.signup_trial_granted_at`.
+    `trial_granted_at` (0013, quà 5 ngày cũ) giữ nguyên không xoá (dữ liệu lịch sử), chỉ
+    ngừng ghi — hàm `grantEmailVerifyTrial()` cũ đã XOÁ khỏi `api/_lib/trial.ts`.
+  - `api/_lib/trial.ts` — chỉ còn 1 hàm `grantSignupTrial()` (`SIGNUP_TRIAL_DAYS = 14`), cơ chế
+    "giành quyền nhận 1 lần" atomic, dùng lại `grantPlanDays()`.
+  - `api/_lib/authService.ts` — `findOrCreateGoogleUser()` trả thêm `isNew` (để KHÔNG cấp
+    trial cho user Google cũ đăng nhập lại, chỉ cấp lần đầu tạo tài khoản).
+  - `api/auth.ts` — `register` KHÔNG còn gọi cấp trial (chỉ gửi mã xác thực như cũ);
+    `verify-email` gọi `grantSignupTrial()` sau khi xác thực đúng mã (response
+    `trialGranted`/`trialDays`, khớp field cũ `EmailVerifySection.tsx` đã đọc — chỉ đổi số
+    ngày 5→14); `google` gọi khi `isNew` (response `signupTrialGranted`/`signupTrialDays`).
   - **Còn mở (chưa làm, đề xuất bước tiếp theo):** UI nhắc "còn X ngày dùng thử" + banner
     upsell lúc trial sắp hết (Dashboard/Profile hiện chưa có chỗ hiển thị hạn Pro/VIP còn
     lại) — cần 1 PR riêng theo đúng nhịp "chia nhỏ".

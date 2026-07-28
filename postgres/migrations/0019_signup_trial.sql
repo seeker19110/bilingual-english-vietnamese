@@ -1,10 +1,16 @@
--- 0016_signup_trial.sql — Trial Pro TỰ ĐỘNG cho tài khoản MỚI đăng ký (chiến lược tăng
--- trưởng, quyết định 2026-07-27) — thay cho phương án mở khuyến mãi Pro cho TOÀN BỘ user
--- hiện có (tốn chi phí AI không kiểm soát cho người vốn đã ở lại mà không cần khuyến mãi).
+-- 0019_signup_trial.sql — Quà dùng thử Pro 14 ngày cho tài khoản MỚI (chiến lược tăng
+-- trưởng, quyết định 2026-07-27, chỉnh lại 2026-07-28) — thay cho phương án mở khuyến mãi Pro
+-- cho TOÀN BỘ user hiện có (tốn chi phí AI không kiểm soát cho người vốn đã ở lại mà không
+-- cần khuyến mãi).
 --
--- TÁCH RIÊNG cột khỏi quà xác thực email đã có (`trial_granted_at`, xem
--- 0013_email_verify_trial.sql) — không đụng/gộp logic đó, hai quà CỘNG DỒN được (Pro ngay
--- lúc đăng ký + thêm ngày khi xác thực email sau đó). Xem api/_lib/trial.ts.
+-- Cấp khi nào: CHỈ khi email đã được XÁC THỰC (email/password: cấp lúc bấm xác thực mã 6 số;
+-- Google: cấp NGAY ở lần đăng nhập đầu tiên vì Google đã tự xác minh email) — chống lạm dụng
+-- email rác tạo hàng loạt để cày trial. Xem api/_lib/trial.ts + api/auth.ts.
+--
+-- Cột TÁCH RIÊNG khỏi quà xác thực email cũ (`trial_granted_at`, 5 ngày, xem
+-- 0013_email_verify_trial.sql) — cơ chế cũ đã NGỪNG dùng (thay hẳn bởi quà 14 ngày này, không
+-- còn cộng dồn 2 quà). Cột `trial_granted_at` GIỮ NGUYÊN không xoá (dữ liệu lịch sử người đã
+-- nhận quà cũ), chỉ không còn ai ghi vào nữa.
 --
 -- Rollback: alter table public.profiles drop column if exists signup_trial_granted_at;
 alter table public.profiles add column if not exists signup_trial_granted_at timestamptz;

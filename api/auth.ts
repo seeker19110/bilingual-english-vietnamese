@@ -29,12 +29,7 @@ import {
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { sendVerificationCode, verifyCode, isEmailVerified } from './_lib/emailVerification.js'
-import {
-  grantEmailVerifyTrial,
-  EMAIL_VERIFY_TRIAL_DAYS,
-  grantSignupTrial,
-  SIGNUP_TRIAL_DAYS,
-} from './_lib/trial.js'
+import { grantSignupTrial, SIGNUP_TRIAL_DAYS } from './_lib/trial.js'
 import { changeEmail } from './_lib/changeEmail.js'
 import { requestPasswordReset, resetPassword } from './_lib/passwordReset.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
@@ -178,28 +173,19 @@ export default async function handler(req: Request): Promise<Response> {
       // Không nói rõ "email đã tồn tại" để tránh dò email hàng loạt — trả lỗi chung.
       return jsonResponse({ error: 'Không đăng ký được tài khoản này' }, 409, allHeaders)
     }
-    await ensureProfileRow(user.id, name)
+    const profile = await ensureProfileRow(user.id, name)
     const token = await createSession(user.id)
     // Gửi mã xác thực ngay sau khi tạo tài khoản. KHÔNG chặn đăng ký nếu gửi lỗi/chưa cấu hình
     // SMTP — người dùng vẫn vào học được, chỉ là chưa mở khoá phần thưởng mời bạn (họ bấm
     // "gửi lại mã" trong Hồ sơ sau). Xem api/_lib/emailVerification.ts.
+    //
+    // KHÔNG cấp quà dùng thử ở đây — tài khoản email/password phải XÁC THỰC EMAIL trước mới
+    // được cấp (chống lạm dụng email rác tạo hàng loạt để cày trial). Xem action 'verify-email'
+    // bên dưới, và api/_lib/trial.ts.
     await sendVerificationCode(user.id).catch((err) => {
       console.error('[auth] Không gửi được mã xác thực lúc đăng ký:', err)
     })
-    // Quà dùng thử Pro ngay lúc đăng ký (chiến lược tăng trưởng, xem api/_lib/trial.ts) —
-    // register luôn là tài khoản MỚI nên cấp thẳng, không cần kiểm tra thêm. Đọc lại profile
-    // SAU khi cấp để phản hồi đúng ngay gói 'pro', tránh client hiện tạm 'free' rồi mới đổi.
-    const signupTrialGranted = await grantSignupTrial(user.id)
-    const profile = await ensureProfileRow(user.id, name)
-    return jsonResponse(
-      {
-        ...authResponse(token, user, profile),
-        signupTrialGranted,
-        signupTrialDays: SIGNUP_TRIAL_DAYS,
-      },
-      200,
-      allHeaders,
-    )
+    return jsonResponse(authResponse(token, user, profile), 200, allHeaders)
   }
 
   if (result.data.action === 'login') {
@@ -220,8 +206,9 @@ export default async function handler(req: Request): Promise<Response> {
     const { user, isNew } = await findOrCreateGoogleUser(info.googleId, info.email)
     await ensureProfileRow(user.id, info.name)
     const token = await createSession(user.id)
-    // Quà dùng thử Pro ngay lúc đăng ký — CHỈ cho lần đăng nhập Google ĐẦU TIÊN (tài khoản
-    // mới tạo). Người dùng cũ đăng nhập lại (isNew=false) không được cấp thêm.
+    // Quà dùng thử Pro — CHỈ cho lần đăng nhập Google ĐẦU TIÊN (tài khoản mới tạo). Cấp NGAY
+    // (khác email/password phải xác thực trước) vì Google đã tự xác minh email cho ta rồi —
+    // coi như đã "xác thực". Người dùng cũ đăng nhập lại (isNew=false) không được cấp thêm.
     const signupTrialGranted = isNew ? await grantSignupTrial(user.id) : false
     const profile = await ensureProfileRow(user.id, info.name)
     return jsonResponse(
@@ -270,14 +257,11 @@ export default async function handler(req: Request): Promise<Response> {
       logSecurityEvent('EMAIL_VERIFY_FAILED', clientIp, { reason: verified.reason })
       return jsonResponse({ error: messages[verified.reason] }, 400, allHeaders)
     }
-    // Quà dùng thử Pro 5 ngày — chỉ lần đầu mỗi tài khoản (xem api/_lib/trial.ts).
-    // Không để lỗi tặng quà làm hỏng việc xác thực: hàm này tự nuốt lỗi, trả false.
-    const trialGranted = await grantEmailVerifyTrial(auth.userId)
-    return jsonResponse(
-      { ok: true, trialGranted, trialDays: EMAIL_VERIFY_TRIAL_DAYS },
-      200,
-      allHeaders,
-    )
+    // Quà dùng thử Pro 14 ngày — chỉ lần đầu mỗi tài khoản, CHỈ SAU KHI xác thực email thành
+    // công (xem api/_lib/trial.ts). Không để lỗi tặng quà làm hỏng việc xác thực: hàm này tự
+    // nuốt lỗi, trả false.
+    const trialGranted = await grantSignupTrial(auth.userId)
+    return jsonResponse({ ok: true, trialGranted, trialDays: SIGNUP_TRIAL_DAYS }, 200, allHeaders)
   }
 
   if (result.data.action === 'change-email') {
