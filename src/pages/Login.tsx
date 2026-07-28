@@ -1,7 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BookOpen, Eye, EyeOff, Mic, PenLine, MessageCircle } from 'lucide-react'
-import { login, register, loginWithGoogle, loginWithFacebook, loginWithApple } from '../lib/auth'
+import {
+  login,
+  register,
+  loginWithGoogle,
+  loginWithFacebook,
+  loginWithApple,
+  loginWithMicrosoft,
+} from '../lib/auth'
 import { claimPendingReferral } from '../lib/referral'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
@@ -155,6 +162,26 @@ export default function Login() {
       nav('/')
     } catch {
       setError(T.errApple)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Đăng nhập bằng Microsoft — MSAL.js (popup, không redirect rời trang).
+  async function microsoftSignIn() {
+    setError('')
+    setLoading(true)
+    try {
+      const u = await loginWithMicrosoft()
+      if (!u) {
+        setError(T.errMicrosoft)
+        return
+      }
+      await claimPendingReferral()
+      await refresh()
+      nav('/')
+    } catch {
+      setError(T.errMicrosoft)
     } finally {
       setLoading(false)
     }
@@ -369,6 +396,22 @@ export default function Login() {
             <path d="M16.36 1.43c0 1.14-.46 2.23-1.2 3.03-.8.86-2.1 1.53-3.19 1.44-.13-1.1.42-2.26 1.16-3.02.82-.85 2.24-1.5 3.23-1.45zm3.16 16.6c-.35.8-.77 1.55-1.28 2.25-.7.96-1.27 1.62-1.71 2-.68.63-1.4.95-2.18.97-.56.01-1.23-.16-2.01-.5-.78-.34-1.5-.5-2.15-.5-.68 0-1.42.16-2.22.5-.8.34-1.44.52-1.94.54-.75.03-1.49-.3-2.22-1-.47-.42-1.08-1.12-1.81-2.1-.79-1.06-1.44-2.29-1.94-3.7-.54-1.52-.81-3-.81-4.42 0-1.63.35-3.04 1.06-4.22.55-.95 1.28-1.7 2.19-2.25.91-.55 1.9-.83 2.96-.85.6-.01 1.38.19 2.35.58.96.4 1.58.6 1.85.6.2 0 .89-.23 2.05-.7.99-.4 1.83-.56 2.5-.5 1.85.15 3.24.88 4.16 2.2-1.65 1-2.47 2.4-2.46 4.2.01 1.4.52 2.57 1.53 3.5.45.43.96.76 1.51 1-.12.35-.25.7-.4 1.03z" />
           </svg>
           {T.appleSignIn}
+        </button>
+
+        {/* Nút đăng nhập bằng Microsoft */}
+        <button
+          type="button"
+          onClick={microsoftSignIn}
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-2.5 bg-[#2f2f2f] hover:bg-[#242424] disabled:opacity-50 text-white font-medium py-3 rounded-xl text-sm transition active:scale-[0.98] mt-2.5"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#f25022" d="M1 1h10v10H1z" />
+            <path fill="#7fba00" d="M13 1h10v10H13z" />
+            <path fill="#00a4ef" d="M1 13h10v10H1z" />
+            <path fill="#ffb900" d="M13 13h10v10H13z" />
+          </svg>
+          {T.microsoftSignIn}
         </button>
 
         <p className="text-center text-xs text-zinc-400 mt-4">{T.loginPrivacy}</p>

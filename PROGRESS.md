@@ -117,30 +117,36 @@ code trong nhiều file rời rạc.
     upsell lúc trial sắp hết (Dashboard/Profile hiện chưa có chỗ hiển thị hạn Pro/VIP còn
     lại) — cần 1 PR riêng theo đúng nhịp "chia nhỏ".
 
-- **[2026-07-28] Đăng nhập Facebook + Apple (cùng nhánh trên).** Thêm 2 kênh OAuth mới cạnh
-  Google đã có, dùng chung hạ tầng `findOrCreateOAuthUser()` (refactor `findOrCreateGoogleUser`
-  thành hàm generic theo cột `google_id`/`facebook_id`/`apple_id`).
-  - `postgres/migrations/0020_facebook_apple_login.sql` — cột `users.facebook_id`/`apple_id`
-    (cùng khuôn mẫu `google_id`).
+- **[2026-07-28] Đăng nhập Facebook + Apple + Microsoft (cùng nhánh trên).** Thêm 3 kênh OAuth
+  mới cạnh Google đã có, dùng chung hạ tầng `findOrCreateOAuthUser()` (refactor
+  `findOrCreateGoogleUser` thành hàm generic theo cột `google_id`/`facebook_id`/`apple_id`/
+  `microsoft_id`).
+  - `postgres/migrations/0020_facebook_apple_login.sql` — cột `users.facebook_id`/`apple_id`;
+    `0022_microsoft_login.sql` — cột `users.microsoft_id` (cùng khuôn mẫu `google_id`).
   - `api/_lib/authService.ts` — `verifyFacebookAccessToken()` (verify qua Graph API
     `debug_token` + `/me`, cần `FACEBOOK_APP_ID`/`FACEBOOK_APP_SECRET`); `verifyAppleIdToken()`
-    (verify chữ ký JWT qua JWKS công khai của Apple bằng thư viện `jose` mới thêm, cần
-    `APPLE_CLIENT_ID` — KHÔNG cần Client Secret/private key .p8 vì không dùng luồng đổi
-    authorization code phía server).
-  - `src/lib/auth.ts` — `loginWithFacebook()`/`loginWithApple()` (tải SDK động, mở popup, gửi
-    token về `/api/auth`). `src/pages/Login.tsx` — 2 nút mới cạnh nút Google.
-  - `server.ts` — CSP `script-src` thêm `connect.facebook.net` + `appleid.cdn-apple.com`.
+    và `verifyMicrosoftIdToken()` (verify chữ ký JWT qua JWKS công khai bằng thư viện `jose`
+    mới thêm — KHÔNG cần Client Secret/private key vì không dùng luồng đổi authorization code
+    phía server). Microsoft dùng authority `common` (chấp nhận cả tài khoản công ty/trường lẫn
+    cá nhân outlook.com/hotmail.com) nên issuer chứa tenant id động — verify bằng REGEX thay vì
+    so khớp chuỗi cố định như Apple/Google.
+  - `src/lib/auth.ts` — `loginWithFacebook()`/`loginWithApple()`/`loginWithMicrosoft()` (tải SDK
+    động — Facebook JS SDK, Sign in with Apple JS, MSAL.js — mở popup, gửi token về
+    `/api/auth`). `src/pages/Login.tsx` — 3 nút mới cạnh nút Google.
+  - `server.ts` — CSP `script-src` thêm `connect.facebook.net`, `appleid.cdn-apple.com`,
+    `alcdn.msauth.net`.
   - **Lưu ý Apple:** email/tên CHỈ được gửi ở LẦN ĐẦU người dùng đồng ý chia sẻ — client PHẢI
     gửi kèm ngay lúc đó (đã làm), các lần đăng nhập sau id_token vẫn có email (kể cả địa chỉ
     ẩn danh `@privaterelay.appleid.com`) nhưng không có tên.
-  - **VIỆC TAY BẮT BUỘC (ngoài khả năng AI) trước khi 2 nút này hoạt động:** tạo Facebook App
+  - **VIỆC TAY BẮT BUỘC (ngoài khả năng AI) trước khi 3 nút này hoạt động:** tạo Facebook App
     tại developers.facebook.com (lấy `FACEBOOK_APP_ID`/`FACEBOOK_APP_SECRET`) + tạo Apple
     Services ID tại developer.apple.com (cần tài khoản Apple Developer Program TRẢ PHÍ, lấy
-    `APPLE_CLIENT_ID`, khai domain trùng domain app) — điền vào `.env` trên VPS. Xem
-    `.env.example` để biết chi tiết từng bước. Chưa điền thì 2 nút vẫn hiện nhưng bấm vào sẽ
-    báo lỗi kết nối (fail rõ ràng, không vỡ trang).
-  - **Chưa chạy migration `npm run migrate:pg`** — cần chạy trước khi deploy (gồm cả `0019`,
-    `0020`, `0021` — xem mục nhiệm vụ ngay dưới).
+    `APPLE_CLIENT_ID`) + tạo App registration tại portal.azure.com (lấy `MICROSOFT_CLIENT_ID`,
+    chọn loại "any organizational directory and personal Microsoft accounts") — điền vào
+    `.env` trên VPS. Xem `.env.example` để biết chi tiết từng bước. Chưa điền thì nút vẫn hiện
+    nhưng bấm vào sẽ báo lỗi kết nối (fail rõ ràng, không vỡ trang).
+  - **Chưa chạy migration `npm run migrate:pg`** — cần chạy trước khi deploy (gồm cả `0019`-
+    `0022` — xem mục nhiệm vụ ngay dưới).
 
 - **[2026-07-28] Nhiệm vụ (quest) cho user — mở đầu bằng "Chia sẻ công khai" (cùng nhánh
   trên).** Nghiên cứu hạ tầng sẵn có (challenge/referral/weekly credit) rồi dựng bảng generic

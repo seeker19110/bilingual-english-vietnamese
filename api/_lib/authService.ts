@@ -110,18 +110,19 @@ export async function verifyGoogleIdToken(
   }
 }
 
-// ── OAuth dùng chung (Google/Facebook/Apple) ────────────────────────────────────────────
+// ── OAuth dùng chung (Google/Facebook/Apple/Microsoft) ──────────────────────────────────
 // Tìm user theo cột định danh của provider (vd google_id); nếu chưa có mà email đã tồn tại
 // (đăng ký email/password hoặc provider khác trước đó) thì LIÊN KẾT (gắn id provider vào user
 // cũ) thay vì tạo user trùng email — 1 người có thể đăng nhập bằng nhiều kênh khác nhau.
 // Trả kèm `isNew` — cần để BIẾT có phải lần đăng nhập ĐẦU TIÊN không (chỉ tài khoản mới mới
 // được cấp quà dùng thử tự động, xem grantSignupTrial ở api/auth.ts — người dùng cũ đăng nhập
 // lại KHÔNG được cấp thêm).
-type OAuthProvider = 'google' | 'facebook' | 'apple'
+type OAuthProvider = 'google' | 'facebook' | 'apple' | 'microsoft'
 const OAUTH_ID_COLUMN: Record<OAuthProvider, string> = {
   google: 'google_id',
   facebook: 'facebook_id',
   apple: 'apple_id',
+  microsoft: 'microsoft_id',
 }
 
 async function findOrCreateOAuthUser(
@@ -181,6 +182,13 @@ export async function findOrCreateAppleUser(
   email: string,
 ): Promise<{ user: AuthUserRow; isNew: boolean }> {
   return findOrCreateOAuthUser('apple', appleId, email)
+}
+
+export async function findOrCreateMicrosoftUser(
+  microsoftId: string,
+  email: string,
+): Promise<{ user: AuthUserRow; isNew: boolean }> {
+  return findOrCreateOAuthUser('microsoft', microsoftId, email)
 }
 
 // ── Facebook Login (SDK trả access token, server verify qua Graph API) ─────────────────
@@ -266,6 +274,52 @@ export async function verifyAppleIdToken(
   } catch (err) {
     console.warn(
       '[authService] verifyAppleIdToken thất bại:',
+      err instanceof Error ? err.message : err,
+    )
+    return null
+  }
+}
+
+// ── Đăng nhập Microsoft (client trả id_token JWT qua MSAL.js, server verify qua JWKS) ───
+// Dùng authority 'common' (chấp nhận CẢ tài khoản công ty/trường lẫn tài khoản cá nhân
+// Microsoft — outlook.com/hotmail.com...) nên mỗi tenant có issuer KHÁC NHAU (chứa tenant id
+// trong URL) — không so sánh issuer CỐ ĐỊNH như Apple/Google được, phải khớp theo MẪU. JWKS
+// của endpoint 'common' phục vụ chung cho mọi tenant nên vẫn verify chữ ký được bình thường.
+// Cần MICROSOFT_CLIENT_ID (Application/client ID, tạo tại portal.azure.com → App registrations
+// → chọn "Accounts in any organizational directory and personal Microsoft accounts").
+const MICROSOFT_JWKS = createRemoteJWKSet(
+  new URL('https://login.microsoftonline.com/common/discovery/v2.0/keys'),
+)
+const MICROSOFT_ISSUER_RE = /^https:\/\/login\.microsoftonline\.com\/[^/]+\/v2\.0$/
+
+export async function verifyMicrosoftIdToken(
+  idToken: string,
+): Promise<{ microsoftId: string; email: string; name: string } | null> {
+  try {
+    const clientId = process.env.MICROSOFT_CLIENT_ID
+    if (!clientId) throw new Error('Server chưa cấu hình MICROSOFT_CLIENT_ID')
+
+    const { payload } = await jwtVerify(idToken, MICROSOFT_JWKS, {
+      audience: clientId,
+    })
+    // Issuer kiểm bằng regex NGAY SAU khi verify chữ ký (không truyền issuer cho jwtVerify vì
+    // nó chỉ so khớp CHUỖI CỐ ĐỊNH, không hỗ trợ mẫu/tenant động).
+    if (typeof payload.iss !== 'string' || !MICROSOFT_ISSUER_RE.test(payload.iss)) return null
+    if (typeof payload.sub !== 'string') return null
+
+    // 'email' claim không phải lúc nào cũng có (phụ thuộc cấu hình tenant) — 'preferred_username'
+    // luôn có và thường CHÍNH LÀ email/UPN đăng nhập, dùng làm phương án dự phòng.
+    const email =
+      (typeof payload.email === 'string' && payload.email) ||
+      (typeof payload.preferred_username === 'string' && payload.preferred_username) ||
+      null
+    if (!email) return null
+
+    const name = typeof payload.name === 'string' ? payload.name : email.split('@')[0] || email
+    return { microsoftId: payload.sub, email, name }
+  } catch (err) {
+    console.warn(
+      '[authService] verifyMicrosoftIdToken thất bại:',
       err instanceof Error ? err.message : err,
     )
     return null

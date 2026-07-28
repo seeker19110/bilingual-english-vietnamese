@@ -247,6 +247,60 @@ export async function loginWithApple(): Promise<AppUser | null> {
   return result.user
 }
 
+// ── Đăng nhập bằng Microsoft (MSAL.js — Microsoft Authentication Library) ────────────────
+declare global {
+  interface Window {
+    msal?: {
+      PublicClientApplication: new (config: { auth: { clientId: string; authority: string } }) => {
+        initialize: () => Promise<void>
+        loginPopup: (request: { scopes: string[] }) => Promise<{ idToken: string }>
+      }
+    }
+  }
+}
+
+let microsoftInitPromise: Promise<void> | null = null
+
+function loadMicrosoftScript(): Promise<void> {
+  if (microsoftInitPromise) return microsoftInitPromise
+  microsoftInitPromise = new Promise((resolve, reject) => {
+    if (window.msal) {
+      resolve()
+      return
+    }
+    const script = document.createElement('script')
+    script.src = 'https://alcdn.msauth.net/browser/3.7.1/js/msal-browser.min.js'
+    script.async = true
+    script.defer = true
+    script.onload = () => resolve()
+    script.onerror = () => reject(new Error('Không tải được MSAL.js'))
+    document.head.appendChild(script)
+  })
+  return microsoftInitPromise
+}
+
+export async function loginWithMicrosoft(): Promise<AppUser | null> {
+  const clientId = import.meta.env.VITE_MICROSOFT_CLIENT_ID as string | undefined
+  if (!clientId) throw new Error('Thiếu VITE_MICROSOFT_CLIENT_ID')
+
+  await loadMicrosoftScript()
+  const app = new window.msal!.PublicClientApplication({
+    auth: {
+      clientId,
+      // 'common' — chấp nhận CẢ tài khoản công ty/trường lẫn tài khoản cá nhân Microsoft
+      // (outlook.com/hotmail.com...), khớp verifyMicrosoftIdToken() ở server (regex issuer).
+      authority: 'https://login.microsoftonline.com/common',
+    },
+  })
+  await app.initialize()
+
+  const resp = await app.loginPopup({ scopes: ['openid', 'profile', 'email'] })
+  const result = await callAuthApi({ action: 'microsoft', idToken: resp.idToken })
+  if (!result) return null
+  setStoredToken(result.token)
+  return result.user
+}
+
 export async function logout() {
   await callAuthApi({ action: 'logout' }).catch(() => undefined)
   clearStoredToken()

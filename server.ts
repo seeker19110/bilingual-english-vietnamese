@@ -72,10 +72,11 @@ const app = express()
 // CSP chặn (lỗi "violates style-src directive"), khiến nút đăng nhập Google mất style/không hiện.
 // https://connect.facebook.net: tải Facebook JS SDK (đăng nhập Facebook, src/lib/auth.ts
 // loadFacebookScript()). https://appleid.cdn-apple.com: tải Sign in with Apple JS
-// (loadAppleScript()). Cả 2 mở popup (window mới), KHÔNG nhúng iframe trong trang như Google
-// One Tap, nên KHÔNG cần thêm vào frame-src.
+// (loadAppleScript()). https://alcdn.msauth.net: tải MSAL.js (đăng nhập Microsoft,
+// loadMicrosoftScript()). Cả 3 mở popup (window mới), KHÔNG nhúng iframe trong trang như
+// Google One Tap, nên KHÔNG cần thêm vào frame-src.
 const CSP_HEADER =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://accounts.google.com https://connect.facebook.net https://appleid.cdn-apple.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://accounts.google.com; frame-ancestors 'self'"
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://accounts.google.com https://connect.facebook.net https://appleid.cdn-apple.com https://alcdn.msauth.net; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://accounts.google.com; frame-ancestors 'self'"
 
 // Bỏ header "X-Powered-By: Express" — tránh lộ stack kỹ thuật ra bên ngoài
 app.disable('x-powered-by')

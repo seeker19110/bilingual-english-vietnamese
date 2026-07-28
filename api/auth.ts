@@ -7,6 +7,7 @@
 // POST /api/auth  body { action: 'google', idToken }
 // POST /api/auth  body { action: 'facebook', accessToken }
 // POST /api/auth  body { action: 'apple', idToken, name? }
+// POST /api/auth  body { action: 'microsoft', idToken }
 // POST /api/auth  body { action: 'logout' }               (cần Authorization: Bearer)
 // GET  /api/auth?action=me                                 (cần Authorization: Bearer)
 
@@ -20,6 +21,8 @@ import {
   findOrCreateFacebookUser,
   verifyAppleIdToken,
   findOrCreateAppleUser,
+  verifyMicrosoftIdToken,
+  findOrCreateMicrosoftUser,
   createSession,
   revokeSession,
   ensureProfileRow,
@@ -76,6 +79,10 @@ const AppleSchema = z.object({
   // các lần sau không gửi, server tự dùng phần trước @ của email.
   name: z.string().trim().min(1).max(80).optional(),
 })
+const MicrosoftSchema = z.object({
+  action: z.literal('microsoft'),
+  idToken: z.string().min(10),
+})
 const LogoutSchema = z.object({ action: z.literal('logout') })
 // Gửi lại mã xác thực email (cần đăng nhập) — chống email giả cày thưởng mời bạn.
 const SendVerificationSchema = z.object({ action: z.literal('send-verification') })
@@ -110,6 +117,7 @@ const BodySchema = z.union([
   GoogleSchema,
   FacebookSchema,
   AppleSchema,
+  MicrosoftSchema,
   LogoutSchema,
   SendVerificationSchema,
   VerifyEmailSchema,
@@ -267,6 +275,13 @@ export default async function handler(req: Request): Promise<Response> {
     const info = await verifyAppleIdToken(result.data.idToken, result.data.name)
     if (!info) return jsonResponse({ error: 'Apple token không hợp lệ' }, 401, allHeaders)
     const { user, isNew } = await findOrCreateAppleUser(info.appleId, info.email)
+    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
+  }
+
+  if (result.data.action === 'microsoft') {
+    const info = await verifyMicrosoftIdToken(result.data.idToken)
+    if (!info) return jsonResponse({ error: 'Microsoft token không hợp lệ' }, 401, allHeaders)
+    const { user, isNew } = await findOrCreateMicrosoftUser(info.microsoftId, info.email)
     return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
   }
 
