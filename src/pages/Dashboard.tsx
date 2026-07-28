@@ -443,7 +443,7 @@ export default function Dashboard() {
                   <MessageCircle className="w-4 h-4 text-accent-400" />
                   {vi ? 'Lượt AI tuần này (chat + nói + viết...)' : 'AI credits this week'}
                 </span>
-                <span className="text-sm font-semibold text-accent-300">
+                <span className="text-sm font-semibold text-accent-300 theme-light:text-accent-800">
                   {weeklyCredit?.freeWeeklyCredit ?? '…'}/{weeklyCredit?.freeWeeklyCap ?? 35}
                 </span>
               </div>
@@ -455,7 +455,7 @@ export default function Dashboard() {
                 }
                 color="bg-accent-500"
               />
-              <p className="text-[11px] text-zinc-500 mt-2">
+              <p className="text-[11px] text-zinc-400 mt-2">
                 {vi
                   ? 'Học từ mới/hoàn thành bài mỗi ngày để được +5 lượt (tối đa 35, tính theo 7 ngày gần nhất).'
                   : 'Learn a new word or finish a lesson each day for +5 credits (up to 35, based on the last 7 days).'}

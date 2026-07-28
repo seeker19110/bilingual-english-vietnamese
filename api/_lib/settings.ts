@@ -30,9 +30,12 @@ export interface AppSettings {
 // Mặc định dùng khi DB CHƯA có dòng cấu hình hoặc query lỗi (fail-open, giống mọi nơi khác
 // trong app — không để lỗi hạ tầng làm vỡ luồng chính) — PHẢI khớp giá trị seed trong
 // postgres/migrations/0016_daily_total_limit.sql (Pro 30/ngày, VIP 300/ngày, đều là TỔNG).
+// promoUntil = null CÓ CHỦ Ý: nếu DB lỗi/mất dòng cấu hình mà mặc định vẫn bật khuyến mãi
+// thì hệ thống tự nâng gói cho toàn bộ user → phát sinh chi phí AI/TTS ngoài kiểm soát.
+// Fail-open ở đây chỉ áp dụng cho HẠN MỨC (vẫn cho dùng), KHÔNG áp dụng cho khuyến mãi.
 const DEFAULT_SETTINGS: AppSettings = {
   limits: { pro: 30, vip: 300 },
-  promoUntil: '2027-01-01T00:00:00+07:00',
+  promoUntil: null,
   aiCircuitBreaker: false,
   leaderboardEnabled: false,
   updatedAt: '1970-01-01T00:00:00.000Z',

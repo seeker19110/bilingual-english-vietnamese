@@ -149,8 +149,8 @@ export interface DailyUsage {
 
 // Giới hạn theo gói (quyết định người dùng chốt 2026-07-21): Free 5 lượt/tính năng/ngày,
 // Pro 100 lượt/tính năng/ngày, VIP không giới hạn (dùng số rất lớn thay Infinity).
-// Áp dụng THẬT từ 2027 — hiện đang trong khuyến mãi ra mắt (xem src/lib/promo.ts), mọi
-// user hiện được effectivePlan() nâng thành 'vip' khi tính hạn mức hiển thị.
+// Trong thời gian khuyến mãi ra mắt (xem src/lib/promo.ts), effectivePlan() nâng mỗi gói
+// ĐÚNG 1 BẬC khi tính hạn mức hiển thị: free → pro, pro → vip, vip giữ nguyên.
 // PHẢI khớp với api/_lib/usage.ts (LIMITS) để client/server đồng nhất.
 const UNLIMITED = 1_000_000
 export const LIMITS: Record<

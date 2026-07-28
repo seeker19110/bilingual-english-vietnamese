@@ -16,6 +16,8 @@ import {
   getAllowedVoices,
   isVoicePromoActive,
 } from '../lib/voiceTiers'
+import { getAppSettings } from '../lib/appSettings'
+import { formatDateVN } from '../lib/promoEndingBanner'
 import type { Plan } from '../types'
 
 interface Props {
@@ -37,6 +39,9 @@ export default function VoicePicker({ plan, isA }: Props) {
   const eleven = new Set(ELEVEN_VOICE_IDS)
   const studio = new Set(STUDIO_VOICE_IDS)
   const promoActive = isVoicePromoActive()
+  // Ngày hết khuyến mãi lấy ĐỘNG từ cấu hình server (app_settings) — trước đây viết cứng
+  // "31/12/2026" nên admin đổi mốc là banner nói sai.
+  const { promoUntil } = getAppSettings()
 
   function choose(v: Voice) {
     if (!allowed.has(v)) return
@@ -63,11 +68,11 @@ export default function VoicePicker({ plan, isA }: Props) {
           {isA ? 'Giọng đọc (áp dụng cho cả app)' : 'Voice (applies app-wide)'}
         </span>
       </div>
-      {promoActive && (
+      {promoActive && promoUntil !== null && (
         <p className="text-xs text-emerald-400 theme-light:text-emerald-800 mb-3">
           {isA
-            ? '🎁 Miễn phí dùng đủ 14 giọng tới hết 31/12/2026'
-            : '🎁 All 14 voices free until Dec 31, 2026'}
+            ? `🎁 Khuyến mãi: mở thêm giọng miễn phí (${allowed.size} giọng) tới hết ${formatDateVN(promoUntil)}`
+            : `🎁 Promo: extra voices unlocked (${allowed.size} total) until ${formatDateVN(promoUntil)}`}
         </p>
       )}
 
