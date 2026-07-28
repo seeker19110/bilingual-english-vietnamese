@@ -43,28 +43,44 @@ export default function AdminDashboard() {
         />
 
         <div className="flex flex-col md:flex-row gap-4">
-          {/* Tab ngang cuộn được trên mobile, menu dọc bên trái trên desktop */}
-          <nav
-            className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-1 md:pb-0 md:w-56 shrink-0"
-            aria-label="Mục quản trị"
-          >
-            {TABS.map(({ key, label, icon: Icon }) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setTab(key)}
-                aria-current={tab === key ? 'page' : undefined}
-                className={`tap-44 shrink-0 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium whitespace-nowrap transition ${
-                  tab === key
-                    ? 'bg-accent-500 text-white'
-                    : 'bg-zinc-900/80 border border-zinc-800/80 text-zinc-300 hover:text-white'
-                }`}
-              >
-                <Icon className="w-4 h-4 shrink-0" />
-                {label}
-              </button>
-            ))}
-          </nav>
+          {/* Tab ngang cuộn được trên mobile, menu dọc bên trái trên desktop. 6 tab hiện đã
+              rộng hơn 1 màn hình mobile — dải mờ bên phải (chỉ hiện trên mobile, md:hidden) gợi
+              ý còn tab cuộn tiếp, tránh người dùng tưởng chỉ có 1 tab "Sử dụng & chi phí". */}
+          <div style={{ position: 'relative' }}>
+            <nav
+              className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-1 md:pb-0 md:w-56 shrink-0"
+              aria-label="Mục quản trị"
+            >
+              {TABS.map(({ key, label, icon: Icon }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setTab(key)}
+                  aria-current={tab === key ? 'page' : undefined}
+                  className={`tap-44 shrink-0 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium whitespace-nowrap transition ${
+                    tab === key
+                      ? 'bg-accent-500 text-white'
+                      : 'bg-zinc-900/80 border border-zinc-800/80 text-zinc-300 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  {label}
+                </button>
+              ))}
+            </nav>
+            <div
+              aria-hidden="true"
+              className="pointer-events-none md:hidden"
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 0,
+                bottom: '0.25rem',
+                width: '2.5rem',
+                background: 'linear-gradient(to left, rgb(var(--z-950)), transparent)',
+              }}
+            />
+          </div>
 
           <div className="flex-1 min-w-0 space-y-4">
             {tab === 'usage' && <AdminUsagePanel />}
