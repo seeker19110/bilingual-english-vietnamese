@@ -17,9 +17,12 @@ export interface AppSettings {
   updatedAt: string
 }
 
+// promoUntil = null CÓ CHỦ Ý — khớp mặc định của api/_lib/settings.ts: chưa gọi được
+// /api/app-settings thì coi như KHÔNG có khuyến mãi, để UI không mở khoá nhầm giọng/hạn mức
+// mà server sẽ chặn. Có giá trị thật ngay sau refreshAppSettings().
 const DEFAULT_SETTINGS: AppSettings = {
   limits: DEFAULT_LIMITS,
-  promoUntil: '2027-01-01T00:00:00+07:00',
+  promoUntil: null,
   leaderboardEnabled: false,
   updatedAt: '1970-01-01T00:00:00.000Z',
 }
