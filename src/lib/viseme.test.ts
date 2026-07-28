@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { textToVisemeTimeline, visemeAtTime } from './viseme'
+import {
+  textToVisemeTimeline,
+  visemeAtTime,
+  fallbackWordVisemes,
+  framesFromWordVisemes,
+} from './viseme'
 
 describe('textToVisemeTimeline', () => {
   it('trả về mảng rỗng khi câu rỗng', () => {
@@ -31,6 +36,37 @@ describe('textToVisemeTimeline', () => {
     const frames = textToVisemeTimeline('hi', 500)
     expect(frames.length).toBeGreaterThan(0)
     expect(frames.every((f) => f.viseme !== 'REST')).toBe(true)
+  })
+})
+
+describe('fallbackWordVisemes', () => {
+  it('mỗi từ có ít nhất 1 viseme', () => {
+    const result = fallbackWordVisemes(['hello', 'a', 'beautiful'])
+    expect(result).toHaveLength(3)
+    result.forEach((visemes) => expect(visemes.length).toBeGreaterThan(0))
+  })
+
+  it('mảng rỗng khi không có từ nào', () => {
+    expect(fallbackWordVisemes([])).toEqual([])
+  })
+})
+
+describe('framesFromWordVisemes', () => {
+  it('mảng rỗng khi wordVisemes rỗng hoặc thời lượng <= 0', () => {
+    expect(framesFromWordVisemes([], 1000)).toEqual([])
+    expect(framesFromWordVisemes([['AA']], 0)).toEqual([])
+  })
+
+  it('dùng ĐÚNG dãy viseme phoneme thật đã cho, không tự đổi', () => {
+    const wordVisemes: Array<('PP' | 'FF' | 'AA' | 'OO')[]> = [['PP', 'AA'], ['FF']]
+    const frames = framesFromWordVisemes(wordVisemes, 1000)
+    const speakingFrames = frames.filter((f) => f.viseme !== 'REST')
+    expect(speakingFrames.map((f) => f.viseme)).toEqual(['PP', 'AA', 'FF'])
+  })
+
+  it('có đúng 1 khung REST giữa 2 từ', () => {
+    const frames = framesFromWordVisemes([['AA'], ['OO']], 1000)
+    expect(frames.filter((f) => f.viseme === 'REST')).toHaveLength(1)
   })
 })
 

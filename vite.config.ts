@@ -136,6 +136,7 @@ const API_ROUTES: { prefix: string; module: string }[] = [
   { prefix: '/api/tutor-feedback', module: '/api/tutor-feedback.ts' },
   { prefix: '/api/admin-settings', module: '/api/admin-settings.ts' },
   { prefix: '/api/app-settings', module: '/api/app-settings.ts' },
+  { prefix: '/api/avatar-visemes', module: '/api/avatar-visemes.ts' },
 ]
 
 function apiEdgeDevMiddleware(): Plugin {

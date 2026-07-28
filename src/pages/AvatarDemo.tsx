@@ -7,10 +7,35 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import AvatarSpeaking from '../components/AvatarSpeaking'
 import { ensureAudioBuffer, bufferToBlobUrl, DEFAULT_VOICE } from '../lib/tts'
-import { textToVisemeTimeline, type VisemeFrame } from '../lib/viseme'
+import {
+  fallbackWordVisemes,
+  framesFromWordVisemes,
+  type Viseme,
+  type VisemeFrame,
+} from '../lib/viseme'
+import { getAccessToken } from '../lib/authHeader'
 import { useToast } from '../context/ToastProvider'
 
 const DEMO_SENTENCE = 'Hello, how are you today? I am your English tutor.'
+
+// Hỏi server dãy viseme thật (eSpeak-ng, xem api/avatar-visemes.ts) — trả null nếu server chưa
+// cài eSpeak-ng hoặc lỗi mạng, để dùng fallbackWordVisemes() (đếm nguyên âm chữ viết) thay thế.
+async function fetchWordVisemes(text: string): Promise<Viseme[][] | null> {
+  try {
+    const token = await getAccessToken()
+    if (!token) return null
+    const res = await fetch('/api/avatar-visemes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ text, lang: 'en-US' }),
+    })
+    if (!res.ok) return null
+    const { wordVisemes } = (await res.json()) as { wordVisemes: Viseme[][] | null }
+    return wordVisemes
+  } catch {
+    return null
+  }
+}
 
 export default function AvatarDemo() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -23,7 +48,11 @@ export default function AvatarDemo() {
     if (loading || isPlaying) return
     setLoading(true)
     try {
-      const buffer = await ensureAudioBuffer(DEMO_SENTENCE, 'en-US', DEFAULT_VOICE)
+      const words = DEMO_SENTENCE.split(/\s+/).filter(Boolean)
+      const [buffer, wordVisemes] = await Promise.all([
+        ensureAudioBuffer(DEMO_SENTENCE, 'en-US', DEFAULT_VOICE),
+        fetchWordVisemes(DEMO_SENTENCE),
+      ])
       const blobUrl = bufferToBlobUrl(buffer)
 
       const audio = audioRef.current ?? new Audio()
@@ -32,7 +61,8 @@ export default function AvatarDemo() {
 
       audio.onloadedmetadata = () => {
         const durationMs = audio.duration * 1000
-        setTimeline(textToVisemeTimeline(DEMO_SENTENCE, durationMs))
+        const frames = framesFromWordVisemes(wordVisemes ?? fallbackWordVisemes(words), durationMs)
+        setTimeline(frames)
       }
       audio.onended = () => {
         setIsPlaying(false)
