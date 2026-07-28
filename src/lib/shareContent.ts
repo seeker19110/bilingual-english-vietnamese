@@ -62,3 +62,15 @@ export function buildChallengeShareContent(
 
   return { title, lines }
 }
+
+// Nội dung chia sẻ tiến độ chung (streak + số từ đã học) — dùng cho nút chia sẻ ở nhiệm vụ
+// "Chia sẻ công khai" (Quests), không gắn với 1 lượt chấm điểm cụ thể nào.
+export function buildProgressShareContent(
+  streak: number,
+  learned: number,
+  isA: boolean,
+): { title: string; lines: string[] } {
+  const title = isA ? `Streak ${streak} ngày liên tiếp 🔥` : `${streak}-day streak 🔥`
+  const lines = [isA ? `Đã học ${learned} từ` : `${learned} words learned`]
+  return { title, lines }
+}

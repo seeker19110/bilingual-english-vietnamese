@@ -14,12 +14,14 @@ import {
   VolumeX,
   Users,
   Gift,
+  ChevronDown,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
 import VoicePicker from '../components/VoicePicker'
 import ReferralSection from '../components/ReferralSection'
+import QuestsPanel from '../components/QuestsPanel'
 import EmailVerifySection from '../components/EmailVerifySection'
 import UpgradeSection from '../components/UpgradeSection'
 import { useAuth } from '../context/useAuth'
@@ -71,6 +73,7 @@ export default function Profile() {
   const [weekGoal, setWeekGoal] = useState<WeeklyGoal>(() => getWeeklyGoal(user?.id ?? ''))
   const [earned, setEarned] = useState<Set<string>>(() => getEarnedAchievements(user?.id ?? ''))
   const [soundOn, setSoundOn] = useState<boolean>(() => isSoundEnabled())
+  const [questsOpen, setQuestsOpen] = useState(false)
   const onboardingData = useOnboarding(user?.id)
   const [ageGroup, setAgeGroupState] = useState<AgeGroup>('nguoi_lon')
 
@@ -295,24 +298,37 @@ export default function Profile() {
           </p>
         </section>
 
-        {/* Nhiệm vụ — streak/thi cấp CEFR/chia sẻ/mời bạn gom vào 1 trang (src/pages/Quests.tsx) */}
-        <button
-          type="button"
-          onClick={() => nav('/quests')}
-          className="tap-44 w-full flex items-center justify-between gap-3 bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 transition text-left"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center shrink-0">
-              <Gift className="w-5 h-5 text-accent-400" />
+        {/* Nhiệm vụ — mở NGAY tại chỗ (không sang trang riêng /quests nữa), có nút chia sẻ/chép
+            link mời ngay trong khối để dễ lan truyền. Nội dung dùng chung với trang /quests qua
+            QuestsPanel.tsx (trang /quests vẫn giữ để có link riêng chia sẻ được). */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
+          <button
+            type="button"
+            onClick={() => setQuestsOpen((v) => !v)}
+            aria-expanded={questsOpen}
+            className="tap-44 w-full flex items-center justify-between gap-3 text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center shrink-0">
+                <Gift className="w-5 h-5 text-accent-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">{isA ? 'Nhiệm vụ' : 'Quests'}</p>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  {isA ? 'Kiếm thêm ngày dùng gói Pro miễn phí' : 'Earn extra free days of Pro'}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-semibold text-white">{isA ? 'Nhiệm vụ' : 'Quests'}</p>
-              <p className="text-xs text-zinc-400 mt-0.5">
-                {isA ? 'Kiếm thêm ngày dùng gói Pro miễn phí' : 'Earn extra free days of Pro'}
-              </p>
+            <ChevronDown
+              className={`w-4 h-4 text-zinc-400 shrink-0 transition-transform ${questsOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+          {questsOpen && (
+            <div className="mt-4 pt-4 border-t border-zinc-800/80">
+              <QuestsPanel isA={isA} userId={user.id} />
             </div>
-          </div>
-        </button>
+          )}
+        </section>
 
         {/* Nâng cấp Pro/VIP qua SePay — ẩn nếu đã VIP (xem UpgradeSection.tsx) */}
         <UpgradeSection isA={isA} currentPlan={user.plan} />
