@@ -11,6 +11,7 @@
 import { randomBytes, createHash } from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import { OAuth2Client } from 'google-auth-library'
+import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { getPgPool } from './pgPool.js'
 import { resolvePlan, type Plan } from './plan.js'
 
@@ -109,43 +110,166 @@ export async function verifyGoogleIdToken(
   }
 }
 
-// Tìm user theo google_id; nếu chưa có mà email đã tồn tại (đăng ký email/password trước đó)
-// thì LIÊN KẾT (gắn google_id vào user cũ) thay vì tạo user trùng email.
-// Trả kèm `isNew` — cần để BIẾT có phải lần đăng nhập Google ĐẦU TIÊN không (chỉ tài khoản
-// mới mới được cấp quà dùng thử tự động, xem grantSignupTrial ở api/auth.ts — người dùng cũ
-// đăng nhập lại KHÔNG được cấp thêm).
-export async function findOrCreateGoogleUser(
-  googleId: string,
+// ── OAuth dùng chung (Google/Facebook/Apple) ────────────────────────────────────────────
+// Tìm user theo cột định danh của provider (vd google_id); nếu chưa có mà email đã tồn tại
+// (đăng ký email/password hoặc provider khác trước đó) thì LIÊN KẾT (gắn id provider vào user
+// cũ) thay vì tạo user trùng email — 1 người có thể đăng nhập bằng nhiều kênh khác nhau.
+// Trả kèm `isNew` — cần để BIẾT có phải lần đăng nhập ĐẦU TIÊN không (chỉ tài khoản mới mới
+// được cấp quà dùng thử tự động, xem grantSignupTrial ở api/auth.ts — người dùng cũ đăng nhập
+// lại KHÔNG được cấp thêm).
+type OAuthProvider = 'google' | 'facebook' | 'apple'
+const OAUTH_ID_COLUMN: Record<OAuthProvider, string> = {
+  google: 'google_id',
+  facebook: 'facebook_id',
+  apple: 'apple_id',
+}
+
+async function findOrCreateOAuthUser(
+  provider: OAuthProvider,
+  providerId: string,
   email: string,
 ): Promise<{ user: AuthUserRow; isNew: boolean }> {
   const pool = getPgPool()
+  // Tên cột lấy từ whitelist cố định OAUTH_ID_COLUMN ở trên (không phải input người dùng) —
+  // an toàn khi ghép thẳng vào chuỗi SQL, giống cách consume_usage() whitelist cột trong DB.
+  const col = OAUTH_ID_COLUMN[provider]
   const normalizedEmail = email.toLowerCase().trim()
 
-  const byGoogle = await pool.query<AuthUserRow>(
-    'select id, email from public.users where google_id = $1',
-    [googleId],
+  const byProvider = await pool.query<AuthUserRow>(
+    `select id, email from public.users where ${col} = $1`,
+    [providerId],
   )
-  if (byGoogle.rows[0]) return { user: byGoogle.rows[0], isNew: false }
+  if (byProvider.rows[0]) return { user: byProvider.rows[0], isNew: false }
 
   const byEmail = await pool.query<AuthUserRow>(
     'select id, email from public.users where email = $1',
     [normalizedEmail],
   )
   if (byEmail.rows[0]) {
-    await pool.query('update public.users set google_id = $1 where id = $2', [
-      googleId,
+    await pool.query(`update public.users set ${col} = $1 where id = $2`, [
+      providerId,
       byEmail.rows[0].id,
     ])
     return { user: byEmail.rows[0], isNew: false }
   }
 
   const { rows } = await pool.query<AuthUserRow>(
-    'insert into public.users (email, google_id, email_verified) values ($1, $2, now()) returning id, email',
-    [normalizedEmail, googleId],
+    `insert into public.users (email, ${col}, email_verified) values ($1, $2, now()) returning id, email`,
+    [normalizedEmail, providerId],
   )
   const created = rows[0]
-  if (!created) throw new Error('Không tạo được user Google mới')
+  if (!created) throw new Error(`Không tạo được user ${provider} mới`)
   return { user: created, isNew: true }
+}
+
+export async function findOrCreateGoogleUser(
+  googleId: string,
+  email: string,
+): Promise<{ user: AuthUserRow; isNew: boolean }> {
+  return findOrCreateOAuthUser('google', googleId, email)
+}
+
+export async function findOrCreateFacebookUser(
+  facebookId: string,
+  email: string,
+): Promise<{ user: AuthUserRow; isNew: boolean }> {
+  return findOrCreateOAuthUser('facebook', facebookId, email)
+}
+
+export async function findOrCreateAppleUser(
+  appleId: string,
+  email: string,
+): Promise<{ user: AuthUserRow; isNew: boolean }> {
+  return findOrCreateOAuthUser('apple', appleId, email)
+}
+
+// ── Facebook Login (SDK trả access token, server verify qua Graph API) ─────────────────
+// Xác minh access token: (1) debug_token bằng app access token (app_id|app_secret) — chống
+// người khác gửi access token của MỘT APP FACEBOOK KHÁC (is_valid + đúng app_id của mình);
+// (2) gọi /me lấy id/email/name bằng CHÍNH access token đó. Cần FACEBOOK_APP_ID +
+// FACEBOOK_APP_SECRET trong .env (tạo app tại developers.facebook.com).
+export async function verifyFacebookAccessToken(
+  accessToken: string,
+): Promise<{ facebookId: string; email: string; name: string } | null> {
+  try {
+    const appId = process.env.FACEBOOK_APP_ID
+    const appSecret = process.env.FACEBOOK_APP_SECRET
+    if (!appId || !appSecret) {
+      throw new Error('Server chưa cấu hình FACEBOOK_APP_ID/FACEBOOK_APP_SECRET')
+    }
+
+    const appToken = `${appId}|${appSecret}`
+    const debugRes = await fetch(
+      `https://graph.facebook.com/debug_token?input_token=${encodeURIComponent(accessToken)}&access_token=${encodeURIComponent(appToken)}`,
+    )
+    const debugData = (await debugRes.json()) as {
+      data?: { is_valid?: boolean; app_id?: string }
+    }
+    if (!debugData.data?.is_valid || debugData.data.app_id !== appId) return null
+
+    const meRes = await fetch(
+      `https://graph.facebook.com/me?fields=id,email,name&access_token=${encodeURIComponent(accessToken)}`,
+    )
+    const me = (await meRes.json()) as { id?: string; email?: string; name?: string }
+    // Facebook cho phép user KHÔNG cấp quyền email (hiếm, thường do tài khoản chỉ có SĐT) —
+    // không tạo được tài khoản nếu thiếu, vì `users.email` là NOT NULL UNIQUE.
+    if (!me.id || !me.email) return null
+
+    return {
+      facebookId: me.id,
+      email: me.email,
+      name: me.name ?? me.email.split('@')[0] ?? me.email,
+    }
+  } catch (err) {
+    console.warn(
+      '[authService] verifyFacebookAccessToken thất bại:',
+      err instanceof Error ? err.message : err,
+    )
+    return null
+  }
+}
+
+// ── Sign in with Apple (client trả id_token JWT, server verify qua JWKS của Apple) ─────
+// Chỉ verify chữ ký + issuer/audience — KHÔNG cần Client Secret/private key .p8 (chỉ cần cho
+// luồng server-to-server đổi authorization code, ta không dùng luồng đó). Cần APPLE_CLIENT_ID
+// (Services ID, tạo tại developer.apple.com → Certificates, Identifiers & Profiles).
+const APPLE_JWKS = createRemoteJWKSet(new URL('https://appleid.apple.com/auth/keys'))
+
+// Apple CHỈ gửi tên/email trong object `user` riêng (không nằm trong id_token) và CHỈ ở LẦN
+// ĐẦU TIÊN người dùng đồng ý chia sẻ với app này — client PHẢI tự lưu/gửi lên ngay lần đó
+// (xem src/lib/auth.ts). Các lần đăng nhập sau, id_token vẫn có `email` (Apple luôn nhúng lại
+// email — kể cả địa chỉ ẩn danh @privaterelay.appleid.com) nhưng KHÔNG có tên, nên `nameFromClient`
+// chỉ dùng khi tạo user mới lần đầu, có thể để trống.
+export async function verifyAppleIdToken(
+  idToken: string,
+  nameFromClient?: string,
+): Promise<{ appleId: string; email: string; name: string } | null> {
+  try {
+    const clientId = process.env.APPLE_CLIENT_ID
+    if (!clientId) throw new Error('Server chưa cấu hình APPLE_CLIENT_ID')
+
+    const { payload } = await jwtVerify(idToken, APPLE_JWKS, {
+      issuer: 'https://appleid.apple.com',
+      audience: clientId,
+    })
+    if (typeof payload.sub !== 'string') return null
+    const email = typeof payload.email === 'string' ? payload.email : null
+    // Không có email = không tạo/khớp được tài khoản an toàn (email NOT NULL UNIQUE) — ca hiếm
+    // (Apple không nhúng lại email cho id_token cũ/đã cache phía client), yêu cầu đăng nhập lại.
+    if (!email) return null
+
+    return {
+      appleId: payload.sub,
+      email,
+      name: nameFromClient?.trim() || email.split('@')[0] || email,
+    }
+  } catch (err) {
+    console.warn(
+      '[authService] verifyAppleIdToken thất bại:',
+      err instanceof Error ? err.message : err,
+    )
+    return null
+  }
 }
 
 export async function getUserById(userId: string): Promise<AuthUserRow | null> {

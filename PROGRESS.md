@@ -98,29 +98,79 @@ code trong nhiều file rời rạc.
     Anthropic/Groq/Google, chia (tiền tháng ÷ lượt tháng) rồi điền vào `.env` trên VPS. Chi phí
     TTS chưa tính (theo ký tự + có cache dùng chung, không tỉ lệ với số lượt).
 
-- **[2026-07-27, chỉnh lại 2026-07-28] Trial Pro 14 ngày cho tài khoản MỚI — CHỈ SAU KHI xác
-  thực (cùng nhánh `claude/feature-usage-dashboard-378z5q`).** Thay cho phương án mở khuyến
-  mãi Pro cho TOÀN BỘ user hiện có (được người dùng cân nhắc sau khi xem dashboard chi phí —
-  rủi ro: chi phí AI tăng ~x20 cho cả user cũ vốn không cần khuyến mãi mới ở lại).
-  **Quyết định 2026-07-28 (chỉnh so với bản đầu):** không cấp ngay lúc `register` nữa — email/
-  password phải XÁC THỰC EMAIL (mã 6 số) mới được cấp, chống lạm dụng email rác tạo hàng loạt
-  để cày trial. Google COI NHƯ ĐÃ XÁC THỰC (Google tự verify) nên vẫn cấp NGAY ở lần đăng nhập
-  đầu tiên. Đây là quà TỔNG 14 ngày DUY NHẤT — thay hẳn quà xác thực email 5 ngày cũ (0013),
-  không còn cộng dồn 2 quà như thiết kế ban đầu.
+- **[2026-07-27, CHỐT LẠI 2026-07-28] Trial Pro 14 ngày TỰ ĐỘNG cho MỌI tài khoản mới (cùng
+  nhánh `claude/feature-usage-dashboard-378z5q`).** Thay cho phương án mở khuyến mãi Pro cho
+  TOÀN BỘ user hiện có (rủi ro: chi phí AI tăng ~x20 cho cả user cũ vốn không cần khuyến mãi
+  mới ở lại). Lịch sử quyết định (đổi 2 lần trong cùng ngày 2026-07-28, chốt bản CUỐI): bản
+  đầu cấp ngay lúc đăng ký → đổi sang chỉ cấp sau khi xác thực email → **CHỐT: bỏ hẳn điều
+  kiện xác thực, quay lại cấp NGAY lúc đăng ký/đăng nhập lần đầu cho MỌI kênh** (đơn giản hơn,
+  không cần người dùng phải làm thêm bước để nhận ưu đãi tăng trưởng).
   - `postgres/migrations/0019_signup_trial.sql` — cột `profiles.signup_trial_granted_at`.
-    `trial_granted_at` (0013, quà 5 ngày cũ) giữ nguyên không xoá (dữ liệu lịch sử), chỉ
-    ngừng ghi — hàm `grantEmailVerifyTrial()` cũ đã XOÁ khỏi `api/_lib/trial.ts`.
+    `trial_granted_at` (0013, quà xác thực email 5 ngày cũ) giữ nguyên không xoá (dữ liệu lịch
+    sử), chỉ ngừng ghi — hàm `grantEmailVerifyTrial()` cũ đã XOÁ khỏi `api/_lib/trial.ts`.
   - `api/_lib/trial.ts` — chỉ còn 1 hàm `grantSignupTrial()` (`SIGNUP_TRIAL_DAYS = 14`), cơ chế
     "giành quyền nhận 1 lần" atomic, dùng lại `grantPlanDays()`.
-  - `api/_lib/authService.ts` — `findOrCreateGoogleUser()` trả thêm `isNew` (để KHÔNG cấp
-    trial cho user Google cũ đăng nhập lại, chỉ cấp lần đầu tạo tài khoản).
-  - `api/auth.ts` — `register` KHÔNG còn gọi cấp trial (chỉ gửi mã xác thực như cũ);
-    `verify-email` gọi `grantSignupTrial()` sau khi xác thực đúng mã (response
-    `trialGranted`/`trialDays`, khớp field cũ `EmailVerifySection.tsx` đã đọc — chỉ đổi số
-    ngày 5→14); `google` gọi khi `isNew` (response `signupTrialGranted`/`signupTrialDays`).
+  - `api/auth.ts` — cấp NGAY ở `register` (email/password) và ở mọi kênh OAuth khi `isNew`
+    (Google/Facebook/Apple, xem mục ngay dưới) qua hàm dùng chung `oauthLoginResponse()`.
+    `verify-email` KHÔNG còn liên quan tới trial (chỉ còn mở khoá thưởng mời bạn).
   - **Còn mở (chưa làm, đề xuất bước tiếp theo):** UI nhắc "còn X ngày dùng thử" + banner
     upsell lúc trial sắp hết (Dashboard/Profile hiện chưa có chỗ hiển thị hạn Pro/VIP còn
     lại) — cần 1 PR riêng theo đúng nhịp "chia nhỏ".
+
+- **[2026-07-28] Đăng nhập Facebook + Apple (cùng nhánh trên).** Thêm 2 kênh OAuth mới cạnh
+  Google đã có, dùng chung hạ tầng `findOrCreateOAuthUser()` (refactor `findOrCreateGoogleUser`
+  thành hàm generic theo cột `google_id`/`facebook_id`/`apple_id`).
+  - `postgres/migrations/0020_facebook_apple_login.sql` — cột `users.facebook_id`/`apple_id`
+    (cùng khuôn mẫu `google_id`).
+  - `api/_lib/authService.ts` — `verifyFacebookAccessToken()` (verify qua Graph API
+    `debug_token` + `/me`, cần `FACEBOOK_APP_ID`/`FACEBOOK_APP_SECRET`); `verifyAppleIdToken()`
+    (verify chữ ký JWT qua JWKS công khai của Apple bằng thư viện `jose` mới thêm, cần
+    `APPLE_CLIENT_ID` — KHÔNG cần Client Secret/private key .p8 vì không dùng luồng đổi
+    authorization code phía server).
+  - `src/lib/auth.ts` — `loginWithFacebook()`/`loginWithApple()` (tải SDK động, mở popup, gửi
+    token về `/api/auth`). `src/pages/Login.tsx` — 2 nút mới cạnh nút Google.
+  - `server.ts` — CSP `script-src` thêm `connect.facebook.net` + `appleid.cdn-apple.com`.
+  - **Lưu ý Apple:** email/tên CHỈ được gửi ở LẦN ĐẦU người dùng đồng ý chia sẻ — client PHẢI
+    gửi kèm ngay lúc đó (đã làm), các lần đăng nhập sau id_token vẫn có email (kể cả địa chỉ
+    ẩn danh `@privaterelay.appleid.com`) nhưng không có tên.
+  - **VIỆC TAY BẮT BUỘC (ngoài khả năng AI) trước khi 2 nút này hoạt động:** tạo Facebook App
+    tại developers.facebook.com (lấy `FACEBOOK_APP_ID`/`FACEBOOK_APP_SECRET`) + tạo Apple
+    Services ID tại developer.apple.com (cần tài khoản Apple Developer Program TRẢ PHÍ, lấy
+    `APPLE_CLIENT_ID`, khai domain trùng domain app) — điền vào `.env` trên VPS. Xem
+    `.env.example` để biết chi tiết từng bước. Chưa điền thì 2 nút vẫn hiện nhưng bấm vào sẽ
+    báo lỗi kết nối (fail rõ ràng, không vỡ trang).
+  - **Chưa chạy migration `npm run migrate:pg`** — cần chạy trước khi deploy (gồm cả `0019`,
+    `0020`, `0021` — xem mục nhiệm vụ ngay dưới).
+
+- **[2026-07-28] Nhiệm vụ (quest) cho user — mở đầu bằng "Chia sẻ công khai" (cùng nhánh
+  trên).** Nghiên cứu hạ tầng sẵn có (challenge/referral/weekly credit) rồi dựng bảng generic
+  `quest_claims` (khoá theo `user_id` + `quest_key` + thời gian hồi) để MỞ THÊM nhiệm vụ mới
+  sau này chỉ cần thêm hằng số, không cần migration mới — xem `api/_lib/quests.ts`.
+  - `postgres/migrations/0021_quest_claims.sql` — bảng `quest_claims` + hàm SQL atomic
+    `claim_quest_if_ready(user_id, quest_key, cooldown_days)`.
+  - Nhiệm vụ đầu tiên: **"Chia sẻ công khai"** — bấm "Chia sẻ kết quả" (màn chấm điểm Chat/
+    Challenge, `ShareResultCard.tsx`) và Web Share API xác nhận đã chọn nơi chia sẻ (không huỷ)
+    → thưởng **+1 ngày gói Pro**, hồi sau **7 ngày** (khớp cửa sổ trượt gói Free) — API
+    `POST /api/quests { action: 'claim-share' }`.
+  - ⚠️ **CẢNH BÁO ĐÃ CHỦ ĐỘNG NÊU (chưa xin thêm xác nhận, đã triển khai với rate-limit là lớp
+    phòng thủ duy nhất):** Web Share API KHÔNG cho server biết người dùng có thật sự đăng công
+    khai hay không — chỉ biết họ đã mở hộp thoại chia sẻ hệ điều hành và không bấm huỷ. Về mặt
+    lý thuyết một tài khoản có thể tự thưởng cho mình 1 ngày Pro mỗi 7 ngày mà không cần chia
+    sẻ thật (mở hộp thoại rồi chọn "Sao chép liên kết" gửi cho chính mình). Đã chấp nhận rủi ro
+    này ở QUY MÔ HIỆN TẠI (giá trị thấp — 1 ngày Pro/7 ngày, không đáng để cày công phu). Nếu
+    sau này phát hiện lạm dụng thật: cân nhắc thêm `device_hash` như referral (migration 0008)
+    hoặc đổi thưởng sang phi tiền tệ (huy hiệu...).
+  - **Nghiên cứu thêm — đề xuất nhiệm vụ TIẾP THEO (chưa làm, cần xác nhận trước khi build,
+    vì đụng quyết định sản phẩm):** các nhiệm vụ dưới đây VERIFY ĐƯỢC HOÀN TOÀN Ở SERVER (an
+    toàn hơn hẳn "chia sẻ công khai") vì đều đọc dữ liệu đã có sẵn trong DB, không phụ thuộc
+    lời khai client:
+    1. "Học đủ N ngày liên tiếp trong tuần" — đọc từ `daily_usage`/streak đã có (`src/lib/
+stats.ts`), thưởng thêm lượt AI hoặc ngày Pro.
+    2. "Hoàn thành bài kiểm tra cuối 1 cấp CEFR" — đã có cột tiến độ `learning_progress.
+cefr_grammar`, chỉ cần thêm điều kiện thưởng.
+    3. "Mời bạn xác thực email" — đã có sẵn (referral), có thể chỉ cần thêm 1 mục trong UI
+       nhiệm vụ để gom tất cả phần thưởng vào 1 nơi thay vì rải rác nhiều trang.
+       Chưa build 3 mục này — chờ người dùng chọn ưu tiên trước khi làm PR tiếp theo.
 
 - **[Kế hoạch 2026-07-22] Giao diện + nội dung theo độ tuổi** — nhánh
   `claude/ui-redesign-age-groups-rk71g8`. Ý tưởng: app đổi giao diện thị giác và giọng điệu nội

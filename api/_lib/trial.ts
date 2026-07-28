@@ -2,14 +2,14 @@
 // chiến lược tăng trưởng — thay cho việc mở khuyến mãi Pro cho TOÀN BỘ user hiện có, vốn tốn
 // chi phí AI không kiểm soát được cho những người vốn đã ở lại mà không cần khuyến mãi).
 //
-// QUYẾT ĐỊNH (chỉnh lại 2026-07-28): chỉ cấp quà khi email đã được XÁC THỰC — tài khoản
-// email/password vừa đăng ký KHÔNG được cấp ngay, phải bấm xác thực mã 6 số trước (chống lạm
-// dụng email rác tạo hàng loạt để cày trial). Tài khoản Google COI NHƯ ĐÃ XÁC THỰC (Google tự
-// verify email khi đăng nhập) nên được cấp NGAY ở lần đăng nhập đầu tiên — xem lời gọi ở
-// api/auth.ts (action 'verify-email' cho email/password, action 'google' khi isNew cho Google).
+// QUYẾT ĐỊNH CUỐI (2026-07-28): cấp NGAY lúc tạo tài khoản, KHÔNG còn điều kiện xác thực email
+// (bản chỉnh 2026-07-28 trước đó từng gắn với xác thực — đã bỏ). Cấp cho MỌI kênh đăng ký lần
+// đầu: email/password (action 'register'), Google/Facebook/Apple (khi tài khoản mới, `isNew`)
+// — xem lời gọi ở api/auth.ts. Đăng nhập lại (login, hoặc OAuth với tài khoản đã tồn tại)
+// KHÔNG được cấp thêm.
 //
 // Luật: mỗi TÀI KHOẢN được nhận đúng MỘT lần, mãi mãi — không phụ thuộc email hiện tại, đổi
-// email rồi xác thực lại KHÔNG được nhận thêm.
+// email sau đó KHÔNG được nhận thêm.
 //
 // Cấp gói đi qua grantPlanDays() dùng chung (api/_lib/planGrant.ts) nên tự động thừa hưởng
 // mọi nguyên tắc ở đó: không hạ cấp người đang VIP, không làm mất hạn đang còn, không đụng
@@ -18,7 +18,7 @@
 import { getPgPool } from './pgPool.js'
 import { grantPlanDays } from './planGrant.js'
 
-/** Số ngày Pro tặng cho tài khoản mới đã xác thực. Đổi ở ĐÚNG một chỗ này. */
+/** Số ngày Pro tặng cho tài khoản mới. Đổi ở ĐÚNG một chỗ này. */
 export const SIGNUP_TRIAL_DAYS = 14
 
 /**
@@ -29,8 +29,8 @@ export const SIGNUP_TRIAL_DAYS = 14
  * lệnh ghi có điều kiện `signup_trial_granted_at is null`, nên chỉ đúng một request thấy
  * rowCount = 1 và đi tiếp tới bước cấp ngày.
  *
- * KHÔNG throw ra ngoài: lỗi tặng quà tuyệt đối không được làm hỏng luồng xác thực email/đăng
- * nhập Google của người dùng.
+ * KHÔNG throw ra ngoài: lỗi tặng quà tuyệt đối không được làm hỏng luồng đăng ký/đăng nhập
+ * (email/password hoặc OAuth) của người dùng.
  */
 export async function grantSignupTrial(userId: string): Promise<boolean> {
   try {

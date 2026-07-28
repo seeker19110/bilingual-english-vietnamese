@@ -96,6 +96,8 @@ export const t = {
     loginProcessing: 'Đang xử lý…',
     loginOr: 'hoặc',
     googleSignIn: 'Đăng nhập bằng Google',
+    facebookSignIn: 'Đăng nhập bằng Facebook',
+    appleSignIn: 'Đăng nhập bằng Apple',
     loginPrivacy: 'Đồng bộ an toàn qua tài khoản · Đổi máy không mất tiến độ',
     featChat: 'Chat với gia sư AI',
     featSpeak: 'Luyện nói song ngữ',
@@ -108,6 +110,8 @@ export const t = {
     errBadCredentials: 'Email hoặc mật khẩu không đúng.',
     errConnection: 'Lỗi kết nối. Vui lòng thử lại.',
     errGoogle: 'Không kết nối được Google. Vui lòng thử lại.',
+    errFacebook: 'Không kết nối được Facebook. Vui lòng thử lại.',
+    errApple: 'Không kết nối được Apple. Vui lòng thử lại.',
 
     // Chat page
     chooseSituation: 'Chọn tình huống luyện tập',
@@ -266,6 +270,8 @@ export const t = {
     loginProcessing: 'Processing…',
     loginOr: 'or',
     googleSignIn: 'Continue with Google',
+    facebookSignIn: 'Continue with Facebook',
+    appleSignIn: 'Continue with Apple',
     loginPrivacy: 'Synced securely to your account · Switch devices, keep your progress',
     featChat: 'Chat with AI tutor',
     featSpeak: 'Bilingual speaking',
@@ -278,6 +284,8 @@ export const t = {
     errBadCredentials: 'Incorrect email or password.',
     errConnection: 'Connection error. Please try again.',
     errGoogle: "Couldn't connect to Google. Please try again.",
+    errFacebook: "Couldn't connect to Facebook. Please try again.",
+    errApple: "Couldn't connect to Apple. Please try again.",
 
     // Chat page
     chooseSituation: 'Choose a practice situation',
