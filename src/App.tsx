@@ -56,6 +56,10 @@ const CefrLevelPage = lazyWithRetry(() => import('./pages/CefrLevelPage'))
 const AdminSettings = lazyWithRetry(() => import('./pages/AdminSettings'))
 const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'))
 
+// PoC nội bộ — không link từ menu/BottomNav, chỉ vào qua URL trực tiếp /avatar-demo.
+// Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md.
+const AvatarDemo = lazyWithRetry(() => import('./pages/AvatarDemo'))
+
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
 // Hiện khung skeleton nhấp nháy thay vì chữ trơ, đỡ cảm giác đơ.
 function PageLoading() {
@@ -329,6 +333,14 @@ export default function App() {
                           <FeatureGate featureKey="quests">
                             <Quests />
                           </FeatureGate>
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/avatar-demo"
+                      element={
+                        <RequireAuth>
+                          <AvatarDemo />
                         </RequireAuth>
                       }
                     />

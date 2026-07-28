@@ -213,6 +213,7 @@ export function getVoicePref(): Voice {
 
 export { DEFAULT_VOICE, DEFAULT_MALE_VOICE }
 export type { VoiceId } from './voiceTiers'
+export type { Lang }
 
 // ── Tốc độ phát toàn cục (0.75× / 1× / 1.25×) ───────────────────────────────
 // Cùng cơ chế với giọng đọc ở trên: lưu localStorage, mọi nơi gọi speak()/
@@ -304,7 +305,7 @@ async function decryptToBuffer(
 }
 
 // Tạo blob URL tạm từ ArrayBuffer để phát qua <audio>
-function bufferToBlobUrl(buffer: ArrayBuffer): string {
+export function bufferToBlobUrl(buffer: ArrayBuffer): string {
   return URL.createObjectURL(new Blob([buffer], { type: 'audio/mpeg' }))
 }
 
@@ -330,7 +331,9 @@ function resolveVoiceForLang(voice: Voice, lang: Lang): Voice {
   return STUDIO_TO_CHIRP_FALLBACK[voice] ?? voice
 }
 
-async function ensureAudioBuffer(
+// Xuất công khai để dùng cho AvatarSpeaking PoC (src/pages/AvatarDemo.tsx) — cần ArrayBuffer
+// audio thô (đã giải mã) để tự quản lý thẻ <audio> riêng, không qua sharedAudio dùng chung.
+export async function ensureAudioBuffer(
   text: string,
   lang: Lang,
   voiceInput: Voice,
