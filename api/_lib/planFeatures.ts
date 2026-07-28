@@ -58,8 +58,8 @@ async function loadMatrix(): Promise<PlanFeatureMatrix> {
         sortOrder: row.sort_order,
       })
     }
-    flags[row.key] ??= { free: true, pro: true, vip: true }
-    flags[row.key][row.plan] = row.enabled
+    const featureFlags = (flags[row.key] ??= { free: true, pro: true, vip: true })
+    featureFlags[row.plan] = row.enabled
     if (row.created_at > latest) latest = row.created_at
     if (row.flag_updated_at > latest) latest = row.flag_updated_at
   }

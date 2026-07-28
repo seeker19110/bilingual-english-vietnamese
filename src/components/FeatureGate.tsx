@@ -20,7 +20,7 @@ export default function FeatureGate({
   const { user } = useAuth()
   const { lang } = useLang()
   const nav = useNavigate()
-  const isA = lang === 'A'
+  const isVi = lang === 'vi'
 
   if (!user || isFeatureEnabled(effectivePlan(user.plan), featureKey)) {
     return <>{children}</>
@@ -33,10 +33,10 @@ export default function FeatureGate({
           <Lock className="w-7 h-7 text-zinc-500" />
         </div>
         <h1 className="text-lg font-semibold text-white">
-          {isA ? 'Tính năng chưa mở cho gói của bạn' : 'Not available on your plan'}
+          {isVi ? 'Tính năng chưa mở cho gói của bạn' : 'Not available on your plan'}
         </h1>
         <p className="text-sm text-zinc-400">
-          {isA
+          {isVi
             ? 'Nâng cấp gói để mở khoá tính năng này.'
             : 'Upgrade your plan to unlock this feature.'}
         </p>
@@ -46,7 +46,7 @@ export default function FeatureGate({
           className="tap-44 inline-flex items-center gap-2 rounded-xl bg-accent-500 text-white font-semibold px-5 py-3"
         >
           <Sparkles className="w-4 h-4" />
-          {isA ? 'Nâng cấp gói' : 'Upgrade plan'}
+          {isVi ? 'Nâng cấp gói' : 'Upgrade plan'}
         </button>
       </div>
     </div>

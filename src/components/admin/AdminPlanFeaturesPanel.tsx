@@ -63,11 +63,11 @@ export default function AdminPlanFeaturesPanel() {
     const cellId = `${featureKey}:${plan}`
     setTogglingCell(cellId)
     // Cập nhật lạc quan để UI mượt, rollback nếu lỗi.
-    setMatrix((prev: Matrix | null) =>
-      prev
-        ? { ...prev, flags: { ...prev.flags, [featureKey]: { ...prev.flags[featureKey], [plan]: enabled } } }
-        : prev,
-    )
+    setMatrix((prev: Matrix | null) => {
+      if (!prev) return prev
+      const prevRow = prev.flags[featureKey] ?? { free: true, pro: true, vip: true }
+      return { ...prev, flags: { ...prev.flags, [featureKey]: { ...prevRow, [plan]: enabled } } }
+    })
     try {
       const headers = await getAuthHeader()
       const res = await fetch('/api/admin-plan-features', {
@@ -148,9 +148,8 @@ export default function AdminPlanFeaturesPanel() {
       <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 space-y-3">
         <p className="text-sm font-semibold text-white">Tính năng theo từng gói</p>
         <p className="text-xs text-zinc-500">
-          Bỏ tick = tính năng bị khoá cho gói đó (user thấy màn "Nâng cấp gói"). Đây là khoá
-          hiển thị/truy cập trang — hạn mức lượt AI/ngày vẫn cấu hình riêng ở tab "Hạn mức &
-          khuyến mãi".
+          Bỏ tick = tính năng bị khoá cho gói đó (user thấy màn "Nâng cấp gói"). Đây là khoá hiển
+          thị/truy cập trang — hạn mức lượt AI/ngày vẫn cấu hình riêng ở tab "Hạn mức & khuyến mãi".
         </p>
 
         {loading && (
