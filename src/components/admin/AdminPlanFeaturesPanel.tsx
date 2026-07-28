@@ -191,7 +191,7 @@ export default function AdminPlanFeaturesPanel() {
                             checked={enabled}
                             disabled={togglingCell === cellId}
                             onChange={(e) => handleToggle(item.key, p.key, e.target.checked)}
-                            className="w-5 h-5 accent-accent-500"
+                            className="w-5 h-5"
                           />
                         </td>
                       )
