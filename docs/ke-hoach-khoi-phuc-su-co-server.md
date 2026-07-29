@@ -30,6 +30,62 @@
 > ⚠️ **Việc cần làm ngay (không thuộc phần code):** điền 2 dòng cuối bảng trên — kế hoạch này vô
 > dụng nếu không vào được VPS lúc sập và chỉ có 1 người biết cách xử lý.
 
+### 0b. Kết nối SSH nhanh (đặt sẵn TRƯỚC khi có sự cố, đỡ mất thời gian lúc đang gấp)
+
+Làm trên **máy cá nhân của bạn** (không phải trên VPS) — mở file `~/.ssh/config` (macOS/Linux) hoặc
+`C:\Users\<tên-bạn>\.ssh\config` (Windows), thêm:
+
+```ssh-config
+# Host trơn — dùng vào VPS bình thường + chạy lệnh lẻ
+Host xboss
+    HostName 103.81.87.174
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+
+# Host tự cd vào thư mục app khi đăng nhập tương tác
+Host app
+    HostName 103.81.87.174
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+    RequestTTY yes
+    RemoteCommand cd /var/www/english-tutor && exec $SHELL -l
+```
+
+Cách dùng sau khi thêm:
+
+```bash
+ssh app                              # vào thẳng /var/www/english-tutor, không cần gõ cd
+ssh xboss                            # vào VPS bình thường (thư mục home)
+ssh xboss "pm2 logs english-tutor"   # chạy 1 lệnh lẻ rồi thoát, không vào shell
+```
+
+> ⚠️ Đổi `IdentityFile` cho khớp đúng khóa SSH bạn dùng, và đổi `HostName` nếu IP VPS đổi (xem
+> Phần 0 ở trên — nhớ cập nhật cả 2 chỗ khi đổi VPS). Host có `RemoteCommand` (`app`) không chạy
+> được lệnh lẻ kiểu `ssh app "lệnh"` (báo lỗi xung đột) — dùng host trơn `xboss` cho trường hợp đó.
+
+**Nếu khóa SSH có đặt passphrase** (khuyên dùng, an toàn hơn) — mỗi lần `ssh app`/`ssh xboss` sẽ
+hỏi lại passphrase, không phải lỗi. Muốn khỏi gõ lại mỗi lần trong cùng phiên làm việc, dùng
+`ssh-agent`:
+
+**Windows (PowerShell):**
+```powershell
+Get-Service ssh-agent | Set-Service -StartupType Automatic
+Start-Service ssh-agent
+ssh-add C:\Users\<tên-bạn>\.ssh\id_ed25519   # gõ passphrase MỘT LẦN khi được hỏi
+```
+Sau đó `ssh app` trong cùng phiên PowerShell (và các phiên sau, vì đã set `Automatic`) sẽ không
+hỏi lại passphrase.
+
+**macOS/Linux:**
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+> Nếu **quên passphrase**: không có cách khôi phục — phải tạo khóa mới (`ssh-keygen`) rồi thêm
+> public key mới vào `~/.ssh/authorized_keys` trên VPS (cần đăng nhập VPS bằng cách khác trước,
+> vd. mật khẩu root hoặc console nhà cung cấp — xem kịch bản 3.1 nếu SSH không vào được).
+
 ---
 
 ## 1. Nguyên tắc chung khi có sự cố
