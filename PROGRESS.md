@@ -833,20 +833,17 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## ⚠️ Cần làm tay (không cần PR)
 
-- **Backup R2 (2026-07-29) — cron `backup:r2` (Postgres) chưa từng được thêm dù code/docs mục
-  7.2 đã có từ trước (chỉ có cron `pg_dump` local, thiếu cron đẩy lên R2 → phát hiện khi người
-  dùng báo "backup tự động lên R2 có nhưng không thấy chạy"). Đã xác nhận + sửa xong phần R2
-  token (thêm quyền bucket `english-tutor-pg-backups` cho token R2 hiện có) và `.env` trên VPS,
-  `npm run backup:r2 -- --dry-run` đã chạy sạch (9 file sẵn sàng). **Còn lại việc tay:** (1) chạy
-  `npm run backup:r2` thật (không dry-run) để upload 9 file hiện có, (2) thêm cron
-  `10 3 * * * cd /var/www/english-tutor && npm run backup:r2 >> /var/log/pg-backup-r2.log 2>&1`
-  vào `sudo -u postgres crontab -e` (crontab đang chỉ có 1 dòng `pg_dump`, dòng backup:r2 vẫn
-  chưa được thêm — cần xác nhận lại). **Đồng thời bổ sung mới:** `.env` (API key/secret) trước
-  giờ KHÔNG được backup ở đâu cả — đã thêm `scripts/backup-env-to-r2.ts` +
-  `scripts/restore-env-from-r2.ts` (mã hoá AES-256-GCM, dùng chung `R2_BACKUP_BUCKET`, xem
-  `docs/setup-postgresql-vps.md` mục 7.3). Việc tay: chọn 1 `ENV_BACKUP_PASSPHRASE` mạnh, lưu ở
-  password manager (KHÔNG đặt trong `.env`), thêm cron
-  `10 3 * * * cd /var/www/english-tutor && ENV_BACKUP_PASSPHRASE="..." npm run backup:env >> /var/log/env-backup-r2.log 2>&1`.
+- ~~Backup R2~~ **ĐÃ XONG (2026-07-29, người dùng xác nhận).** Phát hiện qua báo cáo "backup tự
+  động lên R2 có nhưng không thấy chạy": cron `backup:r2` (Postgres → R2) chưa từng được thêm dù
+  code/docs mục 7.2 đã có từ trước (chỉ có cron `pg_dump` local). Đã sửa: cấp quyền bucket
+  `english-tutor-pg-backups` cho token R2, thêm `R2_BACKUP_BUCKET` vào `.env` VPS, upload 9 file
+  backup tồn đọng, thêm cron `backup:r2`. Trong lúc rà soát phát hiện thêm lỗ hổng: `.env`
+  (API key/secret) trước giờ KHÔNG được backup ở đâu cả — thêm mới `scripts/backup-env-to-r2.ts`
+  - `scripts/restore-env-from-r2.ts` (mã hoá AES-256-GCM, dùng chung `R2_BACKUP_BUCKET`, xem
+    `docs/setup-postgresql-vps.md` mục 7.3, PR #369 đã merge). VPS hiện có đủ **3 dòng cron**
+    (`pg_dump` 5h03, `backup:r2` 3h10, `backup:env` 3h10) chạy hàng ngày, đã xác nhận upload thành
+    công cả 2 loại. `ENV_BACKUP_PASSPHRASE` đã tạo mạnh (qua `openssl rand -base64 24`), lưu ở
+    password manager, KHÔNG đặt trong `.env`.
 - **Kế hoạch scale 50k concurrent (2026-07-25) — GĐ1-5 phần code/config/docs ĐÃ XONG
   (PR #321-#326), còn lại là việc hạ tầng thật cần người dùng tự làm:**
   1. **Mua thêm VPS** (khuyến nghị: tách Postgres/Redis ra 1 VPS riêng 6-8 vCPU trước tiên —
