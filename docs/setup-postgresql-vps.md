@@ -130,6 +130,37 @@ An toàn chạy lại nhiều lần — file đã có trên R2 (đúng kích th�
 vài ngày, lần chạy kế tiếp tự bù các ngày còn thiếu. Mặc định giữ 30 ngày trên R2
 (`BACKUP_KEEP_DAYS`), tự xoá bản cũ hơn.
 
+### 7.3 Backup file `.env` (BẮT BUỘC — `pg_dump` KHÔNG backup secret/API key)
+
+`pg_dump` chỉ backup **database**. File `.env` (API key AI/TTS/STT/R2, `SEPAY_WEBHOOK_API_KEY`,
+`SENTRY_DSN`...) không nằm trong database, nên nếu VPS hỏng, khôi phục xong database app vẫn
+không chạy được vì thiếu `.env`. `scripts/backup-env-to-r2.ts` mã hoá `.env` (AES-256-GCM) rồi
+đẩy lên **cùng bucket R2 private** ở mục 7.2, dùng chung `R2_BACKUP_BUCKET`.
+
+⚠️ **Passphrase mã hoá (`ENV_BACKUP_PASSPHRASE`) TUYỆT ĐỐI KHÔNG được đặt trong chính `.env`** —
+nếu mất `.env` thì passphrase cũng mất theo, backup mã hoá sẽ vô dụng. Chọn 1 passphrase mạnh,
+lưu ở nơi khác (password manager, hoặc ghi tay cất riêng), dùng lại cho mọi lần backup/khôi phục.
+
+```bash
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:env -- --dry-run   # xem trước
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:env                 # chạy thật
+```
+
+Thêm vào cron (chạy cùng giờ với `backup:r2`, đặt passphrase trực tiếp trong dòng cron vì cron
+không đọc `.env` của shell tương tác):
+
+```bash
+sudo -u postgres crontab -e
+10 3 * * * cd /var/www/english-tutor && ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:env >> /var/log/env-backup-r2.log 2>&1
+```
+
+**Khôi phục** khi cần (tải bản mới nhất, giải mã, ghi ra `.env.restored` để tự kiểm tra trước khi
+đổi tên thành `.env`):
+
+```bash
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run restore:env
+```
+
 ## 8. Xác nhận hoàn tất Giai đoạn A
 
 Báo lại kết quả các bước trên (đặc biệt bước 6 — `npm run migrate:pg` chạy thành
