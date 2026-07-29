@@ -833,6 +833,20 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## ⚠️ Cần làm tay (không cần PR)
 
+- **Backup R2 (2026-07-29) — cron `backup:r2` (Postgres) chưa từng được thêm dù code/docs mục
+  7.2 đã có từ trước (chỉ có cron `pg_dump` local, thiếu cron đẩy lên R2 → phát hiện khi người
+  dùng báo "backup tự động lên R2 có nhưng không thấy chạy"). Đã xác nhận + sửa xong phần R2
+  token (thêm quyền bucket `english-tutor-pg-backups` cho token R2 hiện có) và `.env` trên VPS,
+  `npm run backup:r2 -- --dry-run` đã chạy sạch (9 file sẵn sàng). **Còn lại việc tay:** (1) chạy
+  `npm run backup:r2` thật (không dry-run) để upload 9 file hiện có, (2) thêm cron
+  `10 3 * * * cd /var/www/english-tutor && npm run backup:r2 >> /var/log/pg-backup-r2.log 2>&1`
+  vào `sudo -u postgres crontab -e` (crontab đang chỉ có 1 dòng `pg_dump`, dòng backup:r2 vẫn
+  chưa được thêm — cần xác nhận lại). **Đồng thời bổ sung mới:** `.env` (API key/secret) trước
+  giờ KHÔNG được backup ở đâu cả — đã thêm `scripts/backup-env-to-r2.ts` +
+  `scripts/restore-env-from-r2.ts` (mã hoá AES-256-GCM, dùng chung `R2_BACKUP_BUCKET`, xem
+  `docs/setup-postgresql-vps.md` mục 7.3). Việc tay: chọn 1 `ENV_BACKUP_PASSPHRASE` mạnh, lưu ở
+  password manager (KHÔNG đặt trong `.env`), thêm cron
+  `10 3 * * * cd /var/www/english-tutor && ENV_BACKUP_PASSPHRASE="..." npm run backup:env >> /var/log/env-backup-r2.log 2>&1`.
 - **Kế hoạch scale 50k concurrent (2026-07-25) — GĐ1-5 phần code/config/docs ĐÃ XONG
   (PR #321-#326), còn lại là việc hạ tầng thật cần người dùng tự làm:**
   1. **Mua thêm VPS** (khuyến nghị: tách Postgres/Redis ra 1 VPS riêng 6-8 vCPU trước tiên —
