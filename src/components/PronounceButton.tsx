@@ -2,22 +2,16 @@ import { useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
 import { getAuthHeader } from '../lib/authHeader'
 import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
-import { VOICE_OPTIONS, getCachedAllowedVoices } from '../lib/voiceTiers'
+import { VOICE_OPTIONS, pickRandomAllowedVoice } from '../lib/voiceTiers'
 
 interface Props {
   word: string
   lang?: 'en-US' | 'vi-VN' // bỏ trống = tiếng Anh (mặc định cũ, giữ tương thích chỗ gọi chưa sửa)
   // true = mỗi lần bấm bốc NGẪU NHIÊN 1 giọng (cả nam lẫn nữ) trong số giọng gói cho phép,
-  // KHÔNG dùng giọng mặc định đã lưu ở Cài đặt. Quyết định 2026-07-29: riêng nút loa Từ điển
-  // (Dictionary.tsx) dùng chế độ này để người dùng nghe thử nhiều giọng khi tra từ; mọi nơi
-  // khác (flashcard, chấm phát âm, Chat...) vẫn giữ nguyên giọng mặc định như trước.
+  // KHÔNG dùng giọng mặc định đã lưu ở Cài đặt. Quyết định 2026-07-29: nút loa Từ điển/flashcard
+  // dùng chế độ này để người dùng nghe thử nhiều giọng; nơi khác (chấm phát âm, Chat...) vẫn
+  // giữ nguyên giọng mặc định như trước.
   random?: boolean
-}
-
-function pickRandomVoiceAnyGender(): Voice {
-  const allowed = getCachedAllowedVoices()
-  const pool = allowed.length > 0 ? allowed : VOICE_OPTIONS.map((v) => v.id)
-  return pool[Math.floor(Math.random() * pool.length)]!
 }
 
 // Nút loa phát âm 1 từ — mặc định giọng lấy từ global pref (VoiceToggle trên header);
@@ -30,7 +24,7 @@ export default function PronounceButton({ word, lang = 'en-US', random = false }
   const [audioUrls, setAudioUrls] = useState<Record<string, string>>({})
 
   function pickVoice(): Voice {
-    return random ? pickRandomVoiceAnyGender() : getVoicePref()
+    return random ? pickRandomAllowedVoice() : getVoicePref()
   }
 
   function speakWithWebSpeech(voice: Voice) {

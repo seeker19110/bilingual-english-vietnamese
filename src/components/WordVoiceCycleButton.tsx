@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Volume2, Loader2 } from 'lucide-react'
 import { getAuthHeader } from '../lib/authHeader'
 import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
-import { VOICE_OPTIONS } from '../lib/voiceTiers'
+import { VOICE_OPTIONS, pickRandomAllowedVoice } from '../lib/voiceTiers'
 
 interface Props {
   word: string
@@ -15,16 +15,17 @@ const VOICE_LABEL: Record<Voice, string> = Object.fromEntries(
   VOICE_OPTIONS.map((v) => [v.id, `${v.gender === 'female' ? 'Nữ' : 'Nam'} · ${v.id}`]),
 ) as Record<Voice, string>
 
-// Nút DUY NHẤT phát âm 1 từ (khôi phục 2026-07-29, theo yêu cầu người dùng — bản trước tự
-// XOAY VÒNG sang giọng khác mỗi lần bấm gây khó hiểu). Giờ luôn phát bằng ĐÚNG giọng mặc định
-// của người dùng (getVoicePref(), chọn ở trang Cài đặt/VoicePicker.tsx), bấm bao nhiêu lần
-// cũng ra 1 giọng đó — icon loa + tên giọng mặc định hiển thị cạnh nút.
+// Nút DUY NHẤT phát âm 1 từ. Quyết định 2026-07-29: mỗi lần bấm bốc NGẪU NHIÊN 1 giọng trong
+// số giọng gói cho phép (trộn cả nam lẫn nữ, không tuần tự) — khác giọng mặc định cố định ở
+// Cài đặt, đồng bộ với nút loa Từ điển (PronounceButton random, Dictionary.tsx). Nhãn cạnh
+// icon luôn hiện đúng giọng VỪA phát.
 export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
   const [loading, setLoading] = useState(false)
   // Cache audio_url theo từng giọng đã tải — bấm lại đúng giọng cũ thì không gọi lại API.
   const [audioUrls, setAudioUrls] = useState<Partial<Record<Voice, string>>>({})
-
-  const currentVoice = getVoicePref()
+  // Giọng đang hiển thị nhãn — khởi tạo bằng giọng mặc định (trước khi bấm lần nào), sau đó
+  // luôn cập nhật theo giọng NGẪU NHIÊN vừa bốc ở mỗi lần bấm.
+  const [currentVoice, setCurrentVoice] = useState<Voice>(getVoicePref)
 
   // Dự phòng Web Speech API khi /api/pronunciation lỗi — nút này giờ là nút loa DUY NHẤT
   // của thẻ nên phải có fallback như PronounceButton trước đây, không im lặng bỏ qua nữa.
@@ -54,7 +55,8 @@ export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
   async function handleClick() {
     if (loading) return
 
-    const nextVoice = currentVoice
+    const nextVoice = pickRandomAllowedVoice()
+    setCurrentVoice(nextVoice)
 
     const cached = audioUrls[nextVoice]
     if (cached) {
