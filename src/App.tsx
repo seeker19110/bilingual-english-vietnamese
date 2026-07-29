@@ -51,9 +51,7 @@ const Learn = lazyWithRetry(() => import('./pages/Learn'))
 // Trang riêng của từng cấp CEFR (/learning-path/a1…b2) — lazy-load tương tự.
 const CefrLevelPage = lazyWithRetry(() => import('./pages/CefrLevelPage'))
 
-// Trang cấu hình hạn mức/khuyến mãi — chỉ admin (ADMIN_EMAILS) dùng được, lazy-load vì
-// hiếm khi truy cập.
-const AdminSettings = lazyWithRetry(() => import('./pages/AdminSettings'))
+// Trang quản trị tổng — chỉ admin (ADMIN_EMAILS) dùng được, lazy-load vì hiếm khi truy cập.
 const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'))
 
 // PoC nội bộ — không link từ menu/BottomNav, chỉ vào qua URL trực tiếp /avatar-demo.
@@ -88,6 +86,18 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
       {children}
     </>
   )
+}
+
+// Bảo vệ route quản trị (/admin-s): ngoài đăng nhập + onboard (RequireAuth), còn cần cờ
+// user.isAdmin (server tính từ ADMIN_EMAILS, trả về ở /api/auth?action=me — xem
+// src/types.ts). Đây CHỈ là lớp che UI cho người dùng thường đỡ thấy khung/tên các mục quản
+// trị nội bộ — không phải lớp bảo mật thật: mọi API admin vẫn TỰ kiểm lại quyền phía server
+// (api/_lib/adminAuth.ts), nên dù cờ này bị qua mặt trên client thì dữ liệu vẫn an toàn.
+function RequireAdmin({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth()
+  if (loading) return <PageLoading />
+  if (!user?.isAdmin) return <Navigate to="/" replace />
+  return <>{children}</>
 }
 
 // Cập nhật thẻ <link rel="canonical"> theo route hiện tại để tránh lỗi SEO
@@ -282,19 +292,22 @@ export default function App() {
                         </RequireAuth>
                       }
                     />
+                    {/* /admin-settings đã tích hợp vào tab "Hạn mức & khuyến mãi" của
+                        /admin-s — giữ redirect để không vỡ link cũ trong docs/runbook. */}
                     <Route
                       path="/admin-settings"
-                      element={
-                        <RequireAuth>
-                          <AdminSettings />
-                        </RequireAuth>
-                      }
+                      element={<Navigate to="/admin-s?tab=limits" replace />}
                     />
+                    {/* Đường dẫn trang quản trị tổng đổi từ /admin sang /admin-s (2026-07-29)
+                        — giữ redirect /admin cũ để không vỡ link đã chia sẻ/bookmark. */}
+                    <Route path="/admin" element={<Navigate to="/admin-s" replace />} />
                     <Route
-                      path="/admin"
+                      path="/admin-s"
                       element={
                         <RequireAuth>
-                          <AdminDashboard />
+                          <RequireAdmin>
+                            <AdminDashboard />
+                          </RequireAdmin>
                         </RequireAuth>
                       }
                     />

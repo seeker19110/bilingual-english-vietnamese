@@ -1,7 +1,7 @@
-// src/components/admin/AdminLimitsPanel.tsx — Nội dung tab "Hạn mức & khuyến mãi" trong /admin.
-// Tách ra từ src/pages/AdminSettings.tsx (giữ nguyên logic/API gọi /api/admin-settings) để
-// dùng chung được ở cả trang /admin-settings cũ (đứng riêng, có Layout/PageHeader) lẫn
-// trong 1 tab của trang /admin mới (không cần Layout/PageHeader vì AdminDashboard đã có sẵn).
+// src/components/admin/AdminLimitsPanel.tsx — Nội dung tab "Hạn mức & khuyến mãi" trong /admin-s.
+// Trang riêng /admin-settings (src/pages/AdminSettings.tsx) đã bị xoá — route cũ giờ redirect
+// sang /admin-s?tab=limits (xem src/App.tsx), tab này là nơi duy nhất chứa logic/API
+// /api/admin-settings.
 //
 // Quyết định 2026-07-27: hạn mức Pro/VIP đổi từ "5 số riêng theo chế độ (chat/writing/
 // speaking/stt/pronounce)" sang MỘT số TỔNG lượt/ngày mỗi gói — không còn chia lẻ. Free

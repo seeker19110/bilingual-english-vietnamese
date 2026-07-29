@@ -481,10 +481,10 @@ export default function Profile() {
             mọi API admin vẫn TỰ kiểm lại quyền phía server, không tin cờ này. */}
         {user?.isAdmin && (
           <button
-            onClick={() => nav('/admin')}
+            onClick={() => nav('/admin-s')}
             className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 transition text-xs font-medium animate-fade-in"
           >
-            Cấu hình hệ thống (Admin)
+            Quản trị hệ thống (Admin)
           </button>
         )}
 
