@@ -5,7 +5,7 @@
 
 ## Thông tin VPS
 
-- Server: `en-vi.donghanhcungban.com` (160.30.172.203)
+- Server: `en-vi.donghanhcungban.com` (103.81.87.174)
 - Port app: 3001 — Thư mục: `/var/www/english-tutor` — PM2 process: `english-tutor`
 
 ## Deploy — chạy trên VPS (không phải máy local)
@@ -14,7 +14,7 @@
 `git reset --hard origin/main`, cài lại deps, build, restart PM2):
 
 ```bash
-ssh root@160.30.172.203
+ssh root@103.81.87.174
 cd /var/www/english-tutor
 bash scripts/deploy.sh
 ```

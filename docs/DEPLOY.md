@@ -16,7 +16,7 @@ ghi chú trong `ecosystem.config.cjs`), rồi health-check `/api/health`. Cần 
 **Cách 2 — Thủ công trên VPS:**
 
 ```bash
-ssh root@160.30.172.203
+ssh root@103.81.87.174
 cd /var/www/english-tutor
 bash scripts/deploy.sh
 ```

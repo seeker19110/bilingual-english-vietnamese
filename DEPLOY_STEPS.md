@@ -15,7 +15,7 @@ clone code + `.env` → `ecosystem.config.cjs` → start PM2 → Nginx reverse p
 Chạy **trên VPS** (script tự `git reset --hard origin/main`, cài lại, build, restart PM2):
 
 ```bash
-ssh root@160.30.172.203
+ssh root@103.81.87.174
 cd /var/www/english-tutor
 bash scripts/deploy.sh
 # hoặc nếu VPS đã có symlink sẵn: ~/deploy-english-tutor.sh
