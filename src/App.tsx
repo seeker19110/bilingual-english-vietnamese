@@ -88,17 +88,6 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   )
 }
 
-// Màn "không tìm thấy trang" — dùng CHUNG cho cả route "*" (URL sai bất kỳ) lẫn khi người
-// dùng thường cố vào /admin-s. Phải giống hệt nhau ở cả 2 nơi: nếu /admin-s hiện khác đi (vd
-// redirect về "/") thì vô tình lộ ra đây là 1 route thật chỉ bị chặn quyền, khác URL sai thật.
-function NotFoundPage() {
-  return (
-    <div className="min-h-dvh bg-zinc-950 flex items-center justify-center px-4">
-      <p className="text-sm text-zinc-500">Không tìm thấy trang bạn yêu cầu.</p>
-    </div>
-  )
-}
-
 // Bảo vệ route quản trị (/admin-s): ngoài đăng nhập + onboard (RequireAuth), còn cần cờ
 // user.isAdmin (server tính từ ADMIN_EMAILS, trả về ở /api/auth?action=me — xem
 // src/types.ts). Đây CHỈ là lớp che UI cho người dùng thường đỡ thấy khung/tên các mục quản
@@ -107,7 +96,7 @@ function NotFoundPage() {
 function RequireAdmin({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   if (loading) return <PageLoading />
-  if (!user?.isAdmin) return <NotFoundPage />
+  if (!user?.isAdmin) return <Navigate to="/" replace />
   return <>{children}</>
 }
 
@@ -368,7 +357,7 @@ export default function App() {
                         </RequireAuth>
                       }
                     />
-                    <Route path="*" element={<NotFoundPage />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </Suspense>
               </ErrorBoundary>
