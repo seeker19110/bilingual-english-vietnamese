@@ -75,15 +75,24 @@ export async function callClaude(
   return text
 }
 
-// Trích xuất JSON từ câu trả lời (AI đôi khi bọc thêm markdown ```)
+// Trích xuất JSON từ câu trả lời (AI đôi khi bọc thêm markdown ``` hoặc lỡ thêm
+// câu chữ thừa trước/sau khối JSON, vd "Ok! { ... }") — thử parse thẳng trước,
+// nếu lỗi thì thử cắt lấy phần từ dấu "{" đầu tiên tới dấu "}" cuối cùng.
 export function parseJson<T>(text: string): T | null {
+  const cleaned = text
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/, '')
+    .trim()
   try {
-    const cleaned = text
-      .replace(/^```(?:json)?\s*/i, '')
-      .replace(/\s*```$/, '')
-      .trim()
     return JSON.parse(cleaned) as T
   } catch {
-    return null
+    const start = cleaned.indexOf('{')
+    const end = cleaned.lastIndexOf('}')
+    if (start === -1 || end === -1 || end <= start) return null
+    try {
+      return JSON.parse(cleaned.slice(start, end + 1)) as T
+    } catch {
+      return null
+    }
   }
 }

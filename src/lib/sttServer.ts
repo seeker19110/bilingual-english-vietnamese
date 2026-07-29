@@ -84,14 +84,32 @@ export async function startRecording(lang: 'en' | 'vi'): Promise<Recorder> {
   }
 }
 
+// Server /api/stt tự timeout ở 45s khi gọi Groq/OpenAI (xem STT_TIMEOUT_MS trong
+// api/_lib/openaiStt.ts) — client chờ lâu hơn một chút để không cắt ngang lúc server
+// còn đang xử lý, nhưng vẫn phải có giới hạn để không treo vô thời hạn khi mất mạng.
+const CLIENT_STT_TIMEOUT_MS = 60_000
+
 // Gửi audio base64 lên /api/stt và nhận lại văn bản.
 async function transcribe(audioB64: string, mime: string, lang: 'en' | 'vi'): Promise<string> {
   const auth = await getAuthHeader()
-  const resp = await fetch('/api/stt', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', ...auth },
-    body: JSON.stringify({ audio_b64: audioB64, mime, lang }),
-  })
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), CLIENT_STT_TIMEOUT_MS)
+  let resp: Response
+  try {
+    resp = await fetch('/api/stt', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...auth },
+      body: JSON.stringify({ audio_b64: audioB64, mime, lang }),
+      signal: controller.signal,
+    })
+  } catch (e) {
+    if (e instanceof Error && e.name === 'AbortError') {
+      throw new Error('Máy chủ phản hồi quá lâu — kiểm tra mạng rồi thử lại.')
+    }
+    throw e
+  } finally {
+    clearTimeout(timer)
+  }
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}))
     throw new Error((err as { error?: string }).error ?? `Lỗi STT: ${resp.status}`)
