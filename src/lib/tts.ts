@@ -146,8 +146,14 @@ function getDefaultVoiceForUnsetPref(): Voice {
 // khi chế độ ngẫu nhiên TẮT, và làm "hạt giống" xác định GIỚI TÍNH khi chế độ ngẫu nhiên BẬT.
 function getStoredVoice(): Voice {
   const raw = localStorage.getItem(VOICE_KEY) ?? ''
-  if (isValidVoiceId(raw)) return raw
-  return LEGACY_VOICE_MAP[raw] ?? getDefaultVoiceForUnsetPref()
+  const resolved = isValidVoiceId(raw) ? raw : LEGACY_VOICE_MAP[raw]
+  if (!resolved) return getDefaultVoiceForUnsetPref()
+  // Giọng đã lưu nhưng NAY ngoài quyền gói (hết khuyến mãi / bị hạ gói) — server sẽ âm thầm
+  // hạ về DEFAULT_VOICE khi phát (clampVoiceToPlan, api/_lib/voiceAccess.ts). Clamp NGAY ở
+  // đây để nhãn hiển thị (VoicePicker, nút loa) luôn khớp giọng THỰC SỰ phát ra, tránh lệch
+  // "Cài đặt nói giọng X nhưng bấm nghe lại ra giọng khác" (đúng lỗi người dùng gặp phải).
+  const allowed = getCachedAllowedVoices()
+  return allowed.includes(resolved) ? resolved : DEFAULT_VOICE
 }
 
 export function setVoicePref(voice: Voice): void {
