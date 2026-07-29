@@ -44,20 +44,24 @@ export async function login(email: string, password: string): Promise<AppUser | 
   return result.user
 }
 
-// Đăng nhập bằng Google — dùng Google Identity Services (script tải trong index.html),
-// trả về Promise<AppUser|null> thay vì void như bản Supabase cũ (không còn redirect rời
-// trang — GIS hiện popup/One Tap ngay trên trang hiện tại).
+// Đăng nhập bằng Google — dùng Google Identity Services (script tải trong index.html).
+// Dùng luồng OAuth2 popup THẬT (`oauth2.initTokenClient`) thay vì One Tap (`accounts.id.prompt`):
+// One Tap hiển thị qua iframe, phụ thuộc cookie bên thứ 3/FedCM — bị Safari ITP chặn và KHÔNG
+// hoạt động khi chạy PWA ở chế độ standalone (đã cài lên Home Screen iPhone), khiến nút bấm
+// treo loading vô thời hạn mà không báo lỗi. Popup OAuth2 mở thẳng trang đăng nhập thật của
+// Google (accounts.google.com) — tự nhận diện tài khoản đã lưu trong Safari/Chrome hoặc chuyển
+// sang app Google (nếu có cài) qua universal link, không cần 2 bước.
 declare global {
   interface Window {
     google?: {
       accounts: {
-        id: {
-          initialize: (config: {
+        oauth2: {
+          initTokenClient: (config: {
             client_id: string
-            callback: (resp: { credential: string }) => void
-          }) => void
-          prompt: () => void
-          renderButton: (parent: HTMLElement, options: Record<string, unknown>) => void
+            scope: string
+            callback: (resp: { access_token?: string; error?: string }) => void
+            error_callback?: (err: { type?: string; message?: string }) => void
+          }) => { requestAccessToken: () => void }
         }
       }
     }
@@ -69,7 +73,7 @@ let googleInitPromise: Promise<void> | null = null
 function loadGoogleScript(): Promise<void> {
   if (googleInitPromise) return googleInitPromise
   googleInitPromise = new Promise((resolve, reject) => {
-    if (window.google?.accounts?.id) {
+    if (window.google?.accounts?.oauth2) {
       resolve()
       return
     }
@@ -91,10 +95,15 @@ export async function loginWithGoogle(): Promise<AppUser | null> {
   await loadGoogleScript()
 
   return new Promise((resolve, reject) => {
-    window.google!.accounts.id.initialize({
+    const client = window.google!.accounts.oauth2.initTokenClient({
       client_id: clientId,
+      scope: 'openid email profile',
       callback: (resp) => {
-        void callAuthApi({ action: 'google', idToken: resp.credential })
+        if (!resp.access_token) {
+          resolve(null)
+          return
+        }
+        void callAuthApi({ action: 'google-token', accessToken: resp.access_token })
           .then((result) => {
             if (!result) {
               resolve(null)
@@ -105,8 +114,11 @@ export async function loginWithGoogle(): Promise<AppUser | null> {
           })
           .catch(reject)
       },
+      // Popup bị chặn/người dùng đóng popup mà không chọn tài khoản — trả về null thay vì
+      // treo Promise vô thời hạn (lỗi cũ của One Tap khi bị Safari âm thầm bỏ qua).
+      error_callback: () => resolve(null),
     })
-    window.google!.accounts.id.prompt()
+    client.requestAccessToken()
   })
 }
 

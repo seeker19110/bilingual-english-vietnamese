@@ -102,8 +102,52 @@ export async function verifyGoogleIdToken(
       name: payload.name ?? payload.email.split('@')[0] ?? payload.email,
     }
   } catch (err) {
-    console.warn(
+    console.error(
       '[authService] verifyGoogleIdToken thất bại:',
+      err instanceof Error ? err.message : err,
+    )
+    return null
+  }
+}
+
+// Verify access_token nhận từ luồng OAuth2 popup của GIS (`initTokenClient` — dùng thay cho
+// One Tap vì One Tap phụ thuộc cookie bên thứ 3/FedCM, KHÔNG hoạt động trên Safari/iOS,
+// đặc biệt khi chạy PWA ở chế độ standalone — xem src/lib/auth.ts). Xác thực bằng cách gọi
+// endpoint tokeninfo của Google (kiểm audience đúng client_id của app) rồi lấy userinfo.
+export async function verifyGoogleAccessToken(
+  accessToken: string,
+): Promise<{ googleId: string; email: string; name: string } | null> {
+  try {
+    const { clientId } = getGoogleClient()
+
+    const tokenInfoRes = await fetch(
+      `https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(accessToken)}`,
+    )
+    if (!tokenInfoRes.ok) return null
+    const tokenInfo = (await tokenInfoRes.json()) as { aud?: string }
+    if (tokenInfo.aud !== clientId) return null
+
+    const userInfoRes = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+    if (!userInfoRes.ok) return null
+    const userInfo = (await userInfoRes.json()) as {
+      sub?: string
+      email?: string
+      email_verified?: boolean
+      name?: string
+    }
+    if (!userInfo.sub || !userInfo.email) return null
+    if (userInfo.email_verified === false) return null
+
+    return {
+      googleId: userInfo.sub,
+      email: userInfo.email,
+      name: userInfo.name ?? userInfo.email.split('@')[0] ?? userInfo.email,
+    }
+  } catch (err) {
+    console.warn(
+      '[authService] verifyGoogleAccessToken thất bại:',
       err instanceof Error ? err.message : err,
     )
     return null
