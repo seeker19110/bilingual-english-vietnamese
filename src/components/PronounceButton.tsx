@@ -7,16 +7,17 @@ import { VOICE_OPTIONS, pickRandomAllowedVoice } from '../lib/voiceTiers'
 interface Props {
   word: string
   lang?: 'en-US' | 'vi-VN' // bỏ trống = tiếng Anh (mặc định cũ, giữ tương thích chỗ gọi chưa sửa)
-  // true = mỗi lần bấm bốc NGẪU NHIÊN 1 giọng (cả nam lẫn nữ) trong số giọng gói cho phép,
-  // KHÔNG dùng giọng mặc định đã lưu ở Cài đặt. Quyết định 2026-07-29: nút loa Từ điển/flashcard
-  // dùng chế độ này để người dùng nghe thử nhiều giọng; nơi khác (chấm phát âm, Chat...) vẫn
-  // giữ nguyên giọng mặc định như trước.
+  // Quyết định 2026-07-29: nút loa PronounceButton (dùng khắp Từ điển — kết quả tra cứu, tab
+  // Flashcard, các dạng biến thể của từ ở WordFormsBlock) bốc NGẪU NHIÊN 1 giọng (cả nam lẫn
+  // nữ, trong số giọng gói cho phép) MỖI LẦN BẤM theo mặc định — áp dụng TOÀN CỤC cho mọi nơi
+  // dùng component này, không cần bật riêng từng chỗ. Truyền `random={false}` nếu 1 màn hình cụ
+  // thể nào đó sau này cần giữ cố định giọng mặc định ở Cài đặt thay vì ngẫu nhiên.
   random?: boolean
 }
 
-// Nút loa phát âm 1 từ — mặc định giọng lấy từ global pref (VoiceToggle trên header);
-// truyền `random` để mỗi lần bấm bốc giọng ngẫu nhiên khác (xem ghi chú ở Props.random).
-export default function PronounceButton({ word, lang = 'en-US', random = false }: Props) {
+// Nút loa phát âm 1 từ — mặc định BỐC NGẪU NHIÊN giọng mỗi lần bấm (xem ghi chú Props.random);
+// truyền `random={false}` để dùng đúng giọng mặc định đã lưu ở Cài đặt (VoiceToggle) thay vào đó.
+export default function PronounceButton({ word, lang = 'en-US', random = true }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   // Nhớ audioUrl đã tải theo cặp "từ|giọng" — PHẢI có cả từ trong khoá, vì component này
   // hay bị dùng lại cho nhiều từ khác nhau (ví dụ chuyển thẻ flashcard) mà state không bị
