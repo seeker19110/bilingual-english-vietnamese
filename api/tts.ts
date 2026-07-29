@@ -178,7 +178,11 @@ export default async function handler(req: Request): Promise<Response> {
   // ── BƯỚC 1: Kiểm tra cache ──────────────────────────────────────────────────
   // Khóa cache có kèm VOICE_VERSION → khi đổi giọng (đổi version), câu cũ không khớp
   // nữa nên sẽ tạo lại bằng giọng mới thay vì phát lại audio cũ.
-  const textHash = await hashText(text + lang + voice + VOICE_VERSION)
+  // Giọng ElevenLabs KHÔNG nhận tham số lang (audio giống hệt nhau bất kể lang — provider tự
+  // nhận diện ngôn ngữ), nên bỏ `lang` khỏi hash để câu đọc bằng 2 lang khác nhau dùng chung
+  // 1 cache thay vì tạo/lưu 2 file audio giống hệt nhau.
+  const hashLangPart = isValidElevenVoice(voice) ? '' : lang
+  const textHash = await hashText(text + hashLangPart + voice + VOICE_VERSION)
 
   const { rows: cachedRows } = await pool.query<{ audio_url: string }>(
     'select audio_url from public.tts_cache where hash = $1',

@@ -55,11 +55,14 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
 
     const voice = pickVoice()
 
-    if (word.includes(' ')) {
-      speakWithWebSpeech(voice)
-      return
-    }
-
+    // Trước đây cụm từ (word có dấu cách) bị bắt đọc bằng Web Speech API trình duyệt thay vì
+    // Google TTS — Web Speech chỉ set utt.lang chứ không đảm bảo máy có SẴN giọng đúng ngôn
+    // ngữ đó; máy thiếu giọng vi-VN thì trình duyệt tự phát bằng giọng mặc định (thường là
+    // tiếng Anh) dù đặt lang='vi-VN', gây hiện tượng "chữ Việt đọc giọng Anh". Bản dịch tiếng
+    // Việt trong từ điển (card.vi) hầu như luôn là cụm ≥ 2 từ nên lỗi này xảy ra rất thường
+    // xuyên ở chiều B. /api/pronunciation đã hỗ trợ cụm từ (WORD_SAFE_PATTERN cho phép dấu
+    // cách, tối đa 100 ký tự — xem api/pronunciation.ts) nên bỏ nhánh này, đi cùng đường
+    // Google TTS như WordVoiceCycleButton đang làm.
     const cacheKey = `${word}|${voice}|${lang}`
     const cached = audioUrls[cacheKey]
     if (cached) {
