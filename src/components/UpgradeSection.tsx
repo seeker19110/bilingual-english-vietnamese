@@ -24,6 +24,104 @@ const CYCLE_LABEL: Record<PayableCycle, { vi: string; en: string }> = {
   year: { vi: 'Năm', en: 'Year' },
 }
 
+// Mô tả 3 gói — tính năng/lợi ích lấy ĐÚNG từ hạn mức/quyền giọng thật đang áp dụng (không
+// bịa số): hạn mức chung mọi tính năng AI (api/_lib/usage.ts, api/_lib/settings.ts — Free
+// +5 lượt/ngày có học, dồn tối đa 35 lượt/7 ngày; Pro 30 lượt/ngày; VIP 300 lượt/ngày) và số
+// giọng đọc theo gói (src/lib/voiceTiers.ts — Free 4, Pro 8, VIP 14 Chirp3-HD + ElevenLabs +
+// 2 Studio). Đổi hạn mức/giọng thật thì PHẢI sửa lại mô tả ở đây cho khớp.
+const PLAN_INFO: Record<
+  'free' | 'pro' | 'vip',
+  {
+    badge: string
+    title: { vi: string; en: string }
+    tagline: { vi: string; en: string }
+    bullets: { vi: string; en: string }[]
+  }
+> = {
+  free: {
+    badge: '🌱',
+    title: { vi: 'Free', en: 'Free' },
+    tagline: { vi: 'Học thử, không tốn phí', en: 'Try it out, no cost' },
+    bullets: [
+      { vi: '4 giọng đọc (2 nữ, 2 nam)', en: '4 voices (2 female, 2 male)' },
+      {
+        vi: '+5 lượt AI/ngày có học từ mới (Chat/Viết/Nói/Nghe), dồn tối đa 35 lượt trong 7 ngày',
+        en: '+5 AI turns/day when you study new words (Chat/Writing/Speaking/Listening), rolling cap of 35 over 7 days',
+      },
+      { vi: 'Đầy đủ lộ trình CEFR A1–C2', en: 'Full A1–C2 CEFR roadmap' },
+    ],
+  },
+  pro: {
+    badge: '⭐',
+    title: { vi: 'Pro', en: 'Pro' },
+    tagline: { vi: 'Học đều mỗi ngày', en: 'For daily practice' },
+    bullets: [
+      {
+        vi: '8 giọng đọc chất lượng cao, phát tức thì',
+        en: '8 high-quality voices, instant playback',
+      },
+      { vi: '30 lượt AI/ngày (gấp ~6 lần Free)', en: '30 AI turns/day (~6× Free)' },
+      { vi: 'Không lo hết lượt giữa buổi học', en: "Won't run out mid-session" },
+    ],
+  },
+  vip: {
+    badge: '👑',
+    title: { vi: 'VIP', en: 'VIP' },
+    tagline: { vi: 'Luyện tập chuyên sâu', en: 'For serious practice' },
+    bullets: [
+      {
+        vi: 'Trọn bộ 14 giọng Chirp3-HD + giọng đặc biệt + 2 giọng Studio thu âm phòng thu (tiếng Anh)',
+        en: 'All 14 Chirp3-HD voices + a special voice + 2 studio-quality voices (English)',
+      },
+      {
+        vi: '300 lượt AI/ngày — thoải mái luyện không giới hạn thực tế',
+        en: '300 AI turns/day — practically unlimited',
+      },
+      { vi: 'Trải nghiệm giọng đọc tốt nhất trong app', en: 'The best voice quality in the app' },
+    ],
+  },
+}
+
+function PlanFeatureCard({
+  planKey,
+  isA,
+  isCurrent,
+}: {
+  planKey: 'free' | 'pro' | 'vip'
+  isA: boolean
+  isCurrent: boolean
+}) {
+  const info = PLAN_INFO[planKey]
+  return (
+    <div
+      className={`rounded-xl border p-3 ${
+        isCurrent ? 'border-accent-500/50 bg-accent-500/5' : 'border-zinc-800 bg-zinc-950/40'
+      }`}
+    >
+      <div className="flex items-center gap-1.5 mb-0.5">
+        <span aria-hidden>{info.badge}</span>
+        <span className="text-sm font-semibold text-white">{info.title.vi}</span>
+        {isCurrent && (
+          <span className="text-[10px] font-medium text-accent-300 theme-light:text-accent-800 bg-accent-500/15 rounded-full px-1.5 py-0.5">
+            {isA ? 'Đang dùng' : 'Current'}
+          </span>
+        )}
+      </div>
+      <p className="text-xs text-zinc-400 mb-1.5">{isA ? info.tagline.vi : info.tagline.en}</p>
+      <ul className="space-y-1">
+        {info.bullets.map((b, i) => (
+          <li key={i} className="text-xs text-zinc-300 flex gap-1.5">
+            <span className="text-accent-400 shrink-0" aria-hidden>
+              •
+            </span>
+            <span>{isA ? b.vi : b.en}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 const POLL_INTERVAL_MS = 4000
 
 function formatVnd(n: number): string {
@@ -206,6 +304,11 @@ export default function UpgradeSection({
         </div>
       ) : (
         <div>
+          <div className="grid grid-cols-1 gap-2 mb-4">
+            {(['free', 'pro', 'vip'] as const).map((p) => (
+              <PlanFeatureCard key={p} planKey={p} isA={isA} isCurrent={currentPlan === p} />
+            ))}
+          </div>
           <div className="flex gap-2 mb-3">
             {(['pro', 'vip'] as const).map((p) => (
               <button
