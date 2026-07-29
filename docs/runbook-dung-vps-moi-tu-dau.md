@@ -7,6 +7,9 @@
 > - `docs/deploy-vps-ubuntu.md` — chi tiết từng lệnh cài đặt (tham khảo khi cần giải thích thêm).
 > - `docs/ke-hoach-khoi-phuc-su-co-server.md` — quy trình ứng phó khi server **đang chạy** bị sự cố
 >   (khác với dựng **VPS mới hoàn toàn** ở đây).
+> - `docs/ke-hoach-khoi-phuc-su-co.md` — kịch bản disaster recovery đầy đủ dùng **R2** làm nơi lưu
+>   backup từ xa (`npm run restore:r2` cho database, `npm run restore:env` cho `.env`) — nguồn chính
+>   cho mục 3/4 bên dưới, vì R2 độc lập với VPS nên vẫn dùng được kể cả khi mất luôn VPS cũ.
 >
 > ⚠️ Đây là thao tác thật trên hạ tầng — nếu VPS hiện tại (`160.30.172.203`,
 > `en-vi.donghanhcungban.com`) **vẫn đang chạy bình thường**, KHÔNG chạy các lệnh xoá/ghi đè trong
@@ -18,20 +21,22 @@
 
 Điền vào đây (hoặc tài liệu nội bộ riêng, không commit secret thật):
 
-| Mục | Giá trị |
-| --- | --- |
-| Nhà cung cấp VPS mới | _(điền)_ |
-| IP VPS mới | _(điền sau khi tạo máy)_ |
-| Domain sẽ trỏ vào | `en-vi.donghanhcungban.com` (đổi DNS A record sang IP mới) |
-| Bản backup Postgres dùng để restore | bản mới nhất trong `/var/backups/english_tutor_*.sql.gz` lấy từ VPS cũ **trước khi** VPS cũ mất hẳn |
-| `.env` cũ (chứa secret thật) | lấy bản sao lưu riêng (KHÔNG có trong git) — nếu mất, phải tạo lại từng key (xem mục 4 bên dưới) |
-| SSH key | dùng key cũ nếu còn giữ, hoặc tạo cặp key mới rồi cập nhật `~/.ssh/config` |
+| Mục                                 | Giá trị                                                                                                                                                                                                                                               |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Nhà cung cấp VPS mới                | _(điền)_                                                                                                                                                                                                                                              |
+| IP VPS mới                          | _(điền sau khi tạo máy)_                                                                                                                                                                                                                              |
+| Domain sẽ trỏ vào                   | `en-vi.donghanhcungban.com` (đổi DNS A record sang IP mới)                                                                                                                                                                                            |
+| Bản backup Postgres dùng để restore | ưu tiên lấy từ **R2** (`npm run restore:r2 -- --list`, bucket `R2_BACKUP_BUCKET`) — không cần còn giữ VPS cũ. Chỉ dùng `/var/backups/english_tutor_*.sql.gz` local nếu R2 cũng không truy cập được                                                    |
+| `.env` cũ (chứa secret thật)        | ưu tiên khôi phục từ R2 (`npm run restore:env`, cần `ENV_BACKUP_PASSPHRASE` — xem mục 3a bên dưới). Nếu chưa từng bật cron `backup:env`/`backup:r2` (`docs/setup-postgresql-vps.md` mục 7.2-7.3) thì không có gì để khôi phục — phải tạo lại từng key |
+| `ENV_BACKUP_PASSPHRASE`             | passphrase mã hoá `.env` khi backup lên R2 — **không nằm trong `.env`** (theo thiết kế), phải lấy từ nơi lưu riêng (password manager)                                                                                                                 |
+| SSH key                             | dùng key cũ nếu còn giữ, hoặc tạo cặp key mới rồi cập nhật `~/.ssh/config`                                                                                                                                                                            |
 
-> Nếu **mất luôn** cả `.env` cũ (không có bản sao lưu nào) → phải tạo lại **toàn bộ secret mới**:
-> `TTS_ENCRYPTION_MASTER_KEY` mới nghĩa là **audio cache cũ không giải mã được nữa** (chấp nhận
-> được — TTS tự tạo lại), nhưng `JWT`/password DB thì phải khớp với dữ liệu restore từ backup nếu
-> muốn user cũ đăng nhập lại được bằng mật khẩu cũ (mật khẩu hash nằm trong DB, không phụ thuộc
-> secret app — chỉ cần restore đúng DB là đăng nhập lại được, không cần khớp secret cũ).
+> Nếu **mất luôn** cả `.env` lẫn không khôi phục được từ R2 (chưa bật cron `backup:env`, hoặc mất cả
+> `ENV_BACKUP_PASSPHRASE`) → phải tạo lại **toàn bộ secret mới**: `TTS_ENCRYPTION_MASTER_KEY` mới
+> nghĩa là **audio cache cũ không giải mã được nữa** (chấp nhận được — TTS tự tạo lại), nhưng
+> `JWT`/password DB thì phải khớp với dữ liệu restore từ backup nếu muốn user cũ đăng nhập lại được
+> bằng mật khẩu cũ (mật khẩu hash nằm trong DB, không phụ thuộc secret app — chỉ cần restore đúng DB
+> là đăng nhập lại được, không cần khớp secret cũ).
 
 ---
 
@@ -46,8 +51,8 @@ Chạy tuần tự **Bước 0 → Bước 8** của `docs/deploy-vps-ubuntu.md`
 - [ ] Bước 2 — Cài Node.js 22
 - [ ] Bước 3 — Cài Nginx + PM2 + log rotation
 - [ ] Bước 3b — Cài Redis local (bắt buộc nếu dùng cluster mode)
-- [ ] Bước 4 — Clone code, tạo `.env` (dùng lại secret cũ nếu có bản sao lưu; xem mục 4 nếu phải
-      tạo mới), `npm install && npm run build`
+- [ ] Bước 4 — Clone code, `npm install` **trước** để có `npm run restore:env` dùng được, rồi khôi
+      phục `.env` (xem mục 3a bên dưới) thay vì gõ tay lại từng key, cuối cùng `npm run build`
 - [ ] Bước 5 — Cấu hình `ecosystem.config.cjs` (đã có sẵn trong repo, kiểm tra `PORT` đúng 3001)
 - [ ] Bước 7 — Nginx reverse proxy (chưa bật HTTPS vội — cần DNS trỏ đúng IP mới trước, xem mục 2)
 
@@ -68,25 +73,65 @@ Chạy tuần tự **Bước 0 → Bước 8** của `docs/deploy-vps-ubuntu.md`
 
 ---
 
-## 3. Restore dữ liệu Postgres từ backup (theo mục 3.5 của `docs/ke-hoach-khoi-phuc-su-co-server.md`)
+## 3. Khôi phục `.env` + database từ R2 (theo `docs/ke-hoach-khoi-phuc-su-co.md`)
+
+### 3a. Khôi phục `.env` (làm TRƯỚC — cần `DATABASE_URL`/`R2_*` để bước sau chạy được)
 
 ```bash
-# 1. Copy file backup từ VPS cũ (hoặc nơi lưu trữ ngoài) lên VPS mới, ví dụ:
+cd /var/www/english-tutor
+ENV_BACKUP_PASSPHRASE="passphrase-that-cua-ban" npm run restore:env
+# → ghi ra .env.restored, TỰ ĐỌC LẠI rồi mới đổi tên:
+mv .env.restored .env
+```
+
+> Script cố tình KHÔNG ghi đè `.env` trực tiếp — đọc kỹ nội dung trước khi `mv`, tránh restore
+> nhầm bản backup của môi trường khác.
+
+- [ ] `.env` khôi phục xong, đủ key theo `.env.example` (kiểm tra nhanh:
+      `diff <(grep -oP '^[A-Z_]+(?==)' .env.example) <(grep -oP '^[A-Z_]+(?==)' .env)`)
+
+### 3b. Khôi phục database (dùng R2 — không cần VPS cũ còn sống)
+
+```bash
+cd /var/www/english-tutor
+
+# Xem có bản backup nào trên R2, chọn bản cần dùng
+RESTORE_PSQL_URL=postgresql://postgres:MAT-KHAU-SUPERUSER@localhost:5432/postgres \
+  npm run restore:r2 -- --list
+
+# Khôi phục thật — backup tự tạo lại toàn bộ schema, KHÔNG cần chạy migrate:pg trước
+RESTORE_PSQL_URL=postgresql://postgres:MAT-KHAU-SUPERUSER@localhost:5432/postgres \
+  npm run restore:r2 -- --restore-into english_tutor --yes
+```
+
+```bash
+# Xác nhận dữ liệu thật, không phải bảng rỗng
+sudo -u postgres psql english_tutor -c "select count(*) from public.users;"
+
+# Chạy migration còn thiếu (backup có thể cũ hơn schema mới nhất)
+npm run migrate:pg
+```
+
+- [ ] `restore:r2 --list` thấy đúng bản backup mong muốn
+- [ ] `restore:r2 --restore-into` chạy xong, không lỗi
+- [ ] `select count(*) from public.users` > 0 và hợp lý so với traffic gần đây
+- [ ] `npm run migrate:pg` chạy xong, không lỗi
+
+### 3c. Phương án dự phòng — không dùng được R2 (backup local trên VPS cũ vẫn còn truy cập được)
+
+```bash
+# 1. Copy file backup local từ VPS cũ lên VPS mới
 scp /duong/dan/english_tutor_YYYYMMDD.sql.gz root@<ip-vps-moi>:/var/backups/
 
-# 2. Trên VPS mới — verify backup không hỏng trước khi restore thật
+# 2. Verify backup không hỏng trước khi restore thật
 bash /var/www/english-tutor/scripts/verify-pg-backup.sh /var/backups/english_tutor_YYYYMMDD.sql.gz
 
 # 3. Nếu OK — restore vào DB thật (DB đang trống, không cần dropdb)
 gunzip -c /var/backups/english_tutor_YYYYMMDD.sql.gz | sudo -u postgres psql english_tutor
 
-# 4. Chạy migration còn thiếu (backup cũ có thể thiếu bảng/cột mới nhất)
+# 4. Chạy migration còn thiếu
 cd /var/www/english-tutor && npm run migrate:pg
 ```
-
-- [ ] Backup verify OK (bước 2 không báo lỗi)
-- [ ] Restore xong, không có lỗi SQL
-- [ ] `npm run migrate:pg` chạy xong, không lỗi
 
 ---
 
