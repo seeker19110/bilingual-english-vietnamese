@@ -88,6 +88,18 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   )
 }
 
+// Bảo vệ route quản trị (/admin-s): ngoài đăng nhập + onboard (RequireAuth), còn cần cờ
+// user.isAdmin (server tính từ ADMIN_EMAILS, trả về ở /api/auth?action=me — xem
+// src/types.ts). Đây CHỈ là lớp che UI cho người dùng thường đỡ thấy khung/tên các mục quản
+// trị nội bộ — không phải lớp bảo mật thật: mọi API admin vẫn TỰ kiểm lại quyền phía server
+// (api/_lib/adminAuth.ts), nên dù cờ này bị qua mặt trên client thì dữ liệu vẫn an toàn.
+function RequireAdmin({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth()
+  if (loading) return <PageLoading />
+  if (!user?.isAdmin) return <Navigate to="/" replace />
+  return <>{children}</>
+}
+
 // Cập nhật thẻ <link rel="canonical"> theo route hiện tại để tránh lỗi SEO
 // "canonical points to homepage instead of current page".
 // Tên miền lấy từ biến môi trường VITE_SITE_URL (đặt khi build) để dễ dùng cho
@@ -293,7 +305,9 @@ export default function App() {
                       path="/admin-s"
                       element={
                         <RequireAuth>
-                          <AdminDashboard />
+                          <RequireAdmin>
+                            <AdminDashboard />
+                          </RequireAdmin>
                         </RequireAuth>
                       }
                     />
