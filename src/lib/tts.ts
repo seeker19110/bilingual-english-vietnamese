@@ -12,6 +12,7 @@ import {
   DEFAULT_MALE_VOICE,
   VOICE_OPTIONS,
   STUDIO_VOICE_IDS,
+  ELEVEN_VOICE_IDS,
   getCachedAllowedVoices,
   type VoiceId,
 } from './voiceTiers'
@@ -345,7 +346,13 @@ export async function ensureAudioBuffer(
   voiceInput: Voice,
 ): Promise<ArrayBuffer> {
   const voice = resolveVoiceForLang(voiceInput, lang)
-  const cacheKey = audioCacheKey(text, lang, voice)
+  // Giọng ElevenLabs không phân biệt lang (xem ghi chú tương ứng trong api/tts.ts) — bỏ lang
+  // khỏi cacheKey để khớp với hash cache phía server (không tách 2 bản audio giống hệt nhau).
+  const cacheKey = audioCacheKey(
+    text,
+    (ELEVEN_VOICE_IDS as string[]).includes(voice) ? '' : lang,
+    voice,
+  )
 
   // Kiểm tra IndexedDB trước — nếu đã có thì khỏi gọi server
   const cached = await getAudioBuffer(cacheKey)

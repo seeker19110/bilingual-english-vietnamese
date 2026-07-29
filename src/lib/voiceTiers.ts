@@ -162,8 +162,15 @@ export function getCachedAllowedVoices(): VoiceId[] {
 // pickRandomVoice() ở trên — hàm đó random NHƯNG giữ cố định 1 giới tính). Dùng cho nút loa
 // Từ điển/flashcard (PronounceButton, WordVoiceCycleButton) khi bật chế độ "mỗi lần bấm 1
 // giọng khác" (quyết định 2026-07-29).
+//
+// LOẠI giọng ElevenLabs khỏi bể random: 2 nút này gọi /api/pronunciation (tra 1 từ), endpoint
+// đó KHÔNG hỗ trợ ElevenLabs (chỉ dành cho câu/đoạn ở /api/tts — xem api/pronunciation.ts).
+// Nếu random ra Rachel, request sẽ bị server trả 400 rồi âm thầm fallback Web Speech (giọng
+// trình duyệt chất lượng thấp hơn) — bug thật đã gặp với user gói VIP.
+const ALLOWED_VOICE_POOL_EXCLUDING_ELEVEN = VOICE_IDS.filter((v) => !ELEVEN_VOICE_IDS.includes(v))
 export function pickRandomAllowedVoice(): VoiceId {
-  const allowed = getCachedAllowedVoices()
-  const pool = allowed.length > 0 ? allowed : VOICE_IDS
+  const eleven = new Set(ELEVEN_VOICE_IDS)
+  const allowed = getCachedAllowedVoices().filter((v) => !eleven.has(v))
+  const pool = allowed.length > 0 ? allowed : ALLOWED_VOICE_POOL_EXCLUDING_ELEVEN
   return pool[Math.floor(Math.random() * pool.length)]!
 }
