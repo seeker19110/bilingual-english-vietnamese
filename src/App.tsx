@@ -281,13 +281,16 @@ export default function App() {
                       }
                     />
                     {/* /admin-settings đã tích hợp vào tab "Hạn mức & khuyến mãi" của
-                        /admin — giữ redirect để không vỡ link cũ trong docs/runbook. */}
+                        /admin-s — giữ redirect để không vỡ link cũ trong docs/runbook. */}
                     <Route
                       path="/admin-settings"
-                      element={<Navigate to="/admin?tab=limits" replace />}
+                      element={<Navigate to="/admin-s?tab=limits" replace />}
                     />
+                    {/* Đường dẫn trang quản trị tổng đổi từ /admin sang /admin-s (2026-07-29)
+                        — giữ redirect /admin cũ để không vỡ link đã chia sẻ/bookmark. */}
+                    <Route path="/admin" element={<Navigate to="/admin-s" replace />} />
                     <Route
-                      path="/admin"
+                      path="/admin-s"
                       element={
                         <RequireAuth>
                           <AdminDashboard />

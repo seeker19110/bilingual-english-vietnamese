@@ -9,8 +9,8 @@ import AdminPlanFeaturesPanel from '../components/admin/AdminPlanFeaturesPanel'
 import AdminAnalyticsPanel from '../components/admin/AdminAnalyticsPanel'
 import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 
-// Trang khung tổng quản trị (/admin) — gom các mục quản trị vào 1 nơi, điều hướng bằng tab
-// (lưu ở query string ?tab=... để bookmark/redirect được, vd /admin-settings cũ → /admin?tab=limits).
+// Trang khung tổng quản trị (/admin-s) — gom các mục quản trị vào 1 nơi, điều hướng bằng tab
+// (lưu ở query string ?tab=... để bookmark/redirect được, vd /admin-settings cũ → /admin-s?tab=limits).
 // Quyền admin do SERVER tự kiểm (ADMIN_EMAILS trong .env, xem api/_lib/adminAuth.ts) — client
 // không biết trước ai là admin, chỉ dựa vào response 403 của từng tab. Mỗi tab tự gọi API
 // riêng và tự xử lý 403/tải/lỗi — trang này chỉ là khung điều hướng.
@@ -32,7 +32,7 @@ const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
 ]
 
 export default function AdminDashboard() {
-  // Tab đọc/ghi qua query string (?tab=...) để link kiểu /admin?tab=limits (vd redirect từ
+  // Tab đọc/ghi qua query string (?tab=...) để link kiểu /admin-s?tab=limits (vd redirect từ
   // /admin-settings cũ) mở đúng tab, và người dùng có thể chia sẻ/bookmark 1 tab cụ thể.
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
