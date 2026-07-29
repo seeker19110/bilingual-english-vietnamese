@@ -252,15 +252,19 @@ export default async function handler(req: Request): Promise<Response> {
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
       console.warn(`[agent] Gemini lỗi sau ${Date.now() - startedAt}ms: ${errMsg}`)
-      // Provider lỗi → người dùng không nhận được trả lời: hoàn lại lượt vừa trừ.
-      await refundUsage(authResult.userId, mode)
-      // Lỗi timeout (AbortController) → 504, còn lại 502 (lỗi từ nhà cung cấp), không phải 500 của ta.
-      const isTimeout = /Hết thời gian chờ/.test(errMsg)
-      return jsonResponse(
-        { error: { message: `Gemini lỗi: ${errMsg.slice(0, 200)}` } },
-        isTimeout ? 504 : 502,
-        allHeaders,
-      )
+      // Còn Groq/Anthropic dự phòng → thử tiếp thay vì báo lỗi ngay (vd Gemini hết quota
+      // free nhưng Groq vẫn dùng được). Chỉ hoàn lượt + trả lỗi nếu KHÔNG còn provider nào khác.
+      if (!groqKey && !anthropicKey) {
+        await refundUsage(authResult.userId, mode)
+        // Lỗi timeout (AbortController) → 504, còn lại 502 (lỗi từ nhà cung cấp), không phải 500 của ta.
+        const isTimeout = /Hết thời gian chờ/.test(errMsg)
+        return jsonResponse(
+          { error: { message: `Gemini lỗi: ${errMsg.slice(0, 200)}` } },
+          isTimeout ? 504 : 502,
+          allHeaders,
+        )
+      }
+      console.warn('[agent] Gemini lỗi — chuyển sang provider dự phòng (Groq/Anthropic)')
     }
   }
 
