@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Sliders, ShieldCheck, BarChart3, Activity, Crown, ToggleRight } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -9,10 +9,11 @@ import AdminPlanFeaturesPanel from '../components/admin/AdminPlanFeaturesPanel'
 import AdminAnalyticsPanel from '../components/admin/AdminAnalyticsPanel'
 import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 
-// Trang khung tổng quản trị (/admin) — gom các mục quản trị vào 1 nơi, điều hướng bằng tab.
+// Trang khung tổng quản trị (/admin) — gom các mục quản trị vào 1 nơi, điều hướng bằng tab
+// (lưu ở query string ?tab=... để bookmark/redirect được, vd /admin-settings cũ → /admin?tab=limits).
 // Quyền admin do SERVER tự kiểm (ADMIN_EMAILS trong .env, xem api/_lib/adminAuth.ts) — client
-// không biết trước ai là admin, chỉ dựa vào response 403 của từng tab (giống AdminSettings.tsx
-// cũ). Mỗi tab tự gọi API riêng và tự xử lý 403/tải/lỗi — trang này chỉ là khung điều hướng.
+// không biết trước ai là admin, chỉ dựa vào response 403 của từng tab. Mỗi tab tự gọi API
+// riêng và tự xử lý 403/tải/lỗi — trang này chỉ là khung điều hướng.
 //
 // Ghi chú: tab "Chặn tên tài khoản giả danh" CHƯA thêm vì chưa thấy code liên quan
 // (vd api/_lib/reservedNames.ts) trong repo lúc viết trang này — không bịa UI cho tính năng
@@ -31,7 +32,12 @@ const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
 ]
 
 export default function AdminDashboard() {
-  const [tab, setTab] = useState<TabKey>('usage')
+  // Tab đọc/ghi qua query string (?tab=...) để link kiểu /admin?tab=limits (vd redirect từ
+  // /admin-settings cũ) mở đúng tab, và người dùng có thể chia sẻ/bookmark 1 tab cụ thể.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const tab: TabKey = TABS.some((t) => t.key === tabParam) ? (tabParam as TabKey) : 'usage'
+  const setTab = (key: TabKey) => setSearchParams({ tab: key }, { replace: true })
 
   return (
     <div className="min-h-dvh bg-zinc-950">

@@ -51,9 +51,7 @@ const Learn = lazyWithRetry(() => import('./pages/Learn'))
 // Trang riêng của từng cấp CEFR (/learning-path/a1…b2) — lazy-load tương tự.
 const CefrLevelPage = lazyWithRetry(() => import('./pages/CefrLevelPage'))
 
-// Trang cấu hình hạn mức/khuyến mãi — chỉ admin (ADMIN_EMAILS) dùng được, lazy-load vì
-// hiếm khi truy cập.
-const AdminSettings = lazyWithRetry(() => import('./pages/AdminSettings'))
+// Trang quản trị tổng — chỉ admin (ADMIN_EMAILS) dùng được, lazy-load vì hiếm khi truy cập.
 const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'))
 
 // PoC nội bộ — không link từ menu/BottomNav, chỉ vào qua URL trực tiếp /avatar-demo.
@@ -282,13 +280,11 @@ export default function App() {
                         </RequireAuth>
                       }
                     />
+                    {/* /admin-settings đã tích hợp vào tab "Hạn mức & khuyến mãi" của
+                        /admin — giữ redirect để không vỡ link cũ trong docs/runbook. */}
                     <Route
                       path="/admin-settings"
-                      element={
-                        <RequireAuth>
-                          <AdminSettings />
-                        </RequireAuth>
-                      }
+                      element={<Navigate to="/admin?tab=limits" replace />}
                     />
                     <Route
                       path="/admin"
