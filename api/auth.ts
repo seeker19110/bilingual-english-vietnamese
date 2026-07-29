@@ -4,7 +4,8 @@
 //
 // POST /api/auth  body { action: 'register', email, name, password }
 // POST /api/auth  body { action: 'login', email, password }
-// POST /api/auth  body { action: 'google', idToken }
+// POST /api/auth  body { action: 'google', idToken }             (One Tap — cũ, giữ tương thích)
+// POST /api/auth  body { action: 'google-token', accessToken }   (popup OAuth2 — dùng cho Safari/iOS/PWA)
 // POST /api/auth  body { action: 'facebook', accessToken }
 // POST /api/auth  body { action: 'apple', idToken, name? }
 // POST /api/auth  body { action: 'microsoft', idToken }
@@ -16,6 +17,7 @@ import {
   createUserWithPassword,
   verifyUserPassword,
   verifyGoogleIdToken,
+  verifyGoogleAccessToken,
   findOrCreateGoogleUser,
   verifyFacebookAccessToken,
   findOrCreateFacebookUser,
@@ -69,6 +71,10 @@ const GoogleSchema = z.object({
   action: z.literal('google'),
   idToken: z.string().min(10),
 })
+const GoogleTokenSchema = z.object({
+  action: z.literal('google-token'),
+  accessToken: z.string().min(10),
+})
 const FacebookSchema = z.object({
   action: z.literal('facebook'),
   accessToken: z.string().min(10),
@@ -116,6 +122,7 @@ const BodySchema = z.union([
   RegisterSchema,
   LoginSchema,
   GoogleSchema,
+  GoogleTokenSchema,
   FacebookSchema,
   AppleSchema,
   MicrosoftSchema,
@@ -257,6 +264,13 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (result.data.action === 'google') {
     const info = await verifyGoogleIdToken(result.data.idToken)
+    if (!info) return jsonResponse({ error: 'Google token không hợp lệ' }, 401, allHeaders)
+    const { user, isNew } = await findOrCreateGoogleUser(info.googleId, info.email)
+    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
+  }
+
+  if (result.data.action === 'google-token') {
+    const info = await verifyGoogleAccessToken(result.data.accessToken)
     if (!info) return jsonResponse({ error: 'Google token không hợp lệ' }, 401, allHeaders)
     const { user, isNew } = await findOrCreateGoogleUser(info.googleId, info.email)
     return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)

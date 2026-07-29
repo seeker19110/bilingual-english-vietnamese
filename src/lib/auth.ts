@@ -44,20 +44,24 @@ export async function login(email: string, password: string): Promise<AppUser | 
   return result.user
 }
 
-// Đăng nhập bằng Google — dùng Google Identity Services (script tải trong index.html),
-// trả về Promise<AppUser|null> thay vì void như bản Supabase cũ (không còn redirect rời
-// trang — GIS hiện popup/One Tap ngay trên trang hiện tại).
+// Đăng nhập bằng Google — dùng Google Identity Services (script tải trong index.html).
+// Dùng luồng OAuth2 popup THẬT (`oauth2.initTokenClient`) thay vì One Tap (`accounts.id.prompt`):
+// One Tap hiển thị qua iframe, phụ thuộc cookie bên thứ 3/FedCM — bị Safari ITP chặn và KHÔNG
+// hoạt động khi chạy PWA ở chế độ standalone (đã cài lên Home Screen iPhone), khiến nút bấm
+// treo loading vô thời hạn mà không báo lỗi. Popup OAuth2 mở thẳng trang đăng nhập thật của
+// Google (accounts.google.com) — tự nhận diện tài khoản đã lưu trong Safari/Chrome hoặc chuyển
+// sang app Google (nếu có cài) qua universal link, không cần 2 bước.
 declare global {
   interface Window {
     google?: {
       accounts: {
-        id: {
-          initialize: (config: {
+        oauth2: {
+          initTokenClient: (config: {
             client_id: string
-            callback: (resp: { credential: string }) => void
-          }) => void
-          prompt: () => void
-          renderButton: (parent: HTMLElement, options: Record<string, unknown>) => void
+            scope: string
+            callback: (resp: { access_token?: string; error?: string }) => void
+            error_callback?: (err: { type?: string; message?: string }) => void
+          }) => { requestAccessToken: () => void }
         }
       }
     }
@@ -69,7 +73,7 @@ let googleInitPromise: Promise<void> | null = null
 function loadGoogleScript(): Promise<void> {
   if (googleInitPromise) return googleInitPromise
   googleInitPromise = new Promise((resolve, reject) => {
-    if (window.google?.accounts?.id) {
+    if (window.google?.accounts?.oauth2) {
       resolve()
       return
     }
@@ -91,10 +95,15 @@ export async function loginWithGoogle(): Promise<AppUser | null> {
   await loadGoogleScript()
 
   return new Promise((resolve, reject) => {
-    window.google!.accounts.id.initialize({
+    const client = window.google!.accounts.oauth2.initTokenClient({
       client_id: clientId,
+      scope: 'openid email profile',
       callback: (resp) => {
-        void callAuthApi({ action: 'google', idToken: resp.credential })
+        if (!resp.access_token) {
+          resolve(null)
+          return
+        }
+        void callAuthApi({ action: 'google-token', accessToken: resp.access_token })
           .then((result) => {
             if (!result) {
               resolve(null)
@@ -105,8 +114,11 @@ export async function loginWithGoogle(): Promise<AppUser | null> {
           })
           .catch(reject)
       },
+      // Popup bị chặn/người dùng đóng popup mà không chọn tài khoản — trả về null thay vì
+      // treo Promise vô thời hạn (lỗi cũ của One Tap khi bị Safari âm thầm bỏ qua).
+      error_callback: () => resolve(null),
     })
-    window.google!.accounts.id.prompt()
+    client.requestAccessToken()
   })
 }
 
@@ -334,4 +346,27 @@ export async function getCurrentUser(): Promise<AppUser | null> {
 // profile riêng trong localStorage (đã gộp vào getCurrentUser gọi thẳng /api/auth?action=me).
 export function clearProfileCache() {
   /* no-op — giữ lại export để AuthProvider.tsx không phải sửa import */
+}
+
+// Tải trước (preload) SDK của cả 4 nhà cung cấp NGAY khi trang Login hiện ra (gọi từ
+// useEffect, không chờ) — thay vì đợi bấm nút mới bắt đầu tải qua mạng. Lý do: các hàm
+// loginWith*() đều "await loadXScript()" rồi mới mở popup; nếu SDK CHƯA tải xong lúc bấm,
+// khoảng chờ mạng đó cắt đứt chuỗi "cử chỉ người dùng" (user gesture) mà Safari/Chrome mobile
+// dựa vào để cho phép mở popup — trình duyệt coi popup không còn gắn với cú bấm nữa và ÂM THẦM
+// chặn, buộc người dùng phải bấm lại nhiều lần mới thành công. Preload xong trước thì lúc bấm
+// nút, script đã có sẵn, popup mở ngay trong cùng nhịp bấm — không riêng gì Google, áp dụng
+// chung cho Facebook/Apple/Microsoft. Lỗi tải (mất mạng, thiếu script CSP...) bỏ qua trong lúc
+// preload — nút vẫn tự thử tải lại lúc bấm (có xử lý lỗi ở loginWith*() đầy đủ).
+export function preloadOAuthProviders() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined
+  if (googleClientId) void loadGoogleScript().catch(() => undefined)
+
+  const facebookAppId = import.meta.env.VITE_FACEBOOK_APP_ID as string | undefined
+  if (facebookAppId) void loadFacebookScript(facebookAppId).catch(() => undefined)
+
+  const appleClientId = import.meta.env.VITE_APPLE_CLIENT_ID as string | undefined
+  if (appleClientId) void loadAppleScript().catch(() => undefined)
+
+  const microsoftClientId = import.meta.env.VITE_MICROSOFT_CLIENT_ID as string | undefined
+  if (microsoftClientId) void loadMicrosoftScript().catch(() => undefined)
 }
