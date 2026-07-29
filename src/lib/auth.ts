@@ -347,3 +347,26 @@ export async function getCurrentUser(): Promise<AppUser | null> {
 export function clearProfileCache() {
   /* no-op — giữ lại export để AuthProvider.tsx không phải sửa import */
 }
+
+// Tải trước (preload) SDK của cả 4 nhà cung cấp NGAY khi trang Login hiện ra (gọi từ
+// useEffect, không chờ) — thay vì đợi bấm nút mới bắt đầu tải qua mạng. Lý do: các hàm
+// loginWith*() đều "await loadXScript()" rồi mới mở popup; nếu SDK CHƯA tải xong lúc bấm,
+// khoảng chờ mạng đó cắt đứt chuỗi "cử chỉ người dùng" (user gesture) mà Safari/Chrome mobile
+// dựa vào để cho phép mở popup — trình duyệt coi popup không còn gắn với cú bấm nữa và ÂM THẦM
+// chặn, buộc người dùng phải bấm lại nhiều lần mới thành công. Preload xong trước thì lúc bấm
+// nút, script đã có sẵn, popup mở ngay trong cùng nhịp bấm — không riêng gì Google, áp dụng
+// chung cho Facebook/Apple/Microsoft. Lỗi tải (mất mạng, thiếu script CSP...) bỏ qua trong lúc
+// preload — nút vẫn tự thử tải lại lúc bấm (có xử lý lỗi ở loginWith*() đầy đủ).
+export function preloadOAuthProviders() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined
+  if (googleClientId) void loadGoogleScript().catch(() => undefined)
+
+  const facebookAppId = import.meta.env.VITE_FACEBOOK_APP_ID as string | undefined
+  if (facebookAppId) void loadFacebookScript(facebookAppId).catch(() => undefined)
+
+  const appleClientId = import.meta.env.VITE_APPLE_CLIENT_ID as string | undefined
+  if (appleClientId) void loadAppleScript().catch(() => undefined)
+
+  const microsoftClientId = import.meta.env.VITE_MICROSOFT_CLIENT_ID as string | undefined
+  if (microsoftClientId) void loadMicrosoftScript().catch(() => undefined)
+}

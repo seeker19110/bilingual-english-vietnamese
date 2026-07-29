@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BookOpen, Eye, EyeOff, Mic, PenLine, MessageCircle } from 'lucide-react'
 import {
@@ -8,6 +8,7 @@ import {
   loginWithFacebook,
   loginWithApple,
   loginWithMicrosoft,
+  preloadOAuthProviders,
 } from '../lib/auth'
 import { claimPendingReferral } from '../lib/referral'
 import { useAuth } from '../context/useAuth'
@@ -36,6 +37,13 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [forgotSending, setForgotSending] = useState(false)
+
+  // Tải trước SDK Google/Facebook/Apple/Microsoft ngay khi vào trang, không chờ bấm nút —
+  // tránh popup bị trình duyệt âm thầm chặn vì cắt đứt chuỗi "cử chỉ người dùng" trong lúc chờ
+  // tải SDK qua mạng (xem giải thích chi tiết ở preloadOAuthProviders() trong lib/auth.ts).
+  useEffect(() => {
+    preloadOAuthProviders()
+  }, [])
 
   // Quên mật khẩu: gửi link reset qua email. LUÔN hiện cùng 1 thông báo bất kể email có tồn tại
   // hay không — server cũng cố ý không lộ điều đó (chống dò email hàng loạt), UI không được phá
