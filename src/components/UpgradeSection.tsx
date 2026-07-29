@@ -17,6 +17,7 @@ import {
   type CheckoutResult,
 } from '../lib/payment'
 import { useToast } from '../context/ToastProvider'
+import { getPlanMarketing } from '../lib/planMarketing'
 
 const CYCLE_LABEL: Record<PayableCycle, { vi: string; en: string }> = {
   '10day': { vi: '10 ngày', en: '10 days' },
@@ -24,11 +25,11 @@ const CYCLE_LABEL: Record<PayableCycle, { vi: string; en: string }> = {
   year: { vi: 'Năm', en: 'Year' },
 }
 
-// Mô tả 3 gói — tính năng/lợi ích lấy ĐÚNG từ hạn mức/quyền giọng thật đang áp dụng (không
-// bịa số): hạn mức chung mọi tính năng AI (api/_lib/usage.ts, api/_lib/settings.ts — Free
-// +5 lượt/ngày có học, dồn tối đa 35 lượt/7 ngày; Pro 30 lượt/ngày; VIP 300 lượt/ngày) và số
-// giọng đọc theo gói (src/lib/voiceTiers.ts — Free 4, Pro 8, VIP 14 Chirp3-HD + ElevenLabs +
-// 2 Studio). Đổi hạn mức/giọng thật thì PHẢI sửa lại mô tả ở đây cho khớp.
+// Nội dung MẶC ĐỊNH (fallback) khi server chưa trả được /api/plan-marketing (mất mạng lần đầu
+// mở app, hoặc DB chưa chạy migration 0025_plan_marketing.sql) — admin sửa nội dung THẬT qua
+// /admin (tab "Nội dung gói"), xem api/admin-plan-marketing.ts. Số liệu ở đây khớp hạn mức/
+// quyền giọng THẬT tại thời điểm viết (api/_lib/usage.ts, src/lib/voiceTiers.ts) — chỉ dùng khi
+// admin chưa từng sửa gì trong DB.
 const PLAN_INFO: Record<
   'free' | 'pro' | 'vip',
   {
@@ -91,7 +92,21 @@ function PlanFeatureCard({
   isA: boolean
   isCurrent: boolean
 }) {
-  const info = PLAN_INFO[planKey]
+  const fetched = getPlanMarketing()?.plans[planKey]
+  const hasFetchedContent = !!fetched && (fetched.badge !== '' || fetched.bullets.length > 0)
+  const info = hasFetchedContent
+    ? {
+        badge: fetched!.badge || PLAN_INFO[planKey].badge,
+        title: PLAN_INFO[planKey].title,
+        tagline: {
+          vi: fetched!.taglineVi || PLAN_INFO[planKey].tagline.vi,
+          en: fetched!.taglineEn || PLAN_INFO[planKey].tagline.en,
+        },
+        bullets: fetched!.bullets.length
+          ? fetched!.bullets.map((b) => ({ vi: b.textVi, en: b.textEn }))
+          : PLAN_INFO[planKey].bullets,
+      }
+    : PLAN_INFO[planKey]
   return (
     <div
       className={`rounded-xl border p-3 ${

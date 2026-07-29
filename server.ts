@@ -45,6 +45,8 @@ import adminGrantPlanHandler from './api/admin-grant-plan.js'
 import adminVipWhitelistHandler from './api/admin-vip-whitelist.js'
 import planFeaturesHandler from './api/plan-features.js'
 import adminPlanFeaturesHandler from './api/admin-plan-features.js'
+import planMarketingHandler from './api/plan-marketing.js'
+import adminPlanMarketingHandler from './api/admin-plan-marketing.js'
 import analyticsHandler from './api/analytics.js'
 import analyticsSummaryHandler from './api/analytics-summary.js'
 import adminUsageStatsHandler from './api/admin-usage-stats.js'
@@ -189,6 +191,8 @@ app.all('/api/admin-grant-plan', wrapEdge(adminGrantPlanHandler))
 app.all('/api/admin-vip-whitelist', wrapEdge(adminVipWhitelistHandler))
 app.all('/api/plan-features', wrapEdge(planFeaturesHandler))
 app.all('/api/admin-plan-features', wrapEdge(adminPlanFeaturesHandler))
+app.all('/api/plan-marketing', wrapEdge(planMarketingHandler))
+app.all('/api/admin-plan-marketing', wrapEdge(adminPlanMarketingHandler))
 app.all('/api/analytics', wrapEdge(analyticsHandler))
 app.all('/api/analytics-summary', wrapEdge(analyticsSummaryHandler))
 app.all('/api/admin-usage-stats', wrapEdge(adminUsageStatsHandler))
