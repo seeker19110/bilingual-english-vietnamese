@@ -88,9 +88,9 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   )
 }
 
-// Màn "không tìm thấy trang" — dùng cho người dùng thường cố vào /admin-s, để KHÔNG lộ ra
-// rằng đây là 1 route thật (thay vì redirect về "/", vốn để lộ route tồn tại nhưng bị chặn
-// quyền). Route "*" (URL sai bất kỳ) vẫn giữ hành vi cũ — redirect về "/" — không đổi ở đây.
+// Màn "không tìm thấy trang" — dùng CHUNG cho cả route "*" (URL sai bất kỳ) lẫn khi người
+// dùng thường cố vào /admin-s. Phải giống hệt nhau ở cả 2 nơi: nếu /admin-s hiện khác đi (vd
+// redirect về "/") thì vô tình lộ ra đây là 1 route thật chỉ bị chặn quyền, khác URL sai thật.
 function NotFoundPage() {
   return (
     <div className="min-h-dvh bg-zinc-950 flex items-center justify-center px-4">
@@ -368,7 +368,7 @@ export default function App() {
                         </RequireAuth>
                       }
                     />
-                    <Route path="*" element={<Navigate to="/" replace />} />
+                    <Route path="*" element={<NotFoundPage />} />
                   </Routes>
                 </Suspense>
               </ErrorBoundary>
