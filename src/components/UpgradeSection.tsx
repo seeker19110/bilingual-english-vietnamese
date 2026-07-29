@@ -271,6 +271,11 @@ export default function UpgradeSection({
               className="w-48 h-48 rounded-xl border border-zinc-700 bg-white p-1"
             />
           </div>
+          <p className="text-xs text-center text-amber-300 theme-light:text-amber-800 mb-3">
+            {isA
+              ? 'Quét QR để app ngân hàng tự điền số tiền + nội dung — KHÔNG tự sửa 2 mục này. Nếu sửa/gõ sai, hệ thống không tự ghi nhận được và bạn cần chờ admin đối chiếu, duyệt tay.'
+              : "Scan the QR so your banking app auto-fills the amount + content — do NOT edit either field. If edited or mistyped, the system can't auto-confirm and you'll need to wait for manual admin review."}
+          </p>
           <div className="space-y-1.5 text-sm mb-3">
             <div className="flex justify-between">
               <span className="text-zinc-400">{isA ? 'Số tiền' : 'Amount'}</span>
