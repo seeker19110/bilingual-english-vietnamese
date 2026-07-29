@@ -429,7 +429,7 @@ export default function Dictionary() {
                                   {e.level}
                                 </span>
                               )}
-                              <PronounceButton word={e.word} random />
+                              <PronounceButton word={e.word} />
                               {isLearned && (
                                 <span className="flex items-center gap-0.5 text-[11px] text-accent-400 ml-auto">
                                   <CheckCircle2 className="w-3.5 h-3.5" />

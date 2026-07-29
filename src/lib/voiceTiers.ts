@@ -157,3 +157,13 @@ export function getCachedAllowedVoices(): VoiceId[] {
     return SAFE_DEFAULT_ALLOWED
   }
 }
+
+// Bốc NGẪU NHIÊN 1 giọng trong số giọng gói hiện tại cho phép, TRỘN CẢ NAM LẪN NỮ (khác
+// pickRandomVoice() ở trên — hàm đó random NHƯNG giữ cố định 1 giới tính). Dùng cho nút loa
+// Từ điển/flashcard (PronounceButton, WordVoiceCycleButton) khi bật chế độ "mỗi lần bấm 1
+// giọng khác" (quyết định 2026-07-29).
+export function pickRandomAllowedVoice(): VoiceId {
+  const allowed = getCachedAllowedVoices()
+  const pool = allowed.length > 0 ? allowed : VOICE_IDS
+  return pool[Math.floor(Math.random() * pool.length)]!
+}
