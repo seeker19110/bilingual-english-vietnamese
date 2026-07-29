@@ -1,24 +1,40 @@
 import { useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
 import { getAuthHeader } from '../lib/authHeader'
-import { getVoicePref, playAudioUrl } from '../lib/tts'
-import { VOICE_OPTIONS } from '../lib/voiceTiers'
+import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
+import { VOICE_OPTIONS, getCachedAllowedVoices } from '../lib/voiceTiers'
 
 interface Props {
   word: string
   lang?: 'en-US' | 'vi-VN' // bỏ trống = tiếng Anh (mặc định cũ, giữ tương thích chỗ gọi chưa sửa)
+  // true = mỗi lần bấm bốc NGẪU NHIÊN 1 giọng (cả nam lẫn nữ) trong số giọng gói cho phép,
+  // KHÔNG dùng giọng mặc định đã lưu ở Cài đặt. Quyết định 2026-07-29: riêng nút loa Từ điển
+  // (Dictionary.tsx) dùng chế độ này để người dùng nghe thử nhiều giọng khi tra từ; mọi nơi
+  // khác (flashcard, chấm phát âm, Chat...) vẫn giữ nguyên giọng mặc định như trước.
+  random?: boolean
 }
 
-// Nút loa phát âm 1 từ — giọng nữ/nam lấy từ global pref (VoiceToggle trên header).
-export default function PronounceButton({ word, lang = 'en-US' }: Props) {
+function pickRandomVoiceAnyGender(): Voice {
+  const allowed = getCachedAllowedVoices()
+  const pool = allowed.length > 0 ? allowed : VOICE_OPTIONS.map((v) => v.id)
+  return pool[Math.floor(Math.random() * pool.length)]!
+}
+
+// Nút loa phát âm 1 từ — mặc định giọng lấy từ global pref (VoiceToggle trên header);
+// truyền `random` để mỗi lần bấm bốc giọng ngẫu nhiên khác (xem ghi chú ở Props.random).
+export default function PronounceButton({ word, lang = 'en-US', random = false }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   // Nhớ audioUrl đã tải theo cặp "từ|giọng" — PHẢI có cả từ trong khoá, vì component này
   // hay bị dùng lại cho nhiều từ khác nhau (ví dụ chuyển thẻ flashcard) mà state không bị
   // reset; nếu chỉ theo giọng thì từ mới sẽ phát nhầm audio của từ cũ đã lưu.
   const [audioUrls, setAudioUrls] = useState<Record<string, string>>({})
 
-  function speakWithWebSpeech() {
-    const gender = VOICE_OPTIONS.find((v) => v.id === getVoicePref())?.gender ?? 'female'
+  function pickVoice(): Voice {
+    return random ? pickRandomVoiceAnyGender() : getVoicePref()
+  }
+
+  function speakWithWebSpeech(voice: Voice) {
+    const gender = VOICE_OPTIONS.find((v) => v.id === voice)?.gender ?? 'female'
     const utterance = new SpeechSynthesisUtterance(word)
     utterance.lang = lang
     const voices = window.speechSynthesis.getVoices()
@@ -42,12 +58,13 @@ export default function PronounceButton({ word, lang = 'en-US' }: Props) {
   async function handleClick() {
     if (status === 'loading') return
 
+    const voice = pickVoice()
+
     if (word.includes(' ')) {
-      speakWithWebSpeech()
+      speakWithWebSpeech(voice)
       return
     }
 
-    const voice = getVoicePref()
     const cacheKey = `${word}|${voice}|${lang}`
     const cached = audioUrls[cacheKey]
     if (cached) {
@@ -76,7 +93,7 @@ export default function PronounceButton({ word, lang = 'en-US' }: Props) {
     } catch (err) {
       console.error('Lỗi phát âm:', err)
       // Fallback về Web Speech API nếu server lỗi
-      speakWithWebSpeech()
+      speakWithWebSpeech(voice)
       setStatus('idle')
     }
   }

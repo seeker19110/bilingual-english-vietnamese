@@ -13,6 +13,7 @@ import PlanExpiryBanner from './components/PlanExpiryBanner'
 import { lazyWithRetry } from './lib/lazyWithRetry'
 import { refreshAppSettings } from './lib/appSettings'
 import { refreshPlanFeatures } from './lib/planFeatures'
+import { refreshPlanMarketing } from './lib/planMarketing'
 import FeatureGate from './components/FeatureGate'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
 // (thường do app vừa deploy bản mới, chunk cũ không còn) thay vì sập trang.
@@ -154,14 +155,17 @@ export default function App() {
   useEffect(() => {
     void refreshAppSettings()
     void refreshPlanFeatures()
+    void refreshPlanMarketing()
     const interval = setInterval(() => {
       void refreshAppSettings()
       void refreshPlanFeatures()
+      void refreshPlanMarketing()
     }, APP_SETTINGS_POLL_MS)
     const onVisible = () => {
       if (document.visibilityState === 'visible') {
         void refreshAppSettings()
         void refreshPlanFeatures()
+        void refreshPlanMarketing()
       }
     }
     document.addEventListener('visibilitychange', onVisible)
