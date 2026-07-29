@@ -351,6 +351,14 @@
   .flip-back {
     transform: rotateY(180deg);
   }
+  /* backdrop-filter (từ .glass) + xoay 3D cùng lúc gây lỗi dựng hình trên Safari/iOS
+     (thẻ chớp lên kích thước sai giữa chừng lúc lật) — tắt blur riêng cho 2 mặt thẻ
+     đang xoay, bù lại bằng nền đặc hơn (giống fallback không hỗ trợ backdrop-filter). */
+  .flip-face.glass {
+    background: rgb(var(--glass-bg) / 0.98) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
 
   /* Gradient text — theo màu nhấn của theme */
   .gradient-text-accent {
