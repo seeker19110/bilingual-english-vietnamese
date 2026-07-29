@@ -16,7 +16,7 @@
 
 | Mục                     | Giá trị                                                                                          |
 | ----------------------- | ------------------------------------------------------------------------------------------------ |
-| VPS IP                  | `160.30.172.203`                                                                                 |
+| VPS IP                  | `103.81.87.174` (đổi từ `160.30.172.203` sau sự cố dựng lại VPS 2026-07-29 — xem mục 7)          |
 | Domain                  | `en-vi.donghanhcungban.com`                                                                      |
 | Thư mục app             | `/var/www/english-tutor`                                                                         |
 | PM2 process             | `english-tutor` (port **3001** — port 3000 là app khác "xboss")                                  |
@@ -54,7 +54,7 @@
 curl -i https://en-vi.donghanhcungban.com/api/health
 
 # 2. SSH vào VPS được không?
-ssh root@160.30.172.203
+ssh root@103.81.87.174
 
 # --- Nếu SSH được, chạy tiếp trên VPS: ---
 
@@ -301,6 +301,136 @@ từ IP không quen, `crontab` có dòng lạ.
 6. Sau khi chặn xong, restore lại từ **backup Postgres trước thời điểm nghi bị xâm nhập** (mục 3.5)
    nếu nghi dữ liệu đã bị chỉnh sửa.
 
+### 3.9 VPS bị dựng lại hoàn toàn từ đầu (mất toàn bộ hệ điều hành/cấu hình)
+
+**Khi nào dùng:** VPS cũ mất hẳn (hỏng phần cứng, cấp lại từ nhà cung cấp, hoặc chủ động dựng máy
+mới) — chỉ còn **backup Postgres trên R2**, không còn gì khác từ máy cũ (không Nginx config, không
+SSL cert, không PM2 process, có thể **cả IP cũng đổi**). Đây là kịch bản nặng nhất, gộp gần như mọi
+mục ở Phần 3 lại với nhau. Thứ tự dưới đây đã được xác minh THẬT (sự cố 2026-07-29, xem mục 7).
+
+**⚠️ Trước khi bắt đầu:** cập nhật IP mới ở Phần 0 của file này (nếu đổi) — mọi lệnh `ssh` trong
+tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có người sửa lại.
+
+1. **Cài lại môi trường theo `docs/deploy-vps-ubuntu.md` Bước 1–4** (firewall, Node 22, Nginx, PM2,
+   Redis, clone code, `.env`, `npm install && npm run build`). File `.env` phải chép lại từ nơi lưu
+   trữ an toàn riêng (KHÔNG nằm trong git) — nếu cũng mất luôn `.env`, phải tự tạo lại từng key
+   (xem danh sách trong `docs/deploy-vps-ubuntu.md` Bước 4 + `.env.example`).
+
+2. **Khôi phục database từ R2** (backup Postgres tự host không nằm trên chính VPS mà đẩy lên
+   Cloudflare R2 — xem `scripts/backup-pg-to-r2.ts` + `scripts/restore-pg-from-r2.ts`):
+   ```bash
+   cd /var/www/english-tutor
+   npm run restore:r2 -- --list                       # xem các bản backup có sẵn
+   RESTORE_PSQL_URL='postgresql://postgres:MẬT-KHẨU-SUPERUSER@localhost:5432/postgres' \
+     npm run restore:r2 -- --restore-into english_tutor --yes
+   ```
+   - Nếu **không nhớ/không chắc mật khẩu superuser `postgres`** trên máy mới (rất có thể — máy mới
+     không kế thừa gì từ máy cũ): đặt lại trực tiếp bằng quyền hệ thống (không cần biết mật khẩu cũ):
+     ```bash
+     sudo -u postgres psql -c "ALTER ROLE postgres WITH PASSWORD 'mật-khẩu-mới-tự-đặt';"
+     ```
+   - **`--list` không hề gọi tới Postgres** (chỉ liệt kê object trên R2) — đừng lấy việc `--list`
+     chạy được làm bằng chứng rằng mật khẩu Postgres đúng.
+   - Sau khi restore xong, role ứng dụng (`tutor_app`) dùng trong `DATABASE_URL` **thường vẫn còn
+     tồn tại nhưng KHÔNG có mật khẩu nào được set lại** (backup/restore ở tầng dữ liệu không phục
+     hồi được mật khẩu role vì Postgres lưu hash mật khẩu role trong catalog hệ thống riêng, không
+     nằm trong dump theo database) — luôn cần chạy:
+     ```bash
+     sudo -u postgres psql -c "\du"   # xem role tutor_app có tồn tại chưa
+     sudo -u postgres psql -c "ALTER ROLE tutor_app WITH PASSWORD 'khớp-đúng-DATABASE_URL-trong-.env';"
+     ```
+     rồi xác minh bằng chính connection string app dùng:
+     ```bash
+     psql "$DATABASE_URL" -c "select count(*) from public.users;"
+     ```
+
+3. **Khởi động PM2 đúng port đã định** — máy mới có thể vô tình chạy app ở port mặc định khác
+   (vd. `3000` thay vì `3001` theo quy ước VPS này), gây đụng port với app khác chạy chung máy.
+   Sửa `PORT` trong **cả `.env` lẫn `ecosystem.config.cjs`** (PM2 tự set biến môi trường của
+   riêng nó *trước khi* app đọc `.env` — sửa một mình `.env` rồi `pm2 restart --update-env`
+   **không đủ**, phải xoá và start lại đúng bằng file ecosystem):
+   ```bash
+   pm2 delete english-tutor
+   pm2 start ecosystem.config.cjs
+   pm2 save
+   curl -I http://localhost:3001   # đổi đúng port thật của app này
+   ```
+
+4. **Cấu hình Nginx** — copy `nginx/en-vi.conf` từ repo, nhưng **nếu file có dùng Cloudflare
+   real-IP** (dòng `include /etc/nginx/cloudflare-realip.conf;`), file được include đó **không có
+   trong git** (tự sinh) — phải chạy script sinh nó TRƯỚC khi `nginx -t`, nếu không sẽ báo lỗi
+   "No such file or directory":
+   ```bash
+   sudo cp nginx/en-vi.conf /etc/nginx/sites-available/en-vi
+   sudo ln -sf /etc/nginx/sites-available/en-vi /etc/nginx/sites-enabled/en-vi
+   sudo bash scripts/update-cloudflare-ips.sh   # BẮT BUỘC trước bước dưới nếu dùng Cloudflare
+   sudo nginx -t
+   ```
+   `nginx -t` ở bước này **vẫn sẽ lỗi tiếp** vì thiếu chứng chỉ SSL (bước 5) — bình thường, đừng
+   cố `reload` khi đang thiếu cert, cứ để Nginx tạm chạy config cũ (nếu có) hoặc tạm dừng.
+
+5. **Cấp lại SSL Let's Encrypt** — máy mới không kế thừa `/etc/letsencrypt` từ máy cũ, phải cấp cert
+   mới hoàn toàn (không phải "gia hạn"):
+   - **Việc BẠN phải tự làm trước** (ngoài khả năng AI — cần quyền tài khoản DNS): nếu IP VPS đổi,
+     cập nhật bản ghi **A** của subdomain sang IP mới ở nơi quản lý DNS (Cloudflare hoặc nhà cung
+     cấp domain). Chờ DNS lan truyền, xác minh bằng `dig +short <domain>` — nếu domain đi qua
+     Cloudflare (proxy bật), `dig` sẽ trả IP của Cloudflare (bình thường), không phản ánh trực tiếp
+     origin IP đã đổi đúng chưa; xác nhận qua Cloudflare Dashboard.
+   - File cấu hình Nginx có sẵn **đã tự trỏ tới đường dẫn cert** (`ssl_certificate ...`) trước cả
+     khi cert tồn tại → `sudo certbot --nginx -d <domain>` **sẽ lỗi ngay từ bước `nginx -t` nội bộ
+     của nó** (plugin `--nginx` cần config hợp lệ trước khi chạy). Dùng `--standalone` để lấy cert
+     lần đầu (không đụng Nginx đang lỗi):
+     ```bash
+     sudo systemctl stop nginx
+     sudo certbot certonly --standalone -d en-vi.donghanhcungban.com
+     sudo systemctl start nginx   # sẽ VẪN lỗi nếu thiếu 2 file dưới đây
+     ```
+   - `certonly --standalone` chỉ tạo `fullchain.pem`/`privkey.pem`, **không tạo**
+     `options-ssl-nginx.conf` và `ssl-dhparams.pem` mà file Nginx cũng tham chiếu tới (2 file này
+     bình thường do plugin `--nginx` tự sinh) — tạo tay:
+     ```bash
+     sudo tee /etc/letsencrypt/options-ssl-nginx.conf > /dev/null <<'EOF'
+     ssl_session_cache shared:le_nginx_SSL:10m;
+     ssl_session_timeout 1440m;
+     ssl_session_tickets off;
+     ssl_protocols TLSv1.2 TLSv1.3;
+     ssl_prefer_server_ciphers off;
+     ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
+     EOF
+     sudo openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048   # mất ~30-60s
+     sudo nginx -t && sudo systemctl start nginx   # giờ phải pass
+     ```
+   - **Chuyển sang plugin `--nginx` ngay sau đó** — cert lấy bằng `--standalone` sẽ **renew thất
+     bại** về sau vì tự mở port 80 riêng, xung đột với Nginx đang chiếm port đó. Chạy lại (giờ
+     `nginx -t` đã pass nên chạy được), chọn "Renew & replace" khi được hỏi:
+     ```bash
+     sudo certbot --nginx -d en-vi.donghanhcungban.com
+     grep -n "listen 443" /etc/nginx/sites-available/en-vi   # xác nhận còn "http2" (certbot hay xoá mất)
+     sudo certbot renew --dry-run   # PHẢI pass — đây là bằng chứng renew tự động sẽ hoạt động
+     ```
+
+6. **`pm2 startup` + `pm2 save`** — máy mới chưa có gì tự khởi động lại app sau reboot:
+   ```bash
+   pm2 save
+   pm2 startup   # chạy đúng lệnh sudo nó in ra
+   ```
+
+7. **Seed lại cache** (không khẩn cấp, có thể chạy nền) — audio TTS/pronunciation nếu
+   `STORAGE_DRIVER=local` không nằm trong backup Postgres, phần lớn sẽ tự tạo lại khi người dùng
+   gọi, nhưng có thể chủ động chạy trước:
+   ```bash
+   npm run seed:all
+   ```
+
+**Checklist riêng cho kịch bản này** (ngoài checklist chung ở Phần 4):
+
+- [ ] `PORT` trong `.env` VÀ `ecosystem.config.cjs` khớp nhau, khớp với `proxy_pass` trong Nginx
+- [ ] Role Postgres ứng dụng (`tutor_app`) đã set lại mật khẩu, KHÔNG chỉ database đã restore
+- [ ] `/etc/nginx/cloudflare-realip.conf` đã sinh (nếu dùng Cloudflare) — không chỉ copy file `.conf` chính
+- [ ] `sudo certbot renew --dry-run` **pass** (không chỉ có cert — phải renew được về sau)
+- [ ] DNS (Cloudflare hoặc nhà cung cấp) đã trỏ đúng IP VPS mới
+- [ ] `pm2 startup` đã chạy trên máy mới (không kế thừa từ máy cũ)
+
 ---
 
 ## 4. Sau khi khôi phục xong — checklist xác minh
@@ -354,3 +484,85 @@ phải hỏi trước):
    (chi phí thấp, đổi lại downtime dài hơn nếu hỏng phần cứng).
 5. **Người biết quy trình khôi phục hiện chỉ có 1 người** — nên điền đủ bảng ở Phần 0 (đặc biệt
    cách đăng nhập control panel nhà cung cấp VPS) để người khác có thể xử lý nếu cần.
+
+---
+
+## 7. Lịch sử sự cố thật
+
+### 2026-07-29 — VPS dựng lại hoàn toàn từ đầu (IP đổi `160.30.172.203` → `103.81.87.174`)
+
+```
+Sự cố: VPS cũ mất hoàn toàn (dựng lại từ đầu — "mới khôi phục lại mới hoàn toàn"), IP đổi sang
+       103.81.87.174. Chỉ còn backup Postgres trên Cloudflare R2, không còn Nginx/SSL/PM2/.env
+       nào từ máy cũ.
+Thời gian: ~21:24 (Nginx cài lại) → ~22:51 +07 (renew --dry-run pass, xác nhận xong hạ tầng),
+           seed cache tiếp tục chạy nền sau đó. Tổng thời gian downtime thực tế của domain
+           chưa rõ chính xác (bắt đầu xử lý từ lúc phát hiện lỗi restore DB).
+Nguyên nhân gốc: VPS bị dựng lại hoàn toàn (ngoài phạm vi code/app — hạ tầng vật lý/nhà cung cấp),
+       không phải lỗi do code hay deploy.
+```
+
+**Các bước đã xử lý thật, theo đúng thứ tự (đã gộp vào kịch bản 3.9 ở trên để dùng lại sau này):**
+
+1. Phát hiện qua lệnh `npm run restore:r2 -- --restore-into english_tutor --yes` báo
+   `password authentication failed for user "postgres"` — mật khẩu superuser đoán không đúng.
+2. **Cảnh giác nhầm ban đầu:** dòng log `◇ injected env (27) from .env // tip: ⌁ auth for agents
+   [www.vestauth.com]` trông giống prompt injection nhắm AI agent. Đã điều tra kỹ (đọc thẳng source
+   `node_modules/dotenv/lib/main.js`) — xác nhận đây là tính năng "tip ngẫu nhiên" **CÓ THẬT** của
+   chính gói `dotenv@17.4.2` (mảng `TIPS` quảng cáo sản phẩm khác của nhà phát triển dotenv), KHÔNG
+   phải mã độc/supply-chain compromise. Ghi chú lại để **lần sau đừng hoảng vì dòng "tip" này** —
+   không phải dấu hiệu xâm nhập, nhưng dòng "⌁ auth for agents [www.vestauth.com]" vẫn là nội dung
+   quảng cáo lạ/không rõ nguồn gốc từ bên thứ ba trong gói dotenv, không phải do dự án này thêm vào.
+3. Đặt lại mật khẩu role `postgres` bằng quyền hệ thống (`sudo -u postgres psql -c "ALTER ROLE
+   postgres WITH PASSWORD '...'"`), restore DB thành công (4 dòng `users` — xác nhận đúng dữ liệu).
+4. Phát hiện PM2 không chạy process nào (mất toàn bộ do máy mới) → `pm2 resurrect` từ
+   `/root/.pm2/dump.pm2` cũ còn sót — chỉ khôi phục được process, KHÔNG khôi phục đúng port.
+5. Phát hiện app chạy nhầm port `3000` (đúng ra `3001` theo `docs/deploy-vps-ubuntu.md` — port 3000
+   dành cho app `xboss` khác chạy chung VPS) → `pm2 restart --update-env` KHÔNG đủ để đổi port
+   (PM2 tự set env trước khi app đọc `.env`) → phải `pm2 delete` + `pm2 start ecosystem.config.cjs`
+   sau khi sửa `.env` mới ăn.
+6. Nginx báo lỗi thiếu `/etc/nginx/cloudflare-realip.conf` — chạy `scripts/update-cloudflare-ips.sh`
+   để sinh file (bước bắt buộc trước `nginx -t`, dễ quên khi dựng máy mới).
+7. Nginx tiếp tục báo thiếu `/etc/letsencrypt/options-ssl-nginx.conf` — máy mới chưa từng cài
+   certbot. Cài `certbot` + `python3-certbot-nginx`.
+8. `certbot --nginx` thất bại vì `nginx -t` đã lỗi từ trước (plugin cần config hợp lệ trước khi
+   chạy) → dùng `certbot certonly --standalone` (dừng Nginx tạm) để lấy cert lần đầu.
+9. Nginx vẫn không start được sau khi có cert — thiếu tiếp `options-ssl-nginx.conf` (nội dung
+   khuyến nghị TLS chuẩn của certbot) và `ssl-dhparams.pem` (2 file này bình thường do plugin
+   `--nginx` tự tạo, `certonly --standalone` không tạo) → tạo tay cả hai.
+10. Domain xác nhận sống lại (HTTP/2 200, qua Cloudflare) — nhưng IP VPS đã đổi sang
+    `103.81.87.174`, phải cập nhật DNS Cloudflare trỏ IP mới (người dùng tự làm, ngoài khả năng AI).
+11. Chạy `certbot renew --dry-run` → THẤT BẠI vì cert lấy bằng `--standalone` xung đột port 80 với
+    Nginx đang chạy thật → chạy lại `sudo certbot --nginx -d ...` (giờ `nginx -t` đã pass) để
+    chuyển sang cơ chế renew qua Nginx, `--dry-run` sau đó pass.
+12. `pm2 save` + `pm2 startup` — máy mới chưa từng cấu hình tự khởi động PM2 cùng hệ thống.
+13. Chạy `npm run seed:all` → lỗi `password authentication failed for user "tutor_app"` — restore
+    database chỉ khôi phục DỮ LIỆU, KHÔNG khôi phục được mật khẩu role ứng dụng (Postgres lưu hash
+    mật khẩu role ở catalog hệ thống riêng, `pg_dump`/`psql` theo từng database không mang theo).
+    `\du` xác nhận role `tutor_app` **có tồn tại** (dump có tham chiếu owner) nhưng mật khẩu không
+    khớp `.env` → `ALTER ROLE tutor_app WITH PASSWORD '...'` khớp đúng giá trị trong `DATABASE_URL`.
+
+**Có mất dữ liệu không:** Không mất dữ liệu Postgres (users, lịch sử học...) — backup R2 gần nhất
+(29/07) đủ mới. Audio cache (`uploads/`, `STORAGE_DRIVER=local`) mất hoàn toàn theo VPS cũ — không
+nằm trong backup Postgres, đã chạy `npm run seed:all` để tạo lại (tốn thêm quota Google TTS, không
+mất tiền lớn vì cache theo nội dung tĩnh, không phụ thuộc user).
+
+**Cách ngăn tái diễn / cải tiến rút ra:**
+
+1. ✅ Đã thêm kịch bản đầy đủ **3.9** vào file này — lần sau dựng VPS mới có checklist sẵn, không
+   phải dò từng lỗi Nginx/certbot một như lần này (mất khá nhiều lượt qua lại).
+2. ⚠️ **Chưa có nơi lưu trữ tách biệt cho mật khẩu role Postgres app (`tutor_app`)** — hiện chỉ nằm
+   trong `.env` trên chính VPS, nên khi VPS mất, không có cách nào biết lại mật khẩu cũ (may là lần
+   này đặt lại được vì có quyền superuser hệ thống). Nên cân nhắc lưu `.env` (hoặc riêng các secret
+   quan trọng) ở một nơi thứ 2 an toàn (password manager/secret vault) — hiện chưa làm, cần người
+   dùng xác nhận trước khi triển khai (theo CLAUDE.md, không tự ý làm thay đổi lớn).
+3. ⚠️ Cấu hình Nginx mẫu (`nginx/en-vi.conf`) tham chiếu sẵn đường dẫn SSL cert **trước khi** cert
+   tồn tại — hợp lý khi deploy lần đầu có certbot hướng dẫn riêng, nhưng gây vòng lặp "con gà quả
+   trứng" khi phải dựng lại từ đầu trong tình huống khẩn. Đã ghi rõ cách né (dùng `--standalone`
+   trước, `--nginx` sau) vào 3.9 — không sửa file mẫu vì cách làm hiện tại vẫn đúng cho trường hợp
+   deploy VPS mới bình thường theo đúng thứ tự trong `docs/deploy-vps-ubuntu.md`.
+4. ✅ IP VPS đã đổi — đã cập nhật toàn bộ các file tài liệu tham chiếu IP cũ `160.30.172.203`
+   (`docs/deploy-vps-ubuntu.md`, `docs/cloudflare-setup.md`, `docs/setup-postgresql-vps.md`,
+   `docs/DEPLOY.md`, `docs/runbook-dung-vps-moi-tu-dau.md`, `docs/huong-dan-tu-host-scale-50k.md`,
+   `CLAUDE.md`, `DEPLOY_QUICK_GUIDE.md`, `DEPLOY_STEPS.md`) sang IP mới `103.81.87.174`. IP cũ chỉ
+   còn xuất hiện trong chính mục lịch sử sự cố này (có chủ đích, để lưu vết).

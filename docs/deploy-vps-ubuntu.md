@@ -547,13 +547,13 @@ sudo certbot renew && sudo systemctl reload nginx
 ```ssh-config
 # Host trơn — dùng vào VPS bình thường + chạy lệnh lẻ
 Host xboss
-    HostName 160.30.172.203
+    HostName 103.81.87.174
     User root
     IdentityFile ~/.ssh/id_ed25519
 
 # Host tự cd vào thư mục app khi đăng nhập tương tác
 Host app
-    HostName 160.30.172.203
+    HostName 103.81.87.174
     User root
     IdentityFile ~/.ssh/id_ed25519
     RequestTTY yes

@@ -32,7 +32,7 @@ dưới đây bạn tự thao tác trên trình duyệt.
 ### Bước 2 — Bật Proxy (đám mây cam) cho bản ghi `en-vi`
 
 Trong danh sách DNS record, tìm dòng `en-vi` (loại A, trỏ vào IP VPS
-`160.30.172.203`) → bấm vào biểu tượng đám mây để chuyển từ **DNS only** (xám)
+`103.81.87.174`) → bấm vào biểu tượng đám mây để chuyển từ **DNS only** (xám)
 sang **Proxied** (🟠 cam). Chỉ bật Proxied cho subdomain bạn muốn qua Cloudflare —
 subdomain nào chưa sẵn sàng (vd "xboss") có thể để DNS only trước, chuyển sau.
 
@@ -66,7 +66,7 @@ mới nhất) + `nginx/en-vi.conf` đã thêm dòng `include` — chỉ cần de
 
 ```bash
 # SSH vào VPS
-ssh root@160.30.172.203
+ssh root@103.81.87.174
 cd /var/www/english-tutor
 
 # Kéo code mới nhất (đã có script + nginx config cập nhật)

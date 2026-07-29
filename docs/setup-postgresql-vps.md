@@ -1,6 +1,6 @@
 # Cài PostgreSQL tự host trên VPS (Giai đoạn A)
 
-> Việc TAY bạn cần tự chạy trên VPS (SSH vào `160.30.172.203`) — AI không có quyền
+> Việc TAY bạn cần tự chạy trên VPS (SSH vào `103.81.87.174`) — AI không có quyền
 > SSH vào VPS production nên không tự chạy được các lệnh dưới đây. Xem bối cảnh đầy
 > đủ ở `docs/migration-thoat-ly-supabase.md`.
 
