@@ -43,6 +43,47 @@ ssh root@<ip-vps-moi>
 apt update && apt upgrade -y
 ```
 
+### 1a. (Khuyên làm ngay) Cấu hình SSH tự động — đỡ gõ lại IP/passphrase mỗi lần
+
+Làm trên **máy cá nhân của bạn** (không phải trên VPS) — mở `~/.ssh/config` (macOS/Linux) hoặc
+`C:\Users\<tên-bạn>\.ssh\config` (Windows), thêm/sửa (đổi `HostName` mỗi lần IP VPS đổi):
+
+```ssh-config
+Host xboss
+    HostName <ip-vps-moi>
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+
+Host app
+    HostName <ip-vps-moi>
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+    RequestTTY yes
+    RemoteCommand cd /var/www/english-tutor && exec $SHELL -l
+```
+
+Dùng: `ssh app` (vào thẳng thư mục dự án) · `ssh xboss` (vào bình thường) ·
+`ssh xboss "pm2 logs english-tutor"` (chạy 1 lệnh lẻ — **không** dùng được với host `app` vì có
+`RemoteCommand`, sẽ báo lỗi xung đột).
+
+Nếu khóa SSH có passphrase (khuyên dùng), tránh gõ lại mỗi lần bằng `ssh-agent`:
+
+```powershell
+# Windows PowerShell
+Get-Service ssh-agent | Set-Service -StartupType Automatic
+Start-Service ssh-agent
+ssh-add C:\Users\<tên-bạn>\.ssh\id_ed25519   # gõ passphrase MỘT LẦN
+```
+
+```bash
+# macOS/Linux
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+> Quên passphrase = không khôi phục được, phải tạo khóa mới + thêm public key vào
+> `~/.ssh/authorized_keys` trên VPS (cần vào VPS bằng cách khác trước, vd. console nhà cung cấp).
+
 ---
 
 ## 2. Bật firewall (ufw)
@@ -218,7 +259,23 @@ cat ecosystem.config.cjs   # xác nhận env.PORT khớp .env
 cd /var/www/english-tutor
 sudo cp nginx/en-vi.conf /etc/nginx/sites-available/en-vi
 sudo ln -s /etc/nginx/sites-available/en-vi /etc/nginx/sites-enabled/
-sudo nginx -t && sudo systemctl reload nginx
+```
+
+⚠️ **Nếu dùng Cloudflare** (file config có dòng `include /etc/nginx/cloudflare-realip.conf;`) —
+file đó **không nằm trong git**, phải tự sinh ra TRƯỚC khi `nginx -t`, nếu không sẽ báo lỗi
+"No such file or directory":
+
+```bash
+sudo bash scripts/update-cloudflare-ips.sh
+```
+
+⚠️ **`nginx -t` ở bước này SẼ LỖI TIẾP** vì file config cũng trỏ sẵn tới cert Let's Encrypt
+(`ssl_certificate`, `options-ssl-nginx.conf`, `ssl-dhparams.pem`) **chưa hề tồn tại** (chỉ tạo được
+ở Bước 12) — đây là chuyện **bình thường ở giai đoạn này**, đừng cố sửa/reload ngay, cứ để Nginx
+tạm chưa load site này (hoặc dừng hẳn) và làm tiếp Bước 9-11 trước, quay lại Bước 12 mới xử lý:
+
+```bash
+sudo nginx -t   # kỳ vọng: LỖI ở đây, bỏ qua, không chạy `systemctl reload` cho tới Bước 12
 ```
 
 ---
@@ -254,10 +311,26 @@ sudo -u postgres psql english_tutor -c "select count(*) from public.users;"
 npm run migrate:pg
 ```
 
+⚠️ **Reset lại mật khẩu role `tutor_app` — BẮT BUỘC, hay bị bỏ sót:** dump/restore theo database
+**không mang theo mật khẩu role** (Postgres lưu hash mật khẩu ở catalog hệ thống riêng, ngoài phạm
+vi 1 database) — dù `\du` cho thấy role `tutor_app` vẫn "tồn tại" (do dump có ghi lại ai là owner
+bảng), mật khẩu thật của nó **không được khôi phục theo**. Nếu bỏ qua bước này, app sẽ chạy được
+lúc `pm2 start` (không lỗi ngay) nhưng **mọi request đụng DB đều lỗi 500** vì `DATABASE_URL` sai
+mật khẩu:
+
+```bash
+sudo -u postgres psql -c "ALTER ROLE tutor_app WITH PASSWORD 'khớp-đúng-mật-khẩu-trong-DATABASE_URL-của-.env';"
+
+# Xác nhận bằng chính connection string app dùng, không phải bằng quyền postgres superuser
+psql "$(grep '^DATABASE_URL=' .env | cut -d= -f2-)" -c "select count(*) from public.users;"
+```
+
 - [ ] `restore:r2 --list` thấy đúng bản backup mong muốn
 - [ ] `restore:r2 --restore-into` chạy xong, không lỗi
 - [ ] `select count(*) from public.users` > 0 và hợp lý so với traffic gần đây
 - [ ] `npm run migrate:pg` chạy xong, không lỗi
+- [ ] Mật khẩu role `tutor_app` đã reset khớp `.env` — xác nhận bằng connect thật qua `DATABASE_URL`,
+      không chỉ bằng role `postgres` superuser (dễ nhầm "restore xong là chạy được")
 
 ### 10b. Phương án dự phòng — không dùng được R2 (còn giữ file backup local từ VPS cũ)
 
@@ -288,13 +361,24 @@ npm run migrate:pg   # tạo schema trống, không có dữ liệu người dù
 cd /var/www/english-tutor
 pm2 start ecosystem.config.cjs
 pm2 status                       # cột "status" phải là "online"
-pm2 logs english-tutor --lines 30
+pm2 logs english-tutor --lines 30   # xác nhận dòng "đang chạy tại http://localhost:XXXX" đúng port .env
 
 pm2 startup   # chạy lệnh sudo nó in ra
 pm2 save      # để PM2 tự khởi động lại khi VPS reboot
 
 curl http://localhost:3001/api/health
 # Kết quả: {"status":"ok","uptime":...}
+```
+
+⚠️ **Nếu log báo chạy sai port** (vd. thấy `3000` thay vì `3001` trong `.env`/`ecosystem.config.cjs`)
+— **`pm2 restart --update-env` KHÔNG đủ để sửa**, vì PM2 tự set biến môi trường riêng của process
+*trước khi* code app đọc `.env` (`dotenv` mặc định không override biến đã có sẵn trong
+`process.env`). Phải xoá hẳn process rồi start lại đúng bằng `ecosystem.config.cjs`:
+
+```bash
+pm2 delete english-tutor
+pm2 start ecosystem.config.cjs
+pm2 save
 ```
 
 ---
@@ -304,17 +388,52 @@ curl http://localhost:3001/api/health
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d en-vi.donghanhcungban.com
-sudo certbot renew --dry-run
 ```
 
-**⚠️ Certbot bỏ đi `http2` khỏi dòng `listen` sau khi chạy** — sửa lại tay:
+⚠️ **Nếu `en-vi.conf` đã tự có sẵn dòng `ssl_certificate ...` trỏ tới cert chưa tồn tại** (đúng
+tình huống VPS mới, Bước 8 đã báo trước) — lệnh trên **sẽ lỗi ngay** vì plugin `--nginx` tự chạy
+`nginx -t` trước khi làm gì, mà config đang lỗi do thiếu cert. Đây là vòng lặp "con gà quả trứng",
+xử lý bằng `--standalone` để lấy cert TRƯỚC, không đụng Nginx đang lỗi:
 
 ```bash
-sudo nano /etc/nginx/sites-available/en-vi
-# Tìm: listen 443 ssl;
-# Sửa thành: listen 443 ssl http2;
+sudo systemctl stop nginx
+sudo certbot certonly --standalone -d en-vi.donghanhcungban.com
+```
+
+`certonly --standalone` chỉ tạo `fullchain.pem`/`privkey.pem`, **không tạo** 2 file Nginx cũng cần
+(`options-ssl-nginx.conf`, `ssl-dhparams.pem` — bình thường do plugin `--nginx` tự sinh) — tạo tay:
+
+```bash
+sudo tee /etc/letsencrypt/options-ssl-nginx.conf > /dev/null <<'EOF'
+ssl_session_cache shared:le_nginx_SSL:10m;
+ssl_session_timeout 1440m;
+ssl_session_tickets off;
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_prefer_server_ciphers off;
+ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
+EOF
+sudo openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048   # ~30-60s
+
+sudo nginx -t && sudo systemctl start nginx   # giờ phải pass
+```
+
+Cert lấy bằng `--standalone` **sẽ renew thất bại** về sau (tự mở port 80 riêng, xung đột Nginx
+đang chiếm port đó) — chuyển ngay sang plugin `--nginx` để renew tự động hoạt động đúng
+(giờ `nginx -t` đã pass nên chạy được, chọn "Renew & replace" khi được hỏi):
+
+```bash
+sudo certbot --nginx -d en-vi.donghanhcungban.com
+sudo certbot renew --dry-run   # PHẢI pass — bằng chứng renew tự động sẽ hoạt động
+```
+
+**⚠️ Certbot bỏ đi `http2` khỏi dòng `listen` sau khi chạy** — kiểm tra, chỉ sửa nếu thiếu:
+
+```bash
+grep -n "listen 443" /etc/nginx/sites-available/en-vi
+# Nếu chỉ còn "listen 443 ssl;" (thiếu http2), sửa lại:
+sudo sed -i 's/listen 443 ssl;/listen 443 ssl http2;/' /etc/nginx/sites-available/en-vi
 sudo nginx -t && sudo systemctl reload nginx
-curl https://en-vi.donghanhcungban.com/api/health
+curl -I --http2 https://en-vi.donghanhcungban.com
 ```
 
 ---
