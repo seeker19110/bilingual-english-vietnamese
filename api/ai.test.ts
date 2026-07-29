@@ -147,6 +147,56 @@ describe('handler /api/agent — nhánh Groq và hoàn lượt', () => {
   })
 })
 
+// Gemini lỗi (vd hết quota free) nhưng vẫn còn Groq dự phòng → phải tự chuyển sang Groq
+// thay vì báo lỗi ngay cho người dùng, KHÔNG hoàn lượt 2 lần (chỉ hoàn khi cả hai đều fail).
+describe('handler /api/agent — Gemini lỗi tự chuyển sang Groq dự phòng', () => {
+  beforeEach(() => {
+    process.env.GEMINI_API_KEY = 'gemini-test-key'
+    // GROQ_API_KEY đã set 'groq-test-key' ở beforeEach ngoài cùng — giữ nguyên làm dự phòng.
+  })
+
+  it('Gemini 429 (hết quota), Groq trả lời hợp lệ → 200 từ Groq, KHÔNG hoàn lượt', async () => {
+    mockedFetch
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ error: { message: 'quota exceeded' } }), { status: 429 }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ choices: [{ message: { content: 'Từ Groq' } }] }), {
+          status: 200,
+        }),
+      )
+    const res = await handler(makeRequest())
+    expect(res.status).toBe(200)
+    const data = (await res.json()) as { content: Array<{ text: string }> }
+    expect(data.content[0]?.text).toBe('Từ Groq')
+    expect(mockedFetch).toHaveBeenCalledTimes(2)
+    expect(mockedRefund).not.toHaveBeenCalled()
+  })
+
+  it('Gemini lỗi VÀ Groq cũng lỗi → hoàn lượt đúng 1 lần (không double refund)', async () => {
+    mockedFetch
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ error: { message: 'quota exceeded' } }), { status: 429 }),
+      )
+      .mockResolvedValueOnce(new Response('boom', { status: 500 }))
+    const res = await handler(makeRequest())
+    expect(res.status).toBe(500)
+    expect(mockedRefund).toHaveBeenCalledTimes(1)
+  })
+
+  it('Gemini lỗi, KHÔNG có Groq/Anthropic dự phòng → báo lỗi Gemini ngay, hoàn lượt', async () => {
+    delete process.env.GROQ_API_KEY
+    mockedFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: { message: 'quota exceeded' } }), { status: 429 }),
+    )
+    const res = await handler(makeRequest())
+    expect(res.status).toBe(502)
+    const data = (await res.json()) as { error: { message: string } }
+    expect(data.error.message).toMatch(/Gemini lỗi/)
+    expect(mockedRefund).toHaveBeenCalledTimes(1)
+  })
+})
+
 // Đợt 3 rollout Zod (api/ai.ts) — schema CHỈ định hình lại logic lenient cũ (cắt bớt/mặc định),
 // KHÔNG được siết chặt thêm: input sai kiểu/thiếu field vẫn phải trả 200 như trước, không phải
 // 400 mới. Duy nhất hành vi từ chối giữ nguyên là 413 khi tổng nội dung quá lớn.
