@@ -8,9 +8,11 @@ import {
   ToggleRight,
   FileText,
   Percent,
+  Users,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
+import AdminUsersPanel from '../components/admin/AdminUsersPanel'
 import AdminLimitsPanel from '../components/admin/AdminLimitsPanel'
 import AdminGrantPlanPanel from '../components/admin/AdminGrantPlanPanel'
 import AdminVipWhitelistPanel from '../components/admin/AdminVipWhitelistPanel'
@@ -31,6 +33,7 @@ import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 // chưa tồn tại. Thêm lại khi tính năng đó có thật.
 type TabKey =
   | 'usage'
+  | 'users'
   | 'limits'
   | 'plan-features'
   | 'plan-marketing'
@@ -43,6 +46,7 @@ const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   // "Sử dụng & chi phí" để đầu tiên và là tab mặc định — đây là màn cần nhìn mỗi ngày để
   // quyết định chỉnh hạn mức/giá, các tab còn lại chỉ mở khi cần thao tác cụ thể.
   { key: 'usage', label: 'Sử dụng & chi phí', icon: Activity },
+  { key: 'users', label: 'Người dùng', icon: Users },
   { key: 'limits', label: 'Hạn mức & khuyến mãi', icon: Sliders },
   { key: 'plan-features', label: 'Tính năng theo gói', icon: ToggleRight },
   { key: 'plan-marketing', label: 'Nội dung gói', icon: FileText },
@@ -111,6 +115,7 @@ export default function AdminDashboard() {
 
           <div className="flex-1 min-w-0 space-y-4">
             {tab === 'usage' && <AdminUsagePanel />}
+            {tab === 'users' && <AdminUsersPanel />}
             {tab === 'limits' && <AdminLimitsPanel />}
             {tab === 'plan-features' && <AdminPlanFeaturesPanel />}
             {tab === 'plan-marketing' && <AdminPlanMarketingPanel />}
