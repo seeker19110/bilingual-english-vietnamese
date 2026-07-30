@@ -628,8 +628,8 @@ export default function Challenge() {
                   ? 'Mỗi ngày 1 chủ đề gợi ý, có thể nói tự do'
                   : 'A suggested topic each day — free to go off-topic',
                 isA
-                  ? 'AI khen + sửa 2-3 lỗi đáng nhất, không dội bom lỗi'
-                  : 'AI praises + fixes the 2-3 most important errors, no overload',
+                  ? 'Khen + sửa 2-3 lỗi đáng nhất, không dội bom lỗi'
+                  : 'Praises + fixes the 2-3 most important errors, no overload',
               ].map((line) => (
                 <li key={line} className="flex gap-1.5">
                   <span aria-hidden="true">•</span>
