@@ -48,6 +48,9 @@ export default async function handler(req: Request): Promise<Response> {
   // đang khuyến mãi (xem docs/research/dac-ta-thanh-toan-2026-07-25.md mục "Khuyến mãi dịp lễ").
   const body = {
     promoPercent: pct,
+    // Chỉ trả kèm mốc kết thúc khi khuyến mãi đang THẬT SỰ hiệu lực (pct !== null) — tránh
+    // lộ lịch khuyến mãi tương lai chưa công bố nếu admin đã đặt trước nhưng chưa tới giờ.
+    promoEndsAt: pct !== null ? promo.endsAt : null,
     maxPromoYears: MAX_PROMO_YEARS,
     pro: {
       '10day': {

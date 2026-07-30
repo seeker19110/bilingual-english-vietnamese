@@ -21,6 +21,7 @@ import {
   Headphones,
 } from 'lucide-react'
 import Layout from '../components/Layout'
+import PricePromoBanner from '../components/PricePromoBanner'
 import { getStreak, hasStudiedToday, getDirection, setDirection } from '../lib/storage'
 import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
 import { VOICE_OPTIONS, DEFAULT_VOICE, DEFAULT_MALE_VOICE } from '../lib/voiceTiers'
@@ -656,6 +657,8 @@ export default function Home() {
             </span>
           </button>
         </div>
+
+        <PricePromoBanner isA={isA} />
       </main>
 
       {/* Màn chọn nhỏ khi bấm "Nghe" — gộp 2 trang /lessons + /phrases vào 1 nút,

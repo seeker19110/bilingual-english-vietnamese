@@ -33,6 +33,8 @@ export interface PlanPriceEntry {
 
 export type PlanPrices = Record<PayablePlan, Record<PayableCycle, PlanPriceEntry>> & {
   promoPercent: number | null
+  // Mốc kết thúc khuyến mãi % đang hiệu lực — null nếu promoPercent cũng null.
+  promoEndsAt: string | null
   maxPromoYears: number
 }
 
