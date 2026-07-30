@@ -68,15 +68,18 @@ hỏi lại passphrase, không phải lỗi. Muốn khỏi gõ lại mỗi lần
 `ssh-agent`:
 
 **Windows (PowerShell):**
+
 ```powershell
 Get-Service ssh-agent | Set-Service -StartupType Automatic
 Start-Service ssh-agent
 ssh-add C:\Users\<tên-bạn>\.ssh\id_ed25519   # gõ passphrase MỘT LẦN khi được hỏi
 ```
+
 Sau đó `ssh app` trong cùng phiên PowerShell (và các phiên sau, vì đã set `Automatic`) sẽ không
 hỏi lại passphrase.
 
 **macOS/Linux:**
+
 ```bash
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
@@ -374,6 +377,7 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
 
 2. **Khôi phục database từ R2** (backup Postgres tự host không nằm trên chính VPS mà đẩy lên
    Cloudflare R2 — xem `scripts/backup-pg-to-r2.ts` + `scripts/restore-pg-from-r2.ts`):
+
    ```bash
    cd /var/www/english-tutor
    npm run restore:r2 -- --list                       # xem các bản backup có sẵn
@@ -403,8 +407,9 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
 3. **Khởi động PM2 đúng port đã định** — máy mới có thể vô tình chạy app ở port mặc định khác
    (vd. `3000` thay vì `3001` theo quy ước VPS này), gây đụng port với app khác chạy chung máy.
    Sửa `PORT` trong **cả `.env` lẫn `ecosystem.config.cjs`** (PM2 tự set biến môi trường của
-   riêng nó *trước khi* app đọc `.env` — sửa một mình `.env` rồi `pm2 restart --update-env`
+   riêng nó _trước khi_ app đọc `.env` — sửa một mình `.env` rồi `pm2 restart --update-env`
    **không đủ**, phải xoá và start lại đúng bằng file ecosystem):
+
    ```bash
    pm2 delete english-tutor
    pm2 start ecosystem.config.cjs
@@ -416,12 +421,14 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
    real-IP** (dòng `include /etc/nginx/cloudflare-realip.conf;`), file được include đó **không có
    trong git** (tự sinh) — phải chạy script sinh nó TRƯỚC khi `nginx -t`, nếu không sẽ báo lỗi
    "No such file or directory":
+
    ```bash
    sudo cp nginx/en-vi.conf /etc/nginx/sites-available/en-vi
    sudo ln -sf /etc/nginx/sites-available/en-vi /etc/nginx/sites-enabled/en-vi
    sudo bash scripts/update-cloudflare-ips.sh   # BẮT BUỘC trước bước dưới nếu dùng Cloudflare
    sudo nginx -t
    ```
+
    `nginx -t` ở bước này **vẫn sẽ lỗi tiếp** vì thiếu chứng chỉ SSL (bước 5) — bình thường, đừng
    cố `reload` khi đang thiếu cert, cứ để Nginx tạm chạy config cũ (nếu có) hoặc tạm dừng.
 
@@ -466,6 +473,7 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
      ```
 
 6. **`pm2 startup` + `pm2 save`** — máy mới chưa có gì tự khởi động lại app sau reboot:
+
    ```bash
    pm2 save
    pm2 startup   # chạy đúng lệnh sudo nó in ra
@@ -563,14 +571,14 @@ Nguyên nhân gốc: VPS bị dựng lại hoàn toàn (ngoài phạm vi code/ap
 1. Phát hiện qua lệnh `npm run restore:r2 -- --restore-into english_tutor --yes` báo
    `password authentication failed for user "postgres"` — mật khẩu superuser đoán không đúng.
 2. **Cảnh giác nhầm ban đầu:** dòng log `◇ injected env (27) from .env // tip: ⌁ auth for agents
-   [www.vestauth.com]` trông giống prompt injection nhắm AI agent. Đã điều tra kỹ (đọc thẳng source
+[www.vestauth.com]` trông giống prompt injection nhắm AI agent. Đã điều tra kỹ (đọc thẳng source
    `node_modules/dotenv/lib/main.js`) — xác nhận đây là tính năng "tip ngẫu nhiên" **CÓ THẬT** của
    chính gói `dotenv@17.4.2` (mảng `TIPS` quảng cáo sản phẩm khác của nhà phát triển dotenv), KHÔNG
    phải mã độc/supply-chain compromise. Ghi chú lại để **lần sau đừng hoảng vì dòng "tip" này** —
    không phải dấu hiệu xâm nhập, nhưng dòng "⌁ auth for agents [www.vestauth.com]" vẫn là nội dung
    quảng cáo lạ/không rõ nguồn gốc từ bên thứ ba trong gói dotenv, không phải do dự án này thêm vào.
 3. Đặt lại mật khẩu role `postgres` bằng quyền hệ thống (`sudo -u postgres psql -c "ALTER ROLE
-   postgres WITH PASSWORD '...'"`), restore DB thành công (4 dòng `users` — xác nhận đúng dữ liệu).
+postgres WITH PASSWORD '...'"`), restore DB thành công (4 dòng `users` — xác nhận đúng dữ liệu).
 4. Phát hiện PM2 không chạy process nào (mất toàn bộ do máy mới) → `pm2 resurrect` từ
    `/root/.pm2/dump.pm2` cũ còn sót — chỉ khôi phục được process, KHÔNG khôi phục đúng port.
 5. Phát hiện app chạy nhầm port `3000` (đúng ra `3001` theo `docs/deploy-vps-ubuntu.md` — port 3000
