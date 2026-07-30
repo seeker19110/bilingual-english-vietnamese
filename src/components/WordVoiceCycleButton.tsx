@@ -56,10 +56,12 @@ export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
     if (loading) return
 
     const nextVoice = pickRandomAllowedVoice()
-    setCurrentVoice(nextVoice)
 
+    // Cache tra theo giọng ĐOÁN trước (nextVoice) — nếu đã có nghĩa là lần trước server cũng
+    // trả về đúng giọng này (không bị hạ gói), nên vừa tra cache vừa hiện nhãn ngay được.
     const cached = audioUrls[nextVoice]
     if (cached) {
+      setCurrentVoice(nextVoice)
       playAudioUrl(cached)
       return
     }
@@ -71,17 +73,25 @@ export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
         `/api/pronunciation?word=${encodeURIComponent(word)}&voice=${nextVoice}&lang=${lang}`,
         { headers },
       )
-      const data = (await res.json()) as { audio_url?: string; error?: string }
+      const data = (await res.json()) as { audio_url?: string; voice?: string; error?: string }
 
       if (!res.ok || !data.audio_url) {
         throw new Error(data.error ?? `Lỗi ${res.status}`)
       }
       const audioUrl = data.audio_url
+      // Server có thể đã HẠ giọng đoán (nextVoice) xuống giọng khác nếu ngoài quyền gói hiện
+      // tại (clampVoiceToPlan) — PHẢI hiện nhãn theo giọng server THẬT SỰ dùng, không phải
+      // giọng client đoán, nếu không nhãn sẽ đổi liên tục nhưng audio luôn là 1 giọng cố định
+      // (bug đã gặp: cache voice_allowed phía client lệch/rộng hơn gói thật).
+      const actualVoice =
+        data.voice && data.voice in VOICE_LABEL ? (data.voice as Voice) : nextVoice
+      setCurrentVoice(actualVoice)
 
       setAudioUrls((prev) => ({ ...prev, [nextVoice]: audioUrl }))
       playAudioUrl(audioUrl)
     } catch (err) {
       console.error('Lỗi nghe giọng khác, dùng tạm Web Speech:', err)
+      setCurrentVoice(nextVoice)
       speakWithWebSpeech(nextVoice)
     } finally {
       setLoading(false)

@@ -166,7 +166,10 @@ export default async function handler(req: Request): Promise<Response> {
         [word, voice, lang],
       )
       .catch((err: unknown) => console.warn('[pronunciation] cập nhật last_accessed_at lỗi:', err))
-    return jsonResponse({ audio_url: cached.audio_url, cached: true }, 200, allHeaders)
+    // Trả kèm `voice` THẬT SỰ đã dùng (sau khi clamp theo gói) — client cần giá trị này để
+    // sửa lại nhãn tên giọng hiển thị, tránh lệch với audio thực phát (bug: client đoán 1
+    // giọng ngoài quyền, server âm thầm hạ về DEFAULT_VOICE nhưng nhãn vẫn hiện giọng đoán).
+    return jsonResponse({ audio_url: cached.audio_url, voice, cached: true }, 200, allHeaders)
   }
 
   // ── BƯỚC 2: Cache MISS → gọi Google TTS ────────────────────
@@ -229,7 +232,7 @@ export default async function handler(req: Request): Promise<Response> {
     console.error('Lỗi lưu cache pronunciations:', err instanceof Error ? err.message : err)
   }
 
-  return jsonResponse({ audio_url: audioUrl, cached: false }, 200, allHeaders)
+  return jsonResponse({ audio_url: audioUrl, voice, cached: false }, 200, allHeaders)
 }
 
 // Dùng Edge Runtime — nhẹ, khởi động nhanh, giống api/claude.ts đã có
