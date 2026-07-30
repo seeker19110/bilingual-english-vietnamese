@@ -384,6 +384,7 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
    RESTORE_PSQL_URL='postgresql://postgres:MẬT-KHẨU-SUPERUSER@localhost:5432/postgres' \
      npm run restore:r2 -- --restore-into english_tutor --yes
    ```
+
    - Nếu **không nhớ/không chắc mật khẩu superuser `postgres`** trên máy mới (rất có thể — máy mới
      không kế thừa gì từ máy cũ): đặt lại trực tiếp bằng quyền hệ thống (không cần biết mật khẩu cũ):
      ```bash

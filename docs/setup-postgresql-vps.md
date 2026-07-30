@@ -42,6 +42,7 @@ SQL
 > `grant all on schema public to tutor_app;` ở trên thì `npm run migrate:pg` (hoặc
 > deploy tự động) sẽ báo lỗi `permission denied for schema public` (mã lỗi `42501`).
 > Nếu đã lỡ tạo database mà quên bước này, chạy bù lại bất kỳ lúc nào:
+>
 > ```bash
 > sudo -u postgres psql -d english_tutor -c "grant all on schema public to tutor_app;"
 > ```
