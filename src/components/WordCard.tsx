@@ -145,7 +145,13 @@ export default function WordCard({
 
       <div className="flex flex-col items-center gap-2 mb-3">
         <div className="flex flex-row items-center gap-2">
-          <WordVoiceCycleButton word={isA ? card.word : card.vi} lang={isA ? 'en-US' : 'vi-VN'} />
+          {/* key theo từ: buộc remount khi đổi thẻ, tránh giữ audioUrls/currentVoice cũ của
+              từ trước (bug: nhãn tên giọng đổi đúng nhưng phát nhầm audio đã cache của từ cũ). */}
+          <WordVoiceCycleButton
+            key={isA ? card.word : card.vi}
+            word={isA ? card.word : card.vi}
+            lang={isA ? 'en-US' : 'vi-VN'}
+          />
         </div>
         {card.ex_en && (
           <KaraokeText
