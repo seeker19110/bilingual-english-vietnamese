@@ -37,6 +37,7 @@ const PENDING_PAYMENT = {
   cycle: 'month',
   amount_vnd: 40_000,
   status: 'pending',
+  years: 1,
 }
 
 beforeEach(() => {
@@ -149,12 +150,49 @@ describe('/api/payment-webhook', () => {
       })
       .mockResolvedValueOnce({
         rowCount: 1,
-        rows: [{ user_id: 'user-1', plan: 'vip', cycle: 'year' }],
+        rows: [{ user_id: 'user-1', plan: 'vip', cycle: 'year', years: 1 }],
       })
     const resp = await handler(
       makeRequest({ id: 1, transferType: 'in', transferAmount: 500_000, content: 'ENVI7K2M9QRT' }),
     )
     expect(resp.status).toBe(200)
     expect(granted.calls).toEqual([{ userId: 'user-1', plan: 'vip', days: 365 }])
+  })
+
+  it('mua NHIỀU NĂM (years=3) → cấp đúng 3×365 ngày, không phải 365', async () => {
+    query
+      .mockResolvedValueOnce({
+        rows: [{ ...PENDING_PAYMENT, plan: 'vip', cycle: 'year', amount_vnd: 1_050_000, years: 3 }],
+      })
+      .mockResolvedValueOnce({
+        rowCount: 1,
+        rows: [{ user_id: 'user-1', plan: 'vip', cycle: 'year', years: 3 }],
+      })
+    const resp = await handler(
+      makeRequest({
+        id: 2,
+        transferType: 'in',
+        transferAmount: 1_050_000,
+        content: 'ENVI7K2M9QRT',
+      }),
+    )
+    expect(resp.status).toBe(200)
+    expect(granted.calls).toEqual([{ userId: 'user-1', plan: 'vip', days: 1095 }])
+  })
+
+  it('years > 1 nhưng cycle KHÔNG phải year (dữ liệu lệch bất thường) → vẫn cấp đúng 1 chu kỳ, bỏ qua years', async () => {
+    query
+      .mockResolvedValueOnce({
+        rows: [{ ...PENDING_PAYMENT, plan: 'pro', cycle: 'month', years: 3 }],
+      })
+      .mockResolvedValueOnce({
+        rowCount: 1,
+        rows: [{ user_id: 'user-1', plan: 'pro', cycle: 'month', years: 3 }],
+      })
+    const resp = await handler(
+      makeRequest({ id: 3, transferType: 'in', transferAmount: 40_000, content: 'ENVI7K2M9QRT' }),
+    )
+    expect(resp.status).toBe(200)
+    expect(granted.calls).toEqual([{ userId: 'user-1', plan: 'pro', days: 30 }])
   })
 })

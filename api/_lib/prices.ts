@@ -75,8 +75,53 @@ export function invalidatePricesCache(): void {
   cache = null
 }
 
+// Mua nhiều năm liền (chu kỳ 'year') MỘT LẦN — giảm giá luỹ tiến theo số năm, quyết định người
+// dùng 2026-07-30: năm 2 giảm 20%, năm 3 giảm 30%... +10%/năm, TRẦN 80%. Năm 1 (mua lẻ) = 0%.
+export const MAX_PROMO_YEARS = 5
+
+export function multiYearDiscountPercent(years: number): number {
+  if (!Number.isFinite(years) || years <= 1) return 0
+  return Math.min(80, Math.floor(years) * 10)
+}
+
+// Tổng tiền phải trả cho `years` năm liền (chỉ có ý nghĩa với cycle='year', years=1 cho
+// '10day'/'month'). Quyết định người dùng 2026-07-30: giảm giá nhiều năm và % khuyến mãi toàn
+// cục KHÔNG cộng dồn — chỉ áp mức giảm CAO HƠN trong 2, tránh giảm giá chồng ngoài ý muốn.
+export function effectiveTotalPrice(
+  entry: PriceEntry,
+  years: number,
+  now: Date = new Date(),
+  globalPromoPercent: number | null = null,
+): number {
+  const safeYears = Math.max(1, Math.floor(years))
+  // Mua nhiều năm (>1): sale_price_vnd riêng dòng KHÔNG áp dụng — giá đó chỉ định nghĩa cho
+  // 1 năm, dùng cho tổng nhiều năm sẽ sai ý nghĩa. Chỉ % (nhiều năm hoặc khuyến mãi) mới áp.
+  if (safeYears > 1) {
+    const pct = Math.max(multiYearDiscountPercent(safeYears), globalPromoPercent ?? 0)
+    return effectivePrice(
+      { priceVnd: entry.priceVnd * safeYears, salePriceVnd: null, saleUntil: null },
+      now,
+      pct,
+    )
+  }
+  // 1 năm (hoặc chu kỳ khác): giữ nguyên hành vi cũ — sale_price_vnd riêng dòng vẫn có hiệu lực
+  // khi KHÔNG có khuyến mãi toàn cục đang chạy (effectivePrice tự ưu tiên promoPercent nếu có).
+  return effectivePrice(entry, now, globalPromoPercent)
+}
+
 // Giá THẬT phải trả ngay bây giờ: giá khuyến mãi nếu đang trong hạn, ngược lại giá niêm yết.
-export function effectivePrice(entry: PriceEntry, now: Date = new Date()): number {
+// `promoPercent`: % khuyến mãi TOÀN BỘ gói đang chạy (xem api/_lib/pricePromo.ts), null nếu
+// không có. Ưu tiên hơn sale_price_vnd riêng dòng (cơ chế cũ, chưa có admin API nào set) —
+// 2 cơ chế không cộng dồn, tránh giảm giá 2 lần ngoài ý muốn.
+export function effectivePrice(
+  entry: PriceEntry,
+  now: Date = new Date(),
+  promoPercent: number | null = null,
+): number {
+  if (promoPercent != null && promoPercent > 0) {
+    // Làm tròn về đơn vị 1.000đ — giá lẻ dưới nghìn không hợp lý cho chuyển khoản ngân hàng VN.
+    return Math.round((entry.priceVnd * (100 - promoPercent)) / 100 / 1000) * 1000
+  }
   if (
     entry.salePriceVnd != null &&
     entry.saleUntil &&

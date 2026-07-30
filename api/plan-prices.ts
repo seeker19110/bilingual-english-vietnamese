@@ -5,7 +5,14 @@
 //
 // GET /api/plan-prices
 
-import { getPlanPrices, effectivePrice } from './_lib/prices.js'
+import {
+  getPlanPrices,
+  effectivePrice,
+  effectiveTotalPrice,
+  MAX_PROMO_YEARS,
+  type PriceEntry,
+} from './_lib/prices.js'
+import { getPricePromo, activePromoPercent } from './_lib/pricePromo.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -25,21 +32,46 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }
 
-  const prices = await getPlanPrices()
+  const [prices, promo] = await Promise.all([getPlanPrices(), getPricePromo()])
   const now = new Date()
+  const pct = activePromoPercent(promo, now)
+
+  // Tổng tiền mua N năm liền (1..MAX_PROMO_YEARS) cho gói theo chu kỳ 'year' — UI dùng để hiện
+  // giá theo số năm người dùng chọn, không phải tự tính lại công thức giảm giá luỹ tiến.
+  function yearTotals(entry: PriceEntry): number[] {
+    return Array.from({ length: MAX_PROMO_YEARS }, (_, i) =>
+      effectiveTotalPrice(entry, i + 1, now, pct),
+    )
+  }
 
   // Trả kèm cả giá niêm yết lẫn giá đang áp dụng — UI cần cả hai để hiện "gạch giá cũ" khi
   // đang khuyến mãi (xem docs/research/dac-ta-thanh-toan-2026-07-25.md mục "Khuyến mãi dịp lễ").
   const body = {
+    promoPercent: pct,
+    maxPromoYears: MAX_PROMO_YEARS,
     pro: {
-      '10day': { ...prices.pro['10day'], effectiveVnd: effectivePrice(prices.pro['10day'], now) },
-      month: { ...prices.pro.month, effectiveVnd: effectivePrice(prices.pro.month, now) },
-      year: { ...prices.pro.year, effectiveVnd: effectivePrice(prices.pro.year, now) },
+      '10day': {
+        ...prices.pro['10day'],
+        effectiveVnd: effectivePrice(prices.pro['10day'], now, pct),
+      },
+      month: { ...prices.pro.month, effectiveVnd: effectivePrice(prices.pro.month, now, pct) },
+      year: {
+        ...prices.pro.year,
+        effectiveVnd: effectivePrice(prices.pro.year, now, pct),
+        yearTotals: yearTotals(prices.pro.year),
+      },
     },
     vip: {
-      '10day': { ...prices.vip['10day'], effectiveVnd: effectivePrice(prices.vip['10day'], now) },
-      month: { ...prices.vip.month, effectiveVnd: effectivePrice(prices.vip.month, now) },
-      year: { ...prices.vip.year, effectiveVnd: effectivePrice(prices.vip.year, now) },
+      '10day': {
+        ...prices.vip['10day'],
+        effectiveVnd: effectivePrice(prices.vip['10day'], now, pct),
+      },
+      month: { ...prices.vip.month, effectiveVnd: effectivePrice(prices.vip.month, now, pct) },
+      year: {
+        ...prices.vip.year,
+        effectiveVnd: effectivePrice(prices.vip.year, now, pct),
+        yearTotals: yearTotals(prices.vip.year),
+      },
     },
   }
 

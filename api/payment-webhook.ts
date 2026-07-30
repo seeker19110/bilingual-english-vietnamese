@@ -66,8 +66,9 @@ export default async function handler(req: Request): Promise<Response> {
     cycle: PayableCycle
     amount_vnd: number
     status: string
+    years: number
   }>(
-    'select id, user_id, plan, cycle, amount_vnd, status from public.payments where payment_code = $1',
+    'select id, user_id, plan, cycle, amount_vnd, status, years from public.payments where payment_code = $1',
     [paymentCode],
   )
   const payment = rows[0]
@@ -98,16 +99,19 @@ export default async function handler(req: Request): Promise<Response> {
       user_id: string
       plan: 'pro' | 'vip'
       cycle: PayableCycle
+      years: number
     }>(
       `update public.payments set status = 'paid', paid_at = now(), provider_txn_id = $2
        where id = $1 and status = 'pending'
-       returning user_id, plan, cycle`,
+       returning user_id, plan, cycle, years`,
       [payment.id, txnId],
     )
     const won = updated[0]
     if (!rowCount || !won) return ok(headers) // race: request khác vừa xử lý xong
 
-    await grantPlanDays(won.user_id, won.plan, CYCLE_DAYS[won.cycle])
+    // years > 1 CHỈ có ý nghĩa với cycle='year' (mua nhiều năm liền — xem api/checkout.ts).
+    const grantDays = CYCLE_DAYS[won.cycle] * (won.cycle === 'year' ? Math.max(1, won.years) : 1)
+    await grantPlanDays(won.user_id, won.plan, grantDays)
     logSecurityEvent('SEPAY_PAYMENT_PAID', 'sepay', {
       paymentId: payment.id,
       userId: won.user_id,

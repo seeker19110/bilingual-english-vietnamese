@@ -154,6 +154,9 @@ export default function UpgradeSection({
   const [prices, setPrices] = useState<PlanPrices | null>(null)
   const [plan, setPlan] = useState<PayablePlan>('pro')
   const [cycle, setCycle] = useState<PayableCycle>('month')
+  // Số năm mua liền một lần — CHỈ có ý nghĩa khi cycle === 'year' (giảm giá luỹ tiến theo số
+  // năm, xem multiYearDiscountPercent ở api/_lib/prices.ts). Reset về 1 khi đổi sang chu kỳ khác.
+  const [years, setYears] = useState(1)
   const [checkout, setCheckout] = useState<CheckoutResult | null>(null)
   const [creating, setCreating] = useState(false)
   const [paid, setPaid] = useState(false)
@@ -180,7 +183,7 @@ export default function UpgradeSection({
 
   async function handleCreateCheckout() {
     setCreating(true)
-    const r = await createCheckout(plan, cycle)
+    const r = await createCheckout(plan, cycle, cycle === 'year' ? years : 1)
     setCreating(false)
     if (!r.ok) {
       toast.error(r.error)
@@ -348,11 +351,20 @@ export default function UpgradeSection({
           <div className="flex gap-2 mb-4">
             {(['10day', 'month', 'year'] as const).map((c) => {
               const entry = prices?.[plan][c]
+              // Chu kỳ 'year' đang chọn nhiều năm (>1): hiện TỔNG tiền của đúng số năm đó
+              // (yearTotals[years-1]) thay vì giá 1 năm.
+              const totalVnd =
+                c === 'year' && years > 1 && entry?.yearTotals
+                  ? entry.yearTotals[years - 1]
+                  : entry?.effectiveVnd
               return (
                 <button
                   key={c}
                   type="button"
-                  onClick={() => setCycle(c)}
+                  onClick={() => {
+                    setCycle(c)
+                    if (c !== 'year') setYears(1)
+                  }}
                   className={`flex-1 py-2 rounded-xl text-xs border ${
                     cycle === c
                       ? 'bg-accent-500/15 text-accent-300 theme-light:text-accent-800 border-accent-500/40'
@@ -360,11 +372,40 @@ export default function UpgradeSection({
                   }`}
                 >
                   <div className="font-semibold">{isA ? CYCLE_LABEL[c].vi : CYCLE_LABEL[c].en}</div>
-                  <div>{entry ? formatVnd(entry.effectiveVnd) : '…'}</div>
+                  {entry &&
+                  totalVnd != null &&
+                  totalVnd < entry.priceVnd * (c === 'year' ? years : 1) ? (
+                    <div className="flex items-baseline gap-1">
+                      <span className="line-through opacity-60">
+                        {formatVnd(entry.priceVnd * (c === 'year' ? years : 1))}
+                      </span>
+                      <span>{formatVnd(totalVnd)}</span>
+                    </div>
+                  ) : (
+                    <div>{totalVnd != null ? formatVnd(totalVnd) : '…'}</div>
+                  )}
                 </button>
               )
             })}
           </div>
+          {cycle === 'year' && prices && (
+            <div className="flex gap-2 mb-4">
+              {Array.from({ length: prices.maxPromoYears }, (_, i) => i + 1).map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setYears(n)}
+                  className={`flex-1 py-1.5 rounded-lg text-xs border ${
+                    years === n
+                      ? 'bg-accent-500/15 text-accent-300 theme-light:text-accent-800 border-accent-500/40'
+                      : 'bg-zinc-800/60 text-zinc-400 border-zinc-700'
+                  }`}
+                >
+                  {n} {isA ? (n === 1 ? 'năm' : 'năm') : n === 1 ? 'year' : 'years'}
+                </button>
+              ))}
+            </div>
+          )}
           <button
             type="button"
             onClick={handleCreateCheckout}

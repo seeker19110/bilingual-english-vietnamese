@@ -7,6 +7,7 @@ import {
   Crown,
   ToggleRight,
   FileText,
+  Percent,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -15,6 +16,7 @@ import AdminGrantPlanPanel from '../components/admin/AdminGrantPlanPanel'
 import AdminVipWhitelistPanel from '../components/admin/AdminVipWhitelistPanel'
 import AdminPlanFeaturesPanel from '../components/admin/AdminPlanFeaturesPanel'
 import AdminPlanMarketingPanel from '../components/admin/AdminPlanMarketingPanel'
+import AdminPricePromoPanel from '../components/admin/AdminPricePromoPanel'
 import AdminAnalyticsPanel from '../components/admin/AdminAnalyticsPanel'
 import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 
@@ -32,6 +34,7 @@ type TabKey =
   | 'limits'
   | 'plan-features'
   | 'plan-marketing'
+  | 'price-promo'
   | 'grant-plan'
   | 'vip-whitelist'
   | 'analytics'
@@ -43,6 +46,7 @@ const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   { key: 'limits', label: 'Hạn mức & khuyến mãi', icon: Sliders },
   { key: 'plan-features', label: 'Tính năng theo gói', icon: ToggleRight },
   { key: 'plan-marketing', label: 'Nội dung gói', icon: FileText },
+  { key: 'price-promo', label: 'Khuyến mãi giá', icon: Percent },
   { key: 'grant-plan', label: 'Cấp gói tay', icon: ShieldCheck },
   { key: 'vip-whitelist', label: 'Danh sách VIP', icon: Crown },
   { key: 'analytics', label: 'Analytics', icon: BarChart3 },
@@ -110,6 +114,7 @@ export default function AdminDashboard() {
             {tab === 'limits' && <AdminLimitsPanel />}
             {tab === 'plan-features' && <AdminPlanFeaturesPanel />}
             {tab === 'plan-marketing' && <AdminPlanMarketingPanel />}
+            {tab === 'price-promo' && <AdminPricePromoPanel />}
             {tab === 'grant-plan' && <AdminGrantPlanPanel />}
             {tab === 'vip-whitelist' && <AdminVipWhitelistPanel />}
             {tab === 'analytics' && <AdminAnalyticsPanel />}

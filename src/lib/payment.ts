@@ -18,6 +18,7 @@ export interface CheckoutResult {
   expiresAt: string
   plan: PayablePlan
   cycle: PayableCycle
+  years: number
 }
 
 export interface PlanPriceEntry {
@@ -25,9 +26,15 @@ export interface PlanPriceEntry {
   salePriceVnd: number | null
   saleUntil: string | null
   effectiveVnd: number
+  // Chỉ có ở cycle='year' — tổng tiền mua 1..maxPromoYears năm liền (đã áp giảm giá luỹ tiến),
+  // index 0 = mua 1 năm. Xem MAX_PROMO_YEARS/effectiveTotalPrice ở api/_lib/prices.ts.
+  yearTotals?: number[]
 }
 
-export type PlanPrices = Record<PayablePlan, Record<PayableCycle, PlanPriceEntry>>
+export type PlanPrices = Record<PayablePlan, Record<PayableCycle, PlanPriceEntry>> & {
+  promoPercent: number | null
+  maxPromoYears: number
+}
 
 // Công khai, không cần đăng nhập (xem api/plan-prices.ts) — gọi trước khi bấm mua để hiện giá.
 export async function fetchPlanPrices(): Promise<PlanPrices | null> {
@@ -43,12 +50,13 @@ export async function fetchPlanPrices(): Promise<PlanPrices | null> {
 export async function createCheckout(
   plan: PayablePlan,
   cycle: PayableCycle,
+  years = 1,
 ): Promise<{ ok: true; data: CheckoutResult } | { ok: false; error: string }> {
   try {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'content-type': 'application/json', ...getAuthHeader() },
-      body: JSON.stringify({ plan, cycle }),
+      body: JSON.stringify({ plan, cycle, years }),
     })
     const data = (await res.json().catch(() => ({}))) as CheckoutResult & { error?: string }
     if (!res.ok) return { ok: false, error: data.error ?? 'Không tạo được đơn' }
