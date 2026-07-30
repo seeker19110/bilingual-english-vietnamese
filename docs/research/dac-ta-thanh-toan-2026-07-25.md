@@ -245,6 +245,31 @@ niêm yết, giá khuyến mãi (nullable), hạn khuyến mãi (nullable) — x
   giữ hộ. Nên dùng một tài khoản ngân hàng RIÊNG cho app để đối chiếu sổ sách dễ, không lẫn với
   chi tiêu cá nhân.
 
+### Bẫy thực tế đã gặp khi cấu hình (2026-07-30, chuyển khoản test bị "mất tích")
+
+Chuyển khoản test vào đúng tài khoản, tiền báo có, nhưng đơn hàng không tự chuyển `paid`. Server
+hoàn toàn không lỗi (curl thẳng vào `/api/payment-webhook` trả `success:true` bình thường) —
+nguyên nhân nằm ở 2 chỗ cấu hình trên dashboard SePay, không phải code:
+
+1. **Cấu hình chung → Cấu trúc mã thanh toán**: SePay có bước tự tách "mã thanh toán" ra khỏi nội
+   dung chuyển khoản thô, dùng để lọc trước khi gọi webhook. Mẫu mặc định để trường **"Là"** ở
+   **"Số nguyên"** — nhưng mã app sinh ra (`generatePaymentCode` trong `api/_lib/sepay.ts`) có cả
+   chữ lẫn số (bảng ký tự `23456789ABCDEFGHJKMNPQRSTUVWXYZ`, cố tình bỏ 0/O/1/I/L). Kết quả: SePay
+   không nhận diện được mã (trường "MÃ THANH TOÁN" trong chi tiết giao dịch để trống `-`) dù nội
+   dung có chứa `ENVIxxxxxxxx` rõ ràng → webhook bị bộ lọc "chỉ gửi khi có mã thanh toán" chặn
+   ngay từ đầu, không hề gọi ra server (lịch sử webhook trống trơn, dễ nhầm là chưa cấu hình
+   webhook). **Phải đổi "Là" sang "Số và chữ".**
+2. **Webhook → tab Bảo mật → API Key**: dán key dài (chứa `+ / =`) vào ô input của SePay dễ bị
+   dính khoảng trắng thừa ở giữa chuỗi (do UI tự ngắt dòng khi dán) → key không khớp
+   `SEPAY_WEBHOOK_API_KEY` trên server → webhook gọi tới nơi nhưng bị `401 Unauthorized`. Xoá
+   trắng ô rồi dán lại, kiểm tra kỹ không có khoảng trắng ẩn giữa chuỗi.
+
+Cách chẩn đoán nhanh khi gặp lại: `pm2 logs english-tutor --lines 300 --nostream | grep -i sepay`
+— nếu KHÔNG có dòng nào (kể cả `SEPAY_WEBHOOK_UNAUTHORIZED`), nghĩa là request chưa từng chạm
+tới server → lỗi nằm ở cấu hình mã thanh toán (bẫy #1). Nếu thấy `SEPAY_WEBHOOK_UNAUTHORIZED`,
+đó là bẫy #2. Vào SePay → mục Giao dịch → mở chi tiết giao dịch cần tra → xem trường "MÃ THANH
+TOÁN" có bị trống không, và dùng nút "Gọi lại" (resend) để test lại không cần chuyển khoản mới.
+
 ## Tiêu chí chấp nhận
 
 - Test unit cho `planGrant`: cộng dồn đúng ngày, không âm (đã có sẵn từ đợt referral/trial).
