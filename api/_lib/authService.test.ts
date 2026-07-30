@@ -5,6 +5,8 @@ import {
   verifyPassword,
   validateSessionToken,
   createUserWithPassword,
+  createSession,
+  revokeSession,
 } from './authService'
 
 vi.mock('./pgPool', () => ({ getPgPool: vi.fn() }))
@@ -56,6 +58,50 @@ describe('validateSessionToken', () => {
     )
     const result = await validateSessionToken('token-het-han')
     expect(result).toBeNull()
+  })
+})
+
+describe('createSession', () => {
+  beforeEach(() => vi.restoreAllMocks())
+
+  it('tạo token ngẫu nhiên, KHÔNG lưu token trần vào DB (chỉ lưu bản hash)', async () => {
+    let savedToken = ''
+    mockedGetPool.mockReturnValue(
+      mockPool(async (sql, params) => {
+        expect(sql).toContain('insert into public.sessions')
+        savedToken = String(params?.[0])
+        return { rows: [] }
+      }),
+    )
+    const rawToken = await createSession('user-1')
+    expect(rawToken).toBeTruthy()
+    // Token trả về cho client phải khác hẳn bản đã lưu (đã băm) trong DB.
+    expect(savedToken).not.toBe(rawToken)
+  })
+
+  it('gọi 2 lần → 2 token ngẫu nhiên khác nhau', async () => {
+    mockedGetPool.mockReturnValue(mockPool(async () => ({ rows: [] })))
+    const [tokenA, tokenB] = await Promise.all([createSession('user-1'), createSession('user-1')])
+    expect(tokenA).not.toBe(tokenB)
+  })
+})
+
+describe('revokeSession', () => {
+  beforeEach(() => vi.restoreAllMocks())
+
+  it('xoá đúng dòng session khớp với hash của token truyền vào', async () => {
+    const deleteCalls: unknown[][] = []
+    mockedGetPool.mockReturnValue(
+      mockPool(async (sql, params) => {
+        expect(sql).toContain('delete from public.sessions')
+        deleteCalls.push(params ?? [])
+        return { rows: [] }
+      }),
+    )
+    await revokeSession('token-can-thu-hoi')
+    expect(deleteCalls).toHaveLength(1)
+    // Tham số xoá phải là bản hash, không phải token trần.
+    expect(deleteCalls[0]?.[0]).not.toBe('token-can-thu-hoi')
   })
 })
 
