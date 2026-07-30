@@ -499,69 +499,60 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
 
 **Khi nào dùng:** VPS vẫn sống (SSH tay vào được, app chạy bình thường), nhưng workflow
 **"Deploy to VPS"** trên GitHub Actions (`.github/workflows/deploy.yml`) tự động fail mỗi
-lần push/merge lên `main`. Kịch bản này **khác** mục 3.9 (VPS mất trắng) — ở đây VPS còn
-nguyên, chỉ cần cập nhật lại thông tin kết nối phía GitHub. Đã xác minh THẬT (sự cố
-2026-07-30, đổi IP nhưng quên cập nhật secret).
+lần push/merge lên `main`. Nếu VPS bị dựng lại HOÀN TOÀN (mất Nginx/SSL/PM2/`.env`) thì
+đây KHÔNG phải kịch bản đúng — dừng lại, sang mục 3.9 làm từ đầu thay vì làm tiếp ở đây.
+Đã xác minh THẬT (sự cố 2026-07-30, đổi IP nhưng quên cập nhật secret).
 
-**Cách chẩn đoán — đọc log job `deploy` trên tab Actions** (Repo → Actions → chọn lần
-chạy đỏ gần nhất → job `deploy` → bước "Deploy to VPS via SSH"), tìm đúng dòng lỗi rồi
-tra bảng dưới đây:
+Làm đúng theo thứ tự dưới đây — **mỗi bước chỉ chạy khi bước xác minh ngay trước nó còn
+báo lỗi**; hễ xác minh pass thì dừng, không cần chạy tiếp các bước sau.
 
-| Dòng lỗi trong log                                                          | Nguyên nhân                                                   | Việc cần làm                                                      |
-| ---------------------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `dial tcp ***:22: i/o timeout`                                                | Secret `VPS_HOST` đang trỏ **IP cũ** (IP VPS đã đổi)            | Bước 1 dưới đây — cập nhật `VPS_HOST`                                |
-| `ssh.ParsePrivateKey: ssh: no key found` + `unable to authenticate, attempted methods [none]` | Secret `VPS_SSH_KEY` trống, sai định dạng, hoặc lỡ dán **public key** vào (thiếu dòng `BEGIN`/`END`) | Bước 2 dưới đây — tạo lại cặp khoá + cập nhật `VPS_SSH_KEY` |
-| `permission denied for schema public` (mã `42501`) khi chạy `migrate:pg`     | Database tạo bằng `create database ... owner tutor_app` nhưng CHƯA `grant` schema `public` (xem `docs/setup-postgresql-vps.md` mục 3) — lỗi Postgres, không phải lỗi SSH | Bước 3 dưới đây — GRANT schema, không đụng gì tới secret            |
+1. Vào GitHub repo → tab **Actions** → chọn lần chạy đỏ gần nhất của "Deploy to VPS" →
+   job `deploy` → bước "Deploy to VPS via SSH" → đọc dòng lỗi cuối cùng.
 
-**⚠️ Trước khi bắt đầu:** xác nhận đúng tình huống — nếu VPS bị dựng lại HOÀN TOÀN
-(mất Nginx/SSL/PM2/`.env`) thì đây không phải kịch bản đúng, quay lại mục 3.9 làm từ đầu.
-Nếu chỉ SSH tay vẫn vào được, tiếp tục các bước dưới.
+2. Nếu dòng lỗi là `dial tcp ***:22: i/o timeout` → secret `VPS_HOST` đang trỏ IP cũ:
+   - Vào **Settings → Secrets and variables → Actions** → sửa secret `VPS_HOST` = IP hiện
+     tại của VPS (vd `103.81.87.174`).
+   - Nếu user SSH cũng đổi, sửa luôn secret `VPS_USER`.
+   - Quay lại bước 6 (rerun) để xác minh.
 
-**Bước 1 — Cập nhật secret `VPS_HOST`** (khi gặp lỗi `i/o timeout`):
+3. Nếu dòng lỗi là `ssh.ParsePrivateKey: ssh: no key found` hoặc
+   `unable to authenticate, attempted methods [none]` → secret `VPS_SSH_KEY` trống, sai
+   định dạng, hoặc bị dán nhầm public key:
+   - SSH vào VPS bằng khoá cá nhân của bạn (hoặc console nhà cung cấp VPS), tạo khoá
+     **riêng cho CI** (không dùng chung khoá cá nhân):
+     ```bash
+     ssh-keygen -t ed25519 -f ~/.ssh/github_deploy_key -N "" -C "github-actions-deploy"
+     cat ~/.ssh/github_deploy_key.pub >> ~/.ssh/authorized_keys
+     chmod 600 ~/.ssh/authorized_keys
+     cat ~/.ssh/github_deploy_key
+     ```
+   - Lệnh cuối in ra private key — copy **toàn bộ**, giữ nguyên cả 2 dòng
+     `-----BEGIN OPENSSH PRIVATE KEY-----` và `-----END OPENSSH PRIVATE KEY-----` (thiếu 1
+     trong 2 dòng này là nguyên nhân trực tiếp gây lỗi `ssh: no key found`), không cắt bớt,
+     không thêm khoảng trắng.
+   - Dán vào secret `VPS_SSH_KEY` trên GitHub (cùng chỗ ở bước 2).
+   - Quay lại bước 6 (rerun) để xác minh.
 
-1. Vào repo trên GitHub → **Settings → Secrets and variables → Actions**.
-2. Bấm vào secret `VPS_HOST` → **Update** → nhập IP mới (vd `103.81.87.174`) → Save.
-3. Nếu user SSH cũng đổi, sửa luôn secret `VPS_USER` tương tự.
+4. Nếu dòng lỗi là `permission denied for schema public` (mã `42501`) khi chạy
+   `migrate:pg` → database thiếu quyền GRANT trên schema `public` (Postgres 15+ không tự
+   cấp quyền CREATE cho owner database nữa — xem `docs/setup-postgresql-vps.md` mục 3):
+   - Trên VPS, chạy:
+     ```bash
+     sudo -u postgres psql -d english_tutor -c "GRANT ALL ON SCHEMA public TO tutor_app;"
+     ```
+   - Quay lại bước 6 (rerun) để xác minh.
 
-**Bước 2 — Tạo lại cặp khoá SSH riêng cho GitHub Actions** (khi gặp lỗi `ssh: no key found`
-/ `unable to authenticate`) — **luôn tạo khoá RIÊNG cho CI**, không dùng chung khoá cá
-nhân của máy bạn:
+5. Nếu dòng lỗi khác 3 trường hợp trên — dừng lại, đây không phải lỗi đã biết trong mục
+   này, cần chẩn đoán riêng (không đoán mò áp fix ở trên).
 
-```bash
-# Chạy TRÊN VPS (SSH vào bằng khoá cá nhân của bạn, hoặc console nhà cung cấp VPS)
-ssh-keygen -t ed25519 -f ~/.ssh/github_deploy_key -N "" -C "github-actions-deploy"
-cat ~/.ssh/github_deploy_key.pub >> ~/.ssh/authorized_keys
-chmod 600 ~/.ssh/authorized_keys
-cat ~/.ssh/github_deploy_key      # in ra PRIVATE KEY — copy đủ cả dòng BEGIN/END
-```
+6. Rerun: trên GitHub → tab **Actions** → chọn lần chạy đỏ → **Re-run failed jobs**. Đợi
+   job `deploy` chạy xong.
 
-Dán **toàn bộ** nội dung private key (bắt buộc còn nguyên 2 dòng
-`-----BEGIN OPENSSH PRIVATE KEY-----` và `-----END OPENSSH PRIVATE KEY-----`, không cắt
-bớt, không thêm khoảng trắng) vào secret `VPS_SSH_KEY` trên GitHub (cùng chỗ Bước 1).
-Thiếu 1 trong 2 dòng `BEGIN`/`END` là nguyên nhân trực tiếp gây lỗi `ssh: no key found`.
-
-**Bước 3 — GRANT quyền schema Postgres** (khi gặp lỗi `permission denied for schema public`,
-chỉ cần trên VPS, KHÔNG đụng gì tới GitHub secret):
-
-```bash
-sudo -u postgres psql -d english_tutor -c "GRANT ALL ON SCHEMA public TO tutor_app;"
-```
-
-**Bước 4 — Xác minh đã sửa xong:**
-
-1. Trên GitHub → tab **Actions** → chọn lần chạy đỏ gần nhất → nút **Re-run failed jobs**
-   (hoặc AI có thể tự làm hộ nếu đang có phiên làm việc).
-2. Đợi job `deploy` chạy lại, xác nhận chuyển sang tick xanh (✅ `success`).
-3. Xác minh app thật đã nhận code mới: `curl https://en-vi.donghanhcungban.com/api/health`.
-
-**Checklist riêng cho kịch bản này:**
-
-- [ ] Secret `VPS_HOST` (và `VPS_USER` nếu đổi) khớp đúng IP/user hiện tại của VPS
-- [ ] Secret `VPS_SSH_KEY` là private key **đầy đủ** (còn cả dòng `BEGIN`/`END`), khoá
-      riêng cho CI (không phải khoá cá nhân của ai đó)
-- [ ] Public key tương ứng đã có trong `~/.ssh/authorized_keys` trên VPS
-- [ ] `tutor_app` đã có quyền `GRANT ALL ON SCHEMA public` (không chỉ là chủ database)
-- [ ] Workflow "Deploy to VPS" đã rerun và **tick xanh**, không chỉ SSH tay thành công
+7. Xác minh: job `deploy` phải hiện tick xanh (`success`) — nếu vẫn đỏ, quay lại bước 1
+   đọc log mới (log lúc này có thể khác lỗi trước, vì mỗi bước 2-4 chỉ sửa đúng 1 nguyên
+   nhân). Nếu tick xanh, chạy `curl https://en-vi.donghanhcungban.com/api/health` để xác
+   nhận app thật đã nhận code mới — thấy `{"status":"ok",...}` là xong, không cần làm gì
+   thêm.
 
 ---
 
