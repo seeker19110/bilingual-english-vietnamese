@@ -28,11 +28,23 @@ sudo systemctl enable --now postgresql
 sudo -u postgres psql <<'SQL'
 create user tutor_app with password 'ĐẶT_MẬT_KHẨU_MẠNH_Ở_ĐÂY';
 create database english_tutor owner tutor_app;
+\c english_tutor
+grant all on schema public to tutor_app;
 SQL
 ```
 
 > Đổi `ĐẶT_MẬT_KHẨU_MẠNH_Ở_ĐÂY` thành mật khẩu thật — **không dùng lại** mật khẩu
 > nào khác đang có (Supabase, Gmail...). Lưu vào trình quản lý mật khẩu của bạn.
+
+> ⚠️ **Bẫy thật đã gặp (2026-07-30):** `create database ... owner tutor_app` chỉ đổi
+> chủ **database**, KHÔNG tự đổi chủ **schema `public`** bên trong nó. Từ PostgreSQL 15
+> trở đi, schema `public` không còn tự cấp quyền `CREATE` cho mọi role nữa — thiếu dòng
+> `grant all on schema public to tutor_app;` ở trên thì `npm run migrate:pg` (hoặc
+> deploy tự động) sẽ báo lỗi `permission denied for schema public` (mã lỗi `42501`).
+> Nếu đã lỡ tạo database mà quên bước này, chạy bù lại bất kỳ lúc nào:
+> ```bash
+> sudo -u postgres psql -d english_tutor -c "grant all on schema public to tutor_app;"
+> ```
 
 ## 4. Cho phép kết nối từ localhost (mặc định Postgres đã bind 127.0.0.1, kiểm tra lại)
 
