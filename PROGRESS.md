@@ -1082,6 +1082,12 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash scripts/deploy.sh` (1 nguồn
   chân lý duy nhất cho cả thủ công lẫn tự động). Đã cập nhật mọi doc còn nhắc `deploy.sh` gốc
   (`docs/DEPLOY.md`, `docs/deploy-vps-ubuntu.md`, `DEPLOY_STEPS.md`, `CLAUDE.md`).
+- **[Ý tưởng, 2026-07-30] Phòng chat cho bạn bè cùng luyện tập** — chưa làm, mới bàn sơ bộ.
+  2 hướng: (1) chat đơn giản lưu tin nhắn qua PostgreSQL + polling định kỳ, tận dụng hạ tầng
+  `api/` hiện có — nhẹ, làm được ngay; (2) chat real-time thật (WebSocket, typing indicator,
+  online status) — nặng hơn nhiều, cần thêm WebSocket server và sẽ vướng scale vì VPS hiện
+  chỉ có 1 vCPU + chưa có Redis dùng chung giữa các tiến trình (xem nợ kỹ thuật cluster mode ở
+  trên). Cần người dùng chọn hướng trước khi làm.
 - Không còn hạng mục a11y/kiểm thử lớn nào mở. Xem "Tiếp theo" ở trên cho việc sản phẩm còn dở.
 - `docs/research/thu-thach-vlog-30-ngay.md` dùng tên cũ "Vlog" (tính năng đã đổi tên thành
   "Challenge" — route `/challenge`, bảng `challenge_entries`) — tài liệu đó là ghi chép lịch sử
