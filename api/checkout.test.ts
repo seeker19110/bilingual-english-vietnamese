@@ -13,6 +13,7 @@ vi.mock('./_lib/security', () => ({
 import handler from './checkout'
 import { getPgPool } from './_lib/pgPool'
 import { invalidatePricesCache } from './_lib/prices'
+import { invalidatePricePromoCache } from './_lib/pricePromo'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()
@@ -27,6 +28,7 @@ function makeRequest(body?: unknown): Request {
 
 beforeEach(() => {
   invalidatePricesCache() // module-level cache TTL 30s bám giữa các test — reset để test độc lập
+  invalidatePricePromoCache()
   query.mockReset()
   query.mockResolvedValue({ rows: [], rowCount: 1 })
   mockedGetPool.mockReturnValue({ query } as unknown as ReturnType<typeof getPgPool>)
@@ -61,7 +63,7 @@ describe('/api/checkout', () => {
     expect(data.amountVnd).toBe(40_000)
     expect(data.paymentCode).toMatch(/^ENVI/)
     expect(data.qrUrl).toContain('qr.sepay.vn')
-    expect(query).toHaveBeenCalledTimes(2) // 1 đọc bảng giá + 1 insert đơn
+    expect(query).toHaveBeenCalledTimes(3) // đọc bảng giá + đọc khuyến mãi % + insert đơn
   })
 
   it('thiếu cấu hình ngân hàng trên VPS → 503, không tạo đơn', async () => {
@@ -74,10 +76,11 @@ describe('/api/checkout', () => {
   it('mã trùng (23505) → tự thử lại mã khác thay vì lỗi ngay', async () => {
     query
       .mockResolvedValueOnce({ rows: [] }) // đọc bảng giá
+      .mockResolvedValueOnce({ rows: [] }) // đọc khuyến mãi %
       .mockRejectedValueOnce({ code: '23505' }) // lần insert đầu va mã trùng
       .mockResolvedValueOnce({ rows: [], rowCount: 1 }) // lần thử lại thành công
     const resp = await handler(makeRequest({ plan: 'vip', cycle: 'year' }))
     expect(resp.status).toBe(200)
-    expect(query).toHaveBeenCalledTimes(3)
+    expect(query).toHaveBeenCalledTimes(4)
   })
 })

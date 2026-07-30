@@ -2,8 +2,10 @@
 // phải cổng trung gian nên không có bước "tạo link thanh toán" — ta tự sinh mã, tự dựng URL QR,
 // người dùng chuyển khoản, SePay bắn webhook (api/payment-webhook.ts) khi tiền về.
 //
-// POST /api/checkout  body { plan: 'pro'|'vip', cycle: '10day'|'month'|'year' }
-// Trả { paymentCode, amountVnd, qrUrl, bankAccount, bankName, expiresAt, plan, cycle }
+// POST /api/checkout  body { plan: 'pro'|'vip', cycle: '10day'|'month'|'year', years?: number }
+// `years` (1-5, mặc định 1) CHỈ có ý nghĩa với cycle='year' — mua nhiều năm liền một lần,
+// giảm giá luỹ tiến (xem multiYearDiscountPercent ở _lib/prices.ts).
+// Trả { paymentCode, amountVnd, qrUrl, bankAccount, bankName, expiresAt, plan, cycle, years }
 
 import { z } from 'zod'
 import { getPgPool } from './_lib/pgPool.js'
@@ -16,10 +18,12 @@ import {
 } from './_lib/security.js'
 import {
   getPlanPrices,
-  effectivePrice,
+  effectiveTotalPrice,
+  MAX_PROMO_YEARS,
   type PayablePlan,
   type PayableCycle,
 } from './_lib/prices.js'
+import { getPricePromo, activePromoPercent } from './_lib/pricePromo.js'
 import { generatePaymentCode, buildSepayQrUrl } from './_lib/sepay.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
@@ -27,6 +31,7 @@ import { jsonResponse, getClientIp } from './_lib/http.js'
 const CheckoutSchema = z.object({
   plan: z.enum(['pro', 'vip']),
   cycle: z.enum(['10day', 'month', 'year']),
+  years: z.number().int().min(1).max(MAX_PROMO_YEARS).optional(),
 })
 
 // Đơn hết hạn sau 30 phút — đủ thời gian mở app ngân hàng chuyển khoản, không giữ mã QR "treo"
@@ -57,6 +62,9 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
   }
   const { plan, cycle } = parsed.data as { plan: PayablePlan; cycle: PayableCycle }
+  // years > 1 chỉ hợp lệ cho chu kỳ 'year' — ép về 1 cho '10day'/'month' để tránh hiểu nhầm
+  // "mua 3 tháng x3 năm" (client không nên gửi vậy, nhưng phòng ca lỗi/cố tình gửi sai).
+  const years = cycle === 'year' ? (parsed.data.years ?? 1) : 1
 
   const bankAccount = process.env.SEPAY_BANK_ACCOUNT
   const bankCode = process.env.SEPAY_BANK_CODE
@@ -66,8 +74,14 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Thanh toán đang tạm gián đoạn, thử lại sau' }, 503, allHeaders)
   }
 
-  const prices = await getPlanPrices()
-  const amountVnd = effectivePrice(prices[plan][cycle])
+  const [prices, promo] = await Promise.all([getPlanPrices(), getPricePromo()])
+  const now = new Date()
+  const amountVnd = effectiveTotalPrice(
+    prices[plan][cycle],
+    years,
+    now,
+    activePromoPercent(promo, now),
+  )
   const pool = getPgPool()
   const expiresAt = new Date(Date.now() + CHECKOUT_EXPIRES_MS)
 
@@ -77,9 +91,9 @@ export default async function handler(req: Request): Promise<Response> {
     const paymentCode = generatePaymentCode()
     try {
       await pool.query(
-        `insert into public.payments (user_id, plan, cycle, amount_vnd, payment_code, expires_at)
-         values ($1, $2, $3, $4, $5, $6)`,
-        [auth.userId, plan, cycle, amountVnd, paymentCode, expiresAt],
+        `insert into public.payments (user_id, plan, cycle, amount_vnd, payment_code, expires_at, years)
+         values ($1, $2, $3, $4, $5, $6, $7)`,
+        [auth.userId, plan, cycle, amountVnd, paymentCode, expiresAt, years],
       )
       return jsonResponse(
         {
@@ -91,6 +105,7 @@ export default async function handler(req: Request): Promise<Response> {
           expiresAt: expiresAt.toISOString(),
           plan,
           cycle,
+          years,
         },
         200,
         allHeaders,
