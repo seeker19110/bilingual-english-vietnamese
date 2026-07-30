@@ -372,7 +372,7 @@ curl http://localhost:3001/api/health
 
 ⚠️ **Nếu log báo chạy sai port** (vd. thấy `3000` thay vì `3001` trong `.env`/`ecosystem.config.cjs`)
 — **`pm2 restart --update-env` KHÔNG đủ để sửa**, vì PM2 tự set biến môi trường riêng của process
-*trước khi* code app đọc `.env` (`dotenv` mặc định không override biến đã có sẵn trong
+_trước khi_ code app đọc `.env` (`dotenv` mặc định không override biến đã có sẵn trong
 `process.env`). Phải xoá hẳn process rồi start lại đúng bằng `ecosystem.config.cjs`:
 
 ```bash
