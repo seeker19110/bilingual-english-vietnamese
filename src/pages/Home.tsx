@@ -189,8 +189,8 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
       },
       title: 'Challenge',
       desc: isA
-        ? 'Mỗi ngày quay 1 video ngắn kể về cuộc sống — AI khen và sửa lỗi. Bảng tuần Thứ 2 → CN.'
-        : 'Record a short daily video about your life — AI praises and corrects. Weekly board Mon → Sun.',
+        ? 'Mỗi ngày quay 1 video ngắn kể về cuộc sống — sửa lỗi. Bảng tuần Thứ 2 → CN.'
+        : 'Record a short daily video about your life — corrects your mistakes. Weekly board Mon → Sun.',
     },
   ]
 }
