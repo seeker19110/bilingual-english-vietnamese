@@ -24,6 +24,7 @@ import ReferralSection from '../components/ReferralSection'
 import QuestsPanel from '../components/QuestsPanel'
 import EmailVerifySection from '../components/EmailVerifySection'
 import UpgradeSection from '../components/UpgradeSection'
+import PricePromoBanner from '../components/PricePromoBanner'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useToast } from '../context/ToastProvider'
@@ -329,6 +330,9 @@ export default function Profile() {
             </div>
           )}
         </section>
+
+        {/* Băng khuyến mãi % (nếu đang chạy) — ngay trên phần nâng cấp */}
+        <PricePromoBanner isA={isA} />
 
         {/* Nâng cấp Pro/VIP qua SePay — ẩn nếu đã VIP (xem UpgradeSection.tsx) */}
         <UpgradeSection isA={isA} currentPlan={user.plan} />
