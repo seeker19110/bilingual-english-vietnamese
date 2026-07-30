@@ -120,6 +120,21 @@ describe('/api/payment-webhook', () => {
     expect(params).toEqual(['payment-1', '999'])
   })
 
+  it('đủ tiền, đơn pending → coi như đã xác thực email (set email_verified nếu đang null)', async () => {
+    query.mockResolvedValueOnce({ rows: [PENDING_PAYMENT] }).mockResolvedValueOnce({
+      rowCount: 1,
+      rows: [{ user_id: 'user-1', plan: 'pro', cycle: 'month' }],
+    })
+    const resp = await handler(
+      makeRequest({ id: 999, transferType: 'in', transferAmount: 40_000, content: 'ENVI7K2M9QRT' }),
+    )
+    expect(resp.status).toBe(200)
+    const [sql, params] = query.mock.calls[2] as [string, unknown[]]
+    expect(sql).toContain('email_verified = now()')
+    expect(sql).toContain('email_verified is null')
+    expect(params).toEqual(['user-1'])
+  })
+
   it('2 webhook song song cho cùng đơn: cái thứ 2 thấy rowCount=0 → KHÔNG cấp lần 2', async () => {
     query
       .mockResolvedValueOnce({ rows: [PENDING_PAYMENT] })

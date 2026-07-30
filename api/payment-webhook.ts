@@ -112,6 +112,13 @@ export default async function handler(req: Request): Promise<Response> {
     // years > 1 CHỈ có ý nghĩa với cycle='year' (mua nhiều năm liền — xem api/checkout.ts).
     const grantDays = CYCLE_DAYS[won.cycle] * (won.cycle === 'year' ? Math.max(1, won.years) : 1)
     await grantPlanDays(won.user_id, won.plan, grantDays)
+    // Đã bỏ tiền thật ra mua gói → coi như đã xác thực email (chống email giả mạnh hơn nhiều so
+    // với mã gửi qua email, vì phải chuyển khoản ngân hàng thật). Chỉ set khi đang null để không
+    // đè lên thời điểm xác thực thật (nếu người dùng đã tự xác thực trước đó).
+    await pool.query(
+      'update public.users set email_verified = now() where id = $1 and email_verified is null',
+      [won.user_id],
+    )
     logSecurityEvent('SEPAY_PAYMENT_PAID', 'sepay', {
       paymentId: payment.id,
       userId: won.user_id,
