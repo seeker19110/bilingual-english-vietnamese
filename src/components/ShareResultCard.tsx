@@ -8,6 +8,7 @@
 
 import { Share2 } from 'lucide-react'
 import { useState } from 'react'
+import QRCode from 'qrcode'
 import { track } from '../lib/analytics'
 import { fetchReferralStats, buildReferralLink } from '../lib/referral'
 import { claimShareQuest } from '../lib/quests'
@@ -22,7 +23,7 @@ const CANVAS_H = 1080
 
 // Vẽ ảnh kết quả lên canvas. Dùng font hệ thống mặc định (không nhúng font riêng) để tránh lỗi
 // hiển thị dấu tiếng Việt trên các trình duyệt/headless khác nhau.
-function drawShareImage(
+async function drawShareImage(
   canvas: HTMLCanvasElement,
   appName: string,
   title: string,
@@ -62,7 +63,36 @@ function drawShareImage(
 
   ctx.font = '400 32px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
   ctx.fillStyle = '#94a3b8'
-  ctx.fillText(linkText.replace(/^https?:\/\//, ''), CANVAS_W / 2, CANVAS_H - 80)
+  ctx.fillText(linkText.replace(/^https?:\/\//, ''), CANVAS_W / 2, CANVAS_H - 280)
+
+  // Mã QR ở cuối ảnh — người xem ảnh (ảnh chụp màn hình, đăng mạng xã hội...) quét được luôn,
+  // không cần gõ tay link. Lỗi tạo QR (hiếm) thì bỏ qua, ảnh vẫn có link chữ ở trên là đủ dùng.
+  try {
+    const qrSize = 200
+    const pad = 12
+    const boxSize = qrSize + pad * 2
+    const boxTop = CANVAS_H - 240
+    const qrDataUrl = await QRCode.toDataURL(linkText, {
+      width: qrSize,
+      margin: 1,
+      color: { dark: '#0f172a', light: '#ffffff' },
+    })
+    const qrImg = await loadImage(qrDataUrl)
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(CANVAS_W / 2 - boxSize / 2, boxTop, boxSize, boxSize)
+    ctx.drawImage(qrImg, CANVAS_W / 2 - qrSize / 2, boxTop + pad, qrSize, qrSize)
+  } catch {
+    // Không chặn tạo ảnh nếu vẽ QR lỗi.
+  }
+}
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = reject
+    img.src = src
+  })
 }
 
 // Xuống dòng thủ công trên canvas theo maxWidth (canvas không tự wrap text).
@@ -121,7 +151,7 @@ export default function ShareResultCard({
       const linkText = stats ? buildReferralLink(stats.code) : BASE_URL
 
       const canvas = document.createElement('canvas')
-      drawShareImage(canvas, appName, title, lines, linkText)
+      await drawShareImage(canvas, appName, title, lines, linkText)
 
       const blob = await new Promise<Blob | null>((resolve) =>
         canvas.toBlob((b) => resolve(b), 'image/png'),
