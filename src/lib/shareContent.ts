@@ -63,6 +63,19 @@ export function buildChallengeShareContent(
   return { title, lines }
 }
 
+// Nội dung chia sẻ kết quả 1 bài kiểm tra/luyện nghe/chính tả trong lộ trình CEFR
+// (tab Kiểm tra · Nghe · Từ khó ở StudyTabs.tsx) — score/total là số câu đúng/tổng số câu.
+export function buildQuizShareContent(
+  score: number,
+  total: number,
+  isA: boolean,
+): { title: string; lines: string[] } {
+  const pct = total > 0 ? Math.round((score / total) * 100) : 0
+  const title = isA ? `Kết quả bài kiểm tra: ${score}/${total}` : `Quiz result: ${score}/${total}`
+  const lines = [isA ? `Đạt ${pct}%` : `Scored ${pct}%`]
+  return { title, lines }
+}
+
 // Nội dung chia sẻ tiến độ chung (streak + số từ đã học) — dùng cho nút chia sẻ ở nhiệm vụ
 // "Chia sẻ công khai" (Quests), không gắn với 1 lượt chấm điểm cụ thể nào.
 export function buildProgressShareContent(

@@ -47,6 +47,8 @@ import { shouldCelebrateWeeklyGoal, markWeeklyGoalCelebrated } from '../lib/week
 import { checkNewAchievements, achievementMessage } from '../lib/achievements'
 import { useToast } from '../context/ToastProvider'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
+import ShareResultCard from './ShareResultCard'
+import { buildQuizShareContent } from '../lib/shareContent'
 import {
   addToSRS,
   reviewWord,
@@ -1347,6 +1349,7 @@ export function QuizTab({
             </div>
           ))}
         </div>
+        <ShareResultCard {...buildQuizShareContent(score, questions.length, isA)} isA={isA} />
         <div className="flex gap-3">
           <button
             onClick={restart}
@@ -1542,6 +1545,7 @@ function MeaningPractice({
             />
           </div>
         </div>
+        <ShareResultCard {...buildQuizShareContent(score, questions.length, isA)} isA={isA} />
         <div className="flex gap-3">
           <button
             onClick={restart}
@@ -1690,6 +1694,7 @@ function DictationPractice({
             />
           </div>
         </div>
+        <ShareResultCard {...buildQuizShareContent(passedCount, items.length, isA)} isA={isA} />
         <div className="flex gap-3">
           <button
             onClick={restart}
