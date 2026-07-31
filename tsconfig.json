@@ -16,19 +16,21 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
-    // Alias CHỈ cho src/ (Vite bundle) — xem chú thích trong vite.config.ts. @core/@english
-    // tạm thời cùng trỏ vào apps/english/src/*, chỉ là gán nhãn trước khi tách packages/apps thật.
+    // Alias CHỈ cho src/ (Vite bundle) — xem chú thích trong vite.config.ts. @core/* trỏ THẬT
+    // vào packages/core-ui/ (từ PR-6); @english/* trỏ vào apps/english/src/*.
     "baseUrl": ".",
     "paths": {
-      "@core/*": ["apps/english/src/*"],
+      "@core/*": ["packages/core-ui/*"],
       "@english/*": ["apps/english/src/*"]
     }
   },
-  "include": ["apps/english/src"],
+  "include": ["apps/english/src", "packages/core-ui"],
   "exclude": [
     "apps/english/src/**/*.test.ts",
     "apps/english/src/**/*.test.tsx",
-    "apps/english/src/**/*.spec.ts"
+    "apps/english/src/**/*.spec.ts",
+    "packages/core-ui/**/*.test.ts",
+    "packages/core-ui/**/*.test.tsx"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

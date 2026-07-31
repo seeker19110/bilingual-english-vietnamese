@@ -11,7 +11,7 @@
 import { loadCurriculum, getTodayBatch } from './curriculum'
 import { getLearnedWords } from './vocab'
 import { getCachedOnboarding } from './onboarding'
-import { getAccessToken } from './authHeader'
+import { getAccessToken } from '@core/authHeader'
 import { getVoicePref } from './tts'
 import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
 import { preloadFlags } from './preloadState'

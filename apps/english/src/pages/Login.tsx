@@ -13,7 +13,7 @@ import {
 import { claimPendingReferral } from '../lib/referral'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
-import { useToast } from '../context/ToastProvider'
+import { useToast } from '@core/ToastProvider'
 import type { UiLang } from '../lib/uiLang'
 
 // Nhãn tính năng lấy từ i18n theo `key` (icon + màu cố định, chữ dịch theo ngôn ngữ)

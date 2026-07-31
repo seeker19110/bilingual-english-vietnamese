@@ -5,9 +5,9 @@
 // Shape request/response lấy đúng theo GrantSchema trong api/admin-grant-plan.ts, không đoán field.
 import { useState } from 'react'
 import { Loader2, Search, ShieldCheck } from 'lucide-react'
-import { useToast } from '@core/context/ToastProvider'
-import { getAuthHeader } from '@core/lib/authHeader'
-import type { Plan } from '@core/types'
+import { useToast } from '@core/ToastProvider'
+import { getAuthHeader } from '@core/authHeader'
+import type { Plan } from '../../../../../packages/core-billing/plan'
 
 const PLAN_OPTIONS: { key: Plan; label: string }[] = [
   { key: 'free', label: 'Free' },

@@ -2,7 +2,7 @@
 // Điểm tính Ở SERVER (api/leaderboard.ts + api/_lib/leaderboard.ts) — file này CHỈ gọi API,
 // không tự tính gì ở client (đúng nguyên tắc "không tin client", CLAUDE.md §4.2).
 
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 
 export interface LeaderboardEntry {
   nickname: string

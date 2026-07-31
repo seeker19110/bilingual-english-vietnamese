@@ -9,7 +9,7 @@
 //
 // "Bắn rồi quên" — không throw, giống challengeCloud.ts/progressSync.ts.
 
-import { getAuthHeader, getStoredToken } from './authHeader'
+import { getAuthHeader, getStoredToken } from '@core/authHeader'
 
 export type TutorFeedbackSource = 'chat' | 'speaking'
 

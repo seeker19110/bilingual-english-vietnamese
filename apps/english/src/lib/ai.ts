@@ -2,7 +2,7 @@
 // API key được giữ ở server: vite.config.ts (lúc dev) hoặc api/ai.ts (lúc deploy lên VPS).
 // Handler hỗ trợ Gemini (ưu tiên) / Groq / Anthropic — chọn dựa trên biến môi trường.
 
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 import { captureException } from './errorTracking'
 
 const MODEL = 'claude-haiku-4-5-20251001'

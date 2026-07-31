@@ -12,7 +12,7 @@ import LeagueSection from '../components/LeagueSection'
 import ShareResultCard from '../components/ShareResultCard'
 import { buildChallengeShareContent } from '../lib/shareContent'
 import { useAuth } from '../context/useAuth'
-import { useToast } from '../context/ToastProvider'
+import { useToast } from '@core/ToastProvider'
 import { useApiThrottle } from '../lib/useApiThrottle'
 import { getUsage, incrementUsage, getDirection } from '../lib/storage'
 import type { Direction } from '../types'
@@ -23,7 +23,7 @@ import { callClaude, parseJson } from '../lib/ai'
 import { speak } from '../lib/tts'
 import { haptics } from '../lib/haptics'
 import { sound } from '../lib/sound'
-import { getAuthHeader } from '../lib/authHeader'
+import { getAuthHeader } from '@core/authHeader'
 import {
   getTopicForDay,
   CHALLENGE_TOPICS_TOTAL_DAYS,

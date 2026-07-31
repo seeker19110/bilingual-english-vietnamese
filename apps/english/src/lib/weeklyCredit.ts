@@ -9,7 +9,7 @@
 // Không cache lâu (kho đổi liên tục mỗi lần dùng AI/học từ mới) — luôn hỏi lại server khi
 // vào các trang Chat/Writing/Speaking/Dashboard/Challenge để số hiển thị luôn đúng.
 
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 
 export interface WeeklyCreditInfo {
   plan: 'free' | 'pro' | 'vip'

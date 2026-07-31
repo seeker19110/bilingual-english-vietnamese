@@ -9,8 +9,8 @@
 
 import { useState } from 'react'
 import { MailCheck, Loader2 } from 'lucide-react'
-import { getAuthHeader } from '../lib/authHeader'
-import { useToast } from '../context/ToastProvider'
+import { getAuthHeader } from '@core/authHeader'
+import { useToast } from '@core/ToastProvider'
 
 // Trạng thái gửi mail từ server (xem api/_lib/mailer.ts) — quyết định thông báo hiện cho user.
 type MailStatus = 'sent' | 'rejected' | 'not_configured' | 'error' | 'quota_exceeded'

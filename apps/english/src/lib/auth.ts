@@ -1,7 +1,7 @@
 // src/lib/auth.ts — Đăng nhập/đăng ký (Giai đoạn B: gọi /api/auth tự viết, thay Supabase Auth).
 // Giữ NGUYÊN chữ ký export (register/login/loginWithGoogle/logout/getCurrentUser) như cũ để
 // AuthProvider.tsx + Login.tsx không phải sửa nơi gọi.
-import { setStoredToken, clearStoredToken, getAuthHeader } from './authHeader'
+import { setStoredToken, clearStoredToken, getAuthHeader } from '@core/authHeader'
 import type { User as AppUser, Plan } from '../types'
 
 interface AuthApiUser {

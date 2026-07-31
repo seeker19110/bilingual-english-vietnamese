@@ -30,7 +30,7 @@ import {
 import ExamQuestionCard from './ExamQuestionCard'
 import { PART_META } from '../lib/examParts'
 import { checkNewAchievements, achievementMessage } from '../lib/achievements'
-import { useToast } from '../context/ToastProvider'
+import { useToast } from '@core/ToastProvider'
 import { pushProgressAsync } from '../lib/progressSync'
 import { claimCefrExamQuest } from '../lib/quests'
 

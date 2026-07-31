@@ -2,7 +2,7 @@
 // KHÔNG await ở nơi gọi, KHÔNG block UI, nuốt lỗi mạng — đây là tracking nền, lỗi không
 // quan trọng với trải nghiệm nên không hiện toast/thông báo lỗi cho user.
 
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 
 // Whitelist khớp EVENT_TYPES ở api/analytics.ts — giữ đồng bộ khi thêm event mới.
 export type AnalyticsEvent =

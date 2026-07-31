@@ -4,7 +4,7 @@
 // (key_b64/iv_b64) cho request có Bearer token hợp lệ, gửi qua header Authorization: Bearer <token>.
 // Fallback về Web Speech API nếu /api/tts lỗi (mất mạng, server timeout, chưa đăng nhập...).
 
-import { getAccessToken } from './authHeader'
+import { getAccessToken } from '@core/authHeader'
 import { audioCacheKey, getAudioEntry, setAudioBuffer } from './audioCache'
 import type { VisemeFrame } from './viseme'
 import {

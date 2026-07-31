@@ -9,7 +9,7 @@ import {
   optOutLeague,
   type LeaderboardResponse,
 } from '../lib/leaderboardApi'
-import { useToast } from '../context/ToastProvider'
+import { useToast } from '@core/ToastProvider'
 
 const NICKNAME_MIN = 3
 const NICKNAME_MAX = 20

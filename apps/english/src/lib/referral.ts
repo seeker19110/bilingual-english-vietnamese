@@ -2,7 +2,7 @@
 // Mã mời được lưu tạm ở localStorage lúc người dùng vào landing page qua link ?ref=MÃ
 // (src/pages/Landing.tsx), rồi gửi lên server NGAY SAU KHI đăng ký thành công.
 
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 import { getDeviceHash } from './deviceId'
 
 // Cùng key với src/pages/Landing.tsx — đổi ở đây phải đổi cả bên đó.

@@ -16,7 +16,7 @@ import {
   type PlanPrices,
   type CheckoutResult,
 } from '../lib/payment'
-import { useToast } from '../context/ToastProvider'
+import { useToast } from '@core/ToastProvider'
 import { getPlanMarketing } from '../lib/planMarketing'
 
 const CYCLE_LABEL: Record<PayableCycle, { vi: string; en: string }> = {
