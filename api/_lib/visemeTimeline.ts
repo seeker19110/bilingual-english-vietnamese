@@ -9,7 +9,7 @@
 // timestamp mức phoneme, thứ không provider TTS nào hiện trả về.
 
 import { wordVisemesFromEspeak, type Viseme } from './espeakPhonemes.js'
-import type { ElevenAlignment } from '../packages/core-ai/elevenLabsTts.js'
+import type { ElevenAlignment } from '../../packages/core-ai/elevenLabsTts.js'
 
 export type { Viseme }
 

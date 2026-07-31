@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { wordSpansFromAlignment, framesFromWordSpans, type Viseme } from './visemeTimeline.js'
-import type { ElevenAlignment } from '../packages/core-ai/elevenLabsTts.js'
+import type { ElevenAlignment } from '../../packages/core-ai/elevenLabsTts.js'
 
 // Tiện ích dựng alignment giả: mỗi ký tự chiếm đúng `step` giây liên tiếp nhau.
 function makeAlignment(text: string, step = 0.1): ElevenAlignment {
