@@ -199,9 +199,33 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
     working tree, KHÔNG phải staged index, nên không đủ để xác nhận commit đúng.** Đã sửa bằng
     `git add` lại + `git diff --cached` xác nhận khớp working tree trước khi commit (thay vì chỉ
     tin `tsc` chạy sau).
-  - **Tiếp theo: PR-5 (tách `packages/core-billing` + migration `usage_events`/`subject_limits` +
-    đổi tiền tố SePay `DHCB`) — chạy `docs/kiem-tra-tay-thanh-toan-google-login.md` mục A ngay
-    (test đăng nhập Google thật, PR-4 vừa đụng trực tiếp) và mục B sau khi PR-5 đổi tiền tố.**
+  - **[2026-07-31] PR-5 Part A (tách `packages/core-billing`) — XONG.** 18 file di dời
+    (`checkout.ts`, `payment-webhook.ts`, `payment-status.ts`, `payment-history.ts`,
+    `plan-prices.ts`, `plan-features.ts`, `plan-marketing.ts`, `promo.ts`, `usage.ts`, `plan.ts` +
+    test đi kèm). Sửa gap sweep `vi.mock('./promo', ...)` trong `api/_lib/voiceAccess.test.ts` (mock
+    kiểu sibling-path bị sweep regex trước đó bỏ sót). 1015 test pass.
+  - **[2026-07-31] PR-5 Part B (migration `subject` cho quota + đổi tiền tố SePay) — XONG.**
+    Migration `postgres/migrations/0029_platform_subject.sql`: thêm cột `subject` (mặc định
+    `'english'`) vào `daily_usage` + `free_daily_credit`, đổi khoá chính sang
+    `(user_id, day, subject)`, cập nhật các hàm `consume_usage`/`refund_usage`/
+    `consume_usage_total`/`grant_daily_bonus_rolling`/`consume_rolling_credit`/
+    `refund_rolling_credit` nhận thêm `p_subject` (default `'english'`), thêm bảng
+    `subject_limits`. Theo ADR-0001 mục 8: mỗi môn đếm lượt riêng, hạn mức bằng nhau.
+    `packages/core-billing/usage.ts` + `api/progress.ts` truyền `DEFAULT_SUBJECT='english'` vào
+    SQL — CHƯA đổi chữ ký hàm export để tránh đụng ~15 file gọi (Toán/GĐ2 sẽ cần luồng subject
+    tường minh hơn — nợ kỹ thuật, ghi ở mục "Nợ kỹ thuật còn mở"). `api/_lib/sepay.ts`: đổi
+    `PAYMENT_CODE_PREFIX` → `'DHCB'`, thêm `ACCEPTED_PAYMENT_PREFIXES = ['DHCB', 'ENVI']` — giữ
+    `'ENVI'` VĨNH VIỄN để giao dịch/nội dung chuyển khoản cũ vẫn khớp. Nợ kỹ thuật CHƯA xử lý (chỉ
+    1 môn nên chưa ảnh hưởng hành vi thật): `api/usage-summary.ts`, `api/admin-usage-stats.ts` cần
+    lọc theo `subject` khi có môn thứ 2; UI admin bật/tắt `subject_limits.enforced` chưa xây. Xác
+    thực: `tsc --noEmit` + `tsc -p tsconfig.api.json` sạch, `npm run build` + `build:server` sạch,
+    `node --check` các file compile qua, `vitest run` 92 file/1017 test pass. Commit `6f37f38`.
+    **Việc tay còn nợ: chạy `docs/kiem-tra-tay-thanh-toan-google-login.md` mục B (đặc biệt B6/B7 —
+    test giao dịch ENVI cũ vẫn khớp + bật thêm bộ lọc DHCB trên dashboard SePay) sau khi deploy
+    thật lên VPS. Mục A (Google login) cũng nên chạy vì PR-4 vừa đụng `core-auth`.**
+  - **Tiếp theo: PR-5b (chuyển các bảng dữ liệu học tiếng Anh — `chat_sessions`,
+    `writing_submissions`, v.v. — vào schema Postgres riêng `english`, theo đặc tả GĐ1 gốc), rồi
+    PR-6 (tách `packages/core-ui`), rồi PR-7 (`apps/hub` + cấu hình Nginx đa subdomain + SSO).**
   - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
     `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
     trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback

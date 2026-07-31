@@ -153,7 +153,7 @@ describe('getQuestsStatus', () => {
       if (sql.includes('from public.quest_claims')) return Promise.resolve({ rows: [] })
       if (sql.includes('from public.free_daily_credit'))
         return Promise.resolve({ rows: [{ day: today }] })
-      if (sql.includes('from public.learning_progress'))
+      if (sql.includes('from english.learning_progress'))
         return Promise.resolve({ rows: [{ cefr_exams: { A1: { passed: true } } }] })
       return Promise.resolve({ rows: [] })
     })

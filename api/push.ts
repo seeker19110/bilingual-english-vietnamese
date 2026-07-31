@@ -138,7 +138,7 @@ export async function sendReminders(
     try {
       const since = vnDateStr(new Date(Date.now() - CHALLENGE_RECENT_WINDOW_DAYS * 86_400_000))
       const { rows: challengeRows } = await pool.query<ChallengeEntryUserRow>(
-        'select user_id from public.challenge_entries where user_id = any($1::uuid[]) and day >= $2',
+        'select user_id from english.challenge_entries where user_id = any($1::uuid[]) and day >= $2',
         [notStudiedIds, since],
       )
       for (const r of challengeRows) challengeActive.add(r.user_id)
@@ -169,7 +169,7 @@ export async function sendReminders(
           [notStudiedIds, lookbackStart, todayStr()],
         ),
         pool.query<LearningProgressRow>(
-          'select user_id, srs, weekly_goal from public.learning_progress where user_id = any($1::uuid[])',
+          'select user_id, srs, weekly_goal from english.learning_progress where user_id = any($1::uuid[])',
           [notStudiedIds],
         ),
       ])

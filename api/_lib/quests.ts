@@ -101,7 +101,7 @@ function cefrExamQuestKey(level: CefrExamLevel): string {
 async function readCefrExamsPassed(userId: string): Promise<Set<string>> {
   const pool = getPgPool()
   const { rows } = await pool.query<{ cefr_exams: Record<string, { passed?: boolean }> | null }>(
-    'select cefr_exams from public.learning_progress where user_id = $1',
+    'select cefr_exams from english.learning_progress where user_id = $1',
     [userId],
   )
   const exams = rows[0]?.cefr_exams ?? {}

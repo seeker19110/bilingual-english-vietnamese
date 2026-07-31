@@ -117,17 +117,17 @@ export default async function handler(req: Request): Promise<Response> {
     const [chat, writing, speaking, usage] = await Promise.all([
       pool.query<SessionRow>(
         `select id, user_id, situation, level, messages, created_at
-           from public.chat_sessions where user_id = $1 order by created_at desc`,
+           from english.chat_sessions where user_id = $1 order by created_at desc`,
         [auth.userId],
       ),
       pool.query<WritingRow>(
         `select id, user_id, essay_prompt, essay, feedback, submitted_at
-           from public.writing_submissions where user_id = $1 order by submitted_at desc`,
+           from english.writing_submissions where user_id = $1 order by submitted_at desc`,
         [auth.userId],
       ),
       pool.query<SessionRow>(
         `select id, user_id, situation, level, messages, created_at
-           from public.speaking_sessions where user_id = $1 order by created_at desc`,
+           from english.speaking_sessions where user_id = $1 order by created_at desc`,
         [auth.userId],
       ),
       pool.query<UsageRow>(
@@ -204,7 +204,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (body.action === 'writing') {
     const s = body.submission
     await pool.query(
-      `insert into public.writing_submissions
+      `insert into english.writing_submissions
          (id, user_id, essay_prompt, essay, feedback, submitted_at)
        values ($1, $2, $3, $4, $5, $6)
        on conflict (id) do update set

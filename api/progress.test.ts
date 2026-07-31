@@ -87,6 +87,6 @@ describe('POST /api/progress — cộng thưởng lượt khi phát hiện học
     })
     const resp = await handler(makeRequest({ learned: ['apple'] }))
     expect(resp.status).toBe(200)
-    expect(findCall('insert into public.learning_progress')).toBeTruthy()
+    expect(findCall('insert into english.learning_progress')).toBeTruthy()
   })
 })

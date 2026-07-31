@@ -64,7 +64,7 @@ export default async function handler(req: Request): Promise<Response> {
     const { rows } = await pool.query(
       `select id, user_id, day::text as day, challenge_round, challenge_day, topic_day,
               transcript, feedback, duration_sec, word_count, created_at
-         from public.challenge_entries where user_id = $1 order by day asc`,
+         from english.challenge_entries where user_id = $1 order by day asc`,
       [auth.userId],
     )
     return jsonResponse({ entries: rows }, 200, allHeaders)
@@ -83,7 +83,7 @@ export default async function handler(req: Request): Promise<Response> {
   const e = result.data
 
   await pool.query(
-    `insert into public.challenge_entries
+    `insert into english.challenge_entries
        (user_id, day, challenge_round, challenge_day, topic_day, transcript, feedback,
         duration_sec, word_count)
      values ($1, $2::date, $3, $4, $5, $6, $7::jsonb, $8, $9)

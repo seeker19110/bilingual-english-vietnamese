@@ -82,7 +82,7 @@ async function computeRankedEntries(weekStart: string, weekEnd: string): Promise
   let challengeRows: ChallengeRow[] = []
   try {
     const res = await pool.query<ChallengeRow>(
-      `select user_id from public.challenge_entries
+      `select user_id from english.challenge_entries
         where user_id = any($1) and day >= $2::date and day <= $3::date`,
       [optedIds, weekStart, weekEnd],
     )

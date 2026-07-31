@@ -48,7 +48,7 @@ export default async function handler(req: Request): Promise<Response> {
   const d = result.data
 
   await getPgPool().query(
-    `insert into public.tutor_feedback (user_id, source, user_input, ai_feedback)
+    `insert into english.tutor_feedback (user_id, source, user_input, ai_feedback)
      values ($1, $2, $3, $4)`,
     [auth.userId, d.source, d.userInput, d.aiFeedback],
   )

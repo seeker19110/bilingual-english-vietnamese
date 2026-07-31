@@ -68,7 +68,7 @@ export default async function handler(req: Request): Promise<Response> {
     const { rows } = await pool.query<ProgressRow>(
       `select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams,
               placement, weekly_goal, achievements
-         from public.learning_progress where user_id = $1`,
+         from english.learning_progress where user_id = $1`,
       [auth.userId],
     )
     const row = rows[0]
@@ -120,7 +120,7 @@ export default async function handler(req: Request): Promise<Response> {
     cefr_dialogues: string[]
   }>(
     `select learned, hard, cefr_grammar, cefr_dialogues
-       from public.learning_progress where user_id = $1`,
+       from english.learning_progress where user_id = $1`,
     [auth.userId],
   )
   const before = beforeRows[0]
@@ -146,7 +146,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   await pool.query(
-    `insert into public.learning_progress
+    `insert into english.learning_progress
        (user_id, learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked,
         cefr_exams, placement, weekly_goal, achievements, updated_at)
      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, now())
