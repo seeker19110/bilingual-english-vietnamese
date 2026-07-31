@@ -122,7 +122,25 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
     **10 file** có import sâu ≥2 cấp trong `src/` (nhỏ hơn nhiều so với ước lượng ban đầu do cấu
     trúc `src/` khá phẳng) — làm trực tiếp thay vì giao subagent (không đáng chi phí điều phối).
     Build + `build:server` + typecheck + lint + 947 unit test đều xanh, `git diff` chỉ có dòng
-    import. **Tiếp theo: PR-2 (bật npm workspaces, dời `src/`+`api/` vào `apps/english/`).**
+    import.
+  - **[2026-07-31] PR-2 (GĐ1, bật npm workspaces + dời `src/` vào `apps/english/src/`) — XONG.**
+    Chỉ dời `src/` (224 file, `git mv` giữ lịch sử) — **`api/` KHÔNG dời** ở bước này (đợi
+    PR-3/4/5 tách thẳng vào `packages/core-*` qua workspace thật). `package.json` thêm
+    `"workspaces": ["packages/*", "apps/*"]`. Sửa đường dẫn: `index.html`, `vite.config.ts`
+    (alias trỏ `apps/english/src`), `tsconfig.json`, `vitest.config.ts`, `tailwind.config.js`.
+    **Phát hiện ngoài phạm vi đặc tả ban đầu:** 19 file trong `scripts/` (data-gen tooling:
+    dictionary/lessons/curriculum/cefr/prompts…) import trực tiếp từ `src/` — đặc tả gốc chỉ
+    liệt kê `vite.config.ts`/`tsconfig*`/`vitest.config.ts`/`playwright.config.ts`/`size-limit`/
+    `gen-data-manifest.mjs`, thiếu cụm này. Đã sửa cả 19 file, xác nhận bằng typecheck
+    (`tsconfig.api.json` bao `scripts/`). **Phát hiện thứ hai:** `.lintstagedrc.json` pattern
+    `{src,api}/**/*.{ts,tsx}` khớp 0 file sau khi dời — lint-staged **âm thầm ngừng lint/format**
+    phần lớn codebase mỗi lần commit (khớp 0 file không phải lỗi, không ai biết trừ khi để ý kỹ
+    log `[SKIPPED]`). Đã sửa thành `{apps/english/src,api}/**/*.{ts,tsx}`, xác minh bằng
+    `micromatch` + `npx lint-staged --debug`.
+    **Nghiệm thu:** `npm ci` sạch từ đầu · tsc (3 project) + eslint sạch · build + `build:server`
+    - 947 unit test xanh · dev server khởi động thật, `/apps/english/src/main.tsx` trả về HTTP 200
+      (xác nhận alias hoạt động thật, không chỉ qua typecheck).
+      **Tiếp theo: PR-3 (tách `packages/core-db` + `core-ai`, ít ràng buộc nhất).**
   - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
     `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
     trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback
