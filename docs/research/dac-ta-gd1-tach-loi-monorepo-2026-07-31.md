@@ -301,7 +301,39 @@ create view public.chat_sessions       as select * from english.chat_sessions;
 
 ### PR-7 — `apps/hub` + Nginx đa subdomain + SSO
 
-1. `apps/hub`: trang giới thiệu, đăng nhập chung, thẻ điều hướng sang từng môn, bảng giá.
+**7.1. Nội dung trang chủ hub (chốt 2026-07-31)**
+
+Bố cục một trang, từ trên xuống:
+
+1. **Mở đầu — mục tiêu tổng thể dự án.** "Đồng hành cùng bạn" là gì, vì sao làm (§1 bản kế hoạch),
+   không phải quảng cáo một app cụ thể. Ngắn, 1 màn hình đầu.
+2. **Hoạt động của dự án nói chung.** Tổng số người học, tổng số buổi học/lượt học đã thực hiện
+   (tổng hợp qua mọi môn — số thật, đọc từ `core`, không bịa), các mốc/tin tức chung (ra mắt môn mới,
+   thay đổi lớn). Đây là chỗ trả lời câu 3 đã thêm ở buổi trước: "cross-sell" giữa các môn.
+3. **Tab riêng cho từng môn** (không phải cuộn dài một trang) — mỗi tab: mô tả ngắn môn đó, hoạt
+   động riêng của môn (số người học, tính năng nổi bật, ví dụ một bài học/câu hỏi mẫu), nút
+   "Học ngay" → điều hướng sang subdomain tương ứng. Tab tiếng Anh dùng ngay dữ liệu thật đang có;
+   tab Toán/Lý/Hoá hiện trạng thái "sắp ra mắt" cho tới khi GĐ2/3 xong — **không dựng tab rỗng vô
+   nghĩa, phải có nội dung thật dù môn chưa mở**.
+4. Bảng giá chung (một gói dùng mọi môn — đúng nguyên tắc ở §1) + nút đăng nhập/đăng ký.
+
+**7.2. Chọn môn lần đầu → hỏi y như app tiếng Anh đang làm (chốt 2026-07-31)**
+
+Khi người dùng bấm "Học ngay" ở một tab lần đầu tiên (chưa có hồ sơ onboarding cho môn đó), hub dẫn
+qua **đúng luồng hỏi đang có ở `src/pages/Onboarding.tsx`** của môn tiếng Anh trước khi vào app của
+môn: trình độ (`level`), mục tiêu học (`goal`), số phút học mỗi ngày (`dailyMinutes`), nhóm tuổi
+(`ageGroup`). Lưu qua `core-auth`/`core-billing` theo `(user_id, subject)` — **không dùng chung một
+bản ghi onboarding cho mọi môn**, vì trình độ tiếng Anh và trình độ Toán là hai chuyện khác nhau.
+
+- Bảng: `onboarding_profiles(user_id, subject, level, goal, daily_minutes, age_group, created_at)`
+  trong schema `core` (một bảng, phân biệt bằng cột `subject` — không tạo bảng riêng theo môn, vì
+  cấu trúc dữ liệu là chung, chỉ có tập giá trị `level` khả dĩ khác nhau theo môn tuỳ chọn UI).
+- Môn thứ hai trở đi hỏi lại **từ đầu** khi người dùng vào lần đầu, không suy ra từ môn đã học —
+  trình độ tiếng Anh không nói lên được gì về trình độ Toán của một người.
+- App của môn (ví dụ `en-vi.`) đọc `onboarding_profiles` lọc theo `subject` của chính nó, thay vì
+  bảng/khoá cũ dùng chung — đây là điểm chạm cần sửa khi tách `packages/core-auth`.
+
+1. `apps/hub`: trang giới thiệu theo §7.1, luồng hỏi lần đầu theo §7.2, đăng nhập chung, bảng giá.
 2. `server.ts`: thay đường dẫn cứng `dist` (chỗ `express.static` và `res.sendFile`) bằng bảng tra
    theo `Host` → `apps/<app>/dist`; không khớp → hub. **`/api/*` xử lý trước, không đụng bảng này.**
 3. `nginx/`: thêm `server` block cho apex + `math.` (dựng sẵn, trỏ tạm về hub);
@@ -310,7 +342,9 @@ create view public.chat_sessions       as select * from english.chat_sessions;
 5. Cập nhật CSP (`server.ts`) và `VITE_SITE_URL` cho hub.
 
 - **Nghiệm thu:** đăng nhập ở hub → mở `en-vi.` **không phải đăng nhập lại**; đăng xuất ở một
-  subdomain thì mọi subdomain cùng mất phiên; SSL hợp lệ trên cả 3 tên miền.
+  subdomain thì mọi subdomain cùng mất phiên; SSL hợp lệ trên cả 3 tên miền; bấm "Học ngay" lần đầu
+  ở một môn → hiện đúng luồng hỏi onboarding của môn đó, hoàn tất → vào thẳng app, lần sau bấm lại
+  không hỏi nữa; số liệu "hoạt động dự án" trên hub khớp số liệu thật trong DB.
 
 ---
 
@@ -353,4 +387,25 @@ Nhớ `npm run build` (gồm `build:server`) **trước mỗi** `pm2 reload`.
 - [ ] `usage_events` chạy thật ≥ 2 tuần, số liệu khớp `daily_usage`
 - [ ] Thanh toán bằng nội dung `DHCB…` chạy thật; một giao dịch `ENVI…` cũ vẫn đối chiếu đúng
 - [ ] Bảng dữ liệu học nằm hết trong schema `english`; `core` không còn bảng nào thuộc về môn
+- [ ] Trang chủ hub đúng bố cục §7.1 (mục tiêu chung → hoạt động dự án → tab từng môn → giá);
+      onboarding lần đầu theo môn hoạt động đúng §7.2
 - [ ] `PROGRESS.md` cập nhật, ADR-0001 chuyển sang "Đã thi hành"
+
+---
+
+## 7. Ghi nhận nhưng CHƯA đưa vào GĐ1 (đúng phạm vi, để dành GĐ sau)
+
+Các đề xuất dưới đây hợp lý nhưng không thuộc phạm vi "refactor thuần" của GĐ1 — đưa vào đây để
+không quên, làm ở GĐ2 trở đi hoặc một PR bổ sung riêng, có cổng duyệt riêng, không trộn vào 8 PR
+tách lõi để tránh phình phạm vi (đúng tinh thần "mỗi PR một thay đổi logic" ở CLAUDE.md §11).
+
+- **Bảng tiến độ đa môn ở hub** — trang tổng quan hiển thị streak/thời gian học cộng gộp mọi môn
+  của một người dùng, khác với `/progress` hiện tại (chỉ của tiếng Anh). Cần API tổng hợp đọc
+  `usage_events`/`onboarding_profiles` qua mọi `subject`. Làm sau khi có ít nhất 2 môn thật để tránh
+  thiết kế UI dựa trên phỏng đoán.
+- **Referral xuyên môn** — giới thiệu bạn học Toán có tính thành lượt thưởng cho tiếng Anh không?
+  Cần chốt cùng logic hạn mức (§2.4) vì bản chất là một dạng cộng lượt. Xem lại `src/lib/referral.ts`
+  hiện có khi tới lúc.
+- **Nội dung/pipeline soạn bài Toán-Lý-Hoá** (sinh đề theo tham số, gắn nhãn lớp/chương theo GDPT
+  2018, kiểu `scripts/gen-*`/`scripts/tag-cefr-levels.ts` hiện có cho tiếng Anh) — thuộc GĐ2, đã ghi
+  trong bản kế hoạch tổng (`ke-hoach-nen-tang-…md` §4 GĐ2).

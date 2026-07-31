@@ -122,10 +122,21 @@ Một Postgres, **một schema `core`** (users, plans, payments, usage, streak) 
 1. Chuyển repo sang npm workspaces, **app tiếng Anh chạy y hệt như cũ** (không đổi hành vi — đây là refactor thuần, phải có E2E xanh trước & sau).
 2. Tách `packages/core-auth`, `core-billing`, `core-ai`, `core-ui` (theme + component chung).
 3. Migration `(subject, mode)` cho `daily_usage`/`plan_features`; thêm cột `subject` mặc định `'english'` (backfill an toàn, rollback được).
-4. Dựng `apps/hub` tại `donghanhcungban.com`: giới thiệu, đăng nhập chung, thẻ điều hướng sang từng môn, trang giá chung.
+4. Dựng `apps/hub` tại `donghanhcungban.com` (chốt 2026-07-31, chi tiết ở
+   `dac-ta-gd1-tach-loi-monorepo-2026-07-31.md` §7.1–7.2): một trang từ trên xuống — mục tiêu tổng
+   thể dự án → hoạt động chung của dự án (số liệu thật, cộng gộp mọi môn) → **tab riêng cho từng
+   môn** (mô tả + hoạt động riêng + nút "Học ngay"; môn chưa mở hiện "sắp ra mắt", không để tab
+   rỗng) → bảng giá chung.
 5. SSO xuyên subdomain (cookie `.donghanhcungban.com` hoặc token hand-off qua URL một lần).
+6. Onboarding lần đầu theo môn: bấm "Học ngay" ở một môn lần đầu → hỏi trình độ/mục tiêu/phút học
+   mỗi ngày/nhóm tuổi **giống hệt luồng đang có ở app tiếng Anh** (`Onboarding.tsx`), lưu riêng theo
+   `(user_id, subject)` — không suy ra trình độ môn này từ môn khác.
 
-- **Cổng ra:** đăng nhập ở hub → vào thẳng en-vi không phải login lại; app tiếng Anh không hồi quy.
+- **Cổng ra:** đăng nhập ở hub → vào thẳng en-vi không phải login lại; app tiếng Anh không hồi quy;
+  trang hub đúng bố cục trên; bấm "Học ngay" lần đầu ở một môn ra đúng luồng hỏi, lần sau không hỏi lại.
+
+> Ghi nhận nhưng chưa làm ở GĐ1 (để dành GĐ sau, tránh phình phạm vi refactor thuần): bảng tiến độ
+> đa môn ở hub (streak/thời gian học cộng gộp), referral xuyên môn. Chi tiết lý do ở đặc tả §7.
 
 ### GĐ 2 — Môn thứ hai: TOÁN (6–8 tuần) — bài kiểm chứng cho toàn kiến trúc
 
