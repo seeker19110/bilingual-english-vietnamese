@@ -254,9 +254,37 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
     Xác thực: tsc sạch (frontend+api+e2e), build+build:server sạch (`dist-server` không chứa
     `core-ui`), lint 0 cảnh báo, vitest 92 file/1017 test pass, `npm run dev` khởi động + serve
     200 OK. Commit `d355f98`.
-  - **Tiếp theo: PR-7 (`apps/hub` + cấu hình Nginx đa subdomain + SSO) — phần code (trang hub,
-    scaffold app mới) làm được trong sandbox; phần hạ tầng thật (DNS, Nginx, SSO cookie domain
-    chung, deploy VPS) cần làm tay ngoài phiên này.**
+  - **[2026-07-31] PR-7 (scaffold `apps/hub` + server.ts phục vụ đa app theo Host) — XONG,
+    phạm vi ĐÃ THU HẸP so với đặc tả gốc.** Hỏi người dùng chọn mức độ (chỉ scaffold / làm trọn
+    SSO+onboarding_profiles / dừng hẳn) — không có phản hồi, chọn nhánh rủi ro thấp nhất theo
+    quy tắc mặc định an toàn. **Đã làm:** `apps/hub/` — Vite app độc lập (workspace mới, không
+    dùng chung `vite.config.ts` gốc), trang 1 màn hình đúng §7.1: mở đầu → hoạt động chung (số
+    liệu THẬT qua `/api/hub-stats` mới, không bịa) → tab từng môn (tiếng Anh dùng dữ liệu thật,
+    Toán/Lý/Hoá "sắp ra mắt" có nội dung thật, không tab rỗng) → bảng giá chung + nút đăng
+    nhập/đăng ký. `api/hub-stats.ts`: endpoint công khai, cache 5 phút trong process, tổng
+    `public.users` + tổng `english.chat_sessions/writing_submissions/speaking_sessions` — không
+    PII, 3 test. `server.ts`: thay đường dẫn tĩnh cứng `dist/` bằng bảng chọn theo
+    `req.hostname` (`EN_VI_HOSTNAME`, mặc định đúng domain production hiện tại nên KHÔNG đổi
+    hành vi nếu không đặt biến môi trường mới) — smoke test bằng `node dist-server/server.js`
+    thật + `curl -H "Host: ..."` khác nhau, xác nhận đúng 2 app khác nhau được phục vụ.
+    **CHƯA làm** (đụng phiên đăng nhập thật đang chạy, để dành PR sau khi có môn thứ hai):
+    cookie domain chung `.donghanhcungban.com` (SSO thật giữa hub và subdomain), bảng
+    `onboarding_profiles(user_id, subject, ...)` hỏi trình độ riêng theo môn. Nút "Học
+    ngay"/"Đăng nhập" ở hub tạm điều hướng thẳng sang `en-vi.donghanhcungban.com`, người dùng
+    đăng nhập lại ở đó. Theme hub đơn giản hoá (Tailwind zinc/emerald mặc định), chưa nối vào
+    hệ token `--a-*` của app tiếng Anh (ghi nợ kỹ thuật trong `apps/hub/tailwind.config.js`).
+    Hạ tầng thật CHƯA làm — `docs/nginx-hub-apex.md` (mới) ghi rõ việc tay cần làm: trỏ DNS
+    apex/www, thêm Nginx server block, `certbot --expand`. `package.json`: `build` gộp thêm
+    `npm run build --workspace=hub`, `typecheck` gộp thêm `apps/hub/tsconfig.json`.
+    `.lintstagedrc.json`: thêm `apps/hub/src` vào glob (bài học từ PR-2 — glob thiếu khiến
+    lint/format-on-commit im lặng bỏ qua thư mục mới). Xác thực: tsc sạch (frontend+api+e2e+hub),
+    build sạch (`dist/`+`dist-server/`+`apps/hub/dist/`), lint 0 cảnh báo, vitest 93 file/1022
+    test pass. Commit `bbab7e5`.
+  - **GĐ1 (tách lõi monorepo) coi như HOÀN TẤT ở mức phạm vi đã thu hẹp qua PR-1..7** (còn nợ kỹ
+    thuật đã liệt kê rõ ở từng mục trên: PR-5b view compat chưa xoá, PR-6 theme/LangProvider
+    chưa tách, PR-7 SSO/onboarding_profiles/hạ tầng Nginx thật chưa làm). Việc tiếp theo hợp lý:
+    chờ môn Toán (GĐ2) THẬT SỰ bắt đầu rồi mới quay lại xử lý các nợ kỹ thuật này theo nhu cầu
+    thật, tránh trừu tượng hoá sớm dựa trên phỏng đoán (nguyên tắc đã chốt trong đặc tả GĐ1).
   - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
     `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
     trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback
