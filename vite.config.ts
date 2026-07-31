@@ -1,8 +1,20 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from 'vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
 import compress from 'vite-plugin-compression'
 import type { IncomingMessage, ServerResponse } from 'node:http'
+
+// Alias CHỈ áp dụng cho src/ (frontend, do Vite bundle) — KHÔNG áp dụng cho api/.
+// api/ được `tsc -p tsconfig.server.json` biên dịch thành JS thật rồi chạy trực tiếp bằng
+// `node dist-server/server.js`, không qua bundler nào cả — tsc không tự đổi alias thành đường
+// dẫn thật lúc build, nên alias trong api/ sẽ crash production khi Node không tìm thấy module.
+// Xem docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md PR-1 để biết lý do đầy đủ.
+//
+// @core/* và @english/* TẠM THỜI cùng trỏ vào src/ (chưa tách packages/apps thật) — mục đích
+// duy nhất lúc này là GÁN NHÃN đúng nơi mỗi file rồi đây sẽ chuyển tới, để khi thật sự tách
+// (PR-6 trở đi) chỉ cần đổi 2 dòng target dưới đây thay vì sửa lại từng câu import.
+const srcDir = fileURLToPath(new URL('./src', import.meta.url))
 
 export default defineConfig(({ mode }) => {
   // Đọc các biến môi trường server-only trực tiếp từ file .env (Node) —
@@ -30,6 +42,12 @@ export default defineConfig(({ mode }) => {
   // /api/agent giờ do dev middleware gọi thẳng handler api/ai.ts (xem API_ROUTES bên dưới)
   // — không proxy thẳng tới Anthropic nữa, để handler tự chọn nhà cung cấp (Gemini/Groq/Anthropic).
   return {
+    resolve: {
+      alias: {
+        '@core': srcDir,
+        '@english': srcDir,
+      },
+    },
     plugins: [
       react(),
       apiEdgeDevMiddleware(),

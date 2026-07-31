@@ -15,7 +15,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    // Alias CHỈ cho src/ (Vite bundle) — xem chú thích trong vite.config.ts. @core/@english
+    // tạm thời cùng trỏ vào src/*, chỉ là gán nhãn trước khi tách packages/apps thật.
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": ["src/*"],
+      "@english/*": ["src/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/**/*.spec.ts"],
