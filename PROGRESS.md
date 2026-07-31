@@ -156,8 +156,28 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
       947 unit test xanh · `node --check dist-server/server.js` + import trực tiếp cả 2 package đã
       biên dịch (xác nhận resolve runtime thật) · dev server thật: `OPTIONS /api/tts`↦204,
       `POST /api/agent` không auth ↦ 401 đúng logic (KHÔNG phải 500 "cannot find module").
-      **Tiếp theo: PR-4 (tách `packages/core-auth`) ⚠️ PR nhạy cảm nhất — chạy
-      `docs/kiem-tra-tay-thanh-toan-google-login.md` mục A trước khi deploy.**
+  - **[2026-07-31] PR-4 (GĐ1, tách `packages/core-auth`) — XONG. ⚠️ PR nhạy cảm nhất.** 12 file
+    dời (giữ lịch sử): `auth.ts` (**route handler thật**, mounted `/api/auth`) + `authService`,
+    `adminAuth`, `security` (**34 file phụ thuộc — blast radius lớn nhất từ đầu GĐ1**),
+    `emailVerification`, `changeEmail` + 6 file test.
+    **Bài học quan trọng cho PR-5 trở đi:** các file đã sửa đường dẫn liên-package ở PR-3 (khi
+    còn ở `api/_lib/`, trỏ `core-db` bằng `../../packages/core-db/...`) giờ CHÍNH BẢN THÂN CŨNG
+    dời sang `packages/core-auth/` — độ sâu tới `packages/core-db` đổi (từ xuyên qua `api/` thành
+    anh em cùng cấp `packages/`). Phát hiện 9 chỗ `../../packages/` sai, phải sửa thành
+    `../core-db/`. **Mỗi lần một package tiếp tục dời tiếp, PHẢI rà lại toàn bộ path liên-package
+    của nó, không chỉ path trỏ ra `api/`.** Sửa import ở ~33 file `api/*.ts` + 2 `api/_lib/*.ts` +
+    3 `packages/core-ai/*.ts` (vì `ai`/`stt`/`tts` đều cần `security.ts`) + hàng loạt `vi.mock()`
+    trong test (phải khớp CHÍNH XÁC specifier, không chỉ sửa import thật) + `server.ts` (route
+    `/api/auth` + `warnIfClusterWithoutRedis`) + `vite.config.ts` (`API_ROUTES`).
+    **Nghiệm thu:** tsc (3 project) + eslint sạch **ngay lần đầu chạy** (nhờ rà kỹ trước, không
+    phải sửa-chạy-sửa lặp lại) · build + `build:server` + 947 unit test xanh · `node --check` +
+    import trực tiếp cả 6 module core-auth đã biên dịch · dev server thật: `OPTIONS /api/auth`↦204,
+    `GET ?action=me` không token↦401, `POST register` thiếu field↦400 Zod, `POST google` idToken
+    rác chạy sâu tới `verifyGoogleIdToken` thật (báo thiếu `GOOGLE_CLIENT_ID` trong sandbox — đúng
+    hành vi, không phải lỗi module).
+    **Tiếp theo: PR-5 (tách `packages/core-billing` + migration `usage_events`/`subject_limits` +
+    đổi tiền tố SePay `DHCB`) — chạy `docs/kiem-tra-tay-thanh-toan-google-login.md` mục A ngay
+    (test đăng nhập Google thật, PR-4 vừa đụng trực tiếp) và mục B sau khi PR-5 đổi tiền tố.**
   - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
     `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
     trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback
