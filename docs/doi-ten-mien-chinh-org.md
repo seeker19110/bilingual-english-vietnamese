@@ -10,13 +10,14 @@
 >
 > **Cấu hình Nginx thật nằm ở 2 file** (không phải file mẫu `nginx/en-vi.conf`/`docs/nginx-hub-apex.md`
 > trong repo — xem mục "Không nằm trong phạm vi này" cuối bài):
+>
 > - `/etc/nginx/sites-available/default`: 1 block HTTPS chung phục vụ `www.donghanhcungban.org` +
 >   `en-vi.donghanhcungban.org` (proxy Express, chọn app theo `Host` qua `EN_VI_HOSTNAME`), và 1
 >   block riêng chỉ `return 301` cho 3 domain không chuẩn (`donghanhcungban.com`,
 >   `www.donghanhcungban.com`, `donghanhcungban.org` apex) sang `www.donghanhcungban.org`.
 > - `/etc/nginx/sites-available/en-vi`: trước là file phục vụ thật `en-vi.donghanhcungban.com`
 >   (bản gốc trước khi có `.org`, khớp mẫu `nginx/en-vi.conf`) — nay đã đổi thành `return 301
->   https://en-vi.donghanhcungban.org$request_uri;` (giữ path khi redirect, không redirect về
+https://en-vi.donghanhcungban.org$request_uri;` (giữ path khi redirect, không redirect về
 >   trang chủ). Certbot vẫn quản cert của domain này qua `/etc/letsencrypt/live/en-vi.donghanhcungban.com/`.
 
 > **Quyết định 2026-07-31:** tạm hoãn thêm domain `.org` vào Facebook Developer / Apple Developer
