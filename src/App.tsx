@@ -27,6 +27,8 @@ const Home = lazyWithRetry(() => import('./pages/Home'))
 const Chat = lazyWithRetry(() => import('./pages/Chat'))
 const Writing = lazyWithRetry(() => import('./pages/Writing'))
 const Speaking = lazyWithRetry(() => import('./pages/Speaking'))
+// Trang "Luyện tập" gộp — hub điều hướng 4 kỹ năng, dùng lại curriculum + listening.
+const Practice = lazyWithRetry(() => import('./pages/Practice'))
 const CommonPhrases = lazyWithRetry(() => import('./pages/CommonPhrases'))
 const History = lazyWithRetry(() => import('./pages/History'))
 const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'))
@@ -227,6 +229,14 @@ export default function App() {
                           <FeatureGate featureKey="speaking">
                             <Speaking />
                           </FeatureGate>
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path="/practice"
+                      element={
+                        <RequireAuth>
+                          <Practice />
                         </RequireAuth>
                       }
                     />
