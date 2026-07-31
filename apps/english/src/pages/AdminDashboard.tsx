@@ -4,11 +4,9 @@ import {
   ShieldCheck,
   BarChart3,
   Activity,
-  Crown,
   ToggleRight,
   FileText,
-  Percent,
-  Users,
+  ChevronDown,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -22,108 +20,120 @@ import AdminPricePromoPanel from '../components/admin/AdminPricePromoPanel'
 import AdminAnalyticsPanel from '../components/admin/AdminAnalyticsPanel'
 import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 
-// Trang khung tổng quản trị (/admin-s) — gom các mục quản trị vào 1 nơi, điều hướng bằng tab
-// (lưu ở query string ?tab=... để bookmark/redirect được, vd /admin-settings cũ → /admin-s?tab=limits).
-// Quyền admin do SERVER tự kiểm (ADMIN_EMAILS trong .env, xem api/_lib/adminAuth.ts) — client
-// không biết trước ai là admin, chỉ dựa vào response 403 của từng tab. Mỗi tab tự gọi API
-// riêng và tự xử lý 403/tải/lỗi — trang này chỉ là khung điều hướng.
+// Trang khung tổng quản trị (/admin-s) — gom các mục quản trị vào 1 nơi, mỗi mục là 1
+// accordion (component lật mở/đóng được) thay vì tab + menu bên cạnh như trước. Mục đang mở
+// lưu ở query string ?tab=... để bookmark/redirect được (vd /admin-settings cũ →
+// /admin-s?tab=limits). Quyền admin do SERVER tự kiểm (ADMIN_EMAILS trong .env, xem
+// api/_lib/adminAuth.ts) — client không biết trước ai là admin, chỉ dựa vào response 403 của
+// từng mục. Mỗi mục tự gọi API riêng và tự xử lý 403/tải/lỗi; panel chỉ MOUNT khi đang mở
+// (giữ nguyên hành vi cũ: không gọi API của mục đang đóng) — đóng lại thì unmount luôn, mở
+// lại sẽ tải mới (không giữ state cũ giữa các lần mở).
 //
 // Ghi chú: tab "Chặn tên tài khoản giả danh" CHƯA thêm vì chưa thấy code liên quan
 // (vd api/_lib/reservedNames.ts) trong repo lúc viết trang này — không bịa UI cho tính năng
 // chưa tồn tại. Thêm lại khi tính năng đó có thật.
-type TabKey =
-  | 'usage'
-  | 'users'
-  | 'limits'
-  | 'plan-features'
-  | 'plan-marketing'
-  | 'price-promo'
-  | 'grant-plan'
-  | 'vip-whitelist'
-  | 'analytics'
+type TabKey = 'usage' | 'limits' | 'plan-features' | 'plan-marketing' | 'grant-plan' | 'analytics'
 
 const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   // "Sử dụng & chi phí" để đầu tiên và là tab mặc định — đây là màn cần nhìn mỗi ngày để
   // quyết định chỉnh hạn mức/giá, các tab còn lại chỉ mở khi cần thao tác cụ thể.
   { key: 'usage', label: 'Sử dụng & chi phí', icon: Activity },
-  { key: 'users', label: 'Người dùng', icon: Users },
+  // Gộp "Khuyến mãi giá" (AdminPricePromoPanel) vào đây — cùng nhóm "hạn mức dùng thử/giá",
+  // liên quan chặt tới nhau nên gộp 1 mục cho gọn thay vì 2 accordion tách rời.
   { key: 'limits', label: 'Hạn mức & khuyến mãi', icon: Sliders },
   { key: 'plan-features', label: 'Tính năng theo gói', icon: ToggleRight },
   { key: 'plan-marketing', label: 'Nội dung gói', icon: FileText },
-  { key: 'price-promo', label: 'Khuyến mãi giá', icon: Percent },
-  { key: 'grant-plan', label: 'Cấp gói tay', icon: ShieldCheck },
-  { key: 'vip-whitelist', label: 'Danh sách VIP', icon: Crown },
+  // Gộp "Người dùng" (AdminUsersPanel) + "Danh sách VIP" (AdminVipWhitelistPanel) vào đây —
+  // cùng nhóm xem/quản lý user cụ thể (tra cứu, cấp gói tay, whitelist VIP).
+  { key: 'grant-plan', label: 'Người dùng & cấp gói', icon: ShieldCheck },
   { key: 'analytics', label: 'Analytics', icon: BarChart3 },
 ]
 
+function AdminPanel({ tabKey }: { tabKey: TabKey }) {
+  switch (tabKey) {
+    case 'usage':
+      return <AdminUsagePanel />
+    case 'limits':
+      return (
+        <>
+          <AdminLimitsPanel />
+          <AdminPricePromoPanel />
+        </>
+      )
+    case 'plan-features':
+      return <AdminPlanFeaturesPanel />
+    case 'plan-marketing':
+      return <AdminPlanMarketingPanel />
+    case 'grant-plan':
+      return (
+        <>
+          <AdminUsersPanel />
+          <AdminGrantPlanPanel />
+          <AdminVipWhitelistPanel />
+        </>
+      )
+    case 'analytics':
+      return <AdminAnalyticsPanel />
+  }
+}
+
 export default function AdminDashboard() {
-  // Tab đọc/ghi qua query string (?tab=...) để link kiểu /admin-s?tab=limits (vd redirect từ
-  // /admin-settings cũ) mở đúng tab, và người dùng có thể chia sẻ/bookmark 1 tab cụ thể.
+  // Mục đang mở đọc/ghi qua query string (?tab=...) để link kiểu /admin-s?tab=limits (vd
+  // redirect từ /admin-settings cũ) mở đúng mục, và người dùng có thể chia sẻ/bookmark 1 mục
+  // cụ thể. null = tất cả đang đóng (bấm lại mục đang mở để đóng nó).
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
-  const tab: TabKey = TABS.some((t) => t.key === tabParam) ? (tabParam as TabKey) : 'usage'
-  const setTab = (key: TabKey) => setSearchParams({ tab: key }, { replace: true })
+  const openKey: TabKey | null = TABS.some((t) => t.key === tabParam)
+    ? (tabParam as TabKey)
+    : 'usage'
+
+  const toggle = (key: TabKey) => {
+    if (openKey === key) {
+      setSearchParams({}, { replace: true })
+    } else {
+      setSearchParams({ tab: key }, { replace: true })
+    }
+  }
 
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
+      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
         <PageHeader
           title="Quản trị hệ thống"
           subtitle="Cấu hình hạn mức, cấp gói, và các mục vận hành khác"
         />
 
-        <div className="flex flex-col md:flex-row gap-4">
-          {/* Tab ngang cuộn được trên mobile, menu dọc bên trái trên desktop. 6 tab hiện đã
-              rộng hơn 1 màn hình mobile — dải mờ bên phải (chỉ hiện trên mobile, md:hidden) gợi
-              ý còn tab cuộn tiếp, tránh người dùng tưởng chỉ có 1 tab "Sử dụng & chi phí". */}
-          <div style={{ position: 'relative' }}>
-            <nav
-              className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-1 md:pb-0 md:w-56 shrink-0"
-              aria-label="Mục quản trị"
-            >
-              {TABS.map(({ key, label, icon: Icon }) => (
+        <div className="space-y-3">
+          {TABS.map(({ key, label, icon: Icon }) => {
+            const isOpen = openKey === key
+            return (
+              <div
+                key={key}
+                className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 overflow-hidden"
+              >
                 <button
-                  key={key}
                   type="button"
-                  onClick={() => setTab(key)}
-                  aria-current={tab === key ? 'page' : undefined}
-                  className={`tap-44 shrink-0 flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium whitespace-nowrap transition ${
-                    tab === key
-                      ? 'bg-accent-500 text-white'
-                      : 'bg-zinc-900/80 border border-zinc-800/80 text-zinc-300 hover:text-white'
-                  }`}
+                  onClick={() => toggle(key)}
+                  aria-expanded={isOpen}
+                  className="tap-44 w-full flex items-center gap-3 px-4 py-3.5 text-left transition hover:bg-zinc-800/40"
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  {label}
+                  <Icon className="w-4 h-4 shrink-0 text-accent-400" />
+                  <span className="flex-1 text-sm font-semibold text-white">{label}</span>
+                  <ChevronDown
+                    className={`w-4 h-4 shrink-0 text-zinc-400 transition-transform ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
+                  />
                 </button>
-              ))}
-            </nav>
-            <div
-              aria-hidden="true"
-              className="pointer-events-none md:hidden"
-              style={{
-                position: 'absolute',
-                right: 0,
-                top: 0,
-                bottom: '0.25rem',
-                width: '2.5rem',
-                background: 'linear-gradient(to left, rgb(var(--z-950)), transparent)',
-              }}
-            />
-          </div>
-
-          <div className="flex-1 min-w-0 space-y-4">
-            {tab === 'usage' && <AdminUsagePanel />}
-            {tab === 'users' && <AdminUsersPanel />}
-            {tab === 'limits' && <AdminLimitsPanel />}
-            {tab === 'plan-features' && <AdminPlanFeaturesPanel />}
-            {tab === 'plan-marketing' && <AdminPlanMarketingPanel />}
-            {tab === 'price-promo' && <AdminPricePromoPanel />}
-            {tab === 'grant-plan' && <AdminGrantPlanPanel />}
-            {tab === 'vip-whitelist' && <AdminVipWhitelistPanel />}
-            {tab === 'analytics' && <AdminAnalyticsPanel />}
-          </div>
+                {isOpen && (
+                  <div className="px-4 pb-4 pt-1 border-t border-zinc-800/80 space-y-4">
+                    <AdminPanel tabKey={key} />
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       </main>
     </div>
