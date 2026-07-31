@@ -1,9 +1,16 @@
 # Đổi tên miền chính sang donghanhcungban.org — checklist chuẩn bị
 
-> Trạng thái: **CHƯA thực hiện, chỉ chuẩn bị.** `.com` vẫn là mặc định trong code cho tới khi
-> tất cả mục dưới đây xong. Domain `.org` đã mua sẵn nhưng **SSL, redirect URI OAuth, webhook
-> SePay đều CHƯA cập nhật** (xác nhận 2026-07-31) — đổi mặc định lúc này sẽ làm gãy đăng nhập
-> mạng xã hội và webhook thanh toán thật.
+> **Trạng thái: ĐÃ HOÀN TẤT chuyển đổi (2026-07-31).** `.org` giờ là domain mặc định — đã xác nhận
+> đăng nhập Google + thanh toán SePay (tiền tố mới `DHCB`) chạy thật trên `en-vi.donghanhcungban.org`;
+> `.com`/`www.donghanhcungban.com` đã 301 redirect sang `www.donghanhcungban.org`. Toàn bộ nội
+> dung bên dưới giữ lại làm **lịch sử/tham khảo** cho lần đổi domain tiếp theo (vd môn mới), không
+> còn là việc cần làm.
+
+> **Quyết định 2026-07-31:** tạm hoãn thêm domain `.org` vào Facebook Developer / Apple Developer
+> (Services ID) / Microsoft Azure — làm sau, không chặn việc đổi mặc định. Trong lúc đó, đăng nhập
+> Facebook/Apple/Microsoft trên `.org` sẽ báo lỗi "domain không hợp lệ" (Facebook)/`invalid_client`
+> (Apple)/`AADSTS50011` (Microsoft) cho tới khi làm — người dùng vẫn đăng nhập được bằng Google
+> hoặc email/password. Nhớ quay lại làm 3 mục này khi có thời gian (xem §1 các bước 2-4 dưới đây).
 
 ## Vì sao KHÔNG đổi mặc định ngay
 

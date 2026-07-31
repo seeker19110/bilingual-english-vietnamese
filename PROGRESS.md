@@ -83,6 +83,21 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-07-31] Đổi domain chính sang `.org` — ĐÃ HOÀN TẤT.** `en-vi.donghanhcungban.org` giờ là
+  domain mặc định (biến `SITE_URL`/`VITE_SITE_URL`/`EN_VI_HOSTNAME`/`VITE_ENGLISH_APP_URL` trên
+  VPS đã trỏ `.org`); `.com`/`www.donghanhcungban.com` 301 redirect sang `www.donghanhcungban.org`
+  (Nginx, việc tay). Đã xác nhận thật: đăng nhập Google + 1 giao dịch SePay (tiền tố mới `DHCB`)
+  chạy đúng trên `.org`. **Quyết định đi kèm:** tạm hoãn thêm domain `.org` vào Facebook Developer/
+  Apple Developer (Services ID)/Microsoft Azure — 3 nền tảng này tạm báo lỗi khi đăng nhập trên
+  `.org` cho tới khi làm sau; Google + email/password vẫn dùng bình thường. Chi tiết + lịch sử đầy
+  đủ: `docs/doi-ten-mien-chinh-org.md`. Trong lúc thi hành phát hiện + sửa 2 lỗi thật (đã merge,
+  xem PR #403/#404): (1) `apps/hub/vite.config.ts` thiếu `envDir` nên Vite đọc nhầm `.env` ở
+  `apps/hub/` thay vì gốc repo → nút "Đăng nhập"/"Học ngay" của hub luôn rơi về `.com` dù đã đặt
+  đúng `VITE_ENGLISH_APP_URL`; (2) `server.ts` (`distDirForHost`) chỉ khớp đúng 1 hostname với
+  `EN_VI_HOSTNAME` nên trong lúc chạy song song 2 domain, mọi request tới `.org` (kể cả `/login`)
+  bị phục vụ nhầm bằng `apps/hub/dist` — nay `EN_VI_HOSTNAME` nhận danh sách nhiều host phân cách
+  dấu phẩy.
+
 - **[2026-07-31] Kế hoạch nền tảng đa lĩnh vực — ĐÃ CHỐT, CHƯA THI HÀNH.** Chủ dự án muốn
   `donghanhcungban.com` thành nền tảng đồng hành đa lĩnh vực (học hành trước: Anh → Toán → Lý →
   Hoá; sau đó nuôi dạy con, nghề nghiệp). Toàn bộ quyết định kiến trúc đã chốt và ghi tại
