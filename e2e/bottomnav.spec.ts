@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import { mockLogin } from './helpers/auth'
 
-// BottomNav chỉ hiện < 640px (xem --bnav-h trong index.css) — quét ở khổ mobile.
+// BottomNav hiện ở mọi kích thước màn hình (xem --bnav-h trong index.css) — quét ở khổ mobile.
 test.use({ viewport: { width: 390, height: 844 } })
 
 async function mockClaude(page: Page) {
