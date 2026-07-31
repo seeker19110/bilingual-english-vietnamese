@@ -2,7 +2,7 @@
 
 Web app gia sư AI **hai chiều**: người Việt học tiếng Anh, hoặc người nước ngoài học tiếng Việt qua tiếng Anh. Điểm khác biệt: AI **sửa lỗi & giải thích bằng GIỌNG tiếng mẹ đẻ** của học viên (TTS hai giọng riêng), không chỉ bằng chữ.
 
-Đang chạy thật tại **https://en-vi.donghanhcungban.com**.
+Đang chạy thật tại **https://en-vi.donghanhcungban.org**.
 
 ## ✨ Tính năng
 
