@@ -4,9 +4,9 @@
 // năng khỏi danh mục.
 import { useEffect, useState } from 'react'
 import { Loader2, Plus, Trash2 } from 'lucide-react'
-import { useToast } from '../../context/ToastProvider'
-import { getAuthHeader } from '../../lib/authHeader'
-import type { Plan } from '../../types'
+import { useToast } from '@core/context/ToastProvider'
+import { getAuthHeader } from '@core/lib/authHeader'
+import type { Plan } from '@core/types'
 
 interface FeatureCatalogItem {
   key: string

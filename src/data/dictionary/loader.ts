@@ -2,7 +2,7 @@
 // và được tải bằng fetch() thay vì import.meta.glob để giảm số module Vite phải xử lý lúc build.
 // loadDictionary() tải TẤT CẢ chunk SONG SONG rồi ghép lại. Kết quả được cache.
 
-import type { DictEntry } from '../../types'
+import type { DictEntry } from '@core/types'
 
 // Đếm số chunk: script split-dictionary.mjs đặt tên chunk-000.json đến chunk-009.json (10 file).
 const CHUNK_COUNT = 10

@@ -4,7 +4,7 @@
 // không. Vì vậy mọi con số đều đi kèm ngữ cảnh so sánh (chi phí/người, tỉ lệ trả phí, lãi/lỗ).
 import { useEffect, useState } from 'react'
 import { Activity, Loader2, ShieldAlert, RefreshCw, TrendingUp, Wallet, Users } from 'lucide-react'
-import { getAuthHeader } from '../../lib/authHeader'
+import { getAuthHeader } from '@core/lib/authHeader'
 
 type Mode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
 

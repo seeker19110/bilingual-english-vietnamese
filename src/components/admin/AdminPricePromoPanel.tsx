@@ -5,8 +5,8 @@
 // mãi NÂNG HẠN MỨC cho user Free, không phải giảm GIÁ BÁN gói Pro/VIP).
 import { useEffect, useState } from 'react'
 import { ShieldAlert, Loader2, Save } from 'lucide-react'
-import { useToast } from '../../context/ToastProvider'
-import { getAuthHeader } from '../../lib/authHeader'
+import { useToast } from '@core/context/ToastProvider'
+import { getAuthHeader } from '@core/lib/authHeader'
 
 interface PricePromo {
   percent: number

@@ -4,9 +4,9 @@
 // gói" (bật/tắt TRUY CẬP) — đây thuần là NỘI DUNG QUẢNG CÁO.
 import { useEffect, useState } from 'react'
 import { Loader2, Plus, Trash2, Save } from 'lucide-react'
-import { useToast } from '../../context/ToastProvider'
-import { getAuthHeader } from '../../lib/authHeader'
-import type { Plan } from '../../types'
+import { useToast } from '@core/context/ToastProvider'
+import { getAuthHeader } from '@core/lib/authHeader'
+import type { Plan } from '@core/types'
 
 interface Bullet {
   id: number

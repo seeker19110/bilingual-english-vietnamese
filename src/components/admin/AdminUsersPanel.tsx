@@ -3,8 +3,8 @@
 // tìm theo email + phân trang. Gọi api/admin-users.ts (GET, admin-only).
 import { useEffect, useState } from 'react'
 import { Loader2, Search, Users, ShieldCheck, ShieldOff } from 'lucide-react'
-import { useToast } from '../../context/ToastProvider'
-import { getAuthHeader } from '../../lib/authHeader'
+import { useToast } from '@core/context/ToastProvider'
+import { getAuthHeader } from '@core/lib/authHeader'
 
 interface AdminUserRow {
   id: string

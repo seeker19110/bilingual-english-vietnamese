@@ -9,8 +9,8 @@
 // api/_lib/usage.ts), không đọc app_settings, nên không có gì để chỉnh ở màn này.
 import { useEffect, useState } from 'react'
 import { ShieldAlert, Loader2, Save } from 'lucide-react'
-import { useToast } from '../../context/ToastProvider'
-import { getAuthHeader } from '../../lib/authHeader'
+import { useToast } from '@core/context/ToastProvider'
+import { getAuthHeader } from '@core/lib/authHeader'
 
 interface AppSettings {
   limits: { pro: number; vip: number }
