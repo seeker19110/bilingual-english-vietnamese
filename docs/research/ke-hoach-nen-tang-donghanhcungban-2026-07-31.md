@@ -40,6 +40,41 @@
 
 **Đề xuất: C.** Lý do: bạn đang một mình + VPS 1 vCPU, nhưng số môn sẽ tăng; C cho phép thêm môn mà **không** làm rủi ro app đang có người dùng thật.
 
+#### ✅ ĐÃ CHỐT (2026-07-31): phương án C, thi hành ở **MỨC 2 — tách frontend, chung backend**
+
+Mỗi môn có subdomain riêng (`en-vi.` · `math.` · `ly.` · `hoa.`, viết thường), `donghanhcungban.com` là hub.
+Nhưng **chỉ MỘT tiến trình PM2** phục vụ tất cả, cho tới khi chạm ngưỡng nâng cấp bên dưới.
+
+| Mức | Frontend | Tiến trình PM2 | Ghi chú |
+| --- | --- | --- | --- |
+| 1 | 1 bundle, route `/toan` | 1 | Bị loại: bundle phình, sập cả nhà |
+| **2 ⭐ đang chọn** | mỗi môn 1 bundle riêng | **1** | Người dùng thấy như app riêng; RAM/CPU thấp nhất |
+| 3 | mỗi môn 1 bundle | mỗi môn 1 tiến trình + port riêng | Để dành, xem ngưỡng bên dưới |
+
+**Vì sao mức 2:** VPS hiện **1 vCPU** — chạy N tiến trình Node chỉ tổ tranh nhau 1 core và tốn N×~200MB RAM,
+chậm hơn chứ không an toàn hơn. Backend gần như đã dùng chung sẵn (auth, đếm lượt, SePay, `/api/agent`,
+`/api/tts`, `/api/stt`, cache mã hoá); tách tiến trình lúc này là nhân bản vô ích.
+
+**Điểm chạm code khi thi hành:**
+
+1. `nginx/` — thêm `server` block cho mỗi subdomain, cùng `proxy_pass http://127.0.0.1:3001`;
+   mở rộng cert Let's Encrypt đa tên (`certbot -d en-vi.… -d math.… -d donghanhcungban.com`).
+2. `server.ts` (chỗ `express.static(… 'dist')` và `res.sendFile(… 'dist/index.html')`) — thay đường dẫn
+   cứng `dist` bằng **bảng tra theo header `Host`**: `en-vi.→apps/english/dist`, `math.→apps/math/dist`,
+   apex→`apps/hub/dist`, không khớp → hub. `/api/*` giữ nguyên một bộ dùng chung.
+3. Auth SSO — cookie `domain=.donghanhcungban.com`; vì cùng tiến trình nên cùng secret, không phải
+   đồng bộ gì giữa các môn (đây là chỗ mức 2 rẻ hơn hẳn mức 3).
+4. Đếm lượt — vẫn cần migration `(subject, mode)`, độc lập với việc chọn mức.
+
+**Ngưỡng nâng lên mức 3** (chốt trước để khỏi tranh luận lại) — đạt **bất kỳ** điều nào:
+
+- một môn chiếm > 50% CPU của tiến trình chung, **hoặc**
+- cần deploy môn A mà không được phép gián đoạn môn B, **hoặc**
+- đã lên VPS nhiều core (khi đó **bắt buộc** đặt `REDIS_URL` cho rate limit dùng chung).
+
+Nâng cấp = thêm entry vào `ecosystem.config.cjs` + đổi port trong Nginx. Không phải viết lại —
+với điều kiện làm monorepo (QĐ-2) ngay từ đầu.
+
 ### QĐ-2. Repo
 
 - **C1. Monorepo** (npm workspaces): `packages/core-auth`, `core-billing`, `core-ai`, `core-ui`, `apps/english`, `apps/math`, `apps/hub`.
@@ -134,7 +169,7 @@ Khác biệt về chất: ít "luyện tập", nhiều "tư vấn + theo dõi d�
 
 ## 7. Việc tiếp theo ngay (nếu bạn duyệt)
 
-1. Bạn chốt QĐ-1/2/3 (mình đề xuất C + monorepo + schema tách).
+1. ~~QĐ-1~~ **đã chốt: C ở mức 2** (2026-07-31). Còn chờ bạn chốt **QĐ-2 (monorepo)** và **QĐ-3 (schema)**.
 2. Mình viết ADR + đặc tả chi tiết GĐ1 (danh sách file phải di chuyển, migration cụ thể, kế hoạch test hồi quy).
 3. Bắt đầu GĐ1 bước 1 (workspaces) trong 1 PR riêng, không kèm thay đổi hành vi.
 
