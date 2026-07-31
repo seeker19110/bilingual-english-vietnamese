@@ -17,14 +17,18 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     // Alias CHỈ cho src/ (Vite bundle) — xem chú thích trong vite.config.ts. @core/@english
-    // tạm thời cùng trỏ vào src/*, chỉ là gán nhãn trước khi tách packages/apps thật.
+    // tạm thời cùng trỏ vào apps/english/src/*, chỉ là gán nhãn trước khi tách packages/apps thật.
     "baseUrl": ".",
     "paths": {
-      "@core/*": ["src/*"],
-      "@english/*": ["src/*"]
+      "@core/*": ["apps/english/src/*"],
+      "@english/*": ["apps/english/src/*"]
     }
   },
-  "include": ["src"],
-  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/**/*.spec.ts"],
+  "include": ["apps/english/src"],
+  "exclude": [
+    "apps/english/src/**/*.test.ts",
+    "apps/english/src/**/*.test.tsx",
+    "apps/english/src/**/*.spec.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

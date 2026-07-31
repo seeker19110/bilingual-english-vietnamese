@@ -21,13 +21,13 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { computeForms, formValues } from '../src/lib/wordForms.ts'
+import { computeForms, formValues } from '../apps/english/src/lib/wordForms.ts'
 import {
   IRREGULAR_VERBS,
   IRREGULAR_PLURALS,
   IRREGULAR_COMPARATIVES,
-} from '../src/data/irregularForms.ts'
-import type { DictEntry } from '../src/types.ts'
+} from '../apps/english/src/data/irregularForms.ts'
+import type { DictEntry } from '../apps/english/src/types.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = process.env.DICT_DIR

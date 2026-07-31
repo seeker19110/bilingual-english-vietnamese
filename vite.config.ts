@@ -14,7 +14,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 // @core/* và @english/* TẠM THỜI cùng trỏ vào src/ (chưa tách packages/apps thật) — mục đích
 // duy nhất lúc này là GÁN NHÃN đúng nơi mỗi file rồi đây sẽ chuyển tới, để khi thật sự tách
 // (PR-6 trở đi) chỉ cần đổi 2 dòng target dưới đây thay vì sửa lại từng câu import.
-const srcDir = fileURLToPath(new URL('./src', import.meta.url))
+const srcDir = fileURLToPath(new URL('./apps/english/src', import.meta.url))
 
 export default defineConfig(({ mode }) => {
   // Đọc các biến môi trường server-only trực tiếp từ file .env (Node) —

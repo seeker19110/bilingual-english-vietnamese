@@ -11,8 +11,8 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const SRC = path.join(ROOT, 'src/data/dictionary.json')
-const OUT_DIR = path.join(ROOT, 'src/data/dictionary')
+const SRC = path.join(ROOT, 'apps/english/src/data/dictionary.json')
+const OUT_DIR = path.join(ROOT, 'apps/english/src/data/dictionary')
 
 const PER_CHUNK = 1000
 

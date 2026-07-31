@@ -9,8 +9,8 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { FORM_EXAMPLES } from '../src/data/form-examples.ts'
-import type { DictEntry, WordForms } from '../src/types.ts'
+import { FORM_EXAMPLES } from '../apps/english/src/data/form-examples.ts'
+import type { DictEntry, WordForms } from '../apps/english/src/types.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = path.join(ROOT, 'public/data/dictionary')

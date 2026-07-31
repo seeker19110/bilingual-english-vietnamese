@@ -11,7 +11,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { DictEntry } from '../src/types.ts'
+import type { DictEntry } from '../apps/english/src/types.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = path.join(ROOT, 'public/data/dictionary')

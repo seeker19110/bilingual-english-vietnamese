@@ -39,7 +39,7 @@ import {
   type Lang,
   type VoiceId,
 } from '../api/_lib/googleTts.ts'
-import { CEFR_LEVELS } from '../src/data/cefr.ts'
+import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../api/_lib/fileStorage.ts'
 import { getPgPool } from '../api/_lib/pgPool.ts'

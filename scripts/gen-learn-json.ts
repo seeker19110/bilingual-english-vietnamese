@@ -15,8 +15,8 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { CEFR_LEVELS } from '../src/data/cefr.ts'
-import { DIALOGUES } from '../src/data/dialogues.ts'
+import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
+import { DIALOGUES } from '../apps/english/src/data/dialogues.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const CEFR_OUT = path.join(ROOT, 'public/data/cefr.json')

@@ -4,7 +4,7 @@
 //
 // Tách ra đây để 2 script không lặp lại ~400 dòng danh mục chủ đề + logic gom nhóm.
 
-import type { DictEntry } from '../../src/types.ts'
+import type { DictEntry } from '../../apps/english/src/types.ts'
 
 export const wordKey = (s: string) => s.trim().toLowerCase()
 

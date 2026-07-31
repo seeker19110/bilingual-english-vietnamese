@@ -2,7 +2,7 @@ import plugin from 'tailwindcss/plugin'
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./index.html', './apps/english/src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       // Map màu zinc + white sang CSS variable để đổi theme (light/dark/dark blue)

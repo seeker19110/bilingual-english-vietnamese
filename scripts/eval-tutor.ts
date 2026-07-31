@@ -24,7 +24,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import * as path from 'node:path'
 import * as dotenv from 'dotenv'
-import { chatSystemPrompt, speakingSystemPrompt } from '../src/prompts/index.ts'
+import { chatSystemPrompt, speakingSystemPrompt } from '../apps/english/src/prompts/index.ts'
 import { callGemini } from '../api/_lib/geminiApi.ts'
 import { fetchWithTimeout } from '../api/_lib/fetchTimeout.ts'
 import {
