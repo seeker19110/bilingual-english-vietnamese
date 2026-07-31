@@ -49,6 +49,7 @@ React/TS/Tailwind/ESLint — giữ đúng luật phiên bản ở `CLAUDE.md` §
   `speaking_sessions`, `learning_progress`, `pronunciations`, …).
 - Đếm lượt tổng quát hoá từ `mode` thành **`(subject, mode)`**; hạn mức ngày vẫn là
   **kho chung toàn nền tảng**, không chia theo môn.
+  > ⚠️ Câu trên **đã bị sửa cùng ngày** — xem mục bổ sung 7 ở cuối: hạn mức chỉ áp cho tiếng Anh.
 
 ## Lý do
 
@@ -74,6 +75,7 @@ bảng nào thuộc lõi (không được sửa tuỳ tiện) so với bảng n�
 
 **Vì sao hạn mức dùng chung toàn nền tảng:** dễ hiểu với người dùng ("còn X lượt hôm nay"),
 dễ định giá, và chống lạm dụng tốt hơn N hạn mức riêng cộng lại.
+_(Đoạn này đã bị sửa cùng ngày — xem mục bổ sung 7.)_
 
 ## Các phương án đã cân nhắc
 
@@ -113,7 +115,7 @@ dễ định giá, và chống lạm dụng tốt hơn N hạn mức riêng cộ
 
 ---
 
-## Bổ sung cùng ngày 2026-07-31 (làm rõ, trước khi thi hành — không lật ngược gì ở trên)
+## Bổ sung cùng ngày 2026-07-31 (trước khi thi hành; mục 7 SỬA một phần quyết định 3)
 
 **4. Tiền tố nội dung chuyển khoản SePay: `DHCB` dùng chung toàn nền tảng**, không tách theo môn.
 Lý do: một gói cước dùng cho mọi môn, nên tiền tố theo môn là sai mô hình kinh doanh; người chuyển
@@ -134,4 +136,27 @@ với "chưa hiểu khái niệm". Một trừu tượng SRS chung sẽ hoặc q
 thắt mà sửa cho môn này thì hỏng môn kia.
 **Đánh đổi chấp nhận có chủ đích:** thuật toán lập lịch ôn sẽ tồn tại nhiều bản sao; lỗi trong công
 thức tính khoảng cách ôn phải sửa ở từng môn. Ghi nợ kỹ thuật trong `PROGRESS.md`. Xét gộp lại **chỉ
-khi** tới môn thứ ba mà cả ba bản sao vẫn giống hệt nhau — tách dựa trên bằng chứng, không phỏng đoán. 2. Thi hành GĐ1 theo từng PR nhỏ, mỗi PR một thay đổi logic, không kèm tính năng mới. 3. Nâng VPS trước khi bắt đầu GĐ2 (Toán).
+khi** tới môn thứ ba mà cả ba bản sao vẫn giống hệt nhau — tách dựa trên bằng chứng, không phỏng đoán.
+
+**7. Hạn mức lượt dùng: CHỈ áp cho tiếng Anh. Các môn khác không giới hạn.**
+Quyết định của chủ dự án, **sửa lại** phần "kho chung toàn nền tảng" ở quyết định 3.
+
+- `english` giữ nguyên xi cơ chế hiện có (cửa sổ trượt 7 ngày cho Free, hạn mức ngày cho Pro/VIP).
+- Môn mới mở ra không giới hạn — ưu tiên để người học dùng thoải mái khi môn còn mới, chưa có
+  người dùng, và cần thu hút.
+
+**Thi hành bằng cấu hình, không bằng `if` rải rác trong code:** bảng `subject_limits(subject,
+enforced)`, `english` = `true`, còn lại = `false`. `consumeUsage()` vẫn được gọi ở **mọi** môn,
+nhưng khi `enforced = false` thì chỉ ghi nhận vào `usage_events` rồi cho qua.
+
+**Rủi ro đã nêu với chủ dự án và được chấp nhận:** không hạn mức nghĩa là **chi phí AI không có
+trần** — một người dùng hoặc một script có thể gọi hàng nghìn lượt/ngày. Hai biện pháp giảm nhẹ, cả
+hai đều **không** làm phiền người dùng thật:
+
+1. **Vẫn đếm dù không chặn** — nếu không đếm thì không biết môn Toán tốn bao nhiêu cho tới lúc nhận
+   hoá đơn, và cũng không có cơ sở để chọn hạn mức hợp lý khi cần bật.
+2. **Phanh tay bật được trong vài giây** — admin đổi `enforced` sang `true` cho riêng một môn, không
+   cần deploy.
+
+Rate limit kỹ thuật chống spam theo IP/token (`api/_lib/security.ts`) **vẫn áp cho mọi môn** — đó là
+bảo vệ hạ tầng, khác với hạn mức nghiệp vụ, và không được tắt. 2. Thi hành GĐ1 theo từng PR nhỏ, mỗi PR một thay đổi logic, không kèm tính năng mới. 3. Nâng VPS trước khi bắt đầu GĐ2 (Toán).

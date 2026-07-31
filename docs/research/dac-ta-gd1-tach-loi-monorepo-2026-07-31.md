@@ -127,14 +127,48 @@ SRS chung sẽ hoặc quá loãng để dùng được, hoặc biến thành nú
 > giống hệt nhau, khi đó **mới** tách phần hàm thuần ra dùng chung — tách dựa trên bằng chứng thật,
 > không dựa trên phỏng đoán.
 
-### 2.4. Còn lại một điểm mở
+### 2.4. Hạn mức: **CHỈ áp cho tiếng Anh; môn khác không giới hạn** (chốt 2026-07-31)
+
+Sửa lại quyết định "kho chung toàn nền tảng" ở ADR-0001 §3 — xem ADR-0001 mục bổ sung 7.
+
+- `english`: giữ **nguyên xi** cơ chế hiện tại (Free dùng cửa sổ trượt 7 ngày + thưởng khi học thật;
+  Pro/VIP theo hạn mức ngày). Không đổi một dòng hành vi nào của môn Anh trong GĐ1.
+- `math`, `ly`, `hoa`, …: **không giới hạn**.
+
+**Cách thi hành — hạn mức là CẤU HÌNH THEO MÔN, không phải `if (subject === 'english')` rải trong code:**
+
+```sql
+-- Trong migration 0028, cạnh usage_events.
+create table if not exists public.subject_limits (
+  subject   text primary key,          -- 'english' | 'math' | ...
+  enforced  boolean not null default false,  -- false = không giới hạn
+  updated_at timestamptz not null default now()
+);
+insert into public.subject_limits (subject, enforced) values ('english', true)
+on conflict (subject) do nothing;
+```
+
+`consumeUsage(userId, subject, mode)` **luôn được gọi ở mọi môn** — nhưng khi `enforced = false` thì
+chỉ **ghi nhận** vào `usage_events` rồi cho qua, không chặn.
+
+Hai lý do phải ghi nhận cả khi không chặn:
+
+1. **Nhìn thấy chi phí.** Không đếm thì không biết môn Toán tốn bao nhiêu, cho tới lúc nhận hoá đơn.
+2. **Bật được phanh trong vài giây.** Nếu chi phí vọt hoặc gặp người lạm dụng, admin đổi `enforced`
+   sang `true` cho riêng môn đó — **không cần deploy**. Chưa có dữ liệu đếm thì lúc đó cũng không biết
+   nên đặt hạn mức bao nhiêu cho hợp lý.
+
+Vẫn giữ **rate limit kỹ thuật** (chống spam theo IP/token trong `api/_lib/security.ts`) cho mọi môn —
+đây là chống lạm dụng hạ tầng, khác với hạn mức nghiệp vụ, và không được tắt.
+
+### 2.5. Còn lại một điểm mở
 
 **`weeklyCredit` / `FREE_WEEKLY_BONUS_PER_DAY`** trong `api/_lib/usage.ts` — cơ chế "học thật thì
-được thêm lượt" hiện gắn chặt với `api/progress.ts` của môn Anh. Vì hạn mức là **kho chung toàn nền
-tảng** (ADR-0001) nhưng cơ chế học lại **riêng từng môn** (§2.3), phần này phải thành **hợp đồng**:
-mỗi môn tự gọi `grantDailyBonus(userId, subject)` khi xác định người dùng đã học thật, `core-billing`
-chỉ cộng lượt và chống gian lận (mỗi ngày mỗi người tối đa N lượt thưởng, tính chung mọi môn).
-Chốt chi tiết ở PR-5.
+được thêm lượt". Vì hạn mức giờ **chỉ áp cho tiếng Anh** (§2.4) nên phần thưởng lượt này cũng **chỉ
+thuộc về môn Anh**, không cần thành hợp đồng chung cho mọi môn nữa. Điểm cần chốt ở PR-5 rút gọn lại:
+`grantDailyBonus` nằm ở `core-billing` (vì nó ghi vào bảng lượt của `core`) hay ở `apps/english`
+(vì nó chỉ phục vụ môn Anh)? Đề xuất: **để ở `apps/english`**, `core-billing` chỉ mở một hàm cộng
+lượt tổng quát.
 
 ---
 
@@ -203,6 +237,8 @@ on conflict do nothing;
   thật ổn ít nhất 2 tuần. Đây là đường lùi.
 - Hàm SQL `consume_usage`/`refund_usage`/`grant_daily_bonus_rolling` thêm tham số `subject`
   (mặc định `'english'` để mã cũ gọi vẫn đúng).
+- Thêm bảng `subject_limits` và nhánh "chỉ ghi nhận, không chặn" khi `enforced = false` — xem §2.4.
+  Bảng này cần một màn quản trị nhỏ (bật/tắt `enforced` theo môn) trong trang admin sẵn có.
 - **Rollback:** `drop table usage_events` — không mất gì vì `daily_usage` còn nguyên.
 
 Cùng PR này, đổi tiền tố SePay sang **`DHCB`** theo §2.1: hằng số `PAYMENT_PREFIX = 'DHCB'` khi tạo
@@ -210,7 +246,8 @@ mã đơn, `ACCEPTED_PREFIXES = ['DHCB', 'ENVI']` khi đối chiếu webhook. **
 vào trang SePay **thêm** bộ lọc tiền tố `DHCB`, **giữ nguyên** bộ lọc `ENVI` đang có.
 
 - **Nghiệm thu:** ca biên đếm lượt có test — hết lượt · hoàn lượt khi AI lỗi · đổi ngày theo giờ VN ·
-  gói hết hạn · cửa sổ trượt 7 ngày của gói Free. Test webhook khớp đúng với **cả hai** tiền tố, kể cả
+  gói hết hạn · cửa sổ trượt 7 ngày của gói Free · **môn có `enforced = false` không bao giờ bị chặn
+  nhưng vẫn ghi đủ dòng vào `usage_events`**. Test webhook khớp đúng với **cả hai** tiền tố, kể cả
   một mã đơn `ENVI…` cũ có thật trong bảng `payments`. Chạy thật một giao dịch SePay số tiền nhỏ
   bằng nội dung `DHCB…`.
 
