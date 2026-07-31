@@ -210,6 +210,58 @@ sudo cp -a /tmp/restored/nginx/. /etc/nginx/              # khôi phục riêng 
 sudo crontab -u postgres /tmp/restored/crontab/postgres.txt  # khôi phục riêng crontab (nếu cần)
 ```
 
+### 7.5 Khôi phục TẤT CẢ cùng lúc (VPS mới dựng lại từ đầu)
+
+`scripts/restore-all-from-r2.ts` (`npm run restore:all`) gọi tuần tự cả 3 lệnh trên (không viết lại
+logic, chỉ gộp lời gọi) — dùng khi VPS hỏng hẳn, cần khôi phục nhanh thay vì gõ tay 3 lệnh riêng.
+
+### 7.6 Thực tế trên VPS: gộp cả 3 backup vào 1 script (KHÔNG theo đúng 3 dòng cron riêng ở trên)
+
+Các mục 7.2–7.4 mô tả CÁCH LÀM CƠ BẢN (mỗi backup 1 dòng cron riêng, passphrase nhúng thẳng vào
+dòng cron). Trên VPS thật (xác nhận 2026-07-31) đã gộp cả `backup:r2` + `backup:env` +
+`backup:system` vào **1 script `/root/backup-all.sh`** (chỉ `root` đọc được, `chmod 700`), gọi bởi
+**1 dòng cron duy nhất** — gọn hơn, tránh phải nhớ/nhập passphrase nhiều chỗ, và tránh chạy
+`backup:r2` 2 lần (từng bị trùng giữa cron `postgres` cũ và ý định gộp):
+
+```bash
+# /root/backup-all.sh (root-only, KHÔNG nằm trong git — chứa passphrase thật)
+#!/bin/bash
+set -e
+cd /var/www/english-tutor
+export ENV_BACKUP_PASSPHRASE="passphrase-that-cua-ban"
+npm run backup:r2
+npm run backup:env
+pm2 save
+npm run backup:system
+```
+
+Cron thật đang chạy (xác nhận 2026-07-31):
+
+```bash
+sudo crontab -l
+# 10 3 * * * /root/backup-all.sh >> /var/log/backup-all.log 2>&1
+
+sudo -u postgres crontab -l
+# 0 3 * * * pg_dump english_tutor | gzip > /var/backups/english_tutor_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'english_tutor_*.sql.gz' -mtime +7 -delete
+# 0 4 * * 0 bash /var/www/english-tutor/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
+```
+
+`pg_dump` (user `postgres`, 3:00) chạy trước, `/root/backup-all.sh` (user `root`, 3:10) chạy sau —
+đủ 10 phút để file `.sql.gz` ghi xong local trước khi `backup:r2` upload. `verify-pg-backup.sh`
+(test khôi phục vào DB tạm) vẫn chạy riêng, chủ nhật hàng tuần, không đổi.
+
+```bash
+# An toàn — chỉ TẢI VỀ, không đụng database/Nginx/crontab nào:
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run restore:all
+
+# Kèm khôi phục THẬT Postgres (DROP + tạo lại database đích — cần RESTORE_PSQL_URL trong .env):
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run restore:all -- --restore-into english_tutor --yes
+```
+
+Dù chạy gộp, phần Nginx/crontab vẫn phải tự khôi phục TỪNG PHẦN theo hướng dẫn mục 7.4 (script chỉ
+tải về + giải mã, không tự ghi đè `/etc/nginx` hay crontab — tránh phá cấu hình đang chạy nếu chỉ
+cần khôi phục 1 phần).
+
 ## 8. Xác nhận hoàn tất Giai đoạn A
 
 Báo lại kết quả các bước trên (đặc biệt bước 6 — `npm run migrate:pg` chạy thành

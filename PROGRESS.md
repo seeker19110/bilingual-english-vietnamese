@@ -90,10 +90,20 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
   khiến backup TỰ CHẠY). Thêm `scripts/backup-system-to-r2.ts`/`restore-system-from-r2.ts` (lệnh
   `npm run backup:system`/`restore:system`) — đóng gói tar + mã hoá AES-256-GCM (dùng lại
   `encryptEnv`/`decryptEnv` của `backup:env`, không lặp logic), đẩy cùng bucket R2 private. Chi
-  tiết cron + cách khôi phục từng phần: `docs/setup-postgresql-vps.md` mục 7.4. **Còn nợ:** chưa
-  thêm dòng cron thật trên VPS (việc tay, giống các cron backup khác từng bị bỏ sót — xem mục
-  "Backup DB" phía trên); chưa test restore thật (chỉ mới viết code, xác thực bằng lint/typecheck/
-  test, chưa chạy `backup:system`/`restore:system` thật trên VPS).
+  tiết cron + cách khôi phục từng phần: `docs/setup-postgresql-vps.md` mục 7.4. **ĐÃ XÁC NHẬN
+  chạy thật trên VPS 2026-07-31**: `backup:system --dry-run` rồi chạy thật đều thành công (upload
+  `system-backups/system_20260731.tar.gz.enc`). **[Cập nhật cùng ngày]** Đã gộp cron: thay vì 3
+  dòng cron riêng ở 2 user (`postgres`: `backup:r2`; `root`: `backup:system`; `backup:env` từng bị
+  bỏ sót, chưa có cron) → tạo `/root/backup-all.sh` (root-only, `chmod 700`, chứa passphrase tạo
+  bằng `openssl rand -base64 32`) gọi cả `backup:r2`+`backup:env`+`pm2 save`+`backup:system` trong
+  1 lệnh, 1 dòng cron `root` duy nhất (`10 3 * * *`, sau `pg_dump` của `postgres` lúc `0 3 * * *`).
+  Đã xoá dòng `backup:r2` trùng lặp khỏi crontab `postgres` (giữ lại `pg_dump` + `verify-pg-backup`
+  chủ nhật). Chi tiết: `docs/setup-postgresql-vps.md` mục 7.6. Thêm `scripts/restore-all-from-r2.ts`
+  (`npm run restore:all`) gộp cả 3 lệnh khôi
+  phục (Postgres/`.env`/hệ thống) thành 1 lệnh cho tình huống dựng lại VPS từ đầu — mặc định chỉ
+  TẢI VỀ (an toàn), chỉ thực sự ghi đè Postgres khi truyền `--restore-into <db> --yes`. **Còn nợ:**
+  chưa test `restore:all`/`restore:system` thật (khôi phục thử trên máy/VPS phụ) — mới xác nhận
+  chiều backup, chưa xác nhận chiều restore.
 
 - **[2026-07-31] Đổi domain chính sang `.org` — ĐÃ HOÀN TẤT.** `en-vi.donghanhcungban.org` giờ là
   domain mặc định (biến `SITE_URL`/`VITE_SITE_URL`/`EN_VI_HOSTNAME`/`VITE_ENGLISH_APP_URL` trên
