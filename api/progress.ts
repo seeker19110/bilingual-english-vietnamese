@@ -133,10 +133,11 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (grewLearning) {
     try {
-      await pool.query('select public.grant_daily_bonus_rolling($1, $2, $3)', [
+      await pool.query('select public.grant_daily_bonus_rolling($1, $2, $3, $4)', [
         auth.userId,
         vnDateStr(),
         FREE_WEEKLY_BONUS_PER_DAY,
+        'english',
       ])
     } catch (err) {
       // FAIL-OPEN: lỗi cộng thưởng không được làm vỡ luồng lưu tiến độ chính.

@@ -10,7 +10,16 @@ import { randomInt, timingSafeEqual } from 'node:crypto'
 
 // Tiền tố cố định để lọc trên dashboard SePay ("tiền tố mã thanh toán") — tách giao dịch của
 // app khỏi các giao dịch cá nhân khác trong cùng tài khoản ngân hàng.
-export const PAYMENT_CODE_PREFIX = 'ENVI'
+//
+// [2026-07-31, ADR-0001 mục 4] Đổi sang 'DHCB' (Đồng Hành Cùng Bạn) — tiền tố DÙNG CHUNG cho
+// nền tảng đa lĩnh vực, thay 'ENVI' (chỉ tiếng Anh). PAYMENT_CODE_PREFIX chỉ dùng khi TẠO mã
+// đơn MỚI. Khi ĐỐI CHIẾU webhook, dùng ACCEPTED_PAYMENT_PREFIXES — PHẢI giữ 'ENVI' trong đó
+// VĨNH VIỄN: giao dịch cũ và người dùng copy lại nội dung chuyển khoản cũ vẫn phải khớp đúng.
+// Không bao giờ xoá 'ENVI' khỏi danh sách chấp nhận, và trên trang quản trị SePay phải giữ
+// nguyên bộ lọc 'ENVI' đang có, chỉ THÊM bộ lọc 'DHCB' mới (việc tay, xem
+// docs/kiem-tra-tay-thanh-toan-google-login.md mục B7).
+export const PAYMENT_CODE_PREFIX = 'DHCB'
+export const ACCEPTED_PAYMENT_PREFIXES = ['DHCB', 'ENVI'] as const
 
 // Bảng ký tự KHÔNG chứa 0/O, 1/I/L — người dùng có thể phải GÕ TAY nội dung chuyển khoản khi
 // ứng dụng ngân hàng không cho sửa nội dung từ QR, nên tránh ký tự dễ đọc/gõ nhầm.
@@ -29,11 +38,15 @@ export function generatePaymentCode(): string {
 /**
  * Dò mã thanh toán trong một đoạn text (nội dung chuyển khoản hoặc trường `code` của webhook).
  * Không phân biệt hoa/thường — nhiều ngân hàng viết hoa toàn bộ nội dung chuyển khoản.
+ * Chấp nhận CẢ HAI tiền tố (ACCEPTED_PAYMENT_PREFIXES) — mã cũ 'ENVI...' vẫn phải khớp đúng.
  * Trả về mã dạng CHUẨN HOÁ (viết hoa) nếu tìm thấy, null nếu không.
  */
 export function extractPaymentCode(text: string | null | undefined): string | null {
   if (!text) return null
-  const re = new RegExp(`${PAYMENT_CODE_PREFIX}[${CODE_ALPHABET}]{${CODE_SUFFIX_LEN}}`, 'i')
+  const re = new RegExp(
+    `(?:${ACCEPTED_PAYMENT_PREFIXES.join('|')})[${CODE_ALPHABET}]{${CODE_SUFFIX_LEN}}`,
+    'i',
+  )
   const match = text.toUpperCase().match(re)
   return match ? match[0] : null
 }

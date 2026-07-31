@@ -5,14 +5,15 @@ import {
   buildSepayQrUrl,
   verifySepayApiKey,
   PAYMENT_CODE_PREFIX,
+  ACCEPTED_PAYMENT_PREFIXES,
 } from './sepay'
 
 describe('generatePaymentCode', () => {
-  it('luôn bắt đầu bằng tiền tố, đủ độ dài, không chứa ký tự dễ nhầm 0/O/1/I/L', () => {
+  it('luôn bắt đầu bằng tiền tố DHCB (mã mới, kể từ 2026-07-31), đủ độ dài, không chứa ký tự dễ nhầm 0/O/1/I/L', () => {
     for (let i = 0; i < 200; i++) {
       const code = generatePaymentCode()
       expect(code.startsWith(PAYMENT_CODE_PREFIX)).toBe(true)
-      expect(code).toMatch(/^ENVI[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{8}$/)
+      expect(code).toMatch(/^DHCB[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{8}$/)
     }
   })
 
@@ -23,13 +24,20 @@ describe('generatePaymentCode', () => {
 })
 
 describe('extractPaymentCode', () => {
-  it('dò được mã nằm giữa nội dung chuyển khoản thật', () => {
+  it('dò được mã DHCB (tiền tố mới) nằm giữa nội dung chuyển khoản thật', () => {
+    expect(extractPaymentCode('NGUYEN VAN A chuyen tien DHCB7K2M9QRT thanh toan')).toBe(
+      'DHCB7K2M9QRT',
+    )
+  })
+
+  it('VẪN dò được mã ENVI (tiền tố cũ) — giao dịch cũ / người dùng copy lại nội dung cũ phải luôn khớp', () => {
     expect(extractPaymentCode('NGUYEN VAN A chuyen tien ENVI7K2M9QRT thanh toan')).toBe(
       'ENVI7K2M9QRT',
     )
   })
 
-  it('không phân biệt hoa/thường (ngân hàng có thể viết hoa toàn bộ)', () => {
+  it('không phân biệt hoa/thường (ngân hàng có thể viết hoa toàn bộ) — cả 2 tiền tố', () => {
+    expect(extractPaymentCode('dhcb7k2m9qrt')).toBe('DHCB7K2M9QRT')
     expect(extractPaymentCode('envi7k2m9qrt')).toBe('ENVI7K2M9QRT')
   })
 
@@ -45,6 +53,12 @@ describe('extractPaymentCode', () => {
 
   it('mã bị cắt ngắn (thiếu ký tự) → không khớp', () => {
     expect(extractPaymentCode('ENVI7K2M9Q')).toBeNull()
+    expect(extractPaymentCode('DHCB7K2M9Q')).toBeNull()
+  })
+
+  it('ACCEPTED_PAYMENT_PREFIXES luôn chứa cả DHCB và ENVI (chống xoá nhầm ENVI sau này)', () => {
+    expect(ACCEPTED_PAYMENT_PREFIXES).toContain('DHCB')
+    expect(ACCEPTED_PAYMENT_PREFIXES).toContain('ENVI')
   })
 })
 

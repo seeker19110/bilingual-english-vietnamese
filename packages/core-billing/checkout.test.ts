@@ -61,7 +61,7 @@ describe('/api/checkout', () => {
     expect(resp.status).toBe(200)
     const data = (await resp.json()) as { amountVnd: number; paymentCode: string; qrUrl: string }
     expect(data.amountVnd).toBe(40_000)
-    expect(data.paymentCode).toMatch(/^ENVI/)
+    expect(data.paymentCode).toMatch(/^DHCB/)
     expect(data.qrUrl).toContain('qr.sepay.vn')
     expect(query).toHaveBeenCalledTimes(3) // đọc bảng giá + đọc khuyến mãi % + insert đơn
   })

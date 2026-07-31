@@ -90,8 +90,8 @@ describe('checkAndConsumeUsage — gói Free (kho lượt chung, cửa sổ trư
     const call = vi
       .mocked(pool.query)
       .mock.calls.find(([sql]) => (sql as string).includes('consume_rolling_credit'))
-    // Không truyền cột riêng theo mode — chỉ userId + ngày hôm nay + số ngày cửa sổ (7).
-    expect(call?.[1]).toEqual(['u1', expect.any(String), 7])
+    // Không truyền cột riêng theo mode — chỉ userId + ngày hôm nay + số ngày cửa sổ (7) + môn.
+    expect(call?.[1]).toEqual(['u1', expect.any(String), 7, 'english'])
   })
 
   it('tiêu lượt thành công → ghi thêm daily_usage THEO MODE để thống kê (không chặn)', async () => {
@@ -101,8 +101,14 @@ describe('checkAndConsumeUsage — gói Free (kho lượt chung, cửa sổ trư
     const statCall = vi
       .mocked(pool.query)
       .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
-    // Đúng cột của mode + hạn mức vô cực (int4 max) → chỉ đếm, không bao giờ chặn.
-    expect(statCall?.[1]).toEqual(['u1', expect.any(String), 'writing_count', 2_147_483_647])
+    // Đúng cột của mode + hạn mức vô cực (int4 max) + môn → chỉ đếm, không bao giờ chặn.
+    expect(statCall?.[1]).toEqual([
+      'u1',
+      expect.any(String),
+      'writing_count',
+      2_147_483_647,
+      'english',
+    ])
   })
 
   it('hết kho tuần → KHÔNG ghi thống kê (lượt bị chặn thì không tính là đã dùng)', async () => {
@@ -139,7 +145,7 @@ describe('checkAndConsumeUsage — gói Pro/VIP (hạn mức TỔNG/ngày, quy�
     const consumeCall = vi
       .mocked(pool.query)
       .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
-    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 100])
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 100, 'english'])
   })
 
   it('gọi ĐÚNG hàm SQL consume_usage_total (hạn mức tổng), không phải consume_usage cũ (per-mode)', async () => {
@@ -160,7 +166,7 @@ describe('checkAndConsumeUsage — gói Pro/VIP (hạn mức TỔNG/ngày, quy�
     const consumeCall = vi
       .mocked(pool.query)
       .mock.calls.find(([sql]) => (sql as string).includes('consume_rolling_credit'))
-    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 7])
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 7, 'english'])
   })
 
   it('gói pro CÒN HẠN (plan_expires_at trong tương lai) → vẫn áp hạn mức pro', async () => {
@@ -171,7 +177,7 @@ describe('checkAndConsumeUsage — gói Pro/VIP (hạn mức TỔNG/ngày, quy�
     const consumeCall = vi
       .mocked(pool.query)
       .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
-    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 100])
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'speaking_count', 100, 'english'])
   })
 
   it('khuyến mãi đang bật → free được nâng lên hạn mức pro (không phải kho tuần, không phải không giới hạn)', async () => {
@@ -182,7 +188,7 @@ describe('checkAndConsumeUsage — gói Pro/VIP (hạn mức TỔNG/ngày, quy�
     const consumeCall = vi
       .mocked(pool.query)
       .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
-    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'chat_count', 100])
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'chat_count', 100, 'english'])
   })
 
   it('khuyến mãi đang bật → pro được nâng lên vip (không giới hạn)', async () => {
@@ -193,7 +199,7 @@ describe('checkAndConsumeUsage — gói Pro/VIP (hạn mức TỔNG/ngày, quy�
     const consumeCall = vi
       .mocked(pool.query)
       .mock.calls.find(([sql]) => (sql as string).includes('consume_usage'))
-    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'chat_count', 1_000_000])
+    expect(consumeCall?.[1]).toEqual(['u1', expect.any(String), 'chat_count', 1_000_000, 'english'])
   })
 })
 
@@ -207,7 +213,7 @@ describe('refundUsage', () => {
     const refundCall = vi
       .mocked(pool.query)
       .mock.calls.find(([sql]) => (sql as string).includes('refund_rolling_credit'))
-    expect(refundCall?.[1]).toEqual(['u1', expect.any(String)])
+    expect(refundCall?.[1]).toEqual(['u1', expect.any(String), 'english'])
   })
 
   it('gói Pro/VIP → gọi đúng hàm refund_usage với đúng cột như cũ', async () => {
@@ -217,7 +223,7 @@ describe('refundUsage', () => {
     const refundCall = vi
       .mocked(pool.query)
       .mock.calls.find(([sql]) => (sql as string).includes('refund_usage'))
-    expect(refundCall?.[1]).toEqual(['u1', expect.any(String), 'stt_count'])
+    expect(refundCall?.[1]).toEqual(['u1', expect.any(String), 'stt_count', 'english'])
   })
 
   it('DB lỗi → nuốt êm (FAIL-OPEN), không ném', async () => {

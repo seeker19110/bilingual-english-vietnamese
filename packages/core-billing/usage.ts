@@ -12,6 +12,11 @@ import { getAppSettings } from '../core-db/settings.js'
 
 export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
 
+// Môn học — mặc định 'english' ở MỌI lời gọi hiện tại (chỉ có 1 môn tồn tại). Khi thêm môn
+// mới (GĐ2), lời gọi của môn đó tự truyền subject khác; các lời gọi hiện có KHÔNG cần sửa.
+// Xem docs/adr/0001-nen-tang-da-linh-vuc.md mục 8 + postgres/migrations/0029_platform_subject.sql.
+const DEFAULT_SUBJECT = 'english'
+
 // Hạn mức theo gói ĐỌC TỪ DB (bảng app_settings, admin chỉnh qua /api/admin-settings) —
 // xem settings.ts để biết giá trị mặc định khi DB chưa có dòng cấu hình. Riêng gói Free
 // KHÔNG dùng bảng này nữa để enforce — xem FREE_WEEKLY_* + weekly_ai_credit bên dưới.
@@ -75,11 +80,12 @@ const NO_LIMIT = 2_147_483_647
 
 async function bumpUsageStat(userId: string, day: string, col: string): Promise<void> {
   try {
-    await getPgPool().query('select public.consume_usage($1, $2, $3, $4)', [
+    await getPgPool().query('select public.consume_usage($1, $2, $3, $4, $5)', [
       userId,
       day,
       col,
       NO_LIMIT,
+      DEFAULT_SUBJECT,
     ])
   } catch (err) {
     console.warn('[usage] ghi thống kê lượt Free lỗi → bỏ qua:', err)
@@ -107,8 +113,8 @@ export async function checkAndConsumeUsage(
     // ── Gói Free: tiêu từ kho lượt CHUNG (mọi mode), cửa sổ trượt 7 ngày liền kề ──
     if (plan === 'free') {
       const { rows } = await pool.query<{ consume_rolling_credit: boolean }>(
-        'select public.consume_rolling_credit($1, $2, $3) as consume_rolling_credit',
-        [userId, today(), FREE_ROLLING_WINDOW_DAYS],
+        'select public.consume_rolling_credit($1, $2, $3, $4) as consume_rolling_credit',
+        [userId, today(), FREE_ROLLING_WINDOW_DAYS, DEFAULT_SUBJECT],
       )
       const allowed = rows[0]?.consume_rolling_credit
       if (allowed === false) return { ok: false, message: limitMessage(plan) }
@@ -130,8 +136,8 @@ export async function checkAndConsumeUsage(
 
     // Kiểm tra + tăng ATOMIC qua hàm SQL (chống race condition 2 request song song)
     const { rows } = await pool.query<{ consume_usage_total: boolean }>(
-      'select public.consume_usage_total($1, $2, $3, $4) as consume_usage_total',
-      [userId, day, col, limit],
+      'select public.consume_usage_total($1, $2, $3, $4, $5) as consume_usage_total',
+      [userId, day, col, limit, DEFAULT_SUBJECT],
     )
     const allowed = rows[0]?.consume_usage_total
 
@@ -150,17 +156,31 @@ export async function refundUsage(userId: string, mode: UsageMode): Promise<void
     const plan = await lookupPlan(userId)
 
     if (plan === 'free') {
-      await pool.query('select public.refund_rolling_credit($1, $2)', [userId, today()])
+      await pool.query('select public.refund_rolling_credit($1, $2, $3)', [
+        userId,
+        today(),
+        DEFAULT_SUBJECT,
+      ])
       // Trả lại luôn con số thống kê đã cộng ở checkAndConsumeUsage — nếu không, dashboard
       // sẽ đếm cả những lượt mà người dùng KHÔNG hề nhận được kết quả (provider lỗi), làm
       // chi phí ước tính cao hơn thực tế.
-      await pool.query('select public.refund_usage($1, $2, $3)', [userId, today(), COLUMN[mode]])
+      await pool.query('select public.refund_usage($1, $2, $3, $4)', [
+        userId,
+        today(),
+        COLUMN[mode],
+        DEFAULT_SUBJECT,
+      ])
       return
     }
 
     const day = today()
     const col = COLUMN[mode]
-    await pool.query('select public.refund_usage($1, $2, $3)', [userId, day, col])
+    await pool.query('select public.refund_usage($1, $2, $3, $4)', [
+      userId,
+      day,
+      col,
+      DEFAULT_SUBJECT,
+    ])
   } catch (err) {
     console.warn('[usage] hoàn lượt lỗi → bỏ qua (fail-open):', err)
   }
