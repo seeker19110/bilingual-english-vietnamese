@@ -44,25 +44,26 @@ Chạy tuần tự. Mỗi tầng ghi rõ: **lệnh**, **tiêu chí đạt**, **n
 
 ### Tầng 1 — Cổng tự động (bắt buộc, luôn chạy)
 
-| Mục         | Lệnh                   | Tiêu chí đạt                                                                                                            |
-| ----------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Build       | `npm run build`        | Thoát 0, không lỗi vite/tsc                                                                                             |
-| Typecheck   | `npm run typecheck`    | 0 lỗi (gộp `tsconfig` + `tsconfig.api.json` + `tsconfig.e2e.json`)                                                      |
-| Lint        | `npm run lint`         | 0 cảnh báo (`--max-warnings 0`)                                                                                         |
-| Format      | `npm run format:check` | "All matched files use Prettier code style"                                                                             |
-| Unit test   | `npm test`             | 100% pass; ghi số `X/Y`                                                                                                 |
-| Bundle size | `npm run size`         | JS ≤ 123 kB · CSS ≤ 9.7 kB (brotli) — ngưỡng thật đọc ở `.size-limit.json`/cấu hình size-limit, không hardcode số ở đây |
+| Mục         | Lệnh                   | Tiêu chí đạt                                                                                                           |
+| ----------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Build       | `npm run build`        | Thoát 0, không lỗi vite/tsc                                                                                            |
+| Typecheck   | `npm run typecheck`    | 0 lỗi (gộp `tsconfig` + `tsconfig.api.json` + `tsconfig.e2e.json`)                                                     |
+| Lint        | `npm run lint`         | 0 cảnh báo (`--max-warnings 0`)                                                                                        |
+| Format      | `npm run format:check` | "All matched files use Prettier code style"                                                                            |
+| Unit test   | `npm test`             | 100% pass; ghi số `X/Y`                                                                                                |
+| Bundle size | `npm run size`         | JS ≤ 123 kB · CSS ≤ 11 kB (brotli) — ngưỡng thật đọc ở `.size-limit.json`/cấu hình size-limit, không hardcode số ở đây |
 
 - **Nếu fail:** dừng, ghi lỗi cụ thể vào báo cáo. Đây là fail chặn (blocking).
 - **Ai xử lý:** AI tự sửa được (lỗi code/format).
-- **Lưu ý stderr "giả":** `src/lib/ai.test.ts` in log lỗi có chủ đích (test nhánh xử lý lỗi). Đó KHÔNG phải
+- **Lưu ý stderr "giả":** `apps/english/src/lib/ai.test.ts`/`packages/core-ai/ai.test.ts` in log lỗi có
+  chủ đích (test nhánh xử lý lỗi). Đó KHÔNG phải
   test fail — chỉ đọc dòng `Test Files … passed` / `Tests … passed` để kết luận.
 
 ### Tầng 2 — Bảo mật
 
 | Mục                     | Cách kiểm                                                                                                                                                                                                                                                       | Tiêu chí đạt                                                    |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Secret hardcode         | Quét `sk-…`, `AIza…`, `api_key=…` trong `src`/`api`/`server.ts` (trừ `*.test.*`)                                                                                                                                                                                | 0 khớp                                                          |
+| Secret hardcode         | Quét `sk-…`, `AIza…`, `api_key=…` trong `apps/*/src`/`api`/`packages`/`server.ts` (trừ `*.test.*`)                                                                                                                                                              | 0 khớp                                                          |
 | `.env` bị track         | `git ls-files \| grep -E "^\.env($\|\.)"`                                                                                                                                                                                                                       | chỉ `.env.example`                                              |
 | Lỗ hổng dependency      | `npm audit --omit=dev`                                                                                                                                                                                                                                          | 0 mức high/critical (low/moderate: ghi nhận, cân nhắc)          |
 | Logic nhạy cảm ở server | Rà `api/` + `server.ts`: kiểm quyền (`validateAuth`), đếm lượt, gọi AI đều ở server                                                                                                                                                                             | không có logic nhạy cảm chạy ở client                           |
@@ -74,19 +75,19 @@ Chạy tuần tự. Mỗi tầng ghi rõ: **lệnh**, **tiêu chí đạt**, **n
 
 ### Tầng 3 — Vệ sinh code
 
-| Mục                     | Cách kiểm                               | Tiêu chí đạt                                                   |
-| ----------------------- | --------------------------------------- | -------------------------------------------------------------- |
-| `console.log` rác       | Quét `src`/`api` (trừ `*.test.*`)       | 0 (log khởi động chủ đích trong `server.ts` KHÔNG tính là rác) |
-| TODO/FIXME/XXX sót      | Quét `src`/`api`/`server.ts` (trừ test) | 0, hoặc mỗi cái có issue/ghi chú trong PROGRESS                |
-| `any` lọt lưới          | Quét `: any` / `as any` ngoài test      | 0 mới (mục 4.1 CLAUDE.md)                                      |
-| Code chết / import thừa | Lint đã bắt phần lớn (`no-unused-vars`) | không còn cảnh báo                                             |
+| Mục                     | Cách kiểm                                                 | Tiêu chí đạt                                                   |
+| ----------------------- | --------------------------------------------------------- | -------------------------------------------------------------- |
+| `console.log` rác       | Quét `apps/*/src`/`api`/`packages` (trừ `*.test.*`)       | 0 (log khởi động chủ đích trong `server.ts` KHÔNG tính là rác) |
+| TODO/FIXME/XXX sót      | Quét `apps/*/src`/`api`/`packages`/`server.ts` (trừ test) | 0, hoặc mỗi cái có issue/ghi chú trong PROGRESS                |
+| `any` lọt lưới          | Quét `: any` / `as any` ngoài test                        | 0 mới (mục 4.1 CLAUDE.md)                                      |
+| Code chết / import thừa | Lint đã bắt phần lớn (`no-unused-vars`)                   | không còn cảnh báo                                             |
 
 - **Ai xử lý:** AI tự sửa được.
 
 ### Tầng 4 — Chất lượng AI (chỉ khi liên quan)
 
-- **Kích hoạt khi:** audit chạy sau khi có thay đổi `src/prompts/*` hoặc `api/_lib/aiConfig.ts` kể từ lần
-  eval gần nhất.
+- **Kích hoạt khi:** audit chạy sau khi có thay đổi `apps/english/src/prompts/*` hoặc
+  `packages/core-ai/aiConfig.ts` kể từ lần eval gần nhất.
 - **Lệnh:** `npm run eval:tutor` (cần key AI trong `.env`).
 - **Tiêu chí đạt:** recall/precision **không tụt** so với `docs/research/eval-tutor-baseline.md`.
 - **Nếu fail:** không được merge thay đổi prompt/model; dán bảng so sánh vào báo cáo (mục 8 CLAUDE.md).
@@ -100,13 +101,15 @@ Chạy tuần tự. Mỗi tầng ghi rõ: **lệnh**, **tiêu chí đạt**, **n
 
 - **Lệnh:** `npm run test:coverage`.
 - **Tiêu chí đạt:** vượt ngưỡng SÀN trong `vitest.config.ts` (cơ chế "ratchet" — không tệ hơn hiện tại).
-  Ngưỡng hiện tại (đo 2026-07-02): statements 18 · branches 81 · functions 52 · lines 18. Chỉ đo LOGIC THUẦN
-  (`src/lib/**`, `api/**`), không đo UI.
+  Ngưỡng cấu hình (đọc lại `vitest.config.ts`, xác nhận 2026-08-01): statements 48 · branches 87 ·
+  functions 76 · lines 48. Đo thực tế cùng ngày: statements 52.94% · branches 87.02% · functions
+  79.93% · lines 52.94% — cao hơn sàn, còn dư địa nâng ngưỡng. Chỉ đo LOGIC THUẦN (`apps/*/src/lib/**`,
+  `api/**`, `packages/**`), không đo UI.
 - **Khi thêm test mới:** NÂNG DẦN các ngưỡng này (đừng để trôi xuống). Ghi mốc mới vào PROGRESS.
 
 **5b. Rà vùng thiếu test (định tính — theo mục 9 CLAUDE.md "chống lỗi logic"):**
 
-Mở báo cáo coverage HTML (`coverage/index.html`) và soi các file `src/lib/**` + `api/**` có nhánh chưa phủ.
+Mở báo cáo coverage HTML (`coverage/index.html`) và soi các file `apps/*/src/lib/**`/`packages/**` + `api/**` có nhánh chưa phủ.
 Với mỗi hàm logic phức tạp, đối chiếu checklist:
 
 - [ ] **Ca biên / rỗng:** mảng rỗng, chuỗi rỗng, `undefined`, giá trị 0.

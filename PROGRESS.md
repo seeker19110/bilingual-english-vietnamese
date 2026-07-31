@@ -9,11 +9,13 @@
 ## Giai đoạn hiện tại
 
 GĐ 4–5 (Phát triển + nâng chất lượng). Sản phẩm đã deploy thật
-(https://en-vi.donghanhcungban.com). Đã áp xong Lớp 1 (hàng rào: Prettier/ESLint/TS
-strict/husky/CI) và Lớp 2 (E2E Playwright + a11y AA toàn site + coverage ratchet + bundle-size
-budget) của `docs/framework/AP-DUNG-vao-du-an-co-san.md`. **Đã rời Supabase hoàn toàn
-(2026-07-19→20, Giai đoạn A→E) — xem `docs/migration-thoat-ly-supabase.md`.** Không có việc
-code nào đang mở; còn vài thao tác THỦ CÔNG trên VPS (xem "Cần làm tay").
+(https://en-vi.donghanhcungban.org — domain mặc định đổi từ `.com` sang `.org` ngày 2026-07-31, xem
+`docs/doi-ten-mien-chinh-org.md`; `.com`/apex `.org` đều 301 redirect sang `www.donghanhcungban.org`).
+Đã áp xong Lớp 1 (hàng rào: Prettier/ESLint/TS strict/husky/CI) và Lớp 2 (E2E Playwright + a11y AA
+toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUNG-vao-du-an-co-san.md`.
+**Đã rời Supabase hoàn toàn (2026-07-19→20, Giai đoạn A→E) — xem
+`docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
+trên VPS (xem "Cần làm tay").
 
 ## Đã xong — tóm tắt theo mảng
 
@@ -101,9 +103,15 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
   chủ nhật). Chi tiết: `docs/setup-postgresql-vps.md` mục 7.6. Thêm `scripts/restore-all-from-r2.ts`
   (`npm run restore:all`) gộp cả 3 lệnh khôi
   phục (Postgres/`.env`/hệ thống) thành 1 lệnh cho tình huống dựng lại VPS từ đầu — mặc định chỉ
-  TẢI VỀ (an toàn), chỉ thực sự ghi đè Postgres khi truyền `--restore-into <db> --yes`. **Còn nợ:**
-  chưa test `restore:all`/`restore:system` thật (khôi phục thử trên máy/VPS phụ) — mới xác nhận
-  chiều backup, chưa xác nhận chiều restore.
+  TẢI VỀ (an toàn), chỉ thực sự ghi đè Postgres khi truyền `--restore-into <db> --yes`. **[Cập
+  nhật 2026-08-01] ĐÃ XÁC NHẬN chạy thật `restore:all` (chế độ tải về, không ghi đè gì) trên VPS**:
+  `.env.restored` khớp 100% với `.env` thật (`diff` không lệch dòng nào), `system-restored.tar.gz`
+  đủ cấu trúc `nginx/` (gồm `sites-available/default`+`en-vi`) + `crontab/root.txt`+`postgres.txt`
+  - `pm2/dump.pm2`, file `.sql.gz` Postgres tải về nguyên vẹn (`gunzip -t` qua). Lưu ý khi test:
+    chạy qua `npm --prefix <dir> run restore:all` thì file tải về nằm trong `<dir>` (theo cwd của
+    script con), KHÔNG phải thư mục đang đứng — muốn cô lập file test phải `cd` vào thư mục đó rồi
+    chạy `npm run` thường, không dùng `--prefix`. Bộ 3 backup + restore giờ đã kiểm chứng đầy đủ cả
+    2 chiều.
 
 - **[2026-07-31] Đổi domain chính sang `.org` — ĐÃ HOÀN TẤT.** `en-vi.donghanhcungban.org` giờ là
   domain mặc định (biến `SITE_URL`/`VITE_SITE_URL`/`EN_VI_HOSTNAME`/`VITE_ENGLISH_APP_URL` trên
@@ -1336,6 +1344,23 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   - Kết quả người dùng xác nhận: hết treo, hết OOM, tốc độ xoá orphan "cải thiện rất nhanh".
 
 ## Nợ kỹ thuật còn mở
+
+- **[Audit toàn diện 2026-08-01 — phát hiện mới]** Tầng 1–6 theo `docs/framework/QUY-TRINH-AUDIT.md`
+  đều đạt (build/typecheck/lint/format/1033 test/bundle-size ✅, 0 secret hardcode, 0 high/critical
+  `npm audit`, coverage 52.94/87.02/79.93/52.94% vượt sàn 48/87/76/48). Nợ còn lại:
+  - 🟡 `react-router`: 2 lỗ hổng **moderate** (CVE-2025-68470 bypass + arbitrary constructor
+    injection qua `deserializeErrors()`), có fix qua `npm audit fix` — chưa nâng cấp, cần kiểm tra
+    không phá route trước khi merge (đổi major/minor react-router-dom).
+  - 🟡 `restore:all`/`restore:system`/`restore:r2`: mới kiểm chứng nhánh AN TOÀN (tải về, xác nhận
+    2026-08-01). Nhánh `--restore-into <db> --yes` (DROP + tạo lại database thật) CHƯA test thật —
+    chỉ nên chạy lần đầu trên database phụ/staging, không thử trực tiếp trên `english_tutor` production.
+  - Đã sửa 2 lỗi tài liệu lỗi thời tìm thấy: `.claude/report-status.sh` (hardcode text cũ báo sai
+    Sentry/thanh toán Pro/branch protection/migration Supabase "chưa xong" dù đã xong từ lâu) và
+    `docs/framework/QUY-TRINH-AUDIT.md` (ngưỡng CSS bundle ghi 9.7kB thật là 11kB, ngưỡng coverage
+    ghi số đo 2026-07-02 đã lỗi thời so với `vitest.config.ts` hiện tại).
+  - 2 test a11y (`/progress`, `/profile` theme blue-sky) fail 1 lần do "Execution context destroyed"
+    (Playwright flaky khi nhiều test a11y chạy song song dội rate-limit) — chạy lại riêng cả 24 test
+    theme blue-sky đều pass, không phải lỗi a11y thật, không cần xử lý thêm.
 
 - **PM2 cluster mode: ĐÃ XÁC NHẬN chạy đúng cơ chế trên VPS thật (2026-07-25),
   nhưng hiệu quả bị giới hạn bởi phần cứng — xem cuối mục.** (nhánh
