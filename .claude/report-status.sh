@@ -1,6 +1,11 @@
 #!/bin/bash
 # In báo cáo vị trí dự án hiện tại
 # Chạy tự động ở đầu mỗi phiên (session-start hook)
+#
+# LƯU Ý: phần "Nợ kỹ thuật"/"Đã xong" bên dưới là TÓM TẮT TĨNH, phải TỰ TAY cập nhật khi trạng
+# thái đổi (xem PROGRESS.md mục "Nợ kỹ thuật còn mở" là nguồn thật) — nếu để lâu không sửa sẽ lại
+# lỗi thời như lần audit 2026-08-01 phát hiện (từng báo sai: Sentry/thanh toán Pro/branch
+# protection/migration Supabase đều đã xong từ lâu nhưng script vẫn báo "chưa làm").
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "📍 VỊ TRÍ DỰ ÁN HIỆN TẠI"
@@ -11,28 +16,23 @@ echo ""
 echo "🎯 GIAI ĐOẠN:"
 grep "^## Giai đoạn hiện tại" PROGRESS.md -A 3 | tail -3
 
-# Đã xong
 echo ""
-echo "✅ BƯỚC 1 (Dựng hàng rào):"
-echo "   Prettier, ESLint, TS strict, Husky, commitlint, CI"
-echo "   • Branch protection: ❌ chưa kiểm"
+echo "✅ ĐÃ XONG (xác nhận qua audit 2026-08-01, xem CLAUDE.md mục 13 + PROGRESS.md):"
+echo "   Prettier, ESLint, TS strict, Husky, commitlint, CI, coverage gate, E2E+a11y, bundle-size budget"
+echo "   Sentry (DSN đã điền, xác nhận 2026-07-27) · Branch protection (xác nhận 2026-07-11)"
+echo "   Thanh toán Pro/VIP qua SePay (xác nhận 2026-07-27) · Đã rời hẳn Supabase → Postgres tự host"
+echo "   Domain mặc định .org + redirect .com/apex → www.org (2026-07-31)"
+echo "   Backup + restore R2 (DB/.env/Nginx+crontab+PM2) — kiểm chứng cả 2 chiều (2026-08-01)"
 
 echo ""
-echo "✅ BƯỚC 2 (Lấp lỗ hổng):"
-echo "   • Unit test + coverage gate ✅"
-echo "   • E2E Playwright + a11y ✅"
-echo "   • Bundle-size budget ✅"
-echo "   • Theme/mobile ✅"
-echo "   • Sentry (observability) ⚠️ đã code xong (client+server, no-op tới khi có DSN) — CHƯA điền SENTRY_DSN/VITE_SENTRY_DSN trên VPS"
-echo "   • Migration 0007/0008 ❌ CHƯA chạy trên Supabase production (cần làm TRƯỚC deploy kế tiếp)"
-
-# Nợ kỹ thuật
-echo ""
-echo "📝 NỢ KỸ THUẬT (ưu tiên):"
-echo "   1. 🔴 Thanh toán Pro (chốt sản phẩm trước — cần quyết định của người dùng)"
-echo "   2. 🟡 Đợt 2 CEFR C1/C2: bổ sung ~1.407 từ CEFR-J còn thiếu vào từ điển (khác việc mở cấp C1/C2 vào lộ trình — đã xong PR #209)"
-echo "   3. 🟡 Sentry: điền DSN trên VPS + migration 0007/0008 trên Supabase production"
-echo "   4. 🟢 Branch protection (chưa xác nhận được qua tool hiện có)"
+echo "📝 NỢ KỸ THUẬT THẬT (đọc chi tiết ở PROGRESS.md mục \"Nợ kỹ thuật còn mở\"):"
+echo "   1. 🟡 react-router: 2 lỗ hổng moderate (CVE, có fix qua npm audit fix) — chưa nâng cấp"
+echo "   2. 🟡 restore:all: mới kiểm chứng nhánh AN TOÀN (tải về); nhánh --restore-into (phá huỷ" \
+     "DB thật) chưa test thật"
+echo "   3. 🟢 Facebook/Apple/Microsoft OAuth tạm hoãn thêm domain .org (đăng nhập Google/email" \
+     "vẫn OK) — xem docs/doi-ten-mien-chinh-org.md"
+echo "   4. 🟢 PM2 cluster mode đúng cơ chế nhưng VPS 1 vCPU nên chưa có lợi ích song song thật" \
+     "(cần thêm phần cứng, GĐ2 kế hoạch scale)"
 
 # Git status
 echo ""
