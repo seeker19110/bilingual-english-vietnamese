@@ -11,11 +11,11 @@
 
 **Ba làn (lane) theo thời gian:**
 
-| Làn | Nội dung | Mốc dự kiến |
-| --- | --- | --- |
-| L1 — Học hành | Tiếng Anh (đã có) → Toán → Lý → Hoá → Văn/Sử/Địa | 2026 H2 – 2027 H1 |
-| L2 — Nuôi dạy con | Đồng hành cha mẹ: tâm lý theo độ tuổi, học cùng con, sức khoẻ | 2027 |
-| L3 — Nghề nghiệp | CV/phỏng vấn, kỹ năng số, định hướng ngành, học tiếp | 2027–2028 |
+| Làn               | Nội dung                                                      | Mốc dự kiến       |
+| ----------------- | ------------------------------------------------------------- | ----------------- |
+| L1 — Học hành     | Tiếng Anh (đã có) → Toán → Lý → Hoá → Văn/Sử/Địa              | 2026 H2 – 2027 H1 |
+| L2 — Nuôi dạy con | Đồng hành cha mẹ: tâm lý theo độ tuổi, học cùng con, sức khoẻ | 2027              |
+| L3 — Nghề nghiệp  | CV/phỏng vấn, kỹ năng số, định hướng ngành, học tiếp          | 2027–2028         |
 
 **Nguyên tắc bất biến của nền tảng** (giữ đúng ADN app hiện tại):
 
@@ -32,11 +32,11 @@
 
 ### QĐ-1. Bố cục domain
 
-| Phương án | Mô tả | Ưu | Nhược |
-| --- | --- | --- | --- |
-| **A. Subdomain mỗi môn** (`en-vi.`, `toan.`, `ly.`…) | Mỗi môn 1 app deploy riêng | Cô lập lỗi; deploy độc lập; đã đúng với hiện trạng | Cookie/SSO xuyên subdomain phải làm; N lần vận hành |
-| **B. Một app, nhiều route** (`/anh`, `/toan`…) | Gộp hết vào repo hiện tại | Đơn giản nhất; SSO miễn phí | Bundle phình; 1 lỗi sập cả nhà; repo khổng lồ |
-| **C. ⭐ Hub + subdomain, hạ tầng dùng chung** | `donghanhcungban.com` = trang hub (giới thiệu + đăng nhập + điều hướng); mỗi môn 1 app subdomain; **dùng chung 1 Postgres + 1 dịch vụ auth + 1 dịch vụ thanh toán + 1 dịch vụ AI-gateway** | Mở môn mới không đụng môn cũ; chi phí vận hành gần bằng B; đường nâng cấp tự nhiên từ hiện trạng | Phải tách "lõi dùng chung" ra khỏi repo tiếng Anh (việc lớn nhất của cả kế hoạch) |
+| Phương án                                            | Mô tả                                                                                                                                                                                      | Ưu                                                                                               | Nhược                                                                             |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| **A. Subdomain mỗi môn** (`en-vi.`, `toan.`, `ly.`…) | Mỗi môn 1 app deploy riêng                                                                                                                                                                 | Cô lập lỗi; deploy độc lập; đã đúng với hiện trạng                                               | Cookie/SSO xuyên subdomain phải làm; N lần vận hành                               |
+| **B. Một app, nhiều route** (`/anh`, `/toan`…)       | Gộp hết vào repo hiện tại                                                                                                                                                                  | Đơn giản nhất; SSO miễn phí                                                                      | Bundle phình; 1 lỗi sập cả nhà; repo khổng lồ                                     |
+| **C. ⭐ Hub + subdomain, hạ tầng dùng chung**        | `donghanhcungban.com` = trang hub (giới thiệu + đăng nhập + điều hướng); mỗi môn 1 app subdomain; **dùng chung 1 Postgres + 1 dịch vụ auth + 1 dịch vụ thanh toán + 1 dịch vụ AI-gateway** | Mở môn mới không đụng môn cũ; chi phí vận hành gần bằng B; đường nâng cấp tự nhiên từ hiện trạng | Phải tách "lõi dùng chung" ra khỏi repo tiếng Anh (việc lớn nhất của cả kế hoạch) |
 
 **Đề xuất: C.** Lý do: bạn đang một mình + VPS 1 vCPU, nhưng số môn sẽ tăng; C cho phép thêm môn mà **không** làm rủi ro app đang có người dùng thật.
 
@@ -45,11 +45,11 @@
 Mỗi môn có subdomain riêng (`en-vi.` · `math.` · `ly.` · `hoa.`, viết thường), `donghanhcungban.com` là hub.
 Nhưng **chỉ MỘT tiến trình PM2** phục vụ tất cả, cho tới khi chạm ngưỡng nâng cấp bên dưới.
 
-| Mức | Frontend | Tiến trình PM2 | Ghi chú |
-| --- | --- | --- | --- |
-| 1 | 1 bundle, route `/toan` | 1 | Bị loại: bundle phình, sập cả nhà |
-| **2 ⭐ đang chọn** | mỗi môn 1 bundle riêng | **1** | Người dùng thấy như app riêng; RAM/CPU thấp nhất |
-| 3 | mỗi môn 1 bundle | mỗi môn 1 tiến trình + port riêng | Để dành, xem ngưỡng bên dưới |
+| Mức                | Frontend                | Tiến trình PM2                    | Ghi chú                                          |
+| ------------------ | ----------------------- | --------------------------------- | ------------------------------------------------ |
+| 1                  | 1 bundle, route `/toan` | 1                                 | Bị loại: bundle phình, sập cả nhà                |
+| **2 ⭐ đang chọn** | mỗi môn 1 bundle riêng  | **1**                             | Người dùng thấy như app riêng; RAM/CPU thấp nhất |
+| 3                  | mỗi môn 1 bundle        | mỗi môn 1 tiến trình + port riêng | Để dành, xem ngưỡng bên dưới                     |
 
 **Vì sao mức 2:** VPS hiện **1 vCPU** — chạy N tiến trình Node chỉ tổ tranh nhau 1 core và tốn N×~200MB RAM,
 chậm hơn chứ không an toàn hơn. Backend gần như đã dùng chung sẵn (auth, đếm lượt, SePay, `/api/agent`,
@@ -156,21 +156,22 @@ Khác biệt về chất: ít "luyện tập", nhiều "tư vấn + theo dõi d�
 
 ## 6. Rủi ro & cách giảm
 
-| Rủi ro | Mức | Giảm thiểu |
-| --- | --- | --- |
-| **Phình phạm vi, không môn nào tới nơi** | 🔴 cao | Mỗi GĐ có cổng ra đo được; cấm mở môn mới khi môn trước chưa đạt cổng |
-| Refactor GĐ1 làm hỏng app đang có người dùng | 🔴 cao | Refactor thuần + E2E đầy đủ trước khi tách; deploy từng bước, giữ rollback |
-| Bản quyền đề/SGK Toán-Lý-Hoá | 🔴 cao | Chỉ bám **chương trình GDPT 2018** (văn bản nhà nước, được dùng); đề **tự sinh theo tham số** hoặc AI sinh mới; tuyệt đối không chép đề/sách thương mại |
-| AI chấm sai Toán/Lý/Hoá | 🟡 vừa | Chấm bằng thuật toán (so khớp đáp án chuẩn hoá), AI chỉ **giải thích**, không phán đúng/sai |
-| VPS 1 vCPU không tải nổi nhiều app | 🟡 vừa | Nâng VPS trước GĐ2; đặt `REDIS_URL` khi chạy nhiều tiến trình |
-| Một mình làm không xuể | 🟡 vừa | Dùng subagent theo luật phân việc ở CLAUDE.md §3; ưu tiên tái dùng thay vì viết mới |
+| Rủi ro                                       | Mức    | Giảm thiểu                                                                                                                                              |
+| -------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phình phạm vi, không môn nào tới nơi**     | 🔴 cao | Mỗi GĐ có cổng ra đo được; cấm mở môn mới khi môn trước chưa đạt cổng                                                                                   |
+| Refactor GĐ1 làm hỏng app đang có người dùng | 🔴 cao | Refactor thuần + E2E đầy đủ trước khi tách; deploy từng bước, giữ rollback                                                                              |
+| Bản quyền đề/SGK Toán-Lý-Hoá                 | 🔴 cao | Chỉ bám **chương trình GDPT 2018** (văn bản nhà nước, được dùng); đề **tự sinh theo tham số** hoặc AI sinh mới; tuyệt đối không chép đề/sách thương mại |
+| AI chấm sai Toán/Lý/Hoá                      | 🟡 vừa | Chấm bằng thuật toán (so khớp đáp án chuẩn hoá), AI chỉ **giải thích**, không phán đúng/sai                                                             |
+| VPS 1 vCPU không tải nổi nhiều app           | 🟡 vừa | Nâng VPS trước GĐ2; đặt `REDIS_URL` khi chạy nhiều tiến trình                                                                                           |
+| Một mình làm không xuể                       | 🟡 vừa | Dùng subagent theo luật phân việc ở CLAUDE.md §3; ưu tiên tái dùng thay vì viết mới                                                                     |
 
 ---
 
 ## 7. Việc tiếp theo ngay (nếu bạn duyệt)
 
-1. ~~QĐ-1~~ **đã chốt: C ở mức 2** (2026-07-31). Còn chờ bạn chốt **QĐ-2 (monorepo)** và **QĐ-3 (schema)**.
-2. Mình viết ADR + đặc tả chi tiết GĐ1 (danh sách file phải di chuyển, migration cụ thể, kế hoạch test hồi quy).
-3. Bắt đầu GĐ1 bước 1 (workspaces) trong 1 PR riêng, không kèm thay đổi hành vi.
-
-**Chưa duyệt thì chưa động vào code.**
+1. ~~QĐ-1/2/3~~ **ĐÃ CHỐT HẾT (2026-07-31)**: C ở mức 2 · monorepo npm workspaces · schema `core` + schema mỗi môn.
+2. ~~Viết ADR + đặc tả GĐ1~~ **XONG** → `docs/adr/0001-nen-tang-da-linh-vuc.md` và
+   `docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md` (7 PR, migration `0028`, kế hoạch chống hồi quy).
+3. **Việc kế tiếp:** ba việc chuẩn bị BẮT BUỘC trước PR-1 — ghi mốc E2E đang xanh · bổ sung E2E
+   (hoặc danh sách kiểm tra tay) cho thanh toán + đăng nhập Google · backup DB và **xác minh restore
+   chạy được**. Xong ba việc đó mới mở PR-1 (alias đường dẫn).
