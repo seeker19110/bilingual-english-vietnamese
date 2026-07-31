@@ -15,14 +15,14 @@ vi.mock('../core-auth/security', () => ({
   validateContentType: () => true,
   logSecurityEvent: () => {},
 }))
-vi.mock('../../api/_lib/usage', () => ({
+vi.mock('../core-billing/usage', () => ({
   checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const })),
   refundUsage: vi.fn(async () => {}),
 }))
 vi.mock('../../api/_lib/fetchTimeout', () => ({ fetchWithTimeout: vi.fn() }))
 
 import handler from './ai'
-import { refundUsage } from '../../api/_lib/usage'
+import { refundUsage } from '../core-billing/usage'
 import { fetchWithTimeout } from '../../api/_lib/fetchTimeout'
 
 const mockedFetch = vi.mocked(fetchWithTimeout)
@@ -271,7 +271,7 @@ describe('handler /api/agent — mode lạ (không phải chat/writing/speaking)
   it.each(['stt', 'pronounce', 'hack', 123, null])(
     'mode=%p → checkAndConsumeUsage("chat")',
     async (mode) => {
-      const { checkAndConsumeUsage } = await import('../../api/_lib/usage')
+      const { checkAndConsumeUsage } = await import('../core-billing/usage')
       const mockedConsume = vi.mocked(checkAndConsumeUsage)
       mockedConsume.mockClear()
       await handler(makeRequest({ messages: [{ role: 'user', content: 'Hi' }], mode }))

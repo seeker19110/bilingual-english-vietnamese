@@ -17,7 +17,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from '../core-auth/security.js'
-import { checkAndConsumeUsage, refundUsage, type UsageMode } from '../../api/_lib/usage.js'
+import { checkAndConsumeUsage, refundUsage, type UsageMode } from '../core-billing/usage.js'
 import { callGemini } from '../../api/_lib/geminiApi.js'
 import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
 import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'

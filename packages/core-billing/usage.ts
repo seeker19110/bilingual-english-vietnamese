@@ -4,11 +4,11 @@
 // Postgres tự host (cùng 2 hàm SQL, giờ gọi thẳng qua `pg`) — xem postgres/schema.sql.
 // Logic nghiệp vụ (giới hạn theo gói, FAIL-OPEN khi lỗi hạ tầng) giữ nguyên 100%.
 
-import { getPgPool } from '../../packages/core-db/pgPool.js'
-import { vnDateStr } from '../../packages/core-db/date.js'
+import { getPgPool } from '../core-db/pgPool.js'
+import { vnDateStr } from '../core-db/date.js'
 import { resolvePlan, type Plan } from './plan.js'
 import { effectivePlan } from './promo.js'
-import { getAppSettings } from '../../packages/core-db/settings.js'
+import { getAppSettings } from '../core-db/settings.js'
 
 export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
 

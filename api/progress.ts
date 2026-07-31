@@ -18,7 +18,7 @@ import {
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { vnDateStr } from '../packages/core-db/date.js'
-import { FREE_WEEKLY_BONUS_PER_DAY } from './_lib/usage.js'
+import { FREE_WEEKLY_BONUS_PER_DAY } from '../packages/core-billing/usage.js'
 
 // Giới hạn kích thước hợp lý — chặn payload bất thường (DoS/lỗi client) mà vẫn đủ rộng
 // cho người học nhiều năm (từ điển app hiện ~12.000 từ).

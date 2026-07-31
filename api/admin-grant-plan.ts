@@ -19,7 +19,7 @@ import {
 } from '../packages/core-auth/security.js'
 import { getUserById } from '../packages/core-auth/authService.js'
 import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
-import { resolvePlan } from './_lib/plan.js'
+import { resolvePlan } from '../packages/core-billing/plan.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 

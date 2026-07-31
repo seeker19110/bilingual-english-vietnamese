@@ -15,7 +15,11 @@ import {
   logSecurityEvent,
 } from '../packages/core-auth/security.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
-import { lookupPlan, FREE_WEEKLY_CAP, FREE_ROLLING_WINDOW_DAYS } from './_lib/usage.js'
+import {
+  lookupPlan,
+  FREE_WEEKLY_CAP,
+  FREE_ROLLING_WINDOW_DAYS,
+} from '../packages/core-billing/usage.js'
 import { vnDateStr } from '../packages/core-db/date.js'
 
 export default async function handler(req: Request): Promise<Response> {

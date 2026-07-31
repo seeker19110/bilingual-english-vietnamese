@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getAppSettings } from '../../packages/core-db/settings'
+import { getAppSettings } from '../core-db/settings'
 import { isFullAccessPromoActive, effectivePlan } from './promo'
 
-vi.mock('../../packages/core-db/settings', () => ({ getAppSettings: vi.fn() }))
+vi.mock('../core-db/settings', () => ({ getAppSettings: vi.fn() }))
 const mockedGetAppSettings = vi.mocked(getAppSettings)
 
 function settingsWith(promoUntil: string | null) {

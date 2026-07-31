@@ -2,15 +2,15 @@
 //
 // GET /api/payment-history  (cần đăng nhập; tự lọc user_id khớp token)
 
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '../core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '../core-auth/security.js'
+import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
 
 const HISTORY_LIMIT = 50
 

@@ -22,7 +22,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from '../core-auth/security.js'
-import { checkAndConsumeUsage, refundUsage } from '../../api/_lib/usage.js'
+import { checkAndConsumeUsage, refundUsage } from '../core-billing/usage.js'
 import { readJsonBody, validateBody } from '../../api/_lib/validation.js'
 import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
 import { base64ToBytes } from '../core-db/base64.js'

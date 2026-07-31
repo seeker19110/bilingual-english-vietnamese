@@ -11,15 +11,15 @@ import {
   effectiveTotalPrice,
   MAX_PROMO_YEARS,
   type PriceEntry,
-} from './_lib/prices.js'
-import { getPricePromo, activePromoPercent } from './_lib/pricePromo.js'
+} from '../../api/_lib/prices.js'
+import { getPricePromo, activePromoPercent } from '../../api/_lib/pricePromo.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '../core-auth/security.js'
+import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
 
 export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

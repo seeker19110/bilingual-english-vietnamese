@@ -9,7 +9,7 @@
 import { z } from 'zod'
 import { getPgPool } from '../packages/core-db/pgPool.js'
 import { ensureProfileRow } from '../packages/core-auth/authService.js'
-import { resolvePlan } from './_lib/plan.js'
+import { resolvePlan } from '../packages/core-billing/plan.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,

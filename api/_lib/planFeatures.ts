@@ -2,7 +2,7 @@
 // feature_catalog + plan_feature_flags, admin chỉnh qua /api/admin-plan-features). Cache trong
 // bộ nhớ tiến trình (TTL ngắn) giống api/_lib/settings.ts — tránh tra DB ở mọi request.
 import { getPgPool } from '../../packages/core-db/pgPool.js'
-import type { Plan } from './plan.js'
+import type { Plan } from '../../packages/core-billing/plan.js'
 
 export interface FeatureCatalogItem {
   key: string

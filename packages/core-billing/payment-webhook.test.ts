@@ -2,10 +2,10 @@
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 
-vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
-vi.mock('../packages/core-auth/security', () => ({ logSecurityEvent: vi.fn() }))
+vi.mock('../core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../core-auth/security', () => ({ logSecurityEvent: vi.fn() }))
 const granted: { calls: { userId: string; plan: string; days: number }[] } = { calls: [] }
-vi.mock('./_lib/planGrant', () => ({
+vi.mock('../../api/_lib/planGrant', () => ({
   grantPlanDays: async (userId: string, plan: string, days: number) => {
     granted.calls.push({ userId, plan, days })
     return { plan, planExpiresAt: new Date() }
@@ -13,8 +13,8 @@ vi.mock('./_lib/planGrant', () => ({
 }))
 
 import handler from './payment-webhook'
-import { getPgPool } from '../packages/core-db/pgPool'
-import { logSecurityEvent } from '../packages/core-auth/security'
+import { getPgPool } from '../core-db/pgPool'
+import { logSecurityEvent } from '../core-auth/security'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

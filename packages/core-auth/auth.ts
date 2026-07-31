@@ -30,7 +30,7 @@ import {
   ensureProfileRow,
   getUserById,
 } from './authService.js'
-import type { Plan } from '../../api/_lib/plan.js'
+import type { Plan } from '../core-billing/plan.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,

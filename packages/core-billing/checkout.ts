@@ -8,25 +8,25 @@
 // Trả { paymentCode, amountVnd, qrUrl, bankAccount, bankName, expiresAt, plan, cycle, years }
 
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '../core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
+} from '../core-auth/security.js'
 import {
   getPlanPrices,
   effectiveTotalPrice,
   MAX_PROMO_YEARS,
   type PayablePlan,
   type PayableCycle,
-} from './_lib/prices.js'
-import { getPricePromo, activePromoPercent } from './_lib/pricePromo.js'
-import { generatePaymentCode, buildSepayQrUrl } from './_lib/sepay.js'
-import { readJsonBody, validateBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '../../api/_lib/prices.js'
+import { getPricePromo, activePromoPercent } from '../../api/_lib/pricePromo.js'
+import { generatePaymentCode, buildSepayQrUrl } from '../../api/_lib/sepay.js'
+import { readJsonBody, validateBody } from '../../api/_lib/validation.js'
+import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
 
 const CheckoutSchema = z.object({
   plan: z.enum(['pro', 'vip']),

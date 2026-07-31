@@ -26,7 +26,7 @@ import {
   validateContentType,
   logSecurityEvent,
 } from '../packages/core-auth/security.js'
-import { checkAndConsumeUsage, refundUsage } from './_lib/usage.js'
+import { checkAndConsumeUsage, refundUsage } from '../packages/core-billing/usage.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { base64ToBytes } from '../packages/core-db/base64.js'

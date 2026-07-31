@@ -5,14 +5,14 @@
 //
 // GET /api/plan-marketing
 
-import { getPlanMarketing } from './_lib/planMarketing.js'
+import { getPlanMarketing } from '../../api/_lib/planMarketing.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '../core-auth/security.js'
+import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
 
 export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

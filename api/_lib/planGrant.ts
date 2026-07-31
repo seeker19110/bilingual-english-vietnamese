@@ -10,7 +10,7 @@
 //   3. Gói vĩnh viễn (plan pro/vip + plan_expires_at = null) là cao nhất — không đụng vào.
 
 import { getPgPool } from '../../packages/core-db/pgPool.js'
-import { resolvePlan, type Plan } from './plan.js'
+import { resolvePlan, type Plan } from '../../packages/core-billing/plan.js'
 import { getAppSettings } from '../../packages/core-db/settings.js'
 
 // Thứ hạng gói để so sánh cao/thấp — free < pro < vip.

@@ -8,7 +8,7 @@
 // hiện tại). Con số mặc định dưới đây tính từ độ dài prompt/response điển hình của từng chế
 // độ với model đang dùng (xem api/_lib/aiConfig.ts). Khi có hoá đơn thật từ nhà cung cấp,
 // chỉnh lại bằng BIẾN MÔI TRƯỜNG — không cần sửa code, không cần deploy lại frontend.
-import type { UsageMode } from '../../api/_lib/usage.js'
+import type { UsageMode } from '../core-billing/usage.js'
 
 // Đơn giá mặc định (USD cho MỖI lượt). Cơ sở ước tính:
 //   chat      — Claude Haiku 4.5, ~1.5k token vào + ~400 token ra mỗi lượt trò chuyện.

@@ -13,7 +13,7 @@ vi.mock('../packages/core-auth/security', () => ({
   validateContentType: () => true,
   logSecurityEvent: () => {},
 }))
-vi.mock('./_lib/usage', () => ({
+vi.mock('../packages/core-billing/usage', () => ({
   checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const })),
   refundUsage: vi.fn(async () => {}),
 }))
@@ -23,7 +23,7 @@ vi.mock('../packages/core-ai/azurePronounce', () => ({
 }))
 
 import handler from './pronounce-assess'
-import { checkAndConsumeUsage, refundUsage } from './_lib/usage'
+import { checkAndConsumeUsage, refundUsage } from '../packages/core-billing/usage'
 import {
   resolveAzurePronounceConfig,
   assessPronunciation,

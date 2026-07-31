@@ -26,7 +26,11 @@ import { getUserById } from '../packages/core-auth/authService.js'
 import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { getUnitCostsUsd, getUsdVndRate, estimateCostUsd } from '../packages/core-ai/aiCost.js'
-import { FREE_WEEKLY_CAP, FREE_ROLLING_WINDOW_DAYS, type UsageMode } from './_lib/usage.js'
+import {
+  FREE_WEEKLY_CAP,
+  FREE_ROLLING_WINDOW_DAYS,
+  type UsageMode,
+} from '../packages/core-billing/usage.js'
 import { vnDateStr, addDays } from '../packages/core-db/date.js'
 
 const DEFAULT_DAYS = 30

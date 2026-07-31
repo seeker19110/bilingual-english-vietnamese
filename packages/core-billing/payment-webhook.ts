@@ -9,13 +9,13 @@
 // SePay lặp lại).
 
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
-import { logSecurityEvent } from '../packages/core-auth/security.js'
-import { extractPaymentCode, verifySepayApiKey } from './_lib/sepay.js'
-import { grantPlanDays } from './_lib/planGrant.js'
-import { CYCLE_DAYS, type PayableCycle } from './_lib/prices.js'
-import { readJsonBody, validateBody } from './_lib/validation.js'
-import { jsonResponse } from './_lib/http.js'
+import { getPgPool } from '../core-db/pgPool.js'
+import { logSecurityEvent } from '../core-auth/security.js'
+import { extractPaymentCode, verifySepayApiKey } from '../../api/_lib/sepay.js'
+import { grantPlanDays } from '../../api/_lib/planGrant.js'
+import { CYCLE_DAYS, type PayableCycle } from '../../api/_lib/prices.js'
+import { readJsonBody, validateBody } from '../../api/_lib/validation.js'
+import { jsonResponse } from '../../api/_lib/http.js'
 
 const WebhookSchema = z.object({
   id: z.union([z.string(), z.number()]),
