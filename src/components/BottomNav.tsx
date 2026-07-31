@@ -2,53 +2,25 @@
 // `sm:` của Tailwind — xem `--bnav-h` trong index.css). 4 mục: Trang chủ · Lộ
 // trình · Luyện tập · Tiến độ. Ẩn hoàn toàn ở /login, /onboarding (chưa có user).
 //
-// Tab "Luyện tập" không có route cố định — Chat/Nói/Viết là 3 route độc lập,
-// không có trang gộp chung. Bấm vào thì tới ĐÚNG chế độ dùng gần nhất (ghi nhớ
-// localStorage mỗi khi vào /chat, /speaking, /writing); người dùng mới chưa
-// từng vào thì mặc định '/chat' (đã gắn nhãn "Phổ biến" ở Home).
-import { useEffect } from 'react'
+// Tab "Luyện tập" trỏ vào trang hub /practice (gộp Nghe/Nói/Viết — src/pages/Practice.tsx).
+// Chat/Speaking/Writing vẫn là route độc lập (điều hướng TỚI từ trang hub), tab vẫn
+// sáng khi đang ở 1 trong các route đó để không gây cảm giác "lạc" điều hướng.
 import { Link, useLocation } from 'react-router-dom'
 import { Home, Target, Dumbbell, TrendingUp } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 
-const PRACTICE_ROUTES = ['/chat', '/speaking', '/writing']
-const DEFAULT_PRACTICE_ROUTE = '/chat'
+const PRACTICE_ROUTES = ['/practice', '/chat', '/speaking', '/writing']
 // /login, /onboarding không nằm sau RequireAuth — user context có thể vẫn còn
 // (vd vừa đăng nhập nhưng chưa onboarded) nên phải loại trừ theo path, không
 // chỉ dựa vào `!user`.
 const HIDDEN_PATHS = ['/login', '/onboarding']
-const LAST_PRACTICE_KEY = (uid: string) => `et_last_practice_${uid}`
-
-function getLastPracticeRoute(uid: string): string {
-  try {
-    const raw = localStorage.getItem(LAST_PRACTICE_KEY(uid))
-    if (raw && PRACTICE_ROUTES.includes(raw)) return raw
-  } catch {
-    /* localStorage không khả dụng — dùng mặc định bên dưới */
-  }
-  return DEFAULT_PRACTICE_ROUTE
-}
-
-function setLastPracticeRoute(uid: string, path: string) {
-  try {
-    localStorage.setItem(LAST_PRACTICE_KEY(uid), path)
-  } catch {
-    /* bỏ qua — chỉ ảnh hưởng việc tab Luyện tập nhớ sai chế độ gần nhất */
-  }
-}
 
 export default function BottomNav() {
   const { user } = useAuth()
   const { T } = useLang()
   const location = useLocation()
-  const uid = user?.id ?? ''
   const isPracticeRoute = PRACTICE_ROUTES.includes(location.pathname)
-
-  // Ghi nhớ chế độ luyện tập gần nhất mỗi khi vào 1 trong 3 route luyện tập.
-  useEffect(() => {
-    if (uid && isPracticeRoute) setLastPracticeRoute(uid, location.pathname)
-  }, [uid, isPracticeRoute, location.pathname])
 
   if (!user || HIDDEN_PATHS.includes(location.pathname)) return null
 
@@ -69,7 +41,7 @@ export default function BottomNav() {
     },
     {
       key: 'practice',
-      to: isPracticeRoute ? location.pathname : getLastPracticeRoute(uid),
+      to: '/practice',
       icon: Dumbbell,
       label: T.navPractice,
       active: isPracticeRoute,
