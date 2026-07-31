@@ -16,7 +16,14 @@ import type { DictEntry } from '../apps/english/src/types.ts'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = path.join(ROOT, 'public/data/dictionary')
 const OUT_FILE = path.join(ROOT, 'public/sitemap-words.xml')
-const SITE_URL = 'https://en-vi.donghanhcungban.com'
+// SITE_URL/VITE_SITE_URL: cùng quy ước với api/_lib/passwordReset.ts, App.tsx, ShareResultCard.tsx
+// — cho phép đổi domain (vd donghanhcungban.org) mà không cần sửa code, chỉ cần đặt biến môi
+// trường lúc chạy script.
+const SITE_URL = (
+  process.env.SITE_URL ||
+  process.env.VITE_SITE_URL ||
+  'https://en-vi.donghanhcungban.com'
+).replace(/\/$/, '')
 
 let dict: DictEntry[] = []
 for (let i = 0; i < 10; i++) {
