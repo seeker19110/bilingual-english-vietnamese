@@ -223,9 +223,40 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
     **Việc tay còn nợ: chạy `docs/kiem-tra-tay-thanh-toan-google-login.md` mục B (đặc biệt B6/B7 —
     test giao dịch ENVI cũ vẫn khớp + bật thêm bộ lọc DHCB trên dashboard SePay) sau khi deploy
     thật lên VPS. Mục A (Google login) cũng nên chạy vì PR-4 vừa đụng `core-auth`.**
-  - **Tiếp theo: PR-5b (chuyển các bảng dữ liệu học tiếng Anh — `chat_sessions`,
-    `writing_submissions`, v.v. — vào schema Postgres riêng `english`, theo đặc tả GĐ1 gốc), rồi
-    PR-6 (tách `packages/core-ui`), rồi PR-7 (`apps/hub` + cấu hình Nginx đa subdomain + SSO).**
+  - **[2026-07-31] PR-5b (chuyển bảng dữ liệu học tiếng Anh sang schema `english`) — XONG.**
+    Migration `postgres/migrations/0030_schema_english.sql`: `alter table ... set schema english`
+    cho 7 bảng (`chat_sessions`, `writing_submissions`, `speaking_sessions`, `learning_progress`,
+    `pronunciations`, `challenge_entries`, `tutor_feedback`) + view compat `public.<bảng>` trỏ
+    sang `english.<bảng>` (xoá ở PR sau khi xác nhận hết truy vấn dùng tên không gắn schema).
+    `tts_cache`/`daily_usage`/`free_daily_credit` ở lại `public` — hạ tầng dùng chung mọi môn.
+    Sửa 8 file gọi SQL (`api/history.ts`, `_lib/quests.ts`, `push.ts`, `progress.ts`,
+    `pronunciation.ts`, `challenge.ts`, `leaderboard.ts`, `tutor-feedback.ts` + test) sang gọi
+    thẳng `english.<bảng>`. `schema.sql` giữ nguyên (baseline tạo ở `public`, migration set schema
+    sau — đúng quy ước mọi migration trước). Commit `9e45145`, merge PR #395.
+  - **[2026-07-31] PR-6 (tách `packages/core-ui`) — XONG, phạm vi ĐÃ THU HẸP so với đặc tả gốc,
+    lý do phát hiện lúc thi hành.** Chuyển được ngay (thuần, không phụ thuộc gì đặc thù app):
+    `theme.ts`, `themeContext.ts`, `useTheme.ts`, `ThemeProvider.tsx`, `authHeader.ts`,
+    `ToastProvider.tsx`. **Phát hiện:** `ThemeProvider.tsx` bản gốc tự gọi `useAuth()` +
+    `useOnboarding()` để tính `locked` (khoá cứng theme cho nhóm tuổi Nhi đồng) — phụ thuộc
+    ngược vào nghiệp vụ app tiếng Anh, không tách nguyên trạng được như đặc tả giả định. Đã viết
+    lại `ThemeProvider` (core-ui) nhận `locked`/`settled` qua PROP thuần; tạo
+    `apps/english/src/context/AppThemeProvider.tsx` làm lớp bọc tự tính `locked` từ
+    auth/onboarding riêng app rồi truyền xuống — giữ nguyên hành vi cũ kể cả ca biên "đang tải
+    onboarding thì chưa ép đổi theme" (thêm cờ `settled`). **CHƯA tách** (khác đặc tả gốc,
+    quyết định tại chỗ theo nguyên tắc "không trừu tượng hoá sớm"):
+    `ThemeToggle.tsx`/`LangProvider`/`useLang` — phụ thuộc thẳng từ điển dịch `i18n.ts` riêng nội
+    dung app tiếng Anh, chỉ tách khi Toán thật cần và thiết kế được cách truyền nhãn dịch;
+    `types.ts` — giữ nguyên ở app (chứa nhiều type nghiệp vụ: `DictEntry`, `ChatSession`, …),
+    riêng `Plan` (3 panel admin dùng) trỏ thẳng sang `packages/core-billing/plan.ts` có sẵn thay
+    vì tạo bản sao. Alias `@core/*` (vite.config.ts/tsconfig.json/vitest.config.ts) đổi từ trỏ
+    tạm vào `apps/english/src` sang trỏ THẬT vào `packages/core-ui`; `tsconfig.api.json`/
+    `tsconfig.server.json` loại trừ `packages/core-ui` (component React/JSX, không chạy Node).
+    Xác thực: tsc sạch (frontend+api+e2e), build+build:server sạch (`dist-server` không chứa
+    `core-ui`), lint 0 cảnh báo, vitest 92 file/1017 test pass, `npm run dev` khởi động + serve
+    200 OK. Commit `d355f98`.
+  - **Tiếp theo: PR-7 (`apps/hub` + cấu hình Nginx đa subdomain + SSO) — phần code (trang hub,
+    scaffold app mới) làm được trong sandbox; phần hạ tầng thật (DNS, Nginx, SSO cookie domain
+    chung, deploy VPS) cần làm tay ngoài phiên này.**
   - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
     `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
     trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback
