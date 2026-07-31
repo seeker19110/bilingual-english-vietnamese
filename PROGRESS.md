@@ -189,6 +189,16 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
     `tts`/`stt`/`ai`/`auth` vì đã dời sang `packages/`) để tiếp tục canh đúng 4 route đó, không chỉ
     merge cho qua. Nghiệm thu: tsc (3 project) + eslint sạch · build + `build:server` xanh ·
     92 file/1029 test xanh (bao gồm 73 test route-gate).
+  - **[2026-07-31] CI đỏ trên PR #395 do TỰ MÌNH sai quy trình — đã sửa.** Sau khi phát hiện lỗi
+    độ sâu đường dẫn (`'../packages/'` sai → `'../../packages/'` đúng), sửa bằng `sed` NHƯNG
+    file đã `git add` từ TRƯỚC lần sửa đó — quên `git add` lại sau khi sửa. Hook `lint-staged`
+    lúc commit stash/restore unstaged changes nên `tsc` chạy sau đó vẫn "sạch" (đọc working tree),
+    khiến tưởng nhầm đã đúng, nhưng bản **đã commit** (git index lúc đó) vẫn là bản sai — CI bắt
+    đúng lỗi này. **Bài học ghi nhớ: sau khi sửa file bằng sed/Edit RỒI `git add` sớm, phải chạy
+    lại `git diff --cached` đối chiếu working tree trước khi commit — `tsc` chạy sau luôn đọc
+    working tree, KHÔNG phải staged index, nên không đủ để xác nhận commit đúng.** Đã sửa bằng
+    `git add` lại + `git diff --cached` xác nhận khớp working tree trước khi commit (thay vì chỉ
+    tin `tsc` chạy sau).
   - **Tiếp theo: PR-5 (tách `packages/core-billing` + migration `usage_events`/`subject_limits` +
     đổi tiền tố SePay `DHCB`) — chạy `docs/kiem-tra-tay-thanh-toan-google-login.md` mục A ngay
     (test đăng nhập Google thật, PR-4 vừa đụng trực tiếp) và mục B sau khi PR-5 đổi tiền tố.**
