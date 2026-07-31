@@ -21,6 +21,12 @@
 
 create extension if not exists pgcrypto; -- cho gen_random_uuid()
 
+-- schema `english`: dữ liệu học tiếng Anh riêng (migration 0030, tách khỏi hạ tầng dùng
+-- chung để chuẩn bị môn thứ 2 có schema riêng). View compat public.<tên> trỏ sang bảng
+-- thật ở đây — PHẢI khớp với migration 0030, nếu không lần deploy sau (áp lại schema.sql
+-- idempotent) sẽ lỗi vì cố "create table"/"create index" đè lên view.
+create schema if not exists english;
+
 -- ── 0. users: tài khoản (thay auth.users của Supabase) ───────────────────────
 -- Auth.js (Giai đoạn B) sẽ đọc/ghi bảng này: đăng ký (email/password băm bằng
 -- bcrypt/argon2) và đăng nhập Google OAuth (google_id lưu id tài khoản Google).
@@ -50,7 +56,7 @@ create table if not exists public.profiles (
 );
 
 -- ── 2. chat_sessions: lịch sử chế độ Chat ────────────────────────────
-create table if not exists public.chat_sessions (
+create table if not exists english.chat_sessions (
   id         uuid primary key,
   user_id    uuid not null references public.users(id) on delete cascade,
   situation  text,
@@ -58,10 +64,11 @@ create table if not exists public.chat_sessions (
   messages   jsonb not null default '[]',
   created_at bigint not null
 );
-create index if not exists chat_sessions_user_idx on public.chat_sessions(user_id, created_at desc);
+create index if not exists chat_sessions_user_idx on english.chat_sessions(user_id, created_at desc);
+create or replace view public.chat_sessions as select * from english.chat_sessions;
 
 -- ── 3. writing_submissions: lịch sử chấm bài viết ──────────────────────
-create table if not exists public.writing_submissions (
+create table if not exists english.writing_submissions (
   id           uuid primary key,
   user_id      uuid not null references public.users(id) on delete cascade,
   essay_prompt text,
@@ -69,10 +76,11 @@ create table if not exists public.writing_submissions (
   feedback     text,
   submitted_at bigint not null
 );
-create index if not exists writing_subs_user_idx on public.writing_submissions(user_id, submitted_at desc);
+create index if not exists writing_subs_user_idx on english.writing_submissions(user_id, submitted_at desc);
+create or replace view public.writing_submissions as select * from english.writing_submissions;
 
 -- ── 4. speaking_sessions: lịch sử luyện nói ──────────────────────────
-create table if not exists public.speaking_sessions (
+create table if not exists english.speaking_sessions (
   id         uuid primary key,
   user_id    uuid not null references public.users(id) on delete cascade,
   situation  text,
@@ -80,7 +88,8 @@ create table if not exists public.speaking_sessions (
   messages   jsonb not null default '[]',
   created_at bigint not null
 );
-create index if not exists speaking_sessions_user_idx on public.speaking_sessions(user_id, created_at desc);
+create index if not exists speaking_sessions_user_idx on english.speaking_sessions(user_id, created_at desc);
+create or replace view public.speaking_sessions as select * from english.speaking_sessions;
 
 -- ── 5. daily_usage: đếm lượt dùng theo ngày (giới hạn Free/Pro) ─────────────
 create table if not exists public.daily_usage (
@@ -110,7 +119,7 @@ create table if not exists public.tts_cache (
 create index if not exists tts_cache_lang_idx on public.tts_cache(lang);
 
 -- ── 6a. pronunciations: cache audio phát âm TỪ ĐƠN dùng chung cho mọi user ────
-create table if not exists public.pronunciations (
+create table if not exists english.pronunciations (
   id            uuid primary key default gen_random_uuid(),
   word          text not null,
   voice         text not null default 'female',
@@ -121,10 +130,11 @@ create table if not exists public.pronunciations (
   last_accessed_at timestamptz not null default now(), -- Giai đoạn D: LRU dọn cache R2
   unique (word, voice, lang) -- kèm lang: tránh 1 chữ trùng cả 2 ngôn ngữ đè cache lẫn nhau
 );
-create index if not exists idx_pronunciations_word on public.pronunciations(word);
+create index if not exists idx_pronunciations_word on english.pronunciations(word);
+create or replace view public.pronunciations as select * from english.pronunciations;
 
 -- ── 6b. learning_progress: tiến độ học ─────
-create table if not exists public.learning_progress (
+create table if not exists english.learning_progress (
   user_id        uuid primary key references public.users(id) on delete cascade,
   learned        jsonb not null default '[]',
   hard           jsonb not null default '[]',
@@ -138,6 +148,7 @@ create table if not exists public.learning_progress (
   achievements   jsonb not null default '[]',
   updated_at     timestamptz not null default now()
 );
+create or replace view public.learning_progress as select * from english.learning_progress;
 
 -- ── 7. profiles: cột onboarding + giải đấu tuần ───────────────
 alter table public.profiles add column if not exists onboarded     boolean not null default false;
@@ -227,7 +238,7 @@ end;
 $$;
 
 -- ── 11. challenge_entries: thử thách "Challenge 1 phút / 30 ngày" ─────
-create table if not exists public.challenge_entries (
+create table if not exists english.challenge_entries (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null references public.users(id) on delete cascade,
   day             date not null,
@@ -241,9 +252,10 @@ create table if not exists public.challenge_entries (
   created_at      timestamptz default now(),
   unique (user_id, day)
 );
+create or replace view public.challenge_entries as select * from english.challenge_entries;
 
 -- ── 12. tutor_feedback: người dùng báo AI sửa sai/bỏ sót ─────
-create table if not exists public.tutor_feedback (
+create table if not exists english.tutor_feedback (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references public.users(id) on delete cascade,
   source      text not null,
@@ -251,7 +263,8 @@ create table if not exists public.tutor_feedback (
   ai_feedback text not null,
   created_at  timestamptz not null default now()
 );
-create index if not exists tutor_feedback_user_idx on public.tutor_feedback(user_id, created_at desc);
+create index if not exists tutor_feedback_user_idx on english.tutor_feedback(user_id, created_at desc);
+create or replace view public.tutor_feedback as select * from english.tutor_feedback;
 
 -- ── 13. _schema_migrations: theo dõi migration đã áp dụng (scripts/run-pg-migrations.ts) ──
 create table if not exists public._schema_migrations (
