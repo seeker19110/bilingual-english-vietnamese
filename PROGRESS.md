@@ -113,6 +113,16 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
     đúng pattern `checkout.test.ts`. Phần không tự động hoá an toàn được (chuyển khoản SePay thật,
     popup Google OAuth thật) chuyển thành danh sách kiểm tra tay:
     `docs/kiem-tra-tay-thanh-toan-google-login.md` — chạy trước mỗi lần deploy PR-4/PR-5 của GĐ1.
+  - **[2026-07-31] PR-1 (GĐ1, alias đường dẫn) — XONG.** Sửa phạm vi lúc thi hành: alias **chỉ áp
+    dụng cho `src/`** — `api/` được `tsc` biên dịch thành JS thật chạy trực tiếp bằng `node`
+    (không qua bundler), `tsc` không tự rewrite alias lúc build nên sẽ crash production; khi
+    `api/_lib/*` chuyển sang `packages/core-*` (PR-3/4/5) sẽ dùng import package thật qua npm
+    workspaces, không cần alias trung gian. Đã thêm `resolve.alias` (`vite.config.ts`) +
+    `paths` (`tsconfig.json`): `@core/*`/`@english/*` tạm thời cùng trỏ `src/*`. Quét thấy chỉ
+    **10 file** có import sâu ≥2 cấp trong `src/` (nhỏ hơn nhiều so với ước lượng ban đầu do cấu
+    trúc `src/` khá phẳng) — làm trực tiếp thay vì giao subagent (không đáng chi phí điều phối).
+    Build + `build:server` + typecheck + lint + 947 unit test đều xanh, `git diff` chỉ có dòng
+    import. **Tiếp theo: PR-2 (bật npm workspaces, dời `src/`+`api/` vào `apps/english/`).**
   - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
     `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
     trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback
