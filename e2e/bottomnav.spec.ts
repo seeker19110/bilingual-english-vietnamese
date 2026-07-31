@@ -29,19 +29,19 @@ test.describe('BottomNav (U-5)', () => {
     await expect(page.locator('nav[aria-label]')).toHaveCount(0)
   })
 
-  test('tab Luyện tập: chưa từng vào → mặc định /chat; đã vào /speaking → nhớ /speaking', async ({
+  test('tab Luyện tập: luôn vào trang hub /practice, kể cả khi vừa ở /speaking', async ({
     page,
   }) => {
     await mockLogin(page, 'vi')
     await page.goto('/')
     await page.getByRole('link', { name: /Luyện tập/ }).click()
-    await expect(page).toHaveURL(/\/chat$/)
+    await expect(page).toHaveURL(/\/practice$/)
 
     await page.goto('/speaking')
     await expect(page.getByRole('heading', { name: /Luyện nói song ngữ/ }).first()).toBeVisible()
     await page.goto('/')
     await page.getByRole('link', { name: /Luyện tập/ }).click()
-    await expect(page).toHaveURL(/\/speaking$/)
+    await expect(page).toHaveURL(/\/practice$/)
   })
 
   test('Chat: input không bị BottomNav che (nằm trên đường viền nav)', async ({ page }) => {
