@@ -29,23 +29,23 @@ import {
   revokeSession,
   ensureProfileRow,
   getUserById,
-} from './_lib/authService.js'
-import type { Plan } from './_lib/plan.js'
+} from './authService.js'
+import type { Plan } from '../../api/_lib/plan.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { sendVerificationCode, verifyCode, isEmailVerified } from './_lib/emailVerification.js'
-import { isAdminEmail } from './_lib/adminAuth.js'
-import { grantSignupTrial, SIGNUP_TRIAL_DAYS } from './_lib/trial.js'
-import { changeEmail } from './_lib/changeEmail.js'
-import { requestPasswordReset, resetPassword } from './_lib/passwordReset.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { isReservedName } from './_lib/reservedNames.js'
+} from './security.js'
+import { validateBody, readJsonBody } from '../../api/_lib/validation.js'
+import { sendVerificationCode, verifyCode, isEmailVerified } from './emailVerification.js'
+import { isAdminEmail } from './adminAuth.js'
+import { grantSignupTrial, SIGNUP_TRIAL_DAYS } from '../../api/_lib/trial.js'
+import { changeEmail } from './changeEmail.js'
+import { requestPasswordReset, resetPassword } from '../../api/_lib/passwordReset.js'
+import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
+import { isReservedName } from '../../api/_lib/reservedNames.js'
 
 const RegisterSchema = z.object({
   action: z.literal('register'),

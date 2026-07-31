@@ -10,10 +10,10 @@
 //     tính vẫn neo vào google_id nên đổi email KHÔNG cướp được quyền đăng nhập.
 //   • Email mới luôn về trạng thái CHƯA xác thực, kèm gửi mã mới.
 
-import { getPgPool } from '../../packages/core-db/pgPool.js'
+import { getPgPool } from '../core-db/pgPool.js'
 import { verifyPassword } from './authService.js'
 import { sendVerificationCode } from './emailVerification.js'
-import type { MailStatus } from './mailer.js'
+import type { MailStatus } from '../../api/_lib/mailer.js'
 
 export type ChangeEmailResult =
   | { ok: true; mail: MailStatus }

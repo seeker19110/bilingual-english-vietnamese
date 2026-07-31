@@ -10,7 +10,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
 vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
-vi.mock('./authService', () => ({
+vi.mock('../../packages/core-auth/authService', () => ({
   hashPassword: async (pw: string) => `hashed:${pw}`,
 }))
 const mailCalls: unknown[] = []

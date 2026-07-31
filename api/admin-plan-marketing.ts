@@ -16,9 +16,9 @@ import {
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security.js'
-import { getUserById } from './_lib/authService.js'
-import { isAdminEmail } from './_lib/adminAuth.js'
+} from '../packages/core-auth/security.js'
+import { getUserById } from '../packages/core-auth/authService.js'
+import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
 import { getPlanMarketing, invalidatePlanMarketingCache } from './_lib/planMarketing.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'

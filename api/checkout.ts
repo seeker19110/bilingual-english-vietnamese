@@ -15,7 +15,7 @@ import {
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import {
   getPlanPrices,
   effectiveTotalPrice,

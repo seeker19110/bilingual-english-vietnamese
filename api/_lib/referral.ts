@@ -6,7 +6,7 @@
 
 import { getPgPool } from '../../packages/core-db/pgPool.js'
 import { grantPlanDays } from './planGrant.js'
-import { logSecurityEvent } from './security.js'
+import { logSecurityEvent } from '../../packages/core-auth/security.js'
 
 // Số ngày Pro thưởng cho MỖI BÊN khi 1 lượt mời thành công (quyết định 2026-07-28: giảm từ
 // 7 xuống 3 ngày, đồng bộ với thang thưởng nhiệm vụ mới — xem api/_lib/quests.ts).

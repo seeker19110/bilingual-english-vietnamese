@@ -10,7 +10,7 @@
 
 import { z } from 'zod'
 import { getPgPool } from '../packages/core-db/pgPool.js'
-import { logSecurityEvent } from './_lib/security.js'
+import { logSecurityEvent } from '../packages/core-auth/security.js'
 import { extractPaymentCode, verifySepayApiKey } from './_lib/sepay.js'
 import { grantPlanDays } from './_lib/planGrant.js'
 import { CYCLE_DAYS, type PayableCycle } from './_lib/prices.js'

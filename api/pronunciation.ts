@@ -29,7 +29,7 @@ import {
   type VoiceId,
 } from './_lib/googleTts.js'
 import { saveAudio } from '../packages/core-ai/fileStorage.js'
-import { ensureProfileRow } from './_lib/authService.js'
+import { ensureProfileRow } from '../packages/core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
 import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.js'
 import {
@@ -38,7 +38,7 @@ import {
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
 // Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),

@@ -8,7 +8,7 @@
 
 import { z } from 'zod'
 import { getPgPool } from '../packages/core-db/pgPool.js'
-import { ensureProfileRow } from './_lib/authService.js'
+import { ensureProfileRow } from '../packages/core-auth/authService.js'
 import { resolvePlan } from './_lib/plan.js'
 import {
   getCorsHeaders,
@@ -16,7 +16,7 @@ import {
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 

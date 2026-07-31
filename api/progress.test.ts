@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
-vi.mock('./_lib/security', () => ({
+vi.mock('../packages/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,

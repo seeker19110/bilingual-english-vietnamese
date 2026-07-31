@@ -12,7 +12,12 @@
 
 import { z } from 'zod'
 import { getPgPool } from '../packages/core-db/pgPool.js'
-import { getCorsHeaders, SECURITY_HEADERS, checkRateLimit, validateAuth } from './_lib/security.js'
+import {
+  getCorsHeaders,
+  SECURITY_HEADERS,
+  checkRateLimit,
+  validateAuth,
+} from '../packages/core-auth/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 

@@ -21,7 +21,7 @@ import {
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { rewardReferralIfEligible } from './_lib/referral.js'

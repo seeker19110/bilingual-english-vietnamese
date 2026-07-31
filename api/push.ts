@@ -7,7 +7,7 @@
 import webpush from 'web-push'
 import { z } from 'zod'
 import { getPgPool } from '../packages/core-db/pgPool.js'
-import { getCorsHeaders, SECURITY_HEADERS, validateAuth } from './_lib/security.js'
+import { getCorsHeaders, SECURITY_HEADERS, validateAuth } from '../packages/core-auth/security.js'
 import { validateBody } from './_lib/validation.js'
 import { vnDateStr, addDays } from '../packages/core-db/date.js'
 import {

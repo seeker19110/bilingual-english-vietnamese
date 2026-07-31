@@ -10,7 +10,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
-vi.mock('./security', () => ({ logSecurityEvent: () => {} }))
+vi.mock('../../packages/core-auth/security', () => ({ logSecurityEvent: () => {} }))
 const granted: { calls: { userId: string; days: number }[] } = { calls: [] }
 vi.mock('./planGrant', () => ({
   grantPlanDays: async (userId: string, _plan: string, days: number) => {

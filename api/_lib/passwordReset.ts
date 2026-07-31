@@ -14,7 +14,7 @@
 
 import { randomBytes, createHash } from 'node:crypto'
 import { getPgPool } from '../../packages/core-db/pgPool.js'
-import { hashPassword } from './authService.js'
+import { hashPassword } from '../../packages/core-auth/authService.js'
 import { sendMailWithQuota } from './mailQuota.js'
 
 const TOKEN_TTL_MS = 30 * 60 * 1000 // 30 phút — dài hơn mã xác thực email vì phải mở mail rồi mới bấm link, không gõ tay ngay.

@@ -33,7 +33,7 @@ import {
   type VoiceId,
 } from '../../api/_lib/googleTts.js'
 import { generateAudioFromElevenLabs, isValidElevenVoice } from './elevenLabsTts.js'
-import { ensureProfileRow } from '../../api/_lib/authService.js'
+import { ensureProfileRow } from '../core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from '../../api/_lib/voiceAccess.js'
 import { saveAudio } from './fileStorage.js'
 import { encryptAudio, getClientKeyMaterial } from '../../api/_lib/ttsCrypto.js'
@@ -44,7 +44,7 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from '../../api/_lib/security.js'
+} from '../core-auth/security.js'
 import { readJsonBody, validateBody } from '../../api/_lib/validation.js'
 import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
 import { jsonResponse, getClientIp } from '../../api/_lib/http.js'

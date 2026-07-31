@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
-vi.mock('./_lib/security', () => ({
+vi.mock('../packages/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -12,10 +12,10 @@ vi.mock('./_lib/security', () => ({
   logSecurityEvent: () => {},
 }))
 const emailState: { email: string | undefined } = { email: 'admin@x.com' }
-vi.mock('./_lib/authService', () => ({
+vi.mock('../packages/core-auth/authService', () => ({
   getUserById: async () => ({ id: 'user-1', email: emailState.email }),
 }))
-vi.mock('./_lib/adminAuth', () => ({
+vi.mock('../packages/core-auth/adminAuth', () => ({
   isAdminEmail: (email: string | null | undefined) => email === 'admin@x.com',
 }))
 

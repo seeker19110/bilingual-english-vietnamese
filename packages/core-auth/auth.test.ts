@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./_lib/security', () => ({
+vi.mock('./security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -39,21 +39,21 @@ const authService = vi.hoisted(() => ({
   })),
   getUserById: vi.fn(),
 }))
-vi.mock('./_lib/authService', () => authService)
+vi.mock('./authService', () => authService)
 
-vi.mock('./_lib/emailVerification', () => ({
+vi.mock('./emailVerification', () => ({
   sendVerificationCode: vi.fn(async () => ({ ok: true, mail: 'sent' })),
   verifyCode: vi.fn(),
   isEmailVerified: vi.fn(async () => false),
 }))
 
-vi.mock('./_lib/adminAuth', () => ({ isAdminEmail: () => false }))
+vi.mock('./adminAuth', () => ({ isAdminEmail: () => false }))
 
 const trial = vi.hoisted(() => ({ grantSignupTrial: vi.fn(async () => true) }))
-vi.mock('./_lib/trial', () => ({ ...trial, SIGNUP_TRIAL_DAYS: 14 }))
+vi.mock('../../api/_lib/trial', () => ({ ...trial, SIGNUP_TRIAL_DAYS: 14 }))
 
-vi.mock('./_lib/changeEmail', () => ({ changeEmail: vi.fn() }))
-vi.mock('./_lib/passwordReset', () => ({
+vi.mock('./changeEmail', () => ({ changeEmail: vi.fn() }))
+vi.mock('../../api/_lib/passwordReset', () => ({
   requestPasswordReset: vi.fn(),
   resetPassword: vi.fn(),
 }))

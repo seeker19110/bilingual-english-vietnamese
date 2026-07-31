@@ -13,7 +13,7 @@ import {
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { lookupPlan, FREE_WEEKLY_CAP, FREE_ROLLING_WINDOW_DAYS } from './_lib/usage.js'
 import { vnDateStr } from '../packages/core-db/date.js'

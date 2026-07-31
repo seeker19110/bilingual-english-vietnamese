@@ -9,7 +9,7 @@ import {
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const HISTORY_LIMIT = 50

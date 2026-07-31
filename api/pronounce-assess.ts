@@ -25,7 +25,7 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { checkAndConsumeUsage, refundUsage } from './_lib/usage.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'

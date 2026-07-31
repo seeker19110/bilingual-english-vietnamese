@@ -15,7 +15,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 import { initSentryServer, captureServerException } from './api/_lib/sentry.js'
-import { warnIfClusterWithoutRedis } from './api/_lib/security.js'
+import { warnIfClusterWithoutRedis } from './packages/core-auth/security.js'
 
 // Bật Sentry (error tracking) — no-op nếu chưa cấu hình SENTRY_DSN (xem api/_lib/sentry.ts).
 initSentryServer()
@@ -32,7 +32,7 @@ import pushHandler, { sendReminders } from './api/push.js'
 import dictionaryHandler from './api/dictionary.js'
 import leaderboardHandler from './api/leaderboard.js'
 import pronounceAssessHandler from './api/pronounce-assess.js'
-import authHandler from './api/auth.js'
+import authHandler from './packages/core-auth/auth.js'
 import profileHandler from './api/profile.js'
 import progressHandler from './api/progress.js'
 import usageSummaryHandler from './api/usage-summary.js'

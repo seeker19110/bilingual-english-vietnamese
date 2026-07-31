@@ -16,7 +16,7 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from '../../api/_lib/security.js'
+} from '../core-auth/security.js'
 import { checkAndConsumeUsage, refundUsage, type UsageMode } from '../../api/_lib/usage.js'
 import { callGemini } from '../../api/_lib/geminiApi.js'
 import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
