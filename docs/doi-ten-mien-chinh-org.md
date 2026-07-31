@@ -1,5 +1,11 @@
 # Đổi tên miền chính sang donghanhcungban.org — checklist chuẩn bị
 
+> **Quyết định 2026-07-31:** tạm hoãn thêm domain `.org` vào Facebook Developer / Apple Developer
+> (Services ID) / Microsoft Azure — làm sau, không chặn việc đổi mặc định. Trong lúc đó, đăng nhập
+> Facebook/Apple/Microsoft trên `.org` sẽ báo lỗi "domain không hợp lệ" (Facebook)/`invalid_client`
+> (Apple)/`AADSTS50011` (Microsoft) cho tới khi làm — người dùng vẫn đăng nhập được bằng Google
+> hoặc email/password. Nhớ quay lại làm 3 mục này khi có thời gian (xem §1 các bước 2-4 dưới đây).
+
 > Trạng thái: **CHƯA thực hiện, chỉ chuẩn bị.** `.com` vẫn là mặc định trong code cho tới khi
 > tất cả mục dưới đây xong. Domain `.org` đã mua sẵn nhưng **SSL, redirect URI OAuth, webhook
 > SePay đều CHƯA cập nhật** (xác nhận 2026-07-31) — đổi mặc định lúc này sẽ làm gãy đăng nhập
