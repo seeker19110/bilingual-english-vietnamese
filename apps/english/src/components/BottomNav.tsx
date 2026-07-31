@@ -1,5 +1,5 @@
-// BottomNav — thanh điều hướng dưới cố định, CHỈ hiện < 640px (khớp breakpoint
-// `sm:` của Tailwind — xem `--bnav-h` trong index.css). 4 mục: Trang chủ · Lộ
+// BottomNav — thanh điều hướng dưới cố định, hiện ở MỌI kích thước màn hình
+// (mobile lẫn web) — xem `--bnav-h` trong index.css. 4 mục: Trang chủ · Lộ
 // trình · Luyện tập · Tiến độ. Ẩn hoàn toàn ở /login, /onboarding (chưa có user).
 //
 // Tab "Luyện tập" trỏ vào trang hub /practice (gộp Nghe/Nói/Viết — src/pages/Practice.tsx).
@@ -57,24 +57,26 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="sm:hidden fixed bottom-0 inset-x-0 z-40 h-[4.5rem] pb-safe bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 grid grid-cols-4"
+      className="fixed bottom-0 inset-x-0 z-40 h-[4.5rem] pb-safe bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60"
       aria-label={T.home}
     >
-      {TABS.map(({ key, to, icon: Icon, label, active }) => (
-        <Link
-          key={key}
-          to={to}
-          aria-current={active ? 'page' : undefined}
-          className={`tap-44 flex flex-col items-center justify-center gap-1 text-center text-xs font-medium leading-tight transition ${
-            active
-              ? 'text-accent-400 theme-light:text-accent-800'
-              : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          <Icon className="w-6 h-6" />
-          {label}
-        </Link>
-      ))}
+      <div className="max-w-3xl mx-auto h-full grid grid-cols-4">
+        {TABS.map(({ key, to, icon: Icon, label, active }) => (
+          <Link
+            key={key}
+            to={to}
+            aria-current={active ? 'page' : undefined}
+            className={`tap-44 flex flex-col items-center justify-center gap-1 text-center text-xs font-medium leading-tight transition ${
+              active
+                ? 'text-accent-400 theme-light:text-accent-800'
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            <Icon className="w-6 h-6" />
+            {label}
+          </Link>
+        ))}
+      </div>
     </nav>
   )
 }
