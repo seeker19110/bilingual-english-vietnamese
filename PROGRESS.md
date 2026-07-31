@@ -292,6 +292,37 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
     chưa tách, PR-7 SSO/onboarding_profiles/hạ tầng Nginx thật chưa làm). Việc tiếp theo hợp lý:
     chờ môn Toán (GĐ2) THẬT SỰ bắt đầu rồi mới quay lại xử lý các nợ kỹ thuật này theo nhu cầu
     thật, tránh trừu tượng hoá sớm dựa trên phỏng đoán (nguyên tắc đã chốt trong đặc tả GĐ1).
+  - **[2026-07-31] Hub ĐÃ LÊN PRODUCTION THẬT.** Người dùng tự làm việc tay trên VPS (DNS, SSL,
+    Nginx), Claude hướng dẫn từng bước qua chat + chẩn đoán khi gặp sự cố. Đã xong: DNS A record
+    cho `donghanhcungban.com`/`www`/`donghanhcungban.org`/`www.org` → VPS `103.81.87.174`; SSL mở
+    rộng (`certbot --expand`) phủ cả 6 domain (`en-vi.com`, apex `.com`, `www.com`, `en-vi.org`,
+    apex `.org`, `www.org`) trong CÙNG 1 cert; build `apps/hub` trên VPS
+    (`npm run build` đã tự gồm `--workspace=hub` từ PR-7); sửa Nginx để 4 domain
+    (`donghanhcungban.com`/`.org` + `www.` cả hai) proxy đúng vào Express (port 3001),
+    `en-vi.donghanhcungban.com` giữ nguyên không đổi. **Xác nhận qua 3 lớp:** gọi thẳng Express
+    (Host header) → đúng; gọi thẳng IP VPS bỏ qua Cloudflare (`--resolve`) → đúng; qua Cloudflare
+    thật → 200 OK, đúng trang hub.
+    **Sự cố thật gặp phải + đã xử lý** (chi tiết đầy đủ, bẫy cụ thể ở `docs/nginx-hub-apex.md`
+    mục "⚠️ Bẫy thật đã gặp"): (1) thiếu DNS `www.` ban đầu → certbot NXDOMAIN, phải thêm DNS
+    trước; (2) **Certbot không tạo vhost riêng cho domain chưa có server block khớp — tự chèn
+    thẳng vào `/etc/nginx/sites-available/default`**, tạo ra file có **2 block `location /`
+    giống hệt nhau về text** (1 ở `server_name _;` gốc vô hại, 1 ở block Certbot vừa chèn —
+    block THẬT SỰ phục vụ HTTPS domain mới); tìm bằng `nano` + `Ctrl+W` search text bị nhảy
+    nhầm vào bản sao đầu (sai), khiến domain vẫn ra "Welcome to nginx!" dù `nginx -t` xanh và
+    gọi thẳng Express đã đúng — **dễ nhầm tưởng lỗi Cloudflare cache**. Chẩn đoán đúng bằng
+    `cat -n` toàn bộ file thay vì tìm text, xác định đúng block theo `server_name` + `listen 443
+ssl`, sửa bằng `perl -0777 -pi -e 's/.../.../ '` một dòng duy nhất (tránh lỗi dán nhiều dòng —
+    xem bài học paste bên dưới) áp đúng vào block còn lại (lúc này pattern cũ chỉ còn 1 chỗ vì
+    block kia đã sửa trước đó). (3) File `donghanhcungban-hub` riêng ban đầu tạo ra bị
+    "conflicting server name" vì trùng domain với block Certbot đã chèn — xoá file đó, sửa
+    thẳng trong `default` thay vì tạo file mới.
+    **Bài học paste qua chat:** terminal của người dùng chèn thêm ký tự `$ ` lạ vào đầu heredoc/
+    khối nhiều dòng khi dán (không rõ do client SSH/clipboard nào), khiến `bash` chạy từng dòng
+    riêng lẻ thay vì nhận cả khối — chuyển hẳn sang lệnh MỘT DÒNG DUY NHẤT (kể cả sed/perl phức
+    tạp) cho mọi thao tác từ xa qua chat, tránh hẳn heredoc/nano-paste nhiều dòng.
+    `docs/nginx-hub-apex.md` đã viết lại đầy đủ từ "bản nháp" thành "đã triển khai thật", ghi rõ
+    bẫy + cách chẩn đoán 3 lớp (Express trực tiếp / bỏ qua Cloudflare / qua Cloudflare thật) để
+    dùng lại khi dựng VPS khác hoặc thêm domain mới.
   - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
     `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
     trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback
