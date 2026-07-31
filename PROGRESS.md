@@ -101,9 +101,15 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
   chủ nhật). Chi tiết: `docs/setup-postgresql-vps.md` mục 7.6. Thêm `scripts/restore-all-from-r2.ts`
   (`npm run restore:all`) gộp cả 3 lệnh khôi
   phục (Postgres/`.env`/hệ thống) thành 1 lệnh cho tình huống dựng lại VPS từ đầu — mặc định chỉ
-  TẢI VỀ (an toàn), chỉ thực sự ghi đè Postgres khi truyền `--restore-into <db> --yes`. **Còn nợ:**
-  chưa test `restore:all`/`restore:system` thật (khôi phục thử trên máy/VPS phụ) — mới xác nhận
-  chiều backup, chưa xác nhận chiều restore.
+  TẢI VỀ (an toàn), chỉ thực sự ghi đè Postgres khi truyền `--restore-into <db> --yes`. **[Cập
+  nhật 2026-08-01] ĐÃ XÁC NHẬN chạy thật `restore:all` (chế độ tải về, không ghi đè gì) trên VPS**:
+  `.env.restored` khớp 100% với `.env` thật (`diff` không lệch dòng nào), `system-restored.tar.gz`
+  đủ cấu trúc `nginx/` (gồm `sites-available/default`+`en-vi`) + `crontab/root.txt`+`postgres.txt`
+  - `pm2/dump.pm2`, file `.sql.gz` Postgres tải về nguyên vẹn (`gunzip -t` qua). Lưu ý khi test:
+    chạy qua `npm --prefix <dir> run restore:all` thì file tải về nằm trong `<dir>` (theo cwd của
+    script con), KHÔNG phải thư mục đang đứng — muốn cô lập file test phải `cd` vào thư mục đó rồi
+    chạy `npm run` thường, không dùng `--prefix`. Bộ 3 backup + restore giờ đã kiểm chứng đầy đủ cả
+    2 chiều.
 
 - **[2026-07-31] Đổi domain chính sang `.org` — ĐÃ HOÀN TẤT.** `en-vi.donghanhcungban.org` giờ là
   domain mặc định (biến `SITE_URL`/`VITE_SITE_URL`/`EN_VI_HOSTNAME`/`VITE_ENGLISH_APP_URL` trên
