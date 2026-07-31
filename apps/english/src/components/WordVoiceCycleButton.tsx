@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Volume2, Loader2 } from 'lucide-react'
-import { getAuthHeader } from '../lib/authHeader'
+import { getAuthHeader } from '@core/authHeader'
 import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
 import { VOICE_OPTIONS, pickRandomAllowedVoice } from '../lib/voiceTiers'
 

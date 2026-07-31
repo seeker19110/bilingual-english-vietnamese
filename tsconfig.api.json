@@ -20,5 +20,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["api", "scripts", "packages"]
+  "include": ["api", "scripts", "packages"],
+  "exclude": ["packages/core-ui"]
 }

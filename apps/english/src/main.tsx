@@ -6,7 +6,7 @@ import { createRoot } from 'react-dom/client'
 import '@fontsource-variable/inter/wght.css'
 import './index.css'
 import App from './App'
-import { applyTheme, getTheme } from './lib/theme'
+import { applyTheme, getTheme } from '@core/theme'
 import { unlockAudio } from './lib/tts'
 import { initErrorTracking } from './lib/errorTracking'
 

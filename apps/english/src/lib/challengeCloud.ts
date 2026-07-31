@@ -12,7 +12,7 @@
 // LƯU Ý: file này KHÔNG import từ ./challenge (tránh phụ thuộc chéo) — kiểu input dưới
 // đây khớp cấu trúc (structural typing) với ChallengeEntryLocal của lib/challenge.ts.
 
-import { getAuthHeader, getStoredToken } from './authHeader'
+import { getAuthHeader, getStoredToken } from '@core/authHeader'
 
 // ── Kiểu dữ liệu ──────────────────────────────────────────────────────────────
 

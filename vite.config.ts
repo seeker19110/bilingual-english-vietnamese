@@ -11,10 +11,12 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 // dẫn thật lúc build, nên alias trong api/ sẽ crash production khi Node không tìm thấy module.
 // Xem docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md PR-1 để biết lý do đầy đủ.
 //
-// @core/* và @english/* TẠM THỜI cùng trỏ vào src/ (chưa tách packages/apps thật) — mục đích
-// duy nhất lúc này là GÁN NHÃN đúng nơi mỗi file rồi đây sẽ chuyển tới, để khi thật sự tách
-// (PR-6 trở đi) chỉ cần đổi 2 dòng target dưới đây thay vì sửa lại từng câu import.
+// @english/* trỏ vào apps/english/src/ (chưa tách gì thêm ở đây).
+// @core/* trỏ THẬT vào packages/core-ui/ (từ PR-6) — theme, ToastProvider, authHeader dùng
+// chung cho mọi môn sau này (Toán/GĐ2). Các phần còn lại chưa tách được do phụ thuộc chặt
+// vào auth/onboarding/i18n riêng của app tiếng Anh — xem PROGRESS.md mục PR-6.
 const srcDir = fileURLToPath(new URL('./apps/english/src', import.meta.url))
+const coreUiDir = fileURLToPath(new URL('./packages/core-ui', import.meta.url))
 
 export default defineConfig(({ mode }) => {
   // Đọc các biến môi trường server-only trực tiếp từ file .env (Node) —
@@ -44,7 +46,7 @@ export default defineConfig(({ mode }) => {
   return {
     resolve: {
       alias: {
-        '@core': srcDir,
+        '@core': coreUiDir,
         '@english': srcDir,
       },
     },

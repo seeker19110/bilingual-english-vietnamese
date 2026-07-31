@@ -4,7 +4,7 @@
 // Chiến lược 2 tầng giống profile (lib/auth.ts): cache localStorage (~1ms, ghi
 // ngay lúc onboarding xong) → Supabase (chạy nền, cho thiết bị mới chưa có cache).
 import { useEffect, useState } from 'react'
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 import type { Level, AgeGroup } from '../types'
 import type { DailySpeed } from './curriculum'
 

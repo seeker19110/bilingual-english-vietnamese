@@ -16,7 +16,7 @@ import {
   subscribePush,
   unsubscribePush,
 } from '../lib/pushNotif'
-import { getAccessToken } from '../lib/authHeader'
+import { getAccessToken } from '@core/authHeader'
 import { useAuth } from '../context/useAuth'
 import { getDirection } from '../lib/storage'
 

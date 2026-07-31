@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 import { Flame, GraduationCap, Share2, Loader2, Check } from 'lucide-react'
 import ShareResultCard from './ShareResultCard'
-import { useToast } from '../context/ToastProvider'
+import { useToast } from '@core/ToastProvider'
 import { getStreak } from '../lib/storage'
 import { getLearnedCount } from '../lib/vocab'
 import { buildProgressShareContent } from '../lib/shareContent'

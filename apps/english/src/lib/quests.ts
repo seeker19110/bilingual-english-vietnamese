@@ -1,7 +1,7 @@
 // src/lib/quests.ts — Gọi API nhiệm vụ (api/quests.ts). Tách riêng khỏi shareContent.ts (hàm
 // thuần dựng nội dung, không gọi mạng) — file này CÓ gọi API.
 
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 
 export type CefrExamLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
 

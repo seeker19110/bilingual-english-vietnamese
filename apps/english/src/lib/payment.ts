@@ -4,7 +4,7 @@
 // SePay KHÔNG redirect người dùng về sau khi chuyển khoản — UI phải tự POLL trạng thái đơn
 // (fetchPaymentStatus lặp lại) thay vì chờ query string như luồng redirect thông thường.
 
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 
 export type PayablePlan = 'pro' | 'vip'
 export type PayableCycle = '10day' | 'month' | 'year'

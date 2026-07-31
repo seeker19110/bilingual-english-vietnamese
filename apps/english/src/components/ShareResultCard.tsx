@@ -12,7 +12,7 @@ import QRCode from 'qrcode'
 import { track } from '../lib/analytics'
 import { fetchReferralStats, buildReferralLink } from '../lib/referral'
 import { claimShareQuest } from '../lib/quests'
-import { useToast } from '../context/ToastProvider'
+import { useToast } from '@core/ToastProvider'
 
 const BASE_URL =
   (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, '') ||

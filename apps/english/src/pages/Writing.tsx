@@ -6,7 +6,7 @@ import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../lib/s
 import { addMistakes } from '../lib/mistakes'
 import { checkNewAchievements, achievementMessage } from '../lib/achievements'
 import { useAuth } from '../context/useAuth'
-import { useToast } from '../context/ToastProvider'
+import { useToast } from '@core/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { useApiThrottle } from '../lib/useApiThrottle'
 import { callClaude, parseJson } from '../lib/ai'

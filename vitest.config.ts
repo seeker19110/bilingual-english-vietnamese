@@ -1,8 +1,17 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
 
 // Cấu hình test (Vitest). Dùng happy-dom để có localStorage/window cho các hàm
 // đụng tới bộ nhớ trình duyệt. Chỉ chạy file *.test.ts(x) trong src/.
+// resolve.alias tách riêng khỏi vite.config.ts (2 config không merge) — @core/* phải trỏ
+// đúng packages/core-ui/ như production để test không lệch alias với build thật.
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@core': fileURLToPath(new URL('./packages/core-ui', import.meta.url)),
+      '@english': fileURLToPath(new URL('./apps/english/src', import.meta.url)),
+    },
+  },
   test: {
     environment: 'happy-dom',
     // scripts/**/*.test.ts = test cho tiện ích script THUẦN (vd scripts/lib/evalScoring.test.ts) —

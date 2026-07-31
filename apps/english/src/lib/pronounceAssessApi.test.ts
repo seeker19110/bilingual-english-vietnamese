@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-vi.mock('./authHeader', () => ({
+vi.mock('@core/authHeader', () => ({
   getAuthHeader: async () => ({ Authorization: 'Bearer test-token' }),
 }))
 vi.mock('./wav', () => ({

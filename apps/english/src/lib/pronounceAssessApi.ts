@@ -1,7 +1,7 @@
 // src/lib/pronounceAssessApi.ts — Gọi /api/pronounce-assess (① Giai đoạn 2, chấm phát âm
 // chi tiết từng âm vị qua Azure). Điểm tính Ở SERVER — file này chỉ convert audio + gọi API.
 
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 import { blobToWav16kMono } from './wav'
 
 export interface PhonemeScore {

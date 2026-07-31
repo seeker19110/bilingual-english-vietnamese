@@ -4,7 +4,7 @@
 // hết trình duyệt hiện đại (kể cả Safari mobile). Web Speech API (src/lib/stt.ts) chỉ
 // còn là phương án dự phòng khi máy không hỗ trợ ghi âm.
 
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 
 // Trình duyệt có hỗ trợ ghi âm không (cần getUserMedia + MediaRecorder).
 export function isRecordingSupported(): boolean {

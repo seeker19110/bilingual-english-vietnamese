@@ -13,8 +13,8 @@ import {
   type Viseme,
   type VisemeFrame,
 } from '../lib/viseme'
-import { getAccessToken } from '../lib/authHeader'
-import { useToast } from '../context/ToastProvider'
+import { getAccessToken } from '@core/authHeader'
+import { useToast } from '@core/ToastProvider'
 
 const DEMO_SENTENCE = 'Hello, how are you today? I am your English tutor.'
 

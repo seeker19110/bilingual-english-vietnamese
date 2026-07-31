@@ -3,8 +3,8 @@
 // ngay (nếu đã có tài khoản) hoặc tự cấp lúc người đó đăng ký sau này; xoá email → hạ về free.
 import { useEffect, useState } from 'react'
 import { Loader2, ShieldCheck, Trash2 } from 'lucide-react'
-import { useToast } from '@core/context/ToastProvider'
-import { getAuthHeader } from '@core/lib/authHeader'
+import { useToast } from '@core/ToastProvider'
+import { getAuthHeader } from '@core/authHeader'
 
 interface WhitelistItem {
   email: string

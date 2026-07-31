@@ -8,7 +8,7 @@
 // Giai đoạn C (rời Supabase): mọi đọc/ghi đi qua /api/history (Postgres tự host),
 // server tự kiểm user từ Bearer token — thay client query Supabase dựa vào RLS trước đây.
 
-import { getAuthHeader, getStoredToken } from './authHeader'
+import { getAuthHeader, getStoredToken } from '@core/authHeader'
 import type { ChatSession, WritingSubmission, SpeakingSession, DailyUsage } from '../types'
 
 // Khóa localStorage — PHẢI khớp với storage.ts để dùng chung bộ nhớ đệm

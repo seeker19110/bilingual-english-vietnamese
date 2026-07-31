@@ -25,5 +25,5 @@
     "sourceMap": true
   },
   "include": ["server.ts", "api/**/*.ts", "packages/**/*.ts"],
-  "exclude": ["api/**/*.test.ts", "packages/**/*.test.ts"]
+  "exclude": ["api/**/*.test.ts", "packages/**/*.test.ts", "packages/core-ui/**/*"]
 }

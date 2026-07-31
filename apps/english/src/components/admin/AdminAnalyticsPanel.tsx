@@ -3,7 +3,7 @@
 // cần biểu đồ đẹp (xem đặc tả M1.7 gốc), chỉ cần biết kênh nào đang hoạt động.
 import { useEffect, useState } from 'react'
 import { BarChart3, Loader2, ShieldAlert, RefreshCw } from 'lucide-react'
-import { getAuthHeader } from '@core/lib/authHeader'
+import { getAuthHeader } from '@core/authHeader'
 
 interface DailyRow {
   day: string

@@ -9,7 +9,7 @@
 // localStorage vẫn là bộ đệm đọc nhanh + chạy offline. Khi kéo về, ta HỢP NHẤT
 // (không ghi đè mất dữ liệu): learned/hard/cefr_* lấy hợp (union), SRS giữ thẻ tiến bộ hơn.
 
-import { getAuthHeader } from './authHeader'
+import { getAuthHeader } from '@core/authHeader'
 
 const LEARNED = (uid: string) => `et_learned_${uid}`
 const HARD = (uid: string) => `et_hard_${uid}`
