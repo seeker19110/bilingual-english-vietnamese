@@ -163,22 +163,29 @@ hai đều **không** làm phiền người dùng thật:
 Rate limit kỹ thuật chống spam theo IP/token (`api/_lib/security.ts`) **vẫn áp cho mọi môn** — đó là
 bảo vệ hạ tầng, khác với hạn mức nghiệp vụ, và không được tắt.
 
-**8. ĐẢO LẠI mục 7 (2026-07-31, cùng ngày): hạn mức lượt AI các môn khác áp dụng BẰNG môn tiếng Anh.**
-Quyết định mới nhất của chủ dự án — mục 7 ở trên **không còn hiệu lực**, giữ lại nguyên văn chỉ để
-biết đã từng cân nhắc phương án "không giới hạn" và tại sao đổi ý (an toàn chi phí hơn).
+**8. ĐẢO LẠI mục 7 (2026-07-31, cùng ngày): hạn mức lượt AI mỗi môn ĐẾM RIÊNG, nhưng CON SỐ hạn mức
+bằng nhau giữa các môn.** Quyết định mới nhất của chủ dự án — mục 7 ở trên **không còn hiệu lực**,
+giữ lại nguyên văn chỉ để biết đã từng cân nhắc phương án "không giới hạn" và tại sao đổi ý.
 
-- Mọi môn (`english`, `math`, `ly`, `hoa`, …) dùng **chung một bộ hạn mức** — cùng cơ chế cửa sổ
-  trượt 7 ngày cho Free, cùng hạn mức ngày cho Pro/VIP như tiếng Anh hiện có.
-- Hạn mức là **kho chung theo người dùng**, không cộng dồn theo môn (khớp lại với ý ban đầu ở
-  quyết định 3: "một tài khoản, một gói cước dùng cho mọi môn").
-- Bảng `subject_limits(subject, enforced)` ở mục 7 **vẫn giữ lại** nhưng đổi giá trị mặc định:
-  mọi môn `enforced = true` ngay từ đầu. Bảng này vẫn có ích làm phanh tay — nếu môn nào cần nới
-  tạm thời (ví dụ giai đoạn ra mắt), admin bật `enforced = false` cho riêng môn đó, không cần deploy.
-- `usage_events` vẫn đếm theo `(user_id, day, subject, mode)`, nhưng khi tính "còn bao nhiêu lượt
-  hôm nay" của Free thì **cộng gộp mọi `subject`** của user trong ngày/cửa sổ trượt, không tách riêng
-  theo môn — đúng nghĩa "kho chung".
+> Bản thân mục 8 này cũng đã được làm rõ lại một lần trong ngày: ý ban đầu viết ra là "kho chung
+> theo người dùng, cộng gộp mọi môn" — chủ dự án chỉnh lại ngay sau đó: **không cộng gộp**, mỗi môn
+> có kho lượt riêng, chỉ có _con số_ hạn mức (bao nhiêu lượt/ngày) là giống nhau. Bản dưới đây là
+> bản đã chỉnh, có hiệu lực.
 
-**Vì sao đổi:** để hạn mức "không giới hạn" (mục 7) là chấp nhận rủi ro chi phí AI không trần cho một
-tính năng đang thử nghiệm; chủ dự án thấy dùng cùng hạn mức đã kiểm chứng với tiếng Anh an toàn hơn
-và nhất quán hơn với nguyên tắc "một gói cho mọi môn" đã đặt ra từ đầu, và có thể nới sau bằng
-`subject_limits` khi thật sự cần chứ không mặc định mở toang.
+- Mọi môn (`english`, `math`, `ly`, `hoa`, …) áp **cùng một CON SỐ hạn mức** — cùng cơ chế cửa sổ
+  trượt 7 ngày cho Free (`FREE_WEEKLY_BONUS_PER_DAY`, `FREE_ROLLING_WINDOW_DAYS`), cùng hạn mức
+  ngày cho Pro/VIP như tiếng Anh hiện có.
+- Nhưng **mỗi môn đếm và trừ lượt RIÊNG** — học hết lượt tiếng Anh trong ngày không ảnh hưởng gì tới
+  lượt còn lại của Toán trong chính ngày đó, và ngược lại. Không có "kho chung" nào cộng gộp giữa
+  các môn.
+- Bảng `subject_limits(subject, enforced)` **vẫn giữ lại**, mặc định `enforced = true` cho mọi môn
+  ngay từ đầu — vẫn có ích làm phanh tay, admin bật `enforced = false` tạm thời cho riêng một môn khi
+  cần (ví dụ giai đoạn ra mắt), không cần deploy.
+- `usage_events` đếm theo `(user_id, day, subject, mode)` và **hạn mức kiểm tra theo đúng từng
+  `subject`** — không gộp khi tính "còn bao nhiêu lượt hôm nay".
+
+**Vì sao đổi:** "kho chung" (bản nháp đầu của mục 8) làm người học nhiều môn bị thiệt — dùng hết
+lượt ở tiếng Anh thì hết luôn lượt học Toán trong ngày, dù hai môn không liên quan gì tới nhau về nội
+dung. Đếm riêng theo môn nhưng cùng con số hạn mức vừa công bằng cho người học nhiều môn, vừa giữ
+được tính dự đoán được chi phí AI (mỗi môn có trần riêng, không thể một môn "ăn" hết ngân sách của
+người dùng dành cho môn khác).

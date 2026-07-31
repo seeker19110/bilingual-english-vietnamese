@@ -127,19 +127,20 @@ SRS chung sẽ hoặc quá loãng để dùng được, hoặc biến thành nú
 > giống hệt nhau, khi đó **mới** tách phần hàm thuần ra dùng chung — tách dựa trên bằng chứng thật,
 > không dựa trên phỏng đoán.
 
-### 2.4. Hạn mức: **DÙNG CHUNG một bộ cho mọi môn, bằng tiếng Anh hiện tại** (chốt cuối 2026-07-31)
+### 2.4. Hạn mức: **mỗi môn đếm RIÊNG, con số hạn mức BẰNG NHAU** (chốt cuối 2026-07-31)
 
 > Lịch sử quyết định tại chỗ này (giữ lại để không ai lật lại mà không biết): ban đầu định "kho chung
-> toàn nền tảng" → sau đổi thành "chỉ áp cho tiếng Anh, môn khác không giới hạn" → **cùng ngày, chốt
-> lại lần cuối**: mọi môn dùng chung một bộ hạn mức, giống hệt tiếng Anh. Xem ADR-0001 mục bổ sung 8.
+> toàn nền tảng, cộng gộp mọi môn" → sau đổi thành "chỉ áp cho tiếng Anh, môn khác không giới hạn" →
+> rồi "kho chung, cộng gộp" lần nữa → **chốt cuối cùng**: mỗi môn có kho lượt riêng (không cộng gộp),
+> nhưng dùng chung MỘT con số hạn mức/ngày với tiếng Anh. Xem ADR-0001 mục bổ sung 8.
 
-- Mọi môn (`english`, `math`, `ly`, `hoa`, …) áp **cùng một cơ chế** đang chạy cho tiếng Anh: Free
-  dùng cửa sổ trượt 7 ngày + thưởng khi học thật; Pro/VIP theo hạn mức ngày.
-- Hạn mức là **kho chung theo người dùng**, cộng gộp mọi môn trong ngày/cửa sổ trượt — không phải
-  N hạn mức riêng cộng lại. Đúng với nguyên tắc "một tài khoản, một gói cước dùng cho mọi môn".
+- Mọi môn (`english`, `math`, `ly`, `hoa`, …) áp **cùng một CON SỐ** đang dùng cho tiếng Anh: cùng
+  `FREE_WEEKLY_BONUS_PER_DAY`/`FREE_ROLLING_WINDOW_DAYS` cho Free, cùng hạn mức ngày cho Pro/VIP.
+- Nhưng **đếm và trừ lượt riêng theo từng môn** — hết lượt tiếng Anh trong ngày **không** ảnh hưởng
+  lượt Toán còn lại của chính ngày đó. Không cộng gộp giữa các môn.
 - Không đổi hành vi của tiếng Anh trong GĐ1 — số đang hiển thị cho người dùng hiện tại phải giữ nguyên.
 
-**Cách thi hành — vẫn giữ cấu hình theo môn làm phanh tay, chỉ đổi giá trị mặc định:**
+**Cách thi hành:**
 
 ```sql
 -- Trong migration 0028, cạnh usage_events.
@@ -153,14 +154,14 @@ on conflict (subject) do nothing;
 -- Môn mới thêm sau cũng insert với enforced = true (hoặc dựa vào default của cột).
 ```
 
-`consumeUsage(userId, subject, mode)` được gọi ở mọi môn và **luôn kiểm tra hạn mức** khi
-`enforced = true` (mặc định). Bảng `subject_limits` **vẫn giữ lại** dù không dùng "không giới hạn"
-làm mặc định nữa — nó là chỗ admin bật `enforced = false` tạm thời cho một môn cụ thể khi cần
-(ví dụ giai đoạn ra mắt muốn người dùng thử thoải mái), không cần deploy để bật lại sau đó.
+`consumeUsage(userId, subject, mode)` được gọi ở mọi môn, **kiểm tra và trừ lượt theo đúng
+`subject` đó** khi `enforced = true` (mặc định) — mỗi môn một bộ đếm độc lập, cùng hằng số hạn mức.
+Bảng `subject_limits` vẫn có ích làm phanh tay: admin bật `enforced = false` tạm thời cho một môn cụ
+thể khi cần (ví dụ giai đoạn ra mắt), không cần deploy.
 
-`usage_events` đếm theo `(user_id, day, subject, mode)` để vẫn biết môn nào tốn bao nhiêu chi phí,
-nhưng khi tính "còn bao nhiêu lượt hôm nay" của Free thì **cộng gộp mọi `subject`** của user trong
-ngày/cửa sổ trượt — không tách riêng theo môn.
+`usage_events` đếm theo `(user_id, day, subject, mode)`; "còn bao nhiêu lượt hôm nay" của Free tính
+**riêng theo từng `subject`** — người học cả tiếng Anh lẫn Toán trong một ngày có đủ lượt cho cả hai,
+không bị trừ chung vào một kho.
 
 Vẫn giữ **rate limit kỹ thuật** (chống spam theo IP/token trong `api/_lib/security.ts`) cho mọi môn —
 đây là chống lạm dụng hạ tầng, khác với hạn mức nghiệp vụ, và không được tắt.
@@ -168,11 +169,11 @@ Vẫn giữ **rate limit kỹ thuật** (chống spam theo IP/token trong `api/_
 ### 2.5. Còn lại một điểm mở
 
 **`weeklyCredit` / `FREE_WEEKLY_BONUS_PER_DAY`** trong `api/_lib/usage.ts` — cơ chế "học thật thì
-được thêm lượt". Vì hạn mức giờ lại là **kho chung mọi môn** (§2.4), cơ chế "học thật" phải thành
+được thêm lượt". Vì hạn mức đếm **riêng theo từng môn** (§2.4), cơ chế "học thật" cũng phải thành
 **hợp đồng theo môn**: mỗi môn tự gọi `grantDailyBonus(userId, subject)` khi xác định người dùng đã
-học thật hôm đó; `core-billing` cộng lượt và chống gian lận (mỗi ngày mỗi người tối đa N lượt thưởng,
-tính chung mọi môn — không cộng dồn nếu học nhiều môn cùng ngày, tránh vượt trần thiết kế ban đầu
-của cửa sổ trượt). Chốt chi tiết ở PR-5.
+học thật hôm đó, và lượt thưởng chỉ cộng vào kho của **chính môn đó** — học Toán thật không tự động
+cộng thêm lượt cho kho tiếng Anh, và ngược lại. `core-billing` chỉ lo cộng lượt đúng kho + chống gian
+lận trong phạm vi một môn. Chốt chi tiết ở PR-5.
 
 ---
 
@@ -253,11 +254,12 @@ mã đơn, `ACCEPTED_PREFIXES = ['DHCB', 'ENVI']` khi đối chiếu webhook. **
 vào trang SePay **thêm** bộ lọc tiền tố `DHCB`, **giữ nguyên** bộ lọc `ENVI` đang có.
 
 - **Nghiệm thu:** ca biên đếm lượt có test — hết lượt · hoàn lượt khi AI lỗi · đổi ngày theo giờ VN ·
-  gói hết hạn · cửa sổ trượt 7 ngày của gói Free **cộng gộp đúng khi học nhiều môn cùng ngày** ·
-  hạn mức của môn Toán/Lý/Hoá bị chặn giống hệt tiếng Anh khi hết lượt · admin bật `enforced = false`
-  cho một môn thì môn đó không bị chặn nhưng vẫn ghi đủ dòng vào `usage_events`. Test webhook khớp
-  đúng với **cả hai** tiền tố, kể cả một mã đơn `ENVI…` cũ có thật trong bảng `payments`. Chạy thật
-  một giao dịch SePay số tiền nhỏ bằng nội dung `DHCB…`.
+  gói hết hạn · cửa sổ trượt 7 ngày của gói Free · **hết lượt tiếng Anh trong ngày không ảnh hưởng
+  lượt Toán còn lại của chính ngày đó (đếm riêng theo môn)** · hạn mức của môn Toán/Lý/Hoá bị chặn
+  giống hệt tiếng Anh khi hết lượt (cùng con số) · admin bật `enforced = false` cho một môn thì môn
+  đó không bị chặn nhưng vẫn ghi đủ dòng vào `usage_events`. Test webhook khớp đúng với **cả hai**
+  tiền tố, kể cả một mã đơn `ENVI…` cũ có thật trong bảng `payments`. Chạy thật một giao dịch SePay
+  số tiền nhỏ bằng nội dung `DHCB…`.
 
 ### PR-5b — Chuyển bảng dữ liệu học sang schema `english` ⚠️ có migration
 
