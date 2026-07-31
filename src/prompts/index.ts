@@ -359,6 +359,36 @@ Return JSON only (no markdown):
 }`
 }
 
+// ─── Phỏng vấn ngược (Practice.tsx) — chấm NHANH 1 câu trả lời nói tự do ───
+// Khác chatFullEvaluationPrompt/speakingFullEvaluationPrompt (chấm CẢ phiên,
+// nhiều tiêu chí IELTS): đây chỉ chấm 1 câu hỏi – 1 câu trả lời, phản hồi ngắn
+// để không tốn token/tiền — dùng cho bài tập "AI hỏi, học viên trả lời nói".
+export function interviewAnswerFeedbackPrompt(direction: Direction = 'A'): string {
+  if (direction === 'A') {
+    return `Bạn là giáo viên tiếng Anh, chấm NHANH một câu trả lời NÓI của học viên người Việt cho một câu hỏi phỏng vấn/trò chuyện.
+
+Chấm ngắn gọn, tập trung: trả lời có đúng trọng tâm câu hỏi không, câu có trôi chảy/tự nhiên không, có lỗi ngữ pháp/từ vựng nổi bật nào không. KHÔNG chấm theo thang IELTS đầy đủ — chỉ ước lượng % (0–100) mức độ ổn của câu trả lời.
+
+Trả về JSON (không markdown):
+{
+  "score": <0–100>,
+  "feedback": "<1-2 câu nhận xét ngắn gọn bằng tiếng Việt>",
+  "correction": "<nếu có lỗi rõ ràng, viết lại câu đúng hơn — để trống nếu câu đã ổn>"
+}`
+  }
+
+  return `You are a Vietnamese teacher, quickly grading a SPOKEN answer from an English-speaking learner to an interview/conversation question.
+
+Grade briefly: does the answer address the question, is it fluent/natural, any notable grammar/vocab errors. Do NOT use a full IELTS-style rubric — just estimate a % (0–100) for how good the answer is.
+
+Return JSON only (no markdown):
+{
+  "score": <0–100>,
+  "feedback": "<1-2 short sentences of feedback in English>",
+  "correction": "<if there's a clear error, a better version of the sentence — leave empty if the answer is already fine>"
+}`
+}
+
 // ─── Helpers ─────────────────────────────────────────────────────
 export function situationLabel(value: string, dir: Direction = 'A'): string {
   const mapA: Record<string, string> = {
