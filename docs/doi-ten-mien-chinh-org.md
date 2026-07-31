@@ -2,9 +2,17 @@
 
 > **Trạng thái: ĐÃ HOÀN TẤT chuyển đổi (2026-07-31).** `.org` giờ là domain mặc định — đã xác nhận
 > đăng nhập Google + thanh toán SePay (tiền tố mới `DHCB`) chạy thật trên `en-vi.donghanhcungban.org`;
-> `.com`/`www.donghanhcungban.com` đã 301 redirect sang `www.donghanhcungban.org`. Toàn bộ nội
-> dung bên dưới giữ lại làm **lịch sử/tham khảo** cho lần đổi domain tiếp theo (vd môn mới), không
-> còn là việc cần làm.
+> `www.donghanhcungban.org` là domain chuẩn duy nhất cho trang hub — `donghanhcungban.com`,
+> `www.donghanhcungban.com`, VÀ `donghanhcungban.org` (apex, không `www`) đều 301 redirect sang
+> `www.donghanhcungban.org` (tránh trùng nội dung 2 URL, tốt cho SEO). Toàn bộ nội dung bên dưới
+> giữ lại làm **lịch sử/tham khảo** cho lần đổi domain tiếp theo (vd môn mới), không còn là việc
+> cần làm.
+>
+> **Cấu hình Nginx thật nằm ở `/etc/nginx/sites-available/default`** (không phải file mẫu
+> `nginx/en-vi.conf` trong repo — xem mục "Không nằm trong phạm vi này" cuối bài): 1 block HTTPS
+> chung phục vụ `www.donghanhcungban.org` + `en-vi.donghanhcungban.org` (proxy Express, chọn app
+> theo `Host` qua `EN_VI_HOSTNAME`), và 1 block riêng chỉ `return 301` cho 3 domain không chuẩn
+> (`donghanhcungban.com`, `www.donghanhcungban.com`, `donghanhcungban.org`).
 
 > **Quyết định 2026-07-31:** tạm hoãn thêm domain `.org` vào Facebook Developer / Apple Developer
 > (Services ID) / Microsoft Azure — làm sau, không chặn việc đổi mặc định. Trong lúc đó, đăng nhập
