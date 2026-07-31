@@ -35,6 +35,12 @@
    nhập Google/Facebook/Apple/Microsoft và một giao dịch SePay nhỏ TRÊN domain `.org` trong khi
    `.com` vẫn là mặc định (cả 2 domain cùng phục vụ được nhờ bước 1-2, không ảnh hưởng người dùng
    `.com` hiện tại).
+   - **Bắt buộc trước khi test**: đặt `EN_VI_HOSTNAME=en-vi.donghanhcungban.com,en-vi.donghanhcungban.org`
+     trong `.env` trên VPS rồi `pm2 reload` (không cần build lại, biến này server đọc lúc chạy,
+     khác `VITE_*`). Thiếu bước này, `server.ts` (`distDirForHost`) không nhận diện được host
+     `.org` nên mọi đường dẫn (kể cả `/login`) sẽ bị phục vụ nhầm bằng `apps/hub/dist` thay vì
+     app tiếng Anh thật — biểu hiện: mở `https://en-vi.donghanhcungban.org/login` vẫn thấy giao
+     diện trang hub thay vì form đăng nhập.
 
 ## Sau khi TẤT CẢ mục trên đã xác nhận — mới đổi mặc định (việc code, làm trong 1 PR riêng)
 

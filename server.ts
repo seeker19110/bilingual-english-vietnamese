@@ -234,12 +234,19 @@ app.use(
 // hành vi cho host đó giữ y hệt trước PR-7. Host nào Nginx CHƯA có server_name trỏ vào tiến
 // trình này thì nhánh "hub" ở đây là code chết cho tới khi thêm cấu hình Nginx/DNS/cert thật
 // (xem docs/nginx-hub-apex.md — phần hạ tầng thật cần làm tay, PR-7 mới chỉ dựng code).
-const EN_VI_HOSTNAME = process.env.EN_VI_HOSTNAME || 'en-vi.donghanhcungban.com'
+// Nhận NHIỀU host phân cách dấu phẩy (vd đang chuyển đổi .com → .org song song, xem
+// docs/doi-ten-mien-chinh-org.md) — cả 2 domain cùng phục vụ app tiếng Anh trong lúc test.
+const EN_VI_HOSTNAMES = new Set(
+  (process.env.EN_VI_HOSTNAME || 'en-vi.donghanhcungban.com')
+    .split(',')
+    .map((host) => host.trim())
+    .filter(Boolean),
+)
 const englishDistDir = path.join(__dirname, 'dist')
 const hubDistDir = path.join(__dirname, 'apps/hub/dist')
 
 function distDirForHost(hostname: string): string {
-  return hostname === EN_VI_HOSTNAME ? englishDistDir : hubDistDir
+  return EN_VI_HOSTNAMES.has(hostname) ? englishDistDir : hubDistDir
 }
 
 function staticCacheHeaders(res: express.Response, filePath: string) {
