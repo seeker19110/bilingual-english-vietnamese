@@ -92,9 +92,14 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
   `encryptEnv`/`decryptEnv` của `backup:env`, không lặp logic), đẩy cùng bucket R2 private. Chi
   tiết cron + cách khôi phục từng phần: `docs/setup-postgresql-vps.md` mục 7.4. **ĐÃ XÁC NHẬN
   chạy thật trên VPS 2026-07-31**: `backup:system --dry-run` rồi chạy thật đều thành công (upload
-  `system-backups/system_20260731.tar.gz.enc`), đã thêm dòng cron `root` chạy hàng ngày (passphrase
-  tạo bằng `openssl rand -base64 32`, viết thẳng vào dòng crontab theo đúng nguyên tắc không lưu
-  trong `.env`). Thêm `scripts/restore-all-from-r2.ts` (`npm run restore:all`) gộp cả 3 lệnh khôi
+  `system-backups/system_20260731.tar.gz.enc`). **[Cập nhật cùng ngày]** Đã gộp cron: thay vì 3
+  dòng cron riêng ở 2 user (`postgres`: `backup:r2`; `root`: `backup:system`; `backup:env` từng bị
+  bỏ sót, chưa có cron) → tạo `/root/backup-all.sh` (root-only, `chmod 700`, chứa passphrase tạo
+  bằng `openssl rand -base64 32`) gọi cả `backup:r2`+`backup:env`+`pm2 save`+`backup:system` trong
+  1 lệnh, 1 dòng cron `root` duy nhất (`10 3 * * *`, sau `pg_dump` của `postgres` lúc `0 3 * * *`).
+  Đã xoá dòng `backup:r2` trùng lặp khỏi crontab `postgres` (giữ lại `pg_dump` + `verify-pg-backup`
+  chủ nhật). Chi tiết: `docs/setup-postgresql-vps.md` mục 7.6. Thêm `scripts/restore-all-from-r2.ts`
+  (`npm run restore:all`) gộp cả 3 lệnh khôi
   phục (Postgres/`.env`/hệ thống) thành 1 lệnh cho tình huống dựng lại VPS từ đầu — mặc định chỉ
   TẢI VỀ (an toàn), chỉ thực sự ghi đè Postgres khi truyền `--restore-into <db> --yes`. **Còn nợ:**
   chưa test `restore:all`/`restore:system` thật (khôi phục thử trên máy/VPS phụ) — mới xác nhận
