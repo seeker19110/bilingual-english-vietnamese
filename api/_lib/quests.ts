@@ -13,9 +13,9 @@
 //   4. "Mời bạn xác thực email" — đã có sẵn từ trước (api/_lib/referral.ts), CHỈ gộp số liệu
 //      vào GET /api/quests để hiện chung 1 nơi, không đổi logic thưởng đã có.
 
-import { getPgPool } from './pgPool.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
 import { grantPlanDays } from './planGrant.js'
-import { vnDateStr, addDays } from './date.js'
+import { vnDateStr, addDays } from '../../packages/core-db/date.js'
 import { getReferralStats, type ReferralStats } from './referral.js'
 
 export type ClaimQuestResult = { ok: true; rewardDays: number } | { ok: false; message: string }
@@ -101,7 +101,7 @@ function cefrExamQuestKey(level: CefrExamLevel): string {
 async function readCefrExamsPassed(userId: string): Promise<Set<string>> {
   const pool = getPgPool()
   const { rows } = await pool.query<{ cefr_exams: Record<string, { passed?: boolean }> | null }>(
-    'select cefr_exams from public.learning_progress where user_id = $1',
+    'select cefr_exams from english.learning_progress where user_id = $1',
     [userId],
   )
   const exams = rows[0]?.cefr_exams ?? {}

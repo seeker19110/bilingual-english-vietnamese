@@ -15,7 +15,7 @@
 //   http://localhost:5173/api/pronunciation?word=apple&voice=male
 // (vite.config.ts đã gắn middleware gọi thẳng handler này, không cần deploy lên Vercel).
 
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
@@ -28,17 +28,17 @@ import {
   type Lang,
   type VoiceId,
 } from './_lib/googleTts.js'
-import { saveAudio } from './_lib/fileStorage.js'
-import { ensureProfileRow } from './_lib/authService.js'
+import { saveAudio } from '../packages/core-ai/fileStorage.js'
+import { ensureProfileRow } from '../packages/core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
-import { isValidElevenVoice } from './_lib/elevenLabsTts.js'
+import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
 // Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),
@@ -155,14 +155,14 @@ export default async function handler(req: Request): Promise<Response> {
     audio_url: string
     voice_version: string | null
   }>(
-    'select audio_url, voice_version from public.pronunciations where word = $1 and voice = $2 and lang = $3',
+    'select audio_url, voice_version from english.pronunciations where word = $1 and voice = $2 and lang = $3',
     [word, voice, lang],
   )
   const cached = cachedRows[0]
   if (cached?.audio_url && cached.voice_version === VOICE_VERSION) {
     void pool
       .query(
-        'update public.pronunciations set last_accessed_at = now() where word = $1 and voice = $2 and lang = $3',
+        'update english.pronunciations set last_accessed_at = now() where word = $1 and voice = $2 and lang = $3',
         [word, voice, lang],
       )
       .catch((err: unknown) => console.warn('[pronunciation] cập nhật last_accessed_at lỗi:', err))
@@ -219,7 +219,7 @@ export default async function handler(req: Request): Promise<Response> {
   // từ+giọng+ngôn ngữ chạy song song thì không bị lỗi vi phạm unique constraint.
   try {
     await pool.query(
-      `insert into public.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
+      `insert into english.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
        values ($1, $2, $3, $4, $5, now())
        on conflict (word, voice, lang) do update set
          audio_url = excluded.audio_url, voice_version = excluded.voice_version,

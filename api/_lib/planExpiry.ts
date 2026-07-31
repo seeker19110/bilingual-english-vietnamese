@@ -3,7 +3,7 @@
 // profile.ts đã tự coi Pro/VIP hết hạn là 'free' NGAY LÚC ĐỌC qua resolvePlan(), bất kể job này
 // đã chạy hay chưa. Job này chỉ để cột `plan` trong DB phản ánh đúng thực tế (cho các chỗ đọc
 // trực tiếp khác, vd admin xem danh sách user) — chạy 1 lần/ngày là đủ, xem server.ts.
-import { getPgPool } from './pgPool.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
 
 export async function downgradeExpiredPlans(): Promise<{ downgraded: number }> {
   const pool = getPgPool()

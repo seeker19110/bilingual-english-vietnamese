@@ -7,16 +7,16 @@
 // POST /api/profile  body { action: 'onboarding', level, goal, dailyMinutes }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
-import { ensureProfileRow } from './_lib/authService.js'
-import { resolvePlan } from './_lib/plan.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
+import { ensureProfileRow } from '../packages/core-auth/authService.js'
+import { resolvePlan } from '../packages/core-billing/plan.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 

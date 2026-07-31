@@ -2,8 +2,8 @@
 // năng/lợi ích, bảng plan_marketing_info + plan_marketing_bullets, admin chỉnh qua
 // /api/admin-plan-marketing). Cache trong bộ nhớ tiến trình (TTL ngắn) giống
 // api/_lib/planFeatures.ts — tránh tra DB ở mọi request.
-import { getPgPool } from './pgPool.js'
-import type { Plan } from './plan.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
+import type { Plan } from '../../packages/core-billing/plan.js'
 
 export interface PlanMarketingBullet {
   id: number

@@ -6,16 +6,16 @@
 // GET /api/analytics-summary?days=14  (cần Authorization: Bearer, user phải nằm trong ADMIN_EMAILS)
 // Trả về: tổng số theo event trong N ngày gần nhất + số liệu theo ngày cho biểu đồ đơn giản.
 
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security.js'
-import { getUserById } from './_lib/authService.js'
-import { isAdminEmail } from './_lib/adminAuth.js'
+} from '../packages/core-auth/security.js'
+import { getUserById } from '../packages/core-auth/authService.js'
+import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const DEFAULT_DAYS = 14

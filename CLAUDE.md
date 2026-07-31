@@ -82,13 +82,20 @@ Ba chế độ:
 ## 6. Công nghệ (stack) & lệnh
 
 - **Frontend:** React 18 + Vite 7 + TypeScript 5.2 (`strict`) + Tailwind CSS 3 (mã gốc do Lovable sinh ra).
-- **Backend & dữ liệu:** Express (`server.ts`) + **PostgreSQL tự host trên VPS** (thư viện `pg`, `api/_lib/pgPool.ts`) — đã rời hẳn Supabase (xem `docs/migration-thoat-ly-supabase.md`). Auth tự viết (Bearer token, `api/auth.ts` + `api/_lib/authService.ts`, email/password + Google Identity Services). Handler API trong `api/`.
-- **AI:** gọi qua biến môi trường, ưu tiên model rẻ. Chat qua `/api/agent`. **STT** Whisper qua **Groq hoặc OpenAI** (`/api/stt`, tự chọn theo key). **TTS** Google Cloud qua `/api/tts` (audio cache **mã hóa AES-256-GCM**, lưu local VPS hoặc Cloudflare R2 tùy `STORAGE_DRIVER` — `api/_lib/fileStorage.ts`; Web Speech API chỉ là fallback).
+- **Backend & dữ liệu:** Express (`server.ts`) + **PostgreSQL tự host trên VPS** (thư viện `pg`, `packages/core-db/pgPool.ts`) — đã rời hẳn Supabase (xem `docs/migration-thoat-ly-supabase.md`). Auth tự viết (Bearer token, `api/auth.ts` + `api/_lib/authService.ts`, email/password + Google Identity Services). Handler API trong `api/`.
+- **AI:** gọi qua biến môi trường, ưu tiên model rẻ. Chat qua `/api/agent`. **STT** Whisper qua **Groq hoặc OpenAI** (`/api/stt`, tự chọn theo key). **TTS** Google Cloud qua `/api/tts` (audio cache **mã hóa AES-256-GCM**, lưu local VPS hoặc Cloudflare R2 tùy `STORAGE_DRIVER` — `packages/core-ai/fileStorage.ts`; Web Speech API chỉ là fallback).
 - **Deploy:** VPS Ubuntu (PM2 + Nginx + Let's Encrypt), đang chạy tại https://en-vi.donghanhcungban.com — xem `docs/deploy-vps-ubuntu.md`.
 - **GIỮ NGUYÊN PHIÊN BẢN — KHÔNG nâng React/TS/Tailwind/ESLint.** Dự án cố tình dùng **Tailwind 3** (không phải v4) và **ESLint 8 với `.eslintrc.cjs`** (không phải flat config). Tài liệu khung có nhắc Tailwind v4 / ESLint flat config — chỉ để **tham khảo**, KHÔNG áp vào dự án này.
 - **Lệnh:** dev `npm run dev` · build `npm run build` · typecheck `npm run typecheck` (gộp cả `tsconfig.json` + `tsconfig.api.json` + `tsconfig.e2e.json`) · lint `npm run lint` (max-warnings 0) · format `npm run format` (Prettier — đang thêm ở bước khung) · test `npm test` (`vitest run`) · E2E `npm run test:e2e` (Playwright) · start `npm start` (`tsx server.ts`) · migration Postgres tự host `npm run migrate:pg` (tự chạy trong `scripts/deploy.sh`, xem `postgres/migrations/README.md`).
-- **Cấu trúc:** `src/` (React: `pages/`, `components/`, `lib/`, `data/`, `prompts/`), `api/` (handler kiểu serverless), `server.ts` (Express gắn handler), `postgres/` (`schema.sql` + `migrations/`), `scripts/` (seed/sync), `docs/`.
-- **Đặt tên:** component PascalCase (`src/components`), tiện ích camelCase (`src/lib`), prompt gửi AI để riêng trong `src/prompts/`.
+- **Cấu trúc [Cập nhật 2026-07-31, đang tách monorepo — xem ADR-0001]:** `apps/english/src/` (React:
+  `pages/`, `components/`, `lib/`, `data/`, `prompts/` — dời từ `src/` ở PR-2), `api/` (handler
+  kiểu serverless của môn tiếng Anh + hạ tầng dùng chung chưa tách hết), `packages/core-db/`
+  (Postgres pool, ngày giờ, utility dùng chung), `packages/core-ai/` (TTS/STT/AI gateway — tách ở
+  PR-3), `server.ts` (Express gắn handler), `postgres/` (`schema.sql` + `migrations/`),
+  `scripts/` (seed/sync, import từ `apps/english/src/` + `packages/`), `docs/`. Xem
+  `docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md` để biết việc tách đang tới đâu.
+- **Đặt tên:** component PascalCase (`apps/english/src/components`), tiện ích camelCase
+  (`apps/english/src/lib`), prompt gửi AI để riêng trong `apps/english/src/prompts/`.
 
 ## 7. Quy ước khi viết code & cách làm việc
 
@@ -101,7 +108,7 @@ Ba chế độ:
 
 Build `npm run build` · Type `npm run typecheck` · Lint `npm run lint` (0 cảnh báo) · Format `npm run format` _(sau khi thêm Prettier)_ · Test `npm test`. Ngoài ra: tự đọc lại diff (đúng mục tiêu, không sửa nhầm); xóa `console.log` debug/code chết; không bí mật trong code; mọi input đã validate; mọi thao tác có thể lỗi đã xử lý; commit message theo **conventional commits**.
 
-**Đổi prompt hoặc model AI:** mọi PR sửa `src/prompts/*` hoặc `api/_lib/aiConfig.ts` (model/guardrail) PHẢI chạy lại `npm run eval:tutor` (cần key AI trong `.env`) và **dán bảng so sánh với `docs/research/eval-tutor-baseline.md` vào mô tả PR** — recall/precision không được tụt so với baseline. Xem `scripts/eval-tutor.ts`.
+**Đổi prompt hoặc model AI:** mọi PR sửa `apps/english/src/prompts/*` hoặc `packages/core-ai/aiConfig.ts` (model/guardrail) PHẢI chạy lại `npm run eval:tutor` (cần key AI trong `.env`) và **dán bảng so sánh với `docs/research/eval-tutor-baseline.md` vào mô tả PR** — recall/precision không được tụt so với baseline. Xem `scripts/eval-tutor.ts`.
 
 ## 9. Cổng trước khi MERGE (thêm)
 

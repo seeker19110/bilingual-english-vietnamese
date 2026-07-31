@@ -10,8 +10,16 @@
 
 import { z } from 'zod'
 import { wordVisemesFromEspeak } from './_lib/espeakPhonemes.js'
-import { validateAuth, checkRateLimit, validateContentType } from './_lib/security.js'
-import { getCorsHeaders, SECURITY_HEADERS, logSecurityEvent } from './_lib/security.js'
+import {
+  validateAuth,
+  checkRateLimit,
+  validateContentType,
+} from '../packages/core-auth/security.js'
+import {
+  getCorsHeaders,
+  SECURITY_HEADERS,
+  logSecurityEvent,
+} from '../packages/core-auth/security.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 

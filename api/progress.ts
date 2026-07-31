@@ -7,18 +7,18 @@
 //                             cefrExams, placement, weeklyGoal, achievements }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
-import { vnDateStr } from './_lib/date.js'
-import { FREE_WEEKLY_BONUS_PER_DAY } from './_lib/usage.js'
+import { vnDateStr } from '../packages/core-db/date.js'
+import { FREE_WEEKLY_BONUS_PER_DAY } from '../packages/core-billing/usage.js'
 
 // Giới hạn kích thước hợp lý — chặn payload bất thường (DoS/lỗi client) mà vẫn đủ rộng
 // cho người học nhiều năm (từ điển app hiện ~12.000 từ).
@@ -68,7 +68,7 @@ export default async function handler(req: Request): Promise<Response> {
     const { rows } = await pool.query<ProgressRow>(
       `select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams,
               placement, weekly_goal, achievements
-         from public.learning_progress where user_id = $1`,
+         from english.learning_progress where user_id = $1`,
       [auth.userId],
     )
     const row = rows[0]
@@ -120,7 +120,7 @@ export default async function handler(req: Request): Promise<Response> {
     cefr_dialogues: string[]
   }>(
     `select learned, hard, cefr_grammar, cefr_dialogues
-       from public.learning_progress where user_id = $1`,
+       from english.learning_progress where user_id = $1`,
     [auth.userId],
   )
   const before = beforeRows[0]
@@ -133,10 +133,11 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (grewLearning) {
     try {
-      await pool.query('select public.grant_daily_bonus_rolling($1, $2, $3)', [
+      await pool.query('select public.grant_daily_bonus_rolling($1, $2, $3, $4)', [
         auth.userId,
         vnDateStr(),
         FREE_WEEKLY_BONUS_PER_DAY,
+        'english',
       ])
     } catch (err) {
       // FAIL-OPEN: lỗi cộng thưởng không được làm vỡ luồng lưu tiến độ chính.
@@ -145,7 +146,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   await pool.query(
-    `insert into public.learning_progress
+    `insert into english.learning_progress
        (user_id, learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked,
         cefr_exams, placement, weekly_goal, achievements, updated_at)
      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, now())

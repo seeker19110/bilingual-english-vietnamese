@@ -12,9 +12,9 @@ import { describe, it, expect, beforeEach, afterEach, vi, beforeAll } from 'vite
 vi.mock('web-push', () => ({
   default: { setVapidDetails: vi.fn(), sendNotification: vi.fn(async () => undefined) },
 }))
-vi.mock('./_lib/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from '../packages/core-db/pgPool'
 import webpush from 'web-push'
 
 const mockedGetPool = vi.mocked(getPgPool)
@@ -60,7 +60,7 @@ function mockPool(opts: {
     if (sql.includes('from public.daily_usage') && sql.includes('day = $1 and user_id')) {
       return { rows: opts.usageRows ?? [] }
     }
-    if (sql.includes('from public.challenge_entries')) {
+    if (sql.includes('from english.challenge_entries')) {
       if (opts.challengeError) throw opts.challengeError
       return { rows: opts.challengeRows ?? [] }
     }
@@ -68,7 +68,7 @@ function mockPool(opts: {
       if (opts.recentUsageError) throw opts.recentUsageError
       return { rows: opts.recentUsageRows ?? [] }
     }
-    if (sql.includes('from public.learning_progress')) {
+    if (sql.includes('from english.learning_progress')) {
       return { rows: opts.progressRows ?? [] }
     }
     throw new Error(`câu SQL không mong đợi trong test: ${sql}`)

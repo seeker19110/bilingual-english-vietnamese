@@ -1,6 +1,6 @@
 // api/_lib/prices.ts — Đọc bảng giá Pro/VIP (public.plan_prices, migration 0014). Cùng khuôn
 // mẫu cache TTL ngắn như api/_lib/settings.ts — đọc trên đường nóng của /api/checkout.
-import { getPgPool } from './pgPool.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
 
 export type PayableCycle = '10day' | 'month' | 'year'
 export type PayablePlan = 'pro' | 'vip'

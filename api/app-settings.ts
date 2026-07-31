@@ -9,13 +9,13 @@
 //
 // GET /api/app-settings
 
-import { getAppSettings } from './_lib/settings.js'
+import { getAppSettings } from '../packages/core-db/settings.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
 export default async function handler(req: Request): Promise<Response> {

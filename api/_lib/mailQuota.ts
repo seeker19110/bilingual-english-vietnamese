@@ -14,8 +14,8 @@
 //   2. Kênh dự phòng, nếu kênh chính chạm trần / lỗi tạm thời / chưa cấu hình.
 //   3. Không gửi được → trả trạng thái để nơi gọi báo đúng cho người dùng.
 
-import { getPgPool } from './pgPool.js'
-import { vnDateStr } from './date.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
+import { vnDateStr } from '../../packages/core-db/date.js'
 import { sendMail, isMailerConfigured, type MailResult, type MailChannel } from './mailer.js'
 
 // Trần mặc định cho kênh chính, để dưới hạn mức thật một khoảng an toàn (Brevo free 300/ngày →

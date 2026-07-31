@@ -14,7 +14,7 @@
 //
 // Toàn bộ hàm ở đây THUẦN (không gọi Supabase) để dễ test — api/leaderboard.ts lo truy vấn.
 
-import { addDays, weekStartOf } from './date.js'
+import { addDays, weekStartOf } from '../../packages/core-db/date.js'
 import { isReservedName } from './reservedNames.js'
 
 export const LEAGUE_POINTS = {

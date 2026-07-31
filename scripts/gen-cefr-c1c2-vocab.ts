@@ -18,13 +18,13 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { DictEntry } from '../src/types.ts'
+import type { DictEntry } from '../apps/english/src/types.ts'
 import { wordKey, buildLevelGroups, POS_FALLBACK_ADVANCED } from './lib/vocabTopics.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = path.join(ROOT, 'public/data/dictionary')
 const CURRICULUM_JSON = path.join(ROOT, 'public/data/curriculum.json')
-const OUT = path.join(ROOT, 'src/data/cefrC1C2Vocab.json')
+const OUT = path.join(ROOT, 'apps/english/src/data/cefrC1C2Vocab.json')
 
 const WORDS_PER_CIRCLE = 16
 // Trần số vòng mỗi "Phần" (unit): nhóm lớn (vd danh từ nâng cao) cắt thành nhiều

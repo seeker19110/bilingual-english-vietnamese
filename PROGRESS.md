@@ -83,6 +83,173 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-07-31] Kế hoạch nền tảng đa lĩnh vực — ĐÃ CHỐT, CHƯA THI HÀNH.** Chủ dự án muốn
+  `donghanhcungban.com` thành nền tảng đồng hành đa lĩnh vực (học hành trước: Anh → Toán → Lý →
+  Hoá; sau đó nuôi dạy con, nghề nghiệp). Toàn bộ quyết định kiến trúc đã chốt và ghi tại
+  `docs/adr/0001-nen-tang-da-linh-vuc.md` (ADR, có lịch sử các lần đổi ý trong ngày — đọc kỹ trước
+  khi động vào hạn mức/schema) + đặc tả thi hành đầy đủ tại
+  `docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md` (8 PR) và bản kế hoạch tổng
+  `docs/research/ke-hoach-nen-tang-donghanhcungban-2026-07-31.md`. Tóm tắt các điểm dễ quên:
+  - Subdomain mỗi môn (`en-vi.`/`math.`/…), **CHỈ MỘT tiến trình PM2** dùng chung cho tới khi chạm
+    ngưỡng nâng cấp (một môn > 50% CPU · cần deploy độc lập · lên VPS nhiều core).
+  - Monorepo npm workspaces: `packages/core-*` + `apps/english|hub|math`.
+  - Dữ liệu học tách theo **schema riêng từng môn** (`english`, `math`…); `core` chỉ giữ
+    users/payments/usage — không phải bảng học nào.
+  - Cơ chế ôn tập/SRS **tách riêng từng môn**, không đưa vào lõi (chấp nhận nhân bản có chủ đích).
+  - Tiền tố SePay đổi sang `DHCB` dùng chung mọi môn — **webhook phải chấp nhận cả `DHCB` và
+    `ENVI` vĩnh viễn**, không được bỏ tiền tố cũ.
+  - Hạn mức lượt AI: **mỗi môn đếm/trừ riêng** (không cộng gộp), nhưng **cùng một con số** hạn
+    mức/ngày với tiếng Anh — hết lượt Anh không ảnh hưởng lượt Toán trong cùng ngày.
+  - Trang chủ hub: mục tiêu chung → hoạt động dự án (số thật) → tab riêng từng môn → giá chung;
+    lần đầu chọn một môn thì hỏi onboarding y như app tiếng Anh, lưu riêng theo `(user_id, subject)`.
+  - **Việc kế tiếp trước khi mở PR-1:** ~~ghi mốc `npm run test:e2e` đang xanh~~ **ĐÃ XONG
+    (2026-07-31).** · ~~bổ sung E2E (hoặc danh sách kiểm tra tay) cho thanh toán + đăng nhập
+    Google~~ **ĐÃ XONG (2026-07-31).** · ~~backup DB và xác minh restore chạy được~~ **ĐÃ XONG
+    (2026-07-31).** → **CẢ 3 VIỆC CHUẨN BỊ ĐÃ XONG, có thể mở PR-1 (alias đường dẫn).**
+  - **[2026-07-31] Vá lỗ hổng test: `api/auth.ts` (417 dòng, xử lý đăng ký/đăng nhập/OAuth
+    Google-Facebook-Apple-Microsoft/logout) CHƯA TỪNG có file test.** Đã thêm `api/auth.test.ts`
+    (10 test, tập trung đăng nhập Google `action: 'google'`/`'google-token'` — luồng GĐ1 sẽ đụng
+    khi tách `packages/core-auth`), mock `authService`/`security`/`emailVerification`/`trial` theo
+    đúng pattern `checkout.test.ts`. Phần không tự động hoá an toàn được (chuyển khoản SePay thật,
+    popup Google OAuth thật) chuyển thành danh sách kiểm tra tay:
+    `docs/kiem-tra-tay-thanh-toan-google-login.md` — chạy trước mỗi lần deploy PR-4/PR-5 của GĐ1.
+  - **[2026-07-31] PR-1 (GĐ1, alias đường dẫn) — XONG.** Sửa phạm vi lúc thi hành: alias **chỉ áp
+    dụng cho `src/`** — `api/` được `tsc` biên dịch thành JS thật chạy trực tiếp bằng `node`
+    (không qua bundler), `tsc` không tự rewrite alias lúc build nên sẽ crash production; khi
+    `api/_lib/*` chuyển sang `packages/core-*` (PR-3/4/5) sẽ dùng import package thật qua npm
+    workspaces, không cần alias trung gian. Đã thêm `resolve.alias` (`vite.config.ts`) +
+    `paths` (`tsconfig.json`): `@core/*`/`@english/*` tạm thời cùng trỏ `src/*`. Quét thấy chỉ
+    **10 file** có import sâu ≥2 cấp trong `src/` (nhỏ hơn nhiều so với ước lượng ban đầu do cấu
+    trúc `src/` khá phẳng) — làm trực tiếp thay vì giao subagent (không đáng chi phí điều phối).
+    Build + `build:server` + typecheck + lint + 947 unit test đều xanh, `git diff` chỉ có dòng
+    import.
+  - **[2026-07-31] PR-2 (GĐ1, bật npm workspaces + dời `src/` vào `apps/english/src/`) — XONG.**
+    Chỉ dời `src/` (224 file, `git mv` giữ lịch sử) — **`api/` KHÔNG dời** ở bước này (đợi
+    PR-3/4/5 tách thẳng vào `packages/core-*` qua workspace thật). `package.json` thêm
+    `"workspaces": ["packages/*", "apps/*"]`. Sửa đường dẫn: `index.html`, `vite.config.ts`
+    (alias trỏ `apps/english/src`), `tsconfig.json`, `vitest.config.ts`, `tailwind.config.js`.
+    **Phát hiện ngoài phạm vi đặc tả ban đầu:** 19 file trong `scripts/` (data-gen tooling:
+    dictionary/lessons/curriculum/cefr/prompts…) import trực tiếp từ `src/` — đặc tả gốc chỉ
+    liệt kê `vite.config.ts`/`tsconfig*`/`vitest.config.ts`/`playwright.config.ts`/`size-limit`/
+    `gen-data-manifest.mjs`, thiếu cụm này. Đã sửa cả 19 file, xác nhận bằng typecheck
+    (`tsconfig.api.json` bao `scripts/`). **Phát hiện thứ hai:** `.lintstagedrc.json` pattern
+    `{src,api}/**/*.{ts,tsx}` khớp 0 file sau khi dời — lint-staged **âm thầm ngừng lint/format**
+    phần lớn codebase mỗi lần commit (khớp 0 file không phải lỗi, không ai biết trừ khi để ý kỹ
+    log `[SKIPPED]`). Đã sửa thành `{apps/english/src,api}/**/*.{ts,tsx}`, xác minh bằng
+    `micromatch` + `npx lint-staged --debug`.
+    **Nghiệm thu:** `npm ci` sạch từ đầu · tsc (3 project) + eslint sạch · build + `build:server`
+    - 947 unit test xanh · dev server khởi động thật, `/apps/english/src/main.tsx` trả về HTTP 200
+      (xác nhận alias hoạt động thật, không chỉ qua typecheck).
+    - **[2026-07-31] PR-3 (GĐ1, tách `packages/core-db` + `packages/core-ai`) — XONG.** 21 file
+      dời (giữ lịch sử): `core-db` = `pgPool`/`date`/`base64`/`concurrencyLimiter`/`settings`;
+      `core-ai` = `tts`/`stt`/`ai` (**route handler thật**, mounted `/api/tts`·`/api/stt`·`/api/agent`
+      — tính năng trả phí) + `aiConfig`/`aiCost`/`openaiStt`/`elevenLabsTts`/`azurePronounce`/
+      `fileStorage`. Sửa import ở ~50 file `api/`+`api/_lib/`+`scripts/` (độ sâu khác nhau tuỳ vị
+      trí file — không phải sed một mẫu chung được, phải soát từng file) + `server.ts` (route
+      registration) + `vite.config.ts` (bảng `API_ROUTES` dev middleware). Mở rộng include:
+      `tsconfig.server.json`/`tsconfig.api.json` (`packages/`), `vitest.config.ts`,
+      `.lintstagedrc.json` (tránh lặp lỗ hổng "khớp 0 file" đã gặp ở PR-2). Cập nhật `CLAUDE.md` §6
+      — vài đường dẫn (`api/_lib/pgPool.ts`, `api/_lib/aiConfig.ts`, `src/prompts/*`) đã lạc hậu sau
+      PR-2/3, có thể khiến phiên AI sau tìm nhầm chỗ.
+      **Nghiệm thu cao hơn PR-1/2** (đụng route trả phí, rút kinh nghiệm bài học alias ở PR-1 —
+      không tin typecheck không thôi): tsc (3 project) + eslint sạch · build + `build:server` +
+      947 unit test xanh · `node --check dist-server/server.js` + import trực tiếp cả 2 package đã
+      biên dịch (xác nhận resolve runtime thật) · dev server thật: `OPTIONS /api/tts`↦204,
+      `POST /api/agent` không auth ↦ 401 đúng logic (KHÔNG phải 500 "cannot find module").
+  - **[2026-07-31] PR-4 (GĐ1, tách `packages/core-auth`) — XONG. ⚠️ PR nhạy cảm nhất.** 12 file
+    dời (giữ lịch sử): `auth.ts` (**route handler thật**, mounted `/api/auth`) + `authService`,
+    `adminAuth`, `security` (**34 file phụ thuộc — blast radius lớn nhất từ đầu GĐ1**),
+    `emailVerification`, `changeEmail` + 6 file test.
+    **Bài học quan trọng cho PR-5 trở đi:** các file đã sửa đường dẫn liên-package ở PR-3 (khi
+    còn ở `api/_lib/`, trỏ `core-db` bằng `../../packages/core-db/...`) giờ CHÍNH BẢN THÂN CŨNG
+    dời sang `packages/core-auth/` — độ sâu tới `packages/core-db` đổi (từ xuyên qua `api/` thành
+    anh em cùng cấp `packages/`). Phát hiện 9 chỗ `../../packages/` sai, phải sửa thành
+    `../core-db/`. **Mỗi lần một package tiếp tục dời tiếp, PHẢI rà lại toàn bộ path liên-package
+    của nó, không chỉ path trỏ ra `api/`.** Sửa import ở ~33 file `api/*.ts` + 2 `api/_lib/*.ts` +
+    3 `packages/core-ai/*.ts` (vì `ai`/`stt`/`tts` đều cần `security.ts`) + hàng loạt `vi.mock()`
+    trong test (phải khớp CHÍNH XÁC specifier, không chỉ sửa import thật) + `server.ts` (route
+    `/api/auth` + `warnIfClusterWithoutRedis`) + `vite.config.ts` (`API_ROUTES`).
+    **Nghiệm thu:** tsc (3 project) + eslint sạch **ngay lần đầu chạy** (nhờ rà kỹ trước, không
+    phải sửa-chạy-sửa lặp lại) · build + `build:server` + 947 unit test xanh · `node --check` +
+    import trực tiếp cả 6 module core-auth đã biên dịch · dev server thật: `OPTIONS /api/auth`↦204,
+    `GET ?action=me` không token↦401, `POST register` thiếu field↦400 Zod, `POST google` idToken
+    rác chạy sâu tới `verifyGoogleIdToken` thật (báo thiếu `GOOGLE_CLIENT_ID` trong sandbox — đúng
+    hành vi, không phải lỗi module).
+  - **[2026-07-31] PR #395 mở trên GitHub cho nhánh này** — xung đột với `main` (4 PR mới merge:
+    #391 admin-users panel, #392 gộp trang Luyện tập, #393 fix route admin-users, #394 avatar
+    viseme timeline thật) đã xử lý bằng merge commit. 2 conflict rõ (git tự báo): `Practice.tsx`
+    (file mới của main, git tự đặt đúng `apps/english/src/pages/` nhờ rename-detection, chỉ cần
+    xác nhận) và `packages/core-ai/tts.ts` (gộp import `visemeTimeline` mới của main với đường dẫn
+    package đã đổi ở PR-3). **Quan trọng hơn — lỗi ÂM THẦM git không báo conflict:**
+    `api/_lib/visemeTimeline.ts`/`.test.ts` (file MỚI của main) import `elevenLabsTts.js` bằng
+    đường dẫn cũ (file đó đã dời sang `packages/core-ai/` ở PR-3) — build vẫn "thành công" về mặt
+    git merge nhưng sẽ vỡ ở typecheck. **Bài học: sau mỗi merge từ `main` trong lúc làm GĐ1, PHẢI
+    tsc toàn bộ 3 project, không chỉ tin git báo hết conflict.** Cũng vá `api/routes-registered.test.ts`
+    (test canh gác "mọi handler phải có route" — chỉ quét thư mục `api/`, sau PR-3/4 không còn thấy
+    `tts`/`stt`/`ai`/`auth` vì đã dời sang `packages/`) để tiếp tục canh đúng 4 route đó, không chỉ
+    merge cho qua. Nghiệm thu: tsc (3 project) + eslint sạch · build + `build:server` xanh ·
+    92 file/1029 test xanh (bao gồm 73 test route-gate).
+  - **[2026-07-31] CI đỏ trên PR #395 do TỰ MÌNH sai quy trình — đã sửa.** Sau khi phát hiện lỗi
+    độ sâu đường dẫn (`'../packages/'` sai → `'../../packages/'` đúng), sửa bằng `sed` NHƯNG
+    file đã `git add` từ TRƯỚC lần sửa đó — quên `git add` lại sau khi sửa. Hook `lint-staged`
+    lúc commit stash/restore unstaged changes nên `tsc` chạy sau đó vẫn "sạch" (đọc working tree),
+    khiến tưởng nhầm đã đúng, nhưng bản **đã commit** (git index lúc đó) vẫn là bản sai — CI bắt
+    đúng lỗi này. **Bài học ghi nhớ: sau khi sửa file bằng sed/Edit RỒI `git add` sớm, phải chạy
+    lại `git diff --cached` đối chiếu working tree trước khi commit — `tsc` chạy sau luôn đọc
+    working tree, KHÔNG phải staged index, nên không đủ để xác nhận commit đúng.** Đã sửa bằng
+    `git add` lại + `git diff --cached` xác nhận khớp working tree trước khi commit (thay vì chỉ
+    tin `tsc` chạy sau).
+  - **[2026-07-31] PR-5 Part A (tách `packages/core-billing`) — XONG.** 18 file di dời
+    (`checkout.ts`, `payment-webhook.ts`, `payment-status.ts`, `payment-history.ts`,
+    `plan-prices.ts`, `plan-features.ts`, `plan-marketing.ts`, `promo.ts`, `usage.ts`, `plan.ts` +
+    test đi kèm). Sửa gap sweep `vi.mock('./promo', ...)` trong `api/_lib/voiceAccess.test.ts` (mock
+    kiểu sibling-path bị sweep regex trước đó bỏ sót). 1015 test pass.
+  - **[2026-07-31] PR-5 Part B (migration `subject` cho quota + đổi tiền tố SePay) — XONG.**
+    Migration `postgres/migrations/0029_platform_subject.sql`: thêm cột `subject` (mặc định
+    `'english'`) vào `daily_usage` + `free_daily_credit`, đổi khoá chính sang
+    `(user_id, day, subject)`, cập nhật các hàm `consume_usage`/`refund_usage`/
+    `consume_usage_total`/`grant_daily_bonus_rolling`/`consume_rolling_credit`/
+    `refund_rolling_credit` nhận thêm `p_subject` (default `'english'`), thêm bảng
+    `subject_limits`. Theo ADR-0001 mục 8: mỗi môn đếm lượt riêng, hạn mức bằng nhau.
+    `packages/core-billing/usage.ts` + `api/progress.ts` truyền `DEFAULT_SUBJECT='english'` vào
+    SQL — CHƯA đổi chữ ký hàm export để tránh đụng ~15 file gọi (Toán/GĐ2 sẽ cần luồng subject
+    tường minh hơn — nợ kỹ thuật, ghi ở mục "Nợ kỹ thuật còn mở"). `api/_lib/sepay.ts`: đổi
+    `PAYMENT_CODE_PREFIX` → `'DHCB'`, thêm `ACCEPTED_PAYMENT_PREFIXES = ['DHCB', 'ENVI']` — giữ
+    `'ENVI'` VĨNH VIỄN để giao dịch/nội dung chuyển khoản cũ vẫn khớp. Nợ kỹ thuật CHƯA xử lý (chỉ
+    1 môn nên chưa ảnh hưởng hành vi thật): `api/usage-summary.ts`, `api/admin-usage-stats.ts` cần
+    lọc theo `subject` khi có môn thứ 2; UI admin bật/tắt `subject_limits.enforced` chưa xây. Xác
+    thực: `tsc --noEmit` + `tsc -p tsconfig.api.json` sạch, `npm run build` + `build:server` sạch,
+    `node --check` các file compile qua, `vitest run` 92 file/1017 test pass. Commit `6f37f38`.
+    **Việc tay còn nợ: chạy `docs/kiem-tra-tay-thanh-toan-google-login.md` mục B (đặc biệt B6/B7 —
+    test giao dịch ENVI cũ vẫn khớp + bật thêm bộ lọc DHCB trên dashboard SePay) sau khi deploy
+    thật lên VPS. Mục A (Google login) cũng nên chạy vì PR-4 vừa đụng `core-auth`.**
+  - **Tiếp theo: PR-5b (chuyển các bảng dữ liệu học tiếng Anh — `chat_sessions`,
+    `writing_submissions`, v.v. — vào schema Postgres riêng `english`, theo đặc tả GĐ1 gốc), rồi
+    PR-6 (tách `packages/core-ui`), rồi PR-7 (`apps/hub` + cấu hình Nginx đa subdomain + SSO).**
+  - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
+    `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
+    trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback
+    ×2) — nhiều khả năng do VPS **1 vCPU** chạy `npm run dev` + Chromium headless cùng lúc, tranh
+    nhau 1 core, không phải hồi quy thật (CI GitHub Actions nhiều core hơn nên bình thường xanh cả
+    119). **Dùng CI (GitHub Actions) làm mốc đối chiếu chính thức cho GĐ1, không dùng số chạy trên
+    VPS** — VPS chỉ để xác nhận suite chạy được, không đại diện cho baseline chuẩn.
+  - **[2026-07-31] Backup DB — PHÁT HIỆN VÀ VÁ: chưa từng có backup tự động nào chạy.**
+    `sudo -u postgres crontab -l` trống trơn (chỉ có template mặc định) — cả 3 cron job ở
+    `docs/setup-postgresql-vps.md` §7 (dump local · đẩy R2 · test restore hàng tuần) **chưa từng
+    được thêm vào crontab từ trước tới giờ**, dù tài liệu đánh dấu "BẮT BUỘC". Đã thêm đủ 3 dòng
+    cron cho user `postgres` (xác nhận qua `crontab -l`). Backup tay đầu tiên: `pg_dump` **phải
+    chạy bằng quyền `postgres`** (chạy bằng `root` báo lỗi `role "root" does not exist` và tạo ra
+    file `.sql.gz` gần như rỗng — 20 byte — mà `backup:r2` vẫn coi là "thành công" vì chỉ kiểm tra
+    upload xong, không kiểm nội dung; đã xoá bản rỗng, dump lại đúng quyền ra 30.2 MB, xác minh
+    bằng `scripts/verify-pg-backup.sh` đọc được dữ liệu thật (`users` 5 dòng, `profiles` 5,
+    `app_settings` 1), rồi mới upload R2). **Rủi ro đã tồn tại từ trước, không phải mới phát sinh
+    hôm nay** — nên rà lại các dự án tương tự khác (nếu có) đã setup theo cùng runbook.
+  - **[2026-07-31] Cảnh giác:** chạy `npm run backup:r2` in ra dòng quảng cáo xoay vòng của gói
+    `dotenv` (`// tip: … for agents […]`), một lần trỏ domain lạ `vestauth.com` chưa xác minh, lần
+    khác trỏ `dotenvx.com` (domain chính chủ). Gói này tự chèn quảng cáo bên thứ ba vào output —
+    không phải lỗi, nhưng nên tắt bằng `DOTENV_CONFIG_QUIET=true` trong `.env` (VIỆC TAY, chưa
+    làm) để tránh nhiễu log/nhầm lẫn với mã độc thật về sau.
+
 - **[2026-07-28] Danh sách VIP whitelist + Ma trận tính năng theo gói (Free/Pro/VIP) trong
   `/admin` — ĐÃ XONG, ĐÃ MERGE (PR #357).** 2 tính năng quản trị mới, tự chạy migration qua CI/CD
   (`npm run migrate:pg` trong pipeline deploy, không cần chạy tay):
@@ -891,6 +1058,10 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   KHÔNG làm vỡ app — không bắt buộc phải làm ngay.
 
 ## Quyết định quan trọng
+
+- **[2026-07-31] Mở rộng thành nền tảng đa lĩnh vực — ĐÃ CHỐT.** Xem mục "Tiếp theo" ở trên +
+  `docs/adr/0001-nen-tang-da-linh-vuc.md` (nguồn sự thật, đừng chép lại chi tiết ra đây kẻo lệch
+  khi ADR được bổ sung sau này).
 
 - **Bảng xếp hạng (LeagueSection trong `/challenge`) TẠM TẮT (2026-07-27).** Lý do: ở quy mô
   ít người dùng, bảng gần trống/chỉ vài người khiến người mới thấy app "vắng vẻ" và bỏ đi —

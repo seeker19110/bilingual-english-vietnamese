@@ -18,7 +18,7 @@
 // mọi nguyên tắc ở đó: không hạ cấp người đang VIP, không làm mất hạn đang còn, không đụng
 // gói vĩnh viễn.
 
-import { getPgPool } from './pgPool.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
 import { grantPlanDays } from './planGrant.js'
 
 /** Số ngày Pro tặng cho tài khoản mới. Đổi ở ĐÚNG một chỗ này. */

@@ -5,14 +5,14 @@
 // CHỈ ghi khi người dùng CHỦ ĐỘNG bấm 👎 — dùng bổ sung ca sai vào golden set eval (⑤ T1).
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
@@ -48,7 +48,7 @@ export default async function handler(req: Request): Promise<Response> {
   const d = result.data
 
   await getPgPool().query(
-    `insert into public.tutor_feedback (user_id, source, user_input, ai_feedback)
+    `insert into english.tutor_feedback (user_id, source, user_input, ai_feedback)
      values ($1, $2, $3, $4)`,
     [auth.userId, d.source, d.userInput, d.aiFeedback],
   )

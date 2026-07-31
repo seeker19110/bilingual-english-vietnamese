@@ -14,14 +14,14 @@
 // Client chỉ được ghi learn_count (streak, không tốn tiền API).
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { rewardReferralIfEligible } from './_lib/referral.js'
@@ -117,17 +117,17 @@ export default async function handler(req: Request): Promise<Response> {
     const [chat, writing, speaking, usage] = await Promise.all([
       pool.query<SessionRow>(
         `select id, user_id, situation, level, messages, created_at
-           from public.chat_sessions where user_id = $1 order by created_at desc`,
+           from english.chat_sessions where user_id = $1 order by created_at desc`,
         [auth.userId],
       ),
       pool.query<WritingRow>(
         `select id, user_id, essay_prompt, essay, feedback, submitted_at
-           from public.writing_submissions where user_id = $1 order by submitted_at desc`,
+           from english.writing_submissions where user_id = $1 order by submitted_at desc`,
         [auth.userId],
       ),
       pool.query<SessionRow>(
         `select id, user_id, situation, level, messages, created_at
-           from public.speaking_sessions where user_id = $1 order by created_at desc`,
+           from english.speaking_sessions where user_id = $1 order by created_at desc`,
         [auth.userId],
       ),
       pool.query<UsageRow>(
@@ -204,7 +204,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (body.action === 'writing') {
     const s = body.submission
     await pool.query(
-      `insert into public.writing_submissions
+      `insert into english.writing_submissions
          (id, user_id, essay_prompt, essay, feedback, submitted_at)
        values ($1, $2, $3, $4, $5, $6)
        on conflict (id) do update set

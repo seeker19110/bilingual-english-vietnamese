@@ -9,17 +9,17 @@
 //      days = null → không giới hạn thời gian (vd VIP cấp vĩnh viễn); days > 0 → hết hạn sau N ngày.
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security.js'
-import { getUserById } from './_lib/authService.js'
-import { isAdminEmail } from './_lib/adminAuth.js'
-import { resolvePlan } from './_lib/plan.js'
+} from '../packages/core-auth/security.js'
+import { getUserById } from '../packages/core-auth/authService.js'
+import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
+import { resolvePlan } from '../packages/core-billing/plan.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 

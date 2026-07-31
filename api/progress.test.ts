@@ -5,8 +5,8 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./_lib/pgPool', () => ({ getPgPool: vi.fn() }))
-vi.mock('./_lib/security', () => ({
+vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../packages/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -15,7 +15,7 @@ vi.mock('./_lib/security', () => ({
 }))
 
 import handler from './progress'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from '../packages/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()
@@ -87,6 +87,6 @@ describe('POST /api/progress — cộng thưởng lượt khi phát hiện học
     })
     const resp = await handler(makeRequest({ learned: ['apple'] }))
     expect(resp.status).toBe(200)
-    expect(findCall('insert into public.learning_progress')).toBeTruthy()
+    expect(findCall('insert into english.learning_progress')).toBeTruthy()
   })
 })

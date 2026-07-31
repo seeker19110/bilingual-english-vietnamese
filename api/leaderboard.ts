@@ -14,17 +14,17 @@
 // api/_lib/leaderboard.ts. Client KHÔNG gửi điểm lên.
 
 import { z } from 'zod'
-import { getPgPool, getPgReadPool } from './_lib/pgPool.js'
+import { getPgPool, getPgReadPool } from '../packages/core-db/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from './_lib/security.js'
+} from '../packages/core-auth/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
-import { vnDateStr } from './_lib/date.js'
+import { vnDateStr } from '../packages/core-db/date.js'
 import {
   currentWeekRange,
   computeWeeklyPoints,
@@ -82,7 +82,7 @@ async function computeRankedEntries(weekStart: string, weekEnd: string): Promise
   let challengeRows: ChallengeRow[] = []
   try {
     const res = await pool.query<ChallengeRow>(
-      `select user_id from public.challenge_entries
+      `select user_id from english.challenge_entries
         where user_id = any($1) and day >= $2::date and day <= $3::date`,
       [optedIds, weekStart, weekEnd],
     )

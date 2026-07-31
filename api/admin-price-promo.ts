@@ -8,16 +8,16 @@
 // POST /api/admin-price-promo   body: { percent: number, startsAt: string|null, endsAt: string|null }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security.js'
-import { getUserById } from './_lib/authService.js'
-import { isAdminEmail } from './_lib/adminAuth.js'
+} from '../packages/core-auth/security.js'
+import { getUserById } from '../packages/core-auth/authService.js'
+import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
 import { getPricePromo, invalidatePricePromoCache } from './_lib/pricePromo.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'

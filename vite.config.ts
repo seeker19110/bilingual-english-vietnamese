@@ -1,8 +1,20 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from 'vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
 import compress from 'vite-plugin-compression'
 import type { IncomingMessage, ServerResponse } from 'node:http'
+
+// Alias CHỈ áp dụng cho src/ (frontend, do Vite bundle) — KHÔNG áp dụng cho api/.
+// api/ được `tsc -p tsconfig.server.json` biên dịch thành JS thật rồi chạy trực tiếp bằng
+// `node dist-server/server.js`, không qua bundler nào cả — tsc không tự đổi alias thành đường
+// dẫn thật lúc build, nên alias trong api/ sẽ crash production khi Node không tìm thấy module.
+// Xem docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md PR-1 để biết lý do đầy đủ.
+//
+// @core/* và @english/* TẠM THỜI cùng trỏ vào src/ (chưa tách packages/apps thật) — mục đích
+// duy nhất lúc này là GÁN NHÃN đúng nơi mỗi file rồi đây sẽ chuyển tới, để khi thật sự tách
+// (PR-6 trở đi) chỉ cần đổi 2 dòng target dưới đây thay vì sửa lại từng câu import.
+const srcDir = fileURLToPath(new URL('./apps/english/src', import.meta.url))
 
 export default defineConfig(({ mode }) => {
   // Đọc các biến môi trường server-only trực tiếp từ file .env (Node) —
@@ -30,6 +42,12 @@ export default defineConfig(({ mode }) => {
   // /api/agent giờ do dev middleware gọi thẳng handler api/ai.ts (xem API_ROUTES bên dưới)
   // — không proxy thẳng tới Anthropic nữa, để handler tự chọn nhà cung cấp (Gemini/Groq/Anthropic).
   return {
+    resolve: {
+      alias: {
+        '@core': srcDir,
+        '@english': srcDir,
+      },
+    },
     plugins: [
       react(),
       apiEdgeDevMiddleware(),
@@ -122,13 +140,13 @@ export default defineConfig(({ mode }) => {
 // Bảng ánh xạ route → file handler. Thêm endpoint mới chỉ cần thêm 1 dòng ở đây.
 const API_ROUTES: { prefix: string; module: string }[] = [
   { prefix: '/api/pronunciation', module: '/api/pronunciation.ts' },
-  { prefix: '/api/tts', module: '/api/tts.ts' },
-  { prefix: '/api/stt', module: '/api/stt.ts' },
-  { prefix: '/api/agent', module: '/api/ai.ts' },
+  { prefix: '/api/tts', module: '/packages/core-ai/tts.ts' },
+  { prefix: '/api/stt', module: '/packages/core-ai/stt.ts' },
+  { prefix: '/api/agent', module: '/packages/core-ai/ai.ts' },
   { prefix: '/api/dictionary', module: '/api/dictionary.ts' },
   { prefix: '/api/leaderboard', module: '/api/leaderboard.ts' },
   { prefix: '/api/pronounce-assess', module: '/api/pronounce-assess.ts' },
-  { prefix: '/api/auth', module: '/api/auth.ts' },
+  { prefix: '/api/auth', module: '/packages/core-auth/auth.ts' },
   { prefix: '/api/profile', module: '/api/profile.ts' },
   { prefix: '/api/progress', module: '/api/progress.ts' },
   { prefix: '/api/history', module: '/api/history.ts' },

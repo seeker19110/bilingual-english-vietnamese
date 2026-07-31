@@ -6,16 +6,16 @@
 //   search: lọc theo email chứa chuỗi (không phân biệt hoa/thường), rỗng = tất cả.
 //   limit: 1-100 (mặc định 20). offset: phân trang.
 
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security.js'
-import { getUserById } from './_lib/authService.js'
-import { isAdminEmail } from './_lib/adminAuth.js'
+} from '../packages/core-auth/security.js'
+import { getUserById } from '../packages/core-auth/authService.js'
+import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const DEFAULT_LIMIT = 20

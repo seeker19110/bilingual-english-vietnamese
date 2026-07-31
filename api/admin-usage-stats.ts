@@ -14,20 +14,24 @@
 // Riêng bảng "top người dùng" có email — cần thiết để liên hệ khi phát hiện lạm dụng, và chỉ
 // admin đọc được.
 
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from './_lib/security.js'
-import { getUserById } from './_lib/authService.js'
-import { isAdminEmail } from './_lib/adminAuth.js'
+} from '../packages/core-auth/security.js'
+import { getUserById } from '../packages/core-auth/authService.js'
+import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
-import { getUnitCostsUsd, getUsdVndRate, estimateCostUsd } from './_lib/aiCost.js'
-import { FREE_WEEKLY_CAP, FREE_ROLLING_WINDOW_DAYS, type UsageMode } from './_lib/usage.js'
-import { vnDateStr, addDays } from './_lib/date.js'
+import { getUnitCostsUsd, getUsdVndRate, estimateCostUsd } from '../packages/core-ai/aiCost.js'
+import {
+  FREE_WEEKLY_CAP,
+  FREE_ROLLING_WINDOW_DAYS,
+  type UsageMode,
+} from '../packages/core-billing/usage.js'
+import { vnDateStr, addDays } from '../packages/core-db/date.js'
 
 const DEFAULT_DAYS = 30
 const MAX_DAYS = 180

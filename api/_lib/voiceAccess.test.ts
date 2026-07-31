@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { effectivePlan } from './promo'
+import { effectivePlan } from '../../packages/core-billing/promo'
 import { clampVoiceToPlan } from './voiceAccess'
 
-vi.mock('./promo', () => ({ effectivePlan: vi.fn() }))
+vi.mock('../../packages/core-billing/promo', () => ({ effectivePlan: vi.fn() }))
 const mockedEffectivePlan = vi.mocked(effectivePlan)
 
 beforeEach(() => {

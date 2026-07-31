@@ -4,9 +4,9 @@
 // Vì sao tách khỏi api/referral.ts: điểm trao thưởng nằm ở luồng lưu lịch sử học
 // (api/history.ts), không phải ở endpoint referral — 2 nơi cùng dùng nên logic phải ở 1 chỗ.
 
-import { getPgPool } from './pgPool.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
 import { grantPlanDays } from './planGrant.js'
-import { logSecurityEvent } from './security.js'
+import { logSecurityEvent } from '../../packages/core-auth/security.js'
 
 // Số ngày Pro thưởng cho MỖI BÊN khi 1 lượt mời thành công (quyết định 2026-07-28: giảm từ
 // 7 xuống 3 ngày, đồng bộ với thang thưởng nhiệm vụ mới — xem api/_lib/quests.ts).
