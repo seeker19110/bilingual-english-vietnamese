@@ -140,7 +140,24 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
     **Nghiệm thu:** `npm ci` sạch từ đầu · tsc (3 project) + eslint sạch · build + `build:server`
     - 947 unit test xanh · dev server khởi động thật, `/apps/english/src/main.tsx` trả về HTTP 200
       (xác nhận alias hoạt động thật, không chỉ qua typecheck).
-      **Tiếp theo: PR-3 (tách `packages/core-db` + `core-ai`, ít ràng buộc nhất).**
+    - **[2026-07-31] PR-3 (GĐ1, tách `packages/core-db` + `packages/core-ai`) — XONG.** 21 file
+      dời (giữ lịch sử): `core-db` = `pgPool`/`date`/`base64`/`concurrencyLimiter`/`settings`;
+      `core-ai` = `tts`/`stt`/`ai` (**route handler thật**, mounted `/api/tts`·`/api/stt`·`/api/agent`
+      — tính năng trả phí) + `aiConfig`/`aiCost`/`openaiStt`/`elevenLabsTts`/`azurePronounce`/
+      `fileStorage`. Sửa import ở ~50 file `api/`+`api/_lib/`+`scripts/` (độ sâu khác nhau tuỳ vị
+      trí file — không phải sed một mẫu chung được, phải soát từng file) + `server.ts` (route
+      registration) + `vite.config.ts` (bảng `API_ROUTES` dev middleware). Mở rộng include:
+      `tsconfig.server.json`/`tsconfig.api.json` (`packages/`), `vitest.config.ts`,
+      `.lintstagedrc.json` (tránh lặp lỗ hổng "khớp 0 file" đã gặp ở PR-2). Cập nhật `CLAUDE.md` §6
+      — vài đường dẫn (`api/_lib/pgPool.ts`, `api/_lib/aiConfig.ts`, `src/prompts/*`) đã lạc hậu sau
+      PR-2/3, có thể khiến phiên AI sau tìm nhầm chỗ.
+      **Nghiệm thu cao hơn PR-1/2** (đụng route trả phí, rút kinh nghiệm bài học alias ở PR-1 —
+      không tin typecheck không thôi): tsc (3 project) + eslint sạch · build + `build:server` +
+      947 unit test xanh · `node --check dist-server/server.js` + import trực tiếp cả 2 package đã
+      biên dịch (xác nhận resolve runtime thật) · dev server thật: `OPTIONS /api/tts`↦204,
+      `POST /api/agent` không auth ↦ 401 đúng logic (KHÔNG phải 500 "cannot find module").
+      **Tiếp theo: PR-4 (tách `packages/core-auth`) ⚠️ PR nhạy cảm nhất — chạy
+      `docs/kiem-tra-tay-thanh-toan-google-login.md` mục A trước khi deploy.**
   - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
     `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
     trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback
