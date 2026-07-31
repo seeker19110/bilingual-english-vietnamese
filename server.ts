@@ -268,7 +268,10 @@ function staticCacheHeaders(res: express.Response, filePath: string) {
 }
 
 // Cache file tĩnh 1 năm với cache busting (filename hash) — trừ index.html để luôn lấy bản mới nhất
-const englishStatic = express.static(englishDistDir, { maxAge: '1y', setHeaders: staticCacheHeaders })
+const englishStatic = express.static(englishDistDir, {
+  maxAge: '1y',
+  setHeaders: staticCacheHeaders,
+})
 const hubStatic = express.static(hubDistDir, { maxAge: '1y', setHeaders: staticCacheHeaders })
 app.use((req, res, next) => {
   const serveStatic = distDirForHost(req.hostname) === englishDistDir ? englishStatic : hubStatic
