@@ -102,9 +102,16 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
     mức/ngày với tiếng Anh — hết lượt Anh không ảnh hưởng lượt Toán trong cùng ngày.
   - Trang chủ hub: mục tiêu chung → hoạt động dự án (số thật) → tab riêng từng môn → giá chung;
     lần đầu chọn một môn thì hỏi onboarding y như app tiếng Anh, lưu riêng theo `(user_id, subject)`.
-  - **Việc kế tiếp trước khi mở PR-1:** ghi mốc `npm run test:e2e` đang xanh · bổ sung E2E (hoặc
-    danh sách kiểm tra tay) cho thanh toán + đăng nhập Google · ~~backup DB và xác minh restore chạy
-    được~~ **ĐÃ XONG (2026-07-31).**
+  - **Việc kế tiếp trước khi mở PR-1:** ~~ghi mốc `npm run test:e2e` đang xanh~~ **ĐÃ XONG
+    (2026-07-31).** · bổ sung E2E (hoặc danh sách kiểm tra tay) cho thanh toán + đăng nhập Google ·
+    ~~backup DB và xác minh restore chạy được~~ **ĐÃ XONG (2026-07-31).**
+  - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
+    `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
+    trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback
+    ×2) — nhiều khả năng do VPS **1 vCPU** chạy `npm run dev` + Chromium headless cùng lúc, tranh
+    nhau 1 core, không phải hồi quy thật (CI GitHub Actions nhiều core hơn nên bình thường xanh cả
+    119). **Dùng CI (GitHub Actions) làm mốc đối chiếu chính thức cho GĐ1, không dùng số chạy trên
+    VPS** — VPS chỉ để xác nhận suite chạy được, không đại diện cho baseline chuẩn.
   - **[2026-07-31] Backup DB — PHÁT HIỆN VÀ VÁ: chưa từng có backup tự động nào chạy.**
     `sudo -u postgres crontab -l` trống trơn (chỉ có template mặc định) — cả 3 cron job ở
     `docs/setup-postgresql-vps.md` §7 (dump local · đẩy R2 · test restore hàng tuần) **chưa từng
