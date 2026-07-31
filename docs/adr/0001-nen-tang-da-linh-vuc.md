@@ -95,7 +95,7 @@ dễ định giá, và chống lạm dụng tốt hơn N hạn mức riêng cộ
 
 - Mở môn mới không đụng vào app tiếng Anh đang chạy thật.
 - Một tài khoản + một gói cước dùng cho mọi môn — lợi thế lớn nhất so với app đơn môn.
-- Auth/thanh toán/AI-gateway/SRS/theme/CI viết một lần, dùng cho mọi môn.
+- Auth/thanh toán/AI-gateway/theme/CI viết một lần, dùng cho mọi môn.
 
 **Đánh đổi & rủi ro phải chấp nhận**
 
@@ -110,5 +110,28 @@ dễ định giá, và chống lạm dụng tốt hơn N hạn mức riêng cộ
 **Việc tiếp theo**
 
 1. Đặc tả chi tiết GĐ1 (file phải di chuyển, migration cụ thể, kế hoạch test hồi quy).
-2. Thi hành GĐ1 theo từng PR nhỏ, mỗi PR một thay đổi logic, không kèm tính năng mới.
-3. Nâng VPS trước khi bắt đầu GĐ2 (Toán).
+
+---
+
+## Bổ sung cùng ngày 2026-07-31 (làm rõ, trước khi thi hành — không lật ngược gì ở trên)
+
+**4. Tiền tố nội dung chuyển khoản SePay: `DHCB` dùng chung toàn nền tảng**, không tách theo môn.
+Lý do: một gói cước dùng cho mọi môn, nên tiền tố theo môn là sai mô hình kinh doanh; người chuyển
+khoản cũng chỉ phải nhớ một dạng nội dung. **Ràng buộc vĩnh viễn:** webhook chấp nhận cả `DHCB…`
+lẫn `ENVI…` (giao dịch cũ, và người dùng copy lại nội dung cũ). Không bao giờ bỏ `ENVI` khỏi danh
+sách chấp nhận, cũng không gỡ bộ lọc `ENVI` trên trang SePay.
+
+**5. Dữ liệu học tập tách theo môn ở tầng schema.** Bảng học (`chat_sessions`,
+`writing_submissions`, `speaking_sessions`, `learning_progress`, `pronunciations`,
+`challenge_entries`, `tutor_feedback`) chuyển sang schema `english`. `tts_cache` ở lại `core` vì
+khoá là hash nội dung, môn nào cũng dùng chung được. Môn mới tạo schema riêng với bảng của riêng nó;
+khoá ngoại tới `core.users(id)` là điểm nối duy nhất giữa các schema.
+
+**6. Cơ chế học & ôn tập tách riêng từng môn — KHÔNG đưa vào `packages/core-*`.**
+Đảo lại đề xuất ban đầu (định chuyển thuật toán SRS vào lõi). Lý do: ôn từ vựng và ôn công thức Toán
+khác nhau về bản chất — Toán còn phải sinh lại đề theo tham số, chấm bước giải, phân biệt "nhầm dấu"
+với "chưa hiểu khái niệm". Một trừu tượng SRS chung sẽ hoặc quá loãng để dùng được, hoặc thành nút
+thắt mà sửa cho môn này thì hỏng môn kia.
+**Đánh đổi chấp nhận có chủ đích:** thuật toán lập lịch ôn sẽ tồn tại nhiều bản sao; lỗi trong công
+thức tính khoảng cách ôn phải sửa ở từng môn. Ghi nợ kỹ thuật trong `PROGRESS.md`. Xét gộp lại **chỉ
+khi** tới môn thứ ba mà cả ba bản sao vẫn giống hệt nhau — tách dựa trên bằng chứng, không phỏng đoán. 2. Thi hành GĐ1 theo từng PR nhỏ, mỗi PR một thay đổi logic, không kèm tính năng mới. 3. Nâng VPS trước khi bắt đầu GĐ2 (Toán).

@@ -1,7 +1,9 @@
 # Đặc tả GĐ1 — Tách lõi dùng chung + trang hub
 
 > Ngày: 2026-07-31 · Căn cứ: `docs/adr/0001-nen-tang-da-linh-vuc.md`
-> Trạng thái: **đặc tả, chưa thi hành** · Ước lượng: 4–6 tuần, 7 PR
+> Trạng thái: **đặc tả, chưa thi hành** · Ước lượng: 4–6 tuần, 8 PR
+> Cập nhật 2026-07-31: chốt 3 điểm còn mở — tiền tố SePay `DHCB`, tách schema dữ liệu học theo môn,
+> cơ chế học/ôn tách riêng từng môn (xem §2).
 > **Nguyên tắc xuyên suốt GĐ1: đây là REFACTOR THUẦN. Không thêm một tính năng nào cho người dùng cuối. Nếu một PR vừa di chuyển file vừa đổi hành vi → tách làm hai PR.**
 
 ---
@@ -47,32 +49,92 @@ postgres/                     ← schema core + schema từng môn, migrations d
 
 Áp quy tắc này vào hiện trạng:
 
-| Vào `packages/`                                                                                                                                                                                | Ở lại `apps/english/`                                                                               |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `api/auth.ts`, `_lib/authService.ts`, `adminAuth.ts`, `security.ts`, `emailVerification.ts`, `changeEmail.ts`                                                                                  | `api/dictionary.ts`, `pronunciation.ts`, `pronounce-assess.ts`, `avatar-visemes.ts`, `challenge.ts` |
-| `api/checkout.ts`, `payment-webhook.ts`, `payment-status.ts`, `payment-history.ts`, `plan-prices.ts`, `plan-features.ts`, `plan-marketing.ts`, `_lib/promo.ts`, `usage.ts`, `plan.ts`          | `api/tutor-feedback.ts`, `quests.ts`, `leaderboard.ts`, `history.ts`, `progress.ts`                 |
-| `api/tts.ts`, `stt.ts`, `ai.ts`, `_lib/aiConfig.ts`, `aiCost.ts`, `openaiStt.ts`, `elevenLabsTts.ts`, `azurePronounce.ts`, `fileStorage.ts`                                                    | `src/data/**` (từ điển, CEFR), `src/prompts/**`, `src/pages/**`                                     |
-| `_lib/pgPool.ts`, `date.ts`, `base64.ts`, `concurrencyLimiter.ts`, `settings.ts`                                                                                                               | `src/lib/curriculum.ts`, `cefr*.ts`, `vocab.ts`, `wordForms.ts`, `pos.ts`, `dictionaryApi.ts`       |
-| `src/lib/theme.ts`, `auth.ts`, `authHeader.ts`, `payment.ts`, `planFeatures.ts`, `promo.ts`, `errorTracking.ts`, `storage.ts`, `date.ts`, `haptics.ts`, `sound.ts`, `deviceId.ts`, `uiLang.ts` | `src/lib/pronounce*.ts`, `listening.ts`, `placement.ts`, `mistakes.ts`, `challenge*.ts`             |
-| `src/components/ThemeToggle.tsx` + component nền (nút, thẻ, modal, trạng thái tải/rỗng/lỗi)                                                                                                    | các component gắn nội dung tiếng Anh (`WordCard`, `StudyTabs`, `CefrLessonViews`, …)                |
-| `src/lib/srs.ts` ⚠️ xem §2                                                                                                                                                                     | `src/lib/stats.ts`, `achievements.ts`, `weeklyGoal.ts` (tách sau nếu Toán cần)                      |
+| Vào `packages/`                                                                                                                                                                                | Ở lại `apps/english/`                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `api/auth.ts`, `_lib/authService.ts`, `adminAuth.ts`, `security.ts`, `emailVerification.ts`, `changeEmail.ts`                                                                                  | `api/dictionary.ts`, `pronunciation.ts`, `pronounce-assess.ts`, `avatar-visemes.ts`, `challenge.ts`  |
+| `api/checkout.ts`, `payment-webhook.ts`, `payment-status.ts`, `payment-history.ts`, `plan-prices.ts`, `plan-features.ts`, `plan-marketing.ts`, `_lib/promo.ts`, `usage.ts`, `plan.ts`          | `api/tutor-feedback.ts`, `quests.ts`, `leaderboard.ts`, `history.ts`, `progress.ts`                  |
+| `api/tts.ts`, `stt.ts`, `ai.ts`, `_lib/aiConfig.ts`, `aiCost.ts`, `openaiStt.ts`, `elevenLabsTts.ts`, `azurePronounce.ts`, `fileStorage.ts`                                                    | `src/data/**` (từ điển, CEFR), `src/prompts/**`, `src/pages/**`                                      |
+| `_lib/pgPool.ts`, `date.ts`, `base64.ts`, `concurrencyLimiter.ts`, `settings.ts`                                                                                                               | `src/lib/curriculum.ts`, `cefr*.ts`, `vocab.ts`, `wordForms.ts`, `pos.ts`, `dictionaryApi.ts`        |
+| `src/lib/theme.ts`, `auth.ts`, `authHeader.ts`, `payment.ts`, `planFeatures.ts`, `promo.ts`, `errorTracking.ts`, `storage.ts`, `date.ts`, `haptics.ts`, `sound.ts`, `deviceId.ts`, `uiLang.ts` | `src/lib/pronounce*.ts`, `listening.ts`, `placement.ts`, `mistakes.ts`, `challenge*.ts`              |
+| `src/components/ThemeToggle.tsx` + component nền (nút, thẻ, modal, trạng thái tải/rỗng/lỗi)                                                                                                    | các component gắn nội dung tiếng Anh (`WordCard`, `StudyTabs`, `CefrLessonViews`, …)                 |
+| _(không có)_ — mọi thứ thuộc **học tập/ôn tập** ở lại app, xem §2.3                                                                                                                            | `src/lib/srs.ts`, `cefrProgress.ts`, `stats.ts`, `achievements.ts`, `weeklyGoal.ts`, `curriculum.ts` |
 
 ⚠️ **`api/admin-*.ts`**: phần quản trị người dùng/gói/giá là lõi; phần thống kê học tập là của môn.
 PR-4 tách theo đúng ranh giới đó, không bê nguyên cụm `admin-*` sang một bên.
 
 ---
 
-## 2. Điểm cần quyết trong lúc làm (đừng tự ý, hỏi lại)
+## 2. Ba điểm ĐÃ CHỐT (2026-07-31) — trước đây để mở, nay không phải hỏi lại
 
-1. **`src/lib/srs.ts`** — thuật toán ôn tập (SM2/FSRS) dùng chung được cho mọi môn, nhưng
-   _đơn vị được ôn_ hiện là từ vựng. Đề xuất: chuyển **thuật toán** vào `core-*` với kiểu
-   `ReviewItem` chung (`{ id, ease, interval, due }`), giữ phần "từ vựng là gì" ở `apps/english`.
-   Chỉ làm ở PR-6, sau khi mọi thứ khác đã ổn.
-2. **`weeklyCredit` / `FREE_WEEKLY_BONUS_PER_DAY`** trong `api/_lib/usage.ts` — cơ chế "học thật
-   thì được thêm lượt" hiện gắn với `api/progress.ts` của môn Anh. Sang nền tảng, "học thật" phải
-   là **hợp đồng** mà mỗi môn tự báo lên (`grantDailyBonus(userId, subject)`).
-3. **Tiền tố nội dung chuyển khoản SePay `"ENVI"`** đang cứng — phải thành cấu hình theo app,
-   nhưng **không được đổi tiền tố của giao dịch cũ** (webhook vẫn phải nhận được `ENVI…`).
+### 2.1. Tiền tố SePay: **`DHCB` dùng chung toàn nền tảng** (không tách theo môn)
+
+Nội dung chuyển khoản: `DHCB<mã đơn>`. Người dùng mua **một gói dùng cho mọi môn**, nên tiền tố
+theo môn là sai mô hình kinh doanh — và người chuyển khoản chỉ cần nhớ một dạng nội dung.
+
+**Ràng buộc bắt buộc — webhook phải chấp nhận CẢ HAI tiền tố mãi mãi:**
+
+- `ENVI…` — giao dịch cũ, và cả những chuyển khoản mới của người dùng copy lại nội dung cũ.
+- `DHCB…` — mặc định cho đơn mới.
+
+Cách làm: hằng số `PAYMENT_PREFIX = 'DHCB'` (dùng khi **tạo** mã đơn) và
+`ACCEPTED_PREFIXES = ['DHCB', 'ENVI']` (dùng khi **đối chiếu** webhook), đặt trong `core-billing`.
+Tuyệt đối không xoá `ENVI` khỏi danh sách chấp nhận. Trên trang SePay nhớ **thêm** bộ lọc tiền tố
+`DHCB` chứ không thay thế bộ lọc `ENVI` đang có.
+
+**Kiểm thử bắt buộc:** một test cho mỗi tiền tố, cộng test mã đơn cũ dạng `ENVI…` vẫn khớp đúng
+đơn hàng cũ trong bảng `payments`.
+
+### 2.2. Dữ liệu học tập: **mỗi môn một schema riêng**
+
+`core` giữ những gì không thuộc môn nào: `users`, `sessions`, `profiles`, `payments`,
+`plan_prices`, `plan_features`, `app_settings`, `usage_events`, `push_subscriptions`.
+
+Mọi bảng **dữ liệu học** chuyển sang schema của môn:
+
+| Bảng hiện tại (đang ở `public`) | Sau GĐ1                                                                                  |
+| ------------------------------- | ---------------------------------------------------------------------------------------- |
+| `chat_sessions`                 | `english.chat_sessions`                                                                  |
+| `writing_submissions`           | `english.writing_submissions`                                                            |
+| `speaking_sessions`             | `english.speaking_sessions`                                                              |
+| `learning_progress`             | `english.learning_progress`                                                              |
+| `pronunciations`                | `english.pronunciations`                                                                 |
+| `challenge_entries`             | `english.challenge_entries`                                                              |
+| `tutor_feedback`                | `english.tutor_feedback`                                                                 |
+| `tts_cache`                     | **ở lại `core`** — cache audio dùng chung, khoá là hash nội dung, môn nào cũng dùng được |
+
+Môn Toán sau này có schema `math` với bảng **của riêng nó** (`math.attempts`, `math.problem_progress`,
+`math.formula_reviews`…), **không** cố nhét vào bảng chung với tiếng Anh. Khoá ngoại về
+`core.users(id)` là điểm nối duy nhất giữa các schema.
+
+**Cách chuyển an toàn:** `alter table public.X set schema english` (đổi chỗ, **không** copy dữ liệu —
+nhanh và không có nguy cơ lệch), rồi tạo `create view public.X as select * from english.X` để mã cũ
+chưa kịp sửa vẫn chạy. Xoá view ở một PR sau, khi đã đổi hết truy vấn. Rollback: `set schema public`.
+Nhớ đặt `search_path` của kết nối `pg` cho phù hợp, hoặc ghi rõ tên schema trong mọi câu truy vấn
+(**khuyến nghị ghi rõ** — tường minh, không phụ thuộc trạng thái kết nối).
+
+### 2.3. Cơ chế học & ôn tập: **tách riêng theo từng môn, KHÔNG đưa vào `core`**
+
+`srs.ts`, `cefrProgress.ts`, `curriculum.ts`, `stats.ts`, `achievements.ts`, `weeklyGoal.ts` **ở lại
+`apps/english/`**. Môn Toán tự viết cơ chế học/ôn của riêng nó, không kế thừa gì.
+
+Lý do đúng đắn: ôn từ vựng và ôn công thức Toán khác nhau về bản chất — Toán còn phải sinh lại đề
+theo tham số, chấm bước giải, phân biệt "sai vì nhầm dấu" với "chưa hiểu khái niệm". Một trừu tượng
+SRS chung sẽ hoặc quá loãng để dùng được, hoặc biến thành nút thắt mà sửa cho môn này thì hỏng môn kia.
+
+> ⚠️ Đánh đổi đã biết và **chấp nhận có chủ đích**: thuật toán lập lịch ôn (SM2/FSRS) sẽ tồn tại
+> ở nhiều bản sao. Nếu sau này phát hiện lỗi trong công thức tính khoảng cách ôn, phải sửa ở từng
+> môn. Ghi vào `PROGRESS.md` mục nợ kỹ thuật để không quên. Nếu tới môn thứ ba mà cả ba bản sao vẫn
+> giống hệt nhau, khi đó **mới** tách phần hàm thuần ra dùng chung — tách dựa trên bằng chứng thật,
+> không dựa trên phỏng đoán.
+
+### 2.4. Còn lại một điểm mở
+
+**`weeklyCredit` / `FREE_WEEKLY_BONUS_PER_DAY`** trong `api/_lib/usage.ts` — cơ chế "học thật thì
+được thêm lượt" hiện gắn chặt với `api/progress.ts` của môn Anh. Vì hạn mức là **kho chung toàn nền
+tảng** (ADR-0001) nhưng cơ chế học lại **riêng từng môn** (§2.3), phần này phải thành **hợp đồng**:
+mỗi môn tự gọi `grantDailyBonus(userId, subject)` khi xác định người dùng đã học thật, `core-billing`
+chỉ cộng lượt và chống gian lận (mỗi ngày mỗi người tối đa N lượt thưởng, tính chung mọi môn).
+Chốt chi tiết ở PR-5.
 
 ---
 
@@ -142,10 +204,50 @@ on conflict do nothing;
 - Hàm SQL `consume_usage`/`refund_usage`/`grant_daily_bonus_rolling` thêm tham số `subject`
   (mặc định `'english'` để mã cũ gọi vẫn đúng).
 - **Rollback:** `drop table usage_events` — không mất gì vì `daily_usage` còn nguyên.
-- **Nghiệm thu:** ca biên đếm lượt có test — hết lượt · hoàn lượt khi AI lỗi · đổi ngày theo giờ VN ·
-  gói hết hạn · cửa sổ trượt 7 ngày của gói Free. Chạy thật một giao dịch SePay số tiền nhỏ.
 
-### PR-6 — Tách `packages/core-ui` (theme, token `--a-*`, component nền, SRS)
+Cùng PR này, đổi tiền tố SePay sang **`DHCB`** theo §2.1: hằng số `PAYMENT_PREFIX = 'DHCB'` khi tạo
+mã đơn, `ACCEPTED_PREFIXES = ['DHCB', 'ENVI']` khi đối chiếu webhook. **Việc tay đi kèm, không quên:**
+vào trang SePay **thêm** bộ lọc tiền tố `DHCB`, **giữ nguyên** bộ lọc `ENVI` đang có.
+
+- **Nghiệm thu:** ca biên đếm lượt có test — hết lượt · hoàn lượt khi AI lỗi · đổi ngày theo giờ VN ·
+  gói hết hạn · cửa sổ trượt 7 ngày của gói Free. Test webhook khớp đúng với **cả hai** tiền tố, kể cả
+  một mã đơn `ENVI…` cũ có thật trong bảng `payments`. Chạy thật một giao dịch SePay số tiền nhỏ
+  bằng nội dung `DHCB…`.
+
+### PR-5b — Chuyển bảng dữ liệu học sang schema `english` ⚠️ có migration
+
+Migration `0029_schema_english.sql`, theo cách ở §2.2:
+
+```sql
+create schema if not exists english;
+
+-- Đổi CHỖ, không copy dữ liệu (nhanh, không có nguy cơ lệch bản sao).
+alter table public.chat_sessions       set schema english;
+alter table public.writing_submissions set schema english;
+alter table public.speaking_sessions   set schema english;
+alter table public.learning_progress   set schema english;
+alter table public.pronunciations      set schema english;
+alter table public.challenge_entries   set schema english;
+alter table public.tutor_feedback      set schema english;
+-- tts_cache Ở LẠI public/core: cache audio dùng chung mọi môn.
+
+-- Cầu tương thích: mã chưa kịp sửa vẫn chạy.
+create view public.chat_sessions       as select * from english.chat_sessions;
+-- … tương tự cho các bảng còn lại.
+```
+
+- Sau đó đổi truy vấn trong `apps/english/api` sang **ghi rõ tên schema** (`english.chat_sessions`),
+  không dựa vào `search_path`.
+- View tương thích xoá ở PR sau, khi đã xác nhận không còn truy vấn nào dùng tên cũ
+  (kiểm bằng `grep` toàn repo + theo dõi log 1 tuần).
+- **Rollback:** `drop view` + `alter table … set schema public`.
+- **Nghiệm thu:** mọi luồng học chạy thật (chat · viết · nói · lộ trình · SRS · phát âm · challenge);
+  đếm số dòng từng bảng trước/sau migration phải **bằng nhau tuyệt đối**.
+
+### PR-6 — Tách `packages/core-ui` (theme, token `--a-*`, component nền)
+
+**Không** đưa SRS hay bất cứ logic học/ôn nào vào `core-ui` — theo §2.3, những thứ đó ở lại
+`apps/english/`.
 
 - **Nghiệm thu:** cả 4 theme hiển thị đúng trên mọi trang; axe trong E2E không có lỗi mới;
   ảnh chụp màn hình trước/sau vài trang chính để đối chiếu bằng mắt.
@@ -186,7 +288,10 @@ Nhớ `npm run build` (gồm `build:server`) **trước mỗi** `pm2 reload`.
 
 | Rủi ro                                                         | Giảm thiểu                                                                             |
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Refactor lớn làm hỏng app đang có người trả tiền               | 7 PR nhỏ, refactor thuần, E2E làm mốc, deploy giãn cách, backup trước migration        |
+| Refactor lớn làm hỏng app đang có người trả tiền               | 8 PR nhỏ, refactor thuần, E2E làm mốc, deploy giãn cách, backup trước migration        |
+| Đổi tiền tố SePay làm rơi giao dịch cũ `ENVI…`                 | `ACCEPTED_PREFIXES` chấp nhận cả hai **vĩnh viễn**; giữ bộ lọc `ENVI` trên trang SePay |
+| Chuyển schema làm hỏng truy vấn chưa kịp sửa                   | `set schema` (không copy) + view tương thích ở `public`; đếm số dòng trước/sau         |
+| SM2/FSRS nhân bản ở nhiều môn, sửa lỗi sót chỗ                 | Chấp nhận có chủ đích (§2.3); ghi nợ kỹ thuật; xét gộp lại khi có môn thứ ba           |
 | Lịch sử git nát sau khi dời file                               | Luôn `git mv`; PR di chuyển **không** kèm sửa nội dung                                 |
 | Migration `(subject, mode)` sai → mất lượt/mất tiền người dùng | Cộng dồn, giữ `daily_usage`, rollback bằng một câu `drop`                              |
 | Trừu tượng hoá sớm, `core-*` phình theo phỏng đoán             | Áp quy tắc §1: chỉ tách khi môn thứ hai thật sự cần                                    |
@@ -199,4 +304,6 @@ Nhớ `npm run build` (gồm `build:server`) **trước mỗi** `pm2 reload`.
 - [ ] Thêm một app rỗng mới (`math.`) chỉ cần: tạo `apps/math`, thêm `server` block Nginx, thêm
       một dòng vào bảng tra `Host` — **không đụng vào `packages/` hay `apps/english/`**
 - [ ] `usage_events` chạy thật ≥ 2 tuần, số liệu khớp `daily_usage`
+- [ ] Thanh toán bằng nội dung `DHCB…` chạy thật; một giao dịch `ENVI…` cũ vẫn đối chiếu đúng
+- [ ] Bảng dữ liệu học nằm hết trong schema `english`; `core` không còn bảng nào thuộc về môn
 - [ ] `PROGRESS.md` cập nhật, ADR-0001 chuyển sang "Đã thi hành"
