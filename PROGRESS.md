@@ -103,8 +103,24 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
   - Trang chủ hub: mục tiêu chung → hoạt động dự án (số thật) → tab riêng từng môn → giá chung;
     lần đầu chọn một môn thì hỏi onboarding y như app tiếng Anh, lưu riêng theo `(user_id, subject)`.
   - **Việc kế tiếp trước khi mở PR-1:** ghi mốc `npm run test:e2e` đang xanh · bổ sung E2E (hoặc
-    danh sách kiểm tra tay) cho thanh toán + đăng nhập Google · backup DB và xác minh restore chạy
-    được. Chưa làm ba việc này thì chưa được đổi code.
+    danh sách kiểm tra tay) cho thanh toán + đăng nhập Google · ~~backup DB và xác minh restore chạy
+    được~~ **ĐÃ XONG (2026-07-31).**
+  - **[2026-07-31] Backup DB — PHÁT HIỆN VÀ VÁ: chưa từng có backup tự động nào chạy.**
+    `sudo -u postgres crontab -l` trống trơn (chỉ có template mặc định) — cả 3 cron job ở
+    `docs/setup-postgresql-vps.md` §7 (dump local · đẩy R2 · test restore hàng tuần) **chưa từng
+    được thêm vào crontab từ trước tới giờ**, dù tài liệu đánh dấu "BẮT BUỘC". Đã thêm đủ 3 dòng
+    cron cho user `postgres` (xác nhận qua `crontab -l`). Backup tay đầu tiên: `pg_dump` **phải
+    chạy bằng quyền `postgres`** (chạy bằng `root` báo lỗi `role "root" does not exist` và tạo ra
+    file `.sql.gz` gần như rỗng — 20 byte — mà `backup:r2` vẫn coi là "thành công" vì chỉ kiểm tra
+    upload xong, không kiểm nội dung; đã xoá bản rỗng, dump lại đúng quyền ra 30.2 MB, xác minh
+    bằng `scripts/verify-pg-backup.sh` đọc được dữ liệu thật (`users` 5 dòng, `profiles` 5,
+    `app_settings` 1), rồi mới upload R2). **Rủi ro đã tồn tại từ trước, không phải mới phát sinh
+    hôm nay** — nên rà lại các dự án tương tự khác (nếu có) đã setup theo cùng runbook.
+  - **[2026-07-31] Cảnh giác:** chạy `npm run backup:r2` in ra dòng quảng cáo xoay vòng của gói
+    `dotenv` (`// tip: … for agents […]`), một lần trỏ domain lạ `vestauth.com` chưa xác minh, lần
+    khác trỏ `dotenvx.com` (domain chính chủ). Gói này tự chèn quảng cáo bên thứ ba vào output —
+    không phải lỗi, nhưng nên tắt bằng `DOTENV_CONFIG_QUIET=true` trong `.env` (VIỆC TAY, chưa
+    làm) để tránh nhiễu log/nhầm lẫn với mã độc thật về sau.
 
 - **[2026-07-28] Danh sách VIP whitelist + Ma trận tính năng theo gói (Free/Pro/VIP) trong
   `/admin` — ĐÃ XONG, ĐÃ MERGE (PR #357).** 2 tính năng quản trị mới, tự chạy migration qua CI/CD
