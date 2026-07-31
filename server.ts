@@ -60,6 +60,7 @@ import paymentWebhookHandler from './packages/core-billing/payment-webhook.js'
 import paymentStatusHandler from './packages/core-billing/payment-status.js'
 import paymentHistoryHandler from './packages/core-billing/payment-history.js'
 import avatarVisemesHandler from './api/avatar-visemes.js'
+import hubStatsHandler from './api/hub-stats.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 
 const app = express()
@@ -208,6 +209,7 @@ app.all('/api/payment-webhook', wrapEdge(paymentWebhookHandler))
 app.all('/api/payment-status', wrapEdge(paymentStatusHandler))
 app.all('/api/payment-history', wrapEdge(paymentHistoryHandler))
 app.all('/api/avatar-visemes', wrapEdge(avatarVisemesHandler))
+app.all('/api/hub-stats', wrapEdge(hubStatsHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
@@ -222,47 +224,69 @@ app.use(
   }),
 )
 
-// ── Phục vụ frontend (React build) ───────────────────────────────────────────
-// Cache file tĩnh 1 năm với cache busting (filename hash) — trừ index.html để luôn lấy bản mới nhất
-app.use(
-  express.static(path.join(__dirname, 'dist'), {
-    maxAge: '1y',
-    setHeaders(res, filePath) {
-      // index.html không được cache (luôn fetch mới)
-      if (filePath.endsWith('index.html')) {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
-        res.setHeader('Pragma', 'no-cache')
-        res.setHeader('Expires', '0')
-      }
-      // File assets có hash (*.js, *.css, images) — cache mãi mãi (immutable).
-      // LƯU Ý: Vite đặt tên kiểu "[name]-[hash:8].ext" (ví dụ chunk-009-kqpwuI8u.js),
-      // hash là chuỗi base64url 8 ký tự (A-Za-z0-9_-) đứng SAU dấu gạch ngang —
-      // KHÔNG phải hex thường sau dấu chấm. Regex cũ /\.[a-f0-9]{8}\./ không bao giờ
-      // khớp nên trước đây mọi file JS/CSS chỉ được cache 1 tuần (rớt điểm Lighthouse).
-      else if (/-[A-Za-z0-9_-]{8}\.(js|css|png|jpg|jpeg|gif|svg|webp|woff2?)$/.test(filePath)) {
-        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
-      }
-      // File khác (manifest, etc) — cache 1 tuần
-      else {
-        res.setHeader('Cache-Control', 'public, max-age=604800')
-      }
-      // Thêm charset cho HTML/JSON
-      if (filePath.endsWith('.html')) {
-        res.setHeader('Content-Type', 'text/html; charset=utf-8')
-      }
-    },
-  }),
-)
+// ── Phục vụ frontend (React build) — chọn app theo Host header (PR-7) ───────
+// Một tiến trình Express phục vụ NHIỀU app tĩnh (mức 2 kiến trúc đã chốt, ADR-0001): app
+// tiếng Anh ở dist/ (gốc, giữ nguyên đường dẫn cũ để KHÔNG đổi hành vi production hiện tại)
+// và apps/hub/dist/ cho mọi host còn lại (apex, subdomain môn chưa mở, domain lạ). Route
+// /api/* đã xử lý xong ở trên, không đi qua bảng này.
+//
+// EN_VI_HOSTNAME mặc định đúng domain production hiện tại — nếu không đặt biến môi trường,
+// hành vi cho host đó giữ y hệt trước PR-7. Host nào Nginx CHƯA có server_name trỏ vào tiến
+// trình này thì nhánh "hub" ở đây là code chết cho tới khi thêm cấu hình Nginx/DNS/cert thật
+// (xem docs/nginx-hub-apex.md — phần hạ tầng thật cần làm tay, PR-7 mới chỉ dựng code).
+const EN_VI_HOSTNAME = process.env.EN_VI_HOSTNAME || 'en-vi.donghanhcungban.com'
+const englishDistDir = path.join(__dirname, 'dist')
+const hubDistDir = path.join(__dirname, 'apps/hub/dist')
 
-// Mọi route không khớp đều trả index.html (React Router xử lý phía client).
-// index.html KHÔNG được cache — luôn lấy bản mới để tham chiếu đúng tên chunk
-// (có hash) sau mỗi lần deploy; nếu cache index.html cũ sẽ trỏ tới chunk đã biến
-// mất → 404 chunk → màn hình trắng.
-app.get('*', (_req, res) => {
+function distDirForHost(hostname: string): string {
+  return hostname === EN_VI_HOSTNAME ? englishDistDir : hubDistDir
+}
+
+function staticCacheHeaders(res: express.Response, filePath: string) {
+  // index.html không được cache (luôn fetch mới)
+  if (filePath.endsWith('index.html')) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+    res.setHeader('Pragma', 'no-cache')
+    res.setHeader('Expires', '0')
+  }
+  // File assets có hash (*.js, *.css, images) — cache mãi mãi (immutable).
+  // LƯU Ý: Vite đặt tên kiểu "[name]-[hash:8].ext" (ví dụ chunk-009-kqpwuI8u.js),
+  // hash là chuỗi base64url 8 ký tự (A-Za-z0-9_-) đứng SAU dấu gạch ngang —
+  // KHÔNG phải hex thường sau dấu chấm. Regex cũ /\.[a-f0-9]{8}\./ không bao giờ
+  // khớp nên trước đây mọi file JS/CSS chỉ được cache 1 tuần (rớt điểm Lighthouse).
+  else if (/-[A-Za-z0-9_-]{8}\.(js|css|png|jpg|jpeg|gif|svg|webp|woff2?)$/.test(filePath)) {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+  }
+  // File khác (manifest, etc) — cache 1 tuần
+  else {
+    res.setHeader('Cache-Control', 'public, max-age=604800')
+  }
+  // Thêm charset cho HTML/JSON
+  if (filePath.endsWith('.html')) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8')
+  }
+}
+
+// Cache file tĩnh 1 năm với cache busting (filename hash) — trừ index.html để luôn lấy bản mới nhất
+const englishStatic = express.static(englishDistDir, {
+  maxAge: '1y',
+  setHeaders: staticCacheHeaders,
+})
+const hubStatic = express.static(hubDistDir, { maxAge: '1y', setHeaders: staticCacheHeaders })
+app.use((req, res, next) => {
+  const serveStatic = distDirForHost(req.hostname) === englishDistDir ? englishStatic : hubStatic
+  serveStatic(req, res, next)
+})
+
+// Mọi route không khớp đều trả index.html của ĐÚNG app theo Host (React Router xử lý routing
+// phía client). index.html KHÔNG được cache — luôn lấy bản mới để tham chiếu đúng tên chunk
+// (có hash) sau mỗi lần deploy; nếu cache index.html cũ sẽ trỏ tới chunk đã biến mất → 404
+// chunk → màn hình trắng.
+app.get('*', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
   res.setHeader('Pragma', 'no-cache')
   res.setHeader('Expires', '0')
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+  res.sendFile(path.join(distDirForHost(req.hostname), 'index.html'))
 })
 
 // ── Bộ hẹn giờ nhắc học (web push) ───────────────────────────────────────────

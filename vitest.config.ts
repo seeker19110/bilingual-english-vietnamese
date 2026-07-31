@@ -19,7 +19,7 @@ export default defineConfig({
     include: [
       'apps/english/src/**/*.test.{ts,tsx}',
       'api/**/*.test.ts',
-      'packages/**/*.test.ts',
+      'packages/**/*.test.{ts,tsx}',
       'scripts/**/*.test.ts',
     ],
     // Mock fetch('/data/...') → đọc thẳng public/ để test chạy offline (không cần server).
