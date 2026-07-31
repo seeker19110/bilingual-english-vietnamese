@@ -192,10 +192,116 @@ Bước 1–2 là **thắng lợi chắc chắn**, không phụ thuộc quyết 
 Trong lúc chờ 1&2, **bước 1 ở mục 5 (timing thật) chạy được ngay** và cải thiện avatar 2D đang
 có — không phụ thuộc quyết định nào ở trên.
 
-## 8. Nguồn đã tra (2026-07-30)
+## 8. Đánh giá combo "Unity + Ready Player Me + Oculus Lipsync + Convai/Inworld"
+
+Người dùng đề xuất combo này (2026-07-30) như "công thức hoàn hảo nhất hiện nay". Nhận định đó
+**đúng — nhưng cho bối cảnh làm MOBILE APP NATIVE TỪ ĐẦU.** Dự án này là **web app React 18 +
+Vite, deploy VPS, dùng như PWA trên điện thoại**. Đánh giá từng thành phần:
+
+### 8.1. Unity — ❌ KHÔNG áp dụng
+
+| Vấn đề                 | Chi tiết                                                                                                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Không tái dùng được gì | Toàn bộ UI (chat, lộ trình CEFR, SRS, thanh toán SePay, 4 theme, auth Bearer token, i18n) là React/DOM. Unity không dùng lại được dòng nào.                                    |
+| Hai đường đi           | Build native → phải viết lại app + qua App Store/CH Play, mất luôn ưu thế "vào web là học ngay". Build Unity **WebGL** → gói build 15–40MB, nuốt chửng ngân sách LCP hiện tại. |
+| WebGL trên di động     | Unity Web nay có chạy trên iOS Safari (WebGL 2.0 từ iOS 15), nhưng vẫn nặng hơn nhiều so với three.js thuần, và khó nhúng chung DOM với UI React sẵn có.                       |
+| Chi phí thật           | Đây là **viết lại sản phẩm**, không phải thêm tính năng — vi phạm mục 12 CLAUDE.md (breaking change diện rộng).                                                                |
+
+→ **Tương đương trên web: three.js + React Three Fiber v8** (đã đặc tả ở mục 3.1). Cùng làm được
+việc avatar 3D, nhúng thẳng vào React hiện có, không đụng phần còn lại của app.
+
+### 8.2. Ready Player Me — ✅ ÁP DỤNG ĐƯỢC (nhưng lệch phong cách đã chốt)
+
+RPM **không phải công nghệ riêng của Unity** — có SDK web chính chủ `@readyplayerme/visage`,
+xây trên đúng stack đã chọn: three.js + react-three-fiber + drei. Avatar xuất GLB, kèm sẵn
+blendshape ARKit + viseme Oculus.
+
+- **Ưu:** bỏ được toàn bộ khâu tìm/mua/rig model ở mục 3.2.2 — tiết kiệm $30–1500 và 1–3 ngày Blender.
+- **Vướng 1:** RPM là avatar **người thật**, trong khi mục 3.2 đã chốt phong cách **robot** theo
+  ảnh tham chiếu người dùng gửi. Hai thứ loại trừ nhau → **cần chọn lại** (xem mục 9).
+- **Vướng 2:** dùng thương mại phải **đăng ký partner** với RPM (app có bán gói Pro/VIP). Việc tay,
+  phải làm trước khi triển khai.
+
+### 8.3. Oculus Lipsync — ⚠️ ÁP DỤNG MỘT PHẦN
+
+Phải tách hai thứ hay bị gộp làm một:
+
+- **Plugin OVRLipSync (Unity/native): ❌** — không có bản chạy trên web.
+- **Bộ 15 viseme chuẩn Oculus (`sil, PP, FF, TH, DD, kk, CH, SS, nn, RR, aa, E, I, O, U`): ✅** —
+  đây là **chuẩn dữ liệu**, không phụ thuộc Unity. Đúng bộ mà mục 2.3 đã đề xuất và đúng bộ mà
+  avatar RPM nhúng sẵn.
+
+Quan trọng: cách OVRLipSync sinh viseme là **phân tích biên độ audio thời gian thực** — tức là
+**đoán**. Cách của dự án (timestamp thật từ ElevenLabs, mục 2.1) **chính xác hơn**, vì lấy mốc
+thời gian từ chính model đã sinh ra audio. Không cần thay thế bằng OVRLipSync.
+
+### 8.4. Convai / Inworld — ❌ KHÔNG, và đây là cái "không" mạnh nhất
+
+Convai/Inworld là nền tảng **NPC hội thoại trọn gói**: LLM + STT + TTS + lipsync trong một API.
+Dự án này **đã có đủ cả ba** và chúng là tài sản cốt lõi:
+
+| Thành phần | Dự án đã có                                                | Convai/Inworld thay thế bằng       |
+| ---------- | ---------------------------------------------------------- | ---------------------------------- |
+| LLM        | `/api/agent` + prompt sư phạm riêng ở `src/prompts/`       | LLM chung, không có sư phạm CEFR   |
+| STT        | Whisper qua Groq/OpenAI (`/api/stt`)                       | STT đóng gói                       |
+| TTS        | Google Chirp3-HD + ElevenLabs, **cache dùng chung mã hoá** | TTS đóng gói, **mất cơ chế cache** |
+
+Ba lý do bác bỏ, theo thứ tự nặng dần:
+
+1. **Phá vỡ điểm khác biệt sản phẩm.** Đặc trưng bất biến của app (CLAUDE.md mục 1) là **sửa lỗi
+   và giải thích bằng GIỌNG tiếng mẹ đẻ**, hai giọng riêng, đảo chiều theo `direction` A/B. Đây là
+   logic sư phạm song ngữ, không phải hội thoại NPC. Convai/Inworld không làm được việc này.
+2. **Phá vỡ mô hình chi phí.** Inworld ~$15/1M ký tự; stack voice agent thật ~$0.007–0.091 **mỗi
+   phút hội thoại**, và **tính tiền theo mỗi cuộc trò chuyện, mãi mãi**. App đang MIỄN PHÍ cho cộng
+   đồng với gói Pro 20.000đ/10 ngày. Vài chục phút nói/tháng của một người dùng free là đã lỗ.
+   Cơ chế **cache TTS dùng chung** (câu nào đã sinh thì mọi user sau dùng lại miễn phí) — thứ giữ
+   chi phí app ở mức thấp — sẽ **mất trắng**.
+3. **Mất kiểm soát.** Đếm/giới hạn lượt (`api/_lib/usage.ts`), kiểm quyền server, guardrail model
+   trong `aiConfig.ts`, eval chất lượng gia sư (`npm run eval:tutor`) đều nằm ở server dự án.
+   Đẩy sang nền tảng ngoài là bỏ hết.
+
+→ **Giữ nguyên pipeline AI hiện có.** Avatar 3D chỉ là **lớp hiển thị** cắm lên trên, không đụng
+vào tầng AI.
+
+### 8.5. Bảng tổng kết
+
+| Thành phần combo | Áp dụng? | Thay bằng / ghi chú                                                                  |
+| ---------------- | -------- | ------------------------------------------------------------------------------------ |
+| Unity            | ❌       | three.js + React Three Fiber v8                                                      |
+| Ready Player Me  | ✅       | Qua `@readyplayerme/visage` (web SDK); cần chốt lại phong cách + đăng ký partner     |
+| Oculus Lipsync   | ⚠️       | Bỏ plugin, **giữ bộ 15 viseme**; timing lấy từ ElevenLabs timestamps (chính xác hơn) |
+| Convai / Inworld | ❌       | Giữ `/api/agent` + `/api/stt` + `/api/tts` hiện có                                   |
+
+## 9. Quyết định mới phát sinh: phong cách nhân vật (robot hay người?)
+
+Mục 3.2 đã chốt **robot** (theo ảnh người dùng gửi). Mục 8.2 cho thấy **Ready Player Me** (người
+thật) giúp bỏ hẳn khâu model + rig. Hai đường không thể đi cùng lúc:
+
+|                    | Robot (ảnh tham chiếu)                       | Ready Player Me (người)                         |
+| ------------------ | -------------------------------------------- | ----------------------------------------------- |
+| Model              | Tự mua/thuê, $30–1500 + 1–3 ngày Blender     | Miễn phí, có sẵn                                |
+| Rig + blendshape   | Phải tự làm                                  | Có sẵn 52 ARKit + 15 viseme                     |
+| Khẩu hình          | Dải LED emissive (dễ, không cần rig mặt)     | Khẩu hình môi thật (cần bộ 15 viseme ở mục 2.3) |
+| Uncanny valley     | Không có                                     | Có rủi ro                                       |
+| Biểu cảm khuôn mặt | Không (bù bằng mắt/đầu/tay)                  | Đầy đủ                                          |
+| Nhận diện riêng    | Cao — hợp 4 theme, viền sáng đổi màu `--a-*` | Thấp — nhìn giống mọi app dùng RPM              |
+| Thời gian tới PoC  | Lâu hơn                                      | Nhanh nhất                                      |
+| Giấy phép          | Theo model mua                               | Phải đăng ký partner thương mại                 |
+
+**Khuyến nghị:** làm **PoC bằng Ready Player Me trước** (nhanh, gần như 0 đồng) để kiểm chứng rủi
+ro lớn nhất — FPS/pin/WebGL + `MediaRecorder` trên iPhone thật (mục 4). Nếu PoC đạt, mới quyết
+định có đầu tư model robot riêng cho bản chính thức hay không. Như vậy **không tiêu tiền vào model
+trước khi biết 3D có chạy nổi trên điện thoại người dùng hay không**.
+
+## 10. Nguồn đã tra (2026-07-30)
 
 - React Three Fiber — npm / releases (R3F v8 ↔ React 18, v9 ↔ React 19)
 - three.js releases (r184, 16/04/2026)
 - ElevenLabs Docs — Create speech with timing (`/with-timestamps`), Forced Alignment
 - Google Cloud TTS — SSML + `enableTimePointing` (`SSML_MARK`, v1beta1)
 - `@pixiv/three-vrm` npm (v3.5.x) + migration guide 1.0 (`expressionManager`)
+- Khronos — KTX 2.0 + glTF, `KHR_texture_basisu`, `KHR_draco_mesh_compression`
+- So sánh công cụ image-to-3D 2026 (Rodin / Tripo / Meshy v6 / Hunyuan3D v3 / TRELLIS 2)
+- `@readyplayerme/visage` npm (three.js + react-three-fiber + drei)
+- Unity Manual — Web browser compatibility (WebGL 2.0 trên iOS Safari)
+- Inworld AI — Voice agent cost per minute 2026 · Convai pricing
