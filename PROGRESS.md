@@ -103,8 +103,16 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
   - Trang chủ hub: mục tiêu chung → hoạt động dự án (số thật) → tab riêng từng môn → giá chung;
     lần đầu chọn một môn thì hỏi onboarding y như app tiếng Anh, lưu riêng theo `(user_id, subject)`.
   - **Việc kế tiếp trước khi mở PR-1:** ~~ghi mốc `npm run test:e2e` đang xanh~~ **ĐÃ XONG
-    (2026-07-31).** · bổ sung E2E (hoặc danh sách kiểm tra tay) cho thanh toán + đăng nhập Google ·
-    ~~backup DB và xác minh restore chạy được~~ **ĐÃ XONG (2026-07-31).**
+    (2026-07-31).** · ~~bổ sung E2E (hoặc danh sách kiểm tra tay) cho thanh toán + đăng nhập
+    Google~~ **ĐÃ XONG (2026-07-31).** · ~~backup DB và xác minh restore chạy được~~ **ĐÃ XONG
+    (2026-07-31).** → **CẢ 3 VIỆC CHUẨN BỊ ĐÃ XONG, có thể mở PR-1 (alias đường dẫn).**
+  - **[2026-07-31] Vá lỗ hổng test: `api/auth.ts` (417 dòng, xử lý đăng ký/đăng nhập/OAuth
+    Google-Facebook-Apple-Microsoft/logout) CHƯA TỪNG có file test.** Đã thêm `api/auth.test.ts`
+    (10 test, tập trung đăng nhập Google `action: 'google'`/`'google-token'` — luồng GĐ1 sẽ đụng
+    khi tách `packages/core-auth`), mock `authService`/`security`/`emailVerification`/`trial` theo
+    đúng pattern `checkout.test.ts`. Phần không tự động hoá an toàn được (chuyển khoản SePay thật,
+    popup Google OAuth thật) chuyển thành danh sách kiểm tra tay:
+    `docs/kiem-tra-tay-thanh-toan-google-login.md` — chạy trước mỗi lần deploy PR-4/PR-5 của GĐ1.
   - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
     `npx playwright install chromium` + `install-deps` lần đầu, cả hai đều chưa từng chạy trên VPS
     trước đó).** 8 fail đều timeout `toBeVisible 5000ms` (tab Nghe "Chọn nghĩa" ×6, banner comeback
