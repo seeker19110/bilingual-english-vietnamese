@@ -175,7 +175,21 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
     `GET ?action=me` không token↦401, `POST register` thiếu field↦400 Zod, `POST google` idToken
     rác chạy sâu tới `verifyGoogleIdToken` thật (báo thiếu `GOOGLE_CLIENT_ID` trong sandbox — đúng
     hành vi, không phải lỗi module).
-    **Tiếp theo: PR-5 (tách `packages/core-billing` + migration `usage_events`/`subject_limits` +
+  - **[2026-07-31] PR #395 mở trên GitHub cho nhánh này** — xung đột với `main` (4 PR mới merge:
+    #391 admin-users panel, #392 gộp trang Luyện tập, #393 fix route admin-users, #394 avatar
+    viseme timeline thật) đã xử lý bằng merge commit. 2 conflict rõ (git tự báo): `Practice.tsx`
+    (file mới của main, git tự đặt đúng `apps/english/src/pages/` nhờ rename-detection, chỉ cần
+    xác nhận) và `packages/core-ai/tts.ts` (gộp import `visemeTimeline` mới của main với đường dẫn
+    package đã đổi ở PR-3). **Quan trọng hơn — lỗi ÂM THẦM git không báo conflict:**
+    `api/_lib/visemeTimeline.ts`/`.test.ts` (file MỚI của main) import `elevenLabsTts.js` bằng
+    đường dẫn cũ (file đó đã dời sang `packages/core-ai/` ở PR-3) — build vẫn "thành công" về mặt
+    git merge nhưng sẽ vỡ ở typecheck. **Bài học: sau mỗi merge từ `main` trong lúc làm GĐ1, PHẢI
+    tsc toàn bộ 3 project, không chỉ tin git báo hết conflict.** Cũng vá `api/routes-registered.test.ts`
+    (test canh gác "mọi handler phải có route" — chỉ quét thư mục `api/`, sau PR-3/4 không còn thấy
+    `tts`/`stt`/`ai`/`auth` vì đã dời sang `packages/`) để tiếp tục canh đúng 4 route đó, không chỉ
+    merge cho qua. Nghiệm thu: tsc (3 project) + eslint sạch · build + `build:server` xanh ·
+    92 file/1029 test xanh (bao gồm 73 test route-gate).
+  - **Tiếp theo: PR-5 (tách `packages/core-billing` + migration `usage_events`/`subject_limits` +
     đổi tiền tố SePay `DHCB`) — chạy `docs/kiem-tra-tay-thanh-toan-google-login.md` mục A ngay
     (test đăng nhập Google thật, PR-4 vừa đụng trực tiếp) và mục B sau khi PR-5 đổi tiền tố.**
   - **[2026-07-31] Mốc E2E trước GĐ1 — 111/119 passed trên VPS (~15 phút, sau khi cài
