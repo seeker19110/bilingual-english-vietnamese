@@ -1,8 +1,10 @@
 # Đặc tả nghiên cứu: Nâng cấp Avatar AI lên 3D chất lượng cao
 
-> Trạng thái: **NGHIÊN CỨU — chưa triển khai.** Tài liệu này nối tiếp
-> `dac-ta-avatar-ai-noi-chuyen-2026-07-28.md` (bản 2D đã triển khai). Không có code tính năng
-> nào đi kèm.
+> Trạng thái: **BƯỚC 1 (timing thật) ĐÃ TRIỂN KHAI** — xem mục 5. Các bước còn lại (3D) vẫn
+> đang chờ quyết định. Người dùng chốt 2026-07-31: đây chỉ là **một tính năng phụ**, không đầu tư
+> model 3D riêng ($300–1500) và không đổi provider TTS mặc định của toàn app.
+> Tài liệu này nối tiếp
+> `dac-ta-avatar-ai-noi-chuyen-2026-07-28.md` (bản 2D đã triển khai).
 > Yêu cầu người dùng (2026-07-30): _"tạo AI tutor 3D đẹp để nói chuyện với người dùng trên đt"_,
 > ưu tiên **chất lượng cao nhất có thể** (không tối ưu rẻ/nhẹ trước).
 
@@ -164,13 +166,13 @@ frontend map sang biểu cảm. Rất rẻ (chỉ vài token) và tăng cảm gi
 
 ## 5. Phạm vi đề xuất (chia nhỏ theo mục 3 CLAUDE.md)
 
-| Bước | Nội dung                                                                                                    | Rủi ro  | Có giá trị kể cả khi dừng ở đây                 |
-| ---- | ----------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------------- |
-| 1    | Timing thật (ElevenLabs `with-timestamps` + cột `viseme_timeline` + migration)                              | Thấp    | ✅ Avatar 2D **hiện tại** khớp miệng chuẩn ngay |
-| 2    | _(tuỳ chọn, xem 2.3)_ Nâng 5 → 15 viseme OVR — **bỏ được** nếu giữ phong cách robot LED                     | Thấp    | ✅ 2D mượt hơn                                  |
-| 3    | PoC 3D trên `/avatar-demo` (đã có sẵn trang này) — đo FPS/pin/bundle trên **điện thoại thật, có cả iPhone** | **Cao** | ⚠️ Cổng quyết định go/no-go                     |
-| 4    | Tích hợp vào Chat + Luyện nói, công tắc bật/tắt 3D, fallback 2D                                             | Trung   |                                                 |
-| 5    | (Tuỳ chọn) Biểu cảm theo cảm xúc câu trả lời AI                                                             | Thấp    |                                                 |
+| Bước | Nội dung                                                                                                                                                                                                                                                      | Rủi ro  | Có giá trị kể cả khi dừng ở đây                 |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------------- |
+| 1 ✅ | **ĐÃ LÀM (2026-07-31).** `elevenLabsTts.ts` gọi `/with-timestamps`; `visemeTimeline.ts` dựng timeline theo mốc THẬT của từng từ; lưu cột `viseme_timeline` (migration `0028`); client `ensureAudioWithTimeline()` + cache IndexedDB. Không tốn thêm tiền API. | Thấp    | ✅ Avatar 2D **hiện tại** khớp miệng chuẩn ngay |
+| 2    | _(tuỳ chọn, xem 2.3)_ Nâng 5 → 15 viseme OVR — **bỏ được** nếu giữ phong cách robot LED                                                                                                                                                                       | Thấp    | ✅ 2D mượt hơn                                  |
+| 3    | PoC 3D trên `/avatar-demo` (đã có sẵn trang này) — đo FPS/pin/bundle trên **điện thoại thật, có cả iPhone**                                                                                                                                                   | **Cao** | ⚠️ Cổng quyết định go/no-go                     |
+| 4    | Tích hợp vào Chat + Luyện nói, công tắc bật/tắt 3D, fallback 2D                                                                                                                                                                                               | Trung   |                                                 |
+| 5    | (Tuỳ chọn) Biểu cảm theo cảm xúc câu trả lời AI                                                                                                                                                                                                               | Thấp    |                                                 |
 
 Bước 1–2 là **thắng lợi chắc chắn**, không phụ thuộc quyết định 3D. Bước 3 là cổng thật sự.
 

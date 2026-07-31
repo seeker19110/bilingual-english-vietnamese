@@ -101,6 +101,9 @@ create table if not exists public.tts_cache (
   lang       text not null,
   voice      text not null default 'female',
   audio_url  text not null,
+  -- Timeline khẩu hình thật [{viseme,startMs,endMs}] cho avatar nói chuyện (migration 0028).
+  -- NULL = chưa có timing thật (giọng không trả timestamp) → client tự ước lượng.
+  viseme_timeline jsonb,
   created_at timestamptz not null default now(),
   last_accessed_at timestamptz not null default now()  -- Giai đoạn D: LRU dọn cache R2
 );

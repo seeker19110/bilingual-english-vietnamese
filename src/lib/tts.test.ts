@@ -2,6 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('./audioCache', () => ({
   audioCacheKey: (text: string, lang: string, voice: string) => `${lang}:${voice}:${text}`,
+  // getAudioEntry trả cả timeline khẩu hình (null = không có timing thật, xem
+  // api/_lib/visemeTimeline.ts) — đường dùng chính của ensureAudioWithTimeline.
+  getAudioEntry: async () => ({ buffer: new ArrayBuffer(8), timeline: null }),
   getAudioBuffer: async () => new ArrayBuffer(8),
   setAudioBuffer: async () => {},
 }))
