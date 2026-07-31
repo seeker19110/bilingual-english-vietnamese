@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -9,6 +10,9 @@ import react from '@vitejs/plugin-react'
 // Dev: /api/* proxy sang server.ts (Express) đang chạy ở cổng 3001 — hub chỉ gọi 2 API
 // công khai, không cần auth: /api/plan-prices (bảng giá) và /api/hub-stats (số liệu tổng).
 export default defineConfig({
+  // Đọc .env ở gốc repo (nơi VPS lưu .env thật), không phải apps/hub/.env — mặc định của
+  // Vite là cùng thư mục vite.config.ts, sai vì npm workspaces chạy build với cwd=apps/hub.
+  envDir: path.resolve(__dirname, '../..'),
   plugins: [react()],
   server: {
     proxy: {
