@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 
-vi.mock('./_lib/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 vi.mock('./_lib/security', () => ({
   getCorsHeaders: () => ({}),
@@ -11,7 +11,7 @@ vi.mock('./_lib/security', () => ({
 }))
 
 import handler from './checkout'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from '../packages/core-db/pgPool'
 import { invalidatePricesCache } from './_lib/prices'
 import { invalidatePricePromoCache } from './_lib/pricePromo'
 

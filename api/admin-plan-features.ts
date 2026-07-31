@@ -9,7 +9,7 @@
 // DELETE /api/admin-plan-features  body: { key }                        (xoá hẳn tính năng)
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,

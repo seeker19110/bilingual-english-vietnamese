@@ -9,7 +9,7 @@
 //
 // GET /api/app-settings
 
-import { getAppSettings } from './_lib/settings.js'
+import { getAppSettings } from '../packages/core-db/settings.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,

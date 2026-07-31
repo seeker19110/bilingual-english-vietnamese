@@ -31,8 +31,8 @@ import {
   DEFAULT_SEED_VOICE_IDS,
   type VoiceId,
 } from '../api/_lib/googleTts.ts'
-import { getPgPool } from '../api/_lib/pgPool.ts'
-import { saveAudio } from '../api/_lib/fileStorage.ts'
+import { getPgPool } from '../packages/core-db/pgPool.ts'
+import { saveAudio } from '../packages/core-ai/fileStorage.ts'
 
 // Thư mục gốc của project (1 cấp trên thư mục scripts/), để mọi đường dẫn file
 // đều đúng dù bạn chạy lệnh từ đâu.

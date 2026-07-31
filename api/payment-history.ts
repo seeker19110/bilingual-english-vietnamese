@@ -2,7 +2,7 @@
 //
 // GET /api/payment-history  (cần đăng nhập; tự lọc user_id khớp token)
 
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,

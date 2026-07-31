@@ -2,7 +2,7 @@
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 
-vi.mock('./_lib/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 vi.mock('./_lib/security', () => ({ logSecurityEvent: vi.fn() }))
 const granted: { calls: { userId: string; plan: string; days: number }[] } = { calls: [] }
 vi.mock('./_lib/planGrant', () => ({
@@ -13,7 +13,7 @@ vi.mock('./_lib/planGrant', () => ({
 }))
 
 import handler from './payment-webhook'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from '../packages/core-db/pgPool'
 import { logSecurityEvent } from './_lib/security'
 
 const mockedGetPool = vi.mocked(getPgPool)

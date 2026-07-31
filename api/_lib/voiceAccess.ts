@@ -9,7 +9,7 @@ import {
   type VoiceId,
   type StudioVoiceId,
 } from './googleTts.js'
-import { ELEVEN_VOICE_IDS, type ElevenVoiceId } from './elevenLabsTts.js'
+import { ELEVEN_VOICE_IDS, type ElevenVoiceId } from '../../packages/core-ai/elevenLabsTts.js'
 import type { Plan } from './plan.js'
 import { effectivePlan } from './promo.js'
 

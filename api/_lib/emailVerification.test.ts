@@ -9,7 +9,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createHash } from 'node:crypto'
 
-vi.mock('./pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const mailState: { status: string } = { status: 'sent' }
 // emailVerification gửi qua mailQuota (kiểm soát hạn mức + tự chuyển kênh dự phòng) chứ không
 // gọi thẳng mailer — mock ở đúng tầng này, hành vi hạn mức/chuyển kênh có test riêng ở
@@ -23,7 +23,7 @@ vi.mock('./mailQuota', () => ({
 }))
 
 import { sendVerificationCode, verifyCode, isEmailVerified } from './emailVerification'
-import { getPgPool } from './pgPool'
+import { getPgPool } from '../../packages/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

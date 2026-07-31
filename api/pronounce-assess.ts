@@ -14,7 +14,10 @@
 // KHÔNG trừ lượt (giống nhánh hết quota của api/tts.ts) để client tự rơi về Giai đoạn 1.
 
 import { z } from 'zod'
-import { resolveAzurePronounceConfig, assessPronunciation } from './_lib/azurePronounce.js'
+import {
+  resolveAzurePronounceConfig,
+  assessPronunciation,
+} from '../packages/core-ai/azurePronounce.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -26,7 +29,7 @@ import {
 import { checkAndConsumeUsage, refundUsage } from './_lib/usage.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
-import { base64ToBytes } from './_lib/base64.js'
+import { base64ToBytes } from '../packages/core-db/base64.js'
 
 // Giới hạn dung lượng base64 (~4MB chuỗi ≈ ~3MB audio thật) — câu chấm phát âm tối đa ~30s
 // (giới hạn Azure short-audio) nên nhẹ hơn nhiều so với STT hội thoại tự do (api/stt.ts).

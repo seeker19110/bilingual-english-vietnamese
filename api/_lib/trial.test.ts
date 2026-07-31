@@ -4,7 +4,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const granted: { calls: { userId: string; plan: string; days: number }[] } = { calls: [] }
 vi.mock('./planGrant', () => ({
   grantPlanDays: async (userId: string, plan: string, days: number) => {
@@ -14,7 +14,7 @@ vi.mock('./planGrant', () => ({
 }))
 
 import { grantSignupTrial, SIGNUP_TRIAL_DAYS } from './trial'
-import { getPgPool } from './pgPool'
+import { getPgPool } from '../../packages/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

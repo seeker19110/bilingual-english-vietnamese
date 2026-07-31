@@ -9,7 +9,7 @@
 // SePay lặp lại).
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import { logSecurityEvent } from './_lib/security.js'
 import { extractPaymentCode, verifySepayApiKey } from './_lib/sepay.js'
 import { grantPlanDays } from './_lib/planGrant.js'

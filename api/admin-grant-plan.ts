@@ -9,7 +9,7 @@
 //      days = null → không giới hạn thời gian (vd VIP cấp vĩnh viễn); days > 0 → hết hạn sau N ngày.
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,

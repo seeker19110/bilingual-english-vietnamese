@@ -12,7 +12,7 @@ import { randomBytes, createHash } from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import { OAuth2Client } from 'google-auth-library'
 import { createRemoteJWKSet, jwtVerify } from 'jose'
-import { getPgPool } from './pgPool.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
 import { resolvePlan, type Plan } from './plan.js'
 
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 30 ngày — khớp thời hạn session Supabase cũ

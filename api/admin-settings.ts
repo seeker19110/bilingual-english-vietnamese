@@ -7,7 +7,7 @@
 // POST /api/admin-settings   body: { limits: {free:{...},pro:{...},vip:{...}}, promoUntil: string|null }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
@@ -17,7 +17,7 @@ import {
 } from './_lib/security.js'
 import { getUserById } from './_lib/authService.js'
 import { isAdminEmail } from './_lib/adminAuth.js'
-import { getAppSettings, invalidateSettingsCache } from './_lib/settings.js'
+import { getAppSettings, invalidateSettingsCache } from '../packages/core-db/settings.js'
 import { readJsonBody, validateBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 

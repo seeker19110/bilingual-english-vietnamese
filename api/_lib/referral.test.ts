@@ -9,7 +9,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 vi.mock('./security', () => ({ logSecurityEvent: () => {} }))
 const granted: { calls: { userId: string; days: number }[] } = { calls: [] }
 vi.mock('./planGrant', () => ({
@@ -20,7 +20,7 @@ vi.mock('./planGrant', () => ({
 }))
 
 import { claimReferral, rewardReferralIfEligible, MAX_REWARDED_REFERRALS } from './referral'
-import { getPgPool } from './pgPool'
+import { getPgPool } from '../../packages/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

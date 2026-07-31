@@ -6,7 +6,7 @@
 // GET /api/analytics-summary?days=14  (cần Authorization: Bearer, user phải nằm trong ADMIN_EMAILS)
 // Trả về: tổng số theo event trong N ngày gần nhất + số liệu theo ngày cho biểu đồ đơn giản.
 
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,

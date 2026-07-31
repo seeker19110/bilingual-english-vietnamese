@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./_lib/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 vi.mock('./_lib/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
@@ -9,7 +9,7 @@ vi.mock('./_lib/security', () => ({
 }))
 
 import handler from './plan-prices'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from '../packages/core-db/pgPool'
 import { invalidatePricesCache } from './_lib/prices'
 
 const mockedGetPool = vi.mocked(getPgPool)

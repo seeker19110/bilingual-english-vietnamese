@@ -1,7 +1,7 @@
 // Test /api/admin-users — chặn quyền admin, kẹp limit/offset, và trả đúng field cho UI.
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./_lib/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 vi.mock('./_lib/security', () => ({
   getCorsHeaders: () => ({}),
@@ -19,7 +19,7 @@ vi.mock('./_lib/adminAuth', () => ({
 }))
 
 import handler from './admin-users'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from '../packages/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

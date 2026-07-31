@@ -7,7 +7,12 @@ export default defineConfig({
     environment: 'happy-dom',
     // scripts/**/*.test.ts = test cho tiện ích script THUẦN (vd scripts/lib/evalScoring.test.ts) —
     // không tốn API, chỉ logic. KHÔNG gồm chính script chạy AI (scripts/eval-tutor.ts) vì nó tốn phí.
-    include: ['apps/english/src/**/*.test.{ts,tsx}', 'api/**/*.test.ts', 'scripts/**/*.test.ts'],
+    include: [
+      'apps/english/src/**/*.test.{ts,tsx}',
+      'api/**/*.test.ts',
+      'packages/**/*.test.ts',
+      'scripts/**/*.test.ts',
+    ],
     // Mock fetch('/data/...') → đọc thẳng public/ để test chạy offline (không cần server).
     setupFiles: ['./vitest.setup.ts'],
     coverage: {
@@ -15,7 +20,7 @@ export default defineConfig({
       provider: 'v8',
       // Chỉ đo phần LOGIC THUẦN (lib + api). Bỏ UI (.tsx/pages/components),
       // điểm khởi tạo (server.ts) và dữ liệu tĩnh — nơi unit test ít giá trị.
-      include: ['apps/english/src/lib/**/*.ts', 'api/**/*.ts'],
+      include: ['apps/english/src/lib/**/*.ts', 'api/**/*.ts', 'packages/**/*.ts'],
       exclude: ['**/*.test.{ts,tsx}', '**/*.d.ts'],
       reporter: ['text', 'text-summary', 'html'],
       // "Coverage ratchet": ngưỡng SÀN = "không tệ hơn hiện tại" (đo 2026-07-24:

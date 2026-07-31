@@ -24,10 +24,10 @@ initSentryServer()
 // lý do trong warnIfClusterWithoutRedis() (api/_lib/security.ts).
 warnIfClusterWithoutRedis()
 
-import ttsHandler from './api/tts.js'
-import aiHandler from './api/ai.js'
+import ttsHandler from './packages/core-ai/tts.js'
+import aiHandler from './packages/core-ai/ai.js'
 import pronunciationHandler from './api/pronunciation.js'
-import sttHandler from './api/stt.js'
+import sttHandler from './packages/core-ai/stt.js'
 import pushHandler, { sendReminders } from './api/push.js'
 import dictionaryHandler from './api/dictionary.js'
 import leaderboardHandler from './api/leaderboard.js'

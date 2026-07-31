@@ -1,7 +1,7 @@
 // api/_lib/planFeatures.ts — Đọc ma trận "tính năng nào bật cho gói nào" (bảng
 // feature_catalog + plan_feature_flags, admin chỉnh qua /api/admin-plan-features). Cache trong
 // bộ nhớ tiến trình (TTL ngắn) giống api/_lib/settings.ts — tránh tra DB ở mọi request.
-import { getPgPool } from './pgPool.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
 import type { Plan } from './plan.js'
 
 export interface FeatureCatalogItem {

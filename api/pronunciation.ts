@@ -15,7 +15,7 @@
 //   http://localhost:5173/api/pronunciation?word=apple&voice=male
 // (vite.config.ts đã gắn middleware gọi thẳng handler này, không cần deploy lên Vercel).
 
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
@@ -28,10 +28,10 @@ import {
   type Lang,
   type VoiceId,
 } from './_lib/googleTts.js'
-import { saveAudio } from './_lib/fileStorage.js'
+import { saveAudio } from '../packages/core-ai/fileStorage.js'
 import { ensureProfileRow } from './_lib/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
-import { isValidElevenVoice } from './_lib/elevenLabsTts.js'
+import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,

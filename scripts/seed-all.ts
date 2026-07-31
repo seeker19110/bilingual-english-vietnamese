@@ -83,9 +83,9 @@ import {
 } from '../api/_lib/googleTts.ts'
 import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
 import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
-import { saveAudio } from '../api/_lib/fileStorage.ts'
+import { saveAudio } from '../packages/core-ai/fileStorage.ts'
 import type { QueryResultRow } from 'pg'
-import { getPgPool } from '../api/_lib/pgPool.ts'
+import { getPgPool } from '../packages/core-db/pgPool.ts'
 import { FOUNDATION } from '../apps/english/src/data/curriculum.ts'
 import { CHALLENGE_TOPICS } from '../apps/english/src/data/challengeTopics.ts'
 import {

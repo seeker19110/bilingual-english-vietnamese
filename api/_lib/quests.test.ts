@@ -2,7 +2,7 @@
 // (7 ngày), đây là chỗ đụng tiền thật (grantPlanDays).
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const granted: { calls: { userId: string; plan: string; days: number }[] } = { calls: [] }
 vi.mock('./planGrant', () => ({
   grantPlanDays: async (userId: string, plan: string, days: number) => {
@@ -34,8 +34,8 @@ import {
   STREAK_QUEST_REWARD_DAYS,
   CEFR_EXAM_QUEST_REWARD_DAYS,
 } from './quests'
-import { vnDateStr, addDays } from './date'
-import { getPgPool } from './pgPool'
+import { vnDateStr, addDays } from '../../packages/core-db/date'
+import { getPgPool } from '../../packages/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

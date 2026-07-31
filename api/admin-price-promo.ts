@@ -8,7 +8,7 @@
 // POST /api/admin-price-promo   body: { percent: number, startsAt: string|null, endsAt: string|null }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,

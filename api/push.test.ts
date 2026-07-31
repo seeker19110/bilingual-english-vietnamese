@@ -12,9 +12,9 @@ import { describe, it, expect, beforeEach, afterEach, vi, beforeAll } from 'vite
 vi.mock('web-push', () => ({
   default: { setVapidDetails: vi.fn(), sendNotification: vi.fn(async () => undefined) },
 }))
-vi.mock('./_lib/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from '../packages/core-db/pgPool'
 import webpush from 'web-push'
 
 const mockedGetPool = vi.mocked(getPgPool)

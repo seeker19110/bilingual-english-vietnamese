@@ -9,7 +9,7 @@
 //   - Ngược lại         → dùng OpenAI (OPENAI_API_KEY, model gpt-4o-mini-transcribe).
 // Có thể ép model riêng qua STT_MODEL.
 
-import { fetchWithTimeout } from './fetchTimeout.js'
+import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
 
 // STT có thể chậm hơn chat (phải xử lý cả file audio) → cho timeout rộng hơn.
 const STT_TIMEOUT_MS = 45_000

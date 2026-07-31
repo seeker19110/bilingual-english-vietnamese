@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getPgPool } from './pgPool'
+import { getPgPool } from '../../packages/core-db/pgPool'
 import {
   hashPassword,
   verifyPassword,
@@ -9,7 +9,7 @@ import {
   revokeSession,
 } from './authService'
 
-vi.mock('./pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const mockedGetPool = vi.mocked(getPgPool)
 
 function mockPool(queryImpl: (sql: string, params?: unknown[]) => Promise<{ rows: unknown[] }>) {

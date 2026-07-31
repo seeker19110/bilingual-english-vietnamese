@@ -16,21 +16,16 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from './_lib/security.js'
-import { checkAndConsumeUsage, refundUsage, type UsageMode } from './_lib/usage.js'
-import { callGemini } from './_lib/geminiApi.js'
-import { fetchWithTimeout } from './_lib/fetchTimeout.js'
-import { withConcurrencyLimit } from './_lib/concurrencyLimiter.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { validateBody } from './_lib/validation.js'
+} from '../../api/_lib/security.js'
+import { checkAndConsumeUsage, refundUsage, type UsageMode } from '../../api/_lib/usage.js'
+import { callGemini } from '../../api/_lib/geminiApi.js'
+import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
+import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
+import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
+import { validateBody } from '../../api/_lib/validation.js'
 // Model + guardrail tách sang aiConfig.ts để script eval offline (scripts/eval-tutor.ts)
 // dùng chung đúng một nguồn — đổi model ở đây tự động phản ánh vào bài đánh giá (⑤ T1).
-import {
-  ALLOWED_MODEL,
-  GEMINI_CHAT_MODEL,
-  GROQ_CHAT_MODEL,
-  SYSTEM_GUARDRAIL,
-} from './_lib/aiConfig.js'
+import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL, SYSTEM_GUARDRAIL } from './aiConfig.js'
 
 // Thời gian chờ tối đa cho 1 lần gọi AI (ms) — tránh treo vô hạn khi nhà cung cấp chậm.
 const AI_TIMEOUT_MS = 30_000

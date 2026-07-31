@@ -6,10 +6,10 @@
 
 import webpush from 'web-push'
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import { getCorsHeaders, SECURITY_HEADERS, validateAuth } from './_lib/security.js'
 import { validateBody } from './_lib/validation.js'
-import { vnDateStr, addDays } from './_lib/date.js'
+import { vnDateStr, addDays } from '../packages/core-db/date.js'
 import {
   pickReminderMessage,
   computeStreakAtRisk,

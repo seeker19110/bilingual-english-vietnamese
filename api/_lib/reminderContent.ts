@@ -12,7 +12,7 @@
 // Toàn bộ hàm ở đây THUẦN (không gọi Supabase) để dễ test — api/push.ts lo việc
 // truy vấn rồi gọi các hàm này.
 
-import { addDays, weekStartOf } from './date.js'
+import { addDays, weekStartOf } from '../../packages/core-db/date.js'
 
 export interface ReminderContext {
   streakDaysAtRisk: number // streak hiện có tính ĐẾN HÔM QUA — 0 = không có gì để mất

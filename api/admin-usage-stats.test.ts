@@ -2,7 +2,7 @@
 // (chi phí ước tính, lãi/lỗ, tỉ lệ trả phí) phải đúng vì đây là số liệu để ra quyết định.
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./_lib/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 vi.mock('./_lib/security', () => ({
   getCorsHeaders: () => ({}),
@@ -20,8 +20,8 @@ vi.mock('./_lib/adminAuth', () => ({
 }))
 
 import handler from './admin-usage-stats'
-import { getPgPool } from './_lib/pgPool'
-import { getUnitCostsUsd, getUsdVndRate } from './_lib/aiCost'
+import { getPgPool } from '../packages/core-db/pgPool'
+import { getUnitCostsUsd, getUsdVndRate } from '../packages/core-ai/aiCost'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

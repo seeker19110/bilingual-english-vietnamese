@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./_lib/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 vi.mock('./_lib/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
@@ -15,7 +15,7 @@ vi.mock('./_lib/security', () => ({
 }))
 
 import handler from './progress'
-import { getPgPool } from './_lib/pgPool'
+import { getPgPool } from '../packages/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

@@ -6,7 +6,7 @@
 //   search: lọc theo email chứa chuỗi (không phân biệt hoa/thường), rỗng = tất cả.
 //   limit: 1-100 (mặc định 20). offset: phân trang.
 
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,

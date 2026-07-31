@@ -13,7 +13,7 @@
 //      khoản vừa đổi mật khẩu vì lo bị lộ.
 
 import { randomBytes, createHash } from 'node:crypto'
-import { getPgPool } from './pgPool.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
 import { hashPassword } from './authService.js'
 import { sendMailWithQuota } from './mailQuota.js'
 

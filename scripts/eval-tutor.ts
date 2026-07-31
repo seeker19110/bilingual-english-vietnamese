@@ -32,7 +32,7 @@ import {
   GEMINI_CHAT_MODEL,
   GROQ_CHAT_MODEL,
   SYSTEM_GUARDRAIL,
-} from '../api/_lib/aiConfig.ts'
+} from '../packages/core-ai/aiConfig.ts'
 import {
   parseFixtures,
   scoreOne,

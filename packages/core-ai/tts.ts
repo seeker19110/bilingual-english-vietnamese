@@ -21,7 +21,7 @@
 // Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../core-db/pgPool.js'
 import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
@@ -31,12 +31,12 @@ import {
   VOICE_VERSION,
   type Lang,
   type VoiceId,
-} from './_lib/googleTts.js'
-import { generateAudioFromElevenLabs, isValidElevenVoice } from './_lib/elevenLabsTts.js'
-import { ensureProfileRow } from './_lib/authService.js'
-import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
-import { saveAudio } from './_lib/fileStorage.js'
-import { encryptAudio, getClientKeyMaterial } from './_lib/ttsCrypto.js'
+} from '../../api/_lib/googleTts.js'
+import { generateAudioFromElevenLabs, isValidElevenVoice } from './elevenLabsTts.js'
+import { ensureProfileRow } from '../../api/_lib/authService.js'
+import { clampVoiceToPlan, type AnyVoiceId } from '../../api/_lib/voiceAccess.js'
+import { saveAudio } from './fileStorage.js'
+import { encryptAudio, getClientKeyMaterial } from '../../api/_lib/ttsCrypto.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -44,10 +44,10 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from './_lib/security.js'
-import { readJsonBody, validateBody } from './_lib/validation.js'
-import { withConcurrencyLimit } from './_lib/concurrencyLimiter.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '../../api/_lib/security.js'
+import { readJsonBody, validateBody } from '../../api/_lib/validation.js'
+import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
+import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
 

@@ -2,7 +2,7 @@
 // (bảng public.price_promo, migration 0026), quản lý qua api/admin-price-promo.ts. Khác
 // api/_lib/prices.ts (sale_price_vnd — giá tuyệt đối riêng từng dòng, không admin API nào
 // dùng). Cùng khuôn cache TTL ngắn như settings.ts.
-import { getPgPool } from './pgPool.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
 
 export interface PricePromo {
   percent: number

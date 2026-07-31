@@ -7,7 +7,7 @@
 //                             cefrExams, placement, weeklyGoal, achievements }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -17,7 +17,7 @@ import {
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
-import { vnDateStr } from './_lib/date.js'
+import { vnDateStr } from '../packages/core-db/date.js'
 import { FREE_WEEKLY_BONUS_PER_DAY } from './_lib/usage.js'
 
 // Giới hạn kích thước hợp lý — chặn payload bất thường (DoS/lỗi client) mà vẫn đủ rộng

@@ -1,7 +1,9 @@
 {
-  // Typecheck cho code KHÔNG nằm trong bundle Vite: handler API (api/) + script tiện ích (scripts/).
-  // tsconfig.json chính chỉ `include: ["src"]` nên 2 thư mục này lâu nay không được kiểm type —
-  // lỗi tích tụ mà build/CI không phát hiện. File này lấp lỗ hổng đó.
+  // Typecheck cho code KHÔNG nằm trong bundle Vite: handler API (api/) + script tiện ích (scripts/)
+  // + các package lõi dùng chung đã tách (packages/core-db, packages/core-ai — xem
+  // docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md PR-3).
+  // tsconfig.json chính chỉ `include: ["apps/english/src"]` nên các thư mục này lâu nay không
+  // được kiểm type — lỗi tích tụ mà build/CI không phát hiện. File này lấp lỗ hổng đó.
   // Chạy: `npm run typecheck:api` (cũng được gọi trong `npm run build`).
   "compilerOptions": {
     "target": "ES2022",
@@ -18,5 +20,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["api", "scripts"]
+  "include": ["api", "scripts", "packages"]
 }

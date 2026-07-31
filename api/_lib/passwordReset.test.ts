@@ -9,7 +9,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-vi.mock('./pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 vi.mock('./authService', () => ({
   hashPassword: async (pw: string) => `hashed:${pw}`,
 }))
@@ -22,7 +22,7 @@ vi.mock('./mailQuota', () => ({
 }))
 
 import { requestPasswordReset, resetPassword } from './passwordReset'
-import { getPgPool } from './pgPool'
+import { getPgPool } from '../../packages/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

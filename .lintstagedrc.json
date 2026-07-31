@@ -1,5 +1,5 @@
 {
-  "{apps/english/src,api}/**/*.{ts,tsx}": ["eslint --max-warnings 0", "prettier --write"],
+  "{apps/english/src,api,packages}/**/*.{ts,tsx}": ["eslint --max-warnings 0", "prettier --write"],
   "scripts/**/*.{ts,tsx}": ["prettier --write"],
   "*.{js,cjs,mjs,json,css,md,html,yml,yaml}": ["prettier --write"]
 }

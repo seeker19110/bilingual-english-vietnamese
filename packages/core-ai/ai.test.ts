@@ -7,7 +7,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-vi.mock('./_lib/security', () => ({
+vi.mock('../../api/_lib/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -15,15 +15,15 @@ vi.mock('./_lib/security', () => ({
   validateContentType: () => true,
   logSecurityEvent: () => {},
 }))
-vi.mock('./_lib/usage', () => ({
+vi.mock('../../api/_lib/usage', () => ({
   checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const })),
   refundUsage: vi.fn(async () => {}),
 }))
-vi.mock('./_lib/fetchTimeout', () => ({ fetchWithTimeout: vi.fn() }))
+vi.mock('../../api/_lib/fetchTimeout', () => ({ fetchWithTimeout: vi.fn() }))
 
 import handler from './ai'
-import { refundUsage } from './_lib/usage'
-import { fetchWithTimeout } from './_lib/fetchTimeout'
+import { refundUsage } from '../../api/_lib/usage'
+import { fetchWithTimeout } from '../../api/_lib/fetchTimeout'
 
 const mockedFetch = vi.mocked(fetchWithTimeout)
 const mockedRefund = vi.mocked(refundUsage)
@@ -271,7 +271,7 @@ describe('handler /api/agent — mode lạ (không phải chat/writing/speaking)
   it.each(['stt', 'pronounce', 'hack', 123, null])(
     'mode=%p → checkAndConsumeUsage("chat")',
     async (mode) => {
-      const { checkAndConsumeUsage } = await import('./_lib/usage')
+      const { checkAndConsumeUsage } = await import('../../api/_lib/usage')
       const mockedConsume = vi.mocked(checkAndConsumeUsage)
       mockedConsume.mockClear()
       await handler(makeRequest({ messages: [{ role: 'user', content: 'Hi' }], mode }))

@@ -7,7 +7,7 @@
 // POST /api/profile  body { action: 'onboarding', level, goal, dailyMinutes }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import { ensureProfileRow } from './_lib/authService.js'
 import { resolvePlan } from './_lib/plan.js'
 import {

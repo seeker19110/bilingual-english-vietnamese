@@ -12,8 +12,8 @@
 // (ưu tiên GROQ_API_KEY, fallback OPENAI_API_KEY).
 
 import { z } from 'zod'
-import { transcribeAudio, type SttLang } from './_lib/openaiStt.js'
-import { withConcurrencyLimit } from './_lib/concurrencyLimiter.js'
+import { transcribeAudio, type SttLang } from './openaiStt.js'
+import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -21,11 +21,11 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from './_lib/security.js'
-import { checkAndConsumeUsage, refundUsage } from './_lib/usage.js'
-import { readJsonBody, validateBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { base64ToBytes } from './_lib/base64.js'
+} from '../../api/_lib/security.js'
+import { checkAndConsumeUsage, refundUsage } from '../../api/_lib/usage.js'
+import { readJsonBody, validateBody } from '../../api/_lib/validation.js'
+import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
+import { base64ToBytes } from '../core-db/base64.js'
 
 // Giới hạn dung lượng base64 (~8MB chuỗi ≈ ~6MB audio thật, đủ cho ~1–2 phút nói).
 const MAX_AUDIO_B64 = 8 * 1024 * 1024

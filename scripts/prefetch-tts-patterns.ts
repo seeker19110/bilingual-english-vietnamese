@@ -41,8 +41,8 @@ import {
 } from '../api/_lib/googleTts.ts'
 import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
 import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
-import { saveAudio } from '../api/_lib/fileStorage.ts'
-import { getPgPool } from '../api/_lib/pgPool.ts'
+import { saveAudio } from '../packages/core-ai/fileStorage.ts'
+import { getPgPool } from '../packages/core-db/pgPool.ts'
 import { loadSubjectsInDisplayOrder, PREF_VOICE_IDS } from './_lib/patternOrder.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')

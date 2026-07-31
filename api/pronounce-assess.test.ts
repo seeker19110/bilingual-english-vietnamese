@@ -17,14 +17,17 @@ vi.mock('./_lib/usage', () => ({
   checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const })),
   refundUsage: vi.fn(async () => {}),
 }))
-vi.mock('./_lib/azurePronounce', () => ({
+vi.mock('../packages/core-ai/azurePronounce', () => ({
   resolveAzurePronounceConfig: vi.fn(),
   assessPronunciation: vi.fn(),
 }))
 
 import handler from './pronounce-assess'
 import { checkAndConsumeUsage, refundUsage } from './_lib/usage'
-import { resolveAzurePronounceConfig, assessPronunciation } from './_lib/azurePronounce'
+import {
+  resolveAzurePronounceConfig,
+  assessPronunciation,
+} from '../packages/core-ai/azurePronounce'
 
 const mockedConsume = vi.mocked(checkAndConsumeUsage)
 const mockedRefund = vi.mocked(refundUsage)

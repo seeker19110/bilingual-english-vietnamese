@@ -14,7 +14,7 @@
 // Client chỉ được ghi learn_count (streak, không tốn tiền API).
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,

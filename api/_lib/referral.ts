@@ -4,7 +4,7 @@
 // Vì sao tách khỏi api/referral.ts: điểm trao thưởng nằm ở luồng lưu lịch sử học
 // (api/history.ts), không phải ở endpoint referral — 2 nơi cùng dùng nên logic phải ở 1 chỗ.
 
-import { getPgPool } from './pgPool.js'
+import { getPgPool } from '../../packages/core-db/pgPool.js'
 import { grantPlanDays } from './planGrant.js'
 import { logSecurityEvent } from './security.js'
 

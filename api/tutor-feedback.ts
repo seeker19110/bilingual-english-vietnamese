@@ -5,7 +5,7 @@
 // CHỈ ghi khi người dùng CHỦ ĐỘNG bấm 👎 — dùng bổ sung ca sai vào golden set eval (⑤ T1).
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,

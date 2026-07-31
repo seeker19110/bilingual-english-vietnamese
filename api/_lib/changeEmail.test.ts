@@ -8,7 +8,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const passwordState: { valid: boolean } = { valid: true }
 vi.mock('./authService', () => ({
   verifyPassword: async () => passwordState.valid,
@@ -18,7 +18,7 @@ vi.mock('./emailVerification', () => ({
 }))
 
 import { changeEmail } from './changeEmail'
-import { getPgPool } from './pgPool'
+import { getPgPool } from '../../packages/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

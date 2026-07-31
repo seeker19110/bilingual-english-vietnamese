@@ -4,7 +4,7 @@
 // Tiền tố "_" trong tên thư mục "_lib" để Vercel KHÔNG coi file này là 1 API route riêng.
 
 import { fetchWithTimeout } from './fetchTimeout.js'
-import { base64ToBytes } from './base64.js'
+import { base64ToBytes } from '../../packages/core-db/base64.js'
 
 // Thời gian chờ tối đa 1 lần gọi Google TTS (ms) — tránh treo request khi Google chậm/sự cố.
 const TTS_TIMEOUT_MS = 30_000

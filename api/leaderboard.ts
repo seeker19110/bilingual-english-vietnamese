@@ -14,7 +14,7 @@
 // api/_lib/leaderboard.ts. Client KHÔNG gửi điểm lên.
 
 import { z } from 'zod'
-import { getPgPool, getPgReadPool } from './_lib/pgPool.js'
+import { getPgPool, getPgReadPool } from '../packages/core-db/pgPool.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -24,7 +24,7 @@ import {
 } from './_lib/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
-import { vnDateStr } from './_lib/date.js'
+import { vnDateStr } from '../packages/core-db/date.js'
 import {
   currentWeekRange,
   computeWeeklyPoints,

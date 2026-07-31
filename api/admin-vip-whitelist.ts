@@ -9,7 +9,7 @@
 // DELETE /api/admin-vip-whitelist  body: { email }           (gỡ khỏi danh sách, hạ về free)
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,

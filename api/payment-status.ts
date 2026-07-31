@@ -4,7 +4,7 @@
 //
 // GET /api/payment-status?code=...  (cần đăng nhập; chỉ trả đơn CỦA CHÍNH user đó)
 
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,

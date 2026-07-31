@@ -8,7 +8,7 @@
 // Trả { paymentCode, amountVnd, qrUrl, bankAccount, bankName, expiresAt, plan, cycle, years }
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,

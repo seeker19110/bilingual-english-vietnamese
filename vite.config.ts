@@ -140,9 +140,9 @@ export default defineConfig(({ mode }) => {
 // Bảng ánh xạ route → file handler. Thêm endpoint mới chỉ cần thêm 1 dòng ở đây.
 const API_ROUTES: { prefix: string; module: string }[] = [
   { prefix: '/api/pronunciation', module: '/api/pronunciation.ts' },
-  { prefix: '/api/tts', module: '/api/tts.ts' },
-  { prefix: '/api/stt', module: '/api/stt.ts' },
-  { prefix: '/api/agent', module: '/api/ai.ts' },
+  { prefix: '/api/tts', module: '/packages/core-ai/tts.ts' },
+  { prefix: '/api/stt', module: '/packages/core-ai/stt.ts' },
+  { prefix: '/api/agent', module: '/packages/core-ai/ai.ts' },
   { prefix: '/api/dictionary', module: '/api/dictionary.ts' },
   { prefix: '/api/leaderboard', module: '/api/leaderboard.ts' },
   { prefix: '/api/pronounce-assess', module: '/api/pronounce-assess.ts' },

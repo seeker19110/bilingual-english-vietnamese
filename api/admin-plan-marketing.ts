@@ -9,7 +9,7 @@
 // DELETE /api/admin-plan-marketing  body: { id }                                  (xoá 1 hàng)
 
 import { z } from 'zod'
-import { getPgPool } from './_lib/pgPool.js'
+import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
   getCorsHeaders,
