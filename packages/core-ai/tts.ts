@@ -1,7 +1,9 @@
 // api/tts.ts — Vercel Edge Function / chạy qua server.ts (Express) khi deploy VPS
 // Endpoint: POST /api/tts
 // Body: { text: string, lang: 'en-US' | 'vi-VN', voice?: 'female' | 'female2' | 'male' | 'male2' }
-// Trả về: { audio_url: string, key_b64: string, iv_b64: string, cached: boolean }
+// Trả về: { audio_url, key_b64, iv_b64, cached, viseme_timeline }
+//   viseme_timeline: [{ viseme, startMs, endMs }] | null — mốc khẩu hình THẬT cho avatar nói
+//   chuyện, chỉ có với giọng ElevenLabs (endpoint /with-timestamps). null = client tự ước lượng.
 //
 // Luồng xử lý:
 //   1. Hash (text + lang + voice) → tìm trong bảng tts_cache (Postgres tự host)
@@ -33,6 +35,7 @@ import {
   type VoiceId,
 } from '../../api/_lib/googleTts.js'
 import { generateAudioFromElevenLabs, isValidElevenVoice } from './elevenLabsTts.js'
+import { visemeTimelineFromAlignment, type VisemeFrame } from '../../api/_lib/visemeTimeline.js'
 import { ensureProfileRow } from '../core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from '../../api/_lib/voiceAccess.js'
 import { saveAudio } from './fileStorage.js'
@@ -184,10 +187,10 @@ export default async function handler(req: Request): Promise<Response> {
   const hashLangPart = isValidElevenVoice(voice) ? '' : lang
   const textHash = await hashText(text + hashLangPart + voice + VOICE_VERSION)
 
-  const { rows: cachedRows } = await pool.query<{ audio_url: string }>(
-    'select audio_url from public.tts_cache where hash = $1',
-    [textHash],
-  )
+  const { rows: cachedRows } = await pool.query<{
+    audio_url: string
+    viseme_timeline: VisemeFrame[] | null
+  }>('select audio_url, viseme_timeline from public.tts_cache where hash = $1', [textHash])
 
   const cachedUrl = cachedRows[0]?.audio_url
   if (cachedUrl) {
@@ -197,7 +200,19 @@ export default async function handler(req: Request): Promise<Response> {
       .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
       .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
     const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
-    return jsonResponse({ audio_url: cachedUrl, key_b64, iv_b64, cached: true }, 200, allHeaders)
+    return jsonResponse(
+      {
+        audio_url: cachedUrl,
+        key_b64,
+        iv_b64,
+        cached: true,
+        // null với audio cũ (cache trước migration 0028) hoặc giọng không có timestamp —
+        // client tự ước lượng như trước, không phải lỗi.
+        viseme_timeline: cachedRows[0]?.viseme_timeline ?? null,
+      },
+      200,
+      allHeaders,
+    )
   }
 
   // ── BƯỚC 2: Cache MISS → gọi Google TTS ────────────────────────────────────
@@ -226,9 +241,26 @@ export default async function handler(req: Request): Promise<Response> {
       : 'Google'
 
   let audioData: ArrayBuffer
+  // Timeline khẩu hình THẬT — chỉ có với giọng ElevenLabs (endpoint /with-timestamps trả mốc
+  // thời gian từng ký tự). Giọng Google Chirp3-HD không hỗ trợ SSML nên không có timepoint;
+  // những giọng đó giữ nguyên cách client tự ước lượng.
+  let visemeTimeline: VisemeFrame[] | null = null
   try {
     if (isValidElevenVoice(voice)) {
-      audioData = await withConcurrencyLimit('elevenlabs', () => generateAudioFromElevenLabs(text))
+      const result = await withConcurrencyLimit('elevenlabs', () =>
+        generateAudioFromElevenLabs(text),
+      )
+      audioData = result.audio
+      if (result.alignment) {
+        // Dựng timeline KHÔNG được phép làm hỏng việc tạo audio: eSpeak-ng có thể chưa cài trên
+        // VPS, hoặc số token phoneme không khớp số từ. Lỗi ở đây chỉ mất phần đồng bộ khẩu hình.
+        visemeTimeline = await visemeTimelineFromAlignment(result.alignment, lang).catch(
+          (err: unknown) => {
+            console.warn('[tts] Dựng viseme timeline lỗi, bỏ qua:', err)
+            return null
+          },
+        )
+      }
     } else if (isValidStudioVoice(voice)) {
       audioData = await withConcurrencyLimit('google-tts-studio', () =>
         generateStudioAudioFromGoogle(text, voice),
@@ -277,19 +309,24 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     await pool.query(
-      `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
-       values ($1, $2, $3, $4, now())
+      `insert into public.tts_cache (hash, lang, voice, audio_url, viseme_timeline, last_accessed_at)
+       values ($1, $2, $3, $4, $5, now())
        on conflict (hash) do update set
          lang = excluded.lang, voice = excluded.voice, audio_url = excluded.audio_url,
+         viseme_timeline = excluded.viseme_timeline,
          last_accessed_at = now()`,
-      [textHash, lang, voice, audioUrl],
+      [textHash, lang, voice, audioUrl, visemeTimeline ? JSON.stringify(visemeTimeline) : null],
     )
   } catch (err) {
     console.error('Lỗi lưu tts_cache:', err instanceof Error ? err.message : err)
   }
 
   const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
-  return jsonResponse({ audio_url: audioUrl, key_b64, iv_b64, cached: false }, 200, allHeaders)
+  return jsonResponse(
+    { audio_url: audioUrl, key_b64, iv_b64, cached: false, viseme_timeline: visemeTimeline },
+    200,
+    allHeaders,
+  )
 }
 
 export const config = { runtime: 'edge' }

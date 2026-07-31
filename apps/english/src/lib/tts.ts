@@ -5,7 +5,8 @@
 // Fallback về Web Speech API nếu /api/tts lỗi (mất mạng, server timeout, chưa đăng nhập...).
 
 import { getAccessToken } from './authHeader'
-import { audioCacheKey, getAudioBuffer, setAudioBuffer } from './audioCache'
+import { audioCacheKey, getAudioEntry, setAudioBuffer } from './audioCache'
+import type { VisemeFrame } from './viseme'
 import {
   isValidVoiceId,
   DEFAULT_VOICE,
@@ -323,7 +324,7 @@ export function bufferToBlobUrl(buffer: ArrayBuffer): string {
 //
 // `inflight`: gộp các yêu cầu TRÙNG key đang chạy làm 1 — tránh việc trình phát
 // và bộ nạp-trước cùng tải một câu (tải đôi + dễ dính 429).
-const inflight = new Map<string, Promise<ArrayBuffer>>()
+const inflight = new Map<string, Promise<{ buffer: ArrayBuffer; timeline: VisemeFrame[] | null }>>()
 
 // Studio (giọng cao cấp VIP mặc định mới — xem getDefaultVoiceForUnsetPref) CHỈ có
 // tiếng Anh. speak()/prefetchSpeech() không phân biệt lang khi lấy voice mặc định (dùng
@@ -345,6 +346,18 @@ export async function ensureAudioBuffer(
   lang: Lang,
   voiceInput: Voice,
 ): Promise<ArrayBuffer> {
+  const { buffer } = await ensureAudioWithTimeline(text, lang, voiceInput)
+  return buffer
+}
+
+// Như ensureAudioBuffer nhưng trả KÈM timeline khẩu hình thật do server tính (chỉ giọng
+// ElevenLabs có — xem api/_lib/visemeTimeline.ts). `timeline: null` nghĩa là không có timing
+// thật cho câu/giọng này → nơi gọi tự ước lượng bằng src/lib/viseme.ts như trước.
+export async function ensureAudioWithTimeline(
+  text: string,
+  lang: Lang,
+  voiceInput: Voice,
+): Promise<{ buffer: ArrayBuffer; timeline: VisemeFrame[] | null }> {
   const voice = resolveVoiceForLang(voiceInput, lang)
   // Giọng ElevenLabs không phân biệt lang (xem ghi chú tương ứng trong api/tts.ts) — bỏ lang
   // khỏi cacheKey để khớp với hash cache phía server (không tách 2 bản audio giống hệt nhau).
@@ -355,7 +368,7 @@ export async function ensureAudioBuffer(
   )
 
   // Kiểm tra IndexedDB trước — nếu đã có thì khỏi gọi server
-  const cached = await getAudioBuffer(cacheKey)
+  const cached = await getAudioEntry(cacheKey)
   if (cached) return cached
 
   // Đang có yêu cầu tải cùng câu này (vd: bộ nạp-trước) → dùng chung, không tải lại
@@ -386,16 +399,22 @@ export async function ensureAudioBuffer(
 
     if (!res.ok) throw new Error(`TTS API lỗi: ${res.status}`)
 
-    const { audio_url, key_b64, iv_b64 } = (await res.json()) as {
+    const {
+      audio_url,
+      key_b64,
+      iv_b64,
+      viseme_timeline = null,
+    } = (await res.json()) as {
       audio_url: string
       key_b64: string
       iv_b64: string
+      viseme_timeline?: VisemeFrame[] | null
     }
 
     const buffer = await decryptToBuffer(audio_url, key_b64, iv_b64)
     // Lưu vào IndexedDB để lần sau (kể cả mở lại app) dùng ngay không cần fetch
-    void setAudioBuffer(cacheKey, buffer)
-    return buffer
+    void setAudioBuffer(cacheKey, buffer, viseme_timeline)
+    return { buffer, timeline: viseme_timeline }
   })()
 
   inflight.set(cacheKey, job)

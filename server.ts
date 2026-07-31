@@ -51,6 +51,7 @@ import adminPlanMarketingHandler from './api/admin-plan-marketing.js'
 import analyticsHandler from './api/analytics.js'
 import analyticsSummaryHandler from './api/analytics-summary.js'
 import adminUsageStatsHandler from './api/admin-usage-stats.js'
+import adminUsersHandler from './api/admin-users.js'
 import referralHandler from './api/referral.js'
 import questsHandler from './api/quests.js'
 import planPricesHandler from './api/plan-prices.js'
@@ -198,6 +199,7 @@ app.all('/api/admin-plan-marketing', wrapEdge(adminPlanMarketingHandler))
 app.all('/api/analytics', wrapEdge(analyticsHandler))
 app.all('/api/analytics-summary', wrapEdge(analyticsSummaryHandler))
 app.all('/api/admin-usage-stats', wrapEdge(adminUsageStatsHandler))
+app.all('/api/admin-users', wrapEdge(adminUsersHandler))
 app.all('/api/referral', wrapEdge(referralHandler))
 app.all('/api/quests', wrapEdge(questsHandler))
 app.all('/api/plan-prices', wrapEdge(planPricesHandler))

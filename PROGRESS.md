@@ -952,6 +952,13 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## ⚠️ Cần làm tay (không cần PR)
 
+- **Migration `0028_tts_viseme_timeline.sql` — CHẠY TRƯỚC KHI DEPLOY đợt avatar timing.**
+  Thêm cột `viseme_timeline jsonb` vào `tts_cache` (nullable, không phá dữ liệu cache cũ).
+  Lệnh: `npm run migrate:pg` (đã nằm trong `scripts/deploy.sh`). Rollback nếu cần:
+  `alter table public.tts_cache drop column viseme_timeline;`
+  Muốn thấy hiệu quả thật cần `ELEVENLABS_API_KEY` trên VPS + chọn giọng VIP "Rachel";
+  giọng Google Chirp3-HD không có timestamp nên vẫn chạy đường ước lượng như cũ.
+
 - ~~Backup R2~~ **ĐÃ XONG (2026-07-29, người dùng xác nhận).** Phát hiện qua báo cáo "backup tự
   động lên R2 có nhưng không thấy chạy": cron `backup:r2` (Postgres → R2) chưa từng được thêm dù
   code/docs mục 7.2 đã có từ trước (chỉ có cron `pg_dump` local). Đã sửa: cấp quyền bucket
