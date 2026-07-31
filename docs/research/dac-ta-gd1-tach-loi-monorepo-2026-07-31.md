@@ -62,6 +62,11 @@ postgres/                     ← schema core + schema từng môn, migrations d
 ⚠️ **`api/admin-*.ts`**: phần quản trị người dùng/gói/giá là lõi; phần thống kê học tập là của môn.
 PR-4 tách theo đúng ranh giới đó, không bê nguyên cụm `admin-*` sang một bên.
 
+> **Phạm vi dùng cho PR-1 (alias):** chỉ dòng liên quan `src/lib/*` và `src/components/*` (hàng
+> "theme.ts, auth.ts, …", "ThemeToggle.tsx …", "srs.ts, cefrProgress.ts, …") — vì PR-1 chỉ đụng
+> `src/`, không đụng `api/`. Các dòng `api/*` trong bảng này dùng cho PR-3/4/5 (di chuyển file
+> thật), không áp dụng ở bước alias.
+
 ---
 
 ## 2. Ba điểm ĐÃ CHỐT (2026-07-31) — trước đây để mở, nay không phải hỏi lại
@@ -179,13 +184,27 @@ lận trong phạm vi một môn. Chốt chi tiết ở PR-5.
 
 ## 3. Chia PR (mỗi PR merge được độc lập, không PR nào để repo ở trạng thái hỏng)
 
-### PR-1 — Alias đường dẫn (không di chuyển file nào)
+### PR-1 — Alias đường dẫn (không di chuyển file nào) ⚠️ CHỈ ÁP DỤNG CHO `src/`, KHÔNG áp dụng cho `api/`
 
-- Thêm `resolve.alias` trong `vite.config.ts` + `paths` trong `tsconfig*.json`:
-  `@core/*`, `@english/*`, tạm thời **cùng trỏ vào vị trí hiện tại**.
-- Đổi các import tương đối sâu (`../../../`) sang alias. Việc cơ học → giao subagent `mechanical`.
+> **Sửa lại phạm vi (2026-07-31), phát hiện lúc thi hành:** `api/` được `tsc -p tsconfig.server.json`
+> biên dịch thành JS thật rồi chạy trực tiếp bằng `node dist-server/server.js` — KHÔNG qua bundler.
+> `tsc` không tự đổi alias thành đường dẫn thật lúc build; Node lúc chạy không hiểu `@core/x.js` là
+> gì → crash production ngay khi khởi động. Vite (frontend) thì bundle nên alias resolve được bình
+> thường. Vì vậy: **alias chỉ dựng cho `src/`.** Khi `api/_lib/*` thật sự chuyển sang
+> `packages/core-*` (PR-3/4/5), dùng **import package thật qua npm workspaces** (Node tự symlink
+> vào `node_modules`, đúng cơ chế chuẩn), không dựng alias giả trung gian cho `api/`.
+
+- Thêm `resolve.alias` trong `vite.config.ts` + `paths` trong `tsconfig.json` (chỉ áp cho `src/`):
+  `@core/*`, `@english/*`, tạm thời **cùng trỏ vào `./src/*`**.
+- Đổi các import tương đối sâu (`../../../`) trong `src/` sang alias, theo đúng bảng phân loại §1
+  (core vs english) — dù vị trí file trên đĩa CHƯA đổi, tên alias phải đúng nơi file sẽ chuyển tới,
+  để PR-6 (tách `core-ui`) sau này chỉ đổi 1 dòng target thay vì sửa lại từng import.
+  Việc cơ học → giao subagent `mechanical`.
+- `api/`, `tsconfig.api.json`, `tsconfig.server.json`: **không đổi gì trong PR-1.**
 - **Nghiệm thu:** `npm run build` + `typecheck` + `lint` + `test` + `test:e2e` xanh; `git diff` chỉ
-  chứa dòng `import`. Ứng dụng chạy y hệt.
+  chứa dòng `import` trong `src/` + 2 file cấu hình (`vite.config.ts`, `tsconfig.json`). Ứng dụng
+  chạy y hệt. **Kiểm thêm:** `npm run build` xong, chạy thử `node dist-server/server.js` khởi động
+  bình thường (xác nhận `api/` không bị đụng, không có alias lọt vào).
 
 ### PR-2 — Bật npm workspaces, dời app hiện tại vào `apps/english/`
 
