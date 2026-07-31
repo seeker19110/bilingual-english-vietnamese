@@ -83,6 +83,29 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-07-31] Kế hoạch nền tảng đa lĩnh vực — ĐÃ CHỐT, CHƯA THI HÀNH.** Chủ dự án muốn
+  `donghanhcungban.com` thành nền tảng đồng hành đa lĩnh vực (học hành trước: Anh → Toán → Lý →
+  Hoá; sau đó nuôi dạy con, nghề nghiệp). Toàn bộ quyết định kiến trúc đã chốt và ghi tại
+  `docs/adr/0001-nen-tang-da-linh-vuc.md` (ADR, có lịch sử các lần đổi ý trong ngày — đọc kỹ trước
+  khi động vào hạn mức/schema) + đặc tả thi hành đầy đủ tại
+  `docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md` (8 PR) và bản kế hoạch tổng
+  `docs/research/ke-hoach-nen-tang-donghanhcungban-2026-07-31.md`. Tóm tắt các điểm dễ quên:
+  - Subdomain mỗi môn (`en-vi.`/`math.`/…), **CHỈ MỘT tiến trình PM2** dùng chung cho tới khi chạm
+    ngưỡng nâng cấp (một môn > 50% CPU · cần deploy độc lập · lên VPS nhiều core).
+  - Monorepo npm workspaces: `packages/core-*` + `apps/english|hub|math`.
+  - Dữ liệu học tách theo **schema riêng từng môn** (`english`, `math`…); `core` chỉ giữ
+    users/payments/usage — không phải bảng học nào.
+  - Cơ chế ôn tập/SRS **tách riêng từng môn**, không đưa vào lõi (chấp nhận nhân bản có chủ đích).
+  - Tiền tố SePay đổi sang `DHCB` dùng chung mọi môn — **webhook phải chấp nhận cả `DHCB` và
+    `ENVI` vĩnh viễn**, không được bỏ tiền tố cũ.
+  - Hạn mức lượt AI: **mỗi môn đếm/trừ riêng** (không cộng gộp), nhưng **cùng một con số** hạn
+    mức/ngày với tiếng Anh — hết lượt Anh không ảnh hưởng lượt Toán trong cùng ngày.
+  - Trang chủ hub: mục tiêu chung → hoạt động dự án (số thật) → tab riêng từng môn → giá chung;
+    lần đầu chọn một môn thì hỏi onboarding y như app tiếng Anh, lưu riêng theo `(user_id, subject)`.
+  - **Việc kế tiếp trước khi mở PR-1:** ghi mốc `npm run test:e2e` đang xanh · bổ sung E2E (hoặc
+    danh sách kiểm tra tay) cho thanh toán + đăng nhập Google · backup DB và xác minh restore chạy
+    được. Chưa làm ba việc này thì chưa được đổi code.
+
 - **[2026-07-28] Danh sách VIP whitelist + Ma trận tính năng theo gói (Free/Pro/VIP) trong
   `/admin` — ĐÃ XONG, ĐÃ MERGE (PR #357).** 2 tính năng quản trị mới, tự chạy migration qua CI/CD
   (`npm run migrate:pg` trong pipeline deploy, không cần chạy tay):
@@ -884,6 +907,10 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   KHÔNG làm vỡ app — không bắt buộc phải làm ngay.
 
 ## Quyết định quan trọng
+
+- **[2026-07-31] Mở rộng thành nền tảng đa lĩnh vực — ĐÃ CHỐT.** Xem mục "Tiếp theo" ở trên +
+  `docs/adr/0001-nen-tang-da-linh-vuc.md` (nguồn sự thật, đừng chép lại chi tiết ra đây kẻo lệch
+  khi ADR được bổ sung sau này).
 
 - **Bảng xếp hạng (LeagueSection trong `/challenge`) TẠM TẮT (2026-07-27).** Lý do: ở quy mô
   ít người dùng, bảng gần trống/chỉ vài người khiến người mới thấy app "vắng vẻ" và bỏ đi —
