@@ -83,6 +83,18 @@ tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem c
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-07-31] Backup cấu hình hệ thống (Nginx + crontab + PM2 dump) lên R2 — ĐÃ THÊM.** Phát
+  hiện lỗ hổng khi chỉnh tay Nginx nhiều lần lúc chuyển domain `.org`: `pg_dump`/`backup:env` chỉ
+  backup DB/`.env`, không backup Nginx/crontab/PM2 dump — VPS hỏng thì khôi phục xong DB+`.env`
+  vẫn phải cấu hình lại Nginx từ đầu bằng trí nhớ, và mất luôn crontab (chính là các dòng lệnh
+  khiến backup TỰ CHẠY). Thêm `scripts/backup-system-to-r2.ts`/`restore-system-from-r2.ts` (lệnh
+  `npm run backup:system`/`restore:system`) — đóng gói tar + mã hoá AES-256-GCM (dùng lại
+  `encryptEnv`/`decryptEnv` của `backup:env`, không lặp logic), đẩy cùng bucket R2 private. Chi
+  tiết cron + cách khôi phục từng phần: `docs/setup-postgresql-vps.md` mục 7.4. **Còn nợ:** chưa
+  thêm dòng cron thật trên VPS (việc tay, giống các cron backup khác từng bị bỏ sót — xem mục
+  "Backup DB" phía trên); chưa test restore thật (chỉ mới viết code, xác thực bằng lint/typecheck/
+  test, chưa chạy `backup:system`/`restore:system` thật trên VPS).
+
 - **[2026-07-31] Đổi domain chính sang `.org` — ĐÃ HOÀN TẤT.** `en-vi.donghanhcungban.org` giờ là
   domain mặc định (biến `SITE_URL`/`VITE_SITE_URL`/`EN_VI_HOSTNAME`/`VITE_ENGLISH_APP_URL` trên
   VPS đã trỏ `.org`); `.com`/`www.donghanhcungban.com` 301 redirect sang `www.donghanhcungban.org`

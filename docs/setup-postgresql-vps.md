@@ -174,6 +174,42 @@ sudo -u postgres crontab -e
 ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run restore:env
 ```
 
+### 7.4 Backup cấu hình hệ thống: Nginx + crontab + PM2 dump (BẮT BUỘC — phát hiện 2026-07-31)
+
+`pg_dump` chỉ backup database, `backup:env` chỉ backup `.env` — cả hai đều KHÔNG backup cấu hình
+Nginx (`/etc/nginx/`: routing theo domain, redirect, SSL), crontab (chính các dòng lệnh khiến
+backup này TỰ CHẠY — mất cái này thì có cơ chế backup nhưng không có gì backup nữa), và PM2 dump
+(`~/.pm2/dump.pm2`, để `pm2 resurrect` tự khởi động lại đúng tiến trình sau khi VPS hỏng/dựng
+lại). `scripts/backup-system-to-r2.ts` đóng gói cả 3 thành 1 tarball, mã hoá AES-256-GCM (dùng lại
+cơ chế của `backup:env`), đẩy lên **cùng bucket R2 private** ở mục 7.2.
+
+```bash
+sudo pm2 save   # BẮT BUỘC chạy trước, tạo/cập nhật ~/.pm2/dump.pm2 — nếu chưa từng chạy thì
+                 # backup sẽ bỏ qua phần PM2 (script tự báo "không thấy PM2 dump")
+
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:system -- --dry-run   # xem trước
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:system                # chạy thật
+```
+
+Thêm vào cron (chạy cùng giờ với `backup:env`, cần quyền `root` để đọc `/etc/nginx` + crontab của
+user khác — khác `backup:r2`/`backup:env` chạy bằng user `postgres`):
+
+```bash
+sudo crontab -e
+15 3 * * * cd /var/www/english-tutor && ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:system >> /var/log/system-backup-r2.log 2>&1
+```
+
+**Khôi phục** khi cần (tải bản mới nhất, giải mã, ghi ra `system-restored.tar.gz` — KHÔNG tự giải
+nén/ghi đè gì, tự kiểm tra rồi khôi phục TỪNG PHẦN theo nhu cầu thật):
+
+```bash
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run restore:system
+tar -tzf system-restored.tar.gz                          # xem cấu trúc bên trong trước
+sudo tar -xzf system-restored.tar.gz -C /tmp/restored     # giải nén ra chỗ tạm để xem
+sudo cp -a /tmp/restored/nginx/. /etc/nginx/              # khôi phục riêng Nginx (nếu cần)
+sudo crontab -u postgres /tmp/restored/crontab/postgres.txt  # khôi phục riêng crontab (nếu cần)
+```
+
 ## 8. Xác nhận hoàn tất Giai đoạn A
 
 Báo lại kết quả các bước trên (đặc biệt bước 6 — `npm run migrate:pg` chạy thành
