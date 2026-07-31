@@ -127,36 +127,40 @@ SRS chung sẽ hoặc quá loãng để dùng được, hoặc biến thành nú
 > giống hệt nhau, khi đó **mới** tách phần hàm thuần ra dùng chung — tách dựa trên bằng chứng thật,
 > không dựa trên phỏng đoán.
 
-### 2.4. Hạn mức: **CHỈ áp cho tiếng Anh; môn khác không giới hạn** (chốt 2026-07-31)
+### 2.4. Hạn mức: **DÙNG CHUNG một bộ cho mọi môn, bằng tiếng Anh hiện tại** (chốt cuối 2026-07-31)
 
-Sửa lại quyết định "kho chung toàn nền tảng" ở ADR-0001 §3 — xem ADR-0001 mục bổ sung 7.
+> Lịch sử quyết định tại chỗ này (giữ lại để không ai lật lại mà không biết): ban đầu định "kho chung
+> toàn nền tảng" → sau đổi thành "chỉ áp cho tiếng Anh, môn khác không giới hạn" → **cùng ngày, chốt
+> lại lần cuối**: mọi môn dùng chung một bộ hạn mức, giống hệt tiếng Anh. Xem ADR-0001 mục bổ sung 8.
 
-- `english`: giữ **nguyên xi** cơ chế hiện tại (Free dùng cửa sổ trượt 7 ngày + thưởng khi học thật;
-  Pro/VIP theo hạn mức ngày). Không đổi một dòng hành vi nào của môn Anh trong GĐ1.
-- `math`, `ly`, `hoa`, …: **không giới hạn**.
+- Mọi môn (`english`, `math`, `ly`, `hoa`, …) áp **cùng một cơ chế** đang chạy cho tiếng Anh: Free
+  dùng cửa sổ trượt 7 ngày + thưởng khi học thật; Pro/VIP theo hạn mức ngày.
+- Hạn mức là **kho chung theo người dùng**, cộng gộp mọi môn trong ngày/cửa sổ trượt — không phải
+  N hạn mức riêng cộng lại. Đúng với nguyên tắc "một tài khoản, một gói cước dùng cho mọi môn".
+- Không đổi hành vi của tiếng Anh trong GĐ1 — số đang hiển thị cho người dùng hiện tại phải giữ nguyên.
 
-**Cách thi hành — hạn mức là CẤU HÌNH THEO MÔN, không phải `if (subject === 'english')` rải trong code:**
+**Cách thi hành — vẫn giữ cấu hình theo môn làm phanh tay, chỉ đổi giá trị mặc định:**
 
 ```sql
 -- Trong migration 0028, cạnh usage_events.
 create table if not exists public.subject_limits (
   subject   text primary key,          -- 'english' | 'math' | ...
-  enforced  boolean not null default false,  -- false = không giới hạn
+  enforced  boolean not null default true,   -- true = áp hạn mức (mặc định cho MỌI môn)
   updated_at timestamptz not null default now()
 );
 insert into public.subject_limits (subject, enforced) values ('english', true)
 on conflict (subject) do nothing;
+-- Môn mới thêm sau cũng insert với enforced = true (hoặc dựa vào default của cột).
 ```
 
-`consumeUsage(userId, subject, mode)` **luôn được gọi ở mọi môn** — nhưng khi `enforced = false` thì
-chỉ **ghi nhận** vào `usage_events` rồi cho qua, không chặn.
+`consumeUsage(userId, subject, mode)` được gọi ở mọi môn và **luôn kiểm tra hạn mức** khi
+`enforced = true` (mặc định). Bảng `subject_limits` **vẫn giữ lại** dù không dùng "không giới hạn"
+làm mặc định nữa — nó là chỗ admin bật `enforced = false` tạm thời cho một môn cụ thể khi cần
+(ví dụ giai đoạn ra mắt muốn người dùng thử thoải mái), không cần deploy để bật lại sau đó.
 
-Hai lý do phải ghi nhận cả khi không chặn:
-
-1. **Nhìn thấy chi phí.** Không đếm thì không biết môn Toán tốn bao nhiêu, cho tới lúc nhận hoá đơn.
-2. **Bật được phanh trong vài giây.** Nếu chi phí vọt hoặc gặp người lạm dụng, admin đổi `enforced`
-   sang `true` cho riêng môn đó — **không cần deploy**. Chưa có dữ liệu đếm thì lúc đó cũng không biết
-   nên đặt hạn mức bao nhiêu cho hợp lý.
+`usage_events` đếm theo `(user_id, day, subject, mode)` để vẫn biết môn nào tốn bao nhiêu chi phí,
+nhưng khi tính "còn bao nhiêu lượt hôm nay" của Free thì **cộng gộp mọi `subject`** của user trong
+ngày/cửa sổ trượt — không tách riêng theo môn.
 
 Vẫn giữ **rate limit kỹ thuật** (chống spam theo IP/token trong `api/_lib/security.ts`) cho mọi môn —
 đây là chống lạm dụng hạ tầng, khác với hạn mức nghiệp vụ, và không được tắt.
@@ -164,11 +168,11 @@ Vẫn giữ **rate limit kỹ thuật** (chống spam theo IP/token trong `api/_
 ### 2.5. Còn lại một điểm mở
 
 **`weeklyCredit` / `FREE_WEEKLY_BONUS_PER_DAY`** trong `api/_lib/usage.ts` — cơ chế "học thật thì
-được thêm lượt". Vì hạn mức giờ **chỉ áp cho tiếng Anh** (§2.4) nên phần thưởng lượt này cũng **chỉ
-thuộc về môn Anh**, không cần thành hợp đồng chung cho mọi môn nữa. Điểm cần chốt ở PR-5 rút gọn lại:
-`grantDailyBonus` nằm ở `core-billing` (vì nó ghi vào bảng lượt của `core`) hay ở `apps/english`
-(vì nó chỉ phục vụ môn Anh)? Đề xuất: **để ở `apps/english`**, `core-billing` chỉ mở một hàm cộng
-lượt tổng quát.
+được thêm lượt". Vì hạn mức giờ lại là **kho chung mọi môn** (§2.4), cơ chế "học thật" phải thành
+**hợp đồng theo môn**: mỗi môn tự gọi `grantDailyBonus(userId, subject)` khi xác định người dùng đã
+học thật hôm đó; `core-billing` cộng lượt và chống gian lận (mỗi ngày mỗi người tối đa N lượt thưởng,
+tính chung mọi môn — không cộng dồn nếu học nhiều môn cùng ngày, tránh vượt trần thiết kế ban đầu
+của cửa sổ trượt). Chốt chi tiết ở PR-5.
 
 ---
 
@@ -237,8 +241,11 @@ on conflict do nothing;
   thật ổn ít nhất 2 tuần. Đây là đường lùi.
 - Hàm SQL `consume_usage`/`refund_usage`/`grant_daily_bonus_rolling` thêm tham số `subject`
   (mặc định `'english'` để mã cũ gọi vẫn đúng).
-- Thêm bảng `subject_limits` và nhánh "chỉ ghi nhận, không chặn" khi `enforced = false` — xem §2.4.
-  Bảng này cần một màn quản trị nhỏ (bật/tắt `enforced` theo môn) trong trang admin sẵn có.
+- Thêm bảng `subject_limits`, mặc định `enforced = true` cho mọi môn (hạn mức dùng chung — §2.4).
+  Bảng này cần một màn quản trị nhỏ (bật/tắt `enforced` theo môn) trong trang admin sẵn có, dùng làm
+  phanh tay khi cần nới tạm cho một môn cụ thể.
+- Cơ chế "học thật được thêm lượt" thành hợp đồng `grantDailyBonus(userId, subject)` theo môn (§2.5),
+  cộng gộp đúng trần thiết kế ban đầu bất kể học mấy môn trong ngày.
 - **Rollback:** `drop table usage_events` — không mất gì vì `daily_usage` còn nguyên.
 
 Cùng PR này, đổi tiền tố SePay sang **`DHCB`** theo §2.1: hằng số `PAYMENT_PREFIX = 'DHCB'` khi tạo
@@ -246,10 +253,11 @@ mã đơn, `ACCEPTED_PREFIXES = ['DHCB', 'ENVI']` khi đối chiếu webhook. **
 vào trang SePay **thêm** bộ lọc tiền tố `DHCB`, **giữ nguyên** bộ lọc `ENVI` đang có.
 
 - **Nghiệm thu:** ca biên đếm lượt có test — hết lượt · hoàn lượt khi AI lỗi · đổi ngày theo giờ VN ·
-  gói hết hạn · cửa sổ trượt 7 ngày của gói Free · **môn có `enforced = false` không bao giờ bị chặn
-  nhưng vẫn ghi đủ dòng vào `usage_events`**. Test webhook khớp đúng với **cả hai** tiền tố, kể cả
-  một mã đơn `ENVI…` cũ có thật trong bảng `payments`. Chạy thật một giao dịch SePay số tiền nhỏ
-  bằng nội dung `DHCB…`.
+  gói hết hạn · cửa sổ trượt 7 ngày của gói Free **cộng gộp đúng khi học nhiều môn cùng ngày** ·
+  hạn mức của môn Toán/Lý/Hoá bị chặn giống hệt tiếng Anh khi hết lượt · admin bật `enforced = false`
+  cho một môn thì môn đó không bị chặn nhưng vẫn ghi đủ dòng vào `usage_events`. Test webhook khớp
+  đúng với **cả hai** tiền tố, kể cả một mã đơn `ENVI…` cũ có thật trong bảng `payments`. Chạy thật
+  một giao dịch SePay số tiền nhỏ bằng nội dung `DHCB…`.
 
 ### PR-5b — Chuyển bảng dữ liệu học sang schema `english` ⚠️ có migration
 

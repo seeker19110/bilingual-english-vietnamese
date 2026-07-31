@@ -112,6 +112,8 @@ _(Đoạn này đã bị sửa cùng ngày — xem mục bổ sung 7.)_
 **Việc tiếp theo**
 
 1. Đặc tả chi tiết GĐ1 (file phải di chuyển, migration cụ thể, kế hoạch test hồi quy).
+2. Thi hành GĐ1 theo từng PR nhỏ, mỗi PR một thay đổi logic, không kèm tính năng mới.
+3. Nâng VPS trước khi bắt đầu GĐ2 (Toán).
 
 ---
 
@@ -159,4 +161,24 @@ hai đều **không** làm phiền người dùng thật:
    cần deploy.
 
 Rate limit kỹ thuật chống spam theo IP/token (`api/_lib/security.ts`) **vẫn áp cho mọi môn** — đó là
-bảo vệ hạ tầng, khác với hạn mức nghiệp vụ, và không được tắt. 2. Thi hành GĐ1 theo từng PR nhỏ, mỗi PR một thay đổi logic, không kèm tính năng mới. 3. Nâng VPS trước khi bắt đầu GĐ2 (Toán).
+bảo vệ hạ tầng, khác với hạn mức nghiệp vụ, và không được tắt.
+
+**8. ĐẢO LẠI mục 7 (2026-07-31, cùng ngày): hạn mức lượt AI các môn khác áp dụng BẰNG môn tiếng Anh.**
+Quyết định mới nhất của chủ dự án — mục 7 ở trên **không còn hiệu lực**, giữ lại nguyên văn chỉ để
+biết đã từng cân nhắc phương án "không giới hạn" và tại sao đổi ý (an toàn chi phí hơn).
+
+- Mọi môn (`english`, `math`, `ly`, `hoa`, …) dùng **chung một bộ hạn mức** — cùng cơ chế cửa sổ
+  trượt 7 ngày cho Free, cùng hạn mức ngày cho Pro/VIP như tiếng Anh hiện có.
+- Hạn mức là **kho chung theo người dùng**, không cộng dồn theo môn (khớp lại với ý ban đầu ở
+  quyết định 3: "một tài khoản, một gói cước dùng cho mọi môn").
+- Bảng `subject_limits(subject, enforced)` ở mục 7 **vẫn giữ lại** nhưng đổi giá trị mặc định:
+  mọi môn `enforced = true` ngay từ đầu. Bảng này vẫn có ích làm phanh tay — nếu môn nào cần nới
+  tạm thời (ví dụ giai đoạn ra mắt), admin bật `enforced = false` cho riêng môn đó, không cần deploy.
+- `usage_events` vẫn đếm theo `(user_id, day, subject, mode)`, nhưng khi tính "còn bao nhiêu lượt
+  hôm nay" của Free thì **cộng gộp mọi `subject`** của user trong ngày/cửa sổ trượt, không tách riêng
+  theo môn — đúng nghĩa "kho chung".
+
+**Vì sao đổi:** để hạn mức "không giới hạn" (mục 7) là chấp nhận rủi ro chi phí AI không trần cho một
+tính năng đang thử nghiệm; chủ dự án thấy dùng cùng hạn mức đã kiểm chứng với tiếng Anh an toàn hơn
+và nhất quán hơn với nguyên tắc "một gói cho mọi môn" đã đặt ra từ đầu, và có thể nới sau bằng
+`subject_limits` khi thật sự cần chứ không mặc định mở toang.
