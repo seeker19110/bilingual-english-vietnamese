@@ -210,6 +210,23 @@ sudo cp -a /tmp/restored/nginx/. /etc/nginx/              # khôi phục riêng 
 sudo crontab -u postgres /tmp/restored/crontab/postgres.txt  # khôi phục riêng crontab (nếu cần)
 ```
 
+### 7.5 Khôi phục TẤT CẢ cùng lúc (VPS mới dựng lại từ đầu)
+
+`scripts/restore-all-from-r2.ts` (`npm run restore:all`) gọi tuần tự cả 3 lệnh trên (không viết lại
+logic, chỉ gộp lời gọi) — dùng khi VPS hỏng hẳn, cần khôi phục nhanh thay vì gõ tay 3 lệnh riêng.
+
+```bash
+# An toàn — chỉ TẢI VỀ, không đụng database/Nginx/crontab nào:
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run restore:all
+
+# Kèm khôi phục THẬT Postgres (DROP + tạo lại database đích — cần RESTORE_PSQL_URL trong .env):
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run restore:all -- --restore-into english_tutor --yes
+```
+
+Dù chạy gộp, phần Nginx/crontab vẫn phải tự khôi phục TỪNG PHẦN theo hướng dẫn mục 7.4 (script chỉ
+tải về + giải mã, không tự ghi đè `/etc/nginx` hay crontab — tránh phá cấu hình đang chạy nếu chỉ
+cần khôi phục 1 phần).
+
 ## 8. Xác nhận hoàn tất Giai đoạn A
 
 Báo lại kết quả các bước trên (đặc biệt bước 6 — `npm run migrate:pg` chạy thành

@@ -45,6 +45,7 @@
     "restore:env": "tsx scripts/restore-env-from-r2.ts",
     "backup:system": "tsx scripts/backup-system-to-r2.ts",
     "restore:system": "tsx scripts/restore-system-from-r2.ts",
+    "restore:all": "tsx scripts/restore-all-from-r2.ts",
     "loadtest:k6": "k6 run scripts/load-test/k6-baseline.js",
     "prepare": "husky"
   },
