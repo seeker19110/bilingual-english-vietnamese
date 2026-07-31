@@ -6,7 +6,7 @@ import { useRef, useState } from 'react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import AvatarSpeaking from '../components/AvatarSpeaking'
-import { ensureAudioBuffer, bufferToBlobUrl, DEFAULT_VOICE } from '../lib/tts'
+import { ensureAudioWithTimeline, bufferToBlobUrl, DEFAULT_VOICE } from '../lib/tts'
 import {
   fallbackWordVisemes,
   framesFromWordVisemes,
@@ -49,20 +49,34 @@ export default function AvatarDemo() {
     setLoading(true)
     try {
       const words = DEMO_SENTENCE.split(/\s+/).filter(Boolean)
-      const [buffer, wordVisemes] = await Promise.all([
-        ensureAudioBuffer(DEMO_SENTENCE, 'en-US', DEFAULT_VOICE),
-        fetchWordVisemes(DEMO_SENTENCE),
-      ])
+      // `timeline` từ server là mốc thời gian THẬT (giọng ElevenLabs, xem
+      // api/_lib/visemeTimeline.ts) — chính xác hơn hẳn cách ước lượng bên dưới. Chỉ khi
+      // không có mới cần hỏi phoneme rồi chia đều thời lượng như trước.
+      const { buffer, timeline: serverTimeline } = await ensureAudioWithTimeline(
+        DEMO_SENTENCE,
+        'en-US',
+        DEFAULT_VOICE,
+      )
+      const wordVisemes = serverTimeline ? null : await fetchWordVisemes(DEMO_SENTENCE)
       const blobUrl = bufferToBlobUrl(buffer)
 
       const audio = audioRef.current ?? new Audio()
       audioRef.current = audio
       audio.src = blobUrl
 
-      audio.onloadedmetadata = () => {
-        const durationMs = audio.duration * 1000
-        const frames = framesFromWordVisemes(wordVisemes ?? fallbackWordVisemes(words), durationMs)
-        setTimeline(frames)
+      if (serverTimeline && serverTimeline.length > 0) {
+        setTimeline(serverTimeline)
+        audio.onloadedmetadata = null
+      } else {
+        // Ước lượng cần biết thời lượng audio thật → phải đợi metadata tải xong.
+        audio.onloadedmetadata = () => {
+          const durationMs = audio.duration * 1000
+          const frames = framesFromWordVisemes(
+            wordVisemes ?? fallbackWordVisemes(words),
+            durationMs,
+          )
+          setTimeline(frames)
+        }
       }
       audio.onended = () => {
         setIsPlaying(false)
@@ -89,7 +103,7 @@ export default function AvatarDemo() {
       <main className="max-w-lg mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
         <PageHeader
           title="PoC — Avatar AI nói chuyện"
-          subtitle="Demo nội bộ: mô phỏng khẩu hình theo audio TTS (ước lượng, chưa chính xác theo phoneme thật)"
+          subtitle="Demo nội bộ: khẩu hình theo audio TTS — dùng mốc thời gian thật nếu giọng hỗ trợ, không thì ước lượng"
         />
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 flex flex-col items-center gap-5">
           <AvatarSpeaking audioEl={audioRef.current} timeline={timeline} isPlaying={isPlaying} />
