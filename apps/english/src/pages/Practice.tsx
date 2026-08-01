@@ -1164,6 +1164,15 @@ export default function Practice() {
 
   const listening = [
     {
+      key: 'listening-library',
+      icon: Headphones,
+      title: isA ? 'Thư viện Nghe' : 'Listening library',
+      desc: isA
+        ? 'Câu thông dụng, hội thoại, truyện cổ tích & ngụ ngôn — nghe hiểu, không chấm điểm'
+        : 'Phrases, dialogues, fairy tales & fables — listen for understanding, no scoring',
+      action: () => nav('/listening'),
+    },
+    {
       key: 'vocab-listen',
       icon: Headphones,
       title: isA ? 'Nghe đoán từ vựng' : 'Listen & guess vocab',

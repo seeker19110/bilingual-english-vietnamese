@@ -175,6 +175,25 @@ export const t = {
     // Parts of speech
     posPageTitle: 'Từ loại',
     posPageSub: 'Danh từ, động từ, tính từ và nhiều hơn nữa',
+
+    // Trang Nghe (/listening)
+    navListening: 'Nghe',
+    listeningPageTitle: 'Nghe',
+    listeningPageSub: 'Câu thông dụng · Hội thoại · Truyện cổ tích · Truyện ngụ ngôn',
+    tabPhrases: 'Câu thông dụng',
+    tabDialogues: 'Hội thoại',
+    tabFairyTales: 'Truyện cổ tích',
+    tabFables: 'Truyện ngụ ngôn',
+    showTranslation: 'Hiện bản dịch',
+    hideTranslation: 'Ẩn bản dịch',
+    playAllLabel: 'Phát tất cả',
+    playWholeStory: 'Phát cả truyện',
+    playWholeDialogue: 'Phát cả hội thoại',
+    moralLabel: 'Bài học rút ra',
+    sourceLabel: 'Nguồn',
+    filterCountry: 'Quốc gia',
+    storyNotFound: 'Không tìm thấy truyện này.',
+    otherGroupLabel: 'Khác',
   },
 
   en: {
@@ -351,6 +370,25 @@ export const t = {
     // Parts of speech
     posPageTitle: 'Parts of Speech',
     posPageSub: 'Nouns, verbs, adjectives and more',
+
+    // Listening page (/listening)
+    navListening: 'Listening',
+    listeningPageTitle: 'Listening',
+    listeningPageSub: 'Common phrases · Conversations · Fairy tales · Fables',
+    tabPhrases: 'Common phrases',
+    tabDialogues: 'Conversations',
+    tabFairyTales: 'Fairy tales',
+    tabFables: 'Fables',
+    showTranslation: 'Show translation',
+    hideTranslation: 'Hide translation',
+    playAllLabel: 'Play all',
+    playWholeStory: 'Play whole story',
+    playWholeDialogue: 'Play whole conversation',
+    moralLabel: 'Moral of the story',
+    sourceLabel: 'Source',
+    filterCountry: 'Country',
+    storyNotFound: 'Story not found.',
+    otherGroupLabel: 'Other',
   },
 }
 
