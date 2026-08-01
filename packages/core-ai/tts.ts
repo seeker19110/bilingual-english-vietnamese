@@ -64,6 +64,79 @@ function isValidLang(value: string): value is Lang {
   return VALID_LANGS.includes(value as Lang)
 }
 
+// ── Khoá "claim" chống race condition khi nhiều request cùng cache-miss 1 hash ──────────────
+// Trước đây mỗi request cache-miss tự gọi Google TTS + mã hoá + lưu ĐỘC LẬP — nhiều request
+// đồng thời cho CÙNG 1 câu vừa tốn tiền API lặp lại, vừa khiến (khoá, iv) suy ra từ hash trong
+// ttsCrypto.ts bị dùng để mã hoá nhiều audio bytes khác nhau (tái sử dụng nonce — lỗi bảo mật
+// AES-GCM). Bảng public.tts_cache_pending (migration 0031) dùng làm khoá: request nào INSERT
+// thành công là "leader" (đi sinh audio), thua thì là "follower" (chờ rồi đọc lại tts_cache).
+const TTS_CLAIM_STALE_MS = 30_000 // leader trước bị crash/treo giữa chừng -> coi khoá hết hạn
+const TTS_CLAIM_POLL_MS = 300
+const TTS_CLAIM_MAX_WAIT_MS = 20_000 // follower chờ quá lâu -> tự làm leader (fallback hiếm gặp)
+
+type TtsClaim =
+  { role: 'leader' } | { role: 'cached'; audioUrl: string; visemeTimeline: VisemeFrame[] | null }
+
+async function claimTtsGeneration(
+  pool: ReturnType<typeof getPgPool>,
+  hash: string,
+): Promise<TtsClaim> {
+  const deadline = Date.now() + TTS_CLAIM_MAX_WAIT_MS
+  for (;;) {
+    const { rows: claimedRows } = await pool.query<{ hash: string }>(
+      `insert into public.tts_cache_pending (hash) values ($1)
+       on conflict (hash) do nothing
+       returning hash`,
+      [hash],
+    )
+    if (claimedRows[0]) return { role: 'leader' }
+
+    // Thua claim — người khác đang sinh audio (hoặc dòng khoá cũ bị treo do leader trước
+    // crash giữa chừng, không kịp xoá). Kiểm tra tuổi dòng khoá để phân biệt 2 trường hợp.
+    const { rows: pendingRows } = await pool.query<{ created_at: string }>(
+      'select created_at from public.tts_cache_pending where hash = $1',
+      [hash],
+    )
+    const pendingCreatedAt = pendingRows[0]?.created_at
+    const pendingAgeMs = pendingCreatedAt
+      ? Date.now() - new Date(pendingCreatedAt).getTime()
+      : Infinity
+
+    if (pendingAgeMs > TTS_CLAIM_STALE_MS) {
+      // Khoá cũ đã hết hạn — dọn rồi vòng lặp tự thử claim lại (điều kiện created_at khớp
+      // tránh xoá nhầm dòng khoá MỚI nếu có leader khác vừa claim lại đúng lúc).
+      await pool
+        .query('delete from public.tts_cache_pending where hash = $1 and created_at = $2', [
+          hash,
+          pendingCreatedAt,
+        ])
+        .catch((err: unknown) => console.warn('[tts] dọn khoá cache hết hạn lỗi:', err))
+      continue
+    }
+
+    // Khoá còn hợp lệ — kiểm tra xem leader đã sinh xong audio chưa (có thể xong đúng lúc ta
+    // vừa claim thua).
+    const { rows: cachedRows } = await pool.query<{
+      audio_url: string
+      viseme_timeline: VisemeFrame[] | null
+    }>('select audio_url, viseme_timeline from public.tts_cache where hash = $1', [hash])
+    if (cachedRows[0]?.audio_url) {
+      return {
+        role: 'cached',
+        audioUrl: cachedRows[0].audio_url,
+        visemeTimeline: cachedRows[0].viseme_timeline ?? null,
+      }
+    }
+
+    if (Date.now() > deadline) {
+      // Chờ quá lâu (leader bất thường chậm) — tự làm leader luôn thay vì bắt người dùng chờ
+      // vô hạn. Chấp nhận rủi ro hiếm là sinh trùng audio 1 lần, còn hơn treo response.
+      return { role: 'leader' }
+    }
+    await new Promise((resolve) => setTimeout(resolve, TTS_CLAIM_POLL_MS))
+  }
+}
+
 const TtsBodySchema = z.object({
   text: z
     .string({ error: 'Thiếu text' })
@@ -184,6 +257,13 @@ export default async function handler(req: Request): Promise<Response> {
   // Giọng ElevenLabs KHÔNG nhận tham số lang (audio giống hệt nhau bất kể lang — provider tự
   // nhận diện ngôn ngữ), nên bỏ `lang` khỏi hash để câu đọc bằng 2 lang khác nhau dùng chung
   // 1 cache thay vì tạo/lưu 2 file audio giống hệt nhau.
+  // LƯU Ý: nối chuỗi trực tiếp (không delimiter) — GIỮ NGUYÊN có chủ đích, dù về lý thuyết có
+  // thể nhầm ranh giới các phần. Đổi công thức hash sẽ làm TOÀN BỘ cache hiện có trên production
+  // mất hiệu lực (hash cũ không khớp hash mới) và lệch với 2 script seed tính hash riêng
+  // (scripts/seed-all.ts, scripts/prefetch-tts-patterns.ts) — cái giá đổi quá lớn so với rủi ro
+  // va chạm gần như không thể xảy ra trong thực tế (voice/lang là enum cố định, không phải
+  // input tự do). Nếu thật sự cần đổi, phải làm kèm migration remap hash (đã có sẵn
+  // decryptAudio() để hỗ trợ remap, xem ttsCrypto.ts) và cập nhật ĐỒNG BỘ cả 2 script seed.
   const hashLangPart = isValidElevenVoice(voice) ? '' : lang
   const textHash = await hashText(text + hashLangPart + voice + VOICE_VERSION)
 
@@ -215,118 +295,156 @@ export default async function handler(req: Request): Promise<Response> {
     )
   }
 
-  // ── BƯỚC 2: Cache MISS → gọi Google TTS ────────────────────────────────────
-  // Bộ đếm RIÊNG cho đường tạo audio mới (tốn tiền API): 60 lần/phút mỗi IP.
-  // Mục đích của việc TÁCH bucket (không phải đặt hạn mức thấp hơn): cách ly đường tốn
-  // tiền khỏi lưu lượng cache HIT (gần như miễn phí) — nhờ đó phát cả bài học đã cache
-  // hay tra nhiều từ vẫn mượt, mà mỗi IP không thể tạo quá 60 audio MỚI/phút (chặn vòng
-  // lặp lỗi làm cháy hạn mức Google TTS). Giữ 60 để lần đầu "Phát tất cả" một bài học
-  // chưa cache (chế độ EN+VI ~16 câu × 2 giọng) không bị chặn giữa chừng.
-  if (!(await checkRateLimit(clientIp, 60, 'tts-gen'))) {
-    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/tts', stage: 'generate' })
+  // ── BƯỚC 1.5: Giành quyền sinh audio cho hash này (chống race condition) ────────────────
+  // Request khác đang/đã sinh xong audio cho CÙNG câu này → trả luôn kết quả cache, không
+  // gọi Google TTS lần nữa.
+  const claim = await claimTtsGeneration(pool, textHash)
+  if (claim.role === 'cached') {
+    void pool
+      .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
+      .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
+    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
     return jsonResponse(
-      { error: 'Quá nhiều yêu cầu tạo audio mới — thử lại sau 1 phút' },
-      429,
+      {
+        audio_url: claim.audioUrl,
+        key_b64,
+        iv_b64,
+        cached: true,
+        viseme_timeline: claim.visemeTimeline,
+      },
+      200,
       allHeaders,
     )
   }
 
-  // Giọng ElevenLabs (VIP) dùng provider khác hẳn Google — text đọc y nguyên, provider
-  // tự nhận diện ngôn ngữ qua model đa ngôn ngữ nên không cần truyền `lang`. Giọng Studio
-  // vẫn là Google Cloud TTS nhưng lang luôn 'en-US' (đã clamp ở trên).
-  const providerLabel = isValidElevenVoice(voice)
-    ? 'ElevenLabs'
-    : isValidStudioVoice(voice)
-      ? 'Google Studio'
-      : 'Google'
-
-  let audioData: ArrayBuffer
-  // Timeline khẩu hình THẬT — chỉ có với giọng ElevenLabs (endpoint /with-timestamps trả mốc
-  // thời gian từng ký tự). Giọng Google Chirp3-HD không hỗ trợ SSML nên không có timepoint;
-  // những giọng đó giữ nguyên cách client tự ước lượng.
-  let visemeTimeline: VisemeFrame[] | null = null
+  // Từ đây là "leader" — PHẢI xoá dòng khoá tts_cache_pending dù thành công hay lỗi, không
+  // thì các request khác cho cùng câu này bị chặn tới khi hết hạn TTS_CLAIM_STALE_MS.
   try {
-    if (isValidElevenVoice(voice)) {
-      const result = await withConcurrencyLimit('elevenlabs', () =>
-        generateAudioFromElevenLabs(text),
+    // ── BƯỚC 2: Cache MISS → gọi Google TTS ──────────────────────────────────
+    // Bộ đếm RIÊNG cho đường tạo audio mới (tốn tiền API): 60 lần/phút mỗi IP.
+    // Mục đích của việc TÁCH bucket (không phải đặt hạn mức thấp hơn): cách ly đường tốn
+    // tiền khỏi lưu lượng cache HIT (gần như miễn phí) — nhờ đó phát cả bài học đã cache
+    // hay tra nhiều từ vẫn mượt, mà mỗi IP không thể tạo quá 60 audio MỚI/phút (chặn vòng
+    // lặp lỗi làm cháy hạn mức Google TTS). Giữ 60 để lần đầu "Phát tất cả" một bài học
+    // chưa cache (chế độ EN+VI ~16 câu × 2 giọng) không bị chặn giữa chừng.
+    if (!(await checkRateLimit(clientIp, 60, 'tts-gen'))) {
+      logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/tts', stage: 'generate' })
+      return jsonResponse(
+        { error: 'Quá nhiều yêu cầu tạo audio mới — thử lại sau 1 phút' },
+        429,
+        allHeaders,
       )
-      audioData = result.audio
-      if (result.alignment) {
-        // Dựng timeline KHÔNG được phép làm hỏng việc tạo audio: eSpeak-ng có thể chưa cài trên
-        // VPS, hoặc số token phoneme không khớp số từ. Lỗi ở đây chỉ mất phần đồng bộ khẩu hình.
-        visemeTimeline = await visemeTimelineFromAlignment(result.alignment, lang).catch(
-          (err: unknown) => {
-            console.warn('[tts] Dựng viseme timeline lỗi, bỏ qua:', err)
-            return null
+    }
+
+    // Giọng ElevenLabs (VIP) dùng provider khác hẳn Google — text đọc y nguyên, provider
+    // tự nhận diện ngôn ngữ qua model đa ngôn ngữ nên không cần truyền `lang`. Giọng Studio
+    // vẫn là Google Cloud TTS nhưng lang luôn 'en-US' (đã clamp ở trên).
+    const providerLabel = isValidElevenVoice(voice)
+      ? 'ElevenLabs'
+      : isValidStudioVoice(voice)
+        ? 'Google Studio'
+        : 'Google'
+
+    let audioData: ArrayBuffer
+    // Timeline khẩu hình THẬT — chỉ có với giọng ElevenLabs (endpoint /with-timestamps trả mốc
+    // thời gian từng ký tự). Giọng Google Chirp3-HD không hỗ trợ SSML nên không có timepoint;
+    // những giọng đó giữ nguyên cách client tự ước lượng.
+    let visemeTimeline: VisemeFrame[] | null = null
+    try {
+      if (isValidElevenVoice(voice)) {
+        const result = await withConcurrencyLimit('elevenlabs', () =>
+          generateAudioFromElevenLabs(text),
+        )
+        audioData = result.audio
+        if (result.alignment) {
+          // Dựng timeline KHÔNG được phép làm hỏng việc tạo audio: eSpeak-ng có thể chưa cài trên
+          // VPS, hoặc số token phoneme không khớp số từ. Lỗi ở đây chỉ mất phần đồng bộ khẩu hình.
+          visemeTimeline = await visemeTimelineFromAlignment(result.alignment, lang).catch(
+            (err: unknown) => {
+              console.warn('[tts] Dựng viseme timeline lỗi, bỏ qua:', err)
+              return null
+            },
+          )
+        }
+      } else if (isValidStudioVoice(voice)) {
+        audioData = await withConcurrencyLimit('google-tts-studio', () =>
+          generateStudioAudioFromGoogle(text, voice),
+        )
+      } else {
+        audioData = await withConcurrencyLimit('google-tts', () =>
+          generateAudioFromGoogle(text, voice, lang),
+        )
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      // 429 = hết quota Google TTS. Đây là tình huống VẬN HÀNH (cần nâng quota/bật billing),
+      // không phải bug code → log GỌN 1 dòng (tránh spam stack trace), trả 503 + Retry-After
+      // để client biết tạm thời và tự fallback sang Web Speech. Lỗi khác mới log full + 500.
+      const isQuota = /\(429\)|RESOURCE_EXHAUSTED|quota/i.test(msg)
+      if (isQuota) {
+        console.warn('[tts] Google TTS hết quota (429) — client sẽ fallback Web Speech')
+        return jsonResponse(
+          { error: 'Dịch vụ giọng đọc tạm quá tải — thử lại sau', fallback: true },
+          503,
+          {
+            ...allHeaders,
+            'Retry-After': '60',
           },
         )
       }
-    } else if (isValidStudioVoice(voice)) {
-      audioData = await withConcurrencyLimit('google-tts-studio', () =>
-        generateStudioAudioFromGoogle(text, voice),
+      console.error(`[tts] ${providerLabel} TTS generation failed:`, err)
+      return jsonResponse({ error: 'Không thể tạo audio — thử lại sau' }, 500, allHeaders)
+    }
+
+    // ── BƯỚC 3: Mã hóa AES-256-GCM rồi lưu file (local VPS hoặc Cloudflare R2 tùy
+    // STORAGE_DRIVER) ── Mã hóa TRƯỚC khi lưu — file luôn là ciphertext, không phải mp3 gốc.
+    // An toàn với nonce AES-GCM: nhờ claimTtsGeneration() ở trên, chỉ 1 request (leader)
+    // encryptAudio() cho mỗi hash — không còn 2 request đồng thời mã hoá 2 audio bytes khác
+    // nhau bằng cùng 1 (khoá, iv) suy ra từ hash.
+    const encryptedData = await encryptAudio(audioData, textHash)
+    const fileName = `${lang}/${voice}/${textHash}.mp3`
+    const origin = req.headers.get('origin') || ''
+
+    let audioUrl: string
+    try {
+      audioUrl = await saveAudio('tts-cache', fileName, encryptedData, origin)
+    } catch (err) {
+      console.error('[tts] Audio save failed:', err)
+      return jsonResponse({ error: 'Không thể lưu audio — thử lại sau' }, 500, allHeaders)
+    }
+
+    // ── BƯỚC 4: Lưu vào DB ───────────────────────────────────────────────────
+    try {
+      await pool.query(
+        `insert into public.tts_cache (hash, lang, voice, audio_url, viseme_timeline, last_accessed_at)
+         values ($1, $2, $3, $4, $5, now())
+         on conflict (hash) do update set
+           lang = excluded.lang, voice = excluded.voice, audio_url = excluded.audio_url,
+           viseme_timeline = excluded.viseme_timeline,
+           last_accessed_at = now()`,
+        [textHash, lang, voice, audioUrl, visemeTimeline ? JSON.stringify(visemeTimeline) : null],
       )
-    } else {
-      audioData = await withConcurrencyLimit('google-tts', () =>
-        generateAudioFromGoogle(text, voice, lang),
+    } catch (err) {
+      // Audio ĐÃ tạo + lưu file thành công (không mất tiền), chỉ mất bản ghi cache — lần sau
+      // gọi lại câu này sẽ cache-miss và tốn phí Google TTS lần nữa. Log kèm hash để dò khi
+      // có nhiều lỗi liên tiếp (nghi Postgres có sự cố) thay vì chỉ 1 dòng chung chung.
+      console.error(
+        `[tts] Lỗi lưu tts_cache (hash=${textHash}):`,
+        err instanceof Error ? err.message : err,
       )
     }
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err)
-    // 429 = hết quota Google TTS. Đây là tình huống VẬN HÀNH (cần nâng quota/bật billing),
-    // không phải bug code → log GỌN 1 dòng (tránh spam stack trace), trả 503 + Retry-After
-    // để client biết tạm thời và tự fallback sang Web Speech. Lỗi khác mới log full + 500.
-    const isQuota = /\(429\)|RESOURCE_EXHAUSTED|quota/i.test(msg)
-    if (isQuota) {
-      console.warn('[tts] Google TTS hết quota (429) — client sẽ fallback Web Speech')
-      return jsonResponse(
-        { error: 'Dịch vụ giọng đọc tạm quá tải — thử lại sau', fallback: true },
-        503,
-        {
-          ...allHeaders,
-          'Retry-After': '60',
-        },
-      )
-    }
-    console.error(`[tts] ${providerLabel} TTS generation failed:`, err)
-    return jsonResponse({ error: 'Không thể tạo audio — thử lại sau' }, 500, allHeaders)
-  }
 
-  // ── BƯỚC 3: Mã hóa AES-256-GCM rồi lưu file (local VPS hoặc Cloudflare R2 tùy
-  // STORAGE_DRIVER) ── Mã hóa TRƯỚC khi lưu — file luôn là ciphertext, không phải mp3 gốc.
-  const encryptedData = await encryptAudio(audioData, textHash)
-  const fileName = `${lang}/${voice}/${textHash}.mp3`
-  const origin = req.headers.get('origin') || ''
-
-  let audioUrl: string
-  try {
-    audioUrl = await saveAudio('tts-cache', fileName, encryptedData, origin)
-  } catch (err) {
-    console.error('[tts] Audio save failed:', err)
-    return jsonResponse({ error: 'Không thể lưu audio — thử lại sau' }, 500, allHeaders)
-  }
-
-  // ── BƯỚC 4: Lưu vào DB ─────────────────────────────────────────────────────
-
-  try {
-    await pool.query(
-      `insert into public.tts_cache (hash, lang, voice, audio_url, viseme_timeline, last_accessed_at)
-       values ($1, $2, $3, $4, $5, now())
-       on conflict (hash) do update set
-         lang = excluded.lang, voice = excluded.voice, audio_url = excluded.audio_url,
-         viseme_timeline = excluded.viseme_timeline,
-         last_accessed_at = now()`,
-      [textHash, lang, voice, audioUrl, visemeTimeline ? JSON.stringify(visemeTimeline) : null],
+    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
+    return jsonResponse(
+      { audio_url: audioUrl, key_b64, iv_b64, cached: false, viseme_timeline: visemeTimeline },
+      200,
+      allHeaders,
     )
-  } catch (err) {
-    console.error('Lỗi lưu tts_cache:', err instanceof Error ? err.message : err)
+  } finally {
+    await pool
+      .query('delete from public.tts_cache_pending where hash = $1', [textHash])
+      .catch((err: unknown) => console.warn('[tts] xoá khoá tts_cache_pending lỗi:', err))
   }
-
-  const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
-  return jsonResponse(
-    { audio_url: audioUrl, key_b64, iv_b64, cached: false, viseme_timeline: visemeTimeline },
-    200,
-    allHeaders,
-  )
 }
 
 export const config = { runtime: 'edge' }

@@ -461,6 +461,14 @@ df -h                                            # ổ cứng tổng thể
 
 ---
 
+## Dọn cache TTS thừa (audio không còn từ/dòng nào dùng)
+
+Audio cache (bảng `tts_cache`) không tự hết hạn theo thời gian — CHỈ xoá khi câu đó không còn
+nằm trong bất kỳ từ vựng/bài học/cụm từ nào của app nữa (vd. xoá bớt nội dung, đổi giọng), KHÔNG
+xoá theo "lâu không ai nghe" (nội dung đang dùng phải giữ vô thời hạn). Dùng
+`npm run seed:all -- --verify --clean-orphans --yes` — đối chiếu 2 chiều với dữ liệu thật rồi
+mới xoá, xem chi tiết `docs/seed-guide.md` mục dọn dẹp orphan.
+
 ## Backup
 
 Audio cache **có thể tạo lại** bằng script seed (chỉ tốn thêm Google TTS quota).
