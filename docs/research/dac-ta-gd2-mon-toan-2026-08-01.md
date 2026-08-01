@@ -69,20 +69,36 @@
 > liệu). Đề xuất làm **sau cùng** hoặc tách thành nhánh nghiên cứu UX riêng trước khi cam kết lịch
 > — không đoán trước cách làm ở đặc tả này, sẽ viết đặc tả con riêng cho đợt 2c khi tới lượt.
 
-### 2.1a Đợt 2a — 12 chủ đề cấp 2 (giữ nguyên bản gốc, đã chốt kỹ thuật)
+### 2.1a Đợt 2a — 12 chủ đề cấp 2 (**CHỐT theo SGK thật, 2026-08-01**)
 
-Bám khung chương trình GDPT 2018 môn Toán THCS, ưu tiên chủ đề **chấm tự động được bằng đáp số/biểu thức** (loại các chủ đề cần chứng minh hình học dài dòng ở đợt này):
+> ✅ **Không còn là phỏng đoán.** Danh sách dưới đây chọn lại sau khi trích mục lục thật của 8 tập
+> SGK "Kết nối tri thức" (Toán 6-9) — xem `docs/research/muc-luc-sgk/toan-6..9.md` và nhật ký đối
+> chiếu ở `kho-kien-thuc-toan-gdpt2018.md` §8.
 
-| Lớp | 3 chủ đề đợt 2a                                                          |
-| --- | ------------------------------------------------------------------------ |
-| 6   | Số tự nhiên & phép tính · Phân số · Số nguyên                            |
-| 7   | Số hữu tỉ · Biểu thức đại số đơn giản · Tỉ lệ thức                       |
-| 8   | Phương trình bậc nhất một ẩn · Hằng đẳng thức đáng nhớ · Hàm số bậc nhất |
-| 9   | Phương trình bậc hai · Hệ phương trình bậc nhất hai ẩn · Căn bậc hai     |
+Tiêu chí chọn (theo `huong-dan-doi-chieu-sgk.md` Bước 4): (1) **chấm tự động được** — cột ✅ ở mục
+lục; (2) là **trọng tâm** của lớp theo SGK (chiếm cả một chương, nhiều bài luyện tập chung);
+(3) có **`prerequisites` rõ ràng**.
 
-> Chốt danh sách này với người dùng trước khi viết template đề (§2.2) — có thể đổi thứ tự/chủ đề
-> nếu người dùng có ưu tiên khác. Danh sách chủ đề của 2b/2c/2d **để ngỏ, chốt khi tới lượt từng
-> đợt** — tránh soạn trước nội dung rồi phải sửa lại khi đợt 2a đúc kết bài học thật.
+| Lớp | 3 chủ đề đợt 2a                                                                            | Chương tương ứng trong SGK             |
+| --- | ------------------------------------------------------------------------------------------ | -------------------------------------- |
+| 6   | Số tự nhiên & phép tính · Số nguyên · Phân số                                              | I + II · III · VI                      |
+| 7   | Số hữu tỉ · Tỉ lệ thức & đại lượng tỉ lệ · Đa thức một biến                                | I · VI · VII                           |
+| 8   | Hằng đẳng thức đáng nhớ · Phương trình bậc nhất một ẩn · Hàm số bậc nhất                   | II · VII (Bài 25-26) · VII (Bài 27-29) |
+| 9   | Căn bậc hai & căn bậc ba · Hệ phương trình bậc nhất hai ẩn · Phương trình bậc hai và Viète | III (T1) · I (T1) · VI (T2)            |
+
+**Thay đổi so với bản phỏng đoán cũ** (2 mục):
+
+| Lớp | Cũ                                 | Mới                                                                      | Lý do theo SGK                                                                                                                                                                 |
+| --- | ---------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 7   | Biểu thức đại số đơn giản          | **Đa thức một biến**                                                     | Chương VII dành **5 bài** cho đa thức một biến (Bài 25-28 + luyện tập), chỉ **1 bài** cho biểu thức đại số → đa thức mới là trọng tâm; biểu thức đại số trở thành prerequisite |
+| 9   | Phương trình bậc hai · Căn bậc hai | **Phương trình bậc hai và định lí Viète** · **Căn bậc hai & căn bậc ba** | SGK dành hẳn Bài 20 cho **định lí Viète**, và Bài 10 cho **căn bậc ba** — mở rộng phạm vi cho khớp trọn chương                                                                 |
+
+Thứ tự trong bảng đã sắp **theo đúng trình tự dạy trên lớp** (tập một trước tập hai) để dựng lộ
+trình khớp bài học sinh đang học.
+
+> Danh sách chủ đề của 2b/2c/2d **để ngỏ, chốt khi tới lượt từng đợt** — tránh soạn trước nội dung
+> rồi phải sửa lại khi đợt 2a đúc kết bài học thật. Với 2b/2d còn phải đối chiếu SGK Toán 1-5 và
+> 10-12 (chưa có trong `tai-lieu-sgk/`).
 
 ### 2.2 Tính năng MVP (theo đúng khung ở kế hoạch tổng §4 GĐ2)
 
