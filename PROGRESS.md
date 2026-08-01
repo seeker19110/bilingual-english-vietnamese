@@ -17,6 +17,50 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+## GĐ2 (nền tảng đa môn) — đang chuẩn bị nội dung & engine
+
+**[2026-08-01] Đặc tả GĐ2 + kho kiến thức 4 môn + ENGINE CHẤM đã có code chạy.**
+
+- **Phạm vi GĐ2 mở rộng theo yêu cầu người dùng:** không chỉ lớp 6-9 mà đủ **mầm non → cấp 3**.
+  Vì đây đúng rủi ro 🔴 cao nhất của kế hoạch tổng ("phình phạm vi"), chia **4 đợt có cổng ra
+  riêng**: 2a cấp 2 → 2b cấp 1 → 2c mầm non → 2d cấp 3. Đợt sau chỉ mở khi đợt trước đạt cổng.
+  Đặc tả: `docs/research/dac-ta-gd2-mon-toan-2026-08-01.md` (9 PR cho đợt 2a).
+- **Kho kiến thức 4 môn** (bám GDPT 2018, chưa duyệt chuyên môn — **cổng bắt buộc trước khi đưa
+  vào `data/`**): `kho-kien-thuc-{toan,ly,hoa,sinh}-gdpt2018.md`.
+- **SGK thống nhất toàn quốc từ năm học 2026-2027** — bộ "Kết nối tri thức với cuộc sống". Đổi
+  giả định theo hướng TỐT hơn: trước phải viết trung lập giữa 3 bộ sách, nay bám được đúng thứ tự
+  bài học sinh học trên lớp. AI **không tải được SGK** (proxy sandbox chặn `taphuan.nxbgd.vn` —
+  `CONNECT tunnel failed 403`). **Đính chính:** hướng dẫn "đặt PDF vào `tai-lieu-sgk/`" KHÔNG dùng
+  được khi AI chạy từ xa — phiên chạy trong container cloud tạm thời, người dùng không copy file
+  vào được và container bị thu hồi sau phiên. Cách đúng: **đính kèm thẳng vào khung chat**, hoặc
+  chỉ gửi phần Mục lục, hoặc gõ lại danh sách tên bài. Thư mục `tai-lieu-sgk/` + `.gitignore` vẫn
+  giữ làm **hàng rào an toàn** chống lỡ tay commit tài liệu bản quyền. Có PDF vẫn KHÔNG được chép nội dung — chỉ lấy thứ tự bài +
+  danh mục công thức, đề/ví dụ tự soạn mới.
+- **✅ `packages/core-grading` — ENGINE CHẤM DÙNG CHUNG, ĐÃ VIẾT XONG + 74 test** (99% câu lệnh,
+  90,6% nhánh — cao hơn ngưỡng chung của repo vì chấm sai làm mất niềm tin người học ngay).
+  Đặc tả: `docs/research/dac-ta-engine-cham-dung-chung.md`. Không có AI trong luồng chấm; hàm
+  thuần, tất định, dùng chung cả client lẫn server.
+  - Đơn vị mô hình hoá bằng **vector thứ nguyên SI** → phân biệt được `WRONG_UNIT` (tính đúng, ghi
+    nhầm đơn vị) với `WRONG_DIMENSION` (hiểu sai đại lượng). Nhiệt độ có **độ lệch gốc** (°C→K).
+  - Chuẩn hoá số **theo lối viết Việt Nam**: `0,5`, `1.000` = một nghìn, `1,5.10^3`.
+  - So khớp biểu thức bằng **thăm dò số ngẫu nhiên seed cố định** thay vì CAS — nhẹ bundle, tất định.
+  - **Cân bằng PTHH** kiểm bằng vector nguyên tố + điện tích + tối giản, nêu đích danh nguyên tố lệch.
+  - **Bài học đo được bằng số:** ngưỡng dung sai môn Lý đặt 2% ở bản đặc tả đầu là SAI —
+    `10/9,8 − 1 = 2,04%` nên sẽ chấm oan học sinh dùng `g = 10`. Đã nâng lên **3%**, có test canh
+    gác chống đặt lại. Đúng lý do đặc tả bắt "đo bằng test thật, không đoán".
+- **3 quyết định kiến trúc đã chốt (người dùng duyệt 2026-08-01):**
+  1. **Mô hình `subject` cho KHTN: PA C** — môn cha `khtn` + cột `branch`
+     (`physics`/`chemistry`/`biology`). Lý/Hoá/Sinh KHÔNG là môn riêng ở THCS mà nằm trong môn tích
+     hợp KHTN, chỉ tách ở THPT → `subject` phẳng hiện tại không diễn tả được. **Thi hành khi bắt
+     đầu GĐ3**, không migration sớm.
+  2. **Thứ tự GĐ3: Hoá → Lý → Sinh** (không phải "Lý–Hoá" theo thói quen) — Hoá trước vì cân bằng
+     PTHH chấm chính xác tuyệt đối, tạo giá trị thấy ngay.
+  3. **Môn Sinh: PA B** — trắc nghiệm + SRS, KHÔNG xây engine chấm mới. Sinh chỉ ~15% dạng bài chấm
+     tự động được (Toán ~95%); bản chất gần với học từ vựng hơn là với Toán → tái dùng engine SRS
+     đã chạy tốt cho tiếng Anh.
+- **Việc kế tiếp:** chờ PDF SGK để đối chiếu lộ trình cấp 2 → chốt 12 chủ đề đợt 2a → PR-1 (soạn
+  1 bài học mẫu để duyệt định dạng) → PR-2 scaffold `apps/math`.
+
 ## Đã xong — tóm tắt theo mảng
 
 **Lõi sản phẩm (MVP → v2):** đăng nhập Supabase Auth · 3 chế độ Chat/Viết/Nói song ngữ (STT
