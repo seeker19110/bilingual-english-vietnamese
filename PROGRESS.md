@@ -38,19 +38,28 @@ trên VPS (xem "Cần làm tay").
   `kho-kien-thuc-toan-gdpt2018.md` phát hiện **24 mục lệch** (21 thiếu `[+]`, 2 sai vị trí `[≠]`,
   1 nghi vấn `[−]`, ghi ở §8 Nhật ký đối chiếu của file đó) — đáng chú ý nhất: thiếu hẳn chương
   bất đẳng thức/bất phương trình bậc nhất lớp 9, căn bậc hai dạy từ lớp 7 (không phải lớp 9), thiếu
-  chương tam giác đồng dạng (L8) và đường tròn nội/ngoại tiếp (L9). **5 điểm còn cần giáo viên
-  chuyên môn duyệt** (liệt kê ở §8.3 kho-kien-thuc-toan) — đáng chú ý: PDF Toán 9 đang có là **bản
-  mẫu thẩm định 2023**, chưa chắc khớp bản in chính thức 2026-2027, cần đối chiếu lại khi có bản
-  chính thức. 12 chủ đề đợt 2a đã chốt lại theo mục lục thật ở `dac-ta-gd2-mon-toan-2026-08-01.md`
-  §2.1a (trước đó là phỏng đoán).
+  chương tam giác đồng dạng (L8) và đường tròn nội/ngoại tiếp (L9). 12 chủ đề đợt 2a đã chốt lại
+  theo mục lục thật ở `dac-ta-gd2-mon-toan-2026-08-01.md` §2.1a (trước đó là phỏng đoán).
+  **✅ [2026-08-01, đợt đối chiếu LẠI] Người dùng thay bộ PDF cũ bằng bộ ẢNH SCAN ấn bản CHÍNH
+  THỨC** (8 thư mục PNG `tai-lieu-sgk/SGK-Toan/Toan 6-1/` … `Toan 9-2/`, OCR bằng script mới
+  `scripts/ocr-images.py`). Kết quả: **cả 4 lớp 6-9 KHÔNG đổi cấu trúc chương/bài** — 4 file mục
+  lục giữ nguyên bảng, chỉ thêm ghi chú xác nhận. **Bản Toán 9 KHÔNG còn là bản mẫu thẩm định**
+  (bìa không còn watermark "Bản mẫu"; Toán 6 ghi "Tái bản lần thứ năm") và 32 bài trùng khít bản
+  mẫu cũ ⇒ nghi ngờ "bản mẫu có thể khác bản in chính thức" **đã loại trừ**. Số mục lệch: **24 →
+  25** (thêm `[+]` hệ thức cạnh–góc lớp 9). Điểm cần giáo viên duyệt: **5 → 4** — điểm về **hệ
+  thức lượng tam giác vuông** đã giải quyết dứt điểm: chương IV Toán 9 KNTT chỉ dạy tỉ số lượng
+  giác + hệ thức cạnh–góc, **không dạy** `h² = b'·c'`, `b² = a·b'`, `a·h = b·c` (đã bỏ khỏi kho
+  kiến thức). Còn treo: ảnh hưởng TT 17/2025, thứ tự dạy mạch TK lớp 8, độ sâu căn bậc hai lớp 7,
+  việc loại các bài chứng minh hình học khỏi MVP.
   **Còn thiếu:** Toán 1-5 (đợt 2b), KHTN 6-9 (Hoá trước, GĐ3), Toán 10-12 (đợt 2d) — PDF các sách
   này CHƯA có trong `tai-lieu-sgk/`, chờ người dùng bổ sung.
 - **Căn cứ pháp lý đã tra được (2026-08-01):** TT 32/2018 → sửa bởi TT 20/2021, TT 13/2022 và
   **TT 17/2025/TT-BGDĐT** (mới nhất); **QĐ 3588/QĐ-BGDĐT** (26/12/2025) chọn bộ "Kết nối tri thức
   với cuộc sống" dùng chung toàn quốc; SGK chỉnh sửa áp dụng từ năm học 2026-2027.
   ⚠️ **AI CHƯA đọc được nội dung chi tiết TT 17/2025** (`vanban.chinhphu.vn` cũng trả 403) nên
-  **chưa biết môn Toán/KHTN bị sửa cụ thể những gì** so với bản mẫu 2023 đang có trong tay — xem
-  điểm cần giáo viên duyệt ở trên.
+  **chưa biết môn Toán/KHTN bị sửa cụ thể những gì**. Bộ SGK Toán trong tay nay đã là **ấn bản
+  chính thức** (không còn bản mẫu 2023), nhưng vẫn chưa có bản đối chứng của SGK chỉnh sửa theo
+  TT 17/2025 — xem điểm cần giáo viên duyệt ở trên.
 - **✅ `packages/core-grading` — ENGINE CHẤM DÙNG CHUNG, ĐÃ VIẾT XONG + 74 test** (99% câu lệnh,
   90,6% nhánh — cao hơn ngưỡng chung của repo vì chấm sai làm mất niềm tin người học ngay).
   Đặc tả: `docs/research/dac-ta-engine-cham-dung-chung.md`. Không có AI trong luồng chấm; hàm
