@@ -207,9 +207,34 @@ viễn, kể cả người chưa đăng ký) + Ma trận tính năng theo gói F
 tính năng, thêm/xoá tính năng mới) — 2 tab mới trong `/admin`, xem chi tiết trong "Tiếp theo" và
 `docs/` liên quan nếu cần đào sâu.
 
+**Trang Nghe `/listening` — thư viện nghe song ngữ (2026-08-01, PR #434, đang bổ sung nội dung
+theo đợt):** trang mới gom 4 mục để NGHE (không chấm điểm, khác `/phrases` và tab "Nghe" trong
+`/practice`): câu thông dụng + hội thoại (tái dùng dữ liệu sẵn có, đổi cách trình bày) và **truyện
+song ngữ MỚI** (`ft-*`/`fb-*`/... theo 6 thể loại `fairy-tale`/`fable`/`vn-folk`/`myth`/`humor`/
+`children`, xem `docs/research/danh-muc-truyen-nghe-2026-08-01.md` — chốt 120 truyện, làm dần mỗi
+đợt ~10 truyện/PR). Hạ tầng: `data/stories/{index.ts,loader.ts,raw/*.json}` +
+`scripts/gen-stories-json.mjs` (`npm run gen:stories`, nối vào `build`) sinh
+`public/data/stories/`; UI `pages/Listening.tsx` (tab đồng bộ URL) + `pages/StoryReader.tsx` (đọc
+truyện, tự cuộn theo câu, ghi nguồn bắt buộc) + `components/StoryCard.tsx`. Bản tiếng Anh **bắt
+buộc tải thật từ Project Gutenberg** (không gõ từ trí nhớ — CLAUDE.md §5), tiếng Việt Opus dịch
+tay chất lượng văn học. Migration `0032` bật feature `listening` cho mọi gói.
+**Tiến độ nội dung:** `fairy-tale` 9/20 xong (Tấm Cám tự soạn · Hansel/Gretel · Cô bé quàng khăn đỏ
+· Bộ quần áo mới của hoàng đế · Cô bé bán diêm · **Lọ Lem · Bạch Tuyết · Chàng lùn tinh quái** mới
+thêm phiên này) — còn 11 (Chú vịt con xấu xí, Nàng tiên cá, Cô bé tí hon, và 8 truyện Lang/Jacobs/
+Ozaki); `fable` 6/20 xong; 4 thể loại còn lại (`vn-folk`/`myth`/`humor`/`children`) chưa bắt đầu.
+
 ## Tiếp theo
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
+
+- **[2026-08-01] Trang Nghe — tiếp tục nội dung truyện `fairy-tale`.** Phiên này đã thêm 3 truyện
+  (Lọ Lem, Bạch Tuyết, Chàng lùn tinh quái — nguồn Grimm PG 5314 / Blue Fairy Book PG 503, dịch tay
+  đầy đủ, không rút gọn). Đợt kế tiếp: 3 truyện Andersen còn lại của lô Grimm/Andersen ban đầu
+  (Chú vịt con xấu xí, Nàng tiên cá, Cô bé tí hon — nguồn PG 27200) rồi sang lô Lang/Jacobs/Ozaki
+  (8 truyện: Người đẹp ngủ trong rừng, Mèo đi hia, Người đẹp và quái vật, Jack và cây đậu thần, Ba
+  chú lợn con, Ba chú gấu, Momotaro, Urashima Taro, Chim sẻ bị cắt lưỡi — xem bảng đầy đủ
+  `docs/research/danh-muc-truyen-nghe-2026-08-01.md` §3). Sau đó tới `fable` (14 truyện còn lại,
+  ưu tiên nguồn dài ≥400 từ theo nguyên tắc đã chốt ở §4 cùng file) rồi 4 thể loại chưa bắt đầu.
 
 - **[2026-07-31] Backup cấu hình hệ thống (Nginx + crontab + PM2 dump) lên R2 — ĐÃ THÊM.** Phát
   hiện lỗ hổng khi chỉnh tay Nginx nhiều lần lúc chuyển domain `.org`: `pg_dump`/`backup:env` chỉ
