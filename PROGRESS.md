@@ -1539,6 +1539,26 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
     (Playwright flaky khi nhiều test a11y chạy song song dội rate-limit) — chạy lại riêng cả 24 test
     theme blue-sky đều pass, không phải lỗi a11y thật, không cần xử lý thêm.
 
+- **[Rà soát tự động 2026-08-01, phiên sau]** Chạy lại đầy đủ cổng commit: build ✅ · typecheck ✅
+  (4 tsconfig: gốc/api/e2e/`apps/hub`) · lint ✅ (0 cảnh báo) · test ✅ (**103 file / 1249 test** — tăng
+  từ 1033 vì nội dung Nghe + đối chiếu SGK mới thêm sau ngày ghi audit ở trên). Không có lỗi code mới.
+  **Đính chính `npm audit`:** dòng "0 high/critical" ở mục audit toàn diện phía trên **đã lỗi thời** —
+  chạy lại `npm audit` ngay bây giờ ra **5 lỗ hổng: 2 high, 2 moderate, 1 low** (advisory database
+  npm cập nhật liên tục trong ngày, không phải do code đổi):
+  - 🔴 `postcss` (phụ thuộc TRỰC TIẾP qua Tailwind, high, `GHSA-r28c-9q8g-f849`) — Path Traversal khi
+    tự nạp source map (`sourceMappingURL`) lộ file `.map` tuỳ ý. Chỉ chạy lúc BUILD, không lọt vào
+    bundle chạy trên trình duyệt người dùng — rủi ro thực tế thấp nhưng nên nâng khi có bản vá
+    tương thích Tailwind 3.
+  - 🔴 `brace-expansion` (gián tiếp qua `eslint`/`glob`, high) — DoS bộ nhớ, chỉ ảnh hưởng tool dev,
+    không chạy trên server production.
+  - 🟢 `esbuild` (gián tiếp qua Vite, low) — chỉ ảnh hưởng dev server chạy trên Windows.
+  - `react-router`/`react-router-dom` (moderate) — vẫn là mục đã biết ở trên, chưa đổi.
+  - `npm audit fix` (không `--force`) KHÔNG giải quyết dứt điểm 2 mục high vì bản vá nằm sâu trong
+    cây phụ thuộc của `eslint`/`tailwindcss`/`vite` — cần nâng major các gói này mới hết, trái quy
+    tắc "GIỮ NGUYÊN PHIÊN BẢN" (CLAUDE.md mục 6) nên CHƯA tự làm, cần người dùng quyết định trước.
+  - E2E (Playwright) KHÔNG chạy trong lượt rà soát này (môi trường phiên không có `.env`/Postgres để
+    kết nối) — chỉ xác nhận cổng commit, chưa phải cổng merge đầy đủ.
+
 - **PM2 cluster mode: ĐÃ XÁC NHẬN chạy đúng cơ chế trên VPS thật (2026-07-25),
   nhưng hiệu quả bị giới hạn bởi phần cứng — xem cuối mục.** (nhánh
   `claude/project-100k-active-users-8292zf`, đặc tả `docs/research/dac-ta-gd1-scale-30k.md`
