@@ -5,6 +5,10 @@
 > **cấu trúc chương/bài**, không chép nội dung — ranh giới bản quyền §0.1 của
 > `huong-dan-doi-chieu-sgk.md`.
 >
+> ✅ **Đã đối chiếu lại ngày 2026-08-01 với bộ ẢNH SCAN MỚI** (`tai-lieu-sgk/SGK-Toan/Toan 6-1/`,
+> `Toan 6-2/`, OCR bằng `scripts/ocr-images.py`) — bản in ghi "Tái bản lần thứ năm", **không có
+> thay đổi cấu trúc chương/bài** so với bảng dưới đây. Không viết lại bảng.
+>
 > Cột "Công thức chính" là **danh mục kiến thức khoa học** ứng với bài, do người soạn ghi ra, không
 > trích từ sách.
 

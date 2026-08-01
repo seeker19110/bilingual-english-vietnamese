@@ -3,6 +3,11 @@
 > Nguồn: PDF SGK Toán 8 Tập 1 + Tập 2 bộ "Kết nối tri thức với cuộc sống" trong `tai-lieu-sgk/`
 > (không commit). Trích bằng OCR (`scripts/ocr-sgk.py`), chỉ lấy **cấu trúc chương/bài** — ranh
 > giới bản quyền §0.1 của `huong-dan-doi-chieu-sgk.md`.
+>
+> ✅ **Đã đối chiếu lại ngày 2026-08-01 với bộ ẢNH SCAN MỚI** (`tai-lieu-sgk/SGK-Toan/Toan 8-1/`,
+> `Toan 8-2/`, OCR bằng `scripts/ocr-images.py`, trang mục lục `page_0005.png` của tập một và
+> `page_0003.png` của tập hai) — **không có thay đổi cấu trúc chương/bài** so với bảng dưới đây.
+> Không viết lại bảng.
 
 ## Tập một
 

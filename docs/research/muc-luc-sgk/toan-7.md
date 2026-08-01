@@ -4,6 +4,10 @@
 > (không commit). Trích bằng OCR (`scripts/ocr-sgk.py`), chỉ lấy **cấu trúc chương/bài** — ranh
 > giới bản quyền §0.1 của `huong-dan-doi-chieu-sgk.md`. Cột "Công thức chính" do người soạn ghi
 > (kiến thức khoa học phổ quát), không trích từ sách.
+>
+> ✅ **Đã đối chiếu lại ngày 2026-08-01 với bộ ẢNH SCAN MỚI** (`tai-lieu-sgk/SGK-Toan/Toan 7-1/`,
+> `Toan 7-2/`, OCR bằng `scripts/ocr-images.py`) — **không có thay đổi cấu trúc chương/bài** so
+> với bảng dưới đây. Không viết lại bảng.
 
 ## Tập một
 

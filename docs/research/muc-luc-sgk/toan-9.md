@@ -1,12 +1,18 @@
 # Mục lục Toán 9 — Kết nối tri thức (đối chiếu ngày 2026-08-01)
 
-> Nguồn: PDF SGK Toán 9 Tập 1 + Tập 2 bộ "Kết nối tri thức với cuộc sống" trong `tai-lieu-sgk/`
-> (không commit). Trích bằng OCR (`scripts/ocr-sgk.py`), chỉ lấy **cấu trúc chương/bài** — ranh
-> giới bản quyền §0.1 của `huong-dan-doi-chieu-sgk.md`.
+> Nguồn: SGK Toán 9 Tập 1 + Tập 2 bộ "Kết nối tri thức với cuộc sống" trong `tai-lieu-sgk/`
+> (không commit). Trích bằng OCR, chỉ lấy **cấu trúc chương/bài** — ranh giới bản quyền §0.1 của
+> `huong-dan-doi-chieu-sgk.md`.
 >
-> ⚠️ Hai file PDF lớp 9 là **bản mẫu** (`SGK-9-KNTT-T1/T2-BanMau.pdf`). Cấu trúc chương/bài trùng
-> với bản thẩm định (Quyết định 1551/QĐ-BGDĐT ngày 05/6/2023 in ở đầu sách), nhưng **cần đối chiếu
-> lại với bản in chính thức năm học 2026-2027** trước khi đưa vào `data/`.
+> ✅ **Đối chiếu lại ngày 2026-08-01 với bộ ẢNH SCAN MỚI** (`tai-lieu-sgk/SGK-Toan/Toan 9-1/`,
+> `Toan 9-2/`, OCR bằng `scripts/ocr-images.py`, trang mục lục `page_0005.png` của tập một và
+> `page_0003.png` của tập hai, OCR riêng từng nửa trái/phải để tách đúng 2 cột).
+> **Không có thay đổi cấu trúc chương/bài** so với bảng dưới đây.
+>
+> ⚠️→✅ Cảnh báo "bản mẫu" trước đây **đã gỡ**: bìa `Toan 9-1/page_0001.png` KHÔNG còn watermark
+> "Bản mẫu"/"BanMau" — đây là ấn bản chính thức. Thứ tự 32 bài trùng khít bản mẫu cũ, tức bản in
+> chính thức **không đổi cấu trúc**. (Riêng ảnh hưởng của Thông tư 17/2025 vẫn cần giáo viên xác
+> nhận — xem `kho-kien-thuc-toan-gdpt2018.md` §8.3 mục 2.)
 
 ## Tập một
 
@@ -58,5 +64,11 @@
 - Mạch TK lớp 9 gồm hai chương riêng: **Tần số và tần số tương đối** (VII) và **Xác suất của biến
   cố trong một số mô hình xác suất đơn giản** (VIII); có cả **tần số ghép nhóm** — điểm mà kho
   kiến thức cũ ghi thiếu (chỉ ghi "bảng tần số, tần số tương đối").
+- **Chương IV chỉ có 2 bài** (Bài 11 tỉ số lượng giác, Bài 12 hệ thức giữa cạnh và góc) + Luyện
+  tập chung + Bài tập cuối chương — đã xác nhận lại trên ảnh scan mới. Đọc nội dung chương (các
+  ảnh `Toan 9-1/page_0069.png` → `page_0081.png`): **không xuất hiện nhóm hệ thức về hình chiếu**
+  (`h² = b'·c'`, `b² = a·b'`, `a·h = b·c`). Kiến thức trọng tâm của Bài 12 là "cạnh góc vuông =
+  cạnh huyền × sin góc đối / × côsin góc kề" và "cạnh góc vuông = cạnh góc vuông kia × tang góc
+  đối / × côtang góc kề". Xem kết luận ở `kho-kien-thuc-toan-gdpt2018.md` §8.3 mục 1.
 - Hoạt động thực hành trải nghiệm tập hai có bài **dùng Excel** (xác định tần số, tần số tương đối,
   vẽ biểu đồ) và **GeoGebra** — phần chuyển đổi số sẵn có trong sách.
