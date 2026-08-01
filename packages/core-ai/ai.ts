@@ -21,6 +21,7 @@ import { checkAndConsumeUsage, refundUsage, type UsageMode } from '../core-billi
 import { callGemini } from '../../api/_lib/geminiApi.js'
 import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
 import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
+import { createLogger } from '../core-db/logger.js'
 import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
 import { validateBody } from '../../api/_lib/validation.js'
 // Model + guardrail tách sang aiConfig.ts để script eval offline (scripts/eval-tutor.ts)
@@ -28,6 +29,8 @@ import { validateBody } from '../../api/_lib/validation.js'
 import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL, SYSTEM_GUARDRAIL } from './aiConfig.js'
 
 // Thời gian chờ tối đa cho 1 lần gọi AI (ms) — tránh treo vô hạn khi nhà cung cấp chậm.
+const log = createLogger('agent')
+
 const AI_TIMEOUT_MS = 30_000
 
 const MAX_TOKENS_LIMIT = 2048 // tối đa cho phép (writing cần 2048, chat 1024)
@@ -230,7 +233,7 @@ export default async function handler(req: Request): Promise<Response> {
     // lúc bị chặn (401/429), nên khi Gemini/Groq chạy chậm hoặc treo giữa chừng thì
     // không có dòng nào để tra — không suy luận được request có tới server hay không.
     const startedAt = Date.now()
-    console.log(`[agent] gọi Gemini bắt đầu, mode=${mode}`)
+    log.debug(`gọi Gemini bắt đầu, mode=${mode}`)
     try {
       const geminiText = await withConcurrencyLimit('gemini', () =>
         callGemini(
@@ -241,12 +244,12 @@ export default async function handler(req: Request): Promise<Response> {
           maxTokens,
         ),
       )
-      console.log(`[agent] Gemini xong sau ${Date.now() - startedAt}ms`)
+      log.debug(`Gemini xong sau ${Date.now() - startedAt}ms`)
       // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc
       return jsonResponse({ content: [{ type: 'text', text: geminiText }] }, 200, allHeaders)
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
-      console.warn(`[agent] Gemini lỗi sau ${Date.now() - startedAt}ms: ${errMsg}`)
+      log.warn(`Gemini lỗi sau ${Date.now() - startedAt}ms: ${errMsg}`)
       // Còn Groq/Anthropic dự phòng → thử tiếp thay vì báo lỗi ngay (vd Gemini hết quota
       // free nhưng Groq vẫn dùng được). Chỉ hoàn lượt + trả lỗi nếu KHÔNG còn provider nào khác.
       if (!groqKey && !anthropicKey) {
@@ -259,7 +262,7 @@ export default async function handler(req: Request): Promise<Response> {
           allHeaders,
         )
       }
-      console.warn('[agent] Gemini lỗi — chuyển sang provider dự phòng (Groq/Anthropic)')
+      log.warn('Gemini lỗi — chuyển sang provider dự phòng (Groq/Anthropic)')
     }
   }
 
@@ -272,7 +275,7 @@ export default async function handler(req: Request): Promise<Response> {
     ]
     let groqResp: Response
     const groqStartedAt = Date.now()
-    console.log(`[agent] gọi Groq bắt đầu, mode=${mode}`)
+    log.debug(`gọi Groq bắt đầu, mode=${mode}`)
     try {
       groqResp = await withConcurrencyLimit('groq', () =>
         fetchWithTimeout(
@@ -291,7 +294,7 @@ export default async function handler(req: Request): Promise<Response> {
       )
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
-      console.warn(`[agent] Groq lỗi sau ${Date.now() - groqStartedAt}ms: ${errMsg}`)
+      log.warn(`Groq lỗi sau ${Date.now() - groqStartedAt}ms: ${errMsg}`)
       await refundUsage(authResult.userId, mode)
       return jsonResponse(
         { error: { message: `Groq lỗi: ${errMsg.slice(0, 200)}` } },
@@ -299,9 +302,7 @@ export default async function handler(req: Request): Promise<Response> {
         allHeaders,
       )
     }
-    console.log(
-      `[agent] Groq phản hồi sau ${Date.now() - groqStartedAt}ms, status=${groqResp.status}`,
-    )
+    log.debug(`Groq phản hồi sau ${Date.now() - groqStartedAt}ms, status=${groqResp.status}`)
 
     if (!groqResp.ok) {
       const detail = await groqResp.text().catch(() => '')

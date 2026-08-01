@@ -5,6 +5,9 @@
 
 import { fetchWithTimeout } from './fetchTimeout.js'
 import { base64ToBytes } from '../../packages/core-db/base64.js'
+import { createLogger } from '../../packages/core-db/logger.js'
+
+const log = createLogger('googleTts')
 
 // Thời gian chờ tối đa 1 lần gọi Google TTS (ms) — tránh treo request khi Google chậm/sự cố.
 const TTS_TIMEOUT_MS = 30_000
@@ -276,7 +279,7 @@ async function getHealthyKeyPool(): Promise<string[]> {
   const results = await Promise.all(fullPool.map((key) => probeKey(key)))
   const healthy = fullPool.filter((_, i) => results[i])
   healthyPoolCache = { keys: healthy, checkedAt: Date.now() }
-  console.log(`[googleTts] Kiểm tra bể key: ${healthy.length}/${fullPool.length} còn dùng được`)
+  log.debug(`Kiểm tra bể key: ${healthy.length}/${fullPool.length} còn dùng được`)
 
   // TOÀN BỘ key đều fail (probe có thể sai — vd Google tạm lag) → vẫn thử cả bể gốc thay vì
   // chặn hẳn, để generateAudioFromGoogle tự báo lỗi thật qua đường gọi thật (không phải probe).
@@ -312,7 +315,7 @@ async function callGoogleTtsWithKeyPool(
       // lỗi y hệt, ném lỗi ngay cho nhanh.
       if (!isSkippableKeyError(err)) throw err
       if (pool.length > 1 && attempt < pool.length - 1) {
-        console.warn('[googleTts] Key lỗi (quota/billing) — chuyển sang key kế tiếp trong bể')
+        log.warn('Key lỗi (quota/billing) — chuyển sang key kế tiếp trong bể')
       }
     }
   }
