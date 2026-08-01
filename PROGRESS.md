@@ -218,23 +218,27 @@ song ngữ MỚI** (`ft-*`/`fb-*`/... theo 6 thể loại `fairy-tale`/`fable`/`
 truyện, tự cuộn theo câu, ghi nguồn bắt buộc) + `components/StoryCard.tsx`. Bản tiếng Anh **bắt
 buộc tải thật từ Project Gutenberg** (không gõ từ trí nhớ — CLAUDE.md §5), tiếng Việt Opus dịch
 tay chất lượng văn học. Migration `0032` bật feature `listening` cho mọi gói.
-**Tiến độ nội dung:** `fairy-tale` 9/20 xong (Tấm Cám tự soạn · Hansel/Gretel · Cô bé quàng khăn đỏ
-· Bộ quần áo mới của hoàng đế · Cô bé bán diêm · **Lọ Lem · Bạch Tuyết · Chàng lùn tinh quái** mới
-thêm phiên này) — còn 11 (Chú vịt con xấu xí, Nàng tiên cá, Cô bé tí hon, và 8 truyện Lang/Jacobs/
-Ozaki); `fable` 6/20 xong; 4 thể loại còn lại (`vn-folk`/`myth`/`humor`/`children`) chưa bắt đầu.
+**Tiến độ nội dung:** `fairy-tale` 12/20 xong (Tấm Cám tự soạn · Hansel/Gretel · Cô bé quàng khăn
+đỏ · Bộ quần áo mới của hoàng đế · Cô bé bán diêm · Lọ Lem · Bạch Tuyết · Chàng lùn tinh quái ·
+**Chú vịt con xấu xí · Cô bé tí hon · Nàng tiên cá** mới thêm phiên này) — còn 8 truyện
+Lang/Jacobs/Ozaki; `fable` 6/20 xong; 4 thể loại còn lại (`vn-folk`/`myth`/`humor`/`children`)
+chưa bắt đầu.
 
 ## Tiếp theo
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
 - **[2026-08-01] Trang Nghe — tiếp tục nội dung truyện `fairy-tale`.** Phiên này đã thêm 3 truyện
-  (Lọ Lem, Bạch Tuyết, Chàng lùn tinh quái — nguồn Grimm PG 5314 / Blue Fairy Book PG 503, dịch tay
-  đầy đủ, không rút gọn). Đợt kế tiếp: 3 truyện Andersen còn lại của lô Grimm/Andersen ban đầu
-  (Chú vịt con xấu xí, Nàng tiên cá, Cô bé tí hon — nguồn PG 27200) rồi sang lô Lang/Jacobs/Ozaki
-  (8 truyện: Người đẹp ngủ trong rừng, Mèo đi hia, Người đẹp và quái vật, Jack và cây đậu thần, Ba
-  chú lợn con, Ba chú gấu, Momotaro, Urashima Taro, Chim sẻ bị cắt lưỡi — xem bảng đầy đủ
-  `docs/research/danh-muc-truyen-nghe-2026-08-01.md` §3). Sau đó tới `fable` (14 truyện còn lại,
-  ưu tiên nguồn dài ≥400 từ theo nguyên tắc đã chốt ở §4 cùng file) rồi 4 thể loại chưa bắt đầu.
+  Andersen cuối cùng của lô Grimm/Andersen ban đầu (Chú vịt con xấu xí 165 câu · Cô bé tí hon 176
+  câu · Nàng tiên cá 331 câu — tất cả lấy nguyên văn từ PG 27200 đã `curl` về thật, dịch tay đầy
+  đủ từng câu, không rút gọn). Đã đối chiếu số từ tiếng Anh của file JSON với bản trích Gutenberg
+  (3773/4331/9180 so với 3779/4337/9187 — chênh đúng phần dòng tiêu đề) để chắc chắn không sót
+  đoạn nào. **Lô Grimm/Andersen coi như đóng — `fairy-tale` nay 12/20.** Đợt kế tiếp: lô
+  Lang/Jacobs/Ozaki (8 truyện: Người đẹp ngủ trong rừng, Mèo đi hia, Người đẹp và quái vật, Jack và
+  cây đậu thần, Ba chú lợn con, Ba chú gấu, Momotaro, Urashima Taro, Chim sẻ bị cắt lưỡi — nguồn
+  PG 503 / 7439 / 4018, xem bảng đầy đủ `docs/research/danh-muc-truyen-nghe-2026-08-01.md` §3).
+  Sau đó tới `fable` (14 truyện còn lại, ưu tiên nguồn dài ≥400 từ theo nguyên tắc đã chốt ở §4
+  cùng file) rồi 4 thể loại chưa bắt đầu.
 
 - **[2026-07-31] Backup cấu hình hệ thống (Nginx + crontab + PM2 dump) lên R2 — ĐÃ THÊM.** Phát
   hiện lỗ hổng khi chỉnh tay Nginx nhiều lần lúc chuyển domain `.org`: `pg_dump`/`backup:env` chỉ

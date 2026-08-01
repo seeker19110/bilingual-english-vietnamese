@@ -50,9 +50,9 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 
 ## 3. Thể loại 1 — Truyện cổ tích (`kind: "fairy-tale"`)
 
-> **Tiến độ (2026-08-01):** 9/20 đã có `raw/*.json` — #1–6 xong (gồm 3 truyện thêm phiên
-> 2026-08-01: Lọ Lem, Bạch Tuyết, Chàng lùn tinh quái), #10–11 xong (Bộ quần áo mới của hoàng đế,
-> Cô bé bán diêm). Còn #7–9 (Andersen, PG 27200) và #12–20 (Lang/Jacobs/Ozaki) chưa soạn.
+> **Tiến độ (2026-08-01):** 12/20 đã có `raw/*.json` — #1–11 xong hết (đợt cuối bổ sung #7–9
+> Andersen từ PG 27200: Chú vịt con xấu xí, Nàng tiên cá, Cô bé tí hon). Còn #12–20
+> (Lang/Jacobs/Ozaki — PG 503 / 7439 / 4018) chưa soạn.
 
 | #   | id                      | Tiếng Anh                                    | Tiếng Việt                  | Nước        | Nguồn        | Cấp |
 | --- | ----------------------- | -------------------------------------------- | --------------------------- | ----------- | ------------ | --- |
@@ -240,9 +240,9 @@ Kéo theo:
 | Đợt   | Nội dung                                                                                                                                                                         | Trạng thái                          |
 | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
 | 0     | Hạ tầng + UI trang Nghe + `StoryKind` 6 loại + 3 truyện VN + 6 ngụ ngôn (Aesop/Jataka nguyên văn) + 4 cổ tích Grimm/Andersen (Hansel/Gretel, Khăn đỏ, Áo mới hoàng đế, Bán diêm) | ✅ xong — PR #434                   |
-| 1     | 3 truyện cổ tích Grimm (Lọ Lem, Bạch Tuyết, Chàng lùn tinh quái)                                                                                                                 | ✅ xong — phiên 2026-08-01 (PR này) |
-| 2     | 3 truyện cổ tích Andersen còn lại (Vịt xấu xí, Nàng tiên cá, Cô bé tí hon — PG 27200)                                                                                            | ⏳ tiếp theo                        |
-| 3     | 8 truyện cổ tích Lang/Jacobs/Ozaki (còn lại của thể loại `fairy-tale`)                                                                                                           | chưa                                |
+| 1     | 3 truyện cổ tích Grimm (Lọ Lem, Bạch Tuyết, Chàng lùn tinh quái)                                                                                                                 | ✅ xong — PR #435                   |
+| 2     | 3 truyện cổ tích Andersen còn lại (Vịt xấu xí, Cô bé tí hon, Nàng tiên cá — PG 27200)                                                                                            | ✅ xong — phiên 2026-08-01 (PR này) |
+| 3     | 8 truyện cổ tích Lang/Jacobs/Ozaki (còn lại của thể loại `fairy-tale`)                                                                                                           | ⏳ tiếp theo                        |
 | 4–5   | 14 ngụ ngôn còn lại (ưu tiên nguồn ≥400 từ — §4)                                                                                                                                 | chưa                                |
 | 6–7   | 17 truyện dân gian VN còn lại                                                                                                                                                    | chưa                                |
 | 8–9   | 20 thần thoại                                                                                                                                                                    | chưa                                |
