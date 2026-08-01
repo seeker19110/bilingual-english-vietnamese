@@ -11,18 +11,11 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } fr
 // trên máy tính).
 //
 // QUAN TRỌNG — xung đột với cuộn trang gốc: nếu để trình duyệt tự quyết định, nó sẽ
-// nhận diện thao tác kéo dọc là CUỘN TRANG ngay từ đầu và giành quyền xử lý. Với CHUỘT
-// thì không sao (chuột không có cuộn-chạm gốc để tranh giành), nhưng với CẢM ỨNG THẬT,
-// gọi preventDefault() TRONG LÚC chạy KHÔNG đủ tin cậy trên Safari iOS — Safari có thể
-// đã "chốt" quyền xử lý cuộn ngay khi vừa chạm, trước khi JS kịp phản hồi. Cách duy
-// nhất chắc chắn: khai báo CSS touch-action NGAY TỪ ĐẦU (trước khi cử chỉ bắt đầu,
-// không thể set bằng JS sau khi đã chạm).
-//
-// LƯU Ý — từng dùng `touch-action: none` cho CẢ 2 hướng khi ở đỉnh cuộn, nhưng vậy vô
-// tình chặn LUÔN cả vuốt LÊN (cuộn trang xuống bình thường), khoá cuộn trên điện thoại
-// dù không hề đang kéo. Sửa bằng `touch-action: pan-up` khi ở đỉnh cuộn — cho trình
-// duyệt tự xử lý native khi ngón tay vuốt LÊN (cuộn trang bình thường), nhưng vẫn
-// nhường quyền cho JS khi vuốt XUỐNG (đúng hướng cử chỉ kéo 1 tay).
+// nhận diện thao tác kéo dọc là CUỘN TRANG ngay từ đầu và giành quyền xử lý trước khi
+// đủ 0.05s, khiến JS không bao giờ kịp kích hoạt. Để tránh việc này, CHỈ cho phép bắt
+// đầu cử chỉ khi trang đang Ở ĐỈNH CUỘN (window.scrollY === 0 — không còn gì để cuộn
+// lên nữa) và preventDefault() NGAY từ lúc còn "chờ đủ giờ" (không đợi tới khi đã kích
+// hoạt) để trình duyệt không tự ý cuộn/nảy (bounce) trong lúc đó.
 const ACTIVATE_MS = 50 // Tổng thời gian bấm+giữ+kéo vượt quá mốc này là kích hoạt kéo
 const RETURN_DELAY_MS = 3000 // Sau khi buông, chờ chừng này rồi mới tự trôi lên
 const RETURN_DURATION_MS = 3000 // Thời gian trôi ngược lên lại vị trí cũ
@@ -31,9 +24,6 @@ const MAX_DRAG_RATIO = 0.6 // Kéo xuống tối đa 60% chiều cao màn hình
 export function useOneHandedDrag() {
   const [translateY, setTranslateY] = useState(0)
   const [transitionMs, setTransitionMs] = useState(0)
-  const [atTop, setAtTop] = useState(() =>
-    typeof window === 'undefined' ? true : window.scrollY <= 0,
-  )
   const returnTimer = useRef<number | null>(null)
   const isDragging = useRef(false)
   const activePointerId = useRef<number | null>(null)
@@ -54,30 +44,6 @@ export function useOneHandedDrag() {
       setTranslateY(0)
     }, RETURN_DELAY_MS)
   }
-
-  // Đang kéo xuống (translateY > 0) → không cho scrollY lệch khỏi 0, để header luôn
-  // nằm trên cùng, body luôn dính liền ngay sau. LƯU Ý: KHÔNG dùng document.documentElement
-  // .style.overflow = 'hidden' — cách đó set 1 style TOÀN CỤC, nếu effect dọn dẹp không
-  // kịp chạy đúng lúc (vd chuyển trang/route ngay trong lúc đang kéo) thì overflow bị
-  // "kẹt" lại mãi mãi, khoá cuộn cả trang vĩnh viễn (đã xảy ra thật ở trang Luyện tập).
-  // Thay vào đó, chỉ PHẢN ỨNG lại: hễ scrollY lệch khỏi 0 trong lúc đang kéo thì ép về
-  // lại ngay — không set style nào nên không thể bị kẹt.
-  const translateYRef = useRef(0)
-  useEffect(() => {
-    translateYRef.current = translateY
-  }, [translateY])
-
-  useEffect(() => {
-    const onScroll = () => {
-      if (translateYRef.current > 0 && window.scrollY !== 0) {
-        window.scrollTo(0, 0)
-        return
-      }
-      setAtTop(window.scrollY <= 0)
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   useEffect(() => clearReturnTimer, [])
 
@@ -109,6 +75,8 @@ export function useOneHandedDrag() {
     // khi bắt đầu từ vị trí gốc (0%) mới cần đủ thời gian, tránh nhầm với cuộn trang.
     const alreadyPulledDown = startTranslate.current > 0
     if (elapsed < ACTIVATE_MS && !alreadyPulledDown) {
+      // Vẫn đang trong thời gian chờ — chặn trình duyệt tự cuộn/nảy trang trong lúc
+      // này, nếu không nó sẽ giành quyền xử lý trước khi kịp đủ 0.2s để kích hoạt.
       if (e.cancelable) e.preventDefault()
       return
     }
@@ -132,10 +100,6 @@ export function useOneHandedDrag() {
   const style: CSSProperties = {
     transform: translateY ? `translateY(${translateY}px)` : undefined,
     transition: transitionMs ? `transform ${transitionMs}ms ease` : undefined,
-    // Đang kéo xuống → khoá hẳn (JS toàn quyền điều khiển). Ở đỉnh cuộn nhưng chưa kéo
-    // → chỉ nhường quyền vuốt XUỐNG cho JS (pan-up vẫn để trình duyệt tự cuộn bình
-    // thường khi vuốt lên). Các trường hợp khác (đã cuộn xuống giữa trang) → auto.
-    touchAction: translateY > 0 ? 'none' : atTop ? 'pan-up' : 'auto',
   }
 
   return {
