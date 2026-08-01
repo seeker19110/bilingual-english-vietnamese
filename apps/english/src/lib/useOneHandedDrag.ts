@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState, type CSSProperties, type TouchEvent } from 'react'
 
 // Tính năng "kéo 1 tay" (giống Reachability trên iPhone): người dùng chạm và GIỮ YÊN
-// một lúc rồi kéo xuống → toàn bộ nội dung trang tụt xuống tối đa 50% chiều cao màn
+// một lúc rồi kéo xuống → toàn bộ nội dung trang tụt xuống tối đa 60% chiều cao màn
 // hình, giúp bấm các nút phía trên dễ hơn khi cầm điện thoại 1 tay. Buông tay ra, nếu
 // 3 giây không thao tác gì thêm thì tự trôi ngược lên vị trí cũ trong 3 giây.
 const HOLD_MS = 300 // Phải giữ yên ngón tay ít nhất chừng này mới coi là muốn kéo (không phải cuộn trang bình thường)
 const HOLD_MOVE_THRESHOLD_PX = 10 // Di chuyển quá ngưỡng này trong lúc giữ → huỷ, coi là cuộn trang bình thường
 const RETURN_DELAY_MS = 3000 // Sau khi buông tay, chờ chừng này rồi mới tự trôi lên
 const RETURN_DURATION_MS = 3000 // Thời gian trôi ngược lên lại vị trí cũ
-const MAX_DRAG_RATIO = 0.5 // Kéo xuống tối đa 50% chiều cao màn hình
+const MAX_DRAG_RATIO = 0.6 // Kéo xuống tối đa 60% chiều cao màn hình
 
 export function useOneHandedDrag() {
   const [translateY, setTranslateY] = useState(0)
@@ -49,8 +49,10 @@ export function useOneHandedDrag() {
   )
 
   const onTouchStart = (e: TouchEvent) => {
-    // Người dùng chạm lại trước khi kịp tự trôi lên → huỷ, coi như thao tác tiếp
-    clearReturnTimer()
+    // LƯU Ý: KHÔNG huỷ hẹn giờ tự trôi lên ở đây — nếu không, chỉ cần chạm màn hình
+    // thêm 1 lần (cuộn trang, bấm nút khác…) sau khi kéo xuống là bị "kẹt" luôn,
+    // không bao giờ tự về nữa. Hẹn giờ chỉ bị huỷ khi người dùng THỰC SỰ kéo lại
+    // (xem onTouchMove) và luôn được đặt lại mỗi khi buông tay (xem onTouchEnd).
     const touch = e.touches[0]
     if (!touch) return
     startY.current = touch.clientY
@@ -72,6 +74,7 @@ export function useOneHandedDrag() {
       if (Math.abs(dy) > HOLD_MOVE_THRESHOLD_PX) clearHoldTimer()
       return
     }
+    if (!isDragging.current) clearReturnTimer() // Bắt đầu kéo lại thật → huỷ hẹn giờ cũ
     isDragging.current = true
     setTransitionMs(0)
     const maxDrag = window.innerHeight * MAX_DRAG_RATIO
@@ -80,7 +83,9 @@ export function useOneHandedDrag() {
 
   const onTouchEnd = () => {
     clearHoldTimer()
-    if (isDragging.current) scheduleReturn()
+    // Luôn đặt lại hẹn giờ tự trôi lên nếu nội dung đang bị kéo xuống — kể cả khi
+    // lần chạm này không phải là kéo (vd chỉ bấm 1 nút trong lúc đang ở trạng thái kéo).
+    if (translateY > 0) scheduleReturn()
     holdReady.current = false
     isDragging.current = false
   }
