@@ -175,6 +175,31 @@ export const t = {
     // Parts of speech
     posPageTitle: 'Từ loại',
     posPageSub: 'Danh từ, động từ, tính từ và nhiều hơn nữa',
+
+    // Trang Nghe (/listening)
+    navListening: 'Nghe',
+    listeningPageTitle: 'Nghe',
+    listeningPageSub: 'Câu thông dụng · Hội thoại · Kho truyện song ngữ',
+    tabPhrases: 'Câu thông dụng',
+    tabDialogues: 'Hội thoại',
+    tabStories: 'Truyện',
+    kindFairyTale: 'Cổ tích',
+    kindFable: 'Ngụ ngôn',
+    kindVnFolk: 'Dân gian Việt Nam',
+    kindMyth: 'Thần thoại',
+    kindHumor: 'Truyện cười',
+    kindChildren: 'Thiếu nhi',
+    filterKind: 'Thể loại',
+    showTranslation: 'Hiện bản dịch',
+    hideTranslation: 'Ẩn bản dịch',
+    playAllLabel: 'Phát tất cả',
+    playWholeStory: 'Phát cả truyện',
+    playWholeDialogue: 'Phát cả hội thoại',
+    moralLabel: 'Bài học rút ra',
+    sourceLabel: 'Nguồn',
+    filterCountry: 'Quốc gia',
+    storyNotFound: 'Không tìm thấy truyện này.',
+    otherGroupLabel: 'Khác',
   },
 
   en: {
@@ -351,6 +376,31 @@ export const t = {
     // Parts of speech
     posPageTitle: 'Parts of Speech',
     posPageSub: 'Nouns, verbs, adjectives and more',
+
+    // Listening page (/listening)
+    navListening: 'Listening',
+    listeningPageTitle: 'Listening',
+    listeningPageSub: 'Common phrases · Conversations · Bilingual story library',
+    tabPhrases: 'Common phrases',
+    tabDialogues: 'Conversations',
+    tabStories: 'Stories',
+    kindFairyTale: 'Fairy tales',
+    kindFable: 'Fables',
+    kindVnFolk: 'Vietnamese folk tales',
+    kindMyth: 'Myths',
+    kindHumor: 'Humour',
+    kindChildren: "Children's classics",
+    filterKind: 'Genre',
+    showTranslation: 'Show translation',
+    hideTranslation: 'Hide translation',
+    playAllLabel: 'Play all',
+    playWholeStory: 'Play whole story',
+    playWholeDialogue: 'Play whole conversation',
+    moralLabel: 'Moral of the story',
+    sourceLabel: 'Source',
+    filterCountry: 'Country',
+    storyNotFound: 'Story not found.',
+    otherGroupLabel: 'Other',
   },
 }
 

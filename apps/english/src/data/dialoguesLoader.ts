@@ -15,3 +15,9 @@ export async function getDialogues(id: string): Promise<Dialogue[]> {
   const data = await loadDialogues()
   return data[id] ?? []
 }
+
+// Toàn bộ hội thoại kèm id (tiền tố a1-/a2-/b1-/b2-/…) — dùng cho trang Nghe (tab "Hội thoại")
+// để nhóm theo cấp CEFR. Trả về map gốc, KHÔNG copy — không sửa trực tiếp giá trị trả về.
+export async function getAllDialogues(): Promise<Record<string, Dialogue[]>> {
+  return loadDialogues()
+}

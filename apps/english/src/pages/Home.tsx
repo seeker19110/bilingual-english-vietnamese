@@ -684,6 +684,18 @@ export default function Home() {
             </div>
             <div className="space-y-2">
               <button
+                onClick={() => nav('/listening')}
+                className="w-full flex items-center gap-3 rounded-xl p-3 border border-zinc-800/60 bg-zinc-950/40 hover:bg-zinc-800/60 hover:border-accent-500/40 transition text-left"
+              >
+                <BookOpen className="w-5 h-5 text-accent-400 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-white">{T.navListening}</p>
+                  <p className="text-xs text-zinc-400 line-clamp-1">
+                    {isA ? T.listenDescA : T.listenDescB}
+                  </p>
+                </div>
+              </button>
+              <button
                 onClick={() => nav('/lessons')}
                 className="w-full flex items-center gap-3 rounded-xl p-3 border border-zinc-800/60 bg-zinc-950/40 hover:bg-zinc-800/60 hover:border-rose-500/40 transition text-left"
               >

@@ -12,7 +12,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/gen-data-manifest.mjs && tsc && tsc -p tsconfig.api.json && vite build && npm run build:server && npm run build --workspace=hub",
+    "build": "node scripts/gen-data-manifest.mjs && node scripts/gen-stories-json.mjs && tsc && tsc -p tsconfig.api.json && vite build && npm run build:server && npm run build --workspace=hub",
     "build:server": "node -e \"require('fs').rmSync('dist-server',{recursive:true,force:true})\" && tsc -p tsconfig.server.json",
     "typecheck": "tsc && tsc -p tsconfig.api.json && tsc -p tsconfig.e2e.json && tsc -p apps/hub/tsconfig.json",
     "typecheck:api": "tsc -p tsconfig.api.json",
@@ -33,6 +33,7 @@
     "tag:freq": "tsx scripts/assign-word-freq.ts",
     "gen:word-forms": "tsx scripts/gen-word-forms.ts",
     "gen:form-examples": "tsx scripts/gen-form-examples.ts",
+    "gen:stories": "node scripts/gen-stories-json.mjs",
     "extract:words-cefr": "tsx scripts/extract-words-cefr-subset.ts",
     "prefetch:tts-patterns": "tsx scripts/prefetch-tts-patterns.ts",
     "rank:patterns": "tsx scripts/rank-common-patterns.ts",
