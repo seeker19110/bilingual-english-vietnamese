@@ -78,7 +78,7 @@ export default function WordDetail() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 theme-light:bg-white text-zinc-100 theme-light:text-zinc-900">
-      <main className="mx-auto max-w-xl px-4 pb-16 pt-8">
+      <main className="mx-auto max-w-xl px-4 pt-8 pb-[calc(1.5rem+var(--bnav-h))]">
         <Link
           to="/welcome"
           className="tap-44 inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 mb-6"
