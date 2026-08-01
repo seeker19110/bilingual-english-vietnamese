@@ -32,15 +32,16 @@ export default defineConfig({
       include: ['apps/english/src/lib/**/*.ts', 'api/**/*.ts', 'packages/**/*.ts'],
       exclude: ['**/*.test.{ts,tsx}', '**/*.d.ts'],
       reporter: ['text', 'text-summary', 'html'],
-      // "Coverage ratchet": ngưỡng SÀN = "không tệ hơn hiện tại" (đo 2026-08-01, audit toàn
-      // diện: stmts/lines 55.28 · branches 87.55 · funcs 81.39 — đặt thấp hơn số đo chút để
-      // chống tụt, KHÔNG gây gãy do làm tròn hoặc dao động nhỏ giữa các lượt chạy.
-      // Khi thêm test mới → NÂNG DẦN các số này. Xem PROGRESS.md.
+      // "Coverage ratchet": ngưỡng SÀN = "không tệ hơn hiện tại" (đo 2026-08-01, sau khi thêm
+      // test cho authHeader.ts/plan-features.ts/plan-marketing.ts/authService.ts: stmts/lines
+      // 55.9 · branches 87.56 · funcs 82.24 — đặt thấp hơn số đo chút để chống tụt, KHÔNG gây
+      // gãy do làm tròn hoặc dao động nhỏ giữa các lượt chạy. Khi thêm test mới → NÂNG DẦN các
+      // số này. Xem PROGRESS.md.
       thresholds: {
-        statements: 54,
+        statements: 55,
         branches: 87,
-        functions: 80,
-        lines: 54,
+        functions: 81,
+        lines: 55,
       },
     },
   },
