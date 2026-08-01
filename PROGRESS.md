@@ -61,9 +61,12 @@ trên VPS (xem "Cần làm tay").
   **Hai điểm nghi ngờ then chốt đều đã XÁC MINH trên nội dung bài học (không chỉ mục lục):**
   - 🔴 **`n = V/24` là SAI, `n = V/22,4` cũng sai — SGK KHTN 8 dùng `n = V(L)/24,79 (L/mol)`**
     ở điều kiện chuẩn **1 bar, 25 °C** (khung Mục tiêu Bài 3, `SGK-KHTN/8/page_0017.png`). Dùng 24
-    lệch **≈3,3%**, **vượt ngưỡng dung sai 3%** của `packages/core-grading` ⇒ **phải xử lý trước
-    khi mở GĐ3 môn Hoá** (đưa 24,79 thành hằng số có tên, cân nhắc dung sai riêng cho dạng bài
-    chuyển đổi mol ↔ thể tích khí). Chưa sửa code — giữ PR này thuần tài liệu.
+    lệch **≈3,3%**, **vượt ngưỡng dung sai 1% thật của môn Hoá** (`chemistry: 1%` trong
+    `DEFAULT_TOLERANCE_BY_SUBJECT`, không phải 3% — đó là ngưỡng riêng của Lý) ⇒ đã xử lý:
+    **✅ [2026-08-01] `STANDARD_MOLAR_VOLUME_L_PER_MOL = 24.79` đã thêm vào
+    `packages/core-grading/chemistry.ts`** kèm test canh gác (`grading.test.ts`) chứng minh dùng
+    nhầm 24 hoặc 22,4 sẽ bị chấm sai (lệch 3,3%/10,7%, vượt dung sai 1%). Chưa có logic mol↔thể
+    tích khí thật trong engine — hằng số này chỉ chờ sẵn cho khi PR-1 GĐ3 Hoá viết dạng bài đó.
   - **`g = 10` hay `9,8`: SGK dùng CẢ HAI, hai vai trò khác nhau** — Bảng 43.1 KHTN 6 nêu 1 kg có
     trọng lượng **9,8 N** (giá trị vật lí thật, để so Mặt Trăng/Hoả tinh), còn kết luận tính toán
     của Bài 43 ghi `P` (N) **gần bằng 10 lần** `m` (kg) ⇒ công thức làm bài là **`P ≈ 10·m`**.
