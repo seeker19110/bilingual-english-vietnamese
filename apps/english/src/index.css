@@ -242,18 +242,32 @@
     }
   }
 
-  ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
+  /* Thanh cuộn mảnh chỉ hiện trên thiết bị có chuột (desktop) — thiết bị cảm ứng
+     (điện thoại/tablet) đã có thanh cuộn mờ tự động của hệ điều hành khi cuộn, không
+     cần vẽ thêm thanh riêng đè lên mép phải màn hình. */
+  @media (hover: hover) and (pointer: fine) {
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      @apply bg-zinc-700 rounded-full;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      @apply bg-zinc-600;
+    }
   }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-zinc-700 rounded-full;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-zinc-600;
+  @media (hover: none), (pointer: coarse) {
+    * {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    *::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   /* Smooth font rendering for Inter */
