@@ -7,6 +7,9 @@ import {
   createUserWithPassword,
   createSession,
   revokeSession,
+  verifyUserPassword,
+  getUserById,
+  ensureProfileRow,
 } from './authService'
 
 vi.mock('../core-db/pgPool', () => ({ getPgPool: vi.fn() }))
@@ -129,5 +132,120 @@ describe('createUserWithPassword', () => {
     await expect(createUserWithPassword('a@example.com', 'MatKhau123')).rejects.toThrow(
       'connection refused',
     )
+  })
+})
+
+describe('verifyUserPassword', () => {
+  beforeEach(() => vi.restoreAllMocks())
+
+  it('email KHÔNG tồn tại → null (không phân biệt với sai mật khẩu)', async () => {
+    mockedGetPool.mockReturnValue(mockPool(async () => ({ rows: [] })))
+    expect(await verifyUserPassword('khong-co@example.com', 'x')).toBeNull()
+  })
+
+  it('user chỉ đăng nhập OAuth, chưa từng đặt mật khẩu (password_hash null) → null', async () => {
+    mockedGetPool.mockReturnValue(
+      mockPool(async () => ({
+        rows: [{ id: 'u1', email: 'a@b.com', password_hash: null }],
+      })),
+    )
+    expect(await verifyUserPassword('a@b.com', 'batkyxi')).toBeNull()
+  })
+
+  it('đúng mật khẩu → trả user, KHÔNG kèm password_hash trong kết quả', async () => {
+    const hash = await hashPassword('MatKhau123')
+    mockedGetPool.mockReturnValue(
+      mockPool(async () => ({ rows: [{ id: 'u1', email: 'a@b.com', password_hash: hash }] })),
+    )
+    const result = await verifyUserPassword('a@b.com', 'MatKhau123')
+    expect(result).toEqual({ id: 'u1', email: 'a@b.com' })
+  })
+
+  it('sai mật khẩu → null', async () => {
+    const hash = await hashPassword('MatKhau123')
+    mockedGetPool.mockReturnValue(
+      mockPool(async () => ({ rows: [{ id: 'u1', email: 'a@b.com', password_hash: hash }] })),
+    )
+    expect(await verifyUserPassword('a@b.com', 'SaiRoi')).toBeNull()
+  })
+})
+
+describe('getUserById', () => {
+  beforeEach(() => vi.restoreAllMocks())
+
+  it('user tồn tại → trả id/email', async () => {
+    mockedGetPool.mockReturnValue(
+      mockPool(async () => ({ rows: [{ id: 'u1', email: 'a@b.com' }] })),
+    )
+    expect(await getUserById('u1')).toEqual({ id: 'u1', email: 'a@b.com' })
+  })
+
+  it('user không tồn tại → null', async () => {
+    mockedGetPool.mockReturnValue(mockPool(async () => ({ rows: [] })))
+    expect(await getUserById('khong-co')).toBeNull()
+  })
+})
+
+describe('ensureProfileRow', () => {
+  beforeEach(() => vi.restoreAllMocks())
+
+  it('user CŨ (profile đã tồn tại, insert 0 dòng) → KHÔNG chạy nhánh cấp VIP whitelist', async () => {
+    const calls: string[] = []
+    mockedGetPool.mockReturnValue(
+      mockPool(async (sql) => {
+        calls.push(sql)
+        if (sql.startsWith('insert into public.profiles')) return { rows: [] } // 0 dòng = user cũ
+        return { rows: [{ plan: 'free', plan_expires_at: null, onboarded: true, name: 'Cũ' }] }
+      }),
+    )
+    const result = await ensureProfileRow('u1', 'Tên mới')
+    expect(result.plan).toBe('free')
+    expect(result.onboarded).toBe(true)
+    // Không có câu update nào gán plan = 'vip' — nhánh VIP whitelist không chạy cho user cũ.
+    expect(calls.some((sql) => sql.includes("plan = 'vip'"))).toBe(false)
+  })
+
+  it('user MỚI (profile vừa tạo lần đầu) → CÓ chạy nhánh kiểm VIP whitelist', async () => {
+    const calls: string[] = []
+    mockedGetPool.mockReturnValue(
+      mockPool(async (sql) => {
+        calls.push(sql)
+        if (sql.startsWith('insert into public.profiles'))
+          return { rows: [{ id: 'u1' }], rowCount: 1 } // 1 dòng = mới tạo
+        if (sql.includes("plan = 'vip'")) return { rows: [] }
+        return { rows: [{ plan: 'free', plan_expires_at: null, onboarded: false, name: 'Mới' }] }
+      }),
+    )
+    const result = await ensureProfileRow('u1', 'Tên mới')
+    expect(result.onboarded).toBe(false)
+    expect(calls.some((sql) => sql.includes("plan = 'vip'"))).toBe(true)
+  })
+
+  it('gói Free nhưng DB còn sót plan_expires_at cũ → planExpiresAt trả null (tránh hiểu nhầm sắp hết hạn)', async () => {
+    mockedGetPool.mockReturnValue(
+      mockPool(async (sql) => {
+        if (sql.startsWith('insert into public.profiles')) return { rows: [] }
+        return {
+          rows: [
+            { plan: 'free', plan_expires_at: new Date('2020-01-01'), onboarded: true, name: 'X' },
+          ],
+        }
+      }),
+    )
+    const result = await ensureProfileRow('u1', 'X')
+    expect(result.plan).toBe('free')
+    expect(result.planExpiresAt).toBeNull()
+  })
+
+  it('gói Pro còn hạn → planExpiresAt trả đúng ISO string', async () => {
+    const future = new Date(Date.now() + 86_400_000)
+    mockedGetPool.mockReturnValue(
+      mockPool(async (sql) => {
+        if (sql.startsWith('insert into public.profiles')) return { rows: [] }
+        return { rows: [{ plan: 'pro', plan_expires_at: future, onboarded: true, name: 'X' }] }
+      }),
+    )
+    const result = await ensureProfileRow('u1', 'X')
+    expect(result.planExpiresAt).toBe(future.toISOString())
   })
 })
