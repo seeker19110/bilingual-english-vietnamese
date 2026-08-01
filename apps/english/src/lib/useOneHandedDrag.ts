@@ -15,11 +15,14 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } fr
 // thì không sao (chuột không có cuộn-chạm gốc để tranh giành), nhưng với CẢM ỨNG THẬT,
 // gọi preventDefault() TRONG LÚC chạy KHÔNG đủ tin cậy trên Safari iOS — Safari có thể
 // đã "chốt" quyền xử lý cuộn ngay khi vừa chạm, trước khi JS kịp phản hồi. Cách duy
-// nhất chắc chắn: khai báo CSS `touch-action: none` NGAY TỪ ĐẦU (trước khi cử chỉ bắt
-// đầu, không thể set bằng JS sau khi đã chạm), để trình duyệt biết trước là nhường
-// quyền xử lý gesture dọc cho JS. Ta chỉ bật `touch-action: none` khi đang Ở ĐỈNH CUỘN
-// (window.scrollY === 0, theo dõi bằng listener scroll) hoặc đang kéo xuống sẵn — các
-// lúc khác vẫn để trình duyệt tự cuộn bình thường.
+// nhất chắc chắn: khai báo CSS touch-action NGAY TỪ ĐẦU (trước khi cử chỉ bắt đầu,
+// không thể set bằng JS sau khi đã chạm).
+//
+// LƯU Ý — từng dùng `touch-action: none` cho CẢ 2 hướng khi ở đỉnh cuộn, nhưng vậy vô
+// tình chặn LUÔN cả vuốt LÊN (cuộn trang xuống bình thường), khoá cuộn trên điện thoại
+// dù không hề đang kéo. Sửa bằng `touch-action: pan-up` khi ở đỉnh cuộn — cho trình
+// duyệt tự xử lý native khi ngón tay vuốt LÊN (cuộn trang bình thường), nhưng vẫn
+// nhường quyền cho JS khi vuốt XUỐNG (đúng hướng cử chỉ kéo 1 tay).
 const ACTIVATE_MS = 50 // Tổng thời gian bấm+giữ+kéo vượt quá mốc này là kích hoạt kéo
 const RETURN_DELAY_MS = 3000 // Sau khi buông, chờ chừng này rồi mới tự trôi lên
 const RETURN_DURATION_MS = 3000 // Thời gian trôi ngược lên lại vị trí cũ
@@ -129,10 +132,10 @@ export function useOneHandedDrag() {
   const style: CSSProperties = {
     transform: translateY ? `translateY(${translateY}px)` : undefined,
     transition: transitionMs ? `transform ${transitionMs}ms ease` : undefined,
-    // Chỉ khoá cuộn mặc định của trình duyệt lúc đang ở đỉnh cuộn / đang kéo xuống —
-    // đây là điều kiện BẮT BUỘC phải khai báo TRƯỚC (không set được bằng JS lúc đang
-    // chạm) để Safari iOS nhường quyền xử lý gesture dọc cho JS thay vì tự cuộn trang.
-    touchAction: atTop || translateY > 0 ? 'none' : 'auto',
+    // Đang kéo xuống → khoá hẳn (JS toàn quyền điều khiển). Ở đỉnh cuộn nhưng chưa kéo
+    // → chỉ nhường quyền vuốt XUỐNG cho JS (pan-up vẫn để trình duyệt tự cuộn bình
+    // thường khi vuốt lên). Các trường hợp khác (đã cuộn xuống giữa trang) → auto.
+    touchAction: translateY > 0 ? 'none' : atTop ? 'pan-up' : 'auto',
   }
 
   return {
