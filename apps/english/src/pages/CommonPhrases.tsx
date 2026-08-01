@@ -327,7 +327,7 @@ export default function CommonPhrases() {
       <Layout back extra={<VoiceMenu plan={user?.plan ?? 'free'} isA={isA} />} />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
-        <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:py-6 space-y-4">
+        <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:pt-6 sm:pb-[calc(1.5rem+var(--bnav-h))] space-y-4">
           {/* Tiêu đề trang — đặt ngay dưới AppHeader, cỡ chữ lớn */}
           <PageHeader title={T.phrasesPageTitle} subtitle={T.phrasesPageSub} />
 

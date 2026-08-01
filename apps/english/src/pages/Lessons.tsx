@@ -253,7 +253,7 @@ export default function Lessons() {
       <Layout back />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
-        <div className="max-w-3xl mx-auto px-4 pt-4 pb-2">
+        <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:pb-[calc(1.5rem+var(--bnav-h))]">
           {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
           <PageHeader
             title={isA ? 'Các bài hội thoại mẫu thông dụng' : 'Common sample dialogues'}

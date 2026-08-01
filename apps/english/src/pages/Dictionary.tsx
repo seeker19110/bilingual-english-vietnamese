@@ -3,8 +3,11 @@ import {
   Search,
   X,
   BookText,
-  Layers,
   GraduationCap,
+  Target,
+  Brain,
+  Star,
+  ClipboardList,
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
@@ -14,9 +17,8 @@ import PageHeader from '../components/PageHeader'
 import VoiceMenu from '../components/VoiceMenu'
 import PronounceButton from '../components/PronounceButton'
 import VocabMilestone from '../components/VocabMilestone'
-import StudyPanel from '../components/StudyPanel'
+import StudyPanel, { type StudyTab } from '../components/StudyPanel'
 import KaraokeText from '../components/KaraokeText'
-import Flashcard from '../components/Flashcard'
 import WordIllustration from '../components/WordIllustration'
 import WordFormsBlock from '../components/WordFormsBlock'
 import type { ExPair } from '../data/extra-examples'
@@ -30,7 +32,9 @@ import { POS_LABEL, POS_COLOR, POS_LIST, LEVEL_COLOR } from '../lib/pos'
 import { getLearnedWords } from '../lib/vocab'
 
 const PAGE_SIZE = 3
-type Tab = 'search' | 'flashcard' | 'pos'
+type Tab = StudyTab | 'search' | 'pos'
+// Từ tab học (StudyPanel) tách riêng để biết khi nào cần render <StudyPanel>.
+const STUDY_TABS: StudyTab[] = ['today', 'srs', 'hard', 'quiz']
 
 // Phát hiện chuỗi tiếng Việt (có dấu)
 function hasVietnamese(s: string) {
@@ -82,7 +86,8 @@ export default function Dictionary() {
   const onboarding = useOnboarding(user?.id) // nhóm tuổi (GĐ 4, PROGRESS.md) — lọc vòng từ vựng
   const dir = getDirection()
   const isA = dir === 'A'
-  const [tab, setTab] = useState<Tab>('search')
+  const [tab, setTab] = useState<Tab>('today')
+  const [badges, setBadges] = useState({ srsDue: 0, hardCount: 0 })
   const [query, setQuery] = useState('')
   const deferredQuery = useDeferredValue(query)
   const [page, setPage] = useState(0)
@@ -218,7 +223,7 @@ export default function Dictionary() {
       <Layout extra={<VoiceMenu plan={user.plan} isA={isA} />} />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
-        <div className="max-w-3xl mx-auto px-4 py-6 pb-24 sm:pb-6">
+        <div className="max-w-3xl mx-auto px-4 py-6 pb-24 sm:pb-[calc(1.5rem+var(--bnav-h))]">
           {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
           <PageHeader
             title={isA ? 'Từ điển' : 'Dictionary'}
@@ -226,38 +231,79 @@ export default function Dictionary() {
           />
 
           <VocabMilestone userId={user.id} refreshKey={learnedKey} />
-          <StudyPanel
-            uid={user.id}
-            isA={isA}
-            onProgress={() => setLearnedKey((k) => k + 1)}
-            ageGroup={onboarding?.ageGroup}
-          />
 
-          {/* Tab bar */}
-          <div className="flex gap-2 mb-4">
-            {(
-              [
-                { key: 'search', icon: BookText, label: isA ? 'Tra từ' : 'Search' },
-                { key: 'flashcard', icon: Layers, label: 'Flashcard' },
-                { key: 'pos', icon: GraduationCap, label: isA ? 'Loại từ' : 'Word Types' },
-              ] as const
-            ).map(({ key, icon: Icon, label }) => (
-              <button
-                key={key}
-                onClick={() => setTab(key)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-medium transition ${
-                  tab === key
-                    ? 'bg-accent-500/20 text-accent-300 theme-light:text-accent-800 border border-accent-500/40'
-                    : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200'
-                }`}
-              >
-                <Icon className="w-4 h-4" /> {label}
-              </button>
-            ))}
+          {/* Thanh 6 tab — 2 hàng x 3, hàng trên = tra cứu + học hôm nay, hàng dưới = ôn tập */}
+          <div className="space-y-1.5 mb-4">
+            <div className="grid grid-cols-3 gap-1.5">
+              {(
+                [
+                  { key: 'search', icon: BookText, label: isA ? 'Tra từ' : 'Search' },
+                  { key: 'today', icon: Target, label: isA ? 'Hôm nay' : 'Today' },
+                  { key: 'pos', icon: GraduationCap, label: isA ? 'Loại từ' : 'Word Types' },
+                ] as const
+              ).map(({ key, icon: Icon, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setTab(key)}
+                  className={`relative flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition ${
+                    tab === key
+                      ? 'bg-accent-500/20 text-accent-300 theme-light:text-accent-800 border border-accent-500/40'
+                      : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" /> <span className="truncate">{label}</span>
+                </button>
+              ))}
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {(
+                [
+                  { key: 'srs', icon: Brain, label: isA ? 'Ôn SRS' : 'SRS', badge: badges.srsDue },
+                  {
+                    key: 'hard',
+                    icon: Star,
+                    label: isA ? 'Từ khó' : 'Hard',
+                    badge: badges.hardCount,
+                  },
+                  {
+                    key: 'quiz',
+                    icon: ClipboardList,
+                    label: isA ? 'Kiểm tra' : 'Quiz',
+                    badge: undefined as number | undefined,
+                  },
+                ] as const
+              ).map(({ key, icon: Icon, label, badge }) => (
+                <button
+                  key={key}
+                  onClick={() => setTab(key)}
+                  className={`relative flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition ${
+                    tab === key
+                      ? 'bg-accent-500/20 text-accent-300 theme-light:text-accent-800 border border-accent-500/40'
+                      : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:text-zinc-200'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" /> <span className="truncate">{label}</span>
+                  {badge != null && badge > 0 && (
+                    <span className="absolute -top-1.5 -right-1 bg-rose-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                      {badge > 99 ? '99+' : badge}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* ── Tab Tra từ ── */}
-          {tab === 'search' ? (
+          {/* ── Tab học (Hôm nay/Ôn SRS/Từ khó/Kiểm tra) ── */}
+          {STUDY_TABS.includes(tab as StudyTab) ? (
+            <StudyPanel
+              uid={user.id}
+              isA={isA}
+              tab={tab as StudyTab}
+              onProgress={() => setLearnedKey((k) => k + 1)}
+              onBadges={setBadges}
+              ageGroup={onboarding?.ageGroup}
+            />
+          ) : tab === 'search' ? (
             <>
               {/* Ô tìm kiếm — desktop */}
               <div className="hidden sm:block relative mb-3 animate-fade-in">
@@ -613,8 +659,6 @@ export default function Dictionary() {
                 </div>
               )}
             </>
-          ) : tab === 'flashcard' ? (
-            <Flashcard userId={user.id} onLearnedChange={() => setLearnedKey((k) => k + 1)} />
           ) : (
             /* ── Tab Loại từ ── */
             <div className="space-y-3 animate-fade-in">
