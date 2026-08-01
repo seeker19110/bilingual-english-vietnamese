@@ -144,6 +144,37 @@ test** vào báo cáo (KHÔNG tự viết test trong lượt audit — đó là 
 
 Xuất báo cáo theo **mẫu mục 10 CLAUDE.md**, rồi thêm phần phân loại việc (xem §3).
 
+### Tầng 8 — Hiệu năng thực đo (Core Web Vitals)
+
+- **Kích hoạt khi:** audit định kỳ trước deploy lớn, hoặc khi thay đổi UI/trang tải nhiều dữ liệu.
+- **Cách kiểm:** chạy Lighthouse (CLI hoặc DevTools) trên domain production
+  (https://en-vi.donghanhcungban.org) cho trang chủ + 1-2 trang tải nặng (Dictionary, CEFR level).
+- **Tiêu chí đạt:** LCP ≤ 2.5s · INP ≤ 200ms · CLS ≤ 0.1 (ngân sách mục 4.7 CLAUDE.md).
+- **Nếu fail:** ghi vào báo cáo kèm trang cụ thể + chỉ số vượt ngưỡng; không tự sửa trong lượt audit.
+- **Ai xử lý:** AI đo + đề xuất; sửa performance thật (code-splitting, ảnh, font) = việc riêng.
+
+### Tầng 9 — Kiểm tra vận hành (production)
+
+- **Kích hoạt khi:** audit định kỳ trước deploy lớn, hoặc nghi ngờ có sự cố gần đây.
+- **Cách kiểm:** đọc Sentry (alert/lỗi mới chưa xử lý), log PM2 trên VPS (`pm2 logs` / restart count
+  bất thường), dung lượng ổ đĩa còn lại.
+- **Tiêu chí đạt:** không có lỗi Sentry mới chưa xem xét; PM2 không có restart loop; ổ đĩa còn đủ chỗ.
+- **Nếu fail:** ghi vào báo cáo, phân loại xử lý theo `docs/ke-hoach-khoi-phuc-su-co-server.md` nếu là sự cố thật.
+- **Ai xử lý:** AI đọc log qua SSH nếu có quyền; xử lý sự cố thật ưu tiên theo runbook khôi phục.
+
+### Bước bổ sung — Quét scripts/ và tính năng chính (kèm mọi lượt audit toàn diện)
+
+Không tự động hóa được bằng lệnh đơn — làm thủ công, nhanh:
+
+- **Scripts:** liệt kê `scripts/*.ts` (trừ test), đối chiếu với `package.json` "scripts". Script không
+  có trong `package.json` → tra `grep -rl <tên-script> docs/ PROGRESS.md apps/*/src/data` để xác nhận là
+  script sinh dữ liệu one-off đã có tài liệu tham chiếu (bình thường) hay code chết thật sự (đề xuất xoá).
+- **Tính năng chính:** đối chiếu 3 chế độ học (Chat/Viết/Nói) + Lộ trình CEFR + Thanh toán còn hoạt động
+  đúng mô tả ở CLAUDE.md mục 1 — tối thiểu chạy thử 1 lượt tay trên trang thật hoặc dev nếu có nghi ngờ,
+  không chỉ dựa vào test tự động.
+- **Tiêu chí đạt:** không có script/tính năng "mồ côi" (không dùng, không tài liệu, không rõ mục đích).
+- **Ai xử lý:** AI quét + đối chiếu; xoá script/tính năng chết = xác nhận với người dùng trước.
+
 ---
 
 ## 3. Mẫu báo cáo audit
@@ -168,6 +199,14 @@ Coverage gate ✅/❌ (stmts/branches/funcs/lines) | E2E+a11y ✅/❌ | Vùng th
 
 TẦNG 6 — Đối chiếu tài liệu
 Git: ahead X / behind Y | Working tree ✅/❌ | PROGRESS khớp ✅/❌ | Migration chưa áp: [..] | Nợ kỹ thuật: [..]
+
+TẦNG 8 — Hiệu năng thực đo (nếu chạy)
+LCP .. | INP .. | CLS .. | hoặc "N/A — không đo lượt này"
+
+TẦNG 9 — Vận hành production (nếu chạy)
+Sentry ✅/❌ (lỗi mới: ..) | PM2 ✅/❌ (restart bất thường: ..) | Ổ đĩa ✅/❌ | hoặc "N/A — không có quyền truy cập VPS lượt này"
+
+Quét scripts/tính năng: script mồ côi: [..] | tính năng chính còn hoạt động đúng ✅/❌
 
 --- PHÂN LOẠI VIỆC ---
 AI tự làm được: [..]
