@@ -52,25 +52,29 @@ export function useOneHandedDrag() {
     }, RETURN_DELAY_MS)
   }
 
+  // Đang kéo xuống (translateY > 0) → không cho scrollY lệch khỏi 0, để header luôn
+  // nằm trên cùng, body luôn dính liền ngay sau. LƯU Ý: KHÔNG dùng document.documentElement
+  // .style.overflow = 'hidden' — cách đó set 1 style TOÀN CỤC, nếu effect dọn dẹp không
+  // kịp chạy đúng lúc (vd chuyển trang/route ngay trong lúc đang kéo) thì overflow bị
+  // "kẹt" lại mãi mãi, khoá cuộn cả trang vĩnh viễn (đã xảy ra thật ở trang Luyện tập).
+  // Thay vào đó, chỉ PHẢN ỨNG lại: hễ scrollY lệch khỏi 0 trong lúc đang kéo thì ép về
+  // lại ngay — không set style nào nên không thể bị kẹt.
+  const translateYRef = useRef(0)
   useEffect(() => {
-    const onScroll = () => setAtTop(window.scrollY <= 0)
+    translateYRef.current = translateY
+  }, [translateY])
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (translateYRef.current > 0 && window.scrollY !== 0) {
+        window.scrollTo(0, 0)
+        return
+      }
+      setAtTop(window.scrollY <= 0)
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
-  // Đang kéo xuống (translateY > 0) → khoá hẳn việc cuộn trang bên dưới, để header
-  // luôn nằm trên cùng, body luôn dính liền ngay sau — không cho scrollY lệch khỏi 0
-  // (vd người dùng lỡ cuộn bằng phím/nút chuột giữa trong lúc đang ở trạng thái kéo).
-  const isPulled = translateY > 0
-  useEffect(() => {
-    if (!isPulled) return
-    const prevOverflow = document.documentElement.style.overflow
-    document.documentElement.style.overflow = 'hidden'
-    if (window.scrollY !== 0) window.scrollTo(0, 0)
-    return () => {
-      document.documentElement.style.overflow = prevOverflow
-    }
-  }, [isPulled])
 
   useEffect(() => clearReturnTimer, [])
 
