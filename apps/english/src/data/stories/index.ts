@@ -2,7 +2,10 @@
 // File này CHỈ chứa type + hằng số, KHÔNG chứa nội dung truyện (nội dung nằm ở raw/*.json,
 // được script scripts/gen-stories-json.mjs sinh ra public/data/stories/ để tải bằng fetch()).
 
-export type StoryKind = 'fairy-tale' | 'fable'
+// 6 thể loại (chốt 2026-08-01, xem docs/research/danh-muc-truyen-nghe-2026-08-01.md mục 9).
+export const STORY_KINDS = ['fairy-tale', 'fable', 'vn-folk', 'myth', 'humor', 'children'] as const
+
+export type StoryKind = (typeof STORY_KINDS)[number]
 
 /** Một câu song ngữ. `p` = chỉ số đoạn văn (để gom câu thành đoạn khi hiển thị). */
 export interface StoryLine {

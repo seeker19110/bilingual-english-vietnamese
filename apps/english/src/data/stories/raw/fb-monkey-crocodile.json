@@ -1,0 +1,149 @@
+{
+  "id": "fb-monkey-crocodile",
+  "kind": "fable",
+  "titleEn": "The Monkey and the Crocodile",
+  "titleVi": "Khỉ và Cá sấu",
+  "countryVi": "Ấn Độ",
+  "countryEn": "India",
+  "flag": "🇮🇳",
+  "level": "A2",
+  "source": {
+    "en": "Jataka Tales, retold by Ellen C. Babbitt (1912) — public domain, nguyên văn Phần I",
+    "enUrl": "https://www.gutenberg.org/cache/epub/62514/pg62514.txt",
+    "vi": "Opus dịch tay 2026 từ bản public domain"
+  },
+  "moralEn": "Quick wits can save a life where strength cannot.",
+  "moralVi": "Trí nhanh cứu được mạng ở nơi sức mạnh đành chịu.",
+  "lines": [
+    {
+      "p": 0,
+      "en": "A monkey lived in a great tree on a river bank.",
+      "vi": "Có một con khỉ sống trên một cây đại thụ bên bờ sông."
+    },
+    {
+      "p": 0,
+      "en": "In the river there were many Crocodiles.",
+      "vi": "Dưới sông thì có rất nhiều cá sấu."
+    },
+    {
+      "p": 1,
+      "en": "A Crocodile watched the Monkeys for a long time, and one day she said to her son: \"My son, get one of those Monkeys for me. I want the heart of a Monkey to eat.\"",
+      "vi": "Một con cá sấu cái rình lũ khỉ đã lâu, rồi một hôm bảo con trai mình: \"Con ơi, bắt cho mẹ một con khỉ trong đám ấy. Mẹ muốn ăn tim khỉ.\""
+    },
+    {
+      "p": 1,
+      "en": "\"How am I to catch a Monkey?\" asked the little Crocodile. \"I do not travel on land, and the Monkey does not go into the water.\"",
+      "vi": "\"Con bắt khỉ bằng cách nào được?\" cá sấu con hỏi. \"Con thì không đi được trên cạn, mà khỉ thì chẳng xuống nước bao giờ.\""
+    },
+    {
+      "p": 1,
+      "en": "\"Put your wits to work, and you'll find a way,\" said the mother.",
+      "vi": "\"Cứ vận đầu óc ra mà nghĩ, rồi con sẽ tìm được cách,\" cá sấu mẹ nói."
+    },
+    {
+      "p": 1,
+      "en": "And the little Crocodile thought and thought.",
+      "vi": "Thế là cá sấu con nghĩ mãi, nghĩ mãi."
+    },
+    {
+      "p": 2,
+      "en": "At last he said to himself: \"I know what I'll do. I'll get that Monkey that lives in a big tree on the river bank. He wishes to go across the river to the island where the fruit is so ripe.\"",
+      "vi": "Cuối cùng nó tự nhủ: \"Ta biết phải làm gì rồi. Ta sẽ bắt con khỉ sống trên cây to bên bờ sông kia. Nó vẫn thèm sang bên kia sông, tới hòn đảo có thứ quả chín mọng ấy.\""
+    },
+    {
+      "p": 2,
+      "en": "So the Crocodile swam to the tree where the Monkey lived. But he was a stupid Crocodile.",
+      "vi": "Vậy là cá sấu bơi tới gốc cây nơi con khỉ ở. Nhưng nó là một con cá sấu ngu ngốc."
+    },
+    {
+      "p": 3,
+      "en": "\"Oh, Monkey,\" he called, \"come with me over to the island where the fruit is so ripe.\"",
+      "vi": "\"Này anh Khỉ,\" nó gọi, \"sang với tôi tới hòn đảo có thứ quả chín mọng kia đi.\""
+    },
+    {
+      "p": 3,
+      "en": "\"How can I go with you?\" asked the Monkey. \"I do not swim.\"",
+      "vi": "\"Tôi đi với anh sao được?\" khỉ hỏi. \"Tôi có biết bơi đâu.\""
+    },
+    {
+      "p": 3,
+      "en": "\"No--but I do. I will take you over on my back,\" said the Crocodile.",
+      "vi": "\"Đúng thế — nhưng tôi thì biết. Tôi sẽ cõng anh trên lưng đưa sang,\" cá sấu nói."
+    },
+    {
+      "p": 3,
+      "en": "The Monkey was greedy, and wanted the ripe fruit, so he jumped down on the Crocodile's back.",
+      "vi": "Khỉ vốn tham ăn, lại thèm thứ quả chín ấy, nên nhảy phốc xuống lưng cá sấu."
+    },
+    {
+      "p": 4,
+      "en": "\"Off we go!\" said the Crocodile.",
+      "vi": "\"Ta đi thôi!\" cá sấu nói."
+    },
+    {
+      "p": 4,
+      "en": "\"This is a fine ride you are giving me!\" said the Monkey.",
+      "vi": "\"Anh cho tôi một chuyến đi thật là thích!\" khỉ nói."
+    },
+    {
+      "p": 4,
+      "en": "\"Do you think so? Well, how do you like this?\" asked the Crocodile, diving.",
+      "vi": "\"Anh thấy thế à? Vậy anh thấy thế này thì sao?\" cá sấu hỏi, rồi lặn xuống."
+    },
+    {
+      "p": 4,
+      "en": "\"Oh, don't!\" cried the Monkey, as he went under the water. He was afraid to let go, and he did not know what to do under the water.",
+      "vi": "\"Ối, đừng!\" khỉ kêu lên khi bị dìm xuống nước. Nó sợ không dám buông tay, mà ở dưới nước thì chẳng biết xoay xở ra sao."
+    },
+    {
+      "p": 5,
+      "en": "When the Crocodile came up, the Monkey sputtered and choked. \"Why did you take me under water, Crocodile?\" he asked.",
+      "vi": "Khi cá sấu ngoi lên, khỉ vừa phì nước vừa sặc sụa. \"Sao anh lại dìm tôi xuống nước thế, anh Cá sấu?\" nó hỏi."
+    },
+    {
+      "p": 5,
+      "en": "\"I am going to kill you by keeping you under water,\" answered the Crocodile. \"My mother wants Monkey-heart to eat, and I'm going to take yours to her.\"",
+      "vi": "\"Tôi định dìm anh dưới nước cho chết,\" cá sấu đáp. \"Mẹ tôi muốn ăn tim khỉ, nên tôi sẽ mang tim anh về cho bà.\""
+    },
+    {
+      "p": 6,
+      "en": "\"I wish you had told me you wanted my heart,\" said the Monkey, \"then I might have brought it with me.\"",
+      "vi": "\"Giá anh nói sớm là anh cần quả tim của tôi,\" khỉ nói, \"thì tôi đã mang nó theo rồi.\""
+    },
+    {
+      "p": 6,
+      "en": "\"How queer!\" said the stupid Crocodile. \"Do you mean to say that you left your heart back there in the tree?\"",
+      "vi": "\"Lạ thật đấy!\" con cá sấu ngu ngốc nói. \"Ý anh là anh để quả tim ở lại trên cây đằng kia ư?\""
+    },
+    {
+      "p": 6,
+      "en": "\"That is what I mean,\" said the Monkey. \"If you want my heart, we must go back to the tree and get it. But we are so near the island where the ripe fruit is, please take me there first.\"",
+      "vi": "\"Ý tôi đúng là thế,\" khỉ nói. \"Nếu anh muốn quả tim của tôi, ta phải quay lại cây mà lấy. Nhưng ta đã gần tới hòn đảo có quả chín rồi, anh làm ơn đưa tôi sang đó trước đã.\""
+    },
+    {
+      "p": 6,
+      "en": "\"No, Monkey,\" said the Crocodile, \"I'll take you straight back to your tree. Never mind the ripe fruit. Get your heart and bring it to me at once. Then we'll see about going to the island.\"",
+      "vi": "\"Không được, anh Khỉ,\" cá sấu nói, \"tôi sẽ đưa anh về thẳng cái cây của anh. Quả chín thì mặc kệ nó. Anh lấy quả tim mang ra cho tôi ngay lập tức. Rồi ta hẵng tính chuyện ra đảo.\""
+    },
+    {
+      "p": 6,
+      "en": "\"Very well,\" said the Monkey.",
+      "vi": "\"Được thôi,\" khỉ nói."
+    },
+    {
+      "p": 7,
+      "en": "But no sooner had he jumped onto the bank of the river than--whisk! up he ran into the tree.",
+      "vi": "Nhưng vừa nhảy được lên bờ sông thì — vút một cái! — nó đã leo tót lên cây."
+    },
+    {
+      "p": 7,
+      "en": "From the topmost branches he called down to the Crocodile in the water below:",
+      "vi": "Từ trên ngọn cây, nó gọi vọng xuống con cá sấu dưới nước:"
+    },
+    {
+      "p": 7,
+      "en": "\"My heart is way up here! If you want it, come for it, come for it!\"",
+      "vi": "\"Quả tim của tôi ở tít trên này này! Anh muốn thì lên mà lấy, lên mà lấy đi!\""
+    }
+  ]
+}

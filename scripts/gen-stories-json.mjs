@@ -11,14 +11,15 @@
 // ════════════════════════════════════════════════════════════════════
 
 import { mkdirSync, writeFileSync, readdirSync, readFileSync, rmSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, join, basename } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const RAW_DIR = join(__dirname, '..', 'apps', 'english', 'src', 'data', 'stories', 'raw')
 const OUT_DIR = join(__dirname, '..', 'public', 'data', 'stories')
 
-const VALID_KINDS = ['fairy-tale', 'fable']
+// Phải khớp STORY_KINDS ở apps/english/src/data/stories/index.ts (file .mjs không import type được).
+const VALID_KINDS = ['fairy-tale', 'fable', 'vn-folk', 'myth', 'humor', 'children']
 const VALID_LEVELS = ['A2', 'B1', 'B2']
 
 // Kiểm 1 truyện theo ràng buộc mục 5.3 đặc tả. Ném lỗi rõ ràng nếu vi phạm.
@@ -27,7 +28,7 @@ function validateStory(story, filename) {
 
   if (!VALID_KINDS.includes(story.kind)) {
     throw new Error(
-      `${prefix} kind "${story.kind}" không hợp lệ (phải là 'fairy-tale' hoặc 'fable')`,
+      `${prefix} kind "${story.kind}" không hợp lệ (phải là một trong: ${VALID_KINDS.join(', ')})`,
     )
   }
   if (!VALID_LEVELS.includes(story.level)) {
@@ -63,13 +64,12 @@ function validateStory(story, filename) {
     }
   }
 
-  if (story.kind === 'fable') {
-    if (typeof story.moralEn !== 'string' || story.moralEn.trim() === '') {
-      throw new Error(`${prefix} kind 'fable' phải có moralEn`)
-    }
-    if (typeof story.moralVi !== 'string' || story.moralVi.trim() === '') {
-      throw new Error(`${prefix} kind 'fable' phải có moralVi`)
-    }
+  // Bài học rút ra là TÙY CHỌN (bản public domain của một số truyện vốn không kèm câu bài học,
+  // ta lấy nguyên văn nên không tự bịa thêm) — nhưng đã có một bên thì phải có cả hai.
+  const hasMoralEn = typeof story.moralEn === 'string' && story.moralEn.trim() !== ''
+  const hasMoralVi = typeof story.moralVi === 'string' && story.moralVi.trim() !== ''
+  if (hasMoralEn !== hasMoralVi) {
+    throw new Error(`${prefix} moralEn và moralVi phải đi cùng nhau (đang thiếu một bên)`)
   }
 }
 
@@ -121,10 +121,10 @@ function main() {
     stories.push(story)
   }
 
-  // Sắp xếp: fairy-tale trước fable, trong mỗi nhóm giữ thứ tự theo tên file.
+  // Sắp xếp theo đúng thứ tự thể loại của VALID_KINDS, trong mỗi nhóm sắp theo id.
   stories.sort((a, b) => {
-    if (a.kind !== b.kind) return a.kind === 'fairy-tale' ? -1 : 1
-    return a.id.localeCompare(b.id)
+    const d = VALID_KINDS.indexOf(a.kind) - VALID_KINDS.indexOf(b.kind)
+    return d !== 0 ? d : a.id.localeCompare(b.id)
   })
 
   rmSync(OUT_DIR, { recursive: true, force: true })
@@ -144,6 +144,8 @@ function main() {
 
 // Chỉ chạy main() khi file được thực thi trực tiếp (node scripts/gen-stories-json.mjs),
 // KHÔNG chạy khi bị import (vd. stories.test.ts import toStoryMeta để test).
-if (import.meta.url === `file://${process.argv[1]}`) {
+// pathToFileURL: trên Windows, `file://${process.argv[1]}` cho ra "file://C:\..." nên KHÔNG BAO GIỜ
+// khớp với import.meta.url ("file:///C:/..."), khiến script chạy im lặng mà không sinh gì.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main()
 }

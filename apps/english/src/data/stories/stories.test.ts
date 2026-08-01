@@ -9,12 +9,13 @@ import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 
 import { toStoryMeta } from '../../../../../scripts/gen-stories-json.mjs'
+import { STORY_KINDS } from './index'
 import type { Story } from './index'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const RAW_DIR = join(__dirname, 'raw')
 
-const VALID_KINDS = ['fairy-tale', 'fable']
+const VALID_KINDS = STORY_KINDS as readonly string[]
 const VALID_LEVELS = ['A2', 'B1', 'B2']
 
 function loadRawStories(): { filename: string; story: Story }[] {
@@ -61,11 +62,13 @@ describe('stories/raw/*.json — ràng buộc dữ liệu', () => {
     expect(VALID_LEVELS).toContain(story.level)
   })
 
-  it.each(entries)('$filename: kind fable phải có moralEn + moralVi', ({ story }) => {
-    if (story.kind === 'fable') {
-      expect(story.moralEn?.trim()).toBeTruthy()
-      expect(story.moralVi?.trim()).toBeTruthy()
-    }
+  // Bài học rút ra là TÙY CHỌN: một số bản public domain (vd. "The Fox and the Grapes" bản
+  // Townsend 1867) vốn không kèm câu bài học, mà ta lấy nguyên văn nên không được tự bịa thêm.
+  // Ràng buộc còn lại: đã có một bên thì phải có cả hai, không để lệch ngôn ngữ.
+  it.each(entries)('$filename: moralEn và moralVi phải đi cùng nhau', ({ story }) => {
+    const hasEn = Boolean(story.moralEn?.trim())
+    const hasVi = Boolean(story.moralVi?.trim())
+    expect(hasEn).toBe(hasVi)
   })
 })
 
