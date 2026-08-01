@@ -51,8 +51,39 @@ trên VPS (xem "Cần làm tay").
   giác + hệ thức cạnh–góc, **không dạy** `h² = b'·c'`, `b² = a·b'`, `a·h = b·c` (đã bỏ khỏi kho
   kiến thức). Còn treo: ảnh hưởng TT 17/2025, thứ tự dạy mạch TK lớp 8, độ sâu căn bậc hai lớp 7,
   việc loại các bài chứng minh hình học khỏi MVP.
-  **Còn thiếu:** Toán 1-5 (đợt 2b), KHTN 6-9 (Hoá trước, GĐ3), Toán 10-12 (đợt 2d) — PDF các sách
-  này CHƯA có trong `tai-lieu-sgk/`, chờ người dùng bổ sung.
+  **✅ [2026-08-01] Đã đối chiếu xong KHTN 6-9** (ảnh scan `tai-lieu-sgk/SGK-KHTN/6..9/`, OCR bằng
+  `scripts/ocr-images.py`; mục lục 2 cột đọc thêm bằng script mới `scripts/ocr-crop.py`). Mục lục
+  thật ở `docs/research/muc-luc-sgk/khtn-{6,7,8,9}.md` — **có thêm cột `Branch`** (LÝ/HOÁ/SINH/
+  chung) so với mẫu Toán, vì KHTN là **một sách tích hợp**. Quy mô: L6 10 chương/55 bài · L7 10
+  chương/42 bài · L8 8 chương/47 bài · L9 14 chương/51 bài.
+  **Số mục lệch phát hiện:** Hoá **15** (`[+]`5 `[≠]`7 `[−]`3) · Lý **18** (`[+]`8 `[≠]`6 `[−]`4)
+  · Sinh **15** (`[+]`10 `[≠]`5 `[−]`0) — ghi ở mục "Nhật ký đối chiếu" cuối mỗi file kho kiến thức.
+  **Hai điểm nghi ngờ then chốt đều đã XÁC MINH trên nội dung bài học (không chỉ mục lục):**
+  - 🔴 **`n = V/24` là SAI, `n = V/22,4` cũng sai — SGK KHTN 8 dùng `n = V(L)/24,79 (L/mol)`**
+    ở điều kiện chuẩn **1 bar, 25 °C** (khung Mục tiêu Bài 3, `SGK-KHTN/8/page_0017.png`). Dùng 24
+    lệch **≈3,3%**, **vượt ngưỡng dung sai 3%** của `packages/core-grading` ⇒ **phải xử lý trước
+    khi mở GĐ3 môn Hoá** (đưa 24,79 thành hằng số có tên, cân nhắc dung sai riêng cho dạng bài
+    chuyển đổi mol ↔ thể tích khí). Chưa sửa code — giữ PR này thuần tài liệu.
+  - **`g = 10` hay `9,8`: SGK dùng CẢ HAI, hai vai trò khác nhau** — Bảng 43.1 KHTN 6 nêu 1 kg có
+    trọng lượng **9,8 N** (giá trị vật lí thật, để so Mặt Trăng/Hoả tinh), còn kết luận tính toán
+    của Bài 43 ghi `P` (N) **gần bằng 10 lần** `m` (kg) ⇒ công thức làm bài là **`P ≈ 10·m`**.
+    Ngưỡng dung sai 3% hiện có **vừa đủ nhưng sát mép**; khuyến nghị ghi rõ `g` trong đề.
+  - **Bonus, xác nhận PA C là đúng:** KHTN 9 vẫn là MỘT cuốn tích hợp nhưng 14 chương gom thành 3
+    khối liền mạch theo phân môn (I-V Lý → VI-X Hoá → XI-XIV Sinh) ⇒ môn cha `khtn` + cột `branch`
+    diễn tả đủ, **không cần tách 3 môn riêng ở THCS**.
+    **Lệch đáng chú ý khác:** Lý — **công & công suất KHÔNG dạy ở lớp 8** mà ở lớp 9 (Bài 4), kho cũ
+    xếp nhầm; thiếu hẳn chương "Năng lượng cơ học" L9 và chương "Trái Đất và bầu trời" L6; bỏ lực
+    điện từ/quy tắc bàn tay trái/máy ảnh-mắt (không có ở KNTT L9). Hoá — thiếu hẳn chương II lớp 7
+    (phân tử, liên kết, **hoá trị & CTHH** — phần tính toán hoá học đầu tiên) và chương X lớp 9
+    (khai thác tài nguyên vỏ Trái Đất, chu trình carbon); bỏ acetylene. Sinh — **0 mục `[−]`**, mọi
+    nội dung đã ghi đều có thật, chỉ ghi quá sơ lược; đổi thuật ngữ **ADN/ARN → DNA/RNA**, `G = X`
+    → `G = C`; **di truyền liên kết dạy ngay lớp 9** (kho cũ xếp lớp 12).
+    **Điểm cần giáo viên chuyên môn duyệt:** Hoá 4 · Lý 6 · Sinh 4 (chi tiết ở §6.3 / §6.3 / §5.3
+    của từng file). Đáng chú ý: lực đẩy Archimedes & moment lực L8 định tính hay định lượng; công
+    thức thấu kính `1/f = 1/d + 1/d'` L9; Joule–Lenz L9; ăn mòn kim loại L9 (Hoá).
+    **Còn thiếu:** Toán 1-5 (đợt 2b), Toán 10-12 (đợt 2d), **và toàn bộ THPT của Lý/Hoá/Sinh** (§3
+    của 3 file kho kiến thức vẫn là bản thảo chưa kiểm chứng) — sách CHƯA có trong `tai-lieu-sgk/`,
+    chờ người dùng bổ sung.
 - **Căn cứ pháp lý đã tra được (2026-08-01):** TT 32/2018 → sửa bởi TT 20/2021, TT 13/2022 và
   **TT 17/2025/TT-BGDĐT** (mới nhất); **QĐ 3588/QĐ-BGDĐT** (26/12/2025) chọn bộ "Kết nối tri thức
   với cuộc sống" dùng chung toàn quốc; SGK chỉnh sửa áp dụng từ năm học 2026-2027.
