@@ -30,11 +30,16 @@ trên VPS (xem "Cần làm tay").
 - **SGK thống nhất toàn quốc từ năm học 2026-2027** — bộ "Kết nối tri thức với cuộc sống". Đổi
   giả định theo hướng TỐT hơn: trước phải viết trung lập giữa 3 bộ sách, nay bám được đúng thứ tự
   bài học sinh học trên lớp. AI **không tải được SGK** (proxy sandbox chặn `taphuan.nxbgd.vn` —
-  `CONNECT tunnel failed 403`). **Đính chính:** hướng dẫn "đặt PDF vào `tai-lieu-sgk/`" KHÔNG dùng
-  được khi AI chạy từ xa — phiên chạy trong container cloud tạm thời, người dùng không copy file
-  vào được và container bị thu hồi sau phiên. Cách đúng: **đính kèm thẳng vào khung chat**, hoặc
-  chỉ gửi phần Mục lục, hoặc gõ lại danh sách tên bài. Thư mục `tai-lieu-sgk/` + `.gitignore` vẫn
-  giữ làm **hàng rào an toàn** chống lỡ tay commit tài liệu bản quyền. Có PDF vẫn KHÔNG được chép nội dung — chỉ lấy thứ tự bài +
+  `CONNECT tunnel failed 403`). **Chốt: sẽ đối chiếu ở PHIÊN LOCAL** (Claude Code chạy trên máy
+  người dùng) — khi đó chép PDF vào `tai-lieu-sgk/` là đường chính thức, AI đọc trực tiếp cả bộ.
+  Thư mục đã có trong `.gitignore` làm hàng rào cứng chống lỡ tay commit tài liệu bản quyền.
+  Quy trình đối chiếu từng bước: **`docs/research/huong-dan-doi-chieu-sgk.md`**.
+- **Căn cứ pháp lý đã tra được (2026-08-01):** TT 32/2018 → sửa bởi TT 20/2021, TT 13/2022 và
+  **TT 17/2025/TT-BGDĐT** (mới nhất); **QĐ 3588/QĐ-BGDĐT** (26/12/2025) chọn bộ "Kết nối tri thức
+  với cuộc sống" dùng chung toàn quốc; SGK chỉnh sửa áp dụng từ năm học 2026-2027.
+  ⚠️ **AI CHƯA đọc được nội dung chi tiết TT 17/2025** (`vanban.chinhphu.vn` cũng trả 403) nên
+  **chưa biết môn Toán/KHTN bị sửa cụ thể những gì** — 4 file kho kiến thức hiện là BẢN THẢO chưa
+  đối chiếu bản chỉnh sửa mới nhất, phải làm ở phiên local. Có PDF vẫn KHÔNG được chép nội dung — chỉ lấy thứ tự bài +
   danh mục công thức, đề/ví dụ tự soạn mới.
 - **✅ `packages/core-grading` — ENGINE CHẤM DÙNG CHUNG, ĐÃ VIẾT XONG + 74 test** (99% câu lệnh,
   90,6% nhánh — cao hơn ngưỡng chung của repo vì chấm sai làm mất niềm tin người học ngay).

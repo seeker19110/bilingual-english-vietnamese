@@ -7,6 +7,25 @@
 
 ## 0. NGUỒN GỐC & GIỚI HẠN — đọc trước khi dùng file này
 
+### 0.00 Căn cứ pháp lý — chuỗi văn bản đã tra cứu (2026-08-01)
+
+| Văn bản                                    | Vai trò                                                                   |
+| ------------------------------------------ | ------------------------------------------------------------------------- |
+| **Thông tư 32/2018/TT-BGDĐT** (26/12/2018) | Ban hành Chương trình GDPT 2018 — văn bản GỐC                             |
+| Thông tư 20/2021/TT-BGDĐT                  | Sửa đổi, bổ sung                                                          |
+| Thông tư 13/2022/TT-BGDĐT                  | Sửa đổi, bổ sung                                                          |
+| **Thông tư 17/2025/TT-BGDĐT**              | **Sửa đổi, bổ sung MỚI NHẤT** — chương trình chỉnh sửa                    |
+| **Quyết định 3588/QĐ-BGDĐT** (26/12/2025)  | Chọn bộ **"Kết nối tri thức với cuộc sống"** làm SGK dùng chung toàn quốc |
+
+Bộ GD&ĐT tổ chức tập huấn giáo viên về chương trình chỉnh sửa, rà soát chỉnh sửa SGK một số lớp
+cho phù hợp; **SGK chỉnh sửa thực hiện từ năm học 2026-2027**.
+
+> ⚠️ **Điều AI CHƯA biết và KHÔNG được đoán:** nội dung chi tiết Thông tư 17/2025 sửa những gì
+> **cụ thể** với môn Toán/KHTN. Đã thử đọc bản gốc trên `vanban.chinhphu.vn` → **HTTP 403**, cùng
+> tình trạng với mọi nguồn Việt Nam khác (§0.1). Vì vậy toàn bộ nội dung §2-§5 dưới đây bám khung
+> chương trình theo hiểu biết chung, **chưa đối chiếu với bản chỉnh sửa mới nhất** — đây chính là
+> việc phải làm khi có SGK thật (xem `huong-dan-doi-chieu-sgk.md`).
+
 ### 0.0 ⚠️ CẬP NHẬT LỚN 2026-08-01 — SGK thống nhất toàn quốc từ năm học 2026-2027
 
 Phát hiện qua kiểm chứng (người dùng nêu, AI tra cứu xác nhận):
@@ -54,27 +73,22 @@ truy cập bình thường; chỉ môi trường AI bị chặn.
 viết từ **kiến thức toán học phổ quát** (công thức/định lý là sự thật khoa học, không thuộc bản
 quyền ai) và **khung mạch kiến thức GDPT 2018 theo hiểu biết chung**, KHÔNG phải trích từ SGK.
 
-#### Cách khắc phục: người dùng cung cấp nội dung SGK cho AI
+#### Cách cung cấp nội dung SGK cho AI — KHÁC NHAU theo nơi AI chạy
 
-**⚠️ ĐÍNH CHÍNH 2026-08-01 — hướng dẫn ban đầu ("đặt PDF vào `tai-lieu-sgk/`") KHÔNG dùng được
-khi AI chạy từ xa.** Phiên Claude Code trên web/app chạy trong **container cloud tạm thời**, không
-phải máy người dùng: người dùng **không copy file vào thư mục đó được**, và container bị thu hồi
-sau khi phiên kết thúc nên file cũng không còn ở phiên sau.
+**✅ CHỐT 2026-08-01: sẽ làm việc này ở PHIÊN LOCAL** (Claude Code chạy trên máy người dùng), nên
+`tai-lieu-sgk/` là **đường chính thức**.
 
-**Cách dùng được thật, theo thứ tự ưu tiên:**
+| Nơi AI chạy                            | Cách đưa SGK vào                                                                                                                                                                  |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Local** (máy người dùng) — ĐANG DÙNG | ✅ Chép PDF vào `tai-lieu-sgk/`, AI đọc trực tiếp. Nhận được cả bộ, không giới hạn dung lượng chat.                                                                               |
+| Từ xa (web/app, container cloud)       | Đính kèm vào khung chat, hoặc chỉ gửi Mục lục. **Không** chép vào `tai-lieu-sgk/` được — container tạm thời, người dùng không truy cập được thư mục đó và file mất khi hết phiên. |
 
-1. **Đính kèm thẳng vào khung chat** (PDF hoặc ảnh chụp) — AI đọc trực tiếp. An toàn nhất vì file
-   không đi qua repo, không có nguy cơ lỡ tay commit.
-2. **Chỉ gửi phần Mục lục** mỗi cuốn — đây mới là thứ cần nhất (thứ tự chương/bài để dựng lộ
-   trình), không cần toàn bộ sách.
-3. **Gõ lại danh sách tên bài theo thứ tự** — nhanh hơn tưởng, và tuyệt đối sạch về bản quyền.
+**`tai-lieu-sgk/` đã có trong `.gitignore`** — SGK có bản quyền, repo đẩy lên GitHub, **tuyệt đối
+không commit sách vào git**. Dòng ignore này là hàng rào cứng: kể cả AI ở phiên sau lỡ `git add`
+thì cũng không lên được GitHub.
 
-**Thư mục `tai-lieu-sgk/` + dòng `.gitignore` vẫn GIỮ**, không phải để người dùng thả file vào mà
-làm **hàng rào an toàn**: nếu sau này chạy Claude Code ngay trên máy người dùng thì dùng được
-luôn, và quan trọng hơn — lỡ có ai (kể cả AI ở phiên sau) đặt file SGK vào repo thì git đã chặn
-sẵn, không lên GitHub được.
-
-**Ưu tiên nội dung cần:** **Toán 6-9 bộ "Kết nối tri thức"** (đợt 2a làm cấp 2 trước).
+**Ưu tiên nội dung cần:** **Toán 6-9 bộ "Kết nối tri thức"** (đợt 2a làm cấp 2 trước). Quy trình
+đối chiếu chi tiết: xem **`docs/research/huong-dan-doi-chieu-sgk.md`**.
 
 **Có SGK KHÔNG đồng nghĩa được chép nội dung.** Dùng sách để biết đúng _thứ tự bài, phạm vi từng
 lớp, danh mục công thức_ (sự thật + khung chương trình → dùng được). Đề bài và ví dụ trong app
