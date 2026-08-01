@@ -7,6 +7,30 @@
 
 ## 0. NGUỒN GỐC & GIỚI HẠN — đọc trước khi dùng file này
 
+### 0.0 ⚠️ CẬP NHẬT LỚN 2026-08-01 — SGK thống nhất toàn quốc từ năm học 2026-2027
+
+Phát hiện qua kiểm chứng (người dùng nêu, AI tra cứu xác nhận):
+
+- Bộ **"Kết nối tri thức với cuộc sống"** (NXB Giáo dục Việt Nam) được chọn làm **bộ SGK thống
+  nhất dùng chung toàn quốc từ năm học 2026-2027**. Bộ GD&ĐT không biên soạn sách mới (cần 2-3
+  năm) mà chọn 1 trong 3 bộ hiện hành, dựa trên tham vấn các sở GD + chuyên gia.
+- Chương trình được **tinh chỉnh**: tăng thời lượng khoa học công nghệ, đổi mới sáng tạo, STEM,
+  chuyển đổi số, **giáo dục trí tuệ nhân tạo (AI)**; hiệu chỉnh Lịch sử/Địa lý/GDCD theo địa giới
+  hành chính + mô hình chính quyền địa phương hai cấp.
+
+**Hệ quả cho dự án — ĐỔI GIẢ ĐỊNH, theo hướng TỐT hơn:**
+
+| Trước (giả định cũ)                                            | Sau (thực tế 2026-2027)                                                           |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| 3 bộ SGK song song → app phải viết trung lập, không bám bộ nào | **Một bộ duy nhất** → app bám đúng thứ tự chương/bài của "Kết nối tri thức"       |
+| Lộ trình chỉ bám được khung mạch kiến thức chung của GDPT 2018 | Lộ trình khớp **đúng bài học sinh đang học trên lớp** → khác biệt cạnh tranh thật |
+
+> Ghi chú về mức độ ảnh hưởng tới môn TOÁN cụ thể: các điều chỉnh được nêu tập trung vào thời
+> lượng STEM/AI/chuyển đổi số và nhóm môn xã hội — **chưa có căn cứ nào cho thấy công thức/định
+> lý Toán thay đổi** (bản chất chúng là sự thật khoa học, không đổi theo văn bản). Phần có thể
+> xê dịch là **thứ tự và phạm vi bài theo từng lớp**. Vì vậy vẫn phải đối chiếu SGK thật (§0.3),
+> nhưng phần công thức ở §3-§5 giữ nguyên giá trị.
+
 ### 0.1 Việc đã thử và KHÔNG làm được (ghi trung thực, không tô hồng)
 
 Phiên AI này chạy trong sandbox có **chặn kết nối mạng ra ngoài theo danh sách cho phép**. Đã thử
@@ -20,9 +44,25 @@ thật và thất bại:
 | `moet.gov.vn`                                    | `curl` trả `000`                                          |
 | `thuvienphapluat.vn` (bản CT GDPT 2018 môn Toán) | HTTP 403                                                  |
 
-**Kết luận: AI KHÔNG đọc được sách giáo khoa hay bản gốc Thông tư 32.** Mọi nội dung dưới đây
+**Nguyên nhân đã xác định chính xác** (không phải trang chặn): `curl` tới
+`taphuan.nxbgd.vn/tap-huan/chi-tiet-sach/toan-5-tap-mot-...` trả về
+`curl: (56) CONNECT tunnel failed, response 403` — tức **proxy của sandbox từ chối mở đường ra
+host đó**. DNS phân giải bình thường (Cloudflare, chung hạ tầng `taphuan.olm.vn`). Máy người dùng
+truy cập bình thường; chỉ môi trường AI bị chặn.
+
+**Kết luận: AI KHÔNG tự tải được sách giáo khoa hay bản gốc Thông tư 32.** Mọi nội dung dưới đây
 viết từ **kiến thức toán học phổ quát** (công thức/định lý là sự thật khoa học, không thuộc bản
 quyền ai) và **khung mạch kiến thức GDPT 2018 theo hiểu biết chung**, KHÔNG phải trích từ SGK.
+
+#### Cách khắc phục đã chốt: người dùng cấp PDF vào `tai-lieu-sgk/`
+
+- Thư mục `tai-lieu-sgk/` **đã được thêm vào `.gitignore`** — SGK có bản quyền, repo này đẩy lên
+  GitHub, **tuyệt đối không commit sách vào git**.
+- Ưu tiên: **Toán 6-9 bộ "Kết nối tri thức"** (đợt 2a làm cấp 2 trước). Nếu file nặng, chỉ riêng
+  **phần Mục lục** mỗi cuốn đã đủ giá trị — cho biết chính xác thứ tự chương/bài để dựng lộ trình.
+- **Có PDF KHÔNG đồng nghĩa được chép nội dung.** Dùng sách để biết đúng _thứ tự bài, phạm vi
+  từng lớp, danh mục công thức_ (sự thật + khung chương trình → dùng được). Đề bài và ví dụ trong
+  app **vẫn phải tự soạn mới** (§0.2). Đọc sách ≠ được quyền sao chép sách.
 
 ### 0.2 Vì sao cách này lại ĐÚNG về bản quyền (không chỉ là giải pháp chữa cháy)
 
