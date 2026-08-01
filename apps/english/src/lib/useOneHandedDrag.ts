@@ -58,6 +58,20 @@ export function useOneHandedDrag() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Đang kéo xuống (translateY > 0) → khoá hẳn việc cuộn trang bên dưới, để header
+  // luôn nằm trên cùng, body luôn dính liền ngay sau — không cho scrollY lệch khỏi 0
+  // (vd người dùng lỡ cuộn bằng phím/nút chuột giữa trong lúc đang ở trạng thái kéo).
+  const isPulled = translateY > 0
+  useEffect(() => {
+    if (!isPulled) return
+    const prevOverflow = document.documentElement.style.overflow
+    document.documentElement.style.overflow = 'hidden'
+    if (window.scrollY !== 0) window.scrollTo(0, 0)
+    return () => {
+      document.documentElement.style.overflow = prevOverflow
+    }
+  }, [isPulled])
+
   useEffect(() => clearReturnTimer, [])
 
   const onPointerDown = (e: PointerEvent) => {
