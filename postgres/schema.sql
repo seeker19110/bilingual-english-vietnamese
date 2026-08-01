@@ -114,7 +114,7 @@ create table if not exists public.tts_cache (
   -- NULL = chưa có timing thật (giọng không trả timestamp) → client tự ước lượng.
   viseme_timeline jsonb,
   created_at timestamptz not null default now(),
-  last_accessed_at timestamptz not null default now()  -- dùng để dọn cache cũ, xem scripts/cleanup-tts-cache.ts
+  last_accessed_at timestamptz not null default now()  -- Giai đoạn D: LRU dọn cache R2
 );
 create index if not exists tts_cache_lang_idx on public.tts_cache(lang);
 

@@ -13,7 +13,7 @@
 // còn không hề mã hóa — vốn thiết kế public-read từ đầu, xem comment bảng trong
 // postgres/schema.sql). Để bucket R2 private sẽ làm vỡ hoàn toàn việc phát audio.
 
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 
@@ -64,21 +64,6 @@ export async function saveAudio(
   return saveLocal(bucket, fileName, data, baseUrl)
 }
 
-/**
- * Xoá 1 file audio đã lưu (dùng cho dọn cache cũ — xem scripts/cleanup-tts-cache.ts).
- * Không throw khi file vốn không tồn tại (đã bị xoá tay, hoặc URL không khớp driver hiện
- * tại) — coi như đã "xoá xong" để script dọn dẹp không bị chặn lại vì 1 file lẻ tẻ.
- * @param bucket    Tên prefix/thư mục con, giống tham số của saveAudio (vd "tts-cache")
- * @param fileName  Đường dẫn file, ví dụ: "en-US/female/abc123.mp3"
- */
-export async function deleteAudio(bucket: string, fileName: string): Promise<void> {
-  if (isR2Mode()) {
-    await deleteR2(bucket, fileName)
-    return
-  }
-  await deleteLocal(bucket, fileName)
-}
-
 // ── Local storage ────────────────────────────────────────────────────────────
 
 async function saveLocal(
@@ -99,15 +84,6 @@ async function saveLocal(
   // URL công khai: https://yourdomain.com/uploads/tts-cache/en-US/female/abc.mp3
   const publicPath = `/uploads/${bucket}/${fileName}`
   return baseUrl ? `${baseUrl}${publicPath}` : publicPath
-}
-
-async function deleteLocal(bucket: string, fileName: string): Promise<void> {
-  const fullPath = path.join(getUploadsRoot(), bucket, fileName)
-  await fs.unlink(fullPath).catch((err: unknown) => {
-    const code = (err as NodeJS.ErrnoException)?.code
-    if (code === 'ENOENT') return // file đã không còn — coi như xoá xong
-    throw err
-  })
 }
 
 // ── Cloudflare R2 (Giai đoạn D) ─────────────────────────────────────────────
@@ -162,15 +138,4 @@ async function saveR2(bucket: string, fileName: string, data: ArrayBuffer): Prom
   )
 
   return `${publicBaseUrl.replace(/\/$/, '')}/${key}`
-}
-
-async function deleteR2(bucket: string, fileName: string): Promise<void> {
-  const r2Bucket = process.env.R2_BUCKET
-  if (!r2Bucket) {
-    throw new Error('Server chưa cấu hình R2_BUCKET (STORAGE_DRIVER=r2)')
-  }
-  const key = `${bucket}/${fileName}`
-  // DeleteObjectCommand không lỗi khi key không tồn tại (hành vi chuẩn S3/R2) — không cần
-  // tự bắt "không tìm thấy" như nhánh local.
-  await getR2Client().send(new DeleteObjectCommand({ Bucket: r2Bucket, Key: key }))
 }
