@@ -234,35 +234,47 @@ Kỹ năng (thay cho "công thức"), chia theo độ tuổi:
 
 ## 4. CẤP 2 — THCS (lớp 6-9) — đợt 2a, làm TRƯỚC
 
+> ✅ **§4 ĐÃ ĐỐI CHIẾU SGK THẬT ngày 2026-08-01** — nguồn: 8 file PDF bộ "Kết nối tri thức" (Toán
+> 6-9, mỗi lớp 2 tập) trong `tai-lieu-sgk/`, trích mục lục bằng OCR. Mục lục đầy đủ:
+> `docs/research/muc-luc-sgk/toan-6..9.md`. Ký hiệu `[✓] [≠] [+] [−]` theo
+> `huong-dan-doi-chieu-sgk.md` §Bước 2; toàn bộ thay đổi liệt kê ở **§8 Nhật ký đối chiếu**.
+>
+> §3 (lớp 1-5) và §5 (lớp 10-12) **CHƯA đối chiếu** — chưa có SGK các cấp đó trong `tai-lieu-sgk/`.
+
 ### Lớp 6
 
-| Mạch | Công thức / kiến thức cốt lõi                                                                                                                                                                      |
-| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SO   | Số tự nhiên, luỹ thừa: `aᵐ · aⁿ = aᵐ⁺ⁿ`, `aᵐ : aⁿ = aᵐ⁻ⁿ` (m ≥ n, a ≠ 0) · **ƯCLN, BCNN** · **số nguyên** (cộng trừ nhân chia số âm, quy tắc dấu) · **phân số** (mở rộng lớp 4 sang tử/mẫu nguyên) |
-| HINH | Hình học trực quan: tam giác đều, lục giác đều, hình thoi, hình bình hành · điểm, đường thẳng, đoạn thẳng, trung điểm · góc và số đo góc                                                           |
-| TK   | Thu thập, phân loại dữ liệu · biểu đồ cột kép · xác suất thực nghiệm                                                                                                                               |
+| Mạch | Công thức / kiến thức cốt lõi                                                                                                                                                                                                                                                                                                     |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | `[✓]` Số tự nhiên, luỹ thừa: `aᵐ · aⁿ = aᵐ⁺ⁿ`, `aᵐ : aⁿ = aᵐ⁻ⁿ` (m ≥ n, a ≠ 0) · `[✓]` **ƯCLN, BCNN** · `[✓]` **số nguyên** (quy tắc dấu, quy tắc dấu ngoặc) · `[✓]` **phân số** (tử/mẫu nguyên) · `[+]` **số thập phân** (âm, làm tròn & ước lượng) · `[+]` **tỉ số và tỉ số phần trăm** · `[+]` dấu hiệu chia hết, số nguyên tố |
+| HINH | `[✓]` Hình học trực quan: tam giác đều, lục giác đều, hình thoi, hình bình hành, hình thang cân · `[✓]` điểm, đường thẳng, đoạn thẳng, trung điểm · `[✓]` góc và số đo góc · `[+]` **chu vi & diện tích các tứ giác đã học** · `[+]` **tính đối xứng** (trục đối xứng, tâm đối xứng) — cả một chương riêng (V)                    |
+| TK   | `[✓]` Thu thập, phân loại dữ liệu · `[✓]` biểu đồ cột kép · `[✓]` xác suất thực nghiệm · `[+]` biểu đồ tranh, bảng thống kê                                                                                                                                                                                                       |
 
-**3 chủ đề MVP đợt 2a:** Số tự nhiên & phép tính · Phân số · Số nguyên
+**3 chủ đề MVP đợt 2a (chốt theo SGK):** Số tự nhiên & phép tính · Phân số · Số nguyên _(giữ
+nguyên — cả ba là chương I-III và VI của sách, đều ✅ chấm tự động)_
 
 ### Lớp 7
 
-| Mạch | Công thức / kiến thức cốt lõi |
-| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------ |
-| SO | **Số hữu tỉ** ℚ · luỹ thừa số hữu tỉ · **tỉ lệ thức** `a/b = c/d ⟺ ad = bc` · **dãy tỉ số bằng nhau** `a/b = c/d = (a+c)/(b+d)` (b+d ≠ 0) · đại lượng tỉ lệ thuận `y = kx`, tỉ lệ nghịch `y = a/x` · biểu thức đại số, đa thức một biến |
-| HINH | Hai góc đối đỉnh (bằng nhau) · tiên đề Euclid về đường thẳng song song · **tổng ba góc trong tam giác = 180°** · các trường hợp bằng nhau của tam giác (c-c-c, c-g-c, g-c-g) · **quan hệ giữa góc và cạnh đối diện** · **bất đẳng thức tam giác** ` | b − c | < a < b + c` · các đường đồng quy trong tam giác |
-| TK | Biểu đồ đoạn thẳng, biểu đồ quạt tròn · biến cố, xác suất của biến cố đơn giản |
+| Mạch | Công thức / kiến thức cốt lõi                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | `[✓]` **Số hữu tỉ** ℚ · `[✓]` luỹ thừa số hữu tỉ · `[✓]` **tỉ lệ thức** `a/b = c/d ⟺ ad = bc` · `[✓]` **dãy tỉ số bằng nhau** · `[✓]` đại lượng tỉ lệ thuận `y = kx`, tỉ lệ nghịch `y = a/x` · `[✓]` biểu thức đại số, đa thức một biến (cộng, trừ, nhân, chia) · `[+]` **số thực ℝ**: số thập phân vô hạn tuần hoàn, **số vô tỉ, căn bậc hai số học `√a`**, giá trị tuyệt đối                                                                                                              |
+| HINH | `[✓]` Góc ở vị trí đặc biệt (kề bù, đối đỉnh), tia phân giác · `[✓]` tiên đề Euclid về đường thẳng song song · `[✓]` **tổng ba góc trong tam giác = 180°** · `[✓]` các trường hợp bằng nhau của tam giác · `[✓]` **quan hệ giữa góc và cạnh đối diện** · `[✓]` **bất đẳng thức tam giác** `\|b − c\| < a < b + c` · `[✓]` các đường đồng quy trong tam giác · `[+]` **hình hộp chữ nhật, hình lập phương, hình lăng trụ đứng tam giác/tứ giác** (chương X — thể tích, diện tích xung quanh) |
+| TK   | `[✓]` Biểu đồ đoạn thẳng, biểu đồ hình quạt tròn · `[✓]` biến cố, xác suất của biến cố · `[+]` thu thập và phân loại dữ liệu (bài mở đầu chương V)                                                                                                                                                                                                                                                                                                                                          |
 
-**3 chủ đề MVP đợt 2a:** Số hữu tỉ · Biểu thức đại số đơn giản · Tỉ lệ thức
+**3 chủ đề MVP đợt 2a (chốt theo SGK):** Số hữu tỉ · Tỉ lệ thức & đại lượng tỉ lệ · Đa thức một
+biến _(`[≠]` đổi "Biểu thức đại số đơn giản" → **Đa thức một biến**: chương VII của sách dành 5
+bài cho đa thức một biến, chỉ 1 bài cho biểu thức đại số → đa thức mới là trọng tâm)_
 
 ### Lớp 8
 
-| Mạch | Công thức / kiến thức cốt lõi                                                                                                                                                                                                                               |
-| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SO   | **7 hằng đẳng thức đáng nhớ** (xem §4.1) · phân tích đa thức thành nhân tử · phân thức đại số · **phương trình bậc nhất một ẩn** `ax + b = 0` (a ≠ 0) ⟹ `x = −b/a` · **hàm số bậc nhất** `y = ax + b`, hệ số góc `a`                                        |
-| HINH | **Định lý Pythagore** `a² + b² = c²` (tam giác vuông, c là cạnh huyền) và định lý đảo · tứ giác: hình thang, hình bình hành, hình chữ nhật, hình thoi, hình vuông (dấu hiệu nhận biết) · **định lý Thalès** trong tam giác · hình chóp tam giác/tứ giác đều |
-| TK   | Thu thập & phân tích dữ liệu · xác suất lý thuyết vs thực nghiệm                                                                                                                                                                                            |
+| Mạch | Công thức / kiến thức cốt lõi                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | `[✓]` **7 hằng đẳng thức đáng nhớ** (xem §4.1) · `[✓]` phân tích đa thức thành nhân tử · `[✓]` phân thức đại số (4 phép tính) · `[✓]` **phương trình bậc nhất một ẩn** `ax + b = 0` (a ≠ 0) ⟹ `x = −b/a` · `[✓]` **hàm số bậc nhất** `y = ax + b`, hệ số góc `a` · `[+]` **đơn thức, đa thức nhiều biến** (chương I — 5 bài, nền cho hằng đẳng thức) · `[+]` giải bài toán bằng cách lập phương trình                                                                                       |
+| HINH | `[✓]` **Định lý Pythagore** `a² + b² = c²` và định lý đảo (SGK đặt ở tập hai, trong chương IX Tam giác đồng dạng) · `[✓]` tứ giác: hình thang cân, hình bình hành, hình chữ nhật, hình thoi, hình vuông · `[✓]` **định lý Thalès** trong tam giác · `[✓]` hình chóp tam giác/tứ giác đều · `[+]` **đường trung bình của tam giác**, **tính chất đường phân giác** (cùng chương IV với Thalès) · `[+]` **tam giác đồng dạng** (3 trường hợp đồng dạng, hình đồng dạng) — cả một chương riêng |
+| TK   | `[✓]` Thu thập & phân tích dữ liệu · `[✓]` xác suất lý thuyết vs thực nghiệm · `[+]` `P(A) = n(A)/n(Ω)` — cách tính xác suất bằng tỉ số (bài riêng)                                                                                                                                                                                                                                                                                                                                         |
 
-**3 chủ đề MVP đợt 2a:** Phương trình bậc nhất một ẩn · Hằng đẳng thức đáng nhớ · Hàm số bậc nhất
+**3 chủ đề MVP đợt 2a (chốt theo SGK):** Hằng đẳng thức đáng nhớ · Phương trình bậc nhất một ẩn ·
+Hàm số bậc nhất _(giữ nguyên — cả ba là chương II và VII của sách; chỉ đổi thứ tự để đúng trình tự
+dạy: hằng đẳng thức ở tập một, phương trình/hàm số ở tập hai)_
 
 #### 4.1 Bảy hằng đẳng thức đáng nhớ (lớp 8) — bản ghi mẫu đầy đủ
 
@@ -280,13 +292,15 @@ Kỹ năng (thay cho "công thức"), chia theo độ tuổi:
 
 ### Lớp 9
 
-| Mạch | Công thức / kiến thức cốt lõi |
-| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SO | **Căn bậc hai** `√(a²) =                                                                                                                                                                                                                                                                                                                                               | a   | `, `√(ab) = √a · √b`(a,b ≥ 0),`√(a/b) = √a/√b`(a ≥ 0, b > 0) · **hệ phương trình bậc nhất hai ẩn** (thế, cộng đại số) · **phương trình bậc hai**`ax² + bx + c = 0`: biệt thức `Δ = b² − 4ac`, nghiệm `x = (−b ± √Δ)/(2a)`; **định lý Viète** `x₁ + x₂ = −b/a`, `x₁·x₂ = c/a`· hàm số`y = ax²` |
-| HINH | **Tỉ số lượng giác góc nhọn**: `sin α = đối/huyền`, `cos α = kề/huyền`, `tan α = đối/kề`, `cot α = kề/đối`; `sin²α + cos²α = 1` · **hệ thức lượng trong tam giác vuông**: `h² = b'·c'`, `b² = a·b'`, `a·h = b·c` · **đường tròn**: `C = 2πR`, `S = πR²`; góc nội tiếp = ½ góc ở tâm cùng chắn cung · hình trụ, hình nón, hình cầu (`S_cầu = 4πR²`, `V_cầu = (4/3)πR³`) |
-| TK | Bảng tần số, tần số tương đối · xác suất của biến cố |
+| Mạch | Công thức / kiến thức cốt lõi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | `[✓]` **Căn bậc hai** `√(A²) = \|A\|`, `√(ab) = √a·√b` (a,b ≥ 0), `√(a/b) = √a/√b` (a ≥ 0, b > 0) · `[✓]` **hệ phương trình bậc nhất hai ẩn** (thế, cộng đại số) · `[✓]` **phương trình bậc hai** `ax² + bx + c = 0`: `Δ = b² − 4ac`, `x = (−b ± √Δ)/(2a)` · `[✓]` **định lý Viète** `x₁ + x₂ = −b/a`, `x₁·x₂ = c/a` (SGK dành hẳn 1 bài) · `[✓]` hàm số `y = ax²` (a ≠ 0) · `[+]` **căn bậc ba và căn thức bậc ba** · `[+]` **bất đẳng thức và bất phương trình bậc nhất một ẩn** (cả một chương — II) · `[+]` phương trình quy về bậc nhất (phương trình tích, chứa ẩn ở mẫu)                                                                                                                                       |
+| HINH | `[✓]` **Tỉ số lượng giác góc nhọn**: `sin α = đối/huyền`, `cos α = kề/huyền`, `tan α = đối/kề`, `cot α = kề/đối`; `sin²α + cos²α = 1` · `[✓]` **đường tròn**: `C = 2πR`, `S = πR²`; góc nội tiếp = ½ góc ở tâm cùng chắn cung · `[✓]` hình trụ, hình nón, hình cầu (`S_cầu = 4πR²`, `V_cầu = (4/3)πR³`) · `[−]` **hệ thức lượng `h² = b'·c'`, `b² = a·b'`, `a·h = b·c`** — mục lục lớp 9 KNTT chỉ có "hệ thức giữa **cạnh và góc**" (Bài 12); **CẦN GIÁO VIÊN XÁC NHẬN** (xem §8) · `[+]` **độ dài cung, diện tích hình quạt tròn, hình vành khuyên** · `[+]` **vị trí tương đối** của đường thẳng–đường tròn và của hai đường tròn · `[+]` **tứ giác nội tiếp**, **đa giác đều**, đường tròn ngoại/nội tiếp tam giác |
+| TK   | `[✓]` Bảng tần số, tần số tương đối · `[✓]` xác suất của biến cố · `[+]` **tần số & tần số tương đối GHÉP NHÓM** + biểu đồ tương ứng · `[+]` phép thử ngẫu nhiên, không gian mẫu                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 
-**3 chủ đề MVP đợt 2a:** Phương trình bậc hai · Hệ phương trình bậc nhất hai ẩn · Căn bậc hai
+**3 chủ đề MVP đợt 2a (chốt theo SGK):** Căn bậc hai & căn bậc ba · Hệ phương trình bậc nhất hai ẩn ·
+Phương trình bậc hai và định lí Viète _(giữ nguyên 3 chủ đề, mở rộng phạm vi cho khớp chương III và
+chương VI của sách)_
 
 ---
 
@@ -354,3 +368,67 @@ thuật cụ thể để giữ nguyên:
 > Các môn **Lý, Hoá** (định luật, phương trình phản ứng, bảng tuần hoàn) thuộc **GĐ3** theo kế
 > hoạch tổng — sẽ có file kho kiến thức riêng, cùng cấu trúc file này, viết khi tới lượt. Không
 > soạn trước để tránh phình phạm vi (rủi ro 🔴 cao đã ghi ở kế hoạch tổng §6).
+
+---
+
+## 8. Nhật ký đối chiếu SGK (2026-08-01)
+
+**Phạm vi đã đối chiếu:** §4 — cấp 2, lớp 6-9, bộ "Kết nối tri thức" (8 tập PDF trong
+`tai-lieu-sgk/SGK-Toan/`, trích mục lục bằng OCR tiếng Việt qua `scripts/ocr-sgk.py`).
+**Chưa đối chiếu:** §2 (mầm non), §3 (lớp 1-5), §5 (lớp 10-12) — chưa có sách trong `tai-lieu-sgk/`.
+
+### 8.1 Bảng thay đổi — tất cả mục `[≠]` `[+]` `[−]`
+
+| Lớp | Ký hiệu | Nội dung                                                                        | Đã làm gì                                                                                                                               |
+| --- | ------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 6   | `[+]`   | Số thập phân (âm), làm tròn & ước lượng                                         | Bổ sung vào mạch SO — SGK có hẳn chương VII                                                                                             |
+| 6   | `[+]`   | Tỉ số và tỉ số phần trăm                                                        | Bổ sung vào mạch SO (Bài 31)                                                                                                            |
+| 6   | `[+]`   | Dấu hiệu chia hết, số nguyên tố                                                 | Bổ sung vào mạch SO (chương II)                                                                                                         |
+| 6   | `[+]`   | Chu vi & diện tích các tứ giác đã học                                           | Bổ sung vào mạch HINH (Bài 20)                                                                                                          |
+| 6   | `[+]`   | Tính đối xứng (trục / tâm đối xứng)                                             | Bổ sung vào mạch HINH — SGK có hẳn chương V                                                                                             |
+| 6   | `[+]`   | Biểu đồ tranh, bảng thống kê                                                    | Bổ sung vào mạch TK (Bài 39)                                                                                                            |
+| 7   | `[+]`   | Số thực ℝ, số vô tỉ, **căn bậc hai số học `√a`**, số thập phân vô hạn tuần hoàn | Bổ sung vào mạch SO — chương II tập một. Kho cũ chỉ nhắc căn bậc hai ở lớp 9                                                            |
+| 7   | `[+]`   | Hình hộp chữ nhật, hình lập phương, hình lăng trụ đứng                          | Bổ sung vào mạch HINH — chương X tập hai                                                                                                |
+| 7   | `[+]`   | Thu thập và phân loại dữ liệu                                                   | Bổ sung vào mạch TK (Bài 17)                                                                                                            |
+| 7   | `[≠]`   | Chủ đề MVP "Biểu thức đại số đơn giản"                                          | **Đổi thành "Đa thức một biến"** — SGK dành 5 bài cho đa thức một biến, chỉ 1 bài cho biểu thức đại số                                  |
+| 8   | `[+]`   | Đơn thức, đa thức nhiều biến (chương I, 5 bài)                                  | Bổ sung vào mạch SO — là tiền đề của hằng đẳng thức                                                                                     |
+| 8   | `[+]`   | Giải bài toán bằng cách lập phương trình                                        | Bổ sung vào mạch SO (Bài 26)                                                                                                            |
+| 8   | `[+]`   | Đường trung bình của tam giác; tính chất đường phân giác                        | Bổ sung vào mạch HINH — cùng chương IV với Thalès                                                                                       |
+| 8   | `[+]`   | Tam giác đồng dạng (3 trường hợp, hình đồng dạng)                               | Bổ sung vào mạch HINH — SGK có hẳn chương IX                                                                                            |
+| 8   | `[+]`   | `P(A) = n(A)/n(Ω)` — tính xác suất bằng tỉ số                                   | Bổ sung vào mạch TK (Bài 31)                                                                                                            |
+| 8   | `[≠]`   | Vị trí định lí Pythagore                                                        | Ghi rõ: SGK đặt ở **tập hai, chương IX (Tam giác đồng dạng)**, không nằm cùng chương tứ giác                                            |
+| 9   | `[+]`   | Bất đẳng thức và **bất phương trình bậc nhất một ẩn**                           | Bổ sung vào mạch SO — SGK có hẳn chương II. Kho cũ **thiếu hoàn toàn** nội dung này ở mọi lớp cấp 2                                     |
+| 9   | `[+]`   | Căn bậc ba và căn thức bậc ba                                                   | Bổ sung vào mạch SO (Bài 10)                                                                                                            |
+| 9   | `[+]`   | Phương trình quy về bậc nhất (phương trình tích, chứa ẩn ở mẫu)                 | Bổ sung vào mạch SO (Bài 4)                                                                                                             |
+| 9   | `[+]`   | Độ dài cung tròn, diện tích hình quạt tròn & hình vành khuyên                   | Bổ sung vào mạch HINH (Bài 15)                                                                                                          |
+| 9   | `[+]`   | Vị trí tương đối đường thẳng–đường tròn; hai đường tròn                         | Bổ sung vào mạch HINH (Bài 16-17)                                                                                                       |
+| 9   | `[+]`   | Tứ giác nội tiếp, đa giác đều, đường tròn ngoại/nội tiếp tam giác               | Bổ sung vào mạch HINH — chương IX tập hai                                                                                               |
+| 9   | `[+]`   | Tần số & tần số tương đối **ghép nhóm**                                         | Bổ sung vào mạch TK (Bài 24)                                                                                                            |
+| 9   | `[+]`   | Phép thử ngẫu nhiên, không gian mẫu                                             | Bổ sung vào mạch TK (Bài 25)                                                                                                            |
+| 9   | `[−]`   | Hệ thức lượng `h² = b'·c'`, `b² = a·b'`, `a·h = b·c`                            | **Đánh dấu nghi vấn, chưa xoá** — mục lục chương IV chỉ có "hệ thức giữa cạnh, góc trong tam giác vuông". Cần giáo viên xác nhận (§8.3) |
+
+**Tổng cộng: 24 mục** — `[+]` 21 · `[≠]` 2 · `[−]` 1 · phần còn lại `[✓]` giữ nguyên.
+
+### 8.2 Kết luận cho các điểm ĐÃ ĐÁNH DẤU NGHI NGỜ (Bước 3 của quy trình)
+
+| Chỗ nghi ngờ                                                       | Kết luận sau khi đọc mục lục thật                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Thống kê & Xác suất dạy từ lớp mấy**                             | ✅ **Đã kết luận được.** Mạch TK có mặt ở **cả 4 lớp 6-9**, mỗi lớp ít nhất một chương riêng: L6 chương IX (dữ liệu + xác suất thực nghiệm) · L7 chương V (thu thập, biểu diễn) + chương VIII (biến cố, xác suất) · L8 chương V (dữ liệu, biểu đồ) + chương VIII (xác suất) · L9 chương VII (tần số) + chương VIII (xác suất). Kho kiến thức cũ ghi đúng mốc lớp, nhưng **ghi thiếu chi tiết** — đã bổ sung ở §8.1. |
+| Nội dung **STEM / chuyển đổi số** mới                              | 🟡 **Chưa kết luận được — CẦN GIÁO VIÊN XÁC NHẬN.** Mục lục cho thấy mọi tập đều có "Hoạt động thực hành trải nghiệm" dùng **GeoGebra** (L6-L9) và **Excel** (L9 tập hai). Nhưng **không xác định được** phần nào là do Thông tư 17/2025 thêm vào, vì các PDF trong tay là **bản trước chỉnh sửa**; bản SGK chỉnh sửa áp dụng từ năm học 2026-2027 chưa có để so. **Không đoán.**                                   |
+| `n = V/24` hay `V/22,4` · `g = 10` hay `9,8` · phân môn KHTN lớp 9 | Ngoài phạm vi phiên này (thuộc `kho-kien-thuc-hoa` / `kho-kien-thuc-ly`) — chưa có SGK KHTN trong `tai-lieu-sgk/`, **chưa đối chiếu**.                                                                                                                                                                                                                                                                              |
+
+### 8.3 Danh sách cần GIÁO VIÊN CHUYÊN MÔN duyệt lần cuối
+
+1. **Hệ thức lượng trong tam giác vuông (lớp 9)** — kho kiến thức ghi `h² = b'·c'`, `b² = a·b'`,
+   `a·h = b·c`; mục lục chương IV lớp 9 KNTT chỉ nêu "hệ thức giữa **cạnh, góc** trong tam giác
+   vuông". Cần xác nhận: nhóm hệ thức về hình chiếu này **có còn được dạy** ở lớp 9 chương trình
+   2018 không, hay đã bỏ. **AI không tự phân xử được** (mục lục không đủ chi tiết tới mức mục con).
+2. **Ảnh hưởng của Thông tư 17/2025 lên môn Toán** — PDF trong tay là bản **trước** chỉnh sửa
+   (lớp 9 còn là **bản mẫu**, thẩm định theo QĐ 1551/QĐ-BGDĐT 05/6/2023). Cần người có bản SGK
+   chỉnh sửa năm học 2026-2027 xác nhận thứ tự chương/bài **không đổi**.
+3. **Phân bố mạch TK lớp 8** — SGK chia làm hai chương ở hai tập (V và VIII); cần xác nhận thứ tự
+   dạy thực tế trên lớp có theo đúng thứ tự sách không (ảnh hưởng `prerequisites`).
+4. **Toán 7 — vị trí căn bậc hai số học.** SGK dạy `√a` ngay từ lớp 7 (Bài 6). Cần xác nhận mức độ
+   sâu ở lớp 7 so với lớp 9 để đặt `prerequisites` đúng, tránh dạy trùng.
+5. **Các bài ❌ (chứng minh hình học)** — Toán 7 chương IV, Toán 8 chương IX. Cần xác nhận việc
+   **loại khỏi MVP** là chấp nhận được về mặt sư phạm (học sinh vẫn phải học phần này trên lớp).
