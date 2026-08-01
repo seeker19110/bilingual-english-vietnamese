@@ -69,7 +69,11 @@ export function useOneHandedDrag() {
     const touch = e.touches[0]
     if (!touch) return
     const dy = touch.clientY - startY.current
-    if (!holdReady.current) {
+    // Nội dung đang bị kéo xuống sẵn (>0) → theo ngón tay NGAY, không cần giữ yên 0.3s,
+    // để người dùng chủ động đẩy lên (hoặc kéo thêm xuống) là thấy phản hồi tức thì.
+    // Chỉ khi bắt đầu từ vị trí gốc (0%) mới cần giữ yên trước, tránh nhầm với cuộn trang.
+    const alreadyPulledDown = startTranslate.current > 0
+    if (!holdReady.current && !alreadyPulledDown) {
       // Chưa giữ đủ lâu mà đã di chuyển nhiều → đây là cuộn trang bình thường, không kéo
       if (Math.abs(dy) > HOLD_MOVE_THRESHOLD_PX) clearHoldTimer()
       return
