@@ -1117,7 +1117,7 @@ export default function Practice() {
     return (
       <>
         <Layout onBack={() => setMode('hub')} />
-        <main className="max-w-2xl mx-auto px-4 py-6">
+        <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
           <MiniHeader title={title} sub={sub} onBack={() => setMode('hub')} />
           {mode === 'vocab-listen' && (
             <VocabListenGuess pool={pool} isA={isA} onExit={() => setMode('hub')} />
@@ -1302,7 +1302,7 @@ export default function Practice() {
   return (
     <>
       <Layout back={false} />
-      <main className="max-w-2xl mx-auto px-4 py-6">
+      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
         <PageHeader
           title={isA ? 'Luyện tập' : 'Practice'}
           subtitle={
