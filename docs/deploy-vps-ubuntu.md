@@ -461,6 +461,27 @@ df -h                                            # ổ cứng tổng thể
 
 ---
 
+## Dọn cache TTS cũ (chống đầy đĩa)
+
+Audio cache (bảng `tts_cache`) không tự hết hạn — câu nào lâu không ai nghe vẫn nằm mãi trên
+đĩa (mode `local`) hoặc R2. `scripts/cleanup-tts-cache.ts` xoá cache quá hạn (mặc định 90 ngày
+không có ai nghe, theo cột `last_accessed_at`) — chạy tay hoặc đặt cron:
+
+```bash
+# Xem trước sẽ xoá gì, KHÔNG xoá thật
+npm run cleanup:tts-cache -- --dry-run
+
+# Xoá thật (ngưỡng mặc định 90 ngày)
+npm run cleanup:tts-cache
+
+# Tự động hàng tuần (Chủ Nhật 3h sáng) — chỉnh đường dẫn project cho khớp VPS thật
+crontab -e
+# 0 3 * * 0 cd /var/www/english-tutor && npm run cleanup:tts-cache >> /var/log/tts-cleanup.log 2>&1
+```
+
+An toàn khi lỡ xoá nhầm: audio cache **có thể tạo lại** (chỉ tốn thêm Google TTS quota khi câu
+đó được hỏi lại lần sau), không phải dữ liệu người dùng — không cần backup riêng cho bảng này.
+
 ## Backup
 
 Audio cache **có thể tạo lại** bằng script seed (chỉ tốn thêm Google TTS quota).
