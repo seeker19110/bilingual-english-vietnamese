@@ -84,9 +84,32 @@ trên VPS (xem "Cần làm tay").
     **Điểm cần giáo viên chuyên môn duyệt:** Hoá 4 · Lý 6 · Sinh 4 (chi tiết ở §6.3 / §6.3 / §5.3
     của từng file). Đáng chú ý: lực đẩy Archimedes & moment lực L8 định tính hay định lượng; công
     thức thấu kính `1/f = 1/d + 1/d'` L9; Joule–Lenz L9; ăn mòn kim loại L9 (Hoá).
-    **Còn thiếu:** Toán 1-5 (đợt 2b), Toán 10-12 (đợt 2d), **và toàn bộ THPT của Lý/Hoá/Sinh** (§3
-    của 3 file kho kiến thức vẫn là bản thảo chưa kiểm chứng) — sách CHƯA có trong `tai-lieu-sgk/`,
-    chờ người dùng bổ sung.
+    **Còn thiếu:** Toán 1-5 (đợt 2b), Toán 10-12 (đợt 2d), **THPT của Hoá và Sinh** (§3 của 2 file
+    kho kiến thức vẫn là bản thảo chưa kiểm chứng) — sách CHƯA có trong `tai-lieu-sgk/`, chờ người
+    dùng bổ sung. **Vật lí THPT đã xong — xem mục ngay dưới.**
+    **✅ [2026-08-01] Đã đối chiếu xong VẬT LÍ 10-12 (THPT)** — phần §3 của
+    `kho-kien-thuc-ly-gdpt2018.md` trước đây chưa từng đối chiếu, nay đã kiểm chứng bằng ảnh scan
+    `tai-lieu-sgk/SGK-Ly/10..12/` (mục lục 2 cột, OCR bằng `scripts/ocr-crop.py`). Mục lục thật ở
+    `docs/research/muc-luc-sgk/ly-{10,11,12}.md`. Quy mô: **L10 7 chương/34 bài · L11 4 chương/26 bài
+    · L12 4 chương/25 bài** (tổng 15 chương / 85 bài).
+    **Số mục lệch phần THPT: 17** (`[+]`13 · `[≠]`2 · `[−]`2) — ghi ở §6.4 của file kho kiến thức Lý,
+    tách rõ khỏi 18 mục của cấp 2 (§6.1). Tổng toàn file: **35 mục lệch**.
+    **Bốn kết luận cấu trúc quan trọng (khác chương trình cũ):**
+  - **Nhiệt học + khí lí tưởng nằm ở LỚP 12**, Vật lí 10 hoàn toàn không có nhiệt học.
+  - **Từ trường + cảm ứng điện từ nằm ở LỚP 12**, không phải lớp 11.
+  - **Đã bỏ hẳn:** dòng điện xoay chiều/mạch RLC, sóng ánh sáng, lượng tử ánh sáng, mẫu Bohr,
+    thuyết tương đối; quang hình đã chuyển xuống KHTN 9.
+  - **Công/công suất/cơ năng dạy ở CẢ hai cấp** (KHTN 9 và Vật lí 10 chương IV), khác độ sâu:
+    lớp 10 thêm `cos α` trong `A = F·s·cos α`, thêm dạng `P = F·v`, và có **bài riêng** cho định
+    luật bảo toàn cơ năng (Bài 26) lẫn **hiệu suất** (Bài 27). ⇒ **Không xoá nội dung cấp 2**, ghi
+    rõ 2 layer. Điều này cũng chốt được nghi vấn "hiệu suất dạy ở đâu" còn treo từ đợt cấp 2.
+  - **Định luật bảo toàn động lượng chỉ có ở Vật lí 10** (chương V), không có ở cấp 2.
+    **Điểm cần giáo viên Lý duyệt — thêm 9 mục cho cấp 3** (§6.5). Đáng chú ý: giá trị `g` dùng
+    trong bài tập cấp 3 (`9,8` hay `10` — ảnh hưởng trực tiếp ngưỡng dung sai 3% của engine chấm);
+    **lực Lorentz** có còn trong chương trình không (mục lục Vật lí 12 không có bài nào); con lắc lò
+    xo/con lắc đơn ở lớp 11 (chương I không có bài riêng); và **bảng đơn vị hệ SI đầu SGK Vật lí 10**
+    cần bản đầy đủ chính xác để chuẩn hoá danh mục đơn vị hợp lệ của engine chấm (OCR bảng bị vỡ,
+    chưa đủ tin cậy — **không đoán, không chép vào kho**).
 - **Căn cứ pháp lý đã tra được (2026-08-01):** TT 32/2018 → sửa bởi TT 20/2021, TT 13/2022 và
   **TT 17/2025/TT-BGDĐT** (mới nhất); **QĐ 3588/QĐ-BGDĐT** (26/12/2025) chọn bộ "Kết nối tri thức
   với cuộc sống" dùng chung toàn quốc; SGK chỉnh sửa áp dụng từ năm học 2026-2027.
