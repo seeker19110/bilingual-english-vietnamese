@@ -118,6 +118,13 @@ create table if not exists public.tts_cache (
 );
 create index if not exists tts_cache_lang_idx on public.tts_cache(lang);
 
+-- Khoá "claim" chống race condition khi nhiều request cùng cache-miss 1 hash (xem migration
+-- 0031_tts_cache_pending.sql).
+create table if not exists public.tts_cache_pending (
+  hash       text primary key,
+  created_at timestamptz not null default now()
+);
+
 -- ── 6a. pronunciations: cache audio phát âm TỪ ĐƠN dùng chung cho mọi user ────
 create table if not exists english.pronunciations (
   id            uuid primary key default gen_random_uuid(),
