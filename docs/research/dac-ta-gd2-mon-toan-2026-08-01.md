@@ -1,8 +1,10 @@
-# Đặc tả GĐ2 — Môn thứ hai: TOÁN
+# Đặc tả GĐ2 — Môn thứ hai: TOÁN (mầm non → cấp 3)
 
 > Ngày: 2026-08-01 · Căn cứ: `docs/adr/0001-nen-tang-da-linh-vuc.md` +
 > `docs/research/ke-hoach-nen-tang-donghanhcungban-2026-07-31.md` §4 GĐ2
-> Trạng thái: **đặc tả, chưa thi hành** · Ước lượng: 6–8 tuần, 9 PR
+> Trạng thái: **đặc tả, chưa thi hành** · Phạm vi đã MỞ RỘNG 2026-08-01 (mầm non → cấp 3, xem §2)
+> — chia 4 đợt (2a-2d), đợt này (đặc tả chi tiết) chỉ phủ **đợt 2a: cấp 2, 6-8 tuần, 9 PR**.
+> Đợt 2b/2c/2d sẽ có đặc tả con riêng, viết sau khi 2a đạt cổng.
 > Điều kiện tiên quyết: **GĐ1 đã HOÀN TẤT** (PR-1..7, xem PROGRESS.md) — `apps/hub` đã lên
 > production, `packages/core-*` đã tách, cột `subject` đã có ở `daily_usage`/`free_daily_credit`
 > (migration `0029`), schema `english` đã tách (migration `0030`).
@@ -41,13 +43,37 @@
 
 ---
 
-## 2. Phạm vi MVP
+## 2. Phạm vi — MỞ RỘNG theo yêu cầu 2026-08-01: mầm non → cấp 3
 
-### 2.1 Chọn 12 chủ đề (3 chủ đề × 4 lớp 6-9)
+> **Quyết định 2026-08-01:** thay vì chỉ lớp 6-9, người dùng yêu cầu làm đủ **mầm non → cấp 1 →
+> cấp 2 → cấp 3** ngay trong GĐ2. Đây là phình phạm vi lớn so với bản gốc — đúng rủi ro **🔴 cao
+> nhất** mà chính kế hoạch tổng đã cảnh báo ("phình phạm vi, không môn nào tới nơi", §6). Để
+> không rơi vào rủi ro đó, GĐ2 **KHÔNG làm 4 cấp cùng lúc** — chia thành 4 đợt con
+> (2a → 2b → 2c → 2d), **mỗi đợt có cổng ra riêng, đợt sau chỉ mở khi đợt trước đạt cổng** (đúng
+> nguyên tắc CLAUDE.md mục 3 "cổng giữa các giai đoạn" + kế hoạch tổng §6 "cấm mở môn mới khi
+> môn trước chưa đạt cổng" — áp tương tự cho cấp học). Thứ tự đề xuất **cấp 2 trước** (giữ nguyên
+> §2.1 gốc, đã có đặc tả kỹ thuật sẵn — chấm tự động dễ nhất) rồi tới cấp 1, mầm non, cấp 3 —
+> **xin xác nhận thứ tự này hoặc đổi lại** trước khi mở PR-1.
 
-Bám khung chương trình GDPT 2018 môn Toán THCS, ưu tiên chủ đề **chấm tự động được bằng đáp số/biểu thức** (loại các chủ đề cần chứng minh hình học dài dòng ở MVP):
+### 2.1 Bản đồ 4 đợt (2a–2d)
 
-| Lớp | 3 chủ đề MVP                                                              |
+| Đợt | Cấp học    | Phạm vi lớp/độ tuổi                          | Đặc điểm khác biệt cần lưu ý                                                                 |
+| --- | ---------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| 2a  | Cấp 2 (THCS) | Lớp 6-9, 3 chủ đề/lớp (12 chủ đề — bảng §2.1a) | Đã có đặc tả kỹ thuật đầy đủ (KaTeX, sinh đề, chấm) — làm trước để kiểm chứng kiến trúc         |
+| 2b  | Cấp 1 (Tiểu học) | Lớp 1-5, 2-3 chủ đề/lớp                     | Không cần KaTeX phức tạp (số học cơ bản); giao diện to, ít chữ, nhiều hình ảnh/màu; phụ huynh có thể là người dùng chính (theo dõi hộ con), không phải học sinh tự thao tác hết |
+| 2c  | Mầm non    | 3-6 tuổi, không chia "lớp" mà chia theo kỹ năng (đếm số, nhận biết hình, so sánh lớn/bé) | **Khác hẳn cấu trúc "chấm đúng/sai"** — trẻ mầm non không đọc viết thạo, cần tương tác bằng giọng nói/chạm/kéo-thả, không phải nhập đáp số. Đây là thiết kế UI/UX RIÊNG, không tái dùng khung luyện tập của 2a/2b |
+| 2d  | Cấp 3 (THPT) | Lớp 10-12, chủ đề chọn lọc chấm tự động được (đại số, lượng giác cơ bản) | Kiến thức khó hơn — rủi ro AI soạn nháp sai kiến thức cao hơn (§7), cần người có chuyên môn duyệt kỹ hơn cấp 2 |
+
+> **Mầm non (2c) là đợt khác biệt lớn nhất kỹ thuật lẫn UX** — không phải "Toán nhưng dễ hơn" mà
+> gần như một sản phẩm con riêng (tương tác giọng nói/chạm, không có "đáp số" theo nghĩa nhập
+> liệu). Đề xuất làm **sau cùng** hoặc tách thành nhánh nghiên cứu UX riêng trước khi cam kết lịch
+> — không đoán trước cách làm ở đặc tả này, sẽ viết đặc tả con riêng cho đợt 2c khi tới lượt.
+
+### 2.1a Đợt 2a — 12 chủ đề cấp 2 (giữ nguyên bản gốc, đã chốt kỹ thuật)
+
+Bám khung chương trình GDPT 2018 môn Toán THCS, ưu tiên chủ đề **chấm tự động được bằng đáp số/biểu thức** (loại các chủ đề cần chứng minh hình học dài dòng ở đợt này):
+
+| Lớp | 3 chủ đề đợt 2a                                                            |
 | --- | -------------------------------------------------------------------------- |
 | 6   | Số tự nhiên & phép tính · Phân số · Số nguyên                             |
 | 7   | Số hữu tỉ · Biểu thức đại số đơn giản · Tỉ lệ thức                        |
@@ -55,7 +81,8 @@ Bám khung chương trình GDPT 2018 môn Toán THCS, ưu tiên chủ đề **ch
 | 9   | Phương trình bậc hai · Hệ phương trình bậc nhất hai ẩn · Căn bậc hai      |
 
 > Chốt danh sách này với người dùng trước khi viết template đề (§2.2) — có thể đổi thứ tự/chủ đề
-> nếu người dùng có ưu tiên khác (ví dụ theo nhu cầu con đang học lớp mấy).
+> nếu người dùng có ưu tiên khác. Danh sách chủ đề của 2b/2c/2d **để ngỏ, chốt khi tới lượt từng
+> đợt** — tránh soạn trước nội dung rồi phải sửa lại khi đợt 2a đúc kết bài học thật.
 
 ### 2.2 Tính năng MVP (theo đúng khung ở kế hoạch tổng §4 GĐ2)
 
@@ -75,10 +102,10 @@ Bám khung chương trình GDPT 2018 môn Toán THCS, ưu tiên chủ đề **ch
 6. **Chấm & thống kê** — so khớp đáp số/biểu thức đã chuẩn hoá (§3.3), lưu lịch sử làm bài, thống
    kê % đúng theo chủ đề.
 
-### 2.3 Ngoài phạm vi MVP (ghi nhận, không làm)
+### 2.3 Ngoài phạm vi GĐ2 (ghi nhận, không làm ở bất kỳ đợt nào 2a-2d)
 
-Lớp 10-12, hình học chứng minh, video bài giảng, AI chấm tự luận, thi thử theo đề thi thật, bảng
-xếp hạng riêng môn Toán (dùng chung cơ chế `challenge` sẵn có nếu cần, không viết mới).
+Hình học chứng minh, video bài giảng, AI chấm tự luận, thi thử theo đề thi thật, bảng xếp hạng
+riêng môn Toán (dùng chung cơ chế `challenge` sẵn có nếu cần, không viết mới).
 
 ---
 
@@ -150,7 +177,11 @@ hay english). Nginx: thêm `server_name` mới trỏ cùng Express port 3001 (vi
 
 ---
 
-## 5. Danh sách 9 PR
+## 5. Danh sách 9 PR — chỉ cho ĐỢT 2a (cấp 2)
+
+> 9 PR dưới đây chỉ mở đủ điều kiện cấp 2 (đợt 2a). Đợt 2b (cấp 1), 2c (mầm non), 2d (cấp 3) mỗi
+> đợt sẽ có **đặc tả con riêng** viết sau khi 2a đạt cổng ở §6 — không liệt kê PR trước vì nội
+> dung/kỹ thuật của 2b-2d còn phụ thuộc bài học rút ra từ 2a (đặc biệt là PR-5: thuật toán chấm).
 
 1. **PR-1 — Chốt 12 chủ đề + soạn nội dung mẫu 1 bài học đầy đủ (không code app).** Người dùng
    duyệt nội dung 1 bài mẫu (ví dụ "Phân số — lớp 6, bài 1") theo đúng định dạng dự kiến trước
@@ -181,7 +212,7 @@ nhưng viết khác định dạng (`1/2` vs `0.5` vs `0,5`), đáp án gần đ
 
 ---
 
-## 6. Cổng ra (Definition of Done GĐ2)
+## 6. Cổng ra — đợt 2a (Definition of Done, chỉ cấp 2)
 
 Đúng như kế hoạch tổng: **50 người dùng thật học Toán 1 tuần, chi phí AI/người ≤ mức của môn
 Anh.** Đo cụ thể:
@@ -194,6 +225,9 @@ Anh.** Đo cụ thể:
   hơn hẳn chat luyện nói).
 - `apps/english` không hồi quy (E2E xanh, số lượng test bằng hoặc nhiều hơn trước GĐ2).
 - CI xanh (quality + e2e), bundle-size KaTeX không vượt ngân sách đã đặt.
+
+**Chỉ khi đợt 2a đạt đủ cổng trên mới viết đặc tả con cho đợt 2b (cấp 1)** — đúng nguyên tắc
+"cấm mở cấp học mới khi cấp trước chưa đạt cổng" đã chốt ở §2.
 
 ---
 
@@ -210,7 +244,10 @@ Anh.** Đo cụ thể:
 
 ## 8. Việc tiếp theo ngay (nếu người dùng duyệt đặc tả này)
 
-1. Duyệt/chỉnh danh sách 12 chủ đề ở §2.1.
-2. Duyệt định dạng 1 bài học mẫu (PR-1) trước khi mở PR-2 (scaffold app).
-3. Từ PR-2 trở đi: mỗi PR làm xong tự báo cáo theo mẫu KHUNG (báo cáo xác thực CLAUDE.md mục 10),
+1. Xác nhận thứ tự 4 đợt ở §2.1 (đề xuất: 2a cấp 2 → 2b cấp 1 → 2c mầm non → 2d cấp 3) hoặc đổi lại.
+2. Duyệt/chỉnh danh sách 12 chủ đề đợt 2a ở §2.1a.
+3. Duyệt định dạng 1 bài học mẫu (PR-1) trước khi mở PR-2 (scaffold app).
+4. Từ PR-2 trở đi: mỗi PR làm xong tự báo cáo theo mẫu KHUNG (báo cáo xác thực CLAUDE.md mục 10),
    xin xác nhận cổng trước khi mở PR tiếp theo — không dồn nhiều PR cùng lúc.
+5. Sau khi đợt 2a đạt cổng ở §6: viết đặc tả con riêng cho đợt 2b (cấp 1) — không soạn trước ở
+   đây vì cần dựa vào bài học kỹ thuật rút ra thật từ 2a.
