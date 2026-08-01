@@ -75,6 +75,27 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 
 ## 4. Thể loại 2 — Truyện ngụ ngôn (`kind: "fable"`)
 
+> **📌 VIỆC CHO PHIÊN SAU — chốt 2026-08-01 sau khi đo độ dài thật:**
+>
+> Đã đo 7 truyện đầu tiên: ngụ ngôn Aesop nguyên văn CỰC NGẮN — `fb-fox-grapes` 56 từ (~20 giây
+> nghe), `fb-boy-cried-wolf` 98 từ, `fb-tortoise-hare` 128 từ. Đây là ĐÚNG bản Townsend 1867,
+> không phải lỗi — nhưng quá ngắn cho một "thư viện nghe".
+>
+> **Chủ dự án đã chốt: ƯU TIÊN NGUỒN DÀI HƠN.** Nguyên tắc cho mọi đợt sau:
+>
+> 1. Mỗi truyện nên **≥ 400 từ tiếng Anh** (~1,5 phút nghe trở lên). Dưới 200 từ thì cân nhắc bỏ.
+> 2. Ưu tiên Jataka (PG 62514 / 7518, ~400–800 từ), Grimm (PG 5314), Andersen (PG 27200),
+>    Just So Stories (PG 2781), Beatrix Potter — đều dài hơn Aesop nhiều lần.
+> 3. Giảm tỷ trọng Aesop (PG 21) xuống, **chỉ giữ các truyện Aesop DÀI**.
+>
+> **Cần làm:** thay 3 mục Aesop ngắn nhất — `fb-boys-frogs`, `fb-walnut-tree`,
+> `fb-charcoal-fuller` — bằng truyện dài hơn. **CHƯA chọn được truyện thay thế** vì phiên này
+> không có mạng (container cũ, policy Gutenberg chưa áp). Phiên sau có mạng phải: `curl` mục lục
+> PG 62514/7518/7128 → chọn 3 truyện ≥ 400 từ → cập nhật bảng dưới. **KHÔNG được tự nghĩ ra tên
+> truyện** (CLAUDE.md §5) — phải đọc mục lục thật.
+>
+> Ngoài ra `ft-tam-cam` đã được viết lại dày hơn (976 → ~2.100 từ EN) vì bản đầu kể quá gọn.
+
 | #   | id                      | Tiếng Anh                            | Tiếng Việt                   | Nước        | Nguồn    | Cấp |
 | --- | ----------------------- | ------------------------------------ | ---------------------------- | ----------- | -------- | --- |
 | 1   | `fb-frog-in-well`       | The Frog in the Well                 | Ếch ngồi đáy giếng           | 🇻🇳 Việt Nam | Opus     | A2  |
