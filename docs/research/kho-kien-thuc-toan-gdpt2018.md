@@ -189,46 +189,62 @@ Kỹ năng (thay cho "công thức"), chia theo độ tuổi:
 
 > Đặc điểm: rất ít "công thức" theo nghĩa ký hiệu; chủ yếu là **quy tắc tính** và **thuật toán
 > đặt tính**. Hầu như **không cần KaTeX** (trừ phân số lớp 4-5) → nhẹ hơn cấp 2/3 nhiều.
+>
+> ✅ **§3 ĐÃ ĐỐI CHIẾU SGK THẬT ngày 2026-08-01 (đợt 2b)** — nguồn: 10 thư mục ảnh scan bộ "Kết
+> nối tri thức" (Toán 1-5, mỗi lớp 2 tập) trong `tai-lieu-sgk/SGK-Toan/`, trích mục lục bằng OCR.
+> Mục lục đầy đủ: `docs/research/muc-luc-sgk/toan-1..5.md`. Ký hiệu `[✓] [≠] [+] [−]` theo
+> `huong-dan-doi-chieu-sgk.md` §Bước 2; toàn bộ thay đổi liệt kê ở **§8.4 Nhật ký đối chiếu —
+> phần tiểu học**. SGK tiểu học chia theo **chủ đề** (số 1, 2, 3…) thay vì "chương".
 
 ### Lớp 1
 
-| Mạch | Nội dung                                                                   |
-| ---- | -------------------------------------------------------------------------- |
-| SO   | Số 0-100 · cộng, trừ trong phạm vi 100 (không nhớ) · so sánh `>`, `<`, `=` |
-| HINH | Hình vuông, tròn, tam giác, chữ nhật · đo độ dài bằng đơn vị tự quy ước    |
-| TK   | (chưa có)                                                                  |
+_(10 chủ đề · 41 bài + "Tiết học đầu tiên")_
+
+| Mạch | Nội dung                                                                                                                                                                                                                                                                          |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | `[✓]` Số 0-10 rồi 0-100 · `[✓]` cộng, trừ trong phạm vi 10 rồi phạm vi 100 (**không nhớ**) · `[✓]` so sánh `>`, `<`, `=` · `[+]` tách/gộp số ("mấy và mấy")                                                                                                                       |
+| HINH | `[✓]` hình vuông, tròn, tam giác, chữ nhật · `[≠]` đo độ dài bằng **xăng-ti-mét thật** (không dừng ở đơn vị tự quy ước), có ước lượng · `[+]` **khối lập phương, khối hộp chữ nhật; vị trí, định hướng trong không gian** · `[+]` **xem giờ đúng, các ngày trong tuần, xem lịch** |
+| TK   | `[✓]` (chưa có — xác nhận bằng mục lục thật)                                                                                                                                                                                                                                      |
 
 ### Lớp 2
 
-| Mạch | Nội dung                                                                                                   |
-| ---- | ---------------------------------------------------------------------------------------------------------- |
-| SO   | Số đến 1000 · cộng trừ có nhớ · **bảng nhân, bảng chia 2-5** · thừa số × thừa số = tích                    |
-| HINH | Đường thẳng, đường cong, đoạn thẳng · **đơn vị đo:** cm, dm, m; kg; lít · xem đồng hồ (giờ đúng, giờ rưỡi) |
-| TK   | Đọc biểu đồ tranh đơn giản                                                                                 |
+_(14 chủ đề · 75 bài)_
+
+| Mạch | Nội dung                                                                                                                                                                                                                                                                                                                                      |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | `[✓]` số đến 1 000 · `[✓]` cộng trừ **có nhớ** (phạm vi 100 và 1 000) · `[+]` cộng, trừ **qua 10 trong phạm vi 20** (bảng cộng/bảng trừ qua 10) · `[≠]` **bảng nhân, bảng chia CHỈ 2 và 5** (không phải 2-5) · `[✓]` thừa số × thừa số = tích; số bị chia : số chia = thương · `[+]` tia số, số liền trước/liền sau · `[+]` **tiền Việt Nam** |
+| HINH | `[✓]` điểm, đoạn thẳng, đường thẳng, đường cong, ba điểm thẳng hàng · `[+]` **đường gấp khúc, hình tứ giác** · `[+]` **khối trụ, khối cầu** · `[≠]` đơn vị đo: cm, dm, m **và ki-lô-mét**; kg; lít · `[≠]` thời gian dạy **ngày–giờ, giờ–phút, ngày–tháng** (không phải "giờ đúng, giờ rưỡi")                                                 |
+| TK   | `[✓]` biểu đồ tranh · `[+]` **thu thập, phân loại, kiểm đếm số liệu** · `[+]` **XÁC SUẤT: "chắc chắn – có thể – không thể"** (mạch xác suất bắt đầu ngay từ lớp 2)                                                                                                                                                                            |
 
 ### Lớp 3
 
-| Mạch | Nội dung                                                                                                                                                          |
-| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SO   | Số đến 100 000 · bảng nhân chia 6-9 · nhân/chia số có nhiều chữ số cho số có 1 chữ số · **phép chia có dư** (`a = b×q + r`, `0 ≤ r < b`)                          |
-| HINH | **Chu vi hình chữ nhật** `P = (a + b) × 2` · **chu vi hình vuông** `P = a × 4` · **diện tích HCN** `S = a × b` · **diện tích hình vuông** `S = a × a` · góc vuông |
-| TK   | Bảng số liệu, biểu đồ tranh                                                                                                                                       |
+_(16 chủ đề · 81 bài)_
+
+| Mạch | Nội dung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | `[✓]` số đến 10 000 rồi 100 000 · `[≠]` bảng nhân/chia **3, 4** _và_ **6, 7, 8, 9** (kho cũ chỉ ghi 6-9) · `[✓]` nhân/chia số có nhiều chữ số cho số có 1 chữ số · `[✓]` **phép chia có dư** `a = b×q + r` (0 ≤ r < b) · `[+]` **một phần mấy** `1/n` · `[+]` **chữ số La Mã** · `[+]` **làm tròn số** đến hàng chục/trăm/nghìn/chục nghìn · `[+]` **biểu thức số & tính giá trị biểu thức** · `[+]` gấp/giảm một số lên/đi một số lần; so sánh số lớn gấp mấy lần số bé · `[+]` bài toán giải bằng hai bước tính |
+| HINH | `[✓]` **chu vi HCN** `P = (a+b)×2` · `[✓]` **chu vi hình vuông** `P = a×4` · `[✓]` **diện tích HCN** `S = a×b` · `[✓]` **diện tích hình vuông** `S = a×a` · `[✓]` góc vuông, góc không vuông · `[+]` **chu vi hình tam giác, hình tứ giác** · `[+]` **khái niệm diện tích + xăng-ti-mét vuông** · `[+]` **điểm ở giữa, trung điểm đoạn thẳng** · `[+]` **hình tròn: tâm, bán kính, đường kính** (`d = 2r`) · `[+]` khối lập phương, khối hộp chữ nhật · `[+]` đơn vị **mm, gam, ml, độ C**                        |
+| TK   | `[✓]` bảng số liệu (thu thập, phân loại, ghi chép) · `[−]` **biểu đồ tranh KHÔNG dạy ở lớp 3** (chỉ có ở lớp 2) · `[+]` **khả năng xảy ra của một sự kiện**                                                                                                                                                                                                                                                                                                                                                       |
 
 ### Lớp 4
 
-| Mạch | Nội dung                                                                                                                                                      |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SO   | Số tự nhiên lớn, hàng và lớp · **dấu hiệu chia hết cho 2, 3, 5, 9** · **phân số**: rút gọn, quy đồng, so sánh, cộng trừ nhân chia phân số                     |
-| HINH | **Diện tích hình bình hành** `S = a × h` · **diện tích hình thoi** `S = (d₁ × d₂) / 2` · hai đường thẳng song song, vuông góc · đơn vị đo diện tích (cm², m²) |
-| TK   | Biểu đồ cột · số trung bình cộng                                                                                                                              |
+_(13 chủ đề · 73 bài)_
+
+| Mạch | Nội dung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | `[✓]` số có nhiều chữ số, hàng và lớp (đến lớp triệu) · `[−]` **KHÔNG có "dấu hiệu chia hết cho 2, 3, 5, 9" ở lớp 4 KNTT** — chuyển sang lớp 6 (Toán 6 Bài 9) · `[+]` **số chẵn, số lẻ** · `[+]` **biểu thức chứa chữ** · `[+]` làm quen dãy số tự nhiên; làm tròn đến hàng trăm nghìn · `[+]` tính chất **giao hoán, kết hợp** (cộng & nhân), **phân phối** `a(b+c) = ab + ac` · `[+]` **tìm hai số biết tổng và hiệu** · `[≠]` **số trung bình cộng thuộc mạch SO** (chủ đề Phép nhân & phép chia), không thuộc TK · `[+]` bài toán rút về đơn vị · `[✓]` **phân số**: khái niệm, tính chất cơ bản, rút gọn, quy đồng, so sánh, cộng trừ nhân chia, tìm phân số của một số |
+| HINH | `[−]` **KHÔNG có công thức diện tích hình bình hành `S = a×h` và hình thoi `S = (d₁×d₂)/2` ở lớp 4 KNTT** — Bài 31 chỉ nhận dạng; hai công thức này dạy ở lớp 6 (Toán 6 Bài 20) · `[✓]` hai đường thẳng vuông góc, song song · `[≠]` đơn vị đo diện tích là **dm², m², mm²** (cm² đã học ở lớp 3) · `[+]` **góc và đơn vị đo góc; góc nhọn, góc tù, góc bẹt** · `[+]` **yến, tạ, tấn; giây, thế kỉ**                                                                                                                                                                                                                                                                         |
+| TK   | `[✓]` **biểu đồ cột** · `[+]` dãy số liệu thống kê · `[+]` **số lần xuất hiện của một sự kiện**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 
 ### Lớp 5
 
-| Mạch | Nội dung                                                                                                                                                                                                                                                   |
-| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SO   | **Số thập phân**: 4 phép tính · **tỉ số phần trăm** · **toán chuyển động đều**: `s = v × t`, `v = s / t`, `t = s / v`                                                                                                                                      |
-| HINH | **Diện tích tam giác** `S = (a × h) / 2` · **diện tích hình thang** `S = ((a + b) × h) / 2` · **chu vi hình tròn** `C = d × 3,14` · **diện tích hình tròn** `S = r × r × 3,14` · **thể tích HHCN** `V = a × b × c` · **thể tích hình lập phương** `V = a³` |
-| TK   | Biểu đồ hình quạt · làm quen khả năng xảy ra của sự kiện                                                                                                                                                                                                   |
+_(12 chủ đề · 75 bài)_
+
+| Mạch | Nội dung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | `[✓]` **số thập phân**: khái niệm, so sánh, làm tròn, 4 phép tính, nhân/chia với 10; 100; 0,1; 0,01 · `[✓]` **tỉ số phần trăm** (tìm tỉ số % của hai số, tìm giá trị % của một số) · `[✓]` **toán chuyển động đều** `v = s/t`, `s = v×t`, `t = s/v` · `[+]` **phân số thập phân, hỗn số, cộng trừ hai phân số khác mẫu** · `[+]` **tỉ lệ bản đồ** · `[+]` tìm hai số biết tổng (hiệu) và tỉ số · `[+]` **máy tính cầm tay** · `[+]` **cộng, trừ, nhân, chia số đo thời gian**                                   |
+| HINH | `[✓]` **diện tích tam giác** `S = (a×h)/2` · `[✓]` **diện tích hình thang** `S = ((a+b)×h)/2` · `[✓]` **chu vi hình tròn** `C = d×3,14` · `[✓]` **diện tích hình tròn** `S = r×r×3,14` · `[✓]` **thể tích HHCN** `V = a×b×c` · `[≠]` **thể tích hình lập phương viết `V = a×a×a`**, chưa dùng luỹ thừa `a³` (luỹ thừa vào lớp 6) · `[+]` **diện tích xung quanh & toàn phần HHCN và hình lập phương** · `[+]` **hình khai triển** của hình lập phương, HHCN, hình trụ · `[+]` **km², héc-ta**; **cm³, dm³, m³** |
+| TK   | `[✓]` **biểu đồ hình quạt tròn** · `[≠]` phần "khả năng xảy ra của sự kiện" ở lớp 5 thực chất là **tỉ số của số lần lặp lại một sự kiện so với tổng số lần thực hiện** (tiền đề xác suất thực nghiệm lớp 6) · `[+]` thu thập, phân loại, sắp xếp số liệu                                                                                                                                                                                                                                                        |
 
 ---
 
@@ -239,7 +255,8 @@ Kỹ năng (thay cho "công thức"), chia theo độ tuổi:
 > `docs/research/muc-luc-sgk/toan-6..9.md`. Ký hiệu `[✓] [≠] [+] [−]` theo
 > `huong-dan-doi-chieu-sgk.md` §Bước 2; toàn bộ thay đổi liệt kê ở **§8 Nhật ký đối chiếu**.
 >
-> §3 (lớp 1-5) và §5 (lớp 10-12) **CHƯA đối chiếu** — chưa có SGK các cấp đó trong `tai-lieu-sgk/`.
+> §3 (lớp 1-5) **ĐÃ đối chiếu ngày 2026-08-01** (đợt 2b — xem §8.4). §5 (lớp 10-12) **CHƯA đối
+> chiếu** — chưa có SGK cấp đó trong `tai-lieu-sgk/`.
 
 ### Lớp 6
 
@@ -373,9 +390,12 @@ thuật cụ thể để giữ nguyên:
 
 ## 8. Nhật ký đối chiếu SGK (2026-08-01)
 
-**Phạm vi đã đối chiếu:** §4 — cấp 2, lớp 6-9, bộ "Kết nối tri thức" (8 tập trong
-`tai-lieu-sgk/SGK-Toan/`, trích mục lục bằng OCR tiếng Việt).
-**Chưa đối chiếu:** §2 (mầm non), §3 (lớp 1-5), §5 (lớp 10-12) — chưa có sách trong `tai-lieu-sgk/`.
+**Phạm vi đã đối chiếu:** §4 — cấp 2, lớp 6-9 (§8.1-8.3, đợt 2a) **và** §3 — cấp 1, lớp 1-5
+(§8.4, đợt 2b), bộ "Kết nối tri thức" (18 tập trong `tai-lieu-sgk/SGK-Toan/`, trích mục lục bằng
+OCR tiếng Việt).
+**Chưa đối chiếu:** §2 (mầm non), §5 (lớp 10-12) — chưa có sách trong `tai-lieu-sgk/`.
+
+> **§8.1 – §8.3 dưới đây CHỈ nói về cấp 2 (lớp 6-9).** Phần tiểu học nằm riêng ở **§8.4**.
 
 > **Đợt đối chiếu lại — 2026-08-01 (bộ ảnh scan mới).** Nguồn tài liệu đã đổi từ 8 file PDF sang
 > 8 thư mục ảnh PNG (`Toan 6-1/` … `Toan 9-2/`), OCR bằng `scripts/ocr-images.py` (thêm bước OCR
@@ -454,3 +474,106 @@ thuật cụ thể để giữ nguyên:
    sâu ở lớp 7 so với lớp 9 để đặt `prerequisites` đúng, tránh dạy trùng.
 5. **Các bài ❌ (chứng minh hình học)** — Toán 7 chương IV, Toán 8 chương IX. Cần xác nhận việc
    **loại khỏi MVP** là chấp nhận được về mặt sư phạm (học sinh vẫn phải học phần này trên lớp).
+
+---
+
+## 8.4 Nhật ký đối chiếu SGK — PHẦN TIỂU HỌC (§3, lớp 1-5) · đợt 2b, 2026-08-01
+
+**Phạm vi:** §3 — cấp 1, lớp 1-5, bộ "Kết nối tri thức với cuộc sống". Nguồn: 10 thư mục ảnh scan
+`tai-lieu-sgk/SGK-Toan/1-1/ … 5-2/`, trích mục lục bằng OCR (`scripts/ocr-images.py`,
+`scripts/ocr-crop.py`) và đọc trực tiếp trang mục lục khi OCR không tách được cột.
+Mục lục đầy đủ: `docs/research/muc-luc-sgk/toan-1.md` … `toan-5.md`.
+
+**Quy mô sách:** L1 10 chủ đề/41 bài · L2 14/75 · L3 16/81 · L4 13/73 · L5 12/75.
+SGK tiểu học tổ chức theo **chủ đề** (đánh số liên tục qua hai tập), không dùng "chương".
+
+### 8.4.1 Bảng thay đổi — tất cả mục `[≠]` `[+]` `[−]` (phần tiểu học)
+
+| Lớp | Ký hiệu | Nội dung                                                                     | Đã làm gì                                                                                                 |
+| --- | ------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 1   | `[+]`   | Tách/gộp số trong phạm vi 10 ("mấy và mấy")                                  | Bổ sung mạch SO (Bài 5) — nền tảng của cộng/trừ qua 10 ở lớp 2                                            |
+| 1   | `[≠]`   | Đo độ dài                                                                    | Sửa: lớp 1 đã dạy **xăng-ti-mét thật** + ước lượng (chủ đề 7), không dừng ở "đơn vị tự quy ước"           |
+| 1   | `[+]`   | Khối lập phương, khối hộp chữ nhật; vị trí, định hướng trong không gian      | Bổ sung mạch HINH — SGK có hẳn chủ đề 4                                                                   |
+| 1   | `[+]`   | Xem giờ đúng, các ngày trong tuần, xem lịch                                  | Bổ sung mạch HINH (chủ đề 9) — kho cũ xếp nhầm phần "xem đồng hồ" sang lớp 2                              |
+| 2   | `[+]`   | Cộng, trừ **qua 10 trong phạm vi 20**; bảng cộng/bảng trừ qua 10             | Bổ sung mạch SO — SGK dành hẳn chủ đề 2                                                                   |
+| 2   | `[≠]`   | **Bảng nhân, bảng chia ở lớp 2**                                             | Sửa "2-5" → **chỉ bảng 2 và bảng 5** (Bài 39, 40, 43, 44). Bảng 3, 4 chuyển sang lớp 3                    |
+| 2   | `[+]`   | Tia số; số liền trước, số liền sau                                           | Bổ sung mạch SO (Bài 2)                                                                                   |
+| 2   | `[+]`   | Tiền Việt Nam                                                                | Bổ sung mạch SO (Bài 56)                                                                                  |
+| 2   | `[+]`   | Đường gấp khúc; hình tứ giác                                                 | Bổ sung mạch HINH (Bài 26)                                                                                |
+| 2   | `[+]`   | Khối trụ, khối cầu                                                           | Bổ sung mạch HINH (chủ đề 9)                                                                              |
+| 2   | `[≠]`   | Đơn vị đo độ dài lớp 2                                                       | Bổ sung **ki-lô-mét** vào danh sách cm, dm, m (Bài 55)                                                    |
+| 2   | `[≠]`   | Nội dung thời gian lớp 2                                                     | Sửa "giờ đúng, giờ rưỡi" → **ngày–giờ, giờ–phút, ngày–tháng** (chủ đề 6)                                  |
+| 2   | `[+]`   | Thu thập, phân loại, kiểm đếm số liệu                                        | Bổ sung mạch TK (Bài 64)                                                                                  |
+| 2   | `[+]`   | **Xác suất: "chắc chắn – có thể – không thể"**                               | Bổ sung mạch TK (Bài 66) — **mốc bắt đầu thật của mạch xác suất trong CT 2018 là lớp 2**                  |
+| 3   | `[≠]`   | Bảng nhân/chia ở lớp 3                                                       | Sửa "6-9" → **3, 4 và 6, 7, 8, 9** (Bài 5, 6 + chủ đề 2)                                                  |
+| 3   | `[+]`   | **Một phần mấy** `1/n`                                                       | Bổ sung mạch SO (Bài 14) — tiền đề trực tiếp của phân số lớp 4                                            |
+| 3   | `[+]`   | Chữ số La Mã                                                                 | Bổ sung mạch SO (Bài 47)                                                                                  |
+| 3   | `[+]`   | Làm tròn số đến hàng chục, trăm, nghìn, chục nghìn                           | Bổ sung mạch SO (Bài 48, 61) — kho cũ để làm tròn tới tận lớp 6                                           |
+| 3   | `[+]`   | Biểu thức số & tính giá trị của biểu thức số                                 | Bổ sung mạch SO (Bài 38) — tiền đề của "thứ tự thực hiện phép tính" lớp 6                                 |
+| 3   | `[+]`   | Gấp/giảm một số lên (đi) một số lần; so sánh số lớn gấp mấy lần số bé        | Bổ sung mạch SO (Bài 24, 27, 39)                                                                          |
+| 3   | `[+]`   | Bài toán giải bằng hai bước tính                                             | Bổ sung mạch SO (Bài 28)                                                                                  |
+| 3   | `[+]`   | Chu vi hình tam giác, hình tứ giác                                           | Bổ sung mạch HINH (Bài 50) — kho cũ chỉ có chu vi HCN và hình vuông                                       |
+| 3   | `[+]`   | Khái niệm **diện tích của một hình** + **xăng-ti-mét vuông**                 | Bổ sung mạch HINH (Bài 51) — kho cũ để cm² tới lớp 4                                                      |
+| 3   | `[+]`   | Điểm ở giữa, trung điểm của đoạn thẳng                                       | Bổ sung mạch HINH (Bài 16) — kho cũ để trung điểm tới lớp 6                                               |
+| 3   | `[+]`   | Hình tròn: tâm, bán kính, đường kính (`d = 2r`)                              | Bổ sung mạch HINH (Bài 17)                                                                                |
+| 3   | `[+]`   | Khối lập phương, khối hộp chữ nhật (đỉnh, cạnh, mặt)                         | Bổ sung mạch HINH (Bài 21)                                                                                |
+| 3   | `[+]`   | Đơn vị mi-li-mét, gam, mi-li-lít, **độ C**                                   | Bổ sung mạch HINH (chủ đề 5) — nhiệt độ là nội dung kho cũ thiếu hoàn toàn ở mọi lớp tiểu học             |
+| 3   | `[−]`   | Biểu đồ tranh ở lớp 3                                                        | **Bỏ** — biểu đồ tranh chỉ dạy ở **lớp 2** (Bài 65); lớp 3 dùng **bảng số liệu**                          |
+| 3   | `[+]`   | Khả năng xảy ra của một sự kiện                                              | Bổ sung mạch TK (Bài 74)                                                                                  |
+| 4   | `[−]`   | **Dấu hiệu chia hết cho 2, 3, 5, 9**                                         | **Bỏ khỏi lớp 4** — SGK Toán 4 KNTT không có bài này; nội dung dạy ở **lớp 6** (Toán 6 Bài 9)             |
+| 4   | `[+]`   | Số chẵn, số lẻ                                                               | Bổ sung mạch SO (Bài 3) — đây mới là nội dung "chia hết" thật sự của lớp 4                                |
+| 4   | `[+]`   | Biểu thức chứa chữ                                                           | Bổ sung mạch SO (Bài 4) — tiền đề của biểu thức đại số lớp 7                                              |
+| 4   | `[+]`   | Làm quen dãy số tự nhiên; làm tròn đến hàng trăm nghìn                       | Bổ sung mạch SO (Bài 13, 15)                                                                              |
+| 4   | `[+]`   | Tính chất **giao hoán, kết hợp** (cộng & nhân), **phân phối** `a(b+c)=ab+ac` | Bổ sung mạch SO (Bài 24, 40, 42) — kho cũ chỉ ghi các tính chất này ở lớp 6                               |
+| 4   | `[+]`   | Tìm hai số biết tổng và hiệu của hai số đó                                   | Bổ sung mạch SO (Bài 25)                                                                                  |
+| 4   | `[≠]`   | **Số trung bình cộng**                                                       | Chuyển từ mạch TK sang **mạch SO** — SGK đặt ở Bài 46, chủ đề "Phép nhân và phép chia"                    |
+| 4   | `[+]`   | Bài toán liên quan đến rút về đơn vị                                         | Bổ sung mạch SO (Bài 47)                                                                                  |
+| 4   | `[−]`   | **Diện tích hình bình hành `S = a×h`, hình thoi `S = (d₁×d₂)/2`**            | **Bỏ khỏi lớp 4** — Bài 31 chỉ nhận dạng hình; hai công thức dạy ở **lớp 6** (Toán 6 Bài 20)              |
+| 4   | `[≠]`   | Đơn vị đo diện tích lớp 4                                                    | Sửa "cm², m²" → **dm², m², mm²** (Bài 18); cm² đã học từ **lớp 3**                                        |
+| 4   | `[+]`   | **Góc và đơn vị đo góc; góc nhọn, góc tù, góc bẹt**                          | Bổ sung mạch HINH — SGK có hẳn chủ đề 2; kho cũ để phần góc tới lớp 6                                     |
+| 4   | `[+]`   | Yến, tạ, tấn; giây, thế kỉ                                                   | Bổ sung mạch HINH (Bài 17, 19)                                                                            |
+| 4   | `[+]`   | Dãy số liệu thống kê                                                         | Bổ sung mạch TK (Bài 49)                                                                                  |
+| 4   | `[+]`   | Số lần xuất hiện của một sự kiện                                             | Bổ sung mạch TK (Bài 51)                                                                                  |
+| 5   | `[+]`   | Phân số thập phân; hỗn số; cộng, trừ hai phân số khác mẫu số                 | Bổ sung mạch SO (chủ đề 1) — kho cũ coi phân số kết thúc ở lớp 4                                          |
+| 5   | `[+]`   | Tỉ lệ bản đồ và ứng dụng                                                     | Bổ sung mạch SO (Bài 37)                                                                                  |
+| 5   | `[+]`   | Tìm hai số khi biết tổng (hiệu) và tỉ số của hai số đó                       | Bổ sung mạch SO (Bài 38, 39)                                                                              |
+| 5   | `[+]`   | Máy tính cầm tay                                                             | Bổ sung mạch SO (Bài 42, 43) — phần "chuyển đổi số" đã có sẵn ở tiểu học                                  |
+| 5   | `[+]`   | Cộng, trừ, nhân, chia **số đo thời gian**                                    | Bổ sung mạch SO (Bài 57, 58) — tiền đề trực tiếp của toán chuyển động đều                                 |
+| 5   | `[≠]`   | Thể tích hình lập phương                                                     | Sửa `V = a³` → **`V = a × a × a`** — tiểu học chưa dùng luỹ thừa (luỹ thừa vào lớp 6, Toán 6 Bài 6)       |
+| 5   | `[+]`   | Diện tích **xung quanh & toàn phần** HHCN và hình lập phương                 | Bổ sung mạch HINH (Bài 50, 51) — kho cũ chỉ có thể tích                                                   |
+| 5   | `[+]`   | Hình khai triển của hình lập phương, HHCN, hình trụ                          | Bổ sung mạch HINH (Bài 49)                                                                                |
+| 5   | `[+]`   | Ki-lô-mét vuông, héc-ta; xăng-ti-mét khối, đề-xi-mét khối, mét khối          | Bổ sung mạch HINH (Bài 15, 46, 47)                                                                        |
+| 5   | `[≠]`   | "Làm quen khả năng xảy ra của sự kiện" ở lớp 5                               | Sửa cho đúng tên nội dung: **tỉ số của số lần lặp lại một sự kiện so với tổng số lần thực hiện** (Bài 65) |
+| 5   | `[+]`   | Thu thập, phân loại, sắp xếp các số liệu                                     | Bổ sung mạch TK (Bài 63)                                                                                  |
+
+**Tổng cộng phần tiểu học: 54 mục** — `[+]` 42 · `[≠]` 9 · `[−]` 3 · phần còn lại `[✓]` giữ nguyên.
+(Theo lớp: L1 4 · L2 10 · L3 15 · L4 14 · L5 11.)
+
+Cộng cả hai đợt: **79 mục lệch** (25 ở cấp 2 §8.1 + 54 ở tiểu học §8.4.1).
+
+### 8.4.2 Kết luận cho các điểm ĐÃ ĐÁNH DẤU NGHI NGỜ (phần tiểu học)
+
+| Chỗ nghi ngờ                                      | Kết luận sau khi đọc mục lục thật                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Thống kê & Xác suất dạy từ lớp mấy (tiểu học)** | ✅ **Đã kết luận.** Mạch TK **bắt đầu từ lớp 2** (chủ đề 13 "Làm quen với yếu tố thống kê, xác suất") và có mặt liên tục ở **lớp 2, 3, 4, 5**; **lớp 1 KHÔNG có**. Quan trọng: **yếu tố xác suất có ngay từ lớp 2** ("chắc chắn – có thể – không thể"), rồi lớp 3 (khả năng xảy ra), lớp 4 (số lần xuất hiện), lớp 5 (tỉ số số lần lặp lại). Kho cũ ghi đúng mốc lớp 1 (chưa có) nhưng **bỏ sót hoàn toàn nhánh xác suất ở lớp 2, 3, 4**. |
+| **Thứ tự dạy 4 phép tính qua các lớp**            | ✅ **Đã kết luận.** Cộng/trừ phạm vi 10 → 100 (không nhớ) ở **lớp 1**; cộng/trừ **có nhớ** phạm vi 20, 100, 1 000 + **mở nhân/chia** (bảng 2, 5) ở **lớp 2**; bảng nhân/chia **3, 4, 6, 7, 8, 9** + chia có dư ở **lớp 3**; nhân/chia số có nhiều chữ số + các tính chất phép tính ở **lớp 4**. Kho cũ đặt bảng 3, 4 nhầm vào lớp 2.                                                                                                      |
+| **Phạm vi số học theo lớp**                       | ✅ **Đã kết luận.** L1: 10 → 100 · L2: 1 000 · L3: 10 000 → 100 000 · L4: lớp triệu (số có nhiều chữ số) · L5: không mở rộng số tự nhiên nữa, chuyển sang số thập phân. Kho cũ ghi lớp 3 "đến 100 000" là đúng nhưng bỏ qua chặng trung gian 10 000.                                                                                                                                                                                      |
+| **Thời điểm bắt đầu phân số / số thập phân**      | ✅ **Đã kết luận.** Mầm mống phân số là **"một phần mấy" ở lớp 3** (Bài 14); **phân số chính thức ở lớp 4** (chủ đề 10-12, gồm cả nhân/chia phân số); **số thập phân ở lớp 5** (chủ đề 2, 4); **hỗn số & phân số thập phân cũng ở lớp 5** (Bài 4, 7). Kho cũ đúng ở mốc lớp 4/lớp 5 nhưng thiếu bước đệm lớp 3 và thiếu hỗn số.                                                                                                           |
+| Nội dung **STEM / chuyển đổi số** ở tiểu học      | 🟡 **Chưa kết luận được — CẦN GIÁO VIÊN XÁC NHẬN.** Mục lục cho thấy mỗi chủ đề đo lường đều có bài "Thực hành và trải nghiệm", và lớp 5 có **máy tính cầm tay** (Bài 42, 43). Nhưng **không xác định được** phần nào do Thông tư 17/2025 thêm vào — không có bản đối chứng SGK chỉnh sửa theo TT 17/2025. **Không đoán.**                                                                                                                |
+
+### 8.4.3 Danh sách cần GIÁO VIÊN CHUYÊN MÔN duyệt lần cuối (phần tiểu học)
+
+1. **Dấu hiệu chia hết cho 2, 3, 5, 9 — lớp 4 hay lớp 6?** Mục lục Toán 4 KNTT **không có** bài
+   này (chỉ có "Số chẵn, số lẻ"), còn Toán 6 có hẳn Bài 9 "Dấu hiệu chia hết". Đã bỏ khỏi §3 lớp 4.
+   Cần giáo viên xác nhận không có trường hợp dạy lồng trong bài luyện tập chung.
+2. **Diện tích hình bình hành / hình thoi — lớp 4 hay lớp 6?** Toán 4 KNTT Bài 31 theo mục lục chỉ
+   là "Hình bình hành, hình thoi"; công thức diện tích xuất hiện ở Toán 6 Bài 20. Đã bỏ khỏi §3
+   lớp 4. **Đây là kết luận rút từ MỤC LỤC, chưa đọc hết nội dung bài** — cần giáo viên xác nhận.
+3. **Ảnh hưởng của Thông tư 17/2025 lên môn Toán tiểu học** — 🟡 vẫn cần xác nhận, cùng lý do đã
+   ghi ở §8.3 mục 2 (không có bản SGK chỉnh sửa theo TT 17/2025 để đối chứng).
+4. **Ranh giới mạch của các bài đo lường.** File này xếp toàn bộ đo lường (độ dài, khối lượng,
+   thời gian, tiền) vào mạch **HINH** theo cách gộp "Hình học và Đo lường" của CT 2018, riêng
+   "tiền Việt Nam" và "số đo thời gian" (lớp 5) xếp vào **SO** vì bản chất là phép tính. Cần giáo
+   viên xác nhận cách phân mạch này trước khi dựng `prerequisites`.
+5. **Bài "Thực hành và trải nghiệm" (mọi lớp)** — đều gắn ❌ (không chấm tự động được). Cần xác
+   nhận việc loại khỏi MVP là chấp nhận được về mặt sư phạm.
