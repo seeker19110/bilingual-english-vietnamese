@@ -84,9 +84,35 @@ trên VPS (xem "Cần làm tay").
     **Điểm cần giáo viên chuyên môn duyệt:** Hoá 4 · Lý 6 · Sinh 4 (chi tiết ở §6.3 / §6.3 / §5.3
     của từng file). Đáng chú ý: lực đẩy Archimedes & moment lực L8 định tính hay định lượng; công
     thức thấu kính `1/f = 1/d + 1/d'` L9; Joule–Lenz L9; ăn mòn kim loại L9 (Hoá).
-    **Còn thiếu:** Toán 1-5 (đợt 2b), Toán 10-12 (đợt 2d), **THPT của Hoá và Sinh** (§3 của 2 file
+    **Còn thiếu:** Toán 10-12 (đợt 2d), **THPT của Hoá và Sinh** (§3 của 2 file
     kho kiến thức vẫn là bản thảo chưa kiểm chứng) — sách CHƯA có trong `tai-lieu-sgk/`, chờ người
-    dùng bổ sung. **Vật lí THPT đã xong — xem mục ngay dưới.**
+    dùng bổ sung. **Vật lí THPT và Toán 1-5 đã xong — xem hai mục ngay dưới.**
+    **✅ [2026-08-01] Đã đối chiếu xong TOÁN 1-5 (TIỂU HỌC) — đợt 2b** — phần §3 của
+    `kho-kien-thuc-toan-gdpt2018.md` trước đây chưa từng đối chiếu (đợt 2a chỉ làm lớp 6-9), nay đã
+    kiểm chứng bằng ảnh scan `tai-lieu-sgk/SGK-Toan/1-1/ … 5-2/`. Mục lục thật ở
+    `docs/research/muc-luc-sgk/toan-{1,2,3,4,5}.md`. SGK tiểu học tổ chức theo **chủ đề** (không
+    dùng "chương"). Quy mô: **L1 10 chủ đề/41 bài · L2 14/75 · L3 16/81 · L4 13/73 · L5 12/75**
+    (tổng 65 chủ đề / 345 bài).
+    **Số mục lệch phần tiểu học: 54** (`[+]`42 · `[≠]`9 · `[−]`3) — ghi ở §8.4 của file kho kiến
+    thức Toán, tách rõ khỏi 25 mục của cấp 2 (§8.1). Tổng toàn file: **79 mục lệch**.
+    **Bốn phát hiện quan trọng (kho kiến thức trước đây ghi sai):**
+  - 🔴 **Dấu hiệu chia hết cho 2, 3, 5, 9 KHÔNG dạy ở lớp 4** (Toán 4 KNTT chỉ có "Số chẵn, số lẻ")
+    — nội dung này ở **lớp 6** (Toán 6 Bài 9). Đã bỏ khỏi §3 lớp 4.
+  - 🔴 **Diện tích hình bình hành `S = a×h` và hình thoi `S = (d₁×d₂)/2` KHÔNG dạy ở lớp 4** — Bài 31
+    chỉ nhận dạng hình; hai công thức ở **lớp 6** (Toán 6 Bài 20). Đã bỏ khỏi §3 lớp 4.
+  - **Mạch TK bắt đầu từ LỚP 2, và có yếu tố XÁC SUẤT ngay từ lớp 2** ("chắc chắn – có thể – không
+    thể"), rồi liên tục L3 (khả năng xảy ra), L4 (số lần xuất hiện), L5 (tỉ số số lần lặp lại →
+    tiền đề xác suất thực nghiệm L6). Lớp 1 không có. Kho cũ bỏ sót hoàn toàn nhánh xác suất tiểu học.
+  - **Bảng nhân/chia: lớp 2 CHỈ có bảng 2 và 5**; bảng 3, 4 nằm ở **lớp 3** cùng 6, 7, 8, 9 (kho cũ
+    ghi "2-5" ở lớp 2 và "6-9" ở lớp 3 — sai cả hai).
+    Lệch đáng chú ý khác: lớp 1 đã có hình khối + xem giờ/lịch; lớp 3 đã có làm tròn số, chữ số La
+    Mã, biểu thức số, trung điểm đoạn thẳng, cm², nhiệt độ °C; lớp 4 đã có góc & đơn vị đo góc và
+    các tính chất giao hoán/kết hợp/phân phối; lớp 5 có thêm hỗn số, phân số thập phân, diện tích
+    xung quanh/toàn phần hình khối, số đo thời gian, máy tính cầm tay; **biểu đồ tranh chỉ ở lớp 2**
+    (kho cũ ghi cả lớp 3); **số trung bình cộng thuộc mạch SO** chứ không phải TK.
+    **Điểm cần giáo viên Toán duyệt — thêm 5 mục cho tiểu học** (§8.4.3): hai kết luận `[−]` ở trên
+    rút từ **mục lục**, chưa đọc hết nội dung bài; ảnh hưởng TT 17/2025; cách phân mạch các bài đo
+    lường (HINH hay SO); và việc loại toàn bộ bài "Thực hành và trải nghiệm" khỏi MVP.
     **✅ [2026-08-01] Đã đối chiếu xong VẬT LÍ 10-12 (THPT)** — phần §3 của
     `kho-kien-thuc-ly-gdpt2018.md` trước đây chưa từng đối chiếu, nay đã kiểm chứng bằng ảnh scan
     `tai-lieu-sgk/SGK-Ly/10..12/` (mục lục 2 cột, OCR bằng `scripts/ocr-crop.py`). Mục lục thật ở
