@@ -30,8 +30,11 @@ trên VPS (xem "Cần làm tay").
 - **SGK thống nhất toàn quốc từ năm học 2026-2027** — bộ "Kết nối tri thức với cuộc sống". Đổi
   giả định theo hướng TỐT hơn: trước phải viết trung lập giữa 3 bộ sách, nay bám được đúng thứ tự
   bài học sinh học trên lớp. AI **không tải được SGK** (proxy sandbox chặn `taphuan.nxbgd.vn` —
-  `CONNECT tunnel failed 403`); người dùng cấp PDF vào `tai-lieu-sgk/` (đã thêm `.gitignore`,
-  KHÔNG commit tài liệu bản quyền). Có PDF vẫn KHÔNG được chép nội dung — chỉ lấy thứ tự bài +
+  `CONNECT tunnel failed 403`). **Đính chính:** hướng dẫn "đặt PDF vào `tai-lieu-sgk/`" KHÔNG dùng
+  được khi AI chạy từ xa — phiên chạy trong container cloud tạm thời, người dùng không copy file
+  vào được và container bị thu hồi sau phiên. Cách đúng: **đính kèm thẳng vào khung chat**, hoặc
+  chỉ gửi phần Mục lục, hoặc gõ lại danh sách tên bài. Thư mục `tai-lieu-sgk/` + `.gitignore` vẫn
+  giữ làm **hàng rào an toàn** chống lỡ tay commit tài liệu bản quyền. Có PDF vẫn KHÔNG được chép nội dung — chỉ lấy thứ tự bài +
   danh mục công thức, đề/ví dụ tự soạn mới.
 - **✅ `packages/core-grading` — ENGINE CHẤM DÙNG CHUNG, ĐÃ VIẾT XONG + 74 test** (99% câu lệnh,
   90,6% nhánh — cao hơn ngưỡng chung của repo vì chấm sai làm mất niềm tin người học ngay).

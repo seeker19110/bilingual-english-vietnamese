@@ -54,15 +54,31 @@ truy cập bình thường; chỉ môi trường AI bị chặn.
 viết từ **kiến thức toán học phổ quát** (công thức/định lý là sự thật khoa học, không thuộc bản
 quyền ai) và **khung mạch kiến thức GDPT 2018 theo hiểu biết chung**, KHÔNG phải trích từ SGK.
 
-#### Cách khắc phục đã chốt: người dùng cấp PDF vào `tai-lieu-sgk/`
+#### Cách khắc phục: người dùng cung cấp nội dung SGK cho AI
 
-- Thư mục `tai-lieu-sgk/` **đã được thêm vào `.gitignore`** — SGK có bản quyền, repo này đẩy lên
-  GitHub, **tuyệt đối không commit sách vào git**.
-- Ưu tiên: **Toán 6-9 bộ "Kết nối tri thức"** (đợt 2a làm cấp 2 trước). Nếu file nặng, chỉ riêng
-  **phần Mục lục** mỗi cuốn đã đủ giá trị — cho biết chính xác thứ tự chương/bài để dựng lộ trình.
-- **Có PDF KHÔNG đồng nghĩa được chép nội dung.** Dùng sách để biết đúng _thứ tự bài, phạm vi
-  từng lớp, danh mục công thức_ (sự thật + khung chương trình → dùng được). Đề bài và ví dụ trong
-  app **vẫn phải tự soạn mới** (§0.2). Đọc sách ≠ được quyền sao chép sách.
+**⚠️ ĐÍNH CHÍNH 2026-08-01 — hướng dẫn ban đầu ("đặt PDF vào `tai-lieu-sgk/`") KHÔNG dùng được
+khi AI chạy từ xa.** Phiên Claude Code trên web/app chạy trong **container cloud tạm thời**, không
+phải máy người dùng: người dùng **không copy file vào thư mục đó được**, và container bị thu hồi
+sau khi phiên kết thúc nên file cũng không còn ở phiên sau.
+
+**Cách dùng được thật, theo thứ tự ưu tiên:**
+
+1. **Đính kèm thẳng vào khung chat** (PDF hoặc ảnh chụp) — AI đọc trực tiếp. An toàn nhất vì file
+   không đi qua repo, không có nguy cơ lỡ tay commit.
+2. **Chỉ gửi phần Mục lục** mỗi cuốn — đây mới là thứ cần nhất (thứ tự chương/bài để dựng lộ
+   trình), không cần toàn bộ sách.
+3. **Gõ lại danh sách tên bài theo thứ tự** — nhanh hơn tưởng, và tuyệt đối sạch về bản quyền.
+
+**Thư mục `tai-lieu-sgk/` + dòng `.gitignore` vẫn GIỮ**, không phải để người dùng thả file vào mà
+làm **hàng rào an toàn**: nếu sau này chạy Claude Code ngay trên máy người dùng thì dùng được
+luôn, và quan trọng hơn — lỡ có ai (kể cả AI ở phiên sau) đặt file SGK vào repo thì git đã chặn
+sẵn, không lên GitHub được.
+
+**Ưu tiên nội dung cần:** **Toán 6-9 bộ "Kết nối tri thức"** (đợt 2a làm cấp 2 trước).
+
+**Có SGK KHÔNG đồng nghĩa được chép nội dung.** Dùng sách để biết đúng _thứ tự bài, phạm vi từng
+lớp, danh mục công thức_ (sự thật + khung chương trình → dùng được). Đề bài và ví dụ trong app
+**vẫn phải tự soạn mới** (§0.2). Đọc sách ≠ được quyền sao chép sách.
 
 ### 0.2 Vì sao cách này lại ĐÚNG về bản quyền (không chỉ là giải pháp chữa cháy)
 
