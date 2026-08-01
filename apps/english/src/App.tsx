@@ -15,6 +15,7 @@ import { refreshAppSettings } from './lib/appSettings'
 import { refreshPlanFeatures } from './lib/planFeatures'
 import { refreshPlanMarketing } from './lib/planMarketing'
 import FeatureGate from './components/FeatureGate'
+import { useOneHandedDrag } from './lib/useOneHandedDrag'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
 // (thường do app vừa deploy bản mới, chunk cũ không còn) thay vì sập trang.
 const Login = lazyWithRetry(() => import('./pages/Login'))
@@ -150,6 +151,8 @@ const APP_SETTINGS_POLL_MS = 60 * 60 * 1000
 
 export default function App() {
   usePrefetchPages()
+  // Kéo toàn bộ nội dung trang xuống 1 tay (Reachability) — xem lib/useOneHandedDrag.ts
+  const oneHandedDrag = useOneHandedDrag()
   // Đồng bộ hạn mức/khuyến mãi thật từ server: ngay lúc mở app, định kỳ mỗi 1h nếu app mở
   // lâu, và mỗi lần quay lại tab (visibilitychange) — trình duyệt thường tạm dừng
   // setInterval khi tab ẩn/máy ngủ, nên bắt thêm sự kiện này để không phải đợi đủ 1h mới
@@ -184,196 +187,200 @@ export default function App() {
             <BrowserRouter>
               <CanonicalUpdater />
               <ErrorBoundary>
-                <Suspense fallback={<PageLoading />}>
-                  <Routes>
-                    <Route path="/login" element={<Login />} />
-                    {/* Công khai, KHÔNG bọc RequireAuth — vào được khi chưa đăng nhập */}
-                    <Route path="/welcome" element={<Landing />} />
-                    <Route path="/learn-vietnamese" element={<LandingEn />} />
-                    <Route path="/tu-vung/:word" element={<WordDetail />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route path="/onboarding" element={<Onboarding />} />
-                    <Route path="/placement" element={<Placement />} />
-                    <Route
-                      path="/"
-                      element={
-                        <RequireAuth>
-                          <Home />
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/chat"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="chat">
-                            <Chat />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/writing"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="writing">
-                            <Writing />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/speaking"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="speaking">
-                            <Speaking />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/practice"
-                      element={
-                        <RequireAuth>
-                          <Practice />
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/learning-path"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="learning_path">
-                            <Learn />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/learning-path/:levelId"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="learning_path">
-                            <CefrLevelPage />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/dictionary"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="dictionary">
-                            <Dictionary />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/lessons"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="lessons">
-                            <Lessons />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/phrases"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="phrases">
-                            <CommonPhrases />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/history"
-                      element={
-                        <RequireAuth>
-                          <History />
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/progress"
-                      element={
-                        <RequireAuth>
-                          <Dashboard />
-                        </RequireAuth>
-                      }
-                    />
-                    {/* /admin-settings đã tích hợp vào tab "Hạn mức & khuyến mãi" của
+                {/* Bọc toàn bộ nội dung định tuyến để hỗ trợ kéo 1 tay (không bọc
+                    BottomNav — giữ cố định để luôn bấm được dù đang kéo xuống) */}
+                <div style={oneHandedDrag.style} {...oneHandedDrag.handlers}>
+                  <Suspense fallback={<PageLoading />}>
+                    <Routes>
+                      <Route path="/login" element={<Login />} />
+                      {/* Công khai, KHÔNG bọc RequireAuth — vào được khi chưa đăng nhập */}
+                      <Route path="/welcome" element={<Landing />} />
+                      <Route path="/learn-vietnamese" element={<LandingEn />} />
+                      <Route path="/tu-vung/:word" element={<WordDetail />} />
+                      <Route path="/reset-password" element={<ResetPassword />} />
+                      <Route path="/onboarding" element={<Onboarding />} />
+                      <Route path="/placement" element={<Placement />} />
+                      <Route
+                        path="/"
+                        element={
+                          <RequireAuth>
+                            <Home />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/chat"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="chat">
+                              <Chat />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/writing"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="writing">
+                              <Writing />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/speaking"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="speaking">
+                              <Speaking />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/practice"
+                        element={
+                          <RequireAuth>
+                            <Practice />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/learning-path"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="learning_path">
+                              <Learn />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/learning-path/:levelId"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="learning_path">
+                              <CefrLevelPage />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/dictionary"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="dictionary">
+                              <Dictionary />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/lessons"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="lessons">
+                              <Lessons />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/phrases"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="phrases">
+                              <CommonPhrases />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/history"
+                        element={
+                          <RequireAuth>
+                            <History />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/progress"
+                        element={
+                          <RequireAuth>
+                            <Dashboard />
+                          </RequireAuth>
+                        }
+                      />
+                      {/* /admin-settings đã tích hợp vào tab "Hạn mức & khuyến mãi" của
                         /admin-s — giữ redirect để không vỡ link cũ trong docs/runbook. */}
-                    <Route
-                      path="/admin-settings"
-                      element={<Navigate to="/admin-s?tab=limits" replace />}
-                    />
-                    {/* Đường dẫn trang quản trị tổng đổi từ /admin sang /admin-s (2026-07-29)
+                      <Route
+                        path="/admin-settings"
+                        element={<Navigate to="/admin-s?tab=limits" replace />}
+                      />
+                      {/* Đường dẫn trang quản trị tổng đổi từ /admin sang /admin-s (2026-07-29)
                         — giữ redirect /admin cũ để không vỡ link đã chia sẻ/bookmark. */}
-                    <Route path="/admin" element={<Navigate to="/admin-s" replace />} />
-                    <Route
-                      path="/admin-s"
-                      element={
-                        <RequireAuth>
-                          <RequireAdmin>
-                            <AdminDashboard />
-                          </RequireAdmin>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/mistakes"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="mistake_bank">
-                            <MistakeBank />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/challenge"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="challenge">
-                            <Challenge />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/profile"
-                      element={
-                        <RequireAuth>
-                          <Profile />
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/quests"
-                      element={
-                        <RequireAuth>
-                          <FeatureGate featureKey="quests">
-                            <Quests />
-                          </FeatureGate>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      path="/avatar-demo"
-                      element={
-                        <RequireAuth>
-                          <AvatarDemo />
-                        </RequireAuth>
-                      }
-                    />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
-                </Suspense>
+                      <Route path="/admin" element={<Navigate to="/admin-s" replace />} />
+                      <Route
+                        path="/admin-s"
+                        element={
+                          <RequireAuth>
+                            <RequireAdmin>
+                              <AdminDashboard />
+                            </RequireAdmin>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/mistakes"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="mistake_bank">
+                              <MistakeBank />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/challenge"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="challenge">
+                              <Challenge />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/profile"
+                        element={
+                          <RequireAuth>
+                            <Profile />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/quests"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="quests">
+                              <Quests />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/avatar-demo"
+                        element={
+                          <RequireAuth>
+                            <AvatarDemo />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                  </Suspense>
+                </div>
               </ErrorBoundary>
               <BottomNav />
             </BrowserRouter>
