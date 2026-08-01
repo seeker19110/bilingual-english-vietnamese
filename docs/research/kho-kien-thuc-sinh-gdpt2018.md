@@ -41,7 +41,9 @@ di truyền (tỉ lệ phân li), năng lượng sinh thái, và vài công th�
 | B   | Làm Sinh nhưng **chỉ trắc nghiệm + thẻ ghi nhớ (SRS)** | ✅ **Khuyến nghị** — SRS vốn là thứ app đã làm tốt cho từ vựng tiếng Anh, tái dùng được thẳng |
 | C   | Làm đủ, dùng AI chấm phần tự luận                      | ❌ **Vi phạm nguyên tắc đã chốt** "không để AI phán đúng/sai" + đội chi phí AI                |
 
-> **Khuyến nghị PA B**, và đây là chỗ có mối nối bất ngờ: **Sinh học về bản chất gần với HỌC TỪ
+> ### ✅ ĐÃ CHỐT 2026-08-01 (người dùng duyệt): **PA B** — trắc nghiệm + SRS.
+>
+> **PA B**, và đây là chỗ có mối nối bất ngờ: **Sinh học về bản chất gần với HỌC TỪ
 > VỰNG hơn là với Toán** — đều là "nhớ nhiều khái niệm, ôn lặp lại ngắt quãng". App đã có sẵn
 > engine SRS chạy tốt cho tiếng Anh (`apps/english/src/lib/srs.ts`) → **tái dùng cho Sinh rẻ hơn
 > nhiều so với xây engine chấm mới**. Cần người dùng xác nhận.
@@ -125,13 +127,12 @@ tiêu hoá, hô hấp, tuần hoàn, bài tiết ở động vật · **cân b�
 
 ## 4. Kết luận & khuyến nghị
 
-1. **Chốt PA A/B/C ở §0.1** — quyết định có làm Sinh hay không, và làm ở dạng nào.
-   **Khuyến nghị PA B** (trắc nghiệm + SRS, cộng thêm phần tính toán §3.1 dùng engine sẵn có).
+1. ~~Chốt PA A/B/C ở §0.1~~ **✅ ĐÃ CHỐT: PA B** (2026-08-01) — trắc nghiệm + SRS, cộng phần
+   tính toán §3.1 dùng engine chấm sẵn có (`packages/core-grading`, đã viết xong).
 2. Sinh học **không cần engine chấm mới** — nó cần **engine SRS**, thứ app đã có và đã chạy tốt
    cho từ vựng tiếng Anh suốt thời gian qua. Đây là chỗ tái dùng rẻ nhất trong toàn bộ kế hoạch
    đa môn.
-3. Thứ tự đề xuất cho GĐ3 (cập nhật, gộp cả 3 môn KHTN):
-   **Hoá → Lý → Sinh** — Hoá trước vì cân bằng PTHH chấm chính xác tuyệt đối (tính năng "đinh"),
+3. ~~Thứ tự đề xuất cho GĐ3~~ **✅ ĐÃ CHỐT: Hoá → Lý → Sinh** (2026-08-01): — Hoá trước vì cân bằng PTHH chấm chính xác tuyệt đối (tính năng "đinh"),
    Lý sau vì phụ thuộc engine đơn vị/dung sai, Sinh cuối vì mô hình học khác hẳn (SRS chứ không
    phải chấm) nên nên tách ra làm riêng, không trộn nhịp với hai môn kia.
 4. Người có chuyên môn (giáo viên Sinh) duyệt §2-§3 đối chiếu SGK "Kết nối tri thức" trước khi

@@ -155,15 +155,19 @@ Cách kiểm đúng, chạy hoàn toàn bằng thuật toán:
 
 ## 5. Việc tiếp theo
 
-1. **Chốt PA A/B/C mô hình `subject`** (xem `kho-kien-thuc-ly-gdpt2018.md` §0.1) — chung cho Lý/Hoá/Sinh.
+1. ~~Chốt PA A/B/C mô hình `subject`~~ **✅ ĐÃ CHỐT: PA C** (2026-08-01), chung cho Lý/Hoá/Sinh.
 2. Người có chuyên môn (giáo viên Hoá) duyệt §2-§3, đối chiếu SGK "Kết nối tri thức" — **đặc biệt
    lưu ý điểm `n = V/24`** (CT GDPT 2018 dùng điều kiện chuẩn 25 °C, 1 bar → 24 L/mol, khác
    22,4 L/mol của chương trình cũ). Đây là chỗ AI dễ viết theo thói quen cũ và sai — cần xác minh.
 3. Chốt phạm vi chấm tự động theo bảng §4 — **loại sớm** các dạng phải chấm tự luận, đừng để tới
    lúc code mới phát hiện không chấm được.
 4. Lập dữ liệu nền §4.2 (bảng tuần hoàn, bảng tính tan) — việc cơ học, giao subagent được.
+5. **Phần cân bằng PTHH (§4.1) ĐÃ CÓ CODE CHẠY** — `packages/core-grading/chemistry.ts`, kiểm bảo
+   toàn nguyên tố + điện tích + tối giản, có test. Không phải chờ tới GĐ3 mới viết.
 
-> **Đề xuất thứ tự GĐ3: làm HOÁ trước, LÝ sau.** Ngược với tên gọi quen thuộc "Lý–Hoá", nhưng có
+> ### ✅ ĐÃ CHỐT 2026-08-01 (người dùng duyệt): thứ tự GĐ3 là **HOÁ → LÝ → SINH**.
+>
+> **Làm HOÁ trước, LÝ sau.** Ngược với tên gọi quen thuộc "Lý–Hoá", nhưng có
 > lý do kỹ thuật: cân bằng PTHH (§4.1) là tính năng chấm-tuyệt-đối-chính-xác, độc đáo, dễ tạo giá
 > trị thấy được ngay; còn Lý phụ thuộc nặng vào engine đơn vị/dung sai (§4 file Lý) nên nên làm
 > sau khi engine đó đã chín qua Toán + Hoá. **Cần người dùng xác nhận.**

@@ -40,10 +40,12 @@ hỏi theo CLAUDE.md mục 12):
 | B   | `subject = 'physics'` xuyên suốt, chỉ đổi **nhãn hiển thị** theo lớp                           | Dữ liệu liền mạch, SRS/tiến độ nối từ lớp 6 lên 12       | Lớp 6-9 hiện "Vật lí" trong khi trên lớp gọi "KHTN" — dễ gây bối rối        |
 | C   | `subject = 'khtn'` là môn CHA, `physics/chemistry/biology` là phân môn con (thêm cột `branch`) | Đúng nhất về mặt mô hình hoá; hiện đúng tên ở cả hai cấp | Tốn thêm 1 migration + sửa mọi truy vấn đếm lượt đang có                    |
 
-> **Khuyến nghị của tôi: PA C**, nhưng **chỉ khi thật sự bắt đầu GĐ3** — không migration sớm. Lý
-> do: PA A/B đều tạo nợ kỹ thuật phải trả lại đúng lúc đông người dùng nhất, trong khi PA C chỉ
-> đắt thêm một lần ngay lúc dữ liệu Lý/Hoá còn trống (rẻ nhất để đổi). Nhưng đây là quyết định
-> kiến trúc → **xin ý kiến người dùng trước, không tự làm.**
+> ### ✅ ĐÃ CHỐT 2026-08-01: **PA C** (người dùng duyệt)
+>
+> Môn cha `khtn` + cột `branch` (`physics`/`chemistry`/`biology`). Thi hành **khi thật sự bắt đầu
+> GĐ3**, không migration sớm: PA A/B đều tạo nợ kỹ thuật phải trả đúng lúc đông người dùng nhất,
+> còn PA C chỉ đắt thêm một lần ngay lúc dữ liệu Lý/Hoá còn trống — rẻ nhất để đổi.
+> Áp dụng chung cho cả Lý, Hoá, Sinh.
 
 ---
 
@@ -112,31 +114,31 @@ sát", chấm bằng trắc nghiệm chọn đáp án, không cần KaTeX, khôn
 
 ### Lớp 10 — Cơ học
 
-| Chủ đề            | Công thức cốt lõi                                                                                                                                                          |
+| Chủ đề | Công thức cốt lõi |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | ----------------------------------------------- |
-| Động học          | **`v = v₀ + at`** · **`s = v₀t + ½at²`** · **`v² − v₀² = 2as`** · rơi tự do (`a = g ≈ 9,8 m/s²`) · chuyển động ném                                                         |
-| Động lực học      | **Định luật I Newton** (quán tính) · **Định luật II: `F⃗ = m·a⃗`** · **Định luật III: `F⃗₁₂ = −F⃗₂₁`**                                                                     |
-| Các lực           | Trọng lực `P = mg` · **lực ma sát `F_ms = μN`** · \*\*lực đàn hồi (định luật Hooke) `F = k·                                                                                | Δl  | `** · **lực hướng tâm `F_ht = mv²/r = mω²r`\*\* |
+| Động học | **`v = v₀ + at`** · **`s = v₀t + ½at²`** · **`v² − v₀² = 2as`** · rơi tự do (`a = g ≈ 9,8 m/s²`) · chuyển động ném |
+| Động lực học | **Định luật I Newton** (quán tính) · **Định luật II: `F⃗ = m·a⃗`** · **Định luật III: `F⃗₁₂ = −F⃗₂₁`** |
+| Các lực | Trọng lực `P = mg` · **lực ma sát `F_ms = μN`** · \*\*lực đàn hồi (định luật Hooke) `F = k·                                                                                | Δl  | `** · **lực hướng tâm `F_ht = mv²/r = mω²r`\*\* |
 | Công & năng lượng | **`A = F·s·cos α`** · **`P = A/t = F·v`** · **động năng `W_đ = ½mv²`** · **thế năng trọng trường `W_t = mgh`** · **cơ năng `W = W_đ + W_t`** (bảo toàn khi chỉ có lực thế) |
-| Động lượng        | **`p⃗ = m·v⃗`** · **định luật bảo toàn động lượng** · xung lượng `Δp⃗ = F⃗·Δt`                                                                                             |
-| Chuyển động tròn  | **`ω = 2π/T = 2πf`** · **`v = ωr`** · gia tốc hướng tâm **`a_ht = v²/r`**                                                                                                  |
+| Động lượng | **`p⃗ = m·v⃗`** · **định luật bảo toàn động lượng** · xung lượng `Δp⃗ = F⃗·Δt` |
+| Chuyển động tròn | **`ω = 2π/T = 2πf`** · **`v = ωr`** · gia tốc hướng tâm **`a_ht = v²/r`** |
 
 ### Lớp 11 — Dao động, sóng, điện
 
-| Chủ đề            | Công thức cốt lõi                                                                                                                                                       |
+| Chủ đề | Công thức cốt lõi |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------------- |
 | Dao động điều hoà | **`x = A·cos(ωt + φ)`** · `v = −ωA·sin(ωt+φ)`, `a = −ω²x` · **con lắc lò xo `T = 2π√(m/k)`** · **con lắc đơn `T = 2π√(l/g)`** · dao động tắt dần, cưỡng bức, cộng hưởng |
-| Sóng              | **`v = λf = λ/T`** · giao thoa, sóng dừng · sóng điện từ, thang sóng điện từ                                                                                            |
-| Điện trường       | \*\*Định luật Coulomb `F = k·                                                                                                                                           | q₁q₂ | /(εr²)`** (`k = 9·10⁹ N·m²/C²`) · **cường độ điện trường `E = F/q`** · điện thế, hiệu điện thế `U = A/q`· **tụ điện`C = Q/U`\*\* |
-| Dòng điện         | **`I = q/t`** · **định luật Ohm toàn mạch `I = ξ/(R + r)`** · ghép nguồn · năng lượng và công suất điện                                                                 |
+| Sóng | **`v = λf = λ/T`** · giao thoa, sóng dừng · sóng điện từ, thang sóng điện từ |
+| Điện trường | \*\*Định luật Coulomb `F = k·                                                                                                                                           | q₁q₂ | /(εr²)`** (`k = 9·10⁹ N·m²/C²`) · **cường độ điện trường `E = F/q`** · điện thế, hiệu điện thế `U = A/q`· **tụ điện`C = Q/U`\*\* |
+| Dòng điện | **`I = q/t`** · **định luật Ohm toàn mạch `I = ξ/(R + r)`** · ghép nguồn · năng lượng và công suất điện |
 
 ### Lớp 12 — Nhiệt, khí, từ, hạt nhân
 
-| Chủ đề          | Công thức cốt lõi                                                                                                                                                                           |
+| Chủ đề | Công thức cốt lõi |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | ----------------------------------------------------------------------------------------------------------- |
-| Vật lí nhiệt    | **Nhiệt lượng `Q = mcΔt`** · **nhiệt nóng chảy `Q = λm`**, **nhiệt hoá hơi `Q = Lm`** · **nguyên lí I nhiệt động lực học `ΔU = A + Q`**                                                     |
-| Khí lí tưởng    | **Boyle `pV = const`** (T không đổi) · **Charles `V/T = const`** (p không đổi) · **`p/T = const`** (V không đổi) · **phương trình trạng thái `pV/T = const`** · **`pV = nRT`**              |
-| Từ trường       | **Lực từ `F = BIl·sin α`** · \*\*lực Lorentz `f =                                                                                                                                           | q   | vB·sin α`** · **từ thông `Φ = BS·cos α`** · **suất điện động cảm ứng `e_c = −ΔΦ/Δt`\*\* (định luật Faraday) |
+| Vật lí nhiệt | **Nhiệt lượng `Q = mcΔt`** · **nhiệt nóng chảy `Q = λm`**, **nhiệt hoá hơi `Q = Lm`** · **nguyên lí I nhiệt động lực học `ΔU = A + Q`** |
+| Khí lí tưởng | **Boyle `pV = const`** (T không đổi) · **Charles `V/T = const`** (p không đổi) · **`p/T = const`** (V không đổi) · **phương trình trạng thái `pV/T = const`** · **`pV = nRT`** |
+| Từ trường | **Lực từ `F = BIl·sin α`** · \*\*lực Lorentz `f =                                                                                                                                           | q   | vB·sin α`** · **từ thông `Φ = BS·cos α`** · **suất điện động cảm ứng `e_c = −ΔΦ/Δt`\*\* (định luật Faraday) |
 | Vật lí hạt nhân | Cấu tạo hạt nhân `_Z^A X` · **độ hụt khối `Δm = Zm_p + (A−Z)m_n − m_hn`** · **năng lượng liên kết `E = Δm·c²`** · **định luật phóng xạ `N = N₀·2^(−t/T)`** · phản ứng phân hạch, nhiệt hạch |
 
 ---
@@ -163,11 +165,11 @@ Vật lí **thuận lợi hơn Toán ở một điểm, khó hơn ở một đi�
 
 ## 5. Việc tiếp theo
 
-1. **Chốt PA A/B/C ở §0.1** (mô hình `subject` cho KHTN) — **quyết định kiến trúc, cần người dùng
-   duyệt**, làm trước khi viết một dòng code GĐ3 nào.
+1. ~~Chốt PA A/B/C ở §0.1~~ **✅ ĐÃ CHỐT: PA C** (2026-08-01). Thi hành khi bắt đầu GĐ3.
 2. Người có chuyên môn (giáo viên Lý) duyệt nội dung §2-§3, đối chiếu SGK "Kết nối tri thức".
-3. Bổ sung yêu cầu **đơn vị + quy đổi + dung sai** (§4) vào đặc tả thuật toán chấm — lưu ý phần
-   này nên thiết kế **ngay từ GĐ2 (Toán)** để không phải viết lại engine chấm ở GĐ3.
+3. ~~Bổ sung yêu cầu **đơn vị + quy đổi + dung sai** (§4) vào đặc tả thuật toán chấm~~
+   **✅ ĐÃ XONG 2026-08-01** — `packages/core-grading/` đã viết và có test đầy đủ, thiết kế ngay
+   từ GĐ2 đúng như khuyến nghị. Xem `docs/research/dac-ta-engine-cham-dung-chung.md`.
 
 > Điểm 3 là góp ý quan trọng: nếu GĐ2 làm engine chấm chỉ biết "số trần", tới GĐ3 sẽ phải đập đi
 > làm lại. Rẻ hơn nhiều nếu ngay từ đầu thiết kế kiểu đáp án là **(giá trị, đơn vị tuỳ chọn)** —

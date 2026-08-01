@@ -31,15 +31,15 @@
 
 ## 1. Trạng thái xuất phát (đã đọc repo, không đoán)
 
-| Thành phần            | Hiện tại                                                                                              |
-| ---------------------- | ------------------------------------------------------------------------------------------------------ |
-| `apps/`                | `english/` (đủ tính năng), `hub/` (trang giới thiệu, tab "Toán" đang hiện "sắp ra mắt")                |
-| `packages/`            | `core-auth`, `core-billing`, `core-ai`, `core-db`, `core-ui` — đã tách ở GĐ1                           |
-| Đếm lượt               | `daily_usage`/`free_daily_credit` đã có cột `subject` (mặc định `'english'`, migration `0029`)        |
-| Schema DB              | `core` (dùng chung) + `english` (dữ liệu học tiếng Anh, migration `0030`) — chưa có schema `math`      |
-| Render công thức toán | **Chưa có** — chưa dùng KaTeX/MathJax ở đâu trong repo                                                 |
-| Sinh đề có tham số     | **Chưa có** — chưa có cơ chế tương tự                                                                  |
-| SRS                    | Đã có cho từ vựng tiếng Anh (`apps/english/src/lib/srs.ts`) — thuật toán chung tái dùng được, dữ liệu không |
+| Thành phần            | Hiện tại                                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `apps/`               | `english/` (đủ tính năng), `hub/` (trang giới thiệu, tab "Toán" đang hiện "sắp ra mắt")                     |
+| `packages/`           | `core-auth`, `core-billing`, `core-ai`, `core-db`, `core-ui` — đã tách ở GĐ1                                |
+| Đếm lượt              | `daily_usage`/`free_daily_credit` đã có cột `subject` (mặc định `'english'`, migration `0029`)              |
+| Schema DB             | `core` (dùng chung) + `english` (dữ liệu học tiếng Anh, migration `0030`) — chưa có schema `math`           |
+| Render công thức toán | **Chưa có** — chưa dùng KaTeX/MathJax ở đâu trong repo                                                      |
+| Sinh đề có tham số    | **Chưa có** — chưa có cơ chế tương tự                                                                       |
+| SRS                   | Đã có cho từ vựng tiếng Anh (`apps/english/src/lib/srs.ts`) — thuật toán chung tái dùng được, dữ liệu không |
 
 ---
 
@@ -57,12 +57,12 @@
 
 ### 2.1 Bản đồ 4 đợt (2a–2d)
 
-| Đợt | Cấp học    | Phạm vi lớp/độ tuổi                          | Đặc điểm khác biệt cần lưu ý                                                                 |
-| --- | ---------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| 2a  | Cấp 2 (THCS) | Lớp 6-9, 3 chủ đề/lớp (12 chủ đề — bảng §2.1a) | Đã có đặc tả kỹ thuật đầy đủ (KaTeX, sinh đề, chấm) — làm trước để kiểm chứng kiến trúc         |
-| 2b  | Cấp 1 (Tiểu học) | Lớp 1-5, 2-3 chủ đề/lớp                     | Không cần KaTeX phức tạp (số học cơ bản); giao diện to, ít chữ, nhiều hình ảnh/màu; phụ huynh có thể là người dùng chính (theo dõi hộ con), không phải học sinh tự thao tác hết |
-| 2c  | Mầm non    | 3-6 tuổi, không chia "lớp" mà chia theo kỹ năng (đếm số, nhận biết hình, so sánh lớn/bé) | **Khác hẳn cấu trúc "chấm đúng/sai"** — trẻ mầm non không đọc viết thạo, cần tương tác bằng giọng nói/chạm/kéo-thả, không phải nhập đáp số. Đây là thiết kế UI/UX RIÊNG, không tái dùng khung luyện tập của 2a/2b |
-| 2d  | Cấp 3 (THPT) | Lớp 10-12, chủ đề chọn lọc chấm tự động được (đại số, lượng giác cơ bản) | Kiến thức khó hơn — rủi ro AI soạn nháp sai kiến thức cao hơn (§7), cần người có chuyên môn duyệt kỹ hơn cấp 2 |
+| Đợt | Cấp học          | Phạm vi lớp/độ tuổi                                                                      | Đặc điểm khác biệt cần lưu ý                                                                                                                                                                                      |
+| --- | ---------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2a  | Cấp 2 (THCS)     | Lớp 6-9, 3 chủ đề/lớp (12 chủ đề — bảng §2.1a)                                           | Đã có đặc tả kỹ thuật đầy đủ (KaTeX, sinh đề, chấm) — làm trước để kiểm chứng kiến trúc                                                                                                                           |
+| 2b  | Cấp 1 (Tiểu học) | Lớp 1-5, 2-3 chủ đề/lớp                                                                  | Không cần KaTeX phức tạp (số học cơ bản); giao diện to, ít chữ, nhiều hình ảnh/màu; phụ huynh có thể là người dùng chính (theo dõi hộ con), không phải học sinh tự thao tác hết                                   |
+| 2c  | Mầm non          | 3-6 tuổi, không chia "lớp" mà chia theo kỹ năng (đếm số, nhận biết hình, so sánh lớn/bé) | **Khác hẳn cấu trúc "chấm đúng/sai"** — trẻ mầm non không đọc viết thạo, cần tương tác bằng giọng nói/chạm/kéo-thả, không phải nhập đáp số. Đây là thiết kế UI/UX RIÊNG, không tái dùng khung luyện tập của 2a/2b |
+| 2d  | Cấp 3 (THPT)     | Lớp 10-12, chủ đề chọn lọc chấm tự động được (đại số, lượng giác cơ bản)                 | Kiến thức khó hơn — rủi ro AI soạn nháp sai kiến thức cao hơn (§7), cần người có chuyên môn duyệt kỹ hơn cấp 2                                                                                                    |
 
 > **Mầm non (2c) là đợt khác biệt lớn nhất kỹ thuật lẫn UX** — không phải "Toán nhưng dễ hơn" mà
 > gần như một sản phẩm con riêng (tương tác giọng nói/chạm, không có "đáp số" theo nghĩa nhập
@@ -73,12 +73,12 @@
 
 Bám khung chương trình GDPT 2018 môn Toán THCS, ưu tiên chủ đề **chấm tự động được bằng đáp số/biểu thức** (loại các chủ đề cần chứng minh hình học dài dòng ở đợt này):
 
-| Lớp | 3 chủ đề đợt 2a                                                            |
-| --- | -------------------------------------------------------------------------- |
-| 6   | Số tự nhiên & phép tính · Phân số · Số nguyên                             |
-| 7   | Số hữu tỉ · Biểu thức đại số đơn giản · Tỉ lệ thức                        |
-| 8   | Phương trình bậc nhất một ẩn · Hằng đẳng thức đáng nhớ · Hàm số bậc nhất  |
-| 9   | Phương trình bậc hai · Hệ phương trình bậc nhất hai ẩn · Căn bậc hai      |
+| Lớp | 3 chủ đề đợt 2a                                                          |
+| --- | ------------------------------------------------------------------------ |
+| 6   | Số tự nhiên & phép tính · Phân số · Số nguyên                            |
+| 7   | Số hữu tỉ · Biểu thức đại số đơn giản · Tỉ lệ thức                       |
+| 8   | Phương trình bậc nhất một ẩn · Hằng đẳng thức đáng nhớ · Hàm số bậc nhất |
+| 9   | Phương trình bậc hai · Hệ phương trình bậc nhất hai ẩn · Căn bậc hai     |
 
 > Chốt danh sách này với người dùng trước khi viết template đề (§2.2) — có thể đổi thứ tự/chủ đề
 > nếu người dùng có ưu tiên khác. Danh sách chủ đề của 2b/2c/2d **để ngỏ, chốt khi tới lượt từng
@@ -189,8 +189,8 @@ hay english). Nginx: thêm `server_name` mới trỏ cùng Express port 3001 (vi
 2. **PR-2 — Scaffold `apps/math`** (Vite app rỗng, layout + theme dùng chung `core-ui`, route
    khung, chưa có nội dung Toán thật). Thêm `math.` vào `distDirForHost()` + workspace root.
 3. **PR-3 — Migration schema `math`** (`math.attempts`, `math.srs_cards`, `math.lesson_progress`)
-   + handler API cơ bản (`math-progress.ts` đọc/ghi tiến độ, dùng `validateAuth()`/`usage.ts` có
-   sẵn, subject=`'math'`).
+   - handler API cơ bản (`math-progress.ts` đọc/ghi tiến độ, dùng `validateAuth()`/`usage.ts` có
+     sẵn, subject=`'math'`).
 4. **PR-4 — KaTeX + MathInput component** (nghiên cứu + tích hợp theo §3.1, có story/demo trang
    riêng để duyệt UI trước khi gắn vào luồng thật).
 5. **PR-5 — Sinh đề theo tham số + chấm chuẩn hoá** (§3.2 + §3.3) cho **1 chủ đề thử nghiệm**
@@ -233,12 +233,12 @@ Anh.** Đo cụ thể:
 
 ## 7. Rủi ro riêng GĐ2 (bổ sung ngoài bảng rủi ro chung ở kế hoạch tổng §6)
 
-| Rủi ro                                                              | Mức    | Giảm thiểu                                                                                       |
-| --------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------- |
-| Thuật toán chấm chuẩn hoá bỏ sót định dạng đáp án hợp lệ              | 🔴 cao | Bộ test ca biên bắt buộc ở PR-5 trước khi nhân rộng (PR-6); thu thập log đáp án bị chấm sai để vá   |
-| Nội dung bài giảng sai kiến thức toán (AI soạn nháp có thể sai)        | 🔴 cao | Người dùng (hoặc người có chuyên môn) duyệt thủ công từng bài trước khi đưa vào `data/`, không tự động hoá bước này |
-| Bàn phím nhập công thức trên mobile khó dùng, học sinh bỏ cuộc giữa chừng | 🟡 vừa | Test tay trên điện thoại thật trước PR-9 (bắt buộc theo CLAUDE.md mục "UI/frontend"), ưu tiên bàn phím số đơn giản hơn cú pháp LaTeX đầy đủ |
-| 12 chủ đề chọn sai trọng tâm (không khớp nhu cầu thật)                | 🟢 thấp | PR-1 xin duyệt danh sách chủ đề trước khi viết code, dễ đổi hướng sớm với chi phí thấp             |
+| Rủi ro                                                                    | Mức     | Giảm thiểu                                                                                                                                  |
+| ------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Thuật toán chấm chuẩn hoá bỏ sót định dạng đáp án hợp lệ                  | 🔴 cao  | Bộ test ca biên bắt buộc ở PR-5 trước khi nhân rộng (PR-6); thu thập log đáp án bị chấm sai để vá                                           |
+| Nội dung bài giảng sai kiến thức toán (AI soạn nháp có thể sai)           | 🔴 cao  | Người dùng (hoặc người có chuyên môn) duyệt thủ công từng bài trước khi đưa vào `data/`, không tự động hoá bước này                         |
+| Bàn phím nhập công thức trên mobile khó dùng, học sinh bỏ cuộc giữa chừng | 🟡 vừa  | Test tay trên điện thoại thật trước PR-9 (bắt buộc theo CLAUDE.md mục "UI/frontend"), ưu tiên bàn phím số đơn giản hơn cú pháp LaTeX đầy đủ |
+| 12 chủ đề chọn sai trọng tâm (không khớp nhu cầu thật)                    | 🟢 thấp | PR-1 xin duyệt danh sách chủ đề trước khi viết code, dễ đổi hướng sớm với chi phí thấp                                                      |
 
 ---
 

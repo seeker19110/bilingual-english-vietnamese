@@ -216,11 +216,11 @@ Kỹ năng (thay cho "công thức"), chia theo độ tuổi:
 
 ### Lớp 7
 
-| Mạch | Công thức / kiến thức cốt lõi                                                                                                                                                                                                                       |
+| Mạch | Công thức / kiến thức cốt lõi |
 | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------ |
-| SO   | **Số hữu tỉ** ℚ · luỹ thừa số hữu tỉ · **tỉ lệ thức** `a/b = c/d ⟺ ad = bc` · **dãy tỉ số bằng nhau** `a/b = c/d = (a+c)/(b+d)` (b+d ≠ 0) · đại lượng tỉ lệ thuận `y = kx`, tỉ lệ nghịch `y = a/x` · biểu thức đại số, đa thức một biến             |
+| SO | **Số hữu tỉ** ℚ · luỹ thừa số hữu tỉ · **tỉ lệ thức** `a/b = c/d ⟺ ad = bc` · **dãy tỉ số bằng nhau** `a/b = c/d = (a+c)/(b+d)` (b+d ≠ 0) · đại lượng tỉ lệ thuận `y = kx`, tỉ lệ nghịch `y = a/x` · biểu thức đại số, đa thức một biến |
 | HINH | Hai góc đối đỉnh (bằng nhau) · tiên đề Euclid về đường thẳng song song · **tổng ba góc trong tam giác = 180°** · các trường hợp bằng nhau của tam giác (c-c-c, c-g-c, g-c-g) · **quan hệ giữa góc và cạnh đối diện** · **bất đẳng thức tam giác** ` | b − c | < a < b + c` · các đường đồng quy trong tam giác |
-| TK   | Biểu đồ đoạn thẳng, biểu đồ quạt tròn · biến cố, xác suất của biến cố đơn giản                                                                                                                                                                      |
+| TK | Biểu đồ đoạn thẳng, biểu đồ quạt tròn · biến cố, xác suất của biến cố đơn giản |
 
 **3 chủ đề MVP đợt 2a:** Số hữu tỉ · Biểu thức đại số đơn giản · Tỉ lệ thức
 
@@ -250,11 +250,11 @@ Kỹ năng (thay cho "công thức"), chia theo độ tuổi:
 
 ### Lớp 9
 
-| Mạch | Công thức / kiến thức cốt lõi                                                                                                                                                                                                                                                                                                                                          |
+| Mạch | Công thức / kiến thức cốt lõi |
 | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SO   | **Căn bậc hai** `√(a²) =                                                                                                                                                                                                                                                                                                                                               | a   | `, `√(ab) = √a · √b`(a,b ≥ 0),`√(a/b) = √a/√b`(a ≥ 0, b > 0) · **hệ phương trình bậc nhất hai ẩn** (thế, cộng đại số) · **phương trình bậc hai**`ax² + bx + c = 0`: biệt thức `Δ = b² − 4ac`, nghiệm `x = (−b ± √Δ)/(2a)`; **định lý Viète** `x₁ + x₂ = −b/a`, `x₁·x₂ = c/a`· hàm số`y = ax²` |
+| SO | **Căn bậc hai** `√(a²) =                                                                                                                                                                                                                                                                                                                                               | a   | `, `√(ab) = √a · √b`(a,b ≥ 0),`√(a/b) = √a/√b`(a ≥ 0, b > 0) · **hệ phương trình bậc nhất hai ẩn** (thế, cộng đại số) · **phương trình bậc hai**`ax² + bx + c = 0`: biệt thức `Δ = b² − 4ac`, nghiệm `x = (−b ± √Δ)/(2a)`; **định lý Viète** `x₁ + x₂ = −b/a`, `x₁·x₂ = c/a`· hàm số`y = ax²` |
 | HINH | **Tỉ số lượng giác góc nhọn**: `sin α = đối/huyền`, `cos α = kề/huyền`, `tan α = đối/kề`, `cot α = kề/đối`; `sin²α + cos²α = 1` · **hệ thức lượng trong tam giác vuông**: `h² = b'·c'`, `b² = a·b'`, `a·h = b·c` · **đường tròn**: `C = 2πR`, `S = πR²`; góc nội tiếp = ½ góc ở tâm cùng chắn cung · hình trụ, hình nón, hình cầu (`S_cầu = 4πR²`, `V_cầu = (4/3)πR³`) |
-| TK   | Bảng tần số, tần số tương đối · xác suất của biến cố                                                                                                                                                                                                                                                                                                                   |
+| TK | Bảng tần số, tần số tương đối · xác suất của biến cố |
 
 **3 chủ đề MVP đợt 2a:** Phương trình bậc hai · Hệ phương trình bậc nhất hai ẩn · Căn bậc hai
 
@@ -269,11 +269,11 @@ Kỹ năng (thay cho "công thức"), chia theo độ tuổi:
 
 ### Lớp 10
 
-| Mạch | Công thức cốt lõi                                                                                                                                                                                                                                      |
+| Mạch | Công thức cốt lõi |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --- | --- | --- | --------------------------------------------------------------------- |
-| SO   | Mệnh đề, tập hợp · bất phương trình & hệ bất phương trình bậc nhất hai ẩn · **dấu tam thức bậc hai** · phương trình quy về bậc hai                                                                                                                     |
+| SO | Mệnh đề, tập hợp · bất phương trình & hệ bất phương trình bậc nhất hai ẩn · **dấu tam thức bậc hai** · phương trình quy về bậc hai |
 | HINH | **Định lý cosin** `a² = b² + c² − 2bc·cos A` · **định lý sin** `a/sin A = b/sin B = c/sin C = 2R` · **diện tích tam giác**: `S = ½ab·sin C`, `S = abc/(4R)`, `S = pr`, **Heron** `S = √(p(p−a)(p−b)(p−c))` · vectơ (tổng, hiệu, tích vô hướng `a⃗·b⃗ = | a⃗  |     | b⃗  | cos θ`) · phương trình đường thẳng, đường tròn trong mặt phẳng toạ độ |
-| TK   | Số gần đúng, sai số · các số đặc trưng đo xu thế trung tâm và độ phân tán (phương sai, độ lệch chuẩn) · quy tắc đếm, hoán vị `Pₙ = n!`, chỉnh hợp `Aₙᵏ = n!/(n−k)!`, tổ hợp `Cₙᵏ = n!/(k!(n−k)!)` · **nhị thức Newton**                                |
+| TK | Số gần đúng, sai số · các số đặc trưng đo xu thế trung tâm và độ phân tán (phương sai, độ lệch chuẩn) · quy tắc đếm, hoán vị `Pₙ = n!`, chỉnh hợp `Aₙᵏ = n!/(n−k)!`, tổ hợp `Cₙᵏ = n!/(k!(n−k)!)` · **nhị thức Newton** |
 
 ### Lớp 11
 

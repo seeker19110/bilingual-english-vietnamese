@@ -1,6 +1,8 @@
 # Đặc tả ENGINE CHẤM DÙNG CHUNG (Toán · Lý · Hoá) — `packages/core-grading`
 
-> Ngày: 2026-08-01 · Trạng thái: **đặc tả KÍN, sẵn sàng thi hành** (đủ chi tiết để giao
+> Ngày: 2026-08-01 · Trạng thái: **ĐÃ THI HÀNH** — `packages/core-grading/` đã có code + 74 test
+> (99% câu lệnh · 90,6% nhánh). Bước 1-4 của §10 xong; còn bước 5 (nối vào `api/` chấm lại phía
+> server) chờ khi có app Toán thật. Đặc tả gốc: **KÍN, sẵn sàng thi hành** (đủ chi tiết để giao
 > `spec-executor` theo CLAUDE.md §3 — schema, API, tiêu chí chấp nhận đều đã chốt)
 > Chặn: **PR-5 của GĐ2** (`dac-ta-gd2-mon-toan-2026-08-01.md` §5) — phải xong trước
 > Căn cứ phát sinh: `kho-kien-thuc-ly-gdpt2018.md` §4 + `kho-kien-thuc-hoa-gdpt2018.md` §4
@@ -89,12 +91,7 @@ export type GradeResult = {
 
 ```ts
 export type AnswerSpec =
-  | NumericSpec
-  | ExpressionSpec
-  | FractionSpec
-  | ChoiceSpec
-  | ChemFormulaSpec
-  | ChemEquationSpec
+  NumericSpec | ExpressionSpec | FractionSpec | ChoiceSpec | ChemFormulaSpec | ChemEquationSpec
 
 type NumericSpec = {
   kind: 'numeric'
@@ -191,7 +188,7 @@ type Tolerance =
 | Môn  | Mặc định                                                                      |
 | ---- | ----------------------------------------------------------------------------- |
 | Toán | `exact` với số nguyên/phân số · `relative 0,1%` với số thập phân              |
-| Lý   | **`relative 2%`** — hấp thụ chênh lệch `g = 9,8` vs `10`, làm tròn trung gian |
+| Lý   | **`relative 3%`** — hấp thụ chênh lệch `g = 9,8` vs `10`, làm tròn trung gian |
 | Hoá  | **`relative 1%`** — hấp thụ chênh lệch nguyên tử khối làm tròn                |
 
 > Vì sao Lý lỏng hơn Hoá: hằng số `g` chênh 2% giữa hai quy ước phổ biến, còn nguyên tử khối chỉ
@@ -287,14 +284,16 @@ yêu cầu ở PR-5:
 **Đơn vị**
 
 - `1 km` = `1000 m` = `100000 cm` (đáp án đúng 1000 m)
-- `10 kg` cho câu hỏi lực → `WRONG_DIMENSION` (không phải `WRONG_VALUE`)
-- Số đúng, đơn vị sai (`10 kg` khi đáp án `10 N`) → `WRONG_UNIT`
+- Phân biệt hai lỗi (luật đã làm rõ khi thi hành — bản đặc tả đầu tiên nêu hai ca trùng nhau):
+  - con số TRÙNG đáp án nhưng đơn vị khác thứ nguyên (`10 kg` khi đáp án `10 N`) → `WRONG_UNIT`
+    (học sinh tính đúng, chỉ ghi nhầm đơn vị)
+  - con số cũng khác (`10 kg` khi đáp án `50 N`) → `WRONG_DIMENSION` (hiểu sai bản chất đại lượng)
 - Thiếu đơn vị khi `unitRequired` → `MISSING_UNIT`
 - `25 °C` = `298,15 K` (**ca độ lệch gốc — bắt buộc test**)
 
 **Dung sai**
 
-- `g = 10` vs `g = 9,8`: kết quả lệch ~2% vẫn đúng với mặc định môn Lý
+- `g = 10` vs `g = 9,8`: kết quả lệch 2,04% vẫn đúng với mặc định môn Lý (3%)
 - Lệch 5% → sai
 - `CORRECT_LOOSE` được trả đúng khi lệch trong dung sai nhưng khác giá trị chuẩn
 
