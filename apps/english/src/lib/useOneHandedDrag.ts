@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 
 // Tính năng "kéo 1 tay" (giống Reachability trên iPhone): TỔNG thời gian từ lúc bấm
-// xuống (chạm hoặc chuột) tới hiện tại — kể cả lúc đang di chuyển — vượt quá 0.2s là
+// xuống (chạm hoặc chuột) tới hiện tại — kể cả lúc đang di chuyển — vượt quá 0.05s là
 // cho phép kéo header + toàn bộ nội dung trang xuống, tối đa 60% chiều cao màn hình,
 // giúp bấm các nút phía trên dễ hơn khi cầm điện thoại 1 tay. Buông ra, nếu 3 giây
 // không thao tác gì thêm thì tự trôi ngược lên trong 3 giây.
@@ -12,11 +12,11 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } fr
 //
 // QUAN TRỌNG — xung đột với cuộn trang gốc: nếu để trình duyệt tự quyết định, nó sẽ
 // nhận diện thao tác kéo dọc là CUỘN TRANG ngay từ đầu và giành quyền xử lý trước khi
-// đủ 0.2s, khiến JS không bao giờ kịp kích hoạt. Để tránh việc này, CHỈ cho phép bắt
+// đủ 0.05s, khiến JS không bao giờ kịp kích hoạt. Để tránh việc này, CHỈ cho phép bắt
 // đầu cử chỉ khi trang đang Ở ĐỈNH CUỘN (window.scrollY === 0 — không còn gì để cuộn
 // lên nữa) và preventDefault() NGAY từ lúc còn "chờ đủ giờ" (không đợi tới khi đã kích
 // hoạt) để trình duyệt không tự ý cuộn/nảy (bounce) trong lúc đó.
-const ACTIVATE_MS = 200 // Tổng thời gian bấm+giữ+kéo vượt quá mốc này là kích hoạt kéo
+const ACTIVATE_MS = 50 // Tổng thời gian bấm+giữ+kéo vượt quá mốc này là kích hoạt kéo
 const RETURN_DELAY_MS = 3000 // Sau khi buông, chờ chừng này rồi mới tự trôi lên
 const RETURN_DURATION_MS = 3000 // Thời gian trôi ngược lên lại vị trí cũ
 const MAX_DRAG_RATIO = 0.6 // Kéo xuống tối đa 60% chiều cao màn hình
