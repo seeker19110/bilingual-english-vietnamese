@@ -7,6 +7,15 @@
 
 import { gcd } from './number.js'
 
+/**
+ * Thể tích mol chuẩn (L/mol) ở điều kiện chuẩn GDPT 2018: 25 °C, 1 bar.
+ * ⚠️ KHÔNG phải 24 (làm tròn quá thô) và KHÔNG phải 22,4 (đó là đkc 0 °C, 1 atm của chương
+ * trình cũ) — xác minh trực tiếp trên khung Mục tiêu Bài 3, SGK KHTN 8 (Kết nối tri thức):
+ * "n (mol) = V(L) / 24,79 (L/mol)". Xem docs/research/kho-kien-thuc-hoa-gdpt2018.md §6.2.
+ * Dùng 24 thay vì 24,79 lệch ≈ 3,2%, vượt DEFAULT_TOLERANCE_BY_SUBJECT.chemistry (1%).
+ */
+export const STANDARD_MOLAR_VOLUME_L_PER_MOL = 24.79
+
 /** Số nguyên tử theo từng nguyên tố, kèm điện tích của tiểu phân. */
 export type Composition = {
   atoms: Record<string, number>

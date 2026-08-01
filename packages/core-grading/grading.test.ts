@@ -3,7 +3,12 @@
 // lập tức nên phần này soi kỹ hơn mức trung bình của repo.
 
 import { describe, expect, it } from 'vitest'
-import { checkBalance, parseEquation, parseFormula } from './chemistry'
+import {
+  checkBalance,
+  parseEquation,
+  parseFormula,
+  STANDARD_MOLAR_VOLUME_L_PER_MOL,
+} from './chemistry'
 import { evaluateNumeric, expressionsEqual } from './expression'
 import { DEFAULT_TOLERANCE_BY_SUBJECT, gradeAnswer } from './index'
 import { normalizeAnswerText } from './number'
@@ -127,6 +132,29 @@ describe('dung sai', () => {
       tolerance: DEFAULT_TOLERANCE_BY_SUBJECT.physics,
     }
     expect(gradeAnswer('105 N', spec).correct).toBe(false)
+  })
+
+  it('thể tích mol chuẩn: 24,79 L/mol — soạn đề dùng nhầm 24 hoặc 22,4 phải bị chấm sai', () => {
+    // Ca thật: SGK KHTN 8 (Kết nối tri thức) dùng đkc 25 °C, 1 bar → 24,79 L/mol, KHÔNG phải
+    // 24 (làm tròn thô) và KHÔNG phải 22,4 (đkc 0 °C, 1 atm của chương trình cũ). Xem
+    // docs/research/kho-kien-thuc-hoa-gdpt2018.md §6.2. Canh gác chống soạn đề dùng nhầm hằng số.
+    expect(STANDARD_MOLAR_VOLUME_L_PER_MOL).toBe(24.79)
+
+    // Đề bài cố định V = 24,79 L (đúng bằng 1 mol theo hằng số chuẩn). Đáp án đúng: n = 1 mol.
+    const spec: NumericSpec = {
+      kind: 'numeric',
+      value: 1,
+      unit: 'mol',
+      tolerance: DEFAULT_TOLERANCE_BY_SUBJECT.chemistry,
+    }
+    const V = STANDARD_MOLAR_VOLUME_L_PER_MOL
+    // Học sinh tính đúng bằng hằng số chuẩn → n = 1 mol — đúng.
+    expect(gradeAnswer(`${V / STANDARD_MOLAR_VOLUME_L_PER_MOL} mol`, spec).correct).toBe(true)
+    // Nếu ai đó soạn đáp án bằng hằng số SAI 24 (thay vì 24,79) → n ≈ 1,033 mol, lệch ≈ 3,3%,
+    // vượt dung sai 1% của môn Hoá — PHẢI bị chấm sai để lộ ra việc dùng nhầm hằng số.
+    expect(gradeAnswer(`${V / 24} mol`, spec).correct).toBe(false)
+    // Nếu dùng hằng số cũ 22,4 (đkc chương trình trước 2018) → n ≈ 1,107 mol, lệch ≈ 10,7% — càng sai rõ.
+    expect(gradeAnswer(`${V / 22.4} mol`, spec).correct).toBe(false)
   })
 
   it('đúng chính xác thì là CORRECT, không phải CORRECT_LOOSE', () => {
