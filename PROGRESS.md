@@ -30,17 +30,27 @@ trên VPS (xem "Cần làm tay").
 - **SGK thống nhất toàn quốc từ năm học 2026-2027** — bộ "Kết nối tri thức với cuộc sống". Đổi
   giả định theo hướng TỐT hơn: trước phải viết trung lập giữa 3 bộ sách, nay bám được đúng thứ tự
   bài học sinh học trên lớp. AI **không tải được SGK** (proxy sandbox chặn `taphuan.nxbgd.vn` —
-  `CONNECT tunnel failed 403`). **Chốt: sẽ đối chiếu ở PHIÊN LOCAL** (Claude Code chạy trên máy
-  người dùng) — khi đó chép PDF vào `tai-lieu-sgk/` là đường chính thức, AI đọc trực tiếp cả bộ.
-  Thư mục đã có trong `.gitignore` làm hàng rào cứng chống lỡ tay commit tài liệu bản quyền.
-  Quy trình đối chiếu từng bước: **`docs/research/huong-dan-doi-chieu-sgk.md`**.
+  `CONNECT tunnel failed 403`). Đối chiếu thực hiện ở **PHIÊN LOCAL** — PDF chép vào `tai-lieu-sgk/`
+  (đã có trong `.gitignore`, không lọt lên GitHub). Quy trình: `docs/research/huong-dan-doi-chieu-sgk.md`.
+  **✅ [2026-08-01] Đã đối chiếu xong Toán lớp 6-9 (PR #411, merged)** — PDF là ảnh scan không có
+  text layer nên phải OCR (`tesseract-ocr` + gói tiếng Việt, script tái dùng ở `scripts/ocr-sgk.py`).
+  Kết quả: mục lục thật 4 lớp ở `docs/research/muc-luc-sgk/toan-{6,7,8,9}.md`; đối chiếu với
+  `kho-kien-thuc-toan-gdpt2018.md` phát hiện **24 mục lệch** (21 thiếu `[+]`, 2 sai vị trí `[≠]`,
+  1 nghi vấn `[−]`, ghi ở §8 Nhật ký đối chiếu của file đó) — đáng chú ý nhất: thiếu hẳn chương
+  bất đẳng thức/bất phương trình bậc nhất lớp 9, căn bậc hai dạy từ lớp 7 (không phải lớp 9), thiếu
+  chương tam giác đồng dạng (L8) và đường tròn nội/ngoại tiếp (L9). **5 điểm còn cần giáo viên
+  chuyên môn duyệt** (liệt kê ở §8.3 kho-kien-thuc-toan) — đáng chú ý: PDF Toán 9 đang có là **bản
+  mẫu thẩm định 2023**, chưa chắc khớp bản in chính thức 2026-2027, cần đối chiếu lại khi có bản
+  chính thức. 12 chủ đề đợt 2a đã chốt lại theo mục lục thật ở `dac-ta-gd2-mon-toan-2026-08-01.md`
+  §2.1a (trước đó là phỏng đoán).
+  **Còn thiếu:** Toán 1-5 (đợt 2b), KHTN 6-9 (Hoá trước, GĐ3), Toán 10-12 (đợt 2d) — PDF các sách
+  này CHƯA có trong `tai-lieu-sgk/`, chờ người dùng bổ sung.
 - **Căn cứ pháp lý đã tra được (2026-08-01):** TT 32/2018 → sửa bởi TT 20/2021, TT 13/2022 và
   **TT 17/2025/TT-BGDĐT** (mới nhất); **QĐ 3588/QĐ-BGDĐT** (26/12/2025) chọn bộ "Kết nối tri thức
   với cuộc sống" dùng chung toàn quốc; SGK chỉnh sửa áp dụng từ năm học 2026-2027.
   ⚠️ **AI CHƯA đọc được nội dung chi tiết TT 17/2025** (`vanban.chinhphu.vn` cũng trả 403) nên
-  **chưa biết môn Toán/KHTN bị sửa cụ thể những gì** — 4 file kho kiến thức hiện là BẢN THẢO chưa
-  đối chiếu bản chỉnh sửa mới nhất, phải làm ở phiên local. Có PDF vẫn KHÔNG được chép nội dung — chỉ lấy thứ tự bài +
-  danh mục công thức, đề/ví dụ tự soạn mới.
+  **chưa biết môn Toán/KHTN bị sửa cụ thể những gì** so với bản mẫu 2023 đang có trong tay — xem
+  điểm cần giáo viên duyệt ở trên.
 - **✅ `packages/core-grading` — ENGINE CHẤM DÙNG CHUNG, ĐÃ VIẾT XONG + 74 test** (99% câu lệnh,
   90,6% nhánh — cao hơn ngưỡng chung của repo vì chấm sai làm mất niềm tin người học ngay).
   Đặc tả: `docs/research/dac-ta-engine-cham-dung-chung.md`. Không có AI trong luồng chấm; hàm
@@ -63,8 +73,9 @@ trên VPS (xem "Cần làm tay").
   3. **Môn Sinh: PA B** — trắc nghiệm + SRS, KHÔNG xây engine chấm mới. Sinh chỉ ~15% dạng bài chấm
      tự động được (Toán ~95%); bản chất gần với học từ vựng hơn là với Toán → tái dùng engine SRS
      đã chạy tốt cho tiếng Anh.
-- **Việc kế tiếp:** chờ PDF SGK để đối chiếu lộ trình cấp 2 → chốt 12 chủ đề đợt 2a → PR-1 (soạn
-  1 bài học mẫu để duyệt định dạng) → PR-2 scaffold `apps/math`.
+- **Việc kế tiếp:** 12 chủ đề đợt 2a đã chốt theo SGK thật → PR-1 (soạn 1 bài học mẫu để duyệt
+  định dạng) → PR-2 scaffold `apps/math`. Các điểm cần giáo viên duyệt (§8.3 kho-kien-thuc-toan)
+  nên xử lý trước hoặc song song, không chặn PR-1.
 
 ## Đã xong — tóm tắt theo mảng
 
