@@ -273,7 +273,14 @@ Thứ tự: B và C chạy song song trên dữ liệu mẫu → A đổ nốt c
 - [x] B — hạ tầng dữ liệu (subagent)
 - [x] C — UI trang Nghe (subagent)
 - [x] A — 3 truyện Việt Nam: `fb-frog-in-well`, `fb-blind-men-elephant`, `ft-tam-cam`
-- [ ] A — 9 truyện nước ngoài: **CHẶN**, chờ mở network cho `gutenberg.org` (xem mục 3.1)
+- [x] **CHẶN Ở MỤC 3.1 ĐÃ GỠ (2026-08-01):** `gutenberg.org` truy cập được, đã tải thật 16 bộ
+      sách public domain và đọc mục lục thật.
+- [x] Mở rộng phạm vi: **6 thể loại × 20 truyện = 120 truyện** — xem
+      `docs/research/danh-muc-truyen-nghe-2026-08-01.md` (danh mục đầy đủ + kế hoạch 13 đợt).
+      `StoryKind` mở từ 2 lên 6 giá trị; thanh tab đổi từ 4 tab sang 3 tab + chip lọc thể loại.
+- [x] A — 4 ngụ ngôn nguyên văn public domain: `fb-tortoise-hare`, `fb-boy-cried-wolf`,
+      `fb-fox-grapes` (Aesop/Townsend 1867), `fb-monkey-crocodile` (Jataka/Babbitt 1912)
+- [ ] A — 113 truyện còn lại, làm theo đợt ~10 truyện/PR
 
 ## 10. Ngoài phạm vi đợt 1 (ghi để khỏi phình)
 
