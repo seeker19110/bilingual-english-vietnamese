@@ -9,6 +9,13 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } fr
 // Dùng Pointer Events (không phải Touch Events riêng) để hoạt động thống nhất dù là
 // chạm tay thật trên điện thoại hay bấm chuột (vd khi test bằng chế độ giả lập mobile
 // trên máy tính).
+//
+// QUAN TRỌNG — xung đột với cuộn trang gốc: nếu để trình duyệt tự quyết định, nó sẽ
+// nhận diện thao tác kéo dọc là CUỘN TRANG ngay từ đầu và giành quyền xử lý trước khi
+// đủ 0.2s, khiến JS không bao giờ kịp kích hoạt. Để tránh việc này, CHỈ cho phép bắt
+// đầu cử chỉ khi trang đang Ở ĐỈNH CUỘN (window.scrollY === 0 — không còn gì để cuộn
+// lên nữa) và preventDefault() NGAY từ lúc còn "chờ đủ giờ" (không đợi tới khi đã kích
+// hoạt) để trình duyệt không tự ý cuộn/nảy (bounce) trong lúc đó.
 const ACTIVATE_MS = 200 // Tổng thời gian bấm+giữ+kéo vượt quá mốc này là kích hoạt kéo
 const RETURN_DELAY_MS = 3000 // Sau khi buông, chờ chừng này rồi mới tự trôi lên
 const RETURN_DURATION_MS = 3000 // Thời gian trôi ngược lên lại vị trí cũ
@@ -45,6 +52,13 @@ export function useOneHandedDrag() {
     // 1 lần (cuộn trang, bấm nút khác…) sau khi kéo xuống là bị "kẹt" luôn, không bao
     // giờ tự về nữa. Hẹn giờ chỉ bị huỷ khi THỰC SỰ kéo lại (xem onPointerMove) và luôn
     // được đặt lại mỗi khi buông ra (xem onPointerUp).
+    const alreadyPulledDown = translateY > 0
+    // Chỉ nhận cử chỉ khi ở đỉnh cuộn (hoặc đã đang kéo xuống sẵn) — nếu trang còn có
+    // thể cuộn lên, để trình duyệt xử lý cuộn bình thường, không tranh giành gesture.
+    if (!alreadyPulledDown && window.scrollY > 0) {
+      activePointerId.current = null
+      return
+    }
     activePointerId.current = e.pointerId
     startY.current = e.clientY
     startTime.current = performance.now()
@@ -60,7 +74,13 @@ export function useOneHandedDrag() {
     // người dùng chủ động đẩy lên (hoặc kéo thêm xuống) là thấy phản hồi tức thì. Chỉ
     // khi bắt đầu từ vị trí gốc (0%) mới cần đủ thời gian, tránh nhầm với cuộn trang.
     const alreadyPulledDown = startTranslate.current > 0
-    if (elapsed < ACTIVATE_MS && !alreadyPulledDown) return
+    if (elapsed < ACTIVATE_MS && !alreadyPulledDown) {
+      // Vẫn đang trong thời gian chờ — chặn trình duyệt tự cuộn/nảy trang trong lúc
+      // này, nếu không nó sẽ giành quyền xử lý trước khi kịp đủ 0.2s để kích hoạt.
+      if (e.cancelable) e.preventDefault()
+      return
+    }
+    if (e.cancelable) e.preventDefault()
     if (!isDragging.current) clearReturnTimer() // Bắt đầu kéo lại thật → huỷ hẹn giờ cũ
     isDragging.current = true
     setTransitionMs(0)
