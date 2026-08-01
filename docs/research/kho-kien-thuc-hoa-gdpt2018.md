@@ -32,45 +32,66 @@ Nước (3 thể, vòng tuần hoàn) · không khí (thành phần, vai trò c�
 
 ## 2. THCS (lớp 6-9) — trong môn KHTN
 
-### Lớp 6 — Chất quanh ta
+> ✅ **§2 đã được đối chiếu với SGK KHTN 6-9 "Kết nối tri thức" ngày 2026-08-01** — xem
+> `docs/research/muc-luc-sgk/khtn-6..9.md` và **Nhật ký đối chiếu §6** cuối file.
+
+### Lớp 6 — Chất quanh ta (chương II-IV, 9 bài) `[✓]`
 
 Chất và vật thể · ba thể của chất, sự chuyển thể · **oxygen** (tính chất, vai trò với sự cháy) ·
 **thành phần không khí** (≈78% N₂, ≈21% O₂, ~1% còn lại) · ô nhiễm không khí · một số vật liệu,
-nhiên liệu, nguyên liệu, lương thực – thực phẩm · **tách chất** (lọc, cô cạn, chiết).
+nhiên liệu, nguyên liệu, lương thực – thực phẩm · `[+]` **hỗn hợp** (chất tinh khiết/hỗn hợp,
+dung dịch – huyền phù – nhũ tương) · **tách chất** (lọc, cô cạn, chiết).
 
 > Chưa có công thức tính toán → chấm bằng trắc nghiệm.
 
-### Lớp 7 — Nguyên tử, nguyên tố, bảng tuần hoàn
+### Lớp 7 — Nguyên tử, nguyên tố, bảng tuần hoàn, phân tử & liên kết (chương I-II, 6 bài)
 
-| Nội dung          | Kiến thức cốt lõi                                                                                              |
-| ----------------- | -------------------------------------------------------------------------------------------------------------- |
-| Nguyên tử         | Cấu tạo: hạt nhân (proton `p⁺`, neutron `n`) + vỏ electron (`e⁻`) · **số p = số e** (nguyên tử trung hoà điện) |
-| Nguyên tố hoá học | Kí hiệu hoá học · **số hiệu nguyên tử Z = số proton** · khối lượng nguyên tử (amu)                             |
-| Bảng tuần hoàn    | Ô, chu kì, nhóm · sắp xếp theo **chiều tăng dần điện tích hạt nhân** · kim loại / phi kim / khí hiếm           |
+| Nội dung                   | Kiến thức cốt lõi                                                                                              |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Nguyên tử `[✓]`            | Cấu tạo: hạt nhân (proton `p⁺`, neutron `n`) + vỏ electron (`e⁻`) · **số p = số e** (nguyên tử trung hoà điện) |
+| Nguyên tố hoá học `[✓]`    | Kí hiệu hoá học · **số hiệu nguyên tử Z = số proton** · khối lượng nguyên tử (amu)                             |
+| Bảng tuần hoàn `[✓]`       | Ô, chu kì, nhóm · sắp xếp theo **chiều tăng dần điện tích hạt nhân** · kim loại / phi kim / khí hiếm           |
+| **Phân tử** `[+]`          | Đơn chất – hợp chất · **khối lượng phân tử = tổng khối lượng các nguyên tử** (Bài 5)                           |
+| **Liên kết hoá học** `[+]` | Liên kết ion, liên kết cộng hoá trị ở mức giới thiệu (Bài 6)                                                   |
+| **Hoá trị & CTHH** `[+]`   | **Quy tắc hoá trị `x·a = y·b`** · lập CTHH · **`%X = (x·M_X / M) × 100%`** (Bài 7)                             |
+
+> `[+]` Cả chương II (Bài 5-7) trước đây **thiếu hoàn toàn** trong kho kiến thức. Đây là phần
+> **tính toán hoá học đầu tiên** của chương trình (quy tắc hoá trị, phần trăm khối lượng nguyên
+> tố) — chấm tự động được, nên đưa vào phạm vi GĐ3.
 
 ### Lớp 8 — Mol, phương trình hoá học, dung dịch, acid–base
 
 Đây là lớp **bắt đầu tính toán hoá học** — quan trọng nhất về mặt kỹ thuật (cần chấm số + đơn vị).
 
-| Nội dung                          | Công thức cốt lõi                                                                                                     |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **Mol**                           | **`n = m / M`** (mol) · **`n = V / 24`** (chất khí, đkc 25 °C, 1 bar — lưu ý CT 2018 dùng **24 L/mol**, khác 22,4 cũ) |
-| Khối lượng mol                    | `M` (g/mol) · **tỉ khối `d_A/B = M_A / M_B`** · `d_A/kk = M_A / 29`                                                   |
-| **Định luật bảo toàn khối lượng** | Tổng khối lượng chất tham gia = tổng khối lượng sản phẩm                                                              |
-| Phương trình hoá học              | Lập PTHH, **cân bằng số nguyên tử mỗi nguyên tố hai vế** · tính theo PTHH                                             |
-| **Hiệu suất**                     | **`H = (lượng thực tế / lượng lí thuyết) × 100%`**                                                                    |
-| Nồng độ dung dịch                 | **`C% = (m_ct / m_dd) × 100%`** · **`C_M = n / V`** (mol/L)                                                           |
-| Acid – base – oxide – muối        | Tính chất hoá học, thang **pH** (pH < 7 acid, = 7 trung tính, > 7 base) · phản ứng trung hoà                          |
-| Tốc độ phản ứng                   | Các yếu tố ảnh hưởng: nồng độ, nhiệt độ, diện tích bề mặt, chất xúc tác (định tính)                                   |
+| Nội dung                                | Công thức cốt lõi                                                                                                                                                                                   |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mol** `[≠]`                           | **`n = m / M`** (mol) · **`n = V(L) / 24,79 (L/mol)`** — điều kiện chuẩn **1 bar, 25 °C**. ⚠️ **KHÔNG phải 24, cũng không phải 22,4** — xác minh trên Bài 3 SGK KHTN 8, xem §6.2                    |
+| Khối lượng mol `[✓]`                    | `M` (g/mol) · **tỉ khối `d_A/B = M_A / M_B`** · `d_A/kk = M_A / 29`                                                                                                                                 |
+| **Định luật bảo toàn khối lượng** `[✓]` | Tổng khối lượng chất tham gia = tổng khối lượng sản phẩm                                                                                                                                            |
+| Phương trình hoá học `[✓]`              | Lập PTHH, **cân bằng số nguyên tử mỗi nguyên tố hai vế** · tính theo PTHH                                                                                                                           |
+| **Hiệu suất** `[✓]`                     | **`H = (lượng thực tế / lượng lí thuyết) × 100%`** (nằm trong Bài 6 "Tính theo phương trình hoá học")                                                                                               |
+| Nồng độ dung dịch `[≠]`                 | **`C% = (m_ct / m_dd) × 100%`** · **`C_M = n / V`** (mol/L) — SGK dạy ở **Bài 4**, tức TRƯỚC định luật bảo toàn khối lượng (Bài 5) và tính theo PTHH (Bài 6) ⇒ `prerequisites` phải theo thứ tự này |
+| Acid – base – oxide – muối `[✓]`        | Tính chất hoá học, thang **pH** (pH < 7 acid, = 7 trung tính, > 7 base) · phản ứng trung hoà · **bảng tính tan**                                                                                    |
+| **Phân bón hoá học** `[+]`              | Phân đạm / lân / kali · tính %N, %P₂O₅, %K₂O (Bài 12)                                                                                                                                               |
+| Tốc độ phản ứng `[✓]`                   | Các yếu tố ảnh hưởng: nồng độ, nhiệt độ, diện tích bề mặt, chất xúc tác (định tính)                                                                                                                 |
 
-### Lớp 9 — Kim loại, phi kim, hữu cơ mở đầu
+> `[−]` Kho kiến thức cũ xếp acid–base–oxide–muối chung một dòng; SGK tách thành **5 bài riêng**
+> (Bài 8 Acid, Bài 9 Base & thang pH, Bài 10 Oxide, Bài 11 Muối, Bài 12 Phân bón) ⇒ khi soạn nội
+> dung phải tách theo bài, không gộp.
 
-| Nội dung | Kiến thức cốt lõi                                                                                                                                          |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Kim loại | Tính chất chung · **dãy hoạt động hoá học của kim loại** (K, Na, Ca, Mg, Al, Zn, Fe, Pb, H, Cu, Ag, Au) · hợp kim, ăn mòn                                  |
-| Phi kim  | Tính chất chung · một số phi kim tiêu biểu · **sơ lược bảng tuần hoàn nâng cao**                                                                           |
-| Hữu cơ   | Khái niệm hợp chất hữu cơ · **hydrocarbon**: alkane (`CH₄`), alkene (`C₂H₄`), acetylene (`C₂H₂`) · nguồn nhiên liệu (dầu mỏ, khí thiên nhiên)              |
-| Dẫn xuất | **Ethanol `C₂H₅OH`** · **acetic acid `CH₃COOH`** · **phản ứng ester hoá** · lipid, glucose, saccharose, tinh bột, protein (giới thiệu) · polymer, chất dẻo |
+### Lớp 9 — Kim loại, hữu cơ, tài nguyên vỏ Trái Đất (chương VI-X, 18 bài)
+
+| Nội dung                                       | Kiến thức cốt lõi                                                                                                                                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Kim loại `[✓]`                                 | Tính chất chung · **dãy hoạt động hoá học của kim loại** (K, Na, Ca, Mg, Al, Zn, Fe, Pb, H, Cu, Ag, Au) · tách kim loại, hợp kim (gang, thép)                                                          |
+| Phi kim `[≠]`                                  | SGK **không có chương phi kim riêng** — chỉ có Bài 21 "Sự khác nhau cơ bản giữa phi kim và kim loại". `[−]` Bỏ "sơ lược bảng tuần hoàn nâng cao" (không có)                                            |
+| Hữu cơ `[≠]`                                   | Khái niệm hợp chất hữu cơ · **hydrocarbon**: **alkane `CₙH₂ₙ₊₂`** (Bài 23), **alkene `CₙH₂ₙ`** (Bài 24) · nguồn nhiên liệu. `[−]` Bỏ **acetylene `C₂H₂`** — KHTN 9 KNTT không dạy                      |
+| Dẫn xuất `[≠]`                                 | **Ethylic alcohol `C₂H₅OH`** (SGK dùng tên này, không phải "ethanol") · **acetic acid `CH₃COOH`** · **phản ứng ester hoá** (trong Bài 27)                                                              |
+| Lipid – carbohydrate – protein – polymer `[≠]` | SGK dành hẳn **chương IX, 5 bài** chứ không phải "giới thiệu": Lipid (28) · Glucose & saccharose (29) · Tinh bột & cellulose `(C₆H₁₀O₅)ₙ` (30) · Protein (31) · Polymer (32)                           |
+| **Khai thác tài nguyên từ vỏ Trái Đất** `[+]`  | **Chương X, 3 bài — kho kiến thức trước đây THIẾU HOÀN TOÀN**: sơ lược hoá học vỏ Trái Đất · khai thác đá vôi, công nghiệp silicate · nhiên liệu hoá thạch, **chu trình carbon và sự ấm lên toàn cầu** |
+
+> 🟡 `[−]` **Ăn mòn kim loại** — kho kiến thức cũ có, nhưng mục lục KHTN 9 KNTT **không có bài
+> riêng** về ăn mòn. Có thể nằm lồng trong Bài 18/20. **Cần giáo viên xác nhận**, chưa xoá.
 
 ---
 
@@ -156,9 +177,10 @@ Cách kiểm đúng, chạy hoàn toàn bằng thuật toán:
 ## 5. Việc tiếp theo
 
 1. ~~Chốt PA A/B/C mô hình `subject`~~ **✅ ĐÃ CHỐT: PA C** (2026-08-01), chung cho Lý/Hoá/Sinh.
-2. Người có chuyên môn (giáo viên Hoá) duyệt §2-§3, đối chiếu SGK "Kết nối tri thức" — **đặc biệt
-   lưu ý điểm `n = V/24`** (CT GDPT 2018 dùng điều kiện chuẩn 25 °C, 1 bar → 24 L/mol, khác
-   22,4 L/mol của chương trình cũ). Đây là chỗ AI dễ viết theo thói quen cũ và sai — cần xác minh.
+2. ~~Người có chuyên môn (giáo viên Hoá) duyệt §2, đối chiếu SGK — đặc biệt lưu ý `n = V/24`~~
+   **✅ §2 (THCS) ĐÃ ĐỐI CHIẾU 2026-08-01** với SGK KHTN 6-9 KNTT — xem §6. Điểm `n = V/24`
+   **đã xác minh và ĐÃ SỬA thành `n = V/24,79`**. **§3 (THPT 10-12) vẫn CHƯA đối chiếu** — chưa
+   có SGK Hoá 10-12 trong `tai-lieu-sgk/`. Vẫn cần giáo viên Hoá duyệt lần cuối (§6.3).
 3. Chốt phạm vi chấm tự động theo bảng §4 — **loại sớm** các dạng phải chấm tự luận, đừng để tới
    lúc code mới phát hiện không chấm được.
 4. Lập dữ liệu nền §4.2 (bảng tuần hoàn, bảng tính tan) — việc cơ học, giao subagent được.
@@ -171,3 +193,66 @@ Cách kiểm đúng, chạy hoàn toàn bằng thuật toán:
 > lý do kỹ thuật: cân bằng PTHH (§4.1) là tính năng chấm-tuyệt-đối-chính-xác, độc đáo, dễ tạo giá
 > trị thấy được ngay; còn Lý phụ thuộc nặng vào engine đơn vị/dung sai (§4 file Lý) nên nên làm
 > sau khi engine đó đã chín qua Toán + Hoá. **Cần người dùng xác nhận.**
+
+---
+
+## 6. Nhật ký đối chiếu SGK (2026-08-01)
+
+**Phạm vi đã đối chiếu:** §2 — THCS lớp 6-9, môn KHTN bộ "Kết nối tri thức" (4 thư mục ảnh trong
+`tai-lieu-sgk/SGK-KHTN/6..9/`, trích mục lục bằng OCR tiếng Việt `scripts/ocr-images.py`, ảnh 2
+cột đọc thêm bằng `scripts/ocr-crop.py`). Mục lục đầy đủ: `docs/research/muc-luc-sgk/khtn-6..9.md`.
+**Chưa đối chiếu:** §1 (tiểu học 4-5), §3 (THPT 10-12) — chưa có sách trong `tai-lieu-sgk/`.
+
+### 6.1 Bảng thay đổi — tất cả mục `[≠]` `[+]` `[−]`
+
+| Lớp | Ký hiệu | Nội dung                                                                                                                                                                        | Đã làm gì                                                                                                            |
+| --- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 6   | `[+]`   | Hỗn hợp: chất tinh khiết/hỗn hợp, dung dịch – huyền phù – nhũ tương (Bài 16)                                                                                                    | Bổ sung vào §2 lớp 6 — SGK có hẳn chương IV                                                                          |
+| 7   | `[+]`   | **Phân tử – Đơn chất – Hợp chất**; khối lượng phân tử (Bài 5)                                                                                                                   | Bổ sung — kho cũ **thiếu hoàn toàn chương II**                                                                       |
+| 7   | `[+]`   | **Giới thiệu về liên kết hoá học** (Bài 6)                                                                                                                                      | Bổ sung                                                                                                              |
+| 7   | `[+]`   | **Hoá trị và công thức hoá học**: `x·a = y·b`, `%X = (x·M_X/M)·100%` (Bài 7)                                                                                                    | Bổ sung — đây là **phần tính toán hoá học đầu tiên** của chương trình, chấm tự động được                             |
+| 8   | `[≠]`   | **`n = V/24` → `n = V(L)/24,79 (L/mol)`**, đkc **1 bar, 25 °C**                                                                                                                 | **SỬA.** Xác minh trực tiếp trên khung Mục tiêu Bài 3 (`SGK-KHTN/8/page_0017.png`). Xem §6.2 — ảnh hưởng engine chấm |
+| 8   | `[≠]`   | Thứ tự dạy: Dung dịch & nồng độ (Bài 4) đứng **trước** ĐLBT khối lượng (Bài 5) và tính theo PTHH (Bài 6)                                                                        | Ghi rõ thứ tự vào §2 để dựng `prerequisites` đúng                                                                    |
+| 8   | `[+]`   | **Phân bón hoá học** (Bài 12)                                                                                                                                                   | Bổ sung vào §2 lớp 8                                                                                                 |
+| 8   | `[≠]`   | Acid/base/oxide/muối gộp 1 dòng → SGK tách **5 bài riêng** (Bài 8-12)                                                                                                           | Ghi rõ phải tách theo bài khi soạn nội dung                                                                          |
+| 9   | `[−]`   | **Acetylene `C₂H₂`**                                                                                                                                                            | **BỎ** — KHTN 9 KNTT chỉ dạy alkane (Bài 23) và alkene (Bài 24)                                                      |
+| 9   | `[−]`   | "Sơ lược bảng tuần hoàn nâng cao" ở phần phi kim                                                                                                                                | **BỎ** — không có trong mục lục lớp 9                                                                                |
+| 9   | `[≠]`   | "Phi kim: tính chất chung, một số phi kim tiêu biểu"                                                                                                                            | Sửa — SGK chỉ có **Bài 21 "Sự khác nhau cơ bản giữa phi kim và kim loại"**, không có chương phi kim riêng            |
+| 9   | `[≠]`   | "Ethanol" → **"Ethylic alcohol"**                                                                                                                                               | Sửa thuật ngữ theo SGK (tên chương VIII)                                                                             |
+| 9   | `[≠]`   | Lipid/carbohydrate/protein/polymer "(giới thiệu)" → **hẳn chương IX, 5 bài**                                                                                                    | Nâng mức — đây là phần nội dung lớn, không phải phần giới thiệu                                                      |
+| 9   | `[+]`   | **Chương X "Khai thác tài nguyên từ vỏ Trái Đất"** (3 bài): hoá học vỏ Trái Đất, đá vôi & công nghiệp silicate, nhiên liệu hoá thạch, **chu trình carbon & sự ấm lên toàn cầu** | Bổ sung — kho cũ **thiếu hoàn toàn**. Cũng là phần liên quan nội dung mới về phát triển bền vững                     |
+| 9   | `[−]`   | **Ăn mòn kim loại** — 🟡 giữ tạm, cần giáo viên xác nhận                                                                                                                        | Không xoá; mục lục không có bài riêng, có thể lồng trong Bài 18/20                                                   |
+
+**Tổng cộng: 15 mục** — `[+]` 5 · `[≠]` 7 · `[−]` 3 · phần còn lại `[✓]` giữ nguyên.
+
+### 6.2 ⚠️ Kết luận điểm nghi ngờ số 1: `n = V/24` hay `n = V/22,4`?
+
+**CẢ HAI ĐỀU SAI. SGK dùng `n = V(L) / 24,79 (L/mol)`.**
+
+Bằng chứng (xác minh trên **nội dung bài học**, không chỉ mục lục): khung "Mục tiêu" của Bài 3
+"Mol và tỉ khối chất khí", SGK KHTN 8 KNTT, trang in 16 — ảnh
+`tai-lieu-sgk/SGK-KHTN/8/page_0017.png`:
+
+- "Nêu được khái niệm thể tích mol của chất khí ở **áp suất 1 bar và 25 °C**."
+- "Sử dụng được công thức **n (mol) = V(L) / 24,79 (L/mol)** để chuyển đổi giữa số mol và thể
+  tích chất khí ở điều kiện chuẩn: áp suất 1 bar ở 25 °C."
+
+**Hệ quả kỹ thuật — cần xử lý TRƯỚC khi mở GĐ3 môn Hoá** (ghi thành mục riêng, không sửa code
+trong PR tài liệu này):
+
+- Dùng 24 thay vì 24,79 gây sai lệch **≈ 3,3%**, **vượt ngưỡng dung sai 3%** hiện có của
+  `packages/core-grading` ⇒ mọi bài chuyển đổi mol ↔ thể tích khí sẽ bị chấm sai nếu để nguyên.
+- Đề nghị: đưa **24,79 L/mol thành hằng số có tên** trong dữ liệu môn Hoá (không để "số ma
+  thuật"), và cân nhắc dung sai riêng cho dạng bài này.
+
+### 6.3 Danh sách cần GIÁO VIÊN CHUYÊN MÔN (Hoá) duyệt lần cuối
+
+1. **Ăn mòn kim loại có được dạy ở KHTN 9 KNTT không?** Mục lục không có bài riêng — cần xác nhận
+   để quyết định giữ hay bỏ khỏi §2 lớp 9.
+2. **Mức độ định lượng của Bài 6 "Tính theo phương trình hoá học"** — hiệu suất `H` có được dạy ở
+   lớp 8 hay chỉ ở THPT? Chưa xác minh trên nội dung bài.
+3. **§3 (THPT lớp 10-12) hoàn toàn chưa đối chiếu** — chưa có SGK Hoá 10-12 trong `tai-lieu-sgk/`.
+   Toàn bộ §3 vẫn là **bản thảo theo hiểu biết chung**, chưa được kiểm chứng.
+4. **Ảnh hưởng của Thông tư 17/2025** lên nội dung KHTN — không có bản đối chứng để so. **Không
+   đoán.** Riêng chương X lớp 9 (chu trình carbon, ấm lên toàn cầu) có thể là phần được tăng
+   thời lượng, nhưng chưa xác nhận được.
