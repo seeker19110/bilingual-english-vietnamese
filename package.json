@@ -67,7 +67,7 @@
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.24.1",
+    "react-router-dom": "^7.18.2",
     "ts-fsrs": "^5.4.1",
     "web-push": "^3.6.7",
     "zod": "^4.4.3"

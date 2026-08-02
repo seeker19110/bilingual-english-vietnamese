@@ -1574,16 +1574,21 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
-- **[2026-08-02] react-router: đã nghiên cứu + viết kế hoạch nâng v7, CHỜ BẠN CHỌN PHƯƠNG ÁN.**
-  Xác nhận `npm audit` không có bản vá nào ở nhánh 6.x — 2 CVE moderate chỉ được vá ở
-  `react-router-dom@7.18.2`, bắt buộc nâng major mới hết cảnh báo. Đã thử nâng lên `6.30.4` (bản
-  6.x mới nhất) trước — **vẫn dính lỗ hổng**, đã revert về `^6.24.1` (không tự ý nâng major vì vi
-  phạm CLAUDE.md mục 12 "breaking change phải hỏi trước"). Đã quét toàn bộ codebase: app chỉ dùng
-  Declarative Mode cơ bản (`BrowserRouter`/`Routes`/`Route`/`Navigate`/`Link`/`useLocation`/
-  `useNavigate`/`useParams`/`useSearchParams`, 32 file), KHÔNG dùng data router/loader/action/
-  `<Outlet>` → đây là kịch bản migration v6→v7 dễ nhất theo tài liệu chính thức, rủi ro thấp. Kế
-  hoạch chi tiết (2 phương án: nâng thẳng 1 bước hoặc 2 bước qua `future` flags) ở
-  `docs/research/dac-ta-nang-cap-react-router-v7-2026-08-02.md` — **chưa thi hành code**, cần bạn
+- **[2026-08-02] react-router: ĐÃ NÂNG LÊN v7 (phương án 1 bước), package.json đổi
+  `react-router-dom` `^6.24.1` → `^7.18.2`.** Cổng commit đạt đủ: build ✅ · typecheck ✅ (4
+  tsconfig) · lint ✅ (0 cảnh báo) · test ✅ (103 file / 1473 test) · dev server khởi động sạch
+  (HTTP 200, không lỗi console). Không sửa file nào khác ngoài `package.json`/`package-lock.json`
+  — đúng như dự đoán trong đặc tả (Declarative Mode, không data router/loader/action/`<Outlet>`).
+  **Lưu ý audit:** `npm audit` hết 2 CVE moderate cũ, nhưng phát sinh 1 cảnh báo **high** MỚI
+  (`GHSA-qwww-vcr4-c8h2`, CSRF trong **RSC Mode** — React Server Components, dải
+  `>=7.12.0 <8.3.0`) — **chưa có bản vá nào** (react-router v8 chưa phát hành trên npm tính đến
+  2026-08-02). App này **không dùng RSC Mode** (không `react-router.config.ts`, không action
+  route) nên không khai thác được thực tế — chấp nhận cảnh báo audit này, sẽ tự hết khi có bản vá
+  phát hành và nâng tiếp. **Chưa chạy E2E Playwright** (cần Postgres thật, sandbox không có) — cần
+  chạy trước khi merge như cổng merge CLAUDE.md mục 9 yêu cầu. Kế hoạch gốc + đánh giá "chuyển
+  sang data router/loader/action/SSR" (đã đề xuất KHÔNG làm — chi phí lớn, lợi ích nhỏ vì app hầu
+  hết sau đăng nhập, VPS 1 vCPU không nên tăng tải server-render) ở
+  `docs/research/dac-ta-nang-cap-react-router-v7-2026-08-02.md`. Trước đó
   chọn phương án trước khi làm.
 - **[2026-08-02] `restore:r2 -- --restore-into`: đã viết runbook kiểm thử, CHỜ BẠN TỰ CHẠY TRÊN
   VPS.** Sandbox Claude Code web không có Docker daemon/mạng tới VPS nên không tự test được nhánh
