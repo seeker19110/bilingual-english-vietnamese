@@ -133,8 +133,19 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 Không có bản PD tiếng Anh → **Opus kể lại bằng lời văn riêng + tự dịch sang tiếng Anh**.
 Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 
-> **Tiến độ (2026-08-02):** 3/20 đã có `raw/*.json` — #1–3 (Sơn Tinh Thuỷ Tinh, Bánh chưng bánh
-> giầy, Thánh Gióng) đã soạn ở PR #440. Còn #4–20 chưa soạn.
+> **Tiến độ (2026-08-02, cập nhật đợt 2):** **13/20** đã có `raw/*.json` — #1–3 soạn ở PR #440,
+> #4–13 soạn ở đợt này. Còn #14–20 chưa soạn.
+>
+> ⚠️ **Đính chính danh mục (2026-08-02):** mục #10 cũ `vn-mai-an-tiem` ("Mai An Tiêm on the
+> Island") **trùng nội dung** với mục #4 `vn-su-tich-dua-hau` — Mai An Tiêm chính là nhân vật
+> của sự tích quả dưa hấu, hai dòng này là cùng một truyện. Đã **thay #10 bằng `vn-so-dua`
+> (Sọ Dừa)**, một truyện dân gian phổ biến chưa có trong danh mục, giữ nguyên tổng số 20.
+>
+> 📌 **Vì sao đợt này làm `vn-folk` chứ không phải `fable` như kế hoạch:** 14 truyện `fable` còn
+> lại đều cần **nguyên văn Project Gutenberg**, nhưng network policy của phiên chặn
+> `gutenberg.org` (403 ở CONNECT, mọi mirror đã thử đều hỏng). CLAUDE.md §5 cấm gõ từ trí nhớ →
+> `fable`/`myth`/`humor`/`children` bị chặn cứng. `vn-folk` là thể loại duy nhất không phụ thuộc
+> nguồn ngoài (Opus tự kể + tự dịch, theo đúng nguyên tắc §1.3 ở trên).
 
 | #   | id                               | Tiếng Việt              | Tiếng Anh                            | Cấp |
 | --- | -------------------------------- | ----------------------- | ------------------------------------ | --- |
@@ -147,7 +158,7 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 | 7   | `vn-thach-sanh`                  | Thạch Sanh              | Thach Sanh the Woodcutter            | B1  |
 | 8   | `vn-su-tich-ho-guom`             | Sự tích Hồ Gươm         | The Legend of the Returned Sword     | B1  |
 | 9   | `vn-chu-cuoi`                    | Chú Cuội cung trăng     | The Man in the Moon                  | A2  |
-| 10  | `vn-mai-an-tiem`                 | Mai An Tiêm             | Mai An Tiem on the Island            | B1  |
+| 10  | `vn-so-dua`                      | Sọ Dừa                  | So Dua, the Coconut Boy              | B1  |
 | 11  | `vn-con-rong-chau-tien`          | Con Rồng cháu Tiên      | Children of the Dragon and the Fairy | B1  |
 | 12  | `vn-trau-cau`                    | Sự tích trầu cau        | The Legend of the Betel and Areca    | B1  |
 | 13  | `vn-tro-cuoi-trang-quynh`        | Trạng Quỳnh             | The Clever Scholar Quynh             | B1  |

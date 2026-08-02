@@ -254,9 +254,9 @@ song ngữ MỚI** (`ft-*`/`fb-*`/... theo 6 thể loại `fairy-tale`/`fable`/`
 truyện, tự cuộn theo câu, ghi nguồn bắt buộc) + `components/StoryCard.tsx`. Bản tiếng Anh **bắt
 buộc tải thật từ Project Gutenberg** (không gõ từ trí nhớ — CLAUDE.md §5), tiếng Việt Opus dịch
 tay chất lượng văn học. Migration `0032` bật feature `listening` cho mọi gói.
-**Tiến độ nội dung [cập nhật 2026-08-02]:** ✅ **`fairy-tale` XONG 20/20** — thể loại đầu tiên
-hoàn tất trọn vẹn. `fable` 6/20 · `vn-folk` 3/20 (PR #440, phiên khác) · `myth`/`humor`/`children`
-chưa bắt đầu. **Tổng 29/120 truyện.**
+**Tiến độ nội dung [cập nhật 2026-08-02, đợt vn-folk]:** ✅ **`fairy-tale` XONG 20/20** — thể loại
+đầu tiên hoàn tất trọn vẹn. `fable` 6/20 · **`vn-folk` 13/20** · `myth`/`humor`/`children`
+chưa bắt đầu. **Tổng 39/120 truyện.**
 ⚠️ Cách cập nhật con số này: **đếm file thật** (`ls apps/english/src/data/stories/raw/ft-*.json |
 wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale` "12/20" trong khi thực tế mới có
 11 file.
@@ -264,6 +264,23 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 ## Tiếp theo
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
+
+- **[2026-08-02] Trang Nghe — đợt `vn-folk` #4–13 (10 truyện, `vn-folk` lên 13/20).** Soạn: Sự
+  tích quả dưa hấu · Ăn khế trả vàng · Cây tre trăm đốt · Thạch Sanh · Sự tích Hồ Gươm · Chú Cuội
+  cung trăng · Sọ Dừa · Con Rồng cháu Tiên · Sự tích trầu cau · Trạng Quỳnh. Mỗi truyện 497–689
+  từ EN (đều vượt ngưỡng ≥400 từ đã chốt), 27–37 câu song ngữ, Opus tự kể + tự dịch theo nguyên
+  tắc §1.3 của danh mục (truyện dân gian VN không có bản PD tiếng Anh).
+  **⚠️ Vì sao KHÔNG làm `fable` như kế hoạch đã ghi:** 14 truyện `fable` còn lại đều cần nguyên
+  văn Project Gutenberg, nhưng **network policy của phiên chặn `gutenberg.org`** (CONNECT trả
+  403; đã thử cả `aleph.gutenberg.org`, `gutenberg.pglaf.org`, archive.org, wikisource — hỏng
+  hết). CLAUDE.md §5 cấm gõ từ trí nhớ nên `fable`/`myth`/`humor`/`children` **bị chặn cứng**,
+  chỉ `vn-folk` làm được. **Việc cho chủ dự án:** nếu muốn tiếp 4 thể loại kia thì cần mở network
+  policy cho `gutenberg.org` ở môi trường Claude Code web.
+  **Sửa lỗi danh mục:** mục #10 cũ `vn-mai-an-tiem` **trùng nội dung** với #4 `vn-su-tich-dua-hau`
+  (Mai An Tiêm chính là nhân vật sự tích dưa hấu) → đã thay #10 bằng `vn-so-dua` (Sọ Dừa), giữ
+  nguyên tổng 20. Xem `docs/research/danh-muc-truyen-nghe-2026-08-01.md` §5.
+  Đã rút kinh nghiệm đợt trước: chạy script kiểm chỉ số `p` **ngay sau khi viết file**, trước khi
+  chạy test — cả 10 file đạt ngay từ lần đầu.
 
 - **[2026-08-02] Trang Nghe — ✅ ĐÓNG THỂ LOẠI `fairy-tale` 20/20.** Phiên này thêm 6 truyện cuối:
   Jacobs PG 7439 (Jack và cây đậu thần 96 câu · Ba chú lợn con 57 câu · Ba chú gấu 64 câu) +
