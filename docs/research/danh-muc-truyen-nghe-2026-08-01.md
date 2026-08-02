@@ -201,7 +201,12 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 >
 > Số đo từng PART (`wc -w` thật): Perseus I 1.336 · II 3.124 · III 2.709 · IV 3.530 · V 1.367 ·
 > Argonauts I 2.699 · II 2.769 · III 1.192 · IV 7.363 · V 7.465 · VI 845 ·
-> Theseus I 1.319 · II 7.353 · III 1.522 · IV 3.768.
+> Theseus I 1.319 · II 7.353 · III 1.522 · IV **789**.
+>
+> ⚠️ **Đính chính 2026-08-02 (đợt Theseus):** số đo T-IV ghi lần đầu là "3.768 từ" **SAI** — T-IV
+> là phần cuối sách nên phép đo đã gộp cả chú thích cuối sách + toàn bộ giấy phép Project
+> Gutenberg vào. Nội dung truyện thật chỉ **789 từ** (vẫn trên sàn 400). Bài học: khi đo phần
+> CUỐI một sách Gutenberg phải cắt bỏ boilerplate trước, không đo tới hết file.
 >
 > **Loại** A-IV, A-V, T-II (đều >7.000 từ) và A-VI (845 từ, hụt so với mạch truyện).
 > Kingsley chiếm **8 slot** (Perseus trọn 5 phần + Theseus 3 phần I/III/IV — vẫn thành một mạch
@@ -222,9 +227,9 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 | 3   | `my-perseus-3`        | Perseus, Part III: How Perseus Slew the Gorgon               | Perseus III: Chém quái vật Medusa      | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
 | 4   | `my-perseus-4`        | Perseus, Part IV: How Perseus Came to the Æthiops            | Perseus IV: Cứu nàng Andromeda         | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
 | 5   | `my-perseus-5`        | Perseus, Part V: How Perseus Came Home Again                 | Perseus V: Ngày trở về                 | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
-| 6   | `my-theseus-1`        | Theseus, Part I: How Theseus Lifted the Stone                | Theseus I: Nhấc tảng đá                | 🇬🇷 Hy Lạp | PG 677  | B2  | ⏳  |
-| 7   | `my-theseus-3`        | Theseus, Part III: How Theseus Slew the Minotaur             | Theseus III: Giết quái vật Minotaur    | 🇬🇷 Hy Lạp | PG 677  | B2  | ⏳  |
-| 8   | `my-theseus-4`        | Theseus, Part IV: How Theseus Fell by His Pride              | Theseus IV: Ngã vì kiêu ngạo           | 🇬🇷 Hy Lạp | PG 677  | B2  | ⏳  |
+| 6   | `my-theseus-1`        | Theseus, Part I: How Theseus Lifted the Stone                | Theseus I: Nhấc tảng đá                | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
+| 7   | `my-theseus-3`        | Theseus, Part III: How Theseus Slew the Minotaur             | Theseus III: Giết quái vật Minotaur    | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
+| 8   | `my-theseus-4`        | Theseus, Part IV: How Theseus Fell by His Pride              | Theseus IV: Ngã vì kiêu ngạo           | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
 | 9   | `my-prometheus`       | Prometheus and Pandora                                       | Prometheus và chiếc hộp Pandora        | 🇬🇷 Hy Lạp | PG 3327 | B2  | ⏳  |
 | 10  | `my-proserpine`       | Pluto and Proserpine                                         | Pluto và nàng Proserpine               | 🇬🇷 Hy Lạp | PG 3327 | B2  | ⏳  |
 | 11  | `my-midas`            | Midas                                                        | Vua Midas và bàn tay vàng              | 🇬🇷 Hy Lạp | PG 3327 | B1  | ⏳  |
