@@ -133,13 +133,20 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 Không có bản PD tiếng Anh → **Opus kể lại bằng lời văn riêng + tự dịch sang tiếng Anh**.
 Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 
-> **Tiến độ (2026-08-02, cập nhật đợt 2):** **13/20** đã có `raw/*.json` — #1–3 soạn ở PR #440,
-> #4–13 soạn ở đợt này. Còn #14–20 chưa soạn.
+> ## ✅ **HOÀN TẤT 20/20 (2026-08-02)** — thể loại `vn-folk` đã soạn xong toàn bộ.
 >
-> ⚠️ **Đính chính danh mục (2026-08-02):** mục #10 cũ `vn-mai-an-tiem` ("Mai An Tiêm on the
-> Island") **trùng nội dung** với mục #4 `vn-su-tich-dua-hau` — Mai An Tiêm chính là nhân vật
-> của sự tích quả dưa hấu, hai dòng này là cùng một truyện. Đã **thay #10 bằng `vn-so-dua`
-> (Sọ Dừa)**, một truyện dân gian phổ biến chưa có trong danh mục, giữ nguyên tổng số 20.
+> #1–3 soạn ở PR #440; #4–13 và #14–20 soạn trong hai đợt ngày 2026-08-02.
+> Độ dài: 497–709 từ EN mỗi truyện (đều vượt ngưỡng ≥400 từ đã chốt ở §4), 22–37 câu song ngữ.
+>
+> ⚠️ **Đính chính danh mục (2026-08-02) — 3 chỗ sai đã sửa trong bảng dưới:**
+>
+> 1. Mục #10 cũ `vn-mai-an-tiem` ("Mai An Tiêm on the Island") **trùng nội dung** với #4
+>    `vn-su-tich-dua-hau` — Mai An Tiêm chính là nhân vật của sự tích quả dưa hấu, hai dòng là
+>    cùng một truyện. Đã **thay bằng `vn-so-dua` (Sọ Dừa)**, giữ nguyên tổng số 20.
+> 2. Mục #15 id cũ `vn-tam-that-quy` **không mang nghĩa gì** so với nội dung (Sự tích con muỗi,
+>    nhân vật là Ngọc Tâm — Nhan Diệp). Đổi thành `vn-su-tich-con-muoi`.
+> 3. Mục #17 id cũ `vn-hai-chi-em-cay-vu-sua` ("hai chị em") **mô tả sai truyện** — đây là chuyện
+>    một người mẹ và đứa con trai, không có hai chị em nào. Đổi thành `vn-su-tich-cay-vu-sua`.
 >
 > 📌 **Vì sao đợt này làm `vn-folk` chứ không phải `fable` như kế hoạch:** 14 truyện `fable` còn
 > lại đều cần **nguyên văn Project Gutenberg**, nhưng network policy của phiên chặn
@@ -163,9 +170,9 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 | 12  | `vn-trau-cau`                    | Sự tích trầu cau        | The Legend of the Betel and Areca    | B1  |
 | 13  | `vn-tro-cuoi-trang-quynh`        | Trạng Quỳnh             | The Clever Scholar Quynh             | B1  |
 | 14  | `vn-luu-binh-duong-le`           | Lưu Bình — Dương Lễ     | Two Friends, Luu Binh and Duong Le   | B1  |
-| 15  | `vn-tam-that-quy`                | Sự tích con muỗi        | The Legend of the Mosquito           | A2  |
+| 15  | `vn-su-tich-con-muoi`            | Sự tích con muỗi        | The Legend of the Mosquito           | A2  |
 | 16  | `vn-nguoi-con-gai-nam-xuong`     | Người con gái Nam Xương | The Woman of Nam Xuong               | B2  |
-| 17  | `vn-hai-chi-em-cay-vu-sua`       | Sự tích cây vú sữa      | The Legend of the Milk-Fruit Tree    | A2  |
+| 17  | `vn-su-tich-cay-vu-sua`          | Sự tích cây vú sữa      | The Legend of the Milk-Fruit Tree    | A2  |
 | 18  | `vn-su-tich-chim-quoc`           | Sự tích chim quốc       | The Legend of the Quoc Bird          | A2  |
 | 19  | `vn-anh-nong-dan-va-ba-dieu-uoc` | Ba điều ước             | The Three Wishes                     | A2  |
 | 20  | `vn-tri-khon-cua-ta-day`         | Trí khôn của ta đây     | Here Is My Wisdom                    | A2  |

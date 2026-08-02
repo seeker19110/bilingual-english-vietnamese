@@ -254,9 +254,9 @@ song ngữ MỚI** (`ft-*`/`fb-*`/... theo 6 thể loại `fairy-tale`/`fable`/`
 truyện, tự cuộn theo câu, ghi nguồn bắt buộc) + `components/StoryCard.tsx`. Bản tiếng Anh **bắt
 buộc tải thật từ Project Gutenberg** (không gõ từ trí nhớ — CLAUDE.md §5), tiếng Việt Opus dịch
 tay chất lượng văn học. Migration `0032` bật feature `listening` cho mọi gói.
-**Tiến độ nội dung [cập nhật 2026-08-02, đợt vn-folk]:** ✅ **`fairy-tale` XONG 20/20** — thể loại
-đầu tiên hoàn tất trọn vẹn. `fable` 6/20 · **`vn-folk` 13/20** · `myth`/`humor`/`children`
-chưa bắt đầu. **Tổng 39/120 truyện.**
+**Tiến độ nội dung [cập nhật 2026-08-02, đóng vn-folk]:** ✅ **`fairy-tale` XONG 20/20** · ✅
+**`vn-folk` XONG 20/20** — hai thể loại đã hoàn tất trọn vẹn. `fable` 6/20 · `myth`/`humor`/`children`
+chưa bắt đầu. **Tổng 46/120 truyện.**
 ⚠️ Cách cập nhật con số này: **đếm file thật** (`ls apps/english/src/data/stories/raw/ft-*.json |
 wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale` "12/20" trong khi thực tế mới có
 11 file.
@@ -264,6 +264,17 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 ## Tiếp theo
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
+
+- **[2026-08-02] Trang Nghe — ✅ ĐÓNG THỂ LOẠI `vn-folk` 20/20 (đợt 2, 7 truyện cuối).** Soạn nốt
+  #14–20: Lưu Bình — Dương Lễ · Sự tích con muỗi · Người con gái Nam Xương · Sự tích cây vú sữa ·
+  Sự tích chim quốc · Ba điều ước · Trí khôn của ta đây. Cả 20 truyện `vn-folk` đạt 497–709 từ EN,
+  22–37 câu. Người con gái Nam Xương (B2) là truyện dài nhất và khó nhất thể loại — giữ trọn chi
+  tiết cái bóng trên vách và đoạn kết trên bến Hoàng Giang.
+  **Sửa thêm 2 mã id sai trong danh mục:** #15 `vn-tam-that-quy` (vô nghĩa so với nội dung) →
+  `vn-su-tich-con-muoi`; #17 `vn-hai-chi-em-cay-vu-sua` ("hai chị em" — truyện thực ra là mẹ và
+  con trai, không có chị em nào) → `vn-su-tich-cay-vu-sua`.
+  **Còn lại 4 thể loại (`fable` 14 truyện, `myth`/`humor`/`children` mỗi thứ 20) đều PHỤ THUỘC
+  Project Gutenberg** → không làm được cho tới khi network policy mở `gutenberg.org`.
 
 - **[2026-08-02] Trang Nghe — đợt `vn-folk` #4–13 (10 truyện, `vn-folk` lên 13/20).** Soạn: Sự
   tích quả dưa hấu · Ăn khế trả vàng · Cây tre trăm đốt · Thạch Sanh · Sự tích Hồ Gươm · Chú Cuội
