@@ -32,8 +32,10 @@ const Speaking = lazyWithRetry(() => import('./pages/Speaking'))
 const Practice = lazyWithRetry(() => import('./pages/Practice'))
 const CommonPhrases = lazyWithRetry(() => import('./pages/CommonPhrases'))
 
-// Trang "Thư viện Nghe" (/listening) — 4 tab, tái dùng patterns/dialogues + truyện mới.
+// Trang "Thư viện Nghe" (/listening) — 2 tab, tái dùng patterns/dialogues.
 const Listening = lazyWithRetry(() => import('./pages/Listening'))
+// Trang "Nghe - Đọc - Kể Truyện" (/stories) — tách riêng khỏi /listening (2026-08-02).
+const Stories = lazyWithRetry(() => import('./pages/Stories'))
 const StoryReader = lazyWithRetry(() => import('./pages/StoryReader'))
 const History = lazyWithRetry(() => import('./pages/History'))
 const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'))
@@ -311,7 +313,17 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/listening/story/:id"
+                        path="/stories"
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="listening">
+                              <Stories />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/stories/:id"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="listening">

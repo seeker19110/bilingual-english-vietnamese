@@ -17,6 +17,7 @@ import {
   X,
   Sparkles,
   Headphones,
+  BookMarked,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PricePromoBanner from '../components/PricePromoBanner'
@@ -125,6 +126,22 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
       desc: isA
         ? 'Bắt đầu từ chữ cái, số... mỗi ngày 5-20 từ mới (tự chọn tốc độ) theo vòng tròn liên quan, kèm câu thông dụng.'
         : 'Start from letters and numbers — 5-20 new words a day (pick your pace) in related circles, with common sentences.',
+    },
+    {
+      kind: 'link',
+      path: '/stories',
+      icon: BookMarked,
+      gradient: 'from-fuchsia-500 to-purple-400',
+      glow: 'shadow-fuchsia-500/20',
+      ring: 'hover:border-fuchsia-500/40',
+      tag: {
+        label: isA ? '6 thể loại' : '6 genres',
+        cls: 'bg-fuchsia-500/15 text-fuchsia-300 theme-light:text-fuchsia-800 border border-fuchsia-500/20',
+      },
+      title: isA ? 'Nghe - Đọc - Kể Truyện' : 'Listen - Read - Tell Stories',
+      desc: isA
+        ? 'Cổ tích, ngụ ngôn, truyện dân gian Việt Nam... nghe giọng đọc chuẩn, đọc song ngữ.'
+        : 'Fairy tales, fables, Vietnamese folk stories... listen with native voices, read bilingual text.',
     },
     {
       kind: 'group',
