@@ -219,11 +219,15 @@ export default function Dictionary() {
   if (!user) return null
 
   return (
-    <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
+    <div className="min-h-dvh bg-zinc-950">
       <Layout extra={<VoiceMenu plan={user.plan} isA={isA} />} />
 
-      <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
-        <div className="max-w-3xl mx-auto px-4 py-6 pb-24 sm:pb-[calc(1.5rem+var(--bnav-h))]">
+      <main>
+        <div
+          className={`max-w-3xl mx-auto px-4 py-6 sm:pb-[calc(1.5rem+var(--bnav-h))] ${
+            tab === 'search' ? 'pb-[calc(6rem+var(--bnav-h))]' : 'pb-[calc(1.5rem+var(--bnav-h))]'
+          }`}
+        >
           {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
           <PageHeader
             title={isA ? 'Từ điển' : 'Dictionary'}
@@ -707,9 +711,16 @@ export default function Dictionary() {
         </div>
       </main>
 
-      {/* Search bar cố định dưới — CHỈ trên mobile, tab Tra từ */}
+      {/* Search bar cố định dưới — CHỈ trên mobile, tab Tra từ. Cố định ngay TRÊN
+          BottomNav (bottom: var(--bnav-h)), giống PromoEndingBanner — tránh cách
+          làm cũ (bó chiều cao trang bằng 100dvh-bnav-h để "đẩy" thanh này lên):
+          cách đó khiến BottomNav hiển thị sai vị trí trên một số trình duyệt di
+          động do dvh không khớp khi trang không tự cuộn ở cấp document. */}
       {tab === 'search' && (
-        <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md pt-3 pb-safe flex justify-center">
+        <div
+          className="fixed inset-x-0 z-30 sm:hidden border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md pt-3 pb-3 flex justify-center"
+          style={{ bottom: 'var(--bnav-h)' }}
+        >
           <div className="relative w-[97%]">
             <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
