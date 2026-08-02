@@ -6,8 +6,6 @@ import {
   Mic,
   ChevronRight,
   BookOpen,
-  GraduationCap,
-  MessagesSquare,
   ArrowLeftRight,
   History,
   Target,
@@ -54,11 +52,6 @@ import {
 // Số từ vừa học tối đa gợi ý cho 1 phiên Speaking (② M4) — đủ để AI có ngữ cảnh,
 // không phình prompt (giống cap 20 từ ở StudyTabs.tsx cho `?words=` từ URL).
 const RECENT_WORDS_FOR_SPEAKING = 8
-
-// Sub-item "Nghe" trong thẻ "Học cùng gia sư AI" không dẫn thẳng tới 1 route — bấm vào
-// mở màn chọn nhỏ (Bài hội thoại mẫu / Câu thông dụng). Dùng path giả này để nhận diện
-// thay vì nav() bình thường.
-const LISTEN_PICKER_PATH = '__listen_picker__'
 
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
 type IconType = typeof MessageCircle
@@ -147,7 +140,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
       showTip: true,
       items: [
         {
-          path: LISTEN_PICKER_PATH,
+          path: '/listening',
           icon: Headphones,
           label: T.listen,
           color: 'text-rose-400',
@@ -207,9 +200,6 @@ export default function Home() {
   // Đóng banner "quay lại" (② M4) NGAY trong phiên này — dismissComebackToday()
   // ghi localStorage để không hiện lại trong ngày hôm nay ở lần mở app sau.
   const [comebackClosed, setComebackClosed] = useState(false)
-  // Màn chọn nhỏ khi bấm "Nghe" trong thẻ "Học cùng gia sư AI" (gộp 2 trang
-  // /lessons + /phrases thành 1 nút, bấm vào cho chọn tiếp thay vì vào thẳng 1 trang).
-  const [showListenPicker, setShowListenPicker] = useState(false)
 
   // Dữ liệu cho thẻ "Học tiếp" — chỉ cần lộ trình CEFR + vòng nền tảng (không cần
   // nạp toàn bộ từ điển ~10k từ như trang /learning-path, findNextStep chỉ tham
@@ -549,11 +539,7 @@ export default function Home() {
                       return (
                         <button
                           key={sub.path}
-                          onClick={() =>
-                            sub.path === LISTEN_PICKER_PATH
-                              ? setShowListenPicker(true)
-                              : nav(sub.path)
-                          }
+                          onClick={() => nav(sub.path)}
                           aria-label={sub.fullDesc}
                           className="tap-44 flex flex-col items-center justify-center gap-1.5 rounded-xl py-3 border border-zinc-800/60 bg-zinc-950/40 hover:bg-zinc-800/60 hover:border-zinc-700 transition active:scale-[0.98]"
                         >
@@ -660,73 +646,6 @@ export default function Home() {
 
         <PricePromoBanner isA={isA} />
       </main>
-
-      {/* Màn chọn nhỏ khi bấm "Nghe" — gộp 2 trang /lessons + /phrases vào 1 nút,
-          bấm vào cho chọn tiếp (quyết định người dùng: không vào thẳng 1 trang cố định). */}
-      {showListenPicker && (
-        <div
-          className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm px-4 pb-[calc(1rem+var(--bnav-h))] sm:pb-4"
-          onClick={() => setShowListenPicker(false)}
-        >
-          <div
-            className="w-full max-w-xs bg-zinc-900 border border-zinc-700/60 rounded-2xl p-4 animate-fade-in"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-white">{T.listenPickerTitle}</h3>
-              <button
-                onClick={() => setShowListenPicker(false)}
-                aria-label={isA ? 'Đóng' : 'Close'}
-                className="tap-44 text-zinc-400 hover:text-white p-1 -mr-1"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="space-y-2">
-              <button
-                onClick={() => nav('/listening')}
-                className="w-full flex items-center gap-3 rounded-xl p-3 border border-zinc-800/60 bg-zinc-950/40 hover:bg-zinc-800/60 hover:border-accent-500/40 transition text-left"
-              >
-                <BookOpen className="w-5 h-5 text-accent-400 shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-white">{T.navListening}</p>
-                  <p className="text-xs text-zinc-400 line-clamp-1">
-                    {isA ? T.listenDescA : T.listenDescB}
-                  </p>
-                </div>
-              </button>
-              <button
-                onClick={() => nav('/lessons')}
-                className="w-full flex items-center gap-3 rounded-xl p-3 border border-zinc-800/60 bg-zinc-950/40 hover:bg-zinc-800/60 hover:border-rose-500/40 transition text-left"
-              >
-                <GraduationCap className="w-5 h-5 text-rose-400 shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-white">
-                    {isA ? T.lessonsTitleA : T.lessonsTitleB}
-                  </p>
-                  <p className="text-xs text-zinc-400 line-clamp-1">
-                    {isA ? T.lessonsDescA : T.lessonsDescB}
-                  </p>
-                </div>
-              </button>
-              <button
-                onClick={() => nav('/phrases')}
-                className="w-full flex items-center gap-3 rounded-xl p-3 border border-zinc-800/60 bg-zinc-950/40 hover:bg-zinc-800/60 hover:border-teal-500/40 transition text-left"
-              >
-                <MessagesSquare className="w-5 h-5 text-teal-400 shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-white">
-                    {isA ? T.phrasesTitleA : T.phrasesTitleB}
-                  </p>
-                  <p className="text-xs text-zinc-400 line-clamp-1">
-                    {isA ? T.phrasesDescA : T.phrasesDescB}
-                  </p>
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

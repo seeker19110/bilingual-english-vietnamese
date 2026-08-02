@@ -1229,6 +1229,15 @@ export default function Practice() {
       action: () => nav('/chat'),
     },
     {
+      key: 'sample-dialogues',
+      icon: Mic,
+      title: isA ? 'Bài học hội thoại mẫu' : 'Sample dialogue lessons',
+      desc: isA
+        ? 'Nghe từng câu hội thoại rồi đọc lại, AI chấm phát âm'
+        : 'Listen to each dialogue line, read it back, get scored',
+      action: () => nav('/lessons'),
+    },
+    {
       key: 'freetalk-speak',
       icon: Mic,
       title: isA ? 'Nói chuyện tự do với AI' : 'Free talk with AI',
