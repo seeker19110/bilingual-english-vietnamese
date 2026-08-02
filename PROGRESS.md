@@ -165,9 +165,19 @@ trên VPS (xem "Cần làm tay").
   3. **Môn Sinh: PA B** — trắc nghiệm + SRS, KHÔNG xây engine chấm mới. Sinh chỉ ~15% dạng bài chấm
      tự động được (Toán ~95%); bản chất gần với học từ vựng hơn là với Toán → tái dùng engine SRS
      đã chạy tốt cho tiếng Anh.
-- **Việc kế tiếp:** 12 chủ đề đợt 2a đã chốt theo SGK thật → PR-1 (soạn 1 bài học mẫu để duyệt
-  định dạng) → PR-2 scaffold `apps/math`. Các điểm cần giáo viên duyệt (§8.3 kho-kien-thuc-toan)
-  nên xử lý trước hoặc song song, không chặn PR-1.
+  4. **[2026-08-01, người dùng chốt] Hình minh hoạ bài học — kết hợp 2 nguồn theo môn:**
+     **SVG tự vẽ bằng code** cho Toán/Lý/Hoá (hình học, sơ đồ mạch điện, ống nghiệm/phản ứng —
+     miễn phí, nhẹ, sắc nét mọi kích thước, đổi theo theme sáng/tối); **AI sinh ảnh** cho Sinh
+     (động vật, tế bào, hệ sinh thái — cần tả thực, SVG không hợp). ⚠️ **KHÔNG chép hình vẽ từ
+     SGK** — chỉ dùng SGK để biết "minh hoạ ý gì" (đúng ranh giới bản quyền §0.1
+     `huong-dan-doi-chieu-sgk.md`), hình phải tự vẽ/tự sinh mới hoàn toàn. Ảnh AI cần duyệt thủ
+     công tránh sai kiến thức khoa học + tốn phí API (nên cache lại, không sinh lại mỗi lần xem
+     — có thể theo mô hình cache TTS mã hoá đã có ở `packages/core-ai/fileStorage.ts`).
+     **Áp dụng khi viết PR-1** (bài học mẫu), chưa làm ngay — ghi lại quyết định trước để không
+     quên khi tới lúc.
+- **Việc kế tiếp:** 12 chủ đề đợt 2a đã chốt theo SGK thật → PR-1 (soạn 1 bài học mẫu, có áp dụng
+  quyết định hình minh hoạ ở trên, để duyệt định dạng) → PR-2 scaffold `apps/math`. Các điểm cần
+  giáo viên duyệt (§8.3 kho-kien-thuc-toan) nên xử lý trước hoặc song song, không chặn PR-1.
 
 ## Đã xong — tóm tắt theo mảng
 
