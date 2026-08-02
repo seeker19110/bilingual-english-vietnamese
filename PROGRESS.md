@@ -1574,6 +1574,23 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- **[2026-08-02] react-router: đã nghiên cứu + viết kế hoạch nâng v7, CHỜ BẠN CHỌN PHƯƠNG ÁN.**
+  Xác nhận `npm audit` không có bản vá nào ở nhánh 6.x — 2 CVE moderate chỉ được vá ở
+  `react-router-dom@7.18.2`, bắt buộc nâng major mới hết cảnh báo. Đã thử nâng lên `6.30.4` (bản
+  6.x mới nhất) trước — **vẫn dính lỗ hổng**, đã revert về `^6.24.1` (không tự ý nâng major vì vi
+  phạm CLAUDE.md mục 12 "breaking change phải hỏi trước"). Đã quét toàn bộ codebase: app chỉ dùng
+  Declarative Mode cơ bản (`BrowserRouter`/`Routes`/`Route`/`Navigate`/`Link`/`useLocation`/
+  `useNavigate`/`useParams`/`useSearchParams`, 32 file), KHÔNG dùng data router/loader/action/
+  `<Outlet>` → đây là kịch bản migration v6→v7 dễ nhất theo tài liệu chính thức, rủi ro thấp. Kế
+  hoạch chi tiết (2 phương án: nâng thẳng 1 bước hoặc 2 bước qua `future` flags) ở
+  `docs/research/dac-ta-nang-cap-react-router-v7-2026-08-02.md` — **chưa thi hành code**, cần bạn
+  chọn phương án trước khi làm.
+- **[2026-08-02] `restore:r2 -- --restore-into`: đã viết runbook kiểm thử, CHỜ BẠN TỰ CHẠY TRÊN
+  VPS.** Sandbox Claude Code web không có Docker daemon/mạng tới VPS nên không tự test được nhánh
+  phá huỷ dữ liệu tại đây. Đã soạn quy trình 7 bước an toàn (dùng database TẠM
+  `english_tutor_restore_test`, không đụng `english_tutor` production) ở
+  `docs/kiem-thu-restore-into-staging.md` — gồm đối chiếu số liệu trước/sau, dọn dẹp, và lý do cố
+  tình KHÔNG tự động hoá thành 1 script (cần người đọc log/phán đoán chênh lệch số liệu).
 - **[Audit toàn diện 2026-08-01 — phát hiện mới]** Tầng 1–6 theo `docs/framework/QUY-TRINH-AUDIT.md`
   đều đạt (build/typecheck/lint/format/1033 test/bundle-size ✅, 0 secret hardcode, 0 high/critical
   `npm audit`, coverage 52.94/87.02/79.93/52.94% vượt sàn 48/87/76/48). Nợ còn lại:
