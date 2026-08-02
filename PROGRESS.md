@@ -254,9 +254,9 @@ song ngữ MỚI** (`ft-*`/`fb-*`/... theo 6 thể loại `fairy-tale`/`fable`/`
 truyện, tự cuộn theo câu, ghi nguồn bắt buộc) + `components/StoryCard.tsx`. Bản tiếng Anh **bắt
 buộc tải thật từ Project Gutenberg** (không gõ từ trí nhớ — CLAUDE.md §5), tiếng Việt Opus dịch
 tay chất lượng văn học. Migration `0032` bật feature `listening` cho mọi gói.
-**Tiến độ nội dung [cập nhật 2026-08-02, đóng vn-folk]:** ✅ **`fairy-tale` XONG 20/20** · ✅
-**`vn-folk` XONG 20/20** — hai thể loại đã hoàn tất trọn vẹn. `fable` 6/20 · `myth`/`humor`/`children`
-chưa bắt đầu. **Tổng 46/120 truyện.**
+**Tiến độ nội dung [cập nhật 2026-08-02, đóng fable]:** ✅ **`fairy-tale` XONG 20/20** · ✅
+**`vn-folk` XONG 20/20** · ✅ **`fable` XONG 20/20** — ba thể loại đã hoàn tất trọn vẹn.
+`myth`/`humor`/`children` chưa bắt đầu. **Tổng 60/120 truyện — đúng nửa danh mục.**
 ⚠️ Cách cập nhật con số này: **đếm file thật** (`ls apps/english/src/data/stories/raw/ft-*.json |
 wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale` "12/20" trong khi thực tế mới có
 11 file.
@@ -265,6 +265,23 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-08-02] Trang Nghe — ✅ ĐÓNG THỂ LOẠI `fable` 20/20 (14 truyện Jataka).** Soạn nốt toàn
+  bộ phần còn lại của thể loại ngụ ngôn từ **Jataka Tales** (PG 62514, Babbitt 1912) và **More
+  Jataka Tales** (PG 7518, Babbitt 1922): Rùa tự cứu mình · Rùa nói nhiều · Con ngỗng vàng · Con
+  Bò thắng cược · Cái cày bị mất trộm · Chim gõ kiến, Rùa và Hươu · Con đường cát · Cuộc cãi vã
+  của bầy chim cút · Chú Thỏ nhút nhát dại dột · Vua Hươu cây Đa · Cua và Sếu · Ba con Cá · Con
+  Khỉ tham lam · Hoàng tử Độc Ác và những con vật biết ơn.
+  **Thay 4 mục trong danh mục** (đã cập nhật `docs/research/danh-muc-truyen-nghe-2026-08-01.md`):
+  3 truyện Aesop quá ngắn (`fb-boys-frogs`/`fb-walnut-tree`/`fb-charcoal-fuller`, đều < 200 từ)
+  đổi sang Jataka ≥ 489 từ; và **`fb-cruel-crane` bị loại vì TRÙNG NỘI DUNG với `fb-crab-crane`**
+  — "The Cruel Crane Outwitted" (Jacobs, PG 7128) và "The Crab and the Crane" (Babbitt, PG 62514)
+  là **cùng một tích Jataka**, chỉ khác người kể lại. Thay bằng `fb-prince-wicked` (1.692 từ).
+  ⚠️ **Bài học cho các thể loại sau:** khi lấy truyện từ nhiều tuyển tập cùng một truyền thống
+  (Jataka, Grimm/Lang, Andersen nhiều bản dịch) phải **đối chiếu NỘI DUNG, không chỉ đối chiếu
+  tên** — tên khác nhau vẫn có thể là cùng một truyện.
+  Độ dài thể loại: 9.789 từ EN, trung bình 489 từ/truyện (bản Aesop cũ chỉ ~94 từ/truyện, quá
+  ngắn cho thư viện nghe). `fb-prince-wicked` có cảnh đám đông giết vua bằng tên và đá — nguyên
+  văn public domain, giữ nguyên, nhưng nên lưu ý khi gắn nhãn độ tuổi.
 - **[2026-08-02] Trang Nghe — ✅ ĐÓNG THỂ LOẠI `vn-folk` 20/20 (đợt 2, 7 truyện cuối).** Soạn nốt
   #14–20: Lưu Bình — Dương Lễ · Sự tích con muỗi · Người con gái Nam Xương · Sự tích cây vú sữa ·
   Sự tích chim quốc · Ba điều ước · Trí khôn của ta đây. Cả 20 truyện `vn-folk` đạt 497–709 từ EN,
