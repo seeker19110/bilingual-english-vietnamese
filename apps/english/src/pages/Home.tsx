@@ -129,7 +129,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
     },
     {
       kind: 'link',
-      path: '/listening?tab=stories',
+      path: '/stories',
       icon: BookMarked,
       gradient: 'from-fuchsia-500 to-purple-400',
       glow: 'shadow-fuchsia-500/20',

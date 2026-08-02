@@ -1,4 +1,4 @@
-// StoryReader — màn đọc 1 truyện cổ tích/ngụ ngôn, route /listening/story/:id (mục 6.4 đặc tả
+// StoryReader — màn đọc 1 truyện cổ tích/ngụ ngôn, route /stories/:id (mục 6.4 đặc tả
 // trang Nghe). Tải nội dung LAZY qua loadStory() (không import tĩnh — tránh phình bundle).
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'

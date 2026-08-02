@@ -1,9 +1,10 @@
 // Listening — trang "Thư viện Nghe" (/listening), gom mọi nội dung để NGHE-HIỂU (khác /phrases và
-// mục "Nghe" ở /practice vốn là bài tập CÓ CHẤM ĐIỂM). 3 tab: Câu thông dụng · Hội thoại · Truyện.
-// Tab Truyện gom cả 6 thể loại, lọc bằng chip (thay vì 8 tab — không đủ chỗ trên điện thoại).
+// mục "Nghe" ở /practice vốn là bài tập CÓ CHẤM ĐIỂM). 2 tab: Câu thông dụng · Hội thoại.
+// Tab Truyện trước đây ở đây đã tách thành trang riêng /stories (2026-08-02, xem Stories.tsx)
+// để dễ phát triển thêm tính năng sau.
 // Xem docs/research/dac-ta-trang-nghe-2026-08-01.md mục 6 + danh-muc-truyen-nghe-2026-08-01.md mục 9.
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { Play, Square, Eye, EyeOff, ChevronRight } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -11,7 +12,6 @@ import { CardListSkeleton } from '../components/Skeleton'
 import VoiceMenu from '../components/VoiceMenu'
 import RateToggle from '../components/RateToggle'
 import KaraokeText, { KARAOKE_INDENT } from '../components/KaraokeText'
-import StoryCard from '../components/StoryCard'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { getDirection } from '../lib/storage'
@@ -21,15 +21,11 @@ import { loadIndex, loadSubject } from '../data/patterns/loader'
 import type { SubjectMeta, Subject } from '../data/patterns/loader'
 import { getAllDialogues } from '../data/dialoguesLoader'
 import type { Dialogue } from '../data/dialogues'
-import { loadStoryIndex } from '../data/stories/loader'
-import { STORY_KINDS } from '../data/stories/index'
-import type { StoryMeta, StoryKind } from '../data/stories/index'
 
-type Tab = 'phrases' | 'dialogues' | 'stories'
-const TABS: Tab[] = ['phrases', 'dialogues', 'stories']
+type Tab = 'phrases' | 'dialogues'
+const TABS: Tab[] = ['phrases', 'dialogues']
 
 export default function Listening() {
-  const nav = useNavigate()
   const { user } = useAuth()
   const { T } = useLang()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -47,7 +43,6 @@ export default function Listening() {
   const TAB_LABELS: Record<Tab, string> = {
     phrases: T.tabPhrases,
     dialogues: T.tabDialogues,
-    stories: T.tabStories,
   }
 
   return (
@@ -61,11 +56,11 @@ export default function Listening() {
           </div>
         </div>
 
-        {/* Thanh 3 tab */}
+        {/* Thanh 2 tab */}
         <div
           role="tablist"
           aria-label={T.listeningPageTitle}
-          className="grid grid-cols-3 gap-1.5 mb-5"
+          className="grid grid-cols-2 gap-1.5 mb-5"
         >
           {TABS.map((key) => (
             <button
@@ -86,7 +81,6 @@ export default function Listening() {
 
         {tab === 'phrases' && <PhrasesTab isA={isA} T={T} />}
         {tab === 'dialogues' && <DialoguesTab isA={isA} T={T} plan={user?.plan ?? 'free'} />}
-        {tab === 'stories' && <StoriesTab isA={isA} T={T} nav={nav} />}
       </main>
     </div>
   )
@@ -229,149 +223,6 @@ function DialoguesTab({
           </div>
         </div>
       ))}
-    </div>
-  )
-}
-
-// ── Tab 3 — Kho truyện (6 thể loại, lọc bằng chip) ────────────────────────────
-
-/** Nhãn hiển thị của từng thể loại, theo ngôn ngữ giao diện. */
-function kindLabels(T: Lang): Record<StoryKind, string> {
-  return {
-    'fairy-tale': T.kindFairyTale,
-    fable: T.kindFable,
-    'vn-folk': T.kindVnFolk,
-    myth: T.kindMyth,
-    humor: T.kindHumor,
-    children: T.kindChildren,
-  }
-}
-
-/** Chip lọc dùng chung cho hàng thể loại và hàng quốc gia. */
-function FilterChip({
-  label,
-  active,
-  onClick,
-}: {
-  label: string
-  active: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      onClick={onClick}
-      aria-pressed={active}
-      className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-        active
-          ? 'bg-accent-500/20 text-accent-300 theme-light:text-accent-800 border-accent-500/30'
-          : 'bg-zinc-900/60 text-zinc-400 border-zinc-800 hover:text-zinc-300'
-      }`}
-    >
-      {label}
-    </button>
-  )
-}
-
-function StoriesTab({
-  isA,
-  T,
-  nav,
-}: {
-  isA: boolean
-  T: Lang
-  nav: ReturnType<typeof useNavigate>
-}) {
-  const [all, setAll] = useState<StoryMeta[] | null>(null)
-  const [kind, setKind] = useState<StoryKind | null>(null)
-  const [country, setCountry] = useState<string | null>(null)
-
-  useEffect(() => {
-    loadStoryIndex().then(setAll)
-  }, [])
-
-  const stories = useMemo(() => all ?? [], [all])
-  const labels = kindLabels(T)
-
-  // Chỉ hiện chip của thể loại thật sự có truyện, giữ đúng thứ tự STORY_KINDS.
-  const kinds = useMemo(
-    () => STORY_KINDS.filter((k) => stories.some((s) => s.kind === k)),
-    [stories],
-  )
-
-  // Danh sách quốc gia tính TRÊN thể loại đang chọn, để không hiện chip rỗng.
-  const byKind = kind ? stories.filter((s) => s.kind === kind) : stories
-  const countries = useMemo(() => {
-    const set = new Set<string>()
-    byKind.forEach((s) => set.add(isA ? s.countryVi : s.countryEn))
-    return [...set]
-  }, [byKind, isA])
-
-  const shown = country
-    ? byKind.filter((s) => (isA ? s.countryVi : s.countryEn) === country)
-    : byKind
-
-  function selectKind(next: StoryKind | null) {
-    setKind(next)
-    setCountry(null) // đổi thể loại thì bỏ lọc quốc gia cũ (có thể không còn tồn tại)
-  }
-
-  if (all === null) return <CardListSkeleton rows={4} />
-  if (stories.length === 0) return <EmptyState isA={isA} />
-
-  return (
-    <div>
-      {kinds.length > 1 && (
-        <div
-          className="flex gap-2 pb-2 overflow-x-auto scrollbar-none"
-          role="group"
-          aria-label={T.filterKind}
-        >
-          <FilterChip
-            label={T.phrasesAll}
-            active={kind === null}
-            onClick={() => selectKind(null)}
-          />
-          {kinds.map((k) => (
-            <FilterChip
-              key={k}
-              label={labels[k]}
-              active={kind === k}
-              onClick={() => selectKind(kind === k ? null : k)}
-            />
-          ))}
-        </div>
-      )}
-      {countries.length > 1 && (
-        <div
-          className="flex gap-2 pb-3 overflow-x-auto scrollbar-none"
-          role="group"
-          aria-label={T.filterCountry}
-        >
-          <FilterChip
-            label={T.phrasesAll}
-            active={country === null}
-            onClick={() => setCountry(null)}
-          />
-          {countries.map((c) => (
-            <FilterChip
-              key={c}
-              label={c}
-              active={country === c}
-              onClick={() => setCountry(country === c ? null : c)}
-            />
-          ))}
-        </div>
-      )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {shown.map((story) => (
-          <StoryCard
-            key={story.id}
-            story={story}
-            isA={isA}
-            onClick={() => nav(`/listening/story/${story.id}`)}
-          />
-        ))}
-      </div>
     </div>
   )
 }
