@@ -84,7 +84,12 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 
 ## 4. Thể loại 2 — Truyện ngụ ngôn (`kind: "fable"`)
 
-> **📌 VIỆC CHO PHIÊN SAU — chốt 2026-08-01 sau khi đo độ dài thật:**
+> ## ✅ **HOÀN TẤT 20/20 (2026-08-02)** — thể loại `fable` đã soạn xong toàn bộ.
+>
+> Đợt cuối bổ sung 14 truyện Jataka (PG 62514 + PG 7518). Tổng độ dài EN của thể loại: 9.789 từ,
+> trung bình 489 từ/truyện (bản Aesop cũ chỉ ~94 từ/truyện).
+
+> **📌 Ghi chú độ dài — chốt 2026-08-01 sau khi đo độ dài thật:**
 >
 > Đã đo 7 truyện đầu tiên: ngụ ngôn Aesop nguyên văn CỰC NGẮN — `fb-fox-grapes` 56 từ (~20 giây
 > nghe), `fb-boy-cried-wolf` 98 từ, `fb-tortoise-hare` 128 từ. Đây là ĐÚNG bản Townsend 1867,
@@ -97,36 +102,44 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 >    Just So Stories (PG 2781), Beatrix Potter — đều dài hơn Aesop nhiều lần.
 > 3. Giảm tỷ trọng Aesop (PG 21) xuống, **chỉ giữ các truyện Aesop DÀI**.
 >
-> **Cần làm:** thay 3 mục Aesop ngắn nhất — `fb-boys-frogs`, `fb-walnut-tree`,
-> `fb-charcoal-fuller` — bằng truyện dài hơn. **CHƯA chọn được truyện thay thế** vì phiên này
-> không có mạng (container cũ, policy Gutenberg chưa áp). Phiên sau có mạng phải: `curl` mục lục
-> PG 62514/7518/7128 → chọn 3 truyện ≥ 400 từ → cập nhật bảng dưới. **KHÔNG được tự nghĩ ra tên
-> truyện** (CLAUDE.md §5) — phải đọc mục lục thật.
+> **✅ ĐÃ XỬ LÝ 2026-08-02.** Đã `curl` mục lục thật PG 62514 / 7518 / 7128, đo `wc -w` từng
+> truyện rồi thay 4 mục (bảng dưới đã cập nhật):
+>
+> | Mục cũ                       | Lý do bỏ                           | Mục mới thay vào                      | Từ EN |
+> | ---------------------------- | ---------------------------------- | ------------------------------------- | ----- |
+> | `fb-boys-frogs` (Aesop)      | quá ngắn (< 200 từ)                | `fb-ox-won-forfeit` (PG 62514)        | 504   |
+> | `fb-walnut-tree` (Aesop)     | quá ngắn (< 200 từ)                | `fb-stolen-plow` (PG 7518)            | 489   |
+> | `fb-charcoal-fuller` (Aesop) | quá ngắn (< 200 từ)                | `fb-woodpecker-turtle-deer` (PG 7518) | 717   |
+> | `fb-cruel-crane` (PG 7128)   | **TRÙNG NỘI DUNG** `fb-crab-crane` | `fb-prince-wicked` (PG 7518)          | 1.692 |
+>
+> Lưu ý cho phiên sau: "The Cruel Crane Outwitted" (Jacobs, PG 7128) và "The Crab and the Crane"
+> (Babbitt, PG 62514) là **cùng một tích Jataka**, chỉ khác người kể lại — khi chọn truyện từ
+> nhiều tuyển tập Jataka phải đối chiếu nội dung, không chỉ đối chiếu tên.
 >
 > Ngoài ra `ft-tam-cam` đã được viết lại dày hơn (976 → ~2.100 từ EN) vì bản đầu kể quá gọn.
 
-| #   | id                      | Tiếng Anh                            | Tiếng Việt                   | Nước        | Nguồn    | Cấp |
-| --- | ----------------------- | ------------------------------------ | ---------------------------- | ----------- | -------- | --- |
-| 1   | `fb-frog-in-well`       | The Frog in the Well                 | Ếch ngồi đáy giếng           | 🇻🇳 Việt Nam | Opus     | A2  |
-| 2   | `fb-blind-men-elephant` | The Blind Men and the Elephant       | Thầy bói xem voi             | 🇻🇳 Việt Nam | Opus     | A2  |
-| 3   | `fb-tortoise-hare`      | The Hare and the Tortoise            | Rùa và Thỏ                   | 🇬🇷 Hy Lạp   | PG 21    | A2  |
-| 4   | `fb-boy-cried-wolf`     | The Shepherd's Boy and the Wolf      | Cậu bé chăn cừu và con sói   | 🇬🇷 Hy Lạp   | PG 21    | A2  |
-| 5   | `fb-fox-grapes`         | The Fox and the Grapes               | Cáo và chùm nho              | 🇬🇷 Hy Lạp   | PG 21    | A2  |
-| 6   | `fb-boys-frogs`         | The Boys and the Frogs               | Lũ trẻ và đàn ếch            | 🇬🇷 Hy Lạp   | PG 21    | A2  |
-| 7   | `fb-walnut-tree`        | The Walnut-Tree                      | Cây óc chó                   | 🇬🇷 Hy Lạp   | PG 21    | A2  |
-| 8   | `fb-charcoal-fuller`    | The Charcoal-Burner and the Fuller   | Người đốt than và thợ giặt   | 🇬🇷 Hy Lạp   | PG 21    | A2  |
-| 9   | `fb-monkey-crocodile`   | The Monkey and the Crocodile         | Khỉ và Cá sấu                | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
-| 10  | `fb-turtle-saved-life`  | How the Turtle Saved His Own Life    | Rùa tự cứu mình              | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
-| 11  | `fb-talkative-turtle`   | The Turtle Who Couldn't Stop Talking | Rùa nói nhiều                | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
-| 12  | `fb-sandy-road`         | The Sandy Road                       | Con đường cát                | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
-| 13  | `fb-quarrel-quails`     | The Quarrel of the Quails            | Cuộc cãi vã của bầy chim cút | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
-| 14  | `fb-timid-rabbit`       | The Foolish, Timid Rabbit            | Chú thỏ nhát gan khờ khạo    | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
-| 15  | `fb-banyan-deer`        | The Banyan Deer                      | Con nai cây đa               | 🇮🇳 Ấn Độ    | PG 62514 | B1  |
-| 16  | `fb-crab-crane`         | The Crab and the Crane               | Cua và Sếu                   | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
-| 17  | `fb-golden-goose`       | The Golden Goose                     | Con ngỗng vàng               | 🇮🇳 Ấn Độ    | PG 7518  | A2  |
-| 18  | `fb-three-fishes`       | The Three Fishes                     | Ba con cá                    | 🇮🇳 Ấn Độ    | PG 7518  | A2  |
-| 19  | `fb-penny-wise-monkey`  | The Penny-Wise Monkey                | Con khỉ tham bát bỏ mâm      | 🇮🇳 Ấn Độ    | PG 7518  | A2  |
-| 20  | `fb-cruel-crane`        | The Cruel Crane Outwitted            | Con sếu độc ác bị lừa        | 🇮🇳 Ấn Độ    | PG 7128  | B1  |
+| #   | id                          | Tiếng Anh                              | Tiếng Việt                               | Nước        | Nguồn    | Cấp |
+| --- | --------------------------- | -------------------------------------- | ---------------------------------------- | ----------- | -------- | --- |
+| 1   | `fb-frog-in-well`           | The Frog in the Well                   | Ếch ngồi đáy giếng                       | 🇻🇳 Việt Nam | Opus     | A2  |
+| 2   | `fb-blind-men-elephant`     | The Blind Men and the Elephant         | Thầy bói xem voi                         | 🇻🇳 Việt Nam | Opus     | A2  |
+| 3   | `fb-tortoise-hare`          | The Hare and the Tortoise              | Rùa và Thỏ                               | 🇬🇷 Hy Lạp   | PG 21    | A2  |
+| 4   | `fb-boy-cried-wolf`         | The Shepherd's Boy and the Wolf        | Cậu bé chăn cừu và con sói               | 🇬🇷 Hy Lạp   | PG 21    | A2  |
+| 5   | `fb-fox-grapes`             | The Fox and the Grapes                 | Cáo và chùm nho                          | 🇬🇷 Hy Lạp   | PG 21    | A2  |
+| 6   | `fb-ox-won-forfeit`         | The Ox Who Won the Forfeit             | Con Bò thắng cược                        | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
+| 7   | `fb-stolen-plow`            | The Stolen Plow                        | Cái cày bị mất trộm                      | 🇮🇳 Ấn Độ    | PG 7518  | A2  |
+| 8   | `fb-woodpecker-turtle-deer` | The Woodpecker, Turtle, and Deer       | Chim gõ kiến, Rùa và Hươu                | 🇮🇳 Ấn Độ    | PG 7518  | A2  |
+| 9   | `fb-monkey-crocodile`       | The Monkey and the Crocodile           | Khỉ và Cá sấu                            | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
+| 10  | `fb-turtle-saved-life`      | How the Turtle Saved His Own Life      | Rùa tự cứu mình                          | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
+| 11  | `fb-talkative-turtle`       | The Turtle Who Couldn't Stop Talking   | Rùa nói nhiều                            | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
+| 12  | `fb-sandy-road`             | The Sandy Road                         | Con đường cát                            | 🇮🇳 Ấn Độ    | PG 62514 | B1  |
+| 13  | `fb-quarrel-quails`         | The Quarrel of the Quails              | Cuộc cãi vã của bầy chim cút             | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
+| 14  | `fb-timid-rabbit`           | The Foolish, Timid Rabbit              | Chú Thỏ nhút nhát dại dột                | 🇮🇳 Ấn Độ    | PG 62514 | A2  |
+| 15  | `fb-banyan-deer`            | The Banyan Deer                        | Vua Hươu cây Đa                          | 🇮🇳 Ấn Độ    | PG 62514 | B1  |
+| 16  | `fb-crab-crane`             | The Crab and the Crane                 | Cua và Sếu                               | 🇮🇳 Ấn Độ    | PG 62514 | B1  |
+| 17  | `fb-golden-goose`           | The Golden Goose                       | Con ngỗng vàng                           | 🇮🇳 Ấn Độ    | PG 7518  | A2  |
+| 18  | `fb-three-fishes`           | The Three Fishes                       | Ba con Cá                                | 🇮🇳 Ấn Độ    | PG 7518  | A2  |
+| 19  | `fb-penny-wise-monkey`      | The Penny-Wise Monkey                  | Con Khỉ tham lam                         | 🇮🇳 Ấn Độ    | PG 7518  | A2  |
+| 20  | `fb-prince-wicked`          | Prince Wicked and the Grateful Animals | Hoàng tử Độc Ác và những con vật biết ơn | 🇮🇳 Ấn Độ    | PG 7518  | B1  |
 
 ## 5. Thể loại 3 — Truyện dân gian Việt Nam (`kind: "vn-folk"`)
 
