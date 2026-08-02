@@ -192,28 +192,56 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 
 ## 6. Thể loại 4 — Thần thoại (`kind: "myth"`)
 
-| #   | id                    | Tiếng Anh                        | Tiếng Việt                         | Nước      | Nguồn    | Cấp |
-| --- | --------------------- | -------------------------------- | ---------------------------------- | --------- | -------- | --- |
-| 1   | `my-perseus`          | Perseus                          | Perseus và quái vật Medusa         | 🇬🇷 Hy Lạp | PG 677   | B2  |
-| 2   | `my-argonauts`        | The Argonauts                    | Đoàn thủy thủ tàu Argo             | 🇬🇷 Hy Lạp | PG 677   | B2  |
-| 3   | `my-theseus`          | Theseus                          | Theseus và quái vật Minotaur       | 🇬🇷 Hy Lạp | PG 677   | B2  |
-| 4   | `my-prometheus`       | Prometheus and Pandora           | Prometheus và chiếc hộp Pandora    | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 5   | `my-apollo-daphne`    | Apollo and Daphne                | Apollo và nàng Daphne              | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 6   | `my-pyramus-thisbe`   | Pyramus and Thisbe               | Pyramus và Thisbe                  | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 7   | `my-phaeton`          | Phaeton                          | Phaeton và cỗ xe mặt trời          | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 8   | `my-midas`            | Midas                            | Vua Midas và bàn tay vàng          | 🇬🇷 Hy Lạp | PG 3327  | B1  |
-| 9   | `my-baucis-philemon`  | Baucis and Philemon              | Baucis và Philemon                 | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 10  | `my-proserpine`       | Pluto and Proserpine             | Pluto và nàng Proserpine           | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 11  | `my-pygmalion`        | Pygmalion's Statue               | Pho tượng của Pygmalion            | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 12  | `my-cupid-psyche`     | Cupid and Psyche                 | Cupid và Psyche                    | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 13  | `my-narcissus-echo`   | Echo and Narcissus               | Tiếng vọng và chàng Narcissus      | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 14  | `my-arachne`          | Arachne                          | Nàng Arachne dệt vải               | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 15  | `my-daedalus-icarus`  | Daedalus and Icarus              | Daedalus và Icarus                 | 🇬🇷 Hy Lạp | PG 3327  | B1  |
-| 16  | `my-orpheus-eurydice` | Orpheus and Eurydice             | Orpheus và Eurydice                | 🇬🇷 Hy Lạp | PG 3327  | B2  |
-| 17  | `my-building-wall`    | The Building of the Wall         | Bức tường thành Asgard             | 🇮🇸 Bắc Âu | PG 24737 | B1  |
-| 18  | `my-iduna-apples`     | Iduna and Her Apples             | Nàng Iduna và những quả táo        | 🇮🇸 Bắc Âu | PG 24737 | B1  |
-| 19  | `my-sif-golden-hair`  | Sif's Golden Hair                | Mái tóc vàng của Sif               | 🇮🇸 Bắc Âu | PG 24737 | B1  |
-| 20  | `my-thor-thrym`       | How Thor and Loki Befooled Thrym | Thor và Loki lừa gã khổng lồ Thrym | 🇮🇸 Bắc Âu | PG 24737 | B1  |
+> **📌 SỬA DANH MỤC 2026-08-02 — 3 mục Kingsley quá dài, đã tách theo PART.**
+>
+> Đo nguyên văn PG 677: `my-perseus` **12.068 từ**, Argonauts và Theseus còn dài hơn. Một thẻ
+> nghe 12.000 từ ≈ 45–50 phút audio — không dùng được. Danh mục có sàn ≥400 từ (§4) nhưng
+> **thiếu trần**, nên chỗ này lọt lưới. Chủ dự án chốt: **tách theo PART có sẵn của Kingsley**
+> (không cắt giữa chừng, mỗi PART vốn là một chương trọn vẹn), lấy tiêu đề PART thật trong mục lục.
+>
+> Số đo từng PART (`wc -w` thật): Perseus I 1.336 · II 3.124 · III 2.709 · IV 3.530 · V 1.367 ·
+> Argonauts I 2.699 · II 2.769 · III 1.192 · IV 7.363 · V 7.465 · VI 845 ·
+> Theseus I 1.319 · II 7.353 · III 1.522 · IV 3.768.
+>
+> **Loại** A-IV, A-V, T-II (đều >7.000 từ) và A-VI (845 từ, hụt so với mạch truyện).
+> Kingsley chiếm **8 slot** (Perseus trọn 5 phần + Theseus 3 phần I/III/IV — vẫn thành một mạch
+> liền: nhấc tảng đá → giết Minotaur → chết vì kiêu ngạo). Argonauts bị bỏ khỏi PG 677 vì các
+> phần cốt lõi đều quá dài. Còn lại 12 slot cho Bulfinch (8) + Colum (4).
+>
+> ⚠️ Hệ quả: **8 thần thoại Bulfinch trong bảng cũ phải cắt** để giữ tổng 20. Nếu chủ dự án muốn
+> giữ đủ 16 mục Bulfinch thì phải nâng thể loại `myth` lên >20 truyện — cần quyết định riêng.
+>
+> Lỗi bản quét đã sửa khi soạn (ghi rõ trong `source.en` từng file): `flail` → `frail` (Perseus I),
+> `Perseuss` → `Perseus` (Perseus IV). Các dòng `[Picture: ...]` là chú thích tranh, đã bỏ vì TTS
+> sẽ đọc lên thành lời truyện.
+
+| #   | id                    | Tiếng Anh                                                    | Tiếng Việt                             | Nước      | Nguồn   | Cấp | TT  |
+| --- | --------------------- | ------------------------------------------------------------ | -------------------------------------- | --------- | ------- | --- | --- |
+| 1   | `my-perseus-1`        | Perseus, Part I: How Perseus and His Mother Came to Seriphos | Perseus I: Hai mẹ con dạt vào Seriphos | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
+| 2   | `my-perseus-2`        | Perseus, Part II: How Perseus Vowed a Rash Vow               | Perseus II: Lời thề nông nổi           | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
+| 3   | `my-perseus-3`        | Perseus, Part III: How Perseus Slew the Gorgon               | Perseus III: Chém quái vật Medusa      | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
+| 4   | `my-perseus-4`        | Perseus, Part IV: How Perseus Came to the Æthiops            | Perseus IV: Cứu nàng Andromeda         | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
+| 5   | `my-perseus-5`        | Perseus, Part V: How Perseus Came Home Again                 | Perseus V: Ngày trở về                 | 🇬🇷 Hy Lạp | PG 677  | B2  | ✅  |
+| 6   | `my-theseus-1`        | Theseus, Part I: How Theseus Lifted the Stone                | Theseus I: Nhấc tảng đá                | 🇬🇷 Hy Lạp | PG 677  | B2  | ⏳  |
+| 7   | `my-theseus-3`        | Theseus, Part III: How Theseus Slew the Minotaur             | Theseus III: Giết quái vật Minotaur    | 🇬🇷 Hy Lạp | PG 677  | B2  | ⏳  |
+| 8   | `my-theseus-4`        | Theseus, Part IV: How Theseus Fell by His Pride              | Theseus IV: Ngã vì kiêu ngạo           | 🇬🇷 Hy Lạp | PG 677  | B2  | ⏳  |
+| 9   | `my-prometheus`       | Prometheus and Pandora                                       | Prometheus và chiếc hộp Pandora        | 🇬🇷 Hy Lạp | PG 3327 | B2  | ⏳  |
+| 10  | `my-proserpine`       | Pluto and Proserpine                                         | Pluto và nàng Proserpine               | 🇬🇷 Hy Lạp | PG 3327 | B2  | ⏳  |
+| 11  | `my-midas`            | Midas                                                        | Vua Midas và bàn tay vàng              | 🇬🇷 Hy Lạp | PG 3327 | B1  | ⏳  |
+| 12  | `my-daedalus-icarus`  | Daedalus and Icarus                                          | Daedalus và Icarus                     | 🇬🇷 Hy Lạp | PG 3327 | B1  | ⏳  |
+| 13  | `my-orpheus-eurydice` | Orpheus and Eurydice                                         | Orpheus và Eurydice                    | 🇬🇷 Hy Lạp | PG 3327 | B2  | ⏳  |
+| 14  | `my-narcissus-echo`   | Echo and Narcissus                                           | Tiếng vọng và chàng Narcissus          | 🇬🇷 Hy Lạp | PG 3327 | B2  | ⏳  |
+| 15  | `my-cupid-psyche`     | Cupid and Psyche                                             | Cupid và Psyche                        | 🇬🇷 Hy Lạp | PG 3327 | B2  | ⏳  |
+| 16  | `my-arachne`          | Arachne                                                      | Nàng Arachne dệt vải                   | 🇬🇷 Hy Lạp | PG 3327 | B2  | ⏳  |
+
+| 17 | `my-building-wall` | The Building of the Wall | Bức tường thành Asgard | 🇮🇸 Bắc Âu | PG 24737 | B1 | ⏳ |
+| 18 | `my-iduna-apples` | Iduna and Her Apples | Nàng Iduna và những quả táo | 🇮🇸 Bắc Âu | PG 24737 | B1 | ⏳ |
+| 19 | `my-sif-golden-hair` | Sif's Golden Hair | Mái tóc vàng của Sif | 🇮🇸 Bắc Âu | PG 24737 | B1 | ⏳ |
+| 20 | `my-thor-thrym` | How Thor and Loki Befooled Thrym | Thor và Loki lừa gã khổng lồ Thrym | 🇮🇸 Bắc Âu | PG 24737 | B1 | ⏳ |
+
+**5 mục Bulfinch đã CẮT** để giữ tổng 20 sau khi Kingsley chiếm 8 slot (xem cảnh báo ở trên):
+`my-apollo-daphne` · `my-pyramus-thisbe` · `my-phaeton` · `my-baucis-philemon` · `my-pygmalion`.
+Nếu chủ dự án muốn giữ lại thì phải nâng `myth` lên >20 truyện.
 
 ## 7. Thể loại 5 — Truyện cười / trí khôn dân gian (`kind: "humor"`)
 
