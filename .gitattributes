@@ -1,0 +1,27 @@
+# Chuẩn hoá xuống dòng cho toàn repo.
+#
+# Vì sao cần: máy Windows thường đặt core.autocrlf=true, nên khi checkout Git đổi LF -> CRLF
+# trong thư mục làm việc. Prettier thấy CRLF liền ghi đè lại, khiến `npm run format` "sửa" hàng
+# chục file không liên quan và tạo diff rác ở mọi PR. Ép eol=lf làm checkout giữ nguyên LF, khớp
+# với thứ đang lưu trong repo.
+#
+# text=auto: Git tự nhận đâu là file văn bản. eol=lf: luôn checkout bằng LF trên mọi hệ điều hành.
+* text=auto eol=lf
+
+# Dữ liệu gốc bên thứ ba (CEFR-J, Octanove) vốn phát hành bằng CRLF — giữ nguyên byte như bản
+# gốc để còn đối chiếu được với nguồn, đừng để Git viết lại. `-text` = không chuyển đổi gì cả.
+data/cefrj/*.csv -text
+
+# Nhị phân — không đụng vào nội dung, không thử diff theo dòng.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.mp3 binary
+*.wav binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.pdf binary
