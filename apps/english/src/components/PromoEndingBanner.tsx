@@ -46,7 +46,11 @@ export default function PromoEndingBanner() {
   }
 
   return (
-    <div role="status" className="bg-accent-500/10 border-b border-accent-500/25 text-sm">
+    <div
+      role="status"
+      className="fixed inset-x-0 z-30 bg-accent-500/10 border-t border-accent-500/25 text-sm"
+      style={{ bottom: 'var(--bnav-h)' }}
+    >
       <div className="max-w-3xl mx-auto px-4 py-2.5 flex items-center gap-3">
         <p className="flex-1 min-w-0 text-zinc-200 theme-light:text-zinc-800">
           Từ <strong className="font-semibold">{formatDateVN(promoUntil as string)}</strong>, app sẽ
