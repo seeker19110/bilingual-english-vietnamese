@@ -50,9 +50,12 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 
 ## 3. Thể loại 1 — Truyện cổ tích (`kind: "fairy-tale"`)
 
-> **Tiến độ (2026-08-01):** 12/20 đã có `raw/*.json` — #1–11 xong hết (đợt cuối bổ sung #7–9
-> Andersen từ PG 27200: Chú vịt con xấu xí, Nàng tiên cá, Cô bé tí hon). Còn #12–20
-> (Lang/Jacobs/Ozaki — PG 503 / 7439 / 4018) chưa soạn.
+> **Tiến độ (2026-08-02):** 14/20 đã có `raw/*.json` — #1–14 xong hết (đợt này bổ sung #12–14
+> Perrault qua Andrew Lang, PG 503: Người đẹp ngủ trong rừng, Mèo đi hia, Người đẹp và quái vật).
+> Còn #15–20 (Jacobs PG 7439 · Ozaki PG 4018) chưa soạn.
+>
+> ⚠️ **Đính chính (2026-08-02):** ghi chú trước ghi "12/20" là SAI — đếm thật lúc đó chỉ có 11 file
+> `ft-*.json` (đúng như chính dòng "#1–11 xong hết" ngay bên cạnh), tức còn 9 truyện chứ không phải 8. Số trong bảng §10 và `PROGRESS.md` đã được sửa theo.
 
 | #   | id                      | Tiếng Anh                                    | Tiếng Việt                  | Nước        | Nguồn        | Cấp |
 | --- | ----------------------- | -------------------------------------------- | --------------------------- | ----------- | ------------ | --- |
@@ -127,6 +130,9 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 
 Không có bản PD tiếng Anh → **Opus kể lại bằng lời văn riêng + tự dịch sang tiếng Anh**.
 Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
+
+> **Tiến độ (2026-08-02):** 3/20 đã có `raw/*.json` — #1–3 (Sơn Tinh Thuỷ Tinh, Bánh chưng bánh
+> giầy, Thánh Gióng) đã soạn ở PR #440. Còn #4–20 chưa soạn.
 
 | #   | id                               | Tiếng Việt              | Tiếng Anh                            | Cấp |
 | --- | -------------------------------- | ----------------------- | ------------------------------------ | --- |
@@ -241,12 +247,14 @@ Kéo theo:
 | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
 | 0     | Hạ tầng + UI trang Nghe + `StoryKind` 6 loại + 3 truyện VN + 6 ngụ ngôn (Aesop/Jataka nguyên văn) + 4 cổ tích Grimm/Andersen (Hansel/Gretel, Khăn đỏ, Áo mới hoàng đế, Bán diêm) | ✅ xong — PR #434                   |
 | 1     | 3 truyện cổ tích Grimm (Lọ Lem, Bạch Tuyết, Chàng lùn tinh quái)                                                                                                                 | ✅ xong — PR #435                   |
-| 2     | 3 truyện cổ tích Andersen còn lại (Vịt xấu xí, Cô bé tí hon, Nàng tiên cá — PG 27200)                                                                                            | ✅ xong — phiên 2026-08-01 (PR này) |
-| 3     | 8 truyện cổ tích Lang/Jacobs/Ozaki (còn lại của thể loại `fairy-tale`)                                                                                                           | ⏳ tiếp theo                        |
-| 4–5   | 14 ngụ ngôn còn lại (ưu tiên nguồn ≥400 từ — §4)                                                                                                                                 | chưa                                |
-| 6–7   | 17 truyện dân gian VN còn lại                                                                                                                                                    | chưa                                |
-| 8–9   | 20 thần thoại                                                                                                                                                                    | chưa                                |
-| 10–11 | 20 truyện cười                                                                                                                                                                   | chưa                                |
-| 12–13 | 20 thiếu nhi kinh điển                                                                                                                                                           | chưa                                |
+| 2     | 3 truyện cổ tích Andersen còn lại (Vịt xấu xí, Cô bé tí hon, Nàng tiên cá — PG 27200)                                                                                            | ✅ xong — PR #437                   |
+| 2b    | 3 truyện dân gian VN đầu tiên (Sơn Tinh Thuỷ Tinh, Thánh Gióng, Bánh chưng bánh giầy)                                                                                            | ✅ xong — PR #440 (phiên khác)      |
+| 3     | 3 truyện Perrault qua Andrew Lang, PG 503 (Người đẹp ngủ trong rừng, Mèo đi hia, Người đẹp và quái vật)                                                                          | ✅ xong — phiên 2026-08-02 (PR này) |
+| 4     | 6 truyện cổ tích còn lại: Jacobs PG 7439 (Jack và cây đậu thần, Ba chú lợn con, Ba chú gấu) · Ozaki PG 4018 (Momotaro, Urashima Taro, Chim sẻ bị cắt lưỡi)                       | ⏳ tiếp theo                        |
+| 5–6   | 14 ngụ ngôn còn lại (ưu tiên nguồn ≥400 từ — §4)                                                                                                                                 | chưa                                |
+| 7–8   | 17 truyện dân gian VN còn lại                                                                                                                                                    | chưa                                |
+| 9–10  | 20 thần thoại                                                                                                                                                                    | chưa                                |
+| 11–12 | 20 truyện cười                                                                                                                                                                   | chưa                                |
+| 13–14 | 20 thiếu nhi kinh điển                                                                                                                                                           | chưa                                |
 
 Tổng: ~14 đợt. Chi phí lớn nhất nằm ở **dịch tay tiếng Việt**, không phải ở code.
