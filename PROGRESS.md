@@ -254,33 +254,37 @@ song ngữ MỚI** (`ft-*`/`fb-*`/... theo 6 thể loại `fairy-tale`/`fable`/`
 truyện, tự cuộn theo câu, ghi nguồn bắt buộc) + `components/StoryCard.tsx`. Bản tiếng Anh **bắt
 buộc tải thật từ Project Gutenberg** (không gõ từ trí nhớ — CLAUDE.md §5), tiếng Việt Opus dịch
 tay chất lượng văn học. Migration `0032` bật feature `listening` cho mọi gói.
-**Tiến độ nội dung [cập nhật 2026-08-02]:** `fairy-tale` **14/20** (Tấm Cám tự soạn ·
-Hansel/Gretel · Cô bé quàng khăn đỏ · Bộ quần áo mới của hoàng đế · Cô bé bán diêm · Lọ Lem ·
-Bạch Tuyết · Chàng lùn tinh quái · Chú vịt con xấu xí · Cô bé tí hon · Nàng tiên cá ·
-**Người đẹp ngủ trong rừng · Mèo đi hia · Người đẹp và quái vật** mới thêm phiên này) — còn 6
-truyện Jacobs/Ozaki; `fable` 6/20; `vn-folk` 3/20 (PR #440); `myth`/`humor`/`children` chưa
-bắt đầu. **Tổng 23/120 truyện.**
-⚠️ Đính chính: ghi chú trước đó ghi `fairy-tale` "12/20" là SAI — đếm thật lúc ấy chỉ có 11 file
-`ft-*.json`, tức còn 9 truyện chứ không phải 8.
+**Tiến độ nội dung [cập nhật 2026-08-02]:** ✅ **`fairy-tale` XONG 20/20** — thể loại đầu tiên
+hoàn tất trọn vẹn. `fable` 6/20 · `vn-folk` 3/20 (PR #440, phiên khác) · `myth`/`humor`/`children`
+chưa bắt đầu. **Tổng 29/120 truyện.**
+⚠️ Cách cập nhật con số này: **đếm file thật** (`ls apps/english/src/data/stories/raw/ft-*.json |
+wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale` "12/20" trong khi thực tế mới có
+11 file.
 
 ## Tiếp theo
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
-- **[2026-08-02] Trang Nghe — tiếp tục nội dung truyện `fairy-tale`.** Phiên này thêm 3 truyện
-  Perrault qua bản Andrew Lang (Người đẹp ngủ trong rừng 119 câu · Mèo đi hia 66 câu · Người đẹp
-  và quái vật 233 câu — nguyên văn PG 503 đã `curl` về thật, dịch tay đầy đủ từng câu). Đối chiếu
-  số từ tiếng Anh JSON với bản trích Gutenberg: 3635/1726/7162 so với 3641/1736/7176 — chênh đúng
-  phần dòng tiêu đề + dòng ghi nguồn cuối truyện, không sót đoạn nào.
-  Hai bản Perrault này giữ trọn **phần hai** mà đa số bản kể lại hiện nay lược bỏ: Người đẹp ngủ
-  trong rừng có đoạn mẹ chồng Yêu tinh định ăn thịt con dâu và hai cháu; Mèo đi hia giữ nguyên
-  chi tiết mèo hù doạ nông dân. Đây là bản gốc, không phải bản đã làm mềm cho thiếu nhi hiện đại —
-  cần lưu ý khi chọn cấp CEFR và khi giới thiệu cho người học nhỏ tuổi.
-  **`fairy-tale` nay 14/20.** Đợt kế tiếp: 6 truyện cổ tích cuối — Jacobs PG 7439 (Jack và cây đậu
-  thần, Ba chú lợn con, Ba chú gấu) + Ozaki PG 4018 (Momotaro, Urashima Taro, Chim sẻ bị cắt lưỡi),
-  xem `docs/research/danh-muc-truyen-nghe-2026-08-01.md` §3. Sau đó tới `fable` (14 truyện còn lại,
-  ưu tiên nguồn dài ≥400 từ theo nguyên tắc đã chốt ở §4 cùng file) rồi các thể loại chưa bắt đầu.
-  **Lưu ý phối hợp:** `vn-folk` đang do phiên khác làm (PR #440 đã merge 3 truyện) — tránh trùng.
+- **[2026-08-02] Trang Nghe — ✅ ĐÓNG THỂ LOẠI `fairy-tale` 20/20.** Phiên này thêm 6 truyện cuối:
+  Jacobs PG 7439 (Jack và cây đậu thần 96 câu · Ba chú lợn con 57 câu · Ba chú gấu 64 câu) +
+  Ozaki PG 4018 (Chim sẻ bị cắt lưỡi 115 câu · Urashima Taro 148 câu · Momotaro 174 câu) — nguyên
+  văn đã `curl` về thật, dịch tay đầy đủ từng câu. Trước đó cùng ngày đã merge 3 truyện Perrault
+  (PR #441).
+  **Bẫy kỹ thuật gặp phải, ghi lại để đợt sau tránh:** hai truyện Ozaki có **chú thích cuối trang**
+  xen giữa các đoạn (`[1] An alcove where…`, `[2] "All right"…`). Khi bỏ đoạn chú thích ra khỏi
+  bản dịch, chỉ số `p` bị **nhảy cóc**, vi phạm ràng buộc "p tăng dần không nhảy cóc" ở
+  `stories.test.ts` — lỗi này KHÔNG lộ ra khi đọc file bằng mắt, chỉ script kiểm mới bắt được.
+  Đã sửa bằng cách đánh số lại `p` tuần tự. Đợt sau soạn nguồn có chú thích (Ozaki, Bulfinch) phải
+  chạy script kiểm `p` ngay sau khi viết file, đừng đợi tới lúc chạy test.
+  Cũng như lô Perrault, các bản Jacobs này là **bản gốc chưa làm mềm**: hai chú lợn đầu bị sói ăn
+  thịt, con sói bị luộc chín; Ba chú gấu kết bằng việc bà lão nhảy khỏi cửa sổ, người kể bỏ ngỏ
+  chuyện bà có gãy cổ hay không. Cấp CEFR gán theo **độ khó ngôn ngữ**, không phải độ tuổi phù hợp
+  — nếu sau này muốn lọc theo tuổi thì phải thêm trường riêng, đừng dùng lại cấp CEFR.
+  **Đợt kế tiếp:** `fable` (14 truyện còn lại, ưu tiên nguồn dài ≥400 từ theo nguyên tắc đã chốt ở
+  §4 của `docs/research/danh-muc-truyen-nghe-2026-08-01.md`).
+  **Lưu ý phối hợp:** `vn-folk` do phiên khác làm (PR #440) — tránh trùng. Ghi chú trong file chỉ
+  có tác dụng nếu phiên kia đọc trước khi bắt đầu; nếu chạy song song, nên chốt trước ai giữ
+  thể loại nào (PR #440 đã phải huỷ bỏ 2 truyện Andersen vì soạn trùng PR #437).
 
 - **[2026-07-31] Backup cấu hình hệ thống (Nginx + crontab + PM2 dump) lên R2 — ĐÃ THÊM.** Phát
   hiện lỗ hổng khi chỉnh tay Nginx nhiều lần lúc chuyển domain `.org`: `pg_dump`/`backup:env` chỉ
