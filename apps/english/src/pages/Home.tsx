@@ -53,10 +53,6 @@ import {
 // không phình prompt (giống cap 20 từ ở StudyTabs.tsx cho `?words=` từ URL).
 const RECENT_WORDS_FOR_SPEAKING = 8
 
-// Sub-item "Nghe" trong thẻ "Học cùng gia sư AI" không dẫn thẳng tới 1 route — bấm vào
-// mở màn chọn nhỏ (Bài hội thoại mẫu / Câu thông dụng). Dùng path giả này để nhận diện
-// thay vì nav() bình thường.
-
 // ── Nội dung cards theo chiều học và ngôn ngữ giao diện ──────────────────────
 type IconType = typeof MessageCircle
 interface ModeTag {
@@ -650,7 +646,6 @@ export default function Home() {
 
         <PricePromoBanner isA={isA} />
       </main>
-
     </div>
   )
 }
