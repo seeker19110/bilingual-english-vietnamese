@@ -223,11 +223,13 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   if (body.action === 'learn-day') {
-    // CHỈ cột learn_count, không đụng các cột đếm lượt tốn API
+    // CHỈ cột learn_count, không đụng các cột đếm lượt tốn API. Khoá chính daily_usage đã
+    // đổi thành (user_id, day, subject) từ migration 0029 — subject cố định 'english' (repo
+    // này chỉ phục vụ môn tiếng Anh).
     await pool.query(
-      `insert into public.daily_usage (user_id, day, learn_count)
-       values ($1, $2, $3)
-       on conflict (user_id, day) do update set learn_count = excluded.learn_count`,
+      `insert into public.daily_usage (user_id, day, subject, learn_count)
+       values ($1, $2, 'english', $3)
+       on conflict (user_id, day, subject) do update set learn_count = excluded.learn_count`,
       [auth.userId, body.day, body.learnCount],
     )
     return jsonResponse({ ok: true }, 200, allHeaders)
