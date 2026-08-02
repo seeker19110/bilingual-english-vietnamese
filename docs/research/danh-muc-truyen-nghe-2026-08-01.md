@@ -133,8 +133,26 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 Không có bản PD tiếng Anh → **Opus kể lại bằng lời văn riêng + tự dịch sang tiếng Anh**.
 Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 
-> **Tiến độ (2026-08-02):** 3/20 đã có `raw/*.json` — #1–3 (Sơn Tinh Thuỷ Tinh, Bánh chưng bánh
-> giầy, Thánh Gióng) đã soạn ở PR #440. Còn #4–20 chưa soạn.
+> ## ✅ **HOÀN TẤT 20/20 (2026-08-02)** — thể loại `vn-folk` đã soạn xong toàn bộ.
+>
+> #1–3 soạn ở PR #440; #4–13 và #14–20 soạn trong hai đợt ngày 2026-08-02.
+> Độ dài: 497–709 từ EN mỗi truyện (đều vượt ngưỡng ≥400 từ đã chốt ở §4), 22–37 câu song ngữ.
+>
+> ⚠️ **Đính chính danh mục (2026-08-02) — 3 chỗ sai đã sửa trong bảng dưới:**
+>
+> 1. Mục #10 cũ `vn-mai-an-tiem` ("Mai An Tiêm on the Island") **trùng nội dung** với #4
+>    `vn-su-tich-dua-hau` — Mai An Tiêm chính là nhân vật của sự tích quả dưa hấu, hai dòng là
+>    cùng một truyện. Đã **thay bằng `vn-so-dua` (Sọ Dừa)**, giữ nguyên tổng số 20.
+> 2. Mục #15 id cũ `vn-tam-that-quy` **không mang nghĩa gì** so với nội dung (Sự tích con muỗi,
+>    nhân vật là Ngọc Tâm — Nhan Diệp). Đổi thành `vn-su-tich-con-muoi`.
+> 3. Mục #17 id cũ `vn-hai-chi-em-cay-vu-sua` ("hai chị em") **mô tả sai truyện** — đây là chuyện
+>    một người mẹ và đứa con trai, không có hai chị em nào. Đổi thành `vn-su-tich-cay-vu-sua`.
+>
+> 📌 **Vì sao đợt này làm `vn-folk` chứ không phải `fable` như kế hoạch:** 14 truyện `fable` còn
+> lại đều cần **nguyên văn Project Gutenberg**, nhưng network policy của phiên chặn
+> `gutenberg.org` (403 ở CONNECT, mọi mirror đã thử đều hỏng). CLAUDE.md §5 cấm gõ từ trí nhớ →
+> `fable`/`myth`/`humor`/`children` bị chặn cứng. `vn-folk` là thể loại duy nhất không phụ thuộc
+> nguồn ngoài (Opus tự kể + tự dịch, theo đúng nguyên tắc §1.3 ở trên).
 
 | #   | id                               | Tiếng Việt              | Tiếng Anh                            | Cấp |
 | --- | -------------------------------- | ----------------------- | ------------------------------------ | --- |
@@ -147,14 +165,14 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 | 7   | `vn-thach-sanh`                  | Thạch Sanh              | Thach Sanh the Woodcutter            | B1  |
 | 8   | `vn-su-tich-ho-guom`             | Sự tích Hồ Gươm         | The Legend of the Returned Sword     | B1  |
 | 9   | `vn-chu-cuoi`                    | Chú Cuội cung trăng     | The Man in the Moon                  | A2  |
-| 10  | `vn-mai-an-tiem`                 | Mai An Tiêm             | Mai An Tiem on the Island            | B1  |
+| 10  | `vn-so-dua`                      | Sọ Dừa                  | So Dua, the Coconut Boy              | B1  |
 | 11  | `vn-con-rong-chau-tien`          | Con Rồng cháu Tiên      | Children of the Dragon and the Fairy | B1  |
 | 12  | `vn-trau-cau`                    | Sự tích trầu cau        | The Legend of the Betel and Areca    | B1  |
 | 13  | `vn-tro-cuoi-trang-quynh`        | Trạng Quỳnh             | The Clever Scholar Quynh             | B1  |
 | 14  | `vn-luu-binh-duong-le`           | Lưu Bình — Dương Lễ     | Two Friends, Luu Binh and Duong Le   | B1  |
-| 15  | `vn-tam-that-quy`                | Sự tích con muỗi        | The Legend of the Mosquito           | A2  |
+| 15  | `vn-su-tich-con-muoi`            | Sự tích con muỗi        | The Legend of the Mosquito           | A2  |
 | 16  | `vn-nguoi-con-gai-nam-xuong`     | Người con gái Nam Xương | The Woman of Nam Xuong               | B2  |
-| 17  | `vn-hai-chi-em-cay-vu-sua`       | Sự tích cây vú sữa      | The Legend of the Milk-Fruit Tree    | A2  |
+| 17  | `vn-su-tich-cay-vu-sua`          | Sự tích cây vú sữa      | The Legend of the Milk-Fruit Tree    | A2  |
 | 18  | `vn-su-tich-chim-quoc`           | Sự tích chim quốc       | The Legend of the Quoc Bird          | A2  |
 | 19  | `vn-anh-nong-dan-va-ba-dieu-uoc` | Ba điều ước             | The Three Wishes                     | A2  |
 | 20  | `vn-tri-khon-cua-ta-day`         | Trí khôn của ta đây     | Here Is My Wisdom                    | A2  |
