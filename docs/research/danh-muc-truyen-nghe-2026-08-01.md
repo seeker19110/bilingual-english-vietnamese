@@ -245,7 +245,7 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 | 14  | `my-narcissus-echo`   | Echo and Narcissus                                           | Tiếng vọng và chàng Narcissus          | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 15  | `my-cupid-psyche`     | Cupid and Psyche                                             | Cupid và Psyche                        | 🇬🇷 Hy Lạp | PG 3327  | B2  | ⏳  |
 | 16  | `my-arachne`          | Arachne                                                      | Nàng Arachne dệt vải                   | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
-| 17  | `my-apollo-daphne`    | Apollo and Daphne                                            | Apollo và nàng Daphne                  | 🇬🇷 Hy Lạp | PG 3327  | B2  | ⏳  |
+| 17  | `my-apollo-daphne`    | Apollo and Daphne                                            | Apollo và nàng Daphne                  | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 18  | `my-pyramus-thisbe`   | Pyramus and Thisbe                                           | Pyramus và Thisbe                      | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 19  | `my-phaeton`          | Phaeton                                                      | Phaeton và cỗ xe mặt trời              | 🇬🇷 Hy Lạp | PG 3327  | B2  | ⏳  |
 | 20  | `my-baucis-philemon`  | Baucis and Philemon                                          | Baucis và Philemon                     | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
