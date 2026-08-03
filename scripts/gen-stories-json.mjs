@@ -22,6 +22,11 @@ const OUT_DIR = join(__dirname, '..', 'public', 'data', 'stories')
 const VALID_KINDS = ['fairy-tale', 'fable', 'vn-folk', 'myth', 'humor', 'children']
 const VALID_LEVELS = ['A2', 'B1', 'B2']
 
+// Thứ tự độ khó để sắp truyện từ DỄ đến KHÓ. Liệt kê đủ 6 bậc CEFR A1→C2 cho về sau,
+// dù dữ liệu hiện tại chỉ dùng 3 bậc giữa (A2/B1/B2 — xem VALID_LEVELS): nếu sau này mở
+// thêm bậc thì chỉ cần nới VALID_LEVELS, không phải sửa lại chỗ sắp xếp này.
+const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+
 // Kiểm 1 truyện theo ràng buộc mục 5.3 đặc tả. Ném lỗi rõ ràng nếu vi phạm.
 function validateStory(story, filename) {
   const prefix = `[gen-stories-json] ${filename}:`
@@ -121,10 +126,15 @@ function main() {
     stories.push(story)
   }
 
-  // Sắp xếp theo đúng thứ tự thể loại của VALID_KINDS, trong mỗi nhóm sắp theo id.
+  // Sắp xếp theo ĐỘ KHÓ trước (dễ → khó), rồi mới tới thể loại, cuối cùng là id.
+  // Đặt độ khó làm khoá CHÍNH (chứ không phải thể loại) để người học lướt danh sách là gặp
+  // truyện dễ trước. Vì trang /stories lọc theo thể loại bằng chip mà không sắp xếp lại,
+  // thứ tự tương đối được giữ nguyên — nên lọc riêng một thể loại thì bên trong vẫn là dễ → khó.
   stories.sort((a, b) => {
-    const d = VALID_KINDS.indexOf(a.kind) - VALID_KINDS.indexOf(b.kind)
-    return d !== 0 ? d : a.id.localeCompare(b.id)
+    const byLevel = LEVEL_ORDER.indexOf(a.level) - LEVEL_ORDER.indexOf(b.level)
+    if (byLevel !== 0) return byLevel
+    const byKind = VALID_KINDS.indexOf(a.kind) - VALID_KINDS.indexOf(b.kind)
+    return byKind !== 0 ? byKind : a.id.localeCompare(b.id)
   })
 
   rmSync(OUT_DIR, { recursive: true, force: true })
