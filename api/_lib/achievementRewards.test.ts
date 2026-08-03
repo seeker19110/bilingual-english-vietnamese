@@ -1,0 +1,216 @@
+// Test thưởng huy hiệu & mốc (migration 0026) — trọng tâm: KHÔNG cấp thưởng khi chưa đạt/đã
+// nhận rồi/admin tắt thưởng (đây là chỗ đụng tiền thật, giống quests.test.ts).
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
+vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+
+const granted: { calls: { userId: string; plan: string; days: number }[] } = { calls: [] }
+vi.mock('./planGrant', () => ({
+  grantPlanDays: async (userId: string, plan: string, days: number) => {
+    granted.calls.push({ userId, plan, days })
+    return { plan, planExpiresAt: new Date() }
+  },
+}))
+
+const streakMock = vi.fn()
+vi.mock('./quests', () => ({
+  getCurrentStreak: (userId: string) => streakMock(userId),
+}))
+
+import {
+  getAchievementsStatus,
+  claimAchievementReward,
+  getAllRewardConfigs,
+  upsertRewardConfig,
+  invalidateAchievementRewardsCache,
+  ACHIEVEMENT_IDS,
+} from './achievementRewards'
+import { getPgPool } from '../../packages/core-db/pgPool'
+
+const mockedGetPool = vi.mocked(getPgPool)
+const query = vi.fn()
+
+const REWARD_ROWS = [
+  { achievement_id: 'streak_7', enabled: true, reward_plan: 'pro', reward_days: 1 },
+]
+
+function setupQueryImplementation(overrides: {
+  learned?: string[]
+  cefrExams?: Record<string, { passed?: boolean }>
+  speaking?: number
+  writing?: number
+  challengeCount?: number
+  perfectWeek?: boolean
+  claimed?: string[]
+  rewardRows?: typeof REWARD_ROWS
+  insertRowCount?: number
+}) {
+  query.mockImplementation(async (sql: string) => {
+    if (sql.includes('insert into public.achievement_claims')) {
+      return { rowCount: overrides.insertRowCount ?? 1 }
+    }
+    if (sql.includes('insert into public.achievement_rewards')) {
+      return { rowCount: 1 }
+    }
+    if (sql.includes('select achievement_id, enabled, reward_plan, reward_days')) {
+      return { rows: overrides.rewardRows ?? REWARD_ROWS }
+    }
+    if (sql.includes('select achievement_id from public.achievement_claims')) {
+      return { rows: (overrides.claimed ?? []).map((achievement_id) => ({ achievement_id })) }
+    }
+    if (sql.includes('learning_progress')) {
+      return {
+        rows: [{ learned: overrides.learned ?? [], cefr_exams: overrides.cefrExams ?? {} }],
+      }
+    }
+    if (sql.includes('speaking_sessions')) {
+      return { rows: [{ count: String(overrides.speaking ?? 0) }] }
+    }
+    if (sql.includes('writing_submissions')) {
+      return { rows: [{ count: String(overrides.writing ?? 0) }] }
+    }
+    if (sql.includes('has_perfect')) {
+      return { rows: [{ has_perfect: overrides.perfectWeek ?? false }] }
+    }
+    if (sql.includes('challenge_entries')) {
+      return { rows: [{ count: String(overrides.challengeCount ?? 0) }] }
+    }
+    throw new Error(`Unexpected SQL in test: ${sql}`)
+  })
+}
+
+beforeEach(() => {
+  query.mockReset()
+  streakMock.mockReset()
+  streakMock.mockResolvedValue(0)
+  mockedGetPool.mockReturnValue({ query } as unknown as ReturnType<typeof getPgPool>)
+  granted.calls = []
+  invalidateAchievementRewardsCache()
+})
+
+describe('getAchievementsStatus', () => {
+  it('đủ điều kiện streak_7 (server tự tính streak) → earned true', async () => {
+    streakMock.mockResolvedValue(7)
+    setupQueryImplementation({})
+    const items = await getAchievementsStatus('u1')
+    const streak7 = items.find((i) => i.id === 'streak_7')
+    expect(streak7?.earned).toBe(true)
+    expect(streak7?.reward).toEqual({ enabled: true, rewardPlan: 'pro', rewardDays: 1 })
+  })
+
+  it('huy hiệu chưa có cấu hình admin → mặc định tắt, 0 ngày', async () => {
+    streakMock.mockResolvedValue(0)
+    setupQueryImplementation({ rewardRows: [] })
+    const items = await getAchievementsStatus('u1')
+    const vocab100 = items.find((i) => i.id === 'vocab_100')
+    expect(vocab100?.reward).toEqual({ enabled: false, rewardPlan: 'pro', rewardDays: 0 })
+  })
+
+  it('trả đủ 19 huy hiệu, đúng huy hiệu đã claimed', async () => {
+    setupQueryImplementation({ claimed: ['streak_7'] })
+    const items = await getAchievementsStatus('u1')
+    expect(items).toHaveLength(ACHIEVEMENT_IDS.length)
+    expect(items.find((i) => i.id === 'streak_7')?.claimed).toBe(true)
+    expect(items.find((i) => i.id === 'vocab_100')?.claimed).toBe(false)
+  })
+
+  it('tính đúng vocab/cefr/speaking/writing/challenge từ dữ liệu server', async () => {
+    setupQueryImplementation({
+      learned: Array.from({ length: 100 }, (_, i) => `w${i}`),
+      cefrExams: { A1: { passed: true }, A2: { passed: false } },
+      speaking: 10,
+      writing: 10,
+      challengeCount: 30,
+      perfectWeek: true,
+    })
+    const items = await getAchievementsStatus('u1')
+    expect(items.find((i) => i.id === 'vocab_100')?.earned).toBe(true)
+    expect(items.find((i) => i.id === 'vocab_500')?.earned).toBe(false)
+    expect(items.find((i) => i.id === 'cefr_a1')?.earned).toBe(true)
+    expect(items.find((i) => i.id === 'cefr_a2')?.earned).toBe(false)
+    expect(items.find((i) => i.id === 'speak_10')?.earned).toBe(true)
+    expect(items.find((i) => i.id === 'write_10')?.earned).toBe(true)
+    expect(items.find((i) => i.id === 'challenge_10')?.earned).toBe(true)
+    expect(items.find((i) => i.id === 'challenge_30')?.earned).toBe(true)
+    expect(items.find((i) => i.id === 'challenge_100')?.earned).toBe(false)
+    expect(items.find((i) => i.id === 'challenge_perfect_week')?.earned).toBe(true)
+  })
+})
+
+describe('claimAchievementReward', () => {
+  it('achievementId không hợp lệ → ok:false, không đụng DB', async () => {
+    const r = await claimAchievementReward('u1', 'khong-ton-tai')
+    expect(r).toEqual({ ok: false, message: 'Huy hiệu không hợp lệ.' })
+    expect(query).not.toHaveBeenCalled()
+  })
+
+  it('admin chưa bật thưởng cho huy hiệu này → ok:false, không cấp', async () => {
+    streakMock.mockResolvedValue(7)
+    setupQueryImplementation({ rewardRows: [] })
+    const r = await claimAchievementReward('u1', 'streak_7')
+    expect(r.ok).toBe(false)
+    expect(granted.calls).toEqual([])
+  })
+
+  it('đã bật thưởng nhưng CHƯA đạt điều kiện → ok:false, không cấp', async () => {
+    streakMock.mockResolvedValue(3) // chưa đủ 7 ngày
+    setupQueryImplementation({})
+    const r = await claimAchievementReward('u1', 'streak_7')
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.message).toMatch(/chưa đạt/)
+    expect(granted.calls).toEqual([])
+  })
+
+  it('đủ điều kiện + chưa từng nhận → cấp đúng gói/số ngày, ghi nhận claim', async () => {
+    streakMock.mockResolvedValue(7)
+    setupQueryImplementation({})
+    const r = await claimAchievementReward('u1', 'streak_7')
+    expect(r).toEqual({ ok: true, rewardDays: 1, rewardPlan: 'pro' })
+    expect(granted.calls).toEqual([{ userId: 'u1', plan: 'pro', days: 1 }])
+  })
+
+  it('đã nhận thưởng huy hiệu này rồi (insert conflict) → ok:false, KHÔNG cấp thêm', async () => {
+    streakMock.mockResolvedValue(7)
+    setupQueryImplementation({ insertRowCount: 0 })
+    const r = await claimAchievementReward('u1', 'streak_7')
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.message).toMatch(/đã nhận thưởng/)
+    expect(granted.calls).toEqual([])
+  })
+
+  it('lỗi DB → trả ok:false, KHÔNG ném lỗi ra ngoài', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    query.mockRejectedValue(new Error('db down'))
+    const r = await claimAchievementReward('u1', 'streak_7')
+    expect(r.ok).toBe(false)
+    expect(granted.calls).toEqual([])
+    spy.mockRestore()
+  })
+})
+
+describe('getAllRewardConfigs / upsertRewardConfig (admin)', () => {
+  it('getAllRewardConfigs trả đủ 19 huy hiệu kèm cấu hình', async () => {
+    setupQueryImplementation({})
+    const rows = await getAllRewardConfigs()
+    expect(rows).toHaveLength(ACHIEVEMENT_IDS.length)
+    expect(rows.find((r) => r.achievementId === 'streak_7')?.config).toEqual({
+      enabled: true,
+      rewardPlan: 'pro',
+      rewardDays: 1,
+    })
+  })
+
+  it('upsertRewardConfig achievementId không hợp lệ → throw, không đụng DB', async () => {
+    await expect(upsertRewardConfig('khong-ton-tai', { enabled: true })).rejects.toThrow(
+      'Huy hiệu không hợp lệ.',
+    )
+    expect(query).not.toHaveBeenCalled()
+  })
+
+  it('upsertRewardConfig hợp lệ → gọi đúng câu lệnh, xoá cache', async () => {
+    setupQueryImplementation({})
+    await upsertRewardConfig('streak_7', { enabled: false, rewardPlan: 'vip', rewardDays: 5 })
+    expect(query.mock.calls[0]?.[0]).toContain('insert into public.achievement_rewards')
+    expect(query.mock.calls[0]?.[1]).toEqual(['streak_7', false, 'vip', 5])
+  })
+})
