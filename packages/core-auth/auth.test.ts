@@ -205,4 +205,161 @@ describe('/api/auth — action logout', () => {
     expect(resp.status).toBe(200)
     expect(authService.revokeSession).toHaveBeenCalledWith('valid-token')
   })
+
+  it('KHÔNG có token → vẫn trả 200, không gọi revokeSession', async () => {
+    const resp = await handler(makeRequest({ action: 'logout' }))
+    expect(resp.status).toBe(200)
+    expect(authService.revokeSession).not.toHaveBeenCalled()
+  })
+})
+
+describe('/api/auth — action facebook/apple/microsoft', () => {
+  it('facebook: accessToken hợp lệ → đăng nhập thành công', async () => {
+    authService.verifyFacebookAccessToken.mockResolvedValue({
+      facebookId: 'fb1',
+      email: 'fb@b.com',
+      name: 'FB',
+    })
+    authService.findOrCreateFacebookUser.mockResolvedValue({
+      user: { id: 'user-fb', email: 'fb@b.com' },
+      isNew: false,
+    })
+    const resp = await handler(makeRequest({ action: 'facebook', accessToken: 'z'.repeat(20) }))
+    expect(resp.status).toBe(200)
+  })
+
+  it('facebook: token không hợp lệ → 401', async () => {
+    authService.verifyFacebookAccessToken.mockResolvedValue(null)
+    const resp = await handler(makeRequest({ action: 'facebook', accessToken: 'z'.repeat(20) }))
+    expect(resp.status).toBe(401)
+    expect(authService.findOrCreateFacebookUser).not.toHaveBeenCalled()
+  })
+
+  it('apple: idToken hợp lệ → đăng nhập thành công', async () => {
+    authService.verifyAppleIdToken.mockResolvedValue({
+      appleId: 'ap1',
+      email: 'ap@b.com',
+      name: 'AP',
+    })
+    authService.findOrCreateAppleUser.mockResolvedValue({
+      user: { id: 'user-ap', email: 'ap@b.com' },
+      isNew: true,
+    })
+    const resp = await handler(makeRequest({ action: 'apple', idToken: 'z'.repeat(20) }))
+    expect(resp.status).toBe(200)
+    expect(trial.grantSignupTrial).toHaveBeenCalledWith('user-ap')
+  })
+
+  it('apple: idToken không hợp lệ → 401', async () => {
+    authService.verifyAppleIdToken.mockResolvedValue(null)
+    const resp = await handler(makeRequest({ action: 'apple', idToken: 'z'.repeat(20) }))
+    expect(resp.status).toBe(401)
+  })
+
+  it('microsoft: idToken hợp lệ → đăng nhập thành công', async () => {
+    authService.verifyMicrosoftIdToken.mockResolvedValue({
+      microsoftId: 'ms1',
+      email: 'ms@b.com',
+      name: 'MS',
+    })
+    authService.findOrCreateMicrosoftUser.mockResolvedValue({
+      user: { id: 'user-ms', email: 'ms@b.com' },
+      isNew: false,
+    })
+    const resp = await handler(makeRequest({ action: 'microsoft', idToken: 'z'.repeat(20) }))
+    expect(resp.status).toBe(200)
+  })
+
+  it('microsoft: idToken không hợp lệ → 401', async () => {
+    authService.verifyMicrosoftIdToken.mockResolvedValue(null)
+    const resp = await handler(makeRequest({ action: 'microsoft', idToken: 'z'.repeat(20) }))
+    expect(resp.status).toBe(401)
+  })
+})
+
+describe('/api/auth — GET ?action=me', () => {
+  it('KHÔNG có token hợp lệ → 401', async () => {
+    const req = new Request('http://localhost/api/auth?action=me', { method: 'GET' })
+    const resp = await handler(req)
+    expect(resp.status).toBe(401)
+  })
+
+  it('token hợp lệ nhưng user không còn tồn tại (đã bị xoá) → 401', async () => {
+    authService.getUserById.mockResolvedValue(null)
+    const req = new Request('http://localhost/api/auth?action=me', {
+      method: 'GET',
+      headers: { Authorization: 'Bearer valid-token' },
+    })
+    const resp = await handler(req)
+    expect(resp.status).toBe(401)
+  })
+
+  it('token hợp lệ, user tồn tại → 200 kèm profile', async () => {
+    authService.getUserById.mockResolvedValue({ id: 'user-1', email: 'a@b.com' })
+    const req = new Request('http://localhost/api/auth?action=me', {
+      method: 'GET',
+      headers: { Authorization: 'Bearer valid-token' },
+    })
+    const resp = await handler(req)
+    expect(resp.status).toBe(200)
+    const data = (await resp.json()) as { email: string }
+    expect(data.email).toBe('a@b.com')
+  })
+})
+
+describe('/api/auth — xác thực email / đổi email (cần đăng nhập)', () => {
+  it('send-verification KHÔNG có token → 401', async () => {
+    const resp = await handler(makeRequest({ action: 'send-verification' }))
+    expect(resp.status).toBe(401)
+  })
+
+  it('verify-email KHÔNG có token → 401', async () => {
+    const resp = await handler(makeRequest({ action: 'verify-email', code: '123456' }))
+    expect(resp.status).toBe(401)
+  })
+
+  it('change-email KHÔNG có token → 401', async () => {
+    const resp = await handler(makeRequest({ action: 'change-email', newEmail: 'x@y.com' }))
+    expect(resp.status).toBe(401)
+  })
+})
+
+describe('/api/auth — request-password-reset / reset-password', () => {
+  it('request-password-reset LUÔN trả ok:true (chống dò email)', async () => {
+    const resp = await handler(
+      makeRequest({ action: 'request-password-reset', email: 'khong-ton-tai@b.com' }),
+    )
+    expect(resp.status).toBe(200)
+    const data = (await resp.json()) as { ok: boolean }
+    expect(data.ok).toBe(true)
+  })
+})
+
+describe('/api/auth — method/route không hợp lệ', () => {
+  it('method PUT không hỗ trợ → 405', async () => {
+    const req = new Request('http://localhost/api/auth', { method: 'PUT' })
+    const resp = await handler(req)
+    expect(resp.status).toBe(405)
+  })
+
+  it('OPTIONS (preflight CORS) → 204', async () => {
+    const req = new Request('http://localhost/api/auth', { method: 'OPTIONS' })
+    const resp = await handler(req)
+    expect(resp.status).toBe(204)
+  })
+
+  it('body không khớp schema nào (action lạ) → 400', async () => {
+    const resp = await handler(makeRequest({ action: 'khong-ton-tai' }))
+    expect(resp.status).toBe(400)
+  })
+
+  it('body không phải JSON hợp lệ → lỗi 400 từ readJsonBody', async () => {
+    const req = new Request('http://localhost/api/auth', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{khong-phai-json',
+    })
+    const resp = await handler(req)
+    expect(resp.status).toBe(400)
+  })
 })

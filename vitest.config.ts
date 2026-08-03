@@ -74,16 +74,16 @@ export default defineConfig({
         'packages/core-db/pgPool.ts',
       ],
       reporter: ['text', 'text-summary', 'html'],
-      // "Coverage ratchet": ngưỡng SÀN = "không tệ hơn hiện tại" (đo 2026-08-01, sau khi thêm
-      // test cho authHeader.ts/plan-features.ts/plan-marketing.ts/authService.ts: stmts/lines
-      // 55.9 · branches 87.56 · funcs 82.24 — đặt thấp hơn số đo chút để chống tụt, KHÔNG gây
-      // gãy do làm tròn hoặc dao động nhỏ giữa các lượt chạy. Khi thêm test mới → NÂNG DẦN các
-      // số này. Xem PROGRESS.md.
+      // "Coverage ratchet": ngưỡng SÀN = "không tệ hơn hiện tại" (đo 2026-08-03, sau đợt viết
+      // test lớn cho toàn bộ handler API + lib logic thuần còn thiếu — xem PROGRESS.md mục
+      // "Nâng coverage 2026-08-03"): stmts/lines 93.71 · branches 89.69 · funcs 96.27 — đặt
+      // thấp hơn số đo chút để chống tụt, KHÔNG gây gãy do làm tròn hoặc dao động nhỏ giữa các
+      // lượt chạy. Khi thêm test mới → NÂNG DẦN các số này.
       thresholds: {
-        statements: 55,
-        branches: 87,
-        functions: 81,
-        lines: 55,
+        statements: 93,
+        branches: 89,
+        functions: 96,
+        lines: 93,
       },
     },
   },

@@ -17,6 +17,27 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Nâng coverage 2026-08-03
+
+Theo yêu cầu người dùng "nâng hạn mức coverage lên 90" — thay vì đặt số cứng ngay (sẽ làm CI đỏ vì
+chưa có test tương ứng), đã: (1) loại khỏi phép đo các file mà unit test không mang giá trị thật
+(vỏ bọc API trình duyệt/nền tảng — MediaRecorder/IndexedDB/Web Speech/vibrate/service worker, hook
+React, gửi-rồi-quên/khởi tạo SDK ngoài — xem danh sách `exclude` trong `vitest.config.ts` kèm lý do
+từng nhóm); (2) viết mới ~70 file test cho toàn bộ handler API + `api/_lib` + lib logic thuần +
+lib client gọi API + `core-auth`/`core-ai` còn thiếu (giao 9 việc song song cho subagent, mỗi việc
+yêu cầu ≥90% statements/branches cho phạm vi được giao); (3) đo lại và chốt ngưỡng theo SỐ THẬT đo
+được, không đặt số mong muốn. Kết quả: stmts/lines 55.9→93.71 · branches 87.67→89.69 · funcs
+82.46→96.27 (2286 test, 145 file, tất cả xanh; lint/typecheck sạch). Nhân tiện phát hiện + sửa 2
+lỗi thật trong test có sẵn (không đụng code nguồn): `sharedAudio` singleton trong `tts.ts` khiến
+test mới `speakBilingual` treo mãi vì audio giả không tự bắn `onended`; `vi.restoreAllMocks()` ở
+`tts.test.ts` xoá nhầm implementation của `getAccessToken` (vi.mock factory) khiến các test SAU đó
+trong cùng file bị lỗi "Chưa đăng nhập" dây chuyền.
+
+**Nợ còn mở, chưa sửa (nằm ngoài phạm vi việc này):** `api/pronunciation.ts` gọi `.toLowerCase()`
+lên tham số `voice` trước khi so khớp `VOICE_IDS`/`STUDIO_VOICE_IDS` (vốn viết hoa như `Kore`,
+`Studio-O`) — `?voice=Kore` từ client luôn bị coi là không hợp lệ, rơi về `DEFAULT_VOICE`. Cần rà
+lại có phải bug thật không rồi sửa riêng.
+
 ## GĐ2 (nền tảng đa môn) — đang chuẩn bị nội dung & engine
 
 **[2026-08-01] Đặc tả GĐ2 + kho kiến thức 4 môn + ENGINE CHẤM đã có code chạy.**
