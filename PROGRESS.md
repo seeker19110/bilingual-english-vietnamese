@@ -277,11 +277,16 @@ buộc tải thật từ Project Gutenberg** (không gõ từ trí nhớ — CLA
 tay chất lượng văn học. Migration `0032` bật feature `listening` cho mọi gói.
 **Tiến độ nội dung [cập nhật 2026-08-03, đếm file thật]:** ✅ **`fairy-tale` XONG 20/20** · ✅
 **`vn-folk` XONG 20/20** · ✅ **`fable` XONG 20/20** — ba thể loại đã hoàn tất trọn vẹn.
-🔵 **`myth` 20/25** (Kingsley 8 + Bulfinch 12; còn 1 Bulfinch — Cupid và Psyche — + 4 Colum Bắc Âu).
-🔓 **`vn-folk` 25 truyện — thể loại KHÔNG CÒN TRẦN** (chủ dự án chốt 2026-08-03: cứ còn truyện
+🔵 **`myth` 23/25** (Kingsley 8 + Bulfinch 12 + Colum Bắc Âu 3; còn Cupid và Psyche + Iduna).
+🔓 **`vn-folk` 24 truyện — thể loại KHÔNG CÒN TRẦN** (chủ dự án chốt 2026-08-03: cứ còn truyện
 dân gian Việt Nam hay và chưa có thì bổ sung tiếp). Vì thế `vn-folk` ghi số tuyệt đối, KHÔNG ghi
 dạng `n/20` nữa, và tổng danh mục 125 giờ chỉ là **sàn**, không phải đích.
-`humor` 0/20 · `children` 0/20. **Tổng 85 truyện.**
+`humor` 0/20 · `children` 0/20. **Tổng 87 truyện.**
+🚨 **Sự cố trùng lặp 2026-08-03 (đã xử lý):** đã soạn `vn-tam-cam` rồi mới thấy `ft-tam-cam` ĐÃ
+CÓ SẴN ở thể loại `fairy-tale` (bản dài gấp đôi) — đã xoá bản trùng. Nguyên nhân: kiểm "truyện VN
+đã có" bằng `ls raw/vn-*.json`, tức lọc theo TIỀN TỐ THỂ LOẠI, trong khi truyện Việt Nam nằm rải
+cả ở `fairy-tale` và `humor`. **Thể loại KHÔNG suy ra được quốc gia.** Quy tắc mới đã ghi vào
+danh mục §5: trước khi soạn truyện mới phải rà TOÀN BỘ `raw/*.json` không lọc tiền tố.
 ✅ **Rào cản mạng ĐÃ GỠ (2026-08-03):** `gutenberg.org` giờ truy cập được từ môi trường Claude
 Code web (`curl` PG 3327 trả HTTP 200) — ghi chú cũ ngày 2026-08-02 nói `fable`/`myth`/`humor`/
 `children` "bị chặn cứng" đã hết hiệu lực, 4 thể loại phụ thuộc Gutenberg làm tiếp được bình thường.
