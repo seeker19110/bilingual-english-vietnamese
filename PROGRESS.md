@@ -1679,6 +1679,20 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
        **`npm audit` sẽ còn báo 2 dòng high này lâu dài — đó là kỳ vọng, không phải việc bỏ sót.**
        Xem lại quyết định khi nào: nếu dự án sau này dùng RSC/data router, hoặc khi có lý do độc lập
        để nâng React lên 19.
+
+- **[Rà soát tự động 2026-08-03]** Chạy lại đầy đủ cổng commit sau `npm ci` sạch: build ✅ ·
+  typecheck ✅ (4 tsconfig: gốc/api/e2e/`apps/hub`) · lint ✅ (0 cảnh báo) · test ✅ (**103 file /
+  1683 test**). Không có lỗi code mới. `npm audit`: **5 lỗ hổng (4 high, 1 low)** — khớp đúng dự
+  đoán ở mục nâng cấp react-router bên dưới (2 high cũ `postcss`/`brace-expansion` + 1 high mới
+  `react-router` CSRF RSC Mode + 1 low `esbuild`), không phát sinh gì ngoài dự kiến. Phát hiện 1
+  tài liệu lỗi thời: `.claude/report-status.sh` dòng nợ kỹ thuật #1 vẫn ghi react-router "chưa
+  nâng cấp" dù đã nâng lên v7.18.2 từ 2026-08-02 — đã sửa lại đúng hiện trạng (hết 2 CVE moderate
+  cũ, chấp nhận 1 cảnh báo high mới vì app không dùng RSC Mode). E2E Playwright vẫn KHÔNG chạy
+  được trong sandbox này (không có `.env`/Postgres thật) — như các lượt rà soát trước.
+  ⚠️ **Số liệu `npm audit` trong mục này đã bị thay thế** bởi mục 2026-08-03 ngay phía
+  trên (PR #462 đã vá 3/4 lỗ hổng, còn 2). Giữ lại nguyên văn làm bản ghi lịch sử của lượt
+  rà soát lúc 00:13 cùng ngày, không phải hiện trạng.
+
 - **[2026-08-02] react-router: ĐÃ NÂNG LÊN v7 (phương án 1 bước), package.json đổi
   `react-router-dom` `^6.24.1` → `^7.18.2`.** Cổng commit đạt đủ: build ✅ · typecheck ✅ (4
   tsconfig) · lint ✅ (0 cảnh báo) · test ✅ (103 file / 1473 test) · dev server khởi động sạch
