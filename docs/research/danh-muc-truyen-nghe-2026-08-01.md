@@ -170,7 +170,28 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 > đích. Khi báo cáo tiến độ, `vn-folk` ghi số tuyệt đối (vd "vn-folk: 26 truyện"), KHÔNG ghi
 > dạng phân số `n/20` nữa vì không còn mẫu số.
 >
-> Mốc đã qua: 20/20 (2026-08-02) → 22 (2026-08-03, thêm Thần Trụ Trời + Sự tích Táo Quân).
+> Mốc đã qua: 20/20 (2026-08-02) → 24 (2026-08-03, thêm Thần Trụ Trời, Sự tích Táo Quân,
+> Mỵ Châu — Trọng Thuỷ, Cóc kiện Trời).
+>
+> 🚨 **SỰ CỐ TRÙNG LẶP 2026-08-03 — đã xử lý, ghi lại để không lặp.** Đã soạn `vn-tam-cam` (Tấm
+> Cám) rồi mới phát hiện **`ft-tam-cam` ĐÃ TỒN TẠI** từ trước, nằm ở thể loại `fairy-tale` (mục
+> #1 của §3), là bản dài hơn hẳn (115 câu / 2.044 từ so với 59 câu / 1.035 từ). Đã **xoá bản
+> trùng `vn-tam-cam`**, giữ `ft-tam-cam`.
+>
+> **Nguyên nhân:** khi kiểm "truyện Việt Nam nào đã có", đã liệt kê bằng `ls raw/vn-*.json` —
+> tức lọc theo TIỀN TỐ THỂ LOẠI, trong khi truyện Việt Nam còn nằm rải ở `fairy-tale` (Tấm Cám)
+> và sẽ còn ở `humor` (5 truyện cười VN, §7). Đúng bài học đã ghi ở §4 cho lô Jataka — _"phải
+> đối chiếu NỘI DUNG, không chỉ đối chiếu tên"_ — nhưng lần này sai ở chiều khác: lọc nhầm
+> phạm vi tìm kiếm.
+>
+> ✅ **QUY TẮC BẮT BUỘC TỪ NAY:** trước khi soạn bất kỳ truyện mới nào, phải rà **TOÀN BỘ**
+> `raw/*.json` (không lọc tiền tố) theo `titleVi`, `titleEn` VÀ câu mở đầu, cộng với `grep` tên
+> nhân vật/tích trong chính file danh mục này. Đã có sẵn script rà trong lịch sử phiên; chạy nó
+> trước mỗi đợt.
+>
+> 📌 **Ghi chú xếp loại:** `ft-tam-cam` là truyện dân gian Việt Nam nhưng nằm ở `fairy-tale`.
+> Đây là xếp loại có từ đầu dự án, giữ nguyên để không phá URL/tiến độ người học; nhưng nó chính
+> là cái bẫy đã gây ra sự cố trên — nhớ rằng **thể loại KHÔNG suy ra được quốc gia**.
 >
 > #1–3 soạn ở PR #440; #4–13 và #14–20 soạn trong hai đợt ngày 2026-08-02.
 > Độ dài: 497–709 từ EN mỗi truyện (đều vượt ngưỡng ≥400 từ đã chốt ở §4), 22–37 câu song ngữ.
@@ -273,10 +294,10 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 | 19  | `my-phaeton`          | Phaeton                                                      | Phaeton và cỗ xe mặt trời              | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 20  | `my-baucis-philemon`  | Baucis and Philemon                                          | Baucis và Philemon                     | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 21  | `my-pygmalion`        | Pygmalion's Statue                                           | Pho tượng của Pygmalion                | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
-| 22  | `my-building-wall`    | The Building of the Wall                                     | Bức tường thành Asgard                 | 🇮🇸 Bắc Âu | PG 24737 | B1  | ⏳  |
+| 22  | `my-building-wall`    | The Building of the Wall                                     | Bức tường thành Asgard                 | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
 | 23  | `my-iduna-apples`     | Iduna and Her Apples                                         | Nàng Iduna và những quả táo            | 🇮🇸 Bắc Âu | PG 24737 | B1  | ⏳  |
-| 24  | `my-sif-golden-hair`  | Sif's Golden Hair                                            | Mái tóc vàng của Sif                   | 🇮🇸 Bắc Âu | PG 24737 | B1  | ⏳  |
-| 25  | `my-thor-thrym`       | How Thor and Loki Befooled Thrym                             | Thor và Loki lừa gã khổng lồ Thrym     | 🇮🇸 Bắc Âu | PG 24737 | B1  | ⏳  |
+| 24  | `my-sif-golden-hair`  | Sif's Golden Hair                                            | Mái tóc vàng của Sif                   | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
+| 25  | `my-thor-thrym`       | How Thor and Loki Befooled Thrym                             | Thor và Loki lừa gã khổng lồ Thrym     | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
 
 📌 **Mốc cắt truyện trong Bulfinch (PG 3327)** — dùng lại cho các đợt sau. Bulfinch gộp nhiều
 tích trong một chương và không đặt tiêu đề riêng cho từng truyện, nên **không được cắt theo
@@ -298,14 +319,14 @@ Nasreddin (Thổ Nhĩ Kỳ) trong PG 16244 là **mẩu chuyện rất ngắn, kh
 mỗi mẩu lấy nguyên văn và **đặt tiêu đề mô tả** (ghi rõ tiêu đề do Opus đặt trong `source.en`).
 15 mẩu Nasreddin + 5 truyện cười dân gian Việt Nam (Opus kể).
 
-| #    | id                            | Nội dung                                                | Nước          | Nguồn    | Cấp |
-| ---- | ----------------------------- | ------------------------------------------------------- | ------------- | -------- | --- |
-| 1–15 | `hm-nasreddin-01…15`          | 15 mẩu Nasreddin Hoja chọn lọc (nguyên văn Borrow 1884) | 🇹🇷 Thổ Nhĩ Kỳ | PG 16244 | A2  |
-| 16   | `hm-vn-lon-cuoi`              | Lợn cưới áo mới                                         | 🇻🇳 Việt Nam   | Opus     | A2  |
-| 17   | `hm-vn-tam-dai-con-ga`        | Tam đại con gà                                          | 🇻🇳 Việt Nam   | Opus     | A2  |
-| 18   | `hm-vn-treo-bien`             | Treo biển                                               | 🇻🇳 Việt Nam   | Opus     | A2  |
-| 19   | `hm-vn-thay-boi-xem-voi-cuoi` | Đẽo cày giữa đường                                      | 🇻🇳 Việt Nam   | Opus     | A2  |
-| 20   | `hm-vn-mua-kinh`              | Mua kính                                                | 🇻🇳 Việt Nam   | Opus     | A2  |
+| #    | id                         | Nội dung                                                | Nước          | Nguồn    | Cấp |
+| ---- | -------------------------- | ------------------------------------------------------- | ------------- | -------- | --- |
+| 1–15 | `hm-nasreddin-01…15`       | 15 mẩu Nasreddin Hoja chọn lọc (nguyên văn Borrow 1884) | 🇹🇷 Thổ Nhĩ Kỳ | PG 16244 | A2  |
+| 16   | `hm-vn-lon-cuoi`           | Lợn cưới áo mới                                         | 🇻🇳 Việt Nam   | Opus     | A2  |
+| 17   | `hm-vn-tam-dai-con-ga`     | Tam đại con gà                                          | 🇻🇳 Việt Nam   | Opus     | A2  |
+| 18   | `hm-vn-treo-bien`          | Treo biển                                               | 🇻🇳 Việt Nam   | Opus     | A2  |
+| 19   | `hm-vn-deo-cay-giua-duong` | Đẽo cày giữa đường                                      | 🇻🇳 Việt Nam   | Opus     | A2  |
+| 20   | `hm-vn-mua-kinh`           | Mua kính                                                | 🇻🇳 Việt Nam   | Opus     | A2  |
 
 ## 8. Thể loại 6 — Thiếu nhi kinh điển ngắn (`kind: "children"`)
 
