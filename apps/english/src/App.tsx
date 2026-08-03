@@ -159,6 +159,12 @@ export default function App() {
   usePrefetchPages()
   // Kéo toàn bộ nội dung trang xuống 1 tay (Reachability) — xem lib/useOneHandedDrag.ts
   const oneHandedDrag = useOneHandedDrag()
+  // Đang bật Reachability mà cuộn trang → thu lại ngay, không để nội dung kẹt lệch vị trí
+  useEffect(() => {
+    const onScroll = () => oneHandedDrag.contentHandlers.onPointerDownCapture()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [oneHandedDrag])
   // Đồng bộ hạn mức/khuyến mãi thật từ server: ngay lúc mở app, định kỳ mỗi 1h nếu app mở
   // lâu, và mỗi lần quay lại tab (visibilitychange) — trình duyệt thường tạm dừng
   // setInterval khi tab ẩn/máy ngủ, nên bắt thêm sự kiện này để không phải đợi đủ 1h mới
@@ -195,7 +201,7 @@ export default function App() {
               <ErrorBoundary>
                 {/* Bọc toàn bộ nội dung định tuyến để hỗ trợ kéo 1 tay (không bọc
                     BottomNav — giữ cố định để luôn bấm được dù đang kéo xuống) */}
-                <div style={oneHandedDrag.style} {...oneHandedDrag.handlers}>
+                <div style={oneHandedDrag.contentStyle} {...oneHandedDrag.contentHandlers}>
                   <Suspense fallback={<PageLoading />}>
                     <Routes>
                       <Route path="/login" element={<Login />} />
@@ -419,6 +425,16 @@ export default function App() {
                 </div>
               </ErrorBoundary>
               <BottomNav />
+              {/* Dải trigger Reachability — mỏng, vô hình, đè lên mép trên của BottomNav
+                  (z-50 > z-40 của BottomNav). Vuốt xuống từ đây để bật kéo 1 tay — xem
+                  lib/useOneHandedDrag.ts. touchAction 'none' để trình duyệt không tự
+                  cuộn/nảy trang khi vuốt trong dải này. */}
+              <div
+                className="fixed bottom-0 inset-x-0 z-50 h-3.5 pb-safe-only"
+                style={{ touchAction: 'none' }}
+                aria-hidden="true"
+                {...oneHandedDrag.triggerHandlers}
+              />
             </BrowserRouter>
           </ToastProvider>
         </LangProvider>

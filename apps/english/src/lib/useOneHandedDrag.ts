@@ -1,35 +1,32 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 
-// Tính năng "kéo 1 tay" (giống Reachability trên iPhone): TỔNG thời gian từ lúc bấm
-// xuống (chạm hoặc chuột) tới hiện tại — kể cả lúc đang di chuyển — vượt quá 0.05s là
-// cho phép kéo header + toàn bộ nội dung trang xuống, tối đa 60% chiều cao màn hình,
-// giúp bấm các nút phía trên dễ hơn khi cầm điện thoại 1 tay. Buông ra, nếu 3 giây
-// không thao tác gì thêm thì tự trôi ngược lên trong 3 giây.
+// Tính năng "kéo 1 tay" (giống Reachability trên iPhone thật): vuốt xuống bắt đầu từ
+// DẢI MỎNG Ở MÉP DƯỚI MÀN HÌNH (xem <div {...triggerHandlers}> render đè lên BottomNav
+// trong App.tsx) — không phải kéo header hay kéo bất kỳ đâu trên trang như bản cũ.
 //
-// Dùng Pointer Events (không phải Touch Events riêng) để hoạt động thống nhất dù là
-// chạm tay thật trên điện thoại hay bấm chuột (vd khi test bằng chế độ giả lập mobile
-// trên máy tính).
+// Khác bản cũ: đây là cử chỉ BẬT/TẮT (như thật ngoài đời), không phải kéo-theo-ngón-tay
+// liên tục — vuốt xuống đủ NGƯỠNG (ACTIVATE_DISTANCE_PX) là toàn bộ nội dung "bật" xuống
+// một khoảng CỐ ĐỊNH (PULL_DOWN_RATIO) bằng hiệu ứng trượt nhanh, không cần theo sát vị
+// trí ngón tay. Nhờ dải trigger tách riêng khỏi vùng cuộn trang, không còn xung đột với
+// cuộn trang gốc của trình duyệt nữa nên KHÔNG cần preventDefault() hay ngưỡng thời gian
+// như bản cũ.
 //
-// QUAN TRỌNG — xung đột với cuộn trang gốc: nếu để trình duyệt tự quyết định, nó sẽ
-// nhận diện thao tác kéo dọc là CUỘN TRANG ngay từ đầu và giành quyền xử lý trước khi
-// đủ 0.05s, khiến JS không bao giờ kịp kích hoạt. Để tránh việc này, CHỈ cho phép bắt
-// đầu cử chỉ khi trang đang Ở ĐỈNH CUỘN (window.scrollY === 0 — không còn gì để cuộn
-// lên nữa) và preventDefault() NGAY từ lúc còn "chờ đủ giờ" (không đợi tới khi đã kích
-// hoạt) để trình duyệt không tự ý cuộn/nảy (bounce) trong lúc đó.
-const ACTIVATE_MS = 50 // Tổng thời gian bấm+giữ+kéo vượt quá mốc này là kích hoạt kéo
-const RETURN_DELAY_MS = 3000 // Sau khi buông, chờ chừng này rồi mới tự trôi lên
-const RETURN_DURATION_MS = 3000 // Thời gian trôi ngược lên lại vị trí cũ
-const MAX_DRAG_RATIO = 0.6 // Kéo xuống tối đa 60% chiều cao màn hình
+// Đóng lại khi: (1) chạm vào nội dung đang bị đẩy xuống, (2) vuốt lên lại ở dải trigger,
+// (3) cuộn trang, hoặc (4) không thao tác gì trong RETURN_DELAY_MS thì tự thu lại.
+const ACTIVATE_DISTANCE_PX = 12 // Vuốt xuống ở dải trigger đủ khoảng cách này là bật
+const OPEN_DURATION_MS = 220 // Thời gian trượt xuống khi bật
+const RETURN_DELAY_MS = 3000 // Sau khi bật, chờ chừng này rồi mới tự thu lại
+const RETURN_DURATION_MS = 3000 // Thời gian trượt ngược lên khi thu lại
+const PULL_DOWN_RATIO = 0.45 // Bật xuống cố định 45% chiều cao màn hình
 
 export function useOneHandedDrag() {
   const [translateY, setTranslateY] = useState(0)
   const [transitionMs, setTransitionMs] = useState(0)
+  const isOpen = useRef(false)
   const returnTimer = useRef<number | null>(null)
-  const isDragging = useRef(false)
   const activePointerId = useRef<number | null>(null)
   const startY = useRef(0)
-  const startTime = useRef(0)
-  const startTranslate = useRef(0)
+  const triggered = useRef(false)
 
   const clearReturnTimer = () => {
     if (returnTimer.current != null) {
@@ -37,78 +34,70 @@ export function useOneHandedDrag() {
       returnTimer.current = null
     }
   }
+  const close = () => {
+    if (!isOpen.current) return
+    clearReturnTimer()
+    isOpen.current = false
+    setTransitionMs(RETURN_DURATION_MS)
+    setTranslateY(0)
+  }
   const scheduleReturn = () => {
     clearReturnTimer()
-    returnTimer.current = window.setTimeout(() => {
-      setTransitionMs(RETURN_DURATION_MS)
-      setTranslateY(0)
-    }, RETURN_DELAY_MS)
+    returnTimer.current = window.setTimeout(close, RETURN_DELAY_MS)
+  }
+  const open = () => {
+    isOpen.current = true
+    setTransitionMs(OPEN_DURATION_MS)
+    setTranslateY(Math.round(window.innerHeight * PULL_DOWN_RATIO))
+    scheduleReturn()
   }
 
   useEffect(() => clearReturnTimer, [])
 
-  const onPointerDown = (e: PointerEvent) => {
-    // LƯU Ý: KHÔNG huỷ hẹn giờ tự trôi lên ở đây — nếu không, chỉ cần bấm/chạm thêm
-    // 1 lần (cuộn trang, bấm nút khác…) sau khi kéo xuống là bị "kẹt" luôn, không bao
-    // giờ tự về nữa. Hẹn giờ chỉ bị huỷ khi THỰC SỰ kéo lại (xem onPointerMove) và luôn
-    // được đặt lại mỗi khi buông ra (xem onPointerUp).
-    const alreadyPulledDown = translateY > 0
-    // Chỉ nhận cử chỉ khi ở đỉnh cuộn (hoặc đã đang kéo xuống sẵn) — nếu trang còn có
-    // thể cuộn lên, để trình duyệt xử lý cuộn bình thường, không tranh giành gesture.
-    if (!alreadyPulledDown && window.scrollY > 0) {
-      activePointerId.current = null
-      return
-    }
+  // Chạm vào nội dung đang bị đẩy xuống → đóng lại ngay, không chặn thao tác bấm bên dưới
+  // (không preventDefault, không stopPropagation — chỉ đóng, để nút/link vẫn nhận được click).
+  const onContentPointerDown = () => {
+    if (isOpen.current) close()
+  }
+
+  // Handlers gắn vào dải trigger mỏng ở mép dưới màn hình
+  const onTriggerPointerDown = (e: PointerEvent) => {
     activePointerId.current = e.pointerId
     startY.current = e.clientY
-    startTime.current = performance.now()
-    startTranslate.current = translateY
-    isDragging.current = false
+    triggered.current = false
+    e.currentTarget.setPointerCapture(e.pointerId)
   }
-
-  const onPointerMove = (e: PointerEvent) => {
-    if (activePointerId.current !== e.pointerId) return
+  const onTriggerPointerMove = (e: PointerEvent) => {
+    if (activePointerId.current !== e.pointerId || triggered.current) return
     const dy = e.clientY - startY.current
-    const elapsed = performance.now() - startTime.current
-    // Nội dung đang bị kéo xuống sẵn (>0) → theo con trỏ NGAY, không cần đủ 0.2s, để
-    // người dùng chủ động đẩy lên (hoặc kéo thêm xuống) là thấy phản hồi tức thì. Chỉ
-    // khi bắt đầu từ vị trí gốc (0%) mới cần đủ thời gian, tránh nhầm với cuộn trang.
-    const alreadyPulledDown = startTranslate.current > 0
-    if (elapsed < ACTIVATE_MS && !alreadyPulledDown) {
-      // Vẫn đang trong thời gian chờ — chặn trình duyệt tự cuộn/nảy trang trong lúc
-      // này, nếu không nó sẽ giành quyền xử lý trước khi kịp đủ 0.2s để kích hoạt.
-      if (e.cancelable) e.preventDefault()
-      return
+    if (dy >= ACTIVATE_DISTANCE_PX) {
+      triggered.current = true
+      if (!isOpen.current) open()
+      else scheduleReturn() // Đang mở sẵn, vuốt xuống tiếp → chỉ gia hạn hẹn giờ tự thu
+    } else if (dy <= -ACTIVATE_DISTANCE_PX && isOpen.current) {
+      // Vuốt lên lại ở dải trigger → đóng ngay
+      triggered.current = true
+      close()
     }
-    if (e.cancelable) e.preventDefault()
-    if (!isDragging.current) clearReturnTimer() // Bắt đầu kéo lại thật → huỷ hẹn giờ cũ
-    isDragging.current = true
-    setTransitionMs(0)
-    const maxDrag = window.innerHeight * MAX_DRAG_RATIO
-    setTranslateY(Math.min(maxDrag, Math.max(0, startTranslate.current + dy)))
   }
-
-  const onPointerUp = (e: PointerEvent) => {
+  const onTriggerPointerUp = (e: PointerEvent) => {
     if (activePointerId.current !== e.pointerId) return
     activePointerId.current = null
-    // Luôn đặt lại hẹn giờ tự trôi lên nếu nội dung đang bị kéo xuống — kể cả khi
-    // lần này không phải là kéo (vd chỉ bấm 1 nút trong lúc đang ở trạng thái kéo).
-    if (translateY > 0) scheduleReturn()
-    isDragging.current = false
   }
 
-  const style: CSSProperties = {
+  const contentStyle: CSSProperties = {
     transform: translateY ? `translateY(${translateY}px)` : undefined,
     transition: transitionMs ? `transform ${transitionMs}ms ease` : undefined,
   }
 
   return {
-    style,
-    handlers: {
-      onPointerDown,
-      onPointerMove,
-      onPointerUp,
-      onPointerCancel: onPointerUp,
+    contentStyle,
+    contentHandlers: { onPointerDownCapture: onContentPointerDown },
+    triggerHandlers: {
+      onPointerDown: onTriggerPointerDown,
+      onPointerMove: onTriggerPointerMove,
+      onPointerUp: onTriggerPointerUp,
+      onPointerCancel: onTriggerPointerUp,
     },
   }
 }
