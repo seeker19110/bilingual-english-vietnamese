@@ -277,11 +277,11 @@ buộc tải thật từ Project Gutenberg** (không gõ từ trí nhớ — CLA
 tay chất lượng văn học. Migration `0032` bật feature `listening` cho mọi gói.
 **Tiến độ nội dung [cập nhật 2026-08-03, đếm file thật]:** ✅ **`fairy-tale` XONG 20/20** · ✅
 **`vn-folk` XONG 20/20** · ✅ **`fable` XONG 20/20** — ba thể loại đã hoàn tất trọn vẹn.
-🔵 **`myth` 23/25** (Kingsley 8 + Bulfinch 12 + Colum Bắc Âu 3; còn Cupid và Psyche + Iduna).
+🔵 **`myth` 24/25** (Kingsley 8 + Bulfinch 12 + Colum Bắc Âu 4; chỉ còn Cupid và Psyche).
 🔓 **`vn-folk` 24 truyện — thể loại KHÔNG CÒN TRẦN** (chủ dự án chốt 2026-08-03: cứ còn truyện
 dân gian Việt Nam hay và chưa có thì bổ sung tiếp). Vì thế `vn-folk` ghi số tuyệt đối, KHÔNG ghi
 dạng `n/20` nữa, và tổng danh mục 125 giờ chỉ là **sàn**, không phải đích.
-`humor` 0/20 · `children` 0/20. **Tổng 87 truyện.**
+`humor` 0/20 · `children` 0/20. **Tổng 88 truyện.**
 🚨 **Sự cố trùng lặp 2026-08-03 (đã xử lý):** đã soạn `vn-tam-cam` rồi mới thấy `ft-tam-cam` ĐÃ
 CÓ SẴN ở thể loại `fairy-tale` (bản dài gấp đôi) — đã xoá bản trùng. Nguyên nhân: kiểm "truyện VN
 đã có" bằng `ls raw/vn-*.json`, tức lọc theo TIỀN TỐ THỂ LOẠI, trong khi truyện Việt Nam nằm rải
