@@ -275,12 +275,16 @@ song ngữ MỚI** (`ft-*`/`fb-*`/... theo 6 thể loại `fairy-tale`/`fable`/`
 truyện, tự cuộn theo câu, ghi nguồn bắt buộc) + `components/StoryCard.tsx`. Bản tiếng Anh **bắt
 buộc tải thật từ Project Gutenberg** (không gõ từ trí nhớ — CLAUDE.md §5), tiếng Việt Opus dịch
 tay chất lượng văn học. Migration `0032` bật feature `listening` cho mọi gói.
-**Tiến độ nội dung [cập nhật 2026-08-02, đóng fable]:** ✅ **`fairy-tale` XONG 20/20** · ✅
+**Tiến độ nội dung [cập nhật 2026-08-03, đếm file thật]:** ✅ **`fairy-tale` XONG 20/20** · ✅
 **`vn-folk` XONG 20/20** · ✅ **`fable` XONG 20/20** — ba thể loại đã hoàn tất trọn vẹn.
-`myth`/`humor`/`children` chưa bắt đầu. **Tổng 60/120 truyện — đúng nửa danh mục.**
+🔵 **`myth` 18/25** (Kingsley 8 + Bulfinch 10; còn 3 Bulfinch + 4 Colum Bắc Âu).
+`humor` 0/20 · `children` 0/20. **Tổng 78/125 truyện.**
+✅ **Rào cản mạng ĐÃ GỠ (2026-08-03):** `gutenberg.org` giờ truy cập được từ môi trường Claude
+Code web (`curl` PG 3327 trả HTTP 200) — ghi chú cũ ngày 2026-08-02 nói `fable`/`myth`/`humor`/
+`children` "bị chặn cứng" đã hết hiệu lực, 4 thể loại phụ thuộc Gutenberg làm tiếp được bình thường.
 ⚠️ Cách cập nhật con số này: **đếm file thật** (`ls apps/english/src/data/stories/raw/ft-*.json |
 wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale` "12/20" trong khi thực tế mới có
-11 file.
+11 file, và ghi `myth` "chưa bắt đầu" trong khi thực tế đã có 16 file.
 
 ## Tiếp theo
 
