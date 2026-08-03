@@ -7,6 +7,7 @@ import {
   ToggleRight,
   FileText,
   ChevronDown,
+  Award,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -17,6 +18,7 @@ import AdminVipWhitelistPanel from '../components/admin/AdminVipWhitelistPanel'
 import AdminPlanFeaturesPanel from '../components/admin/AdminPlanFeaturesPanel'
 import AdminPlanMarketingPanel from '../components/admin/AdminPlanMarketingPanel'
 import AdminPricePromoPanel from '../components/admin/AdminPricePromoPanel'
+import AdminAchievementRewardsPanel from '../components/admin/AdminAchievementRewardsPanel'
 import AdminAnalyticsPanel from '../components/admin/AdminAnalyticsPanel'
 import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 
@@ -32,7 +34,14 @@ import AdminUsagePanel from '../components/admin/AdminUsagePanel'
 // Ghi chú: tab "Chặn tên tài khoản giả danh" CHƯA thêm vì chưa thấy code liên quan
 // (vd api/_lib/reservedNames.ts) trong repo lúc viết trang này — không bịa UI cho tính năng
 // chưa tồn tại. Thêm lại khi tính năng đó có thật.
-type TabKey = 'usage' | 'limits' | 'plan-features' | 'plan-marketing' | 'grant-plan' | 'analytics'
+type TabKey =
+  | 'usage'
+  | 'limits'
+  | 'plan-features'
+  | 'plan-marketing'
+  | 'achievement-rewards'
+  | 'grant-plan'
+  | 'analytics'
 
 const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   // "Sử dụng & chi phí" để đầu tiên và là tab mặc định — đây là màn cần nhìn mỗi ngày để
@@ -43,6 +52,9 @@ const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   { key: 'limits', label: 'Hạn mức & khuyến mãi', icon: Sliders },
   { key: 'plan-features', label: 'Tính năng theo gói', icon: ToggleRight },
   { key: 'plan-marketing', label: 'Nội dung gói', icon: FileText },
+  // Gom TOÀN BỘ cấu hình thưởng huy hiệu (bật/tắt + gói + số ngày, 19 huy hiệu) vào 1 mục
+  // duy nhất — admin không phải tìm rải rác nhiều nơi (yêu cầu 2026-08-03).
+  { key: 'achievement-rewards', label: 'Thưởng huy hiệu', icon: Award },
   // Gộp "Người dùng" (AdminUsersPanel) + "Danh sách VIP" (AdminVipWhitelistPanel) vào đây —
   // cùng nhóm xem/quản lý user cụ thể (tra cứu, cấp gói tay, whitelist VIP).
   { key: 'grant-plan', label: 'Người dùng & cấp gói', icon: ShieldCheck },
@@ -64,6 +76,8 @@ function AdminPanel({ tabKey }: { tabKey: TabKey }) {
       return <AdminPlanFeaturesPanel />
     case 'plan-marketing':
       return <AdminPlanMarketingPanel />
+    case 'achievement-rewards':
+      return <AdminAchievementRewardsPanel />
     case 'grant-plan':
       return (
         <>

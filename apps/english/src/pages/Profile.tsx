@@ -15,6 +15,7 @@ import {
   Users,
   Gift,
   ChevronDown,
+  Loader2,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -40,6 +41,11 @@ import {
   achievementMessage,
   getEarnedAchievements,
 } from '../lib/achievements'
+import {
+  fetchAchievementRewards,
+  claimAchievementReward,
+  type AchievementRewardStatus,
+} from '../lib/achievementRewards'
 import { ACHIEVEMENTS } from '../data/achievements'
 import { logout } from '../lib/auth'
 import type { AgeGroup } from '../types'
@@ -73,6 +79,8 @@ export default function Profile() {
   const [speed, setSpeed] = useState<DailySpeed>(() => getDailySpeed(user?.id ?? ''))
   const [weekGoal, setWeekGoal] = useState<WeeklyGoal>(() => getWeeklyGoal(user?.id ?? ''))
   const [earned, setEarned] = useState<Set<string>>(() => getEarnedAchievements(user?.id ?? ''))
+  const [rewards, setRewards] = useState<AchievementRewardStatus[] | null>(null)
+  const [claimingId, setClaimingId] = useState<string | null>(null)
   const [soundOn, setSoundOn] = useState<boolean>(() => isSoundEnabled())
   const [questsOpen, setQuestsOpen] = useState(false)
   const onboardingData = useOnboarding(user?.id)
@@ -91,6 +99,31 @@ export default function Profile() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id])
+
+  // Phần thưởng huy hiệu (② quyết định 2026-08-03) — server tự xác minh lại "đã đạt" nên tải
+  // riêng, không dựa vào `earned` (tính ở client, chỉ để hiển thị UI ngay).
+  useEffect(() => {
+    if (!user) return
+    void fetchAchievementRewards().then(setRewards)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id])
+
+  async function handleClaimReward(id: string) {
+    setClaimingId(id)
+    const result = await claimAchievementReward(id)
+    setClaimingId(null)
+    if (result) {
+      const planLabel = result.rewardPlan === 'vip' ? 'VIP' : 'Pro'
+      toast.success(
+        isA
+          ? `Tuyệt vời! Tặng thêm ${result.rewardDays} ngày gói ${planLabel} 🎁`
+          : `Nice! +${result.rewardDays} day of ${planLabel} 🎁`,
+      )
+      void fetchAchievementRewards().then(setRewards)
+    } else {
+      toast.error(isA ? 'Chưa nhận được, thử lại sau nhé' : 'Could not claim right now')
+    }
+  }
 
   // Đồng bộ state hiển thị khi cache/fetch onboarding có dữ liệu (có thể tới sau lần
   // render đầu nếu thiết bị mới chưa có cache local).
@@ -430,6 +463,54 @@ export default function Profile() {
               )
             })}
           </div>
+
+          {/* Phần thưởng huy hiệu (② quyết định 2026-08-03) — chỉ hiện huy hiệu đã đạt, CÓ
+              thưởng (admin bật + số ngày > 0, xem AdminAchievementRewardsPanel) và CHƯA nhận —
+              server tự xác minh lại "đã đạt" lúc bấm Nhận thưởng, không tin danh sách `earned`
+              tính ở client. */}
+          {rewards &&
+            rewards.some(
+              (r) => r.earned && !r.claimed && r.reward.enabled && r.reward.rewardDays > 0,
+            ) && (
+              <div className="mt-3 space-y-2">
+                {rewards
+                  .filter(
+                    (r) => r.earned && !r.claimed && r.reward.enabled && r.reward.rewardDays > 0,
+                  )
+                  .map((r) => {
+                    const def = ACHIEVEMENTS.find((a) => a.id === r.id)
+                    if (!def) return null
+                    const name = isA ? def.nameVi : def.nameEn
+                    const planLabel = r.reward.rewardPlan === 'vip' ? 'VIP' : 'Pro'
+                    return (
+                      <div
+                        key={r.id}
+                        className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3 flex items-center gap-3"
+                      >
+                        <span className="text-lg shrink-0">{def.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-white truncate">{name}</p>
+                          <p className="text-xs text-amber-300 mt-0.5 flex items-center gap-1">
+                            <Gift className="w-3 h-3" />
+                            {isA
+                              ? `+${r.reward.rewardDays} ngày gói ${planLabel}`
+                              : `+${r.reward.rewardDays} day of ${planLabel}`}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => void handleClaimReward(r.id)}
+                          disabled={claimingId === r.id}
+                          className="tap-44 inline-flex items-center gap-1.5 bg-accent-500 hover:bg-accent-400 disabled:opacity-60 text-white text-xs font-medium px-3 py-2 rounded-lg transition active:scale-[0.97] shrink-0"
+                        >
+                          {claimingId === r.id && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                          {isA ? 'Nhận thưởng' : 'Claim'}
+                        </button>
+                      </div>
+                    )
+                  })}
+              </div>
+            )}
         </section>
 
         {/* Điều hướng nhanh */}

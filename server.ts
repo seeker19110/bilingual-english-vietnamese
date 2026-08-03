@@ -54,6 +54,8 @@ import adminUsageStatsHandler from './api/admin-usage-stats.js'
 import adminUsersHandler from './api/admin-users.js'
 import referralHandler from './api/referral.js'
 import questsHandler from './api/quests.js'
+import achievementsHandler from './api/achievements.js'
+import adminAchievementRewardsHandler from './api/admin-achievement-rewards.js'
 import planPricesHandler from './packages/core-billing/plan-prices.js'
 import checkoutHandler from './packages/core-billing/checkout.js'
 import paymentWebhookHandler from './packages/core-billing/payment-webhook.js'
@@ -203,6 +205,8 @@ app.all('/api/admin-usage-stats', wrapEdge(adminUsageStatsHandler))
 app.all('/api/admin-users', wrapEdge(adminUsersHandler))
 app.all('/api/referral', wrapEdge(referralHandler))
 app.all('/api/quests', wrapEdge(questsHandler))
+app.all('/api/achievements', wrapEdge(achievementsHandler))
+app.all('/api/admin-achievement-rewards', wrapEdge(adminAchievementRewardsHandler))
 app.all('/api/plan-prices', wrapEdge(planPricesHandler))
 app.all('/api/checkout', wrapEdge(checkoutHandler))
 app.all('/api/payment-webhook', wrapEdge(paymentWebhookHandler))

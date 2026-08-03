@@ -286,6 +286,27 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-08-03] Thưởng cho Huy hiệu & mốc (migration 0026) — ✅ XONG, admin cấu hình được.**
+  Mỗi huy hiệu/mốc (19 huy hiệu hiện có, `src/data/achievements.ts`) tặng thêm N ngày gói
+  Pro/VIP khi đạt được, nhận **1 lần duy nhất/tài khoản** (khác nhiệm vụ lặp cooldown ở
+  `quests.ts`). Quyết định thiết kế: (1) thưởng = ngày Pro/VIP, tái dùng `grantPlanDays()` có
+  sẵn; (2) **xác minh lại "đã đạt" Ở SERVER** trước khi cấp (không tin danh sách huy hiệu
+  localStorage gửi lên) — server tự tính lại streak (`free_daily_credit`, tái dùng
+  `getCurrentStreak()` của quests.ts), số từ đã thuộc + cấp CEFR đã thi đạt
+  (`learning_progress`), số phiên nói/bài viết (`speaking_sessions`/`writing_submissions`), số
+  challenge đã nộp + tuần trọn vẹn 7/7 (`challenge_entries`); (3) admin cấu hình **TỪNG huy
+  hiệu 1 dòng riêng** (bật/tắt + gói + số ngày) ở tab mới "Thưởng huy hiệu" trong `/admin-s` —
+  gom hết vào 1 chỗ theo yêu cầu, không rải rác nhiều nơi.
+  Migration `postgres/migrations/0026_achievement_rewards.sql` (bảng `achievement_rewards` +
+  `achievement_claims`, seed sẵn giá trị mặc định cho 19 huy hiệu). Backend:
+  `api/_lib/achievementRewards.ts` (tính điểm + cache cấu hình TTL 30s), `api/achievements.ts`
+  (GET trạng thái + POST nhận thưởng, rate-limit chặt như `api/quests.ts`),
+  `api/admin-achievement-rewards.ts` (admin GET/PUT). Frontend:
+  `src/lib/achievementRewards.ts` (gọi API), khối "Nhận thưởng" mới trong Hồ sơ
+  (`Profile.tsx`, chỉ hiện huy hiệu đã đạt + có thưởng + chưa nhận),
+  `AdminAchievementRewardsPanel.tsx`. ⚠️ **Việc tay trước khi dùng thật:** chạy
+  `npm run migrate:pg` trên VPS để tạo 2 bảng mới.
+
 - **[2026-08-02] Trang Nghe — ✅ ĐÓNG THỂ LOẠI `fable` 20/20 (14 truyện Jataka).** Soạn nốt toàn
   bộ phần còn lại của thể loại ngụ ngôn từ **Jataka Tales** (PG 62514, Babbitt 1912) và **More
   Jataka Tales** (PG 7518, Babbitt 1922): Rùa tự cứu mình · Rùa nói nhiều · Con ngỗng vàng · Con
