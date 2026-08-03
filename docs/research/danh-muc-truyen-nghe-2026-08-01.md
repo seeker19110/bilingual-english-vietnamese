@@ -295,7 +295,7 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 | 20  | `my-baucis-philemon`  | Baucis and Philemon                                          | Baucis và Philemon                     | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 21  | `my-pygmalion`        | Pygmalion's Statue                                           | Pho tượng của Pygmalion                | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 22  | `my-building-wall`    | The Building of the Wall                                     | Bức tường thành Asgard                 | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
-| 23  | `my-iduna-apples`     | Iduna and Her Apples                                         | Nàng Iduna và những quả táo            | 🇮🇸 Bắc Âu | PG 24737 | B1  | ⏳  |
+| 23  | `my-iduna-apples`     | Iduna and Her Apples                                         | Nàng Iduna và những quả táo            | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
 | 24  | `my-sif-golden-hair`  | Sif's Golden Hair                                            | Mái tóc vàng của Sif                   | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
 | 25  | `my-thor-thrym`       | How Thor and Loki Befooled Thrym                             | Thor và Loki lừa gã khổng lồ Thrym     | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
 
