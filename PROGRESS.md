@@ -1645,6 +1645,22 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- **[Rà soát tự động 2026-08-03, phiên sau PR #462]** `npm ci` sạch (container mới, chưa có
+  `node_modules`) rồi chạy đủ cổng commit: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅ (0 cảnh
+  báo) · test ✅ (**149 file / 2414 test**, tăng nhiều so với lượt trước vì các PR listening/story
+  mới đã merge). Không có lỗi type/lint/test mới trong code.
+  - `npm audit` sau `npm ci` báo **3 lỗ hổng high** — nhiều hơn 2 dòng đã chốt ở mục ngay dưới, vì
+    phát sinh THÊM 1 advisory mới: `fast-uri` 3.0.0–3.1.4 (`GHSA-7p8r-x3mc-p8w7`, host confusion
+    qua backslash). Nguồn: `@commitlint/cli → @commitlint/load → config-validator → ajv@8.20.0 →
+fast-uri` — thuần devDependency (commitlint hook), không vào bundle chạy cho người dùng cuối.
+    Có bản vá không phá vỡ gì trong dải semver cũ → chạy `npm audit fix` (không dùng `--force`),
+    nâng `fast-uri` `3.1.4` → `3.1.5`, chỉ đổi `package-lock.json` (không đổi `package.json`).
+    Xác nhận lại `npm audit`: về đúng **2 lỗ hổng** (react-router, xem mục dưới — quyết định giữ
+    nguyên đã chốt, không đổi gì thêm ở đây).
+  - Đây là việc lặp lại theo lịch (audit định kỳ bắt kịp advisory mới của hệ sinh thái), không
+    phải lỗi bỏ sót trước đó — bản thân advisory `fast-uri` mới được công bố sau lượt audit PR
+    #462. Không có thay đổi code nghiệp vụ nào trong lượt rà soát này.
+
 - **[2026-08-03] Lỗ hổng npm: ĐÃ VÁ 3/4, mục react-router ĐÓNG LẠI bằng quyết định "không nâng"
   (người dùng chốt phương án A).** PR #462. `npm audit`: **5 lỗ hổng → 2** (2 con số còn lại là
   cùng MỘT advisory react-router, xem ngay dưới).
