@@ -278,7 +278,10 @@ tay chất lượng văn học. Migration `0032` bật feature `listening` cho m
 **Tiến độ nội dung [cập nhật 2026-08-03, đếm file thật]:** ✅ **`fairy-tale` XONG 20/20** · ✅
 **`vn-folk` XONG 20/20** · ✅ **`fable` XONG 20/20** — ba thể loại đã hoàn tất trọn vẹn.
 🔵 **`myth` 20/25** (Kingsley 8 + Bulfinch 12; còn 1 Bulfinch — Cupid và Psyche — + 4 Colum Bắc Âu).
-`humor` 0/20 · `children` 0/20. **Tổng 80/125 truyện.**
+🔓 **`vn-folk` 25 truyện — thể loại KHÔNG CÒN TRẦN** (chủ dự án chốt 2026-08-03: cứ còn truyện
+dân gian Việt Nam hay và chưa có thì bổ sung tiếp). Vì thế `vn-folk` ghi số tuyệt đối, KHÔNG ghi
+dạng `n/20` nữa, và tổng danh mục 125 giờ chỉ là **sàn**, không phải đích.
+`humor` 0/20 · `children` 0/20. **Tổng 85 truyện.**
 ✅ **Rào cản mạng ĐÃ GỠ (2026-08-03):** `gutenberg.org` giờ truy cập được từ môi trường Claude
 Code web (`curl` PG 3327 trả HTTP 200) — ghi chú cũ ngày 2026-08-02 nói `fable`/`myth`/`humor`/
 `children` "bị chặn cứng" đã hết hiệu lực, 4 thể loại phụ thuộc Gutenberg làm tiếp được bình thường.

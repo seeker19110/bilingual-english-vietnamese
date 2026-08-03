@@ -89,6 +89,18 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 >
 > Đợt cuối bổ sung 14 truyện Jataka (PG 62514 + PG 7518). Tổng độ dài EN của thể loại: 9.789 từ,
 > trung bình 489 từ/truyện (bản Aesop cũ chỉ ~94 từ/truyện).
+>
+> ⚠️ **Cẩn thận với con số trung bình 489 ở trên — nó che mất phân bố rất lệch.** Rà lại
+> 2026-08-03 bằng cách đo TỪNG truyện: **10/20 truyện dưới sàn 400 từ**, trong đó 3 truyện dưới
+> cả ngưỡng 200 từ mà quy tắc bên dưới nói "cân nhắc bỏ". Trung bình cao là nhờ vài truyện
+> Jataka rất dài kéo lên (`fb-prince-wicked` 1.692 từ, `fb-monkey-crocodile` 942). Bài học:
+> khi kiểm độ dài thể loại phải xem **phân bố**, đừng tin mỗi số trung bình.
+>
+> ✅ **QUYẾT ĐỊNH 2026-08-03 (chủ dự án): GIỮ NGUYÊN 3 truyện siêu ngắn — ngoại lệ có chủ đích.**
+> `fb-fox-grapes` (56 từ) · `fb-boy-cried-wolf` (98 từ) · `fb-tortoise-hare` (128 từ). Đây là ba
+> ngụ ngôn Aesop nổi tiếng nhất thế giới, hầu như ai cũng biết; nguyên văn Townsend 1867 vốn
+> ngắn đúng như vậy, không phải lỗi dữ liệu. Giá trị nhận biết lớn hơn thiệt hại về thời lượng
+> nghe. **Đây là ngoại lệ được ghi nhận, KHÔNG phải việc còn tồn** — đừng "sửa" ở các đợt sau.
 
 > **📌 Ghi chú độ dài — chốt 2026-08-01 sau khi đo độ dài thật:**
 >
@@ -147,7 +159,18 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 Không có bản PD tiếng Anh → **Opus kể lại bằng lời văn riêng + tự dịch sang tiếng Anh**.
 Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 
-> ## ✅ **HOÀN TẤT 20/20 (2026-08-02)** — thể loại `vn-folk` đã soạn xong toàn bộ.
+> ## 🔓 **KHÔNG GIỚI HẠN SỐ LƯỢNG — chủ dự án chốt 2026-08-03.**
+>
+> `vn-folk` **không còn trần 20 truyện**. Đây là thể loại mở: cứ còn truyện dân gian Việt Nam
+> hay và chưa có thì bổ sung tiếp, không cần sửa danh mục để xin thêm chỗ. Lý do: thể loại này
+> **không phụ thuộc nguồn ngoài** (Opus tự kể + tự dịch theo §1.3) nên không bị giới hạn bởi
+> việc tuyển tập public domain có gì; và đây là phần nội dung mang bản sắc riêng của sản phẩm.
+>
+> ⚠️ **Hệ quả cho con số tổng:** tổng danh mục 125 truyện giờ chỉ còn là **sàn**, không phải
+> đích. Khi báo cáo tiến độ, `vn-folk` ghi số tuyệt đối (vd "vn-folk: 26 truyện"), KHÔNG ghi
+> dạng phân số `n/20` nữa vì không còn mẫu số.
+>
+> Mốc đã qua: 20/20 (2026-08-02) → 22 (2026-08-03, thêm Thần Trụ Trời + Sự tích Táo Quân).
 >
 > #1–3 soạn ở PR #440; #4–13 và #14–20 soạn trong hai đợt ngày 2026-08-02.
 > Độ dài: 497–709 từ EN mỗi truyện (đều vượt ngưỡng ≥400 từ đã chốt ở §4), 22–37 câu song ngữ.
