@@ -1633,6 +1633,40 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- **[2026-08-03] Lỗ hổng npm: ĐÃ VÁ 3/4, mục react-router ĐÓNG LẠI bằng quyết định "không nâng"
+  (người dùng chốt phương án A).** PR #462. `npm audit`: **5 lỗ hổng → 2** (2 con số còn lại là
+  cùng MỘT advisory react-router, xem ngay dưới).
+  - Đã vá, **không nâng major gói nào**: `postcss` 8.4.x → **8.5.25** (Path Traversal source map,
+    `GHSA-r28c-9q8g-f849`, high) · `brace-expansion` → **1.1.18/2.1.4/5.0.9** (DoS tràn bộ nhớ,
+    `GHSA-mh99-v99m-4gvg`, high) · `esbuild` 0.27.7 → **0.28.1** (đọc file tuỳ ý ở dev server trên
+    Windows, `GHSA-g7r4-m6w7-qqqr`, low). Cả 3 đều chỉ chạy lúc **build/dev**, không nằm trong
+    bundle chạy trên trình duyệt người dùng.
+  - `package.json` chỉ đổi đúng 1 dòng: `vite` `7.3.5` → `7.3.6` — **bản vá (patch), vẫn nằm trong
+    dải `^7.3.5` cũ**, không vi phạm quy tắc GIỮ NGUYÊN PHIÊN BẢN (CLAUDE.md mục 6). Cần thiết vì
+    vite 7.3.5 khoá cứng `esbuild@^0.27.0`; 7.3.6 mới nới sang `^0.27.0 || ^0.28.0` để
+    `npm update esbuild` dedupe được về bản đã vá. Ba gói còn lại vá trong dải semver sẵn có nên
+    chỉ `package-lock.json` đổi.
+  - ⚠️ **ĐÍNH CHÍNH ghi chú rà soát 2026-08-01 phía dưới** (dòng "`npm audit fix` không giải quyết
+    dứt điểm 2 mục high vì cần nâng major `eslint`/`tailwindcss`/`vite`"): kết luận đó **SAI/đã lỗi
+    thời**. Chạy lại thực tế ngày 2026-08-03 thì cả 2 mục high vá được mà **không cần nâng major
+    gói nào** — các gói thượng nguồn đã phát hành bản vá trong dải semver cũ kể từ ngày ghi chú đó.
+  - 🔒 **`react-router` (`GHSA-qwww-vcr4-c8h2`, high): QUYẾT ĐỊNH GIỮ NGUYÊN `7.18.2`, KHÔNG nâng.
+    Đây là quyết định có chủ đích, không phải việc còn tồn.** Người dùng chốt 2026-08-03 sau khi
+    cân nhắc 3 dữ kiện đã kiểm chứng:
+    1. **Không ảnh hưởng dự án này.** Advisory ghi rõ _"This only affects your application if you
+       are using the unstable RSC APIs."_ Đã grep xác nhận repo không dùng RSC, không dùng
+       `RouterProvider`/`createBrowserRouter` — `App.tsx` dùng `BrowserRouter` thuần (SPA).
+    2. **Bản vá duy nhất là react-router `8.3.0`**, không có bản vá nào trong dòng 7.x. Mà **v8 yêu
+       cầu React `19.2.7+`** (tài liệu chính thức `reactrouter.com/upgrading/v7`) — dự án đang React
+       `18.3.1`, nâng react-router ⇒ **buộc nâng React 18 → 19**, đúng thứ CLAUDE.md mục 6 cấm.
+       v8 cũng **xoá hẳn gói `react-router-dom`** → 32 file phải đổi import sang
+       `react-router` / `react-router/dom`.
+    3. `npm audit fix --force` không phải là "nâng" — nó **HẠ CẤP** về `react-router-dom@7.11.0`
+       (lùi 7 minor, mất tính năng).
+       → Đổi React 18 → 19 để vá một lỗ hổng ở code path app không hề chạy là cái giá không đáng.
+       **`npm audit` sẽ còn báo 2 dòng high này lâu dài — đó là kỳ vọng, không phải việc bỏ sót.**
+       Xem lại quyết định khi nào: nếu dự án sau này dùng RSC/data router, hoặc khi có lý do độc lập
+       để nâng React lên 19.
 - **[2026-08-02] react-router: ĐÃ NÂNG LÊN v7 (phương án 1 bước), package.json đổi
   `react-router-dom` `^6.24.1` → `^7.18.2`.** Cổng commit đạt đủ: build ✅ · typecheck ✅ (4
   tsconfig) · lint ✅ (0 cảnh báo) · test ✅ (103 file / 1473 test) · dev server khởi động sạch
@@ -1658,9 +1692,11 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 - **[Audit toàn diện 2026-08-01 — phát hiện mới]** Tầng 1–6 theo `docs/framework/QUY-TRINH-AUDIT.md`
   đều đạt (build/typecheck/lint/format/1033 test/bundle-size ✅, 0 secret hardcode, 0 high/critical
   `npm audit`, coverage 52.94/87.02/79.93/52.94% vượt sàn 48/87/76/48). Nợ còn lại:
-  - 🟡 `react-router`: 2 lỗ hổng **moderate** (CVE-2025-68470 bypass + arbitrary constructor
+  - ~~🟡 `react-router`: 2 lỗ hổng **moderate** (CVE-2025-68470 bypass + arbitrary constructor
     injection qua `deserializeErrors()`), có fix qua `npm audit fix` — chưa nâng cấp, cần kiểm tra
-    không phá route trước khi merge (đổi major/minor react-router-dom).
+    không phá route trước khi merge (đổi major/minor react-router-dom).~~ **[Lỗi thời]** 2 CVE
+    moderate này đã hết khi nâng lên react-router v7 (2026-08-02). Advisory react-router hiện tại
+    là `GHSA-qwww-vcr4-c8h2` (high, RSC Mode) — **đã quyết định giữ nguyên, xem mục đầu 2026-08-03.**
   - 🟡 `restore:all`/`restore:system`/`restore:r2`: mới kiểm chứng nhánh AN TOÀN (tải về, xác nhận
     2026-08-01). Nhánh `--restore-into <db> --yes` (DROP + tạo lại database thật) CHƯA test thật —
     chỉ nên chạy lần đầu trên database phụ/staging, không thử trực tiếp trên `english_tutor` production.
@@ -1686,9 +1722,12 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
     không chạy trên server production.
   - 🟢 `esbuild` (gián tiếp qua Vite, low) — chỉ ảnh hưởng dev server chạy trên Windows.
   - `react-router`/`react-router-dom` (moderate) — vẫn là mục đã biết ở trên, chưa đổi.
-  - `npm audit fix` (không `--force`) KHÔNG giải quyết dứt điểm 2 mục high vì bản vá nằm sâu trong
+  - ~~`npm audit fix` (không `--force`) KHÔNG giải quyết dứt điểm 2 mục high vì bản vá nằm sâu trong
     cây phụ thuộc của `eslint`/`tailwindcss`/`vite` — cần nâng major các gói này mới hết, trái quy
-    tắc "GIỮ NGUYÊN PHIÊN BẢN" (CLAUDE.md mục 6) nên CHƯA tự làm, cần người dùng quyết định trước.
+    tắc "GIỮ NGUYÊN PHIÊN BẢN" (CLAUDE.md mục 6) nên CHƯA tự làm, cần người dùng quyết định trước.~~
+    ⚠️ **[SAI — đã đính chính 2026-08-03, xem mục đầu "Nợ kỹ thuật còn mở"]** Chạy lại thực tế cho
+    thấy cả 3 mục (`postcss`/`brace-expansion`/`esbuild`) vá được mà **KHÔNG cần nâng major gói
+    nào**; đã vá xong ở PR #462.
   - E2E (Playwright) KHÔNG chạy trong lượt rà soát này (môi trường phiên không có `.env`/Postgres để
     kết nối) — chỉ xác nhận cổng commit, chưa phải cổng merge đầy đủ.
 
