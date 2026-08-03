@@ -112,4 +112,73 @@ describe('searchDictionary — Bước 4: hiểu dạng biến thể (bo-sung-da
     const playCount = r.results.filter((e) => e.word === 'play').length
     expect(playCount).toBe(1)
   })
+
+  it('query rỗng → trả total nhưng matched=0, không tìm kiếm', async () => {
+    const { searchDictionary } = await import('./dictionaryApi')
+    const r = await searchDictionary('   ')
+    expect(r.total).toBe(FIXTURE.length)
+    expect(r.matched).toBe(0)
+    expect(r.results).toEqual([])
+    expect(r.posGroups).toEqual([])
+  })
+
+  it('lọc theo pos → chỉ trả entry đúng loại từ, posGroups vẫn đếm trên toàn bộ matches', async () => {
+    const { searchDictionary } = await import('./dictionaryApi')
+    const r = await searchDictionary('go', undefined, 'v')
+    expect(r.results.every((e) => e.pos === 'v')).toBe(true)
+    // posGroups đếm trên "go" + "went" (đều v) — có ít nhất 1 nhóm 'v'
+    expect(r.posGroups.some(([pos]) => pos === 'v')).toBe(true)
+  })
+})
+
+describe('fetchWordOfDay — từ vựng cố định theo ngày', () => {
+  beforeEach(() => vi.resetModules())
+
+  it('trả về đúng total + 1 entry hợp lệ trong từ điển', async () => {
+    const { fetchWordOfDay } = await import('./dictionaryApi')
+    const r = await fetchWordOfDay()
+    expect(r.total).toBe(FIXTURE.length)
+    expect(r.entry).not.toBeNull()
+    expect(FIXTURE.some((e) => e.word === r.entry!.word)).toBe(true)
+  })
+
+  it('cùng ngày → luôn ra cùng 1 từ (idempotent)', async () => {
+    const { fetchWordOfDay } = await import('./dictionaryApi')
+    const r1 = await fetchWordOfDay()
+    const r2 = await fetchWordOfDay()
+    expect(r1.entry?.word).toBe(r2.entry?.word)
+  })
+
+  it('từ điển rỗng → total=0, entry=null (không throw)', async () => {
+    const loaderMod = await import('../data/dictionary/loader')
+    const spy = vi.spyOn(loaderMod, 'loadDictionary').mockResolvedValueOnce([])
+    const { fetchWordOfDay } = await import('./dictionaryApi')
+    const r = await fetchWordOfDay()
+    expect(r).toEqual({ total: 0, entry: null })
+    spy.mockRestore()
+  })
+})
+
+describe('fetchRandomEntries — bốc n từ ngẫu nhiên cho Flashcard', () => {
+  beforeEach(() => vi.resetModules())
+
+  it('trả đúng n từ, không trùng lặp', async () => {
+    const { fetchRandomEntries } = await import('./dictionaryApi')
+    const r = await fetchRandomEntries(4)
+    expect(r).toHaveLength(4)
+    const words = new Set(r.map((e) => e.word))
+    expect(words.size).toBe(4)
+  })
+
+  it('n lớn hơn kích thước từ điển → trả hết, không lỗi', async () => {
+    const { fetchRandomEntries } = await import('./dictionaryApi')
+    const r = await fetchRandomEntries(100)
+    expect(r).toHaveLength(FIXTURE.length)
+  })
+
+  it('mặc định n=30 khi không truyền tham số', async () => {
+    const { fetchRandomEntries } = await import('./dictionaryApi')
+    const r = await fetchRandomEntries()
+    expect(r).toHaveLength(FIXTURE.length) // fixture < 30 nên trả hết
+  })
 })

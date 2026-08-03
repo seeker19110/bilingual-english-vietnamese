@@ -6,6 +6,15 @@ import {
   shouldCelebrateStreak,
   markStreakCelebrated,
   daysSinceLastActivity,
+  register,
+  login,
+  logout,
+  getCurrentUser,
+  getDirection,
+  setDirection,
+  incrementUsage,
+  markStudiedToday,
+  getUsage,
 } from './storage'
 import { vnDateStr } from './date'
 
@@ -143,5 +152,94 @@ describe('daysSinceLastActivity — luồng "quay lại sau khi bỏ bẵng" (�
     setActivity('u1', 10)
     expect(daysSinceLastActivity('u1', 5)).toBeNull()
     expect(daysSinceLastActivity('u1', 10)).toBe(10)
+  })
+})
+
+describe('register/login/logout — quản lý guest user cục bộ', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('register tạo user mới, tự đăng nhập luôn', () => {
+    const u = register('a@test.com', 'A', 'pw123')
+    expect(u).not.toBeNull()
+    expect(u!.email).toBe('a@test.com')
+    expect(u!.plan).toBe('free')
+    expect(getCurrentUser()?.email).toBe('a@test.com')
+  })
+
+  it('register trùng email → trả về null, không ghi đè', () => {
+    register('a@test.com', 'A', 'pw123')
+    const dup = register('a@test.com', 'B', 'pw456')
+    expect(dup).toBeNull()
+  })
+
+  it('login đúng email → trả về user, cập nhật currentUser', () => {
+    register('a@test.com', 'A', 'pw123')
+    logout()
+    expect(getCurrentUser()).toBeNull()
+    const u = login('a@test.com', 'pw123')
+    expect(u?.email).toBe('a@test.com')
+    expect(getCurrentUser()?.email).toBe('a@test.com')
+  })
+
+  it('login email không tồn tại → null', () => {
+    expect(login('khong-ton-tai@test.com', 'x')).toBeNull()
+  })
+
+  it('logout → xoá currentUser', () => {
+    register('a@test.com', 'A', 'pw123')
+    logout()
+    expect(getCurrentUser()).toBeNull()
+  })
+})
+
+describe('direction — chiều học (A: học Anh / B: học Việt)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('mặc định chưa set → "A"', () => {
+    expect(getDirection()).toBe('A')
+  })
+
+  it('setDirection lưu và đọc lại đúng', () => {
+    setDirection('B')
+    expect(getDirection()).toBe('B')
+  })
+})
+
+describe('usage — đếm lượt dùng + học từ trong ngày', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('getUsage lần đầu → tất cả về 0', () => {
+    const u = getUsage('u1')
+    expect(u.chatCount).toBe(0)
+    expect(u.sttCount).toBe(0)
+    expect(u.pronounceCount).toBe(0)
+    expect(u.learnCount).toBe(0)
+  })
+
+  it('incrementUsage tăng đúng field, không ảnh hưởng field khác', () => {
+    incrementUsage('u1', 'chatCount')
+    incrementUsage('u1', 'chatCount')
+    incrementUsage('u1', 'writingCount')
+    const u = getUsage('u1')
+    expect(u.chatCount).toBe(2)
+    expect(u.writingCount).toBe(1)
+    expect(u.speakingCount).toBe(0)
+  })
+
+  it('getUsage bù mặc định field thiếu (dữ liệu cũ trước khi thêm sttCount/...)', () => {
+    localStorage.setItem(
+      usageKey('u1', vnDateStr()),
+      JSON.stringify({ date: vnDateStr(), chatCount: 1, writingCount: 0, speakingCount: 0 }),
+    )
+    const u = getUsage('u1')
+    expect(u.sttCount).toBe(0)
+    expect(u.pronounceCount).toBe(0)
+    expect(u.learnCount).toBe(0)
+  })
+
+  it('markStudiedToday tăng learnCount', () => {
+    markStudiedToday('u1')
+    markStudiedToday('u1')
+    expect(getUsage('u1').learnCount).toBe(2)
   })
 })

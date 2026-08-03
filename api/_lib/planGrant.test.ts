@@ -1,5 +1,11 @@
-import { describe, it, expect } from 'vitest'
-import { computePlanGrant } from './planGrant'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
+vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('../../packages/core-db/settings', () => ({ getAppSettings: vi.fn() }))
+
+import { computePlanGrant, grantPlanDays } from './planGrant'
+import { getPgPool } from '../../packages/core-db/pgPool'
+import { getAppSettings } from '../../packages/core-db/settings'
 
 const NOW = new Date('2026-07-25T10:00:00+07:00')
 const MS_DAY = 86_400_000
@@ -96,5 +102,50 @@ describe('computePlanGrant — cấp gói TRONG lúc khuyến mãi (2026-07-26):
   it('không truyền promoUntil (mặc định null) → hành vi cũ, không bị ảnh hưởng', () => {
     const r = computePlanGrant('free', null, 'pro', 7, NOW)
     expect(r.planExpiresAt?.getTime()).toBe(daysFromNow(7).getTime())
+  })
+})
+
+// grantPlanDays: đọc trạng thái hiện tại từ DB, tính bằng computePlanGrant rồi ghi lại.
+describe('grantPlanDays', () => {
+  const mockedGetPool = vi.mocked(getPgPool)
+  const mockedGetSettings = vi.mocked(getAppSettings)
+  const query = vi.fn()
+
+  beforeEach(() => {
+    query.mockReset()
+    mockedGetPool.mockReturnValue({ query } as unknown as ReturnType<typeof getPgPool>)
+    mockedGetSettings.mockResolvedValue({ promoUntil: null } as Awaited<
+      ReturnType<typeof getAppSettings>
+    >)
+  })
+
+  it('user chưa có hồ sơ (không có dòng) → cấp mới từ free, ghi upsert xuống DB', async () => {
+    query
+      .mockResolvedValueOnce({ rows: [] }) // select profiles
+      .mockResolvedValueOnce({ rows: [] }) // insert/upsert
+    const result = await grantPlanDays('u1', 'pro', 7, NOW)
+    expect(result.plan).toBe('pro')
+    expect(result.planExpiresAt?.getTime()).toBe(daysFromNow(7).getTime())
+    // Câu upsert thứ 2 phải nhận đúng userId + gói + hạn vừa tính.
+    const upsertArgs = query.mock.calls[1]?.[1] as unknown[]
+    expect(upsertArgs).toEqual(['u1', 'pro', result.planExpiresAt])
+  })
+
+  it('có khuyến mãi đang chạy (từ getAppSettings) → neo hạn theo promoUntil', async () => {
+    const promoUntil = daysFromNow(20)
+    mockedGetSettings.mockResolvedValue({ promoUntil } as unknown as Awaited<
+      ReturnType<typeof getAppSettings>
+    >)
+    query.mockResolvedValueOnce({ rows: [] }).mockResolvedValueOnce({ rows: [] })
+    const result = await grantPlanDays('u1', 'pro', 7, NOW)
+    expect(result.planExpiresAt?.getTime()).toBe(promoUntil.getTime() + 7 * MS_DAY)
+  })
+
+  it('user đang có gói Pro còn hạn → cộng dồn đúng số ngày', async () => {
+    query
+      .mockResolvedValueOnce({ rows: [{ plan: 'pro', plan_expires_at: daysFromNow(5) }] })
+      .mockResolvedValueOnce({ rows: [] })
+    const result = await grantPlanDays('u1', 'pro', 7, NOW)
+    expect(result.planExpiresAt?.getTime()).toBe(daysFromNow(12).getTime())
   })
 })

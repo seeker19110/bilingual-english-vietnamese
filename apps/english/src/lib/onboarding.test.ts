@@ -1,7 +1,13 @@
 // Test lib onboarding (U-3): cache localStorage, đọc từ GET /api/profile (mock fetch), map
 // phút/ngày → tốc độ học.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getCachedOnboarding, cacheOnboarding, fetchOnboarding, minutesToSpeed } from './onboarding'
+import {
+  getCachedOnboarding,
+  cacheOnboarding,
+  fetchOnboarding,
+  minutesToSpeed,
+  pushAgeGroup,
+} from './onboarding'
 
 // Giả lập GET /api/profile trả về body cho trước (hoặc lỗi HTTP nếu ok=false).
 function mockProfileResponse(body: unknown, ok = true) {
@@ -121,5 +127,42 @@ describe('fetchOnboarding', () => {
     expect(await fetchOnboarding('u1')).toBeNull()
     mockProfileResponse({ userLevel: 'weird', onboarded: true })
     expect(await fetchOnboarding('u1')).toBeNull()
+  })
+
+  it('fetch ném lỗi mạng → bắt lỗi, trả null', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
+    expect(await fetchOnboarding('u1')).toBeNull()
+  })
+})
+
+describe('pushAgeGroup', () => {
+  it('có cache sẵn → cập nhật cache local ngay + POST lên server thành công', async () => {
+    cacheOnboarding('u1', {
+      level: 'beginner',
+      goal: 'daily',
+      dailyMinutes: 10,
+      ageGroup: 'nguoi_lon',
+    })
+    mockProfileResponse({})
+    await pushAgeGroup('u1', 'thieu_nien')
+    expect(getCachedOnboarding('u1')?.ageGroup).toBe('thieu_nien')
+    expect(fetch).toHaveBeenCalledWith('/api/profile', expect.objectContaining({ method: 'POST' }))
+  })
+
+  it('chưa có cache → không cập nhật cache local, vẫn gọi server', async () => {
+    mockProfileResponse({})
+    await pushAgeGroup('u2', 'nguoi_lon')
+    expect(getCachedOnboarding('u2')).toBeNull()
+    expect(fetch).toHaveBeenCalled()
+  })
+
+  it('server trả lỗi HTTP → chỉ warn, không throw', async () => {
+    mockProfileResponse({}, false)
+    await expect(pushAgeGroup('u1', 'nguoi_lon')).resolves.toBeUndefined()
+  })
+
+  it('fetch ném lỗi mạng → bắt lỗi, không throw', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
+    await expect(pushAgeGroup('u1', 'nguoi_lon')).resolves.toBeUndefined()
   })
 })

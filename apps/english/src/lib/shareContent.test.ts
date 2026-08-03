@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { buildEvaluationShareContent, buildChallengeShareContent } from './shareContent'
+import {
+  buildEvaluationShareContent,
+  buildChallengeShareContent,
+  buildQuizShareContent,
+  buildProgressShareContent,
+} from './shareContent'
 import type { EvaluationResult } from '../types'
 
 const mkEvaluation = (overrides: Partial<EvaluationResult['scores']> = {}): EvaluationResult => ({
@@ -66,5 +71,38 @@ describe('buildChallengeShareContent', () => {
     const r = buildChallengeShareContent({ count: 3, firstWpm: 90, lastWpm: 95 }, false)
     expect(r.title).toBe('Week recap: 3/7 days')
     expect(r.lines[0]).toContain('words/min')
+  })
+})
+
+describe('buildQuizShareContent', () => {
+  it('tính % đúng, tiếng Việt khi isA=true', () => {
+    const r = buildQuizShareContent(8, 10, true)
+    expect(r.title).toBe('Kết quả bài kiểm tra: 8/10')
+    expect(r.lines).toEqual(['Đạt 80%'])
+  })
+
+  it('tiếng Anh khi isA=false', () => {
+    const r = buildQuizShareContent(5, 10, false)
+    expect(r.title).toBe('Quiz result: 5/10')
+    expect(r.lines).toEqual(['Scored 50%'])
+  })
+
+  it('total=0 → không chia cho 0, pct = 0', () => {
+    const r = buildQuizShareContent(0, 0, true)
+    expect(r.lines).toEqual(['Đạt 0%'])
+  })
+})
+
+describe('buildProgressShareContent', () => {
+  it('tiếng Việt: streak + số từ đã học', () => {
+    const r = buildProgressShareContent(7, 120, true)
+    expect(r.title).toBe('Streak 7 ngày liên tiếp 🔥')
+    expect(r.lines).toEqual(['Đã học 120 từ'])
+  })
+
+  it('tiếng Anh khi isA=false', () => {
+    const r = buildProgressShareContent(3, 50, false)
+    expect(r.title).toBe('3-day streak 🔥')
+    expect(r.lines).toEqual(['50 words learned'])
   })
 })
