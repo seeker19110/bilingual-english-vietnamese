@@ -1,0 +1,294 @@
+// api/_lib/achievementRewards.ts — Phần thưởng (ngày Pro/VIP) cho HUY HIỆU & MỐC, migration
+// 0026. Admin cấu hình từng huy hiệu qua api/admin-achievement-rewards.ts (bảng
+// achievement_rewards); người dùng nhận thưởng qua api/achievements.ts (bảng
+// achievement_claims, mỗi huy hiệu CHỈ nhận 1 LẦN/tài khoản — khác nhiệm vụ lặp lại theo
+// cooldown ở quests.ts).
+//
+// QUAN TRỌNG: "đã đạt huy hiệu" được XÁC MINH LẠI Ở ĐÂY từ dữ liệu SERVER (streak tính từ
+// free_daily_credit giống quests.ts, còn lại đọc thẳng từ learning_progress/writing_submissions/
+// speaking_sessions/challenge_entries) — KHÔNG tin danh sách huy hiệu localStorage gửi lên (client
+// tự tính ở src/lib/achievements.ts chỉ để hiển thị UI ngay, có thể bị sửa). Danh sách id +
+// điều kiện dưới đây PHẢI khớp apps/english/src/data/achievements.ts + lib/achievements.ts —
+// không import thẳng module frontend vào backend (giữ tách 2 tầng, giống cách quests.ts đã làm
+// với CEFR_EXAM_LEVELS).
+
+import { getPgPool } from '../../packages/core-db/pgPool.js'
+import { grantPlanDays } from './planGrant.js'
+import { getCurrentStreak } from './quests.js'
+import type { Plan } from '../../packages/core-billing/plan.js'
+
+export const ACHIEVEMENT_IDS = [
+  'streak_7',
+  'streak_30',
+  'streak_100',
+  'streak_365',
+  'vocab_100',
+  'vocab_500',
+  'vocab_1000',
+  'cefr_a1',
+  'cefr_a2',
+  'cefr_b1',
+  'cefr_b2',
+  'cefr_c1',
+  'cefr_c2',
+  'speak_10',
+  'write_10',
+  'challenge_10',
+  'challenge_30',
+  'challenge_100',
+  'challenge_perfect_week',
+] as const
+export type AchievementId = (typeof ACHIEVEMENT_IDS)[number]
+
+export interface AchievementRewardConfig {
+  enabled: boolean
+  rewardPlan: Exclude<Plan, 'free'>
+  rewardDays: number
+}
+
+export interface AchievementStatusItem {
+  id: AchievementId
+  earned: boolean
+  claimed: boolean
+  reward: AchievementRewardConfig
+}
+
+export type ClaimAchievementResult =
+  | { ok: true; rewardDays: number; rewardPlan: Exclude<Plan, 'free'> }
+  | { ok: false; message: string }
+
+// ── Cache cấu hình thưởng trong bộ nhớ tiến trình (TTL ngắn) — cùng mô hình
+// api/_lib/planMarketing.ts, tránh tra DB ở mọi request GET/claim. ──────────────────────────
+let cache: { data: Map<AchievementId, AchievementRewardConfig>; expiresAt: number } | null = null
+const CACHE_TTL_MS = 30_000
+
+export function invalidateAchievementRewardsCache(): void {
+  cache = null
+}
+
+async function loadRewardConfig(): Promise<Map<AchievementId, AchievementRewardConfig>> {
+  if (cache && cache.expiresAt > Date.now()) return cache.data
+
+  const pool = getPgPool()
+  const { rows } = await pool.query<{
+    achievement_id: string
+    enabled: boolean
+    reward_plan: 'pro' | 'vip'
+    reward_days: number
+  }>('select achievement_id, enabled, reward_plan, reward_days from public.achievement_rewards')
+
+  const map = new Map<AchievementId, AchievementRewardConfig>()
+  for (const id of ACHIEVEMENT_IDS) {
+    // Mặc định an toàn nếu admin chưa từng tạo hàng cho huy hiệu này: tắt, 0 ngày — không
+    // tự ý phát thưởng khi thiếu cấu hình.
+    map.set(id, { enabled: false, rewardPlan: 'pro', rewardDays: 0 })
+  }
+  for (const r of rows) {
+    if ((ACHIEVEMENT_IDS as readonly string[]).includes(r.achievement_id)) {
+      map.set(r.achievement_id as AchievementId, {
+        enabled: r.enabled,
+        rewardPlan: r.reward_plan,
+        rewardDays: r.reward_days,
+      })
+    }
+  }
+  cache = { data: map, expiresAt: Date.now() + CACHE_TTL_MS }
+  return map
+}
+
+// ── Tính lại điều kiện đạt TỪ DỮ LIỆU SERVER (tin cậy) ──────────────────────────────────────
+interface ServerStats {
+  streak: number
+  vocab: number
+  cefrPassed: Set<string>
+  speakingSessions: number
+  gradedEssays: number
+  challengeSubmitted: number
+  challengePerfectWeek: boolean
+}
+
+async function computeServerStats(userId: string): Promise<ServerStats> {
+  const pool = getPgPool()
+
+  const [streak, progressRes, speakingRes, writingRes, challengeCountRes, perfectWeekRes] =
+    await Promise.all([
+      getCurrentStreak(userId),
+      pool.query<{ learned: string[] | null; cefr_exams: Record<string, { passed?: boolean }> }>(
+        'select learned, cefr_exams from public.learning_progress where user_id = $1',
+        [userId],
+      ),
+      pool.query<{ count: string }>(
+        'select count(*) from public.speaking_sessions where user_id = $1',
+        [userId],
+      ),
+      pool.query<{ count: string }>(
+        'select count(*) from public.writing_submissions where user_id = $1',
+        [userId],
+      ),
+      pool.query<{ count: string }>(
+        'select count(*) from public.challenge_entries where user_id = $1',
+        [userId],
+      ),
+      // 1 tuần (Thứ 2 → CN, date_trunc('week', ...) của Postgres mặc định bắt đầu Thứ 2 — khớp
+      // lib/date.ts weekStartOf()) có đủ 7 ngày nộp — dùng cho huy hiệu "Tuần trọn vẹn".
+      pool.query<{ has_perfect: boolean }>(
+        `select exists(
+           select 1 from public.challenge_entries
+           where user_id = $1
+           group by date_trunc('week', day)
+           having count(*) >= 7
+         ) as has_perfect`,
+        [userId],
+      ),
+    ])
+
+  const learned = progressRes.rows[0]?.learned ?? []
+  const cefrExams = progressRes.rows[0]?.cefr_exams ?? {}
+
+  return {
+    streak,
+    vocab: Array.isArray(learned) ? learned.length : 0,
+    cefrPassed: new Set(Object.keys(cefrExams).filter((lv) => cefrExams[lv]?.passed === true)),
+    speakingSessions: Number(speakingRes.rows[0]?.count ?? 0),
+    gradedEssays: Number(writingRes.rows[0]?.count ?? 0),
+    challengeSubmitted: Number(challengeCountRes.rows[0]?.count ?? 0),
+    challengePerfectWeek: perfectWeekRes.rows[0]?.has_perfect === true,
+  }
+}
+
+// Điều kiện đạt của từng huy hiệu — PHẢI khớp isEarned() ở apps/english/src/lib/achievements.ts
+// (bản client chỉ dùng để hiển thị UI ngay, bản này mới là bản QUYẾT ĐỊNH cấp thưởng).
+function isEarned(id: AchievementId, s: ServerStats): boolean {
+  switch (id) {
+    case 'streak_7':
+      return s.streak >= 7
+    case 'streak_30':
+      return s.streak >= 30
+    case 'streak_100':
+      return s.streak >= 100
+    case 'streak_365':
+      return s.streak >= 365
+    case 'vocab_100':
+      return s.vocab >= 100
+    case 'vocab_500':
+      return s.vocab >= 500
+    case 'vocab_1000':
+      return s.vocab >= 1000
+    case 'cefr_a1':
+      return s.cefrPassed.has('A1')
+    case 'cefr_a2':
+      return s.cefrPassed.has('A2')
+    case 'cefr_b1':
+      return s.cefrPassed.has('B1')
+    case 'cefr_b2':
+      return s.cefrPassed.has('B2')
+    case 'cefr_c1':
+      return s.cefrPassed.has('C1')
+    case 'cefr_c2':
+      return s.cefrPassed.has('C2')
+    case 'speak_10':
+      return s.speakingSessions >= 10
+    case 'write_10':
+      return s.gradedEssays >= 10
+    case 'challenge_10':
+      return s.challengeSubmitted >= 10
+    case 'challenge_30':
+      return s.challengeSubmitted >= 30
+    case 'challenge_100':
+      return s.challengeSubmitted >= 100
+    case 'challenge_perfect_week':
+      return s.challengePerfectWeek
+  }
+}
+
+// ── Trạng thái tổng hợp cho UI (GET /api/achievements) ──────────────────────────────────────
+export async function getAchievementsStatus(userId: string): Promise<AchievementStatusItem[]> {
+  const [rewardConfig, stats, claimsRes] = await Promise.all([
+    loadRewardConfig(),
+    computeServerStats(userId),
+    getPgPool().query<{ achievement_id: string }>(
+      'select achievement_id from public.achievement_claims where user_id = $1',
+      [userId],
+    ),
+  ])
+  const claimed = new Set(claimsRes.rows.map((r) => r.achievement_id))
+
+  return ACHIEVEMENT_IDS.map((id) => ({
+    id,
+    earned: isEarned(id, stats),
+    claimed: claimed.has(id),
+    reward: rewardConfig.get(id) ?? { enabled: false, rewardPlan: 'pro', rewardDays: 0 },
+  }))
+}
+
+// ── Nhận thưởng 1 huy hiệu — KHÔNG throw ra ngoài, lỗi hạ tầng trả { ok: false } chung. ─────
+export async function claimAchievementReward(
+  userId: string,
+  achievementId: string,
+): Promise<ClaimAchievementResult> {
+  if (!(ACHIEVEMENT_IDS as readonly string[]).includes(achievementId)) {
+    return { ok: false, message: 'Huy hiệu không hợp lệ.' }
+  }
+  const id = achievementId as AchievementId
+
+  try {
+    const rewardConfig = (await loadRewardConfig()).get(id)
+    if (!rewardConfig || !rewardConfig.enabled || rewardConfig.rewardDays <= 0) {
+      return { ok: false, message: 'Huy hiệu này hiện chưa có phần thưởng.' }
+    }
+
+    const stats = await computeServerStats(userId)
+    if (!isEarned(id, stats)) {
+      return { ok: false, message: 'Bạn chưa đạt được huy hiệu này.' }
+    }
+
+    const pool = getPgPool()
+    const { rowCount } = await pool.query(
+      `insert into public.achievement_claims (user_id, achievement_id)
+       values ($1, $2)
+       on conflict (user_id, achievement_id) do nothing`,
+      [userId, id],
+    )
+    if (rowCount === 0) {
+      return { ok: false, message: 'Bạn đã nhận thưởng huy hiệu này rồi.' }
+    }
+
+    await grantPlanDays(userId, rewardConfig.rewardPlan, rewardConfig.rewardDays)
+    return { ok: true, rewardDays: rewardConfig.rewardDays, rewardPlan: rewardConfig.rewardPlan }
+  } catch (err) {
+    console.error('[achievementRewards] claimAchievementReward lỗi:', err)
+    return { ok: false, message: 'Có lỗi xảy ra, thử lại sau nhé.' }
+  }
+}
+
+// ── Admin: đọc/sửa cấu hình thưởng từng huy hiệu ────────────────────────────────────────────
+export async function getAllRewardConfigs(): Promise<
+  { achievementId: AchievementId; config: AchievementRewardConfig }[]
+> {
+  const map = await loadRewardConfig()
+  return ACHIEVEMENT_IDS.map((achievementId) => ({
+    achievementId,
+    config: map.get(achievementId) ?? { enabled: false, rewardPlan: 'pro', rewardDays: 0 },
+  }))
+}
+
+export async function upsertRewardConfig(
+  achievementId: string,
+  patch: Partial<AchievementRewardConfig>,
+): Promise<void> {
+  if (!(ACHIEVEMENT_IDS as readonly string[]).includes(achievementId)) {
+    throw new Error('Huy hiệu không hợp lệ.')
+  }
+  const pool = getPgPool()
+  await pool.query(
+    `insert into public.achievement_rewards (achievement_id, enabled, reward_plan, reward_days, updated_at)
+     values ($1, coalesce($2, true), coalesce($3, 'pro'), coalesce($4, 0), now())
+     on conflict (achievement_id) do update set
+       enabled = coalesce($2, achievement_rewards.enabled),
+       reward_plan = coalesce($3, achievement_rewards.reward_plan),
+       reward_days = coalesce($4, achievement_rewards.reward_days),
+       updated_at = now()`,
+    [achievementId, patch.enabled, patch.rewardPlan, patch.rewardDays],
+  )
+  invalidateAchievementRewardsCache()
+}
