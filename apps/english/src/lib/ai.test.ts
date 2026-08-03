@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@core/authHeader', () => ({ getAuthHeader: vi.fn().mockResolvedValue({}) }))
 vi.mock('./errorTracking', () => ({ captureException: vi.fn().mockResolvedValue(undefined) }))
 
-import { callClaude } from './ai'
+import { callClaude, parseJson } from './ai'
 import { captureException } from './errorTracking'
 
 describe('callClaude — xử lý lỗi thân thiện (song ngữ, không phơi lỗi kỹ thuật ra UI)', () => {
@@ -73,5 +73,35 @@ describe('callClaude — xử lý lỗi thân thiện (song ngữ, không phơi 
       json: () => Promise.resolve({ content: [{ text: 123 }] }),
     }) as unknown as typeof fetch
     await expect(callClaude([], 'system')).rejects.toThrow(/Phản hồi từ AI bị lỗi định dạng/)
+  })
+})
+
+describe('parseJson — trích xuất JSON từ câu trả lời AI (đôi khi bọc markdown/thừa chữ)', () => {
+  it('JSON thuần → parse thẳng', () => {
+    expect(parseJson<{ a: number }>('{"a":1}')).toEqual({ a: 1 })
+  })
+
+  it('bọc trong code fence ```json ... ``` → bóc ra rồi parse', () => {
+    expect(parseJson<{ a: number }>('```json\n{"a":1}\n```')).toEqual({ a: 1 })
+  })
+
+  it('bọc trong code fence không có "json" → vẫn bóc được', () => {
+    expect(parseJson<{ a: number }>('```\n{"a":1}\n```')).toEqual({ a: 1 })
+  })
+
+  it('có chữ thừa trước/sau khối JSON → cắt lấy phần từ { đầu tới } cuối', () => {
+    expect(parseJson<{ a: number }>('Ok! {"a":1} cảm ơn')).toEqual({ a: 1 })
+  })
+
+  it('không có dấu { hoặc } nào → trả null', () => {
+    expect(parseJson('không phải JSON gì cả')).toBeNull()
+  })
+
+  it('có { nhưng nội dung bên trong vẫn hỏng → trả null (không throw)', () => {
+    expect(parseJson('{ "a": }')).toBeNull()
+  })
+
+  it('} xuất hiện trước { → end <= start, trả null', () => {
+    expect(parseJson('} lộn xộn {')).toBeNull()
   })
 })

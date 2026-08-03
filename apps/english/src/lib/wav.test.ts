@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { toMonoPcm16kHz, encodeWavPcm16 } from './wav'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { toMonoPcm16kHz, encodeWavPcm16, blobToWav16kMono } from './wav'
 
 describe('toMonoPcm16kHz', () => {
   it('mono đã đúng 16kHz → giữ nguyên (không resample)', () => {
@@ -103,5 +103,52 @@ describe('encodeWavPcm16', () => {
     const wav = readWav(encodeWavPcm16(new Float32Array([]), 16_000))
     expect(wav.dataSize).toBe(0)
     expect(wav.samples).toEqual([])
+  })
+})
+
+describe('blobToWav16kMono — chỉ chạy trong trình duyệt (mock AudioContext)', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    // @ts-expect-error dọn field test tự thêm vào window
+    delete (window as unknown as { AudioContext?: unknown }).AudioContext
+  })
+
+  it('decode thành công → trả về ArrayBuffer WAV hợp lệ, đóng AudioContext', async () => {
+    const close = vi.fn()
+    const decoded = {
+      numberOfChannels: 1,
+      sampleRate: 16_000,
+      getChannelData: () => new Float32Array([0, 0.5]),
+    }
+    const decodeAudioData = vi.fn().mockResolvedValue(decoded)
+    class FakeAudioContext {
+      decodeAudioData = decodeAudioData
+      close = close
+    }
+    vi.stubGlobal('AudioContext', FakeAudioContext)
+    const blob = { arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)) } as unknown as Blob
+
+    const wav = await blobToWav16kMono(blob)
+    expect(wav.byteLength).toBeGreaterThan(44) // có header + ít nhất vài mẫu
+    expect(close).toHaveBeenCalled()
+  })
+
+  it('không có AudioContext trên window → ném lỗi rõ ràng', async () => {
+    vi.stubGlobal('AudioContext', undefined)
+    const blob = { arrayBuffer: vi.fn() } as unknown as Blob
+    await expect(blobToWav16kMono(blob)).rejects.toThrow('Trình duyệt không hỗ trợ AudioContext')
+  })
+
+  it('decode lỗi → vẫn đóng AudioContext (finally) rồi ném lại lỗi', async () => {
+    const close = vi.fn()
+    class FakeAudioContext {
+      decodeAudioData = vi.fn().mockRejectedValue(new Error('decode failed'))
+      close = close
+    }
+    vi.stubGlobal('AudioContext', FakeAudioContext)
+    const blob = { arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)) } as unknown as Blob
+
+    await expect(blobToWav16kMono(blob)).rejects.toThrow('decode failed')
+    expect(close).toHaveBeenCalled()
   })
 })

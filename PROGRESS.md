@@ -17,6 +17,27 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Nâng coverage 2026-08-03
+
+Theo yêu cầu người dùng "nâng hạn mức coverage lên 90" — thay vì đặt số cứng ngay (sẽ làm CI đỏ vì
+chưa có test tương ứng), đã: (1) loại khỏi phép đo các file mà unit test không mang giá trị thật
+(vỏ bọc API trình duyệt/nền tảng — MediaRecorder/IndexedDB/Web Speech/vibrate/service worker, hook
+React, gửi-rồi-quên/khởi tạo SDK ngoài — xem danh sách `exclude` trong `vitest.config.ts` kèm lý do
+từng nhóm); (2) viết mới ~70 file test cho toàn bộ handler API + `api/_lib` + lib logic thuần +
+lib client gọi API + `core-auth`/`core-ai` còn thiếu (giao 9 việc song song cho subagent, mỗi việc
+yêu cầu ≥90% statements/branches cho phạm vi được giao); (3) đo lại và chốt ngưỡng theo SỐ THẬT đo
+được, không đặt số mong muốn. Kết quả: stmts/lines 55.9→93.71 · branches 87.67→89.69 · funcs
+82.46→96.27 (2286 test, 145 file, tất cả xanh; lint/typecheck sạch). Nhân tiện phát hiện + sửa 2
+lỗi thật trong test có sẵn (không đụng code nguồn): `sharedAudio` singleton trong `tts.ts` khiến
+test mới `speakBilingual` treo mãi vì audio giả không tự bắn `onended`; `vi.restoreAllMocks()` ở
+`tts.test.ts` xoá nhầm implementation của `getAccessToken` (vi.mock factory) khiến các test SAU đó
+trong cùng file bị lỗi "Chưa đăng nhập" dây chuyền.
+
+**Nợ còn mở, chưa sửa (nằm ngoài phạm vi việc này):** `api/pronunciation.ts` gọi `.toLowerCase()`
+lên tham số `voice` trước khi so khớp `VOICE_IDS`/`STUDIO_VOICE_IDS` (vốn viết hoa như `Kore`,
+`Studio-O`) — `?voice=Kore` từ client luôn bị coi là không hợp lệ, rơi về `DEFAULT_VOICE`. Cần rà
+lại có phải bug thật không rồi sửa riêng.
+
 ## GĐ2 (nền tảng đa môn) — đang chuẩn bị nội dung & engine
 
 **[2026-08-01] Đặc tả GĐ2 + kho kiến thức 4 môn + ENGINE CHẤM đã có code chạy.**
@@ -254,16 +275,49 @@ song ngữ MỚI** (`ft-*`/`fb-*`/... theo 6 thể loại `fairy-tale`/`fable`/`
 truyện, tự cuộn theo câu, ghi nguồn bắt buộc) + `components/StoryCard.tsx`. Bản tiếng Anh **bắt
 buộc tải thật từ Project Gutenberg** (không gõ từ trí nhớ — CLAUDE.md §5), tiếng Việt Opus dịch
 tay chất lượng văn học. Migration `0032` bật feature `listening` cho mọi gói.
-**Tiến độ nội dung [cập nhật 2026-08-02, đóng fable]:** ✅ **`fairy-tale` XONG 20/20** · ✅
+**Tiến độ nội dung [cập nhật 2026-08-03, đếm file thật]:** ✅ **`fairy-tale` XONG 20/20** · ✅
 **`vn-folk` XONG 20/20** · ✅ **`fable` XONG 20/20** — ba thể loại đã hoàn tất trọn vẹn.
-`myth`/`humor`/`children` chưa bắt đầu. **Tổng 60/120 truyện — đúng nửa danh mục.**
+🔵 **`myth` 24/25** (Kingsley 8 + Bulfinch 12 + Colum Bắc Âu 4; chỉ còn Cupid và Psyche).
+🔓 **`vn-folk` 24 truyện — thể loại KHÔNG CÒN TRẦN** (chủ dự án chốt 2026-08-03: cứ còn truyện
+dân gian Việt Nam hay và chưa có thì bổ sung tiếp). Vì thế `vn-folk` ghi số tuyệt đối, KHÔNG ghi
+dạng `n/20` nữa, và tổng danh mục 125 giờ chỉ là **sàn**, không phải đích.
+`humor` 0/20 · `children` 0/20. **Tổng 88 truyện.**
+🚨 **Sự cố trùng lặp 2026-08-03 (đã xử lý):** đã soạn `vn-tam-cam` rồi mới thấy `ft-tam-cam` ĐÃ
+CÓ SẴN ở thể loại `fairy-tale` (bản dài gấp đôi) — đã xoá bản trùng. Nguyên nhân: kiểm "truyện VN
+đã có" bằng `ls raw/vn-*.json`, tức lọc theo TIỀN TỐ THỂ LOẠI, trong khi truyện Việt Nam nằm rải
+cả ở `fairy-tale` và `humor`. **Thể loại KHÔNG suy ra được quốc gia.** Quy tắc mới đã ghi vào
+danh mục §5: trước khi soạn truyện mới phải rà TOÀN BỘ `raw/*.json` không lọc tiền tố.
+✅ **Rào cản mạng ĐÃ GỠ (2026-08-03):** `gutenberg.org` giờ truy cập được từ môi trường Claude
+Code web (`curl` PG 3327 trả HTTP 200) — ghi chú cũ ngày 2026-08-02 nói `fable`/`myth`/`humor`/
+`children` "bị chặn cứng" đã hết hiệu lực, 4 thể loại phụ thuộc Gutenberg làm tiếp được bình thường.
 ⚠️ Cách cập nhật con số này: **đếm file thật** (`ls apps/english/src/data/stories/raw/ft-*.json |
 wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale` "12/20" trong khi thực tế mới có
-11 file.
+11 file, và ghi `myth` "chưa bắt đầu" trong khi thực tế đã có 16 file.
 
 ## Tiếp theo
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
+
+- **[2026-08-03] Thưởng cho Huy hiệu & mốc (migration 0026) — ✅ XONG, admin cấu hình được.**
+  Mỗi huy hiệu/mốc (19 huy hiệu hiện có, `src/data/achievements.ts`) tặng thêm N ngày gói
+  Pro/VIP khi đạt được, nhận **1 lần duy nhất/tài khoản** (khác nhiệm vụ lặp cooldown ở
+  `quests.ts`). Quyết định thiết kế: (1) thưởng = ngày Pro/VIP, tái dùng `grantPlanDays()` có
+  sẵn; (2) **xác minh lại "đã đạt" Ở SERVER** trước khi cấp (không tin danh sách huy hiệu
+  localStorage gửi lên) — server tự tính lại streak (`free_daily_credit`, tái dùng
+  `getCurrentStreak()` của quests.ts), số từ đã thuộc + cấp CEFR đã thi đạt
+  (`learning_progress`), số phiên nói/bài viết (`speaking_sessions`/`writing_submissions`), số
+  challenge đã nộp + tuần trọn vẹn 7/7 (`challenge_entries`); (3) admin cấu hình **TỪNG huy
+  hiệu 1 dòng riêng** (bật/tắt + gói + số ngày) ở tab mới "Thưởng huy hiệu" trong `/admin-s` —
+  gom hết vào 1 chỗ theo yêu cầu, không rải rác nhiều nơi.
+  Migration `postgres/migrations/0026_achievement_rewards.sql` (bảng `achievement_rewards` +
+  `achievement_claims`, seed sẵn giá trị mặc định cho 19 huy hiệu). Backend:
+  `api/_lib/achievementRewards.ts` (tính điểm + cache cấu hình TTL 30s), `api/achievements.ts`
+  (GET trạng thái + POST nhận thưởng, rate-limit chặt như `api/quests.ts`),
+  `api/admin-achievement-rewards.ts` (admin GET/PUT). Frontend:
+  `src/lib/achievementRewards.ts` (gọi API), khối "Nhận thưởng" mới trong Hồ sơ
+  (`Profile.tsx`, chỉ hiện huy hiệu đã đạt + có thưởng + chưa nhận),
+  `AdminAchievementRewardsPanel.tsx`. ⚠️ **Việc tay trước khi dùng thật:** chạy
+  `npm run migrate:pg` trên VPS để tạo 2 bảng mới.
 
 - **[2026-08-02] Trang Nghe — ✅ ĐÓNG THỂ LOẠI `fable` 20/20 (14 truyện Jataka).** Soạn nốt toàn
   bộ phần còn lại của thể loại ngụ ngôn từ **Jataka Tales** (PG 62514, Babbitt 1912) và **More
@@ -1591,6 +1645,41 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- **[2026-08-03] Lỗ hổng npm: ĐÃ VÁ 3/4, mục react-router ĐÓNG LẠI bằng quyết định "không nâng"
+  (người dùng chốt phương án A).** PR #462. `npm audit`: **5 lỗ hổng → 2** (2 con số còn lại là
+  cùng MỘT advisory react-router, xem ngay dưới).
+  - Đã vá, **không nâng major gói nào**: `postcss` 8.4.x → **8.5.25** (Path Traversal source map,
+    `GHSA-r28c-9q8g-f849`, high) · `brace-expansion` → **1.1.18/2.1.4/5.0.9** (DoS tràn bộ nhớ,
+    `GHSA-mh99-v99m-4gvg`, high) · `esbuild` 0.27.7 → **0.28.1** (đọc file tuỳ ý ở dev server trên
+    Windows, `GHSA-g7r4-m6w7-qqqr`, low). Cả 3 đều chỉ chạy lúc **build/dev**, không nằm trong
+    bundle chạy trên trình duyệt người dùng.
+  - `package.json` chỉ đổi đúng 1 dòng: `vite` `7.3.5` → `7.3.6` — **bản vá (patch), vẫn nằm trong
+    dải `^7.3.5` cũ**, không vi phạm quy tắc GIỮ NGUYÊN PHIÊN BẢN (CLAUDE.md mục 6). Cần thiết vì
+    vite 7.3.5 khoá cứng `esbuild@^0.27.0`; 7.3.6 mới nới sang `^0.27.0 || ^0.28.0` để
+    `npm update esbuild` dedupe được về bản đã vá. Ba gói còn lại vá trong dải semver sẵn có nên
+    chỉ `package-lock.json` đổi.
+  - ⚠️ **ĐÍNH CHÍNH ghi chú rà soát 2026-08-01 phía dưới** (dòng "`npm audit fix` không giải quyết
+    dứt điểm 2 mục high vì cần nâng major `eslint`/`tailwindcss`/`vite`"): kết luận đó **SAI/đã lỗi
+    thời**. Chạy lại thực tế ngày 2026-08-03 thì cả 2 mục high vá được mà **không cần nâng major
+    gói nào** — các gói thượng nguồn đã phát hành bản vá trong dải semver cũ kể từ ngày ghi chú đó.
+  - 🔒 **`react-router` (`GHSA-qwww-vcr4-c8h2`, high): QUYẾT ĐỊNH GIỮ NGUYÊN `7.18.2`, KHÔNG nâng.
+    Đây là quyết định có chủ đích, không phải việc còn tồn.** Người dùng chốt 2026-08-03 sau khi
+    cân nhắc 3 dữ kiện đã kiểm chứng:
+    1. **Không ảnh hưởng dự án này.** Advisory ghi rõ _"This only affects your application if you
+       are using the unstable RSC APIs."_ Đã grep xác nhận repo không dùng RSC, không dùng
+       `RouterProvider`/`createBrowserRouter` — `App.tsx` dùng `BrowserRouter` thuần (SPA).
+    2. **Bản vá duy nhất là react-router `8.3.0`**, không có bản vá nào trong dòng 7.x. Mà **v8 yêu
+       cầu React `19.2.7+`** (tài liệu chính thức `reactrouter.com/upgrading/v7`) — dự án đang React
+       `18.3.1`, nâng react-router ⇒ **buộc nâng React 18 → 19**, đúng thứ CLAUDE.md mục 6 cấm.
+       v8 cũng **xoá hẳn gói `react-router-dom`** → 32 file phải đổi import sang
+       `react-router` / `react-router/dom`.
+    3. `npm audit fix --force` không phải là "nâng" — nó **HẠ CẤP** về `react-router-dom@7.11.0`
+       (lùi 7 minor, mất tính năng).
+       → Đổi React 18 → 19 để vá một lỗ hổng ở code path app không hề chạy là cái giá không đáng.
+       **`npm audit` sẽ còn báo 2 dòng high này lâu dài — đó là kỳ vọng, không phải việc bỏ sót.**
+       Xem lại quyết định khi nào: nếu dự án sau này dùng RSC/data router, hoặc khi có lý do độc lập
+       để nâng React lên 19.
+
 - **[Rà soát tự động 2026-08-03]** Chạy lại đầy đủ cổng commit sau `npm ci` sạch: build ✅ ·
   typecheck ✅ (4 tsconfig: gốc/api/e2e/`apps/hub`) · lint ✅ (0 cảnh báo) · test ✅ (**103 file /
   1683 test**). Không có lỗi code mới. `npm audit`: **5 lỗ hổng (4 high, 1 low)** — khớp đúng dự
@@ -1600,6 +1689,9 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   nâng cấp" dù đã nâng lên v7.18.2 từ 2026-08-02 — đã sửa lại đúng hiện trạng (hết 2 CVE moderate
   cũ, chấp nhận 1 cảnh báo high mới vì app không dùng RSC Mode). E2E Playwright vẫn KHÔNG chạy
   được trong sandbox này (không có `.env`/Postgres thật) — như các lượt rà soát trước.
+  ⚠️ **Số liệu `npm audit` trong mục này đã bị thay thế** bởi mục 2026-08-03 ngay phía
+  trên (PR #462 đã vá 3/4 lỗ hổng, còn 2). Giữ lại nguyên văn làm bản ghi lịch sử của lượt
+  rà soát lúc 00:13 cùng ngày, không phải hiện trạng.
 
 - **[2026-08-02] react-router: ĐÃ NÂNG LÊN v7 (phương án 1 bước), package.json đổi
   `react-router-dom` `^6.24.1` → `^7.18.2`.** Cổng commit đạt đủ: build ✅ · typecheck ✅ (4
@@ -1626,9 +1718,11 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 - **[Audit toàn diện 2026-08-01 — phát hiện mới]** Tầng 1–6 theo `docs/framework/QUY-TRINH-AUDIT.md`
   đều đạt (build/typecheck/lint/format/1033 test/bundle-size ✅, 0 secret hardcode, 0 high/critical
   `npm audit`, coverage 52.94/87.02/79.93/52.94% vượt sàn 48/87/76/48). Nợ còn lại:
-  - 🟡 `react-router`: 2 lỗ hổng **moderate** (CVE-2025-68470 bypass + arbitrary constructor
+  - ~~🟡 `react-router`: 2 lỗ hổng **moderate** (CVE-2025-68470 bypass + arbitrary constructor
     injection qua `deserializeErrors()`), có fix qua `npm audit fix` — chưa nâng cấp, cần kiểm tra
-    không phá route trước khi merge (đổi major/minor react-router-dom).
+    không phá route trước khi merge (đổi major/minor react-router-dom).~~ **[Lỗi thời]** 2 CVE
+    moderate này đã hết khi nâng lên react-router v7 (2026-08-02). Advisory react-router hiện tại
+    là `GHSA-qwww-vcr4-c8h2` (high, RSC Mode) — **đã quyết định giữ nguyên, xem mục đầu 2026-08-03.**
   - 🟡 `restore:all`/`restore:system`/`restore:r2`: mới kiểm chứng nhánh AN TOÀN (tải về, xác nhận
     2026-08-01). Nhánh `--restore-into <db> --yes` (DROP + tạo lại database thật) CHƯA test thật —
     chỉ nên chạy lần đầu trên database phụ/staging, không thử trực tiếp trên `english_tutor` production.
@@ -1654,9 +1748,12 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
     không chạy trên server production.
   - 🟢 `esbuild` (gián tiếp qua Vite, low) — chỉ ảnh hưởng dev server chạy trên Windows.
   - `react-router`/`react-router-dom` (moderate) — vẫn là mục đã biết ở trên, chưa đổi.
-  - `npm audit fix` (không `--force`) KHÔNG giải quyết dứt điểm 2 mục high vì bản vá nằm sâu trong
+  - ~~`npm audit fix` (không `--force`) KHÔNG giải quyết dứt điểm 2 mục high vì bản vá nằm sâu trong
     cây phụ thuộc của `eslint`/`tailwindcss`/`vite` — cần nâng major các gói này mới hết, trái quy
-    tắc "GIỮ NGUYÊN PHIÊN BẢN" (CLAUDE.md mục 6) nên CHƯA tự làm, cần người dùng quyết định trước.
+    tắc "GIỮ NGUYÊN PHIÊN BẢN" (CLAUDE.md mục 6) nên CHƯA tự làm, cần người dùng quyết định trước.~~
+    ⚠️ **[SAI — đã đính chính 2026-08-03, xem mục đầu "Nợ kỹ thuật còn mở"]** Chạy lại thực tế cho
+    thấy cả 3 mục (`postcss`/`brace-expansion`/`esbuild`) vá được mà **KHÔNG cần nâng major gói
+    nào**; đã vá xong ở PR #462.
   - E2E (Playwright) KHÔNG chạy trong lượt rà soát này (môi trường phiên không có `.env`/Postgres để
     kết nối) — chỉ xác nhận cổng commit, chưa phải cổng merge đầy đủ.
 

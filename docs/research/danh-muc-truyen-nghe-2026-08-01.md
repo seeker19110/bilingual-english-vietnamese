@@ -89,6 +89,18 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 >
 > Đợt cuối bổ sung 14 truyện Jataka (PG 62514 + PG 7518). Tổng độ dài EN của thể loại: 9.789 từ,
 > trung bình 489 từ/truyện (bản Aesop cũ chỉ ~94 từ/truyện).
+>
+> ⚠️ **Cẩn thận với con số trung bình 489 ở trên — nó che mất phân bố rất lệch.** Rà lại
+> 2026-08-03 bằng cách đo TỪNG truyện: **10/20 truyện dưới sàn 400 từ**, trong đó 3 truyện dưới
+> cả ngưỡng 200 từ mà quy tắc bên dưới nói "cân nhắc bỏ". Trung bình cao là nhờ vài truyện
+> Jataka rất dài kéo lên (`fb-prince-wicked` 1.692 từ, `fb-monkey-crocodile` 942). Bài học:
+> khi kiểm độ dài thể loại phải xem **phân bố**, đừng tin mỗi số trung bình.
+>
+> ✅ **QUYẾT ĐỊNH 2026-08-03 (chủ dự án): GIỮ NGUYÊN 3 truyện siêu ngắn — ngoại lệ có chủ đích.**
+> `fb-fox-grapes` (56 từ) · `fb-boy-cried-wolf` (98 từ) · `fb-tortoise-hare` (128 từ). Đây là ba
+> ngụ ngôn Aesop nổi tiếng nhất thế giới, hầu như ai cũng biết; nguyên văn Townsend 1867 vốn
+> ngắn đúng như vậy, không phải lỗi dữ liệu. Giá trị nhận biết lớn hơn thiệt hại về thời lượng
+> nghe. **Đây là ngoại lệ được ghi nhận, KHÔNG phải việc còn tồn** — đừng "sửa" ở các đợt sau.
 
 > **📌 Ghi chú độ dài — chốt 2026-08-01 sau khi đo độ dài thật:**
 >
@@ -147,7 +159,39 @@ Tất cả các ID dưới đây đã `curl` về HTTP 200 và **đã đọc m�
 Không có bản PD tiếng Anh → **Opus kể lại bằng lời văn riêng + tự dịch sang tiếng Anh**.
 Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 
-> ## ✅ **HOÀN TẤT 20/20 (2026-08-02)** — thể loại `vn-folk` đã soạn xong toàn bộ.
+> ## 🔓 **KHÔNG GIỚI HẠN SỐ LƯỢNG — chủ dự án chốt 2026-08-03.**
+>
+> `vn-folk` **không còn trần 20 truyện**. Đây là thể loại mở: cứ còn truyện dân gian Việt Nam
+> hay và chưa có thì bổ sung tiếp, không cần sửa danh mục để xin thêm chỗ. Lý do: thể loại này
+> **không phụ thuộc nguồn ngoài** (Opus tự kể + tự dịch theo §1.3) nên không bị giới hạn bởi
+> việc tuyển tập public domain có gì; và đây là phần nội dung mang bản sắc riêng của sản phẩm.
+>
+> ⚠️ **Hệ quả cho con số tổng:** tổng danh mục 125 truyện giờ chỉ còn là **sàn**, không phải
+> đích. Khi báo cáo tiến độ, `vn-folk` ghi số tuyệt đối (vd "vn-folk: 26 truyện"), KHÔNG ghi
+> dạng phân số `n/20` nữa vì không còn mẫu số.
+>
+> Mốc đã qua: 20/20 (2026-08-02) → 24 (2026-08-03, thêm Thần Trụ Trời, Sự tích Táo Quân,
+> Mỵ Châu — Trọng Thuỷ, Cóc kiện Trời).
+>
+> 🚨 **SỰ CỐ TRÙNG LẶP 2026-08-03 — đã xử lý, ghi lại để không lặp.** Đã soạn `vn-tam-cam` (Tấm
+> Cám) rồi mới phát hiện **`ft-tam-cam` ĐÃ TỒN TẠI** từ trước, nằm ở thể loại `fairy-tale` (mục
+> #1 của §3), là bản dài hơn hẳn (115 câu / 2.044 từ so với 59 câu / 1.035 từ). Đã **xoá bản
+> trùng `vn-tam-cam`**, giữ `ft-tam-cam`.
+>
+> **Nguyên nhân:** khi kiểm "truyện Việt Nam nào đã có", đã liệt kê bằng `ls raw/vn-*.json` —
+> tức lọc theo TIỀN TỐ THỂ LOẠI, trong khi truyện Việt Nam còn nằm rải ở `fairy-tale` (Tấm Cám)
+> và sẽ còn ở `humor` (5 truyện cười VN, §7). Đúng bài học đã ghi ở §4 cho lô Jataka — _"phải
+> đối chiếu NỘI DUNG, không chỉ đối chiếu tên"_ — nhưng lần này sai ở chiều khác: lọc nhầm
+> phạm vi tìm kiếm.
+>
+> ✅ **QUY TẮC BẮT BUỘC TỪ NAY:** trước khi soạn bất kỳ truyện mới nào, phải rà **TOÀN BỘ**
+> `raw/*.json` (không lọc tiền tố) theo `titleVi`, `titleEn` VÀ câu mở đầu, cộng với `grep` tên
+> nhân vật/tích trong chính file danh mục này. Đã có sẵn script rà trong lịch sử phiên; chạy nó
+> trước mỗi đợt.
+>
+> 📌 **Ghi chú xếp loại:** `ft-tam-cam` là truyện dân gian Việt Nam nhưng nằm ở `fairy-tale`.
+> Đây là xếp loại có từ đầu dự án, giữ nguyên để không phá URL/tiến độ người học; nhưng nó chính
+> là cái bẫy đã gây ra sự cố trên — nhớ rằng **thể loại KHÔNG suy ra được quốc gia**.
 >
 > #1–3 soạn ở PR #440; #4–13 và #14–20 soạn trong hai đợt ngày 2026-08-02.
 > Độ dài: 497–709 từ EN mỗi truyện (đều vượt ngưỡng ≥400 từ đã chốt ở §4), 22–37 câu song ngữ.
@@ -237,23 +281,23 @@ Không chép sách giáo khoa hay bản của bất kỳ NXB nào.
 | 6   | `my-theseus-1`        | Theseus, Part I: How Theseus Lifted the Stone                | Theseus I: Nhấc tảng đá                | 🇬🇷 Hy Lạp | PG 677   | B2  | ✅  |
 | 7   | `my-theseus-3`        | Theseus, Part III: How Theseus Slew the Minotaur             | Theseus III: Giết quái vật Minotaur    | 🇬🇷 Hy Lạp | PG 677   | B2  | ✅  |
 | 8   | `my-theseus-4`        | Theseus, Part IV: How Theseus Fell by His Pride              | Theseus IV: Ngã vì kiêu ngạo           | 🇬🇷 Hy Lạp | PG 677   | B2  | ✅  |
-| 9   | `my-prometheus`       | Prometheus and Pandora                                       | Prometheus và chiếc hộp Pandora        | 🇬🇷 Hy Lạp | PG 3327  | B2  | ⏳  |
+| 9   | `my-prometheus`       | Prometheus and Pandora                                       | Prometheus và chiếc hộp Pandora        | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 10  | `my-proserpine`       | Pluto and Proserpine                                         | Pluto và nàng Proserpine               | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 11  | `my-midas`            | Midas                                                        | Vua Midas và bàn tay vàng              | 🇬🇷 Hy Lạp | PG 3327  | B1  | ✅  |
 | 12  | `my-daedalus-icarus`  | Daedalus and Icarus                                          | Daedalus và Icarus                     | 🇬🇷 Hy Lạp | PG 3327  | B1  | ✅  |
-| 13  | `my-orpheus-eurydice` | Orpheus and Eurydice                                         | Orpheus và Eurydice                    | 🇬🇷 Hy Lạp | PG 3327  | B2  | ⏳  |
+| 13  | `my-orpheus-eurydice` | Orpheus and Eurydice                                         | Orpheus và Eurydice                    | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 14  | `my-narcissus-echo`   | Echo and Narcissus                                           | Tiếng vọng và chàng Narcissus          | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
-| 15  | `my-cupid-psyche`     | Cupid and Psyche                                             | Cupid và Psyche                        | 🇬🇷 Hy Lạp | PG 3327  | B2  | ⏳  |
+| 15  | `my-cupid-psyche`     | Cupid and Psyche                                             | Cupid và Psyche                        | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 16  | `my-arachne`          | Arachne                                                      | Nàng Arachne dệt vải                   | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 17  | `my-apollo-daphne`    | Apollo and Daphne                                            | Apollo và nàng Daphne                  | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 18  | `my-pyramus-thisbe`   | Pyramus and Thisbe                                           | Pyramus và Thisbe                      | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
-| 19  | `my-phaeton`          | Phaeton                                                      | Phaeton và cỗ xe mặt trời              | 🇬🇷 Hy Lạp | PG 3327  | B2  | ⏳  |
+| 19  | `my-phaeton`          | Phaeton                                                      | Phaeton và cỗ xe mặt trời              | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
 | 20  | `my-baucis-philemon`  | Baucis and Philemon                                          | Baucis và Philemon                     | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
-| 21  | `my-pygmalion`        | Pygmalion's Statue                                           | Pho tượng của Pygmalion                | 🇬🇷 Hy Lạp | PG 3327  | B2  | ⏳  |
-| 22  | `my-building-wall`    | The Building of the Wall                                     | Bức tường thành Asgard                 | 🇮🇸 Bắc Âu | PG 24737 | B1  | ⏳  |
-| 23  | `my-iduna-apples`     | Iduna and Her Apples                                         | Nàng Iduna và những quả táo            | 🇮🇸 Bắc Âu | PG 24737 | B1  | ⏳  |
-| 24  | `my-sif-golden-hair`  | Sif's Golden Hair                                            | Mái tóc vàng của Sif                   | 🇮🇸 Bắc Âu | PG 24737 | B1  | ⏳  |
-| 25  | `my-thor-thrym`       | How Thor and Loki Befooled Thrym                             | Thor và Loki lừa gã khổng lồ Thrym     | 🇮🇸 Bắc Âu | PG 24737 | B1  | ⏳  |
+| 21  | `my-pygmalion`        | Pygmalion's Statue                                           | Pho tượng của Pygmalion                | 🇬🇷 Hy Lạp | PG 3327  | B2  | ✅  |
+| 22  | `my-building-wall`    | The Building of the Wall                                     | Bức tường thành Asgard                 | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
+| 23  | `my-iduna-apples`     | Iduna and Her Apples                                         | Nàng Iduna và những quả táo            | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
+| 24  | `my-sif-golden-hair`  | Sif's Golden Hair                                            | Mái tóc vàng của Sif                   | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
+| 25  | `my-thor-thrym`       | How Thor and Loki Befooled Thrym                             | Thor và Loki lừa gã khổng lồ Thrym     | 🇮🇸 Bắc Âu | PG 24737 | B1  | ✅  |
 
 📌 **Mốc cắt truyện trong Bulfinch (PG 3327)** — dùng lại cho các đợt sau. Bulfinch gộp nhiều
 tích trong một chương và không đặt tiêu đề riêng cho từng truyện, nên **không được cắt theo
@@ -275,14 +319,14 @@ Nasreddin (Thổ Nhĩ Kỳ) trong PG 16244 là **mẩu chuyện rất ngắn, kh
 mỗi mẩu lấy nguyên văn và **đặt tiêu đề mô tả** (ghi rõ tiêu đề do Opus đặt trong `source.en`).
 15 mẩu Nasreddin + 5 truyện cười dân gian Việt Nam (Opus kể).
 
-| #    | id                            | Nội dung                                                | Nước          | Nguồn    | Cấp |
-| ---- | ----------------------------- | ------------------------------------------------------- | ------------- | -------- | --- |
-| 1–15 | `hm-nasreddin-01…15`          | 15 mẩu Nasreddin Hoja chọn lọc (nguyên văn Borrow 1884) | 🇹🇷 Thổ Nhĩ Kỳ | PG 16244 | A2  |
-| 16   | `hm-vn-lon-cuoi`              | Lợn cưới áo mới                                         | 🇻🇳 Việt Nam   | Opus     | A2  |
-| 17   | `hm-vn-tam-dai-con-ga`        | Tam đại con gà                                          | 🇻🇳 Việt Nam   | Opus     | A2  |
-| 18   | `hm-vn-treo-bien`             | Treo biển                                               | 🇻🇳 Việt Nam   | Opus     | A2  |
-| 19   | `hm-vn-thay-boi-xem-voi-cuoi` | Đẽo cày giữa đường                                      | 🇻🇳 Việt Nam   | Opus     | A2  |
-| 20   | `hm-vn-mua-kinh`              | Mua kính                                                | 🇻🇳 Việt Nam   | Opus     | A2  |
+| #    | id                         | Nội dung                                                | Nước          | Nguồn    | Cấp |
+| ---- | -------------------------- | ------------------------------------------------------- | ------------- | -------- | --- |
+| 1–15 | `hm-nasreddin-01…15`       | 15 mẩu Nasreddin Hoja chọn lọc (nguyên văn Borrow 1884) | 🇹🇷 Thổ Nhĩ Kỳ | PG 16244 | A2  |
+| 16   | `hm-vn-lon-cuoi`           | Lợn cưới áo mới                                         | 🇻🇳 Việt Nam   | Opus     | A2  |
+| 17   | `hm-vn-tam-dai-con-ga`     | Tam đại con gà                                          | 🇻🇳 Việt Nam   | Opus     | A2  |
+| 18   | `hm-vn-treo-bien`          | Treo biển                                               | 🇻🇳 Việt Nam   | Opus     | A2  |
+| 19   | `hm-vn-deo-cay-giua-duong` | Đẽo cày giữa đường                                      | 🇻🇳 Việt Nam   | Opus     | A2  |
+| 20   | `hm-vn-mua-kinh`           | Mua kính                                                | 🇻🇳 Việt Nam   | Opus     | A2  |
 
 ## 8. Thể loại 6 — Thiếu nhi kinh điển ngắn (`kind: "children"`)
 

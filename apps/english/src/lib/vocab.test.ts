@@ -8,7 +8,11 @@ import {
   unmarkLearned,
   isLearned,
   getLearnedWords,
+  getLearnedCount,
   getRecentlyLearnedWords,
+  getDifficultWords,
+  toggleDifficult,
+  isDifficult,
 } from './vocab'
 
 describe('vocab — từ đã thuộc (chuẩn hoá chữ thường, BUG-6)', () => {
@@ -35,6 +39,43 @@ describe('vocab — từ đã thuộc (chuẩn hoá chữ thường, BUG-6)', ()
     unmarkLearned('u1', 'DOG')
     expect(isLearned('u1', 'dog')).toBe(false)
     expect(getLearnedWords('u1').size).toBe(0)
+  })
+
+  it('dữ liệu localStorage hỏng → Set rỗng, không throw', () => {
+    localStorage.setItem('et_learned_u1', '{"broken":')
+    expect(getLearnedWords('u1')).toEqual(new Set())
+  })
+
+  it('getLearnedCount đếm đúng số từ đã thuộc', () => {
+    expect(getLearnedCount('u1')).toBe(0)
+    markLearned('u1', 'one')
+    markLearned('u1', 'two')
+    expect(getLearnedCount('u1')).toBe(2)
+  })
+})
+
+describe('vocab — từ khó (đánh dấu ⭐ thủ công)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('toggleDifficult bật rồi tắt, isDifficult phản ánh đúng trạng thái', () => {
+    expect(isDifficult('u1', 'Hard')).toBe(false)
+    const on = toggleDifficult('u1', 'Hard')
+    expect(on).toBe(true)
+    expect(isDifficult('u1', 'hard')).toBe(true)
+    expect(getDifficultWords('u1').has('hard')).toBe(true)
+
+    const off = toggleDifficult('u1', 'HARD')
+    expect(off).toBe(false)
+    expect(isDifficult('u1', 'hard')).toBe(false)
+  })
+
+  it('chưa có từ khó nào → Set rỗng', () => {
+    expect(getDifficultWords('u1')).toEqual(new Set())
+  })
+
+  it('dữ liệu từ khó hỏng → Set rỗng, không throw', () => {
+    localStorage.setItem('et_hard_u1', '{"broken":')
+    expect(getDifficultWords('u1')).toEqual(new Set())
   })
 })
 

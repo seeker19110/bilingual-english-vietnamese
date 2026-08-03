@@ -19,7 +19,14 @@ vi.mock('./planGrant', () => ({
   },
 }))
 
-import { claimReferral, rewardReferralIfEligible, MAX_REWARDED_REFERRALS } from './referral'
+import {
+  claimReferral,
+  rewardReferralIfEligible,
+  ensureReferralCode,
+  getReferralStats,
+  MAX_REWARDED_REFERRALS,
+  REFERRAL_REWARD_DAYS,
+} from './referral'
 import { getPgPool } from '../../packages/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
@@ -112,5 +119,85 @@ describe('rewardReferralIfEligible', () => {
   it('lỗi DB không được ném ra ngoài (không làm hỏng việc lưu bài học)', async () => {
     query.mockRejectedValueOnce(new Error('db down'))
     await expect(rewardReferralIfEligible('u2')).resolves.toBeUndefined()
+  })
+})
+
+describe('claimReferral — hàng rào DB (check_violation)', () => {
+  it('DB ném lỗi check_violation (23514) → coi như tự mời chính mình', async () => {
+    query
+      .mockResolvedValueOnce({ rows: [{ id: 'u1' }] })
+      .mockRejectedValueOnce(Object.assign(new Error('check violation'), { code: '23514' }))
+    expect(await claimReferral('u2', 'ABC123')).toEqual({ ok: false, reason: 'self_invite' })
+  })
+
+  it('DB ném lỗi khác (không phải 23514) → ném ra ngoài', async () => {
+    query.mockResolvedValueOnce({ rows: [{ id: 'u1' }] }).mockRejectedValueOnce(new Error('lỗi lạ'))
+    await expect(claimReferral('u2', 'ABC123')).rejects.toThrow('lỗi lạ')
+  })
+})
+
+describe('ensureReferralCode', () => {
+  it('user đã có mã → trả về luôn, không sinh mới', async () => {
+    query.mockResolvedValueOnce({ rows: [{ referral_code: 'ABCDEF' }] })
+    expect(await ensureReferralCode('u1')).toBe('ABCDEF')
+    expect(query).toHaveBeenCalledTimes(1)
+  })
+
+  it('chưa có mã → sinh mới và ghi thành công', async () => {
+    query
+      .mockResolvedValueOnce({ rows: [{ referral_code: null }] })
+      .mockResolvedValueOnce({ rows: [{ referral_code: 'XYZ123' }] })
+    const code = await ensureReferralCode('u1')
+    expect(code).toBe('XYZ123')
+  })
+
+  it('mã đầu trùng (unique_violation) → thử mã khác rồi thành công', async () => {
+    query
+      .mockResolvedValueOnce({ rows: [{ referral_code: null }] })
+      .mockRejectedValueOnce(Object.assign(new Error('trùng'), { code: '23505' }))
+      .mockResolvedValueOnce({ rows: [{ referral_code: 'RETRY1' }] })
+    const code = await ensureReferralCode('u1')
+    expect(code).toBe('RETRY1')
+  })
+
+  it('insert không trả dòng (request song song vừa ghi) → đọc lại thấy mã đã có', async () => {
+    query
+      .mockResolvedValueOnce({ rows: [{ referral_code: null }] })
+      .mockResolvedValueOnce({ rows: [] }) // insert không update được dòng nào
+      .mockResolvedValueOnce({ rows: [{ referral_code: 'RACE01' }] }) // đọc lại
+    const code = await ensureReferralCode('u1')
+    expect(code).toBe('RACE01')
+  })
+
+  it('lỗi khác unique_violation khi insert → ném ra ngoài', async () => {
+    query
+      .mockResolvedValueOnce({ rows: [{ referral_code: null }] })
+      .mockRejectedValueOnce(new Error('lỗi lạ'))
+    await expect(ensureReferralCode('u1')).rejects.toThrow('lỗi lạ')
+  })
+
+  it('trùng mã liên tục vượt quá số lần thử tối đa → ném lỗi', async () => {
+    query.mockResolvedValueOnce({ rows: [{ referral_code: null }] })
+    // Mọi lần insert đều đụng unique_violation.
+    query.mockRejectedValue(Object.assign(new Error('trùng'), { code: '23505' }))
+    await expect(ensureReferralCode('u1')).rejects.toThrow(
+      'Không sinh được mã mời sau nhiều lần thử',
+    )
+  })
+})
+
+describe('getReferralStats', () => {
+  it('trả về đủ thống kê: mã, số đã thưởng, số đang chờ, trần, số ngày thưởng', async () => {
+    query
+      .mockResolvedValueOnce({ rows: [{ referral_code: 'ABCDEF' }] }) // ensureReferralCode
+      .mockResolvedValueOnce({ rows: [{ rewarded: '3', pending: '2' }] })
+    const stats = await getReferralStats('u1')
+    expect(stats).toEqual({
+      code: 'ABCDEF',
+      rewardedCount: 3,
+      pendingCount: 2,
+      maxRewarded: MAX_REWARDED_REFERRALS,
+      rewardDays: REFERRAL_REWARD_DAYS,
+    })
   })
 })

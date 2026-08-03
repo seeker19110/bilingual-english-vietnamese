@@ -1,5 +1,22 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { getCorsHeaders, checkRateLimit, warnIfClusterWithoutRedis } from './security'
+import {
+  getCorsHeaders,
+  checkRateLimit,
+  warnIfClusterWithoutRedis,
+  validateAuth,
+  validateContentType,
+  logSecurityEvent,
+} from './security'
+
+const validateSessionToken = vi.hoisted(() => vi.fn())
+vi.mock('./authService', () => ({ validateSessionToken }))
+
+// Request giả tối thiểu — chỉ cần headers.get(...).
+function reqWithHeaders(headers: Record<string, string | null>): Request {
+  return {
+    headers: { get: (k: string) => headers[k] ?? null },
+  } as unknown as Request
+}
 
 // Request giả tối thiểu — chỉ cần headers.get('Origin').
 function reqWithOrigin(origin: string | null): Request {
@@ -112,5 +129,124 @@ describe('warnIfClusterWithoutRedis (cảnh báo lúc khởi động — H: rate
     delete process.env.REDIS_URL
     warnIfClusterWithoutRedis()
     expect(warnSpy).not.toHaveBeenCalled()
+  })
+})
+
+// ── validateAuth — nhánh TỪ CHỐI là quan trọng nhất (bảo mật) ──────────────────────────
+describe('validateAuth', () => {
+  const OLD_SKIP = process.env.SKIP_AUTH
+  const OLD_NODE_ENV = process.env.NODE_ENV
+  const OLD_VERCEL_ENV = process.env.VERCEL_ENV
+
+  beforeEach(() => {
+    validateSessionToken.mockReset()
+  })
+  afterEach(() => {
+    if (OLD_SKIP === undefined) delete process.env.SKIP_AUTH
+    else process.env.SKIP_AUTH = OLD_SKIP
+    if (OLD_NODE_ENV === undefined) delete process.env.NODE_ENV
+    else process.env.NODE_ENV = OLD_NODE_ENV
+    if (OLD_VERCEL_ENV === undefined) delete process.env.VERCEL_ENV
+    else process.env.VERCEL_ENV = OLD_VERCEL_ENV
+  })
+
+  it('THIẾU header Authorization → null, không gọi validateSessionToken', async () => {
+    delete process.env.SKIP_AUTH
+    const result = await validateAuth(reqWithHeaders({}))
+    expect(result).toBeNull()
+    expect(validateSessionToken).not.toHaveBeenCalled()
+  })
+
+  it('header sai định dạng (không phải "Bearer ...") → null', async () => {
+    delete process.env.SKIP_AUTH
+    const result = await validateAuth(reqWithHeaders({ Authorization: 'Basic abc123' }))
+    expect(result).toBeNull()
+    expect(validateSessionToken).not.toHaveBeenCalled()
+  })
+
+  it('"Bearer " nhưng token rỗng (chỉ khoảng trắng) → null', async () => {
+    delete process.env.SKIP_AUTH
+    const result = await validateAuth(reqWithHeaders({ Authorization: 'Bearer    ' }))
+    expect(result).toBeNull()
+    expect(validateSessionToken).not.toHaveBeenCalled()
+  })
+
+  it('token ĐÚNG định dạng nhưng hết hạn/không tồn tại (validateSessionToken trả null) → null', async () => {
+    delete process.env.SKIP_AUTH
+    validateSessionToken.mockResolvedValue(null)
+    const result = await validateAuth(reqWithHeaders({ Authorization: 'Bearer het-han' }))
+    expect(result).toBeNull()
+  })
+
+  it('validateSessionToken ném lỗi (DB lỗi) → null, không crash', async () => {
+    delete process.env.SKIP_AUTH
+    validateSessionToken.mockRejectedValue(new Error('db down'))
+    const result = await validateAuth(reqWithHeaders({ Authorization: 'Bearer x' }))
+    expect(result).toBeNull()
+  })
+
+  it('token hợp lệ → trả userId', async () => {
+    delete process.env.SKIP_AUTH
+    validateSessionToken.mockResolvedValue({ userId: 'user-1' })
+    const result = await validateAuth(reqWithHeaders({ Authorization: 'Bearer hop-le' }))
+    expect(result).toEqual({ userId: 'user-1' })
+  })
+
+  it('SKIP_AUTH=true nhưng NODE_ENV=production → KHÔNG bypass (an toàn production)', async () => {
+    process.env.SKIP_AUTH = 'true'
+    process.env.NODE_ENV = 'production'
+    delete process.env.VERCEL_ENV
+    const result = await validateAuth(reqWithHeaders({}))
+    expect(result).toBeNull()
+  })
+
+  it('SKIP_AUTH=true nhưng VERCEL_ENV=production → KHÔNG bypass', async () => {
+    process.env.SKIP_AUTH = 'true'
+    delete process.env.NODE_ENV
+    process.env.VERCEL_ENV = 'production'
+    const result = await validateAuth(reqWithHeaders({}))
+    expect(result).toBeNull()
+  })
+
+  it('SKIP_AUTH=true và KHÔNG phải production nào → bypass, trả user giả dev', async () => {
+    process.env.SKIP_AUTH = 'true'
+    process.env.NODE_ENV = 'development'
+    delete process.env.VERCEL_ENV
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const result = await validateAuth(reqWithHeaders({}))
+    expect(result).toEqual({ userId: 'dev-skip-auth' })
+    warnSpy.mockRestore()
+  })
+})
+
+describe('validateContentType', () => {
+  it('Content-Type application/json → true', () => {
+    expect(validateContentType(reqWithHeaders({ 'Content-Type': 'application/json' }))).toBe(true)
+  })
+
+  it('Content-Type có charset kèm theo (application/json; charset=utf-8) → vẫn true', () => {
+    expect(
+      validateContentType(reqWithHeaders({ 'Content-Type': 'application/json; charset=utf-8' })),
+    ).toBe(true)
+  })
+
+  it('Content-Type khác (text/plain) → false', () => {
+    expect(validateContentType(reqWithHeaders({ 'Content-Type': 'text/plain' }))).toBe(false)
+  })
+
+  it('THIẾU Content-Type → false', () => {
+    expect(validateContentType(reqWithHeaders({}))).toBe(false)
+  })
+})
+
+describe('logSecurityEvent', () => {
+  it('ghi log cảnh báo có kèm loại sự kiện + ip', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    logSecurityEvent('LOGIN_FAILED', '1.2.3.4', { email: 'a@b.com' })
+    expect(warnSpy).toHaveBeenCalledWith(
+      '[Security][LOGIN_FAILED] ip=1.2.3.4',
+      JSON.stringify({ email: 'a@b.com' }),
+    )
+    warnSpy.mockRestore()
   })
 })
