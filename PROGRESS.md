@@ -1645,22 +1645,31 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
-- **[2026-08-04] Nợ tương phản AAA (7:1) trên nội dung/tiêu đề — ~305 phần tử.** Luật a11y mới
-  (CLAUDE.md mục 4.5): nội dung & tiêu đề phải đạt **AAA**, phần còn lại đạt **AA**. Cổng AA
-  (`e2e/a11y.spec.ts`) đã siết TUYỆT ĐỐI (0 vi phạm mọi mức tác động, 15 trang × 5 theme) và đang
-  xanh. Cổng AAA (`e2e/a11y-aaa.spec.ts`) chạy kiểu **bánh cóc**: mọi tiêu chí AAA khác dung sai 0,
-  riêng `color-contrast-enhanced` chấp nhận baseline nợ cũ và **chỉ được giảm**. Phân bố nợ (số
-  phần tử): Xanh đêm 1 · Rực rỡ 48 · Blue sky 26 · Pink 115 · Nhi đồng 115 — nặng nhất ở
-  `/learning-path/a1` (38), `/learning-path` (18), `/progress` (20), `/profile` (17). Nguyên nhân
-  gốc: vài token màu chữ phụ dùng chung (zinc/accent sắc độ nhạt) trên 2 theme nền sáng. **Việc
-  tiếp theo:** chỉnh token màu cho đạt 7:1 rồi hạ dần baseline về 0 (test tự in dòng
-  `[AAA ratchet] …` gợi ý số mới), cuối cùng đổi cổng AAA thành "0 vi phạm" tuyệt đối. Đây là thay
-  đổi thiết kế màu diện rộng nên **cần người dùng duyệt trước khi làm**.
-- **[2026-08-04] Đã sửa kèm:** 4 nút vote 👍/👎 (Chat + Speaking) rớt `target-size` (WCAG 2.2 AA,
-  2.5.8) → đổi từ `tap-44` sang kích thước thật `h-11 w-11`. Lưu ý phát hiện thêm: tiện ích
-  `.tap-44` (`apps/english/src/index.css`) mở rộng vùng chạm bằng `::after` có
-  `pointer-events: none` — pseudo-element này KHÔNG nhận sự kiện chuột nên **không thực sự mở rộng
-  vùng bấm**, cũng không được axe tính. Cần rà lại toàn bộ nơi dùng `.tap-44` (nợ mới, chưa làm).
+- **[2026-08-04] Luật a11y mới + ĐÃ TRẢ HẾT nợ tương phản AAA.** Luật (CLAUDE.md mục 4.5, theo
+  khuyến nghị W3C _Understanding Conformance_): **nội dung & tiêu đề đạt AAA (≥ 7:1)**, **mọi phần
+  còn lại đạt AA**. Hai cổng E2E chặn CI, cả hai TUYỆT ĐỐI (không còn baseline):
+  - `e2e/a11y.spec.ts` — 0 vi phạm A/AA ở MỌI mức tác động (trước chỉ chặn critical + serious mới),
+    thêm tag `wcag22aa`, mở rộng **cả 5 theme** cho mọi trang + trang đăng nhập. 122 test xanh.
+  - `e2e/a11y-aaa.spec.ts` (mới) — 15 trang × 5 theme, lọc riêng phần tử nội dung/tiêu đề. 75 test xanh.
+  - Nợ tương phản AAA ban đầu **~305 phần tử** (Pink 115 · Nhi đồng 115 · Rực rỡ 48 · Blue sky 26 ·
+    Xanh đêm 1) đã **xử lý xong**: gốc rễ chỉ là 2 token `--z-300`/`--z-400` (`text-zinc-300/400`)
+    của từng theme trong `apps/english/src/index.css` — chỉnh sắc độ cho đạt 7:1 trên nền sáng nhất
+    (theme sáng) / tối nhất (theme tối) là hết. Giá trị mới: dark-blue z-400 `158 173 191` ·
+    blue-sky z-400 `64 78 96` · pink z-300 `82 68 76` z-400 `89 75 83` · vibrant z-400
+    `190 172 216` · kid z-300 `98 72 45` z-400 `101 75 48`.
+- **[2026-08-04] 3 lỗi AA THẬT do cổng siết + quét đủ 5 theme phát hiện (đã sửa):**
+  1. 4 nút vote 👍/👎 (Chat, Speaking) rớt `target-size` (WCAG 2.2 AA 2.5.8) → `tap-44` → `h-11 w-11`.
+  2. Nút hiện/ẩn mật khẩu ở `/login` chỉ 20×20px → `h-8 w-8` (32px, nằm gọn trong `pr-11` của ô nhập).
+  3. **Nặng nhất:** 3 nút OAuth (Facebook/Apple/Microsoft) ở `/login` dùng `text-white` — mà `white`
+     map sang token `--c-white`, ở theme nền sáng token này bị ĐẢO thành màu tối → chữ tối trên nền
+     thương hiệu tối, tương phản chỉ **1.17–1.33:1**, gần như không đọc được với người dùng theme
+     Blue sky/Pink/Nhi đồng. Sửa: dùng `text-[#fff]` (trắng thật). Nút Facebook đổi `#1877F2` →
+     `#1772E8` để chữ trắng đạt 4.5:1 (bản gốc 4.23:1).
+     Cả 3 đều là lỗi có thật với người dùng, cổng cũ (chỉ chặn critical + serious mới, 4 theme, không
+     quét `wcag22aa`) không bắt được.
+- **Nợ mới chưa xử lý:** tiện ích `.tap-44` (`apps/english/src/index.css`) mở rộng vùng chạm bằng
+  `::after` có `pointer-events: none` — pseudo-element này KHÔNG nhận sự kiện chuột nên **không thực
+  sự mở rộng vùng bấm** (cũng không được axe tính). Cần rà lại toàn bộ nơi dùng `.tap-44`.
 - **[Rà soát tự động 2026-08-03, phiên sau PR #462]** `npm ci` sạch (container mới, chưa có
   `node_modules`) rồi chạy đủ cổng commit: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅ (0 cảnh
   báo) · test ✅ (**149 file / 2414 test**, tăng nhiều so với lượt trước vì các PR listening/story

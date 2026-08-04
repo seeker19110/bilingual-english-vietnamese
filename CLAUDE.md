@@ -71,7 +71,8 @@ Ba chế độ:
    - **Nội dung & tiêu đề** (chữ để đọc: `h1–h6`, `p`, `li`, bảng, blockquote…) phải đạt **WCAG AAA** — riêng tương phản là **≥ 7:1**.
    - **Mọi phần còn lại** (nav, nút, badge, ô nhập, biểu tượng…) phải đạt **AA** — sàn cứng, dung sai 0.
    - Lý do không ép AAA toàn site: W3C (_Understanding Conformance_) khuyến nghị KHÔNG lấy AAA làm chính sách cho toàn bộ site vì có nội dung không thể đạt hết AAA.
-   - Gác tự động, **chặn CI**: `e2e/a11y.spec.ts` (A/AA — 0 vi phạm ở mọi mức tác động, 15 trang × 5 theme) + `e2e/a11y-aaa.spec.ts` (AAA cho nội dung/tiêu đề, cổng "bánh cóc" — baseline nợ cũ chỉ được giảm, không được tăng). Kèm lint `jsx-a11y`.
+   - Gác tự động, **chặn CI**, cả hai cổng TUYỆT ĐỐI (không có baseline/ngoại lệ): `e2e/a11y.spec.ts` (A/AA — 0 vi phạm ở mọi mức tác động) + `e2e/a11y-aaa.spec.ts` (AAA cho nội dung/tiêu đề). Đều quét **15 trang × 5 theme**. Kèm lint `jsx-a11y`.
+   - Màu chữ lấy từ token `--z-*`/`--a-*` (`apps/english/src/index.css`) — sửa tương phản thì **sửa token**, đừng vá từng chỗ. Lưu ý `text-white` map sang `--c-white` và **bị đảo thành màu tối ở theme nền sáng**: nền cố định tối (nút thương hiệu OAuth…) phải dùng `text-[#fff]`.
 6. **Không bí mật trong code:** dùng biến môi trường; `.env` đã nằm trong `.gitignore`.
 7. **Mobile-first & hiệu năng:** thiết kế màn nhỏ trước, vùng chạm ≥ 44px; hướng tới ngân sách Core Web Vitals (LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1) — Lighthouse CI _(đang bổ sung)_.
 8. **Theme:** **4 theme, mặc định "Xanh đêm"**; dùng design tokens qua biến CSS `--a-*` (`src/index.css` + `tailwind.config.js`), **không hard-code màu**; giữ màu ngữ nghĩa (xanh lá = "đúng", phân cấp A1–B2/loại từ). AA ở mọi theme.
