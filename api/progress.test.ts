@@ -23,8 +23,14 @@ const query = vi.fn()
 const EMPTY_PROGRESS_ROW = {
   learned: [],
   hard: [],
+  srs: {},
   cefr_grammar: [],
   cefr_dialogues: [],
+  cefr_unlocked: [],
+  cefr_exams: {},
+  placement: {},
+  weekly_goal: {},
+  achievements: [],
 }
 
 beforeEach(() => {
@@ -47,7 +53,11 @@ function findCall(sqlSubstr: string): unknown[] | undefined {
 describe('POST /api/progress — cộng thưởng lượt khi phát hiện học thật', () => {
   it('learned dài ra so với bản cũ → gọi grant_daily_bonus_rolling', async () => {
     query.mockImplementation(async (sql: string) => {
-      if (sql.includes('select learned, hard, cefr_grammar, cefr_dialogues'))
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
         return { rows: [EMPTY_PROGRESS_ROW] }
       return { rows: [] }
     })
@@ -58,7 +68,11 @@ describe('POST /api/progress — cộng thưởng lượt khi phát hiện học
 
   it('cefrDialogues dài ra → cũng tính là học thật, gọi grant_daily_bonus_rolling', async () => {
     query.mockImplementation(async (sql: string) => {
-      if (sql.includes('select learned, hard, cefr_grammar, cefr_dialogues'))
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
         return { rows: [EMPTY_PROGRESS_ROW] }
       return { rows: [] }
     })
@@ -69,7 +83,11 @@ describe('POST /api/progress — cộng thưởng lượt khi phát hiện học
 
   it('gửi lại ĐÚNG dữ liệu cũ (không mảng nào dài ra) → KHÔNG cộng thưởng', async () => {
     query.mockImplementation(async (sql: string) => {
-      if (sql.includes('select learned, hard, cefr_grammar, cefr_dialogues'))
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
         return { rows: [{ ...EMPTY_PROGRESS_ROW, learned: ['apple'] }] }
       return { rows: [] }
     })
@@ -80,7 +98,11 @@ describe('POST /api/progress — cộng thưởng lượt khi phát hiện học
 
   it('lỗi khi cộng thưởng (DB throw) → vẫn lưu tiến độ thành công (fail-open, không vỡ luồng chính)', async () => {
     query.mockImplementation(async (sql: string) => {
-      if (sql.includes('select learned, hard, cefr_grammar, cefr_dialogues'))
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
         return { rows: [EMPTY_PROGRESS_ROW] }
       if (sql.includes('grant_daily_bonus_rolling')) throw new Error('db down')
       return { rows: [] }
@@ -88,5 +110,89 @@ describe('POST /api/progress — cộng thưởng lượt khi phát hiện học
     const resp = await handler(makeRequest({ learned: ['apple'] }))
     expect(resp.status).toBe(200)
     expect(findCall('insert into english.learning_progress')).toBeTruthy()
+  })
+})
+
+// Điều tra "mất dữ liệu học tập admin": trước đây POST ghi đè thẳng dữ liệu client gửi lên
+// (on conflict do update set x = excluded.x) — một thiết bị/tab gửi lên bản CŨ/RỖNG (trước
+// khi kịp pull) sẽ xoá mất dữ liệu server đang có. Nhóm test dưới xác nhận srs/cefrExams/
+// placement/weeklyGoal (không có thao tác "bỏ đánh dấu" thật) được HỢP NHẤT với dữ liệu đã
+// có trên server trước khi lưu, thay vì ghi đè thẳng.
+describe('POST /api/progress — hợp nhất với dữ liệu đã có trên server (chống mất dữ liệu race)', () => {
+  function insertedParams(): unknown[] {
+    const call = findCall('insert into english.learning_progress')
+    if (!call) throw new Error('không thấy câu insert')
+    return call[1] as unknown[]
+  }
+
+  it('srs: giữ thẻ đã có trên server nếu reps cao hơn bản client gửi lên (client gửi bản CŨ)', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
+        return {
+          rows: [
+            { ...EMPTY_PROGRESS_ROW, srs: { book: { interval: 5, ease: 2, due: 10, reps: 5 } } },
+          ],
+        }
+      return { rows: [] }
+    })
+    // Client gửi lên bản CŨ (reps=1) — vd tab/thiết bị chưa kịp pull dữ liệu mới.
+    const resp = await handler(
+      makeRequest({ srs: { book: { interval: 1, ease: 2, due: 0, reps: 1 } } }),
+    )
+    expect(resp.status).toBe(200)
+    const params = insertedParams()
+    expect(JSON.parse(params[3] as string)).toEqual({
+      book: { interval: 5, ease: 2, due: 10, reps: 5 },
+    })
+  })
+
+  it('placement: giữ bản trên server nếu lastAt mới hơn bản client gửi lên', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
+        return {
+          rows: [
+            {
+              ...EMPTY_PROGRESS_ROW,
+              placement: { cefr: 'B1', appLevel: 'B1', lastAt: '2026-08-02T00:00:00Z' },
+            },
+          ],
+        }
+      return { rows: [] }
+    })
+    const resp = await handler(
+      makeRequest({ placement: { cefr: 'A1', appLevel: 'A1', lastAt: '2026-08-01T00:00:00Z' } }),
+    )
+    expect(resp.status).toBe(200)
+    const params = insertedParams()
+    expect(JSON.parse(params[8] as string)).toEqual({
+      cefr: 'B1',
+      appLevel: 'B1',
+      lastAt: '2026-08-02T00:00:00Z',
+    })
+  })
+
+  it('learned/hard KHÔNG hợp union — client bỏ đánh dấu 1 từ (unmarkLearned) phải có hiệu lực thật', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
+        return { rows: [{ ...EMPTY_PROGRESS_ROW, learned: ['apple', 'banana'] }] }
+      return { rows: [] }
+    })
+    // Client vừa unmarkLearned('banana') — gửi lên mảng đã bớt đi 1 từ.
+    const resp = await handler(makeRequest({ learned: ['apple'] }))
+    expect(resp.status).toBe(200)
+    const params = insertedParams()
+    expect(JSON.parse(params[1] as string)).toEqual(['apple'])
   })
 })

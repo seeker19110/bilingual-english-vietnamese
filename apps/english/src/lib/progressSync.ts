@@ -8,6 +8,14 @@
 //
 // localStorage vẫn là bộ đệm đọc nhanh + chạy offline. Khi kéo về, ta HỢP NHẤT
 // (không ghi đè mất dữ liệu): learned/hard/cefr_* lấy hợp (union), SRS giữ thẻ tiến bộ hơn.
+//
+// NGUY CƠ MẤT DỮ LIỆU ĐÃ SỬA (điều tra "mất dữ liệu học tập admin"): pushProgress() đọc
+// TOÀN BỘ localStorage rồi gửi đè lên server — nếu máy/tab này VỪA mở app (localStorage
+// còn rỗng/cũ) và người dùng bấm học 1 từ NGAY trước khi pullProgress() (chạy lúc mở app,
+// xem lib/useCloudSync.ts) kéo + hợp nhất xong, pushProgress() sẽ gửi lên bản RỖNG/CŨ —
+// server nhận được ghi vào, xoá mất dữ liệu thật đã lưu trước đó. Sửa bằng cách bắt MỌI
+// lượt gọi pushProgress() CHỜ lượt pullProgress() đang chạy (nếu có) xong trước khi đọc
+// localStorage để gửi — khi đó localStorage đã chắc chắn là bản đã hợp nhất đầy đủ.
 
 import { getAuthHeader } from '@core/authHeader'
 
@@ -162,12 +170,10 @@ function readObj(key: string): Record<string, SRSLike> {
   }
 }
 
-// Bản CÓ THỂ AWAIT — dùng khi nơi gọi cần chắc chắn server đã nhận dữ liệu mới TRƯỚC khi làm
-// bước tiếp theo (vd claim nhiệm vụ "thi đạt cấp CEFR", server tự đọc lại DB để xác minh, xem
-// src/components/CefrExam.tsx). pushProgress() (bên dưới) vẫn giữ dạng bắn-rồi-quên cho mọi
-// nơi gọi khác không cần chờ.
-export async function pushProgressAsync(userId: string): Promise<void> {
-  if (!userId) return
+// Đọc localStorage HIỆN TẠI rồi gửi thẳng lên server — KHÔNG chờ pull nào cả. Chỉ tự gọi
+// nội bộ từ pullProgress() (sau khi đã ghi bản hợp nhất xuống localStorage) để tránh vòng chờ
+// chính nó. Nơi khác dùng pushProgress()/pushProgressAsync() ở dưới (có chờ chống mất dữ liệu).
+async function sendProgressSnapshot(userId: string): Promise<void> {
   try {
     const resp = await fetch('/api/progress', {
       method: 'POST',
@@ -191,6 +197,23 @@ export async function pushProgressAsync(userId: string): Promise<void> {
   }
 }
 
+// Lượt pullProgress() ĐANG CHẠY cho từng user (nếu có) — pushProgressAsync() phải chờ lượt
+// này xong rồi mới đọc localStorage để gửi, tránh gửi bản CŨ/RỖNG đè lên dữ liệu thật vừa
+// kéo về (xem giải thích đầu file). Dùng Map thay biến đơn vì nhiều user/tab có thể đồng
+// thời đăng nhập (hiếm nhưng an toàn hơn không đáng gì thêm phức tạp).
+const pullInFlight = new Map<string, Promise<void>>()
+
+// Bản CÓ THỂ AWAIT — dùng khi nơi gọi cần chắc chắn server đã nhận dữ liệu mới TRƯỚC khi làm
+// bước tiếp theo (vd claim nhiệm vụ "thi đạt cấp CEFR", server tự đọc lại DB để xác minh, xem
+// src/components/CefrExam.tsx). pushProgress() (bên dưới) vẫn giữ dạng bắn-rồi-quên cho mọi
+// nơi gọi khác không cần chờ.
+export async function pushProgressAsync(userId: string): Promise<void> {
+  if (!userId) return
+  const pulling = pullInFlight.get(userId)
+  if (pulling) await pulling.catch(() => undefined)
+  await sendProgressSnapshot(userId)
+}
+
 // Đẩy toàn bộ tiến độ hiện tại lên server (bắn rồi quên — không chặn giao diện).
 // Giai đoạn C: gọi POST /api/progress thay Supabase client trực tiếp (không còn RLS
 // bảo vệ sau khi cutover khỏi Supabase Auth ở Giai đoạn B).
@@ -200,8 +223,22 @@ export function pushProgress(userId: string): void {
 
 // Kéo tiến độ từ server → HỢP NHẤT với bản local → ghi lại localStorage → đẩy bản
 // hợp nhất lên (để mọi máy hội tụ). Lỗi mạng bị nuốt — vẫn dùng bản local.
-export async function pullProgress(userId: string): Promise<void> {
-  if (!userId) return
+//
+// Đăng ký vào pullInFlight NGAY KHI BẮT ĐẦU (trước khi await gì) để pushProgressAsync() gọi
+// đồng thời (do người dùng bấm học 1 từ ngay lúc app vừa mở) THẤY được lượt pull này và chờ
+// đúng lúc, không đọc localStorage khi nó còn rỗng/cũ.
+export function pullProgress(userId: string): Promise<void> {
+  if (!userId) return Promise.resolve()
+  const existing = pullInFlight.get(userId)
+  if (existing) return existing
+  const p = doPull(userId).finally(() => {
+    pullInFlight.delete(userId)
+  })
+  pullInFlight.set(userId, p)
+  return p
+}
+
+async function doPull(userId: string): Promise<void> {
   let data: unknown
   try {
     const resp = await fetch('/api/progress', { headers: getAuthHeader() })
@@ -281,5 +318,6 @@ export async function pullProgress(userId: string): Promise<void> {
     /* hết dung lượng — bỏ qua */
   }
 
-  pushProgress(userId) // đẩy bản hợp nhất để cloud cập nhật
+  void sendProgressSnapshot(userId) // đẩy bản hợp nhất để cloud cập nhật (không qua guard —
+  // guard là để CHỜ pull này, tự chờ chính mình sẽ treo mãi)
 }

@@ -80,6 +80,57 @@ describe('pushProgressAsync', () => {
     await expect(pushProgressAsync('u1')).resolves.toBeUndefined()
     expect(console.warn).toHaveBeenCalled()
   })
+
+  it('CHỜ pullProgress đang chạy xong rồi mới đọc localStorage để gửi (chống mất dữ liệu race — xem đầu file progressSync.ts)', async () => {
+    // Máy vừa mở app: học 1 từ MỚI ngay lập tức, trước khi pull kịp kéo dữ liệu cũ về.
+    localStorage.setItem('et_learned_u1', JSON.stringify(['freshword']))
+    let resolveGet: ((value: Response) => void) | undefined
+    const getPromise = new Promise<Response>((resolve) => {
+      resolveGet = resolve
+    })
+    const postedBodies: { learned: string[] }[] = []
+    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+      if (init?.method === 'POST') {
+        postedBodies.push(JSON.parse(init.body as string) as { learned: string[] })
+        return new Response('{}', { status: 200 })
+      }
+      return getPromise // GET (pull) — cố ý treo, test tự resolve sau
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const pullPromise = pullProgress('u1')
+    const pushPromise = pushProgressAsync('u1') // "gọi tới" trong lúc pull còn đang treo
+
+    // Pull chưa xong (GET chưa trả lời) → push phải CHƯA gửi POST nào (đang chờ).
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(postedBodies.length).toBe(0)
+
+    resolveGet?.(
+      new Response(
+        JSON.stringify({
+          learned: ['cloudword'],
+          hard: [],
+          srs: {},
+          cefrGrammar: [],
+          cefrDialogues: [],
+          cefrUnlocked: [],
+          cefrExams: {},
+          placement: {},
+          weeklyGoal: {},
+          achievements: [],
+        }),
+        { status: 200 },
+      ),
+    )
+    await Promise.all([pullPromise, pushPromise])
+
+    // Sau khi pull xong, push phải gửi bản ĐÃ HỢP NHẤT — không phải bản rỗng/cũ lúc gọi.
+    expect(postedBodies.length).toBeGreaterThanOrEqual(1)
+    for (const body of postedBodies) {
+      expect(new Set(body.learned)).toEqual(new Set(['freshword', 'cloudword']))
+    }
+  })
 })
 
 describe('pushProgress (bắn rồi quên)', () => {

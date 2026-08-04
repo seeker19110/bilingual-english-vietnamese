@@ -17,6 +17,33 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Sửa mất dữ liệu học tập (2026-08-04, điều tra "admin mất hết dữ liệu")
+
+**Nguyên nhân:** `pushProgress()`/`pushProgressAsync()` (`lib/progressSync.ts`) mỗi lần gọi đều
+đọc TOÀN BỘ localStorage (learned/hard/srs/cefr_*/placement/weeklyGoal/achievements) rồi gửi lên
+`POST /api/progress`, và server GHI ĐÈ THẲNG (`on conflict do update set x = excluded.x`) — không
+hợp nhất như phía client (`pullProgress()`) vẫn làm. Nếu máy/tab VỪA mở app (localStorage rỗng/cũ,
+vd trình duyệt mới, xoá cache, ẩn danh — admin hay làm khi test) và người dùng bấm học 1 từ NGAY
+trước khi `pullProgress()` (chạy tự động lúc mở app, `lib/useCloudSync.ts`) kéo + hợp nhất dữ liệu
+thật về xong, `pushProgress()` gửi lên bản RỖNG/CŨ → server ghi đè, xoá mất TOÀN BỘ tiến độ đã lưu.
+
+**Đã sửa 2 lớp:**
+
+1. **Client (lớp chính):** mọi lượt gọi `pushProgress()`/`pushProgressAsync()` giờ CHỜ lượt
+   `pullProgress()` đang chạy (nếu có) xong rồi mới đọc localStorage để gửi — đảm bảo luôn gửi bản
+   đã hợp nhất đầy đủ, không bao giờ gửi bản rỗng do race. Xem đầu file `lib/progressSync.ts`.
+2. **Server (lớp phòng thủ, chỉ cho trường KHÔNG có thao tác "bỏ đánh dấu" thật):** `POST
+/api/progress` hợp nhất `srs`/`cefrExams`/`placement`/`weeklyGoal` với dữ liệu đã có trên server
+   trước khi lưu (`api/_lib/progressMerge.ts`) — an toàn vì không hành động nào của người dùng làm
+   các trường này nhỏ lại. **CHỦ Ý KHÔNG** hợp union cho `learned`/`hard`/`cefrGrammar`/
+   `cefrDialogues`/`cefrUnlocked`/`achievements` vì có thao tác bỏ đánh dấu thật
+   (`unmarkLearned`/`toggleDifficult` tắt/`unmarkGrammarDone` — `lib/vocab.ts`/`lib/cefrProgress.ts`)
+   — hợp union sẽ làm việc bỏ đánh dấu không bao giờ có hiệu lực.
+
+Test mới: `api/_lib/progressMerge.test.ts` (hàm hợp nhất thuần), `api/progress.test.ts` (2 test
+merge + xác nhận KHÔNG hợp union mảng), `apps/english/src/lib/progressSync.test.ts` (test race
+push-chờ-pull). Toàn bộ cổng CLAUDE.md mục 8 xanh (typecheck/lint/format/2579 test/build).
+
 ### Nâng coverage 2026-08-03
 
 Theo yêu cầu người dùng "nâng hạn mức coverage lên 90" — thay vì đặt số cứng ngay (sẽ làm CI đỏ vì
