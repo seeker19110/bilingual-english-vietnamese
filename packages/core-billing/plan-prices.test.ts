@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 vi.mock('../core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+let rateLimitOk = true
 vi.mock('../core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
-  checkRateLimit: async () => true,
+  checkRateLimit: async () => rateLimitOk,
   logSecurityEvent: () => {},
 }))
 
@@ -16,6 +17,7 @@ const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()
 
 beforeEach(() => {
+  rateLimitOk = true
   invalidatePricesCache()
   query.mockReset()
   query.mockResolvedValue({ rows: [] })
@@ -23,7 +25,24 @@ beforeEach(() => {
 })
 
 describe('/api/plan-prices', () => {
-  it('không cần đăng nhập, trả giá mặc định đúng bảng giá đã chốt', async () => {
+  it('rate limit vượt quá → 429', async () => {
+    rateLimitOk = false
+    const resp = await handler(new Request('http://localhost/api/plan-prices'))
+    expect(resp.status).toBe(429)
+  })
+  it('OPTIONS request → 204', async () => {
+    const resp = await handler(
+      new Request('http://localhost/api/plan-prices', { method: 'OPTIONS' }),
+    )
+    expect(resp.status).toBe(204)
+  })
+
+  it('HTTP method khác GET → 405', async () => {
+    const resp = await handler(new Request('http://localhost/api/plan-prices', { method: 'POST' }))
+    expect(resp.status).toBe(405)
+  })
+
+  it('chưa đăng nhập, trả giá mặc định đúng bảng giá đã chốt', async () => {
     const resp = await handler(new Request('http://localhost/api/plan-prices'))
     expect(resp.status).toBe(200)
     const data = (await resp.json()) as {

@@ -56,4 +56,47 @@ describe('/api/admin-feedback', () => {
     const json = await res.json()
     expect(json.feedbackList).toHaveLength(1)
   })
+
+  it('từ chối người dùng không phải admin (403)', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'u1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'u1',
+      email: 'user@example.com',
+    } as UserInfo)
+
+    const req = new Request('http://localhost/api/admin-feedback')
+    const res = await handler(req)
+    expect(res.status).toBe(403)
+  })
+
+  it('từ chối HTTP method không hỗ trợ (405)', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+
+    const req = new Request('http://localhost/api/admin-feedback', {
+      method: 'POST',
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(405)
+  })
+
+  it('lọc phản hồi theo source=chat (GET 200)', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+    queryMock.mockResolvedValueOnce({ rows: [{ id: 'f2', source: 'chat' }] })
+
+    const req = new Request('http://localhost/api/admin-feedback?source=chat')
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    const json = await res.json()
+    expect(json.feedbackList).toHaveLength(1)
+    // Verify query was called with the source filter param
+    expect(queryMock).toHaveBeenCalledWith(expect.stringContaining('tf.source = $1'), ['chat'])
+  })
 })

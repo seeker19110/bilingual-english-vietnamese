@@ -1,11 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 vi.mock('../core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+let rateLimitOk = true
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 vi.mock('../core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
-  checkRateLimit: async () => true,
+  checkRateLimit: async () => rateLimitOk,
   validateAuth: async () => authState.user,
   logSecurityEvent: () => {},
 }))
@@ -24,12 +25,32 @@ function makeRequest(code: string | null): Request {
 }
 
 beforeEach(() => {
+  rateLimitOk = true
   query.mockReset()
   mockedGetPool.mockReturnValue({ query } as unknown as ReturnType<typeof getPgPool>)
   authState.user = { userId: 'user-1' }
 })
 
 describe('/api/payment-status', () => {
+  it('rate limit vượt quá → 429', async () => {
+    rateLimitOk = false
+    const resp = await handler(makeRequest('ENVI7K2M9QRT'))
+    expect(resp.status).toBe(429)
+  })
+  it('OPTIONS request → 204', async () => {
+    const resp = await handler(
+      new Request('http://localhost/api/payment-status', { method: 'OPTIONS' }),
+    )
+    expect(resp.status).toBe(204)
+  })
+
+  it('HTTP method khác GET → 405', async () => {
+    const resp = await handler(
+      new Request('http://localhost/api/payment-status', { method: 'POST' }),
+    )
+    expect(resp.status).toBe(405)
+  })
+
   it('chưa đăng nhập → 401', async () => {
     authState.user = null
     const resp = await handler(makeRequest('ENVI7K2M9QRT'))

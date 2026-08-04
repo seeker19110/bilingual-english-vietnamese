@@ -6,7 +6,7 @@
 // Chat/Speaking/Writing vẫn là route độc lập (điều hướng TỚI từ trang hub), tab vẫn
 // sáng khi đang ở 1 trong các route đó để không gây cảm giác "lạc" điều hướng.
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Target, Dumbbell, TrendingUp } from 'lucide-react'
+import { Home, Target, Dumbbell, TrendingUp, ChevronDown, ChevronUp } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import type { useOneHandedDrag } from '../lib/useOneHandedDrag'
@@ -24,9 +24,11 @@ interface Props {
   // biến CSS --bnav-only-h) để trigger tự bám theo chính kích thước nav qua absolute
   // positioning — không cần đồng bộ 2 file qua biến CSS nữa.
   triggerHandlers?: ReturnType<typeof useOneHandedDrag>['triggerHandlers']
+  /** Reachability đang mở? Dùng để hiển thị chevron đúng hướng trên dải trigger. */
+  isReachabilityOpen?: boolean
 }
 
-export default function BottomNav({ triggerHandlers }: Props) {
+export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props) {
   const { user } = useAuth()
   const { T } = useLang()
   const location = useLocation()
@@ -83,12 +85,21 @@ export default function BottomNav({ triggerHandlers }: Props) {
           lib/useOneHandedDrag.ts khi không cần. */}
       {triggerHandlers && (
         <div
-          className="absolute -top-[2.375rem] inset-x-0 bg-zinc-950"
-          style={{ touchAction: 'none', height: '2.375rem' }}
+          className="absolute -top-[3.5rem] inset-x-0 bg-zinc-950"
+          style={{ touchAction: 'none', height: '3.5rem' }}
           aria-hidden="true"
           {...triggerHandlers}
         >
-          <div className="absolute bottom-3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
+          {/* Dải màu accent gradient — rộng hơn bản cũ (h-0.5 thay vì h-px) */}
+          <div className="absolute bottom-3 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent-500/50 to-transparent" />
+          {/* Chevron mũi tên lên/xuống tùy trạng thái reachability */}
+          <div className="absolute inset-x-0 top-1 flex justify-center pointer-events-none">
+            {isReachabilityOpen ? (
+              <ChevronUp className="w-4 h-4 text-accent-400/70 animate-bounce" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-zinc-500 animate-bounce" />
+            )}
+          </div>
         </div>
       )}
       <div className="max-w-3xl mx-auto h-full grid grid-cols-4">

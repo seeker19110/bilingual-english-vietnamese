@@ -426,11 +426,14 @@ export default function App() {
               </ErrorBoundary>
               {/* Dải trigger Reachability giờ lồng NGAY TRONG BottomNav (xem
                   components/BottomNav.tsx) thay vì <div> rời định vị bằng biến CSS
-                  --bnav-only-h — chỉ cần truyền triggerHandlers xuống, chiều cao
-                  2.375rem vẫn được cộng vào --bnav-h ở index.css để mọi trang tự
+                  --bnav-only-h — chỉ cần truyền triggerHandlers + isOpen xuống, chiều
+                  cao 3.5rem vẫn được cộng vào --bnav-h ở index.css để mọi trang tự
                   chừa đủ padding-bottom, không bị trigger che/chặn tap nội dung
                   cuối trang. */}
-              <BottomNav triggerHandlers={oneHandedDrag.triggerHandlers} />
+              <BottomNav
+                triggerHandlers={oneHandedDrag.triggerHandlers}
+                isReachabilityOpen={oneHandedDrag.isOpen}
+              />
             </BrowserRouter>
           </ToastProvider>
         </LangProvider>
