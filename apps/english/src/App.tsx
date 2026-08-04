@@ -425,19 +425,21 @@ export default function App() {
                 </div>
               </ErrorBoundary>
               <BottomNav />
-              {/* Dải trigger Reachability — đè lên mép trên của BottomNav (z-50 > z-40).
-                  Vuốt xuống từ đây để bật kéo 1 tay — xem lib/useOneHandedDrag.ts.
-                  touchAction 'none' để trình duyệt không tự cuộn/nảy trang khi vuốt
-                  trong dải này. Vạch gradient mỏng (h-px, kéo hết chiều ngang) GIỐNG
-                  HỆT vạch accent trên header (Layout.tsx) để nhất quán ngôn ngữ hình
-                  ảnh, dễ nhận ra đây là chỗ vuốt được. */}
+              {/* Dải trigger Reachability — nằm NGAY PHÍA TRÊN BottomNav (dùng biến
+                  --bnav-h ở index.css, đã gồm cả chiều cao safe-area đáy), không đè
+                  lên nav nữa như bản trước. Vuốt xuống từ đây để bật kéo 1 tay — xem
+                  lib/useOneHandedDrag.ts. touchAction 'none' để trình duyệt không tự
+                  cuộn/nảy trang khi vuốt trong dải này. Vạch gradient mỏng (h-px, kéo
+                  hết chiều ngang) GIỐNG HỆT vạch accent trên header (Layout.tsx) để
+                  nhất quán ngôn ngữ hình ảnh — đặt ở mép dưới dải (giáp BottomNav),
+                  đối xứng với vạch header đặt ở mép trên (giáp đỉnh trang). */}
               <div
-                className="fixed bottom-0 inset-x-0 z-50 h-3.5 pb-safe-only"
-                style={{ touchAction: 'none' }}
+                className="fixed inset-x-0 z-50 h-3.5"
+                style={{ touchAction: 'none', bottom: 'var(--bnav-h)' }}
                 aria-hidden="true"
                 {...oneHandedDrag.triggerHandlers}
               >
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
               </div>
             </BrowserRouter>
           </ToastProvider>
