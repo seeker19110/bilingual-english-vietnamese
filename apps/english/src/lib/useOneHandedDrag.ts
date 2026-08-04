@@ -15,13 +15,14 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } fr
 // (3) cuộn trang, hoặc (4) không thao tác gì trong RETURN_DELAY_MS thì tự thu lại.
 const ACTIVATE_DISTANCE_PX = 12 // Vuốt xuống ở dải trigger đủ khoảng cách này là bật
 const OPEN_DURATION_MS = 220 // Thời gian trượt xuống khi bật
-const RETURN_DELAY_MS = 3000 // Sau khi bật, chờ chừng này rồi mới tự thu lại
+const RETURN_DELAY_MS = 10_000 // Sau khi bật, chờ 10 giây rồi mới tự thu lại
 const RETURN_DURATION_MS = 3000 // Thời gian trượt ngược lên khi thu lại
 const PULL_DOWN_RATIO = 0.45 // Bật xuống cố định 45% chiều cao màn hình
 
 export function useOneHandedDrag() {
   const [translateY, setTranslateY] = useState(0)
   const [transitionMs, setTransitionMs] = useState(0)
+  const [isOpenState, setIsOpenState] = useState(false) // reactive mirror for UI (chevron)
   const isOpen = useRef(false)
   const returnTimer = useRef<number | null>(null)
   const activePointerId = useRef<number | null>(null)
@@ -38,6 +39,7 @@ export function useOneHandedDrag() {
     if (!isOpen.current) return
     clearReturnTimer()
     isOpen.current = false
+    setIsOpenState(false)
     setTransitionMs(RETURN_DURATION_MS)
     setTranslateY(0)
   }
@@ -47,6 +49,7 @@ export function useOneHandedDrag() {
   }
   const open = () => {
     isOpen.current = true
+    setIsOpenState(true)
     setTransitionMs(OPEN_DURATION_MS)
     setTranslateY(Math.round(window.innerHeight * PULL_DOWN_RATIO))
     scheduleReturn()
@@ -91,6 +94,7 @@ export function useOneHandedDrag() {
   }
 
   return {
+    isOpen: isOpenState,
     contentStyle,
     contentHandlers: { onPointerDownCapture: onContentPointerDown },
     triggerHandlers: {

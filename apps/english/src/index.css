@@ -33,14 +33,11 @@
 :root {
   --bnav-only-h: calc(5.25rem + max(12px, env(safe-area-inset-bottom)));
   /* Tổng không gian dành riêng ở ĐÁY MỌI TRANG: BottomNav + dải trigger
-     Reachability nằm ngay trên nó. Trigger cao hơn mép trên BottomNav 1.625rem
-     (0.75rem đệm trên + 0.875rem dải lõi — xem App.tsx) nên phải cộng thêm vào
-     đây; nếu chỉ dùng chiều cao BottomNav, nội dung cuối trang (vd nút "Nhận
-     thưởng" ở Profile) sẽ cuộn lấn vào vùng trigger — vừa bị che, vừa KHÔNG BẤM
-     ĐƯỢC vì trigger chặn hết pointer event trong vùng của nó. Toàn bộ ~30 trang
-     đều dùng chung biến NÀY (pb-[calc(...+var(--bnav-h))]) nên chỉ cần sửa 1 chỗ
-     là tự áp dụng khắp nơi. */
-  --bnav-h: calc(var(--bnav-only-h) + 1.625rem);
+     Reachability nằm ngay trên nó. Trigger cao 3.5rem, phần nhô lên trên mép trên
+     BottomNav = 2.75rem (vì 0.75rem dưới đè lên nav) — xem BottomNav.tsx. Toàn bộ
+     ~30 trang đều dùng chung biến NÀY (pb-[calc(...+var(--bnav-h))]) nên chỉ cần
+     sửa 1 chỗ là tự áp dụng khắp nơi. */
+  --bnav-h: calc(var(--bnav-only-h) + 2.75rem);
 }
 
 /* ===== THEME ===== */
