@@ -1,0 +1,89 @@
+// api/admin-system-control.ts — Quản lý Cầu dao khẩn cấp (AI Circuit Breaker) cho Admin.
+//
+// GET  /api/admin-system-control
+// POST /api/admin-system-control  body { action: 'toggle-circuit-breaker', enabled: boolean }
+
+import { z } from 'zod'
+import { getPgPool } from '../packages/core-db/pgPool.js'
+import {
+  validateAuth,
+  getCorsHeaders,
+  SECURITY_HEADERS,
+  checkRateLimit,
+  logSecurityEvent,
+} from '../packages/core-auth/security.js'
+import { getUserById } from '../packages/core-auth/authService.js'
+import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
+import { readJsonBody, validateBody } from './_lib/validation.js'
+import { jsonResponse, getClientIp } from './_lib/http.js'
+
+const ActionSchema = z.object({
+  action: z.literal('toggle-circuit-breaker'),
+  enabled: z.boolean(),
+})
+
+export default async function handler(req: Request): Promise<Response> {
+  const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: allHeaders })
+
+  const clientIp = getClientIp(req)
+  if (!(await checkRateLimit(clientIp, 20, 'admin-system-control'))) {
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/admin-system-control' })
+    return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
+  }
+
+  const auth = await validateAuth(req)
+  if (!auth) return jsonResponse({ error: 'Unauthorized' }, 401, allHeaders)
+
+  const admin = await getUserById(auth.userId)
+  if (!isAdminEmail(admin?.email)) {
+    logSecurityEvent('ADMIN_ACCESS_DENIED', clientIp, { path: '/api/admin-system-control' })
+    return jsonResponse({ error: 'Chỉ admin mới truy cập được' }, 403, allHeaders)
+  }
+
+  const pool = getPgPool()
+
+  if (req.method === 'GET') {
+    const { rows } = await pool.query<{ value: string }>(
+      `select value from public.app_settings where key = 'ai_circuit_breaker'`,
+    )
+    const enabled = rows[0]?.value === 'true'
+    return jsonResponse({ circuitBreakerEnabled: enabled }, 200, allHeaders)
+  }
+
+  if (req.method === 'POST') {
+    const parsed = await readJsonBody(req)
+    if (!parsed.ok)
+      return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
+    const val = validateBody(ActionSchema, parsed.raw)
+    if (!val.ok) return jsonResponse({ error: val.error.message }, val.error.status, allHeaders)
+
+    const { enabled } = val.data
+
+    await pool.query(
+      `insert into public.app_settings (key, value, updated_at)
+       values ('ai_circuit_breaker', $1, now())
+       on conflict (key) do update set value = $1, updated_at = now()`,
+      [enabled ? 'true' : 'false'],
+    )
+
+    logSecurityEvent('CIRCUIT_BREAKER_TOGGLED', clientIp, {
+      adminEmail: admin?.email ?? 'unknown',
+      enabled,
+    })
+
+    return jsonResponse(
+      {
+        ok: true,
+        circuitBreakerEnabled: enabled,
+        message: enabled
+          ? 'ĐÃ KÍCH HOẠT CẦU DAO KHẨN CẤP — Tạm thời dập tất cả dịch vụ gọi AI!'
+          : 'Đã tắt Cầu dao khẩn cấp — Dịch vụ gọi AI hoạt động bình thường.',
+      },
+      200,
+      allHeaders,
+    )
+  }
+
+  return jsonResponse({ error: 'Method not allowed' }, 405, allHeaders)
+}

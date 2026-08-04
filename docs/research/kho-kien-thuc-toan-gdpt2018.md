@@ -328,29 +328,63 @@ chương VI của sách)_
 > minh/khảo sát hàm số cần lời giải tự luận, nằm ngoài phạm vi MVP (§2.3 đặc tả GĐ2). Ở đợt 2d
 > chỉ chọn chủ đề có **đáp số/biểu thức chấm được**.
 
+> ✅ **ĐÃ ĐỐI CHIẾU SGK ngày 2026-08-03 (đợt 2d)** — xem nhật ký §8.5 và mục lục đầy đủ ở
+> `docs/research/muc-luc-sgk/toan-10.md`, `toan-11.md`, `toan-12.md`.
+>
+> 🔴 **Ba điều phải nhớ ở cấp 3:**
+>
+> 1. **Số phức đã BỎ HOÀN TOÀN** khỏi chương trình 2018 (OCR toàn bộ 3 tập Toán 12: 0 kết quả).
+> 2. **Mũ – lôgarit ở lớp 11**, không phải lớp 12. **Tổ hợp – xác suất cổ điển ở lớp 10**, không
+>    phải lớp 11. **Xác suất có điều kiện ở lớp 12**, không phải lớp 11.
+> 3. Mỗi lớp còn có **"Chuyên đề học tập"** riêng (`10-3`, `11-3`, `12-3`) — sách **TỰ CHỌN**,
+>    KHÔNG bắt buộc. Bảng dưới đây **chỉ liệt kê nội dung SGK chính**; nội dung chuyên đề nằm ở
+>    §5.1, không được trộn vào lộ trình chuẩn.
+
 ### Lớp 10
 
-| Mạch | Công thức cốt lõi |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --- | --- | --- | --------------------------------------------------------------------- |
-| SO | Mệnh đề, tập hợp · bất phương trình & hệ bất phương trình bậc nhất hai ẩn · **dấu tam thức bậc hai** · phương trình quy về bậc hai |
-| HINH | **Định lý cosin** `a² = b² + c² − 2bc·cos A` · **định lý sin** `a/sin A = b/sin B = c/sin C = 2R` · **diện tích tam giác**: `S = ½ab·sin C`, `S = abc/(4R)`, `S = pr`, **Heron** `S = √(p(p−a)(p−b)(p−c))` · vectơ (tổng, hiệu, tích vô hướng `a⃗·b⃗ = | a⃗  |     | b⃗  | cos θ`) · phương trình đường thẳng, đường tròn trong mặt phẳng toạ độ |
-| TK | Số gần đúng, sai số · các số đặc trưng đo xu thế trung tâm và độ phân tán (phương sai, độ lệch chuẩn) · quy tắc đếm, hoán vị `Pₙ = n!`, chỉnh hợp `Aₙᵏ = n!/(n−k)!`, tổ hợp `Cₙᵏ = n!/(k!(n−k)!)` · **nhị thức Newton** |
+**SGK: 9 chương · 27 bài** (tập một chương I–V / Bài 1–14 · tập hai chương VI–IX / Bài 15–27).
+
+| Mạch | Công thức cốt lõi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | Mệnh đề, tập hợp · bất phương trình & hệ bất phương trình bậc nhất hai ẩn · **hàm số, hàm số bậc hai** `y = ax²+bx+c` (đỉnh `(−b/2a; −Δ/4a)`) · **dấu tam thức bậc hai** · phương trình quy về bậc hai (chứa căn thức) · **nhị thức Newton** `(a+b)ⁿ = Σ Cₙᵏaⁿ⁻ᵏbᵏ` (SGK chính chỉ n = 4, 5)                                                                                                                                                                                                                                                                |
+| HINH | **Giá trị lượng giác của góc từ 0° đến 180°** · **định lí cosin** `a² = b² + c² − 2bc·cos A` · **định lí sin** `a/sin A = b/sin B = c/sin C = 2R` · **diện tích tam giác**: `S = ½ab·sin C`, `S = abc/(4R)`, `S = pr`, **Heron** `S = √(p(p−a)(p−b)(p−c))` · **vectơ trong mặt phẳng** (tổng, hiệu, tích với một số, toạ độ, tích vô hướng `a⃗·b⃗ = \|a⃗\|·\|b⃗\|·cos θ`) · phương trình đường thẳng, khoảng cách `d(M,Δ) = \|ax₀+by₀+c\|/√(a²+b²)`, đường tròn `(x−a)²+(y−b)² = R²` · **ba đường conic** (elip, hypebol, parabol — phương trình chính tắc) |
+| TK   | Số gần đúng, sai số · các số đặc trưng của **mẫu số liệu KHÔNG ghép nhóm**: xu thế trung tâm (trung bình, trung vị, tứ phân vị, mốt) và độ phân tán (khoảng biến thiên, khoảng tứ phân vị, phương sai, độ lệch chuẩn, giá trị ngoại lệ) · quy tắc đếm (cộng, nhân), hoán vị `Pₙ = n!`, chỉnh hợp `Aₙᵏ = n!/(n−k)!`, tổ hợp `Cₙᵏ = n!/(k!(n−k)!)` · **xác suất cổ điển `P(A) = n(A)/n(Ω)`**, `P(Ā) = 1 − P(A)`                                                                                                                                               |
 
 ### Lớp 11
 
-| Mạch | Công thức cốt lõi                                                                                                                                                                                                                                                                                                                                                                           |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SO   | **Lượng giác**: công thức cộng, nhân đôi, hạ bậc, biến đổi tổng↔tích · phương trình lượng giác cơ bản · **dãy số, cấp số cộng** `uₙ = u₁ + (n−1)d`, `Sₙ = n(u₁+uₙ)/2` · **cấp số nhân** `uₙ = u₁·qⁿ⁻¹`, `Sₙ = u₁(1−qⁿ)/(1−q)` (q ≠ 1) · giới hạn dãy số/hàm số, hàm số liên tục · **đạo hàm**: quy tắc `(uv)' = u'v + uv'`, `(u/v)' = (u'v − uv')/v²`, đạo hàm hàm hợp; bảng đạo hàm cơ bản |
-| HINH | Quan hệ song song & vuông góc trong không gian · **góc giữa đường thẳng và mặt phẳng**, góc nhị diện · khoảng cách · **thể tích khối lăng trụ** `V = S·h`, **khối chóp** `V = ⅓S·h`                                                                                                                                                                                                         |
-| TK   | Xác suất có điều kiện · công thức cộng, nhân xác suất · biến cố độc lập                                                                                                                                                                                                                                                                                                                     |
+**SGK: 9 chương · 33 bài** (tập một chương I–V / Bài 1–17 · tập hai chương VI–IX / Bài 18–33).
+
+| Mạch | Công thức cốt lõi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| SO   | **Lượng giác**: góc lượng giác & radian, công thức cộng, nhân đôi, hạ bậc, biến đổi tổng↔tích · hàm số lượng giác · phương trình lượng giác cơ bản · **dãy số, cấp số cộng** `uₙ = u₁ + (n−1)d`, `Sₙ = n(u₁+uₙ)/2` · **cấp số nhân** `uₙ = u₁·qⁿ⁻¹`, `Sₙ = u₁(1−qⁿ)/(1−q)` (q ≠ 1) · giới hạn dãy số/hàm số (kể cả **tổng cấp số nhân lùi vô hạn** `S = u₁/(1−q)`), hàm số liên tục · **luỹ thừa với số mũ thực, lôgarit** `log(ab) = log a + log b`, `log(a/b) = log a − log b`, `log aⁿ = n·log a`, đổi cơ số `log_b a = log_c a / log_c b` · **hàm số mũ & hàm số lôgarit**, phương trình và bất phương trình mũ – lôgarit · **đạo hàm**: định nghĩa & ý nghĩa, quy tắc `(uv)' = u'v + uv'`, `(u/v)' = (u'v − uv')/v²`, đạo hàm hàm hợp, bảng đạo hàm cơ bản, **đạo hàm cấp hai** |
+| HINH | Quan hệ song song trong không gian (đường–mặt, hai mặt song song, **định lí Thalès trong không gian**, **phép chiếu song song**) · quan hệ vuông góc (**định lí ba đường vuông góc**, phép chiếu vuông góc) · **góc giữa đường thẳng và mặt phẳng**, **góc nhị diện** · khoảng cách (điểm–mặt, hai mặt song song, hai đường chéo nhau) · **thể tích khối lăng trụ** `V = S·h`, **khối chóp** `V = ⅓S·h`, khối chóp cụt đều                                                                                                                                                                                                                                                                                                                                                           |
+| TK   | Các số đặc trưng đo **xu thế trung tâm của mẫu số liệu GHÉP NHÓM** (trung bình, trung vị, tứ phân vị, mốt) · biến cố hợp/giao/xung khắc/độc lập · **công thức cộng xác suất** `P(A∪B) = P(A) + P(B) − P(A∩B)` · **công thức nhân cho hai biến cố độc lập** `P(A∩B) = P(A)·P(B)`. ⚠️ **Xác suất có điều kiện KHÔNG ở lớp 11** — xem lớp 12.                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 ### Lớp 12
 
-| Mạch | Công thức cốt lõi                                                                                                                                                                                                                                                                                                                                                                                                             |
-| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SO   | Ứng dụng đạo hàm: đơn điệu, cực trị, GTLN-GTNN, tiệm cận, khảo sát & vẽ đồ thị · **luỹ thừa, mũ, logarit**: `log(ab) = log a + log b`, `log(a/b) = log a − log b`, `log aⁿ = n·log a`, đổi cơ số `log_b a = log_c a / log_c b` · phương trình, bất phương trình mũ & logarit · **nguyên hàm, tích phân**: `∫xⁿdx = xⁿ⁺¹/(n+1) + C` (n ≠ −1), tích phân từng phần; ứng dụng tính diện tích hình phẳng, thể tích khối tròn xoay |
-| HINH | **Toạ độ trong không gian Oxyz**: phương trình mặt phẳng `Ax + By + Cz + D = 0`, phương trình đường thẳng, **phương trình mặt cầu** `(x−a)² + (y−b)² + (z−c)² = R²` · tích có hướng · khoảng cách từ điểm đến mặt phẳng                                                                                                                                                                                                       |
-| TK   | Thống kê ghép nhóm (số đặc trưng đo xu thế trung tâm, độ phân tán)                                                                                                                                                                                                                                                                                                                                                            |
+**SGK: 6 chương · 19 bài** — lớp có ít bài nhất cấp THPT.
+
+| Mạch | Công thức cốt lõi                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SO   | **Ứng dụng đạo hàm**: đơn điệu, cực trị, GTLN–GTNN, **tiệm cận ngang/đứng/xiên**, khảo sát & vẽ đồ thị (hàm bậc ba và hai dạng phân thức), bài toán tối ưu thực tiễn · **nguyên hàm, tích phân**: `∫xⁿdx = xⁿ⁺¹/(n+1) + C` (n ≠ −1), **Newton–Leibniz** `∫ₐᵇf(x)dx = F(b) − F(a)`; ứng dụng tính **diện tích hình phẳng**, **thể tích khối tròn xoay** `V = π∫ₐᵇf²(x)dx`. ⚠️ **Mũ – lôgarit KHÔNG ở lớp 12** — đã chuyển sang lớp 11. ⚠️ **KHÔNG có số phức.** |
+| HINH | **Vectơ trong không gian** (phép toán, tích vô hướng) · **hệ trục toạ độ Oxyz**, biểu thức toạ độ `a⃗·b⃗ = a₁b₁ + a₂b₂ + a₃b₃` · **phương trình mặt phẳng** `Ax + By + Cz + D = 0` (dùng **tích có hướng** tìm vectơ pháp tuyến), khoảng cách từ điểm đến mặt phẳng · **phương trình đường thẳng** (tham số, chính tắc) · **công thức tính góc trong không gian** · **phương trình mặt cầu** `(x−a)² + (y−b)² + (z−c)² = R²`                                   |
+| TK   | Các số đặc trưng đo **mức độ phân tán của mẫu số liệu GHÉP NHÓM**: khoảng biến thiên, khoảng tứ phân vị `Δ_Q = Q₃ − Q₁`, phương sai, độ lệch chuẩn · **xác suất có điều kiện** `P(A\|B) = P(A∩B)/P(B)` · **công thức xác suất toàn phần** và **công thức Bayes** (nội dung mới hoàn toàn so với chương trình cũ)                                                                                                                                               |
+
+### 5.1 Chuyên đề học tập (TỰ CHỌN — KHÔNG bắt buộc)
+
+Mỗi lớp 10, 11, 12 còn có một cuốn **"Chuyên đề học tập"** riêng, 35 tiết/năm, học sinh **chọn
+theo định hướng nghề nghiệp**. ⚠️ **Không được đưa vào lộ trình chuẩn của app** — nếu trộn lẫn sẽ
+ép học sinh học phần không bắt buộc. Xếp thành nhánh nâng cao tuỳ chọn.
+
+| Lớp | Chuyên đề (số bài)                                                                                                                                                                                                         |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 10  | CĐ1 Hệ phương trình bậc nhất **ba ẩn** (phương pháp Gauss) · CĐ2 **Phương pháp quy nạp toán học**, nhị thức Newton (n tổng quát) · CĐ3 Ba đường conic và ứng dụng — **8 bài**                                              |
+| 11  | CĐ1 **Phép biến hình trong mặt phẳng** (tịnh tiến, đối xứng trục/tâm, quay, dời hình, vị tự, đồng dạng) · CĐ2 **Lí thuyết đồ thị** (Euler, Hamilton, đường đi tối ưu) · CĐ3 Một số yếu tố vẽ kĩ thuật — **12 bài**         |
+| 12  | CĐ1 **Biến ngẫu nhiên rời rạc** (kì vọng, phương sai, **phân bố nhị thức**) · CĐ2 Bài toán tối ưu (**quy hoạch tuyến tính**, tối ưu bằng đạo hàm) · CĐ3 **Toán tài chính** (lãi đơn/lãi kép, tín dụng, đầu tư) — **7 bài** |
+
+> Đáng chú ý: **phép biến hình** (tịnh tiến, quay, vị tự…) — vốn là nội dung bắt buộc lớp 11 của
+> chương trình cũ — nay **chỉ còn ở chuyên đề tự chọn**. Tương tự, **phương pháp quy nạp toán học**
+> và **kì vọng/phương sai của biến ngẫu nhiên** cũng đã rời khỏi phần bắt buộc.
 
 ---
 
@@ -393,7 +427,9 @@ thuật cụ thể để giữ nguyên:
 **Phạm vi đã đối chiếu:** §4 — cấp 2, lớp 6-9 (§8.1-8.3, đợt 2a) **và** §3 — cấp 1, lớp 1-5
 (§8.4, đợt 2b), bộ "Kết nối tri thức" (18 tập trong `tai-lieu-sgk/SGK-Toan/`, trích mục lục bằng
 OCR tiếng Việt).
-**Chưa đối chiếu:** §2 (mầm non), §5 (lớp 10-12) — chưa có sách trong `tai-lieu-sgk/`.
+**[Cập nhật 2026-08-03 — đợt 2d]** Đã đối chiếu thêm **§5 — cấp 3, lớp 10-12** (nhật ký ở **§8.5**).
+⇒ **Môn Toán nay đã đối chiếu ĐỦ lớp 1 → 12.**
+**Chưa đối chiếu:** §2 (mầm non) — chưa có sách trong `tai-lieu-sgk/` (mầm non không có SGK).
 
 > **§8.1 – §8.3 dưới đây CHỈ nói về cấp 2 (lớp 6-9).** Phần tiểu học nằm riêng ở **§8.4**.
 
