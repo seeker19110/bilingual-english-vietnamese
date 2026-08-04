@@ -1645,6 +1645,22 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- **[2026-08-04] Nợ tương phản AAA (7:1) trên nội dung/tiêu đề — ~305 phần tử.** Luật a11y mới
+  (CLAUDE.md mục 4.5): nội dung & tiêu đề phải đạt **AAA**, phần còn lại đạt **AA**. Cổng AA
+  (`e2e/a11y.spec.ts`) đã siết TUYỆT ĐỐI (0 vi phạm mọi mức tác động, 15 trang × 5 theme) và đang
+  xanh. Cổng AAA (`e2e/a11y-aaa.spec.ts`) chạy kiểu **bánh cóc**: mọi tiêu chí AAA khác dung sai 0,
+  riêng `color-contrast-enhanced` chấp nhận baseline nợ cũ và **chỉ được giảm**. Phân bố nợ (số
+  phần tử): Xanh đêm 1 · Rực rỡ 48 · Blue sky 26 · Pink 115 · Nhi đồng 115 — nặng nhất ở
+  `/learning-path/a1` (38), `/learning-path` (18), `/progress` (20), `/profile` (17). Nguyên nhân
+  gốc: vài token màu chữ phụ dùng chung (zinc/accent sắc độ nhạt) trên 2 theme nền sáng. **Việc
+  tiếp theo:** chỉnh token màu cho đạt 7:1 rồi hạ dần baseline về 0 (test tự in dòng
+  `[AAA ratchet] …` gợi ý số mới), cuối cùng đổi cổng AAA thành "0 vi phạm" tuyệt đối. Đây là thay
+  đổi thiết kế màu diện rộng nên **cần người dùng duyệt trước khi làm**.
+- **[2026-08-04] Đã sửa kèm:** 4 nút vote 👍/👎 (Chat + Speaking) rớt `target-size` (WCAG 2.2 AA,
+  2.5.8) → đổi từ `tap-44` sang kích thước thật `h-11 w-11`. Lưu ý phát hiện thêm: tiện ích
+  `.tap-44` (`apps/english/src/index.css`) mở rộng vùng chạm bằng `::after` có
+  `pointer-events: none` — pseudo-element này KHÔNG nhận sự kiện chuột nên **không thực sự mở rộng
+  vùng bấm**, cũng không được axe tính. Cần rà lại toàn bộ nơi dùng `.tap-44` (nợ mới, chưa làm).
 - **[Rà soát tự động 2026-08-03, phiên sau PR #462]** `npm ci` sạch (container mới, chưa có
   `node_modules`) rồi chạy đủ cổng commit: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅ (0 cảnh
   báo) · test ✅ (**149 file / 2414 test**, tăng nhiều so với lượt trước vì các PR listening/story
