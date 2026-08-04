@@ -108,13 +108,26 @@ function buildGraph(): CodeGraph {
 
     const visit = (node: ts.Node): void => {
       // ── Cạnh import ──
-      if (
+      // Bắt CẢ 3 dạng, nếu thiếu dạng nào thì `impact` sẽ báo sót và cho cảm giác
+      // an toàn giả (bài học: các trang route đều nạp bằng dynamic import nên ban
+      // đầu `impact` tưởng "không ai import"):
+      //   1. import tĩnh:   import X from './x'
+      //   2. re-export:     export { X } from './x'
+      //   3. import động:   import('./x')  — dùng ở App.tsx qua lazyWithRetry()
+      let moduleSpecifier: ts.StringLiteral | undefined
+      if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+        const arg = node.arguments[0]
+        if (arg && ts.isStringLiteral(arg)) moduleSpecifier = arg
+      } else if (
         (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
         node.moduleSpecifier &&
         ts.isStringLiteral(node.moduleSpecifier)
       ) {
+        moduleSpecifier = node.moduleSpecifier
+      }
+      if (moduleSpecifier) {
         const resolved = ts.resolveModuleName(
-          node.moduleSpecifier.text,
+          moduleSpecifier.text,
           sourceFile.fileName,
           program.getCompilerOptions(),
           ts.sys,
