@@ -54,6 +54,27 @@ Khắt khe hơn vì ảnh hưởng nhánh chính. AI phải xác minh thêm:
 - Không đoán output lệnh — thực sự chạy và đọc kết quả.
 - Khẳng định kỹ thuật nên kèm nguồn (tài liệu chính thức) khi có thể.
 
+## Bằng chứng trước khi báo "xong" (mở rộng nguyên tắc cốt lõi #1)
+
+Trước khi khẳng định một việc đã xong — dưới bất kỳ hình thức nào (nói thẳng, diễn giải, hay ngụ ý) — phải: (1) xác định lệnh nào chứng minh được khẳng định đó, (2) **chạy lệnh đó thật, từ đầu** (không lấy từ trí nhớ/lần chạy trước), (3) đọc toàn bộ output + exit code, (4) xác nhận output thực sự chứng minh đúng khẳng định, (5) chỉ lúc đó mới nói ra kèm bằng chứng.
+
+| Loại việc | Cần | KHÔNG đủ |
+|---|---|---|
+| Test | Output test thật, 0 fail | Đoán/chỉ chạy một phần rồi suy ra |
+| Build | Exit code 0 của lệnh build | Chỉ lint qua là đủ |
+| Sửa bug | Tái hiện lỗi gốc → chạy lại thấy hết lỗi | Chỉ sửa code, chưa test lại |
+| Tiêu chí chấp nhận | Đối chiếu từng dòng, từng mục | Test xanh chung chung, không soát chi tiết |
+
+**Cờ đỏ (dừng ngay nếu thấy mình sắp viết):** "chắc là", "có lẽ", "should work", "về cơ bản đã xong" — đây là dấu hiệu CHƯA thực sự xác minh.
+
+## Hoàn tất một nhánh phát triển (trước khi merge/tạo PR)
+
+1. Chạy lại **toàn bộ** test suite trên nhánh — fail thì dừng, không merge/PR.
+2. Xác nhận đúng nhánh đích (base branch) trước khi merge — không giả định.
+3. Nếu merge cục bộ: chạy lại test **trên kết quả đã merge** (không chỉ trên nhánh feature) — merge lỗi thì để nguyên, báo lại, không tự ý gỡ.
+4. Quyết định tích hợp (merge thẳng / tạo PR / giữ nguyên chờ) là của **người dùng** — AI trình bày lựa chọn, không tự chọn thay.
+5. Chỉ xóa nhánh/bỏ thay đổi khi người dùng gõ xác nhận rõ ràng (vd. "xóa đi") — không bao giờ chủ động đề xuất hủy công sức đã làm.
+
 ## Khi nào AI PHẢI dừng và hỏi
 
 - Yêu cầu mơ hồ / nhiều cách hiểu.
