@@ -26,7 +26,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra, st
   const { T } = useLang()
 
   return (
-    <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/60 relative pt-safe">
+    <header className="sticky top-0 z-50 bg-zinc-950 border-b border-zinc-800/60 relative pt-safe">
       {/* Gradient accent line trên cùng */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
 
