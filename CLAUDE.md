@@ -77,7 +77,8 @@ Ba chế độ:
 
 - Không bịa hàm/thư viện/API — xác nhận tồn tại (đọc tài liệu/mã nguồn) trước khi dùng.
 - Không giả định cấu trúc dự án — đọc file thật để biết tên, kiểu, cấu trúc hiện có. **AI tự xác định stack/phiên bản** bằng cách đọc repo — không hỏi người dùng điều đã có trong code.
-- Không đoán kết quả lệnh — thực sự chạy và đọc output.
+- Không đoán kết quả lệnh — thực sự chạy và đọc output + exit code, ngay lúc đó, không dùng lại kết quả lần chạy trước.
+- **Cờ đỏ:** sắp viết "chắc là / có lẽ / should work / về cơ bản đã xong" → nghĩa là CHƯA xác minh. Quay lại chạy lệnh chứng minh được điều mình định nói, rồi mới nói. Áp dụng cho mọi lời khẳng định, không riêng lúc commit. Bảng bằng chứng theo loại việc: KHUNG 2 mục "Bằng chứng trước khi báo xong".
 
 ## 6. Công nghệ (stack) & lệnh
 
@@ -113,7 +114,7 @@ Ba chế độ:
 
 Build `npm run build` · Type `npm run typecheck` · Lint `npm run lint` (0 cảnh báo) · Format `npm run format` _(sau khi thêm Prettier)_ · Test `npm test`. Ngoài ra: tự đọc lại diff (đúng mục tiêu, không sửa nhầm); xóa `console.log` debug/code chết; không bí mật trong code; mọi input đã validate; mọi thao tác có thể lỗi đã xử lý; commit message theo **conventional commits**.
 
-**Bằng chứng, không phải cảm giác:** mọi lệnh trên phải CHẠY THẬT lúc đó và đọc output + exit code — không lấy lại kết quả lần trước, không suy ra. Thấy mình sắp viết "chắc là / có lẽ / should work" → chưa xác minh, quay lại chạy. Bảng bằng chứng theo loại việc: `docs/framework/KHUNG-2-luat-AI-va-mau-du-an.md` mục "Bằng chứng trước khi báo xong".
+**Công cụ phải khớp lockfile (bài học 2026-08-04, CI #475 đỏ).** Cổng chỉ đáng tin khi `node_modules` đúng `package-lock.json`. Dấu hiệu lệch: cổng local báo lỗi ở **nhiều file mình không hề đụng tới**, hoặc local xanh mà CI đỏ (và ngược lại). Gặp dấu hiệu đó → `npm ci` rồi chạy lại cổng, ĐỪNG đi sửa từng file theo báo lỗi giả. Trong container phiên mới, chạy `npm ci` trước lần chạy cổng đầu tiên. Kiểm nhanh: `npx prettier --version` khớp `package.json`.
 
 **Đổi prompt hoặc model AI:** mọi PR sửa `apps/english/src/prompts/*` hoặc `packages/core-ai/aiConfig.ts` (model/guardrail) PHẢI chạy lại `npm run eval:tutor` (cần key AI trong `.env`) và **dán bảng so sánh với `docs/research/eval-tutor-baseline.md` vào mô tả PR** — recall/precision không được tụt so với baseline. Xem `scripts/eval-tutor.ts`.
 
@@ -121,7 +122,7 @@ Build `npm run build` · Type `npm run typecheck` · Lint `npm run lint` (0 cả
 
 Đạt toàn bộ cổng commit · chạy TOÀN BỘ test (xanh) · nhánh đã cập nhật với nhánh chính, không xung đột · đối chiếu đủ tiêu chí chấp nhận (`PROJECT.md`) + Definition of Done · tự chạy smoke test luồng chính (thật) · rà bảo mật (quyền server, không lộ dữ liệu) · không phá tính năng khác (ghi rõ nếu có breaking change) · nếu đổi schema: có migration có phiên bản, rollback được.
 
-Nếu merge cục bộ: chạy lại test **trên kết quả đã merge**, không chỉ trên nhánh feature. Quyết định tích hợp (merge / tạo PR / giữ nguyên chờ) là của **người dùng** — AI trình bày lựa chọn, không tự chọn thay; chỉ xoá nhánh khi người dùng xác nhận rõ ràng. Chi tiết: KHUNG 2 mục "Hoàn tất một nhánh phát triển".
+"Không phá tính năng khác" phải **kiểm bằng công cụ, không bằng trí nhớ**: `npm run codemap -- impact <file>` cho từng file đã sửa → soát lại danh sách bị ảnh hưởng (mục 7). Nếu merge cục bộ: chạy lại test **trên kết quả đã merge**, không chỉ trên nhánh feature. Quyết định tích hợp (merge / tạo PR / giữ nguyên chờ) là của **người dùng** — AI trình bày lựa chọn, không tự chọn thay; chỉ xoá nhánh khi người dùng xác nhận rõ ràng. Chi tiết: KHUNG 2 mục "Hoàn tất một nhánh phát triển".
 
 ## 10. Báo cáo xác thực (xuất trước mỗi commit/merge)
 
