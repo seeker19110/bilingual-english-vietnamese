@@ -340,7 +340,9 @@ function startReminderScheduler() {
       void sendReminders(hour)
         .then((r) => {
           if (r.sent || r.skipped)
-            console.log(`[reminder:push] ${hour}h UTC → gửi ${r.sent}, bỏ qua ${r.skipped} (đã học)`)
+            console.log(
+              `[reminder:push] ${hour}h UTC → gửi ${r.sent}, bỏ qua ${r.skipped} (đã học)`,
+            )
         })
         .catch((err) => {
           console.error('[reminder:push] lỗi gửi nhắc:', err)
@@ -353,7 +355,9 @@ function startReminderScheduler() {
       void sendEmailReminders()
         .then((r) => {
           if (r.sent || r.skipped)
-            console.log(`[reminder:email] Gửi xong email nhắc học: ${r.sent} gửi, ${r.skipped} bỏ qua`)
+            console.log(
+              `[reminder:email] Gửi xong email nhắc học: ${r.sent} gửi, ${r.skipped} bỏ qua`,
+            )
         })
         .catch((err) => {
           console.error('[reminder:email] lỗi gửi email nhắc:', err)
