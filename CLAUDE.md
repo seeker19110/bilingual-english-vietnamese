@@ -108,11 +108,15 @@ Ba chế độ:
 
 Build `npm run build` · Type `npm run typecheck` · Lint `npm run lint` (0 cảnh báo) · Format `npm run format` _(sau khi thêm Prettier)_ · Test `npm test`. Ngoài ra: tự đọc lại diff (đúng mục tiêu, không sửa nhầm); xóa `console.log` debug/code chết; không bí mật trong code; mọi input đã validate; mọi thao tác có thể lỗi đã xử lý; commit message theo **conventional commits**.
 
+**Bằng chứng, không phải cảm giác:** mọi lệnh trên phải CHẠY THẬT lúc đó và đọc output + exit code — không lấy lại kết quả lần trước, không suy ra. Thấy mình sắp viết "chắc là / có lẽ / should work" → chưa xác minh, quay lại chạy. Bảng bằng chứng theo loại việc: `docs/framework/KHUNG-2-luat-AI-va-mau-du-an.md` mục "Bằng chứng trước khi báo xong".
+
 **Đổi prompt hoặc model AI:** mọi PR sửa `apps/english/src/prompts/*` hoặc `packages/core-ai/aiConfig.ts` (model/guardrail) PHẢI chạy lại `npm run eval:tutor` (cần key AI trong `.env`) và **dán bảng so sánh với `docs/research/eval-tutor-baseline.md` vào mô tả PR** — recall/precision không được tụt so với baseline. Xem `scripts/eval-tutor.ts`.
 
 ## 9. Cổng trước khi MERGE (thêm)
 
 Đạt toàn bộ cổng commit · chạy TOÀN BỘ test (xanh) · nhánh đã cập nhật với nhánh chính, không xung đột · đối chiếu đủ tiêu chí chấp nhận (`PROJECT.md`) + Definition of Done · tự chạy smoke test luồng chính (thật) · rà bảo mật (quyền server, không lộ dữ liệu) · không phá tính năng khác (ghi rõ nếu có breaking change) · nếu đổi schema: có migration có phiên bản, rollback được.
+
+Nếu merge cục bộ: chạy lại test **trên kết quả đã merge**, không chỉ trên nhánh feature. Quyết định tích hợp (merge / tạo PR / giữ nguyên chờ) là của **người dùng** — AI trình bày lựa chọn, không tự chọn thay; chỉ xoá nhánh khi người dùng xác nhận rõ ràng. Chi tiết: KHUNG 2 mục "Hoàn tất một nhánh phát triển".
 
 ## 10. Báo cáo xác thực (xuất trước mỗi commit/merge)
 

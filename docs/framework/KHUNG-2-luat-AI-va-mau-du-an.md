@@ -58,12 +58,12 @@ Khắt khe hơn vì ảnh hưởng nhánh chính. AI phải xác minh thêm:
 
 Trước khi khẳng định một việc đã xong — dưới bất kỳ hình thức nào (nói thẳng, diễn giải, hay ngụ ý) — phải: (1) xác định lệnh nào chứng minh được khẳng định đó, (2) **chạy lệnh đó thật, từ đầu** (không lấy từ trí nhớ/lần chạy trước), (3) đọc toàn bộ output + exit code, (4) xác nhận output thực sự chứng minh đúng khẳng định, (5) chỉ lúc đó mới nói ra kèm bằng chứng.
 
-| Loại việc | Cần | KHÔNG đủ |
-|---|---|---|
-| Test | Output test thật, 0 fail | Đoán/chỉ chạy một phần rồi suy ra |
-| Build | Exit code 0 của lệnh build | Chỉ lint qua là đủ |
-| Sửa bug | Tái hiện lỗi gốc → chạy lại thấy hết lỗi | Chỉ sửa code, chưa test lại |
-| Tiêu chí chấp nhận | Đối chiếu từng dòng, từng mục | Test xanh chung chung, không soát chi tiết |
+| Loại việc          | Cần                                      | KHÔNG đủ                                   |
+| ------------------ | ---------------------------------------- | ------------------------------------------ |
+| Test               | Output test thật, 0 fail                 | Đoán/chỉ chạy một phần rồi suy ra          |
+| Build              | Exit code 0 của lệnh build               | Chỉ lint qua là đủ                         |
+| Sửa bug            | Tái hiện lỗi gốc → chạy lại thấy hết lỗi | Chỉ sửa code, chưa test lại                |
+| Tiêu chí chấp nhận | Đối chiếu từng dòng, từng mục            | Test xanh chung chung, không soát chi tiết |
 
 **Cờ đỏ (dừng ngay nếu thấy mình sắp viết):** "chắc là", "có lẽ", "should work", "về cơ bản đã xong" — đây là dấu hiệu CHƯA thực sự xác minh.
 
