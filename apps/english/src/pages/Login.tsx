@@ -298,7 +298,9 @@ export default function Login() {
               onClick={() => setShowPw((p) => !p)}
               aria-label={showPw ? T.hidePassword : T.showPassword}
               aria-pressed={showPw}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300 p-0.5 transition"
+              /* h-8 w-8 = 32px: đạt target-size WCAG 2.2 AA (≥24px). Nằm gọn trong pr-11 (44px)
+                 của ô nhập nên không đè lên chữ. */
+              className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center text-zinc-400 hover:text-zinc-300 transition"
             >
               {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -390,7 +392,10 @@ export default function Login() {
           type="button"
           onClick={facebookSignIn}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2.5 bg-[#166FE5] hover:bg-[#1160CC] disabled:opacity-50 text-white font-medium py-3 rounded-xl text-sm transition active:scale-[0.98] mt-2.5"
+          /* Chữ dùng `text-[#fff]` (trắng THẬT) chứ KHÔNG dùng `text-white`: `white` map sang
+             token --c-white, ở theme nền sáng token này bị ĐẢO thành màu tối → chữ tối trên nền
+             thương hiệu tối (tương phản ~1.2:1). Áp dụng cho cả 3 nút OAuth bên dưới. */
+          className="w-full flex items-center justify-center gap-2.5 bg-[#166FE5] hover:bg-[#1160CC] disabled:opacity-50 text-[#fff] font-medium py-3 rounded-xl text-sm transition active:scale-[0.98] mt-2.5"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.89h2.78l-.44 2.91h-2.34V22c4.78-.79 8.44-4.94 8.44-9.94z" />
@@ -403,7 +408,7 @@ export default function Login() {
           type="button"
           onClick={appleSignIn}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2.5 bg-black hover:bg-zinc-900 disabled:opacity-50 text-white font-medium py-3 rounded-xl text-sm transition active:scale-[0.98] mt-2.5"
+          className="w-full flex items-center justify-center gap-2.5 bg-black hover:bg-zinc-900 disabled:opacity-50 text-[#fff] font-medium py-3 rounded-xl text-sm transition active:scale-[0.98] mt-2.5"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M16.36 1.43c0 1.14-.46 2.23-1.2 3.03-.8.86-2.1 1.53-3.19 1.44-.13-1.1.42-2.26 1.16-3.02.82-.85 2.24-1.5 3.23-1.45zm3.16 16.6c-.35.8-.77 1.55-1.28 2.25-.7.96-1.27 1.62-1.71 2-.68.63-1.4.95-2.18.97-.56.01-1.23-.16-2.01-.5-.78-.34-1.5-.5-2.15-.5-.68 0-1.42.16-2.22.5-.8.34-1.44.52-1.94.54-.75.03-1.49-.3-2.22-1-.47-.42-1.08-1.12-1.81-2.1-.79-1.06-1.44-2.29-1.94-3.7-.54-1.52-.81-3-.81-4.42 0-1.63.35-3.04 1.06-4.22.55-.95 1.28-1.7 2.19-2.25.91-.55 1.9-.83 2.96-.85.6-.01 1.38.19 2.35.58.96.4 1.58.6 1.85.6.2 0 .89-.23 2.05-.7.99-.4 1.83-.56 2.5-.5 1.85.15 3.24.88 4.16 2.2-1.65 1-2.47 2.4-2.46 4.2.01 1.4.52 2.57 1.53 3.5.45.43.96.76 1.51 1-.12.35-.25.7-.4 1.03z" />
@@ -416,7 +421,7 @@ export default function Login() {
           type="button"
           onClick={microsoftSignIn}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2.5 bg-[#2f2f2f] hover:bg-[#242424] disabled:opacity-50 text-white font-medium py-3 rounded-xl text-sm transition active:scale-[0.98] mt-2.5"
+          className="w-full flex items-center justify-center gap-2.5 bg-[#2f2f2f] hover:bg-[#242424] disabled:opacity-50 text-[#fff] font-medium py-3 rounded-xl text-sm transition active:scale-[0.98] mt-2.5"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="#f25022" d="M1 1h10v10H1z" />

@@ -67,13 +67,9 @@ const KNOWN_LOW = new Set<string>([
   'kid|z-500|z-900',
   'kid|z-500|z-800',
   'kid|z-500|z-700',
-  // chữ phụ trên nền z-700 (ô nổi tông đậm)
-  'dark-blue|z-400|z-700',
-  'pink|z-300|z-700',
-  'pink|z-400|z-700',
-  'vibrant|z-400|z-700',
-  'kid|z-300|z-700',
-  'kid|z-400|z-700',
+  // [2026-08-04] Nhóm "chữ phụ (z-300/z-400) trên nền z-700" ĐÃ HẾT NỢ: việc siết token
+  // --z-300/--z-400 cho đạt AAA 7:1 (xem cổng e2e/a11y-aaa.spec.ts) kéo luôn các cặp này
+  // vượt AA, nên đã xoá khỏi danh sách theo đúng yêu cầu của test bên dưới.
   // chữ accent trên nền z-700 (cũng chỉ là màu hover, chưa dùng kèm chữ accent)
   'blue-sky|a-700|z-700',
   'pink|a-700|z-700',

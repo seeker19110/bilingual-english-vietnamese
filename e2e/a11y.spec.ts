@@ -2,63 +2,60 @@ import { test, expect, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { mockLogin, USER_ID, type ThemeName } from './helpers/auth'
 import { muteTts } from './helpers/tts'
+import { freezeAnimations } from './helpers/axe'
 
-// Quét a11y bằng axe-core (WCAG 2.0/2.1 A & AA). Loại 'meta-viewport' vì dự án
+// Quét a11y bằng axe-core (WCAG 2.0/2.1/2.2 A & AA). Loại 'meta-viewport' vì dự án
 // CHỦ ĐỘNG khóa zoom (đánh đổi 1 mục a11y, bù bằng sàn chữ ≥11px — CLAUDE.md mục 8).
 //
-// Cổng kiểu "không tệ hơn hiện tại":
-//   - KHÔNG cho phép bất kỳ vi phạm mức 'critical'.
-//   - 'serious' chỉ chấp nhận các nợ đã biết (KNOWN_SERIOUS); vi phạm serious MỚI
-//     (ngoài baseline) sẽ làm fail → chống tụt lùi. Nợ baseline ghi ở PROGRESS.md.
-// Hiện baseline RỖNG: nợ 'color-contrast' trên TẤT CẢ trang được quét dưới đây đã
-// được fix (caption nhỏ chuyển từ zinc-500/600 + accent-400/60 sang zinc-400 /
-// accent-400 đặc — đạt AA ở mọi theme). Xem PROGRESS.md.
-const KNOWN_SERIOUS = new Set<string>([])
-
+// [2026-08-04] Cổng SIẾT THÀNH TUYỆT ĐỐI: 0 vi phạm A/AA ở MỌI mức tác động
+// (critical/serious/moderate/minor), thay cho cổng cũ kiểu "không tệ hơn hiện tại"
+// (chỉ chặn critical + serious mới). Đo thực tế toàn bộ 15 trang × 5 theme cho 0 vi
+// phạm nên siết được ngay, không cần baseline. AA là SÀN BẮT BUỘC của dự án — theo
+// khuyến nghị của W3C (Understanding Conformance): KHÔNG lấy AAA làm chính sách cho
+// toàn site vì có nội dung không thể đạt hết AAA; chỗ nào chưa/không đạt AAA thì tối
+// thiểu phải đạt AA. Mức AAA được gác riêng ở e2e/a11y-aaa.spec.ts.
 async function scan(page: Page) {
-  // Tắt animation/transition trước khi quét để axe đo TRẠNG THÁI CUỐI, không bắt
-  // nhằm khung giữa của `animate-fade-in` (opacity 0→1) — lúc opacity ~0.6 màu chữ
-  // trộn nền làm contrast tụt dưới 4.5 → vi phạm color-contrast chập chờn (flaky).
-  // fade-in dùng fill-mode 'both' nên ép duration 0s sẽ nhảy thẳng tới opacity 1.
-  await page.addStyleTag({
-    content:
-      '*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;transition:none!important}',
-  })
-  await page.waitForTimeout(100)
+  await freezeAnimations(page)
   const { violations } = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .disableRules(['meta-viewport'])
     .analyze()
-  const fmt = (v: { id: string; impact?: string | null }) => `${v.id} (${v.impact})`
-  return {
-    critical: violations.filter((v) => v.impact === 'critical').map(fmt),
-    unexpectedSerious: violations
-      .filter((v) => v.impact === 'serious' && !KNOWN_SERIOUS.has(v.id))
-      .map(fmt),
-  }
+  const fmt = (v: { id: string; impact?: string | null; nodes: unknown[] }) =>
+    `${v.id} (${v.impact}, ${v.nodes.length} phần tử)`
+  return { all: violations.map(fmt) }
 }
 
-test('a11y: trang đăng nhập — 0 critical, không có serious mới', async ({ page }) => {
-  await page.goto('/login')
-  const { critical, unexpectedSerious } = await scan(page)
-  expect(critical).toEqual([])
-  expect(unexpectedSerious).toEqual([])
-})
-
-// Quét Trang chủ ở CẢ 4 THEME (gồm cả mặc định Xanh đêm) — bảo chứng cam kết
+// Danh sách theme dùng cho MỌI vòng quét bên dưới — gồm cả "Nhi đồng" (kid), theme
+// bình thường chỉ tự áp khi age_group='nhi_dong'; ở E2E seed thẳng localStorage
+// 'ui_theme' qua mockLogin() (theme render y hệt, chỉ khác cách được áp).
+// Quét Trang chủ ở CẢ 5 THEME (gồm cả mặc định Xanh đêm) — bảo chứng cam kết
 // "AA ở mọi theme" (CLAUDE.md mục 4.8, 8).
 // Theme SÁNG (Blue sky, Pink) trước đây rớt color-contrast (pill màu cố định + token
 // zinc-400 của Pink quá nhạt) → đã sửa bằng biến thể `theme-light:` (sắc độ đậm hơn) và
 // chỉnh token `--z-400` của Pink. Gate này chống tụt lùi cho mọi theme.
-const THEMES: ThemeName[] = ['dark-blue', 'blue-sky', 'pink', 'vibrant']
+const THEMES: ThemeName[] = ['dark-blue', 'blue-sky', 'pink', 'vibrant', 'kid']
+
+// Trang đăng nhập — quét CẢ 5 theme (nút OAuth dùng màu thương hiệu cố định, không
+// đổi theo theme, nhưng nền/chữ xung quanh thì có).
 for (const theme of THEMES) {
-  test(`a11y: trang chủ theme=${theme} — 0 critical, không có serious mới`, async ({ page }) => {
+  test(`a11y: trang đăng nhập theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
+    await page.addInitScript((t) => localStorage.setItem('ui_theme', t), theme)
+    await page.goto('/login')
+    // Chờ nút OAuth cuối cùng render xong rồi mới quét: các nút này hiện SAU form nên
+    // quét sớm sẽ bỏ sót chúng (đã từng làm cổng lọt lỗi contrast + target-size).
+    await expect(page.getByRole('button', { name: /Microsoft/i })).toBeVisible()
+    const { all } = await scan(page)
+    expect(all).toEqual([])
+  })
+}
+
+for (const theme of THEMES) {
+  test(`a11y: trang chủ theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
     await mockLogin(page, 'vi', theme)
     await page.goto('/')
     await expect(page.getByRole('banner').getByText(/Xin chào/)).toBeVisible()
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 }
 
@@ -66,20 +63,17 @@ for (const theme of THEMES) {
 // badge/nhãn chiều học. Quét ở 2 theme SÁNG (nơi màu sky cố định dễ rớt AA) để chắc
 // biến thể `theme-light:` của nhánh B cũng đạt — gate Home phía trên chỉ phủ chiều A.
 for (const theme of ['blue-sky', 'pink'] as ThemeName[]) {
-  test(`a11y: trang chủ chiều B theme=${theme} — 0 critical, không có serious mới`, async ({
-    page,
-  }) => {
+  test(`a11y: trang chủ chiều B theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
     await mockLogin(page, 'en', theme)
     await page.addInitScript(() => localStorage.setItem('et_direction', 'B'))
     await page.goto('/')
     await expect(page.getByRole('banner').getByText(/Hello,/)).toBeVisible()
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 }
 
-// Các trang chính sau đăng nhập — quét ở CẢ 4 THEME (cam kết "AA ở mọi theme").
+// Các trang chính sau đăng nhập — quét ở CẢ 5 THEME (cam kết "AA ở mọi theme").
 // Màu cố định của Tailwind (pill loại từ, màu chủ đề/cấp, IPA…) đã thêm biến thể
 // `theme-light:` sắc độ đậm cho 2 theme nền sáng (qua map dùng chung: pos.ts,
 // COLOR_MAP Phrases, COLORS Lessons, CEFR_COLORS Dashboard, tab Learn…).
@@ -100,45 +94,21 @@ const AUTHED_ROUTES = [
 ]
 for (const route of AUTHED_ROUTES) {
   for (const theme of THEMES) {
-    test(`a11y: ${route} theme=${theme} — 0 critical, không có serious mới`, async ({ page }) => {
+    test(`a11y: ${route} theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
       await mockLogin(page, 'vi', theme)
       await page.goto(route, { waitUntil: 'domcontentloaded' })
       await page.waitForTimeout(1000) // chờ render xong (data offline + animation)
-      const { critical, unexpectedSerious } = await scan(page)
-      expect(critical).toEqual([])
-      expect(unexpectedSerious).toEqual([])
+      const { all } = await scan(page)
+      expect(all).toEqual([])
     })
   }
-}
-
-// Theme "Nhi đồng" (kid) — kế hoạch "giao diện + nội dung theo độ tuổi", PROGRESS.md
-// 2026-07-22 GĐ 2. Bình thường theme này chỉ tự áp qua ThemeProvider khi age_group=
-// 'nhi_dong' (không mock được /api/profile ở E2E, xem ThemeProvider.tsx) — ở đây seed
-// thẳng localStorage 'ui_theme'='kid' qua mockLogin() để quét đúng bộ màu mà KHÔNG cần
-// giả lập toàn bộ luồng khoá theme (theme vẫn render y hệt, chỉ khác cách được áp). Đặt
-// SAU vòng AUTHED_ROUTES (không phải ngay đầu file) — chủ ý tránh vị trí "chạy sớm lúc dev
-// server còn nguội" đã gây flaky khi debug (xem PROGRESS.md).
-for (const route of ['/', '/profile']) {
-  test(`a11y: ${route} theme=kid (Nhi đồng) — 0 critical, không có serious mới`, async ({
-    page,
-  }) => {
-    await mockLogin(page, 'vi', 'kid')
-    await page.goto(route, { waitUntil: 'domcontentloaded' })
-    // Cùng lý do với AUTHED_ROUTES ở trên: thẻ "Học tiếp" tính từ dữ liệu curriculum OFFLINE
-    // phía client (không phải fetch mạng nên networkidle không giúp) — banner tĩnh hiện gần
-    // như ngay lập tức nên expect().toBeVisible() KHÔNG đủ, bắt nhầm badge màu chưa render xong.
-    await page.waitForTimeout(1000)
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
-  })
 }
 
 // ── MÀN KẾT QUẢ CẦN BACKEND (Chat trả lời/nhận xét · Writing chấm điểm/lỗi · Speaking
 //    trả lời/sửa lỗi) ──────────────────────────────────────────────────────────────
 // Các UI này chỉ hiện SAU khi gọi AI nên axe lúc tải trang không thấy. E2E không có
 // backend thật → ta CHẶN /api/agent và trả câu mẫu cố định (đủ render màu amber/accent/
-// red của phần sửa lỗi/điểm), rồi quét contrast ở CẢ 4 THEME (cam kết "AA ở mọi theme").
+// red của phần sửa lỗi/điểm), rồi quét contrast ở CẢ 5 THEME (cam kết "AA ở mọi theme").
 // Đây là phần a11y còn chừa lại trong PROGRESS.md ("Tiếp theo").
 
 // Trả lời /api/agent bằng nội dung cố định để dựng UI kết quả.
@@ -183,25 +153,20 @@ const SPEAKING_REPLY = JSON.stringify({
   corrected: 'I went to the cinema with my friends.',
 })
 
-const RESULT_THEMES: ThemeName[] = ['dark-blue', 'blue-sky', 'pink', 'vibrant']
+const RESULT_THEMES: ThemeName[] = THEMES
 
 for (const theme of RESULT_THEMES) {
-  test(`a11y: Chat (kết quả AI) theme=${theme} — 0 critical, không có serious mới`, async ({
-    page,
-  }) => {
+  test(`a11y: Chat (kết quả AI) theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
     await mockClaude(page, CHAT_REPLY)
     await mockLogin(page, 'vi', theme)
     await page.goto('/chat')
     await page.getByRole('button', { name: /Bắt đầu hội thoại/ }).click()
     await expect(page.getByText(/Câu trả lời của bạn khá tốt/)).toBeVisible()
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 
-  test(`a11y: Writing (kết quả chấm) theme=${theme} — 0 critical, không có serious mới`, async ({
-    page,
-  }) => {
+  test(`a11y: Writing (kết quả chấm) theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
     await mockClaude(page, WRITING_FEEDBACK)
     await mockLogin(page, 'vi', theme)
     await page.goto('/writing')
@@ -213,23 +178,19 @@ for (const theme of RESULT_THEMES) {
       )
     await page.getByRole('button', { name: /Chấm bài ngay/ }).click()
     await expect(page.getByText(/Điểm ước lượng IELTS/)).toBeVisible()
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 
-  test(`a11y: Speaking (kết quả AI) theme=${theme} — 0 critical, không có serious mới`, async ({
-    page,
-  }) => {
+  test(`a11y: Speaking (kết quả AI) theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
     await muteTts(page)
     await mockClaude(page, SPEAKING_REPLY)
     await mockLogin(page, 'vi', theme)
     await page.goto('/speaking')
     await page.getByRole('button', { name: /Bắt đầu luyện nói/ }).click()
     await expect(page.getByText(/What did you do last weekend/)).toBeVisible()
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 }
 
@@ -256,7 +217,7 @@ async function seedChallengeState(page: Page, challenge: unknown) {
 }
 
 for (const theme of THEMES) {
-  test(`a11y: /challenge — đã bắt đầu, chưa nộp hôm nay theme=${theme} — 0 critical, không có serious mới`, async ({
+  test(`a11y: /challenge — đã bắt đầu, chưa nộp hôm nay theme=${theme} — 0 vi phạm A/AA`, async ({
     page,
   }) => {
     await mockLogin(page, 'vi', theme)
@@ -264,12 +225,11 @@ for (const theme of THEMES) {
     await page.goto('/challenge', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Challenge 1 phút/)).toBeVisible()
     await page.waitForTimeout(500)
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 
-  test(`a11y: /challenge — đã nộp hôm nay (màn nhận xét AI) theme=${theme} — 0 critical, không có serious mới`, async ({
+  test(`a11y: /challenge — đã nộp hôm nay (màn nhận xét AI) theme=${theme} — 0 vi phạm A/AA`, async ({
     page,
   }) => {
     await mockLogin(page, 'vi', theme)
@@ -304,28 +264,26 @@ for (const theme of THEMES) {
     await page.goto('/challenge', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Đã nộp challenge hôm nay/)).toBeVisible()
     await page.waitForTimeout(500)
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 }
 
 // ── Tab "Nghe" (luyện nghe theo cấp, ③ N3) — 2 chế độ: Chọn nghĩa (mặc định) và
 // Gõ lại (dictation). A1 luôn mở khóa nên vào thẳng qua ?tab=listening.
 for (const theme of THEMES) {
-  test(`a11y: /learning-path/a1 tab Nghe — Chọn nghĩa theme=${theme} — 0 critical, không có serious mới`, async ({
+  test(`a11y: /learning-path/a1 tab Nghe — Chọn nghĩa theme=${theme} — 0 vi phạm A/AA`, async ({
     page,
   }) => {
     await muteTts(page)
     await mockLogin(page, 'vi', theme)
     await page.goto('/learning-path/a1?tab=listening', { waitUntil: 'domcontentloaded' })
     await expect(page.getByRole('button', { name: /Nghe lại/ })).toBeVisible()
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 
-  test(`a11y: /learning-path/a1 tab Nghe — Gõ lại theme=${theme} — 0 critical, không có serious mới`, async ({
+  test(`a11y: /learning-path/a1 tab Nghe — Gõ lại theme=${theme} — 0 vi phạm A/AA`, async ({
     page,
   }) => {
     await muteTts(page)
@@ -333,9 +291,8 @@ for (const theme of THEMES) {
     await page.goto('/learning-path/a1?tab=listening', { waitUntil: 'domcontentloaded' })
     await page.getByRole('button', { name: /Gõ lại/ }).click()
     await expect(page.getByPlaceholder(/Gõ lại câu vừa nghe/)).toBeVisible()
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 }
 
@@ -352,19 +309,16 @@ async function seedOldActivity(page: Page, offsetDays: number) {
 }
 
 for (const theme of THEMES) {
-  test(`a11y: Home — banner quay lại theme=${theme} — 0 critical, không có serious mới`, async ({
-    page,
-  }) => {
+  test(`a11y: Home — banner quay lại theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
     await seedOldActivity(page, 5)
     await mockLogin(page, 'vi', theme)
     await page.goto('/', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Mừng bạn quay lại/)).toBeVisible()
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 
-  test(`a11y: Home — gợi ý luyện nói với từ vừa học theme=${theme} — 0 critical, không có serious mới`, async ({
+  test(`a11y: Home — gợi ý luyện nói với từ vừa học theme=${theme} — 0 vi phạm A/AA`, async ({
     page,
   }) => {
     await page.addInitScript(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
@@ -374,8 +328,7 @@ for (const theme of THEMES) {
     await mockLogin(page, 'vi', theme)
     await page.goto('/', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Luyện nói với 3 từ vừa học/)).toBeVisible()
-    const { critical, unexpectedSerious } = await scan(page)
-    expect(critical).toEqual([])
-    expect(unexpectedSerious).toEqual([])
+    const { all } = await scan(page)
+    expect(all).toEqual([])
   })
 }

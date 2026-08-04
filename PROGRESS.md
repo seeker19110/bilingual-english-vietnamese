@@ -1665,6 +1665,31 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- **[2026-08-04] Luật a11y mới + ĐÃ TRẢ HẾT nợ tương phản AAA.** Luật (CLAUDE.md mục 4.5, theo
+  khuyến nghị W3C _Understanding Conformance_): **nội dung & tiêu đề đạt AAA (≥ 7:1)**, **mọi phần
+  còn lại đạt AA**. Hai cổng E2E chặn CI, cả hai TUYỆT ĐỐI (không còn baseline):
+  - `e2e/a11y.spec.ts` — 0 vi phạm A/AA ở MỌI mức tác động (trước chỉ chặn critical + serious mới),
+    thêm tag `wcag22aa`, mở rộng **cả 5 theme** cho mọi trang + trang đăng nhập. 122 test xanh.
+  - `e2e/a11y-aaa.spec.ts` (mới) — 15 trang × 5 theme, lọc riêng phần tử nội dung/tiêu đề. 75 test xanh.
+  - Nợ tương phản AAA ban đầu **~305 phần tử** (Pink 115 · Nhi đồng 115 · Rực rỡ 48 · Blue sky 26 ·
+    Xanh đêm 1) đã **xử lý xong**: gốc rễ chỉ là 2 token `--z-300`/`--z-400` (`text-zinc-300/400`)
+    của từng theme trong `apps/english/src/index.css` — chỉnh sắc độ cho đạt 7:1 trên nền sáng nhất
+    (theme sáng) / tối nhất (theme tối) là hết. Giá trị mới: dark-blue z-400 `158 173 191` ·
+    blue-sky z-400 `64 78 96` · pink z-300 `82 68 76` z-400 `89 75 83` · vibrant z-400
+    `190 172 216` · kid z-300 `98 72 45` z-400 `101 75 48`.
+- **[2026-08-04] 3 lỗi AA THẬT do cổng siết + quét đủ 5 theme phát hiện (đã sửa):**
+  1. 4 nút vote 👍/👎 (Chat, Speaking) rớt `target-size` (WCAG 2.2 AA 2.5.8) → `tap-44` → `h-11 w-11`.
+  2. Nút hiện/ẩn mật khẩu ở `/login` chỉ 20×20px → `h-8 w-8` (32px, nằm gọn trong `pr-11` của ô nhập).
+  3. **Nặng nhất:** 3 nút OAuth (Facebook/Apple/Microsoft) ở `/login` dùng `text-white` — mà `white`
+     map sang token `--c-white`, ở theme nền sáng token này bị ĐẢO thành màu tối → chữ tối trên nền
+     thương hiệu tối, tương phản chỉ **1.17–1.33:1**, gần như không đọc được với người dùng theme
+     Blue sky/Pink/Nhi đồng. Sửa: dùng `text-[#fff]` (trắng thật). Nút Facebook đổi `#1877F2` →
+     `#1772E8` để chữ trắng đạt 4.5:1 (bản gốc 4.23:1).
+     Cả 3 đều là lỗi có thật với người dùng, cổng cũ (chỉ chặn critical + serious mới, 4 theme, không
+     quét `wcag22aa`) không bắt được.
+- **Nợ mới chưa xử lý:** tiện ích `.tap-44` (`apps/english/src/index.css`) mở rộng vùng chạm bằng
+  `::after` có `pointer-events: none` — pseudo-element này KHÔNG nhận sự kiện chuột nên **không thực
+  sự mở rộng vùng bấm** (cũng không được axe tính). Cần rà lại toàn bộ nơi dùng `.tap-44`.
 - 🟡 **Token `--z-500` rớt WCAG AA ở gần như mọi nền, mọi theme** (phát hiện 2026-08-04 khi thêm
   cổng `apps/english/src/lib/themeContrast.test.ts`). Số đo: Xanh đêm 4.09/3.75/3.07/2.18 trên
   nền z-950/900/800/700; Pink 2.62–1.90; Nhi đồng 2.79–1.99 — đều dưới ngưỡng 4.5. Đây là token

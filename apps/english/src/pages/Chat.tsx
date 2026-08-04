@@ -282,7 +282,7 @@ function Bubble({
                   onClick={() => handleVote('up')}
                   disabled={!!voted}
                   aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
-                  className={`tap-44 flex items-center justify-center rounded-full text-xs transition ${
+                  className={`h-11 w-11 flex items-center justify-center rounded-full text-xs transition ${
                     voted === null
                       ? 'opacity-60 hover:opacity-100'
                       : voted === 'up'
@@ -297,7 +297,7 @@ function Bubble({
                   onClick={() => handleVote('down')}
                   disabled={!!voted}
                   aria-label={dir === 'A' ? 'Nhận xét sai/thiếu' : 'Feedback is wrong/incomplete'}
-                  className={`tap-44 flex items-center justify-center rounded-full text-xs transition ${
+                  className={`h-11 w-11 flex items-center justify-center rounded-full text-xs transition ${
                     voted === null
                       ? 'opacity-60 hover:opacity-100'
                       : voted === 'down'
