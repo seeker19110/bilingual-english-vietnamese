@@ -91,7 +91,7 @@ describe('/api/admin-payments', () => {
     expect(json.payments).toHaveLength(1)
     // Xác nhận query SQL có chứa tham số lọc %search_term%
     const sqlCall = queryMock.mock.calls[0]
-    expect(sqlCall[1]).toContain('%dhcb5678%')
+    expect(sqlCall?.[1]).toContain('%dhcb5678%')
   })
 
   it('POST manual-match: happy path → cấp gói thành công (200)', async () => {
