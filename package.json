@@ -27,6 +27,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "preview": "vite preview",
+    "codemap": "tsx scripts/codemap.ts",
     "eval:tutor": "tsx scripts/eval-tutor.ts",
     "seed:pronunciation": "tsx scripts/seed-pronunciations.ts",
     "tag:cefr": "tsx scripts/tag-cefr-levels.ts",
