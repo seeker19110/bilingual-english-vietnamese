@@ -52,3 +52,6 @@ dist_verify_tmp*/
 # Tài liệu SGK có bản quyền (PDF do người dùng cấp để AI đọc tra cứu phạm vi/thứ tự bài).
 # TUYỆT ĐỐI KHÔNG commit lên GitHub — chỉ đọc tại chỗ, nội dung app phải tự soạn mới.
 tai-lieu-sgk/
+
+# Bản đồ code sinh tự động bởi `npm run codemap` — không commit (dựng lại được)
+.codemap/

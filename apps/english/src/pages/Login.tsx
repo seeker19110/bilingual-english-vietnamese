@@ -380,12 +380,17 @@ export default function Login() {
           {T.googleSignIn}
         </button>
 
-        {/* Nút đăng nhập bằng Facebook */}
+        {/* Nút đăng nhập bằng Facebook.
+            Màu nền KHÔNG dùng xanh thương hiệu gốc #1877F2: chữ trắng 14px trên nền đó chỉ
+            đạt tương phản 4.23 — dưới chuẩn WCAG AA (4.5), vi phạm cam kết a11y ở CLAUDE.md
+            mục 4.5. Dịch cả cặp xuống một nấc tối hơn: nền #166FE5 (4.73) — vốn là màu hover
+            cũ — và hover #1160CC (5.88). Vẫn giữ đúng sắc xanh Facebook, chỉ đậm hơn chút.
+            Đổi 2 mã màu này thì phải tính lại tương phản, đừng quay về #1877F2. */}
         <button
           type="button"
           onClick={facebookSignIn}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2.5 bg-[#1877F2] hover:bg-[#166fe5] disabled:opacity-50 text-white font-medium py-3 rounded-xl text-sm transition active:scale-[0.98] mt-2.5"
+          className="w-full flex items-center justify-center gap-2.5 bg-[#166FE5] hover:bg-[#1160CC] disabled:opacity-50 text-white font-medium py-3 rounded-xl text-sm transition active:scale-[0.98] mt-2.5"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.89h2.78l-.44 2.91h-2.34V22c4.78-.79 8.44-4.94 8.44-9.94z" />
