@@ -25,12 +25,16 @@
   }
 }
 
-/* Chiều cao BottomNav (components/BottomNav.tsx: h-[4.5rem] nội dung) — hiện ở
+/* Chiều cao BottomNav (components/BottomNav.tsx: h-[5.25rem] nội dung) — hiện ở
    MỌI kích thước màn hình (kể cả web/desktop), nên biến này luôn > 0 để các
    trang dùng chung 1 biểu thức calc(...+var(--bnav-h)) mà KHÔNG cần viết riêng
-   class cho từng breakpoint. Đổi h-[4.5rem] ở BottomNav.tsx thì đổi 4.5rem ở đây. */
+   class cho từng breakpoint. Đổi h-[5.25rem] ở BottomNav.tsx thì đổi 5.25rem ở đây.
+   [Cập nhật] 4.5rem → 5.25rem (nới thêm 0.75rem = nửa khoảng trống 1.5rem vẫn
+   dùng ở cuối trang) để BottomNav "nuốt" bớt khoảng trống rỗng phía trên nó —
+   dải trigger Reachability (App.tsx, bottom: var(--bnav-h)) nhờ vậy cũng tự kéo
+   xuống sát nav hơn vì bám theo đúng biến này. */
 :root {
-  --bnav-h: calc(4.5rem + max(12px, env(safe-area-inset-bottom)));
+  --bnav-h: calc(5.25rem + max(12px, env(safe-area-inset-bottom)));
 }
 
 /* ===== THEME ===== */
