@@ -27,6 +27,18 @@ export default function Layout({ title, subtitle, back = true, onBack, extra, st
 
   return (
     <header className="sticky top-0 z-50 bg-zinc-950 border-b border-zinc-800/60 relative pt-safe">
+      {/* Tấm nền ĐẶC phủ toàn bộ khoảng phía TRÊN header.
+          Vì sao cần: tính năng "kéo 1 tay" (Reachability — lib/useOneHandedDrag.ts) đẩy cả
+          trang xuống 45% chiều cao màn hình bằng transform. Header là sticky nên tụt xuống
+          theo, để hở dải phía trên; nếu lúc đó trang ĐANG CUỘN XUỐNG thì phần nội dung đã
+          cuộn qua lộ ra ở dải đó (trông như header bị xuyên thấu, chữ đè lên thanh trạng
+          thái). Tấm này nằm trong header (z-50) nên luôn phủ đè lên nội dung trang; lúc bình
+          thường nó nằm ngoài màn hình phía trên nên không thấy và không chiếm chỗ (absolute). */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 bottom-full h-screen bg-zinc-950 pointer-events-none"
+      />
+
       {/* Gradient accent line trên cùng */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
 
