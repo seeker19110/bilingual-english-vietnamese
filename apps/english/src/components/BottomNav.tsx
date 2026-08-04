@@ -9,6 +9,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { Home, Target, Dumbbell, TrendingUp } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
+import type { useOneHandedDrag } from '../lib/useOneHandedDrag'
 
 const PRACTICE_ROUTES = ['/practice', '/chat', '/speaking', '/writing']
 // /login, /onboarding không nằm sau RequireAuth — user context có thể vẫn còn
@@ -16,7 +17,16 @@ const PRACTICE_ROUTES = ['/practice', '/chat', '/speaking', '/writing']
 // chỉ dựa vào `!user`.
 const HIDDEN_PATHS = ['/login', '/onboarding']
 
-export default function BottomNav() {
+interface Props {
+  // Handlers vuốt-để-kích-hoạt Reachability (lib/useOneHandedDrag.ts) — truyền từ
+  // App.tsx vì state kéo 1 tay dùng chung với nội dung trang (contentStyle/Handlers).
+  // Lồng dải trigger NGAY TRONG BottomNav (thay vì <div> rời ở App.tsx định vị bằng
+  // biến CSS --bnav-only-h) để trigger tự bám theo chính kích thước nav qua absolute
+  // positioning — không cần đồng bộ 2 file qua biến CSS nữa.
+  triggerHandlers?: ReturnType<typeof useOneHandedDrag>['triggerHandlers']
+}
+
+export default function BottomNav({ triggerHandlers }: Props) {
   const { user } = useAuth()
   const { T } = useLang()
   const location = useLocation()
@@ -60,6 +70,27 @@ export default function BottomNav() {
       className="fixed bottom-0 inset-x-0 z-40 h-[5.25rem] pb-safe bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60"
       aria-label={T.home}
     >
+      {/* Vùng bắt cử chỉ Reachability — lồng NGAY TRONG nav (nav đã `fixed` nên tự
+          làm containing block, đặt `absolute -top-[2.375rem]` là bám thẳng lên mép
+          trên của CHÍNH nav này, không cần biến CSS nào để đồng bộ vị trí giữa 2
+          file như cách làm cũ). RỘNG HƠN dải lõi (14px): 0.75rem đệm trên + 0.875rem
+          dải lõi + 0.75rem đệm dưới (đệm dưới nằm đè lên phần trên cùng của chính
+          nav — không sao vì cùng 1 component, luôn nhất quán). touchAction 'none' +
+          triggerHandlers trên toàn vùng để chạm/vuốt hơi lệch vẫn kích hoạt kéo 1
+          tay, không bị trình duyệt cướp quyền cuộn trang. Nền đục hoàn toàn
+          (bg-zinc-950) để không hở nội dung trang phía sau. Chỉ render khi App.tsx
+          truyền triggerHandlers — tránh BottomNav phải biết trực tiếp về
+          lib/useOneHandedDrag.ts khi không cần. */}
+      {triggerHandlers && (
+        <div
+          className="absolute -top-[2.375rem] inset-x-0 bg-zinc-950"
+          style={{ touchAction: 'none', height: '2.375rem' }}
+          aria-hidden="true"
+          {...triggerHandlers}
+        >
+          <div className="absolute bottom-3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
+        </div>
+      )}
       <div className="max-w-3xl mx-auto h-full grid grid-cols-4">
         {TABS.map(({ key, to, icon: Icon, label, active }) => (
           <Link
