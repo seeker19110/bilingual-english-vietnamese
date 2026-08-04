@@ -25,16 +25,22 @@
   }
 }
 
-/* Chiều cao BottomNav (components/BottomNav.tsx: h-[5.25rem] nội dung) — hiện ở
-   MỌI kích thước màn hình (kể cả web/desktop), nên biến này luôn > 0 để các
-   trang dùng chung 1 biểu thức calc(...+var(--bnav-h)) mà KHÔNG cần viết riêng
-   class cho từng breakpoint. Đổi h-[5.25rem] ở BottomNav.tsx thì đổi 5.25rem ở đây.
-   [Cập nhật] 4.5rem → 5.25rem (nới thêm 0.75rem = nửa khoảng trống 1.5rem vẫn
-   dùng ở cuối trang) để BottomNav "nuốt" bớt khoảng trống rỗng phía trên nó —
-   dải trigger Reachability (App.tsx, bottom: var(--bnav-h)) nhờ vậy cũng tự kéo
-   xuống sát nav hơn vì bám theo đúng biến này. */
+/* Chiều cao THẬT của riêng BottomNav (components/BottomNav.tsx: h-[5.25rem] nội
+   dung) — hiện ở MỌI kích thước màn hình (kể cả web/desktop). Đổi h-[5.25rem] ở
+   BottomNav.tsx thì đổi 5.25rem ở đây. CHỈ dùng để định vị dải trigger Reachability
+   (App.tsx: bottom: calc(var(--bnav-only-h) - 0.75rem)) — các trang KHÔNG dùng
+   biến này cho padding-bottom, dùng --bnav-h ở dưới (đã cộng thêm phần trigger). */
 :root {
-  --bnav-h: calc(5.25rem + max(12px, env(safe-area-inset-bottom)));
+  --bnav-only-h: calc(5.25rem + max(12px, env(safe-area-inset-bottom)));
+  /* Tổng không gian dành riêng ở ĐÁY MỌI TRANG: BottomNav + dải trigger
+     Reachability nằm ngay trên nó. Trigger cao hơn mép trên BottomNav 1.625rem
+     (0.75rem đệm trên + 0.875rem dải lõi — xem App.tsx) nên phải cộng thêm vào
+     đây; nếu chỉ dùng chiều cao BottomNav, nội dung cuối trang (vd nút "Nhận
+     thưởng" ở Profile) sẽ cuộn lấn vào vùng trigger — vừa bị che, vừa KHÔNG BẤM
+     ĐƯỢC vì trigger chặn hết pointer event trong vùng của nó. Toàn bộ ~30 trang
+     đều dùng chung biến NÀY (pb-[calc(...+var(--bnav-h))]) nên chỉ cần sửa 1 chỗ
+     là tự áp dụng khắp nơi. */
+  --bnav-h: calc(var(--bnav-only-h) + 1.625rem);
 }
 
 /* ===== THEME ===== */

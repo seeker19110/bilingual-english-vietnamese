@@ -712,14 +712,16 @@ export default function Dictionary() {
       </main>
 
       {/* Search bar cố định dưới — CHỈ trên mobile, tab Tra từ. Cố định ngay TRÊN
-          BottomNav (bottom: var(--bnav-h)), giống PromoEndingBanner — tránh cách
-          làm cũ (bó chiều cao trang bằng 100dvh-bnav-h để "đẩy" thanh này lên):
-          cách đó khiến BottomNav hiển thị sai vị trí trên một số trình duyệt di
-          động do dvh không khớp khi trang không tự cuộn ở cấp document. */}
+          BottomNav (bottom: var(--bnav-only-h) — chiều cao THẬT của riêng nav, xem
+          index.css; --bnav-h giờ là tổng nav+trigger nên không dùng cho việc định vị
+          flush-với-nav nữa), giống PromoEndingBanner — tránh cách làm cũ (bó chiều
+          cao trang bằng 100dvh-bnav-h để "đẩy" thanh này lên): cách đó khiến
+          BottomNav hiển thị sai vị trí trên một số trình duyệt di động do dvh không
+          khớp khi trang không tự cuộn ở cấp document. */}
       {tab === 'search' && (
         <div
           className="fixed inset-x-0 z-30 sm:hidden border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md pt-3 pb-3 flex justify-center"
-          style={{ bottom: 'var(--bnav-h)' }}
+          style={{ bottom: 'var(--bnav-only-h)' }}
         >
           <div className="relative w-[97%]">
             <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
