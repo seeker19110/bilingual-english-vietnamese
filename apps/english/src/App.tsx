@@ -425,21 +425,30 @@ export default function App() {
                 </div>
               </ErrorBoundary>
               <BottomNav />
-              {/* Dải trigger Reachability — nằm NGAY PHÍA TRÊN BottomNav (dùng biến
-                  --bnav-h ở index.css, đã gồm cả chiều cao safe-area đáy), không đè
-                  lên nav nữa như bản trước. Vuốt xuống từ đây để bật kéo 1 tay — xem
-                  lib/useOneHandedDrag.ts. touchAction 'none' để trình duyệt không tự
-                  cuộn/nảy trang khi vuốt trong dải này. Vạch gradient mỏng (h-px, kéo
-                  hết chiều ngang) GIỐNG HỆT vạch accent trên header (Layout.tsx) để
-                  nhất quán ngôn ngữ hình ảnh — đặt ở mép dưới dải (giáp BottomNav),
-                  đối xứng với vạch header đặt ở mép trên (giáp đỉnh trang). */}
+              {/* Vùng bắt cử chỉ Reachability — RỘNG HƠN dải hiển thị: dải lõi (14px,
+                  đặt NGAY PHÍA TRÊN BottomNav qua biến --bnav-h) + thêm 0.75rem đệm
+                  phía trên và 0.75rem phía dưới. Toàn bộ vùng rộng này (cả phần đệm)
+                  đều touchAction 'none' + gắn triggerHandlers — chạm/vuốt trong phần
+                  đệm cũng kích hoạt kéo 1 tay như chạm đúng dải lõi, KHÔNG để trình
+                  duyệt tự cuộn trang khi lỡ chạm hơi lệch. Xem lib/useOneHandedDrag.ts.
+                  Dải lõi có nền đục (bg-zinc-950/90 backdrop-blur-md, giống header/nav)
+                  để nội dung trang không hiển thị xuyên thấu qua nó khi cuộn — trước
+                  đây dải này trong suốt nên thấy được nội dung phía sau. Vạch gradient
+                  mỏng (h-px, kéo hết chiều ngang) GIỐNG HỆT vạch accent trên header
+                  (Layout.tsx), đặt ở mép dưới dải lõi (giáp BottomNav). */}
               <div
-                className="fixed inset-x-0 z-50 h-3.5"
-                style={{ touchAction: 'none', bottom: 'var(--bnav-h)' }}
+                className="fixed inset-x-0 z-50"
+                style={{
+                  touchAction: 'none',
+                  bottom: 'calc(var(--bnav-h) - 0.75rem)',
+                  height: 'calc(0.75rem + 0.875rem + 0.75rem)',
+                }}
                 aria-hidden="true"
                 {...oneHandedDrag.triggerHandlers}
               >
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
+                <div className="absolute inset-x-0 top-3 bottom-3 bg-zinc-950/90 backdrop-blur-md">
+                  <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
+                </div>
               </div>
             </BrowserRouter>
           </ToastProvider>
