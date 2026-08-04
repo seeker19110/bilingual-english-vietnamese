@@ -9,13 +9,14 @@ vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 vi.mock('../packages/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
-  checkRateLimit: async () => true,
-  validateAuth: async () => ({ userId: 'u1' }),
+  checkRateLimit: vi.fn(async () => true),
+  validateAuth: vi.fn(async () => ({ userId: 'u1' })),
   logSecurityEvent: () => undefined,
 }))
 
 import handler from './progress'
 import { getPgPool } from '../packages/core-db/pgPool'
+import { checkRateLimit, validateAuth } from '../packages/core-auth/security'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()
@@ -35,6 +36,8 @@ const EMPTY_PROGRESS_ROW = {
 
 beforeEach(() => {
   query.mockReset()
+  vi.mocked(checkRateLimit).mockResolvedValue(true)
+  vi.mocked(validateAuth).mockResolvedValue({ userId: 'u1' })
   mockedGetPool.mockReturnValue({ query } as unknown as ReturnType<typeof getPgPool>)
 })
 
@@ -49,6 +52,83 @@ function makeRequest(body: unknown): Request {
 function findCall(sqlSubstr: string): unknown[] | undefined {
   return query.mock.calls.find(([sql]) => (sql as string).includes(sqlSubstr))
 }
+
+describe('Rate limit và method not allowed', () => {
+  it('rate limit vượt quá → trả 429', async () => {
+    vi.mocked(checkRateLimit).mockResolvedValueOnce(false)
+    const req = new Request('http://localhost/api/progress', {
+      method: 'GET',
+      headers: { Authorization: 'Bearer x' },
+    })
+    const resp = await handler(req)
+    expect(resp.status).toBe(429)
+    const json = await resp.json()
+    expect(json.error).toContain('Quá nhiều yêu cầu')
+  })
+
+  it('method PUT → trả 405 Method not allowed', async () => {
+    const req = new Request('http://localhost/api/progress', {
+      method: 'PUT',
+      headers: { Authorization: 'Bearer x' },
+    })
+    const resp = await handler(req)
+    expect(resp.status).toBe(405)
+    const json = await resp.json()
+    expect(json.error).toBe('Method not allowed')
+  })
+})
+
+describe('GET /api/progress — đọc tiến độ học', () => {
+  it('không có dữ liệu tiến độ → trả body null', async () => {
+    query.mockResolvedValueOnce({ rows: [] })
+    const req = new Request('http://localhost/api/progress', {
+      method: 'GET',
+      headers: { Authorization: 'Bearer x' },
+    })
+    const resp = await handler(req)
+    expect(resp.status).toBe(200)
+    const json = await resp.json()
+    expect(json).toBeNull()
+  })
+
+  it('có dữ liệu tiến độ → trả camelCase response', async () => {
+    query.mockResolvedValueOnce({
+      rows: [
+        {
+          learned: ['apple'],
+          hard: ['banana'],
+          srs: { apple: { reps: 3 } },
+          cefr_grammar: ['g1'],
+          cefr_dialogues: ['d1'],
+          cefr_unlocked: ['u1'],
+          cefr_exams: { e1: { score: 90 } },
+          placement: { cefr: 'A2' },
+          weekly_goal: { target: 10 },
+          achievements: ['first_word'],
+        },
+      ],
+    })
+    const req = new Request('http://localhost/api/progress', {
+      method: 'GET',
+      headers: { Authorization: 'Bearer x' },
+    })
+    const resp = await handler(req)
+    expect(resp.status).toBe(200)
+    const json = await resp.json()
+    expect(json).toEqual({
+      learned: ['apple'],
+      hard: ['banana'],
+      srs: { apple: { reps: 3 } },
+      cefrGrammar: ['g1'],
+      cefrDialogues: ['d1'],
+      cefrUnlocked: ['u1'],
+      cefrExams: { e1: { score: 90 } },
+      placement: { cefr: 'A2' },
+      weeklyGoal: { target: 10 },
+      achievements: ['first_word'],
+    })
+  })
+})
 
 describe('POST /api/progress — cộng thưởng lượt khi phát hiện học thật', () => {
   it('learned dài ra so với bản cũ → gọi grant_daily_bonus_rolling', async () => {

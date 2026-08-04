@@ -43,11 +43,31 @@ afterEach(() => {
 })
 
 describe('/api/checkout', () => {
+  it('OPTIONS request → 204', async () => {
+    const resp = await handler(new Request('http://localhost/api/checkout', { method: 'OPTIONS' }))
+    expect(resp.status).toBe(204)
+  })
+
+  it('HTTP method khác POST → 405', async () => {
+    const resp = await handler(new Request('http://localhost/api/checkout', { method: 'GET' }))
+    expect(resp.status).toBe(405)
+  })
+
   it('chưa đăng nhập → 401', async () => {
     authState.user = null
     const resp = await handler(makeRequest({ plan: 'pro', cycle: 'month' }))
     expect(resp.status).toBe(401)
     expect(query).not.toHaveBeenCalled()
+  })
+
+  it('body không phải JSON → 400', async () => {
+    const req = new Request('http://localhost/api/checkout', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', Authorization: 'Bearer x' },
+      body: 'invalid-json',
+    })
+    const resp = await handler(req)
+    expect(resp.status).toBe(400)
   })
 
   it('plan/cycle ngoài enum → 400, không tạo đơn', async () => {
@@ -82,5 +102,14 @@ describe('/api/checkout', () => {
     const resp = await handler(makeRequest({ plan: 'vip', cycle: 'year' }))
     expect(resp.status).toBe(200)
     expect(query).toHaveBeenCalledTimes(4)
+  })
+
+  it('vượt quá số lần thử mã trùng → 500', async () => {
+    query
+      .mockResolvedValueOnce({ rows: [] }) // đọc bảng giá
+      .mockResolvedValueOnce({ rows: [] }) // đọc khuyến mãi %
+      .mockRejectedValue({ code: '23505' }) // luôn trùng mã
+    const resp = await handler(makeRequest({ plan: 'vip', cycle: 'year' }))
+    expect(resp.status).toBe(500)
   })
 })

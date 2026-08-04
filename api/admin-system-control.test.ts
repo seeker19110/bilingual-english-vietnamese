@@ -74,4 +74,49 @@ describe('/api/admin-system-control', () => {
     const json = await res.json()
     expect(json.circuitBreakerEnabled).toBe(true)
   })
+
+  it('từ chối người dùng không phải admin (403)', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'u1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'u1',
+      email: 'user@example.com',
+    } as UserInfo)
+
+    const req = new Request('http://localhost/api/admin-system-control')
+    const res = await handler(req)
+    expect(res.status).toBe(403)
+  })
+
+  it('tắt circuit breaker trả message "Đã tắt" (POST enabled=false)', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+    queryMock.mockResolvedValueOnce({ rows: [] })
+
+    const req = new Request('http://localhost/api/admin-system-control', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'toggle-circuit-breaker', enabled: false }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    const json = await res.json()
+    expect(json.circuitBreakerEnabled).toBe(false)
+    expect(json.message).toContain('Đã tắt')
+  })
+
+  it('từ chối HTTP method không hỗ trợ (405)', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+
+    const req = new Request('http://localhost/api/admin-system-control', {
+      method: 'PUT',
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(405)
+  })
 })
