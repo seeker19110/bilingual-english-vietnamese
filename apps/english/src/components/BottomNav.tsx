@@ -57,7 +57,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-40 h-[4.5rem] pb-safe bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60"
+      className="fixed bottom-0 inset-x-0 z-40 h-[5.25rem] pb-safe bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60"
       aria-label={T.home}
     >
       <div className="max-w-3xl mx-auto h-full grid grid-cols-4">
