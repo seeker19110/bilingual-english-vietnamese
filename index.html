@@ -55,6 +55,11 @@
     <link rel="alternate" hreflang="vi" href="https://en-vi.donghanhcungban.org" />
     <link rel="alternate" hreflang="en" href="https://en-vi.donghanhcungban.org" />
     <link rel="alternate" hreflang="x-default" href="https://en-vi.donghanhcungban.org" />
+    <!-- Preconnect to speed up initial latency for AI & storage -->
+    <link rel="preconnect" href="https://api.groq.com" crossorigin />
+    <link rel="preconnect" href="https://api.openai.com" crossorigin />
+    <link rel="preconnect" href="https://api.anthropic.com" crossorigin />
+    <link rel="preconnect" href="https://api.sentry.io" crossorigin />
     <!-- Font Inter tự host cùng domain (xem src/main.tsx) — không còn phụ thuộc Google Fonts -->
   </head>
   <body>
