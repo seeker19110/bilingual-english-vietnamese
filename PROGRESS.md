@@ -1665,6 +1665,18 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🟡 **Token `--z-500` rớt WCAG AA ở gần như mọi nền, mọi theme** (phát hiện 2026-08-04 khi thêm
+  cổng `apps/english/src/lib/themeContrast.test.ts`). Số đo: Xanh đêm 4.09/3.75/3.07/2.18 trên
+  nền z-950/900/800/700; Pink 2.62–1.90; Nhi đồng 2.79–1.99 — đều dưới ngưỡng 4.5. Đây là token
+  "chữ mờ", mã nguồn dùng **~81 chỗ** (`text-zinc-500`). Chưa sửa trong đợt này vì đổi nó là đổi
+  bảng màu toàn app: phải rà từng chỗ dùng xem chữ đó có thật sự là văn bản cần đọc hay chỉ là
+  ký hiệu trang trí (WCAG không tính chữ trang trí). Hiện đã ghi vào `KNOWN_LOW` của cổng nói
+  trên nên KHÔNG thể tụt thêm mà không ai biết; sửa xong nhớ xoá khỏi danh sách đó (cổng có
+  test riêng bắt trường hợp quên xoá).
+  - Kèm theo: các cặp chữ phụ (`z-300`/`z-400`/accent) trên nền `z-700` cũng dưới AA ở vài theme.
+    Đã kiểm mã nguồn: `z-700` hiện CHỈ dùng làm màu hover (`hover:bg-zinc-700`), chưa chỗ nào đặt
+    chữ lên nó — nên là bẫy tiềm ẩn, không phải lỗi đang xảy ra.
+
 - 🟢 **3 chu trình import trong `apps/english/src/data/`** (phát hiện 2026-08-04 bằng
   `npm run codemap -- cycles`): `cefr.ts ↔ cefrAdvanced.ts`, `curriculum.ts ↔ cefrC1C2Vocab.ts`,
   `curriculum.ts ↔ cefrA1B2ExtraVocab.ts`. Hiện KHÔNG gây lỗi (đều là dữ liệu tĩnh, không đọc giá
