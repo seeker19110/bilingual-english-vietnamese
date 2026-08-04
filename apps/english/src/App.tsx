@@ -425,19 +425,19 @@ export default function App() {
                 </div>
               </ErrorBoundary>
               <BottomNav />
-              {/* Vùng bắt cử chỉ Reachability — RỘNG HƠN dải hiển thị: dải lõi (14px,
-                  đặt NGAY PHÍA TRÊN BottomNav qua biến --bnav-h) + thêm 0.75rem đệm
-                  phía trên và 0.75rem phía dưới. Toàn bộ vùng rộng này (cả phần đệm)
-                  đều touchAction 'none' + gắn triggerHandlers — chạm/vuốt trong phần
-                  đệm cũng kích hoạt kéo 1 tay như chạm đúng dải lõi, KHÔNG để trình
-                  duyệt tự cuộn trang khi lỡ chạm hơi lệch. Xem lib/useOneHandedDrag.ts.
-                  Dải lõi có nền đục (bg-zinc-950/90 backdrop-blur-md, giống header/nav)
-                  để nội dung trang không hiển thị xuyên thấu qua nó khi cuộn — trước
-                  đây dải này trong suốt nên thấy được nội dung phía sau. Vạch gradient
-                  mỏng (h-px, kéo hết chiều ngang) GIỐNG HỆT vạch accent trên header
-                  (Layout.tsx), đặt ở mép dưới dải lõi (giáp BottomNav). */}
+              {/* Vùng bắt cử chỉ Reachability — RỘNG HƠN dải lõi (14px, đặt NGAY PHÍA
+                  TRÊN BottomNav qua biến --bnav-h): thêm 0.75rem đệm phía trên và
+                  0.75rem phía dưới. Toàn bộ vùng này (kể cả 2 phần đệm) đều touchAction
+                  'none' + gắn triggerHandlers — chạm/vuốt hơi lệch quanh dải lõi vẫn
+                  kích hoạt kéo 1 tay, KHÔNG để trình duyệt tự cuộn trang. Xem
+                  lib/useOneHandedDrag.ts. NỀN ĐỤC HOÀN TOÀN (bg-zinc-950, không dùng
+                  /90 + backdrop-blur như header/nav) phủ TOÀN BỘ vùng (kể cả 2 phần
+                  đệm, không riêng dải lõi) để không còn khoảng trống nào — kể cả mờ —
+                  lộ nội dung trang phía sau khi cuộn tới đáy. Vạch gradient mỏng (h-px, kéo
+                  hết chiều ngang) GIỐNG HỆT vạch accent trên header (Layout.tsx), đặt
+                  ở mép dưới dải lõi (giáp BottomNav). */}
               <div
-                className="fixed inset-x-0 z-50"
+                className="fixed inset-x-0 z-50 bg-zinc-950"
                 style={{
                   touchAction: 'none',
                   bottom: 'calc(var(--bnav-h) - 0.75rem)',
@@ -446,9 +446,7 @@ export default function App() {
                 aria-hidden="true"
                 {...oneHandedDrag.triggerHandlers}
               >
-                <div className="absolute inset-x-0 top-3 bottom-3 bg-zinc-950/90 backdrop-blur-md">
-                  <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
-                </div>
+                <div className="absolute bottom-3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
               </div>
             </BrowserRouter>
           </ToastProvider>
