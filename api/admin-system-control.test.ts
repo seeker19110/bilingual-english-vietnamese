@@ -48,7 +48,7 @@ describe('/api/admin-system-control', () => {
       id: 'a1',
       email: 'admin@example.com',
     } as UserInfo)
-    queryMock.mockResolvedValueOnce({ rows: [{ value: 'true' }] })
+    queryMock.mockResolvedValueOnce({ rows: [{ ai_circuit_breaker: true }] })
 
     const req = new Request('http://localhost/api/admin-system-control')
     const res = await handler(req)
