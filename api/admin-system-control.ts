@@ -44,10 +44,10 @@ export default async function handler(req: Request): Promise<Response> {
   const pool = getPgPool()
 
   if (req.method === 'GET') {
-    const { rows } = await pool.query<{ value: string }>(
-      `select value from public.app_settings where key = 'ai_circuit_breaker'`,
+    const { rows } = await pool.query<{ ai_circuit_breaker: boolean }>(
+      `select ai_circuit_breaker from public.app_settings where id = 1`,
     )
-    const enabled = rows[0]?.value === 'true'
+    const enabled = rows[0]?.ai_circuit_breaker ?? false
     return jsonResponse({ circuitBreakerEnabled: enabled }, 200, allHeaders)
   }
 
@@ -61,10 +61,10 @@ export default async function handler(req: Request): Promise<Response> {
     const { enabled } = val.data
 
     await pool.query(
-      `insert into public.app_settings (key, value, updated_at)
-       values ('ai_circuit_breaker', $1, now())
-       on conflict (key) do update set value = $1, updated_at = now()`,
-      [enabled ? 'true' : 'false'],
+      `update public.app_settings
+       set ai_circuit_breaker = $1, updated_at = now()
+       where id = 1`,
+      [enabled],
     )
 
     logSecurityEvent('CIRCUIT_BREAKER_TOGGLED', clientIp, {
