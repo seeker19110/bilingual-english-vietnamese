@@ -182,6 +182,10 @@
 
 **Kim tự tháp kiểm thử:** nhiều unit test → ít hơn integration test → ít e2e cho luồng quan trọng nhất. Ưu tiên phủ **đường đi quan trọng + trường hợp biên**, không chạy theo con số phần trăm máy móc.
 
+**TDD cho logic phức tạp/nhạy cảm (khuyến nghị, không bắt buộc toàn bộ):** với logic tính lượt dùng, chấm điểm, thanh toán, hoặc bất kỳ hàm nào CLAUDE.md mục 4.9 yêu cầu ≥1 test ca biên — viết test THẤT BẠI trước (RED) mô tả đúng hành vi mong muốn, viết code tối thiểu để test qua (GREEN), rồi dọn lại code (REFACTOR) mà không đổi hành vi/không để test đỏ. Tránh viết code trước rồi mới nặn test khớp theo — dễ bỏ sót ca biên thật.
+
+**Debug có hệ thống (khi gặp bug khó, không đoán mò):** 1) Tái hiện bug ổn định (script/test case tối thiểu) trước khi sửa. 2) Đọc log/stack trace thật, không đoán nguyên nhân. 3) Nêu 1 giả thuyết cụ thể về nguyên nhân gốc, kiểm chứng bằng cách thêm log/breakpoint hoặc test nhỏ — sai thì đổi giả thuyết, không thử random nhiều chỗ cùng lúc. 4) Sửa đúng nguyên nhân gốc, không vá triệu chứng (che lỗi bằng try/catch rỗng, đổi thứ tự để né race...). 5) Thêm test tái hiện được ca lỗi này để không tái phát.
+
 **Loại kiểm thử bắt buộc:**
 
 - [ ] Trường hợp biên: ô trống, dữ liệu cực dài, số âm, ký tự lạ, nhấn nút liên tục, mất mạng giữa chừng.

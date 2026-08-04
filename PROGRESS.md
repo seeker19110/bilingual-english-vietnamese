@@ -1501,6 +1501,26 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Quyết định quan trọng
 
+- **[2026-08-04] Tự viết "bản đồ code" thay GitNexus.** `npm run codemap` — dùng TypeScript
+  compiler API (đã có sẵn, KHÔNG thêm dependency) dựng đồ thị import + đồ thị lời gọi hàm, lưu
+  `.codemap/graph.json` (gitignore, dựng lại được). Đo thật: 480 file · 1364 cạnh import · 4341
+  cạnh lời gọi trong ~9 giây. Lệnh tra cứu: `impact` (sửa file này gãy chỗ nào), `callers` (ai gọi
+  hàm này), `hotspots`, `cycles`, `orphans`. Logic thuần tách ở `scripts/lib/codemap.ts` (18 test).
+  Phát hiện ngay khi chạy thử: 3 chu trình import trong `apps/english/src/data/` (cefr.ts ↔
+  cefrAdvanced.ts, curriculum.ts ↔ cefrC1C2Vocab.ts, curriculum.ts ↔ cefrA1B2ExtraVocab.ts) —
+  chưa gây lỗi nhưng nên gỡ, đã ghi vào "Nợ kỹ thuật còn mở".
+
+- **[2026-08-04] Không cài `obra/superpowers` và `GitNexus` — chỉ dung hợp ý hay vào khung sẵn có.**
+  Đã rà cả 14 skill của `obra/superpowers` (MIT). 10/14 skill (brainstorming, writing-plans,
+  executing-plans, subagent-driven-development, dispatching-parallel-agents, using-git-worktrees,
+  requesting/receiving-code-review, using-superpowers, writing-skills) **đã có tương đương** trong
+  `docs/framework/KIEN-TRUC-DIEU-PHOI-3-TANG.md` — cài plugin sẽ tạo nguồn luật thứ hai song song
+  với `CLAUDE.md`, dễ khiến agent hành xử không nhất quán. 4 skill còn thiếu đã được viết lại bằng
+  tiếng Việt và nhúng thẳng vào khung: TDD RED-GREEN-REFACTOR + debug 5 bước (KHUNG 1, GĐ5),
+  bằng chứng-trước-khi-báo-xong + hoàn tất nhánh an toàn (KHUNG 2, Phần A).
+  **GitNexus bị loại** vì license PolyForm Noncommercial 1.0.0 xung đột với việc dự án đã thu phí
+  Pro/VIP qua SePay — không đưa vào quy trình chính thức của repo.
+
 - **[2026-07-31] Mở rộng thành nền tảng đa lĩnh vực — ĐÃ CHỐT.** Xem mục "Tiếp theo" ở trên +
   `docs/adr/0001-nen-tang-da-linh-vuc.md` (nguồn sự thật, đừng chép lại chi tiết ra đây kẻo lệch
   khi ADR được bổ sung sau này).
@@ -1670,6 +1690,25 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 - **Nợ mới chưa xử lý:** tiện ích `.tap-44` (`apps/english/src/index.css`) mở rộng vùng chạm bằng
   `::after` có `pointer-events: none` — pseudo-element này KHÔNG nhận sự kiện chuột nên **không thực
   sự mở rộng vùng bấm** (cũng không được axe tính). Cần rà lại toàn bộ nơi dùng `.tap-44`.
+- 🟡 **Token `--z-500` rớt WCAG AA ở gần như mọi nền, mọi theme** (phát hiện 2026-08-04 khi thêm
+  cổng `apps/english/src/lib/themeContrast.test.ts`). Số đo: Xanh đêm 4.09/3.75/3.07/2.18 trên
+  nền z-950/900/800/700; Pink 2.62–1.90; Nhi đồng 2.79–1.99 — đều dưới ngưỡng 4.5. Đây là token
+  "chữ mờ", mã nguồn dùng **~81 chỗ** (`text-zinc-500`). Chưa sửa trong đợt này vì đổi nó là đổi
+  bảng màu toàn app: phải rà từng chỗ dùng xem chữ đó có thật sự là văn bản cần đọc hay chỉ là
+  ký hiệu trang trí (WCAG không tính chữ trang trí). Hiện đã ghi vào `KNOWN_LOW` của cổng nói
+  trên nên KHÔNG thể tụt thêm mà không ai biết; sửa xong nhớ xoá khỏi danh sách đó (cổng có
+  test riêng bắt trường hợp quên xoá).
+  - Kèm theo: các cặp chữ phụ (`z-300`/`z-400`/accent) trên nền `z-700` cũng dưới AA ở vài theme.
+    Đã kiểm mã nguồn: `z-700` hiện CHỈ dùng làm màu hover (`hover:bg-zinc-700`), chưa chỗ nào đặt
+    chữ lên nó — nên là bẫy tiềm ẩn, không phải lỗi đang xảy ra.
+
+- 🟢 **3 chu trình import trong `apps/english/src/data/`** (phát hiện 2026-08-04 bằng
+  `npm run codemap -- cycles`): `cefr.ts ↔ cefrAdvanced.ts`, `curriculum.ts ↔ cefrC1C2Vocab.ts`,
+  `curriculum.ts ↔ cefrA1B2ExtraVocab.ts`. Hiện KHÔNG gây lỗi (đều là dữ liệu tĩnh, không đọc giá
+  trị của nhau lúc khởi tạo module) nên ưu tiên thấp, nhưng chu trình import dễ sinh lỗi
+  `undefined` khó lần nếu sau này có ai thêm logic chạy ngay lúc import. Cách gỡ: tách phần kiểu/
+  hằng dùng chung ra file thứ ba để cả hai bên cùng import một chiều.
+
 - **[Rà soát tự động 2026-08-03, phiên sau PR #462]** `npm ci` sạch (container mới, chưa có
   `node_modules`) rồi chạy đủ cổng commit: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅ (0 cảnh
   báo) · test ✅ (**149 file / 2414 test**, tăng nhiều so với lượt trước vì các PR listening/story
