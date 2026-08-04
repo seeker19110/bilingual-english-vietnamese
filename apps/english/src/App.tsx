@@ -426,21 +426,25 @@ export default function App() {
               </ErrorBoundary>
               <BottomNav />
               {/* Vùng bắt cử chỉ Reachability — RỘNG HƠN dải lõi (14px, đặt NGAY PHÍA
-                  TRÊN BottomNav qua biến --bnav-h): thêm 0.75rem đệm phía trên và
-                  0.75rem phía dưới. Toàn bộ vùng này (kể cả 2 phần đệm) đều touchAction
-                  'none' + gắn triggerHandlers — chạm/vuốt hơi lệch quanh dải lõi vẫn
-                  kích hoạt kéo 1 tay, KHÔNG để trình duyệt tự cuộn trang. Xem
+                  TRÊN BottomNav qua biến --bnav-only-h — chiều cao THẬT của riêng
+                  BottomNav, xem index.css): thêm 0.75rem đệm phía trên và 0.75rem
+                  phía dưới. Toàn bộ vùng này (kể cả 2 phần đệm) đều touchAction 'none'
+                  + gắn triggerHandlers — chạm/vuốt hơi lệch quanh dải lõi vẫn kích
+                  hoạt kéo 1 tay, KHÔNG để trình duyệt tự cuộn trang. Xem
                   lib/useOneHandedDrag.ts. NỀN ĐỤC HOÀN TOÀN (bg-zinc-950, không dùng
                   /90 + backdrop-blur như header/nav) phủ TOÀN BỘ vùng (kể cả 2 phần
                   đệm, không riêng dải lõi) để không còn khoảng trống nào — kể cả mờ —
                   lộ nội dung trang phía sau khi cuộn tới đáy. Vạch gradient mỏng (h-px, kéo
                   hết chiều ngang) GIỐNG HỆT vạch accent trên header (Layout.tsx), đặt
-                  ở mép dưới dải lõi (giáp BottomNav). */}
+                  ở mép dưới dải lõi (giáp BottomNav). QUAN TRỌNG: chiều cao vùng này
+                  (2.375rem) đã được cộng vào --bnav-h ở index.css — mọi trang dùng
+                  --bnav-h để tính padding-bottom nên tự chừa đủ chỗ, không bị dải
+                  trigger che/chặn tap nội dung cuối trang nữa. */}
               <div
                 className="fixed inset-x-0 z-50 bg-zinc-950"
                 style={{
                   touchAction: 'none',
-                  bottom: 'calc(var(--bnav-h) - 0.75rem)',
+                  bottom: 'calc(var(--bnav-only-h) - 0.75rem)',
                   height: 'calc(0.75rem + 0.875rem + 0.75rem)',
                 }}
                 aria-hidden="true"
