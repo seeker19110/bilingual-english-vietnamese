@@ -68,6 +68,7 @@ import paymentHistoryHandler from './packages/core-billing/payment-history.js'
 import avatarVisemesHandler from './api/avatar-visemes.js'
 import hubStatsHandler from './api/hub-stats.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
+import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
 const app = express()
 
@@ -318,10 +319,14 @@ function startReminderScheduler() {
     console.log('   Nhắc học : tắt (REMINDER_SCHEDULER=off)')
     return
   }
-  if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
-    console.log('   Nhắc học : tắt (chưa cấu hình VAPID keys)')
-    return
+
+  const hasPushConfig = !!(process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY)
+  if (!hasPushConfig) {
+    console.log('   Nhắc học Web Push : tắt (chưa cấu hình VAPID keys)')
+  } else {
+    console.log('   Nhắc học Web Push : bật (gửi đúng giờ mỗi người chọn)')
   }
+
   // Khởi tạo = giờ hiện tại để BỎ QUA phần giờ dở dang lúc server vừa bật
   // (tránh gửi nhắc trễ giữa giờ); bắt đầu gửi từ đầu giờ kế tiếp.
   let lastHourSent = new Date().getUTCHours()
@@ -329,17 +334,33 @@ function startReminderScheduler() {
     const hour = new Date().getUTCHours()
     if (hour === lastHourSent) return
     lastHourSent = hour
-    void sendReminders(hour)
-      .then((r) => {
-        if (r.sent || r.skipped)
-          console.log(`[reminder] ${hour}h UTC → gửi ${r.sent}, bỏ qua ${r.skipped} (đã học)`)
-      })
-      .catch((err) => {
-        console.error('[reminder] lỗi gửi nhắc:', err)
-        captureServerException(err, { context: 'reminder-scheduler', hour })
-      })
+
+    // 1. Gửi Web Push reminders nếu có cấu hình
+    if (hasPushConfig) {
+      void sendReminders(hour)
+        .then((r) => {
+          if (r.sent || r.skipped)
+            console.log(`[reminder:push] ${hour}h UTC → gửi ${r.sent}, bỏ qua ${r.skipped} (đã học)`)
+        })
+        .catch((err) => {
+          console.error('[reminder:push] lỗi gửi nhắc:', err)
+          captureServerException(err, { context: 'reminder-scheduler-push', hour })
+        })
+    }
+
+    // 2. Gửi Smart Email Reminders một lần mỗi ngày lúc 13h UTC (20h Việt Nam)
+    if (hour === 13) {
+      void sendEmailReminders()
+        .then((r) => {
+          if (r.sent || r.skipped)
+            console.log(`[reminder:email] Gửi xong email nhắc học: ${r.sent} gửi, ${r.skipped} bỏ qua`)
+        })
+        .catch((err) => {
+          console.error('[reminder:email] lỗi gửi email nhắc:', err)
+          captureServerException(err, { context: 'reminder-scheduler-email' })
+        })
+    }
   }, 60_000) // kiểm tra mỗi phút, gửi 1 lần khi sang giờ mới
-  console.log('   Nhắc học : bật (gửi đúng giờ mỗi người chọn)')
 }
 
 // ── Dọn gói Pro/VIP hết hạn (1 lần/ngày) ─────────────────────────────────────
