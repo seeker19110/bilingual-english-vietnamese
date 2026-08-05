@@ -1,58 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Main pages - high priority, frequent updates -->
+  <!-- Trang chính — ưu tiên cao nhất, cập nhật thường xuyên -->
   <url>
-    <loc>https://en-vi.donghanhcungban.com/</loc>
-    <lastmod>2026-06-24</lastmod>
+    <loc>https://en-vi.donghanhcungban.org/</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://en-vi.donghanhcungban.com/chat</loc>
-    <lastmod>2026-06-24</lastmod>
+    <loc>https://en-vi.donghanhcungban.org/lo-trinh-hoc</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://en-vi.donghanhcungban.com/learn</loc>
-    <lastmod>2026-06-24</lastmod>
+    <loc>https://en-vi.donghanhcungban.org/luyen-tap</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://en-vi.donghanhcungban.com/writing</loc>
-    <lastmod>2026-06-24</lastmod>
+    <loc>https://en-vi.donghanhcungban.org/tro-truyen</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://en-vi.donghanhcungban.org/luyen-noi</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://en-vi.donghanhcungban.com/speaking</loc>
-    <lastmod>2026-06-24</lastmod>
+    <loc>https://en-vi.donghanhcungban.org/luyen-viet</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
-  <!-- Secondary pages -->
+
+  <!-- Trang phụ — lộ trình, từ điển, bài học -->
   <url>
-    <loc>https://en-vi.donghanhcungban.com/lessons</loc>
-    <lastmod>2026-06-24</lastmod>
+    <loc>https://en-vi.donghanhcungban.org/tu-dien</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://en-vi.donghanhcungban.com/dictionary</loc>
-    <lastmod>2026-06-24</lastmod>
+    <loc>https://en-vi.donghanhcungban.org/bai-hoc</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://en-vi.donghanhcungban.com/phrases</loc>
-    <lastmod>2026-06-24</lastmod>
+    <loc>https://en-vi.donghanhcungban.org/cau-thong-dung</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://en-vi.donghanhcungban.org/thu-thach</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://en-vi.donghanhcungban.org/tien-do</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://en-vi.donghanhcungban.com/history</loc>
-    <lastmod>2026-06-24</lastmod>
+    <loc>https://en-vi.donghanhcungban.org/cai-dat</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://en-vi.donghanhcungban.org/lich-su-hoc</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

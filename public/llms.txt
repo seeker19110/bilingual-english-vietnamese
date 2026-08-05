@@ -1,0 +1,44 @@
+# Gia sư tiếng Anh AI (Bilingual English-Vietnamese AI Tutor)
+
+> Ứng dụng web Progressive Web App (PWA) gia sư học tiếng Anh thông minh hỗ trợ 2 chiều Anh - Việt dành cho người Việt Nam từ trình độ A1 đến C2.
+
+## Tổng quan dự án (Project Overview)
+Gia sư tiếng Anh AI là nền tảng học tiếng Anh cá nhân hóa ứng dụng công nghệ trí tuệ nhân tạo (AI) nâng cao. Nền tảng giúp học viên luyện tập 4 kỹ năng Nghe - Nói - Đọc - Viết với phản hồi giải thích chi tiết bằng tiếng Việt hoặc tiếng Anh tùy lựa chọn.
+
+## Các tính năng chính (Key Features)
+
+### 1. Trò chuyện & Giải đáp cùng AI (AI Chat Tutor)
+- URL: `/tro-truyen`
+- Hỗ trợ hội thoại tiếng Anh tự nhiên, tự động phân tích lỗi sai ngữ pháp, từ vựng và gợi ý cách diễn đạt chuẩn bản xứ kèm giải thích tiếng Việt.
+
+### 2. Luyện nói tiếng Anh tương tác (AI Speaking Coach)
+- URL: `/luyen-noi`
+- Luyện nói phản xạ theo ngữ cảnh, AI phát âm chuẩn bản xứ (US/UK/AU), phân tích âm tiết và chấm điểm phát âm trực tiếp.
+
+### 3. Luyện viết & Chấm điểm IELTS (AI Writing Evaluator)
+- URL: `/luyen-viet`
+- Chấm bài luận, email, đoạn văn theo tiêu chuẩn IELTS Task 1 & Task 2. Chỉ rõ lỗi ngữ pháp, gợi ý nâng băng thông từ vựng (Band score booster).
+
+### 4. Thẻ từ vựng thông minh SRS & Học Offline (SRS Flashcards & Offline Mode)
+- URL: `/luyen-tap`
+- Thuật toán lặp lại ngắt quãng SRS (Free Spaced Repetition System - FSRS) tối ưu khả năng ghi nhớ dài hạn. Hỗ trợ lưu dữ liệu vào IndexedDB và Service Worker để ôn tập từ vựng mượt mà ngay cả khi không có kết nối Internet (PWA Offline SRS).
+
+### 5. Khung lộ trình năng lực CEFR (A1 -> C2)
+- URL: `/lo-trinh-hoc`
+- Lộ trình bài học bài bản chia theo khung tham chiếu châu Âu CEFR từ A1 (Cơ bản), A2, B1, B2 đến C1-C2 (Nâng cao).
+
+### 6. Từ điển 10.000+ từ & Bài học Ngữ pháp
+- Từ điển: `/tu-dien`
+- Bài học: `/bai-hoc`
+- Câu thông dụng: `/cau-thong-dung`
+- Sổ tay lỗi sai: `/so-tay-loi-sai`
+
+## Đối tượng sử dụng (Target Audience)
+- Học sinh, sinh viên, người đi làm Việt Nam muốn cải thiện kỹ năng tiếng Anh giao tiếp và học thuật.
+- Người luyện thi chứng chỉ IELTS, TOEIC, VSTEP.
+- Người bận rộn cần giải pháp học ngoại ngữ linh hoạt, học offline mọi lúc mọi nơi.
+
+## Thông tin kỹ thuật (Technical Specs)
+- **Kiến trúc**: React (Vite) Single Page Application, Progressive Web App (PWA), Service Worker & IndexedDB offline cache.
+- **Ngôn ngữ**: Tiếng Việt (chính), Tiếng Anh.
+- **Bảo mật**: Chuẩn OAuth & Supabase Auth, Row-Level Security.
