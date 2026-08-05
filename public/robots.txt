@@ -1,4 +1,4 @@
-# robots.txt — Search engine crawler instructions
+# robots.txt — Search engine & AI crawler instructions
 # Standard format: https://www.robotstxt.org/
 
 # Allow all crawlers to index public content
@@ -23,7 +23,23 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-# Block bad bots and crawlers (must list individually)
+# AI Search & LLM Crawlers (ChatGPT, Claude, Perplexity, Gemini)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Block bad SEO spam bots
 User-agent: AhrefsBot
 Disallow: /
 
@@ -36,9 +52,6 @@ Disallow: /
 User-agent: MJ12bot
 Disallow: /
 
-# Crawl delay (optional): tell crawlers to wait this many seconds between requests
-# Crawl-delay: 1
-
 # Sitemap location for search engines
-Sitemap: https://en-vi.donghanhcungban.com/sitemap.xml
-Sitemap: https://en-vi.donghanhcungban.com/sitemap-words.xml
+Sitemap: https://en-vi.donghanhcungban.org/sitemap.xml
+Sitemap: https://en-vi.donghanhcungban.org/sitemap-words.xml
