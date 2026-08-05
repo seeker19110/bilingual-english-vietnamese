@@ -17,6 +17,31 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Nâng cấp Hệ thống & Tích hợp AgentMemory (2026-08-04 → 2026-08-05)
+
+1. **Email Nhắc học Thông minh & Preconnect Domains (2026-08-04)**:
+   - Thêm migration `postgres/migrations/0033_email_reminders.sql` cho bảng `public.email_reminders` quản lý cooldown 3 ngày.
+   - Thêm service `api/_lib/emailReminders.ts` tự động chọn mẫu thư nhắc học theo ngữ cảnh (chuỗi ngày 🔥, SRS 🧠, mục tiêu 🎯), chạy hàng ngày lúc 13h UTC trong `server.ts`.
+   - Bổ sung `<link rel="preconnect">` trong `index.html` tới Groq, OpenAI, Anthropic, Sentry để giảm ~150ms latency.
+
+2. **Sửa lỗi Schema Cầu dao AI Admin Dashboard (2026-08-04)**:
+   - Sửa truy vấn SQL trong `api/admin-system-control.ts` nhầm lẫn giữa key-value pair và cột boolean `ai_circuit_breaker` của dòng duy nhất `id = 1` trong bảng `public.app_settings`.
+
+3. **Tùy chỉnh Cử chỉ Kéo 1 tay (Reachability) & UI Chevron (2026-08-05)**:
+   - Nâng giới hạn tự thu lại từ 3s lên 10s (`apps/english/src/lib/useOneHandedDrag.ts`).
+   - Mở rộng dải trigger từ 2.375rem lên 3.5rem (rộng hơn ~47%), hiển thị mũi tên chevron animate bounce (▼ khi tắt, ▲ khi bật) trên `BottomNav.tsx`.
+   - Cập nhật biến CSS `--bnav-h` tương ứng trong `index.css`.
+
+4. **Nâng Coverage Branch vượt Cổng CI & Fix Auto Deploy (2026-08-05)**:
+   - Bổ sung 24 unit test cho các handler API (`emailReminders`, `progress`, `admin-payments`, `admin-system-control`, `admin-feedback`, `checkout`, `payment-history`, `payment-status`, `plan-prices`).
+   - Nâng Branch Coverage từ **88.57%** lên **89.05%** (vượt mốc 89% của Vitest).
+   - Sửa lỗi TypeScript `TS18048` `sqlCall is possibly undefined` ở `admin-payments.test.ts` giúp Auto Deploy xanh 100%.
+
+5. **Tích hợp Bộ nhớ Dài hạn AgentMemory (`rohitg00/agentmemory`) (2026-08-05)**:
+   - Cài đặt `@agentmemory/agentmemory` v0.9.28 toàn cục.
+   - Cấu hình chạy chế độ Standalone Local SQLite (`STANDALONE_MCP=1`) với DB path `C:/Users/liend/.agentmemory/local.db`.
+   - Đăng ký MCP Server toàn cục trong `C:\Users\liend\.gemini\config\mcp_config.json`, cấp dự án `.agents/mcp_config.json`, và `C:\Users\liend\.claude\mcp_config.json`.
+
 ### Sửa mất dữ liệu học tập (2026-08-04, điều tra "admin mất hết dữ liệu")
 
 **Nguyên nhân:** `pushProgress()`/`pushProgressAsync()` (`lib/progressSync.ts`) mỗi lần gọi đều
