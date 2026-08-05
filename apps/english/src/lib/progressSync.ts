@@ -172,6 +172,8 @@ function readObj(key: string): Record<string, SRSLike> {
 
 // Đọc localStorage HIỆN TẠI rồi gửi thẳng lên server — KHÔNG chờ pull nào cả. Chỉ tự gọi
 // nội bộ từ pullProgress() (sau khi đã ghi bản hợp nhất xuống localStorage) để tránh vòng chờ
+import { getPendingOfflineReviews, clearPendingOfflineReviews } from './offlineSrsStore'
+
 // chính nó. Nơi khác dùng pushProgress()/pushProgressAsync() ở dưới (có chờ chống mất dữ liệu).
 async function sendProgressSnapshot(userId: string): Promise<void> {
   try {
@@ -191,7 +193,15 @@ async function sendProgressSnapshot(userId: string): Promise<void> {
         achievements: readArr(ACHIEVEMENTS(userId)),
       }),
     })
-    if (!resp.ok) console.warn('[progress] đẩy tiến độ lỗi: HTTP', resp.status)
+    if (!resp.ok) {
+      console.warn('[progress] đẩy tiến độ lỗi: HTTP', resp.status)
+    } else {
+      // Đẩy thành công → xoá hàng chờ review offline
+      void getPendingOfflineReviews(userId).then((pending) => {
+        const ids = pending.map((p) => p.id!).filter(Boolean)
+        if (ids.length > 0) void clearPendingOfflineReviews(userId, ids)
+      })
+    }
   } catch (err) {
     console.warn('[progress] đẩy tiến độ lỗi:', err)
   }

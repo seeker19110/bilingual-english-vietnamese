@@ -626,7 +626,7 @@ export default function Dashboard() {
 
           {wp.count === 0 ? (
             <button
-              onClick={() => nav('/writing')}
+              onClick={() => nav('/luyen-viet')}
               className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-violet-500/40 rounded-2xl p-5 text-center transition group"
             >
               <p className="text-sm text-zinc-400">

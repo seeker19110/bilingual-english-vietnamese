@@ -33,19 +33,19 @@ const THEMES: ThemeName[] = ['dark-blue', 'blue-sky', 'pink', 'vibrant', 'kid']
 const ROUTES = [
   '/login',
   '/',
-  '/progress',
-  '/dictionary',
-  '/lessons',
-  '/history',
-  '/phrases',
-  '/learning-path',
-  '/learning-path/a1', // trang riêng cấp CEFR (6 cấp dùng chung layout)
-  '/learning-path/c1', // cấp nâng cao (accent rose) — gồm cả màn khóa
-  '/chat',
-  '/writing',
-  '/speaking',
-  '/profile',
-  '/challenge',
+  '/tien-do',
+  '/tu-dien',
+  '/bai-hoc',
+  '/lich-su-hoc',
+  '/cau-thong-dung',
+  '/lo-trinh-hoc',
+  '/lo-trinh-hoc/a1', // trang riêng cấp CEFR (6 cấp dùng chung layout)
+  '/lo-trinh-hoc/c1', // cấp nâng cao (accent rose) — gồm cả màn khóa
+  '/tro-truyen',
+  '/luyen-viet',
+  '/luyen-noi',
+  '/cai-dat',
+  '/thu-thach',
 ] as const
 
 // Đếm số phần tử vi phạm NẰM TRONG phần nội dung/tiêu đề (bỏ phần vỏ giao diện).

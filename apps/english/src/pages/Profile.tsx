@@ -516,7 +516,7 @@ export default function Profile() {
         {/* Điều hướng nhanh */}
         <section className="space-y-3 animate-fade-in">
           <button
-            onClick={() => nav('/progress')}
+            onClick={() => nav('/tien-do')}
             aria-label={isA ? 'Xem tiến độ học' : 'View progress'}
             className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 flex items-center gap-4 transition group"
           >
@@ -536,7 +536,7 @@ export default function Profile() {
           </button>
 
           <button
-            onClick={() => nav('/history')}
+            onClick={() => nav('/lich-su-hoc')}
             aria-label={isA ? 'Xem lịch sử học' : 'View learning history'}
             className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700 rounded-2xl p-4 flex items-center gap-4 transition group"
           >

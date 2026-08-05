@@ -92,7 +92,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra, st
         {/* User avatar + tên đầy đủ (bấm vào để xem trang cá nhân) */}
         {user && (
           <button
-            onClick={() => nav('/profile')}
+            onClick={() => nav('/cai-dat')}
             aria-label={T.profile}
             title={T.profile}
             className="tap-44 flex items-center gap-2 shrink-0 hover:opacity-85 transition min-w-0"

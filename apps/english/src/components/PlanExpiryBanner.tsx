@@ -66,7 +66,7 @@ export default function PlanExpiryBanner() {
               Gói <strong className="font-semibold">{planLabel}</strong> của bạn còn{' '}
               <strong className="font-semibold">{daysLeft} ngày</strong> —{' '}
               <button
-                onClick={() => nav('/profile')}
+                onClick={() => nav('/cai-dat')}
                 className="underline underline-offset-2 hover:text-white transition"
               >
                 gia hạn ngay
@@ -78,7 +78,7 @@ export default function PlanExpiryBanner() {
               Your <strong className="font-semibold">{planLabel}</strong> plan has{' '}
               <strong className="font-semibold">{daysLeft} day(s)</strong> left —{' '}
               <button
-                onClick={() => nav('/profile')}
+                onClick={() => nav('/cai-dat')}
                 className="underline underline-offset-2 hover:text-white transition"
               >
                 renew now

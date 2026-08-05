@@ -75,6 +75,8 @@ function toStored(card: FsrsCard): SRSCard {
   }
 }
 
+import { saveSrsToIndexedDB, loadSrsFromIndexedDB, queueOfflineReview } from './offlineSrsStore'
+
 const KEY = (uid: string) => `srs_${uid}`
 const MS = 86_400_000 // 1 ngày tính bằng ms
 
@@ -88,7 +90,28 @@ function load(uid: string): Record<string, SRSCard> {
 }
 
 function save(uid: string, data: Record<string, SRSCard>) {
-  localStorage.setItem(KEY(uid), JSON.stringify(data))
+  try {
+    localStorage.setItem(KEY(uid), JSON.stringify(data))
+  } catch {
+    /* hết quota localStorage — IndexedDB dự phòng ở dưới */
+  }
+  void saveSrsToIndexedDB(uid, data)
+}
+
+// Khôi phục dữ liệu SRS từ IndexedDB nếu localStorage rỗng (ví dụ bị OS xóa)
+export async function syncSrsFromIndexedDB(uid: string): Promise<Record<string, SRSCard>> {
+  const current = load(uid)
+  if (Object.keys(current).length > 0) return current
+  const fromIdb = await loadSrsFromIndexedDB(uid)
+  if (fromIdb && Object.keys(fromIdb).length > 0) {
+    try {
+      localStorage.setItem(KEY(uid), JSON.stringify(fromIdb))
+    } catch {
+      /* bỏ qua */
+    }
+    return fromIdb
+  }
+  return current
 }
 
 // Từ MỚI học đến hạn ôn sau 4 GIỜ (không phải ngay lập tức): ôn cùng ngày buổi
@@ -144,6 +167,9 @@ export function reviewWord(uid: string, word: string, rating: Rating) {
   if (rating === 'again') stored.due = now
   data[key] = stored
   save(uid, data)
+  if (typeof navigator !== 'undefined' && !navigator.onLine) {
+    void queueOfflineReview(uid, word, rating, now)
+  }
   pushProgress(uid) // đồng bộ lịch ôn lên Supabase
 }
 

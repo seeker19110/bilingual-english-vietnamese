@@ -78,7 +78,7 @@ test.describe('Gợi ý "Luyện nói với từ vừa học" ở Home', () => {
     const cta = page.getByRole('button', { name: /Luyện nói với 3 từ vừa học/ })
     await expect(cta).toBeVisible()
     await cta.click()
-    await expect(page).toHaveURL(/\/speaking\?words=/)
+    await expect(page).toHaveURL(/\/luyen-noi\?words=/)
   })
 
   test('chưa học từ nào → không hiện nút gợi ý', async ({ page }) => {

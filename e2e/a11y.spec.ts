@@ -78,19 +78,19 @@ for (const theme of ['blue-sky', 'pink'] as ThemeName[]) {
 // `theme-light:` sắc độ đậm cho 2 theme nền sáng (qua map dùng chung: pos.ts,
 // COLOR_MAP Phrases, COLORS Lessons, CEFR_COLORS Dashboard, tab Learn…).
 const AUTHED_ROUTES = [
-  '/progress',
-  '/dictionary',
-  '/lessons',
-  '/history',
-  '/phrases',
-  '/learning-path',
-  '/learning-path/a1', // trang riêng cấp CEFR (6 cấp A1–C2 dùng chung layout)
-  '/learning-path/c1', // cấp nâng cao (accent rose) — quét cả màn khóa
-  '/chat',
-  '/writing',
-  '/speaking',
-  '/profile',
-  '/challenge', // màn "chưa bắt đầu thử thách" — các trạng thái khác quét riêng bên dưới
+  '/tien-do',
+  '/tu-dien',
+  '/bai-hoc',
+  '/lich-su-hoc',
+  '/cau-thong-dung',
+  '/lo-trinh-hoc',
+  '/lo-trinh-hoc/a1', // trang riêng cấp CEFR (6 cấp A1–C2 dùng chung layout)
+  '/lo-trinh-hoc/c1', // cấp nâng cao (accent rose) — quét cả màn khóa
+  '/tro-truyen',
+  '/luyen-viet',
+  '/luyen-noi',
+  '/cai-dat',
+  '/thu-thach', // màn "chưa bắt đầu thử thách" — các trạng thái khác quét riêng bên dưới
 ]
 for (const route of AUTHED_ROUTES) {
   for (const theme of THEMES) {
@@ -159,7 +159,7 @@ for (const theme of RESULT_THEMES) {
   test(`a11y: Chat (kết quả AI) theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
     await mockClaude(page, CHAT_REPLY)
     await mockLogin(page, 'vi', theme)
-    await page.goto('/chat')
+    await page.goto('/tro-truyen')
     await page.getByRole('button', { name: /Bắt đầu hội thoại/ }).click()
     await expect(page.getByText(/Câu trả lời của bạn khá tốt/)).toBeVisible()
     const { all } = await scan(page)
@@ -169,7 +169,7 @@ for (const theme of RESULT_THEMES) {
   test(`a11y: Writing (kết quả chấm) theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
     await mockClaude(page, WRITING_FEEDBACK)
     await mockLogin(page, 'vi', theme)
-    await page.goto('/writing')
+    await page.goto('/luyen-viet')
     await page.locator('#prompt-input').fill('Some people think children should learn to compete.')
     await page
       .locator('#essay-input')
@@ -186,7 +186,7 @@ for (const theme of RESULT_THEMES) {
     await muteTts(page)
     await mockClaude(page, SPEAKING_REPLY)
     await mockLogin(page, 'vi', theme)
-    await page.goto('/speaking')
+    await page.goto('/luyen-noi')
     await page.getByRole('button', { name: /Bắt đầu luyện nói/ }).click()
     await expect(page.getByText(/What did you do last weekend/)).toBeVisible()
     const { all } = await scan(page)
@@ -194,7 +194,7 @@ for (const theme of RESULT_THEMES) {
   })
 }
 
-// ── /challenge — các trạng thái khác của thử thách "Challenge 1 phút" (chu kỳ tuần) ──
+// ── /thu-thach — các trạng thái khác của thử thách "Challenge 1 phút" (chu kỳ tuần) ──
 // Trạng thái "chưa bắt đầu" đã quét chung với AUTHED_ROUTES ở trên. 2 trạng thái
 // dưới đây cần seed localStorage (khóa `et_challenge_<uid>` — src/lib/challenge.ts) để bỏ
 // qua bước tương tác (bấm bắt đầu/quay/nộp — cần camera thật, không mock ở đây).
@@ -217,19 +217,19 @@ async function seedChallengeState(page: Page, challenge: unknown) {
 }
 
 for (const theme of THEMES) {
-  test(`a11y: /challenge — đã bắt đầu, chưa nộp hôm nay theme=${theme} — 0 vi phạm A/AA`, async ({
+  test(`a11y: /thu-thach — đã bắt đầu, chưa nộp hôm nay theme=${theme} — 0 vi phạm A/AA`, async ({
     page,
   }) => {
     await mockLogin(page, 'vi', theme)
     await seedChallengeState(page, { startDate: vnDateOffset(0), round: 1, entries: {} })
-    await page.goto('/challenge', { waitUntil: 'domcontentloaded' })
+    await page.goto('/thu-thach', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Challenge 1 phút/)).toBeVisible()
     await page.waitForTimeout(500)
     const { all } = await scan(page)
     expect(all).toEqual([])
   })
 
-  test(`a11y: /challenge — đã nộp hôm nay (màn nhận xét AI) theme=${theme} — 0 vi phạm A/AA`, async ({
+  test(`a11y: /thu-thach — đã nộp hôm nay (màn nhận xét AI) theme=${theme} — 0 vi phạm A/AA`, async ({
     page,
   }) => {
     await mockLogin(page, 'vi', theme)
@@ -261,7 +261,7 @@ for (const theme of THEMES) {
         },
       },
     })
-    await page.goto('/challenge', { waitUntil: 'domcontentloaded' })
+    await page.goto('/thu-thach', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Đã nộp challenge hôm nay/)).toBeVisible()
     await page.waitForTimeout(500)
     const { all } = await scan(page)
@@ -272,23 +272,23 @@ for (const theme of THEMES) {
 // ── Tab "Nghe" (luyện nghe theo cấp, ③ N3) — 2 chế độ: Chọn nghĩa (mặc định) và
 // Gõ lại (dictation). A1 luôn mở khóa nên vào thẳng qua ?tab=listening.
 for (const theme of THEMES) {
-  test(`a11y: /learning-path/a1 tab Nghe — Chọn nghĩa theme=${theme} — 0 vi phạm A/AA`, async ({
+  test(`a11y: /lo-trinh-hoc/a1 tab Nghe — Chọn nghĩa theme=${theme} — 0 vi phạm A/AA`, async ({
     page,
   }) => {
     await muteTts(page)
     await mockLogin(page, 'vi', theme)
-    await page.goto('/learning-path/a1?tab=listening', { waitUntil: 'domcontentloaded' })
+    await page.goto('/lo-trinh-hoc/a1?tab=listening', { waitUntil: 'domcontentloaded' })
     await expect(page.getByRole('button', { name: /Nghe lại/ })).toBeVisible()
     const { all } = await scan(page)
     expect(all).toEqual([])
   })
 
-  test(`a11y: /learning-path/a1 tab Nghe — Gõ lại theme=${theme} — 0 vi phạm A/AA`, async ({
+  test(`a11y: /lo-trinh-hoc/a1 tab Nghe — Gõ lại theme=${theme} — 0 vi phạm A/AA`, async ({
     page,
   }) => {
     await muteTts(page)
     await mockLogin(page, 'vi', theme)
-    await page.goto('/learning-path/a1?tab=listening', { waitUntil: 'domcontentloaded' })
+    await page.goto('/lo-trinh-hoc/a1?tab=listening', { waitUntil: 'domcontentloaded' })
     await page.getByRole('button', { name: /Gõ lại/ }).click()
     await expect(page.getByPlaceholder(/Gõ lại câu vừa nghe/)).toBeVisible()
     const { all } = await scan(page)
