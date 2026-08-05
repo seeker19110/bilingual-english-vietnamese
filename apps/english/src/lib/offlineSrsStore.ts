@@ -135,7 +135,7 @@ export async function getPendingOfflineReviews(uid: string): Promise<PendingRevi
 }
 
 // Xoá các lượt review đã sync thành công khỏi hàng chờ
-export async function clearPendingOfflineReviews(uid: string, ids: number[]): Promise<void> {
+export async function clearPendingOfflineReviews(_uid: string, ids: number[]): Promise<void> {
   if (ids.length === 0) return
   try {
     const db = await openSrsDb()
