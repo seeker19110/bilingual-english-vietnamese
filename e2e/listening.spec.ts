@@ -8,7 +8,7 @@ test.describe('Tab Nghe (luyện nghe theo cấp)', () => {
   test('mở tab → mặc định "Chọn nghĩa", hiện câu hỏi trắc nghiệm 4 đáp án', async ({ page }) => {
     await muteTts(page)
     await mockLogin(page, 'vi')
-    await page.goto('/learning-path/a1?tab=listening', { waitUntil: 'domcontentloaded' })
+    await page.goto('/lo-trinh-hoc/a1?tab=listening', { waitUntil: 'domcontentloaded' })
     await expect(page.getByRole('button', { name: /Chọn nghĩa/ })).toBeVisible()
     await expect(page.getByRole('button', { name: /Gõ lại/ })).toBeVisible()
     // Câu hỏi nghe: nút "Nghe lại" + 4 đáp án lựa chọn.
@@ -20,7 +20,7 @@ test.describe('Tab Nghe (luyện nghe theo cấp)', () => {
   test('chọn đáp án đúng/sai → hiện màu phản hồi, bấm tiếp tục sang câu sau', async ({ page }) => {
     await muteTts(page)
     await mockLogin(page, 'vi')
-    await page.goto('/learning-path/a1?tab=listening', { waitUntil: 'domcontentloaded' })
+    await page.goto('/lo-trinh-hoc/a1?tab=listening', { waitUntil: 'domcontentloaded' })
     await expect(page.getByRole('button', { name: /Nghe lại/ })).toBeVisible()
     // Bấm đáp án đầu tiên trong danh sách lựa chọn (dưới khối câu hỏi) — không quan
     // trọng đúng/sai, chỉ cần xác nhận có phản hồi + nút "Câu tiếp theo"/"Xem kết quả".
@@ -34,7 +34,7 @@ test.describe('Tab Nghe (luyện nghe theo cấp)', () => {
   }) => {
     await muteTts(page)
     await mockLogin(page, 'vi')
-    await page.goto('/learning-path/a1?tab=listening', { waitUntil: 'domcontentloaded' })
+    await page.goto('/lo-trinh-hoc/a1?tab=listening', { waitUntil: 'domcontentloaded' })
     await page.getByRole('button', { name: /Gõ lại/ }).click()
 
     const textarea = page.getByPlaceholder(/Gõ lại câu vừa nghe/)

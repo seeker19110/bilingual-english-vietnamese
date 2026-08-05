@@ -8,7 +8,7 @@ test.describe('Gợi ý "Tiếp tục" — đánh dấu đã xem', () => {
     page,
   }) => {
     await mockLogin(page, 'vi')
-    await page.goto('/lessons')
+    await page.goto('/bai-hoc')
     await page.waitForTimeout(500)
     const cta = page.getByRole('button', { name: /Tiếp tục/ })
     await expect(cta).toBeVisible()
@@ -23,14 +23,14 @@ test.describe('Gợi ý "Tiếp tục" — đánh dấu đã xem', () => {
 
   test('CommonPhrases: gợi ý chủ đề đầu tiên chưa xem, mở xong thì đổi gợi ý', async ({ page }) => {
     await mockLogin(page, 'vi')
-    await page.goto('/phrases')
+    await page.goto('/cau-thong-dung')
     await page.waitForTimeout(500)
     const cta = page.getByRole('button', { name: /Tiếp tục/ })
     await expect(cta).toBeVisible()
     const firstLabel = await cta.innerText()
     await cta.click()
     await page.waitForTimeout(300)
-    await page.goto('/phrases')
+    await page.goto('/cau-thong-dung')
     await page.waitForTimeout(500)
     const secondLabel = await page.getByRole('button', { name: /Tiếp tục/ }).innerText()
     expect(secondLabel).not.toBe(firstLabel)
