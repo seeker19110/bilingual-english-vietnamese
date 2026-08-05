@@ -4,9 +4,10 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
 
 // Mock tts prefetchSpeech & getVoicePref
+const mockPrefetchSpeech = vi.fn().mockResolvedValue(undefined)
 vi.mock('./tts', () => ({
   getVoicePref: () => 'Kore',
-  prefetchSpeech: vi.fn().mockResolvedValue(undefined),
+  prefetchSpeech: (...args: unknown[]) => mockPrefetchSpeech(...args),
 }))
 
 // Mock audioCache
@@ -22,7 +23,7 @@ import { addToSRS } from './srs'
 import { getSrsOfflineAudioStatus, preloadSrsAudio } from './srsPreloader'
 import type { DictEntry } from '../types'
 
-const W = (word: string): DictEntry => ({ word }) as DictEntry
+const W = (word: string, ex_en?: string): DictEntry => ({ word, ex_en }) as DictEntry
 
 describe('srsPreloader — Pre-downloading audio for SRS offline review', () => {
   beforeEach(() => {
@@ -50,7 +51,13 @@ describe('srsPreloader — Pre-downloading audio for SRS offline review', () => 
     vi.useRealTimers()
   })
 
-  it('preloadSrsAudio duyệt qua danh sách và gọi callback tiến độ', async () => {
+  it('getSrsOfflineAudioStatus trả về ready khi không có thẻ due nào', async () => {
+    const status = await getSrsOfflineAudioStatus('user_empty', [W('apple')])
+    expect(status.totalDue).toBe(0)
+    expect(status.isFullyPrepared).toBe(true)
+  })
+
+  it('preloadSrsAudio duyệt qua danh sách, prefetch ví dụ và gọi callback tiến độ', async () => {
     vi.useFakeTimers()
     const now = Date.now()
     vi.setSystemTime(now)
@@ -59,7 +66,7 @@ describe('srsPreloader — Pre-downloading audio for SRS offline review', () => 
     vi.advanceTimersByTime(5 * 3600 * 1000)
 
     const progressLogs: number[] = []
-    const resPromise = preloadSrsAudio('user1', [W('apple')], (done) => {
+    const resPromise = preloadSrsAudio('user1', [W('apple', 'An apple a day')], (done) => {
       progressLogs.push(done)
     })
 
@@ -72,5 +79,25 @@ describe('srsPreloader — Pre-downloading audio for SRS offline review', () => 
     expect(progressLogs).toContain(1)
 
     vi.useRealTimers()
+  })
+
+  it('preloadSrsAudio tự động chọn pool đầu tiên khi không có thẻ due nào', async () => {
+    vi.useFakeTimers()
+    mockPrefetchSpeech.mockRejectedValueOnce(new Error('Network error'))
+
+    const resPromise = preloadSrsAudio('user_no_due', [W('orange')])
+    await vi.runAllTimersAsync()
+    const res = await resPromise
+
+    expect(res.total).toBe(1)
+    expect(res.done).toBe(1)
+
+    vi.useRealTimers()
+  })
+
+  it('preloadSrsAudio trả về 0/0 khi pool rỗng và không có thẻ due', async () => {
+    const res = await preloadSrsAudio('user_no_due', [])
+    expect(res.done).toBe(0)
+    expect(res.total).toBe(0)
   })
 })
