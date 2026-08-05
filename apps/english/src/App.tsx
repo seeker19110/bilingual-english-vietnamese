@@ -159,12 +159,6 @@ export default function App() {
   usePrefetchPages()
   // Kéo toàn bộ nội dung trang xuống 1 tay (Reachability) — xem lib/useOneHandedDrag.ts
   const oneHandedDrag = useOneHandedDrag()
-  // Đang bật Reachability mà cuộn trang → thu lại ngay, không để nội dung kẹt lệch vị trí
-  useEffect(() => {
-    const onScroll = () => oneHandedDrag.contentHandlers.onPointerDownCapture()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [oneHandedDrag])
   // Đồng bộ hạn mức/khuyến mãi thật từ server: ngay lúc mở app, định kỳ mỗi 1h nếu app mở
   // lâu, và mỗi lần quay lại tab (visibilitychange) — trình duyệt thường tạm dừng
   // setInterval khi tab ẩn/máy ngủ, nên bắt thêm sự kiện này để không phải đợi đủ 1h mới
@@ -201,7 +195,7 @@ export default function App() {
               <ErrorBoundary>
                 {/* Bọc toàn bộ nội dung định tuyến để hỗ trợ kéo 1 tay (không bọc
                     BottomNav — giữ cố định để luôn bấm được dù đang kéo xuống) */}
-                <div style={oneHandedDrag.contentStyle} {...oneHandedDrag.contentHandlers}>
+                <div style={oneHandedDrag.contentStyle}>
                   <Suspense fallback={<PageLoading />}>
                     <Routes>
                       <Route path="/login" element={<Login />} />

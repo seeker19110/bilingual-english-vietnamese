@@ -80,27 +80,23 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
       aria-label={T.home}
     >
       {/* Vùng bắt cử chỉ Reachability — lồng NGAY TRONG nav (nav đã `fixed` nên tự
-          làm containing block, đặt `absolute -top-[2.375rem]` là bám thẳng lên mép
-          trên của CHÍNH nav này, không cần biến CSS nào để đồng bộ vị trí giữa 2
-          file như cách làm cũ). RỘNG HƠN dải lõi (14px): 0.75rem đệm trên + 0.875rem
-          dải lõi + 0.75rem đệm dưới (đệm dưới nằm đè lên phần trên cùng của chính
-          nav — không sao vì cùng 1 component, luôn nhất quán). touchAction 'none' +
-          triggerHandlers trên toàn vùng để chạm/vuốt hơi lệch vẫn kích hoạt kéo 1
-          tay, không bị trình duyệt cướp quyền cuộn trang. Nền đục hoàn toàn
-          (bg-zinc-950) để không hở nội dung trang phía sau. Chỉ render khi App.tsx
-          truyền triggerHandlers — tránh BottomNav phải biết trực tiếp về
+          làm containing block, đặt `absolute -top-[2rem]` là bám thẳng lên mép
+          trên của CHÍNH nav này). touchAction 'none' để trình duyệt không chiếm
+          quyền cuộn trang trong vùng này. Nền đục hoàn toàn (bg-zinc-950) để
+          không hở nội dung trang phía sau. Chỉ render khi App.tsx truyền
+          triggerHandlers — tránh BottomNav phải biết trực tiếp về
           lib/useOneHandedDrag.ts khi không cần. */}
       {triggerHandlers && (
         <div
-          className="absolute -top-[3.5rem] inset-x-0 bg-zinc-950"
-          style={{ touchAction: 'none', height: '3.5rem' }}
+          className="absolute -top-[2rem] inset-x-0 bg-zinc-950"
+          style={{ touchAction: 'none', height: '2rem' }}
           aria-hidden="true"
           {...triggerHandlers}
         >
-          {/* Dải màu accent gradient — rộng hơn bản cũ (h-0.5 thay vì h-px) */}
-          <div className="absolute bottom-3 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent-500/50 to-transparent" />
-          {/* Chevron mũi tên lên/xuống tùy trạng thái reachability */}
-          <div className="absolute inset-x-0 top-1 flex justify-center pointer-events-none">
+          {/* Dải màu accent gradient — cách 0.5rem từ mép dưới */}
+          <div className="absolute bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent-500/50 to-transparent" />
+          {/* Chevron mũi tên lên/xuống tùy trạng thái reachability — cách 0.5rem từ mép trên */}
+          <div className="absolute inset-x-0 top-2 flex justify-center pointer-events-none">
             {isReachabilityOpen ? (
               <ChevronUp className="w-4 h-4 text-accent-400/70 animate-bounce" />
             ) : (
