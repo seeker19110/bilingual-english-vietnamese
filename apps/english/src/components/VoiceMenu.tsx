@@ -171,7 +171,7 @@ export default function VoiceMenu({ plan, isA }: Props) {
             type="button"
             onClick={() => {
               setOpen(false)
-              nav('/profile')
+              nav('/cai-dat')
             }}
             className="block w-full text-center text-[11px] text-zinc-500 hover:text-zinc-300 mt-2 pt-1.5 border-t border-zinc-800/60 transition"
           >

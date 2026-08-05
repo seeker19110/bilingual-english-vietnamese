@@ -6,12 +6,12 @@
 // Chat/Speaking/Writing vẫn là route độc lập (điều hướng TỚI từ trang hub), tab vẫn
 // sáng khi đang ở 1 trong các route đó để không gây cảm giác "lạc" điều hướng.
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Target, Dumbbell, TrendingUp, ChevronDown, ChevronUp } from 'lucide-react'
+import { Home, Target, Dumbbell, TrendingUp, Settings, ChevronDown, ChevronUp } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import type { useOneHandedDrag } from '../lib/useOneHandedDrag'
 
-const PRACTICE_ROUTES = ['/practice', '/chat', '/speaking', '/writing']
+const PRACTICE_ROUTES = ['/luyen-tap', '/tro-truyen', '/luyen-noi', '/luyen-viet']
 // /login, /onboarding không nằm sau RequireAuth — user context có thể vẫn còn
 // (vd vừa đăng nhập nhưng chưa onboarded) nên phải loại trừ theo path, không
 // chỉ dựa vào `!user`.
@@ -46,24 +46,31 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
     },
     {
       key: 'path',
-      to: '/learning-path',
+      to: '/lo-trinh-hoc',
       icon: Target,
       label: T.navPath,
-      active: location.pathname.startsWith('/learning-path'),
+      active: location.pathname.startsWith('/lo-trinh-hoc'),
     },
     {
       key: 'practice',
-      to: '/practice',
+      to: '/luyen-tap',
       icon: Dumbbell,
       label: T.navPractice,
       active: isPracticeRoute,
     },
     {
       key: 'progress',
-      to: '/progress',
+      to: '/tien-do',
       icon: TrendingUp,
       label: T.navProgress,
-      active: location.pathname === '/progress',
+      active: location.pathname === '/tien-do',
+    },
+    {
+      key: 'profile',
+      to: '/cai-dat',
+      icon: Settings,
+      label: T.navProfile,
+      active: location.pathname === '/cai-dat',
     },
   ]
 
@@ -102,7 +109,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
           </div>
         </div>
       )}
-      <div className="max-w-3xl mx-auto h-full grid grid-cols-4">
+      <div className="max-w-3xl mx-auto h-full grid grid-cols-5">
         {TABS.map(({ key, to, icon: Icon, label, active }) => (
           <Link
             key={key}

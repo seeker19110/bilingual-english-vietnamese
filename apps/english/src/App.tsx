@@ -221,7 +221,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/chat"
+                        path="/tro-truyen"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="chat">
@@ -231,7 +231,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/writing"
+                        path="/luyen-viet"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="writing">
@@ -241,7 +241,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/speaking"
+                        path="/luyen-noi"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="speaking">
@@ -251,7 +251,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/practice"
+                        path="/luyen-tap"
                         element={
                           <RequireAuth>
                             <Practice />
@@ -259,7 +259,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/learning-path"
+                        path="/lo-trinh-hoc"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="learning_path">
@@ -269,7 +269,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/learning-path/:levelId"
+                        path="/lo-trinh-hoc/:levelId"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="learning_path">
@@ -279,7 +279,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/dictionary"
+                        path="/tu-dien"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="dictionary">
@@ -289,7 +289,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/lessons"
+                        path="/bai-hoc"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="lessons">
@@ -299,7 +299,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/phrases"
+                        path="/cau-thong-dung"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="phrases">
@@ -309,7 +309,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/listening"
+                        path="/luyen-nghe"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="listening">
@@ -319,7 +319,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/stories"
+                        path="/truyen-song-ngu"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="listening">
@@ -329,7 +329,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/stories/:id"
+                        path="/truyen-song-ngu/:id"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="listening">
@@ -339,7 +339,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/history"
+                        path="/lich-su-hoc"
                         element={
                           <RequireAuth>
                             <History />
@@ -347,34 +347,15 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/progress"
+                        path="/tien-do"
                         element={
                           <RequireAuth>
                             <Dashboard />
                           </RequireAuth>
                         }
                       />
-                      {/* /admin-settings đã tích hợp vào tab "Hạn mức & khuyến mãi" của
-                        /admin-s — giữ redirect để không vỡ link cũ trong docs/runbook. */}
                       <Route
-                        path="/admin-settings"
-                        element={<Navigate to="/admin-s?tab=limits" replace />}
-                      />
-                      {/* Đường dẫn trang quản trị tổng đổi từ /admin sang /admin-s (2026-07-29)
-                        — giữ redirect /admin cũ để không vỡ link đã chia sẻ/bookmark. */}
-                      <Route path="/admin" element={<Navigate to="/admin-s" replace />} />
-                      <Route
-                        path="/admin-s"
-                        element={
-                          <RequireAuth>
-                            <RequireAdmin>
-                              <AdminDashboard />
-                            </RequireAdmin>
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/mistakes"
+                        path="/so-tay-loi-sai"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="mistake_bank">
@@ -384,7 +365,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/challenge"
+                        path="/thu-thach"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="challenge">
@@ -394,7 +375,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/profile"
+                        path="/cai-dat"
                         element={
                           <RequireAuth>
                             <Profile />
@@ -402,12 +383,58 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/quests"
+                        path="/nhiem-vu"
                         element={
                           <RequireAuth>
                             <FeatureGate featureKey="quests">
                               <Quests />
                             </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+
+                      {/* Chuyển hướng tương thích ngược cho đường dẫn tiếng Anh cũ */}
+                      <Route path="/chat" element={<Navigate to="/tro-truyen" replace />} />
+                      <Route path="/writing" element={<Navigate to="/luyen-viet" replace />} />
+                      <Route path="/speaking" element={<Navigate to="/luyen-noi" replace />} />
+                      <Route path="/practice" element={<Navigate to="/luyen-tap" replace />} />
+                      <Route
+                        path="/learning-path"
+                        element={<Navigate to="/lo-trinh-hoc" replace />}
+                      />
+                      <Route
+                        path="/learning-path/:levelId"
+                        element={<Navigate to="/lo-trinh-hoc" replace />}
+                      />
+                      <Route path="/dictionary" element={<Navigate to="/tu-dien" replace />} />
+                      <Route path="/lessons" element={<Navigate to="/bai-hoc" replace />} />
+                      <Route path="/phrases" element={<Navigate to="/cau-thong-dung" replace />} />
+                      <Route path="/listening" element={<Navigate to="/luyen-nghe" replace />} />
+                      <Route path="/stories" element={<Navigate to="/truyen-song-ngu" replace />} />
+                      <Route
+                        path="/stories/:id"
+                        element={<Navigate to="/truyen-song-ngu" replace />}
+                      />
+                      <Route path="/history" element={<Navigate to="/lich-su-hoc" replace />} />
+                      <Route path="/progress" element={<Navigate to="/tien-do" replace />} />
+                      <Route path="/mistakes" element={<Navigate to="/so-tay-loi-sai" replace />} />
+                      <Route path="/challenge" element={<Navigate to="/thu-thach" replace />} />
+                      <Route path="/profile" element={<Navigate to="/cai-dat" replace />} />
+                      <Route path="/quests" element={<Navigate to="/nhiem-vu" replace />} />
+
+                      {/* Redirects quản trị cũ */}
+                      <Route
+                        path="/admin-settings"
+                        element={<Navigate to="/admin-s?tab=limits" replace />}
+                      />
+                      <Route path="/admin" element={<Navigate to="/admin-s" replace />} />
+                      <Route
+                        path="/admin-s"
+                        element={
+                          <RequireAuth>
+                            <RequireAdmin>
+                              <AdminDashboard />
+                            </RequireAdmin>
                           </RequireAuth>
                         }
                       />

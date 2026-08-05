@@ -290,8 +290,8 @@ export default function CefrLevelPage() {
   }, [uid, grammarQuizPool, refresh])
 
   if (!user) return null
-  // Dữ liệu đã tải mà không tìm thấy cấp (URL sai kiểu /learning-path/c9) → về lộ trình.
-  if (ready && !level) return <Navigate to="/learning-path" replace />
+  // Dữ liệu đã tải mà không tìm thấy cấp (URL sai kiểu /lo-trinh-hoc/c9) → về lộ trình.
+  if (ready && !level) return <Navigate to="/lo-trinh-hoc" replace />
 
   const accent: AccentClasses = level ? ACCENT[level.accent] : ACCENT.emerald
   const locked = level ? (lockedMap.get(level.id) ?? false) : false
@@ -308,11 +308,11 @@ export default function CefrLevelPage() {
   // trong từng màn con). Luôn lùi ĐÚNG 1 BƯỚC theo cấu trúc cấp — bất kể vào bằng cách nào
   // (bấm tuần tự Lộ trình → Cấp → mục con, hay "tắt" thẳng từ nút Home) — KHÔNG về Trang chủ
   // như Layout mặc định: từ màn con (hội thoại/từ vựng/ngữ pháp/thi) → về trang cấp; từ trang
-  // cấp (không mở màn con nào) → về danh sách cấp /learning-path.
+  // cấp (không mở màn con nào) → về danh sách cấp /lo-trinh-hoc.
   function shell(children: React.ReactNode, headerBack?: () => void) {
     return (
       <div className="min-h-dvh bg-zinc-950">
-        <Layout back onBack={headerBack ?? (() => nav('/learning-path'))} />
+        <Layout back onBack={headerBack ?? (() => nav('/lo-trinh-hoc'))} />
         <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
           {children}
         </main>
@@ -439,7 +439,7 @@ export default function CefrLevelPage() {
   // Cấp còn khóa → chỉ hiện màn khóa (không có thanh tab / tab học).
   const activeTab: StudyTab = locked ? 'lessons' : tab
 
-  // Thanh tab của trang cấp (kiểu dáng giữ nguyên từ trang /learning-path cũ).
+  // Thanh tab của trang cấp (kiểu dáng giữ nguyên từ trang /lo-trinh-hoc cũ).
   type TabDef = {
     key: StudyTab
     icon: typeof Target
@@ -508,9 +508,9 @@ export default function CefrLevelPage() {
 
   return shell(
     <div className="animate-fade-in">
-      {/* Về trang lộ trình (tổng quan 4 cấp ở /learning-path) */}
+      {/* Về trang lộ trình (tổng quan 4 cấp ở /lo-trinh-hoc) */}
       <button
-        onClick={() => nav('/learning-path')}
+        onClick={() => nav('/lo-trinh-hoc')}
         className="tap-44 flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200 transition mb-3"
       >
         <ChevronLeft className="w-4 h-4" /> {isA ? 'Lộ trình A1 → C2' : 'Roadmap A1 → C2'}
@@ -707,7 +707,7 @@ export default function CefrLevelPage() {
               </p>
               {prevLevel && (
                 <button
-                  onClick={() => nav(`/learning-path/${prevLevel.id.toLowerCase()}`)}
+                  onClick={() => nav(`/lo-trinh-hoc/${prevLevel.id.toLowerCase()}`)}
                   className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
                 >
                   {isA ? `Học tiếp cấp ${prevLevel.id}` : `Continue ${prevLevel.id}`}
@@ -825,7 +825,7 @@ export default function CefrLevelPage() {
                   </p>
                   {nextLevel && !(lockedMap.get(nextLevel.id) ?? false) && (
                     <button
-                      onClick={() => nav(`/learning-path/${nextLevel.id.toLowerCase()}`)}
+                      onClick={() => nav(`/lo-trinh-hoc/${nextLevel.id.toLowerCase()}`)}
                       className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
                     >
                       {isA ? `Sang cấp ${nextLevel.id}` : `Go to ${nextLevel.id}`}

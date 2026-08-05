@@ -99,7 +99,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
   return [
     {
       kind: 'link',
-      path: '/dictionary',
+      path: '/tu-dien',
       icon: BookOpen,
       gradient: 'from-amber-500 to-orange-400',
       glow: 'shadow-amber-500/20',
@@ -113,7 +113,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
     },
     {
       kind: 'link',
-      path: '/learning-path',
+      path: '/lo-trinh-hoc',
       icon: Target,
       gradient: 'from-lime-500 to-green-400',
       glow: 'shadow-lime-500/20',
@@ -129,7 +129,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
     },
     {
       kind: 'link',
-      path: '/stories',
+      path: '/truyen-song-ngu',
       icon: BookMarked,
       gradient: 'from-fuchsia-500 to-purple-400',
       glow: 'shadow-fuchsia-500/20',
@@ -157,28 +157,28 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
       showTip: true,
       items: [
         {
-          path: '/listening',
+          path: '/luyen-nghe',
           icon: Headphones,
           label: T.listen,
           color: 'text-rose-400',
           fullDesc: `${T.listen}. ${isA ? T.listenDescA : T.listenDescB}`,
         },
         {
-          path: '/chat',
+          path: '/tro-truyen',
           icon: MessageCircle,
           label: T.chat,
           color: 'text-accent-400',
           fullDesc: `${isA ? T.chatTitleA : T.chatTitleB}. ${isA ? T.chatDescA : T.chatDescB}`,
         },
         {
-          path: '/speaking',
+          path: '/luyen-noi',
           icon: Mic,
           label: T.speak,
           color: 'text-sky-400',
           fullDesc: `${isA ? T.speakTitleA : T.speakTitleB}. ${isA ? T.speakDescA : T.speakDescB}`,
         },
         {
-          path: '/writing',
+          path: '/luyen-viet',
           icon: PenLine,
           label: T.write,
           color: 'text-violet-400',
@@ -188,7 +188,7 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
     },
     {
       kind: 'link',
-      path: '/challenge',
+      path: '/thu-thach',
       icon: Video,
       gradient: 'from-rose-500 to-red-400',
       glow: 'shadow-rose-500/20',
@@ -316,12 +316,12 @@ export default function Home() {
 
   function goToNextStep() {
     if (!continueLevel) return
-    nav(`/learning-path/${continueLevel.level.id.toLowerCase()}`)
+    nav(`/lo-trinh-hoc/${continueLevel.level.id.toLowerCase()}`)
   }
 
   function goToSrs() {
     if (!continueLevel) return
-    nav(`/learning-path/${continueLevel.level.id.toLowerCase()}?tab=srs`)
+    nav(`/lo-trinh-hoc/${continueLevel.level.id.toLowerCase()}?tab=srs`)
   }
 
   return (
@@ -364,7 +364,7 @@ export default function Home() {
                 <button
                   onClick={() =>
                     nav(
-                      `/learning-path/${continueLevel.level.id.toLowerCase()}?tab=srs&cap=${COMEBACK_SRS_CARDS}`,
+                      `/lo-trinh-hoc/${continueLevel.level.id.toLowerCase()}?tab=srs&cap=${COMEBACK_SRS_CARDS}`,
                     )
                   }
                   className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 theme-light:text-sky-800 text-sm font-medium transition"
@@ -378,7 +378,7 @@ export default function Home() {
               <button
                 onClick={() =>
                   nav(
-                    `/learning-path/${continueLevel.level.id.toLowerCase()}?tab=today&cap=${COMEBACK_NEW_WORDS}`,
+                    `/lo-trinh-hoc/${continueLevel.level.id.toLowerCase()}?tab=today&cap=${COMEBACK_NEW_WORDS}`,
                   )
                 }
                 className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-accent-500/15 hover:bg-accent-500/25 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
@@ -393,7 +393,7 @@ export default function Home() {
         {/* ── Gợi ý "Luyện nói với từ vừa học" (② M4, nối đề xuất B) ────────── */}
         {recentWords.length > 0 && (
           <button
-            onClick={() => nav(`/speaking?words=${encodeURIComponent(recentWords.join(','))}`)}
+            onClick={() => nav(`/luyen-noi?words=${encodeURIComponent(recentWords.join(','))}`)}
             className="tap-44 w-full flex items-center justify-center gap-1.5 mb-3 px-3 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300 theme-light:text-sky-800 hover:border-sky-500/50 transition animate-fade-in"
           >
             <Mic className="w-3.5 h-3.5 shrink-0" />

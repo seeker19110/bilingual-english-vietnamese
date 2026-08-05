@@ -176,13 +176,13 @@ export default function Placement() {
       // gian rồi lưu 1 lần (tránh set onboarded=true giữa chừng).
       nav('/onboarding', { replace: true, state: { presetLevel: result.appLevel } })
     } else {
-      void applyResultNow(result).then(() => nav('/profile', { replace: true }))
+      void applyResultNow(result).then(() => nav('/cai-dat', { replace: true }))
     }
   }
 
   function skipTest() {
     if (fromOnboarding) nav('/onboarding', { replace: true })
-    else nav('/profile', { replace: true })
+    else nav('/cai-dat', { replace: true })
   }
 
   // ── Màn giới thiệu ─────────────────────────────────────────────────────

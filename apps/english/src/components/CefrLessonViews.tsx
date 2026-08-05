@@ -1219,7 +1219,7 @@ export function DialogueView({
                           : 'Dialogue role-play + AI grading is a Pro/VIP feature.'}
                       </p>
                       <Link
-                        to="/profile"
+                        to="/cai-dat"
                         className="inline-flex items-center gap-1 text-xs font-semibold text-accent-400 theme-light:text-accent-700 hover:underline"
                       >
                         {isA ? 'Nâng cấp Pro/VIP →' : 'Upgrade to Pro/VIP →'}

@@ -41,7 +41,7 @@ export default function PricePromoBanner({ isA }: Props) {
 
   return (
     <button
-      onClick={() => nav('/profile')}
+      onClick={() => nav('/cai-dat')}
       className="mt-3 w-full text-left glass rounded-2xl p-4 border border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 transition animate-fade-in"
     >
       <div className="flex items-start gap-3">

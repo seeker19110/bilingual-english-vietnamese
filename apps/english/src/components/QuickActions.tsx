@@ -97,7 +97,7 @@ export default function QuickActions() {
       <div className="grid grid-cols-3 gap-2 max-w-md mx-auto">
         {/* Lộ trình — mở tổng quan A1→B2 (tab Kiểm tra giờ nằm TRONG từng cấp) */}
         <button
-          onClick={() => nav('/learning-path')}
+          onClick={() => nav('/lo-trinh-hoc')}
           aria-label={isA ? 'Lộ trình học' : 'Learning path'}
           className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-teal-500/40 transition group"
         >

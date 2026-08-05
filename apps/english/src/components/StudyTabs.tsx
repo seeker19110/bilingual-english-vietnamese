@@ -58,8 +58,15 @@ import {
   getDueGrammarLessonIds,
   reviewGrammar,
   SRS_SESSION_CAP,
+  syncSrsFromIndexedDB,
   type Rating,
 } from '../lib/srs'
+import {
+  getSrsOfflineAudioStatus,
+  preloadSrsAudio,
+  type SrsOfflineStatus,
+} from '../lib/srsPreloader'
+import { WifiOff, Download } from 'lucide-react'
 import {
   getTodayBatchFrom,
   getPoolProgress,
@@ -405,7 +412,9 @@ function BatchDoneView({
           Nút chính: LUYỆN NGAY các từ vừa học bằng hội thoại — đóng vòng
           recognition → use (từ được bơm vào prompt Chat/Nói qua ?words=). */}
       <button
-        onClick={() => nav(`/chat?words=${encodeURIComponent(batch.map((w) => w.word).join(','))}`)}
+        onClick={() =>
+          nav(`/tro-truyen?words=${encodeURIComponent(batch.map((w) => w.word).join(','))}`)
+        }
         className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold transition"
       >
         <MessageCircle className="w-4 h-4" />
@@ -415,7 +424,7 @@ function BatchDoneView({
       </button>
       <button
         onClick={() =>
-          nav(`/speaking?words=${encodeURIComponent(batch.map((w) => w.word).join(','))}`)
+          nav(`/luyen-noi?words=${encodeURIComponent(batch.map((w) => w.word).join(','))}`)
         }
         className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 theme-light:text-sky-700 text-sm font-medium transition"
       >
@@ -981,6 +990,53 @@ export function SRSReview({
   const [idx, setIdx] = useState(0)
   const [sessionDone, setDone] = useState(0)
 
+  // Trạng thái Offline & Preload audio SRS
+  const [isOffline, setIsOffline] = useState(() =>
+    typeof navigator !== 'undefined' ? !navigator.onLine : false,
+  )
+  const [offlineStatus, setOfflineStatus] = useState<SrsOfflineStatus | null>(null)
+  const [preloading, setPreloading] = useState(false)
+  const [preloadProgress, setPreloadProgress] = useState<{ done: number; total: number } | null>(
+    null,
+  )
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false)
+    const handleOffline = () => setIsOffline(true)
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
+
+  // Tự động sao lưu & khôi phục từ IndexedDB nếu localStorage trống
+  useEffect(() => {
+    if (!uid) return
+    void syncSrsFromIndexedDB(uid).then(() => {
+      setDue(getDueWords(uid, activePool, cap))
+    })
+  }, [uid, activePool, cap])
+
+  // Cập nhật trạng thái audio offline của các thẻ SRS due
+  useEffect(() => {
+    if (uid && activePool.length > 0) {
+      void getSrsOfflineAudioStatus(uid, activePool).then(setOfflineStatus)
+    }
+  }, [uid, activePool, due, sessionDone])
+
+  async function handlePreloadOffline() {
+    setPreloading(true)
+    setPreloadProgress({ done: 0, total: due.length })
+    await preloadSrsAudio(uid, activePool, (done, total) => {
+      setPreloadProgress({ done, total })
+    })
+    setPreloading(false)
+    const status = await getSrsOfflineAudioStatus(uid, activePool)
+    setOfflineStatus(status)
+  }
+
   function toggleScope() {
     const next = !onlyThisLevel
     setOnlyThisLevel(next)
@@ -1069,6 +1125,52 @@ export function SRSReview({
 
   return (
     <div className="animate-fade-in">
+      {/* Banner thông báo Chế độ Offline */}
+      {isOffline && (
+        <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl p-3 mb-3 flex items-center gap-2.5 text-xs text-amber-300">
+          <WifiOff className="w-4 h-4 shrink-0 text-amber-400" />
+          <div>
+            <p className="font-semibold">{isA ? 'Chế độ Học Offline' : 'Offline Learning Mode'}</p>
+            <p className="text-amber-200/80">
+              {isA
+                ? 'Bạn đang ôn tập ngoại tuyến. Lịch SRS & Âm thanh đã sẵn sàng offline, tiến độ tự đồng bộ khi có mạng.'
+                : 'Reviewing offline. SRS schedule & audio ready offline, progress auto-syncs when online.'}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Thanh tải trước Offline Audio khi Online */}
+      {!isOffline && offlineStatus && (
+        <div className="glass rounded-xl px-3.5 py-2.5 mb-3 flex items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-2">
+            <Download className="w-4 h-4 text-sky-400 shrink-0" />
+            <div>
+              <span className="text-zinc-200 font-medium">
+                {isA ? 'Tải trước SRS Offline:' : 'Offline SRS Pre-download:'}
+              </span>{' '}
+              <span className="text-zinc-400">
+                {offlineStatus.cachedCount}/{offlineStatus.totalDue}{' '}
+                {isA ? 'từ đã có audio' : 'cards cached'}
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={handlePreloadOffline}
+            disabled={preloading}
+            className="px-3 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 font-medium transition disabled:opacity-50 text-xs shrink-0"
+          >
+            {preloading
+              ? isA
+                ? `Đang tải ${preloadProgress?.done ?? 0}/${preloadProgress?.total ?? 0}…`
+                : `Downloading ${preloadProgress?.done ?? 0}/${preloadProgress?.total ?? 0}…`
+              : isA
+                ? 'Tải ngay'
+                : 'Pre-download'}
+          </button>
+        </div>
+      )}
+
       <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
         <span>{isA ? 'Ôn SRS' : 'SRS Review'}</span>
         <span>

@@ -15,7 +15,7 @@ async function mockClaude(page: Page) {
 }
 
 test.describe('BottomNav (U-5)', () => {
-  test('hiện đủ 4 mục ở trang đã đăng nhập, ẩn ở /login và /onboarding', async ({ page }) => {
+  test('hiện đủ 5 mục ở trang đã đăng nhập, ẩn ở /login và /onboarding', async ({ page }) => {
     await mockLogin(page, 'vi')
     await page.goto('/')
     const nav = page.locator('nav[aria-label]')
@@ -24,30 +24,31 @@ test.describe('BottomNav (U-5)', () => {
     await expect(page.getByRole('link', { name: /Lộ trình/ })).toBeVisible()
     await expect(page.getByRole('link', { name: /Luyện tập/ })).toBeVisible()
     await expect(page.getByRole('link', { name: /Tiến độ/ })).toBeVisible()
+    await expect(page.getByRole('link', { name: /Cài đặt/ })).toBeVisible()
 
     await page.goto('/login')
     await expect(page.locator('nav[aria-label]')).toHaveCount(0)
   })
 
-  test('tab Luyện tập: luôn vào trang hub /practice, kể cả khi vừa ở /speaking', async ({
+  test('tab Luyện tập: luôn vào trang hub /luyen-tap, kể cả khi vừa ở /luyen-noi', async ({
     page,
   }) => {
     await mockLogin(page, 'vi')
     await page.goto('/')
     await page.getByRole('link', { name: /Luyện tập/ }).click()
-    await expect(page).toHaveURL(/\/practice$/)
+    await expect(page).toHaveURL(/\/luyen-tap$/)
 
-    await page.goto('/speaking')
+    await page.goto('/luyen-noi')
     await expect(page.getByRole('heading', { name: /Luyện nói song ngữ/ }).first()).toBeVisible()
     await page.goto('/')
     await page.getByRole('link', { name: /Luyện tập/ }).click()
-    await expect(page).toHaveURL(/\/practice$/)
+    await expect(page).toHaveURL(/\/luyen-tap$/)
   })
 
   test('Chat: input không bị BottomNav che (nằm trên đường viền nav)', async ({ page }) => {
     await mockLogin(page, 'vi')
     await mockClaude(page)
-    await page.goto('/chat')
+    await page.goto('/tro-truyen')
     await page.getByRole('button', { name: /Bắt đầu/ }).click()
     const input = page.getByPlaceholder(/Nhập tiếng Anh|Type in Vietnamese/i)
     await expect(input).toBeVisible()
@@ -60,13 +61,13 @@ test.describe('BottomNav (U-5)', () => {
     page,
   }) => {
     await mockLogin(page, 'vi')
-    await page.goto('/profile')
+    await page.goto('/cai-dat')
     await expect(page.getByText('Chia sẻ')).toBeVisible()
 
-    await page.goto('/chat')
+    await page.goto('/tro-truyen')
     await expect(page.getByText('Chia sẻ')).toHaveCount(0)
 
-    await page.goto('/lessons')
+    await page.goto('/bai-hoc')
     await expect(page.getByText('Chia sẻ')).toHaveCount(0)
   })
 
@@ -79,6 +80,6 @@ test.describe('BottomNav (U-5)', () => {
     const historyBtn = page.getByRole('button', { name: /Xem lịch sử học/ })
     await expect(historyBtn).toBeVisible()
     await historyBtn.click()
-    await expect(page).toHaveURL(/\/history$/)
+    await expect(page).toHaveURL(/\/lich-su-hoc$/)
   })
 })

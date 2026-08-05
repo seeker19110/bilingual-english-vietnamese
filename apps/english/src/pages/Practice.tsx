@@ -1170,7 +1170,7 @@ export default function Practice() {
       desc: isA
         ? 'Câu thông dụng, hội thoại, truyện cổ tích & ngụ ngôn — nghe hiểu, không chấm điểm'
         : 'Phrases, dialogues, fairy tales & fables — listen for understanding, no scoring',
-      action: () => nav('/listening'),
+      action: () => nav('/luyen-nghe'),
     },
     {
       key: 'vocab-listen',
@@ -1186,7 +1186,7 @@ export default function Practice() {
       desc: isA
         ? 'AI đóng vai đối tác hội thoại theo tình huống'
         : 'AI roleplays a conversation partner',
-      action: () => nav('/chat'),
+      action: () => nav('/tro-truyen'),
     },
   ]
 
@@ -1226,7 +1226,7 @@ export default function Practice() {
       desc: isA
         ? 'Nói theo tình huống, AI phản hồi bằng giọng nói'
         : 'Speak through a scenario, AI replies by voice',
-      action: () => nav('/chat'),
+      action: () => nav('/tro-truyen'),
     },
     {
       key: 'sample-dialogues',
@@ -1235,14 +1235,14 @@ export default function Practice() {
       desc: isA
         ? 'Nghe từng câu hội thoại rồi đọc lại, AI chấm phát âm'
         : 'Listen to each dialogue line, read it back, get scored',
-      action: () => nav('/lessons'),
+      action: () => nav('/bai-hoc'),
     },
     {
       key: 'freetalk-speak',
       icon: Mic,
       title: isA ? 'Nói chuyện tự do với AI' : 'Free talk with AI',
       desc: isA ? 'Luyện nói song ngữ, sửa lỗi bằng giọng mẹ đẻ' : 'Bilingual speaking practice',
-      action: () => nav('/speaking'),
+      action: () => nav('/luyen-noi'),
     },
   ]
 
@@ -1273,7 +1273,7 @@ export default function Practice() {
       icon: PenLine,
       title: isA ? 'Chat tự do với AI' : 'Free chat with AI',
       desc: isA ? 'Viết & trò chuyện, AI sửa lỗi ngay' : 'Write & chat, AI corrects instantly',
-      action: () => nav('/chat'),
+      action: () => nav('/tro-truyen'),
     },
   ]
 
