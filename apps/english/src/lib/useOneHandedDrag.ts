@@ -11,8 +11,7 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } fr
 // cuộn trang gốc của trình duyệt nữa nên KHÔNG cần preventDefault() hay ngưỡng thời gian
 // như bản cũ.
 //
-// Đóng lại khi: (1) chạm vào nội dung đang bị đẩy xuống, (2) vuốt lên lại ở dải trigger,
-// (3) cuộn trang, hoặc (4) không thao tác gì trong RETURN_DELAY_MS thì tự thu lại.
+// Đóng lại khi: vuốt lên lại ở dải trigger, hoặc không thao tác gì trong RETURN_DELAY_MS thì tự thu lại.
 const ACTIVATE_DISTANCE_PX = 12 // Vuốt xuống ở dải trigger đủ khoảng cách này là bật
 const OPEN_DURATION_MS = 220 // Thời gian trượt xuống khi bật
 const RETURN_DELAY_MS = 10_000 // Sau khi bật, chờ 10 giây rồi mới tự thu lại
@@ -57,12 +56,6 @@ export function useOneHandedDrag() {
 
   useEffect(() => clearReturnTimer, [])
 
-  // Chạm vào nội dung đang bị đẩy xuống → đóng lại ngay, không chặn thao tác bấm bên dưới
-  // (không preventDefault, không stopPropagation — chỉ đóng, để nút/link vẫn nhận được click).
-  const onContentPointerDown = () => {
-    if (isOpen.current) close()
-  }
-
   // Handlers gắn vào dải trigger mỏng ở mép dưới màn hình
   const onTriggerPointerDown = (e: PointerEvent) => {
     activePointerId.current = e.pointerId
@@ -96,7 +89,6 @@ export function useOneHandedDrag() {
   return {
     isOpen: isOpenState,
     contentStyle,
-    contentHandlers: { onPointerDownCapture: onContentPointerDown },
     triggerHandlers: {
       onPointerDown: onTriggerPointerDown,
       onPointerMove: onTriggerPointerMove,
