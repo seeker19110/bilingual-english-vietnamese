@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "agentmemory": {
+      "command": "agentmemory",
+      "args": ["mcp"],
+      "env": {
+        "AGENTMEMORY_PROJECT_ID": "english-tutor",
+        "AGENTMEMORY_DB_PATH": "C:/Users/liend/.gemini/agentmemory.db"
+      }
+    }
+  }
+}
