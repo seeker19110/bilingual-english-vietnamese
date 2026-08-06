@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   Sliders,
@@ -92,16 +93,14 @@ function AdminPanel({ tabKey }: { tabKey: TabKey }) {
 export default function AdminDashboard() {
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
-  const openKey: TabKey | null = TABS.some((t) => t.key === tabParam)
-    ? (tabParam as TabKey)
-    : 'usage'
+  const [openKey, setOpenKey] = useState<TabKey | null>(
+    TABS.some((t) => t.key === tabParam) ? (tabParam as TabKey) : 'usage',
+  )
 
   const toggle = (key: TabKey) => {
-    if (openKey === key) {
-      setSearchParams({}, { replace: true })
-    } else {
-      setSearchParams({ tab: key }, { replace: true })
-    }
+    const next = openKey === key ? null : key
+    setOpenKey(next)
+    setSearchParams(next ? { tab: next } : {}, { replace: true })
   }
 
   return (

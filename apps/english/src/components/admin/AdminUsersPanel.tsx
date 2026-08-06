@@ -97,6 +97,7 @@ export default function AdminUsersPanel() {
           <button
             type="button"
             onClick={handleSearchSubmit}
+            aria-label="Tìm kiếm"
             className="tap-44 shrink-0 flex items-center gap-2 rounded-xl bg-zinc-800 border border-zinc-700 text-white font-medium px-4"
           >
             <Search className="w-4 h-4" />

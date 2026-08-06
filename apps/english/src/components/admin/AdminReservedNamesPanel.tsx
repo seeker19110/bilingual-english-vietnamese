@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Ban, Plus, Trash2, AlertCircle, RefreshCw } from 'lucide-react'
+import { getAuthHeader } from '@core/authHeader'
 import type { ReservedNameRow } from '../../../../../api/admin-reserved-names'
 
 export default function AdminReservedNamesPanel() {
@@ -13,8 +14,9 @@ export default function AdminReservedNamesPanel() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/admin-reserved-names')
-      if (res.status === 403) {
+      const headers = await getAuthHeader()
+      const res = await fetch('/api/admin-reserved-names', { headers })
+      if (res.status === 401 || res.status === 403) {
         setError('Chỉ admin mới truy cập được')
         return
       }
@@ -39,9 +41,10 @@ export default function AdminReservedNamesPanel() {
     setSubmitting(true)
     setError(null)
     try {
+      const headers = await getAuthHeader()
       const res = await fetch('/api/admin-reserved-names', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...headers },
         body: JSON.stringify({ action: 'add', phrase: newPhrase.trim() }),
       })
       const data = await res.json()
@@ -60,9 +63,10 @@ export default function AdminReservedNamesPanel() {
     if (!confirm('Bạn có chắc muốn xóa cụm từ cấm này?')) return
 
     try {
+      const headers = await getAuthHeader()
       const res = await fetch('/api/admin-reserved-names', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...headers },
         body: JSON.stringify({ action: 'remove', id }),
       })
       if (!res.ok) throw new Error('Xóa thất bại')
@@ -91,6 +95,7 @@ export default function AdminReservedNamesPanel() {
           <button
             type="button"
             onClick={fetchReserved}
+            aria-label="Tải lại danh sách"
             className="p-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 rounded-lg"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />

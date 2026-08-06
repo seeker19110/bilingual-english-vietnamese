@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   X,
 } from 'lucide-react'
+import { getAuthHeader } from '@core/authHeader'
 import type { AdminPaymentRow } from '../../../../../api/admin-payments'
 
 export default function AdminPaymentsPanel() {
@@ -33,8 +34,9 @@ export default function AdminPaymentsPanel() {
       if (statusFilter !== 'all') params.set('status', statusFilter)
       if (searchQuery.trim()) params.set('q', searchQuery.trim())
 
-      const res = await fetch(`/api/admin-payments?${params.toString()}`)
-      if (res.status === 403) {
+      const headers = await getAuthHeader()
+      const res = await fetch(`/api/admin-payments?${params.toString()}`, { headers })
+      if (res.status === 401 || res.status === 403) {
         setError('Chỉ admin mới truy cập được')
         return
       }
@@ -65,9 +67,10 @@ export default function AdminPaymentsPanel() {
     setSubmittingMatch(true)
     setError(null)
     try {
+      const headers = await getAuthHeader()
       const res = await fetch('/api/admin-payments', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...headers },
         body: JSON.stringify({
           action: 'manual-match',
           paymentId: matchingPayment.id,
@@ -310,6 +313,7 @@ export default function AdminPaymentsPanel() {
               <button
                 type="button"
                 onClick={() => setMatchingPayment(null)}
+                aria-label="Đóng"
                 className="text-zinc-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
