@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ShieldAlert, Power, AlertTriangle, CheckCircle2, RefreshCw } from 'lucide-react'
+import { getAuthHeader } from '@core/authHeader'
 
 export default function AdminSystemControlPanel() {
   const [circuitBreaker, setCircuitBreaker] = useState<boolean>(false)
@@ -12,8 +13,9 @@ export default function AdminSystemControlPanel() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/admin-system-control')
-      if (res.status === 403) {
+      const headers = await getAuthHeader()
+      const res = await fetch('/api/admin-system-control', { headers })
+      if (res.status === 401 || res.status === 403) {
         setError('Chỉ admin mới truy cập được')
         return
       }
@@ -36,9 +38,10 @@ export default function AdminSystemControlPanel() {
     setError(null)
     setMsg(null)
     try {
+      const headers = await getAuthHeader()
       const res = await fetch('/api/admin-system-control', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...headers },
         body: JSON.stringify({
           action: 'toggle-circuit-breaker',
           enabled: targetState,
@@ -79,6 +82,7 @@ export default function AdminSystemControlPanel() {
           <button
             type="button"
             onClick={fetchStatus}
+            aria-label="Tải lại trạng thái"
             className="p-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 rounded-lg"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />

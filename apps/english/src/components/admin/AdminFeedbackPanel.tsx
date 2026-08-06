@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ThumbsDown, MessageSquare, Mic, RefreshCw, AlertCircle } from 'lucide-react'
+import { getAuthHeader } from '@core/authHeader'
 import type { FeedbackRow } from '../../../../../api/admin-feedback'
 
 export default function AdminFeedbackPanel() {
@@ -15,8 +16,9 @@ export default function AdminFeedbackPanel() {
       const params = new URLSearchParams()
       if (sourceFilter !== 'all') params.set('source', sourceFilter)
 
-      const res = await fetch(`/api/admin-feedback?${params.toString()}`)
-      if (res.status === 403) {
+      const headers = await getAuthHeader()
+      const res = await fetch(`/api/admin-feedback?${params.toString()}`, { headers })
+      if (res.status === 401 || res.status === 403) {
         setError('Chỉ admin mới truy cập được')
         return
       }
