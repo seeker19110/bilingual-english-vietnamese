@@ -39,9 +39,16 @@ function openDb(): Promise<IDBDatabase> {
   return _dbPromise
 }
 
-// Key tra cứu: "lang:voice:text"
+// Đồng bộ TAY với VOICE_VERSION ở api/_lib/googleTts.ts (file đó chỉ chạy server, không import
+// được từ code trình duyệt). Mỗi khi bên server bump VOICE_VERSION (đổi/nâng cấp giọng đọc) —
+// PHẢI đổi giá trị này theo, không thì cache IndexedDB trên máy người dùng cũ vẫn phát audio
+// giọng CŨ tới 7 ngày (TTL) dù server đã có bản ghi mới, vì IndexedDB được tra TRƯỚC khi gọi
+// server (xem ensureAudioWithTimeline trong ./tts.ts) — lỗi thật đã xác nhận 2026-08-06.
+const AUDIO_CACHE_VERSION = 'chirp3hd-v3'
+
+// Key tra cứu: "version:lang:voice:text"
 export function audioCacheKey(text: string, lang: string, voice: string): string {
-  return `${lang}:${voice}:${text}`
+  return `${AUDIO_CACHE_VERSION}:${lang}:${voice}:${text}`
 }
 
 // Một entry trong store. `timeline` thêm ở đợt avatar (viseme timing thật từ /api/tts) —
