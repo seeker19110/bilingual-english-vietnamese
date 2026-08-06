@@ -40,6 +40,7 @@
     "rank:patterns": "tsx scripts/rank-common-patterns.ts",
     "seed:all": "tsx scripts/seed-all.ts",
     "seed:verify": "tsx scripts/seed-all.ts --verify",
+    "seed:stories:gemini": "tsx scripts/seed-stories-gemini-tts.ts",
     "migrate:pg": "tsx scripts/run-pg-migrations.ts",
     "backup:r2": "tsx scripts/backup-pg-to-r2.ts",
     "restore:r2": "tsx scripts/restore-pg-from-r2.ts",

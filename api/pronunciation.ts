@@ -32,6 +32,7 @@ import { saveAudio } from '../packages/core-ai/fileStorage.js'
 import { ensureProfileRow } from '../packages/core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
 import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.js'
+import { isValidGeminiVoice } from '../packages/core-ai/geminiTts.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -120,11 +121,15 @@ export default async function handler(req: Request): Promise<Response> {
   // không lỗi cứng: UI đã tự ẩn lựa chọn ngoài quyền, nhánh này chỉ chặn gọi thẳng API).
   const { plan } = await ensureProfileRow(authResult.userId, '')
   const clampedVoice = await clampVoiceToPlan(voiceParam, plan)
-  // Endpoint tra từ đơn này dùng được cả Chirp3-HD lẫn Studio (tiếng Anh) — chỉ giọng
-  // ElevenLabs (VIP) không áp dụng ở đây (dành cho câu/đoạn ở api/tts.ts).
-  // clampedVoice đã qua isValidVoice()/isValidStudioVoice() (không có Eleven) ở trên nên
-  // nhánh isValidElevenVoice không thực sự xảy ra, chỉ giữ để TypeScript hẹp kiểu.
-  let voice: VoiceId | AnyVoiceId = isValidElevenVoice(clampedVoice) ? DEFAULT_VOICE : clampedVoice
+  // Endpoint tra từ đơn này dùng được cả Chirp3-HD lẫn Studio (tiếng Anh) — giọng ElevenLabs
+  // (VIP) và Gemini (chỉ dành riêng cho đọc truyện, xem packages/core-ai/geminiTts.ts) không
+  // áp dụng ở đây (dành cho câu/đoạn ở api/tts.ts).
+  // clampedVoice đã qua isValidVoice()/isValidStudioVoice() (không có Eleven/Gemini) ở trên
+  // nên 2 nhánh dưới không thực sự xảy ra, chỉ giữ để TypeScript hẹp kiểu.
+  let voice: VoiceId | AnyVoiceId =
+    isValidElevenVoice(clampedVoice) || isValidGeminiVoice(clampedVoice)
+      ? DEFAULT_VOICE
+      : clampedVoice
 
   // Studio CHỈ có tiếng Anh (Google không có giọng Studio cho vi-VN) — nếu lỡ nhận Studio cho
   // từ tiếng Việt (chiều B), hạ về Chirp3-HD cùng giới tính thay vì lỗi cứng, giống fallback

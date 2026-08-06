@@ -14,6 +14,7 @@ import {
   VOICE_OPTIONS,
   STUDIO_VOICE_IDS,
   ELEVEN_VOICE_IDS,
+  GEMINI_VOICE_IDS,
   getCachedAllowedVoices,
   type VoiceId,
 } from './voiceTiers'
@@ -312,9 +313,15 @@ async function decryptToBuffer(
   return crypto.subtle.decrypt({ name: 'AES-GCM', iv: ivBytes as BufferSource }, key, cipherBuffer)
 }
 
-// Tạo blob URL tạm từ ArrayBuffer để phát qua <audio>
-export function bufferToBlobUrl(buffer: ArrayBuffer): string {
-  return URL.createObjectURL(new Blob([buffer], { type: 'audio/mpeg' }))
+// Tạo blob URL tạm từ ArrayBuffer để phát qua <audio>. Giọng Gemini (đọc truyện) trả file
+// WAV thật (không phải mp3 như các giọng khác — xem packages/core-ai/geminiTts.ts), nên
+// phải khai đúng mimeType thì trình duyệt mới giải mã được, không thì phát im lặng/lỗi.
+export function bufferToBlobUrl(buffer: ArrayBuffer, mimeType = 'audio/mpeg'): string {
+  return URL.createObjectURL(new Blob([buffer], { type: mimeType }))
+}
+
+function blobMimeTypeForVoice(voice: Voice): string {
+  return (GEMINI_VOICE_IDS as string[]).includes(voice) ? 'audio/wav' : 'audio/mpeg'
 }
 
 // ── Nạp audio (IndexedDB → server) — tách riêng để vừa phát vừa NẠP TRƯỚC ────
@@ -456,7 +463,7 @@ async function speakViaGoogle(
 
   // Lấy audio (ưu tiên IndexedDB; bộ nạp-trước thường đã tải sẵn câu này)
   const buffer = await ensureAudioBuffer(text, lang, voice)
-  const blobUrl = bufferToBlobUrl(buffer)
+  const blobUrl = bufferToBlobUrl(buffer, blobMimeTypeForVoice(voice))
 
   // Tách từ để tính index tương ứng với vị trí phát (ước tính theo tỉ lệ thời gian)
   const words = onWord ? text.trim().split(/\s+/) : []

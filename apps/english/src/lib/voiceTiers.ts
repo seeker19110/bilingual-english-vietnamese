@@ -28,6 +28,15 @@ export type VoiceId =
   // giọng Chirp3-HD cùng giới tính nếu lỡ dùng cho câu tiếng Việt) + api/_lib/googleTts.ts.
   | 'Studio-O'
   | 'Studio-Q'
+  // Giọng Gemini (native audio) — CHỈ dùng cho trang đọc truyện (StoryReader.tsx qua
+  // getStoryVoice()), mỗi thể loại truyện 1 giọng cố định kèm phong cách đọc riêng. Khác
+  // hẳn engine Chirp3-HD dù trùng tên nhân vật thần thoại — xem packages/core-ai/geminiTts.ts.
+  | 'Gemini-Leda'
+  | 'Gemini-Charon'
+  | 'Gemini-Aoede'
+  | 'Gemini-Orus'
+  | 'Gemini-Puck'
+  | 'Gemini-Kore'
 
 export interface VoiceOption {
   id: VoiceId
@@ -66,6 +75,17 @@ export const ELEVEN_VOICE_IDS: VoiceId[] = ['Rachel']
 // Giọng Studio (Google Cloud TTS cao cấp, CHỈ tiếng Anh) — dùng để UI gắn badge riêng +
 // lib/tts.ts biết đường fallback về Chirp3-HD khi phát nội dung tiếng Việt.
 export const STUDIO_VOICE_IDS: VoiceId[] = ['Studio-O', 'Studio-Q']
+
+// Giọng Gemini — KHÔNG nằm trong VOICE_OPTIONS/VOICE_IDS (không phải lựa chọn tự do trong
+// VoicePicker), chỉ StoryReader.tsx gán trực tiếp theo thể loại truyện (xem lib/stories.ts).
+export const GEMINI_VOICE_IDS: VoiceId[] = [
+  'Gemini-Leda',
+  'Gemini-Charon',
+  'Gemini-Aoede',
+  'Gemini-Orus',
+  'Gemini-Puck',
+  'Gemini-Kore',
+]
 
 export const VOICE_IDS: VoiceId[] = VOICE_OPTIONS.map((v) => v.id)
 export const DEFAULT_VOICE: VoiceId = 'Kore'

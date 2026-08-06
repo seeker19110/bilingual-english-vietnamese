@@ -10,12 +10,14 @@ import {
   type StudioVoiceId,
 } from './googleTts.js'
 import { ELEVEN_VOICE_IDS, type ElevenVoiceId } from '../../packages/core-ai/elevenLabsTts.js'
+import { GEMINI_VOICE_IDS, type GeminiVoiceId } from '../../packages/core-ai/geminiTts.js'
 import type { Plan } from '../../packages/core-billing/plan.js'
 import { effectivePlan } from '../../packages/core-billing/promo.js'
 
-// Gộp 3 nguồn giọng: Chirp3-HD (Google) + giọng đặc biệt ElevenLabs + giọng Studio
-// (Google Cloud TTS cao cấp, chỉ tiếng Anh).
-export type AnyVoiceId = VoiceId | ElevenVoiceId | StudioVoiceId
+// Gộp 4 nguồn giọng: Chirp3-HD (Google) + giọng đặc biệt ElevenLabs + giọng Studio
+// (Google Cloud TTS cao cấp, chỉ tiếng Anh) + giọng Gemini (CHỈ dùng cho đọc truyện, xem
+// packages/core-ai/geminiTts.ts).
+export type AnyVoiceId = VoiceId | ElevenVoiceId | StudioVoiceId | GeminiVoiceId
 
 // Free: 4 giọng (2 nữ Kore/Aoede + 2 nam Puck/Charon) — đều nằm trong DEFAULT_SEED_VOICE_IDS
 // nên đã seed sẵn, phát ngay, KHÔNG phát sinh chi phí tạo audio động.
@@ -26,10 +28,14 @@ export type AnyVoiceId = VoiceId | ElevenVoiceId | StudioVoiceId
 // giá $24/1 triệu ký tự và KHÔNG có hạn mức miễn phí hàng tháng, trong khi Chirp3-HD chỉ $2
 // và có 1 triệu ký tự miễn phí — đắt gấp 12 lần. Giữ Studio cho riêng VIP vừa chặn rủi ro chi
 // phí ở gói rẻ, vừa tạo lý do thật để nâng cấp lên VIP.
+// Giọng Gemini (đọc truyện) mở cho Pro + VIP — cùng bậc với các giọng Chirp3-HD "cao cấp"
+// (Leda/Orus...) mà STORY_KIND_VOICE vẫn dùng cho các thể loại đó từ trước, giữ nhất quán:
+// gói Free đọc truyện vẫn được (server tự hạ về DEFAULT_VOICE nếu voice ngoài quyền, xem
+// clampVoiceToPlan bên dưới), chỉ không có giọng đọc truyền cảm riêng theo thể loại.
 const VOICE_TIERS: Record<Plan, AnyVoiceId[]> = {
   free: ['Kore', 'Aoede', 'Puck', 'Charon'],
-  pro: [...DEFAULT_SEED_VOICE_IDS],
-  vip: [...VOICE_IDS, ...ELEVEN_VOICE_IDS, ...STUDIO_VOICE_IDS],
+  pro: [...DEFAULT_SEED_VOICE_IDS, ...GEMINI_VOICE_IDS],
+  vip: [...VOICE_IDS, ...ELEVEN_VOICE_IDS, ...STUDIO_VOICE_IDS, ...GEMINI_VOICE_IDS],
 }
 
 async function getAllowedVoices(plan: Plan, now: Date): Promise<AnyVoiceId[]> {

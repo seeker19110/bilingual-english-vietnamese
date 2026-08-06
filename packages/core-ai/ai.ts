@@ -169,7 +169,8 @@ export default async function handler(req: Request): Promise<Response> {
     )
   }
 
-  // Chọn nhà cung cấp AI: ưu tiên Gemini → Groq → Anthropic
+  // Chọn nhà cung cấp AI: ưu tiên Groq → Anthropic → Gemini (đổi thứ tự 2026-08-06 — Gemini
+  // xuống cuối, xem PROGRESS.md).
   // Cần ít nhất một trong ba key.
   const geminiKey = process.env.GEMINI_API_KEY
   const groqKey = process.env.GROQ_API_KEY
@@ -227,53 +228,18 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: { message: gate.message } }, 429, allHeaders)
   }
 
-  // ── Nhánh Gemini (ưu tiên — FREE quota, kết quả tốt) ─────────────────────────
-  if (geminiKey) {
-    // Log bắt đầu/kết thúc mỗi lần gọi thật (kể cả thành công) — trước đây chỉ log
-    // lúc bị chặn (401/429), nên khi Gemini/Groq chạy chậm hoặc treo giữa chừng thì
-    // không có dòng nào để tra — không suy luận được request có tới server hay không.
-    const startedAt = Date.now()
-    log.debug(`gọi Gemini bắt đầu, mode=${mode}`)
-    try {
-      const geminiText = await withConcurrencyLimit('gemini', () =>
-        callGemini(
-          geminiKey,
-          GEMINI_CHAT_MODEL,
-          system,
-          sanitizedMessages as Array<{ role: 'user' | 'assistant'; content: string }>,
-          maxTokens,
-        ),
-      )
-      log.debug(`Gemini xong sau ${Date.now() - startedAt}ms`)
-      // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc
-      return jsonResponse({ content: [{ type: 'text', text: geminiText }] }, 200, allHeaders)
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : String(err)
-      log.warn(`Gemini lỗi sau ${Date.now() - startedAt}ms: ${errMsg}`)
-      // Còn Groq/Anthropic dự phòng → thử tiếp thay vì báo lỗi ngay (vd Gemini hết quota
-      // free nhưng Groq vẫn dùng được). Chỉ hoàn lượt + trả lỗi nếu KHÔNG còn provider nào khác.
-      if (!groqKey && !anthropicKey) {
-        await refundUsage(authResult.userId, mode)
-        // Lỗi timeout (AbortController) → 504, còn lại 502 (lỗi từ nhà cung cấp), không phải 500 của ta.
-        const isTimeout = /Hết thời gian chờ/.test(errMsg)
-        return jsonResponse(
-          { error: { message: `Gemini lỗi: ${errMsg.slice(0, 200)}` } },
-          isTimeout ? 504 : 502,
-          allHeaders,
-        )
-      }
-      log.warn('Gemini lỗi — chuyển sang provider dự phòng (Groq/Anthropic)')
-    }
-  }
-
-  // ── Nhánh Groq (FREE, API tương thích chuẩn OpenAI) ────────────────────────
+  // ── Nhánh Groq (ưu tiên — FREE, API tương thích chuẩn OpenAI) ───────────────
   if (groqKey) {
+    // Còn Anthropic/Gemini dự phòng → lỗi thì thử tiếp thay vì báo lỗi ngay. Khi KHÔNG còn
+    // provider nào khác, giữ NGUYÊN status/hành vi gốc (trước đây Groq luôn là nhánh cuối).
+    const canFallback = Boolean(anthropicKey || geminiKey)
+
     // Groq nhận system như 1 message role="system" ở đầu danh sách
     const groqMessages = [
       ...(system ? [{ role: 'system', content: system }] : []),
       ...sanitizedMessages,
     ]
-    let groqResp: Response
+    let groqResp: Response | undefined
     const groqStartedAt = Date.now()
     log.debug(`gọi Groq bắt đầu, mode=${mode}`)
     try {
@@ -295,82 +261,147 @@ export default async function handler(req: Request): Promise<Response> {
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
       log.warn(`Groq lỗi sau ${Date.now() - groqStartedAt}ms: ${errMsg}`)
-      await refundUsage(authResult.userId, mode)
-      return jsonResponse(
-        { error: { message: `Groq lỗi: ${errMsg.slice(0, 200)}` } },
-        504,
-        allHeaders,
-      )
-    }
-    log.debug(`Groq phản hồi sau ${Date.now() - groqStartedAt}ms, status=${groqResp.status}`)
-
-    if (!groqResp.ok) {
-      const detail = await groqResp.text().catch(() => '')
-      await refundUsage(authResult.userId, mode)
-      return jsonResponse(
-        { error: { message: `Groq lỗi (${groqResp.status}): ${detail.slice(0, 200)}` } },
-        groqResp.status,
-        allHeaders,
-      )
+      if (!canFallback) {
+        await refundUsage(authResult.userId, mode)
+        return jsonResponse(
+          { error: { message: `Groq lỗi: ${errMsg.slice(0, 200)}` } },
+          504,
+          allHeaders,
+        )
+      }
+      log.warn('Groq lỗi — chuyển sang provider dự phòng (Anthropic/Gemini)')
     }
 
-    // Parse + kiểm tra cấu trúc trong try/catch: nếu Groq trả 200 nhưng body hỏng
-    // (không phải JSON / thiếu field), người dùng KHÔNG nhận được câu trả lời →
-    // phải hoàn lượt giống các nhánh lỗi khác (trước đây các nhánh này quên hoàn).
-    let text: string
-    try {
-      text = parseGroqText(await groqResp.json())
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : String(err)
-      await refundUsage(authResult.userId, mode)
-      return jsonResponse({ error: { message: errMsg } }, 500, allHeaders)
+    if (groqResp) {
+      log.debug(`Groq phản hồi sau ${Date.now() - groqStartedAt}ms, status=${groqResp.status}`)
+
+      if (!groqResp.ok) {
+        const detail = await groqResp.text().catch(() => '')
+        if (!canFallback) {
+          await refundUsage(authResult.userId, mode)
+          return jsonResponse(
+            { error: { message: `Groq lỗi (${groqResp.status}): ${detail.slice(0, 200)}` } },
+            groqResp.status,
+            allHeaders,
+          )
+        }
+        log.warn('Groq lỗi — chuyển sang provider dự phòng (Anthropic/Gemini)')
+      } else {
+        // Parse + kiểm tra cấu trúc trong try/catch: nếu Groq trả 200 nhưng body hỏng
+        // (không phải JSON / thiếu field), người dùng KHÔNG nhận được câu trả lời →
+        // phải hoàn lượt giống các nhánh lỗi khác.
+        try {
+          // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc:
+          // data.content[0].text
+          const text = parseGroqText(await groqResp.json())
+          return jsonResponse({ content: [{ type: 'text', text }] }, 200, allHeaders)
+        } catch (err) {
+          const errMsg = err instanceof Error ? err.message : String(err)
+          if (!canFallback) {
+            await refundUsage(authResult.userId, mode)
+            return jsonResponse({ error: { message: errMsg } }, 500, allHeaders)
+          }
+          log.warn(
+            `Groq trả body hỏng (${errMsg}) — chuyển sang provider dự phòng (Anthropic/Gemini)`,
+          )
+        }
+      }
     }
-    // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc: data.content[0].text
-    return jsonResponse({ content: [{ type: 'text', text }] }, 200, allHeaders)
   }
 
   // ── Nhánh Anthropic (chất lượng cao — cần credit) ────────────────────────
-  const safeBody = {
-    model: ALLOWED_MODEL,
-    max_tokens: maxTokens,
-    system,
-    messages: sanitizedMessages,
+  if (anthropicKey) {
+    // Còn Gemini dự phòng → lỗi thì thử tiếp. Không còn thì giữ NGUYÊN hành vi gốc (trước đây
+    // Anthropic luôn là nhánh cuối): forward thẳng status/body từ Anthropic, không bọc JSON.
+    const canFallback = Boolean(geminiKey)
+
+    const safeBody = {
+      model: ALLOWED_MODEL,
+      max_tokens: maxTokens,
+      system,
+      messages: sanitizedMessages,
+    }
+
+    let resp: Response | undefined
+    const anthropicStartedAt = Date.now()
+    log.debug(`gọi Anthropic bắt đầu, mode=${mode}`)
+    try {
+      resp = await withConcurrencyLimit('anthropic', () =>
+        fetchWithTimeout(
+          'https://api.anthropic.com/v1/messages',
+          {
+            method: 'POST',
+            headers: {
+              'x-api-key': anthropicKey,
+              'anthropic-version': '2023-06-01',
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify(safeBody),
+          },
+          AI_TIMEOUT_MS,
+        ),
+      )
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err)
+      log.warn(`Anthropic lỗi sau ${Date.now() - anthropicStartedAt}ms: ${errMsg}`)
+      if (!canFallback) {
+        await refundUsage(authResult.userId, mode)
+        return jsonResponse(
+          { error: { message: `Anthropic lỗi: ${errMsg.slice(0, 200)}` } },
+          504,
+          allHeaders,
+        )
+      }
+      log.warn('Anthropic lỗi — chuyển sang provider dự phòng (Gemini)')
+    }
+
+    if (resp) {
+      log.debug(
+        `Anthropic phản hồi sau ${Date.now() - anthropicStartedAt}ms, status=${resp.status}`,
+      )
+
+      if (!resp.ok && canFallback) {
+        log.warn(`Anthropic trả lỗi (${resp.status}) — chuyển sang provider dự phòng (Gemini)`)
+      } else {
+        // Thành công HOẶC không còn provider dự phòng → forward thẳng status/body gốc, giữ
+        // đúng hành vi cũ (kể cả lỗi 4xx/5xx của Anthropic, không bọc lại thành JSON riêng).
+        if (!resp.ok) await refundUsage(authResult.userId, mode)
+        const data = await resp.text()
+        return new Response(data, {
+          status: resp.status,
+          headers: { 'content-type': 'application/json', ...allHeaders },
+        })
+      }
+    }
   }
 
-  let resp: Response
+  // ── Nhánh Gemini (cuối cùng — chỉ dùng khi Groq/Anthropic không có key hoặc đều lỗi)
+  const geminiStartedAt = Date.now()
+  log.debug(`gọi Gemini bắt đầu, mode=${mode}`)
   try {
-    resp = await withConcurrencyLimit('anthropic', () =>
-      fetchWithTimeout(
-        'https://api.anthropic.com/v1/messages',
-        {
-          method: 'POST',
-          headers: {
-            'x-api-key': anthropicKey as string,
-            'anthropic-version': '2023-06-01',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify(safeBody),
-        },
-        AI_TIMEOUT_MS,
+    const geminiText = await withConcurrencyLimit('gemini', () =>
+      callGemini(
+        geminiKey as string,
+        GEMINI_CHAT_MODEL,
+        system,
+        sanitizedMessages as Array<{ role: 'user' | 'assistant'; content: string }>,
+        maxTokens,
       ),
     )
+    log.debug(`Gemini xong sau ${Date.now() - geminiStartedAt}ms`)
+    return jsonResponse({ content: [{ type: 'text', text: geminiText }] }, 200, allHeaders)
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err)
+    log.warn(`Gemini lỗi sau ${Date.now() - geminiStartedAt}ms: ${errMsg}`)
     await refundUsage(authResult.userId, mode)
+    // Lỗi timeout (AbortController) → 504, còn lại 502 (lỗi từ nhà cung cấp), không phải 500 của ta.
+    const isTimeout = /Hết thời gian chờ/.test(errMsg)
     return jsonResponse(
-      { error: { message: `Anthropic lỗi: ${errMsg.slice(0, 200)}` } },
-      504,
+      { error: { message: `Gemini lỗi: ${errMsg.slice(0, 200)}` } },
+      isTimeout ? 504 : 502,
       allHeaders,
     )
   }
-
-  // Anthropic trả lỗi (4xx/5xx) → người dùng không có câu trả lời: hoàn lại lượt vừa trừ.
-  if (!resp.ok) await refundUsage(authResult.userId, mode)
-  const data = await resp.text()
-  return new Response(data, {
-    status: resp.status,
-    headers: { 'content-type': 'application/json', ...allHeaders },
-  })
 }
 
 // Dùng Edge Runtime — nhẹ, khởi động nhanh, đủ cho việc proxy 1 request
