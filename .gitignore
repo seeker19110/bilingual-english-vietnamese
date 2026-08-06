@@ -42,6 +42,8 @@ src/data/dictionary.backup.json
 !.claude/report-status.sh
 !.claude/agents
 !.claude/agents/*.md
+!.claude/hooks
+!.claude/hooks/*.sh
 
 # File cũ đã xóa khỏi project, giữ tạm trên đĩa do hạn chế của sandbox — không commit
 .trash/
