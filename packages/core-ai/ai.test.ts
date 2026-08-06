@@ -188,43 +188,67 @@ describe('handler /api/agent — nhánh Groq và hoàn lượt', () => {
 
 // Gemini lỗi (vd hết quota free) nhưng vẫn còn Groq dự phòng → phải tự chuyển sang Groq
 // thay vì báo lỗi ngay cho người dùng, KHÔNG hoàn lượt 2 lần (chỉ hoàn khi cả hai đều fail).
-describe('handler /api/agent — Gemini lỗi tự chuyển sang Groq dự phòng', () => {
+// Thứ tự ưu tiên (đổi 2026-08-06): Groq → Anthropic → Gemini (Gemini xuống cuối, xem
+// PROGRESS.md). Nhánh nào lỗi mà còn provider dự phòng thì tự rơi xuống nhánh kế tiếp.
+describe('handler /api/agent — Groq lỗi tự chuyển sang Gemini dự phòng', () => {
   beforeEach(() => {
     process.env.GEMINI_API_KEY = 'gemini-test-key'
-    // GROQ_API_KEY đã set 'groq-test-key' ở beforeEach ngoài cùng — giữ nguyên làm dự phòng.
+    // GROQ_API_KEY đã set 'groq-test-key' ở beforeEach ngoài cùng — Groq vẫn được thử TRƯỚC.
   })
 
-  it('Gemini 429 (hết quota), Groq trả lời hợp lệ → 200 từ Groq, KHÔNG hoàn lượt', async () => {
-    mockedGemini.mockRejectedValueOnce(new Error('Gemini API error (429): quota exceeded'))
-    mockedFetch.mockResolvedValueOnce(
-      new Response(JSON.stringify({ choices: [{ message: { content: 'Từ Groq' } }] }), {
-        status: 200,
-      }),
-    )
+  it('Groq lỗi mạng (fetch ném lỗi), còn Gemini dự phòng → 200 từ Gemini, KHÔNG hoàn lượt', async () => {
+    mockedFetch.mockRejectedValueOnce(new Error('network down'))
+    mockedGemini.mockResolvedValueOnce('Từ Gemini')
     const res = await handler(makeRequest())
     expect(res.status).toBe(200)
     const data = (await res.json()) as { content: Array<{ text: string }> }
-    expect(data.content[0]?.text).toBe('Từ Groq')
-    expect(mockedFetch).toHaveBeenCalledTimes(1)
+    expect(data.content[0]?.text).toBe('Từ Gemini')
     expect(mockedRefund).not.toHaveBeenCalled()
   })
 
-  it('Gemini lỗi VÀ Groq cũng lỗi → hoàn lượt đúng 1 lần (không double refund)', async () => {
-    mockedGemini.mockRejectedValueOnce(new Error('Gemini API error (429): quota exceeded'))
+  it('Groq lỗi HTTP (500), Gemini trả lời hợp lệ → 200 từ Gemini, KHÔNG hoàn lượt', async () => {
     mockedFetch.mockResolvedValueOnce(new Response('boom', { status: 500 }))
+    mockedGemini.mockResolvedValueOnce('Từ Gemini')
     const res = await handler(makeRequest())
-    expect(res.status).toBe(500)
-    expect(mockedRefund).toHaveBeenCalledTimes(1)
+    expect(res.status).toBe(200)
+    const data = (await res.json()) as { content: Array<{ text: string }> }
+    expect(data.content[0]?.text).toBe('Từ Gemini')
+    expect(mockedGemini).toHaveBeenCalledTimes(1)
+    expect(mockedRefund).not.toHaveBeenCalled()
   })
 
-  it('Gemini lỗi, KHÔNG có Groq/Anthropic dự phòng → báo lỗi Gemini ngay, hoàn lượt', async () => {
-    delete process.env.GROQ_API_KEY
+  it('Groq lỗi VÀ Gemini cũng lỗi → hoàn lượt đúng 1 lần (không double refund)', async () => {
+    mockedFetch.mockResolvedValueOnce(new Response('boom', { status: 500 }))
     mockedGemini.mockRejectedValueOnce(new Error('Gemini API error (429): quota exceeded'))
     const res = await handler(makeRequest())
     expect(res.status).toBe(502)
     const data = (await res.json()) as { error: { message: string } }
     expect(data.error.message).toMatch(/Gemini lỗi/)
     expect(mockedRefund).toHaveBeenCalledTimes(1)
+  })
+
+  it('Groq 200 nhưng body hỏng (thiếu choices), Gemini fallback thành công → 200', async () => {
+    mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify({}), { status: 200 }))
+    mockedGemini.mockResolvedValueOnce('Từ Gemini')
+    const res = await handler(makeRequest())
+    expect(res.status).toBe(200)
+    const data = (await res.json()) as { content: Array<{ text: string }> }
+    expect(data.content[0]?.text).toBe('Từ Gemini')
+    expect(mockedRefund).not.toHaveBeenCalled()
+  })
+
+  it('Groq lỗi, Anthropic cũng lỗi, Gemini fallback cuối cùng thành công → 200', async () => {
+    process.env.ANTHROPIC_API_KEY = 'anthropic-test-key'
+    mockedFetch
+      .mockResolvedValueOnce(new Response('boom', { status: 500 })) // Groq
+      .mockResolvedValueOnce(new Response('boom', { status: 500 })) // Anthropic
+    mockedGemini.mockResolvedValueOnce('Từ Gemini')
+    const res = await handler(makeRequest())
+    expect(res.status).toBe(200)
+    const data = (await res.json()) as { content: Array<{ text: string }> }
+    expect(data.content[0]?.text).toBe('Từ Gemini')
+    expect(mockedFetch).toHaveBeenCalledTimes(2)
+    expect(mockedRefund).not.toHaveBeenCalled()
   })
 })
 
@@ -366,5 +390,23 @@ describe('handler /api/agent — nhánh Anthropic (không có Gemini/Groq)', () 
     const res = await handler(makeRequest())
     expect(res.status).toBe(504)
     expect(mockedRefund).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('handler /api/agent — Anthropic lỗi tự chuyển sang Gemini dự phòng (không có Groq)', () => {
+  beforeEach(() => {
+    delete process.env.GROQ_API_KEY
+    process.env.ANTHROPIC_API_KEY = 'anthropic-test-key'
+    process.env.GEMINI_API_KEY = 'gemini-test-key'
+  })
+
+  it('Anthropic lỗi mạng, Gemini fallback thành công → 200, KHÔNG hoàn lượt', async () => {
+    mockedFetch.mockRejectedValue(new Error('Hết thời gian chờ (quá 30s)'))
+    mockedGemini.mockResolvedValueOnce('Từ Gemini')
+    const res = await handler(makeRequest())
+    expect(res.status).toBe(200)
+    const data = (await res.json()) as { content: Array<{ text: string }> }
+    expect(data.content[0]?.text).toBe('Từ Gemini')
+    expect(mockedRefund).not.toHaveBeenCalled()
   })
 })

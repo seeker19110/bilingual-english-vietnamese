@@ -17,6 +17,29 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Gemini TTS cho trang đọc truyện + đổi thứ tự ưu tiên AI chat (2026-08-06)
+
+- **Giọng Gemini TTS riêng cho truyện cổ tích/ngụ ngôn** (`/stories`, `/stories/:id`): thêm
+  provider mới `packages/core-ai/geminiTts.ts` (khác hẳn Google Cloud TTS Chirp3-HD đang dùng
+  cho phần còn lại của app) — dùng `GEMINI_API_KEY` đã có sẵn, model TTS chuyên dụng cấu hình
+  qua `GEMINI_TTS_MODEL` (mặc định `gemini-2.5-flash-preview-tts`, KHÔNG dùng chung
+  `GEMINI_MODEL` của chat vì model chat thường không hỗ trợ audio). Điều khiển phong cách đọc
+  bằng câu lệnh tự nhiên ngay trong prompt (mỗi thể loại 1 giọng + 1 phong cách cố định, dặn
+  model tự biến hoá cảm xúc theo nội dung từng câu) — đọc truyền cảm hơn Chirp3-HD. Gemini trả
+  PCM thô → tự đóng gói WAV (`geminiTts.ts`), client phát đúng qua `blobMimeTypeForVoice()`
+  (`apps/english/src/lib/tts.ts`). `STORY_KIND_VOICE` (`apps/english/src/lib/stories.ts`) đổi
+  từ giọng Chirp3-HD sang 6 giọng Gemini theo thể loại. Gắn đầy đủ vào `/api/tts` (như
+  ElevenLabs) nên vẫn tự tạo audio động nếu chưa seed. Seed trước: `npm run
+seed:stories:gemini` (script riêng `scripts/seed-stories-gemini-tts.ts` — tách khỏi
+  `seed-all.ts` vì lược đồ Google-only ở đó không áp dụng). Gói Free tạm không có giọng Gemini
+  riêng cho truyện (clamp về `DEFAULT_VOICE` như các giọng "cao cấp" khác — hành vi có sẵn từ
+  trước, không phải thay đổi mới).
+- **Đổi thứ tự ưu tiên provider AI chat** (`packages/core-ai/ai.ts`, `/api/agent`): từ
+  Gemini → Groq → Anthropic thành **Groq → Anthropic → Gemini** (Gemini xuống cuối). Giữ
+  nguyên cơ chế fallback (lỗi ở 1 nhánh mà còn provider dự phòng thì tự chuyển tiếp, chỉ hoàn
+  lượt dùng khi KHÔNG còn provider nào khác) và giữ nguyên status/hành vi gốc của từng
+  provider khi nó là nhánh cuối cùng (vd Anthropic forward thẳng status/body, không bọc JSON).
+
 ### Nâng cấp Hệ thống & Tích hợp AgentMemory (2026-08-04 → 2026-08-05)
 
 1. **Email Nhắc học Thông minh & Preconnect Domains (2026-08-04)**:

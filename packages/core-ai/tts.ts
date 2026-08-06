@@ -35,6 +35,7 @@ import {
   type VoiceId,
 } from '../../api/_lib/googleTts.js'
 import { generateAudioFromElevenLabs, isValidElevenVoice } from './elevenLabsTts.js'
+import { generateAudioFromGemini, isValidGeminiVoice } from './geminiTts.js'
 import { visemeTimelineFromAlignment, type VisemeFrame } from '../../api/_lib/visemeTimeline.js'
 import { ensureProfileRow } from '../core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from '../../api/_lib/voiceAccess.js'
@@ -160,7 +161,8 @@ const TtsBodySchema = z.object({
     .optional()
     .transform((v) => (v ? v : DEFAULT_VOICE))
     .refine(
-      (v): v is AnyVoiceId => isValidVoice(v) || isValidElevenVoice(v) || isValidStudioVoice(v),
+      (v): v is AnyVoiceId =>
+        isValidVoice(v) || isValidElevenVoice(v) || isValidStudioVoice(v) || isValidGeminiVoice(v),
       {
         error: (ctx) => `voice không hợp lệ: ${ctx.input}`,
       },
@@ -343,9 +345,11 @@ export default async function handler(req: Request): Promise<Response> {
     // vẫn là Google Cloud TTS nhưng lang luôn 'en-US' (đã clamp ở trên).
     const providerLabel = isValidElevenVoice(voice)
       ? 'ElevenLabs'
-      : isValidStudioVoice(voice)
-        ? 'Google Studio'
-        : 'Google'
+      : isValidGeminiVoice(voice)
+        ? 'Gemini'
+        : isValidStudioVoice(voice)
+          ? 'Google Studio'
+          : 'Google'
 
     let audioData: ArrayBuffer
     // Timeline khẩu hình THẬT — chỉ có với giọng ElevenLabs (endpoint /with-timestamps trả mốc
@@ -368,6 +372,10 @@ export default async function handler(req: Request): Promise<Response> {
             },
           )
         }
+      } else if (isValidGeminiVoice(voice)) {
+        audioData = await withConcurrencyLimit('gemini-tts', () =>
+          generateAudioFromGemini(text, voice),
+        )
       } else if (isValidStudioVoice(voice)) {
         audioData = await withConcurrencyLimit('google-tts-studio', () =>
           generateStudioAudioFromGoogle(text, voice),
@@ -404,7 +412,12 @@ export default async function handler(req: Request): Promise<Response> {
     // encryptAudio() cho mỗi hash — không còn 2 request đồng thời mã hoá 2 audio bytes khác
     // nhau bằng cùng 1 (khoá, iv) suy ra từ hash.
     const encryptedData = await encryptAudio(audioData, textHash)
-    const fileName = `${lang}/${voice}/${textHash}.mp3`
+    // Giọng Gemini trả WAV thật (không phải mp3 như các provider khác — xem geminiTts.ts),
+    // đặt đúng đuôi file cho dễ debug; nội dung đã bị mã hoá nên đuôi file không ảnh hưởng
+    // việc phát (client tự khai mimeType đúng khi tạo Blob, xem blobMimeTypeForVoice() phía
+    // apps/english/src/lib/tts.ts).
+    const ext = isValidGeminiVoice(voice) ? 'wav' : 'mp3'
+    const fileName = `${lang}/${voice}/${textHash}.${ext}`
     const origin = req.headers.get('origin') || ''
 
     let audioUrl: string

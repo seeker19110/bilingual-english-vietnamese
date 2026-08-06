@@ -7,20 +7,21 @@ import type { VoiceId } from './voiceTiers'
 // Số giây ước lượng cho mỗi câu khi nghe (mục 6.4 đặc tả).
 const SECONDS_PER_LINE = 4
 
-// Giọng đọc mặc định theo thể loại truyện (chốt 2026-08-06) — mỗi thể loại 1 giọng CỐ ĐỊNH,
-// không dùng getVoicePref() (giọng chung toàn app) nữa khi đọc truyện, để không khí đọc hợp
-// với nội dung (cổ tích nhẹ nhàng, thần thoại có lực, hài hước vui tươi...). Chỉ dùng 6 trong
-// 14 giọng Chirp3-HD (không Studio/ElevenLabs — 2 giọng đó không nằm trong seed mặc định của
-// scripts/seed-all.ts, seed truyện sẽ tốn thêm phí cache-on-demand nếu dùng).
-// Dùng CHUNG cho cả runtime (StoryReader.tsx) lẫn scripts/seed-all.ts (pre-cache) — đổi ở đây
-// là đổi cho cả hai chỗ.
+// Giọng đọc mặc định theo thể loại truyện (đổi sang giọng Gemini 2026-08-06) — mỗi thể loại
+// 1 giọng CỐ ĐỊNH, không dùng getVoicePref() (giọng chung toàn app) nữa khi đọc truyện. Từ
+// dùng Chirp3-HD (Google Cloud TTS) chuyển sang giọng Gemini (native audio, đọc TRUYỀN CẢM
+// hơn nhờ điều khiển được phong cách đọc bằng câu lệnh tự nhiên — xem
+// packages/core-ai/geminiTts.ts) để hợp không khí từng thể loại (cổ tích nhẹ nhàng, thần
+// thoại hùng tráng, hài hước dí dỏm...). Seed trước qua scripts/seed-stories-gemini-tts.ts;
+// nếu chưa seed kịp truyện mới, /api/tts vẫn tự tạo động (cache-on-demand) khi có người đọc.
+// Dùng CHUNG cho cả runtime (StoryReader.tsx) lẫn script seed — đổi ở đây là đổi cho cả hai.
 export const STORY_KIND_VOICE: Record<StoryKind, VoiceId> = {
-  'fairy-tale': 'Leda',
-  fable: 'Charon',
-  'vn-folk': 'Aoede',
-  myth: 'Orus',
-  humor: 'Puck',
-  children: 'Kore',
+  'fairy-tale': 'Gemini-Leda',
+  fable: 'Gemini-Charon',
+  'vn-folk': 'Gemini-Aoede',
+  myth: 'Gemini-Orus',
+  humor: 'Gemini-Puck',
+  children: 'Gemini-Kore',
 }
 
 export function getStoryVoice(kind: StoryKind): VoiceId {
