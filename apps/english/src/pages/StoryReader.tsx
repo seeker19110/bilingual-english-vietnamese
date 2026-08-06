@@ -46,8 +46,10 @@ export default function StoryReader() {
   // Giọng cố định theo thể loại truyện (không dùng giọng chung toàn app nữa — xem lib/stories.ts)
   const storyVoice = story ? getStoryVoice(story.kind) : undefined
 
-  // ── Phát tất cả — tuần tự từng câu, tự cuộn tới câu đang đọc ────────────────
+  // ── Phát tất cả — 2 nguồn phát riêng biệt (tiếng Việt / tiếng Anh), tuần tự
+  // từng câu, tự cuộn tới câu đang đọc. Chọn được đọc bản gốc hay bản dịch.
   const [playing, setPlaying] = useState(false)
+  const [playLang, setPlayLang] = useState<'vi' | 'en' | null>(null)
   const [paused, setPaused] = useState(false)
   const [activeIdx, setActiveIdx] = useState<number | null>(null)
   const [wordIdx, setWordIdx] = useState<number | null>(null)
@@ -63,15 +65,16 @@ export default function StoryReader() {
     [],
   )
 
-  async function playAll() {
-    if (flatLines.length === 0) return
+  async function playAll(lang: 'vi' | 'en') {
+    if (flatLines.length === 0 || playing) return
     unlockAudio()
     stopRef.current = false
     pauseRef.current = false
     setPlaying(true)
+    setPlayLang(lang)
     setPaused(false)
 
-    const lang = isA ? 'en-US' : 'vi-VN'
+    const bcp47 = lang === 'en' ? 'en-US' : 'vi-VN'
     for (let i = 0; i < flatLines.length; i++) {
       if (stopRef.current) break
       while (pauseRef.current && !stopRef.current) await new Promise((r) => setTimeout(r, 100))
@@ -83,12 +86,15 @@ export default function StoryReader() {
       setWordIdx(null)
       lineRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
-      await speak(isA ? ln.en : ln.vi, lang, storyVoice, undefined, (wi) => setWordIdx(wi))
+      await speak(lang === 'en' ? ln.en : ln.vi, bcp47, storyVoice, undefined, (wi) =>
+        setWordIdx(wi),
+      )
       if (!stopRef.current) await new Promise((r) => setTimeout(r, 300))
     }
 
     stopRef.current = false
     setPlaying(false)
+    setPlayLang(null)
     setPaused(false)
     setActiveIdx(null)
     setWordIdx(null)
@@ -108,6 +114,7 @@ export default function StoryReader() {
     stopRef.current = true
     stopSpeaking()
     setPlaying(false)
+    setPlayLang(null)
     setPaused(false)
     setActiveIdx(null)
     setWordIdx(null)
@@ -174,17 +181,30 @@ export default function StoryReader() {
           {story.source.vi}
         </p>
 
-        {/* Thanh điều khiển: Phát tất cả / Tạm dừng / Dừng + nút hiện bản dịch */}
-        <div className="flex items-center gap-2 mb-5">
-          {!playing ? (
+        {/* Thanh điều khiển: 2 nguồn phát riêng (tiếng Việt / tiếng Anh) / Tạm dừng / Dừng + nút hiện bản dịch */}
+        <div className="flex flex-wrap items-center gap-2 mb-5">
+          {!playing || playLang === 'vi' ? (
             <button
-              onClick={playAll}
-              className="tap-44 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
+              onClick={() => (playing ? undefined : playAll('vi'))}
+              disabled={playing && playLang !== 'vi'}
+              className="tap-44 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition disabled:opacity-40"
             >
               <Play className="w-4 h-4 fill-current" />
-              {T.playWholeStory}
+              {T.playStoryVi}
             </button>
-          ) : (
+          ) : null}
+          {!playing || playLang === 'en' ? (
+            <button
+              onClick={() => (playing ? undefined : playAll('en'))}
+              disabled={playing && playLang !== 'en'}
+              className="tap-44 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition disabled:opacity-40"
+            >
+              <Play className="w-4 h-4 fill-current" />
+              {T.playStoryEn}
+            </button>
+          ) : null}
+
+          {playing && (
             <>
               <button
                 onClick={paused ? handleResume : handlePause}
@@ -238,15 +258,24 @@ export default function StoryReader() {
                       textClass="text-[15px] leading-relaxed text-zinc-100"
                       buttonClass="w-full px-2 py-1.5 rounded-lg hover:bg-zinc-900/60"
                       externalState={
-                        playing
+                        playing && playLang === (isA ? 'en' : 'vi')
                           ? { playing: isActive, wordIdx: isActive ? wordIdx : null }
                           : undefined
                       }
                     />
                     {showTranslation && (
-                      <p className={`text-sm text-zinc-400 ${KARAOKE_INDENT}`}>
-                        {isA ? ln.vi : ln.en}
-                      </p>
+                      <KaraokeText
+                        text={isA ? ln.vi : ln.en}
+                        lang={isA ? 'vi-VN' : 'en-US'}
+                        voice={storyVoice}
+                        textClass={`text-sm text-zinc-400 ${KARAOKE_INDENT}`}
+                        buttonClass="w-full px-2 py-1 rounded-lg hover:bg-zinc-900/60"
+                        externalState={
+                          playing && playLang === (isA ? 'vi' : 'en')
+                            ? { playing: isActive, wordIdx: isActive ? wordIdx : null }
+                            : undefined
+                        }
+                      />
                     )}
                   </div>
                 )
@@ -269,9 +298,13 @@ export default function StoryReader() {
               textClass="text-sm text-zinc-200 leading-relaxed"
             />
             {showTranslation && (
-              <p className={`text-xs text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>
-                {isA ? story.moralVi : story.moralEn}
-              </p>
+              <KaraokeText
+                text={isA ? story.moralVi : story.moralEn}
+                lang={isA ? 'vi-VN' : 'en-US'}
+                voice={storyVoice}
+                textClass={`text-xs text-zinc-400 mt-1 ${KARAOKE_INDENT}`}
+                buttonClass="w-full px-2 py-1 rounded-lg hover:bg-zinc-900/60"
+              />
             )}
           </div>
         )}
