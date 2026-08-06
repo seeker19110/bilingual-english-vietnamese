@@ -70,6 +70,7 @@ import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
   isValidStudioVoice,
+  isValidVoice,
   hasGoogleTtsKey,
   probeApiKeys,
   setActiveKeyPool,
@@ -88,6 +89,8 @@ import type { QueryResultRow } from 'pg'
 import { getPgPool } from '../packages/core-db/pgPool.ts'
 import { FOUNDATION } from '../apps/english/src/data/curriculum.ts'
 import { CHALLENGE_TOPICS } from '../apps/english/src/data/challengeTopics.ts'
+import { STORY_KIND_VOICE } from '../apps/english/src/lib/stories.ts'
+import type { StoryKind } from '../apps/english/src/data/stories/index.ts'
 import {
   loadSubjectsInDisplayOrder,
   loadPatternSeedIndex,
@@ -211,7 +214,14 @@ async function withDbRetry<T>(fn: () => Promise<T>, label: string): Promise<T> {
 
 // ── Nhóm (category) ─────────────────────────────────────────────────────────
 type CatId =
-  'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest' | 'challenge'
+  | 'pron'
+  | 'curriculum'
+  | 'cefr'
+  | 'lessons-early'
+  | 'patterns'
+  | 'lessons-rest'
+  | 'challenge'
+  | 'stories'
 
 // Thứ tự seed khi chạy --all (menu chọn riêng từng nhóm không phụ thuộc thứ tự này).
 // "Cụm từ" đặt CUỐI CÙNG vì số lượng lớn nhất (~313k câu) — ưu tiên seed xong các nhóm
@@ -224,6 +234,7 @@ const CATEGORIES: { id: CatId; label: string }[] = [
   { id: 'lessons-early', label: 'Hội thoại 50 bài đầu (Luyện nói)' },
   { id: 'lessons-rest', label: 'Hội thoại các bài còn lại' },
   { id: 'challenge', label: 'Câu mẫu Challenge 30 ngày' },
+  { id: 'stories', label: 'Truyện cổ tích/ngụ ngôn (trang Nghe)' },
   { id: 'patterns', label: 'Câu mẫu trang Cụm từ' },
 ]
 
@@ -501,6 +512,46 @@ function loadPatternTasks(): PatternTask[] {
   for (const t of CHALLENGE_TOPICS) {
     for (const s of t.sampleEn) add(s, 'en-US', 'challenge', PREF_VOICE_IDS_EN)
     for (const s of t.sampleVi) add(s, 'vi-VN', 'challenge', PREF_VOICE_IDS_FULL)
+  }
+
+  // ── Ưu tiên 7: truyện cổ tích/ngụ ngôn (trang /stories, /stories/:id) ────────
+  // Khác các nhóm trên: CHỈ 1 giọng/truyện (giọng cố định theo thể loại — xem
+  // STORY_KIND_VOICE trong apps/english/src/lib/stories.ts, dùng chung với StoryReader.tsx
+  // để runtime và cache khớp nhau), không seed nhiều biến thể giọng như curriculum/CEFR.
+  const storyDir = path.join(PROJECT_ROOT, 'public/data/stories')
+  if (fs.existsSync(storyDir)) {
+    const storyFiles = fs
+      .readdirSync(storyDir)
+      .filter((f) => f.endsWith('.json') && f !== 'index.json')
+    for (const file of storyFiles) {
+      const story = JSON.parse(fs.readFileSync(path.join(storyDir, file), 'utf8')) as {
+        kind: StoryKind
+        lines: { en: string; vi: string }[]
+        moralEn?: string
+        moralVi?: string
+      }
+      // STORY_KIND_VOICE (client, apps/english/src/lib/stories.ts) khai báo kiểu VoiceId RỘNG
+      // (gồm cả Rachel/Studio), nhưng cả 6 giá trị thật gán trong đó đều là tên Chirp3-HD hợp
+      // lệ — narrow bằng isValidVoice() (kiểm tra runtime) thay vì ép kiểu mù (as).
+      const rawVoice = STORY_KIND_VOICE[story.kind]
+      if (!isValidVoice(rawVoice)) {
+        console.warn(
+          `[seed-all] Giọng "${rawVoice}" (thể loại ${story.kind}) không hợp lệ — bỏ qua truyện ${file}.`,
+        )
+        continue
+      }
+      const voice = rawVoice
+      for (const line of story.lines) {
+        add(line.en, 'en-US', 'stories', [voice])
+        add(line.vi, 'vi-VN', 'stories', [voice])
+      }
+      if (story.moralEn) add(story.moralEn, 'en-US', 'stories', [voice])
+      if (story.moralVi) add(story.moralVi, 'vi-VN', 'stories', [voice])
+    }
+  } else {
+    console.warn(
+      `[seed-all] Chưa có ${storyDir} (chạy \`node scripts/gen-stories-json.mjs\` trước) — bỏ qua seed truyện.`,
+    )
   }
 
   return tasks
