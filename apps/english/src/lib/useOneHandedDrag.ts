@@ -11,7 +11,9 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } fr
 // cuộn trang gốc của trình duyệt nữa nên KHÔNG cần preventDefault() hay ngưỡng thời gian
 // như bản cũ.
 //
-// Đóng lại khi: vuốt lên lại ở dải trigger, hoặc không thao tác gì trong RETURN_DELAY_MS thì tự thu lại.
+// Đóng lại khi: vuốt lên lại ở dải trigger, hoặc không có thao tác vuốt/click/scroll nào
+// trên toàn trang trong RETURN_DELAY_MS liên tục thì tự thu lại (mỗi thao tác gia hạn lại
+// đồng hồ đếm từ đầu — xem effect lắng nghe pointerdown/scroll/wheel/touchmove bên dưới).
 const ACTIVATE_DISTANCE_PX = 12 // Vuốt xuống ở dải trigger đủ khoảng cách này là bật
 const OPEN_DURATION_MS = 220 // Thời gian trượt xuống khi bật
 const RETURN_DELAY_MS = 10_000 // Sau khi bật, chờ 10 giây rồi mới tự thu lại
@@ -55,6 +57,18 @@ export function useOneHandedDrag() {
   }
 
   useEffect(() => clearReturnTimer, [])
+
+  // Khi đang mở: đếm 10s CHỈ tính lúc không có thao tác nào (vuốt/click/scroll) —
+  // hễ có 1 trong các thao tác đó thì hẹn giờ tự thu được gia hạn lại từ đầu.
+  useEffect(() => {
+    if (!isOpenState) return
+    const resetTimer = () => scheduleReturn()
+    const events: Array<keyof WindowEventMap> = ['pointerdown', 'scroll', 'wheel', 'touchmove']
+    events.forEach((ev) => window.addEventListener(ev, resetTimer, { passive: true }))
+    return () => {
+      events.forEach((ev) => window.removeEventListener(ev, resetTimer))
+    }
+  }, [isOpenState])
 
   // Handlers gắn vào dải trigger mỏng ở mép dưới màn hình
   const onTriggerPointerDown = (e: PointerEvent) => {
