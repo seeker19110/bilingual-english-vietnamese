@@ -3,7 +3,12 @@
 // đóng gói WAV đúng (header 44 byte + đúng số byte PCM).
 
 import { describe, it, expect, afterEach, vi } from 'vitest'
-import { generateAudioFromGemini, isValidGeminiVoice, hasGeminiTtsKey } from './geminiTts'
+import {
+  generateAudioFromGemini,
+  isValidGeminiVoice,
+  hasGeminiTtsKey,
+  parseSampleRate as parseSampleRateForTest,
+} from './geminiTts'
 
 const OLD_KEY = process.env.GEMINI_API_KEY
 
@@ -49,6 +54,22 @@ describe('generateAudioFromGemini', () => {
       vi.fn(async () => new Response('quota exceeded', { status: 429 })),
     )
     await expect(generateAudioFromGemini('hello', 'Gemini-Kore')).rejects.toThrow(/429/)
+  })
+
+  it('HTTP 200 nhưng body có error.message (Gemini báo lỗi trong payload) → throw', async () => {
+    process.env.GEMINI_API_KEY = 'test-key'
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(JSON.stringify({ error: { message: 'invalid voice name' } }), {
+            status: 200,
+          }),
+      ),
+    )
+    await expect(generateAudioFromGemini('hello', 'Gemini-Kore')).rejects.toThrow(
+      /invalid voice name/,
+    )
   })
 
   it('response thiếu dữ liệu âm thanh → throw', async () => {
@@ -105,5 +126,87 @@ describe('generateAudioFromGemini', () => {
     expect(view.getUint32(24, true)).toBe(24000) // sample rate lấy từ mimeType
     expect(view.getUint16(34, true)).toBe(16) // bitsPerSample
     expect(new Uint8Array(wav, 44)).toEqual(new Uint8Array(pcmBytes))
+  })
+
+  it('mimeType thiếu "rate=" → mặc định sample rate 24000', async () => {
+    process.env.GEMINI_API_KEY = 'test-key'
+    const pcmBytes = Buffer.from([9, 9])
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              candidates: [
+                {
+                  content: {
+                    parts: [
+                      { inlineData: { mimeType: 'audio/L16', data: pcmBytes.toString('base64') } },
+                    ],
+                  },
+                },
+              ],
+            }),
+            { status: 200 },
+          ),
+      ),
+    )
+    const wav = await generateAudioFromGemini('hello', 'Gemini-Kore')
+    const view = new DataView(wav)
+    expect(view.getUint32(24, true)).toBe(24000)
+  })
+})
+
+describe('parseSampleRate (nội bộ)', () => {
+  it('mimeType undefined (hàm dùng nội bộ, TypeScript cho phép dù find() luôn lọc trước) → 24000', () => {
+    expect(parseSampleRateForTest(undefined)).toBe(24000)
+  })
+})
+
+// GEMINI_TTS_MODEL đọc từ process.env LÚC MODULE nạp (module-level const) — phải đặt biến
+// môi trường TRƯỚC rồi nạp lại module bằng vi.resetModules(), test module-scope thông thường
+// (import tĩnh ở đầu file) không thấy được nhánh này.
+describe('GEMINI_TTS_MODEL tuỳ chỉnh qua biến môi trường', () => {
+  const OLD_MODEL = process.env.GEMINI_TTS_MODEL
+
+  afterEach(() => {
+    if (OLD_MODEL === undefined) delete process.env.GEMINI_TTS_MODEL
+    else process.env.GEMINI_TTS_MODEL = OLD_MODEL
+    vi.resetModules()
+  })
+
+  it('dùng đúng model gửi trong GEMINI_TTS_MODEL thay vì mặc định', async () => {
+    process.env.GEMINI_API_KEY = 'test-key'
+    process.env.GEMINI_TTS_MODEL = 'gemini-2.5-pro-preview-tts'
+    vi.resetModules()
+    const { generateAudioFromGemini: freshGenerate } = await import('./geminiTts')
+
+    const pcmBytes = Buffer.from([1])
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) => {
+        expect(url).toContain('gemini-2.5-pro-preview-tts')
+        return new Response(
+          JSON.stringify({
+            candidates: [
+              {
+                content: {
+                  parts: [
+                    {
+                      inlineData: {
+                        mimeType: 'audio/L16;rate=24000',
+                        data: pcmBytes.toString('base64'),
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          }),
+          { status: 200 },
+        )
+      }),
+    )
+    await freshGenerate('hello', 'Gemini-Kore')
   })
 })

@@ -117,7 +117,10 @@ interface GeminiTtsResponse {
 // Gemini trả PCM thô (thường "audio/L16;codec=pcm;rate=24000") — trình duyệt không phát
 // được PCM trần, phải tự đóng gói thành WAV (header 44 byte) trước khi mã hoá + lưu, giống
 // mọi giọng khác trong app (đều là file phát được thẳng qua thẻ <audio>).
-function parseSampleRate(mimeType: string | undefined): number {
+// Export riêng cho test (parseSampleRateForTest ở geminiTts.test.ts) — hàm nội bộ, nhánh
+// mimeType undefined trong thực tế không tới được (part đã lọc qua startsWith('audio/') trước
+// khi gọi hàm này), nhưng vẫn giữ an toàn kiểu vì field mimeType là optional trong response API.
+export function parseSampleRate(mimeType: string | undefined): number {
   const match = /rate=(\d+)/.exec(mimeType ?? '')
   return match ? Number(match[1]) : 24000
 }
