@@ -274,8 +274,10 @@ export default async function handler(req: Request): Promise<Response> {
 
   const cachedUrl = cachedRows[0]?.audio_url
   if (cachedUrl) {
-    // Cập nhật last_accessed_at (bắn rồi quên — dùng cho LRU dọn cache khi gần ngưỡng
-    // 10GB R2 sau này, xem docs/migration-thoat-ly-supabase.md mục 3.3). Không chặn response.
+    // Cập nhật last_accessed_at (bắn rồi quên — CHỈ để thống kê/theo dõi dung lượng, KHÔNG
+    // dùng để tự động xoá — chính sách chốt 2026-08-06: cache không hết hạn theo mức dùng,
+    // chỉ xoá orphan qua --clean-orphans, xem docs/migration-thoat-ly-supabase.md mục 3.3).
+    // Không chặn response.
     void pool
       .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
       .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
