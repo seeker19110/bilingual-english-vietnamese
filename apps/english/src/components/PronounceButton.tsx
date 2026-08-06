@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
 import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
-import { VOICE_OPTIONS, pickRandomAllowedVoice, isValidVoiceId } from '../lib/voiceTiers'
+import { VOICE_OPTIONS, pickRandomAllowedVoice, resolveActualVoice } from '../lib/voiceTiers'
 
 interface Props {
   word: string
@@ -84,11 +84,7 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
         throw new Error(data.error ?? `Lỗi ${res.status}`)
       }
       const audioUrl = data.audio_url
-      // Server có thể đã HẠ giọng đoán (guessedVoice) xuống giọng khác nếu ngoài quyền gói
-      // hiện tại (clampVoiceToPlan) — PHẢI cache theo giọng THẬT server dùng (data.voice), nếu
-      // không lần random trúng lại guessedVoice sau sẽ phát nhầm audio đã lưu của giọng khác
-      // (bug: giọng luôn nghe y hệt dù bốc ngẫu nhiên, xem WordVoiceCycleButton.tsx).
-      const actualVoice = data.voice && isValidVoiceId(data.voice) ? data.voice : guessedVoice
+      const actualVoice = resolveActualVoice(guessedVoice, data.voice)
 
       setAudioUrls((prev) => ({ ...prev, [`${word}|${actualVoice}|${lang}`]: audioUrl }))
       setStatus('idle')

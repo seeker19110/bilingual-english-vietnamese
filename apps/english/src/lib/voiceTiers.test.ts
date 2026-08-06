@@ -7,6 +7,7 @@ import {
   cacheAllowedVoices,
   getCachedAllowedVoices,
   pickRandomAllowedVoice,
+  resolveActualVoice,
   VOICE_IDS,
   DEFAULT_SEED_VOICE_IDS,
 } from './voiceTiers'
@@ -100,6 +101,37 @@ describe('pickRandomAllowedVoice — trộn nam/nữ, loại ElevenLabs (Rachel)
     const v = pickRandomAllowedVoice()
     expect(v).not.toBe('Rachel')
     expect(VOICE_IDS).toContain(v)
+  })
+})
+
+describe('resolveActualVoice — chọn giọng để CACHE audio theo (bug đã gặp: cache theo giọng đoán)', () => {
+  it('server không hạ giọng (voice thật khớp giọng đoán) → trả đúng giọng đoán', () => {
+    expect(resolveActualVoice('Puck', 'Puck')).toBe('Puck')
+  })
+
+  it('server HẠ giọng đoán xuống giọng khác (ngoài quyền gói) → PHẢI trả giọng server thật, không phải giọng đoán', () => {
+    // Đây chính là ca lỗi thật: client đoán 'Charon' (VIP) nhưng gói hiện tại chỉ Free nên
+    // server hạ về 'Kore'. Nếu hàm trả về 'Charon' (giọng đoán) thì audio Kore sẽ bị cache
+    // nhầm dưới nhãn Charon — lần random trúng lại Charon sẽ phát nhầm audio Kore đã lưu.
+    expect(resolveActualVoice('Charon', 'Kore')).toBe('Kore')
+  })
+
+  it('server không trả voice (undefined, vd lỗi mạng) → dùng tạm giọng đoán', () => {
+    expect(resolveActualVoice('Aoede', undefined)).toBe('Aoede')
+  })
+
+  it('server trả voice rỗng → dùng tạm giọng đoán', () => {
+    expect(resolveActualVoice('Aoede', '')).toBe('Aoede')
+  })
+
+  it('server trả voice không hợp lệ (lỗi/hỏng dữ liệu) → dùng tạm giọng đoán, không tin dữ liệu bẩn', () => {
+    expect(resolveActualVoice('Aoede', 'khong-ton-tai')).toBe('Aoede')
+  })
+
+  it('mọi VoiceId hợp lệ đều được server trả về nguyên vẹn (không rơi về giọng đoán)', () => {
+    for (const id of VOICE_IDS) {
+      expect(resolveActualVoice('Kore', id)).toBe(id)
+    }
   })
 })
 

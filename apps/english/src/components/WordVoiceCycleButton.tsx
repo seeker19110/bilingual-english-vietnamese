@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Volume2, Loader2 } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
 import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
-import { VOICE_OPTIONS, pickRandomAllowedVoice } from '../lib/voiceTiers'
+import { VOICE_OPTIONS, pickRandomAllowedVoice, resolveActualVoice } from '../lib/voiceTiers'
 
 interface Props {
   word: string
@@ -83,8 +83,7 @@ export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
       // tại (clampVoiceToPlan) — PHẢI hiện nhãn theo giọng server THẬT SỰ dùng, không phải
       // giọng client đoán, nếu không nhãn sẽ đổi liên tục nhưng audio luôn là 1 giọng cố định
       // (bug đã gặp: cache voice_allowed phía client lệch/rộng hơn gói thật).
-      const actualVoice =
-        data.voice && data.voice in VOICE_LABEL ? (data.voice as Voice) : nextVoice
+      const actualVoice = resolveActualVoice(nextVoice, data.voice)
       setCurrentVoice(actualVoice)
 
       // Cache theo giọng THẬT (actualVoice), không phải giọng đoán (nextVoice) — nếu không,

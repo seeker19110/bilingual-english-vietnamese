@@ -174,3 +174,16 @@ export function pickRandomAllowedVoice(): VoiceId {
   const pool = allowed.length > 0 ? allowed : ALLOWED_VOICE_POOL_EXCLUDING_ELEVEN
   return pool[Math.floor(Math.random() * pool.length)]!
 }
+
+// Server (/api/pronunciation) có thể HẠ giọng ĐOÁN (guessedVoice) xuống giọng khác nếu ngoài
+// quyền gói hiện tại (clampVoiceToPlan, api/_lib/voiceAccess.ts) — trả kèm `voice` THẬT SỰ đã
+// dùng trong response. PronounceButton/WordVoiceCycleButton PHẢI cache audio theo giọng THẬT
+// này, không phải giọng đoán — nếu không, lần random trúng lại đúng giọng đoán cũ sẽ đọc nhầm
+// cache và phát audio của giọng đã bị hạ trước đó dưới nhãn giọng đoán, khiến người dùng luôn
+// nghe 1 giọng cố định dù bốc ngẫu nhiên (bug thật đã gặp, xem PROGRESS.md).
+export function resolveActualVoice(
+  guessedVoice: VoiceId,
+  serverVoice: string | undefined,
+): VoiceId {
+  return serverVoice && isValidVoiceId(serverVoice) ? serverVoice : guessedVoice
+}
