@@ -87,7 +87,10 @@ export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
         data.voice && data.voice in VOICE_LABEL ? (data.voice as Voice) : nextVoice
       setCurrentVoice(actualVoice)
 
-      setAudioUrls((prev) => ({ ...prev, [nextVoice]: audioUrl }))
+      // Cache theo giọng THẬT (actualVoice), không phải giọng đoán (nextVoice) — nếu không,
+      // lần random trúng lại nextVoice sau sẽ đọc nhầm cache và phát audio của actualVoice cũ
+      // dưới nhãn nextVoice, khiến giọng nghe cố định dù nhãn/từ vẫn đổi.
+      setAudioUrls((prev) => ({ ...prev, [actualVoice]: audioUrl }))
       playAudioUrl(audioUrl)
     } catch (err) {
       console.error('Lỗi nghe giọng khác, dùng tạm Web Speech:', err)

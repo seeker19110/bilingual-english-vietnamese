@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
 import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
-import { VOICE_OPTIONS, pickRandomAllowedVoice } from '../lib/voiceTiers'
+import { VOICE_OPTIONS, pickRandomAllowedVoice, isValidVoiceId } from '../lib/voiceTiers'
 
 interface Props {
   word: string
@@ -53,7 +53,7 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
   async function handleClick() {
     if (status === 'loading') return
 
-    const voice = pickVoice()
+    const guessedVoice = pickVoice()
 
     // Trước đây cụm từ (word có dấu cách) bị bắt đọc bằng Web Speech API trình duyệt thay vì
     // Google TTS — Web Speech chỉ set utt.lang chứ không đảm bảo máy có SẴN giọng đúng ngôn
@@ -63,8 +63,8 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
     // xuyên ở chiều B. /api/pronunciation đã hỗ trợ cụm từ (WORD_SAFE_PATTERN cho phép dấu
     // cách, tối đa 100 ký tự — xem api/pronunciation.ts) nên bỏ nhánh này, đi cùng đường
     // Google TTS như WordVoiceCycleButton đang làm.
-    const cacheKey = `${word}|${voice}|${lang}`
-    const cached = audioUrls[cacheKey]
+    const guessCacheKey = `${word}|${guessedVoice}|${lang}`
+    const cached = audioUrls[guessCacheKey]
     if (cached) {
       playAudio(cached)
       return
@@ -75,23 +75,28 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
       // Gửi kèm JWT để server xác thực người dùng
       const headers = await getAuthHeader()
       const res = await fetch(
-        `/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}&lang=${lang}`,
+        `/api/pronunciation?word=${encodeURIComponent(word)}&voice=${guessedVoice}&lang=${lang}`,
         { headers },
       )
-      const data = (await res.json()) as { audio_url?: string; error?: string }
+      const data = (await res.json()) as { audio_url?: string; voice?: string; error?: string }
 
       if (!res.ok || !data.audio_url) {
         throw new Error(data.error ?? `Lỗi ${res.status}`)
       }
       const audioUrl = data.audio_url
+      // Server có thể đã HẠ giọng đoán (guessedVoice) xuống giọng khác nếu ngoài quyền gói
+      // hiện tại (clampVoiceToPlan) — PHẢI cache theo giọng THẬT server dùng (data.voice), nếu
+      // không lần random trúng lại guessedVoice sau sẽ phát nhầm audio đã lưu của giọng khác
+      // (bug: giọng luôn nghe y hệt dù bốc ngẫu nhiên, xem WordVoiceCycleButton.tsx).
+      const actualVoice = data.voice && isValidVoiceId(data.voice) ? data.voice : guessedVoice
 
-      setAudioUrls((prev) => ({ ...prev, [cacheKey]: audioUrl }))
+      setAudioUrls((prev) => ({ ...prev, [`${word}|${actualVoice}|${lang}`]: audioUrl }))
       setStatus('idle')
       playAudio(audioUrl)
     } catch (err) {
       console.error('Lỗi phát âm:', err)
       // Fallback về Web Speech API nếu server lỗi
-      speakWithWebSpeech(voice)
+      speakWithWebSpeech(guessedVoice)
       setStatus('idle')
     }
   }
