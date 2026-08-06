@@ -161,8 +161,10 @@ export default function StoryReader() {
           subtitle={isA ? story.titleVi : story.titleEn}
         />
 
-        {/* Nghĩa vụ ghi công bản quyền — bắt buộc hiển thị (mục 3, đặc tả trang Nghe) */}
-        <p className="text-[11px] text-zinc-500 leading-relaxed mb-4 border-l-2 border-zinc-800 pl-2">
+        {/* Nghĩa vụ ghi công bản quyền — bắt buộc hiển thị (mục 3, đặc tả trang Nghe).
+            Dùng text-zinc-400 (không phải 500) để đạt AAA 7:1 — đây là nội dung
+            đọc (mục 4.5 CLAUDE.md), không phải UI phụ. */}
+        <p className="text-[11px] text-zinc-400 leading-relaxed mb-4 border-l-2 border-zinc-800 pl-2">
           {T.sourceLabel}: {story.source.en}
           {story.source.enUrl && (
             <>
