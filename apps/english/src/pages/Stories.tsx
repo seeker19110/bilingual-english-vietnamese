@@ -167,7 +167,7 @@ export default function Stories() {
                   key={story.id}
                   story={story}
                   isA={isA}
-                  onClick={() => nav(`/stories/${story.id}`)}
+                  onClick={() => nav(`/truyen-song-ngu/${story.id}`)}
                 />
               ))}
             </div>
