@@ -1,10 +1,31 @@
 // lib/stories.ts — hàm THUẦN (pure) dùng cho trang Nghe (Truyện cổ tích / Ngụ ngôn).
 // Tách riêng khỏi component để test đơn vị không cần render UI (mục 8 đặc tả trang Nghe).
 
-import type { StoryLine } from '../data/stories/index'
+import type { StoryKind, StoryLine } from '../data/stories/index'
+import type { VoiceId } from './voiceTiers'
 
 // Số giây ước lượng cho mỗi câu khi nghe (mục 6.4 đặc tả).
 const SECONDS_PER_LINE = 4
+
+// Giọng đọc mặc định theo thể loại truyện (chốt 2026-08-06) — mỗi thể loại 1 giọng CỐ ĐỊNH,
+// không dùng getVoicePref() (giọng chung toàn app) nữa khi đọc truyện, để không khí đọc hợp
+// với nội dung (cổ tích nhẹ nhàng, thần thoại có lực, hài hước vui tươi...). Chỉ dùng 6 trong
+// 14 giọng Chirp3-HD (không Studio/ElevenLabs — 2 giọng đó không nằm trong seed mặc định của
+// scripts/seed-all.ts, seed truyện sẽ tốn thêm phí cache-on-demand nếu dùng).
+// Dùng CHUNG cho cả runtime (StoryReader.tsx) lẫn scripts/seed-all.ts (pre-cache) — đổi ở đây
+// là đổi cho cả hai chỗ.
+export const STORY_KIND_VOICE: Record<StoryKind, VoiceId> = {
+  'fairy-tale': 'Leda',
+  fable: 'Charon',
+  'vn-folk': 'Aoede',
+  myth: 'Orus',
+  humor: 'Puck',
+  children: 'Kore',
+}
+
+export function getStoryVoice(kind: StoryKind): VoiceId {
+  return STORY_KIND_VOICE[kind]
+}
 
 /**
  * Gom các câu (StoryLine) theo chỉ số đoạn `p` để hiển thị truyện theo đoạn văn.

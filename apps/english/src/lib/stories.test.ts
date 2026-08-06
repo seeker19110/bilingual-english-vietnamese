@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { groupLinesByParagraph, estimateListenMinutes } from './stories'
+import {
+  groupLinesByParagraph,
+  estimateListenMinutes,
+  getStoryVoice,
+  STORY_KIND_VOICE,
+} from './stories'
+import { STORY_KINDS } from '../data/stories/index'
 import type { StoryLine } from '../data/stories/index'
+import { isValidVoiceId } from './voiceTiers'
 
 function line(p: number, en: string): StoryLine {
   return { p, en, vi: en }
@@ -51,5 +58,23 @@ describe('estimateListenMinutes', () => {
   it('làm tròn đúng chuẩn (không luôn làm tròn xuống)', () => {
     // 23 câu × 4s = 92s = 1.533 phút → làm tròn thành 2
     expect(estimateListenMinutes(23)).toBe(2)
+  })
+})
+
+describe('getStoryVoice / STORY_KIND_VOICE', () => {
+  it('mỗi thể loại (STORY_KINDS) đều có đúng 1 giọng hợp lệ trong bảng', () => {
+    for (const kind of STORY_KINDS) {
+      const voice = getStoryVoice(kind)
+      expect(voice).toBe(STORY_KIND_VOICE[kind])
+      expect(isValidVoiceId(voice)).toBe(true)
+    }
+  })
+
+  it('không dùng giọng Studio/ElevenLabs (chỉ Chirp3-HD) — tránh tốn seed cache-on-demand', () => {
+    for (const kind of STORY_KINDS) {
+      const voice = getStoryVoice(kind)
+      expect(voice).not.toMatch(/^Studio-/)
+      expect(voice).not.toBe('Rachel')
+    }
   })
 })

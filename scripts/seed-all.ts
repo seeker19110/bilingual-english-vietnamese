@@ -28,6 +28,9 @@
 // Cờ / biến môi trường (SEED nội dung):
 //   --check  (CHECK=1)       Chỉ in báo cáo rồi thoát (không seed, không menu).
 //   --verify (VERIFY=1)      Kiểm tra KỸ DB: đối chiếu 2 chiều (thiếu / thừa / lệch đường dẫn).
+//   --check-versions          CHỈ ĐỌC: báo cáo tts_cache đang ở phiên bản giọng nào (v2 cũ /
+//                             v3 hiện tại / Studio) — không sửa/xoá/remap gì. Dùng để biết đã
+//                             migrate xong VOICE_VERSION chưa trước khi cân nhắc --clean-orphans.
 //   --clean-orphans          (kèm --verify) Xoá bản ghi + file THỪA (orphan) phát hiện được —
 //                             mặc định CHỈ XEM TRƯỚC, thêm --yes để xoá thật. Vd sau đợt đổi
 //                             tên giọng: female2/male2.mp3 không còn dùng nữa, chiếm dung
@@ -70,6 +73,7 @@ import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
   isValidStudioVoice,
+  isValidVoice,
   hasGoogleTtsKey,
   probeApiKeys,
   setActiveKeyPool,
@@ -88,6 +92,8 @@ import type { QueryResultRow } from 'pg'
 import { getPgPool } from '../packages/core-db/pgPool.ts'
 import { FOUNDATION } from '../apps/english/src/data/curriculum.ts'
 import { CHALLENGE_TOPICS } from '../apps/english/src/data/challengeTopics.ts'
+import { STORY_KIND_VOICE } from '../apps/english/src/lib/stories.ts'
+import type { StoryKind } from '../apps/english/src/data/stories/index.ts'
 import {
   loadSubjectsInDisplayOrder,
   loadPatternSeedIndex,
@@ -133,6 +139,7 @@ const BASE_URL = process.env.BASE_URL || ''
 const FORCE = process.argv.includes('--force') || process.env.FORCE === '1'
 const CHECK_ONLY = process.argv.includes('--check') || process.env.CHECK === '1'
 const VERIFY_ONLY = process.argv.includes('--verify') || process.env.VERIFY === '1'
+const CHECK_VERSIONS_ONLY = process.argv.includes('--check-versions')
 // Xoá THẬT các bản ghi + file dư thừa (orphan) phát hiện được lúc --verify — mặc định
 // (không có --yes) chỉ XEM TRƯỚC, không xoá gì. Dùng chung --yes với luồng sync R2 cũ.
 const CLEAN_ORPHANS = process.argv.includes('--clean-orphans')
@@ -211,7 +218,14 @@ async function withDbRetry<T>(fn: () => Promise<T>, label: string): Promise<T> {
 
 // ── Nhóm (category) ─────────────────────────────────────────────────────────
 type CatId =
-  'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest' | 'challenge'
+  | 'pron'
+  | 'curriculum'
+  | 'cefr'
+  | 'lessons-early'
+  | 'patterns'
+  | 'lessons-rest'
+  | 'challenge'
+  | 'stories'
 
 // Thứ tự seed khi chạy --all (menu chọn riêng từng nhóm không phụ thuộc thứ tự này).
 // "Cụm từ" đặt CUỐI CÙNG vì số lượng lớn nhất (~313k câu) — ưu tiên seed xong các nhóm
@@ -224,6 +238,7 @@ const CATEGORIES: { id: CatId; label: string }[] = [
   { id: 'lessons-early', label: 'Hội thoại 50 bài đầu (Luyện nói)' },
   { id: 'lessons-rest', label: 'Hội thoại các bài còn lại' },
   { id: 'challenge', label: 'Câu mẫu Challenge 30 ngày' },
+  { id: 'stories', label: 'Truyện cổ tích/ngụ ngôn (trang Nghe)' },
   { id: 'patterns', label: 'Câu mẫu trang Cụm từ' },
 ]
 
@@ -501,6 +516,46 @@ function loadPatternTasks(): PatternTask[] {
   for (const t of CHALLENGE_TOPICS) {
     for (const s of t.sampleEn) add(s, 'en-US', 'challenge', PREF_VOICE_IDS_EN)
     for (const s of t.sampleVi) add(s, 'vi-VN', 'challenge', PREF_VOICE_IDS_FULL)
+  }
+
+  // ── Ưu tiên 7: truyện cổ tích/ngụ ngôn (trang /stories, /stories/:id) ────────
+  // Khác các nhóm trên: CHỈ 1 giọng/truyện (giọng cố định theo thể loại — xem
+  // STORY_KIND_VOICE trong apps/english/src/lib/stories.ts, dùng chung với StoryReader.tsx
+  // để runtime và cache khớp nhau), không seed nhiều biến thể giọng như curriculum/CEFR.
+  const storyDir = path.join(PROJECT_ROOT, 'public/data/stories')
+  if (fs.existsSync(storyDir)) {
+    const storyFiles = fs
+      .readdirSync(storyDir)
+      .filter((f) => f.endsWith('.json') && f !== 'index.json')
+    for (const file of storyFiles) {
+      const story = JSON.parse(fs.readFileSync(path.join(storyDir, file), 'utf8')) as {
+        kind: StoryKind
+        lines: { en: string; vi: string }[]
+        moralEn?: string
+        moralVi?: string
+      }
+      // STORY_KIND_VOICE (client, apps/english/src/lib/stories.ts) khai báo kiểu VoiceId RỘNG
+      // (gồm cả Rachel/Studio), nhưng cả 6 giá trị thật gán trong đó đều là tên Chirp3-HD hợp
+      // lệ — narrow bằng isValidVoice() (kiểm tra runtime) thay vì ép kiểu mù (as).
+      const rawVoice = STORY_KIND_VOICE[story.kind]
+      if (!isValidVoice(rawVoice)) {
+        console.warn(
+          `[seed-all] Giọng "${rawVoice}" (thể loại ${story.kind}) không hợp lệ — bỏ qua truyện ${file}.`,
+        )
+        continue
+      }
+      const voice = rawVoice
+      for (const line of story.lines) {
+        add(line.en, 'en-US', 'stories', [voice])
+        add(line.vi, 'vi-VN', 'stories', [voice])
+      }
+      if (story.moralEn) add(story.moralEn, 'en-US', 'stories', [voice])
+      if (story.moralVi) add(story.moralVi, 'vi-VN', 'stories', [voice])
+    }
+  } else {
+    console.warn(
+      `[seed-all] Chưa có ${storyDir} (chạy \`node scripts/gen-stories-json.mjs\` trước) — bỏ qua seed truyện.`,
+    )
   }
 
   return tasks
@@ -1862,6 +1917,78 @@ async function verifyDb(
   }
 }
 
+// ── --check-versions: BÁO CÁO (chỉ đọc) tts_cache đang ở phiên bản giọng nào ────────────────
+// Khác verifyDb() (đối chiếu thiếu/thừa rồi có thể XOÁ orphan), lệnh này CHỈ trả lời "cache
+// hiện có đang ở v2 (tên giọng cũ / hash thiếu VOICE_VERSION), v3 (VOICE_VERSION hiện tại)
+// hay Studio?" — không sửa, không remap, không xoá gì cả.
+// Giới hạn cố hữu: hash 1 chiều (không suy ngược ra version), nên chỉ phân loại CHÍNH XÁC
+// được cho câu vẫn còn trong tập "kỳ vọng" hiện tại (allByCat) — dòng KHÔNG khớp gì (không
+// v3, không v2 cũ) bị gộp vào "không xác định" (orphan thật hoặc voice_version lạ khác).
+async function checkVersions(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
+  console.log('\n🔖 KIỂM TRA PHIÊN BẢN GIỌNG trong tts_cache (chỉ đọc — không sửa/xoá/remap gì)')
+
+  // Tập kỳ vọng hiện tại (v3) + 2 lược đồ hash CŨ tương ứng — chỉ tính được cho giọng
+  // Chirp3-HD, KHÔNG phải Studio (Studio không có tiền thân, xem legacyVoiceNameHash).
+  const expectedCurrent = new Set<string>()
+  const expectedOldNoVersion = new Set<string>()
+  const expectedLegacyName = new Set<string>()
+  for (const { id } of CATEGORIES) {
+    for (const t of allByCat.get(id) ?? []) {
+      if (t.type === 'pron') continue
+      expectedCurrent.add(hashText(t.text, t.lang, t.voice))
+      if (!isValidStudioVoice(t.voice)) {
+        expectedOldNoVersion.add(oldHashText(t.text, t.lang, t.voice))
+        const legacy = legacyVoiceNameHash(t.text, t.lang, t.voice)
+        if (legacy) expectedLegacyName.add(legacy)
+      }
+    }
+  }
+  // Câu pattern ngoài seed-index (xem loadAllPatternHashes) vẫn là cache v3 hợp lệ.
+  for (const h of loadAllPatternHashes()) expectedCurrent.add(h)
+
+  // Voice CHƯA từng remap tên giọng (đợt đổi tên 2026-07-21) — nhận biết trực tiếp từ cột
+  // voice, không cần đối chiếu hash.
+  const LEGACY_RAW_NAMES = new Set(['female', 'male', 'female2', 'male2'])
+  const counts = { v3: 0, v2Name: 0, v2Hash: 0, studio: 0, unknown: 0 }
+  let total = 0
+
+  await streamRows<{ hash: string; voice: string }>(
+    'tts_cache',
+    'hash, voice',
+    ['hash'],
+    (rows) => {
+      for (const r of rows) {
+        total++
+        if (LEGACY_RAW_NAMES.has(r.voice)) counts.v2Name++
+        else if (isValidStudioVoice(r.voice)) counts.studio++
+        else if (expectedCurrent.has(r.hash)) counts.v3++
+        else if (expectedOldNoVersion.has(r.hash) || expectedLegacyName.has(r.hash)) counts.v2Hash++
+        else counts.unknown++
+      }
+    },
+  )
+
+  console.log(`\n   Tổng ${total} bản ghi tts_cache:`)
+  console.log(`   ✅ v3 hiện tại (chirp3hd-v3):                      ${counts.v3}`)
+  console.log(`   🟡 v2 cũ — tên giọng chưa remap (female/male/...): ${counts.v2Name}`)
+  console.log(`   🟡 v2 cũ — đúng tên giọng, hash thiếu version:     ${counts.v2Hash}`)
+  console.log(`   🔵 Studio (không có khái niệm v2/v3):              ${counts.studio}`)
+  console.log(`   ⚪ Không xác định (orphan thật hoặc version lạ):   ${counts.unknown}`)
+
+  if (counts.v2Name + counts.v2Hash > 0) {
+    console.log(
+      '\n   Gợi ý: chạy `npm run seed:all -- --all` (hoặc chọn đúng nhóm) để REMAP các dòng v2' +
+        ' sang v3 — không tốn phí API, chỉ tải/giải mã/mã hoá lại (xem processTask()).',
+    )
+  }
+  if (counts.unknown > 0) {
+    console.log(
+      '   Dòng "Không xác định" xem chi tiết + xoá an toàn bằng `npm run seed:all -- --verify' +
+        ' --clean-orphans` (mặc định chỉ xem trước, thêm --yes mới xoá thật).',
+    )
+  }
+}
+
 // ── Ghi/xóa file lỗi sau khi seed ───────────────────────────────────────────
 function writeErrorFiles(remaining: AnyTask[]): void {
   const pronLeft = remaining.filter((t): t is PronTask => t.type === 'pron')
@@ -2013,6 +2140,22 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
   }
 }
 
+// Gom toàn bộ tác vụ theo nhóm (LIMIT cắt bớt mỗi nhóm khi debug) — dùng chung cho luồng
+// seed chính lẫn các chế độ chỉ-đọc không cần key TTS (--check-versions).
+function buildAllByCat(wordsFile: string | undefined, limit: number): Map<CatId, AnyTask[]> {
+  const allByCat = new Map<CatId, AnyTask[]>()
+  for (const { id } of CATEGORIES) allByCat.set(id, [])
+  allByCat.set('pron', loadPronTasks(wordsFile).slice(0, limit))
+  for (const t of loadPatternTasks()) allByCat.get(t.cat)!.push(t)
+  if (Number.isFinite(limit)) {
+    for (const { id } of CATEGORIES) {
+      if (id === 'pron') continue
+      allByCat.set(id, allByCat.get(id)!.slice(0, limit))
+    }
+  }
+  return allByCat
+}
+
 // ── MAIN ─────────────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
   // 2 chế độ R2 không cần key TTS (không gọi Google) — tách trước các check khác.
@@ -2022,6 +2165,22 @@ async function main(): Promise<void> {
   }
   if (VERIFY_R2_FLAG) {
     await runVerifyR2()
+    return
+  }
+
+  const wordsFile = process.env.WORDS_FILE
+    ? path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
+    : undefined
+  const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
+
+  // --check-versions CHỈ ĐỌC DB (không giải mã, không gọi Google) — chỉ cần DATABASE_URL,
+  // tách trước để không đòi hỏi TTS_ENCRYPTION_MASTER_KEY/GOOGLE_TTS_API_KEY như luồng seed.
+  if (CHECK_VERSIONS_ONLY) {
+    if (!process.env.DATABASE_URL) {
+      console.error('❌ Thiếu biến môi trường: DATABASE_URL')
+      process.exit(1)
+    }
+    await checkVersions(buildAllByCat(wordsFile, limit))
     return
   }
 
@@ -2035,22 +2194,7 @@ async function main(): Promise<void> {
     process.exit(1)
   }
 
-  const wordsFile = process.env.WORDS_FILE
-    ? path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
-    : undefined
-  const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
-
-  // Gom toàn bộ tác vụ theo nhóm (LIMIT cắt bớt mỗi nhóm khi debug)
-  const allByCat = new Map<CatId, AnyTask[]>()
-  for (const { id } of CATEGORIES) allByCat.set(id, [])
-  allByCat.set('pron', loadPronTasks(wordsFile).slice(0, limit))
-  for (const t of loadPatternTasks()) allByCat.get(t.cat)!.push(t)
-  if (Number.isFinite(limit)) {
-    for (const { id } of CATEGORIES) {
-      if (id === 'pron') continue
-      allByCat.set(id, allByCat.get(id)!.slice(0, limit))
-    }
-  }
+  const allByCat = buildAllByCat(wordsFile, limit)
 
   // ── Chế độ chỉ xem báo cáo ────────────────────────────────────────────────
   if (CHECK_ONLY) {

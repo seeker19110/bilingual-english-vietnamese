@@ -14,13 +14,14 @@ Mục tiêu: tạo sẵn (cache) audio **phát âm từ điển** + **TTS câu**
 
 ## 1. Các lệnh
 
-| Lệnh                          | Làm gì                                                              |
-| ----------------------------- | ------------------------------------------------------------------- |
-| `npm run seed:all`            | Menu tương tác: in báo cáo → chọn nhóm để seed (lặp tới khi thoát). |
-| `npm run seed:all -- --check` | **Chỉ in báo cáo** tiến độ rồi thoát (không seed, không menu).      |
-| `npm run seed:all -- --all`   | Seed **tất cả** nhóm còn thiếu, không hỏi (dùng cho CI/cron).       |
-| `npm run seed:verify`         | = `seed:all -- --verify`. **Kiểm tra kỹ** DB (đối chiếu 2 chiều).   |
-| `npm run seed:all -- --force` | Tạo lại + **ghi đè** cả audio đã có.                                |
+| Lệnh                                   | Làm gì                                                                                                                                                                                                   |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run seed:all`                     | Menu tương tác: in báo cáo → chọn nhóm để seed (lặp tới khi thoát).                                                                                                                                      |
+| `npm run seed:all -- --check`          | **Chỉ in báo cáo** tiến độ rồi thoát (không seed, không menu).                                                                                                                                           |
+| `npm run seed:all -- --all`            | Seed **tất cả** nhóm còn thiếu, không hỏi (dùng cho CI/cron).                                                                                                                                            |
+| `npm run seed:verify`                  | = `seed:all -- --verify`. **Kiểm tra kỹ** DB (đối chiếu 2 chiều).                                                                                                                                        |
+| `npm run seed:all -- --check-versions` | **CHỈ ĐỌC:** báo cáo `tts_cache` đang ở phiên bản giọng nào (v2 cũ / v3 hiện tại / Studio) — không sửa/xoá/remap gì. Không cần `GOOGLE_TTS_API_KEY`/`TTS_ENCRYPTION_MASTER_KEY`, chỉ cần `DATABASE_URL`. |
+| `npm run seed:all -- --force`          | Tạo lại + **ghi đè** cả audio đã có.                                                                                                                                                                     |
 
 Biến môi trường thêm:
 
@@ -158,6 +159,30 @@ Kết luận cuối:
 
 - `✅ DB KHỚP tập kỳ vọng` — mọi câu cần thiết đã có, đường dẫn đúng (có thể còn orphan để dọn).
 - `⚠️ Chưa khớp: thiếu N câu...` — chạy `npm run seed:all -- --all` để bù.
+
+---
+
+## 4b. Kiểm tra phiên bản giọng (`--check-versions`)
+
+```bash
+npm run seed:all -- --check-versions
+```
+
+Khác `--verify` (đối chiếu thiếu/thừa để CÓ THỂ dọn), lệnh này **chỉ đọc** — không sửa,
+không remap, không xóa gì — trả lời đúng 1 câu hỏi: cache `tts_cache` hiện có đang ở
+phiên bản giọng nào?
+
+- **v3 hiện tại** (`chirp3hd-v3`) — đã đúng, không cần làm gì.
+- **v2 cũ — tên giọng chưa remap** (`voice` vẫn là `female`/`male`/`female2`/`male2`).
+- **v2 cũ — đúng tên giọng nhưng hash thiếu `VOICE_VERSION`** (mục 3, lược đồ hash cũ #1).
+- **Studio** — không có khái niệm v2/v3 (giọng Studio không có tiền thân, xem mục 3).
+- **Không xác định** — không khớp lược đồ hash nào đã biết (orphan thật, hoặc
+  `voice_version` lạ). Hạn chế cố hữu: hash là 1 chiều nên chỉ phân loại chính xác được
+  cho câu **vẫn còn** trong tập kỳ vọng hiện tại — orphan mà đồng thời là hash cũ vẫn rơi
+  vào nhóm này thay vì "v2 cũ" (không có văn bản gốc để đối chiếu ngược).
+
+Thấy `v2 cũ` > 0 → chạy `npm run seed:all -- --all` để remap (không tốn quota, xem mục
+3). Thấy `Không xác định` > 0 → xem/dọn bằng `--verify --clean-orphans` (mục 4).
 
 ---
 

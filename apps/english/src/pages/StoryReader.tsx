@@ -9,7 +9,7 @@ import { CardListSkeleton } from '../components/Skeleton'
 import KaraokeText, { KARAOKE_INDENT } from '../components/KaraokeText'
 import { useLang } from '../context/useLang'
 import { getDirection } from '../lib/storage'
-import { groupLinesByParagraph } from '../lib/stories'
+import { groupLinesByParagraph, getStoryVoice } from '../lib/stories'
 import { loadStory } from '../data/stories/loader'
 import type { Story } from '../data/stories/index'
 import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio, unlockAudio } from '../lib/tts'
@@ -43,6 +43,8 @@ export default function StoryReader() {
 
   const paragraphs = useMemo(() => (story ? groupLinesByParagraph(story.lines) : []), [story])
   const flatLines = story?.lines ?? []
+  // Giọng cố định theo thể loại truyện (không dùng giọng chung toàn app nữa — xem lib/stories.ts)
+  const storyVoice = story ? getStoryVoice(story.kind) : undefined
 
   // ── Phát tất cả — tuần tự từng câu, tự cuộn tới câu đang đọc ────────────────
   const [playing, setPlaying] = useState(false)
@@ -81,7 +83,7 @@ export default function StoryReader() {
       setWordIdx(null)
       lineRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
-      await speak(isA ? ln.en : ln.vi, lang, undefined, undefined, (wi) => setWordIdx(wi))
+      await speak(isA ? ln.en : ln.vi, lang, storyVoice, undefined, (wi) => setWordIdx(wi))
       if (!stopRef.current) await new Promise((r) => setTimeout(r, 300))
     }
 
@@ -232,6 +234,7 @@ export default function StoryReader() {
                     <KaraokeText
                       text={isA ? ln.en : ln.vi}
                       lang={targetLang}
+                      voice={storyVoice}
                       textClass="text-[15px] leading-relaxed text-zinc-100"
                       buttonClass="w-full px-2 py-1.5 rounded-lg hover:bg-zinc-900/60"
                       externalState={
@@ -262,6 +265,7 @@ export default function StoryReader() {
             <KaraokeText
               text={isA ? story.moralEn : story.moralVi}
               lang={targetLang}
+              voice={storyVoice}
               textClass="text-sm text-zinc-200 leading-relaxed"
             />
             {showTranslation && (

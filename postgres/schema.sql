@@ -114,7 +114,11 @@ create table if not exists public.tts_cache (
   -- NULL = chưa có timing thật (giọng không trả timestamp) → client tự ước lượng.
   viseme_timeline jsonb,
   created_at timestamptz not null default now(),
-  last_accessed_at timestamptz not null default now()  -- Giai đoạn D: LRU dọn cache R2
+  -- CHỈ để thống kê/theo dõi dung lượng — KHÔNG dùng để tự động xoá. Chính sách chốt
+  -- 2026-08-06: cache KHÔNG hết hạn theo thời gian/mức dùng, chỉ xoá bản ghi orphan (không
+  -- còn nằm trong dữ liệu app) qua `npm run seed:all -- --verify --clean-orphans --yes`.
+  -- Xem docs/migration-thoat-ly-supabase.md mục 3.3.
+  last_accessed_at timestamptz not null default now()
 );
 create index if not exists tts_cache_lang_idx on public.tts_cache(lang);
 
@@ -134,7 +138,9 @@ create table if not exists english.pronunciations (
   lang          text not null default 'en-US',
   voice_version text,
   created_at    timestamptz default now(),
-  last_accessed_at timestamptz not null default now(), -- Giai đoạn D: LRU dọn cache R2
+  -- CHỈ để thống kê — KHÔNG dùng để tự động xoá (chính sách chốt 2026-08-06, xem ghi chú
+  -- last_accessed_at của bảng tts_cache phía trên).
+  last_accessed_at timestamptz not null default now(),
   unique (word, voice, lang) -- kèm lang: tránh 1 chữ trùng cả 2 ngôn ngữ đè cache lẫn nhau
 );
 create index if not exists idx_pronunciations_word on english.pronunciations(word);
