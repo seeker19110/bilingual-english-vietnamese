@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, BookOpen } from 'lucide-react'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
@@ -57,14 +57,20 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
             <span className="text-sm hidden sm:inline">{T.home}</span>
           </button>
         ) : (
-          <div className="flex items-center gap-2 shrink-0">
+          // Logo "Gia sư AI" — bấm vào xem trang giới thiệu tính năng + mẹo học hiệu quả.
+          <Link
+            to="/gioi-thieu"
+            aria-label={T.aboutApp}
+            title={T.aboutApp}
+            className="tap-44 flex items-center gap-2 shrink-0 -ml-1 p-1 rounded-lg hover:bg-zinc-800/50 transition"
+          >
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center shadow-md shadow-accent-500/30">
               <BookOpen className="w-3.5 h-3.5 text-white" />
             </div>
             <span className="font-bold text-sm text-white hidden sm:inline tracking-tight">
               {T.appName}
             </span>
-          </div>
+          </Link>
         )}
 
         {/* Title — chỉ hiện khi trang truyền title cho header (trang chủ, màn chi tiết…).
