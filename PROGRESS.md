@@ -17,6 +17,19 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Gợi ý email từ danh sách người dùng khi cấp gói tay (2026-08-07, PR #512)
+
+- Tab admin "Người dùng, Thanh toán & Từ cấm" → bấm 1 dòng ở bảng "Người dùng"
+  (`AdminUsersPanel`) giờ tự điền email của user đó vào form "Cấp gói Pro/VIP thủ công"
+  (`AdminGrantPlanPanel`) ngay bên dưới, thay vì phải gõ tay/copy-paste.
+- Ô nhập email trong form cấp gói có thêm gợi ý autocomplete (thẻ HTML `<datalist>`) lấy từ
+  đúng danh sách email đã tải ở bảng "Người dùng" (không gọi API riêng, không lộ thêm dữ liệu
+  ngoài phạm vi admin đã thấy trên cùng trang).
+- Kỹ thuật: tách state dùng chung (`prefillEmail`, `emailSuggestions`) ra component bọc mới
+  `AdminGrantPlanSection` (`apps/english/src/pages/AdminDashboard.tsx`), truyền xuống qua props
+  mới `onSelectEmail`/`onEmailsChange` (`AdminUsersPanel.tsx`) và `prefillEmail`/
+  `emailSuggestions` (`AdminGrantPlanPanel.tsx`). Không đổi API/schema.
+
 ### Gemini TTS cho trang đọc truyện + đổi thứ tự ưu tiên AI chat (2026-08-06)
 
 - **Giọng Gemini TTS riêng cho truyện cổ tích/ngụ ngôn** (`/stories`, `/stories/:id`): thêm
