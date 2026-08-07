@@ -243,16 +243,37 @@ export default function About() {
           </div>
         </section>
 
-        {/* Ghi nhận huy hiệu — nối sang trang Nhiệm vụ để biết thêm cách kiếm thưởng */}
+        {/* Ghi nhận huy hiệu — nối sang trang Nhiệm vụ để biết thêm cách kiếm thưởng.
+            Nội dung cụ thể hoá thứ tự ưu tiên (streak + challenge trước) vì đó là 2 việc
+            tốn ít thời gian nhất/ngày nhưng cộng dồn huy hiệu nhanh nhất — xem đối chiếu
+            với data/achievements.ts. */}
         <section className="bg-zinc-900/60 border border-zinc-800/60 rounded-2xl p-4 flex items-start gap-3 animate-fade-in">
           <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
             <Award className="w-5 h-5 text-amber-300" aria-hidden="true" />
           </div>
-          <p className="text-xs text-zinc-400">
-            {isA
-              ? 'Càng học đều, càng kiếm được nhiều huy hiệu và ngày dùng gói Pro miễn phí — xem chi tiết ở mục Nhiệm vụ trong Hồ sơ.'
-              : 'The more consistently you study, the more achievements and free Pro days you earn — see the Quests section in your Profile.'}
-          </p>
+          <div className="text-xs text-zinc-400">
+            <p>
+              {isA
+                ? 'Càng học đều, càng kiếm được nhiều huy hiệu và ngày dùng gói Pro/VIP miễn phí — xem chi tiết ở mục Nhiệm vụ trong Hồ sơ.'
+                : 'The more consistently you study, the more achievements and free Pro/VIP days you earn — see the Quests section in your Profile.'}
+            </p>
+            <p className="mt-1.5">
+              {isA ? (
+                <>
+                  <strong className="text-zinc-300">Nhanh nhất:</strong> giữ streak học mỗi ngày +
+                  làm challenge 1 phút đều đặn — 2 việc tốn ít thời gian nhất nhưng lên huy hiệu
+                  nhanh nhất. Từ vựng và các cấp CEFR tự cộng dồn theo lộ trình học bình thường.
+                </>
+              ) : (
+                <>
+                  <strong className="text-zinc-300">Fastest path:</strong> keep a daily streak + do
+                  the 1-minute challenge every day — the two lowest-effort habits that unlock
+                  achievements the quickest. Vocabulary and CEFR levels build up naturally as you
+                  study.
+                </>
+              )}
+            </p>
+          </div>
         </section>
 
         <button
