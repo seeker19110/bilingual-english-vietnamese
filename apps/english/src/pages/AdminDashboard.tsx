@@ -46,6 +46,26 @@ const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   { key: 'analytics', label: 'Analytics & Phản hồi AI', icon: BarChart3 },
 ]
 
+// Bọc riêng vì cần state chung: bấm 1 dòng ở bảng "Người dùng" (AdminUsersPanel) sẽ điền sẵn
+// email vào form "Cấp gói tay" (AdminGrantPlanPanel) bên dưới, kèm gợi ý autocomplete từ danh
+// sách user đã tải.
+function AdminGrantPlanSection() {
+  const [prefillEmail, setPrefillEmail] = useState<string>()
+  const [emailSuggestions, setEmailSuggestions] = useState<string[]>([])
+
+  return (
+    <>
+      <AdminPaymentsPanel />
+      <AdminUsersPanel onSelectEmail={setPrefillEmail} onEmailsChange={setEmailSuggestions} />
+      <AdminGrantPlanPanel prefillEmail={prefillEmail} emailSuggestions={emailSuggestions} />
+      <AdminVipWhitelistPanel />
+      {/* Ghi chú: Mục "Chặn tên tài khoản giả danh" (AdminReservedNamesPanel) đã được bổ sung
+      và tích hợp hoàn chỉnh vào tab "Người dùng, Thanh toán & Từ cấm" (api/admin-reserved-names.ts). */}
+      <AdminReservedNamesPanel />
+    </>
+  )
+}
+
 function AdminPanel({ tabKey }: { tabKey: TabKey }) {
   switch (tabKey) {
     case 'usage':
@@ -69,17 +89,7 @@ function AdminPanel({ tabKey }: { tabKey: TabKey }) {
     case 'achievement-rewards':
       return <AdminAchievementRewardsPanel />
     case 'grant-plan':
-      return (
-        <>
-          <AdminPaymentsPanel />
-          <AdminUsersPanel />
-          <AdminGrantPlanPanel />
-          <AdminVipWhitelistPanel />
-          {/* Ghi chú: Mục "Chặn tên tài khoản giả danh" (AdminReservedNamesPanel) đã được bổ sung
-          và tích hợp hoàn chỉnh vào tab "Người dùng, Thanh toán & Từ cấm" (api/admin-reserved-names.ts). */}
-          <AdminReservedNamesPanel />
-        </>
-      )
+      return <AdminGrantPlanSection />
     case 'analytics':
       return (
         <>
