@@ -20,8 +20,7 @@ function genderOf(voice: Voice): 'female' | 'male' {
   return VOICE_OPTIONS.find((v) => v.id === voice)?.gender ?? 'female'
 }
 
-// Thay thế cặp VoiceToggle + RateToggle cũ trên header (Dictionary/CommonPhrases/Lessons):
-// pill Nữ/Nam đổi GIỚI TÍNH giọng, kèm nút mũi tên mở menu chọn ĐÚNG 1 trong 7 giọng của
+// Pill Nữ/Nam đổi GIỚI TÍNH giọng, kèm nút mũi tên mở menu chọn ĐÚNG 1 trong 7 giọng của
 // giới tính đang chọn — khoá theo gói (Free/Pro/VIP, xem voiceTiers.ts). Lựa chọn lưu TOÀN
 // CỤC (setVoicePref) nên đồng bộ với VoicePicker đầy đủ ở trang Cài đặt (Profile.tsx).
 export default function VoiceMenu({ plan, isA }: Props) {

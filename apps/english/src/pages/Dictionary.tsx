@@ -302,6 +302,7 @@ export default function Dictionary() {
             <StudyPanel
               uid={user.id}
               isA={isA}
+              plan={user.plan}
               tab={tab as StudyTab}
               onProgress={() => setLearnedKey((k) => k + 1)}
               onBadges={setBadges}

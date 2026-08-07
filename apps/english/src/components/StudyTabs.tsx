@@ -30,9 +30,9 @@ import {
 import { useNavigate } from 'react-router-dom'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import RateToggle from './RateToggle'
-import VoiceToggle from './VoiceToggle'
+import VoiceMenu from './VoiceMenu'
 import WordCard from './WordCard'
-import type { DictEntry } from '../types'
+import type { DictEntry, Plan } from '../types'
 import {
   markStudiedToday,
   shouldCelebrateStreak,
@@ -233,12 +233,14 @@ function BatchDoneView({
   batch,
   uid,
   isA,
+  plan,
   dailyStart,
   onStartQuiz,
 }: {
   batch: DictEntry[]
   uid: string
   isA: boolean
+  plan: Plan
   dailyStart: number
   onStartQuiz: () => void
 }) {
@@ -329,7 +331,7 @@ function BatchDoneView({
             </div>
             <div className="flex items-center gap-2">
               <RateToggle />
-              <VoiceToggle />
+              <VoiceMenu plan={plan} isA={isA} />
             </div>
           </div>
           <div className="space-y-2">
@@ -366,7 +368,7 @@ function BatchDoneView({
             </div>
             <div className="flex items-center gap-2">
               <RateToggle />
-              <VoiceToggle />
+              <VoiceMenu plan={plan} isA={isA} />
             </div>
           </div>
           <p className="text-xs text-zinc-400 mb-3">{isA ? dialogue.titleVi : dialogue.titleEn}</p>
@@ -448,12 +450,14 @@ function BatchDoneView({
 export function TodayLesson({
   uid,
   isA,
+  plan,
   pool,
   onProgress,
   sessionCap,
 }: {
   uid: string
   isA: boolean
+  plan: Plan
   pool: DictEntry[]
   onProgress: () => void
   // Giới hạn RIÊNG cho batch ĐẦU của phiên này (không đổi tốc độ đã lưu) — dùng
@@ -683,6 +687,7 @@ export function TodayLesson({
         batch={batch}
         uid={uid}
         isA={isA}
+        plan={plan}
         dailyStart={dailyStart}
         onStartQuiz={startMiniQuiz}
       />

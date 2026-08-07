@@ -108,7 +108,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
             </div>
           ))}
 
-        {/* Nút tùy chỉnh thêm vào header (vd: VoiceToggle) */}
+        {/* Nút tùy chỉnh thêm vào header (vd: VoiceMenu) */}
         {extra}
 
         {/* Nút đổi giao diện: Sáng / Tối / Xanh đêm */}
