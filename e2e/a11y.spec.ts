@@ -67,7 +67,7 @@ for (const theme of ['blue-sky', 'pink'] as ThemeName[]) {
     await mockLogin(page, 'en', theme)
     await page.addInitScript(() => localStorage.setItem('et_direction', 'B'))
     await page.goto('/')
-    await expect(page.getByRole('banner').getByText(/Hello,/)).toBeVisible()
+    await expect(page.getByRole('banner').getByText(/Hi there/)).toBeVisible()
     const { all } = await scan(page)
     expect(all).toEqual([])
   })

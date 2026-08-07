@@ -19,7 +19,7 @@ export const t = {
     navProfile: 'Cài đặt',
 
     // Home
-    greeting: (name: string) => `Xin chào, ${name}`,
+    greeting: 'Xin chào bạn',
     dirLabelA: '🇻🇳 Người Việt học tiếng Anh',
     dirLabelB: '🌍 Người nước ngoài học tiếng Việt',
     toggleDirTitleA: 'Chuyển sang dạy tiếng Việt cho người nước ngoài',
@@ -224,7 +224,7 @@ export const t = {
     navProfile: 'Settings',
 
     // Home
-    greeting: (name: string) => `Hello, ${name}`,
+    greeting: 'Hi there',
     dirLabelA: '🇻🇳 Vietnamese learning English',
     dirLabelB: '🌍 Foreigners learning Vietnamese',
     toggleDirTitleA: 'Switch to teaching Vietnamese for foreigners',

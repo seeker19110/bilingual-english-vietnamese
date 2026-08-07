@@ -6,7 +6,6 @@ import {
   Mic,
   ChevronRight,
   BookOpen,
-  ArrowLeftRight,
   History,
   Target,
   TrendingUp,
@@ -21,9 +20,7 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PricePromoBanner from '../components/PricePromoBanner'
-import { getStreak, hasStudiedToday, getDirection, setDirection } from '../lib/storage'
-import { getVoicePref, setVoicePref, type Voice } from '../lib/tts'
-import { VOICE_OPTIONS, DEFAULT_VOICE, DEFAULT_MALE_VOICE } from '../lib/voiceTiers'
+import { getStreak, getDirection } from '../lib/storage'
 import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
@@ -208,12 +205,13 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
 export default function Home() {
   const nav = useNavigate()
   const { user } = useAuth()
-  const { T, setLang } = useLang()
+  const { T } = useLang()
   // PHẢI dùng giá trị trả về + thêm vào deps useMemo bên dưới (xem cảnh báo useCloudSync.ts).
   const syncVersion = useCloudSync(user?.id)
 
-  const [dir, setDir] = useState<Direction>(getDirection)
-  const [voice, setVoice] = useState<Voice>(getVoicePref)
+  // Chiều học đọc trực tiếp từ localStorage — đổi chiều/ngôn ngữ hiển thị đã dời sang
+  // trang Hồ sơ (Profile.tsx), Home không còn tự đổi nên không cần state riêng.
+  const dir: Direction = getDirection()
   // Đóng banner "quay lại" (② M4) NGAY trong phiên này — dismissComebackToday()
   // ghi localStorage để không hiện lại trong ngày hôm nay ở lần mở app sau.
   const [comebackClosed, setComebackClosed] = useState(false)
@@ -270,30 +268,9 @@ export default function Home() {
   if (!user) return null
 
   const streak = getStreak(user.id)
-  const studiedToday = hasStudiedToday(user.id) // ô streak 3 trạng thái (V-2, E2)
   const srsDue = getSRSStats(user.id).due
   const dailyLearned = getDailyLearned(user.id)
   const dailyMax = getDailyMax(user.id)
-
-  function toggleDir() {
-    const next: Direction = dir === 'A' ? 'B' : 'A'
-    setDirection(next)
-    setDir(next)
-    setLang(next === 'A' ? 'vi' : 'en')
-  }
-
-  function chooseVoice(v: Voice) {
-    setVoice(v)
-    setVoicePref(v)
-  }
-
-  const voiceGender = VOICE_OPTIONS.find((v) => v.id === voice)?.gender ?? 'female'
-
-  // Bấm cả khối để đổi giọng Nữ ↔ Nam (giống ô Ngôn ngữ học) — chọn 1 trong 14 giọng cụ thể
-  // thì vào trang Cài đặt (Profile.tsx → VoicePicker).
-  function toggleVoice() {
-    chooseVoice(voiceGender === 'female' ? DEFAULT_MALE_VOICE : DEFAULT_VOICE)
-  }
 
   const MODES = getModes(dir, T)
   const isA = dir === 'A'
@@ -326,12 +303,12 @@ export default function Home() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout title={T.greeting(user.name)} back={false} />
+      <Layout title={T.greeting} back={false} streak={streak} />
 
       <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
         {/* Trang chủ dùng Layout title (chỉ là <p>) thay vì PageHeader nên cần <h1>
             riêng cho screen reader/SEO — ẩn trực quan vì tên đã hiện trong header. */}
-        <h1 className="sr-only">{T.greeting(user.name)}</h1>
+        <h1 className="sr-only">{T.greeting}</h1>
 
         {/* ── Luồng "quay lại sau khi bỏ bẵng" (② M4) — bỏ ≥3 ngày → chào +
             đề xuất phiên RÚT GỌN thay vì đập nguyên nợ ôn vào mặt ─────────── */}
@@ -441,78 +418,6 @@ export default function Home() {
             )}
           </div>
         )}
-
-        {/* ── Chọn chiều học + streak + giọng đọc (3 cột căn giữa) ──────────── */}
-        <div className="mb-6 grid grid-cols-3 gap-3 animate-fade-in">
-          {/* Chiều học — icon trên, text giữa, nhãn dưới, căn giữa */}
-          <button
-            onClick={toggleDir}
-            title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
-            aria-label={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
-            className={`flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3 border transition-all active:scale-[0.98] ${
-              isA
-                ? 'bg-accent-500/10 border-accent-500/30 hover:border-accent-500/60'
-                : 'bg-sky-500/10 border-sky-500/30 hover:border-sky-500/60'
-            }`}
-          >
-            <ArrowLeftRight className={`w-4 h-4 ${isA ? 'text-accent-400' : 'text-sky-400'}`} />
-            <span
-              className={`text-xs font-semibold leading-none text-center ${isA ? 'text-accent-300 theme-light:text-accent-700' : 'text-sky-300 theme-light:text-sky-700'}`}
-            >
-              {isA ? '🇻🇳 → 🇺🇸' : '🇺🇸 → 🇻🇳'}
-            </span>
-            <span
-              className={`text-[11px] leading-none text-center ${isA ? 'text-accent-400 theme-light:text-accent-700' : 'text-sky-400 theme-light:text-sky-700'}`}
-            >
-              {isA ? 'Ngôn ngữ' : 'Language'}
-            </span>
-          </button>
-
-          {/* Streak — 3 trạng thái (V-2, E2): đã giữ hôm nay ✓ · CHƯA giữ (viền đậm
-              nhắc nhở) · chưa có chuỗi (🌱 mời gọi thay 💤 trống rỗng) */}
-          <div
-            className={`flex flex-col items-center justify-center gap-1 rounded-2xl py-3 border ${
-              streak > 0
-                ? studiedToday
-                  ? 'bg-orange-500/10 border-orange-500/25'
-                  : 'bg-orange-500/15 border-orange-500/60'
-                : 'bg-zinc-900/40 border-zinc-800/40'
-            }`}
-          >
-            <span className="text-xl leading-none">{streak > 0 ? '🔥' : '🌱'}</span>
-            <p
-              className={`text-sm font-bold leading-none ${streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
-            >
-              {streak}
-            </p>
-            <p
-              className={`text-[11px] leading-none text-center ${
-                streak > 0
-                  ? `text-orange-400 ${studiedToday ? '' : 'font-semibold'}`
-                  : 'text-zinc-400'
-              }`}
-            >
-              {streak > 0 ? (studiedToday ? T.streakDoneToday : T.streakKeepToday) : T.streakStart}
-            </p>
-          </div>
-
-          {/* Giọng đọc — icon trên, text giữa, nhãn dưới, căn giữa */}
-          <button
-            type="button"
-            onClick={toggleVoice}
-            title={isA ? 'Nhấn để đổi giọng đọc' : 'Tap to switch voice'}
-            aria-label={`${isA ? 'Giọng đọc' : 'Voice'}: ${voiceGender === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'} (${voice})`}
-            className="flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3 border bg-zinc-900/80 border-zinc-700/60 hover:border-zinc-600 transition-all active:scale-[0.98]"
-          >
-            <Mic className="w-4 h-4 text-zinc-400" />
-            <span className="text-xs font-semibold leading-none text-center text-zinc-200">
-              {voiceGender === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'}
-            </span>
-            <span className="text-[11px] leading-none text-center text-zinc-400">
-              {isA ? 'Giọng đọc' : 'Voice'}
-            </span>
-          </button>
-        </div>
 
         {/* ── Mode cards ────────────────────────────────────────────────── */}
         <div className="space-y-3">
