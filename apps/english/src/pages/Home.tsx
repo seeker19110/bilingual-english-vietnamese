@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PricePromoBanner from '../components/PricePromoBanner'
+import RewardTipBanner from '../components/RewardTipBanner'
 import { getDirection } from '../lib/storage'
 import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
@@ -365,6 +366,9 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        {/* ── Mẹo kiếm huy hiệu & thưởng — tự hiện 1 lần rồi tự ẩn ──────────── */}
+        {uid && <RewardTipBanner uid={uid} isA={isA} />}
 
         {/* ── Gợi ý "Luyện nói với từ vừa học" (② M4, nối đề xuất B) ────────── */}
         {recentWords.length > 0 && (

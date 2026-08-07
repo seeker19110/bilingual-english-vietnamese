@@ -17,6 +17,16 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Gợi ý "cách kiếm huy hiệu & thưởng hiệu quả" cho người dùng (2026-08-07)
+
+- **Trang Giới thiệu** (`/gioi-thieu`, `About.tsx`): mục nhắc huy hiệu bổ sung chiến lược cụ thể
+  — ưu tiên giữ streak + làm challenge 1 phút mỗi ngày (2 việc tốn ít thời gian nhất nhưng lên
+  huy hiệu nhanh nhất), từ vựng/CEFR tự cộng dồn theo lộ trình học bình thường.
+- **Banner tự hiện rồi tự ẩn** (`components/RewardTipBanner.tsx` + `lib/rewardTip.ts`), gắn ở
+  Home — trang vào đầu tiên, dễ tiếp cận nhất: hiện 1 LẦN cho mỗi user (khác `comeback.ts` là
+  tắt lại theo ngày), tự ẩn sau 12s hoặc đóng tay, nhớ "đã xem" vĩnh viễn qua
+  `localStorage` (`et_reward_tip_seen_<uid>`) nên không hiện lại nữa — tránh làm phiền.
+
 ### Gợi ý email từ danh sách người dùng khi cấp gói tay (2026-08-07, PR #512)
 
 - Tab admin "Người dùng, Thanh toán & Từ cấm" → bấm 1 dòng ở bảng "Người dùng"
