@@ -3,7 +3,7 @@
 // dùng trong lúc chưa nối cổng thanh toán thật): admin nhập email + chọn gói + số ngày,
 // gọi POST để cấp; có nút "Tra cứu" gọi GET để xem gói hiện tại của 1 user trước khi cấp.
 // Shape request/response lấy đúng theo GrantSchema trong api/admin-grant-plan.ts, không đoán field.
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Loader2, Search, ShieldCheck } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import { getAuthHeader } from '@core/authHeader'
@@ -26,9 +26,23 @@ function formatExpiry(iso: string | null): string {
   return new Date(iso).toLocaleString('vi-VN')
 }
 
-export default function AdminGrantPlanPanel() {
+interface AdminGrantPlanPanelProps {
+  /** Email được chọn từ nơi khác (vd. bấm 1 dòng ở bảng "Người dùng") — điền sẵn vào form. */
+  prefillEmail?: string
+  /** Danh sách email đã biết, để gợi ý autocomplete (datalist) khi gõ. */
+  emailSuggestions?: string[]
+}
+
+export default function AdminGrantPlanPanel({
+  prefillEmail,
+  emailSuggestions,
+}: AdminGrantPlanPanelProps) {
   const toast = useToast()
   const [email, setEmail] = useState('')
+
+  useEffect(() => {
+    if (prefillEmail) setEmail(prefillEmail)
+  }, [prefillEmail])
   const [plan, setPlan] = useState<Plan>('pro')
   const [unlimited, setUnlimited] = useState(true)
   const [days, setDays] = useState(30)
@@ -114,8 +128,16 @@ export default function AdminGrantPlanPanel() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="user@example.com"
+            list={emailSuggestions?.length ? 'admin-grant-plan-email-suggestions' : undefined}
             className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2.5 text-sm text-white"
           />
+          {emailSuggestions && emailSuggestions.length > 0 && (
+            <datalist id="admin-grant-plan-email-suggestions">
+              {emailSuggestions.map((e) => (
+                <option key={e} value={e} />
+              ))}
+            </datalist>
+          )}
         </label>
 
         <label className="block">
