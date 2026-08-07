@@ -51,7 +51,7 @@ export default function RewardTipBanner({ uid, isA }: { uid: string; isA: boolea
         <button
           type="button"
           onClick={close}
-          aria-label={isA ? 'Đóng' : 'Dismiss'}
+          aria-label={isA ? 'Ẩn gợi ý huy hiệu' : 'Hide achievement tip'}
           className="tap-44 shrink-0 text-zinc-400 hover:text-zinc-200 transition"
         >
           <X className="w-4 h-4" />
