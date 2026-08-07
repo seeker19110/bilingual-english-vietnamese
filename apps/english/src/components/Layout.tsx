@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, BookOpen } from 'lucide-react'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
+import { getStreak } from '../lib/storage'
 import ThemeToggle from './ThemeToggle'
 
 interface Props {
@@ -17,13 +18,15 @@ interface Props {
   // nhảy thẳng vào 1 cấp) — không phụ thuộc lối vào, back luôn nhất quán theo cấu trúc trang.
   onBack?: () => void
   extra?: ReactNode
-  streak?: number
 }
 
-export default function Layout({ title, subtitle, back = true, onBack, extra, streak }: Props) {
+export default function Layout({ title, subtitle, back = true, onBack, extra }: Props) {
   const nav = useNavigate()
   const { user } = useAuth()
   const { T } = useLang()
+  // Streak tự lấy ở ĐÂY (không nhận qua prop nữa) — áp dụng TOÀN CỤC, hiện trên MỌI
+  // trang có Layout, không cần từng trang tự truyền vào (trước đây dễ quên).
+  const streak = user ? getStreak(user.id) : 0
 
   return (
     <header className="sticky top-0 z-50 bg-zinc-950 border-b border-zinc-800/60 relative pt-safe">
@@ -42,7 +45,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra, st
       {/* Gradient accent line trên cùng */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
 
-      <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-3">
+      <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-3 relative">
         {/* Back / Logo */}
         {back ? (
           <button
@@ -54,14 +57,20 @@ export default function Layout({ title, subtitle, back = true, onBack, extra, st
             <span className="text-sm hidden sm:inline">{T.home}</span>
           </button>
         ) : (
-          <div className="flex items-center gap-2 shrink-0">
+          // Logo "Gia sư AI" — bấm vào xem trang giới thiệu tính năng + mẹo học hiệu quả.
+          <Link
+            to="/gioi-thieu"
+            aria-label={T.aboutApp}
+            title={T.aboutApp}
+            className="tap-44 flex items-center gap-2 shrink-0 -ml-1 p-1 rounded-lg hover:bg-zinc-800/50 transition"
+          >
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center shadow-md shadow-accent-500/30">
               <BookOpen className="w-3.5 h-3.5 text-white" />
             </div>
             <span className="font-bold text-sm text-white hidden sm:inline tracking-tight">
               {T.appName}
             </span>
-          </div>
+          </Link>
         )}
 
         {/* Title — chỉ hiện khi trang truyền title cho header (trang chủ, màn chi tiết…).
@@ -72,16 +81,32 @@ export default function Layout({ title, subtitle, back = true, onBack, extra, st
           {subtitle && <p className="text-xs text-zinc-400 truncate">{subtitle}</p>}
         </div>
 
-        {/* Streak — hiện ở giữa header khi được truyền vào */}
-        {streak != null && streak > 0 && (
-          <div className="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/25 rounded-xl px-2.5 py-1.5 shrink-0">
-            <span className="text-base leading-none">🔥</span>
-            <div className="leading-none">
-              <p className="text-sm font-bold text-orange-400">{streak}</p>
-              <p className="text-[11px] text-orange-400/60">{T.streakDays}</p>
+        {/* Streak — TOÀN CỤC, dàn ngang 1 hàng. Căn CHÍNH GIỮA header (top-middle) khi
+            KHÔNG có title/subtitle (đa số trang) — không thứ gì để đè lên. Trang CÓ
+            title/subtitle (vd Writing "Kết quả chấm bài", Chat/Speaking đang có session)
+            thì xếp ngay sau khối đó theo dòng chảy bình thường — absolute căn giữa sẽ ĐÈ
+            LÊN chữ title/subtitle, gây lỗi tương phản (a11y AA) khi 2 lớp chữ chồng nhau.
+            Nhãn "ngày liên tiếp" dùng text-orange-400 ĐẶC (không giảm opacity /60 — bản mờ
+            từng rớt AA 3.58:1 trên nền tối) + theme-light:text-orange-800 cho 3 theme nền
+            sáng (Blue sky/Pink/Nhi đồng — orange-400 gốc chỉ 1.96:1 trên nền sáng). */}
+        {streak > 0 &&
+          (title || subtitle ? (
+            <div className="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/25 rounded-xl px-2.5 py-1.5 shrink-0">
+              <span className="text-base leading-none">🔥</span>
+              <span className="text-sm font-bold text-orange-400 leading-none">{streak}</span>
+              <span className="text-[11px] text-orange-400 theme-light:text-orange-800 leading-none">
+                {T.streakDays}
+              </span>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/25 rounded-xl px-2.5 py-1.5 pointer-events-none">
+              <span className="text-base leading-none">🔥</span>
+              <span className="text-sm font-bold text-orange-400 leading-none">{streak}</span>
+              <span className="text-[11px] text-orange-400 theme-light:text-orange-800 leading-none">
+                {T.streakDays}
+              </span>
+            </div>
+          ))}
 
         {/* Nút tùy chỉnh thêm vào header (vd: VoiceToggle) */}
         {extra}

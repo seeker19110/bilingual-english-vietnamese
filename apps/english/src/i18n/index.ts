@@ -3,6 +3,7 @@ export const t = {
   vi: {
     // Layout / Header
     appName: 'Gia sư AI',
+    aboutApp: 'Giới thiệu ứng dụng',
     home: 'Trang chủ',
     profile: 'Trang cá nhân',
     logout: 'Đăng xuất',
@@ -208,6 +209,7 @@ export const t = {
   en: {
     // Layout / Header
     appName: 'AI Tutor',
+    aboutApp: 'About the app',
     home: 'Home',
     profile: 'Profile',
     logout: 'Log out',

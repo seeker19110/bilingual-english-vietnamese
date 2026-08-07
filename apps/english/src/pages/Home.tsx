@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PricePromoBanner from '../components/PricePromoBanner'
-import { getStreak, getDirection } from '../lib/storage'
+import { getDirection } from '../lib/storage'
 import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
@@ -267,7 +267,6 @@ export default function Home() {
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
 
-  const streak = getStreak(user.id)
   const srsDue = getSRSStats(user.id).due
   const dailyLearned = getDailyLearned(user.id)
   const dailyMax = getDailyMax(user.id)
@@ -303,7 +302,7 @@ export default function Home() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout title={T.greeting} back={false} streak={streak} />
+      <Layout title={T.greeting} back={false} />
 
       <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
         {/* Trang chủ dùng Layout title (chỉ là <p>) thay vì PageHeader nên cần <h1>

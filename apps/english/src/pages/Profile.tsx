@@ -188,7 +188,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout streak={streak} />
+      <Layout />
 
       <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader
