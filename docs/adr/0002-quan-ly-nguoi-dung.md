@@ -91,6 +91,18 @@ trước khi mở môn thứ hai (SSO là giá trị lớn nhất của "một t
   chưa phải nguồn sự thật. Trước khi bất kỳ code nào bắt đầu ĐỌC bảng này, phải thêm dual-write
   (giống cách Bước 1 làm cho `identities`) hoặc backfill lại — ghi rõ ở bước rewiring kế tiếp.
 
+## Quyết định chờ sẵn cho Bước 3 (2026-08-08, trước khi thi hành)
+
+Dừng lại sau Bước 2 để merge/kiểm thử kỹ trước — Bước 3 đụng thẳng phiên đăng nhập của
+người dùng thật đang trả tiền (khác Bước 1–2 vốn chỉ thêm dữ liệu). Đã chốt trước 2 điều để
+lúc bắt tay Bước 3 không phải hỏi lại:
+
+- **Domain cookie: `Domain=.donghanhcungban.org` ngay từ đầu** (không để hẹp
+  `en-vi.donghanhcungban.org` rồi sửa lại sau) — đúng tinh thần ADR-0001/0002, và hiện tại chỉ
+  có `en-vi.` dùng domain cha nên không có subdomain khác bị ảnh hưởng bởi cookie share sớm.
+- **Cách làm:** dual-accept — server chấp nhận cả Bearer (client cũ chưa cập nhật) lẫn cookie
+  mới song song trong giai đoạn chuyển tiếp, không ép buộc ngay; bỏ hẳn Bearer là Bước 6.
+
 ## Hệ quả
 
 **Tích cực:** thêm provider đăng nhập mới (Zalo, X…) sau này = 1 dòng code, 0 migration ALTER
