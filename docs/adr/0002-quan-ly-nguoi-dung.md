@@ -1,6 +1,6 @@
 # ADR-0002: Quản lý người dùng cho nền tảng đa lĩnh vực
 
-- **Trạng thái:** Đang thi hành (Bước 1/6)
+- **Trạng thái:** Đang thi hành (Bước 2/6)
 - **Ngày:** 2026-08-08
 - **Liên quan:** `docs/adr/0001-nen-tang-da-linh-vuc.md` (đã chốt bố cục domain/repo/schema),
   `packages/core-auth/`, `postgres/schema.sql`
@@ -54,8 +54,8 @@ app tiếng Anh đang chạy thật.
 
 | #   | Nội dung                                                                                             | Trạng thái            |
 | --- | ---------------------------------------------------------------------------------------------------- | --------------------- |
-| 1   | `identities` + backfill từ 4 cột cũ; `findOrCreateOAuthUser` dual-write (ghi cả cột cũ lẫn bảng mới) | **Đang làm — PR này** |
-| 2   | `entitlements` + backfill từ `profiles.plan`; giữ view tương thích                                   | Chưa làm              |
+| 1   | `identities` + backfill từ 4 cột cũ; `findOrCreateOAuthUser` dual-write (ghi cả cột cũ lẫn bảng mới) | Xong                  |
+| 2   | `entitlements` + backfill từ `profiles.plan`                                                         | **Đang làm — PR này** |
 | 3   | Cookie SSO song song Bearer (chấp nhận cả 2 trong giai đoạn chuyển tiếp)                             | Chưa làm              |
 | 4   | Tách `core.profiles` vs hồ sơ riêng từng môn                                                         | Chưa làm              |
 | 5   | `roles` (quyền quản trị theo môn) + `audit_log` + registry xoá tài khoản                             | Chưa làm              |
@@ -75,6 +75,21 @@ trước khi mở môn thứ hai (SSO là giá trị lớn nhất của "một t
   tiếp (tránh 2 nguồn sự thật lệch nhau trong lúc chuyển tiếp). Bước 6 mới đổi chiều đọc sang
   `identities` rồi xoá cột cũ.
 - 4 cột cũ **giữ nguyên**, không xoá — an toàn rollback deploy này mà không mất dữ liệu.
+
+## Bước 2 — chi tiết đã thi hành
+
+- Migration `postgres/migrations/0035_entitlements.sql`: tạo bảng `entitlements`, backfill 1
+  dòng `product='platform'` cho mỗi user từ `profiles.plan`/`plan_expires_at`.
+- **Không đổi bất kỳ code đọc/ghi gói cước nào** — khác Bước 1 (đã dual-write ngay),
+  bước này CHỈ thêm dữ liệu vì `profiles.plan` đụng trực tiếp tới billing/usage/admin
+  (`packages/core-billing`, `api/payment-webhook.ts`, `api/admin-grant-plan.ts`…) — đổi nơi
+  đọc là thay đổi rủi ro cao liên quan tiền thật, để dành một bước riêng có audit kỹ hơn,
+  không gộp vào PR thuần hạ tầng này.
+- Hệ quả: bảng `entitlements` sau bước này CHƯA được ai đọc — chỉ là dữ liệu backfill một lần,
+  sẽ LỆCH dần với `profiles.plan` nếu gói cước đổi (mua thêm, admin cấp tay, hết hạn…) vì
+  không có dual-write. Chấp nhận vì mục tiêu Bước 2 là bảng có tồn tại + đúng schema,
+  chưa phải nguồn sự thật. Trước khi bất kỳ code nào bắt đầu ĐỌC bảng này, phải thêm dual-write
+  (giống cách Bước 1 làm cho `identities`) hoặc backfill lại — ghi rõ ở bước rewiring kế tiếp.
 
 ## Hệ quả
 
