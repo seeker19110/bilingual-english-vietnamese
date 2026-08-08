@@ -187,11 +187,29 @@ export function getCachedAllowedVoices(): VoiceId[] {
 // đó KHÔNG hỗ trợ ElevenLabs (chỉ dành cho câu/đoạn ở /api/tts — xem api/pronunciation.ts).
 // Nếu random ra Rachel, request sẽ bị server trả 400 rồi âm thầm fallback Web Speech (giọng
 // trình duyệt chất lượng thấp hơn) — bug thật đã gặp với user gói VIP.
+// LOẠI giọng Studio khi đọc nội dung KHÔNG phải tiếng Anh: Google không có giọng Studio cho
+// vi-VN, server sẽ hạ Studio-O→Kore / Studio-Q→Puck (api/pronunciation.ts). Nếu vẫn để Studio
+// trong bể random ở chiều B thì Kore/Puck bị trúng gấp đôi (lệch xác suất, cảm giác "không
+// random") và mất thêm 1 lượt gọi API vô ích.
+//
+// TRÁNH LẶP giọng vừa phát (`exclude`): random đều có thể bốc lại đúng giọng cũ — gói Free chỉ
+// 4 giọng nên 25% lần bấm nghe y hệt, khiến người dùng tưởng random không chạy. Chỉ loại khi
+// bể còn ≥ 2 giọng (không thì không còn gì để bốc).
 const ALLOWED_VOICE_POOL_EXCLUDING_ELEVEN = VOICE_IDS.filter((v) => !ELEVEN_VOICE_IDS.includes(v))
-export function pickRandomAllowedVoice(): VoiceId {
+export function pickRandomAllowedVoice(
+  options: {
+    lang?: 'en-US' | 'vi-VN'
+    exclude?: VoiceId
+  } = {},
+): VoiceId {
+  const { lang = 'en-US', exclude } = options
   const eleven = new Set(ELEVEN_VOICE_IDS)
-  const allowed = getCachedAllowedVoices().filter((v) => !eleven.has(v))
-  const pool = allowed.length > 0 ? allowed : ALLOWED_VOICE_POOL_EXCLUDING_ELEVEN
+  const studio = new Set(STUDIO_VOICE_IDS)
+  const usable = (v: VoiceId) => !eleven.has(v) && (lang === 'en-US' || !studio.has(v))
+  const allowed = getCachedAllowedVoices().filter(usable)
+  const basePool = allowed.length > 0 ? allowed : ALLOWED_VOICE_POOL_EXCLUDING_ELEVEN.filter(usable)
+  const withoutCurrent = basePool.filter((v) => v !== exclude)
+  const pool = withoutCurrent.length > 0 ? withoutCurrent : basePool
   return pool[Math.floor(Math.random() * pool.length)]!
 }
 

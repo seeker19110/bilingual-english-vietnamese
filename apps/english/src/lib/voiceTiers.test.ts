@@ -10,6 +10,7 @@ import {
   resolveActualVoice,
   VOICE_IDS,
   DEFAULT_SEED_VOICE_IDS,
+  STUDIO_VOICE_IDS,
 } from './voiceTiers'
 
 describe('isValidVoiceId', () => {
@@ -101,6 +102,72 @@ describe('pickRandomAllowedVoice — trộn nam/nữ, loại ElevenLabs (Rachel)
     const v = pickRandomAllowedVoice()
     expect(v).not.toBe('Rachel')
     expect(VOICE_IDS).toContain(v)
+  })
+})
+
+describe('pickRandomAllowedVoice — loại giọng Studio khi đọc tiếng Việt', () => {
+  beforeEach(() => localStorage.clear())
+
+  it("lang='vi-VN' (gói VIP có Studio) → không bao giờ bốc Studio-O/Studio-Q", () => {
+    cacheAllowedVoices('vip', new Date('2020-01-01'))
+    for (let i = 0; i < 100; i++) {
+      const v = pickRandomAllowedVoice({ lang: 'vi-VN' })
+      expect(STUDIO_VOICE_IDS).not.toContain(v)
+    }
+  })
+
+  it("lang='en-US' vẫn cho phép Studio (giọng cao cấp chỉ có ở tiếng Anh)", () => {
+    cacheAllowedVoices('vip', new Date('2020-01-01'))
+    const picked = new Set<string>()
+    for (let i = 0; i < 400; i++) picked.add(pickRandomAllowedVoice({ lang: 'en-US' }))
+    expect(STUDIO_VOICE_IDS.some((v) => picked.has(v))).toBe(true)
+  })
+
+  it("cache chỉ có Studio + lang='vi-VN' → rơi về pool mặc định, vẫn không có Studio", () => {
+    localStorage.setItem('voice_allowed_cache', JSON.stringify(STUDIO_VOICE_IDS))
+    for (let i = 0; i < 20; i++) {
+      const v = pickRandomAllowedVoice({ lang: 'vi-VN' })
+      expect(STUDIO_VOICE_IDS).not.toContain(v)
+      expect(VOICE_IDS).toContain(v)
+    }
+  })
+
+  it('không truyền options → giữ hành vi cũ (mặc định en-US, không có Rachel)', () => {
+    cacheAllowedVoices('vip', new Date('2020-01-01'))
+    for (let i = 0; i < 20; i++) expect(pickRandomAllowedVoice()).not.toBe('Rachel')
+  })
+})
+
+describe('pickRandomAllowedVoice — không lặp lại giọng vừa phát (exclude)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('gói Free (4 giọng) → không bao giờ bốc lại giọng đang loại trừ', () => {
+    cacheAllowedVoices('free', new Date('2020-01-01'))
+    for (let i = 0; i < 100; i++) {
+      expect(pickRandomAllowedVoice({ exclude: 'Kore' })).not.toBe('Kore')
+    }
+  })
+
+  it('bể chỉ còn ĐÚNG 1 giọng → vẫn trả về giọng đó (không được rỗng/undefined)', () => {
+    localStorage.setItem('voice_allowed_cache', JSON.stringify(['Kore']))
+    expect(pickRandomAllowedVoice({ exclude: 'Kore' })).toBe('Kore')
+  })
+
+  it('loại trừ giọng KHÔNG nằm trong bể → không ảnh hưởng kết quả', () => {
+    localStorage.setItem('voice_allowed_cache', JSON.stringify(['Kore', 'Puck']))
+    for (let i = 0; i < 20; i++) {
+      expect(['Kore', 'Puck']).toContain(pickRandomAllowedVoice({ exclude: 'Umbriel' }))
+    }
+  })
+
+  it('vừa loại Studio (vi-VN) vừa loại giọng cũ → cả 2 điều kiện đều đúng', () => {
+    cacheAllowedVoices('vip', new Date('2020-01-01'))
+    for (let i = 0; i < 100; i++) {
+      const v = pickRandomAllowedVoice({ lang: 'vi-VN', exclude: 'Kore' })
+      expect(v).not.toBe('Kore')
+      expect(STUDIO_VOICE_IDS).not.toContain(v)
+      expect(v).not.toBe('Rachel')
+    }
   })
 })
 
