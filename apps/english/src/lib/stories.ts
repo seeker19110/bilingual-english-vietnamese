@@ -52,7 +52,8 @@ export function groupLinesByParagraph(lines: StoryLine[]): StoryLine[][] {
 
 /**
  * Ước lượng thời gian nghe (phút, làm tròn) từ số câu: lineCount × 4 giây.
- * Luôn trả về tối thiểu 1 phút để không hiện "0 phút" với truyện rất ngắn.
+ * Với lineCount > 0, luôn trả về tối thiểu 1 phút (không hiện "0 phút" với truyện rất ngắn).
+ * lineCount <= 0 (dữ liệu lỗi — không nên xảy ra, đã có test chặn ở stories.test.ts) trả về 0.
  */
 export function estimateListenMinutes(lineCount: number): number {
   if (lineCount <= 0) return 0
