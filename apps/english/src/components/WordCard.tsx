@@ -151,6 +151,7 @@ export default function WordCard({
             key={isA ? card.word : card.vi}
             word={isA ? card.word : card.vi}
             lang={isA ? 'en-US' : 'vi-VN'}
+            isA={isA}
           />
         </div>
         {card.ex_en && (

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
 import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
@@ -24,8 +24,16 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
   // reset; nếu chỉ theo giọng thì từ mới sẽ phát nhầm audio của từ cũ đã lưu.
   const [audioUrls, setAudioUrls] = useState<Record<string, string>>({})
 
+  // Giọng của lần bấm trước — loại khỏi bể random để không bốc lại đúng giọng cũ (gói Free chỉ
+  // 4 giọng nên random đều sẽ lặp ~25% số lần bấm, người dùng tưởng random không chạy).
+  const lastVoiceRef = useRef<Voice | null>(null)
+
   function pickVoice(): Voice {
-    return random ? pickRandomAllowedVoice() : getVoicePref()
+    // Truyền `lang` để bỏ giọng Studio khi đọc tiếng Việt (Google không có Studio cho vi-VN,
+    // server hạ về Chirp3-HD nên Kore/Puck bị trúng gấp đôi — xem api/pronunciation.ts).
+    return random
+      ? pickRandomAllowedVoice({ lang, exclude: lastVoiceRef.current ?? undefined })
+      : getVoicePref()
   }
 
   function speakWithWebSpeech(voice: Voice) {
@@ -54,6 +62,7 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
     if (status === 'loading') return
 
     const guessedVoice = pickVoice()
+    lastVoiceRef.current = guessedVoice
 
     // Trước đây cụm từ (word có dấu cách) bị bắt đọc bằng Web Speech API trình duyệt thay vì
     // Google TTS — Web Speech chỉ set utt.lang chứ không đảm bảo máy có SẴN giọng đúng ngôn
@@ -85,6 +94,8 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
       }
       const audioUrl = data.audio_url
       const actualVoice = resolveActualVoice(guessedVoice, data.voice)
+      // Nhớ giọng THẬT vừa nghe (server có thể đã hạ giọng đoán) để lần bấm sau không lặp lại nó.
+      lastVoiceRef.current = actualVoice
 
       setAudioUrls((prev) => ({ ...prev, [`${word}|${actualVoice}|${lang}`]: audioUrl }))
       setStatus('idle')

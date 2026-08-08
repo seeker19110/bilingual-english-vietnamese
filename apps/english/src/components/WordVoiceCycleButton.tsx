@@ -7,19 +7,23 @@ import { VOICE_OPTIONS, pickRandomAllowedVoice, resolveActualVoice } from '../li
 interface Props {
   word: string
   lang?: 'en-US' | 'vi-VN' // bỏ trống = tiếng Anh (mặc định cũ, giữ tương thích chỗ gọi chưa sửa)
+  isA?: boolean // true = giao diện tiếng Việt (chiều A) · false = tiếng Anh (chiều B)
 }
 
 // Nhãn ngắn gọn cho từng giọng (tên riêng + nhãn giới tính), hiển thị cạnh icon để người
-// dùng biết đang nghe giọng nào.
-const VOICE_LABEL: Record<Voice, string> = Object.fromEntries(
-  VOICE_OPTIONS.map((v) => [v.id, `${v.gender === 'female' ? 'Nữ' : 'Nam'} · ${v.id}`]),
-) as Record<Voice, string>
+// dùng biết đang nghe giọng nào. Nhãn giới tính theo CHIỀU HỌC như VoiceMenu/VoicePicker —
+// trước đây viết cứng tiếng Việt nên người học chiều B (giao diện tiếng Anh) vẫn thấy "Nữ".
+function voiceLabel(voice: Voice, isA: boolean): string {
+  const gender = VOICE_OPTIONS.find((v) => v.id === voice)?.gender ?? 'female'
+  const genderLabel = gender === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'
+  return `${genderLabel} · ${voice}`
+}
 
 // Nút DUY NHẤT phát âm 1 từ. Quyết định 2026-07-29: mỗi lần bấm bốc NGẪU NHIÊN 1 giọng trong
 // số giọng gói cho phép (trộn cả nam lẫn nữ, không tuần tự) — khác giọng mặc định cố định ở
 // Cài đặt, đồng bộ với nút loa Từ điển (PronounceButton random, Dictionary.tsx). Nhãn cạnh
 // icon luôn hiện đúng giọng VỪA phát.
-export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
+export default function WordVoiceCycleButton({ word, lang = 'en-US', isA = true }: Props) {
   const [loading, setLoading] = useState(false)
   // Cache audio_url theo từng giọng đã tải — bấm lại đúng giọng cũ thì không gọi lại API.
   const [audioUrls, setAudioUrls] = useState<Partial<Record<Voice, string>>>({})
@@ -55,7 +59,9 @@ export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
   async function handleClick() {
     if (loading) return
 
-    const nextVoice = pickRandomAllowedVoice()
+    // `lang`: bỏ giọng Studio khỏi bể random khi đọc từ tiếng Việt (server sẽ hạ về Chirp3-HD).
+    // `exclude`: không bốc lại đúng giọng vừa phát, để mỗi lần bấm nghe thật sự khác giọng.
+    const nextVoice = pickRandomAllowedVoice({ lang, exclude: currentVoice })
 
     // Cache tra theo giọng ĐOÁN trước (nextVoice) — nếu đã có nghĩa là lần trước server cũng
     // trả về đúng giọng này (không bị hạ gói), nên vừa tra cache vừa hiện nhãn ngay được.
@@ -104,12 +110,12 @@ export default function WordVoiceCycleButton({ word, lang = 'en-US' }: Props) {
     <button
       onClick={handleClick}
       disabled={loading}
-      title="Nghe"
-      aria-label="Nghe"
+      title={isA ? 'Nghe' : 'Listen'}
+      aria-label={isA ? 'Nghe' : 'Listen'}
       className="tap-44 shrink-0 h-10 px-3.5 flex items-center gap-1.5 rounded-full bg-zinc-800 hover:bg-accent-500/20 text-zinc-300 hover:text-accent-300 transition disabled:opacity-60 text-sm font-medium"
     >
       {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Volume2 className="w-4 h-4" />}
-      <span>{VOICE_LABEL[currentVoice]}</span>
+      <span>{voiceLabel(currentVoice, isA)}</span>
     </button>
   )
 }
