@@ -184,17 +184,25 @@ async function findOrCreateOAuthUser(
     `select id, email from public.users where ${col} = $1`,
     [providerId],
   )
-  if (byProvider.rows[0]) return { user: byProvider.rows[0], isNew: false }
+  if (byProvider.rows[0]) {
+    // Backfill/đồng bộ bảng identities cho dữ liệu tạo trước khi có bảng này (0034) — không
+    // ảnh hưởng kết quả, chỉ để identities dần đầy đủ mà không cần chạy lại migration.
+    await upsertIdentity(provider, providerId, byProvider.rows[0].id, normalizedEmail)
+    return { user: byProvider.rows[0], isNew: false }
+  }
 
   const byEmail = await pool.query<AuthUserRow>(
     'select id, email from public.users where email = $1',
     [normalizedEmail],
   )
   if (byEmail.rows[0]) {
+    // Dual-write (Bước 1 — docs/adr/0002-quan-ly-nguoi-dung.md): vẫn ghi cột cũ để không phá
+    // code đọc cột cũ, đồng thời ghi bảng identities cho tương lai chuyển hẳn sang đó.
     await pool.query(`update public.users set ${col} = $1 where id = $2`, [
       providerId,
       byEmail.rows[0].id,
     ])
+    await upsertIdentity(provider, providerId, byEmail.rows[0].id, normalizedEmail)
     return { user: byEmail.rows[0], isNew: false }
   }
 
@@ -204,7 +212,25 @@ async function findOrCreateOAuthUser(
   )
   const created = rows[0]
   if (!created) throw new Error(`Không tạo được user ${provider} mới`)
+  await upsertIdentity(provider, providerId, created.id, normalizedEmail)
   return { user: created, isNew: true }
+}
+
+// Ghi/refresh 1 dòng bảng `identities` (0034) — an toàn gọi lặp lại (on conflict do nothing,
+// không cập nhật email để giữ email LÚC LIÊN KẾT ĐẦU TIÊN, khớp comment trong migration).
+async function upsertIdentity(
+  provider: OAuthProvider,
+  providerId: string,
+  userId: string,
+  email: string,
+): Promise<void> {
+  const pool = getPgPool()
+  await pool.query(
+    `insert into public.identities (provider, provider_user_id, user_id, email)
+     values ($1, $2, $3, $4)
+     on conflict (provider, provider_user_id) do nothing`,
+    [provider, providerId, userId, email],
+  )
 }
 
 export async function findOrCreateGoogleUser(
