@@ -17,6 +17,37 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### ADR-0002 — Quản lý người dùng đa lĩnh vực: Bước 1–4 + 6 XONG (2026-08-08, PR #517 · #518)
+
+Chuẩn bị nền tảng tài khoản dùng chung cho các môn tiếp theo (ADR `docs/adr/0002-quan-ly-nguoi-dung.md`).
+Bước 5 **bỏ qua có chủ ý** (roles/audit_log/registry xoá tài khoản chưa có tính năng thật để gắn vào —
+admin hiện là whitelist email trong `.env`).
+
+- **Bước 1 — `identities`** (migration `0034`): tách 4 cột OAuth cứng (Google/Facebook/Apple/Microsoft)
+  trên `users` ra bảng riêng, dual-write để không hồi quy; thêm provider mới không phải `ALTER` bảng lõi.
+- **Bước 2 — `entitlements`** (migration `0035`): quyền lợi theo **sản phẩm** (`user_id, product, tier,
+source, granted_at, expires_at`), backfill từ `profiles.plan`. CHƯA đổi code đọc/ghi gói cước —
+  bảng sẽ lệch dần cho tới bước rewiring, đã ghi rõ trong ADR.
+- **Bước 3 — cookie SSO**: `packages/core-auth/sessionCookie.ts` (mới) — cookie HttpOnly/SameSite=Lax
+  (Secure + `Domain=.donghanhcungban.org` chỉ ở production) dùng CHUNG `session_token` đã có.
+- **Bước 4 — `english.user_profile`** (migration `0036`): tách 4 cột onboarding chỉ đúng với tiếng Anh
+  (`user_level`, `goal`, `daily_minutes`, `age_group`); `api/profile.ts` tạm thời vẫn đọc/ghi cột cũ.
+- **Bước 6 — bỏ Bearer, chỉ còn cookie** (migration `0037` xoá 4 cột OAuth cũ): `validateAuth()` đọc
+  cookie; đọc kênh OAuth từ `identities`. ⚠️ **Đánh đổi người dùng đã chấp nhận:** mọi phiên tạo
+  TRƯỚC khi Bước 3 lên production đều chỉ có Bearer → sẽ nhận 401 và phải **đăng nhập lại một lần**.
+- ⚠️ **Việc tay trước khi deploy:** chạy `npm run migrate:pg` trên VPS (4 migration mới `0034`–`0037`).
+  Deploy Bước 6 phải đi SAU khi Bước 3 đã chạy thật ít nhất một nhịp, nếu không mọi phiên đều đứt.
+
+### Sửa lỗi trang Nghe/Truyện + nút phát âm (2026-08-08, PR #516 · #519)
+
+- **`/truyen-song-ngu`** (PR #516): chặn bấm loa câu lẻ trong lúc "Phát tất cả" chạy (chồng tiếng);
+  `data/stories/loader.ts` không còn cache VĨNH VIỄN lỗi mạng (tự thử lại lần sau); thêm chip lọc theo
+  cấp CEFR (A2/B1/B2); thêm `aria-live` báo câu đang đọc + `aria-label` tường minh cho nút loa.
+- **Nút phát âm** (PR #519): bể random giờ nhận `{ lang, exclude }` — không bốc lại giọng vừa nghe
+  (Free chỉ 4 giọng nên ~25% lần bấm bị lặp) và bỏ giọng Studio khi đọc tiếng Việt (Google không có
+  Studio cho `vi-VN`, server hạ về Kore/Puck → 2 giọng đó trúng gấp đôi + tốn 1 lượt gọi API vô ích).
+  Nhãn giới tính đổi theo chiều học (`isA`) cho khớp `VoiceMenu`/`VoicePicker`. +9 ca test `voiceTiers`.
+
 ### Gợi ý "cách kiếm huy hiệu & thưởng hiệu quả" cho người dùng (2026-08-07)
 
 - **Trang Giới thiệu** (`/gioi-thieu`, `About.tsx`): mục nhắc huy hiệu bổ sung chiến lược cụ thể
@@ -1539,6 +1570,11 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 > `SUPABASE_DB_URL`. Xem `docs/migration-thoat-ly-supabase.md`.
 
 ## ⚠️ Cần làm tay (không cần PR)
+
+- **Migration `0034`–`0037` (ADR-0002) — CHẠY TRƯỚC KHI DEPLOY.** `npm run migrate:pg` trên VPS
+  (`identities`, `entitlements`, `english.user_profile`, xoá 4 cột OAuth cũ trên `users`).
+  Sau khi deploy Bước 6, mọi người dùng đang đăng nhập bằng phiên Bearer cũ **phải đăng nhập lại
+  một lần** — đây là đánh đổi đã được xác nhận, không phải lỗi.
 
 - **Migration `0028_tts_viseme_timeline.sql` — CHẠY TRƯỚC KHI DEPLOY đợt avatar timing.**
   Thêm cột `viseme_timeline jsonb` vào `tts_cache` (nullable, không phá dữ liệu cache cũ).
