@@ -150,71 +150,49 @@ describe('validateAuth', () => {
     else process.env.VERCEL_ENV = OLD_VERCEL_ENV
   })
 
-  it('THIẾU header Authorization → null, không gọi validateSessionToken', async () => {
+  // [Cập nhật Bước 6, docs/adr/0002-quan-ly-nguoi-dung.md] Bearer đã bị bỏ hoàn toàn — chỉ
+  // còn cookie `session_token` (packages/core-auth/sessionCookie.ts) làm nguồn xác thực.
+  it('THIẾU cookie → null, không gọi validateSessionToken', async () => {
     delete process.env.SKIP_AUTH
     const result = await validateAuth(reqWithHeaders({}))
     expect(result).toBeNull()
     expect(validateSessionToken).not.toHaveBeenCalled()
   })
 
-  it('header sai định dạng (không phải "Bearer ...") → null', async () => {
+  it('CÓ header Authorization nhưng KHÔNG còn được dùng để xác thực → null', async () => {
     delete process.env.SKIP_AUTH
-    const result = await validateAuth(reqWithHeaders({ Authorization: 'Basic abc123' }))
+    const result = await validateAuth(reqWithHeaders({ Authorization: 'Bearer hop-le' }))
     expect(result).toBeNull()
     expect(validateSessionToken).not.toHaveBeenCalled()
   })
 
-  it('"Bearer " nhưng token rỗng (chỉ khoảng trắng) → null', async () => {
+  it('cookie không chứa session_token → null', async () => {
     delete process.env.SKIP_AUTH
-    const result = await validateAuth(reqWithHeaders({ Authorization: 'Bearer    ' }))
+    const result = await validateAuth(reqWithHeaders({ Cookie: 'other=xyz' }))
     expect(result).toBeNull()
     expect(validateSessionToken).not.toHaveBeenCalled()
   })
 
-  it('token ĐÚNG định dạng nhưng hết hạn/không tồn tại (validateSessionToken trả null) → null', async () => {
+  it('cookie session_token ĐÚNG định dạng nhưng hết hạn/không tồn tại (validateSessionToken trả null) → null', async () => {
     delete process.env.SKIP_AUTH
     validateSessionToken.mockResolvedValue(null)
-    const result = await validateAuth(reqWithHeaders({ Authorization: 'Bearer het-han' }))
+    const result = await validateAuth(reqWithHeaders({ Cookie: 'session_token=het-han' }))
     expect(result).toBeNull()
   })
 
   it('validateSessionToken ném lỗi (DB lỗi) → null, không crash', async () => {
     delete process.env.SKIP_AUTH
     validateSessionToken.mockRejectedValue(new Error('db down'))
-    const result = await validateAuth(reqWithHeaders({ Authorization: 'Bearer x' }))
+    const result = await validateAuth(reqWithHeaders({ Cookie: 'session_token=x' }))
     expect(result).toBeNull()
   })
 
-  it('token hợp lệ → trả userId', async () => {
-    delete process.env.SKIP_AUTH
-    validateSessionToken.mockResolvedValue({ userId: 'user-1' })
-    const result = await validateAuth(reqWithHeaders({ Authorization: 'Bearer hop-le' }))
-    expect(result).toEqual({ userId: 'user-1' })
-  })
-
-  // ── Cookie fallback (Bước 3 SSO — dual-accept, sessionCookie.ts) ────────────────────
-  it('KHÔNG có Authorization nhưng có cookie session_token hợp lệ → trả userId', async () => {
+  it('cookie session_token hợp lệ → trả userId', async () => {
     delete process.env.SKIP_AUTH
     validateSessionToken.mockResolvedValue({ userId: 'user-cookie' })
     const result = await validateAuth(reqWithHeaders({ Cookie: 'session_token=abc123' }))
     expect(result).toEqual({ userId: 'user-cookie' })
     expect(validateSessionToken).toHaveBeenCalledWith('abc123')
-  })
-
-  it('CÓ CẢ Authorization lẫn cookie → ưu tiên Bearer (cơ chế chính)', async () => {
-    delete process.env.SKIP_AUTH
-    validateSessionToken.mockResolvedValue({ userId: 'user-bearer' })
-    await validateAuth(
-      reqWithHeaders({ Authorization: 'Bearer bearer-tok', Cookie: 'session_token=cookie-tok' }),
-    )
-    expect(validateSessionToken).toHaveBeenCalledWith('bearer-tok')
-  })
-
-  it('không có Authorization, cookie không chứa session_token → null', async () => {
-    delete process.env.SKIP_AUTH
-    const result = await validateAuth(reqWithHeaders({ Cookie: 'other=xyz' }))
-    expect(result).toBeNull()
-    expect(validateSessionToken).not.toHaveBeenCalled()
   })
 
   it('SKIP_AUTH=true nhưng NODE_ENV=production → KHÔNG bypass (an toàn production)', async () => {

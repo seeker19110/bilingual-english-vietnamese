@@ -196,9 +196,10 @@ function checkRateLimitInMemory(key: string, maxPerMin: number): boolean {
 }
 
 // ── Auth Validation ───────────────────────────────────────────────────────────
-// Đọc session token từ header Authorization: Bearer <token> — CƠ CHẾ CHÍNH, không đổi.
-// Thiếu Bearer mới thử cookie `session_token` (Bước 3 SSO, docs/adr/0002-quan-ly-nguoi-dung.md
-// + packages/core-auth/sessionCookie.ts) — dual-accept, KHÔNG bắt buộc client đổi gì.
+// [Cập nhật Bước 6, docs/adr/0002-quan-ly-nguoi-dung.md] Đọc session token TỪ COOKIE
+// `session_token` (packages/core-auth/sessionCookie.ts) — Bearer đã bị bỏ hoàn toàn (trước đó
+// dual-accept ở Bước 3). Client vẫn gửi kèm `Authorization: Bearer` (chưa dọn — xem
+// authService.ts đầu file) nhưng server KHÔNG còn đọc header đó nữa, cố tình bỏ qua.
 // Tra bảng `sessions` trên Postgres tự host (Giai đoạn B — thay Supabase Auth) — trả về
 // userId nếu hợp lệ + chưa hết hạn, null nếu không. Xem api/_lib/authService.ts.
 //
@@ -220,9 +221,7 @@ export async function validateAuth(req: Request): Promise<{ userId: string } | n
     return { userId: 'dev-skip-auth' }
   }
 
-  const authHeader = req.headers.get('Authorization')
-  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : ''
-  const token = bearerToken || readSessionCookie(req) || ''
+  const token = readSessionCookie(req) || ''
   if (!token) return null
 
   try {

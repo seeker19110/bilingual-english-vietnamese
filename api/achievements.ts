@@ -3,7 +3,7 @@
 // LẦN/tài khoản. Xem api/_lib/achievementRewards.ts để biết cách xác minh "đã đạt" (server tự
 // tính lại, không tin danh sách client gửi lên).
 //
-// GET  /api/achievements                                      (cần Authorization: Bearer)
+// GET  /api/achievements                                      (cần đăng nhập — cookie)
 // POST /api/achievements  body { achievementId }
 
 import { z } from 'zod'

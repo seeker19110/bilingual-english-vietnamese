@@ -4,7 +4,7 @@
 // riêng từng dòng, không có admin API). Đổi ở đây có hiệu lực gần như ngay (cache 30s), không
 // cần deploy — xem api/_lib/pricePromo.ts.
 //
-// GET  /api/admin-price-promo   (cần Authorization: Bearer, user phải nằm trong ADMIN_EMAILS)
+// GET  /api/admin-price-promo   (cần đăng nhập — cookie, user phải nằm trong ADMIN_EMAILS)
 // POST /api/admin-price-promo   body: { percent: number, startsAt: string|null, endsAt: string|null }
 
 import { z } from 'zod'

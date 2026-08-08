@@ -3,7 +3,7 @@
 // đường ĐỌC cần quyền admin — gộp chung 1 file dễ lẫn giữa "ai cũng ghi được" và "chỉ admin xem
 // được".
 //
-// GET /api/analytics-summary?days=14  (cần Authorization: Bearer, user phải nằm trong ADMIN_EMAILS)
+// GET /api/analytics-summary?days=14  (cần đăng nhập — cookie, user phải nằm trong ADMIN_EMAILS)
 // Trả về: tổng số theo event trong N ngày gần nhất + số liệu theo ngày cho biểu đồ đơn giản.
 
 import { getPgPool } from '../packages/core-db/pgPool.js'

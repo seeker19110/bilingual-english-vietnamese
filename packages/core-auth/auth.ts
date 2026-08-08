@@ -1,6 +1,8 @@
 // api/auth.ts — Đăng ký/đăng nhập/đăng xuất (Giai đoạn B, thay Supabase Auth).
-// Xem docs/migration-thoat-ly-supabase.md — kiến trúc Bearer token tự viết, KHÔNG dùng
-// @auth/express (lý do: khớp đúng SPA hiện có, miễn nhiễm CSRF theo thiết kế).
+// Xem docs/migration-thoat-ly-supabase.md — kiến trúc auth tự viết GỐC dùng Bearer token.
+// [Cập nhật Bước 6, docs/adr/0002-quan-ly-nguoi-dung.md] Đã đổi sang cookie `session_token`
+// (packages/core-auth/sessionCookie.ts) làm cơ chế DUY NHẤT — mọi endpoint "cần đăng nhập"
+// dưới đây giờ xác thực qua cookie trình duyệt tự gửi, không còn qua header Authorization.
 //
 // POST /api/auth  body { action: 'register', email, name, password }
 // POST /api/auth  body { action: 'login', email, password }
@@ -9,8 +11,8 @@
 // POST /api/auth  body { action: 'facebook', accessToken }
 // POST /api/auth  body { action: 'apple', idToken, name? }
 // POST /api/auth  body { action: 'microsoft', idToken }
-// POST /api/auth  body { action: 'logout' }               (cần Authorization: Bearer)
-// GET  /api/auth?action=me                                 (cần Authorization: Bearer)
+// POST /api/auth  body { action: 'logout' }               (cần đăng nhập — cookie)
+// GET  /api/auth?action=me                                 (cần đăng nhập — cookie)
 
 import { z } from 'zod'
 import {
@@ -394,11 +396,8 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ ok: true }, 200, allHeaders)
   }
 
-  // action === 'logout' — thu hồi ĐÚNG session đang dùng dù đến từ Bearer hay cookie
-  // (dual-accept, xem validateAuth ở security.ts), rồi luôn xoá cookie phía trình duyệt.
-  const authHeader = req.headers.get('Authorization')
-  const rawToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : ''
-  const token = rawToken || readSessionCookie(req) || ''
+  // action === 'logout' — Bearer đã bỏ (Bước 6), chỉ còn cookie làm nguồn sự thật.
+  const token = readSessionCookie(req) || ''
   if (token) await revokeSession(token)
   return jsonResponse({ ok: true }, 200, { ...allHeaders, 'Set-Cookie': buildClearSessionCookie() })
 }

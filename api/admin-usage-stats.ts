@@ -1,7 +1,7 @@
 // api/admin-usage-stats.ts — Dashboard vận hành cho ADMIN: ai đang dùng gì, tốn bao nhiêu
 // tiền, thu về bao nhiêu.
 //
-// GET /api/admin-usage-stats?days=30  (cần Authorization: Bearer, email nằm trong ADMIN_EMAILS)
+// GET /api/admin-usage-stats?days=30  (cần đăng nhập — cookie, email nằm trong ADMIN_EMAILS)
 //
 // Khác gì /api/analytics-summary? File đó đọc bảng `analytics_events` — phễu MARKETING (xem
 // landing, bấm CTA, đăng ký). File này đọc dữ liệu VẬN HÀNH THẬT (daily_usage, profiles,

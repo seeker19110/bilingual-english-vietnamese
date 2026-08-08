@@ -1,14 +1,15 @@
 // api/_lib/authService.ts — Auth tự viết thay Supabase Auth (Giai đoạn B).
-// Quyết định kiến trúc GỐC (xem docs/migration-thoat-ly-supabase.md): Bearer token
-// (không dùng cookie session của @auth/express) — khớp đúng kiến trúc SPA hiện có, miễn
-// nhiễm CSRF theo thiết kế (client tự gắn header Authorization, trình duyệt không tự động
-// gửi kèm như cookie).
+// Quyết định kiến trúc GỐC (xem docs/migration-thoat-ly-supabase.md): Bearer token — khớp
+// đúng kiến trúc SPA hiện có lúc đó.
 //
-// [Cập nhật Bước 3, docs/adr/0002-quan-ly-nguoi-dung.md] Bearer VẪN LÀ CƠ CHẾ CHÍNH — không gì
-// đổi ở đây. Lớp cookie (packages/core-auth/sessionCookie.ts) được thêm SONG SONG, chỉ để mở
-// đường SSO liên subdomain sau này (mỗi subdomain có `localStorage` riêng, không chia sẻ được
-// token qua Bearer). Cookie dùng CHUNG session_token đã có ở bảng `sessions` này — không phải
-// cơ chế phiên thứ hai.
+// [Cập nhật Bước 6, docs/adr/0002-quan-ly-nguoi-dung.md] Bearer đã BỊ THAY bằng cookie
+// `session_token` (packages/core-auth/sessionCookie.ts) làm cơ chế xác thực DUY NHẤT —
+// `security.ts#validateAuth` không còn đọc header Authorization. Client vẫn trả `token` trong
+// body đăng nhập (dùng làm cờ UI "đã đăng nhập chưa" ở localStorage, xem
+// packages/core-ui/authHeader.ts) nhưng giá trị đó KHÔNG còn được server dùng để xác thực —
+// cookie mới là nguồn sự thật. Đổi lúc này chấp nhận đăng xuất hàng loạt các phiên chỉ có
+// Bearer từ trước khi Bước 3 (2026-08-08) triển khai (chưa từng có cookie) — quyết định có
+// chủ ý, xem ADR-0002 mục Bước 6.
 //
 // Session token: chuỗi ngẫu nhiên 32 byte (crypto.randomBytes), CHỈ hash SHA-256 của token
 // được lưu trong bảng `sessions` (không lưu token gốc) — giống thông lệ lưu API key, để lộ
@@ -163,19 +164,17 @@ export async function verifyGoogleAccessToken(
 }
 
 // ── OAuth dùng chung (Google/Facebook/Apple/Microsoft) ──────────────────────────────────
-// Tìm user theo cột định danh của provider (vd google_id); nếu chưa có mà email đã tồn tại
-// (đăng ký email/password hoặc provider khác trước đó) thì LIÊN KẾT (gắn id provider vào user
-// cũ) thay vì tạo user trùng email — 1 người có thể đăng nhập bằng nhiều kênh khác nhau.
+// [Cập nhật Bước 6, docs/adr/0002-quan-ly-nguoi-dung.md] Tra cứu qua bảng `identities` (0034)
+// THAY VÌ 4 cột `google_id`/`facebook_id`/`apple_id`/`microsoft_id` cũ trên `users` — 4 cột đó
+// đã bị xoá ở migration 0037 (cùng đợt deploy với thay đổi này, không được lệch nhau).
+//
+// Nếu chưa có identity nhưng email đã tồn tại (đăng ký email/password hoặc provider khác
+// trước đó) thì LIÊN KẾT (thêm 1 dòng identities cho user cũ) thay vì tạo user trùng email —
+// 1 người có thể đăng nhập bằng nhiều kênh khác nhau.
 // Trả kèm `isNew` — cần để BIẾT có phải lần đăng nhập ĐẦU TIÊN không (chỉ tài khoản mới mới
 // được cấp quà dùng thử tự động, xem grantSignupTrial ở api/auth.ts — người dùng cũ đăng nhập
 // lại KHÔNG được cấp thêm).
 type OAuthProvider = 'google' | 'facebook' | 'apple' | 'microsoft'
-const OAUTH_ID_COLUMN: Record<OAuthProvider, string> = {
-  google: 'google_id',
-  facebook: 'facebook_id',
-  apple: 'apple_id',
-  microsoft: 'microsoft_id',
-}
 
 async function findOrCreateOAuthUser(
   provider: OAuthProvider,
@@ -183,40 +182,28 @@ async function findOrCreateOAuthUser(
   email: string,
 ): Promise<{ user: AuthUserRow; isNew: boolean }> {
   const pool = getPgPool()
-  // Tên cột lấy từ whitelist cố định OAUTH_ID_COLUMN ở trên (không phải input người dùng) —
-  // an toàn khi ghép thẳng vào chuỗi SQL, giống cách consume_usage() whitelist cột trong DB.
-  const col = OAUTH_ID_COLUMN[provider]
   const normalizedEmail = email.toLowerCase().trim()
 
-  const byProvider = await pool.query<AuthUserRow>(
-    `select id, email from public.users where ${col} = $1`,
-    [providerId],
+  const byIdentity = await pool.query<AuthUserRow>(
+    `select u.id, u.email from public.users u
+     join public.identities i on i.user_id = u.id
+     where i.provider = $1 and i.provider_user_id = $2`,
+    [provider, providerId],
   )
-  if (byProvider.rows[0]) {
-    // Backfill/đồng bộ bảng identities cho dữ liệu tạo trước khi có bảng này (0034) — không
-    // ảnh hưởng kết quả, chỉ để identities dần đầy đủ mà không cần chạy lại migration.
-    await upsertIdentity(provider, providerId, byProvider.rows[0].id, normalizedEmail)
-    return { user: byProvider.rows[0], isNew: false }
-  }
+  if (byIdentity.rows[0]) return { user: byIdentity.rows[0], isNew: false }
 
   const byEmail = await pool.query<AuthUserRow>(
     'select id, email from public.users where email = $1',
     [normalizedEmail],
   )
   if (byEmail.rows[0]) {
-    // Dual-write (Bước 1 — docs/adr/0002-quan-ly-nguoi-dung.md): vẫn ghi cột cũ để không phá
-    // code đọc cột cũ, đồng thời ghi bảng identities cho tương lai chuyển hẳn sang đó.
-    await pool.query(`update public.users set ${col} = $1 where id = $2`, [
-      providerId,
-      byEmail.rows[0].id,
-    ])
     await upsertIdentity(provider, providerId, byEmail.rows[0].id, normalizedEmail)
     return { user: byEmail.rows[0], isNew: false }
   }
 
   const { rows } = await pool.query<AuthUserRow>(
-    `insert into public.users (email, ${col}, email_verified) values ($1, $2, now()) returning id, email`,
-    [normalizedEmail, providerId],
+    'insert into public.users (email, email_verified) values ($1, now()) returning id, email',
+    [normalizedEmail],
   )
   const created = rows[0]
   if (!created) throw new Error(`Không tạo được user ${provider} mới`)
