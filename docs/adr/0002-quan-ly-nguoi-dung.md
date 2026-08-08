@@ -1,6 +1,6 @@
 # ADR-0002: Quản lý người dùng cho nền tảng đa lĩnh vực
 
-- **Trạng thái:** Đang thi hành (Bước 3/6)
+- **Trạng thái:** Đang thi hành (Bước 4/6)
 - **Ngày:** 2026-08-08
 - **Liên quan:** `docs/adr/0001-nen-tang-da-linh-vuc.md` (đã chốt bố cục domain/repo/schema),
   `packages/core-auth/`, `postgres/schema.sql`
@@ -56,8 +56,8 @@ app tiếng Anh đang chạy thật.
 | --- | ---------------------------------------------------------------------------------------------------- | --------------------- |
 | 1   | `identities` + backfill từ 4 cột cũ; `findOrCreateOAuthUser` dual-write (ghi cả cột cũ lẫn bảng mới) | Xong                  |
 | 2   | `entitlements` + backfill từ `profiles.plan`                                                         | Xong                  |
-| 3   | Cookie SSO song song Bearer (chấp nhận cả 2 trong giai đoạn chuyển tiếp)                             | **Đang làm — PR này** |
-| 4   | Tách `core.profiles` vs hồ sơ riêng từng môn                                                         | Chưa làm              |
+| 3   | Cookie SSO song song Bearer (chấp nhận cả 2 trong giai đoạn chuyển tiếp)                             | Xong                  |
+| 4   | Tách `core.profiles` vs hồ sơ riêng từng môn                                                         | **Đang làm — PR này** |
 | 5   | `roles` (quyền quản trị theo môn) + `audit_log` + registry xoá tài khoản                             | Chưa làm              |
 | 6   | Bỏ Bearer, bỏ 4 cột provider cũ trên `users`                                                         | Chưa làm              |
 
@@ -122,6 +122,23 @@ ngay từ đầu** (không để hẹp `en-vi.donghanhcungban.org` rồi sửa l
   tra môi trường production ban đầu viết `if (isProduction)` (tham chiếu hàm, luôn truthy) thay
   vì `if (isProduction())` — sẽ khiến cookie LUÔN gắn `Secure`, kể cả ở dev, làm hỏng đăng nhập
   qua `http://localhost`. Sửa trước khi merge.
+
+## Bước 4 — chi tiết đã thi hành
+
+- Migration `postgres/migrations/0036_english_user_profile.sql`: tạo bảng
+  `english.user_profile(user_id, user_level, goal, daily_minutes, age_group)`, backfill từ
+  4 cột cùng tên trên `public.profiles`.
+- **Không đổi code đọc/ghi** — cùng nguyên tắc thận trọng đã áp cho Bước 2: `api/profile.ts`
+  (onboarding, đổi nhóm tuổi) vẫn đọc/ghi 4 cột cũ trên `profiles`, KHÔNG chuyển sang bảng mới
+  ở PR này. 4 cột này là dữ liệu ONBOARDING RIÊNG của việc học tiếng Anh (`user_level` là
+  trình độ tự chọn thô lúc mới vào, không phải cấp CEFR chính thức; `goal`/`daily_minutes` là
+  tốc độ học) — môn tiếp theo sẽ có onboarding khác hẳn, không tái dùng được các cột này.
+- **Không đụng đến các cột lõi khác trên `profiles`** (`name`, `plan`, `plan_expires_at`,
+  `onboarded`, `nickname`, `referral_code`…) — việc phân loại cột nào thuộc lõi/thuộc môn cho
+  TOÀN BỘ `profiles` là quyết định lớn hơn phạm vi 1 bảng, để dành khi rewiring thật.
+- Cùng hệ quả LỆCH DẦN như Bước 2: bảng `english.user_profile` sẽ cũ dần nếu người dùng đổi
+  onboarding (goal/daily_minutes) sau lần backfill, vì chưa có dual-write. Chấp nhận vì mục
+  tiêu bước này là bảng tồn tại đúng schema, chưa phải nguồn sự thật.
 
 ## Hệ quả
 
