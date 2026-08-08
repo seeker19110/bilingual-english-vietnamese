@@ -1,6 +1,6 @@
 # ADR-0002: Quản lý người dùng cho nền tảng đa lĩnh vực
 
-- **Trạng thái:** Đang thi hành (Bước 2/6)
+- **Trạng thái:** Bước 1–4, 6 xong; Bước 5 bỏ qua có chủ ý (không có tính năng thật để gắn)
 - **Ngày:** 2026-08-08
 - **Liên quan:** `docs/adr/0001-nen-tang-da-linh-vuc.md` (đã chốt bố cục domain/repo/schema),
   `packages/core-auth/`, `postgres/schema.sql`
@@ -52,17 +52,30 @@ app tiếng Anh đang chạy thật.
 
 ## Kế hoạch 6 bước
 
-| #   | Nội dung                                                                                             | Trạng thái            |
-| --- | ---------------------------------------------------------------------------------------------------- | --------------------- |
-| 1   | `identities` + backfill từ 4 cột cũ; `findOrCreateOAuthUser` dual-write (ghi cả cột cũ lẫn bảng mới) | Xong                  |
-| 2   | `entitlements` + backfill từ `profiles.plan`                                                         | **Đang làm — PR này** |
-| 3   | Cookie SSO song song Bearer (chấp nhận cả 2 trong giai đoạn chuyển tiếp)                             | Chưa làm              |
-| 4   | Tách `core.profiles` vs hồ sơ riêng từng môn                                                         | Chưa làm              |
-| 5   | `roles` (quyền quản trị theo môn) + `audit_log` + registry xoá tài khoản                             | Chưa làm              |
-| 6   | Bỏ Bearer, bỏ 4 cột provider cũ trên `users`                                                         | Chưa làm              |
+| #   | Nội dung                                                                                             | Trạng thái              |
+| --- | ---------------------------------------------------------------------------------------------------- | ----------------------- |
+| 1   | `identities` + backfill từ 4 cột cũ; `findOrCreateOAuthUser` dual-write (ghi cả cột cũ lẫn bảng mới) | Xong                    |
+| 2   | `entitlements` + backfill từ `profiles.plan`                                                         | Xong                    |
+| 3   | Cookie SSO song song Bearer (chấp nhận cả 2 trong giai đoạn chuyển tiếp)                             | Xong                    |
+| 4   | Tách `core.profiles` vs hồ sơ riêng từng môn                                                         | Xong                    |
+| 5   | `roles` (quyền quản trị theo môn) + `audit_log` + registry xoá tài khoản                             | **Bỏ qua (2026-08-08)** |
+| 6   | Bỏ Bearer, bỏ 4 cột provider cũ trên `users`                                                         | Xong                    |
 
 Bước 1–2 làm ngay vì dữ liệu còn ít, dễ backfill/rollback. Bước 3 là điều kiện bắt buộc
 trước khi mở môn thứ hai (SSO là giá trị lớn nhất của "một tài khoản, nhiều môn").
+
+**Bước 5 — quyết định bỏ qua (2026-08-08):** khác Bước 1–4 (đều có dữ liệu THẬT để backfill),
+Bước 5 không có tính năng nào đang chạy để nối vào — quyền admin hiện là danh sách email cố
+định trong `.env` (`isAdminEmail()`, `packages/core-auth/adminAuth.ts`), không phải bảng DB;
+và **chưa hề có tính năng xoá tài khoản** trong toàn bộ codebase. Dựng sẵn bảng `roles`/
+`audit_log` rỗng lúc này là hạ tầng cho tính năng chưa tồn tại — vi phạm nguyên tắc "không
+triển khai dở dang" (CLAUDE.md mục 4). Làm THẬT khi có yêu cầu cụ thể (vd cần admin theo môn,
+hoặc làm tính năng xoá tài khoản).
+
+**Bước 6 — quyết định làm ngay (2026-08-08, người dùng xác nhận chấp nhận đánh đổi):** ban đầu
+chặn lại vì bỏ Bearer nghĩa là mọi phiên đăng nhập chỉ có Bearer (tạo trước khi Bước 3 deploy,
+chưa từng có cookie) sẽ bị đăng xuất — người dùng xác nhận chấp nhận, vì dự án còn đang ở giai
+đoạn thử nghiệm. Xem chi tiết thi hành bên dưới.
 
 ## Bước 1 — chi tiết đã thi hành
 
@@ -91,17 +104,90 @@ trước khi mở môn thứ hai (SSO là giá trị lớn nhất của "một t
   chưa phải nguồn sự thật. Trước khi bất kỳ code nào bắt đầu ĐỌC bảng này, phải thêm dual-write
   (giống cách Bước 1 làm cho `identities`) hoặc backfill lại — ghi rõ ở bước rewiring kế tiếp.
 
-## Quyết định chờ sẵn cho Bước 3 (2026-08-08, trước khi thi hành)
+## Bước 3 — chi tiết đã thi hành
 
-Dừng lại sau Bước 2 để merge/kiểm thử kỹ trước — Bước 3 đụng thẳng phiên đăng nhập của
-người dùng thật đang trả tiền (khác Bước 1–2 vốn chỉ thêm dữ liệu). Đã chốt trước 2 điều để
-lúc bắt tay Bước 3 không phải hỏi lại:
+Quyết định chốt trước khi code (2026-08-08): **domain cookie `Domain=.donghanhcungban.org`
+ngay từ đầu** (không để hẹp `en-vi.donghanhcungban.org` rồi sửa lại sau — hiện tại chỉ có
+`en-vi.` dùng domain cha nên không subdomain nào khác bị ảnh hưởng bởi việc share sớm), và
+**dual-accept**: Bearer vẫn là cơ chế chính, cookie chỉ thêm song song.
 
-- **Domain cookie: `Domain=.donghanhcungban.org` ngay từ đầu** (không để hẹp
-  `en-vi.donghanhcungban.org` rồi sửa lại sau) — đúng tinh thần ADR-0001/0002, và hiện tại chỉ
-  có `en-vi.` dùng domain cha nên không có subdomain khác bị ảnh hưởng bởi cookie share sớm.
-- **Cách làm:** dual-accept — server chấp nhận cả Bearer (client cũ chưa cập nhật) lẫn cookie
-  mới song song trong giai đoạn chuyển tiếp, không ép buộc ngay; bỏ hẳn Bearer là Bước 6.
+- `packages/core-auth/sessionCookie.ts` (mới): `buildSessionCookie()`/`buildClearSessionCookie()`
+  dựng header `Set-Cookie` (`HttpOnly; SameSite=Lax`, kèm `Secure`+`Domain` CHỈ khi
+  `NODE_ENV`/`VERCEL_ENV`=`production` — dev local qua `http://localhost` sẽ bị trình duyệt từ
+  chối cookie `Secure`); `readSessionCookie()` tự parse header `Cookie` (Web API `Request`
+  không có sẵn, khác Express `req.cookies`).
+- `packages/core-auth/authService.ts`: xuất `SESSION_TTL_MS` để cookie dùng đúng thời hạn với
+  session thật trong bảng `sessions` — không phải cơ chế phiên thứ hai, chỉ 2 cách gửi cùng 1
+  token.
+- `packages/core-auth/security.ts` (`validateAuth`): đọc `Authorization: Bearer` trước
+  (KHÔNG đổi thứ tự ưu tiên); thiếu mới thử cookie. `getCorsHeaders()` giữ nguyên logic
+  `Access-Control-Allow-Credentials` đã có (chỉ bật khi origin nằm trong whitelist), cập nhật
+  lại comment vì giờ có cookie thật sự dùng credentials.
+- `packages/core-auth/auth.ts`: mọi phản hồi tạo phiên thành công (register/login/4 kênh OAuth)
+  gắn thêm `Set-Cookie` bên cạnh `token` có sẵn trong body — client hiện tại (Bearer) không cần
+  đổi gì, cookie chỉ để trình duyệt tự lưu. `logout` thu hồi ĐÚNG session dù đến từ Bearer hay
+  cookie, luôn xoá cookie phía trình duyệt.
+- **Không đổi client** (`apps/english/src/lib/auth.ts`) — vẫn gửi/đọc Bearer y hệt trước. Cookie
+  hiện tại là hạ tầng "ngủ", chưa app con nào dùng tới — chỉ có tác dụng khi mở subdomain thứ 2
+  và app đó gọi API bằng `fetch(..., { credentials: 'include' })`.
+- Test mới `sessionCookie.test.ts` (8 case) + bổ sung `security.test.ts` (3 case dual-accept:
+  chỉ cookie, có cả 2 ưu tiên Bearer, cookie sai tên). Bắt được 1 lỗi thật lúc viết test: kiểm
+  tra môi trường production ban đầu viết `if (isProduction)` (tham chiếu hàm, luôn truthy) thay
+  vì `if (isProduction())` — sẽ khiến cookie LUÔN gắn `Secure`, kể cả ở dev, làm hỏng đăng nhập
+  qua `http://localhost`. Sửa trước khi merge.
+
+## Bước 4 — chi tiết đã thi hành
+
+- Migration `postgres/migrations/0036_english_user_profile.sql`: tạo bảng
+  `english.user_profile(user_id, user_level, goal, daily_minutes, age_group)`, backfill từ
+  4 cột cùng tên trên `public.profiles`.
+- **Không đổi code đọc/ghi** — cùng nguyên tắc thận trọng đã áp cho Bước 2: `api/profile.ts`
+  (onboarding, đổi nhóm tuổi) vẫn đọc/ghi 4 cột cũ trên `profiles`, KHÔNG chuyển sang bảng mới
+  ở PR này. 4 cột này là dữ liệu ONBOARDING RIÊNG của việc học tiếng Anh (`user_level` là
+  trình độ tự chọn thô lúc mới vào, không phải cấp CEFR chính thức; `goal`/`daily_minutes` là
+  tốc độ học) — môn tiếp theo sẽ có onboarding khác hẳn, không tái dùng được các cột này.
+- **Không đụng đến các cột lõi khác trên `profiles`** (`name`, `plan`, `plan_expires_at`,
+  `onboarded`, `nickname`, `referral_code`…) — việc phân loại cột nào thuộc lõi/thuộc môn cho
+  TOÀN BỘ `profiles` là quyết định lớn hơn phạm vi 1 bảng, để dành khi rewiring thật.
+- Cùng hệ quả LỆCH DẦN như Bước 2: bảng `english.user_profile` sẽ cũ dần nếu người dùng đổi
+  onboarding (goal/daily_minutes) sau lần backfill, vì chưa có dual-write. Chấp nhận vì mục
+  tiêu bước này là bảng tồn tại đúng schema, chưa phải nguồn sự thật.
+
+## Bước 6 — chi tiết đã thi hành
+
+**Phát hiện quan trọng lúc lập kế hoạch thi hành:** cookie dùng `Domain=.donghanhcungban.org`
+và mọi request của app đều SAME-ORIGIN (`fetch('/api/...')` tương đối, không gọi domain khác)
+— trình duyệt tự gửi kèm cookie theo mặc định (`credentials: 'same-origin'` là default của
+Fetch spec từ lâu), KHÔNG cần sửa bất kỳ lệnh `fetch()` nào ở client. Client
+(`apps/english/src/lib/auth.ts`, `packages/core-ui/authHeader.ts`) vẫn lưu `token` vào
+`localStorage` và gắn `Authorization: Bearer` như cũ — **cố tình giữ nguyên**, vì giá trị đó
+giờ chỉ còn dùng làm CỜ UI "trình duyệt này đã từng đăng nhập chưa" (nhiều chỗ như
+`cloud.ts`/`challengeCloud.ts`/`tutorFeedback.ts` dùng `getStoredToken()` để tránh gọi API thừa
+khi chắc chắn chưa đăng nhập) — server vẫn nhận được header đó nhưng KHÔNG còn đọc. Nhờ vậy
+**không phải sửa một dòng client nào** để hoàn thành bước này.
+
+- Migration `postgres/migrations/0037_drop_oauth_columns.sql`: xoá `google_id`/`facebook_id`/
+  `apple_id`/`microsoft_id` khỏi `public.users`.
+- `packages/core-auth/authService.ts` (`findOrCreateOAuthUser`): đổi hẳn sang tra cứu qua
+  bảng `identities` (join `users`) thay vì 4 cột vừa xoá — đây chính là việc Bước 1 đã dự tính
+  trước ("Bước 6 mới đổi chiều đọc sang identities rồi xoá cột cũ"). Bỏ hằng `OAUTH_ID_COLUMN`
+  không còn dùng.
+- `packages/core-auth/security.ts` (`validateAuth`): bỏ hẳn nhánh đọc `Authorization: Bearer`
+  — chỉ còn đọc cookie qua `readSessionCookie()`.
+- `packages/core-auth/auth.ts`: `logout` chỉ còn lấy token từ cookie để thu hồi.
+- Cập nhật comment đầu file mô tả endpoint ở 10 handler API (`api/profile.ts`,
+  `api/progress.ts`, `api/quests.ts`, `api/achievements.ts`, `api/usage-summary.ts`, 5 handler
+  admin…) từ "(cần Authorization: Bearer)" sang "(cần đăng nhập — cookie)" — thuần sửa tài
+  liệu, không đổi hành vi (các handler này đều gọi `validateAuth()` dùng chung, không tự đọc
+  header Authorization).
+- Test cập nhật theo hành vi mới: `security.test.ts` (validateAuth chỉ còn nhận cookie, có gửi
+  Authorization cũng bị bỏ qua), `auth.test.ts` (logout dùng cookie), `authService.test.ts`
+  (`findOrCreateOAuthUser` tra theo `identities`, không còn theo cột cũ).
+- **Hệ quả đã được xác nhận trước khi làm:** mọi phiên đăng nhập chỉ có Bearer, tạo TRƯỚC lúc
+  Bước 3 deploy (chưa từng có cookie), sẽ nhận 401 ở lần gọi API kế tiếp — `getCurrentUser()`
+  phía client tự dọn (`clearStoredToken()`) và `AuthProvider` tự đưa về trạng thái chưa đăng
+  nhập, không crash — nhưng người dùng đó phải đăng nhập lại 1 lần. Chấp nhận theo xác nhận
+  của người dùng (dự án đang ở giai đoạn thử nghiệm).
 
 ## Hệ quả
 

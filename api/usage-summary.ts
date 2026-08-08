@@ -4,7 +4,7 @@
 // không còn tính theo NGÀY/theo TỪNG MODE như Pro/VIP, nên client không tự suy ra được từ dữ
 // liệu local nữa — phải hỏi server.
 //
-// GET /api/usage-summary  (cần Authorization: Bearer)
+// GET /api/usage-summary  (cần đăng nhập — cookie)
 
 import { getPgPool } from '../packages/core-db/pgPool.js'
 import {

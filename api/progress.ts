@@ -2,7 +2,7 @@
 // `learning_progress`). Trước đây src/lib/progressSync.ts gọi Supabase client dựa vào RLS
 // `auth.uid()` — không còn hoạt động sau khi cutover khỏi Supabase Auth (Giai đoạn B).
 //
-// GET  /api/progress                         (cần Authorization: Bearer)
+// GET  /api/progress                         (cần đăng nhập — cookie)
 // POST /api/progress  body { learned, hard, srs, cefrGrammar, cefrDialogues, cefrUnlocked,
 //                             cefrExams, placement, weeklyGoal, achievements }
 

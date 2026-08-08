@@ -1,7 +1,7 @@
 // api/quests.ts — Nhiệm vụ (quest): xem trạng thái + nhận thưởng. 4 nhiệm vụ hiện có, xem
 // api/_lib/quests.ts để biết chi tiết từng nhiệm vụ + cảnh báo về mức độ xác minh được.
 //
-// GET  /api/quests                                            (cần Authorization: Bearer)
+// GET  /api/quests                                            (cần đăng nhập — cookie)
 // POST /api/quests  body { action: 'claim-share' }
 // POST /api/quests  body { action: 'claim-streak' }
 // POST /api/quests  body { action: 'claim-cefr-exam', level }

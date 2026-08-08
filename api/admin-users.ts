@@ -2,7 +2,7 @@
 // (tìm theo email, xem gói/trạng thái xác thực/lần hoạt động gần nhất), không phải báo cáo
 // tổng hợp (khác api/admin-usage-stats.ts — file đó GROUP BY toàn bảng, không lộ danh sách).
 //
-// GET /api/admin-users?search=&limit=&offset=   (cần Authorization: Bearer, email trong ADMIN_EMAILS)
+// GET /api/admin-users?search=&limit=&offset=   (cần đăng nhập — cookie, email trong ADMIN_EMAILS)
 //   search: lọc theo email chứa chuỗi (không phân biệt hoa/thường), rỗng = tất cả.
 //   limit: 1-100 (mặc định 20). offset: phân trang.
 

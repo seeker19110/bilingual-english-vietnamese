@@ -38,6 +38,7 @@ const authService = vi.hoisted(() => ({
     planExpiresAt: null,
   })),
   getUserById: vi.fn(),
+  SESSION_TTL_MS: 30 * 24 * 60 * 60 * 1000,
 }))
 vi.mock('./authService', () => authService)
 
@@ -195,18 +196,22 @@ describe('/api/auth — action register/login (đối chiếu hành vi trước 
 })
 
 describe('/api/auth — action logout', () => {
-  it('có token → thu hồi phiên', async () => {
+  it('có cookie session_token → thu hồi phiên', async () => {
     const req = new Request('http://localhost/api/auth', {
       method: 'POST',
-      headers: { 'content-type': 'application/json', Authorization: 'Bearer valid-token' },
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ action: 'logout' }),
     })
+    // happy-dom (môi trường test) chặn set header "Cookie" ngay lúc khởi tạo Request (forbidden
+    // header name theo spec) — set qua headers.set() SAU khi tạo thì được (Node thật/production
+    // không có giới hạn này vì đó không phải script chạy trong trang).
+    req.headers.set('Cookie', 'session_token=valid-token')
     const resp = await handler(req)
     expect(resp.status).toBe(200)
     expect(authService.revokeSession).toHaveBeenCalledWith('valid-token')
   })
 
-  it('KHÔNG có token → vẫn trả 200, không gọi revokeSession', async () => {
+  it('KHÔNG có cookie → vẫn trả 200, không gọi revokeSession', async () => {
     const resp = await handler(makeRequest({ action: 'logout' }))
     expect(resp.status).toBe(200)
     expect(authService.revokeSession).not.toHaveBeenCalled()

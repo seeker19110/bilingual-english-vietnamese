@@ -3,7 +3,7 @@
 // (postgres/migrations/0001_app_settings.sql) — thay vì phải sửa code + deploy lại mỗi lần
 // đổi số. Không CHECK constraint DB nào khác bị ảnh hưởng.
 //
-// GET  /api/admin-settings   (cần Authorization: Bearer, user phải nằm trong ADMIN_EMAILS)
+// GET  /api/admin-settings   (cần đăng nhập — cookie, user phải nằm trong ADMIN_EMAILS)
 // POST /api/admin-settings   body: { limits: {free:{...},pro:{...},vip:{...}}, promoUntil: string|null }
 
 import { z } from 'zod'
