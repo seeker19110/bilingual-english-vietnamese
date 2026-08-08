@@ -69,7 +69,7 @@ export default function VoiceMenu({ plan, isA }: Props) {
             ? 'Chọn giới tính giọng đọc (áp dụng cho cả app)'
             : 'Choose voice gender (applies app-wide)'
         }
-        className="tap-44 flex rounded-full bg-zinc-800 p-0.5 text-[11px] leading-none shrink-0"
+        className="tap-44-y flex rounded-full bg-zinc-800 p-0.5 text-[11px] leading-none shrink-0"
       >
         <button
           type="button"
@@ -99,7 +99,7 @@ export default function VoiceMenu({ plan, isA }: Props) {
           aria-expanded={open}
           aria-label={isA ? 'Chọn giọng cụ thể' : 'Choose specific voice'}
           title={isA ? `Giọng đang dùng: ${voice}` : `Current voice: ${voice}`}
-          className="tap-44 flex items-center justify-center pl-1 pr-1.5 text-zinc-400 hover:text-white transition"
+          className="tap-44-y flex items-center justify-center pl-1 pr-1.5 text-zinc-400 hover:text-white transition"
         >
           <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
         </button>

@@ -449,7 +449,7 @@ export default function Home() {
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="font-semibold text-white text-[15px]">{m.title}</p>
                         <span
-                          className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}
+                          className={`shrink-0 whitespace-nowrap text-[11px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}
                         >
                           {m.tag.label}
                         </span>
@@ -524,7 +524,7 @@ export default function Home() {
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="font-semibold text-white text-[15px]">{m.title}</p>
                     <span
-                      className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}
+                      className={`shrink-0 whitespace-nowrap text-[11px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}
                     >
                       {m.tag.label}
                     </span>

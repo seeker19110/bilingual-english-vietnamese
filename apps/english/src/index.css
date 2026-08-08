@@ -326,21 +326,26 @@
     scrollbar-width: none;
   }
 
-  /* Vùng chạm tối thiểu 44×44px (chuẩn mobile) cho nút nhỏ — mở rộng vùng bấm
-     bằng pseudo-element vô hình, KHÔNG làm thay đổi kích thước hiển thị/layout.
-     min(0px, ...) đảm bảo nút đã đủ lớn thì không mở rộng thêm. */
-  /* :where() để specificity = 0 — nút đã có position khác (vd .absolute) không bị ghi đè */
-  :where(.tap-44) {
-    position: relative;
+  /* Vùng chạm tối thiểu 44×44px (chuẩn mobile, CLAUDE.md mục 4.7).
+     [2026-08-08] SỬA NỢ KỸ THUẬT: bản cũ mở rộng vùng chạm bằng pseudo-element
+     `::after` có `pointer-events: none` — mà pseudo-element không nhận sự kiện chuột
+     thì KHÔNG mở rộng được vùng bấm chút nào (axe cũng không tính), nên class này
+     thực chất là no-op suốt thời gian qua. Nay đặt kích thước THẬT: phần tử tự nó
+     không nhỏ hơn 44×44px. Nút vốn đã đủ lớn thì min-* không đổi gì.
+     KHÔNG đặt `display` ở đây — nhiều nơi đã tự khai flex/grid, ghi đè sẽ vỡ layout;
+     chỗ nào cần căn giữa thì thêm class Tailwind ngay tại chỗ dùng. */
+  .tap-44 {
+    min-height: 44px;
+    min-width: 44px;
   }
-  .tap-44::after {
-    content: '';
-    position: absolute;
-    inset: min(0px, calc((100% - 44px) / 2));
-    /* Vô hình để MỞ RỘNG vùng chạm, không được chặn click/tap của các phần tử
-       bên dưới — nếu không, các nút gộp nhiều phần tử con (VoiceMenu, RateToggle)
-       sẽ bị lớp này che mất, bấm vào không phản ứng gì. */
-    pointer-events: none;
+
+  /* Biến thể CHỈ ÉP CHIỀU CAO — cho control vốn đã rộng (thanh gạt phân đoạn kiểu
+     Nữ|Nam, 0.75×|1×|1.25×, link quay lại). Ép thêm min-width 44px lên TỪNG phân
+     đoạn làm cả cụm phình ngang, đo thực tế trên máy 390px thì header trang Luyện
+     nói tràn và nút avatar bị đẩy khỏi màn hình. Chiều rộng của các control này đã
+     vượt 44px sẵn nên chỉ cần chiều cao. */
+  .tap-44-y {
+    min-height: 44px;
   }
 
   /* Safe area cho iPhone / notch / bottom bar */

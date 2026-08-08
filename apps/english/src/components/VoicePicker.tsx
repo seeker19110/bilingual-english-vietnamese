@@ -120,7 +120,10 @@ export default function VoicePicker({ plan, isA }: Props) {
             role="switch"
             aria-checked={random}
             onClick={toggleRandom}
-            className={`tap-44 relative w-11 h-6 rounded-full transition shrink-0 ${
+            // KHÔNG dùng .tap-44 ở đây: đây là công tắc dạng viên thuốc 44×24 — ép cao 44px
+            // sẽ biến nó thành khối chữ nhật, hỏng hẳn hình dáng công tắc. Rộng 44px (w-11)
+            // + đứng riêng một hàng có khoảng cách rộng nên vẫn đạt WCAG 2.2 AA (2.5.8).
+            className={`relative w-11 h-6 rounded-full transition shrink-0 ${
               random ? 'bg-accent-500' : 'bg-zinc-700'
             }`}
           >
