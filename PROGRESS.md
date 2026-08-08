@@ -2011,3 +2011,41 @@ deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash script
   trùng. Đã liệt kê "cải tiến nên cân nhắc" cần người dùng quyết định (chưa tự làm): uptime
   monitoring tự động, điền DSN Sentry, tăng tần suất backup Postgres, và điền thông tin liên hệ
   khẩn/nhà cung cấp VPS vào bảng đầu file (việc duy nhất người dùng cần tự điền tay).
+
+- **[Audit toàn diện 2026-08-08] Tầng 1–3 đạt hết, không phát hiện lỗi mới; thêm hook
+  `useMountedRef` chặn setState sau unmount ở Chat/Speaking (PR #514 → đã MERGE, commit
+  `e5a371d`).** Chạy lại đầy đủ cổng: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅ (0 cảnh
+  báo) · format ✅ · test ✅ **162 file / 2947 test** (trước khi thêm test mới) · bundle-size ✅
+  JS 96.32/123kB · CSS 10.46/11kB (brotli) · `npm audit --omit=dev` **0 lỗ hổng** (production
+  deps sạch hoàn toàn). Không có secret hardcode, không `.env` bị track, không
+  `dangerouslySetInnerHTML`, không `any`/`TODO` mới, 11 `console.log` còn lại đều là log khởi
+  động chủ đích (`server.ts`) hoặc logger dùng chung — không phải rác. Quét kỹ thêm: 0 N+1 query
+  trong `api/` (mọi vòng lặp xử lý dữ liệu đã lấy sẵn, gửi push dùng `Promise.all` đúng cách),
+  0 catch rỗng nuốt lỗi, không có race double-submit ở Chat/Speaking/Writing (đã chặn đủ bằng
+  `loading`/`isThrottled`/`limitHit`), data lớn (`curriculum.ts` 9059 dòng...) chỉ import
+  `type`, không phình bundle.
+  - **Phát hiện + đã vá:** 27 file gọi `fetch()` trực tiếp trong component nhưng chỉ 2 file dùng
+    `AbortController`/kiểm tra unmount — rủi ro "setState sau unmount" khi người dùng rời trang
+    giữa lúc AI đang trả lời (`callClaude`/TTS có thể mất vài giây). Đã thêm hook dùng chung
+    `useMountedRef()` (`apps/english/src/lib/useMountedRef.ts` + test mount/unmount) và áp dụng
+    vào 6 hàm gọi AI trong `Chat.tsx`/`Speaking.tsx` (`startSession`, `sendMessage`/
+    `sendUserSpeech`, `endAndGrade`) — nơi rủi ro cao nhất. Lượt dùng/lưu phiên (side-effect
+    không phụ thuộc component) vẫn chạy bình thường dù đã rời trang, chỉ bỏ qua các `setState`.
+    `npm run codemap -- impact` xác nhận chỉ ảnh hưởng `App.tsx`/`main.tsx` (router-level),
+    không phá tính năng khác. PR #514, đã merge (squash, `e5a371d`), CI `quality`+`e2e` xanh.
+  - **Đề xuất đã bàn nhưng CHƯA làm (người dùng quyết định hoãn — rủi ro > lợi ích trong điều
+    kiện sandbox này):**
+    - Gộp hook dùng chung giữa `Chat.tsx`/`Speaking.tsx` (2 luồng gần giống nhau: session/
+      loading/error/limitHit/evaluation/throttle) — không có sai lệch logic thật giữa 2 file,
+      lợi ích chỉ là "gọn hơn". Không có test component nào cho 2 trang này, sandbox không chạy
+      được dev server thật (không Postgres/`.env`) để tự smoke-test → hoãn, chỉ nên làm sau khi
+      có test component bảo vệ hoặc test tay trên máy có app thật.
+    - Tách nhỏ các trang >1000 dòng (`Lessons.tsx` 1537, `Practice.tsx` 1338, `Speaking.tsx`
+      1207, `StudyTabs.tsx` 1972...). Đã thử soát `Lessons.tsx`: `LessonView` (dòng 451–1537,
+      ~1090 dòng) không tách cơ học được — chứa hàng chục closure lồng nhau tham chiếu trực
+      tiếp ~65 `useState`/`useEffect`/`useRef` của component cha, tách sai dễ gây stale-closure
+      bug âm thầm mà không có test bắt được. Hoãn tương tự lý do trên.
+    - Rủi ro vận hành khác đã nêu nhưng cần người dùng tự làm tay (không phải AI tự làm được):
+      uptime monitoring ngoài (UptimeRobot/Better Uptime), PWA/offline (`manifest.json` + service
+      worker — có đặc tả sẵn ở `docs/framework/BO-SUNG-nang-cao-i18n-PWA-Sentry-SEO.md` nhưng
+      viết cho Next.js, cần điều chỉnh cho Vite), dashboard theo dõi tổng chi phí AI/tháng.
