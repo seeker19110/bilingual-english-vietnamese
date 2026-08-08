@@ -1,6 +1,7 @@
 # ADR-0002: Quản lý người dùng cho nền tảng đa lĩnh vực
 
-- **Trạng thái:** Đang thi hành (Bước 4/6)
+- **Trạng thái:** Bước 1–4 xong; Bước 5 bỏ qua (không có tính năng thật để gắn); Bước 6 chặn
+  chờ xác nhận (đụng phiên đăng nhập thật, chỉ nên làm sau khi mở môn thứ 2)
 - **Ngày:** 2026-08-08
 - **Liên quan:** `docs/adr/0001-nen-tang-da-linh-vuc.md` (đã chốt bố cục domain/repo/schema),
   `packages/core-auth/`, `postgres/schema.sql`
@@ -52,17 +53,34 @@ app tiếng Anh đang chạy thật.
 
 ## Kế hoạch 6 bước
 
-| #   | Nội dung                                                                                             | Trạng thái            |
-| --- | ---------------------------------------------------------------------------------------------------- | --------------------- |
-| 1   | `identities` + backfill từ 4 cột cũ; `findOrCreateOAuthUser` dual-write (ghi cả cột cũ lẫn bảng mới) | Xong                  |
-| 2   | `entitlements` + backfill từ `profiles.plan`                                                         | Xong                  |
-| 3   | Cookie SSO song song Bearer (chấp nhận cả 2 trong giai đoạn chuyển tiếp)                             | Xong                  |
-| 4   | Tách `core.profiles` vs hồ sơ riêng từng môn                                                         | **Đang làm — PR này** |
-| 5   | `roles` (quyền quản trị theo môn) + `audit_log` + registry xoá tài khoản                             | Chưa làm              |
-| 6   | Bỏ Bearer, bỏ 4 cột provider cũ trên `users`                                                         | Chưa làm              |
+| #   | Nội dung                                                                                             | Trạng thái              |
+| --- | ---------------------------------------------------------------------------------------------------- | ----------------------- |
+| 1   | `identities` + backfill từ 4 cột cũ; `findOrCreateOAuthUser` dual-write (ghi cả cột cũ lẫn bảng mới) | Xong                    |
+| 2   | `entitlements` + backfill từ `profiles.plan`                                                         | Xong                    |
+| 3   | Cookie SSO song song Bearer (chấp nhận cả 2 trong giai đoạn chuyển tiếp)                             | Xong                    |
+| 4   | Tách `core.profiles` vs hồ sơ riêng từng môn                                                         | Xong                    |
+| 5   | `roles` (quyền quản trị theo môn) + `audit_log` + registry xoá tài khoản                             | **Bỏ qua (2026-08-08)** |
+| 6   | Bỏ Bearer, bỏ 4 cột provider cũ trên `users`                                                         | **Chặn — xem dưới**     |
 
 Bước 1–2 làm ngay vì dữ liệu còn ít, dễ backfill/rollback. Bước 3 là điều kiện bắt buộc
 trước khi mở môn thứ hai (SSO là giá trị lớn nhất của "một tài khoản, nhiều môn").
+
+**Bước 5 — quyết định bỏ qua (2026-08-08):** khác Bước 1–4 (đều có dữ liệu THẬT để backfill),
+Bước 5 không có tính năng nào đang chạy để nối vào — quyền admin hiện là danh sách email cố
+định trong `.env` (`isAdminEmail()`, `packages/core-auth/adminAuth.ts`), không phải bảng DB;
+và **chưa hề có tính năng xoá tài khoản** trong toàn bộ codebase. Dựng sẵn bảng `roles`/
+`audit_log` rỗng lúc này là hạ tầng cho tính năng chưa tồn tại — vi phạm nguyên tắc "không
+triển khai dở dang" (CLAUDE.md mục 4). Làm THẬT khi có yêu cầu cụ thể (vd cần admin theo môn,
+hoặc làm tính năng xoá tài khoản).
+
+**Bước 6 — CHẶN, cần xác nhận riêng trước khi làm:** app tiếng Anh — client DUY NHẤT đang chạy
+thật — vẫn gửi `Authorization: Bearer` cho MỌI request, chưa có gì đổi sang thuần cookie. Bỏ
+Bearer lúc này nghĩa là khoá đăng nhập của mọi người dùng thật đang trả tiền ngay lập tức, vì
+server sẽ không nhận Bearer nữa mà client chưa có đường thay thế. Giá trị thật của cookie SSO
+(Bước 3) chỉ phát huy khi có subdomain môn thứ 2 tồn tại và xác thực bằng cookie — hiện chưa
+có app nào như vậy. Bỏ Bearer bây giờ là dọn dẹp cho tình huống chưa xảy ra, đồng thời là thay
+đổi khó hoàn tác trên hệ thống có người dùng thật (CLAUDE.md mục 12) → PHẢI dừng hỏi lại, KHÔNG
+tự làm, và chỉ nên làm SAU KHI mở môn thứ 2 + xác nhận cookie SSO hoạt động đúng trong thực tế.
 
 ## Bước 1 — chi tiết đã thi hành
 
