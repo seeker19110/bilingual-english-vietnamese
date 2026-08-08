@@ -3,6 +3,7 @@
 
 import { Redis } from 'ioredis'
 import { validateSessionToken } from './authService.js'
+import { readSessionCookie } from './sessionCookie.js'
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 // Đọc danh sách domain cho phép từ biến môi trường ALLOWED_ORIGINS (phân cách bằng dấu phẩy).
@@ -37,7 +38,8 @@ export function getCorsHeaders(req: Request): Record<string, string> {
   }
   // CHỈ gắn Allow-Credentials khi phản chiếu đúng 1 origin cụ thể trong whitelist.
   // KHÔNG bao giờ kèm '*' — tổ hợp '*' + credentials bị browser từ chối và quá rộng.
-  // (App xác thực bằng header Authorization: Bearer, không dùng cookie nên không bắt buộc.)
+  // Cần cho cookie phiên (Bước 3 SSO, sessionCookie.ts) khi app con ở subdomain khác gọi
+  // API bằng `fetch(..., { credentials: 'include' })` — Bearer (cơ chế chính) không cần.
   if (allowCredentials) {
     headers['Access-Control-Allow-Credentials'] = 'true'
   }
@@ -194,7 +196,9 @@ function checkRateLimitInMemory(key: string, maxPerMin: number): boolean {
 }
 
 // ── Auth Validation ───────────────────────────────────────────────────────────
-// Đọc session token từ header Authorization: Bearer <token>
+// Đọc session token từ header Authorization: Bearer <token> — CƠ CHẾ CHÍNH, không đổi.
+// Thiếu Bearer mới thử cookie `session_token` (Bước 3 SSO, docs/adr/0002-quan-ly-nguoi-dung.md
+// + packages/core-auth/sessionCookie.ts) — dual-accept, KHÔNG bắt buộc client đổi gì.
 // Tra bảng `sessions` trên Postgres tự host (Giai đoạn B — thay Supabase Auth) — trả về
 // userId nếu hợp lệ + chưa hết hạn, null nếu không. Xem api/_lib/authService.ts.
 //
@@ -217,11 +221,8 @@ export async function validateAuth(req: Request): Promise<{ userId: string } | n
   }
 
   const authHeader = req.headers.get('Authorization')
-  if (!authHeader?.startsWith('Bearer ')) {
-    return null
-  }
-
-  const token = authHeader.slice(7).trim()
+  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : ''
+  const token = bearerToken || readSessionCookie(req) || ''
   if (!token) return null
 
   try {

@@ -38,6 +38,7 @@ const authService = vi.hoisted(() => ({
     planExpiresAt: null,
   })),
   getUserById: vi.fn(),
+  SESSION_TTL_MS: 30 * 24 * 60 * 60 * 1000,
 }))
 vi.mock('./authService', () => authService)
 

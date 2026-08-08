@@ -192,6 +192,31 @@ describe('validateAuth', () => {
     expect(result).toEqual({ userId: 'user-1' })
   })
 
+  // ── Cookie fallback (Bước 3 SSO — dual-accept, sessionCookie.ts) ────────────────────
+  it('KHÔNG có Authorization nhưng có cookie session_token hợp lệ → trả userId', async () => {
+    delete process.env.SKIP_AUTH
+    validateSessionToken.mockResolvedValue({ userId: 'user-cookie' })
+    const result = await validateAuth(reqWithHeaders({ Cookie: 'session_token=abc123' }))
+    expect(result).toEqual({ userId: 'user-cookie' })
+    expect(validateSessionToken).toHaveBeenCalledWith('abc123')
+  })
+
+  it('CÓ CẢ Authorization lẫn cookie → ưu tiên Bearer (cơ chế chính)', async () => {
+    delete process.env.SKIP_AUTH
+    validateSessionToken.mockResolvedValue({ userId: 'user-bearer' })
+    await validateAuth(
+      reqWithHeaders({ Authorization: 'Bearer bearer-tok', Cookie: 'session_token=cookie-tok' }),
+    )
+    expect(validateSessionToken).toHaveBeenCalledWith('bearer-tok')
+  })
+
+  it('không có Authorization, cookie không chứa session_token → null', async () => {
+    delete process.env.SKIP_AUTH
+    const result = await validateAuth(reqWithHeaders({ Cookie: 'other=xyz' }))
+    expect(result).toBeNull()
+    expect(validateSessionToken).not.toHaveBeenCalled()
+  })
+
   it('SKIP_AUTH=true nhưng NODE_ENV=production → KHÔNG bypass (an toàn production)', async () => {
     process.env.SKIP_AUTH = 'true'
     process.env.NODE_ENV = 'production'

@@ -1,8 +1,14 @@
 // api/_lib/authService.ts — Auth tự viết thay Supabase Auth (Giai đoạn B).
-// Quyết định kiến trúc (xem docs/migration-thoat-ly-supabase.md): giữ mô hình Bearer token
-// (không đổi sang cookie session của @auth/express) — khớp đúng kiến trúc SPA hiện có,
-// miễn nhiễm CSRF theo thiết kế (client tự gắn header Authorization, trình duyệt không
-// tự động gửi kèm như cookie).
+// Quyết định kiến trúc GỐC (xem docs/migration-thoat-ly-supabase.md): Bearer token
+// (không dùng cookie session của @auth/express) — khớp đúng kiến trúc SPA hiện có, miễn
+// nhiễm CSRF theo thiết kế (client tự gắn header Authorization, trình duyệt không tự động
+// gửi kèm như cookie).
+//
+// [Cập nhật Bước 3, docs/adr/0002-quan-ly-nguoi-dung.md] Bearer VẪN LÀ CƠ CHẾ CHÍNH — không gì
+// đổi ở đây. Lớp cookie (packages/core-auth/sessionCookie.ts) được thêm SONG SONG, chỉ để mở
+// đường SSO liên subdomain sau này (mỗi subdomain có `localStorage` riêng, không chia sẻ được
+// token qua Bearer). Cookie dùng CHUNG session_token đã có ở bảng `sessions` này — không phải
+// cơ chế phiên thứ hai.
 //
 // Session token: chuỗi ngẫu nhiên 32 byte (crypto.randomBytes), CHỈ hash SHA-256 của token
 // được lưu trong bảng `sessions` (không lưu token gốc) — giống thông lệ lưu API key, để lộ
@@ -15,7 +21,9 @@ import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { getPgPool } from '../core-db/pgPool.js'
 import { resolvePlan, type Plan } from '../core-billing/plan.js'
 
-const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 30 ngày — khớp thời hạn session Supabase cũ
+// Xuất ra để packages/core-auth/sessionCookie.ts đặt đúng Max-Age cho cookie — PHẢI khớp
+// thời hạn session thật lưu ở bảng `sessions` (dưới), không lệch cookie sống lâu hơn session.
+export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 30 ngày — khớp thời hạn session Supabase cũ
 const BCRYPT_ROUNDS = 12
 
 export interface AuthUserRow {

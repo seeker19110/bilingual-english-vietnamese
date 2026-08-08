@@ -46,6 +46,7 @@ import { changeEmail } from './changeEmail.js'
 import { requestPasswordReset, resetPassword } from '../../api/_lib/passwordReset.js'
 import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
 import { isReservedName } from '../../api/_lib/reservedNames.js'
+import { buildSessionCookie, buildClearSessionCookie, readSessionCookie } from './sessionCookie.js'
 
 const RegisterSchema = z.object({
   action: z.literal('register'),
@@ -180,6 +181,10 @@ export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: allHeaders })
 
+  // Gắn thêm cookie phiên SONG SONG với token trả trong body (Bước 3 SSO — sessionCookie.ts).
+  // Client hiện tại vẫn đọc `token` trong body như cũ, cookie chỉ để trình duyệt tự lưu.
+  const withCookie = (token: string) => ({ ...allHeaders, 'Set-Cookie': buildSessionCookie(token) })
+
   const clientIp = getClientIp(req)
   // Giới hạn chặt hơn route thường — chống dò mật khẩu/tạo tài khoản hàng loạt.
   if (!(await checkRateLimit(clientIp, 10, 'auth'))) {
@@ -247,7 +252,7 @@ export default async function handler(req: Request): Promise<Response> {
     // hàng loạt để cày trial). 4 kênh OAuth (Google/Facebook/Apple/Microsoft) COI NHƯ ĐÃ XÁC
     // THỰC (provider tự verify email) nên vẫn cấp NGAY — xem oauthLoginResponse() +
     // action 'verify-email' bên dưới.
-    return jsonResponse(authResponse(token, user, profile), 200, allHeaders)
+    return jsonResponse(authResponse(token, user, profile), 200, withCookie(token))
   }
 
   if (result.data.action === 'login') {
@@ -259,42 +264,47 @@ export default async function handler(req: Request): Promise<Response> {
     }
     const profile = await ensureProfileRow(user.id, user.email.split('@')[0] ?? user.email)
     const token = await createSession(user.id)
-    return jsonResponse(authResponse(token, user, profile), 200, allHeaders)
+    return jsonResponse(authResponse(token, user, profile), 200, withCookie(token))
   }
 
   if (result.data.action === 'google') {
     const info = await verifyGoogleIdToken(result.data.idToken)
     if (!info) return jsonResponse({ error: 'Google token không hợp lệ' }, 401, allHeaders)
     const { user, isNew } = await findOrCreateGoogleUser(info.googleId, info.email)
-    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
+    const body = await oauthLoginResponse(user, isNew, info.name)
+    return jsonResponse(body, 200, withCookie(body.token))
   }
 
   if (result.data.action === 'google-token') {
     const info = await verifyGoogleAccessToken(result.data.accessToken)
     if (!info) return jsonResponse({ error: 'Google token không hợp lệ' }, 401, allHeaders)
     const { user, isNew } = await findOrCreateGoogleUser(info.googleId, info.email)
-    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
+    const body = await oauthLoginResponse(user, isNew, info.name)
+    return jsonResponse(body, 200, withCookie(body.token))
   }
 
   if (result.data.action === 'facebook') {
     const info = await verifyFacebookAccessToken(result.data.accessToken)
     if (!info) return jsonResponse({ error: 'Facebook token không hợp lệ' }, 401, allHeaders)
     const { user, isNew } = await findOrCreateFacebookUser(info.facebookId, info.email)
-    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
+    const body = await oauthLoginResponse(user, isNew, info.name)
+    return jsonResponse(body, 200, withCookie(body.token))
   }
 
   if (result.data.action === 'apple') {
     const info = await verifyAppleIdToken(result.data.idToken, result.data.name)
     if (!info) return jsonResponse({ error: 'Apple token không hợp lệ' }, 401, allHeaders)
     const { user, isNew } = await findOrCreateAppleUser(info.appleId, info.email)
-    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
+    const body = await oauthLoginResponse(user, isNew, info.name)
+    return jsonResponse(body, 200, withCookie(body.token))
   }
 
   if (result.data.action === 'microsoft') {
     const info = await verifyMicrosoftIdToken(result.data.idToken)
     if (!info) return jsonResponse({ error: 'Microsoft token không hợp lệ' }, 401, allHeaders)
     const { user, isNew } = await findOrCreateMicrosoftUser(info.microsoftId, info.email)
-    return jsonResponse(await oauthLoginResponse(user, isNew, info.name), 200, allHeaders)
+    const body = await oauthLoginResponse(user, isNew, info.name)
+    return jsonResponse(body, 200, withCookie(body.token))
   }
 
   // ── Xác thực email (chống email giả cày thưởng mời bạn) ────────────────────
@@ -384,9 +394,11 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ ok: true }, 200, allHeaders)
   }
 
-  // action === 'logout'
+  // action === 'logout' — thu hồi ĐÚNG session đang dùng dù đến từ Bearer hay cookie
+  // (dual-accept, xem validateAuth ở security.ts), rồi luôn xoá cookie phía trình duyệt.
   const authHeader = req.headers.get('Authorization')
   const rawToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : ''
-  if (rawToken) await revokeSession(rawToken)
-  return jsonResponse({ ok: true }, 200, allHeaders)
+  const token = rawToken || readSessionCookie(req) || ''
+  if (token) await revokeSession(token)
+  return jsonResponse({ ok: true }, 200, { ...allHeaders, 'Set-Cookie': buildClearSessionCookie() })
 }

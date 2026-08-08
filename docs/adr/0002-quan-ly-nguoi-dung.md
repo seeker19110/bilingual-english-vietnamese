@@ -1,6 +1,6 @@
 # ADR-0002: Quản lý người dùng cho nền tảng đa lĩnh vực
 
-- **Trạng thái:** Đang thi hành (Bước 2/6)
+- **Trạng thái:** Đang thi hành (Bước 3/6)
 - **Ngày:** 2026-08-08
 - **Liên quan:** `docs/adr/0001-nen-tang-da-linh-vuc.md` (đã chốt bố cục domain/repo/schema),
   `packages/core-auth/`, `postgres/schema.sql`
@@ -55,8 +55,8 @@ app tiếng Anh đang chạy thật.
 | #   | Nội dung                                                                                             | Trạng thái            |
 | --- | ---------------------------------------------------------------------------------------------------- | --------------------- |
 | 1   | `identities` + backfill từ 4 cột cũ; `findOrCreateOAuthUser` dual-write (ghi cả cột cũ lẫn bảng mới) | Xong                  |
-| 2   | `entitlements` + backfill từ `profiles.plan`                                                         | **Đang làm — PR này** |
-| 3   | Cookie SSO song song Bearer (chấp nhận cả 2 trong giai đoạn chuyển tiếp)                             | Chưa làm              |
+| 2   | `entitlements` + backfill từ `profiles.plan`                                                         | Xong                  |
+| 3   | Cookie SSO song song Bearer (chấp nhận cả 2 trong giai đoạn chuyển tiếp)                             | **Đang làm — PR này** |
 | 4   | Tách `core.profiles` vs hồ sơ riêng từng môn                                                         | Chưa làm              |
 | 5   | `roles` (quyền quản trị theo môn) + `audit_log` + registry xoá tài khoản                             | Chưa làm              |
 | 6   | Bỏ Bearer, bỏ 4 cột provider cũ trên `users`                                                         | Chưa làm              |
@@ -91,17 +91,37 @@ trước khi mở môn thứ hai (SSO là giá trị lớn nhất của "một t
   chưa phải nguồn sự thật. Trước khi bất kỳ code nào bắt đầu ĐỌC bảng này, phải thêm dual-write
   (giống cách Bước 1 làm cho `identities`) hoặc backfill lại — ghi rõ ở bước rewiring kế tiếp.
 
-## Quyết định chờ sẵn cho Bước 3 (2026-08-08, trước khi thi hành)
+## Bước 3 — chi tiết đã thi hành
 
-Dừng lại sau Bước 2 để merge/kiểm thử kỹ trước — Bước 3 đụng thẳng phiên đăng nhập của
-người dùng thật đang trả tiền (khác Bước 1–2 vốn chỉ thêm dữ liệu). Đã chốt trước 2 điều để
-lúc bắt tay Bước 3 không phải hỏi lại:
+Quyết định chốt trước khi code (2026-08-08): **domain cookie `Domain=.donghanhcungban.org`
+ngay từ đầu** (không để hẹp `en-vi.donghanhcungban.org` rồi sửa lại sau — hiện tại chỉ có
+`en-vi.` dùng domain cha nên không subdomain nào khác bị ảnh hưởng bởi việc share sớm), và
+**dual-accept**: Bearer vẫn là cơ chế chính, cookie chỉ thêm song song.
 
-- **Domain cookie: `Domain=.donghanhcungban.org` ngay từ đầu** (không để hẹp
-  `en-vi.donghanhcungban.org` rồi sửa lại sau) — đúng tinh thần ADR-0001/0002, và hiện tại chỉ
-  có `en-vi.` dùng domain cha nên không có subdomain khác bị ảnh hưởng bởi cookie share sớm.
-- **Cách làm:** dual-accept — server chấp nhận cả Bearer (client cũ chưa cập nhật) lẫn cookie
-  mới song song trong giai đoạn chuyển tiếp, không ép buộc ngay; bỏ hẳn Bearer là Bước 6.
+- `packages/core-auth/sessionCookie.ts` (mới): `buildSessionCookie()`/`buildClearSessionCookie()`
+  dựng header `Set-Cookie` (`HttpOnly; SameSite=Lax`, kèm `Secure`+`Domain` CHỈ khi
+  `NODE_ENV`/`VERCEL_ENV`=`production` — dev local qua `http://localhost` sẽ bị trình duyệt từ
+  chối cookie `Secure`); `readSessionCookie()` tự parse header `Cookie` (Web API `Request`
+  không có sẵn, khác Express `req.cookies`).
+- `packages/core-auth/authService.ts`: xuất `SESSION_TTL_MS` để cookie dùng đúng thời hạn với
+  session thật trong bảng `sessions` — không phải cơ chế phiên thứ hai, chỉ 2 cách gửi cùng 1
+  token.
+- `packages/core-auth/security.ts` (`validateAuth`): đọc `Authorization: Bearer` trước
+  (KHÔNG đổi thứ tự ưu tiên); thiếu mới thử cookie. `getCorsHeaders()` giữ nguyên logic
+  `Access-Control-Allow-Credentials` đã có (chỉ bật khi origin nằm trong whitelist), cập nhật
+  lại comment vì giờ có cookie thật sự dùng credentials.
+- `packages/core-auth/auth.ts`: mọi phản hồi tạo phiên thành công (register/login/4 kênh OAuth)
+  gắn thêm `Set-Cookie` bên cạnh `token` có sẵn trong body — client hiện tại (Bearer) không cần
+  đổi gì, cookie chỉ để trình duyệt tự lưu. `logout` thu hồi ĐÚNG session dù đến từ Bearer hay
+  cookie, luôn xoá cookie phía trình duyệt.
+- **Không đổi client** (`apps/english/src/lib/auth.ts`) — vẫn gửi/đọc Bearer y hệt trước. Cookie
+  hiện tại là hạ tầng "ngủ", chưa app con nào dùng tới — chỉ có tác dụng khi mở subdomain thứ 2
+  và app đó gọi API bằng `fetch(..., { credentials: 'include' })`.
+- Test mới `sessionCookie.test.ts` (8 case) + bổ sung `security.test.ts` (3 case dual-accept:
+  chỉ cookie, có cả 2 ưu tiên Bearer, cookie sai tên). Bắt được 1 lỗi thật lúc viết test: kiểm
+  tra môi trường production ban đầu viết `if (isProduction)` (tham chiếu hàm, luôn truthy) thay
+  vì `if (isProduction())` — sẽ khiến cookie LUÔN gắn `Secure`, kể cả ở dev, làm hỏng đăng nhập
+  qua `http://localhost`. Sửa trước khi merge.
 
 ## Hệ quả
 
