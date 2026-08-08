@@ -134,6 +134,36 @@ describe('srsPreloader — Pre-downloading audio for SRS offline review', () => 
     vi.useRealTimers()
   })
 
+  it('mục đã có sẵn KHÔNG tốn thời gian chờ, chỉ mục phải gọi API mới bị giới hạn nhịp', async () => {
+    vi.useFakeTimers()
+    // Ngân sách nằm ở cấp module (dùng chung mọi lượt tải) — nhảy tới mốc thời gian xa để
+    // các request của những ca test trước rơi hẳn ra ngoài cửa sổ 60s.
+    vi.setSystemTime(Date.now() + 24 * 3600 * 1000)
+    mockVoices.mockReturnValue(['Kore'])
+
+    // Toàn từ chưa có cache → mọi mục đều phải gọi API. Mỗi lượt tải chuẩn bị trước 20 từ,
+    // nên 2 lượt đầu (40 request) nằm trọn trong ngân sách 50/cửa sổ → chạy liền, không chờ.
+    const batch = (n: number) => Array.from({ length: 20 }, (_, i) => W(`b${n}w${i}`))
+    const t0 = Date.now()
+    for (const n of [1, 2]) {
+      const p = preloadSrsAudio('user_no_due', batch(n))
+      await vi.runAllTimersAsync()
+      await p
+    }
+    expect(Date.now() - t0).toBe(0) // không hề chờ
+
+    // Ngân sách của cửa sổ hiện tại đã cạn → lượt tải kế tiếp phải chờ, không được cấp thêm
+    // chỉ vì người dùng bấm Tải lại (hạn mức server tính theo IP, không theo lượt bấm).
+    const t1 = Date.now()
+    const p3 = preloadSrsAudio('user_no_due', batch(3))
+    await vi.runAllTimersAsync()
+    const res = await p3
+    expect(res.done).toBe(20) // vẫn tải đủ, chỉ là phải chờ hết cửa sổ
+    expect(Date.now() - t1).toBeGreaterThan(0)
+
+    vi.useRealTimers()
+  })
+
   it('trả về 0/0 khi pool rỗng và không có thẻ due', async () => {
     const res = await preloadSrsAudio('user_no_due', [])
     expect(res.done).toBe(0)
