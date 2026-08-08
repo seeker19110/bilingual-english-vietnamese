@@ -18,6 +18,7 @@
 // localStorage để gửi — khi đó localStorage đã chắc chắn là bản đã hợp nhất đầy đủ.
 
 import { getAuthHeader } from '@core/authHeader'
+import { getPendingOfflineReviews, clearPendingOfflineReviews } from './offlineSrsStore'
 
 const LEARNED = (uid: string) => `et_learned_${uid}`
 const HARD = (uid: string) => `et_hard_${uid}`
@@ -172,8 +173,6 @@ function readObj(key: string): Record<string, SRSLike> {
 
 // Đọc localStorage HIỆN TẠI rồi gửi thẳng lên server — KHÔNG chờ pull nào cả. Chỉ tự gọi
 // nội bộ từ pullProgress() (sau khi đã ghi bản hợp nhất xuống localStorage) để tránh vòng chờ
-import { getPendingOfflineReviews, clearPendingOfflineReviews } from './offlineSrsStore'
-
 // chính nó. Nơi khác dùng pushProgress()/pushProgressAsync() ở dưới (có chờ chống mất dữ liệu).
 async function sendProgressSnapshot(userId: string): Promise<void> {
   try {

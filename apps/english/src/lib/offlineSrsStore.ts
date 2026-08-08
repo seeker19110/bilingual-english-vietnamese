@@ -5,7 +5,9 @@
 // đồng thời lưu vết các lượt reviewSRS phát sinh khi không có kết nối Internet.
 // ──────────────────────────────────────────────────────────────────────────
 
-import type { SRSCard, Rating } from './srs'
+// Lấy kiểu từ `srsTypes.ts` (file chỉ-chứa-kiểu) chứ KHÔNG từ './srs' — nếu import ngược lại
+// './srs' thì thành chu trình `srs → offlineSrsStore → srs`.
+import type { SRSCard, Rating } from './srsTypes'
 
 const DB_NAME = 'gia-su-srs-db'
 const STORE_CARDS = 'srs_cards'

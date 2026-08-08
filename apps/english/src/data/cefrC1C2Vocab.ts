@@ -4,7 +4,7 @@
 //
 // KHÔNG sửa file .json bằng tay — chạy lại script sinh để cập nhật.
 
-import type { Circle } from './curriculum'
+import type { Circle } from './curriculumTypes'
 import data from './cefrC1C2Vocab.json'
 
 // Các vòng từ vựng C1 + C2 (đã lọc + gom theo chủ đề/loại từ + sắp theo tần suất).
