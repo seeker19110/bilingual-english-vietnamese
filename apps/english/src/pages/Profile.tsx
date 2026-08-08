@@ -22,6 +22,7 @@ import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
 import VoicePicker from '../components/VoicePicker'
+import RateToggle from '../components/RateToggle'
 import ReferralSection from '../components/ReferralSection'
 import QuestsPanel from '../components/QuestsPanel'
 import EmailVerifySection from '../components/EmailVerifySection'
@@ -429,6 +430,27 @@ export default function Profile() {
 
         {/* Chọn giọng đọc — 14 giọng Chirp3-HD, áp dụng toàn cục */}
         <VoicePicker plan={user.plan} isA={isA} />
+
+        {/* Tốc độ phát — áp dụng toàn cục cho mọi nút nghe. Trước đây nút này nằm rải rác
+            trên header/nội dung từng trang (VoiceMenu + RateToggle); quyết định 2026-08-08:
+            gom hết về đây vì cả hai vốn đã là cài đặt TOÀN CỤC, để trên header chỉ gây rối
+            và khiến người dùng tưởng mỗi trang một tốc độ riêng. */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Gauge className="w-4 h-4 text-accent-400" />
+              <div>
+                <p className="text-sm font-medium text-white">
+                  {isA ? 'Tốc độ phát' : 'Playback speed'}
+                </p>
+                <p className="text-xs text-zinc-400">
+                  {isA ? 'Áp dụng cho mọi nút nghe' : 'Applies to every listen button'}
+                </p>
+              </div>
+            </div>
+            <RateToggle />
+          </div>
+        </section>
 
         {/* Âm thanh phản hồi UI (V-6) — đúng/sai/đạt mốc */}
         <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">

@@ -16,7 +16,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { TodayLesson, SRSReview, HardWords, QuizTab } from './StudyTabs'
-import type { DictEntry, AgeGroup, Plan } from '../types'
+import type { DictEntry, AgeGroup } from '../types'
 import { getDifficultWords } from '../lib/vocab'
 import { getDueWords } from '../lib/srs'
 import { loadCurriculum, isCurriculumReady, getLearningPath } from '../lib/curriculum'
@@ -26,7 +26,6 @@ export type StudyTab = 'today' | 'srs' | 'hard' | 'quiz'
 export default function StudyPanel({
   uid,
   isA,
-  plan,
   tab,
   onProgress,
   onBadges,
@@ -34,7 +33,6 @@ export default function StudyPanel({
 }: {
   uid: string
   isA: boolean
-  plan: Plan
   tab: StudyTab
   // Gọi khi học/ôn xong 1 từ để trang cha cập nhật (vd: "Mốc từ vựng", "Đã học").
   onProgress?: () => void
@@ -91,9 +89,7 @@ export default function StudyPanel({
 
   return (
     <>
-      {tab === 'today' && (
-        <TodayLesson uid={uid} isA={isA} plan={plan} pool={pool} onProgress={bump} />
-      )}
+      {tab === 'today' && <TodayLesson uid={uid} isA={isA} pool={pool} onProgress={bump} />}
       {tab === 'srs' && (
         // levelPool = pool ⇒ không hiện nút lọc "chỉ cấp này" (trang từ điển không chia cấp).
         <SRSReview uid={uid} isA={isA} pool={pool} levelPool={pool} onUpdate={bump} />

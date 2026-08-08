@@ -11,7 +11,7 @@ interface Props {
 }
 
 // Nhãn ngắn gọn cho từng giọng (tên riêng + nhãn giới tính), hiển thị cạnh icon để người
-// dùng biết đang nghe giọng nào. Nhãn giới tính theo CHIỀU HỌC như VoiceMenu/VoicePicker —
+// dùng biết đang nghe giọng nào. Nhãn giới tính theo CHIỀU HỌC như VoicePicker —
 // trước đây viết cứng tiếng Việt nên người học chiều B (giao diện tiếng Anh) vẫn thấy "Nữ".
 function voiceLabel(voice: Voice, isA: boolean): string {
   const gender = VOICE_OPTIONS.find((v) => v.id === voice)?.gender ?? 'female'

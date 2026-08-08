@@ -12,8 +12,6 @@ import {
   Sparkles,
 } from 'lucide-react'
 import Layout from '../components/Layout'
-import RateToggle from '../components/RateToggle'
-import VoiceMenu from '../components/VoiceMenu'
 import PageHeader from '../components/PageHeader'
 import EvaluationResultView from '../components/EvaluationResultView'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../lib/storage'
@@ -905,12 +903,6 @@ export default function Speaking() {
                   : LEVELS.find((l) => l.value === session.level)?.labelB
               }`
             : undefined
-        }
-        extra={
-          <div className="flex items-center gap-1.5">
-            <VoiceMenu plan={user.plan} isA={isA} />
-            <RateToggle />
-          </div>
         }
       />
 
