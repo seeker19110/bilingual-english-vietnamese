@@ -24,6 +24,7 @@ import { useAuth } from '../context/useAuth'
 import { useToast } from '@core/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { useApiThrottle } from '../lib/useApiThrottle'
+import { useMountedRef } from '../lib/useMountedRef'
 import { useOnboarding } from '../lib/onboarding'
 import { callClaude, parseJson } from '../lib/ai'
 import { speakingSystemPrompt, speakingFullEvaluationPrompt, situationLabel } from '../prompts'
@@ -473,6 +474,8 @@ export default function Speaking() {
   const recTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null) // tự dừng ghi âm khi quá lâu
   const pendingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null) // đếm ngược xác nhận
   const bottomRef = useRef<HTMLDivElement>(null)
+  // Chặn setState sau khi rời trang giữa lúc đang chờ AI trả lời (callClaude có thể mất vài giây)
+  const mountedRef = useMountedRef()
   const MAX_REC_MS = 60_000 // tự dừng ghi âm server sau 60s (tránh micro mở vô tận)
   const PENDING_CONFIRM_S = 2 // số giây chờ xác nhận trước khi tự gửi câu vừa ghi âm
   // Ưu tiên ghi âm gửi server (chính xác, đa trình duyệt); Web Speech chỉ là dự phòng.
@@ -614,9 +617,12 @@ export default function Speaking() {
         ...(targets ? { targetWords: targets } : {}),
       }
       saveSpeakingSession(s)
+      incrementUsage(user.id, 'speakingCount')
+      // Đã rời trang trong lúc chờ AI trả lời — vẫn lưu phiên/lượt dùng ở trên, chỉ
+      // bỏ qua các setState (component không còn mount để nhận cập nhật).
+      if (!mountedRef.current) return
       setSession(s)
       setLastIdx(0)
-      incrementUsage(user.id, 'speakingCount')
       throttle() // Rate limit sau lần gọi thành công
       // Huy hiệu mới (kỹ năng — ② M2) — phiên MỚI vừa được lưu (getSpeakingSessions tăng 1).
       for (const a of checkNewAchievements(user.id)) toast.success(achievementMessage(a, isA))
@@ -631,16 +637,18 @@ export default function Speaking() {
           isA ? 'vi-VN' : 'en-US',
           undefined,
           getRatePref(),
-          (wi) => setWordSync({ msgId: msg.id, field: 'speech', wordIdx: wi }),
+          (wi) =>
+            mountedRef.current && setWordSync({ msgId: msg.id, field: 'speech', wordIdx: wi }),
         )
-        setSpeaking(false)
+        if (mountedRef.current) setSpeaking(false)
       }
     } catch (e) {
+      if (!mountedRef.current) return
       const m = e instanceof Error ? e.message : 'Error'
       setError(m)
       toast.error(m)
     }
-    setLoading(false)
+    if (mountedRef.current) setLoading(false)
   }
 
   async function toggleRecord() {
@@ -775,9 +783,7 @@ export default function Speaking() {
         timestamp: Date.now(),
       }
       const final = { ...updated, messages: [...updated.messages, aiMsg] }
-      setSession(final)
       saveSpeakingSession(final)
-      setLastIdx(final.messages.length - 1)
       // Nếu AI có sửa lỗi → thu vào SỔ LỖI CÁ NHÂN (câu sai = câu học viên vừa nói).
       if (!isSuggestionRequest && (ai.corrected?.trim() || ai.feedback?.trim())) {
         addMistake(user.id, {
@@ -789,6 +795,11 @@ export default function Speaking() {
         })
       }
       incrementUsage(user.id, 'speakingCount')
+      // Đã rời trang trong lúc chờ AI trả lời — vẫn lưu phiên/lượt dùng ở trên, chỉ
+      // bỏ qua các setState (component không còn mount để nhận cập nhật).
+      if (!mountedRef.current) return
+      setSession(final)
+      setLastIdx(final.messages.length - 1)
       throttle() // Rate limit sau lần gọi thành công
       if (!muted && isTTSSupported()) {
         setSpeaking(true)
@@ -799,17 +810,20 @@ export default function Speaking() {
           isA ? 'vi-VN' : 'en-US',
           undefined,
           getRatePref(),
-          (wi) => setWordSync({ msgId: aiMsg.id, field: 'speech', wordIdx: wi }),
-          (wi) => setWordSync({ msgId: aiMsg.id, field: 'feedback', wordIdx: wi }),
+          (wi) =>
+            mountedRef.current && setWordSync({ msgId: aiMsg.id, field: 'speech', wordIdx: wi }),
+          (wi) =>
+            mountedRef.current && setWordSync({ msgId: aiMsg.id, field: 'feedback', wordIdx: wi }),
         )
-        setSpeaking(false)
+        if (mountedRef.current) setSpeaking(false)
       }
     } catch (e) {
+      if (!mountedRef.current) return
       const m = e instanceof Error ? e.message : 'Error'
       setError(m)
       toast.error(m)
     }
-    setLoading(false)
+    if (mountedRef.current) setLoading(false)
   }
 
   async function playMsg(msg: Message) {
@@ -865,15 +879,17 @@ export default function Speaking() {
             ? 'AI trả về định dạng không đúng. Thử lại.'
             : 'AI returned invalid format. Please try again.',
         )
-      setEvaluation(data)
       incrementUsage(user.id, 'speakingCount')
+      if (!mountedRef.current) return
+      setEvaluation(data)
       throttle()
     } catch (e) {
+      if (!mountedRef.current) return
       const m = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
       setError(m)
       toast.error(m)
     }
-    setEvaluating(false)
+    if (mountedRef.current) setEvaluating(false)
   }
 
   const userTurns = session?.messages.filter((m) => m.role === 'user').length ?? 0
