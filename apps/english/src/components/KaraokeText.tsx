@@ -27,6 +27,9 @@ interface Props {
   // nhịp, thay vì im lìm vì component không biết cha đang phát. Bỏ trống (mặc định) thì component
   // tự quản lý phát/dừng khi bấm — giữ nguyên hành vi ở mọi nơi khác đang dùng component này.
   externalState?: { playing: boolean; wordIdx: number | null }
+  // Chặn bấm phát audio riêng — dùng khi cha đang phát tuần tự nhiều dòng (vd "Phát tất cả" ở
+  // StoryReader) để tránh người dùng bấm loa dòng khác làm chồng tiếng lên audio cha đang phát.
+  disabled?: boolean
 }
 
 export default function KaraokeText({
@@ -37,6 +40,7 @@ export default function KaraokeText({
   iconSize = 'sm',
   voice,
   externalState,
+  disabled = false,
 }: Props) {
   const [playing, setPlaying] = useState(false)
   const [wordIdx, setWordIdx] = useState<number | null>(null)
@@ -57,7 +61,7 @@ export default function KaraokeText({
     e.stopPropagation() // tránh trigger parent nếu nằm trong nút khác
     // Cha đang điều khiển (vd giữa lúc "Phát tất cả") → bấm không tự phát audio riêng,
     // tránh chồng tiếng với audio cha đang phát.
-    if (isControlled) return
+    if (isControlled || disabled) return
     if (playing) {
       stopSpeaking()
       return
@@ -94,20 +98,22 @@ export default function KaraokeText({
   const parts = text.split(/(\s+)/)
   let wi = 0
 
+  const label = displayPlaying
+    ? lang === 'en-US'
+      ? 'Dừng đọc'
+      : 'Stop'
+    : lang === 'en-US'
+      ? 'Nghe tiếng Anh'
+      : 'Nghe tiếng Việt'
+
   return (
     <button
       type="button"
       onClick={handleClick}
-      title={
-        displayPlaying
-          ? lang === 'en-US'
-            ? 'Dừng đọc'
-            : 'Stop'
-          : lang === 'en-US'
-            ? 'Nghe tiếng Anh'
-            : 'Nghe tiếng Việt'
-      }
-      className={`flex items-start gap-2 text-left transition group ${buttonClass}`}
+      title={label}
+      aria-label={label}
+      disabled={disabled && !isControlled}
+      className={`flex items-start gap-2 text-left transition group disabled:opacity-40 ${buttonClass}`}
     >
       {/* Icon loa / dừng */}
       <span

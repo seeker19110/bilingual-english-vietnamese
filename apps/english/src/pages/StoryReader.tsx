@@ -237,6 +237,17 @@ export default function StoryReader() {
           </button>
         </div>
 
+        {/* Vùng loan báo cho trình đọc màn hình biết câu nào đang được đọc khi "Phát tất cả"
+            đang chạy — người mắt thấy đã có highlight nền (isActive), người dùng screen reader
+            cần kênh riêng vì highlight chỉ đổi class, không tự thông báo. */}
+        <p aria-live="polite" className="sr-only">
+          {playing && activeIdx !== null && flatLines[activeIdx]
+            ? isA
+              ? flatLines[activeIdx].en
+              : flatLines[activeIdx].vi
+            : ''}
+        </p>
+
         {/* Nội dung truyện theo đoạn */}
         <div className="space-y-5">
           {paragraphs.map((para, pi) => (
@@ -259,6 +270,7 @@ export default function StoryReader() {
                       voice={storyVoice}
                       textClass="text-[15px] leading-relaxed text-zinc-100"
                       buttonClass="w-full px-2 py-1.5 rounded-lg hover:bg-zinc-900/60"
+                      disabled={playing}
                       externalState={
                         playing && playLang === (isA ? 'en' : 'vi')
                           ? { playing: isActive, wordIdx: isActive ? wordIdx : null }
@@ -272,6 +284,7 @@ export default function StoryReader() {
                         voice={storyVoice}
                         textClass={`text-sm text-zinc-400 ${KARAOKE_INDENT}`}
                         buttonClass="w-full px-2 py-1 rounded-lg hover:bg-zinc-900/60"
+                        disabled={playing}
                         externalState={
                           playing && playLang === (isA ? 'vi' : 'en')
                             ? { playing: isActive, wordIdx: isActive ? wordIdx : null }
@@ -298,6 +311,7 @@ export default function StoryReader() {
               lang={targetLang}
               voice={storyVoice}
               textClass="text-sm text-zinc-200 leading-relaxed"
+              disabled={playing}
             />
             {showTranslation && (
               <KaraokeText
@@ -306,6 +320,7 @@ export default function StoryReader() {
                 voice={storyVoice}
                 textClass={`text-xs text-zinc-400 mt-1 ${KARAOKE_INDENT}`}
                 buttonClass="w-full px-2 py-1 rounded-lg hover:bg-zinc-900/60"
+                disabled={playing}
               />
             )}
           </div>

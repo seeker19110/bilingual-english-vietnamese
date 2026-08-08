@@ -16,6 +16,7 @@ export function loadStoryIndex(): Promise<StoryMeta[]> {
       })
       .catch((err) => {
         console.error('[stories/loader] Không tải được index.json:', err)
+        _indexPromise = null // bỏ cache lỗi — lần gọi sau sẽ thử tải lại thay vì kẹt mãi mãi
         return []
       })
   }
@@ -36,6 +37,7 @@ export function loadStory(id: string): Promise<Story | null> {
       })
       .catch((err) => {
         console.error(`[stories/loader] Không tải được truyện "${id}":`, err)
+        storyCache.delete(id) // chỉ bỏ cache lỗi MẠNG — 404 thật (!r.ok) vẫn giữ cache null
         return null
       })
     storyCache.set(id, promise)

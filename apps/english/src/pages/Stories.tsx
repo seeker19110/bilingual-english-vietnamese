@@ -53,6 +53,8 @@ function FilterChip({
   )
 }
 
+const CEFR_ORDER = ['A2', 'B1', 'B2'] as const
+
 function EmptyState({ isA }: { isA: boolean }) {
   return (
     <div className="text-center py-16 text-zinc-400 text-sm">
@@ -68,6 +70,7 @@ export default function Stories() {
 
   const [all, setAll] = useState<StoryMeta[] | null>(null)
   const [kind, setKind] = useState<StoryKind | null>(null)
+  const [level, setLevel] = useState<StoryMeta['level'] | null>(null)
   const [country, setCountry] = useState<string | null>(null)
 
   useEffect(() => {
@@ -83,21 +86,35 @@ export default function Stories() {
     [stories],
   )
 
-  // Danh sách quốc gia tính TRÊN thể loại đang chọn, để không hiện chip rỗng.
+  // Cấp CEFR tính TRÊN thể loại đang chọn, để không hiện chip rỗng.
   const byKind = kind ? stories.filter((s) => s.kind === kind) : stories
+  const levels = useMemo(() => {
+    const set = new Set<StoryMeta['level']>()
+    byKind.forEach((s) => set.add(s.level))
+    return CEFR_ORDER.filter((l) => set.has(l))
+  }, [byKind])
+
+  // Danh sách quốc gia tính TRÊN thể loại + cấp đang chọn, để không hiện chip rỗng.
+  const byLevel = level ? byKind.filter((s) => s.level === level) : byKind
   const countries = useMemo(() => {
     const set = new Set<string>()
-    byKind.forEach((s) => set.add(isA ? s.countryVi : s.countryEn))
+    byLevel.forEach((s) => set.add(isA ? s.countryVi : s.countryEn))
     return [...set]
-  }, [byKind, isA])
+  }, [byLevel, isA])
 
   const shown = country
-    ? byKind.filter((s) => (isA ? s.countryVi : s.countryEn) === country)
-    : byKind
+    ? byLevel.filter((s) => (isA ? s.countryVi : s.countryEn) === country)
+    : byLevel
 
   function selectKind(next: StoryKind | null) {
     setKind(next)
-    setCountry(null) // đổi thể loại thì bỏ lọc quốc gia cũ (có thể không còn tồn tại)
+    setLevel(null) // đổi thể loại thì bỏ lọc cấp + quốc gia cũ (có thể không còn tồn tại)
+    setCountry(null)
+  }
+
+  function selectLevel(next: StoryMeta['level'] | null) {
+    setLevel(next)
+    setCountry(null) // đổi cấp thì bỏ lọc quốc gia cũ (có thể không còn tồn tại)
   }
 
   return (
@@ -136,6 +153,27 @@ export default function Stories() {
                     label={labels[k]}
                     active={kind === k}
                     onClick={() => selectKind(kind === k ? null : k)}
+                  />
+                ))}
+              </div>
+            )}
+            {levels.length > 1 && (
+              <div
+                className="flex gap-2 pb-2 overflow-x-auto scrollbar-none"
+                role="group"
+                aria-label={T.filterLevel}
+              >
+                <FilterChip
+                  label={T.phrasesAll}
+                  active={level === null}
+                  onClick={() => selectLevel(null)}
+                />
+                {levels.map((l) => (
+                  <FilterChip
+                    key={l}
+                    label={l}
+                    active={level === l}
+                    onClick={() => selectLevel(level === l ? null : l)}
                   />
                 ))}
               </div>
