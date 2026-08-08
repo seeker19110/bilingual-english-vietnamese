@@ -59,7 +59,10 @@
   --z-300: 203 213 225;
   /* Sáng hơn (cũ 148 163 184) để text-zinc-400 đạt AAA 7:1 trên nền thẻ tối nhất. */
   --z-400: 158 173 191;
-  --z-500: 100 116 139;
+  /* [2026-08-08] Sáng hơn (cũ 100 116 139) để text-zinc-500 đạt AA 4.5:1 trên MỌI bề
+     mặt thật (z-950/900/800): 6.09 / 5.59 / 4.58. Vẫn mờ rõ so với z-400 (8.51/7.81/6.40)
+     nên giữ được phân cấp "chữ phụ". */
+  --z-500: 133 145 163;
   --z-600: 71 85 105;
   --z-700: 51 65 85;
   --z-800: 30 41 59;
@@ -93,7 +96,8 @@
   --z-300: 51 65 85;
   /* Đậm hơn (cũ 71 85 105) để text-zinc-400 đạt AAA 7:1 trên nền xanh sáng. */
   --z-400: 64 78 96;
-  --z-500: 100 116 139;
+  /* [2026-08-08] Đậm hơn (cũ 100 116 139) để đạt AA: 5.42 / 5.17 / 4.59. */
+  --z-500: 90 104 125;
   --z-600: 148 163 184;
   --z-700: 203 213 225;
   --z-800: 226 232 240;
@@ -127,7 +131,8 @@
   --z-300: 82 68 76;
   /* Đậm dần: AA (cũ 140 122 132) → 118 100 110 → nay đạt AAA 7:1 trên nền hồng sáng. */
   --z-400: 89 75 83;
-  --z-500: 168 152 160;
+  /* [2026-08-08] Đậm hơn nhiều (cũ 168 152 160, chỉ 2.25–2.62:1) để đạt AA: 5.42 / 5.22 / 4.65. */
+  --z-500: 111 100 106;
   --z-600: 198 182 190;
   --z-700: 224 212 218;
   --z-800: 240 230 235;
@@ -160,7 +165,8 @@
   --z-300: 209 196 233;
   /* Sáng hơn (cũ 180 160 210) để text-zinc-400 đạt AAA 7:1 trên nền tím than. */
   --z-400: 190 172 216;
-  --z-500: 148 130 178;
+  /* [2026-08-08] Sáng nhẹ (cũ 148 130 178) để đạt AA cả trên nền thẻ nổi z-800: 5.81 / 5.37 / 4.59. */
+  --z-500: 151 134 180;
   --z-600: 110 92 140;
   --z-700: 72 55 100;
   --z-800: 44 32 66;
@@ -198,7 +204,8 @@
   /* Đậm hơn (cũ 132 98 60 / 122 90 58) để text-zinc-300/400 đạt AAA 7:1 trên nền kem. */
   --z-300: 98 72 45;
   --z-400: 101 75 48;
-  --z-500: 176 148 100;
+  /* [2026-08-08] Đậm hơn nhiều (cũ 176 148 100, chỉ 2.41–2.79:1) để đạt AA: 5.33 / 5.08 / 4.62. */
+  --z-500: 121 102 69;
   --z-600: 208 184 142;
   --z-700: 230 212 180;
   --z-800: 246 234 202;
@@ -326,21 +333,26 @@
     scrollbar-width: none;
   }
 
-  /* Vùng chạm tối thiểu 44×44px (chuẩn mobile) cho nút nhỏ — mở rộng vùng bấm
-     bằng pseudo-element vô hình, KHÔNG làm thay đổi kích thước hiển thị/layout.
-     min(0px, ...) đảm bảo nút đã đủ lớn thì không mở rộng thêm. */
-  /* :where() để specificity = 0 — nút đã có position khác (vd .absolute) không bị ghi đè */
-  :where(.tap-44) {
-    position: relative;
+  /* Vùng chạm tối thiểu 44×44px (chuẩn mobile, CLAUDE.md mục 4.7).
+     [2026-08-08] SỬA NỢ KỸ THUẬT: bản cũ mở rộng vùng chạm bằng pseudo-element
+     `::after` có `pointer-events: none` — mà pseudo-element không nhận sự kiện chuột
+     thì KHÔNG mở rộng được vùng bấm chút nào (axe cũng không tính), nên class này
+     thực chất là no-op suốt thời gian qua. Nay đặt kích thước THẬT: phần tử tự nó
+     không nhỏ hơn 44×44px. Nút vốn đã đủ lớn thì min-* không đổi gì.
+     KHÔNG đặt `display` ở đây — nhiều nơi đã tự khai flex/grid, ghi đè sẽ vỡ layout;
+     chỗ nào cần căn giữa thì thêm class Tailwind ngay tại chỗ dùng. */
+  .tap-44 {
+    min-height: 44px;
+    min-width: 44px;
   }
-  .tap-44::after {
-    content: '';
-    position: absolute;
-    inset: min(0px, calc((100% - 44px) / 2));
-    /* Vô hình để MỞ RỘNG vùng chạm, không được chặn click/tap của các phần tử
-       bên dưới — nếu không, các nút gộp nhiều phần tử con (VoiceMenu, RateToggle)
-       sẽ bị lớp này che mất, bấm vào không phản ứng gì. */
-    pointer-events: none;
+
+  /* Biến thể CHỈ ÉP CHIỀU CAO — cho control vốn đã rộng (thanh gạt phân đoạn kiểu
+     Nữ|Nam, 0.75×|1×|1.25×, link quay lại). Ép thêm min-width 44px lên TỪNG phân
+     đoạn làm cả cụm phình ngang, đo thực tế trên máy 390px thì header trang Luyện
+     nói tràn và nút avatar bị đẩy khỏi màn hình. Chiều rộng của các control này đã
+     vượt 44px sẵn nên chỉ cần chiều cao. */
+  .tap-44-y {
+    min-height: 44px;
   }
 
   /* Safe area cho iPhone / notch / bottom bar */

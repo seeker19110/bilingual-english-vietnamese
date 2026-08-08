@@ -392,6 +392,22 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
      ```
    - **`--list` không hề gọi tới Postgres** (chỉ liệt kê object trên R2) — đừng lấy việc `--list`
      chạy được làm bằng chứng rằng mật khẩu Postgres đúng.
+   - **Restore hỏng giữa chừng, không cần tải lại bản dump:** thêm `--from-file` để dùng đúng file
+     đã tải về (kết hợp `--download`), bỏ qua R2 hoàn toàn — dump vài GB mà tải lại từ đầu trong
+     lúc dịch vụ đang sập là mất thời gian vô ích:
+     ```bash
+     npm run restore:r2 -- --download                 # tải 1 lần, giữ lại file
+     RESTORE_PSQL_URL='...' npm run restore:r2 -- \
+       --restore-into english_tutor --from-file ./english-tutor-2026-08-08.sql.gz --yes
+     ```
+     File truyền qua `--from-file` **không bị script tự xoá** (khác file tạm tự tải, sẽ xoá sau khi
+     restore xong).
+   - **[2026-08-08] Nhánh `--restore-into` ĐÃ ĐƯỢC KIỂM CHỨNG THẬT** (trước đó chỉ mới thử nhánh an
+     toàn `--download`): dựng cụm Postgres 16 nháp, nạp `postgres/schema.sql` + toàn bộ migration
+     (47 bảng `public` + `english`) + 1 user thật, `pg_dump | gzip` đúng định dạng cron, rồi chạy
+     `--restore-into` vào một database đã có sẵn dữ liệu rác. Kết quả: bảng rác bị xoá sạch, danh
+     sách 47 bảng giống hệt nguồn, hàng dữ liệu về đủ. Ba hàng rào an toàn đều chặn đúng khi thiếu
+     `--yes` / thiếu `RESTORE_PSQL_URL` / `--from-file` trỏ file không tồn tại.
    - Sau khi restore xong, role ứng dụng (`tutor_app`) dùng trong `DATABASE_URL` **thường vẫn còn
      tồn tại nhưng KHÔNG có mật khẩu nào được set lại** (backup/restore ở tầng dữ liệu không phục
      hồi được mật khẩu role vì Postgres lưu hash mật khẩu role trong catalog hệ thống riêng, không

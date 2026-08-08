@@ -511,7 +511,7 @@ export default function CefrLevelPage() {
       {/* Về trang lộ trình (tổng quan 4 cấp ở /lo-trinh-hoc) */}
       <button
         onClick={() => nav('/lo-trinh-hoc')}
-        className="tap-44 flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200 transition mb-3"
+        className="tap-44-y flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200 transition mb-3"
       >
         <ChevronLeft className="w-4 h-4" /> {isA ? 'Lộ trình A1 → C2' : 'Roadmap A1 → C2'}
       </button>

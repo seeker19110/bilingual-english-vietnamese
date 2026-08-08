@@ -16,7 +16,7 @@ export default function RateToggle() {
     <div
       role="group"
       title="Chọn tốc độ phát (áp dụng cho cả app)"
-      className="tap-44 flex rounded-full bg-zinc-800 p-0.5 text-[11px] leading-none shrink-0"
+      className="tap-44-y flex rounded-full bg-zinc-800 p-0.5 text-[11px] leading-none shrink-0"
     >
       {RATES.map((r) => (
         <button

@@ -17,6 +17,75 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Đợt trả nợ kỹ thuật 2026-08-08 (PR #520)
+
+Trả 4/5 món trong mục "Nợ kỹ thuật còn mở". Món react-router giữ nguyên theo quyết định đã chốt
+(app dùng BrowserRouter thuần, không chạy RSC; bản vá đòi React 19).
+
+1. **Chu trình import: 5 → 0.** Ghi nhận cũ là 3 (trong `data/`), thực tế `npm run codemap -- cycles`
+   báo **5** — có thêm `srs ↔ offlineSrsStore` và `srs → progressSync → offlineSrsStore → srs`, tức
+   đã lan sang `lib/` (logic chạy thật, không chỉ dữ liệu tĩnh). Cả 5 đều cùng một dạng: cạnh quay
+   lại chỉ là `import type`. Gỡ bằng 3 file **chỉ-chứa-kiểu**: `lib/srsTypes.ts`, `data/cefrTypes.ts`,
+   `data/curriculumTypes.ts`; file gốc `export type` lại nên **không nơi nào phải đổi đường dẫn
+   import**. Tiện thể dời 2 import bị đặt lạc giữa file (một cái cắt đôi khối comment ở
+   `progressSync.ts`) lên đầu file.
+2. **`.tap-44` từ no-op thành vùng chạm thật.** Đo bằng Playwright trên 9 trang, khung 390×844:
+   **9 phần tử < 44px** (nhỏ nhất: nút "Ẩn gợi ý huy hiệu" 16×16, avatar header 28×28). Nay
+   `.tap-44` đặt `min-height/min-width: 44px` thật → **0 phần tử < 44px**. Thêm biến thể
+   **`.tap-44-y`** (chỉ ép chiều cao) cho control vốn đã rộng — ép cả `min-width` lên từng phân đoạn
+   của thanh gạt `Nữ|Nam`, `0.75×|1×|1.25×` làm **header trang Luyện nói tràn, đẩy nút avatar khỏi
+   màn hình** (bắt được nhờ chụp ảnh trước/sau, không phải suy đoán). Công tắc 44×24 ở `VoicePicker`
+   bỏ hẳn `.tap-44` (ép cao 44 làm hỏng hình viên thuốc; rộng 44 + đứng riêng hàng vẫn đạt WCAG 2.2
+   AA 2.5.8).
+3. **Token `--z-500` đạt AA ở cả 5 theme.** Giá trị mới tính bằng script (giữ sắc thái, chỉ đổi độ
+   sáng), đo trên 3 bề mặt thật z-950/900/800: dark-blue 6.09/5.59/4.58 · blue-sky 5.42/5.17/4.59 ·
+   pink 5.42/5.22/4.65 · vibrant 5.81/5.37/4.59 · kid 5.33/5.08/4.62 — vẫn mờ rõ so với z-400
+   (6.4–9.2) nên **không mất phân cấp chữ chính/chữ phụ**. `KNOWN_LOW` 17 cặp → 5.
+   **Nhóm nền `z-700` giữ lại CÓ CHỦ Ý:** đo thực tế cho thấy ép z-500 đạt AA cả trên z-700 thì nó
+   phải sáng **ngang z-400** (8.59 so với 8.51) — tức xoá luôn khái niệm "chữ mờ". Ghi chú cũ
+   "z-700 chỉ dùng làm hover" nay đã **lỗi thời**: `ShareProgress`/`Login` dùng nó làm nền nút gạt
+   thật, nhưng chữ đặt lên là `text-white` (đạt AA), không chỗ nào đặt chữ mờ lên z-700.
+4. **Nhánh phá huỷ `restore:r2 --restore-into` đã kiểm chứng THẬT.** Dựng cụm Postgres 16 nháp, nạp
+   `schema.sql` + toàn bộ migration (**47 bảng** `public` + `english`) + 1 user thật, `pg_dump | gzip`
+   đúng định dạng cron, rồi restore vào một database **đã có sẵn dữ liệu rác**: rác bị xoá sạch,
+   danh sách 47 bảng **giống hệt** nguồn, hàng dữ liệu về đủ. 3 hàng rào an toàn đều chặn đúng
+   (thiếu `--yes` / thiếu `RESTORE_PSQL_URL` / `--from-file` trỏ file không tồn tại).
+   Thêm tuỳ chọn **`--from-file`** cho `scripts/restore-pg-from-r2.ts` — vừa là cách chạy thử được
+   nhánh này mà không cần khoá R2, vừa có ích thật trong sự cố: restore hỏng giữa chừng thì dùng lại
+   file đã tải, không tải lại bản dump vài GB trong lúc dịch vụ đang sập (file của người dùng
+   **không bị tự xoá**, khác file tạm tự tải).
+
+### ADR-0002 — Quản lý người dùng đa lĩnh vực: Bước 1–4 + 6 XONG (2026-08-08, PR #517 · #518)
+
+Chuẩn bị nền tảng tài khoản dùng chung cho các môn tiếp theo (ADR `docs/adr/0002-quan-ly-nguoi-dung.md`).
+Bước 5 **bỏ qua có chủ ý** (roles/audit_log/registry xoá tài khoản chưa có tính năng thật để gắn vào —
+admin hiện là whitelist email trong `.env`).
+
+- **Bước 1 — `identities`** (migration `0034`): tách 4 cột OAuth cứng (Google/Facebook/Apple/Microsoft)
+  trên `users` ra bảng riêng, dual-write để không hồi quy; thêm provider mới không phải `ALTER` bảng lõi.
+- **Bước 2 — `entitlements`** (migration `0035`): quyền lợi theo **sản phẩm** (`user_id, product, tier,
+source, granted_at, expires_at`), backfill từ `profiles.plan`. CHƯA đổi code đọc/ghi gói cước —
+  bảng sẽ lệch dần cho tới bước rewiring, đã ghi rõ trong ADR.
+- **Bước 3 — cookie SSO**: `packages/core-auth/sessionCookie.ts` (mới) — cookie HttpOnly/SameSite=Lax
+  (Secure + `Domain=.donghanhcungban.org` chỉ ở production) dùng CHUNG `session_token` đã có.
+- **Bước 4 — `english.user_profile`** (migration `0036`): tách 4 cột onboarding chỉ đúng với tiếng Anh
+  (`user_level`, `goal`, `daily_minutes`, `age_group`); `api/profile.ts` tạm thời vẫn đọc/ghi cột cũ.
+- **Bước 6 — bỏ Bearer, chỉ còn cookie** (migration `0037` xoá 4 cột OAuth cũ): `validateAuth()` đọc
+  cookie; đọc kênh OAuth từ `identities`. ⚠️ **Đánh đổi người dùng đã chấp nhận:** mọi phiên tạo
+  TRƯỚC khi Bước 3 lên production đều chỉ có Bearer → sẽ nhận 401 và phải **đăng nhập lại một lần**.
+- ⚠️ **Việc tay trước khi deploy:** chạy `npm run migrate:pg` trên VPS (4 migration mới `0034`–`0037`).
+  Deploy Bước 6 phải đi SAU khi Bước 3 đã chạy thật ít nhất một nhịp, nếu không mọi phiên đều đứt.
+
+### Sửa lỗi trang Nghe/Truyện + nút phát âm (2026-08-08, PR #516 · #519)
+
+- **`/truyen-song-ngu`** (PR #516): chặn bấm loa câu lẻ trong lúc "Phát tất cả" chạy (chồng tiếng);
+  `data/stories/loader.ts` không còn cache VĨNH VIỄN lỗi mạng (tự thử lại lần sau); thêm chip lọc theo
+  cấp CEFR (A2/B1/B2); thêm `aria-live` báo câu đang đọc + `aria-label` tường minh cho nút loa.
+- **Nút phát âm** (PR #519): bể random giờ nhận `{ lang, exclude }` — không bốc lại giọng vừa nghe
+  (Free chỉ 4 giọng nên ~25% lần bấm bị lặp) và bỏ giọng Studio khi đọc tiếng Việt (Google không có
+  Studio cho `vi-VN`, server hạ về Kore/Puck → 2 giọng đó trúng gấp đôi + tốn 1 lượt gọi API vô ích).
+  Nhãn giới tính đổi theo chiều học (`isA`) cho khớp `VoiceMenu`/`VoicePicker`. +9 ca test `voiceTiers`.
+
 ### Gợi ý "cách kiếm huy hiệu & thưởng hiệu quả" cho người dùng (2026-08-07)
 
 - **Trang Giới thiệu** (`/gioi-thieu`, `About.tsx`): mục nhắc huy hiệu bổ sung chiến lược cụ thể
@@ -1540,6 +1609,11 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## ⚠️ Cần làm tay (không cần PR)
 
+- **Migration `0034`–`0037` (ADR-0002) — CHẠY TRƯỚC KHI DEPLOY.** `npm run migrate:pg` trên VPS
+  (`identities`, `entitlements`, `english.user_profile`, xoá 4 cột OAuth cũ trên `users`).
+  Sau khi deploy Bước 6, mọi người dùng đang đăng nhập bằng phiên Bearer cũ **phải đăng nhập lại
+  một lần** — đây là đánh đổi đã được xác nhận, không phải lỗi.
+
 - **Migration `0028_tts_viseme_timeline.sql` — CHẠY TRƯỚC KHI DEPLOY đợt avatar timing.**
   Thêm cột `viseme_timeline jsonb` vào `tts_cache` (nullable, không phá dữ liệu cache cũ).
   Lệnh: `npm run migrate:pg` (đã nằm trong `scripts/deploy.sh`). Rollback nếu cần:
@@ -1785,27 +1859,14 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
      `#1772E8` để chữ trắng đạt 4.5:1 (bản gốc 4.23:1).
      Cả 3 đều là lỗi có thật với người dùng, cổng cũ (chỉ chặn critical + serious mới, 4 theme, không
      quét `wcag22aa`) không bắt được.
-- **Nợ mới chưa xử lý:** tiện ích `.tap-44` (`apps/english/src/index.css`) mở rộng vùng chạm bằng
-  `::after` có `pointer-events: none` — pseudo-element này KHÔNG nhận sự kiện chuột nên **không thực
-  sự mở rộng vùng bấm** (cũng không được axe tính). Cần rà lại toàn bộ nơi dùng `.tap-44`.
-- 🟡 **Token `--z-500` rớt WCAG AA ở gần như mọi nền, mọi theme** (phát hiện 2026-08-04 khi thêm
-  cổng `apps/english/src/lib/themeContrast.test.ts`). Số đo: Xanh đêm 4.09/3.75/3.07/2.18 trên
-  nền z-950/900/800/700; Pink 2.62–1.90; Nhi đồng 2.79–1.99 — đều dưới ngưỡng 4.5. Đây là token
-  "chữ mờ", mã nguồn dùng **~81 chỗ** (`text-zinc-500`). Chưa sửa trong đợt này vì đổi nó là đổi
-  bảng màu toàn app: phải rà từng chỗ dùng xem chữ đó có thật sự là văn bản cần đọc hay chỉ là
-  ký hiệu trang trí (WCAG không tính chữ trang trí). Hiện đã ghi vào `KNOWN_LOW` của cổng nói
-  trên nên KHÔNG thể tụt thêm mà không ai biết; sửa xong nhớ xoá khỏi danh sách đó (cổng có
-  test riêng bắt trường hợp quên xoá).
-  - Kèm theo: các cặp chữ phụ (`z-300`/`z-400`/accent) trên nền `z-700` cũng dưới AA ở vài theme.
-    Đã kiểm mã nguồn: `z-700` hiện CHỈ dùng làm màu hover (`hover:bg-zinc-700`), chưa chỗ nào đặt
-    chữ lên nó — nên là bẫy tiềm ẩn, không phải lỗi đang xảy ra.
-
-- 🟢 **3 chu trình import trong `apps/english/src/data/`** (phát hiện 2026-08-04 bằng
-  `npm run codemap -- cycles`): `cefr.ts ↔ cefrAdvanced.ts`, `curriculum.ts ↔ cefrC1C2Vocab.ts`,
-  `curriculum.ts ↔ cefrA1B2ExtraVocab.ts`. Hiện KHÔNG gây lỗi (đều là dữ liệu tĩnh, không đọc giá
-  trị của nhau lúc khởi tạo module) nên ưu tiên thấp, nhưng chu trình import dễ sinh lỗi
-  `undefined` khó lần nếu sau này có ai thêm logic chạy ngay lúc import. Cách gỡ: tách phần kiểu/
-  hằng dùng chung ra file thứ ba để cả hai bên cùng import một chiều.
+- ~~**Nợ mới chưa xử lý:** tiện ích `.tap-44` mở rộng vùng chạm bằng `::after` có
+  `pointer-events: none`~~ **✅ ĐÃ TRẢ (2026-08-08).** Xem mục "Đợt trả nợ kỹ thuật 2026-08-08" ở đầu file.
+- ~~🟡 **Token `--z-500` rớt WCAG AA ở gần như mọi nền, mọi theme**~~ **✅ ĐÃ TRẢ (2026-08-08)** trên
+  mọi bề mặt thật (z-950/900/800); chỉ còn nhóm nền `z-700` giữ trong `KNOWN_LOW` CÓ CHỦ Ý. Xem mục
+  "Đợt trả nợ kỹ thuật 2026-08-08" ở đầu file.
+- ~~🟢 **3 chu trình import trong `apps/english/src/data/`**~~ **✅ ĐÃ TRẢ (2026-08-08)** — thực tế
+  lúc bắt tay vào làm là **5 chu trình** (có thêm 2 cái trong `lib/` dính logic chạy thật, phát sinh
+  sau lần ghi nhận 2026-08-04). Nay `npm run codemap -- cycles` báo 0.
 
 - **[Rà soát tự động 2026-08-03, phiên sau PR #462]** `npm ci` sạch (container mới, chưa có
   `node_modules`) rồi chạy đủ cổng commit: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅ (0 cảnh
@@ -1901,9 +1962,10 @@ fast-uri` — thuần devDependency (commitlint hook), không vào bundle chạy
     không phá route trước khi merge (đổi major/minor react-router-dom).~~ **[Lỗi thời]** 2 CVE
     moderate này đã hết khi nâng lên react-router v7 (2026-08-02). Advisory react-router hiện tại
     là `GHSA-qwww-vcr4-c8h2` (high, RSC Mode) — **đã quyết định giữ nguyên, xem mục đầu 2026-08-03.**
-  - 🟡 `restore:all`/`restore:system`/`restore:r2`: mới kiểm chứng nhánh AN TOÀN (tải về, xác nhận
-    2026-08-01). Nhánh `--restore-into <db> --yes` (DROP + tạo lại database thật) CHƯA test thật —
-    chỉ nên chạy lần đầu trên database phụ/staging, không thử trực tiếp trên `english_tutor` production.
+  - ~~🟡 `restore:all`/`restore:system`/`restore:r2`: nhánh `--restore-into <db> --yes` CHƯA test
+    thật~~ **✅ ĐÃ KIỂM CHỨNG (2026-08-08)** trên cụm Postgres 16 nháp — xem mục "Đợt trả nợ kỹ
+    thuật 2026-08-08" ở đầu file. Vẫn giữ nguyên khuyến cáo vận hành: chạy lần đầu trên database
+    phụ/staging, không thử trực tiếp trên `english_tutor` production.
   - Đã sửa 2 lỗi tài liệu lỗi thời tìm thấy: `.claude/report-status.sh` (hardcode text cũ báo sai
     Sentry/thanh toán Pro/branch protection/migration Supabase "chưa xong" dù đã xong từ lâu) và
     `docs/framework/QUY-TRINH-AUDIT.md` (ngưỡng CSS bundle ghi 9.7kB thật là 11kB, ngưỡng coverage

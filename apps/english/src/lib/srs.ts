@@ -19,11 +19,15 @@
 // trong cài đặt Anki. Xem docs/research/sm2-den-fsrs-2026-07-16.md.
 
 import { fsrs, createEmptyCard, Rating as FsrsRating } from 'ts-fsrs'
-import type { Card as FsrsCard, Grade, State } from 'ts-fsrs'
+import type { Card as FsrsCard, Grade } from 'ts-fsrs'
 import type { DictEntry } from '../types'
+import type { Rating, SRSCard } from './srsTypes'
 import { pushProgress } from './progressSync'
+import { saveSrsToIndexedDB, loadSrsFromIndexedDB, queueOfflineReview } from './offlineSrsStore'
 
-export type Rating = 'again' | 'hard' | 'good' | 'easy'
+// Kiểu ở `srsTypes.ts` (file chỉ-chứa-kiểu) để cắt chu trình import với `offlineSrsStore.ts`;
+// xuất lại ở đây để mọi nơi đang import từ './srs' giữ nguyên.
+export type { Rating, SRSCard } from './srsTypes'
 
 const RATING_MAP: Record<Rating, Grade> = {
   again: FsrsRating.Again,
@@ -43,23 +47,6 @@ const LEECH_THRESHOLD = 3
 // dễ ngợp và bỏ học (theo nghiên cứu Duolingo về lý do bỏ học).
 export const SRS_SESSION_CAP = 30
 
-// Dạng LƯU trong localStorage — JSON-safe (Date của FSRS Card → epoch ms).
-// Field còn lại khớp 1:1 field của `Card` (ts-fsrs) để có thể truyền THẲNG
-// object này vào `scheduler.next()` làm CardInput mà không cần dựng lại.
-export interface SRSCard {
-  due: number
-  stability: number
-  difficulty: number
-  /** @deprecated Field cũ của FSRS (sẽ bỏ ở ts-fsrs 6.0.0) — vẫn cần điền vì kiểu CardInput hiện còn bắt buộc, KHÔNG dùng làm input tính toán (thuật toán tự suy elapsed từ due/last_review + now). */
-  elapsed_days: number
-  scheduled_days: number
-  learning_steps: number
-  reps: number
-  lapses: number
-  state: State // 0 New · 1 Learning · 2 Review · 3 Relearning
-  last_review: number | null
-}
-
 function toStored(card: FsrsCard): SRSCard {
   return {
     due: card.due.getTime(),
@@ -74,8 +61,6 @@ function toStored(card: FsrsCard): SRSCard {
     last_review: card.last_review ? card.last_review.getTime() : null,
   }
 }
-
-import { saveSrsToIndexedDB, loadSrsFromIndexedDB, queueOfflineReview } from './offlineSrsStore'
 
 const KEY = (uid: string) => `srs_${uid}`
 const MS = 86_400_000 // 1 ngày tính bằng ms
