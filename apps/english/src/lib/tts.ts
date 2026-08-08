@@ -360,6 +360,16 @@ export async function ensureAudioBuffer(
 // Như ensureAudioBuffer nhưng trả KÈM timeline khẩu hình thật do server tính (chỉ giọng
 // ElevenLabs có — xem api/_lib/visemeTimeline.ts). `timeline: null` nghĩa là không có timing
 // thật cho câu/giọng này → nơi gọi tự ước lượng bằng src/lib/viseme.ts như trước.
+// Khoá IndexedDB THẬT SỰ dùng cho một câu — đã áp cả 2 phép chuẩn hoá: Studio→Chirp3-HD khi
+// đọc tiếng Việt (resolveVoiceForLang) và bỏ `lang` với giọng ElevenLabs. Xuất công khai để
+// nơi nào cần KIỂM TRA "câu này đã có audio offline chưa" (lib/srsPreloader.ts) tính ra đúng
+// khoá mà bộ phát dùng — tự ghép audioCacheKey(text, lang, voice) sẽ lệch khoá ở 2 nhóm giọng
+// trên và luôn báo "chưa có" dù đã tải xong (lỗi thật của thanh Tải trước SRS Offline).
+export function speechCacheKey(text: string, lang: Lang, voiceInput: Voice): string {
+  const voice = resolveVoiceForLang(voiceInput, lang)
+  return audioCacheKey(text, (ELEVEN_VOICE_IDS as string[]).includes(voice) ? '' : lang, voice)
+}
+
 export async function ensureAudioWithTimeline(
   text: string,
   lang: Lang,
@@ -368,11 +378,7 @@ export async function ensureAudioWithTimeline(
   const voice = resolveVoiceForLang(voiceInput, lang)
   // Giọng ElevenLabs không phân biệt lang (xem ghi chú tương ứng trong api/tts.ts) — bỏ lang
   // khỏi cacheKey để khớp với hash cache phía server (không tách 2 bản audio giống hệt nhau).
-  const cacheKey = audioCacheKey(
-    text,
-    (ELEVEN_VOICE_IDS as string[]).includes(voice) ? '' : lang,
-    voice,
-  )
+  const cacheKey = speechCacheKey(text, lang, voiceInput)
 
   // Kiểm tra IndexedDB trước — nếu đã có thì khỏi gọi server
   const cached = await getAudioEntry(cacheKey)

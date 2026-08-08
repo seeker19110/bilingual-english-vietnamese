@@ -213,6 +213,19 @@ export function pickRandomAllowedVoice(
   return pool[Math.floor(Math.random() * pool.length)]!
 }
 
+// Danh sách giọng cần NẠP TRƯỚC cho chế độ offline: TẤT CẢ giọng gói hiện tại được phép
+// dùng (Free 4 · Pro 8 · VIP 17), lọc theo ngôn ngữ sẽ đọc. Khác pickRandomAllowedVoice():
+// hàm đó bốc 1 giọng cho nút loa (/api/pronunciation, không hỗ trợ ElevenLabs), còn preload
+// đi qua /api/tts nên GIỮ luôn ElevenLabs. Studio chỉ có tiếng Anh nên loại khi lang khác.
+// Lý do phải nạp mọi giọng: khoá cache audio gồm cả voice — chế độ "giọng ngẫu nhiên" bốc
+// giọng mới mỗi phiên/tab, nên chỉ nạp 1 giọng thì lần offline sau gần như chắc chắn trượt
+// cache và không nghe được gì (đúng lỗi "tải trước không hoạt động").
+export function getPreloadVoices(lang: 'en-US' | 'vi-VN' = 'en-US'): VoiceId[] {
+  const studio = new Set(STUDIO_VOICE_IDS)
+  const allowed = getCachedAllowedVoices().filter((v) => lang === 'en-US' || !studio.has(v))
+  return allowed.length > 0 ? allowed : SAFE_DEFAULT_ALLOWED
+}
+
 // Server (/api/pronunciation) có thể HẠ giọng ĐOÁN (guessedVoice) xuống giọng khác nếu ngoài
 // quyền gói hiện tại (clampVoiceToPlan, api/_lib/voiceAccess.ts) — trả kèm `voice` THẬT SỰ đã
 // dùng trong response. PronounceButton/WordVoiceCycleButton PHẢI cache audio theo giọng THẬT
