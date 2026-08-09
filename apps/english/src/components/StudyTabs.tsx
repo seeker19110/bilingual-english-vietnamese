@@ -1189,8 +1189,8 @@ export function SRSReview({
           </div>
           <p className="text-zinc-400">
             {isA
-              ? `${offlineStatus.wordCount} ${offlineStatus.isLookahead ? 'từ chuẩn bị trước' : 'từ cần ôn'} × ${offlineStatus.voiceCount} giọng gói bạn đang dùng (kể cả từ và câu ví dụ) — tải xong là nghe được offline dù bật giọng ngẫu nhiên.`
-              : `${offlineStatus.wordCount} ${offlineStatus.isLookahead ? 'words prepared ahead' : 'words due'} × ${offlineStatus.voiceCount} voices in your plan (words and example sentences) — works offline even with random-voice mode on.`}
+              ? `${offlineStatus.wordCount} ${offlineStatus.isLookahead ? 'từ chuẩn bị trước' : 'từ cần ôn + từ mới hôm nay'} × ${offlineStatus.voiceCount} giọng gói bạn đang dùng (kể cả từ và câu ví dụ) — tải xong là nghe được offline dù bật giọng ngẫu nhiên.`
+              : `${offlineStatus.wordCount} ${offlineStatus.isLookahead ? 'words prepared ahead' : "words due + today's new words"} × ${offlineStatus.voiceCount} voices in your plan (words and example sentences) — works offline even with random-voice mode on.`}
           </p>
         </div>
       )}
