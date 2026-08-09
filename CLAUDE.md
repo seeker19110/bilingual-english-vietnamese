@@ -45,6 +45,11 @@ Ba chế độ:
 - **Theo giai đoạn, không bỏ giai đoạn.** Đầu phiên nêu rõ đang ở giai đoạn nào, việc tiếp theo là gì.
 - **Cổng giữa các giai đoạn.** Trước khi chuyển giai đoạn / thay đổi lớn: tóm tắt đã đạt cổng chưa và **xin xác nhận của người dùng**.
 - **Theo dõi trạng thái.** Cập nhật `PROGRESS.md` sau mỗi mốc.
+- **TẠO PR = COI NHƯ ĐÃ XONG (quyết định 2026-08-09).** Không chờ merge mới ghi nhận: **ngay trong
+  chính PR đó** phải cập nhật tài liệu `*.md` liên quan (`PROGRESS.md` là bắt buộc; thêm
+  `CLAUDE.md`/`PROJECT.md`/`docs/*` nếu thay đổi chạm tới). Ghi rõ số PR, ngày, việc đã làm và
+  quyết định kèm theo. Lý do: để phiên sau đọc `PROGRESS.md` là biết đủ, không phải lần lại `git log`
+  hay hỏi lại người dùng — và không còn cảnh dồn một đống PR đã merge mới ngồi ghi bù.
 - **Chia nhỏ.** Mỗi lần một phần nhỏ, hoàn chỉnh, kiểm tra được. Việc lớn → đề xuất kế hoạch chia nhỏ trước.
 - **Chủ động góp ý (BẮT BUỘC).** Thấy cách tốt hơn / rủi ro / thiếu sót yêu cầu / phạm vi phình → **nêu kèm đề xuất cụ thể**. Im lặng làm theo khi biết có vấn đề là vi phạm.
 - **Nhịp làm việc theo giới hạn giờ (usage limit).** Kiểm tra mức dùng giới hạn trước khi quyết định tiếp:
