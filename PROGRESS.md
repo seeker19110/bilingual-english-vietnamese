@@ -17,6 +17,20 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Tải trước SRS offline chạy thật + gom cài giọng/tốc độ về Cài đặt (2026-08-08→09, PR #521 · #522)
+
+1. **PR #521 — sửa 4 lỗi khiến "Tải trước SRS Offline" hiển thị nhưng không dùng được**, nặng nhất
+   là chỉ nạp **1 giọng** (`getVoicePref()`) nên khi bật giọng ngẫu nhiên, mỗi tab bốc giọng khác →
+   khoá cache khác → offline không nghe được gì. Nay `getPreloadVoices()` nạp **TẤT CẢ giọng gói
+   cho phép** (Free 4 · Pro 8 · VIP 17). 3 lỗi còn lại: khoá cache lệch giữa bộ đếm và bộ phát (gộp
+   về `speechCacheKey()` dùng chung), status/preload lệch danh sách (báo `0/0` giả dù pool còn từ
+   chưa tải), và vượt rate limit `/api/tts` (60/phút/IP) do đếm thiếu câu ví dụ.
+2. **PR #522 — ngân sách trượt 60 giây thay nghỉ cố định 1250ms sau MỌI mục.** Chỉ mục thật sự phải
+   gọi `/api/tts` mới bị giới hạn nhịp; mục đã có trong IndexedDB đi thẳng. Đồng thời gộp
+   `VoiceMenu` và `RateToggle` (vốn đã lưu localStorage áp dụng toàn cục) về một chỗ duy nhất —
+   trang Cài đặt, xoá khỏi header/nội dung mọi trang, xoá hẳn `VoiceMenu.tsx`.
+3. Cả hai PR đều đã merge, cổng commit xanh hết lúc tạo PR (2979–2980 test).
+
 ### Đợt trả nợ kỹ thuật 2026-08-08 (PR #520)
 
 Trả 4/5 món trong mục "Nợ kỹ thuật còn mở". Món react-router giữ nguyên theo quyết định đã chốt
@@ -2111,3 +2125,13 @@ deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash script
       uptime monitoring ngoài (UptimeRobot/Better Uptime), PWA/offline (`manifest.json` + service
       worker — có đặc tả sẵn ở `docs/framework/BO-SUNG-nang-cao-i18n-PWA-Sentry-SEO.md` nhưng
       viết cho Next.js, cần điều chỉnh cho Vite), dashboard theo dõi tổng chi phí AI/tháng.
+
+- **[Rà soát tự động 2026-08-09]** Container mới, `npm ci` sạch rồi chạy đủ cổng commit: build ✅ ·
+  typecheck ✅ (4 tsconfig: gốc/api/e2e/`apps/hub`) · lint ✅ (0 cảnh báo) · test ✅ **164 file /
+  2980 test**. Không phát hiện lỗi type/lint/test/build nào trong code — khớp đúng báo cáo cổng của
+  PR #522 (PR gần nhất, đã merge). `npm audit` sau `npm ci`: **2 lỗ hổng high**, cùng 1 advisory
+  `react-router`/`react-router-dom` (`GHSA-qwww-vcr4-c8h2`, CSRF chế độ RSC) đã ghi nhận và quyết
+  giữ nguyên ở mục đầu "Nợ kỹ thuật còn mở" — không có advisory mới phát sinh so với lượt trước.
+  Nhánh làm việc `claude/jolly-mendel-xv76vp` khi bắt đầu phiên đã trùng khớp `origin/main` (PR
+  #521/#522 vừa merge trước đó); chỉ cập nhật tài liệu (mục ngay trên) cho khớp 2 PR này, không có
+  thay đổi code.
