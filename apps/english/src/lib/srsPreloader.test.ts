@@ -17,6 +17,14 @@ vi.mock('./voiceTiers', () => ({
   getPreloadVoices: () => mockVoices(),
 }))
 
+// Mock nguồn "từ mới hôm nay" — mặc định rỗng để các ca cũ chỉ xét thẻ SRS đến hạn
+const mockTodayBatch = vi.fn<() => DictEntry[]>(() => [])
+vi.mock('./curriculum', () => ({
+  getTodayBatchFrom: () => mockTodayBatch(),
+  getDailyAllowance: () => 10,
+}))
+vi.mock('./vocab', () => ({ getLearnedWords: () => new Set<string>() }))
+
 // Mock audioCache: chỉ giọng Kore của từ "apple" là đã có sẵn
 vi.mock('./audioCache', () => ({
   audioCacheKey: (text: string, lang: string, voice: string) => `${lang}:${voice}:${text}`,
@@ -37,6 +45,51 @@ describe('srsPreloader — Pre-downloading audio for SRS offline review', () => 
     localStorage.clear()
     vi.clearAllMocks()
     mockVoices.mockReturnValue(['Kore', 'Puck'])
+    mockTodayBatch.mockReturnValue([])
+  })
+
+  it('gộp CẢ từ mới hôm nay lẫn thẻ SRS đến hạn, khử trùng từ nằm ở cả hai', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(Date.now())
+    addToSRS('user_mix', 'apple')
+    vi.advanceTimersByTime(5 * 3600 * 1000) // apple đến hạn
+
+    mockVoices.mockReturnValue(['Kore'])
+    // "apple" vừa đến hạn ôn vừa nằm trong batch hôm nay → chỉ tính 1 lần
+    mockTodayBatch.mockReturnValue([W('apple'), W('cherry')])
+
+    const status = await getSrsOfflineAudioStatus('user_mix', [W('apple'), W('cherry')])
+    expect(status.wordCount).toBe(2) // apple + cherry, không phải 3
+    expect(status.totalDue).toBe(2)
+    expect(status.isLookahead).toBe(false) // có thẻ due thật
+
+    vi.useRealTimers()
+  })
+
+  it('mục phải gọi API được nạp SAU CÙNG, sau khi đã đếm hết mục có sẵn', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(Date.now() + 48 * 3600 * 1000) // thoát cửa sổ ngân sách của ca khác
+    mockVoices.mockReturnValue(['Kore'])
+    // banana (chưa cache) đứng TRƯỚC apple (đã cache) trong danh sách
+    mockTodayBatch.mockReturnValue([W('banana'), W('apple')])
+
+    const events: string[] = []
+    mockPrefetchSpeech.mockImplementation((text: string) => {
+      events.push(`fetch:${text}`)
+      return Promise.resolve(undefined)
+    })
+
+    const p = preloadSrsAudio('user_order', [W('banana'), W('apple')], {
+      onProgress: (done) => events.push(`progress:${done}`),
+    })
+    await vi.runAllTimersAsync()
+    await p
+
+    // apple (có sẵn) được tính xong TRƯỚC khi banana gọi API, dù đứng sau trong danh sách
+    expect(events).toEqual(['progress:1', 'fetch:banana', 'progress:2'])
+
+    mockPrefetchSpeech.mockResolvedValue(undefined)
+    vi.useRealTimers()
   })
 
   it('đếm mục audio theo TỪNG GIỌNG gói cho phép, không chỉ 1 giọng', async () => {
@@ -146,6 +199,7 @@ describe('srsPreloader — Pre-downloading audio for SRS offline review', () => 
     const batch = (n: number) => Array.from({ length: 20 }, (_, i) => W(`b${n}w${i}`))
     const t0 = Date.now()
     for (const n of [1, 2]) {
+      mockTodayBatch.mockReturnValue(batch(n))
       const p = preloadSrsAudio('user_no_due', batch(n))
       await vi.runAllTimersAsync()
       await p
@@ -155,6 +209,7 @@ describe('srsPreloader — Pre-downloading audio for SRS offline review', () => 
     // Ngân sách của cửa sổ hiện tại đã cạn → lượt tải kế tiếp phải chờ, không được cấp thêm
     // chỉ vì người dùng bấm Tải lại (hạn mức server tính theo IP, không theo lượt bấm).
     const t1 = Date.now()
+    mockTodayBatch.mockReturnValue(batch(3))
     const p3 = preloadSrsAudio('user_no_due', batch(3))
     await vi.runAllTimersAsync()
     const res = await p3

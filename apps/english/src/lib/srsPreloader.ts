@@ -1,8 +1,9 @@
 // ──────────────────────────────────────────────────────────────────────────
 // SRS PRELOADER — Nạp trước audio & từ vựng cho Chế độ Học SRS Offline
 //
-// Tải trước audio phát âm của từ + câu ví dụ các thẻ SRS đến hạn vào IndexedDB
-// (audioCache.ts), sẵn sàng cho học viên ôn flashcard kể cả khi mất mạng.
+// Tải trước audio phát âm của từ + câu ví dụ vào IndexedDB (audioCache.ts), sẵn sàng cho
+// học viên học/ôn flashcard kể cả khi mất mạng. Phạm vi: thẻ SRS đến hạn HÔM NAY + từ mới
+// của tab "Hôm nay" (xem getPreloadTargets).
 //
 // [2026-08-08] Sửa & nâng cấp — 4 lỗi khiến thanh "Tải trước SRS Offline" hiện ra
 // nhưng thực tế vô dụng:
@@ -23,6 +24,8 @@
 
 import type { DictEntry } from '../types'
 import { getDueWords } from './srs'
+import { getTodayBatchFrom, getDailyAllowance } from './curriculum'
+import { getLearnedWords } from './vocab'
 import { prefetchSpeech, speechCacheKey } from './tts'
 import { getAudioBuffer } from './audioCache'
 import { getPreloadVoices, type VoiceId } from './voiceTiers'
@@ -30,7 +33,7 @@ import { getPreloadVoices, type VoiceId } from './voiceTiers'
 // Ngủ ngắn nhường main thread giữa các file audio
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
-// Số từ chuẩn bị sẵn khi CHƯA có thẻ nào đến hạn (để offline vẫn học được ngay)
+// Số từ chuẩn bị sẵn khi KHÔNG có thẻ due lẫn từ mới nào (để offline vẫn học được ngay)
 const LOOKAHEAD_WORDS = 20
 
 // ── Nhịp gọi API: NGÂN SÁCH TRƯỢT 60 GIÂY, không phải nghỉ cố định ──────────
@@ -80,12 +83,30 @@ export interface SrsOfflineStatus {
 
 // Danh sách từ cần chuẩn bị — DÙNG CHUNG cho cả đếm trạng thái lẫn tải, để hai bên không
 // bao giờ lệch nhau (lỗi 3 ở đầu file).
+//
+// Gồm CẢ HAI nhóm từ mà học viên sẽ gặp trong ngày (quyết định 2026-08-09):
+//   · thẻ SRS đến hạn ôn hôm nay (getDueWords)
+//   · từ MỚI của tab "Hôm nay" (getTodayBatchFrom) — trước đây bị bỏ sót, nên mất mạng
+//     giữa buổi là học tiếp không có audio dù thanh tải trước báo đã xong.
+// Không có nhóm nào (đã ôn hết + đã học hết phần hôm nay) → chuẩn bị sẵn 20 từ kế tiếp.
 function getPreloadTargets(
   uid: string,
   pool: DictEntry[],
 ): { words: DictEntry[]; isLookahead: boolean } {
   const due = getDueWords(uid, pool)
-  if (due.length > 0) return { words: due, isLookahead: false }
+  const today = getTodayBatchFrom(pool, getLearnedWords(uid), getDailyAllowance(uid))
+
+  // Gộp, khử trùng theo từ (một từ có thể vừa đến hạn ôn vừa nằm trong batch hôm nay)
+  const seen = new Set<string>()
+  const words: DictEntry[] = []
+  for (const entry of [...due, ...today]) {
+    const key = entry.word.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    words.push(entry)
+  }
+
+  if (words.length > 0) return { words, isLookahead: due.length === 0 }
   return { words: pool.slice(0, LOOKAHEAD_WORDS), isLookahead: true }
 }
 
@@ -148,9 +169,15 @@ export interface PreloadOptions {
   shouldStop?: () => boolean
 }
 
-// Tải trước audio cho các từ SRS đến hạn, ĐỦ MỌI GIỌNG gói hiện tại cho phép.
-// Mục đã có trong IndexedDB được bỏ qua ngay (không gọi API, không chờ) nên lần bấm thứ hai
-// gần như xong tức thì.
+// Tải trước audio cho thẻ SRS đến hạn + từ mới hôm nay, ĐỦ MỌI GIỌNG gói hiện tại cho phép.
+//
+// Chạy HAI LƯỢT (quyết định 2026-08-09) — mục phải gọi API để nạp SAU CÙNG:
+//   Lượt 1 — rà toàn bộ IndexedDB, đánh dấu xong ngay những mục đã có sẵn. Không gọi API,
+//            không chờ, nên thanh tiến độ nhảy lên phần đã có gần như tức thì.
+//   Lượt 2 — mới tải phần còn thiếu qua /api/tts, đi qua ngân sách nhịp.
+// Trước đây hai loại xen kẽ nhau: mục có sẵn nằm sau một mục phải chờ ngân sách thì cũng bị
+// kẹt theo, dù bản thân nó chẳng tốn gì. Tách lượt cũng có nghĩa: bấm Dừng giữa chừng vẫn giữ
+// trọn phần "miễn phí", chỉ bỏ dở phần tốn request.
 export async function preloadSrsAudio(
   uid: string,
   pool: DictEntry[],
@@ -169,19 +196,24 @@ export async function preloadSrsAudio(
     return { done: 0, total: 0, stopped: false }
   }
 
+  // ── Lượt 1: những mục ĐÃ có sẵn (không tốn request nào) ───────────────────
   let done = 0
+  const missing: { text: string; voice: VoiceId }[] = []
   for (const job of jobs) {
     if (shouldStop?.()) return { done, total, stopped: true }
-
-    const key = speechCacheKey(job.text, SRS_LANG, job.voice)
-    // Đã có sẵn trong IndexedDB → KHÔNG gọi API, nên cũng không tốn ngân sách và không chờ
-    if (await getAudioBuffer(key)) {
+    if (await getAudioBuffer(speechCacheKey(job.text, SRS_LANG, job.voice))) {
       done++
       onProgress?.(done, total)
-      continue
+    } else {
+      missing.push(job)
     }
+  }
 
-    // Chỉ mục phải gọi /api/tts mới xin lượt (thường là tức thì, chỉ chờ khi chạm hạn mức)
+  // ── Lượt 2: phần còn thiếu — PHẢI gọi /api/tts nên để sau cùng ────────────
+  for (const job of missing) {
+    if (shouldStop?.()) return { done, total, stopped: true }
+
+    // Xin lượt trong ngân sách (thường tức thì, chỉ chờ khi chạm hạn mức)
     await waitForRequestSlot()
     if (shouldStop?.()) return { done, total, stopped: true }
 
