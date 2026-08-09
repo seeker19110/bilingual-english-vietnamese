@@ -17,6 +17,14 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Quy ước mới: tạo PR = coi như đã xong, ghi tài liệu ngay trong PR đó (2026-08-09)
+
+Người dùng chốt: **không chờ merge mới ghi nhận**. Mỗi PR phải tự mang theo phần cập nhật `*.md`
+liên quan — `PROGRESS.md` là bắt buộc, thêm `CLAUDE.md`/`PROJECT.md`/`docs/*` nếu thay đổi chạm tới —
+ghi rõ số PR, ngày, việc đã làm và quyết định kèm theo. Đã thêm vào `CLAUDE.md` mục 3 để mọi phiên sau
+đọc được. Lý do: phiên sau đọc `PROGRESS.md` là đủ, không phải lần lại `git log` hay hỏi lại người
+dùng, và tránh cảnh dồn một loạt PR đã merge rồi mới ngồi ghi bù (đúng tình huống của PR docs này).
+
 ### Sửa & nâng cấp chế độ tải trước SRS Offline (2026-08-08→09, PR #521 · #522 · #524)
 
 Người dùng báo "chế độ tải trước có hiển thị nhưng thấy không hoạt động". Điều tra ra **4 lỗi cùng
