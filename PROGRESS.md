@@ -17,6 +17,65 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Sửa & nâng cấp chế độ tải trước SRS Offline (2026-08-08→09, PR #521 · #522 · #524)
+
+Người dùng báo "chế độ tải trước có hiển thị nhưng thấy không hoạt động". Điều tra ra **4 lỗi cùng
+lúc** khiến thanh "Tải trước SRS Offline" gần như vô dụng — mỗi lỗi một mình đã đủ làm hỏng tính năng:
+
+1. **Chỉ nạp ĐÚNG 1 giọng** (`getVoicePref()`). Khoá cache audio có chứa tên giọng, mà chế độ
+   "giọng ngẫu nhiên" bốc giọng mới mỗi phiên/tab → mở lại app là trượt cache, offline không nghe
+   được gì. Nay nạp **TẤT CẢ giọng gói cho phép** (Free 4 · Pro 8 · VIP 17) qua `getPreloadVoices()`
+   mới trong `voiceTiers.ts` (loại Studio khi đọc không phải tiếng Anh; **giữ** ElevenLabs vì
+   `/api/tts` có hỗ trợ — khác `pickRandomAllowedVoice()` vốn dành cho `/api/pronunciation`).
+2. **Khoá kiểm tra lệch khoá thật.** Bộ đếm tự ghép `audioCacheKey(word,'en-US',voice)`, còn bộ phát
+   bỏ `lang` với giọng ElevenLabs và hạ Studio→Chirp3-HD khi đọc tiếng Việt → **luôn báo "chưa có"
+   dù đã tải xong**. Nay tách `speechCacheKey()` xuất từ `lib/tts.ts`, cả hai bên dùng chung.
+3. **Bộ đếm và bộ tải nhìn hai danh sách khác nhau.** Chưa có thẻ đến hạn thì bộ đếm trả
+   `0/0 → isFullyPrepared: true`, trong khi bộ tải lại tải 20 từ đầu pool → bấm "Tải ngay" xong
+   thanh **vẫn 0/0**, y như không chạy. Nay dùng chung `getPreloadTargets()` + cờ `isLookahead`.
+4. **Vượt hạn mức server + đếm thiếu.** Bộ tải tải cả câu ví dụ nhưng bộ đếm chỉ đếm từ; nhịp
+   `sleep(60ms)` ≈ 1000 request/phút trong khi `/api/tts` giới hạn **60/phút mỗi IP** → 429 hàng loạt,
+   phần lớn file tải hụt trong im lặng.
+
+Sau khi sửa 4 lỗi (PR #521), nâng cấp tiếp:
+
+- **Nhịp gọi API theo ngân sách trượt 60 giây** (PR #522), thay cho nghỉ cố định 1250ms. Server có
+  **2 bộ đếm, đều 60/phút mỗi IP** (một cho toàn bộ `/api/tts`, một riêng cho đường tạo audio mới) →
+  ngân sách client đặt **50/cửa sổ** nằm dưới cả hai, chừa ~10 lượt cho người dùng bấm nghe song song.
+  Bộ đếm ở **cấp module** (không phải mỗi lượt tải một bộ) — bấm Dừng rồi Tải lại ngay không được cấp
+  thêm ngân sách, vì hạn mức server tính theo IP chứ không theo lượt bấm.
+- **Phạm vi gộp thêm từ mới của tab "Hôm nay"** (PR #524) — trước chỉ có thẻ SRS đến hạn, nên mất
+  mạng giữa buổi là học tiếp không có audio dù thanh báo đã xong. Khử trùng từ nằm ở cả hai nhóm.
+- **Mục phải gọi API nạp SAU CÙNG** (PR #524): tách 2 lượt — lượt 1 rà IndexedDB đánh dấu xong ngay
+  phần đã có (không request, không chờ), lượt 2 mới tải phần thiếu. Trước đây hai loại xen kẽ nên mục
+  đã có sẵn nằm sau một mục đang chờ ngân sách cũng bị kẹt theo dù chẳng tốn gì; nay bấm Dừng giữa
+  chừng vẫn giữ trọn phần miễn phí.
+- **UI**: thanh tiến độ, nút **Dừng**, dòng giải thích phạm vi (N từ × M giọng, gồm cả câu ví dụ).
+
+Ghi chú chi phí: gói VIP (17 giọng) lần tải đầu ≈ 680 mục ≈ 14 phút. Là hành động người dùng **chủ
+động bấm**, có tiến độ + nút Dừng, và cache TTS dùng chung toàn hệ thống (`tts_cache`) nên người dùng
+sau hưởng luôn cache đã tạo. Mục đã có sẵn không tốn request nào.
+
+### Gom cài giọng đọc & tốc độ phát về trang Cài đặt (2026-08-08, PR #522)
+
+`VoiceMenu` + `RateToggle` nằm rải rác trên header và trong nội dung của Từ điển, Cụm từ, Nghe,
+Luyện nói, tab Học. Cả hai vốn **đã lưu localStorage và áp dụng toàn cục**, nên đặt ở từng trang chỉ
+gây rối và khiến người dùng tưởng mỗi trang một giọng/tốc độ riêng.
+
+- Gỡ khỏi mọi trang; **xoá hẳn `VoiceMenu.tsx`** (không còn nơi dùng).
+- Trang Cài đặt giữ `VoicePicker` sẵn có, **thêm mục "Tốc độ phát"** — nếu không thì sau khi gỡ hết,
+  tốc độ phát sẽ không còn chỗ nào chỉnh được.
+- Dọn prop `plan` đã thành thừa dọc chuỗi `StudyPanel → TodayLesson → BatchDoneView` (chỉ tồn tại để
+  truyền xuống `VoiceMenu`).
+
+### Nhãn "Sắp ra mắt" cho tính năng đối thoại với AI (2026-08-09, PR #524)
+
+Thêm `components/ComingSoonBanner.tsx` dùng chung, đặt ở **Luyện nói song ngữ** (`/luyen-noi`) và
+**Avatar AI nói chuyện** (`/avatar-demo`). Kiểu hiển thị chốt với người dùng: **vẫn vào được và dùng
+bình thường**, chỉ thêm banner báo bản đang hoàn thiện — không chặn route, không ẩn khỏi menu, nên khi
+xong chỉ cần gỡ 1 dòng. Màu chữ dùng đúng bộ class của `RewardTipBanner` (`text-white` /
+`text-zinc-400`) vốn đã qua cả 2 cổng a11y (AA mọi thành phần + AAA cho nội dung/tiêu đề).
+
 ### Đợt trả nợ kỹ thuật 2026-08-08 (PR #520)
 
 Trả 4/5 món trong mục "Nợ kỹ thuật còn mở". Món react-router giữ nguyên theo quyết định đã chốt
