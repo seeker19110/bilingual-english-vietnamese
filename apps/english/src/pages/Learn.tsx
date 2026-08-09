@@ -110,7 +110,6 @@ export default function Learn() {
           <StudyPanel
             uid={user.id}
             isA={isA}
-            plan={user.plan}
             tab={tab}
             ageGroup={onboarding?.ageGroup}
             onBadges={setBadges}

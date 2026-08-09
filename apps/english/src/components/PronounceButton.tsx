@@ -16,7 +16,7 @@ interface Props {
 }
 
 // Nút loa phát âm 1 từ — mặc định BỐC NGẪU NHIÊN giọng mỗi lần bấm (xem ghi chú Props.random);
-// truyền `random={false}` để dùng đúng giọng mặc định đã lưu ở Cài đặt (VoiceMenu/VoicePicker) thay vào đó.
+// truyền `random={false}` để dùng đúng giọng mặc định đã lưu ở Cài đặt (VoicePicker ở Cài đặt) thay vào đó.
 export default function PronounceButton({ word, lang = 'en-US', random = true }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   // Nhớ audioUrl đã tải theo cặp "từ|giọng" — PHẢI có cả từ trong khoá, vì component này

@@ -568,7 +568,6 @@ export default function CefrLevelPage() {
                 key={level.id}
                 uid={uid}
                 isA={isA}
-                plan={user?.plan ?? 'free'}
                 pool={studyPool}
                 onProgress={bump}
                 sessionCap={sessionCap}

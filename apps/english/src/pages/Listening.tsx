@@ -9,14 +9,13 @@ import { Play, Square, Eye, EyeOff, ChevronRight } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import { CardListSkeleton } from '../components/Skeleton'
-import VoiceMenu from '../components/VoiceMenu'
-import RateToggle from '../components/RateToggle'
 import KaraokeText, { KARAOKE_INDENT } from '../components/KaraokeText'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { getDirection } from '../lib/storage'
 import { speak, stopSpeaking, unlockAudio, type Voice } from '../lib/tts'
 import { pickRandomVoice } from '../lib/voiceTiers'
+import type { Plan } from '../types'
 import { loadIndex, loadSubject } from '../data/patterns/loader'
 import type { SubjectMeta, Subject } from '../data/patterns/loader'
 import { getAllDialogues } from '../data/dialoguesLoader'
@@ -47,14 +46,9 @@ export default function Listening() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout back extra={<VoiceMenu plan={user?.plan ?? 'free'} isA={isA} />} />
+      <Layout back />
       <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
-        <div className="flex items-start justify-between gap-3 mb-4">
-          <PageHeader title={T.listeningPageTitle} subtitle={T.listeningPageSub} className="mb-0" />
-          <div className="shrink-0 pt-1">
-            <RateToggle />
-          </div>
-        </div>
+        <PageHeader title={T.listeningPageTitle} subtitle={T.listeningPageSub} />
 
         {/* Thanh 2 tab */}
         <div
@@ -154,15 +148,7 @@ interface DialogueEntry {
   dialogue: Dialogue
 }
 
-function DialoguesTab({
-  isA,
-  T,
-  plan,
-}: {
-  isA: boolean
-  T: Lang
-  plan: Parameters<typeof VoiceMenu>[0]['plan']
-}) {
+function DialoguesTab({ isA, T, plan }: { isA: boolean; T: Lang; plan: Plan }) {
   const [groups, setGroups] = useState<Record<string, DialogueEntry[]> | null>(null)
   const [selected, setSelected] = useState<DialogueEntry | null>(null)
   const [showTranslation, setShowTranslation] = useState(false)
@@ -376,7 +362,7 @@ function DialoguePlayer({
   entry: DialogueEntry
   isA: boolean
   T: Lang
-  plan: Parameters<typeof VoiceMenu>[0]['plan']
+  plan: Plan
   showTranslation: boolean
   onToggleTranslation: () => void
   onBack: () => void

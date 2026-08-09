@@ -122,7 +122,7 @@ export function resumeCurrentAudio() {
 // ── Giọng đọc toàn cục (1-trong-14 giọng Chirp3-HD) ─────────────────────────
 // Lưu lựa chọn của người dùng vào localStorage để giữ nguyên qua các lần mở app.
 // Mọi nút loa (KaraokeText, PronounceButton) đọc giá trị này lúc bấm, nên đổi ở Cài đặt
-// (VoicePicker trong Profile.tsx) hoặc VoiceMenu nhanh trên header là áp dụng khắp app.
+// (VoicePicker trong Profile.tsx) là áp dụng khắp app.
 const VOICE_KEY = 'tts_voice'
 
 // Giá trị cũ (trước khi mở rộng lên 14 giọng) — map sang giọng mới tương ứng để không mất
@@ -145,7 +145,7 @@ function getDefaultVoiceForUnsetPref(): Voice {
   return STUDIO_VOICE_IDS.some((v) => allowed.includes(v)) ? STUDIO_VOICE_IDS[0]! : DEFAULT_VOICE
 }
 
-// Giọng "gốc" người dùng đã chọn tay (VoicePicker/VoiceMenu) — luôn dùng làm giọng cố định
+// Giọng "gốc" người dùng đã chọn tay (VoicePicker ở Cài đặt) — luôn dùng làm giọng cố định
 // khi chế độ ngẫu nhiên TẮT, và làm "hạt giống" xác định GIỚI TÍNH khi chế độ ngẫu nhiên BẬT.
 function getStoredVoice(): Voice {
   const raw = localStorage.getItem(VOICE_KEY) ?? ''

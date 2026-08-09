@@ -17,8 +17,8 @@
 //      NAY: status và preload dùng CHUNG một danh sách mục tiêu (getPreloadTargets).
 //   4. Không đếm câu ví dụ dù có tải, và chạy sleep(60ms) → ~1000 request/phút, vượt
 //      rate limit 60/phút của /api/tts (packages/core-ai/tts.ts) → 429 hàng loạt.
-//      NAY: đếm cả ví dụ; bỏ qua mục đã có sẵn (không tốn request); chỉ giãn nhịp sau
-//      request THẬT, đủ chậm để nằm dưới hạn mức.
+//      NAY: đếm cả ví dụ; mục đã có sẵn đi thẳng không chờ; mục phải gọi API thì đi qua
+//      ngân sách trượt 60 giây (xem makeRequestBudget) — nhanh hết mức server cho phép.
 // ──────────────────────────────────────────────────────────────────────────
 
 import type { DictEntry } from '../types'
@@ -33,9 +33,33 @@ const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 // Số từ chuẩn bị sẵn khi CHƯA có thẻ nào đến hạn (để offline vẫn học được ngay)
 const LOOKAHEAD_WORDS = 20
 
-// Giãn cách giữa 2 request TẢI THẬT. /api/tts giới hạn 60 request/phút mỗi IP; để chừa chỗ
-// cho chính người dùng đang bấm nghe, giữ nhịp ~48 request/phút.
-const REQUEST_GAP_MS = 1250
+// ── Nhịp gọi API: NGÂN SÁCH TRƯỢT 60 GIÂY, không phải nghỉ cố định ──────────
+// Chỉ mục nào THỰC SỰ phải gọi /api/tts mới tính vào ngân sách; mục đã có trong IndexedDB
+// đi thẳng, không chờ một mili-giây nào. Nhờ vậy lượt tải lần hai (phần lớn đã có sẵn) chạy
+// vụt qua, còn lượt đầu vẫn nằm dưới hạn mức server.
+//
+// Server (packages/core-ai/tts.ts) có 2 bộ đếm, đều 60 request/phút mỗi IP: một cho TOÀN BỘ
+// /api/tts, một riêng cho đường TẠO audio mới. Ngân sách 50 ở đây nằm dưới cả hai và chừa
+// ~10 lượt/phút cho chính người dùng đang bấm nghe song song.
+const MAX_REQUESTS_PER_WINDOW = 50
+const WINDOW_MS = 60_000
+
+// Mốc thời gian các request thật trong cửa sổ 60s gần nhất. Để ở CẤP MODULE (không phải mỗi
+// lượt tải một bộ đếm riêng) — bấm Dừng rồi bấm Tải lại ngay không được cấp thêm ngân sách,
+// vì hạn mức của server tính theo IP chứ không theo lượt bấm.
+const requestStamps: number[] = []
+
+async function waitForRequestSlot(): Promise<void> {
+  const now = Date.now()
+  // Bỏ các mốc đã ra khỏi cửa sổ
+  while (requestStamps.length > 0 && now - requestStamps[0]! >= WINDOW_MS) requestStamps.shift()
+  if (requestStamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    // Hết lượt → chờ đúng tới lúc mốc cũ nhất rơi khỏi cửa sổ, không chờ thừa
+    await sleep(WINDOW_MS - (now - requestStamps[0]!))
+    return waitForRequestSlot()
+  }
+  requestStamps.push(Date.now())
+}
 
 // Ngôn ngữ ôn SRS luôn là tiếng Anh (thẻ từ vựng tiếng Anh)
 const SRS_LANG = 'en-US' as const
@@ -150,12 +174,16 @@ export async function preloadSrsAudio(
     if (shouldStop?.()) return { done, total, stopped: true }
 
     const key = speechCacheKey(job.text, SRS_LANG, job.voice)
-    // Đã có sẵn → không tốn request, cũng không cần giãn nhịp
+    // Đã có sẵn trong IndexedDB → KHÔNG gọi API, nên cũng không tốn ngân sách và không chờ
     if (await getAudioBuffer(key)) {
       done++
       onProgress?.(done, total)
       continue
     }
+
+    // Chỉ mục phải gọi /api/tts mới xin lượt (thường là tức thì, chỉ chờ khi chạm hạn mức)
+    await waitForRequestSlot()
+    if (shouldStop?.()) return { done, total, stopped: true }
 
     try {
       await prefetchSpeech(job.text, SRS_LANG, job.voice)
@@ -164,7 +192,6 @@ export async function preloadSrsAudio(
     }
     done++
     onProgress?.(done, total)
-    await sleep(REQUEST_GAP_MS)
   }
 
   return { done, total, stopped: false }
