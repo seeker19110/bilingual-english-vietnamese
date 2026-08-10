@@ -11,6 +11,11 @@ import {
   VOICE_IDS,
   DEFAULT_SEED_VOICE_IDS,
   STUDIO_VOICE_IDS,
+  GEMINI_VOICE_IDS,
+  clampVoiceToAllowed,
+  voiceGender,
+  getPreloadVoices,
+  type VoiceId,
 } from './voiceTiers'
 
 describe('isValidVoiceId', () => {
@@ -27,12 +32,17 @@ describe('getAllowedVoices — theo gói (không khuyến mãi)', () => {
     expect(getAllowedVoices('free', noPromo)).toEqual(['Kore', 'Aoede', 'Puck', 'Charon'])
   })
 
-  it('pro: 8 giọng seed sẵn', () => {
-    expect(getAllowedVoices('pro', noPromo)).toEqual(DEFAULT_SEED_VOICE_IDS)
+  // Từ 2026-08-10 bảng tier client có thêm giọng Gemini (đọc truyện) cho khớp bảng server —
+  // chúng KHÔNG hiện trong VoicePicker (mọi nơi chọn giọng lọc theo VOICE_OPTIONS).
+  it('pro: 8 giọng seed sẵn + giọng Gemini (đọc truyện)', () => {
+    expect(getAllowedVoices('pro', noPromo)).toEqual([
+      ...DEFAULT_SEED_VOICE_IDS,
+      ...GEMINI_VOICE_IDS,
+    ])
   })
 
-  it('vip: tất cả giọng', () => {
-    expect(getAllowedVoices('vip', noPromo)).toEqual(VOICE_IDS)
+  it('vip: tất cả giọng + giọng Gemini', () => {
+    expect(getAllowedVoices('vip', noPromo)).toEqual([...VOICE_IDS, ...GEMINI_VOICE_IDS])
   })
 })
 
@@ -61,7 +71,7 @@ describe('cache "giọng gói hiện tại cho phép" (localStorage)', () => {
 
   it('cacheAllowedVoices rồi đọc lại đúng danh sách của gói', () => {
     cacheAllowedVoices('pro', new Date('2020-01-01'))
-    expect(getCachedAllowedVoices()).toEqual(DEFAULT_SEED_VOICE_IDS)
+    expect(getCachedAllowedVoices()).toEqual([...DEFAULT_SEED_VOICE_IDS, ...GEMINI_VOICE_IDS])
   })
 
   it('dữ liệu cache không phải mảng hợp lệ → về mặc định an toàn', () => {
@@ -105,7 +115,7 @@ describe('pickRandomAllowedVoice — trộn nam/nữ, loại ElevenLabs (Rachel)
   })
 })
 
-describe('pickRandomAllowedVoice — loại giọng Studio khi đọc tiếng Việt', () => {
+describe('pickRandomAllowedVoice — không bao giờ tự bốc giọng Studio', () => {
   beforeEach(() => localStorage.clear())
 
   it("lang='vi-VN' (gói VIP có Studio) → không bao giờ bốc Studio-O/Studio-Q", () => {
@@ -116,11 +126,22 @@ describe('pickRandomAllowedVoice — loại giọng Studio khi đọc tiếng Vi
     }
   })
 
-  it("lang='en-US' vẫn cho phép Studio (giọng cao cấp chỉ có ở tiếng Anh)", () => {
+  // Đổi 2026-08-10: trước đây tiếng Anh VẪN cho random trúng Studio. Nhưng Studio giá
+  // $24/1 triệu ký tự, không có hạn mức miễn phí (đắt gấp 12 lần Chirp3-HD) — để nó trong bể
+  // random nghĩa là user VIP vô tình đẩy chi phí lên gấp 12 mà không hề chọn. Studio vẫn dùng
+  // được đầy đủ khi người dùng CHỦ ĐỘNG chọn ở Cài đặt.
+  it("lang='en-US' cũng KHÔNG bốc Studio (đắt gấp 12 lần, chỉ dùng khi chọn tay)", () => {
+    cacheAllowedVoices('vip', new Date('2020-01-01'))
+    for (let i = 0; i < 400; i++) {
+      expect(STUDIO_VOICE_IDS).not.toContain(pickRandomAllowedVoice({ lang: 'en-US' }))
+    }
+  })
+
+  it('gói VIP: bể random vẫn phủ được nhiều giọng Chirp3-HD khác nhau', () => {
     cacheAllowedVoices('vip', new Date('2020-01-01'))
     const picked = new Set<string>()
     for (let i = 0; i < 400; i++) picked.add(pickRandomAllowedVoice({ lang: 'en-US' }))
-    expect(STUDIO_VOICE_IDS.some((v) => picked.has(v))).toBe(true)
+    expect(picked.size).toBeGreaterThanOrEqual(10)
   })
 
   it("cache chỉ có Studio + lang='vi-VN' → rơi về pool mặc định, vẫn không có Studio", () => {
@@ -210,5 +231,52 @@ describe('pickRandomVoice — xác định với Math.random mock', () => {
     const v = pickRandomVoice('female', 'free', new Date('2020-01-01'))
     expect(v).toBe('Kore')
     spy.mockRestore()
+  })
+})
+
+// ── Hạ giọng giữ giới tính + hạ giọng Gemini (2026-08-10) ───────────────────
+describe('clampVoiceToAllowed', () => {
+  const FREE: VoiceId[] = ['Kore', 'Aoede', 'Puck', 'Charon']
+
+  it('giọng đã được phép → giữ nguyên', () => {
+    expect(clampVoiceToAllowed('Aoede', FREE)).toBe('Aoede')
+  })
+
+  it('giọng ngoài quyền → giọng mặc định CÙNG GIỚI TÍNH', () => {
+    expect(clampVoiceToAllowed('Umbriel', FREE)).toBe('Puck') // nam
+    expect(clampVoiceToAllowed('Vindemiatrix', FREE)).toBe('Kore') // nữ
+    expect(clampVoiceToAllowed('Studio-Q', FREE)).toBe('Puck')
+  })
+
+  it('giọng Gemini → giọng Chirp3-HD cùng tên nếu được phép, không thì mặc định cùng giới tính', () => {
+    expect(clampVoiceToAllowed('Gemini-Leda', ['Kore', 'Leda', 'Puck'])).toBe('Leda')
+    expect(clampVoiceToAllowed('Gemini-Orus', FREE)).toBe('Puck')
+  })
+})
+
+describe('voiceGender', () => {
+  it('nhận đúng giới tính cả với giọng Gemini và Studio', () => {
+    expect(voiceGender('Kore')).toBe('female')
+    expect(voiceGender('Umbriel')).toBe('male')
+    expect(voiceGender('Gemini-Orus')).toBe('male')
+    expect(voiceGender('Gemini-Aoede')).toBe('female')
+    expect(voiceGender('Studio-Q')).toBe('male')
+  })
+})
+
+describe('getPreloadVoices — không nạp trước giọng đắt tiền', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('gói VIP: bỏ Studio/ElevenLabs khỏi danh sách nạp trước (tốn tiền, random không bao giờ bốc)', () => {
+    cacheAllowedVoices('vip', new Date('2020-01-01'))
+    const voices = getPreloadVoices('en-US')
+    for (const v of STUDIO_VOICE_IDS) expect(voices).not.toContain(v)
+    expect(voices).not.toContain('Rachel')
+    expect(voices).toContain('Kore')
+  })
+
+  it('giọng người dùng đang chọn tay (keep) vẫn được nạp dù nằm trong nhóm bị loại', () => {
+    cacheAllowedVoices('vip', new Date('2020-01-01'))
+    expect(getPreloadVoices('en-US', 'Studio-O')).toContain('Studio-O')
   })
 })

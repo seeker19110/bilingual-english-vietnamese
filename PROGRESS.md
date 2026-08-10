@@ -17,6 +17,47 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Rà soát tính năng chuyển đổi giọng đọc — 5 lỗi + 5 cải tiến (2026-08-10, PR #526)
+
+Người dùng yêu cầu "kiểm tra cấu trúc, tính năng, đặc biệt tính năng chuyển đổi giọng đọc". Rà toàn
+bộ đường giọng đọc (`apps/english/src/lib/tts.ts` · `voiceTiers.ts` · `packages/core-ai/tts.ts` ·
+`api/_lib/voiceAccess.ts`). Kết quả: phần lớn ĐÚNG thiết kế (chiều A/B truyền đúng lang ở cả 3 chỗ
+gọi trong `Speaking.tsx`; server là nguồn sự thật; các bug cũ đều còn hàng rào chống), nhưng tìm ra
+**5 vấn đề thật**, đã sửa hết:
+
+1. 🔴 **Phần sửa lỗi/giải thích KHÔNG BAO GIỜ được đọc** — hồi quy từ PR #476 (2026-08-04), tức là
+   điểm khác biệt cốt lõi của app im tiếng suốt ~6 ngày trên production mà không ai phát hiện.
+   `speakBilingual()` chốt "vé" `playToken` TRƯỚC khi phát, nhưng PR #476 thêm `playToken++` vào
+   `speakViaGoogle()` (để giải phóng lượt phát trước còn treo) → chính câu thoại của nó cũng làm vé
+   lệch → luôn `return` trước phần feedback. Nay `speak()/speakViaGoogle()` **trả về đúng số vé của
+   lượt phát vừa rồi** để nơi gọi so lại; huỷ khi bấm Tắt tiếng vẫn chạy đúng như cũ. Có test hồi quy
+   khẳng định câu thoại VÀ phần sửa lỗi đều được phát.
+2. 🔴 **Sai mimeType khi server hạ giọng** — gói Free mở trang đọc truyện: client xin giọng Gemini
+   (WAV), server hạ về Chirp3-HD (mp3), nhưng client vẫn gắn nhãn `audio/wav` cho Blob → Safari/iOS
+   có thể không phát. Nay `/api/tts` **trả kèm `voice` thật sự đã dùng** (giống `/api/pronunciation`
+   vốn đã có), client bám theo nó để chọn mimeType + lưu vào IndexedDB (entry cũ thiếu trường này vẫn
+   đọc được, không cần nâng version cache). Thêm `getStoryVoice(kind, plan)` tự hạ giọng ngay ở client.
+3. 🟡 **Hạ gói làm đổi luôn giới tính giọng** — mọi nhánh hạ giọng đều rơi về `Kore` (nữ), nên user
+   đang dùng giọng nam mà hết hạn gói bị đổi phắt sang giọng nữ. Nay hạ giọng **giữ nguyên giới tính**
+   (`defaultVoiceForGender`, khớp tay cả 2 phía); riêng giọng Gemini ưu tiên giọng Chirp3-HD cùng tên
+   (`Gemini-Leda → Leda`) trước khi rơi về mặc định.
+4. 🟡 **Random có thể trúng giọng Studio** — Studio giá $24/1 triệu ký tự, KHÔNG có hạn mức miễn phí
+   (đắt gấp 12 lần Chirp3-HD), nghĩa là user VIP vô tình đẩy chi phí lên gấp 12 mà không hề chọn. Nay
+   Studio/ElevenLabs **không bao giờ tự nhảy vào bể random** (`RANDOM_EXCLUDED_VOICES`) và cũng không
+   bị nạp trước hàng loạt — vẫn dùng đầy đủ khi người dùng CHỦ ĐỘNG chọn ở Cài đặt.
+5. 🟡 **Không có gì chặn khi 2 bảng phân quyền giọng lệch nhau** — cả 2 file chỉ ghi "PHẢI khớp tay".
+   Thêm `api/_lib/voiceTierParity.test.ts` đối chiếu tự động client ↔ server (chạy trong `npm test`,
+   chặn CI). Nhân đó đưa giọng Gemini vào bảng tier phía client cho khớp hẳn bảng server.
+
+Ngoài ra, **tách giọng giải thích khỏi giọng hội thoại** (đúng mô tả "TTS hai giọng riêng" ở
+`CLAUDE.md` mục 1): trước đây cả hai dùng chung một giọng, chỉ khác locale
+(`en-US-Chirp3-HD-Kore` → `vi-VN-Chirp3-HD-Kore`) nên người học nghe ra vẫn là MỘT người. Nay phần sửa
+lỗi mặc định đọc bằng **giọng khác giới tính** với giọng hội thoại — không cần cấu hình gì. Có công
+tắc + bộ chọn riêng ở Cài đặt (`VoicePicker`) để tắt (về hành vi cũ) hoặc chọn giọng khác;
+`speakBilingual()` nhận thêm tham số `feedbackVoice` (mặc định `getNativeVoicePref()`).
+
+Cổng: build ✅ · typecheck ✅ · lint ✅ (0 cảnh báo) · format ✅ · test ✅ 3013/3013.
+
 ### Quy ước mới: tạo PR = coi như đã xong, ghi tài liệu ngay trong PR đó (2026-08-09)
 
 Người dùng chốt: **không chờ merge mới ghi nhận**. Mỗi PR phải tự mang theo phần cập nhật `*.md`

@@ -70,3 +70,21 @@ describe('getStoryVoice / STORY_KIND_VOICE', () => {
     }
   })
 })
+
+// Hạ giọng theo gói (2026-08-10): client phải tự hạ giọng Gemini khi gói chưa mở khoá, khớp
+// đúng thứ server làm (clampVoiceToPlan) — nếu không sẽ gắn sai mimeType cho Blob khi phát.
+describe('getStoryVoice — hạ giọng theo gói', () => {
+  it('không truyền plan → giữ nguyên giọng Gemini (dùng cho script seed)', () => {
+    expect(getStoryVoice('fairy-tale')).toBe('Gemini-Leda')
+  })
+
+  it('gói pro/vip có giọng Gemini → giữ nguyên', () => {
+    expect(getStoryVoice('fairy-tale', 'pro')).toBe('Gemini-Leda')
+    expect(getStoryVoice('myth', 'vip')).toBe('Gemini-Orus')
+  })
+
+  it('gói free chưa mở khoá Gemini → hạ về giọng mặc định cùng giới tính', () => {
+    expect(getStoryVoice('fairy-tale', 'free')).toBe('Kore') // Leda = nữ
+    expect(getStoryVoice('myth', 'free')).toBe('Puck') // Orus = nam
+  })
+})

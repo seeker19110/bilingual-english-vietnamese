@@ -159,6 +159,42 @@ describe('handler /api/tts — cache HIT', () => {
   })
 })
 
+// Client PHẢI biết giọng server THẬT SỰ dùng: nó quyết định định dạng audio (Gemini = WAV,
+// còn lại = mp3) → quyết định mimeType lúc tạo Blob. Trước 2026-08-10 response không có
+// trường này nên gói Free mở trang đọc truyện bị gắn nhầm audio/wav cho dữ liệu mp3.
+describe('handler /api/tts — trả về giọng THẬT SỰ đã dùng', () => {
+  it('giọng bị hạ theo gói → response trả giọng đã hạ, không phải giọng client gửi lên', async () => {
+    vi.mocked(clampVoiceToPlan).mockResolvedValueOnce('Kore')
+    mockedGetPool.mockReturnValue(
+      makePool(async (sql) => {
+        if (sql.includes('select audio_url, viseme_timeline from public.tts_cache where'))
+          return { rows: [{ audio_url: 'https://cdn.test/cached.mp3', viseme_timeline: null }] }
+        return { rows: [] }
+      }) as never,
+    )
+    const res = await handler(
+      makeRequest({ text: 'Ngày xửa', lang: 'vi-VN', voice: 'Gemini-Leda' }),
+    )
+    const data = (await res.json()) as { voice: string }
+    expect(data.voice).toBe('Kore')
+  })
+
+  it('cache MISS (sinh audio mới) cũng trả kèm giọng đã dùng', async () => {
+    mockedGetPool.mockReturnValue(
+      makePool(async (sql) => {
+        if (sql.includes('select audio_url, viseme_timeline from public.tts_cache where'))
+          return { rows: [] }
+        if (sql.startsWith('insert into public.tts_cache_pending')) return { rows: [{ hash: 'h' }] }
+        return { rows: [] }
+      }) as never,
+    )
+    const res = await handler(makeRequest())
+    const data = (await res.json()) as { voice: string; cached: boolean }
+    expect(data.cached).toBe(false)
+    expect(data.voice).toBe('Kore')
+  })
+})
+
 describe('handler /api/tts — cache MISS, leader sinh audio (Google Chirp3-HD)', () => {
   function poolLeaderFlow(): QueryFn {
     return async (sql) => {
