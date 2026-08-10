@@ -152,8 +152,16 @@ describe('giọng đọc: setVoicePref/getVoicePref, clamp theo quyền gói, gi
     expect(getVoicePref()).toBe('Charon')
   })
 
-  it('giọng đã lưu NGOÀI quyền gói hiện tại (cache free) → clamp về DEFAULT_VOICE (Kore)', async () => {
-    localStorage.setItem('tts_voice', 'Umbriel') // giọng chỉ VIP
+  // 2026-08-10: clamp GIỮ NGUYÊN GIỚI TÍNH (nam → Puck, không còn nhảy sang giọng nữ Kore).
+  it('giọng đã lưu NGOÀI quyền gói hiện tại (cache free) → clamp giữ giới tính', async () => {
+    localStorage.setItem('tts_voice', 'Umbriel') // giọng NAM, chỉ VIP
+    localStorage.setItem('voice_allowed_cache', JSON.stringify(['Kore', 'Aoede', 'Puck', 'Charon']))
+    const { getVoicePref } = await import('./tts')
+    expect(getVoicePref()).toBe('Puck')
+  })
+
+  it('giọng NỮ ngoài quyền gói → clamp về Kore (mặc định nữ)', async () => {
+    localStorage.setItem('tts_voice', 'Vindemiatrix')
     localStorage.setItem('voice_allowed_cache', JSON.stringify(['Kore', 'Aoede', 'Puck', 'Charon']))
     const { getVoicePref } = await import('./tts')
     expect(getVoicePref()).toBe('Kore')
@@ -422,7 +430,8 @@ describe('speak() — fallback Web Speech khi Google TTS lỗi', () => {
       },
     })
     const { speak } = await import('./tts')
-    await expect(speak('Xin chào', 'vi-VN', 'Kore')).resolves.toBeUndefined()
+    // speak() trả về "số vé" của lượt phát (number) để speakBilingual so lại — xem playToken.
+    await expect(speak('Xin chào', 'vi-VN', 'Kore')).resolves.toEqual(expect.any(Number))
     expect(speakFn).toHaveBeenCalled()
   })
 
@@ -432,14 +441,14 @@ describe('speak() — fallback Web Speech khi Google TTS lỗi', () => {
     // property mới mô phỏng đúng trình duyệt không hỗ trợ.
     delete (window as unknown as { speechSynthesis?: unknown }).speechSynthesis
     const { speak } = await import('./tts')
-    await expect(speak('Hello', 'en-US', 'Kore')).resolves.toBeUndefined()
+    await expect(speak('Hello', 'en-US', 'Kore')).resolves.toEqual(expect.any(Number))
   })
 
   it('text rỗng ở fallback Web Speech → resolve ngay, không gọi speak()', async () => {
     const speakFn = vi.fn()
     vi.stubGlobal('speechSynthesis', { cancel: vi.fn(), getVoices: () => [], speak: speakFn })
     const { speak } = await import('./tts')
-    await expect(speak('   ', 'en-US', 'Kore')).resolves.toBeUndefined()
+    await expect(speak('   ', 'en-US', 'Kore')).resolves.toEqual(expect.any(Number))
     expect(speakFn).not.toHaveBeenCalled()
   })
 })
@@ -502,5 +511,162 @@ describe('speakBilingual — đọc tuần tự câu thoại rồi phần sửa 
   it('feedback rỗng → chỉ đọc speech, không lỗi', async () => {
     const { speakBilingual } = await import('./tts')
     await expect(speakBilingual('Hello', '', 'en-US', 'vi-VN', 'Kore')).resolves.toBeUndefined()
+  })
+
+  // Điểm khác biệt cốt lõi của app: phần giải thích đọc bằng GIỌNG khác giọng hội thoại
+  // (2026-08-10). Khoá cache mock có dạng "<lang>:<voice>:<text>" nên đọc từ getAudioEntry
+  // là biết chính xác mỗi đoạn được phát bằng giọng nào.
+  it('phần sửa lỗi dùng giọng KHÁC giọng hội thoại (mặc định khác giới tính)', async () => {
+    const { speakBilingual } = await import('./tts')
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockClear()
+    await speakBilingual('Hello', 'Xin chào', 'en-US', 'vi-VN', 'Kore')
+    const keys = vi.mocked(getAudioEntry).mock.calls.map((c) => c[0])
+    expect(keys).toContain('en-US:Kore:Hello')
+    expect(keys).toContain('vi-VN:Puck:Xin chào')
+  })
+
+  it('truyền tay feedbackVoice → dùng đúng giọng đó cho phần sửa lỗi', async () => {
+    const { speakBilingual } = await import('./tts')
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockClear()
+    await speakBilingual(
+      'Hello',
+      'Xin chào',
+      'en-US',
+      'vi-VN',
+      'Kore',
+      1,
+      undefined,
+      undefined,
+      'Charon',
+    )
+    expect(vi.mocked(getAudioEntry).mock.calls.map((c) => c[0])).toContain('vi-VN:Charon:Xin chào')
+  })
+
+  it('tắt chế độ giọng giải thích riêng → cả hai đoạn dùng chung 1 giọng (hành vi cũ)', async () => {
+    const { speakBilingual, setNativeVoiceSeparate } = await import('./tts')
+    const { getAudioEntry } = await import('./audioCache')
+    setNativeVoiceSeparate(false)
+    vi.mocked(getAudioEntry).mockClear()
+    await speakBilingual('Hello', 'Xin chào', 'en-US', 'vi-VN', 'Kore')
+    expect(vi.mocked(getAudioEntry).mock.calls.map((c) => c[0])).toContain('vi-VN:Kore:Xin chào')
+    setNativeVoiceSeparate(true)
+  })
+})
+
+// ── Giọng server THẬT SỰ dùng (2026-08-10) ─────────────────────────────────
+// /api/tts có thể hạ giọng theo gói (clampVoiceToPlan). Client PHẢI bám theo giọng server
+// trả về, vì nó quyết định định dạng audio: Gemini = WAV, còn lại = mp3. Đoán sai là gắn
+// sai mimeType cho Blob → iOS/Safari không phát được (lỗi gói Free mở trang đọc truyện).
+describe('ensureAudioWithTimeline — bám theo giọng server trả về', () => {
+  beforeEach(async () => {
+    localStorage.clear()
+    vi.stubGlobal('speechSynthesis', { pause: vi.fn(), resume: vi.fn(), cancel: vi.fn() })
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue(null)
+    vi.spyOn(crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey)
+    vi.spyOn(crypto.subtle, 'decrypt').mockResolvedValue(new ArrayBuffer(4))
+  })
+  afterEach(() => vi.restoreAllMocks())
+
+  function mockTts(body: Record<string, unknown>) {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((url: string) =>
+        url === '/api/tts'
+          ? Promise.resolve({ ok: true, status: 200, json: async () => body })
+          : Promise.resolve({
+              ok: true,
+              status: 200,
+              arrayBuffer: async () => new ArrayBuffer(16),
+            }),
+      ),
+    )
+  }
+
+  it('server hạ giọng Gemini → Kore: trả về giọng THẬT và lưu cache kèm giọng đó', async () => {
+    mockTts({ audio_url: '/fake.mp3', key_b64: 'a2V5', iv_b64: 'aXY=', voice: 'Kore' })
+    const { ensureAudioWithTimeline } = await import('./tts')
+    const { setAudioBuffer } = await import('./audioCache')
+    const res = await ensureAudioWithTimeline('Ngày xửa ngày xưa', 'vi-VN', 'Gemini-Leda')
+    expect(res.voice).toBe('Kore')
+    expect(vi.mocked(setAudioBuffer).mock.calls.at(-1)?.[3]).toBe('Kore')
+  })
+
+  it('server không trả `voice` (bản cũ) → giữ giọng client yêu cầu, không vỡ', async () => {
+    mockTts({ audio_url: '/fake.mp3', key_b64: 'a2V5', iv_b64: 'aXY=' })
+    const { ensureAudioWithTimeline } = await import('./tts')
+    const res = await ensureAudioWithTimeline('Hello', 'en-US', 'Kore')
+    expect(res.voice).toBe('Kore')
+  })
+
+  it('server trả `voice` lạ (không hợp lệ) → bỏ qua, dùng giọng client yêu cầu', async () => {
+    mockTts({ audio_url: '/fake.mp3', key_b64: 'a2V5', iv_b64: 'aXY=', voice: 'KhongTonTai' })
+    const { ensureAudioWithTimeline } = await import('./tts')
+    const res = await ensureAudioWithTimeline('Hello', 'en-US', 'Aoede')
+    expect(res.voice).toBe('Aoede')
+  })
+
+  it('cache IndexedDB có sẵn giọng thật → dùng lại, không gọi server', async () => {
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue({
+      buffer: new ArrayBuffer(4),
+      timeline: null,
+      voice: 'Kore',
+    })
+    const fetchSpy = vi.fn()
+    vi.stubGlobal('fetch', fetchSpy)
+    const { ensureAudioWithTimeline } = await import('./tts')
+    const res = await ensureAudioWithTimeline('Ngày xửa', 'vi-VN', 'Gemini-Leda')
+    expect(res.voice).toBe('Kore')
+    expect(fetchSpy).not.toHaveBeenCalled()
+  })
+})
+
+// ── Giọng GIẢI THÍCH riêng (tiếng mẹ đẻ) — 2026-08-10 ──────────────────────
+describe('getNativeVoicePref — giọng đọc phần sửa lỗi', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.resetModules()
+  })
+
+  it('mặc định BẬT và chọn giọng KHÁC GIỚI TÍNH với giọng hội thoại', async () => {
+    const { getNativeVoicePref, isNativeVoiceSeparate } = await import('./tts')
+    expect(isNativeVoiceSeparate()).toBe(true)
+    expect(getNativeVoicePref('Kore')).toBe('Puck') // nữ → nam
+    expect(getNativeVoicePref('Charon')).toBe('Kore') // nam → nữ
+  })
+
+  it('tắt công tắc → dùng chung đúng giọng hội thoại (hành vi cũ)', async () => {
+    const { getNativeVoicePref, setNativeVoiceSeparate } = await import('./tts')
+    setNativeVoiceSeparate(false)
+    expect(getNativeVoicePref('Kore')).toBe('Kore')
+  })
+
+  it('người dùng chọn tay giọng trong quyền gói → dùng đúng giọng đó', async () => {
+    const { getNativeVoicePref, setNativeVoicePref } = await import('./tts')
+    const { cacheAllowedVoices } = await import('./voiceTiers')
+    cacheAllowedVoices('vip', new Date('2020-01-01'))
+    setNativeVoicePref('Fenrir')
+    expect(getNativeVoicePref('Kore')).toBe('Fenrir')
+  })
+
+  it('giọng chọn tay NGOÀI quyền gói → về mặc định khác giới tính', async () => {
+    const { getNativeVoicePref, setNativeVoicePref } = await import('./tts')
+    const { cacheAllowedVoices } = await import('./voiceTiers')
+    cacheAllowedVoices('free', new Date('2020-01-01'))
+    setNativeVoicePref('Fenrir') // chỉ Pro/VIP
+    expect(getNativeVoicePref('Kore')).toBe('Puck')
+  })
+
+  it('không bao giờ trả giọng Studio/ElevenLabs (Studio không có tiếng Việt, ElevenLabs đắt)', async () => {
+    const { getNativeVoicePref, setNativeVoicePref } = await import('./tts')
+    const { cacheAllowedVoices } = await import('./voiceTiers')
+    cacheAllowedVoices('vip', new Date('2020-01-01'))
+    setNativeVoicePref('Studio-O')
+    expect(getNativeVoicePref('Puck')).toBe('Kore')
+    setNativeVoicePref('Rachel')
+    expect(getNativeVoicePref('Puck')).toBe('Kore')
   })
 })

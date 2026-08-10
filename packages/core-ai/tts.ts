@@ -290,6 +290,11 @@ export default async function handler(req: Request): Promise<Response> {
         key_b64,
         iv_b64,
         cached: true,
+        // Giọng THẬT SỰ đã dùng (đã qua clampVoiceToPlan + hạ Studio cho tiếng Việt) — client
+        // PHẢI dựa vào đây, không phải giọng nó gửi lên: khác nhau ở chỗ Gemini trả WAV còn
+        // các provider khác trả mp3, đoán sai là gắn sai mimeType cho Blob (iOS/Safari không
+        // phát được). Xem blobMimeTypeForVoice() trong apps/english/src/lib/tts.ts.
+        voice,
         // null với audio cũ (cache trước migration 0028) hoặc giọng không có timestamp —
         // client tự ước lượng như trước, không phải lỗi.
         viseme_timeline: cachedRows[0]?.viseme_timeline ?? null,
@@ -315,6 +320,7 @@ export default async function handler(req: Request): Promise<Response> {
         iv_b64,
         cached: true,
         viseme_timeline: claim.visemeTimeline,
+        voice,
       },
       200,
       allHeaders,
@@ -451,7 +457,14 @@ export default async function handler(req: Request): Promise<Response> {
 
     const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
     return jsonResponse(
-      { audio_url: audioUrl, key_b64, iv_b64, cached: false, viseme_timeline: visemeTimeline },
+      {
+        audio_url: audioUrl,
+        key_b64,
+        iv_b64,
+        cached: false,
+        viseme_timeline: visemeTimeline,
+        voice,
+      },
       200,
       allHeaders,
     )

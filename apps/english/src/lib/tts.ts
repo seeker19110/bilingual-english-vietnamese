@@ -9,12 +9,17 @@ import { audioCacheKey, getAudioEntry, setAudioBuffer } from './audioCache'
 import type { VisemeFrame } from './viseme'
 import {
   isValidVoiceId,
+  isKnownVoiceId,
   DEFAULT_VOICE,
   DEFAULT_MALE_VOICE,
   VOICE_OPTIONS,
   STUDIO_VOICE_IDS,
   ELEVEN_VOICE_IDS,
   GEMINI_VOICE_IDS,
+  RANDOM_EXCLUDED_VOICES,
+  clampVoiceToAllowed,
+  defaultVoiceForGender,
+  voiceGender,
   getCachedAllowedVoices,
   type VoiceId,
 } from './voiceTiers'
@@ -38,8 +43,14 @@ let currentBlobUrl: string | null = null
 let currentAudioId: string | null = null
 // Callback để unblock Promise đang chờ trong speakViaGoogle khi stopSpeaking() được gọi
 let currentResolve: (() => void) | null = null
-// "Vé" cho chuỗi đọc song ngữ: stopSpeaking() tăng số này để huỷ phần CÒN LẠI của
-// speakBilingual (vd: đang đọc câu thoại mà bấm Tắt tiếng → KHÔNG đọc tiếp phần sửa lỗi).
+// "Vé" cho chuỗi đọc song ngữ: stopSpeaking() — và bất kỳ lượt phát MỚI nào chiếm thẻ audio
+// dùng chung — đều tăng số này, để huỷ phần CÒN LẠI của speakBilingual (vd: đang đọc câu
+// thoại mà bấm Tắt tiếng → KHÔNG đọc tiếp phần sửa lỗi).
+//
+// QUAN TRỌNG: chính lượt phát của speakBilingual cũng tăng số này (speakViaGoogle chiếm thẻ
+// audio), nên KHÔNG được so với giá trị chốt TRƯỚC khi phát — làm vậy thì lần nào cũng lệch
+// và phần sửa lỗi KHÔNG BAO GIỜ được đọc (lỗi thật, có từ PR #476 tới 2026-08-10). Vì thế
+// speak()/speakViaGoogle TRẢ VỀ đúng số vé của lượt phát vừa rồi để nơi gọi so lại.
 let playToken = 0
 
 function getSharedAudio(): HTMLAudioElement {
@@ -155,8 +166,7 @@ function getStoredVoice(): Voice {
   // hạ về DEFAULT_VOICE khi phát (clampVoiceToPlan, api/_lib/voiceAccess.ts). Clamp NGAY ở
   // đây để nhãn hiển thị (VoicePicker, nút loa) luôn khớp giọng THỰC SỰ phát ra, tránh lệch
   // "Cài đặt nói giọng X nhưng bấm nghe lại ra giọng khác" (đúng lỗi người dùng gặp phải).
-  const allowed = getCachedAllowedVoices()
-  return allowed.includes(resolved) ? resolved : DEFAULT_VOICE
+  return clampVoiceToAllowed(resolved, getCachedAllowedVoices())
 }
 
 export function setVoicePref(voice: Voice): void {
@@ -193,8 +203,13 @@ export function reshuffleRandomVoice(): void {
 
 function pickAndRememberRandomVoice(gender: 'female' | 'male'): Voice {
   const allowed = new Set(getCachedAllowedVoices())
-  const candidates = VOICE_OPTIONS.filter((v) => v.gender === gender && allowed.has(v.id))
-  const pool = candidates.length > 0 ? candidates : VOICE_OPTIONS.filter((v) => v.gender === gender)
+  // Bỏ giọng không bao giờ tự nhảy vào bể random (Studio đắt gấp 12 lần + chỉ tiếng Anh,
+  // ElevenLabs không dùng được ở /api/pronunciation) — xem RANDOM_EXCLUDED_VOICES.
+  const byGender = VOICE_OPTIONS.filter(
+    (v) => v.gender === gender && !RANDOM_EXCLUDED_VOICES.has(v.id),
+  )
+  const candidates = byGender.filter((v) => allowed.has(v.id))
+  const pool = candidates.length > 0 ? candidates : byGender
   const pick = pool[Math.floor(Math.random() * pool.length)]!.id
   try {
     sessionStorage.setItem(RANDOM_PICK_KEY, `${gender}:${pick}`)
@@ -218,6 +233,49 @@ export function getVoicePref(): Voice {
   const [cachedGender, cachedVoice] = cached?.split(':') ?? []
   if (cachedGender === gender && cachedVoice && isValidVoiceId(cachedVoice)) return cachedVoice
   return pickAndRememberRandomVoice(gender)
+}
+
+// ── Giọng GIẢI THÍCH (tiếng mẹ đẻ) — tách khỏi giọng hội thoại ──────────────
+// Điểm khác biệt cốt lõi của app (CLAUDE.md mục 1): câu hội thoại đọc bằng giọng ngôn ngữ
+// ĐÍCH, phần sửa lỗi/giải thích đọc bằng giọng tiếng MẸ ĐẺ. Trước 2026-08-10 cả hai dùng
+// CHUNG một giọng (chỉ khác locale: en-US-Chirp3-HD-Kore → vi-VN-Chirp3-HD-Kore), nên người
+// học nghe ra vẫn là MỘT người và khó phân biệt "AI đang nói tiếng đích" với "AI đang giải
+// thích". NAY: giọng giải thích mặc định là giọng KHÁC GIỚI TÍNH với giọng hội thoại — hai
+// nhân vật nghe rõ ràng là hai người, không cần người dùng cấu hình gì.
+//
+// Tắt được ở Cài đặt (về lại đúng hành vi cũ: 1 giọng cho cả hai).
+const NATIVE_VOICE_KEY = 'tts_voice_native'
+const NATIVE_VOICE_ON_KEY = 'tts_voice_native_on'
+
+export function isNativeVoiceSeparate(): boolean {
+  // Mặc định BẬT (chưa từng chỉnh = chưa có khoá) — đây là hành vi đúng thiết kế sản phẩm.
+  return localStorage.getItem(NATIVE_VOICE_ON_KEY) !== '0'
+}
+
+export function setNativeVoiceSeparate(on: boolean): void {
+  localStorage.setItem(NATIVE_VOICE_ON_KEY, on ? '1' : '0')
+}
+
+export function setNativeVoicePref(voice: Voice): void {
+  localStorage.setItem(NATIVE_VOICE_KEY, voice)
+}
+
+// Giọng đọc phần giải thích/sửa lỗi. Quy tắc chọn, theo thứ tự:
+//   1. Tắt chế độ tách giọng → dùng luôn giọng hội thoại (hành vi cũ).
+//   2. Người dùng đã chọn tay ở Cài đặt → dùng giọng đó (đã clamp theo gói).
+//   3. Chưa chọn → giọng mặc định KHÁC GIỚI TÍNH với giọng hội thoại (Kore ⇄ Puck).
+// LUÔN loại Studio/ElevenLabs khỏi giọng giải thích: phần giải thích ở chiều A là tiếng
+// VIỆT, mà Studio không có giọng vi-VN (server hạ về Chirp3-HD) còn ElevenLabs thì đắt —
+// không đáng cho phần đọc dài như giải thích.
+export function getNativeVoicePref(targetVoice: Voice = getVoicePref()): Voice {
+  if (!isNativeVoiceSeparate()) return targetVoice
+  const allowed = getCachedAllowedVoices().filter((v) => !RANDOM_EXCLUDED_VOICES.has(v))
+  const oppositeDefault = defaultVoiceForGender(
+    voiceGender(targetVoice) === 'female' ? 'male' : 'female',
+  )
+  const raw = localStorage.getItem(NATIVE_VOICE_KEY) ?? ''
+  if (!isValidVoiceId(raw) || RANDOM_EXCLUDED_VOICES.has(raw)) return oppositeDefault
+  return allowed.includes(raw) ? raw : oppositeDefault
 }
 
 export { DEFAULT_VOICE, DEFAULT_MALE_VOICE }
@@ -331,7 +389,15 @@ function blobMimeTypeForVoice(voice: Voice): string {
 //
 // `inflight`: gộp các yêu cầu TRÙNG key đang chạy làm 1 — tránh việc trình phát
 // và bộ nạp-trước cùng tải một câu (tải đôi + dễ dính 429).
-const inflight = new Map<string, Promise<{ buffer: ArrayBuffer; timeline: VisemeFrame[] | null }>>()
+// `voice`: giọng server THẬT SỰ đã dùng (có thể đã bị hạ theo gói) — quyết định mimeType
+// lúc tạo Blob để phát, xem SpeechAudio bên dưới.
+export interface SpeechAudio {
+  buffer: ArrayBuffer
+  timeline: VisemeFrame[] | null
+  voice: Voice
+}
+
+const inflight = new Map<string, Promise<SpeechAudio>>()
 
 // Studio (giọng cao cấp VIP mặc định mới — xem getDefaultVoiceForUnsetPref) CHỈ có
 // tiếng Anh. speak()/prefetchSpeech() không phân biệt lang khi lấy voice mặc định (dùng
@@ -374,15 +440,22 @@ export async function ensureAudioWithTimeline(
   text: string,
   lang: Lang,
   voiceInput: Voice,
-): Promise<{ buffer: ArrayBuffer; timeline: VisemeFrame[] | null }> {
+): Promise<SpeechAudio> {
   const voice = resolveVoiceForLang(voiceInput, lang)
   // Giọng ElevenLabs không phân biệt lang (xem ghi chú tương ứng trong api/tts.ts) — bỏ lang
   // khỏi cacheKey để khớp với hash cache phía server (không tách 2 bản audio giống hệt nhau).
   const cacheKey = speechCacheKey(text, lang, voiceInput)
 
-  // Kiểm tra IndexedDB trước — nếu đã có thì khỏi gọi server
+  // Kiểm tra IndexedDB trước — nếu đã có thì khỏi gọi server. Entry cũ (lưu trước khi
+  // /api/tts trả `voice`) không có giọng thật → dùng tạm giọng yêu cầu, đúng như hành vi cũ.
   const cached = await getAudioEntry(cacheKey)
-  if (cached) return cached
+  if (cached) {
+    return {
+      buffer: cached.buffer,
+      timeline: cached.timeline,
+      voice: cached.voice && isKnownVoiceId(cached.voice) ? cached.voice : voice,
+    }
+  }
 
   // Đang có yêu cầu tải cùng câu này (vd: bộ nạp-trước) → dùng chung, không tải lại
   const running = inflight.get(cacheKey)
@@ -417,17 +490,23 @@ export async function ensureAudioWithTimeline(
       key_b64,
       iv_b64,
       viseme_timeline = null,
+      voice: serverVoice,
     } = (await res.json()) as {
       audio_url: string
       key_b64: string
       iv_b64: string
       viseme_timeline?: VisemeFrame[] | null
+      voice?: string
     }
 
+    // Server có thể đã HẠ giọng theo gói (clampVoiceToPlan) — vd gói Free mở truyện sẽ nhận
+    // Chirp3-HD (mp3) thay cho giọng Gemini (WAV) mà client yêu cầu. Bám theo giọng server
+    // trả về, nếu không sẽ gắn nhầm mimeType cho Blob và iOS/Safari không phát được.
+    const actualVoice = serverVoice && isKnownVoiceId(serverVoice) ? serverVoice : voice
     const buffer = await decryptToBuffer(audio_url, key_b64, iv_b64)
     // Lưu vào IndexedDB để lần sau (kể cả mở lại app) dùng ngay không cần fetch
-    void setAudioBuffer(cacheKey, buffer, viseme_timeline)
-    return { buffer, timeline: viseme_timeline }
+    void setAudioBuffer(cacheKey, buffer, viseme_timeline, actualVoice)
+    return { buffer, timeline: viseme_timeline, voice: actualVoice }
   })()
 
   inflight.set(cacheKey, job)
@@ -464,16 +543,19 @@ async function speakViaGoogle(
   voice: Voice,
   rate = 1,
   onWord?: (idx: number) => void,
-): Promise<void> {
-  if (!text.trim()) return
+): Promise<number> {
+  if (!text.trim()) return playToken
 
   // Lấy audio (ưu tiên IndexedDB; bộ nạp-trước thường đã tải sẵn câu này)
-  const buffer = await ensureAudioBuffer(text, lang, voice)
-  const blobUrl = bufferToBlobUrl(buffer, blobMimeTypeForVoice(voice))
+  const { buffer, voice: actualVoice } = await ensureAudioWithTimeline(text, lang, voice)
+  // mimeType theo giọng THẬT server dùng, không phải giọng yêu cầu (xem ensureAudioWithTimeline)
+  const blobUrl = bufferToBlobUrl(buffer, blobMimeTypeForVoice(actualVoice))
 
   // Tách từ để tính index tương ứng với vị trí phát (ước tính theo tỉ lệ thời gian)
   const words = onWord ? text.trim().split(/\s+/) : []
   const audioId = crypto.randomUUID()
+  // Số vé của CHÍNH lượt phát này (gán lúc chiếm thẻ audio) — trả về cho nơi gọi so lại.
+  let myPlayToken = playToken
 
   await new Promise<void>((resolve, reject) => {
     // Nếu có lượt phát TRƯỚC ĐÓ còn đang treo (currentResolve chưa được gọi) — vd người
@@ -489,7 +571,7 @@ async function speakViaGoogle(
     }
     currentResolve?.()
     currentResolve = null
-    playToken++
+    myPlayToken = ++playToken
 
     // Tái dùng thẻ <audio> đã mở khoá (xem ghi chú đầu file) thay vì tạo mới mỗi câu
     const audio = getSharedAudio()
@@ -546,6 +628,8 @@ async function speakViaGoogle(
       reject(err)
     })
   })
+
+  return myPlayToken
 }
 
 // Fallback Web Speech API khi Google TTS không khả dụng
@@ -555,10 +639,10 @@ function speakViaWebSpeech(
   voice: Voice,
   rate = 1,
   onWord?: (idx: number) => void,
-): Promise<void> {
+): Promise<number> {
   return new Promise((resolve) => {
     if (!('speechSynthesis' in window) || !text.trim()) {
-      resolve()
+      resolve(playToken)
       return
     }
     window.speechSynthesis.cancel()
@@ -593,8 +677,8 @@ function speakViaWebSpeech(
         : n.includes('female') || n.includes('zira') || n.includes('samantha') || n.includes('nữ')
     })
     if (wanted) utt.voice = wanted
-    utt.onend = () => resolve()
-    utt.onerror = () => resolve() // không throw để tránh crash UI
+    utt.onend = () => resolve(playToken)
+    utt.onerror = () => resolve(playToken) // không throw để tránh crash UI
     window.speechSynthesis.speak(utt)
   })
 }
@@ -609,18 +693,22 @@ export async function speak(
   // (getRatePref/setRatePref/RateToggle) — chỉ nới lỏng tham số phát thực tế.
   rate: number = getRatePref(),
   onWord?: (idx: number) => void,
-): Promise<void> {
+  // Trả về "số vé" của lượt phát này — nơi gọi so với playToken hiện tại để biết lượt phát
+  // có bị Tắt tiếng / lượt phát khác chiếm chỗ hay không (xem speakBilingual).
+): Promise<number> {
   try {
-    await speakViaGoogle(text, lang, voice, rate, onWord)
+    return await speakViaGoogle(text, lang, voice, rate, onWord)
   } catch {
     // Lỗi Google TTS (chưa đăng nhập, mất mạng, server lỗi...) → dùng Web Speech API tạm
-    await speakViaWebSpeech(text, lang, voice, rate, onWord)
+    return await speakViaWebSpeech(text, lang, voice, rate, onWord)
   }
 }
 
 // Đọc tuần tự: câu hội thoại (ngôn ngữ đích) → sửa lỗi (tiếng mẹ đẻ)
 // onSpeechWord/onFeedbackWord (tùy chọn): cho karaoke sáng chữ từng phần theo giọng đọc
 // (dùng ở Speaking.tsx — xem KaraokeText.tsx cho cách dùng onWord tương tự với speak()).
+// `feedbackVoice`: giọng đọc phần sửa lỗi/giải thích — MẶC ĐỊNH khác giọng hội thoại (xem
+// getNativeVoicePref). Truyền tay khi nơi gọi muốn ép 1 giọng cụ thể.
 export async function speakBilingual(
   speech: string,
   feedback: string,
@@ -630,11 +718,14 @@ export async function speakBilingual(
   rate: number = getRatePref(),
   onSpeechWord?: (idx: number) => void,
   onFeedbackWord?: (idx: number) => void,
+  feedbackVoice: Voice = getNativeVoicePref(voice),
 ) {
-  const myToken = ++playToken
-  if (speech) await speak(speech, speechLang, voice, rate, onSpeechWord)
+  // Chốt số vé SAU khi câu thoại phát xong (speak trả về vé của chính lượt phát đó) — chốt
+  // trước khi phát là sai, vì chính lượt phát này cũng tăng playToken (xem ghi chú ở playToken).
+  let myToken = ++playToken
+  if (speech) myToken = await speak(speech, speechLang, voice, rate, onSpeechWord)
   // Nếu giữa chừng người dùng bấm Tắt tiếng / sang câu khác (stopSpeaking → playToken đổi),
   // thì DỪNG, không đọc tiếp phần sửa lỗi.
   if (playToken !== myToken) return
-  if (feedback) await speak(feedback, feedbackLang, voice, rate, onFeedbackWord)
+  if (feedback) await speak(feedback, feedbackLang, feedbackVoice, rate, onFeedbackWord)
 }

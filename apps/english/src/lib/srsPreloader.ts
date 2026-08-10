@@ -26,7 +26,7 @@ import type { DictEntry } from '../types'
 import { getDueWords } from './srs'
 import { getTodayBatchFrom, getDailyAllowance } from './curriculum'
 import { getLearnedWords } from './vocab'
-import { prefetchSpeech, speechCacheKey } from './tts'
+import { prefetchSpeech, speechCacheKey, getVoicePref } from './tts'
 import { getAudioBuffer } from './audioCache'
 import { getPreloadVoices, type VoiceId } from './voiceTiers'
 
@@ -134,7 +134,7 @@ export async function getSrsOfflineAudioStatus(
   pool: DictEntry[],
 ): Promise<SrsOfflineStatus> {
   const { words, isLookahead } = getPreloadTargets(uid, pool)
-  const voices = getPreloadVoices(SRS_LANG)
+  const voices = getPreloadVoices(SRS_LANG, getVoicePref())
   const jobs = buildJobs(words, voices)
 
   if (jobs.length === 0) {
@@ -187,7 +187,7 @@ export async function preloadSrsAudio(
     typeof options === 'function' ? { onProgress: options } : options
 
   const { words } = getPreloadTargets(uid, pool)
-  const voices = getPreloadVoices(SRS_LANG)
+  const voices = getPreloadVoices(SRS_LANG, getVoicePref())
   const jobs = buildJobs(words, voices)
   const total = jobs.length
 

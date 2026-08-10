@@ -8,6 +8,7 @@ import PageHeader from '../components/PageHeader'
 import { CardListSkeleton } from '../components/Skeleton'
 import KaraokeText, { KARAOKE_INDENT } from '../components/KaraokeText'
 import { useLang } from '../context/useLang'
+import { useAuth } from '../context/useAuth'
 import { getDirection } from '../lib/storage'
 import { groupLinesByParagraph, getStoryVoice } from '../lib/stories'
 import { loadStory } from '../data/stories/loader'
@@ -18,6 +19,7 @@ export default function StoryReader() {
   const { id } = useParams<{ id: string }>()
   const nav = useNavigate()
   const { T } = useLang()
+  const { user } = useAuth()
   const isA = getDirection() === 'A' // đích = tiếng Anh (A) hoặc tiếng Việt (B)
 
   const [story, setStory] = useState<Story | null>(null)
@@ -44,7 +46,8 @@ export default function StoryReader() {
   const paragraphs = useMemo(() => (story ? groupLinesByParagraph(story.lines) : []), [story])
   const flatLines = story?.lines ?? []
   // Giọng cố định theo thể loại truyện (không dùng giọng chung toàn app nữa — xem lib/stories.ts)
-  const storyVoice = story ? getStoryVoice(story.kind) : undefined
+  // Truyền `plan` để tự hạ giọng khi gói chưa mở khoá giọng Gemini — xem getStoryVoice().
+  const storyVoice = story ? getStoryVoice(story.kind, user?.plan) : undefined
 
   // ── Phát tất cả — 2 nguồn phát riêng biệt (tiếng Việt / tiếng Anh), tuần tự
   // từng câu, tự cuộn tới câu đang đọc. Chọn được đọc bản gốc hay bản dịch.
