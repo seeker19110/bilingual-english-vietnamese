@@ -15,7 +15,9 @@ export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
 // Môn học — mặc định 'english' ở MỌI lời gọi hiện tại (chỉ có 1 môn tồn tại). Khi thêm môn
 // mới (GĐ2), lời gọi của môn đó tự truyền subject khác; các lời gọi hiện có KHÔNG cần sửa.
 // Xem docs/adr/0001-nen-tang-da-linh-vuc.md mục 8 + postgres/migrations/0029_platform_subject.sql.
-const DEFAULT_SUBJECT = 'english'
+// Export để api/usage-summary.ts lọc ĐÚNG cùng subject như hàm SQL enforce (consume_rolling_credit
+// lọc `subject = p_subject`) — xem audit 2026-08-12.
+export const DEFAULT_SUBJECT = 'english'
 
 // Hạn mức theo gói ĐỌC TỪ DB (bảng app_settings, admin chỉnh qua /api/admin-settings) —
 // xem settings.ts để biết giá trị mặc định khi DB chưa có dòng cấu hình. Riêng gói Free

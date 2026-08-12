@@ -208,7 +208,12 @@ export function getNextReview(uid: string, word: string): Date | null {
 // docs/research/danh-gia-tien-trien-hoc-2026-07-07.md — "spacing áp cho mọi loại kiến thức,
 // không riêng từ vựng"). Tiền tố `grammar:` để khoá KHÔNG đụng namespace với từ tiếng Anh
 // (word) đang lưu trong cùng 1 kho `srs_${uid}`.
-const grammarKey = (lessonId: string) => `grammar:${lessonId}`
+// LƯU Ý (audit 2026-08-12): addToSRS()/reviewWord() hạ chữ thường TOÀN BỘ khoá trước khi ghi
+// (`word.toLowerCase()`), nên khoá ĐỌC ở đây cũng phải hạ chữ thường — nếu không, một lessonId
+// có chữ hoa sẽ được GHI dưới khoá `grammar:a1-be` nhưng ĐỌC dưới `grammar:A1-Be` → bài đó
+// không bao giờ đến hạn ôn, hỏng im lặng. Hiện cả 78 lessonId đều chữ thường nên dữ liệu đã
+// lưu KHÔNG đổi; đây là chặn sẵn cho lessonId thêm sau này.
+const grammarKey = (lessonId: string) => `grammar:${lessonId.toLowerCase()}`
 
 // Vào vòng ôn khi 1 bài ngữ pháp được đánh dấu "đã học xong" (gọi từ markGrammarDone).
 export function addGrammarToSRS(uid: string, lessonId: string) {

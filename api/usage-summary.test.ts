@@ -17,6 +17,7 @@ vi.mock('../packages/core-billing/usage.js', () => ({
   lookupPlan: (userId: string) => lookupPlanMock(userId),
   FREE_WEEKLY_CAP: 70,
   FREE_ROLLING_WINDOW_DAYS: 7,
+  DEFAULT_SUBJECT: 'english',
 }))
 
 vi.mock('../packages/core-db/pgPool.js', () => ({ getPgPool: vi.fn() }))
@@ -74,7 +75,19 @@ describe('GET /api/usage-summary', () => {
     const res = await handler(new Request('http://localhost/api/usage-summary'))
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({ plan: 'free', freeWeeklyCredit: 35, freeWeeklyCap: 70 })
-    expect(query.mock.calls[0]?.[1]).toEqual(['user-1', expect.any(String), 7])
+    expect(query.mock.calls[0]?.[1]).toEqual(['user-1', expect.any(String), 7, 'english'])
+  })
+
+  // Hồi quy (audit 2026-08-12): truy vấn HIỂN THỊ phải lọc `subject` GIỐNG hàm SQL enforce
+  // (consume_rolling_credit lọc `subject = p_subject`, migration 0029). Thiếu bộ lọc này thì
+  // khi có môn thứ 2 (ADR-0001), UI cộng lượt của MỌI môn → hiện nhiều hơn số server cho phép.
+  it('gói Free → truy vấn kho lượt LỌC theo subject, khớp hàm SQL enforce', async () => {
+    lookupPlanMock.mockResolvedValue('free')
+    query.mockResolvedValue({ rows: [{ available: '10' }] })
+    await handler(new Request('http://localhost/api/usage-summary'))
+    const [sql, params] = query.mock.calls[0] as [string, unknown[]]
+    expect(sql).toMatch(/subject\s*=\s*\$4/)
+    expect(params[3]).toBe('english')
   })
 
   it('lỗi DB → fail-open trả 0, vẫn 200', async () => {

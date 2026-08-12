@@ -147,6 +147,21 @@ describe('SRS ngữ pháp (đề xuất E) — dùng chung kho FSRS, khoá tiề
     vi.useRealTimers()
   })
 
+  // Hồi quy (audit 2026-08-12): addToSRS() hạ chữ thường TOÀN BỘ khoá khi GHI, nên khoá ĐỌC
+  // trong getDueGrammarLessonIds cũng phải hạ chữ thường. Trước khi sửa, một lessonId có chữ
+  // hoa được ghi dưới `grammar:a1-be` nhưng đọc dưới `grammar:A1-Be` → bài không bao giờ đến
+  // hạn ôn, hỏng IM LẶNG. Cả 78 lessonId hiện tại đều chữ thường nên chưa ai gặp; test này
+  // chặn cho lessonId thêm về sau.
+  it('lessonId có CHỮ HOA: ghi rồi đọc lại vẫn đến hạn (bất biến khép kín)', () => {
+    vi.useFakeTimers()
+    addGrammarToSRS('u1', 'A1-Be')
+    vi.advanceTimersByTime(NEW_CARD_DELAY_MS + 1000)
+    expect(getDueGrammarLessonIds('u1', ['A1-Be'])).toEqual(['A1-Be'])
+    reviewGrammar('u1', 'A1-Be', 'good')
+    expect(getDueGrammarLessonIds('u1', ['A1-Be'])).toEqual([])
+    vi.useRealTimers()
+  })
+
   it('reviewGrammar("again") → đến hạn ôn lại ngay', () => {
     addGrammarToSRS('u1', 'a1-be')
     reviewGrammar('u1', 'a1-be', 'good') // đẩy due ra tương lai trước
