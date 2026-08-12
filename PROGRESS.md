@@ -17,6 +17,50 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Audit luồng SRS + đếm lượt dùng — 2 lỗi tiềm ẩn đã sửa, 3 việc để ngỏ (2026-08-12)
+
+Người dùng yêu cầu rà triệt để nguồn sai lệch từ đầu vào tới đầu ra, chọn 3 luồng (1 SRS+đếm
+lượt · 2 từ điển/nhãn CEFR · 3 audio TTS/STT). **Đợt này mới xong LUỒNG 1**; luồng 2–3 chưa làm.
+
+Đã sửa (mỗi lỗi có test tái hiện FAIL trước / PASS sau):
+
+1. **Khoá SRS bài ngữ pháp lệch chữ hoa/thường** (`apps/english/src/lib/srs.ts`). `addToSRS()`
+   hạ chữ thường TOÀN BỘ khoá khi GHI, nhưng `getDueGrammarLessonIds()` đọc bằng
+   `grammar:${lessonId}` giữ nguyên dạng. LessonId có chữ hoa → ghi một khoá, đọc một khoá
+   khác → bài đó KHÔNG BAO GIỜ đến hạn ôn, hỏng im lặng. Đã kiểm bằng thực nghiệm: cả **78
+   lessonId hiện tại đều chữ thường** nên chưa ai gặp và **dữ liệu đã lưu không đổi** — sửa là
+   chặn sẵn cho lessonId thêm về sau.
+2. **Truy vấn hiển thị lượt Free không lọc `subject`** (`api/usage-summary.ts`). Hàm SQL
+   enforce `consume_rolling_credit` lọc `subject = p_subject` (migration 0029) nhưng truy vấn
+   hiển thị cộng MỌI subject → khi có môn thứ 2 (ADR-0001), UI báo còn nhiều lượt hơn số
+   server thật sự cho phép. Hiện chỉ có môn `english` nên **số hiển thị hôm nay không đổi**.
+
+Để ngỏ, cần người dùng quyết (KHÔNG tự sửa vì đều làm ĐỔI CON SỐ thật):
+
+- **`subject_limits` là bảng chết**: migration 0029 tạo bảng + cờ `enforced` mô tả là "phanh
+  tay admin tắt enforce hạn mức theo môn", nhưng **không dòng code nào đọc nó**. Hành vi hiện
+  tại = luôn enforce (trùng mặc định `enforced=true`), nên vô hại, nhưng tính năng quảng cáo
+  trong tài liệu thì chưa tồn tại.
+- **Hoàn lượt qua nửa đêm bị mất**: `checkAndConsumeUsage` và `refundUsage` mỗi bên tự gọi
+  `today()`. Lượt tiêu lúc 23:59 giờ VN mà provider AI lỗi và hoàn lúc 00:01 → hoàn vào dòng
+  ngày MỚI (`credits_spent = greatest(0-1, 0) = 0`) → người dùng mất 1 lượt. Hiếm nhưng thật.
+  Sửa được sạch bằng cách cho `checkAndConsumeUsage` trả về `day` đã tiêu để `refundUsage`
+  dùng lại — đụng 3 file gọi, nên chờ duyệt.
+- **`grewLearning` cộng +5 lượt khi chỉ đánh dấu "từ khó"** (`api/progress.ts`): `hard.length`
+  dài ra cũng tính là "học thật". Bật/tắt 1 từ khó là lấy được +5 của ngày mà không học. Trần
+  vẫn là 5/ngày (idempotent) nên thiệt hại có chặn trên.
+
+Bổ sung quy trình: thêm **mục 5 "Audit LUỒNG DỮ LIỆU"** vào `docs/framework/QUY-TRINH-AUDIT.md` —
+prompt 4 giai đoạn dùng lại được (lập ma trận A×B trước khi rà · kiểm chứng bằng test bất biến ·
+sửa phải có test FAIL trước/PASS sau · điều kiện dừng theo bằng chứng), kèm bảng luồng của dự án
+và các cặp đường song song hay lệch nhau. Audit 7 tầng cũ quét theo TẦNG CÔNG CỤ nên không bắt
+được loại lỗi này — mọi cổng vẫn xanh trong khi con số hiển thị cho người học vẫn sai.
+
+Đã rà và KHÔNG có lỗi (khỏi rà lại): chữ ký 7 hàm SQL khớp 100% lời gọi TS · công thức cửa sổ
+trượt `day > d - 7 and day <= d` giống hệt giữa hàm enforce và truy vấn hiển thị · hướng ưu
+tiên khi hoà `reps` nhất quán giữa merge client (`progressSync.ts`) và merge server
+(`progressMerge.ts`) · `vnDateStr` client và server cùng công thức UTC+7.
+
 ### Rà soát tính năng chuyển đổi giọng đọc — 5 lỗi + 5 cải tiến (2026-08-10, PR #526)
 
 Người dùng yêu cầu "kiểm tra cấu trúc, tính năng, đặc biệt tính năng chuyển đổi giọng đọc". Rà toàn
