@@ -119,7 +119,7 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ text }, 200, allHeaders)
   } catch (err) {
     // Provider STT lỗi → người dùng không nhận được kết quả: hoàn lại lượt vừa trừ.
-    await refundUsage(authResult.userId, 'stt')
+    await refundUsage(authResult.userId, 'stt', gate.day)
     return jsonResponse(
       { error: `Không nhận diện được giọng nói: ${(err as Error).message}` },
       500,

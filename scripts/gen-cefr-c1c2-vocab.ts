@@ -16,6 +16,7 @@
 // Chạy: npx tsx scripts/gen-cefr-c1c2-vocab.ts   (an toàn để chạy lại — ghi đè)
 
 import * as fs from 'node:fs'
+import { writeJsonPretty } from './lib/writeJson.ts'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { DictEntry } from '../apps/english/src/types.ts'
@@ -116,7 +117,7 @@ const out = {
   c2Units: c2.units,
 }
 
-fs.writeFileSync(OUT, JSON.stringify(out))
+await writeJsonPretty(OUT, out)
 const pctC1 = Math.round((c1.topicWordCount / c1Words.length) * 100)
 const pctC2 = Math.round((c2.topicWordCount / c2Words.length) * 100)
 console.log(

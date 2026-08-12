@@ -13,7 +13,7 @@ vi.mock('../core-auth/security', () => ({
   logSecurityEvent: () => {},
 }))
 vi.mock('../core-billing/usage', () => ({
-  checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const })),
+  checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const, day: '2026-08-12' })),
   refundUsage: vi.fn(async () => {}),
 }))
 vi.mock('./openaiStt', () => ({ transcribeAudio: vi.fn() }))
@@ -39,7 +39,7 @@ function makeRequest(body?: object): Request {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mockedConsume.mockResolvedValue({ ok: true })
+  mockedConsume.mockResolvedValue({ ok: true, day: '2026-08-12' })
   mockedTranscribe.mockResolvedValue('xin chào')
 })
 
@@ -113,7 +113,10 @@ describe('handler /api/stt — luồng nhận diện', () => {
     mockedTranscribe.mockRejectedValueOnce(new Error('Groq STT lỗi (500): boom'))
     const res = await handler(makeRequest())
     expect(res.status).toBe(500)
-    expect(mockedRefund).toHaveBeenCalledWith('user-test', 'stt')
+    // Hoàn lượt phải nhắm ĐÚNG NGÀY đã trừ (do checkAndConsumeUsage trả về), không phải
+    // "hôm nay" tính lại — audit 2026-08-12: một lượt trừ lúc 23:59 giờ VN mà hoàn lúc 00:01
+    // sẽ hoàn vào dòng ngày mới (credits_spent đang 0 → greatest(-1,0)=0) và bốc hơi.
+    expect(mockedRefund).toHaveBeenCalledWith('user-test', 'stt', '2026-08-12')
     const data = (await res.json()) as { error: string }
     expect(data.error).toMatch(/Không nhận diện được giọng nói/)
   })

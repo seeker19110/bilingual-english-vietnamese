@@ -16,7 +16,7 @@ vi.mock('../core-auth/security', () => ({
   logSecurityEvent: () => {},
 }))
 vi.mock('../core-billing/usage', () => ({
-  checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const })),
+  checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const, day: '2026-08-12' })),
   refundUsage: vi.fn(async () => {}),
 }))
 vi.mock('../../api/_lib/fetchTimeout', () => ({ fetchWithTimeout: vi.fn() }))
@@ -152,7 +152,7 @@ describe('handler /api/agent — nhánh Groq và hoàn lượt', () => {
     const res = await handler(makeRequest())
     expect(res.status).toBe(500)
     expect(mockedRefund).toHaveBeenCalledTimes(1)
-    expect(mockedRefund).toHaveBeenCalledWith('user-test', 'chat')
+    expect(mockedRefund).toHaveBeenCalledWith('user-test', 'chat', '2026-08-12')
   })
 
   it('Groq 200 nhưng body KHÔNG phải JSON → 500 + HOÀN lượt', async () => {
@@ -382,7 +382,7 @@ describe('handler /api/agent — nhánh Anthropic (không có Gemini/Groq)', () 
     mockedFetch.mockResolvedValue(new Response(JSON.stringify({ error: 'boom' }), { status: 529 }))
     const res = await handler(makeRequest())
     expect(res.status).toBe(529)
-    expect(mockedRefund).toHaveBeenCalledWith('user-test', 'chat')
+    expect(mockedRefund).toHaveBeenCalledWith('user-test', 'chat', '2026-08-12')
   })
 
   it('Anthropic timeout/lỗi mạng → 504 + HOÀN lượt', async () => {

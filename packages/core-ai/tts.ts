@@ -76,7 +76,14 @@ const TTS_CLAIM_POLL_MS = 300
 const TTS_CLAIM_MAX_WAIT_MS = 20_000 // follower chờ quá lâu -> tự làm leader (fallback hiếm gặp)
 
 type TtsClaim =
-  { role: 'leader' } | { role: 'cached'; audioUrl: string; visemeTimeline: VisemeFrame[] | null }
+  | { role: 'leader' }
+  | {
+      role: 'cached'
+      audioUrl: string
+      visemeTimeline: VisemeFrame[] | null
+      // iv của bản ghi (null = bản ghi trước migration 0038 → giải mã bằng iv suy từ hash).
+      iv: string | null
+    }
 
 async function claimTtsGeneration(
   pool: ReturnType<typeof getPgPool>,
@@ -120,12 +127,14 @@ async function claimTtsGeneration(
     const { rows: cachedRows } = await pool.query<{
       audio_url: string
       viseme_timeline: VisemeFrame[] | null
-    }>('select audio_url, viseme_timeline from public.tts_cache where hash = $1', [hash])
+      iv: string | null
+    }>('select audio_url, viseme_timeline, iv from public.tts_cache where hash = $1', [hash])
     if (cachedRows[0]?.audio_url) {
       return {
         role: 'cached',
         audioUrl: cachedRows[0].audio_url,
         visemeTimeline: cachedRows[0].viseme_timeline ?? null,
+        iv: cachedRows[0].iv ?? null,
       }
     }
 
@@ -272,7 +281,8 @@ export default async function handler(req: Request): Promise<Response> {
   const { rows: cachedRows } = await pool.query<{
     audio_url: string
     viseme_timeline: VisemeFrame[] | null
-  }>('select audio_url, viseme_timeline from public.tts_cache where hash = $1', [textHash])
+    iv: string | null
+  }>('select audio_url, viseme_timeline, iv from public.tts_cache where hash = $1', [textHash])
 
   const cachedUrl = cachedRows[0]?.audio_url
   if (cachedUrl) {
@@ -283,7 +293,8 @@ export default async function handler(req: Request): Promise<Response> {
     void pool
       .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
       .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
-    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
+    // iv của CHÍNH bản ghi này (null với bản ghi trước migration 0038 → rơi về iv suy từ hash).
+    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, cachedRows[0]?.iv)
     return jsonResponse(
       {
         audio_url: cachedUrl,
@@ -312,7 +323,7 @@ export default async function handler(req: Request): Promise<Response> {
     void pool
       .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
       .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
-    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
+    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, claim.iv)
     return jsonResponse(
       {
         audio_url: claim.audioUrl,
@@ -417,7 +428,7 @@ export default async function handler(req: Request): Promise<Response> {
     // An toàn với nonce AES-GCM: nhờ claimTtsGeneration() ở trên, chỉ 1 request (leader)
     // encryptAudio() cho mỗi hash — không còn 2 request đồng thời mã hoá 2 audio bytes khác
     // nhau bằng cùng 1 (khoá, iv) suy ra từ hash.
-    const encryptedData = await encryptAudio(audioData, textHash)
+    const { cipher: encryptedData, iv_b64: storedIvB64 } = await encryptAudio(audioData, textHash)
     // Giọng Gemini trả WAV thật (không phải mp3 như các provider khác — xem geminiTts.ts),
     // đặt đúng đuôi file cho dễ debug; nội dung đã bị mã hoá nên đuôi file không ảnh hưởng
     // việc phát (client tự khai mimeType đúng khi tạo Blob, xem blobMimeTypeForVoice() phía
@@ -437,13 +448,20 @@ export default async function handler(req: Request): Promise<Response> {
     // ── BƯỚC 4: Lưu vào DB ───────────────────────────────────────────────────
     try {
       await pool.query(
-        `insert into public.tts_cache (hash, lang, voice, audio_url, viseme_timeline, last_accessed_at)
-         values ($1, $2, $3, $4, $5, now())
+        `insert into public.tts_cache (hash, lang, voice, audio_url, viseme_timeline, iv, last_accessed_at)
+         values ($1, $2, $3, $4, $5, $6, now())
          on conflict (hash) do update set
            lang = excluded.lang, voice = excluded.voice, audio_url = excluded.audio_url,
-           viseme_timeline = excluded.viseme_timeline,
+           viseme_timeline = excluded.viseme_timeline, iv = excluded.iv,
            last_accessed_at = now()`,
-        [textHash, lang, voice, audioUrl, visemeTimeline ? JSON.stringify(visemeTimeline) : null],
+        [
+          textHash,
+          lang,
+          voice,
+          audioUrl,
+          visemeTimeline ? JSON.stringify(visemeTimeline) : null,
+          storedIvB64,
+        ],
       )
     } catch (err) {
       // Audio ĐÃ tạo + lưu file thành công (không mất tiền), chỉ mất bản ghi cache — lần sau
@@ -455,7 +473,7 @@ export default async function handler(req: Request): Promise<Response> {
       )
     }
 
-    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
+    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, storedIvB64)
     return jsonResponse(
       {
         audio_url: audioUrl,
