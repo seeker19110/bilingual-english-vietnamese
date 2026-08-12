@@ -262,7 +262,7 @@ export default async function handler(req: Request): Promise<Response> {
       const errMsg = err instanceof Error ? err.message : String(err)
       log.warn(`Groq lỗi sau ${Date.now() - groqStartedAt}ms: ${errMsg}`)
       if (!canFallback) {
-        await refundUsage(authResult.userId, mode)
+        await refundUsage(authResult.userId, mode, gate.day)
         return jsonResponse(
           { error: { message: `Groq lỗi: ${errMsg.slice(0, 200)}` } },
           504,
@@ -278,7 +278,7 @@ export default async function handler(req: Request): Promise<Response> {
       if (!groqResp.ok) {
         const detail = await groqResp.text().catch(() => '')
         if (!canFallback) {
-          await refundUsage(authResult.userId, mode)
+          await refundUsage(authResult.userId, mode, gate.day)
           return jsonResponse(
             { error: { message: `Groq lỗi (${groqResp.status}): ${detail.slice(0, 200)}` } },
             groqResp.status,
@@ -298,7 +298,7 @@ export default async function handler(req: Request): Promise<Response> {
         } catch (err) {
           const errMsg = err instanceof Error ? err.message : String(err)
           if (!canFallback) {
-            await refundUsage(authResult.userId, mode)
+            await refundUsage(authResult.userId, mode, gate.day)
             return jsonResponse({ error: { message: errMsg } }, 500, allHeaders)
           }
           log.warn(
@@ -345,7 +345,7 @@ export default async function handler(req: Request): Promise<Response> {
       const errMsg = err instanceof Error ? err.message : String(err)
       log.warn(`Anthropic lỗi sau ${Date.now() - anthropicStartedAt}ms: ${errMsg}`)
       if (!canFallback) {
-        await refundUsage(authResult.userId, mode)
+        await refundUsage(authResult.userId, mode, gate.day)
         return jsonResponse(
           { error: { message: `Anthropic lỗi: ${errMsg.slice(0, 200)}` } },
           504,
@@ -365,7 +365,7 @@ export default async function handler(req: Request): Promise<Response> {
       } else {
         // Thành công HOẶC không còn provider dự phòng → forward thẳng status/body gốc, giữ
         // đúng hành vi cũ (kể cả lỗi 4xx/5xx của Anthropic, không bọc lại thành JSON riêng).
-        if (!resp.ok) await refundUsage(authResult.userId, mode)
+        if (!resp.ok) await refundUsage(authResult.userId, mode, gate.day)
         const data = await resp.text()
         return new Response(data, {
           status: resp.status,
@@ -393,7 +393,7 @@ export default async function handler(req: Request): Promise<Response> {
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err)
     log.warn(`Gemini lỗi sau ${Date.now() - geminiStartedAt}ms: ${errMsg}`)
-    await refundUsage(authResult.userId, mode)
+    await refundUsage(authResult.userId, mode, gate.day)
     // Lỗi timeout (AbortController) → 504, còn lại 502 (lỗi từ nhà cung cấp), không phải 500 của ta.
     const isTimeout = /Hết thời gian chờ/.test(errMsg)
     return jsonResponse(

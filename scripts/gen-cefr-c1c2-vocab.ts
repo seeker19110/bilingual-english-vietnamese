@@ -16,6 +16,7 @@
 // Chạy: npx tsx scripts/gen-cefr-c1c2-vocab.ts   (an toàn để chạy lại — ghi đè)
 
 import * as fs from 'node:fs'
+import { writeJsonPretty } from './lib/writeJson.ts'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { DictEntry } from '../apps/english/src/types.ts'
@@ -33,7 +34,11 @@ const MAX_CIRCLES_PER_UNIT = 5
 // Lọc nhiễu: vài từ RẤT thông dụng bị nguồn nội suy gắn nhầm nhãn C1/C2 (vd dạng
 // biến thể "trying", "standing" hay modal "cannot"). Từ có hạng tần suất < ngưỡng
 // này (tức nằm trong nhóm thông dụng nhất) KHÔNG thể là C1/C2 → loại. Từ THIẾU freq
-// (hiếm tới mức không có hạng) vẫn giữ. Chỉ bỏ ~9 từ, phần còn lại đúng nâng cao.
+// (hiếm tới mức không có hạng) vẫn giữ.
+// [Đo lại 2026-08-12] Ngưỡng này hiện loại 0 từ (không phải "~9 từ" như ghi chú cũ) — các từ
+// gắn nhầm đã được sửa nhãn ở những đợt gắn nhãn CEFR sau đó. Giữ lại làm lưới an toàn: nếu
+// một đợt gắn nhãn tương lai lại gán C1/C2 cho từ siêu thông dụng, nó sẽ tự chặn. Đo lại bằng
+// cách đếm `e.freq != null && e.freq < MIN_FREQ_RANK` trên tập đã lọc `!e.base`.
 const MIN_FREQ_RANK = 2000
 
 // ── 1. Nạp toàn bộ từ điển ────────────────────────────────────────────────
@@ -112,7 +117,7 @@ const out = {
   c2Units: c2.units,
 }
 
-fs.writeFileSync(OUT, JSON.stringify(out))
+await writeJsonPretty(OUT, out)
 const pctC1 = Math.round((c1.topicWordCount / c1Words.length) * 100)
 const pctC2 = Math.round((c2.topicWordCount / c2Words.length) * 100)
 console.log(

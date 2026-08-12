@@ -21,6 +21,7 @@
 // Chạy: npx tsx scripts/gen-a1b2-extra-vocab.ts   (an toàn để chạy lại — ghi đè)
 
 import * as fs from 'node:fs'
+import { writeJsonPretty } from './lib/writeJson.ts'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { DictEntry } from '../apps/english/src/types.ts'
@@ -111,7 +112,7 @@ const out = {
   b2Units: perLevel[3]!.units,
 }
 
-fs.writeFileSync(OUT, JSON.stringify(out))
+await writeJsonPretty(OUT, out)
 console.log(
   perLevel
     .map((p) => {

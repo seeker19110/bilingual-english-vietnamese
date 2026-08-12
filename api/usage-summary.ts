@@ -19,6 +19,7 @@ import {
   lookupPlan,
   FREE_WEEKLY_CAP,
   FREE_ROLLING_WINDOW_DAYS,
+  DEFAULT_SUBJECT,
 } from '../packages/core-billing/usage.js'
 import { vnDateStr } from '../packages/core-db/date.js'
 
@@ -56,8 +57,9 @@ export default async function handler(req: Request): Promise<Response> {
     const { rows } = await pool.query<{ available: string | null }>(
       `select coalesce(sum(bonus_earned), 0) - coalesce(sum(credits_spent), 0) as available
        from public.free_daily_credit
-       where user_id = $1 and day > $2::date - $3::int and day <= $2::date`,
-      [auth.userId, today, FREE_ROLLING_WINDOW_DAYS],
+       where user_id = $1 and subject = $4
+         and day > $2::date - $3::int and day <= $2::date`,
+      [auth.userId, today, FREE_ROLLING_WINDOW_DAYS, DEFAULT_SUBJECT],
     )
     const rawAvailable = Number(rows[0]?.available ?? 0)
     // Kẹp về [0, cap] — sum có thể âm nhất thời trong ca hiếm (đọc giữa lúc ghi), và không

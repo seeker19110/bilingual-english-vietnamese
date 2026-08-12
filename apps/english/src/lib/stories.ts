@@ -2,7 +2,8 @@
 // Tách riêng khỏi component để test đơn vị không cần render UI (mục 8 đặc tả trang Nghe).
 
 import type { StoryKind, StoryLine } from '../data/stories/index'
-import type { VoiceId } from './voiceTiers'
+import { clampVoiceToAllowed, getAllowedVoices, type VoiceId } from './voiceTiers'
+import type { Plan } from '../types'
 
 // Số giây ước lượng cho mỗi câu khi nghe (mục 6.4 đặc tả).
 const SECONDS_PER_LINE = 4
@@ -24,8 +25,15 @@ export const STORY_KIND_VOICE: Record<StoryKind, VoiceId> = {
   children: 'Gemini-Kore',
 }
 
-export function getStoryVoice(kind: StoryKind): VoiceId {
-  return STORY_KIND_VOICE[kind]
+// `plan`: bỏ trống = trả giọng Gemini gốc (dùng cho script seed — seed cho gói cao nhất).
+// Truyền vào ở runtime (StoryReader.tsx) để tự hạ giọng khi gói CHƯA mở khoá Gemini: gói Free
+// sẽ nhận giọng Chirp3-HD cùng tên (Gemini-Leda → Leda → Kore nếu Leda cũng ngoài quyền),
+// khớp đúng thứ server sẽ làm (clampVoiceToPlan). Không hạ trước ở client thì client tưởng
+// đang phát WAV (Gemini) trong khi server trả mp3 → gắn sai mimeType cho Blob, iOS/Safari
+// không phát được.
+export function getStoryVoice(kind: StoryKind, plan?: Plan): VoiceId {
+  const voice = STORY_KIND_VOICE[kind]
+  return plan ? clampVoiceToAllowed(voice, getAllowedVoices(plan)) : voice
 }
 
 /**

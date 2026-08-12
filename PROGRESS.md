@@ -17,6 +17,167 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Xử lý nốt 5 việc để ngỏ của audit (2026-08-12, cùng PR) — người dùng duyệt "làm tất cả"
+
+Cả 5 việc trước đó chỉ CẢNH BÁO (vì đều làm đổi con số/hành vi thật) nay đã làm, mỗi việc có test:
+
+1. **`subject_limits` thôi là bảng chết.** Migration 0029 tạo bảng + cờ `enforced` mô tả là phanh
+   tay admin tắt enforce hạn mức theo môn, nhưng không code nào đọc. Đã nối vào
+   `checkAndConsumeUsage` qua `isSubjectEnforced()` (`packages/core-db/settings.ts`, cache 30s
+   dùng chung TTL với app_settings). Tắt phanh → KHÔNG chặn theo hạn mức nhưng VẪN ghi thống kê
+   để còn theo dõi chi phí. **Mặc định mọi nhánh không chắc chắn đều là ENFORCE** (chưa có dòng
+   cấu hình, DB lỗi, giá trị null) — ngược với fail-open thường thấy, vì đoán nhầm sang "không
+   enforce" là mở toang lượt gọi AI cho toàn bộ người dùng.
+2. **Hoàn lượt qua nửa đêm không còn bốc hơi.** `checkAndConsumeUsage` nay trả kèm `day` đã trừ,
+   `refundUsage(userId, mode, day)` hoàn đúng dòng ngày đó. Trước đây mỗi bên tự gọi `today()`:
+   lượt trừ 23:59 giờ VN, provider lỗi, hoàn lúc 00:01 → `greatest(0-1, 0) = 0`, mất trắng 1 lượt.
+   Cập nhật 8 nơi gọi refund (`ai.ts` ×6, `stt.ts`, `pronounce-assess.ts`).
+3. **Không còn cộng +5 lượt khi chỉ đánh dấu "từ khó".** Bỏ `hard.length` khỏi `grewLearning`
+   (`api/progress.ts`) — gắn nhãn từ khó là một cú bấm, không phải học. Ba tín hiệu còn lại
+   (thuộc thêm từ / xong bài ngữ pháp / xong hội thoại) đều là học thật.
+4. **IV AES-GCM nay NGẪU NHIÊN, không suy từ hash** — migration `0038_tts_cache_iv.sql` thêm cột
+   `tts_cache.iv`. `encryptAudio()` đổi chữ ký trả `{ cipher, iv_b64 }`, mọi nơi ghi phải lưu iv
+   (tts.ts + 3 script seed), mọi nơi đọc truyền iv vào (`decryptAudio`/`getClientKeyMaterial`).
+   **Tương thích ngược**: cột để NULL được, bản ghi cũ rơi về iv suy từ hash → audio đã trả tiền
+   vẫn nghe được, không cần sinh lại, không downtime. Rủi ro nonce reuse của bản ghi CŨ vẫn còn
+   cho tới khi chúng được sinh lại — chấp nhận, vì nội dung là bài học công khai.
+5. **Generator không còn ghi JSON nén.** `scripts/lib/writeJson.ts` (dùng API Prettier) cho 2
+   script ghi vào `apps/english/src/data/`. Trước đây chạy lại generator tạo diff ~44.000 dòng
+   THUẦN ĐỊNH DẠNG, đủ để che một thay đổi dữ liệu thật. Đã kiểm chứng: chạy lại cả 2 generator
+   giờ cho **diff RỖNG**. Các script ghi vào `public/data/` GIỮ NGUYÊN JSON nén — thư mục đó nằm
+   trong `.prettierignore` có chủ ý (tài sản client tải về lúc chạy, nén cho nhẹ).
+
+Bài học đáng ghi: đổi câu SQL `select audio_url, viseme_timeline` (thêm `, iv`) làm mock trong
+`tts.test.ts` không khớp chuỗi nữa → vòng `for(;;)` của `claimTtsGeneration` quay vô hạn → test
+runner OOM 8GB. Mock phân nhánh theo chuỗi SQL rất giòn; sửa SQL thì phải soát lại mock.
+
+### Audit luồng 2 (từ điển/CEFR) + luồng 3 (audio TTS-STT) (2026-08-12, cùng PR với luồng 1)
+
+**Luồng 2 — dữ liệu SẠCH, chạy kiểm trên dữ liệu THẬT trong repo (12.168 từ, 10 chunk, 3,3MB).**
+Kết quả đo: 100% có nhãn CEFR hợp lệ (0 thiếu, 0 sai giá trị) · 0 từ trùng giữa các chunk ·
+0 từ dư khoảng trắng · `cefrC1C2Vocab.json` (236 vòng/3.548 từ) và `cefrA1B2ExtraVocab.json`
+(374 vòng/6.845 từ) đều 100% tồn tại trong từ điển, đúng cấp mong đợi, không trùng nội bộ và
+không chồng lấn nhau. Chạy lại `gen-cefr-c1c2-vocab.ts` → nội dung JSON **giống hệt bit-for-bit**
+bản đã commit (bất biến lũy đẳng ✅).
+
+Đã sửa ở luồng 2 (đều là số liệu/ghi chú sai, không đụng dữ liệu):
+
+- `CLAUDE.md` ghi "10.746 từ · 97% có freq · 12.073 từ" — số thật là **12.168 từ · 94,9% có freq**
+  (619 từ chưa có). Đã ghi số đo lại kèm phân bố từng cấp.
+- `scripts/gen-cefr-c1c2-vocab.ts`: comment nói ngưỡng `MIN_FREQ_RANK=2000` "chỉ bỏ ~9 từ" —
+  đo thật thì nay loại **0 từ** (các từ gắn nhầm đã được sửa nhãn ở đợt sau). Giữ ngưỡng làm
+  lưới an toàn, sửa lại comment cho đúng.
+
+**Luồng 3 — 1 lỗi đã sửa, 1 rủi ro mật mã để ngỏ.**
+
+Đã sửa: `scripts/seed-all.ts --verify --clean-orphans` **xoá nhầm cache giọng ElevenLabs**.
+Script chỉ sinh tác vụ cho giọng Google/Gemini nên mọi dòng `tts_cache` giọng ElevenLabs đều
+nằm ngoài "tập kỳ vọng" → bị xếp orphan → `--yes` xoá thật. Nhưng Rachel là giọng người dùng
+**chọn tay được** ở Cài đặt (chỉ bị loại khỏi bể random, `RANDOM_EXCLUDED_VOICES`), `/api/tts`
+vẫn phục vụ bình thường — tức KHÔNG "mất khỏi dữ liệu app". Xoá đi là vi phạm chính sách cache
+(CLAUDE.md mục 6) và phải trả tiền sinh lại. Đã thêm bảo vệ cùng tinh thần với phần bảo vệ câu
+pattern ngoài seed-index đã có sẵn, kèm test đối chiếu danh sách giọng ElevenLabs client ↔ server
+(`api/_lib/voiceTierParity.test.ts`) — thêm giọng mới ở 1 phía mà quên phía kia sẽ đỏ test.
+
+Để ngỏ, cần quyết: **IV tất định trong AES-GCM**. `ttsCrypto.ts` suy ra cả khoá lẫn IV từ `hash`,
+nên nếu cùng một hash từng mã hoá HAI nội dung audio khác nhau thì đó là **dùng lại nonce** —
+lỗi mật mã nghiêm trọng (hai ciphertext cùng khoá+IV làm lộ XOR bản rõ và có thể lộ khoá xác
+thực GCM). Provider TTS không trả byte giống hệt nhau giữa các lần gọi, mà `tts_cache` có nhánh
+`on conflict (hash) do update`. Dự án đã lường phần nào bằng khoá "claim" chống 2 request đồng
+thời, nhưng chưa chặn trường hợp sinh lại cùng hash ở hai thời điểm khác nhau. Sửa đúng cách là
+IV ngẫu nhiên lưu kèm bản ghi (thêm cột + migration + tương thích ngược cache cũ) — quá lớn để
+tự quyết. Round-trip mã hoá/giải mã thì đã có test đầy đủ, không có lỗi.
+
+Đã rà và KHÔNG có lỗi ở luồng 3: round-trip `encryptAudio`/`decryptAudio` · khoá suy ra tất định
+theo hash · 3 script seed (`seed-all`, `prefetch-tts-patterns`, `seed-stories-gemini-tts`) tính
+hash `text+lang+voice+VOICE_VERSION` khớp nhau và khớp server cho MỌI giọng Google/Gemini (server
+chỉ bỏ `lang` với giọng ElevenLabs, mà seed không bao giờ dùng giọng đó → không lệch thật).
+
+### Audit luồng SRS + đếm lượt dùng — 2 lỗi tiềm ẩn đã sửa, 3 việc để ngỏ (2026-08-12)
+
+Người dùng yêu cầu rà triệt để nguồn sai lệch từ đầu vào tới đầu ra, chọn 3 luồng (1 SRS+đếm
+lượt · 2 từ điển/nhãn CEFR · 3 audio TTS/STT). **Đợt này mới xong LUỒNG 1**; luồng 2–3 chưa làm.
+
+Đã sửa (mỗi lỗi có test tái hiện FAIL trước / PASS sau):
+
+1. **Khoá SRS bài ngữ pháp lệch chữ hoa/thường** (`apps/english/src/lib/srs.ts`). `addToSRS()`
+   hạ chữ thường TOÀN BỘ khoá khi GHI, nhưng `getDueGrammarLessonIds()` đọc bằng
+   `grammar:${lessonId}` giữ nguyên dạng. LessonId có chữ hoa → ghi một khoá, đọc một khoá
+   khác → bài đó KHÔNG BAO GIỜ đến hạn ôn, hỏng im lặng. Đã kiểm bằng thực nghiệm: cả **78
+   lessonId hiện tại đều chữ thường** nên chưa ai gặp và **dữ liệu đã lưu không đổi** — sửa là
+   chặn sẵn cho lessonId thêm về sau.
+2. **Truy vấn hiển thị lượt Free không lọc `subject`** (`api/usage-summary.ts`). Hàm SQL
+   enforce `consume_rolling_credit` lọc `subject = p_subject` (migration 0029) nhưng truy vấn
+   hiển thị cộng MỌI subject → khi có môn thứ 2 (ADR-0001), UI báo còn nhiều lượt hơn số
+   server thật sự cho phép. Hiện chỉ có môn `english` nên **số hiển thị hôm nay không đổi**.
+
+Để ngỏ, cần người dùng quyết (KHÔNG tự sửa vì đều làm ĐỔI CON SỐ thật):
+
+- **`subject_limits` là bảng chết**: migration 0029 tạo bảng + cờ `enforced` mô tả là "phanh
+  tay admin tắt enforce hạn mức theo môn", nhưng **không dòng code nào đọc nó**. Hành vi hiện
+  tại = luôn enforce (trùng mặc định `enforced=true`), nên vô hại, nhưng tính năng quảng cáo
+  trong tài liệu thì chưa tồn tại.
+- **Hoàn lượt qua nửa đêm bị mất**: `checkAndConsumeUsage` và `refundUsage` mỗi bên tự gọi
+  `today()`. Lượt tiêu lúc 23:59 giờ VN mà provider AI lỗi và hoàn lúc 00:01 → hoàn vào dòng
+  ngày MỚI (`credits_spent = greatest(0-1, 0) = 0`) → người dùng mất 1 lượt. Hiếm nhưng thật.
+  Sửa được sạch bằng cách cho `checkAndConsumeUsage` trả về `day` đã tiêu để `refundUsage`
+  dùng lại — đụng 3 file gọi, nên chờ duyệt.
+- **`grewLearning` cộng +5 lượt khi chỉ đánh dấu "từ khó"** (`api/progress.ts`): `hard.length`
+  dài ra cũng tính là "học thật". Bật/tắt 1 từ khó là lấy được +5 của ngày mà không học. Trần
+  vẫn là 5/ngày (idempotent) nên thiệt hại có chặn trên.
+
+Bổ sung quy trình: thêm **mục 5 "Audit LUỒNG DỮ LIỆU"** vào `docs/framework/QUY-TRINH-AUDIT.md` —
+prompt 4 giai đoạn dùng lại được (lập ma trận A×B trước khi rà · kiểm chứng bằng test bất biến ·
+sửa phải có test FAIL trước/PASS sau · điều kiện dừng theo bằng chứng), kèm bảng luồng của dự án
+và các cặp đường song song hay lệch nhau. Audit 7 tầng cũ quét theo TẦNG CÔNG CỤ nên không bắt
+được loại lỗi này — mọi cổng vẫn xanh trong khi con số hiển thị cho người học vẫn sai.
+
+Đã rà và KHÔNG có lỗi (khỏi rà lại): chữ ký 7 hàm SQL khớp 100% lời gọi TS · công thức cửa sổ
+trượt `day > d - 7 and day <= d` giống hệt giữa hàm enforce và truy vấn hiển thị · hướng ưu
+tiên khi hoà `reps` nhất quán giữa merge client (`progressSync.ts`) và merge server
+(`progressMerge.ts`) · `vnDateStr` client và server cùng công thức UTC+7.
+
+### Rà soát tính năng chuyển đổi giọng đọc — 5 lỗi + 5 cải tiến (2026-08-10, PR #526)
+
+Người dùng yêu cầu "kiểm tra cấu trúc, tính năng, đặc biệt tính năng chuyển đổi giọng đọc". Rà toàn
+bộ đường giọng đọc (`apps/english/src/lib/tts.ts` · `voiceTiers.ts` · `packages/core-ai/tts.ts` ·
+`api/_lib/voiceAccess.ts`). Kết quả: phần lớn ĐÚNG thiết kế (chiều A/B truyền đúng lang ở cả 3 chỗ
+gọi trong `Speaking.tsx`; server là nguồn sự thật; các bug cũ đều còn hàng rào chống), nhưng tìm ra
+**5 vấn đề thật**, đã sửa hết:
+
+1. 🔴 **Phần sửa lỗi/giải thích KHÔNG BAO GIỜ được đọc** — hồi quy từ PR #476 (2026-08-04), tức là
+   điểm khác biệt cốt lõi của app im tiếng suốt ~6 ngày trên production mà không ai phát hiện.
+   `speakBilingual()` chốt "vé" `playToken` TRƯỚC khi phát, nhưng PR #476 thêm `playToken++` vào
+   `speakViaGoogle()` (để giải phóng lượt phát trước còn treo) → chính câu thoại của nó cũng làm vé
+   lệch → luôn `return` trước phần feedback. Nay `speak()/speakViaGoogle()` **trả về đúng số vé của
+   lượt phát vừa rồi** để nơi gọi so lại; huỷ khi bấm Tắt tiếng vẫn chạy đúng như cũ. Có test hồi quy
+   khẳng định câu thoại VÀ phần sửa lỗi đều được phát.
+2. 🔴 **Sai mimeType khi server hạ giọng** — gói Free mở trang đọc truyện: client xin giọng Gemini
+   (WAV), server hạ về Chirp3-HD (mp3), nhưng client vẫn gắn nhãn `audio/wav` cho Blob → Safari/iOS
+   có thể không phát. Nay `/api/tts` **trả kèm `voice` thật sự đã dùng** (giống `/api/pronunciation`
+   vốn đã có), client bám theo nó để chọn mimeType + lưu vào IndexedDB (entry cũ thiếu trường này vẫn
+   đọc được, không cần nâng version cache). Thêm `getStoryVoice(kind, plan)` tự hạ giọng ngay ở client.
+3. 🟡 **Hạ gói làm đổi luôn giới tính giọng** — mọi nhánh hạ giọng đều rơi về `Kore` (nữ), nên user
+   đang dùng giọng nam mà hết hạn gói bị đổi phắt sang giọng nữ. Nay hạ giọng **giữ nguyên giới tính**
+   (`defaultVoiceForGender`, khớp tay cả 2 phía); riêng giọng Gemini ưu tiên giọng Chirp3-HD cùng tên
+   (`Gemini-Leda → Leda`) trước khi rơi về mặc định.
+4. 🟡 **Random có thể trúng giọng Studio** — Studio giá $24/1 triệu ký tự, KHÔNG có hạn mức miễn phí
+   (đắt gấp 12 lần Chirp3-HD), nghĩa là user VIP vô tình đẩy chi phí lên gấp 12 mà không hề chọn. Nay
+   Studio/ElevenLabs **không bao giờ tự nhảy vào bể random** (`RANDOM_EXCLUDED_VOICES`) và cũng không
+   bị nạp trước hàng loạt — vẫn dùng đầy đủ khi người dùng CHỦ ĐỘNG chọn ở Cài đặt.
+5. 🟡 **Không có gì chặn khi 2 bảng phân quyền giọng lệch nhau** — cả 2 file chỉ ghi "PHẢI khớp tay".
+   Thêm `api/_lib/voiceTierParity.test.ts` đối chiếu tự động client ↔ server (chạy trong `npm test`,
+   chặn CI). Nhân đó đưa giọng Gemini vào bảng tier phía client cho khớp hẳn bảng server.
+
+Ngoài ra, **tách giọng giải thích khỏi giọng hội thoại** (đúng mô tả "TTS hai giọng riêng" ở
+`CLAUDE.md` mục 1): trước đây cả hai dùng chung một giọng, chỉ khác locale
+(`en-US-Chirp3-HD-Kore` → `vi-VN-Chirp3-HD-Kore`) nên người học nghe ra vẫn là MỘT người. Nay phần sửa
+lỗi mặc định đọc bằng **giọng khác giới tính** với giọng hội thoại — không cần cấu hình gì. Có công
+tắc + bộ chọn riêng ở Cài đặt (`VoicePicker`) để tắt (về hành vi cũ) hoặc chọn giọng khác;
+`speakBilingual()` nhận thêm tham số `feedbackVoice` (mặc định `getNativeVoicePref()`).
+
+Cổng: build ✅ · typecheck ✅ · lint ✅ (0 cảnh báo) · format ✅ · test ✅ 3013/3013.
+
 ### Quy ước mới: tạo PR = coi như đã xong, ghi tài liệu ngay trong PR đó (2026-08-09)
 
 Người dùng chốt: **không chờ merge mới ghi nhận**. Mỗi PR phải tự mang theo phần cập nhật `*.md`

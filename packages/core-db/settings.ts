@@ -84,4 +84,35 @@ export async function getAppSettings(): Promise<AppSettings> {
 // không phải đợi hết TTL.
 export function invalidateSettingsCache(): void {
   cache = null
+  subjectCache.clear()
+}
+
+// ── Phanh tay theo MÔN: bảng public.subject_limits (migration 0029) ──────────────────────
+// Audit 2026-08-12 phát hiện bảng này được tạo kèm cờ `enforced` và mô tả là phanh tay cho
+// admin tắt enforce hạn mức theo môn, NHƯNG không dòng code nào đọc — tức tính năng chỉ có
+// trên giấy. Hàm dưới đây nối nó vào đường enforce thật (usage.ts).
+//
+// MẶC ĐỊNH LÀ ENFORCE (true) ở mọi nhánh không chắc chắn — môn chưa có dòng cấu hình, DB lỗi,
+// giá trị null. Đây là hướng an toàn về CHI PHÍ: đoán nhầm thành "enforce" thì cùng lắm người
+// dùng bị chặn đúng như hôm nay; đoán nhầm thành "không enforce" là mở toang lượt gọi AI cho
+// toàn bộ người dùng của môn đó. KHÁC với fail-open của hạn mức thường — ở đây rủi ro ngược lại.
+const subjectCache = new Map<string, { enforced: boolean; fetchedAt: number }>()
+
+export async function isSubjectEnforced(subject: string): Promise<boolean> {
+  const hit = subjectCache.get(subject)
+  if (hit && Date.now() - hit.fetchedAt < CACHE_TTL_MS) return hit.enforced
+
+  try {
+    const { rows } = await getPgPool().query<{ enforced: boolean | null }>(
+      'select enforced from public.subject_limits where subject = $1',
+      [subject],
+    )
+    // Không có dòng nào = môn chưa được khai báo → enforce (xem giải thích trên).
+    const enforced = rows.length === 0 ? true : rows[0]?.enforced !== false
+    subjectCache.set(subject, { enforced, fetchedAt: Date.now() })
+    return enforced
+  } catch (err) {
+    console.warn('[settings] Đọc subject_limits lỗi → mặc định ENFORCE (an toàn chi phí):', err)
+    return true
+  }
 }

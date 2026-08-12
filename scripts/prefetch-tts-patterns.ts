@@ -152,7 +152,9 @@ async function processTask(
     const audioBuffer = await generateAudioFromGoogle(text, voice, lang)
 
     // Mã hóa AES-256-GCM TRƯỚC khi lưu (khoá suy từ hash) — giống api/tts.ts.
-    const encrypted = await encryptAudio(audioBuffer, hash)
+    // iv NGẪU NHIÊN mỗi lần mã hoá, PHẢI lưu kèm bản ghi (migration 0038) — không có nó thì
+    // không giải mã lại được. Xem giải thích nonce reuse trong api/_lib/ttsCrypto.ts.
+    const { cipher: encrypted, iv_b64: ivB64 } = await encryptAudio(audioBuffer, hash)
 
     // Lưu file qua saveAudio → tôn trọng STORAGE_DRIVER (local VPS hoặc Cloudflare R2).
     const fileName = `${lang}/${voice}/${hash}.mp3`
@@ -160,10 +162,11 @@ async function processTask(
 
     // Lưu vào DB — upsert để idempotent nếu 2 process chạy song song
     await pool.query(
-      `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
-       values ($1, $2, $3, $4, now())
-       on conflict (hash) do update set audio_url = excluded.audio_url, last_accessed_at = now()`,
-      [hash, lang, voice, audioUrl],
+      `insert into public.tts_cache (hash, lang, voice, audio_url, iv, last_accessed_at)
+       values ($1, $2, $3, $4, $5, now())
+       on conflict (hash) do update set audio_url = excluded.audio_url, iv = excluded.iv,
+         last_accessed_at = now()`,
+      [hash, lang, voice, audioUrl, ivB64],
     )
 
     return { status: 'ok' }

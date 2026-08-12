@@ -30,7 +30,9 @@ vi.mock('../../api/_lib/voiceAccess', () => ({
 }))
 vi.mock('./fileStorage', () => ({ saveAudio: vi.fn(async () => 'https://cdn.test/audio.mp3') }))
 vi.mock('../../api/_lib/ttsCrypto', () => ({
-  encryptAudio: vi.fn(async (buf: ArrayBuffer) => buf),
+  // Khớp chữ ký thật sau audit 2026-08-12: trả { cipher, iv_b64 } — iv ngẫu nhiên mỗi lần
+  // mã hoá và được lưu vào cột tts_cache.iv (migration 0038).
+  encryptAudio: vi.fn(async (buf: ArrayBuffer) => ({ cipher: buf, iv_b64: 'iv-moi' })),
   getClientKeyMaterial: vi.fn(async () => ({ key_b64: 'key', iv_b64: 'iv' })),
 }))
 vi.mock('../core-auth/security', () => ({
@@ -145,7 +147,7 @@ describe('handler /api/tts — cache HIT', () => {
   it('câu đã cache → trả audio ngay, cached:true, không gọi Google TTS', async () => {
     mockedGetPool.mockReturnValue(
       makePool(async (sql) => {
-        if (sql.includes('select audio_url, viseme_timeline from public.tts_cache where'))
+        if (sql.includes('select audio_url, viseme_timeline, iv from public.tts_cache where'))
           return { rows: [{ audio_url: 'https://cdn.test/cached.mp3', viseme_timeline: null }] }
         return { rows: [] }
       }) as never,
@@ -159,10 +161,46 @@ describe('handler /api/tts — cache HIT', () => {
   })
 })
 
+// Client PHẢI biết giọng server THẬT SỰ dùng: nó quyết định định dạng audio (Gemini = WAV,
+// còn lại = mp3) → quyết định mimeType lúc tạo Blob. Trước 2026-08-10 response không có
+// trường này nên gói Free mở trang đọc truyện bị gắn nhầm audio/wav cho dữ liệu mp3.
+describe('handler /api/tts — trả về giọng THẬT SỰ đã dùng', () => {
+  it('giọng bị hạ theo gói → response trả giọng đã hạ, không phải giọng client gửi lên', async () => {
+    vi.mocked(clampVoiceToPlan).mockResolvedValueOnce('Kore')
+    mockedGetPool.mockReturnValue(
+      makePool(async (sql) => {
+        if (sql.includes('select audio_url, viseme_timeline, iv from public.tts_cache where'))
+          return { rows: [{ audio_url: 'https://cdn.test/cached.mp3', viseme_timeline: null }] }
+        return { rows: [] }
+      }) as never,
+    )
+    const res = await handler(
+      makeRequest({ text: 'Ngày xửa', lang: 'vi-VN', voice: 'Gemini-Leda' }),
+    )
+    const data = (await res.json()) as { voice: string }
+    expect(data.voice).toBe('Kore')
+  })
+
+  it('cache MISS (sinh audio mới) cũng trả kèm giọng đã dùng', async () => {
+    mockedGetPool.mockReturnValue(
+      makePool(async (sql) => {
+        if (sql.includes('select audio_url, viseme_timeline, iv from public.tts_cache where'))
+          return { rows: [] }
+        if (sql.startsWith('insert into public.tts_cache_pending')) return { rows: [{ hash: 'h' }] }
+        return { rows: [] }
+      }) as never,
+    )
+    const res = await handler(makeRequest())
+    const data = (await res.json()) as { voice: string; cached: boolean }
+    expect(data.cached).toBe(false)
+    expect(data.voice).toBe('Kore')
+  })
+})
+
 describe('handler /api/tts — cache MISS, leader sinh audio (Google Chirp3-HD)', () => {
   function poolLeaderFlow(): QueryFn {
     return async (sql) => {
-      if (sql.includes('select audio_url, viseme_timeline from public.tts_cache where'))
+      if (sql.includes('select audio_url, viseme_timeline, iv from public.tts_cache where'))
         return { rows: [] } // chưa có cache
       if (sql.startsWith('insert into public.tts_cache_pending')) return { rows: [{ hash: 'h' }] } // giành được quyền leader
       return { rows: [] }
@@ -217,7 +255,7 @@ describe('handler /api/tts — cache MISS, leader sinh audio (Google Chirp3-HD)'
   it('Lưu DB tts_cache lỗi → vẫn trả 200 (audio đã tạo/lưu file thành công)', async () => {
     mockedGetPool.mockReturnValue(
       makePool(async (sql) => {
-        if (sql.includes('select audio_url, viseme_timeline from public.tts_cache where'))
+        if (sql.includes('select audio_url, viseme_timeline, iv from public.tts_cache where'))
           return { rows: [] }
         if (sql.startsWith('insert into public.tts_cache_pending')) return { rows: [{ hash: 'h' }] }
         if (sql.startsWith('insert into public.tts_cache')) throw new Error('db down')
@@ -234,7 +272,7 @@ describe('handler /api/tts — khoá claim cũ (leader trước crash) tự dọ
     let insertCount = 0
     mockedGetPool.mockReturnValue(
       makePool(async (sql) => {
-        if (sql.includes('select audio_url, viseme_timeline from public.tts_cache where'))
+        if (sql.includes('select audio_url, viseme_timeline, iv from public.tts_cache where'))
           return { rows: [] }
         if (sql.startsWith('insert into public.tts_cache_pending')) {
           insertCount += 1
@@ -262,7 +300,9 @@ describe('handler /api/tts — follower nhận kết quả cache từ leader (cl
     let cacheSelectCount = 0
     mockedGetPool.mockReturnValue(
       makePool(async (sql) => {
-        if (sql.startsWith('select audio_url, viseme_timeline from public.tts_cache where hash')) {
+        if (
+          sql.startsWith('select audio_url, viseme_timeline, iv from public.tts_cache where hash')
+        ) {
           cacheSelectCount += 1
           if (cacheSelectCount === 1) return { rows: [] } // chưa có cache lần đầu kiểm tra
           return { rows: [{ audio_url: 'https://cdn.test/leader.mp3', viseme_timeline: null }] }
@@ -285,7 +325,7 @@ describe('handler /api/tts — follower nhận kết quả cache từ leader (cl
 describe('handler /api/tts — giọng ElevenLabs (VIP) và Studio', () => {
   function poolLeaderFlow(): QueryFn {
     return async (sql) => {
-      if (sql.includes('select audio_url, viseme_timeline from public.tts_cache where'))
+      if (sql.includes('select audio_url, viseme_timeline, iv from public.tts_cache where'))
         return { rows: [] }
       if (sql.startsWith('insert into public.tts_cache_pending')) return { rows: [{ hash: 'h' }] }
       return { rows: [] }

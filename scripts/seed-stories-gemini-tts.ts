@@ -177,15 +177,16 @@ async function main(): Promise<void> {
         callsSinceLastPause++
       }
 
-      const encrypted = await encryptAudio(audioBuffer, hash)
+      // iv NGẪU NHIÊN mỗi lần mã hoá, PHẢI lưu kèm bản ghi (migration 0038).
+      const { cipher: encrypted, iv_b64: ivB64 } = await encryptAudio(audioBuffer, hash)
       const fileName = `${lang}/${voice}/${hash}.wav`
       const audioUrl = await saveAudio('tts-cache', fileName, encrypted, BASE_URL)
       await pool.query(
-        `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
-         values ($1, $2, $3, $4, now())
+        `insert into public.tts_cache (hash, lang, voice, audio_url, iv, last_accessed_at)
+         values ($1, $2, $3, $4, $5, now())
          on conflict (hash) do update set
-           audio_url = excluded.audio_url, last_accessed_at = now()`,
-        [hash, lang, voice, audioUrl],
+           audio_url = excluded.audio_url, iv = excluded.iv, last_accessed_at = now()`,
+        [hash, lang, voice, audioUrl, ivB64],
       )
       ok++
     } catch (err) {

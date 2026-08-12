@@ -47,8 +47,15 @@ speakBilingual(
   speechLang = 'en-US', feedbackLang = 'vi-VN',
   voice, rate,
   onSpeechWord?, onFeedbackWord?,   // callback karaoke (sáng chữ theo từ đang đọc)
+  feedbackVoice,                    // giọng đọc phần sửa lỗi (mặc định getNativeVoicePref())
 )
 ```
+
+**Hai giọng THẬT SỰ khác nhau (2026-08-10).** Trước đây câu hội thoại và phần sửa lỗi dùng CHUNG một
+giọng, chỉ khác locale (`en-US-Chirp3-HD-Kore` → `vi-VN-Chirp3-HD-Kore`) nên người học nghe ra vẫn là
+một người. Nay phần sửa lỗi mặc định dùng **giọng khác giới tính** với giọng hội thoại
+(`getNativeVoicePref()` trong `lib/tts.ts`); tắt/đổi được ở Cài đặt (`VoicePicker`). Giọng giải thích
+luôn loại Studio/ElevenLabs (Studio không có tiếng Việt, ElevenLabs đắt cho đoạn đọc dài).
 
 Gọi `/api/tts` (`api/tts.ts`, Google Cloud TTS). Audio cache theo hash trên bảng `tts_cache`
 (Postgres tự host) + file lưu local VPS hoặc Cloudflare R2, **mã hoá AES-256-GCM** — chỉ
