@@ -50,6 +50,12 @@ lượt · 2 từ điển/nhãn CEFR · 3 audio TTS/STT). **Đợt này mới xo
   dài ra cũng tính là "học thật". Bật/tắt 1 từ khó là lấy được +5 của ngày mà không học. Trần
   vẫn là 5/ngày (idempotent) nên thiệt hại có chặn trên.
 
+Bổ sung quy trình: thêm **mục 5 "Audit LUỒNG DỮ LIỆU"** vào `docs/framework/QUY-TRINH-AUDIT.md` —
+prompt 4 giai đoạn dùng lại được (lập ma trận A×B trước khi rà · kiểm chứng bằng test bất biến ·
+sửa phải có test FAIL trước/PASS sau · điều kiện dừng theo bằng chứng), kèm bảng luồng của dự án
+và các cặp đường song song hay lệch nhau. Audit 7 tầng cũ quét theo TẦNG CÔNG CỤ nên không bắt
+được loại lỗi này — mọi cổng vẫn xanh trong khi con số hiển thị cho người học vẫn sai.
+
 Đã rà và KHÔNG có lỗi (khỏi rà lại): chữ ký 7 hàm SQL khớp 100% lời gọi TS · công thức cửa sổ
 trượt `day > d - 7 and day <= d` giống hệt giữa hàm enforce và truy vấn hiển thị · hướng ưu
 tiên khi hoà `reps` nhất quán giữa merge client (`progressSync.ts`) và merge server
