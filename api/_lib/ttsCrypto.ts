@@ -47,27 +47,66 @@ async function hmacSha256(keyBytes: Uint8Array, message: string): Promise<Uint8A
   return new Uint8Array(sig)
 }
 
-// Suy ra khoá AES (32 byte) + iv (12 byte) từ hash — luôn ra kết quả giống nhau với
-// cùng 1 hash, không cần lưu trữ riêng cho mỗi file.
-async function deriveKeyAndIv(hash: string): Promise<{ keyBytes: Uint8Array; iv: Uint8Array }> {
+// ⚠️ IV TẤT ĐỊNH LÀ DI SẢN — chỉ dùng để ĐỌC bản ghi cũ (audit 2026-08-12).
+//
+// Bản đầu suy ra CẢ khoá LẪN iv từ `hash`. Khoá suy ra từ hash thì không sao (mỗi hash một
+// khoá), nhưng iv suy ra từ hash là NONCE CỐ ĐỊNH theo khoá: nếu cùng một hash từng mã hoá
+// HAI audio khác nhau thì đó là dùng lại nonce trong AES-GCM — hỏng nặng, không chỉ lộ XOR
+// của hai bản rõ mà còn cho phép khôi phục khoá xác thực GCM và giả mạo dữ liệu.
+// Điều đó KHÔNG chỉ là lý thuyết ở đây: provider TTS không trả byte giống hệt giữa các lần
+// gọi, mà bảng tts_cache có nhánh `on conflict (hash) do update`, tức cùng một hash có thể
+// được sinh lại ở hai thời điểm khác nhau. Khoá "claim" chỉ chặn hai request ĐỒNG THỜI.
+//
+// Từ nay: encryptAudio() sinh iv NGẪU NHIÊN mỗi lần và trả về để nơi gọi LƯU LẠI (cột
+// tts_cache.iv, migration 0034). Bản ghi cũ chưa có iv thì rơi về công thức suy ra dưới đây —
+// vẫn giải mã được, không phải sinh lại audio đã trả tiền.
+async function deriveKeyAndLegacyIv(
+  hash: string,
+): Promise<{ keyBytes: Uint8Array; iv: Uint8Array }> {
   const master = getMasterKeyBytes()
   const keyBytes = await hmacSha256(master, `dek:${hash}`) // 32 byte → dùng thẳng làm khoá AES-256
   const ivFull = await hmacSha256(master, `iv:${hash}`)
   return { keyBytes, iv: ivFull.slice(0, IV_LENGTH) }
 }
 
+// Chọn iv: có iv đã lưu (base64) thì dùng, không thì rơi về iv suy ra từ hash (bản ghi cũ).
+function pickIv(legacyIv: Uint8Array, ivB64?: string | null): Uint8Array {
+  if (!ivB64) return legacyIv
+  const iv = base64ToBytes(ivB64)
+  if (iv.length !== IV_LENGTH) {
+    throw new Error(`IV đã lưu không hợp lệ: cần ${IV_LENGTH} byte, nhận ${iv.length}`)
+  }
+  return iv
+}
+
 // Mã hóa bytes audio (mp3 gốc) → ciphertext để upload lên Storage.
-export async function encryptAudio(plain: ArrayBuffer, hash: string): Promise<ArrayBuffer> {
-  const { keyBytes, iv } = await deriveKeyAndIv(hash)
+// Trả kèm `iv_b64` — nơi gọi PHẢI lưu chuỗi này cùng bản ghi, không có nó thì không giải mã được.
+export async function encryptAudio(
+  plain: ArrayBuffer,
+  hash: string,
+): Promise<{ cipher: ArrayBuffer; iv_b64: string }> {
+  const { keyBytes } = await deriveKeyAndLegacyIv(hash)
+  const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH))
   const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, [
     'encrypt',
   ])
-  return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv as BufferSource }, key, plain)
+  const cipher = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv: iv as BufferSource },
+    key,
+    plain,
+  )
+  return { cipher, iv_b64: bytesToBase64(iv) }
 }
 
 // Giải mã ciphertext audio → bytes mp3 gốc (dùng khi remap cache sang hash mới).
-export async function decryptAudio(cipher: ArrayBuffer, hash: string): Promise<ArrayBuffer> {
-  const { keyBytes, iv } = await deriveKeyAndIv(hash)
+// `ivB64` bỏ trống = bản ghi CŨ chưa lưu iv → dùng iv suy ra từ hash.
+export async function decryptAudio(
+  cipher: ArrayBuffer,
+  hash: string,
+  ivB64?: string | null,
+): Promise<ArrayBuffer> {
+  const { keyBytes, iv: legacyIv } = await deriveKeyAndLegacyIv(hash)
+  const iv = pickIv(legacyIv, ivB64)
   const key = await crypto.subtle.importKey('raw', keyBytes as BufferSource, 'AES-GCM', false, [
     'decrypt',
   ])
@@ -76,10 +115,13 @@ export async function decryptAudio(cipher: ArrayBuffer, hash: string): Promise<A
 
 // Khoá + iv dạng base64 để gửi cho client giải mã — CHỈ gọi sau khi validateAuth() (security.ts)
 // đã xác nhận request có JWT hợp lệ, tránh phát khoá cho người chưa đăng nhập.
+// `ivB64` = giá trị cột tts_cache.iv của chính bản ghi đó (null với bản ghi cũ).
 export async function getClientKeyMaterial(
   hash: string,
+  ivB64?: string | null,
 ): Promise<{ key_b64: string; iv_b64: string }> {
-  const { keyBytes, iv } = await deriveKeyAndIv(hash)
+  const { keyBytes, iv: legacyIv } = await deriveKeyAndLegacyIv(hash)
+  const iv = pickIv(legacyIv, ivB64)
   return { key_b64: bytesToBase64(keyBytes), iv_b64: bytesToBase64(iv) }
 }
 

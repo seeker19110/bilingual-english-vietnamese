@@ -85,6 +85,7 @@ import {
   type VoiceId,
   type StudioVoiceId,
 } from '../api/_lib/googleTts.ts'
+import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.ts'
 import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
 import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../packages/core-ai/fileStorage.ts'
@@ -731,6 +732,9 @@ async function syncTtsCacheFile(key: string, counters: SyncCounters, samples: st
     const buf = await fs.promises.readFile(localPath)
     const arrayBuffer = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
     const audioUrl = await saveAudio('tts-cache', key, arrayBuffer)
+    // CHỦ Ý không đụng cột `iv`: luồng này chỉ TẢI LẠI file ciphertext local lên R2, không hề
+    // mã hoá lại — iv của bản ghi vẫn đúng như cũ, ghi đè bằng null sẽ làm file không giải mã
+    // được nữa. Nhánh `on conflict` vì thế chỉ cập nhật audio_url (xem migration 0038).
     await pool.query(
       `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
        values ($1, $2, $3, $4, now())
@@ -1271,8 +1275,8 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
       ].filter((h): h is string => h !== null)
 
       for (const oldHash of legacyHashes) {
-        const { rows: oldRows } = await pool.query<{ audio_url: string }>(
-          'select audio_url from public.tts_cache where hash = $1',
+        const { rows: oldRows } = await pool.query<{ audio_url: string; iv: string | null }>(
+          'select audio_url, iv from public.tts_cache where hash = $1',
           [oldHash],
         )
         const oldCached = oldRows[0]
@@ -1280,16 +1284,18 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
         try {
           const res = await fetch(oldCached.audio_url)
           if (res.ok) {
-            const plain = await decryptAudio(await res.arrayBuffer(), oldHash)
-            const newCipher = await encryptAudio(plain, hash)
+            // Giải mã bản CŨ bằng iv của chính nó (null = bản ghi trước migration 0038 → iv
+            // suy từ hash), rồi mã hoá lại bằng iv NGẪU NHIÊN mới và lưu iv đó kèm bản ghi mới.
+            const plain = await decryptAudio(await res.arrayBuffer(), oldHash, oldCached.iv)
+            const { cipher: newCipher, iv_b64: newIvB64 } = await encryptAudio(plain, hash)
             const fileName = `${lang}/${voice}/${hash}.mp3`
             const audioUrl = await saveAudio('tts-cache', fileName, newCipher, BASE_URL)
             await pool.query(
-              `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
-               values ($1, $2, $3, $4, now())
+              `insert into public.tts_cache (hash, lang, voice, audio_url, iv, last_accessed_at)
+               values ($1, $2, $3, $4, $5, now())
                on conflict (hash) do update set
-                 audio_url = excluded.audio_url, last_accessed_at = now()`,
-              [hash, lang, voice, audioUrl],
+                 audio_url = excluded.audio_url, iv = excluded.iv, last_accessed_at = now()`,
+              [hash, lang, voice, audioUrl, newIvB64],
             )
             return { status: 'remapped' }
           }
@@ -1309,15 +1315,16 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
     const audioBuffer = isValidStudioVoice(voice)
       ? await generateStudioAudioFromGoogle(text, voice)
       : await generateAudioFromGoogle(text, voice, lang)
-    const encrypted = await encryptAudio(audioBuffer, hash)
+    // iv NGẪU NHIÊN mỗi lần mã hoá, PHẢI lưu kèm bản ghi (migration 0038).
+    const { cipher: encrypted, iv_b64: ivB64 } = await encryptAudio(audioBuffer, hash)
     const fileName = `${lang}/${voice}/${hash}.mp3`
     const audioUrl = await saveAudio('tts-cache', fileName, encrypted, BASE_URL)
     await pool.query(
-      `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
-       values ($1, $2, $3, $4, now())
+      `insert into public.tts_cache (hash, lang, voice, audio_url, iv, last_accessed_at)
+       values ($1, $2, $3, $4, $5, now())
        on conflict (hash) do update set
-         audio_url = excluded.audio_url, last_accessed_at = now()`,
-      [hash, lang, voice, audioUrl],
+         audio_url = excluded.audio_url, iv = excluded.iv, last_accessed_at = now()`,
+      [hash, lang, voice, audioUrl, ivB64],
     )
     return { status: 'ok' }
   } catch (err) {
@@ -1696,33 +1703,42 @@ async function verifyDb(
   let pathBad = 0 // mục 5: audio_url không đúng dạng lang/voice/hash.mp3
   const badSample: string[] = []
   // mục 6: mẫu file để giải mã thử (chỉ giữ tối đa sampleN dòng, không giữ cả bảng)
-  const decryptSample: { hash: string; audio_url: string }[] = []
+  const decryptSample: { hash: string; audio_url: string; iv: string | null }[] = []
   let ttsCount = 0
 
-  await streamRows<{ hash: string; lang: string; voice: string; audio_url: string }>(
-    'tts_cache',
-    'hash, lang, voice, audio_url',
-    ['hash'],
-    (rows) => {
-      for (const r of rows) {
-        ttsCount++
-        dbHash.add(r.hash)
-        if (expectedTts.has(r.hash)) {
-          if (doClean) activeTtsUrls.add(r.audio_url)
-          if (sampleN > 0 && decryptSample.length < sampleN)
-            decryptSample.push({ hash: r.hash, audio_url: r.audio_url })
-        } else {
-          orphans.push({ hash: r.hash, lang: r.lang, voice: r.voice, audio_url: r.audio_url })
-          const k = `${r.lang}/${r.voice}`
-          orphanByVoice.set(k, (orphanByVoice.get(k) ?? 0) + 1)
-        }
-        if (!r.audio_url || !r.audio_url.includes(`${r.lang}/${r.voice}/${r.hash}.mp3`)) {
-          pathBad++
-          if (badSample.length < 5) badSample.push(r.hash)
-        }
+  await streamRows<{
+    hash: string
+    lang: string
+    voice: string
+    audio_url: string
+    iv: string | null
+  }>('tts_cache', 'hash, lang, voice, audio_url, iv', ['hash'], (rows) => {
+    for (const r of rows) {
+      ttsCount++
+      dbHash.add(r.hash)
+      // BẢO VỆ giọng ElevenLabs (audit 2026-08-12): script này chỉ sinh tác vụ cho giọng
+      // Google/Gemini, nên MỌI dòng giọng ElevenLabs đều nằm ngoài expectedTts và trước đây
+      // bị coi là orphan → `--clean-orphans --yes` xoá sạch. Nhưng ElevenLabs (Rachel) là
+      // giọng người dùng CHỌN TAY được ở Cài đặt (chỉ bị loại khỏi bể random, xem
+      // apps/english/src/lib/voiceTiers.ts RANDOM_EXCLUDED_VOICES) — /api/tts vẫn phục vụ
+      // bình thường. Tức là chúng KHÔNG "mất khỏi dữ liệu app", xoá đi là vi phạm chính sách
+      // cache (CLAUDE.md mục 6: không bao giờ tự xoá cache đang dùng) và phải trả tiền sinh lại.
+      // Cùng tinh thần với phần bảo vệ câu pattern ngoài seed-index ở mục 1.
+      if (expectedTts.has(r.hash) || isValidElevenVoice(r.voice)) {
+        if (doClean) activeTtsUrls.add(r.audio_url)
+        if (sampleN > 0 && decryptSample.length < sampleN)
+          decryptSample.push({ hash: r.hash, audio_url: r.audio_url, iv: r.iv ?? null })
+      } else {
+        orphans.push({ hash: r.hash, lang: r.lang, voice: r.voice, audio_url: r.audio_url })
+        const k = `${r.lang}/${r.voice}`
+        orphanByVoice.set(k, (orphanByVoice.get(k) ?? 0) + 1)
       }
-    },
-  )
+      if (!r.audio_url || !r.audio_url.includes(`${r.lang}/${r.voice}/${r.hash}.mp3`)) {
+        pathBad++
+        if (badSample.length < 5) badSample.push(r.hash)
+      }
+    }
+  })
   // pronunciations nhỏ (~180k dòng) — gom cả mảng vẫn nhẹ.
   const pronRows = await fetchAllRows<{ word: string; voice: string; audio_url: string }>(
     'pronunciations',
@@ -1839,7 +1855,9 @@ async function verifyDb(
         const buf = await res.arrayBuffer()
         if (buf.byteLength < 32)
           throw new Error(`BODY_NGẮN_${buf.byteLength}B (có thể là trang lỗi, không phải audio)`)
-        await decryptAudio(buf, r.hash) // giải mã bằng khoá suy từ hash
+        // Khoá suy từ hash; iv lấy từ chính bản ghi (null = bản ghi trước migration 0038 →
+        // rơi về iv suy từ hash). Thiếu iv này thì mọi bản ghi mới đều báo giải mã hỏng oan.
+        await decryptAudio(buf, r.hash, r.iv)
         okDec++
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err)

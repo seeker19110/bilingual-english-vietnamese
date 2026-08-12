@@ -17,6 +17,82 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Xử lý nốt 5 việc để ngỏ của audit (2026-08-12, cùng PR) — người dùng duyệt "làm tất cả"
+
+Cả 5 việc trước đó chỉ CẢNH BÁO (vì đều làm đổi con số/hành vi thật) nay đã làm, mỗi việc có test:
+
+1. **`subject_limits` thôi là bảng chết.** Migration 0029 tạo bảng + cờ `enforced` mô tả là phanh
+   tay admin tắt enforce hạn mức theo môn, nhưng không code nào đọc. Đã nối vào
+   `checkAndConsumeUsage` qua `isSubjectEnforced()` (`packages/core-db/settings.ts`, cache 30s
+   dùng chung TTL với app_settings). Tắt phanh → KHÔNG chặn theo hạn mức nhưng VẪN ghi thống kê
+   để còn theo dõi chi phí. **Mặc định mọi nhánh không chắc chắn đều là ENFORCE** (chưa có dòng
+   cấu hình, DB lỗi, giá trị null) — ngược với fail-open thường thấy, vì đoán nhầm sang "không
+   enforce" là mở toang lượt gọi AI cho toàn bộ người dùng.
+2. **Hoàn lượt qua nửa đêm không còn bốc hơi.** `checkAndConsumeUsage` nay trả kèm `day` đã trừ,
+   `refundUsage(userId, mode, day)` hoàn đúng dòng ngày đó. Trước đây mỗi bên tự gọi `today()`:
+   lượt trừ 23:59 giờ VN, provider lỗi, hoàn lúc 00:01 → `greatest(0-1, 0) = 0`, mất trắng 1 lượt.
+   Cập nhật 8 nơi gọi refund (`ai.ts` ×6, `stt.ts`, `pronounce-assess.ts`).
+3. **Không còn cộng +5 lượt khi chỉ đánh dấu "từ khó".** Bỏ `hard.length` khỏi `grewLearning`
+   (`api/progress.ts`) — gắn nhãn từ khó là một cú bấm, không phải học. Ba tín hiệu còn lại
+   (thuộc thêm từ / xong bài ngữ pháp / xong hội thoại) đều là học thật.
+4. **IV AES-GCM nay NGẪU NHIÊN, không suy từ hash** — migration `0038_tts_cache_iv.sql` thêm cột
+   `tts_cache.iv`. `encryptAudio()` đổi chữ ký trả `{ cipher, iv_b64 }`, mọi nơi ghi phải lưu iv
+   (tts.ts + 3 script seed), mọi nơi đọc truyền iv vào (`decryptAudio`/`getClientKeyMaterial`).
+   **Tương thích ngược**: cột để NULL được, bản ghi cũ rơi về iv suy từ hash → audio đã trả tiền
+   vẫn nghe được, không cần sinh lại, không downtime. Rủi ro nonce reuse của bản ghi CŨ vẫn còn
+   cho tới khi chúng được sinh lại — chấp nhận, vì nội dung là bài học công khai.
+5. **Generator không còn ghi JSON nén.** `scripts/lib/writeJson.ts` (dùng API Prettier) cho 2
+   script ghi vào `apps/english/src/data/`. Trước đây chạy lại generator tạo diff ~44.000 dòng
+   THUẦN ĐỊNH DẠNG, đủ để che một thay đổi dữ liệu thật. Đã kiểm chứng: chạy lại cả 2 generator
+   giờ cho **diff RỖNG**. Các script ghi vào `public/data/` GIỮ NGUYÊN JSON nén — thư mục đó nằm
+   trong `.prettierignore` có chủ ý (tài sản client tải về lúc chạy, nén cho nhẹ).
+
+Bài học đáng ghi: đổi câu SQL `select audio_url, viseme_timeline` (thêm `, iv`) làm mock trong
+`tts.test.ts` không khớp chuỗi nữa → vòng `for(;;)` của `claimTtsGeneration` quay vô hạn → test
+runner OOM 8GB. Mock phân nhánh theo chuỗi SQL rất giòn; sửa SQL thì phải soát lại mock.
+
+### Audit luồng 2 (từ điển/CEFR) + luồng 3 (audio TTS-STT) (2026-08-12, cùng PR với luồng 1)
+
+**Luồng 2 — dữ liệu SẠCH, chạy kiểm trên dữ liệu THẬT trong repo (12.168 từ, 10 chunk, 3,3MB).**
+Kết quả đo: 100% có nhãn CEFR hợp lệ (0 thiếu, 0 sai giá trị) · 0 từ trùng giữa các chunk ·
+0 từ dư khoảng trắng · `cefrC1C2Vocab.json` (236 vòng/3.548 từ) và `cefrA1B2ExtraVocab.json`
+(374 vòng/6.845 từ) đều 100% tồn tại trong từ điển, đúng cấp mong đợi, không trùng nội bộ và
+không chồng lấn nhau. Chạy lại `gen-cefr-c1c2-vocab.ts` → nội dung JSON **giống hệt bit-for-bit**
+bản đã commit (bất biến lũy đẳng ✅).
+
+Đã sửa ở luồng 2 (đều là số liệu/ghi chú sai, không đụng dữ liệu):
+
+- `CLAUDE.md` ghi "10.746 từ · 97% có freq · 12.073 từ" — số thật là **12.168 từ · 94,9% có freq**
+  (619 từ chưa có). Đã ghi số đo lại kèm phân bố từng cấp.
+- `scripts/gen-cefr-c1c2-vocab.ts`: comment nói ngưỡng `MIN_FREQ_RANK=2000` "chỉ bỏ ~9 từ" —
+  đo thật thì nay loại **0 từ** (các từ gắn nhầm đã được sửa nhãn ở đợt sau). Giữ ngưỡng làm
+  lưới an toàn, sửa lại comment cho đúng.
+
+**Luồng 3 — 1 lỗi đã sửa, 1 rủi ro mật mã để ngỏ.**
+
+Đã sửa: `scripts/seed-all.ts --verify --clean-orphans` **xoá nhầm cache giọng ElevenLabs**.
+Script chỉ sinh tác vụ cho giọng Google/Gemini nên mọi dòng `tts_cache` giọng ElevenLabs đều
+nằm ngoài "tập kỳ vọng" → bị xếp orphan → `--yes` xoá thật. Nhưng Rachel là giọng người dùng
+**chọn tay được** ở Cài đặt (chỉ bị loại khỏi bể random, `RANDOM_EXCLUDED_VOICES`), `/api/tts`
+vẫn phục vụ bình thường — tức KHÔNG "mất khỏi dữ liệu app". Xoá đi là vi phạm chính sách cache
+(CLAUDE.md mục 6) và phải trả tiền sinh lại. Đã thêm bảo vệ cùng tinh thần với phần bảo vệ câu
+pattern ngoài seed-index đã có sẵn, kèm test đối chiếu danh sách giọng ElevenLabs client ↔ server
+(`api/_lib/voiceTierParity.test.ts`) — thêm giọng mới ở 1 phía mà quên phía kia sẽ đỏ test.
+
+Để ngỏ, cần quyết: **IV tất định trong AES-GCM**. `ttsCrypto.ts` suy ra cả khoá lẫn IV từ `hash`,
+nên nếu cùng một hash từng mã hoá HAI nội dung audio khác nhau thì đó là **dùng lại nonce** —
+lỗi mật mã nghiêm trọng (hai ciphertext cùng khoá+IV làm lộ XOR bản rõ và có thể lộ khoá xác
+thực GCM). Provider TTS không trả byte giống hệt nhau giữa các lần gọi, mà `tts_cache` có nhánh
+`on conflict (hash) do update`. Dự án đã lường phần nào bằng khoá "claim" chống 2 request đồng
+thời, nhưng chưa chặn trường hợp sinh lại cùng hash ở hai thời điểm khác nhau. Sửa đúng cách là
+IV ngẫu nhiên lưu kèm bản ghi (thêm cột + migration + tương thích ngược cache cũ) — quá lớn để
+tự quyết. Round-trip mã hoá/giải mã thì đã có test đầy đủ, không có lỗi.
+
+Đã rà và KHÔNG có lỗi ở luồng 3: round-trip `encryptAudio`/`decryptAudio` · khoá suy ra tất định
+theo hash · 3 script seed (`seed-all`, `prefetch-tts-patterns`, `seed-stories-gemini-tts`) tính
+hash `text+lang+voice+VOICE_VERSION` khớp nhau và khớp server cho MỌI giọng Google/Gemini (server
+chỉ bỏ `lang` với giọng ElevenLabs, mà seed không bao giờ dùng giọng đó → không lệch thật).
+
 ### Audit luồng SRS + đếm lượt dùng — 2 lỗi tiềm ẩn đã sửa, 3 việc để ngỏ (2026-08-12)
 
 Người dùng yêu cầu rà triệt để nguồn sai lệch từ đầu vào tới đầu ra, chọn 3 luồng (1 SRS+đếm

@@ -121,7 +121,7 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse(result, 200, allHeaders)
   } catch (err) {
     // Azure lỗi/timeout → người dùng không nhận được kết quả: hoàn lại lượt vừa trừ.
-    await refundUsage(authResult.userId, 'pronounce')
+    await refundUsage(authResult.userId, 'pronounce', gate.day)
     return jsonResponse({ error: (err as Error).message, fallback: true }, 500, allHeaders)
   }
 }
