@@ -121,10 +121,13 @@ export default async function handler(req: Request): Promise<Response> {
     [auth.userId],
   )
   const existing = existingRows[0]
+  // KHÔNG tính `hard` (audit 2026-08-12): đánh dấu một từ là "khó" KHÔNG phải hành động học —
+  // nó chỉ là gắn nhãn để lọc ở tab Từ khó, bấm phát một cái là xong, không cần học gì. Tính nó
+  // vào đây nghĩa là bật/tắt 1 từ khó cũng lĩnh trọn +5 lượt AI của ngày mà không học chữ nào.
+  // Ba tín hiệu còn lại đều là học thật: thuộc thêm từ, xong thêm bài ngữ pháp, xong thêm hội thoại.
   const grewLearning =
     !existing ||
     d.learned.length > (existing.learned ?? []).length ||
-    d.hard.length > (existing.hard ?? []).length ||
     d.cefrGrammar.length > (existing.cefr_grammar ?? []).length ||
     d.cefrDialogues.length > (existing.cefr_dialogues ?? []).length
 

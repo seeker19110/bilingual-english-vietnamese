@@ -8,7 +8,7 @@ import { getPgPool } from '../core-db/pgPool.js'
 import { vnDateStr } from '../core-db/date.js'
 import { resolvePlan, type Plan } from './plan.js'
 import { effectivePlan } from './promo.js'
-import { getAppSettings } from '../core-db/settings.js'
+import { getAppSettings, isSubjectEnforced } from '../core-db/settings.js'
 
 export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
 
@@ -95,10 +95,13 @@ async function bumpUsageStat(userId: string, day: string, col: string): Promise<
 }
 
 // Kiểm tra còn lượt không + tăng 1 (authoritative). FAIL-OPEN khi lỗi hạ tầng.
+// `day` trả kèm khi cho qua = NGÀY (giờ VN) mà lượt đã bị trừ vào. Nơi gọi PHẢI truyền lại
+// đúng ngày này cho refundUsage() nếu sau đó provider lỗi — xem giải thích ở refundUsage().
 export async function checkAndConsumeUsage(
   userId: string,
   mode: UsageMode,
-): Promise<{ ok: true } | { ok: false; message: string }> {
+): Promise<{ ok: true; day: string } | { ok: false; message: string }> {
+  const day = today()
   try {
     const pool = getPgPool()
 
@@ -110,13 +113,21 @@ export async function checkAndConsumeUsage(
       return { ok: false, message: CIRCUIT_BREAKER_MESSAGE }
     }
 
+    // Phanh tay theo môn (bảng subject_limits, migration 0029): admin tắt enforce cho một môn
+    // (vd giai đoạn ra mắt) → KHÔNG chặn theo hạn mức, nhưng VẪN ghi thống kê để còn theo dõi
+    // được chi phí. Mặc định mọi môn đều enforce — xem isSubjectEnforced().
+    if (!(await isSubjectEnforced(DEFAULT_SUBJECT))) {
+      await bumpUsageStat(userId, day, COLUMN[mode])
+      return { ok: true, day }
+    }
+
     const plan = await lookupPlan(userId)
 
     // ── Gói Free: tiêu từ kho lượt CHUNG (mọi mode), cửa sổ trượt 7 ngày liền kề ──
     if (plan === 'free') {
       const { rows } = await pool.query<{ consume_rolling_credit: boolean }>(
         'select public.consume_rolling_credit($1, $2, $3, $4) as consume_rolling_credit',
-        [userId, today(), FREE_ROLLING_WINDOW_DAYS, DEFAULT_SUBJECT],
+        [userId, day, FREE_ROLLING_WINDOW_DAYS, DEFAULT_SUBJECT],
       )
       const allowed = rows[0]?.consume_rolling_credit
       if (allowed === false) return { ok: false, message: limitMessage(plan) }
@@ -124,14 +135,13 @@ export async function checkAndConsumeUsage(
       // bằng kho lượt cửa sổ trượt ở trên). Không có dòng này, dashboard quản trị sẽ không
       // thấy được người dùng Free — vốn là ĐA SỐ — dùng tính năng nào, tức là không đánh giá
       // được chi phí theo tính năng. Hạn mức truyền vào là vô cực để không bao giờ chặn nhầm.
-      await bumpUsageStat(userId, today(), COLUMN[mode])
-      return { ok: true }
+      await bumpUsageStat(userId, day, COLUMN[mode])
+      return { ok: true, day }
     }
 
     // ── Gói Pro/VIP: 1 hạn mức TỔNG/ngày cho MỌI mode cộng lại (quyết định 2026-07-27) ──
     // Vẫn ghi tăng đúng cột theo mode (giữ breakdown cho thống kê), nhưng ngưỡng chặn là
     // SUM cả 5 cột so với limits.pro/limits.vip — xem consume_usage_total (migration 0016).
-    const day = today()
     const col = COLUMN[mode]
     const { limits } = await getAppSettings()
     const limit = limits[plan]
@@ -143,16 +153,23 @@ export async function checkAndConsumeUsage(
     )
     const allowed = rows[0]?.consume_usage_total
 
-    return allowed === false ? { ok: false, message: limitMessage(plan) } : { ok: true }
+    return allowed === false ? { ok: false, message: limitMessage(plan) } : { ok: true, day }
   } catch (err) {
     console.warn('[usage] kiểm tra lượt lỗi → fail-open (cho qua):', err)
-    return { ok: true }
+    return { ok: true, day }
   }
 }
 
 // Hoàn lại 1 lượt đã trừ khi nhà cung cấp AI/STT lỗi (người dùng không nhận được kết quả).
 // FAIL-OPEN: lỗi hạ tầng thì bỏ qua êm (không bao giờ làm vỡ luồng trả lỗi cho client).
-export async function refundUsage(userId: string, mode: UsageMode): Promise<void> {
+//
+// `day` PHẢI là ngày do chính checkAndConsumeUsage() trả về lúc trừ lượt (audit 2026-08-12).
+// Trước đây hàm này tự gọi today() lần nữa: một lượt trừ lúc 23:59 giờ VN mà provider AI lỗi
+// và hoàn lúc 00:01 sẽ hoàn vào dòng NGÀY MỚI, nơi credits_spent đang là 0 —
+// `greatest(0 - 1, 0) = 0` nên khoản hoàn bốc hơi, người dùng mất trắng 1 lượt. Cả 2 hàm SQL
+// refund_rolling_credit/refund_usage đều chỉ sửa đúng dòng của ngày truyền vào.
+// Bỏ trống `day` = giữ hành vi cũ (dùng hôm nay) cho nơi gọi không có ngày gốc.
+export async function refundUsage(userId: string, mode: UsageMode, day = today()): Promise<void> {
   try {
     const pool = getPgPool()
     const plan = await lookupPlan(userId)
@@ -160,7 +177,7 @@ export async function refundUsage(userId: string, mode: UsageMode): Promise<void
     if (plan === 'free') {
       await pool.query('select public.refund_rolling_credit($1, $2, $3)', [
         userId,
-        today(),
+        day,
         DEFAULT_SUBJECT,
       ])
       // Trả lại luôn con số thống kê đã cộng ở checkAndConsumeUsage — nếu không, dashboard
@@ -168,14 +185,13 @@ export async function refundUsage(userId: string, mode: UsageMode): Promise<void
       // chi phí ước tính cao hơn thực tế.
       await pool.query('select public.refund_usage($1, $2, $3, $4)', [
         userId,
-        today(),
+        day,
         COLUMN[mode],
         DEFAULT_SUBJECT,
       ])
       return
     }
 
-    const day = today()
     const col = COLUMN[mode]
     await pool.query('select public.refund_usage($1, $2, $3, $4)', [
       userId,
