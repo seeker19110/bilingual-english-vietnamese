@@ -85,6 +85,7 @@ import {
   type VoiceId,
   type StudioVoiceId,
 } from '../api/_lib/googleTts.ts'
+import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.ts'
 import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
 import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../packages/core-ai/fileStorage.ts'
@@ -1707,7 +1708,15 @@ async function verifyDb(
       for (const r of rows) {
         ttsCount++
         dbHash.add(r.hash)
-        if (expectedTts.has(r.hash)) {
+        // BẢO VỆ giọng ElevenLabs (audit 2026-08-12): script này chỉ sinh tác vụ cho giọng
+        // Google/Gemini, nên MỌI dòng giọng ElevenLabs đều nằm ngoài expectedTts và trước đây
+        // bị coi là orphan → `--clean-orphans --yes` xoá sạch. Nhưng ElevenLabs (Rachel) là
+        // giọng người dùng CHỌN TAY được ở Cài đặt (chỉ bị loại khỏi bể random, xem
+        // apps/english/src/lib/voiceTiers.ts RANDOM_EXCLUDED_VOICES) — /api/tts vẫn phục vụ
+        // bình thường. Tức là chúng KHÔNG "mất khỏi dữ liệu app", xoá đi là vi phạm chính sách
+        // cache (CLAUDE.md mục 6: không bao giờ tự xoá cache đang dùng) và phải trả tiền sinh lại.
+        // Cùng tinh thần với phần bảo vệ câu pattern ngoài seed-index ở mục 1.
+        if (expectedTts.has(r.hash) || isValidElevenVoice(r.voice)) {
           if (doClean) activeTtsUrls.add(r.audio_url)
           if (sampleN > 0 && decryptSample.length < sampleN)
             decryptSample.push({ hash: r.hash, audio_url: r.audio_url })

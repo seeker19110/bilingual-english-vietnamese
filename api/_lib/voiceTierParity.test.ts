@@ -7,6 +7,11 @@ import { describe, it, expect } from 'vitest'
 import { VOICE_TIERS as CLIENT_TIERS } from '../../apps/english/src/lib/voiceTiers'
 import { VOICE_TIERS as SERVER_TIERS } from './voiceAccess.js'
 import { GEMINI_VOICE_IDS } from '../../packages/core-ai/geminiTts.js'
+import {
+  ELEVEN_VOICE_IDS as SERVER_ELEVEN_IDS,
+  isValidElevenVoice,
+} from '../../packages/core-ai/elevenLabsTts.js'
+import { ELEVEN_VOICE_IDS as CLIENT_ELEVEN_IDS } from '../../apps/english/src/lib/voiceTiers'
 import type { Plan } from '../../packages/core-billing/plan.js'
 
 const PLANS: Plan[] = ['free', 'pro', 'vip']
@@ -27,6 +32,15 @@ describe('bảng phân quyền giọng client ↔ server', () => {
       expect(tiers.pro.filter((v) => geminiIds.has(v))).toHaveLength(geminiIds.size)
       expect(tiers.vip.filter((v) => geminiIds.has(v))).toHaveLength(geminiIds.size)
     }
+  })
+
+  // Audit 2026-08-12: scripts/seed-all.ts (--verify --clean-orphans) BẢO VỆ dòng tts_cache có
+  // giọng ElevenLabs khỏi bị xoá nhầm, và nó nhận diện bằng isValidElevenVoice() của server.
+  // Nếu client thêm một giọng ElevenLabs mới mà server không biết, giọng đó vừa không được
+  // bảo vệ (cache bị xoá, phải trả tiền sinh lại) vừa lệch phân quyền. Danh sách 2 phía phải khớp.
+  it('danh sách giọng ElevenLabs khớp giữa client và server', () => {
+    expect([...CLIENT_ELEVEN_IDS].sort()).toEqual([...SERVER_ELEVEN_IDS].sort())
+    for (const v of CLIENT_ELEVEN_IDS) expect(isValidElevenVoice(v)).toBe(true)
   })
 
   it('bảng server có đủ 3 gói và không gói nào rỗng', () => {
