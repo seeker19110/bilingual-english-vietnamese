@@ -2065,6 +2065,34 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- **[Rà soát tự động 2026-08-09] `npm audit` VỀ 0 LỖ HỔNG lần đầu tiên — mục react-router ở dưới
+  ĐÃ ĐÓNG (không còn là nợ), cộng thêm vá 2 advisory mới phát sinh.** Container mới (chưa có
+  `node_modules`) → `npm ci` sạch rồi chạy đủ cổng: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅
+  (0 cảnh báo) · test ✅ (**164 file / 2982 test**). Không có lỗi type/lint/test nào trong code.
+  - **Tin quan trọng: advisory react-router `GHSA-qwww-vcr4-c8h2` đã được GitHub cập nhật ngày
+    2026-08-07, NARROW dải ảnh hưởng xuống `>=7.12.0 <7.18.2`** (trước đó ghi "chưa có bản vá nào
+    trong dòng 7.x", xem quyết định 2026-08-03 ở dưới) — nghĩa là **`7.18.2` (bản dự án đang dùng
+    sẵn) chính là bản đã vá**, không cần đổi gì. Xác nhận qua `npm ls react-router-dom` (đúng
+    `7.18.2`) + `npm audit` không còn liệt kê react-router. **Mục "giữ nguyên v7.18.2, chấp nhận
+    báo 2 dòng high dài hạn" ở quyết định 2026-08-03 nay LỖI THỜI — đã đóng, không phải chờ nâng
+    React 19 như dự tính.**
+  - `npm audit` phát sinh **2 advisory mới** (khác hẳn react-router, do hệ sinh thái cập nhật từ
+    2026-08-03 tới nay): `js-yaml` 4.0.0–4.3.0 (`GHSA-5p4m-2wfm-xmqj`, quadratic CPU qua `!!omap`)
+    nguồn `eslint`/`@commitlint/cli → cosmiconfig`, và `nanoid` `<3.3.17` (`GHSA-2v37-7h3g-55p8`,
+    vòng lặp vô hạn khi `size=0`) nguồn `postcss`. Cả hai đều **thuần devDependency** (lint/build
+    time), không vào bundle chạy cho người dùng cuối. `npm audit fix` mặc định kéo theo cả loạt
+    gói optional platform (`@esbuild/*`, `@img/sharp-libvips-*`) không liên quan — thay vào đó
+    thêm `overrides` trong `package.json` (`js-yaml` `^4.3.1`, `nanoid` `^3.3.18`) rồi `npm
+install`, chỉ đổi 2 dòng version trong `package-lock.json`. Xác nhận lại `npm audit`: **0 lỗ
+    hổng** (`prod` 239 · `dev` 551 · `optional` 83, tổng 790 gói). Đã chạy lại đủ 4 cổng
+    (build/typecheck/lint/test) sau khi đổi, vẫn xanh 100%.
+  - Đã sửa `.claude/report-status.sh` mục nợ #1 (không còn ghi "2 dòng high react-router báo lâu
+    dài" — đã đóng) để phiên sau không đọc phải thông tin lỗi thời.
+  - PR trước của nhánh này (#525) đã merge & xoá nhánh remote trước khi phiên này bắt đầu — theo
+    đúng quy ước "tạo PR = coi như đã xong" (CLAUDE.md mục 3): nhánh `claude/jolly-mendel-h56pdm`
+    khởi động lại từ `origin/main` (lúc đó trùng khớp HEAD, không có commit lạc), coi lượt này là
+    chu kỳ mới trên cùng tên nhánh.
+
 - **[2026-08-04] Luật a11y mới + ĐÃ TRẢ HẾT nợ tương phản AAA.** Luật (CLAUDE.md mục 4.5, theo
   khuyến nghị W3C _Understanding Conformance_): **nội dung & tiêu đề đạt AAA (≥ 7:1)**, **mọi phần
   còn lại đạt AA**. Hai cổng E2E chặn CI, cả hai TUYỆT ĐỐI (không còn baseline):
