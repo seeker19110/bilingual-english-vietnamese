@@ -40,6 +40,7 @@ import { visemeTimelineFromAlignment, type VisemeFrame } from '../../api/_lib/vi
 import { ensureProfileRow } from '../core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from '../../api/_lib/voiceAccess.js'
 import { saveAudio, isServableUrl } from './fileStorage.js'
+import { recordTtsCacheEvent } from './ttsStats.js'
 import { encryptAudio, getClientKeyMaterial } from '../../api/_lib/ttsCrypto.js'
 import {
   getCorsHeaders,
@@ -298,6 +299,7 @@ export default async function handler(req: Request): Promise<Response> {
     void pool
       .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
       .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
+    recordTtsCacheEvent(pool, { lang, voice, hit: true })
     // iv của CHÍNH bản ghi này (null với bản ghi trước migration 0038 → rơi về iv suy từ hash).
     const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, cachedRows[0]?.iv)
     return jsonResponse(
@@ -328,6 +330,8 @@ export default async function handler(req: Request): Promise<Response> {
     void pool
       .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
       .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
+    // Vẫn tính là HIT: request này KHÔNG gọi API TTS (một request khác đã sinh xong hộ).
+    recordTtsCacheEvent(pool, { lang, voice, hit: true })
     const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, claim.iv)
     return jsonResponse(
       {
@@ -478,6 +482,9 @@ export default async function handler(req: Request): Promise<Response> {
       )
     }
 
+    // MISS: đã thực sự gọi API TTS sinh audio mới → tốn tiền. Ghi sau khi lưu file/DB xong để
+    // không đếm nhầm những lần sinh thất bại (đường lỗi đã return trước khi tới đây).
+    recordTtsCacheEvent(pool, { lang, voice, hit: false })
     const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, storedIvB64)
     return jsonResponse(
       {

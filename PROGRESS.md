@@ -17,6 +17,51 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Cache TTS: sửa "cache HIT giả" + tab admin "Cache TTS & R2" (2026-08-13, PR mới)
+
+**Bối cảnh:** người dùng nghi TTS cache hoạt động sai. Đã test THẬT credentials R2 (`STORAGE_DRIVER`,
+`R2_ACCOUNT_ID/ACCESS_KEY/SECRET/BUCKET/PUBLIC_BASE_URL`) bằng đúng config `saveR2()`:
+**cả 6 biến đều ĐÚNG** — xác thực OK, bucket `english-tutor` tồn tại, quyền đọc + ghi OK, public
+read qua `pub-8fa372ee….r2.dev` trả HTTP 200 khớp byte-for-byte, domain trỏ đúng bucket. Trên R2
+đang có `tts-cache/` (≥ 8.000 file, ≥ 82 MB, thư mục con `en-US/` + `vi-VN/`) và `pronunciations/`
+(≥ 12.000 file, ≥ 60 MB). **Vấn đề KHÔNG nằm ở cấu hình R2.**
+
+**Lỗi thật đã tìm ra — "cache HIT giả":** luồng tra cache không hề hỏi R2, nó tra bảng Postgres
+`tts_cache`/`pronunciations` theo hash rồi trả thẳng `audio_url`. Dòng nào còn trỏ `/uploads/...`
+(ghi từ thời `STORAGE_DRIVER=local`, hoặc từ nhánh fallback local khi R2 lỗi) vẫn bị coi là cache
+HIT → client fetch ra 404 → và vì đã "HIT" nên câu đó **không bao giờ được sinh lại**: hỏng vĩnh
+viễn, im lặng, không tự khỏi.
+
+Đã sửa:
+
+1. **`isServableUrl()` (`packages/core-ai/fileStorage.ts`)** — ở chế độ r2 chỉ chấp nhận URL thuộc
+   `R2_PUBLIC_BASE_URL`. `/api/tts` (cả đường đọc thẳng lẫn đường claim chống race) và
+   `/api/pronunciation` coi URL không phục vụ được là MISS → gọi API sinh lại, ghi đè bằng URL R2
+   thật. **Ca biên tốn tiền đã chặn:** thiếu `R2_PUBLIC_BASE_URL` thì GIỮ NGUYÊN cache, không để
+   một biến môi trường thiếu kích hoạt sinh lại toàn bộ.
+2. **Bỏ fallback ghi local khi `STORAGE_DRIVER=r2`** — chính nhánh đó sinh ra URL hỏng. Nay ném lỗi
+   (quyết định của người dùng: "báo lỗi luôn, không ghi local"). Kiểm bằng codemap: trong 4 script
+   seed, `saveAudio` nằm TRƯỚC lệnh ghi DB trong cùng `try` ⇒ ném lỗi thì không dòng DB hỏng nào
+   được tạo, item bị đếm lỗi và báo ra.
+3. **Dữ liệu cũ KHÔNG dọn tay** (người dùng chọn): dòng hỏng gặp tới đâu tự sinh lại tới đó —
+   không đụng DB production, không sinh lại đồng loạt gây dồn cục tiền API.
+
+**Tab admin mới "Cache TTS & R2"** (`api/admin-tts-cache.ts` + `AdminTtsCachePanel.tsx`), vì trước
+đây KHÔNG có chỗ nào ghi lại /api/tts đã hit hay miss nên không trả lời được "cache hit bao nhiêu %":
+
+- Migration `0039_tts_cache_stats.sql`: bảng `tts_cache_stats` (đếm hit/miss theo ngày+lang+voice,
+  upsert bắn-rồi-quên, ngày theo giờ VN cho khớp `daily_usage`) và `tts_cache_audit` (kết quả quét
+  nền). Cả 2 chỉ là số liệu — xoá đi không mất audio.
+- Trang hiện: tỉ lệ hit 30 ngày + biểu đồ theo ngày + bảng theo giọng; đếm nhanh thuần SQL bao
+  nhiêu dòng trỏ đúng R2 / trỏ sai chỗ; và nút "Quét lại" chạy NỀN đối chiếu DB ↔ R2 để ra số
+  **thiếu trên R2** và **orphan trên R2** (bucket hàng chục nghìn file nên không quét đồng bộ được).
+- Chống quét chồng, kèm mốc 30 phút coi lượt quét treo là hỏng để một lần `pm2 reload` đúng lúc
+  không khoá cứng tính năng vĩnh viễn.
+
+**Giới hạn phải biết:** số liệu hit/miss **không hồi tố** — chỉ tính từ lúc deploy bản này.
+Và **% cache hit chưa đo được ở phiên này** vì sandbox không có DB production; phải bấm "Quét lại"
+trên VPS mới có số thật.
+
 ### Xử lý nốt 5 việc để ngỏ của audit (2026-08-12, cùng PR) — người dùng duyệt "làm tất cả"
 
 Cả 5 việc trước đó chỉ CẢNH BÁO (vì đều làm đổi con số/hành vi thật) nay đã làm, mỗi việc có test:

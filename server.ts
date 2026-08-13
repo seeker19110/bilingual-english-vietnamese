@@ -58,6 +58,7 @@ import achievementsHandler from './api/achievements.js'
 import adminAchievementRewardsHandler from './api/admin-achievement-rewards.js'
 import adminPaymentsHandler from './api/admin-payments.js'
 import adminSystemControlHandler from './api/admin-system-control.js'
+import adminTtsCacheHandler from './api/admin-tts-cache.js'
 import adminReservedNamesHandler from './api/admin-reserved-names.js'
 import adminFeedbackHandler from './api/admin-feedback.js'
 import planPricesHandler from './packages/core-billing/plan-prices.js'
@@ -214,6 +215,7 @@ app.all('/api/achievements', wrapEdge(achievementsHandler))
 app.all('/api/admin-achievement-rewards', wrapEdge(adminAchievementRewardsHandler))
 app.all('/api/admin-payments', wrapEdge(adminPaymentsHandler))
 app.all('/api/admin-system-control', wrapEdge(adminSystemControlHandler))
+app.all('/api/admin-tts-cache', wrapEdge(adminTtsCacheHandler))
 app.all('/api/admin-reserved-names', wrapEdge(adminReservedNamesHandler))
 app.all('/api/admin-feedback', wrapEdge(adminFeedbackHandler))
 app.all('/api/plan-prices', wrapEdge(planPricesHandler))

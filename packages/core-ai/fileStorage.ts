@@ -13,7 +13,7 @@
 // còn không hề mã hóa — vốn thiết kế public-read từ đầu, xem comment bảng trong
 // postgres/schema.sql). Để bucket R2 private sẽ làm vỡ hoàn toàn việc phát audio.
 
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 
@@ -132,6 +132,42 @@ function getR2Client(): S3Client {
     requestChecksumCalculation: 'WHEN_REQUIRED',
   })
   return r2Client
+}
+
+/** Bucket R2 hiện đang dùng public URL nào (trang admin cần để dựng key từ audio_url). */
+export function getR2PublicBaseUrl(): string | undefined {
+  return process.env.R2_PUBLIC_BASE_URL?.replace(/\/$/, '')
+}
+
+export interface R2Object {
+  key: string
+  size: number
+}
+
+/**
+ * Liệt kê TOÀN BỘ object trên R2 dưới một prefix (tự phân trang tới hết).
+ *
+ * CHẬM có chủ đích — bucket đang có hàng chục nghìn file. Chỉ gọi từ tác vụ CHẠY NỀN
+ * (quét đối chiếu ở trang admin), TUYỆT ĐỐI không gọi trong đường phục vụ request người dùng.
+ */
+export async function listR2Objects(prefix: string): Promise<R2Object[]> {
+  const r2Bucket = process.env.R2_BUCKET
+  if (!r2Bucket) throw new Error('Server chưa cấu hình R2_BUCKET (STORAGE_DRIVER=r2)')
+
+  const out: R2Object[] = []
+  let token: string | undefined
+  do {
+    const res = await getR2Client().send(
+      new ListObjectsV2Command({ Bucket: r2Bucket, Prefix: prefix, ContinuationToken: token }),
+    )
+    for (const o of res.Contents ?? []) {
+      if (o.Key) out.push({ key: o.Key, size: o.Size ?? 0 })
+    }
+    // IsTruncated=false → hết; chỉ đi tiếp khi CÓ token, tránh vòng lặp vô hạn nếu R2 trả
+    // IsTruncated=true mà quên NextContinuationToken.
+    token = res.IsTruncated ? res.NextContinuationToken : undefined
+  } while (token)
+  return out
 }
 
 async function saveR2(bucket: string, fileName: string, data: ArrayBuffer): Promise<string> {

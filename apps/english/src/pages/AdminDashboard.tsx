@@ -9,6 +9,7 @@ import {
   FileText,
   ChevronDown,
   Award,
+  Database,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -26,6 +27,7 @@ import AdminPaymentsPanel from '../components/admin/AdminPaymentsPanel'
 import AdminSystemControlPanel from '../components/admin/AdminSystemControlPanel'
 import AdminReservedNamesPanel from '../components/admin/AdminReservedNamesPanel'
 import AdminFeedbackPanel from '../components/admin/AdminFeedbackPanel'
+import AdminTtsCachePanel from '../components/admin/AdminTtsCachePanel'
 
 type TabKey =
   | 'usage'
@@ -35,6 +37,7 @@ type TabKey =
   | 'achievement-rewards'
   | 'grant-plan'
   | 'analytics'
+  | 'tts-cache'
 
 const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   { key: 'usage', label: 'Sử dụng, chi phí & Vận hành', icon: Activity },
@@ -44,6 +47,7 @@ const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   { key: 'achievement-rewards', label: 'Thưởng huy hiệu', icon: Award },
   { key: 'grant-plan', label: 'Người dùng, Thanh toán & Từ cấm', icon: ShieldCheck },
   { key: 'analytics', label: 'Analytics & Phản hồi AI', icon: BarChart3 },
+  { key: 'tts-cache', label: 'Cache TTS & R2', icon: Database },
 ]
 
 // Bọc riêng vì cần state chung: bấm 1 dòng ở bảng "Người dùng" (AdminUsersPanel) sẽ điền sẵn
@@ -97,6 +101,8 @@ function AdminPanel({ tabKey }: { tabKey: TabKey }) {
           <AdminFeedbackPanel />
         </>
       )
+    case 'tts-cache':
+      return <AdminTtsCachePanel />
   }
 }
 
