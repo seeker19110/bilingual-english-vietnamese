@@ -17,6 +17,34 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Fix: nút loa thẻ từ mới/SRS/Hôm nay bỏ qua giọng đã chọn ở Cài đặt (2026-08-13, nhánh `claude/fix-word-voice-cycle-l1n2e4`)
+
+Người dùng báo: đổi giọng đọc ở Cài đặt (VoicePicker, 14 giọng) không có tác dụng khi học từ
+mới/ôn SRS/tab Hôm nay — "chỉ đổi được nam/nữ". Điều tra (Explore agent) xác định:
+`WordVoiceCycleButton.tsx` (nút loa DUY NHẤT ở `WordCard.tsx`, dùng khắp `StudyTabs.tsx`) từ
+quyết định 2026-07-29 CỐ Ý bốc random 1 giọng mỗi lần bấm (`pickRandomAllowedVoice`), bỏ qua
+hoàn toàn `getVoicePref()` (giọng đã lưu ở Cài đặt) — chỉ dùng nó làm nhãn khởi tạo ban đầu.
+`KaraokeText`/`StudyTabs` (gọi `speak()` mặc định) và `tts.ts#getVoicePref` đều đúng, không có
+bug.
+
+Đã hỏi và người dùng xác nhận: bỏ hành vi random-mỗi-lần-bấm, đổi sang luôn dùng
+`getVoicePref()` — hàm này đã tự xử lý đúng cả 2 trường hợp (giọng cố định khi tắt "Giọng
+ngẫu nhiên" ở Cài đặt, hoặc giọng ngẫu nhiên GIỮ NGUYÊN trong phiên khi bật) nên khớp hành vi
+với phần còn lại của app. Sửa: bỏ `pickRandomAllowedVoice`/tham số `exclude`, gọi thẳng
+`getVoicePref()` trong `handleClick()`; giữ nguyên cơ chế cache theo giọng thật +
+`resolveActualVoice` (server có thể hạ gói).
+
+**Cùng ngày, tiếp theo:** người dùng hỏi thêm về Từ điển ("fix từ điển đúng random, không
+được thì theo giọng cài đặt") — xác nhận ý: `PronounceButton.tsx` (Từ điển/`WordFormsBlock`)
+trước đây LUÔN random mỗi lần bấm BẤT KỂ công tắc "Giọng ngẫu nhiên" ở Cài đặt (quyết định
+2026-07-29, coi random là hành vi toàn cục không tắt được ở đây) — khiến tắt công tắc đó
+tưởng vô tác dụng ở Từ điển, không đồng nhất với `WordVoiceCycleButton` vừa sửa ở trên. Sửa
+`pickVoice()`: chỉ random khi PROP `random` (mặc định true) VÀ `getVoiceRandomPref()` (công
+tắc Cài đặt) đều bật; tắt công tắc → luôn dùng `getVoicePref()` (giọng cố định đã chọn).
+
+Cổng (cả 2 lượt sửa): build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3115/3115
+xanh ✅. Không có test riêng cho 2 component này (UI thuần, không test unit từ trước).
+
 ### Tiến độ học chỉ TĂNG, không bao giờ GIẢM dù đổi máy/nhiều thiết bị (2026-08-13, PR đang mở, nhánh `claude/learning-progress-persistence-l1n2e4`)
 
 Người dùng yêu cầu: tiến độ học tập chỉ được cập nhật thêm, không được giảm đi dù đổi máy hay
