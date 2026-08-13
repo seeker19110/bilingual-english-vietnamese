@@ -41,6 +41,44 @@ tác dụng TẠM trên 1 máy — máy khác đồng bộ lại sẽ tự thêm
 biên `learned`, thêm ca biên `hard`). Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ ·
 format ✅ · test 3113/3113 xanh ✅.
 
+### Đồng bộ đa thiết bị cho cài đặt cá nhân + vé nghỉ streak (2026-08-13, nhánh `claude/learning-progress-persistence-l1n2e4`)
+
+Người dùng hỏi tiếp "đồng bộ tất cả" sau việc trên — khảo sát lại toàn bộ cơ chế đồng bộ
+(dùng Explore agent) thấy: lịch sử Chat/Viết/Nói + tiến độ học + streak/lượt dùng hàng ngày
+ĐÃ đồng bộ đầy đủ; onboarding đã có cả push (`saveOnboarding`) lẫn pull (`fetchOnboarding`,
+`lib/onboarding.ts`) — không cần sửa. Riêng **5 mục cài đặt cá nhân chỉ lưu localStorage**
+(đổi máy là mất): ngôn ngữ giao diện (`ui_lang`), chiều học Anh⇄Việt (`et_direction`), âm
+thanh (`ui_sound_enabled`), giọng đọc TTS (`tts_voice`/`tts_voice_random`/`tts_voice_native`/
+`tts_voice_native_on`), và vé nghỉ streak (`et_streak_freeze_<uid>`, trước đây CỐ Ý chưa làm
+theo comment cũ trong `storage.ts`).
+
+Đã hỏi phạm vi cụ thể + xác nhận với người dùng trước khi sửa (đúng mục 7 CLAUDE.md — đụng
+nhiều file). Thêm migration `0040_sync_user_settings.sql`: 2 cột mới trên
+`english.learning_progress` —
+
+- `settings` (jsonb): gộp `{uiLang, direction, soundEnabled, voicePref, voiceRandomPref,
+nativeVoiceOn, nativeVoicePref, updatedAt}`. Đây là **"lựa chọn hiện tại"**, không phải tiến
+  độ chỉ tăng → hợp nhất theo `updatedAt` MỚI HƠN thắng (giống `placement`/`weeklyGoal` đã có
+  từ trước), KHÔNG union như `learned`. Mọi setter cài đặt (`setUiLang`, `setDirection`,
+  `setSoundEnabled`, `setVoicePref`, `setVoiceRandomPref`, `setNativeVoiceSeparate`,
+  `setNativeVoicePref`) giờ gọi `touchSettingsUpdated()` (mới, `lib/storage.ts`) để ghi mốc
+  thời gian — nếu quên gọi ở setter mới thêm sau này, cài đặt đó sẽ không đồng bộ đúng (thua
+  trong merge vì `updatedAt` không đổi).
+- `streak_freeze_dates` (jsonb mảng "yyyy-mm-dd"): vé nghỉ ĐÃ DÙNG là sự kiện đã xảy ra → hợp
+  nhất UNION như `learned`/`achievements`, không phải last-write-wins.
+
+Sửa: `api/progress.ts` (schema + SELECT/INSERT/merge 2 cột mới), `lib/progressSync.ts` (đọc/
+ghi `settings` blob + `streakFreezeDates`, thêm `readSettingsBlob`/`applySettingsBlob`),
+`lib/storage.ts` (thêm `touchSettingsUpdated`/`getSettingsUpdatedAt`/`setSettingsUpdatedAt`
+dùng chung, sửa `setDirection`; export `getStreakFreezeDatesForSync`/
+`setStreakFreezeDatesFromSync` để `progressSync.ts` gọi), `lib/uiLang.ts`, `lib/sound.ts`,
+`lib/tts.ts` (gọi `touchSettingsUpdated()` ở từng setter). Test mới trong
+`api/progress.test.ts` (2 ca biên: `settings` giữ bản mới hơn, `streakFreezeDates` union).
+
+Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3115/3115 xanh ✅. Chưa
+chạy migration `0040` trên VPS production — cần `npm run migrate:pg` sau khi PR này deploy
+(`scripts/deploy.sh` tự chạy migration khi deploy, xem `docs/deploy-vps-ubuntu.md`).
+
 ### Sàn coverage chung 90% cho cả 4 chỉ số (2026-08-13, cùng PR)
 
 Người dùng yêu cầu "set toàn bộ coverage 90%". Đã **cảnh báo trước** rằng ngưỡng cũ là

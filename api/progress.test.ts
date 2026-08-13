@@ -126,6 +126,8 @@ describe('GET /api/progress — đọc tiến độ học', () => {
       placement: { cefr: 'A2' },
       weeklyGoal: { target: 10 },
       achievements: ['first_word'],
+      settings: {},
+      streakFreezeDates: [],
     })
   })
 })
@@ -292,6 +294,51 @@ describe('POST /api/progress — hợp nhất với dữ liệu đã có trên s
     const params = insertedParams()
     expect(JSON.parse(params[2] as string)).toEqual(['apple'])
   })
+
+  it('settings: giữ bản có updatedAt MỚI HƠN (không phải tiến độ chỉ tăng, là lựa chọn hiện tại)', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
+        return {
+          rows: [
+            {
+              ...EMPTY_PROGRESS_ROW,
+              settings: { uiLang: 'vi', updatedAt: '2026-08-13T10:00:00Z' },
+            },
+          ],
+        }
+      return { rows: [] }
+    })
+    // Client gửi lên bản CŨ HƠN (mốc sớm hơn) — server giữ nguyên bản mới hơn đang có.
+    const resp = await handler(
+      makeRequest({ settings: { uiLang: 'en', updatedAt: '2026-08-13T09:00:00Z' } }),
+    )
+    expect(resp.status).toBe(200)
+    const params = insertedParams()
+    expect(JSON.parse(params[11] as string)).toEqual({
+      uiLang: 'vi',
+      updatedAt: '2026-08-13T10:00:00Z',
+    })
+  })
+
+  it('streakFreezeDates HỢP UNION với server (vé nghỉ đã dùng ở máy khác không bị mất)', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
+        return { rows: [{ ...EMPTY_PROGRESS_ROW, streak_freeze_dates: ['2026-08-01'] }] }
+      return { rows: [] }
+    })
+    const resp = await handler(makeRequest({ streakFreezeDates: ['2026-08-05'] }))
+    expect(resp.status).toBe(200)
+    const params = insertedParams()
+    expect(JSON.parse(params[12] as string)).toEqual(['2026-08-01', '2026-08-05'])
+  })
 })
 
 describe('Ca biên: cột DB trả NULL và chưa có bản ghi nào', () => {
@@ -338,6 +385,8 @@ describe('Ca biên: cột DB trả NULL và chưa có bản ghi nào', () => {
       placement: {},
       weeklyGoal: {},
       achievements: [],
+      settings: {},
+      streakFreezeDates: [],
     })
   })
 

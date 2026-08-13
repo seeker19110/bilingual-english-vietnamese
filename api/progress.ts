@@ -40,6 +40,8 @@ const ProgressSchema = z.object({
   placement: z.record(z.string(), z.unknown()).default({}),
   weeklyGoal: z.record(z.string(), z.unknown()).default({}),
   achievements: z.array(z.string()).max(MAX_ARR).default([]),
+  settings: z.record(z.string(), z.unknown()).default({}),
+  streakFreezeDates: z.array(z.string()).max(MAX_ARR).default([]),
 })
 
 interface ProgressRow {
@@ -53,6 +55,8 @@ interface ProgressRow {
   placement: Record<string, unknown>
   weekly_goal: Record<string, unknown>
   achievements: string[]
+  settings: Record<string, unknown>
+  streak_freeze_dates: string[]
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -73,7 +77,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'GET') {
     const { rows } = await pool.query<ProgressRow>(
       `select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams,
-              placement, weekly_goal, achievements
+              placement, weekly_goal, achievements, settings, streak_freeze_dates
          from english.learning_progress where user_id = $1`,
       [auth.userId],
     )
@@ -91,6 +95,8 @@ export default async function handler(req: Request): Promise<Response> {
         placement: row.placement ?? {},
         weeklyGoal: row.weekly_goal ?? {},
         achievements: row.achievements ?? [],
+        settings: row.settings ?? {},
+        streakFreezeDates: row.streak_freeze_dates ?? [],
       },
       200,
       allHeaders,
@@ -121,7 +127,7 @@ export default async function handler(req: Request): Promise<Response> {
   // pushProgress merge) mà không có gì mới.
   const { rows: existingRows } = await pool.query<ProgressRow>(
     `select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams,
-            placement, weekly_goal, achievements
+            placement, weekly_goal, achievements, settings, streak_freeze_dates
        from english.learning_progress where user_id = $1`,
     [auth.userId],
   )
@@ -171,13 +177,21 @@ export default async function handler(req: Request): Promise<Response> {
     placement: mergeByTimestamp(existing?.placement ?? {}, d.placement, 'lastAt'),
     weeklyGoal: mergeByTimestamp(existing?.weekly_goal ?? {}, d.weeklyGoal, 'updatedAt'),
     achievements: mergeArrayUnion(existing?.achievements ?? [], d.achievements),
+    // settings: "lựa chọn hiện tại" (ngôn ngữ giao diện, chiều học, âm thanh, giọng đọc) —
+    // không phải tiến độ "chỉ tăng", nên hợp nhất theo mốc updatedAt MỚI HƠN thắng, giống
+    // placement/weeklyGoal.
+    settings: mergeByTimestamp(existing?.settings ?? {}, d.settings, 'updatedAt'),
+    // streakFreezeDates: vé nghỉ streak ĐÃ DÙNG là sự kiện đã xảy ra — chỉ tăng, union như
+    // learned/achievements (không bao giờ mất vé đã ghi nhận ở máy khác).
+    streakFreezeDates: mergeArrayUnion(existing?.streak_freeze_dates ?? [], d.streakFreezeDates),
   }
 
   await pool.query(
     `insert into english.learning_progress
        (user_id, learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked,
-        cefr_exams, placement, weekly_goal, achievements, updated_at)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, now())
+        cefr_exams, placement, weekly_goal, achievements, settings, streak_freeze_dates,
+        updated_at)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, now())
      on conflict (user_id) do update set
        learned = excluded.learned,
        hard = excluded.hard,
@@ -189,6 +203,8 @@ export default async function handler(req: Request): Promise<Response> {
        placement = excluded.placement,
        weekly_goal = excluded.weekly_goal,
        achievements = excluded.achievements,
+       settings = excluded.settings,
+       streak_freeze_dates = excluded.streak_freeze_dates,
        updated_at = now()`,
     [
       auth.userId,
@@ -202,6 +218,8 @@ export default async function handler(req: Request): Promise<Response> {
       JSON.stringify(merged.placement),
       JSON.stringify(merged.weeklyGoal),
       JSON.stringify(merged.achievements),
+      JSON.stringify(merged.settings),
+      JSON.stringify(merged.streakFreezeDates),
     ],
   )
   return jsonResponse({ ok: true }, 200, allHeaders)
