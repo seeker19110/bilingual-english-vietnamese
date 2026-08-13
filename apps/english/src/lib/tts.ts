@@ -6,6 +6,7 @@
 
 import { getAccessToken } from '@core/authHeader'
 import { audioCacheKey, getAudioEntry, setAudioBuffer } from './audioCache'
+import { touchSettingsUpdated } from './storage'
 import type { VisemeFrame } from './viseme'
 import {
   isValidVoiceId,
@@ -171,6 +172,7 @@ function getStoredVoice(): Voice {
 
 export function setVoicePref(voice: Voice): void {
   localStorage.setItem(VOICE_KEY, voice)
+  touchSettingsUpdated()
 }
 
 // ── Chế độ giọng NGẪU NHIÊN (toàn cục, bật ở trang Cài đặt) ────────────────
@@ -189,6 +191,7 @@ export function getVoiceRandomPref(): boolean {
 
 export function setVoiceRandomPref(on: boolean): void {
   localStorage.setItem(RANDOM_KEY, on ? '1' : '0')
+  touchSettingsUpdated()
 }
 
 // Bốc lại 1 giọng ngẫu nhiên mới ngay (nút "Đổi giọng khác" ở Cài đặt) — huỷ giọng đang giữ
@@ -254,10 +257,12 @@ export function isNativeVoiceSeparate(): boolean {
 
 export function setNativeVoiceSeparate(on: boolean): void {
   localStorage.setItem(NATIVE_VOICE_ON_KEY, on ? '1' : '0')
+  touchSettingsUpdated()
 }
 
 export function setNativeVoicePref(voice: Voice): void {
   localStorage.setItem(NATIVE_VOICE_KEY, voice)
+  touchSettingsUpdated()
 }
 
 // Giọng đọc phần giải thích/sửa lỗi. Quy tắc chọn, theo thứ tự:

@@ -20,6 +20,36 @@ const K = {
   usage: (uid: string, date: string) => `et_usage_${uid}_${date}`,
 }
 
+// ── Mốc thời gian cài đặt cá nhân đổi gần nhất — dùng để đồng bộ đa thiết bị (settings
+// blob trong learning_progress, xem lib/progressSync.ts) theo kiểu "mới hơn thắng", giống
+// placement/weeklyGoal. Mọi setter cài đặt (ngôn ngữ giao diện, chiều học, âm thanh, giọng
+// đọc TTS) PHẢI gọi hàm này khi đổi giá trị.
+const SETTINGS_UPDATED_AT_KEY = 'et_settings_updated_at'
+
+export function touchSettingsUpdated(): void {
+  try {
+    localStorage.setItem(SETTINGS_UPDATED_AT_KEY, new Date().toISOString())
+  } catch {
+    /* localStorage đầy/bị chặn — bỏ qua, chỉ là mốc thời gian phụ */
+  }
+}
+
+export function getSettingsUpdatedAt(): string {
+  try {
+    return localStorage.getItem(SETTINGS_UPDATED_AT_KEY) ?? ''
+  } catch {
+    return ''
+  }
+}
+
+export function setSettingsUpdatedAt(iso: string): void {
+  try {
+    localStorage.setItem(SETTINGS_UPDATED_AT_KEY, iso)
+  } catch {
+    /* ignore */
+  }
+}
+
 function get<T>(key: string): T | null {
   try {
     const raw = localStorage.getItem(key)
@@ -186,6 +216,7 @@ export function getDirection(): Direction {
 
 export function setDirection(dir: Direction) {
   localStorage.setItem(DIRECTION_KEY, dir)
+  touchSettingsUpdated()
 }
 
 // ─── Streak ───────────────────────────────────────────────────────────────────
@@ -209,14 +240,23 @@ function hasActivityOn(usage: DailyUsage | null): boolean {
 
 // ── Vé nghỉ streak (streak freeze) — V2, docs/research/cai-tien-lo-trinh-hoc.md ────────
 // 1 "vé nghỉ"/tuần: ngày đầu tiên bị bỏ lỡ trong 1 tuần KHÔNG làm đứt streak (cơ chế đã
-// được chứng minh giảm churn 21% — Duolingo). Lưu CỤC BỘ (localStorage), CHƯA đồng bộ
-// Supabase — tính năng nhẹ, thêm cột/migration mới cho việc này chưa xứng đáng ở giai
-// đoạn này; có thể lệch nhẹ nếu đổi thiết bị đúng lúc dùng vé (chấp nhận được, xem PROGRESS.md).
+// được chứng minh giảm churn 21% — Duolingo). [Cập nhật 2026-08-13] Đã đồng bộ đa thiết bị
+// qua `learning_progress.streak_freeze_dates` (union, xem lib/progressSync.ts) — không còn
+// chỉ lưu cục bộ.
 const STREAK_FREEZE_KEY = (uid: string) => `et_streak_freeze_${uid}`
 const STREAK_FREEZE_COOLDOWN_DAYS = 7 // tối thiểu số ngày giữa 2 lần dùng vé (~1 vé/tuần)
 
 function getStreakFreezeDates(userId: string): string[] {
   return get<string[]>(STREAK_FREEZE_KEY(userId)) ?? []
+}
+
+// Đọc/ghi trực tiếp (đồng bộ đa thiết bị — lib/progressSync.ts) — union với dữ liệu server.
+export function getStreakFreezeDatesForSync(userId: string): string[] {
+  return getStreakFreezeDates(userId)
+}
+
+export function setStreakFreezeDatesFromSync(userId: string, dates: string[]): void {
+  set(STREAK_FREEZE_KEY(userId), dates)
 }
 
 // Số ngày giữa 2 chuỗi "yyyy-mm-dd" (luôn dương) — dùng helper dùng chung `date.ts`.
