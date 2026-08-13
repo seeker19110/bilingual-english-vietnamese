@@ -30,12 +30,20 @@ bug.
 Đã hỏi và người dùng xác nhận: bỏ hành vi random-mỗi-lần-bấm, đổi sang luôn dùng
 `getVoicePref()` — hàm này đã tự xử lý đúng cả 2 trường hợp (giọng cố định khi tắt "Giọng
 ngẫu nhiên" ở Cài đặt, hoặc giọng ngẫu nhiên GIỮ NGUYÊN trong phiên khi bật) nên khớp hành vi
-với phần còn lại của app. Nút loa ngẫu nhiên-mỗi-lần-bấm vẫn giữ nguyên ở Từ điển
-(`PronounceButton.tsx`, không nằm trong phạm vi báo lỗi). Sửa: bỏ `pickRandomAllowedVoice`/
-tham số `exclude`, gọi thẳng `getVoicePref()` trong `handleClick()`; giữ nguyên cơ chế cache
-theo giọng thật + `resolveActualVoice` (server có thể hạ gói).
+với phần còn lại của app. Sửa: bỏ `pickRandomAllowedVoice`/tham số `exclude`, gọi thẳng
+`getVoicePref()` trong `handleClick()`; giữ nguyên cơ chế cache theo giọng thật +
+`resolveActualVoice` (server có thể hạ gói).
 
-Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3115/3115 xanh ✅.
+**Cùng ngày, tiếp theo:** người dùng hỏi thêm về Từ điển ("fix từ điển đúng random, không
+được thì theo giọng cài đặt") — xác nhận ý: `PronounceButton.tsx` (Từ điển/`WordFormsBlock`)
+trước đây LUÔN random mỗi lần bấm BẤT KỂ công tắc "Giọng ngẫu nhiên" ở Cài đặt (quyết định
+2026-07-29, coi random là hành vi toàn cục không tắt được ở đây) — khiến tắt công tắc đó
+tưởng vô tác dụng ở Từ điển, không đồng nhất với `WordVoiceCycleButton` vừa sửa ở trên. Sửa
+`pickVoice()`: chỉ random khi PROP `random` (mặc định true) VÀ `getVoiceRandomPref()` (công
+tắc Cài đặt) đều bật; tắt công tắc → luôn dùng `getVoicePref()` (giọng cố định đã chọn).
+
+Cổng (cả 2 lượt sửa): build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3115/3115
+xanh ✅. Không có test riêng cho 2 component này (UI thuần, không test unit từ trước).
 
 ### Tiến độ học chỉ TĂNG, không bao giờ GIẢM dù đổi máy/nhiều thiết bị (2026-08-13, PR đang mở, nhánh `claude/learning-progress-persistence-l1n2e4`)
 

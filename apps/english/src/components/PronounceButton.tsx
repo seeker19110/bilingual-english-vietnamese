@@ -1,22 +1,25 @@
 import { useRef, useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
-import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
+import { getVoicePref, getVoiceRandomPref, playAudioUrl, type Voice } from '../lib/tts'
 import { VOICE_OPTIONS, pickRandomAllowedVoice, resolveActualVoice } from '../lib/voiceTiers'
 
 interface Props {
   word: string
   lang?: 'en-US' | 'vi-VN' // bỏ trống = tiếng Anh (mặc định cũ, giữ tương thích chỗ gọi chưa sửa)
-  // Quyết định 2026-07-29: nút loa PronounceButton (dùng khắp Từ điển — kết quả tra cứu, tab
-  // Flashcard, các dạng biến thể của từ ở WordFormsBlock) bốc NGẪU NHIÊN 1 giọng (cả nam lẫn
-  // nữ, trong số giọng gói cho phép) MỖI LẦN BẤM theo mặc định — áp dụng TOÀN CỤC cho mọi nơi
-  // dùng component này, không cần bật riêng từng chỗ. Truyền `random={false}` nếu 1 màn hình cụ
-  // thể nào đó sau này cần giữ cố định giọng mặc định ở Cài đặt thay vì ngẫu nhiên.
+  // Quyết định 2026-07-29, SỬA 2026-08-13: nút loa PronounceButton (dùng khắp Từ điển — kết
+  // quả tra cứu, các dạng biến thể của từ ở WordFormsBlock) bốc NGẪU NHIÊN 1 giọng mỗi lần bấm
+  // — NHƯNG CHỈ khi công tắc "Giọng ngẫu nhiên" ở Cài đặt (getVoiceRandomPref) đang BẬT. Tắt
+  // công tắc đó → luôn dùng đúng giọng cố định đã chọn ở VoicePicker (getVoicePref()), khớp
+  // hành vi với WordVoiceCycleButton (thẻ học từ mới/SRS) đã sửa cùng ngày. Trước đây random
+  // CHẠY BẤT KỂ công tắc, khiến người tắt "Giọng ngẫu nhiên" tưởng Cài đặt vô tác dụng ở Từ
+  // điển. Truyền `random={false}` nếu 1 màn hình cụ thể cần ép cố định bất kể công tắc.
   random?: boolean
 }
 
-// Nút loa phát âm 1 từ — mặc định BỐC NGẪU NHIÊN giọng mỗi lần bấm (xem ghi chú Props.random);
-// truyền `random={false}` để dùng đúng giọng mặc định đã lưu ở Cài đặt (VoicePicker ở Cài đặt) thay vào đó.
+// Nút loa phát âm 1 từ — mặc định theo công tắc "Giọng ngẫu nhiên" ở Cài đặt (xem ghi chú
+// Props.random); truyền `random={false}` để LUÔN dùng giọng cố định đã lưu ở Cài đặt
+// (VoicePicker), bất kể công tắc.
 export default function PronounceButton({ word, lang = 'en-US', random = true }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   // Nhớ audioUrl đã tải theo cặp "từ|giọng" — PHẢI có cả từ trong khoá, vì component này
@@ -31,7 +34,9 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
   function pickVoice(): Voice {
     // Truyền `lang` để bỏ giọng Studio khi đọc tiếng Việt (Google không có Studio cho vi-VN,
     // server hạ về Chirp3-HD nên Kore/Puck bị trúng gấp đôi — xem api/pronunciation.ts).
-    return random
+    // Chỉ thật sự random khi PROP cho phép VÀ công tắc "Giọng ngẫu nhiên" ở Cài đặt đang bật —
+    // tắt công tắc thì getVoicePref() trả đúng giọng cố định đã chọn (đã tự xử lý ở tts.ts).
+    return random && getVoiceRandomPref()
       ? pickRandomAllowedVoice({ lang, exclude: lastVoiceRef.current ?? undefined })
       : getVoicePref()
   }
