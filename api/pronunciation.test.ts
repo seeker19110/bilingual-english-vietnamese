@@ -122,8 +122,40 @@ describe('/api/pronunciation', () => {
 
   it('word chứa ký tự lạ → 400', async () => {
     const handler = await importHandler()
-    const res = await handler(makeRequest('word=apple%3Bdrop'))
+    // `<` `>` `|` vẫn nằm ngoài allowlist (dấu câu tiếng Việt đã được mở từ 2026-08-13, xem
+    // WORD_SAFE_PATTERN — nên `;` KHÔNG còn là ca "ký tự lạ" nữa).
+    for (const qs of ['word=apple%3Cscript%3E', 'word=a%7Cb']) {
+      const res = await handler(makeRequest(qs))
+      expect(res.status).toBe(400)
+    }
+  })
+
+  it('word quá dài (>100 ký tự) → 400', async () => {
+    const handler = await importHandler()
+    const res = await handler(makeRequest(`word=${'a'.repeat(101)}`))
     expect(res.status).toBe(400)
+  })
+
+  // Chiều B đọc NGHĨA tiếng Việt của thẻ từ — hầu hết là cụm nhiều vế có dấu phẩy/ngoặc.
+  // Trước 2026-08-13 những chuỗi này bị 400 rồi rơi về Web Speech ("chữ Việt đọc giọng Anh").
+  it('nghĩa tiếng Việt nhiều vế (phẩy, ngoặc, chấm phẩy, gạch chéo) → chấp nhận', async () => {
+    for (const text of [
+      'bỏ rơi, từ bỏ',
+      'trên (tàu, xe, máy bay)',
+      'có cồn; thuộc về người nghiện rượu',
+      'có thể/có khả năng',
+    ]) {
+      query.mockReset()
+      query.mockResolvedValueOnce({ rows: [] }).mockResolvedValueOnce({ rows: [] })
+      generateAudioFromGoogle.mockReset().mockResolvedValue(new ArrayBuffer(8))
+      saveAudio.mockReset().mockResolvedValue('https://cdn/vi.mp3')
+      const handler = await importHandler()
+      const res = await handler(
+        makeRequest(`word=${encodeURIComponent(text)}&voice=Kore&lang=vi-VN`),
+      )
+      expect(res.status).toBe(200)
+      expect(generateAudioFromGoogle).toHaveBeenCalledWith(text, 'Kore', 'vi-VN')
+    }
   })
 
   it('voice không hợp lệ → 400', async () => {
