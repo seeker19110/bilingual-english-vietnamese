@@ -17,6 +17,26 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Fix: nút loa thẻ từ mới/SRS/Hôm nay bỏ qua giọng đã chọn ở Cài đặt (2026-08-13, nhánh `claude/fix-word-voice-cycle-l1n2e4`)
+
+Người dùng báo: đổi giọng đọc ở Cài đặt (VoicePicker, 14 giọng) không có tác dụng khi học từ
+mới/ôn SRS/tab Hôm nay — "chỉ đổi được nam/nữ". Điều tra (Explore agent) xác định:
+`WordVoiceCycleButton.tsx` (nút loa DUY NHẤT ở `WordCard.tsx`, dùng khắp `StudyTabs.tsx`) từ
+quyết định 2026-07-29 CỐ Ý bốc random 1 giọng mỗi lần bấm (`pickRandomAllowedVoice`), bỏ qua
+hoàn toàn `getVoicePref()` (giọng đã lưu ở Cài đặt) — chỉ dùng nó làm nhãn khởi tạo ban đầu.
+`KaraokeText`/`StudyTabs` (gọi `speak()` mặc định) và `tts.ts#getVoicePref` đều đúng, không có
+bug.
+
+Đã hỏi và người dùng xác nhận: bỏ hành vi random-mỗi-lần-bấm, đổi sang luôn dùng
+`getVoicePref()` — hàm này đã tự xử lý đúng cả 2 trường hợp (giọng cố định khi tắt "Giọng
+ngẫu nhiên" ở Cài đặt, hoặc giọng ngẫu nhiên GIỮ NGUYÊN trong phiên khi bật) nên khớp hành vi
+với phần còn lại của app. Nút loa ngẫu nhiên-mỗi-lần-bấm vẫn giữ nguyên ở Từ điển
+(`PronounceButton.tsx`, không nằm trong phạm vi báo lỗi). Sửa: bỏ `pickRandomAllowedVoice`/
+tham số `exclude`, gọi thẳng `getVoicePref()` trong `handleClick()`; giữ nguyên cơ chế cache
+theo giọng thật + `resolveActualVoice` (server có thể hạ gói).
+
+Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3115/3115 xanh ✅.
+
 ### Tiến độ học chỉ TĂNG, không bao giờ GIẢM dù đổi máy/nhiều thiết bị (2026-08-13, PR đang mở, nhánh `claude/learning-progress-persistence-l1n2e4`)
 
 Người dùng yêu cầu: tiến độ học tập chỉ được cập nhật thêm, không được giảm đi dù đổi máy hay
