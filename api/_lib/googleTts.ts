@@ -124,6 +124,21 @@ export function isValidStudioVoice(value: string): value is StudioVoiceId {
   return (STUDIO_VOICE_IDS as string[]).includes(value)
 }
 
+// Đưa tên giọng nhận từ client về ĐÚNG dạng chuẩn (PascalCase: "aoede" → "Aoede",
+// "studio-o" → "Studio-O"). Cần vì tên giọng Chirp3-HD/Studio phân biệt HOA-thường:
+// api/pronunciation.ts trước đây tự toLowerCase() tham số voice rồi mới kiểm hợp lệ, nên
+// MỌI giọng client gửi lên (đều PascalCase) đều bị coi là không hợp lệ → 400 → nút loa âm
+// thầm rơi về Web Speech, khiến người dùng luôn nghe MỘT giọng trình duyệt dù cài đặt gì.
+// Trả nguyên văn nếu không khớp giọng nào — nơi gọi tự báo lỗi 400 như cũ.
+export function canonicalizeVoiceId(raw: string): string {
+  const lower = raw.toLowerCase()
+  return (
+    VOICE_IDS.find((v) => v.toLowerCase() === lower) ??
+    STUDIO_VOICE_IDS.find((v) => v.toLowerCase() === lower) ??
+    raw
+  )
+}
+
 function resolveStudioVoiceConfig(voice: StudioVoiceId): {
   name: string
   ssmlGender: 'FEMALE' | 'MALE'

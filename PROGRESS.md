@@ -17,6 +17,28 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Fix (GỐC RỄ): `/api/pronunciation` từ chối MỌI giọng client gửi lên → luôn nghe 1 giọng (2026-08-13, nhánh `claude/tts-cache-voice-i1plxb`)
+
+Người dùng báo tiếp: "cài đặt riêng thế nào cũng chỉ trả về 1 giọng". Truy đến nơi:
+`api/pronunciation.ts` đọc tham số `voice` bằng `.toLowerCase()` **trước** khi kiểm hợp lệ, trong
+khi tên giọng Chirp3-HD/Studio PHÂN BIỆT hoa-thường (`Aoede`, `Studio-O` — xem
+`api/_lib/googleTts.ts`). Hệ quả: mọi request có `?voice=...` (client luôn gửi PascalCase) đều
+rớt `isValidVoice()` → **400** → `PronounceButton`/`WordVoiceCycleButton` nuốt lỗi và fallback
+Web Speech API, tức luôn phát MỘT giọng mặc định của trình duyệt. Chỉ request KHÔNG kèm `voice`
+(dùng `DEFAULT_VOICE = 'Kore'`) mới chạy được — nên đổi giọng ở Cài đặt trông như vô tác dụng.
+Đường `/api/tts` (câu/đoạn) không dính lỗi này; cache theo `voice` ở cả 2 endpoint vốn đã đúng.
+
+Sửa: thêm `canonicalizeVoiceId()` trong `api/_lib/googleTts.ts` (chuẩn hoá không phân biệt
+hoa-thường về đúng tên chuẩn, giữ tương thích link cũ dạng chữ thường), `api/pronunciation.ts`
+dùng nó thay cho `.toLowerCase()`.
+
+**Vì sao test cũ không bắt được:** `api/pronunciation.test.ts` mock `isValidVoice` bằng danh sách
+CHỮ THƯỜNG (`['kore','puck']`) — mock sai lệch với module thật nên che đúng con bug. Đã sửa mock
+về PascalCase như thật + thêm test hồi quy "voice PascalCase từ client → 200 và giữ đúng giọng",
+kèm test cho `canonicalizeVoiceId`. Bài học: mock phải khớp hành vi thật của module bị mock.
+
+Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3118/3118 xanh ✅.
+
 ### Fix: nút loa thẻ từ mới/SRS/Hôm nay bỏ qua giọng đã chọn ở Cài đặt (2026-08-13, nhánh `claude/fix-word-voice-cycle-l1n2e4`)
 
 Người dùng báo: đổi giọng đọc ở Cài đặt (VoicePicker, 14 giọng) không có tác dụng khi học từ
