@@ -19,7 +19,12 @@ import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { vnDateStr } from '../packages/core-db/date.js'
 import { FREE_WEEKLY_BONUS_PER_DAY } from '../packages/core-billing/usage.js'
-import { mergeSrsMap, mergeExamMap, mergeByTimestamp } from './_lib/progressMerge.js'
+import {
+  mergeSrsMap,
+  mergeExamMap,
+  mergeByTimestamp,
+  mergeArrayUnion,
+} from './_lib/progressMerge.js'
 
 // Giới hạn kích thước hợp lý — chặn payload bất thường (DoS/lỗi client) mà vẫn đủ rộng
 // cho người học nhiều năm (từ điển app hiện ~12.000 từ).
@@ -145,29 +150,27 @@ export default async function handler(req: Request): Promise<Response> {
     }
   }
 
-  // Hợp nhất CÁC TRƯỜNG KHÔNG CÓ THAO TÁC "BỎ ĐÁNH DẤU" với dữ liệu đang có trên server —
-  // an toàn tuyệt đối vì các trường này chỉ "tốt lên", không có hành động nào của người dùng
-  // làm chúng nhỏ lại (SRS chỉ cập nhật thẻ đã có, điểm thi chỉ cải thiện, placement/weeklyGoal
-  // là "chụp trạng thái" nên so theo mốc thời gian). Việc này chặn đúng kịch bản gây mất dữ
-  // liệu: một thiết bị/tab gửi lên dữ liệu CŨ/RỖNG trước khi kịp kéo (pull) dữ liệu thật về
-  // (mất mạng, 2 tab cùng mở, race giữa pullProgress và pushProgress ở client).
-  //
-  // CÁC MẢNG có thao tác bỏ đánh dấu thật (unmarkLearned, toggleDifficult tắt,
-  // unmarkGrammarDone — xem lib/vocab.ts + lib/cefrProgress.ts) KHÔNG được hợp nhất kiểu
-  // hợp (union) ở đây — hợp sẽ làm việc bỏ đánh dấu không bao giờ có hiệu lực (server luôn
-  // cộng lại mục vừa bỏ). Race cho các mảng này được chặn ở phía client (progressSync.ts:
-  // pushProgress luôn CHỜ pullProgress đang chạy xong trước khi đọc localStorage để gửi đi).
+  // Hợp nhất với dữ liệu đang có trên server — CHẶN TUYỆT ĐỐI kịch bản mất tiến độ khi dùng
+  // nhiều thiết bị/tab (một thiết bị gửi lên dữ liệu CŨ/thiếu trước khi kịp kéo dữ liệu thật
+  // về, do mất mạng, 2 tab cùng mở, hoặc 2 thiết bị học song song rồi đồng bộ gần như đồng
+  // thời). Quyết định 2026-08-13: TOÀN BỘ các trường "tiến độ học" giờ chỉ TĂNG, không bao giờ
+  // giảm — kể cả learned/cefrGrammar/cefrDialogues/cefrUnlocked/achievements (trước đây ghi đè
+  // theo client). Đánh đổi đã xác nhận với người dùng: "bỏ đánh dấu" (unmarkLearned — không có
+  // nút UI nào gọi, chỉ còn trong test; unmarkGrammarDone — CÓ dùng ở CefrLessonViews.tsx) sẽ
+  // không còn tác dụng lâu dài, vì máy khác đồng bộ lại sẽ tự thêm lại mục vừa bỏ (xem
+  // _lib/progressMerge.ts). Riêng `hard` (nhãn từ khó, chỉ là lọc hiển thị — không phải tiến
+  // độ) VẪN ghi đè theo client như cũ.
   const merged = {
-    learned: d.learned,
+    learned: mergeArrayUnion(existing?.learned ?? [], d.learned),
     hard: d.hard,
     srs: mergeSrsMap(existing?.srs ?? {}, d.srs),
-    cefrGrammar: d.cefrGrammar,
-    cefrDialogues: d.cefrDialogues,
-    cefrUnlocked: d.cefrUnlocked,
+    cefrGrammar: mergeArrayUnion(existing?.cefr_grammar ?? [], d.cefrGrammar),
+    cefrDialogues: mergeArrayUnion(existing?.cefr_dialogues ?? [], d.cefrDialogues),
+    cefrUnlocked: mergeArrayUnion(existing?.cefr_unlocked ?? [], d.cefrUnlocked),
     cefrExams: mergeExamMap(existing?.cefr_exams ?? {}, d.cefrExams),
     placement: mergeByTimestamp(existing?.placement ?? {}, d.placement, 'lastAt'),
     weeklyGoal: mergeByTimestamp(existing?.weekly_goal ?? {}, d.weeklyGoal, 'updatedAt'),
-    achievements: d.achievements,
+    achievements: mergeArrayUnion(existing?.achievements ?? [], d.achievements),
   }
 
   await pool.query(
