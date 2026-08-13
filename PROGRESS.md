@@ -39,6 +39,12 @@ kèm test cho `canonicalizeVoiceId`. Bài học: mock phải khớp hành vi th�
 
 Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3118/3118 xanh ✅.
 
+**Tiếp theo (cùng ngày, PR sau):** siết luôn gốc rễ khiến bug lọt lưới — `api/pronunciation.test.ts`
+nay dùng `importOriginal` để lấy HÀM THẬT cho phần kiểm tra/chuẩn hoá tên giọng, chỉ còn mock 2 hàm
+gọi ra ngoài (`generateAudioFromGoogle`, `generateStudioAudioFromGoogle`) + `VOICE_VERSION`. Đã
+kiểm chứng bộ test mới thật sự bắt lỗi: tạm khôi phục dòng `.toLowerCase()` cũ → **10/18 test đỏ**
+(trước đây xanh hết). Nguyên tắc rút ra: mock KHÔNG được tự viết lại logic của chính module bị mock.
+
 ### Fix: nút loa thẻ từ mới/SRS/Hôm nay bỏ qua giọng đã chọn ở Cài đặt (2026-08-13, nhánh `claude/fix-word-voice-cycle-l1n2e4`)
 
 Người dùng báo: đổi giọng đọc ở Cài đặt (VoicePicker, 14 giọng) không có tác dụng khi học từ

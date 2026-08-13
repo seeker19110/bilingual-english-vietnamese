@@ -17,19 +17,19 @@ vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: () => ({ query }) }))
 
 const generateAudioFromGoogle = vi.fn()
 const generateStudioAudioFromGoogle = vi.fn()
-vi.mock('./_lib/googleTts', () => ({
+// CHỈ mock 2 hàm GỌI RA NGOÀI (Google TTS — tốn tiền, cần mạng) + VOICE_VERSION (để test cache
+// không phải sửa mỗi lần đổi phiên bản giọng thật). Mọi thứ liên quan tới KIỂM TRA/CHUẨN HOÁ tên
+// giọng dùng HÀM THẬT qua importOriginal.
+//
+// Vì sao bắt buộc: bản mock cũ tự chế lại danh sách giọng bằng CHỮ THƯỜNG (`['kore','puck']`) cho
+// khớp việc handler tự `.toLowerCase()` — nên test xanh trong khi production trả 400 cho MỌI giọng
+// client gửi lên (đều PascalCase) và người dùng chỉ nghe một giọng Web Speech (bug thật, PR #535).
+// Mock tự viết lại logic của chính module bị mock là mock có thể "nói dối"; dùng hàm thật thì
+// không thể lệch được nữa.
+vi.mock('./_lib/googleTts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./_lib/googleTts')>()),
   generateAudioFromGoogle: (...args: unknown[]) => generateAudioFromGoogle(...args),
   generateStudioAudioFromGoogle: (...args: unknown[]) => generateStudioAudioFromGoogle(...args),
-  // Tên giọng PHÂN BIỆT hoa-thường, đúng như module thật (mock cũ nhận chữ thường đã che mất
-  // lỗi handler tự toLowerCase() → mọi giọng client gửi lên đều bị 400).
-  isValidVoice: (v: string) => ['Kore', 'Puck'].includes(v),
-  isValidStudioVoice: (v: string) => ['Studio-O', 'Studio-Q'].includes(v),
-  canonicalizeVoiceId: (raw: string) =>
-    ['Kore', 'Puck', 'Studio-O', 'Studio-Q'].find((v) => v.toLowerCase() === raw.toLowerCase()) ??
-    raw,
-  DEFAULT_VOICE: 'Kore',
-  VOICE_IDS: ['Kore', 'Puck'],
-  STUDIO_VOICE_IDS: ['Studio-O', 'Studio-Q'],
   VOICE_VERSION: 'v3',
 }))
 
