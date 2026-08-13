@@ -20,9 +20,13 @@ const generateStudioAudioFromGoogle = vi.fn()
 vi.mock('./_lib/googleTts', () => ({
   generateAudioFromGoogle: (...args: unknown[]) => generateAudioFromGoogle(...args),
   generateStudioAudioFromGoogle: (...args: unknown[]) => generateStudioAudioFromGoogle(...args),
-  // Lưu ý: handler tự toLowerCase() voiceParam trước khi kiểm — nên so khớp chữ thường ở đây.
-  isValidVoice: (v: string) => ['kore', 'puck'].includes(v),
-  isValidStudioVoice: (v: string) => ['studio-o', 'studio-q'].includes(v),
+  // Tên giọng PHÂN BIỆT hoa-thường, đúng như module thật (mock cũ nhận chữ thường đã che mất
+  // lỗi handler tự toLowerCase() → mọi giọng client gửi lên đều bị 400).
+  isValidVoice: (v: string) => ['Kore', 'Puck'].includes(v),
+  isValidStudioVoice: (v: string) => ['Studio-O', 'Studio-Q'].includes(v),
+  canonicalizeVoiceId: (raw: string) =>
+    ['Kore', 'Puck', 'Studio-O', 'Studio-Q'].find((v) => v.toLowerCase() === raw.toLowerCase()) ??
+    raw,
   DEFAULT_VOICE: 'Kore',
   VOICE_IDS: ['Kore', 'Puck'],
   STUDIO_VOICE_IDS: ['Studio-O', 'Studio-Q'],
@@ -210,6 +214,19 @@ describe('/api/pronunciation', () => {
     expect(res.status).toBe(200)
     expect(generateStudioAudioFromGoogle).not.toHaveBeenCalled()
     expect(generateAudioFromGoogle).toHaveBeenCalledWith('từ', 'Kore', 'vi-VN')
+  })
+
+  // Hồi quy: client LUÔN gửi tên giọng dạng PascalCase ("Puck", "Aoede"). Handler từng
+  // toLowerCase() tham số này rồi mới kiểm hợp lệ → 400 cho mọi giọng, nút loa rơi về Web
+  // Speech nên người dùng chỉ nghe một giọng duy nhất dù đổi cài đặt.
+  it('voice PascalCase từ client → 200 và giữ ĐÚNG giọng đó', async () => {
+    query.mockResolvedValueOnce({ rows: [] })
+    generateAudioFromGoogle.mockResolvedValue(new ArrayBuffer(8))
+    saveAudio.mockResolvedValue('https://cdn/apple-puck.mp3')
+    const handler = await importHandler()
+    const res = await handler(makeRequest('word=apple&voice=Puck'))
+    expect(res.status).toBe(200)
+    expect(generateAudioFromGoogle).toHaveBeenCalledWith('apple', 'Puck', 'en-US')
   })
 
   it('voice Studio hợp lệ (tiếng Anh) → gọi generateStudioAudioFromGoogle', async () => {

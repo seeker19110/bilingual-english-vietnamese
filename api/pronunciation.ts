@@ -21,6 +21,7 @@ import {
   generateStudioAudioFromGoogle,
   isValidVoice,
   isValidStudioVoice,
+  canonicalizeVoiceId,
   DEFAULT_VOICE,
   VOICE_IDS,
   STUDIO_VOICE_IDS,
@@ -80,7 +81,9 @@ export default async function handler(req: Request): Promise<Response> {
 
   const url = new URL(req.url)
   const rawWord = url.searchParams.get('word')?.toLowerCase().trim()
-  const voiceParam = url.searchParams.get('voice')?.toLowerCase().trim() || DEFAULT_VOICE
+  // KHÔNG toLowerCase() — tên giọng phân biệt HOA-thường ("Aoede", "Studio-O"). Chuẩn hoá
+  // không phân biệt hoa-thường qua canonicalizeVoiceId() để link cũ dạng chữ thường vẫn chạy.
+  const voiceParam = canonicalizeVoiceId(url.searchParams.get('voice')?.trim() || DEFAULT_VOICE)
   // lang: 'en-US' (mặc định, giữ tương thích chỗ gọi cũ chưa truyền) | 'vi-VN' (chiều B đọc từ
   // tiếng Việt — WordCard.tsx truyền card.vi kèm lang='vi-VN').
   const langParam = url.searchParams.get('lang')?.trim() || 'en-US'
