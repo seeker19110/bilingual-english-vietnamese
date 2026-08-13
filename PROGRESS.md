@@ -17,6 +17,83 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Sàn coverage chung 90% cho cả 4 chỉ số (2026-08-13, cùng PR)
+
+Người dùng yêu cầu "set toàn bộ coverage 90%". Đã **cảnh báo trước** rằng ngưỡng cũ là
+93/89/96/93 nên đặt phẳng 90 sẽ NỚI statements (93→90) và functions (96→90), chỉ SIẾT branches
+(89→90); người dùng xác nhận giữ nguyên quyết định và làm rõ: _"cao thì mặc kệ, miễn từ 90 trở
+lên là được"_ — tức 90 là **sàn tối thiểu**, không phải mục tiêu để rút test xuống.
+
+`vitest.config.ts` → `thresholds: { statements: 90, branches: 90, functions: 90, lines: 90 }`.
+
+**Trước khi đổi được ngưỡng phải vá branches** (đang 89,06% < 90). Đã viết thêm **51 test**,
+branches **89,06 → 90,32%**; toàn bộ: 94,36 / 90,32 / 96,33 / 94,36 · **3109 test xanh**.
+
+Các file được nâng (chọn theo "thiếu nhiều nhánh nhất / rẻ nhất"), mỗi test kiểm một bất biến
+thật chứ không phải chạy cho đủ số:
+
+| File                              | Branches trước → sau | Bất biến đáng chú ý được thêm                                                                                             |
+| --------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `packages/core-ai/fileStorage.ts` | 90,9 → 97,4          | `listR2Objects` tự phân trang; **`IsTruncated=true` mà thiếu token → dừng, không lặp vô hạn**; nhánh ghi local            |
+| `api/progress.ts`                 | 50 → 91,3            | Cột DB trả NULL → trả mảng/đối tượng rỗng (client `cloud.ts` ghi thẳng vào localStorage, `null` sẽ vỡ chỗ dùng `.length`) |
+| `api/history.ts`                  | 56 → 83,9            | Ngưỡng chống cày thưởng mời bạn: phiên 1 tin nhắn / bài viết < 40 ký tự **sau trim** → KHÔNG thưởng                       |
+| `api/admin-tts-cache.ts`          | 71 → 92,7            | Quét nền ghi `status=done`/`error` đúng; rate limit chặn TRƯỚC xác thực                                                   |
+| `api/admin-reserved-names.ts`     | 41,7 → cao           | Thêm từ cấm phải chuẩn hoá lowercase + trim (không thì "ADMIN" và "admin" thành 2 dòng, lọc tên hụt)                      |
+| `api/leaderboard.ts`              | 86,2 → cao           | Lần gọi thứ 2 trong 5 phút dùng cache, không quét lại `daily_usage` cả tuần                                               |
+| `api/_lib/achievementRewards.ts`  | 82,1 → cao           | Cache cấu hình thưởng + `invalidate` hoạt động; cột `learned` hỏng (không phải mảng) → tính 0, không nổ                   |
+| `api/admin-payments.ts`           | 60 → cao             | OPTIONS/rate-limit/405                                                                                                    |
+
+**Bẫy đã gặp:** mock `rewardReferralIfEligible` trong `api/history.test.ts` không được reset ở
+`beforeEach` nên số lần gọi cộng dồn qua các test → 2 test đỏ oan. Thêm `mockClear()`.
+
+**Lưu ý cho phiên sau:** biên độ branches chỉ còn **0,32 điểm** trên sàn. Thêm code có nhánh mà
+quên test là CI đỏ ngay. Đừng hạ sàn để chữa — viết test.
+
+### Cache TTS: sửa "cache HIT giả" + tab admin "Cache TTS & R2" (2026-08-13, PR mới)
+
+**Bối cảnh:** người dùng nghi TTS cache hoạt động sai. Đã test THẬT credentials R2 (`STORAGE_DRIVER`,
+`R2_ACCOUNT_ID/ACCESS_KEY/SECRET/BUCKET/PUBLIC_BASE_URL`) bằng đúng config `saveR2()`:
+**cả 6 biến đều ĐÚNG** — xác thực OK, bucket `english-tutor` tồn tại, quyền đọc + ghi OK, public
+read qua `pub-8fa372ee….r2.dev` trả HTTP 200 khớp byte-for-byte, domain trỏ đúng bucket. Trên R2
+đang có `tts-cache/` (≥ 8.000 file, ≥ 82 MB, thư mục con `en-US/` + `vi-VN/`) và `pronunciations/`
+(≥ 12.000 file, ≥ 60 MB). **Vấn đề KHÔNG nằm ở cấu hình R2.**
+
+**Lỗi thật đã tìm ra — "cache HIT giả":** luồng tra cache không hề hỏi R2, nó tra bảng Postgres
+`tts_cache`/`pronunciations` theo hash rồi trả thẳng `audio_url`. Dòng nào còn trỏ `/uploads/...`
+(ghi từ thời `STORAGE_DRIVER=local`, hoặc từ nhánh fallback local khi R2 lỗi) vẫn bị coi là cache
+HIT → client fetch ra 404 → và vì đã "HIT" nên câu đó **không bao giờ được sinh lại**: hỏng vĩnh
+viễn, im lặng, không tự khỏi.
+
+Đã sửa:
+
+1. **`isServableUrl()` (`packages/core-ai/fileStorage.ts`)** — ở chế độ r2 chỉ chấp nhận URL thuộc
+   `R2_PUBLIC_BASE_URL`. `/api/tts` (cả đường đọc thẳng lẫn đường claim chống race) và
+   `/api/pronunciation` coi URL không phục vụ được là MISS → gọi API sinh lại, ghi đè bằng URL R2
+   thật. **Ca biên tốn tiền đã chặn:** thiếu `R2_PUBLIC_BASE_URL` thì GIỮ NGUYÊN cache, không để
+   một biến môi trường thiếu kích hoạt sinh lại toàn bộ.
+2. **Bỏ fallback ghi local khi `STORAGE_DRIVER=r2`** — chính nhánh đó sinh ra URL hỏng. Nay ném lỗi
+   (quyết định của người dùng: "báo lỗi luôn, không ghi local"). Kiểm bằng codemap: trong 4 script
+   seed, `saveAudio` nằm TRƯỚC lệnh ghi DB trong cùng `try` ⇒ ném lỗi thì không dòng DB hỏng nào
+   được tạo, item bị đếm lỗi và báo ra.
+3. **Dữ liệu cũ KHÔNG dọn tay** (người dùng chọn): dòng hỏng gặp tới đâu tự sinh lại tới đó —
+   không đụng DB production, không sinh lại đồng loạt gây dồn cục tiền API.
+
+**Tab admin mới "Cache TTS & R2"** (`api/admin-tts-cache.ts` + `AdminTtsCachePanel.tsx`), vì trước
+đây KHÔNG có chỗ nào ghi lại /api/tts đã hit hay miss nên không trả lời được "cache hit bao nhiêu %":
+
+- Migration `0039_tts_cache_stats.sql`: bảng `tts_cache_stats` (đếm hit/miss theo ngày+lang+voice,
+  upsert bắn-rồi-quên, ngày theo giờ VN cho khớp `daily_usage`) và `tts_cache_audit` (kết quả quét
+  nền). Cả 2 chỉ là số liệu — xoá đi không mất audio.
+- Trang hiện: tỉ lệ hit 30 ngày + biểu đồ theo ngày + bảng theo giọng; đếm nhanh thuần SQL bao
+  nhiêu dòng trỏ đúng R2 / trỏ sai chỗ; và nút "Quét lại" chạy NỀN đối chiếu DB ↔ R2 để ra số
+  **thiếu trên R2** và **orphan trên R2** (bucket hàng chục nghìn file nên không quét đồng bộ được).
+- Chống quét chồng, kèm mốc 30 phút coi lượt quét treo là hỏng để một lần `pm2 reload` đúng lúc
+  không khoá cứng tính năng vĩnh viễn.
+
+**Giới hạn phải biết:** số liệu hit/miss **không hồi tố** — chỉ tính từ lúc deploy bản này.
+Và **% cache hit chưa đo được ở phiên này** vì sandbox không có DB production; phải bấm "Quét lại"
+trên VPS mới có số thật.
+
 ### Xử lý nốt 5 việc để ngỏ của audit (2026-08-12, cùng PR) — người dùng duyệt "làm tất cả"
 
 Cả 5 việc trước đó chỉ CẢNH BÁO (vì đều làm đổi con số/hành vi thật) nay đã làm, mỗi việc có test:

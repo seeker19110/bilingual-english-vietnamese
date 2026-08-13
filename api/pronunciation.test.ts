@@ -30,7 +30,9 @@ vi.mock('./_lib/googleTts', () => ({
 }))
 
 const saveAudio = vi.fn()
-vi.mock('../packages/core-ai/fileStorage', () => ({
+// isServableUrl dùng bản THẬT — xem ghi chú cùng loại trong packages/core-ai/tts.test.ts.
+vi.mock('../packages/core-ai/fileStorage', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../packages/core-ai/fileStorage')>()),
   saveAudio: (...args: unknown[]) => saveAudio(...args),
 }))
 

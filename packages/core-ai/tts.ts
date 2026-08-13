@@ -39,7 +39,8 @@ import { generateAudioFromGemini, isValidGeminiVoice } from './geminiTts.js'
 import { visemeTimelineFromAlignment, type VisemeFrame } from '../../api/_lib/visemeTimeline.js'
 import { ensureProfileRow } from '../core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from '../../api/_lib/voiceAccess.js'
-import { saveAudio } from './fileStorage.js'
+import { saveAudio, isServableUrl } from './fileStorage.js'
+import { recordTtsCacheEvent } from './ttsStats.js'
 import { encryptAudio, getClientKeyMaterial } from '../../api/_lib/ttsCrypto.js'
 import {
   getCorsHeaders,
@@ -129,7 +130,9 @@ async function claimTtsGeneration(
       viseme_timeline: VisemeFrame[] | null
       iv: string | null
     }>('select audio_url, viseme_timeline, iv from public.tts_cache where hash = $1', [hash])
-    if (cachedRows[0]?.audio_url) {
+    // Cùng luật với BƯỚC 1: URL không phục vụ được (audio local chết ở chế độ R2) KHÔNG tính
+    // là leader đã sinh xong — cứ chờ tiếp/tự làm leader để sinh lại.
+    if (cachedRows[0]?.audio_url && isServableUrl(cachedRows[0].audio_url)) {
       return {
         role: 'cached',
         audioUrl: cachedRows[0].audio_url,
@@ -284,7 +287,10 @@ export default async function handler(req: Request): Promise<Response> {
     iv: string | null
   }>('select audio_url, viseme_timeline, iv from public.tts_cache where hash = $1', [textHash])
 
-  const cachedUrl = cachedRows[0]?.audio_url
+  // isServableUrl: ở chế độ R2, dòng cache trỏ về /uploads/... (ghi từ thời STORAGE_DRIVER=local
+  // hoặc từ nhánh fallback local đã bỏ) là audio CHẾT — coi như MISS để sinh lại và ghi đè bằng
+  // URL R2 thật, thay vì trả URL 404 cho client mãi mãi. Xem fileStorage.ts.
+  const cachedUrl = isServableUrl(cachedRows[0]?.audio_url) ? cachedRows[0]?.audio_url : undefined
   if (cachedUrl) {
     // Cập nhật last_accessed_at (bắn rồi quên — CHỈ để thống kê/theo dõi dung lượng, KHÔNG
     // dùng để tự động xoá — chính sách chốt 2026-08-06: cache không hết hạn theo mức dùng,
@@ -293,6 +299,7 @@ export default async function handler(req: Request): Promise<Response> {
     void pool
       .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
       .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
+    recordTtsCacheEvent(pool, { lang, voice, hit: true })
     // iv của CHÍNH bản ghi này (null với bản ghi trước migration 0038 → rơi về iv suy từ hash).
     const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, cachedRows[0]?.iv)
     return jsonResponse(
@@ -323,6 +330,8 @@ export default async function handler(req: Request): Promise<Response> {
     void pool
       .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
       .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
+    // Vẫn tính là HIT: request này KHÔNG gọi API TTS (một request khác đã sinh xong hộ).
+    recordTtsCacheEvent(pool, { lang, voice, hit: true })
     const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, claim.iv)
     return jsonResponse(
       {
@@ -473,6 +482,9 @@ export default async function handler(req: Request): Promise<Response> {
       )
     }
 
+    // MISS: đã thực sự gọi API TTS sinh audio mới → tốn tiền. Ghi sau khi lưu file/DB xong để
+    // không đếm nhầm những lần sinh thất bại (đường lỗi đã return trước khi tới đây).
+    recordTtsCacheEvent(pool, { lang, voice, hit: false })
     const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, storedIvB64)
     return jsonResponse(
       {

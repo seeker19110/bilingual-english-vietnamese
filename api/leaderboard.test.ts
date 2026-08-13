@@ -222,4 +222,57 @@ describe('/api/leaderboard', () => {
     )
     expect(res.status).toBe(400)
   })
+
+  it('GET lần 2 trong 5 phút → dùng CACHE, không query lại bảng xếp hạng', async () => {
+    readPool.query
+      .mockResolvedValueOnce({ rows: [{ id: 'user-1', nickname: 'An', league_opt_in: true }] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+    query.mockResolvedValue({ rows: [{ nickname: 'An', league_opt_in: true }] })
+    const handler = await importHandler()
+
+    await handler(makeRequest())
+    const callsSauLan1 = readPool.query.mock.calls.length
+    await handler(makeRequest())
+    // Lần 2 KHÔNG được đọc lại read-pool — nếu đọc lại là cache hỏng, mỗi lượt xem bảng
+    // xếp hạng lại quét toàn bộ daily_usage của tuần.
+    expect(readPool.query.mock.calls.length).toBe(callsSauLan1)
+  })
+
+  it('GET: người opt-in chưa đặt nickname → hiện "(chưa đặt tên)", không hiện null', async () => {
+    readPool.query
+      .mockResolvedValueOnce({ rows: [{ id: 'user-9', nickname: null, league_opt_in: true }] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+    query.mockResolvedValueOnce({ rows: [{ nickname: null, league_opt_in: false }] })
+    const handler = await importHandler()
+    const res = await handler(makeRequest())
+    const data = (await res.json()) as { top: { nickname: string }[] }
+    expect(data.top[0]?.nickname).toBe('(chưa đặt tên)')
+  })
+
+  it('GET: lỗi đọc profile của CHÍNH mình → vẫn trả 200 (best-effort)', async () => {
+    readPool.query
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] })
+    query.mockRejectedValueOnce(new Error('profiles down'))
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const handler = await importHandler()
+    const res = await handler(makeRequest())
+    expect(res.status).toBe(200)
+    warn.mockRestore()
+  })
+
+  it('POST body không phải JSON hợp lệ → 400', async () => {
+    const handler = await importHandler()
+    const res = await handler(
+      makeRequest({
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: '{hong',
+      }),
+    )
+    expect(res.status).toBe(400)
+  })
 })
