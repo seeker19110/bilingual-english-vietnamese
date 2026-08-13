@@ -28,7 +28,13 @@ vi.mock('../core-auth/authService', () => ({
 vi.mock('../../api/_lib/voiceAccess', () => ({
   clampVoiceToPlan: vi.fn(async (voice: string) => voice),
 }))
-vi.mock('./fileStorage', () => ({ saveAudio: vi.fn(async () => 'https://cdn.test/audio.mp3') }))
+// isServableUrl dùng bản THẬT (không mock): test không đặt STORAGE_DRIVER=r2 nên nó ở chế độ
+// local và trả true cho mọi URL — giữ nguyên hành vi các test có sẵn. Ca r2 được phủ riêng
+// trong fileStorage.test.ts.
+vi.mock('./fileStorage', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./fileStorage')>()),
+  saveAudio: vi.fn(async () => 'https://cdn.test/audio.mp3'),
+}))
 vi.mock('../../api/_lib/ttsCrypto', () => ({
   // Khớp chữ ký thật sau audit 2026-08-12: trả { cipher, iv_b64 } — iv ngẫu nhiên mỗi lần
   // mã hoá và được lưu vào cột tts_cache.iv (migration 0038).

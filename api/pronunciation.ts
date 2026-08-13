@@ -28,7 +28,7 @@ import {
   type Lang,
   type VoiceId,
 } from './_lib/googleTts.js'
-import { saveAudio } from '../packages/core-ai/fileStorage.js'
+import { saveAudio, isServableUrl } from '../packages/core-ai/fileStorage.js'
 import { ensureProfileRow } from '../packages/core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
 import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.js'
@@ -164,7 +164,14 @@ export default async function handler(req: Request): Promise<Response> {
     [word, voice, lang],
   )
   const cached = cachedRows[0]
-  if (cached?.audio_url && cached.voice_version === VOICE_VERSION) {
+  // isServableUrl: cùng luật với /api/tts — ở chế độ R2, audio_url trỏ /uploads/... là file đã
+  // chết (ghi từ thời STORAGE_DRIVER=local hoặc nhánh fallback local đã bỏ) ⇒ coi là MISS để
+  // sinh lại, thay vì trả URL 404 cho client mãi mãi. Xem packages/core-ai/fileStorage.ts.
+  if (
+    cached?.audio_url &&
+    isServableUrl(cached.audio_url) &&
+    cached.voice_version === VOICE_VERSION
+  ) {
     void pool
       .query(
         'update english.pronunciations set last_accessed_at = now() where word = $1 and voice = $2 and lang = $3',

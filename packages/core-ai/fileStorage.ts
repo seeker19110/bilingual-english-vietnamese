@@ -28,6 +28,27 @@ function isR2Mode(): boolean {
   return process.env.STORAGE_DRIVER === 'r2'
 }
 
+/**
+ * URL này CÓ phát được với cấu hình lưu trữ hiện tại không?
+ *
+ * Dùng để chặn "cache HIT giả": bảng tts_cache/pronunciations lưu audio_url VĨNH VIỄN, nên một
+ * dòng ghi từ thời STORAGE_DRIVER=local (hoặc từ nhánh fallback local cũ) vẫn nằm đó sau khi
+ * chuyển sang R2 — trỏ tới /uploads/... mà file không còn. Server thấy có dòng thì coi là HIT,
+ * client fetch ra 404, và vì đã "HIT" nên KHÔNG bao giờ sinh lại. Coi các URL đó là MISS để
+ * chúng được sinh lại và ghi đè bằng URL R2 thật.
+ *
+ * Ở chế độ local thì mọi URL đều chấp nhận — không có gì để phân biệt.
+ */
+export function isServableUrl(url: string | null | undefined): boolean {
+  if (!url) return false
+  if (!isR2Mode()) return true
+  const base = process.env.R2_PUBLIC_BASE_URL
+  // Chưa cấu hình base URL → saveR2() cũng sẽ ném lỗi; đừng vội coi cache là hỏng, giữ nguyên
+  // hành vi cũ để một biến môi trường thiếu không kích hoạt sinh lại TOÀN BỘ cache (đốt tiền API).
+  if (!base) return true
+  return url.startsWith(base.replace(/\/$/, '') + '/')
+}
+
 // Thư mục gốc chứa file upload — cùng cấp với server.ts
 function getUploadsRoot(): string {
   // import.meta.url không có trong CJS, dùng process.cwd() thay thế
@@ -49,17 +70,12 @@ export async function saveAudio(
   baseUrl = '',
 ): Promise<string> {
   if (isR2Mode()) {
-    try {
-      return await saveR2(bucket, fileName, data)
-    } catch (err) {
-      // R2 lỗi (thiếu key, mạng, quota...) → ghi tạm vào ổ đĩa local để không mất audio vừa
-      // sinh (tốn tiền gọi TTS). File sẽ nằm ở /uploads/ tới khi chạy lại
-      // `npm run seed:all -- --sync-r2` đẩy lên R2 — xem docs/seed-guide.md mục 5.
-      console.error(
-        `⚠️  Ghi R2 thất bại (${bucket}/${fileName}), fallback sang local: ${err instanceof Error ? err.message : String(err)}`,
-      )
-      return saveLocal(bucket, fileName, data, baseUrl)
-    }
+    // KHÔNG fallback sang local (quyết định 2026-08-13). Trước đây R2 lỗi thì ghi tạm xuống
+    // ổ đĩa VPS, nhưng URL local đó lại được lưu VĨNH VIỄN vào tts_cache.audio_url → lần sau
+    // server coi là cache HIT và trả URL /uploads/... mà file đã không còn ⇒ câu đó không bao
+    // giờ phát được và không bao giờ tự sửa. Thà hỏng to còn hơn hỏng âm thầm: ném lỗi để
+    // caller KHÔNG ghi dòng cache hỏng, client tự rơi về Web Speech API.
+    return saveR2(bucket, fileName, data)
   }
   return saveLocal(bucket, fileName, data, baseUrl)
 }
