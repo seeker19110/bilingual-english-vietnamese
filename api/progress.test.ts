@@ -259,7 +259,7 @@ describe('POST /api/progress — hợp nhất với dữ liệu đã có trên s
     })
   })
 
-  it('learned/hard KHÔNG hợp union — client bỏ đánh dấu 1 từ (unmarkLearned) phải có hiệu lực thật', async () => {
+  it('learned HỢP UNION với server (2026-08-13: chỉ tăng, không giảm dù đổi máy/nhiều thiết bị) — client bỏ đánh dấu 1 từ KHÔNG xoá được nó khỏi server nếu server đã từng lưu', async () => {
     query.mockImplementation(async (sql: string) => {
       if (
         sql.includes(
@@ -269,11 +269,28 @@ describe('POST /api/progress — hợp nhất với dữ liệu đã có trên s
         return { rows: [{ ...EMPTY_PROGRESS_ROW, learned: ['apple', 'banana'] }] }
       return { rows: [] }
     })
-    // Client vừa unmarkLearned('banana') — gửi lên mảng đã bớt đi 1 từ.
+    // Client vừa unmarkLearned('banana') — gửi lên mảng đã bớt đi 1 từ, nhưng server union
+    // lại nên 'banana' vẫn còn (đúng yêu cầu "chỉ tăng, không giảm").
     const resp = await handler(makeRequest({ learned: ['apple'] }))
     expect(resp.status).toBe(200)
     const params = insertedParams()
-    expect(JSON.parse(params[1] as string)).toEqual(['apple'])
+    expect(JSON.parse(params[1] as string)).toEqual(['apple', 'banana'])
+  })
+
+  it('hard VẪN ghi đè theo client (chỉ là lọc hiển thị, không phải tiến độ học)', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
+        return { rows: [{ ...EMPTY_PROGRESS_ROW, hard: ['apple', 'banana'] }] }
+      return { rows: [] }
+    })
+    const resp = await handler(makeRequest({ hard: ['apple'] }))
+    expect(resp.status).toBe(200)
+    const params = insertedParams()
+    expect(JSON.parse(params[2] as string)).toEqual(['apple'])
   })
 })
 

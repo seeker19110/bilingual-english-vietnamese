@@ -53,6 +53,10 @@ export function markGrammarDone(uid: string, lessonId: string) {
   pushProgress(uid) // đồng bộ lên Supabase
 }
 
+// LƯU Ý (2026-08-13): server giờ hợp nhất cefrGrammar kiểu UNION (chỉ tăng, không giảm — xem
+// api/_lib/progressMerge.ts) để tiến độ không mất khi dùng nhiều thiết bị. Hệ quả: bỏ đánh dấu
+// ở ĐÂY chỉ có tác dụng TẠM trên máy này — lần đồng bộ sau (máy khác vẫn còn bản "đã học") sẽ
+// tự thêm lại bài này vào danh sách đã học. Đánh đổi đã xác nhận với người dùng.
 export function unmarkGrammarDone(uid: string, lessonId: string) {
   const set = getDoneGrammar(uid)
   set.delete(lessonId)

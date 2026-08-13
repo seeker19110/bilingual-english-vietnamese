@@ -17,6 +17,30 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Tiến độ học chỉ TĂNG, không bao giờ GIẢM dù đổi máy/nhiều thiết bị (2026-08-13, PR đang mở, nhánh `claude/learning-progress-persistence-l1n2e4`)
+
+Người dùng yêu cầu: tiến độ học tập chỉ được cập nhật thêm, không được giảm đi dù đổi máy hay
+dùng nhiều thiết bị cùng lúc. Rà `apps/english/src/lib/progressSync.ts` +
+`api/progress.ts`: SRS/điểm thi CEFR/placement/mục tiêu tuần đã hợp nhất kiểu "chỉ tốt lên" từ
+trước, nhưng `learned`/`cefrGrammar`/`cefrDialogues`/`cefrUnlocked`/`achievements` server
+**GHI ĐÈ** theo đúng mảng client gửi — chỉ chống mất dữ liệu trong CÙNG 1 tab/máy (chờ pull
+xong mới push), CHƯA chống được 2 thiết bị học song song rồi đồng bộ gần như đồng thời (máy A
+học từ mới → chưa kịp đẩy lên thì máy B, đang mở từ trước chưa thấy dữ liệu mới của A, đẩy bản
+cũ của B lên → đè mất phần A vừa học).
+
+**Đã hỏi người dùng** đánh đổi (union sẽ làm mất tác dụng lâu dài của các thao tác "bỏ đánh
+dấu") — người dùng chọn: `learned`/`cefrGrammar`/`cefrDialogues` → **union tuyệt đối**;
+`achievements`/`cefrUnlocked` → **union** (vốn không có thao tác bỏ đánh dấu, không đánh đổi
+gì); `hard` (nhãn từ khó) → **giữ ghi đè** (chỉ là lọc hiển thị, không phải tiến độ học).
+
+Đã sửa: `api/_lib/progressMerge.ts` thêm `mergeArrayUnion()`; `api/progress.ts` áp dụng cho 5
+trường trên (trừ `hard`). Hệ quả đã ghi rõ trong comment code: `unmarkLearned` (không có nút UI
+gọi, chỉ còn trong test) và `unmarkGrammarDone` (CÓ dùng ở `CefrLessonViews.tsx`) từ nay chỉ có
+tác dụng TẠM trên 1 máy — máy khác đồng bộ lại sẽ tự thêm lại mục vừa bỏ. Test:
+`api/_lib/progressMerge.test.ts` (thêm `mergeArrayUnion`) + `api/progress.test.ts` (sửa lại ca
+biên `learned`, thêm ca biên `hard`). Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ ·
+format ✅ · test 3113/3113 xanh ✅.
+
 ### Sàn coverage chung 90% cho cả 4 chỉ số (2026-08-13, cùng PR)
 
 Người dùng yêu cầu "set toàn bộ coverage 90%". Đã **cảnh báo trước** rằng ngưỡng cũ là
