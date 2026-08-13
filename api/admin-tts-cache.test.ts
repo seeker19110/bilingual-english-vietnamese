@@ -10,7 +10,7 @@ vi.mock('../packages/core-auth/security.js', () => ({
   validateAuth: vi.fn(),
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
-  checkRateLimit: () => Promise.resolve(true),
+  checkRateLimit: vi.fn(() => Promise.resolve(true)),
   logSecurityEvent: vi.fn(),
 }))
 
@@ -24,8 +24,10 @@ vi.mock('../packages/core-ai/fileStorage.js', () => ({
 vi.mock('../packages/core-ai/ttsCacheAudit.js', () => ({ runTtsCacheAudit: vi.fn() }))
 
 import { getPgPool } from '../packages/core-db/pgPool.js'
-import { validateAuth } from '../packages/core-auth/security.js'
+import { validateAuth, checkRateLimit } from '../packages/core-auth/security.js'
 import { getUserById } from '../packages/core-auth/authService.js'
+import { getR2PublicBaseUrl } from '../packages/core-ai/fileStorage.js'
+import { runTtsCacheAudit } from '../packages/core-ai/ttsCacheAudit.js'
 
 type UserInfo = Awaited<ReturnType<typeof getUserById>>
 const queryMock = getPgPool().query as unknown as ReturnType<typeof vi.fn>
@@ -162,5 +164,92 @@ describe('/api/admin-tts-cache', () => {
       new Request('http://localhost/api/admin-tts-cache', { method: 'DELETE' }),
     )
     expect(res.status).toBe(405)
+  })
+
+  it('OPTIONS → 204 (preflight CORS), không cần đăng nhập', async () => {
+    const res = await handler(
+      new Request('http://localhost/api/admin-tts-cache', { method: 'OPTIONS' }),
+    )
+    expect(res.status).toBe(204)
+    expect(validateAuth).not.toHaveBeenCalled()
+  })
+
+  it('vượt rate limit → 429, chặn TRƯỚC cả khi xác thực', async () => {
+    vi.mocked(checkRateLimit).mockResolvedValueOnce(false)
+    const res = await handler(new Request('http://localhost/api/admin-tts-cache'))
+    expect(res.status).toBe(429)
+    expect(validateAuth).not.toHaveBeenCalled()
+  })
+
+  it('chưa cấu hình R2_PUBLIC_BASE_URL → quick là null, không nổ', async () => {
+    asAdmin()
+    vi.mocked(getR2PublicBaseUrl).mockReturnValueOnce(undefined)
+    queryMock.mockResolvedValue({ rows: [] })
+    const res = await handler(new Request('http://localhost/api/admin-tts-cache'))
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.quick).toBeNull()
+    expect(body.r2PublicBaseUrl).toBeNull()
+  })
+
+  it('quét nền XONG → ghi status done kèm kết quả', async () => {
+    asAdmin()
+    const fakeResult = { ttsCache: { total: 1 }, pronunciations: { total: 0 } }
+    vi.mocked(runTtsCacheAudit).mockResolvedValueOnce(
+      fakeResult as unknown as Awaited<ReturnType<typeof runTtsCacheAudit>>,
+    )
+    queryMock
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [{ id: 'audit-ok' }] })
+      .mockResolvedValue({ rows: [] })
+
+    await handler(
+      new Request('http://localhost/api/admin-tts-cache', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'scan' }),
+      }),
+    )
+    // Quét chạy nền — chờ microtask cho nó kịp ghi kết quả.
+    await new Promise((r) => setTimeout(r, 0))
+    const update = queryMock.mock.calls.find((c) => String(c[0]).includes("status = 'done'"))
+    expect(update).toBeTruthy()
+    expect(update?.[1]).toEqual(['audit-ok', JSON.stringify(fakeResult)])
+  })
+
+  it('quét nền LỖI → ghi status error kèm message, không để promise reject trôi nổi', async () => {
+    asAdmin()
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.mocked(runTtsCacheAudit).mockRejectedValueOnce(new Error('R2 sập'))
+    queryMock
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [{ id: 'audit-err' }] })
+      .mockResolvedValue({ rows: [] })
+
+    await handler(
+      new Request('http://localhost/api/admin-tts-cache', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'scan' }),
+      }),
+    )
+    await new Promise((r) => setTimeout(r, 0))
+    const update = queryMock.mock.calls.find((c) => String(c[0]).includes("status = 'error'"))
+    expect(update?.[1]).toEqual(['audit-err', 'R2 sập'])
+    errSpy.mockRestore()
+  })
+
+  it('insert bản ghi quét không trả id → báo lỗi, không chạy quét', async () => {
+    asAdmin()
+    queryMock.mockResolvedValueOnce({ rows: [] }).mockResolvedValueOnce({ rows: [] })
+    const res = await handler(
+      new Request('http://localhost/api/admin-tts-cache', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'scan' }),
+      }),
+    )
+    expect(res.status).toBe(409)
+    expect(runTtsCacheAudit).not.toHaveBeenCalled()
   })
 })

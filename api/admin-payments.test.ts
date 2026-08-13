@@ -10,7 +10,7 @@ vi.mock('../packages/core-auth/security.js', () => ({
   validateAuth: vi.fn(),
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
-  checkRateLimit: () => Promise.resolve(true),
+  checkRateLimit: vi.fn(() => Promise.resolve(true)),
   logSecurityEvent: vi.fn(),
 }))
 
@@ -27,7 +27,7 @@ vi.mock('./_lib/planGrant.js', () => ({
 }))
 
 import { getPgPool } from '../packages/core-db/pgPool.js'
-import { validateAuth } from '../packages/core-auth/security.js'
+import { validateAuth, checkRateLimit } from '../packages/core-auth/security.js'
 import { getUserById } from '../packages/core-auth/authService.js'
 
 type UserInfo = Awaited<ReturnType<typeof getUserById>>
@@ -175,5 +175,32 @@ describe('/api/admin-payments', () => {
     expect(res.status).toBe(400)
     const json = await res.json()
     expect(json.error).toContain('đã được ghi nhận')
+  })
+
+  it('OPTIONS → 204 (preflight CORS), không cần đăng nhập', async () => {
+    const res = await handler(
+      new Request('http://localhost/api/admin-payments', { method: 'OPTIONS' }),
+    )
+    expect(res.status).toBe(204)
+    expect(validateAuth).not.toHaveBeenCalled()
+  })
+
+  it('vượt rate limit → 429, chặn TRƯỚC khi xác thực', async () => {
+    vi.mocked(checkRateLimit).mockResolvedValueOnce(false)
+    const res = await handler(new Request('http://localhost/api/admin-payments'))
+    expect(res.status).toBe(429)
+    expect(validateAuth).not.toHaveBeenCalled()
+  })
+
+  it('method lạ (DELETE) → 405', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+    const res = await handler(
+      new Request('http://localhost/api/admin-payments', { method: 'DELETE' }),
+    )
+    expect(res.status).toBe(405)
   })
 })

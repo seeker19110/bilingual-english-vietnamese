@@ -10,7 +10,7 @@ vi.mock('../packages/core-auth/security.js', () => ({
   validateAuth: vi.fn(),
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
-  checkRateLimit: () => Promise.resolve(true),
+  checkRateLimit: vi.fn(() => Promise.resolve(true)),
   logSecurityEvent: vi.fn(),
 }))
 
@@ -23,7 +23,7 @@ vi.mock('../packages/core-auth/adminAuth.js', () => ({
 }))
 
 import { getPgPool } from '../packages/core-db/pgPool.js'
-import { validateAuth } from '../packages/core-auth/security.js'
+import { validateAuth, checkRateLimit } from '../packages/core-auth/security.js'
 import { getUserById } from '../packages/core-auth/authService.js'
 
 type UserInfo = Awaited<ReturnType<typeof getUserById>>
@@ -71,5 +71,101 @@ describe('/api/admin-reserved-names', () => {
     })
     const res = await handler(req)
     expect(res.status).toBe(200)
+  })
+
+  function asAdmin() {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+  }
+
+  it('OPTIONS → 204 (preflight CORS), không cần đăng nhập', async () => {
+    const res = await handler(
+      new Request('http://localhost/api/admin-reserved-names', { method: 'OPTIONS' }),
+    )
+    expect(res.status).toBe(204)
+    expect(validateAuth).not.toHaveBeenCalled()
+  })
+
+  it('vượt rate limit → 429, chặn TRƯỚC khi xác thực', async () => {
+    vi.mocked(checkRateLimit).mockResolvedValueOnce(false)
+    const res = await handler(new Request('http://localhost/api/admin-reserved-names'))
+    expect(res.status).toBe(429)
+    expect(validateAuth).not.toHaveBeenCalled()
+  })
+
+  it('đăng nhập nhưng KHÔNG phải admin → 403', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'u9' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'u9',
+      email: 'nguoi-la@example.com',
+    } as UserInfo)
+    const res = await handler(new Request('http://localhost/api/admin-reserved-names'))
+    expect(res.status).toBe(403)
+    expect(queryMock).not.toHaveBeenCalled()
+  })
+
+  it('thêm từ cấm: chuẩn hoá về chữ thường và cắt khoảng trắng', async () => {
+    asAdmin()
+    queryMock.mockResolvedValueOnce({ rows: [] })
+    const res = await handler(
+      new Request('http://localhost/api/admin-reserved-names', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'add', phrase: '  ADMIN  ' }),
+      }),
+    )
+    expect(res.status).toBe(200)
+    // Nếu không chuẩn hoá, "ADMIN" và "admin" thành 2 dòng khác nhau → lọc tên hụt.
+    expect(queryMock.mock.calls[0]?.[1]).toEqual(['admin'])
+  })
+
+  it('xoá từ cấm theo id (POST remove)', async () => {
+    asAdmin()
+    queryMock.mockResolvedValueOnce({ rows: [] })
+    const res = await handler(
+      new Request('http://localhost/api/admin-reserved-names', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'remove', id: '123e4567-e89b-42d3-a456-426614174000' }),
+      }),
+    )
+    expect(res.status).toBe(200)
+    expect(String(queryMock.mock.calls[0]?.[0])).toContain('delete from public.reserved_names')
+  })
+
+  it('action lạ → từ chối, không đụng DB', async () => {
+    asAdmin()
+    const res = await handler(
+      new Request('http://localhost/api/admin-reserved-names', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'xoa-sach' }),
+      }),
+    )
+    expect(res.status).toBe(400)
+    expect(queryMock).not.toHaveBeenCalled()
+  })
+
+  it('body không phải JSON hợp lệ → 400', async () => {
+    asAdmin()
+    const res = await handler(
+      new Request('http://localhost/api/admin-reserved-names', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{hong',
+      }),
+    )
+    expect(res.status).toBe(400)
+  })
+
+  it('method lạ (DELETE) → 405', async () => {
+    asAdmin()
+    const res = await handler(
+      new Request('http://localhost/api/admin-reserved-names', { method: 'DELETE' }),
+    )
+    expect(res.status).toBe(405)
   })
 })

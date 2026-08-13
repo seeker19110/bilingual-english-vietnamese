@@ -214,3 +214,73 @@ describe('getAllRewardConfigs / upsertRewardConfig (admin)', () => {
     expect(query.mock.calls[0]?.[1]).toEqual(['streak_7', false, 'vip', 5])
   })
 })
+
+describe('Ca biên: cache cấu hình thưởng và dữ liệu DB thiếu/NULL', () => {
+  it('gọi 2 lần liên tiếp → lần 2 dùng CACHE, không đọc lại bảng cấu hình', async () => {
+    streakMock.mockResolvedValue(0)
+    setupQueryImplementation({})
+    invalidateAchievementRewardsCache()
+
+    await getAchievementsStatus('u1')
+    const demLan1 = query.mock.calls.filter(([sql]) =>
+      String(sql).includes('select achievement_id, enabled, reward_plan, reward_days'),
+    ).length
+    await getAchievementsStatus('u1')
+    const demLan2 = query.mock.calls.filter(([sql]) =>
+      String(sql).includes('select achievement_id, enabled, reward_plan, reward_days'),
+    ).length
+    expect(demLan1).toBe(1)
+    expect(demLan2).toBe(1) // không tăng → cache có hiệu lực
+  })
+
+  it('invalidateAchievementRewardsCache() → lần sau đọc lại DB', async () => {
+    streakMock.mockResolvedValue(0)
+    setupQueryImplementation({})
+    invalidateAchievementRewardsCache()
+    await getAchievementsStatus('u1')
+    invalidateAchievementRewardsCache()
+    await getAchievementsStatus('u1')
+    const dem = query.mock.calls.filter(([sql]) =>
+      String(sql).includes('select achievement_id, enabled, reward_plan, reward_days'),
+    ).length
+    expect(dem).toBe(2)
+  })
+
+  it('learning_progress chưa có dòng nào → vocab = 0, không nổ', async () => {
+    streakMock.mockResolvedValue(0)
+    invalidateAchievementRewardsCache()
+    query.mockImplementation(async (sql: string) => {
+      if (sql.includes('select achievement_id, enabled, reward_plan, reward_days'))
+        return { rows: REWARD_ROWS }
+      if (sql.includes('select achievement_id from public.achievement_claims')) return { rows: [] }
+      // Mọi truy vấn còn lại (progress/speaking/writing/challenge) đều RỖNG.
+      return { rows: [] }
+    })
+    const items = await getAchievementsStatus('u1')
+    expect(items.find((i) => i.id === 'vocab_100')?.earned).toBe(false)
+    expect(items).toHaveLength(ACHIEVEMENT_IDS.length)
+  })
+
+  it('cột learned trong DB không phải mảng (dữ liệu hỏng) → tính 0 từ, không nổ', async () => {
+    streakMock.mockResolvedValue(0)
+    invalidateAchievementRewardsCache()
+    query.mockImplementation(async (sql: string) => {
+      if (sql.includes('select achievement_id, enabled, reward_plan, reward_days'))
+        return { rows: REWARD_ROWS }
+      if (sql.includes('select achievement_id from public.achievement_claims')) return { rows: [] }
+      if (sql.includes('learned'))
+        return { rows: [{ learned: 'hong-phai-mang', cefr_exams: null }] }
+      return { rows: [] }
+    })
+    const items = await getAchievementsStatus('u1')
+    expect(items.find((i) => i.id === 'vocab_100')?.earned).toBe(false)
+  })
+
+  it('getAllRewardConfigs: huy hiệu chưa cấu hình → mặc định tắt, 0 ngày', async () => {
+    invalidateAchievementRewardsCache()
+    setupQueryImplementation({ rewardRows: [] })
+    const configs = await getAllRewardConfigs()
+    expect(configs).toHaveLength(ACHIEVEMENT_IDS.length)
+    expect(configs[0]?.config).toEqual({ enabled: false, rewardPlan: 'pro', rewardDays: 0 })
+  })
+})

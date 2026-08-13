@@ -17,6 +17,38 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Sàn coverage chung 90% cho cả 4 chỉ số (2026-08-13, cùng PR)
+
+Người dùng yêu cầu "set toàn bộ coverage 90%". Đã **cảnh báo trước** rằng ngưỡng cũ là
+93/89/96/93 nên đặt phẳng 90 sẽ NỚI statements (93→90) và functions (96→90), chỉ SIẾT branches
+(89→90); người dùng xác nhận giữ nguyên quyết định và làm rõ: _"cao thì mặc kệ, miễn từ 90 trở
+lên là được"_ — tức 90 là **sàn tối thiểu**, không phải mục tiêu để rút test xuống.
+
+`vitest.config.ts` → `thresholds: { statements: 90, branches: 90, functions: 90, lines: 90 }`.
+
+**Trước khi đổi được ngưỡng phải vá branches** (đang 89,06% < 90). Đã viết thêm **51 test**,
+branches **89,06 → 90,32%**; toàn bộ: 94,36 / 90,32 / 96,33 / 94,36 · **3109 test xanh**.
+
+Các file được nâng (chọn theo "thiếu nhiều nhánh nhất / rẻ nhất"), mỗi test kiểm một bất biến
+thật chứ không phải chạy cho đủ số:
+
+| File                              | Branches trước → sau | Bất biến đáng chú ý được thêm                                                                                             |
+| --------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `packages/core-ai/fileStorage.ts` | 90,9 → 97,4          | `listR2Objects` tự phân trang; **`IsTruncated=true` mà thiếu token → dừng, không lặp vô hạn**; nhánh ghi local            |
+| `api/progress.ts`                 | 50 → 91,3            | Cột DB trả NULL → trả mảng/đối tượng rỗng (client `cloud.ts` ghi thẳng vào localStorage, `null` sẽ vỡ chỗ dùng `.length`) |
+| `api/history.ts`                  | 56 → 83,9            | Ngưỡng chống cày thưởng mời bạn: phiên 1 tin nhắn / bài viết < 40 ký tự **sau trim** → KHÔNG thưởng                       |
+| `api/admin-tts-cache.ts`          | 71 → 92,7            | Quét nền ghi `status=done`/`error` đúng; rate limit chặn TRƯỚC xác thực                                                   |
+| `api/admin-reserved-names.ts`     | 41,7 → cao           | Thêm từ cấm phải chuẩn hoá lowercase + trim (không thì "ADMIN" và "admin" thành 2 dòng, lọc tên hụt)                      |
+| `api/leaderboard.ts`              | 86,2 → cao           | Lần gọi thứ 2 trong 5 phút dùng cache, không quét lại `daily_usage` cả tuần                                               |
+| `api/_lib/achievementRewards.ts`  | 82,1 → cao           | Cache cấu hình thưởng + `invalidate` hoạt động; cột `learned` hỏng (không phải mảng) → tính 0, không nổ                   |
+| `api/admin-payments.ts`           | 60 → cao             | OPTIONS/rate-limit/405                                                                                                    |
+
+**Bẫy đã gặp:** mock `rewardReferralIfEligible` trong `api/history.test.ts` không được reset ở
+`beforeEach` nên số lần gọi cộng dồn qua các test → 2 test đỏ oan. Thêm `mockClear()`.
+
+**Lưu ý cho phiên sau:** biên độ branches chỉ còn **0,32 điểm** trên sàn. Thêm code có nhánh mà
+quên test là CI đỏ ngay. Đừng hạ sàn để chữa — viết test.
+
 ### Cache TTS: sửa "cache HIT giả" + tab admin "Cache TTS & R2" (2026-08-13, PR mới)
 
 **Bối cảnh:** người dùng nghi TTS cache hoạt động sai. Đã test THẬT credentials R2 (`STORAGE_DRIVER`,

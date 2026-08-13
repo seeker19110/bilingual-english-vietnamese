@@ -11,6 +11,7 @@ const sendMock = vi.fn(async (cmd: { input: Record<string, unknown> }) => {
 vi.mock('@aws-sdk/client-s3', () => ({
   S3Client: vi.fn(() => ({ send: sendMock })),
   PutObjectCommand: vi.fn((input: unknown) => ({ input })),
+  ListObjectsV2Command: vi.fn((input: unknown) => ({ input })),
 }))
 
 const ORIGINAL_ENV = { ...process.env }
@@ -94,6 +95,110 @@ describe('saveAudio — driver r2', () => {
       Key: 'tts-cache/en-US/female/abc.mp3',
       ContentType: 'audio/mpeg',
     })
+  })
+})
+
+describe('saveAudio — driver local', () => {
+  it('ghi đúng đường dẫn lồng thư mục và trả URL tương đối khi không có baseUrl', async () => {
+    process.env.STORAGE_DRIVER = 'local'
+    const { saveAudio } = await import('./fileStorage')
+    const url = await saveAudio('tts-cache', 'en-US/female/abc.mp3', new ArrayBuffer(4))
+    expect(url).toBe('/uploads/tts-cache/en-US/female/abc.mp3')
+    // File phải nằm thật trên đĩa, đúng cây thư mục (mkdir -p).
+    const written = await fs.readFile(path.join(tmpUploadsDir, 'tts-cache/en-US/female/abc.mp3'))
+    expect(written.length).toBe(4)
+  })
+
+  it('có baseUrl → trả URL tuyệt đối', async () => {
+    process.env.STORAGE_DRIVER = 'local'
+    const { saveAudio } = await import('./fileStorage')
+    const url = await saveAudio('pronunciations', 'apple.mp3', new ArrayBuffer(2), 'https://x.vn')
+    expect(url).toBe('https://x.vn/uploads/pronunciations/apple.mp3')
+  })
+
+  it('KHÔNG set STORAGE_DRIVER → mặc định là local, không đụng R2', async () => {
+    delete process.env.STORAGE_DRIVER
+    const { saveAudio } = await import('./fileStorage')
+    const url = await saveAudio('tts-cache', 'a.mp3', new ArrayBuffer(1))
+    expect(url).toBe('/uploads/tts-cache/a.mp3')
+    expect(sendMock).not.toHaveBeenCalled()
+  })
+})
+
+describe('getR2PublicBaseUrl', () => {
+  it('cắt dấu / thừa ở cuối', async () => {
+    process.env.R2_PUBLIC_BASE_URL = 'https://pub-abc.r2.dev/'
+    const { getR2PublicBaseUrl } = await import('./fileStorage')
+    expect(getR2PublicBaseUrl()).toBe('https://pub-abc.r2.dev')
+  })
+
+  it('chưa cấu hình → undefined', async () => {
+    delete process.env.R2_PUBLIC_BASE_URL
+    const { getR2PublicBaseUrl } = await import('./fileStorage')
+    expect(getR2PublicBaseUrl()).toBeUndefined()
+  })
+})
+
+describe('listR2Objects', () => {
+  beforeEach(() => {
+    process.env.R2_ACCOUNT_ID = 'acc123'
+    process.env.R2_ACCESS_KEY_ID = 'key123'
+    process.env.R2_SECRET_ACCESS_KEY = 'secret123'
+    process.env.R2_BUCKET = 'test-bucket'
+  })
+
+  it('thiếu R2_BUCKET → ném lỗi rõ ràng', async () => {
+    delete process.env.R2_BUCKET
+    const { listR2Objects } = await import('./fileStorage')
+    await expect(listR2Objects('tts-cache/')).rejects.toThrow(/R2_BUCKET/)
+  })
+
+  it('tự phân trang tới hết và gộp đủ mọi object', async () => {
+    sendMock
+      .mockResolvedValueOnce({
+        Contents: [{ Key: 'tts-cache/a.mp3', Size: 10 }],
+        IsTruncated: true,
+        NextContinuationToken: 'trang2',
+      })
+      .mockResolvedValueOnce({
+        Contents: [{ Key: 'tts-cache/b.mp3', Size: 20 }],
+        IsTruncated: false,
+      })
+    const { listR2Objects } = await import('./fileStorage')
+    const out = await listR2Objects('tts-cache/')
+    expect(out).toEqual([
+      { key: 'tts-cache/a.mp3', size: 10 },
+      { key: 'tts-cache/b.mp3', size: 20 },
+    ])
+    expect(sendMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('IsTruncated=true nhưng THIẾU token → dừng, không lặp vô hạn', async () => {
+    // Ca biên nguy hiểm: nếu chỉ dựa vào IsTruncated thì vòng do/while quay mãi mãi.
+    sendMock.mockResolvedValue({
+      Contents: [{ Key: 'tts-cache/a.mp3', Size: 1 }],
+      IsTruncated: true,
+      // không có NextContinuationToken
+    })
+    const { listR2Objects } = await import('./fileStorage')
+    const out = await listR2Objects('tts-cache/')
+    expect(out).toHaveLength(1)
+    expect(sendMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('bỏ qua entry không có Key, Size thiếu tính là 0', async () => {
+    sendMock.mockResolvedValueOnce({
+      Contents: [{ Size: 99 }, { Key: 'tts-cache/c.mp3' }],
+      IsTruncated: false,
+    })
+    const { listR2Objects } = await import('./fileStorage')
+    expect(await listR2Objects('tts-cache/')).toEqual([{ key: 'tts-cache/c.mp3', size: 0 }])
+  })
+
+  it('bucket rỗng (không có trường Contents) → mảng rỗng', async () => {
+    sendMock.mockResolvedValueOnce({ IsTruncated: false })
+    const { listR2Objects } = await import('./fileStorage')
+    expect(await listR2Objects('tts-cache/')).toEqual([])
   })
 })
 
