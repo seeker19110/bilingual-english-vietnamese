@@ -44,10 +44,21 @@ import {
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
 // Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),
-// dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.). Ngăn ký tự lạ.
+// dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.), và dấu câu
+// thường gặp trong NGHĨA TIẾNG VIỆT của từ điển: phẩy, ngoặc đơn, gạch chéo, chấm phẩy,
+// hai chấm, nháy kép. Ngăn mọi ký tự lạ còn lại.
+//
+// Vì sao phải có nhóm dấu câu thứ hai (mở rộng 2026-08-13): chiều B đọc `card.vi` — nghĩa
+// tiếng Việt, hầu hết là cụm nhiều nghĩa dạng "bỏ rơi, từ bỏ" hay "trên (tàu, xe)". Đo trên
+// từ điển thật: allowlist cũ chỉ nhận **5.565/11.572** nghĩa, tức hơn nửa số thẻ từ ở chiều B
+// bị 400 rồi âm thầm rơi về Web Speech (đúng hiện tượng "chữ Việt đọc giọng Anh" mà
+// PronounceButton.tsx đã ghi chú). Với nhóm dấu câu này: 11.572/11.572.
+//
 // \p{L}=letter, \p{M}=combining mark; cờ u để bật Unicode. An toàn: giá trị chỉ dùng làm
-// cache key + text cho TTS (query Postgres parameterized, không nối chuỗi SQL).
-const WORD_SAFE_PATTERN = /^[\p{L}\p{M}0-9\s'’.-]+$/u
+// cache key + text cho TTS (query Postgres parameterized, không nối chuỗi SQL; tên file qua
+// encodeURIComponent) và vẫn chặn `<>{}[]\|&#$%*+=~^` cùng ký tự điều khiển. Trần 100 ký tự
+// ở dưới giữ nguyên nên chi phí Google TTS mỗi request không đổi.
+const WORD_SAFE_PATTERN = /^[\p{L}\p{M}0-9\s'’.,;:()/"-]+$/u
 
 export default async function handler(req: Request): Promise<Response> {
   const corsHeaders = getCorsHeaders(req)

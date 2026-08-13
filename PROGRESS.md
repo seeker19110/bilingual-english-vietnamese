@@ -17,6 +17,52 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+### Seed phát âm TIẾNG VIỆT (chiều B) + nới luật input cho nghĩa nhiều vế (2026-08-13, nhánh `claude/tts-cache-voice-i1plxb-2`)
+
+Người dùng đính chính (đúng): **cả 16 giọng đã seed đủ** — 12.168 từ × 16 giọng (14 Chirp3-HD +
+2 Studio) = **194.688** khớp chính xác số dòng DB. Trước đó mình đọc nhầm sang script cũ
+`seed-pronunciations.ts` (chỉ 8 giọng) và bị con số trùng khớp 8×2 đánh lừa; `seed-all.ts` mới là
+script đang dùng.
+
+Rà tiếp thì lộ chỗ trống thật: **toàn bộ 194.688 dòng đều là `lang='en-US'`** (seed ghi cứng
+`values (…, 'en-US', …)`), trong khi chiều B (`WordCard.tsx`) đọc **`card.vi`** với `lang='vi-VN'`.
+Nặng hơn: allowlist `WORD_SAFE_PATTERN` cũ chỉ nhận **5.565/11.572** nghĩa tiếng Việt — nghĩa nhiều
+vế ("bỏ rơi, từ bỏ", "trên (tàu, xe)") có dấu phẩy/ngoặc/gạch chéo đều bị **400** rồi rơi về Web
+Speech, đúng hiện tượng "chữ Việt đọc giọng Anh" mà chính `PronounceButton.tsx` đã ghi chú.
+
+Đã làm:
+
+1. **Nới `WORD_SAFE_PATTERN`** (`api/pronunciation.ts`) thêm `, ; : ( ) / "` → phủ **11.572/11.572**
+   nghĩa. Vẫn chặn `<>{}[]\|&#$%*+=~^` và ký tự điều khiển; trần 100 ký tự giữ nguyên nên chi phí
+   mỗi request không đổi. Giá trị chỉ dùng làm cache key + text gửi Google TTS (SQL parameterized,
+   tên file qua `encodeURIComponent`).
+2. **`seed-all.ts` seed được vi-VN**: `PronTask` có thêm `lang`; nguồn là chuỗi `vi` của cùng từ
+   điển (khử trùng còn 11.572), 14 giọng Chirp3-HD (KHÔNG Studio — Google không có Studio cho
+   vi-VN). Quy mô mới: **162.008 dòng** (11.572 × 14), ~~2,72 triệu ký tự → sau 1 triệu miễn phí là
+   **~~$3,4** ở mức $2/1M. Tiếng Việt xếp SAU tiếng Anh để dừng giữa chừng vẫn xong phần chính.
+3. **Thread `lang` qua TOÀN BỘ đường đi** — đây là phần nguy hiểm nhất: khoá `word:voice` cũ thiếu
+   `lang` sẽ khiến `verifyDb` coi 162.008 dòng vi-VN là "orphan" và `--clean-orphans --yes` **xoá
+   thật**. Nay dùng chung `pronKey(word, voice, lang)` ở dedupe/audit/verify/orphan; keyset
+   pagination đổi sang `['word','voice','lang']` (đúng unique thật của bảng); mọi câu SQL
+   select/insert/delete đều có `lang`; parser tên file R2 hiểu hậu tố `-vi-VN`. Thêm **hàng rào**:
+   `--pron-lang` giới hạn cả phạm vi soát orphan, nên lượt chạy hẹp không bao giờ xoá dữ liệu ngôn
+   ngữ khác.
+4. Tên file en-US **giữ nguyên dạng cũ** (`<word>-<voice>.mp3`) để 194.688 file đã có không bị đổi
+   tên/tải lại; chỉ ngôn ngữ mới gắn hậu tố lang.
+5. `seed-pronunciations.ts` (script cũ, chỉ tiếng Anh) nay lọc `where lang='en-US'` khi dựng tập
+   "đã có" — không thì chuỗi trùng nhau giữa 2 ngôn ngữ bị coi nhầm là đã seed.
+6. **Test mới** `scripts/seed-all.test.ts` (12 ca): để test được, `main()` chỉ chạy khi gọi trực
+   tiếp (`isDirectRun`) — import không còn kích hoạt cả quy trình seed. Xác minh bằng số thật:
+   en vẫn đúng **194.688** (không hồi quy), vi = **162.008**, không trùng khoá, mọi chuỗi vi đều
+   qua luật của API. Thêm 3 ca cho `api/pronunciation.test.ts` (nghĩa nhiều vế → 200, từ quá dài
+   → 400, ký tự thật sự cấm → 400).
+
+Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test **3132/3132** xanh ✅.
+
+⚠️ **Việc tay sau khi merge:** chạy `npm run seed:all -- --all` (hoặc `--pron-lang=vi-VN`) trên VPS
+để tạo 162.008 audio tiếng Việt. Chưa chạy thì chiều B vẫn hoạt động, chỉ là tạo động từng từ ở
+lần bấm đầu.
+
 ### Fix (GỐC RỄ): `/api/pronunciation` từ chối MỌI giọng client gửi lên → luôn nghe 1 giọng (2026-08-13, nhánh `claude/tts-cache-voice-i1plxb`)
 
 Người dùng báo tiếp: "cài đặt riêng thế nào cũng chỉ trả về 1 giọng". Truy đến nơi:
@@ -38,6 +84,12 @@ về PascalCase như thật + thêm test hồi quy "voice PascalCase từ client
 kèm test cho `canonicalizeVoiceId`. Bài học: mock phải khớp hành vi thật của module bị mock.
 
 Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3118/3118 xanh ✅.
+
+**Tiếp theo (cùng ngày, PR sau):** siết luôn gốc rễ khiến bug lọt lưới — `api/pronunciation.test.ts`
+nay dùng `importOriginal` để lấy HÀM THẬT cho phần kiểm tra/chuẩn hoá tên giọng, chỉ còn mock 2 hàm
+gọi ra ngoài (`generateAudioFromGoogle`, `generateStudioAudioFromGoogle`) + `VOICE_VERSION`. Đã
+kiểm chứng bộ test mới thật sự bắt lỗi: tạm khôi phục dòng `.toLowerCase()` cũ → **10/18 test đỏ**
+(trước đây xanh hết). Nguyên tắc rút ra: mock KHÔNG được tự viết lại logic của chính module bị mock.
 
 ### Fix: nút loa thẻ từ mới/SRS/Hôm nay bỏ qua giọng đã chọn ở Cài đặt (2026-08-13, nhánh `claude/fix-word-voice-cycle-l1n2e4`)
 
