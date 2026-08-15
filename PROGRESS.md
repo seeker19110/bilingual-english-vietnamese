@@ -32,14 +32,14 @@ mastery → memory/SRS → next plan), làm DẦN từng phase — mỗi phase c
 viết lại app một lần. Đây là kế hoạch nhiều tháng, cần xin xác nhận người dùng ở mỗi cổng chuyển
 giai đoạn (đúng mục 3 `CLAUDE.md`), không tự ý chạy một mạch.
 
-**Tiến độ thực thi:** **Phase 00 — Research & Baseline** ĐANG LÀM (2026-08-15) — đã chạy baseline
-build/typecheck/lint/test (sau `npm ci` để khớp lockfile) + dependency graph qua `codemap`, ghi ở
-`docs/research/baseline.md`. Kết quả: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · test 3132/3132 ✅ ·
-0 chu trình import. Còn thiếu: đo latency/cost AI thật (cần key thật, chưa làm trong sandbox — xem
-mục 4 file baseline) và chạy E2E cục bộ (đang dựa vào CI đã gate sẵn). **CHƯA đóng Phase 00** — cần
-người dùng xác nhận trước khi mở Phase 01 (đụng thẳng `pgPool.ts`/`ai.ts` — hotspot rủi ro cao, xem
-bảng trong baseline.md). Không phase nào được đánh dấu xong chỉ vì có tài liệu — phải đạt Definition
-of Done ghi trong `MASTER_SPEC.md` (code + test + eval + docs + commit thật).
+**Tiến độ thực thi:** **Phase 00 — Research & Baseline** `in_progress` (2026-08-15, rà lại sau
+pull 2026-08-15) — baseline cũ tại `docs/research/baseline.md` là snapshot 3132 test; lượt rà
+hiện tại chạy được unit test **3212/3212** · lint 0 cảnh báo · audit production dependency 0 lỗ
+hổng. Typecheck đã được gọi lại; E2E local đã khởi chạy nhưng chưa là bằng chứng integration đáng
+tin vì test server thiếu Postgres thật và các worker cùng bị rate-limit dưới `ip=unknown`.
+Phase 00 vẫn thiếu trace 8 critical flows, AI latency/token/cost production sample, E2E với DB test
+và risk register có owner. **CHƯA đóng Phase 00**. Chuẩn thực thi/DoD bổ sung nằm ở
+`docs/OS_EXECUTION_GUIDE.md`, backlog và cổng từng phase ở `docs/OS_PHASE_BACKLOG.md`.
 
 **Đối chiếu nhanh với hiện trạng thật** (để Phase 00/01 không làm lại việc đã có — tra nhanh bằng
 Grep, chưa phải audit đầy đủ của Phase 00):
@@ -87,12 +87,12 @@ requestId)` (tương thích ngược, không đổi `createLogger()` cũ) + `pac
   `metrics.test.ts` 9 · thêm 2 vào `logger.test.ts` cho `createRequestLogger`, dư ra từ đợt trước
   còn `chatProviders.test.ts` 12 + `appError.test.ts` 11), coverage 3 file mới 100%.
 
-**Phase 01 "Foundation OS" COI NHƯ HOÀN TẤT ở mức "đã có nền, migrate dần"** — cả 7 mục đều có ít
-nhất một phần triển khai thật + test (mục 1/2/6/7 xong trọn vẹn cho phạm vi đã chọn; mục 3/4 CỐ Ý
-thu hẹp phạm vi vì đụng 71–257 điểm gọi hiện có, rủi ro cao nếu retrofit hàng loạt; mục 5 vốn đã có
-sẵn từ trước). Không tự ý coi đây là "Definition of Done" đầy đủ theo nghĩa khắt khe của
-`MASTER_SPEC.md` (DoD đòi migrate hết, không chỉ thêm nền) — ghi rõ ở đây để phiên sau biết ranh
-giới thật, tránh tưởng nhầm đã xong 100%.
+**Phase 01 "Foundation OS" là `in_progress` (foundation introduced, CHƯA accepted).** Các mục đều
+đã có ít nhất một phần triển khai thật + test (mục 1/2/6/7 xong cho phạm vi đã chọn; mục 3/4 cố ý
+thu hẹp vì đụng 71–257 điểm gọi; mục 5 vốn có sẵn). Nhưng DoD yêu cầu critical code thật dùng các
+abstraction: AI gateway chưa thống nhất chat/TTS/STT, error/env chưa migrate dần hết, và transaction
+helper chưa bảo vệ đủ luồng payment/entitlement. Không được mở Phase 02 hay gọi Phase 01 “hoàn tất”
+cho đến khi các cổng `OS_PHASE_BACKLOG.md` có bằng chứng.
 
 - Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **ĐÃ
   LÀM (2026-08-15)**: `packages/core-config/env.ts` (`EnvSchema` Zod cho ~25 biến hay dùng nhất,
@@ -121,9 +121,10 @@ NOTHING`). 6 test cho `withTransaction` (thành công, `fn` lỗi → rollback, 
   `packages/core-billing`) — tiến xa hơn baseline mà đặc tả OS giả định, xem ADR-0001 +
   `docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md`.
 
-**Việc còn lại của Phase 00** (theo `docs/phases/00-research-baseline.md`): chạy build/typecheck/
-lint/test lấy baseline chính xác, đo latency/token/cost AI thật, dựng dependency graph, ghi
-`docs/research/baseline.md`. Chưa làm ở bước này.
+**Việc còn lại của Phase 00** (theo `docs/phases/00-research-baseline.md`): làm mới snapshot
+build/typecheck/lint/test/E2E có môi trường tái lập, trace 8 luồng critical UI → API → DB/provider,
+đo latency/token/cost AI thật, hoàn tất architecture map và gán owner/next phase cho từng risk.
+Dependency graph đã có nhưng cần cập nhật cùng snapshot hiện hành.
 
 ### Seed phát âm TIẾNG VIỆT (chiều B) + nới luật input cho nghĩa nhiều vế (2026-08-13, nhánh `claude/tts-cache-voice-i1plxb-2`)
 
