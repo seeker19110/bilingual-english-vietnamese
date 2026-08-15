@@ -127,6 +127,34 @@ giờ dù chưa có engine dùng. **Người dùng chọn (b).** Đã làm trọ
 
 Cổng: build ✅ typecheck ✅ lint 0 cảnh báo ✅ test 3330/3330 ✅.
 
+**Phase 03 — Learner OS (2026-08-15, cùng nhánh/PR #541 — quyết định gom nhiều phase 1 PR).**
+Đặc tả gốc đòi bảng Postgres mới `learner_profiles`/`learner_goals`/`learner_preferences` +
+migrate/backfill dữ liệu người dùng thật. Đã hỏi trước — người dùng chọn "chỉ code + migration
+file, KHÔNG tự backfill". Trước khi viết migration, đọc `docs/adr/0002-quan-ly-nguoi-dung.md` thì
+phát hiện: kế hoạch đa lĩnh vực **ĐÃ CÓ** `english.user_profile` (migration `0036`) đóng đúng vai
+"learner profile" — nhưng bảng đó "NGỦ" (backfill 1 lần, code thật vẫn đọc/ghi `public.profiles`,
+LỆCH DẦN vì không dual-write). Tạo thêm `learner_profiles` sẽ là bảng ngủ THỨ HAI cho cùng 1 khái
+niệm — đúng kiểu trùng nguồn sự thật mà ADR-0002 đang tránh. **Đổi hướng sang phương án AN TOÀN
+HƠN cả mức đã duyệt**: `LearnerStateService` là ADAPTER thuần — đọc trực tiếp, luôn mới nhất, từ
+2 bảng nguồn sự thật THẬT đang chạy (`public.profiles`: onboarded/goal/daily_minutes,
+`english.learning_progress`: settings.direction/placement.cefr) — **0 migration, 0 bảng mới, 0
+rủi ro production**, và không có vấn đề "lệch dần" vì không có bản sao nào để lệch.
+
+- `packages/core-learner/learnerState.ts` — `getLearnerState(userId)`: trả `LearnerState` gồm
+  `direction`/`currentLevel`/`onboarded`/`goal` đọc từ dữ liệu thật (mặc định đúng hành vi client
+  hiện có: direction mặc định 'A' khớp `storage.ts#getDirection()`, currentLevel `null` khi chưa
+  làm bài test xếp lớp — không bịa cấp mặc định), cộng `skills`/`knowledge`/`errors`/
+  `recentEvidence`/`risks` LUÔN RỖNG (đúng kiểu `Skill[]`/`Knowledge[]`/`ErrorRecord[]`/
+  `Evidence[]` của Phase 02 — Phase 04/05/06/07/09 chưa xây engine).
+- Authorization (Acceptance "no cross-user leakage"): hàm nhận `userId` đã xác thực từ nơi gọi
+  (đúng quy ước `validateAuth()` hiện có toàn dự án), cả 2 câu SQL lọc CHÍNH XÁC theo `userId`
+  đó — test xác minh tường minh (`params` truyền cho `pool.query` luôn đúng userId).
+- **CHƯA có API endpoint** gọi hàm này — đúng tinh thần ADR-0002 Bước 5 (không dựng hạ tầng cho
+  tính năng UI chưa tồn tại). Nối 1 endpoint thật là việc khi có UI cần tới.
+- 9 test mới, coverage `packages/core-learner/` **100%**.
+
+Cổng: build ✅ typecheck ✅ lint 0 cảnh báo ✅ test 3339/3339 ✅.
+
 - Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **ĐÃ
   LÀM (2026-08-15)**: `packages/core-config/env.ts` (`EnvSchema` Zod cho ~25 biến hay dùng nhất,
   `getEnv()`/`parseEnv()`/`describeEnv()`) + `packages/core-config/secrets.ts`
