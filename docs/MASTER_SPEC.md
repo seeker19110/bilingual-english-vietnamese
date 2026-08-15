@@ -37,6 +37,8 @@ Evolve `english-tutor` from an AI language-learning web app into an Adaptive AI 
 The phase files are concise architectural outlines. The mandatory execution standard is
 [`OS_EXECUTION_GUIDE.md`](./OS_EXECUTION_GUIDE.md), and the phase-level deliverables,
 dependencies and acceptance gates are in [`OS_PHASE_BACKLOG.md`](./OS_PHASE_BACKLOG.md).
+The end-to-end implementation sequence, concrete work packages and exit criteria through Phase 45
+are defined in [`OS_COMPLETE_IMPLEMENTATION_PLAN.md`](./OS_COMPLETE_IMPLEMENTATION_PLAN.md).
 `PROGRESS.md` is the sole source for actual status and evidence; an outline or a new module alone
 does not change a phase to accepted.
 

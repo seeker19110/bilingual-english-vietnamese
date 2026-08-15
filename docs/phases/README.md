@@ -3,7 +3,9 @@
 Read `../MASTER_SPEC.md` first. These files state the architectural intent of each phase; before
 implementation, use the repository-wide [execution guide](../OS_EXECUTION_GUIDE.md) and
 [phase backlog](../OS_PHASE_BACKLOG.md) for contracts, rollout/rollback, test evidence and
-acceptance gates. Actual status is recorded only in [`PROGRESS.md`](../../PROGRESS.md).
+acceptance gates. The detailed sequence through project completion is in the
+[complete implementation plan](../OS_COMPLETE_IMPLEMENTATION_PLAN.md). Actual status is recorded
+only in [`PROGRESS.md`](../../PROGRESS.md).
 
 | Phase | Specification            |
 | ----- | ------------------------ |

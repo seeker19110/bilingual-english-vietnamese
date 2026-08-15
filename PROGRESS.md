@@ -40,6 +40,9 @@ tin vì test server thiếu Postgres thật và các worker cùng bị rate-limi
 Phase 00 vẫn thiếu trace 8 critical flows, AI latency/token/cost production sample, E2E với DB test
 và risk register có owner. **CHƯA đóng Phase 00**. Chuẩn thực thi/DoD bổ sung nằm ở
 `docs/OS_EXECUTION_GUIDE.md`, backlog và cổng từng phase ở `docs/OS_PHASE_BACKLOG.md`.
+Đặc tả chi tiết toàn bộ công việc, contract, test, rollout và exit gate từ Phase 00 đến Phase 45
+nằm ở `docs/OS_COMPLETE_IMPLEMENTATION_PLAN.md`; thứ tự PR gần nhất bắt đầu bằng sửa atomicity
+payment, dựng test environment thật và hoàn tất baseline — chưa mở Phase 02.
 
 **Đối chiếu nhanh với hiện trạng thật** (để Phase 00/01 không làm lại việc đã có — tra nhanh bằng
 Grep, chưa phải audit đầy đủ của Phase 00):

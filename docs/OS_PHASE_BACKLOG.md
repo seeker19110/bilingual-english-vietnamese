@@ -1,6 +1,8 @@
 # English Tutor OS — Backlog thực thi theo phase
 
-> Backlog này không phải báo cáo tiến độ. Dùng cùng [`OS_EXECUTION_GUIDE.md`](./OS_EXECUTION_GUIDE.md). Phase chỉ chuyển `accepted` khi `PROGRESS.md` có evidence, owner và DoD đầy đủ.
+> Backlog này không phải báo cáo tiến độ. Dùng cùng [`OS_EXECUTION_GUIDE.md`](./OS_EXECUTION_GUIDE.md)
+> và [`OS_COMPLETE_IMPLEMENTATION_PLAN.md`](./OS_COMPLETE_IMPLEMENTATION_PLAN.md). Phase chỉ chuyển
+> `accepted` khi `PROGRESS.md` có evidence, owner và DoD đầy đủ.
 
 | Phase                       | Outcome nghiệm thu                       | Deliverable / contract                                                                                      | Phụ thuộc và cổng mở phase kế                           |
 | --------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
