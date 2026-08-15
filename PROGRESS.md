@@ -62,9 +62,18 @@ Grep, chưa phải audit đầy đủ của Phase 00):
   `redactSecrets()` đã nối vào `packages/core-db/logger.ts` (mọi log qua `createLogger()` giờ tự
   che secret nếu lỡ lọt vào message) — đóng luôn Phase 01 mục 7. 42 test mới (`secrets.test.ts` 20
   · `env.test.ts` 14 · thêm 2 vào `logger.test.ts`), coverage 2 file mới 100%.
-- DB transaction helper dùng chung (Phase 01 mục 2) — `packages/core-db/pgPool.ts` có pool sẵn;
-  còn helper transaction chung hay mỗi handler tự `BEGIN/COMMIT` thì CHƯA xác minh — việc của
-  Phase 00.
+- DB transaction helper dùng chung (Phase 01 mục 2) — **ĐÃ LÀM (2026-08-15)**:
+  `packages/core-db/transaction.ts` — `withTransaction(pool, fn)` bọc đúng trình tự
+  `connect → begin → fn → commit`, tự `rollback` khi `fn` ném lỗi (rollback tự nó lỗi thì KHÔNG
+  che mất lỗi nghiệp vụ gốc), luôn `release()` ở `finally`. Trước đó cả repo chỉ có ĐÚNG 1 chỗ
+  dùng transaction thật (`api/admin-plan-features.ts` PUT — thêm tính năng mới + gán mặc định 3
+  gói) — đã chuyển sang dùng helper, đổi từ "rollback tay khi key trùng" sang "trả cờ rồi để
+  transaction tự commit" (hành vi giống hệt: 0 dòng bị đổi trong cả 2 cách vì `ON CONFLICT DO
+NOTHING`). 6 test cho `withTransaction` (thành công, `fn` lỗi → rollback, luôn release kể cả
+  lỗi, rollback tự nó lỗi vẫn giữ đúng lỗi gốc, trả đúng kiểu, dùng đúng client được cấp) + sửa 1
+  test cũ ở `admin-plan-features.test.ts` cho khớp hành vi mới (assert không có insert vào
+  `plan_feature_flags`, thay vì assert gọi `rollback`). `codemap -- impact` xác nhận sửa
+  `admin-plan-features.ts` chỉ ảnh hưởng đúng file test của nó + `server.ts`.
 - Monorepo đã tách một phần (`packages/core-db`, `packages/core-ai`, `packages/core-auth`,
   `packages/core-billing`) — tiến xa hơn baseline mà đặc tả OS giả định, xem ADR-0001 +
   `docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md`.
