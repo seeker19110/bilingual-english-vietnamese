@@ -1,6 +1,11 @@
 # English Tutor OS — Phase Specifications
 
-Read `../MASTER_SPEC.md` first. Each phase is implementation-ready and follows the same contract: objective, scope, implementation steps, contracts/data, tests, acceptance and commit boundary.
+Read `../MASTER_SPEC.md` first. These files state the architectural intent of each phase; before
+implementation, use the repository-wide [execution guide](../OS_EXECUTION_GUIDE.md) and
+[phase backlog](../OS_PHASE_BACKLOG.md) for contracts, rollout/rollback, test evidence and
+acceptance gates. The detailed sequence through project completion is in the
+[complete implementation plan](../OS_COMPLETE_IMPLEMENTATION_PLAN.md). Actual status is recorded
+only in [`PROGRESS.md`](../../PROGRESS.md).
 
 | Phase | Specification            |
 | ----- | ------------------------ |
