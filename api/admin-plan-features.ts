@@ -10,6 +10,7 @@
 
 import { z } from 'zod'
 import { getPgPool } from '../packages/core-db/pgPool.js'
+import { withTransaction } from '../packages/core-db/transaction.js'
 import {
   validateAuth,
   getCorsHeaders,
@@ -102,9 +103,11 @@ export default async function handler(req: Request): Promise<Response> {
       return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
     const { key, label, description } = parsed.data
 
-    const client = await pool.connect()
-    try {
-      await client.query('begin')
+    // "Key đã tồn tại" là kết quả NGHIỆP VỤ bình thường (409), không phải lỗi hạ tầng — nên
+    // không throw để thoát transaction, mà trả về cờ rồi tự quyết rollback/commit trong fn. Nếu
+    // throw ở đây, withTransaction() sẽ coi là lỗi thật và ném ra ngoài thay vì cho phép trả 409
+    // gọn gàng.
+    const outcome = await withTransaction(pool, async (client) => {
       const inserted = await client.query(
         `insert into public.feature_catalog (key, label, description)
          values ($1, $2, $3)
@@ -113,20 +116,18 @@ export default async function handler(req: Request): Promise<Response> {
         [key, label, description ?? null],
       )
       if (inserted.rowCount === 0) {
-        await client.query('rollback')
-        return jsonResponse({ error: 'Key này đã tồn tại' }, 409, allHeaders)
+        return { ok: false as const }
       }
       await client.query(
         `insert into public.plan_feature_flags (feature_key, plan, enabled)
          select $1, p.plan, true from (values ('free'), ('pro'), ('vip')) as p(plan)`,
         [key],
       )
-      await client.query('commit')
-    } catch (err) {
-      await client.query('rollback')
-      throw err
-    } finally {
-      client.release()
+      return { ok: true as const }
+    })
+
+    if (!outcome.ok) {
+      return jsonResponse({ error: 'Key này đã tồn tại' }, 409, allHeaders)
     }
 
     invalidatePlanFeatureCache()

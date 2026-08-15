@@ -2,7 +2,7 @@
 // `learning_progress`). Trước đây src/lib/progressSync.ts gọi Supabase client dựa vào RLS
 // `auth.uid()` — không còn hoạt động sau khi cutover khỏi Supabase Auth (Giai đoạn B).
 //
-// GET  /api/progress                         (cần Authorization: Bearer)
+// GET  /api/progress                         (cần đăng nhập — cookie)
 // POST /api/progress  body { learned, hard, srs, cefrGrammar, cefrDialogues, cefrUnlocked,
 //                             cefrExams, placement, weeklyGoal, achievements }
 
@@ -19,7 +19,12 @@ import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 import { vnDateStr } from '../packages/core-db/date.js'
 import { FREE_WEEKLY_BONUS_PER_DAY } from '../packages/core-billing/usage.js'
-import { mergeSrsMap, mergeExamMap, mergeByTimestamp } from './_lib/progressMerge.js'
+import {
+  mergeSrsMap,
+  mergeExamMap,
+  mergeByTimestamp,
+  mergeArrayUnion,
+} from './_lib/progressMerge.js'
 
 // Giới hạn kích thước hợp lý — chặn payload bất thường (DoS/lỗi client) mà vẫn đủ rộng
 // cho người học nhiều năm (từ điển app hiện ~12.000 từ).
@@ -35,6 +40,8 @@ const ProgressSchema = z.object({
   placement: z.record(z.string(), z.unknown()).default({}),
   weeklyGoal: z.record(z.string(), z.unknown()).default({}),
   achievements: z.array(z.string()).max(MAX_ARR).default([]),
+  settings: z.record(z.string(), z.unknown()).default({}),
+  streakFreezeDates: z.array(z.string()).max(MAX_ARR).default([]),
 })
 
 interface ProgressRow {
@@ -48,6 +55,8 @@ interface ProgressRow {
   placement: Record<string, unknown>
   weekly_goal: Record<string, unknown>
   achievements: string[]
+  settings: Record<string, unknown>
+  streak_freeze_dates: string[]
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -68,7 +77,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'GET') {
     const { rows } = await pool.query<ProgressRow>(
       `select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams,
-              placement, weekly_goal, achievements
+              placement, weekly_goal, achievements, settings, streak_freeze_dates
          from english.learning_progress where user_id = $1`,
       [auth.userId],
     )
@@ -86,6 +95,8 @@ export default async function handler(req: Request): Promise<Response> {
         placement: row.placement ?? {},
         weeklyGoal: row.weekly_goal ?? {},
         achievements: row.achievements ?? [],
+        settings: row.settings ?? {},
+        streakFreezeDates: row.streak_freeze_dates ?? [],
       },
       200,
       allHeaders,
@@ -116,15 +127,18 @@ export default async function handler(req: Request): Promise<Response> {
   // pushProgress merge) mà không có gì mới.
   const { rows: existingRows } = await pool.query<ProgressRow>(
     `select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams,
-            placement, weekly_goal, achievements
+            placement, weekly_goal, achievements, settings, streak_freeze_dates
        from english.learning_progress where user_id = $1`,
     [auth.userId],
   )
   const existing = existingRows[0]
+  // KHÔNG tính `hard` (audit 2026-08-12): đánh dấu một từ là "khó" KHÔNG phải hành động học —
+  // nó chỉ là gắn nhãn để lọc ở tab Từ khó, bấm phát một cái là xong, không cần học gì. Tính nó
+  // vào đây nghĩa là bật/tắt 1 từ khó cũng lĩnh trọn +5 lượt AI của ngày mà không học chữ nào.
+  // Ba tín hiệu còn lại đều là học thật: thuộc thêm từ, xong thêm bài ngữ pháp, xong thêm hội thoại.
   const grewLearning =
     !existing ||
     d.learned.length > (existing.learned ?? []).length ||
-    d.hard.length > (existing.hard ?? []).length ||
     d.cefrGrammar.length > (existing.cefr_grammar ?? []).length ||
     d.cefrDialogues.length > (existing.cefr_dialogues ?? []).length
 
@@ -142,36 +156,42 @@ export default async function handler(req: Request): Promise<Response> {
     }
   }
 
-  // Hợp nhất CÁC TRƯỜNG KHÔNG CÓ THAO TÁC "BỎ ĐÁNH DẤU" với dữ liệu đang có trên server —
-  // an toàn tuyệt đối vì các trường này chỉ "tốt lên", không có hành động nào của người dùng
-  // làm chúng nhỏ lại (SRS chỉ cập nhật thẻ đã có, điểm thi chỉ cải thiện, placement/weeklyGoal
-  // là "chụp trạng thái" nên so theo mốc thời gian). Việc này chặn đúng kịch bản gây mất dữ
-  // liệu: một thiết bị/tab gửi lên dữ liệu CŨ/RỖNG trước khi kịp kéo (pull) dữ liệu thật về
-  // (mất mạng, 2 tab cùng mở, race giữa pullProgress và pushProgress ở client).
-  //
-  // CÁC MẢNG có thao tác bỏ đánh dấu thật (unmarkLearned, toggleDifficult tắt,
-  // unmarkGrammarDone — xem lib/vocab.ts + lib/cefrProgress.ts) KHÔNG được hợp nhất kiểu
-  // hợp (union) ở đây — hợp sẽ làm việc bỏ đánh dấu không bao giờ có hiệu lực (server luôn
-  // cộng lại mục vừa bỏ). Race cho các mảng này được chặn ở phía client (progressSync.ts:
-  // pushProgress luôn CHỜ pullProgress đang chạy xong trước khi đọc localStorage để gửi đi).
+  // Hợp nhất với dữ liệu đang có trên server — CHẶN TUYỆT ĐỐI kịch bản mất tiến độ khi dùng
+  // nhiều thiết bị/tab (một thiết bị gửi lên dữ liệu CŨ/thiếu trước khi kịp kéo dữ liệu thật
+  // về, do mất mạng, 2 tab cùng mở, hoặc 2 thiết bị học song song rồi đồng bộ gần như đồng
+  // thời). Quyết định 2026-08-13: TOÀN BỘ các trường "tiến độ học" giờ chỉ TĂNG, không bao giờ
+  // giảm — kể cả learned/cefrGrammar/cefrDialogues/cefrUnlocked/achievements (trước đây ghi đè
+  // theo client). Đánh đổi đã xác nhận với người dùng: "bỏ đánh dấu" (unmarkLearned — không có
+  // nút UI nào gọi, chỉ còn trong test; unmarkGrammarDone — CÓ dùng ở CefrLessonViews.tsx) sẽ
+  // không còn tác dụng lâu dài, vì máy khác đồng bộ lại sẽ tự thêm lại mục vừa bỏ (xem
+  // _lib/progressMerge.ts). Riêng `hard` (nhãn từ khó, chỉ là lọc hiển thị — không phải tiến
+  // độ) VẪN ghi đè theo client như cũ.
   const merged = {
-    learned: d.learned,
+    learned: mergeArrayUnion(existing?.learned ?? [], d.learned),
     hard: d.hard,
     srs: mergeSrsMap(existing?.srs ?? {}, d.srs),
-    cefrGrammar: d.cefrGrammar,
-    cefrDialogues: d.cefrDialogues,
-    cefrUnlocked: d.cefrUnlocked,
+    cefrGrammar: mergeArrayUnion(existing?.cefr_grammar ?? [], d.cefrGrammar),
+    cefrDialogues: mergeArrayUnion(existing?.cefr_dialogues ?? [], d.cefrDialogues),
+    cefrUnlocked: mergeArrayUnion(existing?.cefr_unlocked ?? [], d.cefrUnlocked),
     cefrExams: mergeExamMap(existing?.cefr_exams ?? {}, d.cefrExams),
     placement: mergeByTimestamp(existing?.placement ?? {}, d.placement, 'lastAt'),
     weeklyGoal: mergeByTimestamp(existing?.weekly_goal ?? {}, d.weeklyGoal, 'updatedAt'),
-    achievements: d.achievements,
+    achievements: mergeArrayUnion(existing?.achievements ?? [], d.achievements),
+    // settings: "lựa chọn hiện tại" (ngôn ngữ giao diện, chiều học, âm thanh, giọng đọc) —
+    // không phải tiến độ "chỉ tăng", nên hợp nhất theo mốc updatedAt MỚI HƠN thắng, giống
+    // placement/weeklyGoal.
+    settings: mergeByTimestamp(existing?.settings ?? {}, d.settings, 'updatedAt'),
+    // streakFreezeDates: vé nghỉ streak ĐÃ DÙNG là sự kiện đã xảy ra — chỉ tăng, union như
+    // learned/achievements (không bao giờ mất vé đã ghi nhận ở máy khác).
+    streakFreezeDates: mergeArrayUnion(existing?.streak_freeze_dates ?? [], d.streakFreezeDates),
   }
 
   await pool.query(
     `insert into english.learning_progress
        (user_id, learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked,
-        cefr_exams, placement, weekly_goal, achievements, updated_at)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, now())
+        cefr_exams, placement, weekly_goal, achievements, settings, streak_freeze_dates,
+        updated_at)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, now())
      on conflict (user_id) do update set
        learned = excluded.learned,
        hard = excluded.hard,
@@ -183,6 +203,8 @@ export default async function handler(req: Request): Promise<Response> {
        placement = excluded.placement,
        weekly_goal = excluded.weekly_goal,
        achievements = excluded.achievements,
+       settings = excluded.settings,
+       streak_freeze_dates = excluded.streak_freeze_dates,
        updated_at = now()`,
     [
       auth.userId,
@@ -196,6 +218,8 @@ export default async function handler(req: Request): Promise<Response> {
       JSON.stringify(merged.placement),
       JSON.stringify(merged.weeklyGoal),
       JSON.stringify(merged.achievements),
+      JSON.stringify(merged.settings),
+      JSON.stringify(merged.streakFreezeDates),
     ],
   )
   return jsonResponse({ ok: true }, 200, allHeaders)

@@ -502,14 +502,16 @@ describe('verifyMicrosoftIdToken', () => {
   })
 })
 
-// ── findOrCreate*User (dùng chung findOrCreateOAuthUser, mỗi hàm khác cột định danh) ──
+// ── findOrCreate*User (dùng chung findOrCreateOAuthUser, tra cứu qua bảng `identities` — 0034,
+// Bước 6 đã bỏ 4 cột google_id/facebook_id/apple_id/microsoft_id cũ trên `users`) ──
 describe('findOrCreate*User (Facebook/Apple/Microsoft — liên kết tài khoản qua email)', () => {
   beforeEach(() => vi.restoreAllMocks())
 
-  it('findOrCreateGoogleUser: đã có user theo google_id → trả user cũ, isNew=false', async () => {
+  it('findOrCreateGoogleUser: đã có identity → trả user cũ, isNew=false', async () => {
     mockedGetPool.mockReturnValue(
       mockPool(async (sql) => {
-        if (sql.includes('google_id')) return { rows: [{ id: 'u1', email: 'a@b.com' }] }
+        if (sql.includes('join public.identities'))
+          return { rows: [{ id: 'u1', email: 'a@b.com' }] }
         return { rows: [] }
       }),
     )
@@ -517,12 +519,12 @@ describe('findOrCreate*User (Facebook/Apple/Microsoft — liên kết tài kho�
     expect(result).toEqual({ user: { id: 'u1', email: 'a@b.com' }, isNew: false })
   })
 
-  it('findOrCreateFacebookUser: chưa có theo facebook_id nhưng email đã tồn tại → LIÊN KẾT, isNew=false', async () => {
+  it('findOrCreateFacebookUser: chưa có identity nhưng email đã tồn tại → LIÊN KẾT (ghi identities), isNew=false', async () => {
     const calls: string[] = []
     mockedGetPool.mockReturnValue(
       mockPool(async (sql) => {
         calls.push(sql)
-        if (sql.includes('facebook_id') && sql.startsWith('select')) return { rows: [] }
+        if (sql.includes('join public.identities')) return { rows: [] }
         if (sql.startsWith('select id, email from public.users where email'))
           return { rows: [{ id: 'u2', email: 'old@b.com' }] }
         return { rows: [] }
@@ -530,18 +532,23 @@ describe('findOrCreate*User (Facebook/Apple/Microsoft — liên kết tài kho�
     )
     const result = await findOrCreateFacebookUser('fb1', 'old@b.com')
     expect(result).toEqual({ user: { id: 'u2', email: 'old@b.com' }, isNew: false })
-    expect(calls.some((sql) => sql.startsWith('update public.users set facebook_id'))).toBe(true)
+    expect(calls.some((sql) => sql.startsWith('insert into public.identities'))).toBe(true)
   })
 
-  it('findOrCreateAppleUser: email HOÀN TOÀN mới → tạo user mới, isNew=true', async () => {
+  it('findOrCreateAppleUser: email HOÀN TOÀN mới → tạo user mới + ghi identities, isNew=true', async () => {
+    const calls: string[] = []
     mockedGetPool.mockReturnValue(
       mockPool(async (sql) => {
+        calls.push(sql)
         if (sql.startsWith('select')) return { rows: [] }
-        return { rows: [{ id: 'u3', email: 'moi@b.com' }] }
+        if (sql.startsWith('insert into public.users'))
+          return { rows: [{ id: 'u3', email: 'moi@b.com' }] }
+        return { rows: [] }
       }),
     )
     const result = await findOrCreateAppleUser('ap1', 'moi@b.com')
     expect(result).toEqual({ user: { id: 'u3', email: 'moi@b.com' }, isNew: true })
+    expect(calls.some((sql) => sql.startsWith('insert into public.identities'))).toBe(true)
   })
 
   it('findOrCreateMicrosoftUser: insert không trả dòng nào (lỗi lạ) → ném lỗi', async () => {

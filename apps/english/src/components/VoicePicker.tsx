@@ -6,6 +6,10 @@ import {
   getVoiceRandomPref,
   setVoiceRandomPref,
   reshuffleRandomVoice,
+  getNativeVoicePref,
+  setNativeVoicePref,
+  isNativeVoiceSeparate,
+  setNativeVoiceSeparate,
   type Voice,
 } from '../lib/tts'
 import {
@@ -13,6 +17,7 @@ import {
   DEFAULT_SEED_VOICE_IDS,
   ELEVEN_VOICE_IDS,
   STUDIO_VOICE_IDS,
+  RANDOM_EXCLUDED_VOICES,
   getAllowedVoices,
   isVoicePromoActive,
 } from '../lib/voiceTiers'
@@ -34,6 +39,8 @@ interface Props {
 export default function VoicePicker({ plan, isA }: Props) {
   const [voice, setVoice] = useState<Voice>(getVoicePref())
   const [random, setRandom] = useState(getVoiceRandomPref())
+  const [nativeOn, setNativeOn] = useState(isNativeVoiceSeparate())
+  const [nativeVoice, setNativeVoice] = useState<Voice>(() => getNativeVoicePref())
   const allowed = new Set(getAllowedVoices(plan))
   const seeded = new Set(DEFAULT_SEED_VOICE_IDS)
   const eleven = new Set(ELEVEN_VOICE_IDS)
@@ -55,6 +62,26 @@ export default function VoicePicker({ plan, isA }: Props) {
     }
     setVoice(v)
     setVoicePref(v)
+  }
+
+  // Giọng giải thích: chỉ cho chọn trong giọng Chirp3-HD thường (bỏ Studio/ElevenLabs — phần
+  // giải thích ở chiều A là tiếng Việt, Studio không có giọng vi-VN; xem getNativeVoicePref).
+  const nativeChoices = VOICE_OPTIONS.filter(
+    (v) => allowed.has(v.id) && !RANDOM_EXCLUDED_VOICES.has(v.id),
+  )
+
+  function chooseNative(v: Voice) {
+    setNativeVoice(v)
+    setNativeVoicePref(v)
+  }
+
+  function toggleNative() {
+    const next = !nativeOn
+    setNativeOn(next)
+    setNativeVoiceSeparate(next)
+    // Đọc lại pref sau khi đổi công tắc: tắt → trả về đúng giọng hội thoại, bật → giọng
+    // giải thích thật sự sẽ dùng (mặc định khác giới tính).
+    setNativeVoice(getNativeVoicePref())
   }
 
   function toggleRandom() {
@@ -120,7 +147,10 @@ export default function VoicePicker({ plan, isA }: Props) {
             role="switch"
             aria-checked={random}
             onClick={toggleRandom}
-            className={`tap-44 relative w-11 h-6 rounded-full transition shrink-0 ${
+            // KHÔNG dùng .tap-44 ở đây: đây là công tắc dạng viên thuốc 44×24 — ép cao 44px
+            // sẽ biến nó thành khối chữ nhật, hỏng hẳn hình dáng công tắc. Rộng 44px (w-11)
+            // + đứng riêng một hàng có khoảng cách rộng nên vẫn đạt WCAG 2.2 AA (2.5.8).
+            className={`relative w-11 h-6 rounded-full transition shrink-0 ${
               random ? 'bg-accent-500' : 'bg-zinc-700'
             }`}
           >
@@ -200,6 +230,63 @@ export default function VoicePicker({ plan, isA }: Props) {
           ? '⚡ = giọng phát ngay lập tức. Giọng khác chậm hơn 1 chút ở lần phát đầu tiên.'
           : '⚡ = plays instantly. Other voices are slightly slower the first time.'}
       </p>
+
+      {/* Giọng GIẢI THÍCH (tiếng mẹ đẻ) — đọc phần sửa lỗi trong Luyện nói. Mặc định khác
+          giọng hội thoại để người học phân biệt ngay "AI đang nói tiếng đích" và "AI đang
+          giải thích" (xem getNativeVoicePref trong lib/tts.ts). */}
+      <div className="mt-4 pt-4 border-t border-zinc-800/80">
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <label htmlFor="native-voice-toggle" className="text-sm font-semibold text-white block">
+              {isA ? '🗣️ Giọng giải thích riêng' : '🗣️ Separate explanation voice'}
+            </label>
+            <p className="text-xs text-zinc-400 mt-0.5">
+              {isA
+                ? 'Phần sửa lỗi (tiếng Việt) đọc bằng giọng khác với câu hội thoại tiếng Anh'
+                : 'Corrections (in English) are read by a different voice than the Vietnamese conversation'}
+            </p>
+          </div>
+          <button
+            id="native-voice-toggle"
+            type="button"
+            role="switch"
+            aria-checked={nativeOn}
+            onClick={toggleNative}
+            // Cùng lý do với công tắc giọng ngẫu nhiên phía trên: không dùng .tap-44 để giữ
+            // hình dáng viên thuốc 44×24 (vẫn đạt WCAG 2.2 AA 2.5.8).
+            className={`relative w-11 h-6 rounded-full transition shrink-0 ${
+              nativeOn ? 'bg-accent-500' : 'bg-zinc-700'
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform ${
+                nativeOn ? 'translate-x-5' : ''
+              }`}
+            />
+          </button>
+        </div>
+
+        {nativeOn && (
+          <div className="grid grid-cols-4 gap-2 mt-3">
+            {nativeChoices.map((v) => (
+              <button
+                key={v.id}
+                type="button"
+                onClick={() => chooseNative(v.id)}
+                aria-pressed={nativeVoice === v.id}
+                title={`${v.id} — ${v.gender === 'female' ? (isA ? 'Nữ' : 'Female') : isA ? 'Nam' : 'Male'}`}
+                className={`flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-medium border transition ${
+                  nativeVoice === v.id
+                    ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
+                    : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
+                }`}
+              >
+                {v.id}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </section>
   )
 }

@@ -16,7 +16,16 @@
 // các helper ex/mis/qz định nghĩa lại tại chỗ (giống bản trong cefr.ts).
 // ──────────────────────────────────────────────────────────────────────────
 
-import type { CefrLevel, CefrUnit, GrammarLesson, Example, CommonMistake, QuizItem } from './cefr'
+// Lấy kiểu từ `cefrTypes.ts` chứ KHÔNG từ './cefr' — './cefr' import DỮ LIỆU C1/C2 của file này
+// nên import ngược lại sẽ thành chu trình.
+import type {
+  CefrLevel,
+  CefrUnit,
+  GrammarLesson,
+  Example,
+  CommonMistake,
+  QuizItem,
+} from './cefrTypes'
 import { C1_VOCAB_UNITS, C2_VOCAB_UNITS, type VocabUnitDef } from './cefrC1C2Vocab'
 
 // Helper rút gọn (bản sao của cefr.ts — dùng type-only import nên phải tự khai báo).

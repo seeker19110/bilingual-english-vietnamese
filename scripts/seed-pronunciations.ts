@@ -211,9 +211,12 @@ async function main(): Promise<void> {
     `⚙️  Batch: ${BATCH_SIZE} | Delay: ${DELAY_MS}ms | Retry delay: ${RETRY_DELAY_MS}ms | Max rounds: ${MAX_ROUNDS}`,
   )
 
-  // Lấy danh sách (từ, giọng) đã có trong DB — bỏ qua để resume được nếu bị dừng giữa chừng
+  // Lấy danh sách (từ, giọng) đã có trong DB — bỏ qua để resume được nếu bị dừng giữa chừng.
+  // LỌC lang='en-US': script này chỉ seed tiếng Anh, mà bảng nay còn có dòng vi-VN (nghĩa
+  // tiếng Việt, seed qua seed-all.ts) — không lọc thì một chuỗi trùng nhau ở 2 ngôn ngữ sẽ bị
+  // coi nhầm là "đã có" và bỏ sót audio tiếng Anh.
   const { rows: existing } = await getPgPool().query<{ word: string; voice: string }>(
-    'select word, voice from public.pronunciations',
+    "select word, voice from public.pronunciations where lang = 'en-US'",
   )
   const done = new Set(existing.map((r) => `${r.word}:${r.voice}`))
 

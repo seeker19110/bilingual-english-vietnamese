@@ -5,6 +5,7 @@
 import { useRef, useState } from 'react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
+import ComingSoonBanner from '../components/ComingSoonBanner'
 import AvatarSpeaking from '../components/AvatarSpeaking'
 import { ensureAudioWithTimeline, bufferToBlobUrl, DEFAULT_VOICE } from '../lib/tts'
 import {
@@ -104,6 +105,10 @@ export default function AvatarDemo() {
         <PageHeader
           title="PoC — Avatar AI nói chuyện"
           subtitle="Demo nội bộ: khẩu hình theo audio TTS — dùng mốc thời gian thật nếu giọng hỗ trợ, không thì ước lượng"
+        />
+        <ComingSoonBanner
+          isA
+          note="Avatar AI nói chuyện đang ở giai đoạn thử nghiệm (PoC): mới chứng minh cơ chế khẩu hình chạy đúng, chưa nối vào luồng Luyện nói thật. Bản hoàn chỉnh sẽ ra mắt sau."
         />
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 flex flex-col items-center gap-5">
           <AvatarSpeaking audioEl={audioRef.current} timeline={timeline} isPlaying={isPlaying} />

@@ -123,15 +123,20 @@ describe('/api/admin-plan-features', () => {
     expect(resp.status).toBe(400)
   })
 
-  it('PUT key đã tồn tại → 409, rollback', async () => {
+  it('PUT key đã tồn tại → 409, không gán quyền cho gói nào', async () => {
     connectClient.query.mockImplementation(async (sql: string) => {
-      if (sql === 'begin') return {}
+      if (sql === 'begin' || sql === 'commit') return {}
       if (sql.startsWith('insert into public.feature_catalog')) return { rowCount: 0 }
       return {}
     })
     const resp = await handler(makeRequest('PUT', { key: 'newkey', label: 'Nhãn' }))
     expect(resp.status).toBe(409)
-    expect(connectClient.query).toHaveBeenCalledWith('rollback')
+    // withTransaction() commit bình thường ở đây (không throw) — ON CONFLICT DO NOTHING đã tự
+    // đảm bảo 0 dòng bị đổi, nên commit một transaction rỗng và rollback nó tương đương nhau.
+    // Bất biến thật sự cần giữ: KHÔNG có câu insert nào vào plan_feature_flags chạy.
+    expect(connectClient.query).not.toHaveBeenCalledWith(
+      expect.stringContaining('insert into public.plan_feature_flags'),
+    )
     expect(connectClient.release).toHaveBeenCalled()
   })
 

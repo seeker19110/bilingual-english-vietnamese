@@ -288,3 +288,19 @@ describe('isValidStudioVoice', () => {
     expect(isValidStudioVoice('studio-o')).toBe(false) // phân biệt hoa/thường
   })
 })
+
+describe('canonicalizeVoiceId', () => {
+  it('đưa mọi cách viết hoa/thường về đúng tên giọng chuẩn', async () => {
+    const { canonicalizeVoiceId } = await import('./googleTts')
+    expect(canonicalizeVoiceId('Aoede')).toBe('Aoede')
+    expect(canonicalizeVoiceId('aoede')).toBe('Aoede')
+    expect(canonicalizeVoiceId('PUCK')).toBe('Puck')
+    expect(canonicalizeVoiceId('studio-o')).toBe('Studio-O')
+  })
+
+  it('giọng lạ → trả nguyên văn để nơi gọi tự báo lỗi', async () => {
+    const { canonicalizeVoiceId } = await import('./googleTts')
+    expect(canonicalizeVoiceId('Rachel')).toBe('Rachel')
+    expect(canonicalizeVoiceId('khong-co')).toBe('khong-co')
+  })
+})

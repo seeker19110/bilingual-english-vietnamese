@@ -14,7 +14,6 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import VoiceMenu from '../components/VoiceMenu'
 import PronounceButton from '../components/PronounceButton'
 import VocabMilestone from '../components/VocabMilestone'
 import StudyPanel, { type StudyTab } from '../components/StudyPanel'
@@ -220,7 +219,7 @@ export default function Dictionary() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout extra={<VoiceMenu plan={user.plan} isA={isA} />} />
+      <Layout />
 
       <main>
         <div

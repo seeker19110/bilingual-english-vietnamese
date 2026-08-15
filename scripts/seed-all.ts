@@ -28,12 +28,21 @@
 // Cờ / biến môi trường (SEED nội dung):
 //   --check  (CHECK=1)       Chỉ in báo cáo rồi thoát (không seed, không menu).
 //   --verify (VERIFY=1)      Kiểm tra KỸ DB: đối chiếu 2 chiều (thiếu / thừa / lệch đường dẫn).
+//   --check-versions          CHỈ ĐỌC: báo cáo tts_cache đang ở phiên bản giọng nào (v2 cũ /
+//                             v3 hiện tại / Studio) — không sửa/xoá/remap gì. Dùng để biết đã
+//                             migrate xong VOICE_VERSION chưa trước khi cân nhắc --clean-orphans.
 //   --clean-orphans          (kèm --verify) Xoá bản ghi + file THỪA (orphan) phát hiện được —
 //                             mặc định CHỈ XEM TRƯỚC, thêm --yes để xoá thật. Vd sau đợt đổi
 //                             tên giọng: female2/male2.mp3 không còn dùng nữa, chiếm dung
 //                             lượng oan → npm run seed:all -- --verify --clean-orphans --yes
 //   --all    (SEED_ALL=1/YES=1) Seed tất cả ngay, không hỏi menu (dùng cho CI/cron).
 //   --force  (FORCE=1)       Tạo lại + ghi đè cả audio đã có (dùng chung cho cả seed VÀ sync R2).
+//   --pron-lang=en-US        Chỉ seed/soát phát âm của (các) ngôn ngữ này — mặc định CẢ HAI:
+//                             en-US (từ tiếng Anh) + vi-VN (NGHĨA tiếng Việt của cùng từ điển,
+//                             chiều B đọc `card.vi`). Nhận nhiều giá trị: --pron-lang=en-US,vi-VN
+//                             ⚠️ Cờ này CŨNG giới hạn phạm vi soát orphan: dòng thuộc ngôn ngữ
+//                             ngoài lượt chạy sẽ KHÔNG bị --clean-orphans đụng tới (chạy hẹp
+//                             không bao giờ xoá nhầm dữ liệu ngôn ngữ khác).
 //   LIMIT=20                 Giới hạn số tác vụ mỗi nhóm (debug).
 //   VERIFY_DECRYPT=20        (kèm --verify) Tải + giải mã thử 20 file để chắc dùng được.
 //   WORDS_FILE=...           Đọc danh sách từ cần phát âm từ file (retry lỗi).
@@ -70,6 +79,7 @@ import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
   isValidStudioVoice,
+  isValidVoice,
   hasGoogleTtsKey,
   probeApiKeys,
   setActiveKeyPool,
@@ -81,6 +91,7 @@ import {
   type VoiceId,
   type StudioVoiceId,
 } from '../api/_lib/googleTts.ts'
+import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.ts'
 import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
 import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
 import { saveAudio } from '../packages/core-ai/fileStorage.ts'
@@ -120,6 +131,29 @@ const PRON_VOICE_IDS: AnyGoogleVoiceId[] = [
   ...EXTRA_VOICE_IDS,
 ]
 
+// Giọng cho phát âm TIẾNG VIỆT (chiều B đọc `card.vi`): 14 giọng Chirp3-HD, KHÔNG có Studio —
+// Google không có giọng Studio cho vi-VN (api/pronunciation.ts tự hạ về Chirp3-HD), seed Studio
+// cho vi-VN là tạo dòng không bao giờ khớp request thật.
+const PRON_VI_VOICE_IDS: AnyGoogleVoiceId[] = [...DEFAULT_SEED_VOICE_IDS, ...EXTRA_VOICE_IDS]
+
+// Ngôn ngữ phát âm sẽ seed trong lượt chạy này. Mặc định CẢ HAI: en-US (từ tiếng Anh) và
+// vi-VN (nghĩa tiếng Việt của cùng từ điển — chiều B). Thu hẹp bằng `--pron-lang=en-US`.
+//
+// ⚠️ AN TOÀN: danh sách này cũng giới hạn phạm vi soát orphan (xem verifyDb) — dòng phát âm
+// thuộc ngôn ngữ KHÔNG nằm trong lượt chạy sẽ không bị coi là orphan, để `--clean-orphans`
+// của một lượt hẹp không xoá nhầm dữ liệu của ngôn ngữ khác.
+const PRON_LANG_ARG = process.argv.find((a) => a.startsWith('--pron-lang='))?.split('=')[1]
+const ALL_PRON_LANGS: PronLang[] = ['en-US', 'vi-VN']
+const PRON_LANGS: PronLang[] = PRON_LANG_ARG
+  ? PRON_LANG_ARG.split(',')
+      .map((s) => s.trim())
+      .filter((s): s is PronLang => (ALL_PRON_LANGS as string[]).includes(s))
+  : ALL_PRON_LANGS
+if (PRON_LANG_ARG && PRON_LANGS.length === 0) {
+  console.error(`❌ --pron-lang không hợp lệ: ${PRON_LANG_ARG} (chỉ nhận en-US | vi-VN)`)
+  process.exit(1)
+}
+
 const BATCH_SIZE = 50 // số tác vụ song song
 const DELAY_MS = 0 // không cần delay
 const RETRY_DELAY_MS = 5000 // nghỉ giữa vòng retry
@@ -133,6 +167,7 @@ const BASE_URL = process.env.BASE_URL || ''
 const FORCE = process.argv.includes('--force') || process.env.FORCE === '1'
 const CHECK_ONLY = process.argv.includes('--check') || process.env.CHECK === '1'
 const VERIFY_ONLY = process.argv.includes('--verify') || process.env.VERIFY === '1'
+const CHECK_VERSIONS_ONLY = process.argv.includes('--check-versions')
 // Xoá THẬT các bản ghi + file dư thừa (orphan) phát hiện được lúc --verify — mặc định
 // (không có --yes) chỉ XEM TRƯỚC, không xoá gì. Dùng chung --yes với luồng sync R2 cũ.
 const CLEAN_ORPHANS = process.argv.includes('--clean-orphans')
@@ -211,7 +246,14 @@ async function withDbRetry<T>(fn: () => Promise<T>, label: string): Promise<T> {
 
 // ── Nhóm (category) ─────────────────────────────────────────────────────────
 type CatId =
-  'pron' | 'curriculum' | 'cefr' | 'lessons-early' | 'patterns' | 'lessons-rest' | 'challenge'
+  | 'pron'
+  | 'curriculum'
+  | 'cefr'
+  | 'lessons-early'
+  | 'patterns'
+  | 'lessons-rest'
+  | 'challenge'
+  | 'stories'
 
 // Thứ tự seed khi chạy --all (menu chọn riêng từng nhóm không phụ thuộc thứ tự này).
 // "Cụm từ" đặt CUỐI CÙNG vì số lượng lớn nhất (~313k câu) — ưu tiên seed xong các nhóm
@@ -224,6 +266,7 @@ const CATEGORIES: { id: CatId; label: string }[] = [
   { id: 'lessons-early', label: 'Hội thoại 50 bài đầu (Luyện nói)' },
   { id: 'lessons-rest', label: 'Hội thoại các bài còn lại' },
   { id: 'challenge', label: 'Câu mẫu Challenge 30 ngày' },
+  { id: 'stories', label: 'Truyện cổ tích/ngụ ngôn (trang Nghe)' },
   { id: 'patterns', label: 'Câu mẫu trang Cụm từ' },
 ]
 
@@ -232,11 +275,21 @@ const CATEGORIES: { id: CatId; label: string }[] = [
 // luồng với Chirp3-HD ở đây (cùng bảng tts_cache/pronunciations, cùng cơ chế remap/retry),
 // chỉ khác hàm gọi Google TTS thực tế (xem processTask).
 type AnyGoogleVoiceId = VoiceId | StudioVoiceId
+// Ngôn ngữ của 1 dòng phát âm. Bảng `pronunciations` unique theo (word, voice, lang) nên
+// MỌI khoá/truy vấn trong file này phải gồm đủ 3 phần — thiếu `lang` sẽ khớp nhầm giữa từ
+// tiếng Anh và nghĩa tiếng Việt trùng chuỗi.
+type PronLang = 'en-US' | 'vi-VN'
 interface PronTask {
   type: 'pron'
   cat: 'pron'
   word: string
   voice: AnyGoogleVoiceId
+  lang: PronLang
+}
+
+// Khoá định danh 1 dòng phát âm — dùng CHUNG cho mọi nơi (dedupe, audit, verify, orphan).
+function pronKey(word: string, voice: string, lang: string): string {
+  return `${word}:${voice}:${lang}`
 }
 interface PatternTask {
   type: 'pattern'
@@ -503,6 +556,12 @@ function loadPatternTasks(): PatternTask[] {
     for (const s of t.sampleVi) add(s, 'vi-VN', 'challenge', PREF_VOICE_IDS_FULL)
   }
 
+  // ── Truyện cổ tích/ngụ ngôn (trang /stories, /stories/:id) ────────────────────
+  // KHÔNG seed ở đây nữa — STORY_KIND_VOICE (apps/english/src/lib/stories.ts) từ 2026-08-06
+  // dùng giọng Gemini (đọc truyền cảm theo thể loại, xem packages/core-ai/geminiTts.ts), khác
+  // hẳn engine Chirp3-HD/Studio mà script này seed. Chạy riêng:
+  // `npm run seed:stories:gemini` (scripts/seed-stories-gemini-tts.ts).
+
   return tasks
 }
 
@@ -545,8 +604,21 @@ function loadAllPatternHashes(): Set<string> {
   return hashes
 }
 
+// Nghĩa tiếng Việt của thẻ từ (`card.vi`) có được phép gửi lên /api/pronunciation không —
+// PHẢI khớp WORD_SAFE_PATTERN + trần 100 ký tự trong api/pronunciation.ts. Seed chuỗi mà API
+// từ chối thì vừa phí tiền tạo audio, vừa để lại dòng không bao giờ khớp request thật (và bị
+// verifyDb coi là orphan). Giữ 2 điều kiện này ĐỒNG BỘ TAY với API — dự án không share code
+// giữa scripts/ và api/.
+const PRON_TEXT_SAFE_PATTERN = /^[\p{L}\p{M}0-9\s'’.,;:()/"-]+$/u
+const PRON_TEXT_MAX = 100
+function isSeedablePronText(text: string): boolean {
+  return text.length > 0 && text.length <= PRON_TEXT_MAX && PRON_TEXT_SAFE_PATTERN.test(text)
+}
+
 function loadPronTasks(wordsFile?: string): PronTask[] {
   let words: string[]
+  // Nghĩa tiếng Việt tương ứng (chỉ có khi đọc từ điển đầy đủ, không có ở đường retry file lỗi)
+  let viTexts: string[] = []
   if (wordsFile) {
     // Retry từ file lỗi (seed-errors.json)
     const raw = JSON.parse(fs.readFileSync(wordsFile, 'utf-8')) as unknown[]
@@ -561,29 +633,47 @@ function loadPronTasks(wordsFile?: string): PronTask[] {
       .filter((f) => /^chunk-\d+\.json$/.test(f))
       .sort()
     words = []
+    const viSeen = new Set<string>()
     for (const file of files) {
       const raw = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf-8')) as unknown[]
       for (const item of raw) {
         words.push(
           (typeof item === 'string' ? item : (item as { word: string }).word).toLowerCase(),
         )
+        // Chiều B (WordCard.tsx) đọc `card.vi` — CHUỖI NGHĨA, không phải từ tiếng Anh. Nhiều
+        // từ khác nhau dùng chung một nghĩa nên khử trùng ngay ở đây.
+        const vi =
+          typeof item === 'string' ? '' : String((item as { vi?: string }).vi ?? '').toLowerCase()
+        const trimmed = vi.trim()
+        if (isSeedablePronText(trimmed) && !viSeen.has(trimmed)) {
+          viSeen.add(trimmed)
+          viTexts.push(trimmed)
+        }
       }
     }
   }
+  if (!PRON_LANGS.includes('vi-VN')) viTexts = []
   // Curriculum words lên đầu → /learn hoạt động instant cho mọi user mới
   const curriculumWords = new Set(
     FOUNDATION.flatMap((c) => c.words.map((w) => w.word.toLowerCase())),
   )
   const tasks: PronTask[] = []
   const seen = new Set<string>()
-  for (const word of words) {
-    // Pronunciations chỉ cần 2 giọng (female/male) — female2/male2 dành cho TTS hội thoại
-    for (const voice of PRON_VOICE_IDS) {
-      const key = `${word}:${voice}`
-      if (seen.has(key)) continue
-      seen.add(key)
-      tasks.push({ type: 'pron', cat: 'pron', word, voice })
+  const pushTask = (word: string, voice: AnyGoogleVoiceId, lang: PronLang): void => {
+    const key = pronKey(word, voice, lang)
+    if (seen.has(key)) return
+    seen.add(key)
+    tasks.push({ type: 'pron', cat: 'pron', word, voice, lang })
+  }
+  if (PRON_LANGS.includes('en-US')) {
+    for (const word of words) {
+      for (const voice of PRON_VOICE_IDS) pushTask(word, voice, 'en-US')
     }
+  }
+  // Nghĩa tiếng Việt xếp SAU toàn bộ tiếng Anh: tiếng Anh là đường dùng chính (chiều A), seed
+  // xong trước rồi mới tới chiều B — dừng giữa chừng vẫn ưu tiên đúng phần quan trọng hơn.
+  for (const text of viTexts) {
+    for (const voice of PRON_VI_VOICE_IDS) pushTask(text, voice, 'vi-VN')
   }
   tasks.sort((a, b) => {
     const aHigh = curriculumWords.has(a.word) ? 0 : 1
@@ -651,16 +741,28 @@ function parseTtsCacheKey(key: string): { lang: string; voice: string; hash: str
 const VOICE_SUFFIXES: AnyGoogleVoiceId[] = [...VOICE_IDS, ...STUDIO_VOICE_IDS].sort(
   (a, b) => b.length - a.length,
 )
-function parsePronunciationKey(key: string): { word: string; voice: AnyGoogleVoiceId } | null {
+function parsePronunciationKey(
+  key: string,
+): { word: string; voice: AnyGoogleVoiceId; lang: PronLang } | null {
   if (!key.endsWith('.mp3')) return null
-  const base = key.slice(0, -'.mp3'.length)
+  let base = key.slice(0, -'.mp3'.length)
+  // Hậu tố ngôn ngữ chỉ có ở file KHÔNG PHẢI tiếng Anh (`<word>-<voice>-vi-VN.mp3`); file
+  // en-US giữ dạng cũ `<word>-<voice>.mp3` — xem processTask.
+  let lang: PronLang = 'en-US'
+  for (const l of ALL_PRON_LANGS) {
+    if (l !== 'en-US' && base.endsWith(`-${l}`)) {
+      lang = l
+      base = base.slice(0, -`-${l}`.length)
+      break
+    }
+  }
   for (const voice of VOICE_SUFFIXES) {
     const suffix = `-${voice}`
     if (base.endsWith(suffix)) {
       const encodedWord = base.slice(0, -suffix.length)
       if (!encodedWord) continue
       try {
-        return { word: decodeURIComponent(encodedWord), voice }
+        return { word: decodeURIComponent(encodedWord), voice, lang }
       } catch {
         return null // encodeURIComponent lỗi (hiếm) — bỏ qua file này
       }
@@ -712,6 +814,9 @@ async function syncTtsCacheFile(key: string, counters: SyncCounters, samples: st
     const buf = await fs.promises.readFile(localPath)
     const arrayBuffer = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
     const audioUrl = await saveAudio('tts-cache', key, arrayBuffer)
+    // CHỦ Ý không đụng cột `iv`: luồng này chỉ TẢI LẠI file ciphertext local lên R2, không hề
+    // mã hoá lại — iv của bản ghi vẫn đúng như cũ, ghi đè bằng null sẽ làm file không giải mã
+    // được nữa. Nhánh `on conflict` vì thế chỉ cập nhật audio_url (xem migration 0038).
     await pool.query(
       `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
        values ($1, $2, $3, $4, now())
@@ -737,8 +842,8 @@ async function syncPronunciationFile(key: string, counters: SyncCounters, sample
   const pool = getPgPool()
   if (!FORCE) {
     const { rows } = await pool.query<{ audio_url: string }>(
-      'select audio_url from public.pronunciations where word = $1 and voice = $2',
-      [parsed.word, parsed.voice],
+      'select audio_url from public.pronunciations where word = $1 and voice = $2 and lang = $3',
+      [parsed.word, parsed.voice, parsed.lang],
     )
     if (rows[0] && !rows[0].audio_url.includes('/uploads/')) {
       counters.skip++
@@ -758,9 +863,9 @@ async function syncPronunciationFile(key: string, counters: SyncCounters, sample
     // file), chấp nhận được vì hằng số này hiếm đổi.
     await pool.query(
       `insert into public.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
-       values ($1, $2, $3, 'en-US', $4, now())
+       values ($1, $2, $3, $4, $5, now())
        on conflict (word, voice, lang) do update set audio_url = excluded.audio_url, last_accessed_at = now()`,
-      [parsed.word, parsed.voice, audioUrl, VOICE_VERSION],
+      [parsed.word, parsed.voice, audioUrl, parsed.lang, VOICE_VERSION],
     )
     counters.uploaded++
   } catch (err) {
@@ -936,7 +1041,7 @@ async function deleteStoredFile(audioUrl: string): Promise<void> {
 // dùng thật, nên những trường hợp đó chỉ xoá bản ghi DB thừa, GIỮ NGUYÊN file.
 async function cleanOrphans(
   ttsOrphans: { hash: string; audio_url: string }[],
-  pronOrphansList: { word: string; voice: string; audio_url: string }[],
+  pronOrphansList: { word: string; voice: string; lang: string; audio_url: string }[],
   activeAudioUrls: Set<string>,
   confirmYes = VERIFY_CONFIRM_YES,
 ): Promise<void> {
@@ -1012,11 +1117,11 @@ async function cleanOrphans(
     }
     await withDbRetry(
       () =>
-        pool.query('delete from public.pronunciations where word = $1 and voice = $2', [
-          r.word,
-          r.voice,
-        ]),
-      `xoá orphan pronunciations ${r.word}/${r.voice}`,
+        pool.query(
+          'delete from public.pronunciations where word = $1 and voice = $2 and lang = $3',
+          [r.word, r.voice, r.lang],
+        ),
+      `xoá orphan pronunciations ${r.word}/${r.voice}/${r.lang}`,
     )
     bumpProgress()
   })
@@ -1171,28 +1276,30 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
 
   try {
     if (task.type === 'pron') {
-      const { word, voice } = task
+      const { word, voice, lang: pronLang } = task
 
       // Trước khi gọi Google TTS: thử remap từ cache cũ dưới TÊN GIỌNG CŨ (đợt đổi tên
       // 2026-07-21: female→Kore, male→Puck...) — audio KHÔNG mã hoá (khác tts_cache) nên
       // chỉ cần copy nguyên audio_url sang dòng mới, không cần tải/upload lại gì cả.
       // Giọng Studio không có tiền thân (voice mới hoàn toàn) nên bỏ qua nhánh này.
-      if (!FORCE && !isValidStudioVoice(voice)) {
+      // Chỉ áp cho tiếng Anh: đợt đổi tên giọng 2026-07-21 chỉ có dòng en-US, không có dòng
+      // vi-VN nào để tái dùng.
+      if (!FORCE && !isValidStudioVoice(voice) && pronLang === 'en-US') {
         const oldVoiceName = OLD_VOICE_ALIAS[voice]
         if (oldVoiceName) {
           const { rows: oldRows } = await pool.query<{ audio_url: string }>(
-            'select audio_url from public.pronunciations where word = $1 and voice = $2',
-            [word, oldVoiceName],
+            'select audio_url from public.pronunciations where word = $1 and voice = $2 and lang = $3',
+            [word, oldVoiceName, pronLang],
           )
           const oldAudioUrl = oldRows[0]?.audio_url
           if (oldAudioUrl) {
             await pool.query(
               `insert into public.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
-               values ($1, $2, $3, 'en-US', $4, now())
+               values ($1, $2, $3, $4, $5, now())
                on conflict (word, voice, lang) do update set
                  audio_url = excluded.audio_url, voice_version = excluded.voice_version,
                  last_accessed_at = now()`,
-              [word, voice, oldAudioUrl, VOICE_VERSION],
+              [word, voice, oldAudioUrl, pronLang, VOICE_VERSION],
             )
             return { status: 'remapped' }
           }
@@ -1209,18 +1316,23 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
 
       const audioBuffer = isValidStudioVoice(voice)
         ? await generateStudioAudioFromGoogle(word, voice)
-        : await generateAudioFromGoogle(word, voice, 'en-US')
+        : await generateAudioFromGoogle(word, voice, pronLang)
       // encodeURIComponent — GIỐNG HỆT api/pronunciation.ts (API thật) — để hỗ trợ từ
       // có dấu (café, naïve...) trong URL, dù key thô vẫn hợp lệ với R2/local.
-      const fileName = `${encodeURIComponent(word)}-${voice}.mp3`
+      // Tên file en-US GIỮ NGUYÊN dạng cũ (không có phần lang) để 194.688 file đã seed trước
+      // đây không bị đổi tên/tải lại; chỉ ngôn ngữ mới mới gắn hậu tố lang.
+      const fileName =
+        pronLang === 'en-US'
+          ? `${encodeURIComponent(word)}-${voice}.mp3`
+          : `${encodeURIComponent(word)}-${voice}-${pronLang}.mp3`
       const audioUrl = await saveAudio('pronunciations', fileName, audioBuffer, BASE_URL)
       await pool.query(
         `insert into public.pronunciations (word, voice, audio_url, lang, voice_version, last_accessed_at)
-         values ($1, $2, $3, 'en-US', $4, now())
+         values ($1, $2, $3, $4, $5, now())
          on conflict (word, voice, lang) do update set
            audio_url = excluded.audio_url, voice_version = excluded.voice_version,
            last_accessed_at = now()`,
-        [word, voice, audioUrl, VOICE_VERSION],
+        [word, voice, audioUrl, pronLang, VOICE_VERSION],
       )
       return { status: 'ok' }
     }
@@ -1252,8 +1364,8 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
       ].filter((h): h is string => h !== null)
 
       for (const oldHash of legacyHashes) {
-        const { rows: oldRows } = await pool.query<{ audio_url: string }>(
-          'select audio_url from public.tts_cache where hash = $1',
+        const { rows: oldRows } = await pool.query<{ audio_url: string; iv: string | null }>(
+          'select audio_url, iv from public.tts_cache where hash = $1',
           [oldHash],
         )
         const oldCached = oldRows[0]
@@ -1261,16 +1373,18 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
         try {
           const res = await fetch(oldCached.audio_url)
           if (res.ok) {
-            const plain = await decryptAudio(await res.arrayBuffer(), oldHash)
-            const newCipher = await encryptAudio(plain, hash)
+            // Giải mã bản CŨ bằng iv của chính nó (null = bản ghi trước migration 0038 → iv
+            // suy từ hash), rồi mã hoá lại bằng iv NGẪU NHIÊN mới và lưu iv đó kèm bản ghi mới.
+            const plain = await decryptAudio(await res.arrayBuffer(), oldHash, oldCached.iv)
+            const { cipher: newCipher, iv_b64: newIvB64 } = await encryptAudio(plain, hash)
             const fileName = `${lang}/${voice}/${hash}.mp3`
             const audioUrl = await saveAudio('tts-cache', fileName, newCipher, BASE_URL)
             await pool.query(
-              `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
-               values ($1, $2, $3, $4, now())
+              `insert into public.tts_cache (hash, lang, voice, audio_url, iv, last_accessed_at)
+               values ($1, $2, $3, $4, $5, now())
                on conflict (hash) do update set
-                 audio_url = excluded.audio_url, last_accessed_at = now()`,
-              [hash, lang, voice, audioUrl],
+                 audio_url = excluded.audio_url, iv = excluded.iv, last_accessed_at = now()`,
+              [hash, lang, voice, audioUrl, newIvB64],
             )
             return { status: 'remapped' }
           }
@@ -1290,15 +1404,16 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
     const audioBuffer = isValidStudioVoice(voice)
       ? await generateStudioAudioFromGoogle(text, voice)
       : await generateAudioFromGoogle(text, voice, lang)
-    const encrypted = await encryptAudio(audioBuffer, hash)
+    // iv NGẪU NHIÊN mỗi lần mã hoá, PHẢI lưu kèm bản ghi (migration 0038).
+    const { cipher: encrypted, iv_b64: ivB64 } = await encryptAudio(audioBuffer, hash)
     const fileName = `${lang}/${voice}/${hash}.mp3`
     const audioUrl = await saveAudio('tts-cache', fileName, encrypted, BASE_URL)
     await pool.query(
-      `insert into public.tts_cache (hash, lang, voice, audio_url, last_accessed_at)
-       values ($1, $2, $3, $4, now())
+      `insert into public.tts_cache (hash, lang, voice, audio_url, iv, last_accessed_at)
+       values ($1, $2, $3, $4, $5, now())
        on conflict (hash) do update set
-         audio_url = excluded.audio_url, last_accessed_at = now()`,
-      [hash, lang, voice, audioUrl],
+         audio_url = excluded.audio_url, iv = excluded.iv, last_accessed_at = now()`,
+      [hash, lang, voice, audioUrl, ivB64],
     )
     return { status: 'ok' }
   } catch (err) {
@@ -1527,12 +1642,12 @@ async function audit(allByCat: Map<CatId, AnyTask[]>): Promise<CatStat[]> {
   process.stdout.write('🔎 Đang kiểm tra DB (pronunciations + tts_cache)...')
 
   // Tập đã có trên DB
-  const pronRows = await fetchAllRows<{ word: string; voice: string }>(
+  const pronRows = await fetchAllRows<{ word: string; voice: string; lang: string }>(
     'pronunciations',
-    'word, voice',
-    ['word', 'voice'],
+    'word, voice, lang',
+    ['word', 'voice', 'lang'],
   )
-  const donePron = new Set(pronRows.map((r) => `${r.word}:${r.voice}`))
+  const donePron = new Set(pronRows.map((r) => pronKey(r.word, r.voice, r.lang)))
   const ttsRows = await fetchAllRows<{ hash: string }>('tts_cache', 'hash', ['hash'])
   const doneHash = new Set(ttsRows.map((r) => r.hash))
 
@@ -1540,7 +1655,7 @@ async function audit(allByCat: Map<CatId, AnyTask[]>): Promise<CatStat[]> {
 
   const isDone = (t: AnyTask): boolean =>
     t.type === 'pron'
-      ? donePron.has(`${t.word}:${t.voice}`)
+      ? donePron.has(pronKey(t.word, t.voice, t.lang))
       : doneHash.has(hashText(t.text, t.lang, t.voice))
 
   const stats: CatStat[] = []
@@ -1646,10 +1761,10 @@ async function verifyDb(
 
   // 1) Tập KỲ VỌNG: hash TTS (kèm VOICE_VERSION) + key phát âm
   const expectedTts = new Set<string>() // hash câu TTS kỳ vọng
-  const expectedPron = new Set<string>() // `word:voice` phát âm kỳ vọng
+  const expectedPron = new Set<string>() // `word:voice:lang` phát âm kỳ vọng
   for (const { id } of CATEGORIES) {
     for (const t of allByCat.get(id) ?? []) {
-      if (t.type === 'pron') expectedPron.add(`${t.word}:${t.voice}`)
+      if (t.type === 'pron') expectedPron.add(pronKey(t.word, t.voice, t.lang))
       else expectedTts.add(hashText(t.text, t.lang, t.voice))
     }
   }
@@ -1677,39 +1792,60 @@ async function verifyDb(
   let pathBad = 0 // mục 5: audio_url không đúng dạng lang/voice/hash.mp3
   const badSample: string[] = []
   // mục 6: mẫu file để giải mã thử (chỉ giữ tối đa sampleN dòng, không giữ cả bảng)
-  const decryptSample: { hash: string; audio_url: string }[] = []
+  const decryptSample: { hash: string; audio_url: string; iv: string | null }[] = []
   let ttsCount = 0
 
-  await streamRows<{ hash: string; lang: string; voice: string; audio_url: string }>(
-    'tts_cache',
-    'hash, lang, voice, audio_url',
-    ['hash'],
-    (rows) => {
-      for (const r of rows) {
-        ttsCount++
-        dbHash.add(r.hash)
-        if (expectedTts.has(r.hash)) {
-          if (doClean) activeTtsUrls.add(r.audio_url)
-          if (sampleN > 0 && decryptSample.length < sampleN)
-            decryptSample.push({ hash: r.hash, audio_url: r.audio_url })
-        } else {
-          orphans.push({ hash: r.hash, lang: r.lang, voice: r.voice, audio_url: r.audio_url })
-          const k = `${r.lang}/${r.voice}`
-          orphanByVoice.set(k, (orphanByVoice.get(k) ?? 0) + 1)
-        }
-        if (!r.audio_url || !r.audio_url.includes(`${r.lang}/${r.voice}/${r.hash}.mp3`)) {
-          pathBad++
-          if (badSample.length < 5) badSample.push(r.hash)
-        }
+  await streamRows<{
+    hash: string
+    lang: string
+    voice: string
+    audio_url: string
+    iv: string | null
+  }>('tts_cache', 'hash, lang, voice, audio_url, iv', ['hash'], (rows) => {
+    for (const r of rows) {
+      ttsCount++
+      dbHash.add(r.hash)
+      // BẢO VỆ giọng ElevenLabs (audit 2026-08-12): script này chỉ sinh tác vụ cho giọng
+      // Google/Gemini, nên MỌI dòng giọng ElevenLabs đều nằm ngoài expectedTts và trước đây
+      // bị coi là orphan → `--clean-orphans --yes` xoá sạch. Nhưng ElevenLabs (Rachel) là
+      // giọng người dùng CHỌN TAY được ở Cài đặt (chỉ bị loại khỏi bể random, xem
+      // apps/english/src/lib/voiceTiers.ts RANDOM_EXCLUDED_VOICES) — /api/tts vẫn phục vụ
+      // bình thường. Tức là chúng KHÔNG "mất khỏi dữ liệu app", xoá đi là vi phạm chính sách
+      // cache (CLAUDE.md mục 6: không bao giờ tự xoá cache đang dùng) và phải trả tiền sinh lại.
+      // Cùng tinh thần với phần bảo vệ câu pattern ngoài seed-index ở mục 1.
+      if (expectedTts.has(r.hash) || isValidElevenVoice(r.voice)) {
+        if (doClean) activeTtsUrls.add(r.audio_url)
+        if (sampleN > 0 && decryptSample.length < sampleN)
+          decryptSample.push({ hash: r.hash, audio_url: r.audio_url, iv: r.iv ?? null })
+      } else {
+        orphans.push({ hash: r.hash, lang: r.lang, voice: r.voice, audio_url: r.audio_url })
+        const k = `${r.lang}/${r.voice}`
+        orphanByVoice.set(k, (orphanByVoice.get(k) ?? 0) + 1)
       }
-    },
-  )
+      if (!r.audio_url || !r.audio_url.includes(`${r.lang}/${r.voice}/${r.hash}.mp3`)) {
+        pathBad++
+        if (badSample.length < 5) badSample.push(r.hash)
+      }
+    }
+  })
   // pronunciations nhỏ (~180k dòng) — gom cả mảng vẫn nhẹ.
-  const pronRows = await fetchAllRows<{ word: string; voice: string; audio_url: string }>(
-    'pronunciations',
-    'word, voice, audio_url',
-    ['word', 'voice'],
-  )
+  const pronRowsAll = await fetchAllRows<{
+    word: string
+    voice: string
+    lang: string
+    audio_url: string
+  }>('pronunciations', 'word, voice, lang, audio_url', ['word', 'voice', 'lang'])
+  // ⚠️ AN TOÀN: chỉ soát những ngôn ngữ NẰM TRONG lượt chạy này. Chạy hẹp (vd
+  // `--pron-lang=en-US`) mà vẫn soát cả bảng thì toàn bộ dòng vi-VN sẽ bị coi là orphan và
+  // `--clean-orphans --yes` xoá sạch chúng — mất hàng vạn file audio đúng nghĩa.
+  const pronRows = pronRowsAll.filter((r) => (PRON_LANGS as string[]).includes(r.lang))
+  const pronSkippedByLang = pronRowsAll.length - pronRows.length
+  if (pronSkippedByLang > 0) {
+    console.log(
+      `\n   ℹ️  Bỏ qua ${pronSkippedByLang} dòng phát âm thuộc ngôn ngữ ngoài lượt chạy này` +
+        ` (--pron-lang=${PRON_LANGS.join(',')}) — không soát, không xoá.`,
+    )
+  }
   console.log(` xong (${ttsCount} câu TTS, ${pronRows.length} phát âm)`)
 
   // 3) Chiều THIẾU — theo nhóm
@@ -1730,7 +1866,7 @@ async function verifyDb(
   }
   // phát âm
   let pronPresent = 0
-  for (const r of pronRows) if (expectedPron.has(`${r.word}:${r.voice}`)) pronPresent++
+  for (const r of pronRows) if (expectedPron.has(pronKey(r.word, r.voice, r.lang))) pronPresent++
   console.log(
     `  ${pronPresent === expectedPron.size ? '✅' : '⚠️'} ${'Phát âm (pron)'.padEnd(labelWidth)}  có ${pronPresent}/${expectedPron.size}  thiếu ${expectedPron.size - pronPresent}`,
   )
@@ -1752,7 +1888,7 @@ async function verifyDb(
   // tên giọng 2026-07-21: dòng voice='female2'/'male2' còn sót lại (chưa từng remap vì
   // pronunciations trước giờ chỉ seed 2 giọng female/male, không có female2/male2) — vẫn
   // chiếm chỗ trên Storage dù app hiện tại không bao giờ đọc tới.
-  const pronOrphans = pronRows.filter((r) => !expectedPron.has(`${r.word}:${r.voice}`))
+  const pronOrphans = pronRows.filter((r) => !expectedPron.has(pronKey(r.word, r.voice, r.lang)))
   const pronOrphanByVoice = new Map<string, number>()
   for (const r of pronOrphans) {
     pronOrphanByVoice.set(r.voice, (pronOrphanByVoice.get(r.voice) ?? 0) + 1)
@@ -1773,7 +1909,7 @@ async function verifyDb(
     // activeTtsUrls đã gom trong stream (mục 2); chỉ cần thêm url của phát âm còn kỳ vọng.
     const activeAudioUrls = activeTtsUrls
     for (const r of pronRows) {
-      if (expectedPron.has(`${r.word}:${r.voice}`)) activeAudioUrls.add(r.audio_url)
+      if (expectedPron.has(pronKey(r.word, r.voice, r.lang))) activeAudioUrls.add(r.audio_url)
     }
     await cleanOrphans(orphans, pronOrphans, activeAudioUrls, confirmYes)
   }
@@ -1820,7 +1956,9 @@ async function verifyDb(
         const buf = await res.arrayBuffer()
         if (buf.byteLength < 32)
           throw new Error(`BODY_NGẮN_${buf.byteLength}B (có thể là trang lỗi, không phải audio)`)
-        await decryptAudio(buf, r.hash) // giải mã bằng khoá suy từ hash
+        // Khoá suy từ hash; iv lấy từ chính bản ghi (null = bản ghi trước migration 0038 →
+        // rơi về iv suy từ hash). Thiếu iv này thì mọi bản ghi mới đều báo giải mã hỏng oan.
+        await decryptAudio(buf, r.hash, r.iv)
         okDec++
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err)
@@ -1858,6 +1996,78 @@ async function verifyDb(
       `⚠️  Chưa khớp: thiếu ${totalMissing} câu kỳ vọng` +
         (pathBad ? `, ${pathBad} đường dẫn lệch` : '') +
         `. Chạy \`npm run seed:all -- --all\` để bù.`,
+    )
+  }
+}
+
+// ── --check-versions: BÁO CÁO (chỉ đọc) tts_cache đang ở phiên bản giọng nào ────────────────
+// Khác verifyDb() (đối chiếu thiếu/thừa rồi có thể XOÁ orphan), lệnh này CHỈ trả lời "cache
+// hiện có đang ở v2 (tên giọng cũ / hash thiếu VOICE_VERSION), v3 (VOICE_VERSION hiện tại)
+// hay Studio?" — không sửa, không remap, không xoá gì cả.
+// Giới hạn cố hữu: hash 1 chiều (không suy ngược ra version), nên chỉ phân loại CHÍNH XÁC
+// được cho câu vẫn còn trong tập "kỳ vọng" hiện tại (allByCat) — dòng KHÔNG khớp gì (không
+// v3, không v2 cũ) bị gộp vào "không xác định" (orphan thật hoặc voice_version lạ khác).
+async function checkVersions(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
+  console.log('\n🔖 KIỂM TRA PHIÊN BẢN GIỌNG trong tts_cache (chỉ đọc — không sửa/xoá/remap gì)')
+
+  // Tập kỳ vọng hiện tại (v3) + 2 lược đồ hash CŨ tương ứng — chỉ tính được cho giọng
+  // Chirp3-HD, KHÔNG phải Studio (Studio không có tiền thân, xem legacyVoiceNameHash).
+  const expectedCurrent = new Set<string>()
+  const expectedOldNoVersion = new Set<string>()
+  const expectedLegacyName = new Set<string>()
+  for (const { id } of CATEGORIES) {
+    for (const t of allByCat.get(id) ?? []) {
+      if (t.type === 'pron') continue
+      expectedCurrent.add(hashText(t.text, t.lang, t.voice))
+      if (!isValidStudioVoice(t.voice)) {
+        expectedOldNoVersion.add(oldHashText(t.text, t.lang, t.voice))
+        const legacy = legacyVoiceNameHash(t.text, t.lang, t.voice)
+        if (legacy) expectedLegacyName.add(legacy)
+      }
+    }
+  }
+  // Câu pattern ngoài seed-index (xem loadAllPatternHashes) vẫn là cache v3 hợp lệ.
+  for (const h of loadAllPatternHashes()) expectedCurrent.add(h)
+
+  // Voice CHƯA từng remap tên giọng (đợt đổi tên 2026-07-21) — nhận biết trực tiếp từ cột
+  // voice, không cần đối chiếu hash.
+  const LEGACY_RAW_NAMES = new Set(['female', 'male', 'female2', 'male2'])
+  const counts = { v3: 0, v2Name: 0, v2Hash: 0, studio: 0, unknown: 0 }
+  let total = 0
+
+  await streamRows<{ hash: string; voice: string }>(
+    'tts_cache',
+    'hash, voice',
+    ['hash'],
+    (rows) => {
+      for (const r of rows) {
+        total++
+        if (LEGACY_RAW_NAMES.has(r.voice)) counts.v2Name++
+        else if (isValidStudioVoice(r.voice)) counts.studio++
+        else if (expectedCurrent.has(r.hash)) counts.v3++
+        else if (expectedOldNoVersion.has(r.hash) || expectedLegacyName.has(r.hash)) counts.v2Hash++
+        else counts.unknown++
+      }
+    },
+  )
+
+  console.log(`\n   Tổng ${total} bản ghi tts_cache:`)
+  console.log(`   ✅ v3 hiện tại (chirp3hd-v3):                      ${counts.v3}`)
+  console.log(`   🟡 v2 cũ — tên giọng chưa remap (female/male/...): ${counts.v2Name}`)
+  console.log(`   🟡 v2 cũ — đúng tên giọng, hash thiếu version:     ${counts.v2Hash}`)
+  console.log(`   🔵 Studio (không có khái niệm v2/v3):              ${counts.studio}`)
+  console.log(`   ⚪ Không xác định (orphan thật hoặc version lạ):   ${counts.unknown}`)
+
+  if (counts.v2Name + counts.v2Hash > 0) {
+    console.log(
+      '\n   Gợi ý: chạy `npm run seed:all -- --all` (hoặc chọn đúng nhóm) để REMAP các dòng v2' +
+        ' sang v3 — không tốn phí API, chỉ tải/giải mã/mã hoá lại (xem processTask()).',
+    )
+  }
+  if (counts.unknown > 0) {
+    console.log(
+      '   Dòng "Không xác định" xem chi tiết + xoá an toàn bằng `npm run seed:all -- --verify' +
+        ' --clean-orphans` (mặc định chỉ xem trước, thêm --yes mới xoá thật).',
     )
   }
 }
@@ -2013,6 +2223,22 @@ async function interactiveMenu(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
   }
 }
 
+// Gom toàn bộ tác vụ theo nhóm (LIMIT cắt bớt mỗi nhóm khi debug) — dùng chung cho luồng
+// seed chính lẫn các chế độ chỉ-đọc không cần key TTS (--check-versions).
+function buildAllByCat(wordsFile: string | undefined, limit: number): Map<CatId, AnyTask[]> {
+  const allByCat = new Map<CatId, AnyTask[]>()
+  for (const { id } of CATEGORIES) allByCat.set(id, [])
+  allByCat.set('pron', loadPronTasks(wordsFile).slice(0, limit))
+  for (const t of loadPatternTasks()) allByCat.get(t.cat)!.push(t)
+  if (Number.isFinite(limit)) {
+    for (const { id } of CATEGORIES) {
+      if (id === 'pron') continue
+      allByCat.set(id, allByCat.get(id)!.slice(0, limit))
+    }
+  }
+  return allByCat
+}
+
 // ── MAIN ─────────────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
   // 2 chế độ R2 không cần key TTS (không gọi Google) — tách trước các check khác.
@@ -2022,6 +2248,22 @@ async function main(): Promise<void> {
   }
   if (VERIFY_R2_FLAG) {
     await runVerifyR2()
+    return
+  }
+
+  const wordsFile = process.env.WORDS_FILE
+    ? path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
+    : undefined
+  const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
+
+  // --check-versions CHỈ ĐỌC DB (không giải mã, không gọi Google) — chỉ cần DATABASE_URL,
+  // tách trước để không đòi hỏi TTS_ENCRYPTION_MASTER_KEY/GOOGLE_TTS_API_KEY như luồng seed.
+  if (CHECK_VERSIONS_ONLY) {
+    if (!process.env.DATABASE_URL) {
+      console.error('❌ Thiếu biến môi trường: DATABASE_URL')
+      process.exit(1)
+    }
+    await checkVersions(buildAllByCat(wordsFile, limit))
     return
   }
 
@@ -2035,22 +2277,7 @@ async function main(): Promise<void> {
     process.exit(1)
   }
 
-  const wordsFile = process.env.WORDS_FILE
-    ? path.resolve(PROJECT_ROOT, process.env.WORDS_FILE)
-    : undefined
-  const limit = process.env.LIMIT ? parseInt(process.env.LIMIT, 10) : Infinity
-
-  // Gom toàn bộ tác vụ theo nhóm (LIMIT cắt bớt mỗi nhóm khi debug)
-  const allByCat = new Map<CatId, AnyTask[]>()
-  for (const { id } of CATEGORIES) allByCat.set(id, [])
-  allByCat.set('pron', loadPronTasks(wordsFile).slice(0, limit))
-  for (const t of loadPatternTasks()) allByCat.get(t.cat)!.push(t)
-  if (Number.isFinite(limit)) {
-    for (const { id } of CATEGORIES) {
-      if (id === 'pron') continue
-      allByCat.set(id, allByCat.get(id)!.slice(0, limit))
-    }
-  }
+  const allByCat = buildAllByCat(wordsFile, limit)
 
   // ── Chế độ chỉ xem báo cáo ────────────────────────────────────────────────
   if (CHECK_ONLY) {
@@ -2119,7 +2346,17 @@ async function main(): Promise<void> {
   await interactiveMenu(allByCat)
 }
 
-main().catch((err) => {
-  console.error('❌ Lỗi:', err)
-  process.exit(1)
-})
+// CHỈ chạy khi gọi trực tiếp (`npm run seed:all`), KHÔNG chạy khi file được import — nhờ vậy
+// test đơn vị nạp được các hàm thuần bên dưới mà không kích hoạt cả quy trình seed (đụng DB,
+// gọi Google TTS, xoá file).
+const isDirectRun =
+  !!process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+if (isDirectRun) {
+  main().catch((err) => {
+    console.error('❌ Lỗi:', err)
+    process.exit(1)
+  })
+}
+
+// Xuất cho test (scripts/seed-all.test.ts) — hàm thuần, không đụng DB/mạng.
+export { loadPronTasks, parsePronunciationKey, pronKey, isSeedablePronText, PRON_VI_VOICE_IDS }

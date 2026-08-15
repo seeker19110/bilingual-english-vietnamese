@@ -11,7 +11,7 @@
 // Yêu cầu: đã await loadCurriculum() trước khi render (trang cấp lo việc này).
 // ──────────────────────────────────────────────────────────────────────
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useRef, useState, useEffect } from 'react'
 import {
   Check,
   X,
@@ -29,8 +29,6 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
-import RateToggle from './RateToggle'
-import VoiceToggle from './VoiceToggle'
 import WordCard from './WordCard'
 import type { DictEntry } from '../types'
 import {
@@ -327,10 +325,6 @@ function BatchDoneView({
                 {isA ? 'Câu thông dụng từ những từ vừa học' : 'Common sentences from these words'}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <RateToggle />
-              <VoiceToggle />
-            </div>
           </div>
           <div className="space-y-2">
             {sentences.map((s, i) => (
@@ -363,10 +357,6 @@ function BatchDoneView({
               <span className="text-sm font-semibold text-white">
                 {isA ? 'Hội thoại dùng các từ vừa học' : 'A conversation using these words'}
               </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <RateToggle />
-              <VoiceToggle />
             </div>
           </div>
           <p className="text-xs text-zinc-400 mb-3">{isA ? dialogue.titleVi : dialogue.titleEn}</p>
@@ -999,6 +989,8 @@ export function SRSReview({
   const [preloadProgress, setPreloadProgress] = useState<{ done: number; total: number } | null>(
     null,
   )
+  // Cờ dừng cho nút "Dừng" — dùng ref để callback shouldStop() luôn đọc giá trị mới nhất
+  const stopPreloadRef = useRef(false)
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false)
@@ -1027,14 +1019,26 @@ export function SRSReview({
   }, [uid, activePool, due, sessionDone])
 
   async function handlePreloadOffline() {
+    if (preloading) {
+      // Đang tải → nút thành "Dừng"
+      stopPreloadRef.current = true
+      return
+    }
+    stopPreloadRef.current = false
     setPreloading(true)
-    setPreloadProgress({ done: 0, total: due.length })
-    await preloadSrsAudio(uid, activePool, (done, total) => {
-      setPreloadProgress({ done, total })
-    })
-    setPreloading(false)
-    const status = await getSrsOfflineAudioStatus(uid, activePool)
-    setOfflineStatus(status)
+    // Tổng lấy từ chính bộ đếm trạng thái (mục = câu × giọng), KHÔNG phải due.length —
+    // due đã bị cắt theo SRS_SESSION_CAP nên trước đây tiến độ chạy vượt quá tổng.
+    setPreloadProgress({ done: 0, total: offlineStatus?.totalDue ?? 0 })
+    try {
+      await preloadSrsAudio(uid, activePool, {
+        onProgress: (done, total) => setPreloadProgress({ done, total }),
+        shouldStop: () => stopPreloadRef.current,
+      })
+    } finally {
+      setPreloading(false)
+      stopPreloadRef.current = false
+      setOfflineStatus(await getSrsOfflineAudioStatus(uid, activePool))
+    }
   }
 
   function toggleScope() {
@@ -1141,33 +1145,53 @@ export function SRSReview({
       )}
 
       {/* Thanh tải trước Offline Audio khi Online */}
-      {!isOffline && offlineStatus && (
-        <div className="glass rounded-xl px-3.5 py-2.5 mb-3 flex items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2">
-            <Download className="w-4 h-4 text-sky-400 shrink-0" />
-            <div>
-              <span className="text-zinc-200 font-medium">
-                {isA ? 'Tải trước SRS Offline:' : 'Offline SRS Pre-download:'}
-              </span>{' '}
-              <span className="text-zinc-400">
-                {offlineStatus.cachedCount}/{offlineStatus.totalDue}{' '}
-                {isA ? 'từ đã có audio' : 'cards cached'}
-              </span>
+      {!isOffline && offlineStatus && offlineStatus.totalDue > 0 && (
+        <div className="glass rounded-xl px-3.5 py-2.5 mb-3 space-y-2 text-xs">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Download className="w-4 h-4 text-sky-400 shrink-0" />
+              <div>
+                <span className="text-zinc-200 font-medium">
+                  {isA ? 'Tải trước SRS Offline:' : 'Offline SRS Pre-download:'}
+                </span>{' '}
+                <span className="text-zinc-400">
+                  {offlineStatus.cachedCount}/{offlineStatus.totalDue}{' '}
+                  {isA ? 'tệp âm thanh' : 'audio files'}
+                </span>
+              </div>
             </div>
+            <button
+              onClick={handlePreloadOffline}
+              className="px-3 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 font-medium transition text-xs shrink-0"
+            >
+              {preloading
+                ? isA
+                  ? `Dừng (${preloadProgress?.done ?? 0}/${preloadProgress?.total ?? 0})`
+                  : `Stop (${preloadProgress?.done ?? 0}/${preloadProgress?.total ?? 0})`
+                : offlineStatus.isFullyPrepared
+                  ? isA
+                    ? 'Tải lại'
+                    : 'Re-check'
+                  : isA
+                    ? 'Tải ngay'
+                    : 'Pre-download'}
+            </button>
           </div>
-          <button
-            onClick={handlePreloadOffline}
-            disabled={preloading}
-            className="px-3 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 font-medium transition disabled:opacity-50 text-xs shrink-0"
-          >
-            {preloading
-              ? isA
-                ? `Đang tải ${preloadProgress?.done ?? 0}/${preloadProgress?.total ?? 0}…`
-                : `Downloading ${preloadProgress?.done ?? 0}/${preloadProgress?.total ?? 0}…`
-              : isA
-                ? 'Tải ngay'
-                : 'Pre-download'}
-          </button>
+
+          {/* Thanh tiến độ + giải thích phạm vi: bao nhiêu từ × bao nhiêu giọng của gói */}
+          <div className="h-1 bg-zinc-800 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-sky-500 rounded-full transition-all"
+              style={{
+                width: `${Math.round(((preloading ? (preloadProgress?.done ?? 0) : offlineStatus.cachedCount) / Math.max(offlineStatus.totalDue, 1)) * 100)}%`,
+              }}
+            />
+          </div>
+          <p className="text-zinc-400">
+            {isA
+              ? `${offlineStatus.wordCount} ${offlineStatus.isLookahead ? 'từ chuẩn bị trước' : 'từ cần ôn + từ mới hôm nay'} × ${offlineStatus.voiceCount} giọng gói bạn đang dùng (kể cả từ và câu ví dụ) — tải xong là nghe được offline dù bật giọng ngẫu nhiên.`
+              : `${offlineStatus.wordCount} ${offlineStatus.isLookahead ? 'words prepared ahead' : "words due + today's new words"} × ${offlineStatus.voiceCount} voices in your plan (words and example sentences) — works offline even with random-voice mode on.`}
+          </p>
         </div>
       )}
 

@@ -17,6 +17,698 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+## Lộ trình mới: English Tutor OS (đặc tả 2026-08-15)
+
+**Hợp nhất tại đây (2026-08-15).** Nhánh `spec/english-tutor-os-v1` (merge `61ee30e`) từng tạo
+`docs/OS_PROGRESS.md` riêng để không đụng lịch sử phía dưới. Nay gộp về ĐÚNG MỘT nguồn theo dõi
+tiến độ (đúng vai trò của `PROGRESS.md` ở mục 2 `CLAUDE.md`) — tránh 2 file tự trôi lệch nhau.
+`docs/OS_PROGRESS.md` đã xoá, nội dung dồn vào mục này.
+
+**Kế hoạch:** `docs/MASTER_SPEC.md` (10 nguyên tắc kiến trúc bất biến + 10 layer mục tiêu) + 46 file
+đặc tả `docs/phases/00-research-baseline.md` → `45-final-audit.md` (mục lục: `docs/phases/README.md`).
+Mục tiêu dài hạn: đưa app từ "web app học tiếng AI" hiện tại lên kiến trúc "Adaptive AI English
+Tutor OS" (learner model → diagnostic → adaptive curriculum → tutor → assessment → evidence →
+mastery → memory/SRS → next plan), làm DẦN từng phase — mỗi phase có DoD/test/commit riêng, KHÔNG
+viết lại app một lần. Đây là kế hoạch nhiều tháng, cần xin xác nhận người dùng ở mỗi cổng chuyển
+giai đoạn (đúng mục 3 `CLAUDE.md`), không tự ý chạy một mạch.
+
+**Tiến độ thực thi:** **Phase 00 — Research & Baseline** ĐANG LÀM (2026-08-15) — đã chạy baseline
+build/typecheck/lint/test (sau `npm ci` để khớp lockfile) + dependency graph qua `codemap`, ghi ở
+`docs/research/baseline.md`. Kết quả: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · test 3132/3132 ✅ ·
+0 chu trình import. Còn thiếu: đo latency/cost AI thật (cần key thật, chưa làm trong sandbox — xem
+mục 4 file baseline) và chạy E2E cục bộ (đang dựa vào CI đã gate sẵn). **CHƯA đóng Phase 00** — cần
+người dùng xác nhận trước khi mở Phase 01 (đụng thẳng `pgPool.ts`/`ai.ts` — hotspot rủi ro cao, xem
+bảng trong baseline.md). Không phase nào được đánh dấu xong chỉ vì có tài liệu — phải đạt Definition
+of Done ghi trong `MASTER_SPEC.md` (code + test + eval + docs + commit thật).
+
+**Đối chiếu nhanh với hiện trạng thật** (để Phase 00/01 không làm lại việc đã có — tra nhanh bằng
+Grep, chưa phải audit đầy đủ của Phase 00):
+
+- Storage abstraction cho audio (Phase 01 mục 5) — **ĐÃ CÓ**: `packages/core-ai/fileStorage.ts`
+  (driver local/R2 qua `STORAGE_DRIVER`, đã dùng thật trong production).
+- Structured logging (Phase 01 mục 6) — **CÓ MỘT PHẦN**: `packages/core-db/logger.ts` (log theo
+  cấp độ `LOG_LEVEL` + tiền tố module), nhưng CHƯA có correlation ID / request ID / metrics.
+- `AIProvider.generate()` gateway thống nhất (Phase 01 mục 3) — **ĐÃ LÀM MỘT PHẦN (2026-08-15)**,
+  phạm vi CỐ Ý thu hẹp vì đây là chỗ rủi ro nhất (đụng trực tiếp đếm lượt/tiền, `ai.ts` có 34 test
+  ghim chặt hành vi fallback Groq→Anthropic→Gemini + hoàn lượt). Đã tách:
+  `packages/core-ai/chatProviders.ts` — `callGroqChat()`/`callAnthropicChat()`, MỖI hàm CHỈ gọi
+  HTTP tới 1 provider rồi trả kết quả dạng discriminated union (`success`/`network_error`/
+  `http_error`/`malformed_body`; Anthropic trả `response{status,bodyText}` NGUYÊN VĂN để giữ đúng
+  hành vi forward-thẳng cho client). Gemini đã có sẵn dạng này từ trước (`api/_lib/geminiApi.ts`).
+  `ai.ts` chuyển sang gọi 3 hàm này thay vì `fetch` thẳng — **logic quyết định (thứ tự fallback,
+  khi nào hoàn lượt, status trả về) giữ NGUYÊN 100%, không rút gọn**. Xác minh: toàn bộ
+  `ai.test.ts` (35 test) xanh SAU KHI refactor mà KHÔNG sửa 1 dòng test nào — bằng chứng hành vi
+  quan sát được không đổi. 12 test mới cho `chatProviders.ts`.
+  **Còn để ngỏ, không làm ở đợt này**: `tts.ts`/`stt.ts` mỗi cái đã tự có lớp chọn provider nội bộ
+  riêng (không dùng chung interface `chatProviders.ts`) — hợp nhất thật sự thành 1
+  `AIProvider.generate()` cho cả chat/TTS/STT là việc lớn hơn, để dành cho phase sau khi cần thêm
+  provider mới, tránh đổi 3 luồng đang chạy thật cùng lúc.
+- Chuẩn hoá lỗi domain/application (Phase 01 mục 4) — **ĐÃ LÀM MỘT PHẦN (2026-08-15)**:
+  `packages/core-errors/appError.ts` — `AppError` + 6 lớp con (`ValidationError`/
+  `UnauthorizedError`/`ForbiddenError`/`NotFoundError`/`ConflictError`/`RateLimitError`), mỗi lớp
+  tự mang `status` HTTP + `code` ổn định; `isAppError()`/`toErrorBody()` để handler chuyển thành
+  JSON. **CỐ Ý CHỈ THÊM, không retrofit** — hiện có **257 chỗ** trong `api/`/`packages/` tự viết
+  tay `jsonResponse({error:...}, status)` với 2 hình dạng khác nhau (`{error:'chuỗi'}` ở đa số
+  handler cũ, `{error:{message}}` ở `ai.ts`); sửa hết 257 chỗ cùng lúc là breaking-change phạm vi
+  rộng, đúng loại việc CLAUDE.md mục 12 yêu cầu dừng hỏi trước — không tự làm. Module mới là nền
+  để domain engine của phase OS sau (Evidence/Mastery/Diagnostic...) dùng ngay từ đầu, và để handler
+  cũ chuyển dần khi có PR đụng tới, không phải retrofit hàng loạt. 11 test, coverage 100%.
+- Correlation ID / request ID / metrics cơ bản (Phase 01 mục 6) — **ĐÃ LÀM (2026-08-15)**:
+  `packages/core-db/requestId.ts` (`createRequestId()` — 8 ký tự đầu UUID v4, không phải khoá bảo
+  mật, chỉ để lọc log 1 request) + `packages/core-db/logger.ts` thêm `createRequestLogger(prefix,
+requestId)` (tương thích ngược, không đổi `createLogger()` cũ) + `packages/core-db/metrics.ts`
+  (`incrementCounter`/`recordLatency`/`getMetricsSnapshot` — đếm trong bộ nhớ, KHÔNG phải
+  observability thật, reset khi restart PM2; export/dashboard thật là việc Phase 35). Đã áp dụng
+  THẬT vào `packages/core-ai/ai.ts` (mỗi request `/api/agent` có `requestId` riêng gắn vào mọi
+  dòng log dạng `[agent#a1b2c3d4]`, và đếm `ai_groq_ms`/`ai_groq_<kind>`/`ai_anthropic_ms`/
+  `ai_anthropic_status_<code>`/`ai_gemini_ms`/`ai_gemini_success`/`ai_gemini_error`) — CHỈ đổi nội
+  dung log/số liệu nội bộ, KHÔNG đổi response trả client, nên vẫn an toàn với 35 test đã ghim hành
+  vi (chạy lại `ai.test.ts` không sửa 1 dòng, vẫn xanh). 24 test mới (`requestId.test.ts` 4 ·
+  `metrics.test.ts` 9 · thêm 2 vào `logger.test.ts` cho `createRequestLogger`, dư ra từ đợt trước
+  còn `chatProviders.test.ts` 12 + `appError.test.ts` 11), coverage 3 file mới 100%.
+
+**Phase 01 "Foundation OS" COI NHƯ HOÀN TẤT ở mức "đã có nền, migrate dần"** — cả 7 mục đều có ít
+nhất một phần triển khai thật + test (mục 1/2/6/7 xong trọn vẹn cho phạm vi đã chọn; mục 3/4 CỐ Ý
+thu hẹp phạm vi vì đụng 71–257 điểm gọi hiện có, rủi ro cao nếu retrofit hàng loạt; mục 5 vốn đã có
+sẵn từ trước). Không tự ý coi đây là "Definition of Done" đầy đủ theo nghĩa khắt khe của
+`MASTER_SPEC.md` (DoD đòi migrate hết, không chỉ thêm nền) — ghi rõ ở đây để phiên sau biết ranh
+giới thật, tránh tưởng nhầm đã xong 100%.
+
+- Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **ĐÃ
+  LÀM (2026-08-15)**: `packages/core-config/env.ts` (`EnvSchema` Zod cho ~25 biến hay dùng nhất,
+  `getEnv()`/`parseEnv()`/`describeEnv()`) + `packages/core-config/secrets.ts`
+  (`isSecretEnvKey`/`redactSecrets` — nhận theo GIÁ TRỊ khớp env thật, không đoán theo mẫu chuỗi).
+  **Cố ý KHÔNG bắt buộc** (mọi trường optional/có `.catch()` mặc định, sao y hệt mặc định cũ trong
+  code) — không được để thiếu 1 biến làm sập cả server đang chạy thật. Chưa migrate các chỗ đọc
+  `process.env.X` trực tiếp sang dùng `getEnv()` — module mới chỉ THÊM lối đi có kiểm, chưa thay
+  thế; làm dần ở PR sau, không đổi 71 lượt đọc cùng lúc (rủi ro cao, khó review).
+  `redactSecrets()` đã nối vào `packages/core-db/logger.ts` (mọi log qua `createLogger()` giờ tự
+  che secret nếu lỡ lọt vào message) — đóng luôn Phase 01 mục 7. 42 test mới (`secrets.test.ts` 20
+  · `env.test.ts` 14 · thêm 2 vào `logger.test.ts`), coverage 2 file mới 100%.
+- DB transaction helper dùng chung (Phase 01 mục 2) — **ĐÃ LÀM (2026-08-15)**:
+  `packages/core-db/transaction.ts` — `withTransaction(pool, fn)` bọc đúng trình tự
+  `connect → begin → fn → commit`, tự `rollback` khi `fn` ném lỗi (rollback tự nó lỗi thì KHÔNG
+  che mất lỗi nghiệp vụ gốc), luôn `release()` ở `finally`. Trước đó cả repo chỉ có ĐÚNG 1 chỗ
+  dùng transaction thật (`api/admin-plan-features.ts` PUT — thêm tính năng mới + gán mặc định 3
+  gói) — đã chuyển sang dùng helper, đổi từ "rollback tay khi key trùng" sang "trả cờ rồi để
+  transaction tự commit" (hành vi giống hệt: 0 dòng bị đổi trong cả 2 cách vì `ON CONFLICT DO
+NOTHING`). 6 test cho `withTransaction` (thành công, `fn` lỗi → rollback, luôn release kể cả
+  lỗi, rollback tự nó lỗi vẫn giữ đúng lỗi gốc, trả đúng kiểu, dùng đúng client được cấp) + sửa 1
+  test cũ ở `admin-plan-features.test.ts` cho khớp hành vi mới (assert không có insert vào
+  `plan_feature_flags`, thay vì assert gọi `rollback`). `codemap -- impact` xác nhận sửa
+  `admin-plan-features.ts` chỉ ảnh hưởng đúng file test của nó + `server.ts`.
+- Monorepo đã tách một phần (`packages/core-db`, `packages/core-ai`, `packages/core-auth`,
+  `packages/core-billing`) — tiến xa hơn baseline mà đặc tả OS giả định, xem ADR-0001 +
+  `docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md`.
+
+**Việc còn lại của Phase 00** (theo `docs/phases/00-research-baseline.md`): chạy build/typecheck/
+lint/test lấy baseline chính xác, đo latency/token/cost AI thật, dựng dependency graph, ghi
+`docs/research/baseline.md`. Chưa làm ở bước này.
+
+### Seed phát âm TIẾNG VIỆT (chiều B) + nới luật input cho nghĩa nhiều vế (2026-08-13, nhánh `claude/tts-cache-voice-i1plxb-2`)
+
+Người dùng đính chính (đúng): **cả 16 giọng đã seed đủ** — 12.168 từ × 16 giọng (14 Chirp3-HD +
+2 Studio) = **194.688** khớp chính xác số dòng DB. Trước đó mình đọc nhầm sang script cũ
+`seed-pronunciations.ts` (chỉ 8 giọng) và bị con số trùng khớp 8×2 đánh lừa; `seed-all.ts` mới là
+script đang dùng.
+
+Rà tiếp thì lộ chỗ trống thật: **toàn bộ 194.688 dòng đều là `lang='en-US'`** (seed ghi cứng
+`values (…, 'en-US', …)`), trong khi chiều B (`WordCard.tsx`) đọc **`card.vi`** với `lang='vi-VN'`.
+Nặng hơn: allowlist `WORD_SAFE_PATTERN` cũ chỉ nhận **5.565/11.572** nghĩa tiếng Việt — nghĩa nhiều
+vế ("bỏ rơi, từ bỏ", "trên (tàu, xe)") có dấu phẩy/ngoặc/gạch chéo đều bị **400** rồi rơi về Web
+Speech, đúng hiện tượng "chữ Việt đọc giọng Anh" mà chính `PronounceButton.tsx` đã ghi chú.
+
+Đã làm:
+
+1. **Nới `WORD_SAFE_PATTERN`** (`api/pronunciation.ts`) thêm `, ; : ( ) / "` → phủ **11.572/11.572**
+   nghĩa. Vẫn chặn `<>{}[]\|&#$%*+=~^` và ký tự điều khiển; trần 100 ký tự giữ nguyên nên chi phí
+   mỗi request không đổi. Giá trị chỉ dùng làm cache key + text gửi Google TTS (SQL parameterized,
+   tên file qua `encodeURIComponent`).
+2. **`seed-all.ts` seed được vi-VN**: `PronTask` có thêm `lang`; nguồn là chuỗi `vi` của cùng từ
+   điển (khử trùng còn 11.572), 14 giọng Chirp3-HD (KHÔNG Studio — Google không có Studio cho
+   vi-VN). Quy mô mới: **162.008 dòng** (11.572 × 14), ~~2,72 triệu ký tự → sau 1 triệu miễn phí là
+   **~~$3,4** ở mức $2/1M. Tiếng Việt xếp SAU tiếng Anh để dừng giữa chừng vẫn xong phần chính.
+3. **Thread `lang` qua TOÀN BỘ đường đi** — đây là phần nguy hiểm nhất: khoá `word:voice` cũ thiếu
+   `lang` sẽ khiến `verifyDb` coi 162.008 dòng vi-VN là "orphan" và `--clean-orphans --yes` **xoá
+   thật**. Nay dùng chung `pronKey(word, voice, lang)` ở dedupe/audit/verify/orphan; keyset
+   pagination đổi sang `['word','voice','lang']` (đúng unique thật của bảng); mọi câu SQL
+   select/insert/delete đều có `lang`; parser tên file R2 hiểu hậu tố `-vi-VN`. Thêm **hàng rào**:
+   `--pron-lang` giới hạn cả phạm vi soát orphan, nên lượt chạy hẹp không bao giờ xoá dữ liệu ngôn
+   ngữ khác.
+4. Tên file en-US **giữ nguyên dạng cũ** (`<word>-<voice>.mp3`) để 194.688 file đã có không bị đổi
+   tên/tải lại; chỉ ngôn ngữ mới gắn hậu tố lang.
+5. `seed-pronunciations.ts` (script cũ, chỉ tiếng Anh) nay lọc `where lang='en-US'` khi dựng tập
+   "đã có" — không thì chuỗi trùng nhau giữa 2 ngôn ngữ bị coi nhầm là đã seed.
+6. **Test mới** `scripts/seed-all.test.ts` (12 ca): để test được, `main()` chỉ chạy khi gọi trực
+   tiếp (`isDirectRun`) — import không còn kích hoạt cả quy trình seed. Xác minh bằng số thật:
+   en vẫn đúng **194.688** (không hồi quy), vi = **162.008**, không trùng khoá, mọi chuỗi vi đều
+   qua luật của API. Thêm 3 ca cho `api/pronunciation.test.ts` (nghĩa nhiều vế → 200, từ quá dài
+   → 400, ký tự thật sự cấm → 400).
+
+Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test **3132/3132** xanh ✅.
+
+⚠️ **Việc tay sau khi merge:** chạy `npm run seed:all -- --all` (hoặc `--pron-lang=vi-VN`) trên VPS
+để tạo 162.008 audio tiếng Việt. Chưa chạy thì chiều B vẫn hoạt động, chỉ là tạo động từng từ ở
+lần bấm đầu.
+
+### Fix (GỐC RỄ): `/api/pronunciation` từ chối MỌI giọng client gửi lên → luôn nghe 1 giọng (2026-08-13, nhánh `claude/tts-cache-voice-i1plxb`)
+
+Người dùng báo tiếp: "cài đặt riêng thế nào cũng chỉ trả về 1 giọng". Truy đến nơi:
+`api/pronunciation.ts` đọc tham số `voice` bằng `.toLowerCase()` **trước** khi kiểm hợp lệ, trong
+khi tên giọng Chirp3-HD/Studio PHÂN BIỆT hoa-thường (`Aoede`, `Studio-O` — xem
+`api/_lib/googleTts.ts`). Hệ quả: mọi request có `?voice=...` (client luôn gửi PascalCase) đều
+rớt `isValidVoice()` → **400** → `PronounceButton`/`WordVoiceCycleButton` nuốt lỗi và fallback
+Web Speech API, tức luôn phát MỘT giọng mặc định của trình duyệt. Chỉ request KHÔNG kèm `voice`
+(dùng `DEFAULT_VOICE = 'Kore'`) mới chạy được — nên đổi giọng ở Cài đặt trông như vô tác dụng.
+Đường `/api/tts` (câu/đoạn) không dính lỗi này; cache theo `voice` ở cả 2 endpoint vốn đã đúng.
+
+Sửa: thêm `canonicalizeVoiceId()` trong `api/_lib/googleTts.ts` (chuẩn hoá không phân biệt
+hoa-thường về đúng tên chuẩn, giữ tương thích link cũ dạng chữ thường), `api/pronunciation.ts`
+dùng nó thay cho `.toLowerCase()`.
+
+**Vì sao test cũ không bắt được:** `api/pronunciation.test.ts` mock `isValidVoice` bằng danh sách
+CHỮ THƯỜNG (`['kore','puck']`) — mock sai lệch với module thật nên che đúng con bug. Đã sửa mock
+về PascalCase như thật + thêm test hồi quy "voice PascalCase từ client → 200 và giữ đúng giọng",
+kèm test cho `canonicalizeVoiceId`. Bài học: mock phải khớp hành vi thật của module bị mock.
+
+Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3118/3118 xanh ✅.
+
+**Tiếp theo (cùng ngày, PR sau):** siết luôn gốc rễ khiến bug lọt lưới — `api/pronunciation.test.ts`
+nay dùng `importOriginal` để lấy HÀM THẬT cho phần kiểm tra/chuẩn hoá tên giọng, chỉ còn mock 2 hàm
+gọi ra ngoài (`generateAudioFromGoogle`, `generateStudioAudioFromGoogle`) + `VOICE_VERSION`. Đã
+kiểm chứng bộ test mới thật sự bắt lỗi: tạm khôi phục dòng `.toLowerCase()` cũ → **10/18 test đỏ**
+(trước đây xanh hết). Nguyên tắc rút ra: mock KHÔNG được tự viết lại logic của chính module bị mock.
+
+### Fix: nút loa thẻ từ mới/SRS/Hôm nay bỏ qua giọng đã chọn ở Cài đặt (2026-08-13, nhánh `claude/fix-word-voice-cycle-l1n2e4`)
+
+Người dùng báo: đổi giọng đọc ở Cài đặt (VoicePicker, 14 giọng) không có tác dụng khi học từ
+mới/ôn SRS/tab Hôm nay — "chỉ đổi được nam/nữ". Điều tra (Explore agent) xác định:
+`WordVoiceCycleButton.tsx` (nút loa DUY NHẤT ở `WordCard.tsx`, dùng khắp `StudyTabs.tsx`) từ
+quyết định 2026-07-29 CỐ Ý bốc random 1 giọng mỗi lần bấm (`pickRandomAllowedVoice`), bỏ qua
+hoàn toàn `getVoicePref()` (giọng đã lưu ở Cài đặt) — chỉ dùng nó làm nhãn khởi tạo ban đầu.
+`KaraokeText`/`StudyTabs` (gọi `speak()` mặc định) và `tts.ts#getVoicePref` đều đúng, không có
+bug.
+
+Đã hỏi và người dùng xác nhận: bỏ hành vi random-mỗi-lần-bấm, đổi sang luôn dùng
+`getVoicePref()` — hàm này đã tự xử lý đúng cả 2 trường hợp (giọng cố định khi tắt "Giọng
+ngẫu nhiên" ở Cài đặt, hoặc giọng ngẫu nhiên GIỮ NGUYÊN trong phiên khi bật) nên khớp hành vi
+với phần còn lại của app. Sửa: bỏ `pickRandomAllowedVoice`/tham số `exclude`, gọi thẳng
+`getVoicePref()` trong `handleClick()`; giữ nguyên cơ chế cache theo giọng thật +
+`resolveActualVoice` (server có thể hạ gói).
+
+**Cùng ngày, tiếp theo:** người dùng hỏi thêm về Từ điển ("fix từ điển đúng random, không
+được thì theo giọng cài đặt") — xác nhận ý: `PronounceButton.tsx` (Từ điển/`WordFormsBlock`)
+trước đây LUÔN random mỗi lần bấm BẤT KỂ công tắc "Giọng ngẫu nhiên" ở Cài đặt (quyết định
+2026-07-29, coi random là hành vi toàn cục không tắt được ở đây) — khiến tắt công tắc đó
+tưởng vô tác dụng ở Từ điển, không đồng nhất với `WordVoiceCycleButton` vừa sửa ở trên. Sửa
+`pickVoice()`: chỉ random khi PROP `random` (mặc định true) VÀ `getVoiceRandomPref()` (công
+tắc Cài đặt) đều bật; tắt công tắc → luôn dùng `getVoicePref()` (giọng cố định đã chọn).
+
+Cổng (cả 2 lượt sửa): build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3115/3115
+xanh ✅. Không có test riêng cho 2 component này (UI thuần, không test unit từ trước).
+
+### Tiến độ học chỉ TĂNG, không bao giờ GIẢM dù đổi máy/nhiều thiết bị (2026-08-13, PR đang mở, nhánh `claude/learning-progress-persistence-l1n2e4`)
+
+Người dùng yêu cầu: tiến độ học tập chỉ được cập nhật thêm, không được giảm đi dù đổi máy hay
+dùng nhiều thiết bị cùng lúc. Rà `apps/english/src/lib/progressSync.ts` +
+`api/progress.ts`: SRS/điểm thi CEFR/placement/mục tiêu tuần đã hợp nhất kiểu "chỉ tốt lên" từ
+trước, nhưng `learned`/`cefrGrammar`/`cefrDialogues`/`cefrUnlocked`/`achievements` server
+**GHI ĐÈ** theo đúng mảng client gửi — chỉ chống mất dữ liệu trong CÙNG 1 tab/máy (chờ pull
+xong mới push), CHƯA chống được 2 thiết bị học song song rồi đồng bộ gần như đồng thời (máy A
+học từ mới → chưa kịp đẩy lên thì máy B, đang mở từ trước chưa thấy dữ liệu mới của A, đẩy bản
+cũ của B lên → đè mất phần A vừa học).
+
+**Đã hỏi người dùng** đánh đổi (union sẽ làm mất tác dụng lâu dài của các thao tác "bỏ đánh
+dấu") — người dùng chọn: `learned`/`cefrGrammar`/`cefrDialogues` → **union tuyệt đối**;
+`achievements`/`cefrUnlocked` → **union** (vốn không có thao tác bỏ đánh dấu, không đánh đổi
+gì); `hard` (nhãn từ khó) → **giữ ghi đè** (chỉ là lọc hiển thị, không phải tiến độ học).
+
+Đã sửa: `api/_lib/progressMerge.ts` thêm `mergeArrayUnion()`; `api/progress.ts` áp dụng cho 5
+trường trên (trừ `hard`). Hệ quả đã ghi rõ trong comment code: `unmarkLearned` (không có nút UI
+gọi, chỉ còn trong test) và `unmarkGrammarDone` (CÓ dùng ở `CefrLessonViews.tsx`) từ nay chỉ có
+tác dụng TẠM trên 1 máy — máy khác đồng bộ lại sẽ tự thêm lại mục vừa bỏ. Test:
+`api/_lib/progressMerge.test.ts` (thêm `mergeArrayUnion`) + `api/progress.test.ts` (sửa lại ca
+biên `learned`, thêm ca biên `hard`). Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ ·
+format ✅ · test 3113/3113 xanh ✅.
+
+### Đồng bộ đa thiết bị cho cài đặt cá nhân + vé nghỉ streak (2026-08-13, nhánh `claude/learning-progress-persistence-l1n2e4`)
+
+Người dùng hỏi tiếp "đồng bộ tất cả" sau việc trên — khảo sát lại toàn bộ cơ chế đồng bộ
+(dùng Explore agent) thấy: lịch sử Chat/Viết/Nói + tiến độ học + streak/lượt dùng hàng ngày
+ĐÃ đồng bộ đầy đủ; onboarding đã có cả push (`saveOnboarding`) lẫn pull (`fetchOnboarding`,
+`lib/onboarding.ts`) — không cần sửa. Riêng **5 mục cài đặt cá nhân chỉ lưu localStorage**
+(đổi máy là mất): ngôn ngữ giao diện (`ui_lang`), chiều học Anh⇄Việt (`et_direction`), âm
+thanh (`ui_sound_enabled`), giọng đọc TTS (`tts_voice`/`tts_voice_random`/`tts_voice_native`/
+`tts_voice_native_on`), và vé nghỉ streak (`et_streak_freeze_<uid>`, trước đây CỐ Ý chưa làm
+theo comment cũ trong `storage.ts`).
+
+Đã hỏi phạm vi cụ thể + xác nhận với người dùng trước khi sửa (đúng mục 7 CLAUDE.md — đụng
+nhiều file). Thêm migration `0040_sync_user_settings.sql`: 2 cột mới trên
+`english.learning_progress` —
+
+- `settings` (jsonb): gộp `{uiLang, direction, soundEnabled, voicePref, voiceRandomPref,
+nativeVoiceOn, nativeVoicePref, updatedAt}`. Đây là **"lựa chọn hiện tại"**, không phải tiến
+  độ chỉ tăng → hợp nhất theo `updatedAt` MỚI HƠN thắng (giống `placement`/`weeklyGoal` đã có
+  từ trước), KHÔNG union như `learned`. Mọi setter cài đặt (`setUiLang`, `setDirection`,
+  `setSoundEnabled`, `setVoicePref`, `setVoiceRandomPref`, `setNativeVoiceSeparate`,
+  `setNativeVoicePref`) giờ gọi `touchSettingsUpdated()` (mới, `lib/storage.ts`) để ghi mốc
+  thời gian — nếu quên gọi ở setter mới thêm sau này, cài đặt đó sẽ không đồng bộ đúng (thua
+  trong merge vì `updatedAt` không đổi).
+- `streak_freeze_dates` (jsonb mảng "yyyy-mm-dd"): vé nghỉ ĐÃ DÙNG là sự kiện đã xảy ra → hợp
+  nhất UNION như `learned`/`achievements`, không phải last-write-wins.
+
+Sửa: `api/progress.ts` (schema + SELECT/INSERT/merge 2 cột mới), `lib/progressSync.ts` (đọc/
+ghi `settings` blob + `streakFreezeDates`, thêm `readSettingsBlob`/`applySettingsBlob`),
+`lib/storage.ts` (thêm `touchSettingsUpdated`/`getSettingsUpdatedAt`/`setSettingsUpdatedAt`
+dùng chung, sửa `setDirection`; export `getStreakFreezeDatesForSync`/
+`setStreakFreezeDatesFromSync` để `progressSync.ts` gọi), `lib/uiLang.ts`, `lib/sound.ts`,
+`lib/tts.ts` (gọi `touchSettingsUpdated()` ở từng setter). Test mới trong
+`api/progress.test.ts` (2 ca biên: `settings` giữ bản mới hơn, `streakFreezeDates` union).
+
+Cổng: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · format ✅ · test 3115/3115 xanh ✅. Chưa
+chạy migration `0040` trên VPS production — cần `npm run migrate:pg` sau khi PR này deploy
+(`scripts/deploy.sh` tự chạy migration khi deploy, xem `docs/deploy-vps-ubuntu.md`).
+
+### Sàn coverage chung 90% cho cả 4 chỉ số (2026-08-13, cùng PR)
+
+Người dùng yêu cầu "set toàn bộ coverage 90%". Đã **cảnh báo trước** rằng ngưỡng cũ là
+93/89/96/93 nên đặt phẳng 90 sẽ NỚI statements (93→90) và functions (96→90), chỉ SIẾT branches
+(89→90); người dùng xác nhận giữ nguyên quyết định và làm rõ: _"cao thì mặc kệ, miễn từ 90 trở
+lên là được"_ — tức 90 là **sàn tối thiểu**, không phải mục tiêu để rút test xuống.
+
+`vitest.config.ts` → `thresholds: { statements: 90, branches: 90, functions: 90, lines: 90 }`.
+
+**Trước khi đổi được ngưỡng phải vá branches** (đang 89,06% < 90). Đã viết thêm **51 test**,
+branches **89,06 → 90,32%**; toàn bộ: 94,36 / 90,32 / 96,33 / 94,36 · **3109 test xanh**.
+
+Các file được nâng (chọn theo "thiếu nhiều nhánh nhất / rẻ nhất"), mỗi test kiểm một bất biến
+thật chứ không phải chạy cho đủ số:
+
+| File                              | Branches trước → sau | Bất biến đáng chú ý được thêm                                                                                             |
+| --------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `packages/core-ai/fileStorage.ts` | 90,9 → 97,4          | `listR2Objects` tự phân trang; **`IsTruncated=true` mà thiếu token → dừng, không lặp vô hạn**; nhánh ghi local            |
+| `api/progress.ts`                 | 50 → 91,3            | Cột DB trả NULL → trả mảng/đối tượng rỗng (client `cloud.ts` ghi thẳng vào localStorage, `null` sẽ vỡ chỗ dùng `.length`) |
+| `api/history.ts`                  | 56 → 83,9            | Ngưỡng chống cày thưởng mời bạn: phiên 1 tin nhắn / bài viết < 40 ký tự **sau trim** → KHÔNG thưởng                       |
+| `api/admin-tts-cache.ts`          | 71 → 92,7            | Quét nền ghi `status=done`/`error` đúng; rate limit chặn TRƯỚC xác thực                                                   |
+| `api/admin-reserved-names.ts`     | 41,7 → cao           | Thêm từ cấm phải chuẩn hoá lowercase + trim (không thì "ADMIN" và "admin" thành 2 dòng, lọc tên hụt)                      |
+| `api/leaderboard.ts`              | 86,2 → cao           | Lần gọi thứ 2 trong 5 phút dùng cache, không quét lại `daily_usage` cả tuần                                               |
+| `api/_lib/achievementRewards.ts`  | 82,1 → cao           | Cache cấu hình thưởng + `invalidate` hoạt động; cột `learned` hỏng (không phải mảng) → tính 0, không nổ                   |
+| `api/admin-payments.ts`           | 60 → cao             | OPTIONS/rate-limit/405                                                                                                    |
+
+**Bẫy đã gặp:** mock `rewardReferralIfEligible` trong `api/history.test.ts` không được reset ở
+`beforeEach` nên số lần gọi cộng dồn qua các test → 2 test đỏ oan. Thêm `mockClear()`.
+
+**Lưu ý cho phiên sau:** biên độ branches chỉ còn **0,32 điểm** trên sàn. Thêm code có nhánh mà
+quên test là CI đỏ ngay. Đừng hạ sàn để chữa — viết test.
+
+### Cache TTS: sửa "cache HIT giả" + tab admin "Cache TTS & R2" (2026-08-13, PR mới)
+
+**Bối cảnh:** người dùng nghi TTS cache hoạt động sai. Đã test THẬT credentials R2 (`STORAGE_DRIVER`,
+`R2_ACCOUNT_ID/ACCESS_KEY/SECRET/BUCKET/PUBLIC_BASE_URL`) bằng đúng config `saveR2()`:
+**cả 6 biến đều ĐÚNG** — xác thực OK, bucket `english-tutor` tồn tại, quyền đọc + ghi OK, public
+read qua `pub-8fa372ee….r2.dev` trả HTTP 200 khớp byte-for-byte, domain trỏ đúng bucket. Trên R2
+đang có `tts-cache/` (≥ 8.000 file, ≥ 82 MB, thư mục con `en-US/` + `vi-VN/`) và `pronunciations/`
+(≥ 12.000 file, ≥ 60 MB). **Vấn đề KHÔNG nằm ở cấu hình R2.**
+
+**Lỗi thật đã tìm ra — "cache HIT giả":** luồng tra cache không hề hỏi R2, nó tra bảng Postgres
+`tts_cache`/`pronunciations` theo hash rồi trả thẳng `audio_url`. Dòng nào còn trỏ `/uploads/...`
+(ghi từ thời `STORAGE_DRIVER=local`, hoặc từ nhánh fallback local khi R2 lỗi) vẫn bị coi là cache
+HIT → client fetch ra 404 → và vì đã "HIT" nên câu đó **không bao giờ được sinh lại**: hỏng vĩnh
+viễn, im lặng, không tự khỏi.
+
+Đã sửa:
+
+1. **`isServableUrl()` (`packages/core-ai/fileStorage.ts`)** — ở chế độ r2 chỉ chấp nhận URL thuộc
+   `R2_PUBLIC_BASE_URL`. `/api/tts` (cả đường đọc thẳng lẫn đường claim chống race) và
+   `/api/pronunciation` coi URL không phục vụ được là MISS → gọi API sinh lại, ghi đè bằng URL R2
+   thật. **Ca biên tốn tiền đã chặn:** thiếu `R2_PUBLIC_BASE_URL` thì GIỮ NGUYÊN cache, không để
+   một biến môi trường thiếu kích hoạt sinh lại toàn bộ.
+2. **Bỏ fallback ghi local khi `STORAGE_DRIVER=r2`** — chính nhánh đó sinh ra URL hỏng. Nay ném lỗi
+   (quyết định của người dùng: "báo lỗi luôn, không ghi local"). Kiểm bằng codemap: trong 4 script
+   seed, `saveAudio` nằm TRƯỚC lệnh ghi DB trong cùng `try` ⇒ ném lỗi thì không dòng DB hỏng nào
+   được tạo, item bị đếm lỗi và báo ra.
+3. **Dữ liệu cũ KHÔNG dọn tay** (người dùng chọn): dòng hỏng gặp tới đâu tự sinh lại tới đó —
+   không đụng DB production, không sinh lại đồng loạt gây dồn cục tiền API.
+
+**Tab admin mới "Cache TTS & R2"** (`api/admin-tts-cache.ts` + `AdminTtsCachePanel.tsx`), vì trước
+đây KHÔNG có chỗ nào ghi lại /api/tts đã hit hay miss nên không trả lời được "cache hit bao nhiêu %":
+
+- Migration `0039_tts_cache_stats.sql`: bảng `tts_cache_stats` (đếm hit/miss theo ngày+lang+voice,
+  upsert bắn-rồi-quên, ngày theo giờ VN cho khớp `daily_usage`) và `tts_cache_audit` (kết quả quét
+  nền). Cả 2 chỉ là số liệu — xoá đi không mất audio.
+- Trang hiện: tỉ lệ hit 30 ngày + biểu đồ theo ngày + bảng theo giọng; đếm nhanh thuần SQL bao
+  nhiêu dòng trỏ đúng R2 / trỏ sai chỗ; và nút "Quét lại" chạy NỀN đối chiếu DB ↔ R2 để ra số
+  **thiếu trên R2** và **orphan trên R2** (bucket hàng chục nghìn file nên không quét đồng bộ được).
+- Chống quét chồng, kèm mốc 30 phút coi lượt quét treo là hỏng để một lần `pm2 reload` đúng lúc
+  không khoá cứng tính năng vĩnh viễn.
+
+**Giới hạn phải biết:** số liệu hit/miss **không hồi tố** — chỉ tính từ lúc deploy bản này.
+Và **% cache hit chưa đo được ở phiên này** vì sandbox không có DB production; phải bấm "Quét lại"
+trên VPS mới có số thật.
+
+### Xử lý nốt 5 việc để ngỏ của audit (2026-08-12, cùng PR) — người dùng duyệt "làm tất cả"
+
+Cả 5 việc trước đó chỉ CẢNH BÁO (vì đều làm đổi con số/hành vi thật) nay đã làm, mỗi việc có test:
+
+1. **`subject_limits` thôi là bảng chết.** Migration 0029 tạo bảng + cờ `enforced` mô tả là phanh
+   tay admin tắt enforce hạn mức theo môn, nhưng không code nào đọc. Đã nối vào
+   `checkAndConsumeUsage` qua `isSubjectEnforced()` (`packages/core-db/settings.ts`, cache 30s
+   dùng chung TTL với app_settings). Tắt phanh → KHÔNG chặn theo hạn mức nhưng VẪN ghi thống kê
+   để còn theo dõi chi phí. **Mặc định mọi nhánh không chắc chắn đều là ENFORCE** (chưa có dòng
+   cấu hình, DB lỗi, giá trị null) — ngược với fail-open thường thấy, vì đoán nhầm sang "không
+   enforce" là mở toang lượt gọi AI cho toàn bộ người dùng.
+2. **Hoàn lượt qua nửa đêm không còn bốc hơi.** `checkAndConsumeUsage` nay trả kèm `day` đã trừ,
+   `refundUsage(userId, mode, day)` hoàn đúng dòng ngày đó. Trước đây mỗi bên tự gọi `today()`:
+   lượt trừ 23:59 giờ VN, provider lỗi, hoàn lúc 00:01 → `greatest(0-1, 0) = 0`, mất trắng 1 lượt.
+   Cập nhật 8 nơi gọi refund (`ai.ts` ×6, `stt.ts`, `pronounce-assess.ts`).
+3. **Không còn cộng +5 lượt khi chỉ đánh dấu "từ khó".** Bỏ `hard.length` khỏi `grewLearning`
+   (`api/progress.ts`) — gắn nhãn từ khó là một cú bấm, không phải học. Ba tín hiệu còn lại
+   (thuộc thêm từ / xong bài ngữ pháp / xong hội thoại) đều là học thật.
+4. **IV AES-GCM nay NGẪU NHIÊN, không suy từ hash** — migration `0038_tts_cache_iv.sql` thêm cột
+   `tts_cache.iv`. `encryptAudio()` đổi chữ ký trả `{ cipher, iv_b64 }`, mọi nơi ghi phải lưu iv
+   (tts.ts + 3 script seed), mọi nơi đọc truyền iv vào (`decryptAudio`/`getClientKeyMaterial`).
+   **Tương thích ngược**: cột để NULL được, bản ghi cũ rơi về iv suy từ hash → audio đã trả tiền
+   vẫn nghe được, không cần sinh lại, không downtime. Rủi ro nonce reuse của bản ghi CŨ vẫn còn
+   cho tới khi chúng được sinh lại — chấp nhận, vì nội dung là bài học công khai.
+5. **Generator không còn ghi JSON nén.** `scripts/lib/writeJson.ts` (dùng API Prettier) cho 2
+   script ghi vào `apps/english/src/data/`. Trước đây chạy lại generator tạo diff ~44.000 dòng
+   THUẦN ĐỊNH DẠNG, đủ để che một thay đổi dữ liệu thật. Đã kiểm chứng: chạy lại cả 2 generator
+   giờ cho **diff RỖNG**. Các script ghi vào `public/data/` GIỮ NGUYÊN JSON nén — thư mục đó nằm
+   trong `.prettierignore` có chủ ý (tài sản client tải về lúc chạy, nén cho nhẹ).
+
+Bài học đáng ghi: đổi câu SQL `select audio_url, viseme_timeline` (thêm `, iv`) làm mock trong
+`tts.test.ts` không khớp chuỗi nữa → vòng `for(;;)` của `claimTtsGeneration` quay vô hạn → test
+runner OOM 8GB. Mock phân nhánh theo chuỗi SQL rất giòn; sửa SQL thì phải soát lại mock.
+
+### Audit luồng 2 (từ điển/CEFR) + luồng 3 (audio TTS-STT) (2026-08-12, cùng PR với luồng 1)
+
+**Luồng 2 — dữ liệu SẠCH, chạy kiểm trên dữ liệu THẬT trong repo (12.168 từ, 10 chunk, 3,3MB).**
+Kết quả đo: 100% có nhãn CEFR hợp lệ (0 thiếu, 0 sai giá trị) · 0 từ trùng giữa các chunk ·
+0 từ dư khoảng trắng · `cefrC1C2Vocab.json` (236 vòng/3.548 từ) và `cefrA1B2ExtraVocab.json`
+(374 vòng/6.845 từ) đều 100% tồn tại trong từ điển, đúng cấp mong đợi, không trùng nội bộ và
+không chồng lấn nhau. Chạy lại `gen-cefr-c1c2-vocab.ts` → nội dung JSON **giống hệt bit-for-bit**
+bản đã commit (bất biến lũy đẳng ✅).
+
+Đã sửa ở luồng 2 (đều là số liệu/ghi chú sai, không đụng dữ liệu):
+
+- `CLAUDE.md` ghi "10.746 từ · 97% có freq · 12.073 từ" — số thật là **12.168 từ · 94,9% có freq**
+  (619 từ chưa có). Đã ghi số đo lại kèm phân bố từng cấp.
+- `scripts/gen-cefr-c1c2-vocab.ts`: comment nói ngưỡng `MIN_FREQ_RANK=2000` "chỉ bỏ ~9 từ" —
+  đo thật thì nay loại **0 từ** (các từ gắn nhầm đã được sửa nhãn ở đợt sau). Giữ ngưỡng làm
+  lưới an toàn, sửa lại comment cho đúng.
+
+**Luồng 3 — 1 lỗi đã sửa, 1 rủi ro mật mã để ngỏ.**
+
+Đã sửa: `scripts/seed-all.ts --verify --clean-orphans` **xoá nhầm cache giọng ElevenLabs**.
+Script chỉ sinh tác vụ cho giọng Google/Gemini nên mọi dòng `tts_cache` giọng ElevenLabs đều
+nằm ngoài "tập kỳ vọng" → bị xếp orphan → `--yes` xoá thật. Nhưng Rachel là giọng người dùng
+**chọn tay được** ở Cài đặt (chỉ bị loại khỏi bể random, `RANDOM_EXCLUDED_VOICES`), `/api/tts`
+vẫn phục vụ bình thường — tức KHÔNG "mất khỏi dữ liệu app". Xoá đi là vi phạm chính sách cache
+(CLAUDE.md mục 6) và phải trả tiền sinh lại. Đã thêm bảo vệ cùng tinh thần với phần bảo vệ câu
+pattern ngoài seed-index đã có sẵn, kèm test đối chiếu danh sách giọng ElevenLabs client ↔ server
+(`api/_lib/voiceTierParity.test.ts`) — thêm giọng mới ở 1 phía mà quên phía kia sẽ đỏ test.
+
+Để ngỏ, cần quyết: **IV tất định trong AES-GCM**. `ttsCrypto.ts` suy ra cả khoá lẫn IV từ `hash`,
+nên nếu cùng một hash từng mã hoá HAI nội dung audio khác nhau thì đó là **dùng lại nonce** —
+lỗi mật mã nghiêm trọng (hai ciphertext cùng khoá+IV làm lộ XOR bản rõ và có thể lộ khoá xác
+thực GCM). Provider TTS không trả byte giống hệt nhau giữa các lần gọi, mà `tts_cache` có nhánh
+`on conflict (hash) do update`. Dự án đã lường phần nào bằng khoá "claim" chống 2 request đồng
+thời, nhưng chưa chặn trường hợp sinh lại cùng hash ở hai thời điểm khác nhau. Sửa đúng cách là
+IV ngẫu nhiên lưu kèm bản ghi (thêm cột + migration + tương thích ngược cache cũ) — quá lớn để
+tự quyết. Round-trip mã hoá/giải mã thì đã có test đầy đủ, không có lỗi.
+
+Đã rà và KHÔNG có lỗi ở luồng 3: round-trip `encryptAudio`/`decryptAudio` · khoá suy ra tất định
+theo hash · 3 script seed (`seed-all`, `prefetch-tts-patterns`, `seed-stories-gemini-tts`) tính
+hash `text+lang+voice+VOICE_VERSION` khớp nhau và khớp server cho MỌI giọng Google/Gemini (server
+chỉ bỏ `lang` với giọng ElevenLabs, mà seed không bao giờ dùng giọng đó → không lệch thật).
+
+### Audit luồng SRS + đếm lượt dùng — 2 lỗi tiềm ẩn đã sửa, 3 việc để ngỏ (2026-08-12)
+
+Người dùng yêu cầu rà triệt để nguồn sai lệch từ đầu vào tới đầu ra, chọn 3 luồng (1 SRS+đếm
+lượt · 2 từ điển/nhãn CEFR · 3 audio TTS/STT). **Đợt này mới xong LUỒNG 1**; luồng 2–3 chưa làm.
+
+Đã sửa (mỗi lỗi có test tái hiện FAIL trước / PASS sau):
+
+1. **Khoá SRS bài ngữ pháp lệch chữ hoa/thường** (`apps/english/src/lib/srs.ts`). `addToSRS()`
+   hạ chữ thường TOÀN BỘ khoá khi GHI, nhưng `getDueGrammarLessonIds()` đọc bằng
+   `grammar:${lessonId}` giữ nguyên dạng. LessonId có chữ hoa → ghi một khoá, đọc một khoá
+   khác → bài đó KHÔNG BAO GIỜ đến hạn ôn, hỏng im lặng. Đã kiểm bằng thực nghiệm: cả **78
+   lessonId hiện tại đều chữ thường** nên chưa ai gặp và **dữ liệu đã lưu không đổi** — sửa là
+   chặn sẵn cho lessonId thêm về sau.
+2. **Truy vấn hiển thị lượt Free không lọc `subject`** (`api/usage-summary.ts`). Hàm SQL
+   enforce `consume_rolling_credit` lọc `subject = p_subject` (migration 0029) nhưng truy vấn
+   hiển thị cộng MỌI subject → khi có môn thứ 2 (ADR-0001), UI báo còn nhiều lượt hơn số
+   server thật sự cho phép. Hiện chỉ có môn `english` nên **số hiển thị hôm nay không đổi**.
+
+Để ngỏ, cần người dùng quyết (KHÔNG tự sửa vì đều làm ĐỔI CON SỐ thật):
+
+- **`subject_limits` là bảng chết**: migration 0029 tạo bảng + cờ `enforced` mô tả là "phanh
+  tay admin tắt enforce hạn mức theo môn", nhưng **không dòng code nào đọc nó**. Hành vi hiện
+  tại = luôn enforce (trùng mặc định `enforced=true`), nên vô hại, nhưng tính năng quảng cáo
+  trong tài liệu thì chưa tồn tại.
+- **Hoàn lượt qua nửa đêm bị mất**: `checkAndConsumeUsage` và `refundUsage` mỗi bên tự gọi
+  `today()`. Lượt tiêu lúc 23:59 giờ VN mà provider AI lỗi và hoàn lúc 00:01 → hoàn vào dòng
+  ngày MỚI (`credits_spent = greatest(0-1, 0) = 0`) → người dùng mất 1 lượt. Hiếm nhưng thật.
+  Sửa được sạch bằng cách cho `checkAndConsumeUsage` trả về `day` đã tiêu để `refundUsage`
+  dùng lại — đụng 3 file gọi, nên chờ duyệt.
+- **`grewLearning` cộng +5 lượt khi chỉ đánh dấu "từ khó"** (`api/progress.ts`): `hard.length`
+  dài ra cũng tính là "học thật". Bật/tắt 1 từ khó là lấy được +5 của ngày mà không học. Trần
+  vẫn là 5/ngày (idempotent) nên thiệt hại có chặn trên.
+
+Bổ sung quy trình: thêm **mục 5 "Audit LUỒNG DỮ LIỆU"** vào `docs/framework/QUY-TRINH-AUDIT.md` —
+prompt 4 giai đoạn dùng lại được (lập ma trận A×B trước khi rà · kiểm chứng bằng test bất biến ·
+sửa phải có test FAIL trước/PASS sau · điều kiện dừng theo bằng chứng), kèm bảng luồng của dự án
+và các cặp đường song song hay lệch nhau. Audit 7 tầng cũ quét theo TẦNG CÔNG CỤ nên không bắt
+được loại lỗi này — mọi cổng vẫn xanh trong khi con số hiển thị cho người học vẫn sai.
+
+Đã rà và KHÔNG có lỗi (khỏi rà lại): chữ ký 7 hàm SQL khớp 100% lời gọi TS · công thức cửa sổ
+trượt `day > d - 7 and day <= d` giống hệt giữa hàm enforce và truy vấn hiển thị · hướng ưu
+tiên khi hoà `reps` nhất quán giữa merge client (`progressSync.ts`) và merge server
+(`progressMerge.ts`) · `vnDateStr` client và server cùng công thức UTC+7.
+
+### Rà soát tính năng chuyển đổi giọng đọc — 5 lỗi + 5 cải tiến (2026-08-10, PR #526)
+
+Người dùng yêu cầu "kiểm tra cấu trúc, tính năng, đặc biệt tính năng chuyển đổi giọng đọc". Rà toàn
+bộ đường giọng đọc (`apps/english/src/lib/tts.ts` · `voiceTiers.ts` · `packages/core-ai/tts.ts` ·
+`api/_lib/voiceAccess.ts`). Kết quả: phần lớn ĐÚNG thiết kế (chiều A/B truyền đúng lang ở cả 3 chỗ
+gọi trong `Speaking.tsx`; server là nguồn sự thật; các bug cũ đều còn hàng rào chống), nhưng tìm ra
+**5 vấn đề thật**, đã sửa hết:
+
+1. 🔴 **Phần sửa lỗi/giải thích KHÔNG BAO GIỜ được đọc** — hồi quy từ PR #476 (2026-08-04), tức là
+   điểm khác biệt cốt lõi của app im tiếng suốt ~6 ngày trên production mà không ai phát hiện.
+   `speakBilingual()` chốt "vé" `playToken` TRƯỚC khi phát, nhưng PR #476 thêm `playToken++` vào
+   `speakViaGoogle()` (để giải phóng lượt phát trước còn treo) → chính câu thoại của nó cũng làm vé
+   lệch → luôn `return` trước phần feedback. Nay `speak()/speakViaGoogle()` **trả về đúng số vé của
+   lượt phát vừa rồi** để nơi gọi so lại; huỷ khi bấm Tắt tiếng vẫn chạy đúng như cũ. Có test hồi quy
+   khẳng định câu thoại VÀ phần sửa lỗi đều được phát.
+2. 🔴 **Sai mimeType khi server hạ giọng** — gói Free mở trang đọc truyện: client xin giọng Gemini
+   (WAV), server hạ về Chirp3-HD (mp3), nhưng client vẫn gắn nhãn `audio/wav` cho Blob → Safari/iOS
+   có thể không phát. Nay `/api/tts` **trả kèm `voice` thật sự đã dùng** (giống `/api/pronunciation`
+   vốn đã có), client bám theo nó để chọn mimeType + lưu vào IndexedDB (entry cũ thiếu trường này vẫn
+   đọc được, không cần nâng version cache). Thêm `getStoryVoice(kind, plan)` tự hạ giọng ngay ở client.
+3. 🟡 **Hạ gói làm đổi luôn giới tính giọng** — mọi nhánh hạ giọng đều rơi về `Kore` (nữ), nên user
+   đang dùng giọng nam mà hết hạn gói bị đổi phắt sang giọng nữ. Nay hạ giọng **giữ nguyên giới tính**
+   (`defaultVoiceForGender`, khớp tay cả 2 phía); riêng giọng Gemini ưu tiên giọng Chirp3-HD cùng tên
+   (`Gemini-Leda → Leda`) trước khi rơi về mặc định.
+4. 🟡 **Random có thể trúng giọng Studio** — Studio giá $24/1 triệu ký tự, KHÔNG có hạn mức miễn phí
+   (đắt gấp 12 lần Chirp3-HD), nghĩa là user VIP vô tình đẩy chi phí lên gấp 12 mà không hề chọn. Nay
+   Studio/ElevenLabs **không bao giờ tự nhảy vào bể random** (`RANDOM_EXCLUDED_VOICES`) và cũng không
+   bị nạp trước hàng loạt — vẫn dùng đầy đủ khi người dùng CHỦ ĐỘNG chọn ở Cài đặt.
+5. 🟡 **Không có gì chặn khi 2 bảng phân quyền giọng lệch nhau** — cả 2 file chỉ ghi "PHẢI khớp tay".
+   Thêm `api/_lib/voiceTierParity.test.ts` đối chiếu tự động client ↔ server (chạy trong `npm test`,
+   chặn CI). Nhân đó đưa giọng Gemini vào bảng tier phía client cho khớp hẳn bảng server.
+
+Ngoài ra, **tách giọng giải thích khỏi giọng hội thoại** (đúng mô tả "TTS hai giọng riêng" ở
+`CLAUDE.md` mục 1): trước đây cả hai dùng chung một giọng, chỉ khác locale
+(`en-US-Chirp3-HD-Kore` → `vi-VN-Chirp3-HD-Kore`) nên người học nghe ra vẫn là MỘT người. Nay phần sửa
+lỗi mặc định đọc bằng **giọng khác giới tính** với giọng hội thoại — không cần cấu hình gì. Có công
+tắc + bộ chọn riêng ở Cài đặt (`VoicePicker`) để tắt (về hành vi cũ) hoặc chọn giọng khác;
+`speakBilingual()` nhận thêm tham số `feedbackVoice` (mặc định `getNativeVoicePref()`).
+
+Cổng: build ✅ · typecheck ✅ · lint ✅ (0 cảnh báo) · format ✅ · test ✅ 3013/3013.
+
+### Quy ước mới: tạo PR = coi như đã xong, ghi tài liệu ngay trong PR đó (2026-08-09)
+
+Người dùng chốt: **không chờ merge mới ghi nhận**. Mỗi PR phải tự mang theo phần cập nhật `*.md`
+liên quan — `PROGRESS.md` là bắt buộc, thêm `CLAUDE.md`/`PROJECT.md`/`docs/*` nếu thay đổi chạm tới —
+ghi rõ số PR, ngày, việc đã làm và quyết định kèm theo. Đã thêm vào `CLAUDE.md` mục 3 để mọi phiên sau
+đọc được. Lý do: phiên sau đọc `PROGRESS.md` là đủ, không phải lần lại `git log` hay hỏi lại người
+dùng, và tránh cảnh dồn một loạt PR đã merge rồi mới ngồi ghi bù (đúng tình huống của PR docs này).
+
+### Sửa & nâng cấp chế độ tải trước SRS Offline (2026-08-08→09, PR #521 · #522 · #524)
+
+Người dùng báo "chế độ tải trước có hiển thị nhưng thấy không hoạt động". Điều tra ra **4 lỗi cùng
+lúc** khiến thanh "Tải trước SRS Offline" gần như vô dụng — mỗi lỗi một mình đã đủ làm hỏng tính năng:
+
+1. **Chỉ nạp ĐÚNG 1 giọng** (`getVoicePref()`). Khoá cache audio có chứa tên giọng, mà chế độ
+   "giọng ngẫu nhiên" bốc giọng mới mỗi phiên/tab → mở lại app là trượt cache, offline không nghe
+   được gì. Nay nạp **TẤT CẢ giọng gói cho phép** (Free 4 · Pro 8 · VIP 17) qua `getPreloadVoices()`
+   mới trong `voiceTiers.ts` (loại Studio khi đọc không phải tiếng Anh; **giữ** ElevenLabs vì
+   `/api/tts` có hỗ trợ — khác `pickRandomAllowedVoice()` vốn dành cho `/api/pronunciation`).
+2. **Khoá kiểm tra lệch khoá thật.** Bộ đếm tự ghép `audioCacheKey(word,'en-US',voice)`, còn bộ phát
+   bỏ `lang` với giọng ElevenLabs và hạ Studio→Chirp3-HD khi đọc tiếng Việt → **luôn báo "chưa có"
+   dù đã tải xong**. Nay tách `speechCacheKey()` xuất từ `lib/tts.ts`, cả hai bên dùng chung.
+3. **Bộ đếm và bộ tải nhìn hai danh sách khác nhau.** Chưa có thẻ đến hạn thì bộ đếm trả
+   `0/0 → isFullyPrepared: true`, trong khi bộ tải lại tải 20 từ đầu pool → bấm "Tải ngay" xong
+   thanh **vẫn 0/0**, y như không chạy. Nay dùng chung `getPreloadTargets()` + cờ `isLookahead`.
+4. **Vượt hạn mức server + đếm thiếu.** Bộ tải tải cả câu ví dụ nhưng bộ đếm chỉ đếm từ; nhịp
+   `sleep(60ms)` ≈ 1000 request/phút trong khi `/api/tts` giới hạn **60/phút mỗi IP** → 429 hàng loạt,
+   phần lớn file tải hụt trong im lặng.
+
+Sau khi sửa 4 lỗi (PR #521), nâng cấp tiếp:
+
+- **Nhịp gọi API theo ngân sách trượt 60 giây** (PR #522), thay cho nghỉ cố định 1250ms. Server có
+  **2 bộ đếm, đều 60/phút mỗi IP** (một cho toàn bộ `/api/tts`, một riêng cho đường tạo audio mới) →
+  ngân sách client đặt **50/cửa sổ** nằm dưới cả hai, chừa ~10 lượt cho người dùng bấm nghe song song.
+  Bộ đếm ở **cấp module** (không phải mỗi lượt tải một bộ) — bấm Dừng rồi Tải lại ngay không được cấp
+  thêm ngân sách, vì hạn mức server tính theo IP chứ không theo lượt bấm.
+- **Phạm vi gộp thêm từ mới của tab "Hôm nay"** (PR #524) — trước chỉ có thẻ SRS đến hạn, nên mất
+  mạng giữa buổi là học tiếp không có audio dù thanh báo đã xong. Khử trùng từ nằm ở cả hai nhóm.
+- **Mục phải gọi API nạp SAU CÙNG** (PR #524): tách 2 lượt — lượt 1 rà IndexedDB đánh dấu xong ngay
+  phần đã có (không request, không chờ), lượt 2 mới tải phần thiếu. Trước đây hai loại xen kẽ nên mục
+  đã có sẵn nằm sau một mục đang chờ ngân sách cũng bị kẹt theo dù chẳng tốn gì; nay bấm Dừng giữa
+  chừng vẫn giữ trọn phần miễn phí.
+- **UI**: thanh tiến độ, nút **Dừng**, dòng giải thích phạm vi (N từ × M giọng, gồm cả câu ví dụ).
+
+Ghi chú chi phí: gói VIP (17 giọng) lần tải đầu ≈ 680 mục ≈ 14 phút. Là hành động người dùng **chủ
+động bấm**, có tiến độ + nút Dừng, và cache TTS dùng chung toàn hệ thống (`tts_cache`) nên người dùng
+sau hưởng luôn cache đã tạo. Mục đã có sẵn không tốn request nào.
+
+### Gom cài giọng đọc & tốc độ phát về trang Cài đặt (2026-08-08, PR #522)
+
+`VoiceMenu` + `RateToggle` nằm rải rác trên header và trong nội dung của Từ điển, Cụm từ, Nghe,
+Luyện nói, tab Học. Cả hai vốn **đã lưu localStorage và áp dụng toàn cục**, nên đặt ở từng trang chỉ
+gây rối và khiến người dùng tưởng mỗi trang một giọng/tốc độ riêng.
+
+- Gỡ khỏi mọi trang; **xoá hẳn `VoiceMenu.tsx`** (không còn nơi dùng).
+- Trang Cài đặt giữ `VoicePicker` sẵn có, **thêm mục "Tốc độ phát"** — nếu không thì sau khi gỡ hết,
+  tốc độ phát sẽ không còn chỗ nào chỉnh được.
+- Dọn prop `plan` đã thành thừa dọc chuỗi `StudyPanel → TodayLesson → BatchDoneView` (chỉ tồn tại để
+  truyền xuống `VoiceMenu`).
+
+### Nhãn "Sắp ra mắt" cho tính năng đối thoại với AI (2026-08-09, PR #524)
+
+Thêm `components/ComingSoonBanner.tsx` dùng chung, đặt ở **Luyện nói song ngữ** (`/luyen-noi`) và
+**Avatar AI nói chuyện** (`/avatar-demo`). Kiểu hiển thị chốt với người dùng: **vẫn vào được và dùng
+bình thường**, chỉ thêm banner báo bản đang hoàn thiện — không chặn route, không ẩn khỏi menu, nên khi
+xong chỉ cần gỡ 1 dòng. Màu chữ dùng đúng bộ class của `RewardTipBanner` (`text-white` /
+`text-zinc-400`) vốn đã qua cả 2 cổng a11y (AA mọi thành phần + AAA cho nội dung/tiêu đề).
+
+### Đợt trả nợ kỹ thuật 2026-08-08 (PR #520)
+
+Trả 4/5 món trong mục "Nợ kỹ thuật còn mở". Món react-router giữ nguyên theo quyết định đã chốt
+(app dùng BrowserRouter thuần, không chạy RSC; bản vá đòi React 19).
+
+1. **Chu trình import: 5 → 0.** Ghi nhận cũ là 3 (trong `data/`), thực tế `npm run codemap -- cycles`
+   báo **5** — có thêm `srs ↔ offlineSrsStore` và `srs → progressSync → offlineSrsStore → srs`, tức
+   đã lan sang `lib/` (logic chạy thật, không chỉ dữ liệu tĩnh). Cả 5 đều cùng một dạng: cạnh quay
+   lại chỉ là `import type`. Gỡ bằng 3 file **chỉ-chứa-kiểu**: `lib/srsTypes.ts`, `data/cefrTypes.ts`,
+   `data/curriculumTypes.ts`; file gốc `export type` lại nên **không nơi nào phải đổi đường dẫn
+   import**. Tiện thể dời 2 import bị đặt lạc giữa file (một cái cắt đôi khối comment ở
+   `progressSync.ts`) lên đầu file.
+2. **`.tap-44` từ no-op thành vùng chạm thật.** Đo bằng Playwright trên 9 trang, khung 390×844:
+   **9 phần tử < 44px** (nhỏ nhất: nút "Ẩn gợi ý huy hiệu" 16×16, avatar header 28×28). Nay
+   `.tap-44` đặt `min-height/min-width: 44px` thật → **0 phần tử < 44px**. Thêm biến thể
+   **`.tap-44-y`** (chỉ ép chiều cao) cho control vốn đã rộng — ép cả `min-width` lên từng phân đoạn
+   của thanh gạt `Nữ|Nam`, `0.75×|1×|1.25×` làm **header trang Luyện nói tràn, đẩy nút avatar khỏi
+   màn hình** (bắt được nhờ chụp ảnh trước/sau, không phải suy đoán). Công tắc 44×24 ở `VoicePicker`
+   bỏ hẳn `.tap-44` (ép cao 44 làm hỏng hình viên thuốc; rộng 44 + đứng riêng hàng vẫn đạt WCAG 2.2
+   AA 2.5.8).
+3. **Token `--z-500` đạt AA ở cả 5 theme.** Giá trị mới tính bằng script (giữ sắc thái, chỉ đổi độ
+   sáng), đo trên 3 bề mặt thật z-950/900/800: dark-blue 6.09/5.59/4.58 · blue-sky 5.42/5.17/4.59 ·
+   pink 5.42/5.22/4.65 · vibrant 5.81/5.37/4.59 · kid 5.33/5.08/4.62 — vẫn mờ rõ so với z-400
+   (6.4–9.2) nên **không mất phân cấp chữ chính/chữ phụ**. `KNOWN_LOW` 17 cặp → 5.
+   **Nhóm nền `z-700` giữ lại CÓ CHỦ Ý:** đo thực tế cho thấy ép z-500 đạt AA cả trên z-700 thì nó
+   phải sáng **ngang z-400** (8.59 so với 8.51) — tức xoá luôn khái niệm "chữ mờ". Ghi chú cũ
+   "z-700 chỉ dùng làm hover" nay đã **lỗi thời**: `ShareProgress`/`Login` dùng nó làm nền nút gạt
+   thật, nhưng chữ đặt lên là `text-white` (đạt AA), không chỗ nào đặt chữ mờ lên z-700.
+4. **Nhánh phá huỷ `restore:r2 --restore-into` đã kiểm chứng THẬT.** Dựng cụm Postgres 16 nháp, nạp
+   `schema.sql` + toàn bộ migration (**47 bảng** `public` + `english`) + 1 user thật, `pg_dump | gzip`
+   đúng định dạng cron, rồi restore vào một database **đã có sẵn dữ liệu rác**: rác bị xoá sạch,
+   danh sách 47 bảng **giống hệt** nguồn, hàng dữ liệu về đủ. 3 hàng rào an toàn đều chặn đúng
+   (thiếu `--yes` / thiếu `RESTORE_PSQL_URL` / `--from-file` trỏ file không tồn tại).
+   Thêm tuỳ chọn **`--from-file`** cho `scripts/restore-pg-from-r2.ts` — vừa là cách chạy thử được
+   nhánh này mà không cần khoá R2, vừa có ích thật trong sự cố: restore hỏng giữa chừng thì dùng lại
+   file đã tải, không tải lại bản dump vài GB trong lúc dịch vụ đang sập (file của người dùng
+   **không bị tự xoá**, khác file tạm tự tải).
+
+### ADR-0002 — Quản lý người dùng đa lĩnh vực: Bước 1–4 + 6 XONG (2026-08-08, PR #517 · #518)
+
+Chuẩn bị nền tảng tài khoản dùng chung cho các môn tiếp theo (ADR `docs/adr/0002-quan-ly-nguoi-dung.md`).
+Bước 5 **bỏ qua có chủ ý** (roles/audit_log/registry xoá tài khoản chưa có tính năng thật để gắn vào —
+admin hiện là whitelist email trong `.env`).
+
+- **Bước 1 — `identities`** (migration `0034`): tách 4 cột OAuth cứng (Google/Facebook/Apple/Microsoft)
+  trên `users` ra bảng riêng, dual-write để không hồi quy; thêm provider mới không phải `ALTER` bảng lõi.
+- **Bước 2 — `entitlements`** (migration `0035`): quyền lợi theo **sản phẩm** (`user_id, product, tier,
+source, granted_at, expires_at`), backfill từ `profiles.plan`. CHƯA đổi code đọc/ghi gói cước —
+  bảng sẽ lệch dần cho tới bước rewiring, đã ghi rõ trong ADR.
+- **Bước 3 — cookie SSO**: `packages/core-auth/sessionCookie.ts` (mới) — cookie HttpOnly/SameSite=Lax
+  (Secure + `Domain=.donghanhcungban.org` chỉ ở production) dùng CHUNG `session_token` đã có.
+- **Bước 4 — `english.user_profile`** (migration `0036`): tách 4 cột onboarding chỉ đúng với tiếng Anh
+  (`user_level`, `goal`, `daily_minutes`, `age_group`); `api/profile.ts` tạm thời vẫn đọc/ghi cột cũ.
+- **Bước 6 — bỏ Bearer, chỉ còn cookie** (migration `0037` xoá 4 cột OAuth cũ): `validateAuth()` đọc
+  cookie; đọc kênh OAuth từ `identities`. ⚠️ **Đánh đổi người dùng đã chấp nhận:** mọi phiên tạo
+  TRƯỚC khi Bước 3 lên production đều chỉ có Bearer → sẽ nhận 401 và phải **đăng nhập lại một lần**.
+- ⚠️ **Việc tay trước khi deploy:** chạy `npm run migrate:pg` trên VPS (4 migration mới `0034`–`0037`).
+  Deploy Bước 6 phải đi SAU khi Bước 3 đã chạy thật ít nhất một nhịp, nếu không mọi phiên đều đứt.
+
+### Sửa lỗi trang Nghe/Truyện + nút phát âm (2026-08-08, PR #516 · #519)
+
+- **`/truyen-song-ngu`** (PR #516): chặn bấm loa câu lẻ trong lúc "Phát tất cả" chạy (chồng tiếng);
+  `data/stories/loader.ts` không còn cache VĨNH VIỄN lỗi mạng (tự thử lại lần sau); thêm chip lọc theo
+  cấp CEFR (A2/B1/B2); thêm `aria-live` báo câu đang đọc + `aria-label` tường minh cho nút loa.
+- **Nút phát âm** (PR #519): bể random giờ nhận `{ lang, exclude }` — không bốc lại giọng vừa nghe
+  (Free chỉ 4 giọng nên ~25% lần bấm bị lặp) và bỏ giọng Studio khi đọc tiếng Việt (Google không có
+  Studio cho `vi-VN`, server hạ về Kore/Puck → 2 giọng đó trúng gấp đôi + tốn 1 lượt gọi API vô ích).
+  Nhãn giới tính đổi theo chiều học (`isA`) cho khớp `VoiceMenu`/`VoicePicker`. +9 ca test `voiceTiers`.
+
+### Gợi ý "cách kiếm huy hiệu & thưởng hiệu quả" cho người dùng (2026-08-07)
+
+- **Trang Giới thiệu** (`/gioi-thieu`, `About.tsx`): mục nhắc huy hiệu bổ sung chiến lược cụ thể
+  — ưu tiên giữ streak + làm challenge 1 phút mỗi ngày (2 việc tốn ít thời gian nhất nhưng lên
+  huy hiệu nhanh nhất), từ vựng/CEFR tự cộng dồn theo lộ trình học bình thường.
+- **Banner tự hiện rồi tự ẩn** (`components/RewardTipBanner.tsx` + `lib/rewardTip.ts`), gắn ở
+  Home — trang vào đầu tiên, dễ tiếp cận nhất: hiện 1 LẦN cho mỗi user (khác `comeback.ts` là
+  tắt lại theo ngày), tự ẩn sau 12s hoặc đóng tay, nhớ "đã xem" vĩnh viễn qua
+  `localStorage` (`et_reward_tip_seen_<uid>`) nên không hiện lại nữa — tránh làm phiền.
+
+### Gợi ý email từ danh sách người dùng khi cấp gói tay (2026-08-07, PR #512)
+
+- Tab admin "Người dùng, Thanh toán & Từ cấm" → bấm 1 dòng ở bảng "Người dùng"
+  (`AdminUsersPanel`) giờ tự điền email của user đó vào form "Cấp gói Pro/VIP thủ công"
+  (`AdminGrantPlanPanel`) ngay bên dưới, thay vì phải gõ tay/copy-paste.
+- Ô nhập email trong form cấp gói có thêm gợi ý autocomplete (thẻ HTML `<datalist>`) lấy từ
+  đúng danh sách email đã tải ở bảng "Người dùng" (không gọi API riêng, không lộ thêm dữ liệu
+  ngoài phạm vi admin đã thấy trên cùng trang).
+- Kỹ thuật: tách state dùng chung (`prefillEmail`, `emailSuggestions`) ra component bọc mới
+  `AdminGrantPlanSection` (`apps/english/src/pages/AdminDashboard.tsx`), truyền xuống qua props
+  mới `onSelectEmail`/`onEmailsChange` (`AdminUsersPanel.tsx`) và `prefillEmail`/
+  `emailSuggestions` (`AdminGrantPlanPanel.tsx`). Không đổi API/schema.
+
+### Gemini TTS cho trang đọc truyện + đổi thứ tự ưu tiên AI chat (2026-08-06)
+
+- **Giọng Gemini TTS riêng cho truyện cổ tích/ngụ ngôn** (`/stories`, `/stories/:id`): thêm
+  provider mới `packages/core-ai/geminiTts.ts` (khác hẳn Google Cloud TTS Chirp3-HD đang dùng
+  cho phần còn lại của app) — dùng `GEMINI_API_KEY` đã có sẵn, model TTS chuyên dụng cấu hình
+  qua `GEMINI_TTS_MODEL` (mặc định `gemini-2.5-flash-preview-tts`, KHÔNG dùng chung
+  `GEMINI_MODEL` của chat vì model chat thường không hỗ trợ audio). Điều khiển phong cách đọc
+  bằng câu lệnh tự nhiên ngay trong prompt (mỗi thể loại 1 giọng + 1 phong cách cố định, dặn
+  model tự biến hoá cảm xúc theo nội dung từng câu) — đọc truyền cảm hơn Chirp3-HD. Gemini trả
+  PCM thô → tự đóng gói WAV (`geminiTts.ts`), client phát đúng qua `blobMimeTypeForVoice()`
+  (`apps/english/src/lib/tts.ts`). `STORY_KIND_VOICE` (`apps/english/src/lib/stories.ts`) đổi
+  từ giọng Chirp3-HD sang 6 giọng Gemini theo thể loại. Gắn đầy đủ vào `/api/tts` (như
+  ElevenLabs) nên vẫn tự tạo audio động nếu chưa seed. Seed trước: `npm run
+seed:stories:gemini` (script riêng `scripts/seed-stories-gemini-tts.ts` — tách khỏi
+  `seed-all.ts` vì lược đồ Google-only ở đó không áp dụng). Gói Free tạm không có giọng Gemini
+  riêng cho truyện (clamp về `DEFAULT_VOICE` như các giọng "cao cấp" khác — hành vi có sẵn từ
+  trước, không phải thay đổi mới).
+- **Đổi thứ tự ưu tiên provider AI chat** (`packages/core-ai/ai.ts`, `/api/agent`): từ
+  Gemini → Groq → Anthropic thành **Groq → Anthropic → Gemini** (Gemini xuống cuối). Giữ
+  nguyên cơ chế fallback (lỗi ở 1 nhánh mà còn provider dự phòng thì tự chuyển tiếp, chỉ hoàn
+  lượt dùng khi KHÔNG còn provider nào khác) và giữ nguyên status/hành vi gốc của từng
+  provider khi nó là nhánh cuối cùng (vd Anthropic forward thẳng status/body, không bọc JSON).
+
 ### Nâng cấp Hệ thống & Tích hợp AgentMemory (2026-08-04 → 2026-08-05)
 
 1. **Email Nhắc học Thông minh & Preconnect Domains (2026-08-04)**:
@@ -1494,6 +2186,11 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## ⚠️ Cần làm tay (không cần PR)
 
+- **Migration `0034`–`0037` (ADR-0002) — CHẠY TRƯỚC KHI DEPLOY.** `npm run migrate:pg` trên VPS
+  (`identities`, `entitlements`, `english.user_profile`, xoá 4 cột OAuth cũ trên `users`).
+  Sau khi deploy Bước 6, mọi người dùng đang đăng nhập bằng phiên Bearer cũ **phải đăng nhập lại
+  một lần** — đây là đánh đổi đã được xác nhận, không phải lỗi.
+
 - **Migration `0028_tts_viseme_timeline.sql` — CHẠY TRƯỚC KHI DEPLOY đợt avatar timing.**
   Thêm cột `viseme_timeline jsonb` vào `tts_cache` (nullable, không phá dữ liệu cache cũ).
   Lệnh: `npm run migrate:pg` (đã nằm trong `scripts/deploy.sh`). Rollback nếu cần:
@@ -1717,6 +2414,34 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- **[Rà soát tự động 2026-08-09] `npm audit` VỀ 0 LỖ HỔNG lần đầu tiên — mục react-router ở dưới
+  ĐÃ ĐÓNG (không còn là nợ), cộng thêm vá 2 advisory mới phát sinh.** Container mới (chưa có
+  `node_modules`) → `npm ci` sạch rồi chạy đủ cổng: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅
+  (0 cảnh báo) · test ✅ (**164 file / 2982 test**). Không có lỗi type/lint/test nào trong code.
+  - **Tin quan trọng: advisory react-router `GHSA-qwww-vcr4-c8h2` đã được GitHub cập nhật ngày
+    2026-08-07, NARROW dải ảnh hưởng xuống `>=7.12.0 <7.18.2`** (trước đó ghi "chưa có bản vá nào
+    trong dòng 7.x", xem quyết định 2026-08-03 ở dưới) — nghĩa là **`7.18.2` (bản dự án đang dùng
+    sẵn) chính là bản đã vá**, không cần đổi gì. Xác nhận qua `npm ls react-router-dom` (đúng
+    `7.18.2`) + `npm audit` không còn liệt kê react-router. **Mục "giữ nguyên v7.18.2, chấp nhận
+    báo 2 dòng high dài hạn" ở quyết định 2026-08-03 nay LỖI THỜI — đã đóng, không phải chờ nâng
+    React 19 như dự tính.**
+  - `npm audit` phát sinh **2 advisory mới** (khác hẳn react-router, do hệ sinh thái cập nhật từ
+    2026-08-03 tới nay): `js-yaml` 4.0.0–4.3.0 (`GHSA-5p4m-2wfm-xmqj`, quadratic CPU qua `!!omap`)
+    nguồn `eslint`/`@commitlint/cli → cosmiconfig`, và `nanoid` `<3.3.17` (`GHSA-2v37-7h3g-55p8`,
+    vòng lặp vô hạn khi `size=0`) nguồn `postcss`. Cả hai đều **thuần devDependency** (lint/build
+    time), không vào bundle chạy cho người dùng cuối. `npm audit fix` mặc định kéo theo cả loạt
+    gói optional platform (`@esbuild/*`, `@img/sharp-libvips-*`) không liên quan — thay vào đó
+    thêm `overrides` trong `package.json` (`js-yaml` `^4.3.1`, `nanoid` `^3.3.18`) rồi `npm
+install`, chỉ đổi 2 dòng version trong `package-lock.json`. Xác nhận lại `npm audit`: **0 lỗ
+    hổng** (`prod` 239 · `dev` 551 · `optional` 83, tổng 790 gói). Đã chạy lại đủ 4 cổng
+    (build/typecheck/lint/test) sau khi đổi, vẫn xanh 100%.
+  - Đã sửa `.claude/report-status.sh` mục nợ #1 (không còn ghi "2 dòng high react-router báo lâu
+    dài" — đã đóng) để phiên sau không đọc phải thông tin lỗi thời.
+  - PR trước của nhánh này (#525) đã merge & xoá nhánh remote trước khi phiên này bắt đầu — theo
+    đúng quy ước "tạo PR = coi như đã xong" (CLAUDE.md mục 3): nhánh `claude/jolly-mendel-h56pdm`
+    khởi động lại từ `origin/main` (lúc đó trùng khớp HEAD, không có commit lạc), coi lượt này là
+    chu kỳ mới trên cùng tên nhánh.
+
 - **[2026-08-04] Luật a11y mới + ĐÃ TRẢ HẾT nợ tương phản AAA.** Luật (CLAUDE.md mục 4.5, theo
   khuyến nghị W3C _Understanding Conformance_): **nội dung & tiêu đề đạt AAA (≥ 7:1)**, **mọi phần
   còn lại đạt AA**. Hai cổng E2E chặn CI, cả hai TUYỆT ĐỐI (không còn baseline):
@@ -1739,27 +2464,14 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
      `#1772E8` để chữ trắng đạt 4.5:1 (bản gốc 4.23:1).
      Cả 3 đều là lỗi có thật với người dùng, cổng cũ (chỉ chặn critical + serious mới, 4 theme, không
      quét `wcag22aa`) không bắt được.
-- **Nợ mới chưa xử lý:** tiện ích `.tap-44` (`apps/english/src/index.css`) mở rộng vùng chạm bằng
-  `::after` có `pointer-events: none` — pseudo-element này KHÔNG nhận sự kiện chuột nên **không thực
-  sự mở rộng vùng bấm** (cũng không được axe tính). Cần rà lại toàn bộ nơi dùng `.tap-44`.
-- 🟡 **Token `--z-500` rớt WCAG AA ở gần như mọi nền, mọi theme** (phát hiện 2026-08-04 khi thêm
-  cổng `apps/english/src/lib/themeContrast.test.ts`). Số đo: Xanh đêm 4.09/3.75/3.07/2.18 trên
-  nền z-950/900/800/700; Pink 2.62–1.90; Nhi đồng 2.79–1.99 — đều dưới ngưỡng 4.5. Đây là token
-  "chữ mờ", mã nguồn dùng **~81 chỗ** (`text-zinc-500`). Chưa sửa trong đợt này vì đổi nó là đổi
-  bảng màu toàn app: phải rà từng chỗ dùng xem chữ đó có thật sự là văn bản cần đọc hay chỉ là
-  ký hiệu trang trí (WCAG không tính chữ trang trí). Hiện đã ghi vào `KNOWN_LOW` của cổng nói
-  trên nên KHÔNG thể tụt thêm mà không ai biết; sửa xong nhớ xoá khỏi danh sách đó (cổng có
-  test riêng bắt trường hợp quên xoá).
-  - Kèm theo: các cặp chữ phụ (`z-300`/`z-400`/accent) trên nền `z-700` cũng dưới AA ở vài theme.
-    Đã kiểm mã nguồn: `z-700` hiện CHỈ dùng làm màu hover (`hover:bg-zinc-700`), chưa chỗ nào đặt
-    chữ lên nó — nên là bẫy tiềm ẩn, không phải lỗi đang xảy ra.
-
-- 🟢 **3 chu trình import trong `apps/english/src/data/`** (phát hiện 2026-08-04 bằng
-  `npm run codemap -- cycles`): `cefr.ts ↔ cefrAdvanced.ts`, `curriculum.ts ↔ cefrC1C2Vocab.ts`,
-  `curriculum.ts ↔ cefrA1B2ExtraVocab.ts`. Hiện KHÔNG gây lỗi (đều là dữ liệu tĩnh, không đọc giá
-  trị của nhau lúc khởi tạo module) nên ưu tiên thấp, nhưng chu trình import dễ sinh lỗi
-  `undefined` khó lần nếu sau này có ai thêm logic chạy ngay lúc import. Cách gỡ: tách phần kiểu/
-  hằng dùng chung ra file thứ ba để cả hai bên cùng import một chiều.
+- ~~**Nợ mới chưa xử lý:** tiện ích `.tap-44` mở rộng vùng chạm bằng `::after` có
+  `pointer-events: none`~~ **✅ ĐÃ TRẢ (2026-08-08).** Xem mục "Đợt trả nợ kỹ thuật 2026-08-08" ở đầu file.
+- ~~🟡 **Token `--z-500` rớt WCAG AA ở gần như mọi nền, mọi theme**~~ **✅ ĐÃ TRẢ (2026-08-08)** trên
+  mọi bề mặt thật (z-950/900/800); chỉ còn nhóm nền `z-700` giữ trong `KNOWN_LOW` CÓ CHỦ Ý. Xem mục
+  "Đợt trả nợ kỹ thuật 2026-08-08" ở đầu file.
+- ~~🟢 **3 chu trình import trong `apps/english/src/data/`**~~ **✅ ĐÃ TRẢ (2026-08-08)** — thực tế
+  lúc bắt tay vào làm là **5 chu trình** (có thêm 2 cái trong `lib/` dính logic chạy thật, phát sinh
+  sau lần ghi nhận 2026-08-04). Nay `npm run codemap -- cycles` báo 0.
 
 - **[Rà soát tự động 2026-08-03, phiên sau PR #462]** `npm ci` sạch (container mới, chưa có
   `node_modules`) rồi chạy đủ cổng commit: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅ (0 cảnh
@@ -1855,9 +2567,10 @@ fast-uri` — thuần devDependency (commitlint hook), không vào bundle chạy
     không phá route trước khi merge (đổi major/minor react-router-dom).~~ **[Lỗi thời]** 2 CVE
     moderate này đã hết khi nâng lên react-router v7 (2026-08-02). Advisory react-router hiện tại
     là `GHSA-qwww-vcr4-c8h2` (high, RSC Mode) — **đã quyết định giữ nguyên, xem mục đầu 2026-08-03.**
-  - 🟡 `restore:all`/`restore:system`/`restore:r2`: mới kiểm chứng nhánh AN TOÀN (tải về, xác nhận
-    2026-08-01). Nhánh `--restore-into <db> --yes` (DROP + tạo lại database thật) CHƯA test thật —
-    chỉ nên chạy lần đầu trên database phụ/staging, không thử trực tiếp trên `english_tutor` production.
+  - ~~🟡 `restore:all`/`restore:system`/`restore:r2`: nhánh `--restore-into <db> --yes` CHƯA test
+    thật~~ **✅ ĐÃ KIỂM CHỨNG (2026-08-08)** trên cụm Postgres 16 nháp — xem mục "Đợt trả nợ kỹ
+    thuật 2026-08-08" ở đầu file. Vẫn giữ nguyên khuyến cáo vận hành: chạy lần đầu trên database
+    phụ/staging, không thử trực tiếp trên `english_tutor` production.
   - Đã sửa 2 lỗi tài liệu lỗi thời tìm thấy: `.claude/report-status.sh` (hardcode text cũ báo sai
     Sentry/thanh toán Pro/branch protection/migration Supabase "chưa xong" dù đã xong từ lâu) và
     `docs/framework/QUY-TRINH-AUDIT.md` (ngưỡng CSS bundle ghi 9.7kB thật là 11kB, ngưỡng coverage
@@ -1965,3 +2678,41 @@ deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash script
   trùng. Đã liệt kê "cải tiến nên cân nhắc" cần người dùng quyết định (chưa tự làm): uptime
   monitoring tự động, điền DSN Sentry, tăng tần suất backup Postgres, và điền thông tin liên hệ
   khẩn/nhà cung cấp VPS vào bảng đầu file (việc duy nhất người dùng cần tự điền tay).
+
+- **[Audit toàn diện 2026-08-08] Tầng 1–3 đạt hết, không phát hiện lỗi mới; thêm hook
+  `useMountedRef` chặn setState sau unmount ở Chat/Speaking (PR #514 → đã MERGE, commit
+  `e5a371d`).** Chạy lại đầy đủ cổng: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅ (0 cảnh
+  báo) · format ✅ · test ✅ **162 file / 2947 test** (trước khi thêm test mới) · bundle-size ✅
+  JS 96.32/123kB · CSS 10.46/11kB (brotli) · `npm audit --omit=dev` **0 lỗ hổng** (production
+  deps sạch hoàn toàn). Không có secret hardcode, không `.env` bị track, không
+  `dangerouslySetInnerHTML`, không `any`/`TODO` mới, 11 `console.log` còn lại đều là log khởi
+  động chủ đích (`server.ts`) hoặc logger dùng chung — không phải rác. Quét kỹ thêm: 0 N+1 query
+  trong `api/` (mọi vòng lặp xử lý dữ liệu đã lấy sẵn, gửi push dùng `Promise.all` đúng cách),
+  0 catch rỗng nuốt lỗi, không có race double-submit ở Chat/Speaking/Writing (đã chặn đủ bằng
+  `loading`/`isThrottled`/`limitHit`), data lớn (`curriculum.ts` 9059 dòng...) chỉ import
+  `type`, không phình bundle.
+  - **Phát hiện + đã vá:** 27 file gọi `fetch()` trực tiếp trong component nhưng chỉ 2 file dùng
+    `AbortController`/kiểm tra unmount — rủi ro "setState sau unmount" khi người dùng rời trang
+    giữa lúc AI đang trả lời (`callClaude`/TTS có thể mất vài giây). Đã thêm hook dùng chung
+    `useMountedRef()` (`apps/english/src/lib/useMountedRef.ts` + test mount/unmount) và áp dụng
+    vào 6 hàm gọi AI trong `Chat.tsx`/`Speaking.tsx` (`startSession`, `sendMessage`/
+    `sendUserSpeech`, `endAndGrade`) — nơi rủi ro cao nhất. Lượt dùng/lưu phiên (side-effect
+    không phụ thuộc component) vẫn chạy bình thường dù đã rời trang, chỉ bỏ qua các `setState`.
+    `npm run codemap -- impact` xác nhận chỉ ảnh hưởng `App.tsx`/`main.tsx` (router-level),
+    không phá tính năng khác. PR #514, đã merge (squash, `e5a371d`), CI `quality`+`e2e` xanh.
+  - **Đề xuất đã bàn nhưng CHƯA làm (người dùng quyết định hoãn — rủi ro > lợi ích trong điều
+    kiện sandbox này):**
+    - Gộp hook dùng chung giữa `Chat.tsx`/`Speaking.tsx` (2 luồng gần giống nhau: session/
+      loading/error/limitHit/evaluation/throttle) — không có sai lệch logic thật giữa 2 file,
+      lợi ích chỉ là "gọn hơn". Không có test component nào cho 2 trang này, sandbox không chạy
+      được dev server thật (không Postgres/`.env`) để tự smoke-test → hoãn, chỉ nên làm sau khi
+      có test component bảo vệ hoặc test tay trên máy có app thật.
+    - Tách nhỏ các trang >1000 dòng (`Lessons.tsx` 1537, `Practice.tsx` 1338, `Speaking.tsx`
+      1207, `StudyTabs.tsx` 1972...). Đã thử soát `Lessons.tsx`: `LessonView` (dòng 451–1537,
+      ~1090 dòng) không tách cơ học được — chứa hàng chục closure lồng nhau tham chiếu trực
+      tiếp ~65 `useState`/`useEffect`/`useRef` của component cha, tách sai dễ gây stale-closure
+      bug âm thầm mà không có test bắt được. Hoãn tương tự lý do trên.
+    - Rủi ro vận hành khác đã nêu nhưng cần người dùng tự làm tay (không phải AI tự làm được):
+      uptime monitoring ngoài (UptimeRobot/Better Uptime), PWA/offline (`manifest.json` + service
+      worker — có đặc tả sẵn ở `docs/framework/BO-SUNG-nang-cao-i18n-PWA-Sentry-SEO.md` nhưng
+      viết cho Next.js, cần điều chỉnh cho Vite), dashboard theo dõi tổng chi phí AI/tháng.

@@ -21,7 +21,8 @@
 //
 //   npm run restore:r2 -- --restore-into <ten_database> [--key <tên-file>] --yes
 //     Tải backup (nếu chưa có local) + DROP database đích (nếu đã tồn tại) + TẠO LẠI + khôi
-//     phục. BẮT BUỘC --yes (không có chế độ hỏi tương tác — kịch bản khẩn cấp thường chạy qua
+//     phục. Thêm --from-file <đường-dẫn.sql.gz> để dùng file ĐÃ tải sẵn, bỏ qua R2 (không
+//     tải lại bản dump lớn khi lần restore trước hỏng giữa chừng). BẮT BUỘC --yes (không có chế độ hỏi tương tác — kịch bản khẩn cấp thường chạy qua
 //     script tự động/SSH, không có người ngồi gõ "yes" giữa lúc dịch vụ đang sập).
 //
 // Biến môi trường (xem .env.example):
@@ -175,14 +176,30 @@ async function cmdRestoreInto(targetDb: string): Promise<void> {
     )
   }
 
-  const client = getClient()
-  const bucket = getBucket()
-  const key = await resolveKey(client, bucket, getArg('key'))
-  const fileName = key.slice(KEY_PREFIX.length)
-  const localPath = path.join(process.cwd(), `.restore-${fileName}`)
+  // --from-file: dùng file .sql.gz CÓ SẴN, bỏ qua R2 hoàn toàn. Hai lý do:
+  //   1. Sự cố thật: đã `--download` bản dump vài GB rồi mà lần restore đầu hỏng giữa chừng —
+  //      không có lý do gì tải lại từ đầu trong lúc dịch vụ đang sập.
+  //   2. Kiểm chứng được nhánh PHÁ HUỶ này trên cụm Postgres nháp mà không cần khoá R2
+  //      (nợ kỹ thuật cũ: nhánh --restore-into chưa từng được chạy thử thật).
+  const fromFile = getArg('from-file')
+  let localPath: string
+  let cleanupLocal = true
 
-  console.log(`[restore:r2] Tải "${key}" về tạm "${localPath}"...`)
-  await downloadBackup(client, bucket, key, localPath)
+  if (fromFile) {
+    if (!fs.existsSync(fromFile)) fail(`Không thấy file "${fromFile}" (tham số --from-file).`)
+    localPath = path.resolve(fromFile)
+    cleanupLocal = false // file của người dùng — KHÔNG tự xoá
+    console.log(`[restore:r2] Dùng file có sẵn "${localPath}" (bỏ qua R2).`)
+  } else {
+    const client = getClient()
+    const bucket = getBucket()
+    const key = await resolveKey(client, bucket, getArg('key'))
+    const fileName = key.slice(KEY_PREFIX.length)
+    localPath = path.join(process.cwd(), `.restore-${fileName}`)
+
+    console.log(`[restore:r2] Tải "${key}" về tạm "${localPath}"...`)
+    await downloadBackup(client, bucket, key, localPath)
+  }
 
   console.log(`[restore:r2] ⚠️  Xoá + tạo lại database "${targetDb}"...`)
   execFileSync('psql', [psqlUrl, '-c', `drop database if exists ${targetDb};`], {
@@ -199,7 +216,7 @@ async function cmdRestoreInto(targetDb: string): Promise<void> {
     stdio: 'inherit',
   })
 
-  fs.unlinkSync(localPath)
+  if (cleanupLocal) fs.unlinkSync(localPath)
   console.log(`[restore:r2] ✅ Khôi phục xong vào database "${targetDb}". Kiểm tra lại bằng:`)
   console.log(`  psql "${targetUrl}" -c "select count(*) from public.users;"`)
 }
@@ -216,6 +233,7 @@ async function main(): Promise<void> {
       '  npm run restore:r2 -- --list\n' +
       '  npm run restore:r2 -- --download [--key <tên-file>] [--out <đường-dẫn>]\n' +
       '  npm run restore:r2 -- --restore-into <ten_database> [--key <tên-file>] --yes\n' +
+      '  npm run restore:r2 -- --restore-into <ten_database> --from-file <file.sql.gz> --yes\n' +
       'Xem chi tiết trong comment đầu file scripts/restore-pg-from-r2.ts.',
   )
 }

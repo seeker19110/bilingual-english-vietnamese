@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+} from 'react'
 
 // Tính năng "kéo 1 tay" (giống Reachability trên iPhone thật): vuốt xuống bắt đầu từ
 // DẢI MỎNG Ở MÉP DƯỚI MÀN HÌNH (xem <div {...triggerHandlers}> render đè lên BottomNav
@@ -11,7 +18,9 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } fr
 // cuộn trang gốc của trình duyệt nữa nên KHÔNG cần preventDefault() hay ngưỡng thời gian
 // như bản cũ.
 //
-// Đóng lại khi: vuốt lên lại ở dải trigger, hoặc không thao tác gì trong RETURN_DELAY_MS thì tự thu lại.
+// Đóng lại khi: vuốt lên lại ở dải trigger, hoặc không có thao tác vuốt/click/scroll nào
+// trên toàn trang trong RETURN_DELAY_MS liên tục thì tự thu lại (mỗi thao tác gia hạn lại
+// đồng hồ đếm từ đầu — xem effect lắng nghe pointerdown/scroll/wheel/touchmove bên dưới).
 const ACTIVATE_DISTANCE_PX = 12 // Vuốt xuống ở dải trigger đủ khoảng cách này là bật
 const OPEN_DURATION_MS = 220 // Thời gian trượt xuống khi bật
 const RETURN_DELAY_MS = 10_000 // Sau khi bật, chờ 10 giây rồi mới tự thu lại
@@ -28,24 +37,24 @@ export function useOneHandedDrag() {
   const startY = useRef(0)
   const triggered = useRef(false)
 
-  const clearReturnTimer = () => {
+  const clearReturnTimer = useCallback(() => {
     if (returnTimer.current != null) {
       window.clearTimeout(returnTimer.current)
       returnTimer.current = null
     }
-  }
-  const close = () => {
+  }, [])
+  const close = useCallback(() => {
     if (!isOpen.current) return
     clearReturnTimer()
     isOpen.current = false
     setIsOpenState(false)
     setTransitionMs(RETURN_DURATION_MS)
     setTranslateY(0)
-  }
-  const scheduleReturn = () => {
+  }, [clearReturnTimer])
+  const scheduleReturn = useCallback(() => {
     clearReturnTimer()
     returnTimer.current = window.setTimeout(close, RETURN_DELAY_MS)
-  }
+  }, [clearReturnTimer, close])
   const open = () => {
     isOpen.current = true
     setIsOpenState(true)
@@ -54,7 +63,18 @@ export function useOneHandedDrag() {
     scheduleReturn()
   }
 
-  useEffect(() => clearReturnTimer, [])
+  useEffect(() => clearReturnTimer, [clearReturnTimer])
+
+  // Khi đang mở: đếm 10s CHỈ tính lúc không có thao tác nào (vuốt/click/scroll) —
+  // hễ có 1 trong các thao tác đó thì hẹn giờ tự thu được gia hạn lại từ đầu.
+  useEffect(() => {
+    if (!isOpenState) return
+    const events: Array<keyof WindowEventMap> = ['pointerdown', 'scroll', 'wheel', 'touchmove']
+    events.forEach((ev) => window.addEventListener(ev, scheduleReturn, { passive: true }))
+    return () => {
+      events.forEach((ev) => window.removeEventListener(ev, scheduleReturn))
+    }
+  }, [isOpenState, scheduleReturn])
 
   // Handlers gắn vào dải trigger mỏng ở mép dưới màn hình
   const onTriggerPointerDown = (e: PointerEvent) => {

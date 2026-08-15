@@ -40,32 +40,26 @@ const ACCENT_TEXT_LIGHT = ['a-700', 'a-800'] as const
  * Nợ đã biết: cặp HIỆN CHƯA đạt AA. Cổng này là loại "không tệ hơn hiện tại" — khoá
  * mọi cặp đang đạt, đồng thời không cho phát sinh cặp rớt MỚI.
  *
- * `z-500` là token "chữ mờ" (mã nguồn dùng ~81 chỗ) và rớt AA ở gần như mọi nền, mọi
- * theme — đây là nợ thật, ghi ở PROGRESS.md, chưa xử lý trong PR này vì sửa nó là đổi
- * bảng màu toàn app, phải xem lại từng chỗ dùng.
- * Nhóm nền `z-700`: đã kiểm mã nguồn — sắc độ này hiện chỉ dùng làm màu HOVER
- * (`hover:bg-zinc-700`), không phải bề mặt nghỉ, và chưa chỗ nào đặt chữ phụ hay chữ
- * accent lên nó. Nên đây là BẪY TIỀM ẨN, không phải lỗi đang xảy ra. Vẫn giữ trong ma
- * trận để ngày ai đó dùng z-700 làm nền thật thì thấy ngay là phải chọn sắc chữ khác.
+ * [2026-08-08] `z-500` (token "chữ mờ", mã nguồn dùng ~101 chỗ) ĐÃ TRẢ NỢ trên mọi BỀ MẶT
+ * THẬT — z-950 (trang), z-900 (thẻ), z-800 (ô nổi) — bằng cách chỉnh 5 giá trị token
+ * trong index.css, giữ nguyên sắc thái từng theme. Số đo mới: 4.58–6.09 (dark-blue),
+ * 4.59–5.42 (blue-sky), 4.65–5.42 (pink), 4.59–5.81 (vibrant), 4.62–5.33 (kid) — vẫn mờ
+ * rõ so với z-400 (6.4–9.2) nên không mất phân cấp chữ chính / chữ phụ.
+ *
+ * Nhóm nền `z-700` giữ lại trong danh sách, có CHỦ Ý: đo thực tế cho thấy ép z-500 đạt AA
+ * cả trên z-700 thì nó phải sáng NGANG z-400 (dark-blue: 8.59 so với 8.51 của z-400) —
+ * tức là xoá luôn khái niệm "chữ mờ". Rà mã nguồn 2026-08-08: z-700 dùng làm màu hover
+ * (`hover:bg-zinc-700`), đường kẻ mảnh, và nền nút gạt đang chọn ở ShareProgress/Login —
+ * chỗ nền thật thì chữ đặt lên là `text-white` (đạt AA), KHÔNG chỗ nào đặt chữ mờ z-500
+ * lên z-700. Nên đây là bẫy tiềm ẩn, không phải lỗi đang xảy ra; giữ trong ma trận để
+ * ngày ai đó đặt chữ phụ lên z-700 thì thấy ngay là phải chọn sắc chữ khác.
  */
 const KNOWN_LOW = new Set<string>([
-  // z-500 — chữ mờ, rớt gần như toàn bộ
-  'dark-blue|z-500|z-950',
-  'dark-blue|z-500|z-900',
-  'dark-blue|z-500|z-800',
+  // z-500 trên nền z-700 — xem giải thích ở khối chú thích ngay trên
   'dark-blue|z-500|z-700',
-  'blue-sky|z-500|z-900',
-  'blue-sky|z-500|z-800',
   'blue-sky|z-500|z-700',
-  'pink|z-500|z-950',
-  'pink|z-500|z-900',
-  'pink|z-500|z-800',
   'pink|z-500|z-700',
-  'vibrant|z-500|z-800',
   'vibrant|z-500|z-700',
-  'kid|z-500|z-950',
-  'kid|z-500|z-900',
-  'kid|z-500|z-800',
   'kid|z-500|z-700',
   // [2026-08-04] Nhóm "chữ phụ (z-300/z-400) trên nền z-700" ĐÃ HẾT NỢ: việc siết token
   // --z-300/--z-400 cho đạt AAA 7:1 (xem cổng e2e/a11y-aaa.spec.ts) kéo luôn các cặp này

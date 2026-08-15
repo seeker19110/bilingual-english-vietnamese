@@ -3,7 +3,7 @@
 // (fetchOnboarding) gọi Supabase client dựa vào RLS `auth.uid()` — không còn hoạt động
 // sau khi cutover khỏi Supabase Auth (Giai đoạn B), nên chuyển hết qua route server này.
 //
-// GET  /api/profile                                          (cần Authorization: Bearer)
+// GET  /api/profile                                          (cần đăng nhập — cookie)
 // POST /api/profile  body { action: 'onboarding', level, goal, dailyMinutes }
 
 import { z } from 'zod'

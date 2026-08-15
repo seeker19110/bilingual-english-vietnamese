@@ -35,10 +35,12 @@ import {
   type VoiceId,
 } from '../../api/_lib/googleTts.js'
 import { generateAudioFromElevenLabs, isValidElevenVoice } from './elevenLabsTts.js'
+import { generateAudioFromGemini, isValidGeminiVoice } from './geminiTts.js'
 import { visemeTimelineFromAlignment, type VisemeFrame } from '../../api/_lib/visemeTimeline.js'
 import { ensureProfileRow } from '../core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from '../../api/_lib/voiceAccess.js'
-import { saveAudio } from './fileStorage.js'
+import { saveAudio, isServableUrl } from './fileStorage.js'
+import { recordTtsCacheEvent } from './ttsStats.js'
 import { encryptAudio, getClientKeyMaterial } from '../../api/_lib/ttsCrypto.js'
 import {
   getCorsHeaders,
@@ -75,7 +77,14 @@ const TTS_CLAIM_POLL_MS = 300
 const TTS_CLAIM_MAX_WAIT_MS = 20_000 // follower chờ quá lâu -> tự làm leader (fallback hiếm gặp)
 
 type TtsClaim =
-  { role: 'leader' } | { role: 'cached'; audioUrl: string; visemeTimeline: VisemeFrame[] | null }
+  | { role: 'leader' }
+  | {
+      role: 'cached'
+      audioUrl: string
+      visemeTimeline: VisemeFrame[] | null
+      // iv của bản ghi (null = bản ghi trước migration 0038 → giải mã bằng iv suy từ hash).
+      iv: string | null
+    }
 
 async function claimTtsGeneration(
   pool: ReturnType<typeof getPgPool>,
@@ -119,12 +128,16 @@ async function claimTtsGeneration(
     const { rows: cachedRows } = await pool.query<{
       audio_url: string
       viseme_timeline: VisemeFrame[] | null
-    }>('select audio_url, viseme_timeline from public.tts_cache where hash = $1', [hash])
-    if (cachedRows[0]?.audio_url) {
+      iv: string | null
+    }>('select audio_url, viseme_timeline, iv from public.tts_cache where hash = $1', [hash])
+    // Cùng luật với BƯỚC 1: URL không phục vụ được (audio local chết ở chế độ R2) KHÔNG tính
+    // là leader đã sinh xong — cứ chờ tiếp/tự làm leader để sinh lại.
+    if (cachedRows[0]?.audio_url && isServableUrl(cachedRows[0].audio_url)) {
       return {
         role: 'cached',
         audioUrl: cachedRows[0].audio_url,
         visemeTimeline: cachedRows[0].viseme_timeline ?? null,
+        iv: cachedRows[0].iv ?? null,
       }
     }
 
@@ -160,7 +173,8 @@ const TtsBodySchema = z.object({
     .optional()
     .transform((v) => (v ? v : DEFAULT_VOICE))
     .refine(
-      (v): v is AnyVoiceId => isValidVoice(v) || isValidElevenVoice(v) || isValidStudioVoice(v),
+      (v): v is AnyVoiceId =>
+        isValidVoice(v) || isValidElevenVoice(v) || isValidStudioVoice(v) || isValidGeminiVoice(v),
       {
         error: (ctx) => `voice không hợp lệ: ${ctx.input}`,
       },
@@ -270,22 +284,35 @@ export default async function handler(req: Request): Promise<Response> {
   const { rows: cachedRows } = await pool.query<{
     audio_url: string
     viseme_timeline: VisemeFrame[] | null
-  }>('select audio_url, viseme_timeline from public.tts_cache where hash = $1', [textHash])
+    iv: string | null
+  }>('select audio_url, viseme_timeline, iv from public.tts_cache where hash = $1', [textHash])
 
-  const cachedUrl = cachedRows[0]?.audio_url
+  // isServableUrl: ở chế độ R2, dòng cache trỏ về /uploads/... (ghi từ thời STORAGE_DRIVER=local
+  // hoặc từ nhánh fallback local đã bỏ) là audio CHẾT — coi như MISS để sinh lại và ghi đè bằng
+  // URL R2 thật, thay vì trả URL 404 cho client mãi mãi. Xem fileStorage.ts.
+  const cachedUrl = isServableUrl(cachedRows[0]?.audio_url) ? cachedRows[0]?.audio_url : undefined
   if (cachedUrl) {
-    // Cập nhật last_accessed_at (bắn rồi quên — dùng cho LRU dọn cache khi gần ngưỡng
-    // 10GB R2 sau này, xem docs/migration-thoat-ly-supabase.md mục 3.3). Không chặn response.
+    // Cập nhật last_accessed_at (bắn rồi quên — CHỈ để thống kê/theo dõi dung lượng, KHÔNG
+    // dùng để tự động xoá — chính sách chốt 2026-08-06: cache không hết hạn theo mức dùng,
+    // chỉ xoá orphan qua --clean-orphans, xem docs/migration-thoat-ly-supabase.md mục 3.3).
+    // Không chặn response.
     void pool
       .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
       .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
-    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
+    recordTtsCacheEvent(pool, { lang, voice, hit: true })
+    // iv của CHÍNH bản ghi này (null với bản ghi trước migration 0038 → rơi về iv suy từ hash).
+    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, cachedRows[0]?.iv)
     return jsonResponse(
       {
         audio_url: cachedUrl,
         key_b64,
         iv_b64,
         cached: true,
+        // Giọng THẬT SỰ đã dùng (đã qua clampVoiceToPlan + hạ Studio cho tiếng Việt) — client
+        // PHẢI dựa vào đây, không phải giọng nó gửi lên: khác nhau ở chỗ Gemini trả WAV còn
+        // các provider khác trả mp3, đoán sai là gắn sai mimeType cho Blob (iOS/Safari không
+        // phát được). Xem blobMimeTypeForVoice() trong apps/english/src/lib/tts.ts.
+        voice,
         // null với audio cũ (cache trước migration 0028) hoặc giọng không có timestamp —
         // client tự ước lượng như trước, không phải lỗi.
         viseme_timeline: cachedRows[0]?.viseme_timeline ?? null,
@@ -303,7 +330,9 @@ export default async function handler(req: Request): Promise<Response> {
     void pool
       .query('update public.tts_cache set last_accessed_at = now() where hash = $1', [textHash])
       .catch((err: unknown) => console.warn('[tts] cập nhật last_accessed_at lỗi:', err))
-    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
+    // Vẫn tính là HIT: request này KHÔNG gọi API TTS (một request khác đã sinh xong hộ).
+    recordTtsCacheEvent(pool, { lang, voice, hit: true })
+    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, claim.iv)
     return jsonResponse(
       {
         audio_url: claim.audioUrl,
@@ -311,6 +340,7 @@ export default async function handler(req: Request): Promise<Response> {
         iv_b64,
         cached: true,
         viseme_timeline: claim.visemeTimeline,
+        voice,
       },
       200,
       allHeaders,
@@ -341,9 +371,11 @@ export default async function handler(req: Request): Promise<Response> {
     // vẫn là Google Cloud TTS nhưng lang luôn 'en-US' (đã clamp ở trên).
     const providerLabel = isValidElevenVoice(voice)
       ? 'ElevenLabs'
-      : isValidStudioVoice(voice)
-        ? 'Google Studio'
-        : 'Google'
+      : isValidGeminiVoice(voice)
+        ? 'Gemini'
+        : isValidStudioVoice(voice)
+          ? 'Google Studio'
+          : 'Google'
 
     let audioData: ArrayBuffer
     // Timeline khẩu hình THẬT — chỉ có với giọng ElevenLabs (endpoint /with-timestamps trả mốc
@@ -366,6 +398,10 @@ export default async function handler(req: Request): Promise<Response> {
             },
           )
         }
+      } else if (isValidGeminiVoice(voice)) {
+        audioData = await withConcurrencyLimit('gemini-tts', () =>
+          generateAudioFromGemini(text, voice),
+        )
       } else if (isValidStudioVoice(voice)) {
         audioData = await withConcurrencyLimit('google-tts-studio', () =>
           generateStudioAudioFromGoogle(text, voice),
@@ -401,8 +437,13 @@ export default async function handler(req: Request): Promise<Response> {
     // An toàn với nonce AES-GCM: nhờ claimTtsGeneration() ở trên, chỉ 1 request (leader)
     // encryptAudio() cho mỗi hash — không còn 2 request đồng thời mã hoá 2 audio bytes khác
     // nhau bằng cùng 1 (khoá, iv) suy ra từ hash.
-    const encryptedData = await encryptAudio(audioData, textHash)
-    const fileName = `${lang}/${voice}/${textHash}.mp3`
+    const { cipher: encryptedData, iv_b64: storedIvB64 } = await encryptAudio(audioData, textHash)
+    // Giọng Gemini trả WAV thật (không phải mp3 như các provider khác — xem geminiTts.ts),
+    // đặt đúng đuôi file cho dễ debug; nội dung đã bị mã hoá nên đuôi file không ảnh hưởng
+    // việc phát (client tự khai mimeType đúng khi tạo Blob, xem blobMimeTypeForVoice() phía
+    // apps/english/src/lib/tts.ts).
+    const ext = isValidGeminiVoice(voice) ? 'wav' : 'mp3'
+    const fileName = `${lang}/${voice}/${textHash}.${ext}`
     const origin = req.headers.get('origin') || ''
 
     let audioUrl: string
@@ -416,13 +457,20 @@ export default async function handler(req: Request): Promise<Response> {
     // ── BƯỚC 4: Lưu vào DB ───────────────────────────────────────────────────
     try {
       await pool.query(
-        `insert into public.tts_cache (hash, lang, voice, audio_url, viseme_timeline, last_accessed_at)
-         values ($1, $2, $3, $4, $5, now())
+        `insert into public.tts_cache (hash, lang, voice, audio_url, viseme_timeline, iv, last_accessed_at)
+         values ($1, $2, $3, $4, $5, $6, now())
          on conflict (hash) do update set
            lang = excluded.lang, voice = excluded.voice, audio_url = excluded.audio_url,
-           viseme_timeline = excluded.viseme_timeline,
+           viseme_timeline = excluded.viseme_timeline, iv = excluded.iv,
            last_accessed_at = now()`,
-        [textHash, lang, voice, audioUrl, visemeTimeline ? JSON.stringify(visemeTimeline) : null],
+        [
+          textHash,
+          lang,
+          voice,
+          audioUrl,
+          visemeTimeline ? JSON.stringify(visemeTimeline) : null,
+          storedIvB64,
+        ],
       )
     } catch (err) {
       // Audio ĐÃ tạo + lưu file thành công (không mất tiền), chỉ mất bản ghi cache — lần sau
@@ -434,9 +482,19 @@ export default async function handler(req: Request): Promise<Response> {
       )
     }
 
-    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash)
+    // MISS: đã thực sự gọi API TTS sinh audio mới → tốn tiền. Ghi sau khi lưu file/DB xong để
+    // không đếm nhầm những lần sinh thất bại (đường lỗi đã return trước khi tới đây).
+    recordTtsCacheEvent(pool, { lang, voice, hit: false })
+    const { key_b64, iv_b64 } = await getClientKeyMaterial(textHash, storedIvB64)
     return jsonResponse(
-      { audio_url: audioUrl, key_b64, iv_b64, cached: false, viseme_timeline: visemeTimeline },
+      {
+        audio_url: audioUrl,
+        key_b64,
+        iv_b64,
+        cached: false,
+        viseme_timeline: visemeTimeline,
+        voice,
+      },
       200,
       allHeaders,
     )

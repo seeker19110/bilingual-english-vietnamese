@@ -16,11 +16,13 @@ import {
   Gift,
   ChevronDown,
   Loader2,
+  ArrowLeftRight,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import QuickActions from '../components/QuickActions'
 import VoicePicker from '../components/VoicePicker'
+import RateToggle from '../components/RateToggle'
 import ReferralSection from '../components/ReferralSection'
 import QuestsPanel from '../components/QuestsPanel'
 import EmailVerifySection from '../components/EmailVerifySection'
@@ -30,7 +32,7 @@ import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useToast } from '@core/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
-import { getStreak, getDirection } from '../lib/storage'
+import { getStreak, getDirection, setDirection } from '../lib/storage'
 import { getLearnedCount } from '../lib/vocab'
 import { getDailySpeed, setDailySpeed, DAILY_SPEEDS, type DailySpeed } from '../lib/curriculum'
 import { getWeeklyGoal, setWeeklyGoal, WEEKLY_GOALS, type WeeklyGoal } from '../lib/weeklyGoal'
@@ -48,7 +50,7 @@ import {
 } from '../lib/achievementRewards'
 import { ACHIEVEMENTS } from '../data/achievements'
 import { logout } from '../lib/auth'
-import type { AgeGroup } from '../types'
+import type { AgeGroup, Direction } from '../types'
 
 const AGE_GROUP_OPTIONS: { value: AgeGroup; emoji: string; vi: string; en: string }[] = [
   { value: 'nhi_dong', emoji: '🧸', vi: 'Nhi đồng (<10)', en: 'Kids (<10)' },
@@ -73,9 +75,11 @@ const GOAL_LABEL: Record<WeeklyGoal, { vi: string; en: string }> = {
 export default function Profile() {
   const nav = useNavigate()
   const { user, refresh } = useAuth()
-  const { T } = useLang()
+  const { T, setLang } = useLang()
   const toast = useToast()
   useCloudSync(user?.id) // kéo lượt dùng mới nhất từ Supabase
+  // Ngôn ngữ hiển thị & chiều học — dời từ Trang chủ vào đây (2026-08-07).
+  const [dir, setDir] = useState<Direction>(getDirection)
   const [speed, setSpeed] = useState<DailySpeed>(() => getDailySpeed(user?.id ?? ''))
   const [weekGoal, setWeekGoal] = useState<WeeklyGoal>(() => getWeeklyGoal(user?.id ?? ''))
   const [earned, setEarned] = useState<Set<string>>(() => getEarnedAchievements(user?.id ?? ''))
@@ -134,9 +138,18 @@ export default function Profile() {
   // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
   if (!user) return null
 
-  const isA = getDirection() === 'A'
+  const isA = dir === 'A'
   const streak = getStreak(user.id)
   const learned = getLearnedCount(user.id)
+
+  // Đổi chiều học (Việt học Anh ⇄ nước ngoài học Việt) VÀ ngôn ngữ giao diện cùng lúc —
+  // giống hành vi cũ ở Trang chủ (Home.tsx), nay chỉ còn ở đây.
+  function toggleDirection() {
+    const next: Direction = dir === 'A' ? 'B' : 'A'
+    setDirection(next)
+    setDir(next)
+    setLang(next === 'A' ? 'vi' : 'en')
+  }
 
   function chooseSpeed(s: DailySpeed) {
     if (!user) return
@@ -176,7 +189,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout streak={streak} />
+      <Layout />
 
       <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader
@@ -234,6 +247,39 @@ export default function Profile() {
               <p className="text-xs text-zinc-400 mt-1">{isA ? 'từ đã thuộc' : 'words learned'}</p>
             </div>
           </div>
+        </section>
+
+        {/* Ngôn ngữ hiển thị & chiều học — dời từ Trang chủ vào đây (2026-08-07) */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
+          <div className="flex items-center gap-2 mb-3">
+            <ArrowLeftRight className="w-4 h-4 text-accent-400" />
+            <span className="text-sm font-semibold text-white">
+              {isA ? 'Ngôn ngữ hiển thị' : 'Display language'}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={toggleDirection}
+            title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
+            aria-label={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
+            className={`w-full flex items-center justify-between gap-3 py-3 px-4 rounded-xl border transition ${
+              isA
+                ? 'bg-accent-500/10 border-accent-500/30 hover:border-accent-500/60'
+                : 'bg-sky-500/10 border-sky-500/30 hover:border-sky-500/60'
+            }`}
+          >
+            <span
+              className={`text-sm font-semibold ${isA ? 'text-accent-300 theme-light:text-accent-700' : 'text-sky-300 theme-light:text-sky-700'}`}
+            >
+              {isA ? '🇻🇳 → 🇺🇸 Tiếng Việt' : '🇺🇸 → 🇻🇳 English'}
+            </span>
+            <span className="text-xs text-zinc-400">{isA ? 'Bấm để đổi' : 'Tap to switch'}</span>
+          </button>
+          <p className="text-xs text-zinc-400 mt-3">
+            {isA
+              ? 'Đổi cùng lúc chiều học (Việt học Anh ⇄ nước ngoài học Việt) và ngôn ngữ giao diện.'
+              : 'Switches learning direction (Vietnamese ⇄ English) and interface language together.'}
+          </p>
         </section>
 
         {/* Nhóm tuổi (kế hoạch "giao diện + nội dung theo độ tuổi", GĐ 1) */}
@@ -384,6 +430,27 @@ export default function Profile() {
 
         {/* Chọn giọng đọc — 14 giọng Chirp3-HD, áp dụng toàn cục */}
         <VoicePicker plan={user.plan} isA={isA} />
+
+        {/* Tốc độ phát — áp dụng toàn cục cho mọi nút nghe. Trước đây nút này nằm rải rác
+            trên header/nội dung từng trang (VoiceMenu + RateToggle); quyết định 2026-08-08:
+            gom hết về đây vì cả hai vốn đã là cài đặt TOÀN CỤC, để trên header chỉ gây rối
+            và khiến người dùng tưởng mỗi trang một tốc độ riêng. */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Gauge className="w-4 h-4 text-accent-400" />
+              <div>
+                <p className="text-sm font-medium text-white">
+                  {isA ? 'Tốc độ phát' : 'Playback speed'}
+                </p>
+                <p className="text-xs text-zinc-400">
+                  {isA ? 'Áp dụng cho mọi nút nghe' : 'Applies to every listen button'}
+                </p>
+              </div>
+            </div>
+            <RateToggle />
+          </div>
+        </section>
 
         {/* Âm thanh phản hồi UI (V-6) — đúng/sai/đạt mốc */}
         <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">

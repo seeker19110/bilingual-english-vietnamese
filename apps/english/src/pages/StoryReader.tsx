@@ -8,8 +8,9 @@ import PageHeader from '../components/PageHeader'
 import { CardListSkeleton } from '../components/Skeleton'
 import KaraokeText, { KARAOKE_INDENT } from '../components/KaraokeText'
 import { useLang } from '../context/useLang'
+import { useAuth } from '../context/useAuth'
 import { getDirection } from '../lib/storage'
-import { groupLinesByParagraph } from '../lib/stories'
+import { groupLinesByParagraph, getStoryVoice } from '../lib/stories'
 import { loadStory } from '../data/stories/loader'
 import type { Story } from '../data/stories/index'
 import { speak, stopSpeaking, pauseCurrentAudio, resumeCurrentAudio, unlockAudio } from '../lib/tts'
@@ -18,6 +19,7 @@ export default function StoryReader() {
   const { id } = useParams<{ id: string }>()
   const nav = useNavigate()
   const { T } = useLang()
+  const { user } = useAuth()
   const isA = getDirection() === 'A' // đích = tiếng Anh (A) hoặc tiếng Việt (B)
 
   const [story, setStory] = useState<Story | null>(null)
@@ -43,9 +45,14 @@ export default function StoryReader() {
 
   const paragraphs = useMemo(() => (story ? groupLinesByParagraph(story.lines) : []), [story])
   const flatLines = story?.lines ?? []
+  // Giọng cố định theo thể loại truyện (không dùng giọng chung toàn app nữa — xem lib/stories.ts)
+  // Truyền `plan` để tự hạ giọng khi gói chưa mở khoá giọng Gemini — xem getStoryVoice().
+  const storyVoice = story ? getStoryVoice(story.kind, user?.plan) : undefined
 
-  // ── Phát tất cả — tuần tự từng câu, tự cuộn tới câu đang đọc ────────────────
+  // ── Phát tất cả — 2 nguồn phát riêng biệt (tiếng Việt / tiếng Anh), tuần tự
+  // từng câu, tự cuộn tới câu đang đọc. Chọn được đọc bản gốc hay bản dịch.
   const [playing, setPlaying] = useState(false)
+  const [playLang, setPlayLang] = useState<'vi' | 'en' | null>(null)
   const [paused, setPaused] = useState(false)
   const [activeIdx, setActiveIdx] = useState<number | null>(null)
   const [wordIdx, setWordIdx] = useState<number | null>(null)
@@ -61,15 +68,16 @@ export default function StoryReader() {
     [],
   )
 
-  async function playAll() {
-    if (flatLines.length === 0) return
+  async function playAll(lang: 'vi' | 'en') {
+    if (flatLines.length === 0 || playing) return
     unlockAudio()
     stopRef.current = false
     pauseRef.current = false
     setPlaying(true)
+    setPlayLang(lang)
     setPaused(false)
 
-    const lang = isA ? 'en-US' : 'vi-VN'
+    const bcp47 = lang === 'en' ? 'en-US' : 'vi-VN'
     for (let i = 0; i < flatLines.length; i++) {
       if (stopRef.current) break
       while (pauseRef.current && !stopRef.current) await new Promise((r) => setTimeout(r, 100))
@@ -81,12 +89,15 @@ export default function StoryReader() {
       setWordIdx(null)
       lineRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
-      await speak(isA ? ln.en : ln.vi, lang, undefined, undefined, (wi) => setWordIdx(wi))
+      await speak(lang === 'en' ? ln.en : ln.vi, bcp47, storyVoice, undefined, (wi) =>
+        setWordIdx(wi),
+      )
       if (!stopRef.current) await new Promise((r) => setTimeout(r, 300))
     }
 
     stopRef.current = false
     setPlaying(false)
+    setPlayLang(null)
     setPaused(false)
     setActiveIdx(null)
     setWordIdx(null)
@@ -106,6 +117,7 @@ export default function StoryReader() {
     stopRef.current = true
     stopSpeaking()
     setPlaying(false)
+    setPlayLang(null)
     setPaused(false)
     setActiveIdx(null)
     setWordIdx(null)
@@ -152,8 +164,10 @@ export default function StoryReader() {
           subtitle={isA ? story.titleVi : story.titleEn}
         />
 
-        {/* Nghĩa vụ ghi công bản quyền — bắt buộc hiển thị (mục 3, đặc tả trang Nghe) */}
-        <p className="text-[11px] text-zinc-500 leading-relaxed mb-4 border-l-2 border-zinc-800 pl-2">
+        {/* Nghĩa vụ ghi công bản quyền — bắt buộc hiển thị (mục 3, đặc tả trang Nghe).
+            Dùng text-zinc-400 (không phải 500) để đạt AAA 7:1 — đây là nội dung
+            đọc (mục 4.5 CLAUDE.md), không phải UI phụ. */}
+        <p className="text-[11px] text-zinc-400 leading-relaxed mb-4 border-l-2 border-zinc-800 pl-2">
           {T.sourceLabel}: {story.source.en}
           {story.source.enUrl && (
             <>
@@ -172,17 +186,30 @@ export default function StoryReader() {
           {story.source.vi}
         </p>
 
-        {/* Thanh điều khiển: Phát tất cả / Tạm dừng / Dừng + nút hiện bản dịch */}
-        <div className="flex items-center gap-2 mb-5">
-          {!playing ? (
+        {/* Thanh điều khiển: 2 nguồn phát riêng (tiếng Việt / tiếng Anh) / Tạm dừng / Dừng + nút hiện bản dịch */}
+        <div className="flex flex-wrap items-center gap-2 mb-5">
+          {!playing || playLang === 'vi' ? (
             <button
-              onClick={playAll}
-              className="tap-44 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
+              onClick={() => (playing ? undefined : playAll('vi'))}
+              disabled={playing && playLang !== 'vi'}
+              className="tap-44 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition disabled:opacity-40"
             >
               <Play className="w-4 h-4 fill-current" />
-              {T.playWholeStory}
+              {T.playStoryVi}
             </button>
-          ) : (
+          ) : null}
+          {!playing || playLang === 'en' ? (
+            <button
+              onClick={() => (playing ? undefined : playAll('en'))}
+              disabled={playing && playLang !== 'en'}
+              className="tap-44 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition disabled:opacity-40"
+            >
+              <Play className="w-4 h-4 fill-current" />
+              {T.playStoryEn}
+            </button>
+          ) : null}
+
+          {playing && (
             <>
               <button
                 onClick={paused ? handleResume : handlePause}
@@ -213,6 +240,17 @@ export default function StoryReader() {
           </button>
         </div>
 
+        {/* Vùng loan báo cho trình đọc màn hình biết câu nào đang được đọc khi "Phát tất cả"
+            đang chạy — người mắt thấy đã có highlight nền (isActive), người dùng screen reader
+            cần kênh riêng vì highlight chỉ đổi class, không tự thông báo. */}
+        <p aria-live="polite" className="sr-only">
+          {playing && activeIdx !== null && flatLines[activeIdx]
+            ? isA
+              ? flatLines[activeIdx].en
+              : flatLines[activeIdx].vi
+            : ''}
+        </p>
+
         {/* Nội dung truyện theo đoạn */}
         <div className="space-y-5">
           {paragraphs.map((para, pi) => (
@@ -232,18 +270,30 @@ export default function StoryReader() {
                     <KaraokeText
                       text={isA ? ln.en : ln.vi}
                       lang={targetLang}
+                      voice={storyVoice}
                       textClass="text-[15px] leading-relaxed text-zinc-100"
                       buttonClass="w-full px-2 py-1.5 rounded-lg hover:bg-zinc-900/60"
+                      disabled={playing}
                       externalState={
-                        playing
+                        playing && playLang === (isA ? 'en' : 'vi')
                           ? { playing: isActive, wordIdx: isActive ? wordIdx : null }
                           : undefined
                       }
                     />
                     {showTranslation && (
-                      <p className={`text-sm text-zinc-400 ${KARAOKE_INDENT}`}>
-                        {isA ? ln.vi : ln.en}
-                      </p>
+                      <KaraokeText
+                        text={isA ? ln.vi : ln.en}
+                        lang={isA ? 'vi-VN' : 'en-US'}
+                        voice={storyVoice}
+                        textClass={`text-sm text-zinc-400 ${KARAOKE_INDENT}`}
+                        buttonClass="w-full px-2 py-1 rounded-lg hover:bg-zinc-900/60"
+                        disabled={playing}
+                        externalState={
+                          playing && playLang === (isA ? 'vi' : 'en')
+                            ? { playing: isActive, wordIdx: isActive ? wordIdx : null }
+                            : undefined
+                        }
+                      />
                     )}
                   </div>
                 )
@@ -262,12 +312,19 @@ export default function StoryReader() {
             <KaraokeText
               text={isA ? story.moralEn : story.moralVi}
               lang={targetLang}
+              voice={storyVoice}
               textClass="text-sm text-zinc-200 leading-relaxed"
+              disabled={playing}
             />
             {showTranslation && (
-              <p className={`text-xs text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>
-                {isA ? story.moralVi : story.moralEn}
-              </p>
+              <KaraokeText
+                text={isA ? story.moralVi : story.moralEn}
+                lang={isA ? 'vi-VN' : 'en-US'}
+                voice={storyVoice}
+                textClass={`text-xs text-zinc-400 mt-1 ${KARAOKE_INDENT}`}
+                buttonClass="w-full px-2 py-1 rounded-lg hover:bg-zinc-900/60"
+                disabled={playing}
+              />
             )}
           </div>
         )}

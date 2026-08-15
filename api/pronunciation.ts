@@ -21,6 +21,7 @@ import {
   generateStudioAudioFromGoogle,
   isValidVoice,
   isValidStudioVoice,
+  canonicalizeVoiceId,
   DEFAULT_VOICE,
   VOICE_IDS,
   STUDIO_VOICE_IDS,
@@ -28,10 +29,11 @@ import {
   type Lang,
   type VoiceId,
 } from './_lib/googleTts.js'
-import { saveAudio } from '../packages/core-ai/fileStorage.js'
+import { saveAudio, isServableUrl } from '../packages/core-ai/fileStorage.js'
 import { ensureProfileRow } from '../packages/core-auth/authService.js'
 import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
 import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.js'
+import { isValidGeminiVoice } from '../packages/core-ai/geminiTts.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -42,10 +44,21 @@ import {
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
 // Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),
-// dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.). Ngăn ký tự lạ.
+// dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.), và dấu câu
+// thường gặp trong NGHĨA TIẾNG VIỆT của từ điển: phẩy, ngoặc đơn, gạch chéo, chấm phẩy,
+// hai chấm, nháy kép. Ngăn mọi ký tự lạ còn lại.
+//
+// Vì sao phải có nhóm dấu câu thứ hai (mở rộng 2026-08-13): chiều B đọc `card.vi` — nghĩa
+// tiếng Việt, hầu hết là cụm nhiều nghĩa dạng "bỏ rơi, từ bỏ" hay "trên (tàu, xe)". Đo trên
+// từ điển thật: allowlist cũ chỉ nhận **5.565/11.572** nghĩa, tức hơn nửa số thẻ từ ở chiều B
+// bị 400 rồi âm thầm rơi về Web Speech (đúng hiện tượng "chữ Việt đọc giọng Anh" mà
+// PronounceButton.tsx đã ghi chú). Với nhóm dấu câu này: 11.572/11.572.
+//
 // \p{L}=letter, \p{M}=combining mark; cờ u để bật Unicode. An toàn: giá trị chỉ dùng làm
-// cache key + text cho TTS (query Postgres parameterized, không nối chuỗi SQL).
-const WORD_SAFE_PATTERN = /^[\p{L}\p{M}0-9\s'’.-]+$/u
+// cache key + text cho TTS (query Postgres parameterized, không nối chuỗi SQL; tên file qua
+// encodeURIComponent) và vẫn chặn `<>{}[]\|&#$%*+=~^` cùng ký tự điều khiển. Trần 100 ký tự
+// ở dưới giữ nguyên nên chi phí Google TTS mỗi request không đổi.
+const WORD_SAFE_PATTERN = /^[\p{L}\p{M}0-9\s'’.,;:()/"-]+$/u
 
 export default async function handler(req: Request): Promise<Response> {
   const corsHeaders = getCorsHeaders(req)
@@ -79,7 +92,9 @@ export default async function handler(req: Request): Promise<Response> {
 
   const url = new URL(req.url)
   const rawWord = url.searchParams.get('word')?.toLowerCase().trim()
-  const voiceParam = url.searchParams.get('voice')?.toLowerCase().trim() || DEFAULT_VOICE
+  // KHÔNG toLowerCase() — tên giọng phân biệt HOA-thường ("Aoede", "Studio-O"). Chuẩn hoá
+  // không phân biệt hoa-thường qua canonicalizeVoiceId() để link cũ dạng chữ thường vẫn chạy.
+  const voiceParam = canonicalizeVoiceId(url.searchParams.get('voice')?.trim() || DEFAULT_VOICE)
   // lang: 'en-US' (mặc định, giữ tương thích chỗ gọi cũ chưa truyền) | 'vi-VN' (chiều B đọc từ
   // tiếng Việt — WordCard.tsx truyền card.vi kèm lang='vi-VN').
   const langParam = url.searchParams.get('lang')?.trim() || 'en-US'
@@ -120,11 +135,15 @@ export default async function handler(req: Request): Promise<Response> {
   // không lỗi cứng: UI đã tự ẩn lựa chọn ngoài quyền, nhánh này chỉ chặn gọi thẳng API).
   const { plan } = await ensureProfileRow(authResult.userId, '')
   const clampedVoice = await clampVoiceToPlan(voiceParam, plan)
-  // Endpoint tra từ đơn này dùng được cả Chirp3-HD lẫn Studio (tiếng Anh) — chỉ giọng
-  // ElevenLabs (VIP) không áp dụng ở đây (dành cho câu/đoạn ở api/tts.ts).
-  // clampedVoice đã qua isValidVoice()/isValidStudioVoice() (không có Eleven) ở trên nên
-  // nhánh isValidElevenVoice không thực sự xảy ra, chỉ giữ để TypeScript hẹp kiểu.
-  let voice: VoiceId | AnyVoiceId = isValidElevenVoice(clampedVoice) ? DEFAULT_VOICE : clampedVoice
+  // Endpoint tra từ đơn này dùng được cả Chirp3-HD lẫn Studio (tiếng Anh) — giọng ElevenLabs
+  // (VIP) và Gemini (chỉ dành riêng cho đọc truyện, xem packages/core-ai/geminiTts.ts) không
+  // áp dụng ở đây (dành cho câu/đoạn ở api/tts.ts).
+  // clampedVoice đã qua isValidVoice()/isValidStudioVoice() (không có Eleven/Gemini) ở trên
+  // nên 2 nhánh dưới không thực sự xảy ra, chỉ giữ để TypeScript hẹp kiểu.
+  let voice: VoiceId | AnyVoiceId =
+    isValidElevenVoice(clampedVoice) || isValidGeminiVoice(clampedVoice)
+      ? DEFAULT_VOICE
+      : clampedVoice
 
   // Studio CHỈ có tiếng Anh (Google không có giọng Studio cho vi-VN) — nếu lỡ nhận Studio cho
   // từ tiếng Việt (chiều B), hạ về Chirp3-HD cùng giới tính thay vì lỗi cứng, giống fallback
@@ -159,7 +178,14 @@ export default async function handler(req: Request): Promise<Response> {
     [word, voice, lang],
   )
   const cached = cachedRows[0]
-  if (cached?.audio_url && cached.voice_version === VOICE_VERSION) {
+  // isServableUrl: cùng luật với /api/tts — ở chế độ R2, audio_url trỏ /uploads/... là file đã
+  // chết (ghi từ thời STORAGE_DRIVER=local hoặc nhánh fallback local đã bỏ) ⇒ coi là MISS để
+  // sinh lại, thay vì trả URL 404 cho client mãi mãi. Xem packages/core-ai/fileStorage.ts.
+  if (
+    cached?.audio_url &&
+    isServableUrl(cached.audio_url) &&
+    cached.voice_version === VOICE_VERSION
+  ) {
     void pool
       .query(
         'update english.pronunciations set last_accessed_at = now() where word = $1 and voice = $2 and lang = $3',

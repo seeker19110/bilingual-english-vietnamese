@@ -3,6 +3,8 @@
 // tốn băng thông/Storage). Gọi an toàn ở mọi nơi — tự kiểm tra hỗ trợ + tùy chọn bật/tắt,
 // không bao giờ ném lỗi (cùng triết lý với haptics.ts).
 
+import { touchSettingsUpdated } from './storage'
+
 const SOUND_KEY = 'ui_sound_enabled'
 
 // Mặc định BẬT — người dùng tắt ở /profile nếu thấy phiền.
@@ -18,6 +20,7 @@ export function isSoundEnabled(): boolean {
 export function setSoundEnabled(enabled: boolean): void {
   try {
     localStorage.setItem(SOUND_KEY, String(enabled))
+    touchSettingsUpdated()
   } catch {
     /* localStorage đầy/bị chặn — bỏ qua, chỉ là tùy chọn */
   }

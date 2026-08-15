@@ -26,11 +26,11 @@ echo "   Backup + restore R2 (DB/.env/Nginx+crontab+PM2) — kiểm chứng cả
 
 echo ""
 echo "📝 NỢ KỸ THUẬT THẬT (đọc chi tiết ở PROGRESS.md mục \"Nợ kỹ thuật còn mở\"):"
-echo "   1. 🟢 npm audit: đã vá postcss/brace-expansion/esbuild (PR #462, 2026-08-03), còn 2 dòng" \
-     "high là CÙNG 1 advisory react-router (GHSA-qwww-vcr4-c8h2, CSRF chế độ RSC). ĐÃ QUYẾT GIỮ" \
-     "NGUYÊN v7.18.2: app dùng BrowserRouter thuần, không chạy RSC; bản vá 8.3.0 lại đòi React 19" \
-     "(dự án ở React 18) và xoá gói react-router-dom. 2 dòng high này sẽ còn báo lâu dài — LÀ KỲ" \
-     "VỌNG, không phải việc bỏ sót"
+echo "   1. 🟢 npm audit: VỀ 0 LỖ HỔNG (rà soát tự động 2026-08-09). Advisory react-router" \
+     "(GHSA-qwww-vcr4-c8h2) đã được GitHub NARROW dải ảnh hưởng xuống <7.18.2 — bản 7.18.2 dự án" \
+     "đang dùng chính là bản vá, mục 'giữ nguyên, chấp nhận báo dài hạn' trước đây nay ĐÃ ĐÓNG." \
+     "2 advisory mới (js-yaml/nanoid, thuần devDependency) đã vá qua 'overrides' trong" \
+     "package.json + npm install"
 echo "   2. 🟡 restore:all: mới kiểm chứng nhánh AN TOÀN (tải về); nhánh --restore-into (phá huỷ" \
      "DB thật) chưa test thật"
 echo "   3. 🟢 Facebook/Apple/Microsoft OAuth tạm hoãn thêm domain .org (đăng nhập Google/email" \

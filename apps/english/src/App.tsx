@@ -44,6 +44,8 @@ const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
 const Placement = lazyWithRetry(() => import('./pages/Placement'))
 const MistakeBank = lazyWithRetry(() => import('./pages/MistakeBank'))
 const Quests = lazyWithRetry(() => import('./pages/Quests'))
+// Trang giới thiệu app (tính năng + mẹo học hiệu quả) — vào từ logo "Gia sư AI" ở header.
+const About = lazyWithRetry(() => import('./pages/About'))
 
 // Thử thách "Challenge 1 phút" (chu kỳ tuần) — ghi hình/IndexedDB chỉ tải khi bấm vào.
 const Challenge = lazyWithRetry(() => import('./pages/Challenge'))
@@ -383,6 +385,14 @@ export default function App() {
                             <FeatureGate featureKey="quests">
                               <Quests />
                             </FeatureGate>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/gioi-thieu"
+                        element={
+                          <RequireAuth>
+                            <About />
                           </RequireAuth>
                         }
                       />

@@ -14,7 +14,7 @@ vi.mock('../packages/core-auth/security', () => ({
   logSecurityEvent: () => {},
 }))
 vi.mock('../packages/core-billing/usage', () => ({
-  checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const })),
+  checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const, day: '2026-08-12' })),
   refundUsage: vi.fn(async () => {}),
 }))
 vi.mock('../packages/core-ai/azurePronounce', () => ({
@@ -52,7 +52,7 @@ function makeRequest(body?: object): Request {
 
 beforeEach(() => {
   mockedConsume.mockClear()
-  mockedConsume.mockResolvedValue({ ok: true })
+  mockedConsume.mockResolvedValue({ ok: true, day: '2026-08-12' })
   mockedRefund.mockClear()
   mockedResolveConfig.mockReset()
   mockedResolveConfig.mockReturnValue({ key: 'test-key', region: 'eastus' })
@@ -95,7 +95,7 @@ describe('handler /api/pronounce-assess', () => {
     mockedAssess.mockRejectedValue(new Error('Azure Speech lỗi (500): oops'))
     const res = await handler(makeRequest())
     expect(res.status).toBe(500)
-    expect(mockedRefund).toHaveBeenCalledWith('user-test', 'pronounce')
+    expect(mockedRefund).toHaveBeenCalledWith('user-test', 'pronounce', '2026-08-12')
   })
 
   it('thiếu referenceText → 400, không trừ lượt', async () => {

@@ -17,8 +17,12 @@ vi.mock('../packages/core-auth/security', () => ({
   logSecurityEvent: () => {},
 }))
 
+// Thưởng "mời bạn" — mock để kiểm chính xác NGƯỠNG nào kích hoạt thưởng, không chạy logic thật.
+vi.mock('./_lib/referral', () => ({ rewardReferralIfEligible: vi.fn(async () => {}) }))
+
 import handler from './history'
 import { getPgPool } from '../packages/core-db/pgPool'
+import { rewardReferralIfEligible } from './_lib/referral'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()
@@ -28,6 +32,7 @@ beforeEach(() => {
   query.mockResolvedValue({ rows: [] })
   mockedGetPool.mockReturnValue({ query } as unknown as ReturnType<typeof getPgPool>)
   authState.user = { userId: 'user-1' }
+  vi.mocked(rewardReferralIfEligible).mockClear()
 })
 
 function makeRequest(method: string, body?: unknown): Request {
@@ -124,6 +129,100 @@ describe('/api/history', () => {
   it('POST session id không phải uuid → 400', async () => {
     const resp = await handler(
       makeRequest('POST', { action: 'chat', session: { ...CHAT_SESSION, id: 'abc' } }),
+    )
+    expect(resp.status).toBe(400)
+    expect(query).not.toHaveBeenCalled()
+  })
+
+  it('POST speaking ghi vào bảng speaking_sessions (không phải chat_sessions)', async () => {
+    const resp = await handler(makeRequest('POST', { action: 'speaking', session: CHAT_SESSION }))
+    expect(resp.status).toBe(200)
+    const [sql] = query.mock.calls[0] as [string]
+    expect(sql).toContain('speaking_sessions')
+    expect(sql).not.toContain('chat_sessions')
+  })
+
+  // Chống cày thưởng: tạo tài khoản ảo rồi gọi API 1 lần không được ăn thưởng mời bạn.
+  it('phiên 1 tin nhắn → KHÔNG trao thưởng mời bạn', async () => {
+    await handler(makeRequest('POST', { action: 'chat', session: CHAT_SESSION }))
+    expect(rewardReferralIfEligible).not.toHaveBeenCalled()
+  })
+
+  it('phiên ĐỦ 2 tin nhắn (user + AI) → có trao thưởng mời bạn', async () => {
+    await handler(
+      makeRequest('POST', {
+        action: 'chat',
+        session: {
+          ...CHAT_SESSION,
+          messages: [
+            { role: 'user', content: 'hi' },
+            { role: 'assistant', content: 'hello' },
+          ],
+        },
+      }),
+    )
+    expect(rewardReferralIfEligible).toHaveBeenCalledWith('user-1')
+  })
+
+  const WRITING = {
+    id: '223e4567-e89b-42d3-a456-426614174000',
+    essayPrompt: 'Describe your hometown',
+    essay: 'x',
+    feedback: 'ok',
+    submittedAt: 1700000000000,
+  }
+
+  it('POST writing upsert kèm WHERE user_id', async () => {
+    const resp = await handler(makeRequest('POST', { action: 'writing', submission: WRITING }))
+    expect(resp.status).toBe(200)
+    const [sql, params] = query.mock.calls[0] as [string, unknown[]]
+    expect(sql).toContain('writing_submissions')
+    expect(sql).toContain('where writing_submissions.user_id = excluded.user_id')
+    expect(params[1]).toBe('user-1')
+  })
+
+  it('bài viết quá ngắn (< 40 ký tự) → KHÔNG trao thưởng', async () => {
+    await handler(makeRequest('POST', { action: 'writing', submission: WRITING }))
+    expect(rewardReferralIfEligible).not.toHaveBeenCalled()
+  })
+
+  it('bài viết đủ dài → có trao thưởng; khoảng trắng KHÔNG tính', async () => {
+    // 40 ký tự thật nhưng bọc toàn khoảng trắng — phải trim trước khi đo.
+    await handler(
+      makeRequest('POST', {
+        action: 'writing',
+        submission: { ...WRITING, essay: '   ' + 'a'.repeat(39) + '   ' },
+      }),
+    )
+    expect(rewardReferralIfEligible).not.toHaveBeenCalled()
+
+    vi.mocked(rewardReferralIfEligible).mockClear()
+    await handler(
+      makeRequest('POST', {
+        action: 'writing',
+        submission: { ...WRITING, essay: 'a'.repeat(40) },
+      }),
+    )
+    expect(rewardReferralIfEligible).toHaveBeenCalledWith('user-1')
+  })
+
+  it('method lạ (DELETE) → 405', async () => {
+    const resp = await handler(makeRequest('DELETE'))
+    expect(resp.status).toBe(405)
+  })
+
+  it('OPTIONS → 204 (preflight CORS)', async () => {
+    const resp = await handler(makeRequest('OPTIONS'))
+    expect(resp.status).toBe(204)
+  })
+
+  it('POST body không phải JSON hợp lệ → 400, không query', async () => {
+    const resp = await handler(
+      new Request('http://localhost/api/history', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', Authorization: 'Bearer x' },
+        body: '{khong-phai-json',
+      }),
     )
     expect(resp.status).toBe(400)
     expect(query).not.toHaveBeenCalled()

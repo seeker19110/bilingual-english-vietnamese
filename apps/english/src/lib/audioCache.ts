@@ -39,9 +39,16 @@ function openDb(): Promise<IDBDatabase> {
   return _dbPromise
 }
 
-// Key tra cứu: "lang:voice:text"
+// Đồng bộ TAY với VOICE_VERSION ở api/_lib/googleTts.ts (file đó chỉ chạy server, không import
+// được từ code trình duyệt). Mỗi khi bên server bump VOICE_VERSION (đổi/nâng cấp giọng đọc) —
+// PHẢI đổi giá trị này theo, không thì cache IndexedDB trên máy người dùng cũ vẫn phát audio
+// giọng CŨ tới 7 ngày (TTL) dù server đã có bản ghi mới, vì IndexedDB được tra TRƯỚC khi gọi
+// server (xem ensureAudioWithTimeline trong ./tts.ts) — lỗi thật đã xác nhận 2026-08-06.
+const AUDIO_CACHE_VERSION = 'chirp3hd-v3'
+
+// Key tra cứu: "version:lang:voice:text"
 export function audioCacheKey(text: string, lang: string, voice: string): string {
-  return `${lang}:${voice}:${text}`
+  return `${AUDIO_CACHE_VERSION}:${lang}:${voice}:${text}`
 }
 
 // Một entry trong store. `timeline` thêm ở đợt avatar (viseme timing thật từ /api/tts) —
@@ -51,12 +58,17 @@ interface AudioEntry {
   buffer: ArrayBuffer
   ts: number
   timeline?: VisemeFrame[]
+  // Giọng server THẬT SỰ đã dùng (có thể khác giọng client yêu cầu khi bị hạ theo gói —
+  // xem clampVoiceToPlan). Cần lưu vì nó quyết định định dạng audio (Gemini = WAV, còn lại
+  // = mp3) → quyết định mimeType lúc tạo Blob để phát. Thêm sau, KHÔNG cần nâng VERSION:
+  // entry cũ thiếu trường này đọc ra undefined, nơi gọi tự dùng giọng yêu cầu như trước.
+  voice?: string
 }
 
 // Đọc cả buffer lẫn timeline; trả null nếu không có hoặc đã hết hạn
 export async function getAudioEntry(
   key: string,
-): Promise<{ buffer: ArrayBuffer; timeline: VisemeFrame[] | null } | null> {
+): Promise<{ buffer: ArrayBuffer; timeline: VisemeFrame[] | null; voice?: string } | null> {
   try {
     const db = await openDb()
     return new Promise((resolve) => {
@@ -73,7 +85,11 @@ export async function getAudioEntry(
           void deleteAudioBuffer(key)
           resolve(null)
         } else {
-          resolve({ buffer: row.buffer, timeline: row.timeline ?? null })
+          resolve({
+            buffer: row.buffer,
+            timeline: row.timeline ?? null,
+            ...(row.voice ? { voice: row.voice } : {}),
+          })
         }
       }
       req.onerror = () => resolve(null)
@@ -94,6 +110,7 @@ export async function setAudioBuffer(
   key: string,
   buffer: ArrayBuffer,
   timeline?: VisemeFrame[] | null,
+  voice?: string,
 ): Promise<void> {
   try {
     const db = await openDb()
@@ -101,6 +118,7 @@ export async function setAudioBuffer(
       const tx = db.transaction(STORE, 'readwrite')
       const entry: AudioEntry = { buffer, ts: Date.now() }
       if (timeline && timeline.length > 0) entry.timeline = timeline
+      if (voice) entry.voice = voice
       const req = tx.objectStore(STORE).put(entry, key)
       req.onsuccess = () => resolve()
       req.onerror = () => reject(req.error)

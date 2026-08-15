@@ -18,6 +18,13 @@
 // localStorage để gửi — khi đó localStorage đã chắc chắn là bản đã hợp nhất đầy đủ.
 
 import { getAuthHeader } from '@core/authHeader'
+import { getPendingOfflineReviews, clearPendingOfflineReviews } from './offlineSrsStore'
+import {
+  getSettingsUpdatedAt,
+  setSettingsUpdatedAt,
+  getStreakFreezeDatesForSync,
+  setStreakFreezeDatesFromSync,
+} from './storage'
 
 const LEARNED = (uid: string) => `et_learned_${uid}`
 const HARD = (uid: string) => `et_hard_${uid}`
@@ -36,6 +43,49 @@ const PLACEMENT = (uid: string) => `et_placement_${uid}`
 const WEEKLY_GOAL = (uid: string) => `et_weekly_goal_${uid}`
 // Huy hiệu đã đạt (mảng id) — migration 0013. Khớp key lib/achievements.ts (KEY).
 const ACHIEVEMENTS = (uid: string) => `et_achievements_${uid}`
+
+// Cài đặt cá nhân (KHÔNG phải tiến độ "chỉ tăng" — hợp nhất theo mốc updatedAt MỚI HƠN
+// thắng, xem touchSettingsUpdated ở storage.ts). Các key này là TOÀN CỤC (không theo uid) vì
+// người dùng có thể chỉnh trước khi đăng nhập — migration 0040. Phải khớp key thật ở
+// lib/uiLang.ts (KEY), lib/storage.ts (DIRECTION_KEY), lib/sound.ts (SOUND_KEY),
+// lib/tts.ts (VOICE_KEY/RANDOM_KEY/NATIVE_VOICE_KEY/NATIVE_VOICE_ON_KEY).
+const SETTINGS_KEYS = {
+  uiLang: 'ui_lang',
+  direction: 'et_direction',
+  soundEnabled: 'ui_sound_enabled',
+  voicePref: 'tts_voice',
+  voiceRandomPref: 'tts_voice_random',
+  nativeVoiceOn: 'tts_voice_native_on',
+  nativeVoicePref: 'tts_voice_native',
+} as const
+
+interface SettingsBlob {
+  uiLang?: string
+  direction?: string
+  soundEnabled?: string
+  voicePref?: string
+  voiceRandomPref?: string
+  nativeVoiceOn?: string
+  nativeVoicePref?: string
+  updatedAt?: string
+}
+
+function readSettingsBlob(): SettingsBlob {
+  const blob: SettingsBlob = { updatedAt: getSettingsUpdatedAt() }
+  for (const [field, key] of Object.entries(SETTINGS_KEYS)) {
+    const v = localStorage.getItem(key)
+    if (v !== null) (blob as Record<string, string>)[field] = v
+  }
+  return blob
+}
+
+function applySettingsBlob(blob: SettingsBlob): void {
+  for (const [field, key] of Object.entries(SETTINGS_KEYS)) {
+    const v = (blob as Record<string, string | undefined>)[field]
+    if (v !== undefined) localStorage.setItem(key, v)
+  }
+  if (blob.updatedAt) setSettingsUpdatedAt(blob.updatedAt)
+}
 
 // Cấu trúc 1 thẻ SRS (khớp src/lib/srs.ts) — chỉ cần để merge theo số lần ôn (reps).
 interface SRSLike {
@@ -172,8 +222,6 @@ function readObj(key: string): Record<string, SRSLike> {
 
 // Đọc localStorage HIỆN TẠI rồi gửi thẳng lên server — KHÔNG chờ pull nào cả. Chỉ tự gọi
 // nội bộ từ pullProgress() (sau khi đã ghi bản hợp nhất xuống localStorage) để tránh vòng chờ
-import { getPendingOfflineReviews, clearPendingOfflineReviews } from './offlineSrsStore'
-
 // chính nó. Nơi khác dùng pushProgress()/pushProgressAsync() ở dưới (có chờ chống mất dữ liệu).
 async function sendProgressSnapshot(userId: string): Promise<void> {
   try {
@@ -191,6 +239,8 @@ async function sendProgressSnapshot(userId: string): Promise<void> {
         placement: readPlacement(PLACEMENT(userId)) ?? {},
         weeklyGoal: readWeeklyGoal(WEEKLY_GOAL(userId)) ?? {},
         achievements: readArr(ACHIEVEMENTS(userId)),
+        settings: readSettingsBlob(),
+        streakFreezeDates: getStreakFreezeDatesForSync(userId),
       }),
     })
     if (!resp.ok) {
@@ -270,6 +320,8 @@ async function doPull(userId: string): Promise<void> {
     placement?: PlacementLike
     weeklyGoal?: WeeklyGoalLike
     achievements?: string[]
+    settings?: SettingsBlob
+    streakFreezeDates?: string[]
   }
 
   // learned/hard/cefr_*: dữ liệu chỉ tăng dần → lấy hợp của local và cloud
@@ -306,6 +358,21 @@ async function doPull(userId: string): Promise<void> {
     cloud.weeklyGoal && 'updatedAt' in cloud.weeklyGoal ? cloud.weeklyGoal : null
   const weeklyGoal = mergeWeeklyGoal(readWeeklyGoal(WEEKLY_GOAL(userId)), cloudWeeklyGoal)
 
+  // settings: mốc updatedAt MỚI HƠN thắng (giống placement/weeklyGoal — đây là "lựa chọn hiện
+  // tại", không phải tiến độ chỉ tăng).
+  const localSettings = readSettingsBlob()
+  const cloudSettings = cloud.settings ?? {}
+  const settings =
+    (cloudSettings.updatedAt ?? '') > (localSettings.updatedAt ?? '')
+      ? cloudSettings
+      : localSettings
+
+  // streakFreezeDates: vé đã dùng là sự kiện đã xảy ra — union như learned/achievements.
+  const streakFreezeDates = new Set<string>([
+    ...getStreakFreezeDatesForSync(userId),
+    ...(cloud.streakFreezeDates ?? []),
+  ])
+
   // SRS: merge theo từ-khoá, giữ thẻ có nhiều lần ôn hơn (tiến bộ hơn)
   const merged: Record<string, SRSLike> = { ...(cloud.srs ?? {}) }
   for (const [k, v] of Object.entries(readObj(SRS(userId)))) {
@@ -324,6 +391,8 @@ async function doPull(userId: string): Promise<void> {
     localStorage.setItem(ACHIEVEMENTS(userId), JSON.stringify([...achievements]))
     if (placement) localStorage.setItem(PLACEMENT(userId), JSON.stringify(placement))
     if (weeklyGoal) localStorage.setItem(WEEKLY_GOAL(userId), JSON.stringify(weeklyGoal))
+    applySettingsBlob(settings)
+    setStreakFreezeDatesFromSync(userId, [...streakFreezeDates])
   } catch {
     /* hết dung lượng — bỏ qua */
   }

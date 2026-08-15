@@ -37,6 +37,9 @@ function mockPool(opts: {
   queryError?: Error
   promoUntil?: string | null
   aiCircuitBreaker?: boolean
+  // Phanh tay theo môn (bảng subject_limits, migration 0029). undefined = KHÔNG có dòng nào
+  // trong bảng → mặc định enforce (hành vi hiện tại của production cho môn chưa khai báo).
+  subjectEnforced?: boolean
 }) {
   const query = vi.fn(async (sql: string) => {
     if (opts.queryError) throw opts.queryError
@@ -53,6 +56,10 @@ function mockPool(opts: {
             ai_circuit_breaker: opts.aiCircuitBreaker ?? false,
           },
         ],
+      }
+    if (sql.includes('from public.subject_limits'))
+      return {
+        rows: opts.subjectEnforced === undefined ? [] : [{ enforced: opts.subjectEnforced }],
       }
     // Gói Free: kho lượt chung, cửa sổ trượt 7 ngày (xem 0017_free_rolling_credit.sql)
     if (sql.includes('consume_rolling_credit'))
@@ -71,9 +78,12 @@ function mockPool(opts: {
 describe('checkAndConsumeUsage — gói Free (kho lượt chung, cửa sổ trượt 7 ngày)', () => {
   beforeEach(() => mockedGetPool.mockReset())
 
-  it('còn lượt trong kho (true) → ok', async () => {
+  it('còn lượt trong kho (true) → ok, kèm NGÀY đã trừ để hoàn đúng chỗ', async () => {
     mockedGetPool.mockReturnValue(mockPool({ consumeWeeklyResult: true }))
-    expect(await checkAndConsumeUsage('u1', 'chat')).toEqual({ ok: true })
+    const r = await checkAndConsumeUsage('u1', 'chat')
+    expect(r.ok).toBe(true)
+    // Ngày trả về phải là chuỗi YYYY-MM-DD theo giờ VN — nơi gọi truyền lại cho refundUsage().
+    if (r.ok) expect(r.day).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 
   it('hết lượt trong kho (false) → chặn kèm thông điệp', async () => {
@@ -123,7 +133,46 @@ describe('checkAndConsumeUsage — gói Free (kho lượt chung, cửa sổ trư
 
   it('DB lỗi (query throw) → FAIL-OPEN (cho qua)', async () => {
     mockedGetPool.mockReturnValue(mockPool({ queryError: new Error('db down') }))
-    expect(await checkAndConsumeUsage('u1', 'chat')).toEqual({ ok: true })
+    const r = await checkAndConsumeUsage('u1', 'chat')
+    expect(r.ok).toBe(true)
+    if (r.ok) expect(r.day).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+
+  // Audit 2026-08-12 — phanh tay theo môn (bảng subject_limits, migration 0029). Trước đây
+  // bảng này KHÔNG được code nào đọc: cờ có trong DB nhưng bật/tắt chẳng thay đổi gì.
+  it('subject_limits.enforced = false → KHÔNG chặn theo hạn mức, nhưng VẪN ghi thống kê', async () => {
+    const pool = mockPool({ subjectEnforced: false, consumeWeeklyResult: false })
+    mockedGetPool.mockReturnValue(pool)
+    // consumeWeeklyResult=false nghĩa là "hết lượt" — nếu phanh tay có hiệu lực thì vẫn phải cho qua.
+    const r = await checkAndConsumeUsage('u1', 'chat')
+    expect(r.ok).toBe(true)
+    const sqls = vi.mocked(pool.query).mock.calls.map((c) => String(c[0]))
+    // Không hề gọi hàm enforce nào...
+    expect(sqls.some((s) => s.includes('consume_rolling_credit'))).toBe(false)
+    expect(sqls.some((s) => s.includes('consume_usage_total'))).toBe(false)
+    // ...nhưng vẫn cộng thống kê để dashboard theo dõi được chi phí theo tính năng.
+    expect(sqls.some((s) => s.includes('consume_usage'))).toBe(true)
+  })
+
+  it('subject_limits.enforced = true → chặn như bình thường', async () => {
+    mockedGetPool.mockReturnValue(mockPool({ subjectEnforced: true, consumeWeeklyResult: false }))
+    expect((await checkAndConsumeUsage('u1', 'chat')).ok).toBe(false)
+  })
+
+  it('không có dòng subject_limits → mặc định ENFORCE (an toàn chi phí)', async () => {
+    mockedGetPool.mockReturnValue(mockPool({ consumeWeeklyResult: false }))
+    expect((await checkAndConsumeUsage('u1', 'chat')).ok).toBe(false)
+  })
+
+  // Audit 2026-08-12 — hoàn lượt phải nhắm ĐÚNG NGÀY đã trừ, không phải "hôm nay" tính lại.
+  it('refundUsage nhận `day` → hoàn vào đúng ngày đó, không phải hôm nay', async () => {
+    const pool = mockPool({ plan: 'free' })
+    mockedGetPool.mockReturnValue(pool)
+    await refundUsage('u1', 'chat', '2020-01-01')
+    const calls = vi.mocked(pool.query).mock.calls
+    const refundCalls = calls.filter(([sql]) => String(sql).includes('refund_'))
+    expect(refundCalls.length).toBeGreaterThan(0)
+    for (const [, params] of refundCalls) expect(params as unknown[]).toContain('2020-01-01')
   })
 
   it('cầu dao AI bật → chặn ngay, không cần biết còn lượt hay không', async () => {

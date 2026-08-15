@@ -1,5 +1,22 @@
 import { describe, it, expect } from 'vitest'
-import { mergeSrsMap, mergeExamMap, mergeByTimestamp } from './progressMerge'
+import { mergeSrsMap, mergeExamMap, mergeByTimestamp, mergeArrayUnion } from './progressMerge'
+
+describe('mergeArrayUnion', () => {
+  it('hợp 2 mảng, không trùng lặp — chỉ tăng, không mất phần tử nào', () => {
+    expect(mergeArrayUnion(['a', 'b'], ['b', 'c'])).toEqual(['a', 'b', 'c'])
+  })
+
+  it('1 bên rỗng → giữ nguyên bên còn lại', () => {
+    expect(mergeArrayUnion([], ['a'])).toEqual(['a'])
+    expect(mergeArrayUnion(['a'], [])).toEqual(['a'])
+  })
+
+  it('phần tử bị "bỏ đánh dấu" ở client (không còn trong mảng gửi lên) vẫn được server giữ lại nếu đã từng có trên server', () => {
+    // Mô phỏng: server đang có 'book' (máy A đã học), máy B đồng bộ gửi lên mảng không có 'book'
+    // (do B chưa từng thấy 'book', không phải B chủ động bỏ đánh dấu) → 'book' KHÔNG được mất.
+    expect(mergeArrayUnion(['book'], ['run'])).toEqual(['book', 'run'])
+  })
+})
 
 describe('mergeSrsMap', () => {
   it('giữ thẻ có reps cao hơn giữa 2 bên', () => {

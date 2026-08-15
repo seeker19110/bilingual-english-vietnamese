@@ -16,21 +16,10 @@ import type { DictEntry } from '../types'
 import { CEFR_C1C2_CIRCLES } from './cefrC1C2Vocab'
 import { CEFR_A1B2_EXTRA_CIRCLES } from './cefrA1B2ExtraVocab'
 
-export interface Circle {
-  id: string
-  titleVi: string
-  titleEn: string
-  emoji: string
-  words: DictEntry[]
-  // Câu thông dụng ráp từ chính các từ trong vòng này
-  sentences: { en: string; vi: string }[]
-  // Chủ đề KHÔNG phù hợp trẻ em (kinh doanh, chính trị, tài chính, sức khỏe tinh thần,
-  // mối quan hệ tình cảm...) — ẨN HẲN khỏi luồng học của nhóm tuổi 'nhi_dong' (GĐ 4,
-  // PROGRESS.md 2026-07-22). Chỉ áp cho vòng THỦ CÔNG bên dưới; vòng CEFR C1/C2 sinh tự
-  // động (cefrC1C2Vocab.ts) không gắn cờ này — thực tế không ai ở tốc độ học của trẻ
-  // em chạm tới mức C1/C2 trong thời gian ngắn.
-  notForKids?: boolean
-}
+// Kiểu ở `curriculumTypes.ts` (file chỉ-chứa-kiểu) để cắt chu trình import với các file vòng
+// từ vựng sinh tự động; xuất lại ở đây để mọi nơi đang import từ './curriculum' giữ nguyên.
+export type { Circle } from './curriculumTypes'
+import type { Circle } from './curriculumTypes'
 
 // Rút gọn: hàm tạo 1 mục từ cho nhanh (ipa để trống — PronounceButton vẫn đọc được)
 const w = (word: string, pos: string, vi: string, ex_en: string, ex_vi: string): DictEntry => ({

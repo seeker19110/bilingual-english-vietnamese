@@ -17,20 +17,26 @@ vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: () => ({ query }) }))
 
 const generateAudioFromGoogle = vi.fn()
 const generateStudioAudioFromGoogle = vi.fn()
-vi.mock('./_lib/googleTts', () => ({
+// CHỈ mock 2 hàm GỌI RA NGOÀI (Google TTS — tốn tiền, cần mạng) + VOICE_VERSION (để test cache
+// không phải sửa mỗi lần đổi phiên bản giọng thật). Mọi thứ liên quan tới KIỂM TRA/CHUẨN HOÁ tên
+// giọng dùng HÀM THẬT qua importOriginal.
+//
+// Vì sao bắt buộc: bản mock cũ tự chế lại danh sách giọng bằng CHỮ THƯỜNG (`['kore','puck']`) cho
+// khớp việc handler tự `.toLowerCase()` — nên test xanh trong khi production trả 400 cho MỌI giọng
+// client gửi lên (đều PascalCase) và người dùng chỉ nghe một giọng Web Speech (bug thật, PR #535).
+// Mock tự viết lại logic của chính module bị mock là mock có thể "nói dối"; dùng hàm thật thì
+// không thể lệch được nữa.
+vi.mock('./_lib/googleTts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./_lib/googleTts')>()),
   generateAudioFromGoogle: (...args: unknown[]) => generateAudioFromGoogle(...args),
   generateStudioAudioFromGoogle: (...args: unknown[]) => generateStudioAudioFromGoogle(...args),
-  // Lưu ý: handler tự toLowerCase() voiceParam trước khi kiểm — nên so khớp chữ thường ở đây.
-  isValidVoice: (v: string) => ['kore', 'puck'].includes(v),
-  isValidStudioVoice: (v: string) => ['studio-o', 'studio-q'].includes(v),
-  DEFAULT_VOICE: 'Kore',
-  VOICE_IDS: ['Kore', 'Puck'],
-  STUDIO_VOICE_IDS: ['Studio-O', 'Studio-Q'],
   VOICE_VERSION: 'v3',
 }))
 
 const saveAudio = vi.fn()
-vi.mock('../packages/core-ai/fileStorage', () => ({
+// isServableUrl dùng bản THẬT — xem ghi chú cùng loại trong packages/core-ai/tts.test.ts.
+vi.mock('../packages/core-ai/fileStorage', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../packages/core-ai/fileStorage')>()),
   saveAudio: (...args: unknown[]) => saveAudio(...args),
 }))
 
@@ -116,8 +122,40 @@ describe('/api/pronunciation', () => {
 
   it('word chứa ký tự lạ → 400', async () => {
     const handler = await importHandler()
-    const res = await handler(makeRequest('word=apple%3Bdrop'))
+    // `<` `>` `|` vẫn nằm ngoài allowlist (dấu câu tiếng Việt đã được mở từ 2026-08-13, xem
+    // WORD_SAFE_PATTERN — nên `;` KHÔNG còn là ca "ký tự lạ" nữa).
+    for (const qs of ['word=apple%3Cscript%3E', 'word=a%7Cb']) {
+      const res = await handler(makeRequest(qs))
+      expect(res.status).toBe(400)
+    }
+  })
+
+  it('word quá dài (>100 ký tự) → 400', async () => {
+    const handler = await importHandler()
+    const res = await handler(makeRequest(`word=${'a'.repeat(101)}`))
     expect(res.status).toBe(400)
+  })
+
+  // Chiều B đọc NGHĨA tiếng Việt của thẻ từ — hầu hết là cụm nhiều vế có dấu phẩy/ngoặc.
+  // Trước 2026-08-13 những chuỗi này bị 400 rồi rơi về Web Speech ("chữ Việt đọc giọng Anh").
+  it('nghĩa tiếng Việt nhiều vế (phẩy, ngoặc, chấm phẩy, gạch chéo) → chấp nhận', async () => {
+    for (const text of [
+      'bỏ rơi, từ bỏ',
+      'trên (tàu, xe, máy bay)',
+      'có cồn; thuộc về người nghiện rượu',
+      'có thể/có khả năng',
+    ]) {
+      query.mockReset()
+      query.mockResolvedValueOnce({ rows: [] }).mockResolvedValueOnce({ rows: [] })
+      generateAudioFromGoogle.mockReset().mockResolvedValue(new ArrayBuffer(8))
+      saveAudio.mockReset().mockResolvedValue('https://cdn/vi.mp3')
+      const handler = await importHandler()
+      const res = await handler(
+        makeRequest(`word=${encodeURIComponent(text)}&voice=Kore&lang=vi-VN`),
+      )
+      expect(res.status).toBe(200)
+      expect(generateAudioFromGoogle).toHaveBeenCalledWith(text, 'Kore', 'vi-VN')
+    }
   })
 
   it('voice không hợp lệ → 400', async () => {
@@ -208,6 +246,19 @@ describe('/api/pronunciation', () => {
     expect(res.status).toBe(200)
     expect(generateStudioAudioFromGoogle).not.toHaveBeenCalled()
     expect(generateAudioFromGoogle).toHaveBeenCalledWith('từ', 'Kore', 'vi-VN')
+  })
+
+  // Hồi quy: client LUÔN gửi tên giọng dạng PascalCase ("Puck", "Aoede"). Handler từng
+  // toLowerCase() tham số này rồi mới kiểm hợp lệ → 400 cho mọi giọng, nút loa rơi về Web
+  // Speech nên người dùng chỉ nghe một giọng duy nhất dù đổi cài đặt.
+  it('voice PascalCase từ client → 200 và giữ ĐÚNG giọng đó', async () => {
+    query.mockResolvedValueOnce({ rows: [] })
+    generateAudioFromGoogle.mockResolvedValue(new ArrayBuffer(8))
+    saveAudio.mockResolvedValue('https://cdn/apple-puck.mp3')
+    const handler = await importHandler()
+    const res = await handler(makeRequest('word=apple&voice=Puck'))
+    expect(res.status).toBe(200)
+    expect(generateAudioFromGoogle).toHaveBeenCalledWith('apple', 'Puck', 'en-US')
   })
 
   it('voice Studio hợp lệ (tiếng Anh) → gọi generateStudioAudioFromGoogle', async () => {

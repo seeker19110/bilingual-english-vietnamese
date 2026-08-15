@@ -1,22 +1,25 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Volume2, Loader2, VolumeX } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
-import { getVoicePref, playAudioUrl, type Voice } from '../lib/tts'
-import { VOICE_OPTIONS, pickRandomAllowedVoice } from '../lib/voiceTiers'
+import { getVoicePref, getVoiceRandomPref, playAudioUrl, type Voice } from '../lib/tts'
+import { VOICE_OPTIONS, pickRandomAllowedVoice, resolveActualVoice } from '../lib/voiceTiers'
 
 interface Props {
   word: string
   lang?: 'en-US' | 'vi-VN' // bỏ trống = tiếng Anh (mặc định cũ, giữ tương thích chỗ gọi chưa sửa)
-  // Quyết định 2026-07-29: nút loa PronounceButton (dùng khắp Từ điển — kết quả tra cứu, tab
-  // Flashcard, các dạng biến thể của từ ở WordFormsBlock) bốc NGẪU NHIÊN 1 giọng (cả nam lẫn
-  // nữ, trong số giọng gói cho phép) MỖI LẦN BẤM theo mặc định — áp dụng TOÀN CỤC cho mọi nơi
-  // dùng component này, không cần bật riêng từng chỗ. Truyền `random={false}` nếu 1 màn hình cụ
-  // thể nào đó sau này cần giữ cố định giọng mặc định ở Cài đặt thay vì ngẫu nhiên.
+  // Quyết định 2026-07-29, SỬA 2026-08-13: nút loa PronounceButton (dùng khắp Từ điển — kết
+  // quả tra cứu, các dạng biến thể của từ ở WordFormsBlock) bốc NGẪU NHIÊN 1 giọng mỗi lần bấm
+  // — NHƯNG CHỈ khi công tắc "Giọng ngẫu nhiên" ở Cài đặt (getVoiceRandomPref) đang BẬT. Tắt
+  // công tắc đó → luôn dùng đúng giọng cố định đã chọn ở VoicePicker (getVoicePref()), khớp
+  // hành vi với WordVoiceCycleButton (thẻ học từ mới/SRS) đã sửa cùng ngày. Trước đây random
+  // CHẠY BẤT KỂ công tắc, khiến người tắt "Giọng ngẫu nhiên" tưởng Cài đặt vô tác dụng ở Từ
+  // điển. Truyền `random={false}` nếu 1 màn hình cụ thể cần ép cố định bất kể công tắc.
   random?: boolean
 }
 
-// Nút loa phát âm 1 từ — mặc định BỐC NGẪU NHIÊN giọng mỗi lần bấm (xem ghi chú Props.random);
-// truyền `random={false}` để dùng đúng giọng mặc định đã lưu ở Cài đặt (VoiceToggle) thay vào đó.
+// Nút loa phát âm 1 từ — mặc định theo công tắc "Giọng ngẫu nhiên" ở Cài đặt (xem ghi chú
+// Props.random); truyền `random={false}` để LUÔN dùng giọng cố định đã lưu ở Cài đặt
+// (VoicePicker), bất kể công tắc.
 export default function PronounceButton({ word, lang = 'en-US', random = true }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   // Nhớ audioUrl đã tải theo cặp "từ|giọng" — PHẢI có cả từ trong khoá, vì component này
@@ -24,8 +27,18 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
   // reset; nếu chỉ theo giọng thì từ mới sẽ phát nhầm audio của từ cũ đã lưu.
   const [audioUrls, setAudioUrls] = useState<Record<string, string>>({})
 
+  // Giọng của lần bấm trước — loại khỏi bể random để không bốc lại đúng giọng cũ (gói Free chỉ
+  // 4 giọng nên random đều sẽ lặp ~25% số lần bấm, người dùng tưởng random không chạy).
+  const lastVoiceRef = useRef<Voice | null>(null)
+
   function pickVoice(): Voice {
-    return random ? pickRandomAllowedVoice() : getVoicePref()
+    // Truyền `lang` để bỏ giọng Studio khi đọc tiếng Việt (Google không có Studio cho vi-VN,
+    // server hạ về Chirp3-HD nên Kore/Puck bị trúng gấp đôi — xem api/pronunciation.ts).
+    // Chỉ thật sự random khi PROP cho phép VÀ công tắc "Giọng ngẫu nhiên" ở Cài đặt đang bật —
+    // tắt công tắc thì getVoicePref() trả đúng giọng cố định đã chọn (đã tự xử lý ở tts.ts).
+    return random && getVoiceRandomPref()
+      ? pickRandomAllowedVoice({ lang, exclude: lastVoiceRef.current ?? undefined })
+      : getVoicePref()
   }
 
   function speakWithWebSpeech(voice: Voice) {
@@ -53,7 +66,8 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
   async function handleClick() {
     if (status === 'loading') return
 
-    const voice = pickVoice()
+    const guessedVoice = pickVoice()
+    lastVoiceRef.current = guessedVoice
 
     // Trước đây cụm từ (word có dấu cách) bị bắt đọc bằng Web Speech API trình duyệt thay vì
     // Google TTS — Web Speech chỉ set utt.lang chứ không đảm bảo máy có SẴN giọng đúng ngôn
@@ -63,8 +77,8 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
     // xuyên ở chiều B. /api/pronunciation đã hỗ trợ cụm từ (WORD_SAFE_PATTERN cho phép dấu
     // cách, tối đa 100 ký tự — xem api/pronunciation.ts) nên bỏ nhánh này, đi cùng đường
     // Google TTS như WordVoiceCycleButton đang làm.
-    const cacheKey = `${word}|${voice}|${lang}`
-    const cached = audioUrls[cacheKey]
+    const guessCacheKey = `${word}|${guessedVoice}|${lang}`
+    const cached = audioUrls[guessCacheKey]
     if (cached) {
       playAudio(cached)
       return
@@ -75,23 +89,26 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
       // Gửi kèm JWT để server xác thực người dùng
       const headers = await getAuthHeader()
       const res = await fetch(
-        `/api/pronunciation?word=${encodeURIComponent(word)}&voice=${voice}&lang=${lang}`,
+        `/api/pronunciation?word=${encodeURIComponent(word)}&voice=${guessedVoice}&lang=${lang}`,
         { headers },
       )
-      const data = (await res.json()) as { audio_url?: string; error?: string }
+      const data = (await res.json()) as { audio_url?: string; voice?: string; error?: string }
 
       if (!res.ok || !data.audio_url) {
         throw new Error(data.error ?? `Lỗi ${res.status}`)
       }
       const audioUrl = data.audio_url
+      const actualVoice = resolveActualVoice(guessedVoice, data.voice)
+      // Nhớ giọng THẬT vừa nghe (server có thể đã hạ giọng đoán) để lần bấm sau không lặp lại nó.
+      lastVoiceRef.current = actualVoice
 
-      setAudioUrls((prev) => ({ ...prev, [cacheKey]: audioUrl }))
+      setAudioUrls((prev) => ({ ...prev, [`${word}|${actualVoice}|${lang}`]: audioUrl }))
       setStatus('idle')
       playAudio(audioUrl)
     } catch (err) {
       console.error('Lỗi phát âm:', err)
       // Fallback về Web Speech API nếu server lỗi
-      speakWithWebSpeech(voice)
+      speakWithWebSpeech(guessedVoice)
       setStatus('idle')
     }
   }

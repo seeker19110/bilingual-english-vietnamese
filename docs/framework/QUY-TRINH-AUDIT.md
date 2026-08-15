@@ -15,6 +15,12 @@
 
 ## 0. Khi nào chạy audit này
 
+> **Hai KIỂU audit, đừng lẫn.** Mục 1–4 dưới đây là audit **RỘNG**: quét toàn repo theo 7 tầng,
+> tìm vấn đề về cổng/bảo mật/vệ sinh/độ phủ. Nó KHÔNG bắt được lỗi tính toán sai âm thầm bên
+> trong một luồng nghiệp vụ (số hiển thị lệch số enforce, khoá ghi một đằng đọc một nẻo…) vì
+> mọi cổng vẫn xanh khi những lỗi đó tồn tại. Loại lỗi ấy cần audit **SÂU** theo một luồng dữ
+> liệu — xem **mục 5** ở cuối file.
+
 - Người dùng yêu cầu trực tiếp ("rà soát toàn bộ", "audit toàn diện").
 - **Cổng giữa các giai đoạn** (KHUNG-1): trước khi chuyển giai đoạn hoặc trước thay đổi lớn.
 - Định kỳ (khuyến nghị: trước mỗi đợt deploy production, hoặc mỗi cuối tuần làm việc).
@@ -282,3 +288,127 @@ Bất kỳ mục ❌ ở Tầng 1–2 (chặn) → nêu rõ trong kết luận l
 - **Lịch định kỳ:** có thể dùng `send_later` / trigger để tự hẹn chạy lại audit (đã dùng trong thực tế).
 - **Không tự thêm CI/script trong đặc tả này** (quyết định phạm vi 2026-07-17: chỉ tài liệu). Nếu sau này muốn
   gộp Tầng 1–3 thành `npm run audit` hoặc job CI hàng tuần → mở thay đổi riêng, cập nhật file này.
+
+---
+
+## 5. Audit LUỒNG DỮ LIỆU (chuyên sâu một luồng) — bổ sung 2026-08-12
+
+Audit rộng ở mục 2 quét theo **tầng công cụ**. Mục này quét theo **đường đi của dữ liệu**: từ
+`<đầu vào>` tới `<đầu ra>` của MỘT luồng cụ thể. Lý do phải có riêng: loại lỗi nguy hiểm nhất
+của dự án này — số đếm lệch, khoá ghi/đọc không khớp, hai đường nhập liệu cho hai kết quả khác
+nhau — **không làm đỏ bất kỳ cổng nào**. Build xanh, test xanh, lint xanh, mà con số hiển thị
+cho người học vẫn sai.
+
+### 5.1. Cách dùng
+
+Chọn TRƯỚC một luồng, đừng rà "tất cả". Điền vào chỗ trống rồi giao nguyên văn prompt ở 5.2.
+Ví dụ luồng có thật trong dự án:
+
+| Luồng                    | Đầu vào                                    | Đầu ra                                      |
+| ------------------------ | ------------------------------------------ | ------------------------------------------- |
+| SRS + đếm lượt           | Hành động học (local + hàng chờ offline)   | Lịch ôn SRS, streak, số lượt còn lại ở DB   |
+| Từ điển & nhãn CEFR/freq | Dữ liệu nguồn (CEFR-J, SUBTLEX, dict JSON) | `apps/english/src/data/*.json` cho lộ trình |
+| Audio TTS/STT + cache    | Text / giọng nói                           | File audio mã hoá AES-256-GCM, phát lại     |
+| Thanh toán SePay         | Webhook chuyển khoản                       | Gói Pro/VIP + hạn dùng                      |
+
+> Một luồng một lượt. Gộp nhiều luồng vào một lượt là cách chắc chắn nhất để không luồng nào
+> được rà đến nơi đến chốn.
+
+### 5.2. Prompt dùng lại (giao nguyên văn)
+
+```text
+Rà soát triệt để các nguồn SAI LỆCH trong <luồng: từ <đầu vào> tới <đầu ra>>.
+
+=== GIAI ĐOẠN 1: LẬP DANH SÁCH TRƯỚC KHI RÀ (bắt buộc, làm xong mới được sửa gì) ===
+
+Không đi tìm lỗi bằng cảm hứng. Lập trước 4 danh sách, rồi rà theo danh sách:
+
+A. KHÔNG GIAN ĐẦU VÀO: liệt kê ĐẦY ĐỦ mọi biến thể mà định dạng/nguồn dữ liệu cho
+   phép (mọi kiểu entity, mọi trường header, mọi biến thể cấu trúc). Lấy từ đặc tả
+   chính thức hoặc từ API của thư viện đang dùng, KHÔNG lấy từ trí nhớ.
+B. CÁC TẦNG BIẾN ĐỔI: liệt kê từng bước dữ liệu bị đọc / đổi đơn vị / gộp / suy diễn
+   / ghi ra.
+C. MỌI HẰNG SỐ VÀ NGƯỠNG trong code liên quan: mỗi con số là một giả định được chôn
+   sẵn. Ghi rõ từng cái giả định điều gì và vỡ khi nào.
+D. CÁC LUỒNG SONG SONG cùng mục đích (đường nhập liệu khác, plugin, API khác) — chúng
+   phải cho cùng kết quả trên cùng dữ liệu.
+
+Lập ma trận A × B. Mỗi ô phải được tick: đã kiểm chứng thực nghiệm, kết quả đúng/sai.
+Ô "đúng, không có lỗi" cũng phải ghi lại — kết quả âm tính là bằng chứng đã rà, không
+phải là chỗ bỏ trống.
+
+=== GIAI ĐOẠN 2: KIỂM CHỨNG ===
+
+1. THỰC NGHIỆM, không suy luận: mỗi ô trong ma trận phải dựng dữ liệu thử và chạy
+   thật. Không tin docstring và comment — chúng có thể mô tả sai chính code bên dưới.
+2. BẤT BIẾN (quan trọng nhất — đây là thứ bắt được lỗi mà bạn CHƯA nghĩ tới):
+   viết test kiểm tra các tính chất phải luôn đúng, ví dụ:
+   - Bất biến hình học/đơn vị: đổi đơn vị + nhân tọa độ tương ứng → kết quả không đổi.
+   - Bất biến phép biến đổi: xoay/tịnh tiến/lật toàn bộ đầu vào → đại lượng đo không đổi.
+   - Bất biến tương đương: dữ liệu đóng gói (nhóm/lồng nhau) phải cho cùng kết quả
+     với dữ liệu trải phẳng tương đương.
+   - Bất biến cộng tính: chia đầu vào làm hai rồi cộng kết quả = xử lý một lần.
+   - Bất biến lũy đẳng: chạy hai lần cho cùng kết quả.
+   - Bất biến khép kín: dữ liệu do chính hệ thống ghi ra, đọc lại phải ra đúng số cũ.
+3. ĐỐI CHIẾU ĐỘC LẬP: với vài mẫu, tính tay hoặc bằng một công cụ/thư viện khác, so
+   với kết quả chương trình. Một cài đặt tự đối chiếu với chính nó không chứng minh
+   được gì.
+4. GIÁ TRỊ BIÊN: rỗng, một phần tử, độ dài 0, trùng điểm, số âm, số cực lớn/cực nhỏ,
+   giá trị thiếu, dữ liệu dị dạng. Với mỗi hằng số ở danh sách C: thử ngay dưới, ngay
+   trên, và đúng bằng ngưỡng.
+5. ĐO ĐỘ PHỦ: chạy coverage trên phần code liên quan. Nhánh nào chưa bao giờ chạy là
+   nhánh chưa ai kiểm chứng — rà từng nhánh đó.
+
+=== GIAI ĐOẠN 3: SỬA ===
+
+- Mỗi lỗi phải có test tái hiện: FAIL trước khi sửa, PASS sau khi sửa. Chưa thấy nó
+  fail thì chưa chắc test đang kiểm tra đúng thứ cần kiểm tra.
+- KHÔNG tự đổi con số dựa trên phỏng đoán. Nếu phép tự sửa có mặt trái đối xứng (sửa
+  đúng thì lợi, sửa nhầm thì gây sai lệch ngược lại và âm thầm) → chỉ CẢNH BÁO, đưa
+  quyền quyết định cho người dùng qua tham số tùy chọn, mặc định giữ hành vi cũ.
+- Mọi thay đổi làm đổi con số phải được nêu trong chính đầu ra của chương trình.
+- Sau mỗi lần sửa: chạy lại TOÀN BỘ test + lint (ghi rõ baseline để biết có phát sinh
+  lỗi mới). Sửa xong phải rà lại chính phần vừa sửa — nó là dữ liệu đầu vào mới của
+  các bước sau.
+
+=== GIAI ĐOẠN 4: ĐIỀU KIỆN DỪNG (dừng theo bằng chứng, không theo cảm giác) ===
+
+Chỉ được dừng khi ĐỒNG THỜI:
+  [ ] Ma trận A × B đã tick hết, không còn ô trống.
+  [ ] Mọi hằng số ở danh sách C đã có test biên.
+  [ ] Bộ test bất biến ở mục 2 chạy pass.
+  [ ] Các luồng song song ở D cho cùng kết quả trên cùng dữ liệu.
+  [ ] HAI vòng rà liên tiếp không phát hiện thêm lỗi mới nào.
+  [ ] Đã chạy thử trên dữ liệu THẬT, không chỉ dữ liệu tổng hợp.
+
+=== BÁO CÁO ===
+
+- Bảng nguồn sai lệch: hậu quả (thiếu/thừa/sai vị trí/sai tên) + cách xử lý.
+- Danh sách đã rà và KHÔNG có lỗi (để lần sau khỏi rà lại).
+- Danh sách "cân nhắc nhưng không làm" kèm lý do.
+- Nếu phát hiện lỗi do chính bạn gây ra ở đợt trước: nói thẳng.
+```
+
+### 5.3. Điều chỉnh cho dự án này
+
+- **Danh sách D là chỗ sinh lỗi nhiều nhất.** Dự án có nhiều cặp đường song song bắt buộc phải
+  khớp nhau, sai là lệch số âm thầm: truy vấn HIỂN THỊ vs hàm SQL ENFORCE · `postgres/schema.sql`
+  (cài mới) vs chuỗi `postgres/migrations/` (nâng cấp) · merge phía client
+  (`apps/english/src/lib/progressSync.ts`) vs merge phía server (`api/_lib/progressMerge.ts`) ·
+  `vnDateStr` bản client (`apps/english/src/lib/date.ts`) vs bản server (`packages/core-db/date.ts`).
+- **Bất biến khép kín là loại rẻ nhất mà bắt được nhiều nhất ở đây** — ghi bằng hàm A, đọc lại
+  bằng hàm B, phải ra đúng thứ vừa ghi. Đợt 2026-08-12 bắt được lỗi khoá SRS ngữ pháp
+  (`addToSRS` hạ chữ thường khi ghi, `getDueGrammarLessonIds` không hạ khi đọc) đúng bằng cách này.
+- **Dùng `npm run codemap -- impact <file>` để lập danh sách B**, đừng tự liệt kê theo trí nhớ.
+- **"Dữ liệu THẬT" ở điều kiện dừng thường KHÔNG đạt được từ phiên AI**: không có quyền vào DB
+  production. Khi đó phải ghi thẳng vào báo cáo là chưa đạt, KHÔNG được lặng lẽ coi dữ liệu
+  nguồn trong repo là "dữ liệu thật" rồi tick ô đó.
+- **Mục 1 nguyên tắc "không sửa trong lúc audit" KHÔNG áp cho mục 5 này** — prompt 5.2 có sẵn
+  Giai đoạn 3 (sửa) nên đây là audit-kèm-sửa. Vẫn giữ luật: chỉ sửa cái không đổi con số của
+  người dùng đang dùng; cái nào đổi con số thì báo cáo và chờ người dùng quyết.
+
+### 5.4. Tiền lệ đã chạy
+
+| Ngày       | Luồng          | Kết quả                                                                                                                                                            |
+| ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-08-12 | SRS + đếm lượt | 2 lỗi tiềm ẩn đã sửa (khoá SRS ngữ pháp lệch hoa/thường · truy vấn hiển thị lượt Free thiếu lọc `subject`) + 3 việc để ngỏ chờ quyết. Xem `PROGRESS.md` cùng ngày. |

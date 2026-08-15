@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { groupLinesByParagraph, estimateListenMinutes } from './stories'
+import {
+  groupLinesByParagraph,
+  estimateListenMinutes,
+  getStoryVoice,
+  STORY_KIND_VOICE,
+} from './stories'
+import { STORY_KINDS } from '../data/stories/index'
 import type { StoryLine } from '../data/stories/index'
+import { GEMINI_VOICE_IDS } from './voiceTiers'
 
 function line(p: number, en: string): StoryLine {
   return { p, en, vi: en }
@@ -51,5 +58,33 @@ describe('estimateListenMinutes', () => {
   it('làm tròn đúng chuẩn (không luôn làm tròn xuống)', () => {
     // 23 câu × 4s = 92s = 1.533 phút → làm tròn thành 2
     expect(estimateListenMinutes(23)).toBe(2)
+  })
+})
+
+describe('getStoryVoice / STORY_KIND_VOICE', () => {
+  it('mỗi thể loại (STORY_KINDS) đều có đúng 1 giọng Gemini hợp lệ trong bảng', () => {
+    for (const kind of STORY_KINDS) {
+      const voice = getStoryVoice(kind)
+      expect(voice).toBe(STORY_KIND_VOICE[kind])
+      expect(GEMINI_VOICE_IDS).toContain(voice)
+    }
+  })
+})
+
+// Hạ giọng theo gói (2026-08-10): client phải tự hạ giọng Gemini khi gói chưa mở khoá, khớp
+// đúng thứ server làm (clampVoiceToPlan) — nếu không sẽ gắn sai mimeType cho Blob khi phát.
+describe('getStoryVoice — hạ giọng theo gói', () => {
+  it('không truyền plan → giữ nguyên giọng Gemini (dùng cho script seed)', () => {
+    expect(getStoryVoice('fairy-tale')).toBe('Gemini-Leda')
+  })
+
+  it('gói pro/vip có giọng Gemini → giữ nguyên', () => {
+    expect(getStoryVoice('fairy-tale', 'pro')).toBe('Gemini-Leda')
+    expect(getStoryVoice('myth', 'vip')).toBe('Gemini-Orus')
+  })
+
+  it('gói free chưa mở khoá Gemini → hạ về giọng mặc định cùng giới tính', () => {
+    expect(getStoryVoice('fairy-tale', 'free')).toBe('Kore') // Leda = nữ
+    expect(getStoryVoice('myth', 'free')).toBe('Puck') // Orus = nam
   })
 })

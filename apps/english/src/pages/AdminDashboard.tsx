@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   Sliders,
@@ -8,6 +9,7 @@ import {
   FileText,
   ChevronDown,
   Award,
+  Database,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -25,6 +27,7 @@ import AdminPaymentsPanel from '../components/admin/AdminPaymentsPanel'
 import AdminSystemControlPanel from '../components/admin/AdminSystemControlPanel'
 import AdminReservedNamesPanel from '../components/admin/AdminReservedNamesPanel'
 import AdminFeedbackPanel from '../components/admin/AdminFeedbackPanel'
+import AdminTtsCachePanel from '../components/admin/AdminTtsCachePanel'
 
 type TabKey =
   | 'usage'
@@ -34,6 +37,7 @@ type TabKey =
   | 'achievement-rewards'
   | 'grant-plan'
   | 'analytics'
+  | 'tts-cache'
 
 const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   { key: 'usage', label: 'Sử dụng, chi phí & Vận hành', icon: Activity },
@@ -43,7 +47,28 @@ const TABS: { key: TabKey; label: string; icon: typeof Sliders }[] = [
   { key: 'achievement-rewards', label: 'Thưởng huy hiệu', icon: Award },
   { key: 'grant-plan', label: 'Người dùng, Thanh toán & Từ cấm', icon: ShieldCheck },
   { key: 'analytics', label: 'Analytics & Phản hồi AI', icon: BarChart3 },
+  { key: 'tts-cache', label: 'Cache TTS & R2', icon: Database },
 ]
+
+// Bọc riêng vì cần state chung: bấm 1 dòng ở bảng "Người dùng" (AdminUsersPanel) sẽ điền sẵn
+// email vào form "Cấp gói tay" (AdminGrantPlanPanel) bên dưới, kèm gợi ý autocomplete từ danh
+// sách user đã tải.
+function AdminGrantPlanSection() {
+  const [prefillEmail, setPrefillEmail] = useState<string>()
+  const [emailSuggestions, setEmailSuggestions] = useState<string[]>([])
+
+  return (
+    <>
+      <AdminPaymentsPanel />
+      <AdminUsersPanel onSelectEmail={setPrefillEmail} onEmailsChange={setEmailSuggestions} />
+      <AdminGrantPlanPanel prefillEmail={prefillEmail} emailSuggestions={emailSuggestions} />
+      <AdminVipWhitelistPanel />
+      {/* Ghi chú: Mục "Chặn tên tài khoản giả danh" (AdminReservedNamesPanel) đã được bổ sung
+      và tích hợp hoàn chỉnh vào tab "Người dùng, Thanh toán & Từ cấm" (api/admin-reserved-names.ts). */}
+      <AdminReservedNamesPanel />
+    </>
+  )
+}
 
 function AdminPanel({ tabKey }: { tabKey: TabKey }) {
   switch (tabKey) {
@@ -68,17 +93,7 @@ function AdminPanel({ tabKey }: { tabKey: TabKey }) {
     case 'achievement-rewards':
       return <AdminAchievementRewardsPanel />
     case 'grant-plan':
-      return (
-        <>
-          <AdminPaymentsPanel />
-          <AdminUsersPanel />
-          <AdminGrantPlanPanel />
-          <AdminVipWhitelistPanel />
-          {/* Ghi chú: Mục "Chặn tên tài khoản giả danh" (AdminReservedNamesPanel) đã được bổ sung
-          và tích hợp hoàn chỉnh vào tab "Người dùng, Thanh toán & Từ cấm" (api/admin-reserved-names.ts). */}
-          <AdminReservedNamesPanel />
-        </>
-      )
+      return <AdminGrantPlanSection />
     case 'analytics':
       return (
         <>
@@ -86,22 +101,22 @@ function AdminPanel({ tabKey }: { tabKey: TabKey }) {
           <AdminFeedbackPanel />
         </>
       )
+    case 'tts-cache':
+      return <AdminTtsCachePanel />
   }
 }
 
 export default function AdminDashboard() {
   const [searchParams, setSearchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
-  const openKey: TabKey | null = TABS.some((t) => t.key === tabParam)
-    ? (tabParam as TabKey)
-    : 'usage'
+  const [openKey, setOpenKey] = useState<TabKey | null>(
+    TABS.some((t) => t.key === tabParam) ? (tabParam as TabKey) : 'usage',
+  )
 
   const toggle = (key: TabKey) => {
-    if (openKey === key) {
-      setSearchParams({}, { replace: true })
-    } else {
-      setSearchParams({ tab: key }, { replace: true })
-    }
+    const next = openKey === key ? null : key
+    setOpenKey(next)
+    setSearchParams(next ? { tab: next } : {}, { replace: true })
   }
 
   return (

@@ -74,16 +74,21 @@ export default defineConfig({
         'packages/core-db/pgPool.ts',
       ],
       reporter: ['text', 'text-summary', 'html'],
-      // "Coverage ratchet": ngưỡng SÀN = "không tệ hơn hiện tại" (đo 2026-08-03, sau đợt viết
-      // test lớn cho toàn bộ handler API + lib logic thuần còn thiếu — xem PROGRESS.md mục
-      // "Nâng coverage 2026-08-03"): stmts/lines 93.71 · branches 89.69 · funcs 96.27 — đặt
-      // thấp hơn số đo chút để chống tụt, KHÔNG gây gãy do làm tròn hoặc dao động nhỏ giữa các
-      // lượt chạy. Khi thêm test mới → NÂNG DẦN các số này.
+      // SÀN CHUNG 90% cho cả 4 chỉ số (quyết định của người dùng 2026-08-13: "set toàn bộ
+      // coverage 90%... cao thì mặc kệ, miễn từ 90 trở lên là được").
+      //
+      // Số đo thật tại thời điểm đặt: stmts/lines 94.36 · branches 90.32 · funcs 96.33 —
+      // nghĩa là 3/4 chỉ số đang CAO HƠN sàn khá nhiều. Đây là sàn tối thiểu, KHÔNG phải mục
+      // tiêu: đừng viết ít test đi cho "vừa đủ 90".
+      //
+      // Trước đó ngưỡng là 93/89/96/93 (ratchet bám sát số đo). Đổi sang sàn phẳng 90 khiến
+      // statements/functions được nới; bù lại branches bị SIẾT (89 → 90), và đợt này đã viết
+      // thêm test để branches từ 89.06 lên 90.32 mới đạt.
       thresholds: {
-        statements: 93,
-        branches: 89,
-        functions: 96,
-        lines: 93,
+        statements: 90,
+        branches: 90,
+        functions: 90,
+        lines: 90,
       },
     },
   },

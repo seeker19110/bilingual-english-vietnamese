@@ -3,6 +3,7 @@ export const t = {
   vi: {
     // Layout / Header
     appName: 'Gia sư AI',
+    aboutApp: 'Giới thiệu ứng dụng',
     home: 'Trang chủ',
     profile: 'Trang cá nhân',
     logout: 'Đăng xuất',
@@ -19,7 +20,7 @@ export const t = {
     navProfile: 'Cài đặt',
 
     // Home
-    greeting: (name: string) => `Xin chào, ${name}`,
+    greeting: 'Xin chào bạn',
     dirLabelA: '🇻🇳 Người Việt học tiếng Anh',
     dirLabelB: '🌍 Người nước ngoài học tiếng Việt',
     toggleDirTitleA: 'Chuyển sang dạy tiếng Việt cho người nước ngoài',
@@ -195,10 +196,13 @@ export const t = {
     hideTranslation: 'Ẩn bản dịch',
     playAllLabel: 'Phát tất cả',
     playWholeStory: 'Phát cả truyện',
+    playStoryVi: 'Phát tiếng Việt',
+    playStoryEn: 'Phát tiếng Anh',
     playWholeDialogue: 'Phát cả hội thoại',
     moralLabel: 'Bài học rút ra',
     sourceLabel: 'Nguồn',
     filterCountry: 'Quốc gia',
+    filterLevel: 'Cấp độ',
     storyNotFound: 'Không tìm thấy truyện này.',
     otherGroupLabel: 'Khác',
   },
@@ -206,6 +210,7 @@ export const t = {
   en: {
     // Layout / Header
     appName: 'AI Tutor',
+    aboutApp: 'About the app',
     home: 'Home',
     profile: 'Profile',
     logout: 'Log out',
@@ -222,7 +227,7 @@ export const t = {
     navProfile: 'Settings',
 
     // Home
-    greeting: (name: string) => `Hello, ${name}`,
+    greeting: 'Hi there',
     dirLabelA: '🇻🇳 Vietnamese learning English',
     dirLabelB: '🌍 Foreigners learning Vietnamese',
     toggleDirTitleA: 'Switch to teaching Vietnamese for foreigners',
@@ -397,10 +402,13 @@ export const t = {
     hideTranslation: 'Hide translation',
     playAllLabel: 'Play all',
     playWholeStory: 'Play whole story',
+    playStoryVi: 'Play in Vietnamese',
+    playStoryEn: 'Play in English',
     playWholeDialogue: 'Play whole conversation',
     moralLabel: 'Moral of the story',
     sourceLabel: 'Source',
     filterCountry: 'Country',
+    filterLevel: 'Level',
     storyNotFound: 'Story not found.',
     otherGroupLabel: 'Other',
   },

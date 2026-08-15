@@ -126,6 +126,8 @@ describe('GET /api/progress — đọc tiến độ học', () => {
       placement: { cefr: 'A2' },
       weeklyGoal: { target: 10 },
       achievements: ['first_word'],
+      settings: {},
+      streakFreezeDates: [],
     })
   })
 })
@@ -259,7 +261,7 @@ describe('POST /api/progress — hợp nhất với dữ liệu đã có trên s
     })
   })
 
-  it('learned/hard KHÔNG hợp union — client bỏ đánh dấu 1 từ (unmarkLearned) phải có hiệu lực thật', async () => {
+  it('learned HỢP UNION với server (2026-08-13: chỉ tăng, không giảm dù đổi máy/nhiều thiết bị) — client bỏ đánh dấu 1 từ KHÔNG xoá được nó khỏi server nếu server đã từng lưu', async () => {
     query.mockImplementation(async (sql: string) => {
       if (
         sql.includes(
@@ -269,10 +271,173 @@ describe('POST /api/progress — hợp nhất với dữ liệu đã có trên s
         return { rows: [{ ...EMPTY_PROGRESS_ROW, learned: ['apple', 'banana'] }] }
       return { rows: [] }
     })
-    // Client vừa unmarkLearned('banana') — gửi lên mảng đã bớt đi 1 từ.
+    // Client vừa unmarkLearned('banana') — gửi lên mảng đã bớt đi 1 từ, nhưng server union
+    // lại nên 'banana' vẫn còn (đúng yêu cầu "chỉ tăng, không giảm").
     const resp = await handler(makeRequest({ learned: ['apple'] }))
     expect(resp.status).toBe(200)
     const params = insertedParams()
-    expect(JSON.parse(params[1] as string)).toEqual(['apple'])
+    expect(JSON.parse(params[1] as string)).toEqual(['apple', 'banana'])
+  })
+
+  it('hard VẪN ghi đè theo client (chỉ là lọc hiển thị, không phải tiến độ học)', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
+        return { rows: [{ ...EMPTY_PROGRESS_ROW, hard: ['apple', 'banana'] }] }
+      return { rows: [] }
+    })
+    const resp = await handler(makeRequest({ hard: ['apple'] }))
+    expect(resp.status).toBe(200)
+    const params = insertedParams()
+    expect(JSON.parse(params[2] as string)).toEqual(['apple'])
+  })
+
+  it('settings: giữ bản có updatedAt MỚI HƠN (không phải tiến độ chỉ tăng, là lựa chọn hiện tại)', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
+        return {
+          rows: [
+            {
+              ...EMPTY_PROGRESS_ROW,
+              settings: { uiLang: 'vi', updatedAt: '2026-08-13T10:00:00Z' },
+            },
+          ],
+        }
+      return { rows: [] }
+    })
+    // Client gửi lên bản CŨ HƠN (mốc sớm hơn) — server giữ nguyên bản mới hơn đang có.
+    const resp = await handler(
+      makeRequest({ settings: { uiLang: 'en', updatedAt: '2026-08-13T09:00:00Z' } }),
+    )
+    expect(resp.status).toBe(200)
+    const params = insertedParams()
+    expect(JSON.parse(params[11] as string)).toEqual({
+      uiLang: 'vi',
+      updatedAt: '2026-08-13T10:00:00Z',
+    })
+  })
+
+  it('streakFreezeDates HỢP UNION với server (vé nghỉ đã dùng ở máy khác không bị mất)', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (
+        sql.includes(
+          'select learned, hard, srs, cefr_grammar, cefr_dialogues, cefr_unlocked, cefr_exams',
+        )
+      )
+        return { rows: [{ ...EMPTY_PROGRESS_ROW, streak_freeze_dates: ['2026-08-01'] }] }
+      return { rows: [] }
+    })
+    const resp = await handler(makeRequest({ streakFreezeDates: ['2026-08-05'] }))
+    expect(resp.status).toBe(200)
+    const params = insertedParams()
+    expect(JSON.parse(params[12] as string)).toEqual(['2026-08-01', '2026-08-05'])
+  })
+})
+
+describe('Ca biên: cột DB trả NULL và chưa có bản ghi nào', () => {
+  it('OPTIONS → 204 (preflight CORS), không cần đăng nhập', async () => {
+    const resp = await handler(new Request('http://localhost/api/progress', { method: 'OPTIONS' }))
+    expect(resp.status).toBe(204)
+    expect(query).not.toHaveBeenCalled()
+  })
+
+  it('GET với mọi cột NULL → trả mảng/đối tượng RỖNG, không trả null gây vỡ client', async () => {
+    // DB cũ (trước các migration thêm cột) trả null cho cột chưa từng ghi. Client
+    // (cloud.ts) ghi thẳng response vào localStorage nên null sẽ làm vỡ chỗ dùng .length.
+    query.mockResolvedValue({
+      rows: [
+        {
+          learned: null,
+          hard: null,
+          srs: null,
+          cefr_grammar: null,
+          cefr_dialogues: null,
+          cefr_unlocked: null,
+          cefr_exams: null,
+          placement: null,
+          weekly_goal: null,
+          achievements: null,
+        },
+      ],
+    })
+    const resp = await handler(
+      new Request('http://localhost/api/progress', {
+        method: 'GET',
+        headers: { Authorization: 'Bearer x' },
+      }),
+    )
+    expect(resp.status).toBe(200)
+    expect(await resp.json()).toEqual({
+      learned: [],
+      hard: [],
+      srs: {},
+      cefrGrammar: [],
+      cefrDialogues: [],
+      cefrUnlocked: [],
+      cefrExams: {},
+      placement: {},
+      weeklyGoal: {},
+      achievements: [],
+      settings: {},
+      streakFreezeDates: [],
+    })
+  })
+
+  it('POST khi CHƯA có bản ghi nào → tính là học thật và lưu được (không nổ vì existing undefined)', async () => {
+    query.mockResolvedValue({ rows: [] })
+    const resp = await handler(makeRequest({ learned: ['apple'] }))
+    expect(resp.status).toBe(200)
+    expect(findCall('grant_daily_bonus_rolling')).toBeTruthy()
+    expect(findCall('insert into english.learning_progress')).toBeTruthy()
+  })
+
+  it('POST khi bản ghi cũ có cột NULL → hợp nhất dùng mặc định rỗng, không nổ', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (sql.includes('select learned, hard, srs'))
+        return {
+          rows: [
+            {
+              ...EMPTY_PROGRESS_ROW,
+              learned: null,
+              srs: null,
+              cefr_exams: null,
+              placement: null,
+              weekly_goal: null,
+            },
+          ],
+        }
+      return { rows: [] }
+    })
+    const resp = await handler(makeRequest({ learned: ['apple'] }))
+    expect(resp.status).toBe(200)
+  })
+
+  it('cefrGrammar dài ra → cũng tính là học thật', async () => {
+    query.mockImplementation(async (sql: string) => {
+      if (sql.includes('select learned, hard, srs'))
+        return { rows: [{ ...EMPTY_PROGRESS_ROW, cefr_grammar: ['a1-u1'] }] }
+      return { rows: [] }
+    })
+    await handler(makeRequest({ cefrGrammar: ['a1-u1', 'a1-u2'] }))
+    expect(findCall('grant_daily_bonus_rolling')).toBeTruthy()
+  })
+
+  it('body không phải JSON hợp lệ → 400, không đụng DB', async () => {
+    const resp = await handler(
+      new Request('http://localhost/api/progress', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', Authorization: 'Bearer x' },
+        body: '{hong',
+      }),
+    )
+    expect(resp.status).toBe(400)
+    expect(query).not.toHaveBeenCalled()
   })
 })

@@ -1,19 +1,24 @@
-// progressMerge.ts — Hợp nhất tiến độ học ĐANG CÓ trên server với dữ liệu client gửi lên,
-// CHỈ cho các trường không có thao tác "bỏ đánh dấu" thật (srs, cefrExams, placement,
-// weeklyGoal) — an toàn tuyệt đối để hợp nhất kiểu "chỉ tốt lên" vì không hành động nào của
-// người dùng làm chúng nhỏ lại. Đây là lớp phòng thủ ở server (nguồn sự thật) cho đúng các
-// trường này, phòng khi một thiết bị/tab gửi lên dữ liệu CŨ trước khi kịp kéo (pull) dữ liệu
-// thật về (mất mạng, 2 tab cùng mở).
+// progressMerge.ts — Hợp nhất tiến độ học ĐANG CÓ trên server với dữ liệu client gửi lên.
+// Đây là lớp phòng thủ ở server (nguồn sự thật): dù client có gửi lên bản CŨ/thiếu (mất mạng,
+// 2 tab/2 THIẾT BỊ cùng học song song rồi đồng bộ gần như đồng thời), tiến độ đã lưu KHÔNG
+// BAO GIỜ bị mất — chỉ có thể tăng thêm.
 //
-// Các MẢNG có thao tác bỏ đánh dấu thật (learned/hard/cefrGrammar/cefrDialogues/
-// cefrUnlocked/achievements — unmarkLearned, toggleDifficult tắt, unmarkGrammarDone, xem
-// lib/vocab.ts + lib/cefrProgress.ts) KHÔNG hợp nhất ở đây: hợp (union) sẽ làm việc bỏ đánh
-// dấu không bao giờ có hiệu lực. Race cho các mảng này được chặn ở phía CLIENT
-// (apps/english/src/lib/progressSync.ts: pushProgress luôn chờ pullProgress đang chạy xong
-// trước khi đọc localStorage để gửi đi) — xem điều tra "mất dữ liệu học tập admin".
+// Quyết định 2026-08-13 (yêu cầu người dùng: tiến độ chỉ tăng, không giảm dù đổi máy/nhiều
+// thiết bị): learned/cefrGrammar/cefrDialogues/cefrUnlocked/achievements ĐỔI SANG hợp nhất
+// UNION (mergeArrayUnion) ở server thay vì ghi đè theo client. Đánh đổi đã xác nhận với
+// người dùng: các thao tác "bỏ đánh dấu" (unmarkLearned — hiện KHÔNG có nút bấm nào trong UI
+// gọi tới, chỉ còn trong test; unmarkGrammarDone — CÓ dùng ở CefrLessonViews.tsx) sẽ không còn
+// tác dụng LÂU DÀI: máy khác đồng bộ lại (còn giữ bản "đã đánh dấu" cũ) sẽ tự thêm lại mục vừa
+// bỏ. Riêng `hard` (nhãn từ khó) GIỮ NGUYÊN ghi đè — đây chỉ là lọc hiển thị, không phải tiến
+// độ học, có thể bật/tắt tự do theo máy gửi cuối.
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v)
+}
+
+/** Hợp (union) 2 mảng chuỗi — dùng cho các mảng "chỉ tăng": không phần tử nào bị mất. */
+export function mergeArrayUnion(a: string[], b: string[]): string[] {
+  return [...new Set([...a, ...b])]
 }
 
 /** SRS: giữ thẻ có số lần ôn (reps) cao hơn — coi là tiến bộ hơn. */

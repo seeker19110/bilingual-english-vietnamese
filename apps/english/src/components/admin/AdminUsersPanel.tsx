@@ -29,7 +29,14 @@ function formatDate(iso: string | null): string {
   return new Date(iso).toLocaleDateString('vi-VN')
 }
 
-export default function AdminUsersPanel() {
+interface AdminUsersPanelProps {
+  /** Gọi khi admin bấm 1 dòng user — để panel "Cấp gói tay" điền sẵn email. */
+  onSelectEmail?: (email: string) => void
+  /** Gọi mỗi khi tải xong 1 trang, để nơi khác (vd. datalist gợi ý email) dùng lại danh sách này. */
+  onEmailsChange?: (emails: string[]) => void
+}
+
+export default function AdminUsersPanel({ onSelectEmail, onEmailsChange }: AdminUsersPanelProps) {
   const toast = useToast()
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -58,6 +65,7 @@ export default function AdminUsersPanel() {
         if (cancelled) return
         setTotal(data.total)
         setUsers(data.users)
+        onEmailsChange?.(data.users.map((u) => u.email))
       } catch (err) {
         if (!cancelled) toast.error(`Tải danh sách thất bại: ${(err as Error).message}`)
       } finally {
@@ -97,6 +105,7 @@ export default function AdminUsersPanel() {
           <button
             type="button"
             onClick={handleSearchSubmit}
+            aria-label="Tìm kiếm"
             className="tap-44 shrink-0 flex items-center gap-2 rounded-xl bg-zinc-800 border border-zinc-700 text-white font-medium px-4"
           >
             <Search className="w-4 h-4" />
@@ -125,7 +134,14 @@ export default function AdminUsersPanel() {
               </thead>
               <tbody>
                 {users.map((u) => (
-                  <tr key={u.id} className="border-b border-zinc-800/60 last:border-0">
+                  <tr
+                    key={u.id}
+                    onClick={() => onSelectEmail?.(u.email)}
+                    className={`border-b border-zinc-800/60 last:border-0 ${
+                      onSelectEmail ? 'cursor-pointer hover:bg-zinc-800/40' : ''
+                    }`}
+                    title={onSelectEmail ? 'Bấm để điền email vào form Cấp gói tay' : undefined}
+                  >
                     <td className="px-4 py-2.5 text-zinc-200">{u.email}</td>
                     <td className="px-4 py-2.5">
                       <span

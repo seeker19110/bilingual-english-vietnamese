@@ -19,6 +19,7 @@ import { useAuth } from '../context/useAuth'
 import { useToast } from '@core/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
 import { useApiThrottle } from '../lib/useApiThrottle'
+import { useMountedRef } from '../lib/useMountedRef'
 import { useOnboarding } from '../lib/onboarding'
 import { callClaude, parseJson } from '../lib/ai'
 import { effectivePlan } from '../lib/promo'
@@ -372,6 +373,8 @@ export default function Chat() {
   const [evaluating, setEvaluating] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  // Chặn setState sau khi rời trang giữa lúc đang chờ AI trả lời (callClaude có thể mất vài giây)
+  const mountedRef = useMountedRef()
 
   // Rate limit chặn double-click/bão request — giới hạn lượt/ngày đã cap riêng
   // qua daily_usage nên throttle chỉ cần mức nhẹ (mặc định 3s của hook).
@@ -425,16 +428,20 @@ export default function Chat() {
         ...(targets ? { targetWords: targets } : {}),
       }
       saveChatSession(newSession)
+      incrementUsage(user.id, 'chatCount')
+      // Đã rời trang trong lúc chờ AI trả lời — vẫn lưu phiên/lượt dùng ở trên, chỉ
+      // bỏ qua các setState (component không còn mount để nhận cập nhật).
+      if (!mountedRef.current) return
       setSession(newSession)
       setLastIdx(0)
-      incrementUsage(user.id, 'chatCount')
       throttle() // Rate limit sau lần gọi thành công
     } catch (e) {
+      if (!mountedRef.current) return
       const msg = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
       setError(msg)
       toast.error(msg)
     }
-    setLoading(false)
+    if (mountedRef.current) setLoading(false)
   }
 
   // overrideText: dùng cho nút "AI phản hồi" (gợi ý tiếp) — không lấy từ ô nhập, và không
@@ -489,9 +496,7 @@ export default function Chat() {
         timestamp: Date.now(),
       }
       const final = { ...updated, messages: [...updated.messages, assistantMsg] }
-      setSession(final)
       saveChatSession(final)
-      setLastIdx(final.messages.length - 1)
       // Nếu gia sư có phần "✅ Nhận xét" → thu vào SỔ LỖI CÁ NHÂN. Chat không tách riêng
       // "câu đúng" nên chỉ lưu câu học viên (wrong) + giải thích; câu đúng để rỗng.
       if (!isSuggestionRequest) {
@@ -507,12 +512,19 @@ export default function Chat() {
         }
       }
       incrementUsage(user.id, 'chatCount')
+      // Đã rời trang trong lúc chờ AI trả lời — vẫn lưu phiên/lượt dùng ở trên, chỉ
+      // bỏ qua các setState (component không còn mount để nhận cập nhật).
+      if (!mountedRef.current) return
+      setSession(final)
+      setLastIdx(final.messages.length - 1)
       throttle() // Rate limit sau lần gọi thành công
     } catch (e) {
+      if (!mountedRef.current) return
       const msg = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
       setError(msg)
       toast.error(msg)
     }
+    if (!mountedRef.current) return
     setLoading(false)
     setTimeout(() => inputRef.current?.focus(), 50)
   }
@@ -559,15 +571,17 @@ export default function Chat() {
             ? 'AI trả về định dạng không đúng. Thử lại.'
             : 'AI returned invalid format. Please try again.',
         )
-      setEvaluation(data)
       incrementUsage(user.id, 'chatCount')
+      if (!mountedRef.current) return
+      setEvaluation(data)
       throttle()
     } catch (e) {
+      if (!mountedRef.current) return
       const msg = e instanceof Error ? e.message : isA ? 'Lỗi không xác định' : 'Unknown error'
       setError(msg)
       toast.error(msg)
     }
-    setEvaluating(false)
+    if (mountedRef.current) setEvaluating(false)
   }
 
   const userTurns = session?.messages.filter((m) => m.role === 'user').length ?? 0

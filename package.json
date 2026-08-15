@@ -10,6 +10,10 @@
   "engines": {
     "node": ">=22"
   },
+  "overrides": {
+    "js-yaml": "^4.3.1",
+    "nanoid": "^3.3.18"
+  },
   "scripts": {
     "dev": "vite",
     "build": "node scripts/gen-data-manifest.mjs && node scripts/gen-stories-json.mjs && tsc && tsc -p tsconfig.api.json && vite build && npm run build:server && npm run build --workspace=hub",
@@ -40,6 +44,7 @@
     "rank:patterns": "tsx scripts/rank-common-patterns.ts",
     "seed:all": "tsx scripts/seed-all.ts",
     "seed:verify": "tsx scripts/seed-all.ts --verify",
+    "seed:stories:gemini": "tsx scripts/seed-stories-gemini-tts.ts",
     "migrate:pg": "tsx scripts/run-pg-migrations.ts",
     "backup:r2": "tsx scripts/backup-pg-to-r2.ts",
     "restore:r2": "tsx scripts/restore-pg-from-r2.ts",

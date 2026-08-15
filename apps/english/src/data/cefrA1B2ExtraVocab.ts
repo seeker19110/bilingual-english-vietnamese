@@ -4,7 +4,7 @@
 //
 // KHÔNG sửa file .json bằng tay — chạy lại script sinh để cập nhật.
 
-import type { Circle } from './curriculum'
+import type { Circle } from './curriculumTypes'
 import type { VocabUnitDef } from './cefrC1C2Vocab'
 import data from './cefrA1B2ExtraVocab.json'
 
