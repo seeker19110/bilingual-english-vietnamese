@@ -48,9 +48,21 @@ Grep, chưa phải audit đầy đủ của Phase 00):
   (driver local/R2 qua `STORAGE_DRIVER`, đã dùng thật trong production).
 - Structured logging (Phase 01 mục 6) — **CÓ MỘT PHẦN**: `packages/core-db/logger.ts` (log theo
   cấp độ `LOG_LEVEL` + tiền tố module), nhưng CHƯA có correlation ID / request ID / metrics.
-- `AIProvider.generate()` gateway thống nhất (Phase 01 mục 3) — **CHƯA CÓ** dạng abstraction hình
-  thức: `packages/core-ai/ai.ts`/`tts.ts`/`stt.ts` gọi thẳng từng provider (Anthropic/Gemini/Groq/
-  Google TTS/ElevenLabs), mỗi nơi tự retry/timeout riêng, không qua 1 interface chung.
+- `AIProvider.generate()` gateway thống nhất (Phase 01 mục 3) — **ĐÃ LÀM MỘT PHẦN (2026-08-15)**,
+  phạm vi CỐ Ý thu hẹp vì đây là chỗ rủi ro nhất (đụng trực tiếp đếm lượt/tiền, `ai.ts` có 34 test
+  ghim chặt hành vi fallback Groq→Anthropic→Gemini + hoàn lượt). Đã tách:
+  `packages/core-ai/chatProviders.ts` — `callGroqChat()`/`callAnthropicChat()`, MỖI hàm CHỈ gọi
+  HTTP tới 1 provider rồi trả kết quả dạng discriminated union (`success`/`network_error`/
+  `http_error`/`malformed_body`; Anthropic trả `response{status,bodyText}` NGUYÊN VĂN để giữ đúng
+  hành vi forward-thẳng cho client). Gemini đã có sẵn dạng này từ trước (`api/_lib/geminiApi.ts`).
+  `ai.ts` chuyển sang gọi 3 hàm này thay vì `fetch` thẳng — **logic quyết định (thứ tự fallback,
+  khi nào hoàn lượt, status trả về) giữ NGUYÊN 100%, không rút gọn**. Xác minh: toàn bộ
+  `ai.test.ts` (35 test) xanh SAU KHI refactor mà KHÔNG sửa 1 dòng test nào — bằng chứng hành vi
+  quan sát được không đổi. 12 test mới cho `chatProviders.ts`.
+  **Còn để ngỏ, không làm ở đợt này**: `tts.ts`/`stt.ts` mỗi cái đã tự có lớp chọn provider nội bộ
+  riêng (không dùng chung interface `chatProviders.ts`) — hợp nhất thật sự thành 1
+  `AIProvider.generate()` cho cả chat/TTS/STT là việc lớn hơn, để dành cho phase sau khi cần thêm
+  provider mới, tránh đổi 3 luồng đang chạy thật cùng lúc.
 - Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **ĐÃ
   LÀM (2026-08-15)**: `packages/core-config/env.ts` (`EnvSchema` Zod cho ~25 biến hay dùng nhất,
   `getEnv()`/`parseEnv()`/`describeEnv()`) + `packages/core-config/secrets.ts`

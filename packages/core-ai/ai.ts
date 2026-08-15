@@ -19,7 +19,7 @@ import {
 } from '../core-auth/security.js'
 import { checkAndConsumeUsage, refundUsage, type UsageMode } from '../core-billing/usage.js'
 import { callGemini } from '../../api/_lib/geminiApi.js'
-import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
+import { callGroqChat, callAnthropicChat } from './chatProviders.js'
 import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
 import { createLogger } from '../core-db/logger.js'
 import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
@@ -37,31 +37,6 @@ const MAX_TOKENS_LIMIT = 2048 // tối đa cho phép (writing cần 2048, chat 1
 const MAX_BODY_BYTES = 64 * 1024 // 64KB — đủ cho 1 cuộc hội thoại dài
 const MAX_MSG_CONTENT = 2000 // mỗi tin nhắn không quá 2000 ký tự
 const MAX_TOTAL_CONTENT = 40000 // tổng nội dung messages không quá 40000 ký tự
-
-// Đọc text trả lời từ body JSON của Groq (chuẩn OpenAI: choices[0].message.content).
-// Ném Error với message cụ thể khi cấu trúc sai — nơi gọi bắt lỗi để hoàn lượt + trả 500.
-function parseGroqText(groqData: unknown): string {
-  if (!groqData || typeof groqData !== 'object' || !('choices' in groqData)) {
-    throw new Error('Groq API returned invalid response structure')
-  }
-  const choices = (groqData as { choices?: unknown }).choices
-  if (!Array.isArray(choices) || choices.length === 0) {
-    throw new Error('Groq API returned empty choices')
-  }
-  const choice = choices[0]
-  if (typeof choice !== 'object' || !choice || !('message' in choice)) {
-    throw new Error('Groq API returned invalid choice structure')
-  }
-  const message = (choice as { message?: unknown }).message
-  if (typeof message !== 'object' || !message || !('content' in message)) {
-    throw new Error('Groq API returned invalid message structure')
-  }
-  const text = (message as { content?: unknown }).content
-  if (typeof text !== 'string') {
-    throw new Error('Groq API returned non-string content')
-  }
-  return text
-}
 
 // Xử lý 1 tin nhắn — object có field `content` thì cắt bớt content (nếu là string) + giữ
 // nguyên role; còn lại (không phải object / không có content) thì giữ nguyên KHÔNG đổi. Handler
@@ -234,78 +209,51 @@ export default async function handler(req: Request): Promise<Response> {
     // provider nào khác, giữ NGUYÊN status/hành vi gốc (trước đây Groq luôn là nhánh cuối).
     const canFallback = Boolean(anthropicKey || geminiKey)
 
-    // Groq nhận system như 1 message role="system" ở đầu danh sách
-    const groqMessages = [
-      ...(system ? [{ role: 'system', content: system }] : []),
-      ...sanitizedMessages,
-    ]
-    let groqResp: Response | undefined
-    const groqStartedAt = Date.now()
     log.debug(`gọi Groq bắt đầu, mode=${mode}`)
-    try {
-      groqResp = await withConcurrencyLimit('groq', () =>
-        fetchWithTimeout(
-          'https://api.groq.com/openai/v1/chat/completions',
-          {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${groqKey}`, 'content-type': 'application/json' },
-            body: JSON.stringify({
-              model: GROQ_CHAT_MODEL,
-              max_tokens: maxTokens,
-              messages: groqMessages,
-            }),
-          },
-          AI_TIMEOUT_MS,
-        ),
-      )
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : String(err)
-      log.warn(`Groq lỗi sau ${Date.now() - groqStartedAt}ms: ${errMsg}`)
+    const groqResult = await withConcurrencyLimit('groq', () =>
+      callGroqChat(groqKey, GROQ_CHAT_MODEL, system, sanitizedMessages, maxTokens, AI_TIMEOUT_MS),
+    )
+    log.debug(`Groq xong sau ${groqResult.latencyMs}ms, kind=${groqResult.kind}`)
+
+    if (groqResult.kind === 'network_error') {
+      log.warn(`Groq lỗi mạng: ${groqResult.message}`)
       if (!canFallback) {
         await refundUsage(authResult.userId, mode, gate.day)
         return jsonResponse(
-          { error: { message: `Groq lỗi: ${errMsg.slice(0, 200)}` } },
+          { error: { message: `Groq lỗi: ${groqResult.message.slice(0, 200)}` } },
           504,
           allHeaders,
         )
       }
       log.warn('Groq lỗi — chuyển sang provider dự phòng (Anthropic/Gemini)')
-    }
-
-    if (groqResp) {
-      log.debug(`Groq phản hồi sau ${Date.now() - groqStartedAt}ms, status=${groqResp.status}`)
-
-      if (!groqResp.ok) {
-        const detail = await groqResp.text().catch(() => '')
-        if (!canFallback) {
-          await refundUsage(authResult.userId, mode, gate.day)
-          return jsonResponse(
-            { error: { message: `Groq lỗi (${groqResp.status}): ${detail.slice(0, 200)}` } },
-            groqResp.status,
-            allHeaders,
-          )
-        }
-        log.warn('Groq lỗi — chuyển sang provider dự phòng (Anthropic/Gemini)')
-      } else {
-        // Parse + kiểm tra cấu trúc trong try/catch: nếu Groq trả 200 nhưng body hỏng
-        // (không phải JSON / thiếu field), người dùng KHÔNG nhận được câu trả lời →
-        // phải hoàn lượt giống các nhánh lỗi khác.
-        try {
-          // Chuẩn hoá về đúng format Anthropic mà frontend (src/lib/ai.ts) đang đọc:
-          // data.content[0].text
-          const text = parseGroqText(await groqResp.json())
-          return jsonResponse({ content: [{ type: 'text', text }] }, 200, allHeaders)
-        } catch (err) {
-          const errMsg = err instanceof Error ? err.message : String(err)
-          if (!canFallback) {
-            await refundUsage(authResult.userId, mode, gate.day)
-            return jsonResponse({ error: { message: errMsg } }, 500, allHeaders)
-          }
-          log.warn(
-            `Groq trả body hỏng (${errMsg}) — chuyển sang provider dự phòng (Anthropic/Gemini)`,
-          )
-        }
+    } else if (groqResult.kind === 'http_error') {
+      if (!canFallback) {
+        await refundUsage(authResult.userId, mode, gate.day)
+        return jsonResponse(
+          {
+            error: {
+              message: `Groq lỗi (${groqResult.status}): ${groqResult.bodyText.slice(0, 200)}`,
+            },
+          },
+          groqResult.status,
+          allHeaders,
+        )
       }
+      log.warn('Groq lỗi — chuyển sang provider dự phòng (Anthropic/Gemini)')
+    } else if (groqResult.kind === 'malformed_body') {
+      // Groq trả 200 nhưng body hỏng (không phải JSON / thiếu field): người dùng KHÔNG nhận
+      // được câu trả lời → phải hoàn lượt giống các nhánh lỗi khác.
+      if (!canFallback) {
+        await refundUsage(authResult.userId, mode, gate.day)
+        return jsonResponse({ error: { message: groqResult.message } }, 500, allHeaders)
+      }
+      log.warn(
+        `Groq trả body hỏng (${groqResult.message}) — chuyển sang provider dự phòng (Anthropic/Gemini)`,
+      )
+    } else {
+      // Chuẩn hoá về đúng format Anthropic mà frontend (apps/english/src/lib/ai.ts) đang đọc:
+      // data.content[0].text
+      return jsonResponse({ content: [{ type: 'text', text: groqResult.text }] }, 200, allHeaders)
     }
   }
 
@@ -315,60 +263,44 @@ export default async function handler(req: Request): Promise<Response> {
     // Anthropic luôn là nhánh cuối): forward thẳng status/body từ Anthropic, không bọc JSON.
     const canFallback = Boolean(geminiKey)
 
-    const safeBody = {
-      model: ALLOWED_MODEL,
-      max_tokens: maxTokens,
-      system,
-      messages: sanitizedMessages,
-    }
-
-    let resp: Response | undefined
-    const anthropicStartedAt = Date.now()
     log.debug(`gọi Anthropic bắt đầu, mode=${mode}`)
-    try {
-      resp = await withConcurrencyLimit('anthropic', () =>
-        fetchWithTimeout(
-          'https://api.anthropic.com/v1/messages',
-          {
-            method: 'POST',
-            headers: {
-              'x-api-key': anthropicKey,
-              'anthropic-version': '2023-06-01',
-              'content-type': 'application/json',
-            },
-            body: JSON.stringify(safeBody),
-          },
-          AI_TIMEOUT_MS,
-        ),
-      )
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : String(err)
-      log.warn(`Anthropic lỗi sau ${Date.now() - anthropicStartedAt}ms: ${errMsg}`)
+    const anthropicResult = await withConcurrencyLimit('anthropic', () =>
+      callAnthropicChat(
+        anthropicKey,
+        ALLOWED_MODEL,
+        system,
+        sanitizedMessages,
+        maxTokens,
+        AI_TIMEOUT_MS,
+      ),
+    )
+
+    if (anthropicResult.kind === 'network_error') {
+      log.warn(`Anthropic lỗi mạng: ${anthropicResult.message}`)
       if (!canFallback) {
         await refundUsage(authResult.userId, mode, gate.day)
         return jsonResponse(
-          { error: { message: `Anthropic lỗi: ${errMsg.slice(0, 200)}` } },
+          { error: { message: `Anthropic lỗi: ${anthropicResult.message.slice(0, 200)}` } },
           504,
           allHeaders,
         )
       }
       log.warn('Anthropic lỗi — chuyển sang provider dự phòng (Gemini)')
-    }
-
-    if (resp) {
+    } else {
       log.debug(
-        `Anthropic phản hồi sau ${Date.now() - anthropicStartedAt}ms, status=${resp.status}`,
+        `Anthropic phản hồi sau ${anthropicResult.latencyMs}ms, status=${anthropicResult.status}`,
       )
-
-      if (!resp.ok && canFallback) {
-        log.warn(`Anthropic trả lỗi (${resp.status}) — chuyển sang provider dự phòng (Gemini)`)
+      const respOk = anthropicResult.status >= 200 && anthropicResult.status < 300
+      if (!respOk && canFallback) {
+        log.warn(
+          `Anthropic trả lỗi (${anthropicResult.status}) — chuyển sang provider dự phòng (Gemini)`,
+        )
       } else {
         // Thành công HOẶC không còn provider dự phòng → forward thẳng status/body gốc, giữ
         // đúng hành vi cũ (kể cả lỗi 4xx/5xx của Anthropic, không bọc lại thành JSON riêng).
-        if (!resp.ok) await refundUsage(authResult.userId, mode, gate.day)
-        const data = await resp.text()
-        return new Response(data, {
-          status: resp.status,
+        if (!respOk) await refundUsage(authResult.userId, mode, gate.day)
+        return new Response(anthropicResult.bodyText, {
+          status: anthropicResult.status,
           headers: { 'content-type': 'application/json', ...allHeaders },
         })
       }
