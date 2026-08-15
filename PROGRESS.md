@@ -17,6 +17,54 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+## Lộ trình mới: English Tutor OS (đặc tả 2026-08-15)
+
+**Hợp nhất tại đây (2026-08-15).** Nhánh `spec/english-tutor-os-v1` (merge `61ee30e`) từng tạo
+`docs/OS_PROGRESS.md` riêng để không đụng lịch sử phía dưới. Nay gộp về ĐÚNG MỘT nguồn theo dõi
+tiến độ (đúng vai trò của `PROGRESS.md` ở mục 2 `CLAUDE.md`) — tránh 2 file tự trôi lệch nhau.
+`docs/OS_PROGRESS.md` đã xoá, nội dung dồn vào mục này.
+
+**Kế hoạch:** `docs/MASTER_SPEC.md` (10 nguyên tắc kiến trúc bất biến + 10 layer mục tiêu) + 46 file
+đặc tả `docs/phases/00-research-baseline.md` → `45-final-audit.md` (mục lục: `docs/phases/README.md`).
+Mục tiêu dài hạn: đưa app từ "web app học tiếng AI" hiện tại lên kiến trúc "Adaptive AI English
+Tutor OS" (learner model → diagnostic → adaptive curriculum → tutor → assessment → evidence →
+mastery → memory/SRS → next plan), làm DẦN từng phase — mỗi phase có DoD/test/commit riêng, KHÔNG
+viết lại app một lần. Đây là kế hoạch nhiều tháng, cần xin xác nhận người dùng ở mỗi cổng chuyển
+giai đoạn (đúng mục 3 `CLAUDE.md`), không tự ý chạy một mạch.
+
+**Tiến độ thực thi:** **Phase 00 — Research & Baseline** ĐANG LÀM (2026-08-15) — đã chạy baseline
+build/typecheck/lint/test (sau `npm ci` để khớp lockfile) + dependency graph qua `codemap`, ghi ở
+`docs/research/baseline.md`. Kết quả: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · test 3132/3132 ✅ ·
+0 chu trình import. Còn thiếu: đo latency/cost AI thật (cần key thật, chưa làm trong sandbox — xem
+mục 4 file baseline) và chạy E2E cục bộ (đang dựa vào CI đã gate sẵn). **CHƯA đóng Phase 00** — cần
+người dùng xác nhận trước khi mở Phase 01 (đụng thẳng `pgPool.ts`/`ai.ts` — hotspot rủi ro cao, xem
+bảng trong baseline.md). Không phase nào được đánh dấu xong chỉ vì có tài liệu — phải đạt Definition
+of Done ghi trong `MASTER_SPEC.md` (code + test + eval + docs + commit thật).
+
+**Đối chiếu nhanh với hiện trạng thật** (để Phase 00/01 không làm lại việc đã có — tra nhanh bằng
+Grep, chưa phải audit đầy đủ của Phase 00):
+
+- Storage abstraction cho audio (Phase 01 mục 5) — **ĐÃ CÓ**: `packages/core-ai/fileStorage.ts`
+  (driver local/R2 qua `STORAGE_DRIVER`, đã dùng thật trong production).
+- Structured logging (Phase 01 mục 6) — **CÓ MỘT PHẦN**: `packages/core-db/logger.ts` (log theo
+  cấp độ `LOG_LEVEL` + tiền tố module), nhưng CHƯA có correlation ID / request ID / metrics.
+- `AIProvider.generate()` gateway thống nhất (Phase 01 mục 3) — **CHƯA CÓ** dạng abstraction hình
+  thức: `packages/core-ai/ai.ts`/`tts.ts`/`stt.ts` gọi thẳng từng provider (Anthropic/Gemini/Groq/
+  Google TTS/ElevenLabs), mỗi nơi tự retry/timeout riêng, không qua 1 interface chung.
+- Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **CHƯA
+  CÓ**: đọc `process.env.X` rải rác toàn repo (20+ file), khớp đúng nợ kỹ thuật Zod đã ghi ở
+  `CLAUDE.md` mục 4.1.
+- DB transaction helper dùng chung (Phase 01 mục 2) — `packages/core-db/pgPool.ts` có pool sẵn;
+  còn helper transaction chung hay mỗi handler tự `BEGIN/COMMIT` thì CHƯA xác minh — việc của
+  Phase 00.
+- Monorepo đã tách một phần (`packages/core-db`, `packages/core-ai`, `packages/core-auth`,
+  `packages/core-billing`) — tiến xa hơn baseline mà đặc tả OS giả định, xem ADR-0001 +
+  `docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md`.
+
+**Việc còn lại của Phase 00** (theo `docs/phases/00-research-baseline.md`): chạy build/typecheck/
+lint/test lấy baseline chính xác, đo latency/token/cost AI thật, dựng dependency graph, ghi
+`docs/research/baseline.md`. Chưa làm ở bước này.
+
 ### Seed phát âm TIẾNG VIỆT (chiều B) + nới luật input cho nghĩa nhiều vế (2026-08-13, nhánh `claude/tts-cache-voice-i1plxb-2`)
 
 Người dùng đính chính (đúng): **cả 16 giọng đã seed đủ** — 12.168 từ × 16 giọng (14 Chirp3-HD +

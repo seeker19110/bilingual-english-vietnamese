@@ -37,6 +37,10 @@ Ba chế độ:
 - `docs/framework/AP-DUNG-vao-du-an-co-san.md` — cách áp khung lên dự án có sẵn (đang theo runbook này).
 - `docs/deploy-vps-ubuntu.md` — hướng dẫn deploy VPS. ADR (quyết định kiến trúc lớn): đặt ở `docs/adr/` khi có.
 - `docs/ke-hoach-khoi-phuc-su-co-server.md` — **quy trình khôi phục khi server sập/gặp sự cố** (chẩn đoán nhanh → kịch bản xử lý → restore backup → post-mortem). Đọc khi có sự cố thật hoặc chuẩn bị runbook. Khác `docs/DEPLOY.md` (deploy + fix nhanh) và `docs/rollback-runbook.md` (rollback cấu hình theo PR cụ thể).
+- `docs/MASTER_SPEC.md` + `docs/phases/00..45-*.md` — đặc tả lộ trình nâng cấp kiến trúc lớn "English
+  Tutor OS" (45 giai đoạn, nhiều tháng). Tiến độ theo dõi CHUNG trong `PROGRESS.md` mục "Lộ trình mới:
+  English Tutor OS" (không có file tiến độ riêng). Đọc khi làm việc thuộc lộ trình này; chưa bắt đầu
+  thực thi (mới có đặc tả) — mỗi cổng chuyển giai đoạn vẫn cần xác nhận người dùng theo mục 3.
 
 > Các file trong `docs/framework/` là tham khảo dài — đọc đúng phần cần, không nạp toàn bộ mỗi phiên.
 
