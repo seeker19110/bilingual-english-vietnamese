@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { createLogger } from './logger'
+import { createLogger, createRequestLogger } from './logger'
+import { resetSecretCache } from '../core-config/secrets.js'
 
 const originalLogLevel = process.env.LOG_LEVEL
 
@@ -64,5 +65,50 @@ describe('createLogger', () => {
     const log = createLogger('x')
     expect(() => log.debug('vẫn chạy bình thường')).not.toThrow()
     expect(console.log).toHaveBeenCalledWith('[x] vẫn chạy bình thường')
+  })
+
+  describe('che bí mật (Phase 01 mục 7 — secrets never enter logs)', () => {
+    const originalKey = process.env.ANTHROPIC_API_KEY
+
+    beforeEach(() => {
+      process.env.ANTHROPIC_API_KEY = 'sk-ant-bi-mat-that-su'
+      resetSecretCache()
+    })
+
+    afterEach(() => {
+      if (originalKey === undefined) delete process.env.ANTHROPIC_API_KEY
+      else process.env.ANTHROPIC_API_KEY = originalKey
+      resetSecretCache()
+    })
+
+    it('secret lỡ tay đưa vào message log bị thay bằng ***, ở mọi cấp độ', () => {
+      const log = createLogger('agent')
+      log.error('gọi API lỗi với key=sk-ant-bi-mat-that-su')
+      expect(console.error).toHaveBeenCalledWith('[agent] gọi API lỗi với key=***')
+      expect(console.error).not.toHaveBeenCalledWith(
+        expect.stringContaining('sk-ant-bi-mat-that-su'),
+      )
+    })
+
+    it('message không chứa secret thì giữ nguyên', () => {
+      const log = createLogger('agent')
+      log.info('câu log bình thường')
+      expect(console.log).toHaveBeenCalledWith('[agent] câu log bình thường')
+    })
+  })
+})
+
+describe('createRequestLogger', () => {
+  it('gắn cả tiền tố module lẫn requestId vào message, dạng [module#id]', () => {
+    const log = createRequestLogger('agent', 'a1b2c3d4')
+    log.info('gọi Groq bắt đầu')
+    expect(console.log).toHaveBeenCalledWith('[agent#a1b2c3d4] gọi Groq bắt đầu')
+  })
+
+  it('vẫn tôn trọng LOG_LEVEL và che secret giống createLogger thường', () => {
+    process.env.LOG_LEVEL = 'info'
+    const log = createRequestLogger('agent', 'a1b2c3d4')
+    log.debug('bị ẩn')
+    expect(console.log).not.toHaveBeenCalled()
   })
 })

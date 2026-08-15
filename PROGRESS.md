@@ -17,6 +17,114 @@ toàn site + coverage ratchet + bundle-size budget) của `docs/framework/AP-DUN
 `docs/migration-thoat-ly-supabase.md`.** Không có việc code nào đang mở; còn vài thao tác THỦ CÔNG
 trên VPS (xem "Cần làm tay").
 
+## Lộ trình mới: English Tutor OS (đặc tả 2026-08-15)
+
+**Hợp nhất tại đây (2026-08-15).** Nhánh `spec/english-tutor-os-v1` (merge `61ee30e`) từng tạo
+`docs/OS_PROGRESS.md` riêng để không đụng lịch sử phía dưới. Nay gộp về ĐÚNG MỘT nguồn theo dõi
+tiến độ (đúng vai trò của `PROGRESS.md` ở mục 2 `CLAUDE.md`) — tránh 2 file tự trôi lệch nhau.
+`docs/OS_PROGRESS.md` đã xoá, nội dung dồn vào mục này.
+
+**Kế hoạch:** `docs/MASTER_SPEC.md` (10 nguyên tắc kiến trúc bất biến + 10 layer mục tiêu) + 46 file
+đặc tả `docs/phases/00-research-baseline.md` → `45-final-audit.md` (mục lục: `docs/phases/README.md`).
+Mục tiêu dài hạn: đưa app từ "web app học tiếng AI" hiện tại lên kiến trúc "Adaptive AI English
+Tutor OS" (learner model → diagnostic → adaptive curriculum → tutor → assessment → evidence →
+mastery → memory/SRS → next plan), làm DẦN từng phase — mỗi phase có DoD/test/commit riêng, KHÔNG
+viết lại app một lần. Đây là kế hoạch nhiều tháng, cần xin xác nhận người dùng ở mỗi cổng chuyển
+giai đoạn (đúng mục 3 `CLAUDE.md`), không tự ý chạy một mạch.
+
+**Tiến độ thực thi:** **Phase 00 — Research & Baseline** ĐANG LÀM (2026-08-15) — đã chạy baseline
+build/typecheck/lint/test (sau `npm ci` để khớp lockfile) + dependency graph qua `codemap`, ghi ở
+`docs/research/baseline.md`. Kết quả: build ✅ · typecheck ✅ · lint 0 cảnh báo ✅ · test 3132/3132 ✅ ·
+0 chu trình import. Còn thiếu: đo latency/cost AI thật (cần key thật, chưa làm trong sandbox — xem
+mục 4 file baseline) và chạy E2E cục bộ (đang dựa vào CI đã gate sẵn). **CHƯA đóng Phase 00** — cần
+người dùng xác nhận trước khi mở Phase 01 (đụng thẳng `pgPool.ts`/`ai.ts` — hotspot rủi ro cao, xem
+bảng trong baseline.md). Không phase nào được đánh dấu xong chỉ vì có tài liệu — phải đạt Definition
+of Done ghi trong `MASTER_SPEC.md` (code + test + eval + docs + commit thật).
+
+**Đối chiếu nhanh với hiện trạng thật** (để Phase 00/01 không làm lại việc đã có — tra nhanh bằng
+Grep, chưa phải audit đầy đủ của Phase 00):
+
+- Storage abstraction cho audio (Phase 01 mục 5) — **ĐÃ CÓ**: `packages/core-ai/fileStorage.ts`
+  (driver local/R2 qua `STORAGE_DRIVER`, đã dùng thật trong production).
+- Structured logging (Phase 01 mục 6) — **CÓ MỘT PHẦN**: `packages/core-db/logger.ts` (log theo
+  cấp độ `LOG_LEVEL` + tiền tố module), nhưng CHƯA có correlation ID / request ID / metrics.
+- `AIProvider.generate()` gateway thống nhất (Phase 01 mục 3) — **ĐÃ LÀM MỘT PHẦN (2026-08-15)**,
+  phạm vi CỐ Ý thu hẹp vì đây là chỗ rủi ro nhất (đụng trực tiếp đếm lượt/tiền, `ai.ts` có 34 test
+  ghim chặt hành vi fallback Groq→Anthropic→Gemini + hoàn lượt). Đã tách:
+  `packages/core-ai/chatProviders.ts` — `callGroqChat()`/`callAnthropicChat()`, MỖI hàm CHỈ gọi
+  HTTP tới 1 provider rồi trả kết quả dạng discriminated union (`success`/`network_error`/
+  `http_error`/`malformed_body`; Anthropic trả `response{status,bodyText}` NGUYÊN VĂN để giữ đúng
+  hành vi forward-thẳng cho client). Gemini đã có sẵn dạng này từ trước (`api/_lib/geminiApi.ts`).
+  `ai.ts` chuyển sang gọi 3 hàm này thay vì `fetch` thẳng — **logic quyết định (thứ tự fallback,
+  khi nào hoàn lượt, status trả về) giữ NGUYÊN 100%, không rút gọn**. Xác minh: toàn bộ
+  `ai.test.ts` (35 test) xanh SAU KHI refactor mà KHÔNG sửa 1 dòng test nào — bằng chứng hành vi
+  quan sát được không đổi. 12 test mới cho `chatProviders.ts`.
+  **Còn để ngỏ, không làm ở đợt này**: `tts.ts`/`stt.ts` mỗi cái đã tự có lớp chọn provider nội bộ
+  riêng (không dùng chung interface `chatProviders.ts`) — hợp nhất thật sự thành 1
+  `AIProvider.generate()` cho cả chat/TTS/STT là việc lớn hơn, để dành cho phase sau khi cần thêm
+  provider mới, tránh đổi 3 luồng đang chạy thật cùng lúc.
+- Chuẩn hoá lỗi domain/application (Phase 01 mục 4) — **ĐÃ LÀM MỘT PHẦN (2026-08-15)**:
+  `packages/core-errors/appError.ts` — `AppError` + 6 lớp con (`ValidationError`/
+  `UnauthorizedError`/`ForbiddenError`/`NotFoundError`/`ConflictError`/`RateLimitError`), mỗi lớp
+  tự mang `status` HTTP + `code` ổn định; `isAppError()`/`toErrorBody()` để handler chuyển thành
+  JSON. **CỐ Ý CHỈ THÊM, không retrofit** — hiện có **257 chỗ** trong `api/`/`packages/` tự viết
+  tay `jsonResponse({error:...}, status)` với 2 hình dạng khác nhau (`{error:'chuỗi'}` ở đa số
+  handler cũ, `{error:{message}}` ở `ai.ts`); sửa hết 257 chỗ cùng lúc là breaking-change phạm vi
+  rộng, đúng loại việc CLAUDE.md mục 12 yêu cầu dừng hỏi trước — không tự làm. Module mới là nền
+  để domain engine của phase OS sau (Evidence/Mastery/Diagnostic...) dùng ngay từ đầu, và để handler
+  cũ chuyển dần khi có PR đụng tới, không phải retrofit hàng loạt. 11 test, coverage 100%.
+- Correlation ID / request ID / metrics cơ bản (Phase 01 mục 6) — **ĐÃ LÀM (2026-08-15)**:
+  `packages/core-db/requestId.ts` (`createRequestId()` — 8 ký tự đầu UUID v4, không phải khoá bảo
+  mật, chỉ để lọc log 1 request) + `packages/core-db/logger.ts` thêm `createRequestLogger(prefix,
+requestId)` (tương thích ngược, không đổi `createLogger()` cũ) + `packages/core-db/metrics.ts`
+  (`incrementCounter`/`recordLatency`/`getMetricsSnapshot` — đếm trong bộ nhớ, KHÔNG phải
+  observability thật, reset khi restart PM2; export/dashboard thật là việc Phase 35). Đã áp dụng
+  THẬT vào `packages/core-ai/ai.ts` (mỗi request `/api/agent` có `requestId` riêng gắn vào mọi
+  dòng log dạng `[agent#a1b2c3d4]`, và đếm `ai_groq_ms`/`ai_groq_<kind>`/`ai_anthropic_ms`/
+  `ai_anthropic_status_<code>`/`ai_gemini_ms`/`ai_gemini_success`/`ai_gemini_error`) — CHỈ đổi nội
+  dung log/số liệu nội bộ, KHÔNG đổi response trả client, nên vẫn an toàn với 35 test đã ghim hành
+  vi (chạy lại `ai.test.ts` không sửa 1 dòng, vẫn xanh). 24 test mới (`requestId.test.ts` 4 ·
+  `metrics.test.ts` 9 · thêm 2 vào `logger.test.ts` cho `createRequestLogger`, dư ra từ đợt trước
+  còn `chatProviders.test.ts` 12 + `appError.test.ts` 11), coverage 3 file mới 100%.
+
+**Phase 01 "Foundation OS" COI NHƯ HOÀN TẤT ở mức "đã có nền, migrate dần"** — cả 7 mục đều có ít
+nhất một phần triển khai thật + test (mục 1/2/6/7 xong trọn vẹn cho phạm vi đã chọn; mục 3/4 CỐ Ý
+thu hẹp phạm vi vì đụng 71–257 điểm gọi hiện có, rủi ro cao nếu retrofit hàng loạt; mục 5 vốn đã có
+sẵn từ trước). Không tự ý coi đây là "Definition of Done" đầy đủ theo nghĩa khắt khe của
+`MASTER_SPEC.md` (DoD đòi migrate hết, không chỉ thêm nền) — ghi rõ ở đây để phiên sau biết ranh
+giới thật, tránh tưởng nhầm đã xong 100%.
+
+- Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **ĐÃ
+  LÀM (2026-08-15)**: `packages/core-config/env.ts` (`EnvSchema` Zod cho ~25 biến hay dùng nhất,
+  `getEnv()`/`parseEnv()`/`describeEnv()`) + `packages/core-config/secrets.ts`
+  (`isSecretEnvKey`/`redactSecrets` — nhận theo GIÁ TRỊ khớp env thật, không đoán theo mẫu chuỗi).
+  **Cố ý KHÔNG bắt buộc** (mọi trường optional/có `.catch()` mặc định, sao y hệt mặc định cũ trong
+  code) — không được để thiếu 1 biến làm sập cả server đang chạy thật. Chưa migrate các chỗ đọc
+  `process.env.X` trực tiếp sang dùng `getEnv()` — module mới chỉ THÊM lối đi có kiểm, chưa thay
+  thế; làm dần ở PR sau, không đổi 71 lượt đọc cùng lúc (rủi ro cao, khó review).
+  `redactSecrets()` đã nối vào `packages/core-db/logger.ts` (mọi log qua `createLogger()` giờ tự
+  che secret nếu lỡ lọt vào message) — đóng luôn Phase 01 mục 7. 42 test mới (`secrets.test.ts` 20
+  · `env.test.ts` 14 · thêm 2 vào `logger.test.ts`), coverage 2 file mới 100%.
+- DB transaction helper dùng chung (Phase 01 mục 2) — **ĐÃ LÀM (2026-08-15)**:
+  `packages/core-db/transaction.ts` — `withTransaction(pool, fn)` bọc đúng trình tự
+  `connect → begin → fn → commit`, tự `rollback` khi `fn` ném lỗi (rollback tự nó lỗi thì KHÔNG
+  che mất lỗi nghiệp vụ gốc), luôn `release()` ở `finally`. Trước đó cả repo chỉ có ĐÚNG 1 chỗ
+  dùng transaction thật (`api/admin-plan-features.ts` PUT — thêm tính năng mới + gán mặc định 3
+  gói) — đã chuyển sang dùng helper, đổi từ "rollback tay khi key trùng" sang "trả cờ rồi để
+  transaction tự commit" (hành vi giống hệt: 0 dòng bị đổi trong cả 2 cách vì `ON CONFLICT DO
+NOTHING`). 6 test cho `withTransaction` (thành công, `fn` lỗi → rollback, luôn release kể cả
+  lỗi, rollback tự nó lỗi vẫn giữ đúng lỗi gốc, trả đúng kiểu, dùng đúng client được cấp) + sửa 1
+  test cũ ở `admin-plan-features.test.ts` cho khớp hành vi mới (assert không có insert vào
+  `plan_feature_flags`, thay vì assert gọi `rollback`). `codemap -- impact` xác nhận sửa
+  `admin-plan-features.ts` chỉ ảnh hưởng đúng file test của nó + `server.ts`.
+- Monorepo đã tách một phần (`packages/core-db`, `packages/core-ai`, `packages/core-auth`,
+  `packages/core-billing`) — tiến xa hơn baseline mà đặc tả OS giả định, xem ADR-0001 +
+  `docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md`.
+
+**Việc còn lại của Phase 00** (theo `docs/phases/00-research-baseline.md`): chạy build/typecheck/
+lint/test lấy baseline chính xác, đo latency/token/cost AI thật, dựng dependency graph, ghi
+`docs/research/baseline.md`. Chưa làm ở bước này.
+
 ### Seed phát âm TIẾNG VIỆT (chiều B) + nới luật input cho nghĩa nhiều vế (2026-08-13, nhánh `claude/tts-cache-voice-i1plxb-2`)
 
 Người dùng đính chính (đúng): **cả 16 giọng đã seed đủ** — 12.168 từ × 16 giọng (14 Chirp3-HD +

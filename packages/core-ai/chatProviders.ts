@@ -1,0 +1,142 @@
+// packages/core-ai/chatProviders.ts — Lời gọi HTTP thô tới từng nhà cung cấp chat AI (Groq,
+// Anthropic), tách khỏi logic điều phối/fallback/hoàn lượt ở packages/core-ai/ai.ts.
+//
+// Phase 01 "Foundation OS" mục 3 (docs/phases/01-foundation-os.md): "AIProvider.generate() gateway
+// với timeout, phân loại lỗi retry". Gemini đã có sẵn dạng này (api/_lib/geminiApi.ts#callGemini) —
+// file này lấp nốt Groq/Anthropic, 2 provider vẫn đang gọi `fetch` thẳng trong `ai.ts`.
+//
+// ─── CỐ Ý CHỈ TÁCH PHẦN GỌI HTTP + PHÂN LOẠI LỖI, KHÔNG TÁCH LOGIC QUYẾT ĐỊNH ─────────────────
+// `ai.ts` xử lý đếm lượt/hoàn tiền thật (`checkAndConsumeUsage`/`refundUsage`) và có 34 test ghim
+// chặt hành vi (thứ tự fallback Groq→Anthropic→Gemini, khi nào hoàn lượt, status trả về client).
+// Rút cả logic đó ra khỏi handler trong 1 lần đổi là rủi ro cao — sai một nhánh là mất tiền hoặc
+// hoàn lượt sai. Nên ranh giới ở đây dừng lại đúng chỗ: mỗi hàm CHỈ gọi HTTP tới 1 provider rồi trả
+// về một trong 4 dạng kết quả rõ ràng (thành công / lỗi mạng-timeout / lỗi HTTP / body sai cấu
+// trúc) — `ai.ts` giữ NGUYÊN 100% cách nó đọc 4 dạng đó để quyết định fallback/hoàn lượt/status.
+// Xác minh: sau khi refactor `ai.ts` dùng các hàm này, toàn bộ `ai.test.ts` (34 ca, không sửa 1
+// dòng) vẫn xanh — bằng chứng hành vi observable không đổi.
+
+import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
+
+export const CHAT_PROVIDER_TIMEOUT_MS = 30_000
+
+/** Kết quả gọi 1 provider chat — 4 dạng loại trừ lẫn nhau, luôn kèm latency để log. */
+export type ChatCallResult =
+  | { kind: 'success'; text: string; latencyMs: number }
+  | { kind: 'network_error'; message: string; latencyMs: number }
+  | { kind: 'http_error'; status: number; bodyText: string; latencyMs: number }
+  | { kind: 'malformed_body'; message: string; latencyMs: number }
+
+/** Kết quả gọi Anthropic — KHÔNG chuẩn hoá thành text vì `ai.ts` cần forward NGUYÊN VĂN body/status
+ * gốc cho client (khớp định dạng Anthropic mà frontend đang đọc trực tiếp). Chỉ tách riêng lỗi
+ * mạng/timeout (không có response để forward) khỏi phần "có response" (dù response đó ok hay lỗi —
+ * `ai.ts` tự quyết forward hay thử fallback dựa trên `status`). */
+export type AnthropicCallResult =
+  | { kind: 'response'; status: number; bodyText: string; latencyMs: number }
+  | { kind: 'network_error'; message: string; latencyMs: number }
+
+// Đọc text trả lời từ body JSON của Groq (chuẩn OpenAI: choices[0].message.content).
+// Chuyển từ ai.ts nguyên vẹn — chỉ đổi vị trí, không đổi 1 dòng logic.
+function parseGroqText(groqData: unknown): string {
+  if (!groqData || typeof groqData !== 'object' || !('choices' in groqData)) {
+    throw new Error('Groq API returned invalid response structure')
+  }
+  const choices = (groqData as { choices?: unknown }).choices
+  if (!Array.isArray(choices) || choices.length === 0) {
+    throw new Error('Groq API returned empty choices')
+  }
+  const choice = choices[0]
+  if (typeof choice !== 'object' || !choice || !('message' in choice)) {
+    throw new Error('Groq API returned invalid choice structure')
+  }
+  const message = (choice as { message?: unknown }).message
+  if (typeof message !== 'object' || !message || !('content' in message)) {
+    throw new Error('Groq API returned invalid message structure')
+  }
+  const text = (message as { content?: unknown }).content
+  if (typeof text !== 'string') {
+    throw new Error('Groq API returned non-string content')
+  }
+  return text
+}
+
+/**
+ * Gọi Groq chat completion (chuẩn OpenAI). `system` (nếu có) được ghép thành 1 message
+ * `role: 'system'` ở đầu — đúng cách `ai.ts` đang ghép trước khi refactor.
+ */
+export async function callGroqChat(
+  apiKey: string,
+  model: string,
+  system: string,
+  messages: unknown[],
+  maxTokens: number,
+  timeoutMs: number = CHAT_PROVIDER_TIMEOUT_MS,
+): Promise<ChatCallResult> {
+  const groqMessages = [...(system ? [{ role: 'system', content: system }] : []), ...messages]
+  const startedAt = Date.now()
+
+  let resp: Response
+  try {
+    resp = await fetchWithTimeout(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ model, max_tokens: maxTokens, messages: groqMessages }),
+      },
+      timeoutMs,
+    )
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    return { kind: 'network_error', message, latencyMs: Date.now() - startedAt }
+  }
+
+  if (!resp.ok) {
+    const bodyText = await resp.text().catch(() => '')
+    return { kind: 'http_error', status: resp.status, bodyText, latencyMs: Date.now() - startedAt }
+  }
+
+  try {
+    const text = parseGroqText(await resp.json())
+    return { kind: 'success', text, latencyMs: Date.now() - startedAt }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    return { kind: 'malformed_body', message, latencyMs: Date.now() - startedAt }
+  }
+}
+
+/**
+ * Gọi Anthropic Messages API. Trả nguyên `status`/body text — KHÔNG parse — để `ai.ts` forward
+ * thẳng cho client (giữ đúng hành vi hiện có, xem chú thích `AnthropicCallResult`).
+ */
+export async function callAnthropicChat(
+  apiKey: string,
+  model: string,
+  system: string,
+  messages: unknown[],
+  maxTokens: number,
+  timeoutMs: number = CHAT_PROVIDER_TIMEOUT_MS,
+): Promise<AnthropicCallResult> {
+  const startedAt = Date.now()
+  let resp: Response
+  try {
+    resp = await fetchWithTimeout(
+      'https://api.anthropic.com/v1/messages',
+      {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ model, max_tokens: maxTokens, system, messages }),
+      },
+      timeoutMs,
+    )
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    return { kind: 'network_error', message, latencyMs: Date.now() - startedAt }
+  }
+
+  const bodyText = await resp.text()
+  return { kind: 'response', status: resp.status, bodyText, latencyMs: Date.now() - startedAt }
+}
