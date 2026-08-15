@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { createLogger } from './logger'
+import { createLogger, createRequestLogger } from './logger'
 import { resetSecretCache } from '../core-config/secrets.js'
 
 const originalLogLevel = process.env.LOG_LEVEL
@@ -95,5 +95,20 @@ describe('createLogger', () => {
       log.info('câu log bình thường')
       expect(console.log).toHaveBeenCalledWith('[agent] câu log bình thường')
     })
+  })
+})
+
+describe('createRequestLogger', () => {
+  it('gắn cả tiền tố module lẫn requestId vào message, dạng [module#id]', () => {
+    const log = createRequestLogger('agent', 'a1b2c3d4')
+    log.info('gọi Groq bắt đầu')
+    expect(console.log).toHaveBeenCalledWith('[agent#a1b2c3d4] gọi Groq bắt đầu')
+  })
+
+  it('vẫn tôn trọng LOG_LEVEL và che secret giống createLogger thường', () => {
+    process.env.LOG_LEVEL = 'info'
+    const log = createRequestLogger('agent', 'a1b2c3d4')
+    log.debug('bị ẩn')
+    expect(console.log).not.toHaveBeenCalled()
   })
 })

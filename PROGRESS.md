@@ -63,6 +63,37 @@ Grep, chưa phải audit đầy đủ của Phase 00):
   riêng (không dùng chung interface `chatProviders.ts`) — hợp nhất thật sự thành 1
   `AIProvider.generate()` cho cả chat/TTS/STT là việc lớn hơn, để dành cho phase sau khi cần thêm
   provider mới, tránh đổi 3 luồng đang chạy thật cùng lúc.
+- Chuẩn hoá lỗi domain/application (Phase 01 mục 4) — **ĐÃ LÀM MỘT PHẦN (2026-08-15)**:
+  `packages/core-errors/appError.ts` — `AppError` + 6 lớp con (`ValidationError`/
+  `UnauthorizedError`/`ForbiddenError`/`NotFoundError`/`ConflictError`/`RateLimitError`), mỗi lớp
+  tự mang `status` HTTP + `code` ổn định; `isAppError()`/`toErrorBody()` để handler chuyển thành
+  JSON. **CỐ Ý CHỈ THÊM, không retrofit** — hiện có **257 chỗ** trong `api/`/`packages/` tự viết
+  tay `jsonResponse({error:...}, status)` với 2 hình dạng khác nhau (`{error:'chuỗi'}` ở đa số
+  handler cũ, `{error:{message}}` ở `ai.ts`); sửa hết 257 chỗ cùng lúc là breaking-change phạm vi
+  rộng, đúng loại việc CLAUDE.md mục 12 yêu cầu dừng hỏi trước — không tự làm. Module mới là nền
+  để domain engine của phase OS sau (Evidence/Mastery/Diagnostic...) dùng ngay từ đầu, và để handler
+  cũ chuyển dần khi có PR đụng tới, không phải retrofit hàng loạt. 11 test, coverage 100%.
+- Correlation ID / request ID / metrics cơ bản (Phase 01 mục 6) — **ĐÃ LÀM (2026-08-15)**:
+  `packages/core-db/requestId.ts` (`createRequestId()` — 8 ký tự đầu UUID v4, không phải khoá bảo
+  mật, chỉ để lọc log 1 request) + `packages/core-db/logger.ts` thêm `createRequestLogger(prefix,
+requestId)` (tương thích ngược, không đổi `createLogger()` cũ) + `packages/core-db/metrics.ts`
+  (`incrementCounter`/`recordLatency`/`getMetricsSnapshot` — đếm trong bộ nhớ, KHÔNG phải
+  observability thật, reset khi restart PM2; export/dashboard thật là việc Phase 35). Đã áp dụng
+  THẬT vào `packages/core-ai/ai.ts` (mỗi request `/api/agent` có `requestId` riêng gắn vào mọi
+  dòng log dạng `[agent#a1b2c3d4]`, và đếm `ai_groq_ms`/`ai_groq_<kind>`/`ai_anthropic_ms`/
+  `ai_anthropic_status_<code>`/`ai_gemini_ms`/`ai_gemini_success`/`ai_gemini_error`) — CHỈ đổi nội
+  dung log/số liệu nội bộ, KHÔNG đổi response trả client, nên vẫn an toàn với 35 test đã ghim hành
+  vi (chạy lại `ai.test.ts` không sửa 1 dòng, vẫn xanh). 24 test mới (`requestId.test.ts` 4 ·
+  `metrics.test.ts` 9 · thêm 2 vào `logger.test.ts` cho `createRequestLogger`, dư ra từ đợt trước
+  còn `chatProviders.test.ts` 12 + `appError.test.ts` 11), coverage 3 file mới 100%.
+
+**Phase 01 "Foundation OS" COI NHƯ HOÀN TẤT ở mức "đã có nền, migrate dần"** — cả 7 mục đều có ít
+nhất một phần triển khai thật + test (mục 1/2/6/7 xong trọn vẹn cho phạm vi đã chọn; mục 3/4 CỐ Ý
+thu hẹp phạm vi vì đụng 71–257 điểm gọi hiện có, rủi ro cao nếu retrofit hàng loạt; mục 5 vốn đã có
+sẵn từ trước). Không tự ý coi đây là "Definition of Done" đầy đủ theo nghĩa khắt khe của
+`MASTER_SPEC.md` (DoD đòi migrate hết, không chỉ thêm nền) — ghi rõ ở đây để phiên sau biết ranh
+giới thật, tránh tưởng nhầm đã xong 100%.
+
 - Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **ĐÃ
   LÀM (2026-08-15)**: `packages/core-config/env.ts` (`EnvSchema` Zod cho ~25 biến hay dùng nhất,
   `getEnv()`/`parseEnv()`/`describeEnv()`) + `packages/core-config/secrets.ts`

@@ -21,7 +21,9 @@ import { checkAndConsumeUsage, refundUsage, type UsageMode } from '../core-billi
 import { callGemini } from '../../api/_lib/geminiApi.js'
 import { callGroqChat, callAnthropicChat } from './chatProviders.js'
 import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
-import { createLogger } from '../core-db/logger.js'
+import { createRequestLogger } from '../core-db/logger.js'
+import { createRequestId } from '../core-db/requestId.js'
+import { incrementCounter, recordLatency } from '../core-db/metrics.js'
 import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
 import { validateBody } from '../../api/_lib/validation.js'
 // Model + guardrail tách sang aiConfig.ts để script eval offline (scripts/eval-tutor.ts)
@@ -29,8 +31,6 @@ import { validateBody } from '../../api/_lib/validation.js'
 import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL, SYSTEM_GUARDRAIL } from './aiConfig.js'
 
 // Thời gian chờ tối đa cho 1 lần gọi AI (ms) — tránh treo vô hạn khi nhà cung cấp chậm.
-const log = createLogger('agent')
-
 const AI_TIMEOUT_MS = 30_000
 
 const MAX_TOKENS_LIMIT = 2048 // tối đa cho phép (writing cần 2048, chat 1024)
@@ -98,6 +98,12 @@ const AiBodySchema = z
   })
 
 export default async function handler(req: Request): Promise<Response> {
+  // requestId riêng cho MỖI lượt gọi — ghép vào mọi dòng log của lượt này (Phase 01 mục 6,
+  // docs/phases/01-foundation-os.md) để lọc đúng 1 request giữa hàng nghìn dòng log khác chạy
+  // song song trên VPS. Chỉ ảnh hưởng NỘI DUNG LOG, không đổi response trả cho client.
+  const requestId = createRequestId()
+  const log = createRequestLogger('agent', requestId)
+
   const corsHeaders = getCorsHeaders(req)
   const allHeaders = { ...corsHeaders, ...SECURITY_HEADERS }
 
@@ -213,6 +219,8 @@ export default async function handler(req: Request): Promise<Response> {
     const groqResult = await withConcurrencyLimit('groq', () =>
       callGroqChat(groqKey, GROQ_CHAT_MODEL, system, sanitizedMessages, maxTokens, AI_TIMEOUT_MS),
     )
+    recordLatency('ai_groq_ms', groqResult.latencyMs)
+    incrementCounter(`ai_groq_${groqResult.kind}`)
     log.debug(`Groq xong sau ${groqResult.latencyMs}ms, kind=${groqResult.kind}`)
 
     if (groqResult.kind === 'network_error') {
@@ -274,6 +282,12 @@ export default async function handler(req: Request): Promise<Response> {
         AI_TIMEOUT_MS,
       ),
     )
+    recordLatency('ai_anthropic_ms', anthropicResult.latencyMs)
+    incrementCounter(
+      anthropicResult.kind === 'network_error'
+        ? 'ai_anthropic_network_error'
+        : `ai_anthropic_status_${anthropicResult.status}`,
+    )
 
     if (anthropicResult.kind === 'network_error') {
       log.warn(`Anthropic lỗi mạng: ${anthropicResult.message}`)
@@ -320,10 +334,14 @@ export default async function handler(req: Request): Promise<Response> {
         maxTokens,
       ),
     )
+    recordLatency('ai_gemini_ms', Date.now() - geminiStartedAt)
+    incrementCounter('ai_gemini_success')
     log.debug(`Gemini xong sau ${Date.now() - geminiStartedAt}ms`)
     return jsonResponse({ content: [{ type: 'text', text: geminiText }] }, 200, allHeaders)
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err)
+    recordLatency('ai_gemini_ms', Date.now() - geminiStartedAt)
+    incrementCounter('ai_gemini_error')
     log.warn(`Gemini lỗi sau ${Date.now() - geminiStartedAt}ms: ${errMsg}`)
     await refundUsage(authResult.userId, mode, gate.day)
     // Lỗi timeout (AbortController) → 504, còn lại 502 (lỗi từ nhà cung cấp), không phải 500 của ta.
