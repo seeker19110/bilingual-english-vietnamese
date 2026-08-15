@@ -94,6 +94,39 @@ sẵn từ trước). Không tự ý coi đây là "Definition of Done" đầy �
 `MASTER_SPEC.md` (DoD đòi migrate hết, không chỉ thêm nền) — ghi rõ ở đây để phiên sau biết ranh
 giới thật, tránh tưởng nhầm đã xong 100%.
 
+**Phase 02 — Contract OS (2026-08-15).** Trước khi code, hỏi người dùng chọn giữa 2 hướng: (a) chỉ
+validate các ranh giới AI-output CÓ THẬT hiện nay, để schema Learner/Skill/Evidence/... viết CÙNG
+LÚC với engine thật của Phase 03+; hay (b) viết đủ 13 schema theo đúng chữ nghĩa đặc tả ngay bây
+giờ dù chưa có engine dùng. **Người dùng chọn (b).** Đã làm trọn `docs/phases/02-contract-os.md`:
+
+- **13 entity + AIRequest/AIResponse**, mỗi entity 1 file trong `packages/core-contracts/`:
+  `learner.ts` · `goal.ts` · `skill.ts` · `knowledge.ts` · `evidence.ts` · `errorRecord.ts`
+  (đặt tên khác `Error` để không đụng `AppError` của Phase 01) · `mastery.ts` · `assessment.ts`
+  (schema NÀY bám sát dữ liệu THẬT — gộp hình dạng `FeedbackData`/`EvaluationResult`/
+  `ChallengeFeedback` đang được `apps/english/src/lib/ai.ts#parseJson()` parse KHÔNG kiểm tra
+  runtime, đúng "critical AI output" mà Phase 02 nhắm tới) · `lesson.ts` · `activity.ts` ·
+  `memory.ts` · `workflow.ts` · `agentManifest.ts` · `aiRequest.ts` (hình thức hoá contract đã mô
+  tả bằng lời ở Phase 01, khớp `chatProviders.ts`/`requestId.ts` đã xây thật).
+- **Versioning + tương thích** (`version.ts`): mọi entity có `schemaVersion` bắt buộc qua
+  `versionedObject()` dùng chung; `.strict()` khắp nơi — field lạ (AI hallucination hoặc client
+  gửi thừa) bị TỪ CHỐI thay vì âm thầm bỏ qua, đúng Acceptance của phase ("no business-critical AI
+  output reaches persistence without validation").
+- **Pipeline validate LLM output** (`pipeline.ts#validateAiOutput()`): PARSE → SCHEMA → DOMAIN
+  RULES → POLICY, trả `PipelineResult` gắn kèm `stage` lỗi cụ thể; KHÔNG tự commit (nơi gọi tự
+  quyết ghi đâu). Domain rules/policy là callback tuỳ chọn nhận dữ liệu ĐÃ CÓ KIỂU sau schema.
+- **Event/idempotency** (`eventEnvelope.ts`): `EventEnvelopeSchema` + `createIdempotencyTracker()`
+  — bộ nhớ đệm CHỐNG XỬ LÝ TRÙNG tối giản (trong bộ nhớ, chưa bền vững — Phase 29 Event OS sẽ thay
+  bằng bản lưu Postgres/Redis khi có event bus thật). Hợp đồng lỗi API tái dùng `AppError` của
+  Phase 01, không định nghĩa lại.
+- **CỐ Ý CHƯA migrate 10 điểm gọi `parseJson()` hiện có** (Writing/Speaking/Chat/Practice/Lessons/
+  Challenge/History) sang dùng `AssessmentSchema` — đó là các trang UI sống, MỘT SỐ không có test
+  (`Writing.tsx` không có file test), rủi ro cao hơn lợi ích của việc "migrate cho xong" ở phase
+  này. Để dành khi có PR đụng tới từng trang, giống cách Phase 01 xử lý 71 điểm đọc env / 257 điểm
+  trả lỗi thủ công.
+- 99+10+9 = **118 test mới**, coverage `packages/core-contracts/` **100%** cả 4 chỉ số.
+
+Cổng: build ✅ typecheck ✅ lint 0 cảnh báo ✅ test 3330/3330 ✅.
+
 - Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **ĐÃ
   LÀM (2026-08-15)**: `packages/core-config/env.ts` (`EnvSchema` Zod cho ~25 biến hay dùng nhất,
   `getEnv()`/`parseEnv()`/`describeEnv()`) + `packages/core-config/secrets.ts`
