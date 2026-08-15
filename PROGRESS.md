@@ -51,9 +51,17 @@ Grep, chưa phải audit đầy đủ của Phase 00):
 - `AIProvider.generate()` gateway thống nhất (Phase 01 mục 3) — **CHƯA CÓ** dạng abstraction hình
   thức: `packages/core-ai/ai.ts`/`tts.ts`/`stt.ts` gọi thẳng từng provider (Anthropic/Gemini/Groq/
   Google TTS/ElevenLabs), mỗi nơi tự retry/timeout riêng, không qua 1 interface chung.
-- Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **CHƯA
-  CÓ**: đọc `process.env.X` rải rác toàn repo (20+ file), khớp đúng nợ kỹ thuật Zod đã ghi ở
-  `CLAUDE.md` mục 4.1.
+- Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **ĐÃ
+  LÀM (2026-08-15)**: `packages/core-config/env.ts` (`EnvSchema` Zod cho ~25 biến hay dùng nhất,
+  `getEnv()`/`parseEnv()`/`describeEnv()`) + `packages/core-config/secrets.ts`
+  (`isSecretEnvKey`/`redactSecrets` — nhận theo GIÁ TRỊ khớp env thật, không đoán theo mẫu chuỗi).
+  **Cố ý KHÔNG bắt buộc** (mọi trường optional/có `.catch()` mặc định, sao y hệt mặc định cũ trong
+  code) — không được để thiếu 1 biến làm sập cả server đang chạy thật. Chưa migrate các chỗ đọc
+  `process.env.X` trực tiếp sang dùng `getEnv()` — module mới chỉ THÊM lối đi có kiểm, chưa thay
+  thế; làm dần ở PR sau, không đổi 71 lượt đọc cùng lúc (rủi ro cao, khó review).
+  `redactSecrets()` đã nối vào `packages/core-db/logger.ts` (mọi log qua `createLogger()` giờ tự
+  che secret nếu lỡ lọt vào message) — đóng luôn Phase 01 mục 7. 42 test mới (`secrets.test.ts` 20
+  · `env.test.ts` 14 · thêm 2 vào `logger.test.ts`), coverage 2 file mới 100%.
 - DB transaction helper dùng chung (Phase 01 mục 2) — `packages/core-db/pgPool.ts` có pool sẵn;
   còn helper transaction chung hay mỗi handler tự `BEGIN/COMMIT` thì CHƯA xác minh — việc của
   Phase 00.

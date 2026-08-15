@@ -1,9 +1,13 @@
 // packages/core-db/logger.ts — Logger nhẹ dùng chung toàn app, bọc console.* để: (1) gắn tiền
 // tố module nhất quán (thay vì mỗi chỗ tự viết `[agent]`/`[googleTts]`), (2) cho phép ẨN log
-// 'debug' (vết chạy chi tiết mỗi request) qua biến môi trường LOG_LEVEL mà không cần xoá code.
+// 'debug' (vết chạy chi tiết mỗi request) qua biến môi trường LOG_LEVEL mà không cần xoá code,
+// (3) CHE bí mật lỡ lọt vào message trước khi in ra (Phase 01 mục 7, docs/phases/01-foundation-os.md
+// — "secrets never enter logs"; xem packages/core-config/secrets.ts để biết cơ chế nhận diện).
 // KHÔNG dùng thư viện ngoài (pino/winston) — quy mô 1 VPS + PM2 đọc log dạng text, không cần
 // log JSON có cấu trúc. KHÔNG thay Sentry — lỗi cần theo dõi dài hạn vẫn gọi
 // captureServerException() (api/_lib/sentry.ts) riêng, logger này chỉ phục vụ đọc log runtime.
+
+import { redactSecrets } from '../core-config/secrets.js'
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
@@ -28,7 +32,7 @@ export function createLogger(prefix: string): Logger {
   const tag = `[${prefix}]`
   function write(level: LogLevel, message: string): void {
     if (LEVEL_ORDER[level] < LEVEL_ORDER[currentMinLevel()]) return
-    const line = `${tag} ${message}`
+    const line = `${tag} ${redactSecrets(message)}`
     if (level === 'error') console.error(line)
     else if (level === 'warn') console.warn(line)
     else console.log(line)
