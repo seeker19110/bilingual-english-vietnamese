@@ -97,6 +97,67 @@ abstraction: AI gateway chưa thống nhất chat/TTS/STT, error/env chưa migra
 helper chưa bảo vệ đủ luồng payment/entitlement. Không được mở Phase 02 hay gọi Phase 01 “hoàn tất”
 cho đến khi các cổng `OS_PHASE_BACKLOG.md` có bằng chứng.
 
+**Phase 02 — Contract OS (2026-08-15).** Trước khi code, hỏi người dùng chọn giữa 2 hướng: (a) chỉ
+validate các ranh giới AI-output CÓ THẬT hiện nay, để schema Learner/Skill/Evidence/... viết CÙNG
+LÚC với engine thật của Phase 03+; hay (b) viết đủ 13 schema theo đúng chữ nghĩa đặc tả ngay bây
+giờ dù chưa có engine dùng. **Người dùng chọn (b).** Đã làm trọn `docs/phases/02-contract-os.md`:
+
+- **13 entity + AIRequest/AIResponse**, mỗi entity 1 file trong `packages/core-contracts/`:
+  `learner.ts` · `goal.ts` · `skill.ts` · `knowledge.ts` · `evidence.ts` · `errorRecord.ts`
+  (đặt tên khác `Error` để không đụng `AppError` của Phase 01) · `mastery.ts` · `assessment.ts`
+  (schema NÀY bám sát dữ liệu THẬT — gộp hình dạng `FeedbackData`/`EvaluationResult`/
+  `ChallengeFeedback` đang được `apps/english/src/lib/ai.ts#parseJson()` parse KHÔNG kiểm tra
+  runtime, đúng "critical AI output" mà Phase 02 nhắm tới) · `lesson.ts` · `activity.ts` ·
+  `memory.ts` · `workflow.ts` · `agentManifest.ts` · `aiRequest.ts` (hình thức hoá contract đã mô
+  tả bằng lời ở Phase 01, khớp `chatProviders.ts`/`requestId.ts` đã xây thật).
+- **Versioning + tương thích** (`version.ts`): mọi entity có `schemaVersion` bắt buộc qua
+  `versionedObject()` dùng chung; `.strict()` khắp nơi — field lạ (AI hallucination hoặc client
+  gửi thừa) bị TỪ CHỐI thay vì âm thầm bỏ qua, đúng Acceptance của phase ("no business-critical AI
+  output reaches persistence without validation").
+- **Pipeline validate LLM output** (`pipeline.ts#validateAiOutput()`): PARSE → SCHEMA → DOMAIN
+  RULES → POLICY, trả `PipelineResult` gắn kèm `stage` lỗi cụ thể; KHÔNG tự commit (nơi gọi tự
+  quyết ghi đâu). Domain rules/policy là callback tuỳ chọn nhận dữ liệu ĐÃ CÓ KIỂU sau schema.
+- **Event/idempotency** (`eventEnvelope.ts`): `EventEnvelopeSchema` + `createIdempotencyTracker()`
+  — bộ nhớ đệm CHỐNG XỬ LÝ TRÙNG tối giản (trong bộ nhớ, chưa bền vững — Phase 29 Event OS sẽ thay
+  bằng bản lưu Postgres/Redis khi có event bus thật). Hợp đồng lỗi API tái dùng `AppError` của
+  Phase 01, không định nghĩa lại.
+- **CỐ Ý CHƯA migrate 10 điểm gọi `parseJson()` hiện có** (Writing/Speaking/Chat/Practice/Lessons/
+  Challenge/History) sang dùng `AssessmentSchema` — đó là các trang UI sống, MỘT SỐ không có test
+  (`Writing.tsx` không có file test), rủi ro cao hơn lợi ích của việc "migrate cho xong" ở phase
+  này. Để dành khi có PR đụng tới từng trang, giống cách Phase 01 xử lý 71 điểm đọc env / 257 điểm
+  trả lỗi thủ công.
+- 99+10+9 = **118 test mới**, coverage `packages/core-contracts/` **100%** cả 4 chỉ số.
+
+Cổng: build ✅ typecheck ✅ lint 0 cảnh báo ✅ test 3330/3330 ✅.
+
+**Phase 03 — Learner OS (2026-08-15, cùng nhánh/PR #541 — quyết định gom nhiều phase 1 PR).**
+Đặc tả gốc đòi bảng Postgres mới `learner_profiles`/`learner_goals`/`learner_preferences` +
+migrate/backfill dữ liệu người dùng thật. Đã hỏi trước — người dùng chọn "chỉ code + migration
+file, KHÔNG tự backfill". Trước khi viết migration, đọc `docs/adr/0002-quan-ly-nguoi-dung.md` thì
+phát hiện: kế hoạch đa lĩnh vực **ĐÃ CÓ** `english.user_profile` (migration `0036`) đóng đúng vai
+"learner profile" — nhưng bảng đó "NGỦ" (backfill 1 lần, code thật vẫn đọc/ghi `public.profiles`,
+LỆCH DẦN vì không dual-write). Tạo thêm `learner_profiles` sẽ là bảng ngủ THỨ HAI cho cùng 1 khái
+niệm — đúng kiểu trùng nguồn sự thật mà ADR-0002 đang tránh. **Đổi hướng sang phương án AN TOÀN
+HƠN cả mức đã duyệt**: `LearnerStateService` là ADAPTER thuần — đọc trực tiếp, luôn mới nhất, từ
+2 bảng nguồn sự thật THẬT đang chạy (`public.profiles`: onboarded/goal/daily_minutes,
+`english.learning_progress`: settings.direction/placement.cefr) — **0 migration, 0 bảng mới, 0
+rủi ro production**, và không có vấn đề "lệch dần" vì không có bản sao nào để lệch.
+
+- `packages/core-learner/learnerState.ts` — `getLearnerState(userId)`: trả `LearnerState` gồm
+  `direction`/`currentLevel`/`onboarded`/`goal` đọc từ dữ liệu thật (mặc định đúng hành vi client
+  hiện có: direction mặc định 'A' khớp `storage.ts#getDirection()`, currentLevel `null` khi chưa
+  làm bài test xếp lớp — không bịa cấp mặc định), cộng `skills`/`knowledge`/`errors`/
+  `recentEvidence`/`risks` LUÔN RỖNG (đúng kiểu `Skill[]`/`Knowledge[]`/`ErrorRecord[]`/
+  `Evidence[]` của Phase 02 — Phase 04/05/06/07/09 chưa xây engine).
+- Authorization (Acceptance "no cross-user leakage"): hàm nhận `userId` đã xác thực từ nơi gọi
+  (đúng quy ước `validateAuth()` hiện có toàn dự án), cả 2 câu SQL lọc CHÍNH XÁC theo `userId`
+  đó — test xác minh tường minh (`params` truyền cho `pool.query` luôn đúng userId).
+- **CHƯA có API endpoint** gọi hàm này — đúng tinh thần ADR-0002 Bước 5 (không dựng hạ tầng cho
+  tính năng UI chưa tồn tại). Nối 1 endpoint thật là việc khi có UI cần tới.
+- 9 test mới, coverage `packages/core-learner/` **100%**.
+
+Cổng: build ✅ typecheck ✅ lint 0 cảnh báo ✅ test 3339/3339 ✅.
+
 - Config/env validate tập trung bằng Zod (Phase 01 mục 1, nguyên tắc 5 `MASTER_SPEC.md`) — **ĐÃ
   LÀM (2026-08-15)**: `packages/core-config/env.ts` (`EnvSchema` Zod cho ~25 biến hay dùng nhất,
   `getEnv()`/`parseEnv()`/`describeEnv()`) + `packages/core-config/secrets.ts`
