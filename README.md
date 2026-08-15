@@ -36,3 +36,10 @@ npm run dev
 ```
 
 Lệnh khác: `npm run build` (build) · `npm run typecheck` · `npm run lint` · `npm test` · `npm run test:e2e` (Playwright) · `npm start` (chạy `server.ts` bằng `tsx`).
+
+## ☁️ Codex Cloud
+
+Repository có setup và maintenance script dành cho container Codex Cloud. Xem
+[`docs/CODEX_CLOUD_SETUP.md`](docs/CODEX_CLOUD_SETUP.md) để cấu hình environment Node.js 22,
+PostgreSQL test disposable, Playwright và luồng tạo PR. Cấu hình này không sử dụng secret hoặc dữ
+liệu production và không thay thế deploy VPS hiện tại.
