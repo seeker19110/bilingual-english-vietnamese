@@ -72,17 +72,17 @@ big-bang và giảm thao tác chuyển đổi.
 
 ## 3. North-star metrics
 
-| Metric | Mục tiêu sau Wave 1–3 |
-| --- | --- |
-| API calls / active user / day | giảm 35–55% |
-| Input tokens / successful turn | giảm 50–75% |
-| Output tokens / successful turn | giảm 25–45% |
-| Audio billed seconds / active user | giảm 40–60% |
-| Audio cache hit cho nội dung tĩnh | ≥90% |
-| Provider attempts / successful turn | p95 ≤1, tối đa 2 |
-| Fallback/escalation cost | <5% tổng inference |
-| Cost / paid active user / month | ≤20–25% ARPPU |
-| Learning outcome và quality | không regression |
+| Metric                              | Mục tiêu sau Wave 1–3 |
+| ----------------------------------- | --------------------- |
+| API calls / active user / day       | giảm 35–55%           |
+| Input tokens / successful turn      | giảm 50–75%           |
+| Output tokens / successful turn     | giảm 25–45%           |
+| Audio billed seconds / active user  | giảm 40–60%           |
+| Audio cache hit cho nội dung tĩnh   | ≥90%                  |
+| Provider attempts / successful turn | p95 ≤1, tối đa 2      |
+| Fallback/escalation cost            | <5% tổng inference    |
+| Cost / paid active user / month     | ≤20–25% ARPPU         |
+| Learning outcome và quality         | không regression      |
 
 Chi phí authoritative của một request:
 
@@ -247,14 +247,14 @@ Luồng hiện tại có thể Groq lỗi → Anthropic lỗi → Gemini. Luồn
 fallback. Chỉ timeout, 429 và 5xx là retryable; validation/4xx dừng ngay. Circuit breaker ngăn retry
 storm và không provider race trong luồng thường.
 
-| Nguồn | Target riêng |
-| --- | ---: |
-| Deterministic/local | 15–25% |
-| Safe exact cache | 10–20% |
-| Chống request trùng | 3–8% |
-| Memory cuối phiên | 5–15% |
-| Giới hạn fallback | 1–5% |
-| **Tổng sau khi loại phần chồng lấn** | **35–55%** |
+| Nguồn                                | Target riêng |
+| ------------------------------------ | -----------: |
+| Deterministic/local                  |       15–25% |
+| Safe exact cache                     |       10–20% |
+| Chống request trùng                  |         3–8% |
+| Memory cuối phiên                    |        5–15% |
+| Giới hạn fallback                    |         1–5% |
+| **Tổng sau khi loại phần chồng lấn** |   **35–55%** |
 
 ### 6.2 Giảm 50–75% input token
 
@@ -291,22 +291,22 @@ hoặc memory không liên quan. Chỉ đoạn dữ liệu được retrieve m�
 Model chỉ trả field biến đổi như score/correction/reason; label, heading và text cố định do client
 render. Không có lỗi thì không sinh explanation dài. Output budget khởi điểm:
 
-| Task | Output target |
-| --- | ---: |
-| Greeting/navigation | 0 token AI |
-| Chat | 192–320 |
-| Correction | 256–384 |
-| Speaking feedback | 320–512 |
-| Writing evaluation | 640–1.024 |
+| Task                   |     Output target |
+| ---------------------- | ----------------: |
+| Greeting/navigation    |        0 token AI |
+| Chat                   |           192–320 |
+| Correction             |           256–384 |
+| Speaking feedback      |           320–512 |
+| Writing evaluation     |         640–1.024 |
 | Session summary/memory | 256–512 qua Batch |
 
-| Nguồn | Target riêng |
-| --- | ---: |
-| Summary + 4–6 turns | 45–70% |
-| System instruction chuẩn | 3–10% |
-| Selective context retrieval | 10–30% |
-| Bỏ boilerplate/budget task | 5–15% |
-| **Tổng sau khi loại phần chồng lấn** | **50–75%** |
+| Nguồn                                | Target riêng |
+| ------------------------------------ | -----------: |
+| Summary + 4–6 turns                  |       45–70% |
+| System instruction chuẩn             |        3–10% |
+| Selective context retrieval          |       10–30% |
+| Bỏ boilerplate/budget task           |        5–15% |
+| **Tổng sau khi loại phần chồng lấn** |   **50–75%** |
 
 ### 6.3 Giảm 40–60% thời lượng voice tính phí
 
@@ -339,20 +339,20 @@ STT → chat → TTS tách rời; vẫn phải benchmark trước cutover.
 
 Server áp duration budget khởi điểm:
 
-| Task | Duration target |
-| --- | ---: |
-| Pronunciation một câu | 10–20 giây |
-| Speaking turn | 20–30 giây |
-| Deep speaking exercise | tối đa 60 giây, quota riêng |
-| Continuous conversation | quota phút/session |
+| Task                    |             Duration target |
+| ----------------------- | --------------------------: |
+| Pronunciation một câu   |                  10–20 giây |
+| Speaking turn           |                  20–30 giây |
+| Deep speaking exercise  | tối đa 60 giây, quota riêng |
+| Continuous conversation |          quota phút/session |
 
-| Nguồn | Target riêng |
-| --- | ---: |
-| VAD/silence trim | 15–30% input audio |
-| Chỉ nói phần cốt lõi | 15–30% output audio |
-| Replay/cache | 10–30% lượt sinh lại |
-| Một pipeline voice | 5–15% |
-| **Tổng sau khi loại phần chồng lấn** | **40–60%** |
+| Nguồn                                |         Target riêng |
+| ------------------------------------ | -------------------: |
+| VAD/silence trim                     |   15–30% input audio |
+| Chỉ nói phần cốt lõi                 |  15–30% output audio |
+| Replay/cache                         | 10–30% lượt sinh lại |
+| Một pipeline voice                   |                5–15% |
+| **Tổng sau khi loại phần chồng lấn** |           **40–60%** |
 
 ### 6.4 Cách chứng minh
 
@@ -389,7 +389,7 @@ của attempt đã phát sinh chi phí.
 3. Idempotency, double-submit guard và single-flight.
 4. Mode-specific token budgets + system instruction chuẩn.
 5. Typed environment model config; Gemini Flash-Lite primary, một fallback, retry classification
-   + circuit breaker.
+   - circuit breaker.
 6. Context summary + 4–6 turns; shadow/A-B quality.
 
 **Gate:** success rate không giảm; p95 latency không tăng; cost/successful-turn giảm ≥40%.
