@@ -26,6 +26,18 @@ authentication, payments, entitlements, usage accounting and AI-provider costs a
 - Do not call paid external providers in tests. Use faithful fakes or mocks at provider boundaries.
 - Do not push, merge, deploy, rotate secrets or modify production unless the user explicitly asks.
 
+## Parallel subagent work
+
+- Decompose work only when tasks are truly independent. Define shared interfaces and contracts before
+  parallel implementation, and cap concurrency at the number of useful independent workstreams.
+- Give each subagent an explicit scope and exclusive file write set. Subagents must not edit
+  overlapping files, shared generated artifacts, migrations or lockfiles concurrently.
+- Parallelize read-only discovery, research and analysis freely. Serialize changes to shared
+  dependencies, schemas, migrations, generated artifacts and lockfiles.
+- Each subagent must report files changed, checks run, results and remaining risks. The primary agent
+  reviews every diff, integrates the work, resolves conflicts and runs the complete relevant
+  test/build/lint gate before declaring completion.
+
 ## Large-goal AI loop
 
 - For a goal spanning multiple PRs, follow `docs/AI_DELIVERY_LOOP.md` and create a persistent
