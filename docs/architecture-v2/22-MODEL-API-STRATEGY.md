@@ -120,10 +120,10 @@ Flash-Lite không tự động được chấp nhận chỉ vì rẻ; Flash khô
 
 “Gemini Voice” gồm hai route độc lập và không được dùng thay thế mù cho nhau:
 
-| Route | Contract | Use case | Cost/control policy |
-|---|---|---|---|
-| Gemini speech generation | text → audio | truyện, câu mẫu, correction đã có text | sinh một lần, chunk ngắn, cache/pre-generate; ưu tiên batch cho nội dung không realtime |
-| Gemini Live native audio | streaming audio → streaming audio/text | hội thoại gia sư realtime | chỉ mở khi user vào live mode; quota phút theo plan; VAD/idle timeout; downgrade về push-to-talk |
+| Route                    | Contract                               | Use case                               | Cost/control policy                                                                              |
+| ------------------------ | -------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Gemini speech generation | text → audio                           | truyện, câu mẫu, correction đã có text | sinh một lần, chunk ngắn, cache/pre-generate; ưu tiên batch cho nội dung không realtime          |
+| Gemini Live native audio | streaming audio → streaming audio/text | hội thoại gia sư realtime              | chỉ mở khi user vào live mode; quota phút theo plan; VAD/idle timeout; downgrade về push-to-talk |
 
 Baseline model ID phải đi qua registry/env. Tại thời điểm quyết định:
 
