@@ -16,21 +16,21 @@ Chuyển kiến trúc từ learner-centric sang person-centric mà không rewrit
 
 ## Mapping ownership
 
-| V1 | V2 owner | Migration |
-|---|---|---|
-| learner profile | Personal World Model + Learning Profile | tách field global/domain; dual-read |
-| learner goals | Life Graph / Goal view | backfill goal node + provenance |
-| learner preferences | Personal World Model | phân scope global vs learning |
-| learner consent | Consent/Permission Platform | purpose/scope/version hóa |
-| skills/knowledge | Learning Domain | giữ IDs bền vững, đổi ownership |
-| learning evidence | Learning Domain | giữ append-only/provenance |
-| mastery | Learning Domain | không đưa lên Personal Core |
-| error memory | Learning Domain memory | expose summary qua contract |
-| generic memory | Knowledge Fabric | phân namespace/sensitivity/retention |
-| workflow | Platform Workflow | migrate adapter dần |
-| agent manifest | Capability Registry / Agent execution | capability-first |
-| AI provider | AI Platform | giữ abstraction, bỏ hard-code domain |
-| voice | shared capability + Learning owner policy | không bắt buộc thành core domain |
+| V1                  | V2 owner                                  | Migration                            |
+| ------------------- | ----------------------------------------- | ------------------------------------ |
+| learner profile     | Personal World Model + Learning Profile   | tách field global/domain; dual-read  |
+| learner goals       | Life Graph / Goal view                    | backfill goal node + provenance      |
+| learner preferences | Personal World Model                      | phân scope global vs learning        |
+| learner consent     | Consent/Permission Platform               | purpose/scope/version hóa            |
+| skills/knowledge    | Learning Domain                           | giữ IDs bền vững, đổi ownership      |
+| learning evidence   | Learning Domain                           | giữ append-only/provenance           |
+| mastery             | Learning Domain                           | không đưa lên Personal Core          |
+| error memory        | Learning Domain memory                    | expose summary qua contract          |
+| generic memory      | Knowledge Fabric                          | phân namespace/sensitivity/retention |
+| workflow            | Platform Workflow                         | migrate adapter dần                  |
+| agent manifest      | Capability Registry / Agent execution     | capability-first                     |
+| AI provider         | AI Platform                               | giữ abstraction, bỏ hard-code domain |
+| voice               | shared capability + Learning owner policy | không bắt buộc thành core domain     |
 
 ## Biên dữ liệu mới
 
