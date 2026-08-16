@@ -1,28 +1,31 @@
 ## Tóm tắt
 
-<!-- Đổi gì, tại sao; ưu tiên 2–3 gạch đầu dòng. -->
-
 -
 
 ## Issue / outcome
 
 Closes #
 
-<!-- Outcome người dùng/sản phẩm nào được cải thiện? Acceptance criteria nào hoàn tất? -->
+## Research / spec
+
+<!-- BẮT BUỘC với feat: link docs/specs/<yyyy-mm-dd>-<slug>.md đã Approved for implementation. -->
+
+- Spec:
+- Trạng thái duyệt:
+- Người/ngày duyệt:
+- Điểm lệch so với spec (nếu có):
 
 ## Loại thay đổi
 
 - [ ] feat
 - [ ] fix
 - [ ] refactor
-- [ ] docs
+- [ ] docs/spec
 - [ ] test
 - [ ] chore
 - [ ] breaking change
 
 ## Validation
-
-<!-- Ghi lệnh đã chạy và kết quả THỰC TẾ; không tick dựa trên lần chạy cũ. -->
 
 - [ ] `npm run typecheck`
 - [ ] `npm run lint` (0 cảnh báo)
@@ -39,26 +42,26 @@ Closes #
 
 ## Rủi ro, rollout và rollback
 
-- Mức rủi ro: thấp / vừa / cao
-- Thành phần/critical flow bị ảnh hưởng:
+- Mức rủi ro:
+- Critical flow bị ảnh hưởng:
 - Rollout/feature flag:
-- Telemetry/health check sau deploy:
+- Telemetry/health check:
 - Rollback/recovery:
-- Migration (nếu có):
+- Migration:
 
 ## Definition of Done
 
+- [ ] Với `feat`: research hoàn tất, spec đã merge và Approved for implementation trước khi code.
+- [ ] Implementation khớp spec; deviation đã được ghi và review.
 - [ ] Acceptance criteria có bằng chứng và không còn blocker.
 - [ ] Đã self-review diff; chỉ gồm thay đổi thuộc scope.
-- [ ] Đã chạy `npm run codemap -- impact <file>` cho hotspot và kiểm consumer liên quan.
+- [ ] Đã chạy `npm run codemap -- impact <file>` cho hotspot và kiểm consumer.
 - [ ] Input, error path, authorization và privacy đã được xử lý.
 - [ ] Không có secret, dữ liệu production, debug log hoặc generated output ngoài ý muốn.
-- [ ] Test mới chứng minh hành vi/bug fix; tài liệu/contract/observability đã cập nhật.
-- [ ] Thay đổi DB có migration versioned, verify query và recovery procedure.
-- [ ] Thay đổi payment/entitlement/usage có test atomicity, idempotency, concurrent/retry.
-- [ ] Thay đổi prompt/model AI đã chạy `npm run eval:tutor` và so baseline cost/quality.
-- [ ] Breaking change được nêu rõ và có kế hoạch tương thích/chuyển đổi.
+- [ ] Test mới chứng minh hành vi; contract/tài liệu/observability đã cập nhật.
+- [ ] DB migration versioned, có verify query và recovery procedure.
+- [ ] Payment/entitlement/usage có test atomicity, idempotency, concurrent/retry.
+- [ ] Prompt/model AI đã chạy `npm run eval:tutor` và so baseline cost/quality.
+- [ ] Breaking change được nêu rõ và có kế hoạch chuyển đổi.
 
 ## Ghi chú cho reviewer
-
-<!-- Quyết định cần soi kỹ, trade-off hoặc follow-up ngoài scope. -->
