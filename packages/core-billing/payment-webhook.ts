@@ -10,6 +10,7 @@
 
 import { z } from 'zod'
 import { getPgPool } from '../core-db/pgPool.js'
+import { withTransaction } from '../core-db/transaction.js'
 import { logSecurityEvent } from '../core-auth/security.js'
 import { extractPaymentCode, verifySepayApiKey } from '../../api/_lib/sepay.js'
 import { grantPlanDays } from '../../api/_lib/planGrant.js'
@@ -92,33 +93,44 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   try {
-    // WHERE status='pending' là chốt CHỐNG TRÙNG chính: 2 webhook song song cho cùng đơn chỉ
-    // đúng 1 cái thấy rowCount=1 (Postgres tự khoá dòng khi UPDATE). UNIQUE trên
-    // provider_txn_id là lớp chống trùng THỨ HAI cho ca hiếm hơn: cùng txnId khớp nhầm 2 đơn.
-    const { rowCount, rows: updated } = await pool.query<{
-      user_id: string
-      plan: 'pro' | 'vip'
-      cycle: PayableCycle
-      years: number
-    }>(
-      `update public.payments set status = 'paid', paid_at = now(), provider_txn_id = $2
-       where id = $1 and status = 'pending'
-       returning user_id, plan, cycle, years`,
-      [payment.id, txnId],
-    )
-    const won = updated[0]
-    if (!rowCount || !won) return ok(headers) // race: request khác vừa xử lý xong
+    // Cả 3 thao tác dưới đây (đánh dấu payment đã trả, cấp gói, xác thực email) phải cùng
+    // thành công hoặc cùng thất bại — nếu grantPlanDays() lỗi SAU KHI đã set status='paid' mà
+    // không có transaction, user mất tiền nhưng không được cấp gói, và lần webhook retry sau đó
+    // (SePay lặp lại tới 7 lần) sẽ bị chặn ngay ở nhánh `status === 'paid'` phía trên nên KHÔNG
+    // tự phục hồi được (phát hiện khi trace luồng payment cho V2-00, xem
+    // docs/architecture-v2/V2-00-CRITICAL-FLOWS.md risk register #1).
+    const won = await withTransaction(pool, async (client) => {
+      // WHERE status='pending' là chốt CHỐNG TRÙNG chính: 2 webhook song song cho cùng đơn chỉ
+      // đúng 1 cái thấy rowCount=1 (Postgres tự khoá dòng khi UPDATE). UNIQUE trên
+      // provider_txn_id là lớp chống trùng THỨ HAI cho ca hiếm hơn: cùng txnId khớp nhầm 2 đơn.
+      const { rowCount, rows: updated } = await client.query<{
+        user_id: string
+        plan: 'pro' | 'vip'
+        cycle: PayableCycle
+        years: number
+      }>(
+        `update public.payments set status = 'paid', paid_at = now(), provider_txn_id = $2
+         where id = $1 and status = 'pending'
+         returning user_id, plan, cycle, years`,
+        [payment.id, txnId],
+      )
+      const row = updated[0]
+      if (!rowCount || !row) return null // race: request khác vừa xử lý xong
 
-    // years > 1 CHỈ có ý nghĩa với cycle='year' (mua nhiều năm liền — xem api/checkout.ts).
-    const grantDays = CYCLE_DAYS[won.cycle] * (won.cycle === 'year' ? Math.max(1, won.years) : 1)
-    await grantPlanDays(won.user_id, won.plan, grantDays)
-    // Đã bỏ tiền thật ra mua gói → coi như đã xác thực email (chống email giả mạnh hơn nhiều so
-    // với mã gửi qua email, vì phải chuyển khoản ngân hàng thật). Chỉ set khi đang null để không
-    // đè lên thời điểm xác thực thật (nếu người dùng đã tự xác thực trước đó).
-    await pool.query(
-      'update public.users set email_verified = now() where id = $1 and email_verified is null',
-      [won.user_id],
-    )
+      // years > 1 CHỈ có ý nghĩa với cycle='year' (mua nhiều năm liền — xem api/checkout.ts).
+      const grantDays = CYCLE_DAYS[row.cycle] * (row.cycle === 'year' ? Math.max(1, row.years) : 1)
+      await grantPlanDays(row.user_id, row.plan, grantDays, new Date(), client)
+      // Đã bỏ tiền thật ra mua gói → coi như đã xác thực email (chống email giả mạnh hơn nhiều so
+      // với mã gửi qua email, vì phải chuyển khoản ngân hàng thật). Chỉ set khi đang null để không
+      // đè lên thời điểm xác thực thật (nếu người dùng đã tự xác thực trước đó).
+      await client.query(
+        'update public.users set email_verified = now() where id = $1 and email_verified is null',
+        [row.user_id],
+      )
+      return row
+    })
+    if (!won) return ok(headers) // race: request khác vừa xử lý xong
+
     logSecurityEvent('SEPAY_PAYMENT_PAID', 'sepay', {
       paymentId: payment.id,
       userId: won.user_id,

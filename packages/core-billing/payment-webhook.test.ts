@@ -20,6 +20,20 @@ const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()
 const API_KEY = 'sepay-test-key'
 
+// withTransaction() lấy client qua pool.connect() rồi tự gọi 'begin'/'commit'/'rollback' — những
+// câu lệnh transaction đó không nằm trong kịch bản mockResolvedValueOnce của từng test (vốn chỉ
+// mô phỏng SELECT/UPDATE nghiệp vụ), nên chặn riêng và cho qua ngay, còn lại uỷ quyền cho `query`
+// dùng chung để giữ nguyên thứ tự mock các test đã viết trước khi có transaction.
+const client = {
+  query: vi.fn((sql: string, params?: unknown[]) => {
+    if (sql === 'begin' || sql === 'commit' || sql === 'rollback') {
+      return Promise.resolve({ rows: [], rowCount: 0 })
+    }
+    return query(sql, params)
+  }),
+  release: vi.fn(),
+}
+
 function makeRequest(body: unknown, apiKey: string | null = API_KEY): Request {
   const headers: Record<string, string> = { 'content-type': 'application/json' }
   if (apiKey) headers.authorization = `Apikey ${apiKey}`
@@ -42,7 +56,12 @@ const PENDING_PAYMENT = {
 
 beforeEach(() => {
   query.mockReset()
-  mockedGetPool.mockReturnValue({ query } as unknown as ReturnType<typeof getPgPool>)
+  client.query.mockClear()
+  client.release.mockClear()
+  mockedGetPool.mockReturnValue({
+    query,
+    connect: () => Promise.resolve(client),
+  } as unknown as ReturnType<typeof getPgPool>)
   granted.calls = []
   vi.mocked(logSecurityEvent).mockClear()
   process.env.SEPAY_WEBHOOK_API_KEY = API_KEY

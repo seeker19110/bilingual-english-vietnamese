@@ -32,6 +32,95 @@ ElevenLabs khỏi bị dọn nhầm orphan, merge tiến độ học kiểu unio
 Chi tiết đối chiếu từng nhóm: `docs/RECOVERY-V2-RECENT-BRANCHES.md`. PR #543/#544/#545 đóng lại,
 lý do superseded by #546.
 
+### V2-00 — Trace 8 critical flows + risk register + apps/hub (2026-08-16, lượt 2)
+
+Owner chọn hướng (a) đóng nốt V2-00 trước khi sang V2-01. Đã làm M1/S2 (trace 8 luồng end-to-end:
+auth, chat, speaking, learning progress, SRS, payment/entitlement, admin mutation, notification —
+mỗi luồng vẽ `client → route → handler → service/DB → response` bằng cách đọc trực tiếp
+`server.ts` + handler liên quan) + M1/S3 (risk register 7 mục, mỗi mục có owner/state) + đọc kỹ
+`apps/hub/` (kết luận: UI khung cho Wave D multi-subject, chưa có logic Wave A/B/C, không cần đụng
+trong Wave A). M1/S4 (latency/cost production thật) còn mở — AI không có quyền SSH VPS, không tự
+bịa số. Tài liệu: `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md`; goal file cập nhật:
+`docs/goals/v2-wave-a-architecture-boundaries.md` (M1/S2, M1/S3 → DONE; M1/S4 → WAITING).
+
+**Phát hiện phụ, ĐÃ FIX ngay trong cùng PR (owner duyệt fix + chuyển M2 cùng lúc, 2026-08-16):**
+`packages/core-billing/payment-webhook.ts` trước đó KHÔNG bọc `UPDATE payments SET status='paid'`
+
+- `grantPlanDays()` trong 1 transaction Postgres — nếu `grantPlanDays()` lỗi sau khi đã set
+  `status='paid'`, user mất tiền nhưng chưa được cấp gói, và SePay retry sau đó bị chặn bởi nhánh
+  idempotent `status==='paid'` nên KHÔNG tự phục hồi được. Đã sửa: bọc `UPDATE payments` +
+  `grantPlanDays()` + `UPDATE users.email_verified` trong 1 `withTransaction()`
+  (`packages/core-db/transaction.ts`, có sẵn từ Phase 01); `grantPlanDays()`
+  (`api/_lib/planGrant.ts`) nhận thêm tham số tuỳ chọn `runner: Pool | PoolClient` để chạy trong
+  transaction của caller, mặc định vẫn dùng pool chung nên 6 nơi gọi khác (referral,
+  admin-grant-plan, quests, trial, achievement rewards) giữ nguyên hành vi. Cập nhật
+  `payment-webhook.test.ts` (mock `pool.connect()` trả về client giả); build ✅ typecheck ✅ lint 0
+  cảnh báo ✅ test 3339/3339 ✅. Chi tiết: `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` mục "Risk
+  register" #1 (đánh dấu FIXED).
+
+### V2-01 — ADR domain boundary + lint boundary rule (2026-08-16, M2/S1 DONE)
+
+Owner xác nhận M1 đủ để chuyển tiếp. `docs/adr/0003-bien-gioi-domain-v2.md` — biên giới THẬT
+hiện có (Personal OS Core chưa tồn tại, xác nhận ở V2-00): 2 lớp, không phải 3 —
+**Platform** (`packages/core-*`, dùng chung mọi domain tương lai) và **Learning domain**
+(`apps/english/` + phần lớn `api/*.ts`); `apps/hub/` xếp cùng nhóm platform về dependency (chưa
+sở hữu business truth). Luật enforce NGAY: `packages/**` không được import `apps/**` — thêm
+`no-restricted-imports` override trong `.eslintrc.cjs`, xác nhận 0 vi phạm hiện có (grep +
+`npm run lint` xanh) và rule hoạt động đúng (thử 1 ca vi phạm cố ý, thấy lỗi, rồi xoá). Trả lời
+câu hỏi mở TTS/STT từ V2-00: xếp **platform** (tham số hoá theo domain gọi tới, không có logic
+ngôn ngữ hard-code trong `packages/core-ai`). Luật "domain không import domain khác" (mục 11
+`02-SYSTEM-ARCHITECTURE.md`) CHƯA enforce — chỉ có 1 domain thật, chưa có ca cụ thể để viết đúng,
+để dành khi domain thứ 2 xuất hiện. Goal file: M2/S1 → DONE; còn mở M3/S1 (V2-02 field-by-field
+contract diff, việc lớn hơn) và M1/S4 (latency production, WAITING, cần quyền VPS).
+
+### V2-02 — code 13 contract V2 (2026-08-16, M3/S1 DONE, sau phần diff)
+
+Owner xác nhận ADR-0003 đúng hướng rồi yêu cầu code tiếp thay vì dừng chờ trả lời từng câu hỏi ở
+`V2-02-CONTRACT-DIFF.md` mục 4. Đã viết **cả 13 contract** trong `packages/core-contracts/`,
+chọn phương án ÍT RỦI RO NHẤT cho 3 ca xung đột tên (không đổi/xoá gì ở v1):
+
+- `Goal` → **`lifeGoal.ts`** (type `LifeGoal`), `goal.ts` (v1) giữ nguyên.
+- `Memory`/`MemoryRecord` → **`personalMemory.ts`** (type `MemoryRecord`), `memory.ts` (v1) giữ
+  nguyên.
+- `EventEnvelope`/`DomainEvent` → **`domainEvent.ts`** CHỈ re-export `EventEnvelopeSchema as
+DomainEventSchema` (cùng 1 object, test bằng `toBe`), không viết schema mới; `eventEnvelope.ts`
+  (v1) giữ nguyên.
+
+10 contract còn lại: `person.ts`, `personalFact.ts` (chuyển thẳng từ interface có sẵn ở
+`02-SYSTEM-ARCHITECTURE.md`), `lifeGraph.ts` (LifeGraphNode+LifeGraphEdge), `consentGrant.ts`,
+`personalPolicy.ts`, `decisionRecord.ts` (interface có sẵn), `capabilityManifest.ts`,
+`toolManifest.ts`, `contextPackage.ts`, `proposedAction.ts` (2 contract cuối giao song song cho
+2 subagent Sonnet — độc lập nhau, đặc tả rõ, đúng quy ước phân việc CLAUDE.md mục 3). 8/10 field
+là ĐỀ XUẤT ĐẦU TIÊN do AI tự thiết kế (chưa có shape sẵn trong tài liệu kiến trúc), mỗi field có
+comment giải thích nguồn gốc — **owner review lại khi Wave B bắt đầu dùng thật**, sửa lúc đó vẫn
+miễn phí vì chưa có dữ liệu Postgres nào tham chiếu.
+
+76 test mới (13 file `.test.ts`), build ✅ typecheck ✅ lint 0 cảnh báo ✅ test **3415/3415** ✅
+(208 file). Không sửa file nào trong 18 contract v1 (`git diff` xác nhận chỉ có file thêm mới).
+Chi tiết quyết định: `docs/architecture-v2/V2-02-CONTRACT-DIFF.md` mục 6.
+
+### V2-02 (lượt trước) — field-by-field contract diff + gap list (2026-08-16, phần diff)
+
+`docs/architecture-v2/V2-02-CONTRACT-DIFF.md` — đọc toàn bộ 18 contract v1 hiện có
+(`packages/core-contracts/*.ts`, tất cả khoá `learnerId`, English Tutor OS Phase 02/03 đã
+frozen), đối chiếu 13 contract V2-02 mục tiêu: **9 hoàn toàn mới, không xung đột**; **1 xung đột
+tên thật** — `Goal` v1 (mục tiêu luyện tập hàng ngày, `learnerId`) khác hoàn toàn `Goal` V2-02
+(node Life Graph, `personId`, có edge) — 3 phương án nêu ra (đổi tên bên nào, hoặc coi v1 là
+adapter/read-view từ V2-02), chưa tự chọn; **3 gần trùng tên khác scope**
+(Memory/MemoryRecord, AgentManifest/CapabilityManifest, EventEnvelope/DomainEvent) — riêng ca
+EventEnvelope/DomainEvent đề xuất DÙNG THẲNG EventEnvelope có sẵn, không viết DomainEvent mới
+(duy nhất trong 13 contract có thể port thẳng). Gap list 10 contract trắng hoàn toàn, trong đó
+`PersonalFact`/`DecisionRecord` đã có interface sẵn ở `02-SYSTEM-ARCHITECTURE.md` (việc cơ học
+khi viết), 8 contract còn lại cần owner tham gia thiết kế field. **Không viết code contract
+nào** — đúng phạm vi M3/S1 là diff-only, đúng guardrail "không tự quyết port/viết mới khi xung
+đột — phải hỏi owner". 4 câu hỏi cụ thể cần owner trả lời trước khi có PR viết contract thật, xem
+`V2-02-CONTRACT-DIFF.md` mục 4.
+
+**M1/S4 (latency/cost production thật) vẫn WAITING** — không có quyền SSH/credential VPS trong
+phiên làm việc từ xa. Đã gửi owner bộ lệnh cụ thể cần chạy trên VPS (PM2 status/logs, Postgres
+`pg_stat_user_tables`, Sentry Performance tab 30 ngày, billing dashboard từng AI provider) và dán
+kết quả lại — chưa nhận được, đang chờ.
+
 ### V2-00 — Baseline and ownership map, lượt inventory đầu tiên (2026-08-16)
 
 `docs/architecture-v2/21-ROADMAP.md` (V2, chính thức từ PR #542/`e54f102`, thay cho lộ trình

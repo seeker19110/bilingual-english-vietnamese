@@ -1,0 +1,37 @@
+// packages/core-contracts/consentGrant.ts — Contract cho "ConsentGrant" (V2-02). Chưa có shape
+// gợi ý cụ thể trong `02-SYSTEM-ARCHITECTURE.md` (chỉ có nguyên tắc ở mục 7: "consent
+// scope/version/revoke") — field dưới đây suy trực tiếp từ đúng 3 từ khoá đó, không thêm khái
+// niệm nào ngoài tài liệu đã nêu. Đây là 1 trong 8 gap contract mà
+// `docs/architecture-v2/V2-02-CONTRACT-DIFF.md` mục 3/4 ghi rõ cần owner tham gia thiết kế field
+// — bản này là ĐỀ XUẤT đầu tiên tối giản theo đúng 3 từ khoá roadmap nêu, KHÔNG phải quyết định
+// cuối cùng; owner review lại trước khi domain engine Wave B (V2-04) dùng thật.
+
+import { z } from 'zod'
+import { versionedObject } from './version.js'
+import { IsoDateTimeSchema, UuidSchema } from './shared.js'
+
+export const CONSENT_GRANT_SCHEMA_VERSION = 1
+
+export const ConsentStatusSchema = z.enum(['active', 'revoked', 'expired'])
+
+export const ConsentGrantSchema = versionedObject(
+  {
+    id: UuidSchema,
+    personId: UuidSchema,
+    // Phạm vi tài nguyên được cấp phép, dạng "resource.action" (vd "personal_fact.read",
+    // "life_graph.write") — khớp cách đặt tên "domain.action" đã dùng ở `eventEnvelope.ts`.
+    scope: z.string().regex(/^[a-z_]+\.[a-z_]+$/, 'scope phải dạng "resource.action"'),
+    // Mục đích dùng — TẠI SAO cần quyền này (vd "companion_context_building",
+    // "third_party_export") — tách riêng `purpose` khỏi `scope` vì cùng 1 scope có thể được cấp
+    // cho nhiều mục đích khác nhau, mỗi mục đích có thể revoke độc lập.
+    purpose: z.string().min(1).max(200),
+    version: z.number().int().positive(),
+    status: ConsentStatusSchema,
+    grantedAt: IsoDateTimeSchema,
+    expiresAt: IsoDateTimeSchema.optional(),
+    revokedAt: IsoDateTimeSchema.optional(),
+  },
+  CONSENT_GRANT_SCHEMA_VERSION,
+)
+
+export type ConsentGrant = z.infer<typeof ConsentGrantSchema>

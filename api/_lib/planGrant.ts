@@ -9,6 +9,7 @@
 //      lực, chỉ tính từ "bây giờ" khi gói cũ đã hết hạn.
 //   3. Gói vĩnh viễn (plan pro/vip + plan_expires_at = null) là cao nhất — không đụng vào.
 
+import type { Pool, PoolClient } from 'pg'
 import { getPgPool } from '../../packages/core-db/pgPool.js'
 import { resolvePlan, type Plan } from '../../packages/core-billing/plan.js'
 import { getAppSettings } from '../../packages/core-db/settings.js'
@@ -79,15 +80,21 @@ export function computePlanGrant(
 /**
  * Ghi kết quả cấp gói xuống DB (đọc trạng thái hiện tại → tính → ghi).
  * Trả về gói/hạn SAU KHI cấp.
+ *
+ * `runner` mặc định là pool dùng chung (hành vi cũ, không đổi cho các nơi gọi hiện có: referral,
+ * admin-grant-plan, quests, trial, achievement rewards). Truyền vào một `PoolClient` đang ở giữa
+ * transaction (từ `withTransaction()`, `packages/core-db/transaction.ts`) khi việc cấp gói này
+ * PHẢI atomic cùng một thao tác ghi DB khác — ví dụ `payment-webhook.ts` cần cập nhật
+ * `payments.status='paid'` và cấp gói cùng thành công/thất bại, không được để lệch nhau.
  */
 export async function grantPlanDays(
   userId: string,
   grantPlan: Exclude<Plan, 'free'>,
   days: number,
   now: Date = new Date(),
+  runner: Pool | PoolClient = getPgPool(),
 ): Promise<PlanGrantResult> {
-  const pool = getPgPool()
-  const { rows } = await pool.query<{ plan: string | null; plan_expires_at: Date | null }>(
+  const { rows } = await runner.query<{ plan: string | null; plan_expires_at: Date | null }>(
     'select plan, plan_expires_at from public.profiles where id = $1',
     [userId],
   )
@@ -101,7 +108,7 @@ export async function grantPlanDays(
     promoUntil,
   )
 
-  await pool.query(
+  await runner.query(
     `insert into public.profiles (id, plan, plan_expires_at)
      values ($1, $2, $3)
      on conflict (id) do update set plan = excluded.plan, plan_expires_at = excluded.plan_expires_at`,
