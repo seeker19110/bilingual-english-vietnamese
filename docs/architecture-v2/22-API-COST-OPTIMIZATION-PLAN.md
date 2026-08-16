@@ -195,7 +195,175 @@ offline eval, backfill và aggregate curriculum feedback. Gom nhiều event cùn
 latest-state-wins cho job chưa chạy. Batch không được quyết định auth, permission, entitlement hoặc
 authoritative state transition.
 
-## 6. Quota và hard cost cap
+## 6. Giải thích chi tiết cách đạt các mức giảm
+
+Các tỷ lệ dưới đây là target kỹ thuật, không phải số cộng cơ học. Nhiều biện pháp tác động lên cùng
+một request nên tổng cuối phải đo bằng production baseline và cohort rollout.
+
+### 6.1 Giảm 35–55% số lần gọi API/người dùng
+
+#### Nguồn 1 — Deterministic/local resolver: 15–25%
+
+Không gọi model cho greeting, acknowledgement, navigation, quota/error message, dictionary, CEFR,
+SRS, progress, static lesson turn, format validation và các lỗi grammar/pronunciation đã có rule.
+
+    User input
+      → local/rule detector
+      → giải quyết được: trả structured result, 0 provider call
+      → không giải quyết được: tiếp tục safe cache/Gemini
+
+Ví dụ câu cơ bản đã đúng chỉ cần feedback mẫu ngắn; không gửi Gemini để nhận một câu xác nhận.
+Learning-specific rule nằm trong Learning domain, không đưa vào platform core.
+
+#### Nguồn 2 — Safe exact cache: 10–20%
+
+Các yêu cầu như giải thích một cấu trúc, từ vựng, câu mẫu hoặc rubric thường lặp giữa người học.
+Shared cache key phải gồm task, normalized input, locale, level, prompt/rubric/model version.
+Personal context chỉ được user/session cache TTL ngắn, không cross-user.
+
+Cache structured result thay vì raw personalized wording để client render boilerplate. Cache miss
+mới được phép đi tiếp tới budget gateway.
+
+#### Nguồn 3 — Chống request trùng: 3–8%
+
+- disable/debounce double-submit ở client;
+- Idempotency-Key cho mỗi task;
+- server single-flight theo user + task + payload hash;
+- retry dùng lại cùng key;
+- AbortController hủy request chưa vào provider khi người dùng rời trang;
+- request trùng nhận lại pending/result, không tạo call thứ hai.
+
+Mobile network, double-click, React effect hoặc timeout không được biến một intent thành nhiều call.
+
+#### Nguồn 4 — Gom memory cuối phiên: 5–15%
+
+Không chạy memory extraction sau mỗi message/event. Event trong một session được deterministic
+dedup, rồi gom thành một Gemini Batch job khi kết thúc hoặc vượt threshold. Latest-state-wins cho
+job chưa chạy. Một phiên 12 message tạo tối đa một memory job, không tạo 12 call.
+
+#### Nguồn 5 — Giới hạn fallback: 1–5%
+
+Luồng hiện tại có thể Groq lỗi → Anthropic lỗi → Gemini. Luồng V2 dùng Gemini primary và tối đa một
+fallback. Chỉ timeout, 429 và 5xx là retryable; validation/4xx dừng ngay. Circuit breaker ngăn retry
+storm và không provider race trong luồng thường.
+
+| Nguồn | Target riêng |
+| --- | ---: |
+| Deterministic/local | 15–25% |
+| Safe exact cache | 10–20% |
+| Chống request trùng | 3–8% |
+| Memory cuối phiên | 5–15% |
+| Giới hạn fallback | 1–5% |
+| **Tổng sau khi loại phần chồng lấn** | **35–55%** |
+
+### 6.2 Giảm 50–75% input token
+
+#### Nguồn 1 — Summary + 4–6 lượt gần nhất: 45–70%
+
+Không gửi mặc định tối đa 30 message ở mọi lượt. Context mục tiêu:
+
+    system instruction ngắn
+      + session summary
+      + relevant facts/goals
+      + 4–6 turns gần nhất
+      + current message
+
+Một phiên 30 lượt có thể giảm từ khoảng 7.000–12.000 input token ở lượt cuối xuống khoảng
+1.500–3.000 token. Summary chỉ giữ mục tiêu, chủ đề, lỗi quan trọng, item cần luyện và việc chưa
+xong; không sao chép transcript.
+
+Summary được cập nhật cuối phiên, khi context vượt ngưỡng hoặc chuyển chủ đề lớn; không gọi model
+summary sau từng message.
+
+#### Nguồn 2 — System instruction chuẩn: 3–10%
+
+callGemini() hiện giả lập system bằng một user message và một model acknowledgement. V2 dùng
+systemInstruction thật, bỏ cặp message giả lặp ở mọi request và tạo điều kiện dùng context cache.
+
+#### Nguồn 3 — Retrieval có chọn lọc: 10–30%
+
+Context Builder lọc theo intent → domain → goal relevance → permission → sensitivity → freshness →
+token budget. Câu hỏi grammar không được mang theo toàn bộ profile, curriculum, dictionary, payment
+hoặc memory không liên quan. Chỉ đoạn dữ liệu được retrieve mới vào prompt.
+
+#### Nguồn 4 — Bỏ boilerplate và đặt budget theo task: 5–15%
+
+Model chỉ trả field biến đổi như score/correction/reason; label, heading và text cố định do client
+render. Không có lỗi thì không sinh explanation dài. Output budget khởi điểm:
+
+| Task | Output target |
+| --- | ---: |
+| Greeting/navigation | 0 token AI |
+| Chat | 192–320 |
+| Correction | 256–384 |
+| Speaking feedback | 320–512 |
+| Writing evaluation | 640–1.024 |
+| Session summary/memory | 256–512 qua Batch |
+
+| Nguồn | Target riêng |
+| --- | ---: |
+| Summary + 4–6 turns | 45–70% |
+| System instruction chuẩn | 3–10% |
+| Selective context retrieval | 10–30% |
+| Bỏ boilerplate/budget task | 5–15% |
+| **Tổng sau khi loại phần chồng lấn** | **50–75%** |
+
+### 6.3 Giảm 40–60% thời lượng voice tính phí
+
+#### Nguồn 1 — VAD và silence trimming: 15–30% audio input
+
+Client chỉ bắt đầu/gửi khi có giọng nói, cắt silence đầu/cuối, dừng sau khoảng im lặng và bỏ đoạn chỉ
+có noise. Push-to-talk là mặc định; continuous mode có quota riêng. Server tự đo duration thật,
+không tin số giây client khai.
+
+Ví dụ ghi âm 30 giây nhưng chỉ có 17 giây lời nói thì payload mục tiêu khoảng 18 giây, không gửi cả
+30 giây.
+
+#### Nguồn 2 — Chỉ nói phần cốt lõi: 15–30% audio output
+
+Gemini Voice đọc câu trả lời hội thoại, câu sửa đúng, giải thích ngắn và câu mẫu cần bắt chước.
+Phân tích grammar dài, rubric, danh sách lỗi và writing feedback hiển thị text. Một response 120 từ
+có thể chỉ cần đọc 25–40 từ quan trọng.
+
+#### Nguồn 3 — Replay/cache: 10–30% lượt sinh audio
+
+Nghe lại dùng buffer/file đã nhận; slow playback đổi tốc độ phía client, không tạo audio mới.
+Static lesson/story/reference được Gemini pre-generate theo popularity + shared cache; phần ít dùng
+cache-on-demand. Personalized live turn chỉ session-cache và không shared-cross-user.
+
+#### Nguồn 4 — Một pipeline voice: 5–15%
+
+Nếu Gemini Voice đã trả audio thì không gọi thêm TTS để đọc cùng nội dung. Mỗi speaking turn có một
+audio source authoritative. Khi Gemini Live đáp ứng quality/cost gate, một session có thể thay chuỗi
+STT → chat → TTS tách rời; vẫn phải benchmark trước cutover.
+
+Server áp duration budget khởi điểm:
+
+| Task | Duration target |
+| --- | ---: |
+| Pronunciation một câu | 10–20 giây |
+| Speaking turn | 20–30 giây |
+| Deep speaking exercise | tối đa 60 giây, quota riêng |
+| Continuous conversation | quota phút/session |
+
+| Nguồn | Target riêng |
+| --- | ---: |
+| VAD/silence trim | 15–30% input audio |
+| Chỉ nói phần cốt lõi | 15–30% output audio |
+| Replay/cache | 10–30% lượt sinh lại |
+| Một pipeline voice | 5–15% |
+| **Tổng sau khi loại phần chồng lấn** | **40–60%** |
+
+### 6.4 Cách chứng minh
+
+Ghi baseline 7–14 ngày: calls/DAU, input/output token theo task, audio input/output seconds, cache
+hit/miss, provider attempts, actual cost theo plan, completion/learning outcome và p95 latency.
+
+Rollout theo cohort 5% → 25% → 50% → 100%. Chỉ công nhận tiết kiệm khi cost giảm mà success rate,
+quality, learning outcome, privacy và latency không regression. Wave 0 usage receipt là điều kiện
+bắt buộc trước mọi tuyên bố phần trăm.
+
+## 7. Quota và hard cost cap
 
 Mỗi plan có: feature turns, text token quota, voice-minute quota và monetary hard cap.
 
@@ -207,7 +375,7 @@ Mỗi plan có: feature turns, text token quota, voice-minute quota và monetary
 Monetary cap không fail-open. Provider lỗi refund entitlement/usage hợp lý nhưng không xoá receipt
 của attempt đã phát sinh chi phí.
 
-## 7. Kế hoạch PR nhỏ
+## 8. Kế hoạch PR nhỏ
 
 ### Wave 0 — Đo đúng (P0)
 
@@ -254,7 +422,7 @@ compatibility route đã diễn tập.
 **Gate:** concurrency/retry tests xanh; cap không bypass; cached/offline learning vẫn chạy khi tắt
 provider.
 
-## 8. Module dự kiến
+## 9. Module dự kiến
 
 - packages/core-ai/ai.ts, aiConfig.ts và geminiApi.ts: router, token/context budget.
 - packages/core-ai/modelConfig.ts: typed environment config, default, allowlist và startup validation.
@@ -268,7 +436,7 @@ provider.
 
 Tên/path cuối phải theo ADR boundary; Learning rubric không đặt vào platform core.
 
-## 9. Không làm
+## 10. Không làm
 
 - Không đổi model chỉ vì rẻ nếu learning outcome giảm.
 - Không cache personalized response xuyên user hoặc lưu raw prompt/audio vào cost ledger.
@@ -278,7 +446,7 @@ Tên/path cuối phải theo ADR boundary; Learning rubric không đặt vào pl
 - Không dùng vector DB/context dài trước khi structured retrieval chứng minh chưa đủ.
 - Không xoá provider/cache v1 trước parity, canary và rollback evidence.
 
-## 10. Definition of Done
+## 11. Definition of Done
 
 - Actual cost trace được đến capability/model/provider attempt.
 - ≥35% intent không cần provider hoặc được safe-cache.
