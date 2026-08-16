@@ -16,16 +16,16 @@
 
 ## Baseline routing
 
-| Task class | Primary baseline | Escalation/fallback | Ghi chú |
-|---|---|---|---|
-| `tutor.chat`, giải thích ngắn, sửa một câu | `gemini-2.5-flash-lite` | model đã benchmark theo registry | Mặc định khối lượng lớn |
-| `tutor.speaking_feedback` | `gemini-2.5-flash-lite` | Gemini 2.5 Flash khi confidence/schema không đạt | STT tách riêng |
-| `assessment.writing`, rubric mở, bài dài | `gemini-2.5-flash` | moderation/fallback đã duyệt | Không dùng Flash cho chat thường |
-| memory extraction, summary, diễn đạt kế hoạch | `gemini-2.5-flash-lite` | bỏ ghi nếu confidence thấp | AI chỉ đề xuất state |
-| diagnostic, mastery, SRS, entitlement, billing, permission | deterministic | không có model fallback | Model không quyết định invariant |
-| speech-to-text Anh–Việt | Groq `whisper-large-v3-turbo` | model STT dự phòng đã benchmark | Đo theo giây audio |
-| pronunciation phoneme tiếng Anh | Azure Pronunciation Assessment | browser/rule fallback | Không áp English assessor cho tiếng Việt |
-| voice hội thoại/narration | Gemini voice model theo registry | cache/pre-generated/fallback đã duyệt | Voice dùng Gemini; không phụ thuộc TTS text provider cũ |
+| Task class                                                 | Primary baseline                 | Escalation/fallback                              | Ghi chú                                                 |
+| ---------------------------------------------------------- | -------------------------------- | ------------------------------------------------ | ------------------------------------------------------- |
+| `tutor.chat`, giải thích ngắn, sửa một câu                 | `gemini-2.5-flash-lite`          | model đã benchmark theo registry                 | Mặc định khối lượng lớn                                 |
+| `tutor.speaking_feedback`                                  | `gemini-2.5-flash-lite`          | Gemini 2.5 Flash khi confidence/schema không đạt | STT tách riêng                                          |
+| `assessment.writing`, rubric mở, bài dài                   | `gemini-2.5-flash`               | moderation/fallback đã duyệt                     | Không dùng Flash cho chat thường                        |
+| memory extraction, summary, diễn đạt kế hoạch              | `gemini-2.5-flash-lite`          | bỏ ghi nếu confidence thấp                       | AI chỉ đề xuất state                                    |
+| diagnostic, mastery, SRS, entitlement, billing, permission | deterministic                    | không có model fallback                          | Model không quyết định invariant                        |
+| speech-to-text Anh–Việt                                    | Groq `whisper-large-v3-turbo`    | model STT dự phòng đã benchmark                  | Đo theo giây audio                                      |
+| pronunciation phoneme tiếng Anh                            | Azure Pronunciation Assessment   | browser/rule fallback                            | Không áp English assessor cho tiếng Việt                |
+| voice hội thoại/narration                                  | Gemini voice model theo registry | cache/pre-generated/fallback đã duyệt            | Voice dùng Gemini; không phụ thuộc TTS text provider cũ |
 
 Tên model trên là baseline hiện hành. Registry phải cho phép đổi qua environment mà không sửa frontend.
 
