@@ -1,46 +1,45 @@
-name: "💡 Feature request"
-description: Đưa một ý tưởng qua discovery và Definition of Ready
-title: "feat: "
+name: "💡 Feature discovery"
+description: Nghiên cứu và viết đặc tả chi tiết trước khi code tính năng
+title: "research: "
 labels: ["type: feature", "status: discovery"]
 body:
   - type: markdown
     attributes:
-      value: "Mô tả vấn đề trước, giải pháp sau. Issue chỉ sẵn sàng code khi đạt DoR."
+      value: |
+        **Không code tính năng từ issue này khi chưa có spec được duyệt.**
+        Tạo spec từ `docs/specs/TEMPLATE.md`, review và merge spec trước implementation.
   - type: textarea
     id: problem
     attributes:
-      label: Vấn đề
-      description: Ai gặp vấn đề gì, trong bối cảnh nào?
-      placeholder: Khi..., người học..., dẫn đến...
+      label: Vấn đề và người dùng
+      description: Ai gặp vấn đề gì, trong bối cảnh nào? Bằng chứng hiện có?
     validations:
       required: true
   - type: textarea
     id: outcome
     attributes:
-      label: Kết quả mong muốn và cách đo
-      placeholder: Thành công khi...
+      label: Outcome và cách đo
+      placeholder: Baseline..., mục tiêu..., guardrail...
     validations:
       required: true
   - type: textarea
-    id: proposal
+    id: research
     attributes:
-      label: Giải pháp đề xuất
-      description: Luồng người dùng, trạng thái chính, API/data nếu đã biết.
+      label: Kế hoạch nghiên cứu
+      description: Code/flow cần đọc, dữ liệu, nguồn chính thống, người dùng và giải pháp tương tự cần khảo sát.
     validations:
       required: true
   - type: textarea
-    id: acceptance
+    id: alternatives
     attributes:
-      label: Acceptance criteria
-      placeholder: |
-        - [ ] Given... when... then...
-        - [ ] ...
+      label: Phương án cần so sánh
+      description: Bao gồm phương án không làm, trade-off và tiêu chí quyết định.
     validations:
       required: true
   - type: textarea
     id: scope
     attributes:
-      label: Scope và non-goals
+      label: Scope sơ bộ và non-goals
       placeholder: |
         In scope:
         - ...
@@ -53,26 +52,25 @@ body:
     attributes:
       label: Mức rủi ro
       options:
-        - Thấp — docs/UI cô lập
-        - Vừa — logic/API không nhạy cảm
+        - Thấp — UI/logic cô lập
+        - Vừa — API/data không nhạy cảm
         - Cao — auth/data/payment/usage/AI cost/production
     validations:
       required: true
   - type: textarea
-    id: validation
+    id: unknowns
     attributes:
-      label: Test, rollout và rollback
-      description: Nêu test plan, telemetry, migration/flag và cách quay lui.
+      label: Giả định, điều chưa biết và quyết định cần chốt
     validations:
       required: true
   - type: checkboxes
-    id: ready
+    id: gate
     attributes:
-      label: Definition of Ready
+      label: Cam kết cổng Spec
       options:
-        - label: Outcome và acceptance criteria kiểm thử được.
+        - label: Chưa sửa source hoặc mở PR implementation trước khi research hoàn tất.
           required: true
-        - label: Scope, non-goals, dependency và quyết định còn mở đã ghi rõ.
+        - label: Sẽ tạo `docs/specs/<yyyy-mm-dd>-<slug>.md` từ template.
           required: true
-        - label: Rủi ro, test, rollout và rollback đã được cân nhắc.
+        - label: Chỉ bắt đầu code sau khi spec ghi Approved for implementation, người duyệt và ngày duyệt.
           required: true
