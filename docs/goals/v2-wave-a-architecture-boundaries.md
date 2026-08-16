@@ -4,7 +4,7 @@
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Goal ID           | GOAL-2026-001                                                                                                                                                         |
 | Owner             | seeker19110 (product/architecture quyết định); AI thực thi từng slice                                                                                                 |
-| Trạng thái        | WAITING (M1/S2-S3, M2/S1, M3/S1 DONE gồm code 13 contract; chờ owner review field + dán số liệu VPS cho M1/S4)                                                        |
+| Trạng thái        | WAITING — PR #560 đã MERGE (`4aad3c2`); chỉ còn M1/S4 mở, chờ owner dán số liệu VPS + review field 8 contract tự thiết kế                                             |
 | Bắt đầu           | 2026-08-16                                                                                                                                                            |
 | Target review     | chưa đặt — chờ owner xác nhận hướng tiếp theo (mục 5)                                                                                                                 |
 | Quyền được cấp    | Research, branch, PR (docs-only đã merge #548). Chưa có quyền tự quyết kiến trúc (Person/PersonalFact/Life Graph schema) hay mở PR đổi code sản xuất                  |
@@ -47,14 +47,14 @@
 
 ## 3. Milestones và slices
 
-| ID    | Outcome/AC                                                       | Dependency | Spec                                   | Issue | PR   | State   | Evidence                                                               |
-| ----- | ---------------------------------------------------------------- | ---------- | -------------------------------------- | ----- | ---- | ------- | ---------------------------------------------------------------------- |
-| M1/S1 | V2-00 inventory ownership map (first pass)                       | —          | `docs/architecture-v2/21-ROADMAP.md`   | —     | #548 | DONE    | Merged `main` `857df19`                                                |
-| M1/S2 | V2-00 trace 8 critical flows end-to-end                          | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | (mở) | DONE    | `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` mục 1                   |
-| M1/S3 | V2-00 risk register có owner                                     | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | (mở) | DONE    | Cùng tài liệu mục 2 — 7 risk, mỗi risk có owner/state                  |
-| M1/S4 | V2-00 latency/cost baseline sản xuất thật                        | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | (mở) | WAITING | Mục 3 — cần owner/quyền SSH VPS, AI không tự đo được từ xa             |
-| M2/S1 | V2-01 ADR domain boundary                                        | M1 đóng?   | `docs/adr/0003-bien-gioi-domain-v2.md` | —     | (mở) | DONE    | ADR + lint rule `packages/**` không import `apps/**`, 0 vi phạm        |
-| M3/S1 | V2-02 field-by-field contract diff + gap list + code 13 contract | M2         | `V2-02-CONTRACT-DIFF.md`               | —     | (mở) | DONE    | 13 file `.ts` + 13 `.test.ts`, 76 test, build/typecheck/lint/test xanh |
+| ID    | Outcome/AC                                                       | Dependency | Spec                                   | Issue | PR   | State   | Evidence                                                                |
+| ----- | ---------------------------------------------------------------- | ---------- | -------------------------------------- | ----- | ---- | ------- | ----------------------------------------------------------------------- |
+| M1/S1 | V2-00 inventory ownership map (first pass)                       | —          | `docs/architecture-v2/21-ROADMAP.md`   | —     | #548 | DONE    | Merged `main` `857df19`                                                 |
+| M1/S2 | V2-00 trace 8 critical flows end-to-end                          | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | #560 | DONE    | `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` mục 1, merged `4aad3c2`  |
+| M1/S3 | V2-00 risk register có owner                                     | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | #560 | DONE    | Cùng tài liệu mục 2 — 7 risk, mỗi risk có owner/state, merged `4aad3c2` |
+| M1/S4 | V2-00 latency/cost baseline sản xuất thật                        | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | (mở) | WAITING | Mục 3 — cần owner/quyền SSH VPS, AI không tự đo được từ xa              |
+| M2/S1 | V2-01 ADR domain boundary                                        | M1 đóng?   | `docs/adr/0003-bien-gioi-domain-v2.md` | —     | #560 | DONE    | ADR + lint rule, 0 vi phạm, merged `4aad3c2`                            |
+| M3/S1 | V2-02 field-by-field contract diff + gap list + code 13 contract | M2         | `V2-02-CONTRACT-DIFF.md`               | —     | #560 | DONE    | 13 file `.ts`+`.test.ts`, 76 test, merged `4aad3c2`                     |
 
 State hợp lệ: BACKLOG / RESEARCH / SPEC / READY / BUILDING / VERIFYING / WAITING / BLOCKED /
 DONE / DROPPED.
@@ -69,6 +69,11 @@ DONE / DROPPED.
 
 ## 5. Current truth
 
+- **Commit `main` đã reconcile: `4aad3c2` (2026-08-16, sau khi merge PR #560).** PR #560 gộp toàn
+  bộ M1/S2, M1/S3, M2/S1, M3/S1 (13 contract V2-02) + fix bug atomicity payment — CI xanh
+  (`metadata`/`quality`/`e2e`), squash-merge. Nhánh làm việc `claude/project-completion-4zaebt`
+  đã reset về `main` mới nhất (không còn commit riêng lẻ nào chưa vào `main`).
+- Lịch sử trước khi merge (giữ để tham khảo):
 - Commit `main` đã reconcile: `c0fabd1` (2026-08-16, sau khi merge #554 mở goal file này).
 - Goal gap hiện tại: M1/S1 DONE. **M1/S2, M1/S3 nay DONE** (lượt 2026-08-16 thứ hai — owner chọn
   hướng (a)). M1/S4 WAITING (chỉ còn thiếu số liệu latency/cost production thật, cần quyền SSH
