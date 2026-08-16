@@ -43,15 +43,25 @@ trong Wave A). M1/S4 (latency/cost production thật) còn mở — AI không c�
 bịa số. Tài liệu: `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md`; goal file cập nhật:
 `docs/goals/v2-wave-a-architecture-boundaries.md` (M1/S2, M1/S3 → DONE; M1/S4 → WAITING).
 
-**Phát hiện phụ (không thuộc mục tiêu goal, nhưng có giá trị thật):**
-`packages/core-billing/payment-webhook.ts` KHÔNG bọc `UPDATE payments SET status='paid'` +
-`grantPlanDays()` trong 1 transaction Postgres (`withTransaction()` đã có sẵn ở
-`packages/core-db/transaction.ts` nhưng chưa dùng ở đây) — nếu `grantPlanDays()` lỗi sau khi đã
-set `status='paid'`, user mất tiền nhưng chưa được cấp gói, và SePay retry sau đó bị chặn bởi
-nhánh idempotent `status==='paid'` nên KHÔNG tự phục hồi được, phải xử lý tay. Đã xác nhận bằng
-đọc code thật, không phải suy đoán. **CHƯA sửa** — đúng guardrail Wave A cấm sửa
-`packages/core-billing` trong goal này; cần owner quyết định mở PR riêng fix ngay hay để backlog.
-Chi tiết: `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` mục "Risk register" #1.
+**Phát hiện phụ, ĐÃ FIX ngay trong cùng PR (owner duyệt fix + chuyển M2 cùng lúc, 2026-08-16):**
+`packages/core-billing/payment-webhook.ts` trước đó KHÔNG bọc `UPDATE payments SET status='paid'`
+
+- `grantPlanDays()` trong 1 transaction Postgres — nếu `grantPlanDays()` lỗi sau khi đã set
+  `status='paid'`, user mất tiền nhưng chưa được cấp gói, và SePay retry sau đó bị chặn bởi nhánh
+  idempotent `status==='paid'` nên KHÔNG tự phục hồi được. Đã sửa: bọc `UPDATE payments` +
+  `grantPlanDays()` + `UPDATE users.email_verified` trong 1 `withTransaction()`
+  (`packages/core-db/transaction.ts`, có sẵn từ Phase 01); `grantPlanDays()`
+  (`api/_lib/planGrant.ts`) nhận thêm tham số tuỳ chọn `runner: Pool | PoolClient` để chạy trong
+  transaction của caller, mặc định vẫn dùng pool chung nên 6 nơi gọi khác (referral,
+  admin-grant-plan, quests, trial, achievement rewards) giữ nguyên hành vi. Cập nhật
+  `payment-webhook.test.ts` (mock `pool.connect()` trả về client giả); build ✅ typecheck ✅ lint 0
+  cảnh báo ✅ test 3339/3339 ✅. Chi tiết: `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` mục "Risk
+  register" #1 (đánh dấu FIXED).
+
+### V2-01 — bắt đầu ADR domain boundary (2026-08-16)
+
+Owner xác nhận M1 đủ để chuyển tiếp — bắt đầu M2/S1 (V2-01 ADR biên giới domain
+`Personal OS Core ↔ Learning ↔ shared platform`).
 
 ### V2-00 — Baseline and ownership map, lượt inventory đầu tiên (2026-08-16)
 

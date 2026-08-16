@@ -4,7 +4,7 @@
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Goal ID           | GOAL-2026-001                                                                                                                                                         |
 | Owner             | seeker19110 (product/architecture quyết định); AI thực thi từng slice                                                                                                 |
-| Trạng thái        | BLOCKED                                                                                                                                                               |
+| Trạng thái        | BUILDING (M2/S1 đang làm)                                                                                                                                             |
 | Bắt đầu           | 2026-08-16                                                                                                                                                            |
 | Target review     | chưa đặt — chờ owner xác nhận hướng tiếp theo (mục 5)                                                                                                                 |
 | Quyền được cấp    | Research, branch, PR (docs-only đã merge #548). Chưa có quyền tự quyết kiến trúc (Person/PersonalFact/Life Graph schema) hay mở PR đổi code sản xuất                  |
@@ -50,9 +50,9 @@
 | ID    | Outcome/AC                                    | Dependency | Spec                                 | Issue | PR   | State   | Evidence                                                     |
 | ----- | --------------------------------------------- | ---------- | ------------------------------------ | ----- | ---- | ------- | ------------------------------------------------------------ |
 | M1/S1 | V2-00 inventory ownership map (first pass)    | —          | `docs/architecture-v2/21-ROADMAP.md` | —     | #548 | DONE    | Merged `main` `857df19`                                      |
-| M1/S2 | V2-00 trace 8 critical flows end-to-end       | S1         | `V2-00-CRITICAL-FLOWS.md`            | —     | (mở) | DONE    | `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` mục 1          |
-| M1/S3 | V2-00 risk register có owner                  | S1         | `V2-00-CRITICAL-FLOWS.md`            | —     | (mở) | DONE    | Cùng tài liệu mục 2 — 7 risk, mỗi risk có owner/state          |
-| M1/S4 | V2-00 latency/cost baseline sản xuất thật     | S1         | `V2-00-CRITICAL-FLOWS.md`            | —     | (mở) | WAITING | Mục 3 — cần owner/quyền SSH VPS, AI không tự đo được từ xa    |
+| M1/S2 | V2-00 trace 8 critical flows end-to-end       | S1         | `V2-00-CRITICAL-FLOWS.md`            | —     | (mở) | DONE    | `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` mục 1         |
+| M1/S3 | V2-00 risk register có owner                  | S1         | `V2-00-CRITICAL-FLOWS.md`            | —     | (mở) | DONE    | Cùng tài liệu mục 2 — 7 risk, mỗi risk có owner/state        |
+| M1/S4 | V2-00 latency/cost baseline sản xuất thật     | S1         | `V2-00-CRITICAL-FLOWS.md`            | —     | (mở) | WAITING | Mục 3 — cần owner/quyền SSH VPS, AI không tự đo được từ xa   |
 | M2/S1 | V2-01 ADR domain boundary                     | M1 đóng?   | chưa viết                            | —     | —    | BACKLOG | Chờ owner: bắt đầu trước hay sau khi M1 đóng hẳn — xem mục 5 |
 | M3/S1 | V2-02 field-by-field contract diff + gap list | M2         | chưa viết                            | —     | —    | BACKLOG | —                                                            |
 
@@ -73,23 +73,21 @@ DONE / DROPPED.
 - Goal gap hiện tại: M1/S1 DONE. **M1/S2, M1/S3 nay DONE** (lượt 2026-08-16 thứ hai — owner chọn
   hướng (a)). M1/S4 WAITING (chỉ còn thiếu số liệu latency/cost production thật, cần quyền SSH
   VPS mà phiên AI này không có — không tự bịa số). M2, M3 vẫn BACKLOG.
-- **Phát hiện phụ trong lúc trace luồng (không phải mục tiêu chính nhưng có giá trị):**
-  `packages/core-billing/payment-webhook.ts` KHÔNG bọc `UPDATE payments SET status='paid'` +
-  `grantPlanDays()` trong 1 transaction Postgres — nếu `grantPlanDays()` lỗi sau khi đã set
-  `status='paid'`, user mất tiền nhưng không được cấp gói, và SePay retry sau đó bị chặn bởi
-  nhánh idempotent `status==='paid'` nên KHÔNG tự phục hồi. Chi tiết + fix đề xuất:
-  `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` risk register mục 1. Đây là bug production thật
-  (không phải suy đoán — đã đọc code xác nhận), nhưng SỬA nó đụng `packages/core-billing` mà
-  budget/guardrail của goal này (mục "Thuộc tính" đầu file) **cấm sửa code sản xuất trong Wave A**
-  — nên KHÔNG tự sửa ở đây, cần owner quyết định có mở 1 PR riêng ngoài Wave A để fix ngay hay để
-  backlog.
-- Blocker/câu hỏi mở: (1) owner có muốn mở PR riêng fix bug atomicity payment ở trên ngay không —
-  ngoài phạm vi goal này nhưng phát hiện trong lúc làm goal này; (2) hướng tiếp theo cho Wave A —
-  coi M1 đủ để chuyển M2 (V2-01 ADR) dù M1/S4 latency thật chưa đo được, hay chờ có quyền VPS mới
-  đóng M1 hẳn rồi mới sang M2. Cả hai đều là quyết định phạm vi/kiến trúc — AI không tự chọn.
-- Next best slice và lý do: nếu owner xác nhận M1 đủ để chuyển tiếp → M2/S1 (V2-01 ADR domain
-  boundary), cần đọc kỹ `docs/architecture-v2/02-SYSTEM-ARCHITECTURE.md` trước khi viết.
-- Quyền hoặc quyết định cần thêm: owner trả lời 2 câu hỏi ở mục "Blocker" trên.
+- **Phát hiện phụ trong lúc trace luồng, ĐÃ FIX (owner duyệt 2026-08-16):**
+  `packages/core-billing/payment-webhook.ts` trước đó KHÔNG bọc `UPDATE payments SET
+status='paid'` + `grantPlanDays()` trong 1 transaction Postgres — nếu `grantPlanDays()` lỗi sau
+  khi đã set `status='paid'`, user mất tiền nhưng không được cấp gói, và SePay retry sau đó bị
+  chặn bởi nhánh idempotent nên KHÔNG tự phục hồi. Owner duyệt sửa ngay dù đụng
+  `packages/core-billing` (ngoại lệ có chủ đích với guardrail Wave A, không phải AI tự vượt rào)
+  — đã bọc bằng `withTransaction()`, test cập nhật, build/typecheck/lint/test đều xanh (3339/3339).
+  Chi tiết: `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` risk register mục 1 (FIXED).
+- Owner xác nhận hướng: coi M1 đủ để chuyển M2 dù M1/S4 (latency production thật) chưa đo được —
+  M1/S4 giữ trạng thái WAITING, không phải điều kiện chặn M2.
+- Blocker/câu hỏi mở: không còn — đã chuyển sang M2/S1.
+- Next best slice và lý do: M2/S1 (V2-01 ADR domain boundary `Personal OS Core ↔ Learning ↔
+shared platform`), dựa trên inventory V2-00 (2 tài liệu lượt 1+2) đã đủ chi tiết routes/tables/
+  providers/flows để vẽ ranh giới có căn cứ.
+- Quyền hoặc quyết định cần thêm: không — đã có đủ để làm M2/S1.
 
 ## 6. Iteration log
 
