@@ -11,6 +11,7 @@ V2 là roadmap kiến trúc active. English Tutor OS v1 đã frozen; phase v1 ch
 **Outcome:** biết chính xác hệ thống hiện tại đang sở hữu dữ liệu/luồng nào và phần nào đã triển khai từ v1.
 
 Deliverables:
+
 - inventory routes/API/tables/jobs/providers/contracts;
 - trace auth, chat, speaking, learning progress, SRS, payment/entitlement, admin mutation, notification;
 - map từng entity sang `platform | learning | legacy`;
@@ -141,6 +142,7 @@ Edges tối thiểu: requires, contributes_to, blocks, conflicts_with, supports,
 Bring English, Mathematics, Physics, Chemistry, Biology under one Learning bounded context without forcing language-specific concepts onto STEM.
 
 Shared:
+
 - learner learning profile;
 - goals;
 - assessment/evidence pattern;
@@ -149,6 +151,7 @@ Shared:
 - content/versioning primitives.
 
 Subject-owned:
+
 - taxonomy;
 - pedagogy;
 - question types;
@@ -223,6 +226,7 @@ Example executable flow:
 ### V2-20 — Scale and Final Architecture Audit
 
 V2 accepted only when:
+
 - same person uses one Companion across >=2 production domains;
 - Life Graph connects cross-domain goal/evidence;
 - Personal World Model has provenance/confidence/privacy controls;

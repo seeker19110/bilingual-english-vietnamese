@@ -133,6 +133,7 @@ interface PersonalFact<T> {
 ```
 
 Rules:
+
 - `user_declared` thường có confidence 1 nhưng vẫn có thể supersede;
 - derived inference không được tự ghi đè user declaration;
 - fact nhạy cảm không tự động cross-domain;
@@ -169,6 +170,7 @@ type LifeRelation =
 ```
 
 Mọi edge:
+
 - cùng person boundary trừ entity external được policy cho phép;
 - có provenance;
 - validate type compatibility;
@@ -294,12 +296,14 @@ Tool manifest bắt buộc khai báo side effect `none | internal | external`, i
 Domain không import repository/table của domain khác.
 
 Allowed:
+
 - typed read model;
 - versioned application service;
 - domain event;
 - capability invocation.
 
 Forbidden:
+
 - Career query `learning_mastery` trực tiếp;
 - Startup update Personal World Model table trực tiếp;
 - Companion import private domain repository rồi bypass domain policy.
@@ -348,6 +352,7 @@ Consumers idempotent theo event ID.
 Context Builder là security boundary, không chỉ prompt utility.
 
 Selection order:
+
 1. current request;
 2. explicit active goal/project;
 3. authoritative domain state;
@@ -366,6 +371,7 @@ AI Gateway receives task + model policy + privacy + budget + output schema. Doma
 Use deterministic code when rules can be known. Use workflow when sequence is controlled. Use agent when steps are genuinely dynamic and bounded by tools/policy/budget.
 
 No agent can directly:
+
 - change auth/permissions;
 - charge/grant billing;
 - set Learning mastery;
@@ -379,6 +385,7 @@ Outcome learning uses `Decision → Action → Observation → Evaluation` evide
 ## 17. Evaluation
 
 Platform eval minimum:
+
 - intent/domain routing accuracy;
 - context precision/recall/relevance;
 - memory correction and false-memory rates;
@@ -405,6 +412,7 @@ web + Express/API + worker + PostgreSQL
 ```
 
 Only split when evidence indicates:
+
 - independent scaling;
 - strong security isolation;
 - background workload separation;
