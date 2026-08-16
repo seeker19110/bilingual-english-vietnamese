@@ -1,140 +1,134 @@
-# PROJECT.md — Gia sư ngôn ngữ AI song ngữ Việt ⇄ Anh
+# PROJECT.md — Đồng Hành: hiện trạng sản phẩm và đích V2
 
-> Đặc tả dự án — nguồn sự thật về _cái gì đã xây_. Viết từ code thật, mọi khẳng định truy được
-> về file cụ thể trong repo. Cập nhật khi tính năng đổi. Tiến độ/lịch sử: `PROGRESS.md`.
+> Đây là bản mô tả sản phẩm cấp cao. `PROGRESS.md` là nguồn trạng thái thực thi; code, migration,
+> test và production evidence mới là nguồn xác nhận một khả năng đã hoạt động.
 
-## 1. Vấn đề & Người dùng
+## 1. Tầm nhìn đã chốt
 
-- **Vấn đề:** học ngoại ngữ một mình thiếu người luyện hội thoại thật; công cụ AI hiện có chỉ
-  sửa lỗi bằng CHỮ, không đọc lại bằng giọng đúng ngôn ngữ mẹ đẻ của người học.
-- **Người dùng:** Chiều A — người Việt học tiếng Anh. Chiều B — người nước ngoài học tiếng Việt
-  qua tiếng Anh.
-- **Khác biệt giữ:** sửa lỗi & giải thích bằng **GIỌNG tiếng mẹ đẻ** (TTS 2 giọng riêng), hội
-  thoại bằng giọng chuẩn ngôn ngữ đích, miễn phí, nội dung sát đời sống Việt Nam.
+Đồng Hành là **Personal AI Companion đa lĩnh vực**, không chỉ là app học tiếng Anh. Sản phẩm cần
+hiểu đúng người dùng xuyên thời gian, giúp biến mục tiêu thành quyết định/kế hoạch/hành động, kết
+nối kết quả giữa các domain, và luôn giữ người dùng kiểm soát dữ liệu lẫn quyền thực thi.
 
-## 2. Tính năng đã có (production)
+Giá trị cốt lõi:
 
-- Đăng nhập/đăng ký tự viết — Bearer token + email/password + Google Identity Services
-  (`src/lib/auth.ts`, `api/auth.ts`).
-- **Chat** — trò chuyện theo tình huống, sửa lỗi + giải thích bằng tiếng mẹ đẻ (`/api/agent`).
-- **Luyện viết** — chấm kiểu IELTS, chỉ lỗi, ước lượng band.
-- **Luyện nói song ngữ** — ghi âm → STT (Whisper qua Groq/OpenAI) → trả lời giọng ngôn ngữ đích
-  - sửa lỗi giọng tiếng mẹ đẻ (Google Cloud TTS, cache mã hoá).
-- Nút "Kết thúc & chấm điểm" cuối phiên Chat/Speaking (chấm kiểu IELTS Speaking, không lưu DB).
-- Giới hạn lượt/ngày theo tính năng (chat/writing/speaking/stt), đồng bộ Postgres tự host
-  (`daily_usage`), atomic qua hàm SQL `consume_usage`/`refund_usage`.
-- **Lộ trình học** (`/learn`): vòng từ vựng nền tảng theo chủ đề + tốc độ 5/10/20 từ/ngày.
-- **Lộ trình CEFR A1 → C2 đầy đủ 6 cấp** (`/learning-path/a1..c2`): mỗi cấp 1 trang, thứ tự
-  Từ vựng → Ngữ pháp → Hội thoại, tab Hôm nay/Ôn SRS/Từ khó/Kiểm tra, **bài thi cuối cấp** chặn
-  lên cấp (≥70%, `src/lib/cefrExam.ts`).
-- Từ điển **12.073 mục**, 100% đã gắn nhãn CEFR (A1–C2), nghĩa + ví dụ song ngữ có audio.
-- **Thử thách "Challenge 1 phút/ngày"** (`/challenge`) — chu kỳ tuần Thứ 2→CN, đã mở cho người
-  dùng thật.
-- **Bảng tiến độ** (`/progress`) — streak, biểu đồ 7 ngày, % hoàn thành theo cấp CEFR.
-- **Trang cá nhân** (`/profile`) — huy hiệu gói, streak, số từ đã học, đăng xuất.
-- Mở chiều B (dạy tiếng Việt cho người nước ngoài) — nút gạt chiều học.
-- 4 theme đạt AA (🌙 Xanh đêm mặc định · ☀️ Blue sky · 🌸 Pink · 🎉 Rực rỡ), song ngữ toàn giao
-  diện (kể cả `/login`).
-- Deploy thật (VPS + PM2 + Nginx + SSL, sau Cloudflare), CI gate (lint/typecheck/test/build/E2E+a11y/size-limit).
+1. continuity xuyên phiên, thiết bị, thời gian và domain;
+2. dữ liệu cá nhân có nguồn gốc, độ tin cậy, mức nhạy cảm và vòng đời rõ ràng;
+3. AI lập kế hoạch và đề xuất, domain engine mới quyết định state transition;
+4. quyền đọc/ghi/tự động hoá theo purpose, scope, expiry và có thể revoke;
+5. học từ outcome thật, không biến suy đoán của model thành sự thật.
 
-## 3. Việc cố tình KHÔNG làm lúc này
+## 2. Sản phẩm production hiện tại
 
-- **Cổng thanh toán thật (PayOS/Casso/webhook tự động)** — quyết định 2026-07-11: dự án
-  **miễn phí cho cộng đồng**, không tự đề xuất lại. **[Cập nhật 2026-07-24]** Đã chuẩn bị hạ
-  tầng kỹ thuật (hạn dùng gói `plan_expires_at`, cấp Pro/VIP thủ công qua
-  `/api/admin-grant-plan` — xem `PROGRESS.md`) theo yêu cầu người dùng, nhưng CHƯA nối cổng
-  thanh toán thật/chưa chốt giá/chưa siết hạn mức Free — vẫn miễn phí như cũ cho người dùng.
-- App di động riêng (native), ngôn ngữ ngoài Việt/Anh, học nhóm/lớp trực tiếp.
+Domain đầu tiên là **Learning**, với ứng dụng gia sư AI song ngữ Việt ⇄ Anh tại
+<https://en-vi.donghanhcungban.org>.
 
-## 4. Yêu cầu phi chức năng
+Khả năng đang có:
 
-- **Tốc độ:** ngân sách bundle qua `size-limit` (Initial JS ≤ 116 kB, CSS ≤ 9 kB, brotli) —
-  thay Lighthouse CI (không đo được trong sandbox CI hiện có).
-- **Bảo mật:** không tin client; xác thực/đếm lượt/gọi AI đều ở server (`api/`, `server.ts`,
-  `api/_lib/security.ts`, `api/_lib/usage.ts`); mọi handler API tự kiểm `user_id` khớp token qua
-  `validateAuth()` trước khi query Postgres (thay Row Level Security cũ của Supabase) — chặn
-  theo CỘT cho `profiles.plan`/`daily_usage.*_count` (chỉ server ghi được); secret qua env.
-- **Accessibility:** WCAG AA — gate E2E quét bằng axe (`e2e/a11y.spec.ts`), phủ mọi route chính +
-  4 theme + trạng thái sau tương tác, 0 critical/0 serious.
-- **Mobile-first:** vùng chạm ≥ 44px, chữ ≥ 11px, input 16px; zoom mobile khoá chủ động.
-- **Theme:** design tokens qua biến CSS `--a-*`, không hard-code màu, giữ màu ngữ nghĩa.
+- auth email/password + Google, session và email verification;
+- chat, writing, speaking, STT, phản hồi voice và chấm cuối phiên;
+- từ vựng theo chủ đề, CEFR A1–C2, SRS, phát âm, từ điển 12.000+ mục và truyện;
+- tiến độ đồng bộ PostgreSQL, streak, challenge, quest, achievement, referral và push/email;
+- Free / Pro / VIP, hạn mức server-side, VietQR/SePay, lịch sử thanh toán và admin controls;
+- hub đa lĩnh vực mới ở mức experience shell; chưa sở hữu Personal OS business truth.
 
-## 5. Tech stack
+Production vẫn là Learning-centric. Personal World Model, Life Graph, Knowledge Fabric, Context
+Engine và Companion Runtime chưa được tuyên bố là đã chạy thật chỉ vì contract/tài liệu đã tồn tại.
 
-> **GIỮ NGUYÊN — không nâng React/TS/Tailwind/ESLint.** Tailwind 3 (không phải v4), ESLint 8
-> `.eslintrc.cjs` (không phải flat config) là chủ đích.
+## 3. AI và voice
 
-- **Frontend:** React 18 + Vite 7 + TypeScript 5.2 (`strict` + `noUncheckedIndexedAccess`) +
-  Tailwind CSS 3 (mã gốc do Lovable sinh ra).
-- **Backend & dữ liệu:** Express (`server.ts`) + **PostgreSQL tự host trên VPS** (`pg`,
-  `api/_lib/pgPool.ts`) — đã rời hẳn Supabase. Auth tự viết (Bearer token, `api/auth.ts` +
-  `api/_lib/authService.ts`). Handler API kiểu serverless trong `api/`, gắn vào Express để chạy
-  trên VPS.
-- **AI:** chat/chấm viết qua `/api/agent` (`api/ai.ts`, ép model/token ở server) · STT Whisper
-  qua Groq (`whisper-large-v3-turbo`) hoặc OpenAI (`gpt-4o-mini-transcribe`), tự chọn theo key ·
-  TTS Google Cloud (`/api/tts`), cache **mã hoá AES-256-GCM** lưu local VPS hoặc Cloudflare R2
-  tùy `STORAGE_DRIVER` (`api/_lib/fileStorage.ts`), Web Speech API chỉ là fallback.
-- **Deploy:** VPS Ubuntu (PM2 + Nginx + Let's Encrypt) sau Cloudflare proxy —
-  https://en-vi.donghanhcungban.com. Xem `docs/deploy-vps-ubuntu.md`.
-- **Kiểm thử/CI:** Vitest (unit + coverage ratchet), Playwright (E2E + axe a11y), ESLint 8 +
-  Prettier + husky/lint-staged/commitlint, `size-limit` — chạy trong CI trên mọi PR.
+### Hiện tại
 
-## 6. Thiết kế dữ liệu
+- Chat đi qua server-side gateway với chuỗi provider để giữ khả dụng và kiểm soát usage/cost.
+- STT dùng Whisper qua Groq/OpenAI theo cấu hình.
+- Voice/TTS hiện có Google Cloud TTS, ElevenLabs cho một số tier và Gemini native audio cho nội
+  dung phù hợp; audio được cache/mã hoá qua storage abstraction.
 
-> Nguồn: `postgres/schema.sql` (+ `postgres/migrations/`). Quyền ghi kiểm ở TẦNG SERVER qua
-> `validateAuth()` (thay Row Level Security cũ của Supabase — xem `api/_lib/security.ts`).
+### Định hướng đã chốt
 
-| Bảng                  | Cột chính                                                                                                | Ghi chú                                                                                         |
-| --------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `profiles`            | `id`, `name`, `plan` (`free`\|`pro`), `onboarded`, `user_level`, `goal`, `daily_minutes`                 | Server tự tạo lúc đăng ký (`api/_lib/authService.ts`). Client KHÔNG ghi được `plan`.            |
-| `chat_sessions`       | `id`, `user_id`, `situation`, `level`, `messages` (jsonb), `created_at`                                  | Lịch sử Chat.                                                                                   |
-| `writing_submissions` | `id`, `user_id`, `essay_prompt`, `essay`, `feedback`, `submitted_at`                                     | Lịch sử chấm bài.                                                                               |
-| `speaking_sessions`   | `id`, `user_id`, `situation`, `level`, `messages` (jsonb), `created_at`                                  | Lịch sử luyện nói.                                                                              |
-| `daily_usage`         | `user_id`, `day`, `chat_count`, `writing_count`, `speaking_count`, `stt_count`, `learn_count`            | PK `(user_id, day)`. 4 cột đếm lượt chỉ server (qua `consume_usage`/`refund_usage`) ghi được.   |
-| `tts_cache`           | `hash` (SHA-256 text+lang+voice), `lang`, `voice`, `audio_url`                                           | Public read, chỉ server ghi (`validateAuth()` chặn client).                                     |
-| `pronunciations`      | tương tự `tts_cache`, cache audio phát âm từ                                                             | Public read, chỉ server ghi.                                                                    |
-| `learning_progress`   | `user_id` (PK), `learned`/`hard`, `srs`, `cefr_grammar`, `cefr_dialogues`, `cefr_unlocked`, `cefr_exams` | Đồng bộ tiến độ học đổi máy không mất; `cefr_exams` = kết quả thi cuối cấp.                     |
-| `push_subscriptions`  | `id`, `user_id`, `endpoint`, `p256dh`, `auth_key`, `remind_hour`                                         | Web Push nhắc học.                                                                              |
-| `challenge_entries`   | `id`, `user_id`, `day`/`round`, video/nhận xét AI                                                        | Thử thách — nay chạy chu kỳ tuần (xem PROGRESS.md), bảng đã có sẵn trong `postgres/schema.sql`. |
+- **Gemini là engine chính mục tiêu cho hội thoại và trải nghiệm voice mới.**
+- Không xây kiến trúc phụ thuộc cứng vào một model: Gemini đi sau `AI Platform` / capability
+  contract để có thể benchmark, đổi model, fallback và kiểm soát chi phí.
+- Provider cũ chỉ được loại bỏ khi telemetry, quality eval, latency/cost, parity và rollback gate
+  chứng minh migration an toàn.
+- Voice tương lai ưu tiên trải nghiệm hội thoại Gemini end-to-end thay vì ghép thêm TTS rời cho
+  luồng companion mới; TTS hiện hữu vẫn được giữ cho nội dung đọc/cache và compatibility trong
+  giai đoạn chuyển tiếp.
 
-**Hàm DB:** `consume_usage`/`refund_usage` — kiểm tra + tăng/hoàn lượt atomic (SELECT FOR
-UPDATE), fail-open khi RPC lỗi (ưu tiên không chặn nhầm người dùng hợp lệ).
+## 4. Mô hình kinh doanh
 
-## 7. Kiến trúc & API
+Đồng Hành không còn ở trạng thái “chưa có thanh toán”. Production đã có:
 
-- **Luồng:** client (React SPA) → `server.ts` (Express, gắn handler `api/*.ts`) → provider AI
-  (Claude/Groq/OpenAI/Google TTS) + PostgreSQL tự host (`pgPool`). Mọi logic nhạy cảm chạy ở
-  server.
-- **Endpoint chính:** `POST /api/agent` (`api/ai.ts`, chat/chấm bài) · `POST /api/stt`
-  (`api/stt.ts`, rate limit + đếm lượt riêng + refund khi provider lỗi) · `POST /api/tts`
-  (`api/tts.ts`, cache theo hash + mã hoá, chỉ trả khoá cho người đã đăng nhập) ·
-  `GET/POST /api/dictionary`, `POST /api/pronunciation`, `POST /api/push`.
-- **`api/_lib/`:** `security.ts` (`validateAuth`, rate limit, CORS) · `usage.ts`
-  (`checkAndConsumeUsage`/`refundUsage`) · `validation.ts` (Zod `readJsonBody`/`validateBody`,
-  dùng ở `stt`/`tts`/`push`) · `ttsCrypto.ts` (AES-256-GCM).
-- **Route client** (`src/App.tsx`): `/login`, `/onboarding`, `/`, `/chat`, `/writing`,
-  `/speaking`, `/learning-path[/a1..c2]`, `/dictionary`, `/lessons`, `/phrases`, `/history`,
-  `/progress`, `/profile`, `/challenge`.
+- gói Free / Pro / VIP;
+- giá và feature flags quản trị từ DB;
+- checkout VietQR, webhook SePay, polling trạng thái và đối soát/admin match;
+- cấp entitlement atomic/idempotent, hạn dùng và lịch sử thanh toán;
+- usage/cost controls theo tính năng.
 
-## 8. Definition of Done (DoD)
+Giá niêm yết hiện là cấu hình vận hành, không phải invariant kiến trúc; nguồn runtime nằm ở
+`plan_prices` với fallback trong `api/_lib/prices.ts`. Tối ưu lợi nhuận phải dựa trên usage và chi
+phí provider production, không hard-code dự báo kinh doanh vào roadmap kỹ thuật.
 
-Cổng ở `CLAUDE.md` mục 8 (trước commit) và mục 9 (trước merge): build/typecheck/lint (0 cảnh
-báo)/format/test xanh; tự review diff; không secret/console.log rác; input đã validate; lỗi có
-nhánh xử lý; đổi schema Postgres phải có migration idempotent (`postgres/migrations/`) chạy lại
-an toàn + cách rollback.
+## 5. Kiến trúc hiện tại
 
-## 9. Việc tiếp theo
+- Frontend: React 18, Vite 7, TypeScript strict, Tailwind 3; monorepo `apps/*` + `packages/*`.
+- Backend: Express + handler API, PostgreSQL self-hosted, Redis khi scale nhiều process.
+- Platform modules: auth, billing/usage, DB/transaction, contracts, AI, storage, errors/logging.
+- Learning domain: `apps/english/` và phần lớn handler học tập hiện hữu.
+- Hub: experience/platform shell, không phải domain source of truth.
+- Deploy: VPS Ubuntu, PM2/Nginx/Cloudflare; domain chuẩn `.org`.
 
-Hiện không có việc code nào đang mở. Còn lại chỉ là thao tác THỦ CÔNG trên VPS (không cần PR) —
-xem "Việc còn dang dở" trong `CLAUDE.md` mục 13 và "Cần làm tay" trong `PROGRESS.md`.
+Boundary đang enforce: `packages/**` không import `apps/**`. Khi domain thứ hai xuất hiện phải bổ
+sung luật domain không import internals của domain khác; giao tiếp qua typed contract/read model/event.
 
-## 10. Rủi ro & Giả định
+## 6. Đích kiến trúc V2
 
-- **Chi phí API AI/STT/TTS** — giảm thiểu bằng đếm/giới hạn lượt server-side atomic, cache TTS
-  dùng chung, model rẻ. Cơ chế đếm lượt **fail-open** (không chặn nhầm khi RPC lỗi) — đánh đổi
-  có chủ đích, cần theo dõi log lỗi RPC nếu chi phí bất thường xuất hiện.
-- **Chưa có cổng thanh toán tự động** — nâng gói Pro/VIP hiện qua admin gọi tay
-  `/api/admin-grant-plan` (có hạn dùng, tự hết hạn về free — xem `PROGRESS.md` 2026-07-24).
-- **Chia sẻ VPS** với app khác ("xboss", port 3000) trên cùng máy — chưa ghi nhận ảnh hưởng.
-- **Phụ thuộc key bên thứ ba** (Groq/OpenAI, Google Cloud, provider chat) — thiếu key có fallback
-  (Web Speech API) nhưng trải nghiệm giảm.
+Thứ tự roadmap active:
+
+1. **Wave A — Architecture & boundaries:** baseline, ownership, ADR và core contracts.
+2. **Wave B — Personal OS Core:** Personal World Model, consent/policy, Life Graph, Knowledge
+   Fabric và Context Engine.
+3. **Wave C — Companion runtime:** Capability Registry, planner/policy/router và Decision Ledger.
+4. **Wave D — Learning migration:** tách global/domain profile và mở rộng đa môn.
+5. **Wave E — Cross-domain proof:** Career → Work → Startup → Life.
+6. **Wave F — Automation/hardening/scale:** approved automation, eval, security, SLO, backup,
+   recovery và final architecture audit.
+
+V2 chỉ được coi là thành công khi cùng một person dùng một companion qua ít nhất hai production
+domain, dữ liệu/quyền có thể inspect-correct-delete-revoke, và provider/agent có thể thay thế mà
+không mất person state.
+
+## 7. Chiến lược chuyển đổi
+
+- strangler migration, không rewrite/big-bang;
+- additive trước destructive; schema/contract v1 tiếp tục được hỗ trợ bằng adapter;
+- shadow → benchmark → feature flag → canary → cutover → retention window;
+- một source of truth và một owner cho mỗi entity tại từng thời điểm;
+- không microservice hoá, graph database hoá hay vectorize toàn bộ khi chưa có nhu cầu đo được;
+- mọi migration phải có mismatch metric, authorization test, rollback và recovery evidence.
+
+English Tutor OS v1 đã frozen. Các tài liệu `docs/phases/*` chỉ còn là lịch sử/tham khảo cho
+Learning stability hoặc migration; roadmap active duy nhất là `docs/architecture-v2/21-ROADMAP.md`.
+
+## 8. Trạng thái và bước kế tiếp
+
+Đến 2026-08-16:
+
+- V2-00 đã có inventory, ownership map, tám critical flow và risk register; latency/cost production
+  vẫn `WAITING` vì cần số liệu vận hành thật.
+- V2-01 đã chốt boundary Platform / Learning và lint enforcement.
+- V2-02 đã thêm 13 contract theo hướng additive; tám shape do AI đề xuất phải được owner review
+  lại khi Wave B dùng thật.
+- Bước phát triển hợp lý tiếp theo là V2-03 Personal World Model, sau khi đóng/ghi nhận rõ phần
+  baseline còn chờ và duyệt contract cần dùng cho vertical slice đầu tiên.
+
+Theo dõi chi tiết tại `PROGRESS.md` và `docs/goals/v2-wave-a-architecture-boundaries.md`.
+
+## 9. Invariant và Definition of Done
+
+- Không tin client; auth, billing, usage và provider calls nằm server-side.
+- AI output không trực tiếp mutate billing, permissions, mastery hoặc authoritative state.
+- Payment/entitlement/usage phải atomic, idempotent và có concurrent/retry tests.
+- Cross-user access, consent revoke và sensitive-context filtering phải có test.
+- External side effect cần authority phù hợp; automation cần budget, pause/revoke và receipt.
+- Mọi thay đổi phải qua build, typecheck, lint, format, test; UI/API/auth cần E2E tương ứng.
+- Production claim cần telemetry/evidence mới, không suy ra từ mock hoặc tài liệu.
