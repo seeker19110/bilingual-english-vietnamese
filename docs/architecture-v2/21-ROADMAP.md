@@ -239,3 +239,7 @@ V2 accepted only when:
 ## Release discipline
 
 Mỗi phase là acceptance package, không nhất thiết một PR. Mỗi PR phải nhỏ, reversible/recoverable, cập nhật `PROGRESS.md`, tests/contracts/ADR liên quan và không tự mở phase kế tiếp nếu gate hiện tại chưa accepted.
+
+Kế hoạch xuyên suốt để hạn chế gọi API và kiểm soát unit economics:
+[`22-API-COST-OPTIMIZATION-PLAN.md`](22-API-COST-OPTIMIZATION-PLAN.md). Tài liệu này không tự mở
+phase implementation; từng PR vẫn phải theo gate của wave tương ứng.
