@@ -2623,6 +2623,25 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- **[Rà soát Dependabot 2026-08-16] Xử lý 9 PR dependency tồn đọng (#550-559): merge 6, đóng 3.**
+  Merge (đều CI xanh thật, chỉ thiếu heading PR template nên `metadata` báo sai): `actions/
+setup-node` 4→7 (#550), `actions/upload-artifact` 4→7 (#551), `actions/github-script` 7→9 (#552),
+  `actions/checkout` 4→7 (#553), nhóm `production-patch` (`jose` 6.2.4→6.2.8, `nodemailer`
+  9.0.3→9.0.5, #556), `@sentry/react` 10.63.0→10.70.0 (#558). **Đóng KHÔNG merge** 3 PR có vấn đề
+  thật, không phải lỗi CI vặt:
+  - **#559 TypeScript 5.9.3→7.0.2** — vi phạm trực tiếp chính sách ghim phiên bản CLAUDE.md mục 6
+    ("KHÔNG nâng ... TS"). Đóng ngay, không cần điều tra thêm.
+  - **#555 nhóm dev-deps (13 gói)** — `npm ci` fail thật: `eslint-plugin-react-refresh@0.5.4` đòi
+    `eslint@^9||^10`, dự án ghim ESLint 8 có chủ đích (chưa chuyển flat config). Không giải được
+    mà không nâng ESLint major (cũng bị cấm). Đóng, để dependabot tách PR khác nếu muốn cập nhật
+    12 gói còn lại riêng.
+  - **#557 vitest 3.2.6→4.1.10** — `npm ci` fail thật: thiếu bump kèm `@vitest/coverage-v8` (vẫn
+    ghim `^3.2.6`) → ERESOLVE. Ngoài lỗi kỹ thuật, đây là major bump test runner đang chạy 3415
+    test — rủi ro cao, không tự merge dù sửa được xung đột peer. Để owner quyết định thời điểm
+    nâng cấp (cần bump đồng thời coverage-v8 + review breaking changes changelog v4).
+    Sau đợt xử lý: `rm -rf node_modules && npm ci` sạch, build ✅ typecheck ✅ lint 0 cảnh báo ✅ test
+    **3415/3415** ✅ (208 file), `npm audit` **0 lỗ hổng**.
+
 - **[Rà soát tự động 2026-08-09] `npm audit` VỀ 0 LỖ HỔNG lần đầu tiên — mục react-router ở dưới
   ĐÃ ĐÓNG (không còn là nợ), cộng thêm vá 2 advisory mới phát sinh.** Container mới (chưa có
   `node_modules`) → `npm ci` sạch rồi chạy đủ cổng: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅
