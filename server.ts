@@ -70,6 +70,8 @@ import avatarVisemesHandler from './api/avatar-visemes.js'
 import hubStatsHandler from './api/hub-stats.js'
 import personsHandler from './api/persons.js'
 import personalFactsHandler from './api/personal-facts.js'
+import consentsHandler from './api/consents.js'
+import personalPoliciesHandler from './api/personal-policies.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -230,6 +232,9 @@ app.all('/api/hub-stats', wrapEdge(hubStatsHandler))
 // Personal World Model (V2-03) — danh tính + fact cá nhân, đều bắt buộc đăng nhập.
 app.all('/api/persons', wrapEdge(personsHandler))
 app.all('/api/personal-facts', wrapEdge(personalFactsHandler))
+// Consent + Personal Policy (V2-04) — quyền/đồng ý của chính người dùng, bắt buộc đăng nhập.
+app.all('/api/consents', wrapEdge(consentsHandler))
+app.all('/api/personal-policies', wrapEdge(personalPoliciesHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
