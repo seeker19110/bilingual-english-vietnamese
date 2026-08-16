@@ -1,0 +1,66 @@
+name: "🐛 Bug report"
+description: Báo lỗi có thể tái hiện và có tiêu chí xác minh
+title: "fix: "
+labels: ["type: bug", "status: triage"]
+body:
+  - type: textarea
+    id: impact
+    attributes:
+      label: Ảnh hưởng
+      description: Ai bị ảnh hưởng, mức độ và tần suất?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Các bước tái hiện
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Kết quả mong đợi
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Kết quả thực tế
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Bằng chứng và môi trường
+      description: URL/route, browser/device, commit, ảnh hoặc log đã loại bỏ dữ liệu nhạy cảm.
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Mức độ
+      options:
+        - S1 — bảo mật/mất dữ liệu/production ngừng hoạt động
+        - S2 — critical flow hỏng, không có workaround
+        - S3 — suy giảm có workaround
+        - S4 — lỗi nhỏ/cosmetic
+    validations:
+      required: true
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Phạm vi nghi ngờ và regression
+      description: Bắt đầu từ khi nào, file/flow liên quan nếu biết.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Tiêu chí xác minh bản sửa
+      placeholder: |
+        - [ ] Regression test thất bại trước và xanh sau bản sửa
+        - [ ] Luồng liên quan không bị ảnh hưởng
+    validations:
+      required: true
