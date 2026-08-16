@@ -68,6 +68,8 @@ import paymentStatusHandler from './packages/core-billing/payment-status.js'
 import paymentHistoryHandler from './packages/core-billing/payment-history.js'
 import avatarVisemesHandler from './api/avatar-visemes.js'
 import hubStatsHandler from './api/hub-stats.js'
+import personsHandler from './api/persons.js'
+import personalFactsHandler from './api/personal-facts.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -225,6 +227,9 @@ app.all('/api/payment-status', wrapEdge(paymentStatusHandler))
 app.all('/api/payment-history', wrapEdge(paymentHistoryHandler))
 app.all('/api/avatar-visemes', wrapEdge(avatarVisemesHandler))
 app.all('/api/hub-stats', wrapEdge(hubStatsHandler))
+// Personal World Model (V2-03) — danh tính + fact cá nhân, đều bắt buộc đăng nhập.
+app.all('/api/persons', wrapEdge(personsHandler))
+app.all('/api/personal-facts', wrapEdge(personalFactsHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
