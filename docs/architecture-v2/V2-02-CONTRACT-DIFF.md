@@ -183,8 +183,39 @@ gia thiết kế field vì đây là quyết định kiến trúc, không phải
    hiện có rồi owner duyệt từng contract một (không làm cả 8 cùng lúc, đúng guardrail "1
    outcome/PR mỗi vòng").
 
-## 5. Việc KHÔNG làm ở tài liệu này
+## 5. Việc KHÔNG làm ở tài liệu này (lúc viết diff)
 
 Không viết bất kỳ file `.ts` contract mới nào, không đổi `packages/core-contracts/*.ts` hiện có —
 đây thuần là DIFF + GAP LIST theo đúng phạm vi M3/S1. Viết code contract thật là bước tiếp theo
 SAU khi owner trả lời mục 4.
+
+## 6. Cập nhật — đã viết code cả 13 contract (2026-08-16, cùng ngày, owner yêu cầu "code đi")
+
+Owner xác nhận hướng ("đúng hết rồi") rồi yêu cầu code tiếp thay vì dừng chờ trả lời từng câu ở
+mục 4. Đã viết **cả 13 contract** trong `packages/core-contracts/` với quyết định cụ thể cho 3 câu
+hỏi đầu (ưu tiên phương án ÍT RỦI RO NHẤT — không đổi gì ở v1, không xoá/rename bất cứ thứ gì đang
+chạy — thay vì tự chọn phương án có khả năng phá vỡ nhiều hơn):
+
+- **Ca `Goal` → phương án (a)**: `packages/core-contracts/lifeGoal.ts`, type `LifeGoal`. `goal.ts`
+  (v1) giữ NGUYÊN không đổi 1 dòng.
+- **Ca `Memory`/`MemoryRecord` → đúng đề xuất mục 2.2**: `packages/core-contracts/
+personalMemory.ts`, type `MemoryRecord`. `memory.ts` (v1) giữ NGUYÊN không đổi.
+- **Ca `EventEnvelope`/`DomainEvent` → đúng đề xuất mục 2.4**: `packages/core-contracts/
+domainEvent.ts` CHỈ re-export `EventEnvelopeSchema as DomainEventSchema` (cùng 1 object, xác nhận
+  bằng test `toBe`), KHÔNG viết schema mới. `eventEnvelope.ts` (v1) giữ NGUYÊN không đổi.
+
+10 gap contract còn lại (`Person`, `PersonalFact`, `LifeGraphNode`/`LifeGraphEdge`, `ConsentGrant`,
+`PersonalPolicy`, `DecisionRecord`, `CapabilityManifest`, `ToolManifest`, `ContextPackage`,
+`ProposedAction`) đã viết đủ — 2 trường hợp có sẵn interface (`PersonalFact`/`DecisionRecord`)
+chuyển thẳng sang Zod; 8 trường hợp còn lại (kể cả field-shape gần trắng như `ConsentGrant`/
+`PersonalPolicy`/`ContextPackage`/`ProposedAction`) do AI tự thiết kế dựa trên nguyên tắc/vị trí
+đã có trong `02-SYSTEM-ARCHITECTURE.md`, MỖI field có comment giải thích nguồn gốc/lý do ngay
+cạnh — **ĐÂY LÀ ĐỀ XUẤT ĐẦU TIÊN, KHÔNG PHẢI QUYẾT ĐỊNH KIẾN TRÚC CUỐI CÙNG**. Owner review lại
+field từng contract khi Wave B (V2-03 trở đi) bắt đầu dùng thật — sửa field lúc đó vẫn miễn phí vì
+CHƯA có dữ liệu Postgres nào tham chiếu (đúng nguyên tắc versioning ở `version.ts`: entity mới,
+chưa có dữ liệu cũ, đổi field không cần migrate).
+
+Tổng: 13 file `.ts` mới + 13 file `.test.ts` mới (trừ `domainEvent.ts` không có schema riêng để
+test đầy đủ, chỉ 3 test xác nhận alias đúng) — 76 test mới. Build ✅ typecheck ✅ lint 0 cảnh báo
+✅ test 3415/3415 ✅ (208 file). Không sửa bất kỳ file `packages/core-contracts/*.ts` nào thuộc
+18 contract v1 — xác nhận bằng `git diff` chỉ có file MỚI, không có file SỬA trong thư mục này.

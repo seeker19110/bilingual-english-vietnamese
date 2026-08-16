@@ -4,7 +4,7 @@
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Goal ID           | GOAL-2026-001                                                                                                                                                         |
 | Owner             | seeker19110 (product/architecture quyết định); AI thực thi từng slice                                                                                                 |
-| Trạng thái        | WAITING (M1/S2-S3, M2/S1, M3/S1-diff DONE; chờ owner trả lời 4 câu hỏi contract + dán số liệu VPS)                                                                    |
+| Trạng thái        | WAITING (M1/S2-S3, M2/S1, M3/S1 DONE gồm code 13 contract; chờ owner review field + dán số liệu VPS cho M1/S4)                                                        |
 | Bắt đầu           | 2026-08-16                                                                                                                                                            |
 | Target review     | chưa đặt — chờ owner xác nhận hướng tiếp theo (mục 5)                                                                                                                 |
 | Quyền được cấp    | Research, branch, PR (docs-only đã merge #548). Chưa có quyền tự quyết kiến trúc (Person/PersonalFact/Life Graph schema) hay mở PR đổi code sản xuất                  |
@@ -47,14 +47,14 @@
 
 ## 3. Milestones và slices
 
-| ID    | Outcome/AC                                    | Dependency | Spec                                   | Issue | PR   | State   | Evidence                                                          |
-| ----- | --------------------------------------------- | ---------- | -------------------------------------- | ----- | ---- | ------- | ----------------------------------------------------------------- |
-| M1/S1 | V2-00 inventory ownership map (first pass)    | —          | `docs/architecture-v2/21-ROADMAP.md`   | —     | #548 | DONE    | Merged `main` `857df19`                                           |
-| M1/S2 | V2-00 trace 8 critical flows end-to-end       | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | (mở) | DONE    | `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` mục 1              |
-| M1/S3 | V2-00 risk register có owner                  | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | (mở) | DONE    | Cùng tài liệu mục 2 — 7 risk, mỗi risk có owner/state             |
-| M1/S4 | V2-00 latency/cost baseline sản xuất thật     | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | (mở) | WAITING | Mục 3 — cần owner/quyền SSH VPS, AI không tự đo được từ xa        |
-| M2/S1 | V2-01 ADR domain boundary                     | M1 đóng?   | `docs/adr/0003-bien-gioi-domain-v2.md` | —     | (mở) | DONE    | ADR + lint rule `packages/**` không import `apps/**`, 0 vi phạm   |
-| M3/S1 | V2-02 field-by-field contract diff + gap list | M2         | `V2-02-CONTRACT-DIFF.md`               | —     | (mở) | WAITING | Diff xong; 4 câu hỏi mục 4 cần owner trước khi viết code contract |
+| ID    | Outcome/AC                                                       | Dependency | Spec                                   | Issue | PR   | State   | Evidence                                                               |
+| ----- | ---------------------------------------------------------------- | ---------- | -------------------------------------- | ----- | ---- | ------- | ---------------------------------------------------------------------- |
+| M1/S1 | V2-00 inventory ownership map (first pass)                       | —          | `docs/architecture-v2/21-ROADMAP.md`   | —     | #548 | DONE    | Merged `main` `857df19`                                                |
+| M1/S2 | V2-00 trace 8 critical flows end-to-end                          | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | (mở) | DONE    | `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` mục 1                   |
+| M1/S3 | V2-00 risk register có owner                                     | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | (mở) | DONE    | Cùng tài liệu mục 2 — 7 risk, mỗi risk có owner/state                  |
+| M1/S4 | V2-00 latency/cost baseline sản xuất thật                        | S1         | `V2-00-CRITICAL-FLOWS.md`              | —     | (mở) | WAITING | Mục 3 — cần owner/quyền SSH VPS, AI không tự đo được từ xa             |
+| M2/S1 | V2-01 ADR domain boundary                                        | M1 đóng?   | `docs/adr/0003-bien-gioi-domain-v2.md` | —     | (mở) | DONE    | ADR + lint rule `packages/**` không import `apps/**`, 0 vi phạm        |
+| M3/S1 | V2-02 field-by-field contract diff + gap list + code 13 contract | M2         | `V2-02-CONTRACT-DIFF.md`               | —     | (mở) | DONE    | 13 file `.ts` + 13 `.test.ts`, 76 test, build/typecheck/lint/test xanh |
 
 State hợp lệ: BACKLOG / RESEARCH / SPEC / READY / BUILDING / VERIFYING / WAITING / BLOCKED /
 DONE / DROPPED.
@@ -208,6 +208,39 @@ V2-02-CONTRACT-DIFF.md` — đọc toàn bộ 18 contract v1 hiện có, đối 
   ở `V2-02-CONTRACT-DIFF.md` mục 4.
 - Next best slice: phụ thuộc câu trả lời owner — không đoán trước.
 - Quyền cần thêm: câu trả lời owner cho 2 blocker trên.
+
+### Iteration 5 — 2026-08-16
+
+- State: WAITING → chờ owner review field 13 contract mới + dán số liệu VPS.
+- Slice: owner xác nhận ADR-0003 đúng hướng ("đúng hết rồi") rồi yêu cầu code tiếp ("code đi")
+  thay vì dừng chờ trả lời từng câu ở mục 4 `V2-02-CONTRACT-DIFF.md`. Hiểu đây là chỉ dẫn: chọn
+  phương án ÍT RỦI RO NHẤT cho 3 ca xung đột tên (không đổi/xoá gì ở v1) thay vì tiếp tục chặn chờ.
+- Goal gap trước/sau: trước — M3/S1 chỉ có diff, chưa có code; sau — cả 13 contract V2-02 đã có
+  Zod schema + test, đúng mẫu convention `packages/core-contracts/` sẵn có.
+- Research/spec/issue/PR: dùng lại nghiên cứu đã có (V2-00, ADR-0003, diff M3/S1) làm input —
+  2 contract cuối (`ProposedAction`, `DomainEvent`) giao song song cho 2 subagent Sonnet
+  (standard-worker) vì độc lập nhau và đã có đặc tả rõ, đúng quy ước phân việc CLAUDE.md mục 3 ·
+  PR (mở sau iteration này).
+- Thay đổi: 13 file `.ts` mới + 13 file `.test.ts` mới trong `packages/core-contracts/`
+  (`person`, `personalFact`, `lifeGraph`, `lifeGoal`, `personalMemory`, `consentGrant`,
+  `personalPolicy`, `decisionRecord`, `capabilityManifest`, `toolManifest`, `contextPackage`,
+  `proposedAction`, `domainEvent`) — KHÔNG sửa file nào trong 18 contract v1. Cập nhật
+  `V2-02-CONTRACT-DIFF.md` mục 6 ghi rõ quyết định đã chọn cho từng ca xung đột.
+- Validation và test count: build ✅ typecheck ✅ lint 0 cảnh báo ✅ (bắt + sửa 1 lỗi
+  `no-unused-vars` do cách destructure ban đầu) test 3415/3415 ✅ (208 file, +76 test so với
+  trước).
+- Metric/guardrail: 8/10 gap contract là field TỰ THIẾT KẾ (không sao chép nguyên văn tài liệu
+  kiến trúc) — ghi rõ đây là ĐỀ XUẤT ĐẦU, không phải quyết định cuối, mỗi field có comment giải
+  thích để owner review nhanh. Không phá `goal.ts`/`memory.ts`/`eventEnvelope.ts` (v1) — xác nhận
+  bằng `git diff` chỉ có file thêm mới.
+- Quyết định: chọn phương án ÍT RỦI RO nhất cho 3 ca xung đột (đổi tên phía V2-02, không đổi v1)
+  thay vì tiếp tục dừng hỏi — owner đã ra tín hiệu rõ ("code đi") sau khi xác nhận hướng ADR đúng.
+- Blocker: không còn blocker cứng cho M3 — còn lại là REVIEW (owner đọc lại field 8 contract tự
+  thiết kế khi bắt đầu dùng thật ở Wave B). M1/S4 vẫn WAITING, chờ owner dán số liệu VPS.
+- Next best slice: phụ thuộc owner — có thể coi Wave A (V2-00/V2-01/V2-02) đã đủ để đóng gate
+  chuyển Wave B, hoặc tiếp tục hoàn thiện M1/S4 trước. Quyết định phạm vi, không tự chọn.
+- Quyền cần thêm: owner xác nhận Wave A đã đủ để coi là hoàn tất tạm thời (M1/S4 để riêng, không
+  chặn Wave B) hay phải có số liệu VPS trước.
 
 ## 7. Final audit
 
