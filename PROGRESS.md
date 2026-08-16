@@ -8,7 +8,7 @@
 
 ## Giai đoạn hiện tại
 
-### V2-03 Personal World Model — slice 1: persistence + API (2026-08-16, PR đang tạo)
+### V2-03 Personal World Model — slice 1: persistence + API (2026-08-16, PR #569 đã MERGE)
 
 Wave B của `docs/architecture-v2/21-ROADMAP.md` đã mở. Slice 1 chỉ làm **nền tảng lưu trữ + API**
 (chưa có UI, chưa có Life Graph V2-05, chưa có Consent V2-04):
