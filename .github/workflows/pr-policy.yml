@@ -13,18 +13,19 @@ jobs:
     name: metadata
     runs-on: ubuntu-latest
     steps:
-      - name: Validate title and PR evidence
+      - name: Validate title, evidence and feature spec
         uses: actions/github-script@v7
         with:
           script: |
-            const title = context.payload.pull_request.title;
-            const body = context.payload.pull_request.body || "";
+            const pr = context.payload.pull_request;
+            const title = pr.title;
+            const body = pr.body || "";
             const conventional = /^(feat|fix|refactor|docs|test|chore|style|perf|build|ci|revert)(\([a-z0-9._/-]+\))?!?: .+/;
             if (!conventional.test(title)) {
               core.setFailed("Tiêu đề PR phải theo Conventional Commits, ví dụ: feat(learn): add review queue");
             }
 
-            if (context.payload.pull_request.draft) {
+            if (pr.draft) {
               core.info("Draft PR: chưa bắt buộc hoàn tất evidence.");
               return;
             }
@@ -32,6 +33,7 @@ jobs:
             const required = [
               "## Tóm tắt",
               "## Issue / outcome",
+              "## Research / spec",
               "## Validation",
               "## Rủi ro, rollout và rollback",
               "## Definition of Done"
@@ -39,4 +41,14 @@ jobs:
             const missing = required.filter((heading) => !body.includes(heading));
             if (missing.length) {
               core.setFailed(`PR Ready for review còn thiếu: ${missing.join(", ")}`);
+            }
+
+            if (/^feat(\(|:)/.test(title)) {
+              const specLink = /docs\/specs\/\d{4}-\d{2}-\d{2}-[a-z0-9-]+\.md/;
+              if (!specLink.test(body)) {
+                core.setFailed("PR feat phải liên kết spec tại docs/specs/YYYY-MM-DD-slug.md.");
+              }
+              if (!/Approved for implementation/i.test(body)) {
+                core.setFailed("PR feat phải xác nhận spec đã Approved for implementation.");
+              }
             }
