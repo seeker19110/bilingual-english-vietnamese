@@ -246,7 +246,6 @@ Model selection is a V2 platform concern shared by Companion and every domain, n
 
 All AI capabilities introduced from V2-08 onward must use stable task/capability identifiers, server-side model registry/configuration, deterministic-first execution, observable escalation and per-task quality/cost gates. No new capability may hard-code a vendor model in client or business-domain code.
 
-
 Kế hoạch xuyên suốt để hạn chế gọi API và kiểm soát unit economics:
 [`22-API-COST-OPTIMIZATION-PLAN.md`](22-API-COST-OPTIMIZATION-PLAN.md). Tài liệu này không tự mở
 phase implementation; từng PR vẫn phải theo gate của wave tương ứng.
