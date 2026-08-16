@@ -1,45 +1,84 @@
-# 🇬🇧🇻🇳 Gia sư ngôn ngữ AI song ngữ Việt ⇄ Anh
+# Đồng Hành
 
-Web app gia sư AI **hai chiều**: người Việt học tiếng Anh, hoặc người nước ngoài học tiếng Việt qua tiếng Anh. Điểm khác biệt: AI **sửa lỗi & giải thích bằng GIỌNG tiếng mẹ đẻ** của học viên (TTS hai giọng riêng), không chỉ bằng chữ.
+**Đồng Hành** đang chuyển từ ứng dụng gia sư AI Việt ⇄ Anh thành một **Personal AI Companion
+đa lĩnh vực**: hiểu người dùng xuyên thời gian, kết nối mục tiêu giữa học tập, nghề nghiệp, công
+việc, dự án và đời sống, nhưng chỉ hành động trong phạm vi quyền được cấp.
 
-Đang chạy thật tại **https://en-vi.donghanhcungban.org**.
+Sản phẩm production hiện tại là **Learning / Gia sư ngôn ngữ AI song ngữ Việt ⇄ Anh**, đang chạy
+tại <https://en-vi.donghanhcungban.org>. Đây là domain đầu tiên và là nền sản phẩm thật để chuyển
+dần sang Đồng Hành Platform V2; không có kế hoạch viết lại một lần hoặc làm gián đoạn người dùng.
 
-## ✨ Tính năng
+## Hiện tại: Learning production
 
-- **Chat gia sư AI** — trò chuyện theo tình huống, sửa lỗi, giải thích bằng tiếng mẹ đẻ; có "Kết thúc & chấm điểm" cuối phiên.
-- **Luyện viết + chấm điểm kiểu IELTS** — chỉ lỗi, ước lượng band.
-- **Luyện nói song ngữ** (tính năng chính) — nói → STT (Whisper) → AI trả lời bằng **giọng ngôn ngữ đích** + sửa lỗi bằng **giọng tiếng mẹ đẻ** (TTS 2 giọng riêng).
-- **Lộ trình học** — từ vựng theo chủ đề (tốc độ 5/10/20 từ/ngày), ôn tập SRS, chấm phát âm.
-- **Lộ trình chuẩn CEFR A1 → C2** — ngữ pháp + hội thoại + bài thi cuối cấp.
-- **Từ điển 12.000+ từ** đã gắn nhãn CEFR, đầy đủ nghĩa + ví dụ song ngữ có audio.
-- **Bảng tiến độ** — streak, biểu đồ, % hoàn thành theo cấp.
-- Hai chiều học (nút gạt A ↔ B), song ngữ toàn giao diện, **4 theme** (mặc định Xanh đêm).
+- Chat gia sư AI, luyện viết và chấm điểm, luyện nói qua STT + phản hồi bằng giọng nói.
+- Lộ trình từ vựng, SRS, phát âm và CEFR A1 → C2; từ điển 12.000+ mục.
+- Tiến độ, streak, thử thách, huy hiệu, referral, thông báo và quản trị.
+- Gói Free / Pro / VIP; thanh toán VietQR qua SePay, webhook cấp quyền atomic và idempotent.
+- Hai chiều Việt ⇄ Anh, giao diện song ngữ, mobile-first và bốn theme đạt WCAG AA.
+- PostgreSQL tự host, Express, React/Vite; triển khai VPS sau Cloudflare với CI đầy đủ.
 
-## 🚀 Công nghệ
+AI hiện tại dùng gateway nhiều provider để giữ độ ổn định. Định hướng đã chốt là **Gemini làm
+engine chính cho hội thoại và trải nghiệm voice mới**; các provider/STT/TTS hiện hữu được duy trì
+như adapter hoặc fallback trong giai đoạn chuyển đổi. Việc chuyển provider phải đi qua benchmark,
+cost/latency evidence và rollout có thể rollback, không thay đổi production chỉ bằng sửa tài liệu.
 
-- **Frontend:** React 18 + Vite 7 + TypeScript 5.2 (strict) + Tailwind CSS 3 (mã gốc do Lovable sinh ra).
-- **Backend & dữ liệu:** Express (`server.ts`) + PostgreSQL tự host trên VPS. Auth tự viết
-  (Bearer token, `api/auth.ts`).
-- **AI:** chat/chấm bài qua `/api/agent` · STT Whisper qua Groq/OpenAI (`/api/stt`) · TTS Google Cloud (`/api/tts`, cache mã hoá AES-256-GCM).
-- **Deploy:** VPS Ubuntu (PM2 + Nginx + Let's Encrypt) sau Cloudflare.
+## Tương lai: Đồng Hành Platform V2
 
-Chi tiết đầy đủ (schema DB, API, MoSCoW): xem `PROJECT.md`. Trạng thái/tiến độ: xem `PROGRESS.md`. Quy ước làm việc với AI: xem `CLAUDE.md`.
+V2 dùng modular monolith, contract rõ ràng và migration kiểu strangler. Trọng tâm không phải tạo
+thêm một chatbot, mà xây một companion có continuity và kiểm soát được:
 
-## 🛠️ Chạy dự án cục bộ
+- **Personal World Model** — facts, preferences và constraints có provenance, confidence,
+  sensitivity, expiry và quyền sửa/xoá/xuất.
+- **Life Graph** — kết nối goal, project, skill, commitment, constraint và decision xuyên domain.
+- **Knowledge Fabric + Context Engine** — lấy đúng ngữ cảnh theo purpose, permission và token budget.
+- **Companion Runtime** — intent → context → plan → policy → capability → validated result.
+- **Capability Registry + Automation** — mọi thao tác có schema, quyền, risk, budget, audit và revoke.
+- **Decision / Outcome Loop** — lưu giả định, bằng chứng, lựa chọn và học từ kết quả thực tế.
+- **Các domain theo thứ tự** — Learning đa môn → Career → Work → Startup → Life.
+
+Các invariant quan trọng: planning không đồng nghĩa execution; AI output không trực tiếp sửa
+billing, permissions, mastery hoặc authoritative state; external write cần đúng authority; dữ liệu
+nhạy cảm không tự động đi xuyên domain.
+
+Roadmap chính thức: [V2 Roadmap](docs/architecture-v2/21-ROADMAP.md). Kiến trúc:
+[System Architecture](docs/architecture-v2/02-SYSTEM-ARCHITECTURE.md). Chiến lược chuyển đổi:
+[Migration V1 → V2](docs/architecture-v2/20-MIGRATION-V1-V2.md). Trạng thái có bằng chứng:
+[PROGRESS.md](PROGRESS.md).
+
+## Trạng thái V2
+
+- V2-00: inventory, ownership map, trace tám critical flow và risk register đã có; baseline
+  latency/cost production còn chờ số liệu vận hành thật.
+- V2-01: ADR boundary Platform / Learning và lint rule đã hoàn tất.
+- V2-02: 13 core contracts V2 đã được thêm theo hướng additive, không phá contract Learning v1.
+- Bước tiếp theo theo roadmap: bắt đầu Wave B bằng Personal World Model sau khi contract được owner
+  review tại thời điểm dùng thật; không tự mở rộng phase khi gate chưa đạt.
+
+English Tutor OS 46 phase là tài liệu v1 đã **frozen**. Chỉ tiếp tục phần nào phục vụ stability,
+migration hoặc domain Learning của V2.
+
+## Chạy cục bộ
+
+Yêu cầu Node.js 22+ và PostgreSQL disposable/local; không dùng production credentials cho test.
 
 ```bash
-git clone https://github.com/seeker19110/bilingual-english-vietnamese.git
-cd bilingual-english-vietnamese
+git clone https://github.com/seeker19110/donghanh.git
+cd donghanh
 npm install
-cp .env.example .env   # điền DATABASE_URL/AI/TTS
+cp .env.example .env
 npm run dev
 ```
 
-Lệnh khác: `npm run build` (build) · `npm run typecheck` · `npm run lint` · `npm test` · `npm run test:e2e` (Playwright) · `npm start` (chạy `server.ts` bằng `tsx`).
+Các cổng chính:
 
-## ☁️ Codex Cloud
+```bash
+npm run build
+npm run typecheck
+npm run lint
+npm run format:check
+npm test
+npm run test:e2e
+```
 
-Repository có setup và maintenance script dành cho container Codex Cloud. Xem
-[`docs/CODEX_CLOUD_SETUP.md`](docs/CODEX_CLOUD_SETUP.md) để cấu hình environment Node.js 22,
-PostgreSQL test disposable, Playwright và luồng tạo PR. Cấu hình này không sử dụng secret hoặc dữ
-liệu production và không thay thế deploy VPS hiện tại.
+Quy ước làm việc: [AGENTS.md](AGENTS.md) và [CLAUDE.md](CLAUDE.md). Thiết lập Codex Cloud:
+[CODEX_CLOUD_SETUP.md](docs/CODEX_CLOUD_SETUP.md).
