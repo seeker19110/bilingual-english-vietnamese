@@ -1,7 +1,7 @@
-name: "🎯 Large goal"
+name: '🎯 Large goal'
 description: Khởi tạo mục tiêu lớn để AI thực thi theo nhiều vòng có checkpoint
-title: "goal: "
-labels: ["type: goal", "status: framing"]
+title: 'goal: '
+labels: ['type: goal', 'status: framing']
 body:
   - type: markdown
     attributes:

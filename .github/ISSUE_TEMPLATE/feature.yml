@@ -1,7 +1,7 @@
-name: "💡 Feature discovery"
+name: '💡 Feature discovery'
 description: Nghiên cứu và viết đặc tả chi tiết trước khi code tính năng
-title: "research: "
-labels: ["type: feature", "status: discovery"]
+title: 'research: '
+labels: ['type: feature', 'status: discovery']
 body:
   - type: markdown
     attributes:

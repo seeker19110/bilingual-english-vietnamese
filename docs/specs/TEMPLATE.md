@@ -1,13 +1,13 @@
 # Feature spec: <Tên tính năng>
 
-| Thuộc tính | Giá trị |
-| --- | --- |
-| Issue | # |
-| Spec owner | |
-| Trạng thái | Draft / In review / **Approved for implementation** |
-| Người duyệt | |
-| Ngày duyệt | YYYY-MM-DD |
-| Lần cập nhật | YYYY-MM-DD |
+| Thuộc tính   | Giá trị                                             |
+| ------------ | --------------------------------------------------- |
+| Issue        | #                                                   |
+| Spec owner   |                                                     |
+| Trạng thái   | Draft / In review / **Approved for implementation** |
+| Người duyệt  |                                                     |
+| Ngày duyệt   | YYYY-MM-DD                                          |
+| Lần cập nhật | YYYY-MM-DD                                          |
 
 > Không bắt đầu code khi trạng thái chưa là **Approved for implementation**.
 
@@ -40,10 +40,10 @@ Chỉ dùng nguồn chính thống cho API/standard; ghi link, phiên bản và 
 ## 4. Phương án và quyết định
 
 | Phương án | Lợi ích | Chi phí/rủi ro | Kết luận |
-| --- | --- | --- | --- |
-| Không làm | | | |
-| A | | | |
-| B | | | |
+| --------- | ------- | -------------- | -------- |
+| Không làm |         |                |          |
+| A         |         |                |          |
+| B         |         |                |          |
 
 Tiêu chí quyết định và lý do chọn:
 
@@ -110,13 +110,13 @@ Event/metric/log (không PII), dashboard/alert, health check, owner và cách x�
 
 ## 14. Test plan
 
-| Lớp | Trường hợp | Bằng chứng |
-| --- | --- | --- |
-| Unit | | |
-| Integration | | |
-| E2E/a11y | | |
-| Manual/eval | | |
-| Concurrent/retry/migration | | |
+| Lớp                        | Trường hợp | Bằng chứng |
+| -------------------------- | ---------- | ---------- |
+| Unit                       |            |            |
+| Integration                |            |            |
+| E2E/a11y                   |            |            |
+| Manual/eval                |            |            |
+| Concurrent/retry/migration |            |            |
 
 ## 15. Kế hoạch triển khai
 
@@ -129,14 +129,14 @@ Phần trăm/giai đoạn rollout, go/no-go, verify query, rollback/revert/recon
 ## 17. Rủi ro và giả định
 
 | Rủi ro/giả định | Xác suất | Ảnh hưởng | Giảm thiểu/xác minh | Owner |
-| --- | --- | --- | --- | --- |
-| | | | | |
+| --------------- | -------- | --------- | ------------------- | ----- |
+|                 |          |           |                     |       |
 
 ## 18. Câu hỏi mở và quyết định
 
 | Mục | Owner | Hạn | Quyết định |
-| --- | --- | --- | --- |
-| | | | |
+| --- | ----- | --- | ---------- |
+|     |       |     |            |
 
 Không được Approved khi còn câu hỏi làm thay đổi cách implementation.
 

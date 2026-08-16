@@ -29,11 +29,11 @@ thật của `main`, đo khoảng cách tới mục tiêu và chọn vòng kế 
 
 ## 2. Ba tầng mục tiêu
 
-| Tầng | Nội dung | Hoàn thành khi |
-| --- | --- | --- |
-| Goal | Outcome lớn của người dùng/sản phẩm | Goal metrics và guardrails đạt |
+| Tầng      | Nội dung                               | Hoàn thành khi                    |
+| --------- | -------------------------------------- | --------------------------------- |
+| Goal      | Outcome lớn của người dùng/sản phẩm    | Goal metrics và guardrails đạt    |
 | Milestone | Capability có thể phát hành/đo độc lập | Milestone acceptance criteria đạt |
-| Slice | Thay đổi nhỏ trong một PR | PR DoD đạt và merge |
+| Slice     | Thay đổi nhỏ trong một PR              | PR DoD đạt và merge               |
 
 Không dùng “đã viết hết code” làm tiêu chí hoàn thành. Mỗi tầng cần outcome, metric, acceptance
 criteria, non-goals và bằng chứng.

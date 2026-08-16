@@ -9,16 +9,16 @@ Mục tiêu là thay đổi nhỏ, truy vết được, có bằng chứng kiể
 
 ## 1. Luồng chuẩn
 
-| Cổng | Đầu vào | Việc bắt buộc | Đầu ra |
-| --- | --- | --- | --- |
-| Idea | Vấn đề hoặc cơ hội | Nêu người dùng, pain point, kết quả mong muốn và cách đo | Feature issue |
-| Research | Feature issue | Đọc code/luồng hiện tại, dữ liệu người dùng, giải pháp tương tự, constraint, rủi ro và phương án | Bằng chứng + lựa chọn |
-| Spec | Nghiên cứu đủ | Viết spec theo `docs/specs/TEMPLATE.md`; review product/UX/architecture/security | Spec được duyệt |
-| Plan | Spec được duyệt | Tách lát dọc nhỏ, dependency, test, migration, rollout/rollback | Checklist thực thi |
-| Build | Issue đạt DoR | Nhánh riêng, commit nhỏ, test cùng code, cập nhật tài liệu | Draft PR |
-| Verify | Draft PR | CI, self-review, security/privacy, a11y, impact map, manual smoke | PR đạt DoD |
-| Release | PR được duyệt | Squash merge, theo dõi deploy; tag phiên bản khi cần release mốc | Bản phát hành |
-| Observe | Đã release | Kiểm health/error/cost/critical flow; rollback nếu vượt ngưỡng | Issue đóng hoặc follow-up |
+| Cổng     | Đầu vào            | Việc bắt buộc                                                                                    | Đầu ra                    |
+| -------- | ------------------ | ------------------------------------------------------------------------------------------------ | ------------------------- |
+| Idea     | Vấn đề hoặc cơ hội | Nêu người dùng, pain point, kết quả mong muốn và cách đo                                         | Feature issue             |
+| Research | Feature issue      | Đọc code/luồng hiện tại, dữ liệu người dùng, giải pháp tương tự, constraint, rủi ro và phương án | Bằng chứng + lựa chọn     |
+| Spec     | Nghiên cứu đủ      | Viết spec theo `docs/specs/TEMPLATE.md`; review product/UX/architecture/security                 | Spec được duyệt           |
+| Plan     | Spec được duyệt    | Tách lát dọc nhỏ, dependency, test, migration, rollout/rollback                                  | Checklist thực thi        |
+| Build    | Issue đạt DoR      | Nhánh riêng, commit nhỏ, test cùng code, cập nhật tài liệu                                       | Draft PR                  |
+| Verify   | Draft PR           | CI, self-review, security/privacy, a11y, impact map, manual smoke                                | PR đạt DoD                |
+| Release  | PR được duyệt      | Squash merge, theo dõi deploy; tag phiên bản khi cần release mốc                                 | Bản phát hành             |
+| Observe  | Đã release         | Kiểm health/error/cost/critical flow; rollback nếu vượt ngưỡng                                   | Issue đóng hoặc follow-up |
 
 Bug nhỏ có thể bắt đầu từ bước tái hiện/root cause; nhưng nếu bản sửa đổi hành vi sản phẩm hoặc
 thêm capability mới thì vẫn phải đi qua Research + Spec.
@@ -66,15 +66,15 @@ không trộn refactor không liên quan. Issue cha giữ outcome; issue con có
 
 ## 5. Ma trận kiểm thử theo rủi ro
 
-| Thay đổi | Bằng chứng tối thiểu |
-| --- | --- |
-| Docs/config | Prettier file đổi, `git diff --check` |
-| Logic thuần | Typecheck, lint, unit test nhắm mục tiêu và full unit gate |
-| UI/routing/a11y | Các gate trên + Playwright + axe + kiểm mobile/theme liên quan |
-| API/auth/data | Các gate trên + integration test PostgreSQL disposable, negative/authorization cases |
-| Payment/entitlement/usage | Concurrent/retry/idempotency tests, failure recovery và reconciliation |
-| Prompt/model AI | Eval tutor so với baseline, token/cost/latency và fallback |
-| Migration | Chạy mới + chạy lặp, verify query, rollout tương thích ngược và recovery procedure |
+| Thay đổi                  | Bằng chứng tối thiểu                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| Docs/config               | Prettier file đổi, `git diff --check`                                                |
+| Logic thuần               | Typecheck, lint, unit test nhắm mục tiêu và full unit gate                           |
+| UI/routing/a11y           | Các gate trên + Playwright + axe + kiểm mobile/theme liên quan                       |
+| API/auth/data             | Các gate trên + integration test PostgreSQL disposable, negative/authorization cases |
+| Payment/entitlement/usage | Concurrent/retry/idempotency tests, failure recovery và reconciliation               |
+| Prompt/model AI           | Eval tutor so với baseline, token/cost/latency và fallback                           |
+| Migration                 | Chạy mới + chạy lặp, verify query, rollout tương thích ngược và recovery procedure   |
 
 Không dùng secret, dữ liệu thật hoặc provider trả phí trong CI.
 
@@ -110,12 +110,12 @@ hoặc critical flow thất bại, ưu tiên rollback/revert rồi điều tra t
 
 ## 9. Trách nhiệm
 
-| Vai trò | Trách nhiệm |
-| --- | --- |
-| Product owner | Outcome, ưu tiên, duyệt research/spec và quyết định scope |
-| Spec owner | Thu thập bằng chứng, viết spec, giải quyết câu hỏi mở |
-| Implementer | Code theo spec, test, migration, self-review, bằng chứng |
-| Reviewer | Correctness, security/privacy, operability, maintainability |
-| Release owner | Go/no-go, theo dõi deploy, xác minh production và rollback |
+| Vai trò       | Trách nhiệm                                                 |
+| ------------- | ----------------------------------------------------------- |
+| Product owner | Outcome, ưu tiên, duyệt research/spec và quyết định scope   |
+| Spec owner    | Thu thập bằng chứng, viết spec, giải quyết câu hỏi mở       |
+| Implementer   | Code theo spec, test, migration, self-review, bằng chứng    |
+| Reviewer      | Correctness, security/privacy, operability, maintainability |
+| Release owner | Go/no-go, theo dõi deploy, xác minh production và rollback  |
 
 Một người có thể giữ nhiều vai trò, nhưng phải đi qua đầy đủ các cổng và ghi người/ngày phê duyệt.

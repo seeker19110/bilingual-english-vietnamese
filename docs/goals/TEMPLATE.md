@@ -1,14 +1,14 @@
 # Goal: <Tên mục tiêu lớn>
 
-| Thuộc tính | Giá trị |
-| --- | --- |
-| Goal ID | GOAL-YYYY-NNN |
-| Owner | |
-| Trạng thái | FRAMING / ACTIVE / WAITING / BLOCKED / COMPLETE |
-| Bắt đầu | YYYY-MM-DD |
-| Target review | YYYY-MM-DD |
-| Quyền được cấp | Research / branch / PR / merge / deploy (ghi rõ) |
-| Budget/guardrails | |
+| Thuộc tính        | Giá trị                                          |
+| ----------------- | ------------------------------------------------ |
+| Goal ID           | GOAL-YYYY-NNN                                    |
+| Owner             |                                                  |
+| Trạng thái        | FRAMING / ACTIVE / WAITING / BLOCKED / COMPLETE  |
+| Bắt đầu           | YYYY-MM-DD                                       |
+| Target review     | YYYY-MM-DD                                       |
+| Quyền được cấp    | Research / branch / PR / merge / deploy (ghi rõ) |
+| Budget/guardrails |                                                  |
 
 ## 1. Outcome và Definition of Goal Complete
 
@@ -31,9 +31,9 @@
 
 ## 3. Milestones và slices
 
-| ID | Outcome/AC | Dependency | Spec | Issue | PR | State | Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| M1/S1 | | | | | | BACKLOG | |
+| ID    | Outcome/AC | Dependency | Spec | Issue | PR  | State   | Evidence |
+| ----- | ---------- | ---------- | ---- | ----- | --- | ------- | -------- |
+| M1/S1 |            |            |      |       |     | BACKLOG |          |
 
 State hợp lệ: BACKLOG / RESEARCH / SPEC / READY / BUILDING / VERIFYING / WAITING / BLOCKED /
 DONE / DROPPED.
@@ -41,8 +41,8 @@ DONE / DROPPED.
 ## 4. Risk register
 
 | Risk | Trigger/guardrail | Mitigation/rollback | Owner | State |
-| --- | --- | --- | --- | --- |
-| | | | | |
+| ---- | ----------------- | ------------------- | ----- | ----- |
+|      |                   |                     |       |       |
 
 ## 5. Current truth
 

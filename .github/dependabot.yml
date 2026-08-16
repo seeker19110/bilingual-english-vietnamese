@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: "03:00"
+      time: '03:00'
       timezone: Asia/Ho_Chi_Minh
     open-pull-requests-limit: 5
     groups:
@@ -15,13 +15,13 @@ updates:
       production-patch:
         dependency-type: production
         update-types: [patch]
-    labels: ["dependencies"]
+    labels: ['dependencies']
     commit-message:
-      prefix: "chore(deps)"
+      prefix: 'chore(deps)'
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
-    labels: ["dependencies", "github-actions"]
+    labels: ['dependencies', 'github-actions']
     commit-message:
-      prefix: "chore(ci)"
+      prefix: 'chore(ci)'
