@@ -8,7 +8,7 @@
 
 ## Giai đoạn hiện tại
 
-### V2-04 Consent + Personal Policy — slice 1: persistence + API (2026-08-16)
+### V2-04 Consent + Personal Policy — slice 1: persistence + API (2026-08-16, PR #571 đã MERGE + deploy production)
 
 Việc kế tiếp của Wave B sau V2-03. Slice 1 chỉ làm **nền tảng lưu trữ + API** cho ConsentGrant và
 PersonalPolicy, cùng khuôn với slice 1 của V2-03:
@@ -23,8 +23,11 @@ PersonalPolicy, cùng khuôn với slice 1 của V2-03:
   vì hai bản "active" song song sẽ khiến câu hỏi "còn quyền không / mức nào" có hai đáp án.
   Thêm `check` constraint `authority='AUTOMATE' ⇒ review_at is not null` (mục 7
   `02-SYSTEM-ARCHITECTURE.md`).
-  **Lưu ý trung thực: SQL này CHƯA chạy thật trên Postgres nào** (sandbox không có DB) — mới soát
-  bằng mắt, đối chiếu `schema.sql` + migration 0041. Sẽ áp tự động ở lượt deploy sau khi merge.
+  **Đã chạy thật trên PostgreSQL production sau khi PR #571 merge**: runner báo đúng 1 migration
+  chờ là `0042_consent_and_policy.sql` và áp dụng thành công (`... xong`). Sau build/reload,
+  PM2 `english-tutor` ở trạng thái `online`; `/api/health` trả 200; hai endpoint mới
+  `/api/consents` và `/api/personal-policies` đều trả 401 khi không có token, xác nhận route đã
+  deploy và auth gate hoạt động. Commit production: `71f7cfde2994b1ff5280eeeac7543235b8e1f171`.
 - **`packages/core-personal/consentService.ts`** — `grantConsent` (đã có bản active thì revoke bản
   cũ + insert `version + 1` trong cùng transaction, `select ... for update` chống race),
   `listConsents`, `revokeConsent` (404 nếu không phải chủ, **409 nếu đã thu hồi/hết hạn** — cùng
@@ -58,9 +61,9 @@ Wave B của `docs/architecture-v2/21-ROADMAP.md` đã mở. Slice 1 chỉ làm 
   — tách khỏi `public.*`/`english.*` đúng ADR-0003 (Personal OS Core là tầng PLATFORM, không phụ
   thuộc môn học). 2 bảng: `personal.persons` (1-1 với `public.users`) và
   `personal.personal_facts` (provenance/confidence/sensitivity/expiry + cột `is_current`).
-  **Lưu ý trung thực: SQL này CHƯA chạy thật trên Postgres nào** (sandbox không có DB) — mới chỉ
-  soát bằng mắt, đối chiếu cú pháp với `schema.sql` + các migration đã chạy được. Nó sẽ được áp
-  tự động ở lượt deploy đầu tiên sau khi merge (`scripts/deploy.sh` → `npm run migrate:pg`).
+  **Đã có trên PostgreSQL production**: lượt deploy sau PR #571 xác nhận migration runner đã áp đủ
+  các migration trước 0042; schema `personal` là tiền đề bắt buộc để 0042 tạo hai bảng mới thành
+  công.
 - **Service `packages/core-personal/personService.ts`** — `getOrCreatePerson`, `declareFact`,
   `listFacts`, `correctFact`, `deleteFact`, `exportPersonData`. Đây là nơi ENFORCE 3 rule kiến trúc:
   1. **GATE V2-03** — fact `derived` KHÔNG được ghi đè fact đang hiệu lực có origin `user_declared`
