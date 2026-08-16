@@ -1,0 +1,78 @@
+name: "💡 Feature request"
+description: Đưa một ý tưởng qua discovery và Definition of Ready
+title: "feat: "
+labels: ["type: feature", "status: discovery"]
+body:
+  - type: markdown
+    attributes:
+      value: "Mô tả vấn đề trước, giải pháp sau. Issue chỉ sẵn sàng code khi đạt DoR."
+  - type: textarea
+    id: problem
+    attributes:
+      label: Vấn đề
+      description: Ai gặp vấn đề gì, trong bối cảnh nào?
+      placeholder: Khi..., người học..., dẫn đến...
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Kết quả mong muốn và cách đo
+      placeholder: Thành công khi...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Giải pháp đề xuất
+      description: Luồng người dùng, trạng thái chính, API/data nếu đã biết.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] Given... when... then...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope và non-goals
+      placeholder: |
+        In scope:
+        - ...
+        Không làm:
+        - ...
+    validations:
+      required: true
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Mức rủi ro
+      options:
+        - Thấp — docs/UI cô lập
+        - Vừa — logic/API không nhạy cảm
+        - Cao — auth/data/payment/usage/AI cost/production
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Test, rollout và rollback
+      description: Nêu test plan, telemetry, migration/flag và cách quay lui.
+    validations:
+      required: true
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Definition of Ready
+      options:
+        - label: Outcome và acceptance criteria kiểm thử được.
+          required: true
+        - label: Scope, non-goals, dependency và quyết định còn mở đã ghi rõ.
+          required: true
+        - label: Rủi ro, test, rollout và rollback đã được cân nhắc.
+          required: true
