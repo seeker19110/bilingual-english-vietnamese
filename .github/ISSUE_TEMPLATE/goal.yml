@@ -1,0 +1,60 @@
+name: "🎯 Large goal"
+description: Khởi tạo mục tiêu lớn để AI thực thi theo nhiều vòng có checkpoint
+title: "goal: "
+labels: ["type: goal", "status: framing"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Goal lớn phải có metric, guardrail, quyền được cấp và Definition of Goal Complete.
+        Sau khi duyệt, tạo `docs/goals/<goal-id>.md` từ template.
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome và người dùng
+    validations:
+      required: true
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Baseline, target và cửa sổ đo
+    validations:
+      required: true
+  - type: textarea
+    id: completion
+    attributes:
+      label: Definition of Goal Complete
+      description: Các tiêu chí có thể xác minh, không dùng “code xong”.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope và non-goals
+    validations:
+      required: true
+  - type: textarea
+    id: guardrails
+    attributes:
+      label: Guardrails và điều kiện rollback
+      description: Security, data, error, latency, cost, accessibility và production health.
+    validations:
+      required: true
+  - type: checkboxes
+    id: authority
+    attributes:
+      label: Quyền cho vòng lặp AI
+      description: Chỉ tick quyền thực sự cấp; quyền không tick vẫn cần hỏi.
+      options:
+        - label: Nghiên cứu và viết spec
+        - label: Tạo/sửa branch và draft PR
+        - label: Chuyển PR Ready for review
+        - label: Merge PR sau required checks
+        - label: Deploy hoặc thay đổi production
+  - type: textarea
+    id: stop
+    attributes:
+      label: Quyết định phải dừng hỏi owner
+      description: Kiến trúc, product, ngân sách hoặc vùng dữ liệu nhạy cảm.
+    validations:
+      required: true
