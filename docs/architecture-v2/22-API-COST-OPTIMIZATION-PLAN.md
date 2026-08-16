@@ -13,12 +13,39 @@
 - Gemini Voice chỉ dùng cho tương tác cần voice; nội dung dài ưu tiên text.
 - Audio tái sử dụng phải cache; memory cập nhật cuối phiên, không gọi model sau mỗi message.
 - Mọi gói có quota voice và hard cost cap phía server.
+- Tên model không hard-code trong handler. Model text, voice, STT, batch/eval và fallback được
+  truyền qua biến môi trường; code chỉ giữ default an toàn để tối giản vận hành.
 - Ngân sách API mục tiêu hiện tại: **500–600 triệu VND/tháng cho 10.000 thuê bao hoạt động
   tích cực**, sau đó hạ tiếp dựa trên số liệu production.
 
 Baseline đang dùng: Gemini 2.5 Flash-Lite $0,10/1M input token và $0,40/1M output token; Batch
 khoảng một nửa. Giá phải là cấu hình versioned cập nhật từ
 [bảng giá Gemini chính thức](https://ai.google.dev/gemini-api/docs/pricing), không là invariant.
+
+### Cấu hình model qua environment
+
+Một nguồn cấu hình server-side duy nhất:
+
+    AI_TEXT_MODEL=gemini-2.5-flash-lite
+    AI_VOICE_MODEL=<gemini-voice-model>
+    AI_STT_MODEL=<gemini-or-compatible-stt-model>
+    AI_BATCH_MODEL=gemini-2.5-flash-lite
+    AI_FALLBACK_MODEL=<optional-approved-model>
+
+Nguyên tắc vận hành:
+
+- đổi model bằng environment + PM2 reload, không sửa code, build lại frontend hoặc đổi client;
+- mọi handler đọc qua một typed model config chung, không tự đọc env theo cách riêng;
+- startup phải validate model/provider/capability compatibility và fail-fast khi cấu hình sai;
+- allowlist chặn model không được phê duyệt hoặc vượt cost/risk tier;
+- model config đi kèm version trong usage receipt để cost/quality truy ngược được;
+- fallback rỗng nghĩa là không fallback, tránh vô tình gọi provider thứ hai;
+- secret API key vẫn tách khỏi model name; không đưa cả hai vào response, log hoặc frontend bundle;
+- production/staging/test có env riêng; test dùng fake provider và không gọi API trả phí.
+
+Trong giai đoạn compatibility, adapter map các biến cũ như GEMINI_MODEL, GEMINI_TTS_MODEL,
+GROQ_CHAT_MODEL và ANTHROPIC_MODEL sang config chung. Sau retention window mới bỏ alias, tránh
+big-bang và giảm thao tác chuyển đổi.
 
 ## 2. Audit hiện trạng
 
@@ -193,7 +220,8 @@ của attempt đã phát sinh chi phí.
 
 3. Idempotency, double-submit guard và single-flight.
 4. Mode-specific token budgets + system instruction chuẩn.
-5. Gemini Flash-Lite primary, một fallback, retry classification + circuit breaker.
+5. Typed environment model config; Gemini Flash-Lite primary, một fallback, retry classification
+   + circuit breaker.
 6. Context summary + 4–6 turns; shadow/A-B quality.
 
 **Gate:** success rate không giảm; p95 latency không tăng; cost/successful-turn giảm ≥40%.
@@ -229,6 +257,7 @@ provider.
 ## 8. Module dự kiến
 
 - packages/core-ai/ai.ts, aiConfig.ts và geminiApi.ts: router, token/context budget.
+- packages/core-ai/modelConfig.ts: typed environment config, default, allowlist và startup validation.
 - packages/core-ai/aiCost.ts: actual receipt + price version thay estimate cố định.
 - packages/core-ai/tts.ts, geminiTts.ts và stt.ts: audio seconds, VAD contract, Gemini voice.
 - packages/core-billing/usage.ts: token/minute/cost quota và reservation/refund.
