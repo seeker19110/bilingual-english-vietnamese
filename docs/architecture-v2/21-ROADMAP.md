@@ -239,3 +239,9 @@ V2 accepted only when:
 ## Release discipline
 
 Mỗi phase là acceptance package, không nhất thiết một PR. Mỗi PR phải nhỏ, reversible/recoverable, cập nhật `PROGRESS.md`, tests/contracts/ADR liên quan và không tự mở phase kế tiếp nếu gate hiện tại chưa accepted.
+
+## Cross-cutting decision — Model API strategy
+
+Model selection is a V2 platform concern shared by Companion and every domain, not an English Tutor implementation detail. The accepted baseline is [22-MODEL-API-STRATEGY.md](./22-MODEL-API-STRATEGY.md).
+
+All AI capabilities introduced from V2-08 onward must use stable task/capability identifiers, server-side model registry/configuration, deterministic-first execution, observable escalation and per-task quality/cost gates. No new capability may hard-code a vendor model in client or business-domain code.
