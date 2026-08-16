@@ -26,6 +26,21 @@ authentication, payments, entitlements, usage accounting and AI-provider costs a
 - Do not call paid external providers in tests. Use faithful fakes or mocks at provider boundaries.
 - Do not push, merge, deploy, rotate secrets or modify production unless the user explicitly asks.
 
+## Large-goal AI loop
+
+- For a goal spanning multiple PRs, follow `docs/AI_DELIVERY_LOOP.md` and create a persistent
+  `docs/goals/<goal-id>.md` from `docs/goals/TEMPLATE.md`.
+- Reload and reconcile state from current `main` at the start of every iteration. Never infer
+  completion from prior chat context or an old checklist.
+- Implement one smallest verifiable slice per PR. A feature requires researched, reviewed and merged
+  `docs/specs/*` marked **Approved for implementation** before source changes.
+- After each merged slice, update evidence, goal gap, risks and next best slice, then repeat until
+  Goal DoD passes or a mandatory stop condition is reached.
+- Repair the same known failure at most three times. Do not weaken tests, thresholds, validation or
+  security controls to make a gate pass.
+- `WAITING` and `BLOCKED` are valid checkpoints. Never assume permission to merge, deploy, spend
+  money, access production/secrets or make destructive/product/architecture decisions.
+
 ## Verification
 
 For code changes, run the checks relevant to the diff and finish with the complete gate:
