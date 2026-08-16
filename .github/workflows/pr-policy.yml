@@ -1,0 +1,42 @@
+name: PR policy
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  metadata:
+    name: metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate title and PR evidence
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            const body = context.payload.pull_request.body || "";
+            const conventional = /^(feat|fix|refactor|docs|test|chore|style|perf|build|ci|revert)(\([a-z0-9._/-]+\))?!?: .+/;
+            if (!conventional.test(title)) {
+              core.setFailed("Tiêu đề PR phải theo Conventional Commits, ví dụ: feat(learn): add review queue");
+            }
+
+            if (context.payload.pull_request.draft) {
+              core.info("Draft PR: chưa bắt buộc hoàn tất evidence.");
+              return;
+            }
+
+            const required = [
+              "## Tóm tắt",
+              "## Issue / outcome",
+              "## Validation",
+              "## Rủi ro, rollout và rollback",
+              "## Definition of Done"
+            ];
+            const missing = required.filter((heading) => !body.includes(heading));
+            if (missing.length) {
+              core.setFailed(`PR Ready for review còn thiếu: ${missing.join(", ")}`);
+            }
