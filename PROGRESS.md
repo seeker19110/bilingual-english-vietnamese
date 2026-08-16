@@ -32,6 +32,27 @@ ElevenLabs khỏi bị dọn nhầm orphan, merge tiến độ học kiểu unio
 Chi tiết đối chiếu từng nhóm: `docs/RECOVERY-V2-RECENT-BRANCHES.md`. PR #543/#544/#545 đóng lại,
 lý do superseded by #546.
 
+### V2-00 — Trace 8 critical flows + risk register + apps/hub (2026-08-16, lượt 2)
+
+Owner chọn hướng (a) đóng nốt V2-00 trước khi sang V2-01. Đã làm M1/S2 (trace 8 luồng end-to-end:
+auth, chat, speaking, learning progress, SRS, payment/entitlement, admin mutation, notification —
+mỗi luồng vẽ `client → route → handler → service/DB → response` bằng cách đọc trực tiếp
+`server.ts` + handler liên quan) + M1/S3 (risk register 7 mục, mỗi mục có owner/state) + đọc kỹ
+`apps/hub/` (kết luận: UI khung cho Wave D multi-subject, chưa có logic Wave A/B/C, không cần đụng
+trong Wave A). M1/S4 (latency/cost production thật) còn mở — AI không có quyền SSH VPS, không tự
+bịa số. Tài liệu: `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md`; goal file cập nhật:
+`docs/goals/v2-wave-a-architecture-boundaries.md` (M1/S2, M1/S3 → DONE; M1/S4 → WAITING).
+
+**Phát hiện phụ (không thuộc mục tiêu goal, nhưng có giá trị thật):**
+`packages/core-billing/payment-webhook.ts` KHÔNG bọc `UPDATE payments SET status='paid'` +
+`grantPlanDays()` trong 1 transaction Postgres (`withTransaction()` đã có sẵn ở
+`packages/core-db/transaction.ts` nhưng chưa dùng ở đây) — nếu `grantPlanDays()` lỗi sau khi đã
+set `status='paid'`, user mất tiền nhưng chưa được cấp gói, và SePay retry sau đó bị chặn bởi
+nhánh idempotent `status==='paid'` nên KHÔNG tự phục hồi được, phải xử lý tay. Đã xác nhận bằng
+đọc code thật, không phải suy đoán. **CHƯA sửa** — đúng guardrail Wave A cấm sửa
+`packages/core-billing` trong goal này; cần owner quyết định mở PR riêng fix ngay hay để backlog.
+Chi tiết: `docs/architecture-v2/V2-00-CRITICAL-FLOWS.md` mục "Risk register" #1.
+
 ### V2-00 — Baseline and ownership map, lượt inventory đầu tiên (2026-08-16)
 
 `docs/architecture-v2/21-ROADMAP.md` (V2, chính thức từ PR #542/`e54f102`, thay cho lộ trình
