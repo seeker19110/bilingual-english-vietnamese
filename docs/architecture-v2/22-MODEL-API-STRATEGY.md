@@ -115,3 +115,51 @@ Flash-Lite không tự động được chấp nhận chỉ vì rẻ; Flash khô
 - Phase 36 Cost Intelligence: sở hữu ledger, budget và reconciliation.
 - Phase 38 Backward Compatibility: migration từ `GEMINI_MODEL`/model hard-code.
 - Phase 45 Final Audit: đối chiếu config, telemetry, benchmark và hóa đơn thực.
+
+## Gemini Voice architecture
+
+“Gemini Voice” gồm hai route độc lập và không được dùng thay thế mù cho nhau:
+
+| Route | Contract | Use case | Cost/control policy |
+|---|---|---|---|
+| Gemini speech generation | text → audio | truyện, câu mẫu, correction đã có text | sinh một lần, chunk ngắn, cache/pre-generate; ưu tiên batch cho nội dung không realtime |
+| Gemini Live native audio | streaming audio → streaming audio/text | hội thoại gia sư realtime | chỉ mở khi user vào live mode; quota phút theo plan; VAD/idle timeout; downgrade về push-to-talk |
+
+Baseline model ID phải đi qua registry/env. Tại thời điểm quyết định:
+
+- speech generation baseline: `gemini-2.5-flash-preview-tts`; ứng viên benchmark: `gemini-3.1-flash-tts-preview`;
+- live baseline/ứng viên: `gemini-2.5-flash-native-audio-preview-12-2025` hoặc `gemini-3.1-flash-live-preview`.
+
+Các model trên có thể ở trạng thái preview. Không hard-code chúng trong client/domain code và không dùng preview alias làm fallback cuối duy nhất.
+
+### Pricing snapshot và cost ledger
+
+Snapshot ngày 2026-08-16, chỉ dùng làm baseline cấu hình và phải đối chiếu lại bảng giá provider trước rollout:
+
+- Gemini 2.5 Flash TTS standard: text input USD 0.50/1M token, audio output USD 10/1M token; batch tương ứng USD 0.25 và USD 5;
+- Gemini 2.5 Flash Live: text input/output USD 0.50/USD 2 mỗi 1M token; audio input/output USD 3/USD 12 mỗi 1M token.
+
+Ledger phải lưu model/version, input/output audio token hoặc giây, text token, retry, cache hit/miss và cost thực. Không cộng chi phí TTS theo “số lượt” khi audio cache được dùng lại.
+
+### Product policy
+
+- Free/default: push-to-talk → Groq STT → Gemini text model → cached/pre-generated Gemini speech khi cần.
+- Pro: quota giới hạn cho Gemini Live; hết quota hoặc provider lỗi thì downgrade về push-to-talk.
+- Narration: Gemini speech generation theo chunk; cache key gồm normalized text, locale, voice, style, rate, provider và model version.
+- Pronunciation: Azure/browser assessor vẫn sở hữu phoneme score. Gemini Live chỉ cung cấp hội thoại/feedback định tính, không tự ghi điểm phoneme.
+- Learning state: Live transcript/summary chỉ là proposal. Schema/domain engine xác nhận trước khi ghi evidence, memory hoặc mastery.
+
+### Voice cost controls
+
+- server-side VAD và không tính/gửi khoảng lặng không cần thiết;
+- idle timeout và đóng session khi app background/disconnect;
+- giới hạn độ dài phản hồi nói; không đọc toàn bộ giải thích nếu user chỉ cần câu mẫu;
+- cache lời chào, hướng dẫn, câu mẫu và narration;
+- dedupe/retry có idempotency để lỗi mạng không tạo nhiều audio tính phí;
+- hard cap phút theo plan/user/day/month và cảnh báo trước quota;
+- theo dõi paid audio seconds, useful speaking seconds và cost/completed-learning-turn;
+- mục tiêu giảm 40–60% voice tính phí chỉ được công nhận khi telemetry so với baseline xác nhận.
+
+### Voice release gate
+
+Không rollout rộng nếu chưa đạt: naturalness/intelligibility/locale QA, interruption/latency threshold, transcript usefulness, privacy/consent/retention checks, cache collision tests, provider outage fallback, quota enforcement và cost-per-session budget. Với output dài, chunk và retry vì chất lượng có thể drift hoặc provider có thể trả sai modality.
