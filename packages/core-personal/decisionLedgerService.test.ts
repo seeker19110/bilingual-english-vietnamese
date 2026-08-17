@@ -241,3 +241,320 @@ describe('getDecision & listDecisions', () => {
     expect(list.length).toBe(1)
   })
 })
+
+// Nhánh biên: not-found, sai trạng thái, cột NULL, tham số optional, clamp limit.
+describe('DecisionLedger — nhánh biên', () => {
+  it('createDecision từ chối khi options là undefined (dữ liệu ngoài không đúng kiểu)', async () => {
+    await expect(
+      createDecision(pool, {
+        personId: PERSON_ID,
+        problem: 'Thiếu options',
+      } as unknown as Parameters<typeof createDecision>[1]),
+    ).rejects.toBeInstanceOf(ValidationError)
+    expect(mockQuery).not.toHaveBeenCalled()
+  })
+
+  it('createDecision không truyền domain/assumptions/evidence/tradeoffs → gửi mảng rỗng và domain null', async () => {
+    mockQuery
+      .mockResolvedValueOnce({ rows: [makeRow({ domain: null })] })
+      .mockResolvedValueOnce({ rows: [] })
+
+    const res = await createDecision(pool, {
+      personId: PERSON_ID,
+      problem: 'Nên thi IELTS hay TOEIC?',
+      options: [{ id: 'opt_ielts', summary: 'Học và thi IELTS 7.0' }],
+    })
+
+    expect(res.domain).toBeUndefined()
+    const params = mockQuery.mock.calls[0]![1] as unknown[]
+    expect(params[3]).toBeNull()
+    expect(params[5]).toBe('[]')
+    expect(params[6]).toBe('[]')
+    expect(params[7]).toBe('[]')
+    expect(params[8]).toBe('[]')
+  })
+
+  it('createDecision ném lỗi khi insert không trả về dòng nào', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(
+      createDecision(pool, {
+        personId: PERSON_ID,
+        problem: 'Insert hỏng',
+        options: [{ id: 'a', summary: 'A' }],
+      }),
+    ).rejects.toThrow('Không thể tạo DecisionRecord')
+  })
+
+  it('decideDecision ném NotFoundError khi không có bản ghi', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(
+      decideDecision(pool, PERSON_ID, DECISION_ID, {
+        selectedOptionId: 'opt_ielts',
+        expectedVersion: 1,
+        actor: 'user:user-1',
+      }),
+    ).rejects.toThrow('Không tìm thấy DecisionRecord')
+  })
+
+  it('decideDecision từ chối khi decision đã rời trạng thái open', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ status: 'decided' })] })
+    await expect(
+      decideDecision(pool, PERSON_ID, DECISION_ID, {
+        selectedOptionId: 'opt_ielts',
+        expectedVersion: 1,
+        actor: 'user:user-1',
+      }),
+    ).rejects.toThrow('Decision không ở trạng thái open (status=decided)')
+  })
+
+  it('decideDecision không truyền rationale/reviewAt/expectedOutcomes → gửi null', async () => {
+    mockQuery
+      .mockResolvedValueOnce({ rows: [makeRow()] })
+      .mockResolvedValueOnce({
+        rows: [makeRow({ selected_option_id: 'opt_ielts', status: 'decided', version: 2 })],
+      })
+      .mockResolvedValueOnce({ rows: [] })
+
+    const res = await decideDecision(pool, PERSON_ID, DECISION_ID, {
+      selectedOptionId: 'opt_ielts',
+      expectedVersion: 1,
+      actor: 'user:user-1',
+    })
+
+    expect(res.rationale).toBeUndefined()
+    expect(res.reviewAt).toBeUndefined()
+    const params = mockQuery.mock.calls[1]![1] as unknown[]
+    expect(params[1]).toBeNull()
+    expect(params[2]).toBeNull()
+    expect(params[3]).toBeNull()
+  })
+
+  it('decideDecision truyền expectedOutcomes → serialize JSON, reviewAt → Date', async () => {
+    mockQuery
+      .mockResolvedValueOnce({ rows: [makeRow()] })
+      .mockResolvedValueOnce({
+        rows: [makeRow({ selected_option_id: 'opt_ielts', status: 'decided', version: 2 })],
+      })
+      .mockResolvedValueOnce({ rows: [] })
+
+    await decideDecision(pool, PERSON_ID, DECISION_ID, {
+      selectedOptionId: 'opt_ielts',
+      expectedOutcomes: [{ description: 'Đạt 7.0', expectedBy: '2027-02-01T00:00:00Z' }],
+      reviewAt: '2026-12-01T00:00:00Z',
+      expectedVersion: 1,
+      actor: 'user:user-1',
+    })
+
+    const params = mockQuery.mock.calls[1]![1] as unknown[]
+    expect(params[2]).toContain('Đạt 7.0')
+    expect(params[3]).toBeInstanceOf(Date)
+  })
+
+  it('decideDecision ném lỗi khi câu update không trả dòng nào', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow()] }).mockResolvedValueOnce({ rows: [] })
+    await expect(
+      decideDecision(pool, PERSON_ID, DECISION_ID, {
+        selectedOptionId: 'opt_ielts',
+        expectedVersion: 1,
+        actor: 'user:user-1',
+      }),
+    ).rejects.toThrow('Không thể cập nhật DecisionRecord decide')
+  })
+
+  it('recordOutcome ném NotFoundError và ConflictError đúng nhánh', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(
+      recordOutcome(pool, PERSON_ID, DECISION_ID, {
+        observation: {
+          description: 'x',
+          observedAt: '2026-10-15T00:00:00Z',
+          matchedExpectation: true,
+        },
+        expectedVersion: 2,
+        actor: 'user:user-1',
+      }),
+    ).rejects.toThrow('Không tìm thấy DecisionRecord')
+
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ status: 'decided', version: 5 })] })
+    await expect(
+      recordOutcome(pool, PERSON_ID, DECISION_ID, {
+        observation: {
+          description: 'x',
+          observedAt: '2026-10-15T00:00:00Z',
+          matchedExpectation: true,
+        },
+        expectedVersion: 2,
+        actor: 'user:user-1',
+      }),
+    ).rejects.toBeInstanceOf(ConflictError)
+  })
+
+  it('recordOutcome từ chối decision còn ở trạng thái open', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ status: 'open', version: 1 })] })
+    await expect(
+      recordOutcome(pool, PERSON_ID, DECISION_ID, {
+        observation: {
+          description: 'x',
+          observedAt: '2026-10-15T00:00:00Z',
+          matchedExpectation: false,
+        },
+        expectedVersion: 1,
+        actor: 'user:user-1',
+      }),
+    ).rejects.toThrow('Không thể ghi nhận kết quả cho decision ở trạng thái open')
+  })
+
+  it('recordOutcome nối tiếp quan sát khi actual_outcomes không phải mảng (NULL từ DB)', async () => {
+    mockQuery
+      .mockResolvedValueOnce({
+        rows: [makeRow({ status: 'review_due', version: 3, actual_outcomes: null })],
+      })
+      .mockResolvedValueOnce({
+        rows: [
+          makeRow({
+            status: 'review_due',
+            version: 4,
+            actual_outcomes: [
+              {
+                description: 'Quan sát 1',
+                observedAt: '2026-10-15T00:00:00Z',
+                matchedExpectation: false,
+              },
+            ],
+          }),
+        ],
+      })
+      .mockResolvedValueOnce({ rows: [] })
+
+    const res = await recordOutcome(pool, PERSON_ID, DECISION_ID, {
+      observation: {
+        description: 'Quan sát 1',
+        observedAt: '2026-10-15T00:00:00Z',
+        matchedExpectation: false,
+      },
+      expectedVersion: 3,
+      actor: 'user:user-1',
+    })
+
+    expect(res.actualOutcomes?.length).toBe(1)
+    // Mảng gửi xuống DB chỉ chứa đúng quan sát mới (không kế thừa gì từ NULL).
+    expect(JSON.parse((mockQuery.mock.calls[1]![1] as unknown[])[0] as string)).toHaveLength(1)
+  })
+
+  it('recordOutcome ném lỗi khi update không trả dòng nào', async () => {
+    mockQuery
+      .mockResolvedValueOnce({ rows: [makeRow({ status: 'decided', version: 2 })] })
+      .mockResolvedValueOnce({ rows: [] })
+    await expect(
+      recordOutcome(pool, PERSON_ID, DECISION_ID, {
+        observation: {
+          description: 'x',
+          observedAt: '2026-10-15T00:00:00Z',
+          matchedExpectation: true,
+        },
+        expectedVersion: 2,
+        actor: 'user:user-1',
+      }),
+    ).rejects.toThrow('Không thể cập nhật DecisionRecord outcome')
+  })
+
+  it('markReviewDueDecisions trả 0 khi rowCount là null, và dùng thời điểm hiện tại nếu không truyền', async () => {
+    mockQuery.mockResolvedValueOnce({ rowCount: null })
+    expect(await markReviewDueDecisions(pool)).toBe(0)
+    expect((mockQuery.mock.calls[0]![1] as unknown[])[0]).toBeInstanceOf(Date)
+  })
+
+  it('reviewDecision: not-found, sai version, sai trạng thái, update rỗng', async () => {
+    const input = {
+      resolutionSummary: 'Xong',
+      expectedVersion: 3,
+      actor: 'user:user-1',
+    }
+
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(reviewDecision(pool, PERSON_ID, DECISION_ID, input)).rejects.toThrow(
+      'Không tìm thấy DecisionRecord',
+    )
+
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ status: 'decided', version: 9 })] })
+    await expect(reviewDecision(pool, PERSON_ID, DECISION_ID, input)).rejects.toBeInstanceOf(
+      ConflictError,
+    )
+
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ status: 'open', version: 3 })] })
+    await expect(reviewDecision(pool, PERSON_ID, DECISION_ID, input)).rejects.toThrow(
+      'Decision không ở trạng thái cần review (status=open)',
+    )
+
+    mockQuery
+      .mockResolvedValueOnce({ rows: [makeRow({ status: 'decided', version: 3 })] })
+      .mockResolvedValueOnce({ rows: [] })
+    await expect(reviewDecision(pool, PERSON_ID, DECISION_ID, input)).rejects.toThrow(
+      'Không thể cập nhật DecisionRecord review',
+    )
+  })
+
+  it('supersedeDecision: not-found, sai version, update rỗng', async () => {
+    const NEW_ID = '33333333-3333-4333-8333-333333333333'
+
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(
+      supersedeDecision(pool, PERSON_ID, DECISION_ID, NEW_ID, 2, 'user:user-1'),
+    ).rejects.toThrow('Không tìm thấy DecisionRecord cũ')
+
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ status: 'decided', version: 7 })] })
+    await expect(
+      supersedeDecision(pool, PERSON_ID, DECISION_ID, NEW_ID, 2, 'user:user-1'),
+    ).rejects.toBeInstanceOf(ConflictError)
+
+    mockQuery
+      .mockResolvedValueOnce({ rows: [makeRow({ status: 'decided', version: 2 })] })
+      .mockResolvedValueOnce({ rows: [] })
+    await expect(
+      supersedeDecision(pool, PERSON_ID, DECISION_ID, NEW_ID, 2, 'user:user-1'),
+    ).rejects.toThrow('Không thể cập nhật DecisionRecord supersede')
+  })
+
+  it('getDecision ném NotFoundError khi không có bản ghi', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(getDecision(pool, PERSON_ID, DECISION_ID)).rejects.toThrow(
+      'Không tìm thấy DecisionRecord',
+    )
+  })
+
+  it('listDecisions không truyền options → chỉ lọc person_id, limit mặc định 50', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    const list = await listDecisions(pool, PERSON_ID)
+    expect(list).toEqual([])
+    const [sql, params] = mockQuery.mock.calls[0]! as [string, unknown[]]
+    expect(sql).not.toContain('status =')
+    expect(sql).not.toContain('domain =')
+    expect(params).toEqual([PERSON_ID, 50])
+  })
+
+  it('listDecisions kẹp limit vào khoảng 1..100', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await listDecisions(pool, PERSON_ID, { limit: 999 })
+    expect((mockQuery.mock.calls[0]![1] as unknown[])[1]).toBe(100)
+
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await listDecisions(pool, PERSON_ID, { limit: 0 })
+    expect((mockQuery.mock.calls[1]![1] as unknown[])[1]).toBe(1)
+  })
+
+  it('listDecisions chỉ lọc domain → placeholder lùi về $2', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await listDecisions(pool, PERSON_ID, { domain: 'career' })
+    const [sql, params] = mockQuery.mock.calls[0]! as [string, unknown[]]
+    expect(sql).toContain('domain = $2')
+    expect(params).toEqual([PERSON_ID, 'career', 50])
+  })
+})
+
+describe('toDecisionRecord — cột actual_outcomes NULL', () => {
+  it('bỏ hẳn actualOutcomes khi DB trả NULL', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ actual_outcomes: null })] })
+    const res = await getDecision(pool, PERSON_ID, DECISION_ID)
+    expect(res.actualOutcomes).toBeUndefined()
+  })
+})
