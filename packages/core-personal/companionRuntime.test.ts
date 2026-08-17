@@ -199,3 +199,231 @@ describe('executeCompanionTurn end-to-end execution pipeline', () => {
     expect(proposedActionMock.proposeAction).toHaveBeenCalled()
   })
 })
+
+// Nhánh biên: chỉ truyền một trong hai tham số explicit, các intent còn lại, đường ngữ cảnh domain learning.
+describe('CompanionRuntime — nhánh biên', () => {
+  it('chỉ truyền explicitIntent (thiếu domain) → vẫn nhận diện domain theo mẫu câu', () => {
+    const res = resolveIntentAndDomain('Tôi muốn học IELTS', 'my_intent')
+    expect(res.intent).toBe('my_intent')
+    expect(res.domain).toBe('learning')
+  })
+
+  it('chỉ truyền explicitDomain (thiếu intent) → intent suy ra từ mẫu câu', () => {
+    const memory = resolveIntentAndDomain('Nhớ giúp tôi lịch họp', undefined, 'my_domain')
+    expect(memory.intent).toBe('create_memory')
+    expect(memory.domain).toBe('my_domain')
+
+    const profile = resolveIntentAndDomain('Tôi là kỹ sư phần mềm', undefined, 'my_domain')
+    expect(profile.intent).toBe('update_profile_fact')
+    expect(profile.domain).toBe('my_domain')
+
+    const lookup = resolveIntentAndDomain('dictionary check', undefined, 'my_domain')
+    expect(lookup.intent).toBe('dictionary_lookup')
+
+    const fallback = resolveIntentAndDomain('Chào buổi tối', undefined, 'my_domain')
+    expect(fallback.intent).toBe('general_conversation')
+    expect(fallback.domain).toBe('my_domain')
+  })
+
+  it('generatePlan tạo bước cập nhật hồ sơ và bước lưu bộ nhớ', () => {
+    const profile = generatePlan('update_profile_fact', 'profile', 'Tôi thích cà phê')
+    expect(profile[0]?.capabilityId).toBe('profile.update_fact')
+    expect(profile[0]?.riskLevel).toBe('low')
+
+    const memory = generatePlan('create_memory', 'personal', 'Ghi nhớ họp 9h')
+    expect(memory[0]?.capabilityId).toBe('memory.create_record')
+    expect(memory[0]?.payload.namespace).toBe('semantic')
+  })
+
+  it('dictionary_lookup không khớp mẫu regex → lấy nguyên câu làm từ khoá', () => {
+    const steps = generatePlan('dictionary_lookup', 'learning', 'lookup please')
+    expect(steps[0]?.payload.word).toBe('lookup please')
+  })
+
+  it('dictionary_lookup với câu rỗng → dùng từ mặc định "learning"', () => {
+    const steps = generatePlan('dictionary_lookup', 'learning', '   ')
+    expect(steps[0]?.payload.word).toBe('learning')
+  })
+
+  it('synthesizeReply cho các intent còn lại và trường hợp không có ngữ cảnh', () => {
+    const emptyCtx = {
+      id: CTX_ID,
+      personId: PERSON_ID,
+      requestId: 'req-1',
+      items: [],
+      tokenBudget: 2000,
+      tokenUsed: 0,
+      createdAt: new Date().toISOString(),
+      schemaVersion: 1,
+    }
+
+    expect(synthesizeReply('x', 'dictionary_lookup', [], emptyCtx)).toBe(
+      'Tôi đã tra cứu từ vựng theo yêu cầu của bạn.',
+    )
+    expect(synthesizeReply('x', 'update_profile_fact', [], emptyCtx)).toBe(
+      'Tôi đã cập nhật thông tin hồ sơ của bạn.',
+    )
+    expect(synthesizeReply('x', 'create_memory', [], emptyCtx)).toBe(
+      'Tôi đã lưu lại ghi nhớ này vào kho kiến thức cá nhân.',
+    )
+    // Intent lạ → câu trả lời mặc định, và không có item ngữ cảnh nên không kèm chú thích token.
+    const generic = synthesizeReply('Chào bạn', 'general_conversation', [], emptyCtx)
+    expect(generic).toBe('Đồng Hành đã nhận được tin nhắn: "Chào bạn".')
+    expect(generic).not.toContain('token ngữ cảnh')
+  })
+
+  it('synthesizeReply đếm cả tác vụ đã chạy và tác vụ bị chính sách từ chối', () => {
+    const baseAction = {
+      personId: PERSON_ID,
+      capabilityId: 'learning.update_goal',
+      action: 'update_goal',
+      targetDomain: 'learning',
+      payload: {},
+      riskLevel: 'low' as const,
+      createdAt: new Date().toISOString(),
+      schemaVersion: 1,
+    }
+
+    const text = synthesizeReply(
+      'x',
+      'set_learning_goal',
+      [
+        { ...baseAction, id: '22222222-2222-4222-8222-222222222222', status: 'committed' },
+        { ...baseAction, id: '33333333-3333-4333-8333-333333333333', status: 'rejected' },
+      ],
+      {
+        id: CTX_ID,
+        personId: PERSON_ID,
+        requestId: 'req-1',
+        items: [],
+        tokenBudget: 2000,
+        tokenUsed: 0,
+        createdAt: new Date().toISOString(),
+        schemaVersion: 1,
+      },
+    )
+
+    expect(text).toContain('Đã tự động thực hiện 1 tác vụ an toàn.')
+    expect(text).toContain('Có 1 tác vụ bị từ chối do chính sách bảo mật.')
+  })
+})
+
+describe('executeCompanionTurn — nhánh ngữ cảnh & đếm trạng thái', () => {
+  it('domain learning: nạp Learning Read Model vào ngữ cảnh, tôn trọng tokenBudget truyền vào', async () => {
+    const queryMock = vi.fn().mockResolvedValue({ rows: [{ user_id: 'user-42' }] })
+    const livePool = { query: queryMock } as unknown as Pool
+
+    proposedActionMock.proposeAction.mockResolvedValueOnce({
+      action: {
+        id: '22222222-2222-4222-8222-222222222222',
+        personId: PERSON_ID,
+        capabilityId: 'learning.update_goal',
+        action: 'update_goal',
+        targetDomain: 'learning',
+        payload: {},
+        riskLevel: 'medium',
+        status: 'rejected',
+        createdAt: new Date().toISOString(),
+        schemaVersion: 1,
+      },
+      autoExecuted: false,
+    })
+
+    const res = await executeCompanionTurn(livePool, {
+      personId: PERSON_ID,
+      userMessage: 'Tôi muốn đặt mục tiêu IELTS 7.0',
+      tokenBudget: 1200,
+    })
+
+    expect(res.executionSummary.rejectedSteps).toBe(1)
+    const ctxOptions = contextEngineMock.buildContextPackage.mock.calls[0]![1] as {
+      tokenBudget?: number
+      domainState?: { provenance: string }
+    }
+    expect(ctxOptions.tokenBudget).toBe(1200)
+    expect(ctxOptions.domainState?.provenance).toBe('learning:read_model')
+  })
+
+  it('domain không phải learning → bỏ qua hẳn bước đọc Learning Read Model', async () => {
+    const queryMock = vi.fn()
+    const livePool = { query: queryMock } as unknown as Pool
+
+    const res = await executeCompanionTurn(livePool, {
+      personId: PERSON_ID,
+      userMessage: 'Chào bạn',
+      targetDomain: 'personal',
+      intent: 'general_conversation',
+    })
+
+    expect(queryMock).not.toHaveBeenCalled()
+    expect(res.targetDomain).toBe('personal')
+    expect(res.executionSummary.plannedSteps).toBe(0)
+    const ctxOptions = contextEngineMock.buildContextPackage.mock.calls[0]![1] as {
+      domainState?: unknown
+      tokenBudget?: number
+    }
+    expect(ctxOptions.domainState).toBeUndefined()
+    expect(ctxOptions.tokenBudget).toBeUndefined()
+  })
+
+  it('không tìm thấy person row → dùng personId thay cho userId', async () => {
+    const queryMock = vi.fn().mockResolvedValue({ rows: [] })
+    const livePool = { query: queryMock } as unknown as Pool
+
+    await executeCompanionTurn(livePool, {
+      personId: PERSON_ID,
+      userMessage: 'Chào bạn',
+    })
+
+    expect(queryMock).toHaveBeenCalledWith('select user_id from personal.persons where id = $1', [
+      PERSON_ID,
+    ])
+  })
+})
+
+describe('executeCompanionTurn — trạng thái confirmed không rơi vào ô đếm nào', () => {
+  it('action ở trạng thái confirmed → cả 3 bộ đếm đều là 0', async () => {
+    const livePool = { query: vi.fn().mockResolvedValue({ rows: [] }) } as unknown as Pool
+
+    proposedActionMock.proposeAction.mockResolvedValueOnce({
+      action: {
+        id: '22222222-2222-4222-8222-222222222222',
+        personId: PERSON_ID,
+        capabilityId: 'learning.update_goal',
+        action: 'update_goal',
+        targetDomain: 'learning',
+        payload: {},
+        riskLevel: 'medium',
+        status: 'confirmed',
+        createdAt: new Date().toISOString(),
+        schemaVersion: 1,
+      },
+      autoExecuted: false,
+    })
+
+    const res = await executeCompanionTurn(livePool, {
+      personId: PERSON_ID,
+      userMessage: 'Tôi muốn đặt mục tiêu IELTS 7.0',
+    })
+
+    expect(res.executionSummary).toMatchObject({
+      plannedSteps: 1,
+      executedSteps: 0,
+      pendingConfirmationSteps: 0,
+      rejectedSteps: 0,
+    })
+  })
+
+  it('action ở trạng thái pending → đếm vào ô chờ xác nhận', async () => {
+    const livePool = { query: vi.fn().mockResolvedValue({ rows: [] }) } as unknown as Pool
+
+    // Dùng mock mặc định trong beforeEach (status = 'pending').
+    const res = await executeCompanionTurn(livePool, {
+      personId: PERSON_ID,
+      userMessage: 'Tôi muốn đặt mục tiêu IELTS 7.0',
+    })
+
+    expect(res.executionSummary.pendingConfirmationSteps).toBe(1)
+    expect(res.reply).toContain('Có 1 đề xuất hành động cần bạn xác nhận')
+  })
+})
