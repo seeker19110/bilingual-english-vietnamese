@@ -6,6 +6,7 @@ vi.mock('@core/authHeader', () => ({
 
 import {
   sendCompanionMessage,
+  sendCompanionMessageStream,
   listProposedActions,
   confirmProposedAction,
   rejectProposedAction,
@@ -63,6 +64,60 @@ describe('companionApi', () => {
       )
 
       await expect(sendCompanionMessage({ message: 'test' })).rejects.toThrow('Unauthorized')
+    })
+  })
+
+  describe('sendCompanionMessageStream', () => {
+    it('nhận và phân giải các sự kiện SSE tuần tự', async () => {
+      const sseBody = [
+        'event: meta\ndata: {"intent":"general_conversation","targetDomain":"learning","contextPackage":{"items":[],"tokenBudget":4000,"tokenUsed":0}}\n\n',
+        'event: chunk\ndata: {"delta":"Xin"}\n\n',
+        'event: chunk\ndata: {"delta":" chào!"}\n\n',
+        'event: actions\ndata: {"proposedActions":[],"executionSummary":{"plannedSteps":0,"executedSteps":0,"pendingConfirmationSteps":0,"rejectedSteps":0}}\n\n',
+        `event: done\ndata: ${JSON.stringify(MOCK_COMPANION_RESPONSE)}\n\n`,
+      ].join('')
+
+      const stream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode(sseBody))
+          controller.close()
+        },
+      })
+
+      const fetchMock = vi.fn(async () => new Response(stream, { status: 200 }))
+      vi.stubGlobal('fetch', fetchMock)
+
+      let receivedChunks = ''
+      let metaReceived = false
+      let actionsReceived = false
+      let doneReceived = false
+
+      const res = await sendCompanionMessageStream(
+        { message: 'Hello stream' },
+        {
+          onMeta: (meta) => {
+            metaReceived = true
+            expect(meta.intent).toBe('general_conversation')
+          },
+          onChunk: (delta) => {
+            receivedChunks += delta
+          },
+          onActions: (actions) => {
+            actionsReceived = true
+            expect(actions.proposedActions).toHaveLength(0)
+          },
+          onDone: (final) => {
+            doneReceived = true
+            expect(final.reply).toBe(MOCK_COMPANION_RESPONSE.reply)
+          },
+        },
+      )
+
+      expect(metaReceived).toBe(true)
+      expect(receivedChunks).toBe('Xin chào!')
+      expect(actionsReceived).toBe(true)
+      expect(doneReceived).toBe(true)
+      expect(res.reply).toBe(MOCK_COMPANION_RESPONSE.reply)
     })
   })
 
