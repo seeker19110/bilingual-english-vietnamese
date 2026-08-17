@@ -175,3 +175,10 @@ describe('isConsentActive', () => {
     expect(await isConsentActive(pool, PERSON_ID, 'life_graph.write', 'export')).toBe(false)
   })
 })
+
+describe('consentService — nhánh biên', () => {
+  it('insert consent không trả dòng nào → ConflictError "thử lại"', async () => {
+    const { pool } = mockPool(() => [])
+    await expect(grantConsent(pool, INPUT)).rejects.toThrow('Không ghi được consent')
+  })
+})

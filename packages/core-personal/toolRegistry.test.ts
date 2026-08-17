@@ -1,29 +1,61 @@
 import { describe, expect, it } from 'vitest'
-import { getToolManifest, listToolManifests, validateToolInput } from './toolRegistry.js'
-import { NotFoundError, ValidationError } from '../core-errors/appError.js'
+import {
+  REGISTERED_TOOLS,
+  getToolManifest,
+  listToolManifests,
+  validateToolInput,
+} from './toolRegistry.js'
 
 describe('toolRegistry', () => {
-  it('gets manifest for registered tool', () => {
+  it('trả về manifest khi tool có trong registry', () => {
+    const tool = getToolManifest('learning.update_goal')
+    expect(tool.id).toBe('learning.update_goal')
+    expect(tool.sideEffect).toBe('internal')
+    expect(tool.requiredPermissions).toContain('learning.write')
+    expect(tool.idempotent).toBe(true)
+  })
+
+  it('ném NotFoundError khi tool không tồn tại', () => {
+    expect(() => getToolManifest('khong.ton.tai')).toThrow(
+      "Tool 'khong.ton.tai' không tồn tại trong registry",
+    )
+  })
+
+  it('liệt kê đủ toàn bộ tool đã đăng ký', () => {
+    const list = listToolManifests()
+    expect(list.length).toBe(Object.keys(REGISTERED_TOOLS).length)
+    expect(list.map((t) => t.id).sort()).toEqual([
+      'dictionary.lookup',
+      'learning.update_goal',
+      'memory.create_record',
+      'profile.update_fact',
+    ])
+  })
+
+  it('tool chỉ đọc (dictionary.lookup) không có side effect và không đòi quyền', () => {
     const tool = getToolManifest('dictionary.lookup')
-    expect(tool.id).toBe('dictionary.lookup')
     expect(tool.sideEffect).toBe('none')
+    expect(tool.requiredPermissions).toEqual([])
+    expect(tool.auditPolicy.logLevel).toBe('minimal')
   })
 
-  it('throws NotFoundError for unknown tool', () => {
-    expect(() => getToolManifest('unknown.tool')).toThrow(NotFoundError)
+  it('tool ghi bộ nhớ không idempotent (được phép tạo nhiều bản ghi)', () => {
+    expect(getToolManifest('memory.create_record').idempotent).toBe(false)
   })
 
-  it('lists all registered tools', () => {
-    const tools = listToolManifests()
-    expect(tools.length).toBeGreaterThanOrEqual(4)
-    expect(tools.some((t) => t.id === 'learning.update_goal')).toBe(true)
+  it('validateToolInput chấp nhận object (kể cả rỗng và mảng)', () => {
+    const tool = getToolManifest('profile.update_fact')
+    expect(() => validateToolInput(tool, {})).not.toThrow()
+    expect(() => validateToolInput(tool, { key: 'name', value: 'An' })).not.toThrow()
+    expect(() => validateToolInput(tool, [])).not.toThrow()
   })
 
-  it('validates tool input object', () => {
-    const tool = getToolManifest('dictionary.lookup')
-    expect(() => validateToolInput(tool, { word: 'test' })).not.toThrow()
-    expect(() => validateToolInput(tool, null)).toThrow(ValidationError)
-    expect(() => validateToolInput(tool, 'string-input')).toThrow(ValidationError)
-    expect(() => validateToolInput(tool, 123)).toThrow(ValidationError)
+  it('validateToolInput từ chối null và giá trị không phải object', () => {
+    const tool = getToolManifest('profile.update_fact')
+    const msg = "Input của tool 'profile.update_fact' phải là một object"
+    expect(() => validateToolInput(tool, null)).toThrow(msg)
+    expect(() => validateToolInput(tool, undefined)).toThrow(msg)
+    expect(() => validateToolInput(tool, 'chuỗi')).toThrow(msg)
+    expect(() => validateToolInput(tool, 42)).toThrow(msg)
   })
 })

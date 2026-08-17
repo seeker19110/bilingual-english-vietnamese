@@ -315,3 +315,148 @@ describe('expireMemoryRecord, deleteMemoryRecord, purgeExpiredMemories', () => {
     expect(purged).toBe(5)
   })
 })
+
+// Nhánh biên: provenance rỗng/quá dài, retain_until, merge lấy bản dài hơn, insert/update rỗng, purge rowCount null.
+describe('memoryService — nhánh biên', () => {
+  it('từ chối khi provenance rỗng hoặc dài quá 200 ký tự', async () => {
+    const runner = { query: vi.fn() }
+
+    const empty = await evaluateMemoryCandidate(runner, PERSON, {
+      namespace: 'semantic',
+      content: 'Nội dung hợp lệ',
+      provenance: '   ',
+      sensitivity: 'personal',
+    })
+    expect(empty.outcome).toBe('REJECT')
+    expect(empty.reason).toContain('Provenance length')
+
+    const tooLong = await evaluateMemoryCandidate(runner, PERSON, {
+      namespace: 'semantic',
+      content: 'Nội dung hợp lệ',
+      provenance: 'a'.repeat(201),
+      sensitivity: 'personal',
+    })
+    expect(tooLong.outcome).toBe('REJECT')
+    expect(tooLong.reason).toContain('Provenance length')
+
+    // Chưa đụng tới DB vì bị chặn ngay ở bước kiểm tra đầu vào.
+    expect(runner.query).not.toHaveBeenCalled()
+  })
+
+  it('từ chối nội dung dài quá 2000 ký tự', async () => {
+    const runner = { query: vi.fn() }
+    const res = await evaluateMemoryCandidate(runner, PERSON, {
+      namespace: 'semantic',
+      content: 'a'.repeat(2001),
+      provenance: 'user_declared',
+      sensitivity: 'personal',
+    })
+    expect(res.outcome).toBe('REJECT')
+    expect(res.reason).toContain('Content length')
+  })
+
+  it('MERGE giữ nội dung DÀI HƠN khi bản cũ dài hơn bản mới', async () => {
+    const runner = {
+      query: vi.fn().mockResolvedValue({
+        rows: [memoryRow({ content: 'User prefers concise feedback and bullet points' })],
+      }),
+    }
+    const res = await evaluateMemoryCandidate(runner, PERSON, {
+      namespace: 'semantic',
+      content: 'concise feedback',
+      provenance: 'user_declared',
+      sensitivity: 'personal',
+    })
+    expect(res.outcome).toBe('MERGE')
+    expect(res.mergedContent).toBe('User prefers concise feedback and bullet points')
+  })
+
+  it('bản ghi có retain_until → trả về retainUntil dạng ISO', async () => {
+    const retain = new Date('2027-01-01T00:00:00Z')
+    const pool = mockPool(async () => ({ rows: [memoryRow({ retain_until: retain })] }))
+    const rec = await getMemoryRecord(pool, PERSON, RECORD_ID)
+    expect(rec?.retainUntil).toBe(retain.toISOString())
+  })
+
+  it('ingestMemory truyền retainUntil → chuyển thành Date gửi xuống DB', async () => {
+    let insertParams: unknown[] = []
+    const handler = async (sql: string, params: unknown[] = []) => {
+      if (sql.trim().toLowerCase().startsWith('select')) return { rows: [] }
+      if (sql.includes('insert into personal.memory_records\n')) {
+        insertParams = params
+        return { rows: [memoryRow()] }
+      }
+      return { rows: [] }
+    }
+    const pool = mockPool(handler as unknown as (sql: string) => Promise<{ rows?: unknown[] }>)
+
+    await ingestMemory(pool, PERSON, {
+      namespace: 'semantic',
+      content: 'Ghi nhớ có hạn giữ',
+      provenance: 'user_declared:onboarding',
+      sensitivity: 'personal',
+      retainUntil: '2027-01-01T00:00:00.000Z',
+    })
+
+    expect(insertParams[5]).toBeInstanceOf(Date)
+  })
+
+  it('ACCEPT nhưng câu insert không trả dòng nào → ném lỗi', async () => {
+    const pool = mockPool(async () => ({ rows: [] }))
+    await expect(
+      ingestMemory(pool, PERSON, {
+        namespace: 'semantic',
+        content: 'Ghi nhớ hợp lệ',
+        provenance: 'user_declared:onboarding',
+        sensitivity: 'personal',
+      }),
+    ).rejects.toThrow('Failed to insert memory record')
+  })
+
+  it('MERGE nhưng bản ghi đích đã biến mất → NotFoundError', async () => {
+    const pool = mockPool(async (sql: string) => {
+      if (sql.trim().toLowerCase().startsWith('select')) {
+        return { rows: [memoryRow({ content: 'User prefers concise feedback' })] }
+      }
+      return { rows: [] }
+    })
+
+    await expect(
+      ingestMemory(pool, PERSON, {
+        namespace: 'semantic',
+        content: 'User prefers concise feedback and bullet points',
+        provenance: 'user_declared',
+        sensitivity: 'personal',
+      }),
+    ).rejects.toThrow('Target memory record to merge was not found')
+  })
+
+  it('expireMemoryRecord: không tìm thấy bản ghi → NotFoundError', async () => {
+    const pool = mockPool(async () => ({ rows: [] }))
+    await expect(expireMemoryRecord(pool, PERSON, RECORD_ID, 1, 'user:1')).rejects.toThrow(
+      'Memory record not found',
+    )
+  })
+
+  it('expireMemoryRecord: câu update không trả dòng nào → NotFoundError', async () => {
+    const pool = mockPool(async (sql: string) => {
+      if (sql.trim().toLowerCase().startsWith('select')) return { rows: [memoryRow()] }
+      return { rows: [] }
+    })
+    await expect(expireMemoryRecord(pool, PERSON, RECORD_ID, 1, 'user:1')).rejects.toThrow(
+      'Memory record not found',
+    )
+  })
+
+  it('deleteMemoryRecord: không xoá được dòng nào → NotFoundError', async () => {
+    const pool = mockPool(async () => ({ rows: [] }))
+    await expect(deleteMemoryRecord(pool, PERSON, RECORD_ID, 'user:1')).rejects.toThrow(
+      'Memory record not found',
+    )
+  })
+
+  it('purgeExpiredMemories trả 0 khi rowCount là null', async () => {
+    const pool = mockPool(async () => ({ rowCount: null }) as unknown as { rows: unknown[] })
+    expect(await purgeExpiredMemories(pool)).toBe(0)
+  })
+})

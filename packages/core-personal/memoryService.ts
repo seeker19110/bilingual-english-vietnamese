@@ -155,13 +155,19 @@ export async function ingestMemory(
     }
 
     if (evaluation.outcome === 'MERGE' && evaluation.existingRecordId) {
+      // evaluateMemoryCandidate() luôn set mergedContent khi outcome='MERGE' (dòng ~131-136) —
+      // bất biến này không được TypeScript enforce (CandidateEvaluation không phải discriminated
+      // union) nên assert tường minh thay vì âm thầm rơi về candidate.content nếu bất biến vỡ.
+      if (!evaluation.mergedContent) {
+        throw new Error('mergedContent phải có giá trị khi outcome=MERGE')
+      }
       // Merge into existing record
       const { rows } = await client.query<MemoryRecordRow>(
         `update personal.memory_records
          set content = $1, status = 'merged', updated_at = now(), version = version + 1
          where id = $2 and person_id = $3
          returning ${MEMORY_COLUMNS}`,
-        [evaluation.mergedContent ?? candidate.content, evaluation.existingRecordId, personId],
+        [evaluation.mergedContent, evaluation.existingRecordId, personId],
       )
       const row = rows[0]
       if (!row) throw new NotFoundError('Target memory record to merge was not found')

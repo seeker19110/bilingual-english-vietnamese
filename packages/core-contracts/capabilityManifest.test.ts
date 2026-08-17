@@ -15,8 +15,12 @@ const validManifest = {
   riskLevel: 'low',
   executionMode: 'ai',
   timeoutMs: 30000,
-  costPolicy: 'per_call_capped',
-  auditPolicy: 'log_input_output',
+  costPolicy: {
+    maxCallsPerDayPerPerson: 20,
+    maxCostUsdPerDayPerPerson: 0.5,
+    onExceed: 'block',
+  },
+  auditPolicy: { logLevel: 'full', retentionDays: 90 },
   lifecycle: 'experimental',
   schemaVersion: CAPABILITY_MANIFEST_SCHEMA_VERSION,
 }
@@ -50,5 +54,58 @@ describe('CapabilityManifestSchema', () => {
 
   it('lifecycle ngoài 3 giá trị hợp lệ → từ chối', () => {
     expect(() => CapabilityManifestSchema.parse({ ...validManifest, lifecycle: 'beta' })).toThrow()
+  })
+
+  // Schema version 2 (quyết định owner 2026-08-17): costPolicy/auditPolicy là object có cấu trúc,
+  // không còn là chuỗi tên policy tự do.
+  it('costPolicy dạng chuỗi (schema version 1 cũ) → từ chối', () => {
+    expect(() =>
+      CapabilityManifestSchema.parse({ ...validManifest, costPolicy: 'per_call_capped' }),
+    ).toThrow()
+  })
+
+  it('costPolicy thiếu trần tiền → từ chối', () => {
+    expect(() =>
+      CapabilityManifestSchema.parse({
+        ...validManifest,
+        costPolicy: { maxCallsPerDayPerPerson: 20, onExceed: 'block' },
+      }),
+    ).toThrow()
+  })
+
+  it('costPolicy.onExceed ngoài 2 giá trị hợp lệ → từ chối', () => {
+    expect(() =>
+      CapabilityManifestSchema.parse({
+        ...validManifest,
+        costPolicy: { ...validManifest.costPolicy, onExceed: 'ignore' },
+      }),
+    ).toThrow()
+  })
+
+  it('costPolicy trần âm/0 → từ chối', () => {
+    expect(() =>
+      CapabilityManifestSchema.parse({
+        ...validManifest,
+        costPolicy: { ...validManifest.costPolicy, maxCostUsdPerDayPerPerson: 0 },
+      }),
+    ).toThrow()
+  })
+
+  it('auditPolicy.retentionDays không phải số nguyên dương → từ chối', () => {
+    expect(() =>
+      CapabilityManifestSchema.parse({
+        ...validManifest,
+        auditPolicy: { logLevel: 'minimal', retentionDays: -1 },
+      }),
+    ).toThrow()
+  })
+
+  it('auditPolicy có field lạ → từ chối (.strict())', () => {
+    expect(() =>
+      CapabilityManifestSchema.parse({
+        ...validManifest,
+        auditPolicy: { logLevel: 'minimal', retentionDays: 30, sampling: 0.5 },
+      }),
+    ).toThrow()
   })
 })
