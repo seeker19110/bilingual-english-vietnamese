@@ -8,7 +8,29 @@
 
 ## Giai đoạn hiện tại
 
-### V2 UI — Personal Command Center & Dedicated Domain Settings Architecture (2026-08-17)
+### V2 UI — Multi-Subject Learning & Domain Deep Sub-Pages Architecture (2026-08-17)
+
+Hoàn thành xây dựng và kết nối hệ thống Trang con Chuyên sâu (Sub-pages) cho toàn bộ hệ sinh thái Platform V2:
+
+- **Phân hệ Môn Học Mới & STEM Solver (V2-12)**:
+  - `apps/english/src/lib/subjectApi.ts` & `subjectApi.test.ts` (4 unit tests passed 100%).
+  - **Trang Danh mục Môn học (`/subjects`, `/mon-hoc` — `Subjects.tsx`)**: Khám phá 5 môn học cốt lõi (Tiếng Anh, Toán học, Vật lý, Hóa học, Sinh học) với bộ lọc theo danh mục, hiển thị cấp độ chuẩn hóa và chế độ đánh giá (`exact_formula`, `step_analysis`, `rubric_ai`).
+  - **Trang Tương tác Học & Giải bài tập STEM (`/subjects/:subjectId` — `SubjectDetail.tsx`)**: Bộ công cụ **Step-by-step AI Problem Solver** phân tích giả thiết, định lý áp dụng, các bước biến đổi chi tiết và kiểm tra đáp số cho Toán, Lý, Hóa, Sinh.
+- **Phân hệ Trang Con Nghiệp Vụ Chuyên Sâu (Domain Deep Sub-Pages)**:
+  - 🎙️ **Career Hub — Phòng Luyện Phỏng Vấn AI (`/career/interview` — `CareerInterview.tsx`)**: Giả lập phỏng vấn chuyên môn / hành vi (mô hình STAR) theo đúng `targetRole`, chấm điểm phản xạ (Score/10), phân tích điểm mạnh, điểm cần cải thiện và gợi ý câu trả lời tối ưu.
+  - 📋 **Work Hub — Bảng Kanban Tương Tác (`/work/kanban` — `WorkKanban.tsx`)**: Theo dõi tiến độ task theo cột (Cần làm $\leftrightarrow$ Hoàn thành), phân loại độ ưu tiên (`urgent`/`high`/`medium`/`low`), lọc theo dự án và thêm việc nhanh.
+  - 📊 **Startup Hub — Khung Lean Canvas 9 Ô Chuẩn Hóa (`/startup/canvas` — `StartupCanvas.tsx`)**: Giao diện 9 ô trực quan (Problem, Customer Segments, UVP, Solution, Channels, Revenue, Cost, Key Metrics, Unfair Advantage) cho phép chỉnh sửa trực tiếp và lưu mô hình kinh doanh khởi nghiệp.
+  - 🎡 **Life Foundation Hub — Bánh Xe Cuộc Đời (`/life/wheel` — `LifeWheel.tsx`)**: Đánh giá 8 khía cạnh cuộc sống (Sức khỏe, Sự nghiệp, Tài chính, Mối quan hệ, Tâm trí, Môi trường, Giải trí, Phát triển) với biểu đồ Radar SVG sắc nét, tính điểm cân bằng và gợi ý cải thiện từ AI.
+- **Tích hợp Điều hướng & Routing**:
+  - Đăng ký 8 routes mới trong `App.tsx` kèm `lazyWithRetry` và bảo vệ phiên bằng `<RequireAuth>`.
+  - Bổ sung nút truy cập nhanh trên header của `Career.tsx`, `Work.tsx`, `Startup.tsx`, `Life.tsx` và thêm thẻ môn học vào `Profile.tsx`.
+- **Quality Gates**:
+  - `npm run build` passed 100% (Client, Server, Hub).
+  - `npm run typecheck` passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint` passed with 0 warnings.
+  - `npm run format:check` passed 100% (All matched files use Prettier code style).
+  - `npm test` (**4.112 / 4.112 tests passed 100%** trên 269 test files).
+  - `npm run eval:v2:audit` passed 100% (8/8 Acceptance Criteria).
 
 Tái cấu trúc giao diện theo chuẩn Platform V2:
 

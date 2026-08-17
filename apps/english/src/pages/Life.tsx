@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   Trophy,
   X,
+  Heart,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -220,6 +221,14 @@ export default function Life() {
             className="mb-0"
           />
           <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => nav('/life/wheel')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-400 text-white text-sm font-bold shadow-sm transition"
+              title="Bánh xe cuộc đời"
+            >
+              <Heart className="w-4 h-4" />
+              Bánh Xe Cuộc Đời
+            </button>
             <button
               onClick={loadData}
               disabled={loading}

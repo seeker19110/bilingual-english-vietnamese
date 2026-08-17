@@ -233,6 +233,14 @@ export default function Career() {
           />
           <div className="flex items-center gap-2 shrink-0">
             <button
+              onClick={() => nav('/career/interview')}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-sm font-bold transition shadow-sm"
+              title="Phòng Luyện Phỏng Vấn AI"
+            >
+              <Sparkles className="w-4 h-4" />
+              Luyện Phỏng Vấn AI
+            </button>
+            <button
               onClick={loadData}
               disabled={loading}
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 transition shadow-sm"

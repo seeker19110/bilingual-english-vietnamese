@@ -152,6 +152,16 @@ export default function Profile() {
       bg: 'bg-indigo-500/10 border-indigo-500/30 hover:border-indigo-500/60',
     },
     {
+      path: '/subjects',
+      title: isA ? 'Các môn học & STEM' : 'Multi-Subject Learning',
+      desc: isA
+        ? 'Toán học, Vật lý, Hóa học, Sinh học & Tiếng Anh'
+        : 'Math, Physics, Chemistry, Biology & English',
+      icon: BookOpen,
+      color: 'text-amber-400',
+      bg: 'bg-amber-500/10 border-amber-500/30 hover:border-amber-500/60',
+    },
+    {
       path: '/dong-hanh',
       title: isA ? 'Bạn Đồng Hành AI' : 'AI Companion',
       desc: isA

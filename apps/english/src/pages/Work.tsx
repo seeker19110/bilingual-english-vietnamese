@@ -209,6 +209,14 @@ export default function Work() {
             className="mb-0"
           />
           <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => nav('/work/kanban')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-bold transition shadow-sm"
+              title="Bảng Kanban Tương Tác"
+            >
+              <FolderKanban className="w-4 h-4" />
+              Bảng Kanban
+            </button>
             <select
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
