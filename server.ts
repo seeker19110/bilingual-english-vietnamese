@@ -80,6 +80,7 @@ import proposedActionsHandler from './api/proposed-actions.js'
 import companionHandler from './api/companion.js'
 import decisionLedgerHandler from './api/decision-ledger.js'
 import learningReadModelHandler from './api/learning-read-model.js'
+import subjectsHandler from './api/subjects.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -258,6 +259,8 @@ app.all('/api/companion', wrapEdge(companionHandler))
 app.all('/api/decision-ledger', wrapEdge(decisionLedgerHandler))
 // Learning Read Model (V2-11) — Typed Learning domain read model for Companion.
 app.all('/api/learning-read-model', wrapEdge(learningReadModelHandler))
+// Multi-Subject Learning (V2-12) — Subject manifests & taxonomy registry.
+app.all('/api/subjects', wrapEdge(subjectsHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
