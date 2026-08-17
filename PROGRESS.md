@@ -8,7 +8,30 @@
 
 ## Giai đoạn hiện tại
 
-### V2 UI — Personal Knowledge Fabric & Life Graph Explorer UI (2026-08-17)
+### V2 UI — Specialized Domain Hubs UI: Career, Work, Startup & Life Foundation (2026-08-17)
+
+Hoàn thành Bộ Giao diện Chuyên biệt cho 4 Sub-Domains (Career Hub, Work Hub, Startup Hub, Life Foundation Hub):
+
+- **Client API Layer & Unit Tests**:
+  - `apps/english/src/lib/careerApi.ts` & `careerApi.test.ts` (8 tests passed).
+  - `apps/english/src/lib/workApi.ts` & `workApi.test.ts` (7 tests passed).
+  - `apps/english/src/lib/startupApi.ts` & `startupApi.test.ts` (5 tests passed).
+  - `apps/english/src/lib/lifeApi.ts` & `lifeApi.test.ts` (3 tests passed).
+  - Tổng cộng 23/23 tests client API passed 100%.
+- **Specialized Domain Pages**:
+  - 💼 **Career Hub (`/career`, `/su-nghiep`)**: Quản lý hồ sơ sự nghiệp (`targetRole`, kỳ vọng lương, số năm kinh nghiệm), kinh nghiệm làm việc theo timeline, mục tiêu nghề nghiệp, và phân tích khoảng cách kỹ năng (Skill Gap Analysis) liên kết với lộ trình học tập.
+  - 📁 **Work Hub (`/work`, `/cong-viec`)**: Quản lý dự án, bảng công việc (`todo`/`done`, mức độ ưu tiên `low`/`medium`/`high`/`urgent`), biên bản cuộc họp (`Meeting Minutes` kèm `Action Items`), tài liệu nghiệp vụ (`specs`, `proposals`, `reports`).
+  - 🚀 **Startup Hub (`/startup`, `/khoi-nghiep`)**: Khung Lean Discovery Canvas, quản lý bài toán khách hàng (`Problems`), chu kỳ giai đoạn khởi nghiệp (`ideation` $\rightarrow$ `validation` $\rightarrow$ `mvp` $\rightarrow$ `growth` $\rightarrow$ `scale`), kiểm chứng giả thuyết (`Hypotheses`), và nhật ký bằng chứng thị trường có nguồn gốc minh bạch (`Validated Evidence with Provenance`).
+  - ❤️ **Life Foundation Hub (`/life`, `/cuoc-song`)**: Theo dõi chuỗi thói quen hàng ngày (Daily Habit Streaks & Check-in), nhật ký sức khỏe & tâm trạng (Mood / Energy / Stress check-in), kế hoạch cuộc sống theo chu kỳ (Life Plans), và lưu giữ cột mốc phát triển bản thân (Growth Milestones).
+- **Routing & Navigation**:
+  - Đăng ký 8 routes mới trong `apps/english/src/App.tsx` với tính năng `lazyWithRetry` và bảo vệ phiên bằng `<RequireAuth>`.
+  - Thêm thẻ điều hướng nhóm "Không Gian Chuyên Biệt (Specialized Domain Hubs)" trên trang chủ `apps/english/src/pages/Home.tsx`.
+- **Quality Gates**:
+  - `npm run build` (client, server, hub) passed 100%.
+  - `npm run typecheck` passed 100%.
+  - `npm run lint` passed with 0 warnings.
+  - `npm run format:check` passed 100%.
+  - `npm test` (**4110 tests passed 100%** trên 268 test files).
 
 Hoàn thành Giao diện Quản lý Mạng lưới Cá nhân & Ký ức (Life Graph & Personal Knowledge Fabric UI):
 

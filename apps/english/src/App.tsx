@@ -72,6 +72,12 @@ const LifeGraph = lazyWithRetry(() => import('./pages/LifeGraph'))
 // Trang Bạn Đồng Hành AI Đa Lĩnh Vực (Companion Runtime)
 const Companion = lazyWithRetry(() => import('./pages/Companion'))
 
+// Các Hub Chuyên Biệt Platform V2
+const Career = lazyWithRetry(() => import('./pages/Career'))
+const Work = lazyWithRetry(() => import('./pages/Work'))
+const Startup = lazyWithRetry(() => import('./pages/Startup'))
+const Life = lazyWithRetry(() => import('./pages/Life'))
+
 // PoC nội bộ — không link từ menu/BottomNav, chỉ vào qua URL trực tiếp /avatar-demo.
 // Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md.
 const AvatarDemo = lazyWithRetry(() => import('./pages/AvatarDemo'))
@@ -243,6 +249,71 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Companion />
+                          </RequireAuth>
+                        }
+                      />
+                      {/* V2 Specialized Domain Hubs */}
+                      <Route
+                        path="/career"
+                        element={
+                          <RequireAuth>
+                            <Career />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/su-nghiep"
+                        element={
+                          <RequireAuth>
+                            <Career />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/work"
+                        element={
+                          <RequireAuth>
+                            <Work />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/cong-viec"
+                        element={
+                          <RequireAuth>
+                            <Work />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/startup"
+                        element={
+                          <RequireAuth>
+                            <Startup />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/khoi-nghiep"
+                        element={
+                          <RequireAuth>
+                            <Startup />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/life"
+                        element={
+                          <RequireAuth>
+                            <Life />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/cuoc-song"
+                        element={
+                          <RequireAuth>
+                            <Life />
                           </RequireAuth>
                         }
                       />
