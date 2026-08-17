@@ -1,3 +1,4 @@
+// apps/english/src/pages/Profile.tsx — Trung tâm Không gian Cá nhân & Đồng Hành (Personal Command Center)
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -7,22 +8,21 @@ import {
   Mail,
   Flame,
   BookOpen,
-  Gauge,
-  CalendarCheck,
   Award,
-  Volume2,
-  VolumeX,
-  Users,
   Gift,
   ChevronDown,
+  ChevronRight,
   Loader2,
-  ArrowLeftRight,
+  Briefcase,
+  FolderKanban,
+  Rocket,
+  Heart,
+  GitMerge,
+  Bot,
+  Settings,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
-import QuickActions from '../components/QuickActions'
-import VoicePicker from '../components/VoicePicker'
-import RateToggle from '../components/RateToggle'
 import ReferralSection from '../components/ReferralSection'
 import QuestsPanel from '../components/QuestsPanel'
 import EmailVerifySection from '../components/EmailVerifySection'
@@ -32,12 +32,8 @@ import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useToast } from '@core/ToastProvider'
 import { useCloudSync } from '../lib/useCloudSync'
-import { getStreak, getDirection, setDirection } from '../lib/storage'
+import { getStreak, getDirection } from '../lib/storage'
 import { getLearnedCount } from '../lib/vocab'
-import { getDailySpeed, setDailySpeed, DAILY_SPEEDS, type DailySpeed } from '../lib/curriculum'
-import { getWeeklyGoal, setWeeklyGoal, WEEKLY_GOALS, type WeeklyGoal } from '../lib/weeklyGoal'
-import { isSoundEnabled, setSoundEnabled, sound } from '../lib/sound'
-import { useOnboarding, pushAgeGroup } from '../lib/onboarding'
 import {
   checkNewAchievements,
   achievementMessage,
@@ -50,67 +46,37 @@ import {
 } from '../lib/achievementRewards'
 import { ACHIEVEMENTS } from '../data/achievements'
 import { logout } from '../lib/auth'
-import type { AgeGroup, Direction } from '../types'
-
-const AGE_GROUP_OPTIONS: { value: AgeGroup; emoji: string; vi: string; en: string }[] = [
-  { value: 'nhi_dong', emoji: '🧸', vi: 'Nhi đồng (<10)', en: 'Kids (<10)' },
-  { value: 'thieu_nien', emoji: '🎒', vi: 'Thiếu niên (10–15)', en: 'Teens (10–15)' },
-  { value: 'thanh_nien', emoji: '🎓', vi: 'Thanh niên (16–22)', en: 'Young adult (16–22)' },
-  { value: 'nguoi_lon', emoji: '💼', vi: 'Người lớn (23+)', en: 'Adult (23+)' },
-]
-
-const SPEED_LABEL: Record<DailySpeed, { vi: string; en: string }> = {
-  5: { vi: 'Nhẹ nhàng', en: 'Light' },
-  10: { vi: 'Vừa', en: 'Regular' },
-  20: { vi: 'Nhanh', en: 'Fast' },
-}
-
-// Nhãn mục tiêu tuần (số NGÀY học/tuần — ② M1, dac-ta-nang-cap-su-pham-2026-07-15.md).
-const GOAL_LABEL: Record<WeeklyGoal, { vi: string; en: string }> = {
-  3: { vi: 'Thoải mái', en: 'Relaxed' },
-  5: { vi: 'Đều đặn', en: 'Steady' },
-  7: { vi: 'Mỗi ngày', en: 'Every day' },
-}
 
 export default function Profile() {
   const nav = useNavigate()
   const { user, refresh } = useAuth()
-  const { T, setLang } = useLang()
+  const { T } = useLang()
   const toast = useToast()
-  useCloudSync(user?.id) // kéo lượt dùng mới nhất từ Supabase
-  // Ngôn ngữ hiển thị & chiều học — dời từ Trang chủ vào đây (2026-08-07).
-  const [dir, setDir] = useState<Direction>(getDirection)
-  const [speed, setSpeed] = useState<DailySpeed>(() => getDailySpeed(user?.id ?? ''))
-  const [weekGoal, setWeekGoal] = useState<WeeklyGoal>(() => getWeeklyGoal(user?.id ?? ''))
+  useCloudSync(user?.id)
+
+  const dir = getDirection()
+  const isA = dir === 'A'
+
   const [earned, setEarned] = useState<Set<string>>(() => getEarnedAchievements(user?.id ?? ''))
   const [rewards, setRewards] = useState<AchievementRewardStatus[] | null>(null)
   const [claimingId, setClaimingId] = useState<string | null>(null)
-  const [soundOn, setSoundOn] = useState<boolean>(() => isSoundEnabled())
   const [questsOpen, setQuestsOpen] = useState(false)
-  const onboardingData = useOnboarding(user?.id)
-  const [ageGroup, setAgeGroupState] = useState<AgeGroup>('nguoi_lon')
 
-  // Backfill lúc mở trang: bắt các huy hiệu đã đủ điều kiện nhưng chưa từng được
-  // ghi nhận (vd người dùng cũ đạt streak_7 TRƯỚC khi tính năng này ra mắt) —
-  // vẫn báo toast, không bỏ lỡ niềm vui chỉ vì thứ tự trang ghé thăm.
+  // Backfill huy hiệu
   useEffect(() => {
     if (!user) return
-    const isA = getDirection() === 'A'
     const fresh = checkNewAchievements(user.id)
     if (fresh.length > 0) {
       setEarned(getEarnedAchievements(user.id))
       for (const a of fresh) toast.success(achievementMessage(a, isA))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id])
+  }, [user, isA, toast])
 
-  // Phần thưởng huy hiệu (② quyết định 2026-08-03) — server tự xác minh lại "đã đạt" nên tải
-  // riêng, không dựa vào `earned` (tính ở client, chỉ để hiển thị UI ngay).
+  // Thưởng huy hiệu
   useEffect(() => {
     if (!user) return
     void fetchAchievementRewards().then(setRewards)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id])
+  }, [user])
 
   async function handleClaimReward(id: string) {
     setClaimingId(id)
@@ -129,63 +95,83 @@ export default function Profile() {
     }
   }
 
-  // Đồng bộ state hiển thị khi cache/fetch onboarding có dữ liệu (có thể tới sau lần
-  // render đầu nếu thiết bị mới chưa có cache local).
-  useEffect(() => {
-    if (onboardingData) setAgeGroupState(onboardingData.ageGroup)
-  }, [onboardingData])
-
-  // RequireAuth đã đảm bảo có user; guard để TypeScript yên tâm
-  if (!user) return null
-
-  const isA = dir === 'A'
-  const streak = getStreak(user.id)
-  const learned = getLearnedCount(user.id)
-
-  // Đổi chiều học (Việt học Anh ⇄ nước ngoài học Việt) VÀ ngôn ngữ giao diện cùng lúc —
-  // giống hành vi cũ ở Trang chủ (Home.tsx), nay chỉ còn ở đây.
-  function toggleDirection() {
-    const next: Direction = dir === 'A' ? 'B' : 'A'
-    setDirection(next)
-    setDir(next)
-    setLang(next === 'A' ? 'vi' : 'en')
-  }
-
-  function chooseSpeed(s: DailySpeed) {
-    if (!user) return
-    setDailySpeed(user.id, s)
-    setSpeed(s)
-  }
-
-  function chooseWeekGoal(g: WeeklyGoal) {
-    if (!user) return
-    setWeeklyGoal(user.id, g)
-    setWeekGoal(g)
-  }
-
-  // Đổi nhóm tuổi (kế hoạch "giao diện + nội dung theo độ tuổi", GĐ 1) — đổi state ngay
-  // để UI mượt, đẩy lên server kiểu "bắn rồi quên" như tốc độ học/mục tiêu tuần.
-  function chooseAgeGroup(a: AgeGroup) {
-    if (!user) return
-    setAgeGroupState(a)
-    void pushAgeGroup(user.id, a)
-  }
-
-  // Bật/tắt âm thanh phản hồi UI (V-6) — bật thử ngay 1 tiếng "đúng" để nghe được hiệu ứng.
-  function chooseSound(enabled: boolean) {
-    setSoundEnabled(enabled)
-    setSoundOn(enabled)
-    if (enabled) sound.correct()
-  }
-
   async function handleLogout() {
     await logout()
-    // Giai đoạn B: không còn onAuthStateChange của Supabase tự bắn sự kiện SIGNED_OUT —
-    // phải tự refresh() để AuthProvider cập nhật user=null trước khi điều hướng, nếu không
-    // Login.tsx (thấy user cũ còn trong context) sẽ redirect ngược lại '/' → màn hình trống.
     await refresh()
     nav('/login')
   }
+
+  if (!user) return null
+
+  const streak = getStreak(user.id)
+  const learned = getLearnedCount(user.id)
+
+  const SPECIAL_HUBS = [
+    {
+      path: '/career',
+      title: isA ? 'Sự nghiệp' : 'Career Hub',
+      desc: isA ? 'Hồ sơ, mục tiêu & phân tích kỹ năng' : 'Profile, goals & skill gap analysis',
+      icon: Briefcase,
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60',
+    },
+    {
+      path: '/work',
+      title: isA ? 'Công việc' : 'Work Hub',
+      desc: isA ? 'Dự án, công việc & biên bản cuộc họp' : 'Projects, tasks & meeting minutes',
+      icon: FolderKanban,
+      color: 'text-blue-400',
+      bg: 'bg-blue-500/10 border-blue-500/30 hover:border-blue-500/60',
+    },
+    {
+      path: '/startup',
+      title: isA ? 'Khởi nghiệp' : 'Startup Hub',
+      desc: isA
+        ? 'Lean discovery canvas & kiểm chứng giả thuyết'
+        : 'Lean canvas & hypothesis validation',
+      icon: Rocket,
+      color: 'text-purple-400',
+      bg: 'bg-purple-500/10 border-purple-500/30 hover:border-purple-500/60',
+    },
+    {
+      path: '/life',
+      title: isA ? 'Đời sống' : 'Life Foundation',
+      desc: isA ? 'Thói quen, sức khỏe & kế hoạch cuộc sống' : 'Habits, wellbeing & life plans',
+      icon: Heart,
+      color: 'text-rose-400',
+      bg: 'bg-rose-500/10 border-rose-500/30 hover:border-rose-500/60',
+    },
+    {
+      path: '/life-graph',
+      title: isA ? 'Mạng lưới cá nhân' : 'Life Graph & Facts',
+      desc: isA
+        ? 'Mạng lưới tri thức, ký ức & quyền riêng tư'
+        : 'Personal facts, memory fabric & GDPR',
+      icon: GitMerge,
+      color: 'text-indigo-400',
+      bg: 'bg-indigo-500/10 border-indigo-500/30 hover:border-indigo-500/60',
+    },
+    {
+      path: '/subjects',
+      title: isA ? 'Các môn học & STEM' : 'Multi-Subject Learning',
+      desc: isA
+        ? 'Toán học, Vật lý, Hóa học, Sinh học & Tiếng Anh'
+        : 'Math, Physics, Chemistry, Biology & English',
+      icon: BookOpen,
+      color: 'text-amber-400',
+      bg: 'bg-amber-500/10 border-amber-500/30 hover:border-amber-500/60',
+    },
+    {
+      path: '/dong-hanh',
+      title: isA ? 'Bạn Đồng Hành AI' : 'AI Companion',
+      desc: isA
+        ? 'Trợ lý đàm thoại & đề xuất đa lĩnh vực'
+        : 'Multi-domain companion & proposed actions',
+      icon: Bot,
+      color: 'text-teal-400',
+      bg: 'bg-teal-500/10 border-teal-500/30 hover:border-teal-500/60',
+    },
+  ]
 
   return (
     <div className="min-h-dvh bg-zinc-950">
@@ -193,15 +179,15 @@ export default function Profile() {
 
       <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader
-          title={isA ? 'Hồ sơ cá nhân' : 'Profile'}
+          title={isA ? 'Trang cá nhân' : 'Personal Profile'}
           subtitle={
             isA
-              ? 'Thông tin tài khoản và tiến độ học của bạn'
-              : 'Your account info and learning progress'
+              ? 'Trung tâm tài khoản, không gian chuyên biệt và mạng lưới của bạn'
+              : 'Your account center, specialized spaces and life network'
           }
         />
 
-        {/* Thông tin người dùng */}
+        {/* Thông tin người dùng & Gói cước */}
         <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 flex items-center gap-4 animate-fade-in">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-2xl font-bold text-white shadow-md shadow-accent-500/30 shrink-0">
             {user.name[0]?.toUpperCase()}
@@ -249,138 +235,116 @@ export default function Profile() {
           </div>
         </section>
 
-        {/* Ngôn ngữ hiển thị & chiều học — dời từ Trang chủ vào đây (2026-08-07) */}
-        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
-          <div className="flex items-center gap-2 mb-3">
-            <ArrowLeftRight className="w-4 h-4 text-accent-400" />
-            <span className="text-sm font-semibold text-white">
-              {isA ? 'Ngôn ngữ hiển thị' : 'Display language'}
-            </span>
+        {/* ── CÁC KHÔNG GIAN CHUYÊN BIỆT (Specialized Spaces & Hubs) ───────── */}
+        <section className="space-y-3 animate-fade-in">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
+              {isA ? 'Không Gian Chuyên Biệt (Hubs)' : 'Specialized Spaces'}
+            </h2>
+            <span className="text-xs text-zinc-500">Platform V2</span>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {SPECIAL_HUBS.map((hub) => {
+              const Icon = hub.icon
+              return (
+                <button
+                  key={hub.path}
+                  onClick={() => nav(hub.path)}
+                  className={`tap-44 flex items-start gap-3.5 p-4 rounded-2xl border text-left transition group active:scale-[0.99] ${hub.bg}`}
+                >
+                  <div className="w-10 h-10 rounded-xl bg-zinc-950/60 flex items-center justify-center shrink-0 border border-zinc-800/80 group-hover:scale-105 transition-transform">
+                    <Icon className={`w-5 h-5 ${hub.color}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-white text-sm group-hover:text-accent-300 transition-colors">
+                      {hub.title}
+                    </p>
+                    <p className="text-xs text-zinc-400 mt-0.5 leading-relaxed line-clamp-1">
+                      {hub.desc}
+                    </p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition shrink-0 mt-2.5" />
+                </button>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* ── CÀI ĐẶT & TIỆN ÍCH HỆ THỐNG ──────────────────────────────────── */}
+        <section className="space-y-3 animate-fade-in">
+          <h2 className="text-sm font-semibold text-white">
+            {isA ? 'Cài đặt & Tiện ích' : 'Settings & Utilities'}
+          </h2>
+
+          {/* Nút sang Cài đặt học Tiếng Anh */}
           <button
-            type="button"
-            onClick={toggleDirection}
-            title={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
-            aria-label={isA ? T.toggleDirTitleA : T.toggleDirTitleB}
-            className={`w-full flex items-center justify-between gap-3 py-3 px-4 rounded-xl border transition ${
-              isA
-                ? 'bg-accent-500/10 border-accent-500/30 hover:border-accent-500/60'
-                : 'bg-sky-500/10 border-sky-500/30 hover:border-sky-500/60'
-            }`}
+            onClick={() => nav('/cai-dat')}
+            className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 flex items-center gap-4 transition group text-left active:scale-[0.99]"
           >
-            <span
-              className={`text-sm font-semibold ${isA ? 'text-accent-300 theme-light:text-accent-700' : 'text-sky-300 theme-light:text-sky-700'}`}
-            >
-              {isA ? '🇻🇳 → 🇺🇸 Tiếng Việt' : '🇺🇸 → 🇻🇳 English'}
-            </span>
-            <span className="text-xs text-zinc-400">{isA ? 'Bấm để đổi' : 'Tap to switch'}</span>
+            <div className="w-11 h-11 rounded-xl bg-accent-500/15 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Settings className="w-5 h-5 text-accent-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-white text-[15px]">
+                {isA ? 'Cài đặt học Tiếng Anh' : 'English Learning Settings'}
+              </p>
+              <p className="text-xs text-zinc-400 truncate mt-0.5">
+                {isA
+                  ? 'Tốc độ học, giọng đọc AI, âm thanh, nhóm tuổi & chiều học'
+                  : 'Study speed, AI voice, sound effects, age group & direction'}
+              </p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 transition shrink-0" />
           </button>
-          <p className="text-xs text-zinc-400 mt-3">
-            {isA
-              ? 'Đổi cùng lúc chiều học (Việt học Anh ⇄ nước ngoài học Việt) và ngôn ngữ giao diện.'
-              : 'Switches learning direction (Vietnamese ⇄ English) and interface language together.'}
-          </p>
+
+          {/* Tiến độ học */}
+          <button
+            onClick={() => nav('/tien-do')}
+            aria-label={isA ? 'Xem tiến độ học' : 'View progress'}
+            className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 flex items-center gap-4 transition group text-left active:scale-[0.99]"
+          >
+            <div className="w-11 h-11 rounded-xl bg-zinc-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <TrendingUp className="w-5 h-5 text-accent-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-white text-[15px]">
+                {isA ? 'Tiến độ học tập' : 'Learning Progress'}
+              </p>
+              <p className="text-xs text-zinc-400 truncate mt-0.5">
+                {isA
+                  ? 'Streak, từ vựng, lộ trình CEFR & kết quả luyện tập'
+                  : 'Streak, vocabulary, CEFR roadmap & practice scores'}
+              </p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 transition shrink-0" />
+          </button>
+
+          {/* Lịch sử học */}
+          <button
+            onClick={() => nav('/lich-su-hoc')}
+            aria-label={isA ? 'Xem lịch sử học' : 'View learning history'}
+            className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700 rounded-2xl p-4 flex items-center gap-4 transition group text-left active:scale-[0.99]"
+          >
+            <div className="w-11 h-11 rounded-xl bg-zinc-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <HistoryIcon className="w-5 h-5 text-zinc-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-white text-[15px]">
+                {isA ? 'Lịch sử học' : 'Learning history'}
+              </p>
+              <p className="text-xs text-zinc-400 truncate mt-0.5">
+                {isA
+                  ? 'Các phiên chat, viết, nói trước đây'
+                  : 'Past chat, writing and speaking sessions'}
+              </p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 transition shrink-0" />
+          </button>
         </section>
 
-        {/* Nhóm tuổi (kế hoạch "giao diện + nội dung theo độ tuổi", GĐ 1) */}
-        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
-          <div className="flex items-center gap-2 mb-3">
-            <Users className="w-4 h-4 text-accent-400" />
-            <span className="text-sm font-semibold text-white">
-              {isA ? 'Nhóm tuổi' : 'Age group'}
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {AGE_GROUP_OPTIONS.map((a) => (
-              <button
-                key={a.value}
-                onClick={() => chooseAgeGroup(a.value)}
-                aria-pressed={ageGroup === a.value}
-                className={`flex items-center gap-2 py-2.5 px-3 rounded-xl text-sm font-medium border transition ${
-                  ageGroup === a.value
-                    ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'
-                }`}
-              >
-                <span className="text-lg shrink-0">{a.emoji}</span>
-                <span className="text-left">{isA ? a.vi : a.en}</span>
-              </button>
-            ))}
-          </div>
-          <p className="text-xs text-zinc-400 mt-3">
-            {isA
-              ? 'Giúp app hiển thị giao diện và nội dung phù hợp với bạn hơn.'
-              : 'Helps the app show a more suitable look and content for you.'}
-          </p>
-        </section>
-
-        {/* Tốc độ học: số từ mới/ngày */}
-        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
-          <div className="flex items-center gap-2 mb-3">
-            <Gauge className="w-4 h-4 text-accent-400" />
-            <span className="text-sm font-semibold text-white">
-              {isA ? 'Tốc độ học (từ mới/ngày)' : 'Learning speed (new words/day)'}
-            </span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {DAILY_SPEEDS.map((s) => (
-              <button
-                key={s}
-                onClick={() => chooseSpeed(s)}
-                aria-pressed={speed === s}
-                className={`flex flex-col items-center justify-center gap-0.5 py-2.5 rounded-xl text-sm font-medium border transition ${
-                  speed === s
-                    ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'
-                }`}
-              >
-                <span className="text-base font-bold">{s}</span>
-                <span className="text-[11px]">{isA ? SPEED_LABEL[s].vi : SPEED_LABEL[s].en}</span>
-              </button>
-            ))}
-          </div>
-          <p className="text-xs text-zinc-400 mt-3">
-            {isA
-              ? 'Đổi tốc độ chỉ áp dụng cho các batch từ mới tiếp theo, không ảnh hưởng từ đã học.'
-              : 'Changing speed only affects upcoming batches, not words already learned.'}
-          </p>
-        </section>
-
-        {/* Mục tiêu tuần: số ngày học/tuần (② M1) — vòng tiến độ hiện ở /progress */}
-        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
-          <div className="flex items-center gap-2 mb-3">
-            <CalendarCheck className="w-4 h-4 text-accent-400" />
-            <span className="text-sm font-semibold text-white">
-              {isA ? 'Mục tiêu tuần (số ngày học/tuần)' : 'Weekly goal (study days/week)'}
-            </span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {WEEKLY_GOALS.map((g) => (
-              <button
-                key={g}
-                onClick={() => chooseWeekGoal(g)}
-                aria-pressed={weekGoal === g}
-                className={`flex flex-col items-center justify-center gap-0.5 py-2.5 rounded-xl text-sm font-medium border transition ${
-                  weekGoal === g
-                    ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'
-                }`}
-              >
-                <span className="text-base font-bold">{g}</span>
-                <span className="text-[11px]">{isA ? GOAL_LABEL[g].vi : GOAL_LABEL[g].en}</span>
-              </button>
-            ))}
-          </div>
-          <p className="text-xs text-zinc-400 mt-3">
-            {isA
-              ? 'Tuần tính từ Thứ 2. Ngày có học bất kỳ hoạt động nào (từ vựng, chat, viết, nói) đều được tính — cùng luật với chuỗi ngày.'
-              : 'Weeks start on Monday. Any study activity (vocab, chat, writing, speaking) counts — same rule as your streak.'}
-          </p>
-        </section>
-
-        {/* Nhiệm vụ — mở NGAY tại chỗ (không sang trang riêng /quests nữa), có nút chia sẻ/chép
-            link mời ngay trong khối để dễ lan truyền. Nội dung dùng chung với trang /quests qua
-            QuestsPanel.tsx (trang /quests vẫn giữ để có link riêng chia sẻ được). */}
+        {/* Nhiệm vụ */}
         <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
           <button
             type="button"
@@ -410,13 +374,13 @@ export default function Profile() {
           )}
         </section>
 
-        {/* Băng khuyến mãi % (nếu đang chạy) — ngay trên phần nâng cấp */}
+        {/* Băng khuyến mãi % */}
         <PricePromoBanner isA={isA} />
 
-        {/* Nâng cấp Pro/VIP qua SePay — ẩn nếu đã VIP (xem UpgradeSection.tsx) */}
+        {/* Nâng cấp Pro/VIP qua SePay */}
         <UpgradeSection isA={isA} currentPlan={user.plan} />
 
-        {/* Xác thực email — chỉ hiện khi CHƯA xác thực; mở khoá thưởng mời bạn */}
+        {/* Xác thực email */}
         {user.emailVerified === false && (
           <EmailVerifySection
             isA={isA}
@@ -425,77 +389,10 @@ export default function Profile() {
           />
         )}
 
-        {/* Mời bạn cùng học — thưởng ngày gói Pro cho cả 2 bên (xem api/_lib/referral.ts) */}
+        {/* Mời bạn cùng học */}
         <ReferralSection isA={isA} />
 
-        {/* Chọn giọng đọc — 14 giọng Chirp3-HD, áp dụng toàn cục */}
-        <VoicePicker plan={user.plan} isA={isA} />
-
-        {/* Tốc độ phát — áp dụng toàn cục cho mọi nút nghe. Trước đây nút này nằm rải rác
-            trên header/nội dung từng trang (VoiceMenu + RateToggle); quyết định 2026-08-08:
-            gom hết về đây vì cả hai vốn đã là cài đặt TOÀN CỤC, để trên header chỉ gây rối
-            và khiến người dùng tưởng mỗi trang một tốc độ riêng. */}
-        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Gauge className="w-4 h-4 text-accent-400" />
-              <div>
-                <p className="text-sm font-medium text-white">
-                  {isA ? 'Tốc độ phát' : 'Playback speed'}
-                </p>
-                <p className="text-xs text-zinc-400">
-                  {isA ? 'Áp dụng cho mọi nút nghe' : 'Applies to every listen button'}
-                </p>
-              </div>
-            </div>
-            <RateToggle />
-          </div>
-        </section>
-
-        {/* Âm thanh phản hồi UI (V-6) — đúng/sai/đạt mốc */}
-        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-in">
-          <div className="flex items-center gap-2 mb-3">
-            {soundOn ? (
-              <Volume2 className="w-4 h-4 text-accent-400" />
-            ) : (
-              <VolumeX className="w-4 h-4 text-accent-400" />
-            )}
-            <span className="text-sm font-semibold text-white">
-              {isA ? 'Âm thanh khi học' : 'Study sound effects'}
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => chooseSound(true)}
-              aria-pressed={soundOn}
-              className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium border transition ${
-                soundOn
-                  ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
-                  : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'
-              }`}
-            >
-              <Volume2 className="w-4 h-4" /> {isA ? 'Bật' : 'On'}
-            </button>
-            <button
-              onClick={() => chooseSound(false)}
-              aria-pressed={!soundOn}
-              className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium border transition ${
-                !soundOn
-                  ? 'bg-accent-500/20 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
-                  : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'
-              }`}
-            >
-              <VolumeX className="w-4 h-4" /> {isA ? 'Tắt' : 'Off'}
-            </button>
-          </div>
-          <p className="text-xs text-zinc-400 mt-3">
-            {isA
-              ? 'Tiếng "ting" nhỏ khi trả lời đúng/sai và khi đạt mốc (streak, huy hiệu). Không cần tải gì thêm.'
-              : 'A small "ting" when you answer right/wrong and when you hit a milestone (streak, achievements). No download needed.'}
-          </p>
-        </section>
-
-        {/* Huy hiệu & mốc (② M2) */}
+        {/* Huy hiệu & mốc */}
         <section className="animate-fade-in">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
@@ -531,10 +428,6 @@ export default function Profile() {
             })}
           </div>
 
-          {/* Phần thưởng huy hiệu (② quyết định 2026-08-03) — chỉ hiện huy hiệu đã đạt, CÓ
-              thưởng (admin bật + số ngày > 0, xem AdminAchievementRewardsPanel) và CHƯA nhận —
-              server tự xác minh lại "đã đạt" lúc bấm Nhận thưởng, không tin danh sách `earned`
-              tính ở client. */}
           {rewards &&
             rewards.some(
               (r) => r.earned && !r.claimed && r.reward.enabled && r.reward.rewardDays > 0,
@@ -580,75 +473,7 @@ export default function Profile() {
             )}
         </section>
 
-        {/* Điều hướng nhanh */}
-        <section className="space-y-3 animate-fade-in">
-          <button
-            onClick={() => nav('/tien-do')}
-            aria-label={isA ? 'Xem tiến độ học' : 'View progress'}
-            className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 flex items-center gap-4 transition group"
-          >
-            <div className="w-11 h-11 rounded-xl bg-accent-500/15 flex items-center justify-center shrink-0 transition group-hover:scale-105">
-              <TrendingUp className="w-5 h-5 text-accent-400" />
-            </div>
-            <div className="flex-1 text-left min-w-0">
-              <p className="font-semibold text-white text-[15px]">
-                {isA ? 'Xem tiến độ học' : 'View progress'}
-              </p>
-              <p className="text-sm text-zinc-400 truncate">
-                {isA
-                  ? 'Streak, từ vựng, lộ trình CEFR, điểm viết'
-                  : 'Streak, vocabulary, CEFR roadmap, writing scores'}
-              </p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => nav('/lich-su-hoc')}
-            aria-label={isA ? 'Xem lịch sử học' : 'View learning history'}
-            className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700 rounded-2xl p-4 flex items-center gap-4 transition group"
-          >
-            <div className="w-11 h-11 rounded-xl bg-zinc-800 flex items-center justify-center shrink-0 transition group-hover:scale-105">
-              <HistoryIcon className="w-5 h-5 text-zinc-400" />
-            </div>
-            <div className="flex-1 text-left min-w-0">
-              <p className="font-semibold text-white text-[15px]">
-                {isA ? 'Lịch sử học' : 'Learning history'}
-              </p>
-              <p className="text-sm text-zinc-400 truncate">
-                {isA
-                  ? 'Các phiên chat, viết, nói trước đây'
-                  : 'Past chat, writing and speaking sessions'}
-              </p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => nav('/life-graph')}
-            aria-label={isA ? 'Xem mạng lưới cá nhân' : 'View life graph'}
-            className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700 rounded-2xl p-4 flex items-center gap-4 transition group"
-          >
-            <div className="w-11 h-11 rounded-xl bg-zinc-800 flex items-center justify-center shrink-0 transition group-hover:scale-105">
-              <LogOut className="w-5 h-5 text-zinc-400 rotate-90" />
-            </div>
-            <div className="flex-1 text-left min-w-0">
-              <p className="font-semibold text-white text-[15px]">
-                {isA ? 'Mạng lưới cá nhân' : 'Life Graph'}
-              </p>
-              <p className="text-sm text-zinc-400 truncate">
-                {isA ? 'Mô hình dữ liệu cá nhân (V2)' : 'Personal World Model (V2)'}
-              </p>
-            </div>
-          </button>
-        </section>
-
-        {/* Hàng hành động nhanh (Chia sẻ/Nhắc học) — dời từ các trang luyện tập/nội
-            dung sang đây theo U-5 (docs/research/cai-tien-ui-ux.md), tránh lặp lại
-            ở mọi trang giờ đã có bottom-nav để điều hướng nhanh. */}
-        <QuickActions />
-
-        {/* Cấu hình hệ thống — chỉ hiện với admin thật (cờ isAdmin do server tính từ
-            ADMIN_EMAILS, trả về ở /api/auth?action=me). Chỉ để ẩn UI khỏi người dùng thường —
-            mọi API admin vẫn TỰ kiểm lại quyền phía server, không tin cờ này. */}
+        {/* Quản trị hệ thống */}
         {user?.isAdmin && (
           <button
             onClick={() => nav('/admin-s')}

@@ -17,11 +17,6 @@ import {
   Sparkles,
   Headphones,
   BookMarked,
-  Briefcase,
-  FolderKanban,
-  Rocket,
-  Heart,
-  GitMerge,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PricePromoBanner from '../components/PricePromoBanner'
@@ -220,65 +215,6 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
       desc: isA
         ? 'Mỗi ngày quay 1 video ngắn kể về cuộc sống — sửa lỗi. Bảng tuần Thứ 2 → CN.'
         : 'Record a short daily video about your life — corrects your mistakes. Weekly board Mon → Sun.',
-    },
-    {
-      kind: 'group',
-      icon: Briefcase,
-      gradient: 'from-emerald-600 via-blue-600 to-purple-600',
-      glow: 'shadow-emerald-500/20',
-      tag: {
-        label: 'Platform V2 Hubs',
-        cls: 'bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800 border border-emerald-500/20',
-      },
-      title: isA ? 'Không Gian Chuyên Biệt' : 'Specialized Domain Hubs',
-      desc: isA
-        ? 'Quản lý toàn diện Sự nghiệp, Dự án công việc, Khởi nghiệp, Thói quen và Mạng lưới cá nhân.'
-        : 'Comprehensive workspace for Career, Work Projects, Startup, Life Foundation & Graph.',
-      items: [
-        {
-          path: '/career',
-          label: isA ? 'Sự nghiệp' : 'Career',
-          icon: Briefcase,
-          color: 'hover:border-emerald-500/40 hover:bg-emerald-500/5',
-          fullDesc: isA ? 'Quản lý hồ sơ và mục tiêu sự nghiệp' : 'Manage career profile and goals',
-        },
-        {
-          path: '/work',
-          label: isA ? 'Công việc' : 'Work',
-          icon: FolderKanban,
-          color: 'hover:border-blue-500/40 hover:bg-blue-500/5',
-          fullDesc: isA
-            ? 'Quản lý dự án, công việc và cuộc họp'
-            : 'Manage projects, tasks and meetings',
-        },
-        {
-          path: '/startup',
-          label: isA ? 'Khởi nghiệp' : 'Startup',
-          icon: Rocket,
-          color: 'hover:border-purple-500/40 hover:bg-purple-500/5',
-          fullDesc: isA
-            ? 'Lean discovery canvas và kiểm chứng giả thuyết'
-            : 'Lean discovery canvas and hypothesis validation',
-        },
-        {
-          path: '/life',
-          label: isA ? 'Đời sống' : 'Life',
-          icon: Heart,
-          color: 'hover:border-rose-500/40 hover:bg-rose-500/5',
-          fullDesc: isA
-            ? 'Thói quen, sức khỏe và kế hoạch cuộc sống'
-            : 'Habits, wellbeing and life plans',
-        },
-        {
-          path: '/life-graph',
-          label: isA ? 'Mạng lưới cá nhân' : 'Life Graph',
-          icon: GitMerge,
-          color: 'hover:border-indigo-500/40 hover:bg-indigo-500/5',
-          fullDesc: isA
-            ? 'Mạng lưới tri thức và ký ức cá nhân'
-            : 'Personal knowledge fabric and life graph',
-        },
-      ],
     },
   ]
 }

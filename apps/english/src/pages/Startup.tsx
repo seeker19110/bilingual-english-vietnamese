@@ -246,8 +246,16 @@ export default function Startup() {
           />
           <div className="flex items-center gap-2 shrink-0">
             <button
+              onClick={() => nav('/startup/canvas')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-400 text-white text-sm font-bold shadow-sm transition"
+              title="Khung Lean Canvas 9 Ô"
+            >
+              <Rocket className="w-4 h-4" />
+              Khung Lean Canvas 9 Ô
+            </button>
+            <button
               onClick={() => setShowVentureModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold shadow-md transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 shadow-md transition"
             >
               <Plus className="w-4 h-4" />
               Dự án mới

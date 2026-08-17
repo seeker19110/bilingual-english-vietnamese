@@ -40,6 +40,7 @@ const StoryReader = lazyWithRetry(() => import('./pages/StoryReader'))
 const History = lazyWithRetry(() => import('./pages/History'))
 const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'))
 const Profile = lazyWithRetry(() => import('./pages/Profile'))
+const EnglishSettings = lazyWithRetry(() => import('./pages/EnglishSettings'))
 const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
 const Placement = lazyWithRetry(() => import('./pages/Placement'))
 const MistakeBank = lazyWithRetry(() => import('./pages/MistakeBank'))
@@ -77,6 +78,14 @@ const Career = lazyWithRetry(() => import('./pages/Career'))
 const Work = lazyWithRetry(() => import('./pages/Work'))
 const Startup = lazyWithRetry(() => import('./pages/Startup'))
 const Life = lazyWithRetry(() => import('./pages/Life'))
+
+// Các Trang Con Chuyên Sâu Platform V2 (Sub-pages & Multi-Subject)
+const Subjects = lazyWithRetry(() => import('./pages/Subjects'))
+const SubjectDetail = lazyWithRetry(() => import('./pages/SubjectDetail'))
+const CareerInterview = lazyWithRetry(() => import('./pages/CareerInterview'))
+const WorkKanban = lazyWithRetry(() => import('./pages/WorkKanban'))
+const StartupCanvas = lazyWithRetry(() => import('./pages/StartupCanvas'))
+const LifeWheel = lazyWithRetry(() => import('./pages/LifeWheel'))
 
 // PoC nội bộ — không link từ menu/BottomNav, chỉ vào qua URL trực tiếp /avatar-demo.
 // Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md.
@@ -229,6 +238,14 @@ export default function App() {
                         }
                       />
                       <Route
+                        path="/trang-ca-nhan"
+                        element={
+                          <RequireAuth>
+                            <Profile />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
                         path="/life-graph"
                         element={
                           <RequireAuth>
@@ -314,6 +331,71 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Life />
+                          </RequireAuth>
+                        }
+                      />
+                      {/* V2 Multi-Subject Learning Hub & Sub-pages */}
+                      <Route
+                        path="/subjects"
+                        element={
+                          <RequireAuth>
+                            <Subjects />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/mon-hoc"
+                        element={
+                          <RequireAuth>
+                            <Subjects />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/subjects/:subjectId"
+                        element={
+                          <RequireAuth>
+                            <SubjectDetail />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/career/interview"
+                        element={
+                          <RequireAuth>
+                            <CareerInterview />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/work/kanban"
+                        element={
+                          <RequireAuth>
+                            <WorkKanban />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/startup/canvas"
+                        element={
+                          <RequireAuth>
+                            <StartupCanvas />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/life/wheel"
+                        element={
+                          <RequireAuth>
+                            <LifeWheel />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/life/wheel-of-life"
+                        element={
+                          <RequireAuth>
+                            <LifeWheel />
                           </RequireAuth>
                         }
                       />
@@ -483,7 +565,23 @@ export default function App() {
                         path="/cai-dat"
                         element={
                           <RequireAuth>
-                            <Profile />
+                            <EnglishSettings />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/cai-dat-tieng-anh"
+                        element={
+                          <RequireAuth>
+                            <EnglishSettings />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/settings"
+                        element={
+                          <RequireAuth>
+                            <EnglishSettings />
                           </RequireAuth>
                         }
                       />

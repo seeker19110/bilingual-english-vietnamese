@@ -17,7 +17,7 @@ export const t = {
     navPath: 'Lộ trình',
     navPractice: 'Luyện tập',
     navProgress: 'Tiến độ',
-    navProfile: 'Cài đặt',
+    navProfile: 'Cá nhân',
 
     // Home
     greeting: 'Xin chào bạn',
@@ -224,7 +224,7 @@ export const t = {
     navPath: 'Path',
     navPractice: 'Practice',
     navProgress: 'Progress',
-    navProfile: 'Settings',
+    navProfile: 'Profile',
 
     // Home
     greeting: 'Hi there',

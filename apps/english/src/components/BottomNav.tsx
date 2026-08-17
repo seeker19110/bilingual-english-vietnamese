@@ -6,7 +6,7 @@
 // Chat/Speaking/Writing vẫn là route độc lập (điều hướng TỚI từ trang hub), tab vẫn
 // sáng khi đang ở 1 trong các route đó để không gây cảm giác "lạc" điều hướng.
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Target, Dumbbell, TrendingUp, Settings, ChevronDown, ChevronUp } from 'lucide-react'
+import { Home, Target, Dumbbell, TrendingUp, User, ChevronDown, ChevronUp } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import type { useOneHandedDrag } from '../lib/useOneHandedDrag'
@@ -67,10 +67,10 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
     },
     {
       key: 'profile',
-      to: '/cai-dat',
-      icon: Settings,
+      to: '/profile',
+      icon: User,
       label: T.navProfile,
-      active: location.pathname === '/cai-dat',
+      active: location.pathname === '/profile',
     },
   ]
 
