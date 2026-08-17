@@ -621,6 +621,24 @@ export default function Profile() {
               </p>
             </div>
           </button>
+
+          <button
+            onClick={() => nav('/life-graph')}
+            aria-label={isA ? 'Xem mạng lưới cá nhân' : 'View life graph'}
+            className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700 rounded-2xl p-4 flex items-center gap-4 transition group"
+          >
+            <div className="w-11 h-11 rounded-xl bg-zinc-800 flex items-center justify-center shrink-0 transition group-hover:scale-105">
+              <LogOut className="w-5 h-5 text-zinc-400 rotate-90" />
+            </div>
+            <div className="flex-1 text-left min-w-0">
+              <p className="font-semibold text-white text-[15px]">
+                {isA ? 'Mạng lưới cá nhân' : 'Life Graph'}
+              </p>
+              <p className="text-sm text-zinc-400 truncate">
+                {isA ? 'Mô hình dữ liệu cá nhân (V2)' : 'Personal World Model (V2)'}
+              </p>
+            </div>
+          </button>
         </section>
 
         {/* Hàng hành động nhanh (Chia sẻ/Nhắc học) — dời từ các trang luyện tập/nội

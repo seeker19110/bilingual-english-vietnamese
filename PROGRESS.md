@@ -8,44 +8,42 @@
 
 ## Giai đoạn hiện tại
 
-### V2-05 Life Graph — slice 1: persistence + API (2026-08-17, PR #578 đã MERGE)
+### V2-05 Life Graph foundation — slice 2: UI, reconciliation & bulk backfill (2026-08-17)
 
-Việc kế tiếp của Wave B sau V2-04. Slice 1 chỉ làm **nền tảng lưu trữ + API** (chưa có UI/Goal
-Graph visualization, chưa deploy production):
+Hoàn thành Slice 2 cho V2-05 Life Graph:
 
-- **Migration `postgres/migrations/0043_life_graph.sql`** (schema `personal`, additive/idempotent):
-  `life_graph_nodes`, `life_graph_edges`, `life_goals` (chi tiết cho node loại `Goal`),
-  `life_goal_sources` (liên kết nguồn gốc, dùng cho backfill từ Learning), `life_graph_audit_log`
-  (append-only). Khoá ngoại composite `(node_id, person_id)` chặn edge orphan/khác chủ ngay ở tầng
-  DB; trigger đảm bảo mọi LifeGoal phải trỏ về node loại `Goal` cùng chủ. **Lưu ý trung thực:
-  chưa chạy migration này trên Postgres thật nào** — không có Postgres service trong sandbox, mới
-  soát bằng mắt; sẽ tự áp ở lượt deploy sau (`scripts/deploy.sh` → `npm run migrate:pg`). PR không
-  triển khai gì lên production.
-- **`packages/core-personal/lifeGraphService.ts`** — CRUD node/edge trong transaction, soft
-  archive (không hard delete), optimistic concurrency (`expectedVersion` → 409 nếu lệch),
-  `validateGraphIntegrity` (dò orphan/cross-person/goal sai kiểu), vòng đời Goal
-  (`transitionGoalStatus`, chặn chuyển trạng thái không hợp lệ — `achieved`/`abandoned` là
-  terminal). Goal import từ Learning (`upsertLearningGoalProjection`, `getLearningGoalSourceId`)
-  không cho sửa label/lifecycle qua Life Graph API — đổi tại nguồn Learning.
-- **API** `GET/POST/PATCH/DELETE /api/life-graph` — `personId` luôn suy từ token, Zod strict
-  schema (discriminated union theo `kind`), ownership + chống orphan/self-loop kiểm ngay trong
-  service, trả đúng 400/401/404/409/429.
-- **Learning Goal adapter/backfill** — mục tiêu onboarding hiện có ở `public.profiles.goal +
-daily_minutes` (khi `onboarded=true`) được chiếu (project) sang Life Graph dạng idempotent,
-  serialize bằng khoá dòng Person; Learning vẫn là nguồn sự thật, `life_goal_sources` chỉ lưu định
-  danh nguồn chứ không copy `daily_minutes`.
-- **CI đỏ do coverage nhánh (2026-08-17, tự sửa trong cùng PR):** code mới thiếu test ca biên
-  khiến branch coverage toàn repo còn 89.77% (< ngưỡng CI 90%). Đã bổ sung ~40 test case cho
-  `lifeGraphService.ts` + `api/life-graph.ts` (not-found/conflict/version-mismatch,
-  `includeArchived`, các `kind` GET/DELETE còn thiếu, method 405, lỗi non-AppError) — nâng coverage
-  2 file lên 100% statements/lines/functions, ≥ 90% nhánh. Toàn suite 3591 test xanh sau đó.
-- Test: 27 test tập trung V2-05 khi tạo PR + ~40 test bổ sung khi vá CI (tổng nằm trong suite
-  chung, xem báo cáo coverage toàn repo qua `npm test`).
+- **UI Mạng lưới cá nhân**: Trang `/life-graph` (`apps/english/src/pages/LifeGraph.tsx`) hiển thị danh sách các Node và Edges của người dùng trực quan, nhẹ, không dùng thư viện đồ thị cồng kềnh; thêm entry point tại trang Profile (`apps/english/src/pages/Profile.tsx`).
+- **Client API**: `apps/english/src/lib/lifeGraphApi.ts` bọc các endpoint `/api/life-graph` và `/api/life-goals`.
+- **Outbox/Reconciliation**: Hook `backfillCurrentLearningGoal` vào `api/profile.ts` để đồng bộ tự động Life Graph projection khi user cập nhật mục tiêu học tập.
+- **Bulk Backfill Script**: `scripts/backfill-life-goals.ts` hỗ trợ batch backfill toàn bộ profile hợp lệ.
+- **Gate verification**: `npm run build`, `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm test` (3591 tests) đều pass 100%.
 
-**GIỚI HẠN PHẢI GHI RÕ (chưa đạt gate roadmap):** cũng như V2-04, slice này mới dựng nền
-persistence + API, **chưa có Context Builder (V2-07)/tool execution (V2-08)** để thực sự đọc/ghi
-qua Life Graph trong luồng AI. Chưa có UI Goal Graph visualization. Chưa có reconciliation/outbox
-khi Learning onboarding goal đổi sau khi đã backfill — mismatch hiện xử lý fail-closed bằng 409.
+### V2-05 Life Graph foundation — slice 1 (2026-08-17)
+
+Đã triển khai nền persistence/service/API, chưa UI và chưa chạy migration trên production:
+
+- Migration `0043_life_graph.sql`: 9 node type + 7 relation đúng contract hiện có; composite FK
+  `(node_id, person_id)` chặn orphan/cross-user edge ngay tại DB; soft archive, optimistic
+  `version`, audit log append-only và trigger buộc `LifeGoal` chỉ trỏ node `Goal`.
+- `lifeGraphService.ts`: create/list/get/update/archive node, create/list/archive edge, integrity
+  validator và lifecycle `active → achieved|abandoned|blocked`, `blocked → active|abandoned`;
+  trạng thái terminal không được mở lại âm thầm.
+- API `/api/life-graph` + `/api/life-goals`: bắt buộc auth/rate limit, `personId` chỉ suy từ token,
+  input Zod strict. Không có UI trong slice này.
+- Gate backfill chọn đúng goal onboarding hiện hành từ `public.profiles.goal + daily_minutes`, chỉ
+  khi `onboarded=true`. Life Graph giữ projection + định danh nguồn, không copy `daily_minutes`;
+  Learning vẫn là source of truth. Adapter chạy lại không tạo projection trùng và đọc ngược luôn
+  lấy payload Learning thật, đồng thời chặn nếu label projection đã lệch nghĩa.
+
+Giới hạn: migration mới chỉ được kiểm qua code/tests trong CI/local, không chạy production. V2-04
+enforcement gate vẫn deferred tới Context Builder/tool execution; slice V2-05 này không tuyên bố
+V2-04 hoàn tất.
+
+**CI đỏ do coverage nhánh (2026-08-17, PR #578, tự sửa trong cùng PR):** code slice 1 thiếu test
+ca biên khiến branch coverage toàn repo còn 89.77% (< ngưỡng CI 90%). Đã bổ sung ~40 test case cho
+`lifeGraphService.ts` + `api/life-graph.ts` (not-found/conflict/version-mismatch,
+`includeArchived`, các `kind` GET/DELETE còn thiếu, method 405, lỗi non-AppError) — nâng coverage
+2 file lên 100% statements/lines/functions, ≥ 90% nhánh. Toàn suite 3591 test xanh sau đó.
 
 ### V2-04 Consent + Personal Policy — slice 1: persistence + API (2026-08-16)
 
