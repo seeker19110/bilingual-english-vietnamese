@@ -46,7 +46,19 @@ const CreateEdgeSchema = z
     provenance: z.string().min(1).max(100),
   })
   .strict()
-const PostSchema = z.discriminatedUnion('kind', [CreateNodeSchema, CreateEdgeSchema])
+import { syncCrossDomainLifeGraph } from '../packages/core-personal/crossDomainGraphService.js'
+
+const CreateCrossDomainSyncSchema = z
+  .object({
+    kind: z.literal('cross_domain_sync'),
+  })
+  .strict()
+
+const PostSchema = z.discriminatedUnion('kind', [
+  CreateNodeSchema,
+  CreateEdgeSchema,
+  CreateCrossDomainSyncSchema,
+])
 const PatchSchema = z.discriminatedUnion('kind', [
   z
     .object({
@@ -124,6 +136,12 @@ export default async function handler(req: Request): Promise<Response> {
         return jsonResponse({ edges: await listEdges(pool, person.id) }, 200, headers)
       if (kind === 'integrity')
         return jsonResponse({ issues: await validateGraphIntegrity(pool, person.id) }, 200, headers)
+      if (kind === 'cross_domain')
+        return jsonResponse(
+          await syncCrossDomainLifeGraph(pool, person.id, auth.userId),
+          200,
+          headers,
+        )
       return jsonResponse({ error: 'kind không hợp lệ' }, 400, headers)
     }
     if (req.method === 'POST') {
@@ -140,11 +158,20 @@ export default async function handler(req: Request): Promise<Response> {
           headers,
         )
       }
-      return jsonResponse(
-        await createEdge(pool, { personId: person.id, ...body.data }),
-        201,
-        headers,
-      )
+      if (body.data.kind === 'edge') {
+        return jsonResponse(
+          await createEdge(pool, { personId: person.id, ...body.data }),
+          201,
+          headers,
+        )
+      }
+      if (body.data.kind === 'cross_domain_sync') {
+        return jsonResponse(
+          await syncCrossDomainLifeGraph(pool, person.id, auth.userId),
+          200,
+          headers,
+        )
+      }
     }
     if (req.method === 'PATCH') {
       const body = await parseBody(req, PatchSchema)
