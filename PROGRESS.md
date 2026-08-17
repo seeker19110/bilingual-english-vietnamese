@@ -8,7 +8,29 @@
 
 ## Giai đoạn hiện tại
 
-### V2 UI — Specialized Domain Hubs UI: Career, Work, Startup & Life Foundation (2026-08-17)
+### V2 UI — Personal Command Center & Dedicated Domain Settings Architecture (2026-08-17)
+
+Tái cấu trúc giao diện theo chuẩn Platform V2:
+
+- **Tách biệt Cài đặt học Tiếng Anh chuyên biệt (`apps/english/src/pages/EnglishSettings.tsx`)**:
+  - Trang riêng `/cai-dat` (và alias `/settings`, `/cai-dat-tieng-anh`) quản lý 100% cấu hình học tiếng Anh: Chiều học (Việt học Anh ⇄ Nước ngoài học Việt), Nhóm tuổi, Tốc độ học từ mới/ngày (5/10/20), Mục tiêu tuần (3/5/7 ngày), 14 Giọng đọc AI (`VoicePicker`), Tốc độ phát (`RateToggle`), và Âm thanh phản hồi UI.
+- **Trang Cá Nhân trở thành Personal Command Center (`apps/english/src/pages/Profile.tsx`)**:
+  - Loại bỏ hoàn toàn các cài đặt học tập vụn vặt khỏi trang cá nhân.
+  - Tích hợp cổng truy cập **6 Không Gian Chuyên Biệt**: 💼 Sự nghiệp (`/career`), 📁 Công việc (`/work`), 🚀 Khởi nghiệp (`/startup`), ❤️ Đời sống (`/life`), 🌐 Mạng lưới cá nhân (`/life-graph`), 💬 Bạn Đồng Hành AI (`/dong-hanh`).
+  - Quản lý thông tin tài khoản, gói cước (Free/Pro/VIP), nâng cấp, xác thực email, Quests, Referral, Huy hiệu & mốc thành tựu.
+  - Liên kết trực tiếp sang Cài đặt học Tiếng Anh (`/cai-dat`).
+- **Tinh gọn Trang chủ Học Tiếng Anh (`apps/english/src/pages/Home.tsx`)**:
+  - Gỡ bỏ hoàn toàn khối thẻ "Không Gian Chuyên Biệt" khỏi trang chủ để giữ trải nghiệm học tiếng Anh thuần túy, mượt mà và tập trung tối đa cho người học.
+- **Cập nhật Điều hướng (`BottomNav.tsx`, `Layout.tsx`, `i18n`)**:
+  - Tab 5 ở BottomNav đổi từ "Cài đặt" sang **"Cá nhân"** (`icon: User`, `to: /profile`).
+  - Avatar ở Header điều hướng về `/profile`.
+- **Quality Gates**:
+  - `npm run build` passed 100%.
+  - `npm run typecheck` passed 100% (0 errors).
+  - `npm run lint` passed 100% (0 warnings).
+  - `npm run format:check` passed 100%.
+  - `npm test` passed 100% (4108/4108 tests).
+  - `npm run eval:v2:audit` passed 100% (8/8 Acceptance Criteria).
 
 Hoàn thành Bộ Giao diện Chuyên biệt cho 4 Sub-Domains (Career Hub, Work Hub, Startup Hub, Life Foundation Hub):
 

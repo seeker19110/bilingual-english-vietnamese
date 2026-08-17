@@ -40,6 +40,7 @@ const StoryReader = lazyWithRetry(() => import('./pages/StoryReader'))
 const History = lazyWithRetry(() => import('./pages/History'))
 const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'))
 const Profile = lazyWithRetry(() => import('./pages/Profile'))
+const EnglishSettings = lazyWithRetry(() => import('./pages/EnglishSettings'))
 const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
 const Placement = lazyWithRetry(() => import('./pages/Placement'))
 const MistakeBank = lazyWithRetry(() => import('./pages/MistakeBank'))
@@ -222,6 +223,14 @@ export default function App() {
                       <Route path="/placement" element={<Placement />} />
                       <Route
                         path="/profile"
+                        element={
+                          <RequireAuth>
+                            <Profile />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/trang-ca-nhan"
                         element={
                           <RequireAuth>
                             <Profile />
@@ -483,7 +492,23 @@ export default function App() {
                         path="/cai-dat"
                         element={
                           <RequireAuth>
-                            <Profile />
+                            <EnglishSettings />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/cai-dat-tieng-anh"
+                        element={
+                          <RequireAuth>
+                            <EnglishSettings />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/settings"
+                        element={
+                          <RequireAuth>
+                            <EnglishSettings />
                           </RequireAuth>
                         }
                       />
