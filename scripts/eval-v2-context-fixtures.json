@@ -1,0 +1,377 @@
+[
+  {
+    "id": "ctx-consent-1",
+    "description": "No consent for domain -> 0 items",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": false,
+    "hasDenyPolicy": false,
+    "storedItems": [{ "type": "memory", "content": "test", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-consent-2",
+    "description": "No consent for domain -> 0 items",
+    "scenario": "basic",
+    "options": {
+      "domain": "health",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": false,
+    "hasDenyPolicy": false,
+    "storedItems": [{ "type": "memory", "content": "test2", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-consent-3",
+    "description": "No consent for domain -> 0 items",
+    "scenario": "basic",
+    "options": {
+      "domain": "career",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": false,
+    "hasDenyPolicy": false,
+    "storedItems": [{ "type": "memory", "content": "test3", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-consent-4",
+    "description": "No consent for domain -> 0 items",
+    "scenario": "basic",
+    "options": {
+      "domain": "finance",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": false,
+    "hasDenyPolicy": false,
+    "storedItems": [{ "type": "memory", "content": "test4", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-consent-5",
+    "description": "No consent for domain -> 0 items",
+    "scenario": "basic",
+    "options": {
+      "domain": "personal",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": false,
+    "hasDenyPolicy": false,
+    "storedItems": [{ "type": "memory", "content": "test5", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+
+  {
+    "id": "ctx-deny-1",
+    "description": "DENY policy excludes item",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": true,
+    "storedItems": [{ "type": "memory", "content": "test", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-deny-2",
+    "description": "DENY policy excludes item",
+    "scenario": "basic",
+    "options": {
+      "domain": "health",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": true,
+    "storedItems": [{ "type": "fact", "content": "test", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-deny-3",
+    "description": "DENY policy excludes item",
+    "scenario": "basic",
+    "options": {
+      "domain": "career",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": true,
+    "storedItems": [{ "type": "goal", "content": "test", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-deny-4",
+    "description": "DENY policy excludes item",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": true,
+    "storedItems": [{ "type": "memory", "content": "test2", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-deny-5",
+    "description": "DENY policy excludes item",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": true,
+    "storedItems": [{ "type": "fact", "content": "test2", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+
+  {
+    "id": "ctx-sens-1",
+    "description": "Sensitivity > maxSensitivity excluded",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": false,
+    "storedItems": [
+      { "type": "memory", "content": "restricted info", "sensitivity": "restricted" }
+    ],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-sens-2",
+    "description": "Sensitivity > maxSensitivity excluded",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "personal",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": false,
+    "storedItems": [{ "type": "memory", "content": "sensitive info", "sensitivity": "sensitive" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-sens-3",
+    "description": "Sensitivity > maxSensitivity excluded",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "public",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": false,
+    "storedItems": [{ "type": "memory", "content": "personal info", "sensitivity": "personal" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-sens-4",
+    "description": "Sensitivity > maxSensitivity excluded",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": false,
+    "storedItems": [{ "type": "fact", "content": "restricted fact", "sensitivity": "restricted" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-sens-5",
+    "description": "Sensitivity > maxSensitivity excluded",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "personal",
+      "tokenBudget": 2000
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": false,
+    "storedItems": [{ "type": "fact", "content": "sensitive fact", "sensitivity": "sensitive" }],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+
+  {
+    "id": "ctx-tok-1",
+    "description": "Token budget exceeded",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 1
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": false,
+    "storedItems": [
+      {
+        "type": "memory",
+        "content": "very long content that exceeds token budget significantly",
+        "sensitivity": "personal"
+      }
+    ],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-tok-2",
+    "description": "Token budget exceeded 2",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 1
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": false,
+    "storedItems": [
+      {
+        "type": "fact",
+        "content": "very long content that exceeds token budget significantly",
+        "sensitivity": "personal"
+      }
+    ],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-tok-3",
+    "description": "Token budget exceeded 3",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 1
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": false,
+    "storedItems": [
+      {
+        "type": "goal",
+        "content": "very long content that exceeds token budget significantly",
+        "sensitivity": "personal"
+      }
+    ],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-tok-4",
+    "description": "Token budget exceeded 4",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 1
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": false,
+    "storedItems": [
+      {
+        "type": "memory",
+        "content": "another very long content that exceeds token budget significantly",
+        "sensitivity": "personal"
+      }
+    ],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  },
+  {
+    "id": "ctx-tok-5",
+    "description": "Token budget exceeded 5",
+    "scenario": "basic",
+    "options": {
+      "domain": "learning",
+      "purpose": "companion",
+      "maxSensitivity": "sensitive",
+      "tokenBudget": 1
+    },
+    "hasConsentForDomain": true,
+    "hasDenyPolicy": false,
+    "storedItems": [
+      {
+        "type": "fact",
+        "content": "yet another very long content that exceeds token budget significantly",
+        "sensitivity": "personal"
+      }
+    ],
+    "expectedItemsIncluded": 0,
+    "expectDenyBypassed": false,
+    "expectSensitivityLeaked": false
+  }
+]

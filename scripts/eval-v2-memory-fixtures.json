@@ -1,0 +1,409 @@
+[
+  {
+    "id": "conf-low-1",
+    "description": "Reject when confidence < 0.6",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "I live in Paris",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.5
+    },
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "conf-low-2",
+    "description": "Reject when confidence < 0.6",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "Favorite food is pizza",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.3
+    },
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "conf-low-3",
+    "description": "Reject when confidence < 0.6",
+    "candidate": {
+      "namespace": "preference",
+      "content": "Likes reading",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.59
+    },
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "conf-low-4",
+    "description": "Reject when confidence < 0.6",
+    "candidate": {
+      "namespace": "episodic",
+      "content": "Went to store",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.1
+    },
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "conf-low-5",
+    "description": "Reject when confidence < 0.6",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "Has a dog",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.45
+    },
+    "expectedOutcome": "REJECT"
+  },
+
+  {
+    "id": "conf-ask-1",
+    "description": "Ask user when 0.6 <= confidence < 0.8",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "I live in Paris",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.65
+    },
+    "expectedOutcome": "ASK_USER"
+  },
+  {
+    "id": "conf-ask-2",
+    "description": "Ask user when 0.6 <= confidence < 0.8",
+    "candidate": {
+      "namespace": "preference",
+      "content": "Favorite food is pizza",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.79
+    },
+    "expectedOutcome": "ASK_USER"
+  },
+  {
+    "id": "conf-ask-3",
+    "description": "Ask user when 0.6 <= confidence < 0.8",
+    "candidate": {
+      "namespace": "episodic",
+      "content": "Went to store",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.6
+    },
+    "expectedOutcome": "ASK_USER"
+  },
+  {
+    "id": "conf-ask-4",
+    "description": "Ask user when 0.6 <= confidence < 0.8",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "Likes reading",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.75
+    },
+    "expectedOutcome": "ASK_USER"
+  },
+  {
+    "id": "conf-ask-5",
+    "description": "Ask user when 0.6 <= confidence < 0.8",
+    "candidate": {
+      "namespace": "preference",
+      "content": "Has a dog",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.7
+    },
+    "expectedOutcome": "ASK_USER"
+  },
+
+  {
+    "id": "conf-accept-1",
+    "description": "Accept when confidence >= 0.8",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "I live in Paris",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.85
+    },
+    "expectedOutcome": "ACCEPT"
+  },
+  {
+    "id": "conf-accept-2",
+    "description": "Accept when confidence >= 0.8",
+    "candidate": {
+      "namespace": "preference",
+      "content": "Favorite food is pizza",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.99
+    },
+    "expectedOutcome": "ACCEPT"
+  },
+  {
+    "id": "conf-accept-3",
+    "description": "Accept when confidence >= 0.8",
+    "candidate": {
+      "namespace": "episodic",
+      "content": "Went to store",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.8
+    },
+    "expectedOutcome": "ACCEPT"
+  },
+  {
+    "id": "conf-accept-4",
+    "description": "Accept when confidence >= 0.8",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "Likes reading",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "expectedOutcome": "ACCEPT"
+  },
+  {
+    "id": "conf-accept-5",
+    "description": "Accept when confidence >= 0.8",
+    "candidate": {
+      "namespace": "preference",
+      "content": "Has a dog",
+      "provenance": "derived",
+      "sensitivity": "personal",
+      "confidence": 0.95
+    },
+    "expectedOutcome": "ACCEPT"
+  },
+
+  {
+    "id": "sens-rej-1",
+    "description": "Reject restricted with derived provenance",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "Secret password",
+      "provenance": "derived",
+      "sensitivity": "restricted",
+      "confidence": 0.9
+    },
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "sens-rej-2",
+    "description": "Reject restricted with derived provenance",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "Bank account",
+      "provenance": "observed",
+      "sensitivity": "restricted",
+      "confidence": 0.99
+    },
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "sens-rej-3",
+    "description": "Reject restricted with derived provenance",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "Medical record",
+      "provenance": "system",
+      "sensitivity": "restricted",
+      "confidence": 0.85
+    },
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "sens-rej-4",
+    "description": "Reject restricted with derived provenance",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "SSN",
+      "provenance": "ai",
+      "sensitivity": "restricted",
+      "confidence": 0.85
+    },
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "sens-rej-5",
+    "description": "Reject restricted with derived provenance",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "Private key",
+      "provenance": "external",
+      "sensitivity": "restricted",
+      "confidence": 0.85
+    },
+    "expectedOutcome": "REJECT"
+  },
+
+  {
+    "id": "dup-rej-1",
+    "description": "Reject exact duplicate",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "User likes coffee",
+      "provenance": "user_declared",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "existingRecords": [
+      { "content": "User likes coffee", "provenance": "user_declared", "sensitivity": "personal" }
+    ],
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "dup-rej-2",
+    "description": "Reject exact duplicate (case insensitive)",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "user likes COFFEE",
+      "provenance": "user_declared",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "existingRecords": [
+      { "content": "User likes coffee", "provenance": "user_declared", "sensitivity": "personal" }
+    ],
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "dup-rej-3",
+    "description": "Reject exact duplicate with spaces",
+    "candidate": {
+      "namespace": "semantic",
+      "content": " User likes coffee ",
+      "provenance": "user_declared",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "existingRecords": [
+      { "content": "User likes coffee", "provenance": "user_declared", "sensitivity": "personal" }
+    ],
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "dup-rej-4",
+    "description": "Reject exact duplicate in different namespace",
+    "candidate": {
+      "namespace": "preference",
+      "content": "Loves dogs",
+      "provenance": "user_declared",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "existingRecords": [
+      { "content": "Loves dogs", "provenance": "user_declared", "sensitivity": "personal" }
+    ],
+    "expectedOutcome": "REJECT"
+  },
+  {
+    "id": "dup-rej-5",
+    "description": "Reject exact duplicate",
+    "candidate": {
+      "namespace": "episodic",
+      "content": "Went to park",
+      "provenance": "user_declared",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "existingRecords": [
+      { "content": "Went to park", "provenance": "user_declared", "sensitivity": "personal" }
+    ],
+    "expectedOutcome": "REJECT"
+  },
+
+  {
+    "id": "merge-1",
+    "description": "Merge partial overlap",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "User likes hot coffee in morning",
+      "provenance": "user_declared",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "existingRecords": [
+      {
+        "content": "User likes hot coffee",
+        "provenance": "user_declared",
+        "sensitivity": "personal"
+      }
+    ],
+    "expectedOutcome": "MERGE"
+  },
+  {
+    "id": "merge-2",
+    "description": "Merge partial overlap",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "I live in Paris",
+      "provenance": "user_declared",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "existingRecords": [
+      {
+        "content": "I live in Paris, France",
+        "provenance": "user_declared",
+        "sensitivity": "personal"
+      }
+    ],
+    "expectedOutcome": "MERGE"
+  },
+  {
+    "id": "merge-3",
+    "description": "Merge partial overlap",
+    "candidate": {
+      "namespace": "preference",
+      "content": "Plays football and tennis",
+      "provenance": "user_declared",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "existingRecords": [
+      { "content": "Plays football", "provenance": "user_declared", "sensitivity": "personal" }
+    ],
+    "expectedOutcome": "MERGE"
+  },
+  {
+    "id": "merge-4",
+    "description": "Merge partial overlap",
+    "candidate": {
+      "namespace": "episodic",
+      "content": "Watched a movie",
+      "provenance": "user_declared",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "existingRecords": [
+      {
+        "content": "Watched a movie yesterday",
+        "provenance": "user_declared",
+        "sensitivity": "personal"
+      }
+    ],
+    "expectedOutcome": "MERGE"
+  },
+  {
+    "id": "merge-5",
+    "description": "Merge partial overlap",
+    "candidate": {
+      "namespace": "semantic",
+      "content": "Has 2 cats and 1 dog",
+      "provenance": "user_declared",
+      "sensitivity": "personal",
+      "confidence": 0.9
+    },
+    "existingRecords": [
+      { "content": "Has 2 cats", "provenance": "user_declared", "sensitivity": "personal" }
+    ],
+    "expectedOutcome": "MERGE"
+  }
+]

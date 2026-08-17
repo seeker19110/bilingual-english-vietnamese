@@ -1,0 +1,306 @@
+[
+  {
+    "id": "goal-1",
+    "input": "Tôi muốn đặt mục tiêu học IELTS",
+    "expectedIntent": "set_learning_goal",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "goal-2",
+    "input": "mục tiêu của tôi là đạt 7.0 ielts",
+    "expectedIntent": "set_learning_goal",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "goal-3",
+    "input": "Thiết lập goal học tập",
+    "expectedIntent": "set_learning_goal",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "goal-4",
+    "input": "giúp tôi học ielts từ số không",
+    "expectedIntent": "set_learning_goal",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "goal-5",
+    "input": "tôi có mục tiêu học giao tiếp",
+    "expectedIntent": "set_learning_goal",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "goal-6",
+    "input": "đặt mục tiêu mỗi ngày học 30 phút",
+    "expectedIntent": "set_learning_goal",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "goal-7",
+    "input": "My goal is to learn English",
+    "expectedIntent": "set_learning_goal",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "goal-8",
+    "input": "tạo một mục tiêu mới",
+    "expectedIntent": "set_learning_goal",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "goal-9",
+    "input": "Tôi cần chứng chỉ ielts 6.5",
+    "expectedIntent": "set_learning_goal",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "goal-10",
+    "input": "Mục tiêu tuần này",
+    "expectedIntent": "set_learning_goal",
+    "expectedDomain": "learning"
+  },
+
+  {
+    "id": "dict-1",
+    "input": "Từ này nghĩa là gì?",
+    "expectedIntent": "dictionary_lookup",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "dict-2",
+    "input": "tra từ 'hello'",
+    "expectedIntent": "dictionary_lookup",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "dict-3",
+    "input": "Nghĩa của từ apple",
+    "expectedIntent": "dictionary_lookup",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "dict-4",
+    "input": "can you lookup the word serendepity",
+    "expectedIntent": "dictionary_lookup",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "dict-5",
+    "input": "dictionary meaning of fast",
+    "expectedIntent": "dictionary_lookup",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "dict-6",
+    "input": "cho tôi nghĩa của từ run",
+    "expectedIntent": "dictionary_lookup",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "dict-7",
+    "input": "tra từ điển chữ này",
+    "expectedIntent": "dictionary_lookup",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "dict-8",
+    "input": "nghĩa là gì vậy",
+    "expectedIntent": "dictionary_lookup",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "dict-9",
+    "input": "I need to lookup a word",
+    "expectedIntent": "dictionary_lookup",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "dict-10",
+    "input": "từ đó nghĩa là gì?",
+    "expectedIntent": "dictionary_lookup",
+    "expectedDomain": "learning"
+  },
+
+  {
+    "id": "prof-1",
+    "input": "tôi thích màu đỏ",
+    "expectedIntent": "update_profile_fact",
+    "expectedDomain": "profile"
+  },
+  {
+    "id": "prof-2",
+    "input": "sở thích của tôi là bơi lội",
+    "expectedIntent": "update_profile_fact",
+    "expectedDomain": "profile"
+  },
+  {
+    "id": "prof-3",
+    "input": "tôi là học sinh lớp 12",
+    "expectedIntent": "update_profile_fact",
+    "expectedDomain": "profile"
+  },
+  {
+    "id": "prof-4",
+    "input": "cập nhật thông tin: tôi 20 tuổi",
+    "expectedIntent": "update_profile_fact",
+    "expectedDomain": "profile"
+  },
+  {
+    "id": "prof-5",
+    "input": "thông tin của tôi có thay đổi",
+    "expectedIntent": "update_profile_fact",
+    "expectedDomain": "profile"
+  },
+  {
+    "id": "prof-6",
+    "input": "tôi là một lập trình viên",
+    "expectedIntent": "update_profile_fact",
+    "expectedDomain": "profile"
+  },
+  {
+    "id": "prof-7",
+    "input": "sở thích mới: đọc sách",
+    "expectedIntent": "update_profile_fact",
+    "expectedDomain": "profile"
+  },
+  {
+    "id": "prof-8",
+    "input": "tôi thích ăn pizza",
+    "expectedIntent": "update_profile_fact",
+    "expectedDomain": "profile"
+  },
+  {
+    "id": "prof-9",
+    "input": "cập nhật thông tin của tôi",
+    "expectedIntent": "update_profile_fact",
+    "expectedDomain": "profile"
+  },
+  {
+    "id": "prof-10",
+    "input": "tôi là nam giới",
+    "expectedIntent": "update_profile_fact",
+    "expectedDomain": "profile"
+  },
+
+  {
+    "id": "mem-1",
+    "input": "ghi nhớ: tôi hay quên từ vựng",
+    "expectedIntent": "create_memory",
+    "expectedDomain": "personal"
+  },
+  {
+    "id": "mem-2",
+    "input": "nhớ giúp tôi lịch học là 8h tối",
+    "expectedIntent": "create_memory",
+    "expectedDomain": "personal"
+  },
+  {
+    "id": "mem-3",
+    "input": "lưu ý: tôi không thích bị nhắc nhở",
+    "expectedIntent": "create_memory",
+    "expectedDomain": "personal"
+  },
+  {
+    "id": "mem-4",
+    "input": "remember that I have a test tomorrow",
+    "expectedIntent": "create_memory",
+    "expectedDomain": "personal"
+  },
+  {
+    "id": "mem-5",
+    "input": "take a note of this",
+    "expectedIntent": "create_memory",
+    "expectedDomain": "personal"
+  },
+  {
+    "id": "mem-6",
+    "input": "ghi nhớ thông tin này nhé",
+    "expectedIntent": "create_memory",
+    "expectedDomain": "personal"
+  },
+  {
+    "id": "mem-7",
+    "input": "nhớ giúp tôi là tôi mệt",
+    "expectedIntent": "create_memory",
+    "expectedDomain": "personal"
+  },
+  {
+    "id": "mem-8",
+    "input": "lưu ý điểm này",
+    "expectedIntent": "create_memory",
+    "expectedDomain": "personal"
+  },
+  {
+    "id": "mem-9",
+    "input": "please remember my name",
+    "expectedIntent": "create_memory",
+    "expectedDomain": "personal"
+  },
+  {
+    "id": "mem-10",
+    "input": "note lại vào sổ tay",
+    "expectedIntent": "create_memory",
+    "expectedDomain": "personal"
+  },
+
+  {
+    "id": "gen-1",
+    "input": "chào bạn",
+    "expectedIntent": "general_conversation",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "gen-2",
+    "input": "hôm nay trời đẹp quá",
+    "expectedIntent": "general_conversation",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "gen-3",
+    "input": "bạn có khỏe không?",
+    "expectedIntent": "general_conversation",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "gen-4",
+    "input": "let's talk about sports",
+    "expectedIntent": "general_conversation",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "gen-5",
+    "input": "tôi cảm thấy buồn",
+    "expectedIntent": "general_conversation",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "gen-6",
+    "input": "kể tôi nghe một câu chuyện",
+    "expectedIntent": "general_conversation",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "gen-7",
+    "input": "hello there",
+    "expectedIntent": "general_conversation",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "gen-8",
+    "input": "bạn làm được những gì",
+    "expectedIntent": "general_conversation",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "gen-9",
+    "input": "chúc ngủ ngon",
+    "expectedIntent": "general_conversation",
+    "expectedDomain": "learning"
+  },
+  {
+    "id": "gen-10",
+    "input": "ai tạo ra bạn",
+    "expectedIntent": "general_conversation",
+    "expectedDomain": "learning"
+  }
+]
