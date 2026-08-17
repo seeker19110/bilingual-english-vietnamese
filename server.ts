@@ -83,6 +83,7 @@ import learningReadModelHandler from './api/learning-read-model.js'
 import subjectsHandler from './api/subjects.js'
 import careerHandler from './api/career.js'
 import workHandler from './api/work.js'
+import startupHandler from './api/startup.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -267,6 +268,8 @@ app.all('/api/subjects', wrapEdge(subjectsHandler))
 app.all('/api/career', wrapEdge(careerHandler))
 // Work Domain (V2-15) — Projects, tasks, meetings, documents, deadlines.
 app.all('/api/work', wrapEdge(workHandler))
+// Startup Domain (V2-16) — Ventures, problems, hypotheses, evidence (claims require provenance).
+app.all('/api/startup', wrapEdge(startupHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
