@@ -74,6 +74,7 @@ import consentsHandler from './api/consents.js'
 import personalPoliciesHandler from './api/personal-policies.js'
 import lifeGraphHandler from './api/life-graph.js'
 import lifeGoalsHandler from './api/life-goals.js'
+import memoriesHandler from './api/memories.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -240,6 +241,8 @@ app.all('/api/personal-policies', wrapEdge(personalPoliciesHandler))
 // Life Graph foundation (V2-05) — graph của chính người dùng + Learning Goal read view.
 app.all('/api/life-graph', wrapEdge(lifeGraphHandler))
 app.all('/api/life-goals', wrapEdge(lifeGoalsHandler))
+// Personal Knowledge Fabric (V2-06) — bộ nhớ cá nhân hóa theo namespace & retention.
+app.all('/api/memories', wrapEdge(memoriesHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
