@@ -75,6 +75,7 @@ import personalPoliciesHandler from './api/personal-policies.js'
 import lifeGraphHandler from './api/life-graph.js'
 import lifeGoalsHandler from './api/life-goals.js'
 import memoriesHandler from './api/memories.js'
+import contextPackageHandler from './api/context-package.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -243,6 +244,8 @@ app.all('/api/life-graph', wrapEdge(lifeGraphHandler))
 app.all('/api/life-goals', wrapEdge(lifeGoalsHandler))
 // Personal Knowledge Fabric (V2-06) — bộ nhớ cá nhân hóa theo namespace & retention.
 app.all('/api/memories', wrapEdge(memoriesHandler))
+// Context Engine (V2-07) — xây dựng ContextPackage có lọc permission/sensitivity/budget.
+app.all('/api/context-package', wrapEdge(contextPackageHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
