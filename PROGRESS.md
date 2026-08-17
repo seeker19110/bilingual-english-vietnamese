@@ -8,6 +8,34 @@
 
 ## Giai đoạn hiện tại
 
+### Fix CI e2e đỏ trên PR #602 (2026-08-17)
+
+4 test e2e đỏ trên `main` từ TRƯỚC PR #602 (đã báo trên PR, giờ chẩn đoán root cause + sửa thay vì
+chỉ chờ) — cả 4 đều là **test cũ chưa cập nhật theo thay đổi UI ở các PR trước**, không phải bug
+sản phẩm:
+
+- `e2e/v2-hubs.spec.ts` luồng "gửi tin nhắn Companion": mock `/api/companion` còn trả JSON thường,
+  nhưng `Companion.tsx` từ PR `b2a78b8` (Companion SSE Streaming) đã đổi sang gọi
+  `stream: true` và parse Server-Sent Events (`event: <type>\ndata: <json>\n\n`) — JSON thô không
+  có `\n\n` nên parser không bao giờ tách được sự kiện, `onDone` không bao giờ gọi, tin nhắn không
+  hiện. Sửa: mock trả đúng định dạng SSE (`event: done\ndata: {...}\n\n`).
+- `e2e/v2-hubs.spec.ts` luồng "Trang chủ": PR "V2 UI — Multi-Subject Learning..." đã dời khối
+  "Không Gian Chuyên Biệt" (thẻ Sự nghiệp/Công việc/Khởi nghiệp/Đời sống) từ Trang chủ sang
+  `/profile`, nhưng test cũ vẫn kiểm tra các thẻ đó trên Trang chủ. Sửa: tách kiểm tra — Trang chủ
+  chỉ còn thẻ "Bạn Đồng Hành AI", 4 thẻ hub kiểm tra ở `/profile`.
+- `e2e/bottomnav.spec.ts` "hiện đủ 5 mục": tab 5 đổi tên "Cài đặt" → "Cá nhân" (dẫn `/profile`)
+  cùng đợt restructure trên, test cũ vẫn tìm link tên "Cài đặt".
+- `e2e/bottomnav.spec.ts` "QuickActions": `QuickActions` (nút Chia sẻ/Nhắc học) dời từ `/cai-dat`
+  sang `/tien-do` (`Dashboard.tsx`) cùng đợt "Loại bỏ cài đặt học tập vụn vặt khỏi trang cá nhân",
+  test cũ vẫn kiểm tra ở `/cai-dat`.
+
+**Bài học:** PR đổi UI/luồng streaming nên tự rà + cập nhật e2e liên quan TRONG CÙNG PR (mục 9
+"Cổng trước khi MERGE" CLAUDE.md) — 3/4 lỗi trên đều do PR trước không cập nhật e2e theo kịp thay
+đổi UI, chỉ 1/4 (mock SSE) là do đổi giao thức API mà chưa ai cập nhật test tương ứng.
+**Quality Gates:** chạy trực tiếp 2 file bị ảnh hưởng bằng Chromium thật (không chỉ đọc log CI) —
+11/11 test `bottomnav.spec.ts` + `v2-hubs.spec.ts` xanh · `npm run lint`/`typecheck`/
+`format:check` sạch.
+
 ### PR 1/3 — Backend Real-time Chat: WebSocket + Content Moderation (2026-08-17)
 
 Tiếp nối PR 0 (hệ thống bạn bè, đã tạo PR #602). PR này làm backend chat 1-1 real-time:

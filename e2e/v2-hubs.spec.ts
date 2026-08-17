@@ -6,45 +6,51 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
   test.beforeEach(async ({ page }) => {
     await mockLogin(page)
 
-    // Mock Companion API
+    // Mock Companion API — apps/english/src/pages/Companion.tsx gửi { stream: true } và parse
+    // SSE (event: <type>\ndata: <json>\n\n), xem apps/english/src/lib/companionApi.ts#
+    // sendCompanionMessageStream. Body phải đúng định dạng SSE, KHÔNG phải JSON thường — mock
+    // JSON cũ khiến parser không bao giờ tách được sự kiện (không có "\n\n" trong JSON thô) nên
+    // Companion không bao giờ nhận được onDone → text không hiện (đã gây CI đỏ, xem PR #602).
     await page.route('**/api/companion', async (route) => {
       if (route.request().method() === 'POST') {
         const body = route.request().postDataJSON()
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            reply: `Phản hồi từ Bạn Đồng Hành AI cho miền: ${body.domain || 'all'}`,
-            intent: 'career_planning',
-            targetDomain: body.domain || 'career',
-            proposedActions: [
+        const response = {
+          reply: `Phản hồi từ Bạn Đồng Hành AI cho miền: ${body.domain || 'all'}`,
+          intent: 'career_planning',
+          targetDomain: body.domain || 'career',
+          proposedActions: [
+            {
+              id: 'pa-e2e-1',
+              action: 'Cập nhật vị trí mục tiêu lên Senior Staff Engineer',
+              targetDomain: 'career',
+              riskLevel: 'low',
+              status: 'pending',
+              proposedPayload: { targetRole: 'Senior Staff Engineer' },
+            },
+          ],
+          contextPackage: {
+            summary: 'Ngữ cảnh thử nghiệm E2E',
+            domain: 'career',
+            tokenBudget: 2000,
+            tokensUsed: 450,
+            retrievedFacts: [
               {
-                id: 'pa-e2e-1',
-                action: 'Cập nhật vị trí mục tiêu lên Senior Staff Engineer',
-                targetDomain: 'career',
-                riskLevel: 'low',
-                status: 'pending',
-                proposedPayload: { targetRole: 'Senior Staff Engineer' },
+                id: 'f-1',
+                category: 'skill',
+                key: 'English',
+                value: 'C1 Fluent',
+                confidence: 0.95,
+                sensitivity: 'low',
+                sourceType: 'user_declared',
               },
             ],
-            contextPackage: {
-              summary: 'Ngữ cảnh thử nghiệm E2E',
-              domain: 'career',
-              tokenBudget: 2000,
-              tokensUsed: 450,
-              retrievedFacts: [
-                {
-                  id: 'f-1',
-                  category: 'skill',
-                  key: 'English',
-                  value: 'C1 Fluent',
-                  confidence: 0.95,
-                  sensitivity: 'low',
-                  sourceType: 'user_declared',
-                },
-              ],
-            },
-          }),
+          },
+        }
+        const sse = `event: done\ndata: ${JSON.stringify(response)}\n\n`
+        await route.fulfill({
+          status: 200,
+          contentType: 'text/event-stream; charset=utf-8',
+          body: sse,
         })
       } else {
         await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' })
@@ -330,10 +336,16 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
     })
   })
 
-  test('Trang chủ hiển thị thẻ Bạn Đồng Hành AI và Không Gian Chuyên Biệt', async ({ page }) => {
+  test('Trang chủ hiển thị thẻ Bạn Đồng Hành AI, Không Gian Chuyên Biệt nằm ở trang Cá nhân', async ({
+    page,
+  }) => {
+    // Khối "Không Gian Chuyên Biệt" đã dời khỏi Trang chủ sang /profile (Personal Command
+    // Center) — xem PROGRESS.md mục "V2 UI — Multi-Subject Learning...". Trang chủ chỉ còn thẻ
+    // "Bạn Đồng Hành AI" dẫn tới /dong-hanh.
     await page.goto('/')
     await expect(page.getByText('Bạn Đồng Hành AI')).toBeVisible()
-    await expect(page.getByText('Không Gian Chuyên Biệt')).toBeVisible()
+
+    await page.goto('/profile')
     await expect(page.getByText('Sự nghiệp', { exact: true })).toBeVisible()
     await expect(page.getByText('Công việc', { exact: true })).toBeVisible()
     await expect(page.getByText('Khởi nghiệp', { exact: true })).toBeVisible()
