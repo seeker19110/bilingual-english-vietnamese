@@ -145,6 +145,13 @@ Chặn: V2-09 không bắt đầu trước khi resolver + ≥ 3 manifest thật 
   V2-18.** Contract đã sửa (schema version 2). Đơn vị tiền là **USD**, khớp quy ước nội bộ của
   `packages/core-ai/aiCost.ts` — chỉ quy đổi VND khi HIỂN THỊ (`USD_VND_RATE`). Sửa được ngay không
   cần đường tương thích vì chưa bảng DB/API nào dùng contract này, chỉ có chính file contract + test.
+- **`ToolManifest.auditPolicy` từng lệch hình dạng với `CapabilityManifest.auditPolicy` (một bên
+  vẫn `z.string()` sau khi bên kia đã cấu trúc hoá) — owner chốt 2026-08-17: dùng CHUNG
+  `CapabilityAuditPolicySchema`.** Cùng khái niệm "mức log/thời gian giữ audit" không nên có 2 hình
+  dạng khác nhau giữa 2 contract liên quan trực tiếp (1 Capability gọi nhiều Tool). Đã sửa
+  `toolManifest.ts` (import `CapabilityAuditPolicySchema` từ `capabilityManifest.ts`, bump
+  `TOOL_MANIFEST_SCHEMA_VERSION` 1→2). `Tool` KHÔNG có `costPolicy` riêng — ngân sách chi phí là
+  quyết định tầng Capability, không phải tầng Tool.
 
 ### Còn mở
 
