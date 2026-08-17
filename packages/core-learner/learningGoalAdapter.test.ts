@@ -30,7 +30,13 @@ const node = {
   updatedAt: '2026-08-17T00:00:00.000Z',
   schemaVersion: 1,
 }
-const sourceRow = {
+const sourceRow: {
+  id: string
+  onboarded: boolean
+  goal: string | null
+  daily_minutes: number | null
+  created_at: Date
+} = {
   id: USER_ID,
   onboarded: true,
   goal: 'work',
@@ -87,4 +93,27 @@ it('profile chưa onboarding không được backfill default giả', async () =
   await expect(
     backfillCurrentLearningGoal(poolWith({ ...sourceRow, onboarded: false }), USER_ID),
   ).rejects.toThrow('chưa có learning goal')
+})
+
+it('chặn backfill nếu goal hoặc daily_minutes không hợp lệ', async () => {
+  await expect(
+    backfillCurrentLearningGoal(poolWith({ ...sourceRow, goal: null }), USER_ID),
+  ).rejects.toThrow('Learning goal nguồn không hợp lệ để backfill')
+
+  await expect(
+    backfillCurrentLearningGoal(poolWith({ ...sourceRow, daily_minutes: 0 }), USER_ID),
+  ).rejects.toThrow('Learning goal nguồn không hợp lệ để backfill')
+})
+
+it('chặn readLearningGoalFromLifeGraph nếu node không phải Goal hoặc không thuộc người dùng', async () => {
+  getNode.mockResolvedValueOnce({ value: { ...node, type: 'Skill' }, version: 1 })
+  await expect(readLearningGoalFromLifeGraph(poolWith(), USER_ID, NODE_ID)).rejects.toThrow(
+    'Node không phải Goal',
+  )
+
+  getNode.mockResolvedValueOnce({ value: node, version: 1 })
+  getLearningGoalSourceId.mockResolvedValueOnce('different-user-id')
+  await expect(readLearningGoalFromLifeGraph(poolWith(), USER_ID, NODE_ID)).rejects.toThrow(
+    'Goal không thuộc người dùng',
+  )
 })

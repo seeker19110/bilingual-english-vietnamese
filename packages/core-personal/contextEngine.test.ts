@@ -184,4 +184,31 @@ describe('ContextEngine - buildContextPackage', () => {
 
     expect(pkg.tokenUsed).toBeLessThanOrEqual(50)
   })
+
+  it('includes recent episodic context when episodic memories exist', async () => {
+    memoryService.listMemoryRecords.mockImplementation(async (_pool, _personId, opts) => {
+      if (opts?.namespace === 'episodic') {
+        return [
+          {
+            id: MEMORY_ID,
+            namespace: 'episodic',
+            content: 'Discussed past simple vs continuous',
+            provenance: 'conversation:session-1',
+            sensitivity: 'personal',
+          },
+        ]
+      }
+      return []
+    })
+
+    const pkg = await buildContextPackage(mockPool, {
+      personId: PERSON,
+      requestId: 'req-6',
+      requestText: 'What did we study?',
+      purpose: 'tutoring',
+    })
+
+    const hasEpisodic = pkg.items.some((i) => i.sourceType === 'recent_episodic_context')
+    expect(hasEpisodic).toBe(true)
+  })
 })

@@ -163,4 +163,79 @@ describe('StartupService', () => {
     const list = await listEvidence(pool, PERSON_ID, VENTURE_ID)
     expect(list.length).toBe(1)
   })
+
+  it('handles not found errors and filter options', async () => {
+    // Venture not found on update
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(updateVentureStage(pool, PERSON_ID, VENTURE_ID, 'scale')).rejects.toThrow(
+      'Không tìm thấy Venture',
+    )
+
+    // Hypothesis not found on update
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(updateHypothesisStatus(pool, PERSON_ID, HYPOTHESIS_ID, 'refuted')).rejects.toThrow(
+      'Không tìm thấy Hypothesis',
+    )
+
+    // List hypotheses
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    const filteredHyp = await listHypotheses(pool, PERSON_ID, VENTURE_ID)
+    expect(filteredHyp.length).toBe(0)
+
+    // List evidence
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    const filteredEv = await listEvidence(pool, PERSON_ID, VENTURE_ID)
+    expect(filteredEv.length).toBe(0)
+
+    // Venture with description
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: VENTURE_ID,
+          person_id: PERSON_ID,
+          name: 'Venture With Desc',
+          description: 'A great idea',
+          stage: 'ideation',
+          version: 1,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const vWithDesc = await createVenture(pool, PERSON_ID, {
+      name: 'Venture With Desc',
+      description: 'A great idea',
+    })
+    expect(vWithDesc.description).toBe('A great idea')
+
+    // Standalone evidence without hypothesisId
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: EVIDENCE_ID,
+          venture_id: VENTURE_ID,
+          hypothesis_id: null,
+          person_id: PERSON_ID,
+          title: 'General Market Report',
+          evidence_type: 'analytics',
+          provenance: 'Statista report 2026',
+          findings: 'Market growing at 15% CAGR',
+          supports_hypothesis: true,
+          collected_at: new Date('2026-08-15T00:00:00Z'),
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const standaloneEv = await recordEvidence(pool, PERSON_ID, {
+      ventureId: VENTURE_ID,
+      title: 'General Market Report',
+      evidenceType: 'analytics',
+      provenance: 'Statista report 2026',
+      findings: 'Market growing at 15% CAGR',
+      supportsHypothesis: true,
+      collectedAt: '2026-08-15T00:00:00Z',
+    })
+    expect(standaloneEv.hypothesisId).toBeUndefined()
+    expect(standaloneEv.collectedAt).toBe('2026-08-15T00:00:00.000Z')
+  })
 })

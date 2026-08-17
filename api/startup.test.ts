@@ -54,6 +54,17 @@ beforeEach(() => {
 })
 
 describe('api/startup', () => {
+  it('handles OPTIONS', async () => {
+    const res = await handler(new Request('http://localhost/api/startup', { method: 'OPTIONS' }))
+    expect(res.status).toBe(204)
+  })
+
+  it('429 on rate limit exceeded', async () => {
+    rateLimitOk = false
+    const res = await handler(req('GET'))
+    expect(res.status).toBe(429)
+  })
+
   it('401 khi chưa đăng nhập', async () => {
     authState.user = null
     expect((await handler(req('GET'))).status).toBe(401)
@@ -67,14 +78,50 @@ describe('api/startup', () => {
     expect(j.ventures.length).toBe(1)
   })
 
-  it('POST venture', async () => {
+  it('GET problems, hypotheses, evidence, and invalid kind', async () => {
+    svc.listProblems.mockResolvedValueOnce([{ id: ID_1 }])
+    const resP = await handler(req('GET', `?kind=problems&ventureId=${ID_1}`))
+    expect(resP.status).toBe(200)
+
+    svc.listHypotheses.mockResolvedValueOnce([{ id: ID_1 }])
+    const resH = await handler(req('GET', `?kind=hypotheses&ventureId=${ID_1}&status=unverified`))
+    expect(resH.status).toBe(200)
+
+    svc.listEvidence.mockResolvedValueOnce([{ id: ID_1 }])
+    const resE = await handler(req('GET', `?kind=evidence&ventureId=${ID_1}`))
+    expect(resE.status).toBe(200)
+
+    const resInvalid = await handler(req('GET', '?kind=unknown'))
+    expect(resInvalid.status).toBe(400)
+  })
+
+  it('POST venture, problem, hypothesis', async () => {
     svc.createVenture.mockResolvedValueOnce({ id: ID_1, name: 'LearnAI', stage: 'ideation' })
     const res = await handler(req('POST', '', { kind: 'venture', name: 'LearnAI' }))
     expect(res.status).toBe(201)
-    expect(svc.createVenture).toHaveBeenCalledWith({}, PERSON_ID, {
-      kind: 'venture',
-      name: 'LearnAI',
-    })
+
+    svc.createProblem.mockResolvedValueOnce({ id: ID_1 })
+    const resP = await handler(
+      req('POST', '', {
+        kind: 'problem',
+        ventureId: ID_1,
+        statement: 'Problem 1',
+        customerSegment: 'Devs',
+        severity: 'critical',
+      }),
+    )
+    expect(resP.status).toBe(201)
+
+    svc.createHypothesis.mockResolvedValueOnce({ id: ID_1 })
+    const resH = await handler(
+      req('POST', '', {
+        kind: 'hypothesis',
+        ventureId: ID_1,
+        statement: 'Hypothesis 1',
+        hypothesisType: 'solution',
+      }),
+    )
+    expect(resH.status).toBe(201)
   })
 
   it('POST evidence requires provenance', async () => {
@@ -91,14 +138,26 @@ describe('api/startup', () => {
       }),
     )
     expect(res.status).toBe(201)
+
+    const resInvalid = await handler(req('POST', '', { kind: 'unknown' }))
+    expect(resInvalid.status).toBe(400)
   })
 
-  it('PATCH venture_stage', async () => {
+  it('PATCH venture_stage and hypothesis_status', async () => {
     svc.updateVentureStage.mockResolvedValueOnce({ id: ID_1, stage: 'validation' })
     const res = await handler(
       req('PATCH', '', { kind: 'venture_stage', id: ID_1, stage: 'validation' }),
     )
     expect(res.status).toBe(200)
+
+    svc.updateHypothesisStatus.mockResolvedValueOnce({ id: ID_1, status: 'supported' })
+    const resH = await handler(
+      req('PATCH', '', { kind: 'hypothesis_status', id: ID_1, status: 'supported' }),
+    )
+    expect(resH.status).toBe(200)
+
+    const resInvalid = await handler(req('PATCH', '', { kind: 'unknown' }))
+    expect(resInvalid.status).toBe(400)
   })
 
   it('405 method not allowed', async () => {

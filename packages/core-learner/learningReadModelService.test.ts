@@ -90,7 +90,37 @@ describe('formatLearningReadModelForContext', () => {
 
     expect(text).toContain('[Domain: Learning | Subject: english]')
     expect(text).toContain('Level: B1')
+    expect(text).toContain('Direction: EN -> VI')
+    expect(text).toContain('Mục tiêu: "Giao tiếp"')
     expect(text).toContain('SRS cần ôn: 5 từ')
     expect(text).toContain('Đã thành thạo: 100 từ')
+  })
+
+  it('formats context string with direction B and empty optional fields', () => {
+    const text = formatLearningReadModelForContext({
+      personId: PERSON_ID,
+      subject: 'english',
+      direction: 'B',
+      currentLevel: null,
+      dailySpeed: 10,
+      dailyMinutes: 15,
+      onboarded: false,
+      activeGoal: null,
+      masterySummary: {
+        masteredCount: 0,
+        inProgressCount: 0,
+        dueForReviewCount: 0,
+      },
+      recentEvidenceCount: 0,
+      srsDueCount: 0,
+      updatedAt: new Date().toISOString(),
+      schemaVersion: 1,
+    })
+
+    expect(text).toContain('Level: Chưa xác định')
+    expect(text).toContain('Direction: VI -> EN')
+    expect(text).not.toContain('Mục tiêu:')
+    expect(text).not.toContain('SRS cần ôn:')
+    expect(text).not.toContain('Đã thành thạo:')
   })
 })

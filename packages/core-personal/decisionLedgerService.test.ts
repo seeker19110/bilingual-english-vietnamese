@@ -11,7 +11,7 @@ import {
   getDecision,
   listDecisions,
 } from './decisionLedgerService.js'
-import { ConflictError, ValidationError } from '../core-errors/appError.js'
+import { ConflictError, NotFoundError, ValidationError } from '../core-errors/appError.js'
 
 const PERSON_ID = '11111111-1111-4111-8111-111111111111'
 const DECISION_ID = '22222222-2222-4222-8222-222222222222'
@@ -235,9 +235,141 @@ describe('getDecision & listDecisions', () => {
     expect(res.id).toBe(DECISION_ID)
   })
 
+  it('throws NotFoundError if decision does not exist', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(getDecision(pool, PERSON_ID, DECISION_ID)).rejects.toBeInstanceOf(NotFoundError)
+  })
+
   it('lists decisions with filters', async () => {
     mockQuery.mockResolvedValueOnce({ rows: [makeRow()] })
     const list = await listDecisions(pool, PERSON_ID, { status: 'open', domain: 'learning' })
     expect(list.length).toBe(1)
+  })
+})
+
+describe('decisionLedgerService error & conflict branches', () => {
+  it('decideDecision errors: not found, version conflict, not open, invalid option', async () => {
+    // Not found
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(
+      decideDecision(pool, PERSON_ID, DECISION_ID, {
+        selectedOptionId: 'opt_1',
+        expectedVersion: 1,
+        actor: 'user',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundError)
+
+    // Version conflict
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ version: 2 })] })
+    await expect(
+      decideDecision(pool, PERSON_ID, DECISION_ID, {
+        selectedOptionId: 'opt_1',
+        expectedVersion: 1,
+        actor: 'user',
+      }),
+    ).rejects.toBeInstanceOf(ConflictError)
+
+    // Not open status
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ status: 'decided', version: 1 })] })
+    await expect(
+      decideDecision(pool, PERSON_ID, DECISION_ID, {
+        selectedOptionId: 'opt_1',
+        expectedVersion: 1,
+        actor: 'user',
+      }),
+    ).rejects.toBeInstanceOf(ConflictError)
+
+    // Invalid option id
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ version: 1 })] })
+    await expect(
+      decideDecision(pool, PERSON_ID, DECISION_ID, {
+        selectedOptionId: 'nonexistent_option',
+        expectedVersion: 1,
+        actor: 'user',
+      }),
+    ).rejects.toBeInstanceOf(ValidationError)
+  })
+
+  it('recordOutcome errors: not found, version conflict, wrong status', async () => {
+    const obs = {
+      description: 'Obs',
+      observedAt: new Date().toISOString(),
+      matchedExpectation: true,
+    }
+    // Not found
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(
+      recordOutcome(pool, PERSON_ID, DECISION_ID, {
+        observation: obs,
+        expectedVersion: 1,
+        actor: 'user',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundError)
+
+    // Version conflict
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ version: 2 })] })
+    await expect(
+      recordOutcome(pool, PERSON_ID, DECISION_ID, {
+        observation: obs,
+        expectedVersion: 1,
+        actor: 'user',
+      }),
+    ).rejects.toBeInstanceOf(ConflictError)
+
+    // Wrong status (open)
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ status: 'open', version: 1 })] })
+    await expect(
+      recordOutcome(pool, PERSON_ID, DECISION_ID, {
+        observation: obs,
+        expectedVersion: 1,
+        actor: 'user',
+      }),
+    ).rejects.toBeInstanceOf(ConflictError)
+  })
+
+  it('reviewDecision errors: not found, version conflict, wrong status', async () => {
+    // Not found
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(
+      reviewDecision(pool, PERSON_ID, DECISION_ID, {
+        resolutionSummary: 'Done',
+        expectedVersion: 1,
+        actor: 'user',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundError)
+
+    // Version conflict
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ version: 2 })] })
+    await expect(
+      reviewDecision(pool, PERSON_ID, DECISION_ID, {
+        resolutionSummary: 'Done',
+        expectedVersion: 1,
+        actor: 'user',
+      }),
+    ).rejects.toBeInstanceOf(ConflictError)
+
+    // Wrong status (open)
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ status: 'open', version: 1 })] })
+    await expect(
+      reviewDecision(pool, PERSON_ID, DECISION_ID, {
+        resolutionSummary: 'Done',
+        expectedVersion: 1,
+        actor: 'user',
+      }),
+    ).rejects.toBeInstanceOf(ConflictError)
+  })
+
+  it('supersedeDecision errors: not found, version conflict, already superseded', async () => {
+    // Not found
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(
+      supersedeDecision(pool, PERSON_ID, DECISION_ID, 'new-id', 1, 'user'),
+    ).rejects.toBeInstanceOf(NotFoundError)
+
+    // Version conflict
+    mockQuery.mockResolvedValueOnce({ rows: [makeRow({ version: 2 })] })
+    await expect(
+      supersedeDecision(pool, PERSON_ID, DECISION_ID, 'new-id', 1, 'user'),
+    ).rejects.toBeInstanceOf(ConflictError)
   })
 })

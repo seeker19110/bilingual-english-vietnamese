@@ -86,7 +86,7 @@ describe('GET /api/proposed-actions', () => {
     expect(json.tools.length).toBeGreaterThan(0)
   })
 
-  it('lists proposed actions with status filter', async () => {
+  it('lists proposed actions with status filter and handles invalid status', async () => {
     service.listProposedActions.mockResolvedValueOnce([{ id: ACTION_ID }])
     const res = await handler(req('GET', '?status=pending'))
     expect(res.status).toBe(200)
@@ -95,6 +95,9 @@ describe('GET /api/proposed-actions', () => {
     expect(service.listProposedActions).toHaveBeenCalledWith(expect.anything(), PERSON, {
       status: 'pending',
     })
+
+    const resInvalid = await handler(req('GET', '?status=invalid_status'))
+    expect(resInvalid.status).toBe(400)
   })
 })
 
@@ -182,5 +185,13 @@ describe('PATCH /api/proposed-actions', () => {
       'user:user-1',
       'Not needed',
     )
+  })
+
+  it('handles invalid PATCH payload and DELETE method', async () => {
+    const resInvalid = await handler(req('PATCH', '', { id: ACTION_ID, action: 'unknown' }))
+    expect(resInvalid.status).toBe(400)
+
+    const resDelete = await handler(req('DELETE'))
+    expect(resDelete.status).toBe(405)
   })
 })

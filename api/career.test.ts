@@ -96,6 +96,18 @@ describe('GET /api/career', () => {
     expect(careerService.listCareerExperiences).toHaveBeenCalledWith(expect.anything(), PERSON)
   })
 
+  it('gets career goals and handles missing goalId on skill_gap', async () => {
+    const resGoals = await handler(req('GET', '?resource=goals&status=active'))
+    expect(resGoals.status).toBe(200)
+    expect(careerService.listCareerGoals).toHaveBeenCalledWith(expect.anything(), PERSON, 'active')
+
+    const resMissingGoal = await handler(req('GET', '?resource=skill_gap'))
+    expect(resMissingGoal.status).toBe(400)
+
+    const resInvalid = await handler(req('GET', '?resource=unknown'))
+    expect(resInvalid.status).toBe(400)
+  })
+
   it('gets skill gap analysis', async () => {
     const res = await handler(req('GET', `?resource=skill_gap&goalId=${GOAL_ID}`))
     expect(res.status).toBe(200)
@@ -125,6 +137,21 @@ describe('POST /api/career', () => {
     )
   })
 
+  it('creates experience on resource=experience', async () => {
+    const res = await handler(
+      req('POST', '', {
+        resource: 'experience',
+        company: 'Tech Corp',
+        role: 'Tech Lead',
+        startDate: '2024-01-01',
+        isCurrent: true,
+        achievements: ['Built system'],
+      }),
+    )
+    expect(res.status).toBe(201)
+    expect(careerService.addCareerExperience).toHaveBeenCalled()
+  })
+
   it('creates goal on resource=goal', async () => {
     const res = await handler(
       req('POST', '', {
@@ -139,5 +166,13 @@ describe('POST /api/career', () => {
       PERSON,
       expect.objectContaining({ targetTitle: 'CTO' }),
     )
+  })
+
+  it('handles invalid POST body and unsupported methods', async () => {
+    const resInvalid = await handler(req('POST', '', { resource: 'unknown' }))
+    expect(resInvalid.status).toBe(400)
+
+    const resDelete = await handler(req('DELETE'))
+    expect(resDelete.status).toBe(405)
   })
 })

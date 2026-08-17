@@ -187,6 +187,76 @@ describe('Career Experience & Goal Management', () => {
     const list = await listCareerExperiences(pool, PERSON_ID)
     expect(list.length).toBe(1)
     expect(list[0]?.company).toBe('Acme Corp')
+
+    // add experience with default achievements and no endDate
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: EXP_ID,
+          person_id: PERSON_ID,
+          company: 'Acme Minimal',
+          role: 'Junior Dev',
+          start_date: '2022-01',
+          end_date: null,
+          is_current: false,
+          achievements: JSON.stringify([]),
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const expMinimal = await addCareerExperience(pool, PERSON_ID, {
+      company: 'Acme Minimal',
+      role: 'Junior Dev',
+      startDate: '2022-01',
+    })
+    expect(expMinimal.achievements).toEqual([])
+    expect(expMinimal.endDate).toBeUndefined()
+
+    // update profile with currency
+    mockQuery
+      .mockResolvedValueOnce({
+        rows: [
+          {
+            id: PROF_ID,
+            person_id: PERSON_ID,
+            target_role: 'Lead',
+            current_title: null,
+            years_of_experience: 3,
+            industry: null,
+            target_salary_min: null,
+            target_salary_max: null,
+            currency: 'USD',
+            version: 1,
+            created_at: new Date('2026-08-17T00:00:00Z'),
+            updated_at: new Date('2026-08-17T00:00:00Z'),
+          },
+        ],
+      })
+      .mockResolvedValueOnce({
+        rows: [
+          {
+            id: PROF_ID,
+            person_id: PERSON_ID,
+            target_role: 'Lead',
+            current_title: null,
+            years_of_experience: 3,
+            industry: null,
+            target_salary_min: null,
+            target_salary_max: null,
+            currency: 'USD',
+            version: 2,
+            created_at: new Date('2026-08-17T00:00:00Z'),
+            updated_at: new Date('2026-08-17T00:00:00Z'),
+          },
+        ],
+      })
+    const updatedCurrency = await updateCareerProfile(pool, PERSON_ID, {
+      targetRole: 'Lead',
+      yearsOfExperience: 3,
+      currency: 'USD',
+    })
+    expect(updatedCurrency.currency).toBe('USD')
   })
 
   it('creates and lists career goals', async () => {
@@ -267,5 +337,83 @@ describe('analyzeCareerSkillGap', () => {
       userId: 'user-1',
       subject: 'english',
     })
+  })
+
+  it('handles goal not found, skill gap without english, and string JSON edge cases', async () => {
+    // Goal not found in analyzeCareerSkillGap
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(analyzeCareerSkillGap(pool, PERSON_ID, GOAL_ID, 'user-1')).rejects.toThrow(
+      'Không tìm thấy CareerGoal',
+    )
+
+    // Goal with non-array json, string json, invalid json
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: GOAL_ID,
+          person_id: PERSON_ID,
+          target_title: 'Backend Dev',
+          skills_required: '{bad-json',
+        },
+      ],
+    })
+    getLearningReadModel.mockResolvedValueOnce(null)
+    const analysis = await analyzeCareerSkillGap(pool, PERSON_ID, GOAL_ID, 'user-1')
+    expect(analysis.gaps.length).toBe(0)
+
+    // parseJsonArray with string array and non-array object
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: EXP_ID,
+          person_id: PERSON_ID,
+          company: 'Acme',
+          role: 'Dev',
+          start_date: '2024-01-01',
+          end_date: null,
+          is_current: true,
+          achievements: '{"key":"val"}',
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const expList = await listCareerExperiences(pool, PERSON_ID)
+    expect(expList[0]?.achievements).toEqual([])
+
+    // List career goals without status filter
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    const allGoals = await listCareerGoals(pool, PERSON_ID)
+    expect(allGoals.length).toBe(0)
+
+    // English skill with A1 level (unfulfilled) and null level (unassessed)
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: GOAL_ID,
+          person_id: PERSON_ID,
+          target_title: 'Global Analyst',
+          skills_required: ['IELTS 6.5', 'Python'],
+        },
+      ],
+    })
+    getLearningReadModel.mockResolvedValueOnce({ currentLevel: 'A1' })
+    const a1Analysis = await analyzeCareerSkillGap(pool, PERSON_ID, GOAL_ID, 'user-1')
+    expect(a1Analysis.gaps.find((g) => g.skill === 'IELTS 6.5')?.isFulfilled).toBe(false)
+    expect(a1Analysis.gaps.find((g) => g.skill === 'IELTS 6.5')?.currentMastery).toBe('A1')
+
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: GOAL_ID,
+          person_id: PERSON_ID,
+          target_title: 'Global Analyst',
+          skills_required: ['IELTS 6.5'],
+        },
+      ],
+    })
+    getLearningReadModel.mockResolvedValueOnce({ currentLevel: undefined })
+    const nullAnalysis = await analyzeCareerSkillGap(pool, PERSON_ID, GOAL_ID, 'user-1')
+    expect(nullAnalysis.gaps[0]?.isFulfilled).toBe(false)
+    expect(nullAnalysis.gaps[0]?.currentMastery).toBe('Chưa đánh giá')
   })
 })
