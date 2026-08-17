@@ -1,0 +1,159 @@
+import { describe, it, expect, beforeEach } from 'vitest'
+import {
+  CapabilityCostTracker,
+  calculateCostUsd,
+  DEFAULT_FALLBACK_PRICING,
+  defaultCapabilityCostTracker,
+} from './capabilityCostTracker.js'
+
+describe('CapabilityCostTracker', () => {
+  let tracker: CapabilityCostTracker
+
+  beforeEach(() => {
+    tracker = new CapabilityCostTracker()
+    defaultCapabilityCostTracker.reset()
+  })
+
+  it('calculates cost correctly based on model pricing registry', () => {
+    // gemini-2.0-flash: prompt: 0.1 / 1M, completion: 0.4 / 1M
+    // 10,000 prompt tokens = 0.001 USD
+    // 5,000 completion tokens = 0.002 USD
+    // total = 0.003 USD
+    const cost = calculateCostUsd('gemini-2.0-flash', 10_000, 5_000)
+    expect(cost).toBeCloseTo(0.003, 6)
+
+    // claude-haiku: prompt 0.8 / 1M, completion 4.0 / 1M
+    // 1,000 prompt tokens = 0.0008 USD
+    // 500 completion tokens = 0.0020 USD
+    // total = 0.0028 USD
+    const claudeCost = calculateCostUsd('claude-haiku-4-5-20251001', 1_000, 500)
+    expect(claudeCost).toBeCloseTo(0.0028, 6)
+
+    // Fallback model pricing
+    const fallbackCost = calculateCostUsd('unknown-model-xyz', 1_000_000, 1_000_000)
+    expect(fallbackCost).toBeCloseTo(
+      DEFAULT_FALLBACK_PRICING.promptCostPer1MTokensUsd +
+        DEFAULT_FALLBACK_PRICING.completionCostPer1MTokensUsd,
+      6,
+    )
+  })
+
+  it('records invocations and calculates total tokens & cost', () => {
+    const metric = tracker.recordInvocation({
+      capabilityId: 'learning.tutor_turn',
+      domain: 'learning',
+      personId: 'person-123',
+      model: 'gemini-2.0-flash',
+      promptTokens: 1000,
+      completionTokens: 200,
+      latencyMs: 350,
+      status: 'success',
+    })
+
+    expect(metric.totalTokens).toBe(1200)
+    expect(metric.costUsd).toBeGreaterThan(0)
+    expect(metric.timestamp).toBeDefined()
+
+    const allMetrics = tracker.getMetrics()
+    expect(allMetrics).toHaveLength(1)
+  })
+
+  it('filters metrics by capability, domain, and person', () => {
+    tracker.recordInvocation({
+      capabilityId: 'learning.tutor_turn',
+      domain: 'learning',
+      personId: 'person-1',
+      model: 'gemini-2.0-flash',
+      promptTokens: 500,
+      completionTokens: 100,
+      latencyMs: 200,
+      status: 'success',
+    })
+
+    tracker.recordInvocation({
+      capabilityId: 'career.review_cv',
+      domain: 'career',
+      personId: 'person-1',
+      model: 'claude-haiku-4-5-20251001',
+      promptTokens: 2000,
+      completionTokens: 800,
+      latencyMs: 1200,
+      status: 'success',
+    })
+
+    tracker.recordInvocation({
+      capabilityId: 'work.summarize_meeting',
+      domain: 'work',
+      personId: 'person-2',
+      model: 'gemini-2.0-flash',
+      promptTokens: 1500,
+      completionTokens: 300,
+      latencyMs: 400,
+      status: 'error',
+    })
+
+    const learningSummary = tracker.getMetricsByCapability('learning.tutor_turn')
+    expect(learningSummary.totalCalls).toBe(1)
+    expect(learningSummary.successfulCalls).toBe(1)
+    expect(learningSummary.totalTokens).toBe(600)
+
+    const careerDomainSummary = tracker.getMetricsByDomain('career')
+    expect(careerDomainSummary.totalCalls).toBe(1)
+    expect(careerDomainSummary.totalTokens).toBe(2800)
+
+    const person1Summary = tracker.getMetricsByPerson('person-1')
+    expect(person1Summary.totalCalls).toBe(2)
+    expect(person1Summary.successfulCalls).toBe(2)
+    expect(person1Summary.errorCalls).toBe(0)
+
+    const person2Summary = tracker.getMetricsByPerson('person-2')
+    expect(person2Summary.totalCalls).toBe(1)
+    expect(person2Summary.errorCalls).toBe(1)
+
+    const totalSummary = tracker.getTotalMetrics()
+    expect(totalSummary.totalCalls).toBe(3)
+    expect(totalSummary.successfulCalls).toBe(2)
+    expect(totalSummary.errorCalls).toBe(1)
+  })
+
+  it('checks person budget threshold correctly', () => {
+    tracker.recordInvocation({
+      capabilityId: 'career.review_cv',
+      domain: 'career',
+      personId: 'person-budget-test',
+      model: 'claude-haiku-4-5-20251001',
+      promptTokens: 100_000,
+      completionTokens: 50_000,
+      latencyMs: 1500,
+      status: 'success',
+      costUsd: 0.28,
+    })
+
+    expect(tracker.checkBudgetExceeded('person-budget-test', 0.5)).toBe(false)
+    expect(tracker.checkBudgetExceeded('person-budget-test', 0.2)).toBe(true)
+  })
+
+  it('handles empty summaries gracefully', () => {
+    const emptySummary = tracker.getMetricsByDomain('non-existent-domain')
+    expect(emptySummary.totalCalls).toBe(0)
+    expect(emptySummary.totalCostUsd).toBe(0)
+    expect(emptySummary.avgLatencyMs).toBe(0)
+  })
+
+  it('resets metrics correctly', () => {
+    tracker.recordInvocation({
+      capabilityId: 'learning.tutor_turn',
+      domain: 'learning',
+      personId: 'person-1',
+      model: 'gemini-2.0-flash',
+      promptTokens: 100,
+      completionTokens: 50,
+      latencyMs: 100,
+      status: 'success',
+    })
+
+    expect(tracker.getMetrics()).toHaveLength(1)
+    tracker.reset()
+    expect(tracker.getMetrics()).toHaveLength(0)
+  })
+})

@@ -250,20 +250,20 @@ Example executable flow:
 - prompt-injection/tool-abuse/red-team suites;
 - privacy/export/delete drills.
 
-### V2-20 — Scale and Final Architecture Audit
+### V2-20 — Scale and Final Architecture Audit (ACCEPTED — 2026-08-17)
 
-Đặc tả chi tiết: [V2-20-SCALE-AUDIT.md](./V2-20-SCALE-AUDIT.md)
+Đặc tả chi tiết: [2026-08-17-v2-20-scale-and-final-architecture-audit.md](../specs/2026-08-17-v2-20-scale-and-final-architecture-audit.md)
 
-V2 accepted only when:
+V2 accepted: All 8 criteria PASSED with verifiable evidence (`docs/research/v2-final-architecture-audit.md` & `npm run eval:v2:audit`):
 
-- same person uses one Companion across >=2 production domains;
-- Life Graph connects cross-domain goal/evidence;
-- Personal World Model has provenance/confidence/privacy controls;
-- Knowledge Fabric has inspect/correct/delete;
-- external side effects enforce authority;
-- Decision/Outcome loop works end-to-end;
-- provider/agent replacement does not lose person state;
-- SLO/cost/security/backup/recovery/audit evidence is complete.
+- [x] same person uses one Companion across >=2 production domains;
+- [x] Life Graph connects cross-domain goal/evidence;
+- [x] Personal World Model has provenance/confidence/privacy controls;
+- [x] Knowledge Fabric has inspect/correct/delete;
+- [x] external side effects enforce authority;
+- [x] Decision/Outcome loop works end-to-end;
+- [x] provider/agent replacement does not lose person state;
+- [x] SLO/cost/security/backup/recovery/audit evidence is complete.
 
 ## Release discipline
 
