@@ -8,6 +8,39 @@
 
 ## Giai đoạn hiện tại
 
+### V2-19 Platform Evaluation and Hardening (2026-08-17)
+
+Hoàn thành V2-19 Platform Evaluation & Hardening (Wave F):
+
+- **Spec & Documentation**: `docs/specs/2026-08-17-v2-19-platform-evaluation-hardening.md` (Approved for implementation) và `docs/research/eval-v2-19-evidence.md` (báo cáo thực nghiệm đầy đủ).
+- **Deterministic Eval Suites (`npm run eval:v2:*`)**:
+  - `eval:v2:routing`: Đo routing accuracy trên 50 fixture tiếng Việt/Anh → đạt **98.00%** (49/50, target $\ge 85\%$).
+  - `eval:v2:context`: Đo context relevance, token budget, DENY-bypass (=0) và sensitive-leakage (=0) trên 20 fixture → đạt **100.00%**.
+  - `eval:v2:memory`: Đo memory classification (100%), false-memory rate (**0.00%**, target $<5\%$), correction rate (**100.00%**) trên 30 fixture.
+  - `eval:v2:permissions`: Đo authority resolution (100%), DENY bypasses (**0**) trên 40 fixture.
+- **Red-Team Adversarial Suites (`eval:v2:red-team`)**:
+  - 30 kịch bản tấn công: 10 Prompt Injection, 10 Tool/State Abuse, 10 Sensitive Data Leakage → **100.00% blocked (30/30)**.
+- **Privacy Export & Cascade Erasure (`eval:v2:privacy`)**:
+  - Migration `0052_person_erasure_log.sql`: Bảng `platform.person_erasure_log` append-only ghi log yêu cầu xoá dữ liệu toàn diện.
+  - Service `personErasureService.ts`: `exportPersonData` xuất dữ liệu cả 13 schema; `erasePersonData` cascade delete atomic trong single transaction across all schemas.
+  - API `GET /api/persons?action=export` và `DELETE /api/persons?action=full_erase` (auth + rate-limited).
+  - 7/7 privacy drills passed 100% (export completeness, zero-residual erase, scoped isolation).
+- **Test suite & Coverage**: 259 test files, **3927 tests passed 100%**, branch coverage **90.23%** (statements 95.43%, lines 95.43%, functions 97.00%), build, typecheck, lint (0 warnings), format:check passed 100%.
+
+### V2-18 Approved Automation — slice 1: explicit grants, triggers, budgets, retries/compensation, action receipts (2026-08-17)
+
+Hoàn thành Slice 1 cho V2-18 Approved Automation (Wave F):
+
+- **Migration `0051_approved_automation.sql`**: Bảng `personal.automation_grants` (grants explicit, reviewAt bắt buộc, status lifecycle `active | paused | revoked | expired`, optimistic locking) và `personal.action_receipts` (append-only immutable receipts với unique idempotency key).
+- **Automation Contracts (`packages/core-contracts/automation.ts`)**: `AutomationTriggerSchema` (`schedule | event | manual`), `AutomationBudgetSchema` (hourly/daily limit & cooldown), `AutomationCompensationSchema`, `AutomationGrantSchema`, `ActionReceiptSchema`.
+- **Automation Service (`packages/core-personal/automationService.ts`)**: Quản lý vòng đời explicit grant (create, pause, resume, revoke), thực thi tự động (`executeAutomatedAction`) tuân thủ Personal Policy authority (chặn DENY lập tức), kiểm soát ngân sách/rate-limits (runs/hour, runs/day, cooldown), cơ chế retry và compensation tự động khi thất bại, ghi nhận `ActionReceipt` bất biến và chống trùng lặp theo idempotency key.
+- **Gate Invariants**:
+  1. Không có hành động tự động nào chạy ngoài `AutomationGrant` có hiệu lực (`active`, chưa hết hạn, chưa quá hạn `reviewAt`).
+  2. Action Receipts là bất biến (append-only) và đảm bảo tính idempotent.
+  3. Quyền `DENY` từ Personal Policy lập tức chặn mọi thực thi tự động.
+- **API `/api/automation`**: GET (danh sách grants/receipts), POST (`create_grant`, `trigger`), PATCH (`pause`, `resume`, `revoke`) auth-guarded và rate-limited. Đăng ký trong `server.ts`.
+- **Test suite & Coverage**: 3897 tests passed 100%, branch coverage 90.14% (statements 95.37%, lines 95.37%, functions 96.99%), build, typecheck, lint (0 warnings), format:check passed 100%.
+
 ### V2-17 Life Foundation Domain — slice 1: plans, habits, wellbeing, growth milestones (2026-08-17)
 
 Hoàn thành Slice 1 cho V2-17 Life Foundation:

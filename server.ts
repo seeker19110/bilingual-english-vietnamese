@@ -85,6 +85,7 @@ import careerHandler from './api/career.js'
 import workHandler from './api/work.js'
 import startupHandler from './api/startup.js'
 import lifeHandler from './api/life.js'
+import automationHandler from './api/automation.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -273,6 +274,8 @@ app.all('/api/work', wrapEdge(workHandler))
 app.all('/api/startup', wrapEdge(startupHandler))
 // Life Foundation (V2-17) — Plans, habits, wellbeing, growth milestones.
 app.all('/api/life', wrapEdge(lifeHandler))
+// Approved Automation (V2-18) — Explicit grants, triggers, budgets, retries/compensation, action receipts.
+app.all('/api/automation', wrapEdge(automationHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

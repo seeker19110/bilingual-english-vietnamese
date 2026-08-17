@@ -1,4 +1,4 @@
-// Test /api/persons — GET danh tính Personal OS của user đang đăng nhập.
+// Test /api/persons — GET danh tính Personal OS, export, và full_erase (V2-03, V2-19).
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
@@ -11,10 +11,18 @@ vi.mock('../packages/core-auth/security', () => ({
   logSecurityEvent: () => {},
 }))
 
-vi.mock('../packages/core-db/pgPool.js', () => ({ getPgPool: vi.fn() }))
+vi.mock('../packages/core-db/pgPool.js', () => ({ getPgPool: vi.fn().mockReturnValue({}) }))
+
 const getOrCreatePersonMock = vi.fn()
 vi.mock('../packages/core-personal/personService.js', () => ({
   getOrCreatePerson: (...args: unknown[]) => getOrCreatePersonMock(...args),
+}))
+
+const exportPersonDataMock = vi.fn()
+const erasePersonDataMock = vi.fn()
+vi.mock('../packages/core-personal/personErasureService.js', () => ({
+  exportPersonData: (...args: unknown[]) => exportPersonDataMock(...args),
+  erasePersonData: (...args: unknown[]) => erasePersonDataMock(...args),
 }))
 
 import handler from './persons'
@@ -28,15 +36,45 @@ const PERSON = {
   schemaVersion: 1,
 }
 
+const EXPORT_DATA = {
+  exportedAt: '2026-08-17T00:00:00.000Z',
+  personId: PERSON.id,
+  person: PERSON,
+  personalFacts: [],
+  memories: [],
+  consentGrants: [],
+  personalPolicies: [],
+  lifeGraphNodes: [],
+  lifeGraphEdges: [],
+  automationGrants: [],
+  actionReceipts: [],
+  decisionRecords: [],
+  careerRecords: [],
+  workRecords: [],
+  startupRecords: [],
+  lifeRecords: [],
+}
+
+const ERASE_RESULT = {
+  personId: PERSON.id,
+  schemasCleared: ['personal.persons'],
+  recordsDeletedCount: 5,
+  erasureLogId: 'log-1',
+}
+
 beforeEach(() => {
   authState.user = { userId: 'user-1' }
   rateLimitOk = true
   getOrCreatePersonMock.mockReset()
   getOrCreatePersonMock.mockResolvedValue(PERSON)
+  exportPersonDataMock.mockReset()
+  exportPersonDataMock.mockResolvedValue(EXPORT_DATA)
+  erasePersonDataMock.mockReset()
+  erasePersonDataMock.mockResolvedValue(ERASE_RESULT)
 })
 
-function makeReq(method = 'GET'): Request {
-  return new Request('http://localhost/api/persons', { method })
+function makeReq(method = 'GET', url = 'http://localhost/api/persons'): Request {
+  return new Request(url, { method })
 }
 
 describe('GET /api/persons', () => {
@@ -54,7 +92,7 @@ describe('GET /api/persons', () => {
     expect((await handler(makeReq())).status).toBe(401)
   })
 
-  it('method khác GET → 405', async () => {
+  it('method khác GET/DELETE → 405', async () => {
     expect((await handler(makeReq('POST'))).status).toBe(405)
   })
 
@@ -63,5 +101,41 @@ describe('GET /api/persons', () => {
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual(PERSON)
     expect(getOrCreatePersonMock.mock.calls[0]?.[1]).toBe('user-1')
+  })
+})
+
+describe('GET /api/persons?action=export', () => {
+  it('trả toàn bộ personal data export', async () => {
+    const res = await handler(makeReq('GET', 'http://localhost/api/persons?action=export'))
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.personId).toBe(PERSON.id)
+    expect(Array.isArray(body.personalFacts)).toBe(true)
+    expect(exportPersonDataMock).toHaveBeenCalledWith(expect.anything(), PERSON.id)
+  })
+
+  it('chưa đăng nhập → 401', async () => {
+    authState.user = null
+    expect(
+      (await handler(makeReq('GET', 'http://localhost/api/persons?action=export'))).status,
+    ).toBe(401)
+  })
+})
+
+describe('DELETE /api/persons?action=full_erase', () => {
+  it('xoá dữ liệu cascade và trả erasure result', async () => {
+    const res = await handler(makeReq('DELETE', 'http://localhost/api/persons?action=full_erase'))
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.personId).toBe(PERSON.id)
+    expect(body.erasureLogId).toBe('log-1')
+    expect(erasePersonDataMock).toHaveBeenCalledWith(expect.anything(), PERSON.id, 'self')
+  })
+
+  it('chưa đăng nhập → 401', async () => {
+    authState.user = null
+    expect(
+      (await handler(makeReq('DELETE', 'http://localhost/api/persons?action=full_erase'))).status,
+    ).toBe(401)
   })
 })
