@@ -78,6 +78,7 @@ import memoriesHandler from './api/memories.js'
 import contextPackageHandler from './api/context-package.js'
 import proposedActionsHandler from './api/proposed-actions.js'
 import companionHandler from './api/companion.js'
+import decisionLedgerHandler from './api/decision-ledger.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -252,6 +253,8 @@ app.all('/api/context-package', wrapEdge(contextPackageHandler))
 app.all('/api/proposed-actions', wrapEdge(proposedActionsHandler))
 // Companion Runtime (V2-09) — Intent -> Context -> Planner -> Policy -> Actions -> Response.
 app.all('/api/companion', wrapEdge(companionHandler))
+// Decision Ledger + Outcome Loop (V2-10) — Structured decision records & evidence loop.
+app.all('/api/decision-ledger', wrapEdge(decisionLedgerHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

@@ -69,6 +69,7 @@ export const DecisionRecordSchema = versionedObject(
     actualOutcomes: z.array(OutcomeObservationSchema).optional(),
     status: DecisionStatusSchema,
     reviewAt: IsoDateTimeSchema.optional(),
+    version: z.number().int().positive().optional(),
     createdAt: IsoDateTimeSchema,
   },
   DECISION_RECORD_SCHEMA_VERSION,
