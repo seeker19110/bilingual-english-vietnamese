@@ -110,3 +110,73 @@ it('404 và 409 từ service được giữ đúng status', async () => {
       .status,
   ).toBe(409)
 })
+
+describe('GET các kind khác', () => {
+  it('kind=nodes lọc theo type hợp lệ', async () => {
+    const res = await handler(req('GET', '?kind=nodes&type=Goal'))
+    expect(res.status).toBe(200)
+    expect(service.listNodes.mock.calls[0]?.[2]).toMatchObject({ type: 'Goal' })
+  })
+  it('kind=nodes với type không hợp lệ trả 400', async () => {
+    expect((await handler(req('GET', '?kind=nodes&type=Habit'))).status).toBe(400)
+  })
+  it('kind=node thiếu id trả 400', async () => {
+    expect((await handler(req('GET', '?kind=node'))).status).toBe(400)
+  })
+  it('kind=node hợp lệ trả node', async () => {
+    service.getNode.mockResolvedValueOnce({ value: { id: NODE }, version: 1 })
+    expect((await handler(req('GET', `?kind=node&id=${NODE}`))).status).toBe(200)
+  })
+  it('kind=edges trả danh sách edges', async () => {
+    const res = await handler(req('GET', '?kind=edges'))
+    expect(res.status).toBe(200)
+    expect(service.listEdges).toHaveBeenCalledWith({}, PERSON)
+  })
+  it('kind=integrity trả issues', async () => {
+    const res = await handler(req('GET', '?kind=integrity'))
+    expect(res.status).toBe(200)
+    expect(service.validateGraphIntegrity).toHaveBeenCalledWith({}, PERSON)
+  })
+  it('kind không hợp lệ trả 400', async () => {
+    expect((await handler(req('GET', '?kind=nope'))).status).toBe(400)
+  })
+})
+
+it('PATCH kind=node cập nhật label', async () => {
+  service.updateNode.mockResolvedValueOnce({ value: { id: NODE }, version: 2 })
+  const res = await handler(
+    req('PATCH', '', { kind: 'node', id: NODE, label: 'mới', expectedVersion: 1 }),
+  )
+  expect(res.status).toBe(200)
+})
+
+it('PATCH kind=goal chuyển trạng thái mục tiêu', async () => {
+  service.transitionGoalStatus.mockResolvedValueOnce({ value: { id: NODE }, version: 2 })
+  const res = await handler(
+    req('PATCH', '', { kind: 'goal', id: NODE, status: 'achieved', expectedVersion: 1 }),
+  )
+  expect(res.status).toBe(200)
+  expect(service.transitionGoalStatus).toHaveBeenCalledWith({}, PERSON, NODE, 'achieved', 1)
+})
+
+describe('DELETE', () => {
+  it('kind=node gọi softDeleteNode', async () => {
+    const res = await handler(req('DELETE', '', { kind: 'node', id: NODE, expectedVersion: 1 }))
+    expect(res.status).toBe(200)
+    expect(service.softDeleteNode).toHaveBeenCalledWith({}, PERSON, NODE, 1)
+  })
+  it('kind=edge gọi softDeleteEdge', async () => {
+    const res = await handler(req('DELETE', '', { kind: 'edge', id: NODE, expectedVersion: 1 }))
+    expect(res.status).toBe(200)
+    expect(service.softDeleteEdge).toHaveBeenCalledWith({}, PERSON, NODE, 1)
+  })
+})
+
+it('method không hỗ trợ trả 405', async () => {
+  expect((await handler(req('PUT'))).status).toBe(405)
+})
+
+it('lỗi không phải AppError được ném lại', async () => {
+  service.listNodes.mockRejectedValueOnce(new Error('boom'))
+  await expect(handler(req('GET'))).rejects.toThrow('boom')
+})
