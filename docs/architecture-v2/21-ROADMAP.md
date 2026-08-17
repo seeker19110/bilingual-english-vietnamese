@@ -99,6 +99,8 @@ Edges tối thiểu: requires, contributes_to, blocks, conflicts_with, supports,
 
 ### V2-08 — Capability Registry
 
+Đặc tả chi tiết: [V2-08-CAPABILITY-REGISTRY.md](./V2-08-CAPABILITY-REGISTRY.md)
+
 - manifest/version/lifecycle;
 - input/output schema;
 - permission/risk/cost/audit policy;
@@ -106,6 +108,8 @@ Edges tối thiểu: requires, contributes_to, blocks, conflicts_with, supports,
 - register real Learning capabilities first.
 
 ### V2-09 — Companion Runtime
+
+Đặc tả chi tiết: [V2-09-COMPANION-RUNTIME.md](./V2-09-COMPANION-RUNTIME.md)
 
 - intent;
 - context resolution;
@@ -120,6 +124,8 @@ Edges tối thiểu: requires, contributes_to, blocks, conflicts_with, supports,
 
 ### V2-10 — Decision Ledger + Outcome Loop
 
+Đặc tả chi tiết: [V2-10-DECISION-LEDGER-OUTCOME-LOOP.md](./V2-10-DECISION-LEDGER-OUTCOME-LOOP.md)
+
 - Decision record;
 - assumptions/evidence/options/tradeoffs;
 - expected vs actual outcome;
@@ -132,12 +138,16 @@ Edges tối thiểu: requires, contributes_to, blocks, conflicts_with, supports,
 
 ### V2-11 — Learning ownership migration
 
+Đặc tả chi tiết: [V2-11-LEARNING-OWNERSHIP-MIGRATION.md](./V2-11-LEARNING-OWNERSHIP-MIGRATION.md)
+
 - learner profile split global/domain;
 - skill/knowledge/evidence/mastery/SRS remain Learning;
 - expose typed Learning read model to Companion;
 - remove new direct imports from core into learning internals.
 
 ### V2-12 — Multi-subject Learning
+
+Đặc tả chi tiết: [V2-12-MULTI-SUBJECT-LEARNING.md](./V2-12-MULTI-SUBJECT-LEARNING.md)
 
 Bring English, Mathematics, Physics, Chemistry, Biology under one Learning bounded context without forcing language-specific concepts onto STEM.
 
@@ -164,6 +174,8 @@ Subject-owned:
 
 ### V2-13 — Career Domain
 
+Đặc tả chi tiết: [V2-13-CAREER-DOMAIN.md](./V2-13-CAREER-DOMAIN.md)
+
 Career is the first non-learning proof.
 
 - CareerProfile;
@@ -175,6 +187,8 @@ Career is the first non-learning proof.
 
 ### V2-14 — Cross-domain Life Graph
 
+Đặc tả chi tiết: [V2-14-CROSS-DOMAIN-LIFE-GRAPH.md](./V2-14-CROSS-DOMAIN-LIFE-GRAPH.md)
+
 Example executable flow:
 
 `Career goal: Data Analyst → skill gap SQL/English/Statistics → Learning plans → evidence/mastery → Career progress`.
@@ -183,11 +197,15 @@ Example executable flow:
 
 ### V2-15 — Work Domain
 
+Đặc tả chi tiết: [V2-15-WORK-DOMAIN.md](./V2-15-WORK-DOMAIN.md)
+
 - projects/tasks/meetings/documents/decisions/deadlines;
 - integrations behind tools + permissions;
 - confirmation boundary for external writes.
 
 ### V2-16 — Startup Domain
+
+Đặc tả chi tiết: [V2-16-STARTUP-DOMAIN.md](./V2-16-STARTUP-DOMAIN.md)
 
 - venture/problem/customer/hypothesis/experiment;
 - validated evidence distinct from hypothesis;
@@ -197,6 +215,8 @@ Example executable flow:
 
 ### V2-17 — Life foundation
 
+Đặc tả chi tiết: [V2-17-LIFE-FOUNDATION.md](./V2-17-LIFE-FOUNDATION.md)
+
 - planning/habits/personal growth/household/wellbeing primitives;
 - high-impact subdomains isolated behind additional policy;
 - no generic mega Life Agent.
@@ -204,6 +224,8 @@ Example executable flow:
 ## Wave F — Automation, hardening, scale
 
 ### V2-18 — Approved automation
+
+Đặc tả chi tiết: [V2-18-APPROVED-AUTOMATION.md](./V2-18-APPROVED-AUTOMATION.md)
 
 - explicit automation grants;
 - schedule/event triggers;
@@ -213,6 +235,8 @@ Example executable flow:
 - action receipts.
 
 ### V2-19 — Platform evaluation and hardening
+
+Đặc tả chi tiết: [V2-19-PLATFORM-EVALUATION-HARDENING.md](./V2-19-PLATFORM-EVALUATION-HARDENING.md)
 
 - memory precision/correction rate;
 - routing accuracy;
@@ -224,6 +248,8 @@ Example executable flow:
 - privacy/export/delete drills.
 
 ### V2-20 — Scale and Final Architecture Audit
+
+Đặc tả chi tiết: [V2-20-SCALE-AUDIT.md](./V2-20-SCALE-AUDIT.md)
 
 V2 accepted only when:
 
