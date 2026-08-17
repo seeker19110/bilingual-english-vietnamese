@@ -95,24 +95,44 @@ it('profile chưa onboarding không được backfill default giả', async () =
   ).rejects.toThrow('chưa có learning goal')
 })
 
-it('chặn backfill nếu goal hoặc daily_minutes không hợp lệ', async () => {
+it('không tìm thấy profile → NotFoundError (không dựng goal giả)', async () => {
+  const pool = { query: vi.fn(async () => ({ rows: [] })) } as unknown as Pool
+  await expect(backfillCurrentLearningGoal(pool, USER_ID)).rejects.toThrow('chưa có learning goal')
+})
+
+it('nguồn thiếu goal hoặc daily_minutes không hợp lệ → ConflictError', async () => {
   await expect(
-    backfillCurrentLearningGoal(poolWith({ ...sourceRow, goal: null }), USER_ID),
-  ).rejects.toThrow('Learning goal nguồn không hợp lệ để backfill')
+    backfillCurrentLearningGoal(
+      poolWith({ ...sourceRow, goal: null } as unknown as typeof sourceRow),
+      USER_ID,
+    ),
+  ).rejects.toThrow('không hợp lệ để backfill')
+
+  await expect(
+    backfillCurrentLearningGoal(
+      poolWith({ ...sourceRow, daily_minutes: null } as unknown as typeof sourceRow),
+      USER_ID,
+    ),
+  ).rejects.toThrow('không hợp lệ để backfill')
 
   await expect(
     backfillCurrentLearningGoal(poolWith({ ...sourceRow, daily_minutes: 0 }), USER_ID),
-  ).rejects.toThrow('Learning goal nguồn không hợp lệ để backfill')
+  ).rejects.toThrow('không hợp lệ để backfill')
+
+  await expect(
+    backfillCurrentLearningGoal(poolWith({ ...sourceRow, daily_minutes: -5 }), USER_ID),
+  ).rejects.toThrow('không hợp lệ để backfill')
 })
 
-it('chặn readLearningGoalFromLifeGraph nếu node không phải Goal hoặc không thuộc người dùng', async () => {
-  getNode.mockResolvedValueOnce({ value: { ...node, type: 'Skill' }, version: 1 })
+it('node không phải Goal → ConflictError', async () => {
+  getNode.mockResolvedValue({ value: { ...node, type: 'Skill' }, version: 1 })
   await expect(readLearningGoalFromLifeGraph(poolWith(), USER_ID, NODE_ID)).rejects.toThrow(
     'Node không phải Goal',
   )
+})
 
-  getNode.mockResolvedValueOnce({ value: node, version: 1 })
-  getLearningGoalSourceId.mockResolvedValueOnce('different-user-id')
+it('node Goal thuộc người dùng khác → NotFoundError', async () => {
+  getLearningGoalSourceId.mockResolvedValue('44444444-4444-4444-8444-444444444444')
   await expect(readLearningGoalFromLifeGraph(poolWith(), USER_ID, NODE_ID)).rejects.toThrow(
     'Goal không thuộc người dùng',
   )

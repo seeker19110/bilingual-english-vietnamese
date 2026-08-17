@@ -197,3 +197,10 @@ describe('resolveAuthority', () => {
     ).rejects.toThrow()
   })
 })
+
+describe('policyService — nhánh biên', () => {
+  it('insert policy không trả dòng nào → ConflictError "thử lại"', async () => {
+    const { pool } = mockPool(() => [])
+    await expect(setPolicy(pool, INPUT)).rejects.toThrow('Không ghi được policy')
+  })
+})

@@ -536,3 +536,263 @@ describe('WorkService', () => {
     expect(minDoc.contentUri).toBeUndefined()
   })
 })
+
+// Nhánh biên: tham số optional KHÔNG truyền, cột NULL, lỗi not-found, parse JSON hỏng.
+describe('WorkService — nhánh biên', () => {
+  it('tạo project không có description/deadline → gửi null xuống DB và bỏ field khỏi kết quả', async () => {
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: PROJECT_ID,
+          person_id: PERSON_ID,
+          name: 'Dự án tối giản',
+          description: null,
+          status: 'active',
+          deadline: null,
+          version: 1,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+
+    const project = await createWorkProject(pool, PERSON_ID, { name: 'Dự án tối giản' })
+    expect(project.description).toBeUndefined()
+    expect(project.deadline).toBeUndefined()
+    expect(mockQuery.mock.calls[0]![1]).toEqual([
+      expect.any(String),
+      PERSON_ID,
+      'Dự án tối giản',
+      null,
+      null,
+    ])
+  })
+
+  it('lọc project theo status → thêm mệnh đề and status = $2', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    const list = await listWorkProjects(pool, PERSON_ID, 'archived')
+    expect(list).toEqual([])
+    const [sql, params] = mockQuery.mock.calls[0]! as [string, unknown[]]
+    expect(sql).toContain('and status = $2')
+    expect(params).toEqual([PERSON_ID, 'archived'])
+  })
+
+  it('updateWorkProject ném NotFoundError khi project không thuộc person', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(
+      updateWorkProject(pool, PERSON_ID, PROJECT_ID, { status: 'completed' }),
+    ).rejects.toThrow('Không tìm thấy WorkProject')
+    // Chỉ chạy câu select, không chạy câu update.
+    expect(mockQuery).toHaveBeenCalledTimes(1)
+  })
+
+  it('updateWorkProject không truyền field nào → tất cả tham số update là null (coalesce giữ nguyên)', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [{ id: PROJECT_ID }] })
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: PROJECT_ID,
+          person_id: PERSON_ID,
+          name: 'Giữ nguyên',
+          description: null,
+          status: 'active',
+          deadline: null,
+          version: 2,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+
+    const updated = await updateWorkProject(pool, PERSON_ID, PROJECT_ID, {})
+    expect(updated.version).toBe(2)
+    expect(mockQuery.mock.calls[1]![1]).toEqual([null, null, null, null, PROJECT_ID, PERSON_ID])
+  })
+
+  it('tạo task không có projectId/dueAt', async () => {
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: TASK_ID,
+          person_id: PERSON_ID,
+          project_id: null,
+          title: 'Việc lẻ',
+          priority: 'low',
+          status: 'todo',
+          due_at: null,
+          version: 1,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+
+    const task = await createWorkTask(pool, PERSON_ID, { title: 'Việc lẻ', priority: 'low' })
+    expect(task.projectId).toBeUndefined()
+    expect(task.dueAt).toBeUndefined()
+  })
+
+  it('listWorkTasks không lọc gì → chỉ where person_id', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await listWorkTasks(pool, PERSON_ID)
+    const [sql, params] = mockQuery.mock.calls[0]! as [string, unknown[]]
+    expect(sql).not.toContain('and status')
+    expect(sql).not.toContain('and project_id')
+    expect(params).toEqual([PERSON_ID])
+  })
+
+  it('listWorkTasks chỉ lọc projectId → placeholder lùi về $2', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await listWorkTasks(pool, PERSON_ID, undefined, PROJECT_ID)
+    const [sql, params] = mockQuery.mock.calls[0]! as [string, unknown[]]
+    expect(sql).toContain('and project_id = $2')
+    expect(params).toEqual([PERSON_ID, PROJECT_ID])
+  })
+
+  it('updateWorkTask ném NotFoundError khi task không tồn tại', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(updateWorkTask(pool, PERSON_ID, TASK_ID, { status: 'done' })).rejects.toThrow(
+      'Không tìm thấy WorkTask',
+    )
+    expect(mockQuery).toHaveBeenCalledTimes(1)
+  })
+
+  it('updateWorkTask không truyền field nào → toàn null', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [{ id: TASK_ID }] })
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: TASK_ID,
+          person_id: PERSON_ID,
+          project_id: null,
+          title: 'Việc lẻ',
+          priority: 'low',
+          status: 'todo',
+          due_at: null,
+          version: 2,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+
+    await updateWorkTask(pool, PERSON_ID, TASK_ID, {})
+    expect(mockQuery.mock.calls[1]![1]).toEqual([null, null, null, null, TASK_ID, PERSON_ID])
+  })
+
+  it('recordWorkMeeting mặc định 30 phút, không summary, actionItems rỗng', async () => {
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: MEETING_ID,
+          person_id: PERSON_ID,
+          title: 'Họp nhanh',
+          scheduled_at: new Date('2026-08-18T10:00:00Z'),
+          duration_minutes: 30,
+          summary: null,
+          action_items: null,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+
+    const meeting = await recordWorkMeeting(pool, PERSON_ID, {
+      title: 'Họp nhanh',
+      scheduledAt: '2026-08-18T10:00:00Z',
+    })
+    expect(meeting.summary).toBeUndefined()
+    expect(meeting.actionItems).toEqual([])
+    const params = mockQuery.mock.calls[0]![1] as unknown[]
+    expect(params[4]).toBe(30)
+    expect(params[5]).toBeNull()
+    expect(params[6]).toBe('[]')
+  })
+
+  it('action_items dạng chuỗi JSON hợp lệ được parse thành mảng', async () => {
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: MEETING_ID,
+          person_id: PERSON_ID,
+          title: 'Họp nhanh',
+          scheduled_at: new Date('2026-08-18T10:00:00Z'),
+          duration_minutes: 15,
+          summary: 'Tóm tắt',
+          action_items: '["Gửi báo cáo"]',
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+
+    const list = await listWorkMeetings(pool, PERSON_ID)
+    expect(list[0]!.actionItems).toEqual(['Gửi báo cáo'])
+  })
+
+  it('action_items dạng chuỗi JSON hỏng hoặc không phải mảng → trả mảng rỗng', async () => {
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: MEETING_ID,
+          person_id: PERSON_ID,
+          title: 'Họp A',
+          scheduled_at: new Date('2026-08-18T10:00:00Z'),
+          duration_minutes: 15,
+          summary: null,
+          action_items: 'không-phải-json',
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+        {
+          id: MEETING_ID,
+          person_id: PERSON_ID,
+          title: 'Họp B',
+          scheduled_at: new Date('2026-08-18T11:00:00Z'),
+          duration_minutes: 15,
+          summary: null,
+          action_items: '{"a":1}',
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+
+    const list = await listWorkMeetings(pool, PERSON_ID)
+    expect(list[0]!.actionItems).toEqual([])
+    expect(list[1]!.actionItems).toEqual([])
+  })
+
+  it('tạo document không có projectId nhưng có contentUri', async () => {
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: DOC_ID,
+          person_id: PERSON_ID,
+          project_id: null,
+          title: 'Ghi chú rời',
+          document_type: 'note',
+          summary: 'Ghi chú không thuộc dự án',
+          content_uri: 'https://example.com/note',
+          version: 1,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+
+    const doc = await createWorkDocument(pool, PERSON_ID, {
+      title: 'Ghi chú rời',
+      documentType: 'note',
+      summary: 'Ghi chú không thuộc dự án',
+      contentUri: 'https://example.com/note',
+    })
+    expect(doc.projectId).toBeUndefined()
+    expect(doc.contentUri).toBe('https://example.com/note')
+  })
+
+  it('listWorkDocuments không lọc projectId → chỉ where person_id', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    const docs = await listWorkDocuments(pool, PERSON_ID)
+    expect(docs).toEqual([])
+    const [sql, params] = mockQuery.mock.calls[0]! as [string, unknown[]]
+    expect(sql).not.toContain('and project_id')
+    expect(params).toEqual([PERSON_ID])
+  })
+})

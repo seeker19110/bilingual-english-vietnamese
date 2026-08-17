@@ -11,7 +11,7 @@ const validTool = {
   requiredPermissions: ['document.read'],
   idempotent: true,
   timeoutMs: 5000,
-  auditPolicy: 'log_document_id',
+  auditPolicy: { logLevel: 'minimal', retentionDays: 90 },
   schemaVersion: TOOL_MANIFEST_SCHEMA_VERSION,
 }
 
@@ -37,5 +37,20 @@ describe('ToolManifestSchema', () => {
 
   it('id sai định dạng → từ chối', () => {
     expect(() => ToolManifestSchema.parse({ ...validTool, id: 'DocumentRead' })).toThrow()
+  })
+
+  it('auditPolicy dạng chuỗi cũ (trước khi dùng chung CapabilityAuditPolicySchema) → từ chối', () => {
+    expect(() =>
+      ToolManifestSchema.parse({ ...validTool, auditPolicy: 'log_document_id' }),
+    ).toThrow()
+  })
+
+  it('auditPolicy.logLevel ngoài minimal|full → từ chối', () => {
+    expect(() =>
+      ToolManifestSchema.parse({
+        ...validTool,
+        auditPolicy: { logLevel: 'verbose', retentionDays: 90 },
+      }),
+    ).toThrow()
   })
 })

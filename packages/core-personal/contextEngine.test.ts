@@ -212,3 +212,213 @@ describe('ContextEngine - buildContextPackage', () => {
     expect(hasEpisodic).toBe(true)
   })
 })
+
+// Nhánh biên: câu hỏi rỗng, bộ nhớ episodic, lọc node/fact không hợp lệ, cắt bớt nội dung khi thiếu budget.
+describe('buildContextPackage — nhánh biên', () => {
+  it('nạp cả bộ nhớ episodic khi có bản ghi', async () => {
+    memoryService.listMemoryRecords.mockImplementation(async (_pool, _personId, opts) => {
+      if (opts?.namespace === 'episodic') {
+        return [
+          {
+            id: MEMORY_ID,
+            namespace: 'episodic',
+            content: 'Buổi học hôm qua nói về thì hiện tại hoàn thành',
+            provenance: 'session_log',
+            sensitivity: 'personal',
+          },
+        ]
+      }
+      return []
+    })
+
+    const pkg = await buildContextPackage(mockPool, {
+      personId: PERSON,
+      requestId: 'req-6',
+      requestText: 'Ôn lại bài hôm qua',
+      purpose: 'tutoring',
+    })
+
+    const episodic = pkg.items.find((i) => i.sourceType === 'recent_episodic_context')
+    expect(episodic?.content).toContain('[episodic]')
+    expect(episodic?.provenance).toBe('session_log')
+  })
+
+  it('câu hỏi rỗng (chỉ khoảng trắng) → không có mục current_request', async () => {
+    lifeGraph.listNodes.mockResolvedValue([])
+    personService.listFacts.mockResolvedValue([])
+    memoryService.listMemoryRecords.mockResolvedValue([])
+
+    const pkg = await buildContextPackage(mockPool, {
+      personId: PERSON,
+      requestId: 'req-7',
+      requestText: '   ',
+      purpose: 'tutoring',
+    })
+
+    expect(pkg.items).toEqual([])
+    expect(pkg.tokenUsed).toBe(0)
+  })
+
+  it('bỏ qua node đã lưu trữ và node không phải Goal/Project', async () => {
+    lifeGraph.listNodes.mockResolvedValue([
+      {
+        value: {
+          id: GOAL_NODE,
+          type: 'Goal',
+          label: 'Đã xong',
+          archivedAt: '2026-01-01T00:00:00Z',
+        },
+      },
+      { value: { id: GOAL_NODE, type: 'Skill', label: 'SQL', archivedAt: null } },
+    ])
+    personService.listFacts.mockResolvedValue([])
+    memoryService.listMemoryRecords.mockResolvedValue([])
+
+    const pkg = await buildContextPackage(mockPool, {
+      personId: PERSON,
+      requestId: 'req-8',
+      requestText: 'Xin chào',
+      purpose: 'tutoring',
+    })
+
+    expect(pkg.items.some((i) => i.sourceType === 'active_goal_or_project')).toBe(false)
+  })
+
+  it('bỏ qua fact không do người dùng tự khai (origin khác user_declared)', async () => {
+    lifeGraph.listNodes.mockResolvedValue([])
+    personService.listFacts.mockResolvedValue([
+      {
+        id: FACT_ID,
+        key: 'observed_level',
+        value: 'B1',
+        origin: 'observed',
+        sensitivity: 'personal',
+        supersededBy: null,
+      },
+    ])
+    memoryService.listMemoryRecords.mockResolvedValue([])
+
+    const pkg = await buildContextPackage(mockPool, {
+      personId: PERSON,
+      requestId: 'req-9',
+      requestText: 'Xin chào',
+      purpose: 'tutoring',
+    })
+
+    expect(pkg.items.some((i) => i.sourceType === 'user_declared_fact')).toBe(false)
+  })
+
+  it('có domainState nhưng chưa đồng ý chia sẻ domain đó → bỏ qua trạng thái domain', async () => {
+    consents.isConsentActive.mockImplementation(
+      async (_pool, _personId, scope) => scope !== 'career',
+    )
+    lifeGraph.listNodes.mockResolvedValue([])
+    personService.listFacts.mockResolvedValue([])
+    memoryService.listMemoryRecords.mockResolvedValue([])
+
+    const pkg = await buildContextPackage(mockPool, {
+      personId: PERSON,
+      requestId: 'req-10',
+      requestText: 'Xin chào',
+      purpose: 'tutoring',
+      domain: 'career',
+      domainState: {
+        sourceId: '55555555-5555-4555-8555-555555555555',
+        content: 'Mục tiêu: Tech Lead',
+        provenance: 'career:profile',
+      },
+    })
+
+    expect(pkg.items.some((i) => i.sourceType === 'authoritative_domain_state')).toBe(false)
+  })
+
+  it('không đồng ý chia sẻ bộ nhớ cá nhân → bỏ cả memory suy ra lẫn episodic', async () => {
+    consents.isConsentActive.mockImplementation(
+      async (_pool, _personId, scope) => scope !== 'personal_memory',
+    )
+    lifeGraph.listNodes.mockResolvedValue([])
+    personService.listFacts.mockResolvedValue([])
+
+    const pkg = await buildContextPackage(mockPool, {
+      personId: PERSON,
+      requestId: 'req-11',
+      requestText: 'Xin chào',
+      purpose: 'tutoring',
+    })
+
+    expect(memoryService.listMemoryRecords).not.toHaveBeenCalled()
+    expect(pkg.items.every((i) => i.sourceType === 'current_request')).toBe(true)
+  })
+
+  it('câu hỏi dài hơn cả budget → cắt bớt nội dung thay vì bỏ hẳn', async () => {
+    lifeGraph.listNodes.mockResolvedValue([])
+    personService.listFacts.mockResolvedValue([])
+    memoryService.listMemoryRecords.mockResolvedValue([])
+
+    const pkg = await buildContextPackage(mockPool, {
+      personId: PERSON,
+      requestId: 'req-12',
+      requestText: 'A'.repeat(5000),
+      purpose: 'tutoring',
+      tokenBudget: 20,
+    })
+
+    expect(pkg.items.length).toBe(1)
+    expect(pkg.items[0]?.sourceType).toBe('current_request')
+    expect(pkg.items[0]?.content.length).toBeLessThan(5000)
+    expect(pkg.tokenUsed).toBeLessThanOrEqual(20)
+  })
+})
+
+describe('buildContextPackage — lưới an toàn cho mức nhạy cảm lạ', () => {
+  it('maxSensitivity không hợp lệ → lùi về mức mặc định "sensitive"', async () => {
+    lifeGraph.listNodes.mockResolvedValue([])
+    personService.listFacts.mockResolvedValue([
+      {
+        id: FACT_ID,
+        key: 'note',
+        value: 'thông tin nhạy cảm',
+        origin: 'user_declared',
+        sensitivity: 'sensitive',
+        supersededBy: null,
+      },
+    ])
+    memoryService.listMemoryRecords.mockResolvedValue([])
+
+    const pkg = await buildContextPackage(mockPool, {
+      personId: PERSON,
+      requestId: 'req-13',
+      requestText: 'Xin chào',
+      purpose: 'tutoring',
+      maxSensitivity: 'khong-hop-le' as unknown as 'sensitive',
+    })
+
+    // Mặc định 'sensitive' nên fact mức sensitive vẫn được giữ.
+    expect(pkg.items.some((i) => i.sensitivity === 'sensitive')).toBe(true)
+  })
+
+  it('mục có mức nhạy cảm lạ được xếp hạng 1 nên bị loại khi ngưỡng là public', async () => {
+    lifeGraph.listNodes.mockResolvedValue([])
+    personService.listFacts.mockResolvedValue([
+      {
+        id: FACT_ID,
+        key: 'note',
+        value: 'giá trị lạ',
+        origin: 'user_declared',
+        sensitivity: 'muc-la',
+        supersededBy: null,
+      },
+    ])
+    memoryService.listMemoryRecords.mockResolvedValue([])
+
+    const pkg = await buildContextPackage(mockPool, {
+      personId: PERSON,
+      requestId: 'req-14',
+      requestText: 'Xin chào',
+      purpose: 'tutoring',
+      maxSensitivity: 'public',
+    })
+
+    expect(pkg.items.some((i) => i.sourceType === 'user_declared_fact')).toBe(false)
+  })
+})

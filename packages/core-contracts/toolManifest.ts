@@ -7,11 +7,16 @@
 // `career.review_cv` DÙNG nhiều Tool (`document.read`, `resume.extract`,
 // `career.rubric.evaluate`). 1 Capability có thể gọi nhiều Tool; 1 Tool có thể được nhiều
 // Capability dùng chung.
+//
+// `auditPolicy` dùng chung `CapabilityAuditPolicySchema` (owner chốt 2026-08-17): cùng khái
+// niệm "mức log/thời gian giữ audit" không nên có 2 hình dạng khác nhau giữa 2 contract liên
+// quan nhau. `costPolicy` KHÔNG có ở Tool — ngân sách chi phí là quyết định tầng Capability.
 
 import { z } from 'zod'
 import { versionedObject } from './version.js'
+import { CapabilityAuditPolicySchema } from './capabilityManifest.js'
 
-export const TOOL_MANIFEST_SCHEMA_VERSION = 1
+export const TOOL_MANIFEST_SCHEMA_VERSION = 2
 
 export const ToolSideEffectSchema = z.enum(['none', 'internal', 'external'])
 
@@ -27,7 +32,10 @@ export const ToolManifestSchema = versionedObject(
     requiredPermissions: z.array(z.string().min(1).max(100)),
     idempotent: z.boolean(),
     timeoutMs: z.number().int().positive(),
-    auditPolicy: z.string().min(1).max(200),
+    // Dùng chung hình dạng với CapabilityAuditPolicySchema — cùng khái niệm "mức log/thời gian
+    // giữ audit", chỉ khác đơn vị mô tả (capability vs tool). Không có costPolicy riêng cho Tool:
+    // ngân sách chi phí nằm ở tầng Capability (1 capability gọi nhiều tool cùng chung 1 trần).
+    auditPolicy: CapabilityAuditPolicySchema,
   },
   TOOL_MANIFEST_SCHEMA_VERSION,
 ).refine((tool) => tool.sideEffect !== 'external' || tool.idempotent, {

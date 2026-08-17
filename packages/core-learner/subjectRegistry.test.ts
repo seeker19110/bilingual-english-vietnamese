@@ -55,3 +55,26 @@ describe('subjectRegistry', () => {
     expect(isValidSubjectLevel('mathematics', 'B2')).toBe(false)
   })
 })
+
+describe('subjectRegistry — nhánh biên', () => {
+  it('liệt kê toàn bộ môn khi không truyền category', () => {
+    const all = listSupportedSubjects()
+    expect(all.length).toBe(5)
+    // Trả về BẢN SAO: sửa mảng nhận được không đụng tới registry gốc.
+    all.pop()
+    expect(listSupportedSubjects().length).toBe(5)
+  })
+
+  it('category không có môn nào → mảng rỗng', () => {
+    expect(listSupportedSubjects('humanities')).toEqual([])
+  })
+
+  it('tra manifest không phân biệt hoa thường', () => {
+    expect(getSubjectManifest('ENGLISH').id).toBe('english')
+    expect(getSubjectManifest('Mathematics').id).toBe('mathematics')
+  })
+
+  it('isValidSubjectLevel trả false (không ném lỗi) khi môn học không tồn tại', () => {
+    expect(isValidSubjectLevel('astronomy', 'B2')).toBe(false)
+  })
+})

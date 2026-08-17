@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import {
   getStoredToken,
   setStoredToken,
@@ -27,28 +27,53 @@ describe('getStoredToken/setStoredToken/clearStoredToken', () => {
     expect(getStoredToken()).toBeNull()
   })
 
+  // `vi.spyOn(Storage.prototype, ...)` KHÔNG dùng ở đây dù chạy đúng logic (đã xác minh thủ công) —
+  // v8 coverage provider của Vitest không ghi nhận nhánh `catch` được chạm khi spy ở tầng
+  // prototype xen giữa các lệnh gọi `localStorage` bình thường khác trong cùng file test (bug
+  // công cụ, không phải bug code). Thay `window.localStorage` toàn bộ bằng
+  // `Object.defineProperty` để v8 coverage đếm đúng nhánh catch.
+  function withBlockedLocalStorage<T>(stub: Partial<Storage>, run: () => T): T {
+    const original = window.localStorage
+    Object.defineProperty(window, 'localStorage', { configurable: true, value: stub })
+    try {
+      return run()
+    } finally {
+      Object.defineProperty(window, 'localStorage', { configurable: true, value: original })
+    }
+  }
+
   it('localStorage bị chặn (throw) → getStoredToken trả null, không throw', () => {
-    const spy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
-      throw new Error('blocked')
-    })
-    expect(getStoredToken()).toBeNull()
-    spy.mockRestore()
+    const result = withBlockedLocalStorage(
+      {
+        getItem() {
+          throw new Error('blocked')
+        },
+      },
+      () => getStoredToken(),
+    )
+    expect(result).toBeNull()
   })
 
   it('localStorage bị chặn (throw) → setStoredToken không throw', () => {
-    const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-      throw new Error('blocked')
-    })
-    expect(() => setStoredToken('x')).not.toThrow()
-    spy.mockRestore()
+    withBlockedLocalStorage(
+      {
+        setItem() {
+          throw new Error('blocked')
+        },
+      },
+      () => expect(() => setStoredToken('x')).not.toThrow(),
+    )
   })
 
   it('localStorage bị chặn (throw) → clearStoredToken không throw', () => {
-    const spy = vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
-      throw new Error('blocked')
-    })
-    expect(() => clearStoredToken()).not.toThrow()
-    spy.mockRestore()
+    withBlockedLocalStorage(
+      {
+        removeItem() {
+          throw new Error('blocked')
+        },
+      },
+      () => expect(() => clearStoredToken()).not.toThrow(),
+    )
   })
 })
 
