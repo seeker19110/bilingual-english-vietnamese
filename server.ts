@@ -79,6 +79,7 @@ import contextPackageHandler from './api/context-package.js'
 import proposedActionsHandler from './api/proposed-actions.js'
 import companionHandler from './api/companion.js'
 import decisionLedgerHandler from './api/decision-ledger.js'
+import learningReadModelHandler from './api/learning-read-model.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -255,6 +256,8 @@ app.all('/api/proposed-actions', wrapEdge(proposedActionsHandler))
 app.all('/api/companion', wrapEdge(companionHandler))
 // Decision Ledger + Outcome Loop (V2-10) — Structured decision records & evidence loop.
 app.all('/api/decision-ledger', wrapEdge(decisionLedgerHandler))
+// Learning Read Model (V2-11) — Typed Learning domain read model for Companion.
+app.all('/api/learning-read-model', wrapEdge(learningReadModelHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

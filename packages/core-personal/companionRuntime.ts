@@ -9,6 +9,10 @@ import { buildContextPackage, type ContextBuildOptions } from './contextEngine.j
 import { proposeAction, type ProposeActionInput } from './proposedActionService.js'
 import type { ContextPackage } from '../core-contracts/contextPackage.js'
 import type { ProposedAction } from '../core-contracts/proposedAction.js'
+import {
+  getLearningReadModel,
+  formatLearningReadModelForContext,
+} from '../core-learner/learningReadModelService.js'
 
 export const CompanionRequestSchema = z.object({
   personId: z.string().uuid(),
@@ -264,13 +268,33 @@ export async function executeCompanionTurn(
   // Step 1: Intent & Domain Resolution
   const { intent, domain } = resolveIntentAndDomain(userMessage, explicitIntent, explicitDomain)
 
-  // Step 2: Context Resolution (Context Engine)
+  // Step 2: Context Resolution (Context Engine with Domain Read Model)
+  let domainState: ContextBuildOptions['domainState'] = undefined
+  if (domain === 'learning') {
+    try {
+      const personRow = await pool.query<{ user_id: string }>(
+        'select user_id from personal.persons where id = $1',
+        [personId],
+      )
+      const userId = personRow.rows[0]?.user_id ?? personId
+      const learningModel = await getLearningReadModel(pool, { personId, userId })
+      domainState = {
+        sourceId: personId,
+        content: formatLearningReadModelForContext(learningModel),
+        provenance: 'learning:read_model',
+      }
+    } catch {
+      // Graceful fallback
+    }
+  }
+
   const contextOptions: ContextBuildOptions = {
     personId,
     requestId: randomUUID(),
     requestText: userMessage,
     domain,
     purpose: 'companion_conversation',
+    ...(domainState ? { domainState } : {}),
     ...(tokenBudget !== undefined ? { tokenBudget } : {}),
   }
   const contextPackage = await buildContextPackage(pool, contextOptions)
