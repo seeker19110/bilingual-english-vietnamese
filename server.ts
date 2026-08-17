@@ -82,6 +82,7 @@ import decisionLedgerHandler from './api/decision-ledger.js'
 import learningReadModelHandler from './api/learning-read-model.js'
 import subjectsHandler from './api/subjects.js'
 import careerHandler from './api/career.js'
+import workHandler from './api/work.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -264,6 +265,8 @@ app.all('/api/learning-read-model', wrapEdge(learningReadModelHandler))
 app.all('/api/subjects', wrapEdge(subjectsHandler))
 // Career Domain (V2-13) — Profile, experiences, goals & skill gap analysis.
 app.all('/api/career', wrapEdge(careerHandler))
+// Work Domain (V2-15) — Projects, tasks, meetings, documents, deadlines.
+app.all('/api/work', wrapEdge(workHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
