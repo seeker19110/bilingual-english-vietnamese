@@ -26,6 +26,17 @@ export interface SendCompanionMessageParams {
   tokenBudget?: number
 }
 
+export interface CompanionStreamCallbacks {
+  onMeta?: (meta: { intent: string; targetDomain: string; contextPackage: ContextPackage }) => void
+  onChunk?: (delta: string) => void
+  onActions?: (actions: {
+    proposedActions: ProposedAction[]
+    executionSummary: CompanionExecutionSummary
+  }) => void
+  onDone?: (response: CompanionResponse) => void
+  onError?: (error: Error) => void
+}
+
 /**
  * Sends a message turn to the Multi-Domain Companion Runtime.
  */
@@ -48,6 +59,94 @@ export async function sendCompanionMessage(
   }
 
   return res.json()
+}
+
+/**
+ * Sends a message turn to the Multi-Domain Companion Runtime with real-time SSE streaming.
+ */
+export async function sendCompanionMessageStream(
+  params: SendCompanionMessageParams,
+  callbacks: CompanionStreamCallbacks,
+): Promise<CompanionResponse> {
+  const headers = await getAuthHeader()
+  const res = await fetch('/api/companion', {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ ...params, stream: true }),
+  })
+
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({ error: `HTTP error ${res.status}` }))
+    const err = new Error(errorBody.error || `HTTP error ${res.status}`)
+    callbacks.onError?.(err)
+    throw err
+  }
+
+  if (!res.body) {
+    throw new Error('Response body is missing')
+  }
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  let finalResponse: CompanionResponse | null = null
+  let isStreaming = true
+  while (isStreaming) {
+    const { done, value } = await reader.read()
+    if (done) {
+      isStreaming = false
+      break
+    }
+
+    buffer += decoder.decode(value, { stream: true })
+    const parts = buffer.split('\n\n')
+    buffer = parts.pop() || ''
+
+    for (const part of parts) {
+      if (!part.trim()) continue
+      const lines = part.split('\n')
+      let eventType = 'message'
+      let dataText = ''
+
+      for (const line of lines) {
+        if (line.startsWith('event:')) {
+          eventType = line.slice(6).trim()
+        } else if (line.startsWith('data:')) {
+          dataText = line.slice(5).trim()
+        }
+      }
+
+      if (!dataText) continue
+      try {
+        const parsed = JSON.parse(dataText)
+        if (eventType === 'meta') {
+          callbacks.onMeta?.(parsed)
+        } else if (eventType === 'chunk') {
+          callbacks.onChunk?.(parsed.delta)
+        } else if (eventType === 'actions') {
+          callbacks.onActions?.(parsed)
+        } else if (eventType === 'done') {
+          finalResponse = parsed as CompanionResponse
+          callbacks.onDone?.(finalResponse)
+        } else if (eventType === 'error') {
+          const err = new Error(parsed.message || parsed.error || 'SSE Error')
+          callbacks.onError?.(err)
+          throw err
+        }
+      } catch {
+        // Ignore parse errors on partial chunks
+      }
+    }
+  }
+
+  if (!finalResponse) {
+    throw new Error('Stream ended without completion event')
+  }
+
+  return finalResponse
 }
 
 /**

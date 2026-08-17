@@ -24,10 +24,9 @@ import PageHeader from '../components/PageHeader'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '@core/ToastProvider'
 import {
-  sendCompanionMessage,
+  sendCompanionMessageStream,
   confirmProposedAction,
   rejectProposedAction,
-  type CompanionResponse,
 } from '../lib/companionApi'
 import type { ProposedAction } from '../../../../packages/core-contracts/proposedAction'
 import type { ContextPackage } from '../../../../packages/core-contracts/contextPackage'
@@ -120,31 +119,80 @@ export default function Companion() {
       timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
     }
 
-    setMessages((prev) => [...prev, userMsg])
+    const botMsgId = `bot-${Date.now()}`
+    let streamedText = ''
+    let botMeta: { intent?: string; domain?: string; contextPackage?: ContextPackage } = {}
+    let botActions: ProposedAction[] | undefined = undefined
+
+    setMessages((prev) => [
+      ...prev,
+      userMsg,
+      {
+        id: botMsgId,
+        sender: 'companion',
+        text: '',
+        timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+        domain: selectedDomain === 'all' ? undefined : selectedDomain,
+      },
+    ])
     if (!customText) setInput('')
     setLoading(true)
 
     try {
-      const response: CompanionResponse = await sendCompanionMessage({
-        message: textToSend,
-        domain: selectedDomain === 'all' ? undefined : selectedDomain,
-      })
-
-      const botMsg: ChatMessage = {
-        id: `bot-${Date.now()}`,
-        sender: 'companion',
-        text: response.reply,
-        timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-        intent: response.intent,
-        domain: response.targetDomain,
-        contextPackage: response.contextPackage,
-        proposedActions: response.proposedActions,
-      }
-
-      setMessages((prev) => [...prev, botMsg])
+      await sendCompanionMessageStream(
+        {
+          message: textToSend,
+          domain: selectedDomain === 'all' ? undefined : selectedDomain,
+        },
+        {
+          onMeta: (meta) => {
+            botMeta = {
+              intent: meta.intent,
+              domain: meta.targetDomain,
+              contextPackage: meta.contextPackage,
+            }
+            setMessages((prev) => prev.map((m) => (m.id === botMsgId ? { ...m, ...botMeta } : m)))
+          },
+          onChunk: (delta) => {
+            streamedText += delta
+            setMessages((prev) =>
+              prev.map((m) => (m.id === botMsgId ? { ...m, text: streamedText } : m)),
+            )
+          },
+          onActions: (actionsData) => {
+            botActions = actionsData.proposedActions
+            setMessages((prev) =>
+              prev.map((m) => (m.id === botMsgId ? { ...m, proposedActions: botActions } : m)),
+            )
+          },
+          onDone: (finalResp) => {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === botMsgId
+                  ? {
+                      ...m,
+                      text: finalResp.reply,
+                      intent: finalResp.intent,
+                      domain: finalResp.targetDomain,
+                      contextPackage: finalResp.contextPackage,
+                      proposedActions: finalResp.proposedActions,
+                    }
+                  : m,
+              ),
+            )
+          },
+        },
+      )
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err)
       toast.error(message || 'Lỗi khi gửi yêu cầu tới Companion')
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === botMsgId && !m.text
+            ? { ...m, text: 'Đã xảy ra lỗi khi kết nối với Bạn Đồng Hành AI.' }
+            : m,
+        ),
+      )
     } finally {
       setLoading(false)
     }

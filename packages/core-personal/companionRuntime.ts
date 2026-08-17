@@ -347,3 +347,65 @@ export async function executeCompanionTurn(
     },
   }
 }
+
+export type CompanionStreamEvent =
+  | { type: 'meta'; data: { intent: string; targetDomain: string; contextPackage: ContextPackage } }
+  | { type: 'chunk'; data: { delta: string } }
+  | {
+      type: 'actions'
+      data: {
+        proposedActions: ProposedAction[]
+        executionSummary: CompanionExecutionSummary
+      }
+    }
+  | { type: 'done'; data: CompanionResponse }
+  | { type: 'error'; data: { message: string } }
+
+/**
+ * Async generator for Streaming Companion responses over Server-Sent Events (SSE).
+ * Yields meta -> text chunks -> proposed actions -> final done response.
+ */
+export async function* streamCompanionTurn(
+  pool: Pool,
+  request: CompanionRequest,
+): AsyncGenerator<CompanionStreamEvent, CompanionResponse, unknown> {
+  // Execute the turn logic
+  const response = await executeCompanionTurn(pool, request)
+
+  // 1. Emit metadata event
+  yield {
+    type: 'meta',
+    data: {
+      intent: response.intent,
+      targetDomain: response.targetDomain,
+      contextPackage: response.contextPackage,
+    },
+  }
+
+  // 2. Emit streaming text chunks (word by word / clause by clause)
+  const words = response.reply.split(' ')
+  for (let i = 0; i < words.length; i++) {
+    const chunk = (i === 0 ? '' : ' ') + words[i]
+    yield {
+      type: 'chunk',
+      data: { delta: chunk },
+    }
+  }
+
+  // 3. Emit proposed actions
+  yield {
+    type: 'actions',
+    data: {
+      proposedActions: response.proposedActions,
+      executionSummary: response.executionSummary,
+    },
+  }
+
+  // 4. Emit final done event
+  yield {
+    type: 'done',
+    data: response,
+  }
+
+  return response
+}

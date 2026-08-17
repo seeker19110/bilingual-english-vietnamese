@@ -20,6 +20,9 @@ export default function SubjectDetail() {
   const [subject, setSubject] = useState<SubjectManifest | null>(null)
   const [selectedGrade, setSelectedGrade] = useState<string>('grade_12')
   const [activeTab, setActiveTab] = useState<'solver' | 'curriculum' | 'practice'>('solver')
+  const [difficultyFilter, setDifficultyFilter] = useState<
+    'all' | 'basic' | 'intermediate' | 'advanced'
+  >('all')
   const [problemInput, setProblemInput] = useState('')
   const [solving, setSolving] = useState(false)
   const [solutionSteps, setSolutionSteps] = useState<SolvedStep[] | null>(null)
@@ -343,8 +346,34 @@ export default function SubjectDetail() {
         {/* TAB 3: PRACTICE PROBLEMS */}
         {activeTab === 'practice' && currentGradeData && (
           <div className="space-y-4">
+            {/* Bộ lọc độ khó */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              <span className="text-xs text-zinc-400 font-medium whitespace-nowrap">Độ khó:</span>
+              {[
+                { id: 'all', label: 'Tất cả' },
+                { id: 'basic', label: 'Cơ bản' },
+                { id: 'intermediate', label: 'Vận dụng' },
+                { id: 'advanced', label: 'Vận dụng cao' },
+              ].map((diff) => (
+                <button
+                  key={diff.id}
+                  onClick={() =>
+                    setDifficultyFilter(diff.id as 'all' | 'basic' | 'intermediate' | 'advanced')
+                  }
+                  className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+                    difficultyFilter === diff.id
+                      ? 'bg-accent-500 text-white shadow-sm shadow-accent-500/20'
+                      : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  {diff.label}
+                </button>
+              ))}
+            </div>
+
             {currentGradeData.chapters
               .flatMap((c) => c.sampleProblems)
+              .filter((prob) => difficultyFilter === 'all' || prob.difficulty === difficultyFilter)
               .map((prob) => (
                 <div
                   key={prob.id}
@@ -352,8 +381,20 @@ export default function SubjectDetail() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent-500/15 text-accent-300 border border-accent-500/30 uppercase mr-2">
-                        {prob.difficulty}
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase mr-2 border ${
+                          prob.difficulty === 'basic'
+                            ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                            : prob.difficulty === 'intermediate'
+                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                              : 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                        }`}
+                      >
+                        {prob.difficulty === 'basic'
+                          ? 'Cơ bản'
+                          : prob.difficulty === 'intermediate'
+                            ? 'Vận dụng'
+                            : 'Vận dụng cao'}
                       </span>
                       <h4 className="text-sm font-bold text-white inline">{prob.title}</h4>
                     </div>

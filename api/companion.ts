@@ -10,7 +10,10 @@ import {
   logSecurityEvent,
 } from '../packages/core-auth/security.js'
 import { getOrCreatePerson } from '../packages/core-personal/personService.js'
-import { executeCompanionTurn } from '../packages/core-personal/companionRuntime.js'
+import {
+  executeCompanionTurn,
+  streamCompanionTurn,
+} from '../packages/core-personal/companionRuntime.js'
 import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
@@ -21,6 +24,7 @@ const CompanionApiRequestSchema = z
     intent: z.string().max(100).optional(),
     domain: z.string().max(100).optional(),
     tokenBudget: z.number().int().positive().max(8000).optional(),
+    stream: z.boolean().optional(),
   })
   .strict()
 
@@ -57,13 +61,51 @@ export default async function handler(req: Request): Promise<Response> {
     const pool = getPgPool()
     const person = await getOrCreatePerson(pool, auth.userId)
 
-    const response = await executeCompanionTurn(pool, {
+    const turnInput = {
       personId: person.id,
       userMessage: validation.data.message,
       intent: validation.data.intent,
       targetDomain: validation.data.domain,
       tokenBudget: validation.data.tokenBudget,
-    })
+    }
+
+    if (validation.data.stream) {
+      const stream = new ReadableStream({
+        async start(controller) {
+          const encoder = new TextEncoder()
+          try {
+            for await (const event of streamCompanionTurn(pool, turnInput)) {
+              const sseChunk = `event: ${event.type}\ndata: ${JSON.stringify(event.data)}\n\n`
+              controller.enqueue(encoder.encode(sseChunk))
+            }
+            controller.close()
+          } catch (streamErr) {
+            const errPayload = isAppError(streamErr)
+              ? toErrorBody(streamErr)
+              : {
+                  error: 'Stream error',
+                  message: streamErr instanceof Error ? streamErr.message : String(streamErr),
+                }
+            controller.enqueue(
+              encoder.encode(`event: error\ndata: ${JSON.stringify(errPayload)}\n\n`),
+            )
+            controller.close()
+          }
+        },
+      })
+
+      return new Response(stream, {
+        status: 200,
+        headers: {
+          ...headers,
+          'Content-Type': 'text/event-stream; charset=utf-8',
+          'Cache-Control': 'no-cache, no-transform',
+          Connection: 'keep-alive',
+        },
+      })
+    }
+
+    const response = await executeCompanionTurn(pool, turnInput)
 
     return jsonResponse(response, 200, headers)
   } catch (err: unknown) {
