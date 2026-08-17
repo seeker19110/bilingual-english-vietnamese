@@ -86,6 +86,8 @@ const CareerInterview = lazyWithRetry(() => import('./pages/CareerInterview'))
 const WorkKanban = lazyWithRetry(() => import('./pages/WorkKanban'))
 const StartupCanvas = lazyWithRetry(() => import('./pages/StartupCanvas'))
 const LifeWheel = lazyWithRetry(() => import('./pages/LifeWheel'))
+const Friends = lazyWithRetry(() => import('./pages/Friends'))
+const AddFriend = lazyWithRetry(() => import('./pages/AddFriend'))
 
 // PoC nội bộ — không link từ menu/BottomNav, chỉ vào qua URL trực tiếp /avatar-demo.
 // Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md.
@@ -266,6 +268,22 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Companion />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/ban-be"
+                        element={
+                          <RequireAuth>
+                            <Friends />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/ket-ban/:code"
+                        element={
+                          <RequireAuth>
+                            <AddFriend />
                           </RequireAuth>
                         }
                       />

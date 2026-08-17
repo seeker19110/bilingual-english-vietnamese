@@ -55,6 +55,7 @@ import adminUsersHandler from './api/admin-users.js'
 import referralHandler from './api/referral.js'
 import questsHandler from './api/quests.js'
 import achievementsHandler from './api/achievements.js'
+import friendsHandler from './api/friends.js'
 import adminAchievementRewardsHandler from './api/admin-achievement-rewards.js'
 import adminPaymentsHandler from './api/admin-payments.js'
 import adminSystemControlHandler from './api/admin-system-control.js'
@@ -230,6 +231,7 @@ app.all('/api/admin-users', wrapEdge(adminUsersHandler))
 app.all('/api/referral', wrapEdge(referralHandler))
 app.all('/api/quests', wrapEdge(questsHandler))
 app.all('/api/achievements', wrapEdge(achievementsHandler))
+app.all('/api/friends', wrapEdge(friendsHandler))
 app.all('/api/admin-achievement-rewards', wrapEdge(adminAchievementRewardsHandler))
 app.all('/api/admin-payments', wrapEdge(adminPaymentsHandler))
 app.all('/api/admin-system-control', wrapEdge(adminSystemControlHandler))
