@@ -39,6 +39,7 @@
     "eval:v2:context": "npx tsx scripts/eval-v2-context.ts",
     "eval:v2:red-team": "npx tsx scripts/red-team/eval-red-team.ts",
     "eval:v2:privacy": "npx tsx scripts/eval-v2-privacy.ts",
+    "eval:v2:audit": "npx tsx scripts/eval-v2-final-audit.ts",
     "seed:pronunciation": "tsx scripts/seed-pronunciations.ts",
     "tag:cefr": "tsx scripts/tag-cefr-levels.ts",
     "tag:freq": "tsx scripts/assign-word-freq.ts",
