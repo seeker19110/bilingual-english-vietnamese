@@ -8,6 +8,45 @@
 
 ## Giai đoạn hiện tại
 
+### V2-05 Life Graph — slice 1: persistence + API (2026-08-17, PR #578 đã MERGE)
+
+Việc kế tiếp của Wave B sau V2-04. Slice 1 chỉ làm **nền tảng lưu trữ + API** (chưa có UI/Goal
+Graph visualization, chưa deploy production):
+
+- **Migration `postgres/migrations/0043_life_graph.sql`** (schema `personal`, additive/idempotent):
+  `life_graph_nodes`, `life_graph_edges`, `life_goals` (chi tiết cho node loại `Goal`),
+  `life_goal_sources` (liên kết nguồn gốc, dùng cho backfill từ Learning), `life_graph_audit_log`
+  (append-only). Khoá ngoại composite `(node_id, person_id)` chặn edge orphan/khác chủ ngay ở tầng
+  DB; trigger đảm bảo mọi LifeGoal phải trỏ về node loại `Goal` cùng chủ. **Lưu ý trung thực:
+  chưa chạy migration này trên Postgres thật nào** — không có Postgres service trong sandbox, mới
+  soát bằng mắt; sẽ tự áp ở lượt deploy sau (`scripts/deploy.sh` → `npm run migrate:pg`). PR không
+  triển khai gì lên production.
+- **`packages/core-personal/lifeGraphService.ts`** — CRUD node/edge trong transaction, soft
+  archive (không hard delete), optimistic concurrency (`expectedVersion` → 409 nếu lệch),
+  `validateGraphIntegrity` (dò orphan/cross-person/goal sai kiểu), vòng đời Goal
+  (`transitionGoalStatus`, chặn chuyển trạng thái không hợp lệ — `achieved`/`abandoned` là
+  terminal). Goal import từ Learning (`upsertLearningGoalProjection`, `getLearningGoalSourceId`)
+  không cho sửa label/lifecycle qua Life Graph API — đổi tại nguồn Learning.
+- **API** `GET/POST/PATCH/DELETE /api/life-graph` — `personId` luôn suy từ token, Zod strict
+  schema (discriminated union theo `kind`), ownership + chống orphan/self-loop kiểm ngay trong
+  service, trả đúng 400/401/404/409/429.
+- **Learning Goal adapter/backfill** — mục tiêu onboarding hiện có ở `public.profiles.goal +
+daily_minutes` (khi `onboarded=true`) được chiếu (project) sang Life Graph dạng idempotent,
+  serialize bằng khoá dòng Person; Learning vẫn là nguồn sự thật, `life_goal_sources` chỉ lưu định
+  danh nguồn chứ không copy `daily_minutes`.
+- **CI đỏ do coverage nhánh (2026-08-17, tự sửa trong cùng PR):** code mới thiếu test ca biên
+  khiến branch coverage toàn repo còn 89.77% (< ngưỡng CI 90%). Đã bổ sung ~40 test case cho
+  `lifeGraphService.ts` + `api/life-graph.ts` (not-found/conflict/version-mismatch,
+  `includeArchived`, các `kind` GET/DELETE còn thiếu, method 405, lỗi non-AppError) — nâng coverage
+  2 file lên 100% statements/lines/functions, ≥ 90% nhánh. Toàn suite 3591 test xanh sau đó.
+- Test: 27 test tập trung V2-05 khi tạo PR + ~40 test bổ sung khi vá CI (tổng nằm trong suite
+  chung, xem báo cáo coverage toàn repo qua `npm test`).
+
+**GIỚI HẠN PHẢI GHI RÕ (chưa đạt gate roadmap):** cũng như V2-04, slice này mới dựng nền
+persistence + API, **chưa có Context Builder (V2-07)/tool execution (V2-08)** để thực sự đọc/ghi
+qua Life Graph trong luồng AI. Chưa có UI Goal Graph visualization. Chưa có reconciliation/outbox
+khi Learning onboarding goal đổi sau khi đã backfill — mismatch hiện xử lý fail-closed bằng 409.
+
 ### V2-04 Consent + Personal Policy — slice 1: persistence + API (2026-08-16)
 
 Việc kế tiếp của Wave B sau V2-03. Slice 1 chỉ làm **nền tảng lưu trữ + API** cho ConsentGrant và
