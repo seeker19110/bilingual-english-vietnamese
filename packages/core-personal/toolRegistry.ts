@@ -18,7 +18,7 @@ export const REGISTERED_TOOLS: Record<string, ToolManifest> = {
     requiredPermissions: ['learning.write'],
     idempotent: true,
     timeoutMs: 5000,
-    auditPolicy: 'audit_on_write',
+    auditPolicy: { logLevel: 'full', retentionDays: 90 },
     schemaVersion: TOOL_MANIFEST_SCHEMA_VERSION,
   }),
   'profile.update_fact': ToolManifestSchema.parse({
@@ -31,7 +31,7 @@ export const REGISTERED_TOOLS: Record<string, ToolManifest> = {
     requiredPermissions: ['profile.write'],
     idempotent: true,
     timeoutMs: 5000,
-    auditPolicy: 'audit_on_write',
+    auditPolicy: { logLevel: 'full', retentionDays: 90 },
     schemaVersion: TOOL_MANIFEST_SCHEMA_VERSION,
   }),
   'memory.create_record': ToolManifestSchema.parse({
@@ -44,7 +44,7 @@ export const REGISTERED_TOOLS: Record<string, ToolManifest> = {
     requiredPermissions: ['memory.write'],
     idempotent: false,
     timeoutMs: 5000,
-    auditPolicy: 'audit_on_write',
+    auditPolicy: { logLevel: 'full', retentionDays: 90 },
     schemaVersion: TOOL_MANIFEST_SCHEMA_VERSION,
   }),
   'dictionary.lookup': ToolManifestSchema.parse({
@@ -57,7 +57,7 @@ export const REGISTERED_TOOLS: Record<string, ToolManifest> = {
     requiredPermissions: [],
     idempotent: true,
     timeoutMs: 3000,
-    auditPolicy: 'no_audit',
+    auditPolicy: { logLevel: 'minimal', retentionDays: 30 },
     schemaVersion: TOOL_MANIFEST_SCHEMA_VERSION,
   }),
 }
