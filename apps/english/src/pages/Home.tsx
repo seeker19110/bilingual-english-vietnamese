@@ -17,6 +17,7 @@ import {
   Sparkles,
   Headphones,
   BookMarked,
+  Compass,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PricePromoBanner from '../components/PricePromoBanner'
@@ -110,6 +111,22 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
       desc: isA
         ? 'Trí tuệ cá nhân hóa đa lĩnh vực: kết nối Học tập, Sự nghiệp, Công việc & Đời sống.'
         : 'Multi-domain Personal AI Companion: connecting Learning, Career, Work & Life.',
+    },
+    {
+      kind: 'link',
+      path: '/ung-dung-thuc-te',
+      icon: Compass,
+      gradient: 'from-indigo-500 to-cyan-400',
+      glow: 'shadow-indigo-500/20',
+      ring: 'hover:border-indigo-500/40',
+      tag: {
+        label: isA ? 'Toán · Lý · Hóa · Sinh' : 'K12 Applied',
+        cls: 'bg-indigo-500/15 text-indigo-300 theme-light:text-indigo-800 border border-indigo-500/20',
+      },
+      title: isA ? 'Ứng Dụng Thực Tế' : 'Applied Knowledge',
+      desc: isA
+        ? 'Học để làm gì ngoài đời? Giải quyết bài toán tiền điện, dinh dưỡng, tối ưu kinh doanh & nghề nghiệp.'
+        : 'Why do we learn this? Solving real problems in finance, electricity, nutrition & career.',
     },
     {
       kind: 'link',

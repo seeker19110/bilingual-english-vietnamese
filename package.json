@@ -69,6 +69,7 @@
     "@fontsource-variable/inter": "^5.2.8",
     "@sentry/node": "^10.63.0",
     "@sentry/react": "^10.70.0",
+    "@types/ws": "^8.18.1",
     "bcryptjs": "^3.0.3",
     "compression": "^1.7.4",
     "express": "^4.21.2",
@@ -84,6 +85,7 @@
     "react-router-dom": "^7.18.2",
     "ts-fsrs": "^5.4.1",
     "web-push": "^3.6.7",
+    "ws": "^8.21.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {

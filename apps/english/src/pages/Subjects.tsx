@@ -10,6 +10,8 @@ import {
   ChevronRight,
   GraduationCap,
   Layers,
+  ArrowRight,
+  Compass,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -88,6 +90,38 @@ export default function Subjects() {
           title="Không Gian Môn Học & Gia Sư AI"
           subtitle="Học tập và giải bài tập tương tác đa môn cùng AI: Tiếng Anh, Toán học, Vật lý, Hóa học & Sinh học"
         />
+
+        {/* Banner dẫn sang Kho Ứng Dụng Thực Tế */}
+        <div
+          onClick={() => nav('/ung-dung-thuc-te')}
+          className="cursor-pointer group relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-900/40 via-purple-900/30 to-zinc-900 border border-indigo-500/30 hover:border-indigo-500/60 p-4 sm:p-5 transition-all shadow-lg hover:shadow-indigo-500/10"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 shrink-0 group-hover:scale-105 transition">
+                <Compass className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">
+                    MỚI RA MẮT
+                  </span>
+                  <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-indigo-200 transition">
+                    Kho Ứng Dụng Thực Tế: Học Để Làm Gì Ngoài Đời?
+                  </h3>
+                </div>
+                <p className="text-xs text-zinc-400">
+                  Khám phá cách Toán, Lý, Hóa, Sinh, Tin, Văn, KTPL giải quyết bài toán tiền bạc,
+                  sức khỏe, công nghệ & nghề nghiệp.
+                </p>
+              </div>
+            </div>
+            <div className="hidden sm:flex items-center gap-1 text-xs font-semibold text-indigo-400 group-hover:text-indigo-300 shrink-0">
+              Trải nghiệm ngay{' '}
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </div>
+          </div>
+        </div>
 
         {/* Bộ lọc phân loại */}
         <div className="flex gap-2 justify-center flex-wrap">

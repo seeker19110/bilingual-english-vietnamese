@@ -5,6 +5,7 @@
 //   Development : npm run dev  (Vite dev server, không dùng file này)
 //   Production  : npm start    (file này, chạy qua PM2)
 
+import http from 'node:http'
 import express from 'express'
 import compression from 'compression'
 import path from 'node:path'
@@ -86,6 +87,8 @@ import workHandler from './api/work.js'
 import startupHandler from './api/startup.js'
 import lifeHandler from './api/life.js'
 import automationHandler from './api/automation.js'
+import chatHandler from './api/chat.js'
+import { attachWebSocketHandler } from './packages/core-chat/wsHandler.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -276,6 +279,10 @@ app.all('/api/startup', wrapEdge(startupHandler))
 app.all('/api/life', wrapEdge(lifeHandler))
 // Approved Automation (V2-18) — Explicit grants, triggers, budgets, retries/compensation, action receipts.
 app.all('/api/automation', wrapEdge(automationHandler))
+// User-to-User Chat — REST endpoints (WebSocket gắn vào httpServer bên dưới).
+// /api/chat xử lý tất cả sub-paths: /rooms, /messages, /users/search, /messages/:id
+app.all('/api/chat', wrapEdge(chatHandler))
+app.all('/api/chat/*', wrapEdge(chatHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
@@ -442,7 +449,14 @@ function startPlanExpiryScheduler() {
 
 // ── Khởi động ─────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000
-const server = app.listen(PORT, () => {
+// Tạo http.Server từ Express app để có thể gắn WebSocket handler (ws library yêu cầu
+// httpServer.on('upgrade') — không làm được trực tiếp với Express app.listen).
+const httpServer = http.createServer(app)
+
+// Gắn WebSocket handler cho real-time chat (path: /ws/chat)
+attachWebSocketHandler(httpServer)
+
+httpServer.listen(PORT, () => {
   console.log(`✅ English Tutor đang chạy tại http://localhost:${PORT}`)
   console.log(`   NODE_ENV : ${process.env.NODE_ENV || 'production'}`)
   console.log(`   Node.js  : ${process.version}`)
@@ -453,6 +467,8 @@ const server = app.listen(PORT, () => {
   // khoảng chết. Chạy ngoài PM2 (npm start tay) thì process.send không tồn tại → bỏ qua.
   process.send?.('ready')
 })
+
+const server = httpServer
 
 // Tắt êm (graceful shutdown): PM2 gửi SIGINT khi stop/reload. Ngừng nhận kết nối mới,
 // đóng ngay kết nối keep-alive đang rảnh, chờ request đang chạy xong rồi thoát.
