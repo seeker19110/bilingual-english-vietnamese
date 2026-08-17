@@ -133,6 +133,48 @@ describe('ProposedActionService - proposeAction', () => {
     expect(res.action.status).toBe('pending')
     expect(res.autoExecuted).toBe(false)
   })
+
+  it('auto-executes for WRITE_INTERNAL with low risk and for read-only tools with null authority', async () => {
+    policies.resolveAuthority.mockResolvedValue('WRITE_INTERNAL')
+
+    const pool = mockPool(async (sql) => {
+      if (sql.includes('insert into personal.proposed_actions')) {
+        return {
+          rows: [
+            actionRow({
+              status: 'committed',
+              resolved_by: 'system:automate',
+              execution_result: { status: 'ok' },
+            }),
+          ],
+        }
+      }
+      return { rows: [] }
+    })
+
+    const res = await proposeAction(pool, {
+      personId: PERSON,
+      capabilityId: 'learning.update_goal',
+      action: 'update_goal',
+      targetDomain: 'learning',
+      payload: { goal: 'IELTS 7.5' },
+      riskLevel: 'low',
+    })
+
+    expect(res.autoExecuted).toBe(true)
+
+    // Read-only tool with null authority
+    policies.resolveAuthority.mockResolvedValue(null)
+    const resDict = await proposeAction(pool, {
+      personId: PERSON,
+      capabilityId: 'dictionary.lookup',
+      action: 'lookup',
+      targetDomain: 'learning',
+      payload: { word: 'hello' },
+      riskLevel: 'low',
+    })
+    expect(resDict.autoExecuted).toBe(true)
+  })
 })
 
 describe('ProposedActionService - confirmAction & rejectAction', () => {
@@ -151,12 +193,39 @@ describe('ProposedActionService - confirmAction & rejectAction', () => {
     expect(action.status).toBe('committed')
   })
 
+  it('throws NotFoundError if action not found on confirm or reject', async () => {
+    const pool = mockPool(async () => ({ rows: [] }))
+
+    await expect(confirmAction(pool, PERSON, ACTION_ID, 1, 'user:123')).rejects.toThrow(
+      'Không tìm thấy ProposedAction',
+    )
+    await expect(rejectAction(pool, PERSON, ACTION_ID, 1, 'user:123')).rejects.toThrow(
+      'Không tìm thấy ProposedAction',
+    )
+  })
+
+  it('throws ConflictError if action is not pending on confirm or reject', async () => {
+    const pool = mockPool(async () => ({
+      rows: [actionRow({ status: 'committed', version: 1 })],
+    }))
+
+    await expect(confirmAction(pool, PERSON, ACTION_ID, 1, 'user:123')).rejects.toThrow(
+      ConflictError,
+    )
+    await expect(rejectAction(pool, PERSON, ACTION_ID, 1, 'user:123')).rejects.toThrow(
+      ConflictError,
+    )
+  })
+
   it('throws ConflictError on optimistic lock version mismatch', async () => {
     const pool = mockPool(async () => ({
       rows: [actionRow({ status: 'pending', version: 2 })],
     }))
 
     await expect(confirmAction(pool, PERSON, ACTION_ID, 1, 'user:123')).rejects.toThrow(
+      ConflictError,
+    )
+    await expect(rejectAction(pool, PERSON, ACTION_ID, 1, 'user:123')).rejects.toThrow(
       ConflictError,
     )
   })
@@ -183,7 +252,10 @@ describe('ProposedActionService - listProposedActions', () => {
       rows: [actionRow()],
     }))
 
-    const list = await listProposedActions(pool, PERSON, { status: 'pending' })
+    const list = await listProposedActions(pool, PERSON, {
+      status: 'pending',
+      limit: 10,
+    })
     expect(list.length).toBe(1)
     expect(list[0]?.id).toBe(ACTION_ID)
   })

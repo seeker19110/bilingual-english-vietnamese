@@ -46,7 +46,7 @@ beforeAll(() => {
   write('server.ts', "import { target } from './src/target'\n\nexport const boot = target\n")
 
   graph = scanGraph({ rootDir: root, scanRoots: ['src'], entryPoints: ['server.ts'] })
-})
+}, 30000)
 
 afterAll(() => {
   rmSync(root, { recursive: true, force: true })

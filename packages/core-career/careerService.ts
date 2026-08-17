@@ -322,7 +322,7 @@ export async function analyzeCareerSkillGap(
     subject: 'english',
   })
 
-  const requiredSkills = (goal.skills_required as string[]) ?? []
+  const requiredSkills = parseJsonArray(goal.skills_required)
   const gaps = requiredSkills.map((skillName) => {
     const isEnglishSkill = /english|tiếng anh|ielts|toeic/i.test(skillName)
     if (isEnglishSkill) {

@@ -64,6 +64,22 @@ describe('evaluateMemoryCandidate - Candidate Pipeline', () => {
       sensitivity: 'personal',
     })
     expect(res2.outcome).toBe('REJECT')
+
+    const res3 = await evaluateMemoryCandidate(runner, PERSON, {
+      namespace: 'preference',
+      content: 'Valid content',
+      provenance: '',
+      sensitivity: 'personal',
+    })
+    expect(res3.outcome).toBe('REJECT')
+
+    const res4 = await evaluateMemoryCandidate(runner, PERSON, {
+      namespace: 'preference',
+      content: 'Valid content',
+      provenance: 'p'.repeat(201),
+      sensitivity: 'personal',
+    })
+    expect(res4.outcome).toBe('REJECT')
   })
 
   it('rejects restricted sensitivity without user_declared provenance', async () => {

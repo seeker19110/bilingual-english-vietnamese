@@ -267,4 +267,272 @@ describe('WorkService', () => {
     const docs = await listWorkDocuments(pool, PERSON_ID, PROJECT_ID)
     expect(docs.length).toBe(1)
   })
+
+  it('handles edge cases, not found, and string JSON in meetings and tasks', async () => {
+    // Project not found on update
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(
+      updateWorkProject(pool, PERSON_ID, PROJECT_ID, { name: 'Nonexistent' }),
+    ).rejects.toThrow('Không tìm thấy WorkProject')
+
+    // Task not found on update
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    await expect(updateWorkTask(pool, PERSON_ID, TASK_ID, { status: 'done' })).rejects.toThrow(
+      'Không tìm thấy WorkTask',
+    )
+
+    // Meeting with string JSON and empty/invalid json
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: MEETING_ID,
+          person_id: PERSON_ID,
+          title: 'Json string meeting',
+          scheduled_at: new Date('2026-08-18T10:00:00Z'),
+          duration_minutes: 30,
+          summary: 'Summary',
+          action_items: JSON.stringify(['item 1', 'item 2']),
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const meetingJson = await recordWorkMeeting(pool, PERSON_ID, {
+      title: 'Json string meeting',
+      scheduledAt: '2026-08-18T10:00:00Z',
+      durationMinutes: 30,
+      summary: 'Summary',
+      actionItems: ['item 1', 'item 2'],
+    })
+    expect(meetingJson.actionItems).toEqual(['item 1', 'item 2'])
+
+    // Meeting with invalid json string
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: MEETING_ID,
+          person_id: PERSON_ID,
+          title: 'Invalid json string meeting',
+          scheduled_at: new Date('2026-08-18T10:00:00Z'),
+          duration_minutes: 30,
+          summary: 'Summary',
+          action_items: '{not-json',
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const listMeetings = await listWorkMeetings(pool, PERSON_ID)
+    expect(listMeetings[0]!.actionItems).toEqual([])
+
+    // Meeting with non-array json string
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: MEETING_ID,
+          person_id: PERSON_ID,
+          title: 'Non array json meeting',
+          scheduled_at: new Date('2026-08-18T10:00:00Z'),
+          duration_minutes: 30,
+          summary: 'Summary',
+          action_items: '{"a":1}',
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const listMeetings2 = await listWorkMeetings(pool, PERSON_ID)
+    expect(listMeetings2[0]!.actionItems).toEqual([])
+
+    // Meeting with number action_items (not array and not string)
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: MEETING_ID,
+          person_id: PERSON_ID,
+          title: 'Number meeting',
+          scheduled_at: new Date('2026-08-18T10:00:00Z'),
+          duration_minutes: 30,
+          summary: 'Summary',
+          action_items: 123,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const listMeetings3 = await listWorkMeetings(pool, PERSON_ID)
+    expect(listMeetings3[0]!.actionItems).toEqual([])
+
+    // Document with contentUri and list without projectId
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: DOC_ID,
+          person_id: PERSON_ID,
+          project_id: null,
+          title: 'Standalone Doc',
+          document_type: 'note',
+          summary: 'General notes',
+          content_uri: 's3://bucket/notes.md',
+          version: 1,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const doc = await createWorkDocument(pool, PERSON_ID, {
+      title: 'Standalone Doc',
+      documentType: 'note',
+      summary: 'General notes',
+      contentUri: 's3://bucket/notes.md',
+    })
+    expect(doc.contentUri).toBe('s3://bucket/notes.md')
+
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    const allDocs = await listWorkDocuments(pool, PERSON_ID)
+    expect(allDocs.length).toBe(0)
+
+    // List tasks with projectId and status
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    const filteredTasks = await listWorkTasks(pool, PERSON_ID, PROJECT_ID, 'todo')
+    expect(filteredTasks.length).toBe(0)
+
+    // List projects with status
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+    const filteredProjects = await listWorkProjects(pool, PERSON_ID, 'completed')
+    expect(filteredProjects.length).toBe(0)
+
+    // Meeting with default duration and no summary
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: MEETING_ID,
+          person_id: PERSON_ID,
+          title: 'Quick Standup',
+          scheduled_at: new Date('2026-08-18T10:00:00Z'),
+          duration_minutes: 30,
+          summary: null,
+          action_items: [],
+          created_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const defaultMeeting = await recordWorkMeeting(pool, PERSON_ID, {
+      title: 'Quick Standup',
+      scheduledAt: '2026-08-18T10:00:00Z',
+    })
+    expect(defaultMeeting.durationMinutes).toBe(30)
+
+    // Update project with description and deadline
+    mockQuery.mockResolvedValueOnce({ rows: [{ id: PROJECT_ID }] })
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: PROJECT_ID,
+          person_id: PERSON_ID,
+          name: 'Updated Project',
+          description: 'Updated Description',
+          status: 'active',
+          deadline: new Date('2026-12-31T00:00:00Z'),
+          version: 2,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const updatedProj = await updateWorkProject(pool, PERSON_ID, PROJECT_ID, {
+      description: 'Updated Description',
+      deadline: '2026-12-31T00:00:00Z',
+    })
+    expect(updatedProj.description).toBe('Updated Description')
+
+    // Update task with title, priority, dueAt
+    mockQuery.mockResolvedValueOnce({ rows: [{ id: TASK_ID }] })
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: TASK_ID,
+          person_id: PERSON_ID,
+          project_id: null,
+          title: 'Updated Task Title',
+          priority: 'urgent',
+          status: 'in_progress',
+          due_at: new Date('2026-08-20T00:00:00Z'),
+          version: 2,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const updatedTask = await updateWorkTask(pool, PERSON_ID, TASK_ID, {
+      title: 'Updated Task Title',
+      priority: 'urgent',
+      dueAt: '2026-08-20T00:00:00Z',
+    })
+    expect(updatedTask.priority).toBe('urgent')
+    expect(updatedTask.title).toBe('Updated Task Title')
+
+    // Minimal project, task, document
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: PROJECT_ID,
+          person_id: PERSON_ID,
+          name: 'Minimal Project',
+          description: null,
+          status: 'active',
+          deadline: null,
+          version: 1,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const minProj = await createWorkProject(pool, PERSON_ID, { name: 'Minimal Project' })
+    expect(minProj.description).toBeUndefined()
+    expect(minProj.deadline).toBeUndefined()
+
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: TASK_ID,
+          person_id: PERSON_ID,
+          project_id: null,
+          title: 'Minimal Task',
+          priority: 'medium',
+          status: 'todo',
+          due_at: null,
+          version: 1,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const minTask = await createWorkTask(pool, PERSON_ID, {
+      title: 'Minimal Task',
+      priority: 'medium',
+    })
+    expect(minTask.projectId).toBeUndefined()
+    expect(minTask.dueAt).toBeUndefined()
+
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: DOC_ID,
+          person_id: PERSON_ID,
+          project_id: null,
+          title: 'Minimal Doc',
+          document_type: 'spec',
+          summary: 'A spec doc',
+          content_uri: null,
+          version: 1,
+          created_at: new Date('2026-08-17T00:00:00Z'),
+          updated_at: new Date('2026-08-17T00:00:00Z'),
+        },
+      ],
+    })
+    const minDoc = await createWorkDocument(pool, PERSON_ID, {
+      title: 'Minimal Doc',
+      documentType: 'spec',
+      summary: 'A spec doc',
+    })
+    expect(minDoc.projectId).toBeUndefined()
+    expect(minDoc.contentUri).toBeUndefined()
+  })
 })

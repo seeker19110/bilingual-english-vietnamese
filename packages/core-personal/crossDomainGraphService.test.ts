@@ -121,4 +121,32 @@ describe('syncCrossDomainLifeGraph', () => {
       subject: 'english',
     })
   })
+
+  it('reuses existing nodes and edges during sync', async () => {
+    listCareerGoals.mockResolvedValueOnce([
+      {
+        id: 'goal-2',
+        personId: PERSON_ID,
+        targetTitle: 'Fullstack Dev',
+        skillsRequired: ['TypeScript'],
+        status: 'active',
+      },
+    ])
+
+    getLearningReadModel.mockResolvedValueOnce(null)
+
+    // Existing Goal node and existing Skill node and existing edge
+    mockQuery
+      .mockResolvedValueOnce({ rows: [{ id: NODE_1 }] }) // Goal node exists
+      .mockResolvedValueOnce({ rows: [{ id: NODE_2 }] }) // Skill node exists
+      .mockResolvedValueOnce({ rows: [{ id: EDGE_1 }] }) // Edge exists
+
+    listNodes.mockResolvedValueOnce([])
+    listEdges.mockResolvedValueOnce([])
+
+    const result = await syncCrossDomainLifeGraph(pool, PERSON_ID, 'user-2')
+    expect(result.syncSummary.nodesCreatedOrUpdated).toBe(0)
+    expect(result.syncSummary.edgesCreatedOrUpdated).toBe(0)
+    expect(result.syncSummary.careerGoalsProcessed).toBe(1)
+  })
 })
