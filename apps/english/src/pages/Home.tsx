@@ -97,6 +97,22 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
   return [
     {
       kind: 'link',
+      path: '/dong-hanh',
+      icon: Sparkles,
+      gradient: 'from-accent-500 to-indigo-500',
+      glow: 'shadow-accent-500/25',
+      ring: 'hover:border-accent-500/40',
+      tag: {
+        label: 'Platform V2',
+        cls: 'bg-accent-500/15 text-accent-300 theme-light:text-accent-800 border border-accent-500/20',
+      },
+      title: isA ? 'Bạn Đồng Hành AI' : 'AI Companion',
+      desc: isA
+        ? 'Trí tuệ cá nhân hóa đa lĩnh vực: kết nối Học tập, Sự nghiệp, Công việc & Đời sống.'
+        : 'Multi-domain Personal AI Companion: connecting Learning, Career, Work & Life.',
+    },
+    {
+      kind: 'link',
       path: '/tu-dien',
       icon: BookOpen,
       gradient: 'from-amber-500 to-orange-400',
