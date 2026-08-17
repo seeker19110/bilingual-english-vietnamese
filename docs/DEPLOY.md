@@ -68,9 +68,11 @@ pm2 restart english-tutor
 - [ ] Nginx đã trỏ `/api/` về port 3001 (`nginx/en-vi.conf`)
 - [ ] SSL Let's Encrypt còn hạn (`sudo certbot renew --dry-run`)
 - [ ] `curl https://en-vi.donghanhcungban.com/api/health` trả `{"status":"ok",...}`
+- [ ] Platform V2 Migration & Audit: `npm run migrate:verify` và `npm run eval:v2:audit` xanh 100%
 
 ## File liên quan
 
+- `docs/runbook-platform-v2-production-deployment.md` — **Runbook chi tiết triển khai Platform V2 (V2-01 đến V2-20)**
 - `scripts/deploy.sh` — script deploy (thủ công VÀ tự động qua `deploy.yml` đều gọi file này —
   1 nguồn duy nhất, có migration + dọn build cũ + health check)
 - `.github/workflows/deploy.yml` — trigger deploy tự động sau khi CI pass, gọi `scripts/deploy.sh`
