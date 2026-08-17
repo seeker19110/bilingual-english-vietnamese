@@ -69,6 +69,9 @@ const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'))
 // Trang Mạng lưới cá nhân (Life Graph)
 const LifeGraph = lazyWithRetry(() => import('./pages/LifeGraph'))
 
+// Trang Bạn Đồng Hành AI Đa Lĩnh Vực (Companion Runtime)
+const Companion = lazyWithRetry(() => import('./pages/Companion'))
+
 // PoC nội bộ — không link từ menu/BottomNav, chỉ vào qua URL trực tiếp /avatar-demo.
 // Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md.
 const AvatarDemo = lazyWithRetry(() => import('./pages/AvatarDemo'))
@@ -224,6 +227,22 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <LifeGraph />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/dong-hanh"
+                        element={
+                          <RequireAuth>
+                            <Companion />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/companion"
+                        element={
+                          <RequireAuth>
+                            <Companion />
                           </RequireAuth>
                         }
                       />
