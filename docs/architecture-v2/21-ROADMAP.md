@@ -56,7 +56,10 @@ Không phá contract Learning v1 đang dùng; adapter compatibility bắt buộc
 
 - resource/action/purpose based policy;
 - consent scope/version/revoke;
-- execution authority: READ/SUGGEST/DRAFT/WRITE_INTERNAL/CONFIRM/AUTOMATE/DENY;
+- execution authority: READ/SUGGEST/DRAFT/WRITE_INTERNAL/EXECUTE_WITH_CONFIRMATION/AUTOMATE/DENY
+  (owner chốt 2026-08-17: tên đúng là `EXECUTE_WITH_CONFIRMATION` — khớp code đã chạy thật ở
+  `packages/core-contracts/personalPolicy.ts` và migration `0042_consent_and_policy.sql`; dòng này
+  trước đây viết tắt là `CONFIRM`, đã sửa);
 - personal policies do not override security/law/domain invariants;
 - complete audit trail.
 
@@ -275,3 +278,12 @@ All AI capabilities introduced from V2-08 onward must use stable task/capability
 Kế hoạch xuyên suốt để hạn chế gọi API và kiểm soát unit economics:
 [`22-API-COST-OPTIMIZATION-PLAN.md`](22-API-COST-OPTIMIZATION-PLAN.md). Tài liệu này không tự mở
 phase implementation; từng PR vẫn phải theo gate của wave tương ứng.
+
+## Cross-cutting decision — Event outbox strategy
+
+Cách domain nói chuyện với nhau qua sự kiện (transactional outbox, delivery guarantee, retry,
+dead-letter) là quyết định nền tảng dùng chung, không thuộc riêng phase nào — mục 13 kiến trúc đã
+đòi "insert outbox event" trong cùng transaction và "consumers idempotent theo event ID", nhưng
+chưa có đặc tả. Đặc tả: [`23-EVENT-OUTBOX-STRATEGY.md`](23-EVENT-OUTBOX-STRATEGY.md) (owner yêu cầu
+viết 2026-08-17). Mọi phase phát/tiêu thụ domain event (V2-09, V2-14, V2-18) phải theo tài liệu này;
+nó không tự mở phase implementation.

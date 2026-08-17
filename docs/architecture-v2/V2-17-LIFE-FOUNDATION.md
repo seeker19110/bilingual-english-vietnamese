@@ -22,6 +22,14 @@ Trong scope (đúng roadmap):
 - các tiểu vùng tác động cao (sức khoẻ, tài chính cá nhân, quan hệ) bị cô lập sau lớp policy bổ sung;
 - không có generic mega Life Agent.
 
+> **Owner chốt 2026-08-17 — đây là tính năng SẢN PHẨM THẬT cho người dùng cuối**, không phải công cụ
+> nội bộ hay bằng chứng kiến trúc dùng một lần. Mỗi người dùng có dữ liệu Life riêng theo `person_id`,
+> giống mọi bảng Personal OS Core từ V2-03 — **không cần cơ chế đặc biệt nào thêm** cho việc "mỗi
+> người một bản": kiến trúc hiện tại (Person / PersonalFact / Life Graph, tất cả khoá theo
+> `person_id`, FK `on delete cascade`) vốn đã per-person. Hệ quả: yêu cầu bảo mật/riêng tư/quota áp ở
+> mức người dùng thật ngay từ đầu, không được nới lỏng với lý do "chỉ owner tự dùng". Thứ tự
+> roll-out các domain: xem V2-13 mục 1 (ĐỀ XUẤT, chờ owner xác nhận).
+
 ## 2. Entities / schema sketch
 
 Schema `life`, quy ước `version` + `archived_at` + audit append-only như `0041`–`0044`.
@@ -123,6 +131,14 @@ Gate coi là đạt phase:
 - **Giả định:** không có tích hợp thiết bị đeo/health API ở phase này.
 
 ## 7. Câu hỏi mở cần owner quyết
+
+### Đã chốt (2026-08-17)
+
+- **Life là tính năng sản phẩm thật cho người dùng cuối, per-person theo `person_id`** — xem hộp
+  quyết định ở mục 1. Không cần thiết kế thêm cơ chế đa người dùng. Lưu ý: chính vì là người dùng
+  thật nên các câu hỏi về ranh giới nội dung sức khoẻ/tài chính dưới đây càng KHÔNG được bỏ qua.
+
+### Còn mở
 
 | Câu hỏi                                                            | Vì sao cần owner                              | Ảnh hưởng nếu chọn sai                                |
 | ------------------------------------------------------------------ | --------------------------------------------- | ----------------------------------------------------- |

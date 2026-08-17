@@ -27,6 +27,29 @@ Trong scope (đúng gạch đầu dòng roadmap):
 Career sở hữu: trạng thái nghề nghiệp, mục tiêu vai trò, kinh nghiệm, và **cách diễn giải** khoảng
 cách kỹ năng. Career **không** sở hữu mastery — mastery vẫn thuộc Learning.
 
+> **Owner chốt 2026-08-17 — đây là tính năng SẢN PHẨM THẬT cho người dùng cuối**, không phải công cụ
+> nội bộ hay bằng chứng kiến trúc dùng một lần. Mỗi người dùng có dữ liệu Career riêng theo `person_id`,
+> giống mọi bảng Personal OS Core từ V2-03 — **không cần cơ chế đặc biệt nào thêm** cho việc "mỗi
+> người một bản": kiến trúc hiện tại (Person / PersonalFact / Life Graph, tất cả khoá theo
+> `person_id`, FK `on delete cascade`) vốn đã per-person. Hệ quả: yêu cầu bảo mật/riêng tư/quota áp ở
+> mức người dùng thật ngay từ đầu, không được nới lỏng với lý do "chỉ owner tự dùng". Thứ tự
+> roll-out các domain: xem V2-13 mục 1 (ĐỀ XUẤT, chờ owner xác nhận).
+
+### Thứ tự roll-out các domain — ĐỀ XUẤT, chờ owner xác nhận
+
+Owner nhờ đề xuất (2026-08-17). Đề xuất: **Career ra trước**, rồi Work / Life / Startup theo nhu cầu
+thực tế ĐO ĐƯỢC sau khi Career chạy thật.
+
+Lý do chọn Career trước — không phải vì nó "hay hơn" mà vì nó là domain duy nhất **không cần thu thập
+dữ liệu mới** để có giá trị ngay: skill gap suy trực tiếp từ mastery Learning đã có sẵn của người dùng
+English. Người dùng mở lên là thấy kết quả, không phải nhập tay trước. Ba domain còn lại đều bắt đầu
+từ trạng thái rỗng (Work phải nhập/đồng bộ dự án; Life phải khai thói quen; Startup phải có venture)
+nên giá trị đến chậm hơn và dễ bị bỏ dở. Career cũng an toàn nhất: không ghi ra hệ thống bên ngoài
+(khác Work), rủi ro cao nhất chỉ là draft CV sai — thu hồi được.
+
+Đây là **ĐỀ XUẤT, không phải quyết định cuối**; owner xác nhận lại ở lần duyệt kế tiếp. Nếu owner
+chọn thứ tự khác, gate "≥ 2 domain production" của V2-20 vẫn không đổi, chỉ đổi domain nào tính vào.
+
 ## 2. Entities / schema sketch
 
 Schema riêng `career` (theo tiền lệ `personal`/`english`), quy ước `version` + `archived_at` +
@@ -133,14 +156,21 @@ Gate coi là đạt phase:
 
 ## 7. Câu hỏi mở cần owner quyết
 
-| Câu hỏi                                                                               | Vì sao cần owner                           | Ảnh hưởng nếu chọn sai                                  |
-| ------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------- |
-| Career là tính năng cho người dùng thật hay chỉ là bằng chứng kiến trúc nội bộ?       | Quyết định sản phẩm, đổi hoàn toàn phạm vi | Làm sản phẩm đầy đủ khi chỉ cần proof → tốn nhiều tháng |
-| Có bao nhiêu mẫu CV, định dạng xuất (PDF/DOCX/HTML)?                                  | Quyết định sản phẩm                        | Chọn PDF sớm kéo theo phụ thuộc kỹ thuật lớn            |
-| `career.match_jobs` lấy dữ liệu việc làm từ đâu (nhập tay, API bên thứ ba, không có)? | Chi phí, pháp lý, khả thi                  | Phụ thuộc API trả phí ngoài ngân sách                   |
-| Ánh xạ skill Career ↔ skill Learning do ai định nghĩa?                                | Cần chuyên môn nghề nghiệp                 | Ánh xạ sai → skill gap vô nghĩa                         |
-| CV/kinh nghiệm là dữ liệu `personal` hay `sensitive` theo phân loại V2-03?            | Chính sách riêng tư                        | Phân loại thấp → lọt vào context sai mục đích           |
-| Career có gửi email/nộp hồ sơ thay người dùng không?                                  | Side effect ra ngoài, cần authority        | Gửi nhầm hồ sơ thật là sự cố không thu hồi được         |
+### Đã chốt (2026-08-17)
+
+- **Career là tính năng sản phẩm thật cho người dùng cuối, per-person theo `person_id`** — xem hộp quyết
+  định ở mục 1. Không cần thiết kế thêm cơ chế đa người dùng.
+- **Đề xuất Career là domain roll-out ĐẦU TIÊN** (mục 1) — đây là đề xuất của AI, CHỜ owner xác nhận.
+
+### Còn mở
+
+| Câu hỏi                                                                               | Vì sao cần owner                    | Ảnh hưởng nếu chọn sai                          |
+| ------------------------------------------------------------------------------------- | ----------------------------------- | ----------------------------------------------- |
+| Có bao nhiêu mẫu CV, định dạng xuất (PDF/DOCX/HTML)?                                  | Quyết định sản phẩm                 | Chọn PDF sớm kéo theo phụ thuộc kỹ thuật lớn    |
+| `career.match_jobs` lấy dữ liệu việc làm từ đâu (nhập tay, API bên thứ ba, không có)? | Chi phí, pháp lý, khả thi           | Phụ thuộc API trả phí ngoài ngân sách           |
+| Ánh xạ skill Career ↔ skill Learning do ai định nghĩa?                                | Cần chuyên môn nghề nghiệp          | Ánh xạ sai → skill gap vô nghĩa                 |
+| CV/kinh nghiệm là dữ liệu `personal` hay `sensitive` theo phân loại V2-03?            | Chính sách riêng tư                 | Phân loại thấp → lọt vào context sai mục đích   |
+| Career có gửi email/nộp hồ sơ thay người dùng không?                                  | Side effect ra ngoài, cần authority | Gửi nhầm hồ sơ thật là sự cố không thu hồi được |
 
 ## 8. Không làm
 

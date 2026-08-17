@@ -49,8 +49,9 @@ personal.capability_manifests        -- bản chiếu, append-only theo (capabil
   risk_level        text not null check (low|medium|high|restricted)
   execution_mode    text not null check (deterministic|workflow|ai|agent)
   timeout_ms        integer not null
-  cost_policy       jsonb not null
-  audit_policy      jsonb not null
+  cost_policy       jsonb not null           -- CapabilityCostPolicy (schema v2): maxCallsPerDayPerPerson,
+                                             -- maxCostUsdPerDayPerPerson (USD), onExceed
+  audit_policy      jsonb not null           -- CapabilityAuditPolicy (schema v2): logLevel, retentionDays
   lifecycle         text not null check (experimental|active|deprecated)
   created_at        timestamptz not null default now()
   archived_at       timestamptz              -- deprecate = archive, không delete
@@ -70,6 +71,9 @@ Ràng buộc:
 
 - không `UPDATE` field nghiệp vụ; đổi manifest = INSERT version mới;
 - `execution_mode='ai'|'agent'` bắt buộc `cost_policy` khác rỗng (điều kiện của model API strategy);
+- `cost_policy.onExceed='warn_and_allow'` CHỈ hợp lệ khi `risk_level='low'` — hành động rủi ro cao
+  không được phép "cứ chạy rồi báo" (ràng buộc này chưa nằm trong Zod contract vì cần biết cả
+  `riskLevel`, sẽ enforce ở lớp registry + test);
 - `risk_level='restricted'` bắt buộc `required_permissions` khác rỗng.
 
 ## 3. API / service contract sketch
@@ -128,18 +132,29 @@ Chặn: V2-09 không bắt đầu trước khi resolver + ≥ 3 manifest thật 
 - **Rủi ro:** manifest ở code còn bản chiếu DB lệch nhau. Giảm thiểu: sync ở deploy + alert khi lệch.
 - **Giả định:** contract `CapabilityManifest`/`ToolManifest` ở `packages/core-contracts/` đã đủ field;
   nếu thiếu thì đây là PR sửa contract, phải theo quy trình V2-02 (không breaking).
-- **Giả định:** `costPolicy`/`auditPolicy` là dữ liệu có cấu trúc; kiến trúc hiện chỉ ghi `string`.
+- **ĐÃ CHỐT (owner 2026-08-17), không còn là giả định:** `costPolicy`/`auditPolicy` là dữ liệu CÓ CẤU
+  TRÚC — đã sửa contract `packages/core-contracts/capabilityManifest.ts` từ `z.string()` sang object,
+  bump `CAPABILITY_MANIFEST_SCHEMA_VERSION` 1 → 2. Cấu trúc theo nhu cầu thật của V2-18 (worker
+  automation cần đọc trần lượt/trần tiền từ manifest, không suy được từ chuỗi tên).
 
 ## 7. Câu hỏi mở cần owner quyết
 
-| Câu hỏi                                                                                | Vì sao cần owner                                       | Ảnh hưởng nếu chọn sai                                 |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------ |
-| Chính xác capability Learning nào đăng ký đợt đầu (và tên ID của chúng)?               | Đây là hợp đồng công khai lâu dài, đổi tên sau tốn kém | ID sai ngữ nghĩa phải version-bump hàng loạt về sau    |
-| `costPolicy`/`auditPolicy` là chuỗi tên policy hay object cấu hình (budget, sampling)? | Quyết định hình dạng contract V2-02                    | Chọn chuỗi rồi phải mở rộng → breaking change contract |
-| Registry đặt ở `packages/core-personal` hay package mới `packages/core-capability`?    | Ranh giới package theo ADR-0003                        | Đặt sai gây phụ thuộc vòng giữa Personal OS và runtime |
-| Manifest có được phép cấu hình theo môi trường (dev/prod khác lifecycle) không?        | Ảnh hưởng an toàn khi thử nghiệm trên production       | Bật nhầm capability experimental cho người dùng thật   |
-| Ai được xem `GET /api/capabilities` — mọi user đăng nhập hay chỉ admin?                | Lộ bề mặt tấn công/thiết kế nội bộ                     | Lộ danh mục tool cho kẻ tấn công dò prompt injection   |
-| Quy tắc deprecate: có thời gian ân hạn bắt buộc không?                                 | Chính sách vận hành                                    | Gỡ capability đang dùng làm gãy luồng production       |
+### Đã chốt
+
+- **`costPolicy`/`auditPolicy`: chuỗi hay object? — owner chốt 2026-08-17: CẤU TRÚC HOÁ theo nhu cầu
+  V2-18.** Contract đã sửa (schema version 2). Đơn vị tiền là **USD**, khớp quy ước nội bộ của
+  `packages/core-ai/aiCost.ts` — chỉ quy đổi VND khi HIỂN THỊ (`USD_VND_RATE`). Sửa được ngay không
+  cần đường tương thích vì chưa bảng DB/API nào dùng contract này, chỉ có chính file contract + test.
+
+### Còn mở
+
+| Câu hỏi                                                                             | Vì sao cần owner                                       | Ảnh hưởng nếu chọn sai                                 |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| Chính xác capability Learning nào đăng ký đợt đầu (và tên ID của chúng)?            | Đây là hợp đồng công khai lâu dài, đổi tên sau tốn kém | ID sai ngữ nghĩa phải version-bump hàng loạt về sau    |
+| Registry đặt ở `packages/core-personal` hay package mới `packages/core-capability`? | Ranh giới package theo ADR-0003                        | Đặt sai gây phụ thuộc vòng giữa Personal OS và runtime |
+| Manifest có được phép cấu hình theo môi trường (dev/prod khác lifecycle) không?     | Ảnh hưởng an toàn khi thử nghiệm trên production       | Bật nhầm capability experimental cho người dùng thật   |
+| Ai được xem `GET /api/capabilities` — mọi user đăng nhập hay chỉ admin?             | Lộ bề mặt tấn công/thiết kế nội bộ                     | Lộ danh mục tool cho kẻ tấn công dò prompt injection   |
+| Quy tắc deprecate: có thời gian ân hạn bắt buộc không?                              | Chính sách vận hành                                    | Gỡ capability đang dùng làm gãy luồng production       |
 
 ## 8. Không làm
 

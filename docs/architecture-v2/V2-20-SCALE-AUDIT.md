@@ -17,16 +17,16 @@ Outcome: kết luận **V2 được chấp nhận hay chưa**, dựa trên bằn
 
 Roadmap nêu 8 điều kiện chấp nhận; đặc tả này biến chúng thành hạng mục kiểm chứng có bằng chứng:
 
-| #   | Điều kiện (roadmap)                                           | Bằng chứng cần có                                            |
-| --- | ------------------------------------------------------------- | ------------------------------------------------------------ |
-| 1   | Một người dùng dùng một Companion trên ≥ 2 domain production  | Log/trace lượt chạy thật trên 2 domain của cùng `person_id`  |
-| 2   | Life Graph nối goal/evidence xuyên domain                     | Truy vấn graph thật ra đường đi Career → Learning → evidence |
-| 3   | Personal World Model có provenance/confidence/privacy control | Export dữ liệu một person cho thấy đủ 3 thuộc tính           |
-| 4   | Knowledge Fabric có inspect/correct/delete                    | Diễn tập thực hiện được cả 3 thao tác, có audit              |
-| 5   | Side effect ngoài tuân thủ authority                          | 100% receipt truy được về policy/grant                       |
-| 6   | Vòng Decision/Outcome chạy end-to-end                         | ≥ 1 decision đi trọn `open → reviewed`                       |
-| 7   | Đổi provider/agent không mất trạng thái người dùng            | Diễn tập đổi provider AI, dữ liệu person không đổi           |
-| 8   | SLO/chi phí/bảo mật/backup/recovery/audit đầy đủ              | Báo cáo có số đo thật từ production                          |
+| #   | Điều kiện (roadmap)                                           | Bằng chứng cần có                                                                                                                                                                     |
+| --- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Một người dùng dùng một Companion trên ≥ 2 domain production  | Log/trace lượt chạy thật trên 2 domain của cùng `person_id` (owner chốt 2026-08-17: các domain V2-13/15/16/17 là sản phẩm thật cho người dùng cuối, nên gate này đo được — xem mục 6) |
+| 2   | Life Graph nối goal/evidence xuyên domain                     | Truy vấn graph thật ra đường đi Career → Learning → evidence                                                                                                                          |
+| 3   | Personal World Model có provenance/confidence/privacy control | Export dữ liệu một person cho thấy đủ 3 thuộc tính                                                                                                                                    |
+| 4   | Knowledge Fabric có inspect/correct/delete                    | Diễn tập thực hiện được cả 3 thao tác, có audit                                                                                                                                       |
+| 5   | Side effect ngoài tuân thủ authority                          | 100% receipt truy được về policy/grant                                                                                                                                                |
+| 6   | Vòng Decision/Outcome chạy end-to-end                         | ≥ 1 decision đi trọn `open → reviewed`                                                                                                                                                |
+| 7   | Đổi provider/agent không mất trạng thái người dùng            | Diễn tập đổi provider AI, dữ liệu person không đổi                                                                                                                                    |
+| 8   | SLO/chi phí/bảo mật/backup/recovery/audit đầy đủ              | Báo cáo có số đo thật từ production                                                                                                                                                   |
 
 ## 2. Entities / schema sketch
 
@@ -70,20 +70,35 @@ chấp nhận thiếu sót cụ thể nào và vì sao.
 - **Rủi ro:** phase này dễ bị biến thành "tick cho xong". Giảm thiểu: mỗi dòng bằng chứng phải là link
   tới log/test/commit thật.
 - **Rủi ro hạ tầng:** VPS 1 vCPU không đủ để đo scale thật; kết luận scale có thể không kết luận được.
-- **Rủi ro:** một số điều kiện (2 domain production) phụ thuộc quyết định sản phẩm ở V2-13/V2-15/V2-16;
-  nếu các domain đó chỉ là proof nội bộ thì điều kiện 1 chưa thể đạt.
+- ~~**Rủi ro:** một số điều kiện (2 domain production) phụ thuộc quyết định sản phẩm ở V2-13/V2-15/
+  V2-16; nếu các domain đó chỉ là proof nội bộ thì điều kiện 1 chưa thể đạt.~~ **ĐÃ ĐÓNG 2026-08-17
+  bằng quyết định owner:** Career/Work/Startup/Life đều là tính năng sản phẩm thật cho người dùng
+  cuối, per-person theo `person_id` (xem mục 1 của V2-13/V2-15/V2-16/V2-17). Điều kiện 1 do đó nhất
+  quán và đạt được về nguyên tắc — không còn mâu thuẫn tiềm tàng nào giữa gate này và phạm vi các
+  phase domain. Rủi ro CÒN LẠI là rủi ro thực thi bình thường, không phải mâu thuẫn đặc tả: các
+  domain đó phải thật sự có người dùng thật dùng trước khi V2-20 chạy.
 - **Giả định:** có quyền truy cập production để đo — hiện chưa có (`docs/goals/v2-wave-a-architecture-boundaries.md` M1/S4 vẫn WAITING).
 
 ## 7. Câu hỏi mở cần owner quyết
 
-| Câu hỏi                                                                | Vì sao cần owner                             | Ảnh hưởng nếu chọn sai                      |
-| ---------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------- |
-| "Production domain thứ hai" là domain nào và có người dùng thật không? | Điều kiện chấp nhận số 1 phụ thuộc trực tiếp | Không có → V2 không thể tuyên bố accepted   |
-| Mục tiêu SLO cụ thể (p95 độ trễ, tỉ lệ lỗi) là bao nhiêu?              | Quyết định sản phẩm/vận hành                 | Không có mục tiêu → không kết luận được     |
-| Trần chi phí API mỗi tháng ở quy mô mục tiêu?                          | Quyết định tài chính                         | Kiến trúc đúng nhưng không kham nổi chi phí |
-| Có nâng cấp hạ tầng (thêm vCPU, Redis) để đo scale không?              | Chi phí thật                                 | Không nâng → phần scale bỏ ngỏ              |
-| Ai thực hiện audit bảo mật độc lập (nếu có)?                           | Tính khách quan                              | Tự audit → bỏ sót lỗ hổng                   |
-| Chấp nhận V2 với những thiếu sót nào (nếu có)?                         | Đây là quyết định chấp nhận rủi ro của owner | AI tự quyết là vượt thẩm quyền              |
+### Đã chốt (2026-08-17)
+
+- **Các domain V2-13/15/16/17 là sản phẩm thật cho người dùng cuối, không phải proof nội bộ.** Gate
+  "≥ 2 domain production" (điều kiện 1) vì thế nhất quán với phạm vi các phase domain; mâu thuẫn tiềm
+  tàng ghi ở mục 6 đã được đóng.
+- **Domain thứ hai (sau Learning) dự kiến là Career** — theo ĐỀ XUẤT thứ tự roll-out ở V2-13 mục 1
+  (Career trước, rồi Work/Life/Startup theo nhu cầu đo được). Đề xuất này CHỜ owner xác nhận lại;
+  đổi thứ tự không làm đổi gate, chỉ đổi domain nào tính vào.
+
+### Còn mở
+
+| Câu hỏi                                                   | Vì sao cần owner                             | Ảnh hưởng nếu chọn sai                      |
+| --------------------------------------------------------- | -------------------------------------------- | ------------------------------------------- |
+| Mục tiêu SLO cụ thể (p95 độ trễ, tỉ lệ lỗi) là bao nhiêu? | Quyết định sản phẩm/vận hành                 | Không có mục tiêu → không kết luận được     |
+| Trần chi phí API mỗi tháng ở quy mô mục tiêu?             | Quyết định tài chính                         | Kiến trúc đúng nhưng không kham nổi chi phí |
+| Có nâng cấp hạ tầng (thêm vCPU, Redis) để đo scale không? | Chi phí thật                                 | Không nâng → phần scale bỏ ngỏ              |
+| Ai thực hiện audit bảo mật độc lập (nếu có)?              | Tính khách quan                              | Tự audit → bỏ sót lỗ hổng                   |
+| Chấp nhận V2 với những thiếu sót nào (nếu có)?            | Đây là quyết định chấp nhận rủi ro của owner | AI tự quyết là vượt thẩm quyền              |
 
 ## 8. Không làm
 

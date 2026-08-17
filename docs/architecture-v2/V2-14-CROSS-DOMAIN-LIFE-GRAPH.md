@@ -70,6 +70,9 @@ getCareerProgress(personId, careerGoalId): {
 
 Truyền tiến độ ngược: Learning phát `DomainEvent` (`learning.mastery_updated`) qua outbox; Career
 tiêu thụ **idempotent theo event id** và tính lại `skill_gaps`. Career không hỏi thẳng bảng Learning.
+Cơ chế outbox (bảng, transactional publish, at-least-once, retry/dead-letter, polling vs
+LISTEN/NOTIFY): [`23-EVENT-OUTBOX-STRATEGY.md`](23-EVENT-OUTBOX-STRATEGY.md) — luồng này là
+**consumer thật đầu tiên** của outbox (`career.skill_gap_recalc`).
 
 ## 4. Invariant và gate
 
@@ -93,7 +96,7 @@ Gate coi là đạt phase:
 1. Mở rộng `life_node_sources` cho nhiều domain (di trú từ `life_goal_sources`).
 2. Liên kết Career goal ↔ Skill node.
 3. Đường Learning plan (Companion đề xuất → Learning commit).
-4. Outbox event Learning → consumer Career.
+4. Dựng hạ tầng outbox theo `23-EVENT-OUTBOX-STRATEGY.md`, rồi nối event Learning → consumer Career.
 5. `getGoalGraph` + view đọc; UI tối thiểu nếu cần chứng minh.
 
 ## 6. Rủi ro và giả định
@@ -103,13 +106,15 @@ Gate coi là đạt phase:
 - **Rủi ro:** event mất/trùng gây tiến độ Career lệch. Giảm thiểu: outbox + reconciliation job.
 - **Rủi ro:** độ trễ cập nhật khiến người dùng thấy số liệu cũ; cần hiển thị `fetchedAt`.
 - **Giả định:** V2-05 đã có adapter đọc ngược an toàn và cơ chế phát hiện lệch nhãn (đã có).
-- **Giả định:** hạ tầng outbox/event đã tồn tại hoặc được dựng ở phase này (cần xác nhận trạng thái thật).
+- **ĐÃ XÁC NHẬN (owner chốt 2026-08-17), không còn là giả định:** hạ tầng outbox/event CHƯA tồn tại —
+  mới chỉ có contract `EventEnvelope`/`DomainEvent` (V2-02), không có bảng outbox, không có worker.
+  Đặc tả cơ chế: [`23-EVENT-OUTBOX-STRATEGY.md`](23-EVENT-OUTBOX-STRATEGY.md). Khối lượng dựng outbox
+  thuộc phase này, phải tính vào ước lượng.
 
 ## 7. Câu hỏi mở cần owner quyết
 
 | Câu hỏi                                                                     | Vì sao cần owner                      | Ảnh hưởng nếu chọn sai                        |
 | --------------------------------------------------------------------------- | ------------------------------------- | --------------------------------------------- |
-| Hạ tầng outbox/event đã có chưa, hay phải dựng trong phase này?             | Ảnh hưởng khối lượng công việc lớn    | Giả định sai làm phase trượt tiến độ          |
 | Tiến độ Career tính theo công thức nào (trung bình gap? có trọng số?)       | Quyết định sản phẩm                   | Công thức sai làm người dùng hiểu sai tiến độ |
 | Người dùng có được tự nối/gỡ cạnh trong graph không?                        | Quyết định sản phẩm + rủi ro toàn vẹn | Cho sửa tự do → graph mâu thuẫn với domain    |
 | Có UI đồ thị xuyên domain trong phase này không?                            | Phạm vi                               | Làm UI sớm tốn công trước khi dữ liệu ổn      |

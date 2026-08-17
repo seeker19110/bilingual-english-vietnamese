@@ -41,7 +41,11 @@ personal.automation_grants
   resource_scope text not null
   purpose text not null
   trigger jsonb not null            -- {kind:'schedule', cron} | {kind:'event', eventType}
-  budget jsonb not null             -- {maxRunsPerDay, maxCostVnd, maxExternalWrites}
+  budget jsonb not null             -- {maxRunsPerDay, maxCostUsd, maxExternalWrites}
+                                    -- ĐƠN VỊ USD (quy ước nội bộ, khớp packages/core-ai/aiCost.ts
+                                    -- và CapabilityManifest.costPolicy schema v2); quy đổi VND khi
+                                    -- HIỂN THỊ qua USD_VND_RATE. Trần của grant KHÔNG được vượt
+                                    -- costPolicy của capability — lấy min của hai trần.
   status text not null check (active|paused|revoked|expired)
   expires_at timestamptz not null   -- BẮT BUỘC, không có grant vĩnh viễn
   review_at timestamptz not null    -- ràng buộc đã có từ 0042 cho AUTOMATE
@@ -78,15 +82,23 @@ dryRun(personId, grantId): PlanPreview                    // chạy thử, khôn
 API HTTP: `GET/POST/PATCH/DELETE /api/automations`, `GET /api/automations/:id/runs`,
 `POST /api/automations/:id/dry-run`. Auth + rate limit + Zod, `personId` từ token.
 
-Worker: quét trigger lịch (và tiêu thụ event từ outbox), mỗi lần chạy tạo `automation_runs` trước khi
-gọi Companion Runtime; runtime vẫn đi qua đủ policy như luồng có người.
+Worker: quét trigger lịch (và tiêu thụ event từ outbox theo
+[`23-EVENT-OUTBOX-STRATEGY.md`](23-EVENT-OUTBOX-STRATEGY.md) — consumer phải idempotent theo event
+id), mỗi lần chạy tạo `automation_runs` trước khi gọi Companion Runtime; runtime vẫn đi qua đủ policy
+như luồng có người.
+
+Ngân sách đọc từ hai nguồn và lấy trần CHẶT HƠN: `CapabilityManifest.costPolicy` (trần của chính
+capability, owner chốt cấu trúc hoá 2026-08-17 — xem V2-08) và `automation_grants.budget` (trần của
+grant cụ thể).
 
 ## 4. Invariant và gate
 
 Invariant:
 
 1. Không có grant vô hạn: `expires_at` và `review_at` bắt buộc.
-2. Vượt budget ⇒ bỏ qua lượt chạy và ghi `skipped_budget`, **không** chạy rồi mới báo.
+2. Vượt budget ⇒ bỏ qua lượt chạy và ghi `skipped_budget`, **không** chạy rồi mới báo. Trần áp dụng
+   là `min(grant.budget, CapabilityManifest.costPolicy)`; `costPolicy.onExceed='warn_and_allow'`
+   KHÔNG áp dụng cho automation — automation không có người xem nên luôn xử như `block`.
 3. `revoke`/`pause` có hiệu lực ngay ở lượt chạy kế tiếp và huỷ lượt đang chờ.
 4. Mọi tác động ngoài sinh receipt (V2-15), `confirmed_by='automation_grant'` kèm `grant_id`.
 5. Retry hữu hạn, cùng idempotency key; hành động không idempotent thì không được retry tự động.
@@ -121,6 +133,15 @@ Gate coi là đạt phase:
 - **Giả định:** đã có hạ tầng job/worker; nếu chưa thì đây là phần việc thêm đáng kể.
 
 ## 7. Câu hỏi mở cần owner quyết
+
+### Đã chốt
+
+- **Hình dạng trần chi phí đọc từ capability — owner chốt 2026-08-17:** `CapabilityManifest.costPolicy`
+  cấu trúc hoá (`maxCallsPerDayPerPerson`, `maxCostUsdPerDayPerPerson` USD, `onExceed`), nên worker
+  automation đọc trực tiếp được, không phải suy từ chuỗi tên policy. Chi tiết: V2-08 mục 7.
+  Vẫn CÒN MỞ: con số trần mặc định cụ thể (dòng đầu bảng dưới).
+
+### Còn mở
 
 | Câu hỏi                                                                     | Vì sao cần owner              | Ảnh hưởng nếu chọn sai                            |
 | --------------------------------------------------------------------------- | ----------------------------- | ------------------------------------------------- |

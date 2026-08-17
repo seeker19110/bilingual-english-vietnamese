@@ -24,6 +24,14 @@ Trong scope (đúng roadmap):
 Giá trị kiến trúc của phase: đây là nơi dễ nhất để LLM "nói chắc như đinh" về thị trường; hệ thống
 phải cấu trúc hoá để phát biểu của model **mặc định là hypothesis**, không phải fact.
 
+> **Owner chốt 2026-08-17 — đây là tính năng SẢN PHẨM THẬT cho người dùng cuối**, không phải công cụ
+> nội bộ hay bằng chứng kiến trúc dùng một lần. Mỗi người dùng có dữ liệu Startup riêng theo `person_id`,
+> giống mọi bảng Personal OS Core từ V2-03 — **không cần cơ chế đặc biệt nào thêm** cho việc "mỗi
+> người một bản": kiến trúc hiện tại (Person / PersonalFact / Life Graph, tất cả khoá theo
+> `person_id`, FK `on delete cascade`) vốn đã per-person. Hệ quả: yêu cầu bảo mật/riêng tư/quota áp ở
+> mức người dùng thật ngay từ đầu, không được nới lỏng với lý do "chỉ owner tự dùng". Thứ tự
+> roll-out các domain: xem V2-13 mục 1 (ĐỀ XUẤT, chờ owner xác nhận).
+
 ## 2. Entities / schema sketch
 
 Schema `startup`, quy ước `version` + `archived_at` + audit append-only như `0041`–`0044`.
@@ -125,14 +133,20 @@ Gate coi là đạt phase:
 
 ## 7. Câu hỏi mở cần owner quyết
 
-| Câu hỏi                                                                        | Vì sao cần owner                      | Ảnh hưởng nếu chọn sai                  |
-| ------------------------------------------------------------------------------ | ------------------------------------- | --------------------------------------- |
-| Startup có phải tính năng phát hành cho người dùng hay chỉ là proof kiến trúc? | Quyết định sản phẩm                   | Sai phạm vi → tốn nhiều tháng           |
-| Có cho phép nhiều người cùng làm một venture không?                            | Kéo theo mô hình quyền hoàn toàn khác | Thêm sau rất tốn kém                    |
-| Số liệu thị trường lấy từ nguồn nào (chỉ AI? nhập tay? API dữ liệu?)           | Chi phí + độ tin cậy                  | Dựa hoàn toàn vào AI → số liệu bịa      |
-| Mô hình tài chính chi tiết tới đâu (bảng dòng tiền? chỉ ước lượng thô?)        | Quyết định sản phẩm                   | Làm sâu quá sớm khi chưa ai dùng        |
-| Hiển thị phân biệt hypothesis/evidence bằng cách nào trong UI?                 | Trải nghiệm + trách nhiệm thông tin   | Người dùng ra quyết định kinh doanh sai |
-| Dữ liệu venture phân loại sensitivity nào?                                     | Bí mật kinh doanh                     | Lọt vào context/logs sai mục đích       |
+### Đã chốt (2026-08-17)
+
+- **Startup là tính năng sản phẩm thật cho người dùng cuối, per-person theo `person_id`** — xem hộp quyết
+  định ở mục 1. Không cần thiết kế thêm cơ chế đa người dùng.
+
+### Còn mở
+
+| Câu hỏi                                                                 | Vì sao cần owner                      | Ảnh hưởng nếu chọn sai                  |
+| ----------------------------------------------------------------------- | ------------------------------------- | --------------------------------------- |
+| Có cho phép nhiều người cùng làm một venture không?                     | Kéo theo mô hình quyền hoàn toàn khác | Thêm sau rất tốn kém                    |
+| Số liệu thị trường lấy từ nguồn nào (chỉ AI? nhập tay? API dữ liệu?)    | Chi phí + độ tin cậy                  | Dựa hoàn toàn vào AI → số liệu bịa      |
+| Mô hình tài chính chi tiết tới đâu (bảng dòng tiền? chỉ ước lượng thô?) | Quyết định sản phẩm                   | Làm sâu quá sớm khi chưa ai dùng        |
+| Hiển thị phân biệt hypothesis/evidence bằng cách nào trong UI?          | Trải nghiệm + trách nhiệm thông tin   | Người dùng ra quyết định kinh doanh sai |
+| Dữ liệu venture phân loại sensitivity nào?                              | Bí mật kinh doanh                     | Lọt vào context/logs sai mục đích       |
 
 ## 8. Không làm
 

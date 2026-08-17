@@ -24,6 +24,13 @@ Trong scope (đúng roadmap):
 Đây là phase đầu tiên hệ thống **tác động ra thế giới bên ngoài**, nên rủi ro cao nhất không phải kỹ
 thuật mà là hành động sai không thu hồi được.
 
+> **Owner chốt 2026-08-17 — đây là tính năng SẢN PHẨM THẬT cho người dùng cuối**, không phải công cụ
+> nội bộ hay proof kiến trúc. Mỗi người dùng có dữ liệu Work riêng theo `person_id`, giống mọi bảng
+> Personal OS Core từ V2-03 — KHÔNG cần cơ chế đặc biệt nào thêm cho việc "mỗi người một bản": kiến
+> trúc hiện tại (Person / PersonalFact / Life Graph, tất cả khoá theo `person_id` với FK
+> `on delete cascade`) vốn đã per-person. Hệ quả cần nhớ: yêu cầu bảo mật/riêng tư áp ở mức người
+> dùng thật ngay từ đầu, không được nới lỏng với lý do "chỉ owner dùng".
+
 ## 2. Entities / schema sketch
 
 Schema `work`, quy ước `version` + `archived_at` + audit append-only như `0041`–`0044`.
@@ -70,8 +77,24 @@ work.external_action_receipts      -- biên nhận mọi tác động ra ngoài,
   created_at timestamptz not null default now()
 ```
 
-Quyết định của Work (`work.decisions`) **không** tạo bảng riêng: dùng `personal.decision_records`
-(V2-10) với `domain='work'` — tránh hai ledger cạnh tranh.
+### Quyết định của Work: KHÔNG có bảng `work.decisions` riêng (owner chốt 2026-08-17)
+
+Dùng `personal.decision_records` (V2-10) với `domain='work'`. Owner chốt "dùng chung được thì dùng
+chung"; đã đối chiếu từng trường Work cần với contract
+`packages/core-contracts/decisionRecord.ts` + schema sketch V2-10, KHÔNG có trường nào thiếu:
+
+| Work cần                             | Decision Ledger đáp ứng bằng                                                                                                                                                                                                                               |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Phân biệt quyết định công việc       | `domain='work'`                                                                                                                                                                                                                                            |
+| Gắn với dự án/công việc cụ thể       | `node_id` → `personal.life_graph_nodes`; `work.projects.node_id` đã có projection sang node `Project`, nối bằng cạnh `belongs_to` (nằm trong 7 relation đã chốt) — đúng giao thức xuyên domain mục 11 kiến trúc, không cần FK trực tiếp sang bảng `work.*` |
+| Bằng chứng từ tài liệu/cuộc họp Work | `evidence`/`assumptions` kiểu `EvidenceRef{sourceType, sourceId}` — `sourceType` là chuỗi tự do, nhận được `work_document`, `work_meeting`                                                                                                                 |
+| Phương án, đánh đổi, lựa chọn, lý do | `options`, `tradeoffs`, `selectedOptionId`, `rationale`                                                                                                                                                                                                    |
+| Rà lại kết quả sau khi làm           | `expectedOutcomes` + `outcome_observations` + `review_at` (Work không cần vòng review thứ hai)                                                                                                                                                             |
+| Lịch sử sửa đổi                      | append-only + `supersedes`/`is_current`                                                                                                                                                                                                                    |
+
+Hệ quả: Work KHÔNG được tự thêm cột vào `personal.decision_records`; nhu cầu mới phải đi qua V2-10.
+Việc cần làm ở phase này (nhỏ, không phải câu hỏi mở): xác nhận `EvidenceRef.sourceId` kiểu `uuid`
+khớp khoá chính của `work.documents`/`work.meetings` — cả hai đều `uuid pk`, nên khớp.
 
 ## 3. API / service contract sketch
 
@@ -134,10 +157,17 @@ Gate coi là đạt phase:
 
 ## 7. Câu hỏi mở cần owner quyết
 
+### Đã chốt (2026-08-17)
+
+- **Work là sản phẩm thật cho người dùng cuối, per-person theo `person_id`** — xem hộp ở mục 1.
+- **Không tạo `work.decisions`; dùng chung `personal.decision_records` với `domain='work'`** — bảng
+  đối chiếu trường ở mục 2 chứng minh không thiếu trường nào.
+
+### Còn mở
+
 | Câu hỏi                                                                                       | Vì sao cần owner                           | Ảnh hưởng nếu chọn sai                                  |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------- |
 | Có tích hợp hệ ngoài nào không, và nếu có thì cái nào trước (Calendar? Email? Issue tracker?) | Quyết định sản phẩm + chi phí + pháp lý    | Chọn sai → nhiều tháng công cho tính năng không ai dùng |
-| Work có phải tính năng cho người dùng cuối hay chỉ cho owner tự dùng?                         | Quyết định sản phẩm                        | Ảnh hưởng toàn bộ yêu cầu bảo mật và quy mô             |
 | Lưu OAuth token bên thứ ba ở đâu và ai chịu trách nhiệm rò rỉ?                                | Rủi ro bảo mật/pháp lý, vượt thẩm quyền AI | Rò token = sự cố nghiêm trọng với tài khoản thật        |
 | Đồng bộ một chiều (đọc) hay hai chiều (ghi) ở đợt đầu?                                        | Đánh đổi giá trị/rủi ro                    | Hai chiều sớm → hành động sai ra ngoài                  |
 | Có lưu nội dung tài liệu/email vào DB không?                                                  | Riêng tư + dung lượng                      | Lưu thô → rủi ro rò rỉ và chi phí lưu trữ               |
