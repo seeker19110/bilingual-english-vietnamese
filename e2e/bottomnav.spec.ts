@@ -24,7 +24,9 @@ test.describe('BottomNav (U-5)', () => {
     await expect(page.getByRole('link', { name: /Lộ trình/ })).toBeVisible()
     await expect(page.getByRole('link', { name: /Luyện tập/ })).toBeVisible()
     await expect(page.getByRole('link', { name: /Tiến độ/ })).toBeVisible()
-    await expect(page.getByRole('link', { name: /Cài đặt/ })).toBeVisible()
+    // Tab 5 đổi từ "Cài đặt" sang "Cá nhân" (dẫn tới /profile) — xem PROGRESS.md mục "V2 UI —
+    // Multi-Subject Learning..." (BottomNav.tsx: label T.navProfile, i18n/index.ts).
+    await expect(page.getByRole('link', { name: /Cá nhân/ })).toBeVisible()
 
     await page.goto('/login')
     await expect(page.locator('nav[aria-label]')).toHaveCount(0)
@@ -57,11 +59,14 @@ test.describe('BottomNav (U-5)', () => {
     if (box) expect(box.y + box.height).toBeLessThanOrEqual(844 - 72)
   })
 
-  test('QuickActions (Chia sẻ/Nhắc học) chỉ còn ở Profile, không còn ở Chat/Lessons', async ({
+  test('QuickActions (Chia sẻ/Nhắc học) chỉ còn ở Tiến độ, không còn ở Chat/Lessons', async ({
     page,
   }) => {
+    // QuickActions dời từ /cai-dat sang /tien-do (Dashboard.tsx) — xem PROGRESS.md mục "V2 UI —
+    // Multi-Subject Learning..." ("Loại bỏ hoàn toàn các cài đặt học tập vụn vặt khỏi trang cá
+    // nhân"); apps/english/src/pages/EnglishSettings.tsx (/cai-dat) không còn import QuickActions.
     await mockLogin(page, 'vi')
-    await page.goto('/cai-dat')
+    await page.goto('/tien-do')
     await expect(page.getByText('Chia sẻ')).toBeVisible()
 
     await page.goto('/tro-truyen')

@@ -8,6 +8,121 @@
 
 ## Giai đoạn hiện tại
 
+### Fix CI e2e đỏ trên PR #602 (2026-08-17)
+
+4 test e2e đỏ trên `main` từ TRƯỚC PR #602 (đã báo trên PR, giờ chẩn đoán root cause + sửa thay vì
+chỉ chờ) — cả 4 đều là **test cũ chưa cập nhật theo thay đổi UI ở các PR trước**, không phải bug
+sản phẩm:
+
+- `e2e/v2-hubs.spec.ts` luồng "gửi tin nhắn Companion": mock `/api/companion` còn trả JSON thường,
+  nhưng `Companion.tsx` từ PR `b2a78b8` (Companion SSE Streaming) đã đổi sang gọi
+  `stream: true` và parse Server-Sent Events (`event: <type>\ndata: <json>\n\n`) — JSON thô không
+  có `\n\n` nên parser không bao giờ tách được sự kiện, `onDone` không bao giờ gọi, tin nhắn không
+  hiện. Sửa: mock trả đúng định dạng SSE (`event: done\ndata: {...}\n\n`).
+- `e2e/v2-hubs.spec.ts` luồng "Trang chủ": PR "V2 UI — Multi-Subject Learning..." đã dời khối
+  "Không Gian Chuyên Biệt" (thẻ Sự nghiệp/Công việc/Khởi nghiệp/Đời sống) từ Trang chủ sang
+  `/profile`, nhưng test cũ vẫn kiểm tra các thẻ đó trên Trang chủ. Sửa: tách kiểm tra — Trang chủ
+  chỉ còn thẻ "Bạn Đồng Hành AI", 4 thẻ hub kiểm tra ở `/profile`.
+- `e2e/bottomnav.spec.ts` "hiện đủ 5 mục": tab 5 đổi tên "Cài đặt" → "Cá nhân" (dẫn `/profile`)
+  cùng đợt restructure trên, test cũ vẫn tìm link tên "Cài đặt".
+- `e2e/bottomnav.spec.ts` "QuickActions": `QuickActions` (nút Chia sẻ/Nhắc học) dời từ `/cai-dat`
+  sang `/tien-do` (`Dashboard.tsx`) cùng đợt "Loại bỏ cài đặt học tập vụn vặt khỏi trang cá nhân",
+  test cũ vẫn kiểm tra ở `/cai-dat`.
+
+**Bài học:** PR đổi UI/luồng streaming nên tự rà + cập nhật e2e liên quan TRONG CÙNG PR (mục 9
+"Cổng trước khi MERGE" CLAUDE.md) — 3/4 lỗi trên đều do PR trước không cập nhật e2e theo kịp thay
+đổi UI, chỉ 1/4 (mock SSE) là do đổi giao thức API mà chưa ai cập nhật test tương ứng.
+**Quality Gates:** chạy trực tiếp 2 file bị ảnh hưởng bằng Chromium thật (không chỉ đọc log CI) —
+11/11 test `bottomnav.spec.ts` + `v2-hubs.spec.ts` xanh · `npm run lint`/`typecheck`/
+`format:check` sạch.
+
+### PR 1/3 — Backend Real-time Chat: WebSocket + Content Moderation (2026-08-17)
+
+Tiếp nối PR 0 (hệ thống bạn bè, đã tạo PR #602). PR này làm backend chat 1-1 real-time:
+
+- Migration `postgres/migrations/0054_chat.sql` (đổi số từ 0053 dự kiến ban đầu vì phát hiện
+  nhánh `feat/chat-feature` khác cũng dùng 0053 cho mục đích khác — xem quyết định dưới) — schema
+  `chat.*`: `rooms`/`room_members`/`messages` (content + content_clean sau lọc + moderation_flags
+  - is_blocked)/`moderation_events`, kèm view `public.chat_*` theo đúng quy ước
+    `english.chat_sessions` cũ.
+- `packages/core-chat/moderator.ts` + `wordlist-vi.ts`/`wordlist-en.ts`: chuẩn hoá token (bỏ dấu,
+  gộp ký tự lặp, leetspeak cơ bản), so khớp theo token + cặp token liền kề (bắt cụm 2 từ như "óc
+  chó", dùng so khớp CHÍNH XÁC cho cặp để tránh báo nhầm khi 2 từ vô hại ghép lại trùng ngẫu nhiên
+  với 1 từ xấu ngắn hơn — vd "mày"+"ngu"). severity low/medium → mask `***`; high → chặn hẳn.
+- `packages/core-chat/chatService.ts`: `createOrGetDmRoom` **gọi `areFriends()` trước khi tạo
+  phòng** (đúng quyết định "chỉ chat được với bạn bè"), `sendMessage` (chạy qua moderation trước
+  khi lưu), `getMessages`/`getRooms`/`markRead`/`deleteMessage`, mọi thao tác tự kiểm thành viên
+  phòng.
+- `packages/core-chat/redisChat.ts`: pub/sub theo kênh `chat:user:<userId>` — có Redis thật thì
+  dùng `ioredis`, **chưa có `REDIS_URL` (đúng tình trạng VPS hiện tại) thì tự fallback sang
+  EventEmitter nội bộ**, chỉ hoạt động trong 1 tiến trình PM2 (đủ dùng vì VPS hiện 1 vCPU/1
+  instance — xem CLAUDE.md mục 13). Khi cài Redis thật, code không cần sửa gì thêm.
+- `packages/core-chat/wsHandler.ts`: gắn WebSocket vào CHÍNH `http.Server` của `server.ts` (không
+  mở cổng riêng), path `/ws/chat`; auth qua cookie HttpOnly (đọc header `cookie` của upgrade
+  request, tái dùng `validateAuth()` sẵn có bằng cách dựng 1 Web Request tối giản); presence
+  online/offline phát cho các "bạn cùng phòng chat" khi kết nối/ngắt kết nối.
+  Sự kiện: `message`/`typing`/`read`/`ping` (client→server), `message`/`typing`/`read`/`presence`/
+  `error`/`pong` (server→client).
+- `packages/core-contracts/chat.ts`: Zod schema cho WS events (discriminated union) + REST
+  (`CreateRoomBodySchema`, `GetMessagesQuerySchema`).
+- `api/chat.ts`: REST 1 endpoint nhiều method theo đúng khuôn `api/friends.ts` (server.ts không có
+  wildcard route) — `GET /api/chat` (danh sách phòng), `GET /api/chat?roomId=` (lịch sử tin nhắn),
+  `POST /api/chat {targetUserId}` (tạo/lấy phòng DM, chỉ với bạn bè), `DELETE /api/chat?messageId=`.
+  Mount vào `server.ts` cùng `attachChatWebSocketServer(server)`.
+- Thêm dependency trực tiếp `ws` + `@types/ws` vào `package.json` (trước đó chỉ là transitive).
+- **Quyết định trong phiên:** phát hiện nhánh `feat/chat-feature` (không có PR mở) đã tự làm toàn
+  bộ chat trong 1 commit nhưng **KHÔNG giới hạn theo bạn bè** (cho phép DM bất kỳ ai) — trái với
+  quyết định đã chốt cùng người dùng. Người dùng xác nhận **bỏ qua nhánh đó** (không xoá, không
+  lấy code), tiếp tục làm đúng kế hoạch 3 PR trên nhánh `claude/chat-feature-az268d`.
+- **Quality Gates**: `npm run build` ✅ (Client/Server/Hub, gồm `tsc -p tsconfig.server.json` xác
+  nhận `ioredis` import đúng kiểu `{ Redis }` chứ không phải default import) · `npm run typecheck`
+  ✅ (0 lỗi, 4 tsconfig) · `npm run lint` ✅ (0 cảnh báo) · `npm run format:check` ✅ · `npm test`
+  ✅ **4.202/4.202 test** (273→278 file test, +5 file mới: `moderator.test.ts`,
+  `chatService.test.ts`, `redisChat.test.ts`, `wsHandler.test.ts`, `api/chat.test.ts`).
+
+**Còn lại theo kế hoạch (chưa làm ở PR này):**
+
+- **PR 2 — Frontend Chat UI**: `ChatPage.tsx` + components (`ChatList`/`ChatWindow`/
+  `MessageBubble`/`MessageInput`/`PresenceDot`), `useChat.ts` hook nối WebSocket, route `/chat`
+  (chỉ hiện bạn bè đã kết bạn qua `/ban-be` làm danh sách người có thể nhắn), E2E test.
+- ⚠️ Việc tay sau này: cài Redis + `REDIS_URL` trên VPS để fan-out multi-instance hoạt động thật
+  (trước đó vẫn chạy được nhờ fallback single-process, chỉ chưa scale nhiều tiến trình). Chạy
+  `npm run migrate:pg` để áp migration `0054_chat.sql`.
+
+### PR 0/3 — Hệ thống kết bạn qua mã/URL/QR (2026-08-17, nền tảng cho Real-time Chat)
+
+Bước đầu của kế hoạch **"Real-time User-to-User Chat với Content Moderation"** (3 PR — chốt cùng
+người dùng 2026-08-17): **PR 0 (hệ thống bạn bè) — PR 1 (backend chat WS+Redis) — PR 2 (frontend
+chat UI)**. Quyết định phạm vi đã chốt: chỉ **DM 1-1** (schema chừa chỗ group sau), **chỉ chat được
+giữa 2 user đã kết bạn** (nên phải xây bạn bè TRƯỚC), moderation **filter theo severity** (low/medium
+che ***, high chặn hẳn + ghi nhận vi phạm), **kết bạn qua URL/mã QR** (không qua luồng gửi/chấp nhận
+lời mời — chia sẻ link đã là hành động chủ động, người quét xác nhận 1 lần là thành bạn ngay, đối
+xứng 2 chiều). VPS **chưa có Redis** → PR 1 sẽ cần fallback broadcast trong 1 process.
+
+**PR 0 này đã xong:**
+
+- Migration `postgres/migrations/0053_friends.sql`: cột `profiles.friend_code` (mã 8 ký tự, sinh
+  lười giống `referral_code` ở migration 0007 nhưng KHÁC mục đích — không thưởng gì) + bảng
+  `public.friendships` (cặp `user_id_a`/`user_id_b` **sắp thứ tự ở tầng ứng dụng**, không dùng
+  CHECK ràng buộc thứ tự ở DB để tránh lệch collation giữa Postgres và so sánh chuỗi JS).
+- `api/_lib/friends.ts`: `ensureFriendCode`, `findUserByFriendCode`, `addFriendByCode` (idempotent —
+  gọi lại không lỗi, không tạo dòng trùng), `listFriends`, `removeFriend`, `areFriends` (hàm PR 1 sẽ
+  dùng để chặn tạo phòng chat DM giữa người lạ).
+- `api/friends.ts`: `GET /api/friends` (mã của mình + danh sách bạn), `GET /api/friends?lookup=CODE`
+  (xem trước ai sở hữu mã), `POST /api/friends {code}` (kết bạn), `DELETE /api/friends?userId=`
+  (huỷ kết bạn — đối xứng, ai gỡ cũng được không cần bên kia đồng ý). Mount vào `server.ts`.
+  Unit test `api/_lib/friends.test.ts` + `api/friends.test.ts` (28 test).
+- Frontend: `apps/english/src/lib/friends.ts` (client), trang `/ban-be` (`Friends.tsx` — hiện mã +
+  QR (tái dùng thư viện `qrcode` đã có, xem `ShareProgress.tsx`) + copy link + danh sách bạn bè),
+  trang `/ket-ban/:code` (`AddFriend.tsx` — mở khi bấm link/quét QR của người khác, xác nhận 1 lần
+  là kết bạn xong). Thêm thẻ "Bạn bè" vào `Profile.tsx` (Personal Command Center).
+- **Quality Gates**: `npm run build` ✅ (Client/Server/Hub) · `npm run typecheck` ✅ (0 lỗi, 4
+  tsconfig) · `npm run lint` ✅ (0 cảnh báo) · `npm run format:check` ✅ · `npm test` ✅
+  **4.146/4.146 test** (271→273 file test, +2 file mới).
+
+**Còn lại theo kế hoạch:** PR 1 (backend chat) đã xong — xem mục PR 1/3 phía trên. Còn PR 2
+(frontend chat UI).
+
 ### V2 Enhancement — Companion SSE Streaming & Multi-Grade STEM Question Banks (2026-08-18)
 
 Hoàn thành nâng cấp trải nghiệm thời gian thực cho Companion Runtime và mở rộng toàn diện dữ liệu bài tập STEM:

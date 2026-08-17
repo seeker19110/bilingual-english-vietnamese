@@ -1,0 +1,127 @@
+// apps/english/src/pages/Friends.tsx — Trang "Bạn bè": mã/link/QR kết bạn của mình + danh sách
+// bạn bè hiện tại. Đây là NỀN TẢNG cho tính năng chat 1-1 sau này (chỉ chat được với bạn bè).
+import { useEffect, useState } from 'react'
+import QRCode from 'qrcode'
+import { Users, Copy, Check, UserMinus } from 'lucide-react'
+import Layout from '../components/Layout'
+import PageHeader from '../components/PageHeader'
+import { useToast } from '@core/ToastProvider'
+import {
+  fetchFriendsState,
+  buildFriendInviteUrl,
+  removeFriend,
+  type FriendUserSummary,
+} from '../lib/friends'
+
+export default function Friends() {
+  const toast = useToast()
+  const [code, setCode] = useState<string | null>(null)
+  const [friends, setFriends] = useState<FriendUserSummary[]>([])
+  const [loading, setLoading] = useState(true)
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    fetchFriendsState().then((state) => {
+      if (cancelled) return
+      if (state) {
+        setCode(state.code)
+        setFriends(state.friends)
+      }
+      setLoading(false)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!code) return
+    QRCode.toDataURL(buildFriendInviteUrl(code), { width: 220, margin: 1 })
+      .then(setQrDataUrl)
+      .catch(() => {})
+  }, [code])
+
+  function copyLink() {
+    if (!code) return
+    navigator.clipboard.writeText(buildFriendInviteUrl(code)).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  async function handleRemove(friend: FriendUserSummary) {
+    const ok = await removeFriend(friend.id)
+    if (ok) {
+      setFriends((prev) => prev.filter((f) => f.id !== friend.id))
+      toast.success(`Đã huỷ kết bạn với ${friend.name}`)
+    } else {
+      toast.error('Không huỷ được — thử lại sau')
+    }
+  }
+
+  return (
+    <div className="min-h-dvh bg-zinc-950">
+      <Layout />
+      <main className="max-w-lg mx-auto px-4 pb-24 pt-4">
+        <PageHeader title="Bạn bè" subtitle="Chia sẻ mã/QR để kết bạn — chỉ bạn bè mới chat được" />
+
+        {loading && <p className="text-sm text-zinc-400">Đang tải…</p>}
+
+        {!loading && code && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-5 mb-6 text-center">
+            {qrDataUrl && (
+              <img
+                src={qrDataUrl}
+                alt="Mã QR kết bạn"
+                className="mx-auto mb-4 rounded-xl bg-white p-2"
+                width={180}
+                height={180}
+              />
+            )}
+            <p className="text-xs text-zinc-400 mb-2">Mã kết bạn của bạn</p>
+            <p className="text-lg font-mono font-bold tracking-widest text-white mb-4">{code}</p>
+            <button
+              type="button"
+              onClick={copyLink}
+              className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-4 py-2.5 text-sm font-semibold text-[#fff] min-h-[44px]"
+            >
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+              {copied ? 'Đã copy link' : 'Copy link kết bạn'}
+            </button>
+          </section>
+        )}
+
+        <section>
+          <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
+            <Users size={16} /> Bạn bè ({friends.length})
+          </h2>
+          {!loading && friends.length === 0 && (
+            <p className="text-sm text-zinc-400">
+              Chưa có bạn bè nào — chia sẻ link/QR ở trên để kết bạn.
+            </p>
+          )}
+          <ul className="space-y-2">
+            {friends.map((friend) => (
+              <li
+                key={friend.id}
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+              >
+                <span className="text-sm font-medium text-white">{friend.name}</span>
+                <button
+                  type="button"
+                  aria-label={`Huỷ kết bạn với ${friend.name}`}
+                  onClick={() => handleRemove(friend)}
+                  className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-full text-zinc-400 hover:text-red-400"
+                >
+                  <UserMinus size={18} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </main>
+    </div>
+  )
+}

@@ -55,6 +55,9 @@ import adminUsersHandler from './api/admin-users.js'
 import referralHandler from './api/referral.js'
 import questsHandler from './api/quests.js'
 import achievementsHandler from './api/achievements.js'
+import friendsHandler from './api/friends.js'
+import chatHandler from './api/chat.js'
+import { attachChatWebSocketServer } from './packages/core-chat/wsHandler.js'
 import adminAchievementRewardsHandler from './api/admin-achievement-rewards.js'
 import adminPaymentsHandler from './api/admin-payments.js'
 import adminSystemControlHandler from './api/admin-system-control.js'
@@ -230,6 +233,8 @@ app.all('/api/admin-users', wrapEdge(adminUsersHandler))
 app.all('/api/referral', wrapEdge(referralHandler))
 app.all('/api/quests', wrapEdge(questsHandler))
 app.all('/api/achievements', wrapEdge(achievementsHandler))
+app.all('/api/friends', wrapEdge(friendsHandler))
+app.all('/api/chat', wrapEdge(chatHandler))
 app.all('/api/admin-achievement-rewards', wrapEdge(adminAchievementRewardsHandler))
 app.all('/api/admin-payments', wrapEdge(adminPaymentsHandler))
 app.all('/api/admin-system-control', wrapEdge(adminSystemControlHandler))
@@ -453,6 +458,10 @@ const server = app.listen(PORT, () => {
   // khoảng chết. Chạy ngoài PM2 (npm start tay) thì process.send không tồn tại → bỏ qua.
   process.send?.('ready')
 })
+
+// WebSocket chat gắn vào CHÍNH http.Server này (không mở cổng riêng) — xem
+// packages/core-chat/wsHandler.ts.
+attachChatWebSocketServer(server)
 
 // Tắt êm (graceful shutdown): PM2 gửi SIGINT khi stop/reload. Ngừng nhận kết nối mới,
 // đóng ngay kết nối keep-alive đang rảnh, chờ request đang chạy xong rồi thoát.

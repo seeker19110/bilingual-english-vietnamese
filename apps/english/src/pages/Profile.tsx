@@ -20,6 +20,7 @@ import {
   GitMerge,
   Bot,
   Settings,
+  Users,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -170,6 +171,14 @@ export default function Profile() {
       icon: Bot,
       color: 'text-teal-400',
       bg: 'bg-teal-500/10 border-teal-500/30 hover:border-teal-500/60',
+    },
+    {
+      path: '/ban-be',
+      title: isA ? 'Bạn bè' : 'Friends',
+      desc: isA ? 'Kết bạn qua link/QR — nền tảng cho chat' : 'Add friends via link/QR code',
+      icon: Users,
+      color: 'text-cyan-400',
+      bg: 'bg-cyan-500/10 border-cyan-500/30 hover:border-cyan-500/60',
     },
   ]
 
