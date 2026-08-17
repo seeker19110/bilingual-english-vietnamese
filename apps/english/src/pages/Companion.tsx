@@ -434,7 +434,7 @@ export default function Companion() {
         )}
 
         {/* Input Bar */}
-        <div className="pt-2 sticky bottom-0 bg-zinc-950 pb-2">
+        <div className="pt-2 sticky bottom-0 bg-zinc-950 pb-24 z-10">
           <form
             onSubmit={(e) => {
               e.preventDefault()
