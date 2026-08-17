@@ -66,6 +66,9 @@ const CefrLevelPage = lazyWithRetry(() => import('./pages/CefrLevelPage'))
 // Trang quản trị tổng — chỉ admin (ADMIN_EMAILS) dùng được, lazy-load vì hiếm khi truy cập.
 const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'))
 
+// Trang Mạng lưới cá nhân (Life Graph)
+const LifeGraph = lazyWithRetry(() => import('./pages/LifeGraph'))
+
 // PoC nội bộ — không link từ menu/BottomNav, chỉ vào qua URL trực tiếp /avatar-demo.
 // Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md.
 const AvatarDemo = lazyWithRetry(() => import('./pages/AvatarDemo'))
@@ -208,6 +211,22 @@ export default function App() {
                       <Route path="/reset-password" element={<ResetPassword />} />
                       <Route path="/onboarding" element={<Onboarding />} />
                       <Route path="/placement" element={<Placement />} />
+                      <Route
+                        path="/profile"
+                        element={
+                          <RequireAuth>
+                            <Profile />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/life-graph"
+                        element={
+                          <RequireAuth>
+                            <LifeGraph />
+                          </RequireAuth>
+                        }
+                      />
                       <Route
                         path="/"
                         element={
