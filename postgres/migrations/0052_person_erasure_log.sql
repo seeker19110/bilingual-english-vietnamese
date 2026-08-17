@@ -1,6 +1,8 @@
 -- Migration 0052: Person erasure audit log (V2-19 Privacy Drills)
 -- Append-only log of full-person erasure requests. Never deleted.
 
+CREATE SCHEMA IF NOT EXISTS platform;
+
 CREATE TABLE IF NOT EXISTS platform.person_erasure_log (
   id               UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   person_id        UUID        NOT NULL,
