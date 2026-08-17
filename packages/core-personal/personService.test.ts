@@ -310,3 +310,102 @@ describe('exportPersonData', () => {
     expect(String(query.mock.calls[0]?.[0])).not.toContain('and is_current')
   })
 })
+
+// Nhánh biên: cột thời gian NULL/có giá trị, insert không trả dòng, deleteFact 404, patch giữ nguyên giá trị cũ.
+describe('personService — nhánh biên', () => {
+  it('fact có last_confirmed_at/expires_at → điền đủ trường thời gian vào kết quả', async () => {
+    const confirmed = new Date('2026-08-10T00:00:00.000Z')
+    const expires = new Date('2027-01-01T00:00:00.000Z')
+    const { pool } = mockPool(() => [
+      factRow({ last_confirmed_at: confirmed, expires_at: expires }),
+    ])
+
+    const facts = await listFacts(pool, PERSON_ID)
+    expect(facts[0]?.lastConfirmedAt).toBe(confirmed.toISOString())
+    expect(facts[0]?.expiresAt).toBe(expires.toISOString())
+  })
+
+  it('insert fact không trả dòng nào → ConflictError "Không ghi được fact"', async () => {
+    const { pool } = mockPool(() => [])
+    await expect(
+      declareFact(pool, {
+        personId: PERSON_ID,
+        namespace: 'profile',
+        key: 'city',
+        value: 'Hà Nội',
+        origin: 'user_declared',
+        confidence: 1,
+        source: { type: 'onboarding' },
+        sensitivity: 'personal',
+      }),
+    ).rejects.toThrow('Không ghi được fact')
+  })
+
+  it('declareFact với value undefined → ghi null xuống cột jsonb', async () => {
+    let capturedParams: unknown[] = []
+    const { pool } = mockPool((sql, params) => {
+      if (sql.includes('insert')) {
+        capturedParams = params
+        return [factRow({ id: NEW_FACT_ID, value: null })]
+      }
+      return []
+    })
+
+    await declareFact(pool, {
+      personId: PERSON_ID,
+      namespace: 'profile',
+      key: 'city',
+      value: undefined,
+      origin: 'user_declared',
+      confidence: 1,
+      source: { type: 'onboarding' },
+      sensitivity: 'personal',
+    })
+
+    expect(capturedParams[3]).toBe('null')
+  })
+
+  it('đua song song mà lần đọc lại vẫn rỗng → ConflictError "thử lại"', async () => {
+    const { pool } = mockPool(() => [])
+    await expect(getOrCreatePerson(pool, USER_ID)).rejects.toThrow('Không tạo được hồ sơ Person')
+  })
+
+  it('correctFact không truyền value → giữ nguyên giá trị cũ; kế thừa expires_at của bản cũ', async () => {
+    const expires = new Date('2027-01-01T00:00:00.000Z')
+    let insertParams: unknown[] = []
+    const { pool } = mockPool((sql, params) => {
+      if (sql.includes('for update')) return [factRow({ expires_at: expires })]
+      if (sql.includes('insert')) {
+        insertParams = params
+        return [factRow({ id: NEW_FACT_ID, supersedes: FACT_ID, expires_at: expires })]
+      }
+      return []
+    })
+
+    const fact = await correctFact(pool, PERSON_ID, FACT_ID, { confidence: 0.7 })
+    expect(fact.value).toBe('Hà Nội')
+    // Giá trị cũ được đưa lại nguyên vẹn vào bản mới, expiresAt kế thừa từ bản cũ.
+    expect(insertParams[3]).toBe(JSON.stringify('Hà Nội'))
+    expect(insertParams[8]).toBe(expires.toISOString())
+  })
+
+  it('correctFact truyền expiresAt mới → dùng giá trị mới', async () => {
+    let insertParams: unknown[] = []
+    const { pool } = mockPool((sql, params) => {
+      if (sql.includes('for update')) return [factRow()]
+      if (sql.includes('insert')) {
+        insertParams = params
+        return [factRow({ id: NEW_FACT_ID, supersedes: FACT_ID })]
+      }
+      return []
+    })
+
+    await correctFact(pool, PERSON_ID, FACT_ID, { expiresAt: '2028-06-01T00:00:00.000Z' })
+    expect(insertParams[8]).toBe('2028-06-01T00:00:00.000Z')
+  })
+
+  it('deleteFact với fact không tồn tại (hoặc của người khác) → NotFoundError', async () => {
+    const { pool } = mockPool(() => [])
+    await expect(deleteFact(pool, PERSON_ID, FACT_ID)).rejects.toBeInstanceOf(NotFoundError)
+  })
+})
