@@ -57,6 +57,12 @@ Giới hạn: migration mới chỉ được kiểm qua code/tests trong CI/loca
 enforcement gate vẫn deferred tới Context Builder/tool execution; slice V2-05 này không tuyên bố
 V2-04 hoàn tất.
 
+**CI đỏ do coverage nhánh (2026-08-17, PR #578, tự sửa trong cùng PR):** code slice 1 thiếu test
+ca biên khiến branch coverage toàn repo còn 89.77% (< ngưỡng CI 90%). Đã bổ sung ~40 test case cho
+`lifeGraphService.ts` + `api/life-graph.ts` (not-found/conflict/version-mismatch,
+`includeArchived`, các `kind` GET/DELETE còn thiếu, method 405, lỗi non-AppError) — nâng coverage
+2 file lên 100% statements/lines/functions, ≥ 90% nhánh. Toàn suite 3591 test xanh sau đó.
+
 ### V2-04 Consent + Personal Policy — slice 1: persistence + API (2026-08-16)
 
 Việc kế tiếp của Wave B sau V2-03. Slice 1 chỉ làm **nền tảng lưu trữ + API** cho ConsentGrant và
