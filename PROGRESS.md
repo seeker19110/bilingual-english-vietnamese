@@ -8,7 +8,25 @@
 
 ## Giai đoạn hiện tại
 
-### V2-05 Life Graph foundation — slice 2: UI, reconciliation & bulk backfill (2026-08-17)
+### V2-07 Context Engine — slice 1: selection pipeline, security filtering & API (2026-08-17)
+
+Hoàn thành Slice 1 cho V2-07 Context Engine:
+
+- **Context Builder Pipeline (`packages/core-personal/contextEngine.ts`)**: Triển khai thứ tự chọn chuẩn (Selection Order: `current_request` → `active_goal_or_project` → `authoritative_domain_state` → `user_declared_fact` → `validated_derived_memory` → `recent_episodic_context`).
+- **Security & Privacy Boundary**: Kiểm tra consent hợp lệ theo (scope, purpose) qua `isConsentActive` (đạt GATE V2-04), lọc thẩm quyền cá nhân (omits DENY từ `resolveAuthority`), loại bỏ item vượt ngưỡng `maxSensitivity` (`public` < `personal` < `sensitive` < `restricted`), và ràng buộc cứng token budget (`tokenUsed <= tokenBudget`).
+- **API `/api/context-package`**: POST endpoint auth-guarded, rate-limited, Zod validation trả về `ContextPackage` chuẩn contract. Đăng ký trong `server.ts`.
+- **Test suite**: 11 unit tests mới (`contextEngine.test.ts` và `api/context-package.test.ts`), 91 route registration tests passed.
+
+### V2-06 Personal Knowledge Fabric — slice 1: persistence, candidate pipeline & API (2026-08-17, PR #581 đã MERGE)
+
+Hoàn thành Slice 1 cho V2-06 Personal Knowledge Fabric:
+
+- **Migration `0044_personal_memory.sql`**: Bảng `personal.memory_records` phân theo 5 namespace (`semantic`, `episodic`, `preference`, `commitment`, `domain`), sensitivity level (`public`, `personal`, `sensitive`, `restricted`), retention timestamp (`retain_until`), versioning và audit log append-only `personal.memory_records_audit_log`.
+- **Candidate Pipeline & Service (`packages/core-personal/memoryService.ts`)**: Triển khai pipeline chuẩn: Schema Validation → Dedup / Conflict detection → Sensitivity classification (restricted đòi `user_declared`) → Confidence policy (threshold < 0.60 reject, 0.60-0.80 ask_user) → Outcome `ACCEPT | MERGE | REJECT | ASK_USER | EXPIRE`. Hỗ trợ merge subsumption, retention purge và GDPR deletion.
+- **API `/api/memories`**: Auth-guarded, rate-limited, Zod validation, hỗ trợ GET (lọc namespace, includeExpired), POST (evaluate/ingest), PATCH (expire kèm version check), DELETE (privacy purge). Đăng ký đầy đủ trong `server.ts`.
+- **Test suite**: 26 unit tests mới (`memoryService.test.ts` và `api/memories.test.ts`), 89 route registration tests passed.
+
+### V2-05 Life Graph foundation — slice 2: UI, reconciliation & bulk backfill (2026-08-17, PR #580 đã MERGE)
 
 Hoàn thành Slice 2 cho V2-05 Life Graph:
 
