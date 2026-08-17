@@ -18,6 +18,7 @@ import {
   logSecurityEvent,
 } from '../packages/core-auth/security.js'
 import { validateBody, readJsonBody } from './_lib/validation.js'
+import { backfillCurrentLearningGoal } from '../packages/core-learner/learningGoalAdapter.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const AGE_GROUPS = ['nhi_dong', 'thieu_nien', 'thanh_nien', 'nguoi_lon'] as const
@@ -123,5 +124,14 @@ export default async function handler(req: Request): Promise<Response> {
       result.data.ageGroup ?? null,
     ],
   )
+
+  // Outbox/Reconciliation: Cập nhật lại read view của Life Graph
+  try {
+    await backfillCurrentLearningGoal(pool, auth.userId)
+  } catch (err) {
+    // Không ném lỗi ra ngoài để tránh làm hỏng luồng đổi profile chính
+    console.error(`Lỗi đồng bộ Life Graph cho user ${auth.userId}:`, err)
+  }
+
   return jsonResponse({ ok: true }, 200, allHeaders)
 }
