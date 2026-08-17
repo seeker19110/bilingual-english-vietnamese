@@ -8,7 +8,94 @@
 
 ## Giai đoạn hiện tại
 
-### V2-07 Context Engine — slice 1: selection pipeline, security filtering & API (2026-08-17)
+### V2-16 Startup Domain — slice 1: ventures, problems, hypotheses, evidence & API (2026-08-17)
+
+Hoàn thành Slice 1 cho V2-16 Startup Domain:
+
+- **Migration `0049_startup_domain.sql`**: Schema `startup` với các bảng `ventures`, `problems`, `hypotheses`, `evidence` (provenance bắt buộc).
+- **Startup Domain Contracts (`packages/core-contracts/startup.ts`)**: `VentureSchema`, `ProblemSchema`, `HypothesisSchema`, `ValidatedEvidenceSchema`.
+- **Startup Service (`packages/core-startup/startupService.ts`)**: Quản lý vòng đời venture, hypothesis status lifecycle, ghi evidence với provenance bắt buộc.
+- **Gate Invariant**: `ValidatedEvidenceSchema.provenance` min 1 char — AI claims không thể trở thành facts khi thiếu provenance.
+- **API `/api/startup`**: GET, POST, PATCH auth-guarded và rate-limited. Đăng ký trong `server.ts`.
+
+### V2-15 Work Domain — slice 1: projects, tasks, meetings, documents & API (2026-08-17, PR #590 đã MERGE)
+
+Hoàn thành Slice 1 cho V2-15 Work Domain:
+
+- **Migration `0048_work_domain.sql`**: Tạo schema `work` với các bảng `work.projects`, `work.tasks`, `work.meetings`, `work.documents` (optimistic locking version).
+- **Work Domain Contracts (`packages/core-contracts/work.ts`)**: Định nghĩa `WorkProjectSchema`, `WorkTaskSchema`, `WorkMeetingSchema`, `WorkDocumentSchema`.
+- **Work Service (`packages/core-work/workService.ts`)**: Quản lý projects, tasks, meetings và documents.
+- **API `/api/work`**: GET, POST, PATCH endpoints auth-guarded và rate-limited. Đăng ký trong `server.ts`.
+- **Test suite**: 15 unit tests mới (`work.test.ts`, `workService.test.ts`, `api/work.test.ts`), 104 route registration tests passed.
+
+### V2-14 Cross-Domain Life Graph — slice 1: cross-domain sync engine, contracts & API (2026-08-17, PR #589 đã MERGE)
+
+Hoàn thành Slice 1 cho V2-14 Cross-Domain Life Graph:
+
+- **Cross-Domain Graph Contracts (`packages/core-contracts/crossDomainGraph.ts`)**: Schema `CrossDomainGraphProjectionSchema` và `CrossDomainSyncSummarySchema`.
+- **Cross-Domain Sync Engine (`packages/core-personal/crossDomainGraphService.ts`)**: Thực thi liên kết `Career goal → skill gap → Learning mastery → Life Graph Nodes & Edges (requires, supports)` mà không vi phạm ranh giới bảng.
+- **API (`api/life-graph.ts`)**: Hỗ trợ GET `?kind=cross_domain` và POST `{ kind: 'cross_domain_sync' }` auth-guarded và rate-limited.
+- **Test suite**: 3 unit tests mới (`crossDomainGraph.test.ts`, `crossDomainGraphService.test.ts`, `api/life-graph.test.ts`), 103 route registration tests passed.
+
+### V2-13 Career Domain — slice 1: profile, experiences, goals, skill gap & API (2026-08-17, PR #588 đã MERGE)
+
+Hoàn thành Slice 1 cho V2-13 Career Domain:
+
+- **Migration `0047_career_domain.sql`**: Tạo schema `career` với các bảng `career.profiles`, `career.experiences`, `career.goals` (optimistic locking version).
+- **Career Domain Contracts (`packages/core-contracts/career.ts`)**: Định nghĩa `CareerProfileSchema`, `CareerExperienceSchema`, `CareerGoalSchema`, `CareerSkillGapAnalysisSchema`.
+- **Career Service (`packages/core-career/careerService.ts`)**: Quản lý hồ sơ sự nghiệp, kinh nghiệm, mục tiêu và phân tích khoảng cách kỹ năng (`analyzeCareerSkillGap`). Tuân thủ Gate Invariant: đọc kỹ năng qua `LearningReadModel`, không query trực tiếp vào DB nội bộ của Learning.
+- **API `/api/career`**: GET và POST endpoints auth-guarded và rate-limited cho profile, experiences, goals, skill_gap. Đăng ký trong `server.ts`.
+- **Test suite**: 12 unit tests mới (`career.test.ts`, `careerService.test.ts`, `api/career.test.ts`), 103 route registration tests passed.
+
+### V2-12 Multi-Subject Learning — slice 1: subject manifests, taxonomy registry & API (2026-08-17, PR #587 đã MERGE)
+
+Hoàn thành Slice 1 cho V2-12 Multi-Subject Learning:
+
+- **Subject Manifest Contract (`packages/core-contracts/subjectManifest.ts`)**: Phân tách ranh giới rõ ràng giữa shared learning primitives và subject-owned rules (taxonomyKind: `cefr` vs `grade_curriculum`, questionTypes, evaluationModes: `exact_formula`, `step_analysis`, `rubric_ielts`, `rubric_ai`).
+- **Subject Registry Service (`packages/core-learner/subjectRegistry.ts`)**: Hỗ trợ 5 môn học cốt lõi (English, Mathematics, Physics, Chemistry, Biology) với cấu hình phân loại và hàm tra cứu chuẩn hoá (`getSubjectManifest`, `listSupportedSubjects`, `isValidSubjectLevel`).
+- **API `/api/subjects`**: GET endpoint tra cứu danh sách môn học hoặc chi tiết môn học theo ID/category. Đăng ký trong `server.ts`.
+- **Test suite**: 11 unit tests mới (`subjectManifest.test.ts`, `subjectRegistry.test.ts`, `api/subjects.test.ts`), 101 route registration tests passed.
+
+### V2-11 Learning Ownership Migration — slice 1: learning read model, companion domain injection & API (2026-08-17, PR #586 đã MERGE)
+
+Hoàn thành Slice 1 cho V2-11 Learning Ownership Migration:
+
+- **Learning Domain Contract (`packages/core-contracts/learningReadModel.ts`)**: Schema `LearningReadModelSchema` chuẩn hoá mô hình đọc cho Learning domain (direction, currentLevel, dailySpeed, dailyMinutes, onboarded, activeGoal, masterySummary, recentEvidenceCount, srsDueCount).
+- **Learning Read Model Service (`packages/core-learner/learningReadModelService.ts`)**: Trích xuất và đóng gói trạng thái học tập từ các bảng nguồn sự thật, cung cấp hàm định dạng ngữ cảnh cho Context Engine (`formatLearningReadModelForContext`).
+- **Companion Runtime Integration (`packages/core-personal/companionRuntime.ts`)**: Tự động tích hợp `LearningReadModel` vào `domainState` của `ContextEngine` khi hội thoại thuộc domain `learning`.
+- **API `/api/learning-read-model`**: GET endpoint auth-guarded và rate-limited cho Companion / clients đọc trạng thái học tập mà không lộ cấu trúc lưu trữ nội bộ. Đăng ký trong `server.ts`.
+- **Test suite**: 8 unit tests mới (`learningReadModel.test.ts`, `learningReadModelService.test.ts`, `api/learning-read-model.test.ts`), 99 route registration tests passed.
+
+### V2-10 Decision Ledger + Outcome Loop — slice 1: persistence, outcome loop, review lifecycle & API (2026-08-17, PR #585 đã MERGE)
+
+Hoàn thành Slice 1 cho V2-10 Decision Ledger + Outcome Loop:
+
+- **Migration `0046_decision_records.sql`**: Bảng `personal.decision_records` (status `open | decided | review_due | reviewed | superseded`, optimistic locking version) và bảng `personal.decision_reviews_audit_log` (ghi nhận lịch sử thao tác `create`, `decide`, `record_outcome`, `mark_review_due`, `review`, `supersede`).
+- **Decision Ledger Service (`packages/core-personal/decisionLedgerService.ts`)**: Lưu trữ và quản lý quyết định có cấu trúc gồm `problem`, `options`, `assumptions`/`evidence` (`EvidenceRef`), `tradeoffs`, `expectedOutcomes` và `actualOutcomes`. Hỗ trợ toàn diện vòng đời quyết định, review theo lịch hẹn (`review_at`) và bảo đảm bất biến: outcome observations không tự động ghi đè các facts/policies do người dùng chủ động tuyên bố.
+- **API `/api/decision-ledger`**: GET (xem chi tiết / danh sách theo status & domain), POST (tạo quyết định mới), PATCH (decide, record_outcome, review, supersede với optimistic locking). Đăng ký trong `server.ts`.
+- **Test suite**: 17 unit tests mới (`decisionLedgerService.test.ts` và `api/decision-ledger.test.ts`), 97 route registration tests passed.
+
+### V2-09 Companion Runtime — slice 1: intent/domain, planner, context injection, action router & API (2026-08-17, PR #584 đã MERGE)
+
+Hoàn thành Slice 1 cho V2-09 Companion Runtime:
+
+- **Companion Engine Pipeline (`packages/core-personal/companionRuntime.ts`)**: Tích hợp luồng thực thi tổng hợp của Companion Runtime theo `02-SYSTEM-ARCHITECTURE.md` mục 3: `Intent/Domain Resolver → Context Builder (Context Engine) → Companion Planner → Policy Engine → Capability / Tool Router → Result Validator & State Proposal → Read Model Response`.
+- **Intent & Domain Resolver (`resolveIntentAndDomain`)**: Phân loại chính xác intent (`set_learning_goal`, `dictionary_lookup`, `update_profile_fact`, `create_memory`, `general_conversation`) và domain (`learning`, `profile`, `personal`).
+- **Planner & Action Router (`generatePlan`, `executeCompanionTurn`)**: Lập kế hoạch theo intent, chuyển thành các bước `PlannedStep` và thực thi/đề xuất qua `proposeAction`.
+- **API `/api/companion`**: POST endpoint auth-guarded, rate-limited, Zod validation trả về `CompanionResponse` kèm `ContextPackage`, danh sách `ProposedAction` và tóm tắt thực thi. Đăng ký trong `server.ts`.
+- **Test suite**: 17 unit tests mới (`companionRuntime.test.ts` và `api/companion.test.ts`), 95 route registration tests passed.
+
+### V2-08 ProposedAction & Tool Manifest Pipeline — slice 1: registry, policy gate, execution & audit (2026-08-17, PR #583 đã MERGE)
+
+Hoàn thành Slice 1 cho V2-08 ProposedAction & Tool Manifest Pipeline:
+
+- **Migration `0045_proposed_actions.sql`**: Bảng `personal.proposed_actions` (status `pending | confirmed | rejected | committed`, optimistic locking version) và bảng `personal.tool_execution_audit_log` (ghi nhận chi tiết tool_id, input/output payload, execution duration, status).
+- **Tool Registry (`packages/core-personal/toolRegistry.ts`)**: Quản lý `ToolManifest` với sideEffect (`none | internal | external`), timeout, idempotent và audit policy (`learning.update_goal`, `profile.update_fact`, `memory.create_record`, `dictionary.lookup`).
+- **ProposedAction Service (`packages/core-personal/proposedActionService.ts`)**: Thực hiện nguyên tắc Planning ≠ Execution ≠ State Mutation: đánh giá Personal Policy (`resolveAuthority`), từ chối lập tức nếu `DENY`, tự động thực thi nếu `AUTOMATE` và rủi ro thấp/vừa, giữ `pending` nếu rủi ro cao/critical hoặc cần confirmation; hỗ trợ `confirmAction` và `rejectAction` kèm khóa bi quan + phiên bản lạc quan.
+- **API `/api/proposed-actions`**: GET (danh sách action / danh sách tools), POST (tạo proposal), PATCH (confirm/reject kèm expectedVersion). Đăng ký trong `server.ts`.
+- **Test suite**: 16 unit tests mới (`proposedActionService.test.ts` và `api/proposed-actions.test.ts`), 93 route registration tests passed.
+
+### V2-07 Context Engine — slice 1: selection pipeline, security filtering & API (2026-08-17, PR #582 đã MERGE)
 
 Hoàn thành Slice 1 cho V2-07 Context Engine:
 

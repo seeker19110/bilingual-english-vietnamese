@@ -76,6 +76,14 @@ import lifeGraphHandler from './api/life-graph.js'
 import lifeGoalsHandler from './api/life-goals.js'
 import memoriesHandler from './api/memories.js'
 import contextPackageHandler from './api/context-package.js'
+import proposedActionsHandler from './api/proposed-actions.js'
+import companionHandler from './api/companion.js'
+import decisionLedgerHandler from './api/decision-ledger.js'
+import learningReadModelHandler from './api/learning-read-model.js'
+import subjectsHandler from './api/subjects.js'
+import careerHandler from './api/career.js'
+import workHandler from './api/work.js'
+import startupHandler from './api/startup.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -246,6 +254,22 @@ app.all('/api/life-goals', wrapEdge(lifeGoalsHandler))
 app.all('/api/memories', wrapEdge(memoriesHandler))
 // Context Engine (V2-07) — xây dựng ContextPackage có lọc permission/sensitivity/budget.
 app.all('/api/context-package', wrapEdge(contextPackageHandler))
+// ProposedAction & Tool Manifest Pipeline (V2-08) — Planning ≠ Execution ≠ State Mutation.
+app.all('/api/proposed-actions', wrapEdge(proposedActionsHandler))
+// Companion Runtime (V2-09) — Intent -> Context -> Planner -> Policy -> Actions -> Response.
+app.all('/api/companion', wrapEdge(companionHandler))
+// Decision Ledger + Outcome Loop (V2-10) — Structured decision records & evidence loop.
+app.all('/api/decision-ledger', wrapEdge(decisionLedgerHandler))
+// Learning Read Model (V2-11) — Typed Learning domain read model for Companion.
+app.all('/api/learning-read-model', wrapEdge(learningReadModelHandler))
+// Multi-Subject Learning (V2-12) — Subject manifests & taxonomy registry.
+app.all('/api/subjects', wrapEdge(subjectsHandler))
+// Career Domain (V2-13) — Profile, experiences, goals & skill gap analysis.
+app.all('/api/career', wrapEdge(careerHandler))
+// Work Domain (V2-15) — Projects, tasks, meetings, documents, deadlines.
+app.all('/api/work', wrapEdge(workHandler))
+// Startup Domain (V2-16) — Ventures, problems, hypotheses, evidence (claims require provenance).
+app.all('/api/startup', wrapEdge(startupHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
