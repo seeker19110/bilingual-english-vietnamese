@@ -20,10 +20,9 @@ import { test, expect, type Page, type Route } from '@playwright/test'
 
 /* ── Hằng số ─────────────────────────────────────────────────────────────── */
 
-const BASE = 'https://en-vi.donghanhcungban.org'
-const ADMIN_URL = `${BASE}/admin-s`
+const ADMIN_URL = '/admin-s'
 const TOKEN_KEY = 'gsa_session_token_v1'
-const GOTO_TIMEOUT = 20000 // production có thể chậm hơn
+const GOTO_TIMEOUT = 20000
 const VISIBLE_TIMEOUT = 15000
 
 /* ── Mock data ─────────────────────────────────────────────────────────────── */
@@ -486,8 +485,6 @@ async function gotoAdmin(page: Page, tab = ''): Promise<void> {
  * ════════════════════════════════════════════════════════════════════════════ */
 
 test.describe('Admin Dashboard — /admin-s', () => {
-  test.use({ baseURL: BASE })
-
   /* ── 1. Bảo vệ route ─────────────────────────────────────────────────── */
 
   test('Auth: Không đăng nhập → redirect /login', async ({ page }) => {
@@ -634,21 +631,21 @@ test.describe('Admin Dashboard — /admin-s', () => {
 
   test('Usage: Bảng tính năng hiện Luyện viết', async ({ page }) => {
     await gotoAdmin(page, 'usage')
-    await expect(page.locator('table').getByText('Luyện viết')).toBeVisible({
+    await expect(page.locator('table').getByText('Luyện viết').first()).toBeVisible({
       timeout: VISIBLE_TIMEOUT,
     })
   })
 
   test('Usage: Bảng tính năng hiện Nhận dạng giọng (STT)', async ({ page }) => {
     await gotoAdmin(page, 'usage')
-    await expect(page.locator('table').getByText('Nhận dạng giọng (STT)')).toBeVisible({
+    await expect(page.locator('table').getByText('Nhận dạng giọng (STT)').first()).toBeVisible({
       timeout: VISIBLE_TIMEOUT,
     })
   })
 
   test('Usage: Bảng tính năng hiện Chấm phát âm', async ({ page }) => {
     await gotoAdmin(page, 'usage')
-    await expect(page.locator('table').getByText('Chấm phát âm')).toBeVisible({
+    await expect(page.locator('table').getByText('Chấm phát âm').first()).toBeVisible({
       timeout: VISIBLE_TIMEOUT,
     })
   })
@@ -717,7 +714,7 @@ test.describe('Admin Dashboard — /admin-s', () => {
     await expect(page.getByRole('heading', { name: 'Quản trị hệ thống' })).toBeVisible({
       timeout: VISIBLE_TIMEOUT,
     })
-    await page.getByRole('button', { name: 'Tải lại' }).click()
+    await page.getByRole('button', { name: 'Tải lại', exact: true }).click()
     await page.waitForTimeout(800)
     expect(callCount).toBeGreaterThan(0)
   })
@@ -831,7 +828,9 @@ test.describe('Admin Dashboard — /admin-s', () => {
     await expect(page.getByText('Cầu dao khẩn cấp — chặn toàn bộ AI')).toBeVisible({
       timeout: VISIBLE_TIMEOUT,
     })
-    await expect(page.getByText('Bảng xếp hạng')).toBeVisible({ timeout: VISIBLE_TIMEOUT })
+    await expect(page.getByText('Bảng xếp hạng', { exact: true })).toBeVisible({
+      timeout: VISIBLE_TIMEOUT,
+    })
   })
 
   test('Limits: Checkbox leaderboard mặc định tắt', async ({ page }) => {
@@ -956,7 +955,9 @@ test.describe('Admin Dashboard — /admin-s', () => {
       'true',
       { timeout: 5000 },
     )
-    await expect(page.getByText('Phổ biến')).toBeVisible({ timeout: VISIBLE_TIMEOUT })
+    await expect(page.locator('input[value="Phổ biến"]')).toBeVisible({
+      timeout: VISIBLE_TIMEOUT,
+    })
   })
 
   /* ── 7. Tab Achievement Rewards ──────────────────────────────────────── */

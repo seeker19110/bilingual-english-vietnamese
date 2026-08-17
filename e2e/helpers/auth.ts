@@ -14,6 +14,17 @@ export const USER_ID = 'e2e-user-0001'
 // chỉ dùng ở vài test riêng quét theme này.
 export type ThemeName = 'dark-blue' | 'blue-sky' | 'pink' | 'vibrant' | 'kid'
 
+const MOCK_APP_SETTINGS = {
+  limits: {
+    free: { chat: 5, writing: 5, speaking: 5, stt: 5, pronounce: 5 },
+    pro: { chat: 100, writing: 100, speaking: 100, stt: 100, pronounce: 100 },
+    vip: { chat: 1000000, writing: 1000000, speaking: 1000000, stt: 1000000, pronounce: 1000000 },
+  },
+  promoUntil: null,
+  leaderboardEnabled: false,
+  updatedAt: '1970-01-01T00:00:00.000Z',
+}
+
 export async function mockLogin(
   page: Page,
   uiLang: 'vi' | 'en' = 'vi',
@@ -25,6 +36,10 @@ export async function mockLogin(
     name: 'E2E User',
     plan: 'free',
     onboarded: true,
+    userLevel: 'beginner',
+    goal: 'daily',
+    dailyMinutes: 10,
+    ageGroup: 'nguoi_lon',
   }
 
   await page.addInitScript(
@@ -42,5 +57,25 @@ export async function mockLogin(
 
   await page.route('**/api/auth?action=me', (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(profile) }),
+  )
+
+  await page.route('**/api/profile**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(profile) }),
+  )
+
+  await page.route('**/api/app-settings**', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(MOCK_APP_SETTINGS),
+    }),
+  )
+
+  await page.route('**/api/progress**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }),
+  )
+
+  await page.route('**/api/history**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }),
   )
 }
