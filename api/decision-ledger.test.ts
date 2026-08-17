@@ -169,4 +169,55 @@ describe('PATCH /api/decision-ledger', () => {
       }),
     )
   })
+
+  it('reviews and supersedes decisions on PATCH', async () => {
+    const resReview = await handler(
+      req('PATCH', '', {
+        id: DECISION_ID,
+        action: 'review',
+        resolutionSummary: 'Decision completed successfully',
+        expectedVersion: 3,
+      }),
+    )
+    expect(resReview.status).toBe(200)
+    expect(service.reviewDecision).toHaveBeenCalledWith(
+      expect.anything(),
+      PERSON,
+      DECISION_ID,
+      expect.objectContaining({
+        resolutionSummary: 'Decision completed successfully',
+        expectedVersion: 3,
+      }),
+    )
+
+    const NEW_DECISION_ID = '33333333-3333-4333-8333-333333333333'
+    const resSupersede = await handler(
+      req('PATCH', '', {
+        id: DECISION_ID,
+        action: 'supersede',
+        newDecisionId: NEW_DECISION_ID,
+        expectedVersion: 4,
+      }),
+    )
+    expect(resSupersede.status).toBe(200)
+    expect(service.supersedeDecision).toHaveBeenCalledWith(
+      expect.anything(),
+      PERSON,
+      DECISION_ID,
+      NEW_DECISION_ID,
+      4,
+      'user:user-1',
+    )
+  })
+
+  it('handles invalid POST/PATCH payload and DELETE method', async () => {
+    const resPostInvalid = await handler(req('POST', '', { options: [] }))
+    expect(resPostInvalid.status).toBe(400)
+
+    const resPatchInvalid = await handler(req('PATCH', '', { id: DECISION_ID, action: 'invalid' }))
+    expect(resPatchInvalid.status).toBe(400)
+
+    const resDelete = await handler(req('DELETE'))
+    expect(resDelete.status).toBe(405)
+  })
 })

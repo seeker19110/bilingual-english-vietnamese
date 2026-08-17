@@ -268,9 +268,26 @@ describe('correctFact', () => {
       correctFact(pool, PERSON_ID, FACT_ID, { origin: 'derived' }),
     ).rejects.toBeInstanceOf(ConflictError)
   })
+
+  it('correctFact với expiresAt cập nhật thời hạn', async () => {
+    const expiry = new Date('2026-12-31T00:00:00Z').toISOString()
+    const { pool } = mockPool((sql) => {
+      if (sql.includes('for update')) return [factRow()]
+      if (sql.includes('insert into personal.personal_facts'))
+        return [factRow({ id: NEW_FACT_ID, expires_at: new Date(expiry) })]
+      return []
+    })
+    const fact = await correctFact(pool, PERSON_ID, FACT_ID, { expiresAt: expiry })
+    expect(fact.expiresAt).toBe(expiry)
+  })
 })
 
 describe('deleteFact', () => {
+  it('không tìm thấy fact → NotFoundError', async () => {
+    const { pool } = mockPool(() => [])
+    await expect(deleteFact(pool, PERSON_ID, FACT_ID)).rejects.toBeInstanceOf(NotFoundError)
+  })
+
   it('xoá mềm: chỉ update is_current, không có câu delete', async () => {
     const { pool, query } = mockPool((sql) => (sql.includes('for update') ? [factRow()] : []))
     await deleteFact(pool, PERSON_ID, FACT_ID)

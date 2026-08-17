@@ -30,7 +30,13 @@ const node = {
   updatedAt: '2026-08-17T00:00:00.000Z',
   schemaVersion: 1,
 }
-const sourceRow = {
+const sourceRow: {
+  id: string
+  onboarded: boolean
+  goal: string | null
+  daily_minutes: number | null
+  created_at: Date
+} = {
   id: USER_ID,
   onboarded: true,
   goal: 'work',

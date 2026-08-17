@@ -84,6 +84,7 @@ import subjectsHandler from './api/subjects.js'
 import careerHandler from './api/career.js'
 import workHandler from './api/work.js'
 import startupHandler from './api/startup.js'
+import lifeHandler from './api/life.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -270,6 +271,8 @@ app.all('/api/career', wrapEdge(careerHandler))
 app.all('/api/work', wrapEdge(workHandler))
 // Startup Domain (V2-16) — Ventures, problems, hypotheses, evidence (claims require provenance).
 app.all('/api/startup', wrapEdge(startupHandler))
+// Life Foundation (V2-17) — Plans, habits, wellbeing, growth milestones.
+app.all('/api/life', wrapEdge(lifeHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

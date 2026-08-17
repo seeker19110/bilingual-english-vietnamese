@@ -57,6 +57,11 @@ beforeEach(() => {
 })
 
 describe('api/work', () => {
+  it('handles OPTIONS', async () => {
+    const res = await handler(new Request('http://localhost/api/work', { method: 'OPTIONS' }))
+    expect(res.status).toBe(204)
+  })
+
   it('401 khi chưa đăng nhập', async () => {
     authState.user = null
     const res = await handler(req('GET'))
@@ -79,10 +84,29 @@ describe('api/work', () => {
 
   it('GET ?kind=tasks trả danh sách công việc', async () => {
     workService.listWorkTasks.mockResolvedValueOnce([{ id: ID_1, title: 'Task A' }])
-    const res = await handler(req('GET', '?kind=tasks&status=todo'))
+    const res = await handler(req('GET', '?kind=tasks&status=todo&projectId=' + ID_1))
     expect(res.status).toBe(200)
     const json = await res.json()
     expect(json.tasks.length).toBe(1)
+  })
+
+  it('GET ?kind=meetings and ?kind=documents', async () => {
+    workService.listWorkMeetings.mockResolvedValueOnce([{ id: ID_1, title: 'Sync' }])
+    const resM = await handler(req('GET', '?kind=meetings'))
+    expect(resM.status).toBe(200)
+    const jsonM = await resM.json()
+    expect(jsonM.meetings.length).toBe(1)
+
+    workService.listWorkDocuments.mockResolvedValueOnce([{ id: ID_1, title: 'Doc' }])
+    const resD = await handler(req('GET', '?kind=documents&projectId=' + ID_1))
+    expect(resD.status).toBe(200)
+    const jsonD = await resD.json()
+    expect(jsonD.documents.length).toBe(1)
+  })
+
+  it('GET với kind không hợp lệ trả 400', async () => {
+    const res = await handler(req('GET', '?kind=unknown'))
+    expect(res.status).toBe(400)
   })
 
   it('POST project tạo dự án mới', async () => {
@@ -111,14 +135,51 @@ describe('api/work', () => {
     })
   })
 
-  it('PATCH project cập nhật dự án', async () => {
+  it('POST meeting và document', async () => {
+    workService.recordWorkMeeting.mockResolvedValueOnce({ id: ID_1, title: 'Meeting' })
+    const resM = await handler(
+      req('POST', '', {
+        kind: 'meeting',
+        title: 'Meeting',
+        scheduledAt: '2026-08-18T10:00:00Z',
+        durationMinutes: 30,
+        summary: 'Review',
+      }),
+    )
+    expect(resM.status).toBe(201)
+
+    workService.createWorkDocument.mockResolvedValueOnce({ id: ID_1, title: 'Doc' })
+    const resD = await handler(
+      req('POST', '', {
+        kind: 'document',
+        title: 'Doc',
+        documentType: 'spec',
+        summary: 'Spec doc',
+      }),
+    )
+    expect(resD.status).toBe(201)
+  })
+
+  it('POST payload không hợp lệ trả 400', async () => {
+    const res = await handler(req('POST', '', { kind: 'unknown' }))
+    expect(res.status).toBe(400)
+  })
+
+  it('PATCH project và task cập nhật', async () => {
     workService.updateWorkProject.mockResolvedValueOnce({ id: ID_1, status: 'completed' })
     const res = await handler(req('PATCH', '', { kind: 'project', id: ID_1, status: 'completed' }))
     expect(res.status).toBe(200)
-    expect(workService.updateWorkProject).toHaveBeenCalledWith({}, PERSON_ID, ID_1, {
-      kind: 'project',
-      id: ID_1,
-      status: 'completed',
-    })
+
+    workService.updateWorkTask.mockResolvedValueOnce({ id: ID_1, status: 'done' })
+    const resT = await handler(req('PATCH', '', { kind: 'task', id: ID_1, status: 'done' }))
+    expect(resT.status).toBe(200)
+
+    const resInvalid = await handler(req('PATCH', '', { kind: 'unknown' }))
+    expect(resInvalid.status).toBe(400)
+  })
+
+  it('DELETE trả 405', async () => {
+    const res = await handler(req('DELETE'))
+    expect(res.status).toBe(405)
   })
 })

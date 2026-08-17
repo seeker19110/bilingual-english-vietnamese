@@ -198,6 +198,51 @@ describe('executeCompanionTurn end-to-end execution pipeline', () => {
     expect(contextEngineMock.buildContextPackage).toHaveBeenCalled()
     expect(proposedActionMock.proposeAction).toHaveBeenCalled()
   })
+
+  it('handles profile fact and memory intents and rejected actions', async () => {
+    // Rejected action
+    proposedActionMock.proposeAction.mockResolvedValueOnce({
+      action: {
+        id: '22222222-2222-4222-8222-222222222222',
+        personId: PERSON_ID,
+        capabilityId: 'profile.update_fact',
+        action: 'update_fact',
+        targetDomain: 'profile',
+        payload: { fact: 'Likes sci-fi' },
+        riskLevel: 'low',
+        status: 'rejected',
+        createdAt: new Date().toISOString(),
+        schemaVersion: 1,
+      },
+      autoExecuted: false,
+    })
+
+    const poolWithUser = {
+      query: vi.fn().mockResolvedValue({ rows: [{ user_id: 'user-123' }] }),
+    } as unknown as Pool
+
+    const response = await executeCompanionTurn(poolWithUser, {
+      personId: PERSON_ID,
+      userMessage: 'Tôi thích đọc sách viễn tưởng',
+    })
+
+    expect(response.intent).toBe('update_profile_fact')
+    expect(response.executionSummary.rejectedSteps).toBe(1)
+    expect(response.reply).toContain('Tôi đã cập nhật thông tin hồ sơ của bạn.')
+
+    // Memory intent synthesis
+    const memoryReply = synthesizeReply('Ghi nhớ lịch', 'create_memory', [], {
+      id: CTX_ID,
+      personId: PERSON_ID,
+      requestId: 'req-2',
+      items: [],
+      tokenBudget: 2000,
+      tokenUsed: 0,
+      createdAt: new Date().toISOString(),
+      schemaVersion: 1,
+    })
+    expect(memoryReply).toContain('Tôi đã lưu lại ghi nhớ này vào kho kiến thức cá nhân.')
+  })
 })
 
 // Nhánh biên: chỉ truyền một trong hai tham số explicit, các intent còn lại, đường ngữ cảnh domain learning.
