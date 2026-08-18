@@ -17,18 +17,26 @@ import {
   Users,
   GraduationCap,
   Flame,
+  User,
+  Shield,
 } from 'lucide-react'
 
 // Trang chủ hub — Nền tảng "Đồng hành cùng bạn" (https://www.donghanhcungban.org)
-// Phản ánh đúng thực trạng: Tiếng Anh giọng Mỹ (US Accent 🇺🇸), gia sư 2 chiều Việt - Anh,
-// lộ trình CEFR A1→C2, chấm viết IELTS, 16+ giọng AI, và các môn STEM tiếp theo (Toán, Lý, Hóa, Sinh).
+// - Tiếng Anh giọng Mỹ (US Accent 🇺🇸), gia sư 2 chiều Việt - Anh, CEFR A1→C2.
+// - Ẩn số người dùng và lượt học cho non-admin (chỉ admin mới thấy qua API).
+// - Hiển thị liên kết trang cá nhân (Profile) khi người dùng đã đăng nhập.
 const ENGLISH_APP_URL =
   (import.meta.env.VITE_ENGLISH_APP_URL as string | undefined) ||
   'https://en-vi.donghanhcungban.org'
 
+const PROFILE_URL = `${ENGLISH_APP_URL}/profile`
+
 interface HubStats {
-  totalUsers: number
-  totalEnglishSessions: number
+  isAdmin?: boolean
+  loggedIn?: boolean
+  userName?: string
+  totalUsers?: number
+  totalEnglishSessions?: number
 }
 
 interface SubjectTab {
@@ -140,7 +148,7 @@ function useHubStats() {
   const [stats, setStats] = useState<HubStats | null>(null)
   useEffect(() => {
     let cancelled = false
-    fetch('/api/hub-stats')
+    fetch('/api/hub-stats', { credentials: 'include' })
       .then((r) => (r.ok ? r.json() : null))
       .then((data: HubStats | null) => {
         if (!cancelled && data) setStats(data)
@@ -156,7 +164,10 @@ function useHubStats() {
 }
 
 // ── Header / Navigation ──────────────────────────────────────────────────────────
-function Navbar() {
+function Navbar({ stats }: { stats: HubStats | null }) {
+  const isLoggedIn = !!stats?.loggedIn
+  const displayName = stats?.userName?.trim()
+
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-zinc-950/80 border-b border-zinc-800/80">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -195,21 +206,46 @@ function Navbar() {
           </a>
         </nav>
 
-        <div className="flex items-center gap-3">
-          <a
-            href={`${ENGLISH_APP_URL}/login`}
-            className="text-xs sm:text-sm font-medium text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-zinc-900 transition"
-          >
-            Đăng nhập
-          </a>
-          <a
-            href={ENGLISH_APP_URL}
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all hover:scale-[1.02]"
-          >
-            <span>Học Tiếng Anh</span>
-            <span className="text-xs">🇺🇸</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </a>
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {isLoggedIn ? (
+            <>
+              <a
+                href={PROFILE_URL}
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-zinc-200 hover:text-white px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 transition"
+                title="Truy cập trang cá nhân & quản lý tài khoản"
+              >
+                <User className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="max-w-[120px] sm:max-w-[160px] truncate">
+                  {displayName || 'Trang cá nhân'}
+                </span>
+              </a>
+              <a
+                href={ENGLISH_APP_URL}
+                className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-md shadow-emerald-500/20 transition-all hover:scale-[1.02]"
+              >
+                <span>Vào học</span>
+                <span className="text-xs">🇺🇸</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
+            </>
+          ) : (
+            <>
+              <a
+                href={`${ENGLISH_APP_URL}/login`}
+                className="text-xs sm:text-sm font-medium text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-zinc-900 transition"
+              >
+                Đăng nhập
+              </a>
+              <a
+                href={ENGLISH_APP_URL}
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all hover:scale-[1.02]"
+              >
+                <span>Học Tiếng Anh</span>
+                <span className="text-xs">🇺🇸</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
+            </>
+          )}
         </div>
       </div>
     </header>
@@ -217,7 +253,10 @@ function Navbar() {
 }
 
 // ── Hero Section ─────────────────────────────────────────────────────────────────
-function Hero() {
+function Hero({ stats }: { stats: HubStats | null }) {
+  const isLoggedIn = !!stats?.loggedIn
+  const displayName = stats?.userName?.trim()
+
   return (
     <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24 px-4 sm:px-6">
       {/* Background glow effects */}
@@ -225,13 +264,26 @@ function Hero() {
       <div className="absolute top-10 right-10 w-[300px] h-[250px] bg-teal-500/10 blur-[100px] pointer-events-none -z-10 rounded-full" />
 
       <div className="max-w-4xl mx-auto text-center">
-        {/* Accent badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs sm:text-sm text-zinc-300 mb-6 shadow-sm">
-          <span className="text-base">🇺🇸</span>
-          <span className="font-semibold text-emerald-400">Tiếng Anh Giọng Mỹ (US Accent)</span>
-          <span className="text-zinc-600">•</span>
-          <span className="text-zinc-400">Chuẩn CEFR A1 → C2</span>
-        </div>
+        {/* Accent / User Greeting badge */}
+        {isLoggedIn ? (
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-500/40 text-xs sm:text-sm text-emerald-300 mb-6 shadow-sm">
+            <span>👋</span>
+            <span className="font-semibold">
+              Chào mừng trở lại{displayName ? `, ${displayName}` : ''}!
+            </span>
+            <span className="text-emerald-600">•</span>
+            <a href={PROFILE_URL} className="underline hover:text-white transition">
+              Trang cá nhân
+            </a>
+          </div>
+        ) : (
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs sm:text-sm text-zinc-300 mb-6 shadow-sm">
+            <span className="text-base">🇺🇸</span>
+            <span className="font-semibold text-emerald-400">Tiếng Anh Giọng Mỹ (US Accent)</span>
+            <span className="text-zinc-600">•</span>
+            <span className="text-zinc-400">Chuẩn CEFR A1 → C2</span>
+          </div>
+        )}
 
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15] mb-6">
           Gia sư AI kiên nhẫn, <br className="hidden sm:inline" />
@@ -253,17 +305,28 @@ function Hero() {
             href={ENGLISH_APP_URL}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-base shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/35 transition-all hover:scale-[1.02]"
           >
-            <span>Bắt đầu học Tiếng Anh ngay (Miễn phí)</span>
+            <span>{isLoggedIn ? 'Tiếp tục học Tiếng Anh ngay' : 'Bắt đầu học Tiếng Anh ngay'}</span>
             <span className="text-sm">🇺🇸</span>
             <ArrowRight className="w-4 h-4" />
           </a>
-          <a
-            href="#subjects"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 font-semibold text-base transition"
-          >
-            <BookOpen className="w-4 h-4 text-emerald-400" />
-            <span>Xem tất cả môn học</span>
-          </a>
+
+          {isLoggedIn ? (
+            <a
+              href={PROFILE_URL}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 font-semibold text-base transition"
+            >
+              <User className="w-4 h-4 text-emerald-400" />
+              <span>Xem trang cá nhân & Lộ trình</span>
+            </a>
+          ) : (
+            <a
+              href="#subjects"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 font-semibold text-base transition"
+            >
+              <BookOpen className="w-4 h-4 text-emerald-400" />
+              <span>Xem tất cả môn học</span>
+            </a>
+          )}
         </div>
 
         {/* Feature Highlights Pills */}
@@ -290,40 +353,84 @@ function Hero() {
   )
 }
 
-// ── Live Activity Stats Section ──────────────────────────────────────────────────
+// ── Activity / Platform Highlights Section ────────────────────────────────────────
+// - Cho Admin: Hiển thị 4 thẻ bao gồm Số người dùng và Lượt học thật.
+// - Cho Non-Admin / Khách: Ẩn số người dùng và lượt học, hiển thị các mốc chất lượng nền tảng.
 function ActivitySection({ stats }: { stats: HubStats | null }) {
+  const isAdmin = stats?.isAdmin === true
+  const hasAdminStats =
+    isAdmin && stats.totalUsers !== undefined && stats.totalEnglishSessions !== undefined
+
   return (
     <section className="px-4 sm:px-6 py-8 bg-zinc-900/40 border-y border-zinc-800/80">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-6">
-          <h2 className="text-xs uppercase tracking-widest text-emerald-400 font-bold mb-1">
-            Hoạt động thực tế của nền tảng
-          </h2>
+          <div className="flex items-center justify-center gap-1.5 mb-1">
+            <h2 className="text-xs uppercase tracking-widest text-emerald-400 font-bold">
+              {isAdmin ? 'Thống kê hoạt động nền tảng' : 'Chất lượng đào tạo chuẩn quốc tế'}
+            </h2>
+            {isAdmin && (
+              <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold">
+                <Shield className="w-2.5 h-2.5" />
+                Admin
+              </span>
+            )}
+          </div>
           <p className="text-zinc-400 text-xs sm:text-sm">
-            Số liệu thống kê thời gian thực từ cộng đồng người học
+            {isAdmin
+              ? 'Số liệu quản trị thời gian thực'
+              : 'Nền tảng học tập thông minh với kho dữ liệu chuẩn mực'}
           </p>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">
-              {stats ? formatNumber(stats.totalUsers) : '1.200+'}
-            </div>
-            <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-zinc-500" />
-              <span>Người học tham gia</span>
-            </div>
-          </div>
+          {hasAdminStats ? (
+            <>
+              {/* Thẻ dành riêng cho Admin */}
+              <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center relative">
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">
+                  {formatNumber(stats.totalUsers!)}
+                </div>
+                <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
+                  <Users className="w-3.5 h-3.5 text-zinc-500" />
+                  <span>Người dùng tham gia</span>
+                </div>
+              </div>
 
-          <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">
-              {stats ? formatNumber(stats.totalEnglishSessions) : '45.000+'}
-            </div>
-            <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
-              <Flame className="w-3.5 h-3.5 text-zinc-500" />
-              <span>Lượt học đã thực hiện</span>
-            </div>
-          </div>
+              <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">
+                  {formatNumber(stats.totalEnglishSessions!)}
+                </div>
+                <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
+                  <Flame className="w-3.5 h-3.5 text-zinc-500" />
+                  <span>Lượt học đã thực hiện</span>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Thẻ hiển thị cho Người học & Khách vãng lai */}
+              <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">
+                  6 Cấp độ
+                </div>
+                <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-zinc-500" />
+                  <span>Lộ trình CEFR A1 → C2</span>
+                </div>
+              </div>
+
+              <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
+                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">
+                  100%
+                </div>
+                <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
+                  <Mic className="w-3.5 h-3.5 text-zinc-500" />
+                  <span>Tiếng Anh Giọng Mỹ (US)</span>
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
             <div className="text-2xl sm:text-3xl font-extrabold text-teal-400 tracking-tight">
@@ -635,7 +742,9 @@ function FeaturesSection() {
 }
 
 // ── Pricing Section ──────────────────────────────────────────────────────────────
-function PricingSection() {
+function PricingSection({ stats }: { stats: HubStats | null }) {
+  const isLoggedIn = !!stats?.loggedIn
+
   return (
     <section
       id="pricing"
@@ -695,7 +804,7 @@ function PricingSection() {
               href={ENGLISH_APP_URL}
               className="w-full py-3 px-4 rounded-xl border border-zinc-700 hover:bg-zinc-800 text-center font-semibold text-sm text-white transition block"
             >
-              Học thử miễn phí ngay
+              {isLoggedIn ? 'Vào học ngay' : 'Học thử miễn phí ngay'}
             </a>
           </div>
 
@@ -744,10 +853,12 @@ function PricingSection() {
               </ul>
             </div>
             <a
-              href={`${ENGLISH_APP_URL}/login`}
+              href={isLoggedIn ? PROFILE_URL : `${ENGLISH_APP_URL}/login`}
               className="w-full py-3.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-center font-bold text-sm text-zinc-950 shadow-md shadow-emerald-500/25 transition block hover:scale-[1.02]"
             >
-              Xem chi tiết giá & Nâng cấp trong App →
+              {isLoggedIn
+                ? 'Xem chi tiết giá & Nâng cấp trong Hồ sơ →'
+                : 'Đăng nhập để xem bảng giá & Nâng cấp →'}
             </a>
           </div>
         </div>
@@ -823,7 +934,9 @@ function FaqSection() {
 }
 
 // ── Call to Action Banner ────────────────────────────────────────────────────────
-function CtaBanner() {
+function CtaBanner({ stats }: { stats: HubStats | null }) {
+  const isLoggedIn = !!stats?.loggedIn
+
   return (
     <section className="px-4 sm:px-6 py-14 max-w-5xl mx-auto">
       <div className="bg-gradient-to-r from-emerald-950 via-zinc-900 to-zinc-900 border border-emerald-500/30 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
@@ -836,13 +949,14 @@ function CtaBanner() {
             Sẵn sàng nâng tầm Tiếng Anh Giọng Mỹ cùng AI?
           </h2>
           <p className="text-zinc-300 text-sm sm:text-base mb-8 leading-relaxed">
-            Hàng ngàn người học đã tiến bộ mỗi ngày. Bắt đầu miễn phí chỉ trong 30 giây!
+            Học tập kiên nhẫn cùng gia sư AI thông minh 24/7. Khám phá ngay trải nghiệm song ngữ 2
+            chiều độc đáo!
           </p>
           <a
             href={ENGLISH_APP_URL}
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-base shadow-lg shadow-emerald-500/25 transition-all hover:scale-105"
           >
-            <span>Học Tiếng Anh miễn phí ngay</span>
+            <span>{isLoggedIn ? 'Tiếp tục bài học' : 'Học Tiếng Anh miễn phí ngay'}</span>
             <span className="text-sm">🇺🇸</span>
             <ArrowRight className="w-4 h-4" />
           </a>
@@ -853,7 +967,9 @@ function CtaBanner() {
 }
 
 // ── Footer ───────────────────────────────────────────────────────────────────────
-function Footer() {
+function Footer({ stats }: { stats: HubStats | null }) {
+  const isLoggedIn = !!stats?.loggedIn
+
   return (
     <footer className="px-4 sm:px-6 py-12 bg-zinc-950 border-t border-zinc-800/80 text-zinc-500 text-xs">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
@@ -867,10 +983,15 @@ function Footer() {
           </p>
         </div>
 
-        <div className="flex items-center gap-6 text-zinc-400">
+        <div className="flex items-center gap-6 text-zinc-400 flex-wrap justify-center">
           <a href={ENGLISH_APP_URL} className="hover:text-emerald-400 transition">
             Học Tiếng Anh 🇺🇸
           </a>
+          {isLoggedIn && (
+            <a href={PROFILE_URL} className="hover:text-emerald-400 transition">
+              Trang cá nhân
+            </a>
+          )}
           <a href="#subjects" className="hover:text-emerald-400 transition">
             Các môn học
           </a>
@@ -902,18 +1023,18 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-emerald-500/30 selection:text-emerald-300">
-      <Navbar />
+      <Navbar stats={stats} />
       <main className="flex-1">
-        <Hero />
+        <Hero stats={stats} />
         <ActivitySection stats={stats} />
         <SubjectTabs />
         <WhyUsSection />
         <FeaturesSection />
-        <PricingSection />
+        <PricingSection stats={stats} />
         <FaqSection />
-        <CtaBanner />
+        <CtaBanner stats={stats} />
       </main>
-      <Footer />
+      <Footer stats={stats} />
     </div>
   )
 }
