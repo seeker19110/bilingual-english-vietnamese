@@ -22,14 +22,63 @@ Hoàn thiện giao diện nhắn tin thời gian thực 1-1 giữa người dùn
   - `ChatList.tsx`: Danh sách hội thoại kèm avatar, preview tin nhắn cuối, thời gian, số tin chưa đọc, thanh tìm kiếm và Friends Picker để bắt đầu chat mới.
   - `ChatWindow.tsx`: Khung chat chính, gom nhóm ngày, tự động cuộn xuống cuối khi có tin mới, typing indicator động.
 - `apps/english/src/pages/ChatPage.tsx`: Trang tin nhắn tại route `/tin-nhan` với bố cục responsive cao cấp (2 cột trên desktop, 1 cột mượt mà trên mobile), hỗ trợ query params `?roomId=` và `?peerId=`.
+- `e2e/chat.spec.ts`: 5 kịch bản E2E Playwright kiểm thử toàn diện luồng bạn bè, kết bạn qua mã QR, mở chat, gửi/nhận tin nhắn và lọc nội dung.
 - Tích hợp điều hướng: Nút "Nhắn tin" trong danh sách bạn bè (`/ban-be`) và thẻ "Tin nhắn" trong Special Hubs trên trang cá nhân (`/profile`).
-- Đồng bộ dependencies: Khắc phục xung đột version giữa `@typescript-eslint/parser`, `@typescript-eslint/eslint-plugin`, và `eslint-plugin-react-refresh`.
 - **Quality Gates**:
-  - `npm test`: **4.216 / 4.216 tests passed 100%** trên 281 test files (+3 test files mới).
+  - `npm test`: **4.229 / 4.229 tests passed 100%** trên 282 test files.
   - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
   - `npm run lint`: passed 100% (0 warnings, 0 errors).
   - `npm run format:check`: passed 100% (All matched files use Prettier style).
   - `npm run build`: passed 100% (Client, Server, Hub).
+
+### Fix auto-deploy lỗi — xung đột peer dependency (2026-08-18)
+
+Workflow `deploy.yml` (chạy trên VPS qua SSH mỗi lần push `main`) đỏ liên tục từ run #519
+(commit `0f41632`, PR #574): `npm ci` trên VPS lỗi `ERESOLVE` — không phải lỗi hạ tầng/VPS.
+Nguyên nhân: 2 PR dependabot gần nhau bump lên bản đòi ESLint/parser mới hơn những gì dự án
+đang ghim:
+
+- PR #576: `@typescript-eslint/eslint-plugin` 7.18.0 → 8.67.0, nhưng `@typescript-eslint/parser`
+  vẫn ở 7.18.0 (plugin 8.x đòi peer parser `^8.67.0`) → nâng parser lên `^8.67.0` khớp.
+- PR #595: `eslint-plugin-react-refresh` 0.4.7 → 0.5.4, bản 0.5.x đòi peer `eslint ^9||^10`,
+  trong khi dự án **cố tình giữ ESLint 8** (CLAUDE.md mục 6: "GIỮ NGUYÊN PHIÊN BẢN — KHÔNG nâng
+  ESLint") → ghim lại `^0.4.26` (bản 0.4.x mới nhất còn hỗ trợ `eslint >=8.40`).
+
+Đã xác minh thật: `npm ci` sạch trên máy dev, `npm run typecheck` ✅, `npm run build` ✅
+(kể cả `build:server`), `npm test` ✅ 4202/4202. Đây đúng là bước `npm ci` mà `scripts/deploy.sh`
+[4/7] chạy trên VPS — sửa xong là auto-deploy chạy lại được.
+
+**[Cập nhật] Đã phát hiện + xử lý thêm 1 lỗi CI khi mở PR #603:** CI đỏ ở bước `Lint` — ban đầu
+tưởng chỉ 1 rule `react-hooks/set-state-in-effect` (48/73 lỗi), soát lại kỹ thì **73 lỗi trải
+trên 45+ file, thuộc 5 rule MỚI khác nhau** của `eslint-plugin-react-hooks@7` (React Compiler
+rules: `set-state-in-effect` 48, `purity` 10, `exhaustive-deps` 10, `immutability` 8,
+`static-components` 3) — cũng từ PR #574 (bump plugin 4.6.2 → 7.1.1). Sửa hết 73 lỗi ngay trong
+PR fix-deploy này rủi ro cao (đụng logic hook ở hàng chục trang/component cùng lúc, ngoài phạm vi
+"fix deploy"). Đã hỏi lại và quyết định: **ghim `eslint-plugin-react-hooks` về lại `^4.6.2`**
+(bản trước PR #574) — an toàn nhất, không đụng code UI. Lint lại sạch 0 lỗi, đã chạy lại đủ
+typecheck/build/test (4202/4202) — tất cả xanh.
+
+**[Cập nhật] Đã phát hiện + xử lý thêm 1 lỗi CI khác — e2e a11y `color-contrast`:** job `e2e`
+đỏ 8/292 test (`a11y.spec.ts` — `/tu-dien` + `/lo-trinh-hoc`, 4/5 theme không phải mặc định). Đối
+chiếu lịch sử CI: **KHÔNG do PR #603 gây ra** — commit `db2f73f` (ngay trước chuỗi dependabot bump)
+CI xanh toàn bộ; PR #595 (bump `@axe-core/playwright` 4.12.1 → 4.13.0, cùng nhóm 14 gói) đã bắt
+được lỗi tương phản màu THẬT mà bản axe cũ bỏ sót. Vì lỗi này nằm trên nhánh PR (thừa hưởng từ
+`main`) và chặn merge, đã chẩn đoán + sửa luôn (đúng trách nhiệm "đưa PR do mình tạo về xanh"):
+`apps/english/src/components/WordCard.tsx` dòng ví dụ câu tiếng Anh (`extraExamples`) dùng
+`text-accent-400/80 italic` — độ tương phản chỉ 1.8–4.44 (cần ≥4.5) ở theme Blue sky/Pink/Rực
+rỡ/Nhi đồng. Sửa theo đúng pattern đã có sẵn trong `WordFormsBlock.tsx` (biến thể Tailwind
+`theme-light:` — xem `tailwind.config.js`): đổi thành `text-accent-300 theme-light:text-accent-800`
+(bỏ opacity `/80`, thêm sắc độ đậm hơn cho theme nền sáng). Đã xác minh: viết script debug tạm lấy
+đúng phần tử/tỷ lệ tương phản qua axe-core trực tiếp (không chỉ đọc log CI), chạy lại toàn bộ
+`e2e/a11y.spec.ts` + `e2e/a11y-aaa.spec.ts` (397 test, 396 xanh + 1 flake hạ tầng "Execution
+context destroyed" xác nhận không liên quan, chạy lại riêng thì xanh), `npm run lint`/`typecheck`/
+`build` vẫn xanh.
+
+**Nợ kỹ thuật CÒN MỞ (chưa xử lý, để làm PR riêng có thời gian review kỹ):** nâng
+`eslint-plugin-react-hooks` lên bản 7.x (React Compiler rules) + sửa đúng 73 lỗi thật ở 45+ file
+— xem chi tiết rule/file/line trong mục "Nợ kỹ thuật còn mở" bên dưới.
+
+> > > > > > > origin/main
 
 ### Fix CI e2e đỏ trên PR #602 (2026-08-17)
 
@@ -3160,6 +3209,16 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🟡 **[2026-08-18, cập nhật khi fix PR #603] `eslint-plugin-react-hooks` đã ghim TẠM về lại
+  `^4.6.2`** (đúng bản trước PR #574) để CI/lint xanh trở lại ngay — bản `7.1.1` mà PR #574 bump
+  lên mang theo 5 rule React Compiler mới, làm lộ **73 lỗi trải trên 45+ file**: `set-state-in-effect`
+  (48 lỗi — vd `Work.tsx:103`, `WorkKanban.tsx:53`, `packages/core-ui/ThemeProvider.tsx:36`, phần
+  lớn các trang `useEffect(() => { loadData() }, [loadData])`), `purity` (10), `exhaustive-deps`
+  (10), `immutability` (8), `static-components` (3). Việc còn lại: **mở PR riêng** để (1) nâng lại
+  `eslint-plugin-react-hooks` lên `^7.x`, (2) sửa đúng 73 lỗi theo từng rule (không chỉ thêm
+  `eslint-disable`) — có thời gian review kỹ vì đụng logic hook ở nhiều trang/component cùng lúc.
+  Danh sách file/line đầy đủ: chạy lại `npm run lint` sau khi bump plugin để lấy danh sách mới nhất
+  (số dòng có thể lệch do code đã đổi).
 - **[Rà soát Dependabot 2026-08-16] Xử lý 9 PR dependency tồn đọng (#550-559): merge 6, đóng 3.**
   Merge (đều CI xanh thật, chỉ thiếu heading PR template nên `metadata` báo sai): `actions/
 setup-node` 4→7 (#550), `actions/upload-artifact` 4→7 (#551), `actions/github-script` 7→9 (#552),
