@@ -15,6 +15,7 @@ import { refreshAppSettings } from './lib/appSettings'
 import { refreshPlanFeatures } from './lib/planFeatures'
 import { refreshPlanMarketing } from './lib/planMarketing'
 import FeatureGate from './components/FeatureGate'
+import OfflineSyncIndicator from './components/OfflineSyncIndicator'
 import { useOneHandedDrag } from './lib/useOneHandedDrag'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
 // (thường do app vừa deploy bản mới, chunk cũ không còn) thay vì sập trang.
@@ -728,6 +729,7 @@ export default function App() {
                   cao 3.5rem vẫn được cộng vào --bnav-h ở index.css để mọi trang tự
                   chừa đủ padding-bottom, không bị trigger che/chặn tap nội dung
                   cuối trang. */}
+              <OfflineSyncIndicator />
               <BottomNav
                 triggerHandlers={oneHandedDrag.triggerHandlers}
                 isReachabilityOpen={oneHandedDrag.isOpen}

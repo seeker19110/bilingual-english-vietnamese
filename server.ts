@@ -90,6 +90,9 @@ import startupHandler from './api/startup.js'
 import lifeHandler from './api/life.js'
 import automationHandler from './api/automation.js'
 import healthDeepHandler from './api/healthDeep.js'
+import proactiveBriefingHandler from './api/proactive-briefing.js'
+import visionSolveHandler from './api/vision-solve.js'
+import integrationsHandler from './api/integrations.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -131,6 +134,8 @@ app.post('/api/stt', express.json({ limit: '10mb' }), wrapEdge(sttHandler))
 // /api/pronounce-assess cũng nhận audio base64 (câu ngắn ~30s, nhẹ hơn STT hội thoại tự do)
 // — cùng lý do cần parser riêng thay vì giới hạn 64kb mặc định.
 app.post('/api/pronounce-assess', express.json({ limit: '5mb' }), wrapEdge(pronounceAssessHandler))
+// /api/vision-solve nhận image base64 từ camera/file upload
+app.post('/api/vision-solve', express.json({ limit: '10mb' }), wrapEdge(visionSolveHandler))
 
 app.use(express.json({ limit: '64kb' }))
 
@@ -284,6 +289,12 @@ app.all('/api/life', wrapEdge(lifeHandler))
 app.all('/api/automation', wrapEdge(automationHandler))
 // Deep Health Check — Giám sát chuyên sâu Database, Storage, Cache, Uptime.
 app.all('/api/health/deep', wrapEdge(healthDeepHandler))
+// Proactive Briefing (V2 Flagship P1) — Morning / Evening personalized proactive briefs.
+app.all('/api/proactive-briefing', wrapEdge(proactiveBriefingHandler))
+// Multimodal Vision Solver (V2 Flagship P1) — STEM & Document OCR solver.
+app.all('/api/vision-solve', wrapEdge(visionSolveHandler))
+// External Integrations (V2 Flagship) — Google Calendar & Notion sync.
+app.all('/api/integrations', wrapEdge(integrationsHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

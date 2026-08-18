@@ -1,10 +1,22 @@
-// apps/english/src/pages/SubjectDetail.tsx — Interactive STEM Subject Solver Room (V2-12)
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Sparkles, Send, CheckCircle2, RotateCcw, BookMarked, BookOpen, Flame } from 'lucide-react'
+import {
+  Sparkles,
+  Send,
+  CheckCircle2,
+  RotateCcw,
+  BookMarked,
+  BookOpen,
+  Flame,
+  Camera,
+  Calendar,
+  Loader2,
+} from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import { getSubjectDetails } from '../lib/subjectApi'
+import { solveProblemImage } from '../lib/visionSolverApi'
+import IntegrationsModal from '../components/IntegrationsModal'
 import { STEM_CURRICULUM } from '../data/stemCurriculum'
 import type { SubjectManifest } from '../../../../packages/core-contracts/subjectManifest'
 
@@ -26,6 +38,40 @@ export default function SubjectDetail() {
   const [problemInput, setProblemInput] = useState('')
   const [solving, setSolving] = useState(false)
   const [solutionSteps, setSolutionSteps] = useState<SolvedStep[] | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (evt) => {
+      const base64 = evt.target?.result as string
+      setImagePreview(base64)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleVisionSolve = async () => {
+    if (!imagePreview || !subjectId) return
+    setSolving(true)
+    try {
+      const res = await solveProblemImage({
+        imageBase64: imagePreview,
+        subjectId,
+        gradeLevel: selectedGrade,
+        userPrompt: problemInput || undefined,
+      })
+      setProblemInput(res.problemText)
+      setSolutionSteps(res.steps)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Lỗi phân tích ảnh đề bài'
+      alert(msg)
+    } finally {
+      setSolving(false)
+    }
+  }
 
   useEffect(() => {
     if (!subjectId) return
@@ -244,28 +290,97 @@ export default function SubjectDetail() {
                 <textarea
                   value={problemInput}
                   onChange={(e) => setProblemInput(e.target.value)}
-                  placeholder={`Nhập đề bài ${subject.label} (ví dụ: phương trình, bài toán tìm giá trị, câu hỏi lý thuyết)...`}
+                  placeholder={`Nhập đề bài ${subject.label} (hoặc bấm biểu tượng máy ảnh bên dưới để tải ảnh chụp đề bài)...`}
                   rows={3}
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-accent-500 leading-relaxed placeholder:text-zinc-600 resize-none"
                 />
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={solving || !problemInput.trim()}
-                    className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-white font-semibold text-sm transition shadow-md shadow-accent-500/20 active:scale-[0.98]"
-                  >
-                    {solving ? (
-                      <>
-                        <Sparkles className="w-4 h-4 animate-spin" />
-                        <span>AI đang phân tích & giải…</span>
-                      </>
+
+                {/* Khối xem trước ảnh đề bài nếu có */}
+                {imagePreview && (
+                  <div className="relative inline-block border border-indigo-500/40 rounded-xl overflow-hidden bg-zinc-950 p-1.5">
+                    <img
+                      src={imagePreview}
+                      alt="Đề bài chụp"
+                      className="max-h-40 rounded-lg object-contain"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setImagePreview(null)}
+                      className="absolute top-2 right-2 p-1 rounded-full bg-black/70 text-white hover:bg-rose-600 transition"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between flex-wrap gap-2 pt-1">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleImageFileChange}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="tap-44 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs font-medium text-zinc-300 hover:text-white transition"
+                    >
+                      <Camera className="w-4 h-4 text-indigo-400" />
+                      <span>{imagePreview ? 'Đổi ảnh đề bài' : 'Chụp / Tải ảnh đề'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsCalendarModalOpen(true)}
+                      className="tap-44 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs font-medium text-zinc-300 hover:text-white transition"
+                    >
+                      <Calendar className="w-4 h-4 text-blue-400" />
+                      <span>Lên lịch học Google</span>
+                    </button>
+                  </div>
+
+                  <div>
+                    {imagePreview ? (
+                      <button
+                        type="button"
+                        onClick={handleVisionSolve}
+                        disabled={solving}
+                        className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 disabled:opacity-50 text-white font-semibold text-sm transition shadow-md shadow-indigo-500/20 active:scale-[0.98]"
+                      >
+                        {solving ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>AI Vision đang giải…</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4" />
+                            <span>Giải từ hình ảnh (Vision)</span>
+                          </>
+                        )}
+                      </button>
                     ) : (
-                      <>
-                        <Send className="w-4 h-4" />
-                        <span>Phân tích & Giải từng bước</span>
-                      </>
+                      <button
+                        type="submit"
+                        disabled={solving || !problemInput.trim()}
+                        className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-white font-semibold text-sm transition shadow-md shadow-accent-500/20 active:scale-[0.98]"
+                      >
+                        {solving ? (
+                          <>
+                            <Sparkles className="w-4 h-4 animate-spin" />
+                            <span>AI đang giải…</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4" />
+                            <span>Phân tích & Giải từng bước</span>
+                          </>
+                        )}
+                      </button>
                     )}
-                  </button>
+                  </div>
                 </div>
               </form>
             </section>
@@ -414,6 +529,16 @@ export default function SubjectDetail() {
           </div>
         )}
       </main>
+
+      <IntegrationsModal
+        isOpen={isCalendarModalOpen}
+        onClose={() => setIsCalendarModalOpen(false)}
+        itemType="study_schedule"
+        itemData={{
+          title: `Học ${subject.label} (${selectedGrade.replace('grade_', 'Lớp ')})`,
+          description: `Phiên học và giải bài tập ${subject.label} trên Đồng Hành AI: ${window.location.href}`,
+        }}
+      />
     </div>
   )
 }

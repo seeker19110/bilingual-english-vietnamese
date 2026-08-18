@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
+import ProactiveBriefingCard from '../components/ProactiveBriefingCard'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '@core/ToastProvider'
 import {
@@ -263,6 +264,8 @@ export default function Companion() {
           title="Bạn Đồng Hành Đa Lĩnh Vực"
           subtitle="Trí tuệ cá nhân hóa kết nối Học tập, Sự nghiệp, Công việc & Đời sống."
         />
+
+        <ProactiveBriefingCard />
 
         {/* Domain Filter Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-4 scrollbar-none border-b border-zinc-800/60">
