@@ -89,6 +89,7 @@ import workHandler from './api/work.js'
 import startupHandler from './api/startup.js'
 import lifeHandler from './api/life.js'
 import automationHandler from './api/automation.js'
+import healthDeepHandler from './api/healthDeep.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -281,6 +282,8 @@ app.all('/api/startup', wrapEdge(startupHandler))
 app.all('/api/life', wrapEdge(lifeHandler))
 // Approved Automation (V2-18) — Explicit grants, triggers, budgets, retries/compensation, action receipts.
 app.all('/api/automation', wrapEdge(automationHandler))
+// Deep Health Check — Giám sát chuyên sâu Database, Storage, Cache, Uptime.
+app.all('/api/health/deep', wrapEdge(healthDeepHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

@@ -25,6 +25,7 @@ type HandlerEntry = { importPath: string; urlPath: string }
 // Handler có đường dẫn URL KHÁC tên file — khai báo tường minh ở đây.
 const CUSTOM_PATH: Record<string, string> = {
   ai: 'agent', // api/ai.ts phục vụ /api/agent
+  healthDeep: 'health/deep',
 }
 
 // File trong api/ KHÔNG phải handler HTTP (không cần route). Thêm vào đây nếu có thêm.
