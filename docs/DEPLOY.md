@@ -1,19 +1,32 @@
-# Deploy — tóm tắt nhanh
+# Hướng Dẫn & Quy Trình Deploy Toàn Diện
 
-> Hướng dẫn đầy đủ (Node, Nginx, HTTPS, `.env`...): **`docs/deploy-vps-ubuntu.md`**.
-> File này chỉ tóm tắt cách deploy code mới + xử lý sự cố nhanh.
+> **Tài liệu hợp nhất toàn bộ quy trình deploy** (Tự động, Thủ công, Migration, Troubleshooting, Pre-cache & Checklist).
+> Hướng dẫn thiết lập VPS lần đầu: xem **`docs/deploy-vps-ubuntu.md`**.
+> Kế hoạch khôi phục sự cố server: xem **`docs/ke-hoach-khoi-phuc-su-co-server.md`**.
 
-## Cách deploy
+---
 
-**Cách 1 — Tự động (đang dùng):** push/merge PR vào `main` → GitHub Actions (`.github/workflows/ci.yml`)
-chạy lint/type/test/build; nếu **CI xanh**, `.github/workflows/deploy.yml` tự SSH vào VPS rồi gọi
-`bash scripts/deploy.sh` (1 nguồn duy nhất, không còn lệnh trùng lặp riêng trong `deploy.yml`) —
-pull code, `npm install`, **chạy migration Postgres tự host còn thiếu** (`npm run migrate:pg`),
-build, `scripts/pm2-reload.sh` (PM2 chạy **fork mode** — có vài giây downtime khi reload, xem
-ghi chú trong `ecosystem.config.cjs`), rồi health-check `/api/health`. Cần secrets `VPS_HOST`,
-`VPS_USER`, `VPS_SSH_KEY` trong GitHub → Settings → Secrets and variables → Actions.
+## 1. Thông Tin Môi Trường VPS Production
 
-**Cách 2 — Thủ công trên VPS:**
+- **Domain chính**: `en-vi.donghanhcungban.org` (Domain cũ redirect: `.com`)
+- **Server IP**: `103.81.87.174` (Port Express: `3001` — Port `3000` dành cho app khác)
+- **Thư mục ứng dụng**: `/var/www/english-tutor`
+- **PM2 Process Name**: `english-tutor` (`instances: max`, `exec_mode: cluster`)
+
+---
+
+## 2. Các Phương Thức Deploy
+
+### Cách 1 — Tự Động Qua GitHub Actions (Khuyến nghị)
+
+- Khi PR được merge vào nhánh `main`:
+  1. Workflow `.github/workflows/ci.yml` chạy kiểm tra cổng chất lượng (lint, typecheck, format, unit test, build).
+  2. Nếu CI xanh, workflow `.github/workflows/deploy.yml` tự động SSH vào VPS và thực thi `bash scripts/deploy.sh`.
+- Yêu cầu secrets cấu hình trong GitHub Repository: `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`.
+
+### Cách 2 — Triển Khai Thủ Công Trực Tiếp Trên VPS
+
+Khi cần deploy khẩn cấp hoặc kiểm tra trực tiếp:
 
 ```bash
 ssh root@103.81.87.174
@@ -21,61 +34,58 @@ cd /var/www/english-tutor
 bash scripts/deploy.sh
 ```
 
-`scripts/deploy.sh` tự làm hết: pull code mới nhất từ `origin/main` → dọn `dist`/`public/data`
-cũ → cài dependencies → **chạy migration Postgres tự host còn thiếu** (`npm run migrate:pg`,
-dừng deploy nếu lỗi) → build → reload PM2. Cần `DATABASE_URL` trong `.env` trên VPS để bước
-migration chạy được — xem `postgres/migrations/README.md`.
-
-## Xử lý sự cố nhanh
-
-**502 Bad Gateway** — Express chưa chạy hoặc lỗi:
-
-```bash
-pm2 logs english-tutor --lines 50
-pm2 status
-curl http://localhost:3001/api/health
-```
-
-Thiếu package sau khi pull code mới → `npm ci` rồi `npm run build` lại.
-
-**Port 3001 đang bị chiếm:**
-
-```bash
-lsof -i :3001
-kill -9 <PID>
-```
-
-**PM2 không chịu restart:**
-
-```bash
-pm2 delete english-tutor
-pm2 start ecosystem.config.cjs
-```
-
-**Xóa sạch cài lại (khi nghi cache/node_modules hỏng):**
+Hoặc từng bước thủ công:
 
 ```bash
 cd /var/www/english-tutor
-rm -rf dist node_modules
-npm ci && npm run build
-pm2 restart english-tutor
+git pull origin main
+npm ci                  # cài đặt dependencies chuẩn theo package-lock.json
+npm run build           # build client, server dist-server và hub
+bash scripts/pm2-reload.sh # reload zero-downtime + health check
+pm2 status
+curl -s http://localhost:3001/api/health
 ```
 
-## Checklist trước khi coi là "đã deploy xong"
+---
 
-- [ ] `.env` trên VPS có đủ biến (xem `docs/deploy-vps-ubuntu.md` Bước 4)
-- [ ] `ecosystem.config.cjs` → `interpreter` khớp `which node` trên VPS (Node ≥ 22)
-- [ ] Nginx đã trỏ `/api/` về port 3001 (`nginx/en-vi.conf`)
-- [ ] SSL Let's Encrypt còn hạn (`sudo certbot renew --dry-run`)
-- [ ] `curl https://en-vi.donghanhcungban.com/api/health` trả `{"status":"ok",...}`
-- [ ] Platform V2 Migration & Audit: `npm run migrate:verify` và `npm run eval:v2:audit` xanh 100%
+## 3. Database Migration & CSDL
 
-## File liên quan
+Script `scripts/deploy.sh` **tự động chạy** `npm run migrate:pg` trong bước 4/7:
 
-- `docs/runbook-platform-v2-production-deployment.md` — **Runbook chi tiết triển khai Platform V2 (V2-01 đến V2-20)**
-- `scripts/deploy.sh` — script deploy (thủ công VÀ tự động qua `deploy.yml` đều gọi file này —
-  1 nguồn duy nhất, có migration + dọn build cũ + health check)
-- `.github/workflows/deploy.yml` — trigger deploy tự động sau khi CI pass, gọi `scripts/deploy.sh`
-- `scripts/pm2-reload.sh` — logic reload PM2 + health check dùng chung
-- `ecosystem.config.cjs` — cấu hình PM2
-- `docs/deploy-vps-ubuntu.md` — hướng dẫn đầy đủ từ đầu (setup VPS lần đầu)
+- Áp dụng tuần tự các migration mới trong `postgres/migrations/`.
+- Kiểm tra tính an toàn qua `npm run migrate:verify`.
+- Tự động dừng deploy nếu migration gặp lỗi để tránh phá vỡ dữ liệu.
+
+---
+
+## 4. Xử Lý Sự Cố Nhanh (Troubleshooting Quick Guide)
+
+| Hiện tượng                    | Nguyên nhân                            | Lệnh kiểm tra & xử lý                                                                           |
+| :---------------------------- | :------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| **502 Bad Gateway**           | App chưa start hoặc bị crash           | `pm2 logs english-tutor --lines 50`<br>`curl http://localhost:3001/api/health`                  |
+| **Port 3001 bị chiếm**        | Tiến trình cũ còn kẹt socket           | `lsof -i :3001` sau đó `kill -9 <PID>`                                                          |
+| **Đăng nhập lỗi / DB lỗi**    | Thiếu biến môi trường hoặc DB pool đầy | `grep -E "^DATABASE_URL                                                                         | ^GOOGLE_CLIENT_ID" .env`<br>`bash scripts/pm2-reload.sh` |
+| **Lỗi cache / node_modules**  | Cần xóa sạch cài lại                   | `rm -rf dist dist-server node_modules && npm ci && npm run build && bash scripts/pm2-reload.sh` |
+| **SSL Let's Encrypt hết hạn** | Certbot chưa tự renew                  | `sudo certbot renew --dry-run`                                                                  |
+
+---
+
+## 5. Rollback Khẩn Cấp (Khi Deploy Lỗi)
+
+Nếu bản deploy mới phát sinh lỗi nghiêm trọng:
+
+```bash
+cd /var/www/english-tutor
+git log --oneline | head -10
+git reset --hard <commit-hash-on-dinh-truoc-do>
+npm run build && bash scripts/pm2-reload.sh
+```
+
+---
+
+## 6. Checklist Nghiệm Thu Sau Deploy
+
+- [ ] `curl -s https://en-vi.donghanhcungban.org/api/health` trả về `{"status":"ok",...}`
+- [ ] `curl -s https://en-vi.donghanhcungban.org/api/health/deep` trả về `{"status":"healthy",...}`
+- [ ] PM2 hiển thị status `online` không có restart loop.
+- [ ] Đăng nhập thành công và gửi tin nhắn chat thử nghiệm.
