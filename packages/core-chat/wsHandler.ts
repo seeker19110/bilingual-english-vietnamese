@@ -43,6 +43,12 @@ async function authenticateUpgrade(req: IncomingMessage): Promise<{ userId: stri
 const localSockets = new Map<string, Set<WebSocket>>()
 const channelUnsubscribers = new Map<string, () => void>()
 
+export function _resetWsHandlerStateForTests(): void {
+  localSockets.clear()
+  for (const unsub of channelUnsubscribers.values()) unsub()
+  channelUnsubscribers.clear()
+}
+
 /** Gắn WebSocket server vào httpServer hiện có, chỉ xử lý upgrade request tới đúng WS_PATH. */
 export function attachChatWebSocketServer(server: HttpServer): void {
   const wss = new WebSocketServer({ noServer: true })
