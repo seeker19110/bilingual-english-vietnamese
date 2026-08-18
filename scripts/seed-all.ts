@@ -91,6 +91,15 @@ import {
   type VoiceId,
   type StudioVoiceId,
 } from '../api/_lib/googleTts.ts'
+import {
+  generateAudioFromGemini,
+  isValidGeminiVoice,
+  hasGeminiTtsKey,
+  type GeminiVoiceId,
+} from '../packages/core-ai/geminiTts.ts'
+import { STORY_KIND_VOICE } from '../apps/english/src/lib/stories.ts'
+import { type VoiceId as AppVoiceId } from '../apps/english/src/lib/voiceTiers.ts'
+import type { StoryKind } from '../apps/english/src/data/stories/index.ts'
 import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.ts'
 import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
 import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
@@ -275,6 +284,7 @@ const CATEGORIES: { id: CatId; label: string }[] = [
 // luồng với Chirp3-HD ở đây (cùng bảng tts_cache/pronunciations, cùng cơ chế remap/retry),
 // chỉ khác hàm gọi Google TTS thực tế (xem processTask).
 type AnyGoogleVoiceId = VoiceId | StudioVoiceId
+type AnyVoiceId = AppVoiceId
 // Ngôn ngữ của 1 dòng phát âm. Bảng `pronunciations` unique theo (word, voice, lang) nên
 // MỌI khoá/truy vấn trong file này phải gồm đủ 3 phần — thiếu `lang` sẽ khớp nhầm giữa từ
 // tiếng Anh và nghĩa tiếng Việt trùng chuỗi.
@@ -296,7 +306,7 @@ interface PatternTask {
   cat: CatId
   text: string
   lang: Lang
-  voice: AnyGoogleVoiceId
+  voice: AnyVoiceId
 }
 type AnyTask = PronTask | PatternTask
 
@@ -311,7 +321,7 @@ type TaskResult =
 // ── Hash cho pattern cache — phải khớp hoàn toàn với api/tts.ts ─────────────
 // Hash đúng (mới): có VOICE_VERSION — dùng cho mọi entry mới (kể cả giọng Studio — hash chỉ
 // nối chuỗi, không quan tâm giọng thuộc Chirp3-HD hay Studio).
-function hashText(text: string, lang: Lang, voice: AnyGoogleVoiceId): string {
+function hashText(text: string, lang: Lang, voice: AnyVoiceId): string {
   return crypto
     .createHash('sha256')
     .update(text + lang + voice + VOICE_VERSION)
@@ -374,7 +384,7 @@ function loadPatternTasks(): PatternTask[] {
     rawText: string,
     lang: Lang,
     cat: CatId,
-    voices: readonly AnyGoogleVoiceId[] = VOICE_IDS,
+    voices: readonly AnyVoiceId[] = VOICE_IDS,
   ) => {
     const text = rawText.trim()
     if (!text) return
@@ -556,11 +566,36 @@ function loadPatternTasks(): PatternTask[] {
     for (const s of t.sampleVi) add(s, 'vi-VN', 'challenge', PREF_VOICE_IDS_FULL)
   }
 
-  // ── Truyện cổ tích/ngụ ngôn (trang /stories, /stories/:id) ────────────────────
-  // KHÔNG seed ở đây nữa — STORY_KIND_VOICE (apps/english/src/lib/stories.ts) từ 2026-08-06
-  // dùng giọng Gemini (đọc truyền cảm theo thể loại, xem packages/core-ai/geminiTts.ts), khác
-  // hẳn engine Chirp3-HD/Studio mà script này seed. Chạy riêng:
-  // `npm run seed:stories:gemini` (scripts/seed-stories-gemini-tts.ts).
+  // ── Ưu tiên 7: Truyện cổ tích/ngụ ngôn (trang /stories, /stories/:id) ─────────
+  // Dùng giọng Gemini chuyên dụng theo từng thể loại (STORY_KIND_VOICE).
+  const storyDir = path.join(PROJECT_ROOT, 'public/data/stories')
+  if (fs.existsSync(storyDir)) {
+    const storyFiles = fs
+      .readdirSync(storyDir)
+      .filter((f) => f.endsWith('.json') && f !== 'index.json')
+    for (const file of storyFiles) {
+      try {
+        const raw = fs.readFileSync(path.join(storyDir, file), 'utf8')
+        const story = JSON.parse(raw) as {
+          kind: StoryKind
+          lines?: Array<{ en?: string; vi?: string }>
+          moralEn?: string
+          moralVi?: string
+        }
+        const voice = STORY_KIND_VOICE[story.kind]
+        if (voice && story.lines) {
+          for (const line of story.lines) {
+            if (line.en) add(line.en, 'en-US', 'stories', [voice])
+            if (line.vi) add(line.vi, 'vi-VN', 'stories', [voice])
+          }
+          if (story.moralEn) add(story.moralEn, 'en-US', 'stories', [voice])
+          if (story.moralVi) add(story.moralVi, 'vi-VN', 'stories', [voice])
+        }
+      } catch {
+        // bỏ qua file lỗi JSON
+      }
+    }
+  }
 
   return tasks
 }
@@ -1355,12 +1390,12 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
     //      female/male/female2/male2 → Kore/Puck/Aoede/Charon — CÙNG 1 giọng Google,
     //      chỉ đổi định danh trong app)
     // Nếu có → tải về → giải mã bằng hash cũ → re-encrypt bằng hash mới → upload.
-    // Không tốn API quota, chỉ tốn băng thông Storage. Giọng Studio không có tiền thân
+    // Không tốn API quota, chỉ tốn băng thông Storage. Giọng Studio/Gemini không có tiền thân
     // (voice mới hoàn toàn, chưa từng đổi tên) nên bỏ qua nhánh này.
-    if (!FORCE && !isValidStudioVoice(voice)) {
+    if (!FORCE && !isValidStudioVoice(voice) && !isValidGeminiVoice(voice)) {
       const legacyHashes = [
-        oldHashText(text, lang, voice),
-        legacyVoiceNameHash(text, lang, voice),
+        oldHashText(text, lang, voice as VoiceId),
+        legacyVoiceNameHash(text, lang, voice as VoiceId),
       ].filter((h): h is string => h !== null)
 
       for (const oldHash of legacyHashes) {
@@ -1401,12 +1436,18 @@ async function processTask(task: AnyTask, remapOnly = false): Promise<TaskResult
       }
     }
 
-    const audioBuffer = isValidStudioVoice(voice)
-      ? await generateStudioAudioFromGoogle(text, voice)
-      : await generateAudioFromGoogle(text, voice, lang)
+    let audioBuffer: ArrayBuffer
+    if (isValidGeminiVoice(voice)) {
+      audioBuffer = await generateAudioFromGemini(text, voice)
+    } else if (isValidStudioVoice(voice)) {
+      audioBuffer = await generateStudioAudioFromGoogle(text, voice)
+    } else {
+      audioBuffer = await generateAudioFromGoogle(text, voice as VoiceId, lang)
+    }
     // iv NGẪU NHIÊN mỗi lần mã hoá, PHẢI lưu kèm bản ghi (migration 0038).
     const { cipher: encrypted, iv_b64: ivB64 } = await encryptAudio(audioBuffer, hash)
-    const fileName = `${lang}/${voice}/${hash}.mp3`
+    const ext = isValidGeminiVoice(voice) ? 'wav' : 'mp3'
+    const fileName = `${lang}/${voice}/${hash}.${ext}`
     const audioUrl = await saveAudio('tts-cache', fileName, encrypted, BASE_URL)
     await pool.query(
       `insert into public.tts_cache (hash, lang, voice, audio_url, iv, last_accessed_at)
@@ -1813,7 +1854,7 @@ async function verifyDb(
       // bình thường. Tức là chúng KHÔNG "mất khỏi dữ liệu app", xoá đi là vi phạm chính sách
       // cache (CLAUDE.md mục 6: không bao giờ tự xoá cache đang dùng) và phải trả tiền sinh lại.
       // Cùng tinh thần với phần bảo vệ câu pattern ngoài seed-index ở mục 1.
-      if (expectedTts.has(r.hash) || isValidElevenVoice(r.voice)) {
+      if (expectedTts.has(r.hash) || isValidElevenVoice(r.voice) || isValidGeminiVoice(r.voice)) {
         if (doClean) activeTtsUrls.add(r.audio_url)
         if (sampleN > 0 && decryptSample.length < sampleN)
           decryptSample.push({ hash: r.hash, audio_url: r.audio_url, iv: r.iv ?? null })
@@ -1822,7 +1863,8 @@ async function verifyDb(
         const k = `${r.lang}/${r.voice}`
         orphanByVoice.set(k, (orphanByVoice.get(k) ?? 0) + 1)
       }
-      if (!r.audio_url || !r.audio_url.includes(`${r.lang}/${r.voice}/${r.hash}.mp3`)) {
+      const ext = isValidGeminiVoice(r.voice) ? 'wav' : 'mp3'
+      if (!r.audio_url || !r.audio_url.includes(`${r.lang}/${r.voice}/${r.hash}.${ext}`)) {
         pathBad++
         if (badSample.length < 5) badSample.push(r.hash)
       }
@@ -2019,9 +2061,9 @@ async function checkVersions(allByCat: Map<CatId, AnyTask[]>): Promise<void> {
     for (const t of allByCat.get(id) ?? []) {
       if (t.type === 'pron') continue
       expectedCurrent.add(hashText(t.text, t.lang, t.voice))
-      if (!isValidStudioVoice(t.voice)) {
-        expectedOldNoVersion.add(oldHashText(t.text, t.lang, t.voice))
-        const legacy = legacyVoiceNameHash(t.text, t.lang, t.voice)
+      if (!isValidStudioVoice(t.voice) && !isValidGeminiVoice(t.voice)) {
+        expectedOldNoVersion.add(oldHashText(t.text, t.lang, t.voice as VoiceId))
+        const legacy = legacyVoiceNameHash(t.text, t.lang, t.voice as VoiceId)
         if (legacy) expectedLegacyName.add(legacy)
       }
     }
@@ -2272,9 +2314,10 @@ async function main(): Promise<void> {
     console.error(`❌ Thiếu biến môi trường: ${missing.join(', ')}`)
     process.exit(1)
   }
-  if (!hasGoogleTtsKey()) {
-    console.error('❌ Thiếu biến môi trường: GOOGLE_TTS_API_KEY hoặc GOOGLE_TTS_API_KEYS')
-    process.exit(1)
+  if (!hasGoogleTtsKey() && !hasGeminiTtsKey()) {
+    console.warn(
+      '⚠️  Chưa cấu hình GOOGLE_TTS_API_KEY hoặc GEMINI_API_KEY — chỉ có thể chạy remap/audit.',
+    )
   }
 
   const allByCat = buildAllByCat(wordsFile, limit)
@@ -2293,29 +2336,24 @@ async function main(): Promise<void> {
   }
 
   // ── Probe key TTS: chỉ xoay vòng qua key CÒN DÙNG ĐƯỢC lúc này ─────────────
-  // Quota Google TTS có thể đã cạn từ lần seed trước trong ngày — probe trước (1 request
-  // nhỏ/key) để loại luôn key đã cạn, tránh phí hàng loạt request 429 vào key đó suốt lượt chạy.
-  console.log('🔑 Kiểm tra key TTS còn dùng được...')
-  const { working, total } = await probeApiKeys()
-  // KHÔNG dừng hẳn khi mọi key đều hết quota/lỗi: các tác vụ REMAP (đổi tên giọng, đổi
-  // cấu trúc hash...) không cần gọi Google TTS — chỉ copy/giải mã-mã hóa lại audio đã có
-  // sẵn trong cache — nên vẫn chạy được bình thường. Chỉ tác vụ THỰC SỰ cần tạo audio mới
-  // (không remap được) mới lỗi, và lỗi đó bị bắt riêng lẻ ở processTask() (không crash cả
-  // lượt chạy) — xem message "Server chưa cấu hình..." từ generateAudioFromGoogle().
-  if (working.length === 0) {
-    console.warn(
-      '⚠️  Không key GOOGLE_TTS nào dùng được lúc này (có thể tất cả đã hết quota) —' +
-        ' vẫn tiếp tục để chạy REMAP (đổi tên giọng/cấu trúc hash không cần gọi API);' +
-        ' tác vụ nào thực sự cần tạo audio mới sẽ báo lỗi riêng, không chặn cả lượt chạy.',
-    )
-  }
-  setActiveKeyPool(working)
-  if (working.length > 0) {
-    console.log(
-      working.length === total.length
-        ? `   ✓ ${working.length}/${total.length} key dùng được — xoay vòng đủ cả bể.`
-        : `   ⚠️  ${working.length}/${total.length} key dùng được — ${total.length - working.length} key đã cạn quota, tạm loại khỏi vòng xoay lượt chạy này.`,
-    )
+  if (hasGoogleTtsKey()) {
+    console.log('🔑 Kiểm tra key TTS còn dùng được...')
+    const { working, total } = await probeApiKeys()
+    if (working.length === 0) {
+      console.warn(
+        '⚠️  Không key GOOGLE_TTS nào dùng được lúc này (có thể tất cả đã hết quota) —' +
+          ' vẫn tiếp tục để chạy REMAP/Gemini TTS;' +
+          ' tác vụ nào thực sự cần tạo audio Google mới sẽ báo lỗi riêng, không chặn cả lượt chạy.',
+      )
+    }
+    setActiveKeyPool(working)
+    if (working.length > 0) {
+      console.log(
+        working.length === total.length
+          ? `   ✓ ${working.length}/${total.length} key dùng được — xoay vòng đủ cả bể.`
+          : `   ⚠️  ${working.length}/${total.length} key dùng được — ${total.length - working.length} key đã cạn quota, tạm loại khỏi vòng xoay lượt chạy này.`,
+      )
+    }
   }
 
   // ── Chế độ seed tất cả không hỏi (CI/cron) ────────────────────────────────
@@ -2359,4 +2397,12 @@ if (isDirectRun) {
 }
 
 // Xuất cho test (scripts/seed-all.test.ts) — hàm thuần, không đụng DB/mạng.
-export { loadPronTasks, parsePronunciationKey, pronKey, isSeedablePronText, PRON_VI_VOICE_IDS }
+export {
+  loadPronTasks,
+  loadPatternTasks,
+  CATEGORIES,
+  parsePronunciationKey,
+  pronKey,
+  isSeedablePronText,
+  PRON_VI_VOICE_IDS,
+}
