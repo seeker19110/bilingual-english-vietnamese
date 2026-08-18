@@ -88,6 +88,7 @@ const StartupCanvas = lazyWithRetry(() => import('./pages/StartupCanvas'))
 const LifeWheel = lazyWithRetry(() => import('./pages/LifeWheel'))
 const Friends = lazyWithRetry(() => import('./pages/Friends'))
 const AddFriend = lazyWithRetry(() => import('./pages/AddFriend'))
+const ChatPage = lazyWithRetry(() => import('./pages/ChatPage'))
 
 // PoC nội bộ — không link từ menu/BottomNav, chỉ vào qua URL trực tiếp /avatar-demo.
 // Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md.
@@ -284,6 +285,14 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <AddFriend />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/tin-nhan"
+                        element={
+                          <RequireAuth>
+                            <ChatPage />
                           </RequireAuth>
                         }
                       />
@@ -623,7 +632,7 @@ export default function App() {
                       />
 
                       {/* Chuyển hướng tương thích ngược cho đường dẫn tiếng Anh cũ */}
-                      <Route path="/chat" element={<Navigate to="/tro-truyen" replace />} />
+                      <Route path="/chat" element={<Navigate to="/tin-nhan" replace />} />
                       <Route path="/writing" element={<Navigate to="/luyen-viet" replace />} />
                       <Route path="/speaking" element={<Navigate to="/luyen-noi" replace />} />
                       <Route path="/practice" element={<Navigate to="/luyen-tap" replace />} />

@@ -1,8 +1,9 @@
 // apps/english/src/pages/Friends.tsx — Trang "Bạn bè": mã/link/QR kết bạn của mình + danh sách
 // bạn bè hiện tại. Đây là NỀN TẢNG cho tính năng chat 1-1 sau này (chỉ chat được với bạn bè).
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import QRCode from 'qrcode'
-import { Users, Copy, Check, UserMinus } from 'lucide-react'
+import { Users, Copy, Check, UserMinus, MessageSquare } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
@@ -109,14 +110,24 @@ export default function Friends() {
                 className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3"
               >
                 <span className="text-sm font-medium text-white">{friend.name}</span>
-                <button
-                  type="button"
-                  aria-label={`Huỷ kết bạn với ${friend.name}`}
-                  onClick={() => handleRemove(friend)}
-                  className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-full text-zinc-400 hover:text-red-400"
-                >
-                  <UserMinus size={18} />
-                </button>
+                <div className="flex items-center gap-1">
+                  <Link
+                    to={`/tin-nhan?peerId=${encodeURIComponent(friend.id)}`}
+                    aria-label={`Nhắn tin với ${friend.name}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 text-xs font-semibold min-h-[36px] transition-colors"
+                  >
+                    <MessageSquare size={14} />
+                    <span>Nhắn tin</span>
+                  </Link>
+                  <button
+                    type="button"
+                    aria-label={`Huỷ kết bạn với ${friend.name}`}
+                    onClick={() => handleRemove(friend)}
+                    className="inline-flex items-center justify-center min-w-[36px] min-h-[36px] rounded-full text-zinc-400 hover:text-red-400 hover:bg-white/5 transition-colors"
+                  >
+                    <UserMinus size={16} />
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
