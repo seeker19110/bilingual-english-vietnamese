@@ -8,6 +8,30 @@
 
 ## Giai đoạn hiện tại
 
+### Fix auto-deploy lỗi — xung đột peer dependency (2026-08-18)
+
+Workflow `deploy.yml` (chạy trên VPS qua SSH mỗi lần push `main`) đỏ liên tục từ run #519
+(commit `0f41632`, PR #574): `npm ci` trên VPS lỗi `ERESOLVE` — không phải lỗi hạ tầng/VPS.
+Nguyên nhân: 2 PR dependabot gần nhau bump lên bản đòi ESLint/parser mới hơn những gì dự án
+đang ghim:
+
+- PR #576: `@typescript-eslint/eslint-plugin` 7.18.0 → 8.67.0, nhưng `@typescript-eslint/parser`
+  vẫn ở 7.18.0 (plugin 8.x đòi peer parser `^8.67.0`) → nâng parser lên `^8.67.0` khớp.
+- PR #595: `eslint-plugin-react-refresh` 0.4.7 → 0.5.4, bản 0.5.x đòi peer `eslint ^9||^10`,
+  trong khi dự án **cố tình giữ ESLint 8** (CLAUDE.md mục 6: "GIỮ NGUYÊN PHIÊN BẢN — KHÔNG nâng
+  ESLint") → ghim lại `^0.4.26` (bản 0.4.x mới nhất còn hỗ trợ `eslint >=8.40`).
+
+Đã xác minh thật: `npm ci` sạch trên máy dev, `npm run typecheck` ✅, `npm run build` ✅
+(kể cả `build:server`), `npm test` ✅ 4202/4202. Đây đúng là bước `npm ci` mà `scripts/deploy.sh`
+[4/7] chạy trên VPS — sửa xong là auto-deploy chạy lại được.
+
+**Nợ kỹ thuật MỚI phát hiện, chưa xử lý trong PR này** (ghi vào mục "Nợ kỹ thuật còn mở"):
+`npm run lint` hiện đỏ 73 lỗi `react-hooks/set-state-in-effect`, từ PR #574 bump
+`eslint-plugin-react-hooks` 4.6.2 → 7.1.1 (rule mới, nghiêm hơn). Không chặn deploy (deploy.sh
+không chạy lint) nhưng chặn cổng lint trước-khi-commit/merge (CLAUDE.md mục 8/9) cho mọi PR sau
+này chạm các file đó — cần dọn riêng (bọc `setState` trong effect bằng logic đúng React 18, hoặc
+đánh giá downgrade nếu chưa kịp sửa hết).
+
 ### Fix CI e2e đỏ trên PR #602 (2026-08-17)
 
 4 test e2e đỏ trên `main` từ TRƯỚC PR #602 (đã báo trên PR, giờ chẩn đoán root cause + sửa thay vì
@@ -3137,6 +3161,13 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🟡 **[2026-08-18] `npm run lint` đỏ 73 lỗi `react-hooks/set-state-in-effect`** — do PR #574 bump
+  `eslint-plugin-react-hooks` 4.6.2 → 7.1.1 thêm rule mới nghiêm hơn (cấm gọi `setState` đồng bộ
+  ngay trong effect). Không chặn deploy (`scripts/deploy.sh` không chạy lint) nhưng chặn cổng
+  lint trước-khi-commit/merge cho PR nào chạm các file dính lỗi (ví dụ `Work.tsx`, `WorkKanban.tsx`,
+  `packages/core-ui/ThemeProvider.tsx`, …). Cần dọn: bọc lại logic effect theo khuyến nghị React 18
+  (tách phần load dữ liệu ra hàm gọi từ event/callback thay vì set trực tiếp trong effect), hoặc
+  đánh giá tắt riêng rule này nếu chưa kịp sửa hết.
 - **[Rà soát Dependabot 2026-08-16] Xử lý 9 PR dependency tồn đọng (#550-559): merge 6, đóng 3.**
   Merge (đều CI xanh thật, chỉ thiếu heading PR template nên `metadata` báo sai): `actions/
 setup-node` 4→7 (#550), `actions/upload-artifact` 4→7 (#551), `actions/github-script` 7→9 (#552),
