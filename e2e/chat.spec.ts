@@ -186,7 +186,9 @@ test.describe('Friends & Real-time Chat E2E Tests', () => {
 
     // Kiểm tra tin nhắn trong khung chat
     await expect(page.locator('text=Chào bạn, chúc một ngày tốt lành!')).toBeVisible()
-    await expect(page.locator('p.whitespace-pre-wrap:has-text("Chào Mai! Mình đang học bài.")')).toBeVisible()
+    await expect(
+      page.locator('p.whitespace-pre-wrap:has-text("Chào Mai! Mình đang học bài.")'),
+    ).toBeVisible()
 
     // Nhập tin nhắn vào ô soạn thảo
     const input = page.getByRole('textbox', { name: 'Nhập tin nhắn' })
