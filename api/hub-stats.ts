@@ -1,7 +1,10 @@
-// api/hub-stats.ts — Số liệu TỔNG HỢP công khai cho trang chủ apps/hub (mục "Hoạt động của dự
-// án nói chung", §7.1 docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md). CHỈ trả số đếm
-// tổng (không có PII, không cần đăng nhập) — khác api/analytics-summary.ts (yêu cầu admin, chi
-// tiết theo kênh). Cache ngắn tại process để không dội DB mỗi lần hub được tải.
+// api/hub-stats.ts — Thống kê và trạng thái phiên cho trang chủ apps/hub.
+// BẢO MẬT & RIÊNG TƯ:
+// - CHỈ ADMIN (xác thực qua cookie session + isAdminEmail) mới xem được số lượng người dùng thật
+//   (totalUsers) và tổng lượt học (totalEnglishSessions).
+// - Người dùng thông thường hoặc khách vãng lai: API KHÔNG trả về 2 trường nhạy cảm này (ẩn hoàn toàn).
+// - Trả kèm trạng thái `loggedIn: boolean` và `userName: string` để trang chủ hiển thị link
+//   truy cập trang cá nhân khi đã đăng nhập.
 //
 // GET /api/hub-stats
 
@@ -10,21 +13,30 @@ import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
+  validateAuth,
   logSecurityEvent,
 } from '../packages/core-auth/security.js'
+import { getUserById } from '../packages/core-auth/authService.js'
+import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
-interface HubStats {
+interface AdminHubStats {
   totalUsers: number
-  // Tổng lượt học tiếng Anh (chat + viết + nói) — cộng dồn qua mọi thời gian. Môn khác
-  // (Toán/Lý/Hoá) sẽ cộng thêm vào đây khi GĐ2/3 có bảng dữ liệu riêng.
   totalEnglishSessions: number
 }
 
-let cache: { data: HubStats; expiresAt: number } | null = null
-const CACHE_MS = 5 * 60 * 1000 // 5 phút — số liệu tổng hợp không cần tức thời
+export interface HubStatsResponse {
+  isAdmin: boolean
+  loggedIn: boolean
+  userName?: string
+  totalUsers?: number
+  totalEnglishSessions?: number
+}
 
-async function loadStats(): Promise<HubStats> {
+let cache: { data: AdminHubStats; expiresAt: number } | null = null
+const CACHE_MS = 5 * 60 * 1000 // 5 phút
+
+async function loadAdminStats(): Promise<AdminHubStats> {
   const pool = getPgPool()
   const [{ rows: userRows }, { rows: sessionRows }] = await Promise.all([
     pool.query<{ count: string }>('select count(*)::text as count from public.users'),
@@ -52,9 +64,50 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
   }
 
-  const now = Date.now()
-  if (!cache || cache.expiresAt < now) {
-    cache = { data: await loadStats(), expiresAt: now + CACHE_MS }
+  // 1. Kiểm tra xác thực qua cookie session_token
+  const auth = await validateAuth(req)
+  let loggedIn = false
+  let isAdmin = false
+  let userName = ''
+
+  if (auth?.userId) {
+    loggedIn = true
+    try {
+      const pool = getPgPool()
+      const [user, profileRes] = await Promise.all([
+        getUserById(auth.userId),
+        pool.query<{ name: string | null }>('select name from public.profiles where id = $1', [
+          auth.userId,
+        ]),
+      ])
+      isAdmin = isAdminEmail(user?.email)
+      userName = profileRes.rows[0]?.name || user?.email?.split('@')[0] || ''
+    } catch {
+      // Fail-open: vẫn coi như đã đăng nhập nhưng không phải admin nếu DB lỗi tạm thời
+    }
   }
-  return jsonResponse(cache.data, 200, allHeaders)
+
+  // 2. Nếu là Admin: nạp số liệu tổng để hiển thị
+  if (isAdmin) {
+    const now = Date.now()
+    if (!cache || cache.expiresAt < now) {
+      cache = { data: await loadAdminStats(), expiresAt: now + CACHE_MS }
+    }
+    const responseData: HubStatsResponse = {
+      isAdmin: true,
+      loggedIn: true,
+      userName,
+      totalUsers: cache.data.totalUsers,
+      totalEnglishSessions: cache.data.totalEnglishSessions,
+    }
+    return jsonResponse(responseData, 200, allHeaders)
+  }
+
+  // 3. Khách hoặc người dùng không phải admin: KHÔNG trả số người dùng và lượt học
+  const responseData: HubStatsResponse = {
+    isAdmin: false,
+    loggedIn,
+    ...(userName ? { userName } : {}),
+  }
+  return jsonResponse(responseData, 200, allHeaders)
 }

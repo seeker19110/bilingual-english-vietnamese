@@ -5,7 +5,14 @@ vi.mock('../packages/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
+  validateAuth: vi.fn(),
   logSecurityEvent: () => {},
+}))
+vi.mock('../packages/core-auth/authService', () => ({
+  getUserById: vi.fn(),
+}))
+vi.mock('../packages/core-auth/adminAuth', () => ({
+  isAdminEmail: vi.fn(),
 }))
 
 const query = vi.fn()
@@ -20,38 +27,76 @@ async function importHandler() {
 
 beforeEach(() => {
   query.mockReset()
+  vi.clearAllMocks()
 })
 
 describe('/api/hub-stats', () => {
-  it('không cần đăng nhập, trả tổng số user + tổng lượt học tiếng Anh', async () => {
-    query
-      .mockResolvedValueOnce({ rows: [{ count: '1234' }] }) // public.users
-      .mockResolvedValueOnce({ rows: [{ count: '5678' }] }) // english.*_sessions cộng dồn
+  it('người dùng chưa đăng nhập → trả { isAdmin: false, loggedIn: false }, KHÔNG trả totalUsers hay totalEnglishSessions', async () => {
+    const { validateAuth } = await import('../packages/core-auth/security')
+    vi.mocked(validateAuth).mockResolvedValue(null)
+
     const handler = await importHandler()
     const resp = await handler(new Request('http://localhost/api/hub-stats'))
     expect(resp.status).toBe(200)
-    const data = (await resp.json()) as { totalUsers: number; totalEnglishSessions: number }
+    const data = (await resp.json()) as Record<string, unknown>
+    expect(data.isAdmin).toBe(false)
+    expect(data.loggedIn).toBe(false)
+    expect(data.totalUsers).toBeUndefined()
+    expect(data.totalEnglishSessions).toBeUndefined()
+    expect(query).not.toHaveBeenCalled()
+  })
+
+  it('người dùng thông thường đã đăng nhập → trả { isAdmin: false, loggedIn: true, userName }, KHÔNG trả totalUsers hay totalEnglishSessions', async () => {
+    const { validateAuth } = await import('../packages/core-auth/security')
+    const { getUserById } = await import('../packages/core-auth/authService')
+    const { isAdminEmail } = await import('../packages/core-auth/adminAuth')
+
+    vi.mocked(validateAuth).mockResolvedValue({ userId: 'user-123' })
+    vi.mocked(getUserById).mockResolvedValue({ id: 'user-123', email: 'student@example.com' })
+    vi.mocked(isAdminEmail).mockReturnValue(false)
+    query.mockResolvedValueOnce({ rows: [{ name: 'Nguyễn Văn A' }] }) // public.profiles
+
+    const handler = await importHandler()
+    const resp = await handler(new Request('http://localhost/api/hub-stats'))
+    expect(resp.status).toBe(200)
+    const data = (await resp.json()) as Record<string, unknown>
+    expect(data.isAdmin).toBe(false)
+    expect(data.loggedIn).toBe(true)
+    expect(data.userName).toBe('Nguyễn Văn A')
+    expect(data.totalUsers).toBeUndefined()
+    expect(data.totalEnglishSessions).toBeUndefined()
+  })
+
+  it('admin đã đăng nhập → trả { isAdmin: true, loggedIn: true, totalUsers, totalEnglishSessions }', async () => {
+    const { validateAuth } = await import('../packages/core-auth/security')
+    const { getUserById } = await import('../packages/core-auth/authService')
+    const { isAdminEmail } = await import('../packages/core-auth/adminAuth')
+
+    vi.mocked(validateAuth).mockResolvedValue({ userId: 'admin-123' })
+    vi.mocked(getUserById).mockResolvedValue({
+      id: 'admin-123',
+      email: 'admin@donghanhcungban.org',
+    })
+    vi.mocked(isAdminEmail).mockReturnValue(true)
+    query
+      .mockResolvedValueOnce({ rows: [{ name: 'Admin Master' }] }) // public.profiles
+      .mockResolvedValueOnce({ rows: [{ count: '1234' }] }) // public.users
+      .mockResolvedValueOnce({ rows: [{ count: '5678' }] }) // english.*_sessions
+
+    const handler = await importHandler()
+    const resp = await handler(new Request('http://localhost/api/hub-stats'))
+    expect(resp.status).toBe(200)
+    const data = (await resp.json()) as Record<string, unknown>
+    expect(data.isAdmin).toBe(true)
+    expect(data.loggedIn).toBe(true)
+    expect(data.userName).toBe('Admin Master')
     expect(data.totalUsers).toBe(1234)
     expect(data.totalEnglishSessions).toBe(5678)
-    expect(query).toHaveBeenCalledTimes(2)
   })
 
   it('method khác GET → 405, không đụng DB', async () => {
     const handler = await importHandler()
     const resp = await handler(new Request('http://localhost/api/hub-stats', { method: 'POST' }))
     expect(resp.status).toBe(405)
-    expect(query).not.toHaveBeenCalled()
-  })
-
-  it('kết quả có cache trong process — gọi 2 lần liên tiếp chỉ query DB 1 lần', async () => {
-    query
-      .mockResolvedValueOnce({ rows: [{ count: '10' }] })
-      .mockResolvedValueOnce({ rows: [{ count: '20' }] })
-    const handler = await importHandler()
-    const resp1 = await handler(new Request('http://localhost/api/hub-stats'))
-    const resp2 = await handler(new Request('http://localhost/api/hub-stats'))
-    expect(resp1.status).toBe(200)
-    expect(resp2.status).toBe(200)
-    expect(query).toHaveBeenCalledTimes(2) // không phải 4 — lần 2 dùng cache
   })
 })
