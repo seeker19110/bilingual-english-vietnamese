@@ -82,6 +82,7 @@ const Life = lazyWithRetry(() => import('./pages/Life'))
 // Các Trang Con Chuyên Sâu Platform V2 (Sub-pages & Multi-Subject)
 const Subjects = lazyWithRetry(() => import('./pages/Subjects'))
 const SubjectDetail = lazyWithRetry(() => import('./pages/SubjectDetail'))
+const AppliedKnowledge = lazyWithRetry(() => import('./pages/AppliedKnowledge'))
 const CareerInterview = lazyWithRetry(() => import('./pages/CareerInterview'))
 const WorkKanban = lazyWithRetry(() => import('./pages/WorkKanban'))
 const StartupCanvas = lazyWithRetry(() => import('./pages/StartupCanvas'))
@@ -423,6 +424,38 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <LifeWheel />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/ung-dung-thuc-te"
+                        element={
+                          <RequireAuth>
+                            <AppliedKnowledge />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/applied-knowledge"
+                        element={
+                          <RequireAuth>
+                            <AppliedKnowledge />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/mo-phong"
+                        element={
+                          <RequireAuth>
+                            <AppliedKnowledge />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/simulators"
+                        element={
+                          <RequireAuth>
+                            <AppliedKnowledge />
                           </RequireAuth>
                         }
                       />

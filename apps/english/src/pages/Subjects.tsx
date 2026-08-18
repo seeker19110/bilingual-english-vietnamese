@@ -10,6 +10,7 @@ import {
   ChevronRight,
   GraduationCap,
   Layers,
+  Sparkles,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -121,6 +122,34 @@ export default function Subjects() {
           >
             Khoa học & Kỹ thuật (STEM)
           </button>
+        </div>
+
+        {/* Banner dẫn vào Phòng Thí Nghiệm Mô Phỏng Ứng Dụng Thực Tế */}
+        <div
+          onClick={() => nav('/ung-dung-thuc-te')}
+          className="p-5 rounded-2xl bg-gradient-to-r from-accent-600/20 via-blue-600/20 to-purple-600/20 border border-accent-500/40 hover:border-accent-500/80 cursor-pointer transition-all flex items-center justify-between group shadow-lg shadow-accent-500/5"
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-2xl bg-accent-500/20 text-accent-400 group-hover:scale-110 transition">
+              <Sparkles className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-2 py-0.5 rounded bg-accent-500/20 text-accent-300 font-bold">
+                  MỚI: REAL-LIFE LAB
+                </span>
+                <span className="text-xs text-zinc-400">10 Simulators Tương Tác</span>
+              </div>
+              <h3 className="text-base font-bold text-white mt-1 group-hover:text-accent-300 transition">
+                Phòng Thí Nghiệm Mô Phỏng & Ứng Dụng Thực Tế
+              </h3>
+              <p className="text-xs text-zinc-300 mt-0.5">
+                Xem ngay công thức Toán, Lý, Hóa, Sinh giải quyết bài toán tiền điện, lãi kép, giảm
+                mỡ, vệ tinh GPS ra sao
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-accent-400 group-hover:translate-x-1 transition" />
         </div>
 
         {/* Danh sách thẻ môn học */}
