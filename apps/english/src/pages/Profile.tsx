@@ -21,6 +21,7 @@ import {
   Bot,
   Settings,
   Users,
+  MessageSquare,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -179,6 +180,14 @@ export default function Profile() {
       icon: Users,
       color: 'text-cyan-400',
       bg: 'bg-cyan-500/10 border-cyan-500/30 hover:border-cyan-500/60',
+    },
+    {
+      path: '/tin-nhan',
+      title: isA ? 'Tin nhắn' : 'Chat & Direct Messages',
+      desc: isA ? 'Nhắn tin thời gian thực 1-1 với bạn bè' : 'Real-time 1-on-1 chat with friends',
+      icon: MessageSquare,
+      color: 'text-blue-400',
+      bg: 'bg-blue-500/10 border-blue-500/30 hover:border-blue-500/60',
     },
   ]
 

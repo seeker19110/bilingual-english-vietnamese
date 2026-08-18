@@ -79,7 +79,7 @@ const { FakeWebSocket, FakeWebSocketServer } = vi.hoisted(() => {
 
 vi.mock('ws', () => ({ WebSocketServer: FakeWebSocketServer, WebSocket: FakeWebSocket }))
 
-import { attachChatWebSocketServer } from './wsHandler'
+import { attachChatWebSocketServer, _resetWsHandlerStateForTests } from './wsHandler'
 
 type FakeWebSocketInstance = InstanceType<typeof FakeWebSocket>
 
@@ -90,6 +90,7 @@ function fakeUpgradeReq(cookie: string) {
 }
 
 beforeEach(() => {
+  _resetWsHandlerStateForTests()
   authState.user = null
   sendMessageMock.mockReset()
   isRoomMemberMock.mockReset()
@@ -221,6 +222,147 @@ describe('attachChatWebSocketServer — luồng sau khi kết nối', () => {
       expect.objectContaining({ type: 'error', code: 'MODERATION_BLOCKED' }),
     )
     expect(publishMock).not.toHaveBeenCalled()
+  })
+
+  it('tin nhắn bị từ chối do không phải thành viên → trả lỗi ROOM_NOT_MEMBER', async () => {
+    const ws = await connect('u1')
+    sendMessageMock.mockResolvedValue({ ok: false, reason: 'not_member' })
+
+    ws.emit(
+      'message',
+      Buffer.from(
+        JSON.stringify({
+          type: 'message',
+          roomId: '11111111-1111-4111-8111-111111111111',
+          content: 'hello strangers',
+        }),
+      ),
+    )
+    await flush()
+
+    expect(ws.sent).toContainEqual(
+      expect.objectContaining({ type: 'error', code: 'ROOM_NOT_MEMBER' }),
+    )
+    expect(publishMock).not.toHaveBeenCalled()
+  })
+
+  it('sự kiện typing: publish cho thành viên phòng nếu là member', async () => {
+    const ws = await connect('u1')
+    isRoomMemberMock.mockResolvedValue(true)
+    getRoomMemberIdsMock.mockResolvedValue(['u2'])
+
+    ws.emit(
+      'message',
+      Buffer.from(
+        JSON.stringify({
+          type: 'typing',
+          roomId: '11111111-1111-4111-8111-111111111111',
+        }),
+      ),
+    )
+    await flush()
+
+    expect(publishMock).toHaveBeenCalledWith(
+      'chat:user:u2',
+      expect.objectContaining({ type: 'typing', roomId: '11111111-1111-4111-8111-111111111111' }),
+    )
+
+    // Nếu không phải member → không publish
+    publishMock.mockClear()
+    isRoomMemberMock.mockResolvedValue(false)
+    ws.emit(
+      'message',
+      Buffer.from(
+        JSON.stringify({
+          type: 'typing',
+          roomId: '11111111-1111-4111-8111-111111111111',
+        }),
+      ),
+    )
+    await flush()
+    expect(publishMock).not.toHaveBeenCalled()
+  })
+
+  it('sự kiện read: markRead và publish cho thành viên phòng', async () => {
+    const ws = await connect('u1')
+    isRoomMemberMock.mockResolvedValue(true)
+    getRoomMemberIdsMock.mockResolvedValue(['u2'])
+
+    const validMsgId = '22222222-2222-4222-8222-222222222222'
+    ws.emit(
+      'message',
+      Buffer.from(
+        JSON.stringify({
+          type: 'read',
+          roomId: '11111111-1111-4111-8111-111111111111',
+          messageId: validMsgId,
+        }),
+      ),
+    )
+    await flush()
+
+    expect(markReadMock).toHaveBeenCalledWith('11111111-1111-4111-8111-111111111111', 'u1')
+    expect(publishMock).toHaveBeenCalledWith(
+      'chat:user:u2',
+      expect.objectContaining({ type: 'read', messageId: validMsgId }),
+    )
+
+    // Nếu không phải member → không markRead / publish
+    markReadMock.mockClear()
+    publishMock.mockClear()
+    isRoomMemberMock.mockResolvedValue(false)
+    ws.emit(
+      'message',
+      Buffer.from(
+        JSON.stringify({
+          type: 'read',
+          roomId: '11111111-1111-4111-8111-111111111111',
+          messageId: validMsgId,
+        }),
+      ),
+    )
+    await flush()
+    expect(markReadMock).not.toHaveBeenCalled()
+    expect(publishMock).not.toHaveBeenCalled()
+  })
+
+  it('sự kiện close: xoá presence và broadcast offline', async () => {
+    getRoomPeerIdsMock.mockResolvedValue(['p1'])
+    const ws = await connect('u1')
+    expect(setPresenceMock).toHaveBeenCalledWith('u1')
+
+    ws.emit('close')
+    await flush()
+
+    expect(clearPresenceMock).toHaveBeenCalledWith('u1')
+    expect(publishMock).toHaveBeenCalledWith(
+      'chat:user:p1',
+      expect.objectContaining({ type: 'presence', userId: 'u1', online: false }),
+    )
+  })
+
+  it('sự kiện error trên ws: kích hoạt disconnect', async () => {
+    getRoomPeerIdsMock.mockResolvedValue(['p2'])
+    const ws = await connect('u2')
+
+    ws.emit('error', new Error('conn reset'))
+    await flush()
+
+    expect(clearPresenceMock).toHaveBeenCalledWith('u2')
+  })
+
+  it('khi nhận tin từ redis pubsub: chuyển tiếp cho client local', async () => {
+    let subHandler: ((payload: unknown) => void) | undefined
+    subscribeChannelMock.mockImplementation((_ch, fn) => {
+      subHandler = fn
+      return () => {}
+    })
+
+    const ws = await connect('u3')
+    expect(subHandler).toBeDefined()
+
+    subHandler?.({ type: 'presence', userId: 'p3', online: true })
+    expect(ws.sent).toContainEqual({ type: 'presence', userId: 'p3', online: true })
   })
 
   it('payload không phải JSON hợp lệ → trả lỗi BAD_JSON', async () => {

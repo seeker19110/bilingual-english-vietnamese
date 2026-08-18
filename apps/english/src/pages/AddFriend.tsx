@@ -2,7 +2,7 @@
 // (/ket-ban/:code). Yêu cầu đăng nhập (bọc RequireAuth ở App.tsx) — chưa đăng nhập sẽ được
 // RequireAuth chuyển sang /login rồi quay lại đúng link này sau khi đăng nhập xong.
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 import { UserPlus, CheckCircle2 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -74,17 +74,25 @@ export default function AddFriend() {
           </div>
         )}
 
-        {added && (
+        {added && target && (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <CheckCircle2 className="mx-auto mb-3 text-green-400" size={40} />
             <p className="text-base text-white mb-6">Đã kết bạn thành công!</p>
-            <button
-              type="button"
-              onClick={() => navigate('/ban-be')}
-              className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-5 py-3 text-sm font-semibold text-[#fff] min-h-[44px]"
-            >
-              Xem danh sách bạn bè
-            </button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                to={`/tin-nhan?peerId=${encodeURIComponent(target.id)}`}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white min-h-[44px] hover:bg-blue-500 transition-colors"
+              >
+                Nhắn tin ngay
+              </Link>
+              <button
+                type="button"
+                onClick={() => navigate('/ban-be')}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white/10 hover:bg-white/15 px-5 py-3 text-sm font-semibold text-white min-h-[44px] transition-colors"
+              >
+                Xem danh sách bạn bè
+              </button>
+            </div>
           </div>
         )}
       </main>

@@ -1,0 +1,249 @@
+import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import { Search, MessageSquarePlus, Users, UserPlus } from 'lucide-react'
+import type { RoomSummary } from '../../lib/chatApi'
+import { fetchFriendsState, type FriendUserSummary } from '../../lib/friends'
+import { formatChatPreviewTime, getAvatarColor } from '../../lib/chatFormatters'
+import PresenceDot from './PresenceDot'
+
+export interface ChatListProps {
+  rooms: RoomSummary[]
+  activeRoomId: string | null
+  presence: Record<string, boolean>
+  onSelectRoom: (roomId: string) => void
+  onStartChatWithFriend: (friendId: string) => void
+  loading?: boolean
+}
+
+export default function ChatList({
+  rooms,
+  activeRoomId,
+  presence,
+  onSelectRoom,
+  onStartChatWithFriend,
+  loading = false,
+}: ChatListProps) {
+  const [search, setSearch] = useState('')
+  const [showFriendsPicker, setShowFriendsPicker] = useState(false)
+  const [friends, setFriends] = useState<FriendUserSummary[]>([])
+  const [loadingFriends, setLoadingFriends] = useState(false)
+
+  // Lọc phòng theo từ khoá tìm kiếm
+  const filteredRooms = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return rooms
+    return rooms.filter((r) => r.peer.name.toLowerCase().includes(q))
+  }, [rooms, search])
+
+  // Tải danh sách bạn bè khi mở Friends Picker
+  useEffect(() => {
+    if (showFriendsPicker && friends.length === 0) {
+      setLoadingFriends(true)
+      fetchFriendsState().then((state) => {
+        if (state) setFriends(state.friends)
+        setLoadingFriends(false)
+      })
+    }
+  }, [showFriendsPicker, friends.length])
+
+  return (
+    <aside className="flex flex-col h-full bg-zinc-900/60 border-r border-white/10 w-full sm:w-80 lg:w-96 flex-shrink-0">
+      {/* Header danh sách */}
+      <div className="p-4 border-b border-white/10 flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <span>Tin nhắn</span>
+          </h2>
+          <p className="text-xs text-zinc-400">Trò chuyện trực tiếp với bạn bè</p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setShowFriendsPicker(!showFriendsPicker)}
+          aria-label="Tạo cuộc trò chuyện mới"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 border border-blue-500/30 text-xs font-semibold transition-colors min-h-[36px]"
+          title="Bắt đầu chat với bạn bè"
+        >
+          <MessageSquarePlus size={15} />
+          <span>Chat mới</span>
+        </button>
+      </div>
+
+      {/* Modal / Popup chọn bạn bè để chat mới */}
+      {showFriendsPicker && (
+        <div className="p-3 bg-zinc-800/90 border-b border-white/10 animate-fade-in">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
+              <Users size={14} /> Chọn bạn bè để nhắn tin
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowFriendsPicker(false)}
+              className="text-xs text-zinc-400 hover:text-white px-1"
+            >
+              Đóng
+            </button>
+          </div>
+
+          {loadingFriends && <p className="text-xs text-zinc-400 py-2">Đang tải bạn bè…</p>}
+
+          {!loadingFriends && friends.length === 0 && (
+            <div className="text-center py-3">
+              <p className="text-xs text-zinc-400 mb-2">Chưa có bạn bè nào.</p>
+              <Link
+                to="/ban-be"
+                className="inline-flex items-center gap-1 text-xs text-blue-400 hover:underline font-medium"
+              >
+                <UserPlus size={13} /> Thêm bạn bè ngay
+              </Link>
+            </div>
+          )}
+
+          {!loadingFriends && friends.length > 0 && (
+            <ul className="max-h-48 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+              {friends.map((f) => (
+                <li key={f.id}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onStartChatWithFriend(f.id)
+                      setShowFriendsPicker(false)
+                    }}
+                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-white/5 transition-colors group"
+                  >
+                    <div
+                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white ${getAvatarColor(
+                        f.name,
+                      )}`}
+                    >
+                      {f.name.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-xs font-medium text-zinc-200 group-hover:text-white truncate">
+                      {f.name}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      {/* Thanh tìm kiếm */}
+      <div className="p-3 border-b border-white/5">
+        <div className="relative flex items-center">
+          <Search size={15} className="absolute left-3 text-zinc-400 pointer-events-none" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Tìm theo tên bạn bè…"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-white/5 border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500/60 transition-colors"
+          />
+        </div>
+      </div>
+
+      {/* Danh sách phòng hội thoại */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-white/5">
+        {loading && (
+          <div className="p-4 space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-3 animate-pulse">
+                <div className="w-11 h-11 rounded-full bg-white/10" />
+                <div className="flex-1 space-y-2">
+                  <div className="w-24 h-3 bg-white/10 rounded" />
+                  <div className="w-40 h-2.5 bg-white/5 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!loading && filteredRooms.length === 0 && (
+          <div className="p-6 text-center text-zinc-400">
+            {search ? (
+              <p className="text-xs">Không tìm thấy hội thoại nào</p>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-xs">Chưa có tin nhắn nào.</p>
+                <Link
+                  to="/ban-be"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-zinc-200 transition-colors"
+                >
+                  <Users size={14} /> Xem danh sách bạn bè
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+
+        {!loading &&
+          filteredRooms.map((room) => {
+            const isActive = room.roomId === activeRoomId
+            const isOnline = !!presence[room.peer.id]
+            const timeStr = formatChatPreviewTime(room.lastMessage?.createdAt)
+            const previewText = room.lastMessage ? room.lastMessage.content : 'Bắt đầu trò chuyện'
+
+            return (
+              <button
+                key={room.roomId}
+                type="button"
+                onClick={() => onSelectRoom(room.roomId)}
+                className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors relative ${
+                  isActive
+                    ? 'bg-blue-600/15 border-l-4 border-blue-500'
+                    : 'hover:bg-white/5 border-l-4 border-transparent'
+                }`}
+              >
+                {/* Avatar & Presence */}
+                <div className="relative flex-shrink-0">
+                  <div
+                    className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-white shadow-sm ${getAvatarColor(
+                      room.peer.name,
+                    )}`}
+                  >
+                    {room.peer.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="absolute bottom-0 right-0">
+                    <PresenceDot online={isOnline} size="sm" />
+                  </div>
+                </div>
+
+                {/* Thông tin tên & tin nhắn cuối */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <span
+                      className={`text-sm font-semibold truncate ${
+                        isActive ? 'text-white' : 'text-zinc-200'
+                      }`}
+                    >
+                      {room.peer.name}
+                    </span>
+                    {timeStr && <span className="text-[11px] text-zinc-400 ml-2">{timeStr}</span>}
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <p
+                      className={`text-xs truncate ${
+                        room.unreadCount > 0
+                          ? 'font-semibold text-white'
+                          : 'text-zinc-400 font-normal'
+                      }`}
+                    >
+                      {previewText}
+                    </p>
+
+                    {room.unreadCount > 0 && (
+                      <span className="ml-2 flex-shrink-0 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-blue-600 text-white text-[10px] font-bold">
+                        {room.unreadCount > 99 ? '99+' : room.unreadCount}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </button>
+            )
+          })}
+      </div>
+    </aside>
+  )
+}
