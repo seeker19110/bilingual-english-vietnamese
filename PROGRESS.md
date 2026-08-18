@@ -25,12 +25,19 @@ Nguyên nhân: 2 PR dependabot gần nhau bump lên bản đòi ESLint/parser m�
 (kể cả `build:server`), `npm test` ✅ 4202/4202. Đây đúng là bước `npm ci` mà `scripts/deploy.sh`
 [4/7] chạy trên VPS — sửa xong là auto-deploy chạy lại được.
 
-**Nợ kỹ thuật MỚI phát hiện, chưa xử lý trong PR này** (ghi vào mục "Nợ kỹ thuật còn mở"):
-`npm run lint` hiện đỏ 73 lỗi `react-hooks/set-state-in-effect`, từ PR #574 bump
-`eslint-plugin-react-hooks` 4.6.2 → 7.1.1 (rule mới, nghiêm hơn). Không chặn deploy (deploy.sh
-không chạy lint) nhưng chặn cổng lint trước-khi-commit/merge (CLAUDE.md mục 8/9) cho mọi PR sau
-này chạm các file đó — cần dọn riêng (bọc `setState` trong effect bằng logic đúng React 18, hoặc
-đánh giá downgrade nếu chưa kịp sửa hết).
+**[Cập nhật] Đã phát hiện + xử lý thêm 1 lỗi CI khi mở PR #603:** CI đỏ ở bước `Lint` — ban đầu
+tưởng chỉ 1 rule `react-hooks/set-state-in-effect` (48/73 lỗi), soát lại kỹ thì **73 lỗi trải
+trên 45+ file, thuộc 5 rule MỚI khác nhau** của `eslint-plugin-react-hooks@7` (React Compiler
+rules: `set-state-in-effect` 48, `purity` 10, `exhaustive-deps` 10, `immutability` 8,
+`static-components` 3) — cũng từ PR #574 (bump plugin 4.6.2 → 7.1.1). Sửa hết 73 lỗi ngay trong
+PR fix-deploy này rủi ro cao (đụng logic hook ở hàng chục trang/component cùng lúc, ngoài phạm vi
+"fix deploy"). Đã hỏi lại và quyết định: **ghim `eslint-plugin-react-hooks` về lại `^4.6.2`**
+(bản trước PR #574) — an toàn nhất, không đụng code UI. Lint lại sạch 0 lỗi, đã chạy lại đủ
+typecheck/build/test (4202/4202) — tất cả xanh.
+
+**Nợ kỹ thuật CÒN MỞ (chưa xử lý, để làm PR riêng có thời gian review kỹ):** nâng
+`eslint-plugin-react-hooks` lên bản 7.x (React Compiler rules) + sửa đúng 73 lỗi thật ở 45+ file
+— xem chi tiết rule/file/line trong mục "Nợ kỹ thuật còn mở" bên dưới.
 
 ### Fix CI e2e đỏ trên PR #602 (2026-08-17)
 
@@ -3161,13 +3168,16 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
-- 🟡 **[2026-08-18] `npm run lint` đỏ 73 lỗi `react-hooks/set-state-in-effect`** — do PR #574 bump
-  `eslint-plugin-react-hooks` 4.6.2 → 7.1.1 thêm rule mới nghiêm hơn (cấm gọi `setState` đồng bộ
-  ngay trong effect). Không chặn deploy (`scripts/deploy.sh` không chạy lint) nhưng chặn cổng
-  lint trước-khi-commit/merge cho PR nào chạm các file dính lỗi (ví dụ `Work.tsx`, `WorkKanban.tsx`,
-  `packages/core-ui/ThemeProvider.tsx`, …). Cần dọn: bọc lại logic effect theo khuyến nghị React 18
-  (tách phần load dữ liệu ra hàm gọi từ event/callback thay vì set trực tiếp trong effect), hoặc
-  đánh giá tắt riêng rule này nếu chưa kịp sửa hết.
+- 🟡 **[2026-08-18, cập nhật khi fix PR #603] `eslint-plugin-react-hooks` đã ghim TẠM về lại
+  `^4.6.2`** (đúng bản trước PR #574) để CI/lint xanh trở lại ngay — bản `7.1.1` mà PR #574 bump
+  lên mang theo 5 rule React Compiler mới, làm lộ **73 lỗi trải trên 45+ file**: `set-state-in-effect`
+  (48 lỗi — vd `Work.tsx:103`, `WorkKanban.tsx:53`, `packages/core-ui/ThemeProvider.tsx:36`, phần
+  lớn các trang `useEffect(() => { loadData() }, [loadData])`), `purity` (10), `exhaustive-deps`
+  (10), `immutability` (8), `static-components` (3). Việc còn lại: **mở PR riêng** để (1) nâng lại
+  `eslint-plugin-react-hooks` lên `^7.x`, (2) sửa đúng 73 lỗi theo từng rule (không chỉ thêm
+  `eslint-disable`) — có thời gian review kỹ vì đụng logic hook ở nhiều trang/component cùng lúc.
+  Danh sách file/line đầy đủ: chạy lại `npm run lint` sau khi bump plugin để lấy danh sách mới nhất
+  (số dòng có thể lệch do code đã đổi).
 - **[Rà soát Dependabot 2026-08-16] Xử lý 9 PR dependency tồn đọng (#550-559): merge 6, đóng 3.**
   Merge (đều CI xanh thật, chỉ thiếu heading PR template nên `metadata` báo sai): `actions/
 setup-node` 4→7 (#550), `actions/upload-artifact` 4→7 (#551), `actions/github-script` 7→9 (#552),
