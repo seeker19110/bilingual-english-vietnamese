@@ -37,9 +37,16 @@ echo "── [1/6] Vào thư mục app ─────────────�
 cd "$APP_DIR"
 
 echo "── [2/6] Ép code KHỚP origin/$BRANCH (gồm mọi PR đã merge) ──"
-git fetch origin --prune --tags
-git checkout -B "$BRANCH" "origin/$BRANCH"
-git reset --hard "origin/$BRANCH"
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+  REPO_NAME="${GITHUB_REPOSITORY:-seeker19110/donghanh}"
+  git fetch "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO_NAME}.git" "$BRANCH" --prune --tags
+  git checkout -B "$BRANCH" FETCH_HEAD
+  git reset --hard FETCH_HEAD
+else
+  git fetch origin --prune --tags
+  git checkout -B "$BRANCH" "origin/$BRANCH"
+  git reset --hard "origin/$BRANCH"
+fi
 echo "  → Đang ở commit:"
 git --no-pager log -1 --oneline
 
