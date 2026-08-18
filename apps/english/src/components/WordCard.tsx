@@ -123,7 +123,9 @@ export default function WordCard({
                 <div className="mt-2 space-y-1 text-left w-full border-t border-zinc-700/50 pt-2">
                   {extraExamples[card.word.toLowerCase()]?.map((ex, i) => (
                     <div key={i}>
-                      <p className="text-xs text-accent-400/80 italic">{ex.en}</p>
+                      <p className="text-xs text-accent-300 theme-light:text-accent-800 italic">
+                        {ex.en}
+                      </p>
                       <p className="text-xs text-zinc-400">{ex.vi}</p>
                     </div>
                   ))}

@@ -35,6 +35,22 @@ PR fix-deploy này rủi ro cao (đụng logic hook ở hàng chục trang/compo
 (bản trước PR #574) — an toàn nhất, không đụng code UI. Lint lại sạch 0 lỗi, đã chạy lại đủ
 typecheck/build/test (4202/4202) — tất cả xanh.
 
+**[Cập nhật] Đã phát hiện + xử lý thêm 1 lỗi CI khác — e2e a11y `color-contrast`:** job `e2e`
+đỏ 8/292 test (`a11y.spec.ts` — `/tu-dien` + `/lo-trinh-hoc`, 4/5 theme không phải mặc định). Đối
+chiếu lịch sử CI: **KHÔNG do PR #603 gây ra** — commit `db2f73f` (ngay trước chuỗi dependabot bump)
+CI xanh toàn bộ; PR #595 (bump `@axe-core/playwright` 4.12.1 → 4.13.0, cùng nhóm 14 gói) đã bắt
+được lỗi tương phản màu THẬT mà bản axe cũ bỏ sót. Vì lỗi này nằm trên nhánh PR (thừa hưởng từ
+`main`) và chặn merge, đã chẩn đoán + sửa luôn (đúng trách nhiệm "đưa PR do mình tạo về xanh"):
+`apps/english/src/components/WordCard.tsx` dòng ví dụ câu tiếng Anh (`extraExamples`) dùng
+`text-accent-400/80 italic` — độ tương phản chỉ 1.8–4.44 (cần ≥4.5) ở theme Blue sky/Pink/Rực
+rỡ/Nhi đồng. Sửa theo đúng pattern đã có sẵn trong `WordFormsBlock.tsx` (biến thể Tailwind
+`theme-light:` — xem `tailwind.config.js`): đổi thành `text-accent-300 theme-light:text-accent-800`
+(bỏ opacity `/80`, thêm sắc độ đậm hơn cho theme nền sáng). Đã xác minh: viết script debug tạm lấy
+đúng phần tử/tỷ lệ tương phản qua axe-core trực tiếp (không chỉ đọc log CI), chạy lại toàn bộ
+`e2e/a11y.spec.ts` + `e2e/a11y-aaa.spec.ts` (397 test, 396 xanh + 1 flake hạ tầng "Execution
+context destroyed" xác nhận không liên quan, chạy lại riêng thì xanh), `npm run lint`/`typecheck`/
+`build` vẫn xanh.
+
 **Nợ kỹ thuật CÒN MỞ (chưa xử lý, để làm PR riêng có thời gian review kỹ):** nâng
 `eslint-plugin-react-hooks` lên bản 7.x (React Compiler rules) + sửa đúng 73 lỗi thật ở 45+ file
 — xem chi tiết rule/file/line trong mục "Nợ kỹ thuật còn mở" bên dưới.
