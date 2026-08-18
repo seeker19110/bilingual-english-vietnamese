@@ -43,9 +43,9 @@ if [ -n "${GITHUB_TOKEN:-}" ]; then
   git checkout -B "$BRANCH" FETCH_HEAD
   git reset --hard FETCH_HEAD
 else
-  git fetch origin --prune --tags
-  git checkout -B "$BRANCH" "origin/$BRANCH"
-  git reset --hard "origin/$BRANCH"
+  git fetch origin --prune --tags 2>/dev/null || true
+  git checkout -B "$BRANCH" "origin/$BRANCH" 2>/dev/null || git checkout -B "$BRANCH" 2>/dev/null || true
+  git reset --hard "origin/$BRANCH" 2>/dev/null || true
 fi
 echo "  → Đang ở commit:"
 git --no-pager log -1 --oneline
