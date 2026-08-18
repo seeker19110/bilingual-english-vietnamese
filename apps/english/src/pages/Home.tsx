@@ -17,6 +17,7 @@ import {
   Sparkles,
   Headphones,
   BookMarked,
+  Activity,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PricePromoBanner from '../components/PricePromoBanner'
@@ -140,6 +141,22 @@ function getModes(dir: Direction, T: ReturnType<typeof useLang>['T']): ModeCard[
       desc: isA
         ? 'Bắt đầu từ chữ cái, số... mỗi ngày 5-20 từ mới (tự chọn tốc độ) theo vòng tròn liên quan, kèm câu thông dụng.'
         : 'Start from letters and numbers — 5-20 new words a day (pick your pace) in related circles, with common sentences.',
+    },
+    {
+      kind: 'link',
+      path: '/ung-dung-thuc-te',
+      icon: Activity,
+      gradient: 'from-cyan-500 to-blue-500',
+      glow: 'shadow-cyan-500/20',
+      ring: 'hover:border-cyan-500/40',
+      tag: {
+        label: isA ? '10 Simulators' : '10 Simulators',
+        cls: 'bg-cyan-500/15 text-cyan-300 theme-light:text-cyan-800 border border-cyan-500/20',
+      },
+      title: isA ? 'Ứng Dụng Thực Tế & Mô Phỏng' : 'Applied Science & Simulators',
+      desc: isA
+        ? 'Phòng thí nghiệm mô phỏng 10 bài toán đời sống: tối ưu lợi nhuận, tiền điện EVN, lãi kép, GPS, giảm mỡ TDEE.'
+        : 'Interactive lab simulating real-world problems: profit optimization, electricity bills, compound interest, GPS.',
     },
     {
       kind: 'link',
