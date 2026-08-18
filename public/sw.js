@@ -114,8 +114,8 @@ self.addEventListener('push', (event) => {
       icon,
       badge: icon,
       data: { url },
-      tag: 'daily-reminder', // ghi đè notification cũ nếu chưa đọc
-      renotify: false,
+      tag: data.tag || 'daily-reminder', // ghi đè nếu cùng tag
+      renotify: !!data.tag,
     }),
   )
 })

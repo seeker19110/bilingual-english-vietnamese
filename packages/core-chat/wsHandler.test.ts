@@ -30,12 +30,14 @@ const subscribeChannelMock = vi.fn((channel: string, fn: (payload: unknown) => v
 })
 const setPresenceMock = vi.fn()
 const clearPresenceMock = vi.fn()
+const isOnlineMock = vi.fn().mockResolvedValue(true)
 vi.mock('./redisChat', () => ({
   publish: (...a: unknown[]) => publishMock(...a),
   subscribeChannel: (channel: string, fn: (payload: unknown) => void) =>
     subscribeChannelMock(channel, fn),
   setPresence: (...a: unknown[]) => setPresenceMock(...a),
   clearPresence: (...a: unknown[]) => clearPresenceMock(...a),
+  isOnline: (...a: unknown[]) => isOnlineMock(...a),
 }))
 
 // Không dùng node:events ở đây — vi.hoisted() chạy TRƯỚC mọi import (kể cả import ở đầu file

@@ -1,0 +1,132 @@
+// packages/core-chat/chatPush.ts — Gửi Web Push Notification khi có tin nhắn chat mới
+// cho người dùng đang offline / không mở WebSocket.
+
+import webpush from 'web-push'
+import { getPgPool } from '../core-db/pgPool.js'
+import { isOnline } from './redisChat.js'
+
+const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY ?? ''
+const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY ?? ''
+const VAPID_EMAIL = process.env.VAPID_EMAIL ?? 'mailto:admin@example.com'
+
+if (VAPID_PUBLIC && VAPID_PRIVATE) {
+  try {
+    webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC, VAPID_PRIVATE)
+  } catch {
+    // Tránh crash nếu key không hợp lệ trong môi trường test
+  }
+}
+
+interface PushSubRow {
+  endpoint: string
+  p256dh: string
+  auth_key: string
+}
+
+/**
+ * Gửi Web Push Notification cho các peer trong phòng chat nếu họ đang offline.
+ */
+export async function notifyOfflinePeers(
+  peerIds: string[],
+  senderUserId: string,
+  roomId: string,
+  messageContent: string,
+): Promise<{ sent: number; skipped: number }> {
+  if (peerIds.length === 0) return { sent: 0, skipped: 0 }
+
+  const offlinePeerIds: string[] = []
+  for (const peerId of peerIds) {
+    if (peerId === senderUserId) continue
+    const online = await isOnline(peerId)
+    if (!online) {
+      offlinePeerIds.push(peerId)
+    }
+  }
+
+  if (offlinePeerIds.length === 0) {
+    return { sent: 0, skipped: peerIds.length }
+  }
+
+  const pool = getPgPool()
+
+  // Lấy tên người gửi
+  let senderName = 'Bạn học'
+  try {
+    const profileRes = await pool.query(
+      `select coalesce(display_name, 'Bạn học') as name from public.profiles where id = $1 limit 1`,
+      [senderUserId],
+    )
+    if (profileRes.rows[0]?.name) {
+      senderName = String(profileRes.rows[0].name)
+    }
+  } catch {
+    // Fallback tên mặc định
+  }
+
+  // Rút gọn preview tin nhắn nếu quá dài
+  const preview = messageContent.length > 80 ? messageContent.slice(0, 77) + '...' : messageContent
+
+  const payload = JSON.stringify({
+    title: `💬 Tin nhắn mới từ ${senderName}`,
+    body: preview,
+    url: `/tin-nhan?roomId=${roomId}`,
+    tag: `chat-room-${roomId}`,
+  })
+
+  let sent = 0
+  let skipped = 0
+
+  for (const peerId of offlinePeerIds) {
+    try {
+      const subsRes = await pool.query<PushSubRow>(
+        `select endpoint, p256dh, auth_key from public.push_subscriptions where user_id = $1`,
+        [peerId],
+      )
+
+      if (subsRes.rows.length === 0) {
+        skipped++
+        continue
+      }
+
+      const expiredEndpoints: string[] = []
+
+      await Promise.all(
+        subsRes.rows.map(async (sub) => {
+          try {
+            await webpush.sendNotification(
+              {
+                endpoint: sub.endpoint,
+                keys: {
+                  p256dh: sub.p256dh,
+                  auth: sub.auth_key,
+                },
+              },
+              payload,
+            )
+            sent++
+          } catch (err: unknown) {
+            if (
+              err &&
+              typeof err === 'object' &&
+              'statusCode' in err &&
+              (err.statusCode === 410 || err.statusCode === 404)
+            ) {
+              expiredEndpoints.push(sub.endpoint)
+            }
+          }
+        }),
+      )
+
+      // Xóa subscription đã hết hạn
+      if (expiredEndpoints.length > 0) {
+        await pool.query(`delete from public.push_subscriptions where endpoint = any($1::text[])`, [
+          expiredEndpoints,
+        ])
+      }
+    } catch {
+      skipped++
+    }
+  }
+
+  return { sent, skipped }
+}

@@ -20,6 +20,7 @@ import {
   markRead,
 } from './chatService.js'
 import { publish, subscribeChannel, setPresence, clearPresence } from './redisChat.js'
+import { notifyOfflinePeers } from './chatPush.js'
 
 const WS_PATH = '/ws/chat'
 
@@ -160,6 +161,7 @@ async function handleClientMessage(ws: WebSocket, userId: string, raw: RawData):
     const serverEvent: WsServerEvent = { type: 'message', message: result.message }
     send(ws, serverEvent) // phản hồi ngay cho chính người gửi, không chờ vòng pub/sub
     await Promise.all(memberIds.map((id) => publish(userChannel(id), serverEvent)))
+    void notifyOfflinePeers(memberIds, userId, event.roomId, result.message.content)
     return
   }
 

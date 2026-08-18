@@ -5,6 +5,7 @@ import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import { getStreak } from '../lib/storage'
 import ThemeToggle from './ThemeToggle'
+import OfflineStatusBanner from './OfflineStatusBanner'
 
 interface Props {
   // title/subtitle KHÔNG bắt buộc: nhiều trang nay hiển thị tiêu đề LỚN ngay dưới header
@@ -44,6 +45,8 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
 
       {/* Gradient accent line trên cùng */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
+
+      <OfflineStatusBanner />
 
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-3 relative">
         {/* Back / Logo */}
