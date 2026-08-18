@@ -107,3 +107,17 @@ describe('parsePronunciationKey', () => {
     expect(parsePronunciationKey('apple-Kore.wav')).toBeNull()
   })
 })
+
+describe('loadPatternTasks — truyện cổ tích/ngụ ngôn (stories)', () => {
+  it('tạo đủ tác vụ truyện cổ tích/ngụ ngôn với giọng Gemini tương ứng', async () => {
+    const { loadPatternTasks } = await import('./seed-all')
+    const patternTasks = loadPatternTasks()
+    const storyTasks = patternTasks.filter((t) => t.cat === 'stories')
+    expect(storyTasks.length).toBeGreaterThan(0)
+    // Có cả tiếng Anh và tiếng Việt
+    expect(storyTasks.some((t) => t.lang === 'en-US')).toBe(true)
+    expect(storyTasks.some((t) => t.lang === 'vi-VN')).toBe(true)
+    // Giọng đều là giọng Gemini hợp lệ
+    expect(storyTasks.every((t) => String(t.voice).startsWith('Gemini-'))).toBe(true)
+  })
+})
