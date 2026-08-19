@@ -95,6 +95,7 @@ import proactiveBriefingHandler from './api/proactive-briefing.js'
 import visionSolveHandler from './api/vision-solve.js'
 import integrationsHandler from './api/integrations.js'
 import subconsciousHandler from './api/subconscious.js'
+import ambientVisionHandler from './api/ambient-vision.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -299,6 +300,8 @@ app.all('/api/vision-solve', wrapEdge(visionSolveHandler))
 app.all('/api/integrations', wrapEdge(integrationsHandler))
 // Subconscious Cognition & Nightly REM Consolidation (V3 Flagship) — Autonomous cognition & predictive strategy.
 app.all('/api/subconscious', wrapEdge(subconsciousHandler))
+// Ambient Vision & Screen Grounding (V3 Flagship) — Realtime screen context copilot.
+app.all('/api/ambient-vision', wrapEdge(ambientVisionHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
