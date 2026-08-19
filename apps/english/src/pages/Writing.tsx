@@ -15,6 +15,8 @@ import { useOnboarding } from '../lib/onboarding'
 import type { WritingSubmission, Direction } from '../types'
 import { effectivePlan } from '../lib/promo'
 import { getLimits } from '../lib/appSettings'
+import { useEdgeAi } from '../lib/edgeAi/useEdgeAi.js'
+import EdgeAiIndicator from '../components/EdgeAi/EdgeAiIndicator'
 
 // Đề bài mẫu — Chiều A: đề IELTS tiếng Anh | Chiều B: đề viết tiếng Việt
 const SAMPLE_PROMPTS_A = [
@@ -210,6 +212,9 @@ export default function Writing() {
   const [result, setResult] = useState<WritingSubmission | null>(null)
   const [throttleCountdown, setThrottleCountdown] = useState(0)
 
+  const { checkGrammar } = useEdgeAi()
+  const grammarIssues = isA && essay.length > 8 ? checkGrammar(essay).issues : []
+
   // Rate limit chặn double-click/bão request — giới hạn lượt/ngày đã cap riêng
   // qua daily_usage nên throttle chỉ cần mức nhẹ (mặc định 3s của hook).
   const { isThrottled, throttle } = useApiThrottle({
@@ -387,9 +392,12 @@ export default function Writing() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-zinc-400">
-              {isA ? 'Bài viết của bạn' : 'Your essay (in Vietnamese)'}
-            </label>
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-medium text-zinc-400">
+                {isA ? 'Bài viết của bạn' : 'Your essay (in Vietnamese)'}
+              </label>
+              <EdgeAiIndicator />
+            </div>
             <span className={`text-xs font-medium ${wordColor}`}>
               {wordCount} {isA ? 'từ' : 'words'} {wordHint}
             </span>
@@ -406,6 +414,26 @@ export default function Writing() {
             }
             className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-400 outline-none focus:border-violet-500/70 transition resize-none min-h-[160px] max-h-[40dvh] sm:max-h-[50vh]"
           />
+
+          {/* Instant Edge Grammar Suggestions */}
+          {grammarIssues.length > 0 && (
+            <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl p-3 space-y-1.5 animate-fade-in text-xs">
+              <div className="font-semibold text-amber-300 flex items-center gap-1.5">
+                <span>⚡ Phát hiện nhanh lỗi ngữ pháp ({grammarIssues.length}):</span>
+              </div>
+              <div className="space-y-1">
+                {grammarIssues.slice(0, 3).map((issue, idx) => (
+                  <div key={idx} className="flex items-center justify-between text-zinc-300">
+                    <span className="line-through text-rose-400 mr-2">{issue.original}</span>
+                    <span className="font-medium text-emerald-400">→ {issue.suggestion}</span>
+                    <span className="text-[10px] text-zinc-400 ml-auto pl-2 truncate max-w-[200px]">
+                      {issue.reason}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {error && (

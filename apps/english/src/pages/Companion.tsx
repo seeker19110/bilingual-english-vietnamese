@@ -29,6 +29,7 @@ import PageHeader from '../components/PageHeader'
 import ProactiveBriefingCard from '../components/ProactiveBriefingCard'
 import CompanionLiveOrb from '../components/CompanionVoice/CompanionLiveOrb'
 import VoiceWaveformVisualizer from '../components/CompanionVoice/VoiceWaveformVisualizer'
+import EdgeAiIndicator from '../components/EdgeAi/EdgeAiIndicator'
 import { useRealtimeVoice } from '../lib/useRealtimeVoice'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '@core/ToastProvider'
@@ -309,7 +310,7 @@ export default function Companion() {
             </button>
           </div>
 
-          {viewMode === 'voice' && (
+          {viewMode === 'voice' ? (
             <div className="flex items-center gap-1.5 pr-2 text-xs font-medium">
               <span
                 className={`w-2 h-2 rounded-full ${
@@ -319,6 +320,10 @@ export default function Companion() {
               <span className="text-zinc-300">
                 {realtimeVoice.isConnected ? 'Đang kết nối' : 'Sẵn sàng'}
               </span>
+            </div>
+          ) : (
+            <div className="pr-1">
+              <EdgeAiIndicator />
             </div>
           )}
         </div>
