@@ -16,8 +16,9 @@
 # ─────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
-# ── CONFIG — chỉnh nếu cần ───────────────────────────────────────────────────
-APP_DIR="/var/www/english-tutor"         # đường dẫn thư mục app trên VPS
+# ── CONFIG — tự động nhận diện thư mục dự án ──────────────────────────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+APP_DIR="${APP_DIR:-$SCRIPT_DIR}"        # tự động nhận thư mục (vd /var/www/dhcb)
 BRANCH="main"                            # luôn deploy main (gồm mọi PR đã merge)
 PM2_PROCESS="english-tutor"
 PORT="3001"                              # cổng app để kiểm tra health sau restart
