@@ -58,6 +58,7 @@ import achievementsHandler from './api/achievements.js'
 import friendsHandler from './api/friends.js'
 import chatHandler from './api/chat.js'
 import { attachChatWebSocketServer } from './packages/core-chat/wsHandler.js'
+import { attachVoiceWebSocketServer } from './packages/core-ai/wsVoiceHandler.js'
 import adminAchievementRewardsHandler from './api/admin-achievement-rewards.js'
 import adminPaymentsHandler from './api/admin-payments.js'
 import adminSystemControlHandler from './api/admin-system-control.js'
@@ -476,6 +477,7 @@ const server = app.listen(PORT, () => {
 // WebSocket chat gắn vào CHÍNH http.Server này (không mở cổng riêng) — xem
 // packages/core-chat/wsHandler.ts.
 attachChatWebSocketServer(server)
+attachVoiceWebSocketServer(server)
 
 // Tắt êm (graceful shutdown): PM2 gửi SIGINT khi stop/reload. Ngừng nhận kết nối mới,
 // đóng ngay kết nối keep-alive đang rảnh, chờ request đang chạy xong rồi thoát.
