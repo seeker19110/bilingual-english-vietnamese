@@ -19,6 +19,7 @@ import {
   getDecision,
   listDecisions,
 } from '../packages/core-personal/decisionLedgerService.js'
+import { calculateOutcomeCalibration } from '../packages/core-personal/outcomeCalibrationService.js'
 import {
   DecisionStatusSchema,
   EvidenceRefSchema,
@@ -125,6 +126,15 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     if (req.method === 'GET') {
       const url = new URL(req.url)
+
+      if (
+        url.searchParams.get('kind') === 'calibration' ||
+        url.searchParams.get('calibration') === 'true'
+      ) {
+        const calibration = await calculateOutcomeCalibration(pool, person.id)
+        return jsonResponse({ calibration }, 200, headers)
+      }
+
       const id = url.searchParams.get('id')
 
       if (id) {

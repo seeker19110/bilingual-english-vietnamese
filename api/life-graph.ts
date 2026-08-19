@@ -47,6 +47,7 @@ const CreateEdgeSchema = z
   })
   .strict()
 import { syncCrossDomainLifeGraph } from '../packages/core-personal/crossDomainGraphService.js'
+import { analyzeCrossDomainSynergies } from '../packages/core-personal/crossDomainSynergyService.js'
 
 const CreateCrossDomainSyncSchema = z
   .object({
@@ -139,6 +140,12 @@ export default async function handler(req: Request): Promise<Response> {
       if (kind === 'cross_domain')
         return jsonResponse(
           await syncCrossDomainLifeGraph(pool, person.id, auth.userId),
+          200,
+          headers,
+        )
+      if (kind === 'synergy')
+        return jsonResponse(
+          await analyzeCrossDomainSynergies(pool, person.id, auth.userId),
           200,
           headers,
         )

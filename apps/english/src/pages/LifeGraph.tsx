@@ -26,6 +26,8 @@ import {
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
+import CrossDomainSynergyCard from '../components/LifeGraph/CrossDomainSynergyCard'
+import OutcomeCalibrationCard from '../components/DecisionLedger/OutcomeCalibrationCard'
 import { useToast } from '@core/ToastProvider'
 import { listLifeGraphNodes, listLifeGraphEdges, createLifeGraphNode } from '../lib/lifeGraphApi'
 import {
@@ -67,6 +69,7 @@ const NODE_ICONS: Record<LifeGraphNodeType, React.ReactNode> = {
 
 const TABS = [
   { id: 'graph', label: 'Mạng lưới Cá nhân', icon: Layers },
+  { id: 'synergy', label: 'Cộng hưởng & Đối soát', icon: Activity },
   { id: 'facts', label: 'Sự thật & Ràng buộc', icon: Brain },
   { id: 'memories', label: 'Bộ nhớ Ký ức', icon: Sparkles },
   { id: 'automation', label: 'Quyền Tự động', icon: Zap },
@@ -75,7 +78,9 @@ const TABS = [
 export default function LifeGraph() {
   const nav = useNavigate()
   const toast = useToast()
-  const [activeTab, setActiveTab] = useState<'graph' | 'facts' | 'memories' | 'automation'>('graph')
+  const [activeTab, setActiveTab] = useState<
+    'graph' | 'synergy' | 'facts' | 'memories' | 'automation'
+  >('graph')
   const [loading, setLoading] = useState(true)
 
   // Graph state
@@ -483,6 +488,14 @@ export default function LifeGraph() {
                 })
               )}
             </div>
+          </div>
+        )}
+
+        {/* ── TAB 1.5: CROSS-DOMAIN SYNERGY & OUTCOME CALIBRATION ─────────── */}
+        {activeTab === 'synergy' && (
+          <div className="space-y-6 animate-fade-in">
+            <CrossDomainSynergyCard />
+            <OutcomeCalibrationCard />
           </div>
         )}
 
