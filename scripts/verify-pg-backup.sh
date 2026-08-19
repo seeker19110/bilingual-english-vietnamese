@@ -34,25 +34,31 @@ if [ -z "$BACKUP_FILE" ] || [ ! -f "$BACKUP_FILE" ]; then
   exit 1
 fi
 
+if [ "$(id -un)" = "postgres" ]; then
+  PSQL="psql"
+else
+  PSQL="sudo -u postgres psql"
+fi
+
 echo "── Kiểm thử phục hồi backup: $BACKUP_FILE ──────────────"
 
 # Dọn database test cũ (nếu lần chạy trước lỗi giữa chừng chưa kịp xoá)
-psql -U postgres -c "drop database if exists $TEST_DB;" >/dev/null
+$PSQL -c "drop database if exists $TEST_DB;" >/dev/null
 
 echo "1/4 — Tạo database tạm '$TEST_DB'..."
-psql -U postgres -c "create database $TEST_DB;" >/dev/null
+$PSQL -c "create database $TEST_DB;" >/dev/null
 
 echo "2/4 — Phục hồi backup vào database tạm..."
-if ! gunzip -c "$BACKUP_FILE" | psql -U postgres -d "$TEST_DB" >/tmp/restore-test.log 2>&1; then
+if ! gunzip -c "$BACKUP_FILE" | $PSQL -d "$TEST_DB" >/tmp/restore-test.log 2>&1; then
   echo "❌ Lệnh phục hồi LỖI — xem /tmp/restore-test.log"
-  psql -U postgres -c "drop database if exists $TEST_DB;" >/dev/null
+  $PSQL -c "drop database if exists $TEST_DB;" >/dev/null
   exit 1
 fi
 
 echo "3/4 — Kiểm tra vài bảng cốt lõi có dữ liệu (users, profiles, app_settings)..."
 FAIL=0
 for TABLE in users profiles app_settings; do
-  COUNT=$(psql -U postgres -d "$TEST_DB" -tAc "select count(*) from public.$TABLE" 2>/dev/null || echo "ERROR")
+  COUNT=$($PSQL -d "$TEST_DB" -tAc "select count(*) from public.$TABLE" 2>/dev/null || echo "ERROR")
   if [ "$COUNT" = "ERROR" ]; then
     echo "   ❌ Bảng '$TABLE' — KHÔNG đọc được (thiếu bảng hoặc lỗi quyền)."
     FAIL=1
@@ -62,7 +68,7 @@ for TABLE in users profiles app_settings; do
 done
 
 echo "4/4 — Dọn database tạm..."
-psql -U postgres -c "drop database if exists $TEST_DB;" >/dev/null
+$PSQL -c "drop database if exists $TEST_DB;" >/dev/null
 
 if [ "$FAIL" -ne 0 ]; then
   echo "❌ Kiểm thử phục hồi CÓ VẤN ĐỀ — xem log ở trên. Backup này CHƯA đáng tin cậy."
