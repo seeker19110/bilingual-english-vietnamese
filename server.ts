@@ -104,6 +104,8 @@ import workplaceInsightsHandler from './api/workplace-insights.js'
 import socraticDiagnosticsHandler from './api/socratic-diagnostics.js'
 import echoShadowingHandler from './api/echo-shadowing.js'
 import wearablesSyncHandler from './api/wearables-sync.js'
+import realtimeMultimodalHandler from './api/realtime-multimodal.js'
+import acousticPhoneticsHandler from './api/acoustic-phonetics.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -326,6 +328,10 @@ app.all('/api/socratic-diagnostics', wrapEdge(socraticDiagnosticsHandler))
 app.all('/api/echo-shadowing', wrapEdge(echoShadowingHandler))
 // Wearables & Circadian Bio-Adaptive MCP (V3 Flagship Wave 2) — Biometric stream to circadian learning window.
 app.all('/api/wearables-sync', wrapEdge(wearablesSyncHandler))
+// Real-Time Multimodal Duplex Gateway (Platform V4 Phase 1) — Sub-250ms voice streaming & barge-in.
+app.all('/api/realtime-multimodal', wrapEdge(realtimeMultimodalHandler))
+// Acoustic Phonetics & GOP Engine (Platform V4 Phase 1) — Phoneme-level acoustic assessment & alignment.
+app.all('/api/acoustic-phonetics', wrapEdge(acousticPhoneticsHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

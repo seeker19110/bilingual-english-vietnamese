@@ -39,6 +39,8 @@ import WorkplaceHarvesterCard from '../components/CompanionVoice/WorkplaceHarves
 import SocraticDiagnosticsCard from '../components/CompanionVoice/SocraticDiagnosticsCard'
 import EchoShadowingCard from '../components/CompanionVoice/EchoShadowingCard'
 import WearablesSyncCard from '../components/CompanionVoice/WearablesSyncCard'
+import RealtimeMultimodalLiveOrb from '../components/CompanionVoice/RealtimeMultimodalLiveOrb'
+import AcousticPhoneticsLab from '../components/CompanionVoice/AcousticPhoneticsLab'
 import EdgeAiIndicator from '../components/EdgeAi/EdgeAiIndicator'
 import { useRealtimeVoice } from '../lib/useRealtimeVoice'
 import { useAuth } from '../context/useAuth'
@@ -292,6 +294,8 @@ export default function Companion() {
         />
 
         <div className="space-y-4 mb-4">
+          <RealtimeMultimodalLiveOrb />
+          <AcousticPhoneticsLab />
           <SubconsciousInsightsCard />
           <ScenarioHolodeckCard />
           <ArticulatoryPhoneticsVisualizer />
