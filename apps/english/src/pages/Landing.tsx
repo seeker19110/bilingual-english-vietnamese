@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { MessageCircle, Mic, PenLine, Volume2, Sparkles } from 'lucide-react'
 import { track } from '../lib/analytics'
+import ThemeToggle from '../components/ThemeToggle'
 
 // Trang landing công khai, KHÔNG bọc RequireAuth — dùng làm điểm đến cho link quảng cáo
 // (TikTok/Facebook/SEO). Khác với "/" (đã gắn RequireAuth, đẩy người chưa đăng nhập sang
@@ -78,7 +79,10 @@ export default function Landing() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 theme-light:bg-white text-zinc-100 theme-light:text-zinc-900">
-      <main className="mx-auto max-w-lg px-4 pb-16 pt-10 sm:max-w-2xl">
+      <header className="max-w-4xl mx-auto px-4 pt-4 flex justify-end">
+        <ThemeToggle />
+      </header>
+      <main className="mx-auto max-w-lg px-4 pb-16 pt-6 sm:max-w-2xl">
         {/* Hero */}
         <section className="text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500/15 text-accent-400">

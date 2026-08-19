@@ -14,6 +14,7 @@ import { claimPendingReferral } from '../lib/referral'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useToast } from '@core/ToastProvider'
+import ThemeToggle from '../components/ThemeToggle'
 import type { UiLang } from '../lib/uiLang'
 
 // Nhãn tính năng lấy từ i18n theo `key` (icon + màu cố định, chữ dịch theo ngôn ngữ)
@@ -205,25 +206,30 @@ export default function Login() {
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-sky-500 rounded-full blur-[140px] opacity-[0.07] translate-x-1/2 translate-y-1/2 pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-violet-500 rounded-full blur-[120px] opacity-[0.04] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
-      {/* Chọn ngôn ngữ giao diện (VI/EN) — trang này không có header nên đặt góc trên */}
-      <div
-        className="absolute top-4 right-4 z-10 flex gap-1 bg-zinc-800/60 border border-zinc-700/60 rounded-xl p-1"
-        role="group"
-        aria-label={T.langToggleLabel}
-      >
-        {(['vi', 'en'] as const).map((l: UiLang) => (
-          <button
-            key={l}
-            type="button"
-            onClick={() => setLang(l)}
-            aria-pressed={lang === l}
-            className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition ${
-              lang === l ? 'bg-zinc-700 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'
-            }`}
-          >
-            {l.toUpperCase()}
-          </button>
-        ))}
+      {/* Nút đổi giao diện & Chọn ngôn ngữ giao diện (VI/EN) — trang này không có header nên đặt góc trên */}
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        <ThemeToggle className="tap-44 flex items-center justify-center text-zinc-400 hover:text-white transition p-2 rounded-xl bg-zinc-800/60 border border-zinc-700/60 hover:bg-zinc-700/60 shrink-0" />
+        <div
+          className="flex gap-1 bg-zinc-800/60 border border-zinc-700/60 rounded-xl p-1"
+          role="group"
+          aria-label={T.langToggleLabel}
+        >
+          {(['vi', 'en'] as const).map((l: UiLang) => (
+            <button
+              key={l}
+              type="button"
+              onClick={() => setLang(l)}
+              aria-pressed={lang === l}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition ${
+                lang === l
+                  ? 'bg-zinc-700 text-white shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              {l.toUpperCase()}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Logo */}

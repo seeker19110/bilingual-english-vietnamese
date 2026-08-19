@@ -14,6 +14,11 @@ export default defineConfig({
   // Vite là cùng thư mục vite.config.ts, sai vì npm workspaces chạy build với cwd=apps/hub.
   envDir: path.resolve(__dirname, '../..'),
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@core': path.resolve(__dirname, '../../packages/core-ui'),
+    },
+  },
   server: {
     proxy: {
       '/api': 'http://localhost:3001',

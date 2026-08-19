@@ -84,11 +84,21 @@ export function contrastRatio(foreground: Rgb, background: Rgb): number {
 }
 
 /**
- * Đọc bảng màu của từng theme từ index.css. Cố tình PHÂN TÍCH FILE THẬT thay vì chép
- * lại bảng màu vào test — chép lại thì sửa màu ở css mà quên sửa test, cổng thành vô dụng.
+ * Đọc bảng màu của từng theme từ theme.css dùng chung (packages/core-ui). Cố tình
+ * PHÂN TÍCH FILE THẬT thay vì chép lại bảng màu vào test — chép lại thì sửa màu ở
+ * css mà quên sửa test, cổng thành vô dụng.
  */
 function readThemeTokens(): Map<string, Map<string, Rgb>> {
-  const cssPath = path.join(import.meta.dirname, '..', 'index.css')
+  const cssPath = path.join(
+    import.meta.dirname,
+    '..',
+    '..',
+    '..',
+    '..',
+    'packages',
+    'core-ui',
+    'theme.css',
+  )
   const css = readFileSync(cssPath, 'utf8')
   const themes = new Map<string, Map<string, Rgb>>()
 
@@ -104,7 +114,7 @@ function readThemeTokens(): Map<string, Map<string, Rgb>> {
 
 const THEMES = readThemeTokens()
 
-describe('bảng màu theme — đọc được từ index.css', () => {
+describe('bảng màu theme — đọc được từ theme.css', () => {
   it('tìm thấy đủ 5 theme', () => {
     expect([...THEMES.keys()].sort()).toEqual(['blue-sky', 'dark-blue', 'kid', 'pink', 'vibrant'])
   })

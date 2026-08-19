@@ -16,7 +16,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": ["../../packages/core-ui/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "../../packages/core-ui"]
 }

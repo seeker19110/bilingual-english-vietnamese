@@ -1,3 +1,4 @@
+@import '../../../packages/core-ui/theme.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -19,9 +20,13 @@
       sans-serif;
   }
 
+  body {
+    @apply bg-zinc-950 text-zinc-100 antialiased;
+  }
+
   ::selection {
-    background-color: rgba(16, 185, 129, 0.3);
-    color: #34d399;
+    background-color: rgba(var(--a-500) / 0.3);
+    color: rgb(var(--a-300));
   }
 }
 

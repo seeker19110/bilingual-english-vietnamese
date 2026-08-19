@@ -20,6 +20,7 @@ import {
   User,
   Shield,
 } from 'lucide-react'
+import { ThemeToggle } from '@core/ThemeToggle'
 
 // Trang chủ hub — Nền tảng "Đồng hành cùng bạn" (https://www.donghanhcungban.org)
 // - Tiếng Anh giọng Mỹ (US Accent 🇺🇸), gia sư 2 chiều Việt - Anh, CEFR A1→C2.
@@ -172,13 +173,13 @@ function Navbar({ stats }: { stats: HubStats | null }) {
     <header className="sticky top-0 z-50 backdrop-blur-md bg-zinc-950/80 border-b border-zinc-800/80">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-zinc-950 font-bold shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-accent-500 to-accent-400 flex items-center justify-center text-zinc-950 font-bold shadow-lg shadow-accent-500/20 group-hover:scale-105 transition-transform">
             <Sparkles className="w-5 h-5 text-zinc-950" />
           </div>
           <div className="flex flex-col">
             <span className="font-bold text-base sm:text-lg tracking-tight text-white flex items-center gap-1.5">
               Đồng hành cùng bạn
-              <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-accent-500/10 text-accent-400 theme-light:text-accent-700 border border-accent-500/20">
                 AI Platform
               </span>
             </span>
@@ -189,24 +190,40 @@ function Navbar({ stats }: { stats: HubStats | null }) {
         </a>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-300">
-          <a href="#subjects" className="hover:text-emerald-400 transition-colors">
+          <a
+            href="#subjects"
+            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition-colors"
+          >
             Môn học
           </a>
-          <a href="#features" className="hover:text-emerald-400 transition-colors">
+          <a
+            href="#features"
+            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition-colors"
+          >
             Tính năng AI
           </a>
-          <a href="#why-us" className="hover:text-emerald-400 transition-colors">
+          <a
+            href="#why-us"
+            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition-colors"
+          >
             Điểm khác biệt
           </a>
-          <a href="#pricing" className="hover:text-emerald-400 transition-colors">
+          <a
+            href="#pricing"
+            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition-colors"
+          >
             Bảng giá
           </a>
-          <a href="#faq" className="hover:text-emerald-400 transition-colors">
+          <a
+            href="#faq"
+            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition-colors"
+          >
             Hỏi đáp
           </a>
         </nav>
 
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle lang="vi" />
           {isLoggedIn ? (
             <>
               <a
@@ -214,14 +231,14 @@ function Navbar({ stats }: { stats: HubStats | null }) {
                 className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-zinc-200 hover:text-white px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 transition"
                 title="Truy cập trang cá nhân & quản lý tài khoản"
               >
-                <User className="w-3.5 h-3.5 text-emerald-400" />
+                <User className="w-3.5 h-3.5 text-accent-400 theme-light:text-accent-700" />
                 <span className="max-w-[120px] sm:max-w-[160px] truncate">
                   {displayName || 'Trang cá nhân'}
                 </span>
               </a>
               <a
                 href={ENGLISH_APP_URL}
-                className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-md shadow-emerald-500/20 transition-all hover:scale-[1.02]"
+                className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 shadow-md shadow-accent-500/20 transition-all hover:scale-[1.02]"
               >
                 <span>Vào học</span>
                 <span className="text-xs">🇺🇸</span>
@@ -238,7 +255,7 @@ function Navbar({ stats }: { stats: HubStats | null }) {
               </a>
               <a
                 href={ENGLISH_APP_URL}
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all hover:scale-[1.02]"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 shadow-md shadow-accent-500/20 hover:shadow-accent-500/30 transition-all hover:scale-[1.02]"
               >
                 <span>Học Tiếng Anh</span>
                 <span className="text-xs">🇺🇸</span>
@@ -260,18 +277,18 @@ function Hero({ stats }: { stats: HubStats | null }) {
   return (
     <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24 px-4 sm:px-6">
       {/* Background glow effects */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-emerald-500/10 blur-[120px] pointer-events-none -z-10 rounded-full" />
-      <div className="absolute top-10 right-10 w-[300px] h-[250px] bg-teal-500/10 blur-[100px] pointer-events-none -z-10 rounded-full" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-accent-500/10 blur-[120px] pointer-events-none -z-10 rounded-full" />
+      <div className="absolute top-10 right-10 w-[300px] h-[250px] bg-accent-400/10 blur-[100px] pointer-events-none -z-10 rounded-full" />
 
       <div className="max-w-4xl mx-auto text-center">
         {/* Accent / User Greeting badge */}
         {isLoggedIn ? (
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-500/40 text-xs sm:text-sm text-emerald-300 mb-6 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-950/50 border border-accent-500/40 text-xs sm:text-sm text-accent-300 theme-light:text-accent-800 mb-6 shadow-sm">
             <span>👋</span>
             <span className="font-semibold">
               Chào mừng trở lại{displayName ? `, ${displayName}` : ''}!
             </span>
-            <span className="text-emerald-600">•</span>
+            <span className="text-accent-600">•</span>
             <a href={PROFILE_URL} className="underline hover:text-white transition">
               Trang cá nhân
             </a>
@@ -279,7 +296,9 @@ function Hero({ stats }: { stats: HubStats | null }) {
         ) : (
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs sm:text-sm text-zinc-300 mb-6 shadow-sm">
             <span className="text-base">🇺🇸</span>
-            <span className="font-semibold text-emerald-400">Tiếng Anh Giọng Mỹ (US Accent)</span>
+            <span className="font-semibold text-accent-400 theme-light:text-accent-700">
+              Tiếng Anh Giọng Mỹ (US Accent)
+            </span>
             <span className="text-zinc-600">•</span>
             <span className="text-zinc-400">Chuẩn CEFR A1 → C2</span>
           </div>
@@ -287,7 +306,7 @@ function Hero({ stats }: { stats: HubStats | null }) {
 
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15] mb-6">
           Gia sư AI kiên nhẫn, <br className="hidden sm:inline" />
-          <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-200 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-accent-400 via-accent-300 to-accent-200 bg-clip-text text-transparent">
             đồng hành cùng bạn
           </span>{' '}
           mỗi ngày
@@ -303,7 +322,7 @@ function Hero({ stats }: { stats: HubStats | null }) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-10">
           <a
             href={ENGLISH_APP_URL}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-base shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/35 transition-all hover:scale-[1.02]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-base shadow-lg shadow-accent-500/25 hover:shadow-accent-500/35 transition-all hover:scale-[1.02]"
           >
             <span>{isLoggedIn ? 'Tiếp tục học Tiếng Anh ngay' : 'Bắt đầu học Tiếng Anh ngay'}</span>
             <span className="text-sm">🇺🇸</span>
@@ -315,7 +334,7 @@ function Hero({ stats }: { stats: HubStats | null }) {
               href={PROFILE_URL}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 font-semibold text-base transition"
             >
-              <User className="w-4 h-4 text-emerald-400" />
+              <User className="w-4 h-4 text-accent-400 theme-light:text-accent-700" />
               <span>Xem trang cá nhân & Lộ trình</span>
             </a>
           ) : (
@@ -323,7 +342,7 @@ function Hero({ stats }: { stats: HubStats | null }) {
               href="#subjects"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 font-semibold text-base transition"
             >
-              <BookOpen className="w-4 h-4 text-emerald-400" />
+              <BookOpen className="w-4 h-4 text-accent-400 theme-light:text-accent-700" />
               <span>Xem tất cả môn học</span>
             </a>
           )}
@@ -332,19 +351,19 @@ function Hero({ stats }: { stats: HubStats | null }) {
         {/* Feature Highlights Pills */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto pt-4 border-t border-zinc-800/60 text-xs sm:text-sm text-zinc-400">
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-zinc-900/40">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
             <span>Không cần thẻ tín dụng</span>
           </div>
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-zinc-900/40">
-            <Smartphone className="w-4 h-4 text-emerald-400 shrink-0" />
+            <Smartphone className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
             <span>Học Web & Mobile PWA</span>
           </div>
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-zinc-900/40">
-            <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
+            <Zap className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
             <span>Phát âm chuẩn giọng Mỹ</span>
           </div>
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-zinc-900/40">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
             <span>Học phí siêu tiết kiệm</span>
           </div>
         </div>
@@ -366,7 +385,7 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-1.5 mb-1">
-            <h2 className="text-xs uppercase tracking-widest text-emerald-400 font-bold">
+            <h2 className="text-xs uppercase tracking-widest text-accent-400 theme-light:text-accent-700 font-bold">
               {isAdmin ? 'Thống kê hoạt động nền tảng' : 'Chất lượng đào tạo chuẩn quốc tế'}
             </h2>
             {isAdmin && (
@@ -388,7 +407,7 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
             <>
               {/* Thẻ dành riêng cho Admin */}
               <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center relative">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
                   {formatNumber(stats.totalUsers!)}
                 </div>
                 <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
@@ -398,7 +417,7 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
               </div>
 
               <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
                   {formatNumber(stats.totalEnglishSessions!)}
                 </div>
                 <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
@@ -411,7 +430,7 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
             <>
               {/* Thẻ hiển thị cho Người học & Khách vãng lai */}
               <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
                   6 Cấp độ
                 </div>
                 <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
@@ -421,7 +440,7 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
               </div>
 
               <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
                   100%
                 </div>
                 <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
@@ -433,7 +452,7 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
           )}
 
           <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-teal-400 tracking-tight">
+            <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
               12.160+
             </div>
             <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
@@ -443,7 +462,7 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
           </div>
 
           <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-teal-400 tracking-tight">
+            <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
               16+
             </div>
             <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
@@ -465,7 +484,7 @@ function SubjectTabs() {
   return (
     <section id="subjects" className="px-4 sm:px-6 py-16 sm:py-20 max-w-5xl mx-auto">
       <div className="text-center max-w-2xl mx-auto mb-10">
-        <span className="text-xs uppercase font-bold tracking-widest text-emerald-400 mb-2 block">
+        <span className="text-xs uppercase font-bold tracking-widest text-accent-400 theme-light:text-accent-700 mb-2 block">
           Hệ sinh thái môn học
         </span>
         <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
@@ -485,14 +504,14 @@ function SubjectTabs() {
             onClick={() => setActive(s.id)}
             className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
               active === s.id
-                ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20 scale-105'
+                ? 'bg-accent-500 text-zinc-950 shadow-lg shadow-accent-500/20 scale-105'
                 : 'bg-zinc-900 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border border-zinc-800'
             }`}
           >
             <span>{s.flagOrEmoji}</span>
             <span>{s.name}</span>
             {s.status === 'live' ? (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
             ) : (
               <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
                 Sắp ra mắt
@@ -510,8 +529,8 @@ function SubjectTabs() {
               <span className="text-3xl">{current.flagOrEmoji}</span>
               <h3 className="text-xl sm:text-2xl font-bold text-white">{current.name}</h3>
               {current.status === 'live' ? (
-                <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/30 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span className="text-xs px-2.5 py-1 rounded-full bg-accent-500/10 text-accent-400 theme-light:text-accent-700 font-semibold border border-accent-500/30 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-400" />
                   Đang hoạt động (Live)
                 </span>
               ) : (
@@ -521,7 +540,7 @@ function SubjectTabs() {
               )}
             </div>
 
-            <p className="text-emerald-400 font-medium text-sm sm:text-base mb-3">
+            <p className="text-accent-400 theme-light:text-accent-700 font-medium text-sm sm:text-base mb-3">
               {current.tagline}
             </p>
 
@@ -530,7 +549,7 @@ function SubjectTabs() {
             </p>
 
             {current.accentNote && (
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm font-medium mb-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-950/40 border border-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs sm:text-sm font-medium mb-5">
                 <span>🎯</span>
                 <span>{current.accentNote}</span>
               </div>
@@ -547,7 +566,7 @@ function SubjectTabs() {
                     key={idx}
                     className="flex items-start gap-2 text-xs sm:text-sm text-zinc-300"
                   >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0 mt-0.5" />
                     <span>{skill}</span>
                   </div>
                 ))}
@@ -562,7 +581,7 @@ function SubjectTabs() {
               <div className="flex flex-wrap items-center gap-3">
                 <a
                   href={current.ctaUrl}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm sm:text-base transition-all shadow-md shadow-emerald-500/20 hover:scale-[1.02]"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-sm sm:text-base transition-all shadow-md shadow-accent-500/20 hover:scale-[1.02]"
                 >
                   <span>Vào học Tiếng Anh ngay</span>
                   <span className="text-sm">🇺🇸</span>
@@ -584,37 +603,37 @@ function SubjectTabs() {
 function WhyUsSection() {
   const features = [
     {
-      icon: <Volume2 className="w-6 h-6 text-emerald-400" />,
+      icon: <Volume2 className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
       title: 'Giọng Mỹ Chuẩn Bản Xứ (US Accent 🇺🇸)',
       description:
         'Học theo giọng tiếng Anh - Mỹ tự nhiên phổ biến nhất thế giới. AI phát âm rõ âm cuối (ending sounds), nối âm, ngữ điệu thực tế và chấm điểm ngữ âm IPA tức thì.',
     },
     {
-      icon: <Mic className="w-6 h-6 text-emerald-400" />,
+      icon: <Mic className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
       title: 'Gia sư Song ngữ 2 chiều Việt ⇄ Anh',
       description:
         'Không sợ bí từ! Bạn có thể nói tiếng Anh để luyện phản xạ, hoặc hỏi bằng tiếng Việt bất kỳ lúc nào để AI giải thích cặn kẽ và hướng dẫn cách diễn đạt hay hơn.',
     },
     {
-      icon: <Award className="w-6 h-6 text-emerald-400" />,
+      icon: <Award className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
       title: 'Chuẩn CEFR A1→C2 & Chấm Điểm IELTS',
       description:
         'Hơn 12.000 từ vựng và bài học phân cấp chặt chẽ theo Khung tham chiếu Châu Âu. Công cụ luyện viết chấm bài tự động theo 4 tiêu chí chuẩn bài thi IELTS.',
     },
     {
-      icon: <Headphones className="w-6 h-6 text-emerald-400" />,
+      icon: <Headphones className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
       title: 'Luyện nghe & Karaoke Text thông minh',
       description:
         'Kho truyện ngắn và bài nghe phong phú, chữ sáng theo từng nhịp giọng đọc giúp bạn đồng thời bắt kịp tai nghe và mắt nhìn mặt chữ chính xác.',
     },
     {
-      icon: <Zap className="w-6 h-6 text-emerald-400" />,
+      icon: <Zap className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
       title: 'Ghi nhớ dài hạn với thuật toán FSRS/SRS',
       description:
         'Tự động tính toán chu kỳ lặp lại ngắt quãng khoa học cho từng từ vựng và mẫu câu, giúp bạn ôn lại đúng lúc trước khi quên mà không tốn công ghi chép.',
     },
     {
-      icon: <Smartphone className="w-6 h-6 text-emerald-400" />,
+      icon: <Smartphone className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
       title: 'Học Ngoại tuyến (Offline Mode) & PWA',
       description:
         'Cài đặt trực tiếp như một ứng dụng di động native từ trình duyệt. Tải trước bài học và audio để luyện tập ngay cả khi đang trên xe buýt hoặc mất mạng.',
@@ -628,7 +647,7 @@ function WhyUsSection() {
     >
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs uppercase font-bold tracking-widest text-emerald-400 mb-2 block">
+          <span className="text-xs uppercase font-bold tracking-widest text-accent-400 theme-light:text-accent-700 mb-2 block">
             Điểm khác biệt vượt trội
           </span>
           <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
@@ -646,7 +665,7 @@ function WhyUsSection() {
               className="bg-zinc-900/70 hover:bg-zinc-900 rounded-2xl p-6 border border-zinc-800 hover:border-zinc-700 transition-all hover:scale-[1.01] flex flex-col justify-between"
             >
               <div>
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-xl bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-4">
                   {item.icon}
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
@@ -665,7 +684,7 @@ function FeaturesSection() {
   return (
     <section id="features" className="px-4 sm:px-6 py-16 sm:py-20 max-w-6xl mx-auto">
       <div className="text-center max-w-2xl mx-auto mb-14">
-        <span className="text-xs uppercase font-bold tracking-widest text-emerald-400 mb-2 block">
+        <span className="text-xs uppercase font-bold tracking-widest text-accent-400 theme-light:text-accent-700 mb-2 block">
           Tính năng AI chuyên sâu
         </span>
         <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
@@ -680,7 +699,7 @@ function FeaturesSection() {
         {/* Box 1: Luyện phát âm & Hội thoại */}
         <div className="bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-6 sm:p-8 border border-zinc-800">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400">
+            <div className="p-2.5 rounded-xl bg-accent-500/10 text-accent-400 theme-light:text-accent-700">
               <Mic className="w-5 h-5" />
             </div>
             <div>
@@ -696,12 +715,14 @@ function FeaturesSection() {
           <div className="bg-zinc-950/60 rounded-xl p-4 border border-zinc-800/80 text-xs font-mono text-zinc-300">
             <div className="flex items-center justify-between text-zinc-400 mb-2 pb-2 border-b border-zinc-800">
               <span>Đánh giá phát âm AI</span>
-              <span className="text-emerald-400 font-bold">96% Match (US)</span>
+              <span className="text-accent-400 theme-light:text-accent-700 font-bold">
+                96% Match (US)
+              </span>
             </div>
             <div className="text-zinc-300 mb-1">
               User: <span className="text-white">"I'd like to schedule an appointment."</span>
             </div>
-            <div className="text-emerald-400">
+            <div className="text-accent-400 theme-light:text-accent-700">
               AI Tutor: 🇺🇸 /aɪd laɪk tuː ˈskedʒuːl ən əˈpɔɪntmənt/ — Âm /skedʒuːl/ chuẩn giọng Mỹ!
             </div>
           </div>
@@ -710,7 +731,7 @@ function FeaturesSection() {
         {/* Box 2: Luyện viết & Chấm điểm */}
         <div className="bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-6 sm:p-8 border border-zinc-800">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-400">
+            <div className="p-2.5 rounded-xl bg-accent-500/10 text-accent-400 theme-light:text-accent-700">
               <PenTool className="w-5 h-5" />
             </div>
             <div>
@@ -726,7 +747,9 @@ function FeaturesSection() {
           <div className="bg-zinc-950/60 rounded-xl p-4 border border-zinc-800/80 text-xs font-mono text-zinc-300">
             <div className="flex items-center justify-between text-zinc-400 mb-2 pb-2 border-b border-zinc-800">
               <span>Tiêu chí đánh giá</span>
-              <span className="text-teal-400 font-bold">Band 7.0 (CEFR C1)</span>
+              <span className="text-accent-400 theme-light:text-accent-700 font-bold">
+                Band 7.0 (CEFR C1)
+              </span>
             </div>
             <div className="grid grid-cols-2 gap-2 text-[11px]">
               <div className="bg-zinc-900 p-1.5 rounded">Từ vựng (Lexical): 7.5</div>
@@ -752,7 +775,7 @@ function PricingSection({ stats }: { stats: HubStats | null }) {
     >
       <div className="max-w-5xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs uppercase font-bold tracking-widest text-emerald-400 mb-2 block">
+          <span className="text-xs uppercase font-bold tracking-widest text-accent-400 theme-light:text-accent-700 mb-2 block">
             Bảng giá minh bạch & Tiết kiệm
           </span>
           <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
@@ -783,19 +806,19 @@ function PricingSection({ stats }: { stats: HubStats | null }) {
               </p>
               <ul className="space-y-3 text-xs sm:text-sm text-zinc-300 mb-8">
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
                   <span>4 giọng đọc AI tiếng Anh Mỹ chuẩn</span>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
                   <span>Chat đàm thoại & Luyện phát âm IPA</span>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
                   <span>Tra từ điển & Ôn tập từ vựng ngắt quãng</span>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
                   <span>Đầy đủ lộ trình CEFR A1 → C2</span>
                 </li>
               </ul>
@@ -809,22 +832,22 @@ function PricingSection({ stats }: { stats: HubStats | null }) {
           </div>
 
           {/* Pro / VIP Tier */}
-          <div className="bg-gradient-to-b from-zinc-900 via-zinc-900 to-emerald-950/30 rounded-2xl p-6 sm:p-8 border-2 border-emerald-500/60 shadow-xl shadow-emerald-500/10 flex flex-col justify-between relative">
-            <div className="absolute -top-3 right-6 bg-emerald-500 text-zinc-950 font-bold text-[11px] uppercase tracking-wider px-3 py-0.5 rounded-full shadow">
+          <div className="bg-gradient-to-b from-zinc-900 via-zinc-900 to-accent-950/30 rounded-2xl p-6 sm:p-8 border-2 border-accent-500/60 shadow-xl shadow-accent-500/10 flex flex-col justify-between relative">
+            <div className="absolute -top-3 right-6 bg-accent-500 text-zinc-950 font-bold text-[11px] uppercase tracking-wider px-3 py-0.5 rounded-full shadow">
               Khuyên dùng
             </div>
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
                   <span>Gói Pro / VIP</span>
-                  <Sparkles className="w-4 h-4 text-emerald-400" />
+                  <Sparkles className="w-4 h-4 text-accent-400 theme-light:text-accent-700" />
                 </h3>
-                <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">
+                <span className="text-xs px-2.5 py-1 rounded-full bg-accent-500/10 text-accent-400 theme-light:text-accent-700 font-semibold border border-accent-500/20">
                   Một gói đa môn
                 </span>
               </div>
               <div className="mb-6">
-                <span className="text-3xl sm:text-4xl font-extrabold text-emerald-400">
+                <span className="text-3xl sm:text-4xl font-extrabold text-accent-400 theme-light:text-accent-700">
                   Học phí bình dân
                 </span>
                 <span className="text-zinc-400 text-xs sm:text-sm"> / theo tháng & năm</span>
@@ -835,26 +858,26 @@ function PricingSection({ stats }: { stats: HubStats | null }) {
               </p>
               <ul className="space-y-3 text-xs sm:text-sm text-zinc-200 mb-8">
                 <li className="flex items-center gap-2.5 font-medium">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
                   <span>Trọn bộ 16+ giọng AI Mỹ (Chirp3-HD, Studio, Gemini)</span>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
                   <span>Chấm bài viết IELTS & Sửa lỗi chi tiết không giới hạn</span>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
                   <span>Tải bài học & Nghe ngoại tuyến (Offline) không giới hạn</span>
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
                   <span>Tự động mở khóa các môn STEM mới (Toán, Lý, Hóa)</span>
                 </li>
               </ul>
             </div>
             <a
               href={isLoggedIn ? PROFILE_URL : `${ENGLISH_APP_URL}/login`}
-              className="w-full py-3.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-center font-bold text-sm text-zinc-950 shadow-md shadow-emerald-500/25 transition block hover:scale-[1.02]"
+              className="w-full py-3.5 px-4 rounded-xl bg-accent-500 hover:bg-accent-400 text-center font-bold text-sm text-zinc-950 shadow-md shadow-accent-500/25 transition block hover:scale-[1.02]"
             >
               {isLoggedIn
                 ? 'Xem chi tiết giá & Nâng cấp trong Hồ sơ →'
@@ -893,7 +916,7 @@ function FaqSection() {
   return (
     <section id="faq" className="px-4 sm:px-6 py-16 sm:py-20 max-w-4xl mx-auto">
       <div className="text-center mb-12">
-        <span className="text-xs uppercase font-bold tracking-widest text-emerald-400 mb-2 block">
+        <span className="text-xs uppercase font-bold tracking-widest text-accent-400 theme-light:text-accent-700 mb-2 block">
           Giải đáp thắc mắc
         </span>
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
@@ -915,7 +938,7 @@ function FaqSection() {
               >
                 <span>{faq.q}</span>
                 {isOpen ? (
-                  <ChevronUp className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <ChevronUp className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
                 ) : (
                   <ChevronDown className="w-4 h-4 text-zinc-500 shrink-0" />
                 )}
@@ -939,9 +962,9 @@ function CtaBanner({ stats }: { stats: HubStats | null }) {
 
   return (
     <section className="px-4 sm:px-6 py-14 max-w-5xl mx-auto">
-      <div className="bg-gradient-to-r from-emerald-950 via-zinc-900 to-zinc-900 border border-emerald-500/30 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
+      <div className="bg-gradient-to-r from-accent-950 via-zinc-900 to-zinc-900 border border-accent-500/30 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
         <div className="max-w-2xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-500/10 border border-accent-500/20 text-accent-400 theme-light:text-accent-700 text-xs font-semibold mb-4">
             <span>🇺🇸</span>
             <span>Bắt đầu ngay hôm nay</span>
           </div>
@@ -954,7 +977,7 @@ function CtaBanner({ stats }: { stats: HubStats | null }) {
           </p>
           <a
             href={ENGLISH_APP_URL}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-base shadow-lg shadow-emerald-500/25 transition-all hover:scale-105"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-base shadow-lg shadow-accent-500/25 transition-all hover:scale-105"
           >
             <span>{isLoggedIn ? 'Tiếp tục bài học' : 'Học Tiếng Anh miễn phí ngay'}</span>
             <span className="text-sm">🇺🇸</span>
@@ -975,7 +998,7 @@ function Footer({ stats }: { stats: HubStats | null }) {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex flex-col items-center md:items-start gap-1">
           <div className="flex items-center gap-2 text-zinc-300 font-bold text-sm">
-            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <Sparkles className="w-4 h-4 text-accent-400 theme-light:text-accent-700" />
             <span>Đồng hành cùng bạn</span>
           </div>
           <p className="text-zinc-500 text-xs">
@@ -984,23 +1007,35 @@ function Footer({ stats }: { stats: HubStats | null }) {
         </div>
 
         <div className="flex items-center gap-6 text-zinc-400 flex-wrap justify-center">
-          <a href={ENGLISH_APP_URL} className="hover:text-emerald-400 transition">
+          <a
+            href={ENGLISH_APP_URL}
+            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition"
+          >
             Học Tiếng Anh 🇺🇸
           </a>
           {isLoggedIn && (
-            <a href={PROFILE_URL} className="hover:text-emerald-400 transition">
+            <a
+              href={PROFILE_URL}
+              className="hover:text-accent-400 theme-light:hover:text-accent-700 transition"
+            >
               Trang cá nhân
             </a>
           )}
-          <a href="#subjects" className="hover:text-emerald-400 transition">
+          <a
+            href="#subjects"
+            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition"
+          >
             Các môn học
           </a>
-          <a href="#pricing" className="hover:text-emerald-400 transition">
+          <a
+            href="#pricing"
+            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition"
+          >
             Bảng giá
           </a>
           <a
             href="mailto:donghanhcungban.org@gmail.com"
-            className="hover:text-emerald-400 transition"
+            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition"
           >
             Liên hệ hỗ trợ
           </a>
@@ -1022,7 +1057,7 @@ export default function App() {
   const stats = useHubStats()
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-emerald-500/30 selection:text-emerald-300">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-accent-500/30 selection:text-accent-300">
       <Navbar stats={stats} />
       <main className="flex-1">
         <Hero stats={stats} />
