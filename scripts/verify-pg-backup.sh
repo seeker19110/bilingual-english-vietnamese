@@ -21,7 +21,7 @@
 set -euo pipefail
 
 BACKUP_DIR="${BACKUP_DIR:-/var/backups}"
-TEST_DB="english_tutor_restore_test"
+TEST_DB="dhcb_restore_test"
 BACKUP_FILE="${1:-}"
 
 if [ -z "$BACKUP_FILE" ]; then
