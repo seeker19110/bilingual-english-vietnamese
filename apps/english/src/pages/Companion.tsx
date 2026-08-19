@@ -50,6 +50,10 @@ import AvatarEmbodimentSelector, {
   EmbodimentMode,
 } from '../components/Companion3D/AvatarEmbodimentSelector'
 import EdgeAiIndicator from '../components/EdgeAi/EdgeAiIndicator'
+import ProactiveNudgeBanner from '../components/ProactiveAgent/ProactiveNudgeBanner'
+import GoalAutoPilotCard from '../components/ProactiveAgent/GoalAutoPilotCard'
+import { fetchProactiveAgentState } from '../lib/proactiveAgentApi'
+import type { ProactiveAgentState } from '../../../../packages/core-contracts/proactiveAgent'
 import { useRealtimeVoice } from '../lib/useRealtimeVoice'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '@core/ToastProvider'
@@ -129,6 +133,13 @@ export default function Companion() {
   const [actionLoadingMap, setActionLoadingMap] = useState<Record<string, boolean>>({})
   const [viewMode, setViewMode] = useState<'chat' | 'voice'>('chat')
   const [embodimentMode, setEmbodimentMode] = useState<EmbodimentMode>('3d_cyber_avatar')
+  const [proactiveState, setProactiveState] = useState<ProactiveAgentState | null>(null)
+
+  useEffect(() => {
+    fetchProactiveAgentState()
+      .then((state) => setProactiveState(state))
+      .catch(() => {})
+  }, [])
 
   const realtimeVoice = useRealtimeVoice({
     onError: (err) => {
@@ -330,6 +341,22 @@ export default function Companion() {
 
             {embodimentMode === 'live_orb' && <RealtimeMultimodalLiveOrb />}
           </div>
+
+          {/* Platform V5 Proactive Nudges & Goal Auto-Pilot */}
+          {proactiveState?.nudges?.map((nudge) => (
+            <ProactiveNudgeBanner
+              key={nudge.id}
+              nudge={nudge}
+              onActionTriggered={(url) => navigate(url)}
+            />
+          ))}
+
+          {proactiveState?.autoPilotPlans?.[0] && (
+            <GoalAutoPilotCard
+              plan={proactiveState.autoPilotPlans[0]}
+              onActionClick={(url) => navigate(url)}
+            />
+          )}
 
           <NeuralMicroCurriculumCard />
           <AcousticPhoneticsLab />

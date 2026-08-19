@@ -110,6 +110,7 @@ import avatarEmbodimentHandler from './api/avatar-embodiment.js'
 import actionCanvasHandler from './api/action-canvas.js'
 import neuralCurriculumHandler from './api/neural-curriculum.js'
 import meshTelemetryHandler from './api/mesh-telemetry.js'
+import proactiveAgentHandler from './api/proactive-agent.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -344,6 +345,8 @@ app.all('/api/action-canvas', wrapEdge(actionCanvasHandler))
 app.all('/api/neural-curriculum', wrapEdge(neuralCurriculumHandler))
 // Distributed WebSocket Mesh & Realtime Telemetry (Platform V4 Phase 5) — Live session cost & latency mesh.
 app.all('/api/mesh-telemetry', wrapEdge(meshTelemetryHandler))
+// Autonomous Proactive Agent & Goal Auto-Pilot (Platform V5 Phase 1) — Proactive Nudges & Action Dispatcher.
+app.all('/api/proactive-agent', wrapEdge(proactiveAgentHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
