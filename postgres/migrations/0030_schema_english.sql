@@ -16,13 +16,43 @@
 
 create schema if not exists english;
 
-alter table if exists public.chat_sessions       set schema english;
-alter table if exists public.writing_submissions set schema english;
-alter table if exists public.speaking_sessions   set schema english;
-alter table if exists public.learning_progress   set schema english;
-alter table if exists public.pronunciations       set schema english;
-alter table if exists public.challenge_entries    set schema english;
-alter table if exists public.tutor_feedback       set schema english;
+do $$
+begin
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'chat_sessions')
+     and not exists (select 1 from pg_tables where schemaname = 'english' and tablename = 'chat_sessions') then
+    alter table public.chat_sessions set schema english;
+  end if;
+
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'writing_submissions')
+     and not exists (select 1 from pg_tables where schemaname = 'english' and tablename = 'writing_submissions') then
+    alter table public.writing_submissions set schema english;
+  end if;
+
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'speaking_sessions')
+     and not exists (select 1 from pg_tables where schemaname = 'english' and tablename = 'speaking_sessions') then
+    alter table public.speaking_sessions set schema english;
+  end if;
+
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'learning_progress')
+     and not exists (select 1 from pg_tables where schemaname = 'english' and tablename = 'learning_progress') then
+    alter table public.learning_progress set schema english;
+  end if;
+
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'pronunciations')
+     and not exists (select 1 from pg_tables where schemaname = 'english' and tablename = 'pronunciations') then
+    alter table public.pronunciations set schema english;
+  end if;
+
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'challenge_entries')
+     and not exists (select 1 from pg_tables where schemaname = 'english' and tablename = 'challenge_entries') then
+    alter table public.challenge_entries set schema english;
+  end if;
+
+  if exists (select 1 from pg_tables where schemaname = 'public' and tablename = 'tutor_feedback')
+     and not exists (select 1 from pg_tables where schemaname = 'english' and tablename = 'tutor_feedback') then
+    alter table public.tutor_feedback set schema english;
+  end if;
+end $$;
 
 create or replace view public.chat_sessions       as select * from english.chat_sessions;
 create or replace view public.writing_submissions as select * from english.writing_submissions;
