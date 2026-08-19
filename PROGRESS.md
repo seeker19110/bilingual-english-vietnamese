@@ -14,6 +14,90 @@
 - Giải phóng 100% gánh nặng I/O và dung lượng ổ cứng trên VPS. Không còn lưu trữ file audio tĩnh cục bộ trong thư mục `uploads/` trên máy chủ.
 - Đã đồng bộ tài liệu hệ thống (`CLAUDE.md`, `docs/deploy-vps-ubuntu.md`, `docs/system-requirements.md`, `docs/ke-hoach-khoi-phuc-su-co-server.md`).
 
+### Platform V4 Phase 5 — Distributed WebSocket Mesh & Realtime Cost Telemetry (2026-08-19)
+
+Hoàn thành triển khai Giai đoạn 5 Nâng cấp Đồng Hành lên Tầng Cao Mới (Sovereign Multimodal Cognitive Companion):
+
+- **1. Hợp đồng Dữ liệu V4.4 (`packages/core-contracts/meshTelemetry.ts`)**:
+  - Định nghĩa chuẩn `v4.4.0`: `MeshNodeRoleSchema` (relay_hub, audio_streamer, avatar_animator, action_canvas_sync, edge_node), `MeshPeerConnectionSchema`, `RealtimeSessionTelemetrySchema` (micro-cost, token counting, p95 latency, budget warning, quota throttling).
+- **2. Động cơ Mạng Lưới Phân Tán & Quản Lý Ngân Sách AI (`packages/core-ai/meshTelemetryService.ts`, `api/mesh-telemetry.ts`)**:
+  - Thuật toán đánh giá sức khỏe mạng lưới (`evaluateMeshHealth`): Đo lường jitter, loss rate, latency P50/P95 và tính toán Quality Score tự động phục hồi kết nối.
+  - Bộ tính toán chi phí phiên đàm thoại thời gian thực & Circuit Breaker (`trackLiveSessionCost`): Tích lũy token, tính phí USD tức thì, cảnh báo khi chạm 80% ngân sách và tự động chuyển sang mô hình siêu tiết kiệm (Edge AI / Flash-Lite) khi chạm 100% trần ngân sách.
+  - Endpoint REST `GET/POST /api/mesh-telemetry` và client library `apps/english/src/lib/meshTelemetryApi.ts`.
+- **3. Frontend UI Components (`apps/english/src/components/MeshTelemetry/`, `apps/english/src/pages/Companion.tsx`)**:
+  - `RealtimeCostTelemetryBadge.tsx`: Huy hiệu chi phí (Micro-USD), số token, và độ trễ ping thời gian thực.
+  - `MeshHealthMonitorModal.tsx`: Hộp thoại phân tích sức khỏe mạng lưới phân tán, số node relay, và cấu hình Budget Cap.
+  - `RealtimeTelemetryBar.tsx`: Thanh giám sát telemetry tích hợp ngay đầu giao diện Bạn Đồng Hành (`/dong-hanh`).
+- **4. Quality Gates**:
+  - `npm test`: **4.496 / 4.496 tests passed 100%** trên 354 test files.
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run format:check`: passed 100% (All matched files use Prettier style).
+  - `npm run build`: passed 100% (Client Vite SPA, Server `dist-server/`, Hub workspace).
+
+### Platform V4 Phase 4 — Dynamic Neural Micro-Curriculum & Spaced Collocations Graph (2026-08-19)
+
+Hoàn thành triển khai Giai đoạn 4 Nâng cấp Đồng Hành lên Tầng Cao Mới (Sovereign Multimodal Cognitive Companion):
+
+- **1. Hợp đồng Dữ liệu V4.3 (`packages/core-contracts/neuralCurriculum.ts`)**:
+  - Định nghĩa chuẩn `v4.3.0`: `CollocationTypeSchema` (verb_noun, adjective_noun, noun_noun, phrasal_verb, idiom, discourse_marker), `CollocationNodeSchema`, `MicroDrillQuestionSchema`, `MicroCurriculumModuleSchema`, `NeuralCurriculumStateSchema`.
+- **2. Động cơ Sinh Lộ Trình Vi Mô & Đồ Thị Collocations (`packages/core-ai/neuralCurriculumService.ts`, `api/neural-curriculum.ts`)**:
+  - Thuật toán sinh mô-đun vi mô (`generateMicroCurriculumModule`): Tự động phát hiện và sinh các bài học 2 phút nhắm đúng cụm từ đắt giá của từng miền và cấp độ CEFR A1-C2.
+  - Thuật toán lặp lại ngắt quãng thích ứng (`computeNextSpacedReview`): Tối ưu đường cong lãng quên Ebbinghaus và điểm nhịp sinh học.
+  - Endpoint REST `GET/POST /api/neural-curriculum` và client library `apps/english/src/lib/neuralCurriculumApi.ts`.
+- **3. Frontend UI Components (`apps/english/src/components/NeuralCurriculum/`, `apps/english/src/pages/Companion.tsx`)**:
+  - `CollocationGraphExplorer.tsx`: Trình hiển thị mạng lưới Collocations chuẩn bản xứ kèm phát âm audio, IPA, loại cụm từ và câu ví dụ song ngữ.
+  - `MicroDrillModal.tsx`: Hộp thoại tương tác luyện nhanh 2 phút với các câu hỏi điền từ vào cụm collocation và lời giải thích sâu.
+  - `NeuralMicroCurriculumCard.tsx`: Thẻ lộ trình vi mô thần kinh tích hợp trực tiếp tại Bạn Đồng Hành (`/dong-hanh`).
+- **4. Quality Gates**:
+  - `npm test`: **4.482 / 4.482 tests passed 100%** trên 350 test files.
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run format:check`: passed 100% (All matched files use Prettier style).
+  - `npm run build`: passed 100% (Client Vite SPA, Server `dist-server/`, Hub workspace).
+
+### Platform V4 Phase 3 — Live Autonomous Action Canvas & Cross-Domain Workspace Hub (2026-08-19)
+
+Hoàn thành triển khai Giai đoạn 3 Nâng cấp Đồng Hành lên Tầng Cao Mới (Sovereign Multimodal Cognitive Companion):
+
+- **1. Hợp đồng Dữ liệu V4.2 (`packages/core-contracts/actionCanvas.ts`)**:
+  - Định nghĩa chuẩn `v4.2.0`: `CanvasNodeTypeSchema` (7 loại node: goal, task, note, code, mindmap_node, decision_bridge, metric), `CanvasDomainSchema` (5 miền: learning, career, work, startup, life), `CanvasNodeSchema`, `CanvasEdgeSchema`, `ActionCanvasStateSchema`, `CanvasExportFormatSchema`.
+- **2. Động cơ Điều phối Tự trị & Bố cục Trực quan (`packages/core-personal/actionCanvasService.ts`, `api/action-canvas.ts`)**:
+  - Thuật toán phân rã mục tiêu tự trị (`synthesizeCrossDomainGoalCanvas`): Tự động chuyển 1 mục tiêu trừu tượng thành mạng lưới các node hành động 5 miền liên kết chặt chẽ.
+  - Thuật toán tự động sắp xếp cây phân cấp (`autoLayoutCanvasNodes`): Sắp xếp trực quan theo tầng quan hệ, chống chồng lấn các thẻ.
+  - Bộ chuyển đổi định dạng xuất Markdown (`exportCanvasToMarkdown`) và endpoint `GET/POST /api/action-canvas`.
+- **3. Frontend UI Workspace Canvas (`apps/english/src/components/ActionCanvas/`, `apps/english/src/pages/ActionCanvas.tsx`, `App.tsx`)**:
+  - `InteractiveCanvasViewport.tsx`: Bảng vẽ tương tác thời gian thực 60 FPS, hỗ trợ kéo thả thẻ, pan/zoom mượt mà, render bezier curve nối các cạnh quan hệ phụ thuộc.
+  - `CanvasAiOrchestratorModal.tsx`: Hộp thoại AI cộng sự tự động hóa phân rã ý tưởng và sinh đồ thị hành động.
+  - `CanvasExportModal.tsx`: Hộp thoại 1 chạm xuất và tải file Markdown tương thích Notion / Obsidian / Google Docs.
+  - Đăng ký route `/workspace` & `/action-canvas` trong `App.tsx` và gắn banner truy cập tại Bạn Đồng Hành (`/dong-hanh`).
+- **4. Quality Gates**:
+  - `npm test`: **4.464 / 4.464 tests passed 100%** trên 346 test files.
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run format:check`: passed 100% (All matched files use Prettier style).
+  - `npm run build`: passed 100% (Client Vite SPA, Server `dist-server/`, Hub workspace).
+
+### Platform V4 Phase 2 — 3D Embodied Cyber-Tutor & Real-Time Viseme Morphing Engine (2026-08-19)
+
+Hoàn thành triển khai Giai đoạn 2 Nâng cấp Đồng Hành lên Tầng Cao Mới (Sovereign Multimodal Cognitive Companion):
+
+- **1. Hợp đồng Dữ liệu V4.1 (`packages/core-contracts/avatarEmbodiment.ts`)**:
+  - Định nghĩa chuẩn `v4.1.0`: `Oculus15VisemeSchema` (15 blendshapes khẩu hình chuẩn Oculus), `VisemeMorphTargetSchema`, `Avatar3DStateSchema`, `AvatarEmbodimentConfigSchema`.
+- **2. Động cơ Viseme Morphing & Cử động Thích ứng (`packages/core-ai/visemeMorphingService.ts`, `api/avatar-embodiment.ts`)**:
+  - Thuật toán ánh xạ âm vị IPA sang 15 Visemes Oculus, tính toán biến thiên độ mở/rộng dải LED miệng tỷ lệ với cường độ âm thanh PCM.
+  - Bộ lọc Exponential Moving Average (EMA) triệt tiêu rung giật 60 FPS, tính toán cử động thở hình sin và chớp mắt ngẫu nhiên tự nhiên.
+- **3. Frontend UI Components (`apps/english/src/components/Companion3D/`, `Companion.tsx`, `apps/english/src/lib/avatarEmbodimentApi.ts`)**:
+  - `CyberTutorAvatar3D.tsx`: Trình kết xuất 3D WebGL/Canvas Cyber-Humanoid Robot Avatar nữ với PBR Lighting, Emissive Accent viền sáng đồng bộ theo 5 Theme, mắt tương tác dõi theo con trỏ chuột/chạm tay (Interactive Gaze Tracking) và dải sóng LED Viseme 15 trạng thái 60 FPS.
+  - `AvatarEmbodimentSelector.tsx`: Thanh chuyển đổi linh hoạt 3 chế độ: 🤖 **Avatar 3D** | 🔮 **Live Audio Orb** | ⚡ **Gọn nhẹ**.
+  - Tích hợp trực tiếp tại trung tâm giao diện Bạn Đồng Hành (`/dong-hanh`).
+- **4. Quality Gates**:
+  - `npm test`: **4.447 / 4.447 tests passed 100%** trên 342 test files.
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run format:check`: passed 100% (All matched files use Prettier style).
+  - `npm run build`: passed 100% (Client Vite SPA, Server `dist-server/`, Hub workspace).
+
 ### Platform V4 Phase 1 — Multimodal Realtime Voice & Acoustic GOP Engine (2026-08-19)
 
 Hoàn thành triển khai Giai đoạn 1 Nâng cấp Đồng Hành lên Tầng Cao Mới (Sovereign Multimodal Cognitive Companion):

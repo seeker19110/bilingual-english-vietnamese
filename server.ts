@@ -106,6 +106,10 @@ import echoShadowingHandler from './api/echo-shadowing.js'
 import wearablesSyncHandler from './api/wearables-sync.js'
 import realtimeMultimodalHandler from './api/realtime-multimodal.js'
 import acousticPhoneticsHandler from './api/acoustic-phonetics.js'
+import avatarEmbodimentHandler from './api/avatar-embodiment.js'
+import actionCanvasHandler from './api/action-canvas.js'
+import neuralCurriculumHandler from './api/neural-curriculum.js'
+import meshTelemetryHandler from './api/mesh-telemetry.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -332,6 +336,14 @@ app.all('/api/wearables-sync', wrapEdge(wearablesSyncHandler))
 app.all('/api/realtime-multimodal', wrapEdge(realtimeMultimodalHandler))
 // Acoustic Phonetics & GOP Engine (Platform V4 Phase 1) — Phoneme-level acoustic assessment & alignment.
 app.all('/api/acoustic-phonetics', wrapEdge(acousticPhoneticsHandler))
+// 3D Embodied Cyber-Tutor & Viseme Morphing (Platform V4 Phase 2) — 3D Embodiment & Real-time Visemes.
+app.all('/api/avatar-embodiment', wrapEdge(avatarEmbodimentHandler))
+// Live Autonomous Action Canvas & Cross-Domain Hub (Platform V4 Phase 3) — Interactive Collaborative Workspace.
+app.all('/api/action-canvas', wrapEdge(actionCanvasHandler))
+// Dynamic Neural Micro-Curriculum & Spaced Collocations (Platform V4 Phase 4) — Adaptive 2-min drills.
+app.all('/api/neural-curriculum', wrapEdge(neuralCurriculumHandler))
+// Distributed WebSocket Mesh & Realtime Telemetry (Platform V4 Phase 5) — Live session cost & latency mesh.
+app.all('/api/mesh-telemetry', wrapEdge(meshTelemetryHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

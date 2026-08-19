@@ -87,6 +87,7 @@ const AppliedKnowledge = lazyWithRetry(() => import('./pages/AppliedKnowledge'))
 const CareerInterview = lazyWithRetry(() => import('./pages/CareerInterview'))
 const WorkKanban = lazyWithRetry(() => import('./pages/WorkKanban'))
 const StartupCanvas = lazyWithRetry(() => import('./pages/StartupCanvas'))
+const ActionCanvas = lazyWithRetry(() => import('./pages/ActionCanvas'))
 const LifeWheel = lazyWithRetry(() => import('./pages/LifeWheel'))
 const Friends = lazyWithRetry(() => import('./pages/Friends'))
 const AddFriend = lazyWithRetry(() => import('./pages/AddFriend'))
@@ -409,6 +410,22 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <StartupCanvas />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/workspace"
+                        element={
+                          <RequireAuth>
+                            <ActionCanvas />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/action-canvas"
+                        element={
+                          <RequireAuth>
+                            <ActionCanvas />
                           </RequireAuth>
                         }
                       />

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Send,
   Sparkles,
@@ -23,6 +24,7 @@ import {
   Radio,
   MessageSquare,
   Volume2,
+  LayoutGrid,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -41,6 +43,12 @@ import EchoShadowingCard from '../components/CompanionVoice/EchoShadowingCard'
 import WearablesSyncCard from '../components/CompanionVoice/WearablesSyncCard'
 import RealtimeMultimodalLiveOrb from '../components/CompanionVoice/RealtimeMultimodalLiveOrb'
 import AcousticPhoneticsLab from '../components/CompanionVoice/AcousticPhoneticsLab'
+import CyberTutorAvatar3D from '../components/Companion3D/CyberTutorAvatar3D'
+import NeuralMicroCurriculumCard from '../components/NeuralCurriculum/NeuralMicroCurriculumCard'
+import RealtimeTelemetryBar from '../components/MeshTelemetry/RealtimeTelemetryBar'
+import AvatarEmbodimentSelector, {
+  EmbodimentMode,
+} from '../components/Companion3D/AvatarEmbodimentSelector'
 import EdgeAiIndicator from '../components/EdgeAi/EdgeAiIndicator'
 import { useRealtimeVoice } from '../lib/useRealtimeVoice'
 import { useAuth } from '../context/useAuth'
@@ -104,6 +112,7 @@ const QUICK_PROMPTS = [
 export default function Companion() {
   const { user } = useAuth()
   const toast = useToast()
+  const navigate = useNavigate()
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
@@ -119,6 +128,7 @@ export default function Companion() {
   const [activeContext, setActiveContext] = useState<ContextPackage | null>(null)
   const [actionLoadingMap, setActionLoadingMap] = useState<Record<string, boolean>>({})
   const [viewMode, setViewMode] = useState<'chat' | 'voice'>('chat')
+  const [embodimentMode, setEmbodimentMode] = useState<EmbodimentMode>('3d_cyber_avatar')
 
   const realtimeVoice = useRealtimeVoice({
     onError: (err) => {
@@ -293,8 +303,35 @@ export default function Companion() {
           subtitle="Trí tuệ cá nhân hóa kết nối Học tập, Sự nghiệp, Công việc & Đời sống."
         />
 
+        <RealtimeTelemetryBar />
+
         <div className="space-y-4 mb-4">
-          <RealtimeMultimodalLiveOrb />
+          {/* Avatar & Multimodal Embodiment Section */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                Giao diện Hiện thân AI (Embodiment)
+              </span>
+              <AvatarEmbodimentSelector
+                currentMode={embodimentMode}
+                onModeChange={setEmbodimentMode}
+              />
+            </div>
+
+            {embodimentMode === '3d_cyber_avatar' && (
+              <CyberTutorAvatar3D
+                isSpeaking={loading}
+                isListening={false}
+                currentSpeechAmplitude={loading ? 0.75 : 0}
+                currentIpaPhoneme={loading ? 'aa' : 'sil'}
+                emotion="neutral"
+              />
+            )}
+
+            {embodimentMode === 'live_orb' && <RealtimeMultimodalLiveOrb />}
+          </div>
+
+          <NeuralMicroCurriculumCard />
           <AcousticPhoneticsLab />
           <SubconsciousInsightsCard />
           <ScenarioHolodeckCard />
@@ -307,6 +344,35 @@ export default function Companion() {
           <NeuroAffectiveCard />
           <A2ANegotiatorCard />
           <ProactiveBriefingCard />
+
+          {/* Action Canvas Quick Workspace Banner */}
+          <div className="flex items-center justify-between p-3.5 rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-slate-900 to-zinc-900 shadow-lg backdrop-blur-md">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                <LayoutGrid className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-zinc-100 flex items-center gap-1.5">
+                  Không Gian Làm Việc Trực Quan (Action Canvas)
+                  <span className="rounded px-1.5 py-0.2 text-[9px] font-semibold uppercase bg-cyan-500/30 text-cyan-300">
+                    V4.2 Hub
+                  </span>
+                </h4>
+                <p className="text-[11px] text-zinc-400">
+                  Phác thảo sơ đồ tư duy, phân rã mục tiêu 5 miền và kết nối tương tác trực quan
+                  cùng AI.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/workspace')}
+              className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 text-zinc-950 hover:bg-cyan-400 transition shadow-md shadow-cyan-500/20 flex-shrink-0"
+            >
+              Mở Workspace
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
         {/* View Mode Switcher (Chat vs Live Voice) */}
