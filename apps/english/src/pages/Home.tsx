@@ -418,36 +418,41 @@ export default function Home() {
 
         {/* ── Thẻ "Học tiếp" — mục kế tiếp trong lộ trình CEFR ─────────────── */}
         {continueLevel && nextLabel && (
-          <div className="mb-3 animate-fade-in">
+          <div className="mb-4 animate-fade-in">
             <button
               onClick={goToNextStep}
               aria-label={`${isA ? 'Học tiếp' : 'Continue'} — ${continueLevel.level.id}: ${nextLabel}`}
-              className="w-full glass rounded-2xl p-4 flex items-center gap-3 text-left border border-zinc-800/80 hover:border-accent-500/40 transition active:scale-[0.99]"
+              className="w-full bg-zinc-900/80 hover:bg-zinc-800/80 rounded-2xl p-4 flex items-center gap-3.5 text-left border border-zinc-800/80 hover:border-accent-500/50 shadow-sm transition-all duration-200 active:scale-[0.99] group"
             >
-              <div className="w-11 h-11 rounded-xl bg-accent-500/15 flex items-center justify-center shrink-0">
-                <Play className="w-5 h-5 fill-current text-accent-400" />
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shrink-0 shadow-md shadow-accent-500/25 group-hover:scale-105 transition-transform">
+                <Play className="w-5 h-5 fill-current text-white ml-0.5" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-zinc-400">
-                  {isA ? 'Học tiếp' : 'Continue'} · {continueLevel.level.id}
-                </p>
-                <p className="text-sm font-semibold text-white truncate mt-0.5">{nextLabel}</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-accent-400 theme-light:text-accent-800 bg-accent-500/15 px-2 py-0.5 rounded-full border border-accent-500/25">
+                    {continueLevel.level.id}
+                  </span>
+                  <p className="text-xs text-zinc-400 font-medium">
+                    {isA ? 'Học tiếp' : 'Continue'}
+                  </p>
+                </div>
+                <p className="text-sm font-semibold text-white truncate mt-1">{nextLabel}</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-zinc-400 shrink-0" />
+              <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-200 group-hover:translate-x-0.5 transition-all shrink-0" />
             </button>
 
             {(srsDue > 0 || dailyMax > 0) && (
-              <div className="flex gap-2 mt-2">
+              <div className="flex gap-2 mt-2.5">
                 {srsDue > 0 && (
                   <button
                     onClick={goToSrs}
-                    className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300 theme-light:text-sky-800 hover:border-sky-500/50 transition"
+                    className="tap-44 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs font-medium text-sky-300 theme-light:text-sky-800 hover:border-sky-500/50 hover:bg-sky-500/15 transition-all"
                   >
                     <Brain className="w-3.5 h-3.5" />
                     {srsDue} {isA ? 'thẻ cần ôn' : 'due'}
                   </button>
                 )}
-                <span className="flex items-center px-3 py-1.5 rounded-xl bg-zinc-900/60 border border-zinc-800/60 text-xs text-zinc-400">
+                <span className="flex items-center px-3.5 py-1.5 rounded-xl bg-zinc-900/80 border border-zinc-800/80 text-xs font-medium text-zinc-300">
                   {dailyLearned}/{dailyMax} {isA ? 'từ hôm nay' : 'words today'}
                 </span>
               </div>
@@ -455,43 +460,80 @@ export default function Home() {
           </div>
         )}
 
-        {/* ── Mode cards ────────────────────────────────────────────────── */}
-        <div className="space-y-3">
+        {/* ── Mode cards (Bento Grid) ─────────────────────────────────── */}
+        <div className="space-y-3.5">
           {MODES.map((m, i) => {
             const Icon = m.icon
-            const delay = { animationDelay: `${100 + i * 60}ms` }
+            const delay = { animationDelay: `${80 + i * 50}ms` }
 
-            // Thẻ gộp nhiều nút con cùng chủ đề (vd "Học cùng gia sư AI": Chat/Nói/Viết —
-            // gộp vì cả 3 đều là hội thoại với AI, chỉ khác kênh; hay "Hội thoại + Câu thông
-            // dụng" — gộp vì cùng nhóm nội dung mẫu câu/hội thoại có sẵn).
+            // Thẻ Hero cho Bạn Đồng Hành AI (Platform V2 / Companion)
+            if (m.kind === 'link' && m.path === '/dong-hanh') {
+              return (
+                <button
+                  key={m.path}
+                  onClick={() => nav(m.path)}
+                  aria-label={`${m.title}. ${m.desc}`}
+                  className="w-full relative overflow-hidden bg-gradient-to-br from-zinc-900/90 via-zinc-900/80 to-accent-950/30 border border-accent-500/30 hover:border-accent-500/60 rounded-3xl p-5 text-left transition-all duration-300 group hover:shadow-xl hover:shadow-accent-500/10 active:scale-[0.99] animate-fade-up"
+                  style={delay}
+                >
+                  <div className="absolute top-0 right-0 w-36 h-36 bg-accent-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-accent-500/20 transition-all" />
+                  <div className="flex items-start gap-4 relative z-10">
+                    <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-accent-500 via-indigo-500 to-purple-600 flex items-center justify-center shrink-0 shadow-lg shadow-accent-500/30 group-hover:scale-105 group-hover:rotate-1 transition-transform p-3">
+                      <Icon className="w-7 h-7 text-white" />
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-bold text-white text-base sm:text-lg tracking-tight">
+                          {m.title}
+                        </p>
+                        <span className="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full font-semibold bg-accent-500/15 text-accent-300 theme-light:text-accent-800 border border-accent-500/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-ping inline-block mr-0.5" />
+                          {m.tag.label}
+                        </span>
+                      </div>
+                      <p className="text-sm text-zinc-300 theme-light:text-zinc-700 leading-relaxed line-clamp-2">
+                        {m.desc}
+                      </p>
+                    </div>
+
+                    <div className="w-8 h-8 rounded-full bg-zinc-800/80 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-accent-500/20 transition-all shrink-0 mt-1">
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </div>
+                </button>
+              )
+            }
+
+            // Thẻ gộp nhiều nút con cùng chủ đề (Học cùng gia sư AI: Nghe/Chat/Nói/Viết)
             if (m.kind === 'group') {
               const gridCls = m.items.length === 3 ? 'grid-cols-3' : 'grid-cols-2'
               return (
                 <div
                   key={m.title}
-                  className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 animate-fade-up"
+                  className="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 animate-fade-up shadow-sm"
                   style={delay}
                 >
-                  <div className="flex items-center gap-4 mb-3">
+                  <div className="flex items-center gap-4 mb-4">
                     <div
-                      className={`w-12 h-12 rounded-xl bg-gradient-to-br ${m.gradient} flex items-center justify-center shrink-0 shadow-lg ${m.glow}`}
+                      className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.gradient} flex items-center justify-center shrink-0 shadow-md ${m.glow}`}
                     >
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <p className="font-semibold text-white text-[15px]">{m.title}</p>
+                        <p className="font-bold text-white text-[15px]">{m.title}</p>
                         <span
                           className={`shrink-0 whitespace-nowrap text-[11px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}
                         >
                           {m.tag.label}
                         </span>
                       </div>
-                      <p className="text-sm text-zinc-400 leading-relaxed line-clamp-2">{m.desc}</p>
+                      <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{m.desc}</p>
                     </div>
                   </div>
 
-                  <div className={`grid ${gridCls} gap-2`}>
+                  <div className={`grid ${gridCls} gap-2.5`}>
                     {m.items.map((sub) => {
                       const SubIcon = sub.icon
                       return (
@@ -499,34 +541,36 @@ export default function Home() {
                           key={sub.path}
                           onClick={() => nav(sub.path)}
                           aria-label={sub.fullDesc}
-                          className="tap-44 flex flex-col items-center justify-center gap-1.5 rounded-xl py-3 border border-zinc-800/60 bg-zinc-950/40 hover:bg-zinc-800/60 hover:border-zinc-700 transition active:scale-[0.98]"
+                          className="tap-44 flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3.5 px-2 border border-zinc-800/70 bg-zinc-950/50 hover:bg-zinc-800/70 hover:border-zinc-700 transition-all duration-200 active:scale-[0.97] group"
                         >
-                          <SubIcon className={`w-5 h-5 ${sub.color}`} />
-                          <span className="text-xs font-medium text-zinc-200">{sub.label}</span>
+                          <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <SubIcon className={`w-4 h-4 ${sub.color}`} />
+                          </div>
+                          <span className="text-xs font-semibold text-zinc-200 tracking-tight">
+                            {sub.label}
+                          </span>
                         </button>
                       )
                     })}
                   </div>
 
-                  {/* Mẹo — trước đây đứng riêng ở cuối trang Home, nay gộp vào NGAY thẻ
-                      liên quan (Hội thoại + Câu thông dụng dẫn sang Luyện nói). */}
+                  {/* Mẹo học */}
                   {m.showTip && (
-                    <div className="mt-3 glass rounded-xl p-3 text-xs text-zinc-400">
-                      <strong className="text-zinc-400">{T.tip}</strong>{' '}
+                    <div className="mt-3.5 bg-zinc-950/60 border border-zinc-800/60 rounded-2xl p-3.5 text-xs text-zinc-400 leading-relaxed">
+                      <strong className="text-zinc-300 font-semibold">{T.tip}</strong>{' '}
                       {T.tipBody(
-                        `<strong class="text-teal-400">${T.tipPhrases}</strong>`,
-                        `<strong class="text-sky-400">${T.tipSpeaking}</strong>`,
+                        `<strong class="text-teal-400 font-semibold">${T.tipPhrases}</strong>`,
+                        `<strong class="text-sky-400 font-semibold">${T.tipSpeaking}</strong>`,
                       )
                         .split(/(<strong[^>]*>.*?<\/strong>)/g)
                         .map((part, idx) => {
                           if (part.startsWith('<strong')) {
-                            // theme-light: sắc độ đậm hơn để đạt AA trên nền sáng (Blue sky/Pink)
                             const color = part.includes('teal')
                               ? 'text-teal-400 theme-light:text-teal-700'
                               : 'text-sky-400 theme-light:text-sky-700'
                             const text = part.replace(/<[^>]+>/g, '')
                             return (
-                              <strong key={idx} className={color}>
+                              <strong key={idx} className={`${color} font-semibold`}>
                                 {text}
                               </strong>
                             )
@@ -544,25 +588,27 @@ export default function Home() {
                 key={m.path}
                 onClick={() => nav(m.path)}
                 aria-label={`${m.title}. ${m.desc}`}
-                className={`w-full bg-zinc-900/80 border border-zinc-800/80 ${m.ring} rounded-2xl p-4 text-left flex items-center gap-4 transition-all duration-200 group hover:bg-zinc-800/60 active:scale-[0.99] animate-fade-up`}
+                className={`w-full bg-zinc-900/80 border border-zinc-800/80 ${m.ring} rounded-3xl p-4 sm:p-5 text-left flex items-center gap-4 transition-all duration-200 group hover:bg-zinc-800/70 hover:shadow-lg active:scale-[0.99] animate-fade-up`}
                 style={delay}
               >
                 <div
-                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${m.gradient} flex items-center justify-center shrink-0 shadow-lg ${m.glow} transition-transform group-hover:scale-105`}
+                  className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.gradient} flex items-center justify-center shrink-0 shadow-md ${m.glow} transition-transform group-hover:scale-105`}
                 >
                   <Icon className="w-6 h-6 text-white" />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-semibold text-white text-[15px]">{m.title}</p>
+                    <p className="font-bold text-white text-[15px]">{m.title}</p>
                     <span
                       className={`shrink-0 whitespace-nowrap text-[11px] px-2 py-0.5 rounded-full font-medium ${m.tag.cls}`}
                     >
                       {m.tag.label}
                     </span>
                   </div>
-                  <p className="text-sm text-zinc-400 leading-relaxed line-clamp-2">{m.desc}</p>
+                  <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed line-clamp-2">
+                    {m.desc}
+                  </p>
                 </div>
 
                 <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-200 shrink-0 transition-all group-hover:translate-x-0.5" />
@@ -572,17 +618,17 @@ export default function Home() {
         </div>
 
         {/* ── Tiến độ + Lịch sử học ──────────────────────────────────── */}
-        <div className="grid grid-cols-2 gap-2 mt-4">
+        <div className="grid grid-cols-2 gap-3 mt-4">
           {/* Bảng tiến độ: streak, từ đã thuộc, % CEFR, lượt còn lại */}
           <button
             onClick={() => nav('/progress')}
             aria-label={isA ? 'Xem bảng tiến độ' : 'View progress dashboard'}
-            className="bg-zinc-900/60 border border-zinc-800/60 hover:border-accent-500/40 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in"
+            className="bg-zinc-900/70 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 flex items-center gap-3.5 transition-all duration-200 group hover:bg-zinc-800/60 active:scale-98 animate-fade-in shadow-sm"
           >
-            <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-accent-500/15 flex items-center justify-center shrink-0 transition">
+            <div className="w-9 h-9 rounded-xl bg-accent-500/10 border border-accent-500/20 group-hover:bg-accent-500/20 flex items-center justify-center shrink-0 transition">
               <TrendingUp className="w-4 h-4 text-accent-400" />
             </div>
-            <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
+            <span className="text-sm font-semibold text-zinc-300 group-hover:text-white transition flex-1 text-left">
               {isA ? 'Tiến độ' : 'Progress'}
             </span>
           </button>
@@ -591,12 +637,12 @@ export default function Home() {
           <button
             onClick={() => nav('/history')}
             aria-label={isA ? 'Xem lịch sử học' : 'View learning history'}
-            className="bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-2xl px-4 py-3 flex items-center gap-3 transition group animate-fade-in"
+            className="bg-zinc-900/70 border border-zinc-800/80 hover:border-zinc-700 rounded-2xl p-4 flex items-center gap-3.5 transition-all duration-200 group hover:bg-zinc-800/60 active:scale-98 animate-fade-in shadow-sm"
           >
-            <div className="w-8 h-8 rounded-lg bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
-              <History className="w-4 h-4 text-zinc-400" />
+            <div className="w-9 h-9 rounded-xl bg-zinc-800/80 border border-zinc-700/50 group-hover:bg-zinc-700 flex items-center justify-center shrink-0 transition">
+              <History className="w-4 h-4 text-zinc-400 group-hover:text-zinc-200" />
             </div>
-            <span className="text-sm text-zinc-400 group-hover:text-zinc-200 transition flex-1 text-left">
+            <span className="text-sm font-semibold text-zinc-300 group-hover:text-white transition flex-1 text-left">
               {isA ? 'Lịch sử' : 'History'}
             </span>
           </button>

@@ -522,8 +522,8 @@ export default function Companion() {
           <>
             {/* Domain Filter Pills */}
             <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-4 scrollbar-none border-b border-zinc-800/60">
-              <span className="text-xs text-zinc-400 font-medium whitespace-nowrap pl-1">
-                Chủ đề:
+              <span className="text-xs text-zinc-400 font-semibold whitespace-nowrap pl-1">
+                Lĩnh vực:
               </span>
               {DOMAIN_OPTIONS.map((d) => {
                 const Icon = d.icon
@@ -532,10 +532,10 @@ export default function Companion() {
                   <button
                     key={d.id}
                     onClick={() => setSelectedDomain(d.id)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all shrink-0 ${
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 shrink-0 ${
                       isSelected
-                        ? 'bg-accent-500 text-white shadow-md shadow-accent-500/20'
-                        : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border border-zinc-800/80'
+                        ? 'bg-gradient-to-r from-accent-500 to-accent-600 text-white shadow-md shadow-accent-500/25 ring-1 ring-accent-400/40 scale-105'
+                        : 'bg-zinc-900/90 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border border-zinc-800/80'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -552,40 +552,40 @@ export default function Companion() {
                 return (
                   <div
                     key={msg.id}
-                    className={`flex gap-3 ${isBot ? 'justify-start' : 'justify-end'} animate-fade-in`}
+                    className={`flex gap-3.5 ${isBot ? 'justify-start' : 'justify-end'} animate-fade-in`}
                   >
                     {isBot && (
-                      <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-accent-600 to-accent-400 flex items-center justify-center shrink-0 shadow-md shadow-accent-500/20 mt-1">
-                        <Bot className="w-4 h-4 text-white" />
+                      <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-accent-600 via-accent-500 to-indigo-500 flex items-center justify-center shrink-0 shadow-md shadow-accent-500/25 mt-1 ring-1 ring-accent-400/30">
+                        <Bot className="w-4.5 h-4.5 text-white" />
                       </div>
                     )}
 
                     <div
-                      className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 shadow-sm ${
+                      className={`max-w-[88%] sm:max-w-[78%] rounded-3xl p-5 shadow-sm transition-all ${
                         isBot
-                          ? 'bg-zinc-900 border border-zinc-800/80 text-zinc-200'
-                          : 'bg-accent-600 text-white shadow-md shadow-accent-600/15'
+                          ? 'bg-zinc-900/90 border border-zinc-800/80 text-zinc-200'
+                          : 'bg-gradient-to-r from-accent-600 to-accent-500 text-white shadow-md shadow-accent-600/20'
                       }`}
                     >
                       {/* Bot message metadata */}
                       {isBot && (msg.domain || msg.intent) && (
-                        <div className="flex flex-wrap items-center gap-2 mb-2.5 pb-2 border-b border-zinc-800/60 text-[11px]">
+                        <div className="flex flex-wrap items-center gap-2 mb-3 pb-2.5 border-b border-zinc-800/70 text-[11px]">
                           {msg.domain && (
-                            <span className="px-2 py-0.5 rounded-md bg-zinc-800 text-accent-300 font-medium">
+                            <span className="px-2.5 py-0.5 rounded-full bg-accent-500/15 text-accent-300 theme-light:text-accent-800 border border-accent-500/25 font-semibold">
                               {getDomainLabel(msg.domain)}
                             </span>
                           )}
                           {msg.intent && (
                             <span className="text-zinc-400">
-                              Ý định: <code className="text-zinc-300">{msg.intent}</code>
+                              Ý định: <code className="text-zinc-300 font-mono">{msg.intent}</code>
                             </span>
                           )}
                           {msg.contextPackage && (
                             <button
                               onClick={() => setActiveContext(msg.contextPackage || null)}
-                              className="ml-auto flex items-center gap-1 text-zinc-400 hover:text-accent-300 transition"
+                              className="ml-auto flex items-center gap-1 text-zinc-400 hover:text-accent-300 transition text-[11px]"
                             >
-                              <Info className="w-3 h-3" />
+                              <Info className="w-3.5 h-3.5" />
                               <span>
                                 {msg.contextPackage.tokenUsed}/{msg.contextPackage.tokenBudget}{' '}
                                 tokens
@@ -596,15 +596,15 @@ export default function Companion() {
                       )}
 
                       {/* Text content */}
-                      <div className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap">
+                      <div className="text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap">
                         {msg.text}
                       </div>
 
                       {/* Proposed Actions Section */}
                       {isBot && msg.proposedActions && msg.proposedActions.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-zinc-800/60 space-y-2">
-                          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300 mb-1.5">
-                            <Shield className="w-3.5 h-3.5 text-accent-400" />
+                        <div className="mt-4 pt-3.5 border-t border-zinc-800/80 space-y-2.5">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-200 mb-1.5">
+                            <Shield className="w-4 h-4 text-accent-400" />
                             Tác vụ đề xuất ({msg.proposedActions.length}):
                           </div>
 
@@ -618,19 +618,21 @@ export default function Companion() {
                             return (
                               <div
                                 key={action.id}
-                                className="bg-zinc-950/80 border border-zinc-800 rounded-xl p-3 text-xs flex flex-col gap-2"
+                                className="bg-zinc-950/80 border border-zinc-800/90 rounded-2xl p-3.5 text-xs flex flex-col gap-2.5 shadow-inner"
                               >
                                 <div className="flex items-start justify-between gap-2">
                                   <div>
-                                    <span className="font-medium text-zinc-100">
+                                    <span className="font-semibold text-zinc-100 text-[13px]">
                                       {action.action}
                                     </span>
-                                    <div className="text-[11px] text-zinc-400 mt-0.5">
-                                      Domain:{' '}
-                                      <span className="text-zinc-300">{action.targetDomain}</span> ·
-                                      Rủi ro:{' '}
+                                    <div className="text-[11px] text-zinc-400 mt-1">
+                                      Lĩnh vực:{' '}
+                                      <span className="text-zinc-200 font-medium">
+                                        {action.targetDomain}
+                                      </span>{' '}
+                                      · Mức rủi ro:{' '}
                                       <span
-                                        className={`font-medium ${
+                                        className={`font-semibold ${
                                           action.riskLevel === 'low'
                                             ? 'text-emerald-400'
                                             : action.riskLevel === 'medium'
@@ -645,18 +647,18 @@ export default function Companion() {
 
                                   {/* Status Pill */}
                                   {isCommitted && (
-                                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-medium shrink-0">
-                                      <CheckCircle2 className="w-3 h-3" /> Đã thực thi
+                                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-semibold shrink-0 border border-emerald-500/25">
+                                      <CheckCircle2 className="w-3.5 h-3.5" /> Đã thực thi
                                     </span>
                                   )}
                                   {isRejected && (
-                                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 font-medium shrink-0">
-                                      <XCircle className="w-3 h-3" /> Đã từ chối
+                                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 font-semibold shrink-0 border border-rose-500/25">
+                                      <XCircle className="w-3.5 h-3.5" /> Đã từ chối
                                     </span>
                                   )}
                                   {isPending && (
-                                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 font-medium shrink-0">
-                                      <Clock className="w-3 h-3" /> Chờ duyệt
+                                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-semibold shrink-0 border border-amber-500/25">
+                                      <Clock className="w-3.5 h-3.5" /> Chờ duyệt
                                     </span>
                                   )}
                                 </div>
@@ -667,21 +669,21 @@ export default function Companion() {
                                     <button
                                       onClick={() => handleConfirmAction(action)}
                                       disabled={isActionLoading}
-                                      className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition flex items-center justify-center gap-1 shadow-sm"
+                                      className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 shadow-sm active:scale-98"
                                     >
                                       {isActionLoading ? (
-                                        <RefreshCw className="w-3 h-3 animate-spin" />
+                                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                                       ) : (
-                                        <CheckCircle2 className="w-3.5 h-3.5" />
+                                        <CheckCircle2 className="w-4 h-4" />
                                       )}
                                       Xác nhận
                                     </button>
                                     <button
                                       onClick={() => handleRejectAction(action)}
                                       disabled={isActionLoading}
-                                      className="flex-1 py-1.5 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium transition flex items-center justify-center gap-1"
+                                      className="flex-1 py-2 px-3 rounded-xl bg-zinc-850 hover:bg-zinc-800 text-zinc-300 font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 border border-zinc-700/80 active:scale-98"
                                     >
-                                      <XCircle className="w-3.5 h-3.5" />
+                                      <XCircle className="w-4 h-4" />
                                       Từ chối
                                     </button>
                                   </div>
@@ -693,14 +695,14 @@ export default function Companion() {
                       )}
 
                       {/* Timestamp */}
-                      <div className="text-[10px] text-zinc-400 text-right mt-1.5 opacity-80">
+                      <div className="text-[10px] text-zinc-400 text-right mt-2 opacity-80">
                         {msg.timestamp}
                       </div>
                     </div>
 
                     {!isBot && (
-                      <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700/80 flex items-center justify-center shrink-0 mt-1">
-                        <User className="w-4 h-4 text-zinc-300" />
+                      <div className="w-9 h-9 rounded-2xl bg-zinc-800 border border-zinc-700/80 flex items-center justify-center shrink-0 mt-1 shadow-sm">
+                        <User className="w-4.5 h-4.5 text-zinc-300" />
                       </div>
                     )}
                   </div>
@@ -709,13 +711,13 @@ export default function Companion() {
 
               {/* Loading Indicator */}
               {loading && (
-                <div className="flex gap-3 justify-start animate-fade-in">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-accent-600 to-accent-400 flex items-center justify-center shrink-0">
-                    <Bot className="w-4 h-4 text-white" />
+                <div className="flex gap-3.5 justify-start animate-fade-in">
+                  <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-accent-600 to-accent-400 flex items-center justify-center shrink-0 shadow-md shadow-accent-500/20">
+                    <Bot className="w-4.5 h-4.5 text-white" />
                   </div>
-                  <div className="bg-zinc-900 border border-zinc-800/80 rounded-2xl px-4 py-3 text-zinc-400 text-sm flex items-center gap-2">
+                  <div className="bg-zinc-900 border border-zinc-800/80 rounded-3xl px-5 py-3.5 text-zinc-300 text-sm flex items-center gap-2.5 shadow-sm">
                     <RefreshCw className="w-4 h-4 animate-spin text-accent-400" />
-                    Đang suy nghĩ & tra cứu ngữ cảnh...
+                    Đang suy nghĩ & tra cứu ngữ cảnh đa miền...
                   </div>
                 </div>
               )}
@@ -725,7 +727,7 @@ export default function Companion() {
 
             {/* Quick Suggestion Chips */}
             {messages.length <= 3 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 my-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 my-3.5">
                 {QUICK_PROMPTS.map((prompt, idx) => (
                   <button
                     key={idx}
@@ -733,10 +735,10 @@ export default function Companion() {
                       setSelectedDomain(prompt.domain)
                       handleSend(prompt.text)
                     }}
-                    className="text-left p-2.5 rounded-xl bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/70 text-xs text-zinc-300 hover:text-white transition flex items-center justify-between group"
+                    className="text-left p-3 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-accent-500/50 text-xs font-medium text-zinc-300 hover:text-white transition-all duration-200 flex items-center justify-between group shadow-sm active:scale-98"
                   >
                     <span>{prompt.label}</span>
-                    <ChevronRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-accent-400 transition" />
+                    <ChevronRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-accent-400 group-hover:translate-x-0.5 transition-all" />
                   </button>
                 ))}
               </div>

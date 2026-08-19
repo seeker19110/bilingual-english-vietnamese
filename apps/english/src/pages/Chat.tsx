@@ -73,33 +73,35 @@ function SetupScreen({
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 overflow-y-auto">
-      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center mb-5 shadow-xl shadow-accent-500/25 animate-scale-in">
-        <Sparkles className="w-8 h-8 text-white" />
+      <div className="w-18 h-18 rounded-3xl bg-gradient-to-br from-accent-500 via-accent-600 to-indigo-600 flex items-center justify-center mb-5 shadow-xl shadow-accent-500/25 animate-scale-in p-4">
+        <Sparkles className="w-9 h-9 text-white drop-shadow-md" />
       </div>
-      <h2 className="text-xl font-bold text-white mb-1 animate-fade-in delay-50">
+      <h2 className="text-2xl font-extrabold text-white mb-1.5 tracking-tight animate-fade-in delay-50">
         {isA ? 'Chọn tình huống luyện tập' : 'Choose a practice situation'}
       </h2>
-      <p className="text-zinc-400 text-sm mb-8 animate-fade-in delay-100">
-        {isA ? 'AI sẽ đóng vai đối tác hội thoại' : 'AI will role-play a conversation partner'}
+      <p className="text-zinc-400 text-sm mb-6 animate-fade-in delay-100 text-center">
+        {isA
+          ? 'AI sẽ đóng vai đối tác hội thoại tự nhiên'
+          : 'AI will role-play a conversation partner'}
       </p>
 
-      <div className="w-full max-w-sm space-y-4 animate-fade-up delay-150">
+      <div className="w-full max-w-sm space-y-4.5 animate-fade-up delay-150 bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 shadow-xl backdrop-blur-md">
         {/* Từ mục tiêu từ lộ trình — AI sẽ dẫn dắt để học viên DÙNG các từ này */}
         {practiceWords && practiceWords.length > 0 && (
-          <div className="bg-teal-500/10 border border-teal-500/30 rounded-xl px-4 py-3">
-            <p className="text-xs font-semibold text-teal-300 theme-light:text-teal-800 mb-1">
+          <div className="bg-teal-500/10 border border-teal-500/30 rounded-2xl px-4 py-3">
+            <p className="text-xs font-bold text-teal-300 theme-light:text-teal-800 mb-1">
               🎯{' '}
               {isA
                 ? `Luyện ${practiceWords.length} từ vừa học`
                 : `Practice ${practiceWords.length} new words`}
             </p>
-            <p className="text-xs text-zinc-400 break-words">{practiceWords.join(' · ')}</p>
+            <p className="text-xs text-zinc-300 break-words">{practiceWords.join(' · ')}</p>
           </div>
         )}
         {/* Tình huống */}
         <div>
-          <label htmlFor="situation" className="text-xs font-medium text-zinc-400 mb-2 block">
-            {isA ? 'Tình huống' : 'Situation'}
+          <label htmlFor="situation" className="text-xs font-semibold text-zinc-300 mb-2 block">
+            {isA ? 'Tình huống đối thoại' : 'Situation'}
           </label>
           <div className="relative">
             <select
@@ -107,7 +109,7 @@ function SetupScreen({
               name="situation"
               value={situation}
               onChange={(e) => setSituation(e.target.value)}
-              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white appearance-none outline-none focus:border-accent-500/70 transition"
+              className="w-full bg-zinc-950/90 border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm text-white appearance-none outline-none focus:border-accent-500/70 transition shadow-inner"
             >
               {SITUATIONS.map((s) => (
                 <option key={s.value} value={s.value}>
@@ -115,14 +117,14 @@ function SetupScreen({
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
+            <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
           </div>
         </div>
 
         {/* Trình độ */}
         <div>
-          <label className="text-xs font-medium text-zinc-400 mb-2 block">
-            {isA ? 'Trình độ' : 'Level'}
+          <label className="text-xs font-semibold text-zinc-300 mb-2 block">
+            {isA ? 'Trình độ hiện tại' : 'Level'}
           </label>
           <div className="grid grid-cols-3 gap-2">
             {LEVELS.map((l) => (
@@ -132,17 +134,17 @@ function SetupScreen({
                   levelTouched.current = true
                   setLevel(l.value)
                 }}
-                className={`py-2.5 rounded-xl text-sm font-medium border transition active:scale-[0.97] ${
+                className={`py-2.5 rounded-2xl text-xs font-semibold border transition-all duration-200 active:scale-95 ${
                   level === l.value
-                    ? 'bg-gradient-to-br from-accent-600 to-accent-500 border-transparent text-white shadow-md shadow-accent-500/20'
-                    : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300'
+                    ? 'bg-gradient-to-r from-accent-600 to-accent-500 border-transparent text-white shadow-md shadow-accent-500/25 ring-1 ring-accent-400/40'
+                    : 'bg-zinc-950/70 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
                 }`}
               >
                 {isA ? l.labelA : l.labelB}
               </button>
             ))}
           </div>
-          <p className="text-xs text-zinc-400 mt-1.5 text-center">
+          <p className="text-xs text-zinc-400 mt-2 text-center">
             {isA
               ? LEVELS.find((l) => l.value === level)?.descA
               : LEVELS.find((l) => l.value === level)?.descB}
@@ -150,7 +152,7 @@ function SetupScreen({
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-xs text-red-400 theme-light:text-red-700">
+          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl px-4 py-3 text-xs text-red-400 theme-light:text-red-700">
             {error}
           </div>
         )}
@@ -158,7 +160,7 @@ function SetupScreen({
         <button
           onClick={() => onStart(situation, level)}
           disabled={loading}
-          className="w-full bg-gradient-to-r from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 disabled:opacity-60 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-accent-500/20"
+          className="w-full bg-gradient-to-r from-accent-600 via-accent-500 to-indigo-600 hover:from-accent-500 hover:to-indigo-500 disabled:opacity-60 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-98 flex items-center justify-center gap-2 shadow-lg shadow-accent-500/25 mt-2"
         >
           {loading ? (
             <>
@@ -230,7 +232,7 @@ function Bubble({
   if (msg.role === 'user') {
     return (
       <div className={`flex justify-end ${isNew ? 'animate-fade-in' : ''}`}>
-        <div className="max-w-[78%] bg-gradient-to-br from-accent-600 to-accent-500 text-white rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm shadow-accent-500/15 break-words">
+        <div className="max-w-[82%] sm:max-w-[75%] bg-gradient-to-r from-accent-600 to-accent-500 text-white rounded-3xl rounded-tr-xs px-5 py-3.5 text-sm leading-relaxed shadow-md shadow-accent-600/20 break-words">
           {msg.content}
         </div>
       </div>
@@ -250,27 +252,27 @@ function Bubble({
 
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
-      <div className="max-w-[85%] space-y-2">
-        <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 border border-zinc-700/30 break-words">
+      <div className="max-w-[88%] sm:max-w-[78%] space-y-2.5">
+        <div className="bg-zinc-900/90 text-zinc-100 rounded-3xl rounded-tl-xs p-4.5 border border-zinc-800/80 break-words shadow-sm">
           {speechText && (
             <KaraokeText
               text={speechText}
               lang={speechLang}
-              textClass="text-sm leading-relaxed text-zinc-100"
+              textClass="text-sm leading-relaxed text-zinc-100 font-medium"
             />
           )}
         </div>
 
         {feedbackText && (
-          <div className="bg-amber-500/8 border border-amber-500/20 border-l-2 border-l-amber-400 rounded-r-xl rounded-bl-sm px-3 py-2.5">
-            <div className="flex items-start gap-1.5">
+          <div className="bg-amber-500/10 border border-amber-500/25 border-l-4 border-l-amber-400 rounded-2xl px-4 py-3 shadow-inner">
+            <div className="flex items-start gap-2">
               <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
                 ✅
               </span>
               <KaraokeText
                 text={feedbackText}
                 lang={feedbackLang}
-                textClass="text-xs leading-relaxed text-amber-200 theme-light:text-amber-800"
+                textClass="text-xs leading-relaxed text-amber-200 theme-light:text-amber-800 font-medium"
                 buttonClass="flex-1"
                 iconSize="xs"
               />
@@ -283,11 +285,11 @@ function Bubble({
                   onClick={() => handleVote('up')}
                   disabled={!!voted}
                   aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
-                  className={`h-11 w-11 flex items-center justify-center rounded-full text-xs transition ${
+                  className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
                     voted === null
-                      ? 'opacity-60 hover:opacity-100'
+                      ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
                       : voted === 'up'
-                        ? ''
+                        ? 'scale-110'
                         : 'disabled:opacity-25'
                   }`}
                 >
@@ -298,11 +300,11 @@ function Bubble({
                   onClick={() => handleVote('down')}
                   disabled={!!voted}
                   aria-label={dir === 'A' ? 'Nhận xét sai/thiếu' : 'Feedback is wrong/incomplete'}
-                  className={`h-11 w-11 flex items-center justify-center rounded-full text-xs transition ${
+                  className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
                     voted === null
-                      ? 'opacity-60 hover:opacity-100'
+                      ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
                       : voted === 'down'
-                        ? ''
+                        ? 'scale-110'
                         : 'disabled:opacity-25'
                   }`}
                 >

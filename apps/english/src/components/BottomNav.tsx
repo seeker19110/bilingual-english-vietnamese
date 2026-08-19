@@ -76,9 +76,12 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-40 h-[5.25rem] pb-safe bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60"
+      className="fixed bottom-0 inset-x-0 z-40 h-[5.25rem] pb-safe bg-zinc-950/90 backdrop-blur-xl border-t border-zinc-800/80 shadow-2xl shadow-black/40"
       aria-label={T.home}
     >
+      {/* Viền sáng gradient đa sắc tinh tế ở đỉnh thanh điều hướng */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
+
       {/* Vùng bắt cử chỉ Reachability — lồng NGAY TRONG nav (nav đã `fixed` nên tự
           làm containing block, đặt `absolute -top-[2rem]` là bám thẳng lên mép
           trên của CHÍNH nav này). touchAction 'none' để trình duyệt không chiếm
@@ -105,20 +108,32 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
           </div>
         </div>
       )}
-      <div className="max-w-3xl mx-auto h-full grid grid-cols-5">
+      <div className="max-w-3xl mx-auto h-full grid grid-cols-5 px-1">
         {TABS.map(({ key, to, icon: Icon, label, active }) => (
           <Link
             key={key}
             to={to}
             aria-current={active ? 'page' : undefined}
-            className={`tap-44 flex flex-col items-center justify-center gap-1 text-center text-xs font-medium leading-tight transition ${
+            className={`tap-44 relative flex flex-col items-center justify-center gap-1 text-center text-xs font-medium leading-tight transition-all duration-200 group ${
               active
-                ? 'text-accent-400 theme-light:text-accent-800'
+                ? 'text-accent-400 theme-light:text-accent-800 font-semibold'
                 : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
-            <Icon className="w-6 h-6" />
-            {label}
+            <div
+              className={`flex items-center justify-center py-1 px-2.5 rounded-xl transition-all duration-200 ${
+                active
+                  ? 'bg-accent-500/15 text-accent-400 theme-light:text-accent-800 shadow-sm shadow-accent-500/20 scale-105'
+                  : 'group-hover:bg-zinc-800/40 group-active:scale-95'
+              }`}
+            >
+              <Icon
+                className={`w-5 h-5 transition-transform duration-200 ${
+                  active ? 'scale-110' : 'group-hover:scale-105'
+                }`}
+              />
+            </div>
+            <span className="truncate max-w-[4.5rem] tracking-tight">{label}</span>
           </Link>
         ))}
       </div>

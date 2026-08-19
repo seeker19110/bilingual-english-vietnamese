@@ -101,24 +101,34 @@ function GameResult({
   onRetry: () => void
   onExit: () => void
 }) {
+  const pct = total > 0 ? (score / total) * 100 : 0
+  const emoji = pct >= 80 ? '🏆' : pct >= 50 ? '🌟' : '💪'
+
   return (
-    <div className="text-center space-y-4 py-8">
-      <p className="text-4xl font-bold text-white">
-        {score}/{total}
-      </p>
-      <p className="text-sm text-zinc-400">
-        {isA ? 'Điểm phiên luyện tập này' : 'Score for this session'}
-      </p>
-      <div className="flex items-center justify-center gap-3">
+    <div className="text-center space-y-6 py-10 max-w-sm mx-auto animate-fade-up">
+      <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-accent-500/20 to-indigo-500/10 border border-accent-500/30 flex items-center justify-center text-4xl shadow-lg shadow-accent-500/15">
+        {emoji}
+      </div>
+      <div>
+        <p className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+          {score}
+          <span className="text-2xl text-zinc-500 font-bold">/{total}</span>
+        </p>
+        <p className="text-sm font-medium text-zinc-400 mt-1.5">
+          {isA ? 'Điểm phiên luyện tập này' : 'Score for this session'}
+        </p>
+      </div>
+
+      <div className="flex items-center justify-center gap-3 pt-2">
         <button
           onClick={onRetry}
-          className="flex items-center gap-1.5 px-4 py-2.5 min-h-11 rounded-xl bg-zinc-800 text-zinc-200 text-sm font-medium hover:bg-zinc-700 transition"
+          className="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 min-h-11 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-200 text-sm font-semibold hover:bg-zinc-800 hover:border-zinc-700 transition-all duration-200 active:scale-95 shadow-sm"
         >
           <RotateCcw className="w-4 h-4" /> {isA ? 'Làm lại' : 'Retry'}
         </button>
         <button
           onClick={onExit}
-          className="px-4 py-2.5 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition"
+          className="flex-1 px-5 py-3.5 min-h-11 rounded-2xl bg-gradient-to-r from-accent-500 to-accent-600 text-white text-sm font-bold hover:from-accent-400 hover:to-accent-500 transition-all duration-200 shadow-md shadow-accent-500/25 active:scale-95"
         >
           {isA ? 'Về Luyện tập' : 'Back to Practice'}
         </button>
@@ -1279,9 +1289,11 @@ export default function Practice() {
 
   function Section({
     title,
+    badgeColor,
     items,
   }: {
     title: string
+    badgeColor: string
     items: {
       key: string
       icon: typeof Headphones
@@ -1291,25 +1303,30 @@ export default function Practice() {
     }[]
   }) {
     return (
-      <div className="mb-7">
-        <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-3">
-          {title}
-        </h2>
-        <div className="space-y-2.5">
+      <div className="mb-8 animate-fade-in">
+        <div className="flex items-center gap-2 mb-3.5">
+          <span className={`w-2 h-2 rounded-full ${badgeColor}`} />
+          <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">{title}</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {items.map((it) => (
             <button
               key={it.key}
               onClick={it.action}
-              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 hover:border-accent-500/40 hover:bg-zinc-900 transition text-left"
+              className="w-full flex items-center gap-3.5 p-4 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/50 hover:bg-zinc-850 transition-all duration-200 text-left group shadow-sm active:scale-[0.98]"
             >
-              <span className="shrink-0 w-10 h-10 rounded-lg bg-accent-500/15 text-accent-300 flex items-center justify-center">
+              <span className="shrink-0 w-11 h-11 rounded-2xl bg-accent-500/15 text-accent-300 theme-light:text-accent-800 flex items-center justify-center group-hover:scale-105 transition-transform shadow-inner">
                 <it.icon className="w-5 h-5" />
               </span>
               <span className="flex-1 min-w-0">
-                <span className="block text-sm font-semibold text-white truncate">{it.title}</span>
-                <span className="block text-xs text-zinc-400 truncate">{it.desc}</span>
+                <span className="block text-sm font-bold text-white group-hover:text-accent-300 transition-colors truncate">
+                  {it.title}
+                </span>
+                <span className="block text-xs text-zinc-400 mt-0.5 line-clamp-1 leading-normal">
+                  {it.desc}
+                </span>
               </span>
-              <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+              <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-200 group-hover:translate-x-0.5 transition-all shrink-0" />
             </button>
           ))}
         </div>
@@ -1320,18 +1337,30 @@ export default function Practice() {
   return (
     <>
       <Layout back={false} />
-      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
+      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
         <PageHeader
-          title={isA ? 'Luyện tập' : 'Practice'}
+          title={isA ? 'Luyện tập 4 Kỹ năng' : 'Skills Practice'}
           subtitle={
             isA
-              ? 'Nghe · Nói · Viết — chọn bài tập bên dưới'
-              : 'Listening · Speaking · Writing — pick an exercise below'
+              ? 'Nghe · Nói · Đọc · Viết — chọn chế độ luyện tập bên dưới'
+              : 'Listening · Speaking · Reading · Writing — pick an exercise below'
           }
         />
-        <Section title={isA ? 'Nghe' : 'Listening'} items={listening} />
-        <Section title={isA ? 'Nói' : 'Speaking'} items={speaking} />
-        <Section title={isA ? 'Viết' : 'Writing'} items={writing} />
+        <Section
+          title={isA ? 'Luyện Nghe & Phản Xạ' : 'Listening & Comprehension'}
+          badgeColor="bg-rose-500"
+          items={listening}
+        />
+        <Section
+          title={isA ? 'Luyện Nói Song Ngữ & Phát Âm' : 'Speaking & Pronunciation'}
+          badgeColor="bg-sky-500"
+          items={speaking}
+        />
+        <Section
+          title={isA ? 'Luyện Viết & Ngữ Pháp' : 'Writing & Grammar'}
+          badgeColor="bg-violet-500"
+          items={writing}
+        />
       </main>
     </>
   )
