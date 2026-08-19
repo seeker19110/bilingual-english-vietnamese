@@ -111,6 +111,8 @@ import actionCanvasHandler from './api/action-canvas.js'
 import neuralCurriculumHandler from './api/neural-curriculum.js'
 import meshTelemetryHandler from './api/mesh-telemetry.js'
 import proactiveAgentHandler from './api/proactive-agent.js'
+import debateArenaHandler from './api/debate-arena.js'
+import stemScratchpadHandler from './api/stem-scratchpad.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -347,6 +349,10 @@ app.all('/api/neural-curriculum', wrapEdge(neuralCurriculumHandler))
 app.all('/api/mesh-telemetry', wrapEdge(meshTelemetryHandler))
 // Autonomous Proactive Agent & Goal Auto-Pilot (Platform V5 Phase 1) — Proactive Nudges & Action Dispatcher.
 app.all('/api/proactive-agent', wrapEdge(proactiveAgentHandler))
+// AI Debate Arena & Socratic Multi-Agent (Platform V5 Phase 2) — Live debate & logic rubric.
+app.all('/api/debate-arena', wrapEdge(debateArenaHandler))
+// STEM Interactive Scratchpad (Platform V5 Phase 2) — Step-by-step math/chem/physics logic validator.
+app.all('/api/stem-scratchpad', wrapEdge(stemScratchpadHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

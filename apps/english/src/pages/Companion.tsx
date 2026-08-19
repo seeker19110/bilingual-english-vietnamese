@@ -52,6 +52,8 @@ import AvatarEmbodimentSelector, {
 import EdgeAiIndicator from '../components/EdgeAi/EdgeAiIndicator'
 import ProactiveNudgeBanner from '../components/ProactiveAgent/ProactiveNudgeBanner'
 import GoalAutoPilotCard from '../components/ProactiveAgent/GoalAutoPilotCard'
+import DebateArenaCard from '../components/DebateArena/DebateArenaCard'
+import StemScratchpadCard from '../components/StemScratchpad/StemScratchpadCard'
 import { fetchProactiveAgentState } from '../lib/proactiveAgentApi'
 import type { ProactiveAgentState } from '../../../../packages/core-contracts/proactiveAgent'
 import { useRealtimeVoice } from '../lib/useRealtimeVoice'
@@ -358,6 +360,8 @@ export default function Companion() {
             />
           )}
 
+          <DebateArenaCard />
+          <StemScratchpadCard />
           <NeuralMicroCurriculumCard />
           <AcousticPhoneticsLab />
           <SubconsciousInsightsCard />
