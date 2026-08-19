@@ -23,7 +23,7 @@
 | Health check            | `curl https://en-vi.donghanhcungban.org/api/health`                                            |
 | Database                | PostgreSQL tự host, db `dhcb`, user `dhcb_app`                                                 |
 | Backup DB               | `/var/backups/dhcb_YYYYMMDD.sql.gz` (cron 3h sáng, giữ 7 bản)                                  |
-| Audio storage           | `STORAGE_DRIVER` — `local` (`/var/www/dhcb/uploads/` trên VPS)                                 |
+| Audio storage           | `STORAGE_DRIVER` — `r2` (Cloudflare R2, độc lập VPS)                                           |
 | Nhà cung cấp VPS/domain | _(điền: tên nhà cung cấp, cách đăng nhập control panel để restart VPS nếu SSH không vào được)_ |
 | Người liên hệ khẩn      | _(điền: SĐT/email người quản trị dự phòng nếu không phải chỉ 1 người)_                         |
 

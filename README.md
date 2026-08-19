@@ -57,6 +57,13 @@ Roadmap chính thức: [V2 Roadmap](docs/architecture-v2/21-ROADMAP.md). Kiến 
 English Tutor OS 46 phase là tài liệu v1 đã **frozen**. Chỉ tiếp tục phần nào phục vụ stability,
 migration hoặc domain Learning của V2.
 
+## Cấu hình Hệ thống & Runtime
+
+- **Runtime & Tooling (Khóa cứng phiên bản)**: Node.js 22 LTS, React 18.3, Tailwind CSS v3.4, ESLint 8 (`.eslintrc.cjs`). Không tự ý nâng cấp framework/tooling khi chưa đánh giá tương thích.
+- **Server VPS Khuyến nghị**: Ubuntu 24.04 (3–4 vCPU, 4–8 GB RAM, PM2 Cluster Mode, PostgreSQL 16+, Redis 7+, Cloudflare R2 cho audio cache).
+- **Client Web/PWA**: Trình duyệt Chromium ≥ 113 (WebGPU cho Edge AI 0ms), Microphone cho STT & Realtime Voice.
+- Xem chi tiết tại: [System Requirements](docs/system-requirements.md) và [Deploy VPS Ubuntu](docs/deploy-vps-ubuntu.md).
+
 ## Chạy cục bộ
 
 Yêu cầu Node.js 22+ và PostgreSQL disposable/local; không dùng production credentials cho test.
