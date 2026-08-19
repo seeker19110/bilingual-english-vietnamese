@@ -113,6 +113,8 @@ import meshTelemetryHandler from './api/mesh-telemetry.js'
 import proactiveAgentHandler from './api/proactive-agent.js'
 import debateArenaHandler from './api/debate-arena.js'
 import stemScratchpadHandler from './api/stem-scratchpad.js'
+import metacognitiveReflectionHandler from './api/metacognitive-reflection.js'
+import memoryPalaceHandler from './api/memory-palace.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -353,6 +355,10 @@ app.all('/api/proactive-agent', wrapEdge(proactiveAgentHandler))
 app.all('/api/debate-arena', wrapEdge(debateArenaHandler))
 // STEM Interactive Scratchpad (Platform V5 Phase 2) — Step-by-step math/chem/physics logic validator.
 app.all('/api/stem-scratchpad', wrapEdge(stemScratchpadHandler))
+// Deep Metacognitive Reflection Engine & Socratic Journal (Platform V5 Phase 3) — Peak Metacognition & Bias Detection.
+app.all('/api/metacognitive-reflection', wrapEdge(metacognitiveReflectionHandler))
+// Spatial Multi-Sensory Memory Palace (Platform V5 Phase 3) — Method of Loci & Neural Anchors.
+app.all('/api/memory-palace', wrapEdge(memoryPalaceHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

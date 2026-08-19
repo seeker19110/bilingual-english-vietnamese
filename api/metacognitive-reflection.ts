@@ -1,0 +1,97 @@
+// api/metacognitive-reflection.ts — REST handler cho Metacognitive Reflection & Socratic Journaling.
+import { jsonResponse } from './_lib/http.js'
+import { validateAuth } from '../packages/core-auth/security.js'
+import { MetacognitiveReflectionService } from '../packages/core-personal/metacognitiveReflectionService.js'
+import { MetacognitiveReflection } from '../packages/core-contracts/metacognitiveReflection.js'
+
+const userReflectionsMap = new Map<string, MetacognitiveReflection[]>()
+
+export default async function handler(req: Request): Promise<Response> {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+    })
+  }
+
+  const auth = await validateAuth(req)
+  if (!auth) {
+    return jsonResponse(
+      {
+        error: 'Unauthorized',
+        message: 'Yêu cầu đăng nhập để truy cập Nhật ký Phản tỉnh Nhận thức.',
+      },
+      401,
+    )
+  }
+
+  const personId = auth.userId
+  const url = new URL(req.url)
+  const action = url.searchParams.get('action')
+
+  if (req.method === 'GET') {
+    if (action === 'daily_prompt') {
+      const rawDomain = url.searchParams.get('domain')
+      const domain = (
+        rawDomain === 'career' ||
+        rawDomain === 'work' ||
+        rawDomain === 'startup' ||
+        rawDomain === 'life'
+          ? rawDomain
+          : 'learning'
+      ) as MetacognitiveReflection['domain']
+      const contextAnchor = url.searchParams.get('contextAnchor') || undefined
+      const prompt = MetacognitiveReflectionService.generateDailySocraticPrompt(
+        domain,
+        contextAnchor,
+      )
+      return jsonResponse({ success: true, prompt }, 200)
+    }
+
+    if (action === 'summary') {
+      const list = userReflectionsMap.get(personId) || []
+      const summary = MetacognitiveReflectionService.summarizeReflections(list)
+      return jsonResponse({ success: true, summary, reflections: list }, 200)
+    }
+
+    const list = userReflectionsMap.get(personId) || []
+    return jsonResponse({ success: true, reflections: list }, 200)
+  }
+
+  if (req.method === 'POST') {
+    try {
+      const body = await req.json()
+
+      if (action === 'submit_reflection') {
+        const { title, domain, reflectionPrompt, userReflection } = body
+        if (!reflectionPrompt || !userReflection) {
+          return jsonResponse({ error: 'Missing required reflection fields' }, 400)
+        }
+
+        const analysis = MetacognitiveReflectionService.analyzeReflection(personId, {
+          title,
+          domain: domain || 'learning',
+          reflectionPrompt,
+          userReflection,
+        })
+
+        const currentList = userReflectionsMap.get(personId) || []
+        currentList.unshift(analysis)
+        userReflectionsMap.set(personId, currentList)
+
+        return jsonResponse({ success: true, reflection: analysis }, 200)
+      }
+
+      return jsonResponse({ error: 'Unknown action' }, 400)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      return jsonResponse({ error: 'Failed to process request', details: msg }, 500)
+    }
+  }
+
+  return jsonResponse({ error: 'Method not allowed' }, 405)
+}

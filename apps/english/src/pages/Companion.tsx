@@ -54,6 +54,8 @@ import ProactiveNudgeBanner from '../components/ProactiveAgent/ProactiveNudgeBan
 import GoalAutoPilotCard from '../components/ProactiveAgent/GoalAutoPilotCard'
 import DebateArenaCard from '../components/DebateArena/DebateArenaCard'
 import StemScratchpadCard from '../components/StemScratchpad/StemScratchpadCard'
+import MetacognitiveJournalCard from '../components/MetacognitiveReflection/MetacognitiveJournalCard'
+import MemoryPalaceCard from '../components/MemoryPalace/MemoryPalaceCard'
 import { fetchProactiveAgentState } from '../lib/proactiveAgentApi'
 import type { ProactiveAgentState } from '../../../../packages/core-contracts/proactiveAgent'
 import { useRealtimeVoice } from '../lib/useRealtimeVoice'
@@ -362,6 +364,8 @@ export default function Companion() {
 
           <DebateArenaCard />
           <StemScratchpadCard />
+          <MetacognitiveJournalCard />
+          <MemoryPalaceCard />
           <NeuralMicroCurriculumCard />
           <AcousticPhoneticsLab />
           <SubconsciousInsightsCard />
