@@ -110,29 +110,29 @@ function SetupScreen({
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 overflow-y-auto">
-      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-400 flex items-center justify-center mb-5 shadow-xl shadow-sky-500/25 animate-scale-in">
-        <Mic className="w-8 h-8 text-white" />
+      <div className="w-18 h-18 rounded-3xl bg-gradient-to-br from-sky-500 via-cyan-500 to-indigo-600 flex items-center justify-center mb-5 shadow-xl shadow-sky-500/25 animate-scale-in p-4">
+        <Mic className="w-9 h-9 text-white drop-shadow-md" />
       </div>
-      <h2 className="text-xl font-bold text-white mb-1 animate-fade-in delay-50">
+      <h2 className="text-2xl font-extrabold text-white mb-1.5 tracking-tight animate-fade-in delay-50">
         {isA ? 'Luyện nói song ngữ' : 'Bilingual Speaking Practice'}
       </h2>
       <p className="text-zinc-400 text-sm mb-2 text-center max-w-xs animate-fade-in delay-100">
         {isA ? (
           <>
-            Nói tiếng Anh · AI trả lời bằng <strong className="text-white">giọng Anh</strong> · Sửa
-            lỗi bằng <strong className="text-white">giọng Việt</strong>
+            Nói tiếng Anh · AI trả lời bằng <strong className="text-zinc-200">giọng Anh</strong> ·
+            Sửa lỗi bằng <strong className="text-zinc-200">giọng Việt</strong>
           </>
         ) : (
           <>
             Speak Vietnamese · AI replies in{' '}
-            <strong className="text-white">Vietnamese voice</strong> · Corrects in{' '}
-            <strong className="text-white">English voice</strong>
+            <strong className="text-zinc-200">Vietnamese voice</strong> · Corrects in{' '}
+            <strong className="text-zinc-200">English voice</strong>
           </>
         )}
       </p>
 
       {!(isRecordingSupported() || isSTTSupported()) && (
-        <div className="mt-3 mb-2 text-amber-400 theme-light:text-amber-800 text-xs bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-center max-w-sm animate-fade-in delay-150">
+        <div className="mt-3 mb-2 text-amber-400 theme-light:text-amber-800 text-xs bg-amber-500/10 border border-amber-500/25 rounded-2xl px-4 py-3 text-center max-w-sm animate-fade-in delay-150 shadow-sm">
           {isA ? (
             <>
               Trình duyệt không hỗ trợ giọng nói. Dùng <strong>Chrome</strong> hoặc{' '}
@@ -147,32 +147,32 @@ function SetupScreen({
         </div>
       )}
 
-      <div className="w-full max-w-sm space-y-4 mt-4 animate-fade-up delay-200">
+      <div className="w-full max-w-sm space-y-4.5 mt-4 animate-fade-up delay-200 bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 shadow-xl backdrop-blur-md">
         {/* Từ mục tiêu từ lộ trình — AI sẽ dẫn dắt để học viên DÙNG các từ này */}
         {practiceWords && practiceWords.length > 0 && (
-          <div className="bg-teal-500/10 border border-teal-500/30 rounded-xl px-4 py-3">
-            <p className="text-xs font-semibold text-teal-300 theme-light:text-teal-800 mb-1">
+          <div className="bg-teal-500/10 border border-teal-500/30 rounded-2xl px-4 py-3">
+            <p className="text-xs font-bold text-teal-300 theme-light:text-teal-800 mb-1">
               🎯{' '}
               {isA
                 ? `Luyện ${practiceWords.length} từ vừa học`
                 : `Practice ${practiceWords.length} new words`}
             </p>
-            <p className="text-xs text-zinc-400 break-words">{practiceWords.join(' · ')}</p>
+            <p className="text-xs text-zinc-300 break-words">{practiceWords.join(' · ')}</p>
           </div>
         )}
         <div>
           <label
             htmlFor="speaking-situation"
-            className="text-xs font-medium text-zinc-400 mb-2 block"
+            className="text-xs font-semibold text-zinc-300 mb-2 block"
           >
-            {isA ? 'Tình huống' : 'Situation'}
+            {isA ? 'Tình huống giao tiếp' : 'Situation'}
           </label>
           <div className="relative">
             <select
               id="speaking-situation"
               value={situation}
               onChange={(e) => setSituation(e.target.value)}
-              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white appearance-none outline-none focus:border-sky-500/70 transition"
+              className="w-full bg-zinc-950/90 border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm text-white appearance-none outline-none focus:border-sky-500/70 transition shadow-inner"
             >
               {SITUATIONS.map((s) => (
                 <option key={s.value} value={s.value}>
@@ -180,13 +180,13 @@ function SetupScreen({
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
+            <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
           </div>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-zinc-400 mb-2 block">
-            {isA ? 'Trình độ' : 'Level'}
+          <label className="text-xs font-semibold text-zinc-300 mb-2 block">
+            {isA ? 'Trình độ của bạn' : 'Your level'}
           </label>
           <div className="grid grid-cols-3 gap-2">
             {LEVELS.map((l) => (
@@ -196,10 +196,10 @@ function SetupScreen({
                   levelTouched.current = true
                   setLevel(l.value)
                 }}
-                className={`py-2.5 rounded-xl text-sm font-medium border transition active:scale-[0.97] ${
+                className={`py-2.5 rounded-2xl text-xs font-semibold border transition-all duration-200 active:scale-95 ${
                   level === l.value
-                    ? 'bg-gradient-to-br from-sky-600 to-cyan-500 border-transparent text-white shadow-md shadow-sky-500/20'
-                    : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300'
+                    ? 'bg-gradient-to-r from-sky-500 to-indigo-600 border-transparent text-white shadow-md shadow-sky-500/25 ring-1 ring-sky-400/40'
+                    : 'bg-zinc-950/70 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
                 }`}
               >
                 {isA ? l.labelA : l.labelB}
@@ -211,7 +211,7 @@ function SetupScreen({
         <button
           onClick={() => onStart(situation, level)}
           aria-label={isA ? 'Bắt đầu luyện nói' : 'Start speaking practice'}
-          className="w-full bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] shadow-lg shadow-sky-500/20"
+          className="w-full bg-gradient-to-r from-sky-500 via-cyan-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-98 shadow-lg shadow-sky-500/25 mt-2"
         >
           {isA ? 'Bắt đầu luyện nói →' : 'Start speaking →'}
         </button>
@@ -258,9 +258,7 @@ function HighlightText({
           <span
             key={i}
             className={
-              thisIdx === wordIdx
-                ? `${highlightClass} rounded px-0.5 transition-colors`
-                : 'transition-colors'
+              thisIdx === wordIdx ? `rounded px-0.5 font-medium transition ${highlightClass}` : ''
             }
           >
             {part}
@@ -307,7 +305,7 @@ function SpeakBubble({
   if (msg.role === 'user') {
     return (
       <div className={`flex justify-end ${isNew ? 'animate-fade-in' : ''}`}>
-        <div className="max-w-[78%] bg-gradient-to-br from-sky-600 to-cyan-500 text-white rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm shadow-sky-500/15 break-words">
+        <div className="max-w-[82%] sm:max-w-[75%] bg-gradient-to-r from-sky-600 to-indigo-600 text-white rounded-3xl rounded-tr-xs px-5 py-3.5 text-sm leading-relaxed shadow-md shadow-sky-600/20 break-words">
           {msg.content}
         </div>
       </div>
@@ -317,30 +315,30 @@ function SpeakBubble({
   const feedbackActive = wordSync?.msgId === msg.id && wordSync.field === 'feedback'
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
-      <div className="max-w-[85%] space-y-2">
+      <div className="max-w-[88%] sm:max-w-[78%] space-y-2.5">
         {/* Loa "Nghe lại" đặt BÊN TRÁI văn bản, căn với dòng đầu — thống nhất với
             chuẩn KaraokeText ở mọi trang khác; tap-44 đảm bảo vùng chạm ≥ 44px. */}
-        <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-bl-sm px-4 py-2.5 text-sm leading-relaxed border border-zinc-700/30 flex items-start gap-2 break-words">
+        <div className="bg-zinc-900/90 text-zinc-100 rounded-3xl rounded-tl-xs p-4.5 text-sm leading-relaxed border border-zinc-800/80 flex items-start gap-3 break-words shadow-sm">
           {onPlay && (
             <button
               onClick={onPlay}
               title="Nghe lại"
               aria-label="Nghe lại"
-              className="tap-44 shrink-0 w-7 h-[1.375rem] flex items-center justify-center text-zinc-400 hover:text-sky-400 transition"
+              className="tap-44 shrink-0 w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-500/25 flex items-center justify-center text-sky-400 hover:bg-sky-500/25 transition mt-0.5 shadow-inner"
             >
-              <Volume2 className="w-[1.3125rem] h-[1.3125rem]" />
+              <Volume2 className="w-4 h-4" />
             </button>
           )}
           <HighlightText
             text={msg.speechEn ?? ''}
             active={speechActive}
             wordIdx={wordSync?.wordIdx ?? null}
-            className="flex-1 min-w-0"
+            className="flex-1 min-w-0 font-medium"
           />
         </div>
         {msg.feedbackVi && (
-          <div className="bg-amber-500/8 border border-amber-500/20 border-l-2 border-l-amber-400 rounded-r-xl rounded-bl-sm px-3 py-2.5 text-xs leading-relaxed">
-            <div className="flex items-start gap-1.5">
+          <div className="bg-amber-500/10 border border-amber-500/25 border-l-4 border-l-amber-400 rounded-2xl px-4 py-3 text-xs leading-relaxed shadow-inner">
+            <div className="flex items-start gap-2">
               <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
                 ✅
               </span>
@@ -348,7 +346,7 @@ function SpeakBubble({
                 text={msg.feedbackVi}
                 active={feedbackActive}
                 wordIdx={wordSync?.wordIdx ?? null}
-                className="text-amber-200 theme-light:text-amber-800"
+                className="text-amber-200 theme-light:text-amber-800 font-medium flex-1"
                 highlightClass="bg-amber-500/25 text-amber-100 theme-light:text-amber-900"
               />
               {/* Vote nhận xét đúng/sai — mục ⑤ T3, xem tutorFeedback.ts.
@@ -360,11 +358,11 @@ function SpeakBubble({
                   onClick={() => handleVote('up')}
                   disabled={!!voted}
                   aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
-                  className={`h-11 w-11 flex items-center justify-center rounded-full text-xs transition ${
+                  className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
                     voted === null
-                      ? 'opacity-60 hover:opacity-100'
+                      ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
                       : voted === 'up'
-                        ? ''
+                        ? 'scale-110'
                         : 'disabled:opacity-25'
                   }`}
                 >

@@ -99,7 +99,7 @@ const ACCENT: Record<LevelProgress['accent'], { bar: string; text: string; soft:
   },
 }
 
-// Một thẻ số liệu nhỏ (icon + số to + nhãn).
+// Một thẻ số liệu nhỏ (icon + số to + nhãn) kiểu Bento hiện đại.
 function StatCard({
   icon,
   value,
@@ -114,11 +114,17 @@ function StatCard({
   color: string
 }) {
   return (
-    <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 flex flex-col gap-1.5">
-      <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${color}`}>{icon}</div>
-      <p className="text-2xl font-bold text-white leading-none mt-1">{value}</p>
-      <p className="text-xs text-zinc-400 leading-tight">{label}</p>
-      {sub && <p className="text-[11px] text-zinc-400 leading-tight">{sub}</p>}
+    <div className="bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700/80 rounded-2xl sm:rounded-3xl p-4 flex flex-col justify-between gap-2 transition-all duration-200 hover:shadow-md">
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
+        {icon}
+      </div>
+      <div>
+        <p className="text-2xl sm:text-3xl font-extrabold text-white leading-none tracking-tight">
+          {value}
+        </p>
+        <p className="text-xs font-medium text-zinc-400 leading-tight mt-1">{label}</p>
+        {sub && <p className="text-[11px] text-zinc-400 leading-tight mt-0.5">{sub}</p>}
+      </div>
     </div>
   )
 }
@@ -126,13 +132,13 @@ function StatCard({
 // Vòng tiến độ MỤC TIÊU TUẦN (② M1) — SVG tròn, % = số ngày đã học / mục tiêu.
 // Dùng stroke="currentColor" + class text-* để ăn theo design tokens (--a-*).
 function GoalRing({ done, goal }: { done: number; goal: number }) {
-  const size = 72
+  const size = 76
   const stroke = 8
   const r = (size - stroke) / 2
   const c = 2 * Math.PI * r
   const pct = Math.min(1, goal > 0 ? done / goal : 0)
   return (
-    <div className="relative w-[72px] h-[72px] shrink-0" aria-hidden="true">
+    <div className="relative w-[76px] h-[76px] shrink-0" aria-hidden="true">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
         <circle
           cx={size / 2}
@@ -141,7 +147,7 @@ function GoalRing({ done, goal }: { done: number; goal: number }) {
           strokeWidth={stroke}
           fill="none"
           stroke="currentColor"
-          className="text-zinc-800"
+          className="text-zinc-800/80"
         />
         <circle
           cx={size / 2}
@@ -153,10 +159,10 @@ function GoalRing({ done, goal }: { done: number; goal: number }) {
           stroke="currentColor"
           strokeDasharray={c}
           strokeDashoffset={c * (1 - pct)}
-          className="text-accent-400 transition-all"
+          className="text-accent-400 transition-all duration-500"
         />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-white">
+      <span className="absolute inset-0 flex items-center justify-center text-sm font-extrabold text-white">
         {done}/{goal}
       </span>
     </div>
@@ -182,9 +188,9 @@ function weeklyLine(p: WeeklyProgress, vi: boolean): string {
 // Thanh tiến độ ngang đơn giản.
 function Bar({ pct, color }: { pct: number; color: string }) {
   return (
-    <div className="h-2 rounded-full bg-zinc-800 overflow-hidden">
+    <div className="h-2 rounded-full bg-zinc-800/90 overflow-hidden">
       <div
-        className={`h-full rounded-full ${color} transition-all`}
+        className={`h-full rounded-full ${color} transition-all duration-500 shadow-sm`}
         style={{ width: `${Math.min(100, pct)}%` }}
       />
     </div>
@@ -302,57 +308,69 @@ export default function Dashboard() {
         />
 
         {/* ── Streak + biểu đồ 7 ngày ─────────────────────────────────── */}
-        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 animate-fade-in">
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm animate-fade-in">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3.5">
               <div
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center ${stats.streak > 0 ? 'bg-orange-500/15' : 'bg-zinc-800'}`}
+                className={`w-13 h-13 rounded-2xl flex items-center justify-center p-3 ${
+                  stats.streak > 0
+                    ? 'bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/30'
+                    : 'bg-zinc-800'
+                }`}
               >
                 <Flame
-                  className={`w-6 h-6 ${stats.streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
+                  className={`w-7 h-7 ${stats.streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
                 />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white leading-none">{stats.streak}</p>
-                <p className="text-xs text-zinc-400 mt-1">{T.streakDays}</p>
+                <p className="text-3xl font-extrabold text-white leading-none tracking-tight">
+                  {stats.streak}
+                </p>
+                <p className="text-xs font-medium text-zinc-400 mt-1">{T.streakDays}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-white leading-none">{stats.weekTotal}</p>
-              <p className="text-xs text-zinc-400 mt-1">
+              <p className="text-3xl font-extrabold text-white leading-none tracking-tight">
+                {stats.weekTotal}
+              </p>
+              <p className="text-xs font-medium text-zinc-400 mt-1">
                 {vi ? 'hoạt động / 7 ngày' : 'activities / 7 days'}
               </p>
             </div>
           </div>
 
           {/* Cột hoạt động 7 ngày gần nhất */}
-          <div className="flex items-end justify-between gap-1.5 h-20">
+          <div className="flex items-end justify-between gap-2 h-20 pt-2">
             {stats.week.map((d) => (
               <div key={d.date} className="flex-1 flex flex-col items-center gap-1.5">
                 <div className="w-full flex-1 flex items-end">
                   <div
-                    className={`w-full rounded-md transition-all ${d.active ? 'bg-gradient-to-t from-orange-500 to-amber-400' : 'bg-zinc-800'}`}
-                    style={{ height: `${d.active ? Math.max(14, (d.count / maxDay) * 100) : 6}%` }}
+                    className={`w-full rounded-lg transition-all duration-300 ${
+                      d.active
+                        ? 'bg-gradient-to-t from-orange-500 to-amber-400 shadow-sm shadow-orange-500/20'
+                        : 'bg-zinc-800/80'
+                    }`}
+                    style={{ height: `${d.active ? Math.max(16, (d.count / maxDay) * 100) : 8}%` }}
                     title={`${d.count} ${vi ? 'hoạt động' : 'activities'}`}
                   />
                 </div>
-                <span className="text-[11px] text-zinc-400">{dow[d.dow]}</span>
+                <span className="text-[11px] font-medium text-zinc-400">{dow[d.dow]}</span>
               </div>
             ))}
           </div>
         </section>
 
         {/* ── Mục tiêu tuần (② M1) ────────────────────────────────────── */}
-        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 animate-fade-in">
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm animate-fade-in">
           <div className="flex items-center gap-4">
             <GoalRing done={stats.weekly.daysDone} goal={stats.weekly.goal} />
             <div className="min-w-0 flex-1">
-              <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+              <h2 className="text-sm font-bold text-zinc-200 flex items-center gap-2">
                 <CalendarCheck className="w-4 h-4 text-accent-400" />
                 {vi ? 'Mục tiêu tuần' : 'Weekly goal'}
               </h2>
               {/* Số liệu cho screen reader — vòng SVG bên trái là aria-hidden */}
-              <p className="text-sm text-zinc-200 mt-1">
+              <p className="text-sm text-zinc-300 mt-1 leading-relaxed">
                 <span className="sr-only">
                   {vi
                     ? `Đã học ${stats.weekly.daysDone} trên ${stats.weekly.goal} ngày mục tiêu. `
@@ -362,7 +380,7 @@ export default function Dashboard() {
               </p>
               <button
                 onClick={() => nav('/profile')}
-                className="text-xs text-accent-400 theme-light:text-accent-800 hover:underline mt-1.5"
+                className="text-xs font-medium text-accent-400 theme-light:text-accent-800 hover:underline mt-1.5 inline-flex items-center gap-1"
               >
                 {vi ? 'Đổi mục tiêu ở Hồ sơ →' : 'Change goal in Profile →'}
               </button>
@@ -371,7 +389,7 @@ export default function Dashboard() {
         </section>
 
         {/* ── Lịch hoạt động 5 tuần (heatmap) ─────────────────────────── */}
-        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 animate-fade-in">
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm animate-fade-in">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
               <CalendarDays className="w-4 h-4 text-accent-400" />{' '}

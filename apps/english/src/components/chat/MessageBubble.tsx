@@ -65,17 +65,17 @@ export default function MessageBubble({ message, isMine, onDelete }: MessageBubb
 
         {/* Khung nội dung tin nhắn */}
         <div
-          className={`rounded-2xl px-4 py-2.5 shadow-sm text-sm break-words relative ${
+          className={`rounded-2xl px-4 py-2.5 shadow-sm text-sm break-words relative transition-all duration-200 ${
             isMine
-              ? 'bg-blue-600 text-white rounded-tr-xs'
-              : 'bg-zinc-800/90 text-zinc-100 border border-white/5 rounded-tl-xs'
+              ? 'bg-gradient-to-r from-accent-600 to-accent-500 text-white rounded-tr-xs shadow-md shadow-accent-500/15'
+              : 'bg-zinc-900/90 text-zinc-100 border border-zinc-800/80 rounded-tl-xs'
           }`}
         >
           <p className="whitespace-pre-wrap leading-relaxed select-text">{message.content}</p>
 
           <div
             className={`flex items-center gap-1.5 justify-end mt-1 text-[10px] ${
-              isMine ? 'text-blue-200' : 'text-zinc-400'
+              isMine ? 'text-accent-100/80' : 'text-zinc-400'
             }`}
           >
             {isFiltered && (

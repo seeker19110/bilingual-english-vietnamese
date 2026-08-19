@@ -11,11 +11,15 @@ interface Props {
 
 export default function PageHeader({ title, subtitle, className = '' }: Props) {
   return (
-    <div className={`mb-5 ${className}`}>
-      <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-tight">
+    <div className={`mb-6 ${className}`}>
+      <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
         {title}
       </h1>
-      {subtitle && <p className="text-sm text-zinc-400 mt-1.5">{subtitle}</p>}
+      {subtitle && (
+        <p className="text-sm text-zinc-400 theme-light:text-zinc-600 mt-1.5 leading-relaxed font-normal">
+          {subtitle}
+        </p>
+      )}
     </div>
   )
 }

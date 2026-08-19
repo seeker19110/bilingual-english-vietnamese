@@ -30,7 +30,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
   const streak = user ? getStreak(user.id) : 0
 
   return (
-    <header className="sticky top-0 z-50 bg-zinc-950 border-b border-zinc-800/60 relative pt-safe">
+    <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-800/80 relative pt-safe shadow-sm">
       {/* Tấm nền ĐẶC phủ toàn bộ khoảng phía TRÊN header.
           Vì sao cần: tính năng "kéo 1 tay" (Reachability — lib/useOneHandedDrag.ts) đẩy cả
           trang xuống 45% chiều cao màn hình bằng transform. Header là sticky nên tụt xuống
@@ -44,7 +44,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
       />
 
       {/* Gradient accent line trên cùng */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/40 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-500/50 to-transparent" />
 
       <OfflineStatusBanner />
 
@@ -54,10 +54,10 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
           <button
             onClick={onBack ?? (() => nav('/'))}
             aria-label={T.home}
-            className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition shrink-0 -ml-1 p-3 rounded-lg hover:bg-zinc-800/50"
+            className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition shrink-0 -ml-1 p-2.5 rounded-xl hover:bg-zinc-800/60 active:scale-95"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm hidden sm:inline">{T.home}</span>
+            <span className="text-sm font-medium hidden sm:inline">{T.home}</span>
           </button>
         ) : (
           // Logo "Gia sư AI" — bấm vào xem trang giới thiệu tính năng + mẹo học hiệu quả.
@@ -65,9 +65,9 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
             to="/gioi-thieu"
             aria-label={T.aboutApp}
             title={T.aboutApp}
-            className="tap-44 flex items-center gap-2 shrink-0 -ml-1 p-1 rounded-lg hover:bg-zinc-800/50 transition"
+            className="tap-44 flex items-center gap-2.5 shrink-0 -ml-1 p-1.5 rounded-xl hover:bg-zinc-800/60 transition active:scale-95 group"
           >
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center shadow-md shadow-accent-500/30">
+            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-accent-500 via-accent-400 to-indigo-500 flex items-center justify-center shadow-md shadow-accent-500/30 group-hover:scale-105 transition-transform">
               <BookOpen className="w-3.5 h-3.5 text-white" />
             </div>
             <span className="font-bold text-sm text-white hidden sm:inline tracking-tight">
@@ -94,18 +94,18 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
             sáng (Blue sky/Pink/Nhi đồng — orange-400 gốc chỉ 1.96:1 trên nền sáng). */}
         {streak > 0 &&
           (title || subtitle ? (
-            <div className="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/25 rounded-xl px-2.5 py-1.5 shrink-0">
-              <span className="text-base leading-none">🔥</span>
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shadow-orange-500/10 shrink-0">
+              <span className="text-base leading-none animate-pulse">🔥</span>
               <span className="text-sm font-bold text-orange-400 leading-none">{streak}</span>
-              <span className="text-[11px] text-orange-400 theme-light:text-orange-800 leading-none">
+              <span className="text-[11px] font-medium text-orange-400 theme-light:text-orange-800 leading-none">
                 {T.streakDays}
               </span>
             </div>
           ) : (
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/25 rounded-xl px-2.5 py-1.5 pointer-events-none">
-              <span className="text-base leading-none">🔥</span>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shadow-orange-500/10 pointer-events-none">
+              <span className="text-base leading-none animate-pulse">🔥</span>
               <span className="text-sm font-bold text-orange-400 leading-none">{streak}</span>
-              <span className="text-[11px] text-orange-400 theme-light:text-orange-800 leading-none">
+              <span className="text-[11px] font-medium text-orange-400 theme-light:text-orange-800 leading-none">
                 {T.streakDays}
               </span>
             </div>
@@ -123,9 +123,9 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
             onClick={() => nav('/profile')}
             aria-label={T.profile}
             title={T.profile}
-            className="tap-44 flex items-center gap-2 shrink-0 hover:opacity-85 transition min-w-0"
+            className="tap-44 flex items-center gap-2 shrink-0 hover:opacity-90 transition active:scale-95 min-w-0 group"
           >
-            <span className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0">
+            <span className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 via-accent-400 to-indigo-500 ring-1.5 ring-accent-500/30 flex items-center justify-center text-xs font-bold text-white shadow-sm shadow-accent-500/20 shrink-0 group-hover:scale-105 transition-transform">
               {user.name[0]?.toUpperCase()}
             </span>
             <span className="text-sm font-medium text-white truncate hidden sm:inline max-w-[10rem]">

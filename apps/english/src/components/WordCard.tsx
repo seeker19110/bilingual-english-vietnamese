@@ -94,39 +94,50 @@ export default function WordCard({
             setFlipped((f) => !f)
           }}
           aria-pressed={flipped}
-          className="w-full flip-scene"
+          className="w-full flip-scene group focus-visible:outline-none"
         >
           <div className={`flip-inner ${flipped ? 'flipped' : ''}`}>
             {/* Mặt trước — từ + IPA */}
             <div
               aria-hidden={flipped}
-              className="flip-face glass w-full rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition-colors"
+              className="flip-face bg-gradient-to-b from-zinc-900/90 via-zinc-900/80 to-zinc-950/90 border border-zinc-800/80 group-hover:border-accent-500/50 shadow-xl w-full rounded-3xl p-8 sm:p-10 min-h-[220px] flex flex-col items-center justify-center text-center transition-all duration-300 relative overflow-hidden"
             >
-              <span className="font-bold text-white text-3xl mb-2">{card.word}</span>
+              <div className="absolute top-0 right-0 w-28 h-28 bg-accent-500/5 rounded-full blur-xl pointer-events-none" />
+              <span className="font-extrabold text-white text-3xl sm:text-4xl mb-2 tracking-tight drop-shadow-sm">
+                {card.word}
+              </span>
               {card.ipa_en && (
-                <span className="text-sm text-accent-400/90 theme-light:text-accent-800 font-mono">
+                <span className="text-sm text-accent-400 font-semibold theme-light:text-accent-800 font-mono bg-accent-500/10 px-3 py-0.5 rounded-full border border-accent-500/20">
                   {card.ipa_en}
                 </span>
               )}
-              <span className="flex items-center gap-1 text-xs text-zinc-400 mt-4">
-                <Eye className="w-3.5 h-3.5" /> {isA ? 'Bấm để xem nghĩa' : 'Tap to flip'}
+              <span className="flex items-center gap-1.5 text-xs font-medium text-zinc-400 mt-5 group-hover:text-zinc-200 transition-colors">
+                <Eye className="w-3.5 h-3.5 text-accent-400" />{' '}
+                {isA ? 'Bấm để xem nghĩa & ví dụ' : 'Tap to flip'}
               </span>
             </div>
             {/* Mặt sau — nghĩa + ví dụ (xoay sẵn 180° để hiện đúng chiều khi lật) */}
             <div
               aria-hidden={!flipped}
-              className="flip-face flip-back glass w-full rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center text-center hover:bg-zinc-800/60 transition-colors"
+              className="flip-face flip-back bg-gradient-to-b from-zinc-900/95 via-zinc-900/85 to-zinc-950/95 border border-zinc-800/80 shadow-xl w-full rounded-3xl p-8 sm:p-10 min-h-[220px] flex flex-col items-center justify-center text-center transition-all duration-300"
             >
-              <span className="text-xl text-zinc-100 font-medium mb-2">{card.vi}</span>
-              {card.ex_vi && <span className="text-xs text-zinc-400 mt-0.5">{card.ex_vi}</span>}
+              <span className="text-2xl text-zinc-100 font-bold mb-2 tracking-tight">
+                {card.vi}
+              </span>
+              {card.ex_vi && (
+                <span className="text-xs font-medium text-zinc-400 mt-1">{card.ex_vi}</span>
+              )}
               {extraExamples[card.word.toLowerCase()] && (
-                <div className="mt-2 space-y-1 text-left w-full border-t border-zinc-700/50 pt-2">
+                <div className="mt-3 space-y-1.5 text-left w-full border-t border-zinc-800/80 pt-3">
                   {extraExamples[card.word.toLowerCase()]?.map((ex, i) => (
-                    <div key={i}>
-                      <p className="text-xs text-accent-300 theme-light:text-accent-800 italic">
+                    <div
+                      key={i}
+                      className="bg-zinc-950/40 p-2 rounded-xl border border-zinc-800/50"
+                    >
+                      <p className="text-xs font-medium text-accent-300 theme-light:text-accent-800 italic">
                         {ex.en}
                       </p>
-                      <p className="text-xs text-zinc-400">{ex.vi}</p>
+                      <p className="text-xs text-zinc-400 mt-0.5">{ex.vi}</p>
                     </div>
                   ))}
                 </div>
