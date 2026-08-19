@@ -32,6 +32,7 @@ import VoiceWaveformVisualizer from '../components/CompanionVoice/VoiceWaveformV
 import SubconsciousInsightsCard from '../components/CompanionVoice/SubconsciousInsightsCard'
 import AmbientScreenCopilot from '../components/CompanionVoice/AmbientScreenCopilot'
 import A2ANegotiatorCard from '../components/CompanionVoice/A2ANegotiatorCard'
+import NeuroAffectiveCard from '../components/CompanionVoice/NeuroAffectiveCard'
 import EdgeAiIndicator from '../components/EdgeAi/EdgeAiIndicator'
 import { useRealtimeVoice } from '../lib/useRealtimeVoice'
 import { useAuth } from '../context/useAuth'
@@ -287,6 +288,7 @@ export default function Companion() {
         <div className="space-y-4 mb-4">
           <SubconsciousInsightsCard />
           <AmbientScreenCopilot />
+          <NeuroAffectiveCard />
           <A2ANegotiatorCard />
           <ProactiveBriefingCard />
         </div>

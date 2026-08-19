@@ -8,6 +8,27 @@
 
 ## Giai đoạn hiện tại
 
+### Platform V3 Flagship — Neuro-Affective Flow & Bio-Adaptive Orchestration (2026-08-19)
+
+Hoàn thành triển khai lát cắt thứ tư của **Platform V3: Thấu cảm Sinh học & Điều tiết Trạng thái Thần kinh**:
+
+- **1. Neuro-Affective Engine (`packages/core-personal/neuroAffectiveService.ts`, `api/neuro-affective.ts`)**:
+  - Đánh giá trạng thái năng lượng (`EnergyLevel`: `peak_flow`, `productive`, `fatigued`, `burnout_risk`, `restorative`) dựa trên nhịp giọng nói, chỉ số căng thẳng (Stress Index 0-100) và điểm tập trung (Focus Score 0-100).
+  - **Lá chắn Dòng chảy (Flow State Shield):** Tự động chặn thông báo xao nhãng và khóa timer tập trung khi đạt `peak_flow`.
+  - **Can thiệp Phục hồi (Restorative Intervention):** Tự động giảm độ khó bài tập, đề xuất bài tập thở phục hồi khi phát hiện nguy cơ kiệt sức (`burnout_risk`).
+  - Endpoint: `GET /api/neuro-affective`, `POST /api/neuro-affective`.
+- **2. Hợp đồng Dữ liệu V3 (`packages/core-contracts/neuroAffective.ts`)**:
+  - Định nghĩa và kiểm thực chặt chẽ `NeuroAffectiveStateSchema`, `EnergyLevelSchema`, `ActiveShieldSchema` (`v3.0.0`).
+- **3. Frontend UI (`apps/english/src/components/CompanionVoice/NeuroAffectiveCard.tsx`, `Companion.tsx`)**:
+  - `NeuroAffectiveCard.tsx`: Bảng điều khiển năng lượng trực quan, hiển thị thước đo Stress, Focus và các nút kích hoạt 1-chạm các lá chắn thích ứng.
+  - Tích hợp trực tiếp tại giao diện Bạn Đồng Hành (`/dong-hanh`).
+- **4. Quality Gates**:
+  - `npm test`: **4.358 / 4.358 tests passed 100%** trên 315 test files.
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run format:check`: passed 100% (All matched files use Prettier style).
+  - `npm run build`: passed 100% (Client Vite SPA, Server `dist-server/`, Hub workspace).
+
 ### Platform V3 Flagship — Multi-Agent A2A Protocol & Peer Negotiation Mesh (2026-08-19)
 
 Hoàn thành triển khai lát cắt thứ ba của **Platform V3: Giao thức Đàm phán Mật mã giữa các AI Agent**:

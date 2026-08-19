@@ -97,6 +97,7 @@ import integrationsHandler from './api/integrations.js'
 import subconsciousHandler from './api/subconscious.js'
 import ambientVisionHandler from './api/ambient-vision.js'
 import a2aHandler from './api/a2a.js'
+import neuroAffectiveHandler from './api/neuro-affective.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -305,6 +306,8 @@ app.all('/api/subconscious', wrapEdge(subconsciousHandler))
 app.all('/api/ambient-vision', wrapEdge(ambientVisionHandler))
 // Multi-Agent A2A Protocol & Peer Negotiation (V3 Flagship) — Cryptographic agent-to-agent bus.
 app.all('/api/a2a', wrapEdge(a2aHandler))
+// Neuro-Affective Flow & Bio-Adaptive Orchestration (V3 Flagship) — Stress intervention & flow state shielding.
+app.all('/api/neuro-affective', wrapEdge(neuroAffectiveHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
