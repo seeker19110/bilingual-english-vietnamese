@@ -1,0 +1,267 @@
+import { useState, useEffect } from 'react'
+import { Briefcase, Zap, CheckCircle2, Plus, BookOpen } from 'lucide-react'
+import type {
+  HarvestedMistake,
+  AutoSrsCard,
+} from '../../../../../packages/core-contracts/workplaceErrorHarvester'
+
+export default function WorkplaceHarvesterCard() {
+  const [mistakes, setMistakes] = useState<HarvestedMistake[]>([])
+  const [srsCards, setSrsCards] = useState<AutoSrsCard[]>([])
+  const [testText, setTestText] = useState<string>('')
+  const [isHarvesting, setIsHarvesting] = useState<boolean>(false)
+  const [convertingId, setConvertingId] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<'mistakes' | 'cards'>('mistakes')
+
+  const loadData = async () => {
+    try {
+      const [mRes, cRes] = await Promise.all([
+        fetch('/api/workplace-insights'),
+        fetch('/api/workplace-insights?kind=srs_cards'),
+      ])
+      if (mRes.ok) {
+        const mData = await mRes.json()
+        if (mData.mistakes) setMistakes(mData.mistakes)
+      }
+      if (cRes.ok) {
+        const cData = await cRes.json()
+        if (cData.cards) setSrsCards(cData.cards)
+      }
+    } catch (err) {
+      console.error('Failed to load workplace harvester data', err)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const handleHarvestText = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!testText.trim() || isHarvesting) return
+    setIsHarvesting(true)
+    try {
+      const res = await fetch('/api/workplace-insights', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'harvest',
+          rawText: testText.trim(),
+          sourceType: 'email',
+        }),
+      })
+      if (res.ok) {
+        setTestText('')
+        await loadData()
+      }
+    } catch (err) {
+      console.error('Failed to harvest', err)
+    } finally {
+      setIsHarvesting(false)
+    }
+  }
+
+  const handleConvertToSrs = async (mistakeId: string) => {
+    setConvertingId(mistakeId)
+    try {
+      const res = await fetch('/api/workplace-insights', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'convert_to_srs',
+          mistakeId,
+        }),
+      })
+      if (res.ok) {
+        await loadData()
+      }
+    } catch (err) {
+      console.error('Failed to convert to SRS', err)
+    } finally {
+      setConvertingId(null)
+    }
+  }
+
+  return (
+    <div className="bg-slate-900/90 border border-amber-500/30 rounded-2xl p-5 shadow-2xl backdrop-blur-xl relative overflow-hidden transition-all duration-300">
+      {/* Background Glow */}
+      <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/25">
+            <Briefcase className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-bold text-white tracking-wide">
+                Workplace Error Harvester & Auto-SRS
+              </h3>
+              <span className="text-[10px] px-2 py-0.5 font-bold uppercase rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                Workplace AI
+              </span>
+            </div>
+            <p className="text-xs text-slate-400">
+              Thu hoạch câu từ chưa chuẩn từ công việc thực tế ➔ Tự động sinh Flashcard Spaced
+              Repetition
+            </p>
+          </div>
+        </div>
+
+        {/* Tab switcher */}
+        <div className="flex bg-slate-800/80 p-1 rounded-xl border border-slate-700">
+          <button
+            onClick={() => setActiveTab('mistakes')}
+            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+              activeTab === 'mistakes'
+                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Lỗi Thu Hoạch ({mistakes.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('cards')}
+            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+              activeTab === 'cards'
+                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Thẻ SRS ({srsCards.length})
+          </button>
+        </div>
+      </div>
+
+      {/* Quick Ingest Form */}
+      <form onSubmit={handleHarvestText} className="mt-4 flex gap-2">
+        <input
+          type="text"
+          value={testText}
+          onChange={(e) => setTestText(e.target.value)}
+          placeholder="Dán đoạn thảo luận / email (ví dụ: 'I am agree with you to discuss about this project')..."
+          disabled={isHarvesting}
+          className="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+        />
+        <button
+          type="submit"
+          disabled={!testText.trim() || isHarvesting}
+          className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-600/30 transition-all disabled:opacity-50"
+        >
+          <Zap className="w-3.5 h-3.5" />
+          <span>{isHarvesting ? 'Đang quét...' : 'Thu hoạch Lỗi'}</span>
+        </button>
+      </form>
+
+      {/* Tab 1: Mistakes List */}
+      {activeTab === 'mistakes' && (
+        <div className="mt-4 space-y-3 max-h-72 overflow-y-auto pr-1">
+          {mistakes.map((m) => (
+            <div
+              key={m.id}
+              className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/80 space-y-2 hover:border-slate-600 transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-slate-700 text-slate-300">
+                    {m.sourceType}
+                  </span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">
+                    CEFR {m.cefrLevel}
+                  </span>
+                  <span
+                    className={`text-[10px] font-semibold ${
+                      m.urgency === 'critical'
+                        ? 'text-red-400'
+                        : m.urgency === 'moderate'
+                          ? 'text-amber-400'
+                          : 'text-teal-400'
+                    }`}
+                  >
+                    • {m.urgency === 'critical' ? 'Lỗi nặng' : 'Cần sửa'}
+                  </span>
+                </div>
+
+                {m.convertedToSrs ? (
+                  <span className="text-[11px] font-semibold text-emerald-400 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Đã tạo Flashcard SRS
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => handleConvertToSrs(m.id)}
+                    disabled={convertingId === m.id}
+                    className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-semibold flex items-center gap-1 border border-amber-500/30 transition-colors"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>{convertingId === m.id ? 'Đang tạo...' : 'Tạo Thẻ SRS'}</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="text-xs text-slate-300 italic bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+                &ldquo;{m.originalContextSnippet}&rdquo;
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                <div className="p-2 rounded bg-red-950/30 border border-red-500/30 text-red-200">
+                  <span className="font-bold text-red-400">❌ Cần tránh: </span>
+                  {m.detectedMistake}
+                </div>
+                <div className="p-2 rounded bg-emerald-950/30 border border-emerald-500/30 text-emerald-200">
+                  <span className="font-bold text-emerald-400">✨ Chuẩn bản xứ: </span>
+                  {m.nativeAlternative}
+                </div>
+              </div>
+
+              <p className="text-[11px] text-slate-400">
+                💡 <span className="text-slate-300">Giải thích:</span> {m.explanationVi}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Tab 2: SRS Cards List */}
+      {activeTab === 'cards' && (
+        <div className="mt-4 space-y-3 max-h-72 overflow-y-auto pr-1">
+          {srsCards.length === 0 ? (
+            <div className="p-6 text-center text-xs text-slate-400">
+              Chưa có thẻ SRS nào được tạo từ lỗi công việc. Hãy nhấn &quot;Tạo Thẻ SRS&quot; ở tab
+              bên cạnh!
+            </div>
+          ) : (
+            srsCards.map((c) => (
+              <div
+                key={c.id}
+                className="p-3.5 rounded-xl bg-indigo-950/30 border border-indigo-500/30 space-y-2"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-indigo-400" />
+                    <span className="text-xs font-bold text-indigo-200">
+                      Thẻ Ôn Tập Spaced Repetition
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-400">
+                    Lặp lại sau {c.repetitionIntervalDays} ngày
+                  </span>
+                </div>
+
+                <div className="text-xs font-medium text-slate-200">
+                  <span className="text-amber-400 font-bold">Mặt trước: </span>
+                  {c.frontPrompt}
+                </div>
+
+                <div className="text-xs font-medium text-emerald-300 bg-slate-900/80 p-2 rounded-lg border border-slate-800">
+                  <span className="text-emerald-400 font-bold">Đáp án: </span>
+                  {c.backAnswer}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  )
+}

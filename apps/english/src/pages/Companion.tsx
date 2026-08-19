@@ -33,6 +33,12 @@ import SubconsciousInsightsCard from '../components/CompanionVoice/SubconsciousI
 import AmbientScreenCopilot from '../components/CompanionVoice/AmbientScreenCopilot'
 import A2ANegotiatorCard from '../components/CompanionVoice/A2ANegotiatorCard'
 import NeuroAffectiveCard from '../components/CompanionVoice/NeuroAffectiveCard'
+import ScenarioHolodeckCard from '../components/CompanionVoice/ScenarioHolodeckCard'
+import ArticulatoryPhoneticsVisualizer from '../components/CompanionVoice/ArticulatoryPhoneticsVisualizer'
+import WorkplaceHarvesterCard from '../components/CompanionVoice/WorkplaceHarvesterCard'
+import SocraticDiagnosticsCard from '../components/CompanionVoice/SocraticDiagnosticsCard'
+import EchoShadowingCard from '../components/CompanionVoice/EchoShadowingCard'
+import WearablesSyncCard from '../components/CompanionVoice/WearablesSyncCard'
 import EdgeAiIndicator from '../components/EdgeAi/EdgeAiIndicator'
 import { useRealtimeVoice } from '../lib/useRealtimeVoice'
 import { useAuth } from '../context/useAuth'
@@ -287,6 +293,12 @@ export default function Companion() {
 
         <div className="space-y-4 mb-4">
           <SubconsciousInsightsCard />
+          <ScenarioHolodeckCard />
+          <ArticulatoryPhoneticsVisualizer />
+          <WorkplaceHarvesterCard />
+          <SocraticDiagnosticsCard />
+          <EchoShadowingCard />
+          <WearablesSyncCard />
           <AmbientScreenCopilot />
           <NeuroAffectiveCard />
           <A2ANegotiatorCard />

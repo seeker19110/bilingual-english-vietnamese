@@ -98,6 +98,12 @@ import subconsciousHandler from './api/subconscious.js'
 import ambientVisionHandler from './api/ambient-vision.js'
 import a2aHandler from './api/a2a.js'
 import neuroAffectiveHandler from './api/neuro-affective.js'
+import scenarioHolodeckHandler from './api/scenario-holodeck.js'
+import articulatoryPhoneticsHandler from './api/articulatory-phonetics.js'
+import workplaceInsightsHandler from './api/workplace-insights.js'
+import socraticDiagnosticsHandler from './api/socratic-diagnostics.js'
+import echoShadowingHandler from './api/echo-shadowing.js'
+import wearablesSyncHandler from './api/wearables-sync.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -308,6 +314,18 @@ app.all('/api/ambient-vision', wrapEdge(ambientVisionHandler))
 app.all('/api/a2a', wrapEdge(a2aHandler))
 // Neuro-Affective Flow & Bio-Adaptive Orchestration (V3 Flagship) — Stress intervention & flow state shielding.
 app.all('/api/neuro-affective', wrapEdge(neuroAffectiveHandler))
+// Scenario Holodeck Engine (V3 Flagship) — Multi-persona high-stakes simulation & Cambridge rubric evaluation.
+app.all('/api/scenario-holodeck', wrapEdge(scenarioHolodeckHandler))
+// 3D Articulatory Phonetics & Pitch Alignment (V3 Flagship) — Vocal tract anatomy & F0 pitch contour.
+app.all('/api/articulatory-phonetics', wrapEdge(articulatoryPhoneticsHandler))
+// Workplace Error Harvester & Auto-SRS (V3 Flagship) — Workplace error ingestion to personalized SRS cards.
+app.all('/api/workplace-insights', wrapEdge(workplaceInsightsHandler))
+// Socratic Cognitive Diagnostics (V3 Flagship Wave 2) — Deep mental model debugging & guided reflection.
+app.all('/api/socratic-diagnostics', wrapEdge(socraticDiagnosticsHandler))
+// Real-Time Echo Shadowing (V3 Flagship Wave 2) — Sub-second acoustic drift & cadence synchronizer.
+app.all('/api/echo-shadowing', wrapEdge(echoShadowingHandler))
+// Wearables & Circadian Bio-Adaptive MCP (V3 Flagship Wave 2) — Biometric stream to circadian learning window.
+app.all('/api/wearables-sync', wrapEdge(wearablesSyncHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
