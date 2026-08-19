@@ -94,6 +94,7 @@ import healthDeepHandler from './api/healthDeep.js'
 import proactiveBriefingHandler from './api/proactive-briefing.js'
 import visionSolveHandler from './api/vision-solve.js'
 import integrationsHandler from './api/integrations.js'
+import subconsciousHandler from './api/subconscious.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -296,6 +297,8 @@ app.all('/api/proactive-briefing', wrapEdge(proactiveBriefingHandler))
 app.all('/api/vision-solve', wrapEdge(visionSolveHandler))
 // External Integrations (V2 Flagship) — Google Calendar & Notion sync.
 app.all('/api/integrations', wrapEdge(integrationsHandler))
+// Subconscious Cognition & Nightly REM Consolidation (V3 Flagship) — Autonomous cognition & predictive strategy.
+app.all('/api/subconscious', wrapEdge(subconsciousHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

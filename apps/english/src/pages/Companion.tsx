@@ -29,6 +29,7 @@ import PageHeader from '../components/PageHeader'
 import ProactiveBriefingCard from '../components/ProactiveBriefingCard'
 import CompanionLiveOrb from '../components/CompanionVoice/CompanionLiveOrb'
 import VoiceWaveformVisualizer from '../components/CompanionVoice/VoiceWaveformVisualizer'
+import SubconsciousInsightsCard from '../components/CompanionVoice/SubconsciousInsightsCard'
 import EdgeAiIndicator from '../components/EdgeAi/EdgeAiIndicator'
 import { useRealtimeVoice } from '../lib/useRealtimeVoice'
 import { useAuth } from '../context/useAuth'
@@ -281,7 +282,10 @@ export default function Companion() {
           subtitle="Trí tuệ cá nhân hóa kết nối Học tập, Sự nghiệp, Công việc & Đời sống."
         />
 
-        <ProactiveBriefingCard />
+        <div className="space-y-4 mb-4">
+          <SubconsciousInsightsCard />
+          <ProactiveBriefingCard />
+        </div>
 
         {/* View Mode Switcher (Chat vs Live Voice) */}
         <div className="flex items-center justify-between mb-3 bg-zinc-900/60 p-1.5 rounded-2xl border border-zinc-800/80">
