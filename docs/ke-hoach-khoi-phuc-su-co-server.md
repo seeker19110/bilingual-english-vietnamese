@@ -14,18 +14,18 @@
 
 ## 0. Thông tin cần có sẵn (điền trước, đừng tìm lúc đang sập)
 
-| Mục                     | Giá trị                                                                                          |
-| ----------------------- | ------------------------------------------------------------------------------------------------ |
-| VPS IP                  | `103.81.87.174` (đổi từ `160.30.172.203` sau sự cố dựng lại VPS 2026-07-29 — xem mục 7)          |
-| Domain                  | `en-vi.donghanhcungban.com`                                                                      |
-| Thư mục app             | `/var/www/english-tutor`                                                                         |
-| PM2 process             | `english-tutor` (port **3001** — port 3000 là app khác "xboss")                                  |
-| Health check            | `curl https://en-vi.donghanhcungban.com/api/health`                                              |
-| Database                | PostgreSQL tự host, db `english_tutor`, user `tutor_app`                                         |
-| Backup DB               | `/var/backups/english_tutor_YYYYMMDD.sql.gz` (cron 3h sáng, giữ 7 bản)                           |
-| Audio storage           | `STORAGE_DRIVER` — `local` (`uploads/` trên VPS) hoặc `r2` (Cloudflare R2) — kiểm tra `.env` VPS |
-| Nhà cung cấp VPS/domain | _(điền: tên nhà cung cấp, cách đăng nhập control panel để restart VPS nếu SSH không vào được)_   |
-| Người liên hệ khẩn      | _(điền: SĐT/email người quản trị dự phòng nếu không phải chỉ 1 người)_                           |
+| Mục                     | Giá trị                                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------------------- |
+| VPS IP                  | `103.118.29.58` (VPS 3 vCPU / 3GB RAM)                                                         |
+| Domain                  | `donghanhcungban.org` (Hub), `en-vi.donghanhcungban.org` (English App)                         |
+| Thư mục app             | `/var/www/dhcb`                                                                                |
+| PM2 process             | `english-tutor` (port **3001**, 3 workers cluster)                                             |
+| Health check            | `curl https://en-vi.donghanhcungban.org/api/health`                                            |
+| Database                | PostgreSQL tự host, db `dhcb`, user `dhcb_app`                                                 |
+| Backup DB               | `/var/backups/dhcb_YYYYMMDD.sql.gz` (cron 3h sáng, giữ 7 bản)                                  |
+| Audio storage           | `STORAGE_DRIVER` — `local` (`/var/www/dhcb/uploads/` trên VPS)                                 |
+| Nhà cung cấp VPS/domain | _(điền: tên nhà cung cấp, cách đăng nhập control panel để restart VPS nếu SSH không vào được)_ |
+| Người liên hệ khẩn      | _(điền: SĐT/email người quản trị dự phòng nếu không phải chỉ 1 người)_                         |
 
 > ⚠️ **Việc cần làm ngay (không thuộc phần code):** điền 2 dòng cuối bảng trên — kế hoạch này vô
 > dụng nếu không vào được VPS lúc sập và chỉ có 1 người biết cách xử lý.
@@ -37,18 +37,18 @@ Làm trên **máy cá nhân của bạn** (không phải trên VPS) — mở fil
 
 ```ssh-config
 # Host trơn — dùng vào VPS bình thường + chạy lệnh lẻ
-Host xboss
-    HostName 103.81.87.174
+Host vps
+    HostName 103.118.29.58
     User root
     IdentityFile ~/.ssh/id_ed25519
 
 # Host tự cd vào thư mục app khi đăng nhập tương tác
-Host app
-    HostName 103.81.87.174
+Host dhcb
+    HostName 103.118.29.58
     User root
     IdentityFile ~/.ssh/id_ed25519
     RequestTTY yes
-    RemoteCommand cd /var/www/english-tutor && exec $SHELL -l
+    RemoteCommand cd /var/www/dhcb && exec $SHELL -l
 ```
 
 Cách dùng sau khi thêm:

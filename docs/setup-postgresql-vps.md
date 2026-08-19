@@ -1,6 +1,6 @@
 # Cài PostgreSQL tự host trên VPS (Giai đoạn A)
 
-> Việc TAY bạn cần tự chạy trên VPS (SSH vào `103.81.87.174`) — AI không có quyền
+> Việc TAY bạn cần tự chạy trên VPS (SSH vào `103.118.29.58`) — AI không có quyền
 > SSH vào VPS production nên không tự chạy được các lệnh dưới đây. Xem bối cảnh đầy
 > đủ ở `docs/migration-thoat-ly-supabase.md`.
 
@@ -26,25 +26,25 @@ sudo systemctl enable --now postgresql
 
 ```bash
 sudo -u postgres psql <<'SQL'
-create user tutor_app with password 'ĐẶT_MẬT_KHẨU_MẠNH_Ở_ĐÂY';
-create database english_tutor owner tutor_app;
-\c english_tutor
-grant all on schema public to tutor_app;
+create user dhcb_app with password 'ĐẶT_MẬT_KHẨU_MẠNH_Ở_ĐÂY';
+create database dhcb owner dhcb_app;
+\c dhcb
+grant all on schema public to dhcb_app;
 SQL
 ```
 
 > Đổi `ĐẶT_MẬT_KHẨU_MẠNH_Ở_ĐÂY` thành mật khẩu thật — **không dùng lại** mật khẩu
 > nào khác đang có (Supabase, Gmail...). Lưu vào trình quản lý mật khẩu của bạn.
 
-> ⚠️ **Bẫy thật đã gặp (2026-07-30):** `create database ... owner tutor_app` chỉ đổi
+> ⚠️ **Bẫy thật đã gặp (2026-07-30):** `create database ... owner dhcb_app` chỉ đổi
 > chủ **database**, KHÔNG tự đổi chủ **schema `public`** bên trong nó. Từ PostgreSQL 15
 > trở đi, schema `public` không còn tự cấp quyền `CREATE` cho mọi role nữa — thiếu dòng
-> `grant all on schema public to tutor_app;` ở trên thì `npm run migrate:pg` (hoặc
+> `grant all on schema public to dhcb_app;` ở trên thì `npm run migrate:pg` (hoặc
 > deploy tự động) sẽ báo lỗi `permission denied for schema public` (mã lỗi `42501`).
 > Nếu đã lỡ tạo database mà quên bước này, chạy bù lại bất kỳ lúc nào:
 >
 > ```bash
-> sudo -u postgres psql -d english_tutor -c "grant all on schema public to tutor_app;"
+> sudo -u postgres psql -d dhcb -c "grant all on schema public to dhcb_app;"
 > ```
 
 ## 4. Cho phép kết nối từ localhost (mặc định Postgres đã bind 127.0.0.1, kiểm tra lại)
@@ -61,11 +61,11 @@ mặc định của gói Ubuntu, thường không cần sửa gì.
 
 ## 5. Ghi vào `.env` trên VPS
 
-Thêm dòng sau vào file `.env` tại `/var/www/english-tutor/.env` (đường dẫn theo
+Thêm dòng sau vào file `.env` tại `/var/www/dhcb/.env` (đường dẫn theo
 `docs/deploy-vps-ubuntu.md`):
 
 ```
-DATABASE_URL=postgresql://tutor_app:ĐẶT_MẬT_KHẨU_MẠNH_Ở_ĐÂY@localhost:5432/english_tutor
+DATABASE_URL=postgresql://dhcb_app:ĐẶT_MẬT_KHẨU_MẠNH_Ở_ĐÂY@localhost:5432/dhcb
 ```
 
 ## 6. Áp schema
@@ -73,7 +73,7 @@ DATABASE_URL=postgresql://tutor_app:ĐẶT_MẬT_KHẨU_MẠNH_Ở_ĐÂY@localho
 Từ thư mục app trên VPS:
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 npm run migrate:pg
 ```
 
@@ -89,7 +89,7 @@ lâu dài):
 ```bash
 sudo -u postgres crontab -e
 # Thêm dòng (chạy 3h sáng mỗi ngày):
-0 3 * * * pg_dump english_tutor | gzip > /var/backups/english_tutor_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'english_tutor_*.sql.gz' -mtime +7 -delete
+0 3 * * * pg_dump dhcb | gzip > /var/backups/dhcb_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'dhcb_*.sql.gz' -mtime +7 -delete
 ```
 
 > `/var/backups` cần tồn tại và ghi được bởi user `postgres`:

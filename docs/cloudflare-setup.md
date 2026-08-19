@@ -29,18 +29,16 @@ dưới đây bạn tự thao tác trên trình duyệt.
    `en-vi.donghanhcungban.com` (và các subdomain khác bạn đang dùng, kể cả app
    "xboss" nếu chung domain) trước khi qua bước sau. Thiếu bản ghi nào thì thêm tay.
 
-### Bước 2 — Bật Proxy (đám mây cam) cho bản ghi `en-vi`
+### Bước 2 — Bật Proxy (đám mây cam) cho bản ghi `en-vi` và domain chính
 
-Trong danh sách DNS record, tìm dòng `en-vi` (loại A, trỏ vào IP VPS
-`103.81.87.174`) → bấm vào biểu tượng đám mây để chuyển từ **DNS only** (xám)
-sang **Proxied** (🟠 cam). Chỉ bật Proxied cho subdomain bạn muốn qua Cloudflare —
-subdomain nào chưa sẵn sàng (vd "xboss") có thể để DNS only trước, chuyển sau.
+Trong danh sách DNS record, tìm các dòng `@`, `www`, `en-vi` (loại A, trỏ vào IP VPS
+`103.118.29.58`) → bấm vào biểu tượng đám mây để chuyển từ **DNS only** (xám)
+sang **Proxied** (🟠 cam).
 
 ### Bước 3 — Đổi Nameserver ở nơi mua domain
 
 Cloudflare cho bạn 2 nameserver riêng (dạng `xxx.ns.cloudflare.com`). Vào trang
-quản lý domain (Namecheap/GoDaddy/Mắt Bão/... — nơi bạn đã mua domain
-`donghanhcungban.com`) → thay nameserver cũ bằng 2 cái Cloudflare vừa cấp.
+quản lý domain (Namecheap/GoDaddy/Mắt Bão/... — nơi bạn đã mua domain) → thay nameserver cũ bằng 2 cái Cloudflare vừa cấp.
 
 ⏳ Việc này có thể mất **vài phút đến 24 giờ** để lan truyền (DNS propagation).
 Cloudflare sẽ gửi email báo khi site đã "Active".
@@ -56,7 +54,7 @@ KHÔNG chọn "Flexible" (sẽ làm mất mã hóa đoạn Cloudflare→VPS).
 
 - **SSL/TLS → Edge Certificates** → bật **Always Use HTTPS**.
 - **Rules → Page Rules** (hoặc **Cache Rules** ở bản mới) → thêm rule:
-  URL khớp `en-vi.donghanhcungban.com/api/*` → **Cache Level: Bypass** (API luôn
+  URL khớp `*donghanhcungban.org/api/*` → **Cache Level: Bypass** (API luôn
   cần dữ liệu mới + xác thực, không được cache).
 
 ## Việc AI/bạn làm trên VPS (sau khi Bước 1–4 xong)
@@ -66,8 +64,8 @@ mới nhất) + `nginx/en-vi.conf` đã thêm dòng `include` — chỉ cần de
 
 ```bash
 # SSH vào VPS
-ssh root@103.81.87.174
-cd /var/www/english-tutor
+ssh root@103.118.29.58
+cd /var/www/dhcb
 
 # Kéo code mới nhất (đã có script + nginx config cập nhật)
 git pull

@@ -8,9 +8,10 @@
 
 ## 1. Thông Tin Môi Trường VPS Production
 
-- **Domain chính**: `en-vi.donghanhcungban.org` (Domain cũ redirect: `.com`)
-- **Server IP**: `103.81.87.174` (Port Express: `3001` — Port `3000` dành cho app khác)
-- **Thư mục ứng dụng**: `/var/www/english-tutor`
+- **Domain chính**: `donghanhcungban.org` (Hub), `en-vi.donghanhcungban.org` (English App)
+- **Domain phụ**: `donghanhcungban.com`, `en-vi.donghanhcungban.com`
+- **Server IP**: `103.118.29.58` (Port Express: `3001`)
+- **Thư mục ứng dụng**: `/var/www/dhcb`
 - **PM2 Process Name**: `english-tutor` (`instances: max`, `exec_mode: cluster`)
 
 ---
@@ -29,15 +30,15 @@
 Khi cần deploy khẩn cấp hoặc kiểm tra trực tiếp:
 
 ```bash
-ssh root@103.81.87.174
-cd /var/www/english-tutor
+ssh root@103.118.29.58
+cd /var/www/dhcb
 bash scripts/deploy.sh
 ```
 
 Hoặc từng bước thủ công:
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 git pull origin main
 npm ci                  # cài đặt dependencies chuẩn theo package-lock.json
 npm run build           # build client, server dist-server và hub
@@ -75,7 +76,7 @@ Script `scripts/deploy.sh` **tự động chạy** `npm run migrate:pg` trong b�
 Nếu bản deploy mới phát sinh lỗi nghiêm trọng:
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 git log --oneline | head -10
 git reset --hard <commit-hash-on-dinh-truoc-do>
 npm run build && bash scripts/pm2-reload.sh

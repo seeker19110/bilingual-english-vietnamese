@@ -33,13 +33,15 @@ thư viện hiện tại, không còn ràng buộc riêng nào từ Supabase).
 
 | Mục           | Giá trị                                            |
 | ------------- | -------------------------------------------------- |
-| OS            | Ubuntu 24.04                                       |
-| Node          | v22.22.3 (cài hệ thống, đường dẫn `/usr/bin/node`) |
-| Thư mục app   | `/var/www/english-tutor`                           |
-| Port app      | **3001** (3000 đã bị app `xboss` chiếm)            |
-| Domain        | `en-vi.donghanhcungban.com`                        |
-| Audio storage | **Local VPS** (`/var/www/english-tutor/uploads/`)  |
-| PM2 app name  | `english-tutor` (id 3)                             |
+| OS            | Ubuntu 24.04 (3 vCPU / 3GB RAM)                    |
+| Node          | v22.x (cài hệ thống, đường dẫn `/usr/bin/node`)    |
+| Thư mục app   | `/var/www/dhcb`                                    |
+| Port app      | **3001**                                           |
+| Domain chính  | `donghanhcungban.org`, `en-vi.donghanhcungban.org` |
+| Domain phụ    | `donghanhcungban.com`, `en-vi.donghanhcungban.com` |
+| Audio storage | **Local VPS** (`/var/www/dhcb/uploads/`)           |
+| PM2 app name  | `english-tutor` (3 cluster workers)                |
+| Database      | PostgreSQL `dhcb`, user `dhcb_app`                 |
 
 ---
 
@@ -63,9 +65,9 @@ thư viện hiện tại, không còn ràng buộc riêng nào từ Supabase).
 App **không chạy được** nếu chưa có database. Xem hướng dẫn đầy đủ (cài đặt, tạo user
 riêng không dùng superuser, backup) tại **`docs/setup-postgresql-vps.md`** — tóm tắt:
 
-1. Cài PostgreSQL 16+ qua `apt`, tạo database `english_tutor` + user riêng `tutor_app`
+1. Cài PostgreSQL 16+ qua `apt`, tạo database `dhcb` + user riêng `dhcb_app`
    (không dùng superuser cho app).
-2. Ghi connection string vào `.env` VPS: `DATABASE_URL=postgresql://tutor_app:MAT_KHAU@localhost:5432/english_tutor`.
+2. Ghi connection string vào `.env` VPS: `DATABASE_URL=postgresql://dhcb_app:MAT_KHAU@localhost:5432/dhcb`.
 3. Áp schema: `npm run migrate:pg` (đọc `postgres/schema.sql` + mọi file trong
    `postgres/migrations/*.sql` chưa chạy — tạo bảng `users`, `sessions`, `profiles`,
    `daily_usage`, `tts_cache`, `pronunciations`, `learning_progress`... quyền kiểm tra
@@ -188,8 +190,8 @@ REDIS_URL=redis://:mat-khau-redis-that-cua-ban@127.0.0.1:6379
 
 ```bash
 cd /var/www
-git clone https://github.com/seeker19110/bilingual-english-vietnamese.git english-tutor
-cd english-tutor
+git clone https://github.com/seeker19110/donghanh.git dhcb
+cd dhcb
 
 mkdir -p logs uploads
 
@@ -200,7 +202,7 @@ Nội dung `.env` đầy đủ (xem `.env.example` trong repo để có danh sá
 
 ```env
 # ── PostgreSQL tự host (Bước 0) ──
-DATABASE_URL=postgresql://tutor_app:mat-khau-that@localhost:5432/english_tutor
+DATABASE_URL=postgresql://dhcb_app:mat-khau-that@localhost:5432/dhcb
 
 # ── Auth tự viết (Bearer token) — Google OAuth Client ID, CẢ 2 biến CÙNG giá trị ──
 GOOGLE_CLIENT_ID=xxxxxxxxxx.apps.googleusercontent.com
@@ -218,15 +220,18 @@ GOOGLE_TTS_API_KEY=AIza...
 TTS_ENCRYPTION_MASTER_KEY=...
 
 # ── Bảo mật: chỉ cho domain thật gọi API ──
-ALLOWED_ORIGINS=https://en-vi.donghanhcungban.com
+ALLOWED_ORIGINS=https://donghanhcungban.org,https://www.donghanhcungban.org,https://en-vi.donghanhcungban.org,https://donghanhcungban.com,https://www.donghanhcungban.com,https://en-vi.donghanhcungban.com
+
+# ── Domain app ──
+EN_VI_HOSTNAME=en-vi.donghanhcungban.org,en-vi.donghanhcungban.com
+VITE_ENGLISH_APP_URL=https://en-vi.donghanhcungban.org
+VITE_SITE_URL=https://en-vi.donghanhcungban.org
 
 # ── Lưu audio TTS — local (mặc định, ổ đĩa VPS) hoặc r2 (Cloudflare R2) ──
 STORAGE_DRIVER=local
-UPLOADS_DIR=/var/www/english-tutor/uploads
-# STORAGE_DRIVER=r2 cần thêm R2_ACCOUNT_ID/R2_ACCESS_KEY_ID/R2_SECRET_ACCESS_KEY/
-# R2_BUCKET/R2_PUBLIC_BASE_URL — xem .env.example.
+UPLOADS_DIR=/var/www/dhcb/uploads
 
-# ── Cổng app (3001 vì 3000 đã bị app khác dùng) ──
+# ── Cổng app ──
 PORT=3001
 
 # ── Redis local (Bước 3b) — rate limit dùng chung khi PM2 chạy nhiều tiến trình ──
@@ -548,32 +553,32 @@ sudo certbot renew && sudo systemctl reload nginx
 
 ## SSH nhanh — tự vào thẳng thư mục app
 
-Để mỗi lần SSH tự nhảy vào `/var/www/english-tutor` (khỏi gõ `cd` lại), thêm
+Để mỗi lần SSH tự nhảy vào `/var/www/dhcb` (khỏi gõ `cd` lại), thêm
 **trên máy cá nhân** của bạn vào file `~/.ssh/config`
 (Windows: `C:\Users\<tên-bạn>\.ssh\config`):
 
 ```ssh-config
 # Host trơn — dùng vào VPS bình thường + chạy lệnh lẻ
-Host xboss
-    HostName 103.81.87.174
+Host vps
+    HostName 103.118.29.58
     User root
     IdentityFile ~/.ssh/id_ed25519
 
 # Host tự cd vào thư mục app khi đăng nhập tương tác
-Host app
-    HostName 103.81.87.174
+Host dhcb
+    HostName 103.118.29.58
     User root
     IdentityFile ~/.ssh/id_ed25519
     RequestTTY yes
-    RemoteCommand cd /var/www/english-tutor && exec $SHELL -l
+    RemoteCommand cd /var/www/dhcb && exec $SHELL -l
 ```
 
 Cách dùng:
 
 ```bash
-ssh app                              # → vào thẳng /var/www/english-tutor
-ssh xboss                            # → vào VPS như cũ (thư mục home)
-ssh xboss "pm2 logs english-tutor"   # → chạy lệnh lẻ trên VPS
+ssh dhcb                             # → vào thẳng /var/www/dhcb
+ssh vps                              # → vào VPS như cũ (thư mục home)
+ssh vps "pm2 logs english-tutor"     # → chạy lệnh lẻ trên VPS
 ```
 
 > ⚠️ Host có `RemoteCommand` (ở đây là `app`) **không** chạy được lệnh lẻ kiểu

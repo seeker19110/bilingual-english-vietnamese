@@ -35,7 +35,7 @@ trong block có `server_name <domain thật>` + `listen 443 ssl`, không dựa v
 ## Các bước ĐÃ làm thật (theo đúng thứ tự, để tham khảo khi dựng VPS khác)
 
 1. **DNS**: A record cho `donghanhcungban.com`, `www.donghanhcungban.com`,
-   `donghanhcungban.org`, `www.donghanhcungban.org` → IP VPS (`103.81.87.174`, xem
+   `donghanhcungban.org`, `www.donghanhcungban.org` → IP VPS (`103.118.29.58`, xem
    `docs/deploy-vps-ubuntu.md`). Ban đầu thiếu bản ghi `www.` cho cả 2 domain khiến bước 2 fail
    NXDOMAIN — phải thêm DNS rồi mới chạy certbot được.
 2. **SSL mở rộng** (một cert phủ tất cả domain, không tạo cert riêng):
