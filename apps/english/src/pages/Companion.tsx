@@ -31,6 +31,7 @@ import CompanionLiveOrb from '../components/CompanionVoice/CompanionLiveOrb'
 import VoiceWaveformVisualizer from '../components/CompanionVoice/VoiceWaveformVisualizer'
 import SubconsciousInsightsCard from '../components/CompanionVoice/SubconsciousInsightsCard'
 import AmbientScreenCopilot from '../components/CompanionVoice/AmbientScreenCopilot'
+import A2ANegotiatorCard from '../components/CompanionVoice/A2ANegotiatorCard'
 import EdgeAiIndicator from '../components/EdgeAi/EdgeAiIndicator'
 import { useRealtimeVoice } from '../lib/useRealtimeVoice'
 import { useAuth } from '../context/useAuth'
@@ -286,6 +287,7 @@ export default function Companion() {
         <div className="space-y-4 mb-4">
           <SubconsciousInsightsCard />
           <AmbientScreenCopilot />
+          <A2ANegotiatorCard />
           <ProactiveBriefingCard />
         </div>
 
