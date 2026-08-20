@@ -44,6 +44,9 @@ export interface CapabilityCostMetric {
   promptTokens: number
   completionTokens: number
   totalTokens: number
+  cacheReadTokens?: number
+  cacheWriteTokens?: number
+  costSavedUsd?: number
   costUsd: number
   latencyMs: number
   status: 'success' | 'error' | 'throttled'
@@ -57,6 +60,8 @@ export interface CapabilityCostSummary {
   totalPromptTokens: number
   totalCompletionTokens: number
   totalTokens: number
+  totalCacheReadTokens: number
+  totalCostSavedUsd: number
   totalCostUsd: number
   avgLatencyMs: number
 }
@@ -65,11 +70,29 @@ export function calculateCostUsd(
   model: string,
   promptTokens: number,
   completionTokens: number,
+  cacheReadTokens: number = 0,
+  cacheWriteTokens: number = 0,
 ): number {
   const pricing = MODEL_PRICING_REGISTRY[model] || DEFAULT_FALLBACK_PRICING
-  const promptCost = (promptTokens / 1_000_000) * pricing.promptCostPer1MTokensUsd
+  // Regular prompt tokens (tokens không được đọc từ cache)
+  const regularPromptTokens = Math.max(0, promptTokens - cacheReadTokens)
+  const regularPromptCost = (regularPromptTokens / 1_000_000) * pricing.promptCostPer1MTokensUsd
+  // Cache read tokens được chiết khấu 90% (chỉ tính 10% đơn giá gốc)
+  const cacheReadCost = (cacheReadTokens / 1_000_000) * (pricing.promptCostPer1MTokensUsd * 0.1)
+  // Cache write tokens (lưu cache ban đầu) tính 125% đơn giá gốc
+  const cacheWriteCost = (cacheWriteTokens / 1_000_000) * (pricing.promptCostPer1MTokensUsd * 1.25)
   const completionCost = (completionTokens / 1_000_000) * pricing.completionCostPer1MTokensUsd
-  return Math.round((promptCost + completionCost) * 1_000_000) / 1_000_000
+
+  const totalCost = regularPromptCost + cacheReadCost + cacheWriteCost + completionCost
+  return Math.round(totalCost * 1_000_000) / 1_000_000
+}
+
+export function calculateCostSavedUsd(model: string, cacheReadTokens: number = 0): number {
+  if (cacheReadTokens <= 0) return 0
+  const pricing = MODEL_PRICING_REGISTRY[model] || DEFAULT_FALLBACK_PRICING
+  // Tiết kiệm 90% chi phí đọc prompt nhờ Cache Hit
+  const saved = (cacheReadTokens / 1_000_000) * (pricing.promptCostPer1MTokensUsd * 0.9)
+  return Math.round(saved * 1_000_000) / 1_000_000
 }
 
 export class CapabilityCostTracker {
@@ -78,16 +101,30 @@ export class CapabilityCostTracker {
   public recordInvocation(
     metric: Omit<CapabilityCostMetric, 'totalTokens' | 'costUsd' | 'timestamp'> & {
       costUsd?: number
+      costSavedUsd?: number
       timestamp?: string
     },
   ): CapabilityCostMetric {
     const totalTokens = metric.promptTokens + metric.completionTokens
+    const cacheRead = metric.cacheReadTokens ?? 0
+    const cacheWrite = metric.cacheWriteTokens ?? 0
+    const costSavedUsd = metric.costSavedUsd ?? calculateCostSavedUsd(metric.model, cacheRead)
     const costUsd =
-      metric.costUsd ?? calculateCostUsd(metric.model, metric.promptTokens, metric.completionTokens)
+      metric.costUsd ??
+      calculateCostUsd(
+        metric.model,
+        metric.promptTokens,
+        metric.completionTokens,
+        cacheRead,
+        cacheWrite,
+      )
     const timestamp = metric.timestamp ?? new Date().toISOString()
 
     const fullMetric: CapabilityCostMetric = {
       ...metric,
+      cacheReadTokens: cacheRead,
+      cacheWriteTokens: cacheWrite,
+      costSavedUsd,
       totalTokens,
       costUsd,
       timestamp,
@@ -138,6 +175,8 @@ export class CapabilityCostTracker {
         totalPromptTokens: 0,
         totalCompletionTokens: 0,
         totalTokens: 0,
+        totalCacheReadTokens: 0,
+        totalCostSavedUsd: 0,
         totalCostUsd: 0,
         avgLatencyMs: 0,
       }
@@ -148,6 +187,8 @@ export class CapabilityCostTracker {
     let totalPromptTokens = 0
     let totalCompletionTokens = 0
     let totalTokens = 0
+    let totalCacheReadTokens = 0
+    let totalCostSavedUsd = 0
     let totalCostUsd = 0
     let totalLatency = 0
 
@@ -160,6 +201,8 @@ export class CapabilityCostTracker {
       totalPromptTokens += item.promptTokens
       totalCompletionTokens += item.completionTokens
       totalTokens += item.totalTokens
+      totalCacheReadTokens += item.cacheReadTokens ?? 0
+      totalCostSavedUsd += item.costSavedUsd ?? 0
       totalCostUsd += item.costUsd
       totalLatency += item.latencyMs
     }
@@ -171,6 +214,8 @@ export class CapabilityCostTracker {
       totalPromptTokens,
       totalCompletionTokens,
       totalTokens,
+      totalCacheReadTokens,
+      totalCostSavedUsd: Math.round(totalCostSavedUsd * 1_000_000) / 1_000_000,
       totalCostUsd: Math.round(totalCostUsd * 1_000_000) / 1_000_000,
       avgLatencyMs: Math.round(totalLatency / items.length),
     }

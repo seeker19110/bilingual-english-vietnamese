@@ -13,7 +13,8 @@
 
 import { lazy, type ComponentType } from 'react'
 
-export function lazyWithRetry<T extends ComponentType<unknown>>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function lazyWithRetry<T extends ComponentType<any>>(
   importer: () => Promise<{ default: T }>,
 ) {
   return lazy(async () => {

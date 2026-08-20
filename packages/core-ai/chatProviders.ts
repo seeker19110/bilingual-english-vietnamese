@@ -107,17 +107,25 @@ export async function callGroqChat(
 /**
  * Gọi Anthropic Messages API. Trả nguyên `status`/body text — KHÔNG parse — để `ai.ts` forward
  * thẳng cho client (giữ đúng hành vi hiện có, xem chú thích `AnthropicCallResult`).
+ * Hỗ trợ `enablePromptCaching` để kích hoạt Anthropic Prompt Caching (giảm 90% chi phí đọc input).
  */
 export async function callAnthropicChat(
   apiKey: string,
   model: string,
-  system: string,
+  system: string | Array<{ type: string; text: string; cache_control?: { type: 'ephemeral' } }>,
   messages: unknown[],
   maxTokens: number,
   timeoutMs: number = CHAT_PROVIDER_TIMEOUT_MS,
+  enablePromptCaching: boolean = false,
 ): Promise<AnthropicCallResult> {
   const startedAt = Date.now()
   let resp: Response
+
+  const systemPayload =
+    enablePromptCaching && typeof system === 'string' && system.length > 0
+      ? [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }]
+      : system
+
   try {
     resp = await fetchWithTimeout(
       'https://api.anthropic.com/v1/messages',
@@ -128,7 +136,7 @@ export async function callAnthropicChat(
           'anthropic-version': '2023-06-01',
           'content-type': 'application/json',
         },
-        body: JSON.stringify({ model, max_tokens: maxTokens, system, messages }),
+        body: JSON.stringify({ model, max_tokens: maxTokens, system: systemPayload, messages }),
       },
       timeoutMs,
     )

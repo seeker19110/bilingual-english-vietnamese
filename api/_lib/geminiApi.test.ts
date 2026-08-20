@@ -59,7 +59,7 @@ describe('callGemini', () => {
     await expect(callGemini('key', 'gemini-pro', 'system', [], 100)).rejects.toThrow(/empty text/)
   })
 
-  it('phản hồi hợp lệ → trả về đúng text, gửi đúng payload (system + hội thoại)', async () => {
+  it('phản hồi hợp lệ → trả về đúng text, gửi đúng payload (systemInstruction + hội thoại)', async () => {
     let capturedBody: string | undefined
     vi.stubGlobal('fetch', async (_url: string, init: RequestInit) => {
       capturedBody = init.body as string
@@ -71,19 +71,21 @@ describe('callGemini', () => {
       'Bạn là gia sư tiếng Anh',
       [{ role: 'user', content: 'Hello' }],
       200,
+      'cachedContents/eng-vocab-12k',
     )
     expect(result).toBe('Xin chào!')
     const body = JSON.parse(capturedBody ?? '{}')
-    // system prompt được chèn làm message user đầu tiên + phản hồi model giả lập tiếp theo
-    expect(body.contents[0]).toEqual({ role: 'user', parts: [{ text: 'Bạn là gia sư tiếng Anh' }] })
-    expect(body.contents[1].role).toBe('model')
-    expect(body.contents[2]).toEqual({ role: 'user', parts: [{ text: 'Hello' }] })
+    // system prompt được gửi trong systemInstruction
+    expect(body.systemInstruction).toEqual({ parts: [{ text: 'Bạn là gia sư tiếng Anh' }] })
+    expect(body.cachedContent).toBe('cachedContents/eng-vocab-12k')
+    expect(body.contents[0]).toEqual({ role: 'user', parts: [{ text: 'Hello' }] })
     expect(body.generationConfig.maxOutputTokens).toBe(200)
   })
 
-  it('không truyền system (rỗng) → không chèn message system vào contents', async () => {
+  it('không truyền system (rỗng) → không chèn systemInstruction vào payload', async () => {
     vi.stubGlobal('fetch', async (_url: string, init: RequestInit) => {
       const body = JSON.parse(init.body as string)
+      expect(body.systemInstruction).toBeUndefined()
       expect(body.contents).toHaveLength(1)
       expect(body.contents[0]).toEqual({ role: 'user', parts: [{ text: 'Hi' }] })
       return jsonResponse({ candidates: [{ content: { parts: [{ text: 'ok' }] } }] })

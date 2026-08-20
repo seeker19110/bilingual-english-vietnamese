@@ -156,4 +156,35 @@ describe('CapabilityCostTracker', () => {
     tracker.reset()
     expect(tracker.getMetrics()).toHaveLength(0)
   })
+
+  it('calculates prompt caching discounts and tracks cost savings', () => {
+    // claude-haiku: 0.8 USD / 1M prompt.
+    // 100,000 prompt tokens, trong đó 80,000 read from cache (được giảm 90% = 0.1x), 20,000 regular (1.0x).
+    // Regular 20k tokens = 0.016 USD
+    // Cache read 80k tokens = 80,000 * 0.08 / 1M = 0.0064 USD
+    // Completion 10k tokens = 10,000 * 4.0 / 1M = 0.04 USD
+    // Total = 0.016 + 0.0064 + 0.04 = 0.0624 USD (thay vì 0.08 + 0.04 = 0.12 USD không cache)
+    const cachedCost = calculateCostUsd('claude-haiku-4-5-20251001', 100_000, 10_000, 80_000, 0)
+    expect(cachedCost).toBeCloseTo(0.0624, 4)
+
+    const metric = tracker.recordInvocation({
+      capabilityId: 'learning.tutor_turn',
+      domain: 'learning',
+      personId: 'person-cache-test',
+      model: 'claude-haiku-4-5-20251001',
+      promptTokens: 100_000,
+      completionTokens: 10_000,
+      cacheReadTokens: 80_000,
+      latencyMs: 220,
+      status: 'success',
+    })
+
+    expect(metric.cacheReadTokens).toBe(80_000)
+    expect(metric.costSavedUsd).toBeGreaterThan(0)
+    expect(metric.costUsd).toBeCloseTo(0.0624, 4)
+
+    const summary = tracker.getMetricsByPerson('person-cache-test')
+    expect(summary.totalCacheReadTokens).toBe(80_000)
+    expect(summary.totalCostSavedUsd).toBeGreaterThan(0)
+  })
 })

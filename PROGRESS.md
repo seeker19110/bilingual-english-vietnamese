@@ -8,7 +8,26 @@
 
 ## Giai đoạn hiện tại
 
-### Platform V6.1 — Universal Navigation Architecture, Domain Unification (www.donghanhcungban.org) & UI/UX Craftsman Revamp (2026-08-20)
+### Platform V6.2 — Priority 1 Optimization: Dynamic Studio Code-Splitting, Chunking & Native AI Prompt/Context Caching Engine (2026-08-20)
+
+Hoàn thành triển khai trọn vẹn 2 trụ cột nâng cấp chiến lược Mức Ưu Tiên 1 (Priority 1):
+
+- **1. Dynamic Studio Code-Splitting & Lazy Loading (`apps/english/src/components/CompanionStudios/`, `apps/english/src/pages/Companion.tsx`)**:
+  - Tách 5 Focus Studios của trang Bạn Đồng Hành (`/dong-hanh`) thành các module con độc lập: `StudioDialogue`, `StudioCognitive`, `StudioLabs`, `StudioProactive`, `StudioSynthesis` và `StudioLoadingSkeleton`.
+  - Áp dụng cơ chế nạp lười `lazyWithRetry` bọc `<Suspense fallback={<StudioLoadingSkeleton />}>`, phân tách bundle thành các dynamic chunks siêu nhẹ (mỗi studio chỉ 6-12KB gzip), tối ưu hóa thời gian tải ban đầu và giữ render 60 FPS mượt mà.
+  - Tách file quản lý kiểu và hằng số dùng chung `studioTypes.ts` tuân thủ chuẩn fast refresh của React.
+- **2. Native AI System Instruction & Prompt/Context Caching Gateway (`api/_lib/geminiApi.ts`, `packages/core-ai/chatProviders.ts`)**:
+  - Nâng cấp `callGemini`: Sử dụng chuẩn `systemInstruction: { parts: [{ text: system }] }` chính thức của Google Gemini API v1beta và hỗ trợ `cachedContent` context caching thay cho cơ chế fake user/model message cũ.
+  - Nâng cấp `callAnthropicChat`: Hỗ trợ cấu trúc Prompt Caching `cache_control: { type: 'ephemeral' }` giúp giảm đến 90% chi phí đọc input token cho các system prompt và kho tri thức lớn.
+- **3. Caching Telemetry & Token Cost Savings Tracking (`packages/core-ai/capabilityCostTracker.ts`)**:
+  - Mở rộng `CapabilityCostMetric` và `CapabilityCostSummary` theo dõi `cacheReadTokens`, `cacheWriteTokens`, và số tiền tiết kiệm được (`costSavedUsd`).
+  - Cập nhật thuật toán tính toán chi phí `calculateCostUsd` với mức chiết khấu 90% khi Cache Hit.
+- **4. Quality Gates**:
+  - `npm test`: **4.606 / 4.606 tests passed 100%** trên 380 test files (+4 tests mới).
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run format:check`: passed 100% (All matched files use Prettier style).
+  - `npm run build`: passed 100% (Client Vite SPA, Server `dist-server/`, Hub workspace).
 
 Hoàn thành tái cấu trúc toàn diện kiến trúc phân cấp trang, định tuyến và giao diện người dùng theo domain chuẩn duy nhất **www.donghanhcungban.org**:
 

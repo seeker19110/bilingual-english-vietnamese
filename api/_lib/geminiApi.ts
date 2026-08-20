@@ -29,22 +29,10 @@ export async function callGemini(
   system: string,
   messages: Array<{ role: 'user' | 'assistant'; content: string }>,
   maxTokens: number,
+  cachedContent?: string,
 ): Promise<string> {
-  // Chuyển đổi từ Anthropic format sang Gemini format
+  // Chuyển đổi từ format chung sang Gemini format
   const geminiMessages: GeminiMessage[] = []
-
-  // Thêm system prompt (Gemini không có role "system", dùng user message đầu tiên)
-  if (system) {
-    geminiMessages.push({
-      role: 'user',
-      parts: [{ text: system }],
-    })
-    // Theo convention, sau system message từ user, AI phải trả lời (role: model)
-    geminiMessages.push({
-      role: 'model',
-      parts: [{ text: 'Hiểu rồi. Tôi sẽ giúp bạn với vai trò này.' }],
-    })
-  }
 
   // Thêm messages từ client (convert role: 'user' → 'user', 'assistant' → 'model')
   for (const msg of messages) {
@@ -54,12 +42,23 @@ export async function callGemini(
     })
   }
 
-  const payload = {
+  const payload: Record<string, unknown> = {
     contents: geminiMessages,
     generationConfig: {
       maxOutputTokens: maxTokens,
       temperature: 0.7, // Cân bằng giữa creativity & consistency
     },
+  }
+
+  // Google Gemini API v1beta hỗ trợ systemInstruction chính thức và tự động caching
+  if (system) {
+    payload.systemInstruction = {
+      parts: [{ text: system }],
+    }
+  }
+
+  if (cachedContent) {
+    payload.cachedContent = cachedContent
   }
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
