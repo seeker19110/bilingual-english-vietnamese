@@ -1,5 +1,6 @@
+// apps/english/src/pages/SubjectDetail.tsx — Specialized AI STEM Step Solver & Subject Studio
 import { useEffect, useState, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import {
   Sparkles,
   Send,
@@ -11,11 +12,16 @@ import {
   Camera,
   Calendar,
   Loader2,
+  Volume2,
+  AlertTriangle,
+  Lightbulb,
+  ArrowRight,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
 import { getSubjectDetails } from '../lib/subjectApi'
 import { solveProblemImage } from '../lib/visionSolverApi'
+import { speak } from '../lib/tts'
 import IntegrationsModal from '../components/IntegrationsModal'
 import { STEM_CURRICULUM } from '../data/stemCurriculum'
 import type { SubjectManifest } from '../../../../packages/core-contracts/subjectManifest'
@@ -24,11 +30,14 @@ interface SolvedStep {
   title: string
   detail: string
   formula?: string
+  socraticHint?: string
+  pitfall?: string
 }
 
 export default function SubjectDetail() {
   const { subjectId } = useParams<{ subjectId: string }>()
   const nav = useNavigate()
+  const location = useLocation()
   const [subject, setSubject] = useState<SubjectManifest | null>(null)
   const [selectedGrade, setSelectedGrade] = useState<string>('grade_12')
   const [activeTab, setActiveTab] = useState<'solver' | 'curriculum' | 'practice'>('solver')
@@ -64,7 +73,14 @@ export default function SubjectDetail() {
         userPrompt: problemInput || undefined,
       })
       setProblemInput(res.problemText)
-      setSolutionSteps(res.steps)
+      setSolutionSteps(
+        res.steps.map((s) => ({
+          title: s.title,
+          detail: s.detail,
+          formula: s.formula,
+          socraticHint: 'Lưu ý kiểm tra lại điều kiện biên và thứ tự thực hiện phép tính.',
+        })),
+      )
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Lỗi phân tích ảnh đề bài'
       alert(msg)
@@ -87,6 +103,18 @@ export default function SubjectDetail() {
       })
   }, [subjectId, nav])
 
+  // Handle URL query parameters (e.g. ?q=... from Home search)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const qParam = params.get('q')
+    const gradeParam = params.get('grade')
+    if (gradeParam) setSelectedGrade(gradeParam)
+    if (qParam) {
+      setProblemInput(qParam)
+      setActiveTab('solver')
+    }
+  }, [location.search])
+
   const curriculumList = subjectId ? STEM_CURRICULUM[subjectId] || [] : []
   const currentGradeData =
     curriculumList.find((g) => g.grade === selectedGrade) || curriculumList[0]
@@ -100,46 +128,78 @@ export default function SubjectDetail() {
       const isMath = subjectId === 'mathematics'
       const isChem = subjectId === 'chemistry'
       const isPhys = subjectId === 'physics'
+      const p = problemInput.toLowerCase()
 
       if (isMath) {
-        setSolutionSteps([
-          {
-            title: 'Bước 1: Xác định tập xác định & Đạo hàm',
-            detail: 'Tập xác định D = R. Lấy đạo hàm bậc nhất của hàm số:',
-            formula: "y' = 3x^2 - 6x = 3x(x - 2)",
-          },
-          {
-            title: 'Bước 2: Tìm nghiệm của đạo hàm (Điểm dừng)',
-            detail: "Giải phương trình y' = 0:",
-            formula: '3x(x - 2) = 0 ⇔ x = 0 hoặc x = 2',
-          },
-          {
-            title: 'Bước 3: Lập bảng biến thiên & Xét dấu',
-            detail:
-              "Trên (-∞, 0) và (2, +∞): y' > 0 (Hàm số đồng biến). Trên khoảng (0, 2): y' < 0 (Hàm số nghịch biến).",
-          },
-          {
-            title: 'Bước 4: Kết luận cực trị',
-            detail: 'Hàm số đạt Cực đại tại x = 0 (y_CD = 2); đạt Cực tiểu tại x = 2 (y_CT = -2).',
-            formula: 'y_cực đại = 2, y_cực tiểu = -2',
-          },
-        ])
+        if (p.includes('tích phân') || p.includes('nguyên hàm')) {
+          setSolutionSteps([
+            {
+              title: 'Bước 1: Nhận diện dạng tích phân & Đổi biến số',
+              detail:
+                'Đặt u = g(x) để đơn giản hóa biểu thức dưới dấu tích phân. Tính vi phân du = g’(x)dx.',
+              formula: '\\int f(g(x)) g’(x) dx = \\int f(u) du',
+              socraticHint: 'Đừng quên đổi cận tương ứng khi đổi biến số trong tích phân xác định!',
+            },
+            {
+              title: 'Bước 2: Tính nguyên hàm theo biến u',
+              detail: 'Áp dụng bảng nguyên hàm cơ bản để tìm họ nguyên hàm F(u).',
+              formula: 'F(u) = \\frac{u^{n+1}}{n+1} + C \\quad (n \\neq -1)',
+            },
+            {
+              title: 'Bước 3: Thay ngược lại biến x và kết luận',
+              detail: 'Hoàn tất kết quả nguyên hàm hoặc thế cận nếu là tích phân xác định.',
+              formula: 'I = F(b) - F(a)',
+              pitfall: 'Coi chừng quên hằng số tích phân C khi tìm nguyên hàm bất định.',
+            },
+          ])
+        } else {
+          setSolutionSteps([
+            {
+              title: 'Bước 1: Xác định tập xác định & Đạo hàm',
+              detail: 'Tập xác định D = R. Lấy đạo hàm bậc nhất của hàm số:',
+              formula: "y' = 3x^2 - 6x = 3x(x - 2)",
+              socraticHint: 'Xác định bậc của hàm số để biết số lượng điểm cực trị tối đa.',
+            },
+            {
+              title: 'Bước 2: Tìm nghiệm của đạo hàm (Điểm dừng)',
+              detail: "Giải phương trình y' = 0:",
+              formula: '3x(x - 2) = 0 \\iff x = 0 \\quad \\text{hoặc} \\quad x = 2',
+            },
+            {
+              title: 'Bước 3: Lập bảng biến thiên & Xét dấu',
+              detail:
+                "Trên (-∞, 0) và (2, +∞): y' > 0 (Hàm số đồng biến). Trên khoảng (0, 2): y' < 0 (Hàm số nghịch biến).",
+              formula:
+                "y'' (0) = -6 < 0 \\implies Cực đại; \\quad y''(2) = 6 > 0 \\implies Cực tiểu",
+            },
+            {
+              title: 'Bước 4: Kết luận cực trị',
+              detail:
+                'Hàm số đạt Cực đại tại x = 0 (y_CD = 2); đạt Cực tiểu tại x = 2 (y_CT = -2).',
+              formula: 'y_{\\text{cực đại}} = 2, \\quad y_{\\text{cực tiểu}} = -2',
+              pitfall: 'Nghiệm bội chẵn của đạo hàm không làm đổi dấu nên không sinh ra cực trị!',
+            },
+          ])
+        }
       } else if (isChem) {
         setSolutionSteps([
           {
             title: 'Bước 1: Xác định sự thay đổi số oxi hóa',
             detail:
               'Fe(0) → Fe(+3) + 3e (Quá trình oxi hóa)\nN(+5) + 3e → N(+2) (Quá trình khử trong NO)',
+            socraticHint: 'Xác định chính xác chất khử (cho e) và chất oxi hóa (nhận e).',
           },
           {
             title: 'Bước 2: Thăng bằng electron',
             detail: 'Nhân hệ số 1 cho cả quá trình oxi hóa và quá trình khử (3e = 3e).',
-            formula: '1 x | Fe → Fe(+3) + 3e\n1 x | N(+5) + 3e → N(+2)',
+            formula:
+              '1 \\times | Fe \\to Fe^{+3} + 3e \\quad ; \\quad 1 \\times | N^{+5} + 3e \\to N^{+2}',
           },
           {
             title: 'Bước 3: Cân bằng số nguyên tử nguyên tố & Phân tử nước',
             detail: 'Đặt hệ số vào phương trình hóa học hoàn chỉnh:',
-            formula: 'Fe + 4HNO3 (loãng) → Fe(NO3)3 + NO↑ + 2H2O',
+            formula: 'Fe + 4HNO_3 \\text{ (loãng)} \\to Fe(NO_3)_3 + NO\\uparrow + 2H_2O',
+            pitfall: 'Cần đếm cả số phân tử axit đóng vai trò môi trường tạo muối.',
           },
         ])
       } else if (isPhys) {
@@ -147,16 +207,20 @@ export default function SubjectDetail() {
           {
             title: 'Bước 1: Tóm tắt giả thiết và đổi đơn vị',
             detail: 'm = 200g = 0.2 kg; k = 50 N/m; Biên độ A = 4 cm = 0.04 m.',
+            socraticHint: 'Luôn đổi khối lượng sang kg và chiều dài sang mét trước khi tính.',
           },
           {
             title: 'Bước 2: Tính tần số góc ω và chu kỳ T',
             detail: 'Tần số góc ω = √(k / m) = √(50 / 0.2) = √250 ≈ 15.81 rad/s.',
-            formula: 'T = 2π / ω = 2π / 15.81 ≈ 0.397 (s)',
+            formula:
+              'T = \\frac{2\\pi}{\\omega} = \\frac{2\\pi}{15.81} \\approx 0.397 \\text{ (s)}',
           },
           {
             title: 'Bước 3: Tính vận tốc cực đại',
             detail: 'Vận tốc cực đại của vật khi qua vị trí cân bằng:',
-            formula: 'v_max = ω * A = 15.81 * 0.04 = 0.632 (m/s) = 63.2 (cm/s)',
+            formula:
+              'v_{\\text{max}} = \\omega A = 15.81 \\times 0.04 = 0.632 \\text{ (m/s)} = 63.2 \\text{ (cm/s)}',
+            pitfall: 'Vận tốc cực đại xảy ra ở vị trí cân bằng (x = 0), không phải ở biên!',
           },
         ])
       } else {
@@ -164,21 +228,23 @@ export default function SubjectDetail() {
           {
             title: 'Bước 1: Xác định kiểu gen của P',
             detail: 'P: Cây hạt vàng dị hợp có kiểu gen Aa.',
+            socraticHint: 'Quy ước gen: A - Hạt vàng (trội), a - Hạt xanh (lặn).',
           },
           {
             title: 'Bước 2: Sơ đồ lai tự thụ phấn',
             detail: 'P: Aa x Aa\nGiao tử: G_P = (1/2 A : 1/2 a) x (1/2 A : 1/2 a)',
-            formula: 'F1: 1/4 AA : 2/4 Aa : 1/4 aa',
+            formula: 'F_1: \\frac{1}{4} AA : \\frac{2}{4} Aa : \\frac{1}{4} aa',
           },
           {
             title: 'Bước 3: Tỉ lệ phân ly kiểu hình',
             detail:
               'Tỉ lệ kiểu hình: 3 Hạt vàng (1 AA : 2 Aa) : 1 Hạt xanh (1 aa) (75% vàng : 25% xanh).',
+            formula: '3 \\text{ Trội (Vàng)} : 1 \\text{ Lặn (Xanh)}',
           },
         ])
       }
       setSolving(false)
-    }, 600)
+    }, 550)
   }
 
   const loadSampleProblem = (prompt: string, steps?: SolvedStep[]) => {
@@ -194,17 +260,17 @@ export default function SubjectDetail() {
   if (!subject) return null
 
   return (
-    <div className="min-h-dvh bg-zinc-950">
+    <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/subjects')} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
+      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
         <PageHeader
           title={`Gia Sư AI: ${subject.label}`}
           subtitle={`Phòng học thông minh và giải bài tập từng bước (${subject.description})`}
         />
 
         {/* Khối chọn khối lớp */}
-        <section className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 flex items-center justify-between gap-4 flex-wrap">
+        <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-4 flex items-center justify-between gap-4 flex-wrap shadow-sm">
           <div className="flex items-center gap-2">
             <BookMarked className="w-5 h-5 text-accent-400" />
             <span className="text-sm font-semibold text-white">Khối lớp / Cấp độ:</span>
@@ -214,9 +280,9 @@ export default function SubjectDetail() {
               <button
                 key={lvl}
                 onClick={() => setSelectedGrade(lvl)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+                className={`tap-44 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
                   selectedGrade === lvl
-                    ? 'bg-accent-500 text-white shadow-sm shadow-accent-500/20'
+                    ? 'bg-accent-500 text-white shadow-sm shadow-accent-500/20 scale-105'
                     : 'bg-zinc-950 border border-zinc-800 text-zinc-400 hover:text-white'
                 }`}
               >
@@ -230,7 +296,7 @@ export default function SubjectDetail() {
         <div className="flex gap-2 border-b border-zinc-800 pb-2">
           <button
             onClick={() => setActiveTab('solver')}
-            className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition ${
+            className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition ${
               activeTab === 'solver'
                 ? 'bg-accent-500/20 text-accent-400 border border-accent-500/30'
                 : 'text-zinc-400 hover:text-zinc-200'
@@ -241,7 +307,7 @@ export default function SubjectDetail() {
           </button>
           <button
             onClick={() => setActiveTab('curriculum')}
-            className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition ${
+            className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition ${
               activeTab === 'curriculum'
                 ? 'bg-accent-500/20 text-accent-400 border border-accent-500/30'
                 : 'text-zinc-400 hover:text-zinc-200'
@@ -252,7 +318,7 @@ export default function SubjectDetail() {
           </button>
           <button
             onClick={() => setActiveTab('practice')}
-            className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition ${
+            className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition ${
               activeTab === 'practice'
                 ? 'bg-accent-500/20 text-accent-400 border border-accent-500/30'
                 : 'text-zinc-400 hover:text-zinc-200'
@@ -267,11 +333,11 @@ export default function SubjectDetail() {
         {activeTab === 'solver' && (
           <div className="space-y-6">
             {/* Khung giải bài tập */}
-            <section className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-5 space-y-4 shadow-xl">
+            <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-4 shadow-xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-accent-400" />
-                  <span>Nhập đề bài hoặc câu hỏi cần giải</span>
+                  <span>Nhập đề bài hoặc tải ảnh chụp</span>
                 </h3>
                 {problemInput && (
                   <button
@@ -279,7 +345,7 @@ export default function SubjectDetail() {
                       setProblemInput('')
                       setSolutionSteps(null)
                     }}
-                    className="text-xs text-zinc-500 hover:text-zinc-300 flex items-center gap-1"
+                    className="text-xs text-zinc-400 hover:text-white flex items-center gap-1"
                   >
                     <RotateCcw className="w-3.5 h-3.5" /> Xóa
                   </button>
@@ -290,25 +356,25 @@ export default function SubjectDetail() {
                 <textarea
                   value={problemInput}
                   onChange={(e) => setProblemInput(e.target.value)}
-                  placeholder={`Nhập đề bài ${subject.label} (hoặc bấm biểu tượng máy ảnh bên dưới để tải ảnh chụp đề bài)...`}
+                  placeholder={`Nhập đề bài môn ${subject.label} (hoặc bấm biểu tượng máy ảnh bên dưới để tải ảnh đề)...`}
                   rows={3}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-accent-500 leading-relaxed placeholder:text-zinc-600 resize-none"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-sm text-white focus:outline-none focus:border-accent-500 leading-relaxed placeholder:text-zinc-500 resize-none shadow-inner"
                 />
 
                 {/* Khối xem trước ảnh đề bài nếu có */}
                 {imagePreview && (
-                  <div className="relative inline-block border border-indigo-500/40 rounded-xl overflow-hidden bg-zinc-950 p-1.5">
+                  <div className="relative inline-block border border-indigo-500/40 rounded-2xl overflow-hidden bg-zinc-950 p-2">
                     <img
                       src={imagePreview}
                       alt="Đề bài chụp"
-                      className="max-h-40 rounded-lg object-contain"
+                      className="max-h-48 rounded-xl object-contain"
                     />
                     <button
                       type="button"
                       onClick={() => setImagePreview(null)}
-                      className="absolute top-2 right-2 p-1 rounded-full bg-black/70 text-white hover:bg-rose-600 transition"
+                      className="absolute top-3 right-3 p-1.5 rounded-full bg-black/70 text-white hover:bg-rose-600 transition"
                     >
-                      <RotateCcw className="w-3.5 h-3.5" />
+                      <RotateCcw className="w-4 h-4" />
                     </button>
                   </div>
                 )}
@@ -325,7 +391,7 @@ export default function SubjectDetail() {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="tap-44 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs font-medium text-zinc-300 hover:text-white transition"
+                      className="tap-44 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-zinc-300 hover:text-white transition"
                     >
                       <Camera className="w-4 h-4 text-indigo-400" />
                       <span>{imagePreview ? 'Đổi ảnh đề bài' : 'Chụp / Tải ảnh đề'}</span>
@@ -334,7 +400,7 @@ export default function SubjectDetail() {
                     <button
                       type="button"
                       onClick={() => setIsCalendarModalOpen(true)}
-                      className="tap-44 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs font-medium text-zinc-300 hover:text-white transition"
+                      className="tap-44 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-zinc-300 hover:text-white transition"
                     >
                       <Calendar className="w-4 h-4 text-blue-400" />
                       <span>Lên lịch học Google</span>
@@ -357,7 +423,7 @@ export default function SubjectDetail() {
                         ) : (
                           <>
                             <Sparkles className="w-4 h-4" />
-                            <span>Giải từ hình ảnh (Vision)</span>
+                            <span>Giải từ ảnh Vision OCR</span>
                           </>
                         )}
                       </button>
@@ -369,7 +435,7 @@ export default function SubjectDetail() {
                       >
                         {solving ? (
                           <>
-                            <Sparkles className="w-4 h-4 animate-spin" />
+                            <Loader2 className="w-4 h-4 animate-spin" />
                             <span>AI đang giải…</span>
                           </>
                         ) : (
@@ -387,27 +453,56 @@ export default function SubjectDetail() {
 
             {/* Kết quả lời giải từng bước */}
             {solutionSteps && (
-              <section className="bg-zinc-900/90 border border-accent-500/30 rounded-2xl p-5 space-y-4 animate-fade-in">
-                <div className="flex items-center gap-2 pb-3 border-b border-zinc-800">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                  <h3 className="text-base font-bold text-white">
-                    Lời Giải Chi Tiết Từng Bước (AI Step Analysis)
-                  </h3>
+              <section className="bg-zinc-900/90 border border-accent-500/30 rounded-3xl p-5 sm:p-6 space-y-4 animate-fade-in shadow-xl">
+                <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                    <h3 className="text-base font-bold text-white">
+                      Lời Giải Chi Tiết Từng Bước (AI Step Analysis)
+                    </h3>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      const fullText = solutionSteps
+                        .map((s) => `${s.title}. ${s.detail}`)
+                        .join('. ')
+                      void speak(fullText, 'vi-VN')
+                    }}
+                    aria-label="Nghe đọc lời giải"
+                    title="Nghe giọng đọc AI"
+                    className="tap-44 p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-accent-300 transition flex items-center gap-1.5 text-xs font-semibold"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                    <span className="hidden sm:inline">Đọc lời giải</span>
+                  </button>
                 </div>
 
                 <div className="space-y-4">
                   {solutionSteps.map((step, idx) => (
                     <div
                       key={idx}
-                      className="bg-zinc-950 rounded-xl p-4 border border-zinc-800/80 space-y-2"
+                      className="bg-zinc-950 rounded-2xl p-4 border border-zinc-800/80 space-y-2.5"
                     >
-                      <h4 className="text-sm font-semibold text-accent-300">{step.title}</h4>
+                      <h4 className="text-sm font-bold text-accent-300">{step.title}</h4>
                       <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
                         {step.detail}
                       </p>
                       {step.formula && (
-                        <div className="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 font-mono text-xs text-amber-300 overflow-x-auto">
+                        <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 font-mono text-xs text-amber-300 overflow-x-auto">
                           {step.formula}
+                        </div>
+                      )}
+                      {step.socraticHint && (
+                        <div className="flex items-start gap-2 p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs">
+                          <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
+                          <span>{step.socraticHint}</span>
+                        </div>
+                      )}
+                      {step.pitfall && (
+                        <div className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs">
+                          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                          <span>{step.pitfall}</span>
                         </div>
                       )}
                     </div>
@@ -424,7 +519,7 @@ export default function SubjectDetail() {
             {currentGradeData.chapters.map((chap) => (
               <div
                 key={chap.id}
-                className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-5 space-y-3"
+                className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-3"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -442,13 +537,13 @@ export default function SubjectDetail() {
                     {chap.keyFormulas.map((kf, i) => (
                       <div
                         key={i}
-                        className="bg-zinc-950 p-3 rounded-xl border border-zinc-800/80 space-y-1"
+                        className="bg-zinc-950 p-3.5 rounded-2xl border border-zinc-800/80 space-y-1.5"
                       >
-                        <p className="text-xs font-medium text-zinc-300">{kf.name}</p>
-                        <p className="text-xs font-mono text-amber-300 bg-zinc-900/80 px-2 py-1 rounded border border-zinc-800">
+                        <p className="text-xs font-semibold text-zinc-200">{kf.name}</p>
+                        <p className="text-xs font-mono text-amber-300 bg-zinc-900/90 px-2.5 py-1.5 rounded-xl border border-zinc-800">
                           {kf.formula}
                         </p>
-                        {kf.note && <p className="text-[11px] text-zinc-500 italic">{kf.note}</p>}
+                        {kf.note && <p className="text-[11px] text-zinc-400 italic">{kf.note}</p>}
                       </div>
                     ))}
                   </div>
@@ -475,7 +570,7 @@ export default function SubjectDetail() {
                   onClick={() =>
                     setDifficultyFilter(diff.id as 'all' | 'basic' | 'intermediate' | 'advanced')
                   }
-                  className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
+                  className={`tap-44 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
                     difficultyFilter === diff.id
                       ? 'bg-accent-500 text-white shadow-sm shadow-accent-500/20'
                       : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white'
@@ -492,12 +587,12 @@ export default function SubjectDetail() {
               .map((prob) => (
                 <div
                   key={prob.id}
-                  className="bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 rounded-2xl p-5 space-y-3 transition"
+                  className="bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 rounded-3xl p-5 space-y-3 transition shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase mr-2 border ${
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase mr-2 border ${
                           prob.difficulty === 'basic'
                             ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
                             : prob.difficulty === 'intermediate'
@@ -515,13 +610,14 @@ export default function SubjectDetail() {
                     </div>
                     <button
                       onClick={() => loadSampleProblem(prob.prompt, prob.solutionSteps)}
-                      className="tap-44 px-3 py-1.5 rounded-xl bg-accent-500 text-white font-semibold text-xs transition shadow-sm hover:bg-accent-400 shrink-0"
+                      className="tap-44 px-3.5 py-1.5 rounded-xl bg-accent-500 text-white font-semibold text-xs transition shadow-sm hover:bg-accent-400 shrink-0 flex items-center gap-1"
                     >
-                      Xem Lời Giải AI →
+                      <span>Xem Lời Giải AI</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <p className="text-sm text-zinc-300 leading-relaxed bg-zinc-950 p-3 rounded-xl border border-zinc-800/80">
+                  <p className="text-sm text-zinc-300 leading-relaxed bg-zinc-950 p-3.5 rounded-2xl border border-zinc-800/80">
                     {prob.prompt}
                   </p>
                 </div>

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, BookOpen } from 'lucide-react'
+import { ArrowLeft, BookOpen, Bot } from 'lucide-react'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import { getStreak } from '../lib/storage'
@@ -113,6 +113,18 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
 
         {/* Nút tùy chỉnh thêm vào header (tuỳ trang truyền vào) */}
         {extra}
+
+        {/* Nút truy cập nhanh Bạn Đồng Hành AI toàn cục */}
+        <button
+          onClick={() => nav('/dong-hanh')}
+          aria-label="Mở Bạn Đồng Hành AI"
+          title="Bạn Đồng Hành AI (Live Voice & Executive Suite)"
+          className="tap-44 relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-accent-500/15 hover:bg-accent-500/25 border border-accent-500/30 text-accent-300 text-xs font-semibold transition-all active:scale-95 group shadow-sm shrink-0"
+        >
+          <Bot className="w-3.5 h-3.5 text-accent-400 group-hover:scale-110 transition-transform" />
+          <span className="hidden md:inline">Đồng Hành AI</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+        </button>
 
         {/* Nút đổi giao diện: Sáng / Tối / Xanh đêm */}
         <ThemeToggle />
