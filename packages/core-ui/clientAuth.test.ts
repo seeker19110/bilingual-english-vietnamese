@@ -6,8 +6,8 @@ import { getSafeRedirectUrl } from './clientAuth'
 describe('packages/core-ui/clientAuth.ts', () => {
   describe('getSafeRedirectUrl', () => {
     it('không có tham số hoặc chuỗi rỗng → trả về fallbackUrl mặc định', () => {
-      expect(getSafeRedirectUrl(null)).toBe('https://en-vi.donghanhcungban.org/')
-      expect(getSafeRedirectUrl('')).toBe('https://en-vi.donghanhcungban.org/')
+      expect(getSafeRedirectUrl(null)).toBe('https://www.donghanhcungban.org/')
+      expect(getSafeRedirectUrl('')).toBe('https://www.donghanhcungban.org/')
       expect(getSafeRedirectUrl('   ', '/dashboard')).toBe('/dashboard')
     })
 
@@ -18,7 +18,7 @@ describe('packages/core-ui/clientAuth.ts', () => {
     })
 
     it('đường dẫn bắt đầu bằng // (protocol-relative URL lạ) → từ chối, trả fallbackUrl', () => {
-      expect(getSafeRedirectUrl('//evil.com/phishing')).toBe('https://en-vi.donghanhcungban.org/')
+      expect(getSafeRedirectUrl('//evil.com/phishing')).toBe('https://www.donghanhcungban.org/')
     })
 
     it('URL tuyệt đối thuộc domain donghanhcungban.org / donghanhcungban.com → cho phép', () => {
@@ -48,11 +48,11 @@ describe('packages/core-ui/clientAuth.ts', () => {
     })
 
     it('URL độc hại / domain bên ngoài (Open Redirect Attack) → từ chối, trả fallbackUrl', () => {
-      expect(getSafeRedirectUrl('https://evil.com/hack')).toBe('https://en-vi.donghanhcungban.org/')
+      expect(getSafeRedirectUrl('https://evil.com/hack')).toBe('https://www.donghanhcungban.org/')
       expect(getSafeRedirectUrl('https://attacker-donghanhcungban.org/')).toBe(
-        'https://en-vi.donghanhcungban.org/',
+        'https://www.donghanhcungban.org/',
       )
-      expect(getSafeRedirectUrl('javascript:alert(1)')).toBe('https://en-vi.donghanhcungban.org/')
+      expect(getSafeRedirectUrl('javascript:alert(1)')).toBe('https://www.donghanhcungban.org/')
     })
   })
 })

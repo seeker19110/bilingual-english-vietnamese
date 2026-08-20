@@ -392,7 +392,10 @@ app.use(
 // Nhận NHIỀU host phân cách dấu phẩy (vd đang chuyển đổi .com → .org song song, xem
 // docs/doi-ten-mien-chinh-org.md) — cả 2 domain cùng phục vụ app tiếng Anh trong lúc test.
 const EN_VI_HOSTNAMES = new Set(
-  (process.env.EN_VI_HOSTNAME || 'en-vi.donghanhcungban.org,en-vi.donghanhcungban.com')
+  (
+    process.env.EN_VI_HOSTNAME ||
+    'www.donghanhcungban.org,donghanhcungban.org,en-vi.donghanhcungban.org,en-vi.donghanhcungban.com'
+  )
     .split(',')
     .map((host) => host.trim())
     .filter(Boolean),

@@ -38,7 +38,7 @@ const ALLOWED_HOST_SUFFIXES = [
 
 export function getSafeRedirectUrl(
   redirectParam: string | null | undefined,
-  fallbackUrl = 'https://en-vi.donghanhcungban.org/',
+  fallbackUrl = 'https://www.donghanhcungban.org/',
 ): string {
   if (!redirectParam || !redirectParam.trim()) return fallbackUrl
   const trimmed = redirectParam.trim()

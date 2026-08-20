@@ -145,7 +145,7 @@ function RequireAdmin({ children }: { children: React.ReactNode }) {
 // staging / domain khác; nếu không đặt thì mặc định domain production hiện tại.
 const BASE_URL =
   (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, '') ||
-  'https://en-vi.donghanhcungban.com'
+  'https://www.donghanhcungban.org'
 function CanonicalUpdater() {
   const { pathname } = useLocation()
   useEffect(() => {

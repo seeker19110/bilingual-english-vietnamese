@@ -158,13 +158,13 @@ export async function sendEmailReminders(): Promise<EmailReminderResult> {
     const mailResult = await sendMailWithQuota({
       to: email,
       subject: `📚 [Gia sư AI] ${msg.title}`,
-      text: `${msg.body}\n\nĐăng nhập ngay để tiếp tục lộ trình học của bạn: https://en-vi.donghanhcungban.org${msg.url}`,
+      text: `${msg.body}\n\nĐăng nhập ngay để tiếp tục lộ trình học của bạn: https://www.donghanhcungban.org${msg.url}`,
       html: `
         <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e4e4e7; rounded: 12px;">
           <h2 style="color: #10b981; margin-top: 0;">${msg.title}</h2>
           <p style="font-size: 14px; color: #3f3f46; line-height: 1.6;">${msg.body}</p>
           <div style="margin-top: 24px; text-align: center;">
-            <a href="https://en-vi.donghanhcungban.org${msg.url}" style="background-color: #10b981; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block;">
+            <a href="https://www.donghanhcungban.org${msg.url}" style="background-color: #10b981; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block;">
               Vào Học Ngay
             </a>
           </div>

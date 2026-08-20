@@ -16,7 +16,7 @@ import { useToast } from '@core/ToastProvider'
 
 const BASE_URL =
   (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, '') ||
-  'https://en-vi.donghanhcungban.com'
+  'https://www.donghanhcungban.org'
 
 const CANVAS_W = 1080
 const CANVAS_H = 1080

@@ -52,7 +52,7 @@ export default function Login() {
     if (isEnViProd) {
       const searchParams = new URLSearchParams(window.location.search)
       const redirectParam = searchParams.get('redirect') || window.location.origin
-      window.location.href = `https://donghanhcungban.org/login?redirect=${encodeURIComponent(redirectParam)}`
+      window.location.href = `https://www.donghanhcungban.org/login?redirect=${encodeURIComponent(redirectParam)}`
       return
     }
 

@@ -22,7 +22,7 @@ const OUT_FILE = path.join(ROOT, 'public/sitemap-words.xml')
 const SITE_URL = (
   process.env.SITE_URL ||
   process.env.VITE_SITE_URL ||
-  'https://en-vi.donghanhcungban.org'
+  'https://www.donghanhcungban.org'
 ).replace(/\/$/, '')
 
 let dict: DictEntry[] = []

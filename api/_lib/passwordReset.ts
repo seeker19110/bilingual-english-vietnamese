@@ -39,7 +39,7 @@ function siteUrl(): string {
   return (
     process.env.SITE_URL ||
     process.env.VITE_SITE_URL ||
-    'https://en-vi.donghanhcungban.org'
+    'https://www.donghanhcungban.org'
   ).replace(/\/$/, '')
 }
 
