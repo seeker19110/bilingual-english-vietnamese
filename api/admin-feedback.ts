@@ -1,7 +1,9 @@
-// api/admin-feedback.ts — Lấy danh sách phản hồi 👎 chất lượng gia sư AI cho Admin.
+// api/admin-feedback.ts — Quản trị ý kiến đóng góp người dùng và phản hồi chất lượng gia sư AI.
 //
-// GET /api/admin-feedback?source=chat|speaking
+// GET   /api/admin-feedback?type=user|tutor&category=...&status=...
+// PATCH /api/admin-feedback body: { id, status, adminNotes? }
 
+import { z } from 'zod'
 import { getPgPool } from '../packages/core-db/pgPool.js'
 import {
   validateAuth,
@@ -12,9 +14,14 @@ import {
 } from '../packages/core-auth/security.js'
 import { getUserById } from '../packages/core-auth/authService.js'
 import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
+import {
+  FeedbackStatusSchema,
+  type UserFeedbackRecord,
+} from '../packages/core-contracts/feedback.js'
+import { validateBody, readJsonBody } from './_lib/validation.js'
 import { jsonResponse, getClientIp } from './_lib/http.js'
 
-export interface FeedbackRow {
+export interface TutorFeedbackRow {
   id: string
   userId: string
   userEmail: string | null
@@ -23,6 +30,12 @@ export interface FeedbackRow {
   aiFeedback: string
   createdAt: string
 }
+
+const PatchSchema = z.object({
+  id: z.string().uuid(),
+  status: FeedbackStatusSchema.optional(),
+  adminNotes: z.string().max(5000).optional(),
+})
 
 export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }
@@ -43,36 +56,108 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Chỉ admin mới truy cập được' }, 403, allHeaders)
   }
 
-  if (req.method !== 'GET') {
-    return jsonResponse({ error: 'Method not allowed' }, 405, allHeaders)
-  }
-
   const pool = getPgPool()
-  const url = new URL(req.url)
-  const sourceFilter = url.searchParams.get('source')?.trim()
 
-  let sql = `
-    select
-      tf.id,
-      tf.user_id as "userId",
-      u.email as "userEmail",
-      tf.source,
-      tf.user_input as "userInput",
-      tf.ai_feedback as "aiFeedback",
-      tf.created_at as "createdAt"
-    from english.tutor_feedback tf
-    left join public.users u on u.id = tf.user_id
-    where 1=1
-  `
-  const params: string[] = []
+  if (req.method === 'GET') {
+    const url = new URL(req.url)
+    const feedbackType = url.searchParams.get('type')?.trim() ?? 'user'
 
-  if (sourceFilter && ['chat', 'speaking'].includes(sourceFilter)) {
-    params.push(sourceFilter)
-    sql += ` and tf.source = $1`
+    if (feedbackType === 'tutor') {
+      const sourceFilter = url.searchParams.get('source')?.trim()
+      let sql = `
+        select
+          tf.id,
+          tf.user_id as "userId",
+          u.email as "userEmail",
+          tf.source,
+          tf.user_input as "userInput",
+          tf.ai_feedback as "aiFeedback",
+          tf.created_at as "createdAt"
+        from english.tutor_feedback tf
+        left join public.users u on u.id = tf.user_id
+        where 1=1
+      `
+      const params: string[] = []
+      if (sourceFilter && ['chat', 'speaking'].includes(sourceFilter)) {
+        params.push(sourceFilter)
+        sql += ` and tf.source = $1`
+      }
+      sql += ` order by tf.created_at desc limit 100`
+      const { rows } = await pool.query<TutorFeedbackRow>(sql, params)
+      return jsonResponse({ feedbackList: rows, type: 'tutor' }, 200, allHeaders)
+    }
+
+    // Default: General User Feedback
+    const categoryFilter = url.searchParams.get('category')?.trim()
+    const statusFilter = url.searchParams.get('status')?.trim()
+
+    let sql = `
+      select
+        uf.id,
+        uf.user_id as "userId",
+        coalesce(u.email, uf.contact_email) as "userEmail",
+        uf.category,
+        uf.rating,
+        uf.title,
+        uf.message,
+        uf.contact_email as "contactEmail",
+        uf.context_info as "contextInfo",
+        uf.status,
+        uf.admin_notes as "adminNotes",
+        uf.created_at as "createdAt",
+        uf.updated_at as "updatedAt"
+      from public.user_feedback uf
+      left join public.users u on u.id = uf.user_id
+      where 1=1
+    `
+    const params: unknown[] = []
+    let paramIdx = 1
+
+    if (categoryFilter) {
+      sql += ` and uf.category = $${paramIdx++}`
+      params.push(categoryFilter)
+    }
+    if (statusFilter) {
+      sql += ` and uf.status = $${paramIdx++}`
+      params.push(statusFilter)
+    }
+
+    sql += ` order by uf.created_at desc limit 100`
+
+    const { rows } = await pool.query<UserFeedbackRecord>(sql, params)
+    return jsonResponse({ feedbackList: rows, type: 'user' }, 200, allHeaders)
   }
 
-  sql += ` order by tf.created_at desc limit 100`
+  if (req.method === 'PATCH') {
+    const bodyResult = await readJsonBody(req)
+    if (!bodyResult.ok) {
+      return jsonResponse({ error: bodyResult.error.message }, bodyResult.error.status, allHeaders)
+    }
+    const parsed = validateBody(PatchSchema, bodyResult.raw)
+    if (!parsed.ok) {
+      return jsonResponse({ error: parsed.error.message }, parsed.error.status, allHeaders)
+    }
 
-  const { rows } = await pool.query<FeedbackRow>(sql, params)
-  return jsonResponse({ feedbackList: rows }, 200, allHeaders)
+    const { id, status, adminNotes } = parsed.data
+
+    const { rows } = await pool.query<{ id: string }>(
+      `update public.user_feedback set
+         status = coalesce($2, status),
+         admin_notes = coalesce($3, admin_notes),
+         updated_at = now()
+       where id = $1
+       returning id`,
+      [id, status ?? null, adminNotes ?? null],
+    )
+
+    if (rows.length === 0) {
+      return jsonResponse({ error: 'Feedback không tồn tại' }, 404, allHeaders)
+    }
+
+    return jsonResponse({ ok: true, id }, 200, allHeaders)
+  }
+
+  return jsonResponse({ error: 'Method not allowed' }, 405, allHeaders)
 }
+
+export const config = { runtime: 'edge' }

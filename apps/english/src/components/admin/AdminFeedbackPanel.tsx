@@ -1,11 +1,36 @@
 import { useState, useEffect, useCallback } from 'react'
-import { ThumbsDown, MessageSquare, Mic, RefreshCw, AlertCircle } from 'lucide-react'
+import {
+  ThumbsDown,
+  MessageSquare,
+  Mic,
+  RefreshCw,
+  AlertCircle,
+  MessageSquareHeart,
+  Star,
+} from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
-import type { FeedbackRow } from '../../../../../api/admin-feedback'
+import { useToast } from '@core/ToastProvider'
+import type { TutorFeedbackRow } from '../../../../../api/admin-feedback'
+import {
+  CATEGORY_METADATA,
+  type UserFeedbackRecord,
+  type UserFeedbackStatus,
+} from '../../../../../packages/core-contracts/feedback'
 
 export default function AdminFeedbackPanel() {
-  const [items, setItems] = useState<FeedbackRow[]>([])
+  const toast = useToast()
+  const [activeTab, setActiveTab] = useState<'user' | 'tutor'>('user')
+
+  // User feedback states
+  const [userFeedbacks, setUserFeedbacks] = useState<UserFeedbackRecord[]>([])
+  const [categoryFilter, setCategoryFilter] = useState<string>('all')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [updatingId, setUpdatingId] = useState<string | null>(null)
+
+  // Tutor feedback states
+  const [tutorFeedbacks, setTutorFeedbacks] = useState<TutorFeedbackRow[]>([])
   const [sourceFilter, setSourceFilter] = useState<string>('all')
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -14,7 +39,14 @@ export default function AdminFeedbackPanel() {
     setError(null)
     try {
       const params = new URLSearchParams()
-      if (sourceFilter !== 'all') params.set('source', sourceFilter)
+      params.set('type', activeTab)
+
+      if (activeTab === 'user') {
+        if (categoryFilter !== 'all') params.set('category', categoryFilter)
+        if (statusFilter !== 'all') params.set('status', statusFilter)
+      } else {
+        if (sourceFilter !== 'all') params.set('source', sourceFilter)
+      }
 
       const headers = await getAuthHeader()
       const res = await fetch(`/api/admin-feedback?${params.toString()}`, { headers })
@@ -24,43 +56,136 @@ export default function AdminFeedbackPanel() {
       }
       if (!res.ok) throw new Error('Không thể tải danh sách phản hồi')
       const data = await res.json()
-      setItems(data.feedbackList || [])
+      if (activeTab === 'user') {
+        setUserFeedbacks(data.feedbackList || [])
+      } else {
+        setTutorFeedbacks(data.feedbackList || [])
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Lỗi tải dữ liệu')
     } finally {
       setLoading(false)
     }
-  }, [sourceFilter])
+  }, [activeTab, categoryFilter, statusFilter, sourceFilter])
 
   useEffect(() => {
     fetchFeedback()
   }, [fetchFeedback])
 
+  async function handleStatusChange(id: string, newStatus: UserFeedbackStatus) {
+    setUpdatingId(id)
+    try {
+      const headers = await getAuthHeader()
+      const res = await fetch('/api/admin-feedback', {
+        method: 'PATCH',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus }),
+      })
+      if (!res.ok) throw new Error('Cập nhật trạng thái thất bại')
+      setUserFeedbacks((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item)),
+      )
+      toast.success('Đã cập nhật trạng thái')
+    } catch (err) {
+      toast.error((err as Error).message)
+    } finally {
+      setUpdatingId(null)
+    }
+  }
+
   return (
     <div className="space-y-4 text-sm">
+      {/* Tab Switcher */}
+      <div className="flex gap-2 border-b border-zinc-800 pb-2">
+        <button
+          type="button"
+          onClick={() => setActiveTab('user')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
+            activeTab === 'user'
+              ? 'bg-accent-500/20 text-accent-300 border border-accent-500/40'
+              : 'text-zinc-400 hover:text-zinc-200 bg-zinc-900 border border-zinc-800'
+          }`}
+        >
+          <MessageSquareHeart className="w-4 h-4" />Ý Kiến Người Dùng & Báo Lỗi (
+          {userFeedbacks.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('tutor')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
+            activeTab === 'tutor'
+              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+              : 'text-zinc-400 hover:text-zinc-200 bg-zinc-900 border border-zinc-800'
+          }`}
+        >
+          <ThumbsDown className="w-4 h-4" />
+          Đánh Giá Gia Sư AI 👎 ({tutorFeedbacks.length})
+        </button>
+      </div>
+
       <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-4">
+        {/* Filter bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800 pb-3">
           <div className="flex items-center gap-2">
-            <ThumbsDown className="w-5 h-5 text-amber-400" />
+            {activeTab === 'user' ? (
+              <MessageSquareHeart className="w-5 h-5 text-accent-400" />
+            ) : (
+              <ThumbsDown className="w-5 h-5 text-amber-400" />
+            )}
             <div>
-              <h3 className="font-bold text-white text-base">Phản Hồi 👎 Chất Lượng Gia Sư AI</h3>
+              <h3 className="font-bold text-white text-base">
+                {activeTab === 'user'
+                  ? 'Ý Kiến Đóng Góp & Đề Xuất Tính Năng'
+                  : 'Phản Hồi 👎 Chất Lượng Gia Sư AI'}
+              </h3>
               <p className="text-xs text-zinc-400">
-                Danh sách các câu hội thoại bị người dùng đánh giá 👎 (Chat & Speaking) để bổ sung
-                dữ liệu huấn luyện.
+                {activeTab === 'user'
+                  ? 'Lắng nghe phản hồi từ học viên để ưu tiên phát triển và cải thiện sản phẩm.'
+                  : 'Bổ sung các ca AI trả lời chưa chuẩn vào bộ đánh giá (Golden set).'}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <select
-              value={sourceFilter}
-              onChange={(e) => setSourceFilter(e.target.value)}
-              className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
-            >
-              <option value="all">Tất cả nguồn</option>
-              <option value="chat">Chat AI</option>
-              <option value="speaking">Luyện nói (Speaking)</option>
-            </select>
+            {activeTab === 'user' ? (
+              <>
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-accent-500"
+                >
+                  <option value="all">Tất cả danh mục</option>
+                  <option value="feature">💡 Đề xuất tính năng</option>
+                  <option value="bug">🐛 Báo lỗi</option>
+                  <option value="content">📚 Góp ý nội dung</option>
+                  <option value="ui_ux">🎨 Giao diện & Trải nghiệm</option>
+                  <option value="other">💬 Ý kiến khác</option>
+                </select>
+
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-accent-500"
+                >
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="new">Mới nhận</option>
+                  <option value="reviewed">Đã xem</option>
+                  <option value="in_progress">Đang xử lý</option>
+                  <option value="resolved">Đã giải quyết</option>
+                  <option value="closed">Đã đóng</option>
+                </select>
+              </>
+            ) : (
+              <select
+                value={sourceFilter}
+                onChange={(e) => setSourceFilter(e.target.value)}
+                className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
+              >
+                <option value="all">Tất cả nguồn</option>
+                <option value="chat">Chat AI</option>
+                <option value="speaking">Luyện nói (Speaking)</option>
+              </select>
+            )}
 
             <button
               type="button"
@@ -79,15 +204,94 @@ export default function AdminFeedbackPanel() {
           </div>
         )}
 
+        {/* Content */}
         <div className="space-y-3">
           {loading ? (
             <div className="text-xs text-zinc-500 py-8 text-center">
               Đang tải danh sách phản hồi...
             </div>
-          ) : items.length === 0 ? (
+          ) : activeTab === 'user' ? (
+            userFeedbacks.length === 0 ? (
+              <div className="text-xs text-zinc-500 py-8 text-center">
+                Chưa có ý kiến đóng góp nào
+              </div>
+            ) : (
+              userFeedbacks.map((fb) => {
+                const meta = CATEGORY_METADATA[fb.category] || CATEGORY_METADATA.other
+                return (
+                  <div
+                    key={fb.id}
+                    className="p-4 bg-zinc-900/60 rounded-2xl border border-zinc-800/80 space-y-3"
+                  >
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`inline-flex items-center gap-1 font-semibold px-2 py-0.5 rounded-lg text-[11px] border ${meta.color}`}
+                        >
+                          <span>{meta.icon}</span> {meta.labelVi}
+                        </span>
+
+                        {fb.rating && (
+                          <span className="flex items-center gap-0.5 text-amber-400 font-bold text-[11px] bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20">
+                            <Star className="w-3 h-3 fill-amber-400" /> {fb.rating}/5
+                          </span>
+                        )}
+
+                        <span className="text-white font-medium">
+                          {fb.userEmail || fb.userId || 'Khách'}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={fb.status}
+                          disabled={updatingId === fb.id}
+                          onChange={(e) =>
+                            handleStatusChange(fb.id, e.target.value as UserFeedbackStatus)
+                          }
+                          className="bg-zinc-950 border border-zinc-800 rounded-lg px-2 py-1 text-[11px] text-zinc-300 focus:outline-none focus:border-accent-500"
+                        >
+                          <option value="new">Mới nhận</option>
+                          <option value="reviewed">Đã xem</option>
+                          <option value="in_progress">Đang xử lý</option>
+                          <option value="resolved">Đã giải quyết</option>
+                          <option value="closed">Đã đóng</option>
+                        </select>
+
+                        <span className="text-zinc-500 text-[11px]">
+                          {new Date(fb.createdAt).toLocaleString('vi-VN')}
+                        </span>
+                      </div>
+                    </div>
+
+                    {fb.title && <p className="font-bold text-white text-sm">{fb.title}</p>}
+
+                    <p className="text-zinc-200 text-xs leading-relaxed whitespace-pre-wrap bg-zinc-950/80 p-3 rounded-xl border border-zinc-800/60">
+                      {fb.message}
+                    </p>
+
+                    {fb.contextInfo && Object.keys(fb.contextInfo).length > 0 && (
+                      <div className="text-[11px] text-zinc-500 flex flex-wrap gap-2 pt-1">
+                        {(fb.contextInfo as { route?: string }).route && (
+                          <span className="bg-zinc-800/60 px-2 py-0.5 rounded">
+                            Route: {(fb.contextInfo as { route?: string }).route}
+                          </span>
+                        )}
+                        {(fb.contextInfo as { appVersion?: string }).appVersion && (
+                          <span className="bg-zinc-800/60 px-2 py-0.5 rounded">
+                            v{(fb.contextInfo as { appVersion?: string }).appVersion}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )
+              })
+            )
+          ) : tutorFeedbacks.length === 0 ? (
             <div className="text-xs text-zinc-500 py-8 text-center">Chưa có phản hồi 👎 nào</div>
           ) : (
-            items.map((fb) => (
+            tutorFeedbacks.map((fb) => (
               <div
                 key={fb.id}
                 className="p-3.5 bg-zinc-900/60 rounded-xl border border-zinc-800/80 space-y-2"

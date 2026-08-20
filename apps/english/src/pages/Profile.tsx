@@ -22,6 +22,7 @@ import {
   Settings,
   Users,
   MessageSquare,
+  MessageSquareHeart,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -30,6 +31,7 @@ import QuestsPanel from '../components/QuestsPanel'
 import EmailVerifySection from '../components/EmailVerifySection'
 import UpgradeSection from '../components/UpgradeSection'
 import PricePromoBanner from '../components/PricePromoBanner'
+import FeedbackModal from '../components/FeedbackModal'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useToast } from '@core/ToastProvider'
@@ -63,6 +65,7 @@ export default function Profile() {
   const [rewards, setRewards] = useState<AchievementRewardStatus[] | null>(null)
   const [claimingId, setClaimingId] = useState<string | null>(null)
   const [questsOpen, setQuestsOpen] = useState(false)
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
 
   // Backfill huy hiệu
   useEffect(() => {
@@ -360,6 +363,29 @@ export default function Profile() {
             </div>
             <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 transition shrink-0" />
           </button>
+
+          {/* Đóng góp ý kiến & Báo lỗi */}
+          <button
+            type="button"
+            onClick={() => setFeedbackOpen(true)}
+            aria-label={isA ? 'Đóng góp ý kiến & Báo lỗi' : 'Feedback & Bug Report'}
+            className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 flex items-center gap-4 transition group text-left active:scale-[0.99]"
+          >
+            <div className="w-11 h-11 rounded-xl bg-purple-500/15 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <MessageSquareHeart className="w-5 h-5 text-purple-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-white text-[15px]">
+                {isA ? 'Đóng góp ý kiến & Báo lỗi' : 'Feedback & Bug Report'}
+              </p>
+              <p className="text-xs text-zinc-400 truncate mt-0.5">
+                {isA
+                  ? 'Gửi đề xuất tính năng, báo lỗi hoặc góp ý nội dung bài học'
+                  : 'Suggest features, report issues or content improvements'}
+              </p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 transition shrink-0" />
+          </button>
         </section>
 
         {/* Nhiệm vụ */}
@@ -509,6 +535,8 @@ export default function Profile() {
           <LogOut className="w-4 h-4" /> {T.logout}
         </button>
       </main>
+
+      <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </div>
   )
 }

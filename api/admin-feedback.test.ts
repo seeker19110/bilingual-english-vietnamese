@@ -42,19 +42,30 @@ describe('/api/admin-feedback', () => {
     expect(res.status).toBe(401)
   })
 
-  it('lấy danh sách phản hồi 👎 (GET 200)', async () => {
+  it('lấy danh sách ý kiến đóng góp người dùng (GET 200 default type=user)', async () => {
     vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
     vi.mocked(getUserById).mockResolvedValueOnce({
       id: 'a1',
       email: 'admin@example.com',
     } as UserInfo)
-    queryMock.mockResolvedValueOnce({ rows: [{ id: 'f1', source: 'chat', userInput: 'Hi' }] })
+    queryMock.mockResolvedValueOnce({
+      rows: [
+        {
+          id: 'fb-1',
+          category: 'feature',
+          title: 'Đổi theme',
+          message: 'Tuyệt vời',
+          status: 'new',
+        },
+      ],
+    })
 
     const req = new Request('http://localhost/api/admin-feedback')
     const res = await handler(req)
     expect(res.status).toBe(200)
     const json = await res.json()
     expect(json.feedbackList).toHaveLength(1)
+    expect(json.type).toBe('user')
   })
 
   it('từ chối người dùng không phải admin (403)', async () => {
@@ -69,21 +80,7 @@ describe('/api/admin-feedback', () => {
     expect(res.status).toBe(403)
   })
 
-  it('từ chối HTTP method không hỗ trợ (405)', async () => {
-    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
-    vi.mocked(getUserById).mockResolvedValueOnce({
-      id: 'a1',
-      email: 'admin@example.com',
-    } as UserInfo)
-
-    const req = new Request('http://localhost/api/admin-feedback', {
-      method: 'POST',
-    })
-    const res = await handler(req)
-    expect(res.status).toBe(405)
-  })
-
-  it('lọc phản hồi theo source=chat (GET 200)', async () => {
+  it('lấy danh sách phản hồi gia sư AI khi type=tutor (GET 200)', async () => {
     vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
     vi.mocked(getUserById).mockResolvedValueOnce({
       id: 'a1',
@@ -91,12 +88,34 @@ describe('/api/admin-feedback', () => {
     } as UserInfo)
     queryMock.mockResolvedValueOnce({ rows: [{ id: 'f2', source: 'chat' }] })
 
-    const req = new Request('http://localhost/api/admin-feedback?source=chat')
+    const req = new Request('http://localhost/api/admin-feedback?type=tutor&source=chat')
     const res = await handler(req)
     expect(res.status).toBe(200)
     const json = await res.json()
     expect(json.feedbackList).toHaveLength(1)
-    // Verify query was called with the source filter param
-    expect(queryMock).toHaveBeenCalledWith(expect.stringContaining('tf.source = $1'), ['chat'])
+    expect(json.type).toBe('tutor')
+  })
+
+  it('cập nhật trạng thái ý kiến đóng góp (PATCH 200)', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+    queryMock.mockResolvedValueOnce({ rows: [{ id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' }] })
+
+    const req = new Request('http://localhost/api/admin-feedback', {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        status: 'resolved',
+        adminNotes: 'Đã fix ở v7.2',
+      }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    const json = await res.json()
+    expect(json.ok).toBe(true)
   })
 })

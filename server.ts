@@ -39,6 +39,7 @@ import usageSummaryHandler from './api/usage-summary.js'
 import historyHandler from './api/history.js'
 import challengeHandler from './api/challenge.js'
 import tutorFeedbackHandler from './api/tutor-feedback.js'
+import feedbackHandler from './api/feedback.js'
 import adminSettingsHandler from './api/admin-settings.js'
 import appSettingsHandler from './api/app-settings.js'
 import adminGrantPlanHandler from './api/admin-grant-plan.js'
@@ -254,6 +255,7 @@ app.all('/api/usage-summary', wrapEdge(usageSummaryHandler))
 app.all('/api/history', wrapEdge(historyHandler))
 app.all('/api/challenge', wrapEdge(challengeHandler))
 app.all('/api/tutor-feedback', wrapEdge(tutorFeedbackHandler))
+app.all('/api/feedback', wrapEdge(feedbackHandler))
 app.all('/api/admin-settings', wrapEdge(adminSettingsHandler))
 app.all('/api/app-settings', wrapEdge(appSettingsHandler))
 app.all('/api/admin-grant-plan', wrapEdge(adminGrantPlanHandler))
