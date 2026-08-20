@@ -43,27 +43,11 @@ export default function Login() {
   const [forgotSending, setForgotSending] = useState(false)
   const [isPopupBlocked, setIsPopupBlocked] = useState(false)
 
-  // 1. Nếu trên production của subdomain môn học (en-vi.), tự động chuyển hướng sang
-  // Cổng Đăng Nhập Toàn Cục tập trung tại donghanhcungban.org/login (hoặc www.)
-  // kèm tham số ?redirect= để thực hiện SSO trọn vẹn.
   useEffect(() => {
-    const host = window.location.hostname
-    const isOtherDomain =
-      host !== 'www.donghanhcungban.org' &&
-      host !== 'localhost' &&
-      host !== '127.0.0.1' &&
-      (host.includes('donghanhcungban.org') || host.includes('donghanhcungban.com'))
-    if (isOtherDomain) {
-      const searchParams = new URLSearchParams(window.location.search)
-      const redirectParam = searchParams.get('redirect') || window.location.origin
-      window.location.href = `https://www.donghanhcungban.org/login?redirect=${encodeURIComponent(redirectParam)}`
-      return
-    }
-
-    // 2. Tải trước SDK OAuth
+    // 1. Tải trước SDK OAuth
     preloadOAuthProviders()
 
-    // 3. Tự động kiểm tra và hoàn tất nếu quay lại từ luồng Google OAuth Redirect.
+    // 2. Tự động kiểm tra và hoàn tất nếu quay lại từ luồng Google OAuth Redirect.
     void handleOAuthRedirectCallback()
       .then(async (u) => {
         if (u) {

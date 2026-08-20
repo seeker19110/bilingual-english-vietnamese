@@ -122,22 +122,6 @@ import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
 const app = express()
 
-// ── Canonical Domain Redirect (301 chuyển hướng mọi domain khác về https://www.donghanhcungban.org) ──
-app.use((req, res, next) => {
-  const host = (req.headers.host || '').split(':')[0]?.toLowerCase() || ''
-  if (
-    process.env.NODE_ENV === 'production' &&
-    host &&
-    host !== 'www.donghanhcungban.org' &&
-    host !== 'localhost' &&
-    host !== '127.0.0.1' &&
-    (host.includes('donghanhcungban.org') || host.includes('donghanhcungban.com'))
-  ) {
-    return res.redirect(301, `https://www.donghanhcungban.org${req.originalUrl || req.url}`)
-  }
-  next()
-})
-
 // Content-Security-Policy dùng chung cho mọi response (API, static, health).
 // Đã bỏ các domain KHÔNG còn dùng: cdn.jsdelivr.net (không có script nào tải từ CDN),
 // fonts.googleapis.com + fonts.gstatic.com (font Inter đã tự host — xem src/main.tsx).
@@ -407,21 +391,7 @@ app.use(
 // (xem docs/nginx-hub-apex.md — phần hạ tầng thật cần làm tay, PR-7 mới chỉ dựng code).
 // Nhận NHIỀU host phân cách dấu phẩy (vd đang chuyển đổi .com → .org song song, xem
 // docs/doi-ten-mien-chinh-org.md) — cả 2 domain cùng phục vụ app tiếng Anh trong lúc test.
-const EN_VI_HOSTNAMES = new Set(
-  (
-    process.env.EN_VI_HOSTNAME ||
-    'www.donghanhcungban.org,donghanhcungban.org,en-vi.donghanhcungban.org,www.donghanhcungban.com,donghanhcungban.com,en-vi.donghanhcungban.com'
-  )
-    .split(',')
-    .map((host) => host.trim())
-    .filter(Boolean),
-)
-const englishDistDir = path.join(__dirname, 'dist')
-const hubDistDir = path.join(__dirname, 'apps/hub/dist')
-
-function distDirForHost(hostname: string): string {
-  return EN_VI_HOSTNAMES.has(hostname) ? englishDistDir : hubDistDir
-}
+const appDistDir = path.join(__dirname, 'dist')
 
 function staticCacheHeaders(res: express.Response, filePath: string) {
   // index.html không được cache (luôn fetch mới)
@@ -431,10 +401,6 @@ function staticCacheHeaders(res: express.Response, filePath: string) {
     res.setHeader('Expires', '0')
   }
   // File assets có hash (*.js, *.css, images) — cache mãi mãi (immutable).
-  // LƯU Ý: Vite đặt tên kiểu "[name]-[hash:8].ext" (ví dụ chunk-009-kqpwuI8u.js),
-  // hash là chuỗi base64url 8 ký tự (A-Za-z0-9_-) đứng SAU dấu gạch ngang —
-  // KHÔNG phải hex thường sau dấu chấm. Regex cũ /\.[a-f0-9]{8}\./ không bao giờ
-  // khớp nên trước đây mọi file JS/CSS chỉ được cache 1 tuần (rớt điểm Lighthouse).
   else if (/-[A-Za-z0-9_-]{8}\.(js|css|png|jpg|jpeg|gif|svg|webp|woff2?)$/.test(filePath)) {
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
   }
@@ -448,26 +414,20 @@ function staticCacheHeaders(res: express.Response, filePath: string) {
   }
 }
 
-// Cache file tĩnh 1 năm với cache busting (filename hash) — trừ index.html để luôn lấy bản mới nhất
-const englishStatic = express.static(englishDistDir, {
-  maxAge: '1y',
-  setHeaders: staticCacheHeaders,
-})
-const hubStatic = express.static(hubDistDir, { maxAge: '1y', setHeaders: staticCacheHeaders })
-app.use((req, res, next) => {
-  const serveStatic = distDirForHost(req.hostname) === englishDistDir ? englishStatic : hubStatic
-  serveStatic(req, res, next)
-})
+// Phục vụ toàn bộ ứng dụng học tập và Bạn Đồng Hành AI đầy đủ tính năng
+app.use(
+  express.static(appDistDir, {
+    maxAge: '1y',
+    setHeaders: staticCacheHeaders,
+  }),
+)
 
-// Mọi route không khớp đều trả index.html của ĐÚNG app theo Host (React Router xử lý routing
-// phía client). index.html KHÔNG được cache — luôn lấy bản mới để tham chiếu đúng tên chunk
-// (có hash) sau mỗi lần deploy; nếu cache index.html cũ sẽ trỏ tới chunk đã biến mất → 404
-// chunk → màn hình trắng.
-app.get('*', (req, res) => {
+// Mọi route client SPA (Toán, Tiếng Anh, Lộ trình, Luyện nói, Đồng Hành, Simulators, v.v.) đều trả index.html đầy đủ
+app.get('*', (_req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
   res.setHeader('Pragma', 'no-cache')
   res.setHeader('Expires', '0')
-  res.sendFile(path.join(distDirForHost(req.hostname), 'index.html'))
+  res.sendFile(path.join(appDistDir, 'index.html'))
 })
 
 // ── Bộ hẹn giờ nhắc học (web push) ───────────────────────────────────────────
