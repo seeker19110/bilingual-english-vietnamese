@@ -48,14 +48,15 @@ export default function Login() {
   // kèm tham số ?redirect= để thực hiện SSO trọn vẹn.
   useEffect(() => {
     const host = window.location.hostname
-    const isEnViProd = host === 'en-vi.donghanhcungban.org' || host === 'en-vi.donghanhcungban.com'
-    if (isEnViProd) {
+    const isOtherDomain =
+      host !== 'www.donghanhcungban.org' &&
+      host !== 'localhost' &&
+      host !== '127.0.0.1' &&
+      (host.includes('donghanhcungban.org') || host.includes('donghanhcungban.com'))
+    if (isOtherDomain) {
       const searchParams = new URLSearchParams(window.location.search)
       const redirectParam = searchParams.get('redirect') || window.location.origin
-      const targetDomain = host.endsWith('.com')
-        ? 'www.donghanhcungban.com'
-        : 'www.donghanhcungban.org'
-      window.location.href = `https://${targetDomain}/login?redirect=${encodeURIComponent(redirectParam)}`
+      window.location.href = `https://www.donghanhcungban.org/login?redirect=${encodeURIComponent(redirectParam)}`
       return
     }
 

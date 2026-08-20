@@ -122,6 +122,22 @@ import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
 const app = express()
 
+// ── Canonical Domain Redirect (301 chuyển hướng mọi domain khác về https://www.donghanhcungban.org) ──
+app.use((req, res, next) => {
+  const host = (req.headers.host || '').split(':')[0]?.toLowerCase() || ''
+  if (
+    process.env.NODE_ENV === 'production' &&
+    host &&
+    host !== 'www.donghanhcungban.org' &&
+    host !== 'localhost' &&
+    host !== '127.0.0.1' &&
+    (host.includes('donghanhcungban.org') || host.includes('donghanhcungban.com'))
+  ) {
+    return res.redirect(301, `https://www.donghanhcungban.org${req.originalUrl || req.url}`)
+  }
+  next()
+})
+
 // Content-Security-Policy dùng chung cho mọi response (API, static, health).
 // Đã bỏ các domain KHÔNG còn dùng: cdn.jsdelivr.net (không có script nào tải từ CDN),
 // fonts.googleapis.com + fonts.gstatic.com (font Inter đã tự host — xem src/main.tsx).
