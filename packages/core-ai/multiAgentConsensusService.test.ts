@@ -75,4 +75,53 @@ describe('multiAgentConsensusService (Multi-Agent Delphi Consensus)', () => {
     expect(verdict.finalRecommendedAction).toContain('GitHub')
     expect(verdict.synthesisSummary).toContain('Portfolio')
   })
+
+  it('handles calculateConsensusDegree with 0 or 1 perspective', () => {
+    expect(calculateConsensusDegree([])).toBe(1.0)
+    expect(
+      calculateConsensusDegree([
+        {
+          agentRole: 'career',
+          agentName: 'Agent',
+          standpoint: 'Stand',
+          confidenceScore: 0.8,
+          keyArguments: [],
+          recommendedAction: 'Action',
+        },
+      ]),
+    ).toBe(1.0)
+  })
+
+  it('handles dissenting perspectives (confidence < 0.6) and missing proposal id', () => {
+    const proposal: ConsensusProposal = {
+      id: '',
+      questionOrTopic: 'Khởi nghiệp EdTech',
+      domain: 'startup',
+      perspectives: [
+        {
+          agentRole: 'career',
+          agentName: 'Growth Expert',
+          standpoint: 'Tập trung vào product-market fit',
+          confidenceScore: 0.9,
+          keyArguments: ['pmf', 'traction'],
+          recommendedAction: 'Launch MVP',
+        },
+        {
+          agentRole: 'pedagogy',
+          agentName: 'Cautious Educator',
+          standpoint: 'Cần thẩm định kỹ giáo trình',
+          confidenceScore: 0.5, // < 0.6 -> dissenting
+          keyArguments: ['audit', 'quality'],
+          recommendedAction: 'Pedagogy Review',
+        },
+      ],
+      createdAt: Date.now(),
+    }
+
+    const verdict = resolveMultiAgentConsensus(proposal)
+    expect(verdict.proposalId).toMatch(/^prop-/)
+    expect(verdict.domain).toBe('startup')
+    expect(verdict.dissentingPerspectives.length).toBe(1)
+    expect(verdict.dissentingPerspectives[0]).toContain('Quan điểm thận trọng từ Cautious Educator')
+  })
 })

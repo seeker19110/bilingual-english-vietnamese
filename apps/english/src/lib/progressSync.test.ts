@@ -274,4 +274,91 @@ describe('pullProgress', () => {
     )
     await expect(pullProgress('u1')).resolves.toBeUndefined()
   })
+
+  it('hợp nhất cefrGrammar, cefrDialogues, cefrUnlocked, achievements, streakFreezeDates', async () => {
+    localStorage.setItem('et_cefr_grammar_u1', JSON.stringify(['g1']))
+    localStorage.setItem('et_cefr_dialogue_u1', JSON.stringify(['d1']))
+    localStorage.setItem('et_cefr_unlocked_u1', JSON.stringify(['u1']))
+    localStorage.setItem('et_achievements_u1', JSON.stringify(['a1']))
+
+    const cloudData = {
+      learned: [],
+      hard: [],
+      srs: {},
+      cefrGrammar: ['g2'],
+      cefrDialogues: ['d2'],
+      cefrUnlocked: ['u2'],
+      cefrExams: {
+        B1: { passed: true, bestPct: 85, attempts: 2, lastAt: '2026-08-10T00:00:00Z' },
+      },
+      placement: {},
+      weeklyGoal: { goal: 50, updatedAt: '2026-08-10T00:00:00Z' },
+      achievements: ['a2'],
+      settings: { theme: 'dark', updatedAt: '2026-08-15T00:00:00Z' },
+      streakFreezeDates: ['2026-08-14'],
+    }
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_url: string, init?: RequestInit) =>
+        init?.method === 'POST'
+          ? new Response('{}', { status: 200 })
+          : new Response(JSON.stringify(cloudData), { status: 200 }),
+      ),
+    )
+
+    await pullProgress('u1')
+    await flush()
+
+    const grammar = JSON.parse(localStorage.getItem('et_cefr_grammar_u1') as string)
+    const dialogues = JSON.parse(localStorage.getItem('et_cefr_dialogue_u1') as string)
+    const unlocked = JSON.parse(localStorage.getItem('et_cefr_unlocked_u1') as string)
+    const achievements = JSON.parse(localStorage.getItem('et_achievements_u1') as string)
+    const exams = JSON.parse(localStorage.getItem('et_cefr_exams_u1') as string)
+
+    expect(new Set(grammar)).toEqual(new Set(['g1', 'g2']))
+    expect(new Set(dialogues)).toEqual(new Set(['d1', 'd2']))
+    expect(new Set(unlocked)).toEqual(new Set(['u1', 'u2']))
+    expect(new Set(achievements)).toEqual(new Set(['a1', 'a2']))
+    expect(exams.B1.passed).toBe(true)
+  })
+
+  it('mergeExamMaps: hợp nhất kết quả thi khi local và cloud cùng có kỳ thi', async () => {
+    localStorage.setItem(
+      'et_cefr_exams_u1',
+      JSON.stringify({
+        A2: { passed: false, bestPct: 60, attempts: 1, lastAt: '2026-08-01T00:00:00Z' },
+        B1: { passed: true, bestPct: 90, attempts: 3, lastAt: '2026-08-05T00:00:00Z' },
+      }),
+    )
+
+    const cloudData = {
+      learned: [],
+      hard: [],
+      srs: {},
+      cefrExams: {
+        A2: { passed: true, bestPct: 75, attempts: 2, lastAt: '2026-08-02T00:00:00Z' },
+        C1: { passed: true, bestPct: 80, attempts: 1, lastAt: '2026-08-03T00:00:00Z' },
+      },
+    }
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_url: string, init?: RequestInit) =>
+        init?.method === 'POST'
+          ? new Response('{}', { status: 200 })
+          : new Response(JSON.stringify(cloudData), { status: 200 }),
+      ),
+    )
+
+    await pullProgress('u1')
+    await flush()
+
+    const exams = JSON.parse(localStorage.getItem('et_cefr_exams_u1') as string)
+    expect(exams.A2.passed).toBe(true) // Cloud passed wins
+    expect(exams.A2.bestPct).toBe(75) // Max bestPct
+    expect(exams.A2.attempts).toBe(2) // Max attempts
+    expect(exams.B1.bestPct).toBe(90) // Local only
+    expect(exams.C1.bestPct).toBe(80) // Cloud only
+  })
 })

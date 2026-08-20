@@ -3,6 +3,7 @@
 import type { Pool } from 'pg'
 import { randomUUID } from 'node:crypto'
 import { withTransaction } from '../core-db/transaction.js'
+import { vnDateStr } from '../core-db/date.js'
 import { NotFoundError } from '../core-errors/appError.js'
 import {
   LifePlanSchema,
@@ -278,7 +279,7 @@ export async function logHabit(
         logId,
         input.habitId,
         personId,
-        input.loggedAt ?? new Date().toISOString().slice(0, 10),
+        input.loggedAt ?? vnDateStr(),
         input.count ?? 1,
         input.note ?? null,
       ],

@@ -81,4 +81,44 @@ describe('proactiveAgentService Engine', () => {
     expect(updated.nudgeFrequency).toBe('high_focus')
     expect(updated.autoFlowShieldEnabled).toBe(false)
   })
+
+  // --- Nhánh lines 115-137: canvas_blocker nudge khi hasUnfinishedCanvasTask = true ---
+  it('triggers canvas_blocker nudge when hasUnfinishedCanvasTask is true', () => {
+    const testId = '55555555-5555-4555-8555-555555555555'
+    const state = evaluateProactiveState(testId, {
+      circadianEnergy: 30, // low energy → không có circadian_peak
+      stressIndex: 10, // low stress → không có burnout
+      hasUnfinishedCanvasTask: true,
+    })
+
+    const canvasNudge = state.nudges.find((n) => n.nudgeType === 'canvas_blocker')
+    expect(canvasNudge).toBeDefined()
+    expect(canvasNudge?.priority).toBe('medium')
+    expect(canvasNudge?.suggestedAction?.actionType).toBe('open_canvas_task')
+  })
+
+  // --- Nhánh lines 140-163: streak_at_risk nudge khi streakCount > 0 và nudges rỗng ---
+  it('triggers streak_at_risk nudge when streakCount > 0 and no other nudges', () => {
+    const testId = '66666666-6666-4666-8666-666666666666'
+    const state = evaluateProactiveState(testId, {
+      circadianEnergy: 30, // không đủ để circadian_peak
+      stressIndex: 10, // không đủ để burnout
+      hasUnfinishedCanvasTask: false,
+      streakCount: 7, // có streak → kích hoạt khi nudges.length === 0
+    })
+
+    const streakNudge = state.nudges.find((n) => n.nudgeType === 'streak_at_risk')
+    expect(streakNudge).toBeDefined()
+    expect(streakNudge?.domain).toBe('learning')
+    expect(streakNudge?.suggestedAction?.actionType).toBe('start_srs_review')
+  })
+
+  // --- Nhánh: evaluateProactiveState với context mặc định (không truyền gì) ---
+  it('evaluateProactiveState với context rỗng → circadianEnergy mặc định 85 → circadian_peak', () => {
+    const testId = '77777777-7777-4777-8777-777777777777'
+    const state = evaluateProactiveState(testId) // không truyền context → default
+    // energy = 85 (default) → circadian_peak nếu stressIndex không có hoặc <= 50
+    const peakNudge = state.nudges.find((n) => n.nudgeType === 'circadian_peak')
+    expect(peakNudge).toBeDefined()
+  })
 })

@@ -4,7 +4,7 @@ vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 vi.mock('../packages/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
-  checkRateLimit: async () => true,
+  checkRateLimit: vi.fn(async () => true),
   validateAuth: vi.fn(),
   logSecurityEvent: () => {},
 }))
@@ -98,5 +98,44 @@ describe('/api/hub-stats', () => {
     const handler = await importHandler()
     const resp = await handler(new Request('http://localhost/api/hub-stats', { method: 'POST' }))
     expect(resp.status).toBe(405)
+  })
+
+  it('OPTIONS trả 204 và rate limit trả 429', async () => {
+    const { checkRateLimit } = await import('../packages/core-auth/security')
+    const handler = await importHandler()
+
+    const resOpt = await handler(
+      new Request('http://localhost/api/hub-stats', { method: 'OPTIONS' }),
+    )
+    expect(resOpt.status).toBe(204)
+
+    vi.mocked(checkRateLimit).mockResolvedValueOnce(false)
+    const resRate = await handler(new Request('http://localhost/api/hub-stats'))
+    expect(resRate.status).toBe(429)
+  })
+
+  it('fallback tên từ email khi profile name null, và fail-open khi DB lỗi', async () => {
+    const { validateAuth } = await import('../packages/core-auth/security')
+    const { getUserById } = await import('../packages/core-auth/authService')
+    const { isAdminEmail } = await import('../packages/core-auth/adminAuth')
+
+    vi.mocked(validateAuth).mockResolvedValue({ userId: 'u1' })
+    vi.mocked(getUserById).mockResolvedValue({ id: 'u1', email: 'john.doe@example.com' })
+    vi.mocked(isAdminEmail).mockReturnValue(false)
+    query.mockResolvedValueOnce({ rows: [{ name: null }] })
+
+    const handler = await importHandler()
+    const resp = await handler(new Request('http://localhost/api/hub-stats'))
+    expect(resp.status).toBe(200)
+    const data = (await resp.json()) as Record<string, unknown>
+    expect(data.userName).toBe('john.doe')
+
+    // DB throw error in try block
+    vi.mocked(getUserById).mockRejectedValueOnce(new Error('DB failure'))
+    const respFail = await handler(new Request('http://localhost/api/hub-stats'))
+    expect(respFail.status).toBe(200)
+    const dataFail = (await respFail.json()) as Record<string, unknown>
+    expect(dataFail.loggedIn).toBe(true)
+    expect(dataFail.isAdmin).toBe(false)
   })
 })

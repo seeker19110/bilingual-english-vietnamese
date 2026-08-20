@@ -74,4 +74,117 @@ describe('STEM Scratchpad API Handler (/api/stem-scratchpad)', () => {
     expect(stepData.success).toBe(true)
     expect(stepData.validation.isValid).toBe(true)
   })
+
+  it('handles OPTIONS request with 204', async () => {
+    const res = await handler(
+      new Request('http://localhost/api/stem-scratchpad', { method: 'OPTIONS' }),
+    )
+    expect(res.status).toBe(204)
+  })
+
+  it('handles GET specific problemId (found and not found)', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    // Not found
+    const notFoundRes = await handler(
+      new Request('http://localhost/api/stem-scratchpad?problemId=nonexistent', { method: 'GET' }),
+    )
+    expect(notFoundRes.status).toBe(404)
+
+    // Create problem
+    const createReq = new Request('http://localhost/api/stem-scratchpad?action=create_problem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subject: 'math',
+        title: 'Equation',
+        problemStatement: '2x = 10',
+      }),
+    })
+    const createRes = await handler(createReq)
+    const { problem } = await createRes.json()
+
+    // Found
+    const foundRes = await handler(
+      new Request(`http://localhost/api/stem-scratchpad?problemId=${problem.id}`, {
+        method: 'GET',
+      }),
+    )
+    expect(foundRes.status).toBe(200)
+  })
+
+  it('validates missing fields and actions on POST', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    // Missing create fields
+    const badCreate = await handler(
+      new Request('http://localhost/api/stem-scratchpad?action=create_problem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      }),
+    )
+    expect(badCreate.status).toBe(400)
+
+    // Missing latexInput in validate_step
+    const badStep = await handler(
+      new Request('http://localhost/api/stem-scratchpad?action=validate_step', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      }),
+    )
+    expect(badStep.status).toBe(400)
+
+    // Validate step with fallback problem creation and solving condition
+    const solvedStep = await handler(
+      new Request('http://localhost/api/stem-scratchpad?action=validate_step', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latexInput: 'x = 5', explanation: 'Final answer' }),
+      }),
+    )
+    expect(solvedStep.status).toBe(200)
+    const solvedData = await solvedStep.json()
+    expect(solvedData.isSolved).toBe(true)
+
+    // Get hint (not found vs found)
+    const notFoundHint = await handler(
+      new Request('http://localhost/api/stem-scratchpad?action=get_hint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ problemId: 'ghost' }),
+      }),
+    )
+    expect(notFoundHint.status).toBe(404)
+
+    const foundHint = await handler(
+      new Request('http://localhost/api/stem-scratchpad?action=get_hint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ problemId: solvedData.problem.id }),
+      }),
+    )
+    expect(foundHint.status).toBe(200)
+
+    // Invalid action
+    const badAction = await handler(
+      new Request('http://localhost/api/stem-scratchpad?action=fake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      }),
+    )
+    expect(badAction.status).toBe(400)
+
+    // Method not allowed
+    const badMethod = await handler(
+      new Request('http://localhost/api/stem-scratchpad', { method: 'PATCH' }),
+    )
+    expect(badMethod.status).toBe(405)
+  })
 })

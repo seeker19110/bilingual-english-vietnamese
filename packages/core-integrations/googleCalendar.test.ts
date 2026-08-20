@@ -28,4 +28,28 @@ describe('GoogleCalendar Connector', () => {
     expect(res.externalUrl).toBeTruthy()
     expect(res.receiptId).toContain('gcal-receipt')
   })
+
+  // --- Nhánh lines 15-16: invalid ISO date → catch branch strips invalid chars ---
+  it('formatGoogleCalendarUrl với ISO không hợp lệ → vẫn trả URL (catch branch fallback)', () => {
+    // new Date('not-a-date').toISOString() → throw → catch → dùng input thô đã strip
+    const url = formatGoogleCalendarUrl({
+      title: 'Test',
+      startIso: 'not-a-date',
+      endIso: 'also-not-a-date',
+    })
+    expect(url).toContain('https://calendar.google.com/calendar/render')
+    // Fallback strip: 'not-a-date'.replace(/[-:]/g, '') = 'notadate'
+    expect(url).toContain('notadate')
+  })
+
+  // --- Nhánh lines 31-32: recurrenceRule có giá trị → params.set('recur', ...) ---
+  it('formatGoogleCalendarUrl với recurrenceRule → URL chứa recur param', () => {
+    const url = formatGoogleCalendarUrl({
+      title: 'Học mỗi tuần',
+      startIso: '2026-08-19T08:00:00.000Z',
+      endIso: '2026-08-19T09:00:00.000Z',
+      recurrenceRule: 'FREQ=WEEKLY;BYDAY=MO',
+    })
+    expect(url).toContain('recur=RRULE%3AFREQ%3DWEEKLY')
+  })
 })

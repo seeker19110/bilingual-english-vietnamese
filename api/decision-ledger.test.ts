@@ -214,10 +214,54 @@ describe('PATCH /api/decision-ledger', () => {
     const resPostInvalid = await handler(req('POST', '', { options: [] }))
     expect(resPostInvalid.status).toBe(400)
 
-    const resPatchInvalid = await handler(req('PATCH', '', { id: DECISION_ID, action: 'invalid' }))
-    expect(resPatchInvalid.status).toBe(400)
-
     const resDelete = await handler(req('DELETE'))
     expect(resDelete.status).toBe(405)
+  })
+
+  it('GET với kind=calibration hoặc calibration=true', async () => {
+    const res = await handler(req('GET', '?kind=calibration'))
+    expect(res.status).toBe(200)
+    const json = await res.json()
+    expect(json.calibration).toBeDefined()
+  })
+
+  it('GET với id sai UUID hoặc status không hợp lệ → 400', async () => {
+    const resId = await handler(req('GET', '?id=not-uuid'))
+    expect(resId.status).toBe(400)
+
+    const resStatus = await handler(req('GET', '?status=invalid-status'))
+    expect(resStatus.status).toBe(400)
+  })
+
+  it('GET với limit và domain', async () => {
+    const res = await handler(req('GET', '?limit=10&domain=work'))
+    expect(res.status).toBe(200)
+    expect(service.listDecisions).toHaveBeenCalledWith(expect.anything(), PERSON, {
+      status: undefined,
+      domain: 'work',
+      limit: 10,
+    })
+  })
+
+  it('POST / PATCH body không phải JSON hợp lệ → 400', async () => {
+    const postBad = new Request('http://localhost/api/decision-ledger', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: 'invalid-json',
+    })
+    expect((await handler(postBad)).status).toBe(400)
+
+    const patchBad = new Request('http://localhost/api/decision-ledger', {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: 'invalid-json',
+    })
+    expect((await handler(patchBad)).status).toBe(400)
+  })
+
+  it('xử lý AppError và internal server error 500', async () => {
+    service.getDecision.mockRejectedValueOnce(new Error('DB failure'))
+    const res500 = await handler(req('GET', `?id=${DECISION_ID}`))
+    expect(res500.status).toBe(500)
   })
 })

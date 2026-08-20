@@ -61,4 +61,33 @@ describe('hybridRagEngine (Hybrid RAG & RRF)', () => {
     expect(results[0]?.rrfScore).toBeGreaterThan(0)
     expect(results[0]?.combinedConfidence).toBeGreaterThan(0)
   })
+
+  it('handles edge cases in calculateCosineSimilarity', () => {
+    expect(calculateCosineSimilarity([], [1, 2])).toBe(0)
+    expect(calculateCosineSimilarity([1, 2], [])).toBe(0)
+    expect(calculateCosineSimilarity([1, 2], [1, 2, 3])).toBe(0)
+    expect(calculateCosineSimilarity([0, 0], [0, 0])).toBe(0)
+  })
+
+  it('handles edge cases in calculateKeywordScore', () => {
+    expect(calculateKeywordScore('', 'Some text')).toBe(0)
+    expect(calculateKeywordScore('query', '')).toBe(0)
+  })
+
+  it('handles searchHybridRag with empty docs, undefined queryEmbedding, and mismatched doc embeddings', () => {
+    expect(searchHybridRag('query', undefined, [])).toEqual([])
+
+    const docs: RagDocument[] = [
+      { id: 'd1', content: 'hello world', embedding: [1, 0] },
+      { id: 'd2', content: 'world peace' }, // no embedding
+    ]
+
+    // Without query embedding
+    const noEmbResults = searchHybridRag('world', undefined, docs)
+    expect(noEmbResults.length).toBe(2)
+
+    // With query embedding of different length
+    const mismatchResults = searchHybridRag('world', [1, 0, 0], docs)
+    expect(mismatchResults.length).toBe(2)
+  })
 })

@@ -70,4 +70,62 @@ describe('remConsolidationService (Autonomous REM Memory Consolidation)', () => 
     expect(report.morningBriefing.focusAreas.length).toBeGreaterThan(0)
     expect(report.morningBriefing.suggestedAction).toContain('Tổng hợp')
   })
+
+  it('handles stabilityS <= 0 in decay and interval calculations', () => {
+    expect(calculateRetentionDecay(5, 0)).toBe(0)
+    expect(calculateRetentionDecay(5, -1)).toBe(0)
+    expect(calculateNextReviewIntervalDays(0)).toBe(1)
+    expect(calculateNextReviewIntervalDays(-5)).toBe(1)
+  })
+
+  it('handles empty memories with default morning briefing values and default targetDate', () => {
+    const report = runRemMemoryConsolidation('user-empty', [])
+    expect(report.totalRawMemoriesProcessed).toBe(0)
+    expect(report.blocksGenerated).toBe(0)
+    expect(report.morningBriefing.focusAreas).toEqual([
+      'Duy trì nhịp học tập và phát triển cá nhân',
+    ])
+    expect(report.morningBriefing.suggestedAction).toBe(
+      'Bắt đầu ngày mới với một bài tập phát âm 5 phút.',
+    )
+  })
+
+  it('covers all 5 domain titles and names (work, startup, life)', () => {
+    const memories: RawDayMemory[] = [
+      {
+        id: 'm-work',
+        personId: 'u1',
+        domain: 'work',
+        content: 'Hoàn thành Sprint 2',
+        confidence: 1,
+        importance: 4,
+        timestamp: Date.now(),
+      },
+      {
+        id: 'm-startup',
+        personId: 'u1',
+        domain: 'startup',
+        content: 'Phỏng vấn 3 khách hàng',
+        confidence: 1,
+        importance: 5,
+        timestamp: Date.now(),
+      },
+      {
+        id: 'm-life',
+        personId: 'u1',
+        domain: 'life',
+        content: 'Ngủ đủ 8 tiếng',
+        confidence: 1,
+        importance: 3,
+        timestamp: Date.now(),
+      },
+    ]
+
+    const report = runRemMemoryConsolidation('u1', memories)
+    expect(report.blocksGenerated).toBe(3)
+    const titles = report.consolidatedBlocks.map((b) => b.title)
+    expect(titles.some((t) => t.includes('Tiến độ Dự án'))).toBe(true)
+    expect(titles.some((t) => t.includes('Kiểm chứng Giả thuyết'))).toBe(true)
+    expect(titles.some((t) => t.includes('Thói quen & Nhịp sinh học'))).toBe(true)
+  })
 })

@@ -78,4 +78,37 @@ describe('dynamicToolSynthesizer (Zero-Trust Tool Synthesizer)', () => {
       expect(execResult.error).toContain('Lỗi thực thi mã')
     }
   })
+
+  // --- Nhánh lines 108-114: safety fail → trả về early với error ---
+  it('executeSynthesizedTool với tool chứa code không an toàn → trả success=false ngay', () => {
+    // Tạo tool với codeLogic chứa từ khóa cấm để validateToolSafety trả isSafe=false
+    const unsafeTool: Parameters<typeof executeSynthesizedTool>[0] = {
+      id: 'unsafe-tool',
+      name: 'unsafe',
+      description: 'unsafe',
+      parameters: [],
+      codeLogic: 'fetch("http://evil.com")', // bị cấm
+      createdByAgent: 'test',
+      createdAt: Date.now(),
+      executionCount: 0,
+    }
+    const result = executeSynthesizedTool(unsafeTool, {})
+    expect(result.success).toBe(false)
+    expect(result.error).toBeDefined()
+    expect(result.toolId).toBe('unsafe-tool')
+  })
+
+  // --- Nhánh lines 132-138: timeout → trả success=false với timeout message ---
+  it('executeSynthesizedTool với timeoutMs=0 → timeout ngay cả khi code nhanh', () => {
+    const fastCode = `return { result: 42 };`
+    const synthesis = synthesizeTool('fast_tool', 'Fast', [], fastCode)
+    expect(synthesis.success).toBe(true)
+
+    if (synthesis.tool) {
+      // timeoutMs = 0 → bất kỳ executionTime nào cũng > 0 ms → timeout ngay
+      const result = executeSynthesizedTool(synthesis.tool, {}, 0)
+      expect(result.success).toBe(false)
+      expect(result.error).toContain('timeout')
+    }
+  })
 })

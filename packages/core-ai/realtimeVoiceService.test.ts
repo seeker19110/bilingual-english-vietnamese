@@ -70,4 +70,73 @@ describe('realtimeVoiceService', () => {
     expect(events.some((e) => e.type === 'interrupted')).toBe(true)
     expect(session.getState()).toBe('listening')
   })
+
+  it('xử lý calculatePcmRms với buffer rỗng hoặc < 2 bytes', () => {
+    expect(calculatePcmRms(Buffer.alloc(0))).toBe(0)
+    expect(calculatePcmRms(Buffer.alloc(1))).toBe(0)
+  })
+
+  it('xử lý getters, unsubscribe, listener throw, và double destroy', () => {
+    const session = new RealtimeVoiceSession({
+      sessionId: 'sess-extra',
+      userId: 'u1',
+      sampleRate: 16000,
+      maxSessionDurationSeconds: 1,
+    })
+
+    expect(session.getSampleRate()).toBe(16000)
+
+    // Unsubscribe
+    const unsub = session.on(() => {})
+    unsub()
+
+    // Listener throw an toàn
+    session.on(() => {
+      throw new Error('Listener crash')
+    })
+    expect(() => session.setState('listening')).not.toThrow()
+
+    // Setting same state does nothing
+    session.setState('listening')
+
+    // pushUserTranscript with isFinal=false
+    session.pushUserTranscript('partial', false)
+    expect(session.getState()).toBe('listening')
+
+    // finishCompanionTurn without transcript
+    session.finishCompanionTurn()
+
+    // pushCompanionAudioChunk with text
+    session.pushCompanionAudioChunk('audio', 'transcript')
+    expect(session.getState()).toBe('speaking')
+
+    // Double destroy
+    session.destroy()
+    session.destroy()
+    expect(() => session.start()).toThrow('Session is already destroyed')
+    expect(() => session.pushUserTranscript('x')).not.toThrow()
+  })
+
+  it('xử lý timeout phiên đàm thoại vượt maxDurationMs', () => {
+    const session = new RealtimeVoiceSession({
+      sessionId: 'sess-timeout',
+      userId: 'u1',
+      maxSessionDurationSeconds: 0.001, // 1ms
+    })
+
+    session.start()
+    // Giả lập trễ thời gian
+    const chunk = Buffer.alloc(100, 0)
+    const events: VoiceSessionEvent[] = []
+    session.on((e) => events.push(e))
+
+    // Đợi 10ms để vượt 1ms
+    const start = Date.now()
+    while (Date.now() - start < 10) {
+      /* wait */
+    }
+
+    session.handleUserAudioChunk(chunk)
+    expect(events.some((e) => e.type === 'error')).toBe(true)
+  })
 })

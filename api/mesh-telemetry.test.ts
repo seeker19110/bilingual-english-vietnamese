@@ -74,4 +74,66 @@ describe('Mesh Telemetry API Handler (/api/mesh-telemetry)', () => {
     expect(data.success).toBe(true)
     expect(data.telemetry.costCapUsd).toBe(0.25)
   })
+
+  it('handles OPTIONS (204) and Method Not Allowed (405)', async () => {
+    const resOpt = await handler(
+      new Request('http://localhost/api/mesh-telemetry', { method: 'OPTIONS' }),
+    )
+    expect(resOpt.status).toBe(204)
+
+    vi.spyOn(security, 'validateAuth').mockResolvedValueOnce({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+    const resDel = await handler(
+      new Request('http://localhost/api/mesh-telemetry', { method: 'DELETE' }),
+    )
+    expect(resDel.status).toBe(405)
+  })
+
+  it('handles POST full telemetry body (valid / invalid) and bad JSON', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    // Bad JSON
+    const badJson = new Request('http://localhost/api/mesh-telemetry', {
+      method: 'POST',
+      body: 'invalid-json',
+    })
+    expect((await handler(badJson)).status).toBe(400)
+
+    // Invalid schema
+    const invalidSchema = new Request('http://localhost/api/mesh-telemetry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ totalTokens: -10 }),
+    })
+    expect((await handler(invalidSchema)).status).toBe(400)
+
+    // Valid schema
+    const now = new Date().toISOString()
+    const validSchema = new Request('http://localhost/api/mesh-telemetry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: '11111111-1111-4111-8111-111111111111',
+        startTime: now,
+        durationSeconds: 10,
+        activeProviders: ['gemini_live'],
+        totalPromptTokens: 10,
+        totalCompletionTokens: 10,
+        totalTokens: 20,
+        audioMinutes: 0.1,
+        accumulatedCostUsd: 0.001,
+        costCapUsd: 0.1,
+        budgetWarning: false,
+        isThrottled: false,
+        currentLatencyMs: 45,
+        qualityTier: 'ultra_low_latency',
+        updatedAt: now,
+      }),
+    })
+    const resValid = await handler(validSchema)
+    expect(resValid.status).toBe(200)
+  })
 })

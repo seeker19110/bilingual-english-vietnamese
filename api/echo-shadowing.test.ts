@@ -75,4 +75,44 @@ describe('api/echo-shadowing', () => {
     const res = await handler(req('GET'))
     expect(res.status).toBe(401)
   })
+
+  it('handles OPTIONS request with 204', async () => {
+    const res = await handler(req('OPTIONS'))
+    expect(res.status).toBe(204)
+  })
+
+  it('returns 429 when rate limit exceeded', async () => {
+    rateLimitOk = false
+    const res = await handler(req('GET'))
+    expect(res.status).toBe(429)
+  })
+
+  it('returns 404 when passageId not found in GET', async () => {
+    const res = await handler(req('GET', undefined, 'passageId=nonexistent'))
+    expect(res.status).toBe(404)
+  })
+
+  it('returns 400 on invalid POST body or missing passageId', async () => {
+    const badJsonReq = new Request('http://localhost/api/echo-shadowing', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: 'bad-json{',
+    })
+    const res1 = await handler(badJsonReq)
+    expect(res1.status).toBe(400)
+
+    const res2 = await handler(req('POST', {}))
+    expect(res2.status).toBe(400)
+  })
+
+  it('returns 405 for unsupported method like PUT', async () => {
+    const res = await handler(req('PUT'))
+    expect(res.status).toBe(405)
+  })
+
+  it('handles unexpected internal error with 500', async () => {
+    getOrCreatePerson.mockRejectedValueOnce(new Error('DB failure'))
+    const res = await handler(req('GET'))
+    expect(res.status).toBe(500)
+  })
 })

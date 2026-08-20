@@ -32,4 +32,30 @@ describe('Notion Connector', () => {
     expect(res.provider).toBe('notion')
     expect(res.receiptId).toContain('notion-receipt')
   })
+
+  // --- Nhánh line 55: contentMarkdown rỗng → fallback timestamp string ---
+  it('buildNotionPagePayload không có contentMarkdown → fallback sang chuỗi timestamp', () => {
+    const payload = buildNotionPagePayload({
+      title: 'Task rỗng',
+      status: 'todo',
+      priority: 'low',
+      tags: [],
+      // contentMarkdown KHÔNG truyền
+    })
+    const blockContent = payload.children[0]?.paragraph?.rich_text[0]?.text.content ?? ''
+    expect(blockContent).toContain('Xuất từ Không Gian Làm Việc Đồng Hành AI')
+  })
+
+  // --- Nhánh: không có dueDate → DueDate property không có trong payload ---
+  it('buildNotionPagePayload không có dueDate → DueDate là null hoặc không có date.start', () => {
+    const payload = buildNotionPagePayload({
+      title: 'No deadline',
+      status: 'done',
+      priority: 'low',
+      tags: [],
+    })
+    // DueDate không có start
+    const dueDateProp = payload.properties.DueDate
+    expect(dueDateProp?.date.start).toBeFalsy()
+  })
 })

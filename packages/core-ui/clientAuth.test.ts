@@ -1,6 +1,6 @@
 // packages/core-ui/clientAuth.test.ts — Kiểm thử module xác thực clientAuth và Safe Redirect.
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { getSafeRedirectUrl } from './clientAuth'
 
 describe('packages/core-ui/clientAuth.ts', () => {
@@ -53,6 +53,148 @@ describe('packages/core-ui/clientAuth.ts', () => {
         'https://www.donghanhcungban.org/',
       )
       expect(getSafeRedirectUrl('javascript:alert(1)')).toBe('https://www.donghanhcungban.org/')
+    })
+  })
+
+  describe('callAuthApi, register, login, logout, getCurrentUser', () => {
+    it('callAuthApi trả về null khi resp không ok', async () => {
+      const { callAuthApi } = await import('./clientAuth')
+      vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+      } as unknown as Response)
+
+      const res = await callAuthApi({ action: 'test' })
+      expect(res).toBeNull()
+    })
+
+    it('register lưu token và trả user', async () => {
+      const { register } = await import('./clientAuth')
+      const mockUser = {
+        id: 'u1',
+        email: 'test@example.com',
+        name: 'User 1',
+        plan: 'free' as const,
+        onboarded: true,
+        createdAt: Date.now(),
+      }
+      vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ token: 'mock-token-xyz', user: mockUser }),
+      } as unknown as Response)
+
+      const user = await register('test@example.com', 'User 1', 'password123')
+      expect(user).toEqual(mockUser)
+      expect(localStorage.getItem('gsa_session_token_v1')).toBe('mock-token-xyz')
+    })
+
+    it('login trả về null khi thất bại', async () => {
+      const { login } = await import('./clientAuth')
+      vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+      } as unknown as Response)
+
+      const user = await login('bad@example.com', 'wrong')
+      expect(user).toBeNull()
+    })
+
+    it('logout gọi API và xóa stored token', async () => {
+      const { logout } = await import('./clientAuth')
+      localStorage.setItem('gsa_session_token_v1', 'existing-token')
+      vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: true }),
+      } as unknown as Response)
+
+      await logout()
+      expect(localStorage.getItem('gsa_session_token_v1')).toBeNull()
+    })
+
+    it('getCurrentUser trả về null khi không có token', async () => {
+      const { getCurrentUser } = await import('./clientAuth')
+      localStorage.removeItem('gsa_session_token_v1')
+      const user = await getCurrentUser()
+      expect(user).toBeNull()
+    })
+
+    it('getCurrentUser xóa token khi nhận 401', async () => {
+      const { getCurrentUser } = await import('./clientAuth')
+      localStorage.setItem('gsa_session_token_v1', 'expired-token')
+      vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+      } as unknown as Response)
+
+      const user = await getCurrentUser()
+      expect(user).toBeNull()
+      expect(localStorage.getItem('gsa_session_token_v1')).toBeNull()
+    })
+
+    it('getCurrentUser trả user hợp lệ khi token đúng', async () => {
+      const { getCurrentUser } = await import('./clientAuth')
+      localStorage.setItem('gsa_session_token_v1', 'valid-token')
+      const mockProfile = {
+        id: 'u-valid',
+        email: 'valid@example.com',
+        name: 'Valid User',
+        plan: 'pro',
+        onboarded: true,
+        emailVerified: true,
+        isAdmin: false,
+      }
+      vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockProfile,
+      } as unknown as Response)
+
+      const user = await getCurrentUser()
+      expect(user?.id).toBe('u-valid')
+      expect(user?.plan).toBe('pro')
+    })
+  })
+
+  describe('GoogleAuthError & OAuth utilities', () => {
+    it('GoogleAuthError khởi tạo đúng name và code', async () => {
+      const { GoogleAuthError } = await import('./clientAuth')
+      const err = new GoogleAuthError('popup_blocked', 'Popup bị chặn')
+      expect(err.name).toBe('GoogleAuthError')
+      expect(err.code).toBe('popup_blocked')
+      expect(err.message).toBe('Popup bị chặn')
+    })
+
+    it('handleOAuthRedirectCallback trả về null khi không có access_token trong url', async () => {
+      const { handleOAuthRedirectCallback } = await import('./clientAuth')
+      window.location.hash = ''
+      window.location.search = ''
+      const user = await handleOAuthRedirectCallback()
+      expect(user).toBeNull()
+    })
+
+    it('handleOAuthRedirectCallback xử lý access_token từ hash thành công', async () => {
+      const { handleOAuthRedirectCallback } = await import('./clientAuth')
+      window.location.hash = '#access_token=google-oauth-token-123'
+      const mockUser = {
+        id: 'u-google',
+        email: 'google@gmail.com',
+        name: 'Google User',
+        plan: 'free' as const,
+        onboarded: true,
+        createdAt: Date.now(),
+      }
+      vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ token: 'session-jwt', user: mockUser }),
+      } as unknown as Response)
+
+      const user = await handleOAuthRedirectCallback()
+      expect(user?.email).toBe('google@gmail.com')
+      expect(localStorage.getItem('gsa_session_token_v1')).toBe('session-jwt')
+    })
+
+    it('preloadOAuthProviders chạy an toàn mà không quăng lỗi', async () => {
+      const { preloadOAuthProviders } = await import('./clientAuth')
+      expect(() => preloadOAuthProviders()).not.toThrow()
     })
   })
 })

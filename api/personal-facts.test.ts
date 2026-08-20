@@ -208,4 +208,64 @@ describe('DELETE', () => {
     deleteFact.mockRejectedValue(new ConflictError('đã xoá'))
     expect((await handler(req('DELETE', `?id=${FACT_ID}`))).status).toBe(409)
   })
+
+  it('POST với origin=observed, confidence, source, expiresAt cụ thể', async () => {
+    const expires = new Date(Date.now() + 86400000).toISOString()
+    const res = await handler(
+      req('POST', '', {
+        namespace: 'learning',
+        key: 'speed',
+        value: 'fast',
+        origin: 'observed',
+        confidence: 0.9,
+        source: { type: 'quiz' },
+        sensitivity: 'public',
+        expiresAt: expires,
+      }),
+    )
+    expect(res.status).toBe(201)
+    expect(declareFact.mock.calls[0]?.[1]).toMatchObject({
+      origin: 'observed',
+      confidence: 0.9,
+      source: { type: 'quiz' },
+      expiresAt: expires,
+    })
+  })
+
+  it('POST / PATCH body không phải JSON hợp lệ → 400', async () => {
+    const postBad = new Request('http://localhost/api/personal-facts', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: 'invalid-json',
+    })
+    expect((await handler(postBad)).status).toBe(400)
+
+    const patchBad = new Request(`http://localhost/api/personal-facts?id=${FACT_ID}`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: 'invalid-json',
+    })
+    expect((await handler(patchBad)).status).toBe(400)
+  })
+
+  it('PATCH với đầy đủ các trường value, confidence, source, sensitivity, expiresAt', async () => {
+    const expires = new Date(Date.now() + 86400000).toISOString()
+    const res = await handler(
+      req('PATCH', `?id=${FACT_ID}`, {
+        value: 'Huế updated',
+        confidence: 0.95,
+        source: { type: 'correction' },
+        sensitivity: 'restricted',
+        expiresAt: expires,
+      }),
+    )
+    expect(res.status).toBe(200)
+    expect(correctFact.mock.calls[0]?.[3]).toMatchObject({
+      value: 'Huế updated',
+      confidence: 0.95,
+      source: { type: 'correction' },
+      sensitivity: 'restricted',
+      expiresAt: expires,
+    })
+  })
 })

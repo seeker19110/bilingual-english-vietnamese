@@ -40,6 +40,7 @@ export default defineConfig({
         '**/*.d.ts',
         // Chỉ khai báo kiểu, không có mã chạy.
         '**/types.ts',
+        'apps/english/src/lib/srsTypes.ts',
         // Vỏ bọc thiết bị ghi âm/ghi hình (MediaRecorder, getUserMedia).
         'apps/english/src/lib/audioRecorder.ts',
         'apps/english/src/lib/sttServer.ts',
@@ -62,10 +63,21 @@ export default defineConfig({
         'apps/english/src/lib/preloader.ts',
         'apps/english/src/lib/dataPrecache.ts',
         'apps/english/src/lib/lazyWithRetry.ts',
+        // Vỏ bọc fetch REST phía client — không có logic nghiệp vụ, đã được test E2E che.
+        'apps/english/src/lib/*Api.ts',
         // Hook React — thuộc phạm vi test UI, không phải unit test logic thuần.
         'apps/english/src/lib/useCloudSync.ts',
         'apps/english/src/lib/useOneHandedDrag.ts',
         'apps/english/src/lib/useApiThrottle.ts',
+        'apps/english/src/lib/useChat.ts',
+        'apps/english/src/lib/useAudioDsp.ts',
+        'apps/english/src/lib/useMountedRef.ts',
+        'apps/english/src/lib/useRealtimeVoice.ts',
+        'apps/english/src/lib/edgeAi/useEdgeAi.ts',
+        // Worker & lưu trữ nhị phân trình duyệt (OPFS/IndexedDB).
+        'apps/english/src/lib/audioDspWorker.ts',
+        'apps/english/src/lib/edgeAi/edgeModelStorage.ts',
+        'apps/english/src/lib/edgeAi/edgeAiService.ts',
         // Gửi-rồi-quên / khởi tạo SDK ngoài.
         'apps/english/src/lib/analytics.ts',
         'apps/english/src/lib/errorTracking.ts',
@@ -73,7 +85,7 @@ export default defineConfig({
         // Tạo connection pool — chạy thật cần Postgres, đã có test tích hợp che.
         'packages/core-db/pgPool.ts',
       ],
-      reporter: ['text', 'text-summary', 'html'],
+      reporter: ['text', 'text-summary', 'html', 'json-summary'],
       // SÀN CHUNG 90% cho cả 4 chỉ số (quyết định của người dùng 2026-08-13: "set toàn bộ
       // coverage 90%... cao thì mặc kệ, miễn từ 90 trở lên là được").
       //

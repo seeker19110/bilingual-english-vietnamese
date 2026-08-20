@@ -73,4 +73,58 @@ describe('Neural Curriculum API Handler (/api/neural-curriculum)', () => {
     expect(data.success).toBe(true)
     expect(data.review.masteryDelta).toBe(15)
   })
+
+  it('handles OPTIONS (204), Method Not Allowed (405), bad JSON and raw state POST', async () => {
+    // OPTIONS
+    const resOpt = await handler(
+      new Request('http://localhost/api/neural-curriculum', { method: 'OPTIONS' }),
+    )
+    expect(resOpt.status).toBe(204)
+
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    // 405
+    const resDel = await handler(
+      new Request('http://localhost/api/neural-curriculum', { method: 'DELETE' }),
+    )
+    expect(resDel.status).toBe(405)
+
+    // Bad JSON
+    const resBadJson = await handler(
+      new Request('http://localhost/api/neural-curriculum', {
+        method: 'POST',
+        body: 'invalid-json',
+      }),
+    )
+    expect(resBadJson.status).toBe(400)
+
+    // Invalid schema
+    const resInvalid = await handler(
+      new Request('http://localhost/api/neural-curriculum', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ masteryScore: -500 }),
+      }),
+    )
+    expect(resInvalid.status).toBe(400)
+
+    // Valid schema
+    const now = new Date().toISOString()
+    const resValid = await handler(
+      new Request('http://localhost/api/neural-curriculum', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          activeModuleId: '20000000-0000-4000-8000-000000000001',
+          masteryScore: 85,
+          modules: [],
+          createdAt: now,
+          updatedAt: now,
+        }),
+      }),
+    )
+    expect(resValid.status).toBe(200)
+  })
 })

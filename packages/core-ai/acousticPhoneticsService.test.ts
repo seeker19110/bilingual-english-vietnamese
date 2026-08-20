@@ -37,4 +37,20 @@ describe('acousticPhoneticsService', () => {
     expect(report.l1InterferenceDetected).toEqual([])
     expect(report.correctiveDrillRecommendation).toContain('chuẩn xác')
   })
+
+  it('handles fallback phoneme extraction and default audio length parameters', () => {
+    // Sentence with no special phoneme keys
+    const fallbackPhonemes = extractTargetPhonemes('you see me')
+    expect(fallbackPhonemes[0]?.key).toBe('general')
+
+    // Report with omitted transcript and omitted audio length (>3000ms long sentence)
+    const longSentence =
+      'We are learning English every single day with continuous improvement and dedication'
+    const report = analyzeAcousticPhonetics({
+      personId: '11111111-1111-4111-8111-111111111111',
+      targetSentence: longSentence,
+    })
+    expect(report.pauseCount).toBeGreaterThan(0)
+    expect(report.spokenTranscript).toBe(longSentence)
+  })
 })

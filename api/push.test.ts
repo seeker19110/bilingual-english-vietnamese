@@ -255,3 +255,99 @@ describe('sendReminders — thiếu VAPID key', () => {
     vi.stubEnv('VAPID_PRIVATE_KEY', 'priv-test')
   })
 })
+
+describe('api/push default handler', () => {
+  let handler: typeof import('./push').default
+
+  beforeAll(async () => {
+    vi.resetModules()
+    vi.stubEnv('VAPID_PUBLIC_KEY', 'pub-test')
+    vi.stubEnv('VAPID_PRIVATE_KEY', 'priv-test')
+    vi.stubEnv('CRON_SECRET', 'test-cron-secret')
+    const mod = await import('./push')
+    handler = mod.default
+  })
+
+  it('OPTIONS trả 204', async () => {
+    const req = new Request('https://example.com/api/push', { method: 'OPTIONS' })
+    const res = await handler(req)
+    expect(res.status).toBe(204)
+  })
+
+  it('action vapid-key trả 200 và publicKey', async () => {
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'vapid-key' }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    const json = (await res.json()) as { publicKey: string }
+    expect(json.publicKey).toBe('pub-test')
+  })
+
+  it('body json lỗi trả 400', async () => {
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: 'invalid-json',
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('action không hợp lệ trả 400', async () => {
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'unknown-action' }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('action subscribe/unsubscribe khi chưa auth trả 401', async () => {
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'subscribe' }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(401)
+  })
+
+  it('action send-daily sai secret trả 403, đúng secret trả 200', async () => {
+    const reqForbidden = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'send-daily', secret: 'wrong' }),
+    })
+    const resForbidden = await handler(reqForbidden)
+    expect(resForbidden.status).toBe(403)
+
+    mockedGetPool.mockReturnValue(mockPool({ subs: [] }))
+    const reqOk = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'send-daily', secret: 'test-cron-secret', hour: 14 }),
+    })
+    const resOk = await handler(reqOk)
+    expect(resOk.status).toBe(200)
+  })
+
+  it('action clear-all sai secret trả 403, đúng secret trả 200', async () => {
+    const reqForbidden = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'clear-all', secret: 'wrong' }),
+    })
+    const resForbidden = await handler(reqForbidden)
+    expect(resForbidden.status).toBe(403)
+
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async () => ({ rowCount: 5 })),
+    } as unknown as ReturnType<typeof getPgPool>)
+
+    const reqOk = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'clear-all', secret: 'test-cron-secret' }),
+    })
+    const resOk = await handler(reqOk)
+    expect(resOk.status).toBe(200)
+    const json = (await resOk.json()) as { ok: boolean; deleted: number }
+    expect(json.deleted).toBe(5)
+  })
+})

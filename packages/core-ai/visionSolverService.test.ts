@@ -1,5 +1,5 @@
 // packages/core-ai/visionSolverService.test.ts
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import {
   cleanBase64,
   parseVisionSolutionText,
@@ -49,5 +49,70 @@ describe('VisionSolverService', () => {
     expect(res.steps.length).toBeGreaterThan(0)
     expect(res.finalAnswer).toBeTruthy()
     expect(res.confidence).toBeGreaterThan(0.9)
+  })
+
+  it('handles cleanBase64 without data prefix and empty aiText parsing', () => {
+    const rawClean = cleanBase64('justbase64string')
+    expect(rawClean.mimeType).toBe('image/jpeg')
+    expect(rawClean.data).toBe('justbase64string')
+
+    const emptyParsed = parseVisionSolutionText('', 'biology')
+    expect(emptyParsed.problemText).toBe('Bài tập biology từ hình ảnh tải lên')
+  })
+
+  it('solves problem with apiKey and mock fetch responses', async () => {
+    // 1. Mock fetch error
+    vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+      ok: false,
+      status: 403,
+      text: async () => 'Quota exceeded',
+    } as unknown as Response)
+
+    await expect(
+      solveProblemWithVision(
+        {
+          imageBase64: 'abc',
+          subjectId: 'math',
+          gradeLevel: 'Lớp 12',
+          mimeType: 'image/png',
+        },
+        'mock-api-key',
+      ),
+    ).rejects.toThrow('Gemini Vision API error (403)')
+
+    // 2. Mock fetch success
+    vi.spyOn(global, 'fetch').mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        candidates: [
+          {
+            content: {
+              parts: [
+                {
+                  text: JSON.stringify({
+                    problemText: 'Tính tích phân',
+                    steps: [
+                      { title: 'B1', detail: 'Tích phân từng phần', formula: 'uv - \\int v du' },
+                    ],
+                    finalAnswer: 'I = 1',
+                  }),
+                },
+              ],
+            },
+          },
+        ],
+        usageMetadata: { totalTokenCount: 420 },
+      }),
+    } as unknown as Response)
+
+    const successRes = await solveProblemWithVision(
+      {
+        imageBase64: 'abc',
+        subjectId: 'math',
+      },
+      'mock-api-key',
+    )
+    expect(successRes.problemText).toBe('Tính tích phân')
+    expect(successRes.tokenUsed).toBe(420)
   })
 })

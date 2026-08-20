@@ -85,4 +85,46 @@ describe('api/workplace-insights', () => {
     const res = await handler(req('GET'))
     expect(res.status).toBe(401)
   })
+
+  it('handles OPTIONS (204) and rate limiting (429)', async () => {
+    const resOpt = await handler(req('OPTIONS'))
+    expect(resOpt.status).toBe(204)
+
+    rateLimitOk = false
+    const resRate = await handler(req('GET'))
+    expect(resRate.status).toBe(429)
+  })
+
+  it('handles bad json, validation errors and method not allowed', async () => {
+    // Bad JSON
+    const resBadJson = await handler(
+      new Request('http://localhost/api/workplace-insights', {
+        method: 'POST',
+        body: 'invalid-json',
+      }),
+    )
+    expect(resBadJson.status).toBe(400)
+
+    // Missing rawText in harvest
+    const resHarvBad = await handler(req('POST', { action: 'harvest' }))
+    expect(resHarvBad.status).toBe(400)
+
+    // Harvest with default sourceType
+    const resHarvDefault = await handler(
+      req('POST', { action: 'harvest', rawText: 'Let us discuss about this issue.' }),
+    )
+    expect(resHarvDefault.status).toBe(201)
+
+    // Missing mistakeId in convert_to_srs
+    const resConvBad = await handler(req('POST', { action: 'convert_to_srs' }))
+    expect(resConvBad.status).toBe(400)
+
+    // Invalid action
+    const resActionBad = await handler(req('POST', { action: 'unknown' }))
+    expect(resActionBad.status).toBe(400)
+
+    // Method not allowed
+    const resDel = await handler(req('DELETE'))
+    expect(resDel.status).toBe(405)
+  })
 })

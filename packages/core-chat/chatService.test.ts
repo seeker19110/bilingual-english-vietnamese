@@ -217,11 +217,40 @@ describe('markRead / deleteMessage / getRoomMemberIds / getRoomPeerIds', () => {
 
   it('getRoomMemberIds trả danh sách user_id', async () => {
     mockQuery.mockResolvedValueOnce({ rows: [{ user_id: 'u2' }, { user_id: 'u3' }] })
-    expect(await getRoomMemberIds('room-1', 'u1')).toEqual(['u2', 'u3'])
+    expect(await getRoomMemberIds('room-1')).toEqual(['u2', 'u3'])
   })
 
   it('getRoomPeerIds trả danh sách user_id là bạn chat cùng phòng', async () => {
     mockQuery.mockResolvedValueOnce({ rows: [{ user_id: 'u2' }] })
     expect(await getRoomPeerIds('u1')).toEqual(['u2'])
+  })
+
+  it('getRooms xử lý phòng chưa có tin nhắn nào và fallback Người dùng khi tên null', async () => {
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          room_id: 'room-empty',
+          peer_id: 'u3',
+          peer_name: null,
+          last_id: null,
+          last_sender_id: null,
+          last_sender_name: null,
+          last_content: null,
+          last_content_clean: null,
+          last_created_at: null,
+          last_read_at: null,
+          unread_count: '0',
+        },
+      ],
+    })
+    const rooms = await getRooms('u1')
+    expect(rooms).toEqual([
+      {
+        roomId: 'room-empty',
+        peer: { id: 'u3', name: 'Người dùng' },
+        lastMessage: null,
+        unreadCount: 0,
+      },
+    ])
   })
 })

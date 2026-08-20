@@ -11,9 +11,10 @@ import {
 } from './chemistry'
 import { evaluateNumeric, expressionsEqual } from './expression'
 import { DEFAULT_TOLERANCE_BY_SUBJECT, gradeAnswer } from './index'
-import { normalizeAnswerText } from './number'
+import { normalizeAnswerText, simplifyFraction } from './number'
 import { splitValueUnit } from './units'
 import type { NumericSpec } from './types'
+import type { ParsedEquation } from './chemistry'
 
 describe('chuẩn hoá số — bẫy cách viết tiếng Việt', () => {
   it('hiểu dấu phẩy thập phân kiểu Việt Nam', () => {
@@ -308,5 +309,81 @@ describe('bất biến chung của engine', () => {
     const first = gradeAnswer('1 km', spec)
     const second = gradeAnswer('1 km', spec)
     expect(first).toEqual(second)
+  })
+})
+
+describe('splitTerms — dấu + là điện tích ion vs ngăn cách', () => {
+  it('ion dương liền sát (Ag+ + Cl-) → tách đúng 2 chất', () => {
+    // parseEquation kích hoạt splitTerms nội bộ
+    const eq = parseEquation('Ag+ + Cl- -> AgCl')
+    expect(eq).not.toBeNull()
+    expect(eq!.left).toHaveLength(2)
+  })
+
+  it('dấu + treo lơ lửng (H2 + -> H2O) → parse lỗi, parseSide trả null', () => {
+    // "H2 + " có dấu + cuối kèm khoảng trắng trước → buffer có \\s$ → terms.push('') → parseSide null
+    expect(parseEquation('H2 + -> H2O')).toBeNull()
+  })
+
+  it('parseSide với term rỗng (+ treo) → parseSide trả null', () => {
+    // "+ H2O" sau split có token rỗng → term.trim() === '' → parseSide null
+    // Chuỗi "  -> H2O" có vế trái rỗng → parseSide(['']) → null vì terms rỗng
+    expect(parseEquation('-> H2O')).toBeNull()
+  })
+})
+
+describe('checkBalance — nhánh PARSE_ERROR và UNBALANCED_CHARGE', () => {
+  it('phương trình có công thức không thể parse → PARSE_ERROR', () => {
+    // Nhét thẳng vào checkBalance một equation với formula lỗi
+    const eq: ParsedEquation = {
+      left: [{ coefficient: 1, formula: '???' }],
+      right: [{ coefficient: 1, formula: 'H2O' }],
+    }
+    expect(checkBalance(eq).status).toBe('parse_error')
+  })
+
+  it('phương trình ion mất cân bằng điện tích → UNBALANCED_CHARGE', () => {
+    const eq = parseEquation('Na+ + Cl- -> NaCl+')
+    expect(eq).not.toBeNull()
+    expect(checkBalance(eq!).status).toBe('unbalanced_charge')
+  })
+
+  it('gradeAnswer trả CORRECT khi cân bằng đúng chuẩn', () => {
+    const spec = {
+      kind: 'chemEquation' as const,
+      reactants: ['H2', 'O2'],
+      products: ['H2O'],
+    }
+    const r = gradeAnswer('2H2 + O2 -> 2H2O', spec)
+    expect(r.reason).toBe('CORRECT')
+  })
+})
+
+describe('simplifyFraction — nhánh mẫu âm và gcd = 0', () => {
+  it('mẫu âm → đổi dấu cả tử và mẫu', () => {
+    const [num, den] = simplifyFraction(4, -2)
+    expect(den).toBeGreaterThan(0)
+    expect(num / den).toBe(-2)
+  })
+
+  it('gcd(0,0) → không chia zero, trả về (0,0)', () => {
+    const [num, den] = simplifyFraction(0, 0)
+    expect(num).toBe(0)
+    expect(den).toBe(0)
+  })
+})
+
+describe('expressionsEqual — nhánh không có biến, giá trị Infinity', () => {
+  it('hai biểu thức hằng khác nhau → false', () => {
+    expect(expressionsEqual('3', '4')).toBe(false)
+  })
+
+  it('biểu thức dẫn đến Infinity (1/0) → false vì không hữu hạn', () => {
+    // Không có biến → đi vào branch evaluateNode({}) → isFinite check
+    expect(expressionsEqual('1/0', '1')).toBe(false)
+  })
+
+  it('biểu thức hằng bằng nhau → true', () => {
+    expect(expressionsEqual('2+3', '5')).toBe(true)
   })
 })

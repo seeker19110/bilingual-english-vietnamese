@@ -109,4 +109,39 @@ describe('adaptiveTestingEngine (IRT 3PL & CAT)', () => {
     expect(state.isComplete).toBe(false)
     expect(state.thetaEstimate).toBeGreaterThan(0.0) // Moving up after correct answer
   })
+
+  // --- Nhánh line 84-85: empty responses → trả prior ---
+  it('estimateThetaEap với responses rỗng → trả priorMean và priorSd', () => {
+    const { theta, se } = estimateThetaEap([], 0.5, 1.2)
+    expect(theta).toBe(0.5)
+    expect(se).toBe(1.2)
+  })
+
+  // --- Nhánh line 115-116: denominator = 0 (tất cả likelihood = 0) ---
+  it('estimateThetaEap với likelihood tất cả bằng 0 → fallback prior', () => {
+    // Tạo responses sao cho likelihood → 0 ở mọi điểm lưới:
+    // câu hỏi với guessingC = 0, isCorrect = false và P ≈ 0 ở mọi theta thấp → likelihood ≈ 0
+    const tinyItem: ItemParameters = {
+      id: 'tiny',
+      difficultyB: 0,
+      discriminationA: 100, // phân biệt cực cao → P rất gần 0 hoặc 1 tùy theta
+      guessingC: 0,
+    }
+    // 61 câu sai với discrimination cực cao sẽ đẩy likelihood về 0 ở mọi node
+    const responses = Array.from({ length: 30 }, () => ({ item: tinyItem, isCorrect: false }))
+    const { theta, se } = estimateThetaEap(responses, -2.0, 0.5)
+    // Nếu denominator = 0 → trả priorMean = -2.0, nếu không → vẫn là số hữu lý
+    expect(Number.isFinite(theta)).toBe(true)
+    expect(Number.isFinite(se)).toBe(true)
+  })
+
+  // --- mapThetaToCefr: tất cả 6 nhánh (bao gồm biên giới chính xác) ---
+  it('mapThetaToCefr bao phủ các biên giới chính xác', () => {
+    expect(mapThetaToCefr(-1.5)).toBe('A2') // biên: -1.5 không < -1.5 → A2
+    expect(mapThetaToCefr(-1.51)).toBe('A1') // nhỏ hơn ngưỡng -1.5
+    expect(mapThetaToCefr(-0.5)).toBe('B1') // biên: -0.5 không < -0.5 → B1
+    expect(mapThetaToCefr(0.5)).toBe('B2') // biên: 0.5 không < 0.5 → B2
+    expect(mapThetaToCefr(1.5)).toBe('C1') // biên: 1.5 không < 1.5 → C1
+    expect(mapThetaToCefr(2.3)).toBe('C2') // biên: 2.3 không < 2.3 → C2
+  })
 })

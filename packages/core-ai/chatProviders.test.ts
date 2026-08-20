@@ -96,6 +96,28 @@ describe('callGroqChat', () => {
     const result = await callGroqChat('key', 'model-x', '', [], 100)
     expect(result.kind).toBe('malformed_body')
   })
+
+  it('200 nhưng body rỗng, thiếu choices, hoặc thiếu message → malformed_body', async () => {
+    // null data
+    mockFetchOnce({ ok: true, status: 200, json: async () => null } as Response)
+    expect((await callGroqChat('key', 'model', '', [], 100)).kind).toBe('malformed_body')
+
+    // empty choices
+    mockFetchOnce({ ok: true, status: 200, json: async () => ({ choices: [] }) } as Response)
+    expect((await callGroqChat('key', 'model', '', [], 100)).kind).toBe('malformed_body')
+
+    // choice without message
+    mockFetchOnce({ ok: true, status: 200, json: async () => ({ choices: [{}] }) } as Response)
+    expect((await callGroqChat('key', 'model', '', [], 100)).kind).toBe('malformed_body')
+
+    // message without content
+    mockFetchOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({ choices: [{ message: {} }] }),
+    } as Response)
+    expect((await callGroqChat('key', 'model', '', [], 100)).kind).toBe('malformed_body')
+  })
 })
 
 describe('callAnthropicChat', () => {

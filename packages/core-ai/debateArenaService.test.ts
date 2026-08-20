@@ -80,4 +80,98 @@ describe('DebateArenaService', () => {
     expect(rubric.strengths.length).toBeGreaterThan(0)
     expect(rubric.recommendedPhrases.length).toBeGreaterThan(0)
   })
+
+  it('detects other fallacies: false_dilemma, slippery_slope, circular_reasoning', () => {
+    const dilemma = DebateArenaService.analyzeArgumentTurn(
+      'Either we ban all cars now or we will completely collapse by tomorrow.',
+    )
+    expect(dilemma.detectedFallacy).toBe('false_dilemma')
+    expect(dilemma.fallacyExplanation).toBeDefined()
+
+    const slope = DebateArenaService.analyzeArgumentTurn(
+      'If we allow this, then everything will be destroyed without doubt.',
+    )
+    expect(slope.detectedFallacy).toBe('slippery_slope')
+
+    const circular = DebateArenaService.analyzeArgumentTurn(
+      'We must accept this conclusion because it is just true.',
+    )
+    expect(circular.detectedFallacy).toBe('circular_reasoning')
+  })
+
+  it('detects rebuttal markers and increases persuasion score', () => {
+    const analysis = DebateArenaService.analyzeArgumentTurn(
+      'Although opponents claim it is costly, research indicates long-term gains. Consequently, the proposal stands.',
+    )
+    expect(analysis.toulmin.rebuttal).toBeDefined()
+    expect(analysis.toulmin.warrant).toBeDefined()
+    expect(analysis.persuasionScore).toBeGreaterThanOrEqual(75)
+  })
+
+  it('creates debate session with userStance=oppose and generates affirmative/moderator turns', () => {
+    const session = DebateArenaService.createDebateSession('11111111-1111-4111-8111-111111111111', {
+      topicId: 't-oppose',
+      motion: 'Nuclear energy should be phased out.',
+      category: 'environment',
+      userStance: 'oppose',
+      difficulty: 'mastery_c2',
+      maxRounds: 3,
+    })
+
+    expect(session.personas.some((p) => p.role === 'affirmative')).toBe(true)
+
+    const affTurn = DebateArenaService.generateAiTurn(session, 'affirmative')
+    expect(affTurn.speakerRole).toBe('affirmative')
+    expect(affTurn.content).toContain('ethical imperative')
+
+    const modTurn = DebateArenaService.generateAiTurn(session, 'socratic_moderator')
+    expect(modTurn.speakerRole).toBe('socratic_moderator')
+    expect(modTurn.content).toContain('probing line of inquiry')
+  })
+
+  it('evaluates match rubric when there are no user turns', () => {
+    const session = DebateArenaService.createDebateSession('11111111-1111-4111-8111-111111111111', {
+      topicId: 't1',
+      motion: 'Motion',
+      category: 'philosophy',
+      userStance: 'support',
+      difficulty: 'intermediate_b2',
+      maxRounds: 2,
+    })
+
+    const rubric = DebateArenaService.evaluateDebateMatch(session)
+    expect(rubric.overallScore).toBe(73.75)
+    expect(rubric.strengths).toContain('Active participation in opening arguments.')
+  })
+
+  it('evaluates match rubric with low scores triggering areasForImprovement branches', () => {
+    const session = DebateArenaService.createDebateSession('11111111-1111-4111-8111-111111111111', {
+      topicId: 't2',
+      motion: 'Motion',
+      category: 'education',
+      userStance: 'support',
+      difficulty: 'intermediate_b2',
+      maxRounds: 2,
+    })
+
+    // Add weak user turn with low logic, fallacy, low vocab
+    session.turns.push({
+      id: 'turn-weak',
+      speakerId: 'u',
+      speakerName: 'User',
+      speakerRole: 'user',
+      content: 'You are stupid and because it is just true.',
+      detectedFallacy: 'ad_hominem',
+      toulmin: { claim: 'Weak', hasValidStructure: false },
+      advancedVocabulary: [],
+      logicScore: 45,
+      persuasionScore: 45,
+      timestamp: new Date().toISOString(),
+    })
+
+    const rubric = DebateArenaService.evaluateDebateMatch(session)
+    expect(rubric.areasForImprovement.length).toBe(3)
+    expect(rubric.areasForImprovement[0]).toContain('Cần bổ sung bằng chứng')
+    expect(rubric.areasForImprovement[1]).toContain('Chú ý tránh khái quát hóa')
+  })
 })

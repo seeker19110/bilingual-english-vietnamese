@@ -85,4 +85,103 @@ describe('Proactive Agent API Handler (/api/proactive-agent)', () => {
     expect(data.success).toBe(true)
     expect(data.config.nudgeFrequency).toBe('gentle')
   })
+
+  it('handles OPTIONS request with 204', async () => {
+    const res = await handler(
+      new Request('http://localhost/api/proactive-agent', { method: 'OPTIONS' }),
+    )
+    expect(res.status).toBe(204)
+  })
+
+  it('handles dismiss_nudge on POST', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    // Bad params
+    const badReq = new Request('http://localhost/api/proactive-agent?action=dismiss_nudge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+    const badRes = await handler(badReq)
+    expect(badRes.status).toBe(400)
+
+    // Good params
+    const goodReq = new Request('http://localhost/api/proactive-agent?action=dismiss_nudge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nudgeId: 'n1' }),
+    })
+    const goodRes = await handler(goodReq)
+    expect(goodRes.status).toBe(200)
+  })
+
+  it('handles create_plan on POST', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    // Bad params
+    const badReq = new Request('http://localhost/api/proactive-agent?action=create_plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ goalId: 'g1' }),
+    })
+    const badRes = await handler(badReq)
+    expect(badRes.status).toBe(400)
+
+    // Good params
+    const goodReq = new Request('http://localhost/api/proactive-agent?action=create_plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ goalId: 'g1', goalTitle: 'Learn English', domain: 'learning' }),
+    })
+    const goodRes = await handler(goodReq)
+    expect(goodRes.status).toBe(200)
+    const data = await goodRes.json()
+    expect(data.plan.goalId).toBe('g1')
+  })
+
+  it('validates invalid actions and methods', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    // Missing actionPayload in execute_action
+    const badExec = await handler(
+      new Request('http://localhost/api/proactive-agent?action=execute_action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nudgeId: 'n1' }),
+      }),
+    )
+    expect(badExec.status).toBe(400)
+
+    // Missing config in update_config
+    const badConfig = await handler(
+      new Request('http://localhost/api/proactive-agent?action=update_config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      }),
+    )
+    expect(badConfig.status).toBe(400)
+
+    // Invalid action
+    const badAction = await handler(
+      new Request('http://localhost/api/proactive-agent?action=unknown', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      }),
+    )
+    expect(badAction.status).toBe(400)
+
+    // Method not allowed
+    const badMethod = await handler(
+      new Request('http://localhost/api/proactive-agent', { method: 'DELETE' }),
+    )
+    expect(badMethod.status).toBe(405)
+  })
 })

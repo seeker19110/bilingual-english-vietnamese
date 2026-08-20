@@ -86,4 +86,58 @@ describe('api/scenario-holodeck', () => {
     const res = await handler(req('GET'))
     expect(res.status).toBe(401)
   })
+
+  it('handles OPTIONS (204) and rate limiting (429)', async () => {
+    const resOpt = await handler(req('OPTIONS'))
+    expect(resOpt.status).toBe(204)
+
+    rateLimitOk = false
+    const resRate = await handler(req('GET'))
+    expect(resRate.status).toBe(429)
+  })
+
+  it('handles GET specific sessionId (found vs 404)', async () => {
+    // Start session first
+    const startRes = await handler(req('POST', { action: 'start', scenarioId: 'silicon_vc_pitch' }))
+    const sessionId = (await startRes.json()).session.sessionId
+
+    // Found
+    const resFound = await handler(req('GET', undefined, `sessionId=${sessionId}`))
+    expect(resFound.status).toBe(200)
+
+    // Not found
+    const resNotFound = await handler(req('GET', undefined, 'sessionId=non-existent-session'))
+    expect(resNotFound.status).toBe(404)
+  })
+
+  it('handles bad json, validation errors and method not allowed', async () => {
+    // Bad JSON
+    const resBadJson = await handler(
+      new Request('http://localhost/api/scenario-holodeck', {
+        method: 'POST',
+        body: 'invalid-json',
+      }),
+    )
+    expect(resBadJson.status).toBe(400)
+
+    // Missing scenarioId in start
+    const resStartBad = await handler(req('POST', { action: 'start' }))
+    expect(resStartBad.status).toBe(400)
+
+    // Missing utterance in turn
+    const resTurnBad = await handler(req('POST', { action: 'turn', sessionId: 's1' }))
+    expect(resTurnBad.status).toBe(400)
+
+    // Missing sessionId in finalize
+    const resFinBad = await handler(req('POST', { action: 'finalize' }))
+    expect(resFinBad.status).toBe(400)
+
+    // Invalid action
+    const resActionBad = await handler(req('POST', { action: 'unknown' }))
+    expect(resActionBad.status).toBe(400)
+
+    // Method not allowed
+    const resDel = await handler(req('DELETE'))
+    expect(resDel.status).toBe(405)
+  })
 })
