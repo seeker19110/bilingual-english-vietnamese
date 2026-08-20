@@ -51,7 +51,18 @@ export default async function handler(req: Request): Promise<Response> {
     // Chỉ trả kèm mốc kết thúc khi khuyến mãi đang THẬT SỰ hiệu lực (pct !== null) — tránh
     // lộ lịch khuyến mãi tương lai chưa công bố nếu admin đã đặt trước nhưng chưa tới giờ.
     promoEndsAt: pct !== null ? promo.endsAt : null,
-    maxPromoYears: MAX_PROMO_YEARS,
+    plus: {
+      '10day': {
+        ...prices.plus['10day'],
+        effectiveVnd: effectivePrice(prices.plus['10day'], now, pct),
+      },
+      month: { ...prices.plus.month, effectiveVnd: effectivePrice(prices.plus.month, now, pct) },
+      year: {
+        ...prices.plus.year,
+        effectiveVnd: effectivePrice(prices.plus.year, now, pct),
+        yearTotals: yearTotals(prices.plus.year),
+      },
+    },
     pro: {
       '10day': {
         ...prices.pro['10day'],

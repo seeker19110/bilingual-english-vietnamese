@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { normalizePlan, resolvePlan } from './plan'
 
 describe('normalizePlan', () => {
-  it('nhận đúng pro/vip, mọi giá trị khác → free', () => {
+  it('nhận đúng plus/pro/vip, mọi giá trị khác → free', () => {
+    expect(normalizePlan('plus')).toBe('plus')
     expect(normalizePlan('pro')).toBe('pro')
     expect(normalizePlan('vip')).toBe('vip')
     expect(normalizePlan('free')).toBe('free')

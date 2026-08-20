@@ -34,7 +34,12 @@ const EMPTY_ENTRY = (plan: Plan): PlanMarketingEntry => ({
 })
 
 const DEFAULT_DATA: PlanMarketingData = {
-  plans: { free: EMPTY_ENTRY('free'), pro: EMPTY_ENTRY('pro'), vip: EMPTY_ENTRY('vip') },
+  plans: {
+    free: EMPTY_ENTRY('free'),
+    plus: EMPTY_ENTRY('plus'),
+    pro: EMPTY_ENTRY('pro'),
+    vip: EMPTY_ENTRY('vip'),
+  },
   updatedAt: '1970-01-01T00:00:00.000Z',
 }
 
@@ -70,6 +75,7 @@ async function loadData(): Promise<PlanMarketingData> {
 
   const plans: Record<Plan, PlanMarketingEntry> = {
     free: EMPTY_ENTRY('free'),
+    plus: EMPTY_ENTRY('plus'),
     pro: EMPTY_ENTRY('pro'),
     vip: EMPTY_ENTRY('vip'),
   }

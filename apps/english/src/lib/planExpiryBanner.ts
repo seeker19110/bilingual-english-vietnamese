@@ -19,8 +19,10 @@ export function daysUntilPlanExpires(planExpiresAt: string, now: Date): number {
 // `plan`: gói ĐANG hiệu lực (đọc từ user.plan, đã resolvePlan() ở server) — Free không bao
 // giờ hiện banner này (không có gì "hết hạn" với Free, xem promoEndingBanner cho khuyến mãi).
 // `planExpiresAt`: null = gói vĩnh viễn hoặc đang Free → không hiện.
+import type { Plan } from '../types'
+
 export function shouldShowPlanExpiryBanner(
-  plan: 'free' | 'pro' | 'vip',
+  plan: Plan,
   planExpiresAt: string | null | undefined,
   now: Date,
   dismissedAtDateStr: string | null,

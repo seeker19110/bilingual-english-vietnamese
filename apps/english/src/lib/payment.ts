@@ -6,7 +6,7 @@
 
 import { getAuthHeader } from '@core/authHeader'
 
-export type PayablePlan = 'pro' | 'vip'
+export type PayablePlan = 'plus' | 'pro' | 'vip'
 export type PayableCycle = '10day' | 'month' | 'year'
 
 export interface CheckoutResult {

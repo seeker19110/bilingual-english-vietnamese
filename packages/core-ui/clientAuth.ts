@@ -3,7 +3,7 @@
 
 import { setStoredToken, clearStoredToken, getAuthHeader } from './authHeader.js'
 
-export type Plan = 'free' | 'pro' | 'vip'
+export type Plan = 'free' | 'plus' | 'pro' | 'vip'
 
 export interface AppUser {
   id: string

@@ -10,7 +10,7 @@ export async function downgradeExpiredPlans(): Promise<{ downgraded: number }> {
   const { rowCount } = await pool.query(
     `update public.profiles
        set plan = 'free', plan_expires_at = null
-     where plan in ('pro', 'vip')
+     where plan in ('plus', 'pro', 'vip')
        and plan_expires_at is not null
        and plan_expires_at < now()`,
   )

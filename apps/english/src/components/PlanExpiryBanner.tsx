@@ -49,7 +49,7 @@ export default function PlanExpiryBanner() {
   }
 
   const daysLeft = daysUntilPlanExpires(planExpiresAt as string, new Date())
-  const planLabel = user.plan === 'vip' ? 'VIP' : 'Pro'
+  const planLabel = user.plan === 'vip' ? 'VIP' : user.plan === 'plus' ? 'Plus' : 'Pro'
 
   const handleDismiss = () => {
     writeDismissedToday()

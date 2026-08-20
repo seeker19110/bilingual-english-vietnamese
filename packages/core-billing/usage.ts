@@ -139,12 +139,10 @@ export async function checkAndConsumeUsage(
       return { ok: true, day }
     }
 
-    // ── Gói Pro/VIP: 1 hạn mức TỔNG/ngày cho MỌI mode cộng lại (quyết định 2026-07-27) ──
-    // Vẫn ghi tăng đúng cột theo mode (giữ breakdown cho thống kê), nhưng ngưỡng chặn là
-    // SUM cả 5 cột so với limits.pro/limits.vip — xem consume_usage_total (migration 0016).
+    // ── Gói Plus/Pro/VIP: 1 hạn mức TỔNG/ngày cho MỌI mode cộng lại ──
     const col = COLUMN[mode]
     const { limits } = await getAppSettings()
-    const limit = limits[plan]
+    const limit = plan === 'plus' ? 30 : limits[plan]
 
     // Kiểm tra + tăng ATOMIC qua hàm SQL (chống race condition 2 request song song)
     const { rows } = await pool.query<{ consume_usage_total: boolean }>(

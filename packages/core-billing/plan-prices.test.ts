@@ -46,6 +46,11 @@ describe('/api/plan-prices', () => {
     const resp = await handler(new Request('http://localhost/api/plan-prices'))
     expect(resp.status).toBe(200)
     const data = (await resp.json()) as {
+      plus: {
+        '10day': { effectiveVnd: number }
+        month: { effectiveVnd: number }
+        year: { effectiveVnd: number }
+      }
       pro: {
         '10day': { effectiveVnd: number }
         month: { effectiveVnd: number }
@@ -57,6 +62,9 @@ describe('/api/plan-prices', () => {
         year: { effectiveVnd: number }
       }
     }
+    expect(data.plus['10day'].effectiveVnd).toBe(15_000)
+    expect(data.plus.month.effectiveVnd).toBe(29_000)
+    expect(data.plus.year.effectiveVnd).toBe(249_000)
     expect(data.pro['10day'].effectiveVnd).toBe(20_000)
     expect(data.pro.month.effectiveVnd).toBe(40_000)
     expect(data.pro.year.effectiveVnd).toBe(360_000)

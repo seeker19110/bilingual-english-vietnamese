@@ -26,7 +26,7 @@ import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const ToggleSchema = z.object({
   featureKey: z.string().trim().min(1).max(100),
-  plan: z.enum(['free', 'pro', 'vip']),
+  plan: z.enum(['free', 'plus', 'pro', 'vip']),
   enabled: z.boolean(),
 })
 
@@ -120,7 +120,7 @@ export default async function handler(req: Request): Promise<Response> {
       }
       await client.query(
         `insert into public.plan_feature_flags (feature_key, plan, enabled)
-         select $1, p.plan, true from (values ('free'), ('pro'), ('vip')) as p(plan)`,
+         select $1, p.plan, true from (values ('free'), ('plus'), ('pro'), ('vip')) as p(plan)`,
         [key],
       )
       return { ok: true as const }

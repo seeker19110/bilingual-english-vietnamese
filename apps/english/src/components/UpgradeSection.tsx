@@ -31,7 +31,7 @@ const CYCLE_LABEL: Record<PayableCycle, { vi: string; en: string }> = {
 // quyền giọng THẬT tại thời điểm viết (api/_lib/usage.ts, src/lib/voiceTiers.ts) — chỉ dùng khi
 // admin chưa từng sửa gì trong DB.
 const PLAN_INFO: Record<
-  'free' | 'pro' | 'vip',
+  'free' | 'plus' | 'pro' | 'vip',
   {
     badge: string
     title: { vi: string; en: string }
@@ -42,43 +42,59 @@ const PLAN_INFO: Record<
   free: {
     badge: '🌱',
     title: { vi: 'Free', en: 'Free' },
-    tagline: { vi: 'Học thử, không tốn phí', en: 'Try it out, no cost' },
+    tagline: { vi: 'Học cơ bản miễn phí', en: 'Basic free learning' },
     bullets: [
-      { vi: '4 giọng đọc (2 nữ, 2 nam)', en: '4 voices (2 female, 2 male)' },
+      { vi: '12.168 từ vựng tra cứu & SRS flashcard', en: '12,168 dictionary words & SRS' },
       {
-        vi: '+5 lượt AI/ngày có học từ mới (Chat/Viết/Nói/Nghe), dồn tối đa 35 lượt trong 7 ngày',
+        vi: 'Tặng +5 lượt AI/ngày khi học từ mới (Chat/Viết/Nói/Nghe), tích luỹ tối đa 35 lượt trong 7 ngày',
         en: '+5 AI turns/day when you study new words (Chat/Writing/Speaking/Listening), rolling cap of 35 over 7 days',
       },
       { vi: 'Đầy đủ lộ trình CEFR A1–C2', en: 'Full A1–C2 CEFR roadmap' },
     ],
   },
+  plus: {
+    badge: '✨',
+    title: { vi: 'Plus', en: 'Plus' },
+    tagline: { vi: 'Tiết kiệm & Học đều', en: 'Affordable daily study' },
+    bullets: [
+      { vi: '30 lượt AI/ngày, mở toàn bộ giáo trình', en: '30 AI turns/day, full curriculum' },
+      { vi: 'Kho bài tập & Phòng Lab STEM nâng cao', en: 'Advanced STEM Problem Bank & Lab' },
+      { vi: '15 lượt phân tích phát âm GOP/ngày', en: '15 GOP pronunciation analyses/day' },
+    ],
+  },
   pro: {
     badge: '⭐',
     title: { vi: 'Pro', en: 'Pro' },
-    tagline: { vi: 'Học đều mỗi ngày', en: 'For daily practice' },
+    tagline: { vi: 'Học đều & Luyện thi', en: 'For daily practice & exams' },
     bullets: [
+      {
+        vi: '100 lượt AI/ngày + Đấu trường 1v1 PvP không giới hạn',
+        en: '100 AI turns/day + Unlimited 1v1 PvP',
+      },
+      { vi: 'Chấm bài viết luận IELTS/Toulmin Band 9', en: 'IELTS/Toulmin Essay grading Band 9' },
       {
         vi: '8 giọng đọc chất lượng cao, phát tức thì',
         en: '8 high-quality voices, instant playback',
       },
-      { vi: '30 lượt AI/ngày (gấp ~6 lần Free)', en: '30 AI turns/day (~6× Free)' },
-      { vi: 'Không lo hết lượt giữa buổi học', en: "Won't run out mid-session" },
     ],
   },
   vip: {
     badge: '👑',
     title: { vi: 'VIP', en: 'VIP' },
-    tagline: { vi: 'Luyện tập chuyên sâu', en: 'For serious practice' },
+    tagline: { vi: 'Đỉnh cao Công nghệ AI', en: 'For serious practice' },
     bullets: [
       {
-        vi: 'Trọn bộ 14 giọng Chirp3-HD + giọng đặc biệt + 2 giọng Studio thu âm phòng thu (tiếng Anh)',
-        en: 'All 14 Chirp3-HD voices + a special voice + 2 studio-quality voices (English)',
+        vi: 'Đàm thoại song công Gemini Live Full-Duplex & Phòng học nhóm âm thanh',
+        en: 'Gemini Live Full-Duplex Audio & Audio Co-learning Rooms',
       },
       {
-        vi: '300 lượt AI/ngày — thoải mái luyện không giới hạn thực tế',
-        en: '300 AI turns/day — practically unlimited',
+        vi: 'Cung điện Trí nhớ Không gian 3D (Memory Palace Loci)',
+        en: 'Spatial 3D Memory Palace (Method of Loci)',
       },
-      { vi: 'Trải nghiệm giọng đọc tốt nhất trong app', en: 'The best voice quality in the app' },
+      {
+        vi: '300 lượt AI/ngày + Trọn bộ 14 giọng Chirp3-HD + 2 giọng Studio',
+        en: '300 AI turns/day + All 14 Chirp3-HD + 2 studio voices',
+      },
     ],
   },
 }
@@ -88,7 +104,7 @@ function PlanFeatureCard({
   isA,
   isCurrent,
 }: {
-  planKey: 'free' | 'pro' | 'vip'
+  planKey: 'free' | 'plus' | 'pro' | 'vip'
   isA: boolean
   isCurrent: boolean
 }) {
@@ -327,13 +343,13 @@ export default function UpgradeSection({
         </div>
       ) : (
         <div>
-          <div className="grid grid-cols-1 gap-2 mb-4">
-            {(['free', 'pro', 'vip'] as const).map((p) => (
+          <div className="grid grid-cols-1 gap-2 mb-4 sm:grid-cols-2">
+            {(['free', 'plus', 'pro', 'vip'] as const).map((p) => (
               <PlanFeatureCard key={p} planKey={p} isA={isA} isCurrent={currentPlan === p} />
             ))}
           </div>
           <div className="flex gap-2 mb-3">
-            {(['pro', 'vip'] as const).map((p) => (
+            {(['plus', 'pro', 'vip'] as const).map((p) => (
               <button
                 key={p}
                 type="button"
@@ -344,7 +360,7 @@ export default function UpgradeSection({
                     : 'bg-zinc-800/60 text-zinc-400 border-zinc-700'
                 }`}
               >
-                {p === 'pro' ? (isA ? 'Pro' : 'Pro') : 'VIP'}
+                {p === 'plus' ? 'Plus' : p === 'pro' ? 'Pro' : 'VIP'}
               </button>
             ))}
           </div>

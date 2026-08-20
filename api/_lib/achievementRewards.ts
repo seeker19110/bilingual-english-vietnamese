@@ -279,6 +279,9 @@ export async function upsertRewardConfig(
   if (!(ACHIEVEMENT_IDS as readonly string[]).includes(achievementId)) {
     throw new Error('Huy hiệu không hợp lệ.')
   }
+  const safeDays =
+    patch.rewardDays !== undefined ? Math.min(7, Math.max(0, patch.rewardDays)) : undefined
+
   const pool = getPgPool()
   await pool.query(
     `insert into public.achievement_rewards (achievement_id, enabled, reward_plan, reward_days, updated_at)
@@ -288,7 +291,7 @@ export async function upsertRewardConfig(
        reward_plan = coalesce($3, achievement_rewards.reward_plan),
        reward_days = coalesce($4, achievement_rewards.reward_days),
        updated_at = now()`,
-    [achievementId, patch.enabled, patch.rewardPlan, patch.rewardDays],
+    [achievementId, patch.enabled, patch.rewardPlan, safeDays],
   )
   invalidateAchievementRewardsCache()
 }

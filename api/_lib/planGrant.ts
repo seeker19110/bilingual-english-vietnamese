@@ -14,8 +14,8 @@ import { getPgPool } from '../../packages/core-db/pgPool.js'
 import { resolvePlan, type Plan } from '../../packages/core-billing/plan.js'
 import { getAppSettings } from '../../packages/core-db/settings.js'
 
-// Thứ hạng gói để so sánh cao/thấp — free < pro < vip.
-const PLAN_RANK: Record<Plan, number> = { free: 0, pro: 1, vip: 2 }
+// Thứ hạng gói để so sánh cao/thấp — free < plus < pro < vip.
+const PLAN_RANK: Record<Plan, number> = { free: 0, plus: 1, pro: 2, vip: 3 }
 
 const MS_DAY = 86_400_000
 

@@ -29,7 +29,7 @@ import { readJsonBody, validateBody } from '../../api/_lib/validation.js'
 import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
 
 const CheckoutSchema = z.object({
-  plan: z.enum(['pro', 'vip']),
+  plan: z.enum(['plus', 'pro', 'vip']),
   cycle: z.enum(['10day', 'month', 'year']),
   years: z.number().int().min(1).max(MAX_PROMO_YEARS).optional(),
 })

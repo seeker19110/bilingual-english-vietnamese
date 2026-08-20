@@ -155,6 +155,7 @@ export const DEFAULT_SEED_VOICE_IDS: VoiceId[] = [
 // trước đây chỉ có ghi chú "PHẢI khớp tay", không có gì chặn khi lệch.
 export const VOICE_TIERS: Record<Plan, VoiceId[]> = {
   free: ['Kore', 'Aoede', 'Puck', 'Charon'],
+  plus: ['Kore', 'Aoede', 'Puck', 'Charon'],
   // Giọng Gemini (đọc truyện) mở cho Pro + VIP, ĐÚNG như bảng server. Chúng KHÔNG hiện trong
   // VoicePicker vì mọi nơi chọn giọng đều lọc theo VOICE_OPTIONS (không chứa Gemini) — có mặt
   // ở đây chỉ để client biết gói nào được giữ giọng Gemini, gói nào phải hạ (getStoryVoice).

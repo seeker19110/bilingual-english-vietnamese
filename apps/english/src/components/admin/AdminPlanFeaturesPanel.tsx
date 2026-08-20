@@ -23,6 +23,7 @@ interface Matrix {
 
 const PLAN_COLS: { key: Plan; label: string }[] = [
   { key: 'free', label: 'Free' },
+  { key: 'plus', label: 'Plus' },
   { key: 'pro', label: 'Pro' },
   { key: 'vip', label: 'VIP' },
 ]
@@ -65,7 +66,12 @@ export default function AdminPlanFeaturesPanel() {
     // Cập nhật lạc quan để UI mượt, rollback nếu lỗi.
     setMatrix((prev: Matrix | null) => {
       if (!prev) return prev
-      const prevRow = prev.flags[featureKey] ?? { free: true, pro: true, vip: true }
+      const prevRow = prev.flags[featureKey] ?? {
+        free: true,
+        plus: true,
+        pro: true,
+        vip: true,
+      }
       return { ...prev, flags: { ...prev.flags, [featureKey]: { ...prevRow, [plan]: enabled } } }
     })
     try {

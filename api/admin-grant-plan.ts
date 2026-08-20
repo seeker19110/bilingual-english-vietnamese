@@ -25,7 +25,7 @@ import { jsonResponse, getClientIp } from './_lib/http.js'
 
 const GrantSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
-  plan: z.enum(['free', 'pro', 'vip']),
+  plan: z.enum(['free', 'plus', 'pro', 'vip']),
   days: z.number().int().min(1).max(3650).nullable(),
 })
 

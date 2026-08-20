@@ -29,7 +29,7 @@ describe('downgradeExpiredPlans', () => {
     mockedGetPool.mockReturnValue(pool)
     await downgradeExpiredPlans()
     const sql = vi.mocked(pool.query).mock.calls[0]?.[0] as string
-    expect(sql).toMatch(/plan in \('pro', 'vip'\)/)
+    expect(sql).toMatch(/plan in \('plus', 'pro', 'vip'\)/)
     expect(sql).toMatch(/plan_expires_at < now\(\)/)
     expect(sql).toMatch(/set plan = 'free', plan_expires_at = null/)
   })

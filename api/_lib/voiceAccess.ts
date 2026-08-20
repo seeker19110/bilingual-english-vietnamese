@@ -35,6 +35,7 @@ export type AnyVoiceId = VoiceId | ElevenVoiceId | StudioVoiceId | GeminiVoiceId
 // Xuất ra để test đối chiếu tự động với bảng client (api/_lib/voiceTierParity.test.ts).
 export const VOICE_TIERS: Record<Plan, AnyVoiceId[]> = {
   free: ['Kore', 'Aoede', 'Puck', 'Charon'],
+  plus: ['Kore', 'Aoede', 'Puck', 'Charon'],
   pro: [...DEFAULT_SEED_VOICE_IDS, ...GEMINI_VOICE_IDS],
   vip: [...VOICE_IDS, ...ELEVEN_VOICE_IDS, ...STUDIO_VOICE_IDS, ...GEMINI_VOICE_IDS],
 }

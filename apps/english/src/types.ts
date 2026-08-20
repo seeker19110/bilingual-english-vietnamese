@@ -1,4 +1,4 @@
-export type Plan = 'free' | 'pro' | 'vip'
+export type Plan = 'free' | 'plus' | 'pro' | 'vip'
 export type Level = 'beginner' | 'intermediate' | 'advanced'
 // A = Người Việt học tiếng Anh | B = Người nước ngoài học tiếng Việt (qua tiếng Anh)
 export type Direction = 'A' | 'B'
@@ -161,6 +161,7 @@ export const LIMITS: Record<
   { chat: number; writing: number; speaking: number; stt: number; pronounce: number }
 > = {
   free: { chat: 5, writing: 5, speaking: 5, stt: 5, pronounce: 5 },
+  plus: { chat: 30, writing: 30, speaking: 30, stt: 30, pronounce: 15 },
   pro: { chat: 100, writing: 100, speaking: 100, stt: 100, pronounce: 100 },
   vip: {
     chat: UNLIMITED,

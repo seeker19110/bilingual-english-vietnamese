@@ -3,7 +3,7 @@
 import { getPgPool } from '../../packages/core-db/pgPool.js'
 
 export type PayableCycle = '10day' | 'month' | 'year'
-export type PayablePlan = 'pro' | 'vip'
+export type PayablePlan = 'plus' | 'pro' | 'vip'
 
 // Số ngày cấp cho mỗi chu kỳ — DUY NHẤT một chỗ đổi nếu sau này thêm chu kỳ mới.
 export const CYCLE_DAYS: Record<PayableCycle, number> = { '10day': 10, month: 30, year: 365 }
@@ -17,8 +17,13 @@ export interface PriceEntry {
 export type PlanPrices = Record<PayablePlan, Record<PayableCycle, PriceEntry>>
 
 // Mặc định khi DB chưa có dòng nào / query lỗi (fail-open) — PHẢI khớp giá trị seed migration
-// 0014 (giá chốt 2026-07-27).
+// 0014 & 0055.
 const DEFAULT_PRICES: PlanPrices = {
+  plus: {
+    '10day': { priceVnd: 15_000, salePriceVnd: null, saleUntil: null },
+    month: { priceVnd: 29_000, salePriceVnd: null, saleUntil: null },
+    year: { priceVnd: 249_000, salePriceVnd: null, saleUntil: null },
+  },
   pro: {
     '10day': { priceVnd: 20_000, salePriceVnd: null, saleUntil: null },
     month: { priceVnd: 40_000, salePriceVnd: null, saleUntil: null },
@@ -53,14 +58,17 @@ export async function getPlanPrices(): Promise<PlanPrices> {
     // Bắt đầu từ mặc định rồi ghi đè bằng dữ liệu DB — nếu DB thiếu 1 dòng (chưa migrate hết),
     // gói/chu kỳ đó vẫn có giá mặc định hợp lý thay vì `undefined` làm vỡ /api/checkout.
     const value: PlanPrices = {
+      plus: { ...DEFAULT_PRICES.plus },
       pro: { ...DEFAULT_PRICES.pro },
       vip: { ...DEFAULT_PRICES.vip },
     }
     for (const row of rows) {
-      value[row.plan][row.cycle] = {
-        priceVnd: row.price_vnd,
-        salePriceVnd: row.sale_price_vnd,
-        saleUntil: row.sale_until ? new Date(row.sale_until).toISOString() : null,
+      if (value[row.plan]) {
+        value[row.plan][row.cycle] = {
+          priceVnd: row.price_vnd,
+          salePriceVnd: row.sale_price_vnd,
+          saleUntil: row.sale_until ? new Date(row.sale_until).toISOString() : null,
+        }
       }
     }
     cache = { value, fetchedAt: Date.now() }

@@ -57,7 +57,7 @@ describe('getPlanFeatureMatrix', () => {
     expect(matrix.catalog).toEqual([
       { key: 'speaking', label: 'Luyện nói', description: 'mô tả', sortOrder: 1 },
     ])
-    expect(matrix.flags.speaking).toEqual({ free: false, pro: true, vip: true })
+    expect(matrix.flags.speaking).toEqual({ free: false, plus: true, pro: true, vip: true })
     expect(matrix.updatedAt).toBe(new Date('2026-01-03').toISOString())
   })
 
