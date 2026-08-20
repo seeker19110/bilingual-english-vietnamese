@@ -59,6 +59,8 @@ import friendsHandler from './api/friends.js'
 import chatHandler from './api/chat.js'
 import { attachChatWebSocketServer } from './packages/core-chat/wsHandler.js'
 import { attachVoiceWebSocketServer } from './packages/core-ai/wsVoiceHandler.js'
+import { attachCoLearningWebSocketServer } from './packages/core-ai/wsCoLearningHandler.js'
+import { attachGeminiLiveWebSocketServer } from './packages/core-ai/wsGeminiLiveHandler.js'
 import adminAchievementRewardsHandler from './api/admin-achievement-rewards.js'
 import adminPaymentsHandler from './api/admin-payments.js'
 import adminSystemControlHandler from './api/admin-system-control.js'
@@ -120,6 +122,8 @@ import agentOrchestratorHandler from './api/agent-orchestrator.js'
 import pvpArenaHandler from './api/pvp-arena.js'
 import referralVipHandler from './api/referral-vip.js'
 import dailyQuestsHandler from './api/daily-quests.js'
+import coLearningAudioHandler from './api/co-learning-audio.js'
+import geminiLiveHandler from './api/gemini-live.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -374,6 +378,10 @@ app.all('/api/pvp-arena', wrapEdge(pvpArenaHandler))
 app.all('/api/referral-vip', wrapEdge(referralVipHandler))
 // Daily Quests & Mystery Streak Vault — Adaptive 3 quests & Streak Freeze.
 app.all('/api/daily-quests', wrapEdge(dailyQuestsHandler))
+// Multiplayer Audio Co-Learning Room (Platform V7.1) — Realtime Live Audio Study Rooms & Socratic Moderator.
+app.all('/api/co-learning-audio', wrapEdge(coLearningAudioHandler))
+// Gemini Live Bidirectional Streaming Gateway (Platform V7.2) — Full-Duplex PCM & Audio Streaming.
+app.all('/api/gemini-live', wrapEdge(geminiLiveHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần
@@ -535,6 +543,8 @@ const server = app.listen(PORT, () => {
 // packages/core-chat/wsHandler.ts.
 attachChatWebSocketServer(server)
 attachVoiceWebSocketServer(server)
+attachCoLearningWebSocketServer(server)
+attachGeminiLiveWebSocketServer(server)
 
 // Tắt êm (graceful shutdown): PM2 gửi SIGINT khi stop/reload. Ngừng nhận kết nối mới,
 // đóng ngay kết nối keep-alive đang rảnh, chờ request đang chạy xong rồi thoát.

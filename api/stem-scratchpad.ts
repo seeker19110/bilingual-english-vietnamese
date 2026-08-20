@@ -3,6 +3,8 @@ import { jsonResponse } from './_lib/http.js'
 import { validateAuth } from '../packages/core-auth/security.js'
 import { StemScratchpadService } from '../packages/core-ai/stemScratchpadService.js'
 import { StemProblemState, StemSubjectType } from '../packages/core-contracts/stemScratchpad.js'
+import { filterStemQuestions, getStemQuestionById } from '../packages/core-ai/stemQuestionBank.js'
+import type { StemQuestion } from '../packages/core-ai/stemQuestionBank.js'
 
 // In-memory cache cho các bài tập STEM đang làm dở
 const activeProblems = new Map<string, StemProblemState>()
@@ -39,6 +41,22 @@ export default async function handler(req: Request): Promise<Response> {
         return jsonResponse({ error: 'Problem not found' }, 404)
       }
       return jsonResponse({ success: true, problem: prob }, 200)
+    }
+
+    // Lọc ngân hàng câu hỏi nâng cao
+    if (action === 'get_questions') {
+      const subject = url.searchParams.get('subject') as StemQuestion['subject'] | null
+      const gradeStr = url.searchParams.get('grade')
+      const difficulty = url.searchParams.get('difficulty') as StemQuestion['difficulty'] | null
+      const limitStr = url.searchParams.get('limit')
+
+      const questions = filterStemQuestions({
+        subject: subject ?? undefined,
+        grade: gradeStr ? (parseInt(gradeStr) as 10 | 11 | 12) : undefined,
+        difficulty: difficulty ?? undefined,
+        limit: limitStr ? parseInt(limitStr) : 20,
+      })
+      return jsonResponse({ success: true, questions, total: questions.length }, 200)
     }
 
     // Trả về danh sách bài tập STEM mẫu
@@ -155,6 +173,29 @@ export default async function handler(req: Request): Promise<Response> {
         prob.hintsUsed += 1
         const hint = StemScratchpadService.generateMicroHint(prob)
         return jsonResponse({ success: true, hint, hintsUsed: prob.hintsUsed }, 200)
+      }
+
+      if (action === 'submit_solution') {
+        const { problemId, finalAnswer } = body
+        const prob = activeProblems.get(problemId)
+        if (!prob) {
+          return jsonResponse({ error: 'Problem not found' }, 404)
+        }
+        // Kiểm tra bài giải dựa vào câu từ question bank
+        const question = getStemQuestionById(problemId)
+        const isCorrect =
+          prob.isSolved || (question && finalAnswer?.includes(question.solutionLatex?.slice(0, 10)))
+        prob.isSolved = !!isCorrect
+        prob.updatedAt = new Date().toISOString()
+        activeProblems.set(prob.id, prob)
+        return jsonResponse(
+          {
+            success: true,
+            isSolved: prob.isSolved,
+            solutionPreview: question?.solutionLatex?.slice(0, 100),
+          },
+          200,
+        )
       }
 
       return jsonResponse({ error: 'Invalid action parameter' }, 400)
