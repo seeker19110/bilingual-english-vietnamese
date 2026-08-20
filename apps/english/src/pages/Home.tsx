@@ -23,11 +23,13 @@ import {
   Rocket,
   GraduationCap,
 } from 'lucide-react'
-import Layout from '../components/Layout'
-import PricePromoBanner from '../components/PricePromoBanner'
-import RewardTipBanner from '../components/RewardTipBanner'
-import HomeAiBriefingCard from '../components/Home/HomeAiBriefingCard'
-import HomeUniversalAiBar from '../components/Home/HomeUniversalAiBar'
+import Layout from '../components/Layout.js'
+import PricePromoBanner from '../components/PricePromoBanner.js'
+import RewardTipBanner from '../components/RewardTipBanner.js'
+import HomeAiBriefingCard from '../components/Home/HomeAiBriefingCard.js'
+import HomeUniversalAiBar from '../components/Home/HomeUniversalAiBar.js'
+import DailyQuestsCard from '../components/DailyQuests/DailyQuestsCard.js'
+import ReferralVipBanner from '../components/ReferralVip/ReferralVipBanner.js'
 import { getDirection } from '../lib/storage'
 import type { Direction } from '../types'
 import { useLang } from '../context/useLang'
@@ -225,6 +227,12 @@ export default function Home() {
               : `Practice speaking with ${recentWords.length} recent words`}
           </button>
         )}
+
+        {/* ── NHIỆM VỤ HÀNG NGÀY & RƯƠNG BÍ ẨN ── */}
+        <DailyQuestsCard />
+
+        {/* ── CHƯƠNG TRÌNH MỜI BẠN NHẬN VIP ── */}
+        <ReferralVipBanner />
 
         {/* ── TẦNG 2: PHÂN CẤP BỘ MÔN & MIỀN CHUYÊN BIỆT (Domain Hubs) ── */}
 

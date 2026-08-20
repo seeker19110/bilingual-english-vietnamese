@@ -117,6 +117,9 @@ import metacognitiveReflectionHandler from './api/metacognitive-reflection.js'
 import memoryPalaceHandler from './api/memory-palace.js'
 import lifeSynthesisHandler from './api/life-synthesis.js'
 import agentOrchestratorHandler from './api/agent-orchestrator.js'
+import pvpArenaHandler from './api/pvp-arena.js'
+import referralVipHandler from './api/referral-vip.js'
+import dailyQuestsHandler from './api/daily-quests.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 
@@ -365,6 +368,12 @@ app.all('/api/memory-palace', wrapEdge(memoryPalaceHandler))
 app.all('/api/life-synthesis', wrapEdge(lifeSynthesisHandler))
 // Autonomous Multi-Agent Orchestrator Studio (Platform V5.5) — Multi-Step Autonomous Execution.
 app.all('/api/agent-orchestrator', wrapEdge(agentOrchestratorHandler))
+// Live 1v1 PvP Arena & Ghost Matchmaking — Speed Vocab, Grammar Clash & Elo Rank.
+app.all('/api/pvp-arena', wrapEdge(pvpArenaHandler))
+// Referral VIP Booster & Viral Share Studio — 7-day VIP rewards & Milestones.
+app.all('/api/referral-vip', wrapEdge(referralVipHandler))
+// Daily Quests & Mystery Streak Vault — Adaptive 3 quests & Streak Freeze.
+app.all('/api/daily-quests', wrapEdge(dailyQuestsHandler))
 
 // ── Phục vụ file upload local (audio cache khi STORAGE_DRIVER=local) ────────
 // Nginx cũng có thể serve trực tiếp nhưng Express làm backup nếu cần

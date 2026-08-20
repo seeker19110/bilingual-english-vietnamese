@@ -28,9 +28,12 @@ import {
   AlertCircle,
   Award,
 } from 'lucide-react'
-import Layout from '../components/Layout'
-import PageHeader from '../components/PageHeader'
-import PronunciationCheck from '../components/PronunciationCheck'
+import Layout from '../components/Layout.js'
+import PageHeader from '../components/PageHeader.js'
+import PronunciationCheck from '../components/PronunciationCheck.js'
+import DailyQuestsCard from '../components/DailyQuests/DailyQuestsCard.js'
+import PvPArenaCard from '../components/PvPArena/PvPArenaCard.js'
+import ReferralVipBanner from '../components/ReferralVip/ReferralVipBanner.js'
 import { getDirection, getUsage, incrementUsage } from '../lib/storage'
 import { useAuth } from '../context/useAuth'
 import { loadCurriculum, getLearningPath } from '../lib/curriculum'
@@ -1189,6 +1192,15 @@ export default function Practice() {
               : 'Master Listening · Speaking IPA · Socratic Chat · IELTS Writing'
           }
         />
+
+        {/* ── NHIỆM VỤ HÀNG NGÀY & RƯƠNG BÍ ẨN ── */}
+        <DailyQuestsCard />
+
+        {/* ── ĐẤU TRƯỜNG 1V1 PVP ARENA ── */}
+        <PvPArenaCard />
+
+        {/* ── BANNER MỜI BẠN NHẬN VIP ── */}
+        <ReferralVipBanner />
 
         {/* ── TẦNG 1: 4 TRỤ CỘT KỸ NĂNG CHÍNH (Core Skills Mastery) ── */}
         <section aria-label="4 Kỹ năng cốt lõi" className="space-y-3">
