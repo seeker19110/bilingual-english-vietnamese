@@ -252,22 +252,118 @@ describe('src/lib/auth.ts', () => {
       delete window.google
     })
 
-    it('không có access_token trong callback → trả null', async () => {
+    it('popup bị chặn (popup_blocked_by_browser) → ném GoogleAuthError popup_blocked', async () => {
       vi.stubEnv('VITE_GOOGLE_CLIENT_ID', 'client-id-test')
       window.google = {
         accounts: {
           oauth2: {
             initTokenClient: (config) => {
-              queueMicrotask(() => config.callback({}))
+              queueMicrotask(() => config.error_callback?.({ type: 'popup_blocked_by_browser' }))
               return { requestAccessToken: vi.fn() }
             },
           },
         },
       }
-      const { loginWithGoogle } = await import('./auth')
+      const { loginWithGoogle, GoogleAuthError } = await import('./auth')
 
-      expect(await loginWithGoogle()).toBeNull()
+      await expect(loginWithGoogle()).rejects.toThrow(GoogleAuthError)
       delete window.google
+    })
+
+    it('sai origin (origin_mismatch) → ném GoogleAuthError origin_mismatch', async () => {
+      vi.stubEnv('VITE_GOOGLE_CLIENT_ID', 'client-id-test')
+      window.google = {
+        accounts: {
+          oauth2: {
+            initTokenClient: (config) => {
+              queueMicrotask(() => config.error_callback?.({ type: 'origin_mismatch' }))
+              return { requestAccessToken: vi.fn() }
+            },
+          },
+        },
+      }
+      const { loginWithGoogle, GoogleAuthError } = await import('./auth')
+
+      await expect(loginWithGoogle()).rejects.toThrow(GoogleAuthError)
+      delete window.google
+    })
+
+    it('từ chối quyền (access_denied) → ném GoogleAuthError access_denied', async () => {
+      vi.stubEnv('VITE_GOOGLE_CLIENT_ID', 'client-id-test')
+      window.google = {
+        accounts: {
+          oauth2: {
+            initTokenClient: (config) => {
+              queueMicrotask(() => config.error_callback?.({ type: 'access_denied' }))
+              return { requestAccessToken: vi.fn() }
+            },
+          },
+        },
+      }
+      const { loginWithGoogle, GoogleAuthError } = await import('./auth')
+
+      await expect(loginWithGoogle()).rejects.toThrow(GoogleAuthError)
+      delete window.google
+    })
+  })
+
+  describe('loginWithGoogleRedirect', () => {
+    it('thiếu VITE_GOOGLE_CLIENT_ID → ném lỗi', async () => {
+      vi.stubEnv('VITE_GOOGLE_CLIENT_ID', '')
+      const { loginWithGoogleRedirect } = await import('./auth')
+
+      expect(() => loginWithGoogleRedirect()).toThrow('Thiếu VITE_GOOGLE_CLIENT_ID')
+    })
+
+    it('có VITE_GOOGLE_CLIENT_ID → chuyển hướng window.location.href với đúng params', async () => {
+      vi.stubEnv('VITE_GOOGLE_CLIENT_ID', 'client-id-test')
+      const { loginWithGoogleRedirect } = await import('./auth')
+
+      loginWithGoogleRedirect('/login')
+      expect(window.location.href).toContain('accounts.google.com/o/oauth2/v2/auth')
+      expect(window.location.href).toContain('client_id=client-id-test')
+      expect(window.location.href).toContain('response_type=token')
+    })
+  })
+
+  describe('handleOAuthRedirectCallback', () => {
+    it('không có token trong URL → trả null', async () => {
+      window.location.hash = ''
+      window.location.search = ''
+      const { handleOAuthRedirectCallback } = await import('./auth')
+
+      const user = await handleOAuthRedirectCallback()
+      expect(user).toBeNull()
+    })
+
+    it('có token trong URL hash → gọi API, lưu token và trả user', async () => {
+      window.location.hash = '#access_token=redirect-token-123&token_type=Bearer'
+      fetchMock.mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          token: 'session-from-redirect',
+          user: {
+            id: 'u-redirect',
+            email: 'redirect@test.com',
+            name: 'Redirect User',
+            plan: 'free',
+            onboarded: false,
+            createdAt: 1,
+          },
+        }),
+      })
+      const { handleOAuthRedirectCallback } = await import('./auth')
+
+      const user = await handleOAuthRedirectCallback()
+      expect(user?.email).toBe('redirect@test.com')
+      expect(localStorage.getItem('gsa_session_token_v1')).toBe('session-from-redirect')
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/auth',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ action: 'google-token', accessToken: 'redirect-token-123' }),
+        }),
+      )
     })
   })
 

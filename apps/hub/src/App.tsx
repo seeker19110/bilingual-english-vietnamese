@@ -21,6 +21,7 @@ import {
   Shield,
 } from 'lucide-react'
 import { ThemeToggle } from '@core/ThemeToggle'
+import HubLogin from './pages/HubLogin'
 
 // Trang chủ hub — Nền tảng "Đồng hành cùng bạn" (https://www.donghanhcungban.org)
 // - Tiếng Anh giọng Mỹ (US Accent 🇺🇸), gia sư 2 chiều Việt - Anh, CEFR A1→C2.
@@ -248,7 +249,7 @@ function Navbar({ stats }: { stats: HubStats | null }) {
           ) : (
             <>
               <a
-                href={`${ENGLISH_APP_URL}/login`}
+                href="/login"
                 className="text-xs sm:text-sm font-medium text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-zinc-900 transition"
               >
                 Đăng nhập
@@ -1052,10 +1053,32 @@ function Footer({ stats }: { stats: HubStats | null }) {
   )
 }
 
+// ── Path Router Hook ─────────────────────────────────────────────────────────────
+function useCurrentPath(): string {
+  const [path, setPath] = useState(typeof window !== 'undefined' ? window.location.pathname : '/')
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setPath(window.location.pathname)
+    }
+    window.addEventListener('popstate', handleLocationChange)
+    return () => window.removeEventListener('popstate', handleLocationChange)
+  }, [])
+
+  return path
+}
+
 // ── Root App Component ───────────────────────────────────────────────────────────
 export default function App() {
+  const path = useCurrentPath()
   const stats = useHubStats()
 
+  // Tuyến đường /login hoặc /login/
+  if (path === '/login' || path.startsWith('/login/')) {
+    return <HubLogin />
+  }
+
+  // Tuyến đường Landing Page mặc định
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-accent-500/30 selection:text-accent-300">
       <Navbar stats={stats} />

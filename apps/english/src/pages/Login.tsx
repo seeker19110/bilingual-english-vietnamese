@@ -5,6 +5,9 @@ import {
   login,
   register,
   loginWithGoogle,
+  loginWithGoogleRedirect,
+  handleOAuthRedirectCallback,
+  GoogleAuthError,
   loginWithFacebook,
   loginWithApple,
   loginWithMicrosoft,
@@ -38,13 +41,37 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [forgotSending, setForgotSending] = useState(false)
+  const [isPopupBlocked, setIsPopupBlocked] = useState(false)
 
-  // Tải trước SDK Google/Facebook/Apple/Microsoft ngay khi vào trang, không chờ bấm nút —
-  // tránh popup bị trình duyệt âm thầm chặn vì cắt đứt chuỗi "cử chỉ người dùng" trong lúc chờ
-  // tải SDK qua mạng (xem giải thích chi tiết ở preloadOAuthProviders() trong lib/auth.ts).
+  // 1. Nếu trên production của subdomain môn học (en-vi.), tự động chuyển hướng sang
+  // Cổng Đăng Nhập Toàn Cục tập trung tại donghanhcungban.org/login (hoặc www.)
+  // kèm tham số ?redirect= để thực hiện SSO trọn vẹn.
   useEffect(() => {
+    const host = window.location.hostname
+    const isEnViProd = host === 'en-vi.donghanhcungban.org' || host === 'en-vi.donghanhcungban.com'
+    if (isEnViProd) {
+      const searchParams = new URLSearchParams(window.location.search)
+      const redirectParam = searchParams.get('redirect') || window.location.origin
+      window.location.href = `https://donghanhcungban.org/login?redirect=${encodeURIComponent(redirectParam)}`
+      return
+    }
+
+    // 2. Tải trước SDK OAuth
     preloadOAuthProviders()
-  }, [])
+
+    // 3. Tự động kiểm tra và hoàn tất nếu quay lại từ luồng Google OAuth Redirect.
+    void handleOAuthRedirectCallback()
+      .then(async (u) => {
+        if (u) {
+          await claimPendingReferral()
+          await refresh()
+          nav('/')
+        }
+      })
+      .catch((err) => {
+        console.error('[Login] OAuth redirect error:', err)
+      })
+  }, [nav, refresh])
 
   // Quên mật khẩu: gửi link reset qua email. LUÔN hiện cùng 1 thông báo bất kể email có tồn tại
   // hay không — server cũng cố ý không lộ điều đó (chống dò email hàng loạt), UI không được phá
@@ -113,15 +140,15 @@ export default function Login() {
     }
   }
 
-  // Đăng nhập bằng Google — Giai đoạn B dùng Google Identity Services (popup/One Tap ngay
-  // trên trang, KHÔNG redirect rời trang như Supabase OAuth trước đây).
+  // Đăng nhập bằng Google — Tối ưu popup không trễ cử chỉ người dùng,
+  // tự động xử lý và gợi ý chuyển sang Redirect nếu trình duyệt chặn popup.
   async function googleSignIn() {
     setError('')
+    setIsPopupBlocked(false)
     setLoading(true)
     try {
       const u = await loginWithGoogle()
       if (!u) {
-        setError(T.errGoogle)
         return
       }
       // Đăng nhập Google cũng là đường TẠO tài khoản mới (findOrCreateGoogleUser) nên cũng cần
@@ -129,10 +156,42 @@ export default function Login() {
       await claimPendingReferral()
       await refresh()
       nav('/')
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof GoogleAuthError) {
+        if (err.code === 'popup_blocked') {
+          setIsPopupBlocked(true)
+          setError(
+            isA
+              ? 'Trình duyệt đang chặn cửa sổ Popup. Bạn có thể cho phép Popup trên thanh địa chỉ hoặc bấm nút "Đăng nhập Google (Chuyển trang)" bên dưới.'
+              : 'Browser blocked the popup window. Please allow popups or use "Continue with Google (Redirect)" below.',
+          )
+          return
+        }
+        if (err.code === 'origin_mismatch') {
+          setError(
+            isA
+              ? 'Tên miền chưa được cấp phép trong Google Cloud Console (Authorized JavaScript origins).'
+              : 'Domain origin is not authorized in Google Cloud Console.',
+          )
+          return
+        }
+        if (err.code === 'access_denied') {
+          setError(isA ? 'Bạn đã từ chối cấp quyền Google.' : 'Google permission was denied.')
+          return
+        }
+      }
       setError(T.errGoogle)
     } finally {
       setLoading(false)
+    }
+  }
+
+  function handleGoogleRedirect() {
+    setError('')
+    try {
+      loginWithGoogleRedirect('/login')
+    } catch {
+      setError(T.errGoogle)
     }
   }
 
@@ -387,6 +446,19 @@ export default function Login() {
           </svg>
           {T.googleSignIn}
         </button>
+
+        {/* Nút đăng nhập Google qua luồng Chuyển trang (Redirect Fallback) khi Popup bị chặn */}
+        {isPopupBlocked && (
+          <button
+            type="button"
+            onClick={handleGoogleRedirect}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-medium py-2.5 rounded-xl text-xs transition active:scale-[0.98] mt-2"
+          >
+            <span>🌐</span>
+            {isA ? 'Đăng nhập Google (Chuyển trang)' : 'Continue with Google (Redirect)'}
+          </button>
+        )}
 
         {/* Nút đăng nhập bằng Facebook.
             Màu nền KHÔNG dùng xanh thương hiệu gốc #1877F2: chữ trắng 14px trên nền đó chỉ
