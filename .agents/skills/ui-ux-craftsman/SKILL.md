@@ -3,9 +3,9 @@ name: ui-ux-craftsman
 description: 'Quy chuẩn thiết kế UI/UX đỉnh cao và quy trình triển khai giao diện cho Đồng Hành (Personal AI Companion & English Tutor). Bắt buộc kích hoạt khi tạo mới, thiết kế, review hoặc sửa đổi bất kỳ trang (page), layout, modal, form, audio/voice widget, quiz, flashcard, dashboard hay component nào.'
 ---
 
-# UI/UX CRAFTSMAN — QUY CHUẨN THIẾT KẾ & QUY TRÌNH TRIỂN KHAI GIAO DIỆN ĐỒNG HÀNH
+# UI/UX CRAFTSMAN — QUY CHUẨN THIẾT KẾ & QUY TRÌNH TRIỂN KHAI GIAO DIỆN ĐỈNH CAO
 
-Bộ Skill này đóng gói toàn bộ tri thức thiết kế UI/UX hiện đại, tâm lý học học tập (learning ergonomics), hiệu ứng chuyển động mượt mà (smooth motion), chuẩn khả năng tiếp cận (WCAG 2.2 AA) và quy trình triển khai giao diện cho hệ sinh thái Đồng Hành.
+Bộ Skill này đóng gói toàn bộ tri thức thiết kế UI/UX hiện đại, tâm lý học học tập (learning ergonomics), hiệu ứng chuyển động mượt mà (smooth motion), chuẩn khả năng tiếp cận (W3C WCAG 2.2 AAA/AA) và quy trình triển khai giao diện cho hệ sinh thái Đồng Hành.
 
 ---
 
@@ -19,104 +19,71 @@ Mọi thay đổi giao diện trong `apps/english/src/**` đều phải tuân th
 
 ### Bước 1: Xác định Phân loại Màn hình & Bối cảnh Trải nghiệm
 
-1. **Hội thoại & Trợ lý Giọng nói AI (Chat, Voice Tutor, STT/TTS):**
-   - Không gian hội thoại tập trung, bong bóng chat (chat bubbles) phân cấp người dùng và AI rõ ràng.
+1. **Studio 1: Đối thoại & Voice Thời gian thực (Realtime Voice & CyberTutor):**
+   - Không gian hội thoại tập trung, bong bóng chat phân cấp người dùng và AI rõ ràng.
    - Trạng thái Voice trực quan: `Idle` $\rightarrow$ `Listening (Waveform animation)` $\rightarrow$ `Processing/Thinking` $\rightarrow$ `Speaking`.
    - Phân tích ngữ âm/từ vựng (phonetics & grammar) mở rộng dạng Popover/Card tinh tế.
-2. **Luyện tập & Gamification (SRS Flashcards, Quiz, Quests, Streaks):**
-   - Tương tác nảy (spring physics), phản hồi thị giác ngay lập tức khi trả lời Đúng/Sai (Confetti, rung nhẹ haptic/shake).
-   - Thẻ từ vựng lật mượt 3D (`flip animation`), nút bấm to rõ dễ thao tác trên mobile.
-3. **Bảng điều khiển & Tiến độ Cá nhân (Personal Hub, Radar Chart, Streak Counter):**
-   - Bố cục **Bento Grid** hiện đại, kết hợp biểu đồ phân tích kỹ năng (Speaking/Listening/Writing/Reading).
-   - Hiển thị streak lửa và điểm thưởng nổi bật tạo động lực học tập.
-4. **Thanh toán & Nâng cấp Gói (Pricing Matrix, VietQR Modal):**
-   - Bảng giá phân tầng rõ ràng (Free / Pro / VIP), nhấn mạnh giá trị cốt lõi.
-   - Modal quét mã VietQR tự động cập nhật trạng thái khi thanh toán thành công (Zero-friction checkout).
+2. **Studio 2: Nhận thức Sâu & Cung điện Trí nhớ (Metacognitive Journal & Memory Palace):**
+   - Không gian 3D/Isometric hiển thị bản đồ Loci và các điểm neo giác quan.
+   - Nhật ký phản tỉnh Socratic với radar phân tích điểm mù tư duy và tiến trình MAI.
+3. **Studio 3: Đấu trường Tranh biện & Labs STEM/Phonetics (Debate Arena & STEM Labs):**
+   - Timeline phân tích luận điểm Toulmin Model 60 FPS mượt mà.
+   - Bảng nháp tương tác từng bước STEM với phản hồi tức thì về tính hợp lệ đại số/hóa học.
+4. **Studio 4: Đón đầu Tự trị & Lộ trình Vi mô (Proactive Nudges & Goal AutoPilot):**
+   - Banner ngữ cảnh thông minh 1-chạm (Quick Action), thanh tiến độ phân kỳ mục tiêu.
+5. **Studio 5: Tổng hợp Đa Miền & Studio Điều phối Agent (Life Synthesis & Orchestrator):**
+   - Bento Grid đa chiều kết hợp biểu đồ radar năng lực (Learning, Career, Work, Startup, Life).
+   - Canvas điều phối Agent tự trị với timeline hiển thị 5 bước (Plan $\to$ Execute $\to$ Verify $\to$ Reflect $\to$ Handoff).
 
 ---
 
-### Bước 2: Thiết kế Bố cục & Tuân thủ Design Tokens
+## 2. QUY CHUẨN DESIGN TOKENS & KHẢ NĂNG TIẾP CẬN (WCAG 2.2 AAA / AA)
 
-- **Cơ chế Đảo màu qua Biến CSS:**
-  - Sử dụng hệ màu semantic được map qua biến CSS:
-    - Thang nền/viền/chữ: `bg-zinc-950`, `bg-zinc-900`, `border-zinc-800`, `text-zinc-100`, `text-zinc-400`.
-    - Màu nhấn thương hiệu: `bg-accent-500`, `text-accent-400`, `border-accent-500/30`.
-    - Màu tương phản cố định: `text-white` / `bg-white`.
-  - **CẤM** hardcode mã hex `#...` trong component giao diện.
-- **Hệ thống Lưới & Khoảng cách:**
-  - Lưới cơ sở 4px / 8px: `gap-2`, `gap-3`, `gap-4`, `p-4`, `p-6`.
-  - Vùng chạm tối thiểu trên mobile: $\ge 44 \times 44\text{px}$ cho tất cả nút bấm và icon interactive.
+### A. Quy chuẩn Tương phản Tuyệt đối (W3C Standard)
+
+- **Nội dung văn bản & Tiêu đề (Text & Headings):** BẮT BUỘC đạt chuẩn **WCAG AAA** (Độ tương phản $\ge 7:1$).
+- **Giao diện Tương tác & Nút bấm (Interactive Controls & Icons):** BẮT BUỘC đạt chuẩn **WCAG AA** (Độ tương phản $\ge 4.5:1$).
+- **Vùng Chạm Mobile (Touch Target):** Tối thiểu $\ge 44 \times 44\text{px}$ cho tất cả nút bấm và vùng tương tác.
+
+### B. Tuân thủ Design Tokens & Không Hardcode Màu
+
+- **Thang Nền / Viền / Chữ Semantic:**
+  - Nền & Thẻ: `bg-zinc-950`, `bg-zinc-900`, `bg-zinc-900/80`, `border-zinc-800`, `border-zinc-700`.
+  - Chữ: `text-zinc-100` (đọc chính), `text-zinc-300`, `text-zinc-400` (phụ trợ).
+  - Điểm nhấn Thương hiệu: `bg-accent-500`, `text-accent-400`, `border-accent-500/30`.
+- **CẤM:** Tuyệt đối không hardcode mã màu hex `#...` trong các component giao diện (trừ trường hợp màu trắng cố định của nút bên thứ ba `text-[#fff]`).
 
 ---
 
-### Bước 3: Đảm bảo đầy đủ 5 Trạng thái Bắt buộc (The 5 States)
+## 3. ĐẢM BẢO ĐẦY ĐỦ 5 TRẠNG THÁI BẮT BUỘC (THE 5 STATES)
 
 Mọi màn hình hoặc component có tương tác/tải dữ liệu phải xử lý trọn vẹn:
 
 1. **Initial / Empty State:**
-   - Khi chưa có dữ liệu/tin nhắn: Icon minh họa sinh động + Lời chào thân thiện + Gợi ý bắt đầu (Prompt starters / Topic suggestions).
+   - Khi chưa có dữ liệu/tin nhắn: Icon sinh động + Lời chào ấm áp + Gợi ý bắt đầu (Prompt Starters / Topic Suggestions).
 2. **Loading / Skeleton State:**
-   - Khung xương tải mờ (`animate-pulse`) khớp chính xác bố cục thật, chống giật layout (CLS < 0.1).
+   - Khung xương tải mờ (`animate-pulse`) khớp chính xác kích thước thật, triệt tiêu hoàn toàn giật bố cục (CLS < 0.1).
 3. **Data Loaded State:**
-   - Trạng thái hiển thị nội dung hoàn chỉnh, mượt mà.
+   - Hiển thị dữ liệu trọn vẹn, căn chỉnh lề chuẩn mực, typography sắc nét.
 4. **Error / Offline State:**
-   - Thông báo lỗi ấm áp, thân thiện kèm nút "Thử lại" hoặc tiếp tục học offline.
+   - Thông báo lỗi thân thiện kèm nguyên nhân + Nút "Thử lại ngay" (Retry Action) + Chế độ hoạt động Offline dự phòng.
 5. **Validation Feedback:**
-   - Báo lỗi trường nhập liệu, âm thanh / hình ảnh phản hồi khi hoàn thành bài tập.
+   - Phản hồi tức thì khi người dùng nhập liệu hoặc thực hiện hành động (Badge, âm thanh nhẹ, toast notification).
 
 ---
 
-### Bước 4: Vi tương tác & Khả năng Tiếp cận (Micro-Interactions & A11y)
+## 4. VI TƯƠNG TÁC & HIỆU ỨNG VẬT LÝ (MICRO-INTERACTIONS & MOTION)
 
-- **Nút bấm & Clickable:** Đủ trạng thái `hover:bg-...`, `active:scale-[0.98]`, `focus-visible:ring-2 focus-visible:ring-accent-500`, `disabled:opacity-50`.
-- **Chuyển động giao diện:** Ưu tiên chuyển động mượt mà với `framer-motion` hoặc CSS transitions (`duration-200 ease-out`).
-- **A11y (WCAG 2.2 AA):**
-  - Mọi nút Icon-only phải có `aria-label` và `title`.
-  - Độ tương phản chữ tối thiểu $4.5:1$ trên tất cả theme.
+- **Nút bấm & Card tương tác:** Đầy đủ `hover:border-accent-500/50`, `active:scale-[0.98]`, `focus-visible:ring-2 focus-visible:ring-accent-500`, `disabled:opacity-50 disabled:pointer-events-none`.
+- **Chuyển động (Motion Ergonomics):** Sử dụng Spring Physics hoặc CSS Transitions (`transition-all duration-200 ease-out`).
+- **A11y:** Mọi nút Icon-only phải có `aria-label` và `title` rõ nghĩa cho Screen Readers.
 
 ---
 
-### Bước 5: Cổng Kiểm thử (Verification Gate)
+## 5. CỔNG KIỂM THỬ GIAO DIỆN (VERIFICATION GATE)
 
-Trước khi bàn giao code, chạy:
+Trước khi hoàn tất code giao diện, bắt buộc chạy:
 
-1. `npm run lint` — Kiểm tra toàn bộ cú pháp code.
-2. `npm run typecheck` — TypeScript strict không còn lỗi type.
-3. `npm test` — Chạy pass các unit tests liên quan.
-
----
-
-## 2. MẪU COMPONENT CHUẨN MỰC (GOLDEN PATTERNS)
-
-### Mẫu 1: Card Chủ đề Học tập (Learning Topic Bento Card)
-
-```tsx
-export function LearningTopicCard({ title, level, progress, icon: Icon, onClick }: TopicCardProps) {
-  return (
-    <button
-      onClick={onClick}
-      className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 hover:border-accent-500/50 hover:bg-zinc-900/80 active:scale-[0.98] transition-all text-left flex flex-col justify-between group focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:outline-none w-full"
-    >
-      <div className="flex items-center justify-between w-full">
-        <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-accent-400 group-hover:scale-110 transition-transform">
-          <Icon className="w-5 h-5" />
-        </div>
-        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent-500/10 text-accent-400 border border-accent-500/20">
-          {level}
-        </span>
-      </div>
-      <div className="mt-4">
-        <h4 className="text-base font-semibold text-zinc-100 group-hover:text-accent-400 transition-colors">
-          {title}
-        </h4>
-        <div className="mt-3 w-full bg-zinc-900 rounded-full h-1.5 overflow-hidden">
-          <div
-            className="bg-accent-500 h-full rounded-full transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
-    </button>
-  )
-}
-```
+1. `npm run lint` — Kiểm tra toàn bộ cú pháp code & quy tắc a11y.
+2. `npm run typecheck` — TypeScript strict 0 lỗi.
+3. `npm test` — Chạy pass 100% tests liên quan đến component và hook.
