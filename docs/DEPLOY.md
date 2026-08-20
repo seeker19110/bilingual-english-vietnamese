@@ -8,8 +8,8 @@
 
 ## 1. Thông Tin Môi Trường VPS Production
 
-- **Domain chính**: `donghanhcungban.org` (Hub), `en-vi.donghanhcungban.org` (English App)
-- **Domain phụ**: `donghanhcungban.com`, `en-vi.donghanhcungban.com`
+- **Domain chính**: `www.donghanhcungban.org`, `donghanhcungban.org`
+- **Domain song hành / phụ**: `www.donghanhcungban.com`, `donghanhcungban.com`, `en-vi.donghanhcungban.org`, `en-vi.donghanhcungban.com`
 - **Server IP**: `103.118.29.58` (Port Express: `3001`)
 - **Thư mục ứng dụng**: `/var/www/dhcb`
 - **PM2 Process Name**: `english-tutor` (`instances: max`, `exec_mode: cluster`)

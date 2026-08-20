@@ -30,6 +30,13 @@ describe('buildSessionCookie', () => {
     expect(cookie).toContain('Domain=.donghanhcungban.org')
   })
 
+  it('môi trường production với domain donghanhcungban.com → tự gán Domain=.donghanhcungban.com', () => {
+    process.env.NODE_ENV = 'production'
+    const cookie = buildSessionCookie('tok123', 'www.donghanhcungban.com')
+    expect(cookie).toContain('Secure')
+    expect(cookie).toContain('Domain=.donghanhcungban.com')
+  })
+
   it('COOKIE_DOMAIN override qua env', () => {
     process.env.NODE_ENV = 'production'
     process.env.COOKIE_DOMAIN = '.example.com'

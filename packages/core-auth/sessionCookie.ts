@@ -26,15 +26,19 @@ export const SESSION_COOKIE_NAME = 'session_token'
 // chối vì Domain không khớp origin (vd chạy `npm run dev` ở localhost).
 // Đọc lại process.env MỖI LẦN gọi (không cache ở module scope) — test đổi biến môi trường
 // giữa các case, và về nguyên tắc process.env có thể đổi runtime nếu process manager reload.
-function getCookieDomain(): string {
-  return process.env.COOKIE_DOMAIN ?? '.donghanhcungban.org'
+function getCookieDomain(reqHost?: string): string {
+  if (process.env.COOKIE_DOMAIN) return process.env.COOKIE_DOMAIN
+  if (reqHost && reqHost.includes('donghanhcungban.com')) {
+    return '.donghanhcungban.com'
+  }
+  return '.donghanhcungban.org'
 }
 function isProduction(): boolean {
   return process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production'
 }
 
 // Dựng giá trị header Set-Cookie cho phiên đăng nhập mới — gọi cùng lúc tạo Bearer token.
-export function buildSessionCookie(token: string): string {
+export function buildSessionCookie(token: string, reqHost?: string): string {
   const maxAgeSeconds = Math.floor(SESSION_TTL_MS / 1000)
   const parts = [
     `${SESSION_COOKIE_NAME}=${token}`,
@@ -47,18 +51,18 @@ export function buildSessionCookie(token: string): string {
   // http://localhost (browser từ chối cookie Secure trên kết nối không mã hoá).
   if (isProduction()) {
     parts.push('Secure')
-    parts.push(`Domain=${getCookieDomain()}`)
+    parts.push(`Domain=${getCookieDomain(reqHost)}`)
   }
   return parts.join('; ')
 }
 
 // Xoá cookie lúc đăng xuất — cùng thuộc tính Domain/Path như lúc set, khác đi trình duyệt sẽ
 // coi là cookie khác và không xoá được cookie cũ.
-export function buildClearSessionCookie(): string {
+export function buildClearSessionCookie(reqHost?: string): string {
   const parts = [`${SESSION_COOKIE_NAME}=`, 'Path=/', 'HttpOnly', 'SameSite=Lax', 'Max-Age=0']
   if (isProduction()) {
     parts.push('Secure')
-    parts.push(`Domain=${getCookieDomain()}`)
+    parts.push(`Domain=${getCookieDomain(reqHost)}`)
   }
   return parts.join('; ')
 }

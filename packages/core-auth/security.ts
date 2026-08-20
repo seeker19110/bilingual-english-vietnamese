@@ -9,6 +9,15 @@ import { readSessionCookie } from './sessionCookie.js'
 // Đọc danh sách domain cho phép từ biến môi trường ALLOWED_ORIGINS (phân cách bằng dấu phẩy).
 // Ví dụ: ALLOWED_ORIGINS=https://myapp.vercel.app,https://myapp.com
 // Nếu không có biến này (môi trường dev), cho phép tất cả ('*').
+const DEFAULT_ALLOWED_ORIGINS = [
+  'https://www.donghanhcungban.org',
+  'https://donghanhcungban.org',
+  'https://en-vi.donghanhcungban.org',
+  'https://www.donghanhcungban.com',
+  'https://donghanhcungban.com',
+  'https://en-vi.donghanhcungban.com',
+]
+
 export function getCorsHeaders(req: Request): Record<string, string> {
   const allowedOrigins = process.env.ALLOWED_ORIGINS
   const origin = req.headers.get('Origin') ?? ''
@@ -16,10 +25,11 @@ export function getCorsHeaders(req: Request): Record<string, string> {
   let allowOrigin = '*'
   let allowCredentials = false
   if (allowedOrigins) {
-    const list = allowedOrigins
+    const customList = allowedOrigins
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean)
+    const list = Array.from(new Set([...customList, ...DEFAULT_ALLOWED_ORIGINS]))
     if (origin && list.includes(origin)) {
       // Origin nằm trong whitelist → phản chiếu đúng origin + cho phép credentials
       allowOrigin = origin

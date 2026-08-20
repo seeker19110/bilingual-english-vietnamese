@@ -394,7 +394,7 @@ app.use(
 const EN_VI_HOSTNAMES = new Set(
   (
     process.env.EN_VI_HOSTNAME ||
-    'www.donghanhcungban.org,donghanhcungban.org,en-vi.donghanhcungban.org,en-vi.donghanhcungban.com'
+    'www.donghanhcungban.org,donghanhcungban.org,en-vi.donghanhcungban.org,www.donghanhcungban.com,donghanhcungban.com,en-vi.donghanhcungban.com'
   )
     .split(',')
     .map((host) => host.trim())

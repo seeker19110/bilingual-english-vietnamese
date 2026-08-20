@@ -185,7 +185,11 @@ export default async function handler(req: Request): Promise<Response> {
 
   // Gắn thêm cookie phiên SONG SONG với token trả trong body (Bước 3 SSO — sessionCookie.ts).
   // Client hiện tại vẫn đọc `token` trong body như cũ, cookie chỉ để trình duyệt tự lưu.
-  const withCookie = (token: string) => ({ ...allHeaders, 'Set-Cookie': buildSessionCookie(token) })
+  const reqHost = req.headers.get('host') || req.headers.get('Host') || ''
+  const withCookie = (token: string) => ({
+    ...allHeaders,
+    'Set-Cookie': buildSessionCookie(token, reqHost),
+  })
 
   const clientIp = getClientIp(req)
   // Giới hạn chặt hơn route thường — chống dò mật khẩu/tạo tài khoản hàng loạt.
@@ -399,5 +403,8 @@ export default async function handler(req: Request): Promise<Response> {
   // action === 'logout' — Bearer đã bỏ (Bước 6), chỉ còn cookie làm nguồn sự thật.
   const token = readSessionCookie(req) || ''
   if (token) await revokeSession(token)
-  return jsonResponse({ ok: true }, 200, { ...allHeaders, 'Set-Cookie': buildClearSessionCookie() })
+  return jsonResponse({ ok: true }, 200, {
+    ...allHeaders,
+    'Set-Cookie': buildClearSessionCookie(reqHost),
+  })
 }
