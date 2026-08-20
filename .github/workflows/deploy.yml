@@ -9,6 +9,7 @@ name: Deploy to VPS
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 # Nhiều lần push/merge lên main gần nhau → nhiều job deploy có thể được GitHub Actions chạy
 # SONG SONG (mặc định không tự xếp hàng), cả 2 cùng SSH vào VPS pull/build/reload PM2 cùng
@@ -22,10 +23,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-
       - name: Deploy to VPS via SSH
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}

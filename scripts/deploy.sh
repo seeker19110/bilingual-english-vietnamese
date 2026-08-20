@@ -51,7 +51,7 @@ fi
 echo "  → Đang ở commit:"
 git --no-pager log -1 --oneline
 
-echo "── [3/6] Dọn build & dữ liệu CŨ (tránh sót, vd lessons 1000 bài cũ) ──"
+echo "── [3/7] Dọn build & dữ liệu CŨ (tránh sót, vd lessons 1000 bài cũ) ──"
 rm -rf dist                              # dist gitignore → xoá tay để build lại sạch
 git clean -fd public/data || true        # bỏ file rác không-theo-dõi trong public/data
 
@@ -66,7 +66,7 @@ npm run migrate:pg
 echo "── [6/7] Build ──────────────────────────────────"
 npm run build
 
-echo "── [7/7] Cập nhật .env (nếu cần) ──────────────"
+echo "── Cập nhật .env (nếu cần) ───────────────────────"
 ENV_FILE="$APP_DIR/.env"
 
 add_env() {
