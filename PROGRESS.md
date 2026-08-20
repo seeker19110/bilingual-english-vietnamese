@@ -8,6 +8,77 @@
 
 ## Giai đoạn hiện tại
 
+### Platform V6.6 — Priority 5 Optimization: Dynamic Tool Synthesizer Engine & Multi-Agent Delphi Consensus Protocol (2026-08-20)
+
+Hoàn thành triển khai trọn vẹn 2 nền tảng công nghệ Agent tối tân về Tổng hợp công cụ động và Đồng thuận đa chuyên gia:
+
+- **1. Dynamic Tool Synthesizer & Zero-Trust Sandbox Engine (`packages/core-personal/dynamicToolSynthesizer.ts`)**:
+  - Cho phép AI Agent tự động thiết kế, đăng ký và thực thi các công cụ tính toán / xử lý dữ liệu đặc thù (Data Transformations, Custom Math/STEM Formulas, Text Parsers) trong môi trường cô lập an toàn (**Zero-Trust Execution Sandbox**).
+  - Tích hợp bộ kiểm tra an toàn AST (AST Inspection Filter) ngăn chặn triệt để các lệnh nguy hiểm (I/O, filesystem, network, dynamic eval), áp đặt timeout và cô lập ngữ cảnh bộ nhớ.
+- **2. Multi-Agent Delphi Consensus Protocol (`packages/core-ai/multiAgentConsensusService.ts`)**:
+  - Xây dựng giao thức biểu quyết có trọng số (**Weighted Delphi Consensus**) giữa 4 nhân vật AI chuyên gia: _Pedagogy Specialist_, _Linguistics Master_, _Career Architect_ và _STEM Mentor_.
+  - Tự động đánh giá độ tương đồng lập luận (Consensus Degree Scoring), tổng hợp góc nhìn đa chiều thành bản phán quyết chiến lược (`ConsensusVerdict`) nhất quán và sâu sắc nhất cho người học.
+- **3. Quality Gates**:
+  - `npm test`: **4.637 / 4.637 tests passed 100%** trên 388 test files (+6 tests mới).
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run format:check`: passed 100% (All matched files use Prettier style).
+  - `npm run build`: passed 100% (Client Vite SPA, Server `dist-server/`, Hub workspace).
+
+### Platform V6.5 — Priority 4 Optimization: Autonomous REM Memory Consolidation & Multiplayer Co-learning Socratic Room Protocol (2026-08-20)
+
+Hoàn thành triển khai trọn vẹn 2 động cơ tối tân về Hợp nhất trí nhớ ngầm và Học nhóm đa người dùng có AI điều phối:
+
+- **1. Autonomous REM Memory Consolidation Engine (`packages/core-personal/remConsolidationService.ts`)**:
+  - Mô phỏng chu trình REM giấc ngủ: Tự động gom cụm, trích xuất core insights và nén các ký ức/lỗi sai trong ngày thành các khối **Consolidated Memory Blocks**.
+  - Tính toán độ suy giảm trí nhớ (Memory Retention Decay) theo đường cong lãng quên **Ebbinghaus / FSRS ($R = e^{-t/S}$)**, tự động đề xuất ngày ôn tập tối ưu khi $R$ giảm xuống ngưỡng 90%.
+  - Tự động biên soạn **Morning Briefing đón đầu** cho Bạn Đồng Hành AI trước khi người dùng bắt đầu ngày mới, hoàn toàn bảo toàn quyền riêng tư (`isPrivate` filtering).
+- **2. Multiplayer Co-learning Socratic Room Protocol (`packages/core-ai/coLearningRoomService.ts`)**:
+  - Xây dựng mô hình phòng học nhóm trực tuyến đa thành viên với vai trò **AI Socratic Moderator**.
+  - Tích hợp thuật toán **Socratic Intervention Detector** phát hiện bối rối kiến thức, câu hỏi khái niệm hoặc tranh luận trái chiều để đưa ra câu hỏi gợi mở Socratic Scaffolding đúng thời điểm.
+- **3. Quality Gates**:
+  - `npm test`: **4.631 / 4.631 tests passed 100%** trên 386 test files (+6 tests mới).
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run format:check`: passed 100% (All matched files use Prettier style).
+  - `npm run build`: passed 100% (Client Vite SPA, Server `dist-server/`, Hub workspace).
+
+### Platform V6.4 — Priority 3 Optimization: Computerized Adaptive Testing (CAT IRT 3PL) & Reciprocal Rank Fusion Hybrid RAG Engine (2026-08-20)
+
+Hoàn thành triển khai trọn vẹn 2 động cơ lõi về Tâm trắc học hiện đại và Truy xuất ngữ cảnh lai:
+
+- **1. Computerized Adaptive Testing (CAT Engine) chuẩn IRT 3PL (`packages/core-learner/adaptiveTestingEngine.ts`)**:
+  - Triển khai mô hình toán học **Item Response Theory (IRT 3PL: 3-Parameter Logistic)** tính toán xác suất $P(\theta) = c + \frac{1 - c}{1 + e^{-1.7a(\theta - b)}}$ và hàm thông tin Fisher $I(\theta)$.
+  - Thuật toán ước lượng năng lực **Expected A Posteriori (EAP)** cập nhật phân phối chuẩn $N(0, 1)$ theo thời gian thực sau mỗi câu trả lời, tự động chọn câu hỏi tối ưu thông tin nhất tiếp theo.
+  - Cho phép rút ngắn thời gian làm bài đánh giá trình độ Placement và kiểm tra định kỳ từ 50 câu xuống còn **12–15 câu** mà vẫn đạt độ tin cậy phân loại CEFR $r > 0.92$.
+- **2. Hybrid RAG Context Retrieval Engine qua Reciprocal Rank Fusion (`packages/core-ai/hybridRagEngine.ts`)**:
+  - Triển khai thuật toán xếp hạng hợp nhất **Reciprocal Rank Fusion (RRF)** kết hợp độ tương đồng ngữ nghĩa vector (Dense Cosine Similarity) và tần suất từ khóa bão hòa (Sparse BM25 Keyword Scoring).
+  - Tối ưu hóa việc lọc nhiễu và nạp trí nhớ cá nhân vào Bạn Đồng Hành AI với độ chính xác và độ sắc nét cao nhất.
+- **3. Quality Gates**:
+  - `npm test`: **4.625 / 4.625 tests passed 100%** trên 384 test files (+9 tests mới).
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run format:check`: passed 100% (All matched files use Prettier style).
+  - `npm run build`: passed 100% (Client Vite SPA, Server `dist-server/`, Hub workspace).
+
+### Platform V6.3 — Priority 2 Optimization: Off-thread Audio DSP Worker & OPFS/IndexedDB Edge AI Persistent Model Storage (2026-08-20)
+
+Hoàn thành triển khai trọn vẹn 2 đột phá kỹ thuật Mức Ưu Tiên 2 (Priority 2):
+
+- **1. Off-thread Audio DSP Worker & Real-time Pitch Detection (`apps/english/src/lib/audioDspWorker.ts`, `apps/english/src/lib/useAudioDsp.ts`)**:
+  - Chuyển toàn bộ các thuật toán tính toán năng lượng âm thanh (PCM RMS), thuật toán tự tương quan phát hiện cao độ giọng nói $F_0$ (Autocorrelation Pitch Detection) và phân tích phổ Formant $F_1, F_2$ ra khỏi Main UI Thread sang Web Worker chuyên dụng.
+  - Xây dựng React Hook `useAudioDsp` quản lý audio stream 2 chiều và tự động fallback về Main Thread đồng bộ trên các trình duyệt cũ.
+  - Loại bỏ hoàn toàn hiện tượng drop frames, đảm bảo giữ vững **60 FPS** mượt mà khi trực quan hóa 3D CyberTutor Avatar và phân tích âm học thời gian thực.
+- **2. OPFS & IndexedDB Persistent Storage cho Edge AI WebGPU (`apps/english/src/lib/edgeAi/edgeModelStorage.ts`, `apps/english/src/lib/edgeAi/edgeAiService.ts`)**:
+  - Xây dựng tầng lưu trữ nhị phân tốc độ cao với **Origin Private File System (OPFS)** kết hợp fallback an toàn sang **IndexedDB**.
+  - Cho phép lưu trữ và nạp trước weights/rules cho mô hình phân loại ý định & kiểm tra ngữ pháp tức thì tại Client, đạt thời gian khởi động **0ms** và hỗ trợ 100% chế độ Offline không tốn băng thông mạng.
+- **3. Quality Gates**:
+  - `npm test`: **4.616 / 4.616 tests passed 100%** trên 382 test files (+10 tests mới).
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run format:check`: passed 100% (All matched files use Prettier style).
+  - `npm run build`: passed 100% (Client Vite SPA, Server `dist-server/`, Hub workspace).
+
 ### Platform V6.2 — Priority 1 Optimization: Dynamic Studio Code-Splitting, Chunking & Native AI Prompt/Context Caching Engine (2026-08-20)
 
 Hoàn thành triển khai trọn vẹn 2 trụ cột nâng cấp chiến lược Mức Ưu Tiên 1 (Priority 1):

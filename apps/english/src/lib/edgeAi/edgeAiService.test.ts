@@ -1,11 +1,27 @@
 import { describe, it, expect } from 'vitest'
-import { detectWebGpuCapability, classifyIntentEdge, checkGrammarEdge } from './edgeAiService.js'
+import {
+  detectWebGpuCapability,
+  classifyIntentEdge,
+  checkGrammarEdge,
+  hydrateEdgeAiModels,
+  loadCachedEdgeModel,
+} from './edgeAiService.js'
 
 describe('edgeAiService', () => {
   it('phát hiện năng lực phần cứng WebGPU', async () => {
     const cap = await detectWebGpuCapability()
     expect(cap).toBeDefined()
     expect(['webgpu', 'wasm', 'cloud_fallback']).toContain(cap.inferenceMode)
+  })
+
+  it('khởi tạo và nạp bền vững Edge AI model qua OPFS/IndexedDB', async () => {
+    const res = await hydrateEdgeAiModels('v1.0')
+    expect(res.cached).toBe(true)
+    expect(res.version).toBe('v1.0')
+
+    const cachedBuffer = await loadCachedEdgeModel('v1.0')
+    expect(cachedBuffer).not.toBeNull()
+    expect(cachedBuffer!.byteLength).toBeGreaterThan(0)
   })
 
   it('phân loại đúng domain Learning, Career, Work, Startup, Life', () => {
