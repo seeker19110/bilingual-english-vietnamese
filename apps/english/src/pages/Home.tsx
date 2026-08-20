@@ -279,7 +279,7 @@ export default function Home() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <h4 className="font-bold text-white text-sm">Từ Điển Song Ngữ 7.400+</h4>
+                  <h4 className="font-bold text-white text-sm">Từ Điển Song Ngữ 12.000+</h4>
                   <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/20">
                     Audio IPA
                   </span>

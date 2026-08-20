@@ -22,6 +22,11 @@ import {
   X,
   Square,
   Sparkles,
+  BookOpen,
+  BookMarked,
+  Video,
+  AlertCircle,
+  Award,
 } from 'lucide-react'
 import Layout from '../components/Layout'
 import PageHeader from '../components/PageHeader'
@@ -1172,195 +1177,360 @@ export default function Practice() {
     )
   }
 
-  const listening = [
-    {
-      key: 'listening-library',
-      icon: Headphones,
-      title: isA ? 'Thư viện Nghe' : 'Listening library',
-      desc: isA
-        ? 'Câu thông dụng, hội thoại, truyện cổ tích & ngụ ngôn — nghe hiểu, không chấm điểm'
-        : 'Phrases, dialogues, fairy tales & fables — listen for understanding, no scoring',
-      action: () => nav('/luyen-nghe'),
-    },
-    {
-      key: 'vocab-listen',
-      icon: Headphones,
-      title: isA ? 'Nghe đoán từ vựng' : 'Listen & guess vocab',
-      desc: isA ? 'Nghe audio, chọn nghĩa đúng' : 'Listen then pick the meaning',
-      action: () => setMode('vocab-listen'),
-    },
-    {
-      key: 'roleplay-listen',
-      icon: MessageCircle,
-      title: isA ? 'Nghe đoạn hội thoại · Nhập vai' : 'Listen to dialogues · Roleplay',
-      desc: isA
-        ? 'AI đóng vai đối tác hội thoại theo tình huống'
-        : 'AI roleplays a conversation partner',
-      action: () => nav('/tro-truyen'),
-    },
-  ]
-
-  const speaking = [
-    {
-      key: 'pronounce-words',
-      icon: Mic,
-      title: isA ? 'Chấm phát âm từ vựng' : 'Word pronunciation check',
-      desc: isA ? 'Đọc to từ đã học, AI chấm điểm' : 'Read learned words aloud, get scored',
-      action: () => setMode('pronounce-words'),
-    },
-    {
-      key: 'read-aloud',
-      icon: Volume2,
-      title: isA ? 'Đọc lại câu' : 'Read the sentence',
-      desc: isA ? 'Đọc to cả câu ví dụ, AI chấm điểm' : 'Read example sentences aloud',
-      action: () => setMode('read-aloud'),
-    },
-    {
-      key: 'shadowing',
-      icon: Sparkles,
-      title: isA ? 'Shadowing — nói đè theo' : 'Shadowing',
-      desc: isA ? 'Nói đè ngay khi audio đang phát' : 'Speak along as the audio plays',
-      action: () => setMode('shadowing'),
-    },
-    {
-      key: 'interview',
-      icon: MessageCircle,
-      title: isA ? 'Phỏng vấn ngược' : 'Reverse interview',
-      desc: isA ? 'AI hỏi, bạn trả lời nói, AI chấm nội dung' : 'AI asks, you answer, AI grades',
-      action: () => setMode('interview'),
-    },
-    {
-      key: 'roleplay-speak',
-      icon: MessageCircle,
-      title: isA ? 'Nhập vai hội thoại' : 'Roleplay a conversation',
-      desc: isA
-        ? 'Nói theo tình huống, AI phản hồi bằng giọng nói'
-        : 'Speak through a scenario, AI replies by voice',
-      action: () => nav('/tro-truyen'),
-    },
-    {
-      key: 'sample-dialogues',
-      icon: Mic,
-      title: isA ? 'Bài học hội thoại mẫu' : 'Sample dialogue lessons',
-      desc: isA
-        ? 'Nghe từng câu hội thoại rồi đọc lại, AI chấm phát âm'
-        : 'Listen to each dialogue line, read it back, get scored',
-      action: () => nav('/bai-hoc'),
-    },
-    {
-      key: 'freetalk-speak',
-      icon: Mic,
-      title: isA ? 'Nói chuyện tự do với AI' : 'Free talk with AI',
-      desc: isA ? 'Luyện nói song ngữ, sửa lỗi bằng giọng mẹ đẻ' : 'Bilingual speaking practice',
-      action: () => nav('/luyen-noi'),
-    },
-  ]
-
-  const writing = [
-    {
-      key: 'dictation',
-      icon: Keyboard,
-      title: isA ? 'Nghe & viết lại' : 'Listen & write',
-      desc: isA ? 'Nghe câu rồi gõ lại chính xác' : 'Listen then type the sentence',
-      action: () => setMode('dictation'),
-    },
-    {
-      key: 'fillblank',
-      icon: ListChecks,
-      title: isA ? 'Điền từ trắc nghiệm' : 'Fill in the blank',
-      desc: isA ? 'Chọn từ đúng để hoàn thành câu' : 'Pick the right word to complete the sentence',
-      action: () => setMode('fillblank'),
-    },
-    {
-      key: 'scramble',
-      icon: Shuffle,
-      title: isA ? 'Sắp xếp câu' : 'Sentence scramble',
-      desc: isA ? 'Ghép các từ thành câu đúng' : 'Put the words in the right order',
-      action: () => setMode('scramble'),
-    },
-    {
-      key: 'freetalk-write',
-      icon: PenLine,
-      title: isA ? 'Chat tự do với AI' : 'Free chat with AI',
-      desc: isA ? 'Viết & trò chuyện, AI sửa lỗi ngay' : 'Write & chat, AI corrects instantly',
-      action: () => nav('/tro-truyen'),
-    },
-  ]
-
-  function Section({
-    title,
-    badgeColor,
-    items,
-  }: {
-    title: string
-    badgeColor: string
-    items: {
-      key: string
-      icon: typeof Headphones
-      title: string
-      desc: string
-      action: () => void
-    }[]
-  }) {
-    return (
-      <div className="mb-8 animate-fade-in">
-        <div className="flex items-center gap-2 mb-3.5">
-          <span className={`w-2 h-2 rounded-full ${badgeColor}`} />
-          <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">{title}</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {items.map((it) => (
-            <button
-              key={it.key}
-              onClick={it.action}
-              className="w-full flex items-center gap-3.5 p-4 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/50 hover:bg-zinc-850 transition-all duration-200 text-left group shadow-sm active:scale-[0.98]"
-            >
-              <span className="shrink-0 w-11 h-11 rounded-2xl bg-accent-500/15 text-accent-300 theme-light:text-accent-800 flex items-center justify-center group-hover:scale-105 transition-transform shadow-inner">
-                <it.icon className="w-5 h-5" />
-              </span>
-              <span className="flex-1 min-w-0">
-                <span className="block text-sm font-bold text-white group-hover:text-accent-300 transition-colors truncate">
-                  {it.title}
-                </span>
-                <span className="block text-xs text-zinc-400 mt-0.5 line-clamp-1 leading-normal">
-                  {it.desc}
-                </span>
-              </span>
-              <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-200 group-hover:translate-x-0.5 transition-all shrink-0" />
-            </button>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
   return (
     <>
       <Layout back={false} />
-      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
+      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-7">
         <PageHeader
-          title={isA ? 'Luyện tập 4 Kỹ năng' : 'Skills Practice'}
+          title={isA ? 'Trung Tâm Luyện Tập 4 Kỹ Năng' : 'Skills Practice Hub'}
           subtitle={
             isA
-              ? 'Nghe · Nói · Đọc · Viết — chọn chế độ luyện tập bên dưới'
-              : 'Listening · Speaking · Reading · Writing — pick an exercise below'
+              ? 'Luyện phản xạ Nghe · Nói chuẩn IPA · Chat đàm thoại · Viết chấm điểm IELTS'
+              : 'Master Listening · Speaking IPA · Socratic Chat · IELTS Writing'
           }
         />
-        <Section
-          title={isA ? 'Luyện Nghe & Phản Xạ' : 'Listening & Comprehension'}
-          badgeColor="bg-rose-500"
-          items={listening}
-        />
-        <Section
-          title={isA ? 'Luyện Nói Song Ngữ & Phát Âm' : 'Speaking & Pronunciation'}
-          badgeColor="bg-sky-500"
-          items={speaking}
-        />
-        <Section
-          title={isA ? 'Luyện Viết & Ngữ Pháp' : 'Writing & Grammar'}
-          badgeColor="bg-violet-500"
-          items={writing}
-        />
+
+        {/* ── TẦNG 1: 4 TRỤ CỘT KỸ NĂNG CHÍNH (Core Skills Mastery) ── */}
+        <section aria-label="4 Kỹ năng cốt lõi" className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-accent-400 theme-light:text-accent-800 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
+              1. 4 Kỹ Năng Đàm Thoại & Đánh Giá AI
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Luyện Nói & IPA */}
+            <button
+              onClick={() => nav('/luyen-noi')}
+              className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-sky-500/30 hover:border-sky-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
+            >
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center shrink-0 shadow-md shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                <Mic className="w-5 h-5 text-zinc-950 font-bold" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-1 mb-0.5">
+                  <h3 className="font-bold text-white text-sm">Luyện Nói & Chấm Âm IPA</h3>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/15 text-sky-300 font-semibold border border-sky-500/20">
+                    Live STT
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                  Đàm thoại tự do, nhận diện và chấm điểm từng âm vị IPA, sửa lỗi bằng tiếng mẹ đẻ.
+                </p>
+              </div>
+            </button>
+
+            {/* Luyện Viết & IELTS */}
+            <button
+              onClick={() => nav('/luyen-viet')}
+              className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-violet-500/30 hover:border-violet-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
+            >
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shrink-0 shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform">
+                <PenLine className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-1 mb-0.5">
+                  <h3 className="font-bold text-white text-sm">Luyện Viết & Chấm IELTS</h3>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-violet-500/15 text-violet-300 font-semibold border border-violet-500/20">
+                    Band 9.0
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                  Chấm 4 tiêu chí Task, Coherence, Lexical, Grammar kèm gợi ý viết lại xuất sắc.
+                </p>
+              </div>
+            </button>
+
+            {/* Chat Đối Thoại Socratic */}
+            <button
+              onClick={() => nav('/tro-truyen')}
+              className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-accent-500/30 hover:border-accent-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
+            >
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-accent-500 to-amber-500 flex items-center justify-center shrink-0 shadow-md shadow-accent-500/20 group-hover:scale-105 transition-transform">
+                <MessageCircle className="w-5 h-5 text-zinc-950 font-bold" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-1 mb-0.5">
+                  <h3 className="font-bold text-white text-sm">Chat Đàm Thoại AI</h3>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-accent-500/15 text-accent-300 font-semibold border border-accent-500/20">
+                    Socratic
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                  Nhập vai tình huống thực tế, trò chuyện linh hoạt và sửa lỗi ngữ cảnh tức thì.
+                </p>
+              </div>
+            </button>
+
+            {/* Thư Viện Nghe */}
+            <button
+              onClick={() => nav('/luyen-nghe')}
+              className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-rose-500/30 hover:border-rose-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
+            >
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shrink-0 shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform">
+                <Headphones className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-1 mb-0.5">
+                  <h3 className="font-bold text-white text-sm">Thư Viện Luyện Nghe</h3>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-rose-500/15 text-rose-300 font-semibold border border-rose-500/20">
+                    Chirp3 HD
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                  Kho bài nghe, truyện cổ tích và hội thoại mẫu giọng bản xứ chuẩn Mỹ.
+                </p>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        {/* ── TẦNG 2: 8 BÀI TẬP PHẢN XẠ NHANH (Interactive Drill Studio) ── */}
+        <section aria-label="Bài tập tương tác nhanh" className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-300 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-sky-400" />
+              2. 8 Chế Độ Luyện Tập Phản Xạ Nhanh
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {/* 1. Nghe đoán từ */}
+            <button
+              onClick={() => setMode('vocab-listen')}
+              className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-9 h-9 rounded-xl bg-sky-500/15 text-sky-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                <Headphones className="w-4 h-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white group-hover:text-sky-300 transition-colors truncate">
+                  Nghe Đoán Từ Vựng
+                </p>
+                <p className="text-[11px] text-zinc-400 truncate">Nghe phát âm, chọn nghĩa đúng</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
+            </button>
+
+            {/* 2. Sắp xếp câu */}
+            <button
+              onClick={() => setMode('scramble')}
+              className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-9 h-9 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                <Shuffle className="w-4 h-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white group-hover:text-indigo-300 transition-colors truncate">
+                  Sắp Xếp Câu Hoàn Chỉnh
+                </p>
+                <p className="text-[11px] text-zinc-400 truncate">
+                  Ghép từ ngữ thành câu chuẩn ngữ pháp
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
+            </button>
+
+            {/* 3. Nghe viết chính tả */}
+            <button
+              onClick={() => setMode('dictation')}
+              className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-9 h-9 rounded-xl bg-violet-500/15 text-violet-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                <Keyboard className="w-4 h-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white group-hover:text-violet-300 transition-colors truncate">
+                  Nghe & Viết Chính Tả (Dictation)
+                </p>
+                <p className="text-[11px] text-zinc-400 truncate">
+                  Nghe từng câu và gõ lại chính xác
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
+            </button>
+
+            {/* 4. Điền từ trắc nghiệm */}
+            <button
+              onClick={() => setMode('fillblank')}
+              className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                <ListChecks className="w-4 h-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors truncate">
+                  Điền Từ Ngữ Cảnh
+                </p>
+                <p className="text-[11px] text-zinc-400 truncate">
+                  Chọn từ chính xác để hoàn chỉnh câu
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
+            </button>
+
+            {/* 5. Chấm phát âm từ */}
+            <button
+              onClick={() => setMode('pronounce-words')}
+              className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                <Mic className="w-4 h-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white group-hover:text-amber-300 transition-colors truncate">
+                  Chấm Phát Âm Từ Vựng
+                </p>
+                <p className="text-[11px] text-zinc-400 truncate">
+                  Đọc to từ vựng, AI chấm điểm chuẩn
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
+            </button>
+
+            {/* 6. Đọc diễn cảm cả câu */}
+            <button
+              onClick={() => setMode('read-aloud')}
+              className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-9 h-9 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                <Volume2 className="w-4 h-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white group-hover:text-rose-300 transition-colors truncate">
+                  Đọc Lại Câu Ví Dụ
+                </p>
+                <p className="text-[11px] text-zinc-400 truncate">
+                  Rèn ngữ điệu và nối âm tự nhiên
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
+            </button>
+
+            {/* 7. Shadowing */}
+            <button
+              onClick={() => setMode('shadowing')}
+              className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-9 h-9 rounded-xl bg-accent-500/15 text-accent-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white group-hover:text-accent-300 transition-colors truncate">
+                  Echo Shadowing (Nói Đè)
+                </p>
+                <p className="text-[11px] text-zinc-400 truncate">
+                  Nói đồng thời theo nhịp audio phát
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
+            </button>
+
+            {/* 8. Phỏng vấn ngược */}
+            <button
+              onClick={() => setMode('interview')}
+              className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                <MessageCircle className="w-4 h-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white group-hover:text-purple-300 transition-colors truncate">
+                  Phỏng Vấn Ngược AI
+                </p>
+                <p className="text-[11px] text-zinc-400 truncate">
+                  AI đặt câu hỏi, bạn trả lời bằng giọng nói
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-500 shrink-0" />
+            </button>
+          </div>
+        </section>
+
+        {/* ── TẦNG 3: KHO HỌC LIỆU & BỔ TRỢ (Resource & Tool Vault) ── */}
+        <section aria-label="Kho học liệu và công cụ bổ trợ" className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-300 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              3. Kho Học Liệu & Công Cụ Bổ Trợ
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {/* Từ điển 12k từ */}
+            <button
+              onClick={() => nav('/tu-dien')}
+              className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-amber-500/40 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+                <BookOpen className="w-4 h-4" />
+              </div>
+              <p className="text-xs font-bold text-white truncate">Từ Điển 12k+ IPA</p>
+              <p className="text-[10px] text-zinc-400 truncate">Tra cứu & Nghe phát âm</p>
+            </button>
+
+            {/* Truyện song ngữ */}
+            <button
+              onClick={() => nav('/truyen-song-ngu')}
+              className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-pink-500/40 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-pink-500/15 text-pink-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+                <BookMarked className="w-4 h-4" />
+              </div>
+              <p className="text-xs font-bold text-white truncate">Truyện Karaoke Text</p>
+              <p className="text-[10px] text-zinc-400 truncate">Vừa nghe vừa sáng chữ</p>
+            </button>
+
+            {/* Mẫu câu thông dụng */}
+            <button
+              onClick={() => nav('/cau-thong-dung')}
+              className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-blue-500/40 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+                <MessageCircle className="w-4 h-4" />
+              </div>
+              <p className="text-xs font-bold text-white truncate">Mẫu Câu Giao Tiếp</p>
+              <p className="text-[10px] text-zinc-400 truncate">Câu thông dụng hằng ngày</p>
+            </button>
+
+            {/* Bài học mẫu */}
+            <button
+              onClick={() => nav('/bai-hoc')}
+              className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-teal-500/40 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-teal-500/15 text-teal-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+                <Award className="w-4 h-4" />
+              </div>
+              <p className="text-xs font-bold text-white truncate">100+ Hội Thoại Mẫu</p>
+              <p className="text-[10px] text-zinc-400 truncate">Tình huống theo chủ đề</p>
+            </button>
+
+            {/* Sổ tay lỗi sai */}
+            <button
+              onClick={() => nav('/so-tay-loi-sai')}
+              className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-rose-500/40 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+                <AlertCircle className="w-4 h-4" />
+              </div>
+              <p className="text-xs font-bold text-white truncate">Sổ Tay Lỗi Sai</p>
+              <p className="text-[10px] text-zinc-400 truncate">Ôn lại điểm ngữ pháp sai</p>
+            </button>
+
+            {/* Video Thử Thách */}
+            <button
+              onClick={() => nav('/thu-thach')}
+              className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-orange-500/40 text-left transition active:scale-[0.98] group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-orange-500/15 text-orange-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+                <Video className="w-4 h-4" />
+              </div>
+              <p className="text-xs font-bold text-white truncate">Thử Thách 1 Phút</p>
+              <p className="text-[10px] text-zinc-400 truncate">Video nói tiếng Anh tuần</p>
+            </button>
+          </div>
+        </section>
       </main>
     </>
   )

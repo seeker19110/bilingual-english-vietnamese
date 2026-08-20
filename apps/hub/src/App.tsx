@@ -28,8 +28,7 @@ import HubLogin from './pages/HubLogin'
 // - Ẩn số người dùng và lượt học cho non-admin (chỉ admin mới thấy qua API).
 // - Hiển thị liên kết trang cá nhân (Profile) khi người dùng đã đăng nhập.
 const ENGLISH_APP_URL =
-  (import.meta.env.VITE_ENGLISH_APP_URL as string | undefined) ||
-  'https://en-vi.donghanhcungban.org'
+  (import.meta.env.VITE_ENGLISH_APP_URL as string | undefined) || 'https://www.donghanhcungban.org'
 
 const PROFILE_URL = `${ENGLISH_APP_URL}/profile`
 

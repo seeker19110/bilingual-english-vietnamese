@@ -8,7 +8,25 @@
 
 ## Giai đoạn hiện tại
 
-### Platform V6 Executive Flagship — Executive Cockpit Studio & Cross-Domain Life Synthesis Engine (2026-08-20)
+### Platform V6.1 — Universal Navigation Architecture, Domain Unification (www.donghanhcungban.org) & UI/UX Craftsman Revamp (2026-08-20)
+
+Hoàn thành tái cấu trúc toàn diện kiến trúc phân cấp trang, định tuyến và giao diện người dùng theo domain chuẩn duy nhất **www.donghanhcungban.org**:
+
+- **1. Chuẩn hóa Tên miền & Sửa Xung đột Định tuyến (`apps/english/src/App.tsx`, `apps/hub/src/App.tsx`, `index.html`)**:
+  - Hợp nhất toàn bộ ứng dụng trên domain chuẩn `https://www.donghanhcungban.org` (Canonical tags, OpenGraph meta, Hub config, Server routing).
+  - Khắc phục triệt để xung đột route: Xóa route `/profile` trùng lặp ghi đè sang `/cai-dat`, chuẩn hóa `/chat` $\to$ `/tro-truyen` (AI Tutor Chat), phân tách `/tin-nhan` (P2P Friends Chat), sửa dynamic route `/learning-path/:levelId` $\to$ `<CefrLevelPage />`.
+- **2. Global Studio Switcher Header (`apps/english/src/components/Layout.tsx`)**:
+  - Tích hợp **Global Studio Switcher Dropdown** ở đỉnh trang: Chuyển đổi nhanh giữa 5 miền cốt lõi (🌟 Bạn Đồng Hành AI, 🇬🇧 Gia Sư Tiếng Anh, ⚡ Hub Luyện Tập, 📐 Khoa Học STEM, 💼 Sự Nghiệp & Work, 🌱 Đời Sống & Life Graph).
+- **3. Adaptive BottomNav với Glowing Center Companion Button (`apps/english/src/components/BottomNav.tsx`)**:
+  - Nâng cấp 5 tab chiến lược (Trang chủ, Học tập, Đồng Hành AI, Luyện tập, Cá nhân) với nút tâm điểm **Orb Glow** và tự động nhận diện route cha/con.
+- **4. Bento Grid 3 Tầng Cho Hub Luyện Tập & Trang Chủ (`apps/english/src/pages/Practice.tsx`, `apps/english/src/pages/Home.tsx`)**:
+  - Thiết kế lại `/luyen-tap` với 3 tầng: 4 Kỹ năng cốt lõi $\to$ 8 Bài tập phản xạ nhanh $\to$ Kho học liệu & công cụ bổ trợ (Từ điển 12k+ IPA, Truyện song ngữ Karaoke, Mẫu câu, Sổ tay lỗi sai, Thử thách video).
+  - Cập nhật số liệu từ điển 12.000+ từ chuẩn IPA trên Trang chủ.
+- **5. Quality Gates**:
+  - `npm test`: **4.602 / 4.602 tests passed 100%** trên 379 test files.
+  - `npm run typecheck`: passed 100% (0 errors trên 4 tsconfigs).
+  - `npm run lint`: passed 100% (0 warnings, 0 errors).
+  - `npm run build`: passed 100% (Frontend Vite, Server `dist-server/`, Hub workspace).
 
 Hoàn thành triển khai toàn diện và nâng cấp hệ sinh thái Đồng Hành lên trạng thái **Đỉnh Cao Chuyên Nghiệp (Executive Flagship Platform V6)**:
 

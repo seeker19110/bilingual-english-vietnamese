@@ -682,8 +682,11 @@ export default function App() {
                         }
                       />
 
-                      {/* Chuyển hướng tương thích ngược cho đường dẫn tiếng Anh cũ */}
-                      <Route path="/chat" element={<Navigate to="/tin-nhan" replace />} />
+                      {/* Chuyển hướng tương thích ngược cho đường dẫn tiếng Anh & alias cũ */}
+                      <Route path="/chat" element={<Navigate to="/tro-truyen" replace />} />
+                      <Route path="/ai-chat" element={<Navigate to="/tro-truyen" replace />} />
+                      <Route path="/messages" element={<Navigate to="/tin-nhan" replace />} />
+                      <Route path="/ho-so" element={<Navigate to="/profile" replace />} />
                       <Route path="/writing" element={<Navigate to="/luyen-viet" replace />} />
                       <Route path="/speaking" element={<Navigate to="/luyen-noi" replace />} />
                       <Route path="/practice" element={<Navigate to="/luyen-tap" replace />} />
@@ -693,7 +696,13 @@ export default function App() {
                       />
                       <Route
                         path="/learning-path/:levelId"
-                        element={<Navigate to="/lo-trinh-hoc" replace />}
+                        element={
+                          <RequireAuth>
+                            <FeatureGate featureKey="learning_path">
+                              <CefrLevelPage />
+                            </FeatureGate>
+                          </RequireAuth>
+                        }
                       />
                       <Route path="/dictionary" element={<Navigate to="/tu-dien" replace />} />
                       <Route path="/lessons" element={<Navigate to="/bai-hoc" replace />} />
@@ -708,7 +717,6 @@ export default function App() {
                       <Route path="/progress" element={<Navigate to="/tien-do" replace />} />
                       <Route path="/mistakes" element={<Navigate to="/so-tay-loi-sai" replace />} />
                       <Route path="/challenge" element={<Navigate to="/thu-thach" replace />} />
-                      <Route path="/profile" element={<Navigate to="/cai-dat" replace />} />
                       <Route path="/quests" element={<Navigate to="/nhiem-vu" replace />} />
 
                       {/* Redirects quản trị cũ */}
