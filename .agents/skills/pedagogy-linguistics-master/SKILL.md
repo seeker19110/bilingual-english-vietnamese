@@ -1,11 +1,11 @@
 ---
 name: pedagogy-linguistics-master
-description: 'Kỹ năng nghiệp vụ Sư phạm Song ngữ (Việt ⇄ Anh) và Ngôn ngữ học Ứng dụng đỉnh cao theo chuẩn quốc tế (CEFR A1-C2, IELTS Speaking/Writing Band 9, Socratic Scaffolding, IPA Phonetics, Echo Shadowing, Memory Palace Loci, Toulmin Debate). Kích hoạt khi thiết kế hoặc xử lý logic dạy học, chấm điểm, sửa lỗi, lộ trình, phát âm, từ vựng và hội thoại AI.'
+description: 'Kỹ năng nghiệp vụ Sư phạm Song ngữ (Việt ⇄ Anh) và Ngôn ngữ học Ứng dụng đỉnh cao theo chuẩn quốc tế (CEFR A1-C2, IELTS Speaking/Writing Band 9, CAT IRT 3PL, Bayesian Knowledge Tracing DAG, Socratic Scaffolding, IPA Phonetics GOP, Echo Shadowing, Memory Palace Loci, Toulmin Debate). Kích hoạt khi thiết kế hoặc xử lý logic dạy học, chấm điểm, sửa lỗi, lộ trình, phát âm, từ vựng và hội thoại AI.'
 ---
 
-# PEDAGOGY & APPLIED LINGUISTICS MASTER — TIÊU CHUẨN SƯ PHẠM ĐỈNH CAO
+# PEDAGOGY & APPLIED LINGUISTICS MASTER V7.0 — TIÊU CHUẨN SƯ PHẠM ĐỈNH CAO
 
-Tài liệu này là quy chuẩn nghiệp vụ Sư phạm & Ngôn ngữ học Ứng dụng bắt buộc cho toàn bộ các tính năng Gia sư AI và Bạn Đồng Hành trong hệ sinh thái Đồng Hành.
+Tài liệu này là quy chuẩn nghiệp vụ Sư phạm & Ngôn ngữ học Ứng dụng bắt buộc cho toàn bộ các tính năng Gia sư AI, Đấu trường Tranh biện và Bạn Đồng Hành trong hệ sinh thái Đồng Hành.
 
 ---
 
@@ -31,54 +31,59 @@ Hệ sinh thái vận hành theo hai chiều học phân biệt (`lib/direction.
 
 ---
 
-## 2. KHUNG THAM CHIẾU & TIÊU CHUẨN ĐÁNH GIÁ QUỐC TẾ
+## 2. KHẢO THÍ THÍCH ỨNG & TRUY VẾT LỖ HỔNG TRI THỨC (CAT IRT 3PL & BKT DAG)
 
-### A. Khung CEFR / CEFR-J (A1 $\to$ C2)
+### A. Computerized Adaptive Testing (CAT Engine chuẩn IRT 3PL)
 
-- **A1–A2 (Cơ bản):** Câu đơn, từ vựng sinh hoạt hàng ngày, phát âm rõ ràng, nhịp độ nói chậm, cấu trúc ngữ pháp thì Hiện tại đơn / Quá khứ đơn căn bản.
-- **B1–B2 (Độc lập/Tự chủ):** Liên kết câu mạch lạc (cohesive devices), phản xạ tự nhiên với các chủ đề trừu tượng, sử dụng mệnh đề quan hệ, câu điều kiện, modal verbs.
-- **C1–C2 (Thành thạo/Chuyên gia):** Văn phong học thuật, sắc thái biểu cảm tinh tế (nuances), thành ngữ tự nhiên (idiomatic expressions), cấu trúc đảo ngữ, giả định.
+- Triển khai mô hình toán học **Item Response Theory (IRT 3PL: 3-Parameter Logistic)**:
+  $$P(\theta) = c + \frac{1 - c}{1 + e^{-1.7a(\theta - b)}}$$
+  Trong đó: $a$ là độ phân biệt, $b$ là độ khó, $c$ là hệ số đoán mò.
+- Thuật toán ước lượng năng lực **Expected A Posteriori (EAP)** cập nhật phân phối chuẩn $N(0, 1)$ sau từng câu hỏi, tự động chọn câu hỏi tối đa hóa hàm thông tin Fisher $I(\theta)$.
+- Rút ngắn bài kiểm tra Placement từ 50 câu xuống còn **12–15 câu** mà vẫn đạt độ tin cậy phân loại CEFR $r > 0.92$.
 
-### B. Chuẩn Đánh giá IELTS Speaking (4 Tiêu chí Band 9)
+### B. Prerequisite Knowledge DAG & Bayesian Knowledge Tracing (BKT)
 
-1. **Fluency and Coherence (FC):** Mạch lạc, lưu loát, độ ngập ngừng tự nhiên (natural hesitation for ideas, not language), sử dụng đa dạng từ nối và discourse markers.
-2. **Lexical Resource (LR):** Độ phong phú từ vựng, Collocations chính xác, Idioms hợp ngữ cảnh, linh hoạt paraphrase và xử lý từ vựng hiếm (less common lexical items).
-3. **Grammatical Range and Accuracy (GRA):** Đa dạng cấu trúc câu (phức, ghép, đảo ngữ, rút gọn mệnh đề), độ chính xác tuyệt đối về thì, hòa hợp chủ-vị và giới từ.
-4. **Pronunciation (PR):** Đầy đủ âm đuôi (final consonants), trọng âm từ (word stress), trọng âm câu (sentence stress), nối âm (linking), nuốt âm (elision), và ngữ điệu (intonation) biểu cảm.
+- Mô hình hóa toàn bộ tri thức ngữ pháp, ngữ âm và kỹ năng thành đồ thị có hướng không chu trình (**Prerequisite Knowledge DAG** — `packages/core-learner/prerequisiteKnowledgeGraph.ts`).
+- Ứng dụng **Bayesian Knowledge Tracing (BKT)** tính toán xác suất làm chủ $P(L_t)$ sau mỗi bài tập:
+  $$P(L_t) = P(L_{t-1} | \text{Action}) + (1 - P(L_{t-1} | \text{Action})) \cdot T$$
+- **Backtracking Gap Detection:** Khi học viên gặp khó khăn, tự động truy vết ngược đồ thị tiền đề để phát hiện chính xác nút kiến thức nền tảng bị hổng và tự động sinh bài tập bắc cầu (**Bridging Micro-lessons**) bù đắp tức thì.
 
 ---
 
-## 3. NGỮ ÂM HỌC ỨNG DỤNG & LUYỆN NÓI NÂNG CAO
+## 3. NGỮ ÂM HỌC ÂM HỌC & LUYỆN NÓI NÂNG CAO (ACOUSTIC GOP & ECHO SHADOWING)
 
-### A. Hệ thống Âm IPA & Cặp âm Tối thiểu (Minimal Pairs)
+### A. Goodness of Pronunciation (GOP) & Formant Alignment
 
-- Nhận diện và sửa triệt để các lỗi phát âm kinh điển của người Việt:
-  - Cặp nguyên âm: `/iː/` vs `/ɪ/` (_sheep_ vs _ship_), `/uː/` vs `/ʊ/` (_fool_ vs _full_), `/æ/` vs `/e/` (_bad_ vs _bed_).
-  - Cặp phụ âm & Âm gió: `/θ/` vs `/s/` (_think_ vs _sink_), `/ð/` vs `/d/` (_this_ vs _dis_), `/ʃ/` vs `/s/` (_she_ vs _sea_), `/tʃ/` vs `/dʒ/` (_cheap_ vs _jeep_).
-  - Âm đuôi (Final Sounds): `/s/`, `/z/`, `/t/`, `/d/`, `/k/`, `/ks/` (_texts_, _six_).
+- Thuật toán đo lường **Goodness of Pronunciation (GOP)** trên từng âm vị (`packages/core-ai/acousticPhoneticsService.ts`).
+- Trích xuất phổ Formant $F_1$ (độ mở miệng/chiều cao lưỡi) và $F_2$ (độ tiến/lùi của lưỡi), phát hiện độ lệch cao độ $F_0$ (Pitch Contour Deviation).
+- Đặc trị 8 nhóm âm lỗi kinh điển L1 tiếng Việt: `/θ/`, `/ð/`, `/æ/`, `/r/`, `/-ks/`, `/tʃ/`, `/dʒ/`, `/ʃ/`.
 
 ### B. Kỹ thuật 3-Phase Echo Shadowing
 
-1. **Phase 1 (Active Listening & Articulatory Mapping):** Nghe mẫu chuẩn, phân tích vị trí đặt lưỡi, khẩu hình miệng và biểu đồ cao độ ngữ điệu (Pitch Contour).
-2. **Phase 2 (Delayed Echo):** Nói đuổi theo audio mẫu với độ trễ 0.5s–1.0s, đồng bộ hóa trọng âm câu và nhịp thở.
-3. **Phase 3 (Independent Production & Phoneme Scoring):** Thu âm độc lập, đối soát bằng thuật toán phân tích âm vị (Phoneme Alignment Score), chỉ ra % tương đồng và từ cần uốn nắn.
+1. **Phase 1 (Active Listening & Articulatory Mapping):** Nghe audio mẫu bản ngữ, quan sát chuyển động khẩu hình 3D và đồ thị sóng âm.
+2. **Phase 2 (Delayed Echo):** Nói đuổi theo audio mẫu với độ trễ tối ưu 0.4s–0.8s, đồng bộ hóa trọng âm câu và nhịp thở.
+3. **Phase 3 (Independent Production & Phoneme Scoring):** Thu âm độc lập, đối soát căn chỉnh âm vị (Phoneme Alignment), chỉ ra % tương đồng và từ cần uốn nắn.
 
 ---
 
-## 4. TỐI ƯU TRÍ NHỚ & PHƯƠNG PHÁP CUNG ĐIỆN TRÍ NHỚ (METHOD OF LOCI)
+## 4. KHUNG THAM CHIẾU QUỐC TẾ & TIÊU CHUẨN IELTS BAND 9
 
-1. **Spaced Repetition System (FSRS / SM-2):**
-   - Khoảng cách lặp lại dựa trên độ khó (Difficulty), độ ổn định (Stability) và độ bền truy xuất (Retrievability).
-   - Tự động điều chỉnh lịch ôn tập flashcard dựa trên tín hiệu phản hồi (Again / Hard / Good / Easy).
-2. **Không gian Ký ức Loci (Spatial Memory Palace):**
-   - Ánh xạ từ vựng/khái niệm trừu tượng vào các điểm neo giác quan (Sensory Anchors: Hình ảnh độc lạ, Âm thanh vang vọng, Xúc giác cụ thể).
-   - Tạo chuỗi liên tưởng kỳ lạ (Absurd Mnemonic Narratives) giúp kích hoạt vỏ não thị giác và thùy thái dương để ghi nhớ vĩnh viễn.
+### A. Khung CEFR / CEFR-J (A1 $\to$ C2)
+
+- **A1–A2 (Cơ bản):** 1.273–1.559 từ, câu đơn, nhịp độ nói chậm, ngữ pháp thì căn bản.
+- **B1–B2 (Độc lập/Tự chủ):** 2.663–2.993 từ, liên kết câu mạch lạc (cohesive devices), phản xạ tự nhiên, câu điều kiện, modal verbs.
+- **C1–C2 (Thành thạo/Chuyên gia):** 1.305–2.375 từ, văn phong học thuật, sắc thái biểu cảm tinh tế (nuances), thành ngữ tự nhiên, đảo ngữ, giả định.
+
+### B. Chuẩn Đánh giá IELTS Speaking (4 Tiêu chí Band 9)
+
+1. **Fluency and Coherence (FC):** Mạch lạc, lưu loát, độ ngập ngừng tự nhiên (hesitation for ideas, not language), discourse markers tự nhiên.
+2. **Lexical Resource (LR):** Collocations phong phú, idioms chuẩn ngữ cảnh, paraphrase linh hoạt và xử lý từ vựng hiếm (less common lexical items).
+3. **Grammatical Range and Accuracy (GRA):** Cấu trúc đa dạng (câu phức, đảo ngữ, rút gọn mệnh đề), độ chính xác tuyệt đối về thì, hòa hợp chủ-vị và giới từ.
+4. **Pronunciation (PR):** Đầy đủ âm đuôi (final consonants), trọng âm từ/câu, nối âm (linking), nuốt âm (elision), và ngữ điệu biểu cảm.
 
 ---
 
 ## 5. MÔ HÌNH TRANH BIỆN TOULMIN & PHẢN BIỆN NHẬN THỨC (METACGONITION)
-
-Khi vận hành Đấu trường Tranh biện AI (Debate Arena) hoặc Hội thoại Tri thức:
 
 - **Cấu trúc Luận điểm Toulmin:**
   - **Claim (Khẳng định):** Tuyên bố rõ ràng, súc tích.

@@ -3,9 +3,9 @@ name: financial-security-sentinel
 description: 'Kỹ năng Nghiệp vụ Tài chính, Thanh toán, Kiểm soát Chi phí AI & Bảo mật Tuyệt đối (Financial Integrity, Billing, VietQR Webhook, Token Budgeting, Zero-Trust Auth, OWASP). Kích hoạt khi đụng tới thanh toán, gói cước, webhook ngân hàng, cấp quyền/entitlements, chi phí token LLM, xác thực auth, cookie/token và bảo mật dữ liệu.'
 ---
 
-# FINANCIAL INTEGRITY, BILLING & SECURITY SENTINEL
+# FINANCIAL INTEGRITY, BILLING & SECURITY SENTINEL V7.0
 
-Bộ quy chuẩn kiểm soát tài chính, thanh toán và bảo mật nghiêm ngặt khắt khe nhất cho hệ thống Đồng Hành.
+Bộ quy chuẩn kiểm soát tài chính, thanh toán, kinh tế gamification, chi phí AI và bảo mật nghiêm ngặt khắt khe nhất cho hệ sinh thái Đồng Hành.
 
 ---
 
@@ -24,7 +24,7 @@ Bộ quy chuẩn kiểm soát tài chính, thanh toán và bảo mật nghiêm n
 [Atomic withTransaction]
   ├── 1. Insert Payment Log (status: 'processing')
   ├── 2. Verify Amount & Order Match
-  ├── 3. Grant Plan Entitlements (calculate expiry)
+  ├── 3. Grant Plan Entitlements (calculate stackable expiry)
   └── 4. Update Payment Log (status: 'completed')
          │
          ▼
@@ -34,7 +34,7 @@ Bộ quy chuẩn kiểm soát tài chính, thanh toán và bảo mật nghiêm n
 ### Các nguyên tắc Bất Biến:
 
 1. **Kiểm tra Chữ ký số (Cryptographic Signature Verification):**
-   - Mọi webhook từ cổng thanh toán / ngân hàng phải được xác minh chữ ký bí mật (`HMAC-SHA256`) trước khi đọc payload.
+   - Mọi webhook từ cổng thanh toán / ngân hàng phải được xác minh chữ ký bí mật (`HMAC-SHA256` qua `SEPAY_WEBHOOK_API_KEY`) trước khi đọc payload.
 2. **Chống Trùng lặp & Tấn công Phát lại (Idempotency & Replay Protection):**
    - Sử dụng `idempotency_key` (kết hợp mã giao dịch ngân hàng + mã đơn hàng) lưu trữ trong PostgreSQL với ràng buộc `UNIQUE`.
    - Nếu webhook gọi lại nhiều lần, lập tức trả về `200 OK` và bỏ qua, không được cấp quyền hai lần (Zero Double-Spending).
@@ -43,28 +43,31 @@ Bộ quy chuẩn kiểm soát tài chính, thanh toán và bảo mật nghiêm n
 
 ---
 
-## 2. QUẢN TRỊ GÓI CƯỚC & QUYỀN TRUY CẬP (ENTITLEMENTS & SUBSCRIPTIONS)
+## 2. KINH TẾ GAMIFICATION & LAN TỎA VIP (REFERRAL VIP & STREAK VAULT)
 
-1. **Kiểm tra Quyền tại Server (Server-Authoritative Permissions):**
-   - Client **KHÔNG BAO GIỜ** được quyết định quyền truy cập tính năng Pro/VIP. Mọi quyết định đều do server kiểm tra từ bảng `user_plans` hoặc `entitlements` qua hàm `validatePlanAccess(userId, featureKey)`.
-2. **Tính toán Thời hạn Chuẩn UTC:**
-   - Ngày bắt đầu và kết thúc gói cước luôn tính theo chuẩn `ISO-8601 UTC`.
-   - Xử lý gia hạn cộng dồn (Stackable Renewal): Khi người dùng đang còn 5 ngày gói Pro mà mua tiếp 30 ngày, hạn mới phải là `Thời hạn cũ + 30 ngày`, không được lấy ngày hiện tại ghi đè làm mất ngày cũ.
-3. **Thu hồi & Hết hạn Tự động (Grace Period & Expiry):**
-   - Khi gói hết hạn, chuyển người dùng về gói `free` êm dịu, không xóa dữ liệu học tập cá nhân đã tích lũy.
+1. **Hệ thống Giới thiệu Bạn bè VIP (`packages/core-personal/referralVipService.ts`):**
+   - Tặng 7 ngày VIP cho cả người mời và người được mời.
+   - **Chống Gian Lận (Anti-Sybil/Fraud):** Người được mời bắt buộc phải hoàn thành bài học thực tế đầu tiên (`hasCompletedFirstLesson: true`) mới kích hoạt tặng ngày VIP.
+   - **Cộng Dồn Thời Hạn (Stackable Days):** Khi nhận thêm ngày VIP, hạn mới luôn tính từ hạn cũ cộng thêm số ngày thưởng, không làm mất ngày của người dùng.
+   - Lộ trình mốc thưởng 4 tầng (Milestone Road: 1, 3, 5, 10 bạn bè) tích lũy ngày VIP và danh hiệu vinh quang.
+2. **Rương Bí Ẩn & Vé Đóng Băng Chuỗi (Streak Freeze Vault):**
+   - Người học hoàn thành 3 nhiệm vụ ngày (`dailyQuestsService`) được mở rương nhận Streak Freeze Token.
+   - Token chỉ được sử dụng tự động khi người học bỏ lỡ ngày học, bảo vệ chuỗi học tập liên tục mà không gây lạm phát phần thưởng.
 
 ---
 
-## 3. LÁ CHẮN NGÂN SÁCH CHI PHÍ AI (AI COST & TOKEN BUDGET GUARDRAILS)
+## 3. LÁ CHẮN NGÂN SÁCH CHI PHÍ AI & PROMPT CACHING GATEWAY
 
-1. **Giới hạn Ngân sách Cứng (Hard Spending Caps):**
-   - Mỗi người dùng / phiên học có một định mức sử dụng (Quota / Rate-limit).
-   - Thiết lập giới hạn trần chi phí USD/ngày cho toàn hệ sinh thái. Khi đạt 80% ngân sách $\to$ gửi cảnh báo; khi đạt 100% $\to$ tự động chuyển sang mô hình siêu tiết kiệm (Gemini Flash / Cache / Local).
-2. **Dynamic Token Clamping & Cost Tier Routing:**
-   - Cắt gọt token đầu vào (Input Truncation) và giới hạn `max_tokens` đầu ra một cách nghiêm ngặt tùy theo tác vụ.
-   - Ưu tiên sử dụng mô hình tối ưu theo bậc chi phí:
-     - Tác vụ phân loại / trích xuất JSON $\to$ Gemini 2.5 Flash / Flash-Lite.
-     - Tác vụ chấm điểm IELTS / Đấu trường Tranh biện chuyên sâu $\to$ Gemini 2.5 Pro.
+1. **Native Context & Prompt Caching Gateway (`api/_lib/geminiApi.ts`, `packages/core-ai/chatProviders.ts`):**
+   - Áp dụng cấu trúc `systemInstruction` và Prompt Caching chính thức của Google Gemini API và Anthropic (`cache_control: { type: 'ephemeral' }`).
+   - Tiết kiệm tới **90% chi phí** đọc input token cho các system instruction lớn và kho tri thức học tập.
+   - Theo dõi chi tiết `cacheReadTokens`, `cacheWriteTokens` và `costSavedUsd` qua `capabilityCostTracker.ts`.
+2. **Giới hạn Ngân sách Cứng (Hard Spending Caps):**
+   - Thiết lập giới hạn trần chi phí USD/ngày cho toàn hệ thống.
+   - Cảnh báo tại 80% ngân sách $\to$ Tự động chuyển sang mô hình siêu tiết kiệm (Flash-Lite / Edge AI WebGPU) tại 100% ngân sách.
+3. **Phân tầng Mô hình Theo Chi phí (Cost Tier Routing):**
+   - Tác vụ phân loại / trích xuất JSON / Socratic Hints $\to$ Gemini 2.5 Flash / Flash-Lite.
+   - Tác vụ chấm điểm IELTS chuyên sâu / Đấu trường Tranh biện $\to$ Gemini 2.5 Pro.
 
 ---
 
@@ -72,7 +75,7 @@ Bộ quy chuẩn kiểm soát tài chính, thanh toán và bảo mật nghiêm n
 
 1. **Xác thực API Tuyệt đối (`validateAuth`):**
    - 100% API handler nhạy cảm phải gọi `validateAuth(req)` để lấy `userId` từ token đã được ký mật mã.
-   - **CẤM:** Không được nhận `userId` từ `req.body` hoặc `req.query` mà không so khớp với token thực tế (Chống triệt để lỗ hổng IDOR - Insecure Direct Object Reference).
-2. **Bảo mật Dữ liệu Riêng tư & GDPR/PDPA:**
+   - **CẤM TUYỆT ĐỐI:** Không được nhận `userId` từ `req.body` hoặc `req.query` mà không so khớp với token thực tế (Chống triệt để lỗ hổng IDOR - Insecure Direct Object Reference).
+2. **Bảo mật Dữ liệu Riêng tư & Mã Hóa Lưu Trữ:**
    - Dữ liệu âm thanh ghi âm và thông tin cá nhân của người học phải được ẩn danh hóa trước khi gửi tới API bên ngoài.
-   - Mọi thay đổi về chính sách quyền riêng tư phải được ghi nhận vào `consent_ledger`.
+   - Kho audio cache trên Cloudflare R2 được mã hóa bằng thuật toán `AES-256-GCM`.

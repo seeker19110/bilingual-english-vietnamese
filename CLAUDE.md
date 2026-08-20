@@ -42,6 +42,21 @@ Ba chế độ:
   English Tutor OS" (không có file tiến độ riêng). Đọc khi làm việc thuộc lộ trình này; chưa bắt đầu
   thực thi (mới có đặc tả) — mỗi cổng chuyển giai đoạn vẫn cần xác nhận người dùng theo mục 3.
 
+## 2.1. Hệ thống 10 Siêu Kỹ Năng Tác Tử (`.agents/skills/`)
+
+Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt trong `.agents/skills/`:
+
+1. `autonomous-agent-orchestrator`: Vòng lặp tự trị 5 bước, Multi-Agent Delphi Consensus, Zero-Trust Tool Synthesizer, REM Consolidation.
+2. `financial-security-sentinel`: VietQR Webhook HMAC-SHA256, Idempotency, Prompt Caching Gateway, Referral VIP, Streak Freeze Vault.
+3. `pedagogy-linguistics-master`: Sư phạm song ngữ 2 chiều, CEFR A1-C2, CAT IRT 3PL, BKT DAG, Acoustic GOP, Echo Shadowing.
+4. `principal-engineer-architect`: Type safety strict, Zod validation, RRF Hybrid RAG, Web Worker Audio DSP, OPFS Edge AI, 5 Quality Gates.
+5. `ui-ux-craftsman`: 5 Focus Studios, CyberTutor 3D Avatar WebGL 15-visemes, 1v1 PvP 60 FPS, WCAG 2.2 AAA/AA, Design Tokens.
+6. `gamification-viral-growth-architect`: 1v1 PvP Arena, Elo FIDE ($K=32$), Ghost Rival Matchmaking, Referral VIP 4 tầng mốc, Story Canvas.
+7. `multimodal-realtime-voice-master`: Full-Duplex WebRTC (<250ms), Barge-in (<50ms), Web Audio Worker ($F_0, F_1, F_2$), 3D Viseme Shaders.
+8. `memory-palace-cognitive-scaffolder`: Method of Loci 3D/Isometric, BKT DAG gap backtrack, Flow State CLI Regulator, Metacognitive MAI.
+9. `stem-science-reasoning-master`: STEM Scratchpad 4 môn, Step-by-Step Symbolic Equation Validator, Socratic Micro-Hints, LaTeX rendering.
+10. `life-career-strategic-advisor`: Tổng hợp 5 Miền Cuộc sống, Holistic Alignment HAS, Predictive Goal Horizon, Decision Ledger, Action Canvas.
+
 > Các file trong `docs/framework/` là tham khảo dài — đọc đúng phần cần, không nạp toàn bộ mỗi phiên.
 
 ## 3. Cách quản lý dự án (quan trọng nhất)
