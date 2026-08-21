@@ -74,7 +74,10 @@ test.describe('Gợi ý "Luyện nói với từ vừa học" ở Home', () => {
   }) => {
     await seedLearnedWords(page, ['apple', 'banana', 'cherry'])
     await mockLogin(page, 'vi')
-    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    // Nút gợi ý này đã dời từ trang chủ hub "/" sang trang riêng môn Tiếng Anh
+    // "/hoc-tieng-anh" (feat(navigation): restructure platform hub and dedicated
+    // english studio routing, commit fd188ef) — xem EnglishHome.tsx.
+    await page.goto('/hoc-tieng-anh', { waitUntil: 'domcontentloaded' })
     const cta = page.getByRole('button', { name: /Luyện nói với 3 từ vừa học/ })
     await expect(cta).toBeVisible()
     await cta.click()
@@ -83,7 +86,7 @@ test.describe('Gợi ý "Luyện nói với từ vừa học" ở Home', () => {
 
   test('chưa học từ nào → không hiện nút gợi ý', async ({ page }) => {
     await mockLogin(page, 'vi')
-    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    await page.goto('/hoc-tieng-anh', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Luyện nói với/)).not.toBeVisible()
   })
 })

@@ -3818,6 +3818,40 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🟢 **[2026-08-21] Đã vá 15 test e2e đỏ trên `main`** (phát hiện khi driving PR #617 tới green —
+  commit `fd188ef` "restructure platform hub and dedicated english studio routing" đổi route "/"
+  từ `EnglishHome` sang `Home` (platform hub mới) và dời `EnglishHome` sang `/hoc-tieng-anh`, kéo
+  theo 2 loại lỗi:
+  1. **5 test sai route** (`e2e/a11y.spec.ts` "Home — gợi ý luyện nói..." × 5 theme,
+     `e2e/comeback.spec.ts` × 2, `e2e/bottomnav.spec.ts` × 1 — nhãn tab đổi "Lộ trình" →
+     "Học Tiếng Anh"): sửa test trỏ đúng `/hoc-tieng-anh` thay vì `/` cho nội dung đã dời, và
+     cập nhật locator theo nhãn mới.
+  2. **9 lỗi a11y `color-contrast` thật** trên `Home.tsx` (platform hub mới) và `EnglishHome.tsx`
+     — 2 dạng bug lặp lại từ đợt vá PR #616 trước: (a) pill/nút dùng thẳng `text-emerald/blue/
+purple/orange/amber/sky-300` thiếu biến thể `theme-light:text-*-800` nên nhạt trên 3 theme
+     sáng; (b) nút nền `bg-accent-500`/`bg-emerald-500` dùng `text-zinc-950` — token `--z-950`
+     BỊ ĐẢO CHIỀU ở theme sáng (nhạt nhất thay vì đậm nhất, xem PROGRESS.md đợt vá PR #616) nên
+     chữ gần trắng trên nền sáng → sửa bằng màu cố định `text-[#09090b]` (không qua token z-*,
+     đã tính contrast ≥ 5.9:1 trên cả 5 theme accent màu khác nhau) thay vì `text-zinc-950`.
+     Xác nhận: `npx playwright test e2e/a11y.spec.ts e2e/bottomnav.spec.ts e2e/comeback.spec.ts`
+     134/134 pass cục bộ; build/typecheck/lint/format/`npm test` (5019/5019) đều xanh.
+- 🟡 **[2026-08-21] Gemini Live — đã thay code GIẢ bằng kết nối WebSocket THẬT, nhưng CHƯA test
+  với API key thật.** Nhánh `claude/gemini-live-integration-xo175x` trước đó (commit `cf44362`
+  "feat: implement horizon features and stress test suite") đã có sẵn một bộ khung lớn (~4100
+  dòng: `packages/core-ai/geminiLiveService.ts`, `wsGeminiLiveHandler.ts`, `api/gemini-live.ts`,
+  contract `packages/core-contracts/geminiLive.ts`, hook `apps/english/src/lib/geminiLiveApi.ts`,
+  đã gắn vào `server.ts` chạy thật) — nhưng khi đọc kỹ, `geminiLiveService.ts` **không hề gọi API
+  Gemini thật**: mỗi 20 audio chunk người dùng gửi lên, code chỉ **echo ngược chính audio đó** giả
+  làm phản hồi AI. Đã sửa `packages/core-ai/geminiLiveService.ts` để **thật sự mở WebSocket** tới
+  `wss://generativelanguage.googleapis.com/.../BidiGenerateContent` (đọc `docs/research/dac-ta-gemini-live-2026-08-21.md`
+  để biết bối cảnh — chọn Phương án C: Live chỉ cho phần hội thoại, giữ pipeline STT/LLM/TTS cũ
+  cho phần sửa lỗi 2 giọng). Đã verify: test đơn vị (mock `ws` qua `_setWebSocketFactoryForTests`,
+  6/6 pass), `npm test` toàn bộ 5019/5019 pass, build/typecheck/lint xanh. **CHƯA verify được** với
+  `GEMINI_API_KEY` thật (sandbox không có key) — trước khi dùng thật cần: (1) thêm
+  `GEMINI_API_KEY` vào `.env`, (2) xác nhận model Live khả dụng qua `GEMINI_LIVE_MODEL` (mặc định
+  `gemini-2.0-flash-exp`, Google hay đổi tên/khả dụng model Live), (3) thử 1 phiên thật qua
+  `/ws/gemini-live`, (4) audit lại các file "V6.x/V7.0" khác cùng thời điểm với `cf44362` xem có
+  scaffolding giả tương tự không (chưa rà — người dùng đã được báo, quyết định xử lý riêng sau).
 - 🟡 **[2026-08-18, cập nhật khi fix PR #603] `eslint-plugin-react-hooks` đã ghim TẠM về lại
   `^4.6.2`** (đúng bản trước PR #574) để CI/lint xanh trở lại ngay — bản `7.1.1` mà PR #574 bump
   lên mang theo 5 rule React Compiler mới, làm lộ **73 lỗi trải trên 45+ file**: `set-state-in-effect`

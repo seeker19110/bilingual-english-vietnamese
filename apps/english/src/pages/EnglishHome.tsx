@@ -149,7 +149,7 @@ export default function EnglishHome() {
               <div>
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
                   {isA ? 'Gia Sư Tiếng Anh Song Ngữ' : 'Bilingual English Tutor'}
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 font-bold border border-emerald-500/30">
                     CEFR A1–C2
                   </span>
                 </h2>
@@ -177,13 +177,13 @@ export default function EnglishHome() {
                 <p className="text-[11px] uppercase tracking-wider text-zinc-400 font-semibold">
                   {isA ? 'Bài học tiếp theo theo lộ trình:' : 'Next roadmap lesson:'}
                 </p>
-                <p className="text-sm font-bold text-emerald-300 truncate mt-0.5">
+                <p className="text-sm font-bold text-emerald-300 theme-light:text-emerald-800 truncate mt-0.5">
                   {nextLabel || (isA ? 'Bắt đầu bài học mới' : 'Start new lesson')}
                 </p>
               </div>
               <button
                 onClick={goToNextStep}
-                className="tap-44 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm shadow-md shadow-emerald-500/20 transition active:scale-95 shrink-0"
+                className="tap-44 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#09090b] font-bold text-sm shadow-md shadow-emerald-500/20 transition active:scale-95 shrink-0"
               >
                 <span>{isA ? 'Tiếp tục học ngay' : 'Continue learning'}</span>
                 <ChevronRight className="w-4 h-4" />
@@ -255,7 +255,7 @@ export default function EnglishHome() {
         {recentWords.length > 0 && (
           <button
             onClick={() => nav(`/luyen-noi?words=${encodeURIComponent(recentWords.join(','))}`)}
-            className="tap-44 w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300 hover:border-sky-500/50 transition animate-fade-in"
+            className="tap-44 w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300 theme-light:text-sky-800 hover:border-sky-500/50 transition animate-fade-in"
           >
             <Mic className="w-3.5 h-3.5 shrink-0" />
             {isA
@@ -339,7 +339,7 @@ export default function EnglishHome() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
                 <h4 className="font-bold text-white text-sm">Học Theo Lộ Trình CEFR</h4>
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/20">
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800 font-semibold border border-emerald-500/20">
                   A1-C2
                 </span>
               </div>
@@ -360,7 +360,7 @@ export default function EnglishHome() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
                 <h4 className="font-bold text-white text-sm">Từ Điển Song Ngữ 12.000+</h4>
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/20">
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 theme-light:text-amber-800 font-semibold border border-amber-500/20">
                   Audio IPA
                 </span>
               </div>

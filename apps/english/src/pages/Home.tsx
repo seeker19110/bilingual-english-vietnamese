@@ -222,7 +222,7 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <h3 className="font-bold text-white text-base">Môn Tiếng Anh</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 font-bold border border-emerald-500/30">
                       CEFR A1–C2
                     </span>
                   </div>
@@ -257,7 +257,7 @@ export default function Home() {
 
               <button
                 onClick={() => nav('/hoc-tieng-anh')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 font-semibold text-xs transition active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 theme-light:text-emerald-800 border border-emerald-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
                 <span>Vào Không Gian Học Tiếng Anh</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -273,7 +273,7 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <h3 className="font-bold text-white text-base">Khoa Học & STEM</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 theme-light:text-blue-800 font-bold border border-blue-500/30">
                       Vision OCR
                     </span>
                   </div>
@@ -302,7 +302,7 @@ export default function Home() {
 
               <button
                 onClick={() => nav('/mon-hoc')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 border border-blue-500/30 font-semibold text-xs transition active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 theme-light:text-blue-800 border border-blue-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
                 <span>Vào Không Gian Môn Học & STEM</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -318,7 +318,7 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <h3 className="font-bold text-white text-base">Sự Nghiệp & Công Việc</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 theme-light:text-purple-800 font-bold border border-purple-500/30">
                       Career Hub
                     </span>
                   </div>
@@ -347,7 +347,7 @@ export default function Home() {
 
               <button
                 onClick={() => nav('/su-nghiep-cua-toi')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 font-semibold text-xs transition active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 theme-light:text-purple-800 border border-purple-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
                 <span>Vào Không Gian Sự Nghiệp Của Tôi</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -363,7 +363,7 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <h3 className="font-bold text-white text-base">Tôi Khởi Nghiệp & Đời Sống</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 font-bold border border-orange-500/30">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 theme-light:text-orange-800 font-bold border border-orange-500/30">
                       Life OS
                     </span>
                   </div>
@@ -392,7 +392,7 @@ export default function Home() {
 
               <button
                 onClick={() => nav('/toi-khoi-nghiep')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 border border-orange-500/30 font-semibold text-xs transition active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 theme-light:text-orange-800 border border-orange-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
                 <span>Vào Không Gian Tôi Khởi Nghiệp</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -419,7 +419,7 @@ export default function Home() {
 
           <button
             onClick={() => nav('/dong-hanh')}
-            className="tap-44 w-full sm:w-auto px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-xs shadow-md shadow-accent-500/25 transition active:scale-95 shrink-0 flex items-center justify-center gap-1.5"
+            className="tap-44 w-full sm:w-auto px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-[#09090b] font-bold text-xs shadow-md shadow-accent-500/25 transition active:scale-95 shrink-0 flex items-center justify-center gap-1.5"
           >
             <Bot className="w-4 h-4" />
             <span>Mở Bạn Đồng Hành</span>

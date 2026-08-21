@@ -21,6 +21,12 @@
 // Gặp 429 giữa chừng (batch chưa đủ ngưỡng nghỉ) → tự nghỉ NGAY 1 đợt rồi thử lại đúng câu đó
 // 1 lần, không bỏ cuộc ngay để đỡ phải chạy lại cả danh sách.
 //
+// Quota THẬT (ngày/tháng, khác lệch nhịp RPM tạm thời) không tự hồi trong vài chục giây — nếu
+// liên tiếp dính 429 dù đã nghỉ+thử lại (mặc định 2 câu liên tiếp, chỉnh qua
+// SEED_MAX_CONSECUTIVE_QUOTA_FAILS) thì DỪNG HẲN thay vì cố chạy hết danh sách vô ích. Chạy
+// xuyên ngày đêm ở free tier: cứ chạy lại lệnh này mỗi ngày (thủ công hoặc cron) — câu đã seed
+// nằm trong tts_cache sẽ tự "skip", chỉ tốn API cho phần chưa xong.
+//
 // Truyện NGẮN được xếp seed TRƯỚC truyện dài (sắp xếp theo số câu tăng dần) — với hạn mức
 // thấp thế này, 1 lần chạy khó seed hết ngay, nên ưu tiên seed XONG HẲN nhiều truyện ngắn
 // thay vì seed dở dang 1 truyện dài.
@@ -141,9 +147,17 @@ async function main(): Promise<void> {
   let skip = 0
   let error = 0
   let callsSinceLastPause = 0
+  let consecutiveQuotaFails = 0
 
   const isQuotaError = (err: unknown): boolean =>
     /\(429\)|RESOURCE_EXHAUSTED|quota/i.test(err instanceof Error ? err.message : String(err))
+
+  // Ngưỡng DỪNG HẲN khi quota đã hết THẬT (ngày/tháng, không phải chỉ lệch nhịp RPM) — phân biệt
+  // với retry-1-lần ở trong vòng lặp (dành cho lệch nhịp tạm thời). Nếu sau khi đã nghỉ+thử lại mà
+  // VẪN liên tiếp dính quota nhiều câu — chạy tiếp chỉ tốn thời gian vô ích (quota ngày không tự hồi
+  // trong vài phút) — dừng lại, để cache (skip) làm phần đã seed, chạy lại sau (cron/thủ công) khi
+  // quota hồi. Chỉnh qua SEED_MAX_CONSECUTIVE_QUOTA_FAILS nếu cần khác 2.
+  const MAX_CONSECUTIVE_QUOTA_FAILS = Number(process.env.SEED_MAX_CONSECUTIVE_QUOTA_FAILS) || 2
 
   for (let i = 0; i < limitedJobs.length; i++) {
     const { text, lang, voice } = limitedJobs[i]!
@@ -189,11 +203,26 @@ async function main(): Promise<void> {
         [hash, lang, voice, audioUrl, ivB64],
       )
       ok++
+      consecutiveQuotaFails = 0
     } catch (err) {
       error++
       console.error(
         `\n❌ Lỗi câu "${text.slice(0, 60)}..." (${voice}/${lang}): ${err instanceof Error ? err.message : String(err)}`,
       )
+
+      if (isQuotaError(err)) {
+        consecutiveQuotaFails++
+        if (consecutiveQuotaFails >= MAX_CONSECUTIVE_QUOTA_FAILS) {
+          console.log(
+            `\n🛑 Chạm quota THẬT (${consecutiveQuotaFails} câu liên tiếp vẫn 429 dù đã nghỉ+thử lại) ` +
+              `— dừng lại, không cố tiếp vô ích. Đã seed ${ok} câu mới (${skip} câu cũ đã có sẵn). ` +
+              `Chạy lại lệnh này sau (quota Google thường hồi theo NGÀY) — câu đã xong sẽ tự bỏ qua.`,
+          )
+          break
+        }
+      } else {
+        consecutiveQuotaFails = 0
+      }
     }
 
     // Nghỉ theo lịch — CHỈ đếm lệnh gọi API thật (câu cache HIT ở trên "continue" trước khi
