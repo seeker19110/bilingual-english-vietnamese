@@ -91,7 +91,7 @@ export default function LandingEn() {
             <br />
             <span className="text-accent-400">mistakes explained back to you in English</span>
           </h1>
-          <p className="mt-3 text-base text-zinc-400 theme-light:text-zinc-600">
+          <p className="mt-3 text-base text-zinc-400">
             Free. No prior Vietnamese needed to get started.
           </p>
 
@@ -108,7 +108,7 @@ export default function LandingEn() {
         <section className="mt-10 rounded-2xl border border-accent-500/30 bg-accent-500/5 p-4">
           <div className="flex items-start gap-3">
             <Volume2 className="mt-0.5 h-5 w-5 shrink-0 text-accent-400" aria-hidden="true" />
-            <p className="text-sm text-zinc-300 theme-light:text-zinc-700">
+            <p className="text-sm text-zinc-300">
               <strong className="text-zinc-100 theme-light:text-zinc-900">What's different:</strong>{' '}
               The AI doesn't just correct your text — it{' '}
               <strong>reads the explanation back to you in a real English voice</strong>, while the
@@ -136,9 +136,7 @@ export default function LandingEn() {
                   <h3 className="font-semibold text-zinc-100 theme-light:text-zinc-900">
                     {mode.title}
                   </h3>
-                  <p className="mt-0.5 text-sm text-zinc-400 theme-light:text-zinc-600">
-                    {mode.desc}
-                  </p>
+                  <p className="mt-0.5 text-sm text-zinc-400">{mode.desc}</p>
                 </div>
               </div>
             ))}
@@ -147,7 +145,7 @@ export default function LandingEn() {
 
         {/* Giới hạn dùng — thành thật, không phóng đại */}
         <section className="mt-8 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4 text-center">
-          <p className="text-sm text-zinc-400 theme-light:text-zinc-600">
+          <p className="text-sm text-zinc-400">
             Free, with a daily usage limit so everyone gets a fair share.
           </p>
         </section>

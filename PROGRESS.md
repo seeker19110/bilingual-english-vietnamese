@@ -4252,7 +4252,35 @@ deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash script
       sư AI (`userInput`, dropdown nguồn, tiêu đề "Phản Hồi 👎...") chỉ hiện sau khi bấm sang tab
       con thứ 2. Đã thêm bước click tab trước khi assert. Cả 2 file đã chạy pass cục bộ
       (Playwright Chromium).
-    - **Chưa vá (ngoài phạm vi PR #616, nợ kỹ thuật riêng):** vi phạm a11y `color-contrast`
-      (serious) thật ở `/thu-thach` + một số trang/theme khác trong `e2e/a11y.spec.ts` — xuất hiện
-      y hệt trên cả `main` lẫn nhánh này (không phải do CORS/coverage), cần soát riêng theo mục 4
-      CLAUDE.md (token `--z-*`/`--a-*` trong `index.css`). Đề xuất mở PR riêng.
+  - **[Cùng ngày, tiếp] Đã vá NỐT toàn bộ 68 vi phạm a11y `color-contrast` còn lại** (không dừng ở
+    2/4 ban đầu — người dùng yêu cầu xử lý hết). Gốc rễ: nhiều nơi dùng thẳng màu pastel Tailwind
+    (`text-emerald-300`, `text-sky-300`, `text-blue-300`, `text-purple-300`, `text-cyan-300`,
+    `text-red-300`...) — vốn chỉ đọc tốt trên nền tối — mà THIẾU biến thể `theme-light:` (quy ước
+    đã có sẵn ở nhiều nơi khác, `tailwind.config.js` định nghĩa variant `theme-light:` = áp cho
+    3 theme nền sáng blue-sky/pink/kid) nên rớt AA trên 3 theme đó. 2 lỗi có tính LAN RỘNG (xuất
+    hiện ở gần như MỌI trang vì nằm trong component dùng chung):
+    - Nút "Đồng Hành AI" toàn cục trong `Layout.tsx` (header mọi trang) — `text-accent-300` thiếu
+      `theme-light:text-accent-800`.
+    - `PageHeader.tsx` (subtitle mọi trang có tiêu đề) — có bug NGƯỢC: ai đó thêm
+      `theme-light:text-zinc-600` tưởng số càng cao càng đậm (quy ước Tailwind chuẩn), nhưng hệ
+      thống token `--z-*` của dự án ĐẢO CHIỀU thang màu cho theme nền sáng (xem
+      `packages/core-ui/theme.css` — z-50 đậm nhất/z-950 nhạt nhất ở theme sáng, ngược hẳn theme
+      tối) nên `z-600` ở blue-sky lại NHẠT HƠN z-400 mặc định — ghi đè lên đúng giá trị đã đúng sẵn.
+      Đã bỏ hẳn override sai (base `text-zinc-400` tự đúng theo theme nhờ CSS var). Cùng bug lặp lại
+      ở `Landing.tsx`, `LandingEn.tsx`, `WordDetail.tsx` (`theme-light:text-zinc-600/700`) — đã sửa
+      luôn dù 3 trang này chưa có trong `e2e/a11y.spec.ts`, để tránh tái phát khi được thêm vào quét.
+    - Còn lại: `Home.tsx` (9 chỗ), `HomeUniversalAiBar.tsx` (6 chỗ badge gợi ý câu hỏi AI),
+      `Writing.tsx` (lỗi/sửa lỗi ngữ pháp trong màn chấm bài), `EdgeAiIndicator.tsx` (badge chế độ
+      WASM/WebGPU) — mỗi chỗ thêm đúng 1 class `theme-light:text-*-800` (hoặc `-700` cho đỏ, khớp
+      quy ước đã dùng ở `CefrLessonViews.tsx`), không đổi cấu trúc/hành vi, chỉ đổi màu chữ ở
+      3 theme sáng.
+    - **Xác minh:** `e2e/a11y.spec.ts` 122/122 pass · `e2e/a11y-aaa.spec.ts` 75/75 pass · toàn bộ
+      `npm run test:e2e` 305/305 pass · `npm test` 417 file/5018 test · build/size/typecheck/
+      lint/format đều xanh. Không đổi hành vi nghiệp vụ, chỉ đổi màu chữ ở theme sáng.
+    - **`e2e/v2-hubs.spec.ts`** — 1 lỗi KHÁC phát sinh khi CI chạy lại (không có trong danh sách
+      fail của `main`, không liên quan CORS/coverage/a11y): `getByText('Bạn Đồng Hành AI')` khớp 2
+      phần tử (tiêu đề thẻ AI companion trên Home + mô tả nhiệm vụ hàng ngày "...cùng Bạn Đồng Hành
+      AI..." của `DailyQuestsCard`, cả hai đã có sẵn từ commit `f67bbcf`, chỉ là test dùng
+      `getByText` không đủ cụ thể + phụ thuộc thời điểm phản hồi `/api/daily-quests` không mock
+      trong test này). Đã sửa locator sang `getByRole('heading', { name: /Bạn Đồng Hành AI/ })` cho
+      rõ ràng, không đổi sản phẩm.

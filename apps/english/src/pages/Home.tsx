@@ -189,7 +189,7 @@ export default function Home() {
                       `/lo-trinh-hoc/${continueLevel.level.id.toLowerCase()}?tab=srs&cap=${COMEBACK_SRS_CARDS}`,
                     )
                   }
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 text-sm font-medium transition"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 theme-light:text-sky-800 text-sm font-medium transition"
                 >
                   <Brain className="w-4 h-4" />
                   {isA
@@ -203,7 +203,7 @@ export default function Home() {
                     `/lo-trinh-hoc/${continueLevel.level.id.toLowerCase()}?tab=today&cap=${COMEBACK_NEW_WORDS}`,
                   )
                 }
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-accent-500/15 hover:bg-accent-500/25 text-accent-300 text-sm font-medium transition"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-accent-500/15 hover:bg-accent-500/25 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
               >
                 <Sparkles className="w-4 h-4" />
                 {isA ? `Học ${COMEBACK_NEW_WORDS} từ mới` : `Learn ${COMEBACK_NEW_WORDS} words`}
@@ -219,7 +219,7 @@ export default function Home() {
         {recentWords.length > 0 && (
           <button
             onClick={() => nav(`/luyen-noi?words=${encodeURIComponent(recentWords.join(','))}`)}
-            className="tap-44 w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300 hover:border-sky-500/50 transition animate-fade-in"
+            className="tap-44 w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300 theme-light:text-sky-800 hover:border-sky-500/50 transition animate-fade-in"
           >
             <Mic className="w-3.5 h-3.5 shrink-0" />
             {isA
@@ -249,7 +249,7 @@ export default function Home() {
             </div>
             <button
               onClick={() => nav('/lo-trinh-hoc')}
-              className="text-xs text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-0.5"
+              className="text-xs text-emerald-400 hover:text-emerald-300 theme-light:text-emerald-800 theme-light:hover:text-emerald-900 font-medium flex items-center gap-0.5"
             >
               Lộ trình CEFR <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -267,7 +267,7 @@ export default function Home() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <h4 className="font-bold text-white text-sm">Học Theo Lộ Trình CEFR</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/20">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800 font-semibold border border-emerald-500/20">
                     A1-C2
                   </span>
                 </div>
@@ -288,7 +288,7 @@ export default function Home() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <h4 className="font-bold text-white text-sm">Từ Điển Song Ngữ 12.000+</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/20">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 theme-light:text-amber-800 font-semibold border border-amber-500/20">
                     Audio IPA
                   </span>
                 </div>
@@ -372,7 +372,7 @@ export default function Home() {
             </div>
             <button
               onClick={() => nav('/subjects')}
-              className="text-xs text-blue-400 hover:text-blue-300 font-medium flex items-center gap-0.5"
+              className="text-xs text-blue-400 hover:text-blue-300 theme-light:text-blue-800 theme-light:hover:text-blue-900 font-medium flex items-center gap-0.5"
             >
               5 Môn Học <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -390,7 +390,7 @@ export default function Home() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <h4 className="font-bold text-white text-sm">Gia Sư AI: Toán, Lý, Hóa, Sinh</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 font-semibold border border-blue-500/20">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 theme-light:text-blue-800 font-semibold border border-blue-500/20">
                     Vision OCR
                   </span>
                 </div>
@@ -412,7 +412,7 @@ export default function Home() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <h4 className="font-bold text-white text-sm">Phòng Thí Nghiệm 10 Simulators</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 font-semibold border border-cyan-500/20">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 theme-light:text-cyan-800 font-semibold border border-cyan-500/20">
                     Tương tác
                   </span>
                 </div>
@@ -438,7 +438,7 @@ export default function Home() {
             </div>
             <button
               onClick={() => nav('/dong-hanh')}
-              className="text-xs text-purple-400 hover:text-purple-300 font-medium flex items-center gap-0.5"
+              className="text-xs text-purple-400 hover:text-purple-300 theme-light:text-purple-800 theme-light:hover:text-purple-900 font-medium flex items-center gap-0.5"
             >
               Executive Suite <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -456,7 +456,7 @@ export default function Home() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <h4 className="font-bold text-white text-sm">Bạn Đồng Hành AI Đa Miền</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-accent-500/15 text-accent-300 font-semibold border border-accent-500/20">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-accent-500/15 text-accent-300 theme-light:text-accent-800 font-semibold border border-accent-500/20">
                     Live Voice
                   </span>
                 </div>
@@ -477,7 +477,7 @@ export default function Home() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <h4 className="font-bold text-white text-sm">AI Phỏng Vấn Thử Việc</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-300 font-semibold border border-purple-500/20">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-300 theme-light:text-purple-800 font-semibold border border-purple-500/20">
                     STAR Model
                   </span>
                 </div>

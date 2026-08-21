@@ -20,9 +20,9 @@ export const EdgeAiIndicator: React.FC<EdgeAiIndicatorProps> = ({ className = ''
         onClick={() => setShowDetails(true)}
         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition border ${
           isWebGpu
-            ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+            ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 border-emerald-500/30'
             : capability.inferenceMode === 'wasm'
-              ? 'bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border-sky-500/30'
+              ? 'bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 theme-light:text-sky-800 border-sky-500/30'
               : 'bg-zinc-800/80 hover:bg-zinc-800 text-zinc-400 border-zinc-700/60'
         } ${className}`}
         title="Nhấn để xem chi tiết Edge AI"
