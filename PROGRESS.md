@@ -4239,3 +4239,20 @@ deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash script
     tính năng "phòng chat bạn bè" (một đoạn ghi "chưa làm", đoạn khác mô tả code đã xong ở
     `packages/core-chat/`) — cần audit luồng riêng (mục 5 quy trình audit) để xác minh, không thuộc
     phạm vi đợt này. E2E+a11y và audit luồng dữ liệu sâu (Tầng 5c, Tầng 8–9) chưa chạy lượt này.
+  - **[Cập nhật cùng ngày] CI e2e (PR #616) đỏ, xác nhận đỏ Y HỆT trên `main`** (job e2e của cả
+    2 nhánh đều "230 passed" + đúng cùng 4 test fail, không phải do PR gây ra) — **đã vá 2/4** vì
+    là test lỗi thời theo sau thay đổi sản phẩm thật, không phải bug:
+    - `e2e/bottomnav.spec.ts` — tab "Tiến độ" đã bị thay bằng tab "Đồng Hành" (AI companion,
+      `/dong-hanh`) ở `BottomNav.tsx` (Platform V7.0), test cũ chưa cập nhật theo. Đã sửa assertion
+      sang `/Đồng Hành/`. Trang `/tien-do` vẫn tồn tại (vào qua Cá nhân/Dashboard), chỉ không còn
+      là tab riêng.
+    - `e2e/admin.spec.ts` (3 test Analytics feedback) — `AdminFeedbackPanel.tsx` giờ có 2 tab con
+      "Ý Kiến Người Dùng" (mặc định) và "Đánh Giá Gia Sư AI 👎" (thêm sau PR feedback người dùng,
+      `feat(feedback): implement full user feedback & suggestion system`) — nội dung phản hồi gia
+      sư AI (`userInput`, dropdown nguồn, tiêu đề "Phản Hồi 👎...") chỉ hiện sau khi bấm sang tab
+      con thứ 2. Đã thêm bước click tab trước khi assert. Cả 2 file đã chạy pass cục bộ
+      (Playwright Chromium).
+    - **Chưa vá (ngoài phạm vi PR #616, nợ kỹ thuật riêng):** vi phạm a11y `color-contrast`
+      (serious) thật ở `/thu-thach` + một số trang/theme khác trong `e2e/a11y.spec.ts` — xuất hiện
+      y hệt trên cả `main` lẫn nhánh này (không phải do CORS/coverage), cần soát riêng theo mục 4
+      CLAUDE.md (token `--z-*`/`--a-*` trong `index.css`). Đề xuất mở PR riêng.

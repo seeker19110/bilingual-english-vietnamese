@@ -1189,8 +1189,12 @@ test.describe('Admin Dashboard — /admin-s', () => {
     await expect(page.getByText('500')).toBeVisible({ timeout: VISIBLE_TIMEOUT })
   })
 
+  // AdminFeedbackPanel giờ có 2 tab con: "Ý Kiến Người Dùng" (mặc định) và "Đánh Giá Gia Sư AI 👎"
+  // (feat/feedback: hệ thống góp ý người dùng, xem CI #616) — nội dung phản hồi gia sư AI chỉ
+  // hiện sau khi bấm sang tab con thứ 2.
   test('Analytics: Tiêu đề "Phản Hồi 👎 Chất Lượng Gia Sư AI"', async ({ page }) => {
     await gotoAdmin(page, 'analytics')
+    await page.getByRole('button', { name: /Đánh Giá Gia Sư AI/ }).click()
     await expect(page.getByText(/Phản Hồi.*Chất Lượng Gia Sư AI/)).toBeVisible({
       timeout: VISIBLE_TIMEOUT,
     })
@@ -1198,11 +1202,13 @@ test.describe('Admin Dashboard — /admin-s', () => {
 
   test('Analytics: Feedback hiện userInput "What is grammar?"', async ({ page }) => {
     await gotoAdmin(page, 'analytics')
+    await page.getByRole('button', { name: /Đánh Giá Gia Sư AI/ }).click()
     await expect(page.getByText('What is grammar?')).toBeVisible({ timeout: VISIBLE_TIMEOUT })
   })
 
   test('Analytics: Dropdown "Tất cả nguồn" tồn tại', async ({ page }) => {
     await gotoAdmin(page, 'analytics')
+    await page.getByRole('button', { name: /Đánh Giá Gia Sư AI/ }).click()
     await expect(page.getByRole('option', { name: 'Tất cả nguồn' })).toBeAttached({
       timeout: VISIBLE_TIMEOUT,
     })

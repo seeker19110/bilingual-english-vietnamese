@@ -23,7 +23,10 @@ test.describe('BottomNav (U-5)', () => {
     await expect(page.getByRole('link', { name: /Trang chủ/ })).toBeVisible()
     await expect(page.getByRole('link', { name: /Lộ trình/ })).toBeVisible()
     await expect(page.getByRole('link', { name: /Luyện tập/ })).toBeVisible()
-    await expect(page.getByRole('link', { name: /Tiến độ/ })).toBeVisible()
+    // Tab 3 đổi từ "Tiến độ" sang "Đồng Hành" (AI companion, dẫn tới /dong-hanh) — xem
+    // BottomNav.tsx (nút tâm điểm Orb Glow, Platform V7.0). Trang /tien-do vẫn tồn tại (vào qua
+    // Cá nhân/Dashboard), chỉ không còn là tab riêng ở BottomNav.
+    await expect(page.getByRole('link', { name: /Đồng Hành/ })).toBeVisible()
     // Tab 5 đổi từ "Cài đặt" sang "Cá nhân" (dẫn tới /profile) — xem PROGRESS.md mục "V2 UI —
     // Multi-Subject Learning..." (BottomNav.tsx: label T.navProfile, i18n/index.ts).
     await expect(page.getByRole('link', { name: /Cá nhân/ })).toBeVisible()
