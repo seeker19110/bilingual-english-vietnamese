@@ -731,9 +731,14 @@ Tiếp nối PR 0 (hệ thống bạn bè, đã tạo PR #602). PR này làm bac
   khi lưu), `getMessages`/`getRooms`/`markRead`/`deleteMessage`, mọi thao tác tự kiểm thành viên
   phòng.
 - `packages/core-chat/redisChat.ts`: pub/sub theo kênh `chat:user:<userId>` — có Redis thật thì
-  dùng `ioredis`, **chưa có `REDIS_URL` (đúng tình trạng VPS hiện tại) thì tự fallback sang
-  EventEmitter nội bộ**, chỉ hoạt động trong 1 tiến trình PM2 (đủ dùng vì VPS hiện 1 vCPU/1
-  instance — xem CLAUDE.md mục 13). Khi cài Redis thật, code không cần sửa gì thêm.
+  dùng `ioredis`, chưa có `REDIS_URL` thì tự fallback sang EventEmitter nội bộ (chỉ hoạt động
+  trong 1 tiến trình PM2). **[Cập nhật 2026-08-21] VPS đã nâng 3 vCPU, PM2 cluster mode nay chạy
+  thật 3 instances** (CLAUDE.md mục 13) và `REDIS_URL` đã được điền cho rate-limit — vì dùng
+  chung biến môi trường, `redisChat.ts` cũng tự lên Redis thật theo, không cần sửa code. **Cần
+  xác nhận lại bằng smoke test thật** (gửi tin nhắn, kiểm tin đến đúng ở tiến trình PM2 khác) vì
+  trước đây tính năng fallback EventEmitter chưa từng bị stress test đa tiến trình — nếu vì lý do
+  nào đó Redis không kết nối được, chat giữa 2 người sẽ chỉ nhận tin khi trúng cùng 1 trong 3
+  tiến trình (im lặng, khó phát hiện).
 - `packages/core-chat/wsHandler.ts`: gắn WebSocket vào CHÍNH `http.Server` của `server.ts` (không
   mở cổng riêng), path `/ws/chat`; auth qua cookie HttpOnly (đọc header `cookie` của upgrade
   request, tái dùng `validateAuth()` sẵn có bằng cách dựng 1 Web Request tối giản); presence
@@ -4057,15 +4062,17 @@ fast-uri` — thuần devDependency (commitlint hook), không vào bundle chạy
   xác nhận log đúng như thiết kế: phát hiện đổi `fork_mode → cluster_mode`, xoá + start lại,
   health check OK sau 1s.
 
-  **NHƯNG: log PM2 báo `App [english-tutor] launched (1 instances)`** — dù cấu hình
-  `instances: 'max'`, chỉ có **đúng 1 tiến trình** được tạo. Kết luận gần như chắc chắn: **VPS
-  hiện tại chỉ có 1 vCPU** (`'max'` = số core thật của máy). Cơ chế cluster mode ĐÃ ĐÚNG và chạy
-  ổn định, nhưng **không có lợi ích song song thật** cho tới khi máy có nhiều hơn 1 core — đây
-  là bằng chứng cụ thể xác nhận GĐ2 (thêm VPS, tách máy khỏi app "xboss" dùng chung) là điều
-  kiện BẮT BUỘC, không phải tuỳ chọn, để kế hoạch scale 50k concurrent
-  (`docs/research/ke-hoach-scale-30k-concurrent.md`) có ý nghĩa thực tế. Nợ kỹ thuật này coi là
-  **đã đóng về mặt cơ chế** (không cần sửa code thêm), còn mở về mặt **phần cứng** (chuyển sang
-  GĐ2).
+  **[Lúc đó] log PM2 báo `App [english-tutor] launched (1 instances)`** — dù cấu hình
+  `instances: 'max'`, chỉ có đúng 1 tiến trình được tạo, vì VPS lúc đó chỉ có 1 vCPU (`'max'` =
+  số core thật của máy).
+
+  **[Cập nhật 2026-08-21] VPS ĐÃ NÂNG CẤP LÊN 3 vCPU / 3GB RAM** (người dùng xác nhận). Theo
+  CLAUDE.md mục 13 (cập nhật 2026-08-19), PM2 đang chạy **cluster mode 3 instances thật** tận
+  dụng cả 3 core, cùng `REDIS_URL` cho rate-limit tập trung (mục ngay bên dưới) — nghĩa là lợi
+  ích song song thật ĐÃ CÓ, không còn bị giới hạn bởi phần cứng như trước. Nợ kỹ thuật này coi
+  là **đã đóng hoàn toàn** (cả cơ chế lẫn phần cứng). Việc còn lại thuộc GĐ2 scale xa hơn (nếu
+  cần vượt quá 3 vCPU cho mục tiêu 30k-50k concurrent) là quyết định mở rộng tiếp theo, không
+  còn là nợ kỹ thuật cấp thiết.
 
   Cũng cần đặt `REDIS_URL` (xem mục ngay bên dưới — rate limit chuyển sang Redis) trước khi bật
   cluster mode nhiều tiến trình thật (sau khi thêm VPS ở GĐ2), không thì rate limit lỏng hơn N
@@ -4088,12 +4095,13 @@ fast-uri` — thuần devDependency (commitlint hook), không vào bundle chạy
 deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash scripts/deploy.sh` (1 nguồn
   chân lý duy nhất cho cả thủ công lẫn tự động). Đã cập nhật mọi doc còn nhắc `deploy.sh` gốc
   (`docs/DEPLOY.md`, `docs/deploy-vps-ubuntu.md`, `DEPLOY_STEPS.md`, `CLAUDE.md`).
-- **[Ý tưởng, 2026-07-30] Phòng chat cho bạn bè cùng luyện tập** — chưa làm, mới bàn sơ bộ.
-  2 hướng: (1) chat đơn giản lưu tin nhắn qua PostgreSQL + polling định kỳ, tận dụng hạ tầng
-  `api/` hiện có — nhẹ, làm được ngay; (2) chat real-time thật (WebSocket, typing indicator,
-  online status) — nặng hơn nhiều, cần thêm WebSocket server và sẽ vướng scale vì VPS hiện
-  chỉ có 1 vCPU + chưa có Redis dùng chung giữa các tiến trình (xem nợ kỹ thuật cluster mode ở
-  trên). Cần người dùng chọn hướng trước khi làm.
+- ⚠️ **[Ý tưởng, 2026-07-30] Phòng chat cho bạn bè cùng luyện tập** — ghi "chưa làm, mới bàn sơ
+  bộ" nhưng mục `packages/core-chat/redisChat.ts` + `packages/core-chat/wsHandler.ts` ở TRÊN
+  trong file này mô tả WebSocket + Redis pub/sub đã code xong (route `/ws/chat`, moderation,
+  presence…) — **hai đoạn mâu thuẫn nhau, cần phiên sau xác minh lại tính năng chat bạn bè đã
+  triển khai tới đâu thật sự** trước khi coi đây còn là "ý tưởng chưa làm". Ràng buộc phần cứng
+  cũ (VPS 1 vCPU, chưa có Redis) đã hết hiệu lực: VPS nay 3 vCPU + `REDIS_URL` đã điền
+  (2026-08-21).
 - Không còn hạng mục a11y/kiểm thử lớn nào mở. Xem "Tiếp theo" ở trên cho việc sản phẩm còn dở.
 - `docs/research/thu-thach-vlog-30-ngay.md` dùng tên cũ "Vlog" (tính năng đã đổi tên thành
   "Challenge" — route `/challenge`, bảng `challenge_entries`) — tài liệu đó là ghi chép lịch sử

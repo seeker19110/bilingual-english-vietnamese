@@ -200,9 +200,12 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
    `speaking`: cột `stt_count`, giới hạn free 10/pro 100 — `api/_lib/usage.ts`, `src/types.ts`). Còn: thêm
    `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) vào `.env` trên VPS.
 2. Cluster mode đã áp dụng thật trên VPS (xác nhận 2026-07-25) — chuyển fork→cluster qua
-   `scripts/pm2-reload.sh` đã chạy xong, không còn việc phải làm. Còn mở về **phần cứng**: VPS
-   1 vCPU nên chưa có lợi ích song song; cần thêm VPS (GĐ2) + `REDIS_URL` mới phát huy.
-   `api/_lib/security.ts` (`validateAuth`) đã rà lại — repo sạch, không còn debug log tạm.
+   `scripts/pm2-reload.sh` đã chạy xong. **[Cập nhật 2026-08-21] VPS đã nâng lên 3 vCPU / 3GB
+   RAM** — cluster mode nay chạy thật 3 instances song song (không còn bị giới hạn 1 vCPU như
+   trước), khớp với mô tả PM2 3 instances ở mục 13. `api/_lib/security.ts` (`validateAuth`) đã
+   rà lại — repo sạch, không còn debug log tạm. Còn cần: smoke test chat real-time
+   (`packages/core-chat/`) qua Redis đa tiến trình để xác nhận không bị lệch (xem PROGRESS.md
+   "Nợ kỹ thuật còn mở").
 3. ~~Thanh toán Pro chưa có~~ **ĐÃ XONG (2026-07-27)** — code M2 hoàn tất (checkout + webhook
    SePay + UI). Còn lại là VIỆC TAY của bạn, ngoài khả năng AI: đăng ký tài khoản SePay + liên
    kết ngân hàng, điền `SEPAY_WEBHOOK_API_KEY`/`SEPAY_BANK_ACCOUNT`/`SEPAY_BANK_CODE` trên VPS,
