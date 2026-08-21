@@ -12,7 +12,7 @@
 //     Tải về: .env.restored, system-restored.tar.gz, và bản Postgres mới nhất (file .sql.gz vào
 //     thư mục hiện tại) — KHÔNG ghi đè gì, tự kiểm tra rồi khôi phục từng phần theo nhu cầu thật.
 //
-//   ENV_BACKUP_PASSPHRASE="..." npm run restore:all -- --restore-into english_tutor --yes
+//   ENV_BACKUP_PASSPHRASE="..." npm run restore:all -- --restore-into dhcb --yes
 //     Giống trên, NHƯNG THÊM bước DROP + TẠO LẠI + khôi phục thật database Postgres đích (cần
 //     RESTORE_PSQL_URL trong .env — xem restore-pg-from-r2.ts). Dùng khi chắc chắn muốn ghi đè.
 //

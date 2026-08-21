@@ -34,7 +34,7 @@ async function main(): Promise<void> {
   if (!connectionString) {
     console.error(
       '[migrate:pg] Thiếu DATABASE_URL trong .env — vd ' +
-        'postgresql://tutor_app:MAT_KHAU@localhost:5432/english_tutor — xem ' +
+        'postgresql://tutor_app:MAT_KHAU@localhost:5432/dhcb — xem ' +
         'docs/migration-thoat-ly-supabase.md Giai đoạn A.',
     )
     process.exit(1)

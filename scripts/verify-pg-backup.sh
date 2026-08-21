@@ -12,7 +12,7 @@
 #
 # CÁCH DÙNG (chạy trên VPS có Postgres, KHÔNG chạy trong CI/sandbox — cần Postgres
 # thật + file backup thật):
-#   bash scripts/verify-pg-backup.sh /var/backups/english_tutor_20260725.sql.gz
+#   bash scripts/verify-pg-backup.sh /var/backups/dhcb_20260725.sql.gz
 #   (không truyền tham số → tự tìm file *.sql.gz mới nhất trong /var/backups)
 #
 # Thoát mã 0 = phục hồi + kiểm tra OK. Khác 0 = có vấn đề, ĐỌC KỸ log trước khi

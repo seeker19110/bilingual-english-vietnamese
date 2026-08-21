@@ -35,7 +35,7 @@ fi
 sudo service postgresql start || sudo pg_ctlcluster --all start
 
 CODEX_DB_USER="codex_tutor"
-CODEX_DB_NAME="english_tutor_codex"
+CODEX_DB_NAME="dhcb_codex"
 CODEX_DB_PASSWORD="codex_tutor_local_only"
 
 if ! sudo -u postgres psql -tAc "select 1 from pg_roles where rolname='${CODEX_DB_USER}'" | grep -q 1; then
@@ -53,7 +53,7 @@ export NODE_ENV="test"
 export SKIP_AUTH="true"
 export ALLOWED_ORIGINS="http://localhost:5179"
 
-BASHRC_MARKER="# english-tutor Codex Cloud environment"
+BASHRC_MARKER="# dhcb Codex Cloud environment"
 if ! grep -Fq "$BASHRC_MARKER" "$HOME/.bashrc" 2>/dev/null; then
   {
     echo ""

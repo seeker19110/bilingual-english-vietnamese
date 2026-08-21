@@ -28,7 +28,7 @@ Script sẽ:
 1. Kiểm tra Node.js 22.
 2. Chạy `npm ci` theo lockfile.
 3. Cài/khởi động PostgreSQL trong container.
-4. Tạo database `english_tutor_codex` và tài khoản test-only.
+4. Tạo database `dhcb_codex` và tài khoản test-only.
 5. Ghi biến test vào `~/.bashrc` để còn hiệu lực trong agent phase.
 6. Áp schema/migrations bằng `npm run migrate:pg`.
 7. Cài Chromium cho Playwright.

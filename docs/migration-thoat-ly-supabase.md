@@ -186,7 +186,7 @@ Sau mục 8, phần LÕI (đăng nhập + đếm lượt dùng AI + tiến độ
 2. Cloudflare Dashboard → R2 → tạo bucket (vd `english-tutor-audio`) → bật **Public access** (nhận domain dạng `pub-xxxxxxxx.r2.dev`, hoặc gắn domain riêng).
 3. R2 → Manage R2 API Tokens → tạo token có quyền Object Read & Write cho đúng bucket → lấy `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`.
 4. Điền 5 biến vào `.env` VPS (mẫu trong `.env.example`), đổi `STORAGE_DRIVER=local` → `STORAGE_DRIVER=r2`.
-5. `git pull && npm ci && npm run build && pm2 restart english-tutor`.
+5. `git pull && npm ci && npm run build && pm2 restart dhcb`.
 6. Smoke test: mở 1 trang có audio (vd Từ điển tra 1 từ, hoặc trang Luyện nói), xác nhận nghe được — kiểm tra Cloudflare Dashboard → R2 → bucket thấy file mới xuất hiện.
 7. **(Tùy chọn) Đẩy nốt audio CŨ đã cache trước khi bật R2 lên R2** — bước 1-6 chỉ làm
    audio MỚI tự lên R2; audio cũ vẫn nằm ở `uploads/` local + DB vẫn trỏ `/uploads/...`.

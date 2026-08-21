@@ -15,7 +15,7 @@
 [databases]
 ; Tên database ảo mà app kết nối tới (đặt trong DATABASE_URL mới, trỏ cổng PgBouncer 6432
 ; thay vì cổng Postgres thật 5432) — map sang database Postgres thật bên dưới.
-english_tutor = host=127.0.0.1 port=5432 dbname=english_tutor
+dhcb = host=127.0.0.1 port=5432 dbname=dhcb
 
 [pgbouncer]
 listen_addr = 0.0.0.0

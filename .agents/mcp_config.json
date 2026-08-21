@@ -4,7 +4,7 @@
       "command": "agentmemory",
       "args": ["mcp"],
       "env": {
-        "AGENTMEMORY_PROJECT_ID": "english-tutor",
+        "AGENTMEMORY_PROJECT_ID": "dhcb",
         "AGENTMEMORY_DB_PATH": "C:/Users/liend/.gemini/agentmemory.db"
       }
     }

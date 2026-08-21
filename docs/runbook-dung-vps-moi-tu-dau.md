@@ -119,7 +119,7 @@ sudo systemctl enable --now postgresql
 # Tạo user riêng cho app (KHÔNG dùng superuser)
 sudo -u postgres psql <<'SQL'
 create user tutor_app with password 'DAT_MAT_KHAU_MANH_O_DAY';
-create database english_tutor owner tutor_app;
+create database dhcb owner tutor_app;
 SQL
 ```
 
@@ -192,7 +192,7 @@ nano .env
 
 ```env
 # ── PostgreSQL (Bước 4) ──
-DATABASE_URL=postgresql://tutor_app:DAT_MAT_KHAU_MANH_O_DAY@localhost:5432/english_tutor
+DATABASE_URL=postgresql://tutor_app:DAT_MAT_KHAU_MANH_O_DAY@localhost:5432/dhcb
 
 # ── Auth tự viết (Bearer token) — Google OAuth Client ID, CẢ 2 biến CÙNG giá trị ──
 GOOGLE_CLIENT_ID=xxxxxxxxxx.apps.googleusercontent.com
@@ -302,10 +302,10 @@ RESTORE_PSQL_URL=postgresql://postgres:MAT_KHAU_SUPERUSER@localhost:5432/postgre
 
 # Khôi phục thật — backup tự tạo lại toàn bộ schema, KHÔNG cần migrate:pg trước
 RESTORE_PSQL_URL=postgresql://postgres:MAT_KHAU_SUPERUSER@localhost:5432/postgres \
-  npm run restore:r2 -- --restore-into english_tutor --yes
+  npm run restore:r2 -- --restore-into dhcb --yes
 
 # Xác nhận dữ liệu thật, không phải bảng rỗng
-sudo -u postgres psql english_tutor -c "select count(*) from public.users;"
+sudo -u postgres psql dhcb -c "select count(*) from public.users;"
 
 # Chạy migration còn thiếu (backup có thể cũ hơn schema mới nhất)
 npm run migrate:pg
@@ -336,13 +336,13 @@ psql "$(grep '^DATABASE_URL=' .env | cut -d= -f2-)" -c "select count(*) from pub
 
 ```bash
 # Copy file backup local từ VPS cũ (hoặc nơi lưu ngoài) lên VPS mới
-scp /duong/dan/english_tutor_YYYYMMDD.sql.gz root@<ip-vps-moi>:/var/backups/
+scp /duong/dan/dhcb_YYYYMMDD.sql.gz root@<ip-vps-moi>:/var/backups/
 
 # Verify backup không hỏng trước khi restore thật
-bash scripts/verify-pg-backup.sh /var/backups/english_tutor_YYYYMMDD.sql.gz
+bash scripts/verify-pg-backup.sh /var/backups/dhcb_YYYYMMDD.sql.gz
 
 # Restore vào DB thật (DB đang trống, không cần dropdb)
-gunzip -c /var/backups/english_tutor_YYYYMMDD.sql.gz | sudo -u postgres psql english_tutor
+gunzip -c /var/backups/dhcb_YYYYMMDD.sql.gz | sudo -u postgres psql dhcb
 
 npm run migrate:pg
 ```
@@ -448,7 +448,7 @@ sudo -u postgres crontab -e
 Thêm 3 dòng:
 
 ```cron
-0 3 * * * pg_dump english_tutor | gzip > /var/backups/english_tutor_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'english_tutor_*.sql.gz' -mtime +7 -delete
+0 3 * * * pg_dump dhcb | gzip > /var/backups/dhcb_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'dhcb_*.sql.gz' -mtime +7 -delete
 5 3 * * * cd /var/www/dhcb && npm run backup:r2 >> /var/log/pg-backup-r2.log 2>&1
 10 3 * * * cd /var/www/dhcb && ENV_BACKUP_PASSPHRASE="passphrase-that-cua-ban" npm run backup:env >> /var/log/env-backup-r2.log 2>&1
 0 4 * * 0 bash /var/www/dhcb/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1

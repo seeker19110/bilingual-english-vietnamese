@@ -16,7 +16,7 @@
 #
 # NÊN đặt cron chạy lại mỗi tháng (Cloudflare hiếm khi đổi dải IP nhưng có thể xảy ra):
 #   sudo crontab -e
-#   0 4 1 * * /usr/bin/bash /var/www/english-tutor/scripts/update-cloudflare-ips.sh && systemctl reload nginx
+#   0 4 1 * * /usr/bin/bash /var/www/dhcb/scripts/update-cloudflare-ips.sh && systemctl reload nginx
 
 set -euo pipefail
 

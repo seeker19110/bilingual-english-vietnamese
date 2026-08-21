@@ -16,7 +16,7 @@
       được, miễn trong ngân sách) để tạo máy mới.
 - [ ] Có quyền SSH vào VPS app hiện tại (`103.81.87.174` theo `docs/deploy-vps-ubuntu.md`).
 - [ ] Đã backup thủ công 1 bản Postgres hiện tại TRƯỚC khi động vào bất cứ gì (an toàn):
-      `pg_dump english_tutor | gzip > ~/backup-truoc-khi-scale.sql.gz` (chạy trên VPS app hiện tại).
+      `pg_dump dhcb | gzip > ~/backup-truoc-khi-scale.sql.gz` (chạy trên VPS app hiện tại).
 
 Nếu chưa tick hết — DỪNG, làm xong các mục trên trước.
 
@@ -79,9 +79,9 @@ sudo systemctl enable --now postgresql pgbouncer
 Tạo database + user (đổi mật khẩu thật, không dùng giá trị mẫu, lưu vào trình quản lý mật khẩu):
 
 ```bash
-sudo -u postgres psql -c "create database english_tutor;"
-sudo -u postgres psql -c "create user english_tutor_app with encrypted password 'ĐỔI-MẬT-KHẨU-THẬT';"
-sudo -u postgres psql -c "grant all privileges on database english_tutor to english_tutor_app;"
+sudo -u postgres psql -c "create database dhcb;"
+sudo -u postgres psql -c "create user tutor_app with encrypted password 'ĐỔI-MẬT-KHẨU-THẬT';"
+sudo -u postgres psql -c "grant all privileges on database dhcb to tutor_app;"
 ```
 
 ## 4. Áp schema + migration lên máy mới
@@ -89,7 +89,7 @@ sudo -u postgres psql -c "grant all privileges on database english_tutor to engl
 Từ máy có sẵn repo (máy của bạn hoặc VPS app cũ), chạy tạm thời trỏ vào máy mới:
 
 ```bash
-DATABASE_URL="postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:5432/english_tutor" \
+DATABASE_URL="postgresql://tutor_app:MẬT-KHẨU@<ip-vps-db>:5432/dhcb" \
   npm run migrate:pg
 ```
 
@@ -104,8 +104,8 @@ Bước 3. Tạo `/etc/pgbouncer/userlist.txt`:
 
 ```bash
 # Định dạng: "tên_user" "md5<hash md5 của (password + username)>"
-# Cách lấy hash nhanh: echo -n "MẬT-KHẨU-THẬTenglish_tutor_app" | md5sum
-echo '"english_tutor_app" "md5<hash-vừa-tạo>"' | sudo tee /etc/pgbouncer/userlist.txt
+# Cách lấy hash nhanh: echo -n "MẬT-KHẨU-THẬTtutor_app" | md5sum
+echo '"tutor_app" "md5<hash-vừa-tạo>"' | sudo tee /etc/pgbouncer/userlist.txt
 ```
 
 ```bash
@@ -145,12 +145,12 @@ trọng (dữ liệu người dùng thật, mật khẩu đã băm, session toke
 Trên VPS app, sửa `.env` (`nano /var/www/dhcb/.env` hoặc tương đương):
 
 ```bash
-DATABASE_URL=postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:6432/english_tutor
+DATABASE_URL=postgresql://tutor_app:MẬT-KHẨU@<ip-vps-db>:6432/dhcb
 REDIS_URL=redis://:MẬT-KHẨU-REDIS@<ip-vps-db>:6379
 PG_POOL_MAX=20   # khớp default_pool_size trong pgbouncer.ini — xem comment file mẫu
 # Migration/DDL nối THẲNG Postgres (5432), KHÔNG qua PgBouncer (6432) — một số DDL (vd
 # CREATE INDEX CONCURRENTLY) không chạy được qua transaction pooling.
-MIGRATE_DATABASE_URL=postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:5432/english_tutor
+MIGRATE_DATABASE_URL=postgresql://tutor_app:MẬT-KHẨU@<ip-vps-db>:5432/dhcb
 ```
 
 Reload app (KHÔNG cần deploy lại toàn bộ code, chỉ đổi `.env`):
@@ -178,7 +178,7 @@ Máy DB mới cần cron `pg_dump` riêng (chưa tự động chuyển từ máy
 sudo mkdir -p /var/backups && sudo chown postgres:postgres /var/backups
 sudo -u postgres crontab -e
 # Thêm dòng (3h sáng mỗi ngày):
-0 3 * * * pg_dump english_tutor | gzip > /var/backups/english_tutor_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'english_tutor_*.sql.gz' -mtime +7 -delete
+0 3 * * * pg_dump dhcb | gzip > /var/backups/dhcb_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'dhcb_*.sql.gz' -mtime +7 -delete
 ```
 
 Sau khi có ít nhất 1 bản backup, xác nhận NGAY nó phục hồi được (đừng đợi tới lúc cần thật):
